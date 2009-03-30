@@ -24,7 +24,7 @@
 #include "server.h"
 
 Player::Player(const QString &name, unsigned short score, unsigned short ping, PlayerTeam team, bool spectator, bool bot) :
-	name(name), score(score), ping(ping), team(team), spectator(spectator), bot(bot)
+	playerName(name), currentScore(score), currentPing(ping), team(team), spectator(spectator), bot(bot)
 {
 }
 
@@ -37,17 +37,23 @@ const GameMode GameMode::DEATHMATCH(QObject::tr("Deathmatch"), false);
 const GameMode GameMode::TEAM_DEATHMATCH(QObject::tr("Team DM"), true);
 const GameMode GameMode::CAPTURE_THE_FLAG(QObject::tr("CTF"), true);
 
-GameMode::GameMode(const QString &name, bool teamgame) : name(name), teamgame(teamgame)
+GameMode::GameMode(const QString &name, bool teamgame) : modeName(name), teamgame(teamgame)
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Server::Server(const QHostAddress &address, unsigned short port) : QObject(), address(address), port(port), gameMode(GameMode::COOPERATIVE)
+Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
+	serverAddress(address), serverPort(port),
+	currentGameMode(GameMode::COOPERATIVE), currentPing(999), locked(false),
+	maxClients(0), maxPlayers(0), serverName(tr("<< ERROR >>")),
+	serverScoreLimit(0)
 {
+	for(int i = 0;i < MAX_TEAMS;i++)
+		scores[i] = 0;
 }
 
-Server::Server(const Server &other) : QObject(), gameMode(GameMode::COOPERATIVE)
+Server::Server(const Server &other) : QObject(), currentGameMode(GameMode::COOPERATIVE)
 {
 	(*this) = other;
 }
@@ -58,6 +64,14 @@ Server::~Server()
 
 void Server::operator= (const Server &other)
 {
-	address = other.address;
-	port = other.port;
+	serverAddress = other.address();
+	serverPort = other.port();
+
+	currentGameMode = other.gameMode();
+	currentPing = other.ping();
+	locked = other.isLocked();
+	maxClients = other.maximumClients();
+	maxPlayers = other.maximumPlayers();
+	serverName = other.name();
+	serverScoreLimit = other.scoreLimit();
 }

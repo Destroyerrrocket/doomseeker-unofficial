@@ -49,15 +49,15 @@ struct Player
 
 		Player(const QString &name, unsigned short score, unsigned short ping, PlayerTeam team=TEAM_NONE, bool spectator=false, bool bot=false);
 
-		const QString	&getName() const { return name; }
-		unsigned short	getScore() const { return score; }
-		unsigned short	getPing() const { return ping; }
+		const QString	&name() const { return playerName; }
+		unsigned short	score() const { return currentScore; }
+		unsigned short	ping() const { return currentPing; }
 		bool			isSpectating() const { return spectator; }
 		bool			isBot() const { return bot; }
 	protected:
-		QString			name;
-		unsigned short	score;
-		unsigned short	ping;
+		QString			playerName;
+		unsigned short	currentScore;
+		unsigned short	currentPing;
 		bool			spectator;
 		bool			bot;
 		PlayerTeam		team;
@@ -81,10 +81,10 @@ struct GameMode
 		 */
 		GameMode(const QString &name, bool teamgame);
 
-		const QString	&getName() { return name;}
+		const QString	&name() { return modeName;}
 		bool			isTeamGame() { return teamgame; }
 	protected:
-		QString	name;
+		QString	modeName;
 		bool	teamgame;
 };
 
@@ -97,21 +97,21 @@ class Server : public QObject
 		Server(const Server &other);
 		virtual ~Server();
 
-		const QHostAddress	&getAddress() const { return address; }
-		const GameMode		&getGameMode() const { return gameMode; }
-		const QString		&getMapName() const { return mapName; }
-		unsigned short		getMaxClients() const { return maxPlayers > maxClients ? maxPlayers : maxClients; }
-		unsigned short		getMaxPlayers() const { return maxPlayers; }
-		const QString		&getName() const { return name; }
-		int					getNumPlayers() const { return players.size(); }
-		int					getNumWads() const { return wads.size(); }
-		const Player		&getPlayer(int index) const { return players[index]; }
-		unsigned int		getPing() const { return ping; }
-		unsigned short		getPort() const { return port; }
-		unsigned int		getScoreLimit() const { return scoreLimit; }
-		unsigned int		getScore(int team=0) const { return scores[team]; }
-		const QString		&getWad(int index) const { return wads[index]; }
+		const QHostAddress	&address() const { return serverAddress; }
+		const GameMode		&gameMode() const { return currentGameMode; }
 		bool				isLocked() const { return locked; }
+		const QString		&map() const { return mapName; }
+		unsigned short		maximumClients() const { return maxPlayers > maxClients ? maxPlayers : maxClients; }
+		unsigned short		maximumPlayers() const { return maxPlayers; }
+		const QString		&name() const { return serverName; }
+		int					numPlayers() const { return players.size(); }
+		int					numWads() const { return wads.size(); }
+		unsigned int		ping() const { return currentPing; }
+		const Player		&player(int index) const { return players[index]; }
+		unsigned short		port() const { return serverPort; }
+		unsigned int		score(int team=0) const { return scores[team]; }
+		unsigned int		scoreLimit() const { return serverScoreLimit; }
+		const QString		&wad(int index) const { return wads[index]; }
 
 		void				operator= (const Server &other);
 
@@ -129,22 +129,23 @@ class Server : public QObject
 		void				updated(const Server *server);
 
 	protected:
-		QHostAddress		address;
-		unsigned short		port;
-		unsigned int		ping;
-
-		GameMode			gameMode;
+		GameMode			currentGameMode;
+		unsigned int		currentPing;
 		QString				iwad;
 		bool				locked;
 		QString				mapName;
 		unsigned short		maxClients;
 		unsigned short		maxPlayers;
-		QString				name;
 		QList<Player>		players;
-		unsigned int		scoreLimit;
 		unsigned int		scores[MAX_TEAMS];
+		QString				serverName;
+		unsigned int		serverScoreLimit;
 		QStringList			wads;
 		QString				webSite;
+
+	private:
+		QHostAddress		serverAddress;
+		unsigned short		serverPort;
 };
 
 #endif /* __SERVER_H__ */

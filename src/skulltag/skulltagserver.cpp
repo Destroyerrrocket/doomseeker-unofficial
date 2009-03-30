@@ -43,7 +43,7 @@ void SkulltagServer::refresh()
 {
 	// Connect to the server
 	QUdpSocket socket;
-	socket.connectToHost(address, port);
+	socket.connectToHost(address(), port());
 	if(!socket.waitForConnected(1000))
 	{
 		printf("%s\n", socket.errorString().toAscii().data());
@@ -73,7 +73,7 @@ void SkulltagServer::refresh()
 
 	// Check the response code
 	int response = READINT32(&packetOut[0]);
-	ping = time.elapsed();
+	currentPing = time.elapsed();
 	if(response == SERVER_BANNED)
 	{
 		emit banned(this);
@@ -90,8 +90,8 @@ void SkulltagServer::refresh()
 	pos += 4;
 	if((flags & SQF_NAME) == SQF_NAME)
 	{
-		name = QString(&packetOut[pos]);
-		pos += name.length() + 1;
+		serverName = QString(&packetOut[pos]);
+		pos += serverName.length() + 1;
 	}
 	if((flags & SQF_URL) == SQF_URL)
 	{
