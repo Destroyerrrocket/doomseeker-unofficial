@@ -25,18 +25,18 @@
 
 struct huffnode_t
 {
-	huffnode_t *zero;
-	huffnode_t *one;
-	unsigned char val;
-	float freq;
-
+	public:
+		huffnode_t *zero;
+		huffnode_t *one;
+		unsigned char val;
+		float freq;
 };
 
 struct hufftab_t
 {
-	unsigned int bits;
-	int len;
-
+	public:
+		unsigned int bits;
+		int len;
 };
 
 class Huffman

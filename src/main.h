@@ -14,7 +14,7 @@ class Tester : public QObject
 	public slots:
 		void serverUpdated(const Server *server)
 		{
-			printf("%d	%s\n", server->ping(), server->name().toAscii().data());
+			printf("%d	%s	%s\n", server->ping(), server->gameMode().name().toAscii().data(), server->name().toAscii().data());
 		}
 };
 

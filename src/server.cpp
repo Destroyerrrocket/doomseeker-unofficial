@@ -47,7 +47,7 @@ Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
 	serverAddress(address), serverPort(port),
 	currentGameMode(GameMode::COOPERATIVE), currentPing(999), locked(false),
 	maxClients(0), maxPlayers(0), serverName(tr("<< ERROR >>")),
-	serverScoreLimit(0)
+	serverScoreLimit(0), serverTimeLeft(0), serverTimeLimit(0)
 {
 	for(int i = 0;i < MAX_TEAMS;i++)
 		scores[i] = 0;

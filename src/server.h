@@ -81,8 +81,8 @@ struct GameMode
 		 */
 		GameMode(const QString &name, bool teamgame);
 
-		const QString	&name() { return modeName;}
-		bool			isTeamGame() { return teamgame; }
+		const QString	&name() const { return modeName;}
+		bool			isTeamGame() const { return teamgame; }
 	protected:
 		QString	modeName;
 		bool	teamgame;
@@ -98,6 +98,7 @@ class Server : public QObject
 		virtual ~Server();
 
 		const QHostAddress	&address() const { return serverAddress; }
+		const QStringList	&gameFlags() const { return dmFlags; }
 		const GameMode		&gameMode() const { return currentGameMode; }
 		bool				isLocked() const { return locked; }
 		const QString		&map() const { return mapName; }
@@ -111,6 +112,8 @@ class Server : public QObject
 		unsigned short		port() const { return serverPort; }
 		unsigned int		score(int team=0) const { return scores[team]; }
 		unsigned int		scoreLimit() const { return serverScoreLimit; }
+		unsigned short		timeLeft() const { return serverTimeLeft; }
+		unsigned short		timeLimit() const { return serverTimeLimit; }
 		const QString		&wad(int index) const { return wads[index]; }
 
 		void				operator= (const Server &other);
@@ -131,6 +134,7 @@ class Server : public QObject
 	protected:
 		GameMode			currentGameMode;
 		unsigned int		currentPing;
+		QStringList			dmFlags;
 		QString				iwad;
 		bool				locked;
 		QString				mapName;
@@ -140,6 +144,8 @@ class Server : public QObject
 		unsigned int		scores[MAX_TEAMS];
 		QString				serverName;
 		unsigned int		serverScoreLimit;
+		unsigned short		serverTimeLeft;
+		unsigned short		serverTimeLimit;
 		QStringList			wads;
 		QString				webSite;
 
