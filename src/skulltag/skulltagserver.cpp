@@ -23,10 +23,12 @@
 
 #include <QUdpSocket>
 #include <QTime>
+#include <QThreadPool>
 
 #include "huffman/huffman.h"
 #include "skulltag/skulltagserver.h"
 #include "global.h"
+#include "main.h"
 
 #define SERVER_CHALLENGE	0xC7,0x00,0x00,0x00
 #define SERVER_GOOD			5660023
@@ -170,16 +172,19 @@ SkulltagServer::SkulltagServer(const QHostAddress &address, unsigned short port)
 	teamInfo[3] = TeamInfo(tr("Gold"), QColor(255, 255, 0), 0);
 }
 
-void SkulltagServer::refresh()
+void SkulltagServer::doRefresh()
 {
 	// Connect to the server
 	QUdpSocket socket;
+	
 	socket.connectToHost(address(), port());
+	
 	if(!socket.waitForConnected(1000))
 	{
 		printf("%s\n", socket.errorString().toAscii().data());
 		return;
 	}
+	
 
 	// Send launcher challenge.
 	QTime time = QTime::currentTime();
@@ -194,6 +199,7 @@ void SkulltagServer::refresh()
 	time.start();
 	if(!socket.waitForReadyRead(1000))
 		return;
+		
 
 	// Decompress the response.
 	QByteArray data = socket.readAll();
@@ -308,11 +314,21 @@ void SkulltagServer::refresh()
 	if((flags & SQF_LIMITS) == SQF_LIMITS)
 	{
 		fragLimit = READINT16(&packetOut[pos]);
+		
+		// Read timelimit and timeleft,
+		// note that if timelimit == 0 then no info
+		// about timeleft is sent
 		serverTimeLimit = READINT16(&packetOut[pos+2]);
-		serverTimeLeft = READINT16(&packetOut[pos+4]);
-		duelLimit = READINT16(&packetOut[pos+6]);
-		pointLimit = READINT16(&packetOut[pos+8]);
-		winLimit = READINT16(&packetOut[pos+10]);
+		pos += 4;
+		if (serverTimeLimit != 0)
+		{
+			serverTimeLeft = READINT16(&packetOut[pos]);
+			pos += 2;
+		}
+		
+		duelLimit = READINT16(&packetOut[pos]);
+		pointLimit = READINT16(&packetOut[pos+2]);
+		winLimit = READINT16(&packetOut[pos+4]);
 		switch(mode)
 		{
 			default:
@@ -332,7 +348,7 @@ void SkulltagServer::refresh()
 				serverScoreLimit = pointLimit;
 				break;
 		}
-		pos += 12;
+		pos += 6;
 	}
 	if((flags & SQF_TEAMDAMAGE) == SQF_TEAMDAMAGE)
 	{
@@ -402,5 +418,29 @@ void SkulltagServer::refresh()
 
 	socket.close();
 
-	emit updated(this);
+	emit updated(this);	
+}
+
+void SkulltagServer::refresh()
+{
+	Refresher* r = new Refresher(this);
+	QThreadPool::globalInstance()->start(r);
+}
+////////////////////////////////////////////////////////////////////////////////
+SkulltagServer::Refresher::Refresher(SkulltagServer* p) : parent(p)
+{
+	
+}
+
+void SkulltagServer::Refresher::run()
+{
+	// HERE ARE SOME PROBLEMS
+	// EVERYTHING BUT parent->doRerfresh()  
+	// IS A TEST CODE
+  Tester *test = new Tester();
+	QObject::connect(parent, SIGNAL(updated(const Server *)), test, SLOT(serverUpdated(const Server *)));
+	
+  parent->doRefresh();
+  test->serverUpdated(parent);
+  delete test;
 }

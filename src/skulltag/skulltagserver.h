@@ -26,6 +26,9 @@
 
 #include <QString>
 #include <QColor>
+#include <QThread>
+#include <QRunnable>
+#include <QMutex>
 
 #include "server.h"
 
@@ -61,6 +64,8 @@ class SkulltagServer : public Server
 	Q_OBJECT
 
 	public:
+		
+	
 		enum SkulltagQueryFlags
 		{
 			SQF_NAME =				0x0000001,
@@ -118,6 +123,7 @@ class SkulltagServer : public Server
 		static const GameMode	GAME_MODES[NUM_SKULLTAG_GAME_MODES];
 
 		SkulltagServer(const QHostAddress &address, unsigned short port);
+		void			doRefresh();
 
 	public slots:
 		void			refresh();
@@ -141,6 +147,20 @@ class SkulltagServer : public Server
 
 		unsigned int	numTeams;
 		TeamInfo		teamInfo[ST_MAX_TEAMS];
+		
+	private:
+		class Refresher;
+		friend class Refresher;
+};
+
+class SkulltagServer::Refresher : public QThread, public QRunnable
+{
+	private:
+		SkulltagServer* parent;
+			
+	public:
+		Refresher(SkulltagServer* p);
+		void run();
 };
 
 #endif /* __SKULLTAGSERVER_H__ */

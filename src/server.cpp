@@ -75,3 +75,4 @@ void Server::operator= (const Server &other)
 	serverName = other.name();
 	serverScoreLimit = other.scoreLimit();
 }
+
