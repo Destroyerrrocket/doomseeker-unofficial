@@ -24,6 +24,7 @@
 #include <QUdpSocket>
 #include <QTime>
 #include <QThreadPool>
+#include <Qt>
 
 #include "huffman/huffman.h"
 #include "skulltag/skulltagserver.h"
@@ -434,13 +435,5 @@ SkulltagServer::Refresher::Refresher(SkulltagServer* p) : parent(p)
 
 void SkulltagServer::Refresher::run()
 {
-	// HERE ARE SOME PROBLEMS
-	// EVERYTHING BUT parent->doRerfresh()  
-	// IS A TEST CODE
-  Tester *test = new Tester();
-	QObject::connect(parent, SIGNAL(updated(const Server *)), test, SLOT(serverUpdated(const Server *)));
-	
   parent->doRefresh();
-  test->serverUpdated(parent);
-  delete test;
 }

@@ -18,7 +18,8 @@ int main(int argc, char* argv[])
 	for(int i = 0;i < mc.numServers();i++)
 	{
 		//printf("%s:%d\n", mc[i]->getAddress().toString().toAscii().data(), mc[i]->getPort());
-		//QObject::connect(mc[i], SIGNAL(updated(const Server *)), test, SLOT(serverUpdated(const Server *)));
+		Qt::ConnectionType conType = Qt::DirectConnection;
+		QObject::connect(mc[i], SIGNAL(updated(const Server *)), test, SLOT(serverUpdated(const Server *)), conType);
 		mc[i]->refresh();
 		
 	}
