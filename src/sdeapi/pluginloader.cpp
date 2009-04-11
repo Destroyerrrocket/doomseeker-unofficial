@@ -28,6 +28,7 @@
 // Description:
 // =============================================================================
 
+/*
 #include "sdeapi/pluginloader.hpp"
 #include "sdeapi/global.hpp"
 
@@ -163,3 +164,4 @@ const Plugin *PluginLoader::operator[] (UInt32 index) const
 {
 	return pluginsList[index];
 }
+*/

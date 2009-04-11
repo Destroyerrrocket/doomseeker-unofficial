@@ -23,8 +23,6 @@
 
 #include <QUdpSocket>
 #include <QTime>
-#include <QThreadPool>
-#include <Qt>
 
 #include "huffman/huffman.h"
 #include "skulltag/skulltagserver.h"
@@ -421,19 +419,5 @@ void SkulltagServer::doRefresh()
 
 	emit updated(this);	
 }
-
-void SkulltagServer::refresh()
-{
-	Refresher* r = new Refresher(this);
-	QThreadPool::globalInstance()->start(r);
-}
 ////////////////////////////////////////////////////////////////////////////////
-SkulltagServer::Refresher::Refresher(SkulltagServer* p) : parent(p)
-{
-	
-}
 
-void SkulltagServer::Refresher::run()
-{
-  parent->doRefresh();
-}

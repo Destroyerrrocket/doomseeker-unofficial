@@ -75,4 +75,18 @@ void Server::operator= (const Server &other)
 	serverName = other.name();
 	serverScoreLimit = other.scoreLimit();
 }
+////////////////////////////////////////////////////////////////////////////////
+void Server::refresh()
+{
+	Refresher* r = new Refresher(this);
+	QThreadPool::globalInstance()->start(r);
+}
 
+Server::Refresher::Refresher(Server* p) : parent(p)
+{
+}
+
+void Server::Refresher::run()
+{
+  parent->doRefresh();
+}

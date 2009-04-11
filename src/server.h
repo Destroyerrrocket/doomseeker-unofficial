@@ -28,6 +28,9 @@
 #include <QHostAddress>
 #include <QString>
 #include <QStringList>
+#include <QThreadPool>
+#include <QThread>
+#include <QRunnable>
 
 #define MAX_TEAMS 4
 
@@ -117,12 +120,14 @@ class Server : public QObject
 		const QString		&wad(int index) const { return wads[index]; }
 
 		void				operator= (const Server &other);
+		virtual void		doRefresh()=0;
 
 	public slots:
 		/**
 		 * Updates the server data.
 		 */
-		virtual void		refresh()=0;
+		void		refresh();
+		
 
 	signals:
 		void				banned(const Server *server);
@@ -152,6 +157,19 @@ class Server : public QObject
 	private:
 		QHostAddress		serverAddress;
 		unsigned short		serverPort;
+		
+		class Refresher;
+		friend class Refresher;		
+};
+
+class Server::Refresher : public QThread, public QRunnable
+{
+	private:
+		Server* parent;
+			
+	public:
+		Refresher(Server* p);
+		void run();
 };
 
 #endif /* __SERVER_H__ */

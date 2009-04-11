@@ -29,6 +29,7 @@
 // Description:
 // =============================================================================
 
+/*
 #include <string>
 #include <string.h>
 #include <stdlib.h>
@@ -453,3 +454,4 @@ char* Scanner::GetNext(UInt32 &pos, UInt32 &lpos, char type, bool report)
 	ret[result.length()] = '\0';
 	return ret;
 }
+*/

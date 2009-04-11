@@ -26,9 +26,6 @@
 
 #include <QString>
 #include <QColor>
-#include <QThread>
-#include <QRunnable>
-#include <QMutex>
 
 #include "server.h"
 
@@ -125,9 +122,6 @@ class SkulltagServer : public Server
 		SkulltagServer(const QHostAddress &address, unsigned short port);
 		void			doRefresh();
 
-	public slots:
-		void			refresh();
-
 	protected:
 		QString			email;
 		QString			version;
@@ -147,20 +141,6 @@ class SkulltagServer : public Server
 
 		unsigned int	numTeams;
 		TeamInfo		teamInfo[ST_MAX_TEAMS];
-		
-	private:
-		class Refresher;
-		friend class Refresher;
-};
-
-class SkulltagServer::Refresher : public QThread, public QRunnable
-{
-	private:
-		SkulltagServer* parent;
-			
-	public:
-		Refresher(SkulltagServer* p);
-		void run();
 };
 
 #endif /* __SKULLTAGSERVER_H__ */

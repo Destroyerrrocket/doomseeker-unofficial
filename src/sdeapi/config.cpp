@@ -28,6 +28,7 @@
 // Description:
 // =============================================================================
 
+/*
 #include "sdeapi/config.hpp"
 #include "sdeapi/scanner.hpp"
 
@@ -239,3 +240,4 @@ bool Config::FindIndex(const string index, SettingsData *&data)
 	}
 	return false;
 }
+*/

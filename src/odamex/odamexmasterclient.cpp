@@ -35,8 +35,7 @@ class OdamexServer : public Server
 		{
 		}
 
-	public slots:
-		void refresh() {}
+		void doRefresh() {}
 };
 
 OdamexMasterClient::OdamexMasterClient(QHostAddress address, unsigned short port) : MasterClient(address, port)
