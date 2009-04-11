@@ -19,6 +19,9 @@ add_executable(doomseeker
 	${QT_FILES}
 	huffman/huffman.cpp
 	odamex/odamexmasterclient.cpp
+	sdeapi/config.cpp
+	sdeapi/pluginloader.cpp
+	sdeapi/scanner.cpp
 	skulltag/skulltagmasterclient.cpp
 	skulltag/skulltagserver.cpp
 	main.cpp
