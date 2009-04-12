@@ -119,7 +119,7 @@ void PluginLoader::filesInDir()
 			if(!(file.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 			{
 				Plugin *plugin = new Plugin(type, pluginsDirectory + "/" + file.cFileName);
-				if(plugin->IsValid())
+				if(plugin->isValid())
 					pluginsList.push_back(plugin);
 				else
 					delete plugin;
