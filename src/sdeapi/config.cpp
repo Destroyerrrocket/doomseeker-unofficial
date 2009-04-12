@@ -32,7 +32,6 @@
 #include "sdeapi/config.hpp"
 #include "sdeapi/scanner.hpp"
 
-#include <string>
 #include <fstream>
 #include <stdlib.h>
 #include <math.h>
@@ -52,18 +51,18 @@ Config::Config() : firstRun(false)
 
 Config::~Config()
 {
-	for(map<string, SettingsData *>::iterator it=settings.begin();it != settings.end();it++)
+	for(map<QString, SettingsData *>::iterator it=settings.begin();it != settings.end();it++)
 		delete (*it).second;
 	settings.clear();
 }
 
 void Config::locateConfigFile(int argc, char* argv[])
 {
-	string configDir;
+	QString configDir;
 #ifdef WINDOWS
 	configDir = argv[0];
-	UInt32 pos = static_cast<UInt32> (configDir.find_last_of('\\')) > static_cast<UInt32> (configDir.find_last_of('/')) ? configDir.find_last_of('\\') : configDir.find_last_of('/');
-	configDir = configDir.substr(0, pos+1);
+	UInt32 pos = static_cast<UInt32> (configDir.lastIndexOf('\\')) > static_cast<UInt32> (configDir.lastIndexOf('/')) ? configDir.lastIndexOf('\\') : configDir.lastIndexOf('/');
+	configDir = configDir.left(pos+1);
 #else
 	char *home = getenv("HOME");
 	if(home == NULL || *home == '\0')
@@ -71,32 +70,32 @@ void Config::locateConfigFile(int argc, char* argv[])
 		printf("Please set your HOME environment variable.\n");
 		return;
 	}
-	configDir = string(home) + "/.sde/";
+	configDir = QString(home) + tr("/.sde/");
 	struct stat dirStat;
-	if(stat(configDir.c_str(), &dirStat) == -1)
+	if(stat(configDir.toAscii().constData(), &dirStat) == -1)
 	{
-		if(mkdir(configDir.c_str(), S_IRWXU) == -1)
+		if(mkdir(configDir.toAscii().constData(), S_IRWXU) == -1)
 		{
 			printf("Could not create settings directory, configuration will not be saved.\n");
 			return;
 		}
 	}
 #endif
-	configFile = configDir + "sde.cfg";
+	configFile = configDir + tr("sde.cfg");
 
 	readConfig();
 }
 
 // NOTE: Be sure that '\\' is the first thing in the array otherwise it will re-escape.
 static char escapeCharacters[] = {'\\', '"', 0};
-const string& Config::escape(string &str)
+const QString& Config::escape(QString &str)
 {
 	for(UInt32 i = 0;escapeCharacters[i] != 0;i++)
 	{
 		// += 2 because we'll be inserting 1 character.
-		for(size_t p = 0;p < str.length() && (p = str.find_first_of(escapeCharacters[i], p)) != string::npos;p += 2)
+		for(size_t p = 0;p < str.length() && (p = str.indexOf(escapeCharacters[i], p)) != static_cast<UInt32>(-1);p += 2)
 		{
-			str.insert(p, 1, '\\');
+			str.insert(p, '\\');
 		}
 	}
 	return str;
@@ -105,10 +104,10 @@ const string& Config::escape(string &str)
 void Config::readConfig()
 {
 	// Check to see if we have located the config file.
-	if(configFile.empty())
+	if(configFile.isEmpty())
 		return;
 
-	fstream stream(configFile.c_str(), ios_base::in | ios_base::binary);
+	fstream stream(configFile.toAscii().constData(), ios_base::in | ios_base::binary);
 	if(stream.is_open())
 	{
 		stream.seekg(0, ios_base::end);
@@ -132,12 +131,12 @@ void Config::readConfig()
 		while(sc.tokensLeft())  // Go until there is nothing left to read.
 		{
 			sc.mustGetToken(TK_Identifier);
-			string index = sc.str;
+			QString index = sc.str.c_str();
 			sc.mustGetToken('=');
 			if(sc.checkToken(TK_StringConst))
 			{
 				createSetting(index, "");
-				setting(index)->setValue(sc.str);
+				setting(index)->setValue(sc.str.c_str());
 			}
 			else
 			{
@@ -158,15 +157,15 @@ void Config::readConfig()
 void Config::saveConfig()
 {
 	// Check to see if we're saving the settings.
-	if(configFile.empty())
+	if(configFile.isEmpty())
 		return;
 
-	fstream stream(configFile.c_str(), ios_base::out | ios_base::trunc);
+	fstream stream(configFile.toAscii().constData(), ios_base::out | ios_base::trunc);
 	if(stream.is_open())
 	{
-		for(map<string, SettingsData *>::iterator it=settings.begin();it != settings.end();it++)
+		for(map<QString, SettingsData *>::iterator it=settings.begin();it != settings.end();it++)
 		{
-			stream.write((*it).first.c_str(), (*it).first.length());
+			stream.write((*it).first.toAscii().constData(), (*it).first.length());
 			if(stream.fail())
 				return;
 			SettingsData *data = (*it).second;
@@ -189,10 +188,10 @@ void Config::saveConfig()
 			}
 			else
 			{
-				string str = data->string(); // Make a non const copy of the string.
+				QString str = data->string(); // Make a non const copy of the string.
 				escape(str);
 				char* value = new char[str.length() + 8];
-				sprintf(value, " = \"%s\";\n", str.c_str());
+				sprintf(value, " = \"%s\";\n", str.toAscii().constData());
 				stream.write(value, str.length() + 7);
 				delete[] value;
 				if(stream.fail())
@@ -203,7 +202,7 @@ void Config::saveConfig()
 	}
 }
 
-void Config::createSetting(const string index, UInt32 defaultInt)
+void Config::createSetting(const QString index, UInt32 defaultInt)
 {
 	SettingsData* data;
 	if(!findIndex(index, data))
@@ -213,7 +212,7 @@ void Config::createSetting(const string index, UInt32 defaultInt)
 	}
 }
 
-void Config::createSetting(const string index, string defaultString)
+void Config::createSetting(const QString index, QString defaultString)
 {
 	SettingsData* data;
 	if(!findIndex(index, data))
@@ -223,16 +222,16 @@ void Config::createSetting(const string index, string defaultString)
 	}
 }
 
-SettingsData* Config::setting(const string index)
+SettingsData* Config::setting(const QString index)
 {
 	SettingsData *data;
 	findIndex(index, data);
 	return data;
 }
 
-bool Config::findIndex(const string index, SettingsData *&data)
+bool Config::findIndex(const QString index, SettingsData *&data)
 {
-	map<string, SettingsData *>::iterator it = settings.find(index);
+	map<QString, SettingsData *>::iterator it = settings.find(index);
 	if(it != settings.end())
 	{
 		data = (*it).second;

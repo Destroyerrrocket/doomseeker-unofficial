@@ -32,10 +32,10 @@
 
 #include "sdeapi/global.hpp"
 
-#include <string>
+#include <QString>
 #include <map>
 
-struct SettingsData
+struct SettingsData : public QObject
 {
 	public:
 		enum SettingType
@@ -44,22 +44,22 @@ struct SettingsData
 			ST_STR
 		};
 
-		SettingsData(Int32 integer=0) : m_integer(0), m_str(""), m_type(ST_INT) { setValue(integer); }
-		SettingsData(std::string str) : m_integer(0), m_str(""), m_type(ST_STR) { setValue(str); }
+		SettingsData(Int32 integer=0) : m_integer(0), m_str(tr("")), m_type(ST_INT) { setValue(integer); }
+		SettingsData(QString str) : m_integer(0), m_str(tr("")), m_type(ST_STR) { setValue(str); }
 
 		const Int32			integer() { return m_integer; }
-		const std::string	string()	{ return m_str; }
+		const QString		string()	{ return m_str; }
 		const SettingType	type() { return m_type; }
 		void				setValue(Int32 integer) { this->m_integer = integer;this->m_type = ST_INT; }
-		void				setValue(std::string str) { this->m_str = str;this->m_type = ST_STR; }
+		void				setValue(QString str) { this->m_str = str;this->m_type = ST_STR; }
 
 	protected:
 		SettingType			m_type;
 		Int32				m_integer;
-		std::string			m_str;
+		QString				m_str;
 };
 
-class Config
+class Config : public QObject
 {
 	public:
 		Config();
@@ -69,13 +69,13 @@ class Config
 		 * Creates the specified setting if it hasn't been made already.  It
 		 * will be set to the default value.
 		 */
-		void			createSetting(const std::string index, UInt32 defaultInt);
-		void			createSetting(const std::string index, std::string defaultString);
+		void			createSetting(const QString index, UInt32 defaultInt);
+		void			createSetting(const QString index, QString defaultString);
 		/**
 		 * Gets the specified setting.  Will return NULL if the setting does
 		 * not exist.
 		 */
-		SettingsData*	setting(const std::string index);
+		SettingsData*	setting(const QString index);
 		/**
 		 * Returns if this is an entirely new configuration file.  This can be
 		 * used to see if a first time set up wizard should be run.
@@ -105,13 +105,13 @@ class Config
 		/**
 		 * Converts str into a form that can be stored into config files.
 		 */
-		static const std::string&	escape(std::string &str);
+		static const QString&	escape(QString& str);
 	protected:
-		bool			findIndex(const std::string index, SettingsData *&data);
+		bool			findIndex(const QString index, SettingsData *&data);
 
-		bool									firstRun;
-		std::string								configFile;
-		std::map<std::string, SettingsData *>	settings;
+		bool								firstRun;
+		QString								configFile;
+		std::map<QString, SettingsData *>	settings;
 };
 
 #endif /* __CONFIG_HPP__ */
