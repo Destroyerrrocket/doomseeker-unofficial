@@ -1,4 +1,4 @@
-// Emacs style mode select   -*- C++ -*- 
+// Emacs style mode select   -*- C++ -*-
 // =============================================================================
 // ### ### ##   ## ###  #   ###  ##   #   #  ##   ## ### ##  ### ###  #  ###
 // #    #  # # # # #  # #   #    # # # # # # # # # # #   # #  #   #  # # #  #
@@ -28,7 +28,7 @@
 // Description:
 // =============================================================================
 
-/*
+
 #include "sdeapi/config.hpp"
 #include "sdeapi/scanner.hpp"
 
@@ -57,7 +57,7 @@ Config::~Config()
 	settings.clear();
 }
 
-void Config::LocateConfigFile(int argc, char* argv[])
+void Config::locateConfigFile(int argc, char* argv[])
 {
 	string configDir;
 #ifdef WINDOWS
@@ -84,12 +84,12 @@ void Config::LocateConfigFile(int argc, char* argv[])
 #endif
 	configFile = configDir + "sde.cfg";
 
-	ReadConfig();
+	readConfig();
 }
 
 // NOTE: Be sure that '\\' is the first thing in the array otherwise it will re-escape.
 static char escapeCharacters[] = {'\\', '"', 0};
-const string &Config::Escape(string &str)
+const string& Config::escape(string &str)
 {
 	for(UInt32 i = 0;escapeCharacters[i] != 0;i++)
 	{
@@ -102,7 +102,7 @@ const string &Config::Escape(string &str)
 	return str;
 }
 
-void Config::ReadConfig()
+void Config::readConfig()
 {
 	// Check to see if we have located the config file.
 	if(configFile.empty())
@@ -129,23 +129,23 @@ void Config::ReadConfig()
 		stream.close();
 
 		Scanner sc(data, size);
-		while(sc.TokensLeft())  // Go until there is nothing left to read.
+		while(sc.tokensLeft())  // Go until there is nothing left to read.
 		{
-			sc.MustGetToken(TK_Identifier);
+			sc.mustGetToken(TK_Identifier);
 			string index = sc.str;
-			sc.MustGetToken('=');
-			if(sc.CheckToken(TK_StringConst))
+			sc.mustGetToken('=');
+			if(sc.checkToken(TK_StringConst))
 			{
-				CreateSetting(index, "");
-				GetSetting(index)->SetValue(sc.str);
+				createSetting(index, "");
+				setting(index)->setValue(sc.str);
 			}
 			else
 			{
-				sc.MustGetToken(TK_IntConst);
-				CreateSetting(index, 0);
-				GetSetting(index)->SetValue(sc.number);
+				sc.mustGetToken(TK_IntConst);
+				createSetting(index, 0);
+				setting(index)->setValue(sc.number);
 			}
-			sc.MustGetToken(';');
+			sc.mustGetToken(';');
 		}
 
 		delete[] data;
@@ -155,7 +155,7 @@ void Config::ReadConfig()
 		firstRun = true;
 }
 
-void Config::SaveConfig()
+void Config::saveConfig()
 {
 	// Check to see if we're saving the settings.
 	if(configFile.empty())
@@ -170,7 +170,7 @@ void Config::SaveConfig()
 			if(stream.fail())
 				return;
 			SettingsData *data = (*it).second;
-			if(data->GetType() == SettingsData::ST_INT)
+			if(data->type() == SettingsData::ST_INT)
 			{
 				// Determine size of number.
 				UInt32 intLength = 0;
@@ -178,10 +178,10 @@ void Config::SaveConfig()
 				{
 					intLength++;
 				}
-				while(data->GetInteger()/static_cast<UInt32>(pow(10.0, static_cast<double>(intLength))) != 0);
+				while(data->integer()/static_cast<UInt32>(pow(10.0, static_cast<double>(intLength))) != 0);
 
 				char* value = new char[intLength + 6];
-				sprintf(value, " = %d;\n", data->GetInteger());
+				sprintf(value, " = %d;\n", data->integer());
 				stream.write(value, intLength + 5);
 				delete[] value;
 				if(stream.fail())
@@ -189,8 +189,8 @@ void Config::SaveConfig()
 			}
 			else
 			{
-				string str = data->GetString(); // Make a non const copy of the string.
-				Escape(str);
+				string str = data->string(); // Make a non const copy of the string.
+				escape(str);
 				char* value = new char[str.length() + 8];
 				sprintf(value, " = \"%s\";\n", str.c_str());
 				stream.write(value, str.length() + 7);
@@ -203,34 +203,34 @@ void Config::SaveConfig()
 	}
 }
 
-void Config::CreateSetting(const string index, UInt32 defaultInt)
+void Config::createSetting(const string index, UInt32 defaultInt)
 {
-	SettingsData *data;
-	if(!FindIndex(index, data))
+	SettingsData* data;
+	if(!findIndex(index, data))
 	{
 		data = new SettingsData(defaultInt);
 		settings[index] = data;
 	}
 }
 
-void Config::CreateSetting(const string index, string defaultString)
+void Config::createSetting(const string index, string defaultString)
 {
-	SettingsData *data;
-	if(!FindIndex(index, data))
+	SettingsData* data;
+	if(!findIndex(index, data))
 	{
 		data = new SettingsData(defaultString);
 		settings[index] = data;
 	}
 }
 
-SettingsData *Config::GetSetting(const string index)
+SettingsData* Config::setting(const string index)
 {
 	SettingsData *data;
-	FindIndex(index, data);
+	findIndex(index, data);
 	return data;
 }
 
-bool Config::FindIndex(const string index, SettingsData *&data)
+bool Config::findIndex(const string index, SettingsData *&data)
 {
 	map<string, SettingsData *>::iterator it = settings.find(index);
 	if(it != settings.end())
@@ -240,4 +240,4 @@ bool Config::FindIndex(const string index, SettingsData *&data)
 	}
 	return false;
 }
-*/
+

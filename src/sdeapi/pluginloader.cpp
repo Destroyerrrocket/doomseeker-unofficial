@@ -1,4 +1,4 @@
-// Emacs style mode select   -*- C++ -*- 
+// Emacs style mode select   -*- C++ -*-
 // =============================================================================
 // ### ### ##   ## ###  #   ###  ##   #   #  ##   ## ### ##  ### ###  #  ###
 // #    #  # # # # #  # #   #    # # # # # # # # # # #   # #  #   #  # # #  #
@@ -28,7 +28,7 @@
 // Description:
 // =============================================================================
 
-/*
+
 #include "sdeapi/pluginloader.hpp"
 #include "sdeapi/global.hpp"
 
@@ -59,13 +59,13 @@ Plugin::Plugin(UInt32 type, string file) : file(file), library(NULL)
 		const PluginInfo *(*SDEInit)() = (const PluginInfo *(*)()) (dlsym(library, "SDEInit"));
 		if(SDEInit == NULL)
 		{ // This is not a valid SDE plugin.
-			Unload();
+			unload();
 			return;
 		}
 		info = SDEInit();
 		if(info->type != type)
 		{ // Make sure this is the right kind of plugin
-			Unload();
+			unload();
 			return;
 		}
 	}
@@ -77,10 +77,10 @@ Plugin::Plugin(UInt32 type, string file) : file(file), library(NULL)
 
 Plugin::~Plugin()
 {
-	Unload();
+	unload();
 }
 
-void Plugin::Unload()
+void Plugin::unload()
 {
 	if(library != NULL)
 	{
@@ -89,9 +89,9 @@ void Plugin::Unload()
 	}
 }
 
-void *Plugin::GetFunction(const char* function) const
+void *Plugin::function(const char* func) const
 {
-	return (void *) dlsym(library, function);
+	return (void *) dlsym(library, func);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -99,7 +99,7 @@ void *Plugin::GetFunction(const char* function) const
 PluginLoader::PluginLoader(UInt32 type, const char* directory, Int32 directoryLength) : type(type)
 {
 	pluginsDirectory = string(directory, 0, directoryLength != -1 ? directoryLength : string::npos);
-	GetFilesInDir();
+	filesInDir();
 }
 
 PluginLoader::~PluginLoader()
@@ -108,7 +108,7 @@ PluginLoader::~PluginLoader()
 		delete pluginsList[i];
 }
 
-void PluginLoader::GetFilesInDir()
+void PluginLoader::filesInDir()
 {
 #ifdef WINDOWS
 	WIN32_FIND_DATA file;
@@ -138,7 +138,7 @@ void PluginLoader::GetFilesInDir()
 			if(temp == NULL) // this is a file
 			{
 				Plugin *plugin = new Plugin(type, pluginsDirectory + "/" + file->d_name);
-				if(plugin->IsValid())
+				if(plugin->isValid())
 					pluginsList.push_back(plugin);
 				else
 					delete plugin;
@@ -155,13 +155,12 @@ void PluginLoader::GetFilesInDir()
 	}
 }
 
-const UInt32 PluginLoader::GetNumPlugins() const
+const UInt32 PluginLoader::numPlugins() const
 {
 	return pluginsList.size();
 }
 
-const Plugin *PluginLoader::operator[] (UInt32 index) const
+const Plugin* PluginLoader::operator[] (UInt32 index) const
 {
 	return pluginsList[index];
 }
-*/

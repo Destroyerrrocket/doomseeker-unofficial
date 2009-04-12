@@ -9,6 +9,7 @@
 int main(int argc, char* argv[])
 {
 	Tester *test = new Tester();
+
 	QApplication app(argc, argv);
 	SkulltagMasterClient mc(QHostAddress("91.121.87.67"), 15300);
 	mc.refresh();

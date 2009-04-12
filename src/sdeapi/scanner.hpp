@@ -1,4 +1,4 @@
-// Emacs style mode select   -*- C++ -*- 
+// Emacs style mode select   -*- C++ -*-
 // =============================================================================
 // ### ### ##   ## ###  #   ###  ##   #   #  ##   ## ### ##  ### ###  #  ###
 // #    #  # # # # #  # #   #    # # # # # # # # # # #   # #  #   #  # # #  #
@@ -70,24 +70,24 @@ class Scanner
 		~Scanner();
 
 		/**
-		 * This function will scan the next token and return if it is of the 
-		 * specified type.  If it returns true, then the position will be moved 
+		 * This function will scan the next token and return if it is of the
+		 * specified type.  If it returns true, then the position will be moved
 		 * to after the token, otherwise it will be reset.
 		 */
-		bool		CheckToken(char token);
+		bool		checkToken(char token);
 		/**
 		 * Gets whatever token is next.
 		 */
-		ETokenType	GetNextToken();
+		ETokenType	nextToken();
 		/**
-		 * Requires that the next token be of the specified type.  Errors will 
+		 * Requires that the next token be of the specified type.  Errors will
 		 * be printed if that is not the case.
 		 */
-		void		MustGetToken(char token);
+		void		mustGetToken(char token);
 		/**
 		 * Returns true if there is still more to read.
 		 */
-		bool		TokensLeft() { return (error != 0) || (pos != length); }
+		bool		tokensLeft() { return (error != 0) || (pos != length); }
 
 		std::string	str;
 		UInt32		number;
@@ -96,12 +96,12 @@ class Scanner
 		char		lastToken;
 	protected:
 		/**
-		 * Moves the position ahead any whitespace that there might be from the 
+		 * Moves the position ahead any whitespace that there might be from the
 		 * current position.
 		 */
-		void		CheckForWhitespace(UInt32 *nPos = NULL, UInt32 *nLpos = NULL);
-		void		GetToken(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool report=false);
-		char*		GetNext(UInt32 &pos, UInt32 &lpos, char type, bool report=false);
+		void		checkForWhitespace(UInt32 *nPos = NULL, UInt32 *nLpos = NULL);
+		void		token(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool report=false);
+		char*		next(UInt32 &pos, UInt32 &lpos, char type, bool report=false);
 
 		bool		error;
 		char*		data;

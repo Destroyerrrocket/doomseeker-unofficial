@@ -1,4 +1,4 @@
-// Emacs style mode select   -*- C++ -*- 
+// Emacs style mode select   -*- C++ -*-
 // =============================================================================
 // ### ### ##   ## ###  #   ###  ##   #   #  ##   ## ### ##  ### ###  #  ###
 // #    #  # # # # #  # #   #    # # # # # # # # # # #   # #  #   #  # # #  #
@@ -42,12 +42,12 @@
 #ifdef _MSC_VER
 #pragma warning(disable: 4251)
 #endif
- 
+
 #endif
 
 #define MAKEID(a,b,c,d) (UInt32(a)|(UInt32(b)<<8)|(UInt32(c)<<16)|(UInt32(d)<<24))
 /**
- * This is a struct to store information about a specific plugin.  This should 
+ * This is a struct to store information about a specific plugin.  This should
  * returned by the plugins themselves.
  */
 struct PluginInfo
@@ -61,14 +61,14 @@ struct PluginInfo
 };
 
 /**
- * This class handles one specific plugin.  It allows for cross-platform access 
+ * This class handles one specific plugin.  It allows for cross-platform access
  * to the plugins.
  */
 class Plugin
 {
 	public:
 		/**
-		 * Inits a plugin.  Type is an id which it compares with any possible 
+		 * Inits a plugin.  Type is an id which it compares with any possible
 		 * plugins to confirm it is the right type.
 		 */
 		Plugin(UInt32 type, std::string file);
@@ -77,13 +77,13 @@ class Plugin
 		/**
 		 * Returns a pointer to the requested function or NULL.
 		 */
-		void	*GetFunction(const char* function) const;
-		bool	IsValid() const { return library != NULL; }
+		void	*function(const char* func) const;
+		bool	isValid() const { return library != NULL; }
 
 		const PluginInfo	*info;
 
 	private:
-		void	Unload();
+		void	unload();
 
 		std::string	file;
 
@@ -107,14 +107,14 @@ class PluginLoader
 		/**
 		 * Gets the number of loaded plugins.  It will return 0 in safe mode.
 		 */
-		const UInt32 GetNumPlugins() const;
+		const UInt32 numPlugins() const;
 		/**
 		 * Returns the requested plugin or NULL.
 		 */
-		const Plugin *operator[] (UInt32 index) const;
+		const Plugin* operator[] (UInt32 index) const;
 
 	private:
-		void	GetFilesInDir();
+		void	filesInDir();
 
 		UInt32						type;
 		std::string					pluginsDirectory;

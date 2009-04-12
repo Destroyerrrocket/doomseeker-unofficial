@@ -10,6 +10,7 @@
 class Tester : public QObject
 {
 	Q_OBJECT
+	public:
 
 	public slots:
 		void serverUpdated(const Server *server)

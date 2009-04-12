@@ -1,4 +1,4 @@
-// Emacs style mode select   -*- C++ -*- 
+// Emacs style mode select   -*- C++ -*-
 // =============================================================================
 // ### ### ##   ## ###  #   ###  ##   #   #  ##   ## ### ##  ### ###  #  ###
 // #    #  # # # # #  # #   #    # # # # # # # # # # #   # #  #   #  # # #  #
@@ -29,7 +29,7 @@
 // Description:
 // =============================================================================
 
-/*
+
 #include <string>
 #include <string.h>
 #include <stdlib.h>
@@ -45,26 +45,26 @@ using namespace std;
 Scanner::Scanner(char* data, UInt32 length)
 : number(0), decimal(0), boolean(false), lastToken(0), error(false), data(data), length(length), line(0), lpos(0), pos(0)
 {
-	CheckForWhitespace();
+	checkForWhitespace();
 }
 
 Scanner::~Scanner()
 {
 }
 
-void Scanner::MustGetToken(char token)
+void Scanner::mustGetToken(char token)
 {
-	GetToken(pos, lpos, line, token, true);
+	this->token(pos, lpos, line, token, true);
 }
 
-bool Scanner::CheckToken(char token)
+bool Scanner::checkToken(char token)
 {
 	if(error)
 		return false;
 	UInt32 nPos = pos;
 	UInt32 nLpos = lpos;
 	UInt32 nLine = line;
-	GetToken(nPos, nLpos, nLine, token, false);
+	this->token(nPos, nLpos, nLine, token, false);
 	if(!error)
 	{
 		pos = nPos;
@@ -77,16 +77,16 @@ bool Scanner::CheckToken(char token)
 	return false;
 }
 
-ETokenType Scanner::GetNextToken()
+ETokenType Scanner::nextToken()
 {
 	if(pos >= length)
 		return TK_NoToken;
 
 	if(data[pos] >= '0' && data[pos] <= '9')
 	{
-		if(CheckToken(TK_Identifier))
+		if(checkToken(TK_Identifier))
 			return TK_Identifier;
-		else if(CheckToken(TK_FloatConst))
+		else if(checkToken(TK_FloatConst))
 		{
 			double integerPart = 0.0;
 			if(modf(decimal, &integerPart) != 0.0)
@@ -97,59 +97,59 @@ ETokenType Scanner::GetNextToken()
 				return TK_IntConst;
 			}
 		}
-		else if(CheckToken(TK_IntConst))
+		else if(checkToken(TK_IntConst))
 			return TK_IntConst;
 	}
 	else if(data[pos] >= 'a' && data[pos] <= 'z')
 	{
-		if(CheckToken(TK_BoolConst))
+		if(checkToken(TK_BoolConst))
 			return TK_BoolConst;
-		else if(CheckToken(TK_Void))
+		else if(checkToken(TK_Void))
 			return TK_Void;
-		else if(CheckToken(TK_String))
+		else if(checkToken(TK_String))
 			return TK_String;
-		else if(CheckToken(TK_Int))
+		else if(checkToken(TK_Int))
 			return TK_Int;
-		else if(CheckToken(TK_Bool))
+		else if(checkToken(TK_Bool))
 			return TK_Bool;
-		else if(CheckToken(TK_Identifier))
+		else if(checkToken(TK_Identifier))
 			return TK_Identifier;
 	}
 	else if((data[pos] >= 'A' && data[pos] <= 'Z') || data[pos] == '_')
 	{
-		if(CheckToken(TK_Identifier))
+		if(checkToken(TK_Identifier))
 			return TK_Identifier;
 	}
 	else if(data[pos] == '"')
 	{
-		if(CheckToken(TK_StringConst))
+		if(checkToken(TK_StringConst))
 			return TK_StringConst;
 	}
 	else
 	{
-		if(CheckToken(TK_AndAnd))
+		if(checkToken(TK_AndAnd))
 			return TK_AndAnd;
-		else if(CheckToken(TK_OrOr))
+		else if(checkToken(TK_OrOr))
 			return TK_OrOr;
-		else if(CheckToken(TK_EqEq))
+		else if(checkToken(TK_EqEq))
 			return TK_EqEq;
-		else if(CheckToken(TK_NotEq))
+		else if(checkToken(TK_NotEq))
 			return TK_NotEq;
-		else if(CheckToken(TK_GtrEq))
+		else if(checkToken(TK_GtrEq))
 			return TK_GtrEq;
-		else if(CheckToken(TK_LessEq))
+		else if(checkToken(TK_LessEq))
 			return TK_LessEq;
-		else if(CheckToken(TK_ShiftLeft))
+		else if(checkToken(TK_ShiftLeft))
 			return TK_ShiftLeft;
-		else if(CheckToken(TK_ShiftRight))
+		else if(checkToken(TK_ShiftRight))
 			return TK_ShiftRight;
 	}
-	if(CheckToken(data[pos]))
+	if(checkToken(data[pos]))
 		return static_cast<ETokenType> (data[pos]);
 	return TK_NoToken;
 }
 
-void Scanner::CheckForWhitespace(UInt32 *nPos, UInt32 *nLpos)
+void Scanner::checkForWhitespace(UInt32 *nPos, UInt32 *nLpos)
 {
 	UInt32 & uPos = (nPos ? (*nPos) : pos);
 	UInt32 & uLpos = (nLpos ? (*nLpos) : lpos);
@@ -212,7 +212,7 @@ void Scanner::CheckForWhitespace(UInt32 *nPos, UInt32 *nLpos)
 //For exmaple GENERIC_TOKEN(void) would do all the needed errors and such for looking for void
 #define GENERIC_GETTOKEN(token) \
 { \
-	char* ident = GetNext(pos, lpos, TK_Identifier, report); \
+	char* ident = next(pos, lpos, TK_Identifier, report); \
 	if(ident != NULL) \
 	{ \
 		if(strcasecmp(ident, token) == 0) \
@@ -252,7 +252,7 @@ void Scanner::CheckForWhitespace(UInt32 *nPos, UInt32 *nLpos)
 	} \
 	break; \
 }
-void Scanner::GetToken(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool report)
+void Scanner::token(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool report)
 {
 	if(error)
 		return;
@@ -266,7 +266,7 @@ void Scanner::GetToken(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool
 	{
 		case TK_Identifier:
 		{
-			char* ident = GetNext(pos, lpos, TK_Identifier, report);
+			char* ident = next(pos, lpos, TK_Identifier, report);
 			if(ident != NULL)
 			{
 				str = ident;
@@ -275,7 +275,7 @@ void Scanner::GetToken(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool
 		}
 		case TK_StringConst:
 		{
-			char* stringConst = GetNext(pos, lpos, TK_StringConst, report);
+			char* stringConst = next(pos, lpos, TK_StringConst, report);
 			if(stringConst != NULL)
 			{
 				str = stringConst;
@@ -284,21 +284,21 @@ void Scanner::GetToken(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool
 		}
 		case TK_IntConst:
 		{
-			const char* integer = GetNext(pos, lpos, TK_IntConst, report);
+			const char* integer = next(pos, lpos, TK_IntConst, report);
 			if(integer != NULL)
 				number = atoi(integer);
 			break;
 		}
 		case TK_FloatConst:
 		{
-			const char* integer = GetNext(pos, lpos, TK_FloatConst, report);
+			const char* integer = next(pos, lpos, TK_FloatConst, report);
 			if(integer != NULL)
 				decimal = atof(integer);
 			break;
 		}
 		case TK_BoolConst:
 		{
-			const char* ident = GetNext(pos, lpos, TK_Identifier, report);
+			const char* ident = next(pos, lpos, TK_Identifier, report);
 			if(ident != NULL)
 			{
 				if(strcasecmp(ident, "true") == 0)
@@ -357,11 +357,11 @@ void Scanner::GetToken(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool
 	else
 		lastToken = 0;
 
-	CheckForWhitespace(&pos, &lpos);
+	checkForWhitespace(&pos, &lpos);
 }
 
 //Find the next identifier by looping until we find an invalid character.
-char* Scanner::GetNext(UInt32 &pos, UInt32 &lpos, char type, bool report)
+char* Scanner::next(UInt32 &pos, UInt32 &lpos, char type, bool report)
 {
 	if(pos >= length)
 		return NULL;
@@ -454,4 +454,3 @@ char* Scanner::GetNext(UInt32 &pos, UInt32 &lpos, char type, bool report)
 	ret[result.length()] = '\0';
 	return ret;
 }
-*/

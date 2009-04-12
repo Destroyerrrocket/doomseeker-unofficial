@@ -44,70 +44,70 @@ struct SettingsData
 			ST_STR
 		};
 
-		SettingsData(Int32 integer=0) : integer(0), str(""), type(ST_INT) { SetValue(integer); }
-		SettingsData(std::string str) : integer(0), str(""), type(ST_STR) { SetValue(str); }
+		SettingsData(Int32 integer=0) : m_integer(0), m_str(""), m_type(ST_INT) { setValue(integer); }
+		SettingsData(std::string str) : m_integer(0), m_str(""), m_type(ST_STR) { setValue(str); }
 
-		const Int32			GetInteger() { return integer; }
-		const std::string	GetString()	{ return str; }
-		const SettingType	GetType() { return type; }
-		void				SetValue(Int32 integer) { this->integer = integer;this->type = ST_INT; }
-		void				SetValue(std::string str) { this->str = str;this->type = ST_STR; }
+		const Int32			integer() { return m_integer; }
+		const std::string	string()	{ return m_str; }
+		const SettingType	type() { return m_type; }
+		void				setValue(Int32 integer) { this->m_integer = integer;this->m_type = ST_INT; }
+		void				setValue(std::string str) { this->m_str = str;this->m_type = ST_STR; }
 
 	protected:
-		SettingType			type;
-		Int32				integer;
-		std::string			str;
+		SettingType			m_type;
+		Int32				m_integer;
+		std::string			m_str;
 };
 
 class Config
-{  
+{
 	public:
 		Config();
 		~Config();
 
 		/**
-		 * Creates the specified setting if it hasn't been made already.  It 
+		 * Creates the specified setting if it hasn't been made already.  It
 		 * will be set to the default value.
 		 */
-		void			CreateSetting(const std::string index, UInt32 defaultInt);
-		void			CreateSetting(const std::string index, std::string defaultString);
+		void			createSetting(const std::string index, UInt32 defaultInt);
+		void			createSetting(const std::string index, std::string defaultString);
 		/**
-		 * Gets the specified setting.  Will return NULL if the setting does 
+		 * Gets the specified setting.  Will return NULL if the setting does
 		 * not exist.
 		 */
-		SettingsData	*GetSetting(const std::string index);
+		SettingsData*	setting(const std::string index);
 		/**
-		 * Returns if this is an entirely new configuration file.  This can be 
+		 * Returns if this is an entirely new configuration file.  This can be
 		 * used to see if a first time set up wizard should be run.
 		 */
-		bool			IsNewConfig() { return firstRun; }
+		bool			isNewConfig() { return firstRun; }
 		/**
-		 * Looks for the config file and creates the directory if needed.  This 
+		 * Looks for the config file and creates the directory if needed.  This
 		 * will call ReadConfig if there is a file to be read.
 		 * @see SaveConfig
 		 * @see ReadConfig
 		 */
-		void			LocateConfigFile(int argc, char* argv[]);
+		void			locateConfigFile(int argc, char* argv[]);
 		/**
-		 * Reads the configuration file for settings.  This is ~/.sde/sde.cfg 
+		 * Reads the configuration file for settings.  This is ~/.sde/sde.cfg
 		 * on unix systems.
 		 * @see LocateConfigFile
 		 * @see SaveConfig
 		 */
-		void			ReadConfig();
+		void			readConfig();
 		/**
 		 * Saves the configuration to a file.  ~/.sde/sde.cfg on unix systems.
 		 * @see LocateConfigFile
 		 * @see ReadConfig
 		 */
-		void			SaveConfig();
+		void			saveConfig();
 
 		/**
 		 * Converts str into a form that can be stored into config files.
 		 */
-		static const std::string	&Escape(std::string &str);
+		static const std::string&	escape(std::string &str);
 	protected:
-		bool			FindIndex(const std::string index, SettingsData *&data);
+		bool			findIndex(const std::string index, SettingsData *&data);
 
 		bool									firstRun;
 		std::string								configFile;
