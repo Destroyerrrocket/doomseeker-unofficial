@@ -18,6 +18,7 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	odamex/odamexmasterclient.h
 	skulltag/skulltagmasterclient.h
 	skulltag/skulltagserver.h
+	sdeapi/config.hpp
 	main.h
 	masterclient.h
 	server.h

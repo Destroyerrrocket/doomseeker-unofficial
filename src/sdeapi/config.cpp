@@ -32,18 +32,8 @@
 #include "sdeapi/config.hpp"
 #include "sdeapi/scanner.hpp"
 
-#include <fstream>
-#include <stdlib.h>
-#include <math.h>
-
-#ifdef WINDOWS
-#include <direct.h>
-#define mkdir(file,mode) _mkdir(file)
-#else
-#include <sys/stat.h>
-#endif
-
-using namespace std;
+#include <QFile>
+#include <QDir>
 
 Config::Config() : firstRun(false)
 {
@@ -51,37 +41,36 @@ Config::Config() : firstRun(false)
 
 Config::~Config()
 {
-	for(map<QString, SettingsData *>::iterator it=settings.begin();it != settings.end();it++)
-		delete (*it).second;
+	for(QHash<QString, SettingsData *>::iterator it=settings.begin();it != settings.end();it++)
+		delete it.value();
 	settings.clear();
 }
 
 void Config::locateConfigFile(int argc, char* argv[])
 {
-	QString configDir;
-#ifdef WINDOWS
+	QDir configDir;
+#if defined(WIN32)
 	configDir = argv[0];
 	UInt32 pos = static_cast<UInt32> (configDir.lastIndexOf('\\')) > static_cast<UInt32> (configDir.lastIndexOf('/')) ? configDir.lastIndexOf('\\') : configDir.lastIndexOf('/');
 	configDir = configDir.left(pos+1);
 #else
-	char *home = getenv("HOME");
-	if(home == NULL || *home == '\0')
+	QDir home = QDir::home();
+	if(!home.exists())
 	{
-		printf("Please set your HOME environment variable.\n");
+		printf("%s\n", tr("Please set your HOME environment variable.").toAscii().constData());
 		return;
 	}
-	configDir = QString(home) + tr("/.doomseeker/");
-	struct stat dirStat;
-	if(stat(configDir.toAscii().constData(), &dirStat) == -1)
+	configDir = home.absolutePath() + "/.doomseeker/";
+	if(!home.exists(".doomseeker"))
 	{
-		if(mkdir(configDir.toAscii().constData(), S_IRWXU) == -1)
+		if(!home.mkdir(".doomseeker"))
 		{
-			printf("Could not create settings directory, configuration will not be saved.\n");
+			printf("%s\n", tr("Could not create settings directory, configuration will not be saved.").toAscii().constData());
 			return;
 		}
 	}
 #endif
-	configFile = configDir + tr("doomseeker.cfg");
+	configFile = configDir.absolutePath() + "/doomseeker.cfg";
 
 	readConfig();
 }
@@ -93,7 +82,7 @@ const QString& Config::escape(QString &str)
 	for(UInt32 i = 0;escapeCharacters[i] != 0;i++)
 	{
 		// += 2 because we'll be inserting 1 character.
-		for(size_t p = 0;p < str.length() && (p = str.indexOf(escapeCharacters[i], p)) != static_cast<UInt32>(-1);p += 2)
+		for(int p = 0;p < str.length() && (p = str.indexOf(escapeCharacters[i], p)) != -1;p += 2)
 		{
 			str.insert(p, '\\');
 		}
@@ -107,20 +96,12 @@ void Config::readConfig()
 	if(configFile.isEmpty())
 		return;
 
-	fstream stream(configFile.toAscii().constData(), ios_base::in | ios_base::binary);
-	if(stream.is_open())
+	QFile stream(configFile);
+	if(stream.open(QIODevice::ReadOnly))
 	{
-		stream.seekg(0, ios_base::end);
-		if(stream.fail())
-			return;
-		UInt32 size = stream.tellg();
-		stream.seekg(0, ios_base::beg);
-		if(stream.fail())
-			return;
+		qint64 size = stream.size();
 		char* data = new char[size];
-		stream.read(data, size);
-		// The eof flag seems to trigger fail on windows.
-		if(!stream.eof() && stream.fail())
+		if(stream.read(data, size) == -1)
 		{
 			delete[] data;
 			return;
@@ -160,41 +141,28 @@ void Config::saveConfig()
 	if(configFile.isEmpty())
 		return;
 
-	fstream stream(configFile.toAscii().constData(), ios_base::out | ios_base::trunc);
-	if(stream.is_open())
+	QFile stream(configFile);
+	if(stream.open(QIODevice::WriteOnly | QIODevice::Truncate))
 	{
-		for(map<QString, SettingsData *>::iterator it=settings.begin();it != settings.end();it++)
+		for(QHash<QString, SettingsData *>::iterator it=settings.begin();it != settings.end();it++)
 		{
-			stream.write((*it).first.toAscii().constData(), (*it).first.length());
-			if(stream.fail())
+			if(stream.write(it.key().toAscii()) == -1)
 				return;
-			SettingsData *data = (*it).second;
+			SettingsData *data = it.value();
 			if(data->type() == SettingsData::ST_INT)
 			{
-				// Determine size of number.
-				UInt32 intLength = 0;
-				do
-				{
-					intLength++;
-				}
-				while(data->integer()/static_cast<UInt32>(pow(10.0, static_cast<double>(intLength))) != 0);
-
-				char* value = new char[intLength + 6];
-				sprintf(value, " = %d;\n", data->integer());
-				stream.write(value, intLength + 5);
-				delete[] value;
-				if(stream.fail())
+				QString value = QString(" = %1;\n").arg(data->integer());
+				qint64 error = stream.write(value.toAscii().constData(), value.length());
+				if(error == -1)
 					return;
 			}
 			else
 			{
 				QString str = data->string(); // Make a non const copy of the string.
 				escape(str);
-				char* value = new char[str.length() + 8];
-				sprintf(value, " = \"%s\";\n", str.toAscii().constData());
-				stream.write(value, str.length() + 7);
-				delete[] value;
-				if(stream.fail())
+				QString value = QString(" = \"%1\";\n").arg(str);
+				qint64 error = stream.write(value.toAscii().constData(), value.length());
+				if(error == -1)
 					return;
 			}
 		}
@@ -225,16 +193,20 @@ void Config::createSetting(const QString index, QString defaultString)
 SettingsData* Config::setting(const QString index)
 {
 	SettingsData *data;
-	findIndex(index, data);
+	if(!findIndex(index, data))
+	{
+		createSetting(index, "");
+		findIndex(index, data);
+	}
 	return data;
 }
 
 bool Config::findIndex(const QString index, SettingsData *&data)
 {
-	map<QString, SettingsData *>::iterator it = settings.find(index);
+	QHash<QString, SettingsData *>::iterator it = settings.find(index);
 	if(it != settings.end())
 	{
-		data = (*it).second;
+		data = it.value();
 		return true;
 	}
 	return false;

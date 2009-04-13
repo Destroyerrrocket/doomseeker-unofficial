@@ -33,10 +33,12 @@
 #include "sdeapi/global.hpp"
 
 #include <QString>
-#include <map>
+#include <QHash>
 
 struct SettingsData : public QObject
 {
+	Q_OBJECT
+
 	public:
 		enum SettingType
 		{
@@ -61,6 +63,8 @@ struct SettingsData : public QObject
 
 class Config : public QObject
 {
+	Q_OBJECT
+
 	public:
 		Config();
 		~Config();
@@ -95,6 +99,13 @@ class Config : public QObject
 		 * @see SaveConfig
 		 */
 		void			readConfig();
+
+		/**
+		 * Converts str into a form that can be stored into config files.
+		 */
+		static const QString&	escape(QString& str);
+
+	public slots:
 		/**
 		 * Saves the configuration to a file.  ~/.doomseeker/doomseeker.cfg on unix systems.
 		 * @see LocateConfigFile
@@ -102,16 +113,12 @@ class Config : public QObject
 		 */
 		void			saveConfig();
 
-		/**
-		 * Converts str into a form that can be stored into config files.
-		 */
-		static const QString&	escape(QString& str);
 	protected:
 		bool			findIndex(const QString index, SettingsData *&data);
 
-		bool								firstRun;
-		QString								configFile;
-		std::map<QString, SettingsData *>	settings;
+		bool							firstRun;
+		QString							configFile;
+		QHash<QString, SettingsData *>	settings;
 };
 
 #endif /* __CONFIG_HPP__ */
