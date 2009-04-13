@@ -1,18 +1,41 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
+<ui version="4.0" >
  <class>ConfigureDlg</class>
- <widget class="QDialog" name="ConfigureDlg">
-  <property name="geometry">
+ <widget class="QDialog" name="ConfigureDlg" >
+  <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>663</width>
+    <height>548</height>
    </rect>
   </property>
-  <property name="windowTitle">
+  <property name="windowTitle" >
    <string>Dialog</string>
   </property>
+  <property name="locale" >
+   <locale country="UnitedStates" language="English" />
+  </property>
+  <widget class="QTreeWidget" name="twOptionsList" >
+   <property name="geometry" >
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>241</width>
+     <height>521</height>
+    </rect>
+   </property>
+   <property name="headerHidden" >
+    <bool>true</bool>
+   </property>
+   <property name="columnCount" >
+    <number>1</number>
+   </property>
+   <column>
+    <property name="text" >
+     <string>1</string>
+    </property>
+   </column>
+  </widget>
  </widget>
  <resources/>
  <connections/>

@@ -2,8 +2,6 @@
 #include "gui/configureDlg.h"
 #include "skulltag/skulltagmasterclient.h"
 
-#include <Qt>
-
 MainWindow::MainWindow()
 {
 	tester = new Tester();

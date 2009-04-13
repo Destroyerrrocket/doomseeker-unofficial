@@ -7,6 +7,9 @@ class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 {
 	Q_OBJECT
 
+	private:
+		void initOptionsList();
+
 	public:
 		ConfigureDlg(QWidget* parent = 0);
 };
