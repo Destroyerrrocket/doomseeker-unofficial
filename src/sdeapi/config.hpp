@@ -89,14 +89,14 @@ class Config : public QObject
 		 */
 		void			locateConfigFile(int argc, char* argv[]);
 		/**
-		 * Reads the configuration file for settings.  This is ~/.sde/sde.cfg
+		 * Reads the configuration file for settings.  This is ~/.doomseeker/doomseeker.cfg
 		 * on unix systems.
 		 * @see LocateConfigFile
 		 * @see SaveConfig
 		 */
 		void			readConfig();
 		/**
-		 * Saves the configuration to a file.  ~/.sde/sde.cfg on unix systems.
+		 * Saves the configuration to a file.  ~/.doomseeker/doomseeker.cfg on unix systems.
 		 * @see LocateConfigFile
 		 * @see ReadConfig
 		 */

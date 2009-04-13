@@ -33,7 +33,7 @@
 
 #include "sdeapi/global.hpp"
 
-#include <string>
+#include <QString>
 
 enum ETokenType
 {
@@ -89,7 +89,7 @@ class Scanner
 		 */
 		bool		tokensLeft() { return (error != 0) || (pos != length); }
 
-		std::string	str;
+		QString		str;
 		UInt32		number;
 		double		decimal;
 		bool		boolean;
@@ -101,7 +101,7 @@ class Scanner
 		 */
 		void		checkForWhitespace(UInt32 *nPos = NULL, UInt32 *nLpos = NULL);
 		void		token(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool report=false);
-		char*		next(UInt32 &pos, UInt32 &lpos, char type, bool report=false);
+		QString		next(UInt32 &pos, UInt32 &lpos, char type, bool report=false);
 
 		bool		error;
 		char*		data;

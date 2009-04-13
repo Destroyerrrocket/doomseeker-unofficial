@@ -70,7 +70,7 @@ void Config::locateConfigFile(int argc, char* argv[])
 		printf("Please set your HOME environment variable.\n");
 		return;
 	}
-	configDir = QString(home) + tr("/.sde/");
+	configDir = QString(home) + tr("/.doomseeker/");
 	struct stat dirStat;
 	if(stat(configDir.toAscii().constData(), &dirStat) == -1)
 	{
@@ -81,7 +81,7 @@ void Config::locateConfigFile(int argc, char* argv[])
 		}
 	}
 #endif
-	configFile = configDir + tr("sde.cfg");
+	configFile = configDir + tr("doomseeker.cfg");
 
 	readConfig();
 }
@@ -131,12 +131,12 @@ void Config::readConfig()
 		while(sc.tokensLeft())  // Go until there is nothing left to read.
 		{
 			sc.mustGetToken(TK_Identifier);
-			QString index = sc.str.c_str();
+			QString index = sc.str;
 			sc.mustGetToken('=');
 			if(sc.checkToken(TK_StringConst))
 			{
 				createSetting(index, "");
-				setting(index)->setValue(sc.str.c_str());
+				setting(index)->setValue(sc.str);
 			}
 			else
 			{

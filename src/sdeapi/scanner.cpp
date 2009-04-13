@@ -30,8 +30,6 @@
 // =============================================================================
 
 
-#include <string>
-#include <string.h>
 #include <stdlib.h>
 #include <math.h>
 
@@ -212,10 +210,11 @@ void Scanner::checkForWhitespace(UInt32 *nPos, UInt32 *nLpos)
 //For exmaple GENERIC_TOKEN(void) would do all the needed errors and such for looking for void
 #define GENERIC_GETTOKEN(token) \
 { \
-	char* ident = next(pos, lpos, TK_Identifier, report); \
-	if(ident != NULL) \
+	QString ident = next(pos, lpos, TK_Identifier, report); \
+	if(!ident.isNull()) \
 	{ \
-		if(strcasecmp(ident, token) == 0) \
+		Qt::CaseSensitivity cs = Qt::CaseInsensitive; \
+		if(ident.compare(token, cs) == 0) \
 		{ \
 			str = ident; \
 		} \
@@ -223,7 +222,7 @@ void Scanner::checkForWhitespace(UInt32 *nPos, UInt32 *nLpos)
 		{ \
 			error = true; \
 			if(report) \
-				printf("Line %d:%d: Expected \"%s\", but got \"%s\" instead.\n", line, lpos, token, ident); \
+				printf("Line %d:%d: Expected \"%s\", but got \"%s\" instead.\n", line, lpos, token, ident.toAscii().constData()); \
 		} \
 	} \
 	break; \
@@ -266,8 +265,8 @@ void Scanner::token(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool re
 	{
 		case TK_Identifier:
 		{
-			char* ident = next(pos, lpos, TK_Identifier, report);
-			if(ident != NULL)
+			QString ident = next(pos, lpos, TK_Identifier, report);
+			if(!ident.isNull())
 			{
 				str = ident;
 			}
@@ -275,8 +274,8 @@ void Scanner::token(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool re
 		}
 		case TK_StringConst:
 		{
-			char* stringConst = next(pos, lpos, TK_StringConst, report);
-			if(stringConst != NULL)
+			QString stringConst = next(pos, lpos, TK_StringConst, report);
+			if(!stringConst.isNull())
 			{
 				str = stringConst;
 			}
@@ -284,32 +283,33 @@ void Scanner::token(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool re
 		}
 		case TK_IntConst:
 		{
-			const char* integer = next(pos, lpos, TK_IntConst, report);
-			if(integer != NULL)
-				number = atoi(integer);
+			QString integer = next(pos, lpos, TK_IntConst, report);
+			if(!integer.isNull())
+				number = integer.toInt();
 			break;
 		}
 		case TK_FloatConst:
 		{
-			const char* integer = next(pos, lpos, TK_FloatConst, report);
-			if(integer != NULL)
-				decimal = atof(integer);
+			QString integer = next(pos, lpos, TK_FloatConst, report);
+			if(!integer.isNull())
+				decimal = integer.toDouble();
 			break;
 		}
 		case TK_BoolConst:
 		{
-			const char* ident = next(pos, lpos, TK_Identifier, report);
-			if(ident != NULL)
+			QString ident = next(pos, lpos, TK_Identifier, report);
+			if(!ident.isNull())
 			{
-				if(strcasecmp(ident, "true") == 0)
+				Qt::CaseSensitivity cs = Qt::CaseInsensitive;
+				if(ident.compare("true", cs) == 0)
 					boolean = true;
-				else if(strcasecmp(ident, "false") == 0)
+				else if(ident.compare("false", cs) == 0)
 					boolean = false;
 				else
 				{
 					error = true;
 					if(report)
-						printf("Line %d:%d: Expected true/false, but got \"%s\" instead.\n", line, lpos, ident);
+						printf("Line %d:%d: Expected true/false, but got \"%s\" instead.\n", line, lpos, ident.toAscii().constData());
 					break;
 				}
 			}
@@ -361,10 +361,10 @@ void Scanner::token(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool re
 }
 
 //Find the next identifier by looping until we find an invalid character.
-char* Scanner::next(UInt32 &pos, UInt32 &lpos, char type, bool report)
+QString Scanner::next(UInt32 &pos, UInt32 &lpos, char type, bool report)
 {
 	if(pos >= length)
-		return NULL;
+		return QString();
 	UInt32 end = pos;
 	bool special = false;
 	bool special2 = false;
@@ -430,17 +430,17 @@ char* Scanner::next(UInt32 &pos, UInt32 &lpos, char type, bool report)
 		}
 		return NULL;
 	}
-	string result(data, pos, end - pos);
+	QString result = QString::fromAscii(&data[pos], end - pos);
 	//strip \\ and \" and cut out the opening quote
 	if(type == TK_StringConst)
 	{
-		result = result.substr(1, result.length()-1);
-		while(result.find("\\\\") != result.npos)
-			result.replace(result.find("\\\\"), 2, 1, '\\');
-		while(result.find("\\\"") != result.npos)
-			result.replace(result.find("\\\""), 2, 1, '"');
+		result = result.mid(1, result.length()-1);
+		while(result.indexOf("\\\\") != -1)
+			result.replace(result.indexOf("\\\\"), 2, '\\');
+		while(result.indexOf("\\\"") != -1)
+			result.replace(result.indexOf("\\\""), 2, '\\');
 	}
-	result.append(1, '\0');
+	result.append('\0');
 	lpos += end - pos;
 	pos = end;
 	if(type == TK_StringConst)
@@ -448,9 +448,6 @@ char* Scanner::next(UInt32 &pos, UInt32 &lpos, char type, bool report)
 		pos++;
 		lpos++;
 	}
-	char * ret = new char[result.length() + 1];
-	for(UInt32 ret_pos = 0; ret_pos < result.length(); ret_pos ++)
-		ret[ret_pos] = result[ret_pos];
-	ret[result.length()] = '\0';
-	return ret;
+
+	return result;
 }

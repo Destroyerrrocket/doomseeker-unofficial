@@ -49,10 +49,10 @@ using namespace std;
 
 PluginInfo test = {"Qt Interface", "Provides the standard GUI interface.", "Blzut3", {1,0,0,0}, MAKEID('I','N','T','F')};
 
-Plugin::Plugin(UInt32 type, string file) : file(file), library(NULL)
+Plugin::Plugin(UInt32 type, QString f) : file(f), library(NULL)
 {
 	// Load the library
-	library = dlopen(file.c_str(), RTLD_NOW);
+	library = dlopen(file.toAscii().constData(), RTLD_NOW);
 
 	if(library != NULL)
 	{
@@ -71,7 +71,7 @@ Plugin::Plugin(UInt32 type, string file) : file(file), library(NULL)
 	}
 	else
 	{
-		printf("Failed to open plugin: %s\n", file.c_str());
+		printf("Failed to open plugin: %s\n", file.toAscii().constData());
 	}
 }
 
@@ -98,7 +98,7 @@ void *Plugin::function(const char* func) const
 
 PluginLoader::PluginLoader(UInt32 type, const char* directory, Int32 directoryLength) : type(type)
 {
-	pluginsDirectory = string(directory, 0, directoryLength != -1 ? directoryLength : string::npos);
+	pluginsDirectory = QString::fromAscii(directory, directoryLength != -1 ? directoryLength : static_cast<UInt32>(-1));
 	filesInDir();
 }
 
@@ -112,7 +112,7 @@ void PluginLoader::filesInDir()
 {
 #ifdef WINDOWS
 	WIN32_FIND_DATA file;
-	HANDLE directory = FindFirstFile((pluginsDirectory + "*.dll").c_str(), &file);
+	HANDLE directory = FindFirstFile((pluginsDirectory + "*.dll").toAscii().constData(), &file);
 	if(directory != INVALID_HANDLE_VALUE)
 	{
 		do {
@@ -128,13 +128,13 @@ void PluginLoader::filesInDir()
 		FindClose(directory);
 	} // WARNING else statement after this
 #else
-	DIR *directory = opendir(pluginsDirectory.c_str());
+	DIR *directory = opendir(pluginsDirectory.toAscii().constData());
 	if(directory != NULL)
 	{
 		dirent *file = NULL;
 		while((file = readdir(directory)) != NULL)
 		{
-			DIR *temp = opendir((pluginsDirectory + "/" + file->d_name).c_str());
+			DIR *temp = opendir((pluginsDirectory + "/" + file->d_name).toAscii().constData());
 			if(temp == NULL) // this is a file
 			{
 				Plugin *plugin = new Plugin(type, pluginsDirectory + "/" + file->d_name);
@@ -151,7 +151,7 @@ void PluginLoader::filesInDir()
 #endif
 	else
 	{ // Error
-		printf("Failed to open plugins directory. (%s)\n", pluginsDirectory.c_str());
+		printf("Failed to open plugins directory. (%s)\n", pluginsDirectory.toAscii().constData());
 	}
 }
 

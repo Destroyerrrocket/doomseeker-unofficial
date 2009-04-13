@@ -32,8 +32,8 @@
 #define __PLUGINLOADER_HPP__
 
 #include "sdeapi/global.hpp"
+#include <QString>
 
-#include <string>
 #include <vector>
 
 #ifdef WINDOWS
@@ -64,14 +64,14 @@ struct PluginInfo
  * This class handles one specific plugin.  It allows for cross-platform access
  * to the plugins.
  */
-class Plugin
+class Plugin : public QObject
 {
 	public:
 		/**
 		 * Inits a plugin.  Type is an id which it compares with any possible
 		 * plugins to confirm it is the right type.
 		 */
-		Plugin(UInt32 type, std::string file);
+		Plugin(UInt32 type, QString file);
 		~Plugin();
 
 		/**
@@ -85,7 +85,7 @@ class Plugin
 	private:
 		void	unload();
 
-		std::string	file;
+		QString	file;
 
 #ifdef WINDOWS
 		HMODULE		library;
@@ -94,7 +94,7 @@ class Plugin
 #endif
 };
 
-class PluginLoader
+class PluginLoader : public QObject
 {
 	public:
 		/**
@@ -117,7 +117,7 @@ class PluginLoader
 		void	filesInDir();
 
 		UInt32						type;
-		std::string					pluginsDirectory;
+		QString						pluginsDirectory;
 		std::vector<Plugin *>		pluginsList;
 };
 
