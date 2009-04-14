@@ -1,6 +1,7 @@
 #include "gui/configureDlg.h"
 #include <Qt>
-#include <QScrollBar>
+#include <QStandardItemModel>
+#include <QStandardItem>
 
 ConfigureDlg::ConfigureDlg(QWidget* parent) : QDialog(parent)
 {
@@ -8,7 +9,7 @@ ConfigureDlg::ConfigureDlg(QWidget* parent) : QDialog(parent)
 	initOptionsList();
 
 	currentlyDisplayedCfgBox = NULL;
-	connect(twOptionsList, SIGNAL( clicked(const QModelIndex&) ), this, SLOT( optionListClicked(const QModelIndex&) ) );
+	connect(tvOptionsList, SIGNAL( clicked(const QModelIndex&) ), this, SLOT( optionListClicked(const QModelIndex&) ) );
 }
 
 ConfigureDlg::~ConfigureDlg()
@@ -21,37 +22,50 @@ ConfigureDlg::~ConfigureDlg()
 /////////////////////////////////////////////////////////
 void ConfigureDlg::initOptionsList()
 {
-	QTreeWidgetItem* engines = new QTreeWidgetItem(twOptionsList);
-	engines->setText(0, tr("Engines"));
-	enginesRoot = engines;
-	QTreeWidgetItem* engineSkullTag = new QTreeWidgetItem(engines);
-	engineSkullTag->setText(0, tr("SkullTag"));
-	QTreeWidgetItem* fakeSkullTag = new QTreeWidgetItem(twOptionsList);
-	fakeSkullTag->setText(0, tr("SkullTag"));
+	QStandardItemModel* model = new QStandardItemModel(this);
+	QStandardItem* root1;
+
+	root1 = new QStandardItem("Engines");
+	model->appendRow(root1);
+	enginesRoot = model->indexFromItem(root1);
+
+	root1 = new QStandardItem("<HIDE>");
+	model->appendRow(root1);
+	hider = model->indexFromItem(root1);
+
+	tvOptionsList->setModel(model);
 }
 /////////////////////////////////////////////////////////
+// This will hide currently displayed box if NULL is passed
+// as w argument.
 void ConfigureDlg::showConfigurationBox(QWidget* w)
 {
-	int width = this->width();
-	int posX = twOptionsList->x() + twOptionsList->width() + 5;
-	int posY = twOptionsList->y();
-	width -= posX + 10;
+	if (currentlyDisplayedCfgBox != NULL)
+	{
+		currentlyDisplayedCfgBox->hide();
+	}
+	currentlyDisplayedCfgBox = w;
 
-	w->move(posX, posY);
-	//w->resize(width, posY);
-	w->show();
+	if (w != NULL)
+	{
+		int width = this->width();
+		int posX = tvOptionsList->x() + tvOptionsList->width() + 5;
+		int posY = tvOptionsList->y();
+		width -= posX + 10;
+
+		w->move(posX, posY);
+		w->resize(width, tvOptionsList->height());
+		w->show();
+	}
 }
 
-QWidget* ConfigureDlg::findEngineConfigurationBox(const QTreeWidgetItem& item)
+QWidget* ConfigureDlg::findEngineConfigurationBox(const QModelIndex& index)
 {
-	QString str = item.text(0);
-	Qt::CaseSensitivity cs = Qt::CaseInsensitive;
-
 	// Cycle through known engines
 	for(int i = 0; i < engineConfigList.count(); ++i)
 	{
 		EngineConfiguration* ec = engineConfigList[i];
-		if (str.compare(ec->engineName, cs) == 0 && ec->confBox != NULL && isEngineConfiguration(item))
+		if (index == ec->indexOnTheList && ec->confBox != NULL && isEngineConfiguration(index))
 		{
 			return ec->confBox;
 		}
@@ -61,47 +75,55 @@ QWidget* ConfigureDlg::findEngineConfigurationBox(const QTreeWidgetItem& item)
 }
 
 // Returns true if item is a child of Engines root item
-bool ConfigureDlg::isEngineConfiguration(const QTreeWidgetItem& item)
+bool ConfigureDlg::isEngineConfiguration(const QModelIndex& index)
 {
-	QTreeWidgetItem* parent = item.parent();
-	Qt::CaseSensitivity cs = Qt::CaseInsensitive;
 
-	while (parent != NULL)
+	QModelIndex parent = index.parent();
+
+	while (parent.isValid())
 	{
 		if (parent == enginesRoot)
 		{
 			return true;
 		}
+		parent = parent.parent();
 	}
 	return false;
 }
 /////////////////////////////////////////////////////////
 void ConfigureDlg::addEngineConfiguration(EngineConfiguration* ec)
 {
-	ec->confBox->setAttribute(Qt::WA_DeleteOnClose, true);
-	engineConfigList.push_back(ec);
+	if (ec != NULL)
+	{
+		QStandardItemModel* model = (QStandardItemModel*)tvOptionsList->model();
+		QStandardItem* item = new QStandardItem(ec->engineName);
+		QStandardItem* root = model->itemFromIndex(enginesRoot);
+
+		root->appendRow(item);
+
+		ec->confBox->setAttribute(Qt::WA_DeleteOnClose, true);
+		ec->indexOnTheList = model->indexFromItem(item);
+		engineConfigList.push_back(ec);
+	}
 }
 /////////////////////////////////////////////////////////
 void ConfigureDlg::optionListClicked(const QModelIndex& index)
 {
-	QTreeWidgetItem* item = (QTreeWidgetItem*)index.model();
-	QString str = item->text(0);
+	QString str = index.data().toString();
 
-	printf("clicked %s\n", str.toAscii().constData());
+	if (index == hider)
+	{
+		showConfigurationBox(NULL);
+	}
 
 	QWidget* newWidget = NULL;
 
-	newWidget = findEngineConfigurationBox(*item);
+	newWidget = findEngineConfigurationBox(index);
 
 	// Something with sense was selected, display this something
 	// and hide previous box.
 	if (newWidget != NULL)
 	{
-		if (currentlyDisplayedCfgBox != NULL)
-		{
-			currentlyDisplayedCfgBox->hide();
-		}
 		showConfigurationBox(newWidget);
-		currentlyDisplayedCfgBox = newWidget;
 	}
 }

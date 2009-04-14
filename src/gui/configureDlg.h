@@ -9,15 +9,16 @@ class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 	Q_OBJECT
 
 	private:
-		QTreeWidgetItem*				enginesRoot;
+		QModelIndex						hider;
+		QModelIndex						enginesRoot;
 		QList<EngineConfiguration*>		engineConfigList;
 		QWidget*						currentlyDisplayedCfgBox;
 
 		void 		initOptionsList();
 
 		void 		showConfigurationBox(QWidget*);
-		QWidget*	findEngineConfigurationBox(const QTreeWidgetItem&);
-		bool		isEngineConfiguration(const QTreeWidgetItem&);
+		QWidget*	findEngineConfigurationBox(const QModelIndex&);
+		bool		isEngineConfiguration(const QModelIndex&);
 
 	public:
 		ConfigureDlg(QWidget* parent = NULL);

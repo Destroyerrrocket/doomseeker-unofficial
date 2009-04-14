@@ -2,13 +2,16 @@
 #define __ENGINE_CONFIG_BASE_H_
 
 #include <QGroupBox>
+#include <QModelIndex>
 
 class EngineConfigurationBaseBox;
 
 struct EngineConfiguration
 {
-	QString 	engineName;
-	EngineConfigurationBaseBox*	confBox;
+	public:
+		QString 					engineName;
+		QModelIndex					indexOnTheList;
+		EngineConfigurationBaseBox*	confBox;
 };
 
 class EngineConfigurationBaseBox : public QGroupBox

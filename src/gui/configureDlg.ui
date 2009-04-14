@@ -16,26 +16,21 @@
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
   </property>
-  <widget class="QTreeWidget" name="twOptionsList">
+  <widget class="QTreeView" name="tvOptionsList">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>241</width>
+     <width>211</width>
      <height>521</height>
     </rect>
    </property>
-   <property name="headerHidden">
+   <attribute name="headerVisible">
     <bool>false</bool>
-   </property>
-   <property name="columnCount">
-    <number>1</number>
-   </property>
-   <column>
-    <property name="text">
-     <string>1</string>
-    </property>
-   </column>
+   </attribute>
+   <attribute name="headerVisible">
+    <bool>false</bool>
+   </attribute>
   </widget>
  </widget>
  <resources/>
