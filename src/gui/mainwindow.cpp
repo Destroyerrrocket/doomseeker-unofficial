@@ -1,6 +1,8 @@
+#include "skulltag/skulltagmasterclient.h"
+
 #include "gui/mainwindow.h"
 #include "gui/configureDlg.h"
-#include "skulltag/skulltagmasterclient.h"
+#include "gui/engineSkulltagConfig.h"
 
 MainWindow::MainWindow()
 {
@@ -37,5 +39,9 @@ void MainWindow::refresh()
 void MainWindow::menuOptionsConfigure()
 {
 	ConfigureDlg dlg(this);
+
+	EngineConfiguration* ec = EngineSkulltagConfigBox::engineConfiguration(&dlg);
+	dlg.addEngineConfiguration(ec);
+
 	dlg.exec();
 }
