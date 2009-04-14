@@ -35,8 +35,7 @@ class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 
 	public slots:
 		void optionListClicked(const QModelIndex&);
-		void btnOkClicked();
-		void btnApplyClicked();
+		void btnClicked(QAbstractButton *button);
 };
 
 #endif

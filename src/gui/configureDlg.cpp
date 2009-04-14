@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QStandardItemModel>
 #include <QStandardItem>
+#include <QAbstractButton>
 
 ConfigureDlg::ConfigureDlg(Config* mainCfg, QWidget* parent) : QDialog(parent)
 {
@@ -13,9 +14,7 @@ ConfigureDlg::ConfigureDlg(Config* mainCfg, QWidget* parent) : QDialog(parent)
 
 	currentlyDisplayedCfgBox = NULL;
 	connect(tvOptionsList, SIGNAL( clicked(const QModelIndex&) ), this, SLOT( optionListClicked(const QModelIndex&) ) );
-	connect(btnCancel, SIGNAL( clicked() ), this, SLOT( reject() ));
-	connect(btnOk, SIGNAL( clicked() ), this, SLOT( btnOkClicked() ));
-	connect(btnApply, SIGNAL( clicked() ), this, SLOT( btnApplyClicked() ));
+	connect(buttonBox, SIGNAL( clicked(QAbstractButton *) ), this, SLOT ( btnClicked(QAbstractButton *) ));
 }
 
 ConfigureDlg::~ConfigureDlg()
@@ -67,14 +66,7 @@ void ConfigureDlg::showConfigurationBox(QWidget* w)
 
 	if (w != NULL)
 	{
-		int width = this->width();
-		int height = btnApply->y() - tvOptionsList->y() - 10;
-		int posX = tvOptionsList->x() + tvOptionsList->width() + 5;
-		int posY = tvOptionsList->y();
-		width -= posX + 10;
-
-		w->move(posX, posY);
-		w->resize(width, height);
+		mainPanel->layout()->addWidget(w);
 		w->show();
 	}
 }
@@ -154,13 +146,20 @@ void ConfigureDlg::optionListClicked(const QModelIndex& index)
 	}
 }
 
-void ConfigureDlg::btnOkClicked()
+void ConfigureDlg::btnClicked(QAbstractButton *button)
 {
-	this->saveSettings();
-	this->accept();
-}
-
-void ConfigureDlg::btnApplyClicked()
-{
-	this->saveSettings();
+	// Figure out what button we pressed and perform its action.
+	switch(buttonBox->standardButton(button))
+	{
+		default:
+			break;
+		case QDialogButtonBox::Ok: // Also does the same as Apply
+			this->accept();
+		case QDialogButtonBox::Apply:
+			this->saveSettings();
+			break;
+		case QDialogButtonBox::Cancel:
+			this->reject();
+			break;
+	}
 }

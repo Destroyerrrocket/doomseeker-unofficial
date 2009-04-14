@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
+<ui version="4.0" >
  <class>ConfigureDlg</class>
- <widget class="QDialog" name="ConfigureDlg">
-  <property name="geometry">
+ <widget class="QDialog" name="ConfigureDlg" >
+  <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
@@ -10,67 +9,51 @@
     <height>548</height>
    </rect>
   </property>
-  <property name="windowTitle">
+  <property name="windowTitle" >
    <string>Dialog</string>
   </property>
-  <property name="locale">
-   <locale language="English" country="UnitedStates"/>
+  <property name="locale" >
+   <locale country="UnitedStates" language="English" />
   </property>
-  <widget class="QTreeView" name="tvOptionsList">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>211</width>
-     <height>521</height>
-    </rect>
-   </property>
-   <attribute name="headerVisible">
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <widget class="QPushButton" name="btnCancel">
-   <property name="geometry">
-    <rect>
-     <x>570</x>
-     <y>510</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>&amp;Cancel</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btnOk">
-   <property name="geometry">
-    <rect>
-     <x>490</x>
-     <y>510</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>&amp;OK</string>
-   </property>
-   <property name="default">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btnApply">
-   <property name="geometry">
-    <rect>
-     <x>410</x>
-     <y>510</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>&amp;Apply</string>
-   </property>
-  </widget>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <widget class="QWidget" native="1" name="widget" >
+     <layout class="QHBoxLayout" name="horizontalLayout" >
+      <property name="sizeConstraint" >
+       <enum>QLayout::SetMinAndMaxSize</enum>
+      </property>
+      <item>
+       <widget class="QTreeView" name="tvOptionsList" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Expanding" hsizetype="Minimum" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize" >
+         <size>
+          <width>200</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" native="1" name="mainPanel" >
+        <layout class="QVBoxLayout" name="verticalLayout_2" />
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>
