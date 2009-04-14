@@ -3,7 +3,7 @@
 
 #include "sdeapi/config.hpp"
 #include <QGroupBox>
-#include <QModelIndex>
+#include <QStandardItem>
 
 
 class ConfigurationBaseBox;
@@ -18,7 +18,7 @@ struct EngineConfiguration
 
 		// Index, used by ConfigureDlg class to find
 
-		QModelIndex					indexOnTheList;
+		QStandardItem*				itemOnTheList;
 
 		// This widget receives WA_DeteleOnClose flag
 		// once this structure is passed to

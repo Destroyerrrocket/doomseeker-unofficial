@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>796</width>
     <height>600</height>
    </rect>
   </property>
@@ -20,8 +20,8 @@
    <widget class="QPushButton" name="btnRefresh">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>30</y>
+      <x>0</x>
+      <y>0</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -30,13 +30,23 @@
      <string>Refresh</string>
     </property>
    </widget>
+   <widget class="QTableView" name="tableServers">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>781</width>
+      <height>511</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>796</width>
      <height>22</height>
     </rect>
    </property>

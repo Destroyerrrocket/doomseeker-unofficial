@@ -13,9 +13,9 @@ class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 		Config*		mainConfig;
 		// hider for debug purposes, if clicked
 		// hides current box and shows nothing
-		QModelIndex						hider;
+		QStandardItem*					hider;
 
-		QModelIndex						enginesRoot;
+		QStandardItem*					enginesRoot;
 		QList<EngineConfiguration*>		engineConfigList;
 		QWidget*						currentlyDisplayedCfgBox;
 
@@ -23,8 +23,8 @@ class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 		void		saveSettings();
 
 		void 					showConfigurationBox(QWidget*);
-		EngineConfiguration*	findEngineConfigurationBox(const QModelIndex&);
-		bool					isEngineConfiguration(const QModelIndex&);
+		EngineConfiguration*	findEngineConfiguration(const QStandardItem*);
+		bool					isEngineConfiguration(const QStandardItem*);
 
 
 	public:

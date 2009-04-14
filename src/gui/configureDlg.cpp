@@ -33,11 +33,11 @@ void ConfigureDlg::initOptionsList()
 
 	root1 = new QStandardItem("Engines");
 	model->appendRow(root1);
-	enginesRoot = model->indexFromItem(root1);
+	enginesRoot = root1;
 
 	root1 = new QStandardItem("<HIDE>");
 	model->appendRow(root1);
-	hider = model->indexFromItem(root1);
+	hider = root1;
 
 	tvOptionsList->setModel(model);
 }
@@ -79,13 +79,13 @@ void ConfigureDlg::showConfigurationBox(QWidget* w)
 	}
 }
 
-EngineConfiguration* ConfigureDlg::findEngineConfigurationBox(const QModelIndex& index)
+EngineConfiguration* ConfigureDlg::findEngineConfiguration(const QStandardItem* item)
 {
 	// Cycle through known engines
 	for(int i = 0; i < engineConfigList.count(); ++i)
 	{
 		EngineConfiguration* ec = engineConfigList[i];
-		if (index == ec->indexOnTheList && ec->confBox != NULL)
+		if (item == ec->itemOnTheList && ec->confBox != NULL)
 		{
 			return ec;
 		}
@@ -95,18 +95,17 @@ EngineConfiguration* ConfigureDlg::findEngineConfigurationBox(const QModelIndex&
 }
 
 // Returns true if item is a child of Engines root item
-bool ConfigureDlg::isEngineConfiguration(const QModelIndex& index)
+bool ConfigureDlg::isEngineConfiguration(const QStandardItem* item)
 {
+	QStandardItem* parent = item->parent();
 
-	QModelIndex parent = index.parent();
-
-	while (parent.isValid())
+	while (parent != NULL)
 	{
 		if (parent == enginesRoot)
 		{
 			return true;
 		}
-		parent = parent.parent();
+		parent = parent->parent();
 	}
 	return false;
 }
@@ -117,12 +116,11 @@ void ConfigureDlg::addEngineConfiguration(EngineConfiguration* ec)
 	{
 		QStandardItemModel* model = (QStandardItemModel*)tvOptionsList->model();
 		QStandardItem* item = new QStandardItem(ec->engineName);
-		QStandardItem* root = model->itemFromIndex(enginesRoot);
 
-		root->appendRow(item);
+		enginesRoot->appendRow(item);
 
 		ec->confBox->setAttribute(Qt::WA_DeleteOnClose, true);
-		ec->indexOnTheList = model->indexFromItem(item);
+		ec->itemOnTheList = item;
 		engineConfigList.push_back(ec);
 	}
 }
@@ -130,17 +128,20 @@ void ConfigureDlg::addEngineConfiguration(EngineConfiguration* ec)
 void ConfigureDlg::optionListClicked(const QModelIndex& index)
 {
 	QString str = index.data().toString();
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(tvOptionsList->model());
+	QStandardItem* item = model->itemFromIndex(index);
 
-	if (index == hider)
+	if (item == hider)
 	{
 		showConfigurationBox(NULL);
+		return;
 	}
 
 	QWidget* newWidget = NULL;
 
-	if (isEngineConfiguration(index))
+	if (isEngineConfiguration(item))
 	{
-		EngineConfiguration *ec = findEngineConfigurationBox(index);
+		EngineConfiguration *ec = findEngineConfiguration(item);
 		ec->confBox->readSettings();
 		newWidget = ec->confBox;
 	}
