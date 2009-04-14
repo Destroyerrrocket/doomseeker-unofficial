@@ -210,8 +210,8 @@ void Scanner::checkForWhitespace(UInt32 *nPos, UInt32 *nLpos)
 //For exmaple GENERIC_TOKEN(void) would do all the needed errors and such for looking for void
 #define GENERIC_GETTOKEN(token) \
 { \
-	QString ident = next(pos, lpos, TK_Identifier, report); \
-	if(!ident.isNull()) \
+	QString ident; \
+	if(next(ident, pos, lpos, TK_Identifier, report)) \
 	{ \
 		Qt::CaseSensitivity cs = Qt::CaseInsensitive; \
 		if(ident.compare(token, cs) == 0) \
@@ -265,8 +265,8 @@ void Scanner::token(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool re
 	{
 		case TK_Identifier:
 		{
-			QString ident = next(pos, lpos, TK_Identifier, report);
-			if(!ident.isNull())
+			QString ident;
+			if(next(ident, pos, lpos, TK_Identifier, report))
 			{
 				str = ident;
 			}
@@ -274,8 +274,8 @@ void Scanner::token(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool re
 		}
 		case TK_StringConst:
 		{
-			QString stringConst = next(pos, lpos, TK_StringConst, report);
-			if(!stringConst.isNull())
+			QString stringConst;
+			if(next(stringConst, pos, lpos, TK_StringConst, report))
 			{
 				str = stringConst;
 			}
@@ -283,22 +283,22 @@ void Scanner::token(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool re
 		}
 		case TK_IntConst:
 		{
-			QString integer = next(pos, lpos, TK_IntConst, report);
-			if(!integer.isNull())
+			QString integer;
+			if(next(integer, pos, lpos, TK_IntConst, report))
 				number = integer.toInt();
 			break;
 		}
 		case TK_FloatConst:
 		{
-			QString integer = next(pos, lpos, TK_FloatConst, report);
-			if(!integer.isNull())
+			QString integer;
+			if(next(integer, pos, lpos, TK_FloatConst, report))
 				decimal = integer.toDouble();
 			break;
 		}
 		case TK_BoolConst:
 		{
-			QString ident = next(pos, lpos, TK_Identifier, report);
-			if(!ident.isNull())
+			QString ident;
+			if(next(ident, pos, lpos, TK_Identifier, report))
 			{
 				Qt::CaseSensitivity cs = Qt::CaseInsensitive;
 				if(ident.compare("true", cs) == 0)
@@ -361,10 +361,14 @@ void Scanner::token(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool re
 }
 
 //Find the next identifier by looping until we find an invalid character.
-QString Scanner::next(UInt32 &pos, UInt32 &lpos, char type, bool report)
+bool Scanner::next(QString &out, UInt32 &pos, UInt32 &lpos, char type, bool report)
 {
 	if(pos >= length)
-		return QString();
+	{
+		out = QString();
+		return false;
+	}
+
 	UInt32 end = pos;
 	bool special = false;
 	bool special2 = false;
@@ -428,7 +432,7 @@ QString Scanner::next(UInt32 &pos, UInt32 &lpos, char type, bool report)
 			else
 				printf("Line %d:%d: Expected a decimal value, but got '%c' instead.\n", line, lpos, data[pos]);
 		}
-		return NULL;
+		return false;
 	}
 	QString result = QString::fromAscii(&data[pos], end - pos);
 	//strip \\ and \" and cut out the opening quote
@@ -449,5 +453,6 @@ QString Scanner::next(UInt32 &pos, UInt32 &lpos, char type, bool report)
 		lpos++;
 	}
 
-	return result;
+	out = result;
+	return true;
 }
