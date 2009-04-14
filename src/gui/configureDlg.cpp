@@ -1,15 +1,21 @@
 #include "gui/configureDlg.h"
 #include <Qt>
+#include <QDebug>
 #include <QStandardItemModel>
 #include <QStandardItem>
 
-ConfigureDlg::ConfigureDlg(QWidget* parent) : QDialog(parent)
+ConfigureDlg::ConfigureDlg(Config* mainCfg, QWidget* parent) : QDialog(parent)
 {
+	mainConfig = mainCfg;
+	mainConfig->readConfig();
 	setupUi(this);
 	initOptionsList();
 
 	currentlyDisplayedCfgBox = NULL;
 	connect(tvOptionsList, SIGNAL( clicked(const QModelIndex&) ), this, SLOT( optionListClicked(const QModelIndex&) ) );
+	connect(btnCancel, SIGNAL( clicked() ), this, SLOT( reject() ));
+	connect(btnOk, SIGNAL( clicked() ), this, SLOT( btnOkClicked() ));
+	connect(btnApply, SIGNAL( clicked() ), this, SLOT( btnApplyClicked() ));
 }
 
 ConfigureDlg::~ConfigureDlg()
@@ -35,6 +41,19 @@ void ConfigureDlg::initOptionsList()
 
 	tvOptionsList->setModel(model);
 }
+
+void ConfigureDlg::saveSettings()
+{
+	qDebug() << "Saving settings:";
+	// Iterate through every engine and execute it's saving method
+	for (int i = 0; i < engineConfigList.count(); ++i)
+	{
+		qDebug() << "Engine:" << engineConfigList[i]->engineName;
+		engineConfigList[i]->confBox->saveSettings();
+	}
+	mainConfig->saveConfig();
+	qDebug() << "Saving completed!";
+}
 /////////////////////////////////////////////////////////
 // This will hide currently displayed box if NULL is passed
 // as w argument.
@@ -49,25 +68,26 @@ void ConfigureDlg::showConfigurationBox(QWidget* w)
 	if (w != NULL)
 	{
 		int width = this->width();
+		int height = btnApply->y() - tvOptionsList->y() - 10;
 		int posX = tvOptionsList->x() + tvOptionsList->width() + 5;
 		int posY = tvOptionsList->y();
 		width -= posX + 10;
 
 		w->move(posX, posY);
-		w->resize(width, tvOptionsList->height());
+		w->resize(width, height);
 		w->show();
 	}
 }
 
-QWidget* ConfigureDlg::findEngineConfigurationBox(const QModelIndex& index)
+EngineConfiguration* ConfigureDlg::findEngineConfigurationBox(const QModelIndex& index)
 {
 	// Cycle through known engines
 	for(int i = 0; i < engineConfigList.count(); ++i)
 	{
 		EngineConfiguration* ec = engineConfigList[i];
-		if (index == ec->indexOnTheList && ec->confBox != NULL && isEngineConfiguration(index))
+		if (index == ec->indexOnTheList && ec->confBox != NULL)
 		{
-			return ec->confBox;
+			return ec;
 		}
 	}
 
@@ -118,7 +138,12 @@ void ConfigureDlg::optionListClicked(const QModelIndex& index)
 
 	QWidget* newWidget = NULL;
 
-	newWidget = findEngineConfigurationBox(index);
+	if (isEngineConfiguration(index))
+	{
+		EngineConfiguration *ec = findEngineConfigurationBox(index);
+		ec->confBox->readSettings();
+		newWidget = ec->confBox;
+	}
 
 	// Something with sense was selected, display this something
 	// and hide previous box.
@@ -126,4 +151,15 @@ void ConfigureDlg::optionListClicked(const QModelIndex& index)
 	{
 		showConfigurationBox(newWidget);
 	}
+}
+
+void ConfigureDlg::btnOkClicked()
+{
+	this->saveSettings();
+	this->accept();
+}
+
+void ConfigureDlg::btnApplyClicked()
+{
+	this->saveSettings();
 }

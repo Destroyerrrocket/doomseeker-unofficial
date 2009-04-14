@@ -4,8 +4,11 @@
 #include "gui/configureDlg.h"
 #include "gui/engineSkulltagConfig.h"
 
-MainWindow::MainWindow()
+MainWindow::MainWindow(int argc, char** argv)
 {
+	config = new Config();
+	config->locateConfigFile(argc, argv);
+
 	tester = new Tester();
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
@@ -17,6 +20,7 @@ MainWindow::MainWindow()
 MainWindow::~MainWindow()
 {
 	delete tester;
+	delete config;
 }
 /////////////////////////////////////////////////////////
 // Slots
@@ -38,9 +42,9 @@ void MainWindow::refresh()
 
 void MainWindow::menuOptionsConfigure()
 {
-	ConfigureDlg dlg(this);
+	ConfigureDlg dlg(config, this);
 
-	EngineConfiguration* ec = EngineSkulltagConfigBox::engineConfiguration(&dlg);
+	EngineConfiguration* ec = EngineSkulltagConfigBox::createStructure(config, &dlg);
 	dlg.addEngineConfiguration(ec);
 
 	dlg.exec();

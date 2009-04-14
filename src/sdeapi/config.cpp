@@ -34,6 +34,7 @@
 
 #include <QFile>
 #include <QDir>
+#include <QDebug>
 
 Config::Config() : firstRun(false)
 {
@@ -72,6 +73,7 @@ void Config::locateConfigFile(int argc, char* argv[])
 	}
 #endif
 	configFile = configDir.absolutePath() + "/doomseeker.cfg";
+	qDebug() << "Config file is:" << configFile;
 
 	readConfig();
 }

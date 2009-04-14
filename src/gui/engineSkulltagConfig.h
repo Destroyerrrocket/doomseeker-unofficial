@@ -1,21 +1,27 @@
 #ifndef __ENGINE_SKULLTAG_CONFIG_H_
 #define __ENGINE_SKULLTAG_CONFIG_H_
 
-#include "gui/engineConfigBase.h"
+#include "gui/configBase.h"
 #include "ui_engineSkulltagConfig.h"
 
-class EngineSkulltagConfigBox : public EngineConfigurationBaseBox, private Ui::EngineSkulltagConfigBox
+class EngineSkulltagConfigBox : public ConfigurationBaseBox, private Ui::EngineSkulltagConfigBox
 {
 	Q_OBJECT
 
 	private:
-		EngineSkulltagConfigBox(QWidget* parent = NULL);
+		EngineSkulltagConfigBox(Config* cfg, QWidget* parent = NULL);
+
+	protected:
+		void resizeEvent(QResizeEvent* event);
 
 	public:
-		static EngineConfiguration* engineConfiguration(QWidget* parent = NULL);
+		static EngineConfiguration* createStructure(Config* cfg, QWidget* parent = NULL);
 
-		void readConfig();
-		void saveConfig();
+		void readSettings();
+		void saveSettings();
+
+	public slots:
+		void btnBrowseBinaryClicked();
 };
 
 #endif

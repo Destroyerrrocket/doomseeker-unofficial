@@ -14,8 +14,8 @@ qt4_wrap_ui(doomseekerUI
 )
 
 qt_wrap_cpp(doomseekerWraps QT_FILES
+	gui/configBase.h
 	gui/mainwindow.h
-	gui/engineConfigBase.h
 	gui/engineSkulltagConfig.h
 	gui/configureDlg.h
 	odamex/odamexmasterclient.h

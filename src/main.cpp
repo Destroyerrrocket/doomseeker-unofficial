@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
 
 	QApplication app(argc, argv);
 
-	MainWindow* mw = new MainWindow();
+	MainWindow* mw = new MainWindow(argc, argv);
 	mw->show();
 	return app.exec();
 }
