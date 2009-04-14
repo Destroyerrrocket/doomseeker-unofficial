@@ -51,8 +51,9 @@ void Config::locateConfigFile(int argc, char* argv[])
 	QDir configDir;
 #if defined(WIN32)
 	configDir = argv[0];
-	UInt32 pos = static_cast<UInt32> (configDir.lastIndexOf('\\')) > static_cast<UInt32> (configDir.lastIndexOf('/')) ? configDir.lastIndexOf('\\') : configDir.lastIndexOf('/');
-	configDir = configDir.left(pos+1);
+	//configDir.
+	UInt32 pos = static_cast<UInt32> (configDir.path().lastIndexOf('\\')) > static_cast<UInt32> (configDir.path().lastIndexOf('/')) ? configDir.path().lastIndexOf('\\') : configDir.path().lastIndexOf('/');
+	configDir = configDir.path().left(pos+1);
 #else
 	QDir home = QDir::home();
 	if(!home.exists())
