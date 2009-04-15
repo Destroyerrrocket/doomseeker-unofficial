@@ -120,6 +120,7 @@ class Server : public QObject
 		unsigned short		timeLimit() const { return serverTimeLimit; }
 		const QString		&wad(int index) const { return wads[index]; }
 		const QString		&iwadName() const { return iwad; }
+		const QStringList	&pwads() const { return wads; }
 
 		void				operator= (const Server &other);
 		virtual void		doRefresh()=0;

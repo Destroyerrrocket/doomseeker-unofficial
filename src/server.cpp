@@ -30,7 +30,7 @@ Player::Player(const QString &name, unsigned short score, unsigned short ping, P
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// I really don't know if the game modes will need to be translated but I 
+// I really don't know if the game modes will need to be translated but I
 // wrapped them in tr() just to be safe.
 const GameMode GameMode::COOPERATIVE(QObject::tr("Cooperative"), false);
 const GameMode GameMode::DEATHMATCH(QObject::tr("Deathmatch"), false);

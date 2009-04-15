@@ -3,6 +3,7 @@
 #include "gui/mainwindow.h"
 #include "gui/configureDlg.h"
 #include "gui/engineSkulltagConfig.h"
+#include "gui/serverlist.h"
 #include <QPointer>
 
 MainWindow::MainWindow(int argc, char** argv)
@@ -30,7 +31,10 @@ void MainWindow::prepareServerTable()
 	QStandardItemModel* model = new QStandardItemModel(this);
 
 	QStringList labels;
-	labels << tr("Players") << tr("Ping") << tr("Server Name") << tr("Address") << tr("IWAD") << tr("MAP") << tr("Wads") << tr("Gametype");
+	for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
+	{
+		labels << SLCHandler::columns[i].name;
+	}
 	model->setHorizontalHeaderLabels(labels);
 
 	tableServers->setModel(model);
@@ -45,7 +49,7 @@ QModelIndex MainWindow::findServerOnTheList(const Server* server)
 		for (int i = 0; i < model->rowCount(); ++i)
 		{
 			QStandardItem* item = model->item(i);
-			QVariant pointer = qVariantFromValue(item->data(SLDT_POINTER_TO_SERVER_STRUCTURE));
+			QVariant pointer = qVariantFromValue(item->data(SLCHandler::SLDT_POINTER_TO_SERVER_STRUCTURE));
 			ServerPointer savedServ = qVariantValue<ServerPointer>(pointer);
 			if (server == savedServ)
 			{
@@ -69,7 +73,7 @@ void MainWindow::addServer(const Server* server)
 	// Save pointer to the column
 	ServerPointer ptr(server);
 	QVariant savePointer = qVariantFromValue(ptr);
-	itemColZero->setData(savePointer, SLDT_POINTER_TO_SERVER_STRUCTURE);
+	itemColZero->setData(savePointer, SLCHandler::SLDT_POINTER_TO_SERVER_STRUCTURE);
 
 	// Append additional data to the rows
 	QList<QStandardItem*> columns;
@@ -91,7 +95,8 @@ void MainWindow::addServer(const Server* server)
 	item = new QStandardItem(server->map());
 	columns.append(item);
 
-	item = new QStandardItem("WADS");
+	tmp = server->pwads().join(" ");
+	item = new QStandardItem(tmp);
 	columns.append(item);
 
 	item = new QStandardItem(server->gameMode().name());
