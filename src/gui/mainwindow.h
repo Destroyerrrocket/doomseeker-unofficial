@@ -26,6 +26,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 		enum ServerListDataTypes
 		{
+			// Pointer to the server structure is always stored in the first column
 			SLDT_POINTER_TO_SERVER_STRUCTURE = Qt::UserRole+1
 		};
 

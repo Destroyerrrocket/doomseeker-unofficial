@@ -39,6 +39,21 @@
       <height>511</height>
      </rect>
     </property>
+    <property name="sortingEnabled">
+     <bool>true</bool>
+    </property>
+    <attribute name="horizontalHeaderVisible">
+     <bool>true</bool>
+    </attribute>
+    <attribute name="verticalHeaderVisible">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="verticalHeaderVisible">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderVisible">
+     <bool>true</bool>
+    </attribute>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

@@ -31,6 +31,7 @@
 #include <QThreadPool>
 #include <QThread>
 #include <QRunnable>
+#include <QMetaType>
 
 #define MAX_TEAMS 4
 
@@ -118,6 +119,7 @@ class Server : public QObject
 		unsigned short		timeLeft() const { return serverTimeLeft; }
 		unsigned short		timeLimit() const { return serverTimeLimit; }
 		const QString		&wad(int index) const { return wads[index]; }
+		const QString		&iwadName() const { return iwad; }
 
 		void				operator= (const Server &other);
 		virtual void		doRefresh()=0;
@@ -127,7 +129,7 @@ class Server : public QObject
 		 * Updates the server data.
 		 */
 		void		refresh();
-		
+
 
 	signals:
 		void				banned(const Server *server);
@@ -157,19 +159,71 @@ class Server : public QObject
 	private:
 		QHostAddress		serverAddress;
 		unsigned short		serverPort;
-		
+
 		class Refresher;
-		friend class Refresher;		
+		friend class Refresher;
+		friend class ServerPointer;
 };
 
 class Server::Refresher : public QThread, public QRunnable
 {
 	private:
 		Server* parent;
-			
+
 	public:
 		Refresher(Server* p);
 		void run();
 };
+
+class ServerPointer
+{
+	private:
+		const Server* ptr;
+
+		void copy(const ServerPointer& copyin)
+		{
+			ptr = copyin.ptr;
+		}
+
+	public:
+		ServerPointer() {}
+		ServerPointer(const Server* s)
+		{
+			ptr = s;
+		}
+
+		ServerPointer(const ServerPointer& copyin)
+		{
+			copy(copyin);
+		}
+
+		ServerPointer& operator=(const ServerPointer& rhs)
+		{
+			if (this != &rhs)
+			{
+				copy(rhs);
+			}
+
+			return *this;
+		}
+		~ServerPointer() {}
+
+		bool operator==(const Server* fPtr)
+		{
+			return (ptr == fPtr);
+		}
+
+		friend bool operator==(const Server* fPtr, const ServerPointer& ref)
+		{
+			return (fPtr == ref.ptr);
+		}
+
+		const Server* operator->()
+		{
+			return ptr;
+		}
+};
+
+Q_DECLARE_METATYPE(ServerPointer)
 
 #endif /* __SERVER_H__ */
