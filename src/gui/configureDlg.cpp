@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QStandardItemModel>
 #include <QStandardItem>
+#include <QTreeView>
 #include <QAbstractButton>
 
 ConfigureDlg::ConfigureDlg(Config* mainCfg, QWidget* parent) : QDialog(parent)
@@ -11,6 +12,8 @@ ConfigureDlg::ConfigureDlg(Config* mainCfg, QWidget* parent) : QDialog(parent)
 	mainConfig->readConfig();
 	setupUi(this);
 	initOptionsList();
+
+	tvOptionsList->setHeaderHidden(true);
 
 	currentlyDisplayedCfgBox = NULL;
 	connect(tvOptionsList, SIGNAL( clicked(const QModelIndex&) ), this, SLOT( optionListClicked(const QModelIndex&) ) );
