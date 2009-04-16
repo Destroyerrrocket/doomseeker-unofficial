@@ -1,8 +1,12 @@
 #ifndef __SERVERLIST_H_
 #define __SERVERLIST_H_
 
+#include "server.h"
+
 #include <QObject>
 #include <QString>
+#include <QTableView>
+#include <QStandardItem>
 
 #define HOW_MANY_SERVERLIST_COLUMNS 8
 
@@ -17,6 +21,9 @@ class SLCHandler : public QObject
 	Q_OBJECT
 
 	public:
+		SLCHandler(QTableView*);
+		~SLCHandler();
+
 		static ServerListColumn columns[];
 
 		enum ColumnId
@@ -36,6 +43,20 @@ class SLCHandler : public QObject
 			// Pointer to the server structure is always stored in the first column
 			SLDT_POINTER_TO_SERVER_STRUCTURE = Qt::UserRole+1
 		};
+
+	public slots:
+		void serverUpdated(const Server *server);
+
+	private:
+		QTableView* table;
+
+		void prepareServerTable();
+		QModelIndex findServerOnTheList(const Server* server);
+		void addServer(const Server* server);
+		void updateServer(const QModelIndex&, const Server* server);
+		const Server* serverFromList(int rowNum) const;
+        const Server* serverFromList(const QModelIndex&) const;
+        const Server* serverFromList(const QStandardItem*) const;
 };
 
 #endif

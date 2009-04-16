@@ -3,6 +3,7 @@
 
 #include "main.h"
 #include "sdeapi/config.hpp"
+#include "gui/serverlist.h"
 #include "ui_mainwindow.h"
 
 #include <QString>
@@ -17,22 +18,15 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		~MainWindow();
 
 	public slots:
-		void serverUpdated(const Server *server);
 		void refresh();
 		void menuOptionsConfigure();
 
 	private:
-		//QMutex		serverTableMutex;
+		SLCHandler*			serverTableHandler;
 		Config* 			config;
 		Tester* 			tester;
 
-		void prepareServerTable();
-		QModelIndex findServerOnTheList(const Server* server);
-		void addServer(const Server* server);
-		void updateServer(const QModelIndex&, const Server* server);
-		const Server* serverFromList(int rowNum) const;
-        const Server* serverFromList(const QModelIndex&) const;
-        const Server* serverFromList(const QStandardItem*) const;
+
 };
 
 #endif
