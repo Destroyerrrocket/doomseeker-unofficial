@@ -38,19 +38,23 @@ void MainWindow::prepareServerTable()
 	model->setHorizontalHeaderLabels(labels);
 
 	tableServers->setModel(model);
+
+	// Now set column widths
+	for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
+	{
+		tableServers->setColumnWidth(i, SLCHandler::columns[i].width);
+	}
 }
 /////////////////////////////////////////////////////////
 QModelIndex MainWindow::findServerOnTheList(const Server* server)
 {
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(tableServers->model());
-
 	if (server != NULL)
 	{
+	    QStandardItemModel* model = static_cast<QStandardItemModel*>(tableServers->model());
 		for (int i = 0; i < model->rowCount(); ++i)
 		{
 			QStandardItem* item = model->item(i);
-			QVariant pointer = qVariantFromValue(item->data(SLCHandler::SLDT_POINTER_TO_SERVER_STRUCTURE));
-			ServerPointer savedServ = qVariantValue<ServerPointer>(pointer);
+			const Server* savedServ = serverFromList(item);
 			if (server == savedServ)
 			{
 				QModelIndex index = model->indexFromItem(item);
@@ -108,6 +112,33 @@ void MainWindow::addServer(const Server* server)
 void MainWindow::updateServer(const QModelIndex&, const Server* server)
 {
 
+}
+
+const Server* MainWindow::serverFromList(int rowNum) const
+{
+    QStandardItemModel* model = static_cast<QStandardItemModel*>(tableServers->model());
+
+    QStandardItem* item = model->item(rowNum);
+    return serverFromList(item);
+}
+
+const Server* MainWindow::serverFromList(const QModelIndex& index) const
+{
+    QStandardItemModel* model = static_cast<QStandardItemModel*>(tableServers->model());
+
+    QStandardItem* item = model->item(index.row());
+    return serverFromList(item);
+}
+
+const Server* MainWindow::serverFromList(const QStandardItem* item) const
+{
+    QVariant pointer = qVariantFromValue(item->data(SLCHandler::SLDT_POINTER_TO_SERVER_STRUCTURE));
+    if (!pointer.isValid())
+    {
+        return NULL;
+    }
+    ServerPointer savedServ = qVariantValue<ServerPointer>(pointer);
+    return savedServ.ptr;
 }
 /////////////////////////////////////////////////////////
 // Slots

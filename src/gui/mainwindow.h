@@ -6,6 +6,7 @@
 #include "ui_mainwindow.h"
 
 #include <QString>
+#include <QStandardItem>
 
 class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 {
@@ -29,6 +30,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		QModelIndex findServerOnTheList(const Server* server);
 		void addServer(const Server* server);
 		void updateServer(const QModelIndex&, const Server* server);
+		const Server* serverFromList(int rowNum) const;
+        const Server* serverFromList(const QModelIndex&) const;
+        const Server* serverFromList(const QStandardItem*) const;
 };
 
 #endif

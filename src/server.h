@@ -179,14 +179,14 @@ class Server::Refresher : public QThread, public QRunnable
 class ServerPointer
 {
 	private:
-		const Server* ptr;
-
 		void copy(const ServerPointer& copyin)
 		{
 			ptr = copyin.ptr;
 		}
 
 	public:
+        const Server* ptr;
+
 		ServerPointer() {}
 		ServerPointer(const Server* s)
 		{
