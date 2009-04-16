@@ -83,7 +83,10 @@ void SLCHandler::prepareServerTable()
 	}
 
 	// We don't really need a vertical header so lets remove it
-	//table->verticalHeader()->hide();
+	table->verticalHeader()->hide();
+	// Also some other flags that can't be set from the Designer
+	table->horizontalHeader()->setSortIndicatorShown(true);
+	table->horizontalHeader()->setHighlightSections(false);
 
 	QHeaderView* header = table->horizontalHeader();
 	connect(header, SIGNAL( sectionClicked(int) ), this, SLOT ( columnHeaderClicked(int) ) );
