@@ -22,9 +22,9 @@ ConfigureDlg::ConfigureDlg(Config* mainCfg, QWidget* parent) : QDialog(parent)
 
 ConfigureDlg::~ConfigureDlg()
 {
-	for(int i = 0; i < engineConfigList.count(); ++i)
+	for(int i = 0; i < configBoxesList.count(); ++i)
 	{
-		delete engineConfigList[i];
+		delete configBoxesList[i];
 	}
 }
 /////////////////////////////////////////////////////////
@@ -48,15 +48,43 @@ void ConfigureDlg::saveSettings()
 {
 	qDebug() << "Saving settings:";
 	// Iterate through every engine and execute it's saving method
-	for (int i = 0; i < engineConfigList.count(); ++i)
+	for (int i = 0; i < configBoxesList.count(); ++i)
 	{
-		qDebug() << "Engine:" << engineConfigList[i]->engineName;
-		engineConfigList[i]->confBox->saveSettings();
+		qDebug() << "Box:" << configBoxesList[i]->boxName;
+		configBoxesList[i]->confBox->saveSettings();
 	}
 	mainConfig->saveConfig();
 	qDebug() << "Saving completed!";
 }
 /////////////////////////////////////////////////////////
+
+bool ConfigureDlg::addConfigurationBox(QStandardItem* rootItem, ConfigurationBoxInfo* cfgBox, int pos)
+{
+	if (cfgBox == NULL || cfgBox->confBox == NULL || cfgBox->boxName.isEmpty() || cfgBox->itemOnTheList != NULL)
+	{
+		return false;
+	}
+
+	QStandardItem* item = new QStandardItem(cfgBox->boxName);
+	cfgBox->itemOnTheList = item;
+	if (rootItem == NULL)
+	{
+		QStandardItemModel* model = (QStandardItemModel*)tvOptionsList->model();
+		rootItem = model->invisibleRootItem();
+	}
+
+	if (pos < 0)
+	{
+		rootItem->appendRow(item);
+	}
+	else
+	{
+		rootItem->insertRow(pos, item);
+	}
+
+	configBoxesList.push_back(cfgBox);
+	return true;
+}
 // This will hide currently displayed box if NULL is passed
 // as w argument.
 void ConfigureDlg::showConfigurationBox(QWidget* w)
@@ -74,12 +102,12 @@ void ConfigureDlg::showConfigurationBox(QWidget* w)
 	}
 }
 
-EngineConfiguration* ConfigureDlg::findEngineConfiguration(const QStandardItem* item)
+ConfigurationBoxInfo* ConfigureDlg::findConfigurationBoxInfo(const QStandardItem* item)
 {
 	// Cycle through known engines
-	for(int i = 0; i < engineConfigList.count(); ++i)
+	for(int i = 0; i < configBoxesList.count(); ++i)
 	{
-		EngineConfiguration* ec = engineConfigList[i];
+		ConfigurationBoxInfo* ec = configBoxesList[i];
 		if (item == ec->itemOnTheList && ec->confBox != NULL)
 		{
 			return ec;
@@ -88,36 +116,14 @@ EngineConfiguration* ConfigureDlg::findEngineConfiguration(const QStandardItem* 
 
 	return NULL;
 }
-
-// Returns true if item is a child of Engines root item
-bool ConfigureDlg::isEngineConfiguration(const QStandardItem* item)
+/////////////////////////////////////////////////////////
+bool ConfigureDlg::addEngineConfiguration(ConfigurationBoxInfo* cfgBox)
 {
-	QStandardItem* parent = item->parent();
-
-	while (parent != NULL)
+	if (enginesRoot != NULL)
 	{
-		if (parent == enginesRoot)
-		{
-			return true;
-		}
-		parent = parent->parent();
+		return addConfigurationBox(enginesRoot, cfgBox);
 	}
 	return false;
-}
-/////////////////////////////////////////////////////////
-void ConfigureDlg::addEngineConfiguration(EngineConfiguration* ec)
-{
-	if (ec != NULL)
-	{
-		QStandardItemModel* model = (QStandardItemModel*)tvOptionsList->model();
-		QStandardItem* item = new QStandardItem(ec->engineName);
-
-		enginesRoot->appendRow(item);
-
-		ec->confBox->setAttribute(Qt::WA_DeleteOnClose, true);
-		ec->itemOnTheList = item;
-		engineConfigList.push_back(ec);
-	}
 }
 /////////////////////////////////////////////////////////
 void ConfigureDlg::optionListClicked(const QModelIndex& index)
@@ -132,20 +138,14 @@ void ConfigureDlg::optionListClicked(const QModelIndex& index)
 		return;
 	}
 
-	QWidget* newWidget = NULL;
-
-	if (isEngineConfiguration(item))
-	{
-		EngineConfiguration *ec = findEngineConfiguration(item);
-		ec->confBox->readSettings();
-		newWidget = ec->confBox;
-	}
+	ConfigurationBoxInfo *cfgBox = findConfigurationBoxInfo(item);
 
 	// Something with sense was selected, display this something
 	// and hide previous box.
-	if (newWidget != NULL)
+	if (cfgBox != NULL && cfgBox->confBox != NULL)
 	{
-		showConfigurationBox(newWidget);
+		cfgBox->confBox->readSettings();
+		showConfigurationBox(cfgBox->confBox);
 	}
 }
 

@@ -31,7 +31,7 @@
 #include "server.h"
 
 /**
- * Abstract class base for all MasterClients.  This is expected to fetch a list 
+ * Abstract class base for all MasterClients.  This is expected to fetch a list
  * of IP addresses which will be turned into Servers.
  */
 class MasterClient : public QObject
@@ -46,7 +46,7 @@ class MasterClient : public QObject
 
 	public slots:
 		/**
-		 * Requests an updated server list from the master, this should emit 
+		 * Requests an updated server list from the master, this should emit
 		 * listUpdated if the list has changed.
 		 */
 		virtual void	refresh()=0;
@@ -64,7 +64,7 @@ class MasterClient : public QObject
 		 */
 		void			notifyBanned();
 		/**
-		 * Tells the user that the master server will not respond to their 
+		 * Tells the user that the master server will not respond to their
 		 * query becuase they tried to refresh too quickly.
 		 */
 		void			notifyDelay();

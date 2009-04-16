@@ -18,8 +18,6 @@ SLCHandler::SLCHandler(QTableView* tab)
 {
 	table = tab;
 	prepareServerTable();
-
-
 }
 
 SLCHandler::~SLCHandler()

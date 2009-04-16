@@ -8,18 +8,12 @@ EngineSkulltagConfigBox::EngineSkulltagConfigBox(Config* cfg, QWidget* parent) :
 	connect(btnBrowseBinary, SIGNAL( clicked() ), this, SLOT ( btnBrowseBinaryClicked() ));
 }
 ///////////////////////////////////////////////////
-EngineConfiguration* EngineSkulltagConfigBox::createStructure(Config* cfg, QWidget* parent)
+ConfigurationBoxInfo* EngineSkulltagConfigBox::createStructure(Config* cfg, QWidget* parent)
 {
-	EngineConfiguration* ec = new EngineConfiguration();
+	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
 	ec->confBox = new EngineSkulltagConfigBox(cfg, parent);
-	ec->engineName = "SkullTag";
+	ec->boxName = "SkullTag";
 	return ec;
-}
-///////////////////////////////////////////////////
-void EngineSkulltagConfigBox::resizeEvent(QResizeEvent* event)
-{
-	// something to keep controls nicely placed
-	// will be put here in the future
 }
 ///////////////////////////////////////////////////
 void EngineSkulltagConfigBox::readSettings()

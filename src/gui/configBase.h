@@ -6,26 +6,6 @@
 #include <QStandardItem>
 
 
-class ConfigurationBaseBox;
-
-// Contains config info for
-// particular engine
-struct EngineConfiguration
-{
-	public:
-		// Name displayed on the engines list.
-		QString 					engineName;
-
-		// Index, used by ConfigureDlg class to find
-
-		QStandardItem*				itemOnTheList;
-
-		// This widget receives WA_DeteleOnClose flag
-		// once this structure is passed to
-		// ConfigureDlg::addEngineConfiguration()
-		ConfigurationBaseBox*	confBox;
-};
-
 // Base class for configuration group boxes.
 // This is the thing selected from the tree view on the left
 // of configuration dialog.
@@ -51,5 +31,34 @@ class ConfigurationBaseBox : public QGroupBox
 		virtual void saveSettings()=0;
 
 };
+
+// Contains config info for
+// particular config box
+struct ConfigurationBoxInfo
+{
+	public:
+		ConfigurationBoxInfo()
+		{
+			confBox = NULL;
+			itemOnTheList = NULL;
+		}
+
+		~ConfigurationBoxInfo()
+		{
+			if (confBox != NULL)
+			{
+				delete confBox;
+			}
+		}
+		// Name displayed on the engines list.
+		QString 					boxName;
+
+		// Index, used by ConfigureDlg class to find.
+		QStandardItem*				itemOnTheList;
+
+		ConfigurationBaseBox*	confBox;
+};
+
+
 
 #endif

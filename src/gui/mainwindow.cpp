@@ -68,7 +68,7 @@ void MainWindow::menuOptionsConfigure()
 {
 	ConfigureDlg dlg(config, this);
 
-	EngineConfiguration* ec = EngineSkulltagConfigBox::createStructure(config, &dlg);
+	ConfigurationBoxInfo* ec = EngineSkulltagConfigBox::createStructure(config, &dlg);
 	dlg.addEngineConfiguration(ec);
 
 	dlg.exec();

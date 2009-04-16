@@ -16,22 +16,32 @@ class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 		QStandardItem*					hider;
 
 		QStandardItem*					enginesRoot;
-		QList<EngineConfiguration*>		engineConfigList;
+		QList<ConfigurationBoxInfo*>	configBoxesList;
 		QWidget*						currentlyDisplayedCfgBox;
 
 		void 		initOptionsList();
 		void		saveSettings();
 
+		/**
+		 * Passing NULL as rootItem will add the item to the tree view's root.
+		 * Passing <0 to pos parameter will use appendRow method.
+		 *
+		 * Will return false and do nothing
+		 * if the ConfigurationBoxInfo is not properly filled
+		 * or if itemOnTheList member is not NULL.
+		 */
+		bool 					addConfigurationBox(QStandardItem* rootItem, ConfigurationBoxInfo*, int pos = -1);
+
 		void 					showConfigurationBox(QWidget*);
-		EngineConfiguration*	findEngineConfiguration(const QStandardItem*);
-		bool					isEngineConfiguration(const QStandardItem*);
+		ConfigurationBoxInfo*	findConfigurationBoxInfo(const QStandardItem*);
+
 
 
 	public:
 		ConfigureDlg(Config* mainCfg, QWidget* parent = NULL);
 		~ConfigureDlg();
 
-		void addEngineConfiguration(EngineConfiguration*);
+		bool addEngineConfiguration(ConfigurationBoxInfo*);
 
 	public slots:
 		void optionListClicked(const QModelIndex&);

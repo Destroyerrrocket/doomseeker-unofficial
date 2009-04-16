@@ -11,11 +11,8 @@ class EngineSkulltagConfigBox : public ConfigurationBaseBox, private Ui::EngineS
 	private:
 		EngineSkulltagConfigBox(Config* cfg, QWidget* parent = NULL);
 
-	protected:
-		void resizeEvent(QResizeEvent* event);
-
 	public:
-		static EngineConfiguration* createStructure(Config* cfg, QWidget* parent = NULL);
+		static ConfigurationBoxInfo* createStructure(Config* cfg, QWidget* parent = NULL);
 
 		void readSettings();
 		void saveSettings();
