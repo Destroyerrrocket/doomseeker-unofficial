@@ -4,6 +4,7 @@
 #include "gui/configureDlg.h"
 #include "gui/engineSkulltagConfig.h"
 #include <QPointer>
+#include <QHeaderView>
 
 MainWindow::MainWindow(int argc, char** argv)
 {

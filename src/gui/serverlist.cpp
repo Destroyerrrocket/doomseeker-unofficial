@@ -82,6 +82,9 @@ void SLCHandler::prepareServerTable()
 		table->setColumnWidth(i, columns[i].width);
 	}
 
+	// We don't really need a vertical header so lets remove it
+	table->verticalHeader()->hide();
+
 	QHeaderView* header = table->horizontalHeader();
 	connect(header, SIGNAL( sectionClicked(int) ), this, SLOT ( columnHeaderClicked(int) ) );
 
@@ -156,6 +159,9 @@ void SLCHandler::addServer(const Server* server)
 	columns.append(item);
 
 	model->appendRow(columns);
+
+	// Compress row size.
+	table->resizeRowToContents(model->indexFromItem(columns[0]).row());
 }
 
 void SLCHandler::updateServer(const QModelIndex&, const Server* server)
