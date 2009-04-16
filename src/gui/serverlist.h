@@ -24,6 +24,8 @@ class SLCHandler : public QObject
 		SLCHandler(QTableView*);
 		~SLCHandler();
 
+		void clearTable();
+
 		static ServerListColumn columns[];
 
 		enum ColumnId
@@ -41,14 +43,26 @@ class SLCHandler : public QObject
 		enum ServerListDataTypes
 		{
 			// Pointer to the server structure is always stored in the first column
-			SLDT_POINTER_TO_SERVER_STRUCTURE = Qt::UserRole+1
+			SLDT_POINTER_TO_SERVER_STRUCTURE = Qt::UserRole+1,
+			SLDT_SORT						 = Qt::UserRole+2
 		};
 
 	public slots:
 		void serverUpdated(const Server *server);
 
-	private:
+	protected slots:
+		// Handles column sorting.
+		void columnHeaderClicked(int);
+
+	protected:
 		QTableView* table;
+
+		Qt::SortOrder 	sortOrder;
+		int				sortIndex;
+
+		void fillItem(QStandardItem*, const QString&);
+		void fillItem(QStandardItem*, int);
+		void fillItem(QStandardItem*, const QHostAddress&);
 
 		void prepareServerTable();
 		QModelIndex findServerOnTheList(const Server* server);

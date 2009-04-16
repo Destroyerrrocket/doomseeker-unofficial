@@ -25,8 +25,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		SLCHandler*			serverTableHandler;
 		Config* 			config;
 		Tester* 			tester;
-
-
 };
 
 #endif

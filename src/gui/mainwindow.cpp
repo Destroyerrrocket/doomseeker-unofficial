@@ -26,11 +26,7 @@ MainWindow::~MainWindow()
 	delete config;
 }
 /////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////
 // Slots
-
-
 void MainWindow::refresh()
 {
 	SkulltagMasterClient mc(QHostAddress("91.121.87.67"), 15300);
@@ -41,8 +37,7 @@ void MainWindow::refresh()
 		return;
 	}
 
-	int rowCount = tableServers->model()->rowCount();
-	tableServers->model()->removeRows(1, rowCount - 1);
+	serverTableHandler->clearTable();
 
 	for(int i = 0;i < mc.numServers();i++)
 	{
