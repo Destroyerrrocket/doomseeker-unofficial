@@ -75,15 +75,25 @@ void Server::operator= (const Server &other)
 	serverName = other.name();
 	serverScoreLimit = other.scoreLimit();
 }
+
+const QThreadPool &Server::refresherThreadPool()
+{
+	return Server::Refresher::threadPool;
+}
 ////////////////////////////////////////////////////////////////////////////////
+
+QThreadPool Server::Refresher::threadPool;
+
 void Server::refresh()
 {
 	Refresher* r = new Refresher(this);
-	QThreadPool::globalInstance()->start(r);
+	Refresher::threadPool.start(r);
 }
 
 Server::Refresher::Refresher(Server* p) : parent(p)
 {
+	if(threadPool.maxThreadCount() != 50)
+		threadPool.setMaxThreadCount(50);
 }
 
 void Server::Refresher::run()

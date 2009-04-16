@@ -28,6 +28,16 @@ MainWindow::~MainWindow()
 }
 /////////////////////////////////////////////////////////
 // Slots
+
+void MainWindow::checkRefreshFinished()
+{
+	// Probably not the best solution to the problem for now it will do.
+	// Once we can get a progress bar in it would probably work better to be
+	// attached to whenever that reaches 100%.
+	if(Server::refresherThreadPool().activeThreadCount() <= Server::refresherThreadPool().maxThreadCount()/4)
+		btnRefresh->setEnabled(true);
+}
+
 void MainWindow::refresh()
 {
 	SkulltagMasterClient mc(QHostAddress("91.121.87.67"), 15300);
@@ -46,8 +56,12 @@ void MainWindow::refresh()
 		Qt::ConnectionType conType = Qt::DirectConnection;
 		//QObject::connect(mc[i], SIGNAL(updated(const Server *)), tester, SLOT(serverUpdated(const Server *)), conType);
 		QObject::connect(mc[i], SIGNAL(updated(const Server *)), serverTableHandler, SLOT(serverUpdated(const Server *)) );
+		QObject::connect(mc[i], SIGNAL(updated(const Server *)), this, SLOT(checkRefreshFinished()));
 		mc[i]->refresh();
 	}
+
+	// disable refresh.
+	btnRefresh->setEnabled(false);
 }
 
 void MainWindow::menuOptionsConfigure()

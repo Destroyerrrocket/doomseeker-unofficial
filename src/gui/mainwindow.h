@@ -18,6 +18,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		~MainWindow();
 
 	public slots:
+		void checkRefreshFinished();
 		void refresh();
 		void menuOptionsConfigure();
 

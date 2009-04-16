@@ -7,8 +7,6 @@
 
 int main(int argc, char* argv[])
 {
-	QThreadPool::globalInstance()->setMaxThreadCount(50);
-
 	QApplication app(argc, argv);
 
 	MainWindow* mw = new MainWindow(argc, argv);

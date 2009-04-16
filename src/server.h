@@ -125,6 +125,11 @@ class Server : public QObject
 		void				operator= (const Server &other);
 		virtual void		doRefresh()=0;
 
+		/**
+		 * Returns the thread pool of the refresher.
+		 */
+		static const QThreadPool	&refresherThreadPool();
+
 	public slots:
 		/**
 		 * Updates the server data.
@@ -169,7 +174,12 @@ class Server : public QObject
 class Server::Refresher : public QThread, public QRunnable
 {
 	private:
-		Server* parent;
+		Server*				parent;
+
+	protected:
+		static QThreadPool	threadPool;
+
+		friend class Server;
 
 	public:
 		Refresher(Server* p);
