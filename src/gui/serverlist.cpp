@@ -180,93 +180,121 @@ void SLHandler::setRefreshing(int row)
 {
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
 	QStandardItem* item = model->item(row, SLCID_SERVERNAME);
-	item->setText("<REFRESHING>");
+	item->setText(tr("<REFRESHING>"));
 }
 //////////////////////////////////////////////////////////////
 QString SLHandler::createPlayersToolTip(const Server* server) const
 {
+	const QString timelimit = tr("Timelimit");
+	const QString scorelimit = tr("Scorelimit");
+	const QString unlimited = tr("Unlimited");
+	const QString players = tr("Players");
+
 	QString ret;
 
+
 	// Timelimit
-	ret = "<p style='font-family: Courier; white-space: pre'>";
-	ret += "Timelimit:\t";
-	if (server->timeLimit() != 0)
-	{
-		ret += QString::number(server->timeLimit()) + " (" + QString::number(server->timeLeft()) + " left)";
-	}
-	else
-	{
-		ret += "unlimited";
-	}
-	ret += "\n";
+    QString firstTableTimelimit = "<TR><TD>" + timelimit + ":&nbsp;</TD><TD>%1 %2</TD></TR>";
+    if (server->timeLimit() == 0)
+    {
+    	firstTableTimelimit = firstTableTimelimit.arg(unlimited, "");
+    }
+    else
+    {
+		QString strLeft = tr("(%1 left)").arg(server->timeLeft());
+		firstTableTimelimit = firstTableTimelimit.arg(server->timeLimit()).arg(strLeft);
+    }
 
 	// Scorelimit
-	ret += "Scorelimit:\t";
-	if (server->scoreLimit() != 0)
+	QString firstTableScorelimit = "<TR><TD>" + scorelimit + ":&nbsp;</TD><TD>%1</TD></TR>";
+	if (server->scoreLimit() == 0)
 	{
-		ret += QString::number(server->scoreLimit());
+		firstTableScorelimit = firstTableScorelimit.arg(unlimited);
 	}
 	else
 	{
-		ret += "unlimited";
+		firstTableScorelimit = firstTableScorelimit.arg(server->scoreLimit());
 	}
-	ret += "\n";
 
-	// Team scores
+	// Team score
+	QString firstTableTeamscore;
 	if (server->gameMode().isTeamGame())
 	{
+		firstTableTeamscore = "<TR><TD COLSPAN=2>%1</TD></TR>";
+		QString teams;
 		bool bPrependBar = false;
 		for (int i = 0; i < MAX_TEAMS; ++i)
 		{
 			if (server->teamPlayerCount(i) != 0)
 			{
 				if (bPrependBar)
-					ret += " | ";
-				ret += Player::teamName(i) + ": " + QString::number(server->score(i));
+					teams += " | ";
+				teams += Player::teamName(i) + ": " + QString::number(server->score(i));
 				bPrependBar = true;
 			}
 		}
-		ret += "\n";
+		firstTableTeamscore = firstTableTeamscore.arg(teams);
 	}
 
-	// Player number
-	ret += "Players: " + QString::number(server->numPlayers()) + "/" + QString::number(server->maximumClients()) + "\n";
-	ret += "\n";
+	// Players
+	QString firstTablePlayers = "<TR><TD>" + players + ":&nbsp;</TD><TD>%1 / %2</TD></TR>";
+	firstTablePlayers = firstTablePlayers.arg(server->numPlayers()).arg(server->maximumClients());
+
+	QString firstTable = "<TABLE>";
+	firstTable += firstTableTimelimit;
+	firstTable += firstTableScorelimit;
+	firstTable += firstTableTeamscore;
+	firstTable += firstTablePlayers;
+	firstTable += "</TABLE>";
+	// END OF FIRST TABLE
+
+
 
 	// Player table
-	unsigned int longestPlayerName = server->longestPlayerName();
-	unsigned int tabNum = longestPlayerName / TAB_WIDTH;
-	if (longestPlayerName % TAB_WIDTH != 0)
-		++tabNum;
+	const QString team = tr("Team");
+	const QString player = tr("Player");
+	const QString score = tr("Score");
+	const QString ping = tr("Ping");
+	const QString status = tr("Status");
 
-	QString tabs = QString(tabNum, '\t');
-	QString plTab;
+	QString plTabTeamHeader;
+	QString plTabHeader = "<TR>";
+	int plTabColNum = 4;
 	if (server->gameMode().isTeamGame())
 	{
-		plTab = "Team\tPlayer" + tabs + "Points\tPing\tStatus\n";
+		plTabColNum = 5;
+		plTabTeamHeader = "<TD>" + team + "</TD>";
 	}
-	else
-	{
-		plTab = "Player" + tabs + "Points\tPing\tStatus\n";
-	}
+	plTabHeader += plTabTeamHeader + "<TD>" + player + "</TD><TD>" + score + "</TD><TD>" + ping + "</TD><TD>" + status + "</TD></TR>";
+	plTabHeader += QString("<TR><TD COLSPAN=%1><HR WIDTH=100%></TD></TR>").arg(plTabColNum);
 
-	plTab += QString(plTab.length(), '-');
-	plTab += "\n";
-
+	QString plTabPlayers;
 	for (int i = 0; i < server->numPlayers(); ++i)
 	{
 		const Player& p = server->player(i);
-		QString strPlayer;
+
+		QString strPlayer = "<TR>";
 		if (server->gameMode().isTeamGame())
 		{
-			strPlayer += p.teamName() + "\t";
+			strPlayer += QString("<TD>%1</TD>").arg(p.teamName());
 		}
-		strPlayer += p.nameFormatted() + tabs + QString::number(p.score()) + "\t" + QString::number(p.ping()) + "\t" + "\n";
+		strPlayer += "<TD>%1</TD><TD ALIGN=right>%2</TD><TD ALIGN=right>%3</TD><TD>%4</TD></TR>";
+		strPlayer = strPlayer.arg(p.nameFormatted()).arg(p.score()).arg(p.ping());
+		strPlayer = strPlayer.arg("STATUS");
 
-		plTab += strPlayer;
+		plTabPlayers += strPlayer;
 	}
 
+	QString plTab = "<TABLE CELLSPACING=5>";
+	plTab += plTabHeader;
+	plTab += plTabPlayers;
+	plTab += "</TABLE>";
 
+	if (server->gameMode().isTeamGame())
+		printf("%s\n", plTab.toAscii().constData());
+
+	ret = "<p style='white-space: pre'>";
+	ret += firstTable;
 	ret += plTab;
 	ret += "</p>";
 	return ret;

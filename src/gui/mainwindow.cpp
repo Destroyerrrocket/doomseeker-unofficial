@@ -28,7 +28,6 @@ MainWindow::~MainWindow()
 }
 /////////////////////////////////////////////////////////
 // Slots
-
 void MainWindow::checkRefreshFinished()
 {
 	btnRefresh->setEnabled(true);

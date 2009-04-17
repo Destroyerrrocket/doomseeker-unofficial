@@ -55,7 +55,7 @@ struct Player
 		Player(const QString &name, unsigned short score, unsigned short ping, PlayerTeam team=TEAM_NONE, bool spectator=false, bool bot=false);
 
 		const QString	&name() const { return playerName; }
-		unsigned short	score() const { return currentScore; }
+		short			score() const { return currentScore; }
 		unsigned short	ping() const { return currentPing; }
 		bool			isSpectating() const { return spectator; }
 		bool			isBot() const { return bot; }
@@ -80,7 +80,7 @@ struct Player
 		static QString	teamNames[];
 
 		QString			playerName;
-		unsigned short	currentScore;
+		short			currentScore;
 		unsigned short	currentPing;
 		bool			spectator;
 		bool			bot;
@@ -171,7 +171,7 @@ class Server : public QObject
 
 	signals:
 		/**
-		 * Emitted when a refresh has been completed.  Be sure to check the 
+		 * Emitted when a refresh has been completed.  Be sure to check the
 		 * response to see if anything has actually changed.
 		 * @see Response
 		 */
