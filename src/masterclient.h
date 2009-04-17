@@ -40,6 +40,7 @@ class MasterClient : public QObject
 
 	public:
 		MasterClient(QHostAddress address, unsigned short port);
+		virtual ~MasterClient();
 
 		int				numServers() const { return servers.size(); }
 		Server			*operator[] (int index) const { return servers[index]; }

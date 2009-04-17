@@ -76,27 +76,48 @@ void Server::operator= (const Server &other)
 	serverScoreLimit = other.scoreLimit();
 }
 
-const QThreadPool &Server::refresherThreadPool()
-{
-	return Server::Refresher::threadPool;
-}
 ////////////////////////////////////////////////////////////////////////////////
 
-QThreadPool Server::Refresher::threadPool;
+QThreadPool ServerRefresher::threadPool;
+QThreadPool	ServerRefresher::guardianThreadPool;
+QMutex ServerRefresher::guardianMutex;
+bool ServerRefresher::bGuardianExists = false;
 
 void Server::refresh()
 {
-	Refresher* r = new Refresher(this);
-	Refresher::threadPool.start(r);
+	ServerRefresher* r = new ServerRefresher(this);
+	ServerRefresher::threadPool.start(r);
 }
 
-Server::Refresher::Refresher(Server* p) : parent(p)
+ServerRefresher::ServerRefresher(Server* p) : parent(p)
 {
+	bGuardian = false;
 	if(threadPool.maxThreadCount() != 50)
 		threadPool.setMaxThreadCount(50);
 }
 
-void Server::Refresher::run()
+void ServerRefresher::startGuardian()
 {
-  parent->doRefresh();
+	guardianMutex.lock();
+	if (!bGuardianExists)
+	{
+		bGuardianExists = true;
+		bGuardian = true;
+		guardianThreadPool.start(this);
+	}
+	guardianMutex.unlock();
+}
+
+void ServerRefresher::run()
+{
+	if (!bGuardian)
+	{
+		parent->doRefresh();
+	}
+	else
+	{
+		threadPool.waitForDone();
+		emit allServersRefreshed();
+		bGuardianExists = false;
+	}
 }

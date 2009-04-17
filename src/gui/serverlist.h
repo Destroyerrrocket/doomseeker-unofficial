@@ -7,6 +7,7 @@
 #include <QString>
 #include <QTableView>
 #include <QStandardItem>
+#include "masterclient.h"
 
 #define HOW_MANY_SERVERLIST_COLUMNS 8
 
@@ -16,13 +17,13 @@ struct ServerListColumn
 	int			width;
 };
 
-class SLCHandler : public QObject
+class SLHandler : public QObject
 {
 	Q_OBJECT
 
 	public:
-		SLCHandler(QTableView*);
-		~SLCHandler();
+		SLHandler(QTableView*);
+		~SLHandler();
 
 		void clearTable();
 
@@ -47,6 +48,8 @@ class SLCHandler : public QObject
 			SLDT_SORT						 = Qt::UserRole+2
 		};
 
+		void setMaster(MasterClient*);
+
 	public slots:
 		void serverUpdated(const Server *server);
 
@@ -55,7 +58,8 @@ class SLCHandler : public QObject
 		void columnHeaderClicked(int);
 
 	protected:
-		QTableView* table;
+		QTableView* 	table;
+		MasterClient*	master;
 
 		Qt::SortOrder 	sortOrder;
 		int				sortIndex;

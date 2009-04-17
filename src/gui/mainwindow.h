@@ -19,11 +19,11 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 	public slots:
 		void checkRefreshFinished();
-		void refresh();
+		void btnRefresh_Click();
 		void menuOptionsConfigure();
 
 	private:
-		SLCHandler*			serverTableHandler;
+		SLHandler*			serverTableHandler;
 		Config* 			config;
 		Tester* 			tester;
 };

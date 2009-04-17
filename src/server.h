@@ -32,6 +32,7 @@
 #include <QThread>
 #include <QRunnable>
 #include <QMetaType>
+#include <QMutex>
 
 #define MAX_TEAMS 4
 
@@ -130,6 +131,9 @@ class Server : public QObject
 		 */
 		static const QThreadPool	&refresherThreadPool();
 
+		friend class Refresher;
+		friend class ServerPointer;
+
 	public slots:
 		/**
 		 * Updates the server data.
@@ -166,24 +170,37 @@ class Server : public QObject
 		QHostAddress		serverAddress;
 		unsigned short		serverPort;
 
-		class Refresher;
-		friend class Refresher;
-		friend class ServerPointer;
+
 };
 
-class Server::Refresher : public QThread, public QRunnable
+class ServerRefresher : public QThread, public QRunnable
 {
+	Q_OBJECT
+
 	private:
+		static bool			bGuardianExists;
+		bool				bGuardian;
 		Server*				parent;
 
 	protected:
 		static QThreadPool	threadPool;
+		static QThreadPool	guardianThreadPool;
+		static QMutex		guardianMutex;
 
 		friend class Server;
 
 	public:
-		Refresher(Server* p);
+		ServerRefresher(Server* p);
+
+		/**
+		 * Creates guardian thread that emits a signal
+		 * when all servers are refreshed.
+		 */
+		void startGuardian();
 		void run();
+
+	signals:
+		void allServersRefreshed();
 };
 
 class ServerPointer

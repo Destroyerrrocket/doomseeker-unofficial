@@ -1,7 +1,8 @@
 #include "gui/serverlist.h"
 #include <QHeaderView>
+#include "skulltag/skulltagmasterclient.h"
 
-ServerListColumn SLCHandler::columns[] =
+ServerListColumn SLHandler::columns[] =
 {
 	{ tr("Players"), 60 },
 	{ tr("Ping"), 50 },
@@ -14,18 +15,22 @@ ServerListColumn SLCHandler::columns[] =
 };
 
 
-SLCHandler::SLCHandler(QTableView* tab)
+SLHandler::SLHandler(QTableView* tab)
 {
 	table = tab;
+	master = NULL;
 	prepareServerTable();
 }
 
-SLCHandler::~SLCHandler()
+SLHandler::~SLHandler()
 {
-
+	if (master != NULL)
+	{
+		delete master;
+	}
 }
 
-void SLCHandler::clearTable()
+void SLHandler::clearTable()
 {
 	if (table != NULL)
 	{
@@ -34,14 +39,14 @@ void SLCHandler::clearTable()
 	}
 }
 ////////////////////////////////////////////////////
-void SLCHandler::fillItem(QStandardItem* item, const QString& str)
+void SLHandler::fillItem(QStandardItem* item, const QString& str)
 {
 	QString newStr = str.toLower();
 	item->setData(str, Qt::DisplayRole);
 	item->setData(newStr, SLDT_SORT);
 }
 
-void SLCHandler::fillItem(QStandardItem* item, int num)
+void SLHandler::fillItem(QStandardItem* item, int num)
 {
 	QVariant var = num;
 
@@ -49,7 +54,7 @@ void SLCHandler::fillItem(QStandardItem* item, int num)
 	item->setData(var, SLDT_SORT);
 }
 
-void SLCHandler::fillItem(QStandardItem* item, const QHostAddress& addr)
+void SLHandler::fillItem(QStandardItem* item, const QHostAddress& addr)
 {
 	QVariant var = addr.toIPv4Address();
 
@@ -57,7 +62,7 @@ void SLCHandler::fillItem(QStandardItem* item, const QHostAddress& addr)
 	item->setData(var, SLDT_SORT);
 }
 ////////////////////////////////////////////////////
-void SLCHandler::prepareServerTable()
+void SLHandler::prepareServerTable()
 {
 	sortOrder = Qt::AscendingOrder;
 	sortIndex = -1;
@@ -92,7 +97,7 @@ void SLCHandler::prepareServerTable()
 	columnHeaderClicked(0);
 }
 /////////////////////////////////////////////////////////
-QModelIndex SLCHandler::findServerOnTheList(const Server* server)
+QModelIndex SLHandler::findServerOnTheList(const Server* server)
 {
 	if (server != NULL)
 	{
@@ -111,7 +116,7 @@ QModelIndex SLCHandler::findServerOnTheList(const Server* server)
 	return QModelIndex();
 }
 
-void SLCHandler::addServer(const Server* server)
+void SLHandler::addServer(const Server* server)
 {
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
 	QStandardItem* item;
@@ -165,12 +170,12 @@ void SLCHandler::addServer(const Server* server)
 	table->resizeRowToContents(model->indexFromItem(columns[0]).row());
 }
 
-void SLCHandler::updateServer(const QModelIndex&, const Server* server)
+void SLHandler::updateServer(const QModelIndex&, const Server* server)
 {
 
 }
 //////////////////////////////////////////////////////////////
-const Server* SLCHandler::serverFromList(int rowNum) const
+const Server* SLHandler::serverFromList(int rowNum) const
 {
     QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
 
@@ -178,7 +183,7 @@ const Server* SLCHandler::serverFromList(int rowNum) const
     return serverFromList(item);
 }
 
-const Server* SLCHandler::serverFromList(const QModelIndex& index) const
+const Server* SLHandler::serverFromList(const QModelIndex& index) const
 {
     QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
 
@@ -186,7 +191,7 @@ const Server* SLCHandler::serverFromList(const QModelIndex& index) const
     return serverFromList(item);
 }
 
-const Server* SLCHandler::serverFromList(const QStandardItem* item) const
+const Server* SLHandler::serverFromList(const QStandardItem* item) const
 {
     QVariant pointer = qVariantFromValue(item->data(SLDT_POINTER_TO_SERVER_STRUCTURE));
     if (!pointer.isValid())
@@ -196,9 +201,20 @@ const Server* SLCHandler::serverFromList(const QStandardItem* item) const
     ServerPointer savedServ = qVariantValue<ServerPointer>(pointer);
     return savedServ.ptr;
 }
+
+void SLHandler::setMaster(MasterClient* mc)
+{
+	if (master != NULL)
+	{
+		delete master;
+	}
+
+	clearTable();
+	master = mc;
+}
 //////////////////////////////////////////////////////////////
 // Slots
-void SLCHandler::serverUpdated(const Server *server)
+void SLHandler::serverUpdated(const Server *server)
 {
 	QModelIndex index = findServerOnTheList(server);
 	if (index.isValid())
@@ -217,7 +233,9 @@ void SLCHandler::serverUpdated(const Server *server)
 	}
 }
 
-void SLCHandler::columnHeaderClicked(int index)
+
+
+void SLHandler::columnHeaderClicked(int index)
 {
 	// if user clicked on different column than the sorting is currently set on
 	if (sortIndex != index)

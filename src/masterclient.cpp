@@ -30,6 +30,11 @@ MasterClient::MasterClient(QHostAddress address, unsigned short port) : QObject(
 {
 }
 
+MasterClient::~MasterClient()
+{
+	emptyServerList();
+}
+
 void MasterClient::emptyServerList()
 {
 	for(int i = 0;i < servers.size();i++)

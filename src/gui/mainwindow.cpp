@@ -15,9 +15,9 @@ MainWindow::MainWindow(int argc, char** argv)
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
 
-	serverTableHandler = new SLCHandler(tableServers);
+	serverTableHandler = new SLHandler(tableServers);
 
-	connect(btnRefresh, SIGNAL( clicked() ), this, SLOT( refresh() ));
+	connect(btnRefresh, SIGNAL( clicked() ), this, SLOT( btnRefresh_Click() ));
 	connect(menuActionConfigure, SIGNAL( triggered() ), this, SLOT( menuOptionsConfigure() ));
 }
 
@@ -34,31 +34,31 @@ void MainWindow::checkRefreshFinished()
 	// Probably not the best solution to the problem for now it will do.
 	// Once we can get a progress bar in it would probably work better to be
 	// attached to whenever that reaches 100%.
-	if(Server::refresherThreadPool().activeThreadCount() <= Server::refresherThreadPool().maxThreadCount()/4)
-		btnRefresh->setEnabled(true);
+	printf("ALL REFRESHED!");
+	btnRefresh->setEnabled(true);
 }
 
-void MainWindow::refresh()
+void MainWindow::btnRefresh_Click()
 {
-	SkulltagMasterClient mc(QHostAddress("91.121.87.67"), 15300);
-	mc.refresh();
+	MasterClient* mc = new SkulltagMasterClient(QHostAddress("91.121.87.67"), 15300);
+	mc->refresh();
 
-	if (mc.numServers() == 0)
+	if (mc->numServers() == 0)
 	{
 		return;
 	}
 
-	serverTableHandler->clearTable();
+	serverTableHandler->setMaster(mc);
 
-	for(int i = 0;i < mc.numServers();i++)
+	for(int i = 0;i < mc->numServers();i++)
 	{
-		//printf("%s:%d\n", mc[i]->getAddress().toString().toAscii().data(), mc[i]->getPort());
-		Qt::ConnectionType conType = Qt::DirectConnection;
-		//QObject::connect(mc[i], SIGNAL(updated(const Server *)), tester, SLOT(serverUpdated(const Server *)), conType);
-		QObject::connect(mc[i], SIGNAL(updated(const Server *)), serverTableHandler, SLOT(serverUpdated(const Server *)) );
-		QObject::connect(mc[i], SIGNAL(updated(const Server *)), this, SLOT(checkRefreshFinished()));
-		mc[i]->refresh();
+		QObject::connect((*mc)[i], SIGNAL(updated(const Server *)), serverTableHandler, SLOT(serverUpdated(const Server *)) );
+		(*mc)[i]->refresh();
 	}
+
+	ServerRefresher* guardian = new ServerRefresher(NULL);
+	connect(guardian, SIGNAL( allServersRefreshed() ), this, SLOT(checkRefreshFinished()) );
+	guardian->startGuardian();
 
 	// disable refresh.
 	btnRefresh->setEnabled(false);
