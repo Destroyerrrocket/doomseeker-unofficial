@@ -150,6 +150,7 @@ void SLHandler::updateServer(int row, Server* server)
 	item->setData(savePointer, SLDT_POINTER_TO_SERVER_STRUCTURE);
 
 	fillItem(item, server->numPlayers());
+	item->setToolTip(createPlayersToolTip(server));
 
 	item = model->item(row, SLCID_PING);
 	fillItem(item, server->ping());
@@ -180,6 +181,95 @@ void SLHandler::setRefreshing(int row)
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
 	QStandardItem* item = model->item(row, SLCID_SERVERNAME);
 	item->setText("<REFRESHING>");
+}
+//////////////////////////////////////////////////////////////
+QString SLHandler::createPlayersToolTip(const Server* server) const
+{
+	QString ret;
+
+	// Timelimit
+	ret = "<p style='font-family: Courier; white-space: pre'>";
+	ret += "Timelimit:\t";
+	if (server->timeLimit() != 0)
+	{
+		ret += QString::number(server->timeLimit()) + " (" + QString::number(server->timeLeft()) + " left)";
+	}
+	else
+	{
+		ret += "unlimited";
+	}
+	ret += "\n";
+
+	// Scorelimit
+	ret += "Scorelimit:\t";
+	if (server->scoreLimit() != 0)
+	{
+		ret += QString::number(server->scoreLimit());
+	}
+	else
+	{
+		ret += "unlimited";
+	}
+	ret += "\n";
+
+	// Team scores
+	if (server->gameMode().isTeamGame())
+	{
+		bool bPrependBar = false;
+		for (int i = 0; i < MAX_TEAMS; ++i)
+		{
+			if (server->teamPlayerCount(i) != 0)
+			{
+				if (bPrependBar)
+					ret += " | ";
+				ret += Player::teamName(i) + ": " + QString::number(server->score(i));
+				bPrependBar = true;
+			}
+		}
+		ret += "\n";
+	}
+
+	// Player number
+	ret += "Players: " + QString::number(server->numPlayers()) + "/" + QString::number(server->maximumClients()) + "\n";
+	ret += "\n";
+
+	// Player table
+	unsigned int longestPlayerName = server->longestPlayerName();
+	unsigned int tabNum = longestPlayerName / TAB_WIDTH;
+	if (longestPlayerName % TAB_WIDTH != 0)
+		++tabNum;
+
+	QString tabs = QString(tabNum, '\t');
+	QString plTab;
+	if (server->gameMode().isTeamGame())
+	{
+		plTab = "Team\tPlayer" + tabs + "Points\tPing\tStatus\n";
+	}
+	else
+	{
+		plTab = "Player" + tabs + "Points\tPing\tStatus\n";
+	}
+
+	plTab += QString(plTab.length(), '-');
+	plTab += "\n";
+
+	for (int i = 0; i < server->numPlayers(); ++i)
+	{
+		const Player& p = server->player(i);
+		QString strPlayer;
+		if (server->gameMode().isTeamGame())
+		{
+			strPlayer += p.teamName() + "\t";
+		}
+		strPlayer += p.nameFormatted() + tabs + QString::number(p.score()) + "\t" + QString::number(p.ping()) + "\t" + "\n";
+
+		plTab += strPlayer;
+	}
+
+
+	ret += plTab;
+	ret += "</p>";
+	return ret;
 }
 //////////////////////////////////////////////////////////////
 Server* SLHandler::serverFromList(int rowNum)

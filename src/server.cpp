@@ -22,10 +22,71 @@
 //------------------------------------------------------------------------------
 
 #include "server.h"
+#include <QSet>
+
+QString Player::teamNames[] = { "Blue", "Red", "Green", "Gold" };
+
 
 Player::Player(const QString &name, unsigned short score, unsigned short ping, PlayerTeam team, bool spectator, bool bot) :
 	playerName(name), currentScore(score), currentPing(ping), team(team), spectator(spectator), bot(bot)
 {
+}
+
+QString	Player::nameFormatted() const
+{
+	QString ret;
+	for (int i = 0; i < playerName.length(); ++i)
+	{
+		if (playerName[i] < 32 || playerName[i] > 126)
+		{
+			++i;
+			continue;
+		}
+
+		char c = playerName[i].toAscii();
+
+		switch (playerName[i].toAscii())
+		{
+			case '<':
+				ret += "&lt;";
+				break;
+
+			case '>':
+				ret += "&gt;";
+				break;
+
+			default:
+				ret += playerName[i];
+				break;
+		}
+	}
+
+	return ret;
+}
+
+QString Player::nameColorTagsStripped() const
+{
+	QString ret;
+	for (int i = 0; i < playerName.length(); ++i)
+	{
+		if (playerName[i] < 32 || playerName[i] > 126)
+		{
+			++i;
+			continue;
+		}
+
+		ret += playerName[i];
+		break;
+	}
+	return ret;
+}
+
+QString Player::teamName(int team)
+{
+	if (team >= MAX_TEAMS)
+		return "";
+
+	return teamNames[team];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -60,6 +121,37 @@ Server::Server(const Server &other) : QObject(), currentGameMode(GameMode::COOPE
 
 Server::~Server()
 {
+}
+
+unsigned int Server::longestPlayerName() const
+{
+	unsigned int x = 0;
+	for (int i = 0; i < numPlayers(); ++i)
+	{
+		unsigned int len = players[i].nameColorTagsStripped().length();
+		if (len > x)
+			x = len;
+	}
+	return x;
+}
+
+int Server::teamPlayerCount(int team) const
+{
+	if (team >= MAX_TEAMS)
+	{
+		return -1;
+	}
+
+	int teamSize = 0;
+	for (int i = 0; i < players.count(); ++i)
+	{
+		const Player& p = players[i];
+		if (p.teamNum() == team)
+		{
+			++teamSize;
+		}
+	}
+	return teamSize;
 }
 
 void Server::operator= (const Server &other)

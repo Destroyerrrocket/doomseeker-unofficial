@@ -59,7 +59,26 @@ struct Player
 		unsigned short	ping() const { return currentPing; }
 		bool			isSpectating() const { return spectator; }
 		bool			isBot() const { return bot; }
+		PlayerTeam		teamNum() const { return team; }
+
+		/**
+		 * Formats string into HTML format.
+		 */
+		QString			nameFormatted() const;
+
+		/**
+		 * Seeks for characters that are not from the <32; 126> range,
+		 * removes them and the characters that appear after them,
+		 * then returns new string.
+		 */
+		QString			nameColorTagsStripped() const;
+
+		QString			teamName() const { return teamName(team); }
+		static QString	teamName(int team);
+
 	protected:
+		static QString	teamNames[];
+
 		QString			playerName;
 		unsigned short	currentScore;
 		unsigned short	currentPing;
@@ -106,6 +125,7 @@ class Server : public QObject
 		const QStringList	&gameFlags() const { return dmFlags; }
 		const GameMode		&gameMode() const { return currentGameMode; }
 		bool				isLocked() const { return locked; }
+		unsigned int		longestPlayerName() const;
 		const QString		&map() const { return mapName; }
 		unsigned short		maximumClients() const { return maxPlayers > maxClients ? maxPlayers : maxClients; }
 		unsigned short		maximumPlayers() const { return maxPlayers; }
@@ -117,6 +137,7 @@ class Server : public QObject
 		unsigned short		port() const { return serverPort; }
 		unsigned int		score(int team=0) const { return scores[team]; }
 		unsigned int		scoreLimit() const { return serverScoreLimit; }
+		int					teamPlayerCount(int team) const;
 		unsigned short		timeLeft() const { return serverTimeLeft; }
 		unsigned short		timeLimit() const { return serverTimeLimit; }
 		const QString		&wad(int index) const { return wads[index]; }

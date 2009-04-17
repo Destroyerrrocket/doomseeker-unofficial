@@ -10,6 +10,7 @@
 #include "masterclient.h"
 
 #define HOW_MANY_SERVERLIST_COLUMNS 8
+#define TAB_WIDTH					8
 
 struct ServerListColumn
 {
@@ -75,6 +76,8 @@ class SLHandler : public QObject
 		void addServer(Server* server);
 		void updateServer(int row, Server* server);
 		void setRefreshing(int row);
+
+		QString createPlayersToolTip(const Server* server) const;
 
 		Server* serverFromList(int rowNum);
         Server* serverFromList(const QModelIndex&);
