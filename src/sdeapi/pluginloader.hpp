@@ -31,7 +31,7 @@
 #ifndef __PLUGINLOADER_HPP__
 #define __PLUGINLOADER_HPP__
 
-#include "sdeapi/global.hpp"
+#include <QObject>
 #include <QString>
 
 #include <vector>
@@ -45,7 +45,7 @@
 
 #endif
 
-#define MAKEID(a,b,c,d) (UInt32(a)|(UInt32(b)<<8)|(UInt32(c)<<16)|(UInt32(d)<<24))
+#define MAKEID(a,b,c,d) (quint32(a)|(quint32(b)<<8)|(quint32(c)<<16)|(quint32(d)<<24))
 /**
  * This is a struct to store information about a specific plugin.  This should
  * returned by the plugins themselves.
@@ -56,22 +56,22 @@ struct PluginInfo
 		const char*	name;
 		const char*	description;
 		const char*	author;
-		UInt8		version[4];
-		UInt32		type; ///< Use MAKEID to generate a check type.
+		quint8		version[4];
+		quint32		type; ///< Use MAKEID to generate a check type.
 };
 
 /**
  * This class handles one specific plugin.  It allows for cross-platform access
  * to the plugins.
  */
-class Plugin : public QObject
+class Plugin
 {
 	public:
 		/**
 		 * Inits a plugin.  Type is an id which it compares with any possible
 		 * plugins to confirm it is the right type.
 		 */
-		Plugin(UInt32 type, QString file);
+		Plugin(unsigned int type, QString file);
 		~Plugin();
 
 		/**
@@ -94,29 +94,29 @@ class Plugin : public QObject
 #endif
 };
 
-class PluginLoader : public QObject
+class PluginLoader
 {
 	public:
 		/**
 		 * Gathers information about plugins in a particular directory.
 		 * @param directoryLength length of the directory argument.  You do not need to supply if directory is NULL terminated.
 		 */
-		PluginLoader(UInt32 type, const char* directory, Int32 directoryLength=-1);
+		PluginLoader(unsigned int type, const char* directory, int directoryLength=-1);
 		~PluginLoader();
 
 		/**
 		 * Gets the number of loaded plugins.  It will return 0 in safe mode.
 		 */
-		const UInt32 numPlugins() const;
+		const unsigned int numPlugins() const;
 		/**
 		 * Returns the requested plugin or NULL.
 		 */
-		const Plugin* operator[] (UInt32 index) const;
+		const Plugin* operator[] (unsigned int index) const;
 
 	private:
 		void	filesInDir();
 
-		UInt32						type;
+		unsigned int				type;
 		QString						pluginsDirectory;
 		std::vector<Plugin *>		pluginsList;
 };

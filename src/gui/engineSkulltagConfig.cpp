@@ -38,7 +38,14 @@ void EngineSkulltagConfigBox::saveSettings()
 ////////////////////////////////////////////////////
 void EngineSkulltagConfigBox::btnBrowseBinaryClicked()
 {
-	QString filter = tr("Binary files (*.exe);;Any files (*)");
+	QString filter;
+#if defined(WIN32)
+	filter = tr("Binary files (*.exe);;Any files (*)");
+#else
+	// Other platforms do not have an extension for their binary files.
+	filter = tr("Any files(*)");
+#endif
 	QString strFilepath = QFileDialog::getOpenFileName(this, tr("Doomseeker - choose SkullTag binary"), QString(), filter);
-	leBinaryPath->setText(strFilepath);
+	if(!strFilepath.isEmpty()) // don't update if nothing was selected.
+		leBinaryPath->setText(strFilepath);
 }

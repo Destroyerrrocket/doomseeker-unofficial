@@ -30,7 +30,6 @@
 
 
 #include "sdeapi/pluginloader.hpp"
-#include "sdeapi/global.hpp"
 
 #include <string>
 #include <vector>
@@ -47,9 +46,7 @@
 
 using namespace std;
 
-PluginInfo test = {"Qt Interface", "Provides the standard GUI interface.", "Blzut3", {1,0,0,0}, MAKEID('I','N','T','F')};
-
-Plugin::Plugin(UInt32 type, QString f) : file(f), library(NULL)
+Plugin::Plugin(unsigned int type, QString f) : file(f), library(NULL)
 {
 	// Load the library
 	library = dlopen(file.toAscii().constData(), RTLD_NOW);
@@ -96,15 +93,15 @@ void *Plugin::function(const char* func) const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-PluginLoader::PluginLoader(UInt32 type, const char* directory, Int32 directoryLength) : type(type)
+PluginLoader::PluginLoader(unsigned int type, const char* directory, int directoryLength) : type(type)
 {
-	pluginsDirectory = QString::fromAscii(directory, directoryLength != -1 ? directoryLength : static_cast<UInt32>(-1));
+	pluginsDirectory = QString::fromAscii(directory, directoryLength != -1 ? directoryLength : static_cast<unsigned int>(-1));
 	filesInDir();
 }
 
 PluginLoader::~PluginLoader()
 {
-	for(UInt32 i = 0;i < pluginsList.size();i++)
+	for(unsigned int i = 0;i < pluginsList.size();i++)
 		delete pluginsList[i];
 }
 
@@ -155,12 +152,12 @@ void PluginLoader::filesInDir()
 	}
 }
 
-const UInt32 PluginLoader::numPlugins() const
+const unsigned int PluginLoader::numPlugins() const
 {
 	return pluginsList.size();
 }
 
-const Plugin* PluginLoader::operator[] (UInt32 index) const
+const Plugin* PluginLoader::operator[] (unsigned int index) const
 {
 	return pluginsList[index];
 }

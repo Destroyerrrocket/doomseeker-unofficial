@@ -30,8 +30,6 @@
 #ifndef __CONFIG_HPP__
 #define __CONFIG_HPP__
 
-#include "sdeapi/global.hpp"
-
 #include <QString>
 #include <QHash>
 
@@ -46,18 +44,18 @@ struct SettingsData : public QObject
 			ST_STR
 		};
 
-		SettingsData(Int32 integer=0) : m_integer(0), m_str(tr("")), m_type(ST_INT) { setValue(integer); }
+		SettingsData(int integer=0) : m_integer(0), m_str(tr("")), m_type(ST_INT) { setValue(integer); }
 		SettingsData(QString str) : m_integer(0), m_str(tr("")), m_type(ST_STR) { setValue(str); }
 
-		const Int32			integer() { return m_integer; }
+		const int			integer() { return m_integer; }
 		const QString		string()	{ return m_str; }
 		const SettingType	type() { return m_type; }
-		void				setValue(Int32 integer) { this->m_integer = integer;this->m_type = ST_INT; }
+		void				setValue(int integer) { this->m_integer = integer;this->m_type = ST_INT; }
 		void				setValue(QString str) { this->m_str = str;this->m_type = ST_STR; }
 
 	protected:
 		SettingType			m_type;
-		Int32				m_integer;
+		int				m_integer;
 		QString				m_str;
 };
 
@@ -73,7 +71,7 @@ class Config : public QObject
 		 * Creates the specified setting if it hasn't been made already.  It
 		 * will be set to the default value.
 		 */
-		void			createSetting(const QString index, UInt32 defaultInt);
+		void			createSetting(const QString index, unsigned int defaultInt);
 		void			createSetting(const QString index, QString defaultString);
 		/**
 		 * Gets the specified setting.  Will return NULL if the setting does

@@ -29,18 +29,15 @@
 // Description:
 // =============================================================================
 
+#include <cmath>
 
-#include <stdlib.h>
-#include <math.h>
-
-#include "sdeapi/global.hpp"
 #include "sdeapi/scanner.hpp"
 
 using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Scanner::Scanner(char* data, UInt32 length)
+Scanner::Scanner(char* data, unsigned int length)
 : number(0), decimal(0), boolean(false), lastToken(0), error(false), data(data), length(length), line(0), lpos(0), pos(0)
 {
 	checkForWhitespace();
@@ -59,9 +56,9 @@ bool Scanner::checkToken(char token)
 {
 	if(error)
 		return false;
-	UInt32 nPos = pos;
-	UInt32 nLpos = lpos;
-	UInt32 nLine = line;
+	unsigned int nPos = pos;
+	unsigned int nLpos = lpos;
+	unsigned int nLine = line;
 	this->token(nPos, nLpos, nLine, token, false);
 	if(!error)
 	{
@@ -91,7 +88,7 @@ ETokenType Scanner::nextToken()
 				return TK_FloatConst;
 			else
 			{
-				number = static_cast<UInt32> (integerPart);
+				number = static_cast<unsigned int> (integerPart);
 				return TK_IntConst;
 			}
 		}
@@ -147,10 +144,10 @@ ETokenType Scanner::nextToken()
 	return TK_NoToken;
 }
 
-void Scanner::checkForWhitespace(UInt32 *nPos, UInt32 *nLpos)
+void Scanner::checkForWhitespace(unsigned int *nPos, unsigned int *nLpos)
 {
-	UInt32 & uPos = (nPos ? (*nPos) : pos);
-	UInt32 & uLpos = (nLpos ? (*nLpos) : lpos);
+	unsigned int & uPos = (nPos ? (*nPos) : pos);
+	unsigned int & uLpos = (nLpos ? (*nLpos) : lpos);
 	while(data[uPos] == ' ' || data[uPos] == '\0' || data[uPos] == '	' || data[uPos] == '\n' || data[uPos] == '\r' ||
 		(data[uPos] == '/' && uPos+1 < length && (data[uPos+1] == '/' || data[uPos+1] == '*')))
 	{
@@ -251,7 +248,7 @@ void Scanner::checkForWhitespace(UInt32 *nPos, UInt32 *nLpos)
 	} \
 	break; \
 }
-void Scanner::token(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool report)
+void Scanner::token(unsigned int &pos, unsigned int &lpos, unsigned int &line, char token, bool report)
 {
 	if(error)
 		return;
@@ -361,7 +358,7 @@ void Scanner::token(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool re
 }
 
 //Find the next identifier by looping until we find an invalid character.
-bool Scanner::next(QString &out, UInt32 &pos, UInt32 &lpos, char type, bool report)
+bool Scanner::next(QString &out, unsigned int &pos, unsigned int &lpos, char type, bool report)
 {
 	if(pos >= length)
 	{
@@ -369,10 +366,10 @@ bool Scanner::next(QString &out, UInt32 &pos, UInt32 &lpos, char type, bool repo
 		return false;
 	}
 
-	UInt32 end = pos;
+	unsigned int end = pos;
 	bool special = false;
 	bool special2 = false;
-	for(UInt32 i = pos;i < length;i++)
+	for(unsigned int i = pos;i < length;i++)
 	{
 		if(type == TK_Identifier)
 		{

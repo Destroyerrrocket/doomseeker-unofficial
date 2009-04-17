@@ -31,8 +31,7 @@
 #ifndef __SCANNER_HPP__
 #define __SCANNER_HPP__
 
-#include "sdeapi/global.hpp"
-
+#include <QObject>
 #include <QString>
 
 enum ETokenType
@@ -66,7 +65,7 @@ enum ETokenType
 class Scanner
 {
 	public:
-		Scanner(char* data, UInt32 length);
+		Scanner(char* data, unsigned int length);
 		~Scanner();
 
 		/**
@@ -89,26 +88,26 @@ class Scanner
 		 */
 		bool		tokensLeft() { return (error != 0) || (pos != length); }
 
-		QString		str;
-		UInt32		number;
-		double		decimal;
-		bool		boolean;
-		char		lastToken;
+		QString			str;
+		unsigned int	number;
+		double			decimal;
+		bool			boolean;
+		char			lastToken;
 	protected:
 		/**
 		 * Moves the position ahead any whitespace that there might be from the
 		 * current position.
 		 */
-		void		checkForWhitespace(UInt32 *nPos = NULL, UInt32 *nLpos = NULL);
-		void		token(UInt32 &pos, UInt32 &lpos, UInt32 &line, char token, bool report=false);
-		bool		next(QString &out, UInt32 &pos, UInt32 &lpos, char type, bool report=false);
+		void		checkForWhitespace(unsigned int *nPos = NULL, unsigned int *nLpos = NULL);
+		void		token(unsigned int &pos, unsigned int &lpos, unsigned int &line, char token, bool report=false);
+		bool		next(QString &out, unsigned int &pos, unsigned int &lpos, char type, bool report=false);
 
-		bool		error;
-		char*		data;
-		UInt32		length;
-		UInt32		line;
-		UInt32		lpos;
-		UInt32		pos;
+		bool			error;
+		char*			data;
+		unsigned int	length;
+		unsigned int	line;
+		unsigned int	lpos;
+		unsigned int	pos;
 };
 
 #endif /* __SCANNER_HPP__ */

@@ -53,7 +53,7 @@ void Config::locateConfigFile(int argc, char* argv[])
 #if defined(WIN32)
 	configDir = argv[0];
 	//configDir.
-	UInt32 pos = static_cast<UInt32> (configDir.path().lastIndexOf('\\')) > static_cast<UInt32> (configDir.path().lastIndexOf('/')) ? configDir.path().lastIndexOf('\\') : configDir.path().lastIndexOf('/');
+	unsigned int pos = static_cast<unsigned int> (configDir.path().lastIndexOf('\\')) > static_cast<unsigned int> (configDir.path().lastIndexOf('/')) ? configDir.path().lastIndexOf('\\') : configDir.path().lastIndexOf('/');
 	configDir = configDir.path().left(pos+1);
 #else
 	QDir home = QDir::home();
@@ -82,7 +82,7 @@ void Config::locateConfigFile(int argc, char* argv[])
 static char escapeCharacters[] = {'\\', '"', 0};
 const QString& Config::escape(QString &str)
 {
-	for(UInt32 i = 0;escapeCharacters[i] != 0;i++)
+	for(unsigned int i = 0;escapeCharacters[i] != 0;i++)
 	{
 		// += 2 because we'll be inserting 1 character.
 		for(int p = 0;p < str.length() && (p = str.indexOf(escapeCharacters[i], p)) != -1;p += 2)
@@ -173,7 +173,7 @@ void Config::saveConfig()
 	}
 }
 
-void Config::createSetting(const QString index, UInt32 defaultInt)
+void Config::createSetting(const QString index, unsigned int defaultInt)
 {
 	SettingsData* data;
 	if(!findIndex(index, data))
