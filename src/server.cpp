@@ -40,11 +40,9 @@ QString	Player::nameFormatted() const
 	QString ret;
 	for (int i = 0; i < playerName.length(); ++i)
 	{
-		if (playerName[i] < 32 || playerName[i] > 126)
-		{
-			++i;
+		// cut out bad characters
+		if ((playerName[i] < 32 || playerName[i] > 126) && playerName[i] != ESCAPE_COLOR)
 			continue;
-		}
 
 		char c = playerName[i].toAscii();
 
@@ -64,7 +62,7 @@ QString	Player::nameFormatted() const
 		}
 	}
 
-	return ret;
+	return colorizeString(ret);
 }
 
 QString Player::nameColorTagsStripped() const
@@ -92,6 +90,68 @@ QString Player::teamName(int team)
 		return "";
 
 	return teamNames[team];
+}
+
+const char Player::colorChart[20][7] =
+{
+	"FF91A4", //a
+	"D2B48C", //b
+	"C0C0C0", //c
+	"32CD32", //d
+	"918151", //e
+	"F4C430", //f
+	"E32636", //g
+	"0000FF", //h
+	"FF8C00", //i
+	"EEEEEE", //j
+	"FFD700", //k
+	"E34234", //l
+	"000000", //m
+	"4169E1", //n
+	"FFDEAD", //o
+	"465945", //p
+	"228b22", //q
+	"800000", //r
+	"704214", //s
+	"A020F0", //t
+};
+QString Player::colorizeString(const QString &str, int current)
+{
+	QString ret;
+	bool colored = false;
+	for(int i = 0;i < str.length();i++)
+	{
+		if(str[i] == ESCAPE_COLOR)
+		{
+			i++;
+			if(i >= str.length())
+				break;
+			QChar colorChar = str[i].toLower();
+			int color = colorChar.toAscii() - 97;
+
+			// special cases
+			if(colorChar == '+')
+				color = current == 19 ? 0 : current+1; // + is the current plus one, wrap if needed.
+			else if(colorChar == '-' || colored)
+			{
+				if(colored)
+				{
+					ret += "</span>";
+				}
+				continue;
+			}
+
+			if(color >= 0 && color < 20)
+			{
+				ret += QString("<span style=\"color: #") + colorChart[color] + "\">";
+			}
+			continue;
+		}
+		ret += str[i];
+	}
+	if(colored)
+		ret += "</span>";
+	return ret;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

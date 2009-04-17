@@ -11,7 +11,6 @@ MainWindow::MainWindow(int argc, char** argv)
 	config = new Config();
 	config->locateConfigFile(argc, argv);
 
-	tester = new Tester();
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
 
@@ -24,7 +23,6 @@ MainWindow::MainWindow(int argc, char** argv)
 
 MainWindow::~MainWindow()
 {
-	delete tester;
 	delete config;
 }
 /////////////////////////////////////////////////////////
