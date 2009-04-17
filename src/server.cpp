@@ -182,6 +182,10 @@ bool ServerRefresher::bGuardianExists = false;
 
 void Server::refresh()
 {
+	if (bRunning)
+		return;
+
+	startRunning();
 	ServerRefresher* r = new ServerRefresher(this);
 	ServerRefresher::threadPool.start(r);
 }
@@ -210,6 +214,7 @@ void ServerRefresher::run()
 	if (!bGuardian)
 	{
 		parent->doRefresh();
+		parent->stopRunning();
 	}
 	else
 	{

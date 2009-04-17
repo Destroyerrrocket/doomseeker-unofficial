@@ -153,6 +153,8 @@ class Server : public QObject
 
 		void				operator= (const Server &other);
 		virtual void		doRefresh()=0;
+		void				startRunning() { bRunning = true; }
+		void				stopRunning() { bRunning = false; }
 
 		/**
 		 * Returns the thread pool of the refresher.
@@ -167,7 +169,6 @@ class Server : public QObject
 		 * Updates the server data.
 		 */
 		void		refresh();
-
 
 	signals:
 		/**
@@ -196,6 +197,12 @@ class Server : public QObject
 		QString				webSite;
 
 	private:
+		/**
+		 * This is used to make
+		 * sure that refresh() method isn't run on
+		 * server that is already refreshing.
+		 */
+		bool				bRunning;
 		QHostAddress		serverAddress;
 		unsigned short		serverPort;
 
