@@ -59,7 +59,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QTableView" name="tableServers">
+     <widget class="ServerListView" name="tableServers">
       <property name="editTriggers">
        <set>QAbstractItemView::NoEditTriggers</set>
       </property>
@@ -117,6 +117,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ServerListView</class>
+   <extends>QTableView</extends>
+   <header>gui/widgets/serverlistview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

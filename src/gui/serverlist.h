@@ -51,7 +51,8 @@ class SLHandler : public QObject
 		void setMaster(MasterClient*);
 
 	public slots:
-		void serverUpdated(const Server *server);
+		void serverUpdated(Server *server);
+		void tableRightClicked(const QModelIndex&);
 
 	protected slots:
 		// Handles column sorting.
@@ -70,11 +71,14 @@ class SLHandler : public QObject
 
 		void prepareServerTable();
 		QModelIndex findServerOnTheList(const Server* server);
-		void addServer(const Server* server);
-		void updateServer(const QModelIndex&, const Server* server);
-		const Server* serverFromList(int rowNum) const;
-        const Server* serverFromList(const QModelIndex&) const;
-        const Server* serverFromList(const QStandardItem*) const;
+
+		void addServer(Server* server);
+		void updateServer(int row, Server* server);
+		void setRefreshing(int row);
+
+		Server* serverFromList(int rowNum);
+        Server* serverFromList(const QModelIndex&);
+        Server* serverFromList(const QStandardItem*);
 };
 
 #endif

@@ -31,10 +31,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::checkRefreshFinished()
 {
-	// Probably not the best solution to the problem for now it will do.
-	// Once we can get a progress bar in it would probably work better to be
-	// attached to whenever that reaches 100%.
-	printf("ALL REFRESHED!");
 	btnRefresh->setEnabled(true);
 }
 
@@ -52,7 +48,7 @@ void MainWindow::btnRefresh_Click()
 
 	for(int i = 0;i < mc->numServers();i++)
 	{
-		QObject::connect((*mc)[i], SIGNAL(updated(const Server *)), serverTableHandler, SLOT(serverUpdated(const Server *)) );
+		QObject::connect((*mc)[i], SIGNAL(updated(Server *)), serverTableHandler, SLOT(serverUpdated(Server *)) );
 		(*mc)[i]->refresh();
 	}
 

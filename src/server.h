@@ -142,11 +142,11 @@ class Server : public QObject
 
 
 	signals:
-		void				banned(const Server *server);
+		void				banned(Server *server);
 		/**
 		 * Emitted by refresh when it is finished and something has changed.
 		 */
-		void				updated(const Server *server);
+		void				updated(Server *server);
 
 	protected:
 		GameMode			currentGameMode;
@@ -212,10 +212,10 @@ class ServerPointer
 		}
 
 	public:
-        const Server* ptr;
+        Server* ptr;
 
 		ServerPointer() {}
-		ServerPointer(const Server* s)
+		ServerPointer(Server* s)
 		{
 			ptr = s;
 		}
@@ -236,7 +236,7 @@ class ServerPointer
 		}
 		~ServerPointer() {}
 
-		bool operator==(const Server* fPtr)
+		bool operator==(const Server* fPtr) const
 		{
 			return (ptr == fPtr);
 		}
@@ -246,7 +246,7 @@ class ServerPointer
 			return (fPtr == ref.ptr);
 		}
 
-		const Server* operator->()
+		Server* operator->()
 		{
 			return ptr;
 		}
