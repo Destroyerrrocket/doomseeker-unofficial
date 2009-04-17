@@ -311,7 +311,7 @@ void SLHandler::setMaster(MasterClient* mc)
 }
 //////////////////////////////////////////////////////////////
 // Slots
-void SLHandler::serverUpdated(Server *server)
+void SLHandler::serverUpdated(Server *server, int response)
 {
 	QModelIndex index = findServerOnTheList(server);
 	if (index.isValid())

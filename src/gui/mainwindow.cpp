@@ -48,7 +48,7 @@ void MainWindow::btnRefresh_Click()
 
 	for(int i = 0;i < mc->numServers();i++)
 	{
-		QObject::connect((*mc)[i], SIGNAL(updated(Server *)), serverTableHandler, SLOT(serverUpdated(Server *)) );
+		QObject::connect((*mc)[i], SIGNAL(updated(Server *, int)), serverTableHandler, SLOT(serverUpdated(Server *, int)) );
 		(*mc)[i]->refresh();
 	}
 

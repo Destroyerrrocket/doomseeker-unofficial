@@ -117,6 +117,13 @@ class Server : public QObject
 	Q_OBJECT
 
 	public:
+		enum Response
+		{
+			RESPONSE_GOOD,	// Data is available
+			RESPONSE_BAD,	// Probably refreshing too quickly
+			RESPONSE_BANNED	// Won't recieve data from this server ever.
+		};
+
 		Server(const QHostAddress &address, unsigned short port);
 		Server(const Server &other);
 		virtual ~Server();
@@ -163,11 +170,12 @@ class Server : public QObject
 
 
 	signals:
-		void				banned(Server *server);
 		/**
-		 * Emitted by refresh when it is finished and something has changed.
+		 * Emitted when a refresh has been completed.  Be sure to check the 
+		 * response to see if anything has actually changed.
+		 * @see Response
 		 */
-		void				updated(Server *server);
+		void				updated(Server *server, int response);
 
 	protected:
 		GameMode			currentGameMode;

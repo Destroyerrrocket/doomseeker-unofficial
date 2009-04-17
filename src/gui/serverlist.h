@@ -52,7 +52,7 @@ class SLHandler : public QObject
 		void setMaster(MasterClient*);
 
 	public slots:
-		void serverUpdated(Server *server);
+		void serverUpdated(Server *server, int response);
 		void tableRightClicked(const QModelIndex&);
 
 	protected slots:

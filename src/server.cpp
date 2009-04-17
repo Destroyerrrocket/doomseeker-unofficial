@@ -24,6 +24,9 @@
 #include "server.h"
 #include <QSet>
 
+// \c = '\034'
+#define	ESCAPE_COLOR	'\034'
+
 QString Player::teamNames[] = { "Blue", "Red", "Green", "Gold" };
 
 
@@ -71,12 +74,14 @@ QString Player::nameColorTagsStripped() const
 	{
 		if (playerName[i] < 32 || playerName[i] > 126)
 		{
-			++i;
+			// Lets only remove the following character on \c.
+			// Removing the control characters is still a good idea though.
+			if(playerName[i] == ESCAPE_COLOR)
+				++i;
 			continue;
 		}
 
 		ret += playerName[i];
-		break;
 	}
 	return ret;
 }

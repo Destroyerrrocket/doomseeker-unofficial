@@ -212,11 +212,14 @@ void SkulltagServer::doRefresh()
 	currentPing = time.elapsed();
 	if(response == SERVER_BANNED)
 	{
-		emit banned(this);
+		emit updated(this, RESPONSE_BANNED);
 		return;
 	}
 	else if(response != SERVER_GOOD)
+	{
+		emit updated(this, RESPONSE_BAD);
 		return;
+	}
 
 	version = QString(&packetOut[12]);
 	int pos = 12 + version.length() + 1;
@@ -252,6 +255,7 @@ void SkulltagServer::doRefresh()
 	if((flags & SQF_PWADS) == SQF_PWADS)
 	{
 		int numPwads = READINT8(&packetOut[pos++]);
+		wads.clear(); // clear any previous list we may have had.
 		for(int i = 0;i < numPwads;i++)
 		{
 			QString wad(&packetOut[pos]);
@@ -368,8 +372,12 @@ void SkulltagServer::doRefresh()
 		int numPlayers = READINT8(&packetOut[pos++]);
 		if((flags & SQF_PLAYERDATA) == SQF_PLAYERDATA)
 		{
+			players.clear(); // Erase previous players (if any)
 			for(int i = 0;i < numPlayers;i++)
 			{
+				// team isn't sent in non team modes.
+				bool teammode = currentGameMode.isTeamGame();
+
 				QString name(&packetOut[pos]);
 				pos += name.length() + 1;
 				int score = READINT16(&packetOut[pos]);
@@ -377,8 +385,8 @@ void SkulltagServer::doRefresh()
 				bool spectating = READINT8(&packetOut[pos+4]) != 0;
 				bool bot = READINT8(&packetOut[pos+5]) != 0;
 				int team = READINT8(&packetOut[pos+6]);
-				int time = READINT8(&packetOut[pos+7]);
-				pos += 8;
+				int time = READINT8(&packetOut[pos+(teammode ? 7 : 6)]);
+				pos += teammode ? 8 : 7;
 
 				Player player(name, score, ping, static_cast<Player::PlayerTeam> (team), spectating, bot);
 				players << player;
@@ -417,7 +425,7 @@ void SkulltagServer::doRefresh()
 
 	socket.close();
 
-	emit updated(this);	
+	emit updated(this, RESPONSE_GOOD);	
 }
 ////////////////////////////////////////////////////////////////////////////////
 
