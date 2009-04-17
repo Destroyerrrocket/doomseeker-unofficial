@@ -34,9 +34,16 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QPushButton" name="btnRefresh">
+        <widget class="QPushButton" name="btnGetServers">
          <property name="text">
-          <string>Refresh</string>
+          <string>Get Servers</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnRefreshAll">
+         <property name="text">
+          <string>Refresh All</string>
          </property>
         </widget>
        </item>
@@ -54,8 +61,6 @@
         </spacer>
        </item>
       </layout>
-      <zorder>btnRefresh</zorder>
-      <zorder>horizontalSpacer</zorder>
      </widget>
     </item>
     <item>

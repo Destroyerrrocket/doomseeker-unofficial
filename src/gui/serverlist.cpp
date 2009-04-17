@@ -178,6 +178,9 @@ void SLHandler::updateServer(int row, Server* server)
 
 void SLHandler::setRefreshing(int row)
 {
+	Server* serv = serverFromList(row);
+	serv->refresh();
+
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
 	QStandardItem* item = model->item(row, SLCID_SERVERNAME);
 	item->setText(tr("<REFRESHING>"));
@@ -290,9 +293,6 @@ QString SLHandler::createPlayersToolTip(const Server* server) const
 	plTab += plTabPlayers;
 	plTab += "</TABLE>";
 
-	if (server->gameMode().isTeamGame())
-		printf("%s\n", plTab.toAscii().constData());
-
 	ret = "<p style='white-space: pre'>";
 	ret += firstTable;
 	ret += plTab;
@@ -358,6 +358,14 @@ void SLHandler::serverUpdated(Server *server, int response)
 	}
 }
 
+void SLHandler::refreshAll()
+{
+	for (int i = 0; i < table->model()->rowCount(); ++i)
+	{
+		setRefreshing(i);
+	}
+}
+
 void SLHandler::tableRightClicked(const QModelIndex& index)
 {
 	QItemSelectionModel* selModel = table->selectionModel();
@@ -365,12 +373,7 @@ void SLHandler::tableRightClicked(const QModelIndex& index)
 
 	for(int i = 0; i < indexList.count(); ++i)
 	{
-		Server* server = serverFromList(indexList[i]);
-		if (server != NULL)
-		{
-			setRefreshing(indexList[i].row());
-			server->refresh();
-		}
+		setRefreshing(indexList[i].row());
 	}
 }
 

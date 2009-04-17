@@ -17,7 +17,8 @@ MainWindow::MainWindow(int argc, char** argv)
 
 	serverTableHandler = new SLHandler(tableServers);
 
-	connect(btnRefresh, SIGNAL( clicked() ), this, SLOT( btnRefresh_Click() ));
+	connect(btnGetServers, SIGNAL( clicked() ), this, SLOT( btnGetServers_Click() ));
+	connect(btnRefreshAll, SIGNAL( clicked() ), serverTableHandler, SLOT( refreshAll() ));
 	connect(menuActionConfigure, SIGNAL( triggered() ), this, SLOT( menuOptionsConfigure() ));
 }
 
@@ -30,10 +31,11 @@ MainWindow::~MainWindow()
 // Slots
 void MainWindow::checkRefreshFinished()
 {
-	btnRefresh->setEnabled(true);
+	btnGetServers->setEnabled(true);
+	btnRefreshAll->setEnabled(true);
 }
 
-void MainWindow::btnRefresh_Click()
+void MainWindow::btnGetServers_Click()
 {
 	MasterClient* mc = new SkulltagMasterClient(QHostAddress("91.121.87.67"), 15300);
 	mc->refresh();
@@ -56,7 +58,8 @@ void MainWindow::btnRefresh_Click()
 	guardian->startGuardian();
 
 	// disable refresh.
-	btnRefresh->setEnabled(false);
+	btnGetServers->setEnabled(false);
+	btnRefreshAll->setEnabled(false);
 }
 
 void MainWindow::menuOptionsConfigure()

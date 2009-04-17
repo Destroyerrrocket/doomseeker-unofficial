@@ -19,7 +19,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 	public slots:
 		void checkRefreshFinished();
-		void btnRefresh_Click();
+		void btnGetServers_Click();
 		void menuOptionsConfigure();
 
 	private:

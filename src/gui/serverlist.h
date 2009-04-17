@@ -49,10 +49,20 @@ class SLHandler : public QObject
 			SLDT_SORT						 = Qt::UserRole+2
 		};
 
-		void setMaster(MasterClient*);
+		void 			setMaster(MasterClient*);
+		QList<Server*>*	serverList()
+		{
+			if (master == NULL)
+			{
+				return NULL;
+			}
+
+			return &master->serverList();
+		}
 
 	public slots:
 		void serverUpdated(Server *server, int response);
+		void refreshAll();
 		void tableRightClicked(const QModelIndex&);
 
 	protected slots:
