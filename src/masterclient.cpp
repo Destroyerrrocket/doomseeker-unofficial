@@ -42,6 +42,17 @@ void MasterClient::emptyServerList()
 	servers.clear();
 }
 
+bool MasterClient::hasServer(const Server* server)
+{
+	for (int i = 0; i < servers.count(); ++i)
+	{
+		if (server == servers[i])
+			return true;
+	}
+
+	return false;
+}
+
 void MasterClient::notifyBanned()
 {
 	QMessageBox::critical(NULL, tr("Banned"), tr("You have been banned from the master server."), QMessageBox::Ok, QMessageBox::Ok);

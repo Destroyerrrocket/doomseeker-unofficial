@@ -38,7 +38,8 @@ void SLHandler::clearTable()
 	if (table != NULL)
 	{
 		int rowCount = table->model()->rowCount();
-		table->model()->removeRows(1, rowCount - 1);
+
+		table->model()->removeRows(0, rowCount - 1);
 	}
 }
 ////////////////////////////////////////////////////
@@ -351,7 +352,7 @@ Server* SLHandler::serverFromList(int rowNum)
 {
     QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
 
-    QStandardItem* item = model->item(rowNum);
+    QStandardItem* item = model->item(rowNum, 0);
     return serverFromList(item);
 }
 
@@ -359,7 +360,7 @@ Server* SLHandler::serverFromList(const QModelIndex& index)
 {
     QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
 
-    QStandardItem* item = model->item(index.row());
+    QStandardItem* item = model->item(index.row(), 0);
     return serverFromList(item);
 }
 

@@ -45,6 +45,7 @@ class MasterClient : public QObject
 		int				numServers() const { return servers.size(); }
 		Server			*operator[] (int index) const { return servers[index]; }
 		QList<Server*>	&serverList() { return servers; }
+		bool			hasServer(const Server*);
 
 	public slots:
 		/**
