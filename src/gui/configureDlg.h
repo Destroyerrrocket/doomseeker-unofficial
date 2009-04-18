@@ -13,7 +13,7 @@ class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 		Config*		mainConfig;
 		// hider for debug purposes, if clicked
 		// hides current box and shows nothing
-		QStandardItem*					hider;
+		//QStandardItem*					hider;
 
 		QStandardItem*					enginesRoot;
 		QList<ConfigurationBoxInfo*>	configBoxesList;

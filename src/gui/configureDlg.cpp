@@ -38,9 +38,9 @@ void ConfigureDlg::initOptionsList()
 	model->appendRow(root1);
 	enginesRoot = root1;
 
-	root1 = new QStandardItem("<HIDE>");
-	model->appendRow(root1);
-	hider = root1;
+//	root1 = new QStandardItem("<HIDE>");
+//	model->appendRow(root1);
+//	hider = root1;
 
 	ConfigurationBoxInfo* cbi = FilePathsConfigBox::createStructure(mainConfig, this);
 	addConfigurationBox(model->invisibleRootItem(), cbi);
@@ -136,11 +136,11 @@ void ConfigureDlg::optionListClicked(const QModelIndex& index)
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(tvOptionsList->model());
 	QStandardItem* item = model->itemFromIndex(index);
 
-	if (item == hider)
-	{
-		showConfigurationBox(NULL);
-		return;
-	}
+//	if (item == hider)
+//	{
+//		showConfigurationBox(NULL);
+//		return;
+//	}
 
 	ConfigurationBoxInfo *cfgBox = findConfigurationBoxInfo(item);
 
