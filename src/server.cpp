@@ -99,14 +99,14 @@ const char Player::colorChart[20][7] =
 {
 	"FF91A4", //a
 	"D2B48C", //b
-	"C0C0C0", //c
+	"808080", //c
 	"32CD32", //d
 	"918151", //e
 	"F4C430", //f
 	"E32636", //g
 	"0000FF", //h
 	"FF8C00", //i
-	"EEEEEE", //j
+	"C0C0C0", //j
 	"FFD700", //k
 	"E34234", //l
 	"000000", //m
