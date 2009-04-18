@@ -15,8 +15,10 @@ class ServerListView : public QTableView
 
 	protected:
 		virtual void mouseReleaseEvent(QMouseEvent* event);
+		virtual void mouseDoubleClickEvent(QMouseEvent* event);
 
 	signals:
+		void leftMouseDoubleClicked(const QModelIndex&);
 		void rightMouseClick(const QModelIndex&);
 };
 

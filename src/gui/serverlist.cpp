@@ -107,7 +107,7 @@ void SLHandler::prepareServerTable()
 	connect(header, SIGNAL( sectionClicked(int) ), this, SLOT ( columnHeaderClicked(int) ) );
 	connect(table, SIGNAL( rightMouseClick(const QModelIndex&) ), this, SLOT ( tableRightClicked(const QModelIndex&)) );
 	connect(table, SIGNAL( entered(const QModelIndex&) ), this, SLOT ( mouseEntered(const QModelIndex&)) );
-	connect(table, SIGNAL( doubleClicked(const QModelIndex&)), this, SLOT( doubleClicked(const QModelIndex&)) );
+	connect(table, SIGNAL( leftMouseDoubleClicked(const QModelIndex&)), this, SLOT( doubleClicked(const QModelIndex&)) );
 
 	columnHeaderClicked(0);
 }
