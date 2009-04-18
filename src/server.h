@@ -134,9 +134,11 @@ class Server : public QObject
 	public:
 		enum Response
 		{
-			RESPONSE_GOOD,	// Data is available
-			RESPONSE_BAD,	// Probably refreshing too quickly
-			RESPONSE_BANNED	// Won't recieve data from this server ever.
+			RESPONSE_GOOD,		// Data is available
+			RESPONSE_TIMEOUT,	// Server didn't respond at all
+			RESPONSE_WAIT,	 	// Server responded with "wait"
+			RESPONSE_BAD,		// Probably refreshing too quickly
+			RESPONSE_BANNED		// Won't recieve data from this server ever.
 		};
 
 		Server(const QHostAddress &address, unsigned short port);

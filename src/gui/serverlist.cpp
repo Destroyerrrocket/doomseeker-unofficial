@@ -131,7 +131,7 @@ QModelIndex SLHandler::findServerOnTheList(const Server* server)
 	return QModelIndex();
 }
 //////////////////////////////////////////////////////////////
-void SLHandler::addServer(Server* server)
+void SLHandler::addServer(Server* server, int response)
 {
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
 	QList<QStandardItem*> columns;
@@ -143,24 +143,111 @@ void SLHandler::addServer(Server* server)
 
 	model->appendRow(columns);
 	QModelIndex index = model->indexFromItem(columns[0]);
-	updateServer(index.row(), server);
-
-	// Compress row size.
-	table->resizeRowToContents(model->indexFromItem(columns[0]).row());
+	updateServer(index.row(), server, response);
 }
 
-void SLHandler::updateServer(int row, Server* server)
+void SLHandler::updateServer(int row, Server* server, int response)
+{
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
+	QStandardItem* item;
+	QStandardItem* itemZero;
+
+    itemZero = model->item(row, 0);
+    // Save pointer to the column
+	ServerPointer ptr(server);
+	QVariant savePointer = qVariantFromValue(ptr);
+	itemZero->setData(savePointer, SLDT_POINTER_TO_SERVER_STRUCTURE);
+
+	// Address is set no matter what, so it's set here.
+	item = model->item(row, SLCID_ADDRESS);
+	fillItem(item, server->address(), QString(server->address().toString() + ":" + QString::number(server->port())) );
+
+
+	switch(response)
+	{
+		case Server::RESPONSE_BAD:
+			setBad(row, server);
+			break;
+
+		case Server::RESPONSE_BANNED:
+			setBanned(row, server);
+			break;
+
+		case Server::RESPONSE_GOOD:
+		case Server::RESPONSE_WAIT:
+			setGood(row, server);
+			break;
+
+		case Server::RESPONSE_TIMEOUT:
+		    setTimeout(row, server);
+			break;
+	}
+
+	// Compress row size.
+	table->resizeRowToContents(model->indexFromItem(itemZero).row());
+}
+
+void SLHandler::setBad(int row, Server* server)
+{
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
+	QStandardItem* item;
+
+	item = model->item(row, SLCID_PLAYERS);
+	fillItem(item, -1);
+
+	item = model->item(row, SLCID_PING);
+	fillItem(item, 99999);
+
+	item = model->item(row, SLCID_SERVERNAME);
+	fillItem(item, tr("<ERROR>"));
+
+	item = model->item(row, SLCID_IWAD);
+	fillItem(item, "");
+
+	item = model->item(row, SLCID_MAP);
+	fillItem(item, "");
+
+	item = model->item(row, SLCID_WADS);
+	fillItem(item, "");
+
+	item = model->item(row, SLCID_GAMETYPE);
+	fillItem(item, "");
+}
+
+void SLHandler::setBanned(int row, Server* server)
+{
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
+	QStandardItem* item;
+
+	item = model->item(row, SLCID_PLAYERS);
+	fillItem(item, -1);
+
+	item = model->item(row, SLCID_PING);
+	fillItem(item, 99999);
+
+	item = model->item(row, SLCID_SERVERNAME);
+	fillItem(item, tr("You are banned from this server"));
+
+	item = model->item(row, SLCID_IWAD);
+	fillItem(item, "");
+
+	item = model->item(row, SLCID_MAP);
+	fillItem(item, "");
+
+	item = model->item(row, SLCID_WADS);
+	fillItem(item, "");
+
+	item = model->item(row, SLCID_GAMETYPE);
+	fillItem(item, "");
+}
+
+void SLHandler::setGood(int row, Server* server)
 {
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
 	QStandardItem* item;
 	QString strTmp;
 
-    item = model->item(row, SLCID_PLAYERS);
-    // Save pointer to the column
-	ServerPointer ptr(server);
-	QVariant savePointer = qVariantFromValue(ptr);
-	item->setData(savePointer, SLDT_POINTER_TO_SERVER_STRUCTURE);
-
+	item = model->item(row, SLCID_PLAYERS);
 	fillItem(item, server->numPlayers());
 
 	item = model->item(row, SLCID_PING);
@@ -168,9 +255,6 @@ void SLHandler::updateServer(int row, Server* server)
 
 	item = model->item(row, SLCID_SERVERNAME);
 	fillItem(item, server->name());
-
-	item = model->item(row, SLCID_ADDRESS);
-	fillItem(item, server->address(), QString(server->address().toString() + ":" + QString::number(server->port())) );
 
 	item = model->item(row, SLCID_IWAD);
 	fillItem(item, server->iwadName());
@@ -184,7 +268,33 @@ void SLHandler::updateServer(int row, Server* server)
 
 	item = model->item(row, SLCID_GAMETYPE);
 	fillItem(item, server->gameMode().name());
+}
 
+void SLHandler::setTimeout(int row, Server* server)
+{
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
+	QStandardItem* item;
+
+	item = model->item(row, SLCID_PLAYERS);
+	fillItem(item, -1);
+
+	item = model->item(row, SLCID_PING);
+	fillItem(item, 99999);
+
+	item = model->item(row, SLCID_SERVERNAME);
+	fillItem(item, tr("<NO RESPONSE>"));
+
+	item = model->item(row, SLCID_IWAD);
+	fillItem(item, "");
+
+	item = model->item(row, SLCID_MAP);
+	fillItem(item, "");
+
+	item = model->item(row, SLCID_WADS);
+	fillItem(item, "");
+
+	item = model->item(row, SLCID_GAMETYPE);
+	fillItem(item, "");
 }
 
 void SLHandler::setRefreshing(int row)
@@ -471,11 +581,11 @@ void SLHandler::serverUpdated(Server *server, int response)
 	QModelIndex index = findServerOnTheList(server);
 	if (index.isValid())
 	{
-		updateServer(index.row(), server);
+		updateServer(index.row(), server, response);
 	}
 	else
 	{
-		addServer(server);
+		addServer(server, response);
 	}
 
 	if (sortIndex >= 0)

@@ -88,9 +88,15 @@ class SLHandler : public QObject
 		void prepareServerTable();
 		QModelIndex findServerOnTheList(const Server* server);
 
-		void addServer(Server* server);
-		void updateServer(int row, Server* server);
+		void addServer(Server* server, int response);
+		void updateServer(int row, Server* server, int response);
+
+		void setBad(int row, Server* server);
+		void setBanned(int row, Server* server);
+		void setGood(int row, Server* server);
+		void setTimeout(int row, Server* server);
 		void setRefreshing(int row);
+
 
 		QString createPlayersToolTip(const Server* server);
 		QString createServerNameToolTip(const Server* server);

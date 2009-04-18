@@ -32,7 +32,7 @@
 #define SERVER_CHALLENGE	0xC7,0x00,0x00,0x00
 #define SERVER_GOOD			5660023
 #define SERVER_BANNED		5660025
-#define SERVER_BAD			5660024
+#define SERVER_WAIT			5660024
 
 TeamInfo::TeamInfo(const QString &name, const QColor &color, unsigned int score) :
 	teamName(name), teamColor(color), teamScore(score)
@@ -211,6 +211,7 @@ void SkulltagServer::doRefresh()
 	if(!socket.waitForConnected(1000))
 	{
 		printf("%s\n", socket.errorString().toAscii().data());
+		emit updated(this, RESPONSE_BAD);
 		return;
 	}
 
@@ -227,7 +228,10 @@ void SkulltagServer::doRefresh()
 	// Start the timer and wait
 	time.start();
 	if(!socket.waitForReadyRead(1000))
+	{
+		emit updated(this, RESPONSE_TIMEOUT);
 		return;
+	}
 
 
 	// Decompress the response.
@@ -245,7 +249,12 @@ void SkulltagServer::doRefresh()
 		emit updated(this, RESPONSE_BANNED);
 		return;
 	}
-	else if(response != SERVER_GOOD)
+	else if(response == SERVER_WAIT)
+	{
+		emit updated(this, RESPONSE_WAIT);
+		return;
+	}
+	else if (response != SERVER_GOOD)
 	{
 		emit updated(this, RESPONSE_BAD);
 		return;
