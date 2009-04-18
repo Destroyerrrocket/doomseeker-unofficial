@@ -8,6 +8,7 @@ include_directories(${QT_INCLUDES})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 qt4_wrap_ui(doomseekerUI
+	gui/aboutDlg.ui
 	gui/cfgFilePaths.ui
 	gui/configureDlg.ui
 	gui/mainwindow.ui
@@ -15,6 +16,7 @@ qt4_wrap_ui(doomseekerUI
 )
 
 qt_wrap_cpp(doomseekerWraps QT_FILES
+	gui/aboutDlg.h
 	gui/cfgFilePaths.h
 	gui/configBase.h
 	gui/configureDlg.h
@@ -34,6 +36,7 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 add_executable(doomseeker
 	${doomseekerUI}
 	${QT_FILES}
+	gui/aboutDlg.cpp
 	gui/cfgFilePaths.cpp
 	gui/configureDlg.cpp
 	gui/engineSkulltagConfig.cpp

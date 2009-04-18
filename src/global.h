@@ -1,6 +1,8 @@
 #ifndef __GLOBAL_H__
 #define __GLOBAL_H__
 
+#define VERSION		"0.1 Alpha"
+
 #define READINT32(pointer) ((quint32((quint8)(*pointer))) | (quint32(quint8(*(pointer+1)))<<8) | (quint32(quint8(*(pointer+2)))<<16) | (quint32(quint8(*(pointer+3)))<<24))
 #define READINT16(pointer) ((quint16((quint8)(*pointer))) | (quint16(quint8(*(pointer+1)))<<8))
 #define READINT8(pointer) ((quint8)(*pointer))

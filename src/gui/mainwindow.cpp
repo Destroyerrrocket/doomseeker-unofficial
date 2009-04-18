@@ -1,5 +1,6 @@
 #include "skulltag/skulltagmasterclient.h"
 
+#include "gui/aboutDlg.h"
 #include "gui/mainwindow.h"
 #include "gui/configureDlg.h"
 #include "gui/engineSkulltagConfig.h"
@@ -21,7 +22,9 @@ MainWindow::MainWindow(int argc, char** argv)
 
 	connect(btnGetServers, SIGNAL( clicked() ), this, SLOT( btnGetServers_Click() ));
 	connect(btnRefreshAll, SIGNAL( clicked() ), serverTableHandler, SLOT( refreshAll() ));
+	connect(menuActionAbout, SIGNAL( triggered() ), this, SLOT( menuHelpAbout() ));
 	connect(menuActionConfigure, SIGNAL( triggered() ), this, SLOT( menuOptionsConfigure() ));
+	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( close() ));
 	connect(serverTableHandler, SIGNAL( serverDoubleClicked(const Server*) ), this, SLOT( runGame(const Server*) ) );
 }
 
@@ -62,6 +65,12 @@ void MainWindow::btnGetServers_Click()
 	// disable refresh.
 	btnGetServers->setEnabled(false);
 	btnRefreshAll->setEnabled(false);
+}
+
+void MainWindow::menuHelpAbout()
+{
+	AboutDlg dlg(this);
+	dlg.exec();
 }
 
 void MainWindow::menuOptionsConfigure()

@@ -20,6 +20,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 	public slots:
 		void checkRefreshFinished();
 		void btnGetServers_Click();
+		void menuHelpAbout();
 		void menuOptionsConfigure();
 		void runGame(const Server*);
 
