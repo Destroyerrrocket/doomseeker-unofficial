@@ -57,11 +57,18 @@ void SLHandler::fillItem(QStandardItem* item, int num)
 	item->setData(var, SLDT_SORT);
 }
 
-void SLHandler::fillItem(QStandardItem* item, const QHostAddress& addr)
+void SLHandler::fillItem(QStandardItem* item, const QHostAddress& addr, const QString& actualDisplay)
 {
 	QVariant var = addr.toIPv4Address();
 
-	item->setData(addr.toString(), Qt::DisplayRole);
+	if (actualDisplay.isEmpty())
+	{
+		item->setData(addr.toString(), Qt::DisplayRole);
+	}
+	else
+	{
+		item->setData(actualDisplay, Qt::DisplayRole);
+	}
 	item->setData(var, SLDT_SORT);
 }
 ////////////////////////////////////////////////////
@@ -163,7 +170,7 @@ void SLHandler::updateServer(int row, Server* server)
 	fillItem(item, server->name());
 
 	item = model->item(row, SLCID_ADDRESS);
-	fillItem(item, server->address());
+	fillItem(item, server->address(), QString(server->address().toString() + ":" + QString::number(server->port())) );
 
 	item = model->item(row, SLCID_IWAD);
 	fillItem(item, server->iwadName());
@@ -199,10 +206,10 @@ QString SLHandler::createPlayersToolTip(const Server* server)
 	QString plTab = spawnPlayerTable(server);
 
 	QString ret;
-	ret = "<span style='white-space: pre'>";
+	ret = "<div style='white-space: pre'>";
 	ret += firstTable;
 	ret += plTab;
-	ret += "</span>";
+	ret += "</div>";
 	return ret;
 }
 
@@ -212,9 +219,9 @@ QString SLHandler::createServerNameToolTip(const Server* server)
 		return QString();
 
 	QString ret;
-	ret = "<span style='white-space: pre'>";
+	ret = "<div style='white-space: pre'>";
 	ret += server->generalInfoHTML();
-	ret += "</span>";
+	ret += "</div>";
 	return ret;
 }
 
@@ -224,9 +231,9 @@ QString SLHandler::createPwadsToolTip(const Server* server)
 		return QString();
 
 	QString ret;
-	ret = "<span style='white-space: pre'>";
+	ret = "<div style='white-space: pre'>";
 	ret += server->pwads().join("\n");
-	ret += "</span>";
+	ret += "</div>";
 	return ret;
 }
 //////////////////////////////////////////////////////////////

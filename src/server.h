@@ -152,6 +152,7 @@ class Server : public QObject
 		const QStringList	&gameFlags() const { return dmFlags; }
 		const GameMode		&gameMode() const { return currentGameMode; }
 		bool				isLocked() const { return locked; }
+		const QString		&iwadName() const { return iwad; }
 		unsigned int		longestPlayerName() const;
 		const QString		&map() const { return mapName; }
 		unsigned short		maximumClients() const { return maxPlayers > maxClients ? maxPlayers : maxClients; }
@@ -162,14 +163,13 @@ class Server : public QObject
 		unsigned int		ping() const { return currentPing; }
 		const Player		&player(int index) const { return players[index]; }
 		unsigned short		port() const { return serverPort; }
+		const QStringList	&pwads() const { return wads; }
 		unsigned int		score(int team=0) const { return scores[team]; }
 		unsigned int		scoreLimit() const { return serverScoreLimit; }
 		int					teamPlayerCount(int team) const;
 		unsigned short		timeLeft() const { return serverTimeLeft; }
 		unsigned short		timeLimit() const { return serverTimeLimit; }
 		const QString		&wad(int index) const { return wads[index]; }
-		const QString		&iwadName() const { return iwad; }
-		const QStringList	&pwads() const { return wads; }
 
 		void				operator= (const Server &other);
 		virtual void		doRefresh()=0;

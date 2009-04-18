@@ -3,6 +3,7 @@
 #include "gui/mainwindow.h"
 #include "gui/configureDlg.h"
 #include "gui/engineSkulltagConfig.h"
+#include "pathfinder.h"
 #include <QFileInfo>
 #include <QProcess>
 #include <QHeaderView>
@@ -91,7 +92,57 @@ void MainWindow::runGame(const Server* server)
 		return;
 	}
 
+	PathFinder pf(config);
 	QStringList args;
+	QStringList missingPwads;
+
+	// Connect
+	args << "+connect" << QString(server->address().toString() + ":" + QString::number(server->port()));
+
+	// Iwad
+	QString iwad = pf.findWad(server->iwadName().toLower());
+	args << "-iwad" << iwad;
+
+	// Pwads
+	if (server->numWads() != 0)
+	{
+		args << "-file";
+	}
+
+	for (int i = 0; i < server->numWads(); ++i)
+	{
+		QString pwad = pf.findWad(server->wad(i));
+		if (pwad.isEmpty())
+		{
+			missingPwads << server->wad(i);
+		}
+		else
+		{
+			args << pwad;
+		}
+	}
+
+	if (iwad.isEmpty() || !missingPwads.isEmpty())
+	{
+		const QString filesMissingCaption = tr("Doomseeker - files are missing");
+		QString error = tr("Following files are missing:\n");
+
+		if (iwad.isEmpty())
+		{
+			error += tr("IWAD: ") + server->iwadName().toLower() + "\n";
+		}
+
+		if (!missingPwads.isEmpty())
+		{
+			error += tr("PWADS: ") + missingPwads.join(" ");
+		}
+
+		QMessageBox::critical(this, filesMissingCaption, error);
+		return;
+	}
+
+	printf("Starting: %s %s", fileinfo.absoluteFilePath().toAscii().constData(), args.join(" ").toAscii().constData());
+
 	QProcess proc;
 	if( !proc.startDetached(fileinfo.absoluteFilePath(), args, fileinfo.absolutePath()) )
 	{

@@ -11,7 +11,7 @@ class PathFinder
 	public:
 		PathFinder(Config*);
 
-		QString findFile(QString fileName);
+		QString findWad(const QString& fileName);
 
 };
 

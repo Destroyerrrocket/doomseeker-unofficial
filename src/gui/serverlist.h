@@ -83,7 +83,7 @@ class SLHandler : public QObject
 
 		void fillItem(QStandardItem*, const QString&);
 		void fillItem(QStandardItem*, int);
-		void fillItem(QStandardItem*, const QHostAddress&);
+		void fillItem(QStandardItem*, const QHostAddress&, const QString& actualDisplay = QString());
 
 		void prepareServerTable();
 		QModelIndex findServerOnTheList(const Server* server);
@@ -103,7 +103,7 @@ class SLHandler : public QObject
 		QString spawnGeneralInfoTable(const Server* server);
 		QString spawnPlayerTable(const Server* server);
 		/**
-		 * This will return absolutely nothing if the list is empty.
+		 * This will return absolutely nothing if the list in the first argument is empty.
 		 */
         QString spawnPartOfPlayerTable(QList<const Player*>, QString status, int colspan, bool isTeamgame, bool bAppendEmptyRowAtBeginning);
 };

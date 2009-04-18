@@ -182,8 +182,17 @@ QString	SkulltagServer::generalInfoHTML() const
 	QString tmp = serverName;
 	ret  = tmp.replace('>', "&gt;").replace('<', "&lt;") + "\n";
 	ret += strVersion + ": " + version + "\n";
-	ret += strEmail + ": " + email + "\n";
-	ret += strURL + ": " + webSite + "\n";
+
+	if (!email.isEmpty())
+	{
+		ret += strEmail + ": " + email + "\n";
+	}
+
+	if (!webSite.isEmpty())
+	{
+		ret += strURL + ": <A HREF=\"" + webSite + "\">" + webSite + "</A>\n";
+	}
+
 	if (skill < SkillLevel::numSkillLevels)
 	{
 		ret += strSkill + ": " + SkillLevel::names[skill];
