@@ -36,6 +36,7 @@ class OdamexServer : public Server
 		}
 
 		void doRefresh() {}
+		QString generalInfoHTML() const {}
 };
 
 OdamexMasterClient::OdamexMasterClient(QHostAddress address, unsigned short port) : MasterClient(address, port)

@@ -27,9 +27,6 @@
 // \c = '\034'
 #define	ESCAPE_COLOR	'\034'
 
-QString Player::teamNames[] = { "Blue", "Red", "Green", "Gold" };
-
-
 Player::Player(const QString &name, unsigned short score, unsigned short ping, PlayerTeam team, bool spectator, bool bot) :
 	playerName(name), currentScore(score), currentPing(ping), team(team), spectator(spectator), bot(bot)
 {
@@ -43,8 +40,6 @@ QString	Player::nameFormatted() const
 		// cut out bad characters
 		if ((playerName[i] < 32 || playerName[i] > 126) && playerName[i] != ESCAPE_COLOR)
 			continue;
-
-		char c = playerName[i].toAscii();
 
 		switch (playerName[i].toAscii())
 		{
@@ -91,6 +86,14 @@ QString Player::teamName(int team)
 
 	return teamNames[team];
 }
+
+QString Player::teamNames[] =
+{
+	"Blue",
+	"Red",
+	"Green",
+	"Gold"
+};
 
 const char Player::colorChart[20][7] =
 {
@@ -166,6 +169,18 @@ const GameMode GameMode::CAPTURE_THE_FLAG(QObject::tr("CTF"), true);
 GameMode::GameMode(const QString &name, bool teamgame) : modeName(name), teamgame(teamgame)
 {
 }
+
+////////////////////////////////////////////////////////////////////////////////
+const int SkillLevel::numSkillLevels = 5;
+
+const QString SkillLevel::names[] =
+{
+	QObject::tr("1 - I'm too young to die."),
+	QObject::tr("2 - Hey, not too rough."),
+	QObject::tr("3 - Hurt me plenty."),
+	QObject::tr("4 - Ultra-Violence."),
+	QObject::tr("5 - NIGHTMARE!")
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 

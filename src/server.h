@@ -77,7 +77,7 @@ struct Player
 		static QString	teamName(int team);
 
 		/**
-		 * Colorizes the given string.  Most useful for displaying colored 
+		 * Colorizes the given string.  Most useful for displaying colored
 		 * names.
 		 */
 		static QString	colorizeString(const QString &str, int def=4);
@@ -119,6 +119,14 @@ struct GameMode
 		bool	teamgame;
 };
 
+struct SkillLevel
+{
+	const QString strName;
+
+	static const int	 numSkillLevels;
+	static const QString names[];
+};
+
 class Server : public QObject
 {
 	Q_OBJECT
@@ -134,6 +142,11 @@ class Server : public QObject
 		Server(const QHostAddress &address, unsigned short port);
 		Server(const Server &other);
 		virtual ~Server();
+
+		/**
+		 * Should return general info about server, like server name, version, email, etc.
+		 */
+		virtual QString		generalInfoHTML() const =0;
 
 		const QHostAddress	&address() const { return serverAddress; }
 		const QStringList	&gameFlags() const { return dmFlags; }

@@ -88,6 +88,8 @@ class SLHandler : public QObject
 		void setRefreshing(int row);
 
 		QString createPlayersToolTip(const Server* server);
+		QString createServerNameToolTip(const Server* server);
+		QString createPwadsToolTip(const Server* server);
 
 		Server* serverFromList(int rowNum);
         Server* serverFromList(const QModelIndex&);

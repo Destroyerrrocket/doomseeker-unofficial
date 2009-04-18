@@ -171,6 +171,27 @@ SkulltagServer::SkulltagServer(const QHostAddress &address, unsigned short port)
 	teamInfo[3] = TeamInfo(tr("Gold"), QColor(255, 255, 0), 0);
 }
 
+QString	SkulltagServer::generalInfoHTML() const
+{
+	const QString strVersion = tr("Version");
+	const QString strEmail = tr ("E-mail");
+	const QString strURL = tr ("URL");
+	const QString strSkill = tr ("Skill");
+	QString ret;
+
+	QString tmp = serverName;
+	ret  = tmp.replace('>', "&gt;").replace('<', "&lt;") + "\n";
+	ret += strVersion + ": " + version + "\n";
+	ret += strEmail + ": " + email + "\n";
+	ret += strURL + ": " + webSite + "\n";
+	if (skill < SkillLevel::numSkillLevels)
+	{
+		ret += strSkill + ": " + SkillLevel::names[skill];
+	}
+
+	return ret;
+}
+
 void SkulltagServer::doRefresh()
 {
 	// Connect to the server
@@ -221,8 +242,8 @@ void SkulltagServer::doRefresh()
 		return;
 	}
 
-	version = QString(&packetOut[12]);
-	int pos = 12 + version.length() + 1;
+	version = QString(&packetOut[8]);
+	int pos = 8 + version.length() + 1;
 
 	// now read the data.
 	SkulltagGameMode mode = GAMEMODE_COOPERATIVE;

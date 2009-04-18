@@ -157,6 +157,7 @@ void SLHandler::updateServer(int row, Server* server)
 
 	item = model->item(row, SLCID_SERVERNAME);
 	fillItem(item, server->name());
+	item->setToolTip(createServerNameToolTip(server));
 
 	item = model->item(row, SLCID_ADDRESS);
 	fillItem(item, server->address());
@@ -170,6 +171,7 @@ void SLHandler::updateServer(int row, Server* server)
 	strTmp = server->pwads().join(" ");
 	item = model->item(row, SLCID_WADS);
 	fillItem(item, strTmp);
+	item->setToolTip(createPwadsToolTip(server));
 
 	item = model->item(row, SLCID_GAMETYPE);
 	fillItem(item, server->gameMode().name());
@@ -188,6 +190,9 @@ void SLHandler::setRefreshing(int row)
 //////////////////////////////////////////////////////////////
 QString SLHandler::createPlayersToolTip(const Server* server)
 {
+	if (server == NULL)
+		return QString();
+
 	QString firstTable = spawnGeneralInfoTable(server);
 	QString plTab = spawnPlayerTable(server);
 
@@ -195,6 +200,30 @@ QString SLHandler::createPlayersToolTip(const Server* server)
 	ret = "<p style='white-space: pre'>";
 	ret += firstTable;
 	ret += plTab;
+	ret += "</p>";
+	return ret;
+}
+
+QString SLHandler::createServerNameToolTip(const Server* server)
+{
+	if (server == NULL)
+		return QString();
+
+	QString ret;
+	ret = "<p style='white-space: pre'>";
+	ret += server->generalInfoHTML();
+	ret += "</p>";
+	return ret;
+}
+
+QString SLHandler::createPwadsToolTip(const Server* server)
+{
+	if (server == NULL)
+		return QString();
+
+	QString ret;
+	ret = "<p style='white-space: pre'>";
+	ret += server->pwads().join("\n");
 	ret += "</p>";
 	return ret;
 }
