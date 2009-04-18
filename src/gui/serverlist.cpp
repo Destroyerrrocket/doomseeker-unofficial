@@ -397,7 +397,7 @@ QString SLHandler::spawnPlayerTable(const Server* server)
 		plTabColNum = 5;
 		plTabTeamHeader = "<TD>" + team + "</TD>";
 	}
-	plTabHeader += plTabTeamHeader + "<TD>" + player + "</TD><TD ALING=right>&nbsp;" + score + "</TD><TD ALIGN=right>&nbsp;" + ping + "</TD><TD ALIGN>" + status + "</TD></TR>";
+	plTabHeader += plTabTeamHeader + "<TD>" + player + "</TD><TD ALIGN=right>&nbsp;" + score + "</TD><TD ALIGN=right>&nbsp;" + ping + "</TD><TD ALIGN>" + status + "</TD></TR>";
 	plTabHeader += QString("<TR><TD COLSPAN=%1><HR WIDTH=100%></TD></TR>").arg(plTabColNum);
 
 	QString plTabPlayers;
@@ -419,12 +419,12 @@ QString SLHandler::spawnPlayerTable(const Server* server)
 	QString plTabSpecs = spawnPartOfPlayerTable(specList, tr("SPECTATOR"), plTabColNum, server->gameMode().isTeamGame(), bAppendEmptyRowAtBeginning);
 
 
-	QString plTab = "<TABLE CELLSPACING=4>";
+	QString plTab = "<table cellspacing=\"4\" style=\"background-color: #FFFFFF;color: #000000\">";
 	plTab += plTabHeader;
 	plTab += plTabPlayers;
 	plTab += plTabBots;
 	plTab += plTabSpecs;
-	plTab += "</TABLE>";
+	plTab += "</table>";
 	return plTab;
 }
 
