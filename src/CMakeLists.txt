@@ -16,7 +16,6 @@ qt4_wrap_ui(doomseekerUI
 )
 
 qt_wrap_cpp(doomseekerWraps QT_FILES
-	gui/aboutDlg.h
 	gui/cfgFilePaths.h
 	gui/configBase.h
 	gui/configureDlg.h
@@ -29,7 +28,6 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	skulltag/skulltagserver.h
 	sdeapi/config.hpp
 	masterclient.h
-	pathfinder.h
 	server.h
 )
 
@@ -59,3 +57,7 @@ add_executable(doomseeker
 target_link_libraries(doomseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES})
 
 set_target_properties(doomseeker PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+if(WIN32)
+	set_target_properties(doomseeker PROPERTIES LINK_FLAGS_RELEASE "-Wl,-subsystem,windows")
+	set_target_properties(doomseeker PROPERTIES LINK_FLAGS_MINSIZEREL "-Wl,-subsystem,windows")
+endif(WIN32)
