@@ -39,7 +39,7 @@ void SLHandler::clearTable()
 	{
 		int rowCount = table->model()->rowCount();
 
-		table->model()->removeRows(0, rowCount - 1);
+		table->model()->removeRows(0, rowCount);
 	}
 }
 ////////////////////////////////////////////////////
