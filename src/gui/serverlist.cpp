@@ -186,14 +186,64 @@ void SLHandler::setRefreshing(int row)
 	item->setText(tr("<REFRESHING>"));
 }
 //////////////////////////////////////////////////////////////
-QString SLHandler::createPlayersToolTip(const Server* server) const
+QString SLHandler::createPlayersToolTip(const Server* server)
+{
+	QString firstTable = spawnGeneralInfoTable(server);
+	QString plTab = spawnPlayerTable(server);
+
+	QString ret;
+	ret = "<p style='white-space: pre'>";
+	ret += firstTable;
+	ret += plTab;
+	ret += "</p>";
+	return ret;
+}
+//////////////////////////////////////////////////////////////
+Server* SLHandler::serverFromList(int rowNum)
+{
+    QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
+
+    QStandardItem* item = model->item(rowNum);
+    return serverFromList(item);
+}
+
+Server* SLHandler::serverFromList(const QModelIndex& index)
+{
+    QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
+
+    QStandardItem* item = model->item(index.row());
+    return serverFromList(item);
+}
+
+Server* SLHandler::serverFromList(const QStandardItem* item)
+{
+    QVariant pointer = qVariantFromValue(item->data(SLDT_POINTER_TO_SERVER_STRUCTURE));
+    if (!pointer.isValid())
+    {
+        return NULL;
+    }
+    ServerPointer savedServ = qVariantValue<ServerPointer>(pointer);
+    return savedServ.ptr;
+}
+
+void SLHandler::setMaster(MasterClient* mc)
+{
+	if (master != NULL)
+	{
+		delete master;
+	}
+
+	clearTable();
+	master = mc;
+}
+//////////////////////////////////////////////////////////////
+QString SLHandler::spawnGeneralInfoTable(const Server* server)
 {
 	const QString timelimit = tr("Timelimit");
 	const QString scorelimit = tr("Scorelimit");
 	const QString unlimited = tr("Unlimited");
 	const QString players = tr("Players");
 
-	QString ret;
 
 
 	// Timelimit
@@ -249,11 +299,59 @@ QString SLHandler::createPlayersToolTip(const Server* server) const
 	firstTable += firstTableTeamscore;
 	firstTable += firstTablePlayers;
 	firstTable += "</TABLE>";
-	// END OF FIRST TABLE
 
+	return firstTable;
+}
 
+QString SLHandler::spawnPlayerTable(const Server* server)
+{
+	// Sort the players out first.
+	QHash<int, QList<const Player*> > sortedPlayers;
+	QList<const Player*> botList;
+	QList<const Player*> specList;
 
-	// Player table
+	for (int i = 0; i < server->numPlayers(); ++i)
+	{
+		const Player& p = server->player(i);
+
+		if (p.isSpectating())
+		{
+			specList.append(&p);
+			continue;
+		}
+
+		if (server->gameMode().isTeamGame())
+		{
+			int team = p.teamNum();
+
+			QHash<int, QList<const Player*> >::iterator it = sortedPlayers.find(team);
+			if (it == sortedPlayers.end())
+			{
+				QList<const Player*> l;
+				l.append(&p);
+				sortedPlayers.insert(team, l);
+			}
+			else
+			{
+				it.value().append(&p);
+			}
+		}
+		else
+		{
+			if (p.isBot())
+			{
+				botList.append(&p);
+				continue;
+			}
+
+			if (sortedPlayers.count() == 0)
+				sortedPlayers.insert(0, QList<const Player*>());
+
+			sortedPlayers.find(0).value().append(&p);
+		}
+
+	}
+
 	const QString team = tr("Team");
 	const QString player = tr("Player");
 	const QString score = tr("Score");
@@ -272,70 +370,61 @@ QString SLHandler::createPlayersToolTip(const Server* server) const
 	plTabHeader += QString("<TR><TD COLSPAN=%1><HR WIDTH=100%></TD></TR>").arg(plTabColNum);
 
 	QString plTabPlayers;
-	for (int i = 0; i < server->numPlayers(); ++i)
+	QHash<int, QList<const Player*> >::iterator it;
+	bool bAppendEmptyRowAtBeginning = false;
+	for (it = sortedPlayers.begin(); it != sortedPlayers.end(); ++it)
 	{
-		const Player& p = server->player(i);
-
-		QString strPlayer = "<TR>";
-		if (server->gameMode().isTeamGame())
+		plTabPlayers += spawnPartOfPlayerTable(it.value(), "", plTabColNum, server->gameMode().isTeamGame(), bAppendEmptyRowAtBeginning);
+		if (!bAppendEmptyRowAtBeginning)
 		{
-			strPlayer += QString("<TD>%1</TD>").arg(p.teamName());
+			bAppendEmptyRowAtBeginning = true;
 		}
-		strPlayer += "<TD>%1</TD><TD ALIGN=right>%2</TD><TD ALIGN=right>%3</TD><TD>%4</TD></TR>";
-		strPlayer = strPlayer.arg(p.nameFormatted()).arg(p.score()).arg(p.ping());
-		strPlayer = strPlayer.arg("STATUS");
-
-		plTabPlayers += strPlayer;
 	}
+
+	bAppendEmptyRowAtBeginning = !plTabPlayers.isEmpty();
+	QString plTabBots = spawnPartOfPlayerTable(botList, tr("BOT"), plTabColNum, server->gameMode().isTeamGame(), bAppendEmptyRowAtBeginning);
+
+	bAppendEmptyRowAtBeginning = !(plTabBots.isEmpty() && plTabPlayers.isEmpty());
+	QString plTabSpecs = spawnPartOfPlayerTable(specList, tr("SPECTATOR"), plTabColNum, server->gameMode().isTeamGame(), bAppendEmptyRowAtBeginning);
+
 
 	QString plTab = "<TABLE CELLSPACING=5>";
 	plTab += plTabHeader;
 	plTab += plTabPlayers;
+	plTab += plTabBots;
+	plTab += plTabSpecs;
 	plTab += "</TABLE>";
-
-	ret = "<p style='white-space: pre'>";
-	ret += firstTable;
-	ret += plTab;
-	ret += "</p>";
-	return ret;
-}
-//////////////////////////////////////////////////////////////
-Server* SLHandler::serverFromList(int rowNum)
-{
-    QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
-
-    QStandardItem* item = model->item(rowNum);
-    return serverFromList(item);
+	return plTab;
 }
 
-Server* SLHandler::serverFromList(const QModelIndex& index)
+QString SLHandler::spawnPartOfPlayerTable(QList<const Player*> list, QString status, int colspan, bool isTeamgame, bool bAppendEmptyRowAtBeginning)
 {
-    QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
-
-    QStandardItem* item = model->item(index.row());
-    return serverFromList(item);
-}
-
-Server* SLHandler::serverFromList(const QStandardItem* item)
-{
-    QVariant pointer = qVariantFromValue(item->data(SLDT_POINTER_TO_SERVER_STRUCTURE));
-    if (!pointer.isValid())
-    {
-        return NULL;
-    }
-    ServerPointer savedServ = qVariantValue<ServerPointer>(pointer);
-    return savedServ.ptr;
-}
-
-void SLHandler::setMaster(MasterClient* mc)
-{
-	if (master != NULL)
+	QString ret;
+	if (list.count() != 0)
 	{
-		delete master;
+		if (bAppendEmptyRowAtBeginning)
+		{
+			ret = QString("<TR><TD COLSPAN=%1>&nbsp;</TD></TR>").arg(colspan);
+		}
+
+		for (int i = 0; i < list.count(); ++i)
+		{
+			const Player& p = *list[i];
+
+			QString strPlayer = "<TR>";
+			if (isTeamgame)
+			{
+				strPlayer += QString("<TD>%1</TD>").arg(p.teamName());
+			}
+			strPlayer += "<TD>%1</TD><TD ALIGN=right>%2</TD><TD ALIGN=right>%3</TD><TD>%4</TD></TR>";
+			strPlayer = strPlayer.arg(p.nameFormatted()).arg(p.score()).arg(p.ping());
+			strPlayer = strPlayer.arg(status);
+
+			ret += strPlayer;
+		}
 	}
 
-	clearTable();
-	master = mc;
+	return ret;
 }
 //////////////////////////////////////////////////////////////
 // Slots

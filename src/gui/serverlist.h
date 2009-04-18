@@ -87,11 +87,18 @@ class SLHandler : public QObject
 		void updateServer(int row, Server* server);
 		void setRefreshing(int row);
 
-		QString createPlayersToolTip(const Server* server) const;
+		QString createPlayersToolTip(const Server* server);
 
 		Server* serverFromList(int rowNum);
         Server* serverFromList(const QModelIndex&);
         Server* serverFromList(const QStandardItem*);
+
+		QString spawnGeneralInfoTable(const Server* server);
+		QString spawnPlayerTable(const Server* server);
+		/**
+		 * This will return absolutely nothing if the list is empty.
+		 */
+        QString spawnPartOfPlayerTable(QList<const Player*>, QString status, int colspan, bool isTeamgame, bool bAppendEmptyRowAtBeginning);
 };
 
 #endif

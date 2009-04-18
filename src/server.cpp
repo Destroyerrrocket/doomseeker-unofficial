@@ -175,6 +175,7 @@ Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
 	maxClients(0), maxPlayers(0), serverName(tr("<< ERROR >>")),
 	serverScoreLimit(0), serverTimeLeft(0), serverTimeLimit(0)
 {
+	bRunning = false;
 	for(int i = 0;i < MAX_TEAMS;i++)
 		scores[i] = 0;
 }

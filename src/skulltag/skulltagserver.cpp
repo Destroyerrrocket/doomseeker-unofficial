@@ -175,15 +175,15 @@ void SkulltagServer::doRefresh()
 {
 	// Connect to the server
 	QUdpSocket socket;
-	
+
 	socket.connectToHost(address(), port());
-	
+
 	if(!socket.waitForConnected(1000))
 	{
 		printf("%s\n", socket.errorString().toAscii().data());
 		return;
 	}
-	
+
 
 	// Send launcher challenge.
 	QTime time = QTime::currentTime();
@@ -198,7 +198,7 @@ void SkulltagServer::doRefresh()
 	time.start();
 	if(!socket.waitForReadyRead(1000))
 		return;
-		
+
 
 	// Decompress the response.
 	QByteArray data = socket.readAll();
@@ -314,10 +314,11 @@ void SkulltagServer::doRefresh()
 			}
 		}
 	}
+
 	if((flags & SQF_LIMITS) == SQF_LIMITS)
 	{
 		fragLimit = READINT16(&packetOut[pos]);
-		
+
 		// Read timelimit and timeleft,
 		// note that if timelimit == 0 then no info
 		// about timeleft is sent
@@ -328,7 +329,7 @@ void SkulltagServer::doRefresh()
 			serverTimeLeft = READINT16(&packetOut[pos]);
 			pos += 2;
 		}
-		
+
 		duelLimit = READINT16(&packetOut[pos]);
 		pointLimit = READINT16(&packetOut[pos+2]);
 		winLimit = READINT16(&packetOut[pos+4]);
@@ -353,6 +354,17 @@ void SkulltagServer::doRefresh()
 		}
 		pos += 6;
 	}
+	else
+	{
+		// Nullify vars if there is no info
+		fragLimit = 0;
+		serverTimeLimit = 0;
+		duelLimit = 0;
+		pointLimit = 0;
+		winLimit = 0;
+		serverScoreLimit = 0;
+	}
+
 	if((flags & SQF_TEAMDAMAGE) == SQF_TEAMDAMAGE)
 	{
 		teamDamage = QByteArray(&packetOut[pos], 4).toFloat();
@@ -425,7 +437,7 @@ void SkulltagServer::doRefresh()
 
 	socket.close();
 
-	emit updated(this, RESPONSE_GOOD);	
+	emit updated(this, RESPONSE_GOOD);
 }
 ////////////////////////////////////////////////////////////////////////////////
 
