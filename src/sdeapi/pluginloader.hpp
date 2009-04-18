@@ -36,7 +36,7 @@
 
 #include <vector>
 
-#ifdef WINDOWS
+#ifdef Q_WS_WIN
 #include <windows.h>
 
 #ifdef _MSC_VER
@@ -87,7 +87,7 @@ class Plugin
 
 		QString	file;
 
-#ifdef WINDOWS
+#ifdef Q_WS_WIN
 		HMODULE		library;
 #else
 		void		*library;

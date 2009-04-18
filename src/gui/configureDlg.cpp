@@ -1,4 +1,5 @@
 #include "gui/configureDlg.h"
+#include "gui/cfgFilePaths.h"
 #include <Qt>
 #include <QDebug>
 #include <QStandardItemModel>
@@ -40,6 +41,9 @@ void ConfigureDlg::initOptionsList()
 	root1 = new QStandardItem("<HIDE>");
 	model->appendRow(root1);
 	hider = root1;
+
+	ConfigurationBoxInfo* cbi = FilePathsConfigBox::createStructure(mainConfig, this);
+	addConfigurationBox(model->invisibleRootItem(), cbi);
 
 	tvOptionsList->setModel(model);
 }

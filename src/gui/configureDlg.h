@@ -1,9 +1,9 @@
 #ifndef __CONFIGUREDIALOG_H_
 #define __CONFIGUREDIALOG_H_
 
-#include "ui_configureDlg.h"
 #include "gui/configBase.h"
 #include "sdeapi/config.hpp"
+#include "ui_configureDlg.h"
 
 class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 {

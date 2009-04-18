@@ -12,7 +12,7 @@ ConfigurationBoxInfo* EngineSkulltagConfigBox::createStructure(Config* cfg, QWid
 {
 	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
 	ec->confBox = new EngineSkulltagConfigBox(cfg, parent);
-	ec->boxName = "SkullTag";
+	ec->boxName = tr("SkullTag");
 	return ec;
 }
 ///////////////////////////////////////////////////
@@ -39,7 +39,7 @@ void EngineSkulltagConfigBox::saveSettings()
 void EngineSkulltagConfigBox::btnBrowseBinaryClicked()
 {
 	QString filter;
-#if defined(WIN32)
+#if defined(Q_WS_WIN)
 	filter = tr("Binary files (*.exe);;Any files (*)");
 #else
 	// Other platforms do not have an extension for their binary files.

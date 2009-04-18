@@ -50,7 +50,7 @@ Config::~Config()
 void Config::locateConfigFile(int argc, char* argv[])
 {
 	QDir configDir;
-#if defined(WIN32)
+#if defined(Q_WS_WIN)
 	configDir = argv[0];
 	//configDir.
 	unsigned int pos = static_cast<unsigned int> (configDir.path().lastIndexOf('\\')) > static_cast<unsigned int> (configDir.path().lastIndexOf('/')) ? configDir.path().lastIndexOf('\\') : configDir.path().lastIndexOf('/');

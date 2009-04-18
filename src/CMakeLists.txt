@@ -8,16 +8,18 @@ include_directories(${QT_INCLUDES})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 qt4_wrap_ui(doomseekerUI
-	gui/mainwindow.ui
+	gui/cfgFilePaths.ui
 	gui/configureDlg.ui
+	gui/mainwindow.ui
 	gui/engineSkulltagConfig.ui
 )
 
 qt_wrap_cpp(doomseekerWraps QT_FILES
+	gui/cfgFilePaths.h
 	gui/configBase.h
+	gui/configureDlg.h
 	gui/mainwindow.h
 	gui/engineSkulltagConfig.h
-	gui/configureDlg.h
 	gui/serverlist.h
 	gui/widgets/serverlistview.h
 	odamex/odamexmasterclient.h
@@ -25,12 +27,14 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	skulltag/skulltagserver.h
 	sdeapi/config.hpp
 	masterclient.h
+	pathfinder.h
 	server.h
 )
 
 add_executable(doomseeker
-	${QT_FILES}
 	${doomseekerUI}
+	${QT_FILES}
+	gui/cfgFilePaths.cpp
 	gui/configureDlg.cpp
 	gui/engineSkulltagConfig.cpp
 	gui/mainwindow.cpp
@@ -45,6 +49,7 @@ add_executable(doomseeker
 	skulltag/skulltagserver.cpp
 	main.cpp
 	masterclient.cpp
+	pathfinder.cpp
 	server.cpp
 )
 

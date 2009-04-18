@@ -34,7 +34,7 @@
 #include <string>
 #include <vector>
 
-#ifdef WINDOWS
+#ifdef Q_WS_WIN
 #include <windows.h>
 #define dlopen(a,b)	LoadLibrary(a)
 #define dlsym(a,b)	GetProcAddress(a, b)
@@ -107,7 +107,7 @@ PluginLoader::~PluginLoader()
 
 void PluginLoader::filesInDir()
 {
-#ifdef WINDOWS
+#ifdef Q_WS_WIN
 	WIN32_FIND_DATA file;
 	HANDLE directory = FindFirstFile((pluginsDirectory + "*.dll").toAscii().constData(), &file);
 	if(directory != INVALID_HANDLE_VALUE)

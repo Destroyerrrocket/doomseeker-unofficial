@@ -3,7 +3,7 @@
 #include "gui/mainwindow.h"
 #include "gui/configureDlg.h"
 #include "gui/engineSkulltagConfig.h"
-#include <QFile>
+#include <QFileInfo>
 #include <QProcess>
 #include <QHeaderView>
 #include <QMessageBox>
@@ -76,17 +76,19 @@ void MainWindow::menuOptionsConfigure()
 void MainWindow::runGame(const Server* server)
 {
 	SettingsData* setting = config->setting("SkullTagBinaryPath");
-	QFile file(setting->string());
-	if (!file.exists())
+	QFileInfo fileinfo(setting->string());
+
+	if (!fileinfo.exists() || fileinfo.isDir())
 	{
-		QMessageBox::critical(this, "Doomseeker - error", "File: " + file.fileName() + "\ndoesn't exist");
-		return;
-	}
-	QProcess proc;
-	if( !proc.startDetached(file.fileName()) )
-	{
-		QMessageBox::critical(this, "Doomseeker - error", "File: " + file.fileName() + "\ncannot be run");
+		QMessageBox::critical(this, "Doomseeker - error", "File: " + fileinfo.absoluteFilePath() + "\ndoesn't exist or is a directory");
 		return;
 	}
 
+	QStringList args;
+	QProcess proc;
+	if( !proc.startDetached(fileinfo.absoluteFilePath(), args, fileinfo.absolutePath()) )
+	{
+		QMessageBox::critical(this, "Doomseeker - error", "File: " + fileinfo.absoluteFilePath() + "\ncannot be run");
+		return;
+	}
 }
