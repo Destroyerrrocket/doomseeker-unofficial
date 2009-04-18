@@ -100,6 +100,7 @@ void SLHandler::prepareServerTable()
 	connect(header, SIGNAL( sectionClicked(int) ), this, SLOT ( columnHeaderClicked(int) ) );
 	connect(table, SIGNAL( rightMouseClick(const QModelIndex&) ), this, SLOT ( tableRightClicked(const QModelIndex&)) );
 	connect(table, SIGNAL( entered(const QModelIndex&) ), this, SLOT ( mouseEntered(const QModelIndex&)) );
+	connect(table, SIGNAL( doubleClicked(const QModelIndex&)), this, SLOT( doubleClicked(const QModelIndex&)) );
 
 	columnHeaderClicked(0);
 }
@@ -559,4 +560,10 @@ void SLHandler::mouseEntered(const QModelIndex& index)
 	}
 
 	QToolTip::showText(QCursor::pos(), tooltip, table);
+}
+
+void SLHandler::doubleClicked(const QModelIndex& index)
+{
+	Server* server = serverFromList(index);
+	emit serverDoubleClicked(server);
 }

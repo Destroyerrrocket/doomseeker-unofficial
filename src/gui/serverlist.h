@@ -69,6 +69,10 @@ class SLHandler : public QObject
 		// Handles column sorting.
 		void columnHeaderClicked(int);
 		void mouseEntered(const QModelIndex&);
+		void doubleClicked(const QModelIndex&);
+
+	signals:
+		void serverDoubleClicked(const Server*);
 
 	protected:
 		QTableView* 	table;

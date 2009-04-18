@@ -3,8 +3,10 @@
 #include "gui/mainwindow.h"
 #include "gui/configureDlg.h"
 #include "gui/engineSkulltagConfig.h"
-#include <QPointer>
+#include <QFile>
+#include <QProcess>
 #include <QHeaderView>
+#include <QMessageBox>
 
 MainWindow::MainWindow(int argc, char** argv)
 {
@@ -19,6 +21,7 @@ MainWindow::MainWindow(int argc, char** argv)
 	connect(btnGetServers, SIGNAL( clicked() ), this, SLOT( btnGetServers_Click() ));
 	connect(btnRefreshAll, SIGNAL( clicked() ), serverTableHandler, SLOT( refreshAll() ));
 	connect(menuActionConfigure, SIGNAL( triggered() ), this, SLOT( menuOptionsConfigure() ));
+	connect(serverTableHandler, SIGNAL( serverDoubleClicked(const Server*) ), this, SLOT( runGame(const Server*) ) );
 }
 
 MainWindow::~MainWindow()
@@ -68,4 +71,22 @@ void MainWindow::menuOptionsConfigure()
 	dlg.addEngineConfiguration(ec);
 
 	dlg.exec();
+}
+
+void MainWindow::runGame(const Server* server)
+{
+	SettingsData* setting = config->setting("SkullTagBinaryPath");
+	QFile file(setting->string());
+	if (!file.exists())
+	{
+		QMessageBox::critical(this, "Doomseeker - error", "File: " + file.fileName() + "\ndoesn't exist");
+		return;
+	}
+	QProcess proc;
+	if( !proc.startDetached(file.fileName()) )
+	{
+		QMessageBox::critical(this, "Doomseeker - error", "File: " + file.fileName() + "\ncannot be run");
+		return;
+	}
+
 }

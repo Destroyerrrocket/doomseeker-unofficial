@@ -21,6 +21,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void checkRefreshFinished();
 		void btnGetServers_Click();
 		void menuOptionsConfigure();
+		void runGame(const Server*);
 
 	private:
 		SLHandler*			serverTableHandler;
