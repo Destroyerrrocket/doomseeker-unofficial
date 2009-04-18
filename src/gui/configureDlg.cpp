@@ -54,8 +54,8 @@ void ConfigureDlg::saveSettings()
 	// Iterate through every engine and execute it's saving method
 	for (int i = 0; i < configBoxesList.count(); ++i)
 	{
-		qDebug() << "Box:" << configBoxesList[i]->boxName;
-		configBoxesList[i]->confBox->saveSettings();
+		if (configBoxesList[i]->confBox->save())
+			qDebug() << "Box:" << configBoxesList[i]->boxName;
 	}
 	mainConfig->saveConfig();
 	qDebug() << "Saving completed!";
@@ -149,6 +149,7 @@ void ConfigureDlg::optionListClicked(const QModelIndex& index)
 	if (cfgBox != NULL && cfgBox->confBox != NULL)
 	{
 		cfgBox->confBox->readSettings();
+		cfgBox->confBox->setAllowSave(true);
 		showConfigurationBox(cfgBox->confBox);
 	}
 }

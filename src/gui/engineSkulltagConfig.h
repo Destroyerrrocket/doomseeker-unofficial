@@ -8,14 +8,15 @@ class EngineSkulltagConfigBox : public ConfigurationBaseBox, private Ui::EngineS
 {
 	Q_OBJECT
 
-	private:
+	protected:
 		EngineSkulltagConfigBox(Config* cfg, QWidget* parent = NULL);
+		void saveSettings();
 
 	public:
 		static ConfigurationBoxInfo* createStructure(Config* cfg, QWidget* parent = NULL);
 
 		void readSettings();
-		void saveSettings();
+
 
 	public slots:
 		void btnBrowseBinaryClicked();

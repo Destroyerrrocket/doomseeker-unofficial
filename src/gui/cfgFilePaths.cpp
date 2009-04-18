@@ -23,18 +23,37 @@ ConfigurationBoxInfo* FilePathsConfigBox::createStructure(Config* cfg, QWidget* 
 ////////////////////////////////////////////////////
 void FilePathsConfigBox::readSettings()
 {
+	SettingsData* setting;
+
+	setting = config->setting("WadPaths");
+	QStringList strList = setting->string().split(";", QString::SkipEmptyParts);
+	for (int i = 0; i < strList.count(); ++i)
+	{
+		addPath(strList[i]);
+	}
 }
 
 void FilePathsConfigBox::saveSettings()
 {
+	QStringList strList;
+	SettingsData* setting;
 
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstIwadAndPwadPaths->model());
+	{
+		for(int i = 0; i < model->rowCount(); ++i)
+		{
+			QStandardItem* item = model->item(i);
+			strList << item->text();
+		}
+	}
+
+	setting = config->setting("WadPaths");
+	setting->setValue(strList.join(";"));
 }
 ////////////////////////////////////////////////////
-// Slots
-void FilePathsConfigBox::btnAddWadPath_Click()
+void FilePathsConfigBox::addPath(const QString& strPath)
 {
-	QString strDir = QFileDialog::getExistingDirectory(this, tr("Doomseeker - Add wad path"));
-	if (strDir.isEmpty())
+	if (strPath.isEmpty())
 	{
 		return;
 	}
@@ -54,12 +73,19 @@ void FilePathsConfigBox::btnAddWadPath_Click()
 		cs = Qt::CaseSensitive;
 		#endif
 
-		if (dir.compare(strDir, cs) == 0)
+		if (dir.compare(strPath, cs) == 0)
 		{
 			return;
 		}
 	}
-	model->appendRow(new QStandardItem(strDir));
+	model->appendRow(new QStandardItem(strPath));
+}
+////////////////////////////////////////////////////
+// Slots
+void FilePathsConfigBox::btnAddWadPath_Click()
+{
+	QString strDir = QFileDialog::getExistingDirectory(this, tr("Doomseeker - Add wad path"));
+	addPath(strDir);
 }
 
 void FilePathsConfigBox::btnRemoveWadPath_Click()

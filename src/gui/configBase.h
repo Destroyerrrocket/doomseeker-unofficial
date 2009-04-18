@@ -14,21 +14,41 @@ class ConfigurationBaseBox : public QGroupBox
 	Q_OBJECT;
 
 	protected:
-		Config* config;
+		Config* 	config;
+		bool		bAllowSave;
+
+		virtual void saveSettings()=0;
 
 	public:
 		ConfigurationBaseBox(Config* cfg, QWidget* parent = NULL) : QGroupBox(parent)
 		{
+			bAllowSave = false;
 			config = cfg;
 			hide();
 		}
 
 		virtual ~ConfigurationBaseBox() {}
 
+		void setAllowSave(bool b)
+		{
+			bAllowSave = b;
+		}
+
 		// These shouldn't execute Config::readConfig() and Config::saveConfig()
 		// methods. They're here to read settings from and write them to controls.
 		virtual void readSettings()=0;
-		virtual void saveSettings()=0;
+		bool save()
+		{
+			if (bAllowSave)
+			{
+				saveSettings();
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
 
 };
 
@@ -51,10 +71,10 @@ struct ConfigurationBoxInfo
 			}
 		}
 		// Name displayed on the engines list.
-		QString 					boxName;
+		QString 				boxName;
 
 		// Index, used by ConfigureDlg class to find.
-		QStandardItem*				itemOnTheList;
+		QStandardItem*			itemOnTheList;
 
 		ConfigurationBaseBox*	confBox;
 };

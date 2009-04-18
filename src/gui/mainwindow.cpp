@@ -75,12 +75,19 @@ void MainWindow::menuOptionsConfigure()
 
 void MainWindow::runGame(const Server* server)
 {
+	const QString errorCaption = tr("Doomseeker - error");
 	SettingsData* setting = config->setting("SkullTagBinaryPath");
+	if (setting->string().isEmpty())
+	{
+		QMessageBox::critical(this, errorCaption, tr("No executable specified for this engine."));
+		return;
+	}
+
 	QFileInfo fileinfo(setting->string());
 
 	if (!fileinfo.exists() || fileinfo.isDir())
 	{
-		QMessageBox::critical(this, "Doomseeker - error", "File: " + fileinfo.absoluteFilePath() + "\ndoesn't exist or is a directory");
+		QMessageBox::critical(this, errorCaption, tr("File: ") + fileinfo.absoluteFilePath() + tr("\ndoesn't exist or is a directory"));
 		return;
 	}
 
@@ -88,7 +95,7 @@ void MainWindow::runGame(const Server* server)
 	QProcess proc;
 	if( !proc.startDetached(fileinfo.absoluteFilePath(), args, fileinfo.absolutePath()) )
 	{
-		QMessageBox::critical(this, "Doomseeker - error", "File: " + fileinfo.absoluteFilePath() + "\ncannot be run");
+		QMessageBox::critical(this, errorCaption, tr("File: ") + fileinfo.absoluteFilePath() + tr("\ncannot be run"));
 		return;
 	}
 }

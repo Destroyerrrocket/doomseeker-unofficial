@@ -10,6 +10,8 @@ class FilePathsConfigBox : public ConfigurationBaseBox, private Ui::FilePathsCon
 
 	protected:
 		FilePathsConfigBox(Config*, QWidget* parent = 0);
+		void addPath(const QString& strPath);
+		void saveSettings();
 
 	protected slots:
 		void btnAddWadPath_Click();
@@ -19,7 +21,6 @@ class FilePathsConfigBox : public ConfigurationBaseBox, private Ui::FilePathsCon
 		static ConfigurationBoxInfo* createStructure(Config* cfg, QWidget* parent = NULL);
 
 		void readSettings();
-		void saveSettings();
 };
 
 #endif
