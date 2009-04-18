@@ -1,6 +1,7 @@
 #include "gui/serverlist.h"
 #include <QHeaderView>
 #include <QStandardItem>
+#include <QToolTip>
 #include "skulltag/skulltagmasterclient.h"
 
 ServerListColumn SLHandler::columns[] =
@@ -93,9 +94,12 @@ void SLHandler::prepareServerTable()
 	table->horizontalHeader()->setSortIndicatorShown(true);
 	table->horizontalHeader()->setHighlightSections(false);
 
+	table->setMouseTracking(true);
+
 	QHeaderView* header = table->horizontalHeader();
 	connect(header, SIGNAL( sectionClicked(int) ), this, SLOT ( columnHeaderClicked(int) ) );
 	connect(table, SIGNAL( rightMouseClick(const QModelIndex&) ), this, SLOT ( tableRightClicked(const QModelIndex&)) );
+	connect(table, SIGNAL( entered(const QModelIndex&) ), this, SLOT ( mouseEntered(const QModelIndex&)) );
 
 	columnHeaderClicked(0);
 }
@@ -150,14 +154,12 @@ void SLHandler::updateServer(int row, Server* server)
 	item->setData(savePointer, SLDT_POINTER_TO_SERVER_STRUCTURE);
 
 	fillItem(item, server->numPlayers());
-	item->setToolTip(createPlayersToolTip(server));
 
 	item = model->item(row, SLCID_PING);
 	fillItem(item, server->ping());
 
 	item = model->item(row, SLCID_SERVERNAME);
 	fillItem(item, server->name());
-	item->setToolTip(createServerNameToolTip(server));
 
 	item = model->item(row, SLCID_ADDRESS);
 	fillItem(item, server->address());
@@ -171,7 +173,6 @@ void SLHandler::updateServer(int row, Server* server)
 	strTmp = server->pwads().join(" ");
 	item = model->item(row, SLCID_WADS);
 	fillItem(item, strTmp);
-	item->setToolTip(createPwadsToolTip(server));
 
 	item = model->item(row, SLCID_GAMETYPE);
 	fillItem(item, server->gameMode().name());
@@ -197,10 +198,10 @@ QString SLHandler::createPlayersToolTip(const Server* server)
 	QString plTab = spawnPlayerTable(server);
 
 	QString ret;
-	ret = "<p style='white-space: pre'>";
+	ret = "<span style='white-space: pre'>";
 	ret += firstTable;
 	ret += plTab;
-	ret += "</p>";
+	ret += "</span>";
 	return ret;
 }
 
@@ -210,9 +211,9 @@ QString SLHandler::createServerNameToolTip(const Server* server)
 		return QString();
 
 	QString ret;
-	ret = "<p style='white-space: pre'>";
+	ret = "<span style='white-space: pre'>";
 	ret += server->generalInfoHTML();
-	ret += "</p>";
+	ret += "</span>";
 	return ret;
 }
 
@@ -222,9 +223,9 @@ QString SLHandler::createPwadsToolTip(const Server* server)
 		return QString();
 
 	QString ret;
-	ret = "<p style='white-space: pre'>";
+	ret = "<span style='white-space: pre'>";
 	ret += server->pwads().join("\n");
-	ret += "</p>";
+	ret += "</span>";
 	return ret;
 }
 //////////////////////////////////////////////////////////////
@@ -395,7 +396,7 @@ QString SLHandler::spawnPlayerTable(const Server* server)
 		plTabColNum = 5;
 		plTabTeamHeader = "<TD>" + team + "</TD>";
 	}
-	plTabHeader += plTabTeamHeader + "<TD>" + player + "</TD><TD>" + score + "</TD><TD>" + ping + "</TD><TD>" + status + "</TD></TR>";
+	plTabHeader += plTabTeamHeader + "<TD>" + player + "</TD><TD ALING=right>&nbsp;" + score + "</TD><TD ALIGN=right>&nbsp;" + ping + "</TD><TD ALIGN>" + status + "</TD></TR>";
 	plTabHeader += QString("<TR><TD COLSPAN=%1><HR WIDTH=100%></TD></TR>").arg(plTabColNum);
 
 	QString plTabPlayers;
@@ -417,7 +418,7 @@ QString SLHandler::spawnPlayerTable(const Server* server)
 	QString plTabSpecs = spawnPartOfPlayerTable(specList, tr("SPECTATOR"), plTabColNum, server->gameMode().isTeamGame(), bAppendEmptyRowAtBeginning);
 
 
-	QString plTab = "<TABLE CELLSPACING=5>";
+	QString plTab = "<TABLE CELLSPACING=4>";
 	plTab += plTabHeader;
 	plTab += plTabPlayers;
 	plTab += plTabBots;
@@ -532,4 +533,30 @@ void SLHandler::columnHeaderClicked(int index)
 
 	QHeaderView* header = table->horizontalHeader();
 	header->setSortIndicator(sortIndex, sortOrder);
+}
+
+void SLHandler::mouseEntered(const QModelIndex& index)
+{
+	Server* server = serverFromList(index);
+	QString tooltip;
+	switch(index.column())
+	{
+		case SLCID_PLAYERS:
+			tooltip = createPlayersToolTip(server);
+			break;
+
+		case SLCID_SERVERNAME:
+			tooltip = createServerNameToolTip(server);
+			break;
+
+		case SLCID_WADS:
+			tooltip = createPwadsToolTip(server);
+			break;
+
+		default:
+			tooltip = "";
+			break;
+	}
+
+	QToolTip::showText(QCursor::pos(), tooltip, table);
 }

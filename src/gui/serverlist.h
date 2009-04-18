@@ -68,6 +68,7 @@ class SLHandler : public QObject
 	protected slots:
 		// Handles column sorting.
 		void columnHeaderClicked(int);
+		void mouseEntered(const QModelIndex&);
 
 	protected:
 		QTableView* 	table;
