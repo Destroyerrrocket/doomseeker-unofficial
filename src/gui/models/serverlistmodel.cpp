@@ -304,7 +304,6 @@ void ServerListModel::sort(int column, Qt::SortOrder order)
 		return;
 
 	// Sort the groups first.
-	int time = clock();
 	for (int i = 0; i < rowCount(); ++i)
 	{
 		ServerGroup sg1 = serverGroup(i);
@@ -360,8 +359,6 @@ void ServerListModel::sort(int column, Qt::SortOrder order)
 	}
 
 	emit allRowsContentChanged();
-
-	printf("Time: %d\n", clock() - time);
 }
 
 ServerListModel::ServerGroup ServerListModel::serverGroup(int row)
