@@ -27,21 +27,8 @@
 #include <QToolTip>
 #include "skulltag/skulltagmasterclient.h"
 
-ServerListColumn SLHandler::columns[] =
-{
-	{ tr("Players"), 60 },
-	{ tr("Ping"), 50 },
-	{ tr("Servername"), 200 },
-	{ tr("Address"), 120 },
-	{ tr("IWAD"), 90 },
-	{ tr("MAP"), 70 },
-	{ tr("Wads"), 120 },
-	{ tr("Gametype"), 150 }
-};
-//////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////
-SLHandler::SLHandler(QTableView* tab)
+
+SLHandler::SLHandler(ServerListView* tab)
 {
 	table = tab;
 	master = NULL;
@@ -58,65 +45,25 @@ SLHandler::~SLHandler()
 
 void SLHandler::clearTable()
 {
-	if (table != NULL)
-	{
-		int rowCount = table->model()->rowCount();
-
-		table->model()->removeRows(0, rowCount);
-	}
-}
-////////////////////////////////////////////////////
-void SLHandler::fillItem(QStandardItem* item, const QString& str)
-{
-	QString newStr = str.toLower();
-	item->setData(str, Qt::DisplayRole);
-	item->setData(newStr, SLDT_SORT);
+	ServerListModel* model = static_cast<ServerListModel*>(table->model());
+	model->destroyRows();
 }
 
-void SLHandler::fillItem(QStandardItem* item, int num)
-{
-	QVariant var = num;
-
-	item->setData(var, Qt::DisplayRole);
-	item->setData(var, SLDT_SORT);
-}
-
-void SLHandler::fillItem(QStandardItem* item, const QHostAddress& addr, const QString& actualDisplay)
-{
-	QVariant var = addr.toIPv4Address();
-
-	if (actualDisplay.isEmpty())
-	{
-		item->setData(addr.toString(), Qt::DisplayRole);
-	}
-	else
-	{
-		item->setData(actualDisplay, Qt::DisplayRole);
-	}
-	item->setData(var, SLDT_SORT);
-}
-////////////////////////////////////////////////////
 void SLHandler::prepareServerTable()
 {
 	sortOrder = Qt::AscendingOrder;
 	sortIndex = -1;
 
-	QStandardItemModel* model = new QStandardItemModel(this);
-
-	QStringList labels;
-	for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
-	{
-		labels << columns[i].name;
-	}
-	model->setHorizontalHeaderLabels(labels);
-	model->setSortRole(SLDT_SORT);
-
+	ServerListModel* model = new ServerListModel(this);
+	model->prepareHeaders();
 	table->setModel(model);
 
-	// Now set column widths
+	// Now set column widths and other properties
 	for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
 	{
+		ServerListColumn* columns = ServerListModel::columns;
 		table->setColumnWidth(i, columns[i].width);
+		table->setColumnHidden(i, columns[i].bHidden);
 	}
 
 	// We don't really need a vertical header so lets remove it
@@ -129,6 +76,7 @@ void SLHandler::prepareServerTable()
 
 	QHeaderView* header = table->horizontalHeader();
 	connect(header, SIGNAL( sectionClicked(int) ), this, SLOT ( columnHeaderClicked(int) ) );
+	connect(model, SIGNAL( allRowsContentChanged() ), table, SLOT( updateAllRows() ) );
 	connect(table, SIGNAL( rightMouseClick(const QModelIndex&) ), this, SLOT ( tableRightClicked(const QModelIndex&)) );
 	connect(table, SIGNAL( entered(const QModelIndex&) ), this, SLOT ( mouseEntered(const QModelIndex&)) );
 	connect(table, SIGNAL( leftMouseDoubleClicked(const QModelIndex&)), this, SLOT( doubleClicked(const QModelIndex&)) );
@@ -136,200 +84,7 @@ void SLHandler::prepareServerTable()
 	columnHeaderClicked(0);
 }
 /////////////////////////////////////////////////////////
-QModelIndex SLHandler::findServerOnTheList(const Server* server)
-{
-	if (server != NULL)
-	{
-	    QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
-		for (int i = 0; i < model->rowCount(); ++i)
-		{
-			QStandardItem* item = model->item(i);
-			const Server* savedServ = serverFromList(item);
-			if (server == savedServ)
-			{
-				QModelIndex index = model->indexFromItem(item);
-				return index;
-			}
-		}
-	}
-	return QModelIndex();
-}
-//////////////////////////////////////////////////////////////
-void SLHandler::addServer(Server* server, int response)
-{
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
-	QList<QStandardItem*> columns;
 
-	for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
-	{
-		columns.append(new QStandardItem());
-	}
-
-	model->appendRow(columns);
-	QModelIndex index = model->indexFromItem(columns[0]);
-	updateServer(index.row(), server, response);
-}
-
-void SLHandler::updateServer(int row, Server* server, int response)
-{
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
-	QStandardItem* item;
-	QStandardItem* itemZero;
-
-    itemZero = model->item(row, 0);
-    // Save pointer to the column
-	ServerPointer ptr(server);
-	QVariant savePointer = qVariantFromValue(ptr);
-	itemZero->setData(savePointer, SLDT_POINTER_TO_SERVER_STRUCTURE);
-
-	// Address is set no matter what, so it's set here.
-	item = model->item(row, SLCID_ADDRESS);
-	fillItem(item, server->address(), QString(server->address().toString() + ":" + QString::number(server->port())) );
-
-
-	switch(response)
-	{
-		case Server::RESPONSE_BAD:
-			setBad(row, server);
-			break;
-
-		case Server::RESPONSE_BANNED:
-			setBanned(row, server);
-			break;
-
-		case Server::RESPONSE_GOOD:
-		case Server::RESPONSE_WAIT:
-			setGood(row, server);
-			break;
-
-		case Server::RESPONSE_TIMEOUT:
-		    setTimeout(row, server);
-			break;
-	}
-
-	// Compress row size.
-	table->resizeRowToContents(model->indexFromItem(itemZero).row());
-}
-
-void SLHandler::setBad(int row, Server* server)
-{
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
-	QStandardItem* item;
-
-	item = model->item(row, SLCID_PLAYERS);
-	fillItem(item, -1);
-
-	item = model->item(row, SLCID_PING);
-	fillItem(item, 99999);
-
-	item = model->item(row, SLCID_SERVERNAME);
-	fillItem(item, tr("<ERROR>"));
-
-	item = model->item(row, SLCID_IWAD);
-	fillItem(item, "");
-
-	item = model->item(row, SLCID_MAP);
-	fillItem(item, "");
-
-	item = model->item(row, SLCID_WADS);
-	fillItem(item, "");
-
-	item = model->item(row, SLCID_GAMETYPE);
-	fillItem(item, "");
-}
-
-void SLHandler::setBanned(int row, Server* server)
-{
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
-	QStandardItem* item;
-
-	item = model->item(row, SLCID_PLAYERS);
-	fillItem(item, -1);
-
-	item = model->item(row, SLCID_PING);
-	fillItem(item, 99999);
-
-	item = model->item(row, SLCID_SERVERNAME);
-	fillItem(item, tr("You are banned from this server"));
-
-	item = model->item(row, SLCID_IWAD);
-	fillItem(item, "");
-
-	item = model->item(row, SLCID_MAP);
-	fillItem(item, "");
-
-	item = model->item(row, SLCID_WADS);
-	fillItem(item, "");
-
-	item = model->item(row, SLCID_GAMETYPE);
-	fillItem(item, "");
-}
-
-void SLHandler::setGood(int row, Server* server)
-{
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
-	QStandardItem* item;
-	QString strTmp;
-
-	item = model->item(row, SLCID_PLAYERS);
-	fillItem(item, server->numPlayers());
-
-	item = model->item(row, SLCID_PING);
-	fillItem(item, server->ping());
-
-	item = model->item(row, SLCID_SERVERNAME);
-	fillItem(item, server->name());
-
-	item = model->item(row, SLCID_IWAD);
-	fillItem(item, server->iwadName());
-
-	item = model->item(row, SLCID_MAP);
-	fillItem(item, server->map());
-
-	strTmp = server->pwads().join(" ");
-	item = model->item(row, SLCID_WADS);
-	fillItem(item, strTmp);
-
-	item = model->item(row, SLCID_GAMETYPE);
-	fillItem(item, server->gameMode().name());
-}
-
-void SLHandler::setTimeout(int row, Server* server)
-{
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
-	QStandardItem* item;
-
-	item = model->item(row, SLCID_PLAYERS);
-	fillItem(item, -1);
-
-	item = model->item(row, SLCID_PING);
-	fillItem(item, 99999);
-
-	item = model->item(row, SLCID_SERVERNAME);
-	fillItem(item, tr("<NO RESPONSE>"));
-
-	item = model->item(row, SLCID_IWAD);
-	fillItem(item, "");
-
-	item = model->item(row, SLCID_MAP);
-	fillItem(item, "");
-
-	item = model->item(row, SLCID_WADS);
-	fillItem(item, "");
-
-	item = model->item(row, SLCID_GAMETYPE);
-	fillItem(item, "");
-}
-
-void SLHandler::setRefreshing(int row)
-{
-	Server* serv = serverFromList(row);
-	serv->refresh();
-
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
-	QStandardItem* item = model->item(row, SLCID_SERVERNAME);
-	item->setText(tr("<REFRESHING>"));
-}
 //////////////////////////////////////////////////////////////
 QString SLHandler::createPlayersToolTip(const Server* server)
 {
@@ -371,32 +126,7 @@ QString SLHandler::createPwadsToolTip(const Server* server)
 	return ret;
 }
 //////////////////////////////////////////////////////////////
-Server* SLHandler::serverFromList(int rowNum)
-{
-    QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
 
-    QStandardItem* item = model->item(rowNum, 0);
-    return serverFromList(item);
-}
-
-Server* SLHandler::serverFromList(const QModelIndex& index)
-{
-    QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
-
-    QStandardItem* item = model->item(index.row(), 0);
-    return serverFromList(item);
-}
-
-Server* SLHandler::serverFromList(const QStandardItem* item)
-{
-    QVariant pointer = qVariantFromValue(item->data(SLDT_POINTER_TO_SERVER_STRUCTURE));
-    if (!pointer.isValid())
-    {
-        return NULL;
-    }
-    ServerPointer savedServ = qVariantValue<ServerPointer>(pointer);
-    return savedServ.ptr;
-}
 
 void SLHandler::setMaster(MasterClient* mc)
 {
@@ -415,8 +145,6 @@ QString SLHandler::spawnGeneralInfoTable(const Server* server)
 	const QString scorelimit = tr("Scorelimit");
 	const QString unlimited = tr("Unlimited");
 	const QString players = tr("Players");
-
-
 
 	// Timelimit
     QString firstTableTimelimit = "<TR><TD>" + timelimit + ":&nbsp;</TD><TD>%1 %2</TD></TR>";
@@ -602,39 +330,44 @@ QString SLHandler::spawnPartOfPlayerTable(QList<const Player*> list, QString sta
 // Slots
 void SLHandler::serverUpdated(Server *server, int response)
 {
-	QModelIndex index = findServerOnTheList(server);
+	ServerListModel* model = static_cast<ServerListModel*>(table->model());
+	QModelIndex index = model->findServerOnTheList(server);
+	int row = 0;
 	if (index.isValid())
 	{
-		updateServer(index.row(), server, response);
+		row = model->updateServer(index.row(), server, response);
 	}
 	else
 	{
-		addServer(server, response);
+		row = model->addServer(server, response);
 	}
 
 	if (sortIndex >= 0)
 	{
-		QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
-		model->sort(sortIndex, sortOrder);
+		//model->sort(sortIndex, sortOrder);
 	}
+
+	table->resizeRowToContents(row);
 }
 
 void SLHandler::refreshAll()
 {
+	ServerListModel* model = static_cast<ServerListModel*>(table->model());
 	for (int i = 0; i < table->model()->rowCount(); ++i)
 	{
-		setRefreshing(i);
+		model->setRefreshing(i);
 	}
 }
 
 void SLHandler::tableRightClicked(const QModelIndex& index)
 {
+	ServerListModel* model = static_cast<ServerListModel*>(table->model());
 	QItemSelectionModel* selModel = table->selectionModel();
 	QModelIndexList indexList = selModel->selectedRows();
 
 	for(int i = 0; i < indexList.count(); ++i)
 	{
-		setRefreshing(indexList[i].row());
+		model->setRefreshing(indexList[i].row());
 	}
 }
 
@@ -646,7 +379,7 @@ void SLHandler::columnHeaderClicked(int index)
 		// set sorting order to default for current column
 		switch(index)
 		{
-			case SLCID_PLAYERS:
+			case ServerListModel::SLCID_PLAYERS:
 				sortOrder = Qt::DescendingOrder;
 				break;
 
@@ -670,28 +403,31 @@ void SLHandler::columnHeaderClicked(int index)
 	}
 	sortIndex = index;
 
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(table->model());
+	ServerListModel* model = static_cast<ServerListModel*>(table->model());
 	model->sort(sortIndex, sortOrder);
 
 	QHeaderView* header = table->horizontalHeader();
 	header->setSortIndicator(sortIndex, sortOrder);
+
+	//table->fixRowSize();
 }
 
 void SLHandler::mouseEntered(const QModelIndex& index)
 {
-	Server* server = serverFromList(index);
+	ServerListModel* model = static_cast<ServerListModel*>(table->model());
+	Server* server = model->serverFromList(index);
 	QString tooltip;
 	switch(index.column())
 	{
-		case SLCID_PLAYERS:
+		case ServerListModel::SLCID_PLAYERS:
 			tooltip = createPlayersToolTip(server);
 			break;
 
-		case SLCID_SERVERNAME:
+		case ServerListModel::SLCID_SERVERNAME:
 			tooltip = createServerNameToolTip(server);
 			break;
 
-		case SLCID_WADS:
+		case ServerListModel::SLCID_WADS:
 			tooltip = createPwadsToolTip(server);
 			break;
 
@@ -705,6 +441,7 @@ void SLHandler::mouseEntered(const QModelIndex& index)
 
 void SLHandler::doubleClicked(const QModelIndex& index)
 {
-	Server* server = serverFromList(index);
+	ServerListModel* model = static_cast<ServerListModel*>(table->model());
+	Server* server = model->serverFromList(index);
 	emit serverDoubleClicked(server);
 }

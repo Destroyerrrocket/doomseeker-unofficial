@@ -36,6 +36,18 @@ class ServerListView : public QTableView
 		{
 		}
 
+		void fixRowsSize()
+		{
+			for (int i = 0; i < model()->rowCount(); ++i)
+			{
+				resizeRowToContents(i);
+			}
+		}
+
+	public slots:
+		void updateRowVisuals(int row);
+		void updateAllRows();
+
 	protected:
 		virtual void mouseReleaseEvent(QMouseEvent* event);
 		virtual void mouseDoubleClickEvent(QMouseEvent* event);

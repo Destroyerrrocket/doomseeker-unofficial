@@ -22,6 +22,7 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/mainwindow.h
 	gui/engineSkulltagConfig.h
 	gui/serverlist.h
+	gui/models/serverlistmodel.h
 	gui/widgets/serverlistview.h
 	odamex/odamexmasterclient.h
 	skulltag/skulltagmasterclient.h
@@ -40,6 +41,7 @@ add_executable(doomseeker
 	gui/engineSkulltagConfig.cpp
 	gui/mainwindow.cpp
 	gui/serverlist.cpp
+	gui/models/serverlistmodel.cpp
 	gui/widgets/serverlistview.cpp
 	huffman/huffman.cpp
 	odamex/odamexmasterclient.cpp

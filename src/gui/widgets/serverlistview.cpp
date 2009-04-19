@@ -24,6 +24,19 @@
 #include "gui/widgets/serverlistview.h"
 #include <QDebug>
 
+void ServerListView::updateRowVisuals(int row)
+{
+	resizeRowToContents(row);
+}
+
+void ServerListView::updateAllRows()
+{
+	for (int i = 0; i < model()->rowCount(); ++i)
+	{
+		updateRowVisuals(i);
+	}
+}
+
 void ServerListView::mouseReleaseEvent(QMouseEvent* event)
 {
 	if (event->button() != Qt::RightButton)
