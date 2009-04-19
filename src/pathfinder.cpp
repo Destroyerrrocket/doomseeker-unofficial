@@ -39,12 +39,32 @@ QString PathFinder::findWad(const QString& fileName)
 	setting = config->setting("WadPaths");
 	QStringList strList = setting->string().split(";", QString::SkipEmptyParts);
 
+	#ifdef Q_WS_WIN
 	for (int i = 0; i < strList.count(); ++i)
 	{
 		QFileInfo file(strList[i] + QDir::separator() + fileName);
 		if (file.exists() && file.isFile())
 			return file.absoluteFilePath();
 	}
+	#else
+	QStringList filterList;
+	filterList << fileName;
+	for (int i = 0; i < strList.count(); ++i)
+	{
+		QDir dir(strList[i]);
+
+		QFileInfoList fiList = dir.entryInfoList(filterList, QDir::Files);
+		for (int j = 0; j < fiList.count(); ++j)
+		{
+			QString tmpName = fiList[j].fileName();
+			printf("%s\n", tmpName.toAscii().constData());
+			if (tmpName.compare(fileName, Qt::CaseInsensitive) == 0)
+			{
+				return fiList[j].absoluteFilePath();
+			}
+		}
+	}
+	#endif
 
 	return QString();
 }
