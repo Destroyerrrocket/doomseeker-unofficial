@@ -175,6 +175,7 @@ class Server : public QObject
 
 		void				operator= (const Server &other);
 		virtual void		doRefresh()=0;
+		void				finalizeRefreshing();
 		void				startRunning() { bRunning = true; }
 		void				stopRunning() { bRunning = false; }
 

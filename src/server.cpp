@@ -266,6 +266,11 @@ void Server::refresh()
 	ServerRefresher::threadPool.start(r);
 }
 
+void Server::finalizeRefreshing()
+{
+	iwad = iwad.toLower();
+}
+
 ServerRefresher::ServerRefresher(Server* p) : parent(p)
 {
 	bGuardian = false;
@@ -290,6 +295,7 @@ void ServerRefresher::run()
 	if (!bGuardian)
 	{
 		parent->doRefresh();
+		parent->finalizeRefreshing();
 		parent->stopRunning();
 	}
 	else
