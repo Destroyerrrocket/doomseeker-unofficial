@@ -61,6 +61,7 @@ void MainWindow::checkRefreshFinished()
 {
 	btnGetServers->setEnabled(true);
 	btnRefreshAll->setEnabled(true);
+	serverTableHandler->serverTable()->setAllowAllRowsRefresh(true);
 }
 
 void MainWindow::btnGetServers_Click()
@@ -88,6 +89,7 @@ void MainWindow::btnGetServers_Click()
 	// disable refresh.
 	btnGetServers->setEnabled(false);
 	btnRefreshAll->setEnabled(false);
+	serverTableHandler->serverTable()->setAllowAllRowsRefresh(false);
 }
 
 void MainWindow::menuHelpAbout()

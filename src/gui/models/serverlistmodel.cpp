@@ -295,99 +295,74 @@ Server* ServerListModel::serverFromList(const QStandardItem* item)
     ServerPointer savedServ = qVariantValue<ServerPointer>(pointer);
     return savedServ.ptr;
 }
-/*
+
 void ServerListModel::sort(int column, Qt::SortOrder order)
 {
+	QList<int> groupEndList;
 
 	if (rowCount() == 0)
 		return;
 
-	typedef QList< QList<QStandardItem*> > RowsList;
-
-	QHash<ServerGroup, RowsList> map;
+	// Sort the groups first.
 	int time = clock();
 	for (int i = 0; i < rowCount(); ++i)
 	{
-		ServerGroup key = static_cast<ServerGroup>(item(i, SLCID_HIDDEN_GROUP)->data(SLDT_SORT).toInt());
-		QList<QStandardItem*> row;
-		for (int j = 0; j < columnCount(); ++j)
+		ServerGroup sg1 = serverGroup(i);
+		for (int j = i + 1; j < rowCount(); ++j)
 		{
-			row.append(item(i, j));
-		}
-
-		QHash<ServerGroup, RowsList>::iterator it = map.find(key);
-		if (it == map.end())
-		{
-			// This group is empty, create it and append current row.
-			RowsList l;
-			l.append(row);
-			map.insert(key, l);
-		}
-		else
-		{
-			// This group is not empty, we need to find where we should insert the row
-			// (in which ashtray put the ciggarete)
-			RowsList::iterator listit;
-			bool bInserted = false;
-			QVariant cigarette = row[column]->data(SLDT_SORT);
-			if (order == Qt::AscendingOrder)
+			ServerGroup sg2 = serverGroup(j);
+			if (sg2 > sg1)
 			{
-				for (listit = it.value().begin(); listit != it.value().end(); ++listit)
-				{
-					QList<QStandardItem*>& rowExisting = *listit;
-					QVariant ashtray = rowExisting[column]->data(SLDT_SORT);
-					int result = compareColumnSortData(cigarette, ashtray, column);
-					if (result < 0)
-					{
-						it.value().insert(listit, row);
-						bInserted = true;
-						break;
-					}
-				}
+				swapRows(i, j);
+				break;
 			}
-			else
-			{
-				for (listit = it.value().begin(); listit != it.value().end(); ++listit)
-				{
-					QList<QStandardItem*>& rowExisting = *listit;
-					QVariant ashtray = rowExisting[column]->data(SLDT_SORT);
-					int result = compareColumnSortData(cigarette, ashtray, column);
-					if (result > 0)
-					{
-						it.value().insert(listit, row);
-						bInserted = true;
-						break;
-					}
-				}
-			}
-
-			// Row wasn't inserted, it means it should be on the end of the list,
-			// append it there.
-			if (!bInserted)
-				it.value().append(row);
 		}
 	}
 
-	// Now clear the table and rebuild it
-	clearRows();
-
-	QHash<ServerGroup, RowsList>::iterator mapit;
-	for (mapit = map.begin(); mapit != map.end(); ++mapit)
+	// Save groups positions
+	ServerGroup sg1 = serverGroup(0);
+	for (int i = 1; i < rowCount(); ++i)
 	{
-		RowsList& rowlist = mapit.value();
-		RowsList::iterator listit;
-
-		for (listit = rowlist.begin(); listit != rowlist.end(); ++listit)
+		ServerGroup sg2 = serverGroup(i);
+		if (sg2 != sg1)
 		{
-			QList<QStandardItem*>& row = *listit;
-			appendRow(row);
+			groupEndList.append(i);
+			sg1 = sg2;
 		}
 	}
+
+	// Now sort groups internally
+	QList<int>::iterator it;
+	int index = 0;
+	for (it = groupEndList.begin(); it != groupEndList.end(); ++it)
+	{
+		for (int i = index; i < *it; ++i)
+		{
+			QVariant var1 = columnSortData(i, column);
+			int swap = i;
+			for (int j = i + 1; j < *it; ++j)
+			{
+				QVariant var2 = columnSortData(j, column);
+				int result = compareColumnSortData(var1, var2, column);
+				if ((order == Qt::AscendingOrder && result > 0) || (order == Qt::DescendingOrder && result < 0))
+				{
+					var1 = var2;
+					swap = j;
+				}
+			}
+
+			// swapRows() checks whether arguments are equal and
+			// does nothing if they are.
+			swapRows(i, swap);
+
+		}
+		index = *it;
+	}
+
+	emit allRowsContentChanged();
 
 	printf("Time: %d\n", clock() - time);
-	emit allRowsContentChanged();
 }
-*/
 
 ServerListModel::ServerGroup ServerListModel::serverGroup(int row)
 {
@@ -446,16 +421,13 @@ inline void ServerListModel::swapRows(unsigned int row1, unsigned int row2)
 	if (row1 == row2 || row1 >= rowCount() || row2 >= rowCount())
 		return;
 
-	if (row1 > row2)
-		qSwap(row1, row2);
+	Server* server1 = serverFromList(row1);
+	Server* server2 = serverFromList(row2);
 
-	QList<QStandardItem*> it1 = takeRow(row1);
-	QList<QStandardItem*> it2 = takeRow(row2 - 1);
-
-	if ( !(it1.isEmpty() || it2.isEmpty()) )
+	if ( !(server1 == NULL || server2 == NULL) )
 	{
-		insertRow(row1, it2);
-		insertRow(row2, it1);
+		updateServer(row1, server2, server2->previousResponse());
+		updateServer(row2, server1, server1->previousResponse());
 	}
 
 	emit rowContentChanged(row1);

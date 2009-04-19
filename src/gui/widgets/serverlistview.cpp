@@ -31,9 +31,12 @@ void ServerListView::updateRowVisuals(int row)
 
 void ServerListView::updateAllRows()
 {
-	for (int i = 0; i < model()->rowCount(); ++i)
+	if (bAllowAllRowsRefresh)
 	{
-		updateRowVisuals(i);
+		for (int i = 0; i < model()->rowCount(); ++i)
+		{
+			updateRowVisuals(i);
+		}
 	}
 }
 

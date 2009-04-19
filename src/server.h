@@ -166,6 +166,7 @@ class Server : public QObject
 		const Player		&player(int index) const { return players[index]; }
 		unsigned short		port() const { return serverPort; }
 		const QStringList	&pwads() const { return wads; }
+		int					previousResponse() const { return response; }
 		unsigned int		score(int team=0) const { return scores[team]; }
 		unsigned int		scoreLimit() const { return serverScoreLimit; }
 		int					teamPlayerCount(int team) const;
@@ -211,6 +212,7 @@ class Server : public QObject
 		unsigned short		maxClients;
 		unsigned short		maxPlayers;
 		QList<Player>		players;
+		Response			response;
 		unsigned int		scores[MAX_TEAMS];
 		QString				serverName;
 		unsigned int		serverScoreLimit;
@@ -218,6 +220,13 @@ class Server : public QObject
 		unsigned short		serverTimeLimit;
 		QStringList			wads;
 		QString				webSite;
+
+	protected slots:
+		/**
+		 * server argument here is only provided for compatibility with updated
+		 * signal
+		 */
+		void				setResponse(Server* server, int response);
 
 	private:
 		/**

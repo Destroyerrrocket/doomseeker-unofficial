@@ -38,8 +38,6 @@ class SLHandler : public QObject
 {
 	Q_OBJECT
 
-
-
 	public:
 		SLHandler(ServerListView*);
 		~SLHandler();
@@ -58,6 +56,7 @@ class SLHandler : public QObject
 
 			return &master->serverList();
 		}
+		ServerListView*	serverTable() { return table; }
 
 	public slots:
 		void serverUpdated(Server *server, int response);

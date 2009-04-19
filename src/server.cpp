@@ -193,15 +193,23 @@ Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
 	bRunning = false;
 	for(int i = 0;i < MAX_TEAMS;i++)
 		scores[i] = 0;
+
+	connect(this, SIGNAL( updated(Server*, int) ), this, SLOT( setResponse(Server*, int) ));
 }
 
 Server::Server(const Server &other) : QObject(), currentGameMode(GameMode::COOPERATIVE)
 {
 	(*this) = other;
+	connect(this, SIGNAL( updated(Server*, int) ), this, SLOT( setResponse(Server* server, int response) ));
 }
 
 Server::~Server()
 {
+}
+
+void Server::setResponse(Server* server, int res)
+{
+	response = static_cast<Response>(res);
 }
 
 unsigned int Server::longestPlayerName() const

@@ -34,6 +34,7 @@ class ServerListView : public QTableView
 	public:
 		ServerListView(QWidget* parent = 0) : QTableView(parent)
 		{
+			bAllowAllRowsRefresh = true;
 		}
 
 		void fixRowsSize()
@@ -44,13 +45,17 @@ class ServerListView : public QTableView
 			}
 		}
 
+		void setAllowAllRowsRefresh(bool b) { bAllowAllRowsRefresh = b; }
+
 	public slots:
 		void updateRowVisuals(int row);
 		void updateAllRows();
 
 	protected:
-		virtual void mouseReleaseEvent(QMouseEvent* event);
-		virtual void mouseDoubleClickEvent(QMouseEvent* event);
+		bool			bAllowAllRowsRefresh;
+
+		virtual void 	mouseReleaseEvent(QMouseEvent* event);
+		virtual void 	mouseDoubleClickEvent(QMouseEvent* event);
 
 	signals:
 		void leftMouseDoubleClicked(const QModelIndex&);
