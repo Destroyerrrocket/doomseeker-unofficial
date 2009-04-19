@@ -89,7 +89,7 @@ class ServerListModel : public QStandardItemModel
         Server* serverFromList(const QModelIndex&);
         Server* serverFromList(const QStandardItem*);
 
-		void sort( int column, Qt::SortOrder order = Qt::AscendingOrder);
+		//void sort( int column, Qt::SortOrder order = Qt::AscendingOrder);
 
 	signals:
 		void rowContentChanged(int row);

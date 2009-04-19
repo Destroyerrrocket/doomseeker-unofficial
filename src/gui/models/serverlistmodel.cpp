@@ -295,9 +295,10 @@ Server* ServerListModel::serverFromList(const QStandardItem* item)
     ServerPointer savedServ = qVariantValue<ServerPointer>(pointer);
     return savedServ.ptr;
 }
-
+/*
 void ServerListModel::sort(int column, Qt::SortOrder order)
 {
+
 	if (rowCount() == 0)
 		return;
 
@@ -386,6 +387,7 @@ void ServerListModel::sort(int column, Qt::SortOrder order)
 	printf("Time: %d\n", clock() - time);
 	emit allRowsContentChanged();
 }
+*/
 
 ServerListModel::ServerGroup ServerListModel::serverGroup(int row)
 {

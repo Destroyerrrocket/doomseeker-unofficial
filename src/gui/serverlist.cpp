@@ -344,7 +344,7 @@ void SLHandler::serverUpdated(Server *server, int response)
 
 	if (sortIndex >= 0)
 	{
-		//model->sort(sortIndex, sortOrder);
+		model->sort(sortIndex, sortOrder);
 	}
 
 	table->resizeRowToContents(row);
