@@ -68,6 +68,12 @@ void ServerListModel::prepareHeaders()
 	setHorizontalHeaderLabels(labels);
 }
 
+void ServerListModel::emptyItem(QStandardItem* item)
+{
+	item->setData("", Qt::DisplayRole);
+	item->setData(QVariant(), SLDT_SORT);
+}
+
 void ServerListModel::fillItem(QStandardItem* item, const QString& str)
 {
 	QString newStr = str.toLower();
@@ -154,26 +160,17 @@ void ServerListModel::setBad(int row, Server* server)
 {
 	QStandardItem* qstdItem;
 
-	qstdItem = item(row, SLCID_PLAYERS);
-	fillItem(qstdItem, -1);
-
-	qstdItem = item(row, SLCID_PING);
-	fillItem(qstdItem, 99999);
+	for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
+	{
+		if(columns[i].bHidden || i == SLCID_ADDRESS)
+		{
+			continue;
+		}
+		emptyItem(item(row, i));
+	}
 
 	qstdItem = item(row, SLCID_SERVERNAME);
 	fillItem(qstdItem, tr("<ERROR>"));
-
-	qstdItem = item(row, SLCID_IWAD);
-	fillItem(qstdItem, "");
-
-	qstdItem = item(row, SLCID_MAP);
-	fillItem(qstdItem, "");
-
-	qstdItem = item(row, SLCID_WADS);
-	fillItem(qstdItem, "");
-
-	qstdItem = item(row, SLCID_GAMETYPE);
-	fillItem(qstdItem, "");
 
 	qstdItem = item(row, SLCID_HIDDEN_GROUP);
 	fillItem(qstdItem, SG_BAD);
@@ -183,26 +180,17 @@ void ServerListModel::setBanned(int row, Server* server)
 {
 	QStandardItem* qstdItem;
 
-	qstdItem = item(row, SLCID_PLAYERS);
-	fillItem(qstdItem, -1);
-
-	qstdItem = item(row, SLCID_PING);
-	fillItem(qstdItem, 99999);
+	for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
+	{
+		if(columns[i].bHidden || i == SLCID_ADDRESS)
+		{
+			continue;
+		}
+		emptyItem(item(row, i));
+	}
 
 	qstdItem = item(row, SLCID_SERVERNAME);
-	fillItem(qstdItem, tr("You are banned from this server"));
-
-	qstdItem = item(row, SLCID_IWAD);
-	fillItem(qstdItem, "");
-
-	qstdItem = item(row, SLCID_MAP);
-	fillItem(qstdItem, "");
-
-	qstdItem = item(row, SLCID_WADS);
-	fillItem(qstdItem, "");
-
-	qstdItem = item(row, SLCID_GAMETYPE);
-	fillItem(qstdItem, "");
+	fillItem(qstdItem, tr("You are banned from this server!"));
 
 	qstdItem = item(row, SLCID_HIDDEN_GROUP);
 	fillItem(qstdItem, SG_BANNED);
@@ -243,26 +231,17 @@ void ServerListModel::setTimeout(int row, Server* server)
 {
 	QStandardItem* qstdItem;
 
-	qstdItem = item(row, SLCID_PLAYERS);
-	fillItem(qstdItem, -1);
-
-	qstdItem = item(row, SLCID_PING);
-	fillItem(qstdItem, 99999);
+	for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
+	{
+		if(columns[i].bHidden || i == SLCID_ADDRESS)
+		{
+			continue;
+		}
+		emptyItem(item(row, i));
+	}
 
 	qstdItem = item(row, SLCID_SERVERNAME);
 	fillItem(qstdItem, tr("<NO RESPONSE>"));
-
-	qstdItem = item(row, SLCID_IWAD);
-	fillItem(qstdItem, "");
-
-	qstdItem = item(row, SLCID_MAP);
-	fillItem(qstdItem, "");
-
-	qstdItem = item(row, SLCID_WADS);
-	fillItem(qstdItem, "");
-
-	qstdItem = item(row, SLCID_GAMETYPE);
-	fillItem(qstdItem, "");
 
 	qstdItem = item(row, SLCID_HIDDEN_GROUP);
 	fillItem(qstdItem, SG_BAD);
@@ -329,15 +308,17 @@ void ServerListModel::sort(int column, Qt::SortOrder order)
 	for (int i = 0; i < rowCount(); ++i)
 	{
 		ServerGroup sg1 = serverGroup(i);
+		int swap = i;
 		for (int j = i + 1; j < rowCount(); ++j)
 		{
 			ServerGroup sg2 = serverGroup(j);
 			if (sg2 > sg1)
 			{
-				swapRows(i, j);
-				break;
+				sg1 = sg2;
+				swap = j;
 			}
 		}
+		swapRows(i, swap);
 	}
 
 	// Save groups positions
@@ -351,6 +332,7 @@ void ServerListModel::sort(int column, Qt::SortOrder order)
 			sg1 = sg2;
 		}
 	}
+	groupEndList.append(rowCount());
 
 	// Now sort groups internally
 	QList<int>::iterator it;
@@ -391,18 +373,28 @@ ServerListModel::ServerGroup ServerListModel::serverGroup(int row)
 
 int	ServerListModel::compareColumnSortData(QVariant& var1, QVariant& var2, int column)
 {
-	int result = 0;
+	if ( !(var1.isValid() && var2.isValid()) )
+		return 0;
+
 	switch(column)
 	{
 		case SLCID_ADDRESS:
+			if (var1.toUInt() < var2.toUInt())
+				return -1;
+			else if (var1.toUInt() == var2.toUInt())
+				return 0;
+			else
+				return 1;
+			break;
+
 		case SLCID_PING:
 		case SLCID_PLAYERS:
 			if (var1.toInt() < var2.toInt())
-				result = -1;
+				return -1;
 			else if (var1.toInt() == var2.toInt())
-				result = 0;
+				return 0;
 			else
-				result = 1;
+				return 1;
 			break;
 
 		case SLCID_GAMETYPE:
@@ -411,14 +403,13 @@ int	ServerListModel::compareColumnSortData(QVariant& var1, QVariant& var2, int c
 		case SLCID_SERVERNAME:
 		case SLCID_WADS:
 			if (var1.toString() < var2.toString())
-				result = -1;
+				return -1;
 			else if (var1.toString() == var2.toString())
-				result = 0;
+				return 0;
 			else
-				result = 1;
+				return 1;
 			break;
 	}
-	return result;
 }
 
 int	ServerListModel::compareColumnSortData(int row1, int row2, int column)
