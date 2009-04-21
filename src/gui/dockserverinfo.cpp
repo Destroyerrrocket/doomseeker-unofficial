@@ -27,13 +27,3 @@ DockServerInfo::DockServerInfo(QWidget* parent) : QDockWidget(parent)
 {
 	setupUi(this);
 }
-
-QSize DockServerInfo::sizeHint() const
-{
-	return QSize(300, 500);
-}
-
-QSize DockServerInfo::minimumSzeHint() const
-{
-	return QSize(300, 500);
-}

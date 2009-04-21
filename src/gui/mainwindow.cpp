@@ -52,8 +52,8 @@ MainWindow::MainWindow(int argc, char** argv)
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( close() ));
 	connect(serverTableHandler, SIGNAL( serverDoubleClicked(const Server*) ), this, SLOT( runGame(const Server*) ) );
 
-	DockServerInfo* dsi = new DockServerInfo(this);
-	this->addDockWidget(Qt::LeftDockWidgetArea, dsi);
+	//DockServerInfo* dsi = new DockServerInfo(this);
+	//this->addDockWidget(Qt::LeftDockWidgetArea, dsi);
 
 }
 

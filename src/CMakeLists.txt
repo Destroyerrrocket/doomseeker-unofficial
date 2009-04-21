@@ -25,6 +25,7 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/engineSkulltagConfig.h
 	gui/serverlist.h
 	gui/models/serverlistmodel.h
+  gui/widgets/dockedwidgets.h
 	gui/widgets/serverlistview.h
 	odamex/odamexmasterclient.h
 	skulltag/skulltagmasterclient.h

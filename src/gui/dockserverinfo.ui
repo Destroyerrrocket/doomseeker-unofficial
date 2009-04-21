@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>DockServerInfo</class>
- <widget class="QDockWidget" name="DockServerInfo" >
-  <property name="geometry" >
+ <widget class="QDockWidget" name="DockServerInfo">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,17 +10,52 @@
     <height>443</height>
    </rect>
   </property>
-  <property name="locale" >
-   <locale country="UnitedStates" language="English" />
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
   </property>
-  <property name="floating" >
+  <property name="floating">
    <bool>false</bool>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>DockWidget</string>
   </property>
-  <widget class="QWidget" name="dockWidgetContents" />
+  <widget class="DockedWidgetServerInfo" name="dockWidgetContents">
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>120</y>
+      <width>251</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PushButton</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>10</y>
+      <width>321</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>LABEL LABEL LABEL LABEL LABEL LABEL LABEL LABEL </string>
+    </property>
+   </widget>
+  </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DockedWidgetServerInfo</class>
+   <extends>QWidget</extends>
+   <header>gui/widgets/dockedwidgets.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
