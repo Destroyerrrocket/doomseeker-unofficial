@@ -26,8 +26,10 @@
 #include "gui/aboutDlg.h"
 #include "gui/mainwindow.h"
 #include "gui/configureDlg.h"
+#include "gui/dockserverinfo.h"
 #include "gui/engineSkulltagConfig.h"
 #include "pathfinder.h"
+#include <QDockWidget>
 #include <QFileInfo>
 #include <QProcess>
 #include <QHeaderView>
@@ -49,6 +51,10 @@ MainWindow::MainWindow(int argc, char** argv)
 	connect(menuActionConfigure, SIGNAL( triggered() ), this, SLOT( menuOptionsConfigure() ));
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( close() ));
 	connect(serverTableHandler, SIGNAL( serverDoubleClicked(const Server*) ), this, SLOT( runGame(const Server*) ) );
+
+	DockServerInfo* dsi = new DockServerInfo(this);
+	this->addDockWidget(Qt::LeftDockWidgetArea, dsi);
+
 }
 
 MainWindow::~MainWindow()
@@ -57,6 +63,7 @@ MainWindow::~MainWindow()
 }
 /////////////////////////////////////////////////////////
 // Slots
+
 void MainWindow::checkRefreshFinished()
 {
 	btnGetServers->setEnabled(true);

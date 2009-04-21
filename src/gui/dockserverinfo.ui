@@ -12,6 +12,9 @@
   <property name="locale" >
    <locale country="UnitedStates" language="English" />
   </property>
+  <property name="floating" >
+   <bool>false</bool>
+  </property>
   <property name="windowTitle" >
    <string>DockWidget</string>
   </property>

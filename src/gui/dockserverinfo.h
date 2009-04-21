@@ -28,7 +28,13 @@
 
 class DockServerInfo : public QDockWidget, private Ui::DockServerInfo
 {
-  Q_OBJECT
+	Q_OBJECT
+
+	public:
+		DockServerInfo(QWidget* parent = NULL);
+
+		QSize sizeHint() const;
+		QSize minimumSzeHint() const;
 };
 
 #endif

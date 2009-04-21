@@ -79,8 +79,6 @@
      </widget>
     </item>
    </layout>
-   <zorder>tableServers</zorder>
-   <zorder>widget</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar" >
    <property name="geometry" >
@@ -88,7 +86,7 @@
      <x>0</x>
      <y>0</y>
      <width>796</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <property name="locale" >
