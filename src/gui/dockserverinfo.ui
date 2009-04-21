@@ -1,0 +1,22 @@
+<ui version="4.0" >
+ <class>DockServerInfo</class>
+ <widget class="QDockWidget" name="DockServerInfo" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>371</width>
+    <height>443</height>
+   </rect>
+  </property>
+  <property name="locale" >
+   <locale country="UnitedStates" language="English" />
+  </property>
+  <property name="windowTitle" >
+   <string>DockWidget</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents" />
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

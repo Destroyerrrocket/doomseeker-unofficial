@@ -68,6 +68,18 @@ void ServerListModel::prepareHeaders()
 	setHorizontalHeaderLabels(labels);
 }
 
+void ServerListModel::clearNonVitalFields(int row)
+{
+	for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
+	{
+		if(columns[i].bHidden || i == SLCID_ADDRESS)
+		{
+			continue;
+		}
+		emptyItem(item(row, i));
+	}
+}
+
 void ServerListModel::emptyItem(QStandardItem* item)
 {
 	item->setData("", Qt::DisplayRole);
@@ -144,8 +156,18 @@ int ServerListModel::updateServer(int row, Server* server, int response)
 			break;
 
 		case Server::RESPONSE_GOOD:
-		case Server::RESPONSE_WAIT:
 			setGood(row, server);
+			break;
+
+		case Server::RESPONSE_WAIT:
+			if (server->isKnown())
+			{
+				setGood(row, server);
+			}
+			else
+			{
+				setWait(row, server);
+			}
 			break;
 
 		case Server::RESPONSE_TIMEOUT:
@@ -160,14 +182,7 @@ void ServerListModel::setBad(int row, Server* server)
 {
 	QStandardItem* qstdItem;
 
-	for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
-	{
-		if(columns[i].bHidden || i == SLCID_ADDRESS)
-		{
-			continue;
-		}
-		emptyItem(item(row, i));
-	}
+	clearNonVitalFields(row);
 
 	qstdItem = item(row, SLCID_SERVERNAME);
 	fillItem(qstdItem, tr("<ERROR>"));
@@ -180,14 +195,7 @@ void ServerListModel::setBanned(int row, Server* server)
 {
 	QStandardItem* qstdItem;
 
-	for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
-	{
-		if(columns[i].bHidden || i == SLCID_ADDRESS)
-		{
-			continue;
-		}
-		emptyItem(item(row, i));
-	}
+	clearNonVitalFields(row);
 
 	qstdItem = item(row, SLCID_SERVERNAME);
 	fillItem(qstdItem, tr("You are banned from this server!"));
@@ -231,20 +239,26 @@ void ServerListModel::setTimeout(int row, Server* server)
 {
 	QStandardItem* qstdItem;
 
-	for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
-	{
-		if(columns[i].bHidden || i == SLCID_ADDRESS)
-		{
-			continue;
-		}
-		emptyItem(item(row, i));
-	}
+	clearNonVitalFields(row);
 
 	qstdItem = item(row, SLCID_SERVERNAME);
 	fillItem(qstdItem, tr("<NO RESPONSE>"));
 
 	qstdItem = item(row, SLCID_HIDDEN_GROUP);
 	fillItem(qstdItem, SG_BAD);
+}
+
+void ServerListModel::setWait(int row, Server* server)
+{
+	QStandardItem* qstdItem;
+
+	clearNonVitalFields(row);
+
+	qstdItem = item(row, SLCID_SERVERNAME);
+	fillItem(qstdItem, tr("<Refreshed too soon, wait a while and try again>") );
+
+	qstdItem = item(row, SLCID_HIDDEN_GROUP);
+	fillItem(qstdItem, SG_WAIT);
 }
 
 void ServerListModel::setRefreshing(int row)

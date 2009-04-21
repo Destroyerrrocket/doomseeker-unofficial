@@ -12,6 +12,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/cfgFilePaths.ui
 	gui/configureDlg.ui
 	gui/mainwindow.ui
+  gui/dockserverinfo.ui
 	gui/engineSkulltagConfig.ui
 )
 
@@ -20,6 +21,7 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/configBase.h
 	gui/configureDlg.h
 	gui/mainwindow.h
+  gui/dockserverinfo.h	
 	gui/engineSkulltagConfig.h
 	gui/serverlist.h
 	gui/models/serverlistmodel.h
@@ -38,6 +40,7 @@ add_executable(doomseeker
 	gui/aboutDlg.cpp
 	gui/cfgFilePaths.cpp
 	gui/configureDlg.cpp
+  gui/dockserverinfo.cpp	
 	gui/engineSkulltagConfig.cpp
 	gui/mainwindow.cpp
 	gui/serverlist.cpp

@@ -190,6 +190,7 @@ Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
 	maxClients(0), maxPlayers(0), serverName(tr("<< ERROR >>")),
 	serverScoreLimit(0), serverTimeLeft(0), serverTimeLimit(0)
 {
+	bKnown = false;
 	bRunning = false;
 	for(int i = 0;i < MAX_TEAMS;i++)
 		scores[i] = 0;
@@ -210,6 +211,15 @@ Server::~Server()
 void Server::setResponse(Server* server, int res)
 {
 	response = static_cast<Response>(res);
+	if (response == RESPONSE_GOOD)
+	{
+		bKnown = true;
+	}
+	else if (response == RESPONSE_BAD || response == RESPONSE_BANNED || response == RESPONSE_TIMEOUT)
+	{
+		bKnown = false;
+	}
+
 }
 
 unsigned int Server::longestPlayerName() const

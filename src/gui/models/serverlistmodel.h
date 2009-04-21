@@ -69,6 +69,7 @@ class ServerListModel : public QStandardItemModel
 		{
 			SG_CUSTOM 	= 300,
 			SG_NORMAL 	= 200,
+			SG_WAIT 	= 175,
 			SG_BANNED	= 150,
 			SG_BAD		= 100
 		};
@@ -86,6 +87,11 @@ class ServerListModel : public QStandardItemModel
 
 		void destroyRows();
 
+		/**
+		 * Removes content from fields that aren't
+		 * hidden and don't belong to SLCID_ADDRESS column.
+		 */
+		void clearNonVitalFields(int row);
 		void emptyItem(QStandardItem*);
 		void fillItem(QStandardItem*, const QString&);
 		void fillItem(QStandardItem*, int);
@@ -105,6 +111,7 @@ class ServerListModel : public QStandardItemModel
 		void setBanned(int row, Server* server);
 		void setGood(int row, Server* server);
 		void setTimeout(int row, Server* server);
+		void setWait(int row, Server* server);
 		void setRefreshing(int row);
 
 		QModelIndex findServerOnTheList(const Server* server);

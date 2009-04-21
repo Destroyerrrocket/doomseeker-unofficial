@@ -153,6 +153,7 @@ class Server : public QObject
 		const QHostAddress	&address() const { return serverAddress; }
 		const QStringList	&gameFlags() const { return dmFlags; }
 		const GameMode		&gameMode() const { return currentGameMode; }
+		bool				isKnown() const { return bKnown; }
 		bool				isLocked() const { return locked; }
 		const QString		&iwadName() const { return iwad; }
 		unsigned int		longestPlayerName() const;
@@ -203,6 +204,14 @@ class Server : public QObject
 		void				updated(Server *server, int response);
 
 	protected:
+		/**
+		 * This should be set to true upon successful return from doRefresh(),
+		 * and to false upon failure. setServers() protected slot handles this.
+		 * Example usage: SkullTag servers can use this to update ping
+		 * if the server responds with "wait before refreshing".
+		 */
+		bool				bKnown;
+
 		GameMode			currentGameMode;
 		unsigned int		currentPing;
 		QStringList			dmFlags;

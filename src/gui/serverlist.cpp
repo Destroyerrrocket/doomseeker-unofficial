@@ -417,23 +417,38 @@ void SLHandler::mouseEntered(const QModelIndex& index)
 	ServerListModel* model = static_cast<ServerListModel*>(table->model());
 	Server* server = model->serverFromList(index);
 	QString tooltip;
-	switch(index.column())
+
+	if (!server->isKnown())
 	{
-		case ServerListModel::SLCID_PLAYERS:
-			tooltip = createPlayersToolTip(server);
-			break;
+		tooltip = "";
+	}
+	else
+	{
+		switch(index.column())
+		{
+			case ServerListModel::SLCID_PLAYERS:
+				tooltip = createPlayersToolTip(server);
+				break;
 
-		case ServerListModel::SLCID_SERVERNAME:
-			tooltip = createServerNameToolTip(server);
-			break;
+			case ServerListModel::SLCID_SERVERNAME:
+				tooltip = createServerNameToolTip(server);
+				break;
 
-		case ServerListModel::SLCID_WADS:
-			tooltip = createPwadsToolTip(server);
-			break;
+			case ServerListModel::SLCID_WADS:
+				if (server->numWads() == 0)
+				{
+					tooltip = "";
+				}
+				else
+				{
+					tooltip = createPwadsToolTip(server);
+				}
+				break;
 
-		default:
-			tooltip = "";
-			break;
+			default:
+				tooltip = "";
+				break;
+		}
 	}
 
 	QToolTip::showText(QCursor::pos(), tooltip, table);
