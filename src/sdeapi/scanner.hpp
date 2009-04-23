@@ -34,6 +34,8 @@
 #include <QObject>
 #include <QString>
 
+#include "global.h"
+
 enum ETokenType
 {
 	TK_Identifier,	// Ex: SomeIdentifier
@@ -62,7 +64,7 @@ enum ETokenType
  * Scanner reads scripts by checking individual tokens.
  * @author Blzut3
  */
-class Scanner
+class MAIN_EXPORT Scanner
 {
 	public:
 		Scanner(char* data, unsigned int length);

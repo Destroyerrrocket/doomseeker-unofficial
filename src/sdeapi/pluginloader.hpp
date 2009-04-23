@@ -33,8 +33,9 @@
 
 #include <QObject>
 #include <QString>
+#include <QList>
 
-#include <vector>
+#include "global.h"
 
 #ifdef Q_WS_WIN
 #include <windows.h>
@@ -50,7 +51,7 @@
  * This is a struct to store information about a specific plugin.  This should
  * returned by the plugins themselves.
  */
-struct PluginInfo
+struct MAIN_EXPORT PluginInfo
 {
 	public:
 		const char*	name;
@@ -64,7 +65,7 @@ struct PluginInfo
  * This class handles one specific plugin.  It allows for cross-platform access
  * to the plugins.
  */
-class Plugin
+class MAIN_EXPORT Plugin
 {
 	public:
 		/**
@@ -94,7 +95,7 @@ class Plugin
 #endif
 };
 
-class PluginLoader
+class MAIN_EXPORT PluginLoader
 {
 	public:
 		/**
@@ -116,9 +117,9 @@ class PluginLoader
 	private:
 		void	filesInDir();
 
-		unsigned int				type;
-		QString						pluginsDirectory;
-		std::vector<Plugin *>		pluginsList;
+		unsigned int		type;
+		QString				pluginsDirectory;
+		QList<Plugin *>		pluginsList;
 };
 
 #endif /* __PLUGINLOADER_HPP__ */

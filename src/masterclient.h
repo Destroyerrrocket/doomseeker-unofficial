@@ -34,7 +34,7 @@
  * Abstract class base for all MasterClients.  This is expected to fetch a list
  * of IP addresses which will be turned into Servers.
  */
-class MasterClient : public QObject
+class MAIN_EXPORT MasterClient : public QObject
 {
 	Q_OBJECT
 

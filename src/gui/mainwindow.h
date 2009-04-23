@@ -26,6 +26,7 @@
 
 #include "main.h"
 #include "sdeapi/config.hpp"
+#include "sdeapi/pluginloader.hpp"
 #include "gui/serverlist.h"
 #include "ui_mainwindow.h"
 
@@ -50,6 +51,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 	private:
 		SLHandler*			serverTableHandler;
 		Config* 			config;
+		PluginLoader		enginePlugins;
 };
 
 #endif

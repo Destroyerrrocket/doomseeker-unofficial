@@ -21,21 +21,20 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 
-#include "skulltag/skulltagmasterclient.h"
-
 #include "gui/aboutDlg.h"
 #include "gui/mainwindow.h"
 #include "gui/configureDlg.h"
 #include "gui/dockserverinfo.h"
 #include "gui/engineSkulltagConfig.h"
 #include "pathfinder.h"
+#include "plugin.h"
 #include <QDockWidget>
 #include <QFileInfo>
 #include <QProcess>
 #include <QHeaderView>
 #include <QMessageBox>
 
-MainWindow::MainWindow(int argc, char** argv)
+MainWindow::MainWindow(int argc, char** argv) : enginePlugins(MAKEID('E','N','G','N'), "./engines/")
 {
 	config = new Config();
 	config->locateConfigFile(argc, argv);
@@ -73,7 +72,17 @@ void MainWindow::checkRefreshFinished()
 
 void MainWindow::btnGetServers_Click()
 {
-	MasterClient* mc = new SkulltagMasterClient(QHostAddress("91.121.87.67"), 15300);
+	// TODO: Do this right.
+	if(enginePlugins.numPlugins() == 0)
+		return;
+	const Plugin *plugin = enginePlugins[0];
+	if(plugin == NULL)
+		return;
+	const EnginePlugin *(*enginePluginGetter)() = (const EnginePlugin *(*)()) plugin->function("enginePlugin");
+	if(enginePluginGetter == NULL)
+		return;
+	const EnginePlugin *enginePlugin = enginePluginGetter();
+	MasterClient* mc = enginePlugin->masterClient(QHostAddress("91.121.87.67"), 15300);
 	mc->refresh();
 
 	if (mc->numServers() == 0)

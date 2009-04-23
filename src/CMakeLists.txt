@@ -7,12 +7,16 @@ include_directories(${DOOMSEEKER_SOURCE_DIR}/src)
 include_directories(${QT_INCLUDES})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
+if(WIN32)
+	add_definitions(-DMODE_MAIN)
+endif(WIN32)
+
 qt4_wrap_ui(doomseekerUI
 	gui/aboutDlg.ui
 	gui/cfgFilePaths.ui
 	gui/configureDlg.ui
 	gui/mainwindow.ui
-  gui/dockserverinfo.ui
+	gui/dockserverinfo.ui
 	gui/engineSkulltagConfig.ui
 )
 
@@ -21,15 +25,13 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/configBase.h
 	gui/configureDlg.h
 	gui/mainwindow.h
-  gui/dockserverinfo.h	
+	gui/dockserverinfo.h	
 	gui/engineSkulltagConfig.h
 	gui/serverlist.h
 	gui/models/serverlistmodel.h
-  gui/widgets/dockedwidgets.h
+	gui/widgets/dockedwidgets.h
 	gui/widgets/serverlistview.h
 	odamex/odamexmasterclient.h
-	skulltag/skulltagmasterclient.h
-	skulltag/skulltagserver.h
 	sdeapi/config.hpp
 	masterclient.h
 	server.h
@@ -41,7 +43,7 @@ add_executable(doomseeker
 	gui/aboutDlg.cpp
 	gui/cfgFilePaths.cpp
 	gui/configureDlg.cpp
-  gui/dockserverinfo.cpp	
+	gui/dockserverinfo.cpp	
 	gui/engineSkulltagConfig.cpp
 	gui/mainwindow.cpp
 	gui/serverlist.cpp
@@ -52,8 +54,6 @@ add_executable(doomseeker
 	sdeapi/config.cpp
 	sdeapi/pluginloader.cpp
 	sdeapi/scanner.cpp
-	skulltag/skulltagmasterclient.cpp
-	skulltag/skulltagserver.cpp
 	main.cpp
 	masterclient.cpp
 	pathfinder.cpp
@@ -61,6 +61,9 @@ add_executable(doomseeker
 )
 
 target_link_libraries(doomseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES})
+
+# Allow plugins to link with doomseeker
+set_property(TARGET doomseeker PROPERTY ENABLE_EXPORTS 1)
 
 set_target_properties(doomseeker PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 if(WIN32)

@@ -34,12 +34,14 @@
 #include <QMetaType>
 #include <QMutex>
 
+#include "global.h"
+
 #define MAX_TEAMS 4
 
 /**
  * Data structure that holds information about players in a server.
  */
-struct Player
+struct MAIN_EXPORT Player
 {
 	public:
 		enum PlayerTeam
@@ -97,7 +99,7 @@ struct Player
 /**
  * Data structure that holds information about a servers game mode.
  */
-struct GameMode
+struct MAIN_EXPORT GameMode
 {
 	public:
 		// Standard game mode set
@@ -119,7 +121,7 @@ struct GameMode
 		bool	teamgame;
 };
 
-struct SkillLevel
+struct MAIN_EXPORT SkillLevel
 {
 	const QString strName;
 
@@ -127,7 +129,7 @@ struct SkillLevel
 	static const QString names[];
 };
 
-class Server : public QObject
+class MAIN_EXPORT Server : public QObject
 {
 	Q_OBJECT
 
@@ -250,7 +252,7 @@ class Server : public QObject
 
 };
 
-class ServerRefresher : public QThread, public QRunnable
+class MAIN_EXPORT ServerRefresher : public QThread, public QRunnable
 {
 	Q_OBJECT
 
@@ -280,7 +282,7 @@ class ServerRefresher : public QThread, public QRunnable
 		void allServersRefreshed();
 };
 
-class ServerPointer
+class MAIN_EXPORT ServerPointer
 {
 	private:
 		void copy(const ServerPointer& copyin)

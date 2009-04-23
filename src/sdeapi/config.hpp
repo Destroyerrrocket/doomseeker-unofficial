@@ -33,7 +33,9 @@
 #include <QString>
 #include <QHash>
 
-struct SettingsData : public QObject
+#include "global.h"
+
+struct MAIN_EXPORT SettingsData : public QObject
 {
 	Q_OBJECT
 
@@ -59,7 +61,7 @@ struct SettingsData : public QObject
 		QString				m_str;
 };
 
-class Config : public QObject
+class MAIN_EXPORT Config : public QObject
 {
 	Q_OBJECT
 

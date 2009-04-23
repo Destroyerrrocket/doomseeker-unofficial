@@ -15,4 +15,18 @@
 #define WRITEINT16(pointer, integer) *pointer = (quint8)(integer&0xFF);*(pointer+1) = (quint8)((integer>>8)&0xFF);
 #define WRITEINT8(pointer, integer) *pointer = (quint8)(integer&0xFF);
 
+// Now we set it up so symbols are properly exported/imported on Windows
+#ifdef Q_WS_WIN
+#ifdef MODE_MAIN
+#define MAIN_EXPORT		__declspec(dllexport)
+#define PLUGIN_EXPORT	__declspec(dllimport)
+#else
+#define MAIN_EXPORT		__declspec(dllimport)
+#define PLUGIN_EXPORT	__declspec(dllexport)
+#endif
+#else
+#define MAIN_EXPORT
+#define PLUGIN_EXPORT
+#endif
+
 #endif /* __GLOBAL_H__ */

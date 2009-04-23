@@ -28,11 +28,7 @@
 // Description:
 // =============================================================================
 
-
 #include "sdeapi/pluginloader.hpp"
-
-#include <string>
-#include <vector>
 
 #ifdef Q_WS_WIN
 #include <windows.h>
@@ -44,8 +40,6 @@
 #include <dirent.h>
 #endif
 
-using namespace std;
-
 Plugin::Plugin(unsigned int type, QString f) : file(f), library(NULL)
 {
 	// Load the library
@@ -53,13 +47,13 @@ Plugin::Plugin(unsigned int type, QString f) : file(f), library(NULL)
 
 	if(library != NULL)
 	{
-		const PluginInfo *(*SDEInit)() = (const PluginInfo *(*)()) (dlsym(library, "SDEInit"));
-		if(SDEInit == NULL)
-		{ // This is not a valid SDE plugin.
+		const PluginInfo *(*doomSeekerInit)() = (const PluginInfo *(*)()) (dlsym(library, "doomSeekerInit"));
+		if(doomSeekerInit == NULL)
+		{ // This is not a valid plugin.
 			unload();
 			return;
 		}
-		info = SDEInit();
+		info = doomSeekerInit();
 		if(info->type != type)
 		{ // Make sure this is the right kind of plugin
 			unload();
