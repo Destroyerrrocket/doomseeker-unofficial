@@ -127,18 +127,27 @@ void MainWindow::menuServerInfo()
 	if (serverInfo == NULL)
 	{
 		serverInfo = new DockServerInfo(this);
-		this->addDockWidget(Qt::LeftDockWidgetArea, serverInfo);
+		this->addDockWidget(Qt::RightDockWidgetArea, serverInfo);
 
 		QList<Server*> slist = serverTableHandler->selectedServers();
 		if (slist.count() == 1)
 		{
 			serverInfo->updateServerInfo(slist[0]);
 		}
+		menuActionServerInfo->setChecked(true);
 	}
 	else
 	{
-		delete serverInfo;
-		serverInfo = NULL;
+	    if (serverInfo->isVisible())
+	    {
+	        serverInfo->hide();
+	        menuActionServerInfo->setChecked(false);
+	    }
+	    else
+	    {
+	        serverInfo->show();
+	        menuActionServerInfo->setChecked(true);
+	    }
 	}
 }
 

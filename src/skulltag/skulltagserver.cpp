@@ -243,7 +243,7 @@ void SkulltagServer::doRefresh()
 
 	// Start the timer and wait
 	time.start();
-	if(!socket.waitForReadyRead(10000))
+	if(!socket.waitForReadyRead(5000))
 	{
 		emit updated(this, RESPONSE_TIMEOUT);
 		return;
