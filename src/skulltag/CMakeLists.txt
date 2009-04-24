@@ -13,6 +13,7 @@ set(SKULLTAG_QT_FILES
 	skulltagserver.h
 )
 set(SKULLTAG_FILES
+  ../huffman/huffman.cpp
 	skulltagmain.cpp
 	skulltagmasterclient.cpp
 	skulltagserver.cpp
@@ -22,5 +23,6 @@ qt_wrap_cpp(skulltagQt SKULLTAG_FILES ${SKULLTAG_QT_FILES})
 
 add_library(skulltag SHARED ${SKULLTAG_FILES})
 add_dependencies(skulltag doomseeker)
-target_link_libraries(skulltag ${QT_LIBRARIES} doomseeker)
+target_link_libraries(skulltag ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} doomseeker)
+
 set_target_properties(skulltag PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}/engines/)
