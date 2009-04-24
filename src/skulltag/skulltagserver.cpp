@@ -171,6 +171,22 @@ SkulltagServer::SkulltagServer(const QHostAddress &address, unsigned short port)
 	teamInfo[3] = TeamInfo(tr("Gold"), QColor(255, 255, 0), 0);
 }
 
+void SkulltagServer::additionalServerInfo(QList<ServerInfo>* baseList) const
+{
+	if (!this->webSite.isEmpty())
+	{
+		QString url = "<A HREF=\"" + this->webSite + "\">" + this->webSite + "</A>";
+		ServerInfo siUrl = { tr("URL: ") + url, "<div style='white-space: pre'>" + this->webSite + "</div>"};
+		baseList->append(siUrl);
+	}
+	if (!this->email.isEmpty())
+	{
+		QString email = "<A HREF=\"mailto:" + this->email + "\">" + this->email + "</A>";
+		ServerInfo siEmail = { tr("E-mail: ") + email, "<div style='white-space: pre'>" + this->email + "</div>"};
+		baseList->append(siEmail);
+	}
+}
+
 QString	SkulltagServer::generalInfoHTML() const
 {
 	const QString strVersion = tr("Version");
@@ -227,7 +243,7 @@ void SkulltagServer::doRefresh()
 
 	// Start the timer and wait
 	time.start();
-	if(!socket.waitForReadyRead(1000))
+	if(!socket.waitForReadyRead(10000))
 	{
 		emit updated(this, RESPONSE_TIMEOUT);
 		return;

@@ -43,17 +43,16 @@ MainWindow::MainWindow(int argc, char** argv) : enginePlugins(MAKEID('E','N','G'
 	setupUi(this);
 
 	serverTableHandler = new SLHandler(tableServers);
+	serverInfo = NULL;
 
 	connect(btnGetServers, SIGNAL( clicked() ), this, SLOT( btnGetServers_Click() ));
 	connect(btnRefreshAll, SIGNAL( clicked() ), serverTableHandler, SLOT( refreshAll() ));
 	connect(menuActionAbout, SIGNAL( triggered() ), this, SLOT( menuHelpAbout() ));
 	connect(menuActionConfigure, SIGNAL( triggered() ), this, SLOT( menuOptionsConfigure() ));
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( close() ));
+	connect(menuActionServerInfo, SIGNAL( triggered() ), this, SLOT( menuServerInfo() ));
 	connect(serverTableHandler, SIGNAL( serverDoubleClicked(const Server*) ), this, SLOT( runGame(const Server*) ) );
-
-	//DockServerInfo* dsi = new DockServerInfo(this);
-	//this->addDockWidget(Qt::LeftDockWidgetArea, dsi);
-
+	connect(serverTableHandler, SIGNAL( serversSelected(QList<Server*>&) ), this, SLOT( updateServerInfo(QList<Server*>&) ) );
 }
 
 MainWindow::~MainWindow()
@@ -62,7 +61,6 @@ MainWindow::~MainWindow()
 }
 /////////////////////////////////////////////////////////
 // Slots
-
 void MainWindow::checkRefreshFinished()
 {
 	btnGetServers->setEnabled(true);
@@ -122,6 +120,26 @@ void MainWindow::menuOptionsConfigure()
 	dlg.addEngineConfiguration(ec);
 
 	dlg.exec();
+}
+
+void MainWindow::menuServerInfo()
+{
+	if (serverInfo == NULL)
+	{
+		serverInfo = new DockServerInfo(this);
+		this->addDockWidget(Qt::LeftDockWidgetArea, serverInfo);
+
+		QList<Server*> slist = serverTableHandler->selectedServers();
+		if (slist.count() == 1)
+		{
+			serverInfo->updateServerInfo(slist[0]);
+		}
+	}
+	else
+	{
+		delete serverInfo;
+		serverInfo = NULL;
+	}
 }
 
 void MainWindow::runGame(const Server* server)
@@ -198,5 +216,20 @@ void MainWindow::runGame(const Server* server)
 	{
 		QMessageBox::critical(this, errorCaption, tr("File: ") + fileinfo.absoluteFilePath() + tr("\ncannot be run"));
 		return;
+	}
+}
+
+void MainWindow::updateServerInfo(QList<Server*>& servers)
+{
+	if (serverInfo != NULL)
+	{
+		if (servers.isEmpty())
+		{
+			serverInfo->updateServerInfo(NULL);
+		}
+		else if (servers.count() == 1)
+		{
+			serverInfo->updateServerInfo(servers[0]);
+		}
 	}
 }

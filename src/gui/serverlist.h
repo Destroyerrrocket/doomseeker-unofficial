@@ -42,12 +42,12 @@ class SLHandler : public QObject
 		SLHandler(ServerListView*);
 		~SLHandler();
 
-		void clearTable();
+		void 				clearTable();
 
+		QList<Server*>		selectedServers();
 
-
-		void 			setMaster(MasterClient*);
-		QList<Server*>*	serverList()
+		void 				setMaster(MasterClient*);
+		QList<Server*>*		serverList()
 		{
 			if (master == NULL)
 			{
@@ -56,21 +56,25 @@ class SLHandler : public QObject
 
 			return &master->serverList();
 		}
-		ServerListView*	serverTable() { return table; }
+		ServerListView*		serverTable() { return table; }
+
 
 	public slots:
-		void serverUpdated(Server *server, int response);
 		void refreshAll();
+		void serverUpdated(Server *server, int response);
 		void tableRightClicked(const QModelIndex&);
 
 	protected slots:
 		// Handles column sorting.
 		void columnHeaderClicked(int);
-		void mouseEntered(const QModelIndex&);
 		void doubleClicked(const QModelIndex&);
+		void itemSelected(const QModelIndex&);
+		void modelCleared();
+		void mouseEntered(const QModelIndex&);
 
 	signals:
 		void serverDoubleClicked(const Server*);
+		void serversSelected(QList<Server*>&);
 
 	protected:
 		ServerListView*	table;
@@ -84,7 +88,6 @@ class SLHandler : public QObject
 		QString createPlayersToolTip(const Server* server);
 		QString createServerNameToolTip(const Server* server);
 		QString createPwadsToolTip(const Server* server);
-
 
 		QString spawnGeneralInfoTable(const Server* server);
 		QString spawnPlayerTable(const Server* server);

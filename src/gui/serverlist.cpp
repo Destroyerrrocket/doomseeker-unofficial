@@ -77,15 +77,16 @@ void SLHandler::prepareServerTable()
 	QHeaderView* header = table->horizontalHeader();
 	connect(header, SIGNAL( sectionClicked(int) ), this, SLOT ( columnHeaderClicked(int) ) );
 	connect(model, SIGNAL( allRowsContentChanged() ), table, SLOT( updateAllRows() ) );
+	connect(model, SIGNAL( modelCleared() ), this, SLOT( modelCleared() ) );
+	connect(table, SIGNAL( clicked(const QModelIndex&) ), this, SLOT( itemSelected(const QModelIndex&) ));
+	connect(table, SIGNAL( rightMouseClick(const QModelIndex&) ), this, SLOT ( itemSelected(const QModelIndex&)) );
 	connect(table, SIGNAL( rightMouseClick(const QModelIndex&) ), this, SLOT ( tableRightClicked(const QModelIndex&)) );
 	connect(table, SIGNAL( entered(const QModelIndex&) ), this, SLOT ( mouseEntered(const QModelIndex&)) );
 	connect(table, SIGNAL( leftMouseDoubleClicked(const QModelIndex&)), this, SLOT( doubleClicked(const QModelIndex&)) );
 
 	columnHeaderClicked(0);
 }
-/////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////
 QString SLHandler::createPlayersToolTip(const Server* server)
 {
 	if (server == NULL)
@@ -125,8 +126,21 @@ QString SLHandler::createPwadsToolTip(const Server* server)
 	ret += "</div>";
 	return ret;
 }
-//////////////////////////////////////////////////////////////
 
+QList<Server*> SLHandler::selectedServers()
+{
+	ServerListModel* model = static_cast<ServerListModel*>(table->model());
+	QItemSelectionModel* selModel = table->selectionModel();
+	QModelIndexList indexList = selModel->selectedRows();
+
+	QList<Server*> servers;
+	for(int i = 0; i < indexList.count(); ++i)
+	{
+		Server* server = model->serverFromList(indexList[i]);
+		servers.append(server);
+	}
+	return servers;
+}
 
 void SLHandler::setMaster(MasterClient* mc)
 {
@@ -138,7 +152,7 @@ void SLHandler::setMaster(MasterClient* mc)
 	clearTable();
 	master = mc;
 }
-//////////////////////////////////////////////////////////////
+
 QString SLHandler::spawnGeneralInfoTable(const Server* server)
 {
 	const QString timelimit = tr("Timelimit");
@@ -412,6 +426,12 @@ void SLHandler::columnHeaderClicked(int index)
 	//table->fixRowSize();
 }
 
+void SLHandler::modelCleared()
+{
+	QList<Server*> servers;
+	emit serversSelected(servers);
+}
+
 void SLHandler::mouseEntered(const QModelIndex& index)
 {
 	ServerListModel* model = static_cast<ServerListModel*>(table->model());
@@ -459,4 +479,10 @@ void SLHandler::doubleClicked(const QModelIndex& index)
 	ServerListModel* model = static_cast<ServerListModel*>(table->model());
 	Server* server = model->serverFromList(index);
 	emit serverDoubleClicked(server);
+}
+
+void SLHandler::itemSelected(const QModelIndex& index)
+{
+	QList<Server*> servers = selectedServers();
+	emit serversSelected(servers);
 }

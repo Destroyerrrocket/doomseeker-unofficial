@@ -22,8 +22,62 @@
 //------------------------------------------------------------------------------
 
 #include "gui/dockserverinfo.h"
+#include <QLabel>
 
 DockServerInfo::DockServerInfo(QWidget* parent) : QDockWidget(parent)
 {
 	setupUi(this);
+	currentServer = NULL;
+	updateServerInfo(NULL);
+
+	dockWidgetContents->setHintSize(175, 200);
+
+	mainLayoutDistanceFromRight = this->width() - mainLayout->width();
+	mainLayoutDistanceFromBottom = this->height() - mainLayout->height();
+}
+
+void DockServerInfo::destroyServerInfo()
+{
+	QList<QWidget*>::iterator it;
+	for (it = removalList.begin(); it != removalList.end(); ++it)
+	{
+		delete *it;
+	}
+	removalList.clear();
+}
+
+void DockServerInfo::resizeEvent(QResizeEvent* event)
+{
+	int w = this->width() - mainLayoutDistanceFromRight;
+	int h = this->height() - mainLayoutDistanceFromBottom;
+	mainLayout->resize(w, h);
+}
+
+void DockServerInfo::updateServerInfo(Server* server)
+{
+	if (server == currentServer)
+		return;
+
+	destroyServerInfo();
+	static int x = 0;
+	if (server == NULL)
+	{
+		currentServer = NULL;
+	}
+	else
+	{
+		currentServer = server;
+
+		QList<ServerInfo>* infolist = server->serverInfo();
+		QList<ServerInfo>::iterator it;
+		for (it = infolist->begin(); it != infolist->end(); ++it)
+		{
+			QLabel* label = new QLabel(it->richText, this);
+			label->setToolTip(it->toolTip);
+			infoLayout->addWidget(label);
+			removalList.append(label);
+		}
+
+		delete infolist;
+	}
 }

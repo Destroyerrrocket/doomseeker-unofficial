@@ -27,6 +27,7 @@
 #include "main.h"
 #include "sdeapi/config.hpp"
 #include "sdeapi/pluginloader.hpp"
+#include "gui/dockserverinfo.h"
 #include "gui/serverlist.h"
 #include "ui_mainwindow.h"
 
@@ -46,9 +47,13 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void btnGetServers_Click();
 		void menuHelpAbout();
 		void menuOptionsConfigure();
+		void menuServerInfo();
 		void runGame(const Server*);
+		void updateServerInfo(QList<Server*>&);
+
 
 	private:
+		DockServerInfo*		serverInfo;
 		SLHandler*			serverTableHandler;
 		Config* 			config;
 		PluginLoader		enginePlugins;

@@ -122,8 +122,9 @@ class ServerListModel : public QStandardItemModel
 		void sort( int column, Qt::SortOrder order = Qt::AscendingOrder);
 
 	signals:
-		void rowContentChanged(int row);
 		void allRowsContentChanged();
+		void modelCleared();
+		void rowContentChanged(int row);
 
 	protected:
 		void 				clearRows();

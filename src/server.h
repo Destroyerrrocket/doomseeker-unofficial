@@ -129,6 +129,16 @@ struct MAIN_EXPORT SkillLevel
 	static const QString names[];
 };
 
+/**
+ * This structure is used by Server Info dockable widget.
+ * Each instance of this struct is one label on the widget.
+ */
+struct MAIN_EXPORT ServerInfo
+{
+	QString richText;
+	QString toolTip;
+};
+
 class MAIN_EXPORT Server : public QObject
 {
 	Q_OBJECT
@@ -151,6 +161,7 @@ class MAIN_EXPORT Server : public QObject
 		 * Should return general info about server, like server name, version, email, etc.
 		 */
 		virtual QString		generalInfoHTML() const =0;
+		QList<ServerInfo>*	serverInfo() const;
 
 		const QHostAddress	&address() const { return serverAddress; }
 		const QStringList	&gameFlags() const { return dmFlags; }
@@ -206,6 +217,8 @@ class MAIN_EXPORT Server : public QObject
 		void				updated(Server *server, int response);
 
 	protected:
+		virtual void		additionalServerInfo(QList<ServerInfo>* baseList) const {}
+
 		/**
 		 * This should be set to true upon successful return from doRefresh(),
 		 * and to false upon failure. setServers() protected slot handles this.

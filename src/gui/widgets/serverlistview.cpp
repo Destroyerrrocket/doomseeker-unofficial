@@ -49,7 +49,10 @@ void ServerListView::mouseReleaseEvent(QMouseEvent* event)
 	else
 	{
 		QModelIndex index = indexAt(event->pos());
-		emit rightMouseClick(index);
+		if (index.isValid())
+		{
+			emit rightMouseClick(index);
+		}
 	}
 }
 
@@ -62,6 +65,9 @@ void ServerListView::mouseDoubleClickEvent(QMouseEvent* event)
 	else
 	{
 		QModelIndex index = indexAt(event->pos());
-		emit leftMouseDoubleClicked(index);
+		if (index.isValid())
+		{
+			emit leftMouseDoubleClicked(index);
+		}
 	}
 }

@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
+<ui version="4.0" >
  <class>DockServerInfo</class>
- <widget class="QDockWidget" name="DockServerInfo">
-  <property name="geometry">
+ <widget class="QDockWidget" name="DockServerInfo" >
+  <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
@@ -10,47 +9,49 @@
     <height>443</height>
    </rect>
   </property>
-  <property name="locale">
-   <locale language="English" country="UnitedStates"/>
+  <property name="locale" >
+   <locale country="UnitedStates" language="English" />
   </property>
-  <property name="floating">
+  <property name="floating" >
    <bool>false</bool>
   </property>
-  <property name="windowTitle">
-   <string>DockWidget</string>
+  <property name="windowTitle" >
+   <string>Server Info</string>
   </property>
-  <widget class="DockedWidgetServerInfo" name="dockWidgetContents">
-   <widget class="QPushButton" name="pushButton">
-    <property name="geometry">
+  <widget class="DockWidgetChild" name="dockWidgetContents" >
+   <widget class="QWidget" native="1" name="mainLayout" >
+    <property name="geometry" >
      <rect>
-      <x>50</x>
-      <y>120</y>
-      <width>251</width>
-      <height>23</height>
+      <x>-1</x>
+      <y>3</y>
+      <width>371</width>
+      <height>421</height>
      </rect>
     </property>
-    <property name="text">
-     <string>PushButton</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>10</y>
-      <width>321</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>LABEL LABEL LABEL LABEL LABEL LABEL LABEL LABEL </string>
-    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2" >
+     <item>
+      <layout class="QVBoxLayout" name="infoLayout" />
+     </item>
+     <item>
+      <spacer name="verticalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </widget>
   </widget>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>DockedWidgetServerInfo</class>
+   <class>DockWidgetChild</class>
    <extends>QWidget</extends>
    <header>gui/widgets/dockedwidgets.h</header>
    <container>1</container>

@@ -144,6 +144,8 @@ class SkulltagServer : public Server
 
 		unsigned int	numTeams;
 		TeamInfo		teamInfo[ST_MAX_TEAMS];
+
+		void 			additionalServerInfo(QList<ServerInfo>* baseList) const;
 };
 
 #endif /* __SKULLTAGSERVER_H__ */

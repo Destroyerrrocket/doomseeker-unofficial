@@ -234,6 +234,22 @@ unsigned int Server::longestPlayerName() const
 	return x;
 }
 
+QList<ServerInfo>* Server::serverInfo() const
+{
+	QList<ServerInfo>* list = new QList<ServerInfo>();
+
+	ServerInfo siName = { this->name(), "<div style='white-space: pre'>" + this->name() + "</div>" };
+
+	QString addr = this->address().toString() + ":" + QString::number(this->port());
+	ServerInfo siAddress = { addr, addr };
+
+	list->append(siName);
+	list->append(siAddress);
+
+	additionalServerInfo(list);
+	return list;
+}
+
 int Server::teamPlayerCount(int team) const
 {
 	if (team >= MAX_TEAMS)

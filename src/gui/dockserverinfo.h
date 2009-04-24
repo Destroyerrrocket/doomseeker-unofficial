@@ -25,6 +25,7 @@
 #define __DOCKSERVERINFO_H_
 
 #include "ui_dockserverinfo.h"
+#include "server.h"
 
 class DockServerInfo : public QDockWidget, private Ui::DockServerInfo
 {
@@ -32,6 +33,18 @@ class DockServerInfo : public QDockWidget, private Ui::DockServerInfo
 
 	public:
 		DockServerInfo(QWidget* parent = NULL);
+
+		void updateServerInfo(Server*);
+
+	protected:
+		QList<QWidget*> removalList;
+
+		int 		mainLayoutDistanceFromRight;
+		int 		mainLayoutDistanceFromBottom;
+		Server* 	currentServer;
+
+		void 			destroyServerInfo();
+		virtual void 	resizeEvent(QResizeEvent* event);
 };
 
 #endif

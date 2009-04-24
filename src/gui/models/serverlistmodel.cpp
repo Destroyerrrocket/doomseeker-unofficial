@@ -47,6 +47,7 @@ void ServerListModel::destroyRows()
 {
 	int rows = rowCount();
 	removeRows(0, rows);
+	emit modelCleared();
 }
 
 void ServerListModel::clearRows()
