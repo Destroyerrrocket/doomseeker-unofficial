@@ -25,4 +25,4 @@ add_library(skulltag SHARED ${SKULLTAG_FILES})
 add_dependencies(skulltag doomseeker)
 target_link_libraries(skulltag ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} doomseeker)
 
-set_target_properties(skulltag PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}/engines/)
+set_target_properties(skulltag PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}/engines/ RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}/engines/)
