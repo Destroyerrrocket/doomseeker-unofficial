@@ -21,6 +21,7 @@ qt4_wrap_ui(doomseekerUI
 )
 
 qt_wrap_cpp(doomseekerWraps QT_FILES
+	gui/aboutDlg.h
 	gui/cfgFilePaths.h
 	gui/configBase.h
 	gui/configureDlg.h

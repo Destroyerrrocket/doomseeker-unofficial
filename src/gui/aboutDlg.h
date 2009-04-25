@@ -28,9 +28,14 @@
 
 class AboutDlg : public QDialog, private Ui::aboutDlg
 {
+	Q_OBJECT
+
 	public:
 		AboutDlg(QWidget* parent = NULL);
 		~AboutDlg();
+
+	public slots:
+		void	changePlugin(int plugin);
 };
 
 #endif /* __ABOUTDIALOG_H__ */

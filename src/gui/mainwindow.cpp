@@ -28,17 +28,15 @@
 #include "gui/engineSkulltagConfig.h"
 #include "pathfinder.h"
 #include "plugin.h"
+#include "main.h"
 #include <QDockWidget>
 #include <QFileInfo>
 #include <QProcess>
 #include <QHeaderView>
 #include <QMessageBox>
 
-MainWindow::MainWindow(int argc, char** argv) : enginePlugins(MAKEID('E','N','G','N'), "./engines/")
+MainWindow::MainWindow(int argc, char** argv)
 {
-	config = new Config();
-	config->locateConfigFile(argc, argv);
-
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
 
@@ -57,7 +55,6 @@ MainWindow::MainWindow(int argc, char** argv) : enginePlugins(MAKEID('E','N','G'
 
 MainWindow::~MainWindow()
 {
-	delete config;
 }
 /////////////////////////////////////////////////////////
 // Slots
@@ -71,9 +68,9 @@ void MainWindow::checkRefreshFinished()
 void MainWindow::btnGetServers_Click()
 {
 	// TODO: Do this right.
-	if(enginePlugins.numPlugins() == 0)
+	if(Main::enginePlugins.numPlugins() == 0)
 		return;
-	const Plugin *plugin = enginePlugins[0];
+	const Plugin *plugin = Main::enginePlugins[0];
 	if(plugin == NULL)
 		return;
 	const EnginePlugin *(*enginePluginGetter)() = (const EnginePlugin *(*)()) plugin->function("enginePlugin");
@@ -114,9 +111,9 @@ void MainWindow::menuHelpAbout()
 
 void MainWindow::menuOptionsConfigure()
 {
-	ConfigureDlg dlg(config, this);
+	ConfigureDlg dlg(Main::config, this);
 
-	ConfigurationBoxInfo* ec = EngineSkulltagConfigBox::createStructure(config, &dlg);
+	ConfigurationBoxInfo* ec = EngineSkulltagConfigBox::createStructure(Main::config, &dlg);
 	dlg.addEngineConfiguration(ec);
 
 	dlg.exec();
@@ -154,7 +151,7 @@ void MainWindow::menuServerInfo()
 void MainWindow::runGame(const Server* server)
 {
 	const QString errorCaption = tr("Doomseeker - error");
-	SettingsData* setting = config->setting("SkullTagBinaryPath");
+	SettingsData* setting = Main::config->setting("SkullTagBinaryPath");
 	if (setting->string().isEmpty())
 	{
 		QMessageBox::critical(this, errorCaption, tr("No executable specified for this engine."));
@@ -169,7 +166,7 @@ void MainWindow::runGame(const Server* server)
 		return;
 	}
 
-	PathFinder pf(config);
+	PathFinder pf(Main::config);
 	QStringList args;
 	QStringList missingPwads;
 

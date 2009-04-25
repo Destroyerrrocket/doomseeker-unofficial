@@ -55,8 +55,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 	private:
 		DockServerInfo*		serverInfo;
 		SLHandler*			serverTableHandler;
-		Config* 			config;
-		PluginLoader		enginePlugins;
 };
 
 #endif

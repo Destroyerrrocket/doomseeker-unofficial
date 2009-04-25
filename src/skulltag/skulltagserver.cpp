@@ -27,7 +27,6 @@
 #include "huffman/huffman.h"
 #include "skulltag/skulltagserver.h"
 #include "global.h"
-#include "main.h"
 
 #define SERVER_CHALLENGE	0xC7,0x00,0x00,0x00
 #define SERVER_GOOD			5660023
