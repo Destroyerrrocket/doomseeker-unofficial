@@ -23,7 +23,9 @@
 #ifndef __HUFFMAN_H__
 #define __HUFFMAN_H__
 
-struct huffnode_t
+#include "global.h"
+
+struct MAIN_EXPORT huffnode_t
 {
 	public:
 		huffnode_t *zero;
@@ -32,14 +34,14 @@ struct huffnode_t
 		float freq;
 };
 
-struct hufftab_t
+struct MAIN_EXPORT hufftab_t
 {
 	public:
 		unsigned int bits;
 		int len;
 };
 
-class Huffman
+class MAIN_EXPORT Huffman
 {
 	public:
 		Huffman();
@@ -61,6 +63,6 @@ class Huffman
 		static float	huffFreq[256];
 };
 
-extern Huffman g_Huffman;
+extern MAIN_EXPORT Huffman g_Huffman;
 
 #endif // __HUFFMAN_H__

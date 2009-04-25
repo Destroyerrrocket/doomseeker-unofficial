@@ -31,7 +31,6 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/models/serverlistmodel.h
 	gui/widgets/dockedwidgets.h
 	gui/widgets/serverlistview.h
-	odamex/odamexmasterclient.h
 	sdeapi/config.hpp
 	masterclient.h
 	server.h
@@ -50,7 +49,6 @@ add_executable(doomseeker
 	gui/models/serverlistmodel.cpp
 	gui/widgets/serverlistview.cpp
 	huffman/huffman.cpp
-	odamex/odamexmasterclient.cpp
 	sdeapi/config.cpp
 	sdeapi/pluginloader.cpp
 	sdeapi/scanner.cpp

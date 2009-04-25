@@ -13,7 +13,6 @@ set(SKULLTAG_QT_FILES
 	skulltagserver.h
 )
 set(SKULLTAG_FILES
-  ../huffman/huffman.cpp
 	skulltagmain.cpp
 	skulltagmasterclient.cpp
 	skulltagserver.cpp
