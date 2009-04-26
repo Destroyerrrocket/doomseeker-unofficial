@@ -68,4 +68,5 @@ set_target_properties(doomseeker PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DI
 if(WIN32)
 	set_target_properties(doomseeker PROPERTIES LINK_FLAGS_RELEASE "-Wl,-subsystem,windows")
 	set_target_properties(doomseeker PROPERTIES LINK_FLAGS_MINSIZEREL "-Wl,-subsystem,windows")
+  set_target_properties(doomseeker PROPERTIES LINK_FLAGS "-Wl,--export-all-symbols")
 endif(WIN32)
