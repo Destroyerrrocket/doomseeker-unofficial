@@ -88,13 +88,6 @@ class SLHandler : public QObject
 		QString createPlayersToolTip(const Server* server);
 		QString createServerNameToolTip(const Server* server);
 		QString createPwadsToolTip(const Server* server);
-
-		QString spawnGeneralInfoTable(const Server* server);
-		QString spawnPlayerTable(const Server* server);
-		/**
-		 * This will return absolutely nothing if the list in the first argument is empty.
-		 */
-        QString spawnPartOfPlayerTable(QList<const Player*>, QString status, int colspan, bool isTeamgame, bool bAppendEmptyRowAtBeginning);
 };
 
 #endif

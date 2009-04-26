@@ -123,7 +123,7 @@ struct MAIN_EXPORT GameMode
 
 struct MAIN_EXPORT SkillLevel
 {
-	const QString strName;
+	//const QString strName;
 
 	static const int	 numSkillLevels;
 	static const QString names[];
@@ -158,9 +158,18 @@ class MAIN_EXPORT Server : public QObject
 		virtual ~Server();
 
 		/**
+		 * Should return general info about current game (fraglimit, team scores, etc.)
+		 */
+		virtual QString		gameInfoTableHTML() const { return QString(); }
+		/**
 		 * Should return general info about server, like server name, version, email, etc.
 		 */
 		virtual QString		generalInfoHTML() const =0;
+		/**
+		 * Should return player table (the thing that is created when cursor hovers over players column)
+		 */
+		virtual QString		playerTableHTML() const { return QString(); }
+
 		QList<ServerInfo>*	serverInfo() const;
 
 		const QHostAddress	&address() const { return serverAddress; }

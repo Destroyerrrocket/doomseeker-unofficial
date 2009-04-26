@@ -90,7 +90,7 @@ class SkulltagServer : public Server
 			SQF_TEAMINFO_COLOR =	0x0800000,
 			SQF_TEAMINFO_SCORE =	0x1000000,
 
-			SQF_STANDARDQUERY =		SQF_NAME|SQF_URL|SQF_EMAIL|SQF_MAPNAME|SQF_MAXCLIENTS|SQF_MAXPLAYERS|SQF_PWADS|SQF_GAMETYPE|SQF_IWAD|SQF_FORCEPASSWORD|SQF_FORCEJOINPASSWORD|SQF_DMFLAGS|SQF_LIMITS|SQF_NUMPLAYERS|SQF_PLAYERDATA|SQF_TEAMINFO_NUMBER|SQF_TEAMINFO_SCORE|SQF_GAMESKILL
+			SQF_STANDARDQUERY =		SQF_NAME|SQF_URL|SQF_EMAIL|SQF_MAPNAME|SQF_MAXCLIENTS|SQF_MAXPLAYERS|SQF_PWADS|SQF_GAMETYPE|SQF_IWAD|SQF_FORCEPASSWORD|SQF_FORCEJOINPASSWORD|SQF_DMFLAGS|SQF_LIMITS|SQF_NUMPLAYERS|SQF_PLAYERDATA|SQF_TEAMINFO_NUMBER|SQF_TEAMINFO_NAME|SQF_TEAMINFO_SCORE|SQF_GAMESKILL
 		};
 
 		enum SkulltagGameMode
@@ -121,7 +121,9 @@ class SkulltagServer : public Server
 
 		SkulltagServer(const QHostAddress &address, unsigned short port);
 
+		QString			gameInfoTableHTML() const;
 		QString			generalInfoHTML() const;
+		QString			playerTableHTML() const;
 
 		void			doRefresh();
 
@@ -146,6 +148,11 @@ class SkulltagServer : public Server
 		TeamInfo		teamInfo[ST_MAX_TEAMS];
 
 		void 			additionalServerInfo(QList<ServerInfo>* baseList) const;
+
+		/**
+		 * This will return absolutely nothing if the list in the first argument is empty.
+		 */
+        QString 		spawnPartOfPlayerTable(QList<const Player*>, QString status, int colspan, bool isTeamgame, bool bAppendEmptyRowAtBeginning) const;
 };
 
 #endif /* __SKULLTAGSERVER_H__ */
