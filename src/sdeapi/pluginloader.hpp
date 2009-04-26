@@ -64,12 +64,13 @@ class MAIN_EXPORT EnginePlugin
 struct MAIN_EXPORT PluginInfo
 {
 	public:
+
 		const char*			name;
 		const char*			description;
 		const char*			author;
 		quint8				version[4];
 		quint32				type; ///< Use MAKEID to generate a check type.
-		const EnginePlugin	*interface;
+		const EnginePlugin	*pInterface;
 };
 
 /**

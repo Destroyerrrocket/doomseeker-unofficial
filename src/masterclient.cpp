@@ -89,7 +89,7 @@ void MasterManager::loadMastersFromPlugins()
 {
 	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
 	{
-		const EnginePlugin *plugin = Main::enginePlugins[i]->info->interface;
+		const EnginePlugin *plugin = Main::enginePlugins[i]->info->pInterface;
 		addMaster(plugin->masterClient());
 	}
 }
