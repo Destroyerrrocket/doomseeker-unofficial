@@ -78,4 +78,23 @@ class MAIN_EXPORT MasterClient : public QObject
 		unsigned short	port;
 };
 
+class MasterManager : public MasterClient
+{
+	Q_OBJECT
+
+	public:
+		MasterManager();
+		~MasterManager();
+
+		void	addMaster(MasterClient *master);
+
+	public slots:
+		void	refresh();
+
+	protected:
+		void	loadMastersFromPlugins();
+
+		QList<MasterClient *>	masters;
+};
+
 #endif /* __MASTERSERVER_H__ */

@@ -21,8 +21,9 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
+#include <QHostInfo>
+
 #include "global.h"
-#include "plugin.h"
 #include "masterclient.h"
 #include "sdeapi/pluginloader.hpp"
 
@@ -31,19 +32,18 @@
 class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 {
 	public:
-		MasterClient	*masterClient(QHostAddress address, unsigned short port) const
+		MasterClient	*masterClient() const
 		{
-			return new SkulltagMasterClient(address, port);
+			QHostInfo info = QHostInfo::fromName("skulltag.servegame.com");
+			if(info.addresses().size() == 0)
+				return NULL;
+			return new SkulltagMasterClient(info.addresses().first(), 15300);
 		}
 };
 
-static const PluginInfo skulltag_info = {"Skulltag", "Skulltag server query plugin.", "The Skulltag Team", {0,1,0,0}, MAKEID('E','N','G','N')};
 static SkulltagEnginePlugin skulltag_engine_plugin;
+static const PluginInfo skulltag_info = {"Skulltag", "Skulltag server query plugin.", "The Skulltag Team", {0,1,0,0}, MAKEID('E','N','G','N'), &skulltag_engine_plugin};
 extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 {
 	return &skulltag_info;
-}
-extern "C" PLUGIN_EXPORT const EnginePlugin *enginePlugin()
-{
-	return &skulltag_engine_plugin;
 }

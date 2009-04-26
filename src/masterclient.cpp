@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "masterclient.h"
+#include "main.h"
 
 #include <QErrorMessage>
 #include <QMessageBox>
@@ -62,4 +63,46 @@ void MasterClient::notifyDelay()
 {
 	QErrorMessage message;
 	message.showMessage(tr("Could not fetch a new server list from the master because not enough time has past."));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+MasterManager::MasterManager() : MasterClient(QHostAddress(), 0)
+{
+	loadMastersFromPlugins();
+}
+
+MasterManager::~MasterManager()
+{
+	for(int i = 0;i < masters.size();i++)
+		delete masters[i];
+}
+
+void MasterManager::addMaster(MasterClient *master)
+{
+	if(master == NULL)
+		return;
+
+	masters.append(master);
+}
+
+void MasterManager::loadMastersFromPlugins()
+{
+	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
+	{
+		const EnginePlugin *plugin = Main::enginePlugins[i]->info->interface;
+		addMaster(plugin->masterClient());
+	}
+}
+
+void MasterManager::refresh()
+{
+	emptyServerList();
+
+	for(int i = 0;i < masters.size();i++)
+	{
+		masters[i]->refresh();
+		servers.append(masters[i]->serverList());
+	}
+
+	emit listUpdated();
 }

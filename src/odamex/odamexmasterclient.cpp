@@ -35,8 +35,8 @@ class OdamexServer : public Server
 		{
 		}
 
-		void doRefresh() {}
-		QString generalInfoHTML() const {}
+		void doRefresh() { emit updated(this, RESPONSE_GOOD); }
+		QString generalInfoHTML() const { return QString(); }
 };
 
 OdamexMasterClient::OdamexMasterClient(QHostAddress address, unsigned short port) : MasterClient(address, port)
@@ -73,7 +73,7 @@ void OdamexMasterClient::refresh()
 	emptyServerList();
 
 	int numServers = READINT16(&in[4]);
-	int pos = 5;
+	int pos = 6;
 	for(;numServers > 0;numServers--)
 	{
 		// This might be able to be simplified a little bit...

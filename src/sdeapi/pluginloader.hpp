@@ -46,6 +46,16 @@
 
 #endif
 
+////////////////////////////////////////////////////////////////////////////////
+#include "masterclient.h"
+
+class MAIN_EXPORT EnginePlugin
+{
+	public:
+		virtual MasterClient	*masterClient(/*QHostAddress adress, unsigned short port*/) const=0;
+};
+////////////////////////////////////////////////////////////////////////////////
+
 #define MAKEID(a,b,c,d) (quint32(a)|(quint32(b)<<8)|(quint32(c)<<16)|(quint32(d)<<24))
 /**
  * This is a struct to store information about a specific plugin.  This should
@@ -54,11 +64,12 @@
 struct MAIN_EXPORT PluginInfo
 {
 	public:
-		const char*	name;
-		const char*	description;
-		const char*	author;
-		quint8		version[4];
-		quint32		type; ///< Use MAKEID to generate a check type.
+		const char*			name;
+		const char*			description;
+		const char*			author;
+		quint8				version[4];
+		quint32				type; ///< Use MAKEID to generate a check type.
+		const EnginePlugin	*interface;
 };
 
 /**

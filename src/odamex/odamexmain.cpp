@@ -21,8 +21,9 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
+#include <QHostInfo>
+
 #include "global.h"
-#include "plugin.h"
 #include "masterclient.h"
 #include "sdeapi/pluginloader.hpp"
 
@@ -31,19 +32,18 @@
 class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 {
 	public:
-		MasterClient	*masterClient(QHostAddress address, unsigned short port) const
+		MasterClient	*masterClient() const
 		{
-			return new OdamexMasterClient(address, port);
+			QHostInfo info = QHostInfo::fromName("master1.odamex.net");
+			if(info.addresses().size() == 0)
+				return NULL;
+			return new OdamexMasterClient(info.addresses().first(), 15000);
 		}
 };
 
-static const PluginInfo odamex_info = {"Odamex", "Odamex server query plugin.", "The Skulltag Team", {0,1,0,0}, MAKEID('E','N','G','N')};
 static OdamexEnginePlugin odamex_engine_plugin;
+static const PluginInfo odamex_info = {"Odamex", "Odamex server query plugin.", "The Skulltag Team", {0,1,0,0}, MAKEID('E','N','G','N'), &odamex_engine_plugin};
 extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 {
 	return &odamex_info;
-}
-extern "C" PLUGIN_EXPORT const EnginePlugin *enginePlugin()
-{
-	return &odamex_engine_plugin;
 }

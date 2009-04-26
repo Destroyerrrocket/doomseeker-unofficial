@@ -27,7 +27,6 @@
 #include "gui/dockserverinfo.h"
 #include "gui/engineSkulltagConfig.h"
 #include "pathfinder.h"
-#include "plugin.h"
 #include "main.h"
 #include <QDockWidget>
 #include <QFileInfo>
@@ -67,17 +66,7 @@ void MainWindow::checkRefreshFinished()
 
 void MainWindow::btnGetServers_Click()
 {
-	// TODO: Do this right.
-	if(Main::enginePlugins.numPlugins() == 0)
-		return;
-	const Plugin *plugin = Main::enginePlugins[0];
-	if(plugin == NULL)
-		return;
-	const EnginePlugin *(*enginePluginGetter)() = (const EnginePlugin *(*)()) plugin->function("enginePlugin");
-	if(enginePluginGetter == NULL)
-		return;
-	const EnginePlugin *enginePlugin = enginePluginGetter();
-	MasterClient* mc = enginePlugin->masterClient(QHostAddress("91.121.87.67"), 15300);
+	MasterClient* mc = new MasterManager();
 	mc->refresh();
 
 	if (mc->numServers() == 0)
