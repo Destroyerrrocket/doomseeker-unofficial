@@ -73,7 +73,11 @@ void DockServerInfo::updateServerInfo(Server* server)
 		for (it = infolist->begin(); it != infolist->end(); ++it)
 		{
 			QLabel* label = new QLabel(it->richText, this);
+			label->setOpenExternalLinks(true);
 			label->setToolTip(it->toolTip);
+			label->setTextInteractionFlags(Qt::LinksAccessibleByMouse | Qt::TextSelectableByMouse);
+			label->setWordWrap(true);
+
 			infoLayout->addWidget(label);
 			removalList.append(label);
 		}
