@@ -246,7 +246,7 @@ void ServerListModel::setTimeout(int row, Server* server)
 	fillItem(qstdItem, tr("<NO RESPONSE>"));
 
 	qstdItem = item(row, SLCID_HIDDEN_GROUP);
-	fillItem(qstdItem, SG_BAD);
+	fillItem(qstdItem, SG_TIMEOUT);
 }
 
 void ServerListModel::setWait(int row, Server* server)

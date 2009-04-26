@@ -71,6 +71,7 @@ class ServerListModel : public QStandardItemModel
 			SG_NORMAL 	= 200,
 			SG_WAIT 	= 175,
 			SG_BANNED	= 150,
+			SG_TIMEOUT	= 125,
 			SG_BAD		= 100
 		};
 

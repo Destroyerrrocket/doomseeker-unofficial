@@ -35,7 +35,7 @@ class OdamexServer : public Server
 		{
 		}
 
-		void doRefresh() { emit updated(this, RESPONSE_GOOD); }
+		void doRefresh() { emit updated(this, RESPONSE_BAD); }
 		QString generalInfoHTML() const { return QString(); }
 };
 

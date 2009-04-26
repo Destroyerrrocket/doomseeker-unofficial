@@ -39,6 +39,6 @@ int main(int argc, char* argv[])
 	MainWindow* mw = new MainWindow(argc, argv);
 	mw->show();
 
-	delete Main::config;
+	//delete Main::config;
 	return app.exec();
 }
