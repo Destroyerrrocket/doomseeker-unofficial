@@ -25,7 +25,6 @@
 #include <QHeaderView>
 #include <QStandardItem>
 #include <QToolTip>
-#include "skulltag/skulltagmasterclient.h"
 
 
 SLHandler::SLHandler(ServerListView* tab)

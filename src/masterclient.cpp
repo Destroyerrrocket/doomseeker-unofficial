@@ -26,6 +26,7 @@
 
 #include <QErrorMessage>
 #include <QMessageBox>
+#include <QUdpSocket>
 
 MasterClient::MasterClient(QHostAddress address, unsigned short port) : QObject(), address(address), port(port)
 {
@@ -63,6 +64,35 @@ void MasterClient::notifyDelay()
 {
 	QErrorMessage message;
 	message.showMessage(tr("Could not fetch a new server list from the master because not enough time has past."));
+}
+
+void MasterClient::refresh()
+{
+	// Connect to the server
+	QUdpSocket socket;
+	socket.connectToHost(address, port);
+	if(!socket.waitForConnected(1000))
+	{
+		printf("%s\n", socket.errorString().toAscii().data());
+		return;
+	}
+
+	// Make request
+	QByteArray request;
+	if(!sendRequest(request))
+		return;
+	socket.write(request);
+	if(!socket.waitForReadyRead(10000))
+		return;
+
+	// get data
+	QByteArray data = socket.readAll();
+	if(!readRequest(data))
+		return;
+
+	socket.close();
+
+	emit listUpdated();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -33,8 +33,9 @@ class SkulltagMasterClient : public MasterClient
 	public:
 		SkulltagMasterClient(QHostAddress address, unsigned short port);
 
-	public slots:
-		void	refresh();
+	protected:
+		bool	readRequest(QByteArray &data);
+		bool	sendRequest(QByteArray &data);
 };
 
 #endif /* __SKULLTAGMASTERCLIENT_H__ */

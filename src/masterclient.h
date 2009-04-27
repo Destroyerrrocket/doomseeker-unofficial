@@ -51,8 +51,10 @@ class MAIN_EXPORT MasterClient : public QObject
 		/**
 		 * Requests an updated server list from the master, this should emit
 		 * listUpdated if the list has changed.
+		 *
+		 * This function is virtual since MasterManager overrides it.
 		 */
-		virtual void	refresh()=0;
+		virtual void	refresh();
 
 	signals:
 		void			listUpdated();
@@ -71,6 +73,9 @@ class MAIN_EXPORT MasterClient : public QObject
 		 * query becuase they tried to refresh too quickly.
 		 */
 		void			notifyDelay();
+
+		virtual bool	readRequest(QByteArray &data)=0;
+		virtual bool	sendRequest(QByteArray &data)=0;
 
 		QList<Server *>	servers;
 
@@ -93,6 +98,8 @@ class MasterManager : public MasterClient
 
 	protected:
 		void	loadMastersFromPlugins();
+		bool	readRequest(QByteArray &data) { return true; }
+		bool	sendRequest(QByteArray &data) { return true; }
 
 		QList<MasterClient *>	masters;
 };

@@ -21,8 +21,6 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include <QUdpSocket>
-
 #include "global.h"
 #include "odamex/odamexmasterclient.h"
 
@@ -43,31 +41,22 @@ OdamexMasterClient::OdamexMasterClient(QHostAddress address, unsigned short port
 {
 }
 
-void OdamexMasterClient::refresh()
+bool OdamexMasterClient::sendRequest(QByteArray &data)
 {
-	// Connect to the server
-	QUdpSocket socket;
-	socket.connectToHost(address, port);
-	if(!socket.waitForConnected(1000))
-	{
-		printf("%s\n", socket.errorString().toAscii().data());
-		return;
-	}
-
-	// Send launcher challenge.
 	const char challenge[4] = {MASTER_CHALLENGE};
-	socket.write(challenge, 4);
-	if(!socket.waitForReadyRead(10000))
-		return;
+	data.append(challenge, 4);
+	return true;
+}
 
+bool OdamexMasterClient::readRequest(QByteArray &data)
+{
 	// Decompress the response.
-	QByteArray data = socket.readAll();
 	const char* in = data.data();
 
 	// Check the response code
 	int response = READINT32(&in[0]);
 	if(response != MASTER_CHALLENGE)
-		return;
+		return false;
 
 	// Make sure we have an empty list.
 	emptyServerList();
@@ -83,8 +72,5 @@ void OdamexMasterClient::refresh()
 		servers.push_back(server);
 		pos += 6;
 	}
-
-	socket.close();
-
-	emit listUpdated();
+	return true;
 }

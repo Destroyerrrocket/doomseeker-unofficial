@@ -39,31 +39,22 @@ SkulltagMasterClient::SkulltagMasterClient(QHostAddress address, unsigned short 
 {
 }
 
-void SkulltagMasterClient::refresh()
+bool SkulltagMasterClient::sendRequest(QByteArray &data)
 {
-	// Connect to the server
-	QUdpSocket socket;
-	socket.connectToHost(address, port);
-	if(!socket.waitForConnected(1000))
-	{
-		printf("%s\n", socket.errorString().toAscii().data());
-		return;
-	}
-
 	// Send launcher challenge.
 	const char challenge[4] = {MASTER_CHALLENGE};
 	char challengeOut[12];
 	int out = 12;
 	g_Huffman.encode(challenge, challengeOut, 4, &out);
-	socket.write(challengeOut, out);
-	if(!socket.waitForReadyRead(10000))
-		return;
+	data.append(challengeOut, out);
+	return true;
+}
 
-	// Decompress the response.
-	QByteArray data = socket.readAll();
+bool SkulltagMasterClient::readRequest(QByteArray &data)
+{
 	const char* in = data.data();
 	char packetOut[2000];
-	out = 2000;
+	int out = 2000;
 	g_Huffman.decode(in, packetOut, data.size(), &out);
 
 	// Check the response code
@@ -71,15 +62,15 @@ void SkulltagMasterClient::refresh()
 	if(response == MASTER_RESPONSE_BANNED)
 	{
 		notifyBanned();
-		return;
+		return false;
 	}
 	else if(response == MASTER_RESPONSE_BAD)
 	{
 		notifyDelay();
-		return;
+		return false;
 	}
 	else if(response != MASTER_RESPONSE_GOOD)
-		return;
+		return false;
 
 	// Make sure we have an empty list.
 	emptyServerList();
@@ -97,7 +88,5 @@ void SkulltagMasterClient::refresh()
 		firstByte = READINT8(&packetOut[pos++]);
 	}
 
-	socket.close();
-
-	emit listUpdated();
+	return true;
 }

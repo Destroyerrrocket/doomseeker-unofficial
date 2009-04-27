@@ -33,8 +33,9 @@ class OdamexMasterClient : public MasterClient
 	public:
 		OdamexMasterClient(QHostAddress address, unsigned short port);
 
-	public slots:
-		void	refresh();
+	protected:
+		bool	readRequest(QByteArray &data);
+		bool	sendRequest(QByteArray &data);
 };
 
 #endif /* __ODAMEXMASTERCLIENT_H__ */
