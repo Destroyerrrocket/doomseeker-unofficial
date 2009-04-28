@@ -21,9 +21,6 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include <QUdpSocket>
-#include <QTime>
-
 #include "huffman/huffman.h"
 #include "skulltag/skulltagserver.h"
 #include "global.h"
@@ -412,44 +409,24 @@ QString SkulltagServer::spawnPartOfPlayerTable(QList<const Player*> list, QStrin
 	return ret;
 }
 
-void SkulltagServer::doRefresh()
+bool SkulltagServer::sendRequest(QByteArray &data)
 {
-	// Connect to the server
-	QUdpSocket socket;
-
-	socket.connectToHost(address(), port());
-
-	if(!socket.waitForConnected(1000))
-	{
-		printf("%s\n", socket.errorString().toAscii().data());
-		emit updated(this, RESPONSE_BAD);
-		return;
-	}
-
-
 	// Send launcher challenge.
-	QTime time = QTime::currentTime();
 	int query = SQF_STANDARDQUERY;
 	const char challenge[12] = {SERVER_CHALLENGE,WRITEINT32_DIRECT(query),0x00,0x00,0x00,0x00};
 	char challengeOut[16];
 	int out = 16;
 	g_Huffman.encode(challenge, challengeOut, 12, &out);
-	socket.write(challengeOut, out);
+	data.append(challengeOut, out);
+	return true;
+}
 
-	// Start the timer and wait
-	time.start();
-	if(!socket.waitForReadyRead(5000))
-	{
-		emit updated(this, RESPONSE_TIMEOUT);
-		return;
-	}
-
-
+bool SkulltagServer::readRequest(QByteArray &data, QTime &time)
+{
 	// Decompress the response.
-	QByteArray data = socket.readAll();
 	const char* in = data.data();
 	char packetOut[2000];
-	out = 2000;
+	int out = 2000;
 	g_Huffman.decode(in, packetOut, data.size(), &out);
 
 	// Check the response code
@@ -458,17 +435,17 @@ void SkulltagServer::doRefresh()
 	if(response == SERVER_BANNED)
 	{
 		emit updated(this, RESPONSE_BANNED);
-		return;
+		return false;
 	}
 	else if(response == SERVER_WAIT)
 	{
 		emit updated(this, RESPONSE_WAIT);
-		return;
+		return false;
 	}
 	else if (response != SERVER_GOOD)
 	{
 		emit updated(this, RESPONSE_BAD);
-		return;
+		return false;
 	}
 
 	version = QString(&packetOut[8]);
@@ -685,9 +662,5 @@ void SkulltagServer::doRefresh()
 		}
 	}
 
-	socket.close();
-
-	emit updated(this, RESPONSE_GOOD);
+	return true;
 }
-////////////////////////////////////////////////////////////////////////////////
-

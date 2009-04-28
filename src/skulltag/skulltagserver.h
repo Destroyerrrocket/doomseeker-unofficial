@@ -26,6 +26,7 @@
 
 #include <QString>
 #include <QColor>
+#include <QTime>
 
 #include "server.h"
 
@@ -148,6 +149,8 @@ class SkulltagServer : public Server
 		TeamInfo		teamInfo[ST_MAX_TEAMS];
 
 		void 			additionalServerInfo(QList<ServerInfo>* baseList) const;
+		bool			readRequest(QByteArray &data, QTime &time);
+		bool			sendRequest(QByteArray &data);
 
 		/**
 		 * This will return absolutely nothing if the list in the first argument is empty.

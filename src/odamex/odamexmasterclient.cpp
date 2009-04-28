@@ -35,6 +35,10 @@ class OdamexServer : public Server
 
 		void doRefresh() { emit updated(this, RESPONSE_BAD); }
 		QString generalInfoHTML() const { return QString(); }
+
+	protected:
+		bool	readRequest(QByteArray &data, QTime &time) { return true; }
+		bool	sendRequest(QByteArray &data) { return true; }
 };
 
 OdamexMasterClient::OdamexMasterClient(QHostAddress address, unsigned short port) : MasterClient(address, port)

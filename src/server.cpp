@@ -23,6 +23,8 @@
 
 #include "server.h"
 #include <QSet>
+#include <QTime>
+#include <QUdpSocket>
 
 // \c = '\034'
 #define	ESCAPE_COLOR	'\034'
@@ -328,7 +330,41 @@ void ServerRefresher::run()
 {
 	if (!bGuardian)
 	{
-		parent->doRefresh();
+		// Connect to the server
+		QUdpSocket socket;
+
+		socket.connectToHost(parent->address(), parent->port());
+
+		if(!socket.waitForConnected(1000))
+		{
+			printf("%s\n", socket.errorString().toAscii().data());
+			parent->emitUpdated(Server::RESPONSE_BAD);
+			return;
+		}
+
+		QByteArray request;
+		if(!parent->sendRequest(request))
+			return;
+
+		// start timer and write.
+		QTime time = QTime::currentTime();
+		socket.write(request);
+		time.start();
+		if(!socket.waitForReadyRead(5000))
+		{
+			parent->emitUpdated(Server::RESPONSE_TIMEOUT);
+			return;
+		}
+
+		// Read
+		QByteArray data = socket.readAll();
+		if(!parent->readRequest(data, time))
+			return;
+
+		socket.close();
+
+		parent->emitUpdated(Server::RESPONSE_GOOD);
+
 		parent->finalizeRefreshing();
 		parent->stopRunning();
 	}

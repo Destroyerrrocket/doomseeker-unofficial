@@ -198,7 +198,6 @@ class MAIN_EXPORT Server : public QObject
 		const QString		&wad(int index) const { return wads[index]; }
 
 		void				operator= (const Server &other);
-		virtual void		doRefresh()=0;
 		void				finalizeRefreshing();
 		void				startRunning() { bRunning = true; }
 		void				stopRunning() { bRunning = false; }
@@ -208,7 +207,7 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		static const QThreadPool	&refresherThreadPool();
 
-		friend class Refresher;
+		friend class ServerRefresher;
 		friend class ServerPointer;
 
 	public slots:
@@ -227,6 +226,13 @@ class MAIN_EXPORT Server : public QObject
 
 	protected:
 		virtual void		additionalServerInfo(QList<ServerInfo>* baseList) const {}
+		/**
+		 * Wrapper function to allow refresher to emit the updated signal.
+		 */
+		void				emitUpdated(int response) { emit updated(this, response); }
+
+		virtual bool		readRequest(QByteArray &data, QTime &time)=0;
+		virtual bool		sendRequest(QByteArray &data)=0;
 
 		/**
 		 * This should be set to true upon successful return from doRefresh(),
