@@ -291,12 +291,12 @@ class MAIN_EXPORT ServerRefresher : public QThread, public QRunnable
 
 	protected:
 		static QThreadPool	threadPool;
-		static QThreadPool	guardianThreadPool;
 		static QMutex		guardianMutex;
 
 		friend class Server;
 
 	public:
+
 		ServerRefresher(Server* p);
 
 		/**
@@ -305,7 +305,6 @@ class MAIN_EXPORT ServerRefresher : public QThread, public QRunnable
 		 */
 		void startGuardian();
 		void run();
-
 	signals:
 		void allServersRefreshed();
 };

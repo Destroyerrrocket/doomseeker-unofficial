@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "server.h"
+#include "main.h"
 #include <QSet>
 #include <QTime>
 #include <QUdpSocket>
@@ -288,7 +289,6 @@ void Server::operator= (const Server &other)
 ////////////////////////////////////////////////////////////////////////////////
 
 QThreadPool ServerRefresher::threadPool;
-QThreadPool	ServerRefresher::guardianThreadPool;
 QMutex ServerRefresher::guardianMutex;
 bool ServerRefresher::bGuardianExists = false;
 
@@ -311,7 +311,9 @@ ServerRefresher::ServerRefresher(Server* p) : parent(p)
 {
 	bGuardian = false;
 	if(threadPool.maxThreadCount() != 50)
+	{
 		threadPool.setMaxThreadCount(50);
+	}
 }
 
 void ServerRefresher::startGuardian()
@@ -321,7 +323,7 @@ void ServerRefresher::startGuardian()
 	{
 		bGuardianExists = true;
 		bGuardian = true;
-		guardianThreadPool.start(this);
+		QThreadPool::globalInstance()->start(this);
 	}
 	guardianMutex.unlock();
 }
@@ -330,40 +332,44 @@ void ServerRefresher::run()
 {
 	if (!bGuardian)
 	{
-		// Connect to the server
-		QUdpSocket socket;
-
-		socket.connectToHost(parent->address(), parent->port());
-
-		if(!socket.waitForConnected(1000))
+		// If the program is no longer running then do nothing.
+		if(Main::running)
 		{
-			printf("%s\n", socket.errorString().toAscii().data());
-			parent->emitUpdated(Server::RESPONSE_BAD);
-			return;
+			// Connect to the server
+			QUdpSocket socket;
+	
+			socket.connectToHost(parent->address(), parent->port());
+	
+			if(!socket.waitForConnected(1000))
+			{
+				printf("%s\n", socket.errorString().toAscii().data());
+				parent->emitUpdated(Server::RESPONSE_BAD);
+				return;
+			}
+	
+			QByteArray request;
+			if(!parent->sendRequest(request))
+				return;
+	
+			// start timer and write.
+			QTime time = QTime::currentTime();
+			socket.write(request);
+			time.start();
+			if(!socket.waitForReadyRead(5000))
+			{
+				parent->emitUpdated(Server::RESPONSE_TIMEOUT);
+				return;
+			}
+	
+			// Read
+			QByteArray data = socket.readAll();
+			if(!parent->readRequest(data, time))
+				return;
+	
+			socket.close();
+	
+			parent->emitUpdated(Server::RESPONSE_GOOD);
 		}
-
-		QByteArray request;
-		if(!parent->sendRequest(request))
-			return;
-
-		// start timer and write.
-		QTime time = QTime::currentTime();
-		socket.write(request);
-		time.start();
-		if(!socket.waitForReadyRead(5000))
-		{
-			parent->emitUpdated(Server::RESPONSE_TIMEOUT);
-			return;
-		}
-
-		// Read
-		QByteArray data = socket.readAll();
-		if(!parent->readRequest(data, time))
-			return;
-
-		socket.close();
-
-		parent->emitUpdated(Server::RESPONSE_GOOD);
 
 		parent->finalizeRefreshing();
 		parent->stopRunning();

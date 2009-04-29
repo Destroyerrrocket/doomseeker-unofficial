@@ -131,7 +131,9 @@ void MasterManager::refresh()
 	for(int i = 0;i < masters.size();i++)
 	{
 		masters[i]->refresh();
-		servers.append(masters[i]->serverList());
+		// Qt 4.4 doesn't have list appending.
+		foreach(Server *server, masters[i]->serverList())
+			servers.append(server);
 	}
 
 	emit listUpdated();

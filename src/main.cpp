@@ -27,9 +27,11 @@
 
 #include "gui/mainwindow.h"
 #include "main.h"
+#include "server.h"
 
 PluginLoader Main::enginePlugins(MAKEID('E','N','G','N'), "./engines/");
 Config *Main::config = new Config();
+bool Main::running = true;
 
 int main(int argc, char* argv[])
 {
@@ -40,5 +42,8 @@ int main(int argc, char* argv[])
 	mw->show();
 
 	//delete Main::config;
-	return app.exec();
+	int ret = app.exec();
+	Main::running = false;
+
+	return ret;
 }
