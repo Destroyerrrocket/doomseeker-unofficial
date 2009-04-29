@@ -363,7 +363,8 @@ void ServerRefresher::run()
 	
 			// Read
 			QByteArray data = socket.readAll();
-			if(!parent->readRequest(data, time))
+			parent->currentPing = time.elapsed();
+			if(!parent->readRequest(data))
 				return;
 	
 			socket.close();

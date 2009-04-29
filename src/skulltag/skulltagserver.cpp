@@ -421,7 +421,7 @@ bool SkulltagServer::sendRequest(QByteArray &data)
 	return true;
 }
 
-bool SkulltagServer::readRequest(QByteArray &data, QTime &time)
+bool SkulltagServer::readRequest(QByteArray &data)
 {
 	// Decompress the response.
 	const char* in = data.data();
@@ -431,7 +431,6 @@ bool SkulltagServer::readRequest(QByteArray &data, QTime &time)
 
 	// Check the response code
 	int response = READINT32(&packetOut[0]);
-	currentPing = time.elapsed();
 	if(response == SERVER_BANNED)
 	{
 		emit updated(this, RESPONSE_BANNED);

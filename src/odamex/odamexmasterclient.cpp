@@ -23,23 +23,9 @@
 
 #include "global.h"
 #include "odamex/odamexmasterclient.h"
+#include "odamex/odamexserver.h"
 
 #define MASTER_CHALLENGE	0xA3,0xDB,0x0B,0x00
-
-class OdamexServer : public Server
-{
-	public:
-		OdamexServer(const QHostAddress &address, unsigned short port) : Server(address, port)
-		{
-		}
-
-		void doRefresh() { emit updated(this, RESPONSE_BAD); }
-		QString generalInfoHTML() const { return QString(); }
-
-	protected:
-		bool	readRequest(QByteArray &data, QTime &time) { return true; }
-		bool	sendRequest(QByteArray &data) { return true; }
-};
 
 OdamexMasterClient::OdamexMasterClient(QHostAddress address, unsigned short port) : MasterClient(address, port)
 {

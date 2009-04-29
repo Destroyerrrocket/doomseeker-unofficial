@@ -129,7 +129,6 @@ class SkulltagServer : public Server
 		void			doRefresh();
 
 	protected:
-		QString			email;
 		QString			version;
 
 		bool			buckshot;
@@ -149,7 +148,7 @@ class SkulltagServer : public Server
 		TeamInfo		teamInfo[ST_MAX_TEAMS];
 
 		void 			additionalServerInfo(QList<ServerInfo>* baseList) const;
-		bool			readRequest(QByteArray &data, QTime &time);
+		bool			readRequest(QByteArray &data);
 		bool			sendRequest(QByteArray &data);
 
 		/**

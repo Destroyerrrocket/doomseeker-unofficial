@@ -14,6 +14,7 @@ set(ODAMEX_QT_FILES
 set(ODAMEX_FILES
 	odamexmain.cpp
 	odamexmasterclient.cpp
+	odamexserver.cpp
 )
 include_directories(${QT_INCLUDES})
 qt_wrap_cpp(odamexQt ODAMEX_FILES ${ODAMEX_QT_FILES})

@@ -231,7 +231,7 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		void				emitUpdated(int response) { emit updated(this, response); }
 
-		virtual bool		readRequest(QByteArray &data, QTime &time)=0;
+		virtual bool		readRequest(QByteArray &data)=0;
 		virtual bool		sendRequest(QByteArray &data)=0;
 
 		/**
@@ -245,6 +245,7 @@ class MAIN_EXPORT Server : public QObject
 		GameMode			currentGameMode;
 		unsigned int		currentPing;
 		QStringList			dmFlags;
+		QString				email;
 		QString				iwad;
 		bool				locked;
 		QString				mapName;
