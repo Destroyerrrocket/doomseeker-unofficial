@@ -349,9 +349,9 @@ void Server::finalizeRefreshing()
 ServerRefresher::ServerRefresher(Server* p) : parent(p)
 {
 	bGuardian = false;
-	if(threadPool.maxThreadCount() != 5)
+	if(threadPool.maxThreadCount() != 50)
 	{
-		threadPool.setMaxThreadCount(5);
+		threadPool.setMaxThreadCount(50);
 	}
 }
 

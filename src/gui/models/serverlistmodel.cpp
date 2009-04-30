@@ -21,6 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "gui/models/serverlistmodel.h"
+#include <QTime>
 
 ServerListColumn ServerListModel::columns[] =
 {
@@ -315,7 +316,11 @@ Server* ServerListModel::serverFromList(const QStandardItem* item)
 void ServerListModel::sort(int column, Qt::SortOrder order)
 {
 	QList<int> groupEndList;
-
+#ifdef QT_DEBUG
+	QTime time;
+	time.start();
+	printf("Sorting: ");
+#endif
 	if (rowCount() == 0)
 		return;
 
@@ -376,6 +381,9 @@ void ServerListModel::sort(int column, Qt::SortOrder order)
 		}
 		index = *it;
 	}
+#ifdef QT_DEBUG
+	printf("DONE! time: %d\n", time.elapsed());
+#endif
 
 	emit allRowsContentChanged();
 }

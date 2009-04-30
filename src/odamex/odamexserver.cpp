@@ -63,7 +63,8 @@ OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port) : S
 bool OdamexServer::sendRequest(QByteArray &data)
 {
 	const char challenge[4] = {SERVER_CHALLENGE};
-	data.append(challenge, 4);
+	const QByteArray chall(challenge, 4);
+	data.append(chall);
 	return true;
 }
 

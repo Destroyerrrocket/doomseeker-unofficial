@@ -177,6 +177,7 @@ class MAIN_EXPORT Server : public QObject
 		const GameMode		&gameMode() const { return currentGameMode; }
 		bool				isKnown() const { return bKnown; }
 		bool				isLocked() const { return locked; }
+		bool				isRunning() const { return bRunning; }
 		const QString		&iwadName() const { return iwad; }
 		unsigned int		longestPlayerName() const;
 		const QString		&map() const { return mapName; }

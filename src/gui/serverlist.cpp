@@ -31,6 +31,10 @@ SLHandler::SLHandler(ServerListView* tab)
 {
 	table = tab;
 	prepareServerTable();
+	needsCleaning = false;
+	cleaner.setInterval(200);
+	cleaner.start();
+	connect(&cleaner, SIGNAL( timeout() ), this, SLOT ( cleanUp() ) );
 }
 
 SLHandler::~SLHandler()
@@ -43,138 +47,18 @@ void SLHandler::clearTable()
 	model->destroyRows();
 }
 
-void SLHandler::prepareServerTable()
+void SLHandler::cleanUp()
 {
-	sortOrder = Qt::AscendingOrder;
-	sortIndex = -1;
-
-	ServerListModel* model = new ServerListModel(this);
-	model->prepareHeaders();
-	table->setModel(model);
-
-	// Now set column widths and other properties
-	for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
+	if (needsCleaning)
 	{
-		ServerListColumn* columns = ServerListModel::columns;
-		table->setColumnWidth(i, columns[i].width);
-		table->setColumnHidden(i, columns[i].bHidden);
-	}
+		ServerListModel* model = static_cast<ServerListModel*>(table->model());
+		if (sortIndex >= 0)
+		{
+			model->sort(sortIndex, sortOrder);
+		}
 
-	// We don't really need a vertical header so lets remove it
-	table->verticalHeader()->hide();
-	// Also some other flags that can't be set from the Designer
-	table->horizontalHeader()->setSortIndicatorShown(true);
-	table->horizontalHeader()->setHighlightSections(false);
-
-	table->setMouseTracking(true);
-
-	QHeaderView* header = table->horizontalHeader();
-	connect(header, SIGNAL( sectionClicked(int) ), this, SLOT ( columnHeaderClicked(int) ) );
-	connect(model, SIGNAL( allRowsContentChanged() ), table, SLOT( updateAllRows() ) );
-	connect(model, SIGNAL( modelCleared() ), this, SLOT( modelCleared() ) );
-	connect(table, SIGNAL( clicked(const QModelIndex&) ), this, SLOT( itemSelected(const QModelIndex&) ));
-	connect(table, SIGNAL( rightMouseClick(const QModelIndex&) ), this, SLOT ( itemSelected(const QModelIndex&)) );
-	connect(table, SIGNAL( rightMouseClick(const QModelIndex&) ), this, SLOT ( tableRightClicked(const QModelIndex&)) );
-	connect(table, SIGNAL( entered(const QModelIndex&) ), this, SLOT ( mouseEntered(const QModelIndex&)) );
-	connect(table, SIGNAL( leftMouseDoubleClicked(const QModelIndex&)), this, SLOT( doubleClicked(const QModelIndex&)) );
-
-	columnHeaderClicked(0);
-}
-
-QString SLHandler::createPlayersToolTip(const Server* server)
-{
-	if (server == NULL)
-		return QString();
-
-    QString ret;
-	ret = "<div style='white-space: pre'>";
-	ret += server->gameInfoTableHTML();
-	ret += server->playerTableHTML();
-	ret += "</div>";
-	return ret;
-}
-
-QString SLHandler::createServerNameToolTip(const Server* server)
-{
-	if (server == NULL)
-		return QString();
-
-	QString ret;
-	ret = "<div style='white-space: pre'>";
-	ret += server->generalInfoHTML();
-	ret += "</div>";
-	return ret;
-}
-
-QString SLHandler::createPwadsToolTip(const Server* server)
-{
-	if (server == NULL)
-		return QString();
-
-	QString ret;
-	ret = "<div style='white-space: pre'>";
-	ret += server->pwads().join("\n");
-	ret += "</div>";
-	return ret;
-}
-
-QList<Server*> SLHandler::selectedServers()
-{
-	ServerListModel* model = static_cast<ServerListModel*>(table->model());
-	QItemSelectionModel* selModel = table->selectionModel();
-	QModelIndexList indexList = selModel->selectedRows();
-
-	QList<Server*> servers;
-	for(int i = 0; i < indexList.count(); ++i)
-	{
-		Server* server = model->serverFromList(indexList[i]);
-		servers.append(server);
-	}
-	return servers;
-}
-
-//////////////////////////////////////////////////////////////
-// Slots
-void SLHandler::serverUpdated(Server *server, int response)
-{
-	ServerListModel* model = static_cast<ServerListModel*>(table->model());
-	QModelIndex index = model->findServerOnTheList(server);
-	int row = 0;
-	if (index.isValid())
-	{
-		row = model->updateServer(index.row(), server, response);
-	}
-	else
-	{
-		row = model->addServer(server, response);
-	}
-
-	if (sortIndex >= 0)
-	{
-		model->sort(sortIndex, sortOrder);
-	}
-
-	table->resizeRowToContents(row);
-}
-
-void SLHandler::refreshAll()
-{
-	ServerListModel* model = static_cast<ServerListModel*>(table->model());
-	for (int i = 0; i < table->model()->rowCount(); ++i)
-	{
-		model->setRefreshing(i);
-	}
-}
-
-void SLHandler::tableRightClicked(const QModelIndex& index)
-{
-	ServerListModel* model = static_cast<ServerListModel*>(table->model());
-	QItemSelectionModel* selModel = table->selectionModel();
-	QModelIndexList indexList = selModel->selectedRows();
-
-	for(int i = 0; i < indexList.count(); ++i)
-	{
-		model->setRefreshing(indexList[i].row());
+		table->updateAllRows();
+		needsCleaning = false;
 	}
 }
 
@@ -217,6 +101,56 @@ void SLHandler::columnHeaderClicked(int index)
 	header->setSortIndicator(sortIndex, sortOrder);
 
 	//table->fixRowSize();
+}
+
+QString SLHandler::createPlayersToolTip(const Server* server)
+{
+	if (server == NULL)
+		return QString();
+
+    QString ret;
+	ret = "<div style='white-space: pre'>";
+	ret += server->gameInfoTableHTML();
+	ret += server->playerTableHTML();
+	ret += "</div>";
+	return ret;
+}
+
+QString SLHandler::createServerNameToolTip(const Server* server)
+{
+	if (server == NULL)
+		return QString();
+
+	QString ret;
+	ret = "<div style='white-space: pre'>";
+	ret += server->generalInfoHTML();
+	ret += "</div>";
+	return ret;
+}
+
+QString SLHandler::createPwadsToolTip(const Server* server)
+{
+	if (server == NULL)
+		return QString();
+
+	QString ret;
+	ret = "<div style='white-space: pre'>";
+	ret += server->pwads().join("\n");
+	ret += "</div>";
+	return ret;
+}
+
+void SLHandler::doubleClicked(const QModelIndex& index)
+{
+	ServerListModel* model = static_cast<ServerListModel*>(table->model());
+	Server* server = model->serverFromList(index);
+	emit serverDoubleClicked(server);
+}
+
+void SLHandler::itemSelected(const QModelIndex& index)
+{
+	QList<Server*> servers = selectedServers();
+	emit serversSelected(servers);
 }
 
 void SLHandler::modelCleared()
@@ -267,15 +201,93 @@ void SLHandler::mouseEntered(const QModelIndex& index)
 	QToolTip::showText(QCursor::pos(), tooltip, table);
 }
 
-void SLHandler::doubleClicked(const QModelIndex& index)
+QList<Server*> SLHandler::selectedServers()
 {
 	ServerListModel* model = static_cast<ServerListModel*>(table->model());
-	Server* server = model->serverFromList(index);
-	emit serverDoubleClicked(server);
+	QItemSelectionModel* selModel = table->selectionModel();
+	QModelIndexList indexList = selModel->selectedRows();
+
+	QList<Server*> servers;
+	for(int i = 0; i < indexList.count(); ++i)
+	{
+		Server* server = model->serverFromList(indexList[i]);
+		servers.append(server);
+	}
+	return servers;
 }
 
-void SLHandler::itemSelected(const QModelIndex& index)
+void SLHandler::prepareServerTable()
 {
-	QList<Server*> servers = selectedServers();
-	emit serversSelected(servers);
+	sortOrder = Qt::AscendingOrder;
+	sortIndex = -1;
+
+	ServerListModel* model = new ServerListModel(this);
+	model->prepareHeaders();
+	table->setModel(model);
+
+	// Now set column widths and other properties
+	for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
+	{
+		ServerListColumn* columns = ServerListModel::columns;
+		table->setColumnWidth(i, columns[i].width);
+		table->setColumnHidden(i, columns[i].bHidden);
+	}
+
+	// We don't really need a vertical header so lets remove it
+	table->verticalHeader()->hide();
+	// Also some other flags that can't be set from the Designer
+	table->horizontalHeader()->setSortIndicatorShown(true);
+	table->horizontalHeader()->setHighlightSections(false);
+
+	table->setMouseTracking(true);
+
+	QHeaderView* header = table->horizontalHeader();
+	connect(header, SIGNAL( sectionClicked(int) ), this, SLOT ( columnHeaderClicked(int) ) );
+	connect(model, SIGNAL( modelCleared() ), this, SLOT( modelCleared() ) );
+	connect(table, SIGNAL( clicked(const QModelIndex&) ), this, SLOT( itemSelected(const QModelIndex&) ));
+	connect(table, SIGNAL( rightMouseClick(const QModelIndex&) ), this, SLOT ( itemSelected(const QModelIndex&)) );
+	connect(table, SIGNAL( rightMouseClick(const QModelIndex&) ), this, SLOT ( tableRightClicked(const QModelIndex&)) );
+	connect(table, SIGNAL( entered(const QModelIndex&) ), this, SLOT ( mouseEntered(const QModelIndex&)) );
+	connect(table, SIGNAL( leftMouseDoubleClicked(const QModelIndex&)), this, SLOT( doubleClicked(const QModelIndex&)) );
+
+	columnHeaderClicked(0);
+}
+
+void SLHandler::refreshAll()
+{
+	ServerListModel* model = static_cast<ServerListModel*>(table->model());
+	for (int i = 0; i < table->model()->rowCount(); ++i)
+	{
+		model->setRefreshing(i);
+	}
+}
+
+void SLHandler::serverUpdated(Server *server, int response)
+{
+	ServerListModel* model = static_cast<ServerListModel*>(table->model());
+	QModelIndex index = model->findServerOnTheList(server);
+	int row = 0;
+	if (index.isValid())
+	{
+		row = model->updateServer(index.row(), server, response);
+	}
+	else
+	{
+		row = model->addServer(server, response);
+	}
+
+	needsCleaning = true;
+}
+
+
+void SLHandler::tableRightClicked(const QModelIndex& index)
+{
+	ServerListModel* model = static_cast<ServerListModel*>(table->model());
+	QItemSelectionModel* selModel = table->selectionModel();
+	QModelIndexList indexList = selModel->selectedRows();
+
+	for(int i = 0; i < indexList.count(); ++i)
+	{
+		model->setRefreshing(indexList[i].row());
+	}
 }

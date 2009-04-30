@@ -46,7 +46,8 @@ bool SkulltagMasterClient::sendRequest(QByteArray &data)
 	char challengeOut[12];
 	int out = 12;
 	g_Huffman.encode(challenge, challengeOut, 4, &out);
-	data.append(challengeOut, out);
+	const QByteArray chall(challengeOut, out);
+	data.append(chall);
 	return true;
 }
 

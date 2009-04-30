@@ -27,9 +27,11 @@
 #include "server.h"
 
 #include <QObject>
+#include <QStandardItem>
 #include <QString>
 #include <QTableView>
-#include <QStandardItem>
+#include <QTimer>
+
 #include "gui/widgets/serverlistview.h"
 #include "gui/models/serverlistmodel.h"
 
@@ -54,6 +56,7 @@ class SLHandler : public QObject
 		void tableRightClicked(const QModelIndex&);
 
 	protected slots:
+		void cleanUp();
 		// Handles column sorting.
 		void columnHeaderClicked(int);
 		void doubleClicked(const QModelIndex&);
@@ -66,10 +69,14 @@ class SLHandler : public QObject
 		void serversSelected(QList<Server*>&);
 
 	protected:
+		QTimer			cleaner;
+		bool 			needsCleaning;
+
 		ServerListView*	table;
 
 		Qt::SortOrder 	sortOrder;
 		int				sortIndex;
+
 
 		void prepareServerTable();
 

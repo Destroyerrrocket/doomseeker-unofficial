@@ -34,7 +34,8 @@ OdamexMasterClient::OdamexMasterClient(QHostAddress address, unsigned short port
 bool OdamexMasterClient::sendRequest(QByteArray &data)
 {
 	const char challenge[4] = {MASTER_CHALLENGE};
-	data.append(challenge, 4);
+	const QByteArray chall(challenge, 4);
+	data.append(chall);
 	return true;
 }
 
