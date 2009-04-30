@@ -25,6 +25,9 @@
 #include "skulltag/skulltagserver.h"
 #include "global.h"
 
+const // clear warnings
+#include "skulltag/skulltag.xpm"
+
 #define SERVER_CHALLENGE	0xC7,0x00,0x00,0x00
 #define SERVER_GOOD			5660023
 #define SERVER_BANNED		5660025
@@ -165,6 +168,11 @@ SkulltagServer::SkulltagServer(const QHostAddress &address, unsigned short port)
 	teamInfo[1] = TeamInfo(tr("Red"), QColor(255, 0, 0), 0);
 	teamInfo[2] = TeamInfo(tr("Green"), QColor(0, 255, 0), 0);
 	teamInfo[3] = TeamInfo(tr("Gold"), QColor(255, 255, 0), 0);
+}
+
+QPixmap SkulltagServer::icon() const
+{
+	return QPixmap(skulltag_xpm);
 }
 
 void SkulltagServer::additionalServerInfo(QList<ServerInfo>* baseList) const

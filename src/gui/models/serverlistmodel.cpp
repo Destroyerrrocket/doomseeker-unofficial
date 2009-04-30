@@ -25,16 +25,17 @@
 
 ServerListColumn ServerListModel::columns[] =
 {
-	{ tr("Players"), 60, false },
-	{ tr("Ping"), 50, false },
-	{ tr("Servername"), 200, false },
-	{ tr("Address"), 120, false },
-	{ tr("IWAD"), 90, false },
-	{ tr("MAP"), 70, false },
-	{ tr("Wads"), 120, false },
-	{ tr("Gametype"), 150, false },
-	{ "SORT_GROUP", 0, true },
-	{ "SERVER_POINTER", 0, true }
+	{ tr("Port"), 24, false, false },
+	{ tr("Players"), 60, false, true },
+	{ tr("Ping"), 50, false, true },
+	{ tr("Servername"), 200, false, true },
+	{ tr("Address"), 120, false, true },
+	{ tr("IWAD"), 90, false, true },
+	{ tr("MAP"), 70, false, true },
+	{ tr("Wads"), 120, false, true },
+	{ tr("Gametype"), 150, false, true },
+	{ "SORT_GROUP", 0, true, false },
+	{ "SERVER_POINTER", 0, true, false }
 };
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
@@ -116,6 +117,12 @@ void ServerListModel::fillItem(QStandardItem* item, const QHostAddress& addr, co
 		item->setData(actualDisplay, Qt::DisplayRole);
 	}
 	item->setData(var, SLDT_SORT);
+}
+
+void ServerListModel::fillItem(QStandardItem* item, const QString& sort, const QPixmap& icon)
+{
+	item->setIcon(QIcon(icon));
+	item->setData(sort, SLDT_SORT);
 }
 
 int ServerListModel::addServer(Server* server, int response)
@@ -210,6 +217,9 @@ void ServerListModel::setGood(int row, Server* server)
 {
 	QStandardItem* qstdItem;
 	QString strTmp;
+
+	qstdItem = item(row, SLCID_PORT);
+	fillItem(qstdItem, server->metaObject()->className(), server->icon());
 
 	qstdItem = item(row, SLCID_PLAYERS);
 	fillItem(qstdItem, server->numPlayers());
@@ -420,6 +430,7 @@ int	ServerListModel::compareColumnSortData(QVariant& var1, QVariant& var2, int c
 				return 1;
 			break;
 
+		case SLCID_PORT:
 		case SLCID_GAMETYPE:
 		case SLCID_IWAD:
 		case SLCID_MAP:

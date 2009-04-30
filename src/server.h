@@ -33,6 +33,7 @@
 #include <QRunnable>
 #include <QMetaType>
 #include <QMutex>
+#include <QPixmap>
 
 #include "global.h"
 
@@ -175,6 +176,7 @@ class MAIN_EXPORT Server : public QObject
 		const QHostAddress	&address() const { return serverAddress; }
 		const QStringList	&gameFlags() const { return dmFlags; }
 		const GameMode		&gameMode() const { return currentGameMode; }
+		virtual QPixmap		icon() const=0;
 		bool				isKnown() const { return bKnown; }
 		bool				isLocked() const { return locked; }
 		bool				isRunning() const { return bRunning; }

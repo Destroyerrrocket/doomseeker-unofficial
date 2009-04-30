@@ -23,12 +23,13 @@
 #ifndef __SERVER_LIST_MODEL_H_
 #define __SERVER_LIST_MODEL_H_
 
-#define HOW_MANY_SERVERLIST_COLUMNS 10
+#define HOW_MANY_SERVERLIST_COLUMNS 11
 
 #include <QHostAddress>
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QString>
+#include <QPixmap>
 #include "server.h"
 
 struct ServerListColumn
@@ -36,6 +37,7 @@ struct ServerListColumn
 	QString		name;
 	int			width;
 	bool		bHidden;
+	bool		bResizable;
 };
 
 class ServerListModel : public QStandardItemModel
@@ -47,16 +49,17 @@ class ServerListModel : public QStandardItemModel
 	public:
 		enum ColumnId
 		{
-			SLCID_PLAYERS = 0,
-			SLCID_PING = 1,
-			SLCID_SERVERNAME = 2,
-			SLCID_ADDRESS = 3,
-			SLCID_IWAD = 4,
-			SLCID_MAP = 5,
-			SLCID_WADS = 6,
-			SLCID_GAMETYPE = 7,
-			SLCID_HIDDEN_GROUP = 8,
-			SLCID_HIDDEN_SERVER_POINTER = 9
+			SLCID_PORT = 0,
+			SLCID_PLAYERS = 1,
+			SLCID_PING = 2,
+			SLCID_SERVERNAME = 3,
+			SLCID_ADDRESS = 4,
+			SLCID_IWAD = 5,
+			SLCID_MAP = 6,
+			SLCID_WADS = 7,
+			SLCID_GAMETYPE = 8,
+			SLCID_HIDDEN_GROUP = 9,
+			SLCID_HIDDEN_SERVER_POINTER = 10
 		};
 
 		/**
@@ -97,6 +100,7 @@ class ServerListModel : public QStandardItemModel
 		void fillItem(QStandardItem*, const QString&);
 		void fillItem(QStandardItem*, int);
 		void fillItem(QStandardItem*, const QHostAddress&, const QString& actualDisplay = QString());
+		void fillItem(QStandardItem*, const QString&, const QPixmap&);
 
 		/**
 		 *	Returns row number

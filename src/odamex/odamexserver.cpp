@@ -23,6 +23,9 @@
 
 #include "odamex/odamexserver.h"
 
+const // clear warnings
+#include "odamex/odamex.xpm"
+
 #define SERVER_CHALLENGE	0xA3,0xDB,0x0B,0x00
 #define SERVER_GOOD			5560020
 
@@ -58,6 +61,11 @@ const QString OdamexServer::DMFLAGS[13] =
 OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port) : Server(address, port),
 	protocol(0), skill(0), version(0)
 {
+}
+
+QPixmap OdamexServer::icon() const
+{
+	return QPixmap(odamex_xpm);
 }
 
 bool OdamexServer::sendRequest(QByteArray &data)

@@ -119,9 +119,11 @@ class SkulltagServer : public Server
 		 */
 		static const QString	DMFLAGS[96];
 		static const GameMode	GAME_MODES[NUM_SKULLTAG_GAME_MODES];
+		static const QPixmap	ICON;
 
 		SkulltagServer(const QHostAddress &address, unsigned short port);
 
+		QPixmap			icon() const;
 		QString			gameInfoTableHTML() const;
 		QString			generalInfoHTML() const;
 		QString			playerTableHTML() const;

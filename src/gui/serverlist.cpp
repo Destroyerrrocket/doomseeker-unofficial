@@ -231,6 +231,8 @@ void SLHandler::prepareServerTable()
 		ServerListColumn* columns = ServerListModel::columns;
 		table->setColumnWidth(i, columns[i].width);
 		table->setColumnHidden(i, columns[i].bHidden);
+		if(!columns[i].bResizable)
+			table->horizontalHeader()->setResizeMode(i, QHeaderView::Fixed);
 	}
 
 	// We don't really need a vertical header so lets remove it

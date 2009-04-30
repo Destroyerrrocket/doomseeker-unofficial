@@ -30,6 +30,8 @@
 
 class OdamexServer : public Server
 {
+	Q_OBJECT
+
 	public:
 		enum OdamexGameModes
 		{
@@ -41,10 +43,12 @@ class OdamexServer : public Server
 		};
 		static const GameMode	GAME_MODES[NUM_ODAMEX_GAME_MODES];
 		static const QString	DMFLAGS[13];
+		static const QPixmap	ICON;
 
 		OdamexServer(const QHostAddress &address, unsigned short port);
 
-		QString generalInfoHTML() const { return QString(); }
+		QPixmap	icon() const;
+		QString	generalInfoHTML() const { return QString(); }
 
 	protected:
 		bool	readRequest(QByteArray &data);

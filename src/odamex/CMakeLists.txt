@@ -10,6 +10,7 @@ find_package(Qt4 REQUIRED)
 include(${QT_USE_FILE})
 set(ODAMEX_QT_FILES
 	odamexmasterclient.h
+	odamexserver.h
 )
 set(ODAMEX_FILES
 	odamexmain.cpp
