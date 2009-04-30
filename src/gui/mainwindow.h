@@ -48,9 +48,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void menuHelpAbout();
 		void menuOptionsConfigure();
 		void menuServerInfo();
+		void menuWadSeeker();
 		void runGame(const Server*);
 		void updateServerInfo(QList<Server*>&);
-
 
 	private:
 		DockServerInfo*		serverInfo;

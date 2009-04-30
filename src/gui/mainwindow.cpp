@@ -26,6 +26,7 @@
 #include "gui/configureDlg.h"
 #include "gui/dockserverinfo.h"
 #include "gui/engineSkulltagConfig.h"
+#include "gui/wadseekerinterface.h"
 #include "pathfinder.h"
 #include "main.h"
 #include <QDockWidget>
@@ -48,6 +49,7 @@ MainWindow::MainWindow(int argc, char** argv)
 	connect(menuActionConfigure, SIGNAL( triggered() ), this, SLOT( menuOptionsConfigure() ));
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( close() ));
 	connect(menuActionServerInfo, SIGNAL( triggered() ), this, SLOT( menuServerInfo() ));
+	connect(menuActionWadseeker, SIGNAL( triggered() ), this, SLOT( menuWadSeeker() ));
 	connect(serverTableHandler, SIGNAL( serverDoubleClicked(const Server*) ), this, SLOT( runGame(const Server*) ) );
 	connect(serverTableHandler, SIGNAL( serversSelected(QList<Server*>&) ), this, SLOT( updateServerInfo(QList<Server*>&) ) );
 }
@@ -135,6 +137,12 @@ void MainWindow::menuServerInfo()
 	        menuActionServerInfo->setChecked(true);
 	    }
 	}
+}
+
+void MainWindow::menuWadSeeker()
+{
+	WadSeekerInterface wsi(this);
+	wsi.exec();
 }
 
 void MainWindow::runGame(const Server* server)

@@ -18,6 +18,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/mainwindow.ui
 	gui/dockserverinfo.ui
 	gui/engineSkulltagConfig.ui
+	gui/wadseekerinterface.ui
 )
 
 qt_wrap_cpp(doomseekerWraps QT_FILES
@@ -29,6 +30,7 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/dockserverinfo.h	
 	gui/engineSkulltagConfig.h
 	gui/serverlist.h
+	gui/wadseekerinterface.h
 	gui/models/serverlistmodel.h
 	gui/widgets/dockedwidgets.h
 	gui/widgets/serverlistview.h
@@ -47,6 +49,7 @@ add_executable(doomseeker
 	gui/engineSkulltagConfig.cpp
 	gui/mainwindow.cpp
 	gui/serverlist.cpp
+	gui/wadseekerinterface.cpp
 	gui/models/serverlistmodel.cpp
 	gui/widgets/serverlistview.cpp
 	huffman/huffman.cpp
@@ -59,7 +62,7 @@ add_executable(doomseeker
 	server.cpp
 )
 
-target_link_libraries(doomseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES})
+target_link_libraries(doomseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} wadseeker)
 
 # Allow plugins to link with doomseeker
 set_target_properties(doomseeker PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR} ENABLE_EXPORTS 1)

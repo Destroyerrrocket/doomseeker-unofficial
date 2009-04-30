@@ -5,4 +5,5 @@ set(OUTPUT_DIR ${CMAKE_BINARY_DIR} CACHE PATH "Directory in which to build the b
 
 add_subdirectory(src/odamex)
 add_subdirectory(src/skulltag)
+add_subdirectory(src/wadseeker)
 add_subdirectory(src)
