@@ -30,7 +30,6 @@
 #include <QString>
 #include <QTableView>
 #include <QStandardItem>
-#include "masterclient.h"
 #include "gui/widgets/serverlistview.h"
 #include "gui/models/serverlistmodel.h"
 
@@ -46,16 +45,6 @@ class SLHandler : public QObject
 
 		QList<Server*>		selectedServers();
 
-		void 				setMaster(MasterClient*);
-		QList<Server*>*		serverList()
-		{
-			if (master == NULL)
-			{
-				return NULL;
-			}
-
-			return &master->serverList();
-		}
 		ServerListView*		serverTable() { return table; }
 
 
@@ -78,7 +67,6 @@ class SLHandler : public QObject
 
 	protected:
 		ServerListView*	table;
-		MasterClient*	master;
 
 		Qt::SortOrder 	sortOrder;
 		int				sortIndex;

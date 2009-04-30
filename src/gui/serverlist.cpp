@@ -30,16 +30,11 @@
 SLHandler::SLHandler(ServerListView* tab)
 {
 	table = tab;
-	master = NULL;
 	prepareServerTable();
 }
 
 SLHandler::~SLHandler()
 {
-	if (master != NULL)
-	{
-		delete master;
-	}
 }
 
 void SLHandler::clearTable()
@@ -138,16 +133,6 @@ QList<Server*> SLHandler::selectedServers()
 	return servers;
 }
 
-void SLHandler::setMaster(MasterClient* mc)
-{
-	if (master != NULL)
-	{
-		delete master;
-	}
-
-	clearTable();
-	master = mc;
-}
 //////////////////////////////////////////////////////////////
 // Slots
 void SLHandler::serverUpdated(Server *server, int response)

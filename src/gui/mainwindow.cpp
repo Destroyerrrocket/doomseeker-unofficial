@@ -74,7 +74,7 @@ void MainWindow::btnGetServers_Click()
 		return;
 	}
 
-	serverTableHandler->setMaster(mc);
+	serverTableHandler->clearTable();
 
 	for(int i = 0;i < mc->numServers();i++)
 	{
