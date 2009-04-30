@@ -278,6 +278,8 @@ class MAIN_EXPORT Server : public QObject
 		QHostAddress		serverAddress;
 		unsigned short		serverPort;
 
+		void 				doRefresh();
+
 
 };
 

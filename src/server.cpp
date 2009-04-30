@@ -292,6 +292,45 @@ QThreadPool ServerRefresher::threadPool;
 QMutex ServerRefresher::guardianMutex;
 bool ServerRefresher::bGuardianExists = false;
 
+void Server::doRefresh()
+{
+	// Connect to the server
+	QUdpSocket socket;
+
+	socket.connectToHost(address(), port());
+
+	if(!socket.waitForConnected(1000))
+	{
+		printf("%s\n", socket.errorString().toAscii().data());
+		emitUpdated(Server::RESPONSE_BAD);
+		return;
+	}
+
+	QByteArray request;
+	if(!sendRequest(request))
+		return;
+
+	// start timer and write.
+	QTime time = QTime::currentTime();
+	socket.write(request);
+	time.start();
+	if(!socket.waitForReadyRead(5000))
+	{
+		emitUpdated(Server::RESPONSE_TIMEOUT);
+		return;
+	}
+
+	// Read
+	QByteArray data = socket.readAll();
+	currentPing = time.elapsed();
+	if(!readRequest(data))
+		return;
+
+	socket.close();
+
+	emitUpdated(Server::RESPONSE_GOOD);
+}
+
 void Server::refresh()
 {
 	if (bRunning)
@@ -310,9 +349,9 @@ void Server::finalizeRefreshing()
 ServerRefresher::ServerRefresher(Server* p) : parent(p)
 {
 	bGuardian = false;
-	if(threadPool.maxThreadCount() != 50)
+	if(threadPool.maxThreadCount() != 5)
 	{
-		threadPool.setMaxThreadCount(50);
+		threadPool.setMaxThreadCount(5);
 	}
 }
 
@@ -335,45 +374,10 @@ void ServerRefresher::run()
 		// If the program is no longer running then do nothing.
 		if(Main::running)
 		{
-			// Connect to the server
-			QUdpSocket socket;
-	
-			socket.connectToHost(parent->address(), parent->port());
-	
-			if(!socket.waitForConnected(1000))
-			{
-				printf("%s\n", socket.errorString().toAscii().data());
-				parent->emitUpdated(Server::RESPONSE_BAD);
-				return;
-			}
-	
-			QByteArray request;
-			if(!parent->sendRequest(request))
-				return;
-	
-			// start timer and write.
-			QTime time = QTime::currentTime();
-			socket.write(request);
-			time.start();
-			if(!socket.waitForReadyRead(5000))
-			{
-				parent->emitUpdated(Server::RESPONSE_TIMEOUT);
-				return;
-			}
-	
-			// Read
-			QByteArray data = socket.readAll();
-			parent->currentPing = time.elapsed();
-			if(!parent->readRequest(data))
-				return;
-	
-			socket.close();
-	
-			parent->emitUpdated(Server::RESPONSE_GOOD);
+			parent->doRefresh();
+			parent->finalizeRefreshing();
+			parent->stopRunning();
 		}
-
-		parent->finalizeRefreshing();
-		parent->stopRunning();
 	}
 	else
 	{
