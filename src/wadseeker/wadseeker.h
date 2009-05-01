@@ -26,7 +26,22 @@
 #include "global.h"
 #include "http.h"
 #include <QObject>
+#include <QUrl>
 
+/**
+ * How does this work:
+ * 	1.	Entry point is seekWads() method, it copies the list and initializes the iterator
+ *		then it launched seekNextWad() method.
+ *	2.	seekNextWad() checks if iterator is at the end of the list, if it is it emits allDone()
+ *		signal and exits, if not it launched the seekWad(wadname) method.
+ *	3.	seekWad() resets state of current Wadseeker class object and launches nextSite() method
+ *	4.	nextSite() picks site in order: directLinks, siteLinks, globalSiteLinks.
+ *	5.	Http::finishedReceiving() signal is received. If this is a file it is downloaded
+ *		and unpacked if necessary. If this is a site it is parsed
+ *		to find any links. Links leading to file with the name of seeked file
+ *		are added to directLinks list. Links leading to other sites are
+ *		added to siteLinks list. Checked links are added to checkedLinks set.
+ */
 class PLUGIN_EXPORT Wadseeker : public QObject
 {
 	Q_OBJECT
@@ -35,21 +50,34 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 		Wadseeker();
 		~Wadseeker();
 
-		bool seekWads(QStringList& wads);
+		void seekWads(const QStringList& wads);
 
 	signals:
-		void done(bool bFound);
-		void gotPage();
+		void allDone();
+		void wadDone(bool bFound, const QString& wadname);
 
 	protected slots:
-		void dataReceived(int statusCode);
 		void finishedReceiving(QString);
+		void seekWad(const QString& wad);
 
 	protected:
-		QSet<QString> 	checkedLinks;
-		QList<Link> 	directLinks;
-		Http 			http;
-		QList<Link> 	siteLinks;
+		static QUrl						globalSiteLinks[];
+
+		QSet<QString>					checkedLinks;
+		int								currentGlobalSite;
+		QStringList::const_iterator 	currentWad;
+		QList<Link>	 					directLinks;
+		Http 							http;
+		QString							seekedWad;
+		QList<Link> 					siteLinks;
+		QUrl							url;
+		QStringList						wadnames;
+
+		bool							isDirectLinkToFile(const QStringList& wantedFileNames, const QUrl& link);
+		void							nextSite();
+		QString							nextWad();
+		void 							seekNextWad();
+
 };
 
 #endif

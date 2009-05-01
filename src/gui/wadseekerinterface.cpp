@@ -25,18 +25,28 @@
 WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 {
 	setupUi(this);
-	connect(&wadseeker, SIGNAL( done(bool) ), this, SLOT( done(bool) ) );
+	connect(&wadseeker, SIGNAL( allDone() ), this, SLOT( allDone() ) );
+	connect(&wadseeker, SIGNAL( wadDone(bool, const QString&) ), this, SLOT( wadDone(bool, const QString&) ) );
 }
 
 void WadSeekerInterface::accept()
 {
-	QStringList list;
-	list << "a";
-	wadseeker.seekWads(list);
 	buttonBox->setEnabled(false);
+
+	QStringList list;
+	//list << leWadName->text();
+	list << "dtinv3-a.pk3" << "kurwa.wad";
+	wadseeker.seekWads(list);
+
 }
 
-void WadSeekerInterface::done(bool bFound)
+void WadSeekerInterface::allDone()
 {
+	qDebug() << "All done!";
 	buttonBox->setEnabled(true);
+}
+
+void WadSeekerInterface::wadDone(bool bFound, const QString& wadname)
+{
+	qDebug() << "Wad" << wadname << "done! Found:" << bFound;
 }

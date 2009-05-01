@@ -35,7 +35,8 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 
 	public slots:
 		virtual void 	accept();
-		void			done(bool bFound);
+		void			allDone();
+		void			wadDone(bool bFound, const QString& wadname);
 
 	protected:
 		Wadseeker 		wadseeker;

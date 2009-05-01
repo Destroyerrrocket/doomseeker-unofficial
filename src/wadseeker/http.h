@@ -28,13 +28,94 @@
 #include <QHttpRequestHeader>
 #include <QHttpResponseHeader>
 #include <QList>
+#include <QStringList>
 #include <Qt>
+#include <QUrl>
 #include <QWaitCondition>
 
 struct Link
 {
-	QString url;
-	QString text;
+	QUrl 		url;
+	QString 	text;
+
+	bool 		pathEndsWith(const QStringList& ends)
+	{
+		QString str = url.encodedPath();
+		QStringList::const_iterator it;
+		for (it = ends.begin(); it != ends.end(); ++it)
+		{
+			if (str.endsWith(*it, Qt::CaseInsensitive))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 *	@param comparePage		- if not empty checks if URL refers to the same host as this param
+	 *	@return true if URL points to another server
+	 */
+	bool		isRemote(const QUrl& comparePage)
+	{
+		QString str1 = url.encodedHost();
+		QString str2 = comparePage.encodedHost();
+
+		if (str1.isEmpty())
+		{
+			return false;
+		}
+
+		if (!comparePage.isEmpty())
+		{
+			if (str1.compare(str2, Qt::CaseInsensitive) != 0)
+			{
+				return true;
+			}
+		}
+		else
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 *	@return true if the URL refers to the same page (for example URLs with '#')
+	 */
+	bool		isTheSamePage(const QUrl& comparePage)
+	{
+		QString str1 = url.encodedHost();
+		QString str2 = comparePage.encodedHost();
+
+		if (!str1.isEmpty() && str1.compare(str2, Qt::CaseInsensitive) != 0)
+		{
+			return false;
+		}
+
+		str1 = url.encodedQuery();
+		str2 = comparePage.encodedQuery();
+		QString str3 = url.encodedPath();
+		QString str4 = comparePage.encodedPath();
+
+		if (str1.compare(str2, Qt::CaseInsensitive) == 0
+			&& str3.compare(str4, Qt::CaseInsensitive) == 0)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * @return true if URL begins from javascript: phrase
+	 */
+	bool		isJavascriptURL()
+	{
+		return url.toString().startsWith("javascript:", Qt::CaseInsensitive);
+	}
 };
 
 class Http : public QObject
