@@ -121,8 +121,8 @@ class ServerListModel : public QStandardItemModel
 
 		QModelIndex findServerOnTheList(const Server* server);
 		Server* serverFromList(int rowNum);
-        Server* serverFromList(const QModelIndex&);
-        Server* serverFromList(const QStandardItem*);
+		Server* serverFromList(const QModelIndex&);
+		Server* serverFromList(const QStandardItem*);
 
 		void sort( int column, Qt::SortOrder order = Qt::AscendingOrder);
 

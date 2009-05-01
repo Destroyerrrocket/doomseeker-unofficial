@@ -92,6 +92,7 @@ class MasterManager : public MasterClient
 		~MasterManager();
 
 		void	addMaster(MasterClient *master);
+		void	enableMaster(int port, bool enable=true);
 
 	public slots:
 		void	refresh();
@@ -102,6 +103,7 @@ class MasterManager : public MasterClient
 		bool	sendRequest(QByteArray &data) { return true; }
 
 		QList<MasterClient *>	masters;
+		QList<bool>				masterEnabled;
 };
 
 #endif /* __MASTERSERVER_H__ */

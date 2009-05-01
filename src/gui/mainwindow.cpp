@@ -29,19 +29,33 @@
 #include "gui/wadseekerinterface.h"
 #include "pathfinder.h"
 #include "main.h"
+#include <QAction>
 #include <QDockWidget>
 #include <QFileInfo>
 #include <QProcess>
 #include <QHeaderView>
 #include <QMessageBox>
 
-MainWindow::MainWindow(int argc, char** argv)
+MainWindow::MainWindow(int argc, char** argv) : mc(NULL)
 {
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
 
 	serverTableHandler = new SLHandler(tableServers);
 	serverInfo = NULL;
+
+	// Allow us to enable and disable ports.
+	queryMenuPorts = new const QAction*[Main::enginePlugins.numPlugins()];
+	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
+	{
+		QAction *query = menuQuery->addAction(Main::enginePlugins[i]->info->name, this, SLOT( enablePort() ));
+		query->setCheckable(true);
+		query->setChecked(true);
+		queryMenuPorts[i] = query;
+	}
+
+	// Get the master
+	mc = new MasterManager();
 
 	connect(btnGetServers, SIGNAL( clicked() ), this, SLOT( btnGetServers_Click() ));
 	connect(btnRefreshAll, SIGNAL( clicked() ), serverTableHandler, SLOT( refreshAll() ));
@@ -56,6 +70,9 @@ MainWindow::MainWindow(int argc, char** argv)
 
 MainWindow::~MainWindow()
 {
+	if(mc != NULL)
+		delete mc;
+	delete[] queryMenuPorts;
 }
 /////////////////////////////////////////////////////////
 // Slots
@@ -68,7 +85,6 @@ void MainWindow::checkRefreshFinished()
 
 void MainWindow::btnGetServers_Click()
 {
-	MasterClient* mc = new MasterManager();
 	mc->refresh();
 
 	if (mc->numServers() == 0)
@@ -92,6 +108,14 @@ void MainWindow::btnGetServers_Click()
 	btnGetServers->setEnabled(false);
 	btnRefreshAll->setEnabled(false);
 	serverTableHandler->serverTable()->setAllowAllRowsRefresh(false);
+}
+
+void MainWindow::enablePort()
+{
+	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
+	{
+		mc->enableMaster(i, queryMenuPorts[i]->isChecked());
+	}
 }
 
 void MainWindow::menuHelpAbout()

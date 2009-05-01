@@ -324,7 +324,7 @@ class MAIN_EXPORT ServerPointer
 		}
 
 	public:
-        Server* ptr;
+		Server* ptr;
 
 		ServerPointer() {}
 		ServerPointer(Server* s)

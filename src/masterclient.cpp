@@ -103,6 +103,7 @@ MasterManager::MasterManager() : MasterClient(QHostAddress(), 0)
 
 MasterManager::~MasterManager()
 {
+	servers.clear();
 	for(int i = 0;i < masters.size();i++)
 		delete masters[i];
 }
@@ -113,6 +114,15 @@ void MasterManager::addMaster(MasterClient *master)
 		return;
 
 	masters.append(master);
+	masterEnabled.append(true);
+}
+
+void MasterManager::enableMaster(int port, bool enable)
+{
+	if(port >= masterEnabled.size())
+		return;
+
+	masterEnabled[port] = enable;
 }
 
 void MasterManager::loadMastersFromPlugins()
@@ -126,10 +136,14 @@ void MasterManager::loadMastersFromPlugins()
 
 void MasterManager::refresh()
 {
-	emptyServerList();
+	// Don't delete the servers yet!
+	servers.clear();
 
 	for(int i = 0;i < masters.size();i++)
 	{
+		if(!masterEnabled[i])
+			continue;
+
 		masters[i]->refresh();
 		// Qt 4.4 doesn't have list appending.
 		foreach(Server *server, masters[i]->serverList())

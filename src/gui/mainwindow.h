@@ -25,12 +25,14 @@
 #define __MAINWINDOW_H_
 
 #include "main.h"
+#include "masterclient.h"
 #include "sdeapi/config.hpp"
 #include "sdeapi/pluginloader.hpp"
 #include "gui/dockserverinfo.h"
 #include "gui/serverlist.h"
 #include "ui_mainwindow.h"
 
+#include <QAction>
 #include <QString>
 #include <QStandardItem>
 
@@ -45,6 +47,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 	public slots:
 		void checkRefreshFinished();
 		void btnGetServers_Click();
+		void enablePort();
 		void menuHelpAbout();
 		void menuOptionsConfigure();
 		void menuServerInfo();
@@ -55,6 +58,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 	private:
 		DockServerInfo*		serverInfo;
 		SLHandler*			serverTableHandler;
+
+		MasterManager*		mc;
+		const QAction**		queryMenuPorts;
 };
 
 #endif
