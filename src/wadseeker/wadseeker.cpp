@@ -24,17 +24,18 @@
 #include "wadseeker.h"
 #include <QFileInfo>
 
-#define GLOBAL_SITE_LINKS 1
-
 QUrl Wadseeker::globalSiteLinks[] =
 {
-	QUrl("http://zalewa.dyndns.org/robert/doom/site/index2.php")
+	QUrl("http://zalewa.dyndns.org/robert/doom/site/index2.php"),
+	QUrl("http://supergod.servegame.com/"),
+	QUrl("") // empty url is treated here like '\0' in a string
 };
 
 Wadseeker::Wadseeker()
 {
 	currentGlobalSite = 0;
 
+	connect(&http, SIGNAL( error(const QString&) ), this, SLOT( httpError(const QString&) ) );
 	connect(&http, SIGNAL( finishedReceiving(QString) ), this, SLOT( finishedReceiving(QString) ) );
 	//connect(this, SIGNAL( wadDone(bool, const QString&) ), this, SLOT( seekNextWad(bool, const QString&) ) );
 }
@@ -57,14 +58,16 @@ void Wadseeker::finishedReceiving(QString error)
 	QStringList wantedFileNames;
 	wantedFileNames << fi.completeBaseName() + ".zip";
 	if (extension.compare("zip", Qt::CaseInsensitive) != 0)
+	{
 		wantedFileNames << fi.fileName();
+	}
 
 	QList<Link> list = http.links();
 	QList<Link>::iterator it;
 
 	for (it = list.begin(); it != list.end(); ++it)
 	{
-		if (isDirectLinkToFile(wantedFileNames, it->url))
+		if (it->isHttpLink())
 		{
 			QString strUrl;
 			if (it->url.authority().isEmpty())
@@ -73,18 +76,43 @@ void Wadseeker::finishedReceiving(QString error)
 			}
 			else
 			{
-				strUrl = it->url.authority();
+				strUrl = "";
 			}
 
-			QUrl(strUrl + it->url.toString());
-			directLinks.append(*it);
-		}
-		else
-		{
-			// here we append all links that contain this filename somewhere else than in path.
+			QUrl newUrl(strUrl + it->url.toString());
+			printf("%s\n", newUrl.toString().toAscii().constData());
+
+			if (isDirectLinkToFile(wantedFileNames, it->url))
+			{
+				directLinks.append(newUrl);
+			}
+			else if (hasFileReferenceSomewhere(wantedFileNames, *it))
+			{
+				// here we append all links that contain this filename somewhere else than in path
+				siteLinks.append(newUrl);
+			}
 		}
 	}
 
+	nextSite();
+}
+
+bool Wadseeker::hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link)
+{
+	for (int i = 0; i < wantedFileNames.count(); ++i)
+	{
+		if (link.url.toString().contains(wantedFileNames[i], Qt::CaseInsensitive) || link.text.contains(wantedFileNames[i], Qt::CaseInsensitive) )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Wadseeker::httpError(const QString& errorString)
+{
+	qDebug() << "Error:" << errorString;
 	nextSite();
 }
 
@@ -104,35 +132,45 @@ bool Wadseeker::isDirectLinkToFile(const QStringList& wantedFileNames, const QUr
 
 void Wadseeker::nextSite()
 {
-	Link link;
 	bool bGotUrl = false;
+
+	if (!customSiteUsed && !customSite.isEmpty())
+	{
+		url = customSite;
+		bGotUrl = true;
+		customSiteUsed = true;
+	}
+
 	while (!directLinks.empty() && !bGotUrl)
 	{
-		link = directLinks.first();
+		url = directLinks.first();
 		directLinks.removeFirst();
-		if (checkedLinks.find(link.url.toString()) == checkedLinks.end())
+		if (checkedLinks.find(url.toString()) == checkedLinks.end())
 		{
-			url = link.url;
+			checkedLinks.insert(url.toString());
 			bGotUrl = true;
 		}
 	}
 
 	while (!siteLinks.empty() && !bGotUrl)
 	{
-		link = siteLinks.first();
+		url = siteLinks.first();
 		siteLinks.removeFirst();
-		if (checkedLinks.find(link.url.toString()) == checkedLinks.end())
+		if (checkedLinks.find(url.toString()) == checkedLinks.end())
 		{
-			url = link.url;
+			checkedLinks.insert(url.toString());
 			bGotUrl = true;
 		}
 	}
 
-	if (currentGlobalSite < GLOBAL_SITE_LINKS && !bGotUrl)
+	if (!bGotUrl)
 	{
 		url = globalSiteLinks[currentGlobalSite];
-		++currentGlobalSite;
-		bGotUrl = true;
+		if (!url.isEmpty())
+		{
+			++currentGlobalSite;
+			bGotUrl = true;
+		}
 	}
 
 	if (!bGotUrl)
@@ -177,6 +215,7 @@ void Wadseeker::seekNextWad()
 void Wadseeker::seekWad(const QString& wad)
 {
 	currentGlobalSite = 0;
+	customSiteUsed = false;
 	checkedLinks.clear();
 	directLinks.clear();
 	siteLinks.clear();

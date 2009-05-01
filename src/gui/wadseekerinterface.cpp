@@ -35,7 +35,7 @@ void WadSeekerInterface::accept()
 
 	QStringList list;
 	//list << leWadName->text();
-	list << "dtinv3-a.pk3" << "kurwa.wad";
+	list << "dtinv3a.pk3";
 	wadseeker.seekWads(list);
 
 }

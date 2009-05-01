@@ -47,6 +47,7 @@ void Http::construct()
 	Qt::ConnectionType ct = Qt::DirectConnection;
 
 	connect(&qHttp, SIGNAL( done(bool) ), this, SLOT( done(bool)), ct);
+	connect(&qHttp, SIGNAL( responseHeaderReceived(const QHttpResponseHeader&) ), this, SLOT( headerReceived(const QHttpResponseHeader&)), ct);
 	connect(&qHttp, SIGNAL( readyRead ( const QHttpResponseHeader& ) ), this, SLOT( read(const QHttpResponseHeader&)), ct);
 }
 
@@ -107,6 +108,23 @@ void Http::capitalizeTags(QByteArray& byte)
 	} // end of while
 }
 
+void Http::done(bool error)
+{
+	capitalizeTags(data);
+
+	if (!dontSendFinishedReceiving)
+	{
+		if (error)
+			emit finishedReceiving(qHttp.errorString());
+		else
+			emit finishedReceiving(QString());
+	}
+	else
+	{
+		dontSendFinishedReceiving = false;
+	}
+}
+
 int	 Http::findTag(QByteArray& byte, int beginAt, int* end)
 {
 	if (end == NULL)
@@ -136,6 +154,25 @@ int	 Http::findTag(QByteArray& byte, int beginAt, int* end)
 	}
 
 	return begin;
+}
+
+void Http::headerReceived(const QHttpResponseHeader& resp)
+{
+	if (resp.statusCode() == STATUS_REDIRECT)
+	{
+		dontSendFinishedReceiving = true;
+		QUrl url = resp.value("Location");
+		setSite(url.authority());
+		sendRequestGet(url.encodedPath() + url.encodedQuery());
+	}
+	else
+	{
+		dontSendFinishedReceiving = false;
+		if (resp.statusCode() != STATUS_OK)
+		{
+			emit error(QString::number(resp.statusCode()) + " - " + resp.reasonPhrase());
+		}
+	}
 }
 
 /**
@@ -213,16 +250,6 @@ QList<Link>	Http::links()
 	return list;
 }
 
-void Http::done(bool error)
-{
-	capitalizeTags(data);
-
-	if (error)
-		emit finishedReceiving(qHttp.errorString());
-	else
-		emit finishedReceiving(QString());
-}
-
 QString Http::htmlValue(QByteArray& byte, int beginIndex, int endIndex)
 {
 	int indexStartValue = -1;
@@ -295,14 +322,14 @@ void Http::setSite(const QString& s)
 
 void Http::read(const QHttpResponseHeader& httpResp)
 {
-/*
+	/*
 	#ifdef QT_DEBUG
 	qDebug() << "========================================================";
 	qDebug() << "= Responded Responded Responded Responded Responded Re =";
 	qDebug() << "= Status code:" << httpResp.statusCode() << httpResp.reasonPhrase() << "=";
 	qDebug() << "========================================================";
 	#endif
-*/
+	*/
 
 	responseCode = httpResp.statusCode();
 	responsePhrase = httpResp.reasonPhrase();

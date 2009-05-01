@@ -30,17 +30,23 @@
 
 /**
  * How does this work:
- * 	1.	Entry point is seekWads() method, it copies the list and initializes the iterator
- *		then it launched seekNextWad() method.
- *	2.	seekNextWad() checks if iterator is at the end of the list, if it is it emits allDone()
+ * 	1.	Entry point is seekWads() method, it copies the list and initializes the wad list iterator
+ *		then it launches seekNextWad() method.
+ *	2.	seekNextWad() checks if wad list iterator is at the end of the list, if it is it emits allDone()
  *		signal and exits, if not it launched the seekWad(wadname) method.
  *	3.	seekWad() resets state of current Wadseeker class object and launches nextSite() method
- *	4.	nextSite() picks site in order: directLinks, siteLinks, globalSiteLinks.
- *	5.	Http::finishedReceiving() signal is received. If this is a file it is downloaded
- *		and unpacked if necessary. If this is a site it is parsed
- *		to find any links. Links leading to file with the name of seeked file
- *		are added to directLinks list. Links leading to other sites are
- *		added to siteLinks list. Checked links are added to checkedLinks set.
+ *	4.	nextSite() picks site in order: customLink, directLinks, siteLinks, globalSiteLinks.
+ * 		If there are no more sites to pick it emits wadDone signal with flag set to 'wad not found'.
+ *		If there are still some sites left it sends a request and awaits finishedReceiving() signal.
+ *	5.
+ *		a)
+ *			Http::finishedReceiving() signal is received. If this is a file it is downloaded
+ *			and unpacked if necessary. If this is a site it is parsed
+ *			to find any links. Links leading to file with the name of seeked file
+ *			are added to directLinks list. Links leading to other sites are
+ *			added to siteLinks list.
+ *		b)
+ *			Http::error signal is received. Proceed to nextSite() (4).
  */
 class PLUGIN_EXPORT Wadseeker : public QObject
 {
@@ -51,12 +57,14 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 		~Wadseeker();
 
 		void seekWads(const QStringList& wads);
+		void setCustomSite(const QUrl&);
 
 	signals:
 		void allDone();
 		void wadDone(bool bFound, const QString& wadname);
 
 	protected slots:
+		void httpError(const QString&);
 		void finishedReceiving(QString);
 		void seekWad(const QString& wad);
 
@@ -66,13 +74,16 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 		QSet<QString>					checkedLinks;
 		int								currentGlobalSite;
 		QStringList::const_iterator 	currentWad;
-		QList<Link>	 					directLinks;
+		QUrl							customSite;
+		bool							customSiteUsed;
+		QList<QUrl>	 					directLinks;
 		Http 							http;
 		QString							seekedWad;
-		QList<Link> 					siteLinks;
+		QList<QUrl> 					siteLinks;
 		QUrl							url;
 		QStringList						wadnames;
 
+		bool							hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link);
 		bool							isDirectLinkToFile(const QStringList& wantedFileNames, const QUrl& link);
 		void							nextSite();
 		QString							nextWad();

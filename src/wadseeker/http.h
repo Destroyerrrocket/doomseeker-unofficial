@@ -53,6 +53,15 @@ struct Link
 		return false;
 	}
 
+	bool		isHttpLink()
+	{
+		const QString& scheme = url.scheme();
+		if(scheme.isEmpty() || scheme.compare("http", Qt::CaseInsensitive) == 0)
+			return true;
+
+		return false;
+	}
+
 	/**
 	 *	@param comparePage		- if not empty checks if URL refers to the same host as this param
 	 *	@return true if URL points to another server
@@ -125,7 +134,8 @@ class Http : public QObject
 	public:
 		enum STATUS_CODES
 		{
-			STATUS_OK = 200
+			STATUS_OK 		= 200,
+			STATUS_REDIRECT = 302
 		};
 
 		Http();
@@ -141,14 +151,17 @@ class Http : public QObject
 
 	signals:
 		void dataReceived(int statusCode);
+		void error(const QString&);
 		void finishedReceiving(QString error);
 
 	protected slots:
 		void done(bool);
+		void headerReceived(const QHttpResponseHeader&);
 		void read(const QHttpResponseHeader&);
 
 	protected:
 		QByteArray				data;
+		bool					dontSendFinishedReceiving;
 		QHttp 					qHttp;
 		int						responseCode;
 		QString					responsePhrase;
