@@ -21,37 +21,22 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "gui/wadseekerinterface.h"
-#include "wadseeker/wadseeker.h"
 
 WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 {
 	setupUi(this);
-	connect(buttonBox, SIGNAL( clicked(QAbstractButton *) ), this, SLOT ( btnClicked(QAbstractButton *) ));
+	connect(&wadseeker, SIGNAL( done(bool) ), this, SLOT( done(bool) ) );
 }
 
 void WadSeekerInterface::accept()
 {
-	Wadseeker ws;
 	QStringList list;
 	list << "a";
-	ws.seekWads(list);
-	this->close();
+	wadseeker.seekWads(list);
+	buttonBox->setEnabled(false);
 }
 
-void WadSeekerInterface::btnClicked(QAbstractButton *button)
+void WadSeekerInterface::done(bool bFound)
 {
-	// Figure out what button we pressed and perform its action.
-	switch(buttonBox->standardButton(button))
-	{
-		default:
-			break;
-
-		case QDialogButtonBox::Ok:
-			this->accept();
-			break;
-
-		case QDialogButtonBox::Cancel:
-			this->reject();
-			break;
-	}
+	buttonBox->setEnabled(true);
 }

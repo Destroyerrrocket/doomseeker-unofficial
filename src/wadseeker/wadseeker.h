@@ -37,11 +37,19 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 
 		bool seekWads(QStringList& wads);
 
+	signals:
+		void done(bool bFound);
+		void gotPage();
+
 	protected slots:
-		void pageReceived();
+		void dataReceived(int statusCode);
+		void finishedReceiving(QString);
 
 	protected:
-		Http 	http;
+		QSet<QString> 	checkedLinks;
+		QList<Link> 	directLinks;
+		Http 			http;
+		QList<Link> 	siteLinks;
 };
 
 #endif

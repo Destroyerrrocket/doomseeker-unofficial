@@ -42,26 +42,60 @@ class Http : public QObject
 	Q_OBJECT
 
 	public:
+		enum STATUS_CODES
+		{
+			STATUS_OK = 200
+		};
+
 		Http();
 		Http(QString);
 		~Http();
 
+		QByteArray&		lastData() { return data; }
+		int				lastResponseCode() const { return responseCode; }
+		const QString&	lastResponsePhrase() const { return responsePhrase; }
 		QList<Link>		links();
 		void 			sendRequestGet(QString);
 		void 			setSite(const QString&);
 
 	signals:
-		void dataReceived();
+		void dataReceived(int statusCode);
+		void finishedReceiving(QString error);
 
 	protected slots:
+		void done(bool);
 		void read(const QHttpResponseHeader&);
-		void reqFinished(int, bool);
 
 	protected:
 		QByteArray				data;
 		QHttp 					qHttp;
+		int						responseCode;
+		QString					responsePhrase;
 		QString 				site;
 		QWaitCondition			waitCondition;
+
+		/**
+		 * Capitalizes all keywords
+		 */
+		void					capitalizeTags(QByteArray&);
+
+		/**
+		 * Finds a HTML tag starting from index in the byte array.
+		 * @param byte		- array that will be searched
+		 * @param beginAt 	- index from which searching starts
+		 * @param end 		- end index of a tag
+		 * @return 			- begin index of a tag
+		 */
+		int						findTag(QByteArray& byte, int beginAt, int* end);
+
+		/**
+		 * You put something like HREF="http://127.0.0.1" and it retrieves the thing after '=' without the "".
+		 * @param byte			- array that will be searched
+		 * @param beginIndex 	- index from which parsing starts
+		 * @param endIndex		- index at which parsing ends
+		 * @return 				- trimmed value, without white-spaces and quotes.
+		 */
+		QString					htmlValue(QByteArray& byte, int beginIndex, int endIndex);
 
 	private:
 		void					construct();

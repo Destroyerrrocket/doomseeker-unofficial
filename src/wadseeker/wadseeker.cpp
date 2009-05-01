@@ -25,7 +25,8 @@
 
 Wadseeker::Wadseeker()
 {
-	connect(&http, SIGNAL( dataReceived() ), this, SLOT( pageReceived() ) );
+	connect(&http, SIGNAL( dataReceived(int) ), this, SLOT( dataReceived(int) ) );
+	connect(&http, SIGNAL( finishedReceiving(QString) ), this, SLOT( finishedReceiving(QString) ) );
 }
 
 Wadseeker::~Wadseeker()
@@ -35,18 +36,33 @@ Wadseeker::~Wadseeker()
 bool Wadseeker::seekWads(QStringList& wads)
 {
 	http.setSite("zalewa.dyndns.org");
-	http.sendRequestGet("/robert/pic/index.php");
+	http.sendRequestGet("/al/index.php");
 
 	return true;
 }
 
-void Wadseeker::pageReceived()
+void Wadseeker::dataReceived(int statusCode)
 {
+	if (statusCode != Http::STATUS_OK)
+	{
+		return;
+	}
+}
+
+void Wadseeker::finishedReceiving(QString error)
+{
+	if (!error.isEmpty())
+	{
+		qDebug() << "HTTP error: " << error.toAscii().constData();
+		return;
+	}
+
 	QList<Link> list = http.links();
 	QList<Link>::iterator it;
 	for (it = list.begin(); it != list.end(); ++it)
 	{
-		qDebug() << it->url.toAscii().constData() << it->text.toAscii().constData();
+		qDebug() << it->url.toAscii().constData() << ":" << it->text.toAscii().constData();
 	}
-}
 
+	emit done(true);
+}

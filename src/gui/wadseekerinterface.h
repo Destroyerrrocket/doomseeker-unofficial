@@ -24,6 +24,7 @@
 #define __WADSEEKERINTERFACE_H_
 
 #include "ui_wadseekerinterface.h"
+#include "wadseeker/wadseeker.h"
 
 class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 {
@@ -34,7 +35,10 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 
 	public slots:
 		virtual void 	accept();
-		void 			btnClicked(QAbstractButton *button);
+		void			done(bool bFound);
+
+	protected:
+		Wadseeker 		wadseeker;
 };
 
 #endif
