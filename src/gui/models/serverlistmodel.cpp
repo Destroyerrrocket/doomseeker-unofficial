@@ -75,7 +75,7 @@ void ServerListModel::clearNonVitalFields(int row)
 {
 	for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
 	{
-		if(columns[i].bHidden || i == SLCID_ADDRESS)
+		if(columns[i].bHidden || i == SLCID_ADDRESS || i == SLCID_PORT)
 		{
 			continue;
 		}
@@ -150,6 +150,10 @@ int ServerListModel::updateServer(int row, Server* server, int response)
 	QVariant savePointer = qVariantFromValue(ptr);
 	itemPointer->setData(savePointer, SLDT_POINTER_TO_SERVER_STRUCTURE);
 
+	// Port icon is also set no matter what
+	qstdItem = item(row, SLCID_PORT);
+	fillItem(qstdItem, server->metaObject()->className(), server->icon());
+
 	// Address is set no matter what, so it's set here.
 	qstdItem = item(row, SLCID_ADDRESS);
 	fillItem(qstdItem, server->address(), QString(server->address().toString() + ":" + QString::number(server->port())) );
@@ -217,9 +221,6 @@ void ServerListModel::setGood(int row, Server* server)
 {
 	QStandardItem* qstdItem;
 	QString strTmp;
-
-	qstdItem = item(row, SLCID_PORT);
-	fillItem(qstdItem, server->metaObject()->className(), server->icon());
 
 	qstdItem = item(row, SLCID_PLAYERS);
 	fillItem(qstdItem, server->numPlayers());
