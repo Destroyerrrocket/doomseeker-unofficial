@@ -93,7 +93,7 @@ class ServerListModel : public QStandardItemModel
 
 		/**
 		 * Removes content from fields that aren't
-		 * hidden and don't belong to SLCID_ADDRESS column.
+		 * hidden and don't belong to SLCID_ADDRESS and SLCID_PORT columns.
 		 */
 		void clearNonVitalFields(int row);
 		void emptyItem(QStandardItem*);

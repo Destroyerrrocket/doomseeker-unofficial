@@ -150,11 +150,11 @@ int ServerListModel::updateServer(int row, Server* server, int response)
 	QVariant savePointer = qVariantFromValue(ptr);
 	itemPointer->setData(savePointer, SLDT_POINTER_TO_SERVER_STRUCTURE);
 
-	// Port icon is also set no matter what
+	// Port icon is set no matter what
 	qstdItem = item(row, SLCID_PORT);
 	fillItem(qstdItem, server->metaObject()->className(), server->icon());
 
-	// Address is set no matter what, so it's set here.
+	// Address is also set no matter what, so it's set here.
 	qstdItem = item(row, SLCID_ADDRESS);
 	fillItem(qstdItem, server->address(), QString(server->address().toString() + ":" + QString::number(server->port())) );
 
