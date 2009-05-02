@@ -47,6 +47,8 @@ class OdamexServer : public Server
 
 		OdamexServer(const QHostAddress &address, unsigned short port);
 
+		QString	clientBinary() const { return "OdamexBinaryPath"; }
+		void	connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound) const;
 		QPixmap	icon() const;
 		QString	generalInfoHTML() const { return QString(); }
 

@@ -17,7 +17,7 @@
    <locale language="English" country="UnitedStates"/>
   </property>
   <property name="title">
-   <string>SkullTag Configuration</string>
+   <string>Skulltag Configuration</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -28,7 +28,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Path to SkullTag Binary:</string>
+        <string>Path to Skulltag Binary:</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>

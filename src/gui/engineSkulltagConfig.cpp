@@ -35,7 +35,7 @@ ConfigurationBoxInfo* EngineSkulltagConfigBox::createStructure(Config* cfg, QWid
 {
 	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
 	ec->confBox = new EngineSkulltagConfigBox(cfg, parent);
-	ec->boxName = tr("SkullTag");
+	ec->boxName = tr("Skulltag");
 	return ec;
 }
 ///////////////////////////////////////////////////
@@ -44,7 +44,7 @@ void EngineSkulltagConfigBox::readSettings()
 	QString str;
 	SettingsData* setting;
 
-	setting = config->setting("SkullTagBinaryPath");
+	setting = config->setting("SkulltagBinaryPath");
 
 	leBinaryPath->setText(setting->string());
 }
@@ -55,7 +55,7 @@ void EngineSkulltagConfigBox::saveSettings()
 	SettingsData* setting;
 
 	strVal = leBinaryPath->text();
-	setting = config->setting("SkullTagBinaryPath");
+	setting = config->setting("SkulltagBinaryPath");
 	setting->setValue(strVal);
 }
 ////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ void EngineSkulltagConfigBox::btnBrowseBinaryClicked()
 	// Other platforms do not have an extension for their binary files.
 	filter = tr("Any files(*)");
 #endif
-	QString strFilepath = QFileDialog::getOpenFileName(this, tr("Doomseeker - choose SkullTag binary"), QString(), filter);
+	QString strFilepath = QFileDialog::getOpenFileName(this, tr("Doomseeker - choose Skulltag binary"), QString(), filter);
 	if(!strFilepath.isEmpty()) // don't update if nothing was selected.
 		leBinaryPath->setText(strFilepath);
 }

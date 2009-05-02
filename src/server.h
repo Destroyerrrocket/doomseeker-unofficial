@@ -36,6 +36,7 @@
 #include <QPixmap>
 
 #include "global.h"
+#include "pathfinder.h"
 
 #define MAX_TEAMS 4
 
@@ -206,6 +207,12 @@ class MAIN_EXPORT Server : public QObject
 		void				stopRunning() { bRunning = false; }
 
 		/**
+		 * Returns the name of the setting pointing to the client binary.
+		 */
+		virtual QString		clientBinary() const=0;
+		virtual void		connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound) const;
+
+		/**
 		 * Returns the thread pool of the refresher.
 		 */
 		static const QThreadPool	&refresherThreadPool();
@@ -217,7 +224,7 @@ class MAIN_EXPORT Server : public QObject
 		/**
 		 * Updates the server data.
 		 */
-		void		refresh();
+		void			refresh();
 
 	signals:
 		/**

@@ -63,6 +63,19 @@ OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port) : S
 {
 }
 
+void OdamexServer::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound) const
+{
+	Server::connectParameters(args, pf, iwadFound);
+
+	if(iwadFound)
+	{
+		// Waddir
+		QString waddir = pf.findWad(iwadName().toLower());
+		waddir.truncate(waddir.length() - iwad.length());
+		args << "-waddir" << waddir;
+	}
+}
+
 QPixmap OdamexServer::icon() const
 {
 	return QPixmap(odamex_xpm);

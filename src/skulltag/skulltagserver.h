@@ -124,6 +124,7 @@ class SkulltagServer : public Server
 		SkulltagServer(const QHostAddress &address, unsigned short port);
 
 		QPixmap			icon() const;
+		QString			clientBinary() const { return "SkulltagBinaryPath"; }
 		QString			gameInfoTableHTML() const;
 		QString			generalInfoHTML() const;
 		QString			playerTableHTML() const;

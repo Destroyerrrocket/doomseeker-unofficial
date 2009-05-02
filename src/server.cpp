@@ -23,6 +23,7 @@
 
 #include "server.h"
 #include "main.h"
+#include <QProcess>
 #include <QSet>
 #include <QTime>
 #include <QUdpSocket>
@@ -284,6 +285,17 @@ void Server::operator= (const Server &other)
 	maxPlayers = other.maximumPlayers();
 	serverName = other.name();
 	serverScoreLimit = other.scoreLimit();
+}
+
+void Server::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound) const
+{
+	// Connect
+	args << "+connect" << QString(address().toString() + ":" + QString::number(port()));
+
+	// Iwad
+	QString iwad = pf.findWad(iwadName().toLower());
+	args << "-iwad" << iwad;
+	iwadFound = !iwad.isEmpty();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

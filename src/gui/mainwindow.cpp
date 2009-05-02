@@ -172,7 +172,7 @@ void MainWindow::menuWadSeeker()
 void MainWindow::runGame(const Server* server)
 {
 	const QString errorCaption = tr("Doomseeker - error");
-	SettingsData* setting = Main::config->setting("SkullTagBinaryPath");
+	SettingsData* setting = Main::config->setting(server->clientBinary());
 	if (setting->string().isEmpty())
 	{
 		QMessageBox::critical(this, errorCaption, tr("No executable specified for this engine."));
@@ -190,13 +190,9 @@ void MainWindow::runGame(const Server* server)
 	PathFinder pf(Main::config);
 	QStringList args;
 	QStringList missingPwads;
+	bool iwadFound = false;
 
-	// Connect
-	args << "+connect" << QString(server->address().toString() + ":" + QString::number(server->port()));
-
-	// Iwad
-	QString iwad = pf.findWad(server->iwadName().toLower());
-	args << "-iwad" << iwad;
+	server->connectParameters(args, pf, iwadFound);
 
 	// Pwads
 	if (server->numWads() != 0)
@@ -217,12 +213,12 @@ void MainWindow::runGame(const Server* server)
 		}
 	}
 
-	if (iwad.isEmpty() || !missingPwads.isEmpty())
+	if (!iwadFound || !missingPwads.isEmpty())
 	{
 		const QString filesMissingCaption = tr("Doomseeker - files are missing");
 		QString error = tr("Following files are missing:\n");
 
-		if (iwad.isEmpty())
+		if (!iwadFound)
 		{
 			error += tr("IWAD: ") + server->iwadName().toLower() + "\n";
 		}
