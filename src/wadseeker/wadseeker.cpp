@@ -58,14 +58,14 @@ void Wadseeker::finishedReceiving(QString error)
 		return;
 	}
 
-	if( http.lastFileType() == Http::FILE_TYPE_BINARY)
+	if( http.lastFileType() == Http::HTTP_FILE_TYPE_BINARY)
 	{
 		if (this->parseFile())
 		{
 			emit wadDone(true, seekedWad);
 		}
 	}
-	else if ( http.lastFileType() == Http::FILE_TYPE_HTML)
+	else if ( http.lastFileType() == Http::HTTP_FILE_TYPE_HTML)
 	{
 		this->getLinks();
 		this->nextSite();

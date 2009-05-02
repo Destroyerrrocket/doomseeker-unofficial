@@ -116,7 +116,7 @@ void Http::capitalizeTags(QByteArray& byte)
 
 void Http::done(bool error)
 {
-	if (fileType == FILE_TYPE_HTML)
+	if (fileType == HTTP_FILE_TYPE_HTML)
 	{
 		capitalizeTags(data);
 	}
@@ -364,17 +364,17 @@ void Http::sendRequestGet(QString resource)
 
 	if (isBinaryFile(fi))
 	{
-		fileType = FILE_TYPE_BINARY;
+		fileType = HTTP_FILE_TYPE_BINARY;
 		qDebug() << "Receiving binary file!";
 	}
 	else if (isHTMLFile(fi))
 	{
-		fileType = FILE_TYPE_HTML;
+		fileType = HTTP_FILE_TYPE_HTML;
 		qDebug() << "Receiving HTML file!";
 	}
 	else
 	{
-		fileType = FILE_TYPE_UNKNOWN;
+		fileType = HTTP_FILE_TYPE_BINARY;
 		emit (finishedReceiving(site + resource + " will not be processed"));
 		return;
 	}

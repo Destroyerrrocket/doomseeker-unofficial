@@ -45,28 +45,28 @@ class Http : public QObject
 			STATUS_REDIRECT = 302
 		};
 
-		enum FILE_TYPE
+		enum HTTP_FILE_TYPE
 		{
-			FILE_TYPE_BINARY 	= 0,
-			FILE_TYPE_HTML 		= 1,
-			FILE_TYPE_UNKNOWN 	= 2,
+			HTTP_FILE_TYPE_BINARY 	= 0,
+			HTTP_FILE_TYPE_HTML 	= 1,
+			HTTP_FILE_TYPE_UNKNOWN 	= 2
 		};
 
 		Http();
 		Http(QString);
 		~Http();
 
-		bool			isBinaryFile(const QFileInfo&);
-		bool			isHTMLFile(const QFileInfo&);
-		QByteArray&		lastData() { return data; }
-		FILE_TYPE		lastFileType() { return fileType; }
-		int				lastResponseCode() const { return responseCode; }
-		const QString&	lastResponsePhrase() const { return responsePhrase; }
-		QUrl			lastLink() const;
-		QList<Link>		links();
-		void 			sendRequestGet(QString);
-		void			setBinaryFilesExtensions(const QStringList& list);
-		void 			setSite(const QString&);
+		bool				isBinaryFile(const QFileInfo&);
+		bool				isHTMLFile(const QFileInfo&);
+		QByteArray&			lastData() { return data; }
+		HTTP_FILE_TYPE		lastFileType() { return fileType; }
+		int					lastResponseCode() const { return responseCode; }
+		const QString&		lastResponsePhrase() const { return responsePhrase; }
+		QUrl				lastLink() const;
+		QList<Link>			links();
+		void 				sendRequestGet(QString);
+		void				setBinaryFilesExtensions(const QStringList& list);
+		void 				setSite(const QString&);
 
 	signals:
 		void dataReceived(unsigned howMuch, unsigned howMuchSum, unsigned percent);
@@ -85,7 +85,7 @@ class Http : public QObject
 		QStringList				binaryFileExtensions;
 		QByteArray				data;
 		bool					dontSendFinishedReceiving;
-		FILE_TYPE				fileType;
+		HTTP_FILE_TYPE			fileType;
 		QHttp 					qHttp;
 		int						responseCode;
 		QString					responsePhrase;
