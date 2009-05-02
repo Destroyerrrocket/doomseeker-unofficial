@@ -53,7 +53,7 @@ void Http::construct()
 
 	if (htmlFileExtensions.isEmpty())
 	{
-		htmlFileExtensions << "html" << "htm" << "php";
+		htmlFileExtensions << "html" << "htm" << "php" << "php4" << "php5";
 	}
 }
 
