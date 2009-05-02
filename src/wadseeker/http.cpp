@@ -365,12 +365,12 @@ void Http::sendRequestGet(QString resource)
 	if (isBinaryFile(fi))
 	{
 		fileType = HTTP_FILE_TYPE_BINARY;
-		qDebug() << "Receiving binary file!";
+		qDebug() << "Getting binary file!";
 	}
 	else if (isHTMLFile(fi))
 	{
 		fileType = HTTP_FILE_TYPE_HTML;
-		qDebug() << "Receiving HTML file!";
+		qDebug() << "Getting HTML file!";
 	}
 	else
 	{

@@ -63,7 +63,18 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 
 	signals:
 		void allDone();
-		void error(const QString&);
+
+		/**
+		 * Emitted when Wadseeker encounters an error.
+		 * Wadseeker ends after emitting critical error.
+		 */
+		void error(const QString&, bool bIsCritical);
+
+		/**
+		 * Emitted when Wadseeker wants to notify "the world" about
+		 * how it's performing.
+		 */
+		void notice(const QString&);
 		void wadDone(bool bFound, const QString& wadname);
 
 	protected slots:

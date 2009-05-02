@@ -27,6 +27,8 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 {
 	setupUi(this);
 	connect(&wadseeker, SIGNAL( allDone() ), this, SLOT( allDone() ) );
+	connect(&wadseeker, SIGNAL( error(const QString&) ), this, SLOT( error(const QString&)) );
+	connect(&wadseeker, SIGNAL( notice(const QString&) ), this, SLOT( notice(const QString&)) );
 	connect(&wadseeker, SIGNAL( wadDone(bool, const QString&) ), this, SLOT( wadDone(bool, const QString&) ) );
 }
 
@@ -48,6 +50,20 @@ void WadSeekerInterface::allDone()
 {
 	qDebug() << "All done!";
 	buttonBox->setEnabled(true);
+}
+
+void WadSeekerInterface::error(const QString& str, bool bIsCritical)
+{
+	qDebug() << "Error:" << str.toAscii().constData();
+	if (bIsCritical)
+	{
+		buttonBox->setEnabled(true);
+	}
+}
+
+void WadSeekerInterface::notice(const QString& str)
+{
+	qDebug() << str.toAscii().constData();
 }
 
 void WadSeekerInterface::wadDone(bool bFound, const QString& wadname)

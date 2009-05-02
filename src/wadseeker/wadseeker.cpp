@@ -54,7 +54,8 @@ void Wadseeker::finishedReceiving(QString error)
 {
 	if (!error.isEmpty())
 	{
-		qDebug() << "HTTP error: " << error.toAscii().constData();
+		QString str = "HTTP error: " + error;
+		//emit error("LOL", true);
 		return;
 	}
 
@@ -63,6 +64,10 @@ void Wadseeker::finishedReceiving(QString error)
 		if (this->parseFile())
 		{
 			emit wadDone(true, seekedWad);
+		}
+		else
+		{
+			this->nextSite();
 		}
 	}
 	else if ( http.lastFileType() == Http::HTTP_FILE_TYPE_HTML)
@@ -114,7 +119,19 @@ void Wadseeker::getLinks()
 			QString strUrl;
 			if (it->url.authority().isEmpty())
 			{
-				strUrl = url.authority();
+				QList<QByteArray> path = url.encodedPath().split('/');
+
+				strUrl = "http://" + url.authority();
+				if (strUrl[strUrl.length() - 1] != '/')
+					strUrl += '/';
+
+				for (int i = 0; i < path.length() - 1; ++i)
+				{
+					if (!path[i].isEmpty())
+					{
+						strUrl += path[i] + '/';
+					}
+				}
 			}
 			else
 			{
@@ -123,6 +140,7 @@ void Wadseeker::getLinks()
 
 			QUrl newUrl(strUrl + it->url.toString());
 			printf("%s\n", newUrl.toString().toAscii().constData());
+			getchar();
 
 			if (isDirectLinkToFile(wantedFileNames, it->url))
 			{
@@ -203,6 +221,7 @@ void Wadseeker::nextSite()
 	}
 
 	qDebug() << "Next site:" << url.toString();
+	getchar();
 
 	http.setSite(url.encodedHost());
 	http.sendRequestGet(url.encodedPath());
@@ -230,6 +249,8 @@ bool Wadseeker::parseFile()
 	{
 		QByteArray& data = http.lastData();
 	}
+
+	return true;
 }
 
 void Wadseeker::seekNextWad()
@@ -265,8 +286,7 @@ void Wadseeker::seekWads(const QStringList& wads)
 	if (targetDirectory.isEmpty())
 	{
 		QString err = tr("No target directory specified! Aborting");
-		qDebug() << err;
-		emit error(err);
+		emit error(err, true);
 		return;
 	}
 
@@ -276,16 +296,14 @@ void Wadseeker::seekWads(const QStringList& wads)
 	if (!fi.exists() || !fi.isDir())
 	{
 		QString err = tr("Target directory: \"") + targetDirectory + tr("\" doesn't exist! Aborting");
-		qDebug() << err;
-		emit error(err);
+		emit error(err, true);
 		return;
 	}
 
 	if (!fi.isWritable())
 	{
 		QString err = tr("You cannot write to directory: \"") + targetDirectory + tr("\"! Aborting");
-		qDebug() << err;
-		emit error(err);
+		emit error(err, true);
 		return;
 	}
 
