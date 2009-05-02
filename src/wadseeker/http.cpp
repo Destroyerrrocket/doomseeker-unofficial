@@ -22,8 +22,9 @@
 //------------------------------------------------------------------------------
 #include "http.h"
 #include <QByteArray>
-#include <QString>
 #include <cctype>
+
+QStringList Http::htmlFileExtensions;
 
 Http::Http()
 {
@@ -49,6 +50,11 @@ void Http::construct()
 	connect(&qHttp, SIGNAL( done(bool) ), this, SLOT( done(bool)), ct);
 	connect(&qHttp, SIGNAL( responseHeaderReceived(const QHttpResponseHeader&) ), this, SLOT( headerReceived(const QHttpResponseHeader&)), ct);
 	connect(&qHttp, SIGNAL( readyRead ( const QHttpResponseHeader& ) ), this, SLOT( read(const QHttpResponseHeader&)), ct);
+
+	if (htmlFileExtensions.isEmpty())
+	{
+		htmlFileExtensions << "html" << "htm" << "php";
+	}
 }
 
 void Http::capitalizeTags(QByteArray& byte)
@@ -110,7 +116,10 @@ void Http::capitalizeTags(QByteArray& byte)
 
 void Http::done(bool error)
 {
-	capitalizeTags(data);
+	if (fileType == FILE_TYPE_HTML)
+	{
+		capitalizeTags(data);
+	}
 
 	if (!dontSendFinishedReceiving)
 	{
@@ -158,21 +167,62 @@ int	 Http::findTag(QByteArray& byte, int beginAt, int* end)
 
 void Http::headerReceived(const QHttpResponseHeader& resp)
 {
-	if (resp.statusCode() == STATUS_REDIRECT)
+	QUrl url;
+	switch (resp.statusCode())
 	{
-		dontSendFinishedReceiving = true;
-		QUrl url = resp.value("Location");
-		setSite(url.authority());
-		sendRequestGet(url.encodedPath() + url.encodedQuery());
-	}
-	else
-	{
-		dontSendFinishedReceiving = false;
-		if (resp.statusCode() != STATUS_OK)
-		{
+		case STATUS_REDIRECT:
+			dontSendFinishedReceiving = true;
+			url = resp.value("Location");
+			setSite(url.authority());
+			sendRequestGet(url.encodedPath() + url.encodedQuery());
+			break;
+
+		case STATUS_OK:
+			dontSendFinishedReceiving = false;
+			sizeMax = resp.contentLength();
+			sizeCur = 0;
+			emit size(sizeMax);
+			break;
+
+		default:
+			dontSendFinishedReceiving = false;
 			emit error(QString::number(resp.statusCode()) + " - " + resp.reasonPhrase());
-		}
+			break;
 	}
+}
+
+bool Http::isBinaryFile(const QFileInfo& fi)
+{
+	QStringList::iterator it;
+	QString extension = fi.suffix();
+	for (it = binaryFileExtensions.begin(); it != binaryFileExtensions.end(); ++it)
+	{
+		if (extension.compare(*it, Qt::CaseInsensitive) == 0)
+			return true;
+	}
+
+	return false;
+}
+
+bool Http::isHTMLFile(const QFileInfo& fi)
+{
+	if (fi.fileName().isEmpty())
+		return true;
+
+	QStringList::iterator it;
+	QString extension = fi.suffix();
+	for (it = htmlFileExtensions.begin(); it != htmlFileExtensions.end(); ++it)
+	{
+		if (extension.compare(*it, Qt::CaseInsensitive) == 0)
+			return true;
+	}
+
+	return false;
+}
+
+QUrl Http::lastLink() const
+{
+	return QUrl(site + resource);
 }
 
 /**
@@ -310,8 +360,33 @@ QString Http::htmlValue(QByteArray& byte, int beginIndex, int endIndex)
 
 void Http::sendRequestGet(QString resource)
 {
+	QFileInfo fi(resource);
+
+	if (isBinaryFile(fi))
+	{
+		fileType = FILE_TYPE_BINARY;
+		qDebug() << "Receiving binary file!";
+	}
+	else if (isHTMLFile(fi))
+	{
+		fileType = FILE_TYPE_HTML;
+		qDebug() << "Receiving HTML file!";
+	}
+	else
+	{
+		fileType = FILE_TYPE_UNKNOWN;
+		emit (finishedReceiving(site + resource + " will not be processed"));
+		return;
+	}
+
 	data.clear();
+	this->resource = resource;
 	qHttp.get(resource);
+}
+
+void Http::setBinaryFilesExtensions(const QStringList& list)
+{
+	binaryFileExtensions = list;
 }
 
 void Http::setSite(const QString& s)
@@ -335,7 +410,16 @@ void Http::read(const QHttpResponseHeader& httpResp)
 	responsePhrase = httpResp.reasonPhrase();
 
 	QByteArray newData = qHttp.readAll();
+	sizeCur += newData.length();
 	data.append(newData);
 
-	emit dataReceived(httpResp.statusCode());
+	int percent = 0;
+	if (sizeMax != 0)
+	{
+		percent = sizeCur * 100 / sizeMax;
+		if ((sizeMax % sizeCur) != 0)
+			++percent;
+	}
+
+	emit dataReceived(newData.length(), sizeCur, percent);
 }

@@ -10,10 +10,12 @@ find_package(Qt4 REQUIRED)
 include(${QT_USE_FILE})
 set(WADSEEKER_QT_FILES
 	http.h
+	link.h
 	wadseeker.h
 )
 set(WADSEEKER_FILES
   http.cpp
+	link.cpp  
   wadseeker.cpp
 )
 

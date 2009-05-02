@@ -35,9 +35,15 @@ Wadseeker::Wadseeker()
 {
 	currentGlobalSite = 0;
 
+	connect(&http, SIGNAL( dataReceived(unsigned, unsigned, unsigned) ), this, SLOT( sizeUpdate(unsigned, unsigned, unsigned) ) );
 	connect(&http, SIGNAL( error(const QString&) ), this, SLOT( httpError(const QString&) ) );
 	connect(&http, SIGNAL( finishedReceiving(QString) ), this, SLOT( finishedReceiving(QString) ) );
+	connect(&http, SIGNAL( size(unsigned int) ), this, SLOT( size(unsigned int) ) );
 	//connect(this, SIGNAL( wadDone(bool, const QString&) ), this, SLOT( seekNextWad(bool, const QString&) ) );
+
+	QStringList expectedExtensions;
+	expectedExtensions << "zip" << "wad" << "pk3";
+	http.setBinaryFilesExtensions(expectedExtensions);
 }
 
 Wadseeker::~Wadseeker()
@@ -52,6 +58,42 @@ void Wadseeker::finishedReceiving(QString error)
 		return;
 	}
 
+	if( http.lastFileType() == Http::FILE_TYPE_BINARY)
+	{
+		if (this->parseFile())
+		{
+			emit wadDone(true, seekedWad);
+		}
+	}
+	else if ( http.lastFileType() == Http::FILE_TYPE_HTML)
+	{
+		this->getLinks();
+		this->nextSite();
+	}
+
+}
+
+bool Wadseeker::hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link)
+{
+	for (int i = 0; i < wantedFileNames.count(); ++i)
+	{
+		if (link.url.toString().contains(wantedFileNames[i], Qt::CaseInsensitive) || link.text.contains(wantedFileNames[i], Qt::CaseInsensitive) )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Wadseeker::httpError(const QString& errorString)
+{
+	qDebug() << "Error:" << errorString;
+	nextSite();
+}
+
+void Wadseeker::getLinks()
+{
 	QFileInfo fi(seekedWad);
 	QString extension = fi.suffix();
 
@@ -93,27 +135,6 @@ void Wadseeker::finishedReceiving(QString error)
 			}
 		}
 	}
-
-	nextSite();
-}
-
-bool Wadseeker::hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link)
-{
-	for (int i = 0; i < wantedFileNames.count(); ++i)
-	{
-		if (link.url.toString().contains(wantedFileNames[i], Qt::CaseInsensitive) || link.text.contains(wantedFileNames[i], Qt::CaseInsensitive) )
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void Wadseeker::httpError(const QString& errorString)
-{
-	qDebug() << "Error:" << errorString;
-	nextSite();
 }
 
 bool Wadseeker::isDirectLinkToFile(const QStringList& wantedFileNames, const QUrl& link)
@@ -199,6 +220,18 @@ QString Wadseeker::nextWad()
 	return str;
 }
 
+bool Wadseeker::parseFile()
+{
+	// first we check if the seeked file and retrieved file have exactly the same filename
+	QFileInfo fi(http.lastLink().path());
+	QString filename = fi.fileName();
+
+	if (filename.compare(seekedWad, Qt::CaseInsensitive) == 0)
+	{
+		QByteArray& data = http.lastData();
+	}
+}
+
 void Wadseeker::seekNextWad()
 {
 	QString str = nextWad();
@@ -229,5 +262,42 @@ void Wadseeker::seekWads(const QStringList& wads)
 	wadnames = wads;
 	currentWad = wadnames.begin();
 
+	if (targetDirectory.isEmpty())
+	{
+		QString err = tr("No target directory specified! Aborting");
+		qDebug() << err;
+		emit error(err);
+		return;
+	}
+
+	QFileInfo fi(targetDirectory);
+	fi.isWritable();
+
+	if (!fi.exists() || !fi.isDir())
+	{
+		QString err = tr("Target directory: \"") + targetDirectory + tr("\" doesn't exist! Aborting");
+		qDebug() << err;
+		emit error(err);
+		return;
+	}
+
+	if (!fi.isWritable())
+	{
+		QString err = tr("You cannot write to directory: \"") + targetDirectory + tr("\"! Aborting");
+		qDebug() << err;
+		emit error(err);
+		return;
+	}
+
 	seekNextWad();
+}
+
+void Wadseeker::size(unsigned int s)
+{
+	qDebug() << "Size of received file:" << s;
+}
+
+void Wadseeker::sizeUpdate(unsigned howMuch, unsigned howMuchSum, unsigned percent)
+{
+	qDebug() << howMuchSum << QString::number(percent) + "%";
 }

@@ -23,7 +23,9 @@
 #ifndef __HTTP_H_
 #define __HTTP_H_
 
+#include "link.h"
 #include <QDebug>
+#include <QFileInfo>
 #include <QHttp>
 #include <QHttpRequestHeader>
 #include <QHttpResponseHeader>
@@ -31,101 +33,6 @@
 #include <QStringList>
 #include <Qt>
 #include <QUrl>
-#include <QWaitCondition>
-
-struct Link
-{
-	QUrl 		url;
-	QString 	text;
-
-	bool 		pathEndsWith(const QStringList& ends)
-	{
-		QString str = url.encodedPath();
-		QStringList::const_iterator it;
-		for (it = ends.begin(); it != ends.end(); ++it)
-		{
-			if (str.endsWith(*it, Qt::CaseInsensitive))
-			{
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	bool		isHttpLink()
-	{
-		const QString& scheme = url.scheme();
-		if(scheme.isEmpty() || scheme.compare("http", Qt::CaseInsensitive) == 0)
-			return true;
-
-		return false;
-	}
-
-	/**
-	 *	@param comparePage		- if not empty checks if URL refers to the same host as this param
-	 *	@return true if URL points to another server
-	 */
-	bool		isRemote(const QUrl& comparePage)
-	{
-		QString str1 = url.encodedHost();
-		QString str2 = comparePage.encodedHost();
-
-		if (str1.isEmpty())
-		{
-			return false;
-		}
-
-		if (!comparePage.isEmpty())
-		{
-			if (str1.compare(str2, Qt::CaseInsensitive) != 0)
-			{
-				return true;
-			}
-		}
-		else
-		{
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 *	@return true if the URL refers to the same page (for example URLs with '#')
-	 */
-	bool		isTheSamePage(const QUrl& comparePage)
-	{
-		QString str1 = url.encodedHost();
-		QString str2 = comparePage.encodedHost();
-
-		if (!str1.isEmpty() && str1.compare(str2, Qt::CaseInsensitive) != 0)
-		{
-			return false;
-		}
-
-		str1 = url.encodedQuery();
-		str2 = comparePage.encodedQuery();
-		QString str3 = url.encodedPath();
-		QString str4 = comparePage.encodedPath();
-
-		if (str1.compare(str2, Qt::CaseInsensitive) == 0
-			&& str3.compare(str4, Qt::CaseInsensitive) == 0)
-		{
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * @return true if URL begins from javascript: phrase
-	 */
-	bool		isJavascriptURL()
-	{
-		return url.toString().startsWith("javascript:", Qt::CaseInsensitive);
-	}
-};
 
 class Http : public QObject
 {
@@ -138,21 +45,34 @@ class Http : public QObject
 			STATUS_REDIRECT = 302
 		};
 
+		enum FILE_TYPE
+		{
+			FILE_TYPE_BINARY 	= 0,
+			FILE_TYPE_HTML 		= 1,
+			FILE_TYPE_UNKNOWN 	= 2,
+		};
+
 		Http();
 		Http(QString);
 		~Http();
 
+		bool			isBinaryFile(const QFileInfo&);
+		bool			isHTMLFile(const QFileInfo&);
 		QByteArray&		lastData() { return data; }
+		FILE_TYPE		lastFileType() { return fileType; }
 		int				lastResponseCode() const { return responseCode; }
 		const QString&	lastResponsePhrase() const { return responsePhrase; }
+		QUrl			lastLink() const;
 		QList<Link>		links();
 		void 			sendRequestGet(QString);
+		void			setBinaryFilesExtensions(const QStringList& list);
 		void 			setSite(const QString&);
 
 	signals:
-		void dataReceived(int statusCode);
+		void dataReceived(unsigned howMuch, unsigned howMuchSum, unsigned percent);
 		void error(const QString&);
 		void finishedReceiving(QString error);
+		void size(unsigned int);
 
 	protected slots:
 		void done(bool);
@@ -160,13 +80,19 @@ class Http : public QObject
 		void read(const QHttpResponseHeader&);
 
 	protected:
+		static QStringList		htmlFileExtensions;
+
+		QStringList				binaryFileExtensions;
 		QByteArray				data;
 		bool					dontSendFinishedReceiving;
+		FILE_TYPE				fileType;
 		QHttp 					qHttp;
 		int						responseCode;
 		QString					responsePhrase;
+		QString					resource;
 		QString 				site;
-		QWaitCondition			waitCondition;
+		unsigned 				sizeCur;
+		unsigned				sizeMax;
 
 		/**
 		 * Capitalizes all keywords

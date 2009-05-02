@@ -25,6 +25,7 @@
 
 #include "global.h"
 #include "http.h"
+#include <QDir>
 #include <QObject>
 #include <QUrl>
 
@@ -58,15 +59,19 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 
 		void seekWads(const QStringList& wads);
 		void setCustomSite(const QUrl&);
+		void setTargetDirectory(const QString& dir) { targetDirectory = dir; }
 
 	signals:
 		void allDone();
+		void error(const QString&);
 		void wadDone(bool bFound, const QString& wadname);
 
 	protected slots:
 		void httpError(const QString&);
 		void finishedReceiving(QString);
 		void seekWad(const QString& wad);
+		void size(unsigned int);
+		void sizeUpdate(unsigned howMuch, unsigned howMuchSum, unsigned percent);
 
 	protected:
 		static QUrl						globalSiteLinks[];
@@ -80,13 +85,23 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 		Http 							http;
 		QString							seekedWad;
 		QList<QUrl> 					siteLinks;
+		QString							targetDirectory;
 		QUrl							url;
 		QStringList						wadnames;
 
+		/**
+		 * Retrievies links from HTML file.
+		 */
+		void							getLinks();
 		bool							hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link);
 		bool							isDirectLinkToFile(const QStringList& wantedFileNames, const QUrl& link);
 		void							nextSite();
 		QString							nextWad();
+
+		/**
+		 * Returns true if wad file was installed properly.
+		 */
+		bool							parseFile();
 		void 							seekNextWad();
 
 };
