@@ -32,7 +32,7 @@
 // Base class for configuration group boxes.
 // This is the thing selected from the tree view on the left
 // of configuration dialog.
-class ConfigurationBaseBox : public QGroupBox
+class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 {
 	Q_OBJECT;
 
@@ -77,7 +77,7 @@ class ConfigurationBaseBox : public QGroupBox
 
 // Contains config info for
 // particular config box
-struct ConfigurationBoxInfo
+struct MAIN_EXPORT ConfigurationBoxInfo
 {
 	public:
 		ConfigurationBoxInfo()
