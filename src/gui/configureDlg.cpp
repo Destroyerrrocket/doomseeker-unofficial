@@ -23,6 +23,7 @@
 
 #include "gui/configureDlg.h"
 #include "gui/cfgFilePaths.h"
+#include "gui/wadseekerconfig.h"
 #include <Qt>
 #include <QDebug>
 #include <QStandardItemModel>
@@ -65,7 +66,12 @@ void ConfigureDlg::initOptionsList()
 //	model->appendRow(root1);
 //	hider = root1;
 
-	ConfigurationBoxInfo* cbi = FilePathsConfigBox::createStructure(mainConfig, this);
+	ConfigurationBoxInfo* cbi;
+
+	cbi = FilePathsConfigBox::createStructure(mainConfig, this);
+	addConfigurationBox(model->invisibleRootItem(), cbi);
+
+	cbi = WadseekerConfigBox::createStructure(mainConfig, this);
 	addConfigurationBox(model->invisibleRootItem(), cbi);
 
 	tvOptionsList->setModel(model);

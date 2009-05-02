@@ -40,6 +40,10 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 		Config* 	config;
 		bool		bAllowSave;
 
+		/**
+		 * These shouldn't execute Config::readConfig() and Config::saveConfig()
+		 * methods. They're here to read settings from and write them to controls.
+		 */
 		virtual void saveSettings()=0;
 
 	public:
@@ -57,8 +61,10 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 			bAllowSave = b;
 		}
 
-		// These shouldn't execute Config::readConfig() and Config::saveConfig()
-		// methods. They're here to read settings from and write them to controls.
+		/**
+		 * These shouldn't execute Config::readConfig() and Config::saveConfig()
+		 * methods. They're here to read settings from and write them to controls.
+		 */
 		virtual void readSettings()=0;
 		bool save()
 		{

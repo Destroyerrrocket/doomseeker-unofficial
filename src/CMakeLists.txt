@@ -17,6 +17,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/configureDlg.ui
 	gui/mainwindow.ui
 	gui/dockserverinfo.ui
+	gui/wadseekerconfig.ui
 	gui/wadseekerinterface.ui
 )
 
@@ -28,6 +29,7 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/mainwindow.h
 	gui/dockserverinfo.h
 	gui/serverlist.h
+	gui/wadseekerconfig.h
 	gui/wadseekerinterface.h
 	gui/models/serverlistmodel.h
 	gui/widgets/dockedwidgets.h
@@ -46,6 +48,7 @@ add_executable(doomseeker
 	gui/dockserverinfo.cpp
 	gui/mainwindow.cpp
 	gui/serverlist.cpp
+	gui/wadseekerconfig.cpp
 	gui/wadseekerinterface.cpp
 	gui/models/serverlistmodel.cpp
 	gui/widgets/serverlistview.cpp

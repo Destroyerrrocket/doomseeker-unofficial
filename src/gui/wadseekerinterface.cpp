@@ -21,6 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "gui/wadseekerinterface.h"
+#include "main.h"
 
 WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 {
@@ -31,13 +32,16 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 
 void WadSeekerInterface::accept()
 {
+	SettingsData* setting;
+	setting = Main::config->setting("WadseekerTargetDirectory");
+
 	buttonBox->setEnabled(false);
 
 	QStringList list;
 	//list << leWadName->text();
-	list << "dtinv3a.pk3";
+	list << "test.wad";
+	wadseeker.setTargetDirectory(setting->string());
 	wadseeker.seekWads(list);
-
 }
 
 void WadSeekerInterface::allDone()

@@ -26,9 +26,9 @@
 
 QUrl Wadseeker::globalSiteLinks[] =
 {
-	QUrl("http://zalewa.dyndns.org/robert/doom/site/index2.php"),
-	QUrl("http://supergod.servegame.com/"),
-	QUrl("") // empty url is treated here like '\0' in a string
+	QUrl("http://zalewa.dyndns.org/robert/wadseeker_test/test1.html"),
+	//QUrl("http://supergod.servegame.com/"),
+	QUrl("") // empty url is treated here like an '\0' in a string
 };
 
 Wadseeker::Wadseeker()

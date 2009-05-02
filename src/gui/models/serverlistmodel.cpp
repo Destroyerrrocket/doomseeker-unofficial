@@ -327,13 +327,14 @@ Server* ServerListModel::serverFromList(const QStandardItem* item)
 void ServerListModel::sort(int column, Qt::SortOrder order)
 {
 	QList<int> groupEndList;
+	if (rowCount() == 0)
+		return;
+
 #ifdef QT_DEBUG
 	QTime time;
 	time.start();
 	printf("Sorting: ");
 #endif
-	if (rowCount() == 0)
-		return;
 
 	// Sort the groups first.
 	for (int i = 0; i < rowCount(); ++i)

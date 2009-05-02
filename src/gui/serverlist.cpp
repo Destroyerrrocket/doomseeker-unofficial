@@ -94,8 +94,7 @@ void SLHandler::columnHeaderClicked(int index)
 	}
 	sortIndex = index;
 
-	ServerListModel* model = static_cast<ServerListModel*>(table->model());
-	model->sort(sortIndex, sortOrder);
+	needsCleaning = true;
 
 	QHeaderView* header = table->horizontalHeader();
 	header->setSortIndicator(sortIndex, sortOrder);
