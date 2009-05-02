@@ -25,7 +25,6 @@
 #include "gui/mainwindow.h"
 #include "gui/configureDlg.h"
 #include "gui/dockserverinfo.h"
-#include "gui/engineSkulltagConfig.h"
 #include "gui/wadseekerinterface.h"
 #include "pathfinder.h"
 #include "main.h"
@@ -128,8 +127,11 @@ void MainWindow::menuOptionsConfigure()
 {
 	ConfigureDlg dlg(Main::config, this);
 
-	ConfigurationBoxInfo* ec = EngineSkulltagConfigBox::createStructure(Main::config, &dlg);
-	dlg.addEngineConfiguration(ec);
+	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
+	{
+		ConfigurationBoxInfo* ec = Main::enginePlugins[i]->info->pInterface->configuration(Main::config, &dlg);
+		dlg.addEngineConfiguration(ec);
+	}
 
 	dlg.exec();
 }

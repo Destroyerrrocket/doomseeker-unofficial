@@ -48,11 +48,13 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #include "masterclient.h"
+#include "gui/configBase.h"
 
 class MAIN_EXPORT EnginePlugin
 {
 	public:
-		virtual MasterClient	*masterClient(/*QHostAddress adress, unsigned short port*/) const=0;
+		virtual ConfigurationBoxInfo	*configuration(Config *cfg, QWidget *parent) const=0;
+		virtual MasterClient			*masterClient() const=0;
 };
 ////////////////////////////////////////////////////////////////////////////////
 

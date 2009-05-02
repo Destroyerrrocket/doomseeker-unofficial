@@ -21,7 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 
-#include "gui/engineSkulltagConfig.h"
+#include "skulltag/engineSkulltagConfig.h"
 #include <QFileDialog>
 
 EngineSkulltagConfigBox::EngineSkulltagConfigBox(Config* cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)

@@ -27,11 +27,17 @@
 #include "masterclient.h"
 #include "sdeapi/pluginloader.hpp"
 
+#include "odamex/engineOdamexConfig.h"
 #include "odamex/odamexmasterclient.h"
 
 class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 {
 	public:
+		ConfigurationBoxInfo *configuration(Config *cfg, QWidget *parent) const
+		{
+			return EngineOdamexConfigBox::createStructure(cfg, parent);
+		}
+
 		MasterClient	*masterClient() const
 		{
 			QHostInfo info = QHostInfo::fromName("master1.odamex.net");

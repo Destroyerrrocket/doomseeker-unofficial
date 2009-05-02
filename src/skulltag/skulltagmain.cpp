@@ -28,10 +28,16 @@
 #include "sdeapi/pluginloader.hpp"
 
 #include "skulltag/skulltagmasterclient.h"
+#include "skulltag/engineSkulltagConfig.h"
 
 class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 {
 	public:
+		ConfigurationBoxInfo *configuration(Config *cfg, QWidget *parent) const
+		{
+			return EngineSkulltagConfigBox::createStructure(cfg, parent);
+		}
+
 		MasterClient	*masterClient() const
 		{
 			QHostInfo info = QHostInfo::fromName("skulltag.servegame.com");

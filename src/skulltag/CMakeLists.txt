@@ -8,11 +8,16 @@ endif(WIN32)
 
 find_package(Qt4 REQUIRED)
 include(${QT_USE_FILE})
+qt4_wrap_ui(skulltagUi
+	engineSkulltagConfig.ui
+)
 set(SKULLTAG_QT_FILES
+	engineSkulltagConfig.h
 	skulltagmasterclient.h
 	skulltagserver.h
 )
 set(SKULLTAG_FILES
+	engineSkulltagConfig.cpp
 	skulltagmain.cpp
 	skulltagmasterclient.cpp
 	skulltagserver.cpp
@@ -20,7 +25,7 @@ set(SKULLTAG_FILES
 include_directories(${QT_INCLUDES})
 qt_wrap_cpp(skulltagQt SKULLTAG_FILES ${SKULLTAG_QT_FILES})
 
-add_library(skulltag SHARED ${SKULLTAG_FILES})
+add_library(skulltag SHARED ${skulltagUi} ${SKULLTAG_FILES})
 add_dependencies(skulltag doomseeker)
 target_link_libraries(skulltag ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} doomseeker)
 
