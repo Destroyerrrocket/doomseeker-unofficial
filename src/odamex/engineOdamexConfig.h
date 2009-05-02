@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// engineSkulltagConfig.h
+// engineOdamexConfig.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,7 +18,7 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
 #ifndef __ENGINE_ODAMEX_CONFIG_H_

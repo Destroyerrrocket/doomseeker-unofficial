@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.4)
 
 include_directories(${DOOMSEEKER_SOURCE_DIR}/src)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 if(WIN32)
 	add_definitions(-DMODE_PLUGIN)
