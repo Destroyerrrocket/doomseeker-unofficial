@@ -59,7 +59,15 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 
 		void seekWads(const QStringList& wads);
 		void setCustomSite(const QUrl&);
-		void setTargetDirectory(const QString& dir) { targetDirectory = dir; }
+		void setTargetDirectory(const QString& dir)
+		{
+			targetDirectory = dir;
+			if (dir[dir.length() - 1] != QDir::separator())
+				targetDirectory += '/';
+		}
+
+	public slots:
+		void abort();
 
 	signals:
 		void allDone();
@@ -76,15 +84,24 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 		 */
 		void notice(const QString&);
 		void wadDone(bool bFound, const QString& wadname);
+		void wadSize(unsigned int);
+		void wadCurrentDownloadedSize(unsigned int howMuchSum, unsigned int percent);
 
 	protected slots:
 		void httpError(const QString&);
-		void finishedReceiving(QString);
+		void finishedReceiving(const QString&);
 		void seekWad(const QString& wad);
 		void size(unsigned int);
 		void sizeUpdate(unsigned howMuch, unsigned howMuchSum, unsigned percent);
 
 	protected:
+		enum PARSE_FILE_RETURN_CODES
+		{
+			PARSE_FILE_CRITICAL_ERROR	= -1,
+			PARSE_FILE_OK 				= 0,
+			PARSE_FILE_ERROR			= 1
+		};
+
 		static QUrl						globalSiteLinks[];
 
 		QSet<QString>					checkedLinks;
@@ -107,12 +124,12 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 		bool							hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link);
 		bool							isDirectLinkToFile(const QStringList& wantedFileNames, const QUrl& link);
 		void							nextSite();
-		QString							nextWad();
+		QString							nextWadName();
 
 		/**
-		 * Returns true if wad file was installed properly.
+		 * Returns OK if wad file was installed properly and CRITICAL_ERROR if Wadseeker should stop
 		 */
-		bool							parseFile();
+		PARSE_FILE_RETURN_CODES			parseFile();
 		void 							seekNextWad();
 
 };

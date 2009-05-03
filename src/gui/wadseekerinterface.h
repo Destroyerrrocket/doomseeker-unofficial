@@ -35,13 +35,26 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 
 	public slots:
 		virtual void 	accept();
+		virtual void	reject();
 		void			allDone();
 		void			error(const QString&, bool bIsCritical);
 		void			notice(const QString&);
 		void			wadDone(bool bFound, const QString& wadname);
+		void			wadSize(unsigned int);
+		void			wadCurrentDownloadedSize(unsigned int howMuchSum, unsigned int percent);
 
 	protected:
+		enum STATES
+		{
+			DOWNLOADING 	= 0,
+			WAITING			= 1
+		};
+
+		STATES			state;
 		Wadseeker 		wadseeker;
+
+		void			setStateDownloading();
+		void			setStateWaiting();
 };
 
 #endif

@@ -57,6 +57,11 @@ void Http::construct()
 	}
 }
 
+void Http::abort()
+{
+	qHttp.abort();
+}
+
 void Http::capitalizeTags(QByteArray& byte)
 {
 	int begin = 0;
@@ -365,17 +370,15 @@ void Http::sendRequestGet(QString resource)
 	if (isBinaryFile(fi))
 	{
 		fileType = HTTP_FILE_TYPE_BINARY;
-		qDebug() << "Getting binary file!";
 	}
 	else if (isHTMLFile(fi))
 	{
 		fileType = HTTP_FILE_TYPE_HTML;
-		qDebug() << "Getting HTML file!";
 	}
 	else
 	{
 		fileType = HTTP_FILE_TYPE_BINARY;
-		emit (finishedReceiving(site + resource + " will not be processed"));
+		emit (finishedReceiving(site + resource + tr(" will not be processed")));
 		return;
 	}
 

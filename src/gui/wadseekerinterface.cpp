@@ -22,51 +22,120 @@
 //------------------------------------------------------------------------------
 #include "gui/wadseekerinterface.h"
 #include "main.h"
+#include <QPushButton>
 
 WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 {
 	setupUi(this);
 	connect(&wadseeker, SIGNAL( allDone() ), this, SLOT( allDone() ) );
-	connect(&wadseeker, SIGNAL( error(const QString&) ), this, SLOT( error(const QString&)) );
+	connect(&wadseeker, SIGNAL( error(const QString&, bool) ), this, SLOT( error(const QString&, bool)) );
 	connect(&wadseeker, SIGNAL( notice(const QString&) ), this, SLOT( notice(const QString&)) );
 	connect(&wadseeker, SIGNAL( wadDone(bool, const QString&) ), this, SLOT( wadDone(bool, const QString&) ) );
+	connect(&wadseeker, SIGNAL( wadSize(unsigned int) ), this, SLOT( wadSize(unsigned int) ) );
+	connect(&wadseeker, SIGNAL( wadCurrentDownloadedSize(unsigned int, unsigned int) ), this, SLOT( wadCurrentDownloadedSize(unsigned int, unsigned int) ) );
+	setStateWaiting();
 }
 
 void WadSeekerInterface::accept()
 {
+	teWadseekerOutput->clear();
+
 	SettingsData* setting;
 	setting = Main::config->setting("WadseekerTargetDirectory");
 
-	buttonBox->setEnabled(false);
+	setStateDownloading();
 
 	QStringList list;
 	//list << leWadName->text();
-	list << "test.wad";
+	list << "dtinv3a.pk3";
 	wadseeker.setTargetDirectory(setting->string());
 	wadseeker.seekWads(list);
 }
 
 void WadSeekerInterface::allDone()
 {
-	qDebug() << "All done!";
-	buttonBox->setEnabled(true);
+	teWadseekerOutput->append(tr("All done."));
+	setStateWaiting();
 }
 
-void WadSeekerInterface::error(const QString& str, bool bIsCritical)
+void WadSeekerInterface::error(const QString& err, bool bIsCritical)
 {
-	qDebug() << "Error:" << str.toAscii().constData();
+	QString str;
 	if (bIsCritical)
 	{
-		buttonBox->setEnabled(true);
+		str = tr("CRITICAL ERROR: %1").arg(err);
+		setStateWaiting();
 	}
+	else
+	{
+		str = tr("Error: %1").arg(err);
+	}
+	teWadseekerOutput->append(str);
 }
 
 void WadSeekerInterface::notice(const QString& str)
 {
-	qDebug() << str.toAscii().constData();
+	teWadseekerOutput->append(str);
+}
+
+void WadSeekerInterface::reject()
+{
+	switch(state)
+	{
+		case DOWNLOADING:
+			wadseeker.abort();
+			teWadseekerOutput->append(tr("Aborted!"));
+			this->setStateWaiting();
+			break;
+
+		case WAITING:
+			this->done(Rejected);
+			break;
+	}
+}
+
+void WadSeekerInterface::setStateDownloading()
+{
+	buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+	buttonBox->button(QDialogButtonBox::Cancel)->setEnabled(true);
+	buttonBox->button(QDialogButtonBox::Close)->setEnabled(false);
+	state = DOWNLOADING;
+}
+
+void WadSeekerInterface::setStateWaiting()
+{
+	buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+	buttonBox->button(QDialogButtonBox::Cancel)->setEnabled(false);
+	buttonBox->button(QDialogButtonBox::Close)->setEnabled(true);
+	state = WAITING;
 }
 
 void WadSeekerInterface::wadDone(bool bFound, const QString& wadname)
 {
-	qDebug() << "Wad" << wadname << "done! Found:" << bFound;
+	QString str = tr("Wad %1 done! Found: %2.\n").arg(wadname);
+	if (bFound)
+	{
+		str = str.arg(tr("true"));
+	}
+	else
+	{
+		str = str.arg(tr("false"));
+	}
+	teWadseekerOutput->append(str);
 }
+
+void WadSeekerInterface::wadSize(unsigned int s)
+{
+	QString str = tr("Size: %1 B\n").arg(s);
+	teWadseekerOutput->append(str);
+	if (s == 0)
+		s = 1;
+	pbProgress->setMaximum(s);
+}
+
+void WadSeekerInterface::wadCurrentDownloadedSize(unsigned int howMuchSum, unsigned int percent)
+{
+	pbProgress->setValue(howMuchSum);
+}
+
+

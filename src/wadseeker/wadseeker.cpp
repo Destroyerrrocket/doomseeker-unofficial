@@ -27,7 +27,7 @@
 QUrl Wadseeker::globalSiteLinks[] =
 {
 	QUrl("http://zalewa.dyndns.org/robert/wadseeker_test/test1.html"),
-	//QUrl("http://supergod.servegame.com/"),
+	QUrl("http://supergod.servegame.com/"),
 	QUrl("") // empty url is treated here like an '\0' in a string
 };
 
@@ -37,7 +37,7 @@ Wadseeker::Wadseeker()
 
 	connect(&http, SIGNAL( dataReceived(unsigned, unsigned, unsigned) ), this, SLOT( sizeUpdate(unsigned, unsigned, unsigned) ) );
 	connect(&http, SIGNAL( error(const QString&) ), this, SLOT( httpError(const QString&) ) );
-	connect(&http, SIGNAL( finishedReceiving(QString) ), this, SLOT( finishedReceiving(QString) ) );
+	connect(&http, SIGNAL( finishedReceiving(const QString&) ), this, SLOT( finishedReceiving(const QString&) ) );
 	connect(&http, SIGNAL( size(unsigned int) ), this, SLOT( size(unsigned int) ) );
 	//connect(this, SIGNAL( wadDone(bool, const QString&) ), this, SLOT( seekNextWad(bool, const QString&) ) );
 
@@ -50,24 +50,36 @@ Wadseeker::~Wadseeker()
 {
 }
 
-void Wadseeker::finishedReceiving(QString error)
+void Wadseeker::abort()
 {
-	if (!error.isEmpty())
+	http.abort();
+}
+
+void Wadseeker::finishedReceiving(const QString& err)
+{
+	if (!err.isEmpty())
 	{
-		QString str = "HTTP error: " + error;
-		//emit error("LOL", true);
+		QString str = tr("HTTP error: ") + err;
+		emit error(str, true);
 		return;
 	}
 
 	if( http.lastFileType() == Http::HTTP_FILE_TYPE_BINARY)
 	{
-		if (this->parseFile())
+		PARSE_FILE_RETURN_CODES ret = this->parseFile();
+		switch(ret)
 		{
-			emit wadDone(true, seekedWad);
-		}
-		else
-		{
-			this->nextSite();
+			case PARSE_FILE_CRITICAL_ERROR:
+				return;
+
+			case PARSE_FILE_ERROR:
+				this->nextSite();
+				break;
+
+			case PARSE_FILE_OK:
+				emit wadDone(true, seekedWad);
+				this->seekNextWad();
+				break;
 		}
 	}
 	else if ( http.lastFileType() == Http::HTTP_FILE_TYPE_HTML)
@@ -93,7 +105,8 @@ bool Wadseeker::hasFileReferenceSomewhere(const QStringList& wantedFileNames, co
 
 void Wadseeker::httpError(const QString& errorString)
 {
-	qDebug() << "Error:" << errorString;
+	QString str = tr("Http error: ") + errorString;
+	emit error(str, false);
 	nextSite();
 }
 
@@ -139,8 +152,6 @@ void Wadseeker::getLinks()
 			}
 
 			QUrl newUrl(strUrl + it->url.toString());
-			printf("%s\n", newUrl.toString().toAscii().constData());
-			getchar();
 
 			if (isDirectLinkToFile(wantedFileNames, it->url))
 			{
@@ -186,7 +197,6 @@ void Wadseeker::nextSite()
 		directLinks.removeFirst();
 		if (checkedLinks.find(url.toString()) == checkedLinks.end())
 		{
-			checkedLinks.insert(url.toString());
 			bGotUrl = true;
 		}
 	}
@@ -197,7 +207,6 @@ void Wadseeker::nextSite()
 		siteLinks.removeFirst();
 		if (checkedLinks.find(url.toString()) == checkedLinks.end())
 		{
-			checkedLinks.insert(url.toString());
 			bGotUrl = true;
 		}
 	}
@@ -214,20 +223,22 @@ void Wadseeker::nextSite()
 
 	if (!bGotUrl)
 	{
-		qDebug() << "no more sites";
+		emit notice(tr("No more sites!"));
 		emit wadDone(false, seekedWad);
 		seekNextWad();
 		return;
 	}
 
-	qDebug() << "Next site:" << url.toString();
-	getchar();
+	checkedLinks.insert(url.toString());
+
+	QString strNotice = tr("Next site: ") + url.toString();
+	emit notice(strNotice);
 
 	http.setSite(url.encodedHost());
 	http.sendRequestGet(url.encodedPath());
 }
 
-QString Wadseeker::nextWad()
+QString Wadseeker::nextWadName()
 {
 	if (currentWad == wadnames.end())
 	{
@@ -239,23 +250,40 @@ QString Wadseeker::nextWad()
 	return str;
 }
 
-bool Wadseeker::parseFile()
+Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::parseFile()
 {
 	// first we check if the seeked file and retrieved file have exactly the same filename
 	QFileInfo fi(http.lastLink().path());
 	QString filename = fi.fileName();
 
+	// If they do have the same name we simply dump the file into directory and return OK.
 	if (filename.compare(seekedWad, Qt::CaseInsensitive) == 0)
 	{
 		QByteArray& data = http.lastData();
+		QString path = this->targetDirectory + filename;
+		QFile f(path);
+		if (!f.open(QIODevice::WriteOnly))
+		{
+			emit error(tr("Failed to save file: ") + path, true);
+			return PARSE_FILE_CRITICAL_ERROR;
+		}
+
+		int writeLen = f.write(data);
+		f.close();
+
+		if (writeLen != data.length())
+		{
+			emit error(tr("Failed to save file: ") + path, true);
+			return PARSE_FILE_CRITICAL_ERROR;
+		}
 	}
 
-	return true;
+	return PARSE_FILE_OK;
 }
 
 void Wadseeker::seekNextWad()
 {
-	QString str = nextWad();
+	QString str = nextWadName();
 	if (!str.isEmpty())
 	{
 		seekWad(str);
@@ -312,10 +340,10 @@ void Wadseeker::seekWads(const QStringList& wads)
 
 void Wadseeker::size(unsigned int s)
 {
-	qDebug() << "Size of received file:" << s;
+	emit wadSize(s);
 }
 
 void Wadseeker::sizeUpdate(unsigned howMuch, unsigned howMuchSum, unsigned percent)
 {
-	qDebug() << howMuchSum << QString::number(percent) + "%";
+	emit wadCurrentDownloadedSize(howMuchSum, percent);
 }

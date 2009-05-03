@@ -56,6 +56,8 @@ class Http : public QObject
 		Http(QString);
 		~Http();
 
+		void abort();
+
 		bool				isBinaryFile(const QFileInfo&);
 		bool				isHTMLFile(const QFileInfo&);
 		QByteArray&			lastData() { return data; }
@@ -71,7 +73,7 @@ class Http : public QObject
 	signals:
 		void dataReceived(unsigned howMuch, unsigned howMuchSum, unsigned percent);
 		void error(const QString&);
-		void finishedReceiving(QString error);
+		void finishedReceiving(const QString& error);
 		void size(unsigned int);
 
 	protected slots:
