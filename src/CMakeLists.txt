@@ -14,6 +14,7 @@ endif(WIN32)
 qt4_wrap_ui(doomseekerUI
 	gui/aboutDlg.ui
 	gui/cfgFilePaths.ui
+	gui/cfgQuery.ui
 	gui/configureDlg.ui
 	gui/mainwindow.ui
 	gui/dockserverinfo.ui
@@ -24,6 +25,7 @@ qt4_wrap_ui(doomseekerUI
 qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/aboutDlg.h
 	gui/cfgFilePaths.h
+	gui/cfgQuery.h
 	gui/configBase.h
 	gui/configureDlg.h
 	gui/mainwindow.h
@@ -44,6 +46,7 @@ add_executable(doomseeker
 	${QT_FILES}
 	gui/aboutDlg.cpp
 	gui/cfgFilePaths.cpp
+	gui/cfgQuery.cpp
 	gui/configureDlg.cpp
 	gui/dockserverinfo.cpp
 	gui/mainwindow.cpp

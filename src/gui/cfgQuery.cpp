@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// main.cpp
+// cfgQueryPaths.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -21,33 +21,45 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include <QApplication>
-#include <QObject>
-#include <QThreadPool>
+#include "gui/cfgQuery.h"
 
-#include "gui/mainwindow.h"
-#include "main.h"
-#include "server.h"
-
-PluginLoader Main::enginePlugins(MAKEID('E','N','G','N'), "./engines/");
-Config *Main::config = new Config();
-bool Main::running = true;
-
-int main(int argc, char* argv[])
+QueryConfigBox::QueryConfigBox(Config *cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent)
 {
-	QApplication app(argc, argv);
-	Main::config->locateConfigFile(argc, argv);
+	setupUi(this);
+}
 
-	// Initial settings values
-	Main::config->createSetting("QueryThreads", 50);
-	Main::config->createSetting("QueryTimeout", 5000);
+ConfigurationBoxInfo *QueryConfigBox::createStructure(Config *cfg, QWidget *parent)
+{
+	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
+	ec->confBox = new QueryConfigBox(cfg, parent);
+	ec->boxName = tr("Query");
+	return ec;
+}
 
-	MainWindow* mw = new MainWindow(argc, argv);
-	mw->show();
+void QueryConfigBox::readSettings()
+{
+	SettingsData *setting;
 
-	int ret = app.exec();
-	Main::running = false;
-	delete Main::config;
+	setting = config->setting("QueryOnStartup");
+	queryOnStartup->setChecked(setting->integer() != 0);
 
-	return ret;
+	setting = config->setting("QueryTimeout");
+	timeoutBox->setValue(setting->integer());
+
+	setting = config->setting("QueryThreads");
+	threadsBox->setValue(setting->integer());
+}
+
+void QueryConfigBox::saveSettings()
+{
+	SettingsData *setting;
+
+	setting = config->setting("QueryOnStartup");
+	setting->setValue(queryOnStartup->isChecked());
+
+	setting = config->setting("QueryTimeout");
+	setting->setValue(timeoutBox->value());
+
+	setting = config->setting("QueryThreads");
+	setting->setValue(threadsBox->value());
 }

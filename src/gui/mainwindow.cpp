@@ -56,6 +56,11 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL)
 	// Get the master
 	mc = new MasterManager();
 
+	// check query on statup
+	bool queryOnStartup = Main::config->setting("QueryOnStartup")->integer() != 0;
+	if(queryOnStartup)
+		btnGetServers_Click();
+
 	connect(btnGetServers, SIGNAL( clicked() ), this, SLOT( btnGetServers_Click() ));
 	connect(btnRefreshAll, SIGNAL( clicked() ), serverTableHandler, SLOT( refreshAll() ));
 	connect(menuActionAbout, SIGNAL( triggered() ), this, SLOT( menuHelpAbout() ));

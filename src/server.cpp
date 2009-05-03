@@ -326,7 +326,8 @@ void Server::doRefresh()
 	QTime time = QTime::currentTime();
 	socket.write(request);
 	time.start();
-	if(!socket.waitForReadyRead(5000))
+	int queryTimeout = Main::config->setting("QueryTimeout")->integer();
+	if(!socket.waitForReadyRead(queryTimeout))
 	{
 		emitUpdated(Server::RESPONSE_TIMEOUT);
 		return;
@@ -361,9 +362,10 @@ void Server::finalizeRefreshing()
 ServerRefresher::ServerRefresher(Server* p) : parent(p)
 {
 	bGuardian = false;
-	if(threadPool.maxThreadCount() != 50)
+	int queryThreads = Main::config->setting("QueryThreads")->integer();
+	if(threadPool.maxThreadCount() != queryThreads)
 	{
-		threadPool.setMaxThreadCount(50);
+		threadPool.setMaxThreadCount(queryThreads);
 	}
 }
 

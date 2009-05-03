@@ -23,6 +23,7 @@
 
 #include "gui/configureDlg.h"
 #include "gui/cfgFilePaths.h"
+#include "gui/cfgQuery.h"
 #include "gui/wadseekerconfig.h"
 #include <Qt>
 #include <QDebug>
@@ -67,6 +68,9 @@ void ConfigureDlg::initOptionsList()
 //	hider = root1;
 
 	ConfigurationBoxInfo* cbi;
+
+	cbi = QueryConfigBox::createStructure(mainConfig, this);
+	addConfigurationBox(model->invisibleRootItem(), cbi);
 
 	cbi = FilePathsConfigBox::createStructure(mainConfig, this);
 	addConfigurationBox(model->invisibleRootItem(), cbi);

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// main.cpp
+// cfgQueryPaths.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -21,33 +21,25 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include <QApplication>
-#include <QObject>
-#include <QThreadPool>
+#ifndef __CFG_QUERY_H__
+#define __CFG_QUERY_H__
 
-#include "gui/mainwindow.h"
-#include "main.h"
-#include "server.h"
+#include "gui/configBase.h"
+#include "ui_cfgQuery.h"
 
-PluginLoader Main::enginePlugins(MAKEID('E','N','G','N'), "./engines/");
-Config *Main::config = new Config();
-bool Main::running = true;
-
-int main(int argc, char* argv[])
+class QueryConfigBox : public ConfigurationBaseBox, private Ui::QueryConfigBox
 {
-	QApplication app(argc, argv);
-	Main::config->locateConfigFile(argc, argv);
+	Q_OBJECT
 
-	// Initial settings values
-	Main::config->createSetting("QueryThreads", 50);
-	Main::config->createSetting("QueryTimeout", 5000);
+	public:
+		static ConfigurationBoxInfo	*createStructure(Config *cfg, QWidget *parent=NULL);
 
-	MainWindow* mw = new MainWindow(argc, argv);
-	mw->show();
+		void	readSettings();
 
-	int ret = app.exec();
-	Main::running = false;
-	delete Main::config;
+	protected:
+		QueryConfigBox(Config *cfg, QWidget *parent=NULL);
 
-	return ret;
-}
+		void	saveSettings();
+};
+
+#endif /* __CFG_QUERY_H__ */
