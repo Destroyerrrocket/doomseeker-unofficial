@@ -26,9 +26,14 @@
 
 QUrl Wadseeker::globalSiteLinks[] =
 {
-	QUrl("http://zalewa.dyndns.org/robert/wadseeker_test/test1.html"),
+	QUrl("http://zalewa.dyndns.org/robert/wadseeker_test/test2.html"),
 	QUrl("http://supergod.servegame.com/"),
 	QUrl("") // empty url is treated here like an '\0' in a string
+};
+
+QString Wadseeker::iwadNames[] =
+{
+	"doom", "doom2", "heretic", "hexen", "tnt", "plutonia", "hexdd", "strife", ""
 };
 
 Wadseeker::Wadseeker()
@@ -40,10 +45,6 @@ Wadseeker::Wadseeker()
 	connect(&http, SIGNAL( finishedReceiving(const QString&) ), this, SLOT( finishedReceiving(const QString&) ) );
 	connect(&http, SIGNAL( size(unsigned int) ), this, SLOT( size(unsigned int) ) );
 	//connect(this, SIGNAL( wadDone(bool, const QString&) ), this, SLOT( seekNextWad(bool, const QString&) ) );
-
-	QStringList expectedExtensions;
-	expectedExtensions << "zip" << "wad" << "pk3";
-	http.setBinaryFilesExtensions(expectedExtensions);
 }
 
 Wadseeker::~Wadseeker()
@@ -180,6 +181,24 @@ bool Wadseeker::isDirectLinkToFile(const QStringList& wantedFileNames, const QUr
 	return false;
 }
 
+bool Wadseeker::isIwad(const QString& wad)
+{
+	QFileInfo fiWad(wad);
+	// Check the basename, ignore extension.
+	// This will block names like "doom2.zip" but also "doom2.pk3" and
+	// "doom2.whatever".
+	QString basename = fiWad.baseName();
+	for (int i = 0; !iwadNames[i].isEmpty(); ++i)
+	{
+		if(basename.compare(iwadNames[i], Qt::CaseInsensitive) == 0)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void Wadseeker::nextSite()
 {
 	bool bGotUrl = false;
@@ -225,7 +244,7 @@ void Wadseeker::nextSite()
 	{
 		emit notice(tr("No more sites!"));
 		emit wadDone(false, seekedWad);
-		seekNextWad();
+		this->seekNextWad();
 		return;
 	}
 
@@ -296,14 +315,41 @@ void Wadseeker::seekNextWad()
 
 void Wadseeker::seekWad(const QString& wad)
 {
-	currentGlobalSite = 0;
-	customSiteUsed = false;
-	checkedLinks.clear();
-	directLinks.clear();
-	siteLinks.clear();
+	QString notic = tr("Seeking file: %1").arg(wad);
+	emit notice(notic);
+	if (!this->isIwad(wad))
+	{
+		currentGlobalSite = 0;
+		customSiteUsed = false;
+		checkedLinks.clear();
+		directLinks.clear();
+		siteLinks.clear();
 
-	seekedWad = wad;
-	nextSite();
+		// Get the file extension and compare it against "zip"
+		// If the file extension is "zip" already set only "zip"
+		// as "binary" files for Http class.
+		// If the file extension is not "zip" set "zip" and this extension
+		// as "binary" files for Http class.
+
+		QFileInfo fi(wad);
+		QString extension = fi.suffix();
+		QStringList expectedExtensions;
+		expectedExtensions << extension;
+		if (extension.compare("zip", Qt::CaseInsensitive) != 0)
+		{
+			expectedExtensions << "zip";
+		}
+		http.setBinaryFilesExtensions(expectedExtensions);
+
+		seekedWad = wad;
+		nextSite();
+	}
+	else
+	{
+		emit error(tr("This is an IWAD!"), false);
+		emit wadDone(false, wad);
+		this->seekNextWad();
+	}
 }
 
 void Wadseeker::seekWads(const QStringList& wads)

@@ -47,7 +47,7 @@ void WadSeekerInterface::accept()
 
 	QStringList list;
 	//list << leWadName->text();
-	list << "dtinv3a.pk3";
+	list << "doom.wad" << "hexdd.wad" << "test.wad";
 	wadseeker.setTargetDirectory(setting->string());
 	wadseeker.seekWads(list);
 }
@@ -112,7 +112,7 @@ void WadSeekerInterface::setStateWaiting()
 
 void WadSeekerInterface::wadDone(bool bFound, const QString& wadname)
 {
-	QString str = tr("Wad %1 done! Found: %2.\n").arg(wadname);
+	QString str = tr("File %1 done! Found: %2.\n").arg(wadname);
 	if (bFound)
 	{
 		str = str.arg(tr("true"));

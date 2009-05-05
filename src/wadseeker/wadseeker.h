@@ -103,6 +103,7 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 		};
 
 		static QUrl						globalSiteLinks[];
+		static QString					iwadNames[];
 
 		QSet<QString>					checkedLinks;
 		int								currentGlobalSite;
@@ -123,6 +124,7 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 		void							getLinks();
 		bool							hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link);
 		bool							isDirectLinkToFile(const QStringList& wantedFileNames, const QUrl& link);
+		bool							isIwad(const QString&);
 		void							nextSite();
 		QString							nextWadName();
 

@@ -24,8 +24,6 @@
 #include <QByteArray>
 #include <cctype>
 
-QStringList Http::htmlFileExtensions;
-
 Http::Http()
 {
 	construct();
@@ -50,12 +48,8 @@ void Http::construct()
 	connect(&qHttp, SIGNAL( done(bool) ), this, SLOT( done(bool)), ct);
 	connect(&qHttp, SIGNAL( responseHeaderReceived(const QHttpResponseHeader&) ), this, SLOT( headerReceived(const QHttpResponseHeader&)), ct);
 	connect(&qHttp, SIGNAL( readyRead ( const QHttpResponseHeader& ) ), this, SLOT( read(const QHttpResponseHeader&)), ct);
-
-	if (htmlFileExtensions.isEmpty())
-	{
-		htmlFileExtensions << "html" << "htm" << "php" << "php4" << "php5";
-	}
 }
+
 
 void Http::abort()
 {
@@ -172,6 +166,7 @@ int	 Http::findTag(QByteArray& byte, int beginAt, int* end)
 
 void Http::headerReceived(const QHttpResponseHeader& resp)
 {
+	QFileInfo fi(resource);
 	QUrl url;
 	switch (resp.statusCode())
 	{
@@ -184,6 +179,22 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 
 		case STATUS_OK:
 			dontSendFinishedReceiving = false;
+
+			if (isBinaryFile(fi))
+			{
+				fileType = HTTP_FILE_TYPE_BINARY;
+			}
+			else if (isHTMLFile(resp))
+			{
+				fileType = HTTP_FILE_TYPE_HTML;
+			}
+			else
+			{
+				fileType = HTTP_FILE_TYPE_UNKNOWN;
+				emit (finishedReceiving(site + resource + tr(" will not be processed")));
+				return;
+			}
+
 			sizeMax = resp.contentLength();
 			sizeCur = 0;
 			emit size(sizeMax);
@@ -209,17 +220,18 @@ bool Http::isBinaryFile(const QFileInfo& fi)
 	return false;
 }
 
-bool Http::isHTMLFile(const QFileInfo& fi)
+bool Http::isHTMLFile(const QHttpHeader& http)
 {
-	if (fi.fileName().isEmpty())
-		return true;
-
-	QStringList::iterator it;
-	QString extension = fi.suffix();
-	for (it = htmlFileExtensions.begin(); it != htmlFileExtensions.end(); ++it)
+	if (!http.hasKey("Content-type"))
 	{
-		if (extension.compare(*it, Qt::CaseInsensitive) == 0)
-			return true;
+		return false;
+	}
+
+	QString contentType = http.value("Content-type");
+
+	if (contentType.startsWith("text/html;", Qt::CaseInsensitive))
+	{
+		return true;
 	}
 
 	return false;
@@ -365,23 +377,6 @@ QString Http::htmlValue(QByteArray& byte, int beginIndex, int endIndex)
 
 void Http::sendRequestGet(QString resource)
 {
-	QFileInfo fi(resource);
-
-	if (isBinaryFile(fi))
-	{
-		fileType = HTTP_FILE_TYPE_BINARY;
-	}
-	else if (isHTMLFile(fi))
-	{
-		fileType = HTTP_FILE_TYPE_HTML;
-	}
-	else
-	{
-		fileType = HTTP_FILE_TYPE_BINARY;
-		emit (finishedReceiving(site + resource + tr(" will not be processed")));
-		return;
-	}
-
 	data.clear();
 	this->resource = resource;
 	qHttp.get(resource);

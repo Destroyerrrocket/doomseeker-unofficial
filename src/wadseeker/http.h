@@ -59,7 +59,7 @@ class Http : public QObject
 		void abort();
 
 		bool				isBinaryFile(const QFileInfo&);
-		bool				isHTMLFile(const QFileInfo&);
+		bool				isHTMLFile(const QHttpHeader&);
 		QByteArray&			lastData() { return data; }
 		HTTP_FILE_TYPE		lastFileType() { return fileType; }
 		int					lastResponseCode() const { return responseCode; }
@@ -82,8 +82,6 @@ class Http : public QObject
 		void read(const QHttpResponseHeader&);
 
 	protected:
-		static QStringList		htmlFileExtensions;
-
 		QStringList				binaryFileExtensions;
 		QByteArray				data;
 		bool					dontSendFinishedReceiving;
