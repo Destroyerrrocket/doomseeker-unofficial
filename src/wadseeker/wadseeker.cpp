@@ -88,6 +88,10 @@ void Wadseeker::finishedReceiving(const QString& err)
 		this->getLinks();
 		this->nextSite();
 	}
+	else
+	{
+		qDebug() << "lol";
+	}
 
 }
 
@@ -295,9 +299,21 @@ Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::parseFile()
 			emit error(tr("Failed to save file: ") + path, true);
 			return PARSE_FILE_CRITICAL_ERROR;
 		}
+
+		return PARSE_FILE_OK;
+	}
+	else if (fi.suffix().compare("zip", Qt::CaseInsensitive) == 0)
+	{
+		emit error(tr("Extracting zip files not yet supported: %1").arg(seekedWad) , false);
+		return PARSE_FILE_ERROR;
+	}
+	else
+	{
+		emit error(tr("File %1 failed (at site %2)").arg(seekedWad, http.lastLink().path()) , false);
+		return PARSE_FILE_ERROR;
 	}
 
-	return PARSE_FILE_OK;
+
 }
 
 void Wadseeker::seekNextWad()
@@ -380,6 +396,7 @@ void Wadseeker::seekWads(const QStringList& wads)
 		emit error(err, true);
 		return;
 	}
+
 
 	seekNextWad();
 }

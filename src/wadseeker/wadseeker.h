@@ -62,8 +62,11 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 		void setTargetDirectory(const QString& dir)
 		{
 			targetDirectory = dir;
-			if (dir[dir.length() - 1] != QDir::separator())
-				targetDirectory += '/';
+			if (!dir.isEmpty())
+			{
+				if (dir[dir.length() - 1] != QDir::separator())
+					targetDirectory += '/';
+			}
 		}
 
 	public slots:

@@ -168,6 +168,7 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 {
 	QFileInfo fi(resource);
 	QUrl url;
+
 	switch (resp.statusCode())
 	{
 		case STATUS_REDIRECT:
@@ -229,7 +230,7 @@ bool Http::isHTMLFile(const QHttpHeader& http)
 
 	QString contentType = http.value("Content-type");
 
-	if (contentType.startsWith("text/html;", Qt::CaseInsensitive))
+	if (contentType.contains("text/html", Qt::CaseInsensitive))
 	{
 		return true;
 	}
