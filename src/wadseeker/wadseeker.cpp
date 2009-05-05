@@ -43,6 +43,7 @@ Wadseeker::Wadseeker()
 	connect(&http, SIGNAL( dataReceived(unsigned, unsigned, unsigned) ), this, SLOT( sizeUpdate(unsigned, unsigned, unsigned) ) );
 	connect(&http, SIGNAL( error(const QString&) ), this, SLOT( httpError(const QString&) ) );
 	connect(&http, SIGNAL( finishedReceiving(const QString&) ), this, SLOT( finishedReceiving(const QString&) ) );
+	connect(&http, SIGNAL( notice(const QString&) ), this, SLOT( httpNotice(const QString&) ) );
 	connect(&http, SIGNAL( size(unsigned int) ), this, SLOT( size(unsigned int) ) );
 	//connect(this, SIGNAL( wadDone(bool, const QString&) ), this, SLOT( seekNextWad(bool, const QString&) ) );
 }
@@ -60,12 +61,12 @@ void Wadseeker::finishedReceiving(const QString& err)
 {
 	if (!err.isEmpty())
 	{
-		QString str = tr("HTTP error: ") + err;
+		QString str = tr("HTTP error: %1").arg(err);
 		emit error(str, true);
 		return;
 	}
 
-	if( http.lastFileType() == Http::HTTP_FILE_TYPE_BINARY)
+	if( http.lastFileType() == Http::HTTP_FILE_TYPE_WANTED)
 	{
 		PARSE_FILE_RETURN_CODES ret = this->parseFile();
 		switch(ret)
@@ -90,7 +91,7 @@ void Wadseeker::finishedReceiving(const QString& err)
 	}
 	else
 	{
-		qDebug() << "lol";
+
 	}
 
 }
@@ -110,9 +111,15 @@ bool Wadseeker::hasFileReferenceSomewhere(const QStringList& wantedFileNames, co
 
 void Wadseeker::httpError(const QString& errorString)
 {
-	QString str = tr("Http error: ") + errorString;
+	QString str = tr("HTTP error: %1").arg(errorString);
 	emit error(str, false);
 	nextSite();
+}
+
+void Wadseeker::httpNotice(const QString& string)
+{
+	QString str = tr("HTTP notice: %1").arg(string);
+	emit notice(str);
 }
 
 void Wadseeker::getLinks()
@@ -254,7 +261,7 @@ void Wadseeker::nextSite()
 
 	checkedLinks.insert(url.toString());
 
-	QString strNotice = tr("Next site: ") + url.toString();
+	QString strNotice = tr("Next site: %1").arg(url.toString());
 	emit notice(strNotice);
 
 	http.setSite(url.encodedHost());
@@ -287,7 +294,7 @@ Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::parseFile()
 		QFile f(path);
 		if (!f.open(QIODevice::WriteOnly))
 		{
-			emit error(tr("Failed to save file: ") + path, true);
+			emit error(tr("Failed to save file: %1").arg(path), true);
 			return PARSE_FILE_CRITICAL_ERROR;
 		}
 
@@ -296,7 +303,7 @@ Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::parseFile()
 
 		if (writeLen != data.length())
 		{
-			emit error(tr("Failed to save file: ") + path, true);
+			emit error(tr("Failed to save file: %1").arg(path), true);
 			return PARSE_FILE_CRITICAL_ERROR;
 		}
 
@@ -309,7 +316,7 @@ Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::parseFile()
 	}
 	else
 	{
-		emit error(tr("File %1 failed (at site %2)").arg(seekedWad, http.lastLink().path()) , false);
+		emit error(tr("File %1 failed (on site %2)").arg(seekedWad, http.lastLink().toString()) , false);
 		return PARSE_FILE_ERROR;
 	}
 
@@ -349,13 +356,13 @@ void Wadseeker::seekWad(const QString& wad)
 
 		QFileInfo fi(wad);
 		QString extension = fi.suffix();
-		QStringList expectedExtensions;
-		expectedExtensions << extension;
+		QStringList expectedFilenames;
+		expectedFilenames << wad;
 		if (extension.compare("zip", Qt::CaseInsensitive) != 0)
 		{
-			expectedExtensions << "zip";
+			expectedFilenames << QString(fi.completeBaseName() + ".zip");
 		}
-		http.setBinaryFilesExtensions(expectedExtensions);
+		http.setWantedFilenames(expectedFilenames);
 
 		seekedWad = wad;
 		nextSite();
@@ -385,14 +392,14 @@ void Wadseeker::seekWads(const QStringList& wads)
 
 	if (!fi.exists() || !fi.isDir())
 	{
-		QString err = tr("Target directory: \"") + targetDirectory + tr("\" doesn't exist! Aborting");
+		QString err = tr("Target directory: \"%1\" doesn't exist! Aborting").arg(targetDirectory);
 		emit error(err, true);
 		return;
 	}
 
 	if (!fi.isWritable())
 	{
-		QString err = tr("You cannot write to directory: \"") + targetDirectory + tr("\"! Aborting");
+		QString err = tr("You cannot write to directory: \"%1\"! Aborting").arg(targetDirectory);
 		emit error(err, true);
 		return;
 	}

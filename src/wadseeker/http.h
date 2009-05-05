@@ -47,7 +47,7 @@ class Http : public QObject
 
 		enum HTTP_FILE_TYPE
 		{
-			HTTP_FILE_TYPE_BINARY 	= 0,
+			HTTP_FILE_TYPE_WANTED 	= 0,
 			HTTP_FILE_TYPE_HTML 	= 1,
 			HTTP_FILE_TYPE_UNKNOWN 	= 2
 		};
@@ -58,7 +58,7 @@ class Http : public QObject
 
 		void abort();
 
-		bool				isBinaryFile(const QFileInfo&);
+		bool				isWantedFile(const QFileInfo&);
 		bool				isHTMLFile(const QHttpHeader&);
 		QByteArray&			lastData() { return data; }
 		HTTP_FILE_TYPE		lastFileType() { return fileType; }
@@ -67,13 +67,14 @@ class Http : public QObject
 		QUrl				lastLink() const;
 		QList<Link>			links();
 		void 				sendRequestGet(QString);
-		void				setBinaryFilesExtensions(const QStringList& list);
+		void				setWantedFilenames(const QStringList& list);
 		void 				setSite(const QString&);
 
 	signals:
 		void dataReceived(unsigned howMuch, unsigned howMuchSum, unsigned percent);
 		void error(const QString&);
 		void finishedReceiving(const QString& error);
+		void notice(const QString&);
 		void size(unsigned int);
 
 	protected slots:
@@ -82,7 +83,7 @@ class Http : public QObject
 		void read(const QHttpResponseHeader&);
 
 	protected:
-		QStringList				binaryFileExtensions;
+		QStringList				wantedFilenames;
 		QByteArray				data;
 		bool					dontSendFinishedReceiving;
 		HTTP_FILE_TYPE			fileType;

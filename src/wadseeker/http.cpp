@@ -174,6 +174,7 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 		case STATUS_REDIRECT:
 			dontSendFinishedReceiving = true;
 			url = resp.value("Location");
+			emit notice( tr("Redirecting to: %1").arg(url.toString()) );
 			setSite(url.authority());
 			sendRequestGet(url.encodedPath() + url.encodedQuery());
 			break;
@@ -181,9 +182,9 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 		case STATUS_OK:
 			dontSendFinishedReceiving = false;
 
-			if (isBinaryFile(fi))
+			if (isWantedFile(fi))
 			{
-				fileType = HTTP_FILE_TYPE_BINARY;
+				fileType = HTTP_FILE_TYPE_WANTED;
 			}
 			else if (isHTMLFile(resp))
 			{
@@ -192,13 +193,16 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 			else
 			{
 				fileType = HTTP_FILE_TYPE_UNKNOWN;
-				emit (finishedReceiving(site + resource + tr(" will not be processed")));
+				emit (finishedReceiving( tr("%1 will not be processed").arg(url.toString())) );
 				return;
 			}
 
-			sizeMax = resp.contentLength();
 			sizeCur = 0;
-			emit size(sizeMax);
+			if (resp.hasContentLength())
+			{
+				sizeMax = resp.contentLength();
+				emit size(sizeMax);
+			}
 			break;
 
 		default:
@@ -208,13 +212,13 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 	}
 }
 
-bool Http::isBinaryFile(const QFileInfo& fi)
+bool Http::isWantedFile(const QFileInfo& fi)
 {
 	QStringList::iterator it;
-	QString extension = fi.suffix();
-	for (it = binaryFileExtensions.begin(); it != binaryFileExtensions.end(); ++it)
+	QString file = fi.fileName();
+	for (it = wantedFilenames.begin(); it != wantedFilenames.end(); ++it)
 	{
-		if (extension.compare(*it, Qt::CaseInsensitive) == 0)
+		if (file.compare(*it, Qt::CaseInsensitive) == 0)
 			return true;
 	}
 
@@ -383,9 +387,9 @@ void Http::sendRequestGet(QString resource)
 	qHttp.get(resource);
 }
 
-void Http::setBinaryFilesExtensions(const QStringList& list)
+void Http::setWantedFilenames(const QStringList& list)
 {
-	binaryFileExtensions = list;
+	wantedFilenames = list;
 }
 
 void Http::setSite(const QString& s)

@@ -38,6 +38,9 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 
 void WadSeekerInterface::accept()
 {
+	if (leWadName->text().isEmpty())
+		return;
+
 	teWadseekerOutput->clear();
 
 	SettingsData* setting;
@@ -46,8 +49,8 @@ void WadSeekerInterface::accept()
 	setStateDownloading();
 
 	QStringList list;
-	//list << leWadName->text();
-	list << "doom.wad" << "hexdd.wad" << "test.wad";
+	list << leWadName->text();
+	//list << "doom.wad" << "hexdd.wad" << "test.wad";
 	wadseeker.setTargetDirectory(setting->string());
 	wadseeker.seekWads(list);
 }

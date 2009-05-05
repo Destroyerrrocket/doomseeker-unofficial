@@ -93,6 +93,7 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 	protected slots:
 		void httpError(const QString&);
 		void finishedReceiving(const QString&);
+		void httpNotice(const QString&);
 		void seekWad(const QString& wad);
 		void size(unsigned int);
 		void sizeUpdate(unsigned howMuch, unsigned howMuchSum, unsigned percent);
