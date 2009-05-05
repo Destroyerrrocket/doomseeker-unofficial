@@ -33,7 +33,7 @@ QUrl Wadseeker::globalSiteLinks[] =
 
 QString Wadseeker::iwadNames[] =
 {
-	"doom", "doom2", "heretic", "hexen", "tnt", "plutonia", "hexdd", "strife", ""
+	"doom", "doom2", "heretic", "hexen", "tnt", "plutonia", "hexdd", "strife1", "voices", ""
 };
 
 Wadseeker::Wadseeker()
@@ -198,7 +198,7 @@ bool Wadseeker::isIwad(const QString& wad)
 	// Check the basename, ignore extension.
 	// This will block names like "doom2.zip" but also "doom2.pk3" and
 	// "doom2.whatever".
-	QString basename = fiWad.baseName();
+	QString basename = fiWad.completeBaseName();
 	for (int i = 0; !iwadNames[i].isEmpty(); ++i)
 	{
 		if(basename.compare(iwadNames[i], Qt::CaseInsensitive) == 0)
