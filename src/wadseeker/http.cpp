@@ -45,6 +45,8 @@ void Http::construct()
 {
 	Qt::ConnectionType ct = Qt::DirectConnection;
 
+	dontSendFinishedReceiving = false;
+
 	connect(&qHttp, SIGNAL( done(bool) ), this, SLOT( done(bool)), ct);
 	connect(&qHttp, SIGNAL( responseHeaderReceived(const QHttpResponseHeader&) ), this, SLOT( headerReceived(const QHttpResponseHeader&)), ct);
 	connect(&qHttp, SIGNAL( readyRead ( const QHttpResponseHeader& ) ), this, SLOT( read(const QHttpResponseHeader&)), ct);
@@ -123,9 +125,13 @@ void Http::done(bool error)
 	if (!dontSendFinishedReceiving)
 	{
 		if (error)
+		{
 			emit finishedReceiving(qHttp.errorString());
+		}
 		else
+		{
 			emit finishedReceiving(QString());
+		}
 	}
 	else
 	{
