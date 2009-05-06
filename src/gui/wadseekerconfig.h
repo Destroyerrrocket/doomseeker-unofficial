@@ -25,6 +25,7 @@
 
 #include "ui_wadseekerconfig.h"
 #include "gui/configBase.h"
+#include <QKeyEvent>
 
 class WadseekerConfigBox : public ConfigurationBaseBox, private Ui::WadseekerConfigBox
 {
@@ -40,6 +41,7 @@ class WadseekerConfigBox : public ConfigurationBaseBox, private Ui::WadseekerCon
 		void btnUrlAddClicked();
 		void btnUrlDefaultClicked();
 		void btnUrlRemoveClicked();
+		void focusChanged(QWidget* old, QWidget* now);
 
 	protected:
 		WadseekerConfigBox(Config*, QWidget* parent = NULL);

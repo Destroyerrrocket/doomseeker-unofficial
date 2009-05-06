@@ -120,6 +120,8 @@ bool ConfigureDlg::addConfigurationBox(QStandardItem* rootItem, ConfigurationBox
 	}
 
 	configBoxesList.push_back(cfgBox);
+	connect(cfgBox->confBox, SIGNAL( wantChangeDefaultButton(QPushButton*) ), this, SLOT( wantChangeDefaultButton(QPushButton*) ) );
+
 	return true;
 }
 // This will hide currently displayed box if NULL is passed
@@ -202,5 +204,17 @@ void ConfigureDlg::btnClicked(QAbstractButton *button)
 		case QDialogButtonBox::Cancel:
 			this->reject();
 			break;
+	}
+}
+
+void ConfigureDlg::wantChangeDefaultButton(QPushButton* button)
+{
+	if (button == NULL)
+	{
+		buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
+	}
+	else
+	{
+		button->setDefault(true);
 	}
 }

@@ -32,6 +32,17 @@ class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 {
 	Q_OBJECT
 
+	public:
+		ConfigureDlg(Config* mainCfg, QWidget* parent = NULL);
+		~ConfigureDlg();
+
+		bool addEngineConfiguration(ConfigurationBoxInfo*);
+
+	protected slots:
+		void btnClicked(QAbstractButton *button);
+		void optionListClicked(const QModelIndex&);
+		void wantChangeDefaultButton(QPushButton*);
+
 	private:
 		Config*		mainConfig;
 		// hider for debug purposes, if clicked
@@ -57,18 +68,6 @@ class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 
 		void 					showConfigurationBox(QWidget*);
 		ConfigurationBoxInfo*	findConfigurationBoxInfo(const QStandardItem*);
-
-
-
-	public:
-		ConfigureDlg(Config* mainCfg, QWidget* parent = NULL);
-		~ConfigureDlg();
-
-		bool addEngineConfiguration(ConfigurationBoxInfo*);
-
-	public slots:
-		void optionListClicked(const QModelIndex&);
-		void btnClicked(QAbstractButton *button);
 };
 
 #endif

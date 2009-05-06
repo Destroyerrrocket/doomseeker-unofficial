@@ -26,6 +26,7 @@
 
 #include "sdeapi/config.hpp"
 #include <QGroupBox>
+#include <QPushButton>
 #include <QStandardItem>
 
 
@@ -35,16 +36,6 @@
 class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 {
 	Q_OBJECT;
-
-	protected:
-		Config* 	config;
-		bool		bAllowSave;
-
-		/**
-		 * These shouldn't execute Config::readConfig() and Config::saveConfig()
-		 * methods. They're here to read settings from and write them to controls.
-		 */
-		virtual void saveSettings()=0;
 
 	public:
 		ConfigurationBaseBox(Config* cfg, QWidget* parent = NULL) : QGroupBox(parent)
@@ -78,6 +69,23 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 				return false;
 			}
 		}
+
+	signals:
+		/**
+		 * This will change default button (the one that is activated when user hits ENTER)
+		 * to 'btn'. If NULL is passed as 'btn' argument it will revert to OK button.
+		 */
+		void 		wantChangeDefaultButton(QPushButton* btn);
+
+	protected:
+		Config* 	config;
+		bool		bAllowSave;
+
+		/**
+		 * These shouldn't execute Config::readConfig() and Config::saveConfig()
+		 * methods. They're here to read settings from and write them to controls.
+		 */
+		virtual void saveSettings()=0;
 
 };
 

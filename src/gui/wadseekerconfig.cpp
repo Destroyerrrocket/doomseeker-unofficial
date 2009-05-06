@@ -37,6 +37,8 @@ WadseekerConfigBox::WadseekerConfigBox(Config* cfg, QWidget* parent) : Configura
 	connect(btnUrlAdd, SIGNAL( clicked() ), this, SLOT( btnUrlAddClicked() ) );
 	connect(btnUrlDefault, SIGNAL( clicked() ), this, SLOT( btnUrlDefaultClicked() ) );
 	connect(btnUrlRemove, SIGNAL( clicked() ), this, SLOT( btnUrlRemoveClicked() ) );
+	connect(QApplication::instance(), SIGNAL( focusChanged(QWidget*, QWidget*) ), this, SLOT( focusChanged(QWidget*, QWidget*) ));
+
 }
 
 ConfigurationBoxInfo* WadseekerConfigBox::createStructure(Config* cfg, QWidget* parent)
@@ -116,6 +118,18 @@ void WadseekerConfigBox::btnUrlRemoveClicked()
 	{
 		QModelIndex index = model->indexFromItem(itemList[i]);
 		model->removeRow(index.row());
+	}
+}
+
+void WadseekerConfigBox::focusChanged(QWidget* old, QWidget* now)
+{
+	if (now == leUrl)
+	{
+		emit wantChangeDefaultButton(btnUrlAdd);
+	}
+	else
+	{
+		emit wantChangeDefaultButton(NULL);
 	}
 }
 
