@@ -80,6 +80,12 @@ class MAIN_EXPORT Config : public QObject
 		 * not exist.
 		 */
 		SettingsData*	setting(const QString index);
+
+		/**
+		 * @return - true if setting exists in the config file, false if not
+		 */
+		bool			settingExists(const QString& index);
+
 		/**
 		 * Returns if this is an entirely new configuration file.  This can be
 		 * used to see if a first time set up wizard should be run.

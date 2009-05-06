@@ -22,13 +22,21 @@
 //------------------------------------------------------------------------------
 
 #include "gui/wadseekerconfig.h"
+#include "wadseeker/wadseeker.h"
+#include <QDebug>
 #include <QFileDialog>
+#include <QUrl>
 
 WadseekerConfigBox::WadseekerConfigBox(Config* cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
 {
 	setupUi(this);
 
+	lstUrls->setModel(new QStandardItemModel());
+
 	connect(btnBrowseTargetDirectory, SIGNAL( clicked() ), this, SLOT( btnBrowseTargetDirectoryClicked() ) );
+	connect(btnUrlAdd, SIGNAL( clicked() ), this, SLOT( btnUrlAddClicked() ) );
+	connect(btnUrlDefault, SIGNAL( clicked() ), this, SLOT( btnUrlDefaultClicked() ) );
+	connect(btnUrlRemove, SIGNAL( clicked() ), this, SLOT( btnUrlRemoveClicked() ) );
 }
 
 ConfigurationBoxInfo* WadseekerConfigBox::createStructure(Config* cfg, QWidget* parent)
@@ -45,6 +53,14 @@ void WadseekerConfigBox::readSettings()
 
 	setting = config->setting("WadseekerTargetDirectory");
 	leTargetDirectory->setText(setting->string());
+
+	setting = config->setting("WadseekerSearchURLs");
+	QStringList urlLst = setting->string().split(";");
+	QStringList::iterator it;
+	for (it = urlLst.begin(); it != urlLst.end(); ++it)
+	{
+		this->insertUrl(QUrl::fromPercentEncoding(it->toAscii()));
+	}
 }
 
 void WadseekerConfigBox::saveSettings()
@@ -53,6 +69,12 @@ void WadseekerConfigBox::saveSettings()
 
 	setting = config->setting("WadseekerTargetDirectory");
 	setting->setValue(leTargetDirectory->text());
+
+	QStringList* urlLst = this->urlListEncoded();
+	setting = config->setting("WadseekerSearchURLs");
+	setting->setValue(urlLst->join(";"));
+
+	delete urlLst;
 }
 
 void WadseekerConfigBox::btnBrowseTargetDirectoryClicked()
@@ -64,3 +86,73 @@ void WadseekerConfigBox::btnBrowseTargetDirectoryClicked()
 		leTargetDirectory->setText(strFilepath);
 }
 
+void WadseekerConfigBox::btnUrlAddClicked()
+{
+	insertUrl(leUrl->text());
+}
+
+void WadseekerConfigBox::btnUrlDefaultClicked()
+{
+	for (int i = 0; !Wadseeker::defaultSites[i].isEmpty(); ++i)
+	{
+		this->insertUrl(Wadseeker::defaultSites[i]);
+	}
+}
+
+void WadseekerConfigBox::btnUrlRemoveClicked()
+{
+	QItemSelectionModel* selModel = lstUrls->selectionModel();
+	QModelIndexList indexList = selModel->selectedIndexes();
+	selModel->clear();
+
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstUrls->model());
+	QList<QStandardItem*> itemList;
+	for (int i = 0; i < indexList.count(); ++i)
+	{
+		itemList << model->itemFromIndex(indexList[i]);
+	}
+
+	for (int i = 0; i < itemList.count(); ++i)
+	{
+		QModelIndex index = model->indexFromItem(itemList[i]);
+		model->removeRow(index.row());
+	}
+}
+
+void WadseekerConfigBox::insertUrl(const QUrl& url)
+{
+	if (url.isEmpty())
+		return;
+
+	// first we check whether the URL is already in the box.
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstUrls->model());
+	for (int i = 0; i < model->rowCount(); ++i)
+	{
+		QUrl existingUrl( model->item(i)->text() );
+		if (existingUrl == url)
+		{
+			return;
+		}
+	}
+
+	QStandardItem* it = new QStandardItem(url.toString());
+
+	it->setDragEnabled(true);
+	it->setDropEnabled(false);
+	it->setToolTip(url.toString());
+
+	model->appendRow(it);
+}
+
+QStringList* WadseekerConfigBox::urlListEncoded()
+{
+	QStringList* list = new QStringList();
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstUrls->model());
+	for (int i = 0; i < model->rowCount(); ++i)
+	{
+		QUrl existingUrl( model->item(i)->text() );
+		(*list) << QUrl::toPercentEncoding(existingUrl.toString());
+	}
+
+	return list;
+}

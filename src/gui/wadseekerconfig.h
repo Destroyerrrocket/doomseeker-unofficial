@@ -30,18 +30,23 @@ class WadseekerConfigBox : public ConfigurationBaseBox, private Ui::WadseekerCon
 {
 	Q_OBJECT
 
-	protected:
-		WadseekerConfigBox(Config*, QWidget* parent = NULL);
-
-		void saveSettings();
-
-	protected slots:
-		void btnBrowseTargetDirectoryClicked();
-
 	public:
 		static ConfigurationBoxInfo* createStructure(Config* cfg, QWidget* parent = NULL);
 
 		void readSettings();
+
+	protected slots:
+		void btnBrowseTargetDirectoryClicked();
+		void btnUrlAddClicked();
+		void btnUrlDefaultClicked();
+		void btnUrlRemoveClicked();
+
+	protected:
+		WadseekerConfigBox(Config*, QWidget* parent = NULL);
+
+		void 			saveSettings();
+		void 			insertUrl(const QUrl& url);
+		QStringList*	urlListEncoded();
 };
 
 #endif

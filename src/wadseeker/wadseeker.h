@@ -54,11 +54,17 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 	Q_OBJECT
 
 	public:
+		static QUrl			defaultSites[];
+
+		static QStringList 	defaultSitesListEncoded();
+
 		Wadseeker();
 		~Wadseeker();
 
 		void seekWads(const QStringList& wads);
-		void setCustomSite(const QUrl&);
+		void setCustomSite(const QUrl& u) { customSite = u; }
+		void setGlobalSiteLinks(const QList<QUrl>& l) { globalSiteLinks = l; }
+		void setGlobalSiteLinksToDefaults();
 		void setTargetDirectory(const QString& dir)
 		{
 			targetDirectory = dir;
@@ -68,6 +74,7 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 					targetDirectory += '/';
 			}
 		}
+
 
 	public slots:
 		void abort();
@@ -106,7 +113,6 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 			PARSE_FILE_ERROR			= 1
 		};
 
-		static QUrl						globalSiteLinks[];
 		static QString					iwadNames[];
 
 		QSet<QString>					checkedLinks;
@@ -115,6 +121,7 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 		QUrl							customSite;
 		bool							customSiteUsed;
 		QList<QUrl>	 					directLinks;
+		QList<QUrl>						globalSiteLinks;
 		Http 							http;
 		QString							seekedWad;
 		QList<QUrl> 					siteLinks;

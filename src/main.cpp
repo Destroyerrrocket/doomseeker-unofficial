@@ -28,6 +28,7 @@
 #include "gui/mainwindow.h"
 #include "main.h"
 #include "server.h"
+#include "wadseeker/wadseeker.h"
 
 PluginLoader Main::enginePlugins(MAKEID('E','N','G','N'), "./engines/");
 Config *Main::config = new Config();
@@ -41,6 +42,9 @@ int main(int argc, char* argv[])
 	// Initial settings values
 	Main::config->createSetting("QueryThreads", 50);
 	Main::config->createSetting("QueryTimeout", 5000);
+	QStringList urlList = Wadseeker::defaultSitesListEncoded();
+	Main::config->createSetting("WadseekerSearchURLs", urlList.join(";"));
+
 
 	MainWindow* mw = new MainWindow(argc, argv);
 	mw->show();

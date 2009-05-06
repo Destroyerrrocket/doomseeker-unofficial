@@ -193,7 +193,8 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 			else
 			{
 				fileType = HTTP_FILE_TYPE_UNKNOWN;
-				emit (finishedReceiving( tr("%1 will not be processed").arg(url.toString())) );
+				url = site + resource;
+				emit (finishedReceiving(tr("%1 is not expected or HTML file. Ignoring.").arg(url.toString() )) );
 				return;
 			}
 

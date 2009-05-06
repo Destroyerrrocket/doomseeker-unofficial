@@ -204,6 +204,16 @@ SettingsData* Config::setting(const QString index)
 	return data;
 }
 
+bool Config::settingExists(const QString& index)
+{
+	SettingsData *data;
+	if(!findIndex(index, data))
+	{
+		return false;
+	}
+	return true;
+}
+
 bool Config::findIndex(const QString index, SettingsData *&data)
 {
 	QHash<QString, SettingsData *>::iterator it = settings.find(index);

@@ -129,7 +129,4 @@ void FilePathsConfigBox::btnRemoveWadPath_Click()
 		QModelIndex index = model->indexFromItem(itemList[i]);
 		model->removeRow(index.row());
 	}
-
-
-
 }

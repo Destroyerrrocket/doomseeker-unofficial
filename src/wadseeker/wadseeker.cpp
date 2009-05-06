@@ -24,9 +24,10 @@
 #include "wadseeker.h"
 #include <QFileInfo>
 
-QUrl Wadseeker::globalSiteLinks[] =
+QUrl Wadseeker::defaultSites[] =
 {
 	QUrl("http://zalewa.dyndns.org/robert/wadseeker_test/test2.html"),
+	QUrl("http://zalewa.dyndns.org/robert/wadseeker_test/test3.html"),
 	QUrl("http://supergod.servegame.com/"),
 	QUrl("") // empty url is treated here like an '\0' in a string
 };
@@ -35,6 +36,16 @@ QString Wadseeker::iwadNames[] =
 {
 	"doom", "doom2", "heretic", "hexen", "tnt", "plutonia", "hexdd", "strife1", "voices", ""
 };
+
+QStringList Wadseeker::defaultSitesListEncoded()
+{
+	QStringList list;
+	for (int i = 0; !defaultSites[i].isEmpty(); ++i)
+	{
+		list << QUrl::toPercentEncoding(defaultSites[i].toString());
+	}
+	return list;
+}
 
 Wadseeker::Wadseeker()
 {
@@ -61,46 +72,45 @@ void Wadseeker::finishedReceiving(const QString& err)
 {
 	if (!err.isEmpty())
 	{
-		QString str = tr("HTTP error: %1").arg(err);
-		emit error(str, true);
-		return;
-	}
-
-	if( http.lastFileType() == Http::HTTP_FILE_TYPE_WANTED)
-	{
-		PARSE_FILE_RETURN_CODES ret = this->parseFile();
-		switch(ret)
-		{
-			case PARSE_FILE_CRITICAL_ERROR:
-				return;
-
-			case PARSE_FILE_ERROR:
-				this->nextSite();
-				break;
-
-			case PARSE_FILE_OK:
-				emit wadDone(true, seekedWad);
-				this->seekNextWad();
-				break;
-		}
-	}
-	else if ( http.lastFileType() == Http::HTTP_FILE_TYPE_HTML)
-	{
-		this->getLinks();
+		QString str = tr("HTTP Receive error: %1").arg(err);
+		emit error(str, false);
 		this->nextSite();
 	}
 	else
 	{
+		if( http.lastFileType() == Http::HTTP_FILE_TYPE_WANTED)
+		{
+			PARSE_FILE_RETURN_CODES ret = this->parseFile();
+			switch(ret)
+			{
+				case PARSE_FILE_CRITICAL_ERROR:
+					return;
 
+				case PARSE_FILE_ERROR:
+					this->nextSite();
+					break;
+
+				case PARSE_FILE_OK:
+					emit wadDone(true, seekedWad);
+					this->seekNextWad();
+					break;
+			}
+		}
+		else if ( http.lastFileType() == Http::HTTP_FILE_TYPE_HTML)
+		{
+			this->getLinks();
+			this->nextSite();
+		}
 	}
-
 }
 
 bool Wadseeker::hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link)
 {
+	QString strQuery = link.url.encodedQuery();
+
 	for (int i = 0; i < wantedFileNames.count(); ++i)
 	{
-		if (link.url.toString().contains(wantedFileNames[i], Qt::CaseInsensitive) || link.text.contains(wantedFileNames[i], Qt::CaseInsensitive) )
+		if (strQuery.contains(wantedFileNames[i], Qt::CaseInsensitive) || link.text.contains(wantedFileNames[i], Qt::CaseInsensitive) )
 		{
 			return true;
 		}
@@ -243,9 +253,9 @@ void Wadseeker::nextSite()
 
 	if (!bGotUrl)
 	{
-		url = globalSiteLinks[currentGlobalSite];
-		if (!url.isEmpty())
+		if (currentGlobalSite < globalSiteLinks.size())
 		{
+			url = globalSiteLinks[currentGlobalSite];
 			++currentGlobalSite;
 			bGotUrl = true;
 		}
@@ -406,6 +416,16 @@ void Wadseeker::seekWads(const QStringList& wads)
 
 
 	seekNextWad();
+}
+
+void Wadseeker::setGlobalSiteLinksToDefaults()
+{
+	QList<QUrl> list;
+	for (int i = 0; !defaultSites[i].isEmpty(); ++i)
+	{
+		list << defaultSites[i];
+	}
+	setGlobalSiteLinks(list);
 }
 
 void Wadseeker::size(unsigned int s)

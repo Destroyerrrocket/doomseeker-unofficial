@@ -34,6 +34,27 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 	connect(&wadseeker, SIGNAL( wadSize(unsigned int) ), this, SLOT( wadSize(unsigned int) ) );
 	connect(&wadseeker, SIGNAL( wadCurrentDownloadedSize(unsigned int, unsigned int) ), this, SLOT( wadCurrentDownloadedSize(unsigned int, unsigned int) ) );
 	setStateWaiting();
+
+	// Set site links
+	if (Main::config->settingExists("WadseekerSearchURLs"))
+	{
+		SettingsData* setting = Main::config->setting("WadseekerSearchURLs");
+		QList<QUrl> urlList;
+		QStringList strLst = setting->string().split(";");
+		QStringList::iterator it;
+		for (it = strLst.begin(); it != strLst.end(); ++it)
+		{
+			urlList << QUrl::fromPercentEncoding(it->toAscii());
+		}
+
+		wadseeker.setGlobalSiteLinks(urlList);
+	}
+	else
+	{
+		// Theoreticaly this else should never happen due to config initialization in Main.cpp.
+		// theoreticaly...
+		wadseeker.setGlobalSiteLinksToDefaults();
+	}
 }
 
 void WadSeekerInterface::accept()
