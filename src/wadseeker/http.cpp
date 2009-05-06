@@ -200,7 +200,7 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 			{
 				fileType = HTTP_FILE_TYPE_UNKNOWN;
 				url = site + resource;
-				emit (finishedReceiving(tr("%1 is not expected or HTML file. Ignoring.").arg(url.toString() )) );
+				emit (finishedReceiving(tr("%1 is neither an expected file nor a HTML file. Ignoring.").arg(url.toString() )) );
 				return;
 			}
 

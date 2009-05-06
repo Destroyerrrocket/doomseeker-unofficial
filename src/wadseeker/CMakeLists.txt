@@ -7,13 +7,19 @@ if(WIN32)
 endif(WIN32)
 
 find_package(Qt4 REQUIRED)
+find_package(ZLIB)
+
 include(${QT_USE_FILE})
+include_directories(${ZLIB_INCLUDE_DIR})
 set(WADSEEKER_QT_FILES
+  zip/unzip.h
 	http.h
 	link.h
 	wadseeker.h
 )
+
 set(WADSEEKER_FILES
+  zip/unzip.cpp
   http.cpp
 	link.cpp  
   wadseeker.cpp

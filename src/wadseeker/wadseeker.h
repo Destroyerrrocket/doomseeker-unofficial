@@ -25,6 +25,7 @@
 
 #include "global.h"
 #include "http.h"
+#include "zip/unzip.h"
 #include <QDir>
 #include <QObject>
 #include <QUrl>
@@ -75,6 +76,8 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 			}
 		}
 
+		void zipTest();
+
 
 	public slots:
 		void abort();
@@ -104,6 +107,7 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 		void seekWad(const QString& wad);
 		void size(unsigned int);
 		void sizeUpdate(unsigned howMuch, unsigned howMuchSum, unsigned percent);
+		void zipError(const QString&);
 
 	protected:
 		enum PARSE_FILE_RETURN_CODES

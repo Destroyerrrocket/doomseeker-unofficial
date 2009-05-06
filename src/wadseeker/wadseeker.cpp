@@ -160,7 +160,7 @@ void Wadseeker::getLinks()
 				if (strUrl[strUrl.length() - 1] != '/')
 					strUrl += '/';
 
-				for (int i = 0; i < path.length() - 1; ++i)
+				for (int i = 0; i < path.size() - 1; ++i)
 				{
 					if (!path[i].isEmpty())
 					{
@@ -387,6 +387,7 @@ void Wadseeker::seekWad(const QString& wad)
 
 void Wadseeker::seekWads(const QStringList& wads)
 {
+//	zipTest();
 	wadnames = wads;
 	currentWad = wadnames.begin();
 
@@ -436,4 +437,23 @@ void Wadseeker::size(unsigned int s)
 void Wadseeker::sizeUpdate(unsigned howMuch, unsigned howMuchSum, unsigned percent)
 {
 	emit wadCurrentDownloadedSize(howMuchSum, percent);
+}
+
+void Wadseeker::zipError(const QString& str)
+{
+	emit error(tr("UnZip error: %1").arg(str), false);
+}
+
+void Wadseeker::zipTest()
+{
+	UnZip unzip("/home/robert/Smieci/arch.zip");
+	connect (&unzip, SIGNAL( error(const QString&) ), this, SLOT( zipError(const QString&) ) );
+	QList<ZipLocalFileHeader> headers = unzip.allDataHeaders();
+	QList<ZipLocalFileHeader>::iterator it;
+	for (it = headers.begin(); it != headers.end(); ++it)
+	{
+		qDebug() << "versionNeededToExtract=" << it->versionNeededToExtract << ", generalPurposeBitFlag=" << it->generalPurposeBitFlag << ", compressionMethod=" << it->compressionMethod << ", lastModFileTime=" << it->lastModFileTime << ", lastModFileDate=" << it->lastModFileDate << ", crc32=" << it->crc32 << ", compressedSize=" << it->compressedSize << ", uncompressedSize=" << it->uncompressedSize << ", fileNameLength=" << it->fileNameLength << ", extraFieldLength" << it->extraFieldLength
+				<< ", fileName=" << it->fileName << ", extraField=" << it->extraField;
+		qDebug() << "";
+	}
 }
