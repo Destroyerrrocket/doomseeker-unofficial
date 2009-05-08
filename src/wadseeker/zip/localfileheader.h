@@ -23,7 +23,8 @@
 #ifndef __LOCALFILEHEADER_H_
 #define __LOCALFILEHEADER_H_
 
-#include <QObject>
+#include <QByteArray>
+#include <QString>
 #include "global.h"
 
 #define LOCAL_FILE_HEADER_SIGNATURE 0x04034b50
@@ -32,35 +33,33 @@
 
 struct ZipLocalFileHeader
 {
+	enum HeaderError
+	{
+		HE_NO_ERROR 				= 0,
+		HE_CORRUPTED				= 1,
+		HE_NOT_LOCAL_FILE_HEADER 	= 2
+	};
+
 	ZipLocalFileHeader()
 	{
 		localFileHeaderSignature = 0;
-		fileName = NULL;
-		extraField = NULL;
 	}
 
 	ZipLocalFileHeader(const ZipLocalFileHeader& copyin)
 	{
 		localFileHeaderSignature = 0;
-		fileName = NULL;
-		extraField = NULL;
 
 		copy(copyin);
 	}
 
 	~ZipLocalFileHeader()
 	{
-		if (fileName != NULL)
-			delete [] fileName;
-
-		if (extraField != NULL)
-			delete [] extraField;
 	}
 
 	/**
 	 * Calculated depending on below variables.
 	 */
-	unsigned long	fileEntrySize()
+	unsigned long	fileEntrySize() const
 	{
 		long dataDescriptorSize = 0;
 		if (generalPurposeBitFlag & DESCRIPTOR_EXISTS_FLAG == DESCRIPTOR_EXISTS_FLAG)
@@ -79,20 +78,25 @@ struct ZipLocalFileHeader
 	 * If given data is not a local file header it will also return false but localFileHeaderSignature
 	 * will be set to other value.
 	 */
-	bool			fromByteArray(const char* data, unsigned long dataSize)
+	int				fromByteArray(const QByteArray& array)
 	{
+		const char* data = array.constData();
+
 		localFileHeaderSignature = 0;
 
-		if (data == NULL)
-			return false;
+		if (array.size() < 4)
+			return HE_NOT_LOCAL_FILE_HEADER;
 
-		if (dataSize >= 4)
-			localFileHeaderSignature 	= READINT32(data);
-		else
-			return false;
+		localFileHeaderSignature 	= READINT32(data);
 
-		if (dataSize != 30 || localFileHeaderSignature != LOCAL_FILE_HEADER_SIGNATURE)
-			return false;
+		if (localFileHeaderSignature != LOCAL_FILE_HEADER_SIGNATURE)
+			return HE_NOT_LOCAL_FILE_HEADER;
+
+		// The header is correct but the data size is not enough.
+		if (array.size() != 30)
+		{
+			return HE_CORRUPTED;
+		}
 
 		versionNeededToExtract 		= READINT16(&data[4]);
 		generalPurposeBitFlag		= READINT16(&data[6]);
@@ -105,10 +109,10 @@ struct ZipLocalFileHeader
 		fileNameLength				= READINT16(&data[26]);
 		extraFieldLength			= READINT16(&data[28]);
 
-		return true;
+		return HE_NO_ERROR;
 	}
 
-	unsigned long	howManyBytesTillData()
+	unsigned long	howManyBytesTillData() const
 	{
 		return ZIP_LOCAL_FILE_HEADER_SIZE + fileNameLength + extraFieldLength;
 	}
@@ -134,14 +138,16 @@ struct ZipLocalFileHeader
     unsigned short	fileNameLength;
 	unsigned short	extraFieldLength;
 
-    char*			fileName;
-    char*			extraField;
+    QString			fileName;
+    QByteArray		extraField;
     /* END OF ZIP FILE FORMAT DESCRIPTION */
 
-    /**
-     * Position in the ZIP file at which the data begins.
+	/**
+     * Position in the ZIP file at which the header begins.
+     * Data position can be calculated from this using
+     * howManyBytesTillData() method.
      */
-    unsigned long 	dataPosition;
+	unsigned long 	headerPosition;
 
     protected:
 		void copy(const ZipLocalFileHeader& o)
@@ -158,17 +164,10 @@ struct ZipLocalFileHeader
 			fileNameLength = o.fileNameLength;
 			extraFieldLength = o.extraFieldLength;
 
-			if (fileName != NULL)
-				delete [] fileName;
+			fileName = o.fileName;
+			extraField = o.extraField;
 
-			fileName = new char[fileNameLength + 1];
-			strcpy(fileName, o.fileName);
-
-			if (extraField != NULL)
-				delete [] extraField;
-
-			extraField = new char[extraFieldLength];
-			memcpy(extraField, o.extraField, extraFieldLength);
+			headerPosition = o.headerPosition;
 		}
 };
 

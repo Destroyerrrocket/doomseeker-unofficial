@@ -76,9 +76,6 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 			}
 		}
 
-		void zipTest();
-
-
 	public slots:
 		void abort();
 
@@ -108,6 +105,7 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 		void size(unsigned int);
 		void sizeUpdate(unsigned howMuch, unsigned howMuchSum, unsigned percent);
 		void zipError(const QString&);
+		void zipNotice(const QString&);
 
 	protected:
 		enum PARSE_FILE_RETURN_CODES
@@ -147,6 +145,7 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 		 * Returns OK if wad file was installed properly and CRITICAL_ERROR if Wadseeker should stop
 		 */
 		PARSE_FILE_RETURN_CODES			parseFile();
+		PARSE_FILE_RETURN_CODES 		parseZipFile();
 		void 							seekNextWad();
 
 };

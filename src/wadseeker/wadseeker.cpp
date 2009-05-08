@@ -23,6 +23,7 @@
 
 #include "wadseeker.h"
 #include <QFileInfo>
+#include <QTemporaryFile>
 
 QUrl Wadseeker::defaultSites[] =
 {
@@ -321,16 +322,65 @@ Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::parseFile()
 	}
 	else if (fi.suffix().compare("zip", Qt::CaseInsensitive) == 0)
 	{
-		emit error(tr("Extracting zip files not yet supported: %1").arg(seekedWad) , false);
-		return PARSE_FILE_ERROR;
+		return parseZipFile();
 	}
 	else
 	{
 		emit error(tr("File %1 failed (on site %2)").arg(seekedWad, http.lastLink().toString()) , false);
 		return PARSE_FILE_ERROR;
 	}
+}
 
+Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::parseZipFile()
+{
+	QFileInfo fi(http.lastLink().path());
+	QString filename = fi.fileName();
+	QString path = this->targetDirectory + seekedWad;
+	QByteArray& data = http.lastData();
 
+	// Open temporary file
+	QTemporaryFile tempFile;
+
+	tempFile.open();
+	QString tempFileName = tempFile.fileName();
+
+	QFileInfo fiTemp(tempFileName);
+	if (!fiTemp.exists())
+	{
+		emit error(tr("Couldn't create temporary file to unzip \"%1\".").arg(filename), false);
+		return PARSE_FILE_ERROR;
+	}
+
+	tempFile.setAutoRemove(false);
+	tempFile.write(data);
+	tempFile.close();
+
+	// Unzip temporary file
+	UnZip unzip(tempFileName);
+	if (!unzip.isValid())
+	{
+		emit error(tr("Couldn't open \"%1\" to unzip \"%2\".").arg(tempFileName, filename), false);
+		tempFile.remove();
+		return PARSE_FILE_ERROR;
+	}
+
+	connect (&unzip, SIGNAL( error(const QString&) ), this, SLOT( zipError(const QString&) ) );
+	connect (&unzip, SIGNAL( notice(const QString&) ), this, SLOT( zipNotice(const QString&) ) );
+	ZipLocalFileHeader* zip = unzip.findFileEntry(seekedWad);
+	if (zip != NULL)
+	{
+		unzip.extract(*zip, path);
+		delete zip;
+	}
+	else
+	{
+		emit error(tr("File \"%1\" not found in \"%2\"").arg(seekedWad, filename), false);
+		tempFile.remove();
+		return PARSE_FILE_ERROR;
+	}
+
+	tempFile.remove();
+	return PARSE_FILE_OK;
 }
 
 void Wadseeker::seekNextWad()
@@ -387,7 +437,6 @@ void Wadseeker::seekWad(const QString& wad)
 
 void Wadseeker::seekWads(const QStringList& wads)
 {
-//	zipTest();
 	wadnames = wads;
 	currentWad = wadnames.begin();
 
@@ -444,16 +493,7 @@ void Wadseeker::zipError(const QString& str)
 	emit error(tr("UnZip error: %1").arg(str), false);
 }
 
-void Wadseeker::zipTest()
+void Wadseeker::zipNotice(const QString& str)
 {
-	UnZip unzip("/home/robert/Smieci/arch.zip");
-	connect (&unzip, SIGNAL( error(const QString&) ), this, SLOT( zipError(const QString&) ) );
-	QList<ZipLocalFileHeader> headers = unzip.allDataHeaders();
-	QList<ZipLocalFileHeader>::iterator it;
-	for (it = headers.begin(); it != headers.end(); ++it)
-	{
-		qDebug() << "versionNeededToExtract=" << it->versionNeededToExtract << ", generalPurposeBitFlag=" << it->generalPurposeBitFlag << ", compressionMethod=" << it->compressionMethod << ", lastModFileTime=" << it->lastModFileTime << ", lastModFileDate=" << it->lastModFileDate << ", crc32=" << it->crc32 << ", compressedSize=" << it->compressedSize << ", uncompressedSize=" << it->uncompressedSize << ", fileNameLength=" << it->fileNameLength << ", extraFieldLength" << it->extraFieldLength
-				<< ", fileName=" << it->fileName << ", extraField=" << it->extraField;
-		qDebug() << "";
-	}
+	emit notice(tr("UnZip: %1").arg(str));
 }

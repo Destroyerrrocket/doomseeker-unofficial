@@ -25,10 +25,8 @@
 
 #include "localfileheader.h"
 #include <QFile>
+#include <QFileInfo>
 #include <QObject>
-
-#define UNSIGNED_MINUS_ONE static_cast<unsigned long>(-1)
-
 
 class UnZip : public QObject
 {
@@ -41,20 +39,33 @@ class UnZip : public QObject
 		 * @return all data headers found in the zip file
 		 */
 		QList<ZipLocalFileHeader> 	allDataHeaders();
+
+		bool						extract(const ZipLocalFileHeader& header, const QString& where);
+
 		/**
 		 * @return position of file entry in the zip file,
 		 *	beginning from local file header signature (see: localfileheader.h)
-		 *	if entry is not found the value is UNSIGNED_MINUS_ONE
 		 */
-		unsigned long				findFileEntry(const QString& entryName);
+		ZipLocalFileHeader*			findFileEntry(const QString& entryName);
+
+		/**
+		 * @return true if the zipFile is a valid file.
+		 */
+		bool	isValid()
+		{
+			QFileInfo fi(zipFile);
+			return (fi.exists() && !fi.isDir());
+		}
 
 	signals:
 		void error(const QString&);
+		void notice(const QString&);
 
 	protected:
 		QFile		zipFile;
 
-		bool		readHeader(QFile& zipFile, qint64 pos, ZipLocalFileHeader& zip);
+		int			readHeader(QFile& zipFile, qint64 pos, ZipLocalFileHeader& zip);
+		int			uncompress(char* out, unsigned long uncompressedSize, const QByteArray& inArray);
 };
 
 #endif
