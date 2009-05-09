@@ -24,6 +24,7 @@
 #include "gui/aboutDlg.h"
 #include "gui/mainwindow.h"
 #include "gui/configureDlg.h"
+#include "gui/dockBuddiesList.h"
 #include "gui/dockserverinfo.h"
 #include "gui/wadseekerinterface.h"
 #include "pathfinder.h"
@@ -35,7 +36,7 @@
 #include <QHeaderView>
 #include <QMessageBox>
 
-MainWindow::MainWindow(int argc, char** argv) : mc(NULL)
+MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 {
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
@@ -64,6 +65,7 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL)
 	connect(btnGetServers, SIGNAL( clicked() ), this, SLOT( btnGetServers_Click() ));
 	connect(btnRefreshAll, SIGNAL( clicked() ), serverTableHandler, SLOT( refreshAll() ));
 	connect(menuActionAbout, SIGNAL( triggered() ), this, SLOT( menuHelpAbout() ));
+	connect(menuActionBuddies, SIGNAL( triggered() ), this, SLOT( menuBuddies() ));
 	connect(menuActionConfigure, SIGNAL( triggered() ), this, SLOT( menuOptionsConfigure() ));
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( close() ));
 	connect(menuActionServerInfo, SIGNAL( triggered() ), this, SLOT( menuServerInfo() ));
@@ -119,6 +121,26 @@ void MainWindow::enablePort()
 	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
 	{
 		mc->enableMaster(i, queryMenuPorts[i]->isChecked());
+	}
+}
+
+void MainWindow::menuBuddies()
+{
+	if (buddiesList == NULL)
+	{
+		buddiesList = new DockBuddiesList(this);
+		buddiesList->scan(mc);
+		this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
+
+		menuActionBuddies->setChecked(true);
+	}
+	else
+	{
+		if (buddiesList->isVisible())
+			buddiesList->hide();
+		else
+			buddiesList->show();
+		menuActionBuddies->setChecked(buddiesList->isVisible());
 	}
 }
 

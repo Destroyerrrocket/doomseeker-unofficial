@@ -23,8 +23,6 @@
 #ifndef __SERVER_LIST_MODEL_H_
 #define __SERVER_LIST_MODEL_H_
 
-#define HOW_MANY_SERVERLIST_COLUMNS 11
-
 #include <QHostAddress>
 #include <QStandardItem>
 #include <QStandardItemModel>
@@ -49,17 +47,19 @@ class ServerListModel : public QStandardItemModel
 	public:
 		enum ColumnId
 		{
-			SLCID_PORT = 0,
-			SLCID_PLAYERS = 1,
-			SLCID_PING = 2,
-			SLCID_SERVERNAME = 3,
-			SLCID_ADDRESS = 4,
-			SLCID_IWAD = 5,
-			SLCID_MAP = 6,
-			SLCID_WADS = 7,
-			SLCID_GAMETYPE = 8,
-			SLCID_HIDDEN_GROUP = 9,
-			SLCID_HIDDEN_SERVER_POINTER = 10
+			SLCID_PORT,
+			SLCID_PLAYERS,
+			SLCID_PING,
+			SLCID_SERVERNAME,
+			SLCID_ADDRESS,
+			SLCID_IWAD,
+			SLCID_MAP,
+			SLCID_WADS,
+			SLCID_GAMETYPE,
+			SLCID_HIDDEN_GROUP,
+			SLCID_HIDDEN_SERVER_POINTER,
+
+			HOW_MANY_SERVERLIST_COLUMNS
 		};
 
 		/**

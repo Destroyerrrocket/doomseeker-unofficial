@@ -225,7 +225,7 @@ void SLHandler::prepareServerTable()
 	table->setModel(model);
 
 	// Now set column widths and other properties
-	for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
+	for (int i = 0; i < ServerListModel::HOW_MANY_SERVERLIST_COLUMNS; ++i)
 	{
 		ServerListColumn* columns = ServerListModel::columns;
 		table->setColumnWidth(i, columns[i].width);

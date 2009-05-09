@@ -28,6 +28,7 @@
 #include "masterclient.h"
 #include "sdeapi/config.hpp"
 #include "sdeapi/pluginloader.hpp"
+#include "gui/dockBuddiesList.h"
 #include "gui/dockserverinfo.h"
 #include "gui/serverlist.h"
 #include "ui_mainwindow.h"
@@ -48,6 +49,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void checkRefreshFinished();
 		void btnGetServers_Click();
 		void enablePort();
+		void menuBuddies();
 		void menuHelpAbout();
 		void menuOptionsConfigure();
 		void menuServerInfo();
@@ -56,6 +58,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void updateServerInfo(QList<Server*>&);
 
 	private:
+		DockBuddiesList*	buddiesList;
 		DockServerInfo*		serverInfo;
 		SLHandler*			serverTableHandler;
 
