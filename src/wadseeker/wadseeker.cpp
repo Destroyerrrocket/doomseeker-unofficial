@@ -76,7 +76,8 @@ void Wadseeker::finishedReceiving(const QByteArray& data)
 	PARSE_FILE_RETURN_CODES ret = this->parseFile(data);
 	switch(ret)
 	{
-		case PARSE_FILE_CRITICAL_ERROR:
+		case PARSE_FILE_CRITICAL_ERROR: // this should never happen
+			emit error(tr("Critical error encountered while parsing data"), true);
 			return;
 
 		case PARSE_FILE_ERROR:
@@ -303,6 +304,7 @@ Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::unzipFile(const QString& zipFileNa
 	connect (&unzip, SIGNAL( error(const QString&) ), this, SLOT( zipError(const QString&) ) );
 	connect (&unzip, SIGNAL( notice(const QString&) ), this, SLOT( zipNotice(const QString&) ) );
 	ZipLocalFileHeader* zip = unzip.findFileEntry(seekedWad);
+
 	if (zip != NULL)
 	{
 		unzip.extract(*zip, targetPath);
@@ -313,6 +315,8 @@ Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::unzipFile(const QString& zipFileNa
 		emit error(tr("File \"%1\" not found in \"%2\"").arg(seekedWad, displayFileName), false);
 		return PARSE_FILE_ERROR;
 	}
+
+	return PARSE_FILE_OK;
 }
 
 void Wadseeker::wwwError(const QString& errorString)
