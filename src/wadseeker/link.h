@@ -23,16 +23,15 @@
 #ifndef __LINK_H_
 #define __LINK_H_
 
-#include <Qt>
 #include <QUrl>
 
 struct Link
 {
+
 	QUrl 		url;
 	QString 	text;
 
 	bool 		pathEndsWith(const QStringList& ends);
-	bool		isHttpLink();
 	/**
 	 *	@param comparePage		- if not empty checks if URL refers to the same host as this param
 	 *	@return true if URL points to another server

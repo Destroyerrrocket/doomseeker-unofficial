@@ -24,8 +24,8 @@
 #define __WADSEEKER_H_
 
 #include "global.h"
-#include "http.h"
 #include "zip/unzip.h"
+#include "www.h"
 #include <QDir>
 #include <QObject>
 #include <QUrl>
@@ -50,23 +50,28 @@
  *		b)
  *			Http::error signal is received. Proceed to nextSite() (4).
  */
+
 class PLUGIN_EXPORT Wadseeker : public QObject
 {
 	Q_OBJECT
 
 	public:
-		static QUrl			defaultSites[];
+		static QString		defaultSites[];
 
 		static QStringList 	defaultSitesListEncoded();
 
 		Wadseeker();
 		~Wadseeker();
 
-		void seekWads(const QStringList& wads);
-		void setCustomSite(const QUrl& u) { customSite = u; }
-		void setGlobalSiteLinks(const QList<QUrl>& l) { globalSiteLinks = l; }
-		void setGlobalSiteLinksToDefaults();
-		void setTargetDirectory(const QString& dir)
+		bool 				areAllWadsFound() const { return notFoundWads.isEmpty(); }
+
+		const QStringList&	notFoundWadsList() const { return notFoundWads; }
+
+		void 				seekWads(const QStringList& wads);
+		void 				setCustomSite(const QUrl& u) { www.setCustomSite(u); }
+		void 				setGlobalSiteLinks(const QStringList& l) { www.setGlobalSiteLinks(l); }
+		void	 			setGlobalSiteLinksToDefaults();
+		void				setTargetDirectory(const QString& dir)
 		{
 			targetDirectory = dir;
 			if (!dir.isEmpty())
@@ -92,18 +97,21 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 		 * Emitted when Wadseeker wants to notify "the world" about
 		 * how it's performing.
 		 */
+
 		void notice(const QString&);
 		void wadDone(bool bFound, const QString& wadname);
 		void wadSize(unsigned int);
 		void wadCurrentDownloadedSize(unsigned int howMuchSum, unsigned int percent);
 
 	protected slots:
-		void httpError(const QString&);
-		void finishedReceiving(const QString&);
-		void httpNotice(const QString&);
+		void finishedReceiving(const QByteArray&);
 		void seekWad(const QString& wad);
 		void size(unsigned int);
 		void sizeUpdate(unsigned howMuch, unsigned howMuchSum, unsigned percent);
+		void wadDoneSlot(bool bFound, const QString& wadname);
+		void wwwError(const QString&);
+		void wwwNoMoreSites();
+		void wwwNotice(const QString&);
 		void zipError(const QString&);
 		void zipNotice(const QString&);
 
@@ -117,36 +125,27 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 
 		static QString					iwadNames[];
 
-		QSet<QString>					checkedLinks;
-		int								currentGlobalSite;
+		bool							bAutomaticCloseOnSuccess;
+
 		QStringList::const_iterator 	currentWad;
-		QUrl							customSite;
-		bool							customSiteUsed;
-		QList<QUrl>	 					directLinks;
-		QList<QUrl>						globalSiteLinks;
-		Http 							http;
+		QStringList						notFoundWads;
 		QString							seekedWad;
-		QList<QUrl> 					siteLinks;
 		QString							targetDirectory;
 		QUrl							url;
 		QStringList						wadnames;
+		WWW								www;
 
-		/**
-		 * Retrievies links from HTML file.
-		 */
-		void							getLinks();
-		bool							hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link);
-		bool							isDirectLinkToFile(const QStringList& wantedFileNames, const QUrl& link);
 		bool							isIwad(const QString&);
-		void							nextSite();
+
 		QString							nextWadName();
 
 		/**
 		 * Returns OK if wad file was installed properly and CRITICAL_ERROR if Wadseeker should stop
 		 */
-		PARSE_FILE_RETURN_CODES			parseFile();
-		PARSE_FILE_RETURN_CODES 		parseZipFile();
+		PARSE_FILE_RETURN_CODES			parseFile(const QByteArray&);
+		PARSE_FILE_RETURN_CODES 		parseZipFile(const QByteArray&);
 		void 							seekNextWad();
+		PARSE_FILE_RETURN_CODES			unzipFile(const QString& zipFileName, const QString& displayFileName, const QString& targetPath);
 
 };
 

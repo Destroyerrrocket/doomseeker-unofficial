@@ -26,12 +26,20 @@
 #include "ui_wadseekerinterface.h"
 #include "wadseeker/wadseeker.h"
 
+/**
+ * This dialog box returns 'Accepted' result ONLY when
+ * automaticCloseOnSuccess is set to true and when
+ * it succeedes finding all wads.
+ */
 class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 {
 	Q_OBJECT
 
 	public:
 		WadSeekerInterface(QWidget* parent = NULL);
+
+		bool 			automaticCloseOnSuccess() const { return bAutomaticCloseOnSuccess; }
+		bool 			setAutomaticCloseOnSuccess(bool b) { bAutomaticCloseOnSuccess = b; }
 
 	public slots:
 		virtual void 	accept();
@@ -50,6 +58,13 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 			WAITING			= 1
 		};
 
+		/**
+		 * If this flag is set the dialog box will automatically shut itself
+		 * down with 'Accepted' result when all seeked files are found.
+		 * If anything is not found the behavior will be default + this
+		 * flag will be set to false.
+		 */
+		bool 			bAutomaticCloseOnSuccess;
 		STATES			state;
 		Wadseeker 		wadseeker;
 

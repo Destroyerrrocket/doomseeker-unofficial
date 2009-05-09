@@ -12,17 +12,23 @@ find_package(ZLIB)
 include(${QT_USE_FILE})
 include_directories(${ZLIB_INCLUDE_DIR})
 set(WADSEEKER_QT_FILES
+  protocols/ftp.h
+  protocols/http.h
+  protocols/protocol.h
   zip/unzip.h
-	http.h
-	link.h
+  link.h
 	wadseeker.h
+  www.h
 )
 
 set(WADSEEKER_FILES
+  protocols/ftp.cpp
+  protocols/http.cpp
+  protocols/protocol.cpp
   zip/unzip.cpp
-  http.cpp
-	link.cpp  
+	link.cpp
   wadseeker.cpp
+  www.cpp
 )
 
 include_directories(${QT_INCLUDES})

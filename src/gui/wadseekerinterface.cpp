@@ -35,11 +35,13 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 	connect(&wadseeker, SIGNAL( wadCurrentDownloadedSize(unsigned int, unsigned int) ), this, SLOT( wadCurrentDownloadedSize(unsigned int, unsigned int) ) );
 	setStateWaiting();
 
+	this->bAutomaticCloseOnSuccess = false;
+
 	// Set site links
 	if (Main::config->settingExists("WadseekerSearchURLs"))
 	{
 		SettingsData* setting = Main::config->setting("WadseekerSearchURLs");
-		QList<QUrl> urlList;
+		QStringList urlList;
 		QStringList strLst = setting->string().split(";");
 		QStringList::iterator it;
 		for (it = strLst.begin(); it != strLst.end(); ++it)
@@ -80,6 +82,22 @@ void WadSeekerInterface::allDone()
 {
 	teWadseekerOutput->append(tr("All done."));
 	setStateWaiting();
+	if (wadseeker.areAllWadsFound())
+	{
+		teWadseekerOutput->append(tr("SUCCESS!"));
+		if (bAutomaticCloseOnSuccess)
+		{
+			this->done(Accepted);
+		}
+	}
+	else
+	{
+		bAutomaticCloseOnSuccess = false;
+		const QStringList& notFoundWads = wadseeker.notFoundWadsList();
+		QString nfwStr = tr("Following files were not found: %1").arg(notFoundWads.join(" "));
+		teWadseekerOutput->append(nfwStr);
+		teWadseekerOutput->append(tr("FAIL!"));
+	}
 }
 
 void WadSeekerInterface::error(const QString& err, bool bIsCritical)

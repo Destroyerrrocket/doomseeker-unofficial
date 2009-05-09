@@ -39,15 +39,6 @@ bool Link::pathEndsWith(const QStringList& ends)
 	return false;
 }
 
-bool Link::isHttpLink()
-{
-	const QString& scheme = url.scheme();
-	if(scheme.isEmpty() || scheme.compare("http", Qt::CaseInsensitive) == 0)
-		return true;
-
-	return false;
-}
-
 /**
  *	@param comparePage		- if not empty checks if URL refers to the same host as this param
  *	@return true if URL points to another server

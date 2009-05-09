@@ -25,12 +25,14 @@
 #include <QFileInfo>
 #include <QTemporaryFile>
 
-QUrl Wadseeker::defaultSites[] =
+QString Wadseeker::defaultSites[] =
 {
-	QUrl("http://zalewa.dyndns.org/robert/wadseeker_test/test2.html"),
-	QUrl("http://zalewa.dyndns.org/robert/wadseeker_test/test3.html"),
-	QUrl("http://supergod.servegame.com/"),
-	QUrl("") // empty url is treated here like an '\0' in a string
+	QString("http://raider.dnsalias.com:8001/doom/userwads/"),
+	QString("http://doom.dogsoft.net/getwad.php?search=%WADNAME%"),
+	QString("http://hs.keystone.gr/lap/"),
+	QString("http://www.rarefiles.com/download/"),
+	QString("http://supergod.servegame.com/"),
+	QString("") // empty url is treated here like an '\0' in a string
 };
 
 QString Wadseeker::iwadNames[] =
@@ -43,21 +45,21 @@ QStringList Wadseeker::defaultSitesListEncoded()
 	QStringList list;
 	for (int i = 0; !defaultSites[i].isEmpty(); ++i)
 	{
-		list << QUrl::toPercentEncoding(defaultSites[i].toString());
+		list << QUrl::toPercentEncoding(defaultSites[i]);
 	}
 	return list;
 }
 
 Wadseeker::Wadseeker()
 {
-	currentGlobalSite = 0;
+	connect(&www, SIGNAL( dataReceived(unsigned, unsigned, unsigned) ), this, SLOT( sizeUpdate(unsigned, unsigned, unsigned) ) );
+	connect(&www, SIGNAL( error(const QString&) ), this, SLOT( wwwError(const QString&) ) );
+	connect(&www, SIGNAL( finishedReceiving(const QByteArray&) ), this, SLOT( finishedReceiving(const QByteArray&) ) );
+	connect(&www, SIGNAL( notice(const QString&) ), this, SLOT( wwwNotice(const QString&) ) );
+	connect(&www, SIGNAL( noMoreSites() ), this, SLOT( wwwNoMoreSites() ) );
+	connect(&www, SIGNAL( size(unsigned int) ), this, SLOT( size(unsigned int) ) );
 
-	connect(&http, SIGNAL( dataReceived(unsigned, unsigned, unsigned) ), this, SLOT( sizeUpdate(unsigned, unsigned, unsigned) ) );
-	connect(&http, SIGNAL( error(const QString&) ), this, SLOT( httpError(const QString&) ) );
-	connect(&http, SIGNAL( finishedReceiving(const QString&) ), this, SLOT( finishedReceiving(const QString&) ) );
-	connect(&http, SIGNAL( notice(const QString&) ), this, SLOT( httpNotice(const QString&) ) );
-	connect(&http, SIGNAL( size(unsigned int) ), this, SLOT( size(unsigned int) ) );
-	//connect(this, SIGNAL( wadDone(bool, const QString&) ), this, SLOT( seekNextWad(bool, const QString&) ) );
+	connect(this, SIGNAL( wadDone(bool, const QString&) ), this, SLOT( wadDoneSlot(bool, const QString&) ));
 }
 
 Wadseeker::~Wadseeker()
@@ -66,141 +68,26 @@ Wadseeker::~Wadseeker()
 
 void Wadseeker::abort()
 {
-	http.abort();
+	www.abort();
 }
 
-void Wadseeker::finishedReceiving(const QString& err)
+void Wadseeker::finishedReceiving(const QByteArray& data)
 {
-	if (!err.isEmpty())
+	PARSE_FILE_RETURN_CODES ret = this->parseFile(data);
+	switch(ret)
 	{
-		QString str = tr("HTTP Receive error: %1").arg(err);
-		emit error(str, false);
-		this->nextSite();
+		case PARSE_FILE_CRITICAL_ERROR:
+			return;
+
+		case PARSE_FILE_ERROR:
+			www.nextSite();
+			break;
+
+		case PARSE_FILE_OK:
+			emit wadDone(true, seekedWad);
+			this->seekNextWad();
+			break;
 	}
-	else
-	{
-		if( http.lastFileType() == Http::HTTP_FILE_TYPE_WANTED)
-		{
-			PARSE_FILE_RETURN_CODES ret = this->parseFile();
-			switch(ret)
-			{
-				case PARSE_FILE_CRITICAL_ERROR:
-					return;
-
-				case PARSE_FILE_ERROR:
-					this->nextSite();
-					break;
-
-				case PARSE_FILE_OK:
-					emit wadDone(true, seekedWad);
-					this->seekNextWad();
-					break;
-			}
-		}
-		else if ( http.lastFileType() == Http::HTTP_FILE_TYPE_HTML)
-		{
-			this->getLinks();
-			this->nextSite();
-		}
-	}
-}
-
-bool Wadseeker::hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link)
-{
-	QString strQuery = link.url.encodedQuery();
-
-	for (int i = 0; i < wantedFileNames.count(); ++i)
-	{
-		if (strQuery.contains(wantedFileNames[i], Qt::CaseInsensitive) || link.text.contains(wantedFileNames[i], Qt::CaseInsensitive) )
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void Wadseeker::httpError(const QString& errorString)
-{
-	QString str = tr("HTTP error: %1").arg(errorString);
-	emit error(str, false);
-	nextSite();
-}
-
-void Wadseeker::httpNotice(const QString& string)
-{
-	QString str = tr("HTTP notice: %1").arg(string);
-	emit notice(str);
-}
-
-void Wadseeker::getLinks()
-{
-	QFileInfo fi(seekedWad);
-	QString extension = fi.suffix();
-
-	QStringList wantedFileNames;
-	wantedFileNames << fi.completeBaseName() + ".zip";
-	if (extension.compare("zip", Qt::CaseInsensitive) != 0)
-	{
-		wantedFileNames << fi.fileName();
-	}
-
-	QList<Link> list = http.links();
-	QList<Link>::iterator it;
-
-	for (it = list.begin(); it != list.end(); ++it)
-	{
-		if (it->isHttpLink())
-		{
-			QString strUrl;
-			if (it->url.authority().isEmpty())
-			{
-				QList<QByteArray> path = url.encodedPath().split('/');
-
-				strUrl = "http://" + url.authority();
-				if (strUrl[strUrl.length() - 1] != '/')
-					strUrl += '/';
-
-				for (int i = 0; i < path.size() - 1; ++i)
-				{
-					if (!path[i].isEmpty())
-					{
-						strUrl += path[i] + '/';
-					}
-				}
-			}
-			else
-			{
-				strUrl = "";
-			}
-
-			QUrl newUrl(strUrl + it->url.toString());
-
-			if (isDirectLinkToFile(wantedFileNames, it->url))
-			{
-				directLinks.append(newUrl);
-			}
-			else if (hasFileReferenceSomewhere(wantedFileNames, *it))
-			{
-				// here we append all links that contain this filename somewhere else than in path
-				siteLinks.append(newUrl);
-			}
-		}
-	}
-}
-
-bool Wadseeker::isDirectLinkToFile(const QStringList& wantedFileNames, const QUrl& link)
-{
-	QFileInfo fi(link.encodedPath());
-	for (int i = 0; i < wantedFileNames.count(); ++i)
-	{
-		if (fi.fileName() == wantedFileNames[i])
-		{
-			return true;
-		}
-	}
-
-	return false;
 }
 
 bool Wadseeker::isIwad(const QString& wad)
@@ -221,63 +108,7 @@ bool Wadseeker::isIwad(const QString& wad)
 	return false;
 }
 
-void Wadseeker::nextSite()
-{
-	bool bGotUrl = false;
 
-	if (!customSiteUsed && !customSite.isEmpty())
-	{
-		url = customSite;
-		bGotUrl = true;
-		customSiteUsed = true;
-	}
-
-	while (!directLinks.empty() && !bGotUrl)
-	{
-		url = directLinks.first();
-		directLinks.removeFirst();
-		if (checkedLinks.find(url.toString()) == checkedLinks.end())
-		{
-			bGotUrl = true;
-		}
-	}
-
-	while (!siteLinks.empty() && !bGotUrl)
-	{
-		url = siteLinks.first();
-		siteLinks.removeFirst();
-		if (checkedLinks.find(url.toString()) == checkedLinks.end())
-		{
-			bGotUrl = true;
-		}
-	}
-
-	if (!bGotUrl)
-	{
-		if (currentGlobalSite < globalSiteLinks.size())
-		{
-			url = globalSiteLinks[currentGlobalSite];
-			++currentGlobalSite;
-			bGotUrl = true;
-		}
-	}
-
-	if (!bGotUrl)
-	{
-		emit notice(tr("No more sites!"));
-		emit wadDone(false, seekedWad);
-		this->seekNextWad();
-		return;
-	}
-
-	checkedLinks.insert(url.toString());
-
-	QString strNotice = tr("Next site: %1").arg(url.toString());
-	emit notice(strNotice);
-
-	http.setSite(url.encodedHost());
-	http.sendRequestGet(url.encodedPath());
-}
 
 QString Wadseeker::nextWadName()
 {
@@ -291,16 +122,15 @@ QString Wadseeker::nextWadName()
 	return str;
 }
 
-Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::parseFile()
+Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::parseFile(const QByteArray& data)
 {
 	// first we check if the seeked file and retrieved file have exactly the same filename
-	QFileInfo fi(http.lastLink().path());
+	QFileInfo fi(www.lastUrl().path());
 	QString filename = fi.fileName();
 
 	// If they do have the same name we simply dump the file into directory and return OK.
 	if (filename.compare(seekedWad, Qt::CaseInsensitive) == 0)
 	{
-		QByteArray& data = http.lastData();
 		QString path = this->targetDirectory + filename;
 		QFile f(path);
 		if (!f.open(QIODevice::WriteOnly))
@@ -322,21 +152,20 @@ Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::parseFile()
 	}
 	else if (fi.suffix().compare("zip", Qt::CaseInsensitive) == 0)
 	{
-		return parseZipFile();
+		return parseZipFile(data);
 	}
 	else
 	{
-		emit error(tr("File %1 failed (on site %2)").arg(seekedWad, http.lastLink().toString()) , false);
+		emit error(tr("File %1 failed (on site %2)").arg(seekedWad, www.lastUrl().toString()) , false);
 		return PARSE_FILE_ERROR;
 	}
 }
 
-Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::parseZipFile()
+Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::parseZipFile(const QByteArray& data)
 {
-	QFileInfo fi(http.lastLink().path());
+	QFileInfo fi(www.lastUrl().path());
 	QString filename = fi.fileName();
 	QString path = this->targetDirectory + seekedWad;
-	QByteArray& data = http.lastData();
 
 	// Open temporary file
 	QTemporaryFile tempFile;
@@ -356,31 +185,10 @@ Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::parseZipFile()
 	tempFile.close();
 
 	// Unzip temporary file
-	UnZip unzip(tempFileName);
-	if (!unzip.isValid())
-	{
-		emit error(tr("Couldn't open \"%1\" to unzip \"%2\".").arg(tempFileName, filename), false);
-		tempFile.remove();
-		return PARSE_FILE_ERROR;
-	}
-
-	connect (&unzip, SIGNAL( error(const QString&) ), this, SLOT( zipError(const QString&) ) );
-	connect (&unzip, SIGNAL( notice(const QString&) ), this, SLOT( zipNotice(const QString&) ) );
-	ZipLocalFileHeader* zip = unzip.findFileEntry(seekedWad);
-	if (zip != NULL)
-	{
-		unzip.extract(*zip, path);
-		delete zip;
-	}
-	else
-	{
-		emit error(tr("File \"%1\" not found in \"%2\"").arg(seekedWad, filename), false);
-		tempFile.remove();
-		return PARSE_FILE_ERROR;
-	}
+	int err = unzipFile(tempFileName, filename, path);
 
 	tempFile.remove();
-	return PARSE_FILE_OK;
+	return static_cast<PARSE_FILE_RETURN_CODES>(err);
 }
 
 void Wadseeker::seekNextWad()
@@ -402,30 +210,8 @@ void Wadseeker::seekWad(const QString& wad)
 	emit notice(notic);
 	if (!this->isIwad(wad))
 	{
-		currentGlobalSite = 0;
-		customSiteUsed = false;
-		checkedLinks.clear();
-		directLinks.clear();
-		siteLinks.clear();
-
-		// Get the file extension and compare it against "zip"
-		// If the file extension is "zip" already set only "zip"
-		// as "binary" files for Http class.
-		// If the file extension is not "zip" set "zip" and this extension
-		// as "binary" files for Http class.
-
-		QFileInfo fi(wad);
-		QString extension = fi.suffix();
-		QStringList expectedFilenames;
-		expectedFilenames << wad;
-		if (extension.compare("zip", Qt::CaseInsensitive) != 0)
-		{
-			expectedFilenames << QString(fi.completeBaseName() + ".zip");
-		}
-		http.setWantedFilenames(expectedFilenames);
-
 		seekedWad = wad;
-		nextSite();
+		www.get(wad); // get wad :P
 	}
 	else
 	{
@@ -439,6 +225,7 @@ void Wadseeker::seekWads(const QStringList& wads)
 {
 	wadnames = wads;
 	currentWad = wadnames.begin();
+	notFoundWads = wads;
 
 	if (targetDirectory.isEmpty())
 	{
@@ -464,13 +251,12 @@ void Wadseeker::seekWads(const QStringList& wads)
 		return;
 	}
 
-
 	seekNextWad();
 }
 
 void Wadseeker::setGlobalSiteLinksToDefaults()
 {
-	QList<QUrl> list;
+	QList<QString> list;
 	for (int i = 0; !defaultSites[i].isEmpty(); ++i)
 	{
 		list << defaultSites[i];
@@ -486,6 +272,64 @@ void Wadseeker::size(unsigned int s)
 void Wadseeker::sizeUpdate(unsigned howMuch, unsigned howMuchSum, unsigned percent)
 {
 	emit wadCurrentDownloadedSize(howMuchSum, percent);
+}
+
+void Wadseeker::wadDoneSlot(bool bFound, const QString& wadname)
+{
+	// if wad was found remove it from not found list
+	if (bFound)
+	{
+		QStringList::iterator it;
+		for (it = notFoundWads.begin(); it != notFoundWads.end(); ++it)
+		{
+			if (it->compare(wadname, Qt::CaseInsensitive) == 0)
+			{
+				notFoundWads.erase(it);
+				break;
+			}
+		}
+	}
+}
+
+Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::unzipFile(const QString& zipFileName, const QString& displayFileName, const QString& targetPath)
+{
+	UnZip unzip(zipFileName);
+	if (!unzip.isValid())
+	{
+		emit error(tr("Couldn't open \"%1\" to unzip \"%2\".").arg(zipFileName, displayFileName), false);
+		return PARSE_FILE_ERROR;
+	}
+
+	connect (&unzip, SIGNAL( error(const QString&) ), this, SLOT( zipError(const QString&) ) );
+	connect (&unzip, SIGNAL( notice(const QString&) ), this, SLOT( zipNotice(const QString&) ) );
+	ZipLocalFileHeader* zip = unzip.findFileEntry(seekedWad);
+	if (zip != NULL)
+	{
+		unzip.extract(*zip, targetPath);
+		delete zip;
+	}
+	else
+	{
+		emit error(tr("File \"%1\" not found in \"%2\"").arg(seekedWad, displayFileName), false);
+		return PARSE_FILE_ERROR;
+	}
+}
+
+void Wadseeker::wwwError(const QString& errorString)
+{
+	emit error(errorString, false);
+}
+
+void Wadseeker::wwwNoMoreSites()
+{
+	emit notice(tr("No more sites!"));
+	emit wadDone(false, seekedWad);
+	this->seekNextWad();
+}
+
+void Wadseeker::wwwNotice(const QString& string)
+{
+	emit notice(string);
 }
 
 void Wadseeker::zipError(const QString& str)
