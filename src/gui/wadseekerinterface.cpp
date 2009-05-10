@@ -27,6 +27,7 @@
 WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 {
 	setupUi(this);
+	connect(&wadseeker, SIGNAL( aborted() ), this, SLOT( aborted() ) );
 	connect(&wadseeker, SIGNAL( allDone() ), this, SLOT( allDone() ) );
 	connect(&wadseeker, SIGNAL( error(const QString&, bool) ), this, SLOT( error(const QString&, bool)) );
 	connect(&wadseeker, SIGNAL( notice(const QString&) ), this, SLOT( notice(const QString&)) );
@@ -57,6 +58,17 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 		// theoreticaly...
 		wadseeker.setGlobalSiteLinksToDefaults();
 	}
+}
+
+void WadSeekerInterface::aborted()
+{
+	teWadseekerOutput->append(tr("Aborted!"));
+	bAutomaticCloseOnSuccess = false;
+	const QStringList& notFoundWads = wadseeker.notFoundWadsList();
+	QString nfwStr = tr("Following files were not found: %1").arg(notFoundWads.join(" "));
+	teWadseekerOutput->append(nfwStr);
+
+	this->setStateWaiting();
 }
 
 void WadSeekerInterface::accept()
@@ -126,8 +138,6 @@ void WadSeekerInterface::reject()
 	{
 		case DOWNLOADING:
 			wadseeker.abort();
-			teWadseekerOutput->append(tr("Aborted!"));
-			this->setStateWaiting();
 			break;
 
 		case WAITING:

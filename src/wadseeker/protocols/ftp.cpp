@@ -22,11 +22,6 @@
 //------------------------------------------------------------------------------
 #include "ftp.h"
 
-void Ftp::get(const QUrl& url)
-{
-
-}
-
 bool Ftp::isFTPLink(const QUrl& url)
 {
 
@@ -35,4 +30,9 @@ bool Ftp::isFTPLink(const QUrl& url)
 		return true;
 
 	return false;
+}
+
+void Ftp::sendGet()
+{
+
 }

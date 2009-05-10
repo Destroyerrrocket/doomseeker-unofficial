@@ -44,6 +44,8 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 	public slots:
 		virtual void 	accept();
 		virtual void	reject();
+
+		void			aborted();
 		void			allDone();
 		void			error(const QString&, bool bIsCritical);
 		void			notice(const QString&);

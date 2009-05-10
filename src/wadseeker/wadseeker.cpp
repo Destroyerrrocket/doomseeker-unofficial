@@ -52,6 +52,8 @@ QStringList Wadseeker::defaultSitesListEncoded()
 
 Wadseeker::Wadseeker()
 {
+	bAbort = false;
+
 	connect(&www, SIGNAL( dataReceived(unsigned, unsigned, unsigned) ), this, SLOT( sizeUpdate(unsigned, unsigned, unsigned) ) );
 	connect(&www, SIGNAL( error(const QString&) ), this, SLOT( wwwError(const QString&) ) );
 	connect(&www, SIGNAL( finishedReceiving(const QByteArray&) ), this, SLOT( finishedReceiving(const QByteArray&) ) );
@@ -68,7 +70,10 @@ Wadseeker::~Wadseeker()
 
 void Wadseeker::abort()
 {
+	bAbort = true;
 	www.abort();
+	currentWad = wadnames.end();
+	emit aborted();
 }
 
 void Wadseeker::finishedReceiving(const QByteArray& data)
@@ -126,7 +131,7 @@ QString Wadseeker::nextWadName()
 Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::parseFile(const QByteArray& data)
 {
 	// first we check if the seeked file and retrieved file have exactly the same filename
-	QFileInfo fi(www.lastUrl().path());
+	QFileInfo fi(www.lastFile());
 	QString filename = fi.fileName();
 
 	// If they do have the same name we simply dump the file into directory and return OK.
@@ -164,8 +169,7 @@ Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::parseFile(const QByteArray& data)
 
 Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::parseZipFile(const QByteArray& data)
 {
-	QFileInfo fi(www.lastUrl().path());
-	QString filename = fi.fileName();
+	QString filename = www.lastFile();
 	QString path = this->targetDirectory + seekedWad;
 
 	// Open temporary file
@@ -194,6 +198,11 @@ Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::parseZipFile(const QByteArray& dat
 
 void Wadseeker::seekNextWad()
 {
+	if (bAbort)
+	{
+		return;
+	}
+
 	QString str = nextWadName();
 	if (!str.isEmpty())
 	{
@@ -224,6 +233,7 @@ void Wadseeker::seekWad(const QString& wad)
 
 void Wadseeker::seekWads(const QStringList& wads)
 {
+	bAbort = false;
 	wadnames = wads;
 	currentWad = wadnames.begin();
 	notFoundWads = wads;

@@ -21,10 +21,45 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "protocol.h"
+#include <QDebug>
+#include <QFileInfo>
 
 Protocol::Protocol()
 {
 	port = 0;
+}
+
+void Protocol::get(const QUrl& url)
+{
+	QString scheme = url.scheme();
+	if (scheme.isEmpty())
+	{
+		scheme = this->defaultScheme();
+	}
+	this->site.setScheme(scheme);
+	if (!url.authority().isEmpty())
+	{
+		this->site.setAuthority(url.authority());
+	}
+
+	this->resource = url.encodedPath();
+	if (this->resource.isEmpty())
+	{
+		this->resource = '/';
+	}
+	else if (this->resource[0] != '/')
+	{
+		this->resource.prepend('/');
+	}
+
+	if (!url.encodedQuery().isNull())
+	{
+		resource += "?" + url.encodedQuery();
+	}
+
+	QFileInfo fi(url.encodedPath());
+	emit nameOfCurrentlyDownloadedResource(fi.fileName());
+	sendGet();
 }
 
 QUrl Protocol::lastLink() const

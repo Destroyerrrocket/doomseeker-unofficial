@@ -59,9 +59,6 @@ class Http : public Protocol
 		Http(QString);
 		~Http();
 
-		void				get(const QUrl&);
-
-
 		static bool			hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link);
 		static bool			isDirectLinkToFile(const QStringList& wantedFileNames, const QUrl& link);
 		static bool			isHTTPLink(const QUrl&);
@@ -94,9 +91,17 @@ class Http : public Protocol
 		QString					responsePhrase;
 
 		/**
+		 * Looks for attachment information in http header.
+		 * @return empty string if nothing found or string of values (like filename="something")
+		 */
+		QString		attachmentInformation(const QHttpHeader&, QString& filename);
+
+		/**
 		 * Capitalizes all keywords
 		 */
 		void		capitalizeTags(QByteArray&);
+
+		QString		defaultScheme() { return "http"; }
 
 		/**
 		 * Finds a HTML tag starting from index in the byte array.
@@ -114,9 +119,17 @@ class Http : public Protocol
 		 * @param endIndex		- index at which parsing ends
 		 * @return 				- trimmed value, without white-spaces and quotes.
 		 */
-		QString		htmlValue(QByteArray& byte, int beginIndex, int endIndex);
+		QString		htmlValue(const QByteArray& byte, int beginIndex, int endIndex);
 
-		void 		sendRequestGet();
+		/**
+		 * You put a string of values, for example <A HREF="http://127.0.0.1/" TARGET="_blank"> and it
+		 * retrieves the value after specified key.
+		 * @param byte			- array that will be searched
+		 * @param key			- key that will be searched for
+		 */
+		QString 	htmlValue(const QByteArray& byte, const QString& key);
+
+		void 		sendGet();
 
 	private:
 		void					construct();

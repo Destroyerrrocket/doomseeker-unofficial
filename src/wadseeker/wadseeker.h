@@ -85,6 +85,7 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 		void abort();
 
 	signals:
+		void aborted();
 		void allDone();
 
 		/**
@@ -125,6 +126,7 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 
 		static QString					iwadNames[];
 
+		bool							bAbort;
 		bool							bAutomaticCloseOnSuccess;
 
 		QStringList::const_iterator 	currentWad;

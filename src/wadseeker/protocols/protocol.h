@@ -35,18 +35,22 @@ class Protocol : public QObject
 
 		virtual void		abort() {};
 
-		//virtual void		get(const QUrl& url) {};
+		void				get(const QUrl& url);
 
 		const QByteArray&	lastData() const { return data; }
 		QUrl				lastLink() const;
 
 	signals:
 		void error(const QString&);
+		void nameOfCurrentlyDownloadedResource(const QString&);
 		void finishedReceiving(const QString& error);
 		void notice(const QString&);
 		void size(unsigned int);
 
 	protected:
+		virtual QString		defaultScheme()=0;
+		virtual void 		sendGet()=0;
+
 		QByteArray	data;
 		int			port;
 		QString		resource;

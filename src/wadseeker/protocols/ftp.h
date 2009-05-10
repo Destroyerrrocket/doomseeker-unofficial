@@ -36,9 +36,11 @@ class Ftp : public Protocol
 		 * This method takes care of splitting proper info from QUrl and
 		 * subsequently it starts communicating with FTP server.
 		 */
-		void	get(const QUrl&);
 
 	protected:
+		QString		defaultScheme() { return "ftp"; }
+		void		sendGet();
+
 		QFtp	qFtp;
 };
 

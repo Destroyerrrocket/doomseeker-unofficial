@@ -25,17 +25,20 @@
 
 WWW::WWW()
 {
+	bAbort = false;
 	currentGlobalSite = 0;
 
 	connect(&http, SIGNAL( dataReceived(unsigned, unsigned, unsigned) ), this, SLOT( dataReceivedSlot(unsigned, unsigned, unsigned) ) );
 	connect(&http, SIGNAL( error(const QString&) ), this, SLOT( httpError(const QString&) ) );
 	connect(&http, SIGNAL( finishedReceiving(const QString&) ), this, SLOT( httpFinishedReceiving(const QString&) ) );
+	connect(&http, SIGNAL( nameOfCurrentlyDownloadedResource(const QString&) ), this, SLOT( nameOfCurrentlyDownloadedResource(const QString&) ) );
 	connect(&http, SIGNAL( notice(const QString&) ), this, SLOT( httpNotice(const QString&) ) );
 	connect(&http, SIGNAL( size(unsigned int) ), this, SLOT( sizeSlot(unsigned int) ) );
 }
 
 void WWW::abort()
 {
+	bAbort = true;
 	http.abort();
 }
 
@@ -85,6 +88,11 @@ void WWW::getLinks()
 
 void WWW::httpFinishedReceiving(const QString& err)
 {
+	if (bAbort)
+	{
+		return;
+	}
+
 	if (!err.isEmpty())
 	{
 		QString str = tr("HTTP Receive error: %1").arg(err);
@@ -118,8 +126,19 @@ void WWW::httpNotice(const QString& string)
 	emit notice(str);
 }
 
+void WWW::nameOfCurrentlyDownloadedResource(const QString& res)
+{
+	lastFilename = res;
+}
+
 void WWW::nextSite()
 {
+	if (bAbort)
+	{
+		bAbort = false;
+		return;
+	}
+
 	bool bGotUrl = false;
 
 	if (!customSiteUsed && !customSite.isEmpty())
@@ -151,7 +170,8 @@ void WWW::nextSite()
 
 	while (!bGotUrl && currentGlobalSite < globalSiteLinks.size())
 	{
-		url = globalSiteLinks[currentGlobalSite].replace(QString("%WADNAME%"), seekedWad);
+		QString strUrl = globalSiteLinks[currentGlobalSite];
+		url = strUrl.replace(QString("%WADNAME%"), seekedWad);
 		++currentGlobalSite;
 		if (!url.isEmpty())
 		{
@@ -184,6 +204,7 @@ void WWW::nextSite()
 
 void WWW::reset()
 {
+	bAbort = false;
 	currentGlobalSite = 0;
 	customSiteUsed = false;
 	checkedLinks.clear();

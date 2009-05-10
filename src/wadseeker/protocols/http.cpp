@@ -50,6 +50,30 @@ void Http::construct()
 void Http::abort()
 {
 	qHttp.abort();
+	qHttp.close();
+}
+
+QString Http::attachmentInformation(const QHttpHeader& header, QString& filename)
+{
+	QString val = header.value("Content-Disposition");
+	QStringList values = val.split(";");
+	QStringList::iterator it;
+	for (it = values.begin(); it != values.end(); ++it)
+	{
+		if (it->trimmed().compare("attachment") == 0)
+		{
+			++it;
+			if (it == values.end())
+				break;
+
+			QString ret = it->trimmed();
+			QByteArray asciiStr = ret.toAscii();
+			filename = htmlValue(asciiStr, "filename");
+			return ret;
+		}
+	}
+
+	return QString();
 }
 
 void Http::capitalizeTags(QByteArray& byte)
@@ -164,24 +188,6 @@ int	 Http::findTag(QByteArray& byte, int beginAt, int* end)
 	return begin;
 }
 
-void Http::get(const QUrl& url)
-{
-	this->site.setScheme(url.scheme());
-	this->site.setAuthority(url.authority());
-	this->resource = url.encodedPath();
-	if (this->resource.isEmpty())
-	{
-		this->resource = '/';
-	}
-
-	if (!url.encodedQuery().isNull())
-	{
-		resource += "?" + url.encodedQuery();
-	}
-
-	sendRequestGet();
-}
-
 bool Http::hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link)
 {
 	QString strQuery = link.url.encodedQuery();
@@ -200,36 +206,30 @@ bool Http::hasFileReferenceSomewhere(const QStringList& wantedFileNames, const L
 void Http::headerReceived(const QHttpResponseHeader& resp)
 {
 	QFileInfo fi(resource);
+	QString attachmentInfo;
+	QString attachmentFilename;
 	QUrl url;
 
 	switch (resp.statusCode())
 	{
 		case STATUS_REDIRECT:
 			dontSendFinishedReceiving = true;
-			url = resp.value("Location");
-			emit notice( tr("Redirecting to: %1").arg(url.toString()) );
-			if (!url.scheme().isEmpty())
-			{
-				this->site.setScheme(url.scheme());
-			}
 
-			if (!url.authority().isEmpty())
-			{
-				this->site.setAuthority(url.authority());
-			}
+			// first we determine whether this is attachment redirect
+			// (like the one from doom.dogsoft.net/getwad.php
+			attachmentInfo = attachmentInformation(resp, attachmentFilename);
 
-			this->resource = url.encodedPath();
-			if (this->resource.isEmpty() || this->resource[0] != '/')
+			if (!attachmentInfo.isEmpty())
 			{
-				this->resource.prepend('/');
+				emit notice(tr("Downloading attached file: %1").arg(attachmentFilename));
+				emit nameOfCurrentlyDownloadedResource(attachmentFilename);
 			}
-
-			if (!url.encodedQuery().isNull())
+			else
 			{
-				this->resource += "?" + url.encodedQuery();
+				url = resp.value("Location");
+				emit notice( tr("Redirecting to: %1").arg(url.toString()) );
+				get(url);
 			}
-
-			sendRequestGet();
 			break;
 
 		case STATUS_OK:
@@ -251,12 +251,6 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 				return;
 			}
 
-			sizeCur = 0;
-			if (resp.hasContentLength())
-			{
-				sizeMax = resp.contentLength();
-				emit size(sizeMax);
-			}
 			break;
 
 		default:
@@ -264,9 +258,16 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 			emit error(QString::number(resp.statusCode()) + " - " + resp.reasonPhrase());
 			break;
 	}
+
+	if (resp.hasContentLength())
+	{
+		sizeMax = resp.contentLength();
+		emit size(sizeMax);
+	}
+	sizeCur = 0;
 }
 
-QString Http::htmlValue(QByteArray& byte, int beginIndex, int endIndex)
+QString Http::htmlValue(const QByteArray& byte, int beginIndex, int endIndex)
 {
 	int indexStartValue = -1;
 	int indexEndValue = -1;
@@ -319,6 +320,64 @@ QString Http::htmlValue(QByteArray& byte, int beginIndex, int endIndex)
 		else
 			return QString();
 	}
+
+	QString ret = byte.mid(indexStartValue, indexEndValue - indexStartValue + 1);
+	return ret;
+}
+
+QString Http::htmlValue(const QByteArray& byte, const QString& key)
+{
+	QByteArray upperByte = byte.toUpper();
+	QString upperKey = key.toUpper();
+
+	int beginIndex = upperByte.indexOf(upperKey);
+
+	if (beginIndex < 0)
+		return QString();
+
+	for (; beginIndex < byte.size(); ++beginIndex)
+	{
+		if (byte[beginIndex] == '=')
+		{
+			++beginIndex;
+			break;
+		}
+	}
+
+	int indexStartValue = -1;
+	int indexEndValue = byte.size() - 1;
+
+	char endingChar = ' ';
+	for (int i = beginIndex; i < byte.size(); ++i)
+	{
+		if (indexStartValue < 0)
+		{
+			if (byte[i] == '\"')
+			{
+				indexStartValue = i + 1;
+				endingChar = '\"';
+			}
+			else if (byte[i] == ' ')
+			{
+				continue;
+			}
+			else
+			{
+				indexStartValue = i;
+			}
+		}
+		else
+		{
+			if (byte[i] == endingChar )
+			{
+				indexEndValue = i - 1;
+				break;
+			}
+		}
+	}
+
+	if (indexStartValue < 0)
+		return QString();
 
 	QString ret = byte.mid(indexStartValue, indexEndValue - indexStartValue + 1);
 	return ret;
@@ -500,10 +559,10 @@ void Http::linksByPattern(const QStringList& wantedFileNames, QList<QUrl>& direc
 	}
 }
 
-void Http::sendRequestGet()
+void Http::sendGet()
 {
 	data.clear();
-	qHttp.setHost(this->site.encodedHost());
+	qHttp.setHost(this->site.encodedHost(), this->site.port(80));
 	qHttp.get(this->resource);
 }
 

@@ -40,6 +40,7 @@ class WWW : public QObject
 
 		void 			abort();
 		void			get(const QString& strSeekedWad);
+		const QString&	lastFile() const { return lastFilename; }
 		const QUrl&		lastUrl() const { return url; }
 
 		void			nextSite();
@@ -62,13 +63,13 @@ class WWW : public QObject
 		void httpError(const QString&);
 		void httpFinishedReceiving(const QString& error);
 		void httpNotice(const QString&);
+		void nameOfCurrentlyDownloadedResource(const QString&);
 		void sizeSlot(unsigned int);
 
 	protected:
 		/**
 		 * Retrievies links from HTML file.
 		 */
-
 		void			getLinks();
 
 		QSet<QString>	checkedLinks;
@@ -80,6 +81,8 @@ class WWW : public QObject
 		QString			seekedWad;
 		QList<QUrl> 	siteLinks;
 
+		bool	bAbort;
+		QString lastFilename;
 		Http	http;
 		Ftp		ftp;
 		QUrl	url;
