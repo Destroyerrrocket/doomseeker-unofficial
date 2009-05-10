@@ -50,7 +50,9 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 
 	public slots:
 		void	addBuddy();
-		void	scan(const MasterClient *master);
+		void	deleteBuddy();
+		void	patternsListContextMenu(const QPoint &pos);
+		void	scan(const MasterClient *master=NULL);
 
 	protected:
 		struct BuddyInfo
