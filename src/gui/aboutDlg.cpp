@@ -24,12 +24,14 @@
 #include "aboutDlg.h"
 #include "global.h"
 #include "main.h"
+#include <QPixmap>
 
 AboutDlg::AboutDlg(QWidget* parent) : QDialog(parent)
 {
 	setupUi(this);
 
 	versionNumber->setText(VERSION);
+	logo->setPixmap(QPixmap(":/logo.png"));
 
 	connect(buttonBox, SIGNAL( clicked(QAbstractButton *) ), this, SLOT( close() ));
 

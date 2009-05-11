@@ -32,6 +32,7 @@
 #include <QAction>
 #include <QDockWidget>
 #include <QFileInfo>
+#include <QIcon>
 #include <QProcess>
 #include <QHeaderView>
 #include <QMessageBox>
@@ -61,6 +62,8 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 	bool queryOnStartup = Main::config->setting("QueryOnStartup")->integer() != 0;
 	if(queryOnStartup)
 		btnGetServers_Click();
+
+	setWindowIcon(QIcon(":/icon.png"));
 
 	connect(btnGetServers, SIGNAL( clicked() ), this, SLOT( btnGetServers_Click() ));
 	connect(btnRefreshAll, SIGNAL( clicked() ), serverTableHandler, SLOT( refreshAll() ));

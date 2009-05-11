@@ -44,8 +44,13 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	server.h
 )
 
+qt4_add_resources(doomseekerResources
+	../media/resources.qrc
+)
+
 add_executable(doomseeker
 	${doomseekerUI}
+	${doomseekerResources}
 	${QT_FILES}
 	gui/aboutDlg.cpp
 	gui/cfgFilePaths.cpp
