@@ -59,6 +59,8 @@ void Protocol::get(const QUrl& url)
 
 	QFileInfo fi(url.encodedPath());
 	emit nameOfCurrentlyDownloadedResource(fi.fileName());
+
+	data.clear();
 	sendGet();
 }
 

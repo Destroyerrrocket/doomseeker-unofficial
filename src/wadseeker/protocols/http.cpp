@@ -210,22 +210,24 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 	QString attachmentFilename;
 	QUrl url;
 
+	dontSendFinishedReceiving = false;
 	switch (resp.statusCode())
 	{
 		case STATUS_REDIRECT:
-			dontSendFinishedReceiving = true;
-
 			// first we determine whether this is attachment redirect
 			// (like the one from doom.dogsoft.net/getwad.php
 			attachmentInfo = attachmentInformation(resp, attachmentFilename);
 
-			if (!attachmentInfo.isEmpty())
+			if (!attachmentInfo.isEmpty() && isWantedFile(attachmentFilename))
 			{
+				fileType = HTTP_FILE_TYPE_WANTED;
 				emit notice(tr("Downloading attached file: %1").arg(attachmentFilename));
 				emit nameOfCurrentlyDownloadedResource(attachmentFilename);
 			}
 			else
 			{
+				fileType = HTTP_FILE_TYPE_HTML;
+				dontSendFinishedReceiving = true;
 				url = resp.value("Location");
 				emit notice( tr("Redirecting to: %1").arg(url.toString()) );
 				get(url);
@@ -233,8 +235,6 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 			break;
 
 		case STATUS_OK:
-			dontSendFinishedReceiving = false;
-
 			if (isWantedFile(fi))
 			{
 				fileType = HTTP_FILE_TYPE_WANTED;
@@ -254,7 +254,6 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 			break;
 
 		default:
-			dontSendFinishedReceiving = false;
 			emit error(QString::number(resp.statusCode()) + " - " + resp.reasonPhrase());
 			break;
 	}
@@ -561,7 +560,6 @@ void Http::linksByPattern(const QStringList& wantedFileNames, QList<QUrl>& direc
 
 void Http::sendGet()
 {
-	data.clear();
 	qHttp.setHost(this->site.encodedHost(), this->site.port(80));
 	qHttp.get(this->resource);
 }
