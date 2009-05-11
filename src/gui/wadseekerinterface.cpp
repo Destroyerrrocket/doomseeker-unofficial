@@ -26,14 +26,16 @@
 
 WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 {
+	bAutomaticStart = false;
+
 	setupUi(this);
-	connect(&wadseeker, SIGNAL( aborted() ), this, SLOT( aborted() ) );
-	connect(&wadseeker, SIGNAL( allDone() ), this, SLOT( allDone() ) );
-	connect(&wadseeker, SIGNAL( error(const QString&, bool) ), this, SLOT( error(const QString&, bool)) );
-	connect(&wadseeker, SIGNAL( notice(const QString&) ), this, SLOT( notice(const QString&)) );
-	connect(&wadseeker, SIGNAL( wadDone(bool, const QString&) ), this, SLOT( wadDone(bool, const QString&) ) );
-	connect(&wadseeker, SIGNAL( wadSize(unsigned int) ), this, SLOT( wadSize(unsigned int) ) );
-	connect(&wadseeker, SIGNAL( wadCurrentDownloadedSize(unsigned int, unsigned int) ), this, SLOT( wadCurrentDownloadedSize(unsigned int, unsigned int) ) );
+	connect(&pWadseeker, SIGNAL( aborted() ), this, SLOT( aborted() ) );
+	connect(&pWadseeker, SIGNAL( allDone() ), this, SLOT( allDone() ) );
+	connect(&pWadseeker, SIGNAL( error(const QString&, bool) ), this, SLOT( error(const QString&, bool)) );
+	connect(&pWadseeker, SIGNAL( notice(const QString&) ), this, SLOT( notice(const QString&)) );
+	connect(&pWadseeker, SIGNAL( wadDone(bool, const QString&) ), this, SLOT( wadDone(bool, const QString&) ) );
+	connect(&pWadseeker, SIGNAL( wadSize(unsigned int) ), this, SLOT( wadSize(unsigned int) ) );
+	connect(&pWadseeker, SIGNAL( wadCurrentDownloadedSize(unsigned int, unsigned int) ), this, SLOT( wadCurrentDownloadedSize(unsigned int, unsigned int) ) );
 	setStateWaiting();
 
 	this->bAutomaticCloseOnSuccess = false;
@@ -50,13 +52,13 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 			urlList << QUrl::fromPercentEncoding(it->toAscii());
 		}
 
-		wadseeker.setGlobalSiteLinks(urlList);
+		pWadseeker.setGlobalSiteLinks(urlList);
 	}
 	else
 	{
 		// Theoreticaly this else should never happen due to config initialization in Main.cpp.
 		// theoreticaly...
-		wadseeker.setGlobalSiteLinksToDefaults();
+		pWadseeker.setGlobalSiteLinksToDefaults();
 	}
 }
 
@@ -64,7 +66,7 @@ void WadSeekerInterface::aborted()
 {
 	teWadseekerOutput->append(tr("Aborted!"));
 	bAutomaticCloseOnSuccess = false;
-	const QStringList& notFoundWads = wadseeker.notFoundWadsList();
+	const QStringList& notFoundWads = pWadseeker.notFoundWadsList();
 	QString nfwStr = tr("Following files were not found: %1").arg(notFoundWads.join(" "));
 	teWadseekerOutput->append(nfwStr);
 
@@ -76,25 +78,17 @@ void WadSeekerInterface::accept()
 	if (leWadName->text().isEmpty())
 		return;
 
-	teWadseekerOutput->clear();
-
-	SettingsData* setting;
-	setting = Main::config->setting("WadseekerTargetDirectory");
-
-	setStateDownloading();
-
 	QStringList list;
 	list << leWadName->text();
-	//list << "doom.wad" << "hexdd.wad" << "test.wad";
-	wadseeker.setTargetDirectory(setting->string());
-	wadseeker.seekWads(list);
+
+	startSeeking(list);
 }
 
 void WadSeekerInterface::allDone()
 {
 	teWadseekerOutput->append(tr("All done."));
 	setStateWaiting();
-	if (wadseeker.areAllWadsFound())
+	if (pWadseeker.areAllWadsFound())
 	{
 		teWadseekerOutput->append(tr("SUCCESS!"));
 		if (bAutomaticCloseOnSuccess)
@@ -105,7 +99,7 @@ void WadSeekerInterface::allDone()
 	else
 	{
 		bAutomaticCloseOnSuccess = false;
-		const QStringList& notFoundWads = wadseeker.notFoundWadsList();
+		const QStringList& notFoundWads = pWadseeker.notFoundWadsList();
 		QString nfwStr = tr("Following files were not found: %1").arg(notFoundWads.join(" "));
 		teWadseekerOutput->append(nfwStr);
 		teWadseekerOutput->append(tr("FAIL!"));
@@ -137,12 +131,21 @@ void WadSeekerInterface::reject()
 	switch(state)
 	{
 		case DOWNLOADING:
-			wadseeker.abort();
+			pWadseeker.abort();
 			break;
 
 		case WAITING:
 			this->done(Rejected);
 			break;
+	}
+}
+
+void WadSeekerInterface::setAutomaticStart(const QStringList& seekedFilesList)
+{
+	if (!seekedFilesList.isEmpty())
+	{
+		bAutomaticStart = true;
+		startSeeking(seekedFilesList);
 	}
 }
 
@@ -160,6 +163,22 @@ void WadSeekerInterface::setStateWaiting()
 	buttonBox->button(QDialogButtonBox::Cancel)->setEnabled(false);
 	buttonBox->button(QDialogButtonBox::Close)->setEnabled(true);
 	state = WAITING;
+}
+
+void WadSeekerInterface::startSeeking(const QStringList& seekedFilesList)
+{
+	if (seekedFilesList.isEmpty())
+		return;
+
+	teWadseekerOutput->clear();
+
+	SettingsData* setting;
+	setting = Main::config->setting("WadseekerTargetDirectory");
+
+	setStateDownloading();
+
+	pWadseeker.setTargetDirectory(setting->string());
+	pWadseeker.seekWads(seekedFilesList);
 }
 
 void WadSeekerInterface::wadDone(bool bFound, const QString& wadname)

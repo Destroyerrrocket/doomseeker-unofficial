@@ -200,6 +200,7 @@ class MAIN_EXPORT Server : public QObject
 		unsigned short		timeLeft() const { return serverTimeLeft; }
 		unsigned short		timeLimit() const { return serverTimeLimit; }
 		const QString		&wad(int index) const { return wads[index]; }
+		const QString		&website() const { return webSite; }
 
 		void				operator= (const Server &other);
 		void				finalizeRefreshing();

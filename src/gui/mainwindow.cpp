@@ -257,10 +257,26 @@ void MainWindow::runGame(const Server* server)
 
 		if (!missingPwads.isEmpty())
 		{
-			error += tr("PWADS: ") + missingPwads.join(" ");
+			error += tr("PWADS: %1\nDo you want Wadseeker to find missing PWADS?").arg(missingPwads.join(" "));
 		}
 
-		QMessageBox::critical(this, filesMissingCaption, error);
+		if (QMessageBox::question(this, filesMissingCaption, error, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+		{
+			if (!iwadFound)
+			{
+				missingPwads.append(server->iwadName());
+			}
+
+			WadSeekerInterface wsi;
+			wsi.setAutomaticCloseOnSuccess(true);
+			wsi.wadseeker().setCustomSite(server->website());
+			wsi.setAutomaticStart(missingPwads);
+			if (wsi.exec() == QDialog::Accepted)
+			{
+				runGame(server);
+			}
+		}
+
 		return;
 	}
 

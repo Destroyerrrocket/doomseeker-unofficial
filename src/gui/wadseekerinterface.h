@@ -40,6 +40,8 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 
 		bool 			automaticCloseOnSuccess() const { return bAutomaticCloseOnSuccess; }
 		bool 			setAutomaticCloseOnSuccess(bool b) { bAutomaticCloseOnSuccess = b; }
+		void			setAutomaticStart(const QStringList& seekedFilesList);
+		Wadseeker&		wadseeker() { return pWadseeker; }
 
 	public slots:
 		virtual void 	accept();
@@ -67,11 +69,13 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 		 * flag will be set to false.
 		 */
 		bool 			bAutomaticCloseOnSuccess;
+		bool			bAutomaticStart;
 		STATES			state;
-		Wadseeker 		wadseeker;
+		Wadseeker 		pWadseeker;
 
 		void			setStateDownloading();
 		void			setStateWaiting();
+		void			startSeeking(const QStringList& seekedFilesList);
 };
 
 #endif
