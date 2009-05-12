@@ -152,7 +152,6 @@ class ServerListSortFilterProxyModel : public QSortFilterProxyModel
 
 		void	sortServers(int column, Qt::SortOrder order = Qt::AscendingOrder)
 		{
-			qDebug() << "Sort!";
 			sortOrder = order;
 			sort(column, order);
 		}

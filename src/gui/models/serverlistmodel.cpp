@@ -382,7 +382,7 @@ bool ServerListSortFilterProxyModel::lessThan(const QModelIndex& left, const QMo
 	ServerListModel::ServerGroup sg1 = model->serverGroup(left.row());
 	ServerListModel::ServerGroup sg2 = model->serverGroup(right.row());
 
-	if (sg1 != sg2)
+	if (sg1 != sg2 && sg1 != 0 && sg2 != 0)
 	{
 		if (sortOrder == Qt::AscendingOrder)
 		{

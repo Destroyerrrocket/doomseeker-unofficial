@@ -52,7 +52,9 @@ void SLHandler::cleanUp()
 	{
 		if (sortIndex >= 0)
 		{
-			static_cast<ServerListSortFilterProxyModel*>(table->model())->sortServers(sortIndex, sortOrder);
+			ServerListSortFilterProxyModel* pModel = static_cast<ServerListSortFilterProxyModel*>(table->model());
+			pModel->invalidate();
+			pModel->sortServers(sortIndex, sortOrder);
 		}
 
 		table->updateAllRows();
@@ -140,7 +142,9 @@ QString SLHandler::createPwadsToolTip(const Server* server)
 
 void SLHandler::doubleClicked(const QModelIndex& index)
 {
-	Server* server = model->serverFromList(index);
+	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
+	QModelIndex indexReal = pModel->mapToSource(index);
+	Server* server = model->serverFromList(indexReal);
 	emit serverDoubleClicked(server);
 }
 
@@ -158,7 +162,9 @@ void SLHandler::modelCleared()
 
 void SLHandler::mouseEntered(const QModelIndex& index)
 {
-	Server* server = model->serverFromList(index);
+	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
+	QModelIndex realIndex = pModel->mapToSource(index);
+	Server* server = model->serverFromList(realIndex);
 	QString tooltip;
 
 	if (!server->isKnown())
@@ -199,13 +205,15 @@ void SLHandler::mouseEntered(const QModelIndex& index)
 
 QList<Server*> SLHandler::selectedServers()
 {
+	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
 	QItemSelectionModel* selModel = table->selectionModel();
 	QModelIndexList indexList = selModel->selectedRows();
 
 	QList<Server*> servers;
 	for(int i = 0; i < indexList.count(); ++i)
 	{
-		Server* server = model->serverFromList(indexList[i]);
+		QModelIndex realIndex = pModel->mapToSource(indexList[i]);
+		Server* server = model->serverFromList(realIndex);
 		servers.append(server);
 	}
 	return servers;
@@ -283,11 +291,13 @@ void SLHandler::serverUpdated(Server *server, int response)
 
 void SLHandler::tableRightClicked(const QModelIndex& index)
 {
+	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
 	QItemSelectionModel* selModel = table->selectionModel();
 	QModelIndexList indexList = selModel->selectedRows();
 
 	for(int i = 0; i < indexList.count(); ++i)
 	{
-		model->setRefreshing(indexList[i].row());
+		QModelIndex realIndex = pModel->mapToSource(indexList[i]);
+		model->setRefreshing(realIndex.row());
 	}
 }

@@ -66,6 +66,7 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 
 	// The buddies list must always be available so we can perform certain operations on it
 	buddiesList = new DockBuddiesList(this);
+	connect(buddiesList, SIGNAL( visibilityChanged(bool)), menuActionBuddies, SLOT( setChecked(bool)));
 	buddiesList->scan(mc);
 	buddiesList->hide();
 	this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
@@ -166,6 +167,7 @@ void MainWindow::menuServerInfo()
 	if (serverInfo == NULL)
 	{
 		serverInfo = new DockServerInfo(this);
+		connect(serverInfo, SIGNAL( visibilityChanged(bool)), menuActionServerInfo, SLOT( setChecked(bool)));
 		this->addDockWidget(Qt::RightDockWidgetArea, serverInfo);
 
 		QList<Server*> slist = serverTableHandler->selectedServers();
@@ -173,19 +175,16 @@ void MainWindow::menuServerInfo()
 		{
 			serverInfo->updateServerInfo(slist[0]);
 		}
-		menuActionServerInfo->setChecked(true);
 	}
 	else
 	{
 	    if (serverInfo->isVisible())
 	    {
 	        serverInfo->hide();
-	        menuActionServerInfo->setChecked(false);
 	    }
 	    else
 	    {
 	        serverInfo->show();
-	        menuActionServerInfo->setChecked(true);
 	    }
 	}
 }

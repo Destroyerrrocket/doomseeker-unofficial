@@ -205,8 +205,6 @@ bool Http::hasFileReferenceSomewhere(const QStringList& wantedFileNames, const L
 
 void Http::headerReceived(const QHttpResponseHeader& resp)
 {
-	qDebug() << resp.toString();
-
 	QFileInfo fi(resource);
 	QString attachmentInfo;
 	QString attachmentFilename;
@@ -562,7 +560,6 @@ void Http::linksByPattern(const QStringList& wantedFileNames, QList<QUrl>& direc
 
 void Http::sendGet()
 {
-	qDebug() << this->site.encodedHost() << this->resource;
 	qHttp.setHost(this->site.encodedHost(), this->site.port(80));
 	qHttp.get(this->resource);
 }
