@@ -24,6 +24,7 @@
 #define __SERVER_LIST_MODEL_H_
 
 #include <QHostAddress>
+#include <QSortFilterProxyModel>
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QString>
@@ -38,11 +39,14 @@ struct ServerListColumn
 	bool		bResizable;
 };
 
+class ServerListSortFilterProxyModel;
+
 class ServerListModel : public QStandardItemModel
 {
 	Q_OBJECT
 
 	friend class SLHandler;
+	friend class ServerListSortFilterProxyModel;
 
 	public:
 		enum ColumnId
@@ -112,19 +116,10 @@ class ServerListModel : public QStandardItemModel
 		 */
 		int updateServer(int row, Server* server, int response);
 
-		void setBad(int row, Server* server);
-		void setBanned(int row, Server* server);
-		void setGood(int row, Server* server);
-		void setTimeout(int row, Server* server);
-		void setWait(int row, Server* server);
-		void setRefreshing(int row);
-
 		QModelIndex findServerOnTheList(const Server* server);
 		Server* serverFromList(int rowNum);
 		Server* serverFromList(const QModelIndex&);
 		Server* serverFromList(const QStandardItem*);
-
-		void sort( int column, Qt::SortOrder order = Qt::AscendingOrder);
 
 	signals:
 		void allRowsContentChanged();
@@ -132,21 +127,44 @@ class ServerListModel : public QStandardItemModel
 		void rowContentChanged(int row);
 
 	protected:
-		void 				clearRows();
-		void 				prepareHeaders();
-		ServerGroup 		serverGroup(int row);
+		void 					clearRows();
+		void 					prepareHeaders();
+		ServerGroup 			serverGroup(int row);
+
+		void 					setBad(int row, Server* server);
+		void 					setBanned(int row, Server* server);
+		void 					setGood(int row, Server* server);
+		void					setTimeout(int row, Server* server);
+		void 					setWait(int row, Server* server);
+		void 					setRefreshing(int row);
+
+		QVariant				columnSortData(int row, int column);
+};
+
+class ServerListSortFilterProxyModel : public QSortFilterProxyModel
+{
+	Q_OBJECT
+
+	friend class SLHandler;
+
+	public:
+		ServerListSortFilterProxyModel(QObject* parent = 0) : QSortFilterProxyModel(parent) {}
+
+		void	sortServers(int column, Qt::SortOrder order = Qt::AscendingOrder)
+		{
+			qDebug() << "Sort!";
+			sortOrder = order;
+			sort(column, order);
+		}
+
+	protected:
+		Qt::SortOrder sortOrder;
 
 		/**
-		 * Returns:
-		 *		0 if rows are equal
-		 *	   <0 if row1 is less than row2
-		 *	   >0 if row1 is more than row2
+		 * @return true if var1 is less than var2, false if otherwise.
 		 */
-		int					compareColumnSortData(QVariant& var1, QVariant& var2, int column);
-		int					compareColumnSortData(int row1, int row2, int column);
-
-		QVariant			columnSortData(int row, int column);
-		void 				swapRows(unsigned int row1, unsigned int row2);
+		bool	compareColumnSortData(QVariant& var1, QVariant& var2, int column) const;
+		bool	lessThan(const QModelIndex& left, const QModelIndex& right) const;
 };
 
 #endif

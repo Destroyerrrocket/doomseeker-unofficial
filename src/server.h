@@ -182,6 +182,7 @@ class MAIN_EXPORT Server : public QObject
 		bool				isLocked() const { return locked; }
 		bool				isRunning() const { return bRunning; }
 		const QString		&iwadName() const { return iwad; }
+		int					lastResponse() const { return response; }
 		unsigned int		longestPlayerName() const;
 		const QString		&map() const { return mapName; }
 		unsigned short		maximumClients() const { return maxPlayers > maxClients ? maxPlayers : maxClients; }
@@ -193,7 +194,6 @@ class MAIN_EXPORT Server : public QObject
 		const Player		&player(int index) const { return players[index]; }
 		unsigned short		port() const { return serverPort; }
 		const QStringList	&pwads() const { return wads; }
-		int					previousResponse() const { return response; }
 		unsigned int		score(int team=0) const { return scores[team]; }
 		unsigned int		scoreLimit() const { return serverScoreLimit; }
 		int					teamPlayerCount(int team) const;

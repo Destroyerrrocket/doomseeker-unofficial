@@ -45,30 +45,18 @@ ServerListModel::ServerListModel(QObject* parent) : QStandardItemModel(parent)
 	setSortRole(SLDT_SORT);
 }
 
-void ServerListModel::destroyRows()
+int ServerListModel::addServer(Server* server, int response)
 {
-	int rows = rowCount();
-	removeRows(0, rows);
-	emit modelCleared();
-}
+	QList<QStandardItem*> columns;
 
-void ServerListModel::clearRows()
-{
-	int rows = rowCount();
-	for (int i = 0; i < rows; ++i)
-	{
-		takeRow(0);
-	}
-}
-
-void ServerListModel::prepareHeaders()
-{
-	QStringList labels;
 	for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
 	{
-		labels << columns[i].name;
+		columns.append(new QStandardItem());
 	}
-	setHorizontalHeaderLabels(labels);
+
+	appendRow(columns);
+	QModelIndex index = indexFromItem(columns[0]);
+	return updateServer(index.row(), server, response);
 }
 
 void ServerListModel::clearNonVitalFields(int row)
@@ -81,6 +69,22 @@ void ServerListModel::clearNonVitalFields(int row)
 		}
 		emptyItem(item(row, i));
 	}
+}
+
+void ServerListModel::clearRows()
+{
+	int rows = rowCount();
+	for (int i = 0; i < rows; ++i)
+	{
+		takeRow(0);
+	}
+}
+
+void ServerListModel::destroyRows()
+{
+	int rows = rowCount();
+	removeRows(0, rows);
+	emit modelCleared();
 }
 
 void ServerListModel::emptyItem(QStandardItem* item)
@@ -125,70 +129,22 @@ void ServerListModel::fillItem(QStandardItem* item, const QString& sort, const Q
 	item->setData(sort, SLDT_SORT);
 }
 
-int ServerListModel::addServer(Server* server, int response)
+QModelIndex ServerListModel::findServerOnTheList(const Server* server)
 {
-	QList<QStandardItem*> columns;
-
-	for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
+	if (server != NULL)
 	{
-		columns.append(new QStandardItem());
-	}
-
-	appendRow(columns);
-	QModelIndex index = indexFromItem(columns[0]);
-	return updateServer(index.row(), server, response);
-}
-
-int ServerListModel::updateServer(int row, Server* server, int response)
-{
-	QStandardItem* qstdItem;
-	QStandardItem* itemPointer;
-
-    itemPointer = item(row, SLCID_HIDDEN_SERVER_POINTER);
-    // Save pointer to the column
-	ServerPointer ptr(server);
-	QVariant savePointer = qVariantFromValue(ptr);
-	itemPointer->setData(savePointer, SLDT_POINTER_TO_SERVER_STRUCTURE);
-
-	// Port icon is set no matter what
-	qstdItem = item(row, SLCID_PORT);
-	fillItem(qstdItem, server->metaObject()->className(), server->icon());
-
-	// Address is also set no matter what, so it's set here.
-	qstdItem = item(row, SLCID_ADDRESS);
-	fillItem(qstdItem, server->address(), QString(server->address().toString() + ":" + QString::number(server->port())) );
-
-	switch(response)
-	{
-		case Server::RESPONSE_BAD:
-			setBad(row, server);
-			break;
-
-		case Server::RESPONSE_BANNED:
-			setBanned(row, server);
-			break;
-
-		case Server::RESPONSE_GOOD:
-			setGood(row, server);
-			break;
-
-		case Server::RESPONSE_WAIT:
-			if (server->isKnown())
+		for (int i = 0; i < rowCount(); ++i)
+		{
+			QStandardItem* qstdItem = item(i, SLCID_HIDDEN_SERVER_POINTER);
+			const Server* savedServ = serverFromList(qstdItem);
+			if (server == savedServ)
 			{
-				setGood(row, server);
+				QModelIndex index = indexFromItem(qstdItem);
+				return index;
 			}
-			else
-			{
-				setWait(row, server);
-			}
-			break;
-
-		case Server::RESPONSE_TIMEOUT:
-		    setTimeout(row, server);
-			break;
+		}
 	}
-
-	return row;
+	return QModelIndex();
 }
 
 void ServerListModel::setBad(int row, Server* server)
@@ -248,6 +204,15 @@ void ServerListModel::setGood(int row, Server* server)
 	fillItem(qstdItem, SG_NORMAL);
 }
 
+void ServerListModel::setRefreshing(int row)
+{
+	Server* serv = serverFromList(row);
+	serv->refresh();
+
+	QStandardItem* qstdItem = item(row, SLCID_SERVERNAME);
+	qstdItem->setText(tr("<REFRESHING>"));
+}
+
 void ServerListModel::setTimeout(int row, Server* server)
 {
 	QStandardItem* qstdItem;
@@ -274,33 +239,6 @@ void ServerListModel::setWait(int row, Server* server)
 	fillItem(qstdItem, SG_WAIT);
 }
 
-void ServerListModel::setRefreshing(int row)
-{
-	Server* serv = serverFromList(row);
-	serv->refresh();
-
-	QStandardItem* qstdItem = item(row, SLCID_SERVERNAME);
-	qstdItem->setText(tr("<REFRESHING>"));
-}
-
-QModelIndex ServerListModel::findServerOnTheList(const Server* server)
-{
-	if (server != NULL)
-	{
-		for (int i = 0; i < rowCount(); ++i)
-		{
-			QStandardItem* qstdItem = item(i, SLCID_HIDDEN_SERVER_POINTER);
-			const Server* savedServ = serverFromList(qstdItem);
-			if (server == savedServ)
-			{
-				QModelIndex index = indexFromItem(qstdItem);
-				return index;
-			}
-		}
-	}
-	return QModelIndex();
-}
-
 Server* ServerListModel::serverFromList(int rowNum)
 {
     QStandardItem* qstdItem = item(rowNum, SLCID_HIDDEN_SERVER_POINTER);
@@ -324,136 +262,72 @@ Server* ServerListModel::serverFromList(const QStandardItem* item)
     return savedServ.ptr;
 }
 
-void ServerListModel::sort(int column, Qt::SortOrder order)
-{
-	QList<int> groupEndList;
-	if (rowCount() == 0)
-		return;
-
-#ifdef QT_DEBUG
-	QTime time;
-	time.start();
-	printf("Sorting: ");
-#endif
-
-	// Sort the groups first.
-	for (int i = 0; i < rowCount(); ++i)
-	{
-		ServerGroup sg1 = serverGroup(i);
-		int swap = i;
-		for (int j = i + 1; j < rowCount(); ++j)
-		{
-			ServerGroup sg2 = serverGroup(j);
-			if (sg2 > sg1)
-			{
-				sg1 = sg2;
-				swap = j;
-			}
-		}
-		swapRows(i, swap);
-	}
-
-	// Save groups positions
-	ServerGroup sg1 = serverGroup(0);
-	for (int i = 1; i < rowCount(); ++i)
-	{
-		ServerGroup sg2 = serverGroup(i);
-		if (sg2 != sg1)
-		{
-			groupEndList.append(i);
-			sg1 = sg2;
-		}
-	}
-	groupEndList.append(rowCount());
-
-	// Now sort groups internally
-	QList<int>::iterator it;
-	int index = 0;
-	for (it = groupEndList.begin(); it != groupEndList.end(); ++it)
-	{
-		for (int i = index; i < *it; ++i)
-		{
-			QVariant var1 = columnSortData(i, column);
-			int swap = i;
-			for (int j = i + 1; j < *it; ++j)
-			{
-				QVariant var2 = columnSortData(j, column);
-				int result = compareColumnSortData(var1, var2, column);
-				if ((order == Qt::AscendingOrder && result > 0) || (order == Qt::DescendingOrder && result < 0))
-				{
-					var1 = var2;
-					swap = j;
-				}
-			}
-
-			// swapRows() checks whether arguments are equal and
-			// does nothing if they are.
-			swapRows(i, swap);
-
-		}
-		index = *it;
-	}
-#ifdef QT_DEBUG
-	printf("DONE! time: %d\n", time.elapsed());
-#endif
-
-	emit allRowsContentChanged();
-}
-
 ServerListModel::ServerGroup ServerListModel::serverGroup(int row)
 {
 	QStandardItem* qstdItem = item(row, SLCID_HIDDEN_GROUP);
 	return static_cast<ServerListModel::ServerGroup>(qstdItem->data(SLDT_SORT).toInt());
 }
 
-int	ServerListModel::compareColumnSortData(QVariant& var1, QVariant& var2, int column)
+void ServerListModel::prepareHeaders()
 {
-	if ( !(var1.isValid() && var2.isValid()) )
-		return 0;
-
-	switch(column)
+	QStringList labels;
+	for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
 	{
-		case SLCID_ADDRESS:
-			if (var1.toUInt() < var2.toUInt())
-				return -1;
-			else if (var1.toUInt() == var2.toUInt())
-				return 0;
-			else
-				return 1;
-			break;
-
-		case SLCID_PING:
-		case SLCID_PLAYERS:
-			if (var1.toInt() < var2.toInt())
-				return -1;
-			else if (var1.toInt() == var2.toInt())
-				return 0;
-			else
-				return 1;
-			break;
-
-		case SLCID_PORT:
-		case SLCID_GAMETYPE:
-		case SLCID_IWAD:
-		case SLCID_MAP:
-		case SLCID_SERVERNAME:
-		case SLCID_WADS:
-			if (var1.toString() < var2.toString())
-				return -1;
-			else if (var1.toString() == var2.toString())
-				return 0;
-			else
-				return 1;
-			break;
+		labels << columns[i].name;
 	}
+	setHorizontalHeaderLabels(labels);
 }
 
-int	ServerListModel::compareColumnSortData(int row1, int row2, int column)
+int ServerListModel::updateServer(int row, Server* server, int response)
 {
-	QVariant var1 = item(row1, column)->data(SLDT_SORT);
-	QVariant var2 = item(row2, column)->data(SLDT_SORT);
+	QStandardItem* qstdItem;
+	QStandardItem* itemPointer;
 
-	return compareColumnSortData(var1, var2, column);
+    itemPointer = item(row, SLCID_HIDDEN_SERVER_POINTER);
+    // Save pointer to the column
+	ServerPointer ptr(server);
+	QVariant savePointer = qVariantFromValue(ptr);
+	itemPointer->setData(savePointer, SLDT_POINTER_TO_SERVER_STRUCTURE);
+
+	// Port icon is set no matter what
+	qstdItem = item(row, SLCID_PORT);
+	fillItem(qstdItem, server->metaObject()->className(), server->icon());
+
+	// Address is also set no matter what, so it's set here.
+	qstdItem = item(row, SLCID_ADDRESS);
+	fillItem(qstdItem, server->address(), QString(server->address().toString() + ":" + QString::number(server->port())) );
+
+	switch(response)
+	{
+		case Server::RESPONSE_BAD:
+			setBad(row, server);
+			break;
+
+		case Server::RESPONSE_BANNED:
+			setBanned(row, server);
+			break;
+
+		case Server::RESPONSE_GOOD:
+			setGood(row, server);
+			break;
+
+		case Server::RESPONSE_WAIT:
+			if (server->isKnown())
+			{
+				setGood(row, server);
+			}
+			else
+			{
+				setWait(row, server);
+			}
+			break;
+
+		case Server::RESPONSE_TIMEOUT:
+		    setTimeout(row, server);
+			break;
+	}
+
+	return row;
 }
 
 QVariant ServerListModel::columnSortData(int row, int column)
@@ -461,21 +335,81 @@ QVariant ServerListModel::columnSortData(int row, int column)
 	QStandardItem* it = item(row, column);
 	return it->data(SLDT_SORT);
 }
-
-inline void ServerListModel::swapRows(unsigned int row1, unsigned int row2)
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+bool ServerListSortFilterProxyModel::compareColumnSortData(QVariant& var1, QVariant& var2, int column) const
 {
-	if (row1 == row2 || row1 >= rowCount() || row2 >= rowCount())
-		return;
+	if ( !(var1.isValid() && var2.isValid()) )
+		return false;
 
-	Server* server1 = serverFromList(row1);
-	Server* server2 = serverFromList(row2);
-
-	if ( !(server1 == NULL || server2 == NULL) )
+	switch(column)
 	{
-		updateServer(row1, server2, server2->previousResponse());
-		updateServer(row2, server1, server1->previousResponse());
+		case ServerListModel::SLCID_ADDRESS:
+			if (var1.toUInt() < var2.toUInt())
+				return true;
+			else
+				return false;
+			break;
+
+		case ServerListModel::SLCID_PING:
+		case ServerListModel::SLCID_PLAYERS:
+			if (var1.toInt() < var2.toInt())
+				return true;
+			else
+				return false;
+
+			break;
+
+		case ServerListModel::SLCID_PORT:
+		case ServerListModel::SLCID_GAMETYPE:
+		case ServerListModel::SLCID_IWAD:
+		case ServerListModel::SLCID_MAP:
+		case ServerListModel::SLCID_SERVERNAME:
+		case ServerListModel::SLCID_WADS:
+			if (var1.toString() < var2.toString())
+				return true;
+			else
+				return false;
+			break;
+	}
+}
+
+bool ServerListSortFilterProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
+{
+	ServerListModel* model = static_cast<ServerListModel*>(sourceModel());
+
+	ServerListModel::ServerGroup sg1 = model->serverGroup(left.row());
+	ServerListModel::ServerGroup sg2 = model->serverGroup(right.row());
+
+	if (sg1 != sg2)
+	{
+		if (sortOrder == Qt::AscendingOrder)
+		{
+			if (sg1 > sg2)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			if (sg1 < sg2)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
 	}
 
-	emit rowContentChanged(row1);
-	emit rowContentChanged(row2);
+	QVariant leftVar = sourceModel()->data(left, sortRole());
+	QVariant rightVar = sourceModel()->data(right, sortRole());
+
+	return compareColumnSortData(leftVar, rightVar, left.column());
 }

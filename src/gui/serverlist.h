@@ -47,6 +47,7 @@ class SLHandler : public QObject
 
 		QList<Server*>		selectedServers();
 
+		ServerListModel*	serverModel() { return model; }
 		ServerListView*		serverTable() { return table; }
 
 
@@ -72,7 +73,8 @@ class SLHandler : public QObject
 		QTimer			cleaner;
 		bool 			needsCleaning;
 
-		ServerListView*	table;
+		ServerListView*		table;
+		ServerListModel* 	model;
 
 		Qt::SortOrder 	sortOrder;
 		int				sortIndex;

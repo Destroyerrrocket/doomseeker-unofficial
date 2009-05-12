@@ -43,7 +43,6 @@ SLHandler::~SLHandler()
 
 void SLHandler::clearTable()
 {
-	ServerListModel* model = static_cast<ServerListModel*>(table->model());
 	model->destroyRows();
 }
 
@@ -51,10 +50,9 @@ void SLHandler::cleanUp()
 {
 	if (needsCleaning)
 	{
-		ServerListModel* model = static_cast<ServerListModel*>(table->model());
 		if (sortIndex >= 0)
 		{
-			model->sort(sortIndex, sortOrder);
+			static_cast<ServerListSortFilterProxyModel*>(table->model())->sortServers(sortIndex, sortOrder);
 		}
 
 		table->updateAllRows();
@@ -95,6 +93,7 @@ void SLHandler::columnHeaderClicked(int index)
 	sortIndex = index;
 
 	needsCleaning = true;
+	cleanUp();
 
 	QHeaderView* header = table->horizontalHeader();
 	header->setSortIndicator(sortIndex, sortOrder);
@@ -141,7 +140,6 @@ QString SLHandler::createPwadsToolTip(const Server* server)
 
 void SLHandler::doubleClicked(const QModelIndex& index)
 {
-	ServerListModel* model = static_cast<ServerListModel*>(table->model());
 	Server* server = model->serverFromList(index);
 	emit serverDoubleClicked(server);
 }
@@ -160,7 +158,6 @@ void SLHandler::modelCleared()
 
 void SLHandler::mouseEntered(const QModelIndex& index)
 {
-	ServerListModel* model = static_cast<ServerListModel*>(table->model());
 	Server* server = model->serverFromList(index);
 	QString tooltip;
 
@@ -202,7 +199,6 @@ void SLHandler::mouseEntered(const QModelIndex& index)
 
 QList<Server*> SLHandler::selectedServers()
 {
-	ServerListModel* model = static_cast<ServerListModel*>(table->model());
 	QItemSelectionModel* selModel = table->selectionModel();
 	QModelIndexList indexList = selModel->selectedRows();
 
@@ -220,9 +216,15 @@ void SLHandler::prepareServerTable()
 	sortOrder = Qt::AscendingOrder;
 	sortIndex = -1;
 
-	ServerListModel* model = new ServerListModel(this);
+	model = new ServerListModel(this);
 	model->prepareHeaders();
-	table->setModel(model);
+
+	QSortFilterProxyModel* sortingModel = new ServerListSortFilterProxyModel(this);
+	sortingModel->setSourceModel(model);
+	sortingModel->setSortRole(ServerListModel::SLDT_SORT);
+	sortingModel->setSortCaseSensitivity( Qt::CaseInsensitive );
+
+	table->setModel(sortingModel);
 
 	// Now set column widths and other properties
 	for (int i = 0; i < ServerListModel::HOW_MANY_SERVERLIST_COLUMNS; ++i)
@@ -251,13 +253,12 @@ void SLHandler::prepareServerTable()
 	connect(table, SIGNAL( entered(const QModelIndex&) ), this, SLOT ( mouseEntered(const QModelIndex&)) );
 	connect(table, SIGNAL( leftMouseDoubleClicked(const QModelIndex&)), this, SLOT( doubleClicked(const QModelIndex&)) );
 
-	columnHeaderClicked(0);
+	columnHeaderClicked(ServerListModel::SLCID_PLAYERS);
 }
 
 void SLHandler::refreshAll()
 {
-	ServerListModel* model = static_cast<ServerListModel*>(table->model());
-	for (int i = 0; i < table->model()->rowCount(); ++i)
+	for (int i = 0; i < model->rowCount(); ++i)
 	{
 		model->setRefreshing(i);
 	}
@@ -265,7 +266,6 @@ void SLHandler::refreshAll()
 
 void SLHandler::serverUpdated(Server *server, int response)
 {
-	ServerListModel* model = static_cast<ServerListModel*>(table->model());
 	QModelIndex index = model->findServerOnTheList(server);
 	int row = 0;
 	if (index.isValid())
@@ -283,7 +283,6 @@ void SLHandler::serverUpdated(Server *server, int response)
 
 void SLHandler::tableRightClicked(const QModelIndex& index)
 {
-	ServerListModel* model = static_cast<ServerListModel*>(table->model());
 	QItemSelectionModel* selModel = table->selectionModel();
 	QModelIndexList indexList = selModel->selectedRows();
 
