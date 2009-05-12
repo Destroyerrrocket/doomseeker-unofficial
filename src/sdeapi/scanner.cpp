@@ -32,19 +32,23 @@
 #include <cmath>
 
 #include "sdeapi/scanner.hpp"
+#include "sdeapi/config.hpp"
 
 using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Scanner::Scanner(char* data, unsigned int length)
-: number(0), decimal(0), boolean(false), lastToken(0), error(false), data(data), length(length), line(0), lpos(0), pos(0)
+Scanner::Scanner(const char* data, unsigned int length)
+: number(0), decimal(0), boolean(false), lastToken(0), error(false), length(length), line(0), lpos(0), pos(0)
 {
+	this->data = new char[length];
+	memcpy(this->data, data, length);
 	checkForWhitespace();
 }
 
 Scanner::~Scanner()
 {
+	delete[] data;
 }
 
 void Scanner::mustGetToken(char token)
@@ -436,10 +440,7 @@ bool Scanner::next(QString &out, unsigned int &pos, unsigned int &lpos, char typ
 	if(type == TK_StringConst)
 	{
 		result = result.mid(1, result.length()-1);
-		while(result.indexOf("\\\\") != -1)
-			result.replace(result.indexOf("\\\\"), 2, '\\');
-		while(result.indexOf("\\\"") != -1)
-			result.replace(result.indexOf("\\\""), 2, '\\');
+		Config::unescape(result);
 	}
 	result.append('\0');
 	lpos += end - pos;

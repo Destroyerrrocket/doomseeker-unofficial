@@ -35,6 +35,8 @@
 
 #include "global.h"
 
+class MAIN_EXPORT Config;
+
 struct MAIN_EXPORT SettingsData : public QObject
 {
 	Q_OBJECT
@@ -52,13 +54,22 @@ struct MAIN_EXPORT SettingsData : public QObject
 		const int			integer() { return m_integer; }
 		const QString		string()	{ return m_str; }
 		const SettingType	type() { return m_type; }
-		void				setValue(int integer) { this->m_integer = integer;this->m_type = ST_INT; }
-		void				setValue(QString str) { this->m_str = str;this->m_type = ST_STR; }
+		void				setValue(int integer) { this->m_integer = integer;this->m_type = ST_INT;settingsChanged = true; }
+		void				setValue(QString str) { this->m_str = str;this->m_type = ST_STR;settingsChanged = true; }
 
 	protected:
 		SettingType			m_type;
 		int				m_integer;
 		QString				m_str;
+
+		/**
+		 * Stores if there has been a change to any configs.  This is used to 
+		 * save a write cycle if nothing has changed during the program 
+		 * operation.
+		 */
+		static bool			settingsChanged;
+
+		friend class Config;
 };
 
 class MAIN_EXPORT Config : public QObject
@@ -110,6 +121,7 @@ class MAIN_EXPORT Config : public QObject
 		 * Converts str into a form that can be stored into config files.
 		 */
 		static const QString&	escape(QString& str);
+		static const QString&	unescape(QString& str);
 
 	public slots:
 		/**

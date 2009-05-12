@@ -23,6 +23,8 @@
 
 #include "server.h"
 #include "main.h"
+#include "gui/wadseekerinterface.h"
+#include <QMessageBox>
 #include <QProcess>
 #include <QSet>
 #include <QTime>
@@ -296,6 +298,95 @@ void Server::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFoun
 	QString iwad = pf.findWad(iwadName().toLower());
 	args << "-iwad" << iwad;
 	iwadFound = !iwad.isEmpty();
+}
+
+void Server::join() const
+{
+	const QString errorCaption = tr("Doomseeker - error");
+	SettingsData* setting = Main::config->setting(clientBinary());
+	if (setting->string().isEmpty())
+	{
+		QMessageBox::critical(NULL, errorCaption, tr("No executable specified for this engine."));
+		return;
+	}
+
+	QFileInfo fileinfo(setting->string());
+
+	if (!fileinfo.exists() || fileinfo.isDir())
+	{
+		QMessageBox::critical(NULL, errorCaption, tr("File: ") + fileinfo.absoluteFilePath() + tr("\ndoesn't exist or is a directory"));
+		return;
+	}
+
+	PathFinder pf(Main::config);
+	QStringList args;
+	QStringList missingPwads;
+	bool iwadFound = false;
+
+	connectParameters(args, pf, iwadFound);
+
+	// Pwads
+	if (numWads() != 0)
+	{
+		args << "-file";
+	}
+
+	for (int i = 0; i < numWads(); ++i)
+	{
+		QString pwad = pf.findWad(wad(i));
+		if (pwad.isEmpty())
+		{
+			missingPwads << wad(i);
+		}
+		else
+		{
+			args << pwad;
+		}
+	}
+
+	if (!iwadFound || !missingPwads.isEmpty())
+	{
+		const QString filesMissingCaption = tr("Doomseeker - files are missing");
+		QString error = tr("Following files are missing:\n");
+
+		if (!iwadFound)
+		{
+			error += tr("IWAD: ") + iwadName().toLower() + "\n";
+		}
+
+		if (!missingPwads.isEmpty())
+		{
+			error += tr("PWADS: %1\nDo you want Wadseeker to find missing PWADS?").arg(missingPwads.join(" "));
+		}
+
+		if (QMessageBox::question(NULL, filesMissingCaption, error, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+		{
+			if (!iwadFound)
+			{
+				missingPwads.append(iwadName());
+			}
+
+			WadSeekerInterface wsi;
+			wsi.setAutomaticCloseOnSuccess(true);
+			wsi.wadseeker().setCustomSite(website());
+			wsi.setAutomaticStart(missingPwads);
+			if (wsi.exec() == QDialog::Accepted)
+			{
+				join();
+			}
+		}
+
+		return;
+	}
+
+	printf("Starting: %s %s\n", fileinfo.absoluteFilePath().toAscii().constData(), args.join(" ").toAscii().constData());
+
+	QProcess proc;
+	if( !proc.startDetached(fileinfo.absoluteFilePath(), args, fileinfo.absolutePath()) )
+	{
+		QMessageBox::critical(NULL, errorCaption, tr("File: ") + fileinfo.absoluteFilePath() + tr("\ncannot be run"));
+		return;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

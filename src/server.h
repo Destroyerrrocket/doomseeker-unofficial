@@ -222,6 +222,7 @@ class MAIN_EXPORT Server : public QObject
 		friend class ServerPointer;
 
 	public slots:
+		void			join() const;
 		/**
 		 * Updates the server data.
 		 */

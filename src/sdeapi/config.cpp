@@ -36,6 +36,8 @@
 #include <QDir>
 #include <QDebug>
 
+bool SettingsData::settingsChanged = false;
+
 Config::Config() : firstRun(false)
 {
 }
@@ -92,6 +94,16 @@ const QString& Config::escape(QString &str)
 	}
 	return str;
 }
+const QString& Config::unescape(QString &str)
+{
+	for(unsigned int i = 0;escapeCharacters[i] != 0;i++)
+	{
+		QString sequence = "\\" + QString(escapeCharacters[i]);
+		for(int p = 0;p < str.length() && (p = str.indexOf(sequence, p)) != -1;p++)
+			str.replace(str.indexOf(sequence, p), 2, escapeCharacters[i]);
+	}
+	return str;
+}
 
 void Config::readConfig()
 {
@@ -136,13 +148,22 @@ void Config::readConfig()
 
 	if(settings.size() == 0)
 		firstRun = true;
+
+	// Make sure we're clear that nothing has changed.
+	SettingsData::settingsChanged = false;
 }
 
 void Config::saveConfig()
 {
+	// No real reason to do anything.
+	if(!SettingsData::settingsChanged)
+		return;
+
 	// Check to see if we're saving the settings.
 	if(configFile.isEmpty())
 		return;
+
+	qDebug() << "Saving config";
 
 	QFile stream(configFile);
 	if(stream.open(QIODevice::WriteOnly | QIODevice::Truncate))
@@ -171,6 +192,11 @@ void Config::saveConfig()
 		}
 		stream.close();
 	}
+
+	// Flag the configs as unchanged.  I know this can cause problems if there 
+	// are multiple config objects, but I can't think of when this would 
+	// realistically happen.
+	SettingsData::settingsChanged = false;
 }
 
 void Config::createSetting(const QString index, unsigned int defaultInt)
@@ -190,6 +216,9 @@ void Config::createSetting(const QString index, QString defaultString)
 	{
 		data = new SettingsData(defaultString);
 		settings[index] = data;
+
+		// Modified
+		SettingsData::settingsChanged = true;
 	}
 }
 

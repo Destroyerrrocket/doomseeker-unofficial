@@ -33,7 +33,6 @@
 #include <QDockWidget>
 #include <QFileInfo>
 #include <QIcon>
-#include <QProcess>
 #include <QHeaderView>
 #include <QMessageBox>
 
@@ -64,6 +63,12 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 		btnGetServers_Click();
 
 	setWindowIcon(QIcon(":/icon.png"));
+
+	// The buddies list must always be available so we can perform certain operations on it
+	buddiesList = new DockBuddiesList(this);
+	buddiesList->scan(mc);
+	buddiesList->hide();
+	this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
 
 	connect(btnGetServers, SIGNAL( clicked() ), this, SLOT( btnGetServers_Click() ));
 	connect(btnRefreshAll, SIGNAL( clicked() ), serverTableHandler, SLOT( refreshAll() ));
@@ -105,12 +110,13 @@ void MainWindow::btnGetServers_Click()
 
 	for(int i = 0;i < mc->numServers();i++)
 	{
-		QObject::connect((*mc)[i], SIGNAL(updated(Server *, int)), serverTableHandler, SLOT(serverUpdated(Server *, int)) );
+		connect((*mc)[i], SIGNAL(updated(Server *, int)), serverTableHandler, SLOT(serverUpdated(Server *, int)) );
 		(*mc)[i]->refresh();
 	}
 
 	ServerRefresher* guardian = new ServerRefresher(NULL);
 	connect(guardian, SIGNAL( allServersRefreshed() ), this, SLOT(checkRefreshFinished()) );
+	connect(guardian, SIGNAL( allServersRefreshed() ), buddiesList, SLOT(scan()) );
 	guardian->startGuardian();
 
 	// disable refresh.
@@ -129,22 +135,11 @@ void MainWindow::enablePort()
 
 void MainWindow::menuBuddies()
 {
-	if (buddiesList == NULL)
-	{
-		buddiesList = new DockBuddiesList(this);
-		buddiesList->scan(mc);
-		this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
-
-		menuActionBuddies->setChecked(true);
-	}
+	if (buddiesList->isVisible())
+		buddiesList->hide();
 	else
-	{
-		if (buddiesList->isVisible())
-			buddiesList->hide();
-		else
-			buddiesList->show();
-		menuActionBuddies->setChecked(buddiesList->isVisible());
-	}
+		buddiesList->show();
+	menuActionBuddies->setChecked(buddiesList->isVisible());
 }
 
 void MainWindow::menuHelpAbout()
@@ -201,93 +196,9 @@ void MainWindow::menuWadSeeker()
 	wsi.exec();
 }
 
-void MainWindow::runGame(const Server* server)
+void MainWindow::runGame(const Server* server) const
 {
-	const QString errorCaption = tr("Doomseeker - error");
-	SettingsData* setting = Main::config->setting(server->clientBinary());
-	if (setting->string().isEmpty())
-	{
-		QMessageBox::critical(this, errorCaption, tr("No executable specified for this engine."));
-		return;
-	}
-
-	QFileInfo fileinfo(setting->string());
-
-	if (!fileinfo.exists() || fileinfo.isDir())
-	{
-		QMessageBox::critical(this, errorCaption, tr("File: ") + fileinfo.absoluteFilePath() + tr("\ndoesn't exist or is a directory"));
-		return;
-	}
-
-	PathFinder pf(Main::config);
-	QStringList args;
-	QStringList missingPwads;
-	bool iwadFound = false;
-
-	server->connectParameters(args, pf, iwadFound);
-
-	// Pwads
-	if (server->numWads() != 0)
-	{
-		args << "-file";
-	}
-
-	for (int i = 0; i < server->numWads(); ++i)
-	{
-		QString pwad = pf.findWad(server->wad(i));
-		if (pwad.isEmpty())
-		{
-			missingPwads << server->wad(i);
-		}
-		else
-		{
-			args << pwad;
-		}
-	}
-
-	if (!iwadFound || !missingPwads.isEmpty())
-	{
-		const QString filesMissingCaption = tr("Doomseeker - files are missing");
-		QString error = tr("Following files are missing:\n");
-
-		if (!iwadFound)
-		{
-			error += tr("IWAD: ") + server->iwadName().toLower() + "\n";
-		}
-
-		if (!missingPwads.isEmpty())
-		{
-			error += tr("PWADS: %1\nDo you want Wadseeker to find missing PWADS?").arg(missingPwads.join(" "));
-		}
-
-		if (QMessageBox::question(this, filesMissingCaption, error, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-		{
-			if (!iwadFound)
-			{
-				missingPwads.append(server->iwadName());
-			}
-
-			WadSeekerInterface wsi;
-			wsi.setAutomaticCloseOnSuccess(true);
-			wsi.wadseeker().setCustomSite(server->website());
-			wsi.setAutomaticStart(missingPwads);
-			if (wsi.exec() == QDialog::Accepted)
-			{
-				runGame(server);
-			}
-		}
-
-		return;
-	}
-
-	printf("Starting: %s %s", fileinfo.absoluteFilePath().toAscii().constData(), args.join(" ").toAscii().constData());
-
-	QProcess proc;
-	if( !proc.startDetached(fileinfo.absoluteFilePath(), args, fileinfo.absolutePath()) )
-	{
-		QMessageBox::critical(this, errorCaption, tr("File: ") + fileinfo.absoluteFilePath() + tr("\ncannot be run"));
-		return;
-	}
+	server->join();
 }
 
 void MainWindow::updateServerInfo(QList<Server*>& servers)

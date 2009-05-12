@@ -40,6 +40,7 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 	public:
 		enum ColumnId
 		{
+			BLCID_ID,
 			BLCID_BUDDY,
 			BLCID_LOCATION,
 
@@ -47,11 +48,10 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 		};
 
 		DockBuddiesList(QWidget *parent=NULL);
+		~DockBuddiesList();
 
 	public slots:
 		void	addBuddy();
-		void	deleteBuddy();
-		void	patternsListContextMenu(const QPoint &pos);
 		void	scan(const MasterClient *master=NULL);
 
 	protected:
@@ -73,8 +73,14 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 		QStandardItemModel					*buddiesTableModel;
 		QList<QRegExp>						pBuddies;
 
+	protected slots:
+		void	deleteBuddy();
+		void	followBuddy(const QModelIndex &index) const;
+		void	patternsListContextMenu(const QPoint &pos) const;
+
 	private:
 		const MasterClient					*mc;
+		bool								save;
 };
 
 class AddBuddyDlg : public QDialog, private Ui::AddBuddyDlg
@@ -90,8 +96,8 @@ class AddBuddyDlg : public QDialog, private Ui::AddBuddyDlg
 
 		AddBuddyDlg(QWidget *parent=NULL);
 
-		PatternType	patternType() { return basicPattern->isChecked() ? PT_BASIC : PT_ADVANCED; }
-		QString		pattern() { return patternBox->text(); }
+		PatternType	patternType() const { return basicPattern->isChecked() ? PT_BASIC : PT_ADVANCED; }
+		QString		pattern() const { return patternBox->text(); }
 
 	protected slots:
 		void		buttonBoxClicked(QAbstractButton *button);

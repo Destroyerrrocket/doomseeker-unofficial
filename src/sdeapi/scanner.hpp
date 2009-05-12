@@ -67,7 +67,7 @@ enum ETokenType
 class MAIN_EXPORT Scanner
 {
 	public:
-		Scanner(char* data, unsigned int length);
+		Scanner(const char* data, unsigned int length);
 		~Scanner();
 
 		/**
@@ -88,7 +88,7 @@ class MAIN_EXPORT Scanner
 		/**
 		 * Returns true if there is still more to read.
 		 */
-		bool		tokensLeft() { return (error != 0) || (pos != length); }
+		bool		tokensLeft() { return (error != 0) || (pos < length); }
 
 		QString			str;
 		unsigned int	number;

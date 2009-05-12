@@ -45,12 +45,13 @@ int main(int argc, char* argv[])
 	QStringList urlList = Wadseeker::defaultSitesListEncoded();
 	Main::config->createSetting("WadseekerSearchURLs", urlList.join(";"));
 
-
 	MainWindow* mw = new MainWindow(argc, argv);
 	mw->show();
 
 	int ret = app.exec();
 	Main::running = false;
+
+	Main::config->saveConfig();
 	delete Main::config;
 
 	return ret;
