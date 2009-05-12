@@ -59,7 +59,7 @@ const QString OdamexServer::DMFLAGS[13] =
 };
 
 OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port) : Server(address, port),
-	protocol(0), skill(0), version(0)
+	protocol(0), skill(0)
 {
 }
 
@@ -220,7 +220,11 @@ bool OdamexServer::readRequest(QByteArray &data)
 	{
 		pos += 4;
 		locked = READINT8(&in[pos++]) == 1;
-		version = READINT32(&in[pos]);
+		int version = READINT32(&in[pos]);
+		int version_major = version/256;
+		int version_minor = (version % 256)/10;
+		int version_patch = (version % 256)%10;
+		serverVersion = QString("%1.%2.%3").arg(version_major).arg(version_minor).arg(version_patch);
 	}
 
 	emit updated(this, RESPONSE_GOOD);

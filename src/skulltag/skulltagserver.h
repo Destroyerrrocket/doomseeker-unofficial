@@ -125,15 +125,11 @@ class SkulltagServer : public Server
 
 		QPixmap			icon() const;
 		QString			clientBinary() const { return "SkulltagBinaryPath"; }
-		QString			gameInfoTableHTML() const;
-		QString			generalInfoHTML() const;
-		QString			playerTableHTML() const;
+		QString			teamName(int team) const { return team >= 0 && team < ST_MAX_TEAMS ? teamInfo[team].name() : ""; }
 
 		void			doRefresh();
 
 	protected:
-		QString			version;
-
 		bool			buckshot;
 		bool			instagib;
 
@@ -150,14 +146,8 @@ class SkulltagServer : public Server
 		unsigned int	numTeams;
 		TeamInfo		teamInfo[ST_MAX_TEAMS];
 
-		void 			additionalServerInfo(QList<ServerInfo>* baseList) const;
 		bool			readRequest(QByteArray &data);
 		bool			sendRequest(QByteArray &data);
-
-		/**
-		 * This will return absolutely nothing if the list in the first argument is empty.
-		 */
-        QString 		spawnPartOfPlayerTable(QList<const Player*>, QString status, int colspan, bool isTeamgame, bool bAppendEmptyRowAtBeginning) const;
 };
 
 #endif /* __SKULLTAGSERVER_H__ */

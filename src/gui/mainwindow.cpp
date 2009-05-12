@@ -96,6 +96,7 @@ void MainWindow::checkRefreshFinished()
 	btnGetServers->setEnabled(true);
 	btnRefreshAll->setEnabled(true);
 	serverTableHandler->serverTable()->setAllowAllRowsRefresh(true);
+	statusBar()->showMessage(tr("Done"));
 }
 
 void MainWindow::btnGetServers_Click()
@@ -124,6 +125,7 @@ void MainWindow::btnGetServers_Click()
 	btnGetServers->setEnabled(false);
 	btnRefreshAll->setEnabled(false);
 	serverTableHandler->serverTable()->setAllowAllRowsRefresh(false);
+	statusBar()->showMessage(tr("Querying..."));
 }
 
 void MainWindow::enablePort()

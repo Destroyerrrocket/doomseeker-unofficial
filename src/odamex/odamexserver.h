@@ -50,7 +50,6 @@ class OdamexServer : public Server
 		QString	clientBinary() const { return "OdamexBinaryPath"; }
 		void	connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound) const;
 		QPixmap	icon() const;
-		QString	generalInfoHTML() const { return QString(); }
 
 	protected:
 		bool	readRequest(QByteArray &data);
@@ -58,7 +57,6 @@ class OdamexServer : public Server
 
 		short			protocol;
 		unsigned short	skill;
-		int				version;
 };
 
 #endif /* __ODAMEXSERVER_H__ */

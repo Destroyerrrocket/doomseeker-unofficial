@@ -77,9 +77,6 @@ struct MAIN_EXPORT Player
 		 */
 		QString			nameColorTagsStripped() const;
 
-		QString			teamName() const { return teamName(team); }
-		static QString	teamName(int team);
-
 		/**
 		 * Colorizes the given string.  Most useful for displaying colored
 		 * names.
@@ -87,7 +84,6 @@ struct MAIN_EXPORT Player
 		static QString	colorizeString(const QString &str, int def=4);
 
 	protected:
-		static QString		teamNames[];
 		static const char	colorChart[20][7];
 
 		QString			playerName;
@@ -162,15 +158,15 @@ class MAIN_EXPORT Server : public QObject
 		/**
 		 * Should return general info about current game (fraglimit, team scores, etc.)
 		 */
-		virtual QString		gameInfoTableHTML() const { return QString(); }
+		virtual QString		gameInfoTableHTML() const;
 		/**
 		 * Should return general info about server, like server name, version, email, etc.
 		 */
-		virtual QString		generalInfoHTML() const =0;
+		virtual QString		generalInfoHTML() const;
 		/**
 		 * Should return player table (the thing that is created when cursor hovers over players column)
 		 */
-		virtual QString		playerTableHTML() const { return QString(); }
+		virtual QString		playerTableHTML() const;
 
 		QList<ServerInfo>*	serverInfo() const;
 
@@ -196,9 +192,11 @@ class MAIN_EXPORT Server : public QObject
 		const QStringList	&pwads() const { return wads; }
 		unsigned int		score(int team=0) const { return scores[team]; }
 		unsigned int		scoreLimit() const { return serverScoreLimit; }
+		virtual QString		teamName(int team) const { return team < MAX_TEAMS && team >= 0 ? teamNames[team] : ""; }
 		int					teamPlayerCount(int team) const;
 		unsigned short		timeLeft() const { return serverTimeLeft; }
 		unsigned short		timeLimit() const { return serverTimeLimit; }
+		const QString		version() const { return serverVersion; }
 		const QString		&wad(int index) const { return wads[index]; }
 		const QString		&website() const { return webSite; }
 
@@ -245,6 +243,10 @@ class MAIN_EXPORT Server : public QObject
 
 		virtual bool		readRequest(QByteArray &data)=0;
 		virtual bool		sendRequest(QByteArray &data)=0;
+		/**
+		 * This will return absolutely nothing if the list in the first argument is empty.
+		 */
+		virtual QString		spawnPartOfPlayerTable(QList<const Player*> list, QString status, int colspan, bool bAppendEmptyRowAtBeginning) const;
 
 		/**
 		 * This should be set to true upon successful return from doRefresh(),
@@ -270,8 +272,11 @@ class MAIN_EXPORT Server : public QObject
 		unsigned int		serverScoreLimit;
 		unsigned short		serverTimeLeft;
 		unsigned short		serverTimeLimit;
+		QString				serverVersion;
 		QStringList			wads;
 		QString				webSite;
+
+		static QString		teamNames[];
 
 	protected slots:
 		/**

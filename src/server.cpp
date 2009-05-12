@@ -85,22 +85,6 @@ QString Player::nameColorTagsStripped() const
 	return ret;
 }
 
-QString Player::teamName(int team)
-{
-	if (team >= MAX_TEAMS)
-		return "";
-
-	return teamNames[team];
-}
-
-QString Player::teamNames[] =
-{
-	"Blue",
-	"Red",
-	"Green",
-	"Gold"
-};
-
 const char Player::colorChart[20][7] =
 {
 	"FF91A4", //a
@@ -190,6 +174,14 @@ const QString SkillLevel::names[] =
 
 ////////////////////////////////////////////////////////////////////////////////
 
+QString Server::teamNames[] =
+{
+	"Blue",
+	"Red",
+	"Green",
+	"Gold"
+};
+
 Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
 	serverAddress(address), serverPort(port),
 	currentGameMode(GameMode::COOPERATIVE), currentPing(999), locked(false),
@@ -240,6 +232,70 @@ unsigned int Server::longestPlayerName() const
 	return x;
 }
 
+QString Server::gameInfoTableHTML() const
+{
+	const QString timelimit = tr("Timelimit");
+	const QString scorelimit = tr("Scorelimit");
+	const QString unlimited = tr("Unlimited");
+	const QString players = tr("Players");
+
+	// Timelimit
+    QString firstTableTimelimit = "<tr><td>" + timelimit + ":&nbsp;</td><td>%1 %2</td></tr>";
+    if (this->timeLimit() == 0)
+    {
+    	firstTableTimelimit = firstTableTimelimit.arg(unlimited, "");
+    }
+    else
+    {
+		QString strLeft = tr("(%1 left)").arg(this->timeLeft());
+		firstTableTimelimit = firstTableTimelimit.arg(this->timeLimit()).arg(strLeft);
+    }
+
+	// Scorelimit
+	QString firstTableScorelimit = "<tr><td>" + scorelimit + ":&nbsp;</td><td>%1</td></tr>";
+	if (this->scoreLimit() == 0)
+	{
+		firstTableScorelimit = firstTableScorelimit.arg(unlimited);
+	}
+	else
+	{
+		firstTableScorelimit = firstTableScorelimit.arg(this->scoreLimit());
+	}
+
+	// Team score
+	QString firstTableTeamscore;
+	if (this->gameMode().isTeamGame())
+	{
+		firstTableTeamscore = "<tr><td colspan=\"2\">%1</td></tr>";
+		QString teams;
+		bool bPrependBar = false;
+		for (int i = 0; i < MAX_TEAMS; ++i)
+		{
+			if (this->teamPlayerCount(i) != 0)
+			{
+				if (bPrependBar)
+					teams += " | ";
+				teams += teamName(i) + ": " + QString::number(this->score(i));
+				bPrependBar = true;
+			}
+		}
+		firstTableTeamscore = firstTableTeamscore.arg(teams);
+	}
+
+	// Players
+	QString firstTablePlayers = "<tr><td>" + players + ":&nbsp;</td><td>%1 / %2</td></tr>";
+	firstTablePlayers = firstTablePlayers.arg(this->numPlayers()).arg(this->maximumClients());
+
+	QString firstTable = "<table>";
+	firstTable += firstTableTimelimit;
+	firstTable += firstTableScorelimit;
+	firstTable += firstTableTeamscore;
+	firstTable += firstTablePlayers;
+	firstTable += "</table>";
+
+	return firstTable;
+}
+
 QList<ServerInfo>* Server::serverInfo() const
 {
 	QList<ServerInfo>* list = new QList<ServerInfo>();
@@ -251,6 +307,19 @@ QList<ServerInfo>* Server::serverInfo() const
 
 	list->append(siName);
 	list->append(siAddress);
+
+	if (!this->webSite.isEmpty())
+	{
+		QString url = "<A HREF=\"" + this->webSite + "\">" + this->webSite + "</A>";
+		ServerInfo siUrl = { tr("URL: ") + url, "<div style='white-space: pre'>" + this->webSite + "</div>"};
+		list->append(siUrl);
+	}
+	if (!this->email.isEmpty())
+	{
+		QString email = "<a href=\"mailto:" + this->email + "\">" + this->email + "</a>";
+		ServerInfo siEmail = { tr("E-mail: ") + email, "<div style='white-space: pre'>" + this->email + "</div>"};
+		list->append(siEmail);
+	}
 
 	additionalServerInfo(list);
 	return list;
@@ -387,6 +456,148 @@ void Server::join() const
 		QMessageBox::critical(NULL, errorCaption, tr("File: ") + fileinfo.absoluteFilePath() + tr("\ncannot be run"));
 		return;
 	}
+}
+
+QString Server::generalInfoHTML() const
+{
+	QString ret = QString(name()).replace('>', "&gt;").replace('<', "&lt;") + "\n";
+	if(!version().isEmpty())
+	{
+		ret += tr("Version") + ": " + version() + "\n";
+	}
+	if (!email.isEmpty())
+	{
+		ret += tr("E-mail") + ": " + email + "\n";
+	}
+	if (!webSite.isEmpty())
+	{
+		ret += tr("URL") + ": <a href=\"" + webSite + "\">" + webSite + "</a>\n";
+	}
+	return ret;
+}
+
+QString Server::playerTableHTML() const
+{
+	// Sort the players out first.
+	QHash<int, QList<const Player*> > sortedPlayers;
+	QList<const Player*> botList;
+	QList<const Player*> specList;
+
+	for (int i = 0; i < this->numPlayers(); ++i)
+	{
+		const Player& p = this->player(i);
+
+		if (p.isSpectating())
+		{
+			specList.append(&p);
+			continue;
+		}
+
+		if (this->gameMode().isTeamGame())
+		{
+			int team = p.teamNum();
+
+			QHash<int, QList<const Player*> >::iterator it = sortedPlayers.find(team);
+			if (it == sortedPlayers.end())
+			{
+				QList<const Player*> l;
+				l.append(&p);
+				sortedPlayers.insert(team, l);
+			}
+			else
+			{
+				it.value().append(&p);
+			}
+		}
+		else
+		{
+			if (p.isBot())
+			{
+				botList.append(&p);
+				continue;
+			}
+
+			if (sortedPlayers.count() == 0)
+				sortedPlayers.insert(0, QList<const Player*>());
+
+			sortedPlayers.find(0).value().append(&p);
+		}
+
+	}
+
+	const QString team = tr("Team");
+	const QString player = tr("Player");
+	const QString score = tr("Score");
+	const QString ping = tr("Ping");
+	const QString status = tr("Status");
+
+	QString plTabTeamHeader;
+	QString plTabHeader = "<tr>";
+	int plTabColNum = 4;
+	if (this->gameMode().isTeamGame())
+	{
+		plTabColNum = 5;
+		plTabTeamHeader = "<td>" + team + "</td>";
+	}
+	plTabHeader += plTabTeamHeader + "<td>" + player + "</td><td align=\"right\">&nbsp;" + score + "</td><td align=\"right\">&nbsp;" + ping + "</td><td>" + status + "</td></tr>";
+	plTabHeader += QString("<tr><td colspan=\"%1\"><hr width=\"100%\"></td></tr>").arg(plTabColNum);
+
+	QString plTabPlayers;
+	QHash<int, QList<const Player*> >::iterator it;
+	bool bAppendEmptyRowAtBeginning = false;
+	for (it = sortedPlayers.begin(); it != sortedPlayers.end(); ++it)
+	{
+		plTabPlayers += spawnPartOfPlayerTable(it.value(), "", plTabColNum, bAppendEmptyRowAtBeginning);
+		if (!bAppendEmptyRowAtBeginning)
+		{
+			bAppendEmptyRowAtBeginning = true;
+		}
+	}
+
+	bAppendEmptyRowAtBeginning = !plTabPlayers.isEmpty();
+	QString plTabBots = spawnPartOfPlayerTable(botList, tr("BOT"), plTabColNum, bAppendEmptyRowAtBeginning);
+
+	bAppendEmptyRowAtBeginning = !(plTabBots.isEmpty() && plTabPlayers.isEmpty());
+	QString plTabSpecs = spawnPartOfPlayerTable(specList, tr("SPECTATOR"), plTabColNum, bAppendEmptyRowAtBeginning);
+
+
+	QString plTab = "<table cellspacing=\"4\" style=\"background-color: #FFFFFF;color: #000000\">";
+	plTab += plTabHeader;
+	plTab += plTabPlayers;
+	plTab += plTabBots;
+	plTab += plTabSpecs;
+	plTab += "</table>";
+	return plTab;
+}
+
+QString Server::spawnPartOfPlayerTable(QList<const Player*> list, QString status, int colspan, bool bAppendEmptyRowAtBeginning) const
+{
+	QString ret;
+	if (list.count() != 0)
+	{
+		if (bAppendEmptyRowAtBeginning)
+		{
+			ret = QString("<tr><td colspan=\"%1\">&nbsp;</td></tr>").arg(colspan);
+		}
+
+		for (int i = 0; i < list.count(); ++i)
+		{
+			const Player& p = *list[i];
+
+			QString strPlayer = "<tr>";
+			if (gameMode().isTeamGame())
+			{
+				strPlayer += QString("<td>%1</td>").arg(teamName(p.teamNum()));
+			}
+			strPlayer += "<td>%1</td><td align=\"right\">%2</td><td align=\"right\">%3</td><td>%4</td></tr>";
+			strPlayer = strPlayer.arg(p.nameFormatted()).arg(p.score()).arg(p.ping());
+			strPlayer = strPlayer.arg(status);
+
+			ret += strPlayer;
+		}
+	}
+
+	return ret;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
