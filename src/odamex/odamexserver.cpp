@@ -69,10 +69,17 @@ void OdamexServer::connectParameters(QStringList &args, PathFinder &pf, bool &iw
 
 	if(iwadFound)
 	{
-		// Waddir
+		// Waddir - Work around for an Odamex bug.
+		args << "-waddir";
 		QString waddir = pf.findWad(iwadName().toLower());
-		waddir.truncate(waddir.length() - iwad.length());
-		args << "-waddir" << waddir;
+		waddir.truncate(waddir.length() - iwadName().length());
+		for(int i = 0;i < numWads();i++)
+		{
+			QString pwaddir = pf.findWad(wad(i).toLower());
+			pwaddir.truncate(pwaddir.length() - wad(i).length());
+			waddir += ":" + pwaddir;
+		}
+		args << waddir;
 	}
 }
 
@@ -113,6 +120,7 @@ bool OdamexServer::readRequest(QByteArray &data)
 	pos += mapName.length() + 1;
 
 	// Wads
+	wads.clear();
 	int wadCount = READINT8(&in[pos++]);
 	if(wadCount > 0)
 	{
@@ -139,6 +147,7 @@ bool OdamexServer::readRequest(QByteArray &data)
 		currentGameMode = GAME_MODES[mode];
 
 	// Players
+	players.clear();
 	for(int i = 0;i < numPlayers;i++)
 	{
 		QString name(&in[pos]);
