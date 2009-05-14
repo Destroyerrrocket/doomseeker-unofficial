@@ -1,6 +1,8 @@
 #ifndef __GLOBAL_H__
 #define __GLOBAL_H__
 
+#include <QtGlobal>
+
 #define VERSION		"0.1 Alpha"
 
 #define READINT32(pointer) ((quint32((quint8)(*pointer))) | (quint32(quint8(*(pointer+1)))<<8) | (quint32(quint8(*(pointer+2)))<<16) | (quint32(quint8(*(pointer+3)))<<24))
@@ -16,7 +18,7 @@
 #define WRITEINT8(pointer, integer) *pointer = (quint8)(integer&0xFF);
 
 // Now we set it up so symbols are properly exported/imported on Windows
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 #ifdef MODE_MAIN
 #define MAIN_EXPORT		__declspec(dllexport)
 #define PLUGIN_EXPORT	__declspec(dllimport)

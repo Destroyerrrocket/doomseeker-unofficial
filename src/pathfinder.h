@@ -25,8 +25,9 @@
 #define __PATHFINDER_H_
 
 #include "sdeapi/config.hpp"
+#include "global.h"
 
-class PathFinder
+class MAIN_EXPORT PathFinder
 {
 	private:
 		Config* config;

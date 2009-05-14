@@ -48,11 +48,8 @@ qt4_add_resources(doomseekerResources
 	../media/resources.qrc
 )
 
-add_executable(doomseeker
-	${doomseekerUI}
-	${doomseekerResources}
-	${QT_FILES}
-	gui/aboutDlg.cpp
+set(SOURCE_FILES
+    gui/aboutDlg.cpp
 	gui/cfgFilePaths.cpp
 	gui/cfgQuery.cpp
 	gui/configureDlg.cpp
@@ -74,6 +71,28 @@ add_executable(doomseeker
 	server.cpp
 )
 
+if(WIN32)
+	# compile the Windows resource file.  How we do this depends on the compiler.
+	if(CMAKE_COMPILER_IS_GNUCXX)
+		add_custom_command(
+			OUTPUT windows.o
+			COMMAND windres -o windows.o -i ${CMAKE_CURRENT_SOURCE_DIR}/../media/windows.rc
+			COMMENT "Generating windows resources (windows.rc)"
+		)
+
+		set(SOURCE_FILES ${SOURCE_FILES} windows.o)
+	else(CMAKE_COMPILER_IS_GNUCXX)
+		set(SOURCE_FILES ${SOURCE_FILES} ../media/windows.rc)
+	endif(CMAKE_COMPILER_IS_GNUCXX)
+endif(WIN32)
+
+add_executable(doomseeker
+	${doomseekerUI}
+	${doomseekerResources}
+	${QT_FILES}
+	${SOURCE_FILES}
+)
+
 target_link_libraries(doomseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} wadseeker)
 
 # Allow plugins to link with doomseeker
@@ -81,5 +100,4 @@ set_target_properties(doomseeker PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DI
 if(WIN32)
 	set_target_properties(doomseeker PROPERTIES LINK_FLAGS_RELEASE "-Wl,-subsystem,windows")
 	set_target_properties(doomseeker PROPERTIES LINK_FLAGS_MINSIZEREL "-Wl,-subsystem,windows")
-  set_target_properties(doomseeker PROPERTIES LINK_FLAGS "-Wl,--export-all-symbols")
 endif(WIN32)

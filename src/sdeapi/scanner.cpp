@@ -29,6 +29,7 @@
 // Description:
 // =============================================================================
 
+#include <cstdio>
 #include <cmath>
 
 #include "sdeapi/scanner.hpp"

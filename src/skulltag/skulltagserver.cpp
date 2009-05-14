@@ -21,6 +21,7 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
+#define TEST
 #include "huffman/huffman.h"
 #include "skulltag/skulltagserver.h"
 #include "global.h"

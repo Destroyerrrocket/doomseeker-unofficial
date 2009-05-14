@@ -102,10 +102,10 @@ struct MAIN_EXPORT GameMode
 	public:
 		// Standard game mode set
 		// These should be used in order to keep the names uniform.
-		static const GameMode	COOPERATIVE;
-		static const GameMode	DEATHMATCH;
-		static const GameMode	TEAM_DEATHMATCH;
-		static const GameMode	CAPTURE_THE_FLAG;
+		static MAIN_EXPORT const GameMode	COOPERATIVE;
+		static MAIN_EXPORT const GameMode	DEATHMATCH;
+		static MAIN_EXPORT const GameMode	TEAM_DEATHMATCH;
+		static MAIN_EXPORT const GameMode	CAPTURE_THE_FLAG;
 
 		/**
 		 * @param name Name to display for game mode, this should be fairly short about no longer than "cooperative".
