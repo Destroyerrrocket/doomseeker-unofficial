@@ -84,7 +84,7 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 		void	aborted();
 		void 	allDone();
 		void 	downloadProgress(int done, int total);
-		void	message(const QString& msg, WadseekerMessageType type);
+		void	message(const QString& msg, Wadseeker::MessageType type);
 };
 
 #endif

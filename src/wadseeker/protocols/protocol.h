@@ -23,15 +23,14 @@
 #ifndef __PROTOCOL_H_
 #define __PROTOCOL_H_
 
-#include "global.h"
-#include "../wadseekerglobals.h"
+#include "../wadseeker.h"
 #include <QObject>
 #include <QTimer>
 #include <QUrl>
 
 #define WWW_TIMEOUT_MS 5000
 
-class PLUGIN_EXPORT Protocol : public QObject
+class WADSEEKER_API Protocol : public QObject
 {
 	Q_OBJECT
 
@@ -53,7 +52,7 @@ class PLUGIN_EXPORT Protocol : public QObject
 		void 	currentFileSize(int);
 		void	dataReadProgress(int done, int total);
 		void	done(bool success, QByteArray& data, int fileType, const QString& filename);
-		void 	message(const QString& msg, WadseekerMessageType type);
+		void 	message(const QString& msg, Wadseeker::MessageType type);
 
 	protected slots:
 		void			dataReadProgressSlot(int done, int total);

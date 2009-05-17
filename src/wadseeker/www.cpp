@@ -28,7 +28,7 @@ WWW::WWW()
 	connect(&http, SIGNAL( aborted() ), this, SLOT( protocolAborted() ) );
 	connect(&http, SIGNAL( dataReadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
 	connect(&http, SIGNAL( done(bool, QByteArray&, int, const QString&) ), this, SLOT( protocolDone(bool, QByteArray&, int, const QString&) ) );
-	connect(&http, SIGNAL( message(const QString&, WadseekerMessageType) ), this, SLOT( messageSlot(const QString&, WadseekerMessageType) ) );
+	connect(&http, SIGNAL( message(const QString&, Wadseeker::MessageType) ), this, SLOT( messageSlot(const QString&, Wadseeker::MessageType) ) );
 	connect(&http, SIGNAL( redirect(const QUrl&) ), this, SLOT( get(const QUrl&) ) );
 }
 
@@ -102,7 +102,7 @@ void WWW::checkNextSite()
 	if (site.isEmpty())
 	{
 		processedUrl = QUrl();
-		emit message(tr("No more sites.\n"), Notice);
+		emit message(tr("No more sites.\n"), Wadseeker::Notice);
 		emit noMoreSites();
 	}
 	else
@@ -179,7 +179,7 @@ void WWW::get(const QUrl& url)
 	QUrl urlValid = constructValidUrl(url);
 	if (urlValid.isEmpty())
 	{
-		emit message(tr("Failed to create valid URL out of \"%1\". Ignoring.\n").arg(url.toString()), Error);
+		emit message(tr("Failed to create valid URL out of \"%1\". Ignoring.\n").arg(url.toString()), Wadseeker::Error);
 		checkNextSite();
 		return;
 	}
@@ -193,14 +193,14 @@ void WWW::get(const QUrl& url)
 	checkedLinks.insert(urlValid.toString());
 	processedUrl = urlValid;
 
-	emit message(tr("Next site: %1").arg(urlValid.toString()), Notice);
+	emit message(tr("Next site: %1").arg(urlValid.toString()), Wadseeker::Notice);
 	if (Http::isHTTPLink(urlValid))
 	{
 		http.get(urlValid);
 	}
 	else
 	{
-		message(tr("Protocol for this site is not supported\n"), Error);
+		message(tr("Protocol for this site is not supported\n"), Wadseeker::Error);
 		checkNextSite();
 	}
 
@@ -351,7 +351,7 @@ void WWW::linksFromHTMLByPattern(const QByteArray& data, const QStringList& want
 	}
 }
 
-void WWW::messageSlot(const QString& msg, WadseekerMessageType type)
+void WWW::messageSlot(const QString& msg, Wadseeker::MessageType type)
 {
 	emit message(msg, type);
 }
@@ -407,10 +407,10 @@ void WWW::protocolDone(bool success, QByteArray& data, int fileType, const QStri
 {
 	if (success)
 	{
-		emit message(tr("Got file %1.").arg(filename), Notice);
+		emit message(tr("Got file %1.").arg(filename), Wadseeker::Notice);
 		if (fileType == Protocol::Html)
 		{
-			emit message(tr("Parsing file as HTML looking for links.\n"), Notice);
+			emit message(tr("Parsing file as HTML looking for links.\n"), Wadseeker::Notice);
 			capitalizeHTMLTags(data);
 			linksFromHTMLByPattern(data, filesToFind);
 			checkNextSite();
@@ -421,7 +421,7 @@ void WWW::protocolDone(bool success, QByteArray& data, int fileType, const QStri
 		}
 	}
 
-	emit message(" ", Notice);
+	emit message(" ", Wadseeker::Notice);
 
 }
 

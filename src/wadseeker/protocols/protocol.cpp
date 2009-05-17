@@ -65,6 +65,6 @@ void Protocol::get(const QUrl& url)
 
 void Protocol::timeout()
 {
-	emit message(tr("Request timeout!\n"), Error);
+	emit message(tr("Request timeout!\n"), Wadseeker::Error);
 	abort();
 }

@@ -31,7 +31,7 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 	connect(&wadseeker, SIGNAL( aborted() ), this, SLOT( aborted() ) );
 	connect(&wadseeker, SIGNAL( allDone() ), this, SLOT( allDone() ) );
 	connect(&wadseeker, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgress(int, int) ) );
-	connect(&wadseeker, SIGNAL( message(const QString&, WadseekerMessageType) ), this, SLOT( message(const QString&, WadseekerMessageType) ) );
+	connect(&wadseeker, SIGNAL( message(const QString&, Wadseeker::MessageType) ), this, SLOT( message(const QString&, Wadseeker::MessageType) ) );
 
 	bAutomatic = false;
 	bFirstShown = false;
@@ -109,21 +109,21 @@ void WadSeekerInterface::fail()
 	teWadseekerOutput->append(nfwStr);
 }
 
-void WadSeekerInterface::message(const QString& msg, WadseekerMessageType type)
+void WadSeekerInterface::message(const QString& msg, Wadseeker::MessageType type)
 {
 	QString str;
 	switch (type)
 	{
-		case CriticalError:
+		case Wadseeker::CriticalError:
 			str = tr("CRITICAL ERROR: %1").arg(msg);
 			setStateWaiting();
 			break;
 
-		case Error:
+		case Wadseeker::Error:
 			str = tr("Error: %1").arg(msg);
 			break;
 
-		case Notice:
+		case Wadseeker::Notice:
 			str = msg;
 			break;
 	}
@@ -186,3 +186,7 @@ void WadSeekerInterface::startSeeking(const QStringList& seekedFilesList)
 	wadseeker.seekWads(seekedFilesList);
 }
 
+QString Wadseeker::targetDirectory() const
+{
+	return targetDir;
+}

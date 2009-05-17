@@ -24,6 +24,7 @@
 #include "server.h"
 #include "main.h"
 #include "gui/wadseekerinterface.h"
+#include <QFileInfo>
 #include <QMessageBox>
 #include <QProcess>
 #include <QSet>

@@ -23,11 +23,11 @@
 #ifndef __HTML_H_
 #define __HTML_H_
 
-#include "global.h"
+#include "wadseeker.h"
 #include <QByteArray>
 #include <QString>
 
-class PLUGIN_EXPORT Html
+class WADSEEKER_API Html
 {
 	public:
 		/**

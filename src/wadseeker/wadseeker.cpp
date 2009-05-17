@@ -22,10 +22,12 @@
 //------------------------------------------------------------------------------
 
 #include "wadseeker.h"
+#include "www.h"
+#include "zip/unzip.h"
 #include <QDir>
 #include <QFileInfo>
 
-QString Wadseeker::defaultSites[] =
+const QString Wadseeker::defaultSites[] =
 {
 	QString("http://raider.dnsalias.com:8001/doom/userwads/"),
 	QString("http://doom.dogsoft.net/getwad.php?search=%WADNAME%"),
@@ -36,27 +38,44 @@ QString Wadseeker::defaultSites[] =
 	QString("") // empty url is treated here like an '\0' in a string
 };
 
-QString Wadseeker::iwadNames[] =
+const QString Wadseeker::iwadNames[] =
 {
 	"doom", "doom2", "heretic", "hexen", "tnt", "plutonia", "hexdd", "strife1", "voices", ""
 };
 ///////////////////////////////////////////////////////////////////////
 Wadseeker::Wadseeker()
 {
-	connect(&www, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
-	connect(&www, SIGNAL( fileDone(QByteArray&, const QString&) ), this, SLOT( fileDone(QByteArray&, const QString&) ));
-	connect(&www, SIGNAL( message(const QString&, WadseekerMessageType) ), this, SLOT( messageSlot(const QString&, WadseekerMessageType) ) );
-	connect(&www, SIGNAL( noMoreSites() ), this, SLOT( wadFail() ) );
+	www = new WWW();
+
+	connect(www, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
+	connect(www, SIGNAL( fileDone(QByteArray&, const QString&) ), this, SLOT( fileDone(QByteArray&, const QString&) ));
+	connect(www, SIGNAL( message(const QString&, Wadseeker::MessageType) ), this, SLOT( messageSlot(const QString&, Wadseeker::MessageType) ) );
+	connect(www, SIGNAL( noMoreSites() ), this, SLOT( wadFail() ) );
+}
+
+Wadseeker::~Wadseeker()
+{
+	delete www;
 }
 
 void Wadseeker::abort()
 {
-	www.abort();
+	www->abort();
 	for (int i = iNextWad - 1; i < seekedWads.size(); ++i)
 	{
 		notFound.append(seekedWads[i]);
 	}
 	emit aborted();
+}
+
+bool Wadseeker::areAllFilesFound() const
+{
+	return notFound.isEmpty();
+}
+
+const QStringList& Wadseeker::filesNotFound() const
+{
+	return notFound;
 }
 
 QStringList Wadseeker::defaultSitesListEncoded()
@@ -85,7 +104,7 @@ void Wadseeker::fileDone(QByteArray& data, const QString& filename)
 		QFile f(path);
 		if (!f.open(QIODevice::WriteOnly))
 		{
-			emit message(tr("Failed to save file: %1").arg(path), WMTCriticalError);
+			emit message(tr("Failed to save file: %1").arg(path), CriticalError);
 			return;
 		}
 
@@ -94,7 +113,7 @@ void Wadseeker::fileDone(QByteArray& data, const QString& filename)
 
 		if (writeLen != data.length())
 		{
-			emit message(tr("Failed to save file: %1").arg(path), WMTCriticalError);
+			emit message(tr("Failed to save file: %1").arg(path), CriticalError);
 			return;
 		}
 
@@ -113,7 +132,7 @@ void Wadseeker::fileDone(QByteArray& data, const QString& filename)
 		}
 		else
 		{
-			connect (&unzip, SIGNAL( message(const QString&, WadseekerMessageType) ), this, SLOT( messageSlot(const QString&, WadseekerMessageType) ) );
+			connect (&unzip, SIGNAL( message(const QString&, Wadseeker::MessageType) ), this, SLOT( messageSlot(const QString&, Wadseeker::MessageType) ) );
 			ZipLocalFileHeader* zip = unzip.findFileEntry(currentWad);
 
 			if (zip != NULL)
@@ -137,11 +156,11 @@ void Wadseeker::fileDone(QByteArray& data, const QString& filename)
 	}
 	else
 	{
-		www.checkNextSite();
+		www->checkNextSite();
 	}
 }
 
-bool Wadseeker::isIwad(const QString& wad)
+bool Wadseeker::isIwad(const QString& wad) const
 {
 	QFileInfo fiWad(wad);
 	// Check the basename, ignore extension.
@@ -159,7 +178,7 @@ bool Wadseeker::isIwad(const QString& wad)
 	return false;
 }
 
-void Wadseeker::messageSlot(const QString& msg, WadseekerMessageType type)
+void Wadseeker::messageSlot(const QString& msg, MessageType type)
 {
 	emit message(msg, type);
 }
@@ -189,7 +208,7 @@ void Wadseeker::nextWad()
 	emit message(tr("Seeking file: %1").arg(wad), Notice);
 	currentWad = wad;
 	QStringList wfi = wantedFilenames(wad);
-	www.searchFiles(wfi, currentWad);
+	www->searchFiles(wfi, currentWad);
 }
 
 void Wadseeker::seekWads(const QStringList& wads)
@@ -204,7 +223,7 @@ void Wadseeker::seekWads(const QStringList& wads)
 	if (targetDir.isEmpty())
 	{
 		QString err = tr("No target directory specified! Aborting");
-		emit message(err, WMTCriticalError);
+		emit message(err, CriticalError);
 		return;
 	}
 
@@ -214,18 +233,29 @@ void Wadseeker::seekWads(const QStringList& wads)
 	if (!fi.exists() || !fi.isDir())
 	{
 		QString err = tr("Target directory: \"%1\" doesn't exist! Aborting").arg(targetDir);
-		emit message(err, WMTCriticalError);
+		emit message(err, CriticalError);
 		return;
 	}
 
 	if (!fi.isWritable())
 	{
 		QString err = tr("You cannot write to directory: \"%1\"! Aborting").arg(targetDir);
-		emit message(err, WMTCriticalError);
+		emit message(err, CriticalError);
 		return;
 	}
 
 	nextWad();
+}
+
+
+void Wadseeker::setCustomSite(const QUrl& url)
+{
+	www->setCustomSite(url);
+}
+
+void Wadseeker::setPrimarySites(const QStringList& lst)
+{
+	www->setPrimarySites(lst);
 }
 
 void Wadseeker::setPrimarySitesToDefault()
@@ -257,7 +287,7 @@ void Wadseeker::wadFail()
 	nextWad();
 }
 
-QStringList	Wadseeker::wantedFilenames(const QString& wad)
+QStringList	Wadseeker::wantedFilenames(const QString& wad) const
 {
 	QStringList lst;
 	lst.append(wad);

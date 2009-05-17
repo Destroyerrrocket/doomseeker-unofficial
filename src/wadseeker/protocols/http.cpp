@@ -67,7 +67,7 @@ void Http::doneEx(bool error)
 {
 	if (error)
 	{
-		emit message(tr("HTTP error: %1").arg(qHttp->errorString()), Error);
+		emit message(tr("HTTP error: %1").arg(qHttp->errorString()), Wadseeker::Error);
 		noData = true;
 	}
 
@@ -148,7 +148,7 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 			}
 			if (resp.hasContentLength())
 			{
-				emit message(tr("File size: %1 B").arg(resp.contentLength()), Notice);
+				emit message(tr("File size: %1 B").arg(resp.contentLength()), Wadseeker::Notice);
 			}
 
 			break;
@@ -159,16 +159,16 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 			if (!attachmentInfo.isEmpty())
 			{
 				fileType = Other;
-				emit message(tr("Downloading attached file: %1").arg(processedFileName), Notice);
+				emit message(tr("Downloading attached file: %1").arg(processedFileName), Wadseeker::Notice);
 			}
 			else
 			{
 				noData = true;
-				emit message(tr("Redirecting"), Notice);
+				emit message(tr("Redirecting"), Wadseeker::Notice);
 				tmp = resp.value("Location");
 				if (tmp.isEmpty())
 				{
-					emit message(tr("Redirect header was received but no location was specified. Aborting.\n").arg(resp.value("Location")), Error);
+					emit message(tr("Redirect header was received but no location was specified. Aborting.\n").arg(resp.value("Location")), Wadseeker::Error);
 					abort();
 				}
 				else
@@ -181,7 +181,7 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 
 		default:
 			noData = true;
-			emit message(tr("HTTP response %1 - %2.").arg(QString::number(resp.statusCode())).arg(resp.reasonPhrase()), Error);
+			emit message(tr("HTTP response %1 - %2.").arg(QString::number(resp.statusCode())).arg(resp.reasonPhrase()), Wadseeker::Error);
 			break;
 	}
 }

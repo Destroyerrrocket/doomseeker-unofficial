@@ -32,7 +32,7 @@
 #include <QStringList>
 #include <QUrl>
 
-class PLUGIN_EXPORT WWW : public QObject
+class WADSEEKER_API WWW : public QObject
 {
 	Q_OBJECT
 
@@ -48,7 +48,7 @@ class PLUGIN_EXPORT WWW : public QObject
 	signals:
 		void 	downloadProgress(int done, int total);
 		void 	fileDone(QByteArray& data, const QString& filename);
-		void 	message(const QString&, WadseekerMessageType type);
+		void 	message(const QString&, Wadseeker::MessageType type);
 		void 	noMoreSites();
 
 	protected slots:
@@ -56,7 +56,7 @@ class PLUGIN_EXPORT WWW : public QObject
 		void 	downloadProgressSlot(int done, int total);
 		void 	protocolAborted();
 		void 	protocolDone(bool success, QByteArray& data, int fileType, const QString& filename);
-		void 	messageSlot(const QString&, WadseekerMessageType type);
+		void 	messageSlot(const QString&, Wadseeker::MessageType type);
 
 	protected:
 		static bool			hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link);

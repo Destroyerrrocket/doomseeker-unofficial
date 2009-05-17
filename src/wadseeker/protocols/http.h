@@ -26,7 +26,7 @@
 #include "protocol.h"
 #include <QHttp>
 
-class PLUGIN_EXPORT Http : public Protocol
+class WADSEEKER_API Http : public Protocol
 {
 	Q_OBJECT
 

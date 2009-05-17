@@ -23,7 +23,7 @@
 #ifndef __UNZIP_H_
 #define __UNZIP_H_
 
-#include "../wadseekerglobals.h"
+#include "../wadseeker.h"
 #include "localfileheader.h"
 #include <QFile>
 #include <QFileInfo>
@@ -79,7 +79,7 @@ class UnZip : public QObject
 		bool	isZip();
 
 	signals:
-		void message(const QString&, WadseekerMessageType type);
+		void message(const QString&, Wadseeker::MessageType type);
 
 	protected:
 		DataType	dataType;

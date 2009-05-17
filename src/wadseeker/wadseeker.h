@@ -23,41 +23,62 @@
 #ifndef __WADSEEKER_H_
 #define __WADSEEKER_H_
 
-#include "global.h"
-#include "wadseekerglobals.h"
-#include "www.h"
-#include "zip/unzip.h"
 #include <QList>
 #include <QString>
 #include <QStringList>
 #include <QUrl>
 
-class PLUGIN_EXPORT Wadseeker : public QObject
+#ifdef Q_OS_WIN32
+#ifdef WADSEEKER_API_EXPORT
+#define WADSEEKER_API	__declspec(dllexport)
+#else
+#define WADSEEKER_API	__declspec(dllimport)
+#endif
+#else
+#define WADSEEKER_API
+#endif
+
+class WADSEEKER_API WWW;
+
+/**
+ * The Wadseeker class provides an interface for searching for and downloading 
+ * modifications for Doom engine games.  Wadseeker will search for mods in a 
+ * list of locations provided by setPrimarySites.
+ */
+class WADSEEKER_API Wadseeker : public QObject
 {
 	Q_OBJECT
 
 	public:
-		static QString defaultSites[];
+		enum MessageType
+		{
+			Notice 			= 0,
+			Error	 		= 1,
+			CriticalError	= 2
+		};
+
+		static const QString defaultSites[];
 
 		static QStringList 	defaultSitesListEncoded();
 
 		Wadseeker();
+		~Wadseeker();
 
 		void				abort();
-		bool				areAllFilesFound() { return notFound.isEmpty(); }
-		const QStringList&	filesNotFound() { return notFound; }
+		bool				areAllFilesFound() const;
+		const QStringList&	filesNotFound() const;
 		void 				seekWads(const QStringList& wads);
-		void				setCustomSite(const QUrl& url) { www.setCustomSite(url); }
-		void 				setPrimarySites(const QStringList& lst) { www.setPrimarySites(lst); }
+		void				setCustomSite(const QUrl& url);
+		void 				setPrimarySites(const QStringList& lst);
 		void				setPrimarySitesToDefault();
 		void				setTargetDirectory(const QString& dir);
-		QString				targetDirectory() { return targetDir; }
+		QString				targetDirectory() const;
 
 	signals:
 		void aborted();
 		void allDone();
 		void downloadProgress(int done, int total);
-		void message(const QString& msg, WadseekerMessageType type);
+		void message(const QString& msg, Wadseeker::MessageType type);
 
 	protected:
 		int				iNextWad;
@@ -65,21 +86,22 @@ class PLUGIN_EXPORT Wadseeker : public QObject
 		QStringList		notFound;
 		QStringList		seekedWads;
 		QString			targetDir;
-		WWW				www;
+		WWW				*www;
 
 		void			nextWad();
-		QStringList		wantedFilenames(const QString& wad);
+		QStringList		wantedFilenames(const QString& wad) const;
 
 	protected slots:
 		void 			downloadProgressSlot(int done, int total);
 		void			fileDone(QByteArray& data, const QString& filename);
-		void			messageSlot(const QString& msg, WadseekerMessageType type);
+		void			messageSlot(const QString& msg, 
+									Wadseeker::MessageType type);
 		void			wadFail();
 
 	private:
-		static QString iwadNames[];
+		static const QString iwadNames[];
 
-		bool	isIwad(const QString&);
+		bool	isIwad(const QString&) const;
 };
 
 #endif

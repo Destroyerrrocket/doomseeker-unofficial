@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.4)
 include_directories(${DOOMSEEKER_SOURCE_DIR}/src)
 
 if(WIN32)
-	add_definitions(-DMODE_PLUGIN)
+	add_definitions(-DWADSEEKER_API_EXPORT)
 endif(WIN32)
 
 find_package(Qt4 REQUIRED)

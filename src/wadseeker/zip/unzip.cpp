@@ -46,9 +46,9 @@ QList<ZipLocalFileHeader> UnZip::allDataHeaders()
 	if (!isValid())
 	{
 		if (dataType == File)
-			emit message(tr("\"%1\" doesn't exist or is a directory.").arg(zipFile.fileName()), Error);
+			emit message(tr("\"%1\" doesn't exist or is a directory.").arg(zipFile.fileName()), Wadseeker::Error);
 		else
-			emit message(tr("No data is present."), Error);
+			emit message(tr("No data is present."), Wadseeker::Error);
 		return list;
 	}
 
@@ -72,7 +72,7 @@ QList<ZipLocalFileHeader> UnZip::allDataHeaders()
 
 		if(readError == ZipLocalFileHeader::Corrupted)
 		{
-			emit message(tr("ZIP file \"%1\" is corrupted!").arg(zipFile.fileName()), Error);
+			emit message(tr("ZIP file \"%1\" is corrupted!").arg(zipFile.fileName()), Wadseeker::Error);
 			break;
 		}
 		else if (readError == ZipLocalFileHeader::NoError)
