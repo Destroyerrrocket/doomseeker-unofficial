@@ -23,69 +23,89 @@
 #ifndef __WWW_H_
 #define __WWW_H_
 
-#include "protocols/ftp.h"
+#include "html.h"
+#include "global.h"
+#include "link.h"
 #include "protocols/http.h"
 #include <QObject>
 #include <QSet>
-#include <QString>
+#include <QStringList>
 #include <QUrl>
 
-
-class WWW : public QObject
+class PLUGIN_EXPORT WWW : public QObject
 {
 	Q_OBJECT
 
 	public:
 		WWW();
 
-		void 			abort();
-		void			get(const QString& strSeekedWad);
-		const QString&	lastFile() const { return lastFilename; }
-		const QUrl&		lastUrl() const { return url; }
-
-		void			nextSite();
-
-		void 			reset();
-
-		void 			setCustomSite(const QUrl& u) { customSite = u; }
-		void 			setGlobalSiteLinks(const QStringList& l) { globalSiteLinks = l; }
+		void abort();
+		void checkNextSite();
+		void searchFiles(const QStringList& seekedFiles, const QString& primaryFilename);
+		void setCustomSite(const QUrl& url) { customSite = url; }
+		void setPrimarySites(const QStringList& lst) { primarySites = lst; }
 
 	signals:
-		void dataReceived(unsigned howMuch, unsigned howMuchSum, unsigned percent);
-		void error(const QString&);
-		void finishedReceiving(const QByteArray& data);
-		void noMoreSites();
-		void notice(const QString&);
-		void size(unsigned int);
+		void 	downloadProgress(int done, int total);
+		void 	fileDone(QByteArray& data, const QString& filename);
+		void 	message(const QString&, WadseekerMessageType type);
+		void 	noMoreSites();
 
 	protected slots:
-		void dataReceivedSlot(unsigned howMuch, unsigned howMuchSum, unsigned percent);
-		void httpError(const QString&);
-		void httpFinishedReceiving(const QString& error);
-		void httpNotice(const QString&);
-		void nameOfCurrentlyDownloadedResource(const QString&);
-		void sizeSlot(unsigned int);
+		void	get(const QUrl&);
+		void 	downloadProgressSlot(int done, int total);
+		void 	protocolAborted();
+		void 	protocolDone(bool success, QByteArray& data, int fileType, const QString& filename);
+		void 	messageSlot(const QString&, WadseekerMessageType type);
 
 	protected:
-		/**
-		 * Retrievies links from HTML file.
-		 */
-		void			getLinks();
+		static bool			hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link);
+		static bool			isDirectLinkToFile(const QStringList& wantedFileNames, const QUrl& link);
+
+		bool			aborting;
+		Http			http;
 
 		QSet<QString>	checkedLinks;
-		int				currentGlobalSite;
+		int				currentPrimarySite;
 		QUrl			customSite;
 		bool			customSiteUsed;
-		QStringList		globalSiteLinks;
 		QList<QUrl>		directLinks;
-		QString			seekedWad;
+		QStringList		filesToFind;
+		QString			primaryFile;
+		QStringList		primarySites;
+		QUrl			processedUrl;
 		QList<QUrl> 	siteLinks;
 
-		bool	bAbort;
-		QString lastFilename;
-		Http	http;
-		Ftp		ftp;
-		QUrl	url;
+		/**
+		 * Capitalizes all HTML keywords
+		 */
+		void		capitalizeHTMLTags(QByteArray&);
+
+		QUrl		constructValidUrl(const QUrl&);
+
+		/**
+		 * Finds a HTML tag starting from index in the byte array.
+		 * @param byte		- array that will be searched
+		 * @param beginAt 	- index from which searching starts
+		 * @param end 		- end index of a tag
+		 * @return 			- begin index of a tag
+		 */
+		int			findTag(QByteArray& byte, int beginAt, int* end);
+
+		/**
+		 * Extracts links from HTML file.
+		 * @param - content of the HTML file, all characters in HTML keywords must be capitalized
+		 */
+		QList<Link> linksFromHTML(const QByteArray& data);
+
+		/**
+		 * Extracts links from HTML file but only those that match "pattern".
+		 * @param data - content of the HTML file, all characters in HTML keywords must be capitalized
+		 * @param wantedFiles - names of the files we want to get the links to.
+		 */
+		void		linksFromHTMLByPattern(const QByteArray& data, const QStringList& wantedFiles);
+
+		QUrl		nextSite();
 };
 
 #endif

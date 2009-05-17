@@ -22,25 +22,20 @@
 //------------------------------------------------------------------------------
 #include "gui/wadseekerinterface.h"
 #include "main.h"
-#include <QPushButton>
 
 WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 {
-	bAutomaticStart = false;
-
 	setupUi(this);
-	connect(&pWadseeker, SIGNAL( aborted() ), this, SLOT( aborted() ) );
-	connect(&pWadseeker, SIGNAL( allDone() ), this, SLOT( allDone() ) );
-	connect(&pWadseeker, SIGNAL( error(const QString&, bool) ), this, SLOT( error(const QString&, bool)) );
-	connect(&pWadseeker, SIGNAL( notice(const QString&) ), this, SLOT( notice(const QString&)) );
-	connect(&pWadseeker, SIGNAL( wadDone(bool, const QString&) ), this, SLOT( wadDone(bool, const QString&) ) );
-	connect(&pWadseeker, SIGNAL( wadSize(unsigned int) ), this, SLOT( wadSize(unsigned int) ) );
-	connect(&pWadseeker, SIGNAL( wadCurrentDownloadedSize(unsigned int, unsigned int) ), this, SLOT( wadCurrentDownloadedSize(unsigned int, unsigned int) ) );
 	setStateWaiting();
 
-	this->bAutomaticCloseOnSuccess = false;
+	connect(&wadseeker, SIGNAL( aborted() ), this, SLOT( aborted() ) );
+	connect(&wadseeker, SIGNAL( allDone() ), this, SLOT( allDone() ) );
+	connect(&wadseeker, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgress(int, int) ) );
+	connect(&wadseeker, SIGNAL( message(const QString&, WadseekerMessageType) ), this, SLOT( message(const QString&, WadseekerMessageType) ) );
 
-	// Set site links
+	bAutomatic = false;
+	bFirstShown = false;
+
 	if (Main::config->settingExists("WadseekerSearchURLs"))
 	{
 		SettingsData* setting = Main::config->setting("WadseekerSearchURLs");
@@ -52,23 +47,20 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 			urlList << QUrl::fromPercentEncoding(it->toAscii());
 		}
 
-		pWadseeker.setGlobalSiteLinks(urlList);
+		wadseeker.setPrimarySites(urlList);
 	}
 	else
 	{
 		// Theoreticaly this else should never happen due to config initialization in Main.cpp.
 		// theoreticaly...
-		pWadseeker.setGlobalSiteLinksToDefaults();
+		wadseeker.setPrimarySitesToDefault();
 	}
 }
 
 void WadSeekerInterface::aborted()
 {
 	teWadseekerOutput->append(tr("Aborted!"));
-	bAutomaticCloseOnSuccess = false;
-	const QStringList& notFoundWads = pWadseeker.notFoundWadsList();
-	QString nfwStr = tr("Following files were not found: %1").arg(notFoundWads.join(" "));
-	teWadseekerOutput->append(nfwStr);
+	fail();
 
 	this->setStateWaiting();
 }
@@ -88,41 +80,54 @@ void WadSeekerInterface::allDone()
 {
 	teWadseekerOutput->append(tr("All done."));
 	setStateWaiting();
-	if (pWadseeker.areAllWadsFound())
+	if (wadseeker.areAllFilesFound())
 	{
 		teWadseekerOutput->append(tr("SUCCESS!"));
-		if (bAutomaticCloseOnSuccess)
+		if (bAutomatic)
 		{
 			this->done(Accepted);
 		}
 	}
 	else
 	{
-		bAutomaticCloseOnSuccess = false;
-		const QStringList& notFoundWads = pWadseeker.notFoundWadsList();
-		QString nfwStr = tr("Following files were not found: %1").arg(notFoundWads.join(" "));
-		teWadseekerOutput->append(nfwStr);
+		fail();
 		teWadseekerOutput->append(tr("FAIL!"));
 	}
 }
 
-void WadSeekerInterface::error(const QString& err, bool bIsCritical)
+void WadSeekerInterface::downloadProgress(int done, int total)
 {
-	QString str;
-	if (bIsCritical)
-	{
-		str = tr("CRITICAL ERROR: %1").arg(err);
-		setStateWaiting();
-	}
-	else
-	{
-		str = tr("Error: %1").arg(err);
-	}
-	teWadseekerOutput->append(str);
+	pbProgress->setMaximum(total);
+	pbProgress->setValue(done);
 }
 
-void WadSeekerInterface::notice(const QString& str)
+void WadSeekerInterface::fail()
 {
+	bAutomatic = false;
+	const QStringList& notFoundWads = wadseeker.filesNotFound();
+	QString nfwStr = tr("Following files were not found: %1").arg(notFoundWads.join(", "));
+	teWadseekerOutput->append(nfwStr);
+}
+
+void WadSeekerInterface::message(const QString& msg, WadseekerMessageType type)
+{
+	QString str;
+	switch (type)
+	{
+		case CriticalError:
+			str = tr("CRITICAL ERROR: %1").arg(msg);
+			setStateWaiting();
+			break;
+
+		case Error:
+			str = tr("Error: %1").arg(msg);
+			break;
+
+		case Notice:
+			str = msg;
+			break;
+	}
+
 	teWadseekerOutput->append(str);
 }
 
@@ -131,21 +136,12 @@ void WadSeekerInterface::reject()
 	switch(state)
 	{
 		case DOWNLOADING:
-			pWadseeker.abort();
+			wadseeker.abort();
 			break;
 
 		case WAITING:
 			this->done(Rejected);
 			break;
-	}
-}
-
-void WadSeekerInterface::setAutomaticStart(const QStringList& seekedFilesList)
-{
-	if (!seekedFilesList.isEmpty())
-	{
-		bAutomaticStart = true;
-		startSeeking(seekedFilesList);
 	}
 }
 
@@ -165,6 +161,15 @@ void WadSeekerInterface::setStateWaiting()
 	state = WAITING;
 }
 
+void WadSeekerInterface::showEvent(QShowEvent* event)
+{
+	if (bAutomatic && !bFirstShown)
+	{
+		bFirstShown = true;
+		startSeeking(seekedWads);
+	}
+}
+
 void WadSeekerInterface::startSeeking(const QStringList& seekedFilesList)
 {
 	if (seekedFilesList.isEmpty())
@@ -177,36 +182,7 @@ void WadSeekerInterface::startSeeking(const QStringList& seekedFilesList)
 
 	setStateDownloading();
 
-	pWadseeker.setTargetDirectory(setting->string());
-	pWadseeker.seekWads(seekedFilesList);
+	wadseeker.setTargetDirectory(setting->string());
+	wadseeker.seekWads(seekedFilesList);
 }
-
-void WadSeekerInterface::wadDone(bool bFound, const QString& wadname)
-{
-	QString str = tr("File %1 done! Found: %2.\n").arg(wadname);
-	if (bFound)
-	{
-		str = str.arg(tr("true"));
-	}
-	else
-	{
-		str = str.arg(tr("false"));
-	}
-	teWadseekerOutput->append(str);
-}
-
-void WadSeekerInterface::wadSize(unsigned int s)
-{
-	QString str = tr("Size: %1 B\n").arg(s);
-	teWadseekerOutput->append(str);
-	if (s == 0)
-		s = 1;
-	pbProgress->setMaximum(s);
-}
-
-void WadSeekerInterface::wadCurrentDownloadedSize(unsigned int howMuchSum, unsigned int percent)
-{
-	pbProgress->setValue(howMuchSum);
-}
-
 

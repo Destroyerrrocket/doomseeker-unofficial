@@ -25,6 +25,7 @@
 
 #include "ui_wadseekerinterface.h"
 #include "wadseeker/wadseeker.h"
+#include <QStringList>
 
 /**
  * This dialog box returns 'Accepted' result ONLY when
@@ -38,22 +39,21 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 	public:
 		WadSeekerInterface(QWidget* parent = NULL);
 
-		bool 			automaticCloseOnSuccess() const { return bAutomaticCloseOnSuccess; }
-		bool 			setAutomaticCloseOnSuccess(bool b) { bAutomaticCloseOnSuccess = b; }
-		void			setAutomaticStart(const QStringList& seekedFilesList);
-		Wadseeker&		wadseeker() { return pWadseeker; }
+		bool 		isAutomatic() { return bAutomatic; }
 
-	public slots:
-		virtual void 	accept();
-		virtual void	reject();
+		/**
+		 * Sets the window to start seeking immediatelly after being shown and
+		 * automatically close on success.
+		 * @param b - is automatic or is it not
+		 * @param seekedWads - wads to seek if 'b' parameter is set to true.
+		 */
+		void 		setAutomatic(bool b, const QStringList& seekedWads)
+		{
+			bAutomatic = b;
+			this->seekedWads = seekedWads;
+		}
 
-		void			aborted();
-		void			allDone();
-		void			error(const QString&, bool bIsCritical);
-		void			notice(const QString&);
-		void			wadDone(bool bFound, const QString& wadname);
-		void			wadSize(unsigned int);
-		void			wadCurrentDownloadedSize(unsigned int howMuchSum, unsigned int percent);
+		Wadseeker&	wadseekerRef() { return wadseeker; }
 
 	protected:
 		enum STATES
@@ -62,20 +62,29 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 			WAITING			= 1
 		};
 
-		/**
-		 * If this flag is set the dialog box will automatically shut itself
-		 * down with 'Accepted' result when all seeked files are found.
-		 * If anything is not found the behavior will be default + this
-		 * flag will be set to false.
-		 */
-		bool 			bAutomaticCloseOnSuccess;
-		bool			bAutomaticStart;
-		STATES			state;
-		Wadseeker 		pWadseeker;
+		bool			bAutomatic;
+		bool			bFirstShown;
 
-		void			setStateDownloading();
-		void			setStateWaiting();
-		void			startSeeking(const QStringList& seekedFilesList);
+		/**
+		 * Interface uses this instead of line edit if bAutomatic is true.
+		 */
+		QStringList 	seekedWads;
+		STATES			state;
+		Wadseeker		wadseeker;
+
+		void	accept();
+		void	fail();
+		void	reject();
+		void	setStateDownloading();
+		void	setStateWaiting();
+		void 	showEvent(QShowEvent* event);
+		void	startSeeking(const QStringList& seekedFilesList);
+
+	protected slots:
+		void	aborted();
+		void 	allDone();
+		void 	downloadProgress(int done, int total);
+		void	message(const QString& msg, WadseekerMessageType type);
 };
 
 #endif

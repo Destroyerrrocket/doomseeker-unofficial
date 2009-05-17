@@ -24,131 +24,62 @@
 #define __WADSEEKER_H_
 
 #include "global.h"
-#include "zip/unzip.h"
+#include "wadseekerglobals.h"
 #include "www.h"
-#include <QDir>
-#include <QObject>
+#include "zip/unzip.h"
+#include <QList>
+#include <QString>
+#include <QStringList>
 #include <QUrl>
-
-/**
- * How does this work:
- * 	1.	Entry point is seekWads() method, it copies the list and initializes the wad list iterator
- *		then it launches seekNextWad() method.
- *	2.	seekNextWad() checks if wad list iterator is at the end of the list, if it is it emits allDone()
- *		signal and exits, if not it launched the seekWad(wadname) method.
- *	3.	seekWad() resets state of current Wadseeker class object and launches nextSite() method
- *	4.	nextSite() picks site in order: customLink, directLinks, siteLinks, globalSiteLinks.
- * 		If there are no more sites to pick it emits wadDone signal with flag set to 'wad not found'.
- *		If there are still some sites left it sends a request and awaits finishedReceiving() signal.
- *	5.
- *		a)
- *			Http::finishedReceiving() signal is received. If this is a file it is downloaded
- *			and unpacked if necessary. If this is a site it is parsed
- *			to find any links. Links leading to file with the name of seeked file
- *			are added to directLinks list. Links leading to other sites are
- *			added to siteLinks list.
- *		b)
- *			Http::error signal is received. Proceed to nextSite() (4).
- */
 
 class PLUGIN_EXPORT Wadseeker : public QObject
 {
 	Q_OBJECT
 
 	public:
-		static QString		defaultSites[];
+		static QString defaultSites[];
 
 		static QStringList 	defaultSitesListEncoded();
 
 		Wadseeker();
-		~Wadseeker();
 
-		bool 				areAllWadsFound() const { return notFoundWads.isEmpty(); }
-
-		const QStringList&	notFoundWadsList() const { return notFoundWads; }
-
+		void				abort();
+		bool				areAllFilesFound() { return notFound.isEmpty(); }
+		const QStringList&	filesNotFound() { return notFound; }
 		void 				seekWads(const QStringList& wads);
-		void 				setCustomSite(const QUrl& u) { www.setCustomSite(u); }
-		void 				setGlobalSiteLinks(const QStringList& l) { www.setGlobalSiteLinks(l); }
-		void	 			setGlobalSiteLinksToDefaults();
-		void				setTargetDirectory(const QString& dir)
-		{
-			targetDirectory = dir;
-			if (!dir.isEmpty())
-			{
-				if (dir[dir.length() - 1] != QDir::separator())
-					targetDirectory += '/';
-			}
-		}
-
-	public slots:
-		void abort();
+		void				setCustomSite(const QUrl& url) { www.setCustomSite(url); }
+		void 				setPrimarySites(const QStringList& lst) { www.setPrimarySites(lst); }
+		void				setPrimarySitesToDefault();
+		void				setTargetDirectory(const QString& dir);
+		QString				targetDirectory() { return targetDir; }
 
 	signals:
 		void aborted();
 		void allDone();
-
-		/**
-		 * Emitted when Wadseeker encounters an error.
-		 * Wadseeker ends after emitting critical error.
-		 */
-		void error(const QString&, bool bIsCritical);
-
-		/**
-		 * Emitted when Wadseeker wants to notify "the world" about
-		 * how it's performing.
-		 */
-
-		void notice(const QString&);
-		void wadDone(bool bFound, const QString& wadname);
-		void wadSize(unsigned int);
-		void wadCurrentDownloadedSize(unsigned int howMuchSum, unsigned int percent);
-
-	protected slots:
-		void finishedReceiving(const QByteArray&);
-		void seekWad(const QString& wad);
-		void size(unsigned int);
-		void sizeUpdate(unsigned howMuch, unsigned howMuchSum, unsigned percent);
-		void wadDoneSlot(bool bFound, const QString& wadname);
-		void wwwError(const QString&);
-		void wwwNoMoreSites();
-		void wwwNotice(const QString&);
-		void zipError(const QString&);
-		void zipNotice(const QString&);
+		void downloadProgress(int done, int total);
+		void message(const QString& msg, WadseekerMessageType type);
 
 	protected:
-		enum PARSE_FILE_RETURN_CODES
-		{
-			PARSE_FILE_CRITICAL_ERROR	= -1,
-			PARSE_FILE_OK 				= 0,
-			PARSE_FILE_ERROR			= 1
-		};
+		int				iNextWad;
+		QString			currentWad;
+		QStringList		notFound;
+		QStringList		seekedWads;
+		QString			targetDir;
+		WWW				www;
 
-		static QString					iwadNames[];
+		void			nextWad();
+		QStringList		wantedFilenames(const QString& wad);
 
-		bool							bAbort;
-		bool							bAutomaticCloseOnSuccess;
+	protected slots:
+		void 			downloadProgressSlot(int done, int total);
+		void			fileDone(QByteArray& data, const QString& filename);
+		void			messageSlot(const QString& msg, WadseekerMessageType type);
+		void			wadFail();
 
-		QStringList::const_iterator 	currentWad;
-		QStringList						notFoundWads;
-		QString							seekedWad;
-		QString							targetDirectory;
-		QUrl							url;
-		QStringList						wadnames;
-		WWW								www;
+	private:
+		static QString iwadNames[];
 
-		bool							isIwad(const QString&);
-
-		QString							nextWadName();
-
-		/**
-		 * Returns OK if wad file was installed properly and CRITICAL_ERROR if Wadseeker should stop
-		 */
-		PARSE_FILE_RETURN_CODES			parseFile(const QByteArray&);
-		PARSE_FILE_RETURN_CODES 		parseZipFile(const QByteArray&);
-		void 							seekNextWad();
-		PARSE_FILE_RETURN_CODES			unzipFile(const QString& zipFileName, const QString& displayFileName, const QString& targetPath);
-
+		bool	isIwad(const QString&);
 };
 
 #endif

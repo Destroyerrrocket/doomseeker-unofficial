@@ -21,50 +21,50 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "protocol.h"
-#include <QDebug>
 #include <QFileInfo>
 
 Protocol::Protocol()
 {
-	port = 0;
+	connect(&timeoutTimer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
+
+	timeoutTimer.setSingleShot(true);
+}
+
+void Protocol::abort()
+{
+	aborting = true;
+	timeoutTimer.stop();
+	abortEx();
+}
+
+void Protocol::dataReadProgressSlot(int done, int total)
+{
+	timeoutTimer.start(WWW_TIMEOUT_MS);
+	emit dataReadProgress(done, total);
+}
+
+void Protocol::doneSlot(bool error)
+{
+	timeoutTimer.stop();
+	if (!aborting)
+	{
+		doneEx(error);
+	}
 }
 
 void Protocol::get(const QUrl& url)
 {
-	QString scheme = url.scheme();
-	if (scheme.isEmpty())
-	{
-		scheme = this->defaultScheme();
-	}
-	this->site.setScheme(scheme);
-	if (!url.authority().isEmpty())
-	{
-		this->site.setAuthority(url.authority());
-	}
+	aborting = false;
+	QFileInfo fi(url.path());
+	processedFileName = fi.fileName();
 
-	this->resource = url.encodedPath();
-	if (this->resource.isEmpty())
-	{
-		this->resource = '/';
-	}
-	else if (this->resource[0] != '/')
-	{
-		this->resource.prepend('/');
-	}
+	timeoutTimer.start(WWW_TIMEOUT_MS);
 
-	if (!url.encodedQuery().isNull())
-	{
-		resource += "?" + url.encodedQuery();
-	}
-
-	QFileInfo fi(url.encodedPath());
-	emit nameOfCurrentlyDownloadedResource(fi.fileName());
-
-	data.clear();
-	sendGet();
+	getEx(url);
 }
 
-QUrl Protocol::lastLink() const
+void Protocol::timeout()
 {
-	return QUrl(site.toString() + resource);
+	emit message(tr("Request timeout!\n"), Error);
+	abort();
 }

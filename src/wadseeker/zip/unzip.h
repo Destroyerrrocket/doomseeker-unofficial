@@ -23,6 +23,7 @@
 #ifndef __UNZIP_H_
 #define __UNZIP_H_
 
+#include "../wadseekerglobals.h"
 #include "localfileheader.h"
 #include <QFile>
 #include <QFileInfo>
@@ -33,7 +34,15 @@ class UnZip : public QObject
 	Q_OBJECT
 
 	public:
+		enum DataType
+		{
+			File		= 0,
+			ByteArray	= 1
+		};
+
+		UnZip(const QByteArray& data);
 		UnZip(const QString& file);
+
 
 		/**
 		 * @return all data headers found in the zip file
@@ -49,21 +58,35 @@ class UnZip : public QObject
 		ZipLocalFileHeader*			findFileEntry(const QString& entryName);
 
 		/**
-		 * @return true if the zipFile is a valid file.
+		 * @return true if the zipFile is a valid file or zipData is not empty.
 		 */
 		bool	isValid()
 		{
-			QFileInfo fi(zipFile);
-			return (fi.exists() && !fi.isDir());
+			if (dataType == File)
+			{
+				QFileInfo fi(zipFile);
+				return (fi.exists() && !fi.isDir());
+			}
+			else
+			{
+				return !zipData.isEmpty();
+			}
 		}
 
+		/**
+		 * @return true if data passed to constructor is a zip data.
+		 */
+		bool	isZip();
+
 	signals:
-		void error(const QString&);
-		void notice(const QString&);
+		void message(const QString&, WadseekerMessageType type);
 
 	protected:
+		DataType	dataType;
 		QFile		zipFile;
+		QByteArray	zipData;
 
+		int			readHeader(QByteArray& zipData, qint64 pos, ZipLocalFileHeader& zip);
 		int			readHeader(QFile& zipFile, qint64 pos, ZipLocalFileHeader& zip);
 		int			uncompress(char* out, unsigned long uncompressedSize, const QByteArray& inArray);
 };

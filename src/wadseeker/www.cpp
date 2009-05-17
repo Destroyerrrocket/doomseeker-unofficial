@@ -25,194 +25,416 @@
 
 WWW::WWW()
 {
-	bAbort = false;
-	currentGlobalSite = 0;
-
-	connect(&http, SIGNAL( dataReceived(unsigned, unsigned, unsigned) ), this, SLOT( dataReceivedSlot(unsigned, unsigned, unsigned) ) );
-	connect(&http, SIGNAL( error(const QString&) ), this, SLOT( httpError(const QString&) ) );
-	connect(&http, SIGNAL( finishedReceiving(const QString&) ), this, SLOT( httpFinishedReceiving(const QString&) ) );
-	connect(&http, SIGNAL( nameOfCurrentlyDownloadedResource(const QString&) ), this, SLOT( nameOfCurrentlyDownloadedResource(const QString&) ) );
-	connect(&http, SIGNAL( notice(const QString&) ), this, SLOT( httpNotice(const QString&) ) );
-	connect(&http, SIGNAL( size(unsigned int) ), this, SLOT( sizeSlot(unsigned int) ) );
+	connect(&http, SIGNAL( aborted() ), this, SLOT( protocolAborted() ) );
+	connect(&http, SIGNAL( dataReadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
+	connect(&http, SIGNAL( done(bool, QByteArray&, int, const QString&) ), this, SLOT( protocolDone(bool, QByteArray&, int, const QString&) ) );
+	connect(&http, SIGNAL( message(const QString&, WadseekerMessageType) ), this, SLOT( messageSlot(const QString&, WadseekerMessageType) ) );
+	connect(&http, SIGNAL( redirect(const QUrl&) ), this, SLOT( get(const QUrl&) ) );
 }
 
 void WWW::abort()
 {
-	bAbort = true;
+	aborting = true;
 	http.abort();
 }
 
-void WWW::dataReceivedSlot(unsigned howMuch, unsigned howMuchSum, unsigned percent)
+void WWW::capitalizeHTMLTags(QByteArray& byte)
 {
-	emit dataReceived(howMuch, howMuchSum, percent);
+	int begin = 0;
+	int end = 0;
+
+	while (true)
+	{
+		char endingChar = ' ';
+		bool bNext = false;
+		bool bValueBegin = false;
+
+		begin = findTag(byte, end, &end);
+		if (begin < 0 || end < 0)
+			break;
+
+		for(int i = begin; i < end; ++i)
+		{
+			if (bNext)
+			{
+				if (byte[i] == endingChar)
+				{
+					bNext = false;
+					bValueBegin = false;
+				}
+				continue;
+			}
+			else
+			{
+				if (bValueBegin)
+				{
+					if (byte[i] == '\"')
+					{
+						bNext = true;
+						endingChar = '\"';
+					}
+					else if (byte[i] != ' ')
+					{
+						bNext = true;
+						endingChar = ' ';
+					}
+				}
+				else
+				{
+					if (byte[i] == '=')
+					{
+						bValueBegin = true;
+					}
+					else
+					{
+						byte[i] = toupper(byte[i]);
+					}
+				} // end of else
+			} // end of else
+		} // end of for
+	} // end of while
 }
 
-void WWW::get(const QString& strSeekedWad)
+void WWW::checkNextSite()
 {
-	reset();
+	QUrl site = nextSite();
 
-	// Get the file extension and compare it against "zip"
-	// If the file extension is "zip" already set only "zip"
-	// as "binary" files for Http class.
-	// If the file extension is not "zip" set "zip" and this extension
-	// as "binary" files for Http class.
-
-	QFileInfo fi(strSeekedWad);
-	QString extension = fi.suffix();
-	QStringList expectedFilenames;
-	expectedFilenames << strSeekedWad;
-	if (extension.compare("zip", Qt::CaseInsensitive) != 0)
+	if (site.isEmpty())
 	{
-		expectedFilenames << QString(fi.completeBaseName() + ".zip");
-	}
-
-	seekedWad = strSeekedWad;
-	http.setWantedFilenames(expectedFilenames);
-	nextSite();
-}
-
-void WWW::getLinks()
-{
-	QFileInfo fi(seekedWad);
-	QString extension = fi.suffix();
-
-	QStringList wantedFileNames;
-	wantedFileNames << fi.completeBaseName() + ".zip";
-	if (extension.compare("zip", Qt::CaseInsensitive) != 0)
-	{
-		wantedFileNames << fi.fileName();
-	}
-
-	http.linksByPattern(wantedFileNames, directLinks, siteLinks);
-}
-
-void WWW::httpFinishedReceiving(const QString& err)
-{
-	if (bAbort)
-	{
-		return;
-	}
-
-	if (!err.isEmpty())
-	{
-		QString str = tr("HTTP Receive error: %1").arg(err);
-		emit error(str);
-		this->nextSite();
+		processedUrl = QUrl();
+		emit message(tr("No more sites.\n"), Notice);
+		emit noMoreSites();
 	}
 	else
 	{
-		if( http.lastFileType() == Http::HTTP_FILE_TYPE_WANTED)
-		{
-			emit finishedReceiving(http.lastData());
-		}
-		else if ( http.lastFileType() == Http::HTTP_FILE_TYPE_HTML)
-		{
-			this->getLinks();
-			this->nextSite();
-		}
+		emit downloadProgress(0, 100);
+		get(site);
 	}
 }
 
-void WWW::httpError(const QString& errorString)
+QUrl WWW::constructValidUrl(const QUrl& url)
 {
-	QString str = tr("HTTP error: %1").arg(errorString);
-	emit error(str);
-	this->nextSite();
-}
-
-void WWW::httpNotice(const QString& string)
-{
-	QString str = tr("HTTP notice: %1").arg(string);
-	emit notice(str);
-}
-
-void WWW::nameOfCurrentlyDownloadedResource(const QString& res)
-{
-	lastFilename = res;
-}
-
-void WWW::nextSite()
-{
-	if (bAbort)
+	QUrl returnUrl = url;
+	if (returnUrl.scheme().isEmpty())
 	{
-		bAbort = false;
+		returnUrl.setScheme(processedUrl.scheme());
+	}
+
+	if (returnUrl.scheme().isEmpty())
+	{
+		return QUrl();
+	}
+
+	if (returnUrl.host().isEmpty())
+	{
+		returnUrl.setHost(processedUrl.host());
+	}
+
+	if (returnUrl.host().isEmpty())
+	{
+		return QUrl();
+	}
+
+	return returnUrl;
+}
+
+void WWW::downloadProgressSlot(int done, int total)
+{
+	emit downloadProgress(done, total);
+}
+
+int	 WWW::findTag(QByteArray& byte, int beginAt, int* end)
+{
+	if (end == NULL)
+		return -1;
+
+	int begin = -1;
+	*end = -1;
+	for (int i = beginAt; i < byte.length(); ++i)
+	{
+		if (byte[i] == '<')
+		{
+			begin = i;
+			break;
+		}
+	}
+
+	if (begin < 0)
+		return -1;
+
+	for (int i = begin; i < byte.length(); ++i)
+	{
+		if (byte[i] == '>')
+		{
+			*end = i;
+			break;
+		}
+	}
+
+	return begin;
+}
+
+void WWW::get(const QUrl& url)
+{
+	QUrl urlValid = constructValidUrl(url);
+	if (urlValid.isEmpty())
+	{
+		emit message(tr("Failed to create valid URL out of \"%1\". Ignoring.\n").arg(url.toString()), Error);
+		checkNextSite();
 		return;
 	}
 
-	bool bGotUrl = false;
-
-	if (!customSiteUsed && !customSite.isEmpty())
+	if (checkedLinks.find(urlValid.toString()) != checkedLinks.end())
 	{
-		url = customSite;
-		bGotUrl = true;
-		customSiteUsed = true;
-	}
-
-	while (!directLinks.empty() && !bGotUrl)
-	{
-		url = directLinks.first();
-		directLinks.removeFirst();
-		if (checkedLinks.find(url.toString()) == checkedLinks.end())
-		{
-			bGotUrl = true;
-		}
-	}
-
-	while (!siteLinks.empty() && !bGotUrl)
-	{
-		url = siteLinks.first();
-		siteLinks.removeFirst();
-		if (checkedLinks.find(url.toString()) == checkedLinks.end())
-		{
-			bGotUrl = true;
-		}
-	}
-
-	while (!bGotUrl && currentGlobalSite < globalSiteLinks.size())
-	{
-		QString strUrl = globalSiteLinks[currentGlobalSite];
-		url = strUrl.replace(QString("%WADNAME%"), seekedWad);
-		++currentGlobalSite;
-		if (!url.isEmpty())
-		{
-			bGotUrl = true;
-		}
-	}
-
-
-	if (!bGotUrl)
-	{
-		emit noMoreSites();
+		checkNextSite();
 		return;
 	}
 
-	checkedLinks.insert(url.toString());
+	checkedLinks.insert(urlValid.toString());
+	processedUrl = urlValid;
 
-	QString strNotice = tr("Next site: %1").arg(url.toString());
-	emit notice(strNotice);
-
-	if (Http::isHTTPLink(url))
+	emit message(tr("Next site: %1").arg(urlValid.toString()), Notice);
+	if (Http::isHTTPLink(urlValid))
 	{
-		http.get(url);
+		http.get(urlValid);
 	}
-	else if (Ftp::isFTPLink(url))
+	else
 	{
-		emit notice(tr("FTP sites not supported yet."));
-		nextSite();
+		message(tr("Protocol for this site is not supported\n"), Error);
+		checkNextSite();
+	}
+
+}
+
+bool WWW::hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link)
+{
+	QString strQuery = link.url.encodedQuery();
+
+	for (int i = 0; i < wantedFileNames.count(); ++i)
+	{
+		if (strQuery.contains(wantedFileNames[i], Qt::CaseInsensitive) || link.text.contains(wantedFileNames[i], Qt::CaseInsensitive) )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool WWW::isDirectLinkToFile(const QStringList& wantedFileNames, const QUrl& link)
+{
+	QFileInfo fi(link.encodedPath());
+	for (int i = 0; i < wantedFileNames.count(); ++i)
+	{
+		if (fi.fileName() == wantedFileNames[i])
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Steps:
+ * 1. Find an occurence of "<A " character sequence,
+ *		if nothing found return.
+ * 2. Find an occurence of ">" character starting
+ *		from index returned by 1, if nothing found return.
+ * 3. Find an occurence of " HREF" character sequence
+ *		starting from index returned by 1.
+ * 4. Check if HREF is between 1. and 2. and if there is ' ' or '='
+ *		character after " HREF"	if not goto 1. starting
+ *		from index returned by 2.
+ * 5. Get HREF value.
+ * 6. Find "</A>" character sequence starting from 2.
+ *		if nothing found return.
+ * 7. Get everything between 2. and 6.
+ * 8. Append Link struct to list.
+ * 9. Goto 1. starting from index returned by 6.
+ */
+QList<Link>	WWW::linksFromHTML(const QByteArray& data)
+{
+	QList<Link> list;
+
+	int indexBeginTag = 0;
+	while (true)
+	{
+		int indexCloseBracket = 0;
+		int indexHref = 0;
+
+		// 1
+		indexBeginTag = data.indexOf("<A ", indexBeginTag);
+		if (indexBeginTag < 0)
+			break;
+
+		// 2
+		indexCloseBracket = data.indexOf(">", indexBeginTag);
+		if (indexCloseBracket < 0)
+			break;
+
+		// 3
+		indexHref = data.indexOf(" HREF", indexBeginTag) + 1;
+
+		// 4
+		int strLength = QString("HREF").length();
+		if (indexHref > indexCloseBracket || (data[indexHref + strLength] != ' ' && data[indexHref + strLength] != '=') )
+		{
+			// next iteration
+			indexBeginTag = indexCloseBracket;
+		}
+		else
+		{
+			// 5
+			QString url = Html::htmlValue(data, indexHref, indexCloseBracket);
+
+			// 6
+			int indexEndA = 0;
+
+			indexEndA = data.indexOf("</A>", indexCloseBracket);
+			if (indexEndA < 0)
+				break;
+
+			// 7
+			QString text = data.mid(indexCloseBracket + 1, indexEndA - (indexCloseBracket + 1) );
+
+			// 8
+			Link link = {url, text};
+			list.append(link);
+
+			// 9
+			indexBeginTag = indexEndA;
+		}
+	}
+
+	return list;
+}
+
+void WWW::linksFromHTMLByPattern(const QByteArray& data, const QStringList& wantedFiles)
+{
+	QList<Link> list = linksFromHTML(data);
+	QList<Link>::iterator it;
+
+	for (it = list.begin(); it != list.end(); ++it)
+	{
+		QUrl newUrl = it->url;
+		if (it->url.authority().isEmpty())
+		{
+			newUrl.setAuthority("http");
+		}
+
+		if (it->url.host().isEmpty())
+		{
+			if (processedUrl.host().isEmpty())
+				continue;
+
+			newUrl.setHost(processedUrl.host());
+		}
+
+		if (it->url.host().isEmpty() && it->url.authority().isEmpty())
+		{
+			QString path = processedUrl.path();
+			path = path.left(path.lastIndexOf('/') + 1);
+			path += it->url.path();
+			newUrl.setPath(path);
+		}
+
+		if (isDirectLinkToFile(wantedFiles, it->url))
+		{
+			directLinks.append(newUrl);
+		}
+		else if (hasFileReferenceSomewhere(wantedFiles, *it))
+		{
+			// here we append all links that contain this filename somewhere else than in path
+			siteLinks.append(newUrl);
+		}
 	}
 }
 
-void WWW::reset()
+void WWW::messageSlot(const QString& msg, WadseekerMessageType type)
 {
-	bAbort = false;
-	currentGlobalSite = 0;
+	emit message(msg, type);
+}
+
+QUrl WWW::nextSite()
+{
+	while (true)
+	{
+		QUrl url;
+		if (!customSiteUsed && customSite.isValid())
+		{
+			url = customSite;
+			customSiteUsed = true;
+		}
+		else if (!directLinks.isEmpty())
+		{
+			url = directLinks.takeFirst();
+		}
+		else if (!siteLinks.isEmpty())
+		{
+			url = siteLinks.takeFirst();
+		}
+		else if (currentPrimarySite < primarySites.size())
+		{
+			url = primarySites[currentPrimarySite];
+			++currentPrimarySite;
+		}
+		else
+		{
+			break;
+		}
+
+		if (url.isEmpty() || !url.isValid())
+			continue;
+
+		url = url.toString().replace("%WADNAME%", primaryFile);
+
+		return url;
+	}
+
+	return QUrl();
+}
+
+void WWW::protocolAborted()
+{
+	if (!aborting)
+	{
+		checkNextSite();
+	}
+}
+
+void WWW::protocolDone(bool success, QByteArray& data, int fileType, const QString& filename)
+{
+	if (success)
+	{
+		emit message(tr("Got file %1.").arg(filename), Notice);
+		if (fileType == Protocol::Html)
+		{
+			emit message(tr("Parsing file as HTML looking for links.\n"), Notice);
+			capitalizeHTMLTags(data);
+			linksFromHTMLByPattern(data, filesToFind);
+			checkNextSite();
+		}
+		else
+		{
+			emit fileDone(data, filename);
+		}
+	}
+
+	emit message(" ", Notice);
+
+}
+
+void WWW::searchFiles(const QStringList& list, const QString& primaryFilename)
+{
+	aborting = false;
 	customSiteUsed = false;
+	currentPrimarySite = 0;
 	checkedLinks.clear();
-	directLinks.clear();
-	siteLinks.clear();
+
+	filesToFind = list;
+	primaryFile = primaryFilename;
+	checkNextSite();
 }
 
-void WWW::sizeSlot(unsigned int s)
-{
-	emit size(s);
-}
+

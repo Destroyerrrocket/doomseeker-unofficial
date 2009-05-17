@@ -436,9 +436,8 @@ void Server::join() const
 			}
 
 			WadSeekerInterface wsi;
-			wsi.setAutomaticCloseOnSuccess(true);
-			wsi.wadseeker().setCustomSite(website());
-			wsi.setAutomaticStart(missingPwads);
+			wsi.setAutomatic(true, missingPwads);
+			wsi.wadseekerRef().setCustomSite(website());
 			if (wsi.exec() == QDialog::Accepted)
 			{
 				join();

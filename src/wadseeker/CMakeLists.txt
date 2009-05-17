@@ -16,6 +16,7 @@ set(WADSEEKER_QT_FILES
   protocols/http.h
   protocols/protocol.h
   zip/unzip.h
+	html.h
   link.h
 	wadseeker.h
   www.h
@@ -26,6 +27,7 @@ set(WADSEEKER_FILES
   protocols/http.cpp
   protocols/protocol.cpp
   zip/unzip.cpp
+	html.cpp
 	link.cpp
   wadseeker.cpp
   www.cpp

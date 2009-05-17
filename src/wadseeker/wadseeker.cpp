@@ -22,8 +22,8 @@
 //------------------------------------------------------------------------------
 
 #include "wadseeker.h"
+#include <QDir>
 #include <QFileInfo>
-#include <QTemporaryFile>
 
 QString Wadseeker::defaultSites[] =
 {
@@ -39,6 +39,24 @@ QString Wadseeker::iwadNames[] =
 {
 	"doom", "doom2", "heretic", "hexen", "tnt", "plutonia", "hexdd", "strife1", "voices", ""
 };
+///////////////////////////////////////////////////////////////////////
+Wadseeker::Wadseeker()
+{
+	connect(&www, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
+	connect(&www, SIGNAL( fileDone(QByteArray&, const QString&) ), this, SLOT( fileDone(QByteArray&, const QString&) ));
+	connect(&www, SIGNAL( message(const QString&, WadseekerMessageType) ), this, SLOT( messageSlot(const QString&, WadseekerMessageType) ) );
+	connect(&www, SIGNAL( noMoreSites() ), this, SLOT( wadFail() ) );
+}
+
+void Wadseeker::abort()
+{
+	www.abort();
+	for (int i = iNextWad - 1; i < seekedWads.size(); ++i)
+	{
+		notFound.append(seekedWads[i]);
+	}
+	emit aborted();
+}
 
 QStringList Wadseeker::defaultSitesListEncoded()
 {
@@ -50,49 +68,75 @@ QStringList Wadseeker::defaultSitesListEncoded()
 	return list;
 }
 
-Wadseeker::Wadseeker()
+void Wadseeker::downloadProgressSlot(int done, int total)
 {
-	bAbort = false;
-
-	connect(&www, SIGNAL( dataReceived(unsigned, unsigned, unsigned) ), this, SLOT( sizeUpdate(unsigned, unsigned, unsigned) ) );
-	connect(&www, SIGNAL( error(const QString&) ), this, SLOT( wwwError(const QString&) ) );
-	connect(&www, SIGNAL( finishedReceiving(const QByteArray&) ), this, SLOT( finishedReceiving(const QByteArray&) ) );
-	connect(&www, SIGNAL( notice(const QString&) ), this, SLOT( wwwNotice(const QString&) ) );
-	connect(&www, SIGNAL( noMoreSites() ), this, SLOT( wwwNoMoreSites() ) );
-	connect(&www, SIGNAL( size(unsigned int) ), this, SLOT( size(unsigned int) ) );
-
-	connect(this, SIGNAL( wadDone(bool, const QString&) ), this, SLOT( wadDoneSlot(bool, const QString&) ));
+	emit downloadProgress(done, total);
 }
 
-Wadseeker::~Wadseeker()
+void Wadseeker::fileDone(QByteArray& data, const QString& filename)
 {
-}
+	QFileInfo fi(filename);
+	bool bNextWad = false; // if set to false it will perform WWW::checkNextSite().
 
-void Wadseeker::abort()
-{
-	bAbort = true;
-	www.abort();
-	currentWad = wadnames.end();
-	emit aborted();
-}
-
-void Wadseeker::finishedReceiving(const QByteArray& data)
-{
-	PARSE_FILE_RETURN_CODES ret = this->parseFile(data);
-	switch(ret)
+	QString path = this->targetDir + currentWad;
+	if (filename.compare(currentWad, Qt::CaseInsensitive) == 0)
 	{
-		case PARSE_FILE_CRITICAL_ERROR: // this should never happen
-			emit error(tr("Critical error encountered while parsing data"), true);
+		QFile f(path);
+		if (!f.open(QIODevice::WriteOnly))
+		{
+			emit message(tr("Failed to save file: %1").arg(path), WMTCriticalError);
 			return;
+		}
 
-		case PARSE_FILE_ERROR:
-			www.nextSite();
-			break;
+		int writeLen = f.write(data);
+		f.close();
 
-		case PARSE_FILE_OK:
-			emit wadDone(true, seekedWad);
-			this->seekNextWad();
-			break;
+		if (writeLen != data.length())
+		{
+			emit message(tr("Failed to save file: %1").arg(path), WMTCriticalError);
+			return;
+		}
+
+		bNextWad = true;
+	}
+	else if (fi.suffix().compare("zip", Qt::CaseInsensitive) == 0)
+	{
+		UnZip unzip(data);
+		if (!unzip.isValid())
+		{
+			emit message(tr("Couldn't unzip \"%1\".").arg(filename), Error);
+		}
+		else if (!unzip.isZip())
+		{
+			emit message(tr("\"%1\" is not a valid ZIP file.").arg(filename), Error);
+		}
+		else
+		{
+			connect (&unzip, SIGNAL( message(const QString&, WadseekerMessageType) ), this, SLOT( messageSlot(const QString&, WadseekerMessageType) ) );
+			ZipLocalFileHeader* zip = unzip.findFileEntry(currentWad);
+
+			if (zip != NULL)
+			{
+				unzip.extract(*zip, path);
+				emit message(tr("%1#%2 uncompressed successfuly!").arg(filename, zip->fileName), Notice);
+				delete zip;
+				bNextWad = true;
+			}
+			else
+			{
+				emit message(tr("File \"%1\" not found in \"%2\"").arg(currentWad, filename), Error);
+			}
+		}
+	}
+
+	emit message(" ", Notice);
+	if (bNextWad)
+	{
+		nextWad();
+	}
+	else
+	{
+		www.checkNextSite();
 	}
 }
 
@@ -114,244 +158,115 @@ bool Wadseeker::isIwad(const QString& wad)
 	return false;
 }
 
-
-
-QString Wadseeker::nextWadName()
+void Wadseeker::messageSlot(const QString& msg, WadseekerMessageType type)
 {
-	if (currentWad == wadnames.end())
-	{
-		return QString();
-	}
-
-	QString str = *currentWad;
-	++currentWad;
-	return str;
+	emit message(msg, type);
 }
 
-Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::parseFile(const QByteArray& data)
+void Wadseeker::nextWad()
 {
-	// first we check if the seeked file and retrieved file have exactly the same filename
-	QFileInfo fi(www.lastFile());
-	QString filename = fi.fileName();
-
-	// If they do have the same name we simply dump the file into directory and return OK.
-	if (filename.compare(seekedWad, Qt::CaseInsensitive) == 0)
+	QString wad;
+	while (wad.isNull() || wad.isEmpty())
 	{
-		QString path = this->targetDirectory + filename;
-		QFile f(path);
-		if (!f.open(QIODevice::WriteOnly))
+		if (iNextWad >= seekedWads.size())
 		{
-			emit error(tr("Failed to save file: %1").arg(path), true);
-			return PARSE_FILE_CRITICAL_ERROR;
+			emit allDone();
+			return;
 		}
 
-		int writeLen = f.write(data);
-		f.close();
+		wad = seekedWads[iNextWad];
+		++iNextWad;
 
-		if (writeLen != data.length())
+		if (isIwad(wad))
 		{
-			emit error(tr("Failed to save file: %1").arg(path), true);
-			return PARSE_FILE_CRITICAL_ERROR;
+			emit message(tr("%1 is an IWAD. Ignoring.\n").arg(wad), Error);
+			notFound.append(wad);
+			wad = QString();
 		}
-
-		return PARSE_FILE_OK;
-	}
-	else if (fi.suffix().compare("zip", Qt::CaseInsensitive) == 0)
-	{
-		return parseZipFile(data);
-	}
-	else
-	{
-		emit error(tr("File %1 failed (on site %2)").arg(seekedWad, www.lastUrl().toString()) , false);
-		return PARSE_FILE_ERROR;
-	}
-}
-
-Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::parseZipFile(const QByteArray& data)
-{
-	QString filename = www.lastFile();
-	QString path = this->targetDirectory + seekedWad;
-
-	// Open temporary file
-	QTemporaryFile tempFile;
-
-	tempFile.open();
-	QString tempFileName = tempFile.fileName();
-
-	QFileInfo fiTemp(tempFileName);
-	if (!fiTemp.exists())
-	{
-		emit error(tr("Couldn't create temporary file to unzip \"%1\".").arg(filename), false);
-		return PARSE_FILE_ERROR;
 	}
 
-	tempFile.setAutoRemove(false);
-	tempFile.write(data);
-	tempFile.close();
-
-	// Unzip temporary file
-	int err = unzipFile(tempFileName, filename, path);
-
-	tempFile.remove();
-	return static_cast<PARSE_FILE_RETURN_CODES>(err);
-}
-
-void Wadseeker::seekNextWad()
-{
-	if (bAbort)
-	{
-		return;
-	}
-
-	QString str = nextWadName();
-	if (!str.isEmpty())
-	{
-		seekWad(str);
-	}
-	else
-	{
-		emit allDone();
-	}
-}
-
-void Wadseeker::seekWad(const QString& wad)
-{
-	QString notic = tr("Seeking file: %1").arg(wad);
-	emit notice(notic);
-	if (!this->isIwad(wad))
-	{
-		seekedWad = wad;
-		www.get(wad); // get wad :P
-	}
-	else
-	{
-		emit error(tr("This is an IWAD!"), false);
-		emit wadDone(false, wad);
-		this->seekNextWad();
-	}
+	emit message(tr("Seeking file: %1").arg(wad), Notice);
+	currentWad = wad;
+	QStringList wfi = wantedFilenames(wad);
+	www.searchFiles(wfi, currentWad);
 }
 
 void Wadseeker::seekWads(const QStringList& wads)
 {
-	bAbort = false;
-	wadnames = wads;
-	currentWad = wadnames.begin();
-	notFoundWads = wads;
+	iNextWad = 0;
+	notFound.clear();
+	seekedWads = wads;
 
-	if (targetDirectory.isEmpty())
+	if (wads.isEmpty())
+		return;
+
+	if (targetDir.isEmpty())
 	{
 		QString err = tr("No target directory specified! Aborting");
-		emit error(err, true);
+		emit message(err, WMTCriticalError);
 		return;
 	}
 
-	QFileInfo fi(targetDirectory);
+	QFileInfo fi(targetDir);
 	fi.isWritable();
 
 	if (!fi.exists() || !fi.isDir())
 	{
-		QString err = tr("Target directory: \"%1\" doesn't exist! Aborting").arg(targetDirectory);
-		emit error(err, true);
+		QString err = tr("Target directory: \"%1\" doesn't exist! Aborting").arg(targetDir);
+		emit message(err, WMTCriticalError);
 		return;
 	}
 
 	if (!fi.isWritable())
 	{
-		QString err = tr("You cannot write to directory: \"%1\"! Aborting").arg(targetDirectory);
-		emit error(err, true);
+		QString err = tr("You cannot write to directory: \"%1\"! Aborting").arg(targetDir);
+		emit message(err, WMTCriticalError);
 		return;
 	}
 
-	seekNextWad();
+	nextWad();
 }
 
-void Wadseeker::setGlobalSiteLinksToDefaults()
+void Wadseeker::setPrimarySitesToDefault()
 {
 	QList<QString> list;
 	for (int i = 0; !defaultSites[i].isEmpty(); ++i)
 	{
 		list << defaultSites[i];
 	}
-	setGlobalSiteLinks(list);
+	setPrimarySites(list);
 }
 
-void Wadseeker::size(unsigned int s)
+void Wadseeker::setTargetDirectory(const QString& dir)
 {
-	emit wadSize(s);
-}
-
-void Wadseeker::sizeUpdate(unsigned howMuch, unsigned howMuchSum, unsigned percent)
-{
-	emit wadCurrentDownloadedSize(howMuchSum, percent);
-}
-
-void Wadseeker::wadDoneSlot(bool bFound, const QString& wadname)
-{
-	// if wad was found remove it from not found list
-	if (bFound)
+	targetDir = dir;
+	if (!dir.isEmpty())
 	{
-		QStringList::iterator it;
-		for (it = notFoundWads.begin(); it != notFoundWads.end(); ++it)
-		{
-			if (it->compare(wadname, Qt::CaseInsensitive) == 0)
-			{
-				notFoundWads.erase(it);
-				break;
-			}
-		}
+		if (dir[dir.length() - 1] != QDir::separator())
+			targetDir += '/';
 	}
 }
 
-Wadseeker::PARSE_FILE_RETURN_CODES Wadseeker::unzipFile(const QString& zipFileName, const QString& displayFileName, const QString& targetPath)
+void Wadseeker::wadFail()
 {
-	UnZip unzip(zipFileName);
-	if (!unzip.isValid())
+	QString tmp = tr("%1 WAS NOT FOUND\n").arg(seekedWads[iNextWad - 1]);
+	notFound.append(seekedWads[iNextWad - 1]);
+	emit message(tmp, Error);
+	emit downloadProgress(100, 100);
+	nextWad();
+}
+
+QStringList	Wadseeker::wantedFilenames(const QString& wad)
+{
+	QStringList lst;
+	lst.append(wad);
+
+	QFileInfo fi(wad);
+	if (fi.suffix().compare("zip", Qt::CaseInsensitive) != 0)
 	{
-		emit error(tr("Couldn't open \"%1\" to unzip \"%2\".").arg(zipFileName, displayFileName), false);
-		return PARSE_FILE_ERROR;
+		QString app = fi.completeBaseName() + ".zip";
+		lst.append(app);
 	}
 
-	connect (&unzip, SIGNAL( error(const QString&) ), this, SLOT( zipError(const QString&) ) );
-	connect (&unzip, SIGNAL( notice(const QString&) ), this, SLOT( zipNotice(const QString&) ) );
-	ZipLocalFileHeader* zip = unzip.findFileEntry(seekedWad);
-
-	if (zip != NULL)
-	{
-		unzip.extract(*zip, targetPath);
-		delete zip;
-	}
-	else
-	{
-		emit error(tr("File \"%1\" not found in \"%2\"").arg(seekedWad, displayFileName), false);
-		return PARSE_FILE_ERROR;
-	}
-
-	return PARSE_FILE_OK;
-}
-
-void Wadseeker::wwwError(const QString& errorString)
-{
-	emit error(errorString, false);
-}
-
-void Wadseeker::wwwNoMoreSites()
-{
-	emit notice(tr("No more sites!"));
-	emit wadDone(false, seekedWad);
-	this->seekNextWad();
-}
-
-void Wadseeker::wwwNotice(const QString& string)
-{
-	emit notice(string);
-}
-
-void Wadseeker::zipError(const QString& str)
-{
-	emit error(tr("UnZip error: %1").arg(str), false);
-}
-
-void Wadseeker::zipNotice(const QString& str)
-{
-	emit notice(tr("UnZip: %1").arg(str));
+	return lst;
 }

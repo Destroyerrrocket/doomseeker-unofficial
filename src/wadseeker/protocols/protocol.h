@@ -23,40 +23,51 @@
 #ifndef __PROTOCOL_H_
 #define __PROTOCOL_H_
 
+#include "global.h"
+#include "../wadseekerglobals.h"
 #include <QObject>
+#include <QTimer>
 #include <QUrl>
 
-class Protocol : public QObject
+#define WWW_TIMEOUT_MS 5000
+
+class PLUGIN_EXPORT Protocol : public QObject
 {
 	Q_OBJECT
 
 	public:
+		enum FileType
+		{
+			Html 	= 0,
+			Other 	= 1
+		};
+
 		Protocol();
+		virtual ~Protocol() {}
 
-		virtual void		abort() {};
-
-		void				get(const QUrl& url);
-
-		const QByteArray&	lastData() const { return data; }
-		QUrl				lastLink() const;
+		void 	abort();
+		void	get(const QUrl&);
 
 	signals:
-		void error(const QString&);
-		void nameOfCurrentlyDownloadedResource(const QString&);
-		void finishedReceiving(const QString& error);
-		void notice(const QString&);
-		void size(unsigned int);
+		void	aborted();
+		void 	currentFileSize(int);
+		void	dataReadProgress(int done, int total);
+		void	done(bool success, QByteArray& data, int fileType, const QString& filename);
+		void 	message(const QString& msg, WadseekerMessageType type);
+
+	protected slots:
+		void			dataReadProgressSlot(int done, int total);
+		void			doneSlot(bool error);
+		void 			timeout();
 
 	protected:
-		virtual QString		defaultScheme()=0;
-		virtual void 		sendGet()=0;
+		bool 		aborting;
+		QString		processedFileName;
+		QTimer		timeoutTimer;
 
-		QByteArray	data;
-		int			port;
-		QString		resource;
-		QUrl	 	site;
-		unsigned 	sizeCur;
-		unsigned	sizeMax;
+		virtual void 	abortEx() =0;
+		virtual void	doneEx(bool error)=0;
+		virtual void 	getEx(const QUrl&) =0;
 };
 
 #endif

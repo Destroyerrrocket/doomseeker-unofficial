@@ -35,9 +35,9 @@ struct ZipLocalFileHeader
 {
 	enum HeaderError
 	{
-		HE_NO_ERROR 				= 0,
-		HE_CORRUPTED				= 1,
-		HE_NOT_LOCAL_FILE_HEADER 	= 2
+		NoError 				= 0,
+		Corrupted				= 1,
+		NotLocalFileHeader 		= 2
 	};
 
 	ZipLocalFileHeader()
@@ -85,17 +85,17 @@ struct ZipLocalFileHeader
 		localFileHeaderSignature = 0;
 
 		if (array.size() < 4)
-			return HE_NOT_LOCAL_FILE_HEADER;
+			return NotLocalFileHeader;
 
 		localFileHeaderSignature 	= READINT32(data);
 
 		if (localFileHeaderSignature != LOCAL_FILE_HEADER_SIGNATURE)
-			return HE_NOT_LOCAL_FILE_HEADER;
+			return NotLocalFileHeader;
 
 		// The header is correct but the data size is not enough.
 		if (array.size() != 30)
 		{
-			return HE_CORRUPTED;
+			return Corrupted;
 		}
 
 		versionNeededToExtract 		= READINT16(&data[4]);
@@ -109,7 +109,7 @@ struct ZipLocalFileHeader
 		fileNameLength				= READINT16(&data[26]);
 		extraFieldLength			= READINT16(&data[28]);
 
-		return HE_NO_ERROR;
+		return NoError;
 	}
 
 	unsigned long	howManyBytesTillData() const

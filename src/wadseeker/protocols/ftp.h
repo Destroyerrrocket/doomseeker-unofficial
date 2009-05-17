@@ -23,25 +23,5 @@
 #ifndef __FTP_H_
 #define __FTP_H_
 
-#include <QFtp>
-#include "protocol.h"
-
-class Ftp : public Protocol
-{
-	public:
-		static bool	isFTPLink(const QUrl&);
-
-		/**
-		 * Info for QFtp needs to be specified more explictly that info for QHttp.
-		 * This method takes care of splitting proper info from QUrl and
-		 * subsequently it starts communicating with FTP server.
-		 */
-
-	protected:
-		QString		defaultScheme() { return "ftp"; }
-		void		sendGet();
-
-		QFtp	qFtp;
-};
 
 #endif

@@ -22,17 +22,3 @@
 //------------------------------------------------------------------------------
 #include "ftp.h"
 
-bool Ftp::isFTPLink(const QUrl& url)
-{
-
-	const QString& scheme = url.scheme();
-	if(scheme.compare("ftp", Qt::CaseInsensitive) == 0)
-		return true;
-
-	return false;
-}
-
-void Ftp::sendGet()
-{
-
-}
