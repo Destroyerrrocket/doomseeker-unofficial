@@ -282,7 +282,7 @@ QString Wadseeker::targetDirectory() const
 	return targetDir;
 }
 
-QString& Wadseeker::version()
+const QString Wadseeker::version()
 {
 	return "0.1";
 }

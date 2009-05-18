@@ -76,7 +76,12 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *	QUrl::toPercentEncoding() and returns a list of so
 		 *	encoded strings.
 		 */
-		static QStringList 	defaultSitesListEncoded();
+		static QStringList 			defaultSitesListEncoded();
+
+		/**
+		 * @return version string of the library.
+		 */
+		static const QString		version();
 
 		Wadseeker();
 		~Wadseeker();
@@ -139,6 +144,8 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *  be saved.
 		 */
 		QString				targetDirectory() const;
+
+
 
 	signals:
 		/**
