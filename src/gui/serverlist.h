@@ -55,6 +55,7 @@ class SLHandler : public QObject
 		void refreshAll();
 		void serverUpdated(Server *server, int response);
 		void tableRightClicked(const QModelIndex&);
+		void updateSearch(const QString& search);
 
 	protected slots:
 		void cleanUp();
@@ -73,8 +74,9 @@ class SLHandler : public QObject
 		QTimer			cleaner;
 		bool 			needsCleaning;
 
-		ServerListView*		table;
-		ServerListModel* 	model;
+		ServerListView*			table;
+		ServerListModel* 		model;
+		QSortFilterProxyModel*	sortingModel;
 
 		Qt::SortOrder 	sortOrder;
 		int				sortIndex;

@@ -267,10 +267,11 @@ void SLHandler::prepareServerTable()
 	model = new ServerListModel(this);
 	model->prepareHeaders();
 
-	QSortFilterProxyModel* sortingModel = new ServerListSortFilterProxyModel(this);
+	sortingModel = new ServerListSortFilterProxyModel(this);
 	sortingModel->setSourceModel(model);
 	sortingModel->setSortRole(ServerListModel::SLDT_SORT);
 	sortingModel->setSortCaseSensitivity( Qt::CaseInsensitive );
+	sortingModel->setFilterKeyColumn(ServerListModel::SLCID_SERVERNAME);
 
 	table->setModel(sortingModel);
 
@@ -340,4 +341,10 @@ void SLHandler::tableRightClicked(const QModelIndex& index)
 		QModelIndex realIndex = pModel->mapToSource(indexList[i]);
 		model->setRefreshing(realIndex.row());
 	}
+}
+
+void SLHandler::updateSearch(const QString& search)
+{
+	QRegExp pattern(QString("*") + search + "*", Qt::CaseInsensitive, QRegExp::Wildcard);
+	sortingModel->setFilterRegExp(pattern);
 }
