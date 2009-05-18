@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "gui/serverlist.h"
+#include "main.h"
 #include <QHeaderView>
 #include <QStandardItem>
 #include <QToolTip>
@@ -29,6 +30,29 @@
 
 SLHandler::SLHandler(ServerListView* tab)
 {
+	// We will be saving the column widths to the config, but lets get the defaults
+	ServerListColumn* columns = ServerListModel::columns;
+	QString widths;
+	for(int i = 0;i < ServerListModel::HOW_MANY_SERVERLIST_COLUMNS;i++)
+	{
+		if(i != 0)
+			widths += ",";
+		widths += QString("%1").arg(columns[i].width);
+	}
+	Main::config->createSetting("ServerListColumnWidths", widths.toAscii().data());
+	// Now we see if we have a different configuration.
+	QStringList colWidths = Main::config->setting("ServerListColumnWidths")->string().split(',', QString::SkipEmptyParts);
+	if(colWidths.size() == ServerListModel::HOW_MANY_SERVERLIST_COLUMNS) // If the number of columns do not match than reset this setting
+	{
+		for(int i = 0;i < ServerListModel::HOW_MANY_SERVERLIST_COLUMNS;i++)
+		{
+			bool ok = false;
+			int width = colWidths[i].toInt(&ok);
+			if(ok)
+				columns[i].width = width;
+		}
+	}
+
 	table = tab;
 	prepareServerTable();
 	needsCleaning = false;
@@ -39,6 +63,22 @@ SLHandler::SLHandler(ServerListView* tab)
 
 SLHandler::~SLHandler()
 {
+	// Have we made any changes to the column widths?
+	for(int i = 0;i < ServerListModel::HOW_MANY_SERVERLIST_COLUMNS;i++)
+	{
+		if(ServerListModel::columns[i].width != table->columnWidth(i))
+		{ // They have, write the changes.
+			QString widths;
+			for(int j = 0;j < ServerListModel::HOW_MANY_SERVERLIST_COLUMNS;j++)
+			{
+				if(j != 0)
+					widths += ",";
+				widths += QString("%1").arg(table->columnWidth(j));
+			}
+			Main::config->setting("ServerListColumnWidths")->setValue(widths);
+			break;
+		}
+	}
 }
 
 void SLHandler::clearTable()

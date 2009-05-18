@@ -38,6 +38,28 @@
 
 bool SettingsData::settingsChanged = false;
 
+void SettingsData::setValue(int integer)
+{
+	if(m_type != ST_INT || m_integer != integer)
+	{
+		m_integer = integer;
+		m_type = ST_INT;
+		settingsChanged = true;
+	}
+}
+
+void SettingsData::setValue(QString str)
+{
+	if(m_type != ST_STR || m_str != str)
+	{
+		m_str = str;
+		m_type = ST_STR;
+		settingsChanged = true;
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 Config::Config() : firstRun(false)
 {
 }

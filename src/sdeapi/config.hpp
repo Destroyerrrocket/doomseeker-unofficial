@@ -51,16 +51,16 @@ struct MAIN_EXPORT SettingsData : public QObject
 		SettingsData(int integer=0) : m_integer(0), m_str(tr("")), m_type(ST_INT) { setValue(integer); }
 		SettingsData(QString str) : m_integer(0), m_str(tr("")), m_type(ST_STR) { setValue(str); }
 
-		const int			integer() { return m_integer; }
-		const QString		string()	{ return m_str; }
-		const SettingType	type() { return m_type; }
-		void				setValue(int integer) { this->m_integer = integer;this->m_type = ST_INT;settingsChanged = true; }
-		void				setValue(QString str) { this->m_str = str;this->m_type = ST_STR;settingsChanged = true; }
+		const int			integer() const { return m_integer; }
+		const QString		string() const { return m_str; }
+		const SettingType	type() const { return m_type; }
+		void				setValue(int integer);
+		void				setValue(QString str);
 
 	protected:
-		SettingType			m_type;
-		int				m_integer;
-		QString				m_str;
+		SettingType	m_type;
+		int			m_integer;
+		QString		m_str;
 
 		/**
 		 * Stores if there has been a change to any configs.  This is used to 

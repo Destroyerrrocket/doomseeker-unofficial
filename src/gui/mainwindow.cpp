@@ -41,6 +41,11 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
 
+	// Window size settings
+	Main::config->createSetting("MainWindowWidth", width());
+	Main::config->createSetting("MainWindowHeight", height());
+	resize(Main::config->setting("MainWindowWidth")->integer(), Main::config->setting("MainWindowHeight")->integer());
+
 	serverTableHandler = new SLHandler(tableServers);
 	serverInfo = NULL;
 
@@ -85,6 +90,12 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 
 MainWindow::~MainWindow()
 {
+	// Window size settings
+	Main::config->setting("MainWindowWidth")->setValue(width());
+	Main::config->setting("MainWindowHeight")->setValue(height());
+
+	delete serverTableHandler;
+
 	if(mc != NULL)
 		delete mc;
 	delete[] queryMenuPorts;
