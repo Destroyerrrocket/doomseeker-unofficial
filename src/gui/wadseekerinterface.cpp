@@ -185,8 +185,3 @@ void WadSeekerInterface::startSeeking(const QStringList& seekedFilesList)
 	wadseeker.setTargetDirectory(setting->string());
 	wadseeker.seekWads(seekedFilesList);
 }
-
-QString Wadseeker::targetDirectory() const
-{
-	return targetDir;
-}

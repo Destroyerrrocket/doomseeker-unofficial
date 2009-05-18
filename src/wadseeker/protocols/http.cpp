@@ -55,7 +55,8 @@ QString Http::attachmentInformation(const QHttpHeader& header, QString& filename
 
 			QString ret = it->trimmed();
 			QByteArray asciiStr = ret.toAscii();
-			filename = Html::htmlValue(asciiStr, "filename");
+			CHtml html(asciiStr);
+			filename = html.htmlValue("filename");
 			return ret;
 		}
 	}

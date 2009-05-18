@@ -278,6 +278,11 @@ void Wadseeker::setTargetDirectory(const QString& dir)
 	}
 }
 
+QString Wadseeker::targetDirectory() const
+{
+	return targetDir;
+}
+
 void Wadseeker::wadFail()
 {
 	QString tmp = tr("%1 WAS NOT FOUND\n").arg(seekedWads[iNextWad - 1]);

@@ -79,8 +79,9 @@ if(WIN32)
 	# compile the Windows resource file.  How we do this depends on the compiler.
 	if(CMAKE_COMPILER_IS_GNUCXX)
 		add_custom_command(
-			OUTPUT windows.o
-			COMMAND windres -o windows.o -i ${CMAKE_CURRENT_SOURCE_DIR}/../media/windows.rc
+			OUTPUT ${OUTPUT_DIR}/src/windows.o
+			COMMAND windres -o ${OUTPUT_DIR}/src/windows.o -i ${CMAKE_CURRENT_SOURCE_DIR}/../media/windows.rc
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../media
 			COMMENT "Generating windows resources (windows.rc)"
 		)
 

@@ -38,11 +38,11 @@
 #define WADSEEKER_API
 #endif
 
-class WADSEEKER_API WWW;
+class WWW;
 
 /**
- * The Wadseeker class provides an interface for searching for and downloading 
- * modifications for Doom engine games.  Wadseeker will search for mods in a 
+ * The Wadseeker class provides an interface for searching for and downloading
+ * modifications for Doom engine games.  Wadseeker will search for mods in a
  * list of locations provided by setPrimarySites.
  */
 class WADSEEKER_API Wadseeker : public QObject
@@ -94,7 +94,7 @@ class WADSEEKER_API Wadseeker : public QObject
 	protected slots:
 		void 			downloadProgressSlot(int done, int total);
 		void			fileDone(QByteArray& data, const QString& filename);
-		void			messageSlot(const QString& msg, 
+		void			messageSlot(const QString& msg,
 									Wadseeker::MessageType type);
 		void			wadFail();
 

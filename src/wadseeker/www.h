@@ -32,7 +32,7 @@
 #include <QStringList>
 #include <QUrl>
 
-class WADSEEKER_API WWW : public QObject
+class WWW : public QObject
 {
 	Q_OBJECT
 
@@ -59,9 +59,6 @@ class WADSEEKER_API WWW : public QObject
 		void 	messageSlot(const QString&, Wadseeker::MessageType type);
 
 	protected:
-		static bool			hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link);
-		static bool			isDirectLinkToFile(const QStringList& wantedFileNames, const QUrl& link);
-
 		bool			aborting;
 		Http			http;
 
@@ -76,34 +73,7 @@ class WADSEEKER_API WWW : public QObject
 		QUrl			processedUrl;
 		QList<QUrl> 	siteLinks;
 
-		/**
-		 * Capitalizes all HTML keywords
-		 */
-		void		capitalizeHTMLTags(QByteArray&);
-
 		QUrl		constructValidUrl(const QUrl&);
-
-		/**
-		 * Finds a HTML tag starting from index in the byte array.
-		 * @param byte		- array that will be searched
-		 * @param beginAt 	- index from which searching starts
-		 * @param end 		- end index of a tag
-		 * @return 			- begin index of a tag
-		 */
-		int			findTag(QByteArray& byte, int beginAt, int* end);
-
-		/**
-		 * Extracts links from HTML file.
-		 * @param - content of the HTML file, all characters in HTML keywords must be capitalized
-		 */
-		QList<Link> linksFromHTML(const QByteArray& data);
-
-		/**
-		 * Extracts links from HTML file but only those that match "pattern".
-		 * @param data - content of the HTML file, all characters in HTML keywords must be capitalized
-		 * @param wantedFiles - names of the files we want to get the links to.
-		 */
-		void		linksFromHTMLByPattern(const QByteArray& data, const QStringList& wantedFiles);
 
 		QUrl		nextSite();
 };
