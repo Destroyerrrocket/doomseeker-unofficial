@@ -21,6 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "protocol.h"
+#include <QDebug>
 #include <QFileInfo>
 
 Protocol::Protocol()
@@ -39,7 +40,7 @@ void Protocol::abort()
 
 void Protocol::dataReadProgressSlot(int done, int total)
 {
-	timeoutTimer.start(WWW_TIMEOUT_MS);
+	timeoutTimer.start(WWW_DOWNLOAD_TIMEOUT_MS);
 	emit dataReadProgress(done, total);
 }
 
@@ -58,7 +59,7 @@ void Protocol::get(const QUrl& url)
 	QFileInfo fi(url.path());
 	processedFileName = fi.fileName();
 
-	timeoutTimer.start(WWW_TIMEOUT_MS);
+	timeoutTimer.start(WWW_CONNECT_TIMEOUT_MS);
 
 	getEx(url);
 }

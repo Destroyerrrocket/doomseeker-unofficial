@@ -41,7 +41,7 @@ class CHtml
 		/**
 		 * Finds a HTML tag starting from index in the byte array.
 		 * @param beginAt 	- index from which searching starts
-		 * @param end 		- (OUT) end index of a tag
+		 * @param[out] end 	- end index of a tag
 		 * @return 			- begin index of a tag
 		 */
 		int			findTag(int beginAt, int* end);

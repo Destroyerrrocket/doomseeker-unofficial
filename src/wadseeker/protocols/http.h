@@ -63,6 +63,8 @@ class WADSEEKER_API Http : public Protocol
 		 */
 		QString		attachmentInformation(const QHttpHeader&, QString& filename);
 
+		void	disconnectQHttp();
+
 		void 	getEx(const QUrl&);
 		void	doneEx(bool error);
 		bool 	isHTMLFile(const QHttpHeader& http);

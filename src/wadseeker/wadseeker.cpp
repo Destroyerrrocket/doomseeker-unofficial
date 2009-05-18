@@ -29,7 +29,6 @@
 
 const QString Wadseeker::defaultSites[] =
 {
-	QString("http://raider.dnsalias.com:8001/doom/userwads/"),
 	QString("http://doom.dogsoft.net/getwad.php?search=%WADNAME%"),
 	QString("http://hs.keystone.gr/lap/"),
 	QString("http://www.rarefiles.com/download/"),
@@ -281,6 +280,11 @@ void Wadseeker::setTargetDirectory(const QString& dir)
 QString Wadseeker::targetDirectory() const
 {
 	return targetDir;
+}
+
+QString& Wadseeker::version()
+{
+	return "0.1";
 }
 
 void Wadseeker::wadFail()

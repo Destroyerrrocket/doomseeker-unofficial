@@ -28,7 +28,8 @@
 #include <QTimer>
 #include <QUrl>
 
-#define WWW_TIMEOUT_MS 5000
+#define WWW_CONNECT_TIMEOUT_MS 5000
+#define WWW_DOWNLOAD_TIMEOUT_MS 1000 * 60
 
 class WADSEEKER_API Protocol : public QObject
 {

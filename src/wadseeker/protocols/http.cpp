@@ -64,6 +64,18 @@ QString Http::attachmentInformation(const QHttpHeader& header, QString& filename
 	return QString();
 }
 
+void Http::disconnectQHttp()
+{
+	if (qHttp != NULL)
+	{
+		qHttp->disconnect(this, SLOT( dataReadProgressSlot(int, int) ) );
+		qHttp->disconnect(this, SLOT( doneSlot(bool) ) );
+		qHttp->disconnect(this, SLOT( headerReceived(const QHttpResponseHeader&) ) );
+		qHttp->disconnect(this, SLOT( stateChanged(int) ) );
+		qHttp = NULL;
+	}
+}
+
 void Http::doneEx(bool error)
 {
 	if (error)
@@ -78,30 +90,28 @@ void Http::doneEx(bool error)
 		return;
 	}
 
+	if (aborting)
+	{
+		return;
+	}
+
 	if (noData)
 	{
 		QByteArray data = QByteArray();
+		disconnectQHttp();
 		emit done(false, data, 0, processedFileName);
 	}
 	else
 	{
 		QByteArray data = qHttp->readAll();
+		disconnectQHttp();
 		emit done(true, data, fileType, processedFileName);
 	}
 }
 
 void Http::getEx(const QUrl& url)
 {
-
-	if (qHttp != NULL)
-	{
-//		delete qHttp;
-		qHttp->disconnect(this, SLOT( dataReadProgressSlot(int, int) ) );
-		qHttp->disconnect(this, SLOT( doneSlot(bool) ) );
-		qHttp->disconnect(this, SLOT( headerReceived(const QHttpResponseHeader&) ) );
-		qHttp->disconnect(this, SLOT( stateChanged(int) ) );
-	}
-
+	disconnectQHttp();
 
 	qHttp = new QHttp(this);
 
@@ -217,6 +227,7 @@ void Http::stateChanged(int state)
 {
 	if (state == QHttp::Unconnected && aborting)
 	{
+		disconnectQHttp();
 		emit aborted();
 	}
 }

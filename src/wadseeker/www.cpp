@@ -193,6 +193,10 @@ void WWW::protocolDone(bool success, QByteArray& data, int fileType, const QStri
 
 	emit message(" ", Wadseeker::Notice);
 
+	if (!success)
+	{
+		checkNextSite();
+	}
 }
 
 void WWW::searchFiles(const QStringList& list, const QString& primaryFilename)
