@@ -159,7 +159,7 @@ void Wadseeker::fileDone(QByteArray& data, const QString& filename)
 	}
 }
 
-bool Wadseeker::isIwad(const QString& wad) const
+bool Wadseeker::isIwad(const QString& wad)
 {
 	QFileInfo fiWad(wad);
 	// Check the basename, ignore extension.
@@ -296,7 +296,7 @@ void Wadseeker::wadFail()
 	nextWad();
 }
 
-QStringList	Wadseeker::wantedFilenames(const QString& wad) const
+QStringList Wadseeker::wantedFilenames(const QString& wad)
 {
 	QStringList lst;
 	lst.append(wad);

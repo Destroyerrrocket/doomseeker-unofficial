@@ -41,9 +41,44 @@
 class WWW;
 
 /**
- * The Wadseeker class provides an interface for searching for and downloading
- * modifications for Doom engine games.  Wadseeker will search for mods in a
- * list of locations provided by setPrimarySites.
+ *	@mainpage Wadseeker API
+ *
+ *	@section intro Introduction
+ *	Wadseeker is a library for searching for an automatically downloading a
+ *	list of mods for Doom.  Wadseeker requires a small subset of the Qt Toolkit,
+ *	namely the QtCore and QtNetwork modules.  In addition, to interact with
+ *	Wadseeker, you will need to use Qt to conenct to the signals.
+ */
+
+/**
+ *	@brief Main controlling class.
+ *
+ *	The Wadseeker class provides an interface for searching for and downloading
+ *	modifications for Doom engine games.  Wadseeker will search for mods in a
+ *	list of locations provided by setPrimarySites.
+ *
+ *	Wadseeker will ignore a predefined set of file names which it suspects to
+ *	be attempts to illegally download commercial game data, so passing in any
+ *	name which is found in iwadNames will result in the file being ignored.
+ *
+ *	@section usage Usage
+ *	Using Wadseeker is quite simple, there are three steps required for use:
+ *		-#	Initialize an instance of Wadseeker
+ *		-#	Configure some values such as the sites to search in and target
+ *			directory.
+ *		-#	Create a list of wads to search for and pass it into seekWads.
+ *
+ *	Observe the following example on how to do these things.
+ *	@code
+ *	Wadseeker ws;
+ *	ws.setPrimarySitesToDefault(); // Use the default list of sites
+ *	ws.setTargetDirectory("./");
+ *	QStringList listOfWads;
+ *	listOfWads << "doom2.wad"; // This will be ignored beacuse of iwadNames
+ *	listOfWads << "somemod.wad";
+ *	listOfWads << "somemod.pk3";
+ *	ws.seekWads(listOfWads);
+ *	@endcode
  */
 class WADSEEKER_API Wadseeker : public QObject
 {
@@ -55,11 +90,11 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *	a type of message together with a string representing it's
 		 *	content. Types should be treated as follows:
 		 *
-		 *	Notice - this is just an information of what Wadseeker
+		 *	- Notice - this is just an information of what Wadseeker
 		 *			 is currently doing
-		 *	Error - something bad happened but Wadseeker is able to continue
+		 *	- Error - something bad happened but Wadseeker is able to continue
 		 *			by itself.
-		 *	CriticalError - Wadseeker stops working after such error.
+		 *	- CriticalError - Wadseeker stops working after such error.
 		 *			Programmer should return control to the main application.
 		 */
 		enum MessageType
@@ -69,21 +104,45 @@ class WADSEEKER_API Wadseeker : public QObject
 			CriticalError	= 2
 		};
 
+		/**
+		 *	List of default sites to search for files.
+		 *	@see setPrimarySitesToDefault
+		 */
 		static const QString defaultSites[];
+		/**
+		 *	List of file names that will be ignored as they are part of a
+		 *	commercial product.
+		 *	@see isIwad
+		 */
+		static const QString iwadNames[];
 
 		/**
 		 *	Runs content of defaultSites array through
 		 *	QUrl::toPercentEncoding() and returns a list of so
 		 *	encoded strings.
 		 */
-		static QStringList 			defaultSitesListEncoded();
+		static QStringList 		defaultSitesListEncoded();
+
+		/**
+		 *	Attempts to detect if the input is an iwad.
+		 *	@param wad Name of wad trying to be searched for.
+		 *	@return True if the wad specified is an iwad.
+		 *	@see iwadNames
+		 */
+		static bool				isIwad(const QString& wad);
 
 		/**
 		 * @return version string of the library.
 		 */
-		static const QString		version();
+		static const QString	version();
 
+		/**
+		 * Initializes a new instance of Wadseeker.
+		 */
 		Wadseeker();
+		/**
+		 * Deallocates an instance of Wadseeker.
+		 */
 		~Wadseeker();
 
 		/**
@@ -129,7 +188,8 @@ class WADSEEKER_API Wadseeker : public QObject
 
 		/**
 		 *	Convenience method. Sets list of primary sites to sites
-		 * 	hardcoded into library itself.
+		 *	hardcoded into library itself.
+		 *	@see defaultSites
 		 */
 		void				setPrimarySitesToDefault();
 
@@ -174,11 +234,28 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *	Emitted when Wadseeker wants to communicate about its progress
 		 *	with outside world.
 		 *	@param msg - content of the message
-		 *	@param type - See: MessageType
+		 *	@param type - See: Wadseeker::MessageType
 		 */
 		void message(const QString& msg, Wadseeker::MessageType type);
 
 	protected:
+		/**
+		 * Returns the name of the actual files that will be searched for.
+		 * For example, if somemod.wad was searched for, this would return 
+		 * somemod.wad and somemod.zip
+		 * @param wad Absolute file being searched for. (ex: somemod.wad)
+		 */
+		static QStringList	wantedFilenames(const QString& wad);
+
+	protected slots:
+		/**
+		 * This slot acts as a pipe to the message signal.
+		 * @see message
+		 */
+		void			messageSlot(const QString& msg,
+									Wadseeker::MessageType type);
+
+	private:
 		int				iNextWad;
 		QString			currentWad;
 		QStringList		notFound;
@@ -186,20 +263,13 @@ class WADSEEKER_API Wadseeker : public QObject
 		QString			targetDir;
 		WWW				*www;
 
-		void			nextWad();
-		QStringList		wantedFilenames(const QString& wad) const;
+		void	nextWad();
 
-	protected slots:
+	// The following slots are used to pickup progress from the WWW object.
+	private slots:
 		void 			downloadProgressSlot(int done, int total);
 		void			fileDone(QByteArray& data, const QString& filename);
-		void			messageSlot(const QString& msg,
-									Wadseeker::MessageType type);
 		void			wadFail();
-
-	private:
-		static const QString iwadNames[];
-
-		bool	isIwad(const QString&) const;
 };
 
 #endif
