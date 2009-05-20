@@ -56,6 +56,8 @@ void Protocol::doneSlot(bool error)
 void Protocol::get(const QUrl& url)
 {
 	aborting = false;
+	noData = false;
+
 	QFileInfo fi(url.path());
 	processedFileName = fi.fileName();
 

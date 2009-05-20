@@ -62,6 +62,7 @@ class WADSEEKER_API Protocol : public QObject
 
 	protected:
 		bool 		aborting;
+		bool		noData;
 		QString		processedFileName;
 		QTimer		timeoutTimer;
 

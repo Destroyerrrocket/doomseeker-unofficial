@@ -51,7 +51,6 @@ class WADSEEKER_API Http : public Protocol
 	protected:
 		QHttp*		qHttp;
 		FileType	fileType;
-		bool		noData;
 		bool		redirected;
 		QString		redirectUrl;
 

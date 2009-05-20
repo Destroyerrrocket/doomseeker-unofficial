@@ -137,7 +137,7 @@ void Wadseeker::fileDone(QByteArray& data, const QString& filename)
 			if (zip != NULL)
 			{
 				unzip.extract(*zip, path);
-				emit message(tr("%1#%2 uncompressed successfuly!").arg(filename, zip->fileName), Notice);
+				emit message(tr("%1#%2 uncompressed successfully!").arg(filename, zip->fileName), Notice);
 				delete zip;
 				bNextWad = true;
 			}

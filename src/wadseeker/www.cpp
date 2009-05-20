@@ -25,6 +25,13 @@
 
 WWW::WWW()
 {
+	currentProtocol = NULL;
+
+	connect(&ftp, SIGNAL( aborted() ), this, SLOT( protocolAborted() ) );
+	connect(&ftp, SIGNAL( dataReadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
+	connect(&ftp, SIGNAL( done(bool, QByteArray&, int, const QString&) ), this, SLOT( protocolDone(bool, QByteArray&, int, const QString&) ) );
+	connect(&ftp, SIGNAL( message(const QString&, Wadseeker::MessageType) ), this, SLOT( messageSlot(const QString&, Wadseeker::MessageType) ) );
+
 	connect(&http, SIGNAL( aborted() ), this, SLOT( protocolAborted() ) );
 	connect(&http, SIGNAL( dataReadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
 	connect(&http, SIGNAL( done(bool, QByteArray&, int, const QString&) ), this, SLOT( protocolDone(bool, QByteArray&, int, const QString&) ) );
@@ -35,7 +42,10 @@ WWW::WWW()
 void WWW::abort()
 {
 	aborting = true;
-	http.abort();
+	if (currentProtocol != NULL)
+	{
+		currentProtocol->abort();
+	}
 }
 
 void WWW::checkNextSite()
@@ -110,10 +120,17 @@ void WWW::get(const QUrl& url)
 	emit message(tr("Next site: %1").arg(urlValid.toString()), Wadseeker::Notice);
 	if (Http::isHTTPLink(urlValid))
 	{
+		currentProtocol = &http;
 		http.get(urlValid);
+	}
+	else if (Ftp::isFTPLink(urlValid))
+	{
+		currentProtocol = &ftp;
+		ftp.get(urlValid);
 	}
 	else
 	{
+		currentProtocol = NULL;
 		message(tr("Protocol for this site is not supported\n"), Wadseeker::Error);
 		checkNextSite();
 	}
@@ -132,6 +149,7 @@ QUrl WWW::nextSite()
 		QUrl url;
 		if (!customSiteUsed && customSite.isValid())
 		{
+			processedUrl = QUrl();
 			url = customSite;
 			customSiteUsed = true;
 		}
@@ -145,6 +163,7 @@ QUrl WWW::nextSite()
 		}
 		else if (currentPrimarySite < primarySites.size())
 		{
+			processedUrl = QUrl();
 			url = primarySites[currentPrimarySite];
 			++currentPrimarySite;
 		}
@@ -205,9 +224,10 @@ void WWW::searchFiles(const QStringList& list, const QString& primaryFilename)
 	customSiteUsed = false;
 	currentPrimarySite = 0;
 	checkedLinks.clear();
-
 	filesToFind = list;
 	primaryFile = primaryFilename;
+	processedUrl = QUrl();
+
 	checkNextSite();
 }
 

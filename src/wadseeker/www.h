@@ -26,6 +26,7 @@
 #include "html.h"
 #include "global.h"
 #include "link.h"
+#include "protocols/ftp.h"
 #include "protocols/http.h"
 #include <QObject>
 #include <QSet>
@@ -60,7 +61,9 @@ class WWW : public QObject
 
 	protected:
 		bool			aborting;
+		Protocol*		currentProtocol;
 		Http			http;
+		Ftp				ftp;
 
 		QSet<QString>	checkedLinks;
 		int				currentPrimarySite;

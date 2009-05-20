@@ -38,6 +38,10 @@ void Http::abortEx()
 	{
 		qHttp->abort();
 	}
+	else
+	{
+		emit aborted();
+	}
 }
 
 QString Http::attachmentInformation(const QHttpHeader& header, QString& filename)
@@ -120,7 +124,6 @@ void Http::getEx(const QUrl& url)
 	connect(qHttp, SIGNAL( responseHeaderReceived(const QHttpResponseHeader&) ), this, SLOT ( headerReceived(const QHttpResponseHeader&) ) );
 	connect(qHttp, SIGNAL( stateChanged(int) ), this, SLOT ( stateChanged(int) ) );
 
-	noData = false;
 	qHttp->setHost(url.host(), url.port(80));
 	QString query = url.encodedPath();
 	if (!url.encodedQuery().isNull())

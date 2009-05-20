@@ -23,5 +23,30 @@
 #ifndef __FTP_H_
 #define __FTP_H_
 
+#include "protocol.h"
+#include <QFtp>
+
+class Ftp : public Protocol
+{
+	Q_OBJECT
+
+	public:
+		static bool	isFTPLink(const QUrl&);
+
+		Ftp();
+
+	protected slots:
+		void	dataTransferProgressSlot(qint64 done, qint64 total);
+		void	stateChanged(int);
+
+	protected:
+		void 	abortEx();
+		void	disconnectQFtp();
+		void	doneEx(bool error);
+		void 	getEx(const QUrl&);
+
+		QFtp*	qFtp;
+		QUrl	queryUrl;
+};
 
 #endif
