@@ -36,7 +36,9 @@ class Ftp : public Protocol
 		Ftp();
 
 	protected slots:
+		void	commandFinished(int id, bool error);
 		void	dataTransferProgressSlot(qint64 done, qint64 total);
+		void	listInfo(const QUrlInfo& i);
 		void	stateChanged(int);
 
 	protected:
@@ -45,8 +47,14 @@ class Ftp : public Protocol
 		void	doneEx(bool error);
 		void 	getEx(const QUrl&);
 
+		int		listCommandId;
 		QFtp*	qFtp;
 		QUrl	queryUrl;
+
+		/**
+		 * Size of the downloaded file.
+		 */
+		int		size;
 };
 
 #endif

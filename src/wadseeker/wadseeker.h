@@ -47,7 +47,7 @@ class WWW;
  *	Wadseeker is a library for searching for an automatically downloading a
  *	list of mods for Doom.  Wadseeker requires a small subset of the Qt Toolkit,
  *	namely the QtCore and QtNetwork modules.  In addition, to interact with
- *	Wadseeker, you will need to use Qt to conenct to the signals.
+ *	Wadseeker, you will need to use Qt to connect to the signals.
  */
 
 /**
@@ -105,6 +105,11 @@ class WADSEEKER_API Wadseeker : public QObject
 		};
 
 		/**
+		 * @return author of the library.
+		 */
+		static const QString	author();
+
+		/**
 		 *	List of default sites to search for files.
 		 *	@see setPrimarySitesToDefault
 		 */
@@ -123,6 +128,12 @@ class WADSEEKER_API Wadseeker : public QObject
 		 */
 		static QStringList 		defaultSitesListEncoded();
 
+
+		/**
+		 * @return description of the library.
+		 */
+		static const QString	description();
+
 		/**
 		 *	Attempts to detect if the input is an iwad.
 		 *	@param wad Name of wad trying to be searched for.
@@ -135,6 +146,11 @@ class WADSEEKER_API Wadseeker : public QObject
 		 * @return version string of the library.
 		 */
 		static const QString	version();
+
+		/**
+		 * @return Development dates.
+		 */
+		static const QString	yearSpan();
 
 		/**
 		 * Initializes a new instance of Wadseeker.
@@ -241,7 +257,7 @@ class WADSEEKER_API Wadseeker : public QObject
 	protected:
 		/**
 		 * Returns the name of the actual files that will be searched for.
-		 * For example, if somemod.wad was searched for, this would return 
+		 * For example, if somemod.wad was searched for, this would return
 		 * somemod.wad and somemod.zip
 		 * @param wad Absolute file being searched for. (ex: somemod.wad)
 		 */

@@ -41,6 +41,12 @@ void Ftp::abortEx()
 	}
 }
 
+void Ftp::commandFinished(int id, bool error)
+{
+	if (id == listCommandId)
+		qFtp->get(queryUrl.path());
+}
+
 void Ftp::disconnectQFtp()
 {
 	if (qFtp != NULL)
@@ -54,7 +60,7 @@ void Ftp::disconnectQFtp()
 
 void Ftp::dataTransferProgressSlot(qint64 done, qint64 total)
 {
-	dataReadProgressSlot(static_cast<int>(done), static_cast<int>(total));
+	dataReadProgressSlot(static_cast<int>(done), size);
 }
 
 void Ftp::doneEx(bool error)
@@ -87,11 +93,15 @@ void Ftp::doneEx(bool error)
 void Ftp::getEx(const QUrl& url)
 {
 	disconnectQFtp();
+	listCommandId = 9999;
+	size = 0;
 
 	qFtp = new QFtp(this);
 
+	connect(qFtp, SIGNAL( commandFinished(int, bool) ), this, SLOT ( commandFinished(int, bool) ) );
 	connect(qFtp, SIGNAL( dataTransferProgress(qint64, qint64) ), this, SLOT ( dataTransferProgressSlot(qint64, qint64) ) );
 	connect(qFtp, SIGNAL( done(bool) ), this, SLOT ( doneSlot(bool) ) );
+	connect(qFtp, SIGNAL( listInfo(const QUrlInfo&) ), this, SLOT ( listInfo(const QUrlInfo&) ) );
 	connect(qFtp, SIGNAL( stateChanged(int) ), this, SLOT ( stateChanged(int) ) );
 
 	queryUrl = url;
@@ -107,6 +117,15 @@ bool Ftp::isFTPLink(const QUrl& url)
 	return false;
 }
 
+void Ftp::listInfo(const QUrlInfo& i)
+{
+	if (i.name().compare(queryUrl.path()) == 0)
+	{
+		emit message(tr("File size: %1 B").arg(i.size()), Wadseeker::Notice);
+		size = i.size();
+	}
+}
+
 void Ftp::stateChanged(int state)
 {
 	if (state == QFtp::Connected)
@@ -117,7 +136,8 @@ void Ftp::stateChanged(int state)
 	}
 	else if (state == QFtp::LoggedIn)
 	{
-		qFtp->get(queryUrl.path());
+		// Try to determine the size first.
+		listCommandId = qFtp->list(queryUrl.path());
 	}
 	else if (state == QFtp::Unconnected && aborting)
 	{

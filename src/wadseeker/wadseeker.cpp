@@ -72,6 +72,11 @@ bool Wadseeker::areAllFilesFound() const
 	return notFound.isEmpty();
 }
 
+const QString Wadseeker::author()
+{
+	return "The Skulltag Team";
+}
+
 const QStringList& Wadseeker::filesNotFound() const
 {
 	return notFound;
@@ -85,6 +90,11 @@ QStringList Wadseeker::defaultSitesListEncoded()
 		list << QUrl::toPercentEncoding(defaultSites[i]);
 	}
 	return list;
+}
+
+const QString Wadseeker::description()
+{
+	return "This program is distributed under the terms of the GPL v2.";
 }
 
 void Wadseeker::downloadProgressSlot(int done, int total)
@@ -309,4 +319,9 @@ QStringList Wadseeker::wantedFilenames(const QString& wad)
 	}
 
 	return lst;
+}
+
+const QString Wadseeker::yearSpan()
+{
+	return "2009";
 }

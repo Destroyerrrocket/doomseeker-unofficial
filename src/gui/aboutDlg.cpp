@@ -24,16 +24,24 @@
 #include "aboutDlg.h"
 #include "global.h"
 #include "main.h"
+#include "wadseeker/wadseeker.h"
 #include <QPixmap>
 
 AboutDlg::AboutDlg(QWidget* parent) : QDialog(parent)
 {
 	setupUi(this);
 
+	connect(buttonBox, SIGNAL( clicked(QAbstractButton *) ), this, SLOT( close() ));
+
+	// Doomseeker
 	versionNumber->setText(VERSION);
 	logo->setPixmap(QPixmap(":/logo.png"));
 
-	connect(buttonBox, SIGNAL( clicked(QAbstractButton *) ), this, SLOT( close() ));
+	// Wadseeker
+	wadseekerAuthor->setText(Wadseeker::author());
+	wadseekerDescription->setText(Wadseeker::description());
+	wadseekerVersion->setText(Wadseeker::version());
+	wadseekerYearSpan->setText(Wadseeker::yearSpan());
 
 	// Populate plugins dialog
 	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
