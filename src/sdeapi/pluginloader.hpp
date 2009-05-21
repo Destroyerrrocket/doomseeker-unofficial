@@ -55,6 +55,8 @@ class MAIN_EXPORT EnginePlugin
 	public:
 		virtual ConfigurationBoxInfo	*configuration(Config *cfg, QWidget *parent) const=0;
 		virtual MasterClient			*masterClient() const=0;
+
+		static void	translateServerAddress(const QString& settingValue, QString& hostname, short& port, const QString& defaultHostname, const short defaultPort);
 };
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -93,6 +95,9 @@ class MAIN_EXPORT Plugin
 		 * Returns a pointer to the requested function or NULL.
 		 */
 		void	*function(const char* func) const;
+
+		void	initConfig();
+
 		bool	isValid() const { return library != NULL; }
 
 		const PluginInfo	*info;
@@ -118,6 +123,11 @@ class MAIN_EXPORT PluginLoader
 		 */
 		PluginLoader(unsigned int type, const char* directory, int directoryLength=-1);
 		~PluginLoader();
+
+		/**
+		 * Inits configuration for plugins.
+		 */
+		void initConfig();
 
 		/**
 		 * Gets the number of loaded plugins.  It will return 0 in safe mode.

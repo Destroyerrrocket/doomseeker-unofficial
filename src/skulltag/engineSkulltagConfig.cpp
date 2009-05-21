@@ -45,8 +45,10 @@ void EngineSkulltagConfigBox::readSettings()
 	SettingsData* setting;
 
 	setting = config->setting("SkulltagBinaryPath");
-
 	leBinaryPath->setText(setting->string());
+
+	setting = config->setting("SkulltagMasterserver");
+	leMasterserverAddress->setText(setting->string());
 }
 
 void EngineSkulltagConfigBox::saveSettings()
@@ -56,6 +58,10 @@ void EngineSkulltagConfigBox::saveSettings()
 
 	strVal = leBinaryPath->text();
 	setting = config->setting("SkulltagBinaryPath");
+	setting->setValue(strVal);
+
+	strVal = leMasterserverAddress->text();
+	setting = config->setting("SkulltagMasterserver");
 	setting->setValue(strVal);
 }
 ////////////////////////////////////////////////////

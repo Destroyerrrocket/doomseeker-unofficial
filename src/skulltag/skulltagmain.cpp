@@ -24,7 +24,8 @@
 #include <QHostInfo>
 
 #include "global.h"
-#include "masterclient.h"
+#include "main.h"
+#include "sdeapi/config.hpp"
 #include "sdeapi/pluginloader.hpp"
 
 #include "skulltag/skulltagmasterclient.h"
@@ -40,10 +41,18 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 
 		MasterClient	*masterClient() const
 		{
-			QHostInfo info = QHostInfo::fromName("skulltag.servegame.com");
+			// Get server address.
+			QString host;
+			short int port = 0;
+
+			SettingsData* setting = Main::config->setting("SkulltagMasterserver");
+			QString str = setting->string();
+			translateServerAddress(str, host, port, "skulltag.servegame.com", 15300);
+
+			QHostInfo info = QHostInfo::fromName(host);
 			if(info.addresses().size() == 0)
 				return NULL;
-			return new SkulltagMasterClient(info.addresses().first(), 15300);
+			return new SkulltagMasterClient(info.addresses().first(), port);
 		}
 };
 
@@ -52,4 +61,9 @@ static const PluginInfo skulltag_info = {"Skulltag", "Skulltag server query plug
 extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 {
 	return &skulltag_info;
+}
+
+extern "C" PLUGIN_EXPORT void doomSeekerInitConfig()
+{
+	Main::config->createSetting("SkulltagMasterserver", "skulltag.servegame.com:15300");
 }

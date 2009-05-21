@@ -24,6 +24,7 @@
 #include <QHostInfo>
 
 #include "global.h"
+#include "main.h"
 #include "masterclient.h"
 #include "sdeapi/pluginloader.hpp"
 
@@ -40,10 +41,18 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 
 		MasterClient	*masterClient() const
 		{
-			QHostInfo info = QHostInfo::fromName("master1.odamex.net");
+			// Get server address.
+			QString host;
+			short int port = 0;
+
+			SettingsData* setting = Main::config->setting("OdamexMasterserver");
+			QString str = setting->string();
+			translateServerAddress(str, host, port, "master1.odamex.net", 15000);
+
+			QHostInfo info = QHostInfo::fromName(host);
 			if(info.addresses().size() == 0)
 				return NULL;
-			return new OdamexMasterClient(info.addresses().first(), 15000);
+			return new OdamexMasterClient(info.addresses().first(), port);
 		}
 };
 
@@ -52,4 +61,9 @@ static const PluginInfo odamex_info = {"Odamex", "Odamex server query plugin.", 
 extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 {
 	return &odamex_info;
+}
+
+extern "C" PLUGIN_EXPORT void doomSeekerInitConfig()
+{
+	Main::config->createSetting("OdamexMasterserver", "master1.odamex.net:15000");
 }

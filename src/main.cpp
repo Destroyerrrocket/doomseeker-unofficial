@@ -45,6 +45,9 @@ int main(int argc, char* argv[])
 	QStringList urlList = Wadseeker::defaultSitesListEncoded();
 	Main::config->createSetting("WadseekerSearchURLs", urlList.join(";"));
 
+	// Init plugin settings
+	Main::enginePlugins.initConfig();
+
 	MainWindow* mw = new MainWindow(argc, argv);
 	mw->show();
 
