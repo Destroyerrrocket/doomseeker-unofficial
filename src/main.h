@@ -30,7 +30,7 @@
 /**
  * This class holds some global information.
  */
-class Main
+class MAIN_EXPORT Main
 {
 	public:
 		static Config 			*config;
