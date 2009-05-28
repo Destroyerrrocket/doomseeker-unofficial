@@ -63,6 +63,12 @@ void WadseekerConfigBox::readSettings()
 	{
 		this->insertUrl(QUrl::fromPercentEncoding(it->toAscii()));
 	}
+
+	setting = config->setting("WadseekerConnectTimeoutSeconds");
+	spinConnectTimeout->setValue(setting->integer());
+
+	setting = config->setting("WadseekerDownloadTimeoutSeconds");
+	spinDownloadTimeout->setValue(setting->integer());
 }
 
 void WadseekerConfigBox::saveSettings()
@@ -75,6 +81,12 @@ void WadseekerConfigBox::saveSettings()
 	QStringList* urlLst = this->urlListEncoded();
 	setting = config->setting("WadseekerSearchURLs");
 	setting->setValue(urlLst->join(";"));
+
+	setting = config->setting("WadseekerConnectTimeoutSeconds");
+	setting->setValue(spinConnectTimeout->value());
+
+	setting = config->setting("WadseekerDownloadTimeoutSeconds");
+	setting->setValue(spinDownloadTimeout->value());
 
 	delete urlLst;
 }

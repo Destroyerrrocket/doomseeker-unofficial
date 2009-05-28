@@ -24,6 +24,9 @@
 #include <QDebug>
 #include <QFileInfo>
 
+int Protocol::timeConnectTimeoutSeconds = WADSEEKER_CONNECT_TIMEOUT_SECONDS_DEFAULT;
+int Protocol::timeDownloadTimeoutSeconds = WADSEEKER_DOWNLOAD_TIMEOUT_SECONDS_DEFAULT;
+
 Protocol::Protocol()
 {
 	connect(&timeoutTimer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
@@ -40,7 +43,7 @@ void Protocol::abort()
 
 void Protocol::dataReadProgressSlot(int done, int total)
 {
-	timeoutTimer.start(WWW_DOWNLOAD_TIMEOUT_MS);
+	timeoutTimer.start(timeConnectTimeoutSeconds * 1000);
 	emit dataReadProgress(done, total);
 }
 
@@ -61,7 +64,7 @@ void Protocol::get(const QUrl& url)
 	QFileInfo fi(url.path());
 	processedFileName = fi.fileName();
 
-	timeoutTimer.start(WWW_CONNECT_TIMEOUT_MS);
+	timeoutTimer.start(timeDownloadTimeoutSeconds * 1000);
 
 	getEx(url);
 }

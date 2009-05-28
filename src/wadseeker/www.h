@@ -38,6 +38,20 @@ class WWW : public QObject
 	Q_OBJECT
 
 	public:
+		/**
+		 *	Sets time after which to abort connecting
+		 *	if no response is received.
+		 *	@param seconds - time in seconds
+		 */
+		static void	setTimeConnectTimeout(int seconds) { Protocol::setTimeConnectTimeoutSeconds(seconds); }
+
+		/**
+		 *	Sets time after which to abort downloading
+		 *	if data stops coming.
+		 *	@param seconds - time in seconds
+		 */
+		static void	setTimeDownloadTimeout(int seconds) { Protocol::setTimeDownloadTimeoutSeconds(seconds); }
+
 		WWW();
 
 		void abort();
@@ -47,6 +61,7 @@ class WWW : public QObject
 		void setPrimarySites(const QStringList& lst) { primarySites = lst; }
 
 	signals:
+		void	aborted();
 		void 	downloadProgress(int done, int total);
 		void 	fileDone(QByteArray& data, const QString& filename);
 		void 	message(const QString&, Wadseeker::MessageType type);

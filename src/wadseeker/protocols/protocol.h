@@ -28,10 +28,7 @@
 #include <QTimer>
 #include <QUrl>
 
-#define WWW_CONNECT_TIMEOUT_MS 5000
-#define WWW_DOWNLOAD_TIMEOUT_MS 1000 * 60
-
-class WADSEEKER_API Protocol : public QObject
+class Protocol : public QObject
 {
 	Q_OBJECT
 
@@ -41,6 +38,20 @@ class WADSEEKER_API Protocol : public QObject
 			Html 	= 0,
 			Other 	= 1
 		};
+
+		/**
+		 *	Sets time after which to abort connecting
+		 *	if no response is received.
+		 *	@param seconds - time in seconds
+		 */
+		static void	setTimeConnectTimeoutSeconds(int seconds) { timeConnectTimeoutSeconds = seconds; }
+
+		/**
+		 *	Sets time after which to abort downloading
+		 *	if data stops coming.
+		 *	@param seconds - time in seconds
+		 */
+		static void	setTimeDownloadTimeoutSeconds(int seconds) {timeDownloadTimeoutSeconds = seconds; }
 
 		Protocol();
 		virtual ~Protocol() {}
@@ -61,6 +72,9 @@ class WADSEEKER_API Protocol : public QObject
 		void 			timeout();
 
 	protected:
+		static int	timeConnectTimeoutSeconds;
+		static int	timeDownloadTimeoutSeconds;
+
 		bool 		aborting;
 		bool		noData;
 		QString		processedFileName;

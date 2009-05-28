@@ -44,6 +44,8 @@ int main(int argc, char* argv[])
 	Main::config->createSetting("QueryTimeout", 5000);
 	QStringList urlList = Wadseeker::defaultSitesListEncoded();
 	Main::config->createSetting("WadseekerSearchURLs", urlList.join(";"));
+	Main::config->createSetting("WadseekerConnectTimeoutSeconds", WADSEEKER_CONNECT_TIMEOUT_SECONDS_DEFAULT);
+	Main::config->createSetting("WadseekerDownloadTimeoutSeconds", WADSEEKER_DOWNLOAD_TIMEOUT_SECONDS_DEFAULT);
 
 	// Init plugin settings
 	Main::enginePlugins.initConfig();

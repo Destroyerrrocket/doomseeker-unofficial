@@ -46,6 +46,7 @@ Wadseeker::Wadseeker()
 {
 	www = new WWW();
 
+	connect(www, SIGNAL( aborted() ), this, SLOT( wwwAborted() ) );
 	connect(www, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
 	connect(www, SIGNAL( fileDone(QByteArray&, const QString&) ), this, SLOT( fileDone(QByteArray&, const QString&) ));
 	connect(www, SIGNAL( message(const QString&, Wadseeker::MessageType) ), this, SLOT( messageSlot(const QString&, Wadseeker::MessageType) ) );
@@ -64,7 +65,6 @@ void Wadseeker::abort()
 	{
 		notFound.append(seekedWads[i]);
 	}
-	emit aborted();
 }
 
 bool Wadseeker::areAllFilesFound() const
@@ -287,6 +287,16 @@ void Wadseeker::setTargetDirectory(const QString& dir)
 	}
 }
 
+void Wadseeker::setTimeConnectTimeout(int i)
+{
+	WWW::setTimeConnectTimeout(i);
+}
+
+void Wadseeker::setTimeDownloadTimeout(int i)
+{
+	WWW::setTimeDownloadTimeout(i);
+}
+
 QString Wadseeker::targetDirectory() const
 {
 	return targetDir;
@@ -319,6 +329,11 @@ QStringList Wadseeker::wantedFilenames(const QString& wad)
 	}
 
 	return lst;
+}
+
+void Wadseeker::wwwAborted()
+{
+	emit aborted();
 }
 
 const QString Wadseeker::yearSpan()

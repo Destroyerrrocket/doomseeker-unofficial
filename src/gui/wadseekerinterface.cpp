@@ -177,11 +177,15 @@ void WadSeekerInterface::startSeeking(const QStringList& seekedFilesList)
 
 	teWadseekerOutput->clear();
 
-	SettingsData* setting;
-	setting = Main::config->setting("WadseekerTargetDirectory");
+	SettingsData* targetDir, *connectTimeout, *downloadTimeout;
+	targetDir = Main::config->setting("WadseekerTargetDirectory");
+	connectTimeout = Main::config->setting("WadseekerConnectTimeoutSeconds");
+	downloadTimeout = Main::config->setting("WadseekerDownloadTimeoutSeconds");
 
 	setStateDownloading();
 
-	wadseeker.setTargetDirectory(setting->string());
+	wadseeker.setTimeConnectTimeout(connectTimeout->integer());
+	wadseeker.setTimeDownloadTimeout(downloadTimeout->integer());
+	wadseeker.setTargetDirectory(targetDir->string());
 	wadseeker.seekWads(seekedFilesList);
 }

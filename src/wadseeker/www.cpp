@@ -46,6 +46,10 @@ void WWW::abort()
 	{
 		currentProtocol->abort();
 	}
+	else
+	{
+		emit aborted();
+	}
 }
 
 void WWW::checkNextSite()
@@ -188,6 +192,10 @@ void WWW::protocolAborted()
 	if (!aborting)
 	{
 		checkNextSite();
+	}
+	else
+	{
+		emit aborted();
 	}
 }
 

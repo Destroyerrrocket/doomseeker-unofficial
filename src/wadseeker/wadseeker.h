@@ -28,6 +28,9 @@
 #include <QStringList>
 #include <QUrl>
 
+#define WADSEEKER_CONNECT_TIMEOUT_SECONDS_DEFAULT 30
+#define WADSEEKER_DOWNLOAD_TIMEOUT_SECONDS_DEFAULT 120
+
 #ifdef Q_OS_WIN32
 #ifdef WADSEEKER_API_EXPORT
 #define WADSEEKER_API	__declspec(dllexport)
@@ -141,6 +144,20 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *	@see iwadNames
 		 */
 		static bool				isIwad(const QString& wad);
+
+		/**
+		 *	Sets time after which to abort connecting
+		 *	if no response is received.
+		 *	@param seconds - time in seconds
+		 */
+		static void				setTimeConnectTimeout(int seconds);
+
+		/**
+		 *	Sets time after which to abort downloading
+		 *	if data stops coming.
+		 *	@param seconds - time in seconds
+		 */
+		static void				setTimeDownloadTimeout(int seconds);
 
 		/**
 		 * @return version string of the library.
@@ -270,6 +287,14 @@ class WADSEEKER_API Wadseeker : public QObject
 		 */
 		void			messageSlot(const QString& msg,
 									Wadseeker::MessageType type);
+
+		/**
+		 *	Activated when WWW class finishes aborting,
+		 *	emits aborted() signal.
+		 *	@see abort
+		 *	@see aborted
+		 */
+		void			wwwAborted();
 
 	private:
 		int				iNextWad;
