@@ -119,7 +119,8 @@ class WADSEEKER_API Wadseeker : public QObject
 		static const QString defaultSites[];
 		/**
 		 *	List of file names that will be ignored as they are part of a
-		 *	commercial product.
+		 *	commercial product. Empty string at the end of the array
+		 *	is required and indicates the end of the array.
 		 *	@see isIwad
 		 */
 		static const QString iwadNames[];
