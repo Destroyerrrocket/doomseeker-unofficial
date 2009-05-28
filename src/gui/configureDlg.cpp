@@ -183,7 +183,10 @@ void ConfigureDlg::optionListClicked(const QModelIndex& index)
 	// and hide previous box.
 	if (cfgBox != NULL && cfgBox->confBox != NULL)
 	{
-		cfgBox->confBox->readSettings();
+		if (!cfgBox->confBox->areSettingsAlreadyRead())
+		{
+			cfgBox->confBox->read();
+		}
 		cfgBox->confBox->setAllowSave(true);
 		showConfigurationBox(cfgBox->confBox);
 	}

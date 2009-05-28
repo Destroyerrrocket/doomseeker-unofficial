@@ -41,22 +41,26 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 		ConfigurationBaseBox(Config* cfg, QWidget* parent = NULL) : QGroupBox(parent)
 		{
 			bAllowSave = false;
+			bSettingsAlreadyRead = false;
 			config = cfg;
 			hide();
 		}
 
 		virtual ~ConfigurationBaseBox() {}
 
+		bool areSettingsAlreadyRead() { return bSettingsAlreadyRead; }
+
 		void setAllowSave(bool b)
 		{
 			bAllowSave = b;
 		}
 
-		/**
-		 * These shouldn't execute Config::readConfig() and Config::saveConfig()
-		 * methods. They're here to read settings from and write them to controls.
-		 */
-		virtual void readSettings()=0;
+		void read()
+		{
+			bSettingsAlreadyRead = true;
+			readSettings();
+		}
+
 		bool save()
 		{
 			if (bAllowSave)
@@ -80,6 +84,13 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 	protected:
 		Config* 	config;
 		bool		bAllowSave;
+		bool		bSettingsAlreadyRead;
+
+		/**
+		 * These shouldn't execute Config::readConfig() and Config::saveConfig()
+		 * methods. They're here to read settings from and write them to controls.
+		 */
+		virtual void readSettings()=0;
 
 		/**
 		 * These shouldn't execute Config::readConfig() and Config::saveConfig()
