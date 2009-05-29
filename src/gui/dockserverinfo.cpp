@@ -23,6 +23,7 @@
 
 #include "gui/dockserverinfo.h"
 #include <QLabel>
+#include <QPushButton>
 
 DockServerInfo::DockServerInfo(QWidget* parent) : QDockWidget(parent)
 {
@@ -34,6 +35,18 @@ DockServerInfo::DockServerInfo(QWidget* parent) : QDockWidget(parent)
 
 	mainLayoutDistanceFromRight = this->width() - mainLayout->width();
 	mainLayoutDistanceFromBottom = this->height() - mainLayout->height();
+}
+
+void DockServerInfo::addAction(ServerAction& sa)
+{
+	if (sa.receiver == NULL || sa.slot == NULL)
+		return;
+
+	QPushButton* btn = new QPushButton(sa.label);
+	connect(btn, SIGNAL( clicked() ), sa.receiver, sa.slot);
+
+	actionsLayout->addWidget(btn);
+	removalList.append(btn);
 }
 
 void DockServerInfo::destroyServerInfo()
@@ -83,5 +96,14 @@ void DockServerInfo::updateServerInfo(Server* server)
 		}
 
 		delete infolist;
+
+		QList<ServerAction>* actions = server->actions();
+		QList<ServerAction>::iterator ita;
+		for (ita = actions->begin(); ita != actions->end(); ++ita)
+		{
+			addAction(*ita);
+		}
+
+		delete actions;
 	}
 }

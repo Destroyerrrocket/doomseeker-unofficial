@@ -45,6 +45,9 @@
        </property>
       </spacer>
      </item>
+     <item>
+      <layout class="QVBoxLayout" name="actionsLayout" />
+     </item>
     </layout>
    </widget>
   </widget>

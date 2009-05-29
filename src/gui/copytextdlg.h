@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// main.h
+// copytextdlg.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,25 +18,23 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#ifndef __DOCKSERVERINFO_H_
+#define __DOCKSERVERINFO_H_
 
-#include "sdeapi/pluginloader.hpp"
-#include "sdeapi/config.hpp"
+#include "ui_copytextdlg.h"
 
-/**
- * This class holds some global information.
- */
-class MAIN_EXPORT Main
+class CopyTextDlg : public QDialog, private Ui::CopyTextDlg
 {
+	Q_OBJECT;
+
 	public:
-		static Config 			*config;
-		static QWidget*			mainWindow;
-		static PluginLoader		enginePlugins;
-		static bool				running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
+		CopyTextDlg(const QString& content, const QString& description = QString(), QWidget* parent = NULL);
+
+	protected slots:
+		void copyContent();
 };
 
-#endif /* __MAIN_H__ */
+#endif

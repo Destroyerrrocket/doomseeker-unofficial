@@ -24,6 +24,7 @@
 #ifndef __SERVER_H__
 #define __SERVER_H__
 
+#include <QFileInfo>
 #include <QObject>
 #include <QHostAddress>
 #include <QString>
@@ -128,6 +129,24 @@ struct MAIN_EXPORT SkillLevel
 };
 
 /**
+ *	This structure is used by Server Info dockable widget.
+ *	Each instance of this struct is one button on the widget.
+ *	The button is connected to function();
+ */
+struct MAIN_EXPORT ServerAction
+{
+	QString		label;
+	QObject*	receiver;
+	const char*	slot;
+
+	ServerAction()
+	{
+		receiver = NULL;
+		slot = NULL;
+	}
+};
+
+/**
  * This structure is used by Server Info dockable widget.
  * Each instance of this struct is one label on the widget.
  */
@@ -205,11 +224,19 @@ class MAIN_EXPORT Server : public QObject
 		void				startRunning() { bRunning = true; }
 		void				stopRunning() { bRunning = false; }
 
+		QList<ServerAction>*	actions();
+		virtual void			actionsEx(QList<ServerAction>*) {};
 		/**
 		 * Returns the name of the setting pointing to the client binary.
 		 */
 		virtual QString		clientBinary() const=0;
 		virtual void		connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound) const;
+		/**
+		 *	@param [out] executablePath - path to the executable is saved here.
+		 *	@param [out] args - launch arguments are saved here.
+		 *	@return	true if command line was successfully created.
+		 */
+		bool				createJoinCommandLine(QFileInfo& executablePath, QStringList& args) const;
 
 		/**
 		 * Returns the thread pool of the refresher.
@@ -220,6 +247,8 @@ class MAIN_EXPORT Server : public QObject
 		friend class ServerPointer;
 
 	public slots:
+
+		void			displayJoinCommandLine();
 		void			join() const;
 		/**
 		 * Updates the server data.

@@ -31,6 +31,7 @@
 #include "wadseeker/wadseeker.h"
 
 PluginLoader Main::enginePlugins(MAKEID('E','N','G','N'), "./engines/");
+QWidget* Main::mainWindow = NULL;
 Config *Main::config = new Config();
 bool Main::running = true;
 
@@ -51,6 +52,7 @@ int main(int argc, char* argv[])
 	Main::enginePlugins.initConfig();
 
 	MainWindow* mw = new MainWindow(argc, argv);
+	Main::mainWindow = mw;
 	mw->show();
 
 	int ret = app.exec();

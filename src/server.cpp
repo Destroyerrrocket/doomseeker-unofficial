@@ -23,8 +23,8 @@
 
 #include "server.h"
 #include "main.h"
+#include "gui/copytextdlg.h"
 #include "gui/wadseekerinterface.h"
-#include <QFileInfo>
 #include <QMessageBox>
 #include <QProcess>
 #include <QSet>
@@ -207,6 +207,21 @@ Server::~Server()
 {
 }
 
+QList<ServerAction>* Server::actions()
+{
+	QList<ServerAction>* lst = new QList<ServerAction>();
+
+	ServerAction sa;
+	sa.label = "Join command line";
+	sa.receiver = this;
+	sa.slot = SLOT( displayJoinCommandLine() );
+
+	lst->append(sa);
+
+	actionsEx(lst);
+	return lst;
+}
+
 void Server::setResponse(Server* server, int res)
 {
 	response = static_cast<Response>(res);
@@ -370,26 +385,26 @@ void Server::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFoun
 	iwadFound = !iwad.isEmpty();
 }
 
-void Server::join() const
+bool Server::createJoinCommandLine(QFileInfo& executablePath, QStringList& args) const
 {
 	const QString errorCaption = tr("Doomseeker - error");
+	args.clear();
 	SettingsData* setting = Main::config->setting(clientBinary());
 	if (setting->string().isEmpty())
 	{
 		QMessageBox::critical(NULL, errorCaption, tr("No executable specified for this engine."));
-		return;
+		return false;
 	}
 
-	QFileInfo fileinfo(setting->string());
+	executablePath = QFileInfo(setting->string());
 
-	if (!fileinfo.exists() || fileinfo.isDir())
+	if (!executablePath.exists() || executablePath.isDir())
 	{
-		QMessageBox::critical(NULL, errorCaption, tr("File: ") + fileinfo.absoluteFilePath() + tr("\ndoesn't exist or is a directory"));
-		return;
+		QMessageBox::critical(NULL, errorCaption, tr("File: ") + executablePath.absoluteFilePath() + tr("\ndoesn't exist or is a directory"));
+		return false;
 	}
 
 	PathFinder pf(Main::config);
-	QStringList args;
 	QStringList missingPwads;
 	bool iwadFound = false;
 
@@ -441,12 +456,35 @@ void Server::join() const
 			wsi.wadseekerRef().setCustomSite(website());
 			if (wsi.exec() == QDialog::Accepted)
 			{
-				join();
+				return createJoinCommandLine(executablePath, args);
 			}
 		}
 
-		return;
+		return false;
 	}
+
+	return true;
+}
+
+void Server::displayJoinCommandLine()
+{
+	QFileInfo executablePath;
+	QStringList args;
+	if (!createJoinCommandLine(executablePath, args))
+		return;
+
+	CopyTextDlg* ctd = new CopyTextDlg(executablePath.absoluteFilePath() + " " + args.join(" "), "Join command line:", Main::mainWindow);
+	ctd->show();
+}
+
+void Server::join() const
+{
+	const QString errorCaption = tr("Doomseeker - error");
+	QFileInfo fileinfo;
+	QStringList args;
+
+	if (!createJoinCommandLine(fileinfo, args))
+		return;
 
 	printf("Starting: %s %s\n", fileinfo.absoluteFilePath().toAscii().constData(), args.join(" ").toAscii().constData());
 

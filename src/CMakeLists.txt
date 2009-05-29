@@ -21,6 +21,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/cfgFilePaths.ui
 	gui/cfgQuery.ui
 	gui/configureDlg.ui
+	gui/copytextdlg.ui
 	gui/mainwindow.ui
 	gui/dockBuddiesList.ui
 	gui/dockserverinfo.ui
@@ -34,6 +35,7 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/cfgQuery.h
 	gui/configBase.h
 	gui/configureDlg.h
+	gui/copytextdlg.h	
 	gui/mainwindow.h
 	gui/dockBuddiesList.h
 	gui/dockserverinfo.h
@@ -53,10 +55,11 @@ qt4_add_resources(doomseekerResources
 )
 
 set(SOURCE_FILES
-    gui/aboutDlg.cpp
+  gui/aboutDlg.cpp
 	gui/cfgFilePaths.cpp
 	gui/cfgQuery.cpp
 	gui/configureDlg.cpp
+	gui/copytextdlg.cpp
 	gui/dockBuddiesList.cpp
 	gui/dockserverinfo.cpp
 	gui/mainwindow.cpp

@@ -43,6 +43,7 @@ class DockServerInfo : public QDockWidget, private Ui::DockServerInfo
 		int 		mainLayoutDistanceFromBottom;
 		Server* 	currentServer;
 
+		void			addAction(ServerAction&);
 		void 			destroyServerInfo();
 		virtual void 	resizeEvent(QResizeEvent* event);
 };

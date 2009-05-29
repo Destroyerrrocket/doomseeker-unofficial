@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// main.h
+// copytextdlg.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,25 +18,27 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "copytextdlg.h"
+#include <QClipboard>
 
-#ifndef __MAIN_H__
-#define __MAIN_H__
-
-#include "sdeapi/pluginloader.hpp"
-#include "sdeapi/config.hpp"
-
-/**
- * This class holds some global information.
- */
-class MAIN_EXPORT Main
+CopyTextDlg::CopyTextDlg(const QString& content, const QString& description, QWidget* parent) : QDialog(parent)
 {
-	public:
-		static Config 			*config;
-		static QWidget*			mainWindow;
-		static PluginLoader		enginePlugins;
-		static bool				running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
-};
+	setupUi(this);
 
-#endif /* __MAIN_H__ */
+	connect(btnCopy, SIGNAL( clicked() ), this, SLOT( copyContent() ) );
+
+	if (!description.isNull())
+	{
+		lblDescription->setText(description);
+	}
+
+	teContent->document()->setPlainText(content);
+}
+
+void CopyTextDlg::copyContent()
+{
+	QClipboard *clipboard = QApplication::clipboard();
+	clipboard->setText(teContent->document()->toPlainText());
+}
