@@ -68,13 +68,18 @@ class CHtml
 
 		/**
 		 * Extracts links from HTML file but only those that match "pattern".
-		 * @param wantedFiles 	- 	names of the files we want to get the links to.
-		 * @param siteLinks		- 	indirect links to wanted files will be appended here
-		 * @param directLinks	- 	direct links to wanted files will be appended here
-		 * @param baseUrl		- 	relative URLs will be converted to absolute
+		 *	@param wantedFiles 	- 	names of the files we want to get the
+		 *							links to.
+		 *	@param siteLinks	- 	indirect links to wanted files will be
+		 *							appended here
+		 *	@param directLinks	- 	direct links to wanted files will be
+		 *							appended here
+		 *	@param baseUrl		- 	relative URLs will be converted to absolute
 		 *							URLs using this URL as a base
+		 *	@param[out] siteLinksOut - number of site links found
+		 *	@param[out] directLinksOut - number of direct links found
 		 */
-		void		linksFromHTMLByPattern(const QStringList& wantedFiles, QList<QUrl>& siteLinks, QList<QUrl>& directLinks, const QUrl& baseUrl);
+		void		linksFromHTMLByPattern(const QStringList& wantedFiles, QList<QUrl>& siteLinks, QList<QUrl>& directLinks, const QUrl& baseUrl, int& siteLinksOut, int& directLinksOut);
 
 	protected:
 		static bool			hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link);

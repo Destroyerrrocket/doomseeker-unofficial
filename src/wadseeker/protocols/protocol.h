@@ -64,6 +64,7 @@ class Protocol : public QObject
 		void 	currentFileSize(int);
 		void	dataReadProgress(int done, int total);
 		void	done(bool success, QByteArray& data, int fileType, const QString& filename);
+		void	nameAndTypeOfReceivedFile(const QString& name, int fileType);
 		void 	message(const QString& msg, Wadseeker::MessageType type);
 
 	protected slots:

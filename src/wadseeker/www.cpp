@@ -23,6 +23,8 @@
 #include "www.h"
 #include <QFileInfo>
 
+QString WWW::ignoringMessage = tr("%1 is not a HTML file, nor a wanted file, nor a file with \'.zip\' extension. Ignoring.\n");
+
 WWW::WWW()
 {
 	currentProtocol = NULL;
@@ -36,6 +38,7 @@ WWW::WWW()
 	connect(&http, SIGNAL( dataReadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
 	connect(&http, SIGNAL( done(bool, QByteArray&, int, const QString&) ), this, SLOT( protocolDone(bool, QByteArray&, int, const QString&) ) );
 	connect(&http, SIGNAL( message(const QString&, Wadseeker::MessageType) ), this, SLOT( messageSlot(const QString&, Wadseeker::MessageType) ) );
+	connect(&http, SIGNAL( nameAndTypeOfReceivedFile(const QString&, int) ), this, SLOT( protocolNameAndTypeOfReceivedFile(const QString&, int) ) );
 	connect(&http, SIGNAL( redirect(const QUrl&) ), this, SLOT( get(const QUrl&) ) );
 }
 
@@ -100,8 +103,6 @@ void WWW::downloadProgressSlot(int done, int total)
 	emit downloadProgress(done, total);
 }
 
-
-
 void WWW::get(const QUrl& url)
 {
 	QUrl urlValid = constructValidUrl(url);
@@ -129,16 +130,42 @@ void WWW::get(const QUrl& url)
 	}
 	else if (Ftp::isFTPLink(urlValid))
 	{
-		currentProtocol = &ftp;
-		ftp.get(urlValid);
+		QFileInfo fi(urlValid.path());
+		if (!isWantedFileOrZip(fi.fileName()))
+		{
+			emit message(ignoringMessage.arg(fi.fileName()), Wadseeker::Notice);
+			checkNextSite();
+			return;
+		}
+		else
+		{
+			currentProtocol = &ftp;
+			ftp.get(urlValid);
+		}
 	}
 	else
 	{
 		currentProtocol = NULL;
 		message(tr("Protocol for this site is not supported\n"), Wadseeker::Error);
 		checkNextSite();
+		return;
 	}
 
+}
+
+bool WWW::isWantedFileOrZip(const QString& filename)
+{
+	if (!primaryFile.isNull())
+	{
+		if (primaryFile.compare(filename, Qt::CaseInsensitive) == 0)
+			return true;
+	}
+
+	QFileInfo fi(filename);
+	if (fi.suffix().compare("zip", Qt::CaseInsensitive) == 0)
+		return true;
+
+	return false;
 }
 
 void WWW::messageSlot(const QString& msg, Wadseeker::MessageType type)
@@ -189,6 +216,7 @@ QUrl WWW::nextSite()
 
 void WWW::protocolAborted()
 {
+	currentProtocol = NULL;
 	if (!aborting)
 	{
 		checkNextSite();
@@ -201,15 +229,18 @@ void WWW::protocolAborted()
 
 void WWW::protocolDone(bool success, QByteArray& data, int fileType, const QString& filename)
 {
+	currentProtocol = NULL;
 	if (success)
 	{
 		emit message(tr("Got file %1.").arg(filename), Wadseeker::Notice);
 		if (fileType == Protocol::Html)
 		{
-			emit message(tr("Parsing file as HTML looking for links.\n"), Wadseeker::Notice);
+			int siteLinksNum, directLinksNum; // CHtml::linksFromHTMLByPattern will zero this
+			emit message(tr("Parsing file as HTML looking for links."), Wadseeker::Notice);
 			CHtml html(data);
 			html.capitalizeHTMLTags();
-			html.linksFromHTMLByPattern(filesToFind, siteLinks, directLinks, processedUrl);
+			html.linksFromHTMLByPattern(filesToFind, siteLinks, directLinks, processedUrl, siteLinksNum, directLinksNum);
+			emit message(tr("Site links found: %1 | Direct links found: %2\n").arg(siteLinksNum).arg(directLinksNum), Wadseeker::Notice);
 			checkNextSite();
 		}
 		else
@@ -223,6 +254,21 @@ void WWW::protocolDone(bool success, QByteArray& data, int fileType, const QStri
 	if (!success)
 	{
 		checkNextSite();
+	}
+}
+
+void WWW::protocolNameAndTypeOfReceivedFile(const QString& name, int type)
+{
+	if (type == Protocol::Other)
+	{
+		if (!isWantedFileOrZip(name))
+		{
+			emit message(ignoringMessage.arg(name), Wadseeker::Notice);
+			if (currentProtocol != NULL)
+			{
+				currentProtocol->abort();
+			}
+		}
 	}
 }
 

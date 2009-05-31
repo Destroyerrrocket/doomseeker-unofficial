@@ -152,6 +152,11 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 	switch (resp.statusCode())
 	{
 		case OK:
+			if (resp.hasContentLength())
+			{
+				emit message(tr("File size: %1 B").arg(resp.contentLength()), Wadseeker::Notice);
+			}
+
 			if (isHTMLFile(resp))
 			{
 				fileType = Html;
@@ -159,10 +164,7 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 			else
 			{
 				fileType = Other;
-			}
-			if (resp.hasContentLength())
-			{
-				emit message(tr("File size: %1 B").arg(resp.contentLength()), Wadseeker::Notice);
+				emit nameAndTypeOfReceivedFile(processedFileName, fileType);
 			}
 
 			break;
@@ -174,6 +176,7 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 			{
 				fileType = Other;
 				emit message(tr("Downloading attached file: %1").arg(processedFileName), Wadseeker::Notice);
+				emit nameAndTypeOfReceivedFile(processedFileName, fileType);
 			}
 			else
 			{

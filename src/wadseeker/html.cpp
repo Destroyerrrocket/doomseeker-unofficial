@@ -341,8 +341,10 @@ QList<Link>	CHtml::linksFromHTML()
 	return list;
 }
 
-void CHtml::linksFromHTMLByPattern(const QStringList& wantedFiles, QList<QUrl>& siteLinks, QList<QUrl>& directLinks, const QUrl& baseUrl)
+void CHtml::linksFromHTMLByPattern(const QStringList& wantedFiles, QList<QUrl>& siteLinks, QList<QUrl>& directLinks, const QUrl& baseUrl, int& siteLinksOut, int& directLinksOut)
 {
+	siteLinksOut = 0;
+	directLinksOut = 0;
 	QList<Link> list = linksFromHTML();
 	QList<Link>::iterator it;
 
@@ -373,11 +375,13 @@ void CHtml::linksFromHTMLByPattern(const QStringList& wantedFiles, QList<QUrl>& 
 		if (isDirectLinkToFile(wantedFiles, it->url))
 		{
 			directLinks.append(newUrl);
+			++directLinksOut;
 		}
 		else if (hasFileReferenceSomewhere(wantedFiles, *it))
 		{
 			// here we append all links that contain this filename somewhere else than in path
 			siteLinks.append(newUrl);
+			++siteLinksOut;
 		}
 	}
 }

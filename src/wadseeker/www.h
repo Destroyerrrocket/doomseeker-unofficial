@@ -155,9 +155,12 @@ class WWW : public QObject
 		void 	downloadProgressSlot(int done, int total);
 		void 	protocolAborted();
 		void 	protocolDone(bool success, QByteArray& data, int fileType, const QString& filename);
+		void	protocolNameAndTypeOfReceivedFile(const QString&, int);
 		void 	messageSlot(const QString&, Wadseeker::MessageType type);
 
 	protected:
+		static QString	ignoringMessage;
+
 		bool			aborting;
 		Protocol*		currentProtocol;
 		Http			http;
@@ -180,7 +183,7 @@ class WWW : public QObject
 		QList<QUrl> 	siteLinks;
 
 		QUrl		constructValidUrl(const QUrl&);
-
+		bool		isWantedFileOrZip(const QString& filename);
 		QUrl		nextSite();
 };
 
