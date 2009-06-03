@@ -3,5 +3,6 @@
 <qresource>
 	<file alias="icon.png">icon_small.png</file>
 	<file alias="logo.png">logo_small.png</file>
+	<file>locked.png</file>
 </qresource>
 </RCC>

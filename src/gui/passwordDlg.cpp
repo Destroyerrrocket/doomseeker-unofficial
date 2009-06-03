@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// odamexserver.h
+// passwordDlg.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -21,42 +21,30 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#ifndef __ODAMEXSERVER_H__
-#define __ODAMEXSERVER_H__
+#include "passwordDlg.h"
+#include "main.h"
 
-#include "server.h"
-
-#define NUM_ODAMEX_GAME_MODES 5
-
-class OdamexServer : public Server
+PasswordDlg::PasswordDlg(QWidget *parent) : QDialog(parent)
 {
-	Q_OBJECT
+	setupUi(this);
 
-	public:
-		enum OdamexGameModes
-		{
-			MODE_COOPERATIVE,
-			MODE_DEATHMATCH,
-			MODE_DEATHMATCH2,
-			MODE_TEAM_DEATHMATCH,
-			MODE_CAPTURE_THE_FLAG
-		};
-		static const GameMode	GAME_MODES[NUM_ODAMEX_GAME_MODES];
-		static const QString	DMFLAGS[13];
-		static const QPixmap	ICON;
+	Main::config->createSetting("RememberConnectPassword", 1);
 
-		OdamexServer(const QHostAddress &address, unsigned short port);
+	SettingsData *rememberConnectPassword = Main::config->setting("RememberConnectPassword");
+	remember->setChecked(rememberConnectPassword->integer() != 0);
+	if(rememberConnectPassword->integer() != 0)
+	{
+		SettingsData *storedPassword = Main::config->setting("ConnectPassword");
+		password->setText(storedPassword->string());
+	}
 
-		QString	clientBinary() const { return "OdamexBinaryPath"; }
-		void	connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
-		QPixmap	icon() const;
+	connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+}
 
-	protected:
-		bool	readRequest(QByteArray &data);
-		bool	sendRequest(QByteArray &data);
-
-		short			protocol;
-		unsigned short	skill;
-};
-
-#endif /* __ODAMEXSERVER_H__ */
+PasswordDlg::~PasswordDlg()
+{
+	Main::config->setting("RememberConnectPassword")->setValue(remember->isChecked());
+	if(remember->isChecked())
+		Main::config->setting("ConnectPassword")->setValue(password->text());
+}

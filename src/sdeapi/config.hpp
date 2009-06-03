@@ -87,8 +87,8 @@ class MAIN_EXPORT Config : public QObject
 		void			createSetting(const QString index, unsigned int defaultInt);
 		void			createSetting(const QString index, QString defaultString);
 		/**
-		 * Gets the specified setting.  Will return NULL if the setting does
-		 * not exist.
+		 * Gets the specified setting.  Will create the setting if it does not
+		 * exist.
 		 */
 		SettingsData*	setting(const QString index);
 

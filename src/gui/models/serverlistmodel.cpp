@@ -21,6 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "gui/models/serverlistmodel.h"
+#include <QPainter>
 #include <QTime>
 
 ServerListColumn ServerListModel::columns[] =
@@ -291,7 +292,14 @@ int ServerListModel::updateServer(int row, Server* server, int response)
 
 	// Port icon is set no matter what
 	qstdItem = item(row, SLCID_PORT);
-	fillItem(qstdItem, server->metaObject()->className(), server->icon());
+	QPixmap icon = server->icon();
+	if(server->isLocked()) // Draw a key if it is locked.
+	{
+		QPainter iconPainter(&icon);
+		iconPainter.drawPixmap(0, 0, QPixmap(":/locked.png"));
+		iconPainter.end();
+	}
+	fillItem(qstdItem, server->metaObject()->className(), icon);
 
 	// Address is also set no matter what, so it's set here.
 	qstdItem = item(row, SLCID_ADDRESS);

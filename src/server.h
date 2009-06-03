@@ -230,13 +230,13 @@ class MAIN_EXPORT Server : public QObject
 		 * Returns the name of the setting pointing to the client binary.
 		 */
 		virtual QString		clientBinary() const=0;
-		virtual void		connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound) const;
+		virtual void		connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
 		/**
 		 *	@param [out] executablePath - path to the executable is saved here.
 		 *	@param [out] args - launch arguments are saved here.
 		 *	@return	true if command line was successfully created.
 		 */
-		bool				createJoinCommandLine(QFileInfo& executablePath, QStringList& args) const;
+		bool				createJoinCommandLine(QFileInfo& executablePath, QStringList& args, const QString &connectPassword) const;
 
 		/**
 		 * Returns the thread pool of the refresher.
@@ -249,7 +249,7 @@ class MAIN_EXPORT Server : public QObject
 	public slots:
 
 		void			displayJoinCommandLine();
-		void			join() const;
+		void			join(const QString &connectPassword=QString()) const;
 		/**
 		 * Updates the server data.
 		 */

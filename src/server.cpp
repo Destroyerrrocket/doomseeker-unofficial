@@ -24,6 +24,7 @@
 #include "server.h"
 #include "main.h"
 #include "gui/copytextdlg.h"
+#include "gui/passwordDlg.h"
 #include "gui/wadseekerinterface.h"
 #include <QMessageBox>
 #include <QProcess>
@@ -374,10 +375,12 @@ void Server::operator= (const Server &other)
 	serverScoreLimit = other.scoreLimit();
 }
 
-void Server::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound) const
+void Server::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const
 {
 	// Connect
 	args << "+connect" << QString(address().toString() + ":" + QString::number(port()));
+	if(isLocked())
+		args << connectPassword;
 
 	// Iwad
 	QString iwad = pf.findWad(iwadName().toLower());
@@ -385,7 +388,7 @@ void Server::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFoun
 	iwadFound = !iwad.isEmpty();
 }
 
-bool Server::createJoinCommandLine(QFileInfo& executablePath, QStringList& args) const
+bool Server::createJoinCommandLine(QFileInfo& executablePath, QStringList& args, const QString &connectPassword) const
 {
 	const QString errorCaption = tr("Doomseeker - error");
 	args.clear();
@@ -408,7 +411,7 @@ bool Server::createJoinCommandLine(QFileInfo& executablePath, QStringList& args)
 	QStringList missingPwads;
 	bool iwadFound = false;
 
-	connectParameters(args, pf, iwadFound);
+	connectParameters(args, pf, iwadFound, connectPassword);
 
 	// Pwads
 	if (numWads() != 0)
@@ -456,7 +459,7 @@ bool Server::createJoinCommandLine(QFileInfo& executablePath, QStringList& args)
 			wsi.wadseekerRef().setCustomSite(website());
 			if (wsi.exec() == QDialog::Accepted)
 			{
-				return createJoinCommandLine(executablePath, args);
+				return createJoinCommandLine(executablePath, args, connectPassword);
 			}
 		}
 
@@ -470,20 +473,30 @@ void Server::displayJoinCommandLine()
 {
 	QFileInfo executablePath;
 	QStringList args;
-	if (!createJoinCommandLine(executablePath, args))
+	QString connectPassword;
+	if(isLocked())
+	{
+		PasswordDlg password;
+		int ret = password.exec();
+		if(ret == QDialog::Accepted)
+			connectPassword = password.connectPassword();
+		else
+			return;
+	}
+	if (!createJoinCommandLine(executablePath, args, connectPassword))
 		return;
 
 	CopyTextDlg* ctd = new CopyTextDlg(executablePath.absoluteFilePath() + " " + args.join(" "), "Join command line:", Main::mainWindow);
 	ctd->show();
 }
 
-void Server::join() const
+void Server::join(const QString &connectPassword) const
 {
 	const QString errorCaption = tr("Doomseeker - error");
 	QFileInfo fileinfo;
 	QStringList args;
 
-	if (!createJoinCommandLine(fileinfo, args))
+	if (!createJoinCommandLine(fileinfo, args, connectPassword))
 		return;
 
 	printf("Starting: %s %s\n", fileinfo.absoluteFilePath().toAscii().constData(), args.join(" ").toAscii().constData());

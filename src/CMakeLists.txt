@@ -22,9 +22,10 @@ qt4_wrap_ui(doomseekerUI
 	gui/cfgQuery.ui
 	gui/configureDlg.ui
 	gui/copytextdlg.ui
-	gui/mainwindow.ui
 	gui/dockBuddiesList.ui
 	gui/dockserverinfo.ui
+	gui/mainwindow.ui
+	gui/passwordDlg.ui
 	gui/wadseekerconfig.ui
 	gui/wadseekerinterface.ui
 )
@@ -35,10 +36,11 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/cfgQuery.h
 	gui/configBase.h
 	gui/configureDlg.h
-	gui/copytextdlg.h	
-	gui/mainwindow.h
+	gui/copytextdlg.h
 	gui/dockBuddiesList.h
 	gui/dockserverinfo.h
+	gui/mainwindow.h
+	gui/passwordDlg.h
 	gui/serverlist.h
 	gui/wadseekerconfig.h
 	gui/wadseekerinterface.h
@@ -63,6 +65,7 @@ set(SOURCE_FILES
 	gui/dockBuddiesList.cpp
 	gui/dockserverinfo.cpp
 	gui/mainwindow.cpp
+	gui/passwordDlg.cpp
 	gui/serverlist.cpp
 	gui/wadseekerconfig.cpp
 	gui/wadseekerinterface.cpp

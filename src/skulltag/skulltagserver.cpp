@@ -171,6 +171,13 @@ SkulltagServer::SkulltagServer(const QHostAddress &address, unsigned short port)
 	teamInfo[3] = TeamInfo(tr("Gold"), QColor(255, 255, 0), 0);
 }
 
+void SkulltagServer::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const
+{
+	Server::connectParameters(args, pf, iwadFound, connectPassword);
+	if(isLocked())
+		args << "+cl_password" << connectPassword;
+}
+
 QPixmap SkulltagServer::icon() const
 {
 	return QPixmap(skulltag_xpm);

@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>ConfigureDlg</class>
- <widget class="QDialog" name="ConfigureDlg" >
-  <property name="geometry" >
+ <widget class="QDialog" name="ConfigureDlg">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,49 +10,49 @@
     <height>548</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>Dialog</string>
+  <property name="windowTitle">
+   <string>Doomseeker - Configuration</string>
   </property>
-  <property name="locale" >
-   <locale country="UnitedStates" language="English" />
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QWidget" native="1" name="widget" >
-     <layout class="QHBoxLayout" name="horizontalLayout" >
-      <property name="sizeConstraint" >
+    <widget class="QWidget" name="widget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="sizeConstraint">
        <enum>QLayout::SetMinAndMaxSize</enum>
       </property>
       <item>
-       <widget class="QTreeView" name="tvOptionsList" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Expanding" hsizetype="Minimum" >
+       <widget class="QTreeView" name="tvOptionsList">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="maximumSize" >
+        <property name="maximumSize">
          <size>
           <width>200</width>
           <height>16777215</height>
          </size>
         </property>
-        <property name="editTriggers" >
+        <property name="editTriggers">
          <set>QAbstractItemView::NoEditTriggers</set>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QWidget" native="1" name="mainPanel" >
-        <layout class="QVBoxLayout" name="verticalLayout_2" />
+       <widget class="QWidget" name="mainPanel" native="true">
+        <layout class="QVBoxLayout" name="verticalLayout_2"/>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox" >
-     <property name="standardButtons" >
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
       <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>

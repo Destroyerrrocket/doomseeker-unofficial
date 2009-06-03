@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// odamexserver.h
+// passwordDlg.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -21,42 +21,23 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#ifndef __ODAMEXSERVER_H__
-#define __ODAMEXSERVER_H__
+#ifndef __PASSWORDDIALOG_H__
+#define __PASSWRODDIALOG_H__
 
-#include "server.h"
+#include "ui_passwordDlg.h"
 
-#define NUM_ODAMEX_GAME_MODES 5
-
-class OdamexServer : public Server
+class PasswordDlg : public QDialog, private Ui::passwordDlg
 {
 	Q_OBJECT
 
 	public:
-		enum OdamexGameModes
-		{
-			MODE_COOPERATIVE,
-			MODE_DEATHMATCH,
-			MODE_DEATHMATCH2,
-			MODE_TEAM_DEATHMATCH,
-			MODE_CAPTURE_THE_FLAG
-		};
-		static const GameMode	GAME_MODES[NUM_ODAMEX_GAME_MODES];
-		static const QString	DMFLAGS[13];
-		static const QPixmap	ICON;
+		PasswordDlg(QWidget *parent=NULL);
+		~PasswordDlg();
 
-		OdamexServer(const QHostAddress &address, unsigned short port);
+		QString	connectPassword() const { return password->text(); }
 
-		QString	clientBinary() const { return "OdamexBinaryPath"; }
-		void	connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
-		QPixmap	icon() const;
-
-	protected:
-		bool	readRequest(QByteArray &data);
-		bool	sendRequest(QByteArray &data);
-
-		short			protocol;
-		unsigned short	skill;
+//	protected slots:
+//		void	buttonBoxClicked(QAbstractButton *button);
 };
 
-#endif /* __ODAMEXSERVER_H__ */
+#endif /* __PASSWORDDIALOG_H__ */

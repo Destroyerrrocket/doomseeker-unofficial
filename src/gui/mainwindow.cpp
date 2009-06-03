@@ -26,6 +26,7 @@
 #include "gui/configureDlg.h"
 #include "gui/dockBuddiesList.h"
 #include "gui/dockserverinfo.h"
+#include "gui/passwordDlg.h"
 #include "gui/wadseekerinterface.h"
 #include "pathfinder.h"
 #include "main.h"
@@ -211,7 +212,18 @@ void MainWindow::menuWadSeeker()
 
 void MainWindow::runGame(const Server* server) const
 {
-	server->join();
+	QString connectPassword;
+	if(server->isLocked())
+	{
+		PasswordDlg password;
+		int ret = password.exec();
+
+		if(ret == QDialog::Accepted)
+			connectPassword = password.connectPassword();
+		else
+			return;
+	}
+	server->join(connectPassword);
 }
 
 void MainWindow::updateServerInfo(QList<Server*>& servers)

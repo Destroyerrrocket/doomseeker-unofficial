@@ -63,9 +63,9 @@ OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port) : S
 {
 }
 
-void OdamexServer::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound) const
+void OdamexServer::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const
 {
-	Server::connectParameters(args, pf, iwadFound);
+	Server::connectParameters(args, pf, iwadFound, connectPassword);
 
 	if(iwadFound)
 	{

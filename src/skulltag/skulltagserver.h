@@ -125,6 +125,7 @@ class SkulltagServer : public Server
 
 		QPixmap			icon() const;
 		QString			clientBinary() const { return "SkulltagBinaryPath"; }
+		void			connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
 		QString			teamName(int team) const { return team >= 0 && team < ST_MAX_TEAMS ? teamInfo[team].name() : ""; }
 
 		void			doRefresh();
