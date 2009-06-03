@@ -257,7 +257,7 @@ bool CHtml::isDirectLinkToFile(const QStringList& wantedFileNames, const QUrl& l
 	QFileInfo fi(link.encodedPath());
 	for (int i = 0; i < wantedFileNames.count(); ++i)
 	{
-		if (fi.fileName() == wantedFileNames[i])
+		if (fi.fileName().compare(wantedFileNames[i], Qt::CaseInsensitive) == 0)
 		{
 			return true;
 		}
