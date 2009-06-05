@@ -5,6 +5,7 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 find_package(Qt4 REQUIRED)
+find_package(ZLIB REQUIRED)
 include(${QT_USE_FILE})
 
 include_directories(${DOOMSEEKER_SOURCE_DIR}/src)
@@ -48,6 +49,7 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/widgets/dockedwidgets.h
 	gui/widgets/serverlistview.h
 	sdeapi/config.hpp
+	ip2c.h
 	masterclient.h
 	server.h
 )
@@ -57,7 +59,7 @@ qt4_add_resources(doomseekerResources
 )
 
 set(SOURCE_FILES
-  gui/aboutDlg.cpp
+	gui/aboutDlg.cpp
 	gui/cfgFilePaths.cpp
 	gui/cfgQuery.cpp
 	gui/configureDlg.cpp
@@ -75,6 +77,7 @@ set(SOURCE_FILES
 	sdeapi/config.cpp
 	sdeapi/pluginloader.cpp
 	sdeapi/scanner.cpp
+	ip2c.cpp
 	main.cpp
 	masterclient.cpp
 	pathfinder.cpp

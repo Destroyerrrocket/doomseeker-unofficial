@@ -33,11 +33,13 @@
 PluginLoader Main::enginePlugins(MAKEID('E','N','G','N'), "./engines/");
 QWidget* Main::mainWindow = NULL;
 Config *Main::config = new Config();
+IP2C *Main::ip2c = new IP2C("IpToCountry.csv", QUrl("http://software77.net/geo-ip?DL=1"));
 bool Main::running = true;
 
 int main(int argc, char* argv[])
 {
 	QApplication app(argc, argv);
+
 	Main::config->locateConfigFile(argc, argv);
 
 	// Initial settings values
@@ -60,6 +62,8 @@ int main(int argc, char* argv[])
 
 	Main::config->saveConfig();
 	delete Main::config;
+
+	delete Main::ip2c;
 
 	return ret;
 }

@@ -126,7 +126,11 @@ QString Player::colorizeString(const QString &str, int current)
 
 			// special cases
 			if(colorChar == '+')
-				color = current == 19 ? 0 : current+1; // + is the current plus one, wrap if needed.
+				color = current == 0 ? 19 : current-1; // + is the current minus one, wrap if needed.
+			else if(colorChar == '*')
+				color = 3; // Chat color which is usally green
+			else if(colorChar == '!')
+				color = 16; // Team char (usually green, but made dark green here for distinction)
 			else if(colorChar == '-' || colored)
 			{
 				if(colored)

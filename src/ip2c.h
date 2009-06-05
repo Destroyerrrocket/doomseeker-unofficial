@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// main.h
+// ip2c.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -21,24 +21,53 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#ifndef __IP2C_H__
+#define __IP2C_H__
 
-#include "sdeapi/pluginloader.hpp"
-#include "sdeapi/config.hpp"
-#include "ip2c.h"
+#include <QHostAddress>
+#include <QHttp>
+#include <QList>
+#include <QString>
+#include <QUrl>
 
-/**
- * This class holds some global information.
- */
-class MAIN_EXPORT Main
+#include "global.h"
+
+class MAIN_EXPORT IP2C : public QObject
 {
+	Q_OBJECT
+
 	public:
-		static Config 			*config;
-		static IP2C				*ip2c;
-		static QWidget*			mainWindow;
-		static PluginLoader		enginePlugins;
-		static bool				running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
+		struct IP2CData
+		{
+			public:
+				unsigned int	ipStart;
+				unsigned int	ipEnd;
+				QString			country;
+		};
+
+		IP2C(QString file, QUrl netLocation);
+		~IP2C();
+
+		void	downloadDatabase();
+		bool	isRead() const { return read; }
+		QString	lookupIP(unsigned int ipaddress) const;
+		QString	lookupIP(const QHostAddress &ipaddress) const { return lookupIP(ipaddress.toIPv4Address()); }
+
+	public slots:
+		bool	readDatabase();
+
+	signals:
+		void	databaseUpdated();
+
+	private:
+		QList<IP2CData>	database;
+		QHttp			*http;
+		QString			file;
+		QUrl			netLocation;
+		bool			read;
+
+	private slots:
+		void	processHttp(bool error);
 };
 
-#endif /* __MAIN_H__ */
+#endif /* __IP2C_H__ */
