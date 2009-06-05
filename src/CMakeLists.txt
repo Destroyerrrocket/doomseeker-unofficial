@@ -11,6 +11,7 @@ include(${QT_USE_FILE})
 include_directories(${DOOMSEEKER_SOURCE_DIR}/src)
 include_directories(${QT_INCLUDES})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${ZLIB_INCLUDE_DIR})
 
 if(WIN32)
 	add_definitions(-DMODE_MAIN)
