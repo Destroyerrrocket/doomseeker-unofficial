@@ -25,6 +25,7 @@
 #include "huffman/huffman.h"
 #include "skulltag/skulltagserver.h"
 #include "global.h"
+#include "main.h"
 
 const // clear warnings
 #include "skulltag/skulltag.xpm"
@@ -174,6 +175,9 @@ SkulltagServer::SkulltagServer(const QHostAddress &address, unsigned short port)
 void SkulltagServer::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const
 {
 	Server::connectParameters(args, pf, iwadFound, connectPassword);
+
+	args << Main::config->setting("SkulltagCustomParameters")->string().split(" ", QString::SkipEmptyParts);;
+
 	if(isLocked())
 		args << "+cl_password" << connectPassword;
 }

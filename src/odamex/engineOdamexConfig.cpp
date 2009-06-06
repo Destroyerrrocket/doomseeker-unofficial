@@ -47,6 +47,9 @@ void EngineOdamexConfigBox::readSettings()
 	setting = config->setting("OdamexBinaryPath");
 	leBinaryPath->setText(setting->string());
 
+	setting = config->setting("OdamexCustomParameters");
+	leCustomParameters->setText(setting->string());
+
 	setting = config->setting("OdamexMasterserver");
 	leMasterserverAddress->setText(setting->string());
 }
@@ -58,6 +61,10 @@ void EngineOdamexConfigBox::saveSettings()
 
 	strVal = leBinaryPath->text();
 	setting = config->setting("OdamexBinaryPath");
+	setting->setValue(strVal);
+
+	strVal = leCustomParameters->text();
+	setting = config->setting("OdamexCustomParameters");
 	setting->setValue(strVal);
 
 	strVal = leMasterserverAddress->text();

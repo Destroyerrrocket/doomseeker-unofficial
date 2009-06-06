@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "odamex/odamexserver.h"
+#include "main.h"
 
 const // clear warnings
 #include "odamex/odamex.xpm"
@@ -66,6 +67,8 @@ OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port) : S
 void OdamexServer::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const
 {
 	Server::connectParameters(args, pf, iwadFound, connectPassword);
+
+	args << Main::config->setting("OdamexCustomParameters")->string().split(" ", QString::SkipEmptyParts);
 
 	if(iwadFound)
 	{
