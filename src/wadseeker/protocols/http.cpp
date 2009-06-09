@@ -148,7 +148,7 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 {
 	QString attachmentInfo;
 	QString tmp;
-	qDebug() << resp.toString();
+	//qDebug() << resp.toString();
 
 	// Set defaults
 	noData = false;
