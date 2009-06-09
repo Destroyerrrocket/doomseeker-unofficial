@@ -41,6 +41,8 @@ class WADSEEKER_API Http : public Protocol
 
 		Http();
 
+		void	setUserAgent(const QString& s) { useragent = s; }
+
 	signals:
 		void	redirect(const QUrl& where);
 
@@ -53,6 +55,7 @@ class WADSEEKER_API Http : public Protocol
 		FileType	fileType;
 		bool		redirected;
 		QString		redirectUrl;
+		QString		useragent;
 
 		void 	abortEx();
 

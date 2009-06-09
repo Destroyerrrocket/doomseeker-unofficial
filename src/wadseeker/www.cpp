@@ -285,4 +285,7 @@ void WWW::searchFiles(const QStringList& list, const QString& primaryFilename)
 	checkNextSite();
 }
 
-
+void WWW::setUserAgent(const QString& str)
+{
+	http.setUserAgent(str);
+}

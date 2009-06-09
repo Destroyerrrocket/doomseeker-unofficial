@@ -114,6 +114,12 @@ class WWW : public QObject
 		 */
 		void setPrimarySites(const QStringList& lst) { primarySites = lst; }
 
+		/**
+		 *	Sets user agent that is used in HTTP queries.
+		 *	@param agent - string to send in HTTP queries
+		 */
+		void setUserAgent(const QString& agent);
+
 	signals:
 		/**
 		 *	Emitted after abort() method is used and when it's safe

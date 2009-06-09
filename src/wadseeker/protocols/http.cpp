@@ -28,6 +28,8 @@ Http::Http()
 {
 	qHttp = NULL;
 
+	useragent = "Wadseeker";
+
 	noData = false;
 	redirected = false;
 }
@@ -136,14 +138,17 @@ void Http::getEx(const QUrl& url)
 		query.prepend('/');
 	}
 
-	qHttp->get(query);
+	QHttpRequestHeader header("GET", query);
+	header.setValue("Host", url.host());
+	header.setValue("User-Agent", useragent);
+	qHttp->request(header);
 }
 
 void Http::headerReceived(const QHttpResponseHeader& resp)
 {
 	QString attachmentInfo;
 	QString tmp;
-	// qDebug() << resp.toString();
+	qDebug() << resp.toString();
 
 	// Set defaults
 	noData = false;

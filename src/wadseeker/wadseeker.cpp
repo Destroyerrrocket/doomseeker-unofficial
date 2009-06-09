@@ -46,6 +46,8 @@ Wadseeker::Wadseeker()
 {
 	www = new WWW();
 
+	www->setUserAgent("Wadseeker/" + this->version());
+
 	connect(www, SIGNAL( aborted() ), this, SLOT( wwwAborted() ) );
 	connect(www, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
 	connect(www, SIGNAL( fileDone(QByteArray&, const QString&) ), this, SLOT( fileDone(QByteArray&, const QString&) ));
@@ -74,7 +76,7 @@ bool Wadseeker::areAllFilesFound() const
 
 const QString Wadseeker::author()
 {
-	return "The Skulltag Team";
+	return tr("The Skulltag Team");
 }
 
 const QStringList& Wadseeker::filesNotFound() const
@@ -94,7 +96,7 @@ QStringList Wadseeker::defaultSitesListEncoded()
 
 const QString Wadseeker::description()
 {
-	return "This library is distributed under the terms of the LGPL v2.1.";
+	return tr("This library is distributed under the terms of the LGPL v2.1.");
 }
 
 void Wadseeker::downloadProgressSlot(int done, int total)
