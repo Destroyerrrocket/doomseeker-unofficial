@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// odamexserver.h
+// customservers.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,46 +18,11 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-
-#ifndef __ODAMEXSERVER_H__
-#define __ODAMEXSERVER_H__
-
-#include "server.h"
-
-#define NUM_ODAMEX_GAME_MODES 5
-
-class OdamexServer : public Server
+#include "customservers.h"
+void CustomServers::addServer(Server* p)
 {
-	Q_OBJECT
-
-	public:
-		enum OdamexGameModes
-		{
-			MODE_COOPERATIVE,
-			MODE_DEATHMATCH,
-			MODE_DEATHMATCH2,
-			MODE_TEAM_DEATHMATCH,
-			MODE_CAPTURE_THE_FLAG
-		};
-		static const GameMode	GAME_MODES[NUM_ODAMEX_GAME_MODES];
-		static const QString	DMFLAGS[13];
-		static const QPixmap	ICON;
-
-		OdamexServer(const QHostAddress &address, unsigned short port);
-
-		QString	clientBinary() const { return "OdamexBinaryPath"; }
-		void	connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
-		short	defaultServerPort() const { return 10666; }
-		QPixmap	icon() const;
-
-	protected:
-		bool	readRequest(QByteArray &data);
-		bool	sendRequest(QByteArray &data);
-
-		short			protocol;
-		unsigned short	skill;
-};
-
-#endif /* __ODAMEXSERVER_H__ */
+	p->setCustom(true);
+	servers.append(p);
+}

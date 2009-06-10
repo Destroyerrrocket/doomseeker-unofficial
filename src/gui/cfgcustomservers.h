@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// odamexserver.h
+// cfgcustomservers.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,46 +18,30 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#ifndef __CFGCUSTOMSERVERS_H_
+#define __CFGCUSTOMSERVERS_H_
 
-#ifndef __ODAMEXSERVER_H__
-#define __ODAMEXSERVER_H__
+#include "gui/configBase.h"
+#include "ui_cfgcustomservers.h"
 
-#include "server.h"
-
-#define NUM_ODAMEX_GAME_MODES 5
-
-class OdamexServer : public Server
+class CustomServersConfigBox : public ConfigurationBaseBox, private Ui::CustomServersConfigBox
 {
 	Q_OBJECT
 
 	public:
-		enum OdamexGameModes
-		{
-			MODE_COOPERATIVE,
-			MODE_DEATHMATCH,
-			MODE_DEATHMATCH2,
-			MODE_TEAM_DEATHMATCH,
-			MODE_CAPTURE_THE_FLAG
-		};
-		static const GameMode	GAME_MODES[NUM_ODAMEX_GAME_MODES];
-		static const QString	DMFLAGS[13];
-		static const QPixmap	ICON;
+		static ConfigurationBoxInfo	*createStructure(Config *cfg, QWidget *parent=NULL);
 
-		OdamexServer(const QHostAddress &address, unsigned short port);
-
-		QString	clientBinary() const { return "OdamexBinaryPath"; }
-		void	connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
-		short	defaultServerPort() const { return 10666; }
-		QPixmap	icon() const;
+		void	readSettings();
 
 	protected:
-		bool	readRequest(QByteArray &data);
-		bool	sendRequest(QByteArray &data);
+		QStandardItemModel* model;
 
-		short			protocol;
-		unsigned short	skill;
+		CustomServersConfigBox(Config *cfg, QWidget *parent=NULL);
+
+		void 	prepareTable();
+		void	saveSettings();
 };
 
-#endif /* __ODAMEXSERVER_H__ */
+#endif

@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "gui/configureDlg.h"
+#include "gui/cfgcustomservers.h"
 #include "gui/cfgFilePaths.h"
 #include "gui/cfgQuery.h"
 #include "gui/wadseekerconfig.h"
@@ -68,6 +69,9 @@ void ConfigureDlg::initOptionsList()
 //	hider = root1;
 
 	ConfigurationBoxInfo* cbi;
+
+	cbi = CustomServersConfigBox::createStructure(mainConfig, this);
+	addConfigurationBox(model->invisibleRootItem(), cbi);
 
 	cbi = QueryConfigBox::createStructure(mainConfig, this);
 	addConfigurationBox(model->invisibleRootItem(), cbi);

@@ -31,12 +31,20 @@
 #include "odamex/engineOdamexConfig.h"
 #include "odamex/odamexmasterclient.h"
 
+const // clear warnings
+#include "odamex/odamex.xpm"
+
 class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 {
 	public:
 		ConfigurationBoxInfo *configuration(Config *cfg, QWidget *parent) const
 		{
 			return EngineOdamexConfigBox::createStructure(cfg, parent);
+		}
+
+		QPixmap			icon() const
+		{
+			return QPixmap(odamex_xpm);
 		}
 
 		MasterClient	*masterClient() const
@@ -47,7 +55,7 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 
 			SettingsData* setting = Main::config->setting("OdamexMasterserver");
 			QString str = setting->string();
-			translateServerAddress(str, host, port, "master1.odamex.net", 15000);
+			Main::translateServerAddress(str, host, port, "master1.odamex.net", 15000);
 
 			QHostInfo info = QHostInfo::fromName(host);
 			if(info.addresses().size() == 0)

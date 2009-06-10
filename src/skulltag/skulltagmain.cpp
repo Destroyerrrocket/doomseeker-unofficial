@@ -31,12 +31,20 @@
 #include "skulltag/skulltagmasterclient.h"
 #include "skulltag/engineSkulltagConfig.h"
 
+const // clear warnings
+#include "skulltag/skulltag.xpm"
+
 class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 {
 	public:
 		ConfigurationBoxInfo *configuration(Config *cfg, QWidget *parent) const
 		{
 			return EngineSkulltagConfigBox::createStructure(cfg, parent);
+		}
+
+		QPixmap			icon() const
+		{
+			return QPixmap(skulltag_xpm);
 		}
 
 		MasterClient	*masterClient() const
@@ -47,7 +55,7 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 
 			SettingsData* setting = Main::config->setting("SkulltagMasterserver");
 			QString str = setting->string();
-			translateServerAddress(str, host, port, "skulltag.servegame.com", 15300);
+			Main::translateServerAddress(str, host, port, "skulltag.servegame.com", 15300);
 
 			QHostInfo info = QHostInfo::fromName(host);
 			if(info.addresses().size() == 0)

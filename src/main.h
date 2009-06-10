@@ -39,6 +39,8 @@ class MAIN_EXPORT Main
 		static QWidget*			mainWindow;
 		static PluginLoader		enginePlugins;
 		static bool				running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
+
+		static void				translateServerAddress(const QString& settingValue, QString& hostname, short& port, const QString& defaultHostname, const short defaultPort);
 };
 
 #endif /* __MAIN_H__ */

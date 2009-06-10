@@ -54,9 +54,8 @@ class MAIN_EXPORT EnginePlugin
 {
 	public:
 		virtual ConfigurationBoxInfo	*configuration(Config *cfg, QWidget *parent) const=0;
+		virtual QPixmap					icon() const=0;
 		virtual MasterClient			*masterClient() const=0;
-
-		static void	translateServerAddress(const QString& settingValue, QString& hostname, short& port, const QString& defaultHostname, const short defaultPort);
 };
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -20,6 +20,7 @@ endif(WIN32)
 qt4_wrap_ui(doomseekerUI
 	gui/aboutDlg.ui
 	gui/addBuddyDlg.ui
+	gui/cfgcustomservers.ui
 	gui/cfgFilePaths.ui
 	gui/cfgQuery.ui
 	gui/configureDlg.ui
@@ -34,6 +35,7 @@ qt4_wrap_ui(doomseekerUI
 
 qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/aboutDlg.h
+	gui/cfgcustomservers.h	
 	gui/cfgFilePaths.h
 	gui/cfgQuery.h
 	gui/configBase.h
@@ -50,6 +52,7 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/widgets/dockedwidgets.h
 	gui/widgets/serverlistview.h
 	sdeapi/config.hpp
+	customservers.h
 	ip2c.h
 	masterclient.h
 	server.h
@@ -61,6 +64,7 @@ qt4_add_resources(doomseekerResources
 
 set(SOURCE_FILES
 	gui/aboutDlg.cpp
+	gui/cfgcustomservers.cpp	
 	gui/cfgFilePaths.cpp
 	gui/cfgQuery.cpp
 	gui/configureDlg.cpp
@@ -78,6 +82,7 @@ set(SOURCE_FILES
 	sdeapi/config.cpp
 	sdeapi/pluginloader.cpp
 	sdeapi/scanner.cpp
+	customservers.cpp
 	ip2c.cpp
 	main.cpp
 	masterclient.cpp

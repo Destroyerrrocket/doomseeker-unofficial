@@ -175,6 +175,11 @@ class MAIN_EXPORT Server : public QObject
 		virtual ~Server();
 
 		/**
+		 *	@return default port on which servers for given engine are hosted.
+		 */
+		virtual short		defaultServerPort() const = 0;
+
+		/**
 		 * Should return general info about current game (fraglimit, team scores, etc.)
 		 */
 		virtual QString		gameInfoTableHTML() const;
@@ -193,6 +198,7 @@ class MAIN_EXPORT Server : public QObject
 		const QStringList	&gameFlags() const { return dmFlags; }
 		const GameMode		&gameMode() const { return currentGameMode; }
 		virtual QPixmap		icon() const=0;
+		bool				isCustom() const { return custom; }
 		bool				isKnown() const { return bKnown; }
 		bool				isLocked() const { return locked; }
 		bool				isRunning() const { return bRunning; }
@@ -221,6 +227,7 @@ class MAIN_EXPORT Server : public QObject
 
 		void				operator= (const Server &other);
 		void				finalizeRefreshing();
+		void				setCustom(bool b) { custom = b; }
 		void				startRunning() { bRunning = true; }
 		void				stopRunning() { bRunning = false; }
 
@@ -280,13 +287,14 @@ class MAIN_EXPORT Server : public QObject
 		/**
 		 * This should be set to true upon successful return from doRefresh(),
 		 * and to false upon failure. setServers() protected slot handles this.
-		 * Example usage: SkullTag servers can use this to update ping
+		 * Example usage: Skulltag servers can use this to update ping
 		 * if the server responds with "wait before refreshing".
 		 */
 		bool				bKnown;
 
 		GameMode			currentGameMode;
 		unsigned int		currentPing;
+		bool				custom;
 		QStringList			dmFlags;
 		QString				email;
 		QString				iwad;

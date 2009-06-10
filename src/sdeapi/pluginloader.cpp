@@ -40,26 +40,6 @@
 #include <dirent.h>
 #endif
 
-void EnginePlugin::translateServerAddress(const QString& settingValue, QString& hostname, short& port, const QString& defaultHostname, const short defaultPort)
-{
-	QStringList addressAndPort = settingValue.split(":");
-	if (addressAndPort.size() == 0 || addressAndPort.size() > 2)
-	{ // if something is not right set default settings
-		hostname = defaultHostname;
-	}
-	else
-	{
-		hostname = addressAndPort[0];
-		if (addressAndPort.size() == 2)
-		{
-			port = addressAndPort[1].toShort();
-		}
-	}
-
-	if (port == 0)
-		port = defaultPort;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 Plugin::Plugin(unsigned int type, QString f) : file(f), library(NULL)
 {
