@@ -48,6 +48,7 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 
 		virtual ~ConfigurationBaseBox() {}
 
+		bool allowSave() { return bAllowSave; }
 		bool areSettingsAlreadyRead() { return bSettingsAlreadyRead; }
 
 		void setAllowSave(bool b)

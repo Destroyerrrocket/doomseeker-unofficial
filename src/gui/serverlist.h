@@ -53,6 +53,7 @@ class SLHandler : public QObject
 
 	public slots:
 		void refreshAll();
+		void serverBegunRefreshing(Server* server);
 		void serverUpdated(Server *server, int response);
 		void tableRightClicked(const QModelIndex&);
 		void updateSearch(const QString& search);

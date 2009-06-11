@@ -15,16 +15,60 @@
   <property name="title" >
    <string>Custom Servers</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QHBoxLayout" name="horizontalLayout" >
    <item>
     <widget class="QTableView" name="tvServers" >
-     <property name="selectionMode" >
-      <enum>QAbstractItemView::MultiSelection</enum>
-     </property>
      <property name="selectionBehavior" >
       <enum>QAbstractItemView::SelectRows</enum>
      </property>
+     <property name="horizontalScrollMode" >
+      <enum>QAbstractItemView::ScrollPerPixel</enum>
+     </property>
     </widget>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout" >
+     <item>
+      <widget class="QPushButton" name="btnAdd" >
+       <property name="text" >
+        <string>Add</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnRemove" >
+       <property name="text" >
+        <string>Remove</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnSetEngine" >
+       <property name="toolTip" >
+        <string>Changes engine on selected servers.</string>
+       </property>
+       <property name="text" >
+        <string>Set Engine</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cboEngines" />
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

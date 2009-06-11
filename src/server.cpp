@@ -194,8 +194,10 @@ Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
 	maxClients(0), maxPlayers(0), serverName(tr("<< ERROR >>")),
 	serverScoreLimit(0), serverTimeLeft(0), serverTimeLimit(0)
 {
+	bDelete = false;
 	bKnown = false;
 	bRunning = false;
+	custom = false;
 	for(int i = 0;i < MAX_TEAMS;i++)
 		scores[i] = 0;
 
@@ -370,8 +372,11 @@ void Server::operator= (const Server &other)
 	serverAddress = other.address();
 	serverPort = other.port();
 
+	bDelete = other.bDelete;
+	bKnown = other.isKnown();
 	currentGameMode = other.gameMode();
 	currentPing = other.ping();
+	custom = other.isCustom();
 	locked = other.isLocked();
 	maxClients = other.maximumClients();
 	maxPlayers = other.maximumPlayers();
@@ -661,8 +666,9 @@ QThreadPool ServerRefresher::threadPool;
 QMutex ServerRefresher::guardianMutex;
 bool ServerRefresher::bGuardianExists = false;
 
-void Server::doRefresh()
+void Server::doRefresh(bool& bKillThread)
 {
+	bKillThread = false;
 	// Connect to the server
 	QUdpSocket socket;
 
@@ -684,7 +690,23 @@ void Server::doRefresh()
 	socket.write(request);
 	time.start();
 	int queryTimeout = Main::config->setting("QueryTimeout")->integer();
-	if(!socket.waitForReadyRead(queryTimeout))
+
+	bool bOk = socket.waitForReadyRead(queryTimeout);
+
+	if (!Main::running)
+	{
+		bKillThread = true;
+		return;
+	}
+
+	if (bDelete)
+	{
+		bKillThread = true;
+		delete this;
+		return;
+	}
+
+	if(!bOk)
 	{
 		emitUpdated(Server::RESPONSE_TIMEOUT);
 		return;
@@ -707,6 +729,7 @@ void Server::refresh()
 		return;
 
 	startRunning();
+	emit begunRefreshing(this);
 	ServerRefresher* r = new ServerRefresher(this);
 	ServerRefresher::threadPool.start(r);
 }
@@ -714,6 +737,13 @@ void Server::refresh()
 void Server::finalizeRefreshing()
 {
 	iwad = iwad.toLower();
+}
+
+void Server::setToDelete(bool b)
+{
+	bDelete = b;
+	if (!bRunning)
+		delete this;
 }
 
 ServerRefresher::ServerRefresher(Server* p) : parent(p)
@@ -743,17 +773,29 @@ void ServerRefresher::run()
 	if (!bGuardian)
 	{
 		// If the program is no longer running then do nothing.
+		bool bKillThread = false;
 		if(Main::running)
-		{
-			parent->doRefresh();
+			parent->doRefresh(bKillThread);
+
+		if (bKillThread)
+			return;
+
+		if (Main::running)
 			parent->finalizeRefreshing();
+
+		if (Main::running)
 			parent->stopRunning();
-		}
+
+		if (Main::running && parent->isSetToDelete())
+			delete parent;
 	}
 	else
 	{
 		threadPool.waitForDone();
-		emit allServersRefreshed();
-		bGuardianExists = false;
+		if (Main::running)
+		{
+			emit allServersRefreshed();
+			bGuardianExists = false;
+		}
 	}
 }

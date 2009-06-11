@@ -37,6 +37,7 @@ class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 		~ConfigureDlg();
 
 		bool addEngineConfiguration(ConfigurationBoxInfo*);
+		bool customServersChanged() { return bCustomServersChanged; }
 
 	protected slots:
 		void btnClicked(QAbstractButton *button);
@@ -45,6 +46,8 @@ class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 
 	private:
 		Config*		mainConfig;
+		bool		bCustomServersChanged;
+
 		// hider for debug purposes, if clicked
 		// hides current box and shows nothing
 		//QStandardItem*					hider;
@@ -52,6 +55,7 @@ class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 		QStandardItem*					enginesRoot;
 		QList<ConfigurationBoxInfo*>	configBoxesList;
 		QWidget*						currentlyDisplayedCfgBox;
+		ConfigurationBaseBox*			customServersCfgBox;
 
 		void 		initOptionsList();
 		void		saveSettings();

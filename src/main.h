@@ -40,6 +40,15 @@ class MAIN_EXPORT Main
 		static PluginLoader		enginePlugins;
 		static bool				running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
 
+		/**
+		 *	Translates string in format "hostname:port" to atomic values.
+		 *	@param settingValue - string to be translated.
+		 *	@param[out] hostname - hostname output.
+		 *	@param[out] port - port output.
+		 *	@param defaultHostname - default hostname to use if translation fails.
+		 *	@param defaultPort - default port to use if translation fails
+		 *		or no port is specified.
+		 */
 		static void				translateServerAddress(const QString& settingValue, QString& hostname, short& port, const QString& defaultHostname, const short defaultPort);
 };
 

@@ -28,6 +28,7 @@
 #include "gui/dockserverinfo.h"
 #include "gui/passwordDlg.h"
 #include "gui/wadseekerinterface.h"
+#include "customservers.h"
 #include "pathfinder.h"
 #include "main.h"
 #include <QAction>
@@ -63,10 +64,8 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 	// Get the master
 	mc = new MasterManager();
 
-	// check query on statup
-	bool queryOnStartup = Main::config->setting("QueryOnStartup")->integer() != 0;
-	if(queryOnStartup)
-		btnGetServers_Click();
+	// Init custom servers
+	mc->customServs()->readConfig(Main::config, serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
 
 	setWindowIcon(QIcon(":/icon.png"));
 
@@ -88,6 +87,18 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 	connect(serverSearch, SIGNAL( textChanged(const QString &) ), serverTableHandler, SLOT( updateSearch(const QString &) ));
 	connect(serverTableHandler, SIGNAL( serverDoubleClicked(const Server*) ), this, SLOT( runGame(const Server*) ) );
 	connect(serverTableHandler, SIGNAL( serversSelected(QList<Server*>&) ), this, SLOT( updateServerInfo(QList<Server*>&) ) );
+
+	// check query on statup
+	bool queryOnStartup = Main::config->setting("QueryOnStartup")->integer() != 0;
+	if (queryOnStartup)
+		btnGetServers_Click();
+	else
+	{
+		// Custom servers should be refreshed no matter what.
+		// They will not block the app in any way, there is no reason
+		// not to refresh them.
+		refreshServers(true); // This should include only refreshing customs
+	}
 }
 
 MainWindow::~MainWindow()
@@ -102,21 +113,12 @@ MainWindow::~MainWindow()
 		delete mc;
 	delete[] queryMenuPorts;
 }
-/////////////////////////////////////////////////////////
-// Slots
-void MainWindow::checkRefreshFinished()
-{
-	btnGetServers->setEnabled(true);
-	btnRefreshAll->setEnabled(true);
-	serverTableHandler->serverTable()->setAllowAllRowsRefresh(true);
-	statusBar()->showMessage(tr("Done"));
-}
 
 void MainWindow::btnGetServers_Click()
 {
 	mc->refresh();
 
-	if (mc->numServers() == 0)
+	if (mc->numServers() == 0 && mc->customServs()->numServers() == 0)
 	{
 		return;
 	}
@@ -126,19 +128,18 @@ void MainWindow::btnGetServers_Click()
 	for(int i = 0;i < mc->numServers();i++)
 	{
 		connect((*mc)[i], SIGNAL(updated(Server *, int)), serverTableHandler, SLOT(serverUpdated(Server *, int)) );
-		(*mc)[i]->refresh();
+		connect((*mc)[i], SIGNAL(begunRefreshing(Server *)), serverTableHandler, SLOT(serverBegunRefreshing(Server *)) );
 	}
 
-	ServerRefresher* guardian = new ServerRefresher(NULL);
-	connect(guardian, SIGNAL( allServersRefreshed() ), this, SLOT(checkRefreshFinished()) );
-	connect(guardian, SIGNAL( allServersRefreshed() ), buddiesList, SLOT(scan()) );
-	guardian->startGuardian();
+	refreshServers(false);
+}
 
-	// disable refresh.
-	btnGetServers->setEnabled(false);
-	btnRefreshAll->setEnabled(false);
-	serverTableHandler->serverTable()->setAllowAllRowsRefresh(false);
-	statusBar()->showMessage(tr("Querying..."));
+void MainWindow::checkRefreshFinished()
+{
+	btnGetServers->setEnabled(true);
+	btnRefreshAll->setEnabled(true);
+	serverTableHandler->serverTable()->setAllowAllRowsRefresh(true);
+	statusBar()->showMessage(tr("Done"));
 }
 
 void MainWindow::enablePort()
@@ -175,6 +176,15 @@ void MainWindow::menuOptionsConfigure()
 	}
 
 	dlg.exec();
+
+	// Do some cleanups after config box finishes.
+
+	// Refresh custom servers list:
+	if (dlg.customServersChanged())
+	{
+		mc->customServs()->readConfig(Main::config, serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
+		refreshServers(true);
+	}
 }
 
 void MainWindow::menuServerInfo()
@@ -208,6 +218,35 @@ void MainWindow::menuWadSeeker()
 {
 	WadSeekerInterface wsi(this);
 	wsi.exec();
+}
+
+void MainWindow::refreshServers(bool onlyCustom)
+{
+	serverTableHandler->serverModel()->removeCustomServers();
+	CustomServers* cs = mc->customServs();
+	for(int i = 0;i < cs->numServers();i++)
+	{
+		(*cs)[i]->refresh();
+	}
+
+	if (!onlyCustom)
+	{
+		for(int i = 0;i < mc->numServers();i++)
+		{
+			(*mc)[i]->refresh();
+		}
+
+		ServerRefresher* guardian = new ServerRefresher(NULL);
+		connect(guardian, SIGNAL( allServersRefreshed() ), this, SLOT(checkRefreshFinished()) );
+		connect(guardian, SIGNAL( allServersRefreshed() ), buddiesList, SLOT(scan()) );
+		guardian->startGuardian();
+
+		// disable refresh.
+		btnGetServers->setEnabled(false);
+		btnRefreshAll->setEnabled(false);
+		serverTableHandler->serverTable()->setAllowAllRowsRefresh(false);
+		statusBar()->showMessage(tr("Querying..."));
+	}
 }
 
 void MainWindow::runGame(const Server* server) const

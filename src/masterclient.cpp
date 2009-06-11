@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "masterclient.h"
+#include "customservers.h"
 #include "main.h"
 
 #include <QErrorMessage>
@@ -40,7 +41,10 @@ MasterClient::~MasterClient()
 void MasterClient::emptyServerList()
 {
 	for(int i = 0;i < servers.size();i++)
-		delete servers[i];
+	{
+		servers[i]->disconnect();
+		servers[i]->setToDelete(true);
+	}
 	servers.clear();
 }
 
@@ -99,6 +103,7 @@ void MasterClient::refresh()
 MasterManager::MasterManager() : MasterClient(QHostAddress(), 0)
 {
 	loadMastersFromPlugins();
+	customServers = new CustomServers();
 }
 
 MasterManager::~MasterManager()
@@ -106,6 +111,8 @@ MasterManager::~MasterManager()
 	servers.clear();
 	for(int i = 0;i < masters.size();i++)
 		delete masters[i];
+
+	delete customServers;
 }
 
 void MasterManager::addMaster(MasterClient *master)

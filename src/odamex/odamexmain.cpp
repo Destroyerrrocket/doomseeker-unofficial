@@ -30,6 +30,7 @@
 
 #include "odamex/engineOdamexConfig.h"
 #include "odamex/odamexmasterclient.h"
+#include "odamex/odamexserver.h"
 
 const // clear warnings
 #include "odamex/odamex.xpm"
@@ -41,6 +42,8 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 		{
 			return EngineOdamexConfigBox::createStructure(cfg, parent);
 		}
+
+		short			defaultServerPort() const { return 10666; }
 
 		QPixmap			icon() const
 		{
@@ -61,6 +64,11 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 			if(info.addresses().size() == 0)
 				return NULL;
 			return new OdamexMasterClient(info.addresses().first(), port);
+		}
+
+		Server*			server(const QHostAddress &address, unsigned short port) const
+		{
+			return (new OdamexServer(address, port));
 		}
 };
 

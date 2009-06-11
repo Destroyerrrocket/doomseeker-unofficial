@@ -309,7 +309,17 @@ void SLHandler::refreshAll()
 {
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
-		model->setRefreshing(i);
+		Server* serv = model->serverFromList(i);
+		serv->refresh();
+	}
+}
+
+void SLHandler::serverBegunRefreshing(Server* server)
+{
+	QModelIndex index = model->findServerOnTheList(server);
+	if (index.isValid())
+	{
+		model->setRefreshing(index.row());
 	}
 }
 
@@ -339,7 +349,8 @@ void SLHandler::tableRightClicked(const QModelIndex& index)
 	for(int i = 0; i < indexList.count(); ++i)
 	{
 		QModelIndex realIndex = pModel->mapToSource(indexList[i]);
-		model->setRefreshing(realIndex.row());
+		Server* serv = model->serverFromList(realIndex);
+		serv->refresh();
 	}
 }
 

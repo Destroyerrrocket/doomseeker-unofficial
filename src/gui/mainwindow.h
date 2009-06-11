@@ -57,6 +57,13 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void runGame(const Server*) const;
 		void updateServerInfo(QList<Server*>&);
 
+	protected:
+		/**
+		 *	@param onlyCustom - if true, the refreshing buttons aren't blocked
+		 *		and servers that aren't custom aren't contacted in any way.
+		 */
+		void refreshServers(bool onlyCustom);
+
 	private:
 		DockBuddiesList*	buddiesList;
 		DockServerInfo*		serverInfo;

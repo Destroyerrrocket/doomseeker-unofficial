@@ -24,6 +24,7 @@
 #define __CFGCUSTOMSERVERS_H_
 
 #include "gui/configBase.h"
+#include "customservers.h"
 #include "ui_cfgcustomservers.h"
 
 class CustomServersConfigBox : public ConfigurationBaseBox, private Ui::CustomServersConfigBox
@@ -33,15 +34,30 @@ class CustomServersConfigBox : public ConfigurationBaseBox, private Ui::CustomSe
 	public:
 		static ConfigurationBoxInfo	*createStructure(Config *cfg, QWidget *parent=NULL);
 
-		void	readSettings();
+		void						readSettings();
 
 	protected:
 		QStandardItemModel* model;
 
 		CustomServersConfigBox(Config *cfg, QWidget *parent=NULL);
 
-		void 	prepareTable();
+
+		void	prepareEnginesComboBox();
+		void	prepareTable();
 		void	saveSettings();
+		void	setEngineOnItem(QStandardItem*, const QString& engineName);
+		/**
+		 *	Encodes table entries into format:
+		 * `(<engine_name>;<host_name>;<port>);(...)...`
+		 */
+		QString	tableEntriesEncoded();
+
+	protected slots:
+		void 	add();
+		void	add(const QString& engineName, const QString& host, short port);
+		void	dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
+		void 	remove();
+		void 	setEngine();
 };
 
 #endif

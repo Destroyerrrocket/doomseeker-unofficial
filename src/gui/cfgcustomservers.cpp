@@ -21,12 +21,21 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "gui/cfgcustomservers.h"
+#include "sdeapi/pluginloader.hpp"
+#include "main.h"
+#include <QHeaderView>
+#include <QMessageBox>
+#include <QUrl>
 
 CustomServersConfigBox::CustomServersConfigBox(Config *cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent)
 {
 	setupUi(this);
 
-	prepareTable();
+	connect(btnAdd, SIGNAL( clicked() ), this, SLOT( add() ));
+	connect(btnRemove, SIGNAL( clicked() ), this, SLOT( remove() ));
+	connect(btnSetEngine, SIGNAL( clicked() ), this, SLOT( setEngine() ));
+
+	prepareEnginesComboBox();
 }
 
 ConfigurationBoxInfo* CustomServersConfigBox::createStructure(Config *cfg, QWidget *parent)
@@ -37,40 +46,187 @@ ConfigurationBoxInfo* CustomServersConfigBox::createStructure(Config *cfg, QWidg
 	return ec;
 }
 
+void CustomServersConfigBox::add()
+{
+	int pluginIndex = cboEngines->itemData(cboEngines->currentIndex()).toInt();
+	const PluginInfo* nfo = Main::enginePlugins[pluginIndex]->info;
+
+	QString engineName = cboEngines->itemText(cboEngines->currentIndex());
+
+	add(engineName, "", nfo->pInterface->defaultServerPort());
+}
+
+void CustomServersConfigBox::add(const QString& engineName, const QString& host, short port)
+{
+	QList<QStandardItem* > record;
+
+	QStandardItem* engine = new QStandardItem();
+	setEngineOnItem(engine, engineName);
+
+	record.append(engine);
+	record.append(new QStandardItem(host));
+	record.append(new QStandardItem( QString::number(port) ));
+
+	model->appendRow(record);
+}
+
+void CustomServersConfigBox::dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
+{
+	if (bottomRight.column() < 2)
+		return;
+	else
+	{
+		// Check if port is in correct range
+		for (int i = topLeft.row(); i <= bottomRight.row(); ++i)
+		{
+			QStandardItem* item = model->item(i, 2);
+			bool ok;
+			int port = item->text().toInt(&ok);
+			if (!ok || port < 1 || port > 65535)
+			{
+				QMessageBox::warning(this, tr("Doomseeker - custom servers"), tr("Port must be from range 1 - 65535"));
+
+				// Set port to default:
+				QStandardItem* itemEng = model->item(i, 0);
+				int pluginIndex = itemEng->data().toInt();
+				const PluginInfo* nfo = Main::enginePlugins[pluginIndex]->info;
+				item->setText(QString::number(nfo->pInterface->defaultServerPort()));
+			}
+		}
+	}
+}
+
+void CustomServersConfigBox::prepareEnginesComboBox()
+{
+	cboEngines->clear();
+
+	for (int i = 0; i < Main::enginePlugins.numPlugins(); ++i)
+	{
+		const PluginInfo* nfo = Main::enginePlugins[i]->info;
+		cboEngines->addItem(nfo->pInterface->icon(), nfo->name, i);
+	}
+
+	if (cboEngines->count() > 0)
+	{
+		cboEngines->setCurrentIndex(0);
+	}
+}
+
 void CustomServersConfigBox::prepareTable()
 {
 	model = new QStandardItemModel(this);
 
+	connect(model, SIGNAL( dataChanged(const QModelIndex&, const QModelIndex&) ), this, SLOT( dataChanged(const QModelIndex&, const QModelIndex&) ) );
+
 	QStringList labels;
-	labels << "Engine" << "Host" << "Port";
+	labels << "" << "Host" << "Port";
 	model->setHorizontalHeaderLabels(labels);
 
-	QList<QStandardItem* > record;
-
-	record.append(new QStandardItem("A"));
-	record.append(new QStandardItem("B"));
-	record.append(new QStandardItem("C"));
-
-	model->appendRow(record);
-
 	tvServers->setModel(model);
+
+	tvServers->setColumnWidth(0, 23);
+	tvServers->setColumnWidth(1, 180);
+	tvServers->setColumnWidth(2, 60);
+
+	tvServers->horizontalHeader()->setHighlightSections(false);
+	tvServers->horizontalHeader()->setResizeMode(0, QHeaderView::Fixed);
+
+	tvServers->verticalHeader()->hide();
 }
 
 void CustomServersConfigBox::readSettings()
 {
-	if (model->rowCount() != 0)
+	prepareTable();
+
+	SettingsData *setting;
+
+	setting = config->setting("CustomServers");
+	QList<CustomServerInfo>* entrylist = CustomServers::decodeConfigEntries(setting->string());
+	QList<CustomServerInfo>::iterator it;
+
+	for (it = entrylist->begin(); it != entrylist->end(); ++it)
 	{
-		tvServers->resizeColumnsToContents();
+		add(it->engine, it->host, it->port);
 	}
-	else
+
+	delete entrylist;
+}
+
+void CustomServersConfigBox::remove()
+{
+	QItemSelectionModel* selModel = tvServers->selectionModel();
+	QModelIndexList indexList = selModel->selectedRows();
+	selModel->clear();
+
+	QList<QStandardItem*> itemList;
+	for (int i = 0; i < indexList.count(); ++i)
 	{
-		tvServers->setColumnWidth(0, 20);
-		tvServers->setColumnWidth(1, 200);
-		tvServers->setColumnWidth(2, 100);
+		itemList << model->item(indexList[i].row(), 0);
+	}
+
+	for (int i = 0; i < itemList.count(); ++i)
+	{
+		QModelIndex index = model->indexFromItem(itemList[i]);
+		model->removeRow(index.row());
 	}
 }
 
 void CustomServersConfigBox::saveSettings()
 {
+	SettingsData *setting;
 
+	setting = config->setting("CustomServers");
+	setting->setValue(tableEntriesEncoded());
+}
+
+void CustomServersConfigBox::setEngine()
+{
+	QItemSelectionModel* sel = tvServers->selectionModel();
+	QModelIndexList indexList = sel->selectedRows();
+
+	QModelIndexList::iterator it;
+	for (it = indexList.begin(); it != indexList.end(); ++it)
+	{
+		QStandardItem* item = model->itemFromIndex(*it);
+		QString engineName = cboEngines->itemText(cboEngines->currentIndex());
+		setEngineOnItem(item, engineName);
+	}
+}
+
+void CustomServersConfigBox::setEngineOnItem(QStandardItem* item, const QString& engineName)
+{
+	int engineId = Main::enginePlugins.pluginIndexFromName(engineName);
+	if (engineId >= 0)
+	{
+		const PluginInfo* nfo = Main::enginePlugins[engineId]->info;
+
+		item->setData(nfo->name);
+		item->setIcon(nfo->pInterface->icon());
+		item->setToolTip(nfo->name);
+	}
+
+	item->setEditable(false);
+	item->setText("");
+}
+
+QString	CustomServersConfigBox::tableEntriesEncoded()
+{
+	QStringList allItemsList;
+	for (int i = 0; i < model->rowCount(); ++i)
+	{
+		QStringList itemList;
+		QStandardItem* item = model->item(i, 0);
+
+		itemList << QUrl::toPercentEncoding(item->data().toString(), "", "()");
+
+		item = model->item(i, 1);
+		itemList << QUrl::toPercentEncoding(item->text(), "", "()");
+
+		item = model->item(i, 2);
+		itemList << item->text();
+
+		allItemsList << QString("(" + itemList.join(";") + ")");
+	}
+
+	return allItemsList.join(";");
 }

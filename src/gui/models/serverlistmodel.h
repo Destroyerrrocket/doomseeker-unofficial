@@ -69,12 +69,15 @@ class ServerListModel : public QStandardItemModel
 		/**
 		 *	Servers from the same group will be always kept together
 		 *  and sorted only inside this group. Group order is always descending:
-		 *  SG_CUSTOM servers will be always on the top of the list, after them
-		 *  will be SG_NORMAL servers, etc.
+		 *  SG_NORMAL servers will be always on the top of the list, after them
+		 *  will be SG_WAIT servers, etc.
+		 *
+		 *  !!! WARNING !!!
+		 *	Exception: custom servers will be always on top of the list
+		 *	and will be sorted inside their own group independentedly.
 		 */
 		enum ServerGroup
 		{
-			SG_CUSTOM 	= 300,
 			SG_NORMAL 	= 200,
 			SG_WAIT 	= 175,
 			SG_BANNED	= 150,
@@ -116,6 +119,8 @@ class ServerListModel : public QStandardItemModel
 		 */
 		int updateServer(int row, Server* server, int response);
 
+		void removeCustomServers();
+
 		QModelIndex findServerOnTheList(const Server* server);
 		Server* serverFromList(int rowNum);
 		Server* serverFromList(const QModelIndex&);
@@ -127,9 +132,10 @@ class ServerListModel : public QStandardItemModel
 		void rowContentChanged(int row);
 
 	protected:
-		void 					clearRows();
 		void 					prepareHeaders();
 		ServerGroup 			serverGroup(int row);
+
+		void					setBackgroundColor(int row, Server* server);
 
 		void 					setBad(int row, Server* server);
 		void 					setBanned(int row, Server* server);
@@ -164,6 +170,8 @@ class ServerListSortFilterProxyModel : public QSortFilterProxyModel
 		 */
 		bool	compareColumnSortData(QVariant& var1, QVariant& var2, int column) const;
 		bool	lessThan(const QModelIndex& left, const QModelIndex& right) const;
+
+		Server* serverFromList(const QModelIndex& index) const;
 };
 
 #endif

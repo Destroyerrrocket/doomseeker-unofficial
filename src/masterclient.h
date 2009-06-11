@@ -84,6 +84,8 @@ class MAIN_EXPORT MasterClient : public QObject
 		unsigned short	port;
 };
 
+class CustomServers;
+
 class MasterManager : public MasterClient
 {
 	Q_OBJECT
@@ -92,8 +94,10 @@ class MasterManager : public MasterClient
 		MasterManager();
 		~MasterManager();
 
-		void	addMaster(MasterClient *master);
-		void	enableMaster(int port, bool enable=true);
+		void			addMaster(MasterClient *master);
+		CustomServers*	customServs() { return customServers; }
+		void			enableMaster(int port, bool enable=true);
+
 
 	public slots:
 		void	refresh();
@@ -105,6 +109,7 @@ class MasterManager : public MasterClient
 
 		QList<MasterClient *>	masters;
 		QList<bool>				masterEnabled;
+		CustomServers*			customServers;
 };
 
 #endif /* __MASTERSERVER_H__ */

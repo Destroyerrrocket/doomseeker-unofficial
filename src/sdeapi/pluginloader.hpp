@@ -54,8 +54,21 @@ class MAIN_EXPORT EnginePlugin
 {
 	public:
 		virtual ConfigurationBoxInfo	*configuration(Config *cfg, QWidget *parent) const=0;
+		/**
+		 *	@return default port on which servers for given engine are hosted.
+		 */
+		virtual short					defaultServerPort() const = 0;
+		/**
+		 *	@return icon of the engine
+		 */
 		virtual QPixmap					icon() const=0;
 		virtual MasterClient			*masterClient() const=0;
+		/**
+		 *	Creates an instance of server object from this plugin.
+		 *	This might be useful for custom servers.
+		 * 	@return instance of plugin's server object
+		 */
+		virtual Server*					server(const QHostAddress &address, unsigned short port) const=0;
 };
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -132,6 +145,14 @@ class MAIN_EXPORT PluginLoader
 		 * Gets the number of loaded plugins.  It will return 0 in safe mode.
 		 */
 		const unsigned int numPlugins() const;
+
+		/**
+		 *	Looks for a plugin which info::name equals to parameter.
+		 * 	@param name - name to look for.
+		 *	@return index of found plugin in the plugin array, or -1
+		 *		if not found.
+		 */
+		int pluginIndexFromName(const QString& name) const;
 		/**
 		 * Returns the requested plugin or NULL.
 		 */

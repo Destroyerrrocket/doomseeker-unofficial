@@ -175,11 +175,6 @@ class MAIN_EXPORT Server : public QObject
 		virtual ~Server();
 
 		/**
-		 *	@return default port on which servers for given engine are hosted.
-		 */
-		virtual short		defaultServerPort() const = 0;
-
-		/**
 		 * Should return general info about current game (fraglimit, team scores, etc.)
 		 */
 		virtual QString		gameInfoTableHTML() const;
@@ -202,6 +197,7 @@ class MAIN_EXPORT Server : public QObject
 		bool				isKnown() const { return bKnown; }
 		bool				isLocked() const { return locked; }
 		bool				isRunning() const { return bRunning; }
+		bool				isSetToDelete() const { return bDelete; }
 		const QString		&iwadName() const { return iwad; }
 		int					lastResponse() const { return response; }
 		unsigned int		longestPlayerName() const;
@@ -228,6 +224,7 @@ class MAIN_EXPORT Server : public QObject
 		void				operator= (const Server &other);
 		void				finalizeRefreshing();
 		void				setCustom(bool b) { custom = b; }
+		void				setToDelete(bool b);
 		void				startRunning() { bRunning = true; }
 		void				stopRunning() { bRunning = false; }
 
@@ -263,6 +260,7 @@ class MAIN_EXPORT Server : public QObject
 		void			refresh();
 
 	signals:
+		void				begunRefreshing(Server* server);
 		/**
 		 * Emitted when a refresh has been completed.  Be sure to check the
 		 * response to see if anything has actually changed.
@@ -285,12 +283,20 @@ class MAIN_EXPORT Server : public QObject
 		virtual QString		spawnPartOfPlayerTable(QList<const Player*> list, QString status, int colspan, bool bAppendEmptyRowAtBeginning) const;
 
 		/**
+		 *	If this is true server will be deleted as soon as
+		 *	it finished working (refreshing). This should be safer
+		 *	than blatant `delete server` while server's thread is still
+		 *	running.
+		 */
+		bool				bDelete;
+		/**
 		 * This should be set to true upon successful return from doRefresh(),
 		 * and to false upon failure. setServers() protected slot handles this.
 		 * Example usage: Skulltag servers can use this to update ping
 		 * if the server responds with "wait before refreshing".
 		 */
 		bool				bKnown;
+
 
 		GameMode			currentGameMode;
 		unsigned int		currentPing;
@@ -332,7 +338,7 @@ class MAIN_EXPORT Server : public QObject
 		QHostAddress		serverAddress;
 		unsigned short		serverPort;
 
-		void 				doRefresh();
+		void 				doRefresh(bool& bKillThread);
 
 
 };

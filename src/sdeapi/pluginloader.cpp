@@ -173,6 +173,17 @@ const unsigned int PluginLoader::numPlugins() const
 	return pluginsList.size();
 }
 
+int PluginLoader::pluginIndexFromName(const QString& name) const
+{
+	for (int i = 0; i < pluginsList.size(); ++i)
+	{
+		if (name.compare(pluginsList[i]->info->name) == 0)
+			return i;
+	}
+
+	return -1;
+}
+
 const Plugin* PluginLoader::operator[] (unsigned int index) const
 {
 	return pluginsList[index];

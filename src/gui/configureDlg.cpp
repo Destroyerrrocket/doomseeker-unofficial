@@ -35,6 +35,8 @@
 
 ConfigureDlg::ConfigureDlg(Config* mainCfg, QWidget* parent) : QDialog(parent)
 {
+	bCustomServersChanged = false;
+
 	mainConfig = mainCfg;
 	mainConfig->readConfig();
 	setupUi(this);
@@ -72,6 +74,7 @@ void ConfigureDlg::initOptionsList()
 
 	cbi = CustomServersConfigBox::createStructure(mainConfig, this);
 	addConfigurationBox(model->invisibleRootItem(), cbi);
+	customServersCfgBox = cbi->confBox;
 
 	cbi = QueryConfigBox::createStructure(mainConfig, this);
 	addConfigurationBox(model->invisibleRootItem(), cbi);
@@ -92,8 +95,12 @@ void ConfigureDlg::saveSettings()
 	for (int i = 0; i < configBoxesList.count(); ++i)
 	{
 		if (configBoxesList[i]->confBox->save())
+		{
 			qDebug() << "Box:" << configBoxesList[i]->boxName;
+		}
 	}
+
+	bCustomServersChanged = customServersCfgBox->allowSave();
 	mainConfig->saveConfig();
 	qDebug() << "Saving completed!";
 }

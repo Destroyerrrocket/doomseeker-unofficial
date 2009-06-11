@@ -72,15 +72,6 @@ void ServerListModel::clearNonVitalFields(int row)
 	}
 }
 
-void ServerListModel::clearRows()
-{
-	int rows = rowCount();
-	for (int i = 0; i < rows; ++i)
-	{
-		takeRow(0);
-	}
-}
-
 void ServerListModel::destroyRows()
 {
 	int rows = rowCount();
@@ -148,6 +139,43 @@ QModelIndex ServerListModel::findServerOnTheList(const Server* server)
 	return QModelIndex();
 }
 
+void ServerListModel::removeCustomServers()
+{
+	QList<Server*> serversToRemove;
+	for (int i = 0; i < rowCount(); ++i)
+	{
+		Server* serv = serverFromList(i);
+		if (serv->isCustom())
+			serversToRemove.append(serv);
+	}
+
+	QList<Server*>::iterator it;
+	for (it = serversToRemove.begin(); it != serversToRemove.end(); ++it)
+	{
+		QModelIndex index = findServerOnTheList(*it);
+		removeRow(index.row());
+	}
+}
+
+void ServerListModel::setBackgroundColor(int row, Server* server)
+{
+	if (server->isCustom())
+	{
+		for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
+		{
+			QStandardItem* itm = item(row, i);
+			itm->setBackground(QBrush(Qt::cyan));
+		}
+	}
+
+	/*
+	switch(server->lastResponse())
+	{
+		case
+	}
+	*/
+}
+
 void ServerListModel::setBad(int row, Server* server)
 {
 	QStandardItem* qstdItem;
@@ -207,9 +235,6 @@ void ServerListModel::setGood(int row, Server* server)
 
 void ServerListModel::setRefreshing(int row)
 {
-	Server* serv = serverFromList(row);
-	serv->refresh();
-
 	QStandardItem* qstdItem = item(row, SLCID_SERVERNAME);
 	qstdItem->setText(tr("<REFRESHING>"));
 }
@@ -335,6 +360,8 @@ int ServerListModel::updateServer(int row, Server* server, int response)
 			break;
 	}
 
+	setBackgroundColor(row, server);
+
 	return row;
 }
 
@@ -387,9 +414,36 @@ bool ServerListSortFilterProxyModel::lessThan(const QModelIndex& left, const QMo
 {
 	ServerListModel* model = static_cast<ServerListModel*>(sourceModel());
 
+	Server* s1 = serverFromList(left);
+	Server* s2 = serverFromList(right);
+
+	if (s1 != NULL && s2 != NULL)
+	{
+		if (s1->isCustom() && !s2->isCustom())
+		{
+			return sortOrder == Qt::AscendingOrder;
+		}
+		else if (!s1->isCustom() && s2->isCustom())
+		{
+			return sortOrder == Qt::DescendingOrder;
+		}
+	}
+
 	ServerListModel::ServerGroup sg1 = model->serverGroup(left.row());
 	ServerListModel::ServerGroup sg2 = model->serverGroup(right.row());
 
+	if (sg1 != sg2 && sg1 != 0 && sg2 != 0)
+	{
+		if (sg1 > sg2)
+		{
+			return sortOrder == Qt::AscendingOrder;
+		}
+		else
+		{
+			return sortOrder == Qt::DescendingOrder;
+		}
+	}
+/*
 	if (sg1 != sg2 && sg1 != 0 && sg2 != 0)
 	{
 		if (sortOrder == Qt::AscendingOrder)
@@ -415,9 +469,18 @@ bool ServerListSortFilterProxyModel::lessThan(const QModelIndex& left, const QMo
 			}
 		}
 	}
+	*/
 
 	QVariant leftVar = sourceModel()->data(left, sortRole());
 	QVariant rightVar = sourceModel()->data(right, sortRole());
 
 	return compareColumnSortData(leftVar, rightVar, left.column());
+}
+
+Server* ServerListSortFilterProxyModel::serverFromList(const QModelIndex& index) const
+{
+	ServerListModel* model = static_cast<ServerListModel*>(sourceModel());
+
+    QStandardItem* qstdItem = model->item(index.row(), ServerListModel::SLCID_HIDDEN_SERVER_POINTER);
+    return model->serverFromList(qstdItem);
 }

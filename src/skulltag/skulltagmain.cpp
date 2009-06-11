@@ -29,6 +29,7 @@
 #include "sdeapi/pluginloader.hpp"
 
 #include "skulltag/skulltagmasterclient.h"
+#include "skulltag/skulltagserver.h"
 #include "skulltag/engineSkulltagConfig.h"
 
 const // clear warnings
@@ -41,6 +42,8 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 		{
 			return EngineSkulltagConfigBox::createStructure(cfg, parent);
 		}
+
+		short			defaultServerPort() const { return 10666; }
 
 		QPixmap			icon() const
 		{
@@ -61,6 +64,11 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 			if(info.addresses().size() == 0)
 				return NULL;
 			return new SkulltagMasterClient(info.addresses().first(), port);
+		}
+
+		Server*			server(const QHostAddress &address, unsigned short port) const
+		{
+			return (new SkulltagServer(address, port));
 		}
 };
 

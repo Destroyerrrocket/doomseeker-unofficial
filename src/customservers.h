@@ -24,18 +24,66 @@
 #define __CUSTOMSERVERS_H_
 
 #include "masterclient.h"
+#include <QList>
 
+struct CustomServerInfo
+{
+	QString engine;
+	QString host;
+	short port;
+	int engineIndex;
+};
+
+/**
+ *	A 'fake' master server that is used to handle
+ *	custom servers from various engines.
+ */
 class CustomServers : public MasterClient
 {
 	Q_OBJECT;
 
 	public:
+		CustomServers() : MasterClient(QHostAddress("0.0.0.0"), 0) {}
+
 		/**
-		 *	Adds a custom server to the list.
-		 *	@param address - instance of a server, from now on CustomServers class takes
-		 *		ownership of this server. Deleting it is not required.
+		 *	Reads data in format `(<engine_name>;<host_name>;<port>);(...)...`
+		 *	and splits it to a list of CustomServerInfo objects.
+		 *	@param str - concatenated string in required format
+		 *	@return list of custom servers
 		 */
-		void addServer(Server*);
+		static QList<CustomServerInfo>*	decodeConfigEntries(const QString& str);
+
+		/**
+		 *	Convenience method - tries to read config seeking for
+		 *	"CustomServers" entry, decode it and launch setServers() method.
+		 *	@param cfg - instance of the config that will be read
+		 *	@param receiver - object to receive server signals
+		 *	@param slotUpdated - slot to receive Server::updated signals
+		 *	@param slotBegunRefreshing - slot to receive Server::begunRefreshing signals
+		 */
+		void	readConfig(Config* cfg, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing);
+
+		/**
+		 *	Since this is not required here (there's no real
+		 *	master to refresh) this does nothing.
+		 */
+		void 	refresh() {}
+
+		/**
+		 *	Sets a list of custom servers.
+		 *	@param csiList - list of custom servers. If element's
+		 *		engineIndex is < 0 the element is discarded. Also
+		 *		the element will be discarded if it's hostname cannot
+		 *		be resolved.
+		 *	@param receiver - object to receive server signals
+		 *	@param slotUpdated - slot to receive Server::updated signals
+		 *	@param slotBegunRefreshing - slot to receive Server::begunRefreshing signals
+		 */
+		void 	setServers(const QList<CustomServerInfo>& csiList, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing);
+
+	protected:
+		bool	readRequest(QByteArray &data) { return true; }
+		bool	sendRequest(QByteArray &data) { return true; }
 };
 
 #endif
