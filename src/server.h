@@ -24,6 +24,7 @@
 #ifndef __SERVER_H__
 #define __SERVER_H__
 
+#include <QDir>
 #include <QFileInfo>
 #include <QObject>
 #include <QHostAddress>
@@ -234,13 +235,15 @@ class MAIN_EXPORT Server : public QObject
 		 * Returns the name of the setting pointing to the client binary.
 		 */
 		virtual QString		clientBinary() const=0;
+		QString				clientBinarysDirectoy();
 		virtual void		connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
 		/**
 		 *	@param [out] executablePath - path to the executable is saved here.
+		 *	@param [out] applicationDir - working directory of the executable
 		 *	@param [out] args - launch arguments are saved here.
 		 *	@return	true if command line was successfully created.
 		 */
-		bool				createJoinCommandLine(QFileInfo& executablePath, QStringList& args, const QString &connectPassword) const;
+		bool				createJoinCommandLine(QFileInfo& executablePath, QDir& applicationDir, QStringList& args, const QString &connectPassword) const;
 
 		/**
 		 * Returns the thread pool of the refresher.

@@ -68,6 +68,7 @@ void CustomServersConfigBox::add(const QString& engineName, const QString& host,
 	record.append(new QStandardItem( QString::number(port) ));
 
 	model->appendRow(record);
+	tvServers->resizeRowsToContents();
 }
 
 void CustomServersConfigBox::dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)

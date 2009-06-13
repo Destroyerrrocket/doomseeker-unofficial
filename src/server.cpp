@@ -384,6 +384,12 @@ void Server::operator= (const Server &other)
 	serverScoreLimit = other.scoreLimit();
 }
 
+QString Server::clientBinarysDirectoy()
+{
+	QFileInfo fi(clientBinary());
+	return fi.canonicalPath();
+}
+
 void Server::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const
 {
 	// Connect
@@ -397,18 +403,19 @@ void Server::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFoun
 	iwadFound = !iwad.isEmpty();
 }
 
-bool Server::createJoinCommandLine(QFileInfo& executablePath, QStringList& args, const QString &connectPassword) const
+bool Server::createJoinCommandLine(QFileInfo& executablePath, QDir& applicationDir, QStringList& args, const QString &connectPassword) const
 {
 	const QString errorCaption = tr("Doomseeker - error");
 	args.clear();
-	SettingsData* setting = Main::config->setting(clientBinary());
-	if (setting->string().isEmpty())
+
+	QString clientBin = clientBinary();
+	if (clientBin.isEmpty())
 	{
 		QMessageBox::critical(NULL, errorCaption, tr("No executable specified for this engine."));
 		return false;
 	}
 
-	executablePath = QFileInfo(setting->string());
+	executablePath = QFileInfo(clientBin);
 
 	if (!executablePath.exists() || executablePath.isDir())
 	{
@@ -468,7 +475,7 @@ bool Server::createJoinCommandLine(QFileInfo& executablePath, QStringList& args,
 			wsi.wadseekerRef().setCustomSite(website());
 			if (wsi.exec() == QDialog::Accepted)
 			{
-				return createJoinCommandLine(executablePath, args, connectPassword);
+				return createJoinCommandLine(executablePath, applicationDir, args, connectPassword);
 			}
 		}
 
@@ -481,6 +488,7 @@ bool Server::createJoinCommandLine(QFileInfo& executablePath, QStringList& args,
 void Server::displayJoinCommandLine()
 {
 	QFileInfo executablePath;
+	QDir applicationDir;
 	QStringList args;
 	QString connectPassword;
 	if(isLocked())
@@ -492,7 +500,7 @@ void Server::displayJoinCommandLine()
 		else
 			return;
 	}
-	if (!createJoinCommandLine(executablePath, args, connectPassword))
+	if (!createJoinCommandLine(executablePath, applicationDir, args, connectPassword))
 		return;
 
 	CopyTextDlg* ctd = new CopyTextDlg(executablePath.absoluteFilePath() + " " + args.join(" "), "Join command line:", Main::mainWindow);
@@ -503,9 +511,10 @@ void Server::join(const QString &connectPassword) const
 {
 	const QString errorCaption = tr("Doomseeker - error");
 	QFileInfo fileinfo;
+	QDir applicationDir;
 	QStringList args;
 
-	if (!createJoinCommandLine(fileinfo, args, connectPassword))
+	if (!createJoinCommandLine(fileinfo, applicationDir, args, connectPassword))
 		return;
 
 	printf("Starting: %s %s\n", fileinfo.absoluteFilePath().toAscii().constData(), args.join(" ").toAscii().constData());

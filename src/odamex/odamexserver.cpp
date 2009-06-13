@@ -64,6 +64,12 @@ OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port) : S
 {
 }
 
+QString	OdamexServer::clientBinary() const
+{
+	SettingsData* setting = Main::config->setting("OdamexBinaryPath");
+	return setting->string();
+}
+
 void OdamexServer::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const
 {
 	Server::connectParameters(args, pf, iwadFound, connectPassword);

@@ -164,12 +164,18 @@ const GameMode SkulltagServer::GAME_MODES[NUM_SKULLTAG_GAME_MODES] =
 
 SkulltagServer::SkulltagServer(const QHostAddress &address, unsigned short port) : Server(address, port),
 	botSkill(0), buckshot(false), duelLimit(0), fragLimit(0), instagib(false),
-	numTeams(2), pointLimit(0), skill(0), teamDamage(0.0f), winLimit(0)
+	numTeams(2), pointLimit(0), skill(0), teamDamage(0.0f), winLimit(0), testingServer(false)
 {
 	teamInfo[0] = TeamInfo(tr("Blue"), QColor(0, 0, 255), 0);
 	teamInfo[1] = TeamInfo(tr("Red"), QColor(255, 0, 0), 0);
 	teamInfo[2] = TeamInfo(tr("Green"), QColor(0, 255, 0), 0);
 	teamInfo[3] = TeamInfo(tr("Gold"), QColor(255, 255, 0), 0);
+}
+
+QString SkulltagServer::clientBinary() const
+{
+	SettingsData* setting = Main::config->setting("SkulltagBinaryPath");
+	return setting->string();
 }
 
 void SkulltagServer::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const
@@ -425,6 +431,24 @@ bool SkulltagServer::readRequest(QByteArray &data)
 				scores[i] = teamInfo[i].score();
 			pos += 2;
 		}
+	}
+
+	// Due to a bug in 0.97d3 we need to add additional checks here.
+	// 0.97d3 servers also respond with SQF_TESTING_SERVER flag set
+	// if it was previously sent to them
+	if (pos < out && version().compare("0.97d3") != 0 && (flags & SQF_TESTING_SERVER) == SQF_TESTING_SERVER)
+	{
+		testingServer = static_cast<bool>(READINT8(&packetOut[pos]));
+		++pos;
+
+		// '\0' is read if testingServer == false
+		testingArchive = &packetOut[pos];
+		pos += testingArchive.length() + 1;
+	}
+	else
+	{
+		testingServer = false;
+		testingArchive = QString();
 	}
 
 	return true;

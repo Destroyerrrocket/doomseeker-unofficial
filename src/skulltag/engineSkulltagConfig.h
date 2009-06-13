@@ -31,18 +31,19 @@ class EngineSkulltagConfigBox : public ConfigurationBaseBox, private Ui::EngineS
 {
 	Q_OBJECT
 
-	protected:
-		EngineSkulltagConfigBox(Config* cfg, QWidget* parent = NULL);
-		void saveSettings();
-
 	public:
 		static ConfigurationBoxInfo* createStructure(Config* cfg, QWidget* parent = NULL);
 
 		void readSettings();
 
 
-	public slots:
+	protected slots:
 		void btnBrowseBinaryClicked();
+		void btnBrowseTestingPathClicked();
+
+	protected:
+		EngineSkulltagConfigBox(Config* cfg, QWidget* parent = NULL);
+		void saveSettings();
 };
 
 #endif
