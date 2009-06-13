@@ -603,11 +603,15 @@ QString Server::playerTableHTML() const
 	plTabHeader += QString("<tr><td colspan=\"%1\"><hr width=\"100%\"></td></tr>").arg(plTabColNum);
 
 	QString plTabPlayers;
-	QHash<int, QList<const Player*> >::iterator it;
+
+	QList<int> hashKeys = sortedPlayers.uniqueKeys();
+	qSort(hashKeys);
+	QList<int>::iterator keyit;
+
 	bool bAppendEmptyRowAtBeginning = false;
-	for (it = sortedPlayers.begin(); it != sortedPlayers.end(); ++it)
+	for (keyit = hashKeys.begin(); keyit != hashKeys.end(); ++keyit)
 	{
-		plTabPlayers += spawnPartOfPlayerTable(it.value(), "", plTabColNum, bAppendEmptyRowAtBeginning);
+		plTabPlayers += spawnPartOfPlayerTable(sortedPlayers[*keyit], plTabColNum, bAppendEmptyRowAtBeginning);
 		if (!bAppendEmptyRowAtBeginning)
 		{
 			bAppendEmptyRowAtBeginning = true;
@@ -615,10 +619,10 @@ QString Server::playerTableHTML() const
 	}
 
 	bAppendEmptyRowAtBeginning = !plTabPlayers.isEmpty();
-	QString plTabBots = spawnPartOfPlayerTable(botList, tr("BOT"), plTabColNum, bAppendEmptyRowAtBeginning);
+	QString plTabBots = spawnPartOfPlayerTable(botList, plTabColNum, bAppendEmptyRowAtBeginning);
 
 	bAppendEmptyRowAtBeginning = !(plTabBots.isEmpty() && plTabPlayers.isEmpty());
-	QString plTabSpecs = spawnPartOfPlayerTable(specList, tr("SPECTATOR"), plTabColNum, bAppendEmptyRowAtBeginning);
+	QString plTabSpecs = spawnPartOfPlayerTable(specList, plTabColNum, bAppendEmptyRowAtBeginning);
 
 
 	QString plTab = "<table cellspacing=\"4\" style=\"background-color: #FFFFFF;color: #000000\">";
@@ -630,7 +634,7 @@ QString Server::playerTableHTML() const
 	return plTab;
 }
 
-QString Server::spawnPartOfPlayerTable(QList<const Player*> list, QString status, int colspan, bool bAppendEmptyRowAtBeginning) const
+QString Server::spawnPartOfPlayerTable(QList<const Player*> list, int colspan, bool bAppendEmptyRowAtBeginning) const
 {
 	QString ret;
 	if (list.count() != 0)
@@ -643,6 +647,12 @@ QString Server::spawnPartOfPlayerTable(QList<const Player*> list, QString status
 		for (int i = 0; i < list.count(); ++i)
 		{
 			const Player& p = *list[i];
+
+			QString status = "";
+			if (p.isBot())
+				status = tr("BOT");
+			else if (p.isSpectating())
+				status = tr("SPECTATOR");
 
 			QString strPlayer = "<tr>";
 			if (gameMode().isTeamGame())

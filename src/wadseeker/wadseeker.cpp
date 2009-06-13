@@ -44,7 +44,7 @@ const QString Wadseeker::iwadNames[] =
 ///////////////////////////////////////////////////////////////////////
 Wadseeker::Wadseeker()
 {
-	www = new WWW();
+	www = new WWWSeeker();
 
 	www->setUserAgent("Wadseeker/" + this->version());
 
@@ -52,7 +52,7 @@ Wadseeker::Wadseeker()
 	connect(www, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
 	connect(www, SIGNAL( fileDone(QByteArray&, const QString&) ), this, SLOT( fileDone(QByteArray&, const QString&) ));
 	connect(www, SIGNAL( message(const QString&, Wadseeker::MessageType) ), this, SLOT( messageSlot(const QString&, Wadseeker::MessageType) ) );
-	connect(www, SIGNAL( noMoreSites() ), this, SLOT( wadFail() ) );
+	connect(www, SIGNAL( fail() ), this, SLOT( wadFail() ) );
 }
 
 Wadseeker::~Wadseeker()

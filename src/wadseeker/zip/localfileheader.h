@@ -25,7 +25,9 @@
 
 #include <QByteArray>
 #include <QString>
-#include "global.h"
+
+#define READINT32(pointer) ((quint32((quint8)(*pointer))) | (quint32(quint8(*(pointer+1)))<<8) | (quint32(quint8(*(pointer+2)))<<16) | (quint32(quint8(*(pointer+3)))<<24))
+#define READINT16(pointer) ((quint16((quint8)(*pointer))) | (quint16(quint8(*(pointer+1)))<<8))
 
 #define LOCAL_FILE_HEADER_SIGNATURE 0x04034b50
 #define DESCRIPTOR_EXISTS_FLAG		0x0004 // (3rd bit)

@@ -24,7 +24,6 @@
 #define __WWW_H_
 
 #include "html.h"
-#include "global.h"
 #include "link.h"
 #include "protocols/ftp.h"
 #include "protocols/http.h"
@@ -34,24 +33,19 @@
 #include <QUrl>
 
 /**
- *	@brief Search and protocol wrapper class.
+ *	@brief Class for manual download of files.
  *
- *	WWW class seeks specified files by iterating through
- *	previously defined set of sites and parsing their HTML code
- *	if necessary.
- *
- *	This class handles URLs by selecting proper protocols for them.
- *	It hides how protocols work and provides simple interface:
- *	request a file, inform about download progress and
- *	send a proper signal when download is finished.
- *
- *	URLs with wildcards can be used, see: primaryFile
+ *	This class hides how protocols work exactly and provides simple interface:
+ *	get url, monitor the progress and emit signal when file is done
+ *	downloading.
  */
-class WWW : public QObject
+class WADSEEKER_API WWW : public QObject
 {
 	Q_OBJECT
 
 	public:
+		static bool isAbsoluteUrl(const QUrl&);
+
 		/**
 		 *	Sets time after which to abort connecting
 		 *	if no response is received.
@@ -67,7 +61,7 @@ class WWW : public QObject
 		static void	setTimeDownloadTimeout(int seconds) { Protocol::setTimeDownloadTimeoutSeconds(seconds); }
 
 		/**
-		 *	Allocates a new instance of Wadseeker and connects protocols
+		 *	Allocates a new instance of WWW and connects protocols
 		 *	to signsls.
 		 */
 		WWW();
@@ -79,6 +73,96 @@ class WWW : public QObject
 		 *	it emits aborted() signal right away.
 		 */
 		void abort();
+
+		/**
+		 *	Used to download a file. WWWSeeker class should override
+		 *	this method to be protected, do nothing and always return false
+		 *	@param url - a valid, absolute url to a site
+		 *	@return false if url is invalid or protocol is not supported
+		 */
+		virtual bool 	getUrl(const QUrl& url);
+
+		/**
+		 *	Sets user agent that is used in HTTP queries.
+		 *	@param agent - string to send in HTTP queries
+		 */
+		void setUserAgent(const QString& agent);
+
+	signals:
+		/**
+		 *	Emitted after abort() method is used and when it's safe
+		 *	to assume that WWW finished all its jobs.
+		 */
+		void	aborted();
+
+		/**
+		 *	Emits download progress. Programmer may use this to update
+		 *	a progress bar, for example.
+		 *	@param done - bytes downloaded
+		 *	@param total - size of file
+		 */
+		void 	downloadProgress(int done, int total);
+
+		/**
+		 *	Emitted when WWW class was unsuccessful of downloading a file.
+		 */
+		void	fail();
+
+		/**
+		 *	Emitted when WWW class finishes downloading searched file.
+		 *	@param data - content of downloaded file
+		 *	@param filename - name of downloaded file
+		 */
+		void 	fileDone(QByteArray& data, const QString& filename);
+
+		/**
+		 *	Emitted when WWW wants to communicate about its progress
+		 *	with outside world.
+		 *	@param msg - content of the message
+		 *	@param type - See: Wadseeker::MessageType
+		 */
+		void 	message(const QString&, Wadseeker::MessageType type);
+
+	protected slots:
+		virtual void	get(const QUrl&);
+		void 			downloadProgressSlot(int done, int total);
+		virtual void	protocolAborted();
+		virtual void	protocolDone(bool success, QByteArray& data, int fileType, const QString& filename);
+		void 			messageSlot(const QString&, Wadseeker::MessageType type);
+
+	protected:
+		static QString	ignoringMessage;
+
+		bool			aborting;
+		Protocol*		currentProtocol;
+		Http			http;
+		Ftp				ftp;
+
+		QUrl			processedUrl;
+
+		QUrl		constructValidUrl(const QUrl&);
+};
+
+/**
+ *	@brief Search and protocol wrapper class.
+ *
+ *	WWWSeeker class seeks specified files by iterating through
+ *	previously defined set of sites and parsing their HTML code
+ *	if necessary.
+ *
+ *	This class handles URLs by selecting proper protocols for them.
+ *	It hides how protocols work and provides simple interface:
+ *	request a file, inform about download progress and
+ *	send a proper signal when download is finished.
+ *
+ *	URLs with wildcards can be used, see: primaryFile
+ */
+class WADSEEKER_API WWWSeeker : public WWW
+{
+	Q_OBJECT
+
+	public:
+		WWWSeeker();
 
 		/**
 		 *	Tells the class to keep looking for file on next available
@@ -114,64 +198,13 @@ class WWW : public QObject
 		 */
 		void setPrimarySites(const QStringList& lst) { primarySites = lst; }
 
-		/**
-		 *	Sets user agent that is used in HTTP queries.
-		 *	@param agent - string to send in HTTP queries
-		 */
-		void setUserAgent(const QString& agent);
-
-	signals:
-		/**
-		 *	Emitted after abort() method is used and when it's safe
-		 *	to assume that WWW finished all its jobs.
-		 */
-		void	aborted();
-
-		/**
-		 *	Emits download progress. Programmer may use this to update
-		 *	a progress bar, for example.
-		 *	@param done - bytes downloaded
-		 *	@param total - size of file
-		 */
-		void 	downloadProgress(int done, int total);
-
-		/**
-		 *	Emitted when WWW class finishes downloading searched file.
-		 *	@param data - content of downloaded file
-		 *	@param filename - name of downloaded file
-		 */
-		void 	fileDone(QByteArray& data, const QString& filename);
-
-		/**
-		 *	Emitted when WWW wants to communicate about its progress
-		 *	with outside world.
-		 *	@param msg - content of the message
-		 *	@param type - See: Wadseeker::MessageType
-		 */
-		void 	message(const QString&, Wadseeker::MessageType type);
-
-		/**
-		 *	Emitted when there are no more sites available and
-		 *	the file is still not found.
-		 */
-		void 	noMoreSites();
-
 	protected slots:
 		void	get(const QUrl&);
-		void 	downloadProgressSlot(int done, int total);
-		void 	protocolAborted();
-		void 	protocolDone(bool success, QByteArray& data, int fileType, const QString& filename);
+		void	protocolAborted();
+		void	protocolDone(bool success, QByteArray& data, int fileType, const QString& filename);
 		void	protocolNameAndTypeOfReceivedFile(const QString&, int);
-		void 	messageSlot(const QString&, Wadseeker::MessageType type);
 
 	protected:
-		static QString	ignoringMessage;
-
-		bool			aborting;
-		Protocol*		currentProtocol;
-		Http			http;
-		Ftp				ftp;
-
 		QSet<QString>	checkedLinks;
 		int				currentPrimarySite;
 		QUrl			customSite;
@@ -185,10 +218,10 @@ class WWW : public QObject
 		 */
 		QString			primaryFile;
 		QStringList		primarySites;
-		QUrl			processedUrl;
 		QList<QUrl> 	siteLinks;
 
-		QUrl		constructValidUrl(const QUrl&);
+		bool 		getUrl(const QUrl& url) { return false; }
+
 		bool		isWantedFileOrZip(const QString& filename);
 		QUrl		nextSite();
 };

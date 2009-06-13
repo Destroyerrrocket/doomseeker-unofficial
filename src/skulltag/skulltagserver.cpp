@@ -187,19 +187,6 @@ QPixmap SkulltagServer::icon() const
 	return QPixmap(skulltag_xpm);
 }
 
-bool SkulltagServer::sendRequest(QByteArray &data)
-{
-	// Send launcher challenge.
-	int query = SQF_STANDARDQUERY;
-	const char challenge[12] = {SERVER_CHALLENGE,WRITEINT32_DIRECT(query),0x00,0x00,0x00,0x00};
-	char challengeOut[16];
-	int out = 16;
-	g_Huffman.encode(challenge, challengeOut, 12, &out);
-	const QByteArray chall(challengeOut, out);
-	data.append(chall);
-	return true;
-}
-
 bool SkulltagServer::readRequest(QByteArray &data)
 {
 	// Decompress the response.
@@ -441,4 +428,25 @@ bool SkulltagServer::readRequest(QByteArray &data)
 	}
 
 	return true;
+}
+
+bool SkulltagServer::sendRequest(QByteArray &data)
+{
+	// Send launcher challenge.
+	int query = SQF_STANDARDQUERY;
+	const char challenge[12] = {SERVER_CHALLENGE,WRITEINT32_DIRECT(query),0x00,0x00,0x00,0x00};
+	char challengeOut[16];
+	int out = 16;
+	g_Huffman.encode(challenge, challengeOut, 12, &out);
+	const QByteArray chall(challengeOut, out);
+	data.append(chall);
+	return true;
+}
+
+QString	SkulltagServer::teamName(int team) const
+{
+	if (team == 255)
+		return "NO TEAM";
+
+	return team >= 0 && team < ST_MAX_TEAMS ? teamInfo[team].name() : "";
 }

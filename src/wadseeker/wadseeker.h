@@ -41,7 +41,7 @@
 #define WADSEEKER_API
 #endif
 
-class WWW;
+class WADSEEKER_API WWWSeeker;
 
 /**
  *	@mainpage Wadseeker API
@@ -303,7 +303,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		QStringList		notFound;
 		QStringList		seekedWads;
 		QString			targetDir;
-		WWW				*www;
+		WWWSeeker		*www;
 
 		void	nextWad();
 

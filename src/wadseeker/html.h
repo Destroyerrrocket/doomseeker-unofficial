@@ -24,9 +24,9 @@
 #define __HTML_H_
 
 #include "link.h"
-#include "wadseeker.h"
 #include <QByteArray>
 #include <QString>
+#include <QStringList>
 
 class CHtml
 {

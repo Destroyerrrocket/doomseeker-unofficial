@@ -38,7 +38,6 @@ WWW::WWW()
 	connect(&http, SIGNAL( dataReadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
 	connect(&http, SIGNAL( done(bool, QByteArray&, int, const QString&) ), this, SLOT( protocolDone(bool, QByteArray&, int, const QString&) ) );
 	connect(&http, SIGNAL( message(const QString&, Wadseeker::MessageType) ), this, SLOT( messageSlot(const QString&, Wadseeker::MessageType) ) );
-	connect(&http, SIGNAL( nameAndTypeOfReceivedFile(const QString&, int) ), this, SLOT( protocolNameAndTypeOfReceivedFile(const QString&, int) ) );
 	connect(&http, SIGNAL( redirect(const QUrl&) ), this, SLOT( get(const QUrl&) ) );
 }
 
@@ -52,23 +51,6 @@ void WWW::abort()
 	else
 	{
 		emit aborted();
-	}
-}
-
-void WWW::checkNextSite()
-{
-	QUrl site = nextSite();
-
-	if (site.isEmpty())
-	{
-		processedUrl = QUrl();
-		emit message(tr("No more sites.\n"), Wadseeker::Notice);
-		emit noMoreSites();
-	}
-	else
-	{
-		emit downloadProgress(0, 100);
-		get(site);
 	}
 }
 
@@ -104,6 +86,134 @@ void WWW::downloadProgressSlot(int done, int total)
 }
 
 void WWW::get(const QUrl& url)
+{
+	QUrl urlValid = constructValidUrl(url);
+	if (urlValid.isEmpty())
+	{
+		emit message(tr("Failed to create valid URL out of \"%1\". Ignoring.\n").arg(url.toString()), Wadseeker::Error);
+		emit fail();
+		return;
+	}
+
+	processedUrl = urlValid;
+
+	if (Http::isHTTPLink(urlValid))
+	{
+		currentProtocol = &http;
+		http.get(urlValid);
+	}
+	else if (Ftp::isFTPLink(urlValid))
+	{
+		currentProtocol = &ftp;
+		ftp.get(urlValid);
+	}
+	else
+	{
+		currentProtocol = NULL;
+		message(tr("Protocol for this site is not supported\n"), Wadseeker::Error);
+		emit fail();
+		return;
+	}
+}
+
+bool WWW::getUrl(const QUrl& url)
+{
+	if (!isAbsoluteUrl(url))
+		return false;
+
+	QUrl urlValid = url;
+	if (urlValid.path().isEmpty())
+		urlValid.setPath("/");
+
+	if (Http::isHTTPLink(urlValid))
+	{
+		currentProtocol = &http;
+		http.get(urlValid);
+	}
+	else if (Ftp::isFTPLink(urlValid))
+	{
+		currentProtocol = &ftp;
+		ftp.get(urlValid);
+	}
+	else
+	{
+		currentProtocol = NULL;
+		message(tr("Protocol for this site is not supported\n"), Wadseeker::Error);
+		return false;
+	}
+
+	return true;
+}
+
+bool WWW::isAbsoluteUrl(const QUrl& url)
+{
+	if (url.scheme().isEmpty() || url.host().isEmpty())
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void WWW::messageSlot(const QString& msg, Wadseeker::MessageType type)
+{
+	emit message(msg, type);
+}
+
+void WWW::protocolAborted()
+{
+	currentProtocol = NULL;
+	if (!aborting)
+	{
+		emit fail();
+	}
+	else
+	{
+		emit aborted();
+	}
+}
+
+void WWW::protocolDone(bool success, QByteArray& data, int fileType, const QString& filename)
+{
+	currentProtocol = NULL;
+	if (success)
+	{
+		emit fileDone(data, filename);
+	}
+	else
+	{
+		emit fail();
+	}
+}
+
+void WWW::setUserAgent(const QString& str)
+{
+	http.setUserAgent(str);
+}
+///////////////////////////////////////////////////////////////////////////////
+WWWSeeker::WWWSeeker()
+{
+	connect(&http, SIGNAL( nameAndTypeOfReceivedFile(const QString&, int) ), this, SLOT( protocolNameAndTypeOfReceivedFile(const QString&, int) ) );
+}
+
+void WWWSeeker::checkNextSite()
+{
+	QUrl site = nextSite();
+
+	if (site.isEmpty())
+	{
+		processedUrl = QUrl();
+		emit message(tr("No more sites.\n"), Wadseeker::Notice);
+		emit fail();
+	}
+	else
+	{
+		emit downloadProgress(0, 100);
+		get(site);
+	}
+}
+
+void WWWSeeker::get(const QUrl& url)
 {
 	QUrl urlValid = constructValidUrl(url);
 	if (urlValid.isEmpty())
@@ -153,7 +263,7 @@ void WWW::get(const QUrl& url)
 
 }
 
-bool WWW::isWantedFileOrZip(const QString& filename)
+bool WWWSeeker::isWantedFileOrZip(const QString& filename)
 {
 	if (!primaryFile.isNull())
 	{
@@ -168,12 +278,7 @@ bool WWW::isWantedFileOrZip(const QString& filename)
 	return false;
 }
 
-void WWW::messageSlot(const QString& msg, Wadseeker::MessageType type)
-{
-	emit message(msg, type);
-}
-
-QUrl WWW::nextSite()
+QUrl WWWSeeker::nextSite()
 {
 	while (true)
 	{
@@ -214,7 +319,7 @@ QUrl WWW::nextSite()
 	return QUrl();
 }
 
-void WWW::protocolAborted()
+void WWWSeeker::protocolAborted()
 {
 	currentProtocol = NULL;
 	if (!aborting)
@@ -227,7 +332,7 @@ void WWW::protocolAborted()
 	}
 }
 
-void WWW::protocolDone(bool success, QByteArray& data, int fileType, const QString& filename)
+void WWWSeeker::protocolDone(bool success, QByteArray& data, int fileType, const QString& filename)
 {
 	currentProtocol = NULL;
 	if (success)
@@ -257,7 +362,7 @@ void WWW::protocolDone(bool success, QByteArray& data, int fileType, const QStri
 	}
 }
 
-void WWW::protocolNameAndTypeOfReceivedFile(const QString& name, int type)
+void WWWSeeker::protocolNameAndTypeOfReceivedFile(const QString& name, int type)
 {
 	if (type == Protocol::Other)
 	{
@@ -272,7 +377,7 @@ void WWW::protocolNameAndTypeOfReceivedFile(const QString& name, int type)
 	}
 }
 
-void WWW::searchFiles(const QStringList& list, const QString& primaryFilename)
+void WWWSeeker::searchFiles(const QStringList& list, const QString& primaryFilename)
 {
 	aborting = false;
 	customSiteUsed = false;
@@ -283,9 +388,4 @@ void WWW::searchFiles(const QStringList& list, const QString& primaryFilename)
 	processedUrl = QUrl();
 
 	checkNextSite();
-}
-
-void WWW::setUserAgent(const QString& str)
-{
-	http.setUserAgent(str);
 }

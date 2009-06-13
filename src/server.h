@@ -280,7 +280,7 @@ class MAIN_EXPORT Server : public QObject
 		/**
 		 * This will return absolutely nothing if the list in the first argument is empty.
 		 */
-		virtual QString		spawnPartOfPlayerTable(QList<const Player*> list, QString status, int colspan, bool bAppendEmptyRowAtBeginning) const;
+		virtual QString		spawnPartOfPlayerTable(QList<const Player*> list, int colspan, bool bAppendEmptyRowAtBeginning) const;
 
 		/**
 		 *	If this is true server will be deleted as soon as
