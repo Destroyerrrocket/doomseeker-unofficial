@@ -137,6 +137,11 @@ class MAIN_EXPORT PluginLoader
 		~PluginLoader();
 
 		/**
+		 * Clears the plugins list
+		 */
+		void clearPlugins();
+
+		/**
 		 * Inits configuration for plugins.
 		 */
 		void initConfig();
@@ -153,6 +158,12 @@ class MAIN_EXPORT PluginLoader
 		 *		if not found.
 		 */
 		int pluginIndexFromName(const QString& name) const;
+
+		/**
+		 * Resets the plugins directory, clearing the loaded plugins and getting new loaded plugins in the process.
+		 */
+		void resetPluginsDirectory(const QString& pluginsDirectory);
+
 		/**
 		 * Returns the requested plugin or NULL.
 		 */

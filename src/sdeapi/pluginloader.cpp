@@ -112,6 +112,17 @@ PluginLoader::~PluginLoader()
 		delete pluginsList[i];
 }
 
+void PluginLoader::clearPlugins()
+{
+	for(QList<Plugin *>::iterator iter = pluginsList.begin(); iter != pluginsList.end(); )
+	{
+		Plugin * plug = (*iter);
+		iter = pluginsList.erase(iter);
+		delete plug;
+		plug = NULL;
+	}
+}
+
 void PluginLoader::filesInDir()
 {
 #ifdef Q_WS_WIN
@@ -182,6 +193,14 @@ int PluginLoader::pluginIndexFromName(const QString& name) const
 	}
 
 	return -1;
+}
+
+void PluginLoader::resetPluginsDirectory(const QString& pluginsDirectory)
+{
+	this->pluginsDirectory = pluginsDirectory;
+	if(!pluginsList.isEmpty())
+		clearPlugins();
+	filesInDir();
 }
 
 const Plugin* PluginLoader::operator[] (unsigned int index) const
