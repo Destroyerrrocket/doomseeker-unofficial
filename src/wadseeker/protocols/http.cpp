@@ -154,6 +154,15 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 	noData = false;
 	redirected = false;
 
+	attachmentInfo = attachmentInformation(resp, processedFileName);
+
+	if (!attachmentInfo.isEmpty())
+	{
+		fileType = Other;
+		emit message(tr("Downloading attached file: %1").arg(processedFileName), Wadseeker::Notice);
+		emit nameAndTypeOfReceivedFile(processedFileName, fileType);
+	}
+
 	switch (resp.statusCode())
 	{
 		case OK:
@@ -175,29 +184,18 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 			break;
 
 		case Redirect:
-			attachmentInfo = attachmentInformation(resp, processedFileName);
-
-			if (!attachmentInfo.isEmpty())
+			noData = attachmentInfo.isEmpty();
+			emit message(tr("Redirecting"), Wadseeker::Notice);
+			tmp = resp.value("Location");
+			if (tmp.isEmpty())
 			{
-				fileType = Other;
-				emit message(tr("Downloading attached file: %1").arg(processedFileName), Wadseeker::Notice);
-				emit nameAndTypeOfReceivedFile(processedFileName, fileType);
+				emit message(tr("Redirect header was received but no location was specified. Aborting.\n").arg(resp.value("Location")), Wadseeker::Error);
+				abort();
 			}
 			else
 			{
-				noData = true;
-				emit message(tr("Redirecting"), Wadseeker::Notice);
-				tmp = resp.value("Location");
-				if (tmp.isEmpty())
-				{
-					emit message(tr("Redirect header was received but no location was specified. Aborting.\n").arg(resp.value("Location")), Wadseeker::Error);
-					abort();
-				}
-				else
-				{
-					redirected = true;
-					redirectUrl = tmp;
-				}
+				redirected = true;
+				redirectUrl = tmp;
 			}
 			break;
 
