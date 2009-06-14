@@ -197,7 +197,7 @@ QString SkulltagServer::clientBinary(QString& error) const
 
 		if (!fi.exists() || fi.isDir())
 		{
-			error = tr("%1\n is a directory or doesn't exist.").arg(setting->string());
+			error = tr("%1\nis a directory or doesn't exist.").arg(setting->string());
 			return QString();
 		}
 
@@ -215,15 +215,23 @@ QString SkulltagServer::clientBinary(QString& error) const
 		}
 
 		if (path[path.length() - 1] != '/' && path[path.length() - 1] != '\\' )
-			path.append('/');
+			path += '/';
 
-
-		path.append(version());
+		path += version();
 
 		QFileInfo fi(path);
 		if (!fi.exists() || !fi.isDir())
 		{
-			error = tr("%1\n doesn't exist or is NOT a directory.\nPerhaps you need to install new testing binaries.").arg(path);
+			error = tr("%1\ndoesn't exist or is NOT a directory.\nPerhaps you need to install new testing binaries.").arg(path);
+			return QString();
+		}
+
+		QString binPath = path + '/' + ST_BINARY_NAME;
+		qDebug() << binPath;
+		fi = QFileInfo(binPath);
+		if (!fi.exists() || fi.isDir())
+		{
+			error = tr("%1\ndoesn't contain Skulltag executable").arg(path);
 			return QString();
 		}
 
@@ -575,13 +583,13 @@ bool SkulltagServer::spawnTestingBatchFile(const QString& versionDir, QString& f
 
 	if (!file.open(QIODevice::WriteOnly))
 	{
-		error = tr("Couldn't open %1 for writing").arg(fullPathToFile);
+		error = tr("Couldn't open batch file \"%1\" for writing").arg(fullPathToFile);
 		return false;
 	}
 
 	if (file.write(content.toAscii()) < 0)
 	{
-		error = tr("Error while writing %1").arg(fullPathToFile);
+		error = tr("Error while writing batch file \"%1\"").arg(fullPathToFile);
 		file.close();
 		return false;
 	}
