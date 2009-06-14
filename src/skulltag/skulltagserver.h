@@ -125,7 +125,13 @@ class SkulltagServer : public Server
 		SkulltagServer(const QHostAddress &address, unsigned short port);
 
 		QPixmap			icon() const;
-		QString			clientBinary() const;
+		/**
+		 *	If this is a normal server simple path to executable file is produced.
+		 *	If this is a testing server, a shell script will be produced if necessary and
+		 *	path to this shell script will be returned.
+		 */
+		QString			clientBinary(QString& error) const;
+		virtual QString	clientBinarysDirectory() const;
 		void			connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
 		QString			teamName(int team) const;
 
@@ -151,6 +157,18 @@ class SkulltagServer : public Server
 
 		bool			readRequest(QByteArray &data);
 		bool			sendRequest(QByteArray &data);
+		/**
+		 *	Creates Unix .sh file or Windows .bat file to
+		 *	launch client for this server. Returns true if the file
+		 *	already exists.
+		 *	@param versionDir - convenience parameter. This is the directory
+		 *		where testing package was unpacked. This path was
+		 *		already created in clientBinary() method so let's reuse it.
+		 *	@param [out] fullPathToFile - path to created script file
+		 *	@param [out] error - error if return == false
+		 *	@return false if fail
+		 */
+		bool			spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, QString& error) const;
 
 		QString			testingArchive;
 };

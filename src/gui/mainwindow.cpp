@@ -249,12 +249,12 @@ void MainWindow::refreshServers(bool onlyCustom)
 	}
 }
 
-void MainWindow::runGame(const Server* server) const
+void MainWindow::runGame(const Server* server)
 {
 	QString connectPassword;
 	if(server->isLocked())
 	{
-		PasswordDlg password;
+		PasswordDlg password(this);
 		int ret = password.exec();
 
 		if(ret == QDialog::Accepted)

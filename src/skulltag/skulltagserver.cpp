@@ -30,6 +30,14 @@
 const // clear warnings
 #include "skulltag/skulltag.xpm"
 
+#ifdef Q_WS_WIN
+#define ST_BINARY_NAME "skulltag.exe"
+#define SCRIPT_FILE_EXTENSION ".bat"
+#else
+#define ST_BINARY_NAME "skulltag"
+#define SCRIPT_FILE_EXTENSION ".sh"
+#endif
+
 #define SERVER_CHALLENGE	0xC7,0x00,0x00,0x00
 #define SERVER_GOOD			5660023
 #define SERVER_BANNED		5660025
@@ -172,10 +180,70 @@ SkulltagServer::SkulltagServer(const QHostAddress &address, unsigned short port)
 	teamInfo[3] = TeamInfo(tr("Gold"), QColor(255, 255, 0), 0);
 }
 
-QString SkulltagServer::clientBinary() const
+QString SkulltagServer::clientBinary(QString& error) const
+{
+	SettingsData* setting;
+	if (!this->testingServer)
+	{
+		setting = Main::config->setting("SkulltagBinaryPath");
+
+		if (setting->string().isEmpty())
+		{
+			error = tr("No executable specified for Skulltag");
+			return QString();
+		}
+
+		QFileInfo fi(setting->string());
+
+		if (!fi.exists() || fi.isDir())
+		{
+			error = tr("%1\n is a directory or doesn't exist.").arg(setting->string());
+			return QString();
+		}
+
+		return setting->string();
+	}
+	else
+	{
+		// This is common code for both Unix and Windows:
+		setting = Main::config->setting("SkulltagTestingPath");
+		QString path = setting->string();
+		if (path.isEmpty())
+		{
+			error = tr("No testing directory specified for Skulltag");
+			return QString();
+		}
+
+		if (path[path.length() - 1] != '/' && path[path.length() - 1] != '\\' )
+			path.append('/');
+
+
+		path.append(version());
+
+		QFileInfo fi(path);
+		if (!fi.exists() || !fi.isDir())
+		{
+			error = tr("%1\n doesn't exist or is NOT a directory.\nPerhaps you need to install new testing binaries.").arg(path);
+			return QString();
+		}
+
+		// Everything checked out, so proceed to create (if necessary) and return path to the script file.
+		QString retPath;
+		if (!spawnTestingBatchFile(path, retPath, error))
+		{
+			// error is already specified inside spawnTestingBatchFile()Ŝ
+			return QString();
+		}
+
+		return retPath;
+	}
+}
+
+QString SkulltagServer::clientBinarysDirectory() const
 {
 	SettingsData* setting = Main::config->setting("SkulltagBinaryPath");
-	return setting->string();
+	QFileInfo fi(setting->string());
+	return fi.canonicalPath();
 }
 
 void SkulltagServer::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const
@@ -464,6 +532,68 @@ bool SkulltagServer::sendRequest(QByteArray &data)
 	g_Huffman.encode(challenge, challengeOut, 12, &out);
 	const QByteArray chall(challengeOut, out);
 	data.append(chall);
+	return true;
+}
+
+bool SkulltagServer::spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, QString& error) const
+{
+	QString binaryPath = versionDir + '/' + ST_BINARY_NAME;
+	// This will create an actual path to file, because there is no '/' at the end
+	// of scriptFilepath.
+	fullPathToFile = versionDir + SCRIPT_FILE_EXTENSION;
+	QFileInfo fi(fullPathToFile);
+	QFile file(fullPathToFile);
+	if (fi.isDir())
+	{
+		error = tr("%1\n should be a script file but is a directory!").arg(fullPathToFile);
+		return false;
+	}
+
+	if (fi.exists())
+	{
+		printf("File Permissions: %X\n", (unsigned int)file.permissions());
+		if ((file.permissions() & QFile::ExeUser) == 0)
+		{
+			error = tr("You don't have permissions to execute file: %1\n").arg(fullPathToFile);
+			return false;
+		}
+		return true;
+	}
+
+	QString content;
+	#ifdef Q_WS_WIN
+	// Create Windows batch file
+	content  = "cd " + clientBinarysDirectory() + "\r\n";
+	content += binaryPath + " %*"; // %* deals with all the parameters
+	#else
+	// Create Unix script file
+	content  = "#!/bin/bash\n";
+	content += "cd " + clientBinarysDirectory() + "\n";
+	content += "export LANG=C\n"; // without this Skulltag won't run on my system (Zalewa)
+	content += binaryPath + " $*"; // $* deals with all the parameters
+	#endif
+
+	if (!file.open(QIODevice::WriteOnly))
+	{
+		error = tr("Couldn't open %1 for writing").arg(fullPathToFile);
+		return false;
+	}
+
+	if (file.write(content.toAscii()) < 0)
+	{
+		error = tr("Error while writing %1").arg(fullPathToFile);
+		file.close();
+		return false;
+	}
+
+	file.close();
+
+	if (!file.setPermissions(file.permissions() | QFile::ExeUser))
+	{
+		error = tr("Cannot set permissions for file:\n%1").arg(fullPathToFile);
+		return false;
+	}
+
 	return true;
 }
 

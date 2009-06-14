@@ -232,10 +232,17 @@ class MAIN_EXPORT Server : public QObject
 		QList<ServerAction>*	actions();
 		virtual void			actionsEx(QList<ServerAction>*) {};
 		/**
-		 * Returns the name of the setting pointing to the client binary.
+		 *	Returns the path to the client binary
+		 *	@param [out] error - type of error
+		 *	@return empty if error
 		 */
-		virtual QString		clientBinary() const=0;
-		QString				clientBinarysDirectoy();
+		virtual QString		clientBinary(QString& error) const=0;
+		/**
+		 *	Default behavior returns directory of clientBinary(), but
+		 *	you can override this to provide different working directory for
+		 *	Skulltag's testing binaries.
+		 */
+		virtual QString		clientBinarysDirectory() const;
 		virtual void		connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
 		/**
 		 *	@param [out] executablePath - path to the executable is saved here.

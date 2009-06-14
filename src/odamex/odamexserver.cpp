@@ -64,9 +64,24 @@ OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port) : S
 {
 }
 
-QString	OdamexServer::clientBinary() const
+QString	OdamexServer::clientBinary(QString& error) const
 {
 	SettingsData* setting = Main::config->setting("OdamexBinaryPath");
+
+	if (setting->string().isEmpty())
+	{
+		error = tr("No executable specified for Odamex");
+		return QString();
+	}
+
+	QFileInfo fi(setting->string());
+
+	if (!fi.exists() || fi.isDir())
+	{
+		error = tr("%1\n is a directory or doesn't exist.").arg(setting->string());
+		return QString();
+	}
+
 	return setting->string();
 }
 

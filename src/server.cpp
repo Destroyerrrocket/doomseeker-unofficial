@@ -384,9 +384,10 @@ void Server::operator= (const Server &other)
 	serverScoreLimit = other.scoreLimit();
 }
 
-QString Server::clientBinarysDirectoy()
+QString Server::clientBinarysDirectory() const
 {
-	QFileInfo fi(clientBinary());
+	QString dummy;
+	QFileInfo fi(clientBinary(dummy));
 	return fi.canonicalPath();
 }
 
@@ -408,18 +409,21 @@ bool Server::createJoinCommandLine(QFileInfo& executablePath, QDir& applicationD
 	const QString errorCaption = tr("Doomseeker - error");
 	args.clear();
 
-	QString clientBin = clientBinary();
+	QString clientBinError;
+	QString clientBin = clientBinary(clientBinError);
 	if (clientBin.isEmpty())
 	{
-		QMessageBox::critical(NULL, errorCaption, tr("No executable specified for this engine."));
+		QMessageBox::critical(Main::mainWindow, errorCaption, clientBinError);
 		return false;
 	}
+	executablePath = clientBin;
 
-	executablePath = QFileInfo(clientBin);
+	QString clientWorkingDirPath = clientBinarysDirectory();
+	applicationDir = clientWorkingDirPath;
 
-	if (!executablePath.exists() || executablePath.isDir())
+	if (!applicationDir.exists())
 	{
-		QMessageBox::critical(NULL, errorCaption, tr("File: ") + executablePath.absoluteFilePath() + tr("\ndoesn't exist or is a directory"));
+		QMessageBox::critical(Main::mainWindow, errorCaption, tr("%1\n cannot be used as working directory for:\n%2").arg(clientWorkingDirPath, clientBin));
 		return false;
 	}
 
@@ -463,7 +467,7 @@ bool Server::createJoinCommandLine(QFileInfo& executablePath, QDir& applicationD
 			error += tr("PWADS: %1\nDo you want Wadseeker to find missing PWADS?").arg(missingPwads.join(" "));
 		}
 
-		if (QMessageBox::question(NULL, filesMissingCaption, error, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+		if (QMessageBox::question(Main::mainWindow, filesMissingCaption, error, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 		{
 			if (!iwadFound)
 			{
@@ -510,19 +514,19 @@ void Server::displayJoinCommandLine()
 void Server::join(const QString &connectPassword) const
 {
 	const QString errorCaption = tr("Doomseeker - error");
-	QFileInfo fileinfo;
+	QFileInfo executable;
 	QDir applicationDir;
 	QStringList args;
 
-	if (!createJoinCommandLine(fileinfo, applicationDir, args, connectPassword))
+	if (!createJoinCommandLine(executable, applicationDir, args, connectPassword))
 		return;
 
-	printf("Starting: %s %s\n", fileinfo.absoluteFilePath().toAscii().constData(), args.join(" ").toAscii().constData());
+	printf("Starting (working dir %s): %s %s\n", applicationDir.canonicalPath().toAscii().constData(), executable.absoluteFilePath().toAscii().constData(), args.join(" ").toAscii().constData());
 
 	QProcess proc;
-	if( !proc.startDetached(fileinfo.absoluteFilePath(), args, fileinfo.absolutePath()) )
+	if( !proc.startDetached(executable.canonicalFilePath(), args, applicationDir.canonicalPath()) )
 	{
-		QMessageBox::critical(NULL, errorCaption, tr("File: ") + fileinfo.absoluteFilePath() + tr("\ncannot be run"));
+		QMessageBox::critical(Main::mainWindow, errorCaption, tr("File: %1\ncannot be run").arg(executable.canonicalFilePath()));
 		return;
 	}
 }
