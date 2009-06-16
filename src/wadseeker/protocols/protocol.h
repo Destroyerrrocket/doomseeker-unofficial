@@ -65,7 +65,7 @@ class Protocol : public QObject
 		void	dataReadProgress(int done, int total);
 		void	done(bool success, QByteArray& data, int fileType, const QString& filename);
 		void	nameAndTypeOfReceivedFile(const QString& name, int fileType);
-		void 	message(const QString& msg, Wadseeker::MessageType type);
+		void 	message(const QString& msg, int type);
 
 	protected slots:
 		void			dataReadProgressSlot(int done, int total);

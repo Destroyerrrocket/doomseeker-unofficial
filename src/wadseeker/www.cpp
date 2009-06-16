@@ -20,6 +20,10 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "html.h"
+#include "link.h"
+#include "protocols/ftp.h"
+#include "protocols/http.h"
 #include "www.h"
 #include <QFileInfo>
 
@@ -29,16 +33,19 @@ WWW::WWW()
 {
 	currentProtocol = NULL;
 
-	connect(&ftp, SIGNAL( aborted() ), this, SLOT( protocolAborted() ) );
-	connect(&ftp, SIGNAL( dataReadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
-	connect(&ftp, SIGNAL( done(bool, QByteArray&, int, const QString&) ), this, SLOT( protocolDone(bool, QByteArray&, int, const QString&) ) );
-	connect(&ftp, SIGNAL( message(const QString&, Wadseeker::MessageType) ), this, SLOT( messageSlot(const QString&, Wadseeker::MessageType) ) );
+	ftp = new Ftp();
+	http = new Http();
 
-	connect(&http, SIGNAL( aborted() ), this, SLOT( protocolAborted() ) );
-	connect(&http, SIGNAL( dataReadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
-	connect(&http, SIGNAL( done(bool, QByteArray&, int, const QString&) ), this, SLOT( protocolDone(bool, QByteArray&, int, const QString&) ) );
-	connect(&http, SIGNAL( message(const QString&, Wadseeker::MessageType) ), this, SLOT( messageSlot(const QString&, Wadseeker::MessageType) ) );
-	connect(&http, SIGNAL( redirect(const QUrl&) ), this, SLOT( get(const QUrl&) ) );
+	connect(ftp, SIGNAL( aborted() ), this, SLOT( protocolAborted() ) );
+	connect(ftp, SIGNAL( dataReadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
+	connect(ftp, SIGNAL( done(bool, QByteArray&, int, const QString&) ), this, SLOT( protocolDone(bool, QByteArray&, int, const QString&) ) );
+	connect(ftp, SIGNAL( message(const QString&, int) ), this, SLOT( messageSlot(const QString&, int) ) );
+
+	connect(http, SIGNAL( aborted() ), this, SLOT( protocolAborted() ) );
+	connect(http, SIGNAL( dataReadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
+	connect(http, SIGNAL( done(bool, QByteArray&, int, const QString&) ), this, SLOT( protocolDone(bool, QByteArray&, int, const QString&) ) );
+	connect(http, SIGNAL( message(const QString&, int) ), this, SLOT( messageSlot(const QString&, int) ) );
+	connect(http, SIGNAL( redirect(const QUrl&) ), this, SLOT( get(const QUrl&) ) );
 }
 
 void WWW::abort()
@@ -99,13 +106,13 @@ void WWW::get(const QUrl& url)
 
 	if (Http::isHTTPLink(urlValid))
 	{
-		currentProtocol = &http;
-		http.get(urlValid);
+		currentProtocol = http;
+		http->get(urlValid);
 	}
 	else if (Ftp::isFTPLink(urlValid))
 	{
-		currentProtocol = &ftp;
-		ftp.get(urlValid);
+		currentProtocol = ftp;
+		ftp->get(urlValid);
 	}
 	else
 	{
@@ -127,13 +134,13 @@ bool WWW::getUrl(const QUrl& url)
 
 	if (Http::isHTTPLink(urlValid))
 	{
-		currentProtocol = &http;
-		http.get(urlValid);
+		currentProtocol = http;
+		http->get(urlValid);
 	}
 	else if (Ftp::isFTPLink(urlValid))
 	{
-		currentProtocol = &ftp;
-		ftp.get(urlValid);
+		currentProtocol = ftp;
+		ftp->get(urlValid);
 	}
 	else
 	{
@@ -155,7 +162,7 @@ bool WWW::isAbsoluteUrl(const QUrl& url)
 	return true;
 }
 
-void WWW::messageSlot(const QString& msg, Wadseeker::MessageType type)
+void WWW::messageSlot(const QString& msg, int type)
 {
 	emit message(msg, type);
 }
@@ -186,14 +193,24 @@ void WWW::protocolDone(bool success, QByteArray& data, int fileType, const QStri
 	}
 }
 
+void WWW::setTimeConnectTimeout(int seconds)
+{
+	Protocol::setTimeConnectTimeoutSeconds(seconds);
+}
+
+void WWW::setTimeDownloadTimeout(int seconds)
+{
+	Protocol::setTimeDownloadTimeoutSeconds(seconds);
+}
+
 void WWW::setUserAgent(const QString& agent)
 {
-	http.setUserAgent(agent);
+	http->setUserAgent(agent);
 }
 ///////////////////////////////////////////////////////////////////////////////
 WWWSeeker::WWWSeeker()
 {
-	connect(&http, SIGNAL( nameAndTypeOfReceivedFile(const QString&, int) ), this, SLOT( protocolNameAndTypeOfReceivedFile(const QString&, int) ) );
+	connect(http, SIGNAL( nameAndTypeOfReceivedFile(const QString&, int) ), this, SLOT( protocolNameAndTypeOfReceivedFile(const QString&, int) ) );
 }
 
 void WWWSeeker::checkNextSite()
@@ -235,8 +252,8 @@ void WWWSeeker::get(const QUrl& url)
 	emit message(tr("Next site: %1").arg(urlValid.toString()), Wadseeker::Notice);
 	if (Http::isHTTPLink(urlValid))
 	{
-		currentProtocol = &http;
-		http.get(urlValid);
+		currentProtocol = http;
+		http->get(urlValid);
 	}
 	else if (Ftp::isFTPLink(urlValid))
 	{
@@ -249,8 +266,8 @@ void WWWSeeker::get(const QUrl& url)
 		}
 		else
 		{
-			currentProtocol = &ftp;
-			ftp.get(urlValid);
+			currentProtocol = ftp;
+			ftp->get(urlValid);
 		}
 	}
 	else

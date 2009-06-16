@@ -286,8 +286,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 * This slot acts as a pipe to the message signal.
 		 * @see message
 		 */
-		void			messageSlot(const QString& msg,
-									Wadseeker::MessageType type);
+		void			messageSlot(const QString& msg, int type);
 
 		/**
 		 *	Activated when WWW class finishes aborting,

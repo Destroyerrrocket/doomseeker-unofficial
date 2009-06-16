@@ -23,14 +23,24 @@
 #ifndef __WWW_H_
 #define __WWW_H_
 
-#include "html.h"
-#include "link.h"
-#include "protocols/ftp.h"
-#include "protocols/http.h"
 #include <QObject>
 #include <QSet>
 #include <QStringList>
 #include <QUrl>
+
+#ifdef Q_OS_WIN32
+#ifdef WADSEEKER_API_EXPORT
+#define WADSEEKER_API	__declspec(dllexport)
+#else
+#define WADSEEKER_API	__declspec(dllimport)
+#endif
+#else
+#define WADSEEKER_API
+#endif
+
+class Protocol;
+class Http;
+class Ftp;
 
 /**
  *	@brief Class for manual download of files.
@@ -51,14 +61,14 @@ class WADSEEKER_API WWW : public QObject
 		 *	if no response is received.
 		 *	@param seconds - time in seconds
 		 */
-		static void	setTimeConnectTimeout(int seconds) { Protocol::setTimeConnectTimeoutSeconds(seconds); }
+		static void	setTimeConnectTimeout(int seconds);
 
 		/**
 		 *	Sets time after which to abort downloading
 		 *	if data stops coming.
 		 *	@param seconds - time in seconds
 		 */
-		static void	setTimeDownloadTimeout(int seconds) { Protocol::setTimeDownloadTimeoutSeconds(seconds); }
+		static void	setTimeDownloadTimeout(int seconds);
 
 		/**
 		 *	Allocates a new instance of WWW and connects protocols
@@ -121,22 +131,22 @@ class WADSEEKER_API WWW : public QObject
 		 *	@param msg - content of the message
 		 *	@param type - See: Wadseeker::MessageType
 		 */
-		void 	message(const QString&, Wadseeker::MessageType type);
+		void 	message(const QString&, int type);
 
 	protected slots:
 		virtual void	get(const QUrl&);
 		void 			downloadProgressSlot(int done, int total);
 		virtual void	protocolAborted();
 		virtual void	protocolDone(bool success, QByteArray& data, int fileType, const QString& filename);
-		void 			messageSlot(const QString&, Wadseeker::MessageType type);
+		void 			messageSlot(const QString&, int type);
 
 	protected:
 		static QString	ignoringMessage;
 
 		bool			aborting;
 		Protocol*		currentProtocol;
-		Http			http;
-		Ftp				ftp;
+		Http*			http;
+		Ftp*			ftp;
 
 		QUrl			processedUrl;
 

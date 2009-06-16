@@ -79,7 +79,7 @@ class UnZip : public QObject
 		bool	isZip();
 
 	signals:
-		void message(const QString&, Wadseeker::MessageType type);
+		void message(const QString&, int type);
 
 	protected:
 		DataType	dataType;

@@ -53,7 +53,7 @@ Wadseeker::Wadseeker()
 	connect(www, SIGNAL( aborted() ), this, SLOT( wwwAborted() ) );
 	connect(www, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
 	connect(www, SIGNAL( fileDone(QByteArray&, const QString&) ), this, SLOT( fileDone(QByteArray&, const QString&) ));
-	connect(www, SIGNAL( message(const QString&, Wadseeker::MessageType) ), this, SLOT( messageSlot(const QString&, Wadseeker::MessageType) ) );
+	connect(www, SIGNAL( message(const QString&, int) ), this, SLOT( messageSlot(const QString&, int) ) );
 	connect(www, SIGNAL( fail() ), this, SLOT( wadFail() ) );
 }
 
@@ -145,7 +145,7 @@ void Wadseeker::fileDone(QByteArray& data, const QString& filename)
 		}
 		else
 		{
-			connect (&unzip, SIGNAL( message(const QString&, Wadseeker::MessageType) ), this, SLOT( messageSlot(const QString&, Wadseeker::MessageType) ) );
+			connect (&unzip, SIGNAL( message(const QString&, int) ), this, SLOT( messageSlot(const QString&, int) ) );
 			ZipLocalFileHeader* zip = unzip.findFileEntry(currentWad);
 
 			if (zip != NULL)
@@ -191,9 +191,9 @@ bool Wadseeker::isIwad(const QString& wad)
 	return false;
 }
 
-void Wadseeker::messageSlot(const QString& msg, MessageType type)
+void Wadseeker::messageSlot(const QString& msg, int type)
 {
-	emit message(msg, type);
+	emit message(msg, static_cast<Wadseeker::MessageType>(type));
 }
 
 void Wadseeker::nextWad()
