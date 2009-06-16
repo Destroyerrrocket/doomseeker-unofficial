@@ -47,6 +47,7 @@ IP2C::~IP2C()
 
 void IP2C::downloadDatabase()
 {
+//	qDebug() << "Downloading";
 	connect(www, SIGNAL( fileDone(QByteArray&, const QString&) ), this, SLOT( processHttp(QByteArray&, const QString&) ));
 	www->getUrl(netLocation);
 }

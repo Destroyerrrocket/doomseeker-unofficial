@@ -333,7 +333,7 @@ int ServerListModel::updateServer(int row, Server* server, int response)
 	if (!flag.isNull())
 	{
 		qstdItem = item(row, SLCID_SERVERNAME);
-		qstdItem->setData(flag, Qt::DecorationRole);
+		qstdItem->setIcon(flag);
 	}
 
 	// Address is also set no matter what, so it's set here.
