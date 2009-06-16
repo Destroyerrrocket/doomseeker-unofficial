@@ -24,31 +24,54 @@
 #include <QBuffer>
 #include <QDebug>
 #include <QFile>
-#include <QHttp>
+#include <QFileInfo>
+#include <QResource>
 #include <QTime>
 #include <zlib.h>
 
 #include "ip2c.h"
 #include "sdeapi/scanner.hpp"
 
-IP2C::IP2C(QString file, QUrl netLocation) : file(file), netLocation(netLocation), http(NULL)
+IP2C::IP2C(QString file, QUrl netLocation) : file(file), netLocation(netLocation)
 {
 	read = readDatabase();
+	www = new WWW();
+	www->setUserAgent(QString("Doomseeker/") + QString(VERSION));
 }
 
 IP2C::~IP2C()
 {
-	if(http != NULL)
-		delete http;
+	if(www != NULL)
+		delete www;
 }
 
 void IP2C::downloadDatabase()
 {
-	if(http != NULL)
-		delete http;
-	http = new QHttp(netLocation.host(), netLocation.port(80));
-	http->get(netLocation.encodedPath() + "?" + netLocation.encodedQuery());
-	connect(http, SIGNAL( done(bool) ), this, SLOT( processHttp(bool) ));
+	connect(www, SIGNAL( fileDone(QByteArray&, const QString&) ), this, SLOT( processHttp(QByteArray&, const QString&) ));
+	www->getUrl(netLocation);
+}
+
+QPixmap IP2C::flag(unsigned int ipaddress) const
+{
+	const QString unknown = ":flags/unknown.gif";
+
+	QString country = lookupIP(ipaddress);
+	if (country.isEmpty())
+	{
+		printf("Unrecognized IP address: %s (%u)\n", QHostAddress(ipaddress).toString().toAscii().constData(), ipaddress);
+		return QPixmap(unknown);
+	}
+
+	QString resName = ":flags/" + country + ".gif";
+	QResource res(resName);
+
+	if (!res.isValid())
+	{
+		printf("No flag for country: %s\n", country.toAscii().constData());
+		return QPixmap(unknown);
+	}
+
+	return QPixmap(resName);
 }
 
 QString IP2C::lookupIP(unsigned int ipaddress) const
@@ -59,49 +82,58 @@ QString IP2C::lookupIP(unsigned int ipaddress) const
 	foreach(const IP2CData entry, database)
 	{
 		if(ipaddress >= entry.ipStart && ipaddress <= entry.ipEnd)
+		{
 			return entry.country;
+		}
 	}
 
 	return QString();
 }
 
-void IP2C::processHttp(bool error)
+bool IP2C::needsUpdate()
 {
-	if(http == NULL)
-		return;
+	if (file.isEmpty())
+		return false;
 
-	if(!error)
+	QFileInfo fi(file);
+	if (fi.exists())
 	{
-		// Get the data and uncompress it.
-		QByteArray data = http->readAll();
-		// First we need to write it to a temporary file
-		QFile tmp(file + ".gz");
-		if(tmp.open(QIODevice::WriteOnly) && tmp.isWritable())
-		{
-			tmp.write(data);
-
-			QByteArray uncompressedData;
-			gzFile gz = gzopen((file + ".gz").toAscii().constData(), "rb");
-			if(gz != NULL)
-			{
-				char chunk[131072]; // 128k
-				int bytesRead = 0;
-				while((bytesRead = gzread(gz, chunk, 131072)) != 0)
-					uncompressedData.append(QByteArray(chunk, bytesRead));
-				gzclose(gz);
-		
-				// write it to a new file.
-				QFile out(file);
-				if(out.open(QIODevice::WriteOnly) && out.isWritable())
-					out.write(uncompressedData);
-			}
-
-			tmp.remove();
-		}
+		// Currently there are no other criteria, if file exists
+		// it doesn't need to be downloaded.
+		return false;
 	}
 
-	delete http;
-	http = NULL;
+	return true;
+}
+
+void IP2C::processHttp(QByteArray& data, const QString& filename)
+{
+	// Get the data and uncompress it.
+	qDebug() << data.size();
+	// First we need to write it to a temporary file
+	QFile tmp(file + ".gz");
+	if(tmp.open(QIODevice::WriteOnly) && tmp.isWritable())
+	{
+		tmp.write(data);
+
+		QByteArray uncompressedData;
+		gzFile gz = gzopen((file + ".gz").toAscii().constData(), "rb");
+		if(gz != NULL)
+		{
+			char chunk[131072]; // 128k
+			int bytesRead = 0;
+			while((bytesRead = gzread(gz, chunk, 131072)) != 0)
+				uncompressedData.append(QByteArray(chunk, bytesRead));
+			gzclose(gz);
+
+			// write it to a new file.
+			QFile out(file);
+			if(out.open(QIODevice::WriteOnly) && out.isWritable())
+				out.write(uncompressedData);
+		}
+
+		tmp.remove();
+	}
 
 	readDatabase();
 }
@@ -149,7 +181,7 @@ bool IP2C::readDatabase()
 
 		database << entry;
 	}
-	qDebug("IP2C Database read in %d ms.", time.elapsed());
+	qDebug("IP2C Database read in %d ms. Entries read: %d", time.elapsed(), database.size());
 
 	emit databaseUpdated();
 	return true;

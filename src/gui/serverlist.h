@@ -56,6 +56,7 @@ class SLHandler : public QObject
 		void serverBegunRefreshing(Server* server);
 		void serverUpdated(Server *server, int response);
 		void tableRightClicked(const QModelIndex&);
+		void updateCountryFlags();
 		void updateSearch(const QString& search);
 
 	protected slots:

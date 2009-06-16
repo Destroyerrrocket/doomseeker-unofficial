@@ -21,8 +21,10 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "gui/models/serverlistmodel.h"
+#include "main.h"
 #include <QPainter>
 #include <QTime>
+
 
 ServerListColumn ServerListModel::columns[] =
 {
@@ -325,6 +327,14 @@ int ServerListModel::updateServer(int row, Server* server, int response)
 		iconPainter.end();
 	}
 	fillItem(qstdItem, server->metaObject()->className(), icon);
+
+	// Also the flag should be set no matter what
+	QPixmap flag = Main::ip2c->flag(server->address());
+	if (!flag.isNull())
+	{
+		qstdItem = item(row, SLCID_SERVERNAME);
+		qstdItem->setData(flag, Qt::DecorationRole);
+	}
 
 	// Address is also set no matter what, so it's set here.
 	qstdItem = item(row, SLCID_ADDRESS);

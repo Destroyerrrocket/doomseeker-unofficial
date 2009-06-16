@@ -148,7 +148,7 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 {
 	QString attachmentInfo;
 	QString tmp;
-	//qDebug() << resp.toString();
+	// qDebug() << resp.toString();
 
 	// Set defaults
 	noData = false;
@@ -183,6 +183,7 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 
 			break;
 
+		case PermamentlyMoved:
 		case Redirect:
 			noData = attachmentInfo.isEmpty();
 			emit message(tr("Redirecting"), Wadseeker::Notice);
@@ -200,7 +201,7 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 			break;
 
 		default:
-			noData = true;
+			noData = attachmentInfo.isEmpty();
 			emit message(tr("HTTP response %1 - %2.").arg(QString::number(resp.statusCode())).arg(resp.reasonPhrase()), Wadseeker::Error);
 			break;
 	}

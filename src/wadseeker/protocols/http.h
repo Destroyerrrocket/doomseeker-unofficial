@@ -33,8 +33,9 @@ class WADSEEKER_API Http : public Protocol
 	public:
 		enum	HTTPResponseCodes
 		{
-			OK 			= 200,
-			Redirect 	= 302,
+			OK 					= 200,
+			PermamentlyMoved 	= 301,
+			Redirect 			= 302,
 		};
 
 		static bool	isHTTPLink(const QUrl&);

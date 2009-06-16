@@ -59,6 +59,9 @@ SLHandler::SLHandler(ServerListView* tab)
 	cleaner.setInterval(200);
 	cleaner.start();
 	connect(&cleaner, SIGNAL( timeout() ), this, SLOT ( cleanUp() ) );
+
+	// Finally, make all flags update with ip2c database
+	connect(Main::ip2c, SIGNAL( databaseUpdated() ), this, SLOT( updateCountryFlags() ));
 }
 
 SLHandler::~SLHandler()
@@ -336,6 +339,8 @@ void SLHandler::serverUpdated(Server *server, int response)
 		row = model->addServer(server, response);
 	}
 
+	table->resizeRowToContents(row);
+
 	needsCleaning = true;
 }
 
@@ -352,6 +357,11 @@ void SLHandler::tableRightClicked(const QModelIndex& index)
 		Server* serv = model->serverFromList(realIndex);
 		serv->refresh();
 	}
+}
+
+void SLHandler::updateCountryFlags()
+{
+
 }
 
 void SLHandler::updateSearch(const QString& search)

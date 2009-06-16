@@ -99,6 +99,13 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 		// not to refresh them.
 		refreshServers(true); // This should include only refreshing customs
 	}
+
+	// IP2C
+	connect(Main::ip2c, SIGNAL( databaseUpdated() ), serverTableHandler, SLOT( updateCountryFlags() ) );
+	if (Main::ip2c->needsUpdate())
+	{
+		Main::ip2c->downloadDatabase();
+	}
 }
 
 MainWindow::~MainWindow()

@@ -251,6 +251,7 @@ int UnZip::readHeader(QByteArray& zipData, qint64 pos, ZipLocalFileHeader& zip)
 
 int UnZip::readHeader(QFile& zipFile, qint64 pos, ZipLocalFileHeader& zip)
 {
+	// This expects the file to be already open and doesn't close it.
 	int readErr;
 	zipFile.seek(pos);
 

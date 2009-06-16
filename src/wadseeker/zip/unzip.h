@@ -87,6 +87,9 @@ class UnZip : public QObject
 		QByteArray	zipData;
 
 		int			readHeader(QByteArray& zipData, qint64 pos, ZipLocalFileHeader& zip);
+		/**
+		 *	This method expects zipFile to be already open and it won't close it.
+		 */
 		int			readHeader(QFile& zipFile, qint64 pos, ZipLocalFileHeader& zip);
 		int			uncompress(char* out, unsigned long uncompressedSize, const QByteArray& inArray);
 };

@@ -186,9 +186,9 @@ void WWW::protocolDone(bool success, QByteArray& data, int fileType, const QStri
 	}
 }
 
-void WWW::setUserAgent(const QString& str)
+void WWW::setUserAgent(const QString& agent)
 {
-	http.setUserAgent(str);
+	http.setUserAgent(agent);
 }
 ///////////////////////////////////////////////////////////////////////////////
 WWWSeeker::WWWSeeker()

@@ -85,6 +85,12 @@ class MAIN_EXPORT Scanner
 		 * be printed if that is not the case.
 		 */
 		void		mustGetToken(char token);
+
+		/**
+		 * Returns current position.
+		 */
+		unsigned int position() const { return pos; }
+
 		/**
 		 * Returns true if there is still more to read.
 		 */

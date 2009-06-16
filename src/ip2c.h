@@ -25,12 +25,13 @@
 #define __IP2C_H__
 
 #include <QHostAddress>
-#include <QHttp>
 #include <QList>
+#include <QPixmap>
 #include <QString>
 #include <QUrl>
 
 #include "global.h"
+#include "wadseeker/www.h"
 
 class MAIN_EXPORT IP2C : public QObject
 {
@@ -48,10 +49,14 @@ class MAIN_EXPORT IP2C : public QObject
 		IP2C(QString file, QUrl netLocation);
 		~IP2C();
 
-		void	downloadDatabase();
-		bool	isRead() const { return read; }
-		QString	lookupIP(unsigned int ipaddress) const;
-		QString	lookupIP(const QHostAddress &ipaddress) const { return lookupIP(ipaddress.toIPv4Address()); }
+		void			downloadDatabase();
+		const QString& 	filename() { return file; }
+		QPixmap			flag(unsigned int ipaddress) const;
+		QPixmap 		flag(const QHostAddress& ipaddress) const { return flag(ipaddress.toIPv4Address()); }
+		bool			isRead() const { return read; }
+		QString			lookupIP(unsigned int ipaddress) const;
+		QString			lookupIP(const QHostAddress &ipaddress) const { return lookupIP(ipaddress.toIPv4Address()); }
+		bool			needsUpdate();
 
 	public slots:
 		bool	readDatabase();
@@ -61,13 +66,13 @@ class MAIN_EXPORT IP2C : public QObject
 
 	private:
 		QList<IP2CData>	database;
-		QHttp			*http;
 		QString			file;
 		QUrl			netLocation;
 		bool			read;
+		WWW*			www;
 
 	private slots:
-		void	processHttp(bool error);
+		void	processHttp(QByteArray& data, const QString& filename);
 };
 
 #endif /* __IP2C_H__ */

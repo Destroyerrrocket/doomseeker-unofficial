@@ -4,5 +4,13 @@
 	<file alias="icon.png">icon_small.png</file>
 	<file alias="logo.png">logo_small.png</file>
 	<file>locked.png</file>
+	<file>flags/unknown.gif</file>
+	<file>flags/CAN.gif</file>	
+	<file>flags/CZE.gif</file>	
+	<file>flags/FRA.gif</file>
+	<file>flags/GBR.gif</file>
+	<file>flags/POL.gif</file>
+	<file>flags/RUS.gif</file>
+	<file>flags/USA.gif</file>	
 </qresource>
 </RCC>
