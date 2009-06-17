@@ -24,6 +24,9 @@
 #include "skulltag/engineSkulltagConfig.h"
 #include <QFileDialog>
 
+const // clear warnings
+#include "skulltag/skulltag.xpm"
+
 EngineSkulltagConfigBox::EngineSkulltagConfigBox(Config* cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
 {
 	setupUi(this);
@@ -56,8 +59,9 @@ void EngineSkulltagConfigBox::btnBrowseTestingPathClicked()
 ConfigurationBoxInfo* EngineSkulltagConfigBox::createStructure(Config* cfg, QWidget* parent)
 {
 	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
-	ec->confBox = new EngineSkulltagConfigBox(cfg, parent);
 	ec->boxName = tr("Skulltag");
+	ec->confBox = new EngineSkulltagConfigBox(cfg, parent);
+	ec->icon = QPixmap(skulltag_xpm);
 	return ec;
 }
 

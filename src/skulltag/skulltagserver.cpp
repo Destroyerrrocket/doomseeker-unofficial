@@ -27,6 +27,8 @@
 #include "global.h"
 #include "main.h"
 
+#include <QMessageBox>
+
 const // clear warnings
 #include "skulltag/skulltag.xpm"
 
@@ -220,9 +222,45 @@ QString SkulltagServer::clientBinary(QString& error) const
 		path += version();
 
 		QFileInfo fi(path);
-		if (!fi.exists() || !fi.isDir())
+		if (!fi.exists())
 		{
-			error = tr("%1\ndoesn't exist or is NOT a directory.\nPerhaps you need to install new testing binaries.").arg(path);
+			error = tr("%1\ndoesn't exist.\nYou need to install new testing binaries.").arg(path);
+			QString messageBoxContent = tr("%1\n\nDo you want Doomseeker to create %2 directory and copy all your .ini files from your base directory?\n\nNote: You will still have to manualy install the binaries.").arg(error, version());
+
+			if (QMessageBox::question(Main::mainWindow, tr("Doomseeker - missing testing binaries"), messageBoxContent, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+			{
+				// setting->string() should still contain base dir
+				// for testing binaries
+				QDir dir(setting->string());
+				if (!dir.mkdir(version()))
+				{
+					error = tr("Unable to create directory:\n%1").arg(path);
+					return QString();
+				}
+
+				// Now copy all .ini's. On Linux .ini's are kept in ~/.skulltag so this will
+				// do nothing, but on Windows this should work like magic.
+				QDir baseBinaryDir(clientBinarysDirectory());
+				QStringList nameFilters;
+				nameFilters << "*.ini";
+				QStringList iniFiles = baseBinaryDir.entryList(nameFilters, QDir::Files);
+				foreach(QString str, iniFiles)
+				{
+					QString sourcePath = baseBinaryDir.canonicalPath() + '/' + str;
+					QString targetPath = path + '/' + str;
+					QFile file(sourcePath);
+					file.copy(targetPath);
+				}
+
+				QMessageBox::information(Main::mainWindow, tr("Doomseeker"), tr("Please install now version \"%1\" into:\n%2").arg(version(), path));
+				error = QString();
+			}
+			return QString();
+		}
+
+		if (!fi.isDir())
+		{
+			error = tr("%1\nexists but is NOT a directory.\nCannot proceed.").arg(path);
 			return QString();
 		}
 

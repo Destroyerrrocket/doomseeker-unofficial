@@ -122,6 +122,8 @@ struct MAIN_EXPORT ConfigurationBoxInfo
 		// Name displayed on the engines list.
 		QString 				boxName;
 
+		QIcon					icon;
+
 		// Index, used by ConfigureDlg class to find.
 		QStandardItem*			itemOnTheList;
 

@@ -413,7 +413,9 @@ bool Server::createJoinCommandLine(QFileInfo& executablePath, QDir& applicationD
 	QString clientBin = clientBinary(clientBinError);
 	if (clientBin.isEmpty())
 	{
-		QMessageBox::critical(Main::mainWindow, errorCaption, clientBinError);
+		if (!clientBinError.isEmpty())
+			QMessageBox::critical(Main::mainWindow, errorCaption, clientBinError);
+
 		return false;
 	}
 	executablePath = clientBin;

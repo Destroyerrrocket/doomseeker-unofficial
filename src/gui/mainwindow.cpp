@@ -56,6 +56,7 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
 	{
 		QAction *query = menuQuery->addAction(Main::enginePlugins[i]->info->name, this, SLOT( enablePort() ));
+		query->setIcon(Main::enginePlugins[i]->info->pInterface->icon());
 		query->setCheckable(true);
 		query->setChecked(true);
 		queryMenuPorts[i] = query;

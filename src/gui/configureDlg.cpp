@@ -114,6 +114,7 @@ bool ConfigureDlg::addConfigurationBox(QStandardItem* rootItem, ConfigurationBox
 	}
 
 	QStandardItem* item = new QStandardItem(cfgBox->boxName);
+	item->setIcon(cfgBox->icon);
 	cfgBox->itemOnTheList = item;
 	if (rootItem == NULL)
 	{

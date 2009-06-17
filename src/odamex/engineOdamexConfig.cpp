@@ -24,6 +24,9 @@
 #include "odamex/engineOdamexConfig.h"
 #include <QFileDialog>
 
+const // clear warnings
+#include "odamex/odamex.xpm"
+
 EngineOdamexConfigBox::EngineOdamexConfigBox(Config* cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
 {
 	setupUi(this);
@@ -34,8 +37,9 @@ EngineOdamexConfigBox::EngineOdamexConfigBox(Config* cfg, QWidget* parent) : Con
 ConfigurationBoxInfo* EngineOdamexConfigBox::createStructure(Config* cfg, QWidget* parent)
 {
 	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
-	ec->confBox = new EngineOdamexConfigBox(cfg, parent);
 	ec->boxName = tr("Odamex");
+	ec->confBox = new EngineOdamexConfigBox(cfg, parent);
+	ec->icon = QPixmap(odamex_xpm);
 	return ec;
 }
 ///////////////////////////////////////////////////
