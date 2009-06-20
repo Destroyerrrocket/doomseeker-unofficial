@@ -121,6 +121,12 @@ class ServerListModel : public QStandardItemModel
 
 		void removeCustomServers();
 
+		/**
+		 *  Updates flag on given row.
+		 *  @param row - index of row to update
+		 */
+		void updateFlag(int row);
+
 		QModelIndex findServerOnTheList(const Server* server);
 		Server* serverFromList(int rowNum);
 		Server* serverFromList(const QModelIndex&);
@@ -139,6 +145,7 @@ class ServerListModel : public QStandardItemModel
 
 		void 					setBad(int row, Server* server);
 		void 					setBanned(int row, Server* server);
+		void                    setCountryFlag(QStandardItem* itm, const QHostAddress& addr);
 		void 					setGood(int row, Server* server);
 		void					setTimeout(int row, Server* server);
 		void 					setWait(int row, Server* server);

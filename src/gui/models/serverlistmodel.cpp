@@ -204,6 +204,15 @@ void ServerListModel::setBanned(int row, Server* server)
 	fillItem(qstdItem, SG_BANNED);
 }
 
+void ServerListModel::setCountryFlag(QStandardItem* itm, const QHostAddress& addr)
+{
+	QPixmap flag = Main::ip2c->flag(addr);
+	if (!flag.isNull())
+	{
+		itm->setIcon(flag);
+	}
+}
+
 void ServerListModel::setGood(int row, Server* server)
 {
 	QStandardItem* qstdItem;
@@ -329,12 +338,8 @@ int ServerListModel::updateServer(int row, Server* server, int response)
 	fillItem(qstdItem, server->metaObject()->className(), icon);
 
 	// Also the flag should be set no matter what
-	QPixmap flag = Main::ip2c->flag(server->address());
-	if (!flag.isNull())
-	{
-		qstdItem = item(row, SLCID_SERVERNAME);
-		qstdItem->setIcon(flag);
-	}
+	qstdItem = item(row, SLCID_SERVERNAME);
+	setCountryFlag(qstdItem, server->address());
 
 	// Address is also set no matter what, so it's set here.
 	qstdItem = item(row, SLCID_ADDRESS);
@@ -379,6 +384,13 @@ QVariant ServerListModel::columnSortData(int row, int column)
 {
 	QStandardItem* it = item(row, column);
 	return it->data(SLDT_SORT);
+}
+
+void ServerListModel::updateFlag(int row)
+{
+    Server* serv = serverFromList(row);
+    QStandardItem* itm = item(row, SLCID_SERVERNAME);
+    setCountryFlag(itm, serv->address());
 }
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////

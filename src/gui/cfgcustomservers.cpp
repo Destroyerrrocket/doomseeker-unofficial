@@ -27,6 +27,9 @@
 #include <QMessageBox>
 #include <QUrl>
 
+const // clear warnings
+#include "unknownengine.xpm"
+
 CustomServersConfigBox::CustomServersConfigBox(Config *cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent)
 {
 	setupUi(this);
@@ -197,13 +200,17 @@ void CustomServersConfigBox::setEngine()
 void CustomServersConfigBox::setEngineOnItem(QStandardItem* item, const QString& engineName)
 {
 	int engineId = Main::enginePlugins.pluginIndexFromName(engineName);
+
+	item->setData(engineName);
+	item->setToolTip(engineName);
 	if (engineId >= 0)
 	{
 		const PluginInfo* nfo = Main::enginePlugins[engineId]->info;
-
-		item->setData(nfo->name);
 		item->setIcon(nfo->pInterface->icon());
-		item->setToolTip(nfo->name);
+	}
+	else
+	{
+	    item->setIcon(QPixmap(unknownengine_xpm));
 	}
 
 	item->setEditable(false);

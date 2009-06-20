@@ -51,19 +51,19 @@ QList<CustomServerInfo>* CustomServers::decodeConfigEntries(const QString& str)
 				CustomServerInfo csi; // CSI: Miami
 				csi.engine = QUrl::fromPercentEncoding(entryList[0].toAscii());
 				csi.engineIndex = Main::enginePlugins.pluginIndexFromName(csi.engine);
-				if (csi.engineIndex >= 0)
-				{
-					csi.host = QUrl::fromPercentEncoding(entryList[1].toAscii());
 
-					bool ok;
-					int port = QString(entryList[2]).toInt(&ok);
-					if (ok && port >= 1 && port <= 65535)
-						csi.port = port;
-					else
-						csi.port = Main::enginePlugins[csi.engineIndex]->info->pInterface->defaultServerPort();
+                csi.host = QUrl::fromPercentEncoding(entryList[1].toAscii());
 
-					csiList->append(csi);
-				}
+                bool ok;
+                int port = QString(entryList[2]).toInt(&ok);
+                if (ok && port >= 1 && port <= 65535)
+                    csi.port = port;
+                else if (csi.engineIndex >= 0)
+                    csi.port = Main::enginePlugins[csi.engineIndex]->info->pInterface->defaultServerPort();
+                else
+                    csi.port = 1;
+
+                csiList->append(csi);
 			} // end of if
 		} // end of else if
 	} // end of for

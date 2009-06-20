@@ -361,6 +361,10 @@ void SLHandler::tableRightClicked(const QModelIndex& index)
 
 void SLHandler::updateCountryFlags()
 {
+    for (int i = 0; i < model->rowCount(); ++i)
+    {
+        model->updateFlag(i);
+    }
 
 }
 

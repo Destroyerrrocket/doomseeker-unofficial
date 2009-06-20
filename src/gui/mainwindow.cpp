@@ -55,10 +55,11 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 	queryMenuPorts = new const QAction*[Main::enginePlugins.numPlugins()];
 	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
 	{
-		QAction *query = menuQuery->addAction(Main::enginePlugins[i]->info->name, this, SLOT( enablePort() ));
+	    QString name = Main::enginePlugins[i]->info->name;
+		QAction *query = menuQuery->addAction(name, this, SLOT( enablePort() ));
 		query->setIcon(Main::enginePlugins[i]->info->pInterface->icon());
 		query->setCheckable(true);
-		query->setChecked(true);
+		query->setChecked( static_cast<bool>(Main::config->setting(name + "Query")->integer()) );
 		queryMenuPorts[i] = query;
 	}
 
@@ -114,6 +115,19 @@ MainWindow::~MainWindow()
 	// Window size settings
 	Main::config->setting("MainWindowWidth")->setValue(width());
 	Main::config->setting("MainWindowHeight")->setValue(height());
+
+	QList<QAction*> menuQueryActions = menuQuery->actions();
+	QList<QAction*>::iterator it;
+	for (it = menuQueryActions.begin(); it != menuQueryActions.end(); ++it)
+	{
+	    QAction* action = *it;
+
+	    if (!action->text().isEmpty())
+	    {
+	        QString settingName = action->text() + "Query";
+	        Main::config->setting(settingName)->setValue(action->isChecked());
+	    }
+	}
 
 	delete serverTableHandler;
 

@@ -109,8 +109,6 @@ bool IP2C::needsUpdate()
 
 void IP2C::processHttp(QByteArray& data, const QString& filename)
 {
-	// Get the data and uncompress it.
-	qDebug() << data.size();
 	// First we need to write it to a temporary file
 	QFile tmp(file + ".gz");
 	if(tmp.open(QIODevice::WriteOnly) && tmp.isWritable())
@@ -128,9 +126,13 @@ void IP2C::processHttp(QByteArray& data, const QString& filename)
 			gzclose(gz);
 
 			// write it to a new file.
-			QFile out(file);
-			if(out.open(QIODevice::WriteOnly) && out.isWritable())
-				out.write(uncompressedData);
+			// but ignore if data failed to uncompress
+			if (uncompressedData.size() > 0)
+			{
+                QFile out(file);
+                if(out.open(QIODevice::WriteOnly) && out.isWritable())
+                    out.write(uncompressedData);
+			}
 		}
 
 		tmp.remove();

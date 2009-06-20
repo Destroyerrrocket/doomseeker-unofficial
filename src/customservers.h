@@ -26,6 +26,10 @@
 #include "masterclient.h"
 #include <QList>
 
+/**
+ *  If server for unknown engine is found, the engineIndex should be set
+ *  to a negative value.
+ */
 struct CustomServerInfo
 {
 	QString engine;
@@ -47,7 +51,10 @@ class CustomServers : public MasterClient
 
 		/**
 		 *	Reads data in format `(<engine_name>;<host_name>;<port>);(...)...`
-		 *	and splits it to a list of CustomServerInfo objects.
+		 *	and splits it to a list of CustomServerInfo objects. If a server
+		 *  for unknown engine is found it will be appended anyway
+		 *  but the CustomServerInfo::engineIndex will be set to a
+		 *  negative value.
 		 *	@param str - concatenated string in required format
 		 *	@return list of custom servers
 		 */
