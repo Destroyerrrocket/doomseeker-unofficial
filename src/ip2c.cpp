@@ -166,10 +166,10 @@ bool IP2C::readDatabase()
 		bool ok = true;
 
 		if(!sc.checkToken(TK_StringConst)) break; // ipStart
-		entry.ipStart = sc.str.toInt(&ok);
+		entry.ipStart = sc.str.toUInt(&ok);
 		if(!ok || !sc.checkToken(',')) break;
 		if(!sc.checkToken(TK_StringConst)) break; // ipEnd
-		entry.ipEnd = sc.str.toInt(&ok);
+		entry.ipEnd = sc.str.toUInt(&ok);
 		if(!ok || !sc.checkToken(',')) break;
 		if(!sc.checkToken(TK_StringConst)) break; // Register
 		if(!sc.checkToken(',')) break;
