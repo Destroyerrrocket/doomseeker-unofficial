@@ -37,14 +37,6 @@ class ServerListView : public QTableView
 			bAllowAllRowsRefresh = true;
 		}
 
-		void fixRowsSize()
-		{
-			for (int i = 0; i < model()->rowCount(); ++i)
-			{
-				resizeRowToContents(i);
-			}
-		}
-
 		void setAllowAllRowsRefresh(bool b) { bAllowAllRowsRefresh = b; }
 
 	public slots:

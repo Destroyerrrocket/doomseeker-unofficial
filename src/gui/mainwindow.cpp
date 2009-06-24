@@ -59,10 +59,19 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 		QAction *query = menuQuery->addAction(name, this, SLOT( enablePort() ));
 		query->setIcon(Main::enginePlugins[i]->info->pInterface->icon());
 		query->setCheckable(true);
-		query->setChecked( static_cast<bool>(Main::config->setting(name + "Query")->integer()) );
+
+		if (Main::config->settingExists(name + "Query"))
+		{
+			query->setChecked( static_cast<bool>(Main::config->setting(name + "Query")->integer()) );
+		}
+		else
+		{
+			// if no setting is found for this engine
+			// set default as follows:
+			query->setChecked(true);
+		}
 		queryMenuPorts[i] = query;
 	}
-
 	// Get the master
 	mc = new MasterManager();
 
@@ -108,6 +117,10 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 	{
 		Main::ip2c->downloadDatabase();
 	}
+
+	// This must be executed in order to set port query booleans
+	// after the Query menu actions settings are read.
+	enablePort();
 }
 
 MainWindow::~MainWindow()
