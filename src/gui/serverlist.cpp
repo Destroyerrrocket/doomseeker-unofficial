@@ -54,6 +54,7 @@ SLHandler::SLHandler(ServerListView* tab)
 	}
 
 	table = tab;
+	table->setIconSize(QSize(26, 15));
 	prepareServerTable();
 	needsCleaning = false;
 	cleaner.setInterval(200);
@@ -365,7 +366,6 @@ void SLHandler::updateCountryFlags()
     {
         model->updateFlag(i);
     }
-
 }
 
 void SLHandler::updateSearch(const QString& search)

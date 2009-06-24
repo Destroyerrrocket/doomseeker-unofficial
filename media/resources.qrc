@@ -4,13 +4,18 @@
 	<file alias="icon.png">icon_small.png</file>
 	<file alias="logo.png">logo_small.png</file>
 	<file>locked.png</file>
-	<file>flags/unknown.gif</file>
-	<file>flags/CAN.gif</file>	
-	<file>flags/CZE.gif</file>	
-	<file>flags/FRA.gif</file>
-	<file>flags/GBR.gif</file>
-	<file>flags/POL.gif</file>
-	<file>flags/RUS.gif</file>
-	<file>flags/USA.gif</file>	
+	<file alias="flags/unknown">flags/unknown.gif</file>
+  <file alias="flags/AUS">flags/AUS.gif</file>	
+	<file alias="flags/CAN">flags/CAN.gif</file>	
+	<file alias="flags/CZE">flags/CZE.gif</file>	
+  <file alias="flags/EU" >flags/EU.gif</file>
+  <file alias="flags/FIN">flags/FIN.gif</file>
+	<file alias="flags/FRA">flags/FRA.gif</file>
+	<file alias="flags/GBR">flags/GBR.gif</file>
+  <file alias="flags/HUN">flags/HUN.gif</file>
+  <file alias="flags/NLD">flags/NLD.gif</file>
+	<file alias="flags/POL">flags/POL.gif</file>
+	<file alias="flags/RUS">flags/RUS.gif</file>
+	<file alias="flags/USA">flags/USA.gif</file>	
 </qresource>
 </RCC>

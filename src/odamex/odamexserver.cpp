@@ -127,7 +127,10 @@ bool OdamexServer::readRequest(QByteArray &data)
 	// Check the response code
 	int response = READINT32(&in[0]);
 	if(response != SERVER_GOOD)
+	{
 		emit updated(this, RESPONSE_BAD);
+		return false;
+	}
 
 	int pos = 8;
 
@@ -260,6 +263,5 @@ bool OdamexServer::readRequest(QByteArray &data)
 		serverVersion = QString("%1.%2.%3").arg(version_major).arg(version_minor).arg(version_patch);
 	}
 
-	emit updated(this, RESPONSE_GOOD);
 	return true;
 }

@@ -54,7 +54,7 @@ void IP2C::downloadDatabase()
 
 QPixmap IP2C::flag(unsigned int ipaddress) const
 {
-	const QString unknown = ":flags/unknown.gif";
+	const QString unknown = ":flags/unknown";
 
 	QString country = lookupIP(ipaddress);
 	if (country.isEmpty())
@@ -63,7 +63,7 @@ QPixmap IP2C::flag(unsigned int ipaddress) const
 		return QPixmap(unknown);
 	}
 
-	QString resName = ":flags/" + country + ".gif";
+	QString resName = ":flags/" + country;
 	QResource res(resName);
 
 	if (!res.isValid())
