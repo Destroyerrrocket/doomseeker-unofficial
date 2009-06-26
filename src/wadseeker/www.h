@@ -41,6 +41,7 @@
 class Protocol;
 class Http;
 class Ftp;
+class Idgames;
 
 /**
  *	@brief Class for manual download of files.
@@ -75,6 +76,7 @@ class WADSEEKER_API WWW : public QObject
 		 *	to signsls.
 		 */
 		WWW();
+		virtual ~WWW();
 
 		/**
 		 *	Issues an abort command on currently working protocol and
@@ -150,7 +152,14 @@ class WADSEEKER_API WWW : public QObject
 
 		QUrl			processedUrl;
 
-		QUrl		constructValidUrl(const QUrl&);
+		QUrl			constructValidUrl(const QUrl&);
+
+		/**
+		 *	Executed through setUserAgent. Descendant classes can assign
+		 *	the same user-agent to other protocols through this.
+		 *	@param agent - string to send in HTTP queries
+		 */
+		virtual void 	setUserAgentEx(const QString& agent) {}
 };
 
 /**
@@ -173,6 +182,7 @@ class WADSEEKER_API WWWSeeker : public WWW
 
 	public:
 		WWWSeeker();
+		virtual ~WWWSeeker();
 
 		/**
 		 *	Tells the class to keep looking for file on next available
@@ -187,10 +197,12 @@ class WADSEEKER_API WWWSeeker : public WWW
 		 *	Begins the search process. This is the main entry method for this
 		 *	class.
 		 *	@param seekedFiles - list of filenames we want to get.
-		 *	@param primaryFilename - filename used to replace wildcards.
+		 *	@param primaryFilename - filename used to replace %WADNAME%
+		 *		wildcards.
+		 *	@param zipFilename - filename used to replace %ZIPNAME wildcards.
 		 *	@see primaryFile
 		 */
-		void searchFiles(const QStringList& seekedFiles, const QString& primaryFilename);
+		void searchFiles(const QStringList& seekedFiles, const QString& primaryFilename, const QString& zipFilename);
 
 		/**
 		 *	Sets a custom site. This site has priority over all other
@@ -208,6 +220,17 @@ class WADSEEKER_API WWWSeeker : public WWW
 		 */
 		void setPrimarySites(const QStringList& lst) { primarySites = lst; }
 
+		/**
+		 *	Sets parameters for Idgames protocol.
+		 *	@param use - @see useIdgames
+		 *	@param highPriority - @see idgamesHasHighPriority
+		 */
+		void setUseIdgames(bool use, bool highPriority = false)
+		{
+			useIdgames = use;
+			idgamesHasHighPriority = highPriority;
+		}
+
 	protected slots:
 		void	get(const QUrl&);
 		void	protocolAborted();
@@ -222,6 +245,17 @@ class WADSEEKER_API WWWSeeker : public WWW
 		QList<QUrl>		directLinks;
 		QStringList		filesToFind;
 
+		Idgames*		idgames;
+		bool			idgamesUsed;
+
+		/**
+		 *	If true, idgames archive will be searched right after
+		 *	the custom site.
+		 *	If false, idgames archive will be searched after all other
+		 *	sites fail.
+		 */
+		bool			idgamesHasHighPriority;
+
 		/**
 		 *	This will replace all occurences of %WADNAME%
 		 *	string in all URLs.
@@ -230,10 +264,33 @@ class WADSEEKER_API WWWSeeker : public WWW
 		QStringList		primarySites;
 		QList<QUrl> 	siteLinks;
 
+		/**
+		 *	If true, idgames search will be performed.
+		 *	If false, idgames archive will be skipped.
+		 */
+		bool			useIdgames;
+
+		/**
+		 *	This will replace all occurences of %ZIPNAME% string in
+		 *	all URLs. Also this will be passed to Idgames::findFile()
+		 *	as seeked file parameter.
+		 */
+		QString			zipFile;
+
 		bool 		getUrl(const QUrl& url) { return false; }
 
 		bool		isWantedFileOrZip(const QString& filename);
 		QUrl		nextSite();
+
+		/**
+		 *	Calling this method will set idgamesUsed boolean to true
+		 */
+		void		searchIdgames();
+
+		/**
+		 *	@param agent - string to send in Idgames queries
+		 */
+		virtual void 	setUserAgentEx(const QString& agent);
 };
 
 #endif

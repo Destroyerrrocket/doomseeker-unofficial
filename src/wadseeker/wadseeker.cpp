@@ -220,8 +220,9 @@ void Wadseeker::nextWad()
 
 	emit message(tr("Seeking file: %1").arg(wad), Notice);
 	currentWad = wad;
-	QStringList wfi = wantedFilenames(wad);
-	www->searchFiles(wfi, currentWad);
+	QString zipName;
+	QStringList wfi = wantedFilenames(wad, zipName);
+	www->searchFiles(wfi, currentWad, zipName);
 }
 
 void Wadseeker::seekWads(const QStringList& wads)
@@ -291,6 +292,11 @@ void Wadseeker::setTargetDirectory(const QString& dir)
 	}
 }
 
+void Wadseeker::setUseIdgames(bool use, bool highPriority)
+{
+	www->setUseIdgames(use, highPriority);
+}
+
 void Wadseeker::setTimeConnectTimeout(int i)
 {
 	WWW::setTimeConnectTimeout(i);
@@ -320,7 +326,7 @@ void Wadseeker::wadFail()
 	nextWad();
 }
 
-QStringList Wadseeker::wantedFilenames(const QString& wad)
+QStringList Wadseeker::wantedFilenames(const QString& wad, QString& zip)
 {
 	QStringList lst;
 	lst.append(wad);
@@ -329,7 +335,12 @@ QStringList Wadseeker::wantedFilenames(const QString& wad)
 	if (fi.suffix().compare("zip", Qt::CaseInsensitive) != 0)
 	{
 		QString app = fi.completeBaseName() + ".zip";
+		zip = app;
 		lst.append(app);
+	}
+	else
+	{
+		zip = wad;
 	}
 
 	return lst;

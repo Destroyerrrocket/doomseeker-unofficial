@@ -24,6 +24,7 @@
 #include "link.h"
 #include "protocols/ftp.h"
 #include "protocols/http.h"
+#include "protocols/idgames.h"
 #include "www.h"
 #include <QFileInfo>
 
@@ -46,6 +47,12 @@ WWW::WWW()
 	connect(http, SIGNAL( done(bool, QByteArray&, int, const QString&) ), this, SLOT( protocolDone(bool, QByteArray&, int, const QString&) ) );
 	connect(http, SIGNAL( message(const QString&, int) ), this, SLOT( messageSlot(const QString&, int) ) );
 	connect(http, SIGNAL( redirect(const QUrl&) ), this, SLOT( get(const QUrl&) ) );
+}
+
+WWW::~WWW()
+{
+	delete ftp;
+	delete http;
 }
 
 void WWW::abort()
@@ -206,27 +213,63 @@ void WWW::setTimeDownloadTimeout(int seconds)
 void WWW::setUserAgent(const QString& agent)
 {
 	http->setUserAgent(agent);
+	setUserAgentEx(agent);
 }
 ///////////////////////////////////////////////////////////////////////////////
 WWWSeeker::WWWSeeker()
 {
+	idgames = new Idgames("http://www.doomworld.com/idgames/index.php?search&page=%PAGENUM%&field=filename&word=%ZIPNAME%&sort=time&order=asc");
+
+	idgamesHasHighPriority = false;
+	useIdgames = true;
+
 	connect(http, SIGNAL( nameAndTypeOfReceivedFile(const QString&, int) ), this, SLOT( protocolNameAndTypeOfReceivedFile(const QString&, int) ) );
+
+	connect(idgames, SIGNAL( aborted() ), this, SLOT( protocolAborted() ) );
+	connect(idgames, SIGNAL( dataReadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
+	connect(idgames, SIGNAL( done(bool, QByteArray&, int, const QString&) ), this, SLOT( protocolDone(bool, QByteArray&, int, const QString&) ) );
+	connect(idgames, SIGNAL( message(const QString&, int) ), this, SLOT( messageSlot(const QString&, int) ) );
+	connect(idgames, SIGNAL( nameAndTypeOfReceivedFile(const QString&, int) ), this, SLOT( protocolNameAndTypeOfReceivedFile(const QString&, int) ) );
+}
+
+WWWSeeker::~WWWSeeker()
+{
+	delete idgames;
 }
 
 void WWWSeeker::checkNextSite()
 {
-	QUrl site = nextSite();
-
-	if (site.isEmpty())
+	// If link for custom site is invalid customSiteUsed will be set to true,
+	// even before customSite is checked through nextSite() method.
+	if (customSiteUsed && useIdgames && idgamesHasHighPriority && !idgamesUsed)
 	{
-		processedUrl = QUrl();
-		emit message(tr("No more sites.\n"), Wadseeker::Notice);
-		emit fail();
+		this->searchIdgames();
 	}
 	else
 	{
-		emit downloadProgress(0, 100);
-		get(site);
+		QUrl site = nextSite();
+		if (site.isEmpty())
+		{
+			// A few words of explanation:
+			// We don't need to check if idgamesHasHighPriority == false.
+			// If it is true, the idgamesUsed will also be set to true already and
+			// the condidition won't be met anyway.
+			if (useIdgames && !idgamesUsed)
+			{
+				this->searchIdgames();
+			}
+			else
+			{
+				processedUrl = QUrl();
+				emit message(tr("No more sites.\n"), Wadseeker::Notice);
+				emit fail();
+			}
+		}
+		else
+		{
+			emit downloadProgress(0, 100);
+			get(site);
+		}
 	}
 }
 
@@ -328,7 +371,7 @@ QUrl WWWSeeker::nextSite()
 		if (url.isEmpty() || !url.isValid())
 			continue;
 
-		url = url.toString().replace("%WADNAME%", primaryFile);
+		url = url.toString().replace("%WADNAME%", primaryFile).replace("%ZIPNAME", zipFile);
 
 		return url;
 	}
@@ -394,15 +437,31 @@ void WWWSeeker::protocolNameAndTypeOfReceivedFile(const QString& name, int type)
 	}
 }
 
-void WWWSeeker::searchFiles(const QStringList& list, const QString& primaryFilename)
+void WWWSeeker::searchFiles(const QStringList& list, const QString& primaryFilename, const QString& zipFilename)
 {
 	aborting = false;
-	customSiteUsed = false;
+	// This needs to be set here due to how Idgames archive is checked.
+	customSiteUsed = !customSite.isValid();
 	currentPrimarySite = 0;
 	checkedLinks.clear();
 	filesToFind = list;
+	idgamesUsed = false;
 	primaryFile = primaryFilename;
+	zipFile = zipFilename;
+
 	processedUrl = QUrl();
 
 	checkNextSite();
+}
+
+void WWWSeeker::searchIdgames()
+{
+	idgamesUsed = true;
+	currentProtocol = idgames;
+	idgames->findFile(zipFile);
+}
+
+void WWWSeeker::setUserAgentEx(const QString& agent)
+{
+	idgames->setUserAgent(agent);
 }

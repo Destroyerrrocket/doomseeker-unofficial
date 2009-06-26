@@ -234,6 +234,17 @@ class WADSEEKER_API Wadseeker : public QObject
 		void				setTargetDirectory(const QString& dir);
 
 		/**
+		 *	Sets parameters for Idgames protocol.
+		 *	@param use - If true, idgames search will be performed.
+		 *			If false, idgames archive will be skipped.
+		 *	@param highPriority - If true, idgames archive will be
+		 *		searched right after the custom site.
+		 *		If false, idgames archive will be searched after all other
+		 *		sites fail.
+		 */
+		void setUseIdgames(bool use, bool highPriority = false);
+
+		/**
 		 *	Target directory is a directory where all seeked files will
 		 *  be saved.
 		 */
@@ -278,8 +289,9 @@ class WADSEEKER_API Wadseeker : public QObject
 		 * For example, if somemod.wad was searched for, this would return
 		 * somemod.wad and somemod.zip
 		 * @param wad Absolute file being searched for. (ex: somemod.wad)
+		 * @param [out] zip - returns name of according zip file
 		 */
-		static QStringList	wantedFilenames(const QString& wad);
+		static QStringList	wantedFilenames(const QString& wad, QString& zip);
 
 	protected slots:
 		/**

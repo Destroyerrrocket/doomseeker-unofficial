@@ -51,10 +51,12 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 	}
 	else
 	{
-		// Theoreticaly this else should never happen due to config initialization in Main.cpp.
+		// Theoreticaly this else should never happen due to config initialization in main.cpp.
 		// theoreticaly...
 		wadseeker.setPrimarySitesToDefault();
 	}
+
+	wadseeker.setUseIdgames(false);
 }
 
 void WadSeekerInterface::aborted()
@@ -107,6 +109,9 @@ void WadSeekerInterface::fail()
 	const QStringList& notFoundWads = wadseeker.filesNotFound();
 	QString nfwStr = tr("Following files were not found: %1").arg(notFoundWads.join(", "));
 	teWadseekerOutput->append(nfwStr);
+
+	pbProgress->setMaximum(100);
+	pbProgress->setValue(0);
 }
 
 void WadSeekerInterface::message(const QString& msg, Wadseeker::MessageType type)

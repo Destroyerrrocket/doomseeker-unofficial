@@ -14,6 +14,7 @@ include_directories(${ZLIB_INCLUDE_DIR})
 set(WADSEEKER_QT_FILES
   protocols/ftp.h
   protocols/http.h
+  protocols/idgames.h
   protocols/protocol.h
   zip/unzip.h
 	wadseeker.h
@@ -23,6 +24,7 @@ set(WADSEEKER_QT_FILES
 set(WADSEEKER_FILES
   protocols/ftp.cpp
   protocols/http.cpp
+	protocols/idgames.cpp
   protocols/protocol.cpp
   zip/unzip.cpp
 	html.cpp
