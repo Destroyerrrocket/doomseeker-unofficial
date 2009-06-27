@@ -218,7 +218,7 @@ void WWW::setUserAgent(const QString& agent)
 ///////////////////////////////////////////////////////////////////////////////
 WWWSeeker::WWWSeeker()
 {
-	idgames = new Idgames("http://www.doomworld.com/idgames/index.php?search&page=%PAGENUM%&field=filename&word=%ZIPNAME%&sort=time&order=asc");
+	idgames = new Idgames(Idgames::defaultIdgamesUrl());
 
 	idgamesHasHighPriority = false;
 	useIdgames = true;
@@ -271,6 +271,11 @@ void WWWSeeker::checkNextSite()
 			get(site);
 		}
 	}
+}
+
+const QString WWWSeeker::defaultIdgamesUrl()
+{
+	return Idgames::defaultIdgamesUrl();
 }
 
 void WWWSeeker::get(const QUrl& url)
@@ -371,7 +376,7 @@ QUrl WWWSeeker::nextSite()
 		if (url.isEmpty() || !url.isValid())
 			continue;
 
-		url = url.toString().replace("%WADNAME%", primaryFile).replace("%ZIPNAME", zipFile);
+		url = url.toString().replace("%WADNAME%", primaryFile).replace("%ZIPNAME%", zipFile);
 
 		return url;
 	}
@@ -459,6 +464,13 @@ void WWWSeeker::searchIdgames()
 	idgamesUsed = true;
 	currentProtocol = idgames;
 	idgames->findFile(zipFile);
+}
+
+void WWWSeeker::setUseIdgames(bool use, bool highPriority, QString archiveURL)
+{
+	useIdgames = use;
+	idgamesHasHighPriority = highPriority;
+	idgames->setPage(archiveURL);
 }
 
 void WWWSeeker::setUserAgentEx(const QString& agent)

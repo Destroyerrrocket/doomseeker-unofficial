@@ -34,11 +34,14 @@ WadseekerConfigBox::WadseekerConfigBox(Config* cfg, QWidget* parent) : Configura
 	lstUrls->setModel(new QStandardItemModel());
 
 	connect(btnBrowseTargetDirectory, SIGNAL( clicked() ), this, SLOT( btnBrowseTargetDirectoryClicked() ) );
+	connect(btnIdgamesURLDefault, SIGNAL( clicked() ), this, SLOT( btnIdgamesURLDefaultClicked() ) );
 	connect(btnUrlAdd, SIGNAL( clicked() ), this, SLOT( btnUrlAddClicked() ) );
 	connect(btnUrlDefault, SIGNAL( clicked() ), this, SLOT( btnUrlDefaultClicked() ) );
 	connect(btnUrlRemove, SIGNAL( clicked() ), this, SLOT( btnUrlRemoveClicked() ) );
 	connect(QApplication::instance(), SIGNAL( focusChanged(QWidget*, QWidget*) ), this, SLOT( focusChanged(QWidget*, QWidget*) ));
 
+	cboIdgamesPriority->addItem("After all sites");
+	cboIdgamesPriority->addItem("After custom site");
 }
 
 ConfigurationBoxInfo* WadseekerConfigBox::createStructure(Config* cfg, QWidget* parent)
@@ -64,6 +67,16 @@ void WadseekerConfigBox::readSettings()
 		this->insertUrl(QUrl::fromPercentEncoding(it->toAscii()));
 	}
 
+	setting = config->setting("WadseekerSearchInIdgames");
+	bool b = static_cast<bool>(setting->integer());
+	cbSearchInIdgames->setChecked(b);
+
+	setting = config->setting("WadseekerIdgamesPriority");
+	cboIdgamesPriority->setCurrentIndex(setting->integer());
+
+	setting = config->setting("WadseekerIdgamesURL");
+	leIdgamesURL->setText(setting->string());
+
 	setting = config->setting("WadseekerConnectTimeoutSeconds");
 	spinConnectTimeout->setValue(setting->integer());
 
@@ -82,6 +95,15 @@ void WadseekerConfigBox::saveSettings()
 	setting = config->setting("WadseekerSearchURLs");
 	setting->setValue(urlLst->join(";"));
 
+	setting = config->setting("WadseekerSearchInIdgames");
+	setting->setValue(cbSearchInIdgames->isChecked());
+
+	setting = config->setting("WadseekerIdgamesPriority");
+	setting->setValue(cboIdgamesPriority->currentIndex());
+
+	setting = config->setting("WadseekerIdgamesURL");
+	setting->setValue(leIdgamesURL->text());
+
 	setting = config->setting("WadseekerConnectTimeoutSeconds");
 	setting->setValue(spinConnectTimeout->value());
 
@@ -98,6 +120,11 @@ void WadseekerConfigBox::btnBrowseTargetDirectoryClicked()
 
 	if(!strFilepath.isEmpty()) // don't update if nothing was selected.
 		leTargetDirectory->setText(strFilepath);
+}
+
+void WadseekerConfigBox::btnIdgamesURLDefaultClicked()
+{
+	leIdgamesURL->setText(Wadseeker::defaultIdgamesUrl());
 }
 
 void WadseekerConfigBox::btnUrlAddClicked()

@@ -47,6 +47,9 @@ int main(int argc, char* argv[])
 	Main::config->createSetting("QueryTimeout", 5000);
 	QStringList urlList = Wadseeker::defaultSitesListEncoded();
 	Main::config->createSetting("WadseekerSearchURLs", urlList.join(";"));
+	Main::config->createSetting("WadseekerSearchInIdgames", true);
+	Main::config->createSetting("WadseekerIdgamesPriority", 0); // 0 == After all other sites
+	Main::config->createSetting("WadseekerIdgamesURL", Wadseeker::defaultIdgamesUrl());
 	Main::config->createSetting("WadseekerConnectTimeoutSeconds", WADSEEKER_CONNECT_TIMEOUT_SECONDS_DEFAULT);
 	Main::config->createSetting("WadseekerDownloadTimeoutSeconds", WADSEEKER_DOWNLOAD_TIMEOUT_SECONDS_DEFAULT);
 

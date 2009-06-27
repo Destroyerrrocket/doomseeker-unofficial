@@ -185,6 +185,11 @@ class WADSEEKER_API WWWSeeker : public WWW
 		virtual ~WWWSeeker();
 
 		/**
+		 *	@return Default URL of Idgames archive, hardcoded into the library.
+		 */
+		static const QString 	defaultIdgamesUrl();
+
+		/**
 		 *	Tells the class to keep looking for file on next available
 		 *	site. This method is public because WWW class stops when
 		 *	it finds and downloads seeked file. If end-programmer decides
@@ -224,12 +229,9 @@ class WADSEEKER_API WWWSeeker : public WWW
 		 *	Sets parameters for Idgames protocol.
 		 *	@param use - @see useIdgames
 		 *	@param highPriority - @see idgamesHasHighPriority
+		 *	@param archiveURL - URL to the idgames search page.
 		 */
-		void setUseIdgames(bool use, bool highPriority = false)
-		{
-			useIdgames = use;
-			idgamesHasHighPriority = highPriority;
-		}
+		void setUseIdgames(bool use, bool highPriority = false, QString archiveURL = defaultIdgamesUrl());
 
 	protected slots:
 		void	get(const QUrl&);

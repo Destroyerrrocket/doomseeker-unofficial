@@ -21,9 +21,10 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 
+#include "protocols/idgames.h"
+#include "zip/unzip.h"
 #include "wadseeker.h"
 #include "www.h"
-#include "zip/unzip.h"
 #include <QDir>
 #include <QFileInfo>
 
@@ -84,6 +85,11 @@ const QString Wadseeker::author()
 const QStringList& Wadseeker::filesNotFound() const
 {
 	return notFound;
+}
+
+const QString Wadseeker::defaultIdgamesUrl()
+{
+	return Idgames::defaultIdgamesUrl();
 }
 
 QStringList Wadseeker::defaultSitesListEncoded()
@@ -292,9 +298,9 @@ void Wadseeker::setTargetDirectory(const QString& dir)
 	}
 }
 
-void Wadseeker::setUseIdgames(bool use, bool highPriority)
+void Wadseeker::setUseIdgames(bool use, bool highPriority, QString archiveURL)
 {
-	www->setUseIdgames(use, highPriority);
+	www->setUseIdgames(use, highPriority, archiveURL);
 }
 
 void Wadseeker::setTimeConnectTimeout(int i)

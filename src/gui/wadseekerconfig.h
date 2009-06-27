@@ -38,9 +38,11 @@ class WadseekerConfigBox : public ConfigurationBaseBox, private Ui::WadseekerCon
 
 	protected slots:
 		void btnBrowseTargetDirectoryClicked();
+		void btnIdgamesURLDefaultClicked();
 		void btnUrlAddClicked();
 		void btnUrlDefaultClicked();
 		void btnUrlRemoveClicked();
+
 		void focusChanged(QWidget* old, QWidget* now);
 
 	protected:

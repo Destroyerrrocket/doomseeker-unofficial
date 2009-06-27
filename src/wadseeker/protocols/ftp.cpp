@@ -21,7 +21,6 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ftp.h"
-#include <QDebug>
 
 Ftp::Ftp()
 {
@@ -34,11 +33,10 @@ void Ftp::abortEx()
 	{
 		qFtp->abort();
 		qFtp->close();
+		disconnectQFtp();
 	}
-	else
-	{
-		emit aborted();
-	}
+
+	emit aborted();
 }
 
 void Ftp::commandFinished(int id, bool error)
@@ -138,10 +136,5 @@ void Ftp::stateChanged(int state)
 	{
 		// Try to determine the size first.
 		listCommandId = qFtp->list(queryUrl.path());
-	}
-	else if (state == QFtp::Unconnected && aborting)
-	{
-		disconnectQFtp();
-		emit aborted();
 	}
 }

@@ -7,14 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>299</height>
+    <height>410</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>GroupBox</string>
-  </property>
-  <property name="locale">
-   <locale language="English" country="UnitedStates"/>
   </property>
   <property name="title">
    <string>Wadseeker configuration</string>
@@ -127,6 +124,64 @@
            </size>
           </property>
          </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Idgames archive</string>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_6">
+      <item>
+       <widget class="QCheckBox" name="cbSearchInIdgames">
+        <property name="text">
+         <string>I want Wadseeker to browse the Idgames archive</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <item>
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>Idgames archive search priority:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="cboIdgamesPriority">
+          <property name="currentIndex">
+           <number>-1</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Idgames archive URL (changing this is NOT recommended):</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <item>
+         <widget class="QLineEdit" name="leIdgamesURL"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnIdgamesURLDefault">
+          <property name="text">
+           <string>Default</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>

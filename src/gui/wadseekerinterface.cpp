@@ -56,7 +56,20 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 		wadseeker.setPrimarySitesToDefault();
 	}
 
-	wadseeker.setUseIdgames(false);
+	Main::config->createSetting("WadseekerSearchInIdgames", true);
+	Main::config->createSetting("WadseekerIdgamesPriority", 0); // 0 == After all other sites
+	Main::config->createSetting("WadseekerIdgamesURL", Wadseeker::defaultIdgamesUrl());
+
+	QString idgamesURL = Wadseeker::defaultIdgamesUrl();
+	bool useIdgames = true, idgamesHasHighPriority = false;
+	if (Main::config->settingExists("WadseekerSearchInIdgames"))
+		useIdgames = Main::config->setting("WadseekerSearchInIdgames")->integer();
+	if (Main::config->settingExists("WadseekerIdgamesPriority"))
+		idgamesHasHighPriority = Main::config->setting("WadseekerIdgamesPriority")->integer();
+	if (Main::config->settingExists("WadseekerIdgamesURL"))
+		idgamesURL = Main::config->setting("WadseekerIdgamesURL")->string();
+
+	wadseeker.setUseIdgames(useIdgames, idgamesHasHighPriority, idgamesURL);
 }
 
 void WadSeekerInterface::aborted()

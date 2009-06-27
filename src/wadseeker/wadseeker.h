@@ -108,11 +108,6 @@ class WADSEEKER_API Wadseeker : public QObject
 		};
 
 		/**
-		 * @return author of the library.
-		 */
-		static const QString	author();
-
-		/**
 		 *	List of default sites to search for files.
 		 *	@see setPrimarySitesToDefault
 		 */
@@ -124,6 +119,16 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *	@see isIwad
 		 */
 		static const QString iwadNames[];
+
+		/**
+		 * @return author of the library.
+		 */
+		static const QString	author();
+
+		/**
+		 *	@return Default URL of Idgames archive, hardcoded into the library.
+		 */
+		static const QString 	defaultIdgamesUrl();
 
 		/**
 		 *	Runs content of defaultSites array through
@@ -241,8 +246,9 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *		searched right after the custom site.
 		 *		If false, idgames archive will be searched after all other
 		 *		sites fail.
+		 *	@param archiveURL - URL to Idgames search page
 		 */
-		void setUseIdgames(bool use, bool highPriority = false);
+		void 				setUseIdgames(bool use, bool highPriority = false, QString archiveURL = defaultIdgamesUrl());
 
 		/**
 		 *	Target directory is a directory where all seeked files will

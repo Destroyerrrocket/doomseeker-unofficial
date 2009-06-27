@@ -58,19 +58,19 @@ class WADSEEKER_API Http : public Protocol
 		QString		redirectUrl;
 		QString		useragent;
 
-		void 	abortEx();
+		void 	        abortEx();
 
 		/**
 		 * Looks for attachment information in http header.
 		 * @return empty string if nothing found or string of values (like filename="something")
 		 */
-		QString		attachmentInformation(const QHttpHeader&, QString& filename);
+		QString		    attachmentInformation(const QHttpHeader&, QString& filename);
 
-		void	disconnectQHttp();
+		void	        disconnectQHttp();
 
-		void 	getEx(const QUrl&);
-		void	doneEx(bool error);
-		bool 	isHTMLFile(const QHttpHeader& http);
+		void 	        getEx(const QUrl&);
+		virtual void	doneEx(bool error);
+		bool 	        isHTMLFile(const QHttpHeader& http);
 };
 
 #endif
