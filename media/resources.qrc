@@ -8,14 +8,18 @@
   <file alias="flags/AUS">flags/AUS.gif</file>	
 	<file alias="flags/CAN">flags/CAN.gif</file>	
 	<file alias="flags/CZE">flags/CZE.gif</file>	
+	<file alias="flags/DEU">flags/DEU.gif</file>
   <file alias="flags/EU" >flags/EU.gif</file>
   <file alias="flags/FIN">flags/FIN.gif</file>
 	<file alias="flags/FRA">flags/FRA.gif</file>
 	<file alias="flags/GBR">flags/GBR.gif</file>
   <file alias="flags/HUN">flags/HUN.gif</file>
+	<file alias="flags/ISR">flags/ISR.gif</file>
+	<file alias="flags/JPN">flags/JPN.gif</file>
   <file alias="flags/NLD">flags/NLD.gif</file>
 	<file alias="flags/POL">flags/POL.gif</file>
 	<file alias="flags/RUS">flags/RUS.gif</file>
+	<file alias="flags/TWN">flags/TWN.gif</file>	
 	<file alias="flags/USA">flags/USA.gif</file>	
 </qresource>
 </RCC>
