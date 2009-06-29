@@ -358,11 +358,11 @@ void SLHandler::tableRightClicked(const QModelIndex& index, const QPoint& point)
 	Server *server = serverFromIndex(index);
 
 	QMenu contextMenu;
-	QAction *refresh = contextMenu.addAction("Refresh");
-	QAction *join = contextMenu.addAction("Join");
-	QMenu *copyMenu = contextMenu.addMenu("Copy");
-	QAction *copyAddress = copyMenu->addAction("Copy Address");
-	QAction *copyName = copyMenu->addAction("Copy Name");
+	QAction *refresh = contextMenu.addAction(tr("Refresh"));
+	QAction *join = contextMenu.addAction(tr("Join"));
+	QMenu *copyMenu = contextMenu.addMenu(tr("Copy"));
+	QAction *copyAddress = copyMenu->addAction(tr("Copy Address"));
+	QAction *copyName = copyMenu->addAction(tr("Copy Name"));
 
 	QAction *result = contextMenu.exec(table->viewport()->mapToGlobal(point));
 	if(result == refresh)
