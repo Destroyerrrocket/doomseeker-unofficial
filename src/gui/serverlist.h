@@ -47,6 +47,8 @@ class SLHandler : public QObject
 
 		QList<Server*>		selectedServers();
 
+		Server*				serverFromIndex(const QModelIndex&);
+
 		ServerListModel*	serverModel() { return model; }
 		ServerListView*		serverTable() { return table; }
 
@@ -55,7 +57,7 @@ class SLHandler : public QObject
 		void refreshAll();
 		void serverBegunRefreshing(Server* server);
 		void serverUpdated(Server *server, int response);
-		void tableRightClicked(const QModelIndex&);
+		void tableRightClicked(const QModelIndex&, const QPoint&);
 		void updateCountryFlags();
 		void updateSearch(const QString& search);
 

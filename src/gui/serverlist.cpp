@@ -23,7 +23,10 @@
 
 #include "gui/serverlist.h"
 #include "main.h"
+#include <QApplication>
+#include <QClipboard>
 #include <QHeaderView>
+#include <QMenu>
 #include <QStandardItem>
 #include <QToolTip>
 
@@ -186,10 +189,7 @@ QString SLHandler::createPwadsToolTip(const Server* server)
 
 void SLHandler::doubleClicked(const QModelIndex& index)
 {
-	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
-	QModelIndex indexReal = pModel->mapToSource(index);
-	Server* server = model->serverFromList(indexReal);
-	emit serverDoubleClicked(server);
+	emit serverDoubleClicked(serverFromIndex(index));
 }
 
 void SLHandler::itemSelected(const QModelIndex& index)
@@ -301,10 +301,10 @@ void SLHandler::prepareServerTable()
 	connect(header, SIGNAL( sectionClicked(int) ), this, SLOT ( columnHeaderClicked(int) ) );
 	connect(model, SIGNAL( modelCleared() ), this, SLOT( modelCleared() ) );
 	connect(table, SIGNAL( clicked(const QModelIndex&) ), this, SLOT( itemSelected(const QModelIndex&) ));
-	connect(table, SIGNAL( rightMouseClick(const QModelIndex&) ), this, SLOT ( itemSelected(const QModelIndex&)) );
-	connect(table, SIGNAL( rightMouseClick(const QModelIndex&) ), this, SLOT ( tableRightClicked(const QModelIndex&)) );
+	connect(table, SIGNAL( rightMouseClick(const QModelIndex&, const QPoint&) ), this, SLOT ( itemSelected(const QModelIndex&)) );
+	connect(table, SIGNAL( rightMouseClick(const QModelIndex&, const QPoint&) ), this, SLOT ( tableRightClicked(const QModelIndex&, const QPoint&)) );
 	connect(table, SIGNAL( entered(const QModelIndex&) ), this, SLOT ( mouseEntered(const QModelIndex&)) );
-	connect(table, SIGNAL( leftMouseDoubleClicked(const QModelIndex&)), this, SLOT( doubleClicked(const QModelIndex&)) );
+	connect(table, SIGNAL( leftMouseDoubleClicked(const QModelIndex&, const QPoint&)), this, SLOT( doubleClicked(const QModelIndex&)) );
 
 	columnHeaderClicked(ServerListModel::SLCID_PLAYERS);
 }
@@ -327,6 +327,13 @@ void SLHandler::serverBegunRefreshing(Server* server)
 	}
 }
 
+Server *SLHandler::serverFromIndex(const QModelIndex &index)
+{
+	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
+	QModelIndex indexReal = pModel->mapToSource(index);
+	return model->serverFromList(indexReal);
+}
+
 void SLHandler::serverUpdated(Server *server, int response)
 {
 	QModelIndex index = model->findServerOnTheList(server);
@@ -346,17 +353,43 @@ void SLHandler::serverUpdated(Server *server, int response)
 }
 
 
-void SLHandler::tableRightClicked(const QModelIndex& index)
+void SLHandler::tableRightClicked(const QModelIndex& index, const QPoint& point)
 {
-	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
-	QItemSelectionModel* selModel = table->selectionModel();
-	QModelIndexList indexList = selModel->selectedRows();
+	Server *server = serverFromIndex(index);
 
-	for(int i = 0; i < indexList.count(); ++i)
+	QMenu contextMenu;
+	QAction *refresh = contextMenu.addAction("Refresh");
+	QAction *join = contextMenu.addAction("Join");
+	QMenu *copyMenu = contextMenu.addMenu("Copy");
+	QAction *copyAddress = copyMenu->addAction("Copy Address");
+	QAction *copyName = copyMenu->addAction("Copy Name");
+
+	QAction *result = contextMenu.exec(table->viewport()->mapToGlobal(point));
+	if(result == refresh)
 	{
-		QModelIndex realIndex = pModel->mapToSource(indexList[i]);
-		Server* serv = model->serverFromList(realIndex);
-		serv->refresh();
+		QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
+		QItemSelectionModel* selModel = table->selectionModel();
+		QModelIndexList indexList = selModel->selectedRows();
+	
+		for(int i = 0; i < indexList.count(); ++i)
+		{
+			QModelIndex realIndex = pModel->mapToSource(indexList[i]);
+			Server* serv = model->serverFromList(realIndex);
+			serv->refresh();
+		}
+	}
+	else if(result == join)
+	{
+		emit serverDoubleClicked(server);
+	}
+	else if(result == copyAddress)
+	{
+		QString addr = QString("%1:%2").arg(server->address().toString()).arg(server->port());
+		QApplication::clipboard()->setText(addr);
+	}
+	else if(result == copyName)
+	{
+		QApplication::clipboard()->setText(server->name());
 	}
 }
 
