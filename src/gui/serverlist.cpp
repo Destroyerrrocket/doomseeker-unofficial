@@ -299,6 +299,7 @@ void SLHandler::prepareServerTable()
 
 	QHeaderView* header = table->horizontalHeader();
 	connect(header, SIGNAL( sectionClicked(int) ), this, SLOT ( columnHeaderClicked(int) ) );
+	connect(sortingModel, SIGNAL( rowsInserted(const QModelIndex&, int, int) ), this, SLOT( resizeChangedRows(const QModelIndex&, int, int) ));
 	connect(model, SIGNAL( modelCleared() ), this, SLOT( modelCleared() ) );
 	connect(table, SIGNAL( clicked(const QModelIndex&) ), this, SLOT( itemSelected(const QModelIndex&) ));
 	connect(table, SIGNAL( rightMouseClick(const QModelIndex&, const QPoint&) ), this, SLOT ( itemSelected(const QModelIndex&)) );
@@ -315,6 +316,15 @@ void SLHandler::refreshAll()
 	{
 		Server* serv = model->serverFromList(i);
 		serv->refresh();
+	}
+}
+
+void SLHandler::resizeChangedRows(const QModelIndex &parent, int start, int end)
+{
+	// This is so when the search is undone the rows don't become fat again.
+	for (int i = start;i < end; ++i)
+	{
+		table->resizeRowToContents(i);
 	}
 }
 

@@ -69,6 +69,7 @@ class SLHandler : public QObject
 		void itemSelected(const QModelIndex&);
 		void modelCleared();
 		void mouseEntered(const QModelIndex&);
+		void resizeChangedRows(const QModelIndex&, int, int);
 
 	signals:
 		void serverDoubleClicked(const Server*);
