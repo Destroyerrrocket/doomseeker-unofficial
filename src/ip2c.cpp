@@ -56,11 +56,23 @@ QPixmap IP2C::flag(unsigned int ipaddress) const
 {
 	const QString unknown = ":flags/unknown";
 
+	if (ipaddress >= QHostAddress("127.0.0.0").toIPv4Address() && ipaddress <= QHostAddress("127.255.255.255").toIPv4Address())
+	{
+		return QPixmap(":flags/localhost-small");
+	}
+
+	if (ipaddress >= QHostAddress("10.0.0.0").toIPv4Address() && ipaddress <= QHostAddress("10.255.255.255").toIPv4Address()
+	||	ipaddress >= QHostAddress("172.16.0.0").toIPv4Address() && ipaddress <= QHostAddress("127.31.255.255").toIPv4Address()
+	||	ipaddress >= QHostAddress("192.168.0.0").toIPv4Address() && ipaddress <= QHostAddress("192.168.255.255").toIPv4Address())
+	{
+		return QPixmap(":flags/lan-small");
+	}
+
 	QString country = lookupIP(ipaddress);
 	if (country.isEmpty())
 	{
 		printf("Unrecognized IP address: %s (%u)\n", QHostAddress(ipaddress).toString().toAscii().constData(), ipaddress);
-		return QPixmap(unknown);
+		return QPixmap(":flags/unknown-small");
 	}
 
 	QString resName = ":flags/" + country;
@@ -69,7 +81,7 @@ QPixmap IP2C::flag(unsigned int ipaddress) const
 	if (!res.isValid())
 	{
 		printf("No flag for country: %s\n", country.toAscii().constData());
-		return QPixmap(unknown);
+		return QPixmap(":flags/unknown-small");
 	}
 
 	return QPixmap(resName);
