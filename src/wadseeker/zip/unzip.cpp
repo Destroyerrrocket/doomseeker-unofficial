@@ -119,32 +119,46 @@ bool UnZip::extract(const ZipLocalFileHeader& header, const QString& where)
 		array = zipData.mid(header.headerPosition + header.howManyBytesTillData(), header.compressedSize);
 	}
 
-	char* uncompressed = new char[header.uncompressedSize];
-	if (uncompressed == NULL)
-	{
-		return false;
-	}
-
-	int err = uncompress(uncompressed, header.uncompressedSize, array);
-
-	bool bRet = false;
 	QFile outputFile(where);
-	switch (err)
+	if (header.compressionMethod != 0)
 	{
-		case Z_OK:
-			outputFile.open(QFile::WriteOnly);
-			outputFile.write(uncompressed, header.uncompressedSize);
-			outputFile.close();
-			bRet = true;
-			break;
+		char* uncompressed = new char[header.uncompressedSize];
+		if (uncompressed == NULL)
+		{
+			return false;
+		}
 
-		case Z_DATA_ERROR:
-			break;
+
+		int err = uncompress(uncompressed, header.uncompressedSize, array);
+
+		bool bRet = false;
+		switch (err)
+		{
+			case Z_OK:
+				outputFile.open(QFile::WriteOnly);
+				outputFile.write(uncompressed, header.uncompressedSize);
+				outputFile.close();
+				bRet = true;
+				break;
+
+			case Z_DATA_ERROR:
+				break;
+		}
+
+		delete [] uncompressed;
+		return bRet;
 	}
-
-	delete [] uncompressed;
-	return bRet;
+	else
+	{
+		// No compression, simply copy.
+		outputFile.open(QFile::WriteOnly);
+		outputFile.write(array, header.uncompressedSize);
+		outputFile.close();
+		return true;
+	}
 }
+
+
 
 ZipLocalFileHeader* UnZip::findFileEntry(const QString& entryName)
 {
