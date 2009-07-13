@@ -714,28 +714,48 @@ void Server::doRefresh(bool& bKillThread)
 	QTime time = QTime::currentTime();
 	socket.write(request);
 	time.start();
+
+	int queryTries = Main::config->setting("QueryTries")->integer();
 	int queryTimeout = Main::config->setting("QueryTimeout")->integer();
 
-	bool bOk = socket.waitForReadyRead(queryTimeout);
-
-	if (!Main::running)
+	// Make sure everything is in given limits
+	if (queryTries > 10)
 	{
-		bKillThread = true;
-		return;
+		queryTries = 10;
 	}
 
-	if (bDelete)
+	// Make sure everything is in given limits, as above.
+	if (queryTimeout < 100)
 	{
-		bKillThread = true;
-		delete this;
-		return;
+		queryTimeout = 100;
 	}
 
-	if(!bOk)
-	{
-		emitUpdated(Server::RESPONSE_TIMEOUT);
-		return;
-	}
+	int currentTry = 0;
+	bool bResponseReceived = false;
+	do {
+		if (currentTry >= queryTries)
+		{
+			emitUpdated(Server::RESPONSE_TIMEOUT);
+			return;
+		}
+
+		bResponseReceived = socket.waitForReadyRead(queryTimeout);
+
+		if (!Main::running)
+		{
+			bKillThread = true;
+			return;
+		}
+
+		if (bDelete)
+		{
+			bKillThread = true;
+			delete this;
+			return;
+		}
+
+		++currentTry;
+	} while (!bResponseReceived);
 
 	// Read
 	QByteArray data = socket.readAll();

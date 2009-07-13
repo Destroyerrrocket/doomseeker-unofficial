@@ -43,6 +43,9 @@ void QueryConfigBox::readSettings()
 	setting = config->setting("QueryOnStartup");
 	queryOnStartup->setChecked(setting->integer() != 0);
 
+	setting = config->setting("QueryTries");
+	triesBox->setValue(setting->integer());
+
 	setting = config->setting("QueryTimeout");
 	timeoutBox->setValue(setting->integer());
 
@@ -56,6 +59,9 @@ void QueryConfigBox::saveSettings()
 
 	setting = config->setting("QueryOnStartup");
 	setting->setValue(queryOnStartup->isChecked());
+
+	setting = config->setting("QueryTries");
+	setting->setValue(triesBox->value());
 
 	setting = config->setting("QueryTimeout");
 	setting->setValue(timeoutBox->value());

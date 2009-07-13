@@ -43,8 +43,9 @@ int main(int argc, char* argv[])
 	Main::config->locateConfigFile(argc, argv);
 
 	// Initial settings values
+	Main::config->createSetting("QueryTries", 7);
 	Main::config->createSetting("QueryThreads", 50);
-	Main::config->createSetting("QueryTimeout", 5000);
+	Main::config->createSetting("QueryTimeout", 1000);
 	QStringList urlList = Wadseeker::defaultSitesListEncoded();
 	Main::config->createSetting("WadseekerSearchURLs", urlList.join(";"));
 	Main::config->createSetting("WadseekerSearchInIdgames", true);
