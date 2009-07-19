@@ -81,5 +81,12 @@ extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 
 extern "C" PLUGIN_EXPORT void doomSeekerInitConfig()
 {
+	// Default to where the automatic installations install to.
+#ifdef Q_OS_WIN32
+	Main::config->createSetting("SkulltagBinaryPath", "C:\Program Files\Skulltag\Skulltag.exe");
+#else
+	Main::config->createSetting("SkulltagBinaryPath", "/usr/games/skulltag/skulltag");
+#endif
+
 	Main::config->createSetting("SkulltagMasterserver", "skulltag.servegame.com:15300");
 }
