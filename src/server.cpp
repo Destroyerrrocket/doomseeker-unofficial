@@ -712,8 +712,6 @@ void Server::doRefresh(bool& bKillThread)
 
 	// start timer and write.
 	QTime time = QTime::currentTime();
-	socket.write(request);
-	time.start();
 
 	int queryTries = Main::config->setting("QueryTries")->integer();
 	int queryTimeout = Main::config->setting("QueryTimeout")->integer();
@@ -739,6 +737,8 @@ void Server::doRefresh(bool& bKillThread)
 			return;
 		}
 
+		socket.write(request);
+		time.start();
 		bResponseReceived = socket.waitForReadyRead(queryTimeout);
 
 		if (!Main::running)
