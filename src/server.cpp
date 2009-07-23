@@ -844,3 +844,17 @@ void ServerRefresher::run()
 		}
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+RConProtocol::RConProtocol(Server *server) : server(server), connected(true)
+{
+	socket.connectToHost(server->address(), server->port());
+	if(!socket.waitForConnected())
+		connected = false;
+}
+
+RConProtocol::~RConProtocol()
+{
+	socket.close();
+}

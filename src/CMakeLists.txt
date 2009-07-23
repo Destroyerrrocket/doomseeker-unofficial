@@ -29,6 +29,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/dockserverinfo.ui
 	gui/mainwindow.ui
 	gui/passwordDlg.ui
+	gui/remoteconsole.ui
 	gui/wadseekerconfig.ui
 	gui/wadseekerinterface.ui
 )
@@ -45,6 +46,7 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/dockserverinfo.h
 	gui/mainwindow.h
 	gui/passwordDlg.h
+	gui/remoteconsole.h
 	gui/serverlist.h
 	gui/wadseekerconfig.h
 	gui/wadseekerinterface.h
@@ -73,12 +75,15 @@ set(SOURCE_FILES
 	gui/dockserverinfo.cpp
 	gui/mainwindow.cpp
 	gui/passwordDlg.cpp
+	gui/remoteconsole.cpp
 	gui/serverlist.cpp
 	gui/wadseekerconfig.cpp
 	gui/wadseekerinterface.cpp
 	gui/models/serverlistmodel.cpp
 	gui/widgets/serverlistview.cpp
 	huffman/huffman.cpp
+	md5/md5c.c
+	md5/mddriver.c
 	sdeapi/config.cpp
 	sdeapi/pluginloader.cpp
 	sdeapi/scanner.cpp

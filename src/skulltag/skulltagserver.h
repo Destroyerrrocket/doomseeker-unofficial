@@ -131,8 +131,9 @@ class SkulltagServer : public Server
 		 *	path to this shell script will be returned.
 		 */
 		QString			clientBinary(QString& error) const;
-		virtual QString	clientBinarysDirectory() const;
+		QString			clientBinarysDirectory() const;
 		void			connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
+		RConProtocol	*rcon();
 		QString			teamName(int team) const;
 
 		void			doRefresh();
@@ -171,6 +172,50 @@ class SkulltagServer : public Server
 		bool			spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, QString& error) const;
 
 		QString			testingArchive;
+};
+
+class SkulltagRConProtocol : public RConProtocol
+{
+	Q_OBJECT
+
+	private:
+		enum
+		{
+			SVRCU_PLAYERDATA = 0,
+			SVRCU_ADMINCOUNT,
+			SVRCU_MAP,
+
+			SVRC_OLDPROTOCOL = 32,
+			SVRC_BANNED,
+			SVRC_SALT,
+			SVRC_LOGGEDIN,
+			SVRC_INVALIDPASSWORD,
+			SVRC_MESSAGE,
+			SVRC_UPDATE,
+
+			CLRC_BEGINCONNECTION = 52,
+			CLRC_PASSWORD,
+			CLRC_COMMAND,
+			CLRC_PONG,
+			CLRC_DISCONNECT
+		};
+
+	public:
+		SkulltagRConProtocol(Server *server);
+		static RConProtocol	*connectToServer(Server *server, Response &response);
+
+	public slots:
+		void	disconnectFromServer();
+		void	sendCommand(const QString &cmd);
+		void	sendPassword(const QString &password);
+
+	protected:
+		void	run();
+		void	processPacket(const char *data, int length, bool initial=false, int maxUpdates=-1, int *pos=NULL);
+
+		QString	hostName;
+		QString	salt;
+		int		serverProtocolVersion;
 };
 
 #endif /* __SKULLTAGSERVER_H__ */

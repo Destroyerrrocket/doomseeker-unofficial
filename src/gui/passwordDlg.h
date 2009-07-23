@@ -31,10 +31,13 @@ class PasswordDlg : public QDialog, private Ui::passwordDlg
 	Q_OBJECT
 
 	public:
-		PasswordDlg(QWidget *parent=NULL);
+		PasswordDlg(QWidget *parent=NULL, bool rcon=false);
 		~PasswordDlg();
 
 		QString	connectPassword() const { return password->text(); }
+
+	protected:
+		bool	rcon;
 
 //	protected slots:
 //		void	buttonBoxClicked(QAbstractButton *button);

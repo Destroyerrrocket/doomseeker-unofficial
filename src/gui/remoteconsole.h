@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// passwordDlg.cpp
+// remoteconsole.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -21,42 +21,36 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include "passwordDlg.h"
-#include "main.h"
+#ifndef __REMOTECONSOLE_H__
+#define __REMOTECONSOLE_H__
 
-PasswordDlg::PasswordDlg(QWidget *parent, bool rcon) : QDialog(parent), rcon(rcon)
+#include <QStandardItemModel>
+
+#include "ui_remoteconsole.h"
+#include "server.h"
+
+class RemoteConsole : public QMainWindow, private Ui::RemoteConsole
 {
-	setupUi(this);
+	Q_OBJECT
 
-	if(rcon)
-	{
-		//layout()->removeWidget(remember);
-		remember->hide();
-		label->setText(tr("Please enter your remote console password."));
-	}
-	else
-	{
-		Main::config->createSetting("RememberConnectPassword", 1);
-	
-		SettingsData *rememberConnectPassword = Main::config->setting("RememberConnectPassword");
-		remember->setChecked(rememberConnectPassword->integer() != 0);
-		if(rememberConnectPassword->integer() != 0)
-		{
-			SettingsData *storedPassword = Main::config->setting("ConnectPassword");
-			password->setText(storedPassword->string());
-		}
-	}
+	public:
+		RemoteConsole(Server *server, QWidget *parent=NULL);
 
-	connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-}
+	public slots:
+		void	disconnectFromServer();
 
-PasswordDlg::~PasswordDlg()
-{
-	if(rcon)
-		return;
+	protected:
+		void	closeEvent(QCloseEvent *event);
 
-	Main::config->setting("RememberConnectPassword")->setValue(remember->isChecked());
-	if(remember->isChecked())
-		Main::config->setting("ConnectPassword")->setValue(password->text());
-}
+	protected slots:
+		void	connectionResponse(RConProtocol::Response response);
+		void	receiveMessage(const QString &message);
+		void	sendCommand();
+		void	updatePlayerList();
+
+	private:
+		QStandardItemModel	*playerModel;
+		RConProtocol		*protocol;
+};
+
+#endif /* __REMOTECONSOLE_HPP__ */

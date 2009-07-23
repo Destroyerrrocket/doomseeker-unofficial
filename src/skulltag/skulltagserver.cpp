@@ -21,11 +21,11 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#define TEST
 #include "huffman/huffman.h"
 #include "skulltag/skulltagserver.h"
 #include "global.h"
 #include "main.h"
+#include "md5/md5.h"
 
 #include <QMessageBox>
 
@@ -44,6 +44,8 @@ const // clear warnings
 #define SERVER_GOOD			5660023
 #define SERVER_BANNED		5660025
 #define SERVER_WAIT			5660024
+
+#define RCON_PROTOCOL_VERSION	3
 
 TeamInfo::TeamInfo(const QString &name, const QColor &color, unsigned int score) :
 	teamName(name), teamColor(color), teamScore(score)
@@ -649,4 +651,261 @@ QString	SkulltagServer::teamName(int team) const
 		return "NO TEAM";
 
 	return team >= 0 && team < ST_MAX_TEAMS ? teamInfo[team].name() : "";
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SkulltagRConProtocol::SkulltagRConProtocol(Server *server) : RConProtocol(server)
+{
+}
+
+RConProtocol *SkulltagRConProtocol::connectToServer(Server *server, Response &response)
+{
+	SkulltagRConProtocol *protocol = new SkulltagRConProtocol(server);
+	if(!protocol->connected)
+	{
+		delete protocol;
+		return NULL;
+	}
+
+	const char beginConnection[2] = { CLRC_BEGINCONNECTION, RCON_PROTOCOL_VERSION };
+	char encodedConnection[4];
+	int encodedSize = 4;
+	g_Huffman.encode(beginConnection, encodedConnection, 2, &encodedSize);
+
+	// Try to connect, up to 3 times
+	protocol->connected = false;
+	for(unsigned int attempts = 0;attempts < 3;attempts++)
+	{
+		qDebug() << "Requesting...";
+		protocol->socket.write(encodedConnection, encodedSize);
+
+		if(protocol->socket.waitForReadyRead(3000))
+		{
+			QByteArray data = protocol->socket.readAll();
+			char packet[64];
+			int decodedSize = 64;
+			g_Huffman.decode(data.data(), packet, data.size(), &decodedSize);
+			qDebug() << (int) packet[0];
+			switch(packet[0])
+			{
+				case SVRC_BANNED:
+					QMessageBox::critical(NULL, tr("Banned"), tr("You have been banned from this server."));
+					response = RSP_BANNED;
+					break;
+				default:
+				case SVRC_OLDPROTOCOL:
+					QMessageBox::critical(NULL, tr("Incompatible Protocol"), tr("The protocol appears to be outdated."));
+					response = RSP_BAD;
+					break;
+				case SVRC_SALT:
+					protocol->connected = true;
+					protocol->salt = QString(&packet[1]);
+					qDebug() << "Salt is: " << protocol->salt;
+					response = RSP_GOOD;
+					return protocol;
+			}
+			delete protocol;
+			return NULL;
+		}
+	}
+	response = RSP_TIMEOUT;
+	delete protocol;
+	return NULL;
+}
+
+void SkulltagRConProtocol::disconnectFromServer()
+{
+	const char disconnectPacket[1] = { CLRC_DISCONNECT };
+	char encodedDisconnect[4];
+	int encodedSize = 4;
+	g_Huffman.encode(disconnectPacket, encodedDisconnect, 1, &encodedSize);
+	socket.write(encodedDisconnect, encodedSize);
+	connected = false;
+	emit disconnected();
+}
+
+void SkulltagRConProtocol::sendCommand(const QString &cmd)
+{
+	char packet[4096];
+	packet[0] = CLRC_COMMAND;
+	packet[cmd.length()+1] = 0;
+	memcpy(packet+1, cmd.toAscii().constData(), cmd.length());
+	char encodedPacket[4097];
+	int encodedSize = 4097;
+	g_Huffman.encode(packet, encodedPacket, cmd.length()+2, &encodedSize);
+	socket.write(encodedPacket, encodedSize);
+}
+
+void SkulltagRConProtocol::sendPassword(const QString &password)
+{
+	// Calculate the MD5 of the salt + password
+	// Since the md5 implementation is written in C we need to do some
+	// conversions in order to use the functions with our C++ code.
+	// Hence the mess.
+	QString hashPassword = salt + password;
+	qDebug() << "Hashing: " << hashPassword;
+	MD5_CTX context;
+	MD5Init(&context);
+	unsigned char tmp[128];
+	memcpy(tmp, hashPassword.toAscii().constData(), hashPassword.length());
+	MD5Update(&context, tmp, hashPassword.length());
+	unsigned char out[16];
+	MD5Final(out, &context);
+	QString md5;
+	for(int i = 0;i < 16;i++)
+		md5 += QString("%1").arg(out[i], 2, 16, QChar('0'));
+	qDebug() << "MD5 is: " << md5;
+
+	// Create the packet
+	char passwordPacket[34];
+	passwordPacket[0] = CLRC_PASSWORD;
+	memcpy(passwordPacket+1, md5.toAscii().data(), md5.length());
+	passwordPacket[33] = 0;
+	char encodedPassword[50];
+	int encodedLength = 50;
+	g_Huffman.encode(passwordPacket, encodedPassword, 34, &encodedLength);
+
+	for(unsigned int i = 0;i < 3;i++)
+	{
+		socket.write(encodedPassword, encodedLength);
+
+		if(socket.waitForReadyRead(3000))
+		{
+			QByteArray data = socket.readAll();
+			char packet[4096];
+			int decodedSize = 4096;
+			g_Huffman.decode(data.data(), packet, data.size(), &decodedSize);
+			switch(packet[0])
+			{
+				default:
+				case SVRC_INVALIDPASSWORD:
+					connected = false;
+					QMessageBox::critical(NULL, tr("Invalid Password"), tr("The password you entered appears to be invalid."));
+					disconnectFromServer();
+					break;
+				case SVRC_LOGGEDIN:
+					start();
+					serverProtocolVersion = packet[1];
+					hostName = QString(&packet[2]);
+					int numUpdates = packet[hostName.length() + 3];
+					int position = 0;
+					processPacket(packet + hostName.length() + 4, decodedSize - hostName.length() - 4, true, numUpdates, &position);
+					position += hostName.length() + 4;
+					int numStrings = packet[position++];
+					qDebug() << numStrings;
+					while(numStrings-- > 0)
+					{
+						QString message(&packet[position]);
+						position += message.length() + 1;
+						qDebug() << message;
+						emit messageReceived(message);
+					}
+					break;
+			}
+			break;
+		}
+	}
+}
+
+void SkulltagRConProtocol::run()
+{
+	while(connected)
+	{
+		if(socket.waitForReadyRead(4800)) // Try to get 2 packets per second in order to compensate for lag and packet loss
+		{
+			QByteArray data = socket.readAll();
+			char packet[4096];
+			int decodedSize = 4096;
+			g_Huffman.decode(data.constData(), packet, data.size(), &decodedSize);
+
+			processPacket(packet, data.size());
+		}
+		else
+		{
+			// create a "PONG" packet
+			const char pong[1] = { CLRC_PONG };
+			char encodedPong[4];
+			int encodedSize = 4;
+			g_Huffman.encode(pong, encodedPong, 1, &encodedSize);
+			socket.write(encodedPong, encodedSize);
+		}
+	}
+}
+
+void SkulltagRConProtocol::processPacket(const char *data, int length, bool initial, int maxUpdates, int *pos)
+{
+	if(length <= 0)
+		return;
+
+	int position = 0;
+	while(position < length && maxUpdates-- != 0)
+	{
+		// Determine how we get to the update.
+		int update = 0;
+		if(initial)
+			update = SVRC_UPDATE;
+		else
+			update = data[position++];
+
+		switch(update)
+		{
+			default:
+				qDebug() << "Unknown update (" << static_cast<int> (data[position-1]) << ")";
+				if(pos != NULL)
+					*pos = position;
+				return;
+			case SVRC_MESSAGE:
+			{
+				QString message = QString(&data[position]);
+				position += message.length() + 1;
+				qDebug() << message;
+				emit messageReceived(message);
+				break;
+			}
+			case SVRC_UPDATE:
+				switch(data[position++])
+				{
+					default:
+						qDebug() << "Uknown streamlined update (" << static_cast<int> (data[position-1]) << ")";
+						if(pos != NULL)
+							*pos = position;
+						return;
+					case SVRCU_MAP:
+					{
+						QString map = QString(&data[position]);
+						position += map.length() + 1;
+						qDebug() << map;
+						break;
+					}
+					case SVRCU_ADMINCOUNT:
+					{
+						int admins = data[position++];
+						break;
+					}
+					case SVRCU_PLAYERDATA:
+					{
+						int players = data[position++];
+						this->players.clear();
+						while(players-- > 0)
+						{
+							QString player(&data[position]);
+							position += player.length() + 1;
+							this->players.append(Player(player, 0, 0));
+						}
+						emit playerListUpdated();
+						break;
+					}
+				}
+				break;
+		}
+	}
+	if(pos != NULL)
+		*pos = position;
+}
+
+RConProtocol *SkulltagServer::rcon()
+{
+	RConProtocol::Response response;
+	return SkulltagRConProtocol::connectToServer(this, response);
 }

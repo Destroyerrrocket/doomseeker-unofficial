@@ -21,6 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 
+#include "gui/remoteconsole.h"
 #include "gui/serverlist.h"
 #include "main.h"
 #include <QApplication>
@@ -373,6 +374,7 @@ void SLHandler::tableRightClicked(const QModelIndex& index, const QPoint& point)
 	QMenu *copyMenu = contextMenu.addMenu(tr("Copy"));
 	QAction *copyAddress = copyMenu->addAction(tr("Copy Address"));
 	QAction *copyName = copyMenu->addAction(tr("Copy Name"));
+	QAction *rcon = contextMenu.addAction("Remote Console");
 
 	QAction *result = contextMenu.exec(table->viewport()->mapToGlobal(point));
 	if(result == refresh)
@@ -400,6 +402,10 @@ void SLHandler::tableRightClicked(const QModelIndex& index, const QPoint& point)
 	else if(result == copyName)
 	{
 		QApplication::clipboard()->setText(server->name());
+	}
+	else if(result == rcon)
+	{
+		new RemoteConsole(server);
 	}
 }
 

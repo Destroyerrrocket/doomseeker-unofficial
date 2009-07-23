@@ -36,6 +36,7 @@
 #include <QMetaType>
 #include <QMutex>
 #include <QPixmap>
+#include <QUdpSocket>
 
 #include "global.h"
 #include "pathfinder.h"
@@ -157,6 +158,51 @@ struct MAIN_EXPORT ServerInfo
 	QString toolTip;
 };
 
+class MAIN_EXPORT Server;
+
+/**
+ * An abstract interface for a remote console protocol.
+ */
+class MAIN_EXPORT RConProtocol : public QThread
+{
+	Q_OBJECT
+
+	public:
+		enum Response
+		{
+			RSP_GOOD,
+			RSP_BANNED,
+			RSP_BAD,
+			RSP_TIMEOUT
+		};
+
+		virtual ~RConProtocol();
+
+		bool				isConnected() const { return connected; }
+		const QList<Player>	&playerList() const { return players; }
+
+	public slots:
+		virtual void	disconnectFromServer()=0;
+		virtual void	sendCommand(const QString &cmd)=0;
+		virtual void	sendPassword(const QString &password)=0;
+
+	signals:
+		void			connectionResponse(RConProtocol::Response response);
+		void			disconnected();
+		void			messageReceived(const QString &cmd);
+		void			playerListUpdated();
+
+	protected:
+		RConProtocol(Server *server);
+
+		bool			connected;
+		QList<Player>	players;
+		Server			*server;
+		QUdpSocket		socket;
+
+		friend class Server;
+};
+
 class MAIN_EXPORT Server : public QObject
 {
 	Q_OBJECT
@@ -212,6 +258,7 @@ class MAIN_EXPORT Server : public QObject
 		const Player		&player(int index) const { return players[index]; }
 		unsigned short		port() const { return serverPort; }
 		const QStringList	&pwads() const { return wads; }
+		virtual RConProtocol	*rcon() { return NULL; }
 		unsigned int		score(int team=0) const { return scores[team]; }
 		unsigned int		scoreLimit() const { return serverScoreLimit; }
 		virtual QString		teamName(int team) const { return team < MAX_TEAMS && team >= 0 ? teamNames[team] : ""; }
