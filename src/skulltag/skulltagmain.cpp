@@ -45,6 +45,16 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 
 		short			defaultServerPort() const { return 10666; }
 
+		const GameMode*	gameModes() const
+		{
+			return SkulltagServer::GAME_MODES;
+		}
+
+		int				gameModesNumber() const
+		{
+			return NUM_SKULLTAG_GAME_MODES;
+		}
+
 		QPixmap			icon() const
 		{
 			return QPixmap(skulltag_xpm);

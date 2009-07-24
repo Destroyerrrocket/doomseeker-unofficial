@@ -13,9 +13,6 @@
   <property name="windowTitle">
    <string>Doomseeker</string>
   </property>
-  <property name="locale">
-   <locale language="English" country="UnitedStates"/>
-  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
@@ -110,7 +107,7 @@
      <x>0</x>
      <y>0</y>
      <width>796</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="locale">
@@ -135,6 +132,7 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="menuActionCreateServer"/>
     <addaction name="menuActionWadseeker"/>
     <addaction name="separator"/>
     <addaction name="menuActionQuit"/>
@@ -201,6 +199,11 @@
    </property>
    <property name="shortcut">
     <string>B</string>
+   </property>
+  </action>
+  <action name="menuActionCreateServer">
+   <property name="text">
+    <string>Create server</string>
    </property>
   </action>
  </widget>

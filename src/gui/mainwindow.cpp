@@ -22,10 +22,11 @@
 //------------------------------------------------------------------------------
 
 #include "gui/aboutDlg.h"
-#include "gui/mainwindow.h"
 #include "gui/configureDlg.h"
+#include "gui/createserver.h"
 #include "gui/dockBuddiesList.h"
 #include "gui/dockserverinfo.h"
+#include "gui/mainwindow.h"
 #include "gui/passwordDlg.h"
 #include "gui/wadseekerinterface.h"
 #include "customservers.h"
@@ -92,6 +93,7 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 	connect(menuActionAbout, SIGNAL( triggered() ), this, SLOT( menuHelpAbout() ));
 	connect(menuActionBuddies, SIGNAL( triggered() ), this, SLOT( menuBuddies() ));
 	connect(menuActionConfigure, SIGNAL( triggered() ), this, SLOT( menuOptionsConfigure() ));
+	connect(menuActionCreateServer, SIGNAL( triggered() ), this, SLOT( menuCreateServer() ));
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( close() ));
 	connect(menuActionServerInfo, SIGNAL( triggered() ), this, SLOT( menuServerInfo() ));
 	connect(menuActionWadseeker, SIGNAL( triggered() ), this, SLOT( menuWadSeeker() ));
@@ -192,6 +194,12 @@ void MainWindow::menuBuddies()
 	else
 		buddiesList->show();
 	menuActionBuddies->setChecked(buddiesList->isVisible());
+}
+
+void MainWindow::menuCreateServer()
+{
+	CreateServerDlg dlg(this);
+	dlg.exec();
 }
 
 void MainWindow::menuHelpAbout()

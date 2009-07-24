@@ -50,6 +50,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void btnGetServers_Click();
 		void enablePort();
 		void menuBuddies();
+		void menuCreateServer();
 		void menuHelpAbout();
 		void menuOptionsConfigure();
 		void menuServerInfo();

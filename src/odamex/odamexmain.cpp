@@ -45,6 +45,16 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 
 		short			defaultServerPort() const { return 10666; }
 
+		const GameMode*	gameModes() const
+		{
+			return OdamexServer::GAME_MODES;
+		}
+
+		int				gameModesNumber() const
+		{
+			return NUM_ODAMEX_GAME_MODES;
+		}
+
 		QPixmap			icon() const
 		{
 			return QPixmap(odamex_xpm);

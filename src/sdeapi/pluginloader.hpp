@@ -54,15 +54,28 @@ class MAIN_EXPORT EnginePlugin
 {
 	public:
 		virtual ConfigurationBoxInfo	*configuration(Config *cfg, QWidget *parent) const=0;
+
 		/**
 		 *	@return default port on which servers for given engine are hosted.
 		 */
 		virtual short					defaultServerPort() const = 0;
+
+		/**
+		 *	Should return all available game modes for current engine.
+		 */
+		virtual const GameMode*			gameModes() const = 0;
+
+		/**
+		 *	Should return number of all available game modes for current engine.
+		 */
+		virtual int						gameModesNumber() const = 0;
+
 		/**
 		 *	@return icon of the engine
 		 */
 		virtual QPixmap					icon() const=0;
 		virtual MasterClient			*masterClient() const=0;
+
 		/**
 		 *	Creates an instance of server object from this plugin.
 		 *	This might be useful for custom servers.

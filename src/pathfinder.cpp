@@ -57,7 +57,6 @@ QString PathFinder::findWad(const QString& fileName)
 		for (int j = 0; j < fiList.count(); ++j)
 		{
 			QString tmpName = fiList[j].fileName();
-			printf("%s\n", tmpName.toAscii().constData());
 			if (tmpName.compare(fileName, Qt::CaseInsensitive) == 0)
 			{
 				return fiList[j].absoluteFilePath();
