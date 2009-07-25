@@ -24,8 +24,6 @@
 #ifndef __REMOTECONSOLE_H__
 #define __REMOTECONSOLE_H__
 
-#include <QStandardItemModel>
-
 #include "ui_remoteconsole.h"
 #include "server.h"
 
@@ -43,13 +41,11 @@ class RemoteConsole : public QMainWindow, private Ui::RemoteConsole
 		void	closeEvent(QCloseEvent *event);
 
 	protected slots:
-		void	connectionResponse(RConProtocol::Response response);
 		void	receiveMessage(const QString &message);
 		void	sendCommand();
 		void	updatePlayerList();
 
 	private:
-		QStandardItemModel	*playerModel;
 		RConProtocol		*protocol;
 };
 

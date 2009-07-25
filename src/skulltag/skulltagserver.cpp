@@ -659,7 +659,7 @@ SkulltagRConProtocol::SkulltagRConProtocol(Server *server) : RConProtocol(server
 {
 }
 
-RConProtocol *SkulltagRConProtocol::connectToServer(Server *server, Response &response)
+RConProtocol *SkulltagRConProtocol::connectToServer(Server *server)
 {
 	SkulltagRConProtocol *protocol = new SkulltagRConProtocol(server);
 	if(!protocol->connected)
@@ -677,7 +677,6 @@ RConProtocol *SkulltagRConProtocol::connectToServer(Server *server, Response &re
 	protocol->connected = false;
 	for(unsigned int attempts = 0;attempts < 3;attempts++)
 	{
-		qDebug() << "Requesting...";
 		protocol->socket.write(encodedConnection, encodedSize);
 
 		if(protocol->socket.waitForReadyRead(3000))
@@ -686,30 +685,23 @@ RConProtocol *SkulltagRConProtocol::connectToServer(Server *server, Response &re
 			char packet[64];
 			int decodedSize = 64;
 			g_Huffman.decode(data.data(), packet, data.size(), &decodedSize);
-			qDebug() << (int) packet[0];
 			switch(packet[0])
 			{
 				case SVRC_BANNED:
 					QMessageBox::critical(NULL, tr("Banned"), tr("You have been banned from this server."));
-					response = RSP_BANNED;
 					break;
 				default:
 				case SVRC_OLDPROTOCOL:
 					QMessageBox::critical(NULL, tr("Incompatible Protocol"), tr("The protocol appears to be outdated."));
-					response = RSP_BAD;
 					break;
 				case SVRC_SALT:
 					protocol->connected = true;
 					protocol->salt = QString(&packet[1]);
-					qDebug() << "Salt is: " << protocol->salt;
-					response = RSP_GOOD;
 					return protocol;
 			}
-			delete protocol;
-			return NULL;
+			break;
 		}
 	}
-	response = RSP_TIMEOUT;
 	delete protocol;
 	return NULL;
 }
@@ -744,7 +736,6 @@ void SkulltagRConProtocol::sendPassword(const QString &password)
 	// conversions in order to use the functions with our C++ code.
 	// Hence the mess.
 	QString hashPassword = salt + password;
-	qDebug() << "Hashing: " << hashPassword;
 	MD5_CTX context;
 	MD5Init(&context);
 	unsigned char tmp[128];
@@ -755,7 +746,6 @@ void SkulltagRConProtocol::sendPassword(const QString &password)
 	QString md5;
 	for(int i = 0;i < 16;i++)
 		md5 += QString("%1").arg(out[i], 2, 16, QChar('0'));
-	qDebug() << "MD5 is: " << md5;
 
 	// Create the packet
 	char passwordPacket[34];
@@ -788,17 +778,16 @@ void SkulltagRConProtocol::sendPassword(const QString &password)
 					start();
 					serverProtocolVersion = packet[1];
 					hostName = QString(&packet[2]);
+					qDebug() << hostName;
 					int numUpdates = packet[hostName.length() + 3];
 					int position = 0;
 					processPacket(packet + hostName.length() + 4, decodedSize - hostName.length() - 4, true, numUpdates, &position);
 					position += hostName.length() + 4;
 					int numStrings = packet[position++];
-					qDebug() << numStrings;
 					while(numStrings-- > 0)
 					{
 						QString message(&packet[position]);
 						position += message.length() + 1;
-						qDebug() << message;
 						emit messageReceived(message);
 					}
 					break;
@@ -859,7 +848,6 @@ void SkulltagRConProtocol::processPacket(const char *data, int length, bool init
 			{
 				QString message = QString(&data[position]);
 				position += message.length() + 1;
-				qDebug() << message;
 				emit messageReceived(message);
 				break;
 			}
@@ -875,7 +863,6 @@ void SkulltagRConProtocol::processPacket(const char *data, int length, bool init
 					{
 						QString map = QString(&data[position]);
 						position += map.length() + 1;
-						qDebug() << map;
 						break;
 					}
 					case SVRCU_ADMINCOUNT:
@@ -906,6 +893,5 @@ void SkulltagRConProtocol::processPacket(const char *data, int length, bool init
 
 RConProtocol *SkulltagServer::rcon()
 {
-	RConProtocol::Response response;
-	return SkulltagRConProtocol::connectToServer(this, response);
+	return SkulltagRConProtocol::connectToServer(this);
 }

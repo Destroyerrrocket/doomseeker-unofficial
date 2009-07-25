@@ -168,14 +168,6 @@ class MAIN_EXPORT RConProtocol : public QThread
 	Q_OBJECT
 
 	public:
-		enum Response
-		{
-			RSP_GOOD,
-			RSP_BANNED,
-			RSP_BAD,
-			RSP_TIMEOUT
-		};
-
 		virtual ~RConProtocol();
 
 		bool				isConnected() const { return connected; }
@@ -187,7 +179,6 @@ class MAIN_EXPORT RConProtocol : public QThread
 		virtual void	sendPassword(const QString &password)=0;
 
 	signals:
-		void			connectionResponse(RConProtocol::Response response);
 		void			disconnected();
 		void			messageReceived(const QString &cmd);
 		void			playerListUpdated();

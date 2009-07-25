@@ -40,6 +40,15 @@ int main(int argc, char* argv[])
 {
 	QApplication app(argc, argv);
 
+	// If no plugins were found in ./ try looking in the directory in argv[0].
+	if(Main::enginePlugins.numPlugins() == 0)
+	{
+		QString workingDirectory = argv[0];
+		int lastSlash = qMax<int>(workingDirectory.lastIndexOf('\\'), workingDirectory.lastIndexOf('/'));
+		if(lastSlash != -1)
+			Main::enginePlugins.resetPluginsDirectory(workingDirectory.mid(0, lastSlash+1) + "engines/");
+	}
+
 	Main::config->locateConfigFile(argc, argv);
 
 	// Initial settings values

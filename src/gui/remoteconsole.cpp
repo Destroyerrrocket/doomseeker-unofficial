@@ -21,8 +21,6 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include <QStandardItem>
-
 #include "remoteconsole.h"
 #include "passwordDlg.h"
 
@@ -32,9 +30,6 @@ RemoteConsole::RemoteConsole(Server *server, QWidget *parent) : QMainWindow(pare
 
 	setWindowIcon(server->icon());
 	setWindowTitle(windowTitle() + " - " + server->name());
-
-	playerModel = new QStandardItemModel();
-	playerTable->setModel(playerModel);
 
 	if(protocol == NULL)
 		return;
@@ -68,13 +63,6 @@ void RemoteConsole::closeEvent(QCloseEvent *event)
 	event->accept();
 }
 
-void RemoteConsole::connectionResponse(RConProtocol::Response response)
-{
-	qDebug() << "Resonse:" << (int) response;
-	if(response == RConProtocol::RSP_GOOD)
-		show();
-}
-
 void RemoteConsole::disconnectFromServer()
 {
 	if(protocol->isConnected())
@@ -95,14 +83,8 @@ void RemoteConsole::sendCommand()
 void RemoteConsole::updatePlayerList()
 {
 	const QList<Player> &list = protocol->playerList();
-	QList<QStandardItem *> items;
 
-	foreach(const Player &player, list)
-	{
-		items.append(new QStandardItem(player.name()));
-	}
-
-	// clear the current list and put in the new one
-	playerModel->removeColumn(0);
-	playerModel->appendColumn(items);
+	playerTable->setRowCount(list.size());
+	for(unsigned int i = 0;i < list.size();i++)
+		playerTable->setItem(i, 0, new QTableWidgetItem(list[i].nameFormatted()));
 }

@@ -201,8 +201,7 @@ class SkulltagRConProtocol : public RConProtocol
 		};
 
 	public:
-		SkulltagRConProtocol(Server *server);
-		static RConProtocol	*connectToServer(Server *server, Response &response);
+		static RConProtocol	*connectToServer(Server *server);
 
 	public slots:
 		void	disconnectFromServer();
@@ -210,6 +209,8 @@ class SkulltagRConProtocol : public RConProtocol
 		void	sendPassword(const QString &password);
 
 	protected:
+		SkulltagRConProtocol(Server *server);
+
 		void	run();
 		void	processPacket(const char *data, int length, bool initial=false, int maxUpdates=-1, int *pos=NULL);
 
