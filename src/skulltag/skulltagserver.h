@@ -115,10 +115,16 @@ class SkulltagServer : public Server
 			GAMEMODE_DOMINATION
 		};
 
-		/**
+		static const DMFlags			DMFLAGS;
+		static const DMFlagsSection		DM_FLAGS;
+		static const DMFlagsSection		DM_FLAGS_2;
+		static const DMFlagsSection		COMPAT_FLAGS;
+
+		/*
 		 * Lists all DMFlags, DMFlags2, and CompatFlags in order.
-		 */
+
 		static const QString	DMFLAGS[96];
+		*/
 		static const GameMode	GAME_MODES[NUM_SKULLTAG_GAME_MODES];
 		static const QPixmap	ICON;
 
@@ -126,9 +132,9 @@ class SkulltagServer : public Server
 
 		QPixmap			icon() const;
 		/**
-		 *	If this is a normal server simple path to executable file is produced.
-		 *	If this is a testing server, a shell script will be produced if necessary and
-		 *	path to this shell script will be returned.
+		 *	If this is a normal server simple path to executable file is
+		 *	returned. If this is a testing server, a shell script is created
+		 *	if necessary and a path to this shell script s returned.
 		 */
 		QString			clientBinary(QString& error) const;
 		QString			clientBinarysDirectory() const;

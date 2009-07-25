@@ -212,6 +212,7 @@ Server::Server(const Server &other) : QObject(), currentGameMode(GameMode::COOPE
 
 Server::~Server()
 {
+	clearDMFlags();
 }
 
 QList<ServerAction>* Server::actions()
@@ -227,6 +228,16 @@ QList<ServerAction>* Server::actions()
 
 	actionsEx(lst);
 	return lst;
+}
+
+void Server::clearDMFlags()
+{
+	DMFlagsIt it;
+	for (it = dmFlags.begin(); it != dmFlags.end(); ++it)
+	{
+		delete (*it);
+	}
+	dmFlags.clear();
 }
 
 void Server::setResponse(Server* server, int res)

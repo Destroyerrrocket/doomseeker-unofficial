@@ -44,6 +44,34 @@
 #define MAX_TEAMS 4
 
 /**
+ *	@brief Generic representation of DMFlags section.
+ *
+ *	Note: Maximum amount of flags in one section is 32.
+ */
+struct MAIN_EXPORT DMFlagsSection
+{
+	struct DMFlag
+	{
+		QString         name;
+		unsigned char   value;
+	};
+
+	QString         name;
+	unsigned char   size;
+	DMFlag			flags[32];
+};
+
+/**
+ *	List used by Server class' virtual method to return all flags sections.
+ */
+typedef QList<DMFlagsSection*> 							DMFlags;
+typedef QList<DMFlagsSection*>::iterator				DMFlagsIt;
+typedef QList<DMFlagsSection*>::const_iterator 			DMFlagsItConst;
+typedef QList<const DMFlagsSection*> 					DMFlagsConst;
+typedef QList<const DMFlagsSection*>::iterator			DMFlagsConstIt;
+typedef QList<const DMFlagsSection*>::const_iterator 	DMFlagsConstItConst;
+
+/**
  * Data structure that holds information about players in a server.
  */
 struct MAIN_EXPORT Player
@@ -228,7 +256,7 @@ class MAIN_EXPORT Server : public QObject
 		QList<ServerInfo>*	serverInfo() const;
 
 		const QHostAddress	&address() const { return serverAddress; }
-		const QStringList	&gameFlags() const { return dmFlags; }
+		const DMFlags		&gameFlags() const { return dmFlags; }
 		const GameMode		&gameMode() const { return currentGameMode; }
 		virtual QPixmap		icon() const=0;
 		bool				isCustom() const { return custom; }
@@ -318,6 +346,8 @@ class MAIN_EXPORT Server : public QObject
 
 	protected:
 		virtual void		additionalServerInfo(QList<ServerInfo>* baseList) const {}
+
+		void				clearDMFlags();
 		/**
 		 * Wrapper function to allow refresher to emit the updated signal.
 		 */
@@ -349,7 +379,7 @@ class MAIN_EXPORT Server : public QObject
 		GameMode			currentGameMode;
 		unsigned int		currentPing;
 		bool				custom;
-		QStringList			dmFlags;
+		DMFlags				dmFlags;
 		QString				email;
 		QString				iwad;
 		bool				locked;

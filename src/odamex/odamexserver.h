@@ -41,9 +41,9 @@ class OdamexServer : public Server
 			MODE_TEAM_DEATHMATCH,
 			MODE_CAPTURE_THE_FLAG
 		};
-		static const GameMode	GAME_MODES[NUM_ODAMEX_GAME_MODES];
-		static const QString	DMFLAGS[13];
-		static const QPixmap	ICON;
+		static const DMFlagsSection		DM_FLAGS;
+		static const GameMode			GAME_MODES[NUM_ODAMEX_GAME_MODES];
+		static const QPixmap			ICON;
 
 		OdamexServer(const QHostAddress &address, unsigned short port);
 

@@ -56,7 +56,7 @@ void CustomServersConfigBox::add()
 
 	QString engineName = cboEngines->itemText(cboEngines->currentIndex());
 
-	add(engineName, "", nfo->pInterface->defaultServerPort());
+	add(engineName, "", nfo->pInterface->generalEngineInfo().defaultServerPort);
 }
 
 void CustomServersConfigBox::add(const QString& engineName, const QString& host, short port)
@@ -94,7 +94,7 @@ void CustomServersConfigBox::dataChanged(const QModelIndex& topLeft, const QMode
 				QStandardItem* itemEng = model->item(i, 0);
 				int pluginIndex = itemEng->data().toInt();
 				const PluginInfo* nfo = Main::enginePlugins[pluginIndex]->info;
-				item->setText(QString::number(nfo->pInterface->defaultServerPort()));
+				item->setText(QString::number(nfo->pInterface->generalEngineInfo().defaultServerPort));
 			}
 		}
 	}

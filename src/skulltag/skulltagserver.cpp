@@ -54,6 +54,229 @@ TeamInfo::TeamInfo(const QString &name, const QColor &color, unsigned int score)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+const DMFlagsSection SkulltagServer::DM_FLAGS =
+{
+	tr("DM Flags"),
+	29,
+	{
+		{ tr("Do not spawn health items (DM)"),					0 },
+		{ tr("Do not spawn powerups (DM)"),						1 },
+		{ tr("Weapons remain after pickup (DM)"),				2 },
+		{ tr("Falling damage (ZDoom/Strife)"),					3 },
+		{ tr("Falling damage (Hexen/Strife)"),					4 },
+		{ tr("Stay on same map when someone exits (DM)"),		6 },
+		{ tr("Spawn players as far as possible (DM)"),			7 },
+		{ tr("Automatically respawn dead players (DM)"),		8 },
+		{ tr("Don't spawn armor (DM)"),							9 },
+		{ tr("Kill anyone who tries to exit the level (DM)"),	10 },
+		{ tr("Infinite ammo"),									11 },
+		{ tr("No monsters"),									12 },
+		{ tr("Monsters respawn"),								13 },
+		{ tr("Items other than invuln. and invis. respawn"),	14 },
+		{ tr("Fast monsters"),									15 },
+		{ tr("No jumping"),										16 },
+		{ tr("No freelook"),									17 },
+		{ tr("Respawn invulnerability and invisibility"),		18 },
+		{ tr("Arbitrator FOV"),									19 },
+		{ tr("No multiplayer weapons in cooperative"),			20 },
+		{ tr("No crouching"),									21 },
+		{ tr("Lose all old inventory on respawn (COOP)"),		22 },
+		{ tr("Lose keys on respawn (COOP)"),					23 },
+		{ tr("Lose weapons on respawn (COOP)"),					24 },
+		{ tr("Lose armor on respawn (COOP)"),					25 },
+		{ tr("Lose powerups on respawn (COOP)"),				26 },
+		{ tr("Lose ammo on respawn (COOP)"),					27 },
+		{ tr("Lose half your ammo on respawn (COOP)"),			28 },
+		{ tr("Jumping allowed"),								29 },
+		{ tr("Crouching allowed"),								30 }
+	}
+};
+
+const DMFlagsSection SkulltagServer::DM_FLAGS_2 =
+{
+	tr("DM Flags 2"),
+	25,
+	{
+		{ tr("Drop weapons upon death"), 							0 },
+		{ tr("Don't spawn runes"),									1 },
+		{ tr("Instantly return flags (ST/CTF)"),					2 },
+		{ tr("Don't allow players to switch teams"),				3 },
+		{ tr("Players are automatically assigned teams"),			4 },
+		{ tr("Double the amount of ammo given"),					5 },
+		{ tr("Players slowly lose health over 100% like Quake"),	6 },
+		{ tr("Allow BFG freeaiming"),								7 },
+		{ tr("Barrels respawn"),									8 },
+		{ tr("Invulnerability doesn't respawn"),					9 },
+		{ tr("All players start with a shotgun"),					10 },
+		{ tr("Players respawn where they died (COOP)"),				11 },
+		{ tr("Players keep teams after map change"),				12 },
+		{ tr("Don't clear frags after each level"),					13 },
+		{ tr("Player can't respawn"),								14 },
+		{ tr("Lose a frag when killed"),							15 },
+		{ tr("Infinite inventory"),									16 },
+		{ tr("Award damage not kills"),								19 },
+		{ tr("Force drawing alpha"),								20 },
+		{ tr("All monsters must be killed before exiting"),			21 },
+		{ tr("Players can see the automap"),						22 },
+		{ tr("Allies can be seen on the automap"),					23 },
+		{ tr("You can spy allies"),									24 },
+		{ tr("Players can use chase cam"),							25 },
+		{ tr("Players can not suicide"),							26 },
+		{ tr("Players can not use autoaim"),						27 }
+	}
+};
+
+const DMFlagsSection SkulltagServer::COMPAT_FLAGS =
+{
+	tr("Compat. flags"),
+	30,
+	{
+		{ tr("Use Doom's shortest texture behavior"),						0 },
+		{ tr("Don't fix loop index for stair building"),					1 },
+		{ tr("Pain elemental is limited to 20 lost souls"),					2 },
+		{ tr("Pickups are only heard locally"),								3 },
+		{ tr("Infinitly tall actors"),										4 },
+		{ tr("Limit actors to only one sound"),								5 },
+		{ tr("Enable wallrunning"),											6 },
+		{ tr("Dropped items spawn on floor"),								7 },
+		{ tr("Special lines block use line"),								8 },
+		{ tr("Disable BOOM local door light effect"),						9 },
+		{ tr("Raven's scrollers use their original speed"),					10 },
+		{ tr("Use sector based sound target code"),							11 },
+		{ tr("Limit dehacked MaxHealth to health bonus"),					12 },
+		{ tr("Trace ignores lines with the same sector on both sides"),		13 },
+		{ tr("Monsters can not move when hanging over a drop off"),			14 },
+		{ tr("Scrolling sectors are additive like Boom"),					15 },
+		{ tr("Monsters can see semi-invisible players"),					16 },
+		{ tr("Limited movement in the air"),								17 },
+		{ tr("Allow map01 \"plasma bump\" bug"),							18 },
+		{ tr("Allow instant respawn after death"),							19 },
+		{ tr("Disable taunting"),											20 },
+		{ tr("Use doom2.exe's original sound curve"),						21 },
+		{ tr("Use original doom2 intermission music"),						22 },
+		{ tr("Disable stealth monsters"),									23 },
+		{ tr("Disable crosshair"),											25 },
+		{ tr("Force weapon switch"),										26 },
+		{ tr("Instantly moving floors are not silent"),						28 },
+		{ tr("Sector sounds use original method for sound orgin"),			29 },
+		{ tr("Use original Doom heights for clipping against projetiles"),	30 },
+		{ tr("Monsters can't be pushed over drop offs"),					31 }
+	}
+};
+
+/*
+const DMFlags SkulltagServer::DMFLAGS =
+{
+	3,
+	{
+		tr("DM Flags"),
+		29,
+		{
+			{ tr("Do not spawn health items (DM)"),					0 },
+			{ tr("Do not spawn powerups (DM)"),						1 },
+			{ tr("Weapons remain after pickup (DM)"),				2 },
+			{ tr("Falling damage (ZDoom/Strife)"),					3 },
+			{ tr("Falling damage (Hexen/Strife)"),					4 },
+			{ tr("Stay on same map when someone exits (DM)"),		6 },
+			{ tr("Spawn players as far as possible (DM)"),			7 },
+			{ tr("Automatically respawn dead players (DM)"),		8 },
+			{ tr("Don't spawn armor (DM)"),							9 },
+			{ tr("Kill anyone who tries to exit the level (DM)"),	10 },
+			{ tr("Infinite ammo"),									11 },
+			{ tr("No monsters"),									12 },
+			{ tr("Monsters respawn"),								13 },
+			{ tr("Items other than invuln. and invis. respawn"),	14 },
+			{ tr("Fast monsters"),									15 },
+			{ tr("No jumping"),										16 },
+			{ tr("No freelook"),									17 },
+			{ tr("Respawn invulnerability and invisibility"),		18 },
+			{ tr("Arbitrator FOV"),									19 },
+			{ tr("No multiplayer weapons in cooperative"),			20 },
+			{ tr("No crouching"),									21 },
+			{ tr("Lose all old inventory on respawn (COOP)"),		22 },
+			{ tr("Lose keys on respawn (COOP)"),					23 },
+			{ tr("Lose weapons on respawn (COOP)"),					24 },
+			{ tr("Lose armor on respawn (COOP)"),					25 },
+			{ tr("Lose powerups on respawn (COOP)"),				26 },
+			{ tr("Lose ammo on respawn (COOP)"),					27 },
+			{ tr("Lose half your ammo on respawn (COOP)"),			28 },
+			{ tr("Jumping allowed"),								29 },
+			{ tr("Crouching allowed"),								30 }
+		}
+	},
+	{
+		tr("DM Flags 2"),
+		25,
+		{
+			{ tr("Drop weapons upon death"), 							0 },
+			{ tr("Don't spawn runes"),									1 },
+			{ tr("Instantly return flags (ST/CTF)"),					2 },
+			{ tr("Don't allow players to switch teams"),				3 },
+			{ tr("Players are automatically assigned teams"),			4 },
+			{ tr("Double the amount of ammo given"),					5 },
+			{ tr("Players slowly lose health over 100% like Quake"),	6 },
+			{ tr("Allow BFG freeaiming"),								7 },
+			{ tr("Barrels respawn"),									8 },
+			{ tr("Invulnerability doesn't respawn"),					9 },
+			{ tr("All players start with a shotgun"),					10 },
+			{ tr("Players respawn where they died (COOP)"),				11 },
+			{ tr("Players keep teams after map change"),				12 },
+			{ tr("Don't clear frags after each level"),					13 },
+			{ tr("Player can't respawn"),								14 },
+			{ tr("Lose a frag when killed"),							15 },
+			{ tr("Infinite inventory"),									16 },
+			{ tr("Award damage not kills"),								19 },
+			{ tr("Force drawing alpha"),								20 },
+			{ tr("All monsters must be killed before exiting"),			21 },
+			{ tr("Players can see the automap"),						22 },
+			{ tr("Allies can be seen on the automap"),					23 },
+			{ tr("You can spy allies"),									24 },
+			{ tr("Players can use chase cam"),							25 },
+			{ tr("Players can not suicide"),							26 },
+			{ tr("Players can not use autoaim"),						27 }
+		}
+	},
+	{
+		tr("Compat. flags"),
+		30,
+		{
+			{ tr("Use Doom's shortest texture behavior"),						0 },
+			{ tr("Don't fix loop index for stair building"),					1 },
+			{ tr("Pain elemental is limited to 20 lost souls"),					2 },
+			{ tr("Pickups are only heard locally"),								3 },
+			{ tr("Infinitly tall actors"),										4 },
+			{ tr("Limit actors to only one sound"),								5 },
+			{ tr("Enable wallrunning"),											6 },
+			{ tr("Dropped items spawn on floor"),								7 },
+			{ tr("Special lines block use line"),								8 },
+			{ tr("Disable BOOM local door light effect"),						9 },
+			{ tr("Raven's scrollers use their original speed"),					10 },
+			{ tr("Use sector based sound target code"),							11 },
+			{ tr("Limit dehacked MaxHealth to health bonus"),					12 },
+			{ tr("Trace ignores lines with the same sector on both sides"),		13 },
+			{ tr("Monsters can not move when hanging over a drop off"),			14 },
+			{ tr("Scrolling sectors are additive like Boom"),					15 },
+			{ tr("Monsters can see semi-invisible players"),					16 },
+			{ tr("Limited movement in the air"),								17 },
+			{ tr("Allow map01 \"plasma bump\" bug"),							18 },
+			{ tr("Allow instant respawn after death"),							19 },
+			{ tr("Disable taunting"),											20 },
+			{ tr("Use doom2.exe's original sound curve"),						21 },
+			{ tr("Use original doom2 intermission music"),						22 },
+			{ tr("Disable stealth monsters"),									23 },
+			{ tr("Disable crosshair"),											25 },
+			{ tr("Force weapon switch"),										26 },
+			{ tr("Instantly moving floors are not silent"),						28 },
+			{ tr("Sector sounds use original method for sound orgin"),			29 },
+			{ tr("Use original Doom heights for clipping against projetiles"),	30 },
+			{ tr("Monsters can't be pushed over drop offs"),					31 }
+		}
+	}
+};
+*/
+
+
+/*
 const QString SkulltagServer::DMFLAGS[96] =
 {
 	tr("Do not spawn health items (DM)"),
@@ -153,6 +376,7 @@ const QString SkulltagServer::DMFLAGS[96] =
 	tr("Use original Doom heights for clipping against projetiles"),
 	tr("Monsters can't be pushed over drop offs")
 };
+*/
 
 const GameMode SkulltagServer::GAME_MODES[NUM_SKULLTAG_GAME_MODES] =
 {
@@ -408,6 +632,23 @@ bool SkulltagServer::readRequest(QByteArray &data)
 		skill = READINT8(&packetOut[pos++]);
 	if((flags & SQF_BOTSKILL) == SQF_BOTSKILL)
 		botSkill = READINT8(&packetOut[pos++]);
+
+	clearDMFlags();
+	DMFlagsSection* dmFlagsSec = new DMFlagsSection();
+	dmFlagsSec->name = DM_FLAGS.name;
+	dmFlagsSec->size = 0;
+
+	DMFlagsSection* dmFlags2Sec = new DMFlagsSection();
+	dmFlags2Sec->name = DM_FLAGS_2.name;
+	dmFlags2Sec->size = 0;
+
+	DMFlagsSection* compatFlagsSec = new DMFlagsSection();
+	compatFlagsSec->name = COMPAT_FLAGS.name;
+	compatFlagsSec->size = 0;
+
+	dmFlags << dmFlagsSec << dmFlags2Sec << compatFlagsSec;
+
+
 	if((flags & SQF_DMFLAGS) == SQF_DMFLAGS)
 	{
 		unsigned int dmflags = READINT32(&packetOut[pos]);
@@ -415,16 +656,27 @@ bool SkulltagServer::readRequest(QByteArray &data)
 		unsigned int compatflags = READINT32(&packetOut[pos+8]);
 		pos += 12;
 
-		for(int i = 0;i < 96;i++)
+		for (int i = 0; i < DM_FLAGS.size; ++i)
 		{
-			// If the flag is set and we have the description for the flag,
-			// add it to the list.
-			if(((i < 32 && (dmflags & (1<<i)) != 0) ||
-				((i >= 32 && i < 64) && (dmflags2 & (i<<(i-32))) != 0) ||
-				(i >= 64 && (compatflags & (1<<(i-64))) != 0))
-				&& !DMFLAGS[i].isEmpty())
+			if ( (dmflags & (1 << DM_FLAGS.flags[i].value)) != 0)
 			{
-				dmFlags << DMFLAGS[i];
+				dmFlagsSec->flags[dmFlagsSec->size++] = DM_FLAGS.flags[i];
+			}
+		}
+
+		for (int i = 0; i < DM_FLAGS_2.size; ++i)
+		{
+			if ( (dmflags2 & (1 << DM_FLAGS_2.flags[i].value)) != 0)
+			{
+				dmFlags2Sec->flags[dmFlags2Sec->size++] = DM_FLAGS_2.flags[i];
+			}
+		}
+
+		for (int i = 0; i < COMPAT_FLAGS.size; ++i)
+		{
+			if ( (compatflags & (1 << COMPAT_FLAGS.flags[i].value)) != 0)
+			{
+				compatFlagsSec->flags[compatFlagsSec->size++] = COMPAT_FLAGS.flags[i];
 			}
 		}
 	}

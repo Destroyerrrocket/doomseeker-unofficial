@@ -42,21 +42,25 @@ const GameMode OdamexServer::GAME_MODES[NUM_ODAMEX_GAME_MODES] =
 	GameMode::CAPTURE_THE_FLAG
 };
 
-const QString OdamexServer::DMFLAGS[13] =
+const DMFlagsSection OdamexServer::DM_FLAGS =
 {
-	tr("Items respawn"),
-	tr("Weapons stay"),
-	tr("Friendly fire"),
-	tr("Allow exit"),
-	tr("Infinite ammo"),
-	tr("No monsters"),
-	tr("Monsters respawn"),
-	tr("Fast monsters"),
-	tr("Jumping allowed"),
-	tr("Freelook allowed"),
-	tr("Wad can be downloaded"),
-	tr("Server resets on empty"),
-	tr("Kill anyone who tries to leave the level")
+	tr("DMFlags"),
+	13,
+	{
+		{ tr("Items respawn"),									0 },
+		{ tr("Weapons stay"),									1 },
+		{ tr("Friendly fire"),									2 },
+		{ tr("Allow exit"),										3 },
+		{ tr("Infinite ammo"),									4 },
+		{ tr("No monsters"),									5 },
+		{ tr("Monsters respawn"),								6 },
+		{ tr("Fast monsters"),									7 },
+		{ tr("Jumping allowed"),								8 },
+		{ tr("Freelook allowed"),								9 },
+		{ tr("Wad can be downloaded"),							10 },
+		{ tr("Server resets on empty"),							11 },
+		{ tr("Kill anyone who tries to leave the level"),		12 }
+	}
 };
 
 OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port) : Server(address, port),
@@ -230,10 +234,17 @@ bool OdamexServer::readRequest(QByteArray &data)
 	pos += 6;
 
 	// flags
+	clearDMFlags();
+	DMFlagsSection* dmFlagsSec = new DMFlagsSection();
+	dmFlagsSec->size = 0;
+	dmFlagsSec->name = DM_FLAGS.name;
+	dmFlags << dmFlagsSec;
 	for(int i = 0;i < 13;i++)
 	{
 		if(READINT8(&in[pos++]) == 1)
-			dmFlags << DMFLAGS[i];
+		{
+			dmFlagsSec->flags[dmFlagsSec->size++] = DM_FLAGS.flags[i];
+		}
 	}
 
 	// Players 2

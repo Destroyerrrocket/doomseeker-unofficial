@@ -59,7 +59,7 @@ QList<CustomServerInfo>* CustomServers::decodeConfigEntries(const QString& str)
                 if (ok && port >= 1 && port <= 65535)
                     csi.port = port;
                 else if (csi.engineIndex >= 0)
-                    csi.port = Main::enginePlugins[csi.engineIndex]->info->pInterface->defaultServerPort();
+                    csi.port = Main::enginePlugins[csi.engineIndex]->info->pInterface->generalEngineInfo().defaultServerPort;
                 else
                     csi.port = 1;
 

@@ -35,6 +35,13 @@
 const // clear warnings
 #include "skulltag/skulltag.xpm"
 
+static GeneralEngineInfo SkulltagEngineInfo =
+{
+	10666,
+	SkulltagServer::GAME_MODES,
+	NUM_SKULLTAG_GAME_MODES
+};
+
 class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 {
 	public:
@@ -43,24 +50,17 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 			return EngineSkulltagConfigBox::createStructure(cfg, parent);
 		}
 
-		short			defaultServerPort() const { return 10666; }
-
-		const GameMode*	gameModes() const
+		const GeneralEngineInfo&	generalEngineInfo() const
 		{
-			return SkulltagServer::GAME_MODES;
+			return SkulltagEngineInfo;
 		}
 
-		int				gameModesNumber() const
-		{
-			return NUM_SKULLTAG_GAME_MODES;
-		}
-
-		QPixmap			icon() const
+		QPixmap						icon() const
 		{
 			return QPixmap(skulltag_xpm);
 		}
 
-		MasterClient	*masterClient() const
+		MasterClient				*masterClient() const
 		{
 			// Get server address.
 			QString host;
@@ -76,7 +76,7 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 			return new SkulltagMasterClient(info.addresses().first(), port);
 		}
 
-		Server*			server(const QHostAddress &address, unsigned short port) const
+		Server*						server(const QHostAddress &address, unsigned short port) const
 		{
 			return (new SkulltagServer(address, port));
 		}

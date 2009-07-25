@@ -35,6 +35,13 @@
 const // clear warnings
 #include "odamex/odamex.xpm"
 
+static GeneralEngineInfo OdamexEngineInfo =
+{
+	10666,
+	OdamexServer::GAME_MODES,
+	NUM_ODAMEX_GAME_MODES
+};
+
 class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 {
 	public:
@@ -43,16 +50,9 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 			return EngineOdamexConfigBox::createStructure(cfg, parent);
 		}
 
-		short			defaultServerPort() const { return 10666; }
-
-		const GameMode*	gameModes() const
+		const GeneralEngineInfo&	generalEngineInfo() const
 		{
-			return OdamexServer::GAME_MODES;
-		}
-
-		int				gameModesNumber() const
-		{
-			return NUM_ODAMEX_GAME_MODES;
+			return OdamexEngineInfo;
 		}
 
 		QPixmap			icon() const

@@ -161,12 +161,12 @@ void CreateServerDlg::initEngineSpecific(const PluginInfo* engineInfo)
 		return;
 
 	currentEngine = engineInfo;
-	spinPort->setValue(engineInfo->pInterface->defaultServerPort());
+	spinPort->setValue(engineInfo->pInterface->generalEngineInfo().defaultServerPort);
 
 	cboGamemode->clear();
 
-	const GameMode* gameModes = engineInfo->pInterface->gameModes();
-	for (int i = 0; i < engineInfo->pInterface->gameModesNumber(); ++i)
+	const GameMode* gameModes = engineInfo->pInterface->generalEngineInfo().gameModes;
+	for (int i = 0; i < engineInfo->pInterface->generalEngineInfo().gameModesNum; ++i)
 	{
 		cboGamemode->addItem(gameModes[i].name(), i);
 	}
