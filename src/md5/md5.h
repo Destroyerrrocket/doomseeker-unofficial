@@ -30,6 +30,7 @@ documentation and/or software.
 extern "C" {
 #endif
 
+#include "../global.h"
 #include "md5/global.h"
 
 /* MD5 context. */
@@ -39,10 +40,10 @@ typedef struct {
   unsigned char buffer[64];                         /* input buffer */
 } MD5_CTX;
 
-void MD5Init PROTO_LIST ((MD5_CTX *));
-void MD5Update PROTO_LIST
+MAIN_EXPORT void MD5Init PROTO_LIST ((MD5_CTX *));
+MAIN_EXPORT void MD5Update PROTO_LIST
   ((MD5_CTX *, unsigned char *, unsigned int));
-void MD5Final PROTO_LIST ((unsigned char [16], MD5_CTX *));
+MAIN_EXPORT void MD5Final PROTO_LIST ((unsigned char [16], MD5_CTX *));
 
 #if defined(__cplusplus)
 }
