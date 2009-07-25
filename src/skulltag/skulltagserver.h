@@ -30,7 +30,8 @@
 
 #include "server.h"
 
-#define	NUM_SKULLTAG_GAME_MODES 16
+#define NUM_SKULLTAG_GAME_MODES	16
+#define NUM_DMFLAG_SECTIONS		3
 #define ST_MAX_TEAMS			4
 
 class SkulltagServer;
@@ -116,9 +117,7 @@ class SkulltagServer : public Server
 		};
 
 		static const DMFlags			DMFLAGS;
-		static const DMFlagsSection		DM_FLAGS;
-		static const DMFlagsSection		DM_FLAGS_2;
-		static const DMFlagsSection		COMPAT_FLAGS;
+		static const DMFlagsSection		DM_FLAGS[NUM_DMFLAG_SECTIONS];
 
 		/*
 		 * Lists all DMFlags, DMFlags2, and CompatFlags in order.
