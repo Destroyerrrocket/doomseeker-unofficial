@@ -34,8 +34,10 @@ class SkulltagMasterClient : public MasterClient
 		SkulltagMasterClient(QHostAddress address, unsigned short port);
 
 	protected:
-		bool	readRequest(QByteArray &data);
+		bool	readRequest(QByteArray &data, bool &expectingMorePackets);
 		bool	sendRequest(QByteArray &data);
+
+		int		numPacketsLeft;
 };
 
 #endif /* __SKULLTAGMASTERCLIENT_H__ */

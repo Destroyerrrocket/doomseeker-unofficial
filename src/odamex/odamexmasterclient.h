@@ -34,7 +34,7 @@ class OdamexMasterClient : public MasterClient
 		OdamexMasterClient(QHostAddress address, unsigned short port);
 
 	protected:
-		bool	readRequest(QByteArray &data);
+		bool	readRequest(QByteArray &data, bool &expectingMorePackets);
 		bool	sendRequest(QByteArray &data);
 };
 

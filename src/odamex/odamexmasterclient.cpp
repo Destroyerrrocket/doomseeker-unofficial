@@ -39,7 +39,7 @@ bool OdamexMasterClient::sendRequest(QByteArray &data)
 	return true;
 }
 
-bool OdamexMasterClient::readRequest(QByteArray &data)
+bool OdamexMasterClient::readRequest(QByteArray &data, bool &expectingMorePackets)
 {
 	// Decompress the response.
 	const char* in = data.data();

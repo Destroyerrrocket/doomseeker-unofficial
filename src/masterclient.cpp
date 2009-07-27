@@ -70,31 +70,45 @@ void MasterClient::notifyDelay()
 	message.showMessage(tr("Could not fetch a new server list from the master because not enough time has past."));
 }
 
+void MasterClient::notifyUpdate()
+{
+	QErrorMessage message;
+	message.showMessage(tr("Could not fetch a new server list.  The protocol you are using is too old.  An update may be available."));
+}
+
 void MasterClient::refresh()
 {
 	// Connect to the server
 	QUdpSocket socket;
-	socket.connectToHost(address, port);
-	if(!socket.waitForConnected(1000))
-	{
-		printf("%s\n", socket.errorString().toAscii().data());
-		return;
-	}
+	socket.bind();
+
 
 	// Make request
 	QByteArray request;
 	if(!sendRequest(request))
 		return;
-	socket.write(request);
-	if(!socket.waitForReadyRead(10000))
-		return;
+	socket.writeDatagram(request, address, port);
 
-	// get data
-	QByteArray data = socket.readAll();
-	if(!readRequest(data))
-		return;
+	bool expectingMorePackets = false;
+	do
+	{
+		if(!socket.hasPendingDatagrams())
+		{
+			if(!socket.waitForReadyRead(10000))
+				return;
+		}
 
-	socket.close();
+		// get data
+		qint64 datagramSize = socket.pendingDatagramSize();
+		char* datagram = new char[datagramSize];
+		socket.readDatagram(datagram, datagramSize);
+		QByteArray data(datagram, datagramSize);
+		delete[] datagram;
+
+		if(!readRequest(data, expectingMorePackets))
+			return;
+	}
+	while(expectingMorePackets);
 
 	emit listUpdated();
 }

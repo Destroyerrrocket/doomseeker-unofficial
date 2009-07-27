@@ -28,12 +28,16 @@
 #include "skulltag/skulltagmasterclient.h"
 #include "skulltag/skulltagserver.h"
 
-#define MASTER_CHALLENGE		0xC7,0x00,0x00,0x00
-#define MASTER_RESPONSE_GOOD	0
-#define MASTER_RESPONSE_BANNED	3
-#define MASTER_RESPONSE_BAD		4
-#define MASTER_RESPONSE_SERVER	1
-#define MASTER_RESPONSE_END		2
+#define MASTER_CHALLENGE				5660028
+#define MASTER_PROTOCOL_VERSION			1
+#define MASTER_RESPONSE_GOOD			0
+#define MASTER_RESPONSE_BANNED			3
+#define MASTER_RESPONSE_BAD				4
+#define MASTER_RESPONSE_WRONGVERSION	5
+#define MASTER_RESPONSE_SERVER			1
+#define MASTER_RESPONSE_END				2
+#define MASTER_RESPONSE_BEGINPART		6
+#define MASTER_RESPONSE_TERMINATELIST	7
 
 SkulltagMasterClient::SkulltagMasterClient(QHostAddress address, unsigned short port) : MasterClient(address, port)
 {
@@ -42,16 +46,16 @@ SkulltagMasterClient::SkulltagMasterClient(QHostAddress address, unsigned short 
 bool SkulltagMasterClient::sendRequest(QByteArray &data)
 {
 	// Send launcher challenge.
-	const char challenge[4] = {MASTER_CHALLENGE};
+	const char challenge[6] = {WRITEINT32_DIRECT(MASTER_CHALLENGE), WRITEINT16_DIRECT(MASTER_PROTOCOL_VERSION)};
 	char challengeOut[12];
 	int out = 12;
-	g_Huffman.encode(challenge, challengeOut, 4, &out);
+	g_Huffman.encode(challenge, challengeOut, 6, &out);
 	const QByteArray chall(challengeOut, out);
 	data.append(chall);
 	return true;
 }
 
-bool SkulltagMasterClient::readRequest(QByteArray &data)
+bool SkulltagMasterClient::readRequest(QByteArray &data, bool &expectingMorePackets)
 {
 	const char* in = data.data();
 	char packetOut[2000];
@@ -70,15 +74,27 @@ bool SkulltagMasterClient::readRequest(QByteArray &data)
 		notifyDelay();
 		return false;
 	}
-	else if(response != MASTER_RESPONSE_GOOD)
+	else if(response == MASTER_RESPONSE_WRONGVERSION)
+	{
+		notifyUpdate();
+		return false;
+	}
+	else if(response != MASTER_RESPONSE_BEGINPART)
 		return false;
 
-	// Make sure we have an empty list.
-	emptyServerList();
+	// if we are not waiting for packets then this is probably the first time
+	// the function was executed.  So store the number of packets.
+	if(!expectingMorePackets)
+	{
+		numPacketsLeft = READINT8(&packetOut[5]);
 
-	quint8 firstByte = READINT8(&packetOut[4]);
-	int pos = 5;
-	while(firstByte == MASTER_RESPONSE_SERVER)
+		// Make sure we have an empty list.
+		emptyServerList();
+	}
+
+	quint8 firstByte = READINT8(&packetOut[6]);
+	int pos = 7;
+	while(firstByte != MASTER_RESPONSE_TERMINATELIST)
 	{
 		// This might be able to be simplified a little bit...
 		QString ip = QString("%1.%2.%3.%4").
@@ -88,6 +104,8 @@ bool SkulltagMasterClient::readRequest(QByteArray &data)
 		pos += 6;
 		firstByte = READINT8(&packetOut[pos++]);
 	}
+
+	expectingMorePackets = (--numPacketsLeft > 0);
 
 	return true;
 }

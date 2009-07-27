@@ -74,8 +74,12 @@ class MAIN_EXPORT MasterClient : public QObject
 		 * query becuase they tried to refresh too quickly.
 		 */
 		void			notifyDelay();
+		/**
+		 * Tells the user they need to update since the protocol is too old.
+		 */
+		void			notifyUpdate();
 
-		virtual bool	readRequest(QByteArray &data)=0;
+		virtual bool	readRequest(QByteArray &data, bool &expectingMorePackets)=0;
 		virtual bool	sendRequest(QByteArray &data)=0;
 
 		QList<Server *>	servers;
@@ -104,7 +108,7 @@ class MasterManager : public MasterClient
 
 	protected:
 		void	loadMastersFromPlugins();
-		bool	readRequest(QByteArray &data) { return true; }
+		bool	readRequest(QByteArray &data, bool &expectingMorePackets) { return true; }
 		bool	sendRequest(QByteArray &data) { return true; }
 
 		QList<MasterClient *>	masters;

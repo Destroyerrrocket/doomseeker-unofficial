@@ -89,7 +89,7 @@ class CustomServers : public MasterClient
 		void 	setServers(const QList<CustomServerInfo>& csiList, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing);
 
 	protected:
-		bool	readRequest(QByteArray &data) { return true; }
+		bool	readRequest(QByteArray &data, bool &expectingMorePackets) { return true; }
 		bool	sendRequest(QByteArray &data) { return true; }
 };
 
