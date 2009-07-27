@@ -157,12 +157,12 @@ QString Player::colorizeString(const QString &str, int current)
 
 // I really don't know if the game modes will need to be translated but I
 // wrapped them in tr() just to be safe.
-const GameMode GameMode::COOPERATIVE(QObject::tr("Cooperative"), false);
-const GameMode GameMode::DEATHMATCH(QObject::tr("Deathmatch"), false);
-const GameMode GameMode::TEAM_DEATHMATCH(QObject::tr("Team DM"), true);
-const GameMode GameMode::CAPTURE_THE_FLAG(QObject::tr("CTF"), true);
+const GameMode GameMode::COOPERATIVE(SGMICooperative, QObject::tr("Cooperative"), false);
+const GameMode GameMode::DEATHMATCH(SGMIDeathmatch, QObject::tr("Deathmatch"), false);
+const GameMode GameMode::TEAM_DEATHMATCH(SGMITeamDeathmatch, QObject::tr("Team DM"), true);
+const GameMode GameMode::CAPTURE_THE_FLAG(SGMICTF, QObject::tr("CTF"), true);
 
-GameMode::GameMode(const QString &name, bool teamgame) : modeName(name), teamgame(teamgame)
+GameMode::GameMode(int index, const QString &name, bool teamgame) : gameModeIndex(index), modeName(name), teamgame(teamgame)
 {
 }
 

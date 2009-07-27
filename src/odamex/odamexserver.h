@@ -35,11 +35,11 @@ class OdamexServer : public Server
 	public:
 		enum OdamexGameModes
 		{
-			MODE_COOPERATIVE,
-			MODE_DEATHMATCH,
-			MODE_DEATHMATCH2,
-			MODE_TEAM_DEATHMATCH,
-			MODE_CAPTURE_THE_FLAG
+			MODE_COOPERATIVE	 	= GameMode::SGMICooperative,
+			MODE_DEATHMATCH			= GameMode::SGMIDeathmatch,
+			MODE_DEATHMATCH2		= 0,
+			MODE_TEAM_DEATHMATCH	= GameMode::SGMITeamDeathmatch,
+			MODE_CAPTURE_THE_FLAG	= GameMode::SGMICTF
 		};
 		static const DMFlagsSection		DM_FLAGS;
 		static const GameMode			GAME_MODES[NUM_ODAMEX_GAME_MODES];

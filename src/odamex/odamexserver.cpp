@@ -37,7 +37,7 @@ const GameMode OdamexServer::GAME_MODES[NUM_ODAMEX_GAME_MODES] =
 {
 	GameMode::COOPERATIVE,
 	GameMode::DEATHMATCH,
-	GameMode(tr("Deathmatch 2.0"), false),
+	GameMode(MODE_DEATHMATCH2, tr("Deathmatch 2.0"), false),
 	GameMode::TEAM_DEATHMATCH,
 	GameMode::CAPTURE_THE_FLAG
 };

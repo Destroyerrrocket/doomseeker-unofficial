@@ -37,9 +37,18 @@ const // clear warnings
 
 static GeneralEngineInfo OdamexEngineInfo =
 {
-	10666,
-	OdamexServer::GAME_MODES,
-	NUM_ODAMEX_GAME_MODES
+	10666,								// Default port
+	OdamexServer::GAME_MODES,			// List of game modes
+	NUM_ODAMEX_GAME_MODES,				// Number of game modes
+	&OdamexServer::DM_FLAGS,			// List of DMFlags sections
+	1,									// Number of DMFlags sections
+	true,								// Allows URL
+	true,								// Allows E-Mail
+	true,								// Allows connect password
+	true,								// Allows join password
+	true,								// Allows rcon password
+	true,								// Allows MOTD
+	true,								// Supports random map rotation
 };
 
 class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
@@ -53,6 +62,11 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 		const GeneralEngineInfo&	generalEngineInfo() const
 		{
 			return OdamexEngineInfo;
+		}
+
+		virtual QList<GameLimit>	limits(const GameMode&) const
+		{
+			return QList<GameLimit>();
 		}
 
 		QPixmap			icon() const

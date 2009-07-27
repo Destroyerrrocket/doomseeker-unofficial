@@ -28,12 +28,38 @@
 #include "sdeapi/config.hpp"
 #include "ip2c.h"
 
+#include <QAbstractItemView>
+#include <QStandardItemModel>
+
 /**
  * This class holds some global information.
  */
 class MAIN_EXPORT Main
 {
 	public:
+		/**
+		 *	Global GUI method.
+		 */
+		static void removeSelectionFromStandardItemView(QAbstractItemView* view)
+		{
+			QItemSelectionModel* selModel = view->selectionModel();
+			QModelIndexList indexList = selModel->selectedIndexes();
+			selModel->clear();
+
+			QStandardItemModel* model = static_cast<QStandardItemModel*>(view->model());
+			QList<QStandardItem*> itemList;
+			for (int i = 0; i < indexList.count(); ++i)
+			{
+				itemList << model->itemFromIndex(indexList[i]);
+			}
+
+			for (int i = 0; i < itemList.count(); ++i)
+			{
+				QModelIndex index = model->indexFromItem(itemList[i]);
+				model->removeRow(index.row());
+			}
+		}
+
 		static Config 			*config;
 		static IP2C				*ip2c;
 		static QWidget*			mainWindow;

@@ -55,17 +55,39 @@ struct MAIN_EXPORT GeneralEngineInfo
 	/**
 	 *	Default port on which servers for given engine are hosted.
 	 */
-	unsigned short		defaultServerPort;
+	unsigned short			defaultServerPort;
 
 	/**
 	 *	All available game modes for the engine.
 	 */
-	const GameMode*		gameModes;
+	const GameMode*			gameModes;
 
 	/**
 	 *	Number of all available game modes for current engine.
 	 */
-	int					gameModesNum;
+	int						gameModesNum;
+
+	/**
+	 *	Pointer to the static struct (or array of structs) containing
+	 *	the list of all engine's DMFlags.
+	 */
+	const DMFlagsSection*	allDMFlags;
+
+	/**
+	 *	Number of DMFlags sections.
+	 */
+	unsigned				dmFlagsSectionsNum;
+
+	/**
+	 *	Information for Create Server dialog
+	 */
+	bool					allowsURL;
+	bool					allowsEmail;
+	bool					allowsConnectPassword;
+	bool					allowsJoinPassword;
+	bool					allowsRConPassword;
+	bool					allowsMOTD;
+	bool					supportsRandomMapRotation;
 };
 
 class MAIN_EXPORT EnginePlugin
@@ -80,9 +102,15 @@ class MAIN_EXPORT EnginePlugin
 		virtual	const GeneralEngineInfo&	generalEngineInfo() const = 0;
 
 		/**
+		 *	Returns a list of GameLimits supported by passed gamemode.
+		 */
+		virtual QList<GameLimit>			limits(const GameMode&) const = 0;
+
+		/**
 		 *	@return icon of the engine
 		 */
 		virtual QPixmap						icon() const=0;
+
 		virtual MasterClient				*masterClient() const=0;
 
 		/**

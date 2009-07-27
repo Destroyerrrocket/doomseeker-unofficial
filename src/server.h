@@ -126,11 +126,38 @@ struct MAIN_EXPORT Player
 };
 
 /**
+ *	@brief Struct containing info about a game limit (like fraglimit)
+ */
+struct MAIN_EXPORT GameLimit
+{
+	/**
+	 *	Nice name to display in Create Server dialog.
+	 */
+	QString		name;
+
+	/**
+	 *	Console command used to set the given limit.
+	 */
+	QString		consoleCommand;
+
+	GameLimit() {}
+	GameLimit(QString fname, QString fconsoleCommand):name(fname),consoleCommand(fconsoleCommand) {}
+};
+
+/**
  * Data structure that holds information about a servers game mode.
  */
 struct MAIN_EXPORT GameMode
 {
 	public:
+		enum StandardGameModeIndexes
+		{
+			SGMICooperative		= 900,
+			SGMIDeathmatch		= 901,
+			SGMITeamDeathmatch	= 902,
+			SGMICTF				= 903
+		};
+
 		// Standard game mode set
 		// These should be used in order to keep the names uniform.
 		static MAIN_EXPORT const GameMode	COOPERATIVE;
@@ -141,11 +168,13 @@ struct MAIN_EXPORT GameMode
 		/**
 		 * @param name Name to display for game mode, this should be fairly short about no longer than "cooperative".
 		 */
-		GameMode(const QString &name, bool teamgame);
+		GameMode(int index, const QString &name, bool teamgame);
 
+		int				modeIndex() const { return gameModeIndex; }
 		const QString	&name() const { return modeName;}
 		bool			isTeamGame() const { return teamgame; }
 	protected:
+		int		gameModeIndex;
 		QString	modeName;
 		bool	teamgame;
 };

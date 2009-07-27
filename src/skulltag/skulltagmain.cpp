@@ -37,9 +37,18 @@ const // clear warnings
 
 static GeneralEngineInfo SkulltagEngineInfo =
 {
-	10666,
-	SkulltagServer::GAME_MODES,
-	NUM_SKULLTAG_GAME_MODES
+	10666,								// Default server port
+	SkulltagServer::GAME_MODES,			// List of gamemodes
+	NUM_SKULLTAG_GAME_MODES,			// Number of gamemodes
+	SkulltagServer::DM_FLAGS,			// List of DMFlags sections
+	3,									// Number of DMFlags sections
+	true,								// Allows URL
+	true,								// Allows E-Mail
+	true,								// Allows connect password
+	true,								// Allows join password
+	true,								// Allows rcon password
+	true,								// Allows MOTD
+	true,								// Supports random map rotation
 };
 
 class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
@@ -53,6 +62,55 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 		const GeneralEngineInfo&	generalEngineInfo() const
 		{
 			return SkulltagEngineInfo;
+		}
+
+		virtual QList<GameLimit>	limits(const GameMode& gm) const
+		{
+			QList<GameLimit> gl;
+
+			int m = gm.modeIndex();
+
+			if (m != SkulltagServer::GAMEMODE_COOPERATIVE
+			&&	m != SkulltagServer::GAMEMODE_INVASION
+			&&	m != SkulltagServer::GAMEMODE_SURVIVAL)
+			{
+				gl << GameLimit(QObject::tr("Time limit:"), "timelimit");
+			}
+
+			if (m == SkulltagServer::GAMEMODE_DEATHMATCH
+			||	m == SkulltagServer::GAMEMODE_DUEL
+			||	m == SkulltagServer::GAMEMODE_TEAMPLAY
+			||	m == SkulltagServer::GAMEMODE_TERMINATOR)
+			{
+				gl << GameLimit(QObject::tr("Frag limit:"), "fraglimit");
+			}
+
+			if (m == SkulltagServer::GAMEMODE_CTF
+			||	m == SkulltagServer::GAMEMODE_DOMINATION
+			||	m == SkulltagServer::GAMEMODE_ONEFLAGCTF
+			||	m == SkulltagServer::GAMEMODE_POSSESSION
+			||	m == SkulltagServer::GAMEMODE_SKULLTAG
+			||	m == SkulltagServer::GAMEMODE_TEAMGAME
+			||	m == SkulltagServer::GAMEMODE_TEAMPOSSESSION)
+			{
+				gl << GameLimit(QObject::tr("Point limit:"), "pointlimit");
+			}
+
+			if (m == SkulltagServer::GAMEMODE_DUEL
+			||	m == SkulltagServer::GAMEMODE_LASTMANSTANDING
+			||	m == SkulltagServer::GAMEMODE_TEAMLMS)
+			{
+				gl << GameLimit(QObject::tr("Win limit:"), "winlimit");
+			}
+
+			if (m == SkulltagServer::GAMEMODE_DUEL)
+			{
+				gl << GameLimit(QObject::tr("Duel limit:"), "duellimit");
+			}
+
+			gl << GameLimit(QObject::tr("Max. lives:"), "sv_maxlives");
+
+			return gl;
 		}
 
 		QPixmap						icon() const

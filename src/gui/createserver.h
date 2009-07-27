@@ -25,6 +25,7 @@
 
 #include "ui_createserver.h"
 #include "sdeapi/pluginloader.hpp"
+#include <QCheckBox>
 #include <QDialog>
 
 /**
@@ -40,15 +41,42 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 
 	protected slots:
 		void 	btnClicked(QAbstractButton *button);
+		void	btnAddMapToMaplistClicked();
 		void	btnAddPwadClicked();
 		void	btnIwadBrowseClicked();
+		void	btnRemoveMapFromMaplistClicked();
 		void	btnRemovePwadClicked();
 		void	cboEngineSelected(int index);
+		void	cboGamemodeSelected(int index);
 
 	protected:
-		const PluginInfo* 		currentEngine;
+		struct DMFlagsTabWidget
+		{
+			QWidget*				widget;
+			const DMFlagsSection*	section;
 
+			/**
+			 *	Check boxes in the same order the flags are stored in the plugin.
+			 */
+			QList<QCheckBox*>		checkBoxes;
+		};
+
+		struct GameLimitWidget
+		{
+			QWidget*	label;
+			QWidget*	spinBox;
+			GameLimit	limit;
+		};
+
+		const PluginInfo* 				currentEngine;
+		QList<DMFlagsTabWidget*>		dmFlagsTabs;
+		QList<GameLimitWidget*>			limitWidgets;
+
+
+		void	addMapToMaplist(const QString& map);
 		void	addWadPath(const QString& path);
+
+		void	initDMFlagsTabs();
 
 		/**
 		 *	Called each time when a new engine in engine combo box is selected.
@@ -57,12 +85,21 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		 */
 		void	initEngineSpecific(const PluginInfo* engineInfo);
 
+		void	initGamemodeSpecific(const GameMode& gameMode);
+
+		void	initInfoAndPassword();
+
 		/**
 		 *	Called once, when the dialog is opened. Handles initialization
 		 *	of very basic stuff that's common no matter what the selected
 		 *	engine is.
 		 */
 		void	initPrimary();
+
+		void	initRules();
+
+		void	removeDMFlagsTabs();
+		void	removeLimitWidgets();
 };
 
 #endif

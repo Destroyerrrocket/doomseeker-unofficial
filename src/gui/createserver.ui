@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -214,10 +214,180 @@
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>DMFlags</string>
+       <string>Info &amp;&amp; Passwords</string>
       </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <layout class="QFormLayout" name="formLayout_2">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="labelURL">
+           <property name="text">
+            <string>URL:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="leURL"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="labelEmail">
+           <property name="text">
+            <string>E-mail:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="leEmail"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="labelConnectPassword">
+           <property name="text">
+            <string>Connect password:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="labelJoinPassword">
+           <property name="text">
+            <string>Join password:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="labelRConPassword">
+           <property name="text">
+            <string>RCon password:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="leConnectPassword"/>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLineEdit" name="leJoinPassword"/>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLineEdit" name="leRConPassword"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelMOTD">
+         <property name="text">
+          <string>MOTD:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPlainTextEdit" name="pteMOTD"/>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Rules</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <layout class="QGridLayout" name="limitsLayout">
+         <item row="0" column="1">
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>Max. clients:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QSpinBox" name="spinMaxClients"/>
+         </item>
+         <item row="0" column="3">
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>Max. players:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="4">
+          <widget class="QSpinBox" name="spinMaxPlayers"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Map list</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <widget class="QListView" name="lstMaplist">
+              <property name="dragEnabled">
+               <bool>true</bool>
+              </property>
+              <property name="dragDropMode">
+               <enum>QAbstractItemView::InternalMove</enum>
+              </property>
+              <property name="selectionMode">
+               <enum>QAbstractItemView::ExtendedSelection</enum>
+              </property>
+              <property name="movement">
+               <enum>QListView::Free</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="leMapname"/>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbRandomMapRotation">
+              <property name="text">
+               <string>Random map rotation</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_7">
+            <item>
+             <widget class="QPushButton" name="btnAddMapToMaplist">
+              <property name="text">
+               <string>Add</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnRemoveMapFromMaplist">
+              <property name="text">
+               <string>Remove</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabCustomParameters">
       <attribute name="title">
        <string>Custom parameters</string>
       </attribute>
