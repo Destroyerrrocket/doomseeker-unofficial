@@ -70,22 +70,22 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 
 			int m = gm.modeIndex();
 
-			if (m != SkulltagServer::GAMEMODE_COOPERATIVE
+			if (m != GameMode::SGMICooperative
 			&&	m != SkulltagServer::GAMEMODE_INVASION
 			&&	m != SkulltagServer::GAMEMODE_SURVIVAL)
 			{
 				gl << GameLimit(QObject::tr("Time limit:"), "timelimit");
 			}
 
-			if (m == SkulltagServer::GAMEMODE_DEATHMATCH
+			if (m == GameMode::SGMIDeathmatch
 			||	m == SkulltagServer::GAMEMODE_DUEL
-			||	m == SkulltagServer::GAMEMODE_TEAMPLAY
+			||	m == GameMode::SGMITeamDeathmatch
 			||	m == SkulltagServer::GAMEMODE_TERMINATOR)
 			{
 				gl << GameLimit(QObject::tr("Frag limit:"), "fraglimit");
 			}
 
-			if (m == SkulltagServer::GAMEMODE_CTF
+			if (m == GameMode::SGMICTF
 			||	m == SkulltagServer::GAMEMODE_DOMINATION
 			||	m == SkulltagServer::GAMEMODE_ONEFLAGCTF
 			||	m == SkulltagServer::GAMEMODE_POSSESSION

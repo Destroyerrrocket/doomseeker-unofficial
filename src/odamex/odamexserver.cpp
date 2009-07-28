@@ -126,6 +126,8 @@ bool OdamexServer::sendRequest(QByteArray &data)
 
 bool OdamexServer::readRequest(QByteArray &data)
 {
+	fflush(stderr);
+	fflush(stdout);
 	const char* in = data.data();
 
 	// Check the response code
@@ -171,12 +173,17 @@ bool OdamexServer::readRequest(QByteArray &data)
 	int teamplay = READINT8(&in[pos++]);
 	int ctf = READINT8(&in[pos++]);
 	if(ctf == 1)
+	{
 		currentGameMode = GAME_MODES[MODE_CAPTURE_THE_FLAG];
+	}
 	else if(teamplay == 1)
+	{
 		currentGameMode = GAME_MODES[MODE_TEAM_DEATHMATCH];
+	}
 	else
+	{
 		currentGameMode = GAME_MODES[mode];
-
+	}
 	// Players
 	players.clear();
 	for(int i = 0;i < numPlayers;i++)
