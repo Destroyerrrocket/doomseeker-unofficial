@@ -184,6 +184,12 @@ const GameMode SkulltagServer::GAME_MODES[NUM_SKULLTAG_GAME_MODES] =
 	GameMode(GAMEMODE_DOMINATION, tr("Domination"), true)
 };
 
+const GameCVar SkulltagServer::GAME_MODIFIERS[NUM_SKULLTAG_GAME_MODIFIERS] =
+{
+	GameCVar("Buckshot", "buckshot"),
+	GameCVar("Instagib", "instagib")
+};
+
 SkulltagServer::SkulltagServer(const QHostAddress &address, unsigned short port) : Server(address, port),
 	botSkill(0), buckshot(false), duelLimit(0), fragLimit(0), instagib(false),
 	numTeams(2), pointLimit(0), skill(0), teamDamage(0.0f), winLimit(0), testingServer(false)

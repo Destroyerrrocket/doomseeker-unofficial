@@ -36,15 +36,22 @@
 #include <QDir>
 #include <QDebug>
 
-bool SettingsData::settingsChanged = false;
-
 void SettingsData::setValue(int integer)
 {
+	if (integer < 0)
+	{
+		setValue(QString::number(integer));
+		return;
+	}
+
 	if(m_type != ST_INT || m_integer != integer)
 	{
 		m_integer = integer;
 		m_type = ST_INT;
-		settingsChanged = true;
+		if (m_parent != NULL)
+		{
+			m_parent->settingsChanged = true;
+		}
 	}
 }
 
@@ -54,7 +61,10 @@ void SettingsData::setValue(QString str)
 	{
 		m_str = str;
 		m_type = ST_STR;
-		settingsChanged = true;
+		if (m_parent != NULL)
+		{
+			m_parent->settingsChanged = true;
+		}
 	}
 }
 
@@ -64,10 +74,30 @@ Config::Config() : firstRun(false)
 {
 }
 
+Config::Config(const QString& cfgFile, bool readCfg) : firstRun(false)
+{
+	configFile = cfgFile;
+
+	if (readCfg)
+	{
+		readConfig();
+	}
+}
+
 Config::~Config()
 {
 	for(QHash<QString, SettingsData *>::iterator it=settings.begin();it != settings.end();it++)
 		delete it.value();
+	settings.clear();
+}
+
+void Config::clear()
+{
+	foreach(SettingsData* set, settings)
+	{
+		delete set;
+	}
+
 	settings.clear();
 }
 
@@ -172,18 +202,18 @@ void Config::readConfig()
 		firstRun = true;
 
 	// Make sure we're clear that nothing has changed.
-	SettingsData::settingsChanged = false;
+	settingsChanged = false;
 }
 
-void Config::saveConfig()
+bool Config::saveConfig()
 {
 	// No real reason to do anything.
-	if(!SettingsData::settingsChanged)
-		return;
+	if(!settingsChanged)
+		return true;
 
 	// Check to see if we're saving the settings.
 	if(configFile.isEmpty())
-		return;
+		return false;
 
 	qDebug() << "Saving config";
 
@@ -193,14 +223,15 @@ void Config::saveConfig()
 		for(QHash<QString, SettingsData *>::iterator it=settings.begin();it != settings.end();it++)
 		{
 			if(stream.write(it.key().toAscii()) == -1)
-				return;
+				return false;
+
 			SettingsData *data = it.value();
 			if(data->type() == SettingsData::ST_INT)
 			{
 				QString value = QString(" = %1;\n").arg(data->integer());
 				qint64 error = stream.write(value.toAscii().constData(), value.length());
 				if(error == -1)
-					return;
+					return false;
 			}
 			else
 			{
@@ -209,16 +240,16 @@ void Config::saveConfig()
 				QString value = QString(" = \"%1\";\n").arg(str);
 				qint64 error = stream.write(value.toAscii().constData(), value.length());
 				if(error == -1)
-					return;
+					return false;
 			}
 		}
 		stream.close();
+		settingsChanged = false;
+		return true;
 	}
 
-	// Flag the configs as unchanged.  I know this can cause problems if there 
-	// are multiple config objects, but I can't think of when this would 
-	// realistically happen.
-	SettingsData::settingsChanged = false;
+	return false;
+
 }
 
 void Config::createSetting(const QString index, unsigned int defaultInt)
@@ -226,7 +257,7 @@ void Config::createSetting(const QString index, unsigned int defaultInt)
 	SettingsData* data;
 	if(!findIndex(index, data))
 	{
-		data = new SettingsData(defaultInt);
+		data = new SettingsData(this, defaultInt);
 		settings[index] = data;
 	}
 }
@@ -236,11 +267,11 @@ void Config::createSetting(const QString index, QString defaultString)
 	SettingsData* data;
 	if(!findIndex(index, data))
 	{
-		data = new SettingsData(defaultString);
+		data = new SettingsData(this, defaultString);
 		settings[index] = data;
 
 		// Modified
-		SettingsData::settingsChanged = true;
+		settingsChanged = true;
 	}
 }
 

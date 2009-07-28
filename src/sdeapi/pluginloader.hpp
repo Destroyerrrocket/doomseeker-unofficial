@@ -88,6 +88,12 @@ struct MAIN_EXPORT GeneralEngineInfo
 	bool					allowsRConPassword;
 	bool					allowsMOTD;
 	bool					supportsRandomMapRotation;
+
+	/**
+	 *	Set this to NULL to disable Modifiers combo box in Create Server dialog
+	 */
+	const GameCVar*			gameModifiers;
+	unsigned				gameModifiersNum;
 };
 
 class MAIN_EXPORT EnginePlugin
@@ -102,9 +108,10 @@ class MAIN_EXPORT EnginePlugin
 		virtual	const GeneralEngineInfo&	generalEngineInfo() const = 0;
 
 		/**
-		 *	Returns a list of GameLimits supported by passed gamemode.
+		 *	Returns a list of limits (like fraglimit) supported by passed
+		 *	gamemode.
 		 */
-		virtual QList<GameLimit>			limits(const GameMode&) const = 0;
+		virtual QList<GameCVar>				limits(const GameMode&) const = 0;
 
 		/**
 		 *	@return icon of the engine

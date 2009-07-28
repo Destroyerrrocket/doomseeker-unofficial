@@ -38,8 +38,8 @@ const // clear warnings
 static GeneralEngineInfo SkulltagEngineInfo =
 {
 	10666,								// Default server port
-	SkulltagServer::GAME_MODES,			// List of gamemodes
-	NUM_SKULLTAG_GAME_MODES,			// Number of gamemodes
+	SkulltagServer::GAME_MODES,			// List of game modes
+	NUM_SKULLTAG_GAME_MODES,			// Number of game modes
 	SkulltagServer::DM_FLAGS,			// List of DMFlags sections
 	3,									// Number of DMFlags sections
 	true,								// Allows URL
@@ -49,6 +49,8 @@ static GeneralEngineInfo SkulltagEngineInfo =
 	true,								// Allows rcon password
 	true,								// Allows MOTD
 	true,								// Supports random map rotation
+	SkulltagServer::GAME_MODIFIERS,		// Game modifiers
+	NUM_SKULLTAG_GAME_MODIFIERS,		// Number of game modifiers
 };
 
 class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
@@ -64,9 +66,9 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 			return SkulltagEngineInfo;
 		}
 
-		virtual QList<GameLimit>	limits(const GameMode& gm) const
+		virtual QList<GameCVar>	limits(const GameMode& gm) const
 		{
-			QList<GameLimit> gl;
+			QList<GameCVar> gl;
 
 			int m = gm.modeIndex();
 
@@ -74,7 +76,7 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 			&&	m != SkulltagServer::GAMEMODE_INVASION
 			&&	m != SkulltagServer::GAMEMODE_SURVIVAL)
 			{
-				gl << GameLimit(QObject::tr("Time limit:"), "timelimit");
+				gl << GameCVar(QObject::tr("Time limit:"), "timelimit");
 			}
 
 			if (m == GameMode::SGMIDeathmatch
@@ -82,7 +84,7 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 			||	m == GameMode::SGMITeamDeathmatch
 			||	m == SkulltagServer::GAMEMODE_TERMINATOR)
 			{
-				gl << GameLimit(QObject::tr("Frag limit:"), "fraglimit");
+				gl << GameCVar(QObject::tr("Frag limit:"), "fraglimit");
 			}
 
 			if (m == GameMode::SGMICTF
@@ -93,22 +95,22 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 			||	m == SkulltagServer::GAMEMODE_TEAMGAME
 			||	m == SkulltagServer::GAMEMODE_TEAMPOSSESSION)
 			{
-				gl << GameLimit(QObject::tr("Point limit:"), "pointlimit");
+				gl << GameCVar(QObject::tr("Point limit:"), "pointlimit");
 			}
 
 			if (m == SkulltagServer::GAMEMODE_DUEL
 			||	m == SkulltagServer::GAMEMODE_LASTMANSTANDING
 			||	m == SkulltagServer::GAMEMODE_TEAMLMS)
 			{
-				gl << GameLimit(QObject::tr("Win limit:"), "winlimit");
+				gl << GameCVar(QObject::tr("Win limit:"), "winlimit");
 			}
 
 			if (m == SkulltagServer::GAMEMODE_DUEL)
 			{
-				gl << GameLimit(QObject::tr("Duel limit:"), "duellimit");
+				gl << GameCVar(QObject::tr("Duel limit:"), "duellimit");
 			}
 
-			gl << GameLimit(QObject::tr("Max. lives:"), "sv_maxlives");
+			gl << GameCVar(QObject::tr("Max. lives:"), "sv_maxlives");
 
 			return gl;
 		}

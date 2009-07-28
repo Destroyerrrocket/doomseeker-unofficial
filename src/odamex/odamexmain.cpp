@@ -49,6 +49,8 @@ static GeneralEngineInfo OdamexEngineInfo =
 	true,								// Allows rcon password
 	true,								// Allows MOTD
 	true,								// Supports random map rotation
+	NULL,								// Game modifiers
+	0,									// Number of game modifiers
 };
 
 class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
@@ -64,9 +66,9 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 			return OdamexEngineInfo;
 		}
 
-		virtual QList<GameLimit>	limits(const GameMode&) const
+		virtual QList<GameCVar>	limits(const GameMode&) const
 		{
-			return QList<GameLimit>();
+			return QList<GameCVar>();
 		}
 
 		QPixmap			icon() const

@@ -40,12 +40,13 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		~CreateServerDlg();
 
 	protected slots:
-		void 	btnClicked(QAbstractButton *button);
 		void	btnAddMapToMaplistClicked();
 		void	btnAddPwadClicked();
 		void	btnIwadBrowseClicked();
+		void	btnLoadClicked();
 		void	btnRemoveMapFromMaplistClicked();
 		void	btnRemovePwadClicked();
+		void	btnSaveClicked();
 		void	cboEngineSelected(int index);
 		void	cboGamemodeSelected(int index);
 
@@ -64,15 +65,28 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		struct GameLimitWidget
 		{
 			QWidget*	label;
-			QWidget*	spinBox;
-			GameLimit	limit;
+			QSpinBox*	spinBox;
+			GameCVar	limit;
+		};
+
+		struct GameModifierEntry
+		{
+			int			index;
+			GameCVar 	modifier;
 		};
 
 		const PluginInfo* 				currentEngine;
 		QList<DMFlagsTabWidget*>		dmFlagsTabs;
 		QList<GameLimitWidget*>			limitWidgets;
+		QList<GameModifierEntry>		gameModifiers;
 
 
+		/**
+		 *	Adds IWAD path to the IWAD ComboBox.
+		 *	If the path already exists no new items will be added but this path
+		 *	will be selected.
+		 */
+		void	addIwad(const QString& path);
 		void	addMapToMaplist(const QString& map);
 		void	addWadPath(const QString& path);
 

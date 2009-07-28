@@ -31,6 +31,7 @@
 #include "server.h"
 
 #define NUM_SKULLTAG_GAME_MODES	16
+#define NUM_SKULLTAG_GAME_MODIFIERS 2
 #define NUM_DMFLAG_SECTIONS		3
 #define ST_MAX_TEAMS			4
 
@@ -119,6 +120,7 @@ class SkulltagServer : public Server
 		static const DMFlags			DMFLAGS;
 		static const DMFlagsSection		DM_FLAGS[NUM_DMFLAG_SECTIONS];
 		static const GameMode	GAME_MODES[NUM_SKULLTAG_GAME_MODES];
+		static const GameCVar	GAME_MODIFIERS[NUM_SKULLTAG_GAME_MODIFIERS];
 		static const QPixmap	ICON;
 
 		SkulltagServer(const QHostAddress &address, unsigned short port);

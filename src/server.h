@@ -126,9 +126,9 @@ struct MAIN_EXPORT Player
 };
 
 /**
- *	@brief Struct containing info about a game limit (like fraglimit)
+ *	@brief Struct containing info about a game console variable (like fraglimit)
  */
-struct MAIN_EXPORT GameLimit
+struct MAIN_EXPORT GameCVar
 {
 	/**
 	 *	Nice name to display in Create Server dialog.
@@ -136,12 +136,23 @@ struct MAIN_EXPORT GameLimit
 	QString		name;
 
 	/**
-	 *	Console command used to set the given limit.
+	 *	Console command used to set the given CVar.
 	 */
 	QString		consoleCommand;
 
-	GameLimit() {}
-	GameLimit(QString fname, QString fconsoleCommand):name(fname),consoleCommand(fconsoleCommand) {}
+	GameCVar() {}
+	GameCVar(QString fname, QString fconsoleCommand):name(fname),consoleCommand(fconsoleCommand) {}
+
+	void			setValue(bool b) { b == true ? setValue("1") : setValue("0"); }
+	void			setValue(int i) { setValue(QString::number(i)); }
+	void			setValue(const QString& str) { val = str; }
+
+	const QString&	value() const { return val; }
+	bool			valueBool() const { static_cast<bool>(val.toInt()); }
+	bool			valueInt() const { return val.toInt(); }
+
+	protected:
+		QString		val;
 };
 
 /**

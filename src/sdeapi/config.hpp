@@ -48,11 +48,9 @@ struct MAIN_EXPORT SettingsData : public QObject
 			ST_STR
 		};
 
-		SettingsData(int integer=0) : m_integer(0), m_str(tr("")), m_type(ST_INT) { setValue(integer); }
-		SettingsData(QString str) : m_integer(0), m_str(tr("")), m_type(ST_STR) { setValue(str); }
-
-		const int			integer() const { return m_integer; }
-		const QString		string() const { return m_str; }
+		bool				boolean() const { return static_cast<bool>(m_integer); }
+		const int			integer() const { return m_type == ST_INT ? m_integer : m_str.toInt(); }
+		const QString		string() const { return m_type == ST_STR ? m_str : QString::number(m_integer); }
 		const SettingType	type() const { return m_type; }
 		void				setValue(int integer);
 		void				setValue(QString str);
@@ -61,15 +59,12 @@ struct MAIN_EXPORT SettingsData : public QObject
 		SettingType	m_type;
 		int			m_integer;
 		QString		m_str;
+		Config*		m_parent;
 
-		/**
-		 * Stores if there has been a change to any configs.  This is used to 
-		 * save a write cycle if nothing has changed during the program 
-		 * operation.
-		 */
-		static bool			settingsChanged;
+		SettingsData(Config* parent, int integer=0) : m_parent(parent), m_integer(0), m_str(tr("")), m_type(ST_INT) { setValue(integer); }
+		SettingsData(Config* parent, QString str) : m_parent(parent), m_integer(0), m_str(tr("")), m_type(ST_STR) { setValue(str); }
 
-		friend class Config;
+	friend class Config;
 };
 
 class MAIN_EXPORT Config : public QObject
@@ -78,7 +73,17 @@ class MAIN_EXPORT Config : public QObject
 
 	public:
 		Config();
+
+		/**
+		 *	Allows specifying a custom path to the config file.
+		 */
+		Config(const QString& cfgFile, bool readCfg = true);
 		~Config();
+
+		/**
+		 *	Erases all settings.
+		 */
+		void			clear();
 
 		/**
 		 * Creates the specified setting if it hasn't been made already.  It
@@ -125,11 +130,11 @@ class MAIN_EXPORT Config : public QObject
 
 	public slots:
 		/**
-		 * Saves the configuration to a file.  ~/.doomseeker/doomseeker.cfg on unix systems.
+		 * Saves the configuration to a file.  (default: ~/.doomseeker/doomseeker.cfg on unix systems)
 		 * @see LocateConfigFile
 		 * @see ReadConfig
 		 */
-		void			saveConfig();
+		bool			saveConfig();
 
 	protected:
 		bool			findIndex(const QString index, SettingsData *&data);
@@ -137,6 +142,15 @@ class MAIN_EXPORT Config : public QObject
 		bool							firstRun;
 		QString							configFile;
 		QHash<QString, SettingsData *>	settings;
+
+		/**
+		 * Stores if there has been a change to the configs.  This is used to
+		 * save a write cycle if nothing has changed during the program
+		 * operation.
+		 */
+		bool							settingsChanged;
+
+	friend class SettingsData;
 };
 
 #endif /* __CONFIG_HPP__ */

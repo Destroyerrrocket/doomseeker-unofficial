@@ -29,6 +29,7 @@
 #include "ip2c.h"
 
 #include <QAbstractItemView>
+#include <QListView>
 #include <QStandardItemModel>
 
 /**
@@ -40,7 +41,22 @@ class MAIN_EXPORT Main
 		/**
 		 *	Global GUI method.
 		 */
-		static void removeSelectionFromStandardItemView(QAbstractItemView* view)
+		static QStringList		listViewStandardItemsToStringList(QListView* lv)
+		{
+			QStringList list;
+			QStandardItemModel* model = static_cast<QStandardItemModel*>(lv->model());
+			for (int i = 0; i < model->rowCount(); ++i)
+			{
+				list << model->item(i)->text();
+			}
+
+			return list;
+		}
+
+		/**
+		 *	Global GUI method.
+		 */
+		static void 			removeSelectionFromStandardItemView(QAbstractItemView* view)
 		{
 			QItemSelectionModel* selModel = view->selectionModel();
 			QModelIndexList indexList = selModel->selectedIndexes();
