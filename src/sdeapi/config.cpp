@@ -38,12 +38,6 @@
 
 void SettingsData::setValue(int integer)
 {
-	if (integer < 0)
-	{
-		setValue(QString::number(integer));
-		return;
-	}
-
 	if(m_type != ST_INT || m_integer != integer)
 	{
 		m_integer = integer;
@@ -188,9 +182,10 @@ void Config::readConfig()
 			}
 			else
 			{
+				bool negative = sc.checkToken('-');
 				sc.mustGetToken(TK_IntConst);
 				createSetting(index, 0);
-				setting(index)->setValue(sc.number);
+				setting(index)->setValue(negative ? -sc.number : sc.number);
 			}
 			sc.mustGetToken(';');
 		}
