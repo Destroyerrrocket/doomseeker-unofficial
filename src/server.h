@@ -328,6 +328,24 @@ class MAIN_EXPORT Server : public QObject
 		const QString		&wad(int index) const { return wads[index]; }
 		const QString		&website() const { return webSite; }
 
+		void				setBroadcastToLAN(bool b) { broadcastToLAN = b; }
+		void				setBroadcastToMaster(bool b) { broadcastToMaster = b; }
+		void				setHostEmail(const QString& mail) { email = mail; }
+		void				setGameMode(const GameMode& gameMode) { currentGameMode = gameMode; }
+		void				setMap(const QString& name) { mapName = name; }
+		void				setMapList(const QStringList& maplist) { mapList = maplist; }
+		void				setMaximumClients(unsigned short i) { maxClients = i; }
+		void				setMaximumPlayers(unsigned short i) { maxPlayers = i; }
+		void				setMOTD(const QString& message) { motd = message; }
+		void				setName(const QString& name) { serverName = name; }
+		void				setPasswordConnect(const QString& str) { passwordConnect = str; }
+		void				setPasswordJoin(const QString& str) { passwordJoin = str; }
+		void				setPasswordRCon(const QString& str) { passwordRCon = str; }
+		void				setPort(unsigned short i) { serverPort = i; }
+		void				setRandomMapRotation(bool b) { mapRandomRotation = b; }
+		void				setSkill(unsigned char newSkill) { skill = newSkill; }
+		void				setWebsite(const QString& site) { webSite = site; }
+
 		void				operator= (const Server &other);
 		void				finalizeRefreshing();
 		void				setCustom(bool b) { custom = b; }
@@ -337,12 +355,14 @@ class MAIN_EXPORT Server : public QObject
 
 		QList<ServerAction>*	actions();
 		virtual void			actionsEx(QList<ServerAction>*) {};
+
 		/**
 		 *	Returns the path to the client binary
 		 *	@param [out] error - type of error
 		 *	@return empty if error
 		 */
 		virtual QString		clientBinary(QString& error) const=0;
+
 		/**
 		 *	Default behavior returns directory of clientBinary(), but
 		 *	you can override this to provide different working directory for
@@ -350,6 +370,25 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		virtual QString		clientBinarysDirectory() const;
 		virtual void		connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
+
+		/**
+		 *	@param [out] executablePath - path to the executable is saved here.
+		 *	@param [out] applicationDir - working directory of the executable
+		 *	@param [out] args - launch arguments are saved here.
+		 *	@param cvars - This parameter requires detailed explanation.
+		 *	This can be used to set virtually anything. Contents of this list
+		 *	will be passed as "+consoleCommand value" to the command line.
+		 *	Create Server dialog uses this list to configure some server
+		 *	settingsthat are port specific and it's easier to set them this way.
+		 *	However things that can be set globally through the Server class,
+		 *	like MOTD, max. clients, max. players, server name, etc. should
+		 *	be set through Server class' setters.
+		 *
+		 *	@param [out] error - if return == false, error text will be put here
+		 *	@return	true if command line was successfully created.
+		 */
+		bool				createHostCommandLine(QFileInfo& executablePath, QDir& applicationDir, QStringList& args, const QStringList& customParameters, const QString& iwadPath, const QStringList& pwadsPaths, const DMFlags& dmFlags, const QList<GameCVar>& cvars, QString& error) const;
+
 		/**
 		 *	@param [out] executablePath - path to the executable is saved here.
 		 *	@param [out] applicationDir - working directory of the executable
@@ -357,6 +396,26 @@ class MAIN_EXPORT Server : public QObject
 		 *	@return	true if command line was successfully created.
 		 */
 		bool				createJoinCommandLine(QFileInfo& executablePath, QDir& applicationDir, QStringList& args, const QString &connectPassword) const;
+
+		/**
+		 *	@see createHostCommandLine()
+		 */
+		bool				host(const QString& iwadPath, const QStringList& pwadsPaths, const QStringList& customParameters, const DMFlags& dmFlags, const QList<GameCVar>& cvars, QString& error);
+
+		/**
+		 *	Default behaviour returns the same string as clientBinary().
+		 *	This can be reimplemented for engines that use two different
+		 *	binaries for the server and for the client.
+		 */
+		virtual QString		serverBinary(QString& error) const { return clientBinary(error); }
+
+		/**
+		 *	Default behaviour returns the same string as
+		 *	clientBinarysDirectory(). This can be reimplemented for engines that
+		 *	use two different binaries for the server and for the client.
+		 */
+		virtual QString		serverBinarysDirectory() const { return clientBinarysDirectory(); }
+
 
 		/**
 		 * Returns the thread pool of the refresher.
@@ -385,6 +444,10 @@ class MAIN_EXPORT Server : public QObject
 		void				updated(Server *server, int response);
 
 	protected:
+		virtual QString		argForIwadLoading() const { return "-iwad"; }
+		virtual QString		argForPort() const { return "-port"; }
+		virtual QString		argForPwadLoading() const { return "-file"; }
+
 		virtual void		additionalServerInfo(QList<ServerInfo>* baseList) const {}
 
 		void				clearDMFlags();
@@ -393,10 +456,28 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		void				emitUpdated(int response) { emit updated(this, response); }
 
+		/**
+		 *	Creates engine specific command line parameters out of passed
+		 *	dmFlags list.
+		 *	Default behavior does nothing.
+		 */
+		virtual void		hostDMFlags(QStringList& args, const DMFlags& dmFlags) const {};
+
+		/**
+		 *	Creates engine specific command line parameters out of Server class
+		 *	fields.
+		 *
+		 *	Please note that port, and some other stuff, is already set by
+		 *	createHostCommandLine().
+		 *	@see createHostCommandLine() - cvars parameter.
+		 */
+		virtual void		hostProperties(QStringList& args) const {};
+
 		virtual bool		readRequest(QByteArray &data)=0;
 		virtual bool		sendRequest(QByteArray &data)=0;
 		/**
-		 * This will return absolutely nothing if the list in the first argument is empty.
+		 *	This will return absolutely nothing if the list in the first
+		 *	argument is empty.
 		 */
 		virtual QString		spawnPartOfPlayerTable(QList<const Player*> list, int colspan, bool bAppendEmptyRowAtBeginning) const;
 
@@ -416,6 +497,8 @@ class MAIN_EXPORT Server : public QObject
 		bool				bKnown;
 
 
+		bool				broadcastToLAN;
+		bool				broadcastToMaster;
 		GameMode			currentGameMode;
 		unsigned int		currentPing;
 		bool				custom;
@@ -423,9 +506,15 @@ class MAIN_EXPORT Server : public QObject
 		QString				email;
 		QString				iwad;
 		bool				locked;
+		QStringList			mapList;
 		QString				mapName;
+		bool				mapRandomRotation;
 		unsigned short		maxClients;
 		unsigned short		maxPlayers;
+		QString				motd;
+		QString				passwordConnect;
+		QString				passwordJoin;
+		QString				passwordRCon;
 		QList<Player>		players;
 		Response			response;
 		unsigned int		scores[MAX_TEAMS];
@@ -434,6 +523,7 @@ class MAIN_EXPORT Server : public QObject
 		unsigned short		serverTimeLeft;
 		unsigned short		serverTimeLimit;
 		QString				serverVersion;
+		unsigned char		skill;
 		QStringList			wads;
 		QString				webSite;
 

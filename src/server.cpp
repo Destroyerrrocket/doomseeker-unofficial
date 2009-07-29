@@ -194,10 +194,14 @@ Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
 	maxClients(0), maxPlayers(0), serverName(tr("<< ERROR >>")),
 	serverScoreLimit(0), serverTimeLeft(0), serverTimeLimit(0)
 {
+	broadcastToLAN = false;
+	broadcastToMaster = false;
+	mapRandomRotation = false;
 	bDelete = false;
 	bKnown = false;
 	bRunning = false;
 	custom = false;
+	skill = 3;
 	for(int i = 0;i < MAX_TEAMS;i++)
 		scores[i] = 0;
 
@@ -415,10 +419,73 @@ void Server::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFoun
 	iwadFound = !iwad.isEmpty();
 }
 
-bool Server::createJoinCommandLine(QFileInfo& executablePath, QDir& applicationDir, QStringList& args, const QString &connectPassword) const
+bool Server::createHostCommandLine(QFileInfo& executablePath, QDir& applicationDir, QStringList& args, const QStringList& customParameters, const QString& iwadPath, const QStringList& pwadsPaths, const DMFlags& dmFlags, const QList<GameCVar>& cvars, QString& error) const
 {
 	const QString errorCaption = tr("Doomseeker - error");
 	args.clear();
+
+	// First some wad path checks, add wad paths to the args if check passes:
+	QFileInfo fi(iwadPath);
+	if (!fi.isFile())
+	{
+		error = tr("\"%1\" doesn't exist or is a directory!").arg(iwadPath);
+		return false;
+	}
+
+	args << argForIwadLoading() << iwadPath;
+
+	if (!pwadsPaths.isEmpty())
+	{
+		args << argForPwadLoading();
+
+		foreach(const QString s, pwadsPaths)
+		{
+			fi.setFile(s);
+			if (!fi.isFile())
+			{
+				error = tr("\"%1\" doesn't exist or is a directory!").arg(iwadPath);
+				return false;
+			}
+			args << s;
+		}
+	}
+	// Checks done.
+
+	// Port
+	args << argForPort() << QString::number(serverPort);
+
+	// CVars
+	foreach(const GameCVar c, cvars)
+	{
+		args << QString("+" + c.consoleCommand) << c.value();
+	}
+
+	QString clientBin = serverBinary(error);
+	if (clientBin.isEmpty())
+	{
+		return false;
+	}
+	executablePath = clientBin;
+
+	QString clientWorkingDirPath = serverBinarysDirectory();
+	applicationDir = clientWorkingDirPath;
+
+	if (!applicationDir.exists())
+	{
+		error = tr("%1\n cannot be used as working directory for:\n%2").arg(clientWorkingDirPath, clientBin);
+		return false;
+	}
+
+	hostDMFlags(args, dmFlags);
+	hostProperties(args);
+	args.append(customParameters);
+
+	return true;
+}
+
+bool Server::createJoinCommandLine(QFileInfo& executablePath, QDir& applicationDir, QStringList& args, const QString &connectPassword) const
+{
+	const QString errorCaption = tr("Doomseeker - error");
 
 	QString clientBinError;
 	QString clientBin = clientBinary(clientBinError);
@@ -560,6 +627,28 @@ QString Server::generalInfoHTML() const
 		ret += tr("URL") + ": <a href=\"" + webSite + "\">" + webSite + "</a>\n";
 	}
 	return ret;
+}
+
+bool Server::host(const QString& iwadPath, const QStringList& pwadsPaths, const QStringList& customParameters, const DMFlags& dmFlags, const QList<GameCVar>& cvars, QString& error)
+{
+	error.clear();
+	QStringList args;
+	QFileInfo executable;
+	QDir applicationDir;
+
+	if (!createHostCommandLine(executable, applicationDir, args, customParameters, iwadPath, pwadsPaths, dmFlags, cvars, error))
+		return false;
+
+	printf("Starting (working dir %s): %s %s\n", applicationDir.canonicalPath().toAscii().constData(), executable.absoluteFilePath().toAscii().constData(), args.join(" ").toAscii().constData());
+
+	QProcess proc;
+	if( !proc.startDetached(executable.canonicalFilePath(), args, applicationDir.canonicalPath()) )
+	{
+		error = tr("File: %1\ncannot be run").arg(executable.canonicalFilePath());
+		return false;
+	}
+
+	return true;
 }
 
 QString Server::playerTableHTML() const

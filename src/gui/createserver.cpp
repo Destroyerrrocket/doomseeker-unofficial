@@ -60,6 +60,107 @@ CreateServerDlg::~CreateServerDlg()
 
 }
 
+void CreateServerDlg::accept()
+{
+	const QString errorCapt = tr("Doomseeker - create server");
+	if (currentEngine == NULL)
+	{
+		QMessageBox::critical(this, errorCapt, tr("No engine selected"));
+		return;
+	}
+
+	Server* server = currentEngine->pInterface->server(QHostAddress(), spinPort->value());
+
+	if (server != NULL)
+	{
+		const QString& iwad = cboIwad->currentText();
+		QStringList pwads = Main::listViewStandardItemsToStringList(lstAdditionalFiles);
+
+		DMFlags flags;
+		QList<GameCVar> cvars;
+
+		// DMFlags
+		foreach(const DMFlagsTabWidget* p, dmFlagsTabs)
+		{
+			DMFlagsSection* sec = new DMFlagsSection();
+			sec->name = p->section->name;
+			sec->size = 0;
+
+			for (int i = 0; i < p->section->size; ++i)
+			{
+				if (p->checkBoxes[i]->isChecked())
+				{
+					sec->flags[sec->size++] = p->section->flags[i];
+				}
+			}
+
+			flags << sec;
+		}
+
+		// limits
+		foreach(GameLimitWidget* p, limitWidgets)
+		{
+			p->limit.setValue(p->spinBox->value());
+			cvars << p->limit;
+		}
+
+		// modifier
+		int modIndex = cboModifier->currentIndex();
+		if (modIndex > 0) // Index zero is always "< NONE >"
+		{
+			--modIndex;
+			gameModifiers[modIndex].setValue(1);
+			cvars << gameModifiers[modIndex];
+		}
+
+		// Custom parameters
+		QStringList customParams = pteCustomParameters->toPlainText().split('\n');
+
+		// Other
+		server->setBroadcastToLAN(cbBroadcastToLAN->isChecked());
+		server->setBroadcastToMaster(cbBroadcastToMaster->isChecked());
+		server->setHostEmail(leEmail->text());
+		server->setMap(leMap->text());
+		server->setMapList(Main::listViewStandardItemsToStringList(lstMaplist));
+		server->setRandomMapRotation(cbRandomMapRotation->isChecked());
+		server->setMaximumClients(spinMaxClients->value());
+		server->setMaximumPlayers(spinMaxPlayers->value());
+		server->setMOTD(pteMOTD->toPlainText());
+		server->setName(leServername->text());
+		server->setPasswordConnect(leConnectPassword->text());
+		server->setPasswordJoin(leJoinPassword->text());
+		server->setPasswordRCon(leRConPassword->text());
+		server->setPort(spinPort->value());
+		server->setSkill(static_cast<unsigned char>(cboDifficulty->currentIndex()));
+		server->setWebsite(leURL->text());
+
+		const GeneralEngineInfo& engNfo = currentEngine->pInterface->generalEngineInfo();
+		for (int i = 0; i < engNfo.gameModesNum; ++i)
+		{
+			if (engNfo.gameModes[i].name().compare(cboGamemode->currentText()) == 0)
+			{
+				server->setGameMode(engNfo.gameModes[i]);
+				break;
+			}
+		}
+
+		QString error;
+		bool ok = server->host(iwad, pwads, customParams, flags, cvars, error);
+
+		foreach(DMFlagsSection* sec, flags)
+			delete sec;
+
+		if (ok)
+		{
+			done(Accepted);
+		}
+		else
+		{
+			QMessageBox::critical(this, errorCapt, error);
+		}
+	}
+}
+
 void CreateServerDlg::addIwad(const QString& path)
 {
 	if (path.isEmpty())
@@ -141,21 +242,42 @@ void CreateServerDlg::btnAddMapToMaplistClicked()
 
 void CreateServerDlg::btnAddPwadClicked()
 {
-	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - Add file"));
-	addWadPath(strFile);
+	QString dialogDir = Main::config->setting("PreviousCreateServerWadDir")->string();
+	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - Add file"), dialogDir);
+
+	if (!strFile.isEmpty())
+	{
+		QFileInfo fi(strFile);
+		Main::config->setting("PreviousCreateServerWadDir")->setValue(fi.absolutePath());
+
+		addWadPath(strFile);
+	}
 }
 
 void CreateServerDlg::btnIwadBrowseClicked()
 {
-	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - select IWAD"));
-	addIwad(strFile);
+	QString dialogDir = Main::config->setting("PreviousCreateServerWadDir")->string();
+	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - select IWAD"), dialogDir);
+
+	if (!strFile.isEmpty())
+	{
+		QFileInfo fi(strFile);
+		Main::config->setting("PreviousCreateServerWadDir")->setValue(fi.absolutePath());
+
+		addIwad(strFile);
+	}
 }
 
 void CreateServerDlg::btnLoadClicked()
 {
-	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - load server config"), QString(), tr("Config files (*.cfg)"));
+	QString dialogDir = Main::config->setting("PreviousCreateServerConfigDir")->string();
+	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - load server config"), dialogDir, tr("Config files (*.cfg)"));
+
 	if (!strFile.isEmpty())
 	{
+		QFileInfo fi(strFile);
+		Main::config->setting("PreviousCreateServerConfigDir")->setValue(fi.absolutePath());
+
 		QAbstractItemModel* model;
 		QStringList stringList;
 		Config cfg(strFile);
@@ -165,7 +287,7 @@ void CreateServerDlg::btnLoadClicked()
 		int engIndex = Main::enginePlugins.pluginIndexFromName(engineName);
 		if (engIndex < 0)
 		{
-			QMessageBox::critical(this, tr("Doomseeker - load server config"), tr("Plugin for engine \"%s\" is not present!").arg(engineName));
+			QMessageBox::critical(this, tr("Doomseeker - load server config"), tr("Plugin for engine \"%1\" is not present!").arg(engineName));
 			return;
 		}
 
@@ -173,6 +295,7 @@ void CreateServerDlg::btnLoadClicked()
 		leServername->setText(cfg.setting("name")->string());
 		spinPort->setValue(cfg.setting("port")->integer());
 		cboGamemode->setCurrentIndex(cfg.setting("gamemode")->integer());
+		leMap->setText(cfg.setting("map")->string());
 		addIwad(cfg.setting("iwad")->string());
 
 		stringList = cfg.setting("pwads")->string().split(";");
@@ -188,7 +311,7 @@ void CreateServerDlg::btnLoadClicked()
 
 		// Rules
 		cboDifficulty->setCurrentIndex(cfg.setting("difficulty")->integer());
-		cboModifiers->setCurrentIndex(cfg.setting("modifier")->integer());
+		cboModifier->setCurrentIndex(cfg.setting("modifier")->integer());
 		spinMaxClients->setValue(cfg.setting("maxClients")->integer());
 		spinMaxPlayers->setValue(cfg.setting("maxPlayers")->integer());
 
@@ -247,10 +370,13 @@ void CreateServerDlg::btnRemovePwadClicked()
 
 void CreateServerDlg::btnSaveClicked()
 {
-	QString strFile = QFileDialog::getSaveFileName(this, tr("Doomseeker - save server config"), QString(), tr("Config files (*.cfg)"));
+	QString dialogDir = Main::config->setting("PreviousCreateServerConfigDir")->string();
+	QString strFile = QFileDialog::getSaveFileName(this, tr("Doomseeker - save server config"), dialogDir, tr("Config files (*.cfg)"));
 	if (!strFile.isEmpty())
 	{
 		QFileInfo fi(strFile);
+		Main::config->setting("PreviousCreateServerConfigDir")->setValue(fi.absolutePath());
+
 		if (fi.suffix().isEmpty())
 			strFile += ".cfg";
 
@@ -262,6 +388,7 @@ void CreateServerDlg::btnSaveClicked()
 		cfg.setting("name")->setValue(leServername->text());
 		cfg.setting("port")->setValue(spinPort->value());
 		cfg.setting("gamemode")->setValue(cboGamemode->currentIndex());
+		cfg.setting("map")->setValue(leMap->text());
 		cfg.setting("iwad")->setValue(cboIwad->currentText());
 
 		stringList = Main::listViewStandardItemsToStringList(lstAdditionalFiles);
@@ -272,7 +399,7 @@ void CreateServerDlg::btnSaveClicked()
 
 		// Rules
 		cfg.setting("difficulty")->setValue(cboDifficulty->currentIndex());
-		cfg.setting("modifier")->setValue(cboModifiers->currentIndex());
+		cfg.setting("modifier")->setValue(cboModifier->currentIndex());
 		cfg.setting("maxClients")->setValue(spinMaxClients->value());
 		cfg.setting("maxPlayers")->setValue(spinMaxPlayers->value());
 
@@ -502,22 +629,24 @@ void CreateServerDlg::initRules()
 
 	cbRandomMapRotation->setVisible(engNfo.supportsRandomMapRotation);
 
-	cboModifiers->clear();
+	cboModifier->clear();
 	gameModifiers.clear();
 	if (engNfo.gameModifiers != NULL)
 	{
-		cboModifiers->show();
+		cboModifier->show();
 		labelModifiers->show();
+
+		cboModifier->addItem(tr("< NONE >"));
+
 		for (int i = 0; i < engNfo.gameModifiersNum; ++i)
 		{
-			GameModifierEntry gme = {i, engNfo.gameModifiers[i]};
-			cboModifiers->addItem(engNfo.gameModifiers[i].name);
-			gameModifiers << gme;
+			cboModifier->addItem(engNfo.gameModifiers[i].name);
+			gameModifiers << engNfo.gameModifiers[i];
 		}
 	}
 	else
 	{
-		cboModifiers->hide();
+		cboModifier->hide();
 		labelModifiers->hide();
 	}
 }

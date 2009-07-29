@@ -64,7 +64,7 @@ const DMFlagsSection OdamexServer::DM_FLAGS =
 };
 
 OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port) : Server(address, port),
-	protocol(0), skill(0)
+	protocol(0)
 {
 }
 

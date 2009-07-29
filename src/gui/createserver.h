@@ -39,6 +39,9 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		CreateServerDlg(QWidget* parent = NULL);
 		~CreateServerDlg();
 
+	public slots:
+		void	accept();
+
 	protected slots:
 		void	btnAddMapToMaplistClicked();
 		void	btnAddPwadClicked();
@@ -69,16 +72,10 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 			GameCVar	limit;
 		};
 
-		struct GameModifierEntry
-		{
-			int			index;
-			GameCVar 	modifier;
-		};
-
 		const PluginInfo* 				currentEngine;
 		QList<DMFlagsTabWidget*>		dmFlagsTabs;
 		QList<GameLimitWidget*>			limitWidgets;
-		QList<GameModifierEntry>		gameModifiers;
+		QList<GameCVar>					gameModifiers;
 
 
 		/**

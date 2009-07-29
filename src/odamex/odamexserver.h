@@ -56,7 +56,6 @@ class OdamexServer : public Server
 		bool	sendRequest(QByteArray &data);
 
 		short			protocol;
-		unsigned short	skill;
 };
 
 #endif /* __ODAMEXSERVER_H__ */

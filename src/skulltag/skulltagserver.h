@@ -147,7 +147,6 @@ class SkulltagServer : public Server
 		float			teamDamage;
 
 		unsigned short	botSkill;
-		unsigned short	skill;
 
 		unsigned short	duelLimit;
 		unsigned short	fragLimit;
@@ -156,6 +155,11 @@ class SkulltagServer : public Server
 
 		unsigned int	numTeams;
 		TeamInfo		teamInfo[ST_MAX_TEAMS];
+
+		QString			testingArchive;
+
+		void			hostDMFlags(QStringList& args, const DMFlags& dmFlags) const;
+		void			hostProperties(QStringList& args) const;
 
 		bool			readRequest(QByteArray &data);
 		bool			sendRequest(QByteArray &data);
@@ -171,8 +175,6 @@ class SkulltagServer : public Server
 		 *	@return false if fail
 		 */
 		bool			spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, QString& error) const;
-
-		QString			testingArchive;
 };
 
 class SkulltagRConProtocol : public RConProtocol

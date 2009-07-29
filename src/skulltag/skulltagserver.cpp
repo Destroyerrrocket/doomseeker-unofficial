@@ -192,7 +192,7 @@ const GameCVar SkulltagServer::GAME_MODIFIERS[NUM_SKULLTAG_GAME_MODIFIERS] =
 
 SkulltagServer::SkulltagServer(const QHostAddress &address, unsigned short port) : Server(address, port),
 	botSkill(0), buckshot(false), duelLimit(0), fragLimit(0), instagib(false),
-	numTeams(2), pointLimit(0), skill(0), teamDamage(0.0f), winLimit(0), testingServer(false)
+	numTeams(2), pointLimit(0), teamDamage(0.0f), winLimit(0), testingServer(false)
 {
 	teamInfo[0] = TeamInfo(tr("Blue"), QColor(0, 0, 255), 0);
 	teamInfo[1] = TeamInfo(tr("Red"), QColor(255, 0, 0), 0);
@@ -318,6 +318,107 @@ void SkulltagServer::connectParameters(QStringList &args, PathFinder &pf, bool &
 
 	if(isLocked())
 		args << "+cl_password" << connectPassword;
+}
+
+void SkulltagServer::hostDMFlags(QStringList& args, const DMFlags& dmFlags) const
+{
+	const QString argNames[] = { "+dmflags", "+dmflags2", "+compatflags" };
+	for (int i = 0; i < qMin(dmFlags.size(), 3); ++i)
+	{
+		args << argNames[i];
+		unsigned val = 0;
+		const DMFlagsSection* sec = dmFlags[i];
+
+		for (int i = 0; i < sec->size; ++i)
+		{
+			val |= 1 << sec->flags[i].value;
+		}
+
+		args << QString::number(val);
+	}
+}
+
+void SkulltagServer::hostProperties(QStringList& args) const
+{
+	args << "+alwaysapplydmflags" << QString::number(1);
+	args << "-host";
+	args << "-skill" << QString::number(skill + 1); // from 1 to 5
+
+	QString gameModeStr;
+	switch(currentGameMode.modeIndex())
+	{
+		case GameMode::SGMICooperative:			gameModeStr = "+cooperative"; break;
+		case GameMode::SGMICTF:					gameModeStr = "+ctf"; break;
+		case GameMode::SGMIDeathmatch:			gameModeStr = "+deathmatch"; break;
+		case GameMode::SGMITeamDeathmatch:		gameModeStr = "+teamplay"; break;
+		case GAMEMODE_DOMINATION:				gameModeStr = "+domination"; break;
+		case GAMEMODE_DUEL:						gameModeStr = "+duel"; break;
+		case GAMEMODE_INVASION:					gameModeStr = "+invasion"; break;
+		case GAMEMODE_LASTMANSTANDING:			gameModeStr = "+lastmanstanding"; break;
+		case GAMEMODE_ONEFLAGCTF:				gameModeStr = "+oneflagctf"; break;
+		case GAMEMODE_POSSESSION:				gameModeStr = "+possession"; break;
+		case GAMEMODE_SKULLTAG:					gameModeStr = "+skulltag"; break;
+		case GAMEMODE_SURVIVAL:					gameModeStr = "+survival"; break;
+		case GAMEMODE_TEAMGAME:					gameModeStr = "+teamgame"; break;
+		case GAMEMODE_TEAMLMS:					gameModeStr = "+teamlms"; break;
+		case GAMEMODE_TEAMPOSSESSION:			gameModeStr = "+teampossession"; break;
+		case GAMEMODE_TERMINATOR:				gameModeStr = "+terminator"; break;
+	}
+	args << gameModeStr << "1";
+
+	if (!email.isEmpty())
+	{
+		args << "+sv_hostemail" << "\"" + email + "\"";
+	}
+
+	if (!mapName.isEmpty())
+	{
+		args << "+map" << mapName;
+	}
+
+	if (!mapList.isEmpty())
+	{
+		args << "+maplist" << "\"" + mapList.join("\n") + "\"";
+	}
+
+	args << "+sv_maprotation" << QString::number(static_cast<int>(mapRandomRotation));
+
+	if (!motd.isEmpty())
+	{
+		args << "+sv_motd" << "\"" + motd + "\"";
+	}
+
+	if (!name().isEmpty())
+	{
+		args << "+sv_hostname" << "\"" + name() + "\"";
+	}
+
+	if (!webSite.isEmpty())
+	{
+		args << "+sv_website" << "\"" + webSite + "\"";
+	}
+
+	if (!passwordConnect.isEmpty())
+	{
+		args << "+sv_password" << "\"" + passwordConnect + "\"";
+		args << "+sv_forcepassword" << "1";
+	}
+
+	if (!passwordJoin.isEmpty())
+	{
+		args << "+sv_joinpassword" << "\"" + passwordJoin + "\"";
+		args << "+sv_forcejoinpassword" << "1";
+	}
+
+	if (!passwordRCon.isEmpty())
+	{
+		args << "+sv_rconpassword" << "\"" + passwordRCon + "\"";
+	}
+
+	args << "+sv_broadcast" << QString::number(static_cast<int>(broadcastToLAN));
+	args << "+sv_updatemaster" << QString::number(static_cast<int>(broadcastToMaster));
+	args << "+sv_maxclients" << QString::number(maxClients);
+	args << "+sv_maxplayers" << QString::number(maxPlayers);
 }
 
 QPixmap SkulltagServer::icon() const
