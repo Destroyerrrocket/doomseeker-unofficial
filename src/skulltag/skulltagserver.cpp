@@ -95,7 +95,7 @@ const DMFlagsSection SkulltagServer::DM_FLAGS[NUM_DMFLAG_SECTIONS] =
 
 	{
 		tr("DMFlags2"),
-		26,
+		27,
 		{
 			{ tr("Drop weapons upon death"), 							1 },
 			{ tr("Don't spawn runes"),									2 },
@@ -114,6 +114,7 @@ const DMFlagsSection SkulltagServer::DM_FLAGS[NUM_DMFLAG_SECTIONS] =
 			{ tr("Player can't respawn"),								15 },
 			{ tr("Lose a frag when killed"),							16 },
 			{ tr("Infinite inventory"),									17 },
+			{ tr("No rocket jumping"),									19 },
 			{ tr("Award damage not kills"),								20 },
 			{ tr("Force drawing alpha"),								21 },
 			{ tr("All monsters must be killed before exiting"),			22 },
