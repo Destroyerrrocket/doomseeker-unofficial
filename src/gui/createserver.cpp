@@ -21,6 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "createserver.h"
+#include "copytextdlg.h"
 #include "main.h"
 
 #include <QCheckBox>
@@ -37,7 +38,9 @@ CreateServerDlg::CreateServerDlg(QWidget* parent) : QDialog(parent)
 	setupUi(this);
 	connect(btnAddMapToMaplist, SIGNAL( clicked() ), this, SLOT ( btnAddMapToMaplistClicked() ) );
 	connect(btnAddPwad, SIGNAL( clicked() ), this, SLOT ( btnAddPwadClicked() ) );
+	connect(btnBrowseExecutable, SIGNAL( clicked() ), this, SLOT ( btnBrowseExecutableClicked() ) );
 	connect(btnCancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
+	connect(btnCommandLine, SIGNAL( clicked() ), this, SLOT( btnCommandLineClicked() ) );
 	connect(btnIwadBrowse, SIGNAL( clicked() ), this, SLOT ( btnIwadBrowseClicked() ) );
 	connect(btnLoad, SIGNAL( clicked() ), this, SLOT ( btnLoadClicked() ) );
 	connect(btnRemoveMapFromMaplist, SIGNAL( clicked() ), this, SLOT ( btnRemoveMapFromMaplistClicked() ) );
@@ -47,6 +50,8 @@ CreateServerDlg::CreateServerDlg(QWidget* parent) : QDialog(parent)
 
 	connect(cboEngine, SIGNAL( currentIndexChanged(int) ), this, SLOT( cboEngineSelected(int) ) );
 	connect(cboGamemode, SIGNAL( currentIndexChanged(int) ), this, SLOT( cboGamemodeSelected(int) ) );
+
+	connect(QApplication::instance(), SIGNAL( focusChanged(QWidget*, QWidget*) ), this, SLOT( focusChanged(QWidget*, QWidget*) ));
 
 	cboIwad->setEditable(true);
 	lstAdditionalFiles->setModel(new QStandardItemModel(this));
@@ -69,86 +74,13 @@ void CreateServerDlg::accept()
 		return;
 	}
 
-	Server* server = currentEngine->pInterface->server(QHostAddress(), spinPort->value());
-
-	if (server != NULL)
+	HostInfo* hi = createHostInfo();
+	if (hi != NULL)
 	{
-		const QString& iwad = cboIwad->currentText();
-		QStringList pwads = Main::listViewStandardItemsToStringList(lstAdditionalFiles);
-
-		DMFlags flags;
-		QList<GameCVar> cvars;
-
-		// DMFlags
-		foreach(const DMFlagsTabWidget* p, dmFlagsTabs)
-		{
-			DMFlagsSection* sec = new DMFlagsSection();
-			sec->name = p->section->name;
-			sec->size = 0;
-
-			for (int i = 0; i < p->section->size; ++i)
-			{
-				if (p->checkBoxes[i]->isChecked())
-				{
-					sec->flags[sec->size++] = p->section->flags[i];
-				}
-			}
-
-			flags << sec;
-		}
-
-		// limits
-		foreach(GameLimitWidget* p, limitWidgets)
-		{
-			p->limit.setValue(p->spinBox->value());
-			cvars << p->limit;
-		}
-
-		// modifier
-		int modIndex = cboModifier->currentIndex();
-		if (modIndex > 0) // Index zero is always "< NONE >"
-		{
-			--modIndex;
-			gameModifiers[modIndex].setValue(1);
-			cvars << gameModifiers[modIndex];
-		}
-
-		// Custom parameters
-		QStringList customParams = pteCustomParameters->toPlainText().split('\n');
-
-		// Other
-		server->setBroadcastToLAN(cbBroadcastToLAN->isChecked());
-		server->setBroadcastToMaster(cbBroadcastToMaster->isChecked());
-		server->setHostEmail(leEmail->text());
-		server->setMap(leMap->text());
-		server->setMapList(Main::listViewStandardItemsToStringList(lstMaplist));
-		server->setRandomMapRotation(cbRandomMapRotation->isChecked());
-		server->setMaximumClients(spinMaxClients->value());
-		server->setMaximumPlayers(spinMaxPlayers->value());
-		server->setMOTD(pteMOTD->toPlainText());
-		server->setName(leServername->text());
-		server->setPasswordConnect(leConnectPassword->text());
-		server->setPasswordJoin(leJoinPassword->text());
-		server->setPasswordRCon(leRConPassword->text());
-		server->setPort(spinPort->value());
-		server->setSkill(static_cast<unsigned char>(cboDifficulty->currentIndex()));
-		server->setWebsite(leURL->text());
-
-		const GeneralEngineInfo& engNfo = currentEngine->pInterface->generalEngineInfo();
-		for (int i = 0; i < engNfo.gameModesNum; ++i)
-		{
-			if (engNfo.gameModes[i].name().compare(cboGamemode->currentText()) == 0)
-			{
-				server->setGameMode(engNfo.gameModes[i]);
-				break;
-			}
-		}
-
 		QString error;
-		bool ok = server->host(iwad, pwads, customParams, flags, cvars, error);
+		bool ok = hi->server->host(hi->executablePath, hi->iwadPath, hi->pwadsPaths, hi->customParameters, hi->dmFlags, hi->cvars, error);
 
-		foreach(DMFlagsSection* sec, flags)
-			delete sec;
+		delete hi;
 
 		if (ok)
 		{
@@ -251,6 +183,63 @@ void CreateServerDlg::btnAddPwadClicked()
 		Main::config->setting("PreviousCreateServerWadDir")->setValue(fi.absolutePath());
 
 		addWadPath(strFile);
+	}
+}
+
+void CreateServerDlg::btnBrowseExecutableClicked()
+{
+	QString dialogDir = Main::config->setting("PreviousCreateServerExecDir")->string();
+	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - Add file"), dialogDir);
+
+	if (!strFile.isEmpty())
+	{
+		QFileInfo fi(strFile);
+		Main::config->setting("PreviousCreateServerExecDir")->setValue(fi.absolutePath());
+
+		leExecutable->setText(fi.absoluteFilePath());
+	}
+}
+
+void CreateServerDlg::btnCommandLineClicked()
+{
+	const QString errorCapt = tr("Doomseeker - create server");
+	if (currentEngine == NULL)
+	{
+		QMessageBox::critical(this, errorCapt, tr("No engine selected"));
+		return;
+	}
+
+	HostInfo* hi = createHostInfo();
+	if (hi != NULL)
+	{
+		QStringList args;
+		QDir applicationDir;
+		QFileInfo executablePath;
+		QString error;
+
+		bool ok = hi->server->createHostCommandLine(
+			hi->executablePath,
+			executablePath, 			// out
+			applicationDir, 			// out
+			args, 						// out
+			hi->customParameters,
+			hi->iwadPath,
+			hi->pwadsPaths,
+			hi->dmFlags,
+			hi->cvars,
+			error);						// out
+
+		delete hi;
+
+		if (ok)
+		{
+			CopyTextDlg ctd(executablePath.absoluteFilePath() + " " + args.join(" "), "Host server command line:", this);
+			ctd.exec();
+		}
+		else
+		{
+			QMessageBox::critical(this, errorCapt, error);
+		}
 	}
 }
 
@@ -469,6 +458,102 @@ void CreateServerDlg::cboGamemodeSelected(int index)
 	}
 }
 
+CreateServerDlg::HostInfo* CreateServerDlg::createHostInfo()
+{
+	Server* server = currentEngine->pInterface->server(QHostAddress(), spinPort->value());
+
+	if (server != NULL)
+	{
+		HostInfo* hi = new HostInfo();
+		hi->server = server;
+		hi->executablePath = leExecutable->text();
+
+		hi->iwadPath = cboIwad->currentText();
+		hi->pwadsPaths = Main::listViewStandardItemsToStringList(lstAdditionalFiles);
+
+		// DMFlags
+		foreach(const DMFlagsTabWidget* p, dmFlagsTabs)
+		{
+			DMFlagsSection* sec = new DMFlagsSection();
+			sec->name = p->section->name;
+			sec->size = 0;
+
+			for (int i = 0; i < p->section->size; ++i)
+			{
+				if (p->checkBoxes[i]->isChecked())
+				{
+					sec->flags[sec->size++] = p->section->flags[i];
+				}
+			}
+
+			hi->dmFlags << sec;
+		}
+
+		// limits
+		foreach(GameLimitWidget* p, limitWidgets)
+		{
+			p->limit.setValue(p->spinBox->value());
+			hi->cvars << p->limit;
+		}
+
+		// modifier
+		int modIndex = cboModifier->currentIndex();
+		if (modIndex > 0) // Index zero is always "< NONE >"
+		{
+			--modIndex;
+			gameModifiers[modIndex].setValue(1);
+			hi->cvars << gameModifiers[modIndex];
+		}
+
+		// Custom parameters
+		hi->customParameters = pteCustomParameters->toPlainText().split('\n');
+
+		// Other
+		server->setBroadcastToLAN(cbBroadcastToLAN->isChecked());
+		server->setBroadcastToMaster(cbBroadcastToMaster->isChecked());
+		server->setHostEmail(leEmail->text());
+		server->setMap(leMap->text());
+		server->setMapList(Main::listViewStandardItemsToStringList(lstMaplist));
+		server->setRandomMapRotation(cbRandomMapRotation->isChecked());
+		server->setMaximumClients(spinMaxClients->value());
+		server->setMaximumPlayers(spinMaxPlayers->value());
+		server->setMOTD(pteMOTD->toPlainText());
+		server->setName(leServername->text());
+		server->setPasswordConnect(leConnectPassword->text());
+		server->setPasswordJoin(leJoinPassword->text());
+		server->setPasswordRCon(leRConPassword->text());
+		server->setPort(spinPort->value());
+		server->setSkill(cboDifficulty->currentIndex());
+		server->setWebsite(leURL->text());
+
+		const GeneralEngineInfo& engNfo = currentEngine->pInterface->generalEngineInfo();
+		for (int i = 0; i < engNfo.gameModesNum; ++i)
+		{
+			if (engNfo.gameModes[i].name().compare(cboGamemode->currentText()) == 0)
+			{
+				server->setGameMode(engNfo.gameModes[i]);
+				break;
+			}
+		}
+
+		return hi;
+	}
+
+	return NULL;
+}
+
+void CreateServerDlg::focusChanged(QWidget* oldW, QWidget* newW)
+{
+	if (newW == leMapname)
+	{
+		btnAddMapToMaplist->setDefault(true);
+	}
+	else if (oldW == leMapname)
+	{
+		btnAddMapToMaplist->setDefault(false);
+	}
+}
+
 void CreateServerDlg::initDMFlagsTabs()
 {
 	removeDMFlagsTabs();
@@ -523,6 +608,9 @@ void CreateServerDlg::initEngineSpecific(const PluginInfo* engineInfo)
 
 	currentEngine = engineInfo;
 	const GeneralEngineInfo& engNfo = currentEngine->pInterface->generalEngineInfo();
+
+	// Executable path
+	leExecutable->setText(currentEngine->pInterface->binaryServer());
 
 	spinPort->setValue(engNfo.defaultServerPort);
 

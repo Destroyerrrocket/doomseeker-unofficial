@@ -26,6 +26,7 @@
 
 #include <QDir>
 #include <QFileInfo>
+#include <QProcess>
 #include <QObject>
 #include <QHostAddress>
 #include <QString>
@@ -368,10 +369,11 @@ class MAIN_EXPORT Server : public QObject
 		 *	you can override this to provide different working directory for
 		 *	Skulltag's testing binaries.
 		 */
-		virtual QString		clientBinarysDirectory() const;
+		virtual QString		clientWorkingDirectory() const;
 		virtual void		connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
 
 		/**
+		 *	@param serverExecutablePath - if empty, serverBinary() will be used
 		 *	@param [out] executablePath - path to the executable is saved here.
 		 *	@param [out] applicationDir - working directory of the executable
 		 *	@param [out] args - launch arguments are saved here.
@@ -387,7 +389,7 @@ class MAIN_EXPORT Server : public QObject
 		 *	@param [out] error - if return == false, error text will be put here
 		 *	@return	true if command line was successfully created.
 		 */
-		bool				createHostCommandLine(QFileInfo& executablePath, QDir& applicationDir, QStringList& args, const QStringList& customParameters, const QString& iwadPath, const QStringList& pwadsPaths, const DMFlags& dmFlags, const QList<GameCVar>& cvars, QString& error) const;
+		bool				createHostCommandLine(const QString& serverExecutablePath, QFileInfo& executablePath, QDir& applicationDir, QStringList& args, const QStringList& customParameters, const QString& iwadPath, const QStringList& pwadsPaths, const DMFlags& dmFlags, const QList<GameCVar>& cvars, QString& error) const;
 
 		/**
 		 *	@param [out] executablePath - path to the executable is saved here.
@@ -398,9 +400,10 @@ class MAIN_EXPORT Server : public QObject
 		bool				createJoinCommandLine(QFileInfo& executablePath, QDir& applicationDir, QStringList& args, const QString &connectPassword) const;
 
 		/**
+		 *	@param serverExecutablePath - if empty, serverBinary() will be used
 		 *	@see createHostCommandLine()
 		 */
-		bool				host(const QString& iwadPath, const QStringList& pwadsPaths, const QStringList& customParameters, const DMFlags& dmFlags, const QList<GameCVar>& cvars, QString& error);
+		bool				host(const QString& serverExecutablePath, const QString& iwadPath, const QStringList& pwadsPaths, const QStringList& customParameters, const DMFlags& dmFlags, const QList<GameCVar>& cvars, QString& error);
 
 		/**
 		 *	Default behaviour returns the same string as clientBinary().
@@ -411,10 +414,10 @@ class MAIN_EXPORT Server : public QObject
 
 		/**
 		 *	Default behaviour returns the same string as
-		 *	clientBinarysDirectory(). This can be reimplemented for engines that
+		 *	clientWorkingDirectory(). This can be reimplemented for engines that
 		 *	use two different binaries for the server and for the client.
 		 */
-		virtual QString		serverBinarysDirectory() const { return clientBinarysDirectory(); }
+		virtual QString		serverWorkingDirectory() const { return clientWorkingDirectory(); }
 
 
 		/**
@@ -451,6 +454,19 @@ class MAIN_EXPORT Server : public QObject
 		virtual void		additionalServerInfo(QList<ServerInfo>* baseList) const {}
 
 		void				clearDMFlags();
+
+		/**
+		 *	On Windows this removes any wrapping " chars.
+		 *
+		 *	Explanation:
+		 *	Draft from Qt documentation on QProcess::startDetached:
+		 *	"On Windows, arguments that contain spaces are wrapped in quotes."
+		 *	Thus, on Windows we must unwrap the arguments that are wrapped in
+		 *	quotes because thing like +sv_hostname "Started from Doomseeker"
+		 *	won't work properly and a server with empty name will be started.
+		 */
+		void				cleanArguments(QStringList& args) const;
+
 		/**
 		 * Wrapper function to allow refresher to emit the updated signal.
 		 */

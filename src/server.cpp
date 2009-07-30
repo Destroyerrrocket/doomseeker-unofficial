@@ -399,11 +399,22 @@ void Server::operator= (const Server &other)
 	serverScoreLimit = other.scoreLimit();
 }
 
-QString Server::clientBinarysDirectory() const
+void Server::cleanArguments(QStringList& args) const
+{
+	#ifdef Q_WS_WIN
+	QStringList::iterator it;
+	for (it = args.begin(); it != args.end(); ++it)
+	{
+		Main::trim(*it, "\"");
+	}
+	#endif
+}
+
+QString Server::clientWorkingDirectory() const
 {
 	QString dummy;
 	QFileInfo fi(clientBinary(dummy));
-	return fi.canonicalPath();
+	return fi.absolutePath();
 }
 
 void Server::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const
@@ -419,7 +430,7 @@ void Server::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFoun
 	iwadFound = !iwad.isEmpty();
 }
 
-bool Server::createHostCommandLine(QFileInfo& executablePath, QDir& applicationDir, QStringList& args, const QStringList& customParameters, const QString& iwadPath, const QStringList& pwadsPaths, const DMFlags& dmFlags, const QList<GameCVar>& cvars, QString& error) const
+bool Server::createHostCommandLine(const QString& serverExecutablePath, QFileInfo& executablePath, QDir& applicationDir, QStringList& args, const QStringList& customParameters, const QString& iwadPath, const QStringList& pwadsPaths, const DMFlags& dmFlags, const QList<GameCVar>& cvars, QString& error) const
 {
 	const QString errorCaption = tr("Doomseeker - error");
 	args.clear();
@@ -443,7 +454,7 @@ bool Server::createHostCommandLine(QFileInfo& executablePath, QDir& applicationD
 			fi.setFile(s);
 			if (!fi.isFile())
 			{
-				error = tr("\"%1\" doesn't exist or is a directory!").arg(iwadPath);
+				error = tr("\"%1\" doesn't exist or is a directory!").arg(s);
 				return false;
 			}
 			args << s;
@@ -460,19 +471,32 @@ bool Server::createHostCommandLine(QFileInfo& executablePath, QDir& applicationD
 		args << QString("+" + c.consoleCommand) << c.value();
 	}
 
-	QString clientBin = serverBinary(error);
-	if (clientBin.isEmpty())
+	if (serverExecutablePath.isEmpty())
 	{
+		QString serverBin = serverBinary(error);
+		if (serverBin.isEmpty())
+		{
+			return false;
+		}
+		executablePath = serverBin;
+	}
+	else
+	{
+		executablePath = serverExecutablePath;
+	}
+
+	if (!executablePath.isFile())
+	{
+		error = tr("%1\n doesn't exist or is not a file.").arg(executablePath.filePath());
 		return false;
 	}
-	executablePath = clientBin;
 
-	QString clientWorkingDirPath = serverBinarysDirectory();
-	applicationDir = clientWorkingDirPath;
+	QString serverWorkingDirPath = serverWorkingDirectory();
+	applicationDir = serverWorkingDirPath;
 
 	if (!applicationDir.exists())
 	{
-		error = tr("%1\n cannot be used as working directory for:\n%2").arg(clientWorkingDirPath, clientBin);
+		error = tr("%1\n cannot be used as working directory for:\n%2").arg(serverWorkingDirPath, executablePath.filePath());
 		return false;
 	}
 
@@ -498,7 +522,7 @@ bool Server::createJoinCommandLine(QFileInfo& executablePath, QDir& applicationD
 	}
 	executablePath = clientBin;
 
-	QString clientWorkingDirPath = clientBinarysDirectory();
+	QString clientWorkingDirPath = clientWorkingDirectory();
 	applicationDir = clientWorkingDirPath;
 
 	if (!applicationDir.exists())
@@ -604,6 +628,9 @@ void Server::join(const QString &connectPassword) const
 	printf("Starting (working dir %s): %s %s\n", applicationDir.canonicalPath().toAscii().constData(), executable.absoluteFilePath().toAscii().constData(), args.join(" ").toAscii().constData());
 
 	QProcess proc;
+
+	cleanArguments(args);
+
 	if( !proc.startDetached(executable.canonicalFilePath(), args, applicationDir.canonicalPath()) )
 	{
 		QMessageBox::critical(Main::mainWindow, errorCaption, tr("File: %1\ncannot be run").arg(executable.canonicalFilePath()));
@@ -629,19 +656,22 @@ QString Server::generalInfoHTML() const
 	return ret;
 }
 
-bool Server::host(const QString& iwadPath, const QStringList& pwadsPaths, const QStringList& customParameters, const DMFlags& dmFlags, const QList<GameCVar>& cvars, QString& error)
+bool Server::host(const QString& serverVersion, const QString& iwadPath, const QStringList& pwadsPaths, const QStringList& customParameters, const DMFlags& dmFlags, const QList<GameCVar>& cvars, QString& error)
 {
 	error.clear();
 	QStringList args;
 	QFileInfo executable;
 	QDir applicationDir;
 
-	if (!createHostCommandLine(executable, applicationDir, args, customParameters, iwadPath, pwadsPaths, dmFlags, cvars, error))
+	if (!createHostCommandLine(serverVersion, executable, applicationDir, args, customParameters, iwadPath, pwadsPaths, dmFlags, cvars, error))
 		return false;
 
 	printf("Starting (working dir %s): %s %s\n", applicationDir.canonicalPath().toAscii().constData(), executable.absoluteFilePath().toAscii().constData(), args.join(" ").toAscii().constData());
 
 	QProcess proc;
+
+	cleanArguments(args);
+
 	if( !proc.startDetached(executable.canonicalFilePath(), args, applicationDir.canonicalPath()) )
 	{
 		error = tr("File: %1\ncannot be run").arg(executable.canonicalFilePath());

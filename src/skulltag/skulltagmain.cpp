@@ -56,6 +56,11 @@ static GeneralEngineInfo SkulltagEngineInfo =
 class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 {
 	public:
+		QString				 binaryClient() const
+		{
+			return Main::config->setting("SkulltagBinaryPath")->string();
+		}
+
 		ConfigurationBoxInfo *configuration(Config *cfg, QWidget *parent) const
 		{
 			return EngineSkulltagConfigBox::createStructure(cfg, parent);

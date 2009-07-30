@@ -132,8 +132,9 @@ class SkulltagServer : public Server
 		 *	if necessary and a path to this shell script s returned.
 		 */
 		QString			clientBinary(QString& error) const;
-		QString			clientBinarysDirectory() const;
+		QString			clientWorkingDirectory() const;
 		void			connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
+
 		RConProtocol	*rcon();
 		QString			teamName(int team) const;
 

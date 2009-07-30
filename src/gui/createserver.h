@@ -45,6 +45,8 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 	protected slots:
 		void	btnAddMapToMaplistClicked();
 		void	btnAddPwadClicked();
+		void	btnBrowseExecutableClicked();
+		void	btnCommandLineClicked();
 		void	btnIwadBrowseClicked();
 		void	btnLoadClicked();
 		void	btnRemoveMapFromMaplistClicked();
@@ -52,6 +54,7 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		void	btnSaveClicked();
 		void	cboEngineSelected(int index);
 		void	cboGamemodeSelected(int index);
+		void	focusChanged(QWidget* oldW, QWidget* newW);
 
 	protected:
 		struct DMFlagsTabWidget
@@ -72,6 +75,26 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 			GameCVar	limit;
 		};
 
+		struct HostInfo
+		{
+			QString 		executablePath;
+			QString 		iwadPath;
+			QStringList 	pwadsPaths;
+			QStringList 	customParameters;
+			DMFlags 		dmFlags;
+			QList<GameCVar> cvars;
+			Server*			server;
+
+			~HostInfo()
+			{
+				if (server != NULL)
+					delete server;
+
+				foreach(DMFlagsSection* sec, dmFlags)
+					delete sec;
+			}
+		};
+
 		const PluginInfo* 				currentEngine;
 		QList<DMFlagsTabWidget*>		dmFlagsTabs;
 		QList<GameLimitWidget*>			limitWidgets;
@@ -86,6 +109,11 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		void	addIwad(const QString& path);
 		void	addMapToMaplist(const QString& map);
 		void	addWadPath(const QString& path);
+
+		/**
+		 *	Needs to be deleted afterwards.
+		 */
+		HostInfo*	createHostInfo();
 
 		void	initDMFlagsTabs();
 

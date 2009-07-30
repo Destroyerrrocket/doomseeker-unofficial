@@ -38,6 +38,12 @@
 class MAIN_EXPORT Main
 {
 	public:
+		static Config 			*config;
+		static IP2C				*ip2c;
+		static QWidget*			mainWindow;
+		static PluginLoader		enginePlugins;
+		static bool				running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
+
 		/**
 		 *	Global GUI method.
 		 */
@@ -76,12 +82,6 @@ class MAIN_EXPORT Main
 			}
 		}
 
-		static Config 			*config;
-		static IP2C				*ip2c;
-		static QWidget*			mainWindow;
-		static PluginLoader		enginePlugins;
-		static bool				running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
-
 		/**
 		 *	Translates string in format "hostname:port" to atomic values.
 		 *	@param settingValue - string to be translated.
@@ -92,6 +92,11 @@ class MAIN_EXPORT Main
 		 *		or no port is specified.
 		 */
 		static void				translateServerAddress(const QString& settingValue, QString& hostname, short& port, const QString& defaultHostname, const short defaultPort);
+
+		static bool				isCharOnCharList(char c, const QString& charList);
+		static QString&			trim(QString& str, const QString& charList) { return trimr(triml(str, charList), charList); }
+		static QString&			trimr(QString& str, const QString& charList);
+		static QString&			triml(QString& str, const QString& charList);
 };
 
 #endif /* __MAIN_H__ */

@@ -258,7 +258,7 @@ QString SkulltagServer::clientBinary(QString& error) const
 
 				// Now copy all .ini's. On Linux .ini's are kept in ~/.skulltag so this will
 				// do nothing, but on Windows this should work like magic.
-				QDir baseBinaryDir(clientBinarysDirectory());
+				QDir baseBinaryDir(clientWorkingDirectory());
 				QStringList nameFilters;
 				nameFilters << "*.ini";
 				QStringList iniFiles = baseBinaryDir.entryList(nameFilters, QDir::Files);
@@ -303,7 +303,7 @@ QString SkulltagServer::clientBinary(QString& error) const
 	}
 }
 
-QString SkulltagServer::clientBinarysDirectory() const
+QString SkulltagServer::clientWorkingDirectory() const
 {
 	SettingsData* setting = Main::config->setting("SkulltagBinaryPath");
 	QFileInfo fi(setting->string());
@@ -366,10 +366,7 @@ void SkulltagServer::hostProperties(QStringList& args) const
 	}
 	args << gameModeStr << "1";
 
-	if (!email.isEmpty())
-	{
-		args << "+sv_hostemail" << "\"" + email + "\"";
-	}
+	args << "+sv_hostemail" << "\"" + email + "\"";
 
 	if (!mapName.isEmpty())
 	{
@@ -378,42 +375,28 @@ void SkulltagServer::hostProperties(QStringList& args) const
 
 	if (!mapList.isEmpty())
 	{
-		args << "+maplist" << "\"" + mapList.join("\n") + "\"";
+		foreach (QString s, mapList)
+		{
+			args << "+addmap" << s;
+		}
 	}
 
 	args << "+sv_maprotation" << QString::number(static_cast<int>(mapRandomRotation));
 
-	if (!motd.isEmpty())
-	{
-		args << "+sv_motd" << "\"" + motd + "\"";
-	}
+	QString md = motd;
+	args << "+sv_motd" << "\"" + md.replace("\n", "\\n") + "\"";
 
-	if (!name().isEmpty())
-	{
-		args << "+sv_hostname" << "\"" + name() + "\"";
-	}
+	args << "+sv_hostname" << "\"" + name() + "\"";
 
-	if (!webSite.isEmpty())
-	{
-		args << "+sv_website" << "\"" + webSite + "\"";
-	}
+	args << "+sv_website" << "\"" + webSite + "\"";
 
-	if (!passwordConnect.isEmpty())
-	{
-		args << "+sv_password" << "\"" + passwordConnect + "\"";
-		args << "+sv_forcepassword" << "1";
-	}
+	args << "+sv_password" << "\"" + passwordConnect + "\"";
+	args << "+sv_forcepassword" << QString::number(static_cast<int>(!passwordConnect.isEmpty()));
 
-	if (!passwordJoin.isEmpty())
-	{
-		args << "+sv_joinpassword" << "\"" + passwordJoin + "\"";
-		args << "+sv_forcejoinpassword" << "1";
-	}
+	args << "+sv_joinpassword" << "\"" + passwordJoin + "\"";
+	args << "+sv_forcejoinpassword" << QString::number(static_cast<int>(!passwordJoin.isEmpty()));
 
-	if (!passwordRCon.isEmpty())
-	{
-		args << "+sv_rconpassword" << "\"" + passwordRCon + "\"";
-	}
+	args << "+sv_rconpassword" << "\"" + passwordRCon + "\"";
 
 	args << "+sv_broadcast" << QString::number(static_cast<int>(broadcastToLAN));
 	args << "+sv_updatemaster" << QString::number(static_cast<int>(broadcastToMaster));
@@ -511,16 +494,25 @@ bool SkulltagServer::readRequest(QByteArray &data)
 		iwad = QString(&packetOut[pos]);
 		pos += iwad.length() + 1;
 	}
+
 	if((flags & SQF_FORCEPASSWORD) == SQF_FORCEPASSWORD)
 	{
-		if(READINT8(&packetOut[pos++]) != 0)
-			locked = true;
+		locked = (READINT8(&packetOut[pos++]) != 0);
 	}
+	else
+	{
+		locked = false;
+	}
+
 	if((flags & SQF_FORCEJOINPASSWORD) == SQF_FORCEJOINPASSWORD)
 	{
-		if(READINT8(&packetOut[pos++]) != 0)
-			locked = true;
+		locked = (READINT8(&packetOut[pos++]) != 0);
 	}
+	else
+	{
+		locked = false;
+	}
+
 	if((flags & SQF_GAMESKILL) == SQF_GAMESKILL)
 		skill = READINT8(&packetOut[pos++]);
 	if((flags & SQF_BOTSKILL) == SQF_BOTSKILL)
@@ -732,7 +724,23 @@ bool SkulltagServer::spawnTestingBatchFile(const QString& versionDir, QString& f
 	QString content;
 	#ifdef Q_WS_WIN
 	// Create Windows batch file
-	content  = "cd " + clientBinarysDirectory() + "\r\n";
+	// Extract drive letter:
+	QString driveLetter;
+	QString workDir = clientWorkingDirectory();
+	for (int i = 0; i < workDir.length(); ++i)
+	{
+		if (workDir[i] == ':')
+		{
+			driveLetter = workDir.left(i);
+		}
+	}
+
+	if (!driveLetter.isEmpty())
+	{
+		content += driveLetter + ":\r\n";
+	}
+
+	content += "cd " + clientWorkingDirectory() + "\r\n";
 	content += binaryPath + " %*"; // %* deals with all the parameters
 	#else
 	// Create Unix script file

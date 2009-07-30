@@ -100,3 +100,39 @@ void Main::translateServerAddress(const QString& settingValue, QString& hostname
 	if (port == 0)
 		port = defaultPort;
 }
+
+bool Main::isCharOnCharList(char c, const QString& charList)
+{
+	for (int i = 0; i < charList.length(); ++i)
+	{
+		if (charList[i] == c)
+			return true;
+	}
+
+	return false;
+}
+
+QString& Main::trimr(QString& str, const QString& charList)
+{
+	int i;
+	for (i = str.length() - 1; i >= 0; --i)
+	{
+		if (!isCharOnCharList(str[i].toAscii(), charList))
+			break;
+	}
+	++i;
+
+	return str.remove(i, str.length() - i);
+}
+
+QString& Main::triml(QString& str, const QString& charList)
+{
+	int i;
+	for (i = 0; i < str.length(); ++i)
+	{
+		if (!isCharOnCharList(str[i].toAscii(), charList))
+			break;
+	}
+
+	return str.remove(0, i);
+}
