@@ -241,7 +241,12 @@ void WWWSeeker::checkNextSite()
 {
 	// If link for custom site is invalid customSiteUsed will be set to true,
 	// even before customSite is checked through nextSite() method.
-	if (customSiteUsed && useIdgames && idgamesHasHighPriority && !idgamesUsed)
+	if (customSiteUsed 			// Did we check custom site already?
+	&&	useIdgames 				// Do we use idgames at all?
+	&&	directLinks.isEmpty() 	// Were there any direct links found on custom site?
+	&&	siteLinks.isEmpty() 	// Were there any site links found on custom site?
+	&&	idgamesHasHighPriority  // Does idgames have high priority?
+	&&	!idgamesUsed)			// Was idgames already searched?
 	{
 		this->searchIdgames();
 	}
@@ -252,8 +257,8 @@ void WWWSeeker::checkNextSite()
 		{
 			// A few words of explanation:
 			// We don't need to check if idgamesHasHighPriority == false.
-			// If it is true, the idgamesUsed will also be set to true already and
-			// the condidition won't be met anyway.
+			// If it is true, the idgamesUsed will already be set to true by the
+			// call to searchIdgames() above.
 			if (useIdgames && !idgamesUsed)
 			{
 				this->searchIdgames();

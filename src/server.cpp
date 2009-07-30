@@ -405,7 +405,10 @@ void Server::cleanArguments(QStringList& args) const
 	QStringList::iterator it;
 	for (it = args.begin(); it != args.end(); ++it)
 	{
-		Main::trim(*it, "\"");
+		if (it->contains(" "))
+		{
+			Main::trim(*it, "\"");
+		}
 	}
 	#endif
 }
@@ -510,6 +513,7 @@ bool Server::createHostCommandLine(const QString& serverExecutablePath, QFileInf
 bool Server::createJoinCommandLine(QFileInfo& executablePath, QDir& applicationDir, QStringList& args, const QString &connectPassword) const
 {
 	const QString errorCaption = tr("Doomseeker - error");
+	args.clear();
 
 	QString clientBinError;
 	QString clientBin = clientBinary(clientBinError);
