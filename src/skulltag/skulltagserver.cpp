@@ -745,7 +745,7 @@ bool SkulltagServer::spawnTestingBatchFile(const QString& versionDir, QString& f
 	#else
 	// Create Unix script file
 	content  = "#!/bin/bash\n";
-	content += "cd " + clientBinarysDirectory() + "\n";
+	content += "cd " + clientWorkingDirectory() + "\n";
 	content += "export LANG=C\n"; // without this Skulltag won't run on my system (Zalewa)
 	content += binaryPath + " $*"; // $* deals with all the parameters
 	#endif
