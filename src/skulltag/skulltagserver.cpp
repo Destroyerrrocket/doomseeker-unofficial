@@ -507,11 +507,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 
 	if((flags & SQF_FORCEJOINPASSWORD) == SQF_FORCEJOINPASSWORD)
 	{
-		locked = (READINT8(&packetOut[pos++]) != 0);
-	}
-	else
-	{
-		locked = false;
+		pos++;
 	}
 
 	if((flags & SQF_GAMESKILL) == SQF_GAMESKILL)
