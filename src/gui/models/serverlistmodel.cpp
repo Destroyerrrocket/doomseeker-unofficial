@@ -329,7 +329,7 @@ int ServerListModel::updateServer(int row, Server* server, int response)
 	// Port icon is set no matter what
 	qstdItem = item(row, SLCID_PORT);
 	QPixmap icon = server->icon();
-	if(server->isLocked()) // Draw a key if it is locked.
+	if(server->isLocked() && server->isKnown()) // Draw a key if it is locked.
 	{
 		QPainter iconPainter(&icon);
 		iconPainter.drawPixmap(0, 0, QPixmap(":/locked.png"));
