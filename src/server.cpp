@@ -429,7 +429,7 @@ void Server::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFoun
 
 	// Iwad
 	QString iwad = pf.findWad(iwadName().toLower());
-	args << "-iwad" << iwad;
+	args << argForIwadLoading() << iwad;
 	iwadFound = !iwad.isEmpty();
 }
 
@@ -497,7 +497,12 @@ bool Server::createHostCommandLine(const QString& serverExecutablePath, QFileInf
 	QString serverWorkingDirPath = serverWorkingDirectory();
 	applicationDir = serverWorkingDirPath;
 
-	if (!applicationDir.exists())
+	if (serverWorkingDirPath.isEmpty())
+	{
+		error = tr("Path to working directory is empty.\nMake sure the configuration for the main binary is set properly.");
+		return false;
+	}
+	else if (!applicationDir.exists())
 	{
 		error = tr("%1\n cannot be used as working directory for:\n%2").arg(serverWorkingDirPath, executablePath.filePath());
 		return false;
@@ -529,7 +534,12 @@ bool Server::createJoinCommandLine(QFileInfo& executablePath, QDir& applicationD
 	QString clientWorkingDirPath = clientWorkingDirectory();
 	applicationDir = clientWorkingDirPath;
 
-	if (!applicationDir.exists())
+	if (clientWorkingDirPath.isEmpty())
+	{
+		QMessageBox::critical(Main::mainWindow, errorCaption, tr("Path to working directory is empty.\nMake sure the configuration for the main binary is set properly."));
+		return false;
+	}
+	else if (!applicationDir.exists())
 	{
 		QMessageBox::critical(Main::mainWindow, errorCaption, tr("%1\n cannot be used as working directory for:\n%2").arg(clientWorkingDirPath, clientBin));
 		return false;
@@ -544,7 +554,7 @@ bool Server::createJoinCommandLine(QFileInfo& executablePath, QDir& applicationD
 	// Pwads
 	if (numWads() != 0)
 	{
-		args << "-file";
+		args << argForPwadLoading();
 	}
 
 	for (int i = 0; i < numWads(); ++i)
