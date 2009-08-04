@@ -26,6 +26,7 @@
 
 #include "ui_remoteconsole.h"
 #include "server.h"
+#include "widgets/serverconsole.h"
 
 class RemoteConsole : public QMainWindow, private Ui::RemoteConsole
 {
@@ -41,12 +42,11 @@ class RemoteConsole : public QMainWindow, private Ui::RemoteConsole
 		void	closeEvent(QCloseEvent *event);
 
 	protected slots:
-		void	receiveMessage(const QString &message);
-		void	sendCommand();
 		void	updatePlayerList();
 
 	private:
 		RConProtocol		*protocol;
+		ServerConsole		*serverConsole;
 };
 
 #endif /* __REMOTECONSOLE_HPP__ */

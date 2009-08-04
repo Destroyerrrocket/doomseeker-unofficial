@@ -33,6 +33,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/remoteconsole.ui
 	gui/wadseekerconfig.ui
 	gui/wadseekerinterface.ui
+	gui/widgets/serverconsole.ui
 )
 
 qt_wrap_cpp(doomseekerWraps QT_FILES
@@ -54,6 +55,7 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/wadseekerinterface.h
 	gui/models/serverlistmodel.h
 	gui/widgets/dockedwidgets.h
+	gui/widgets/serverconsole.h
 	gui/widgets/serverlistview.h
 	sdeapi/config.hpp
 	customservers.h

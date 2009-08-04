@@ -374,7 +374,12 @@ void SLHandler::tableRightClicked(const QModelIndex& index, const QPoint& point)
 	QMenu *copyMenu = contextMenu.addMenu(tr("Copy"));
 	QAction *copyAddress = copyMenu->addAction(tr("Copy Address"));
 	QAction *copyName = copyMenu->addAction(tr("Copy Name"));
-	QAction *rcon = contextMenu.addAction("Remote Console");
+	QAction *rcon = NULL;
+	if(server->hasRcon())
+	{
+		contextMenu.addSeparator();
+		rcon = contextMenu.addAction("Remote Console");
+	}
 
 	QAction *result = contextMenu.exec(table->viewport()->mapToGlobal(point));
 	if(result == refresh)
@@ -403,7 +408,7 @@ void SLHandler::tableRightClicked(const QModelIndex& index, const QPoint& point)
 	{
 		QApplication::clipboard()->setText(server->name());
 	}
-	else if(result == rcon)
+	else if(result == rcon && rcon != NULL)
 	{
 		new RemoteConsole(server);
 	}

@@ -23,10 +23,13 @@
 
 #include "remoteconsole.h"
 #include "passwordDlg.h"
+#include "widgets/serverconsole.h"
 
 RemoteConsole::RemoteConsole(Server *server, QWidget *parent) : QMainWindow(parent), protocol(server->rcon())
 {
 	setupUi(this);
+	serverConsole = new ServerConsole();
+	console->layout()->addWidget(serverConsole);
 
 	setWindowIcon(server->icon());
 	setWindowTitle(windowTitle() + " - " + server->name());
@@ -38,9 +41,9 @@ RemoteConsole::RemoteConsole(Server *server, QWidget *parent) : QMainWindow(pare
 	show();
 
 	connect(actionDisconnect, SIGNAL(triggered()), this, SLOT(disconnectFromServer()));
-	connect(consoleInput, SIGNAL(returnPressed()), this, SLOT(sendCommand()));
+	connect(serverConsole, SIGNAL(messageSent(const QString &)), protocol, SLOT(sendCommand(const QString &)));
 	connect(protocol, SIGNAL(disconnected()), this, SLOT(close()));
-	connect(protocol, SIGNAL(messageReceived(const QString &)), this, SLOT(receiveMessage(const QString &)));
+	connect(protocol, SIGNAL(messageReceived(const QString &)), serverConsole, SLOT(appendMessage(const QString &)));
 	connect(protocol, SIGNAL(playerListUpdated()), this, SLOT(updatePlayerList()));
 
 	// Prompt for password.
@@ -67,17 +70,6 @@ void RemoteConsole::disconnectFromServer()
 {
 	if(protocol->isConnected())
 		protocol->disconnectFromServer();
-}
-
-void RemoteConsole::receiveMessage(const QString &message)
-{
-	console->appendPlainText(message.trimmed());
-}
-
-void RemoteConsole::sendCommand()
-{
-	protocol->sendCommand(consoleInput->text());
-	consoleInput->setText("");
 }
 
 void RemoteConsole::updatePlayerList()

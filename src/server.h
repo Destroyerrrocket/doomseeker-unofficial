@@ -299,6 +299,7 @@ class MAIN_EXPORT Server : public QObject
 		const QHostAddress	&address() const { return serverAddress; }
 		const DMFlags		&gameFlags() const { return dmFlags; }
 		const GameMode		&gameMode() const { return currentGameMode; }
+		virtual bool		hasRcon() const { return false; }
 		virtual QPixmap		icon() const=0;
 		bool				isCustom() const { return custom; }
 		bool				isKnown() const { return bKnown; }
