@@ -31,6 +31,9 @@ RemoteConsole::RemoteConsole(Server *server, QWidget *parent) : QMainWindow(pare
 	serverConsole = new ServerConsole();
 	console->layout()->addWidget(serverConsole);
 
+	// delete ourself on close
+	setAttribute(Qt::WA_DeleteOnClose);
+
 	setWindowIcon(server->icon());
 	setWindowTitle(windowTitle() + " - " + server->name());
 

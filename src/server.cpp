@@ -682,15 +682,17 @@ bool Server::host(const QString& serverVersion, const QString& iwadPath, const Q
 
 	printf("Starting (working dir %s): %s %s\n", applicationDir.canonicalPath().toAscii().constData(), executable.absoluteFilePath().toAscii().constData(), args.join(" ").toAscii().constData());
 
-	QProcess proc;
-
+#ifdef Q_WS_WIN
 	cleanArguments(args);
 
-	if( !proc.startDetached(executable.canonicalFilePath(), args, applicationDir.canonicalPath()) )
+	if( !QProcess::startDetached(executable.canonicalFilePath(), args, applicationDir.canonicalPath()) )
 	{
 		error = tr("File: %1\ncannot be run").arg(executable.canonicalFilePath());
 		return false;
 	}
+#else
+	new StandardServerConsole(this, executable.canonicalFilePath(), args);
+#endif
 
 	return true;
 }
@@ -1001,4 +1003,56 @@ RConProtocol::RConProtocol(Server *server) : server(server), connected(true)
 RConProtocol::~RConProtocol()
 {
 	socket.close();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+StandardServerConsole::StandardServerConsole(Server *server, const QString &program, const QStringList &arguments)
+{
+	// Have the console delete itself
+	setAttribute(Qt::WA_DeleteOnClose);
+
+	// Set up the window.
+	setWindowTitle("Server Console");
+	setWindowIcon(server->icon());
+	resize(640, 400);
+
+	// Add our console widget
+	console = new ServerConsole();
+	setCentralWidget(console);
+
+	// Start the process
+	process = new QProcess();
+	process->start(program, arguments);
+	if(process->waitForStarted())
+	{
+		show();
+		connect(console, SIGNAL(messageSent(const QString &)), this, SLOT(writeToStandardInput(const QString &)));
+		connect(process, SIGNAL(readyReadStandardError()), this, SLOT(errorDataReady()));
+		connect(process, SIGNAL(readyReadStandardOutput()), this, SLOT(outputDataReady()));
+	}
+	else // Didn't start get rid of this console.
+		close();
+}
+
+StandardServerConsole::~StandardServerConsole()
+{
+	process->close();
+	process->waitForFinished();
+	delete process;
+}
+
+void StandardServerConsole::errorDataReady()
+{
+	console->appendMessage(QString(process->readAllStandardError()));
+}
+
+void StandardServerConsole::outputDataReady()
+{
+	console->appendMessage(QString(process->readAllStandardOutput()));
+}
+
+void StandardServerConsole::writeToStandardInput(const QString &message)
+{
+	process->write((message+"\n").toAscii());
 }

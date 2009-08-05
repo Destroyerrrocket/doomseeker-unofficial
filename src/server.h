@@ -34,6 +34,7 @@
 #include <QThreadPool>
 #include <QThread>
 #include <QRunnable>
+#include <QMainWindow>
 #include <QMetaType>
 #include <QMutex>
 #include <QPixmap>
@@ -41,6 +42,7 @@
 
 #include "global.h"
 #include "pathfinder.h"
+#include "gui/widgets/serverconsole.h"
 
 #define MAX_TEAMS 4
 
@@ -647,5 +649,27 @@ class MAIN_EXPORT ServerPointer
 };
 
 Q_DECLARE_METATYPE(ServerPointer)
+
+/**
+ * This is a wrapper for the standard input and output of a console app.  This
+ * is mainly for use on Linux, but it is compiled on Windows.
+ */
+class StandardServerConsole : public QMainWindow
+{
+	Q_OBJECT
+
+	public:
+		StandardServerConsole(Server *server, const QString &program, const QStringList &arguments);
+		~StandardServerConsole();
+
+	private slots:
+		void	errorDataReady();
+		void	outputDataReady();
+		void	writeToStandardInput(const QString &message);
+
+	private:
+		ServerConsole	*console;
+		QProcess		*process;
+};
 
 #endif /* __SERVER_H__ */
