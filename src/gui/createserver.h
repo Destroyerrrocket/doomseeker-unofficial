@@ -47,6 +47,7 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		void	btnAddPwadClicked();
 		void	btnBrowseExecutableClicked();
 		void	btnCommandLineClicked();
+		void	btnDefaultExecutableClicked();
 		void	btnIwadBrowseClicked();
 		void	btnLoadClicked();
 		void	btnRemoveMapFromMaplistClicked();

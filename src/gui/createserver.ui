@@ -158,6 +158,29 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QPushButton" name="btnDefaultExecutable">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Default</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbLockExecutable">
+             <property name="toolTip">
+              <string>If locked, executable won't change when new config for the same engine is loaded</string>
+             </property>
+             <property name="text">
+              <string>Lock</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item row="2" column="0">

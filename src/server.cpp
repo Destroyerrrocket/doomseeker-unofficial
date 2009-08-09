@@ -25,6 +25,7 @@
 #include "main.h"
 #include "gui/copytextdlg.h"
 #include "gui/passwordDlg.h"
+#include "gui/standardserverconsole.h"
 #include "gui/wadseekerinterface.h"
 #include <QMessageBox>
 #include <QProcess>

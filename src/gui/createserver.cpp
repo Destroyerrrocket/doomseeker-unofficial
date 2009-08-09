@@ -41,6 +41,7 @@ CreateServerDlg::CreateServerDlg(QWidget* parent) : QDialog(parent)
 	connect(btnBrowseExecutable, SIGNAL( clicked() ), this, SLOT ( btnBrowseExecutableClicked() ) );
 	connect(btnCancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
 	connect(btnCommandLine, SIGNAL( clicked() ), this, SLOT( btnCommandLineClicked() ) );
+	connect(btnDefaultExecutable, SIGNAL( clicked() ), this, SLOT( btnDefaultExecutableClicked() ) );
 	connect(btnIwadBrowse, SIGNAL( clicked() ), this, SLOT ( btnIwadBrowseClicked() ) );
 	connect(btnLoad, SIGNAL( clicked() ), this, SLOT ( btnLoadClicked() ) );
 	connect(btnRemoveMapFromMaplist, SIGNAL( clicked() ), this, SLOT ( btnRemoveMapFromMaplistClicked() ) );
@@ -243,6 +244,11 @@ void CreateServerDlg::btnCommandLineClicked()
 	}
 }
 
+void CreateServerDlg::btnDefaultExecutableClicked()
+{
+	leExecutable->setText(currentEngine->pInterface->binaryServer());
+}
+
 void CreateServerDlg::btnIwadBrowseClicked()
 {
 	QString dialogDir = Main::config->setting("PreviousCreateServerWadDir")->string();
@@ -280,7 +286,15 @@ void CreateServerDlg::btnLoadClicked()
 			return;
 		}
 
+		const PluginInfo* prevEngine = currentEngine;
+
 		cboEngine->setCurrentIndex(engIndex);
+
+		if (prevEngine != currentEngine || !cbLockExecutable->isChecked())
+		{
+			leExecutable->setText(cfg.setting("executable")->string());
+		}
+
 		leServername->setText(cfg.setting("name")->string());
 		spinPort->setValue(cfg.setting("port")->integer());
 		cboGamemode->setCurrentIndex(cfg.setting("gamemode")->integer());
@@ -374,6 +388,7 @@ void CreateServerDlg::btnSaveClicked()
 
 		// General
 		cfg.setting("engine")->setValue(cboEngine->currentText());
+		cfg.setting("executable")->setValue(leExecutable->text());
 		cfg.setting("name")->setValue(leServername->text());
 		cfg.setting("port")->setValue(spinPort->value());
 		cfg.setting("gamemode")->setValue(cboGamemode->currentIndex());
