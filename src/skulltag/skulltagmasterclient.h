@@ -37,7 +37,9 @@ class SkulltagMasterClient : public MasterClient
 		bool	readRequest(QByteArray &data, bool &expectingMorePackets);
 		bool	sendRequest(QByteArray &data);
 
-		int		numPacketsLeft;
+		bool	readLastPacket; // This is used as a marker to determine if we have an accurate reading for numPackets.
+		int		numPackets;
+		int		numPacketsRead;
 };
 
 #endif /* __SKULLTAGMASTERCLIENT_H__ */

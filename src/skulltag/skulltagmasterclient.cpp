@@ -37,7 +37,8 @@
 #define MASTER_RESPONSE_SERVER			1
 #define MASTER_RESPONSE_END				2
 #define MASTER_RESPONSE_BEGINPART		6
-#define MASTER_RESPONSE_TERMINATELIST	7
+#define MASTER_RESPONSE_ENDPART			7
+#define MASTER_RESPONSE_SERVERBLOCK		8
 
 SkulltagMasterClient::SkulltagMasterClient(QHostAddress address, unsigned short port) : MasterClient(address, port)
 {
@@ -86,26 +87,51 @@ bool SkulltagMasterClient::readRequest(QByteArray &data, bool &expectingMorePack
 	// the function was executed.  So store the number of packets.
 	if(!expectingMorePackets)
 	{
-		numPacketsLeft = READINT8(&packetOut[5]);
-
 		// Make sure we have an empty list.
 		emptyServerList();
+		readLastPacket = false;
+		numPackets = 0;
+		numPacketsRead = 0;
 	}
+	int packetNum = READINT8(&packetOut[4]);
+	if(packetNum+1 > numPackets) // Packet numbers start at 0
+		numPackets = packetNum+1;
 
-	quint8 firstByte = READINT8(&packetOut[6]);
-	int pos = 7;
-	while(firstByte != MASTER_RESPONSE_TERMINATELIST)
+	quint8 firstByte = READINT8(&packetOut[5]);
+	int pos = 6;
+	while(firstByte != MASTER_RESPONSE_ENDPART && firstByte != MASTER_RESPONSE_END)
 	{
-		// This might be able to be simplified a little bit...
 		QString ip = QString("%1.%2.%3.%4").
-			arg(static_cast<quint8> (packetOut[pos]), 1, 10, QChar('0')).arg(static_cast<quint8> (packetOut[pos+1]), 1, 10, QChar('0')).arg(static_cast<quint8> (packetOut[pos+2]), 1, 10, QChar('0')).arg(static_cast<quint8> (packetOut[pos+3]), 1, 10, QChar('0'));
-		SkulltagServer *server = new SkulltagServer(QHostAddress(ip), READINT16(&packetOut[pos+4]));
-		servers.push_back(server);
-		pos += 6;
+				arg(static_cast<quint8> (packetOut[pos]), 1, 10, QChar('0')).arg(static_cast<quint8> (packetOut[pos+1]), 1, 10, QChar('0')).arg(static_cast<quint8> (packetOut[pos+2]), 1, 10, QChar('0')).arg(static_cast<quint8> (packetOut[pos+3]), 1, 10, QChar('0'));
+		if(firstByte == MASTER_RESPONSE_SERVER)
+		{
+			SkulltagServer *server = new SkulltagServer(QHostAddress(ip), READINT16(&packetOut[pos+4]));
+			servers.push_back(server);
+			pos += 6;
+		}
+		else // MASTER_RESPONSE_SERVERBLOCK
+		{
+			unsigned int numServersInBlock = READINT8(&packetOut[pos+4]);
+			pos += 5;
+			for(unsigned int i = 0;i < numServersInBlock;i++)
+			{
+				SkulltagServer *server = new SkulltagServer(QHostAddress(ip), READINT16(&packetOut[pos]));
+				servers.push_back(server);
+				pos += 2;
+			}
+		}
 		firstByte = READINT8(&packetOut[pos++]);
 	}
 
-	expectingMorePackets = (--numPacketsLeft > 0);
+	if(firstByte == MASTER_RESPONSE_END)
+		readLastPacket = true;
+	if(readLastPacket)
+		expectingMorePackets = (++numPacketsRead < numPackets);
+	else
+	{
+		expectingMorePackets = true;
+		numPacketsRead++;
+	}
 
 	return true;
 }
