@@ -31,9 +31,38 @@ EngineOdamexConfigBox::EngineOdamexConfigBox(Config* cfg, QWidget* parent) : Con
 {
 	setupUi(this);
 
-	connect(btnBrowseBinary, SIGNAL( clicked() ), this, SLOT ( btnBrowseBinaryClicked() ));
+	connect(btnBrowseClientBinary, SIGNAL( clicked() ), this, SLOT ( btnBrowseClientBinaryClicked() ));
+	connect(btnBrowseServerBinary, SIGNAL( clicked() ), this, SLOT ( btnBrowseServerBinaryClicked() ));
 }
-///////////////////////////////////////////////////
+
+void EngineOdamexConfigBox::btnBrowseClientBinaryClicked()
+{
+	QString filter;
+#if defined(Q_OS_WIN32)
+	filter = tr("Binary files (*.exe);;Any files (*)");
+#else
+	// Other platforms do not have an extension for their binary files.
+	filter = tr("Any files(*)");
+#endif
+	QString strFilepath = QFileDialog::getOpenFileName(this, tr("Doomseeker - choose Odamex client binary"), QString(), filter);
+	if(!strFilepath.isEmpty()) // don't update if nothing was selected.
+		leClientBinaryPath->setText(strFilepath);
+}
+
+void EngineOdamexConfigBox::btnBrowseServerBinaryClicked()
+{
+	QString filter;
+#if defined(Q_OS_WIN32)
+	filter = tr("Binary files (*.exe);;Any files (*)");
+#else
+	// Other platforms do not have an extension for their binary files.
+	filter = tr("Any files(*)");
+#endif
+	QString strFilepath = QFileDialog::getOpenFileName(this, tr("Doomseeker - choose Odamex server binary"), QString(), filter);
+	if(!strFilepath.isEmpty()) // don't update if nothing was selected.
+		leServerBinaryPath->setText(strFilepath);
+}
+
 ConfigurationBoxInfo* EngineOdamexConfigBox::createStructure(Config* cfg, QWidget* parent)
 {
 	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
@@ -42,20 +71,23 @@ ConfigurationBoxInfo* EngineOdamexConfigBox::createStructure(Config* cfg, QWidge
 	ec->icon = QPixmap(odamex_xpm);
 	return ec;
 }
-///////////////////////////////////////////////////
+
 void EngineOdamexConfigBox::readSettings()
 {
 	QString str;
 	SettingsData* setting;
 
 	setting = config->setting("OdamexBinaryPath");
-	leBinaryPath->setText(setting->string());
+	leClientBinaryPath->setText(setting->string());
 
 	setting = config->setting("OdamexCustomParameters");
 	leCustomParameters->setText(setting->string());
 
 	setting = config->setting("OdamexMasterserver");
 	leMasterserverAddress->setText(setting->string());
+
+	setting = config->setting("OdamexServerBinaryPath");
+	leServerBinaryPath->setText(setting->string());
 }
 
 void EngineOdamexConfigBox::saveSettings()
@@ -63,7 +95,7 @@ void EngineOdamexConfigBox::saveSettings()
 	QString strVal;
 	SettingsData* setting;
 
-	strVal = leBinaryPath->text();
+	strVal = leClientBinaryPath->text();
 	setting = config->setting("OdamexBinaryPath");
 	setting->setValue(strVal);
 
@@ -74,18 +106,8 @@ void EngineOdamexConfigBox::saveSettings()
 	strVal = leMasterserverAddress->text();
 	setting = config->setting("OdamexMasterserver");
 	setting->setValue(strVal);
-}
-////////////////////////////////////////////////////
-void EngineOdamexConfigBox::btnBrowseBinaryClicked()
-{
-	QString filter;
-#if defined(Q_WS_WIN)
-	filter = tr("Binary files (*.exe);;Any files (*)");
-#else
-	// Other platforms do not have an extension for their binary files.
-	filter = tr("Any files(*)");
-#endif
-	QString strFilepath = QFileDialog::getOpenFileName(this, tr("Doomseeker - choose Odamex binary"), QString(), filter);
-	if(!strFilepath.isEmpty()) // don't update if nothing was selected.
-		leBinaryPath->setText(strFilepath);
+
+	strVal = leServerBinaryPath->text();
+	setting = config->setting("OdamexServerBinaryPath");
+	setting->setValue(strVal);
 }

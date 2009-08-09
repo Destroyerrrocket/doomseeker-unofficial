@@ -56,9 +56,18 @@ static GeneralEngineInfo SkulltagEngineInfo =
 class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 {
 	public:
-		QString				 binaryClient() const
+		QString					binaryClient() const
 		{
 			return Main::config->setting("SkulltagBinaryPath")->string();
+		}
+
+		QString					binaryServer() const
+		{
+			#ifdef Q_OS_WIN32
+				return binaryClient();
+			#else
+				return Main::config->setting("SkulltagServerBinaryPath")->string();
+			#endif
 		}
 
 		ConfigurationBoxInfo *configuration(Config *cfg, QWidget *parent) const
@@ -161,6 +170,7 @@ extern "C" PLUGIN_EXPORT void doomSeekerInitConfig()
 	Main::config->createSetting("SkulltagBinaryPath", "C:\\Program Files\\Skulltag\\Skulltag.exe");
 #else
 	Main::config->createSetting("SkulltagBinaryPath", "/usr/games/skulltag/skulltag");
+	Main::config->createSetting("SkulltagServerBinaryPath", "/usr/games/skulltag/skulltag-server");
 #endif
 
 	Main::config->createSetting("SkulltagMasterserver", "skulltag.servegame.com:15300");

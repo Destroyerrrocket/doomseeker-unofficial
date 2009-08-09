@@ -98,7 +98,7 @@ void Config::clear()
 void Config::locateConfigFile(int argc, char* argv[])
 {
 	QDir configDir;
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN32)
 	configDir = argv[0];
 	//configDir.
 	unsigned int pos = static_cast<unsigned int> (configDir.path().lastIndexOf('\\')) > static_cast<unsigned int> (configDir.path().lastIndexOf('/')) ? configDir.path().lastIndexOf('\\') : configDir.path().lastIndexOf('/');

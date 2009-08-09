@@ -47,9 +47,11 @@ class OdamexServer : public Server
 
 		OdamexServer(const QHostAddress &address, unsigned short port);
 
-		QString	clientBinary(QString& error) const;
-		void	connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
-		QPixmap	icon() const;
+		QString			clientBinary(QString& error) const;
+		void			connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
+		QPixmap			icon() const;
+
+		QString			serverBinary(QString& error) const;
 
 	protected:
 		bool	readRequest(QByteArray &data);

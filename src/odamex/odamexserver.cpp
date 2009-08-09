@@ -124,6 +124,27 @@ bool OdamexServer::sendRequest(QByteArray &data)
 	return true;
 }
 
+QString OdamexServer::serverBinary(QString& error) const
+{
+	SettingsData* setting = Main::config->setting("OdamexServerBinaryPath");
+
+	if (setting->string().isEmpty())
+	{
+		error = tr("No server executable specified for Odamex");
+		return QString();
+	}
+
+	QFileInfo fi(setting->string());
+
+	if (!fi.exists() || fi.isDir())
+	{
+		error = tr("%1\nis a directory or doesn't exist.").arg(setting->string());
+		return QString();
+	}
+
+	return setting->string();
+}
+
 bool OdamexServer::readRequest(QByteArray &data)
 {
 	fflush(stderr);

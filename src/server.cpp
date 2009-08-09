@@ -401,7 +401,7 @@ void Server::operator= (const Server &other)
 
 void Server::cleanArguments(QStringList& args) const
 {
-	#ifdef Q_WS_WIN
+	#ifdef Q_OS_WIN32
 	QStringList::iterator it;
 	for (it = args.begin(); it != args.end(); ++it)
 	{
@@ -682,7 +682,7 @@ bool Server::host(const QString& serverVersion, const QString& iwadPath, const Q
 
 	printf("Starting (working dir %s): %s %s\n", applicationDir.canonicalPath().toAscii().constData(), executable.absoluteFilePath().toAscii().constData(), args.join(" ").toAscii().constData());
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 	cleanArguments(args);
 
 	if( !QProcess::startDetached(executable.canonicalFilePath(), args, applicationDir.canonicalPath()) )
@@ -793,6 +793,13 @@ QString Server::playerTableHTML() const
 	plTab += plTabSpecs;
 	plTab += "</table>";
 	return plTab;
+}
+
+QString Server::serverWorkingDirectory() const
+{
+	QString dummy;
+	QFileInfo fi(serverBinary(dummy));
+	return fi.absolutePath();
 }
 
 QString Server::spawnPartOfPlayerTable(QList<const Player*> list, int colspan, bool bAppendEmptyRowAtBeginning) const
@@ -1003,56 +1010,4 @@ RConProtocol::RConProtocol(Server *server) : server(server), connected(true)
 RConProtocol::~RConProtocol()
 {
 	socket.close();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-StandardServerConsole::StandardServerConsole(Server *server, const QString &program, const QStringList &arguments)
-{
-	// Have the console delete itself
-	setAttribute(Qt::WA_DeleteOnClose);
-
-	// Set up the window.
-	setWindowTitle("Server Console");
-	setWindowIcon(server->icon());
-	resize(640, 400);
-
-	// Add our console widget
-	console = new ServerConsole();
-	setCentralWidget(console);
-
-	// Start the process
-	process = new QProcess();
-	process->start(program, arguments);
-	if(process->waitForStarted())
-	{
-		show();
-		connect(console, SIGNAL(messageSent(const QString &)), this, SLOT(writeToStandardInput(const QString &)));
-		connect(process, SIGNAL(readyReadStandardError()), this, SLOT(errorDataReady()));
-		connect(process, SIGNAL(readyReadStandardOutput()), this, SLOT(outputDataReady()));
-	}
-	else // Didn't start get rid of this console.
-		close();
-}
-
-StandardServerConsole::~StandardServerConsole()
-{
-	process->close();
-	process->waitForFinished();
-	delete process;
-}
-
-void StandardServerConsole::errorDataReady()
-{
-	console->appendMessage(QString(process->readAllStandardError()));
-}
-
-void StandardServerConsole::outputDataReady()
-{
-	console->appendMessage(QString(process->readAllStandardOutput()));
-}
-
-void StandardServerConsole::writeToStandardInput(const QString &message)
-{
-	process->write((message+"\n").toAscii());
 }

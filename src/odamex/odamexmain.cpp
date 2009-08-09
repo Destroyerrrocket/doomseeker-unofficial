@@ -56,12 +56,17 @@ static GeneralEngineInfo OdamexEngineInfo =
 class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 {
 	public:
-		QString				 binaryClient() const
+		QString					binaryClient() const
 		{
 			return Main::config->setting("OdamexBinaryPath")->string();
 		}
 
-		ConfigurationBoxInfo *configuration(Config *cfg, QWidget *parent) const
+		QString					binaryServer() const
+		{
+			return Main::config->setting("OdamexServerBinaryPath")->string();
+		}
+
+		ConfigurationBoxInfo	*configuration(Config *cfg, QWidget *parent) const
 		{
 			return EngineOdamexConfigBox::createStructure(cfg, parent);
 		}

@@ -51,6 +51,7 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/passwordDlg.h
 	gui/remoteconsole.h
 	gui/serverlist.h
+	gui/standardserverconsole.h
 	gui/wadseekerconfig.h
 	gui/wadseekerinterface.h
 	gui/models/serverlistmodel.h
@@ -82,6 +83,7 @@ set(SOURCE_FILES
 	gui/passwordDlg.cpp
 	gui/remoteconsole.cpp
 	gui/serverlist.cpp
+	gui/standardserverconsole.cpp
 	gui/wadseekerconfig.cpp
 	gui/wadseekerinterface.cpp
 	gui/models/serverlistmodel.cpp

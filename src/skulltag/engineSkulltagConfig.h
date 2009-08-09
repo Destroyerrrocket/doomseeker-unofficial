@@ -38,7 +38,8 @@ class EngineSkulltagConfigBox : public ConfigurationBaseBox, private Ui::EngineS
 
 
 	protected slots:
-		void btnBrowseBinaryClicked();
+		void btnBrowseClientBinaryClicked();
+		void btnBrowseServerBinaryClicked();
 		void btnBrowseTestingPathClicked();
 
 	protected:

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>374</width>
-    <height>291</height>
+    <height>492</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,16 +16,16 @@
   <property name="title">
    <string>Skulltag Configuration</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout_6">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="sizeConstraint">
       <enum>QLayout::SetMinAndMaxSize</enum>
      </property>
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="lblClientBinary">
        <property name="text">
-        <string>Path to Skulltag binary:</string>
+        <string>Path to client binary:</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -35,10 +35,10 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QLineEdit" name="leBinaryPath"/>
+        <widget class="QLineEdit" name="leClientBinaryPath"/>
        </item>
        <item>
-        <widget class="QPushButton" name="btnBrowseBinary">
+        <widget class="QPushButton" name="btnBrowseClientBinary">
          <property name="maximumSize">
           <size>
            <width>32</width>
@@ -53,6 +53,48 @@
       </layout>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QFrame" name="frameServerBinary">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="margin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Path to server binary:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QLineEdit" name="leServerBinaryPath"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnBrowseServerBinary">
+          <property name="maximumSize">
+           <size>
+            <width>32</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_5">

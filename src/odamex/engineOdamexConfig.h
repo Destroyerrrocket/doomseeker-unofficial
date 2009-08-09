@@ -31,18 +31,18 @@ class EngineOdamexConfigBox : public ConfigurationBaseBox, private Ui::EngineOda
 {
 	Q_OBJECT
 
-	protected:
-		EngineOdamexConfigBox(Config* cfg, QWidget* parent = NULL);
-		void saveSettings();
-
 	public:
 		static ConfigurationBoxInfo* createStructure(Config* cfg, QWidget* parent = NULL);
 
 		void readSettings();
 
+	protected:
+		EngineOdamexConfigBox(Config* cfg, QWidget* parent = NULL);
+		void saveSettings();
 
-	public slots:
-		void btnBrowseBinaryClicked();
+	protected slots:
+		void btnBrowseClientBinaryClicked();
+		void btnBrowseServerBinaryClicked();
 };
 
 #endif

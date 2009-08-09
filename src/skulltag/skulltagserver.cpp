@@ -32,7 +32,7 @@
 const // clear warnings
 #include "skulltag/skulltag.xpm"
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 #define ST_BINARY_NAME "skulltag.exe"
 #define SCRIPT_FILE_EXTENSION ".bat"
 #else
@@ -693,6 +693,31 @@ bool SkulltagServer::sendRequest(QByteArray &data)
 	return true;
 }
 
+QString SkulltagServer::serverBinary(QString& error) const
+{
+	#ifdef Q_OS_WIN32
+		return clientBinary(error);
+	#else
+		SettingsData* setting = Main::config->setting("SkulltagServerBinaryPath");
+
+		if (setting->string().isEmpty())
+		{
+			error = tr("No server executable specified for Skulltag");
+			return QString();
+		}
+
+		QFileInfo fi(setting->string());
+
+		if (!fi.exists() || fi.isDir())
+		{
+			error = tr("%1\nis a directory or doesn't exist.").arg(setting->string());
+			return QString();
+		}
+
+		return setting->string();
+	#endif
+}
+
 bool SkulltagServer::spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, QString& error) const
 {
 	QString binaryPath = versionDir + '/' + ST_BINARY_NAME;
@@ -719,7 +744,7 @@ bool SkulltagServer::spawnTestingBatchFile(const QString& versionDir, QString& f
 	}
 
 	QString content;
-	#ifdef Q_WS_WIN
+	#ifdef Q_OS_WIN32
 	// Create Windows batch file
 	// Extract drive letter:
 	QString driveLetter;

@@ -52,6 +52,7 @@ int main(int argc, char* argv[])
 	Main::config->locateConfigFile(argc, argv);
 
 	// Initial settings values
+	Main::config->createSetting("MainWindowMaximized", 0);
 	Main::config->createSetting("QueryTries", 7);
 	Main::config->createSetting("QueryThreads", 50);
 	Main::config->createSetting("QueryTimeout", 1000);
@@ -68,7 +69,14 @@ int main(int argc, char* argv[])
 
 	MainWindow* mw = new MainWindow(argc, argv);
 	Main::mainWindow = mw;
-	mw->show();
+	if (Main::config->setting("MainWindowMaximized")->boolean())
+	{
+		mw->showMaximized();
+	}
+	else
+	{
+		mw->show();
+	}
 
 	int ret = app.exec();
 	Main::running = false;

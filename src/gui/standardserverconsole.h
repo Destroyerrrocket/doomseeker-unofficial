@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// pathfinder.cpp
+// standardserverconsole.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,50 +20,38 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#ifndef __STANDARD_SERVER_CONSOLE_H_
+#define __STANDARD_SERVER_CONSOLE_H_
 
-#include "pathfinder.h"
-#include <QDir>
-#include <QFileInfo>
+#include "gui/widgets/serverconsole.h"
 
-PathFinder::PathFinder(Config* cfg)
+#include <QMainWindow>
+#include <QProcess>
+#include <QString>
+#include <QStringList>
+
+class Server;
+
+/**
+ * This is a wrapper for the standard input and output of a console app.  This
+ * is mainly for use on Linux, but it is compiled on Windows.
+ */
+class StandardServerConsole : public QMainWindow
 {
-	config = cfg;
-}
+	Q_OBJECT
 
-QString PathFinder::findWad(const QString& fileName)
-{
-	if (config == NULL)
-		return QString();
+	public:
+		StandardServerConsole(Server *server, const QString &program, const QStringList &arguments);
+		~StandardServerConsole();
 
-	SettingsData* setting;
-	setting = config->setting("WadPaths");
-	QStringList strList = setting->string().split(";", QString::SkipEmptyParts);
+	private slots:
+		void	errorDataReady();
+		void	outputDataReady();
+		void	writeToStandardInput(const QString &message);
 
-	#ifdef Q_OS_WIN32
-	for (int i = 0; i < strList.count(); ++i)
-	{
-		QFileInfo file(strList[i] + QDir::separator() + fileName);
-		if (file.exists() && file.isFile())
-			return file.absoluteFilePath();
-	}
-	#else
-	QStringList filterList;
-	filterList << fileName;
-	for (int i = 0; i < strList.count(); ++i)
-	{
-		QDir dir(strList[i]);
+	private:
+		ServerConsole	*console;
+		QProcess		*process;
+};
 
-		QFileInfoList fiList = dir.entryInfoList(filterList, QDir::Files);
-		for (int j = 0; j < fiList.count(); ++j)
-		{
-			QString tmpName = fiList[j].fileName();
-			if (tmpName.compare(fileName, Qt::CaseInsensitive) == 0)
-			{
-				return fiList[j].absoluteFilePath();
-			}
-		}
-	}
-	#endif
-
-	return QString();
-}
+#endif

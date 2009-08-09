@@ -90,7 +90,7 @@ void FilePathsConfigBox::addPath(const QString& strPath)
 		QString dir = item->text();
 		Qt::CaseSensitivity cs;
 
-		#ifdef Q_WS_WIN
+		#ifdef Q_OS_WIN32
 		cs = Qt::CaseInsensitive;
 		#else
 		cs = Qt::CaseSensitive;

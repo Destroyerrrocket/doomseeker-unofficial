@@ -30,7 +30,7 @@
 
 #include "sdeapi/pluginloader.hpp"
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 #include <windows.h>
 #define dlopen(a,b)	LoadLibrary(a)
 #define dlsym(a,b)	GetProcAddress(a, b)
@@ -125,7 +125,7 @@ void PluginLoader::clearPlugins()
 
 void PluginLoader::filesInDir()
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 	WIN32_FIND_DATA file;
 	HANDLE directory = FindFirstFile((pluginsDirectory + "*.dll").toAscii().constData(), &file);
 	if(directory != INVALID_HANDLE_VALUE)

@@ -44,9 +44,13 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
 
-	// Window size settings
+	// Window geometry settings
+	Main::config->createSetting("MainWindowX", x());
+	Main::config->createSetting("MainWindowY", y());
 	Main::config->createSetting("MainWindowWidth", width());
 	Main::config->createSetting("MainWindowHeight", height());
+
+	move(Main::config->setting("MainWindowX")->integer(), Main::config->setting("MainWindowY")->integer());
 	resize(Main::config->setting("MainWindowWidth")->integer(), Main::config->setting("MainWindowHeight")->integer());
 
 	serverTableHandler = new SLHandler(tableServers);
@@ -127,9 +131,15 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 
 MainWindow::~MainWindow()
 {
-	// Window size settings
-	Main::config->setting("MainWindowWidth")->setValue(width());
-	Main::config->setting("MainWindowHeight")->setValue(height());
+	// Window geometry settings
+	Main::config->setting("MainWindowMaximized")->setValue(isMaximized());
+	if (!isMaximized() && !isMinimized())
+	{
+		Main::config->setting("MainWindowX")->setValue(x());
+		Main::config->setting("MainWindowY")->setValue(y());
+		Main::config->setting("MainWindowWidth")->setValue(width());
+		Main::config->setting("MainWindowHeight")->setValue(height());
+	}
 
 	QList<QAction*> menuQueryActions = menuQuery->actions();
 	QList<QAction*>::iterator it;

@@ -31,14 +31,20 @@ EngineSkulltagConfigBox::EngineSkulltagConfigBox(Config* cfg, QWidget* parent) :
 {
 	setupUi(this);
 
-	connect(btnBrowseBinary, SIGNAL( clicked() ), this, SLOT ( btnBrowseBinaryClicked() ));
+	#ifdef Q_OS_WIN32
+		lblClientBinary->setText(tr("Path to executable:"));
+		frameServerBinary->hide();
+	#endif
+
+	connect(btnBrowseClientBinary, SIGNAL( clicked() ), this, SLOT ( btnBrowseClientBinaryClicked() ));
+	connect(btnBrowseServerBinary, SIGNAL( clicked() ), this, SLOT ( btnBrowseServerBinaryClicked() ));
 	connect(btnBrowseTestingPath, SIGNAL( clicked() ), this, SLOT ( btnBrowseTestingPathClicked() ));
 }
 
-void EngineSkulltagConfigBox::btnBrowseBinaryClicked()
+void EngineSkulltagConfigBox::btnBrowseClientBinaryClicked()
 {
 	QString filter;
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN32)
 	filter = tr("Binary files (*.exe);;Any files (*)");
 #else
 	// Other platforms do not have an extension for their binary files.
@@ -46,7 +52,17 @@ void EngineSkulltagConfigBox::btnBrowseBinaryClicked()
 #endif
 	QString strFilepath = QFileDialog::getOpenFileName(this, tr("Doomseeker - choose Skulltag binary"), QString(), filter);
 	if(!strFilepath.isEmpty()) // don't update if nothing was selected.
-		leBinaryPath->setText(strFilepath);
+		leClientBinaryPath->setText(strFilepath);
+}
+
+void EngineSkulltagConfigBox::btnBrowseServerBinaryClicked()
+{
+	QString filter;
+	filter = tr("Any files(*)");
+
+	QString strFilepath = QFileDialog::getOpenFileName(this, tr("Doomseeker - choose Skulltag server binary"), QString(), filter);
+	if(!strFilepath.isEmpty()) // don't update if nothing was selected.
+		leServerBinaryPath->setText(strFilepath);
 }
 
 void EngineSkulltagConfigBox::btnBrowseTestingPathClicked()
@@ -71,7 +87,10 @@ void EngineSkulltagConfigBox::readSettings()
 	SettingsData* setting;
 
 	setting = config->setting("SkulltagBinaryPath");
-	leBinaryPath->setText(setting->string());
+	leClientBinaryPath->setText(setting->string());
+
+	setting = config->setting("SkulltagServerBinaryPath");
+	leServerBinaryPath->setText(setting->string());
 
 	setting = config->setting("SkulltagTestingPath");
 	leTestingPath->setText(setting->string());
@@ -88,8 +107,12 @@ void EngineSkulltagConfigBox::saveSettings()
 	QString strVal;
 	SettingsData* setting;
 
-	strVal = leBinaryPath->text();
+	strVal = leClientBinaryPath->text();
 	setting = config->setting("SkulltagBinaryPath");
+	setting->setValue(strVal);
+
+	strVal = leServerBinaryPath->text();
+	setting = config->setting("SkulltagServerBinaryPath");
 	setting->setValue(strVal);
 
 	strVal = leTestingPath->text();

@@ -137,6 +137,9 @@ class SkulltagServer : public Server
 
 		bool			hasRcon() const { return true; }
 		RConProtocol	*rcon();
+
+		QString			serverBinary(QString& error) const;
+
 		QString			teamName(int team) const;
 
 		void			doRefresh();

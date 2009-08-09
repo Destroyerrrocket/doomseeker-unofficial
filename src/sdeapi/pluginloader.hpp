@@ -37,7 +37,7 @@
 
 #include "global.h"
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 #include <windows.h>
 
 #ifdef _MSC_VER
@@ -182,7 +182,7 @@ class MAIN_EXPORT Plugin
 
 		QString	file;
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 		HMODULE		library;
 #else
 		void		*library;
