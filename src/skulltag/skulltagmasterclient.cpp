@@ -29,7 +29,7 @@
 #include "skulltag/skulltagserver.h"
 
 #define MASTER_CHALLENGE				5660028
-#define MASTER_PROTOCOL_VERSION			1
+#define MASTER_PROTOCOL_VERSION			2
 #define MASTER_RESPONSE_GOOD			0
 #define MASTER_RESPONSE_BANNED			3
 #define MASTER_RESPONSE_BAD				4
@@ -99,20 +99,14 @@ bool SkulltagMasterClient::readRequest(QByteArray &data, bool &expectingMorePack
 
 	quint8 firstByte = READINT8(&packetOut[5]);
 	int pos = 6;
-	while(firstByte != MASTER_RESPONSE_ENDPART && firstByte != MASTER_RESPONSE_END)
+	if(firstByte != MASTER_RESPONSE_ENDPART && firstByte != MASTER_RESPONSE_END)
 	{
-		QString ip = QString("%1.%2.%3.%4").
-				arg(static_cast<quint8> (packetOut[pos]), 1, 10, QChar('0')).arg(static_cast<quint8> (packetOut[pos+1]), 1, 10, QChar('0')).arg(static_cast<quint8> (packetOut[pos+2]), 1, 10, QChar('0')).arg(static_cast<quint8> (packetOut[pos+3]), 1, 10, QChar('0'));
-		if(firstByte == MASTER_RESPONSE_SERVER)
+		unsigned int numServersInBlock = 0;
+		while((numServersInBlock = READINT8(&packetOut[pos++])) != 0)
 		{
-			SkulltagServer *server = new SkulltagServer(QHostAddress(ip), READINT16(&packetOut[pos+4]));
-			servers.push_back(server);
-			pos += 6;
-		}
-		else // MASTER_RESPONSE_SERVERBLOCK
-		{
-			unsigned int numServersInBlock = READINT8(&packetOut[pos+4]);
-			pos += 5;
+			QString ip = QString("%1.%2.%3.%4").
+					arg(static_cast<quint8> (packetOut[pos]), 1, 10, QChar('0')).arg(static_cast<quint8> (packetOut[pos+1]), 1, 10, QChar('0')).arg(static_cast<quint8> (packetOut[pos+2]), 1, 10, QChar('0')).arg(static_cast<quint8> (packetOut[pos+3]), 1, 10, QChar('0'));
+			pos += 4;
 			for(unsigned int i = 0;i < numServersInBlock;i++)
 			{
 				SkulltagServer *server = new SkulltagServer(QHostAddress(ip), READINT16(&packetOut[pos]));
