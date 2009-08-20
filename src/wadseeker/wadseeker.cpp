@@ -320,7 +320,7 @@ QString Wadseeker::targetDirectory() const
 
 const QString Wadseeker::version()
 {
-	return "0.1";
+	return "0.2";
 }
 
 void Wadseeker::wadFail()

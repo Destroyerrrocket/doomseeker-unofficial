@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.4)
 
-include_directories(${DOOMSEEKER_SOURCE_DIR}/src)
+# If we are compiling wadseeker outside of doomseeker prepare its own project.
+if(DEFINED DOOMSEEKER_SOURCE_DIR)
+	include_directories(${DOOMSEEKER_SOURCE_DIR}/src)
+else(DEFINED DOOMSEEKER_SOURCE_DIR)
+	project(WADSEEKER)
+endif(DEFINED DOOMSEEKER_SOURCE_DIR)
 
 if(WIN32)
 	add_definitions(-DWADSEEKER_API_EXPORT)
@@ -41,5 +46,7 @@ add_library(wadseeker SHARED ${WADSEEKER_FILES})
 
 target_link_libraries(wadseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES})
 
-set_target_properties(wadseeker PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR} RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+if(DEFINED DOOMSEEKER_SOURCE_DIR)
+	set_target_properties(wadseeker PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR} RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+endif(DEFINED DOOMSEEKER_SOURCE_DIR)
 
