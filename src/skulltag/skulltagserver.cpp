@@ -204,7 +204,7 @@ SkulltagServer::SkulltagServer(const QHostAddress &address, unsigned short port)
 QString SkulltagServer::clientBinary(QString& error) const
 {
 	SettingsData* setting;
-	if (!this->testingServer)
+	if (!this->testingServer || !Main::config->setting("SkulltagEnableTesting")->boolean())
 	{
 		setting = Main::config->setting("SkulltagBinaryPath");
 

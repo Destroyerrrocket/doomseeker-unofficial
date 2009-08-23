@@ -174,4 +174,5 @@ extern "C" PLUGIN_EXPORT void doomSeekerInitConfig()
 #endif
 
 	Main::config->createSetting("SkulltagMasterserver", "skulltag.servegame.com:15300");
+	Main::config->createSetting("SkulltagEnableTesting", true);
 }

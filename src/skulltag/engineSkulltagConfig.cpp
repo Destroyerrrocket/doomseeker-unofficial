@@ -92,14 +92,17 @@ void EngineSkulltagConfigBox::readSettings()
 	setting = config->setting("SkulltagServerBinaryPath");
 	leServerBinaryPath->setText(setting->string());
 
-	setting = config->setting("SkulltagTestingPath");
-	leTestingPath->setText(setting->string());
-
 	setting = config->setting("SkulltagCustomParameters");
 	leCustomParameters->setText(setting->string());
 
 	setting = config->setting("SkulltagMasterserver");
 	leMasterserverAddress->setText(setting->string());
+
+	setting = config->setting("SkulltagEnableTesting");
+	groupTesting->setChecked(setting->boolean());
+
+	setting = config->setting("SkulltagTestingPath");
+	leTestingPath->setText(setting->string());
 }
 
 void EngineSkulltagConfigBox::saveSettings()
@@ -115,15 +118,18 @@ void EngineSkulltagConfigBox::saveSettings()
 	setting = config->setting("SkulltagServerBinaryPath");
 	setting->setValue(strVal);
 
-	strVal = leTestingPath->text();
-	setting = config->setting("SkulltagTestingPath");
-	setting->setValue(strVal);
-
 	strVal = leCustomParameters->text();
 	setting = config->setting("SkulltagCustomParameters");
 	setting->setValue(strVal);
 
 	strVal = leMasterserverAddress->text();
 	setting = config->setting("SkulltagMasterserver");
+	setting->setValue(strVal);
+
+	setting = config->setting("SkulltagEnableTesting");
+	setting->setValue(groupTesting->isChecked());
+
+	strVal = leTestingPath->text();
+	setting = config->setting("SkulltagTestingPath");
 	setting->setValue(strVal);
 }
