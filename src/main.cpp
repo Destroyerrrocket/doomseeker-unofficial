@@ -53,6 +53,7 @@ int main(int argc, char* argv[])
 
 	// Initial settings values
 	Main::config->createSetting("MainWindowMaximized", 0);
+	Main::config->createSetting("QueryOnStartup", true);
 	Main::config->createSetting("QueryTries", 7);
 	Main::config->createSetting("QueryThreads", 50);
 	Main::config->createSetting("QueryTimeout", 1000);

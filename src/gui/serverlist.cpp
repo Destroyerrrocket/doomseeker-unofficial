@@ -159,7 +159,8 @@ QString SLHandler::createPlayersToolTip(const Server* server)
     QString ret;
 	ret = "<div style='white-space: pre'>";
 	ret += server->gameInfoTableHTML();
-	ret += server->playerTableHTML();
+	if(server->numPlayers() != 0)
+		ret += server->playerTableHTML();
 	ret += "</div>";
 	return ret;
 }
