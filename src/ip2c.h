@@ -27,6 +27,8 @@
 #include <QHostAddress>
 #include <QList>
 #include <QPixmap>
+#include <QProgressBar>
+#include <QStatusBar>
 #include <QString>
 #include <QUrl>
 
@@ -49,7 +51,7 @@ class MAIN_EXPORT IP2C : public QObject
 		IP2C(QString file, QUrl netLocation);
 		~IP2C();
 
-		void			downloadDatabase();
+		void			downloadDatabase(QStatusBar *statusbar=NULL);
 		const QString& 	filename() { return file; }
 		QPixmap			flag(unsigned int ipaddress) const;
 		QPixmap 		flag(const QHostAddress& ipaddress) const { return flag(ipaddress.toIPv4Address()); }
@@ -69,9 +71,11 @@ class MAIN_EXPORT IP2C : public QObject
 		QString			file;
 		QUrl			netLocation;
 		bool			read;
+		QProgressBar	*downloadProgressWidget;
 		WWW*			www;
 
 	private slots:
+		void	downloadProgress(int value, int max);
 		void	processHttp(QByteArray& data, const QString& filename);
 };
 

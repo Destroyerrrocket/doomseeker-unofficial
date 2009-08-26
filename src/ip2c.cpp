@@ -27,12 +27,13 @@
 #include <QFileInfo>
 #include <QResource>
 #include <QTime>
+#include <QTimeLine>
 #include <zlib.h>
 
 #include "ip2c.h"
 #include "sdeapi/scanner.hpp"
 
-IP2C::IP2C(QString file, QUrl netLocation) : file(file), netLocation(netLocation)
+IP2C::IP2C(QString file, QUrl netLocation) : file(file), netLocation(netLocation), downloadProgressWidget(NULL)
 {
 	read = readDatabase();
 	www = new WWW();
@@ -43,13 +44,31 @@ IP2C::~IP2C()
 {
 	if(www != NULL)
 		delete www;
+	if(downloadProgressWidget != NULL)
+		delete downloadProgressWidget;
 }
 
-void IP2C::downloadDatabase()
+void IP2C::downloadDatabase(QStatusBar *statusbar)
 {
+	if(downloadProgressWidget != NULL)
+		delete downloadProgressWidget;
+	downloadProgressWidget = new QProgressBar();
+	if(statusbar != NULL)
+		statusbar->addPermanentWidget(downloadProgressWidget);
+
 //	qDebug() << "Downloading";
 	connect(www, SIGNAL( fileDone(QByteArray&, const QString&) ), this, SLOT( processHttp(QByteArray&, const QString&) ));
+	connect(www, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgress(int, int) ));
 	www->getUrl(netLocation);
+}
+
+void IP2C::downloadProgress(int value, int max)
+{
+	if(downloadProgressWidget == NULL)
+		return;
+
+	downloadProgressWidget->setMaximum(max);
+	downloadProgressWidget->setValue(value);
 }
 
 QPixmap IP2C::flag(unsigned int ipaddress) const
@@ -150,7 +169,13 @@ void IP2C::processHttp(QByteArray& data, const QString& filename)
 		tmp.remove();
 	}
 
-	readDatabase();
+	read = readDatabase();
+	// clear the progress bar
+	if(downloadProgressWidget != NULL)
+	{
+		delete downloadProgressWidget;
+		downloadProgressWidget = NULL;
+	}
 }
 
 bool IP2C::readDatabase()

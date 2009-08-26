@@ -119,9 +119,10 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 
 	// IP2C
 	connect(Main::ip2c, SIGNAL( databaseUpdated() ), serverTableHandler, SLOT( updateCountryFlags() ) );
-	if (Main::ip2c->needsUpdate())
+	if (Main::ip2c->needsUpdate() &&
+	   QMessageBox::question(this, tr("IP2C Database Update"), tr("Your IP2C database is missing or needs to be updated.  Would you like to download the database now?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
 	{
-		Main::ip2c->downloadDatabase();
+		Main::ip2c->downloadDatabase(statusBar());
 	}
 
 	// This must be executed in order to set port query booleans

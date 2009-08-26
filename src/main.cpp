@@ -33,12 +33,14 @@
 PluginLoader Main::enginePlugins(MAKEID('E','N','G','N'), "./engines/");
 QWidget* Main::mainWindow = NULL;
 Config *Main::config = new Config();
-IP2C *Main::ip2c = new IP2C("IpToCountry.csv", QUrl("http://software77.net/geo-ip?DL=1"));
+IP2C *Main::ip2c = NULL;
 bool Main::running = true;
 
 int main(int argc, char* argv[])
 {
 	QApplication app(argc, argv);
+
+	Main::ip2c = new IP2C("IpToCountry.csv", QUrl("http://software77.net/geo-ip?DL=1"));
 
 	// If no plugins were found in ./ try looking in the directory in argv[0].
 	if(Main::enginePlugins.numPlugins() == 0)
