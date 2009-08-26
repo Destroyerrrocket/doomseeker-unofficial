@@ -53,6 +53,7 @@ void IP2C::downloadDatabase(QStatusBar *statusbar)
 	if(downloadProgressWidget != NULL)
 		delete downloadProgressWidget;
 	downloadProgressWidget = new QProgressBar();
+	downloadProgressWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	if(statusbar != NULL)
 		statusbar->addPermanentWidget(downloadProgressWidget);
 
