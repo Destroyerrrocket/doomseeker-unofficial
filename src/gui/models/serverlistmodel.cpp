@@ -315,16 +315,9 @@ void ServerListModel::setBackgroundColor(int row, Server* server)
 		for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
 		{
 			QStandardItem* itm = item(row, i);
-			itm->setBackground(QBrush(Qt::cyan));
+			itm->setBackground( QBrush(QColor(0x94, 0xff, 0xff)) );
 		}
 	}
-
-	/*
-	switch(server->lastResponse())
-	{
-		case
-	}
-	*/
 }
 
 void ServerListModel::setBad(int row, Server* server)
