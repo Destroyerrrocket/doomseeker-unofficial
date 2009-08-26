@@ -54,6 +54,7 @@ class PlayersDiagram
 			{
 				openImage = new QImage(":/slots/open");
 				openSpecImage = new QImage(":/slots/specopen");
+				botImage = new QImage(":/slots/bot");
 				playerImage = new QImage(":/slots/player");
 				spectatorImage = new QImage(":/slots/spectator");
 			}
@@ -68,17 +69,25 @@ class PlayersDiagram
 			// in order to simplify the drawing code.
 			int numSpectators = server->numPlayers();
 			int numPlayers = numSpectators;
+			int numBots = numSpectators; // Bots not on a team
 			int numPlayersTeam[MAX_TEAMS] = {0, 0, 0, 0};
+			int numBotsTeam[MAX_TEAMS] = {0, 0, 0, 0};
 			for(unsigned int i = 0;i < server->numPlayers();i++)
 			{
 				if(server->player(i).isSpectating())
 				{
 					numPlayers--;
+					numBots--;
 				}
 				else if(server->player(i).teamNum() != Player::TEAM_NONE)
 				{
-					numPlayersTeam[server->player(i).teamNum()]++;
-					continue;
+					if(!server->player(i).isBot())
+						numPlayersTeam[server->player(i).teamNum()]++;
+					numBotsTeam[server->player(i).teamNum()]++;
+				}
+				else if(server->player(i).isBot())
+				{
+					numPlayers--;
 				}
 			}
 
@@ -90,7 +99,7 @@ class PlayersDiagram
 				const QImage *slot = openSpecImage;
 				if(i < numPlayers)
 				{
-					while(numPlayersTeam[currentTeam] == count && currentTeam < MAX_TEAMS)
+					while(numBotsTeam[currentTeam] == count && currentTeam < MAX_TEAMS)
 					{
 						count = 0;
 						currentTeam++;
@@ -98,9 +107,14 @@ class PlayersDiagram
 					if(currentTeam >= MAX_TEAMS)
 						currentTeam = Player::TEAM_NONE;
 
-					slot = colorizePlayer(playerImage, QColor(server->teamColor(currentTeam)));
+					if(currentTeam == Player::TEAM_NONE || count < numPlayersTeam[currentTeam])
+						slot = colorizePlayer(playerImage, QColor(server->teamColor(currentTeam)));
+					else
+						slot = colorizePlayer(botImage, QColor(server->teamColor(currentTeam)));
 					count++;
 				}
+				else if(i < numBots)
+					slot = colorizePlayer(botImage, QColor(server->teamColor(Player::TEAM_NONE)));
 				else if(i < numSpectators)
 					slot = spectatorImage;
 				else if(i < server->maximumPlayers())
@@ -121,7 +135,7 @@ class PlayersDiagram
 		QPixmap pixmap() const { return diagram; }
 
 	protected:
-		static const QImage *openImage, *openSpecImage, *playerImage, *spectatorImage;
+		static const QImage *openImage, *openSpecImage, *botImage, *playerImage, *spectatorImage;
 
 		/**
 		 * Colorizes the image to color.  This works is a fairly hacky way.  It
@@ -165,6 +179,7 @@ class PlayersDiagram
 
 const QImage *PlayersDiagram::openImage = NULL;
 const QImage *PlayersDiagram::openSpecImage = NULL;
+const QImage *PlayersDiagram::botImage = NULL;
 const QImage *PlayersDiagram::playerImage = NULL;
 const QImage *PlayersDiagram::spectatorImage = NULL;
 

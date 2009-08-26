@@ -6,6 +6,7 @@
 	<file>locked.png</file>
 	<file alias="slots/open">openslot.png</file>
 	<file alias="slots/specopen">openspecslot.png</file>
+	<file alias="slots/bot">bot.png</file>
 	<file alias="slots/player">player.png</file>
 	<file alias="slots/spectator">spectator.png</file>
 	<file alias="flags/AUS">flags/AUS.png</file>	
