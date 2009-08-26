@@ -45,6 +45,7 @@ ServerListColumn ServerListModel::columns[] =
 
 //////////////////////////////////////////////////////////////
 
+#define NUM_SLOTSTYLES 2
 class PlayersDiagram
 {
 	public:
@@ -52,11 +53,17 @@ class PlayersDiagram
 		{
 			if(openImage == NULL)
 			{
-				openImage = new QImage(":/slots/open");
-				openSpecImage = new QImage(":/slots/specopen");
-				botImage = new QImage(":/slots/bot");
-				playerImage = new QImage(":/slots/player");
-				spectatorImage = new QImage(":/slots/spectator");
+				int style = Main::config->setting("SlotStyle")->integer();
+				if(style > NUM_SLOTSTYLES || style < 0)
+					style = 0;
+
+				QString filename(":/slots/");
+				filename += slotStyles[style];
+				openImage = new QImage(filename + "/open");
+				openSpecImage = new QImage(filename + "/specopen");
+				botImage = new QImage(filename + "/bot");
+				playerImage = new QImage(filename + "/player");
+				spectatorImage = new QImage(filename + "/spectator");
 			}
 			QPixmap diagram(server->maximumClients()*playerImage->width(), playerImage->height());
 			diagram.fill(Qt::transparent);
@@ -135,6 +142,7 @@ class PlayersDiagram
 		QPixmap pixmap() const { return diagram; }
 
 	protected:
+		static const char* slotStyles[NUM_SLOTSTYLES];
 		static const QImage *openImage, *openSpecImage, *botImage, *playerImage, *spectatorImage;
 
 		/**
@@ -156,7 +164,7 @@ class PlayersDiagram
 			for(int i = 0;i < colors.size();i++)
 			{
 				// Cyan has no red so move on if this color has red.
-				if(qRed(colors[i]) != 0)
+				if(qRed(colors[i]) != 0 || qAlpha(colors[i]) == 0)
 					continue;
 
 				int hue = 0;
@@ -177,6 +185,7 @@ class PlayersDiagram
 		QImage			*tmp;
 };
 
+const char* PlayersDiagram::slotStyles[NUM_SLOTSTYLES] = { "marines", "blocks" };
 const QImage *PlayersDiagram::openImage = NULL;
 const QImage *PlayersDiagram::openSpecImage = NULL;
 const QImage *PlayersDiagram::botImage = NULL;

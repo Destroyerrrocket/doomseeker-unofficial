@@ -51,6 +51,9 @@ void QueryConfigBox::readSettings()
 
 	setting = config->setting("QueryThreads");
 	threadsBox->setValue(setting->integer());
+
+	setting = config->setting("SlotStyle");
+	slotStyle->setCurrentIndex(setting->integer());
 }
 
 void QueryConfigBox::saveSettings()
@@ -68,4 +71,7 @@ void QueryConfigBox::saveSettings()
 
 	setting = config->setting("QueryThreads");
 	setting->setValue(threadsBox->value());
+
+	setting = config->setting("SlotStyle");
+	setting->setValue(slotStyle->currentIndex());
 }

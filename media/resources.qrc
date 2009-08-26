@@ -4,11 +4,16 @@
 	<file alias="icon.png">icon_small.png</file>
 	<file alias="logo.png">logo_small.png</file>
 	<file>locked.png</file>
-	<file alias="slots/open">openslot.png</file>
-	<file alias="slots/specopen">openspecslot.png</file>
-	<file alias="slots/bot">bot.png</file>
-	<file alias="slots/player">player.png</file>
-	<file alias="slots/spectator">spectator.png</file>
+	<file alias="slots/blocks/open">slotstyles/blocks/openslot.png</file>
+	<file alias="slots/blocks/specopen">slotstyles/blocks/openspecslot.png</file>
+	<file alias="slots/blocks/bot">slotstyles/blocks/bot.png</file>
+	<file alias="slots/blocks/player">slotstyles/blocks/player.png</file>
+	<file alias="slots/blocks/spectator">slotstyles/blocks/spectator.png</file>
+	<file alias="slots/marines/open">slotstyles/marines/openslot.png</file>
+	<file alias="slots/marines/specopen">slotstyles/marines/openspecslot.png</file>
+	<file alias="slots/marines/bot">slotstyles/marines/bot.png</file>
+	<file alias="slots/marines/player">slotstyles/marines/player.png</file>
+	<file alias="slots/marines/spectator">slotstyles/marines/spectator.png</file>
 	<file alias="flags/AUS">flags/AUS.png</file>	
 	<file alias="flags/AUT">flags/AUT.png</file>
 	<file alias="flags/BRA">flags/BRA.png</file>
