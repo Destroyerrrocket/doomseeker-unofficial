@@ -620,7 +620,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 				int ping = READINT16(&packetOut[pos+2]);
 				bool spectating = READINT8(&packetOut[pos+4]) != 0;
 				bool bot = READINT8(&packetOut[pos+5]) != 0;
-				int team = READINT8(&packetOut[pos+6]);
+				int team = teammode ? READINT8(&packetOut[pos+6]) : Player::TEAM_NONE;
 				int time = READINT8(&packetOut[pos+(teammode ? 7 : 6)]);
 				pos += teammode ? 8 : 7;
 
@@ -794,6 +794,14 @@ bool SkulltagServer::spawnTestingBatchFile(const QString& versionDir, QString& f
 	}
 
 	return true;
+}
+
+QRgb SkulltagServer::teamColor(int team) const
+{
+	if(team >= ST_MAX_TEAMS || team < 0)
+		return Server::teamColor(team);
+
+	return teamInfo[team].color().rgb();
 }
 
 QString	SkulltagServer::teamName(int team) const

@@ -322,6 +322,7 @@ class MAIN_EXPORT Server : public QObject
 		virtual RConProtocol	*rcon() { return NULL; }
 		unsigned int		score(int team=0) const { return scores[team]; }
 		unsigned int		scoreLimit() const { return serverScoreLimit; }
+		virtual QRgb		teamColor(int team) const;
 		virtual QString		teamName(int team) const { return team < MAX_TEAMS && team >= 0 ? teamNames[team] : ""; }
 		int					teamPlayerCount(int team) const;
 		unsigned short		timeLeft() const { return serverTimeLeft; }

@@ -4,6 +4,10 @@
 	<file alias="icon.png">icon_small.png</file>
 	<file alias="logo.png">logo_small.png</file>
 	<file>locked.png</file>
+	<file alias="slots/open">openslot.png</file>
+	<file alias="slots/specopen">openspecslot.png</file>
+	<file alias="slots/player">player.png</file>
+	<file alias="slots/spectator">spectator.png</file>
 	<file alias="flags/AUS">flags/AUS.png</file>	
 	<file alias="flags/BRA">flags/BRA.png</file>
 	<file alias="flags/CAN">flags/CAN.png</file>	

@@ -140,6 +140,7 @@ class SkulltagServer : public Server
 
 		QString			serverBinary(QString& error) const;
 
+		QRgb			teamColor(int team) const;
 		QString			teamName(int team) const;
 
 		void			doRefresh();

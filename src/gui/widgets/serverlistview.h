@@ -27,15 +27,14 @@
 #include <QTableView>
 #include <QMouseEvent>
 
+#define USERROLE_RIGHTALIGNDECORATION 1
+
 class ServerListView : public QTableView
 {
 	Q_OBJECT
 
 	public:
-		ServerListView(QWidget* parent = 0) : QTableView(parent)
-		{
-			bAllowAllRowsRefresh = true;
-		}
+		ServerListView(QWidget* parent = 0);
 
 		void setAllowAllRowsRefresh(bool b) { bAllowAllRowsRefresh = b; }
 

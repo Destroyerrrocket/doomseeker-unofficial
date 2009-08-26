@@ -108,6 +108,7 @@ class ServerListModel : public QStandardItemModel
 		void fillItem(QStandardItem*, int);
 		void fillItem(QStandardItem*, const QHostAddress&, const QString& actualDisplay = QString());
 		void fillItem(QStandardItem*, const QString&, const QPixmap&);
+		void fillItem(QStandardItem*, int, const QPixmap&);
 
 		/**
 		 *	Returns row number

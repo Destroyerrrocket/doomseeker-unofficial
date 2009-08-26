@@ -23,6 +23,52 @@
 
 #include "gui/widgets/serverlistview.h"
 #include <QDebug>
+#include <QItemDelegate>
+#include <QPainter>
+
+/**
+ * Custom delegate class.  This allows us to right align the decoration images.
+ * To do this the UserRole needs to be set to USERROLE_RIGHTALIGNDECORATION.
+ */
+class CustomItemDelegate : public QItemDelegate
+{
+	public:
+		void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+		{
+			QStyleOptionViewItem opt = option;
+
+			QVariant userRole = index.data(Qt::UserRole);
+			if(userRole.isValid() && userRole.type() == QVariant::Int && userRole.toInt() == USERROLE_RIGHTALIGNDECORATION)
+			{
+				opt.decorationAlignment = Qt::AlignRight|Qt::AlignVCenter;
+			}
+
+			QItemDelegate::paint(painter, opt, index);
+		}
+
+	protected:
+		void drawDecoration(QPainter *painter, const QStyleOptionViewItem &option, const QRect &rect, const QPixmap &pixmap) const
+		{
+			if(pixmap.isNull() || !rect.isValid())
+				return;
+
+			if(option.decorationAlignment == (Qt::AlignRight|Qt::AlignVCenter)) // Special handling.
+			{
+				QPoint p = QStyle::alignedRect(option.direction, option.decorationAlignment, pixmap.size(), option.rect).topLeft();
+				painter->drawPixmap(p, pixmap);
+			}
+			else
+				QItemDelegate::drawDecoration(painter, option, rect, pixmap);
+		}
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+ServerListView::ServerListView(QWidget* parent) : QTableView(parent)
+{
+	bAllowAllRowsRefresh = true;
+	setItemDelegate(new CustomItemDelegate());
+}
 
 void ServerListView::updateRowVisuals(int row)
 {

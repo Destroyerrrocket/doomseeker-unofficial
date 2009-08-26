@@ -839,6 +839,19 @@ QString Server::spawnPartOfPlayerTable(QList<const Player*> list, int colspan, b
 	return ret;
 }
 
+QRgb Server::teamColor(int team) const
+{
+	switch(team)
+	{
+		case Player::TEAM_BLUE: return qRgb(0, 0, 255);
+		case Player::TEAM_RED: return qRgb(255, 0, 0);
+		case Player::TEAM_GREEN: return qRgb(0, 255, 0);
+		case Player::TEAM_GOLD: return qRgb(255, 255, 0);
+		default: break;
+	}
+	return qRgb(0, 255, 0);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 QThreadPool ServerRefresher::threadPool;

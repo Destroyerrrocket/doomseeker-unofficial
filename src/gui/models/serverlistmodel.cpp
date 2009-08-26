@@ -21,7 +21,9 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "gui/models/serverlistmodel.h"
+#include "gui/widgets/serverlistview.h"
 #include "main.h"
+#include <QItemDelegate>
 #include <QPainter>
 #include <QTime>
 
@@ -40,6 +42,132 @@ ServerListColumn ServerListModel::columns[] =
 	{ "SORT_GROUP", 0, true, false },
 	{ "SERVER_POINTER", 0, true, false }
 };
+
+//////////////////////////////////////////////////////////////
+
+class PlayersDiagram
+{
+	public:
+		PlayersDiagram(const Server *server) : server(server), tmp(NULL)
+		{
+			if(openImage == NULL)
+			{
+				openImage = new QImage(":/slots/open");
+				openSpecImage = new QImage(":/slots/specopen");
+				playerImage = new QImage(":/slots/player");
+				spectatorImage = new QImage(":/slots/spectator");
+			}
+			QPixmap diagram(server->maximumClients()*playerImage->width(), playerImage->height());
+			diagram.fill(Qt::transparent);
+
+			int slotSize = playerImage->width();
+			int position = diagram.width()-slotSize;
+			QPainter p(&diagram);
+
+			// numSpectators is actually greater than numPlayers.  This is done
+			// in order to simplify the drawing code.
+			int numSpectators = server->numPlayers();
+			int numPlayers = numSpectators;
+			int numPlayersTeam[MAX_TEAMS] = {0, 0, 0, 0};
+			for(unsigned int i = 0;i < server->numPlayers();i++)
+			{
+				if(server->player(i).isSpectating())
+				{
+					numPlayers--;
+				}
+				else if(server->player(i).teamNum() != Player::TEAM_NONE)
+				{
+					numPlayersTeam[server->player(i).teamNum()]++;
+					continue;
+				}
+			}
+
+			// Draw them
+			int currentTeam = 0;
+			int count = 0;
+			for(unsigned short i = 0;i < server->maximumClients();i++)
+			{
+				const QImage *slot = openSpecImage;
+				if(i < numPlayers)
+				{
+					while(numPlayersTeam[currentTeam] == count && currentTeam < MAX_TEAMS)
+					{
+						count = 0;
+						currentTeam++;
+					}
+					if(currentTeam >= MAX_TEAMS)
+						currentTeam = Player::TEAM_NONE;
+
+					slot = colorizePlayer(playerImage, QColor(server->teamColor(currentTeam)));
+					count++;
+				}
+				else if(i < numSpectators)
+					slot = spectatorImage;
+				else if(i < server->maximumPlayers())
+					slot = openImage;
+				p.drawImage(position, 0, *slot);
+				position -= slotSize;
+			}
+
+			this->diagram = diagram;
+		}
+
+		~PlayersDiagram()
+		{
+			if(tmp != NULL)
+				delete tmp;
+		}
+
+		QPixmap pixmap() const { return diagram; }
+
+	protected:
+		static const QImage *openImage, *openSpecImage, *playerImage, *spectatorImage;
+
+		/**
+		 * Colorizes the image to color.  This works is a fairly hacky way.  It
+		 * colorizes cyan areas only.  To detect cyan it simply checks if a red
+		 * component is present.  If so it is not cyan.
+		 *
+		 * Colorization is done by keeping the hue and saturation if the passed
+		 * in color and applying the value of the color in the image.
+		 */
+		const QImage *colorizePlayer(const QImage *image, const QColor &color)
+		{
+			if(tmp != NULL)
+				delete tmp;
+			tmp = new QImage(*image);
+
+			QVector<QRgb> colors = tmp->colorTable();
+			QColor destinationColor = color.toHsv();
+			for(int i = 0;i < colors.size();i++)
+			{
+				// Cyan has no red so move on if this color has red.
+				if(qRed(colors[i]) != 0)
+					continue;
+
+				int hue = 0;
+				int saturation = 0;
+				int value = 0;
+				destinationColor.getHsv(&hue, &saturation, &value);
+				destinationColor.setHsv(hue, saturation, QColor(colors[i]).toHsv().value());
+				colors[i] = destinationColor.rgb();
+			}
+			tmp->setColorTable(colors);
+
+			return tmp;
+		}
+
+	private:
+		const Server	*server;
+		QPixmap			diagram;
+		QImage			*tmp;
+};
+
+const QImage *PlayersDiagram::openImage = NULL;
+const QImage *PlayersDiagram::openSpecImage = NULL;
+const QImage *PlayersDiagram::playerImage = NULL;
+const QImage *PlayersDiagram::spectatorImage = NULL;
+
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
@@ -120,6 +248,12 @@ void ServerListModel::fillItem(QStandardItem* item, const QHostAddress& addr, co
 void ServerListModel::fillItem(QStandardItem* item, const QString& sort, const QPixmap& icon)
 {
 	item->setIcon(QIcon(icon));
+	item->setData(sort, SLDT_SORT);
+}
+
+void ServerListModel::fillItem(QStandardItem* item, int sort, const QPixmap& image)
+{
+	item->setData(image, Qt::DecorationRole);
 	item->setData(sort, SLDT_SORT);
 }
 
@@ -219,7 +353,8 @@ void ServerListModel::setGood(int row, Server* server)
 	QString strTmp;
 
 	qstdItem = item(row, SLCID_PLAYERS);
-	fillItem(qstdItem, server->numPlayers());
+	fillItem(qstdItem, server->numPlayers(), PlayersDiagram(server).pixmap());
+	qstdItem->setData(USERROLE_RIGHTALIGNDECORATION, Qt::UserRole);
 
 	qstdItem = item(row, SLCID_PING);
 	fillItem(qstdItem, server->ping());
