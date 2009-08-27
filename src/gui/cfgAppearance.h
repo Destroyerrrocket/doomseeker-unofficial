@@ -37,9 +37,12 @@ class AppearanceConfigBox : public ConfigurationBaseBox, private Ui::AppearanceC
 		void	readSettings();
 
 	protected:
+		unsigned	customServersColor;
+	
 		AppearanceConfigBox(Config *cfg, QWidget *parent=NULL);
 
 		void	saveSettings();
+		void	setWidgetBackgroundColor(QWidget* widget, unsigned color);
 
 	protected slots:
 		void	btnCustomServersColor_clicked();

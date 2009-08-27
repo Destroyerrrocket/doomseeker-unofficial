@@ -27,6 +27,7 @@
 
 AppearanceConfigBox::AppearanceConfigBox(Config *cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent)
 {
+	customServersColor = 0;
 	setupUi(this);
 
 	connect(btnCustomServersColor, SIGNAL( clicked() ), this, SLOT ( btnCustomServersColor_clicked() ) );
@@ -48,9 +49,8 @@ void AppearanceConfigBox::btnCustomServersColor_clicked()
 {
 	QColor c = QColorDialog::getColor(Qt::white, this);
 
-	QPalette p = btnCustomServersColor->palette();
-	p.setColor(QPalette::Button, c);
-	btnCustomServersColor->setPalette(p);
+	customServersColor = c.rgb();
+	setWidgetBackgroundColor(btnCustomServersColor, customServersColor);
 }
 
 void AppearanceConfigBox::readSettings()
@@ -60,10 +60,9 @@ void AppearanceConfigBox::readSettings()
 	setting = config->setting("SlotStyle");
 	slotStyle->setCurrentIndex(setting->integer());
 
-	QPalette p = btnCustomServersColor->palette();
 	setting = config->setting("CustomServersColor");
-	p.setColor(QPalette::Button, QColor( setting->integer() ));
-	btnCustomServersColor->setPalette(p);
+	customServersColor = setting->integer();
+	setWidgetBackgroundColor(btnCustomServersColor, customServersColor);
 }
 
 void AppearanceConfigBox::saveSettings()
@@ -75,7 +74,25 @@ void AppearanceConfigBox::saveSettings()
 
 	QPalette p = btnCustomServersColor->palette();
 	setting = config->setting("CustomServersColor");
-	setting->setValue(p.color(QPalette::Button).rgb());
+	setting->setValue(p.color(QPalette::Button).rgb() & 0x00ffffff); // Remove alpha value
 
 	emit appearanceChanged();
+}
+
+void AppearanceConfigBox::setWidgetBackgroundColor(QWidget* widget, unsigned color)
+{
+	const QString COLOR_STYLE("QPushButton { background-color : %1; }");
+	
+	// Remove alpha value
+	color &= 0x00ffffff;
+	
+	// Convert to hexadecimal number
+	QString colorString = QString::number(color, 16);
+	while (colorString.length() < 6)
+	{
+		// This string must have six characters. Prepend zeros if length is
+		// insufficient.
+		colorString.prepend('0');
+	}
+	widget->setStyleSheet(COLOR_STYLE.arg("#" + colorString));
 }
