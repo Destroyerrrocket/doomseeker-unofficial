@@ -49,22 +49,42 @@ ServerListColumn ServerListModel::columns[] =
 class PlayersDiagram
 {
 	public:
+		/**
+		 *	Loads all the images used to build a diagram. Previous images
+		 *	will be freed. This is be used to change the diagram appearance
+		 *	when Configuration box indicates that such action is required.
+		 */
+		static	void loadImages()
+		{
+			if(openImage != NULL)
+			{
+				delete openImage;
+				delete openSpecImage;
+				delete botImage;
+				delete playerImage;
+				delete spectatorImage;
+			}
+
+			int style = Main::config->setting("SlotStyle")->integer();
+			if(style > NUM_SLOTSTYLES || style < 0)
+				style = 0;
+
+			QString filename(":/slots/");
+			filename += slotStyles[style];
+			openImage = new QImage(filename + "/open");
+			openSpecImage = new QImage(filename + "/specopen");
+			botImage = new QImage(filename + "/bot");
+			playerImage = new QImage(filename + "/player");
+			spectatorImage = new QImage(filename + "/spectator");
+		}
+
 		PlayersDiagram(const Server *server) : server(server), tmp(NULL)
 		{
 			if(openImage == NULL)
 			{
-				int style = Main::config->setting("SlotStyle")->integer();
-				if(style > NUM_SLOTSTYLES || style < 0)
-					style = 0;
-
-				QString filename(":/slots/");
-				filename += slotStyles[style];
-				openImage = new QImage(filename + "/open");
-				openSpecImage = new QImage(filename + "/specopen");
-				botImage = new QImage(filename + "/bot");
-				playerImage = new QImage(filename + "/player");
-				spectatorImage = new QImage(filename + "/spectator");
+				loadImages();
 			}
+
 			QPixmap diagram(server->maximumClients()*playerImage->width(), playerImage->height());
 			diagram.fill(Qt::transparent);
 
@@ -299,6 +319,20 @@ QModelIndex ServerListModel::findServerOnTheList(const Server* server)
 	return QModelIndex();
 }
 
+void ServerListModel::redraw(int row)
+{
+	Server* server = serverFromList(row);
+	updateServer(row, server, server->lastResponse());
+}
+
+void ServerListModel::redrawAll()
+{
+	PlayersDiagram::loadImages();
+
+	for (int i = 0; i < rowCount(); ++i)
+		redraw(i);
+}
+
 void ServerListModel::removeCustomServers()
 {
 	QList<Server*> serversToRemove;
@@ -321,10 +355,13 @@ void ServerListModel::setBackgroundColor(int row, Server* server)
 {
 	if (server->isCustom())
 	{
+		SettingsData* setting = Main::config->setting("CustomServersColor");
+
+
 		for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
 		{
 			QStandardItem* itm = item(row, i);
-			itm->setBackground( QBrush(QColor(0x94, 0xff, 0xff)) );
+			itm->setBackground( QBrush(QColor(setting->integer() )) );
 		}
 	}
 }

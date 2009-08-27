@@ -54,6 +54,7 @@ int main(int argc, char* argv[])
 	Main::config->locateConfigFile(argc, argv);
 
 	// Initial settings values
+	Main::config->createSetting("CustomServersColor", (0x94 << 16) | (0xff << 8) | (0xff)); // r | g | b
 	Main::config->createSetting("MainWindowMaximized", 0);
 	Main::config->createSetting("QueryOnStartup", true);
 	Main::config->createSetting("QueryTries", 7);

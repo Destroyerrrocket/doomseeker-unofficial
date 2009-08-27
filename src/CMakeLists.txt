@@ -20,6 +20,7 @@ endif(WIN32)
 qt4_wrap_ui(doomseekerUI
 	gui/aboutDlg.ui
 	gui/addBuddyDlg.ui
+	gui/cfgAppearance.ui
 	gui/cfgcustomservers.ui
 	gui/cfgFilePaths.ui
 	gui/cfgQuery.ui
@@ -38,6 +39,7 @@ qt4_wrap_ui(doomseekerUI
 
 qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/aboutDlg.h
+	gui/cfgAppearance.h
 	gui/cfgcustomservers.h	
 	gui/cfgFilePaths.h
 	gui/cfgQuery.h
@@ -71,6 +73,7 @@ qt4_add_resources(doomseekerResources
 
 set(SOURCE_FILES
 	gui/aboutDlg.cpp
+	gui/cfgAppearance.cpp
 	gui/cfgcustomservers.cpp	
 	gui/cfgFilePaths.cpp
 	gui/cfgQuery.cpp

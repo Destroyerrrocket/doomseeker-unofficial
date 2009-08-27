@@ -233,6 +233,11 @@ void MainWindow::menuOptionsConfigure()
 
 	// Do some cleanups after config box finishes.
 
+	if (dlg.appearanceChanged())
+	{
+		serverTableHandler->redraw();
+	}
+
 	// Refresh custom servers list:
 	if (dlg.customServersChanged())
 	{

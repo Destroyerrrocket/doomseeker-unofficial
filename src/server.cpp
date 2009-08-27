@@ -890,9 +890,9 @@ void Server::doRefresh(bool& bKillThread)
 	}
 
 	// Make sure everything is in given limits, as above.
-	if (queryTimeout < 100)
+	if (queryTimeout < 500)
 	{
-		queryTimeout = 100;
+		queryTimeout = 500;
 	}
 
 	int currentTry = 0;

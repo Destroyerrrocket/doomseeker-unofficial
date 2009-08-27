@@ -40,6 +40,13 @@
      </property>
     </widget>
    </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Number of tries:</string>
+     </property>
+    </widget>
+   </item>
    <item row="2" column="1">
     <widget class="QSpinBox" name="triesBox">
      <property name="minimum">
@@ -56,17 +63,17 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_4">
+   <item row="3" column="0">
+    <widget class="QLabel" name="label">
      <property name="text">
-      <string>Number of tries:</string>
+      <string>Delay between tries (ms):</string>
      </property>
     </widget>
    </item>
    <item row="3" column="1">
     <widget class="QSpinBox" name="timeoutBox">
      <property name="minimum">
-      <number>100</number>
+      <number>500</number>
      </property>
      <property name="maximum">
       <number>10000</number>
@@ -79,10 +86,10 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="label">
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Delay between tries (ms):</string>
+      <string>Number of threads:</string>
      </property>
     </widget>
    </item>
@@ -94,34 +101,6 @@
      <property name="maximum">
       <number>50</number>
      </property>
-    </widget>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Number of threads:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>Player slots style:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1">
-    <widget class="QComboBox" name="slotStyle">
-     <item>
-      <property name="text">
-       <string>Marines</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Blocks</string>
-      </property>
-     </item>
     </widget>
    </item>
   </layout>

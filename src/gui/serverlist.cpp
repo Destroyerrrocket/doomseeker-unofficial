@@ -249,22 +249,6 @@ void SLHandler::mouseEntered(const QModelIndex& index)
 	QToolTip::showText(QCursor::pos(), tooltip, table);
 }
 
-QList<Server*> SLHandler::selectedServers()
-{
-	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
-	QItemSelectionModel* selModel = table->selectionModel();
-	QModelIndexList indexList = selModel->selectedRows();
-
-	QList<Server*> servers;
-	for(int i = 0; i < indexList.count(); ++i)
-	{
-		QModelIndex realIndex = pModel->mapToSource(indexList[i]);
-		Server* server = model->serverFromList(realIndex);
-		servers.append(server);
-	}
-	return servers;
-}
-
 void SLHandler::prepareServerTable()
 {
 	sortOrder = Qt::AscendingOrder;
@@ -312,6 +296,11 @@ void SLHandler::prepareServerTable()
 	columnHeaderClicked(ServerListModel::SLCID_PLAYERS);
 }
 
+void SLHandler::redraw()
+{
+	model->redrawAll();
+}
+
 void SLHandler::refreshAll()
 {
 	for (int i = 0; i < model->rowCount(); ++i)
@@ -328,6 +317,22 @@ void SLHandler::resizeChangedRows(const QModelIndex &parent, int start, int end)
 	{
 		table->resizeRowToContents(i);
 	}
+}
+
+QList<Server*> SLHandler::selectedServers()
+{
+	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
+	QItemSelectionModel* selModel = table->selectionModel();
+	QModelIndexList indexList = selModel->selectedRows();
+
+	QList<Server*> servers;
+	for(int i = 0; i < indexList.count(); ++i)
+	{
+		QModelIndex realIndex = pModel->mapToSource(indexList[i]);
+		Server* server = model->serverFromList(realIndex);
+		servers.append(server);
+	}
+	return servers;
 }
 
 void SLHandler::serverBegunRefreshing(Server* server)
@@ -388,7 +393,7 @@ void SLHandler::tableRightClicked(const QModelIndex& index, const QPoint& point)
 		QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
 		QItemSelectionModel* selModel = table->selectionModel();
 		QModelIndexList indexList = selModel->selectedRows();
-	
+
 		for(int i = 0; i < indexList.count(); ++i)
 		{
 			QModelIndex realIndex = pModel->mapToSource(indexList[i]);

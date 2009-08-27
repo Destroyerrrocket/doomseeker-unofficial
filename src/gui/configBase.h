@@ -77,6 +77,12 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 
 	signals:
 		/**
+		 *	This will send a request to the Doomseeker through ConfigureDlg
+		 *	to redraw some graphics.
+		 */
+		void		appearanceChanged();
+
+		/**
 		 * This will change default button (the one that is activated when user hits ENTER)
 		 * to 'btn'. If NULL is passed as 'btn' argument it will revert to OK button.
 		 */

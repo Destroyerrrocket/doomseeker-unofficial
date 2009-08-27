@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "gui/configureDlg.h"
+#include "gui/cfgAppearance.h"
 #include "gui/cfgcustomservers.h"
 #include "gui/cfgFilePaths.h"
 #include "gui/cfgQuery.h"
@@ -35,6 +36,7 @@
 
 ConfigureDlg::ConfigureDlg(Config* mainCfg, QWidget* parent) : QDialog(parent)
 {
+	bAppearanceChanged = false;
 	bCustomServersChanged = false;
 
 	mainConfig = mainCfg;
@@ -57,6 +59,11 @@ ConfigureDlg::~ConfigureDlg()
 	}
 }
 /////////////////////////////////////////////////////////
+void ConfigureDlg::appearanceChangedSlot()
+{
+	bAppearanceChanged = true;
+}
+
 void ConfigureDlg::initOptionsList()
 {
 	QStandardItemModel* model = new QStandardItemModel(this);
@@ -71,6 +78,9 @@ void ConfigureDlg::initOptionsList()
 //	hider = root1;
 
 	ConfigurationBoxInfo* cbi;
+
+	cbi = AppearanceConfigBox::createStructure(mainConfig, this);
+	addConfigurationBox(model->invisibleRootItem(), cbi);
 
 	cbi = CustomServersConfigBox::createStructure(mainConfig, this);
 	addConfigurationBox(model->invisibleRootItem(), cbi);
@@ -132,6 +142,7 @@ bool ConfigureDlg::addConfigurationBox(QStandardItem* rootItem, ConfigurationBox
 	}
 
 	configBoxesList.push_back(cfgBox);
+	connect(cfgBox->confBox, SIGNAL( appearanceChanged() ), this, SLOT( appearanceChangedSlot() ) );
 	connect(cfgBox->confBox, SIGNAL( wantChangeDefaultButton(QPushButton*) ), this, SLOT( wantChangeDefaultButton(QPushButton*) ) );
 
 	return true;

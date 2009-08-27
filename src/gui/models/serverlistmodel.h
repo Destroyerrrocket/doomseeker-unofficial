@@ -116,9 +116,12 @@ class ServerListModel : public QStandardItemModel
 		int addServer(Server* server, int response);
 
 		/**
-		 *	Returns row number
+		 *	Enforces update of a given row. No modificiation is done
+		 *	to the server info itself. Can be used to redraw things like
+		 *	background.
 		 */
-		int updateServer(int row, Server* server, int response);
+		void redraw(int row);
+		void redrawAll();
 
 		void removeCustomServers();
 
@@ -127,6 +130,11 @@ class ServerListModel : public QStandardItemModel
 		 *  @param row - index of row to update
 		 */
 		void updateFlag(int row);
+
+		/**
+		 *	Returns row number
+		 */
+		int updateServer(int row, Server* server, int response);
 
 		QModelIndex findServerOnTheList(const Server* server);
 		Server* serverFromList(int rowNum);

@@ -36,16 +36,23 @@ class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 		ConfigureDlg(Config* mainCfg, QWidget* parent = NULL);
 		~ConfigureDlg();
 
-		bool addEngineConfiguration(ConfigurationBoxInfo*);
-		bool customServersChanged() { return bCustomServersChanged; }
+		bool 	addEngineConfiguration(ConfigurationBoxInfo*);
+		bool	appearanceChanged() const { return bAppearanceChanged; }
+		bool 	customServersChanged() const { return bCustomServersChanged; }
 
 	protected slots:
-		void btnClicked(QAbstractButton *button);
-		void optionListClicked(const QModelIndex&);
-		void wantChangeDefaultButton(QPushButton*);
+		/**
+		 *	When called, sets bAppearanceChanged to true.
+		 */
+		void	appearanceChangedSlot();
+
+		void 	btnClicked(QAbstractButton *button);
+		void 	optionListClicked(const QModelIndex&);
+		void 	wantChangeDefaultButton(QPushButton*);
 
 	private:
 		Config*		mainConfig;
+		bool		bAppearanceChanged;
 		bool		bCustomServersChanged;
 
 		// hider for debug purposes, if clicked

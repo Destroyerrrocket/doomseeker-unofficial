@@ -54,6 +54,7 @@ class SLHandler : public QObject
 
 
 	public slots:
+		void redraw();
 		void refreshAll();
 		void serverBegunRefreshing(Server* server);
 		void serverUpdated(Server *server, int response);
