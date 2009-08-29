@@ -31,6 +31,7 @@
 #include <zlib.h>
 
 #include "ip2c.h"
+#include "sdeapi/pluginloader.hpp"
 #include "sdeapi/scanner.hpp"
 
 IP2C::IP2C(QString file, QUrl netLocation) : file(file), netLocation(netLocation), downloadProgressWidget(NULL)
@@ -46,6 +47,74 @@ IP2C::~IP2C()
 		delete www;
 	if(downloadProgressWidget != NULL)
 		delete downloadProgressWidget;
+}
+
+bool IP2C::convertAndSaveDatabase(QByteArray& downloadedData)
+{
+	QTime time;
+	time.start();
+
+	if (downloadedData.isEmpty())
+		return false;
+
+	// Skip over the header
+	int indexOfNewLine = -1;
+	while(downloadedData[indexOfNewLine + 1] == '#')
+	{
+		indexOfNewLine = downloadedData.indexOf('\n', indexOfNewLine + 1);
+	}
+
+	// Trim the header
+	downloadedData = downloadedData.right(downloadedData.size() - indexOfNewLine);
+
+	Scanner sc = Scanner(downloadedData.constData(), downloadedData.count());
+	QByteArray binaryData;
+
+	unsigned fileId = MAKEID('I', 'P', '2', 'C');
+	unsigned short version = 1;
+	binaryData += QByteArray((const char*)&fileId, 4);
+	binaryData += QByteArray((const char*)&version, sizeof(unsigned short));
+
+	while(sc.tokensLeft())
+	{
+		IP2CData entry;
+		bool ok = true;
+
+		if(!sc.checkToken(TK_StringConst)) break; // ipStart
+		entry.ipStart = sc.str.toUInt(&ok);
+		if(!ok || !sc.checkToken(',')) break;
+		if(!sc.checkToken(TK_StringConst)) break; // ipEnd
+		entry.ipEnd = sc.str.toUInt(&ok);
+		if(!ok || !sc.checkToken(',')) break;
+		if(!sc.checkToken(TK_StringConst)) break; // Register
+		if(!sc.checkToken(',')) break;
+		if(!sc.checkToken(TK_StringConst)) break; // date assigned
+		if(!sc.checkToken(',')) break;
+		if(!sc.checkToken(TK_StringConst)) break; // 2 char country
+		if(!sc.checkToken(',')) break;
+		if(!sc.checkToken(TK_StringConst)) break; // 3 char country
+		entry.country = sc.str;
+		if(!sc.checkToken(',')) break;
+		if(!sc.checkToken(TK_StringConst)) break; // country string
+
+		binaryData += QByteArray((const char*)&entry.ipStart, sizeof(entry.ipStart));
+		binaryData += QByteArray((const char*)&entry.ipEnd, sizeof(entry.ipEnd));
+		binaryData += entry.country;
+		binaryData += QByteArray(1, 0); // array with one null character
+	}
+
+	QFile out(file);
+    if(out.open(QIODevice::WriteOnly) && out.isWritable())
+    {
+		out.write(binaryData);
+		qDebug("Database converted in %d ms", time.elapsed());
+    }
+    else
+    {
+    	return false;
+    }
+
+    return true;
 }
 
 void IP2C::downloadDatabase(QStatusBar *statusbar)
@@ -161,9 +230,7 @@ void IP2C::processHttp(QByteArray& data, const QString& filename)
 			// but ignore if data failed to uncompress
 			if (uncompressedData.size() > 0)
 			{
-                QFile out(file);
-                if(out.open(QIODevice::WriteOnly) && out.isWritable())
-                    out.write(uncompressedData);
+				convertAndSaveDatabase(uncompressedData);
 			}
 		}
 
@@ -181,44 +248,59 @@ void IP2C::processHttp(QByteArray& data, const QString& filename)
 
 bool IP2C::readDatabase()
 {
+	QFile db(file);
+	if(!db.exists() || !db.open(QIODevice::ReadOnly) || !db.isReadable())
+		return false;
+
+	// We need to check whether this is a text file or Doomseeker's IP2C
+	// compacted database. To determine this we see if first four bytes are
+	// equal to IP2C. If not, we perform the conversion.
+
+	QString signature = db.read(4);
+	db.seek(0);
+	if (signature.compare("IP2C") != 0)
+	{
+		qDebug() << "IP2C database is not in compacted format. Performing conversion!";
+		QByteArray contents = db.readAll();
+
+		if (!convertAndSaveDatabase(contents))
+		{
+			qDebug() << "Conversion failed";
+			return false;
+		}
+	}
+	db.close();
+
+	db.setFileName(file);
+	if (!db.open(QIODevice::ReadOnly))
+	{
+		return false;
+	}
+
 	QTime time;
 	time.start();
 
-	QFile db(file);
-	if(!db.exists() || !db.open(QIODevice::ReadOnly|QIODevice::Text) || !db.isReadable())
-		return false;
+	QByteArray dataArray = db.readAll();
+	const char* data = dataArray.constData();
 
-	// Skip over the header
-	char firstChar = 0;
-	while(db.getChar(&firstChar) && firstChar == '#')
-		db.readLine();
-
-	// Put the character back
-	db.seek(db.pos()-1);
-
-	QByteArray dbData = db.readAll();
-	Scanner sc = Scanner(dbData.constData(), dbData.count());
-	while(sc.tokensLeft())
+	// Currently Doomseeker ignores the IP2C database version.
+	int pos = 6; // skip the signature and the version
+	while (pos < dataArray.size())
 	{
 		IP2CData entry;
-		bool ok = true;
 
-		if(!sc.checkToken(TK_StringConst)) break; // ipStart
-		entry.ipStart = sc.str.toUInt(&ok);
-		if(!ok || !sc.checkToken(',')) break;
-		if(!sc.checkToken(TK_StringConst)) break; // ipEnd
-		entry.ipEnd = sc.str.toUInt(&ok);
-		if(!ok || !sc.checkToken(',')) break;
-		if(!sc.checkToken(TK_StringConst)) break; // Register
-		if(!sc.checkToken(',')) break;
-		if(!sc.checkToken(TK_StringConst)) break; // date assigned
-		if(!sc.checkToken(',')) break;
-		if(!sc.checkToken(TK_StringConst)) break; // 2 char country
-		if(!sc.checkToken(',')) break;
-		if(!sc.checkToken(TK_StringConst)) break; // 3 char country
-		entry.country = sc.str;
-		if(!sc.checkToken(',')) break;
-		if(!sc.checkToken(TK_StringConst)) break; // country string
+		// Perform error checks at each point. We don't want the app to crash
+		// due to corrupted database.
+		if (pos + 4 > dataArray.size()) return false;
+		entry.ipStart = READINT32(&data[pos]);
+		pos += 4;
+
+		if (pos + 4 > dataArray.size()) return false;
+		entry.ipEnd = READINT32(&data[pos]);
+		pos += 4;
+
+		entry.country = &data[pos];
+		pos += entry.country.size() + 1;
 
 		database << entry;
 	}

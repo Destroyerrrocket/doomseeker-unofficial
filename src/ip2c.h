@@ -66,6 +66,32 @@ class MAIN_EXPORT IP2C : public QObject
 	signals:
 		void	databaseUpdated();
 
+	protected:
+		/**
+		 *	Converts downloaded text database to a compacted binary file.
+		 *	The name of the new file is IP2C::file
+		 *
+		 *	The format of the compacted file is:
+		 *	(all strings are null terminated)
+		 *	Header:
+		 *	@code
+		 *	TYPE			LENGTH		DESCRIPTION
+		 *  -----------------------------------------------------
+		 *	unsigned long	4			'I' 'P' '2' 'C' bytes
+		 *	unsigned short	2			Version
+		 *	@endcode
+		 *
+		 *	Block repeated until EOF:
+		 *	@code
+		 *	TYPE			LENGTH		DESCRIPTION
+		 *  -----------------------------------------------------
+		 *	unsigned long	4			Beginning of an IP range
+		 *	unsigned long	4			End of an IP range
+		 *	string			N/A			Country name abbreviation
+		 *	@endcode
+		 */
+		bool	convertAndSaveDatabase(QByteArray& downloadedData);
+
 	private:
 		QList<IP2CData>	database;
 		QString			file;
