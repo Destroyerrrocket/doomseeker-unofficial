@@ -18,6 +18,8 @@
 	<file alias="flags/AUT">flags/AUT.png</file>
 	<file alias="flags/BRA">flags/BRA.png</file>
 	<file alias="flags/CAN">flags/CAN.png</file>	
+	<file alias="flags/CHE">flags/CHE.png</file>
+	<file alias="flags/CHL">flags/CHL.png</file>
 	<file alias="flags/CZE">flags/CZE.png</file>	
 	<file alias="flags/DEU">flags/DEU.png</file>
 	<file alias="flags/EST">flags/EST.png</file>
@@ -30,7 +32,9 @@
 	<file alias="flags/JPN">flags/JPN.png</file>
 	<file alias="flags/MEX">flags/MEX.png</file>	
 	<file alias="flags/NLD">flags/NLD.png</file>
+	<file alias="flags/NZL">flags/NZL.png</file>
 	<file alias="flags/POL">flags/POL.png</file>
+	<file alias="flags/PRY">flags/PRY.png</file>
 	<file alias="flags/RUS">flags/RUS.png</file>
 	<file alias="flags/SWE">flags/SWE.png</file>
 	<file alias="flags/TWN">flags/TWN.png</file>	
