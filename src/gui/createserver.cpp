@@ -83,11 +83,7 @@ void CreateServerDlg::accept()
 
 		delete hi;
 
-		if (ok)
-		{
-			done(Accepted);
-		}
-		else
+		if (!ok)
 		{
 			QMessageBox::critical(this, errorCapt, error);
 		}
