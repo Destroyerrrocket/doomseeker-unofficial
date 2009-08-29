@@ -62,8 +62,13 @@ class CustomItemDelegate : public QItemDelegate
 				QVariant decorationRole = index.data(Qt::DecorationRole);
 				if(decorationRole.isValid())
 				{
+					painter->save();
+					painter->setClipRect(opt.rect);
+
 					QPixmap pixmap = decoration(opt, decorationRole);
 					drawDecoration(painter, opt, opt.rect, pixmap);
+
+					painter->restore();
 				}
 			}
 		}
