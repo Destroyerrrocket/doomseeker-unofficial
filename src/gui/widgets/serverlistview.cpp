@@ -35,15 +35,37 @@ class CustomItemDelegate : public QItemDelegate
 	public:
 		void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 		{
+			// First we're going to check for our new right aligned image
+			// option.
+			bool rightAligned = false;
 			QStyleOptionViewItem opt = option;
 
 			QVariant userRole = index.data(Qt::UserRole);
 			if(userRole.isValid() && userRole.type() == QVariant::Int && userRole.toInt() == USERROLE_RIGHTALIGNDECORATION)
 			{
 				opt.decorationAlignment = Qt::AlignRight|Qt::AlignVCenter;
+				rightAligned = true;
 			}
 
+			// Now we draw the table as usual.
 			QItemDelegate::paint(painter, opt, index);
+
+			// If the row is selected and we are using the right aligned feature
+			// we must now redraw the decoration.  The rectangle that was used
+			// in the previous function will cause the image to clip.
+			//
+			// The only other way I can think of for fixing that problem would
+			// be to completely rewrite this class, which I really don't want
+			// to do.
+			if(rightAligned && (opt.state & QStyle::State_Selected))
+			{
+				QVariant decorationRole = index.data(Qt::DecorationRole);
+				if(decorationRole.isValid())
+				{
+					QPixmap pixmap = decoration(opt, decorationRole);
+					drawDecoration(painter, opt, opt.rect, pixmap);
+				}
+			}
 		}
 
 	protected:
