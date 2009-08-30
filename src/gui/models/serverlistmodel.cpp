@@ -66,7 +66,7 @@ class PlayersDiagram
 			}
 
 			int style = Main::config->setting("SlotStyle")->integer();
-			if(style > NUM_SLOTSTYLES || style < 0)
+			if(style >= NUM_SLOTSTYLES || style < 0)
 				style = 0;
 
 			QString filename(":/slots/");
@@ -406,9 +406,16 @@ void ServerListModel::setGood(int row, Server* server)
 	QStandardItem* qstdItem;
 	QString strTmp;
 
+	qDebug() << "Here\n";
 	qstdItem = item(row, SLCID_PLAYERS);
-	fillItem(qstdItem, server->numPlayers(), PlayersDiagram(server).pixmap());
-	qstdItem->setData(USERROLE_RIGHTALIGNDECORATION, Qt::UserRole);
+	int style = Main::config->setting("SlotStyle")->integer();
+	if(style != NUM_SLOTSTYLES)
+		fillItem(qstdItem, server->numPlayers(), PlayersDiagram(server).pixmap());
+	else
+		fillItem(qstdItem, server->numPlayers());
+	// Unset some data if it has been set before.
+	qstdItem->setData(QVariant(QVariant::Invalid), style == NUM_SLOTSTYLES ? Qt::DecorationRole : Qt::DisplayRole);
+	qstdItem->setData(style == NUM_SLOTSTYLES ? 0 : USERROLE_RIGHTALIGNDECORATION, Qt::UserRole);
 
 	qstdItem = item(row, SLCID_PING);
 	fillItem(qstdItem, server->ping());
