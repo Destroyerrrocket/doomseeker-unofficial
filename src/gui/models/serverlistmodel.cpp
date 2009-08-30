@@ -406,7 +406,6 @@ void ServerListModel::setGood(int row, Server* server)
 	QStandardItem* qstdItem;
 	QString strTmp;
 
-	qDebug() << "Here\n";
 	qstdItem = item(row, SLCID_PLAYERS);
 	int style = Main::config->setting("SlotStyle")->integer();
 	if(style != NUM_SLOTSTYLES)
