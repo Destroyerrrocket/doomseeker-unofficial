@@ -364,6 +364,11 @@ void CHtml::linksFromHTMLByPattern(const QStringList& wantedFiles, QList<QUrl>& 
 			newUrl.setHost(baseUrl.host());
 		}
 
+		if (it->url.port() < 0 && baseUrl.port() >= 0 && baseUrl.port() != 80)
+		{
+			newUrl.setPort(baseUrl.port());
+		}
+
 		if (it->url.host().isEmpty() && it->url.authority().isEmpty())
 		{
 			QString path = baseUrl.path();
