@@ -762,8 +762,8 @@ bool SkulltagServer::spawnTestingBatchFile(const QString& versionDir, QString& f
 		content += driveLetter + ":\r\n";
 	}
 
-	content += "cd " + clientWorkingDirectory() + "\r\n";
-	content += binaryPath + " %*"; // %* deals with all the parameters
+	content += "cd " + clientWorkingDirectory().replace('/', '\\') + "\r\n";
+	content += binaryPath.replace('/', '\\') + " %*"; // %* deals with all the parameters
 	#else
 	// Create Unix script file
 	content  = "#!/bin/bash\n";
