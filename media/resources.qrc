@@ -27,9 +27,12 @@
 	<file alias="flags/FIN">flags/FIN.png</file>
 	<file alias="flags/FRA">flags/FRA.png</file>
 	<file alias="flags/GBR">flags/GBR.png</file>
+	<file alias="flags/HRV">flags/HRV.png</file>
 	<file alias="flags/HUN">flags/HUN.png</file>
 	<file alias="flags/ISR">flags/ISR.png</file>
+	<file alias="flags/ITA">flags/ITA.png</file>
 	<file alias="flags/JPN">flags/JPN.png</file>
+	<file alias="flags/MAR">flags/MAR.png</file>	
 	<file alias="flags/MEX">flags/MEX.png</file>	
 	<file alias="flags/NLD">flags/NLD.png</file>
 	<file alias="flags/NZL">flags/NZL.png</file>

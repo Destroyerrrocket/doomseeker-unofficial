@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>410</height>
+    <height>419</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -131,21 +131,17 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QGroupBox" name="gboIdgamesArchive">
      <property name="title">
       <string>Idgames archive</string>
      </property>
      <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
       <bool>false</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_6">
-      <item>
-       <widget class="QCheckBox" name="cbSearchInIdgames">
-        <property name="text">
-         <string>I want Wadseeker to browse the Idgames archive</string>
-        </property>
-       </widget>
-      </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
         <item>
@@ -253,10 +249,19 @@ p, li { white-space: pre-wrap; }
            </property>
           </widget>
          </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
          <item>
           <widget class="QLabel" name="label_3">
            <property name="toolTip">

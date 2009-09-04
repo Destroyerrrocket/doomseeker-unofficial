@@ -69,7 +69,7 @@ void WadseekerConfigBox::readSettings()
 
 	setting = config->setting("WadseekerSearchInIdgames");
 	bool b = static_cast<bool>(setting->integer());
-	cbSearchInIdgames->setChecked(b);
+	gboIdgamesArchive->setChecked(b);
 
 	setting = config->setting("WadseekerIdgamesPriority");
 	cboIdgamesPriority->setCurrentIndex(setting->integer());
@@ -96,7 +96,7 @@ void WadseekerConfigBox::saveSettings()
 	setting->setValue(urlLst->join(";"));
 
 	setting = config->setting("WadseekerSearchInIdgames");
-	setting->setValue(cbSearchInIdgames->isChecked());
+	setting->setValue(gboIdgamesArchive->isChecked());
 
 	setting = config->setting("WadseekerIdgamesPriority");
 	setting->setValue(cboIdgamesPriority->currentIndex());
