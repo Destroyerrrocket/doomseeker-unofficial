@@ -424,7 +424,7 @@ QString Server::clientWorkingDirectory() const
 void Server::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const
 {
 	// Connect
-	args << "+connect" << QString(address().toString() + ":" + QString::number(port()));
+	args << "-connect" << QString(address().toString() + ":" + QString::number(port()));
 	if(isLocked())
 		args << connectPassword;
 
