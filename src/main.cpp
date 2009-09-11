@@ -35,6 +35,7 @@ QWidget* Main::mainWindow = NULL;
 Config *Main::config = new Config();
 IP2C *Main::ip2c = NULL;
 bool Main::running = true;
+ServerRefresher *Main::guardian = NULL;
 
 int main(int argc, char* argv[])
 {
@@ -71,6 +72,8 @@ int main(int argc, char* argv[])
 	// Init plugin settings
 	Main::enginePlugins.initConfig();
 
+	//Main::guardian = new ServerRefresher(NULL);
+
 	MainWindow* mw = new MainWindow(argc, argv);
 	Main::mainWindow = mw;
 	if (Main::config->setting("MainWindowMaximized")->boolean())
@@ -89,6 +92,8 @@ int main(int argc, char* argv[])
 	delete Main::config;
 
 	delete Main::ip2c;
+
+	//delete Main::guardian;
 
 	return ret;
 }

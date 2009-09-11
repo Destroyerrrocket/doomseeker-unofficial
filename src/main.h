@@ -27,10 +27,12 @@
 #include "sdeapi/pluginloader.hpp"
 #include "sdeapi/config.hpp"
 #include "ip2c.h"
+#include "server.h"
 
 #include <QAbstractItemView>
 #include <QListView>
 #include <QStandardItemModel>
+#include <QUdpSocket>
 
 /**
  * This class holds some global information.
@@ -43,6 +45,7 @@ class MAIN_EXPORT Main
 		static QWidget*			mainWindow;
 		static PluginLoader		enginePlugins;
 		static bool				running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
+		static ServerRefresher	*guardian;
 
 		/**
 		 *	Global GUI method.

@@ -37,6 +37,7 @@
 #include <QMetaType>
 #include <QMutex>
 #include <QPixmap>
+#include <QTime>
 #include <QUdpSocket>
 
 #include "global.h"
@@ -435,7 +436,7 @@ class MAIN_EXPORT Server : public QObject
 		/**
 		 * Updates the server data.
 		 */
-		void			refresh();
+		bool			refresh(bool resend=false);
 
 	signals:
 		void				begunRefreshing(Server* server);
@@ -545,6 +546,7 @@ class MAIN_EXPORT Server : public QObject
 
 		static QString		teamNames[];
 
+		QTime				time;
 	protected slots:
 		/**
 		 * server argument here is only provided for compatibility with updated
@@ -562,9 +564,8 @@ class MAIN_EXPORT Server : public QObject
 		QHostAddress		serverAddress;
 		unsigned short		serverPort;
 
-		void 				doRefresh(bool& bKillThread);
-
-
+		int					triesLeft; /// Track how many resends we should try.
+		static unsigned int	packetsSent;
 };
 
 class MAIN_EXPORT ServerRefresher : public QThread, public QRunnable
@@ -572,20 +573,24 @@ class MAIN_EXPORT ServerRefresher : public QThread, public QRunnable
 	Q_OBJECT
 
 	private:
-		static bool			bGuardianExists;
-		bool				bGuardian;
-		Server*				parent;
+		static bool				bGuardianExists;
+		bool					bGuardian;
+		Server*					parent;
+		static QList<Server *>	registeredServers;
 
 	protected:
 		static QThreadPool	threadPool;
 		static QMutex		guardianMutex;
+		static QUdpSocket	*socket;
 
+		static void registerServer(Server *server) { registeredServers.append(server); }
 		friend class Server;
 
 	public:
 
 		ServerRefresher(Server* p);
 
+		bool guardianExists() { return bGuardianExists; }
 		/**
 		 * Creates guardian thread that emits a signal
 		 * when all servers are refreshed.

@@ -857,93 +857,42 @@ QRgb Server::teamColor(int team) const
 QThreadPool ServerRefresher::threadPool;
 QMutex ServerRefresher::guardianMutex;
 bool ServerRefresher::bGuardianExists = false;
+QList<Server *> ServerRefresher::registeredServers;
+QUdpSocket *ServerRefresher::socket = NULL;
+unsigned int Server::packetsSent = 0;
 
-void Server::doRefresh(bool& bKillThread)
+bool Server::refresh(bool resend)
 {
-	bKillThread = false;
-	// Connect to the server
-	QUdpSocket socket;
+	if ((bRunning && !resend) || Main::guardian == NULL)
+		return false;
 
-	socket.connectToHost(address(), port());
-
-	if(!socket.waitForConnected(1000))
+	if(!resend)
 	{
-		printf("%s\n", socket.errorString().toAscii().data());
-		emitUpdated(Server::RESPONSE_BAD);
-		return;
+		startRunning();
+		emit begunRefreshing(this);
+		triesLeft = Main::config->setting("QueryTries")->integer();
+		if(triesLeft > 10) // Limit the maximum number of tries
+			triesLeft = 10;
 	}
+	if(triesLeft-- == 0)
+		return false;
 
 	QByteArray request;
 	if(!sendRequest(request))
-		return;
-
-	// start timer and write.
-	QTime time = QTime::currentTime();
-
-	int queryTries = Main::config->setting("QueryTries")->integer();
-	int queryTimeout = Main::config->setting("QueryTimeout")->integer();
-
-	// Make sure everything is in given limits
-	if (queryTries > 10)
 	{
-		queryTries = 10;
+		emitUpdated(Server::RESPONSE_BAD);
+		return false;
 	}
-
-	// Make sure everything is in given limits, as above.
-	if (queryTimeout < 500)
+	if(!resend)
 	{
-		queryTimeout = 500;
+		time.start(); // The ping timer is only set on first query.
+		ServerRefresher::registerServer(this);
 	}
+	Main::guardian->socket->writeDatagram(request, address(), port());
 
-	int currentTry = 0;
-	bool bResponseReceived = false;
-	do {
-		if (currentTry >= queryTries)
-		{
-			emitUpdated(Server::RESPONSE_TIMEOUT);
-			return;
-		}
-
-		socket.write(request);
-		time.start();
-		bResponseReceived = socket.waitForReadyRead(queryTimeout);
-
-		if (!Main::running)
-		{
-			bKillThread = true;
-			return;
-		}
-
-		if (bDelete)
-		{
-			bKillThread = true;
-			delete this;
-			return;
-		}
-
-		++currentTry;
-	} while (!bResponseReceived);
-
-	// Read
-	QByteArray data = socket.readAll();
-	currentPing = time.elapsed();
-	if(!readRequest(data))
-		return;
-
-	socket.close();
-
-	emitUpdated(Server::RESPONSE_GOOD);
-}
-
-void Server::refresh()
-{
-	if (bRunning)
-		return;
-
-	startRunning();
-	emit begunRefreshing(this);
-	ServerRefresher* r = new ServerRefresher(this);
-	ServerRefresher::threadPool.start(r);
+	// try to instate a small delay in order to prevent too many packets from being sent at once.
+	Main::guardian->socket->waitForReadyRead(1);
+	return true;
 }
 
 void Server::finalizeRefreshing()
@@ -960,6 +909,12 @@ void Server::setToDelete(bool b)
 
 ServerRefresher::ServerRefresher(Server* p) : parent(p)
 {
+	if(socket == NULL)
+	{
+		socket = new QUdpSocket();
+		socket->bind();
+	}
+
 	bGuardian = false;
 	int queryThreads = Main::config->setting("QueryThreads")->integer();
 	if(threadPool.maxThreadCount() != queryThreads)
@@ -973,6 +928,8 @@ void ServerRefresher::startGuardian()
 	guardianMutex.lock();
 	if (!bGuardianExists)
 	{
+		registeredServers.clear();
+
 		bGuardianExists = true;
 		bGuardian = true;
 		QThreadPool::globalInstance()->start(this);
@@ -982,33 +939,81 @@ void ServerRefresher::startGuardian()
 
 void ServerRefresher::run()
 {
-	if (!bGuardian)
+	QTime time;
+	time.start();
+	int queryTimeout = Main::config->setting("QueryTimeout")->integer();
+	if(queryTimeout < 100) // Keep within a reasonable limit.
+		queryTimeout = 100;
+
+	// Give the code some time to run
+	socket->waitForReadyRead(20);
+	do
 	{
-		// If the program is no longer running then do nothing.
-		bool bKillThread = false;
-		if(Main::running)
-			parent->doRefresh(bKillThread);
-
-		if (bKillThread)
-			return;
-
-		if (Main::running)
-			parent->finalizeRefreshing();
-
-		if (Main::running)
-			parent->stopRunning();
-
-		if (Main::running && parent->isSetToDelete())
-			delete parent;
-	}
-	else
-	{
-		threadPool.waitForDone();
-		if (Main::running)
+		// Process any packets
+		while(socket->hasPendingDatagrams())
 		{
-			emit allServersRefreshed();
-			bGuardianExists = false;
+			QHostAddress address;
+			quint16 port;
+			qint64 size = socket->pendingDatagramSize();
+			char* data = new char[size];
+			socket->readDatagram(data, size, &address, &port);
+			foreach(Server *server, registeredServers)
+			{
+				if(server->port() == port && server->address() == address)
+				{
+					QByteArray dataArray(data, size);
+					server->currentPing = server->time.elapsed();
+					server->readRequest(dataArray);
+					server->emitUpdated(Server::RESPONSE_GOOD);
+					server->stopRunning();
+					registeredServers.removeOne(server);
+					break;
+				}
+			}
+			delete[] data;
 		}
+
+		// If we got all of the servers just wait until more packets start coming in.
+		if(registeredServers.size() <= 0)
+		{
+			while(!socket->waitForReadyRead(5000) && Main::running);
+			time.start();
+			continue;
+		}
+
+		// If we haven't gone through all of the servers we have to handle resends.
+		int timeout = queryTimeout - time.elapsed();
+		// If we're not currently waiting for a server's data, we'll
+		// slow down our timeout.
+		if(timeout < 1)
+			timeout = 1;
+		if(!socket->waitForReadyRead(timeout))
+		{
+			time.start();
+			if(Main::running)
+			{
+				foreach(Server *server, registeredServers)
+				{
+					if(!server->refresh(true))
+					{
+						server->emitUpdated(Server::RESPONSE_TIMEOUT);
+						registeredServers.removeOne(server);
+					}
+				}
+			}
+		}
+
+		// If we have queried everything say so.
+		if(registeredServers.size() <= 0)
+			emit allServersRefreshed();
+	}
+	while(Main::running);
+
+	if (Main::running)
+	{
+		qDebug() << "Closing guardian";
+		emit allServersRefreshed();
+		bGuardianExists = false;
 	}
 }
 

@@ -283,6 +283,21 @@ void MainWindow::refreshServers(bool onlyCustom)
 {
 	serverTableHandler->serverModel()->removeCustomServers();
 	CustomServers* cs = mc->customServs();
+
+	// Figure out what the heck we're doing regarding the guardian thread,
+	// UPDATE --- Since I've made the guardian remain running the whole time,
+	// this code probably isn't needed, but in the case the guardian does close
+	// it doesn't hurt to keep this around.
+	if(Main::guardian != NULL || !Main::guardian->guardianExists())
+	{
+		//if(Main::guardian != NULL)
+		//	delete Main::guardian;
+		Main::guardian = new ServerRefresher(NULL);
+		Main::guardian->startGuardian();
+		connect(Main::guardian, SIGNAL( allServersRefreshed() ), this, SLOT(checkRefreshFinished()) );
+		connect(Main::guardian, SIGNAL( allServersRefreshed() ), buddiesList, SLOT(scan()) );
+	}
+
 	for(int i = 0;i < cs->numServers();i++)
 	{
 		(*cs)[i]->refresh();
@@ -294,11 +309,6 @@ void MainWindow::refreshServers(bool onlyCustom)
 		{
 			(*mc)[i]->refresh();
 		}
-
-		ServerRefresher* guardian = new ServerRefresher(NULL);
-		connect(guardian, SIGNAL( allServersRefreshed() ), this, SLOT(checkRefreshFinished()) );
-		connect(guardian, SIGNAL( allServersRefreshed() ), buddiesList, SLOT(scan()) );
-		guardian->startGuardian();
 
 		// disable refresh.
 		btnGetServers->setEnabled(false);
