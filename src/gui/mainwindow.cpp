@@ -125,9 +125,26 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 		Main::ip2c->downloadDatabase(statusBar());
 	}
 
+	// Auto refresh timer
+	initAutoRefreshTimer();
+	connect(&autoRefreshTimer, SIGNAL( timeout() ), this, SLOT( autoRefreshTimer_timeout() ));
+
 	// This must be executed in order to set port query booleans
 	// after the Query menu actions settings are read.
 	enablePort();
+}
+
+void MainWindow::autoRefreshTimer_timeout()
+{
+	if (Main::config->setting("QueryAutoRefreshOnlyIfNotFocused")->boolean() && !isMinimized())
+	{
+		if (isActiveWindow ())
+		{
+			return;
+		}
+	}
+
+	btnGetServers_Click();
 }
 
 MainWindow::~MainWindow()
@@ -198,6 +215,43 @@ void MainWindow::enablePort()
 	}
 }
 
+void MainWindow::initAutoRefreshTimer()
+{
+	const unsigned MIN_DELAY = 30;
+	const unsigned MAX_DELAY = 3600;
+
+	Config* cfg = Main::config;
+
+	bool bEnabled = cfg->setting("QueryAutoRefreshEnabled")->boolean();
+
+	if (!bEnabled)
+	{
+		autoRefreshTimer.stop();
+	}
+	else
+	{
+		SettingsData* setting = cfg->setting("QueryAutoRefreshEverySeconds");
+		unsigned delay = setting->integer();
+
+		// Make sure delay is in given limit.
+		if (delay < MIN_DELAY)
+		{
+			setting->setValue(MIN_DELAY);
+			delay = MIN_DELAY;
+		}
+		else if (delay > MAX_DELAY)
+		{
+			setting->setValue(MAX_DELAY);
+			delay = MAX_DELAY;
+		}
+
+		delay *= 1000; // seconds to miliseconds
+
+		autoRefreshTimer.setSingleShot(false);
+		autoRefreshTimer.start(delay);
+	}
+}
+
 void MainWindow::menuBuddies()
 {
 	if (buddiesList->isVisible())
@@ -210,13 +264,17 @@ void MainWindow::menuBuddies()
 void MainWindow::menuCreateServer()
 {
 	CreateServerDlg dlg(this);
+	autoRefreshTimer.stop();
 	dlg.exec();
+	initAutoRefreshTimer();
 }
 
 void MainWindow::menuHelpAbout()
 {
 	AboutDlg dlg(this);
+	autoRefreshTimer.stop();
 	dlg.exec();
+	initAutoRefreshTimer();
 }
 
 void MainWindow::menuOptionsConfigure()
@@ -229,9 +287,12 @@ void MainWindow::menuOptionsConfigure()
 		dlg.addEngineConfiguration(ec);
 	}
 
+	// Stop the auto refresh timer during configuration.
+	autoRefreshTimer.stop();
 	dlg.exec();
 
 	// Do some cleanups after config box finishes.
+	initAutoRefreshTimer();
 
 	if (dlg.appearanceChanged())
 	{
@@ -285,6 +346,7 @@ void MainWindow::refreshServers(bool onlyCustom)
 	CustomServers* cs = mc->customServs();
 	for(int i = 0;i < cs->numServers();i++)
 	{
+		serverTableHandler->serverUpdated((*cs)[i], Server::RESPONSE_NO_RESPONSE_YET);
 		(*cs)[i]->refresh();
 	}
 
@@ -292,6 +354,7 @@ void MainWindow::refreshServers(bool onlyCustom)
 	{
 		for(int i = 0;i < mc->numServers();i++)
 		{
+			serverTableHandler->serverUpdated((*mc)[i], Server::RESPONSE_NO_RESPONSE_YET);
 			(*mc)[i]->refresh();
 		}
 

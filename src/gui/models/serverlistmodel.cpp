@@ -230,6 +230,11 @@ int ServerListModel::addServer(Server* server, int response)
 	}
 
 	appendRow(columns);
+
+	// Country flag is set only once. Set it here and avoid setting it in
+	// updateServer() method.
+	setCountryFlag(columns[SLCID_SERVERNAME], server->address());
+
 	QModelIndex index = indexFromItem(columns[0]);
 	return updateServer(index.row(), server, response);
 }
@@ -323,6 +328,11 @@ void ServerListModel::redraw(int row)
 {
 	Server* server = serverFromList(row);
 	updateServer(row, server, server->lastResponse());
+
+	// Since updateServer doesn't do anything with the flags we need to
+	// explicitly redraw it here.
+	QStandardItem* itm = item(row, SLCID_SERVERNAME);
+	setCountryFlag(itm, server->address());
 }
 
 void ServerListModel::redrawAll()
@@ -399,6 +409,12 @@ void ServerListModel::setCountryFlag(QStandardItem* itm, const QHostAddress& add
 	{
 		itm->setIcon(flag);
 	}
+}
+
+void ServerListModel::setFirstQuery(int row, Server* server)
+{
+	QStandardItem* qstdItem = item(row, SLCID_HIDDEN_GROUP);
+	fillItem(qstdItem, SG_FIRST_QUERY);
 }
 
 void ServerListModel::setGood(int row, Server* server)
@@ -532,10 +548,6 @@ int ServerListModel::updateServer(int row, Server* server, int response)
 	}
 	fillItem(qstdItem, server->metaObject()->className(), icon);
 
-	// Also the flag should be set no matter what
-	qstdItem = item(row, SLCID_SERVERNAME);
-	setCountryFlag(qstdItem, server->address());
-
 	// Address is also set no matter what, so it's set here.
 	qstdItem = item(row, SLCID_ADDRESS);
 	fillItem(qstdItem, server->address(), QString(server->address().toString() + ":" + QString::number(server->port())) );
@@ -567,6 +579,10 @@ int ServerListModel::updateServer(int row, Server* server, int response)
 
 		case Server::RESPONSE_TIMEOUT:
 		    setTimeout(row, server);
+			break;
+
+		case Server::RESPONSE_NO_RESPONSE_YET:
+			setFirstQuery(row, server);
 			break;
 	}
 

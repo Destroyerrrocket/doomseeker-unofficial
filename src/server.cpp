@@ -441,9 +441,15 @@ bool Server::createHostCommandLine(const QString& serverExecutablePath, QFileInf
 
 	// First some wad path checks, add wad paths to the args if check passes:
 	QFileInfo fi(iwadPath);
+	if (iwadPath.isEmpty())
+	{
+		error = tr("Iwad is not set");
+		return false;
+	}
+
 	if (!fi.isFile())
 	{
-		error = tr("\"%1\" doesn't exist or is a directory!").arg(iwadPath);
+		error = tr("Iwad Path error:\n\"%1\" doesn't exist or is a directory!").arg(iwadPath);
 		return false;
 	}
 
@@ -458,7 +464,7 @@ bool Server::createHostCommandLine(const QString& serverExecutablePath, QFileInf
 			fi.setFile(s);
 			if (!fi.isFile())
 			{
-				error = tr("\"%1\" doesn't exist or is a directory!").arg(s);
+				error = tr("Pwad path error:\n\"%1\" doesn't exist or is a directory!").arg(s);
 				return false;
 			}
 			args << s;

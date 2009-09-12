@@ -59,11 +59,24 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void updateServerInfo(QList<Server*>&);
 
 	protected:
+		QTimer	autoRefreshTimer;
+
+		/**
+		 *	This will either enable or disable the auto refresh timer
+		 *	depending on the settings. This method also takes care of every
+		 *	checks. It will make sure the delay between the refreshes is
+		 *	inside gives boundaries (30 - 3600 seconds).
+		 */
+		void	initAutoRefreshTimer();
+
 		/**
 		 *	@param onlyCustom - if true, the refreshing buttons aren't blocked
 		 *		and servers that aren't custom aren't contacted in any way.
 		 */
-		void refreshServers(bool onlyCustom);
+		void 	refreshServers(bool onlyCustom);
+
+	protected slots:
+		void	autoRefreshTimer_timeout();
 
 	private:
 		DockBuddiesList*	buddiesList;

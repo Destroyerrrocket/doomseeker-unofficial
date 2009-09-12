@@ -143,16 +143,25 @@ void IP2C::downloadProgress(int value, int max)
 
 QPixmap IP2C::flag(unsigned int ipaddress) const
 {
+	const static unsigned LOCALHOST_BEGIN = QHostAddress("127.0.0.0").toIPv4Address();
+	const static unsigned LOCALHOST_END = QHostAddress("127.255.255.255").toIPv4Address();
+	const static unsigned LAN_1_BEGIN = QHostAddress("10.0.0.0").toIPv4Address();
+	const static unsigned LAN_1_END = QHostAddress("10.255.255.255").toIPv4Address();
+	const static unsigned LAN_2_BEGIN = QHostAddress("172.16.0.0").toIPv4Address();
+	const static unsigned LAN_2_END = QHostAddress("127.31.255.255").toIPv4Address();
+	const static unsigned LAN_3_BEGIN = QHostAddress("192.168.0.0").toIPv4Address();
+	const static unsigned LAN_3_END = QHostAddress("192.168.255.255").toIPv4Address();
+
 	const QString unknown = ":flags/unknown";
 
-	if (ipaddress >= QHostAddress("127.0.0.0").toIPv4Address() && ipaddress <= QHostAddress("127.255.255.255").toIPv4Address())
+	if (ipaddress >= LOCALHOST_BEGIN && ipaddress <= LOCALHOST_END)
 	{
 		return QPixmap(":flags/localhost-small");
 	}
 
-	if (ipaddress >= QHostAddress("10.0.0.0").toIPv4Address() && ipaddress <= QHostAddress("10.255.255.255").toIPv4Address()
-	||	ipaddress >= QHostAddress("172.16.0.0").toIPv4Address() && ipaddress <= QHostAddress("127.31.255.255").toIPv4Address()
-	||	ipaddress >= QHostAddress("192.168.0.0").toIPv4Address() && ipaddress <= QHostAddress("192.168.255.255").toIPv4Address())
+	if (ipaddress >= LAN_1_BEGIN && ipaddress <= LAN_1_END
+	||	ipaddress >= LAN_2_BEGIN && ipaddress <= LAN_2_END
+	||	ipaddress >= LAN_3_BEGIN && ipaddress <= LAN_3_END)
 	{
 		return QPixmap(":flags/lan-small");
 	}

@@ -274,7 +274,8 @@ class MAIN_EXPORT Server : public QObject
 			RESPONSE_TIMEOUT,	// Server didn't respond at all
 			RESPONSE_WAIT,	 	// Server responded with "wait"
 			RESPONSE_BAD,		// Probably refreshing too quickly
-			RESPONSE_BANNED		// Won't recieve data from this server ever.
+			RESPONSE_BANNED,	// Won't recieve data from this server ever.
+			RESPONSE_NO_RESPONSE_YET	// "Dummy" response for servers that weren't refreshed yet
 		};
 
 		Server(const QHostAddress &address, unsigned short port);

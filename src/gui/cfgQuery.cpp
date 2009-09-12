@@ -51,6 +51,15 @@ void QueryConfigBox::readSettings()
 
 	setting = config->setting("QueryThreads");
 	threadsBox->setValue(setting->integer());
+
+	setting = config->setting("QueryAutoRefreshEnabled");
+	grbServerAutoRefresh->setChecked(setting->boolean());
+
+	setting = config->setting("QueryAutoRefreshEverySeconds");
+	numAutoRefreshEverySeconds->setValue(setting->integer());
+
+	setting = config->setting("QueryAutoRefreshDontIfActive");
+	cboDontRefreshIfActive->setChecked(setting->boolean());
 }
 
 void QueryConfigBox::saveSettings()
@@ -68,4 +77,13 @@ void QueryConfigBox::saveSettings()
 
 	setting = config->setting("QueryThreads");
 	setting->setValue(threadsBox->value());
+
+	setting = config->setting("QueryAutoRefreshEnabled");
+	setting->setValue(grbServerAutoRefresh->isChecked());
+
+	setting = config->setting("QueryAutoRefreshEverySeconds");
+	setting->setValue(numAutoRefreshEverySeconds->value());
+
+	setting = config->setting("QueryAutoRefreshDontIfActive");
+	setting->setValue(cboDontRefreshIfActive->isChecked());
 }
