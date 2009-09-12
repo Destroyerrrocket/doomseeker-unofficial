@@ -136,7 +136,7 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 
 void MainWindow::autoRefreshTimer_timeout()
 {
-	if (Main::config->setting("QueryAutoRefreshOnlyIfNotFocused")->boolean() && !isMinimized())
+	if (Main::config->setting("QueryAutoRefreshDontIfActive")->boolean() && !isMinimized())
 	{
 		if (isActiveWindow ())
 		{
