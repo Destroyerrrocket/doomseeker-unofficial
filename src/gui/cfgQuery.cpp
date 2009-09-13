@@ -59,7 +59,7 @@ void QueryConfigBox::readSettings()
 	numAutoRefreshEverySeconds->setValue(setting->integer());
 
 	setting = config->setting("QueryAutoRefreshDontIfActive");
-	cboDontRefreshIfActive->setChecked(setting->boolean());
+	cbDontRefreshIfActive->setChecked(setting->boolean());
 }
 
 void QueryConfigBox::saveSettings()
@@ -85,5 +85,5 @@ void QueryConfigBox::saveSettings()
 	setting->setValue(numAutoRefreshEverySeconds->value());
 
 	setting = config->setting("QueryAutoRefreshDontIfActive");
-	setting->setValue(cboDontRefreshIfActive->isChecked());
+	setting->setValue(cbDontRefreshIfActive->isChecked());
 }

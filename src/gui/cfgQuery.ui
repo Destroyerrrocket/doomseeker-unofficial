@@ -149,7 +149,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QCheckBox" name="cboDontRefreshIfActive">
+       <widget class="QCheckBox" name="cbDontRefreshIfActive">
         <property name="toolTip">
          <string>Enabling this will prevent server list from disappearing when you are browsing through it.</string>
         </property>

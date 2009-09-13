@@ -36,6 +36,7 @@
 #include <QAction>
 #include <QString>
 #include <QStandardItem>
+#include <QSystemTrayIcon>
 
 class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 {
@@ -62,12 +63,27 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		QTimer	autoRefreshTimer;
 
 		/**
+		 *	This is required so tray icon knows how to bring the window back.
+		 */
+		bool	bWasMaximized;
+
+		bool	event(QEvent* event);
+
+		void	hideEvent(QHideEvent* event);
+
+		/**
 		 *	This will either enable or disable the auto refresh timer
 		 *	depending on the settings. This method also takes care of every
 		 *	checks. It will make sure the delay between the refreshes is
 		 *	inside gives boundaries (30 - 3600 seconds).
 		 */
 		void	initAutoRefreshTimer();
+
+		/**
+		 *	Checks whether the program will use the tray icon and
+		 *	deletes or instantiates a QSystemTrayIcon object.
+		 */
+		void	initTrayIcon();
 
 		/**
 		 *	@param onlyCustom - if true, the refreshing buttons aren't blocked
@@ -77,6 +93,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 	protected slots:
 		void	autoRefreshTimer_timeout();
+		void	trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
 
 	private:
 		DockBuddiesList*	buddiesList;
@@ -85,6 +102,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 		MasterManager*		mc;
 		const QAction**		queryMenuPorts;
+		QSystemTrayIcon*	trayIcon;
+		QMenu*				trayIconMenu;
 };
 
 #endif

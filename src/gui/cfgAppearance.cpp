@@ -63,6 +63,12 @@ void AppearanceConfigBox::readSettings()
 	setting = config->setting("CustomServersColor");
 	customServersColor = setting->integer();
 	setWidgetBackgroundColor(btnCustomServersColor, customServersColor);
+
+	setting = config->setting("UseTrayIcon");
+	gboUseTrayIcon->setChecked(setting->boolean());
+
+	setting = config->setting("MinimizeToTrayIcon");
+	cbMinimizeToTrayIcon->setChecked(setting->boolean());
 }
 
 void AppearanceConfigBox::saveSettings()
@@ -76,16 +82,22 @@ void AppearanceConfigBox::saveSettings()
 	setting = config->setting("CustomServersColor");
 	setting->setValue(p.color(QPalette::Button).rgb() & 0x00ffffff); // Remove alpha value
 
+	setting = config->setting("UseTrayIcon");
+	setting->setValue(gboUseTrayIcon->isChecked());
+
+	setting = config->setting("MinimizeToTrayIcon");
+	setting->setValue(cbMinimizeToTrayIcon->isChecked());
+
 	emit appearanceChanged();
 }
 
 void AppearanceConfigBox::setWidgetBackgroundColor(QWidget* widget, unsigned color)
 {
 	const QString COLOR_STYLE("QPushButton { background-color : %1; }");
-	
+
 	// Remove alpha value
 	color &= 0x00ffffff;
-	
+
 	// Convert to hexadecimal number
 	QString colorString = QString::number(color, 16);
 	while (colorString.length() < 6)

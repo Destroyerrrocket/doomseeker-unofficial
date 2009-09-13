@@ -39,7 +39,7 @@
 #include <QHeaderView>
 #include <QMessageBox>
 
-MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
+MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), trayIcon(NULL), trayIconMenu(NULL)
 {
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
@@ -129,22 +129,12 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 	initAutoRefreshTimer();
 	connect(&autoRefreshTimer, SIGNAL( timeout() ), this, SLOT( autoRefreshTimer_timeout() ));
 
+	// Tray icon
+	initTrayIcon();
+
 	// This must be executed in order to set port query booleans
 	// after the Query menu actions settings are read.
 	enablePort();
-}
-
-void MainWindow::autoRefreshTimer_timeout()
-{
-	if (Main::config->setting("QueryAutoRefreshDontIfActive")->boolean() && !isMinimized())
-	{
-		if (isActiveWindow ())
-		{
-			return;
-		}
-	}
-
-	btnGetServers_Click();
 }
 
 MainWindow::~MainWindow()
@@ -177,6 +167,19 @@ MainWindow::~MainWindow()
 	if(mc != NULL)
 		delete mc;
 	delete[] queryMenuPorts;
+}
+
+void MainWindow::autoRefreshTimer_timeout()
+{
+	if (Main::config->setting("QueryAutoRefreshDontIfActive")->boolean() && !isMinimized())
+	{
+		if (isActiveWindow ())
+		{
+			return;
+		}
+	}
+
+	btnGetServers_Click();
 }
 
 void MainWindow::btnGetServers_Click()
@@ -215,6 +218,48 @@ void MainWindow::enablePort()
 	}
 }
 
+bool MainWindow::event(QEvent* event)
+{
+	if (event->type() == QEvent::WindowStateChange && trayIcon != NULL && Main::config->setting("MinimizeToTrayIcon")->boolean())
+	{
+		QWindowStateChangeEvent* wscEvent = static_cast<QWindowStateChangeEvent*>(event);
+		static int no = 0;
+		qDebug() << "Event no. " << ++no << wscEvent->oldState();
+		qDebug() << "Is hidden:" << isHidden() << "| Is visible:" << isVisible() << "| Is minimized:" << isMinimized();
+		if (isMinimized() && isVisible())
+		{
+			hide();
+			setVisible(false);
+			setHidden(true);
+			event->accept();
+			return true;
+		}
+	}
+	return false;
+}
+
+void MainWindow::hideEvent(QHideEvent* event)
+{
+	bWasMaximized = isMaximized();
+	qDebug() << "HIDE EVENT!";
+
+	// Check if tray icon is enabled and whether we want to hide -the window
+	// from taskbar. Also do nothing if the window is already not visible - this
+	// will prevent infinite reccurency.
+	/*
+	if (trayIcon != NULL && Main::config->setting("MinimizeToTrayIcon")->boolean())
+	{
+		qDebug() << "Step one";
+		qDebug() << "Minimi:" << isMinimized() << "Visi:" << isVisible() << "Is hidden:" << isHidden();
+		if (isMinimized() && isVisible())
+		{
+			qDebug() << "Step two";
+			hide();
+		}
+	}
+	*/
+}
+
 void MainWindow::initAutoRefreshTimer()
 {
 	const unsigned MIN_DELAY = 30;
@@ -249,6 +294,36 @@ void MainWindow::initAutoRefreshTimer()
 
 		autoRefreshTimer.setSingleShot(false);
 		autoRefreshTimer.start(delay);
+	}
+}
+
+void MainWindow::initTrayIcon()
+{
+	bool isEnabled = Main::config->setting("UseTrayIcon")->boolean();
+	if (!isEnabled || !QSystemTrayIcon::isSystemTrayAvailable())
+	{
+		if (trayIcon != NULL)
+		{
+			delete trayIcon;
+			trayIcon = NULL;
+			delete trayIconMenu;
+			trayIconMenu = NULL;
+		}
+	}
+	else if (trayIcon == NULL)
+	{
+		QAction* trayAction;
+		trayIconMenu = new QMenu(this);
+		trayAction = trayIconMenu->addAction("Exit");
+		connect(trayAction, SIGNAL( triggered() ), this, SLOT( close() ) );
+
+		// This should be automatically deleted when main window closes
+		trayIcon = new QSystemTrayIcon(this);
+		connect(trayIcon, SIGNAL( activated(QSystemTrayIcon::ActivationReason) ), this, SLOT( trayIcon_activated(QSystemTrayIcon::ActivationReason) ) );
+
+		trayIcon->setContextMenu(trayIconMenu);
+		trayIcon->setIcon(QIcon(":/icon.png"));
+		trayIcon->setVisible(true);
 	}
 }
 
@@ -297,6 +372,7 @@ void MainWindow::menuOptionsConfigure()
 	if (dlg.appearanceChanged())
 	{
 		serverTableHandler->redraw();
+		initTrayIcon();
 	}
 
 	// Refresh custom servers list:
@@ -385,6 +461,22 @@ void MainWindow::runGame(const Server* server)
 			return;
 	}
 	server->join(connectPassword);
+}
+
+void MainWindow::trayIcon_activated(QSystemTrayIcon::ActivationReason reason)
+{
+	if (reason == QSystemTrayIcon::Trigger)
+	{
+		if (isMinimized() || !isVisible())
+		{
+			bWasMaximized == true ? showMaximized() : showNormal();
+		}
+		else
+		{
+			showMinimized();
+			//hide();
+		}
+	}
 }
 
 void MainWindow::updateServerInfo(QList<Server*>& servers)

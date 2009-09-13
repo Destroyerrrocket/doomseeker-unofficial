@@ -369,13 +369,16 @@ void CHtml::linksFromHTMLByPattern(const QStringList& wantedFiles, QList<QUrl>& 
 			newUrl.setPort(baseUrl.port());
 		}
 
-		if (it->url.host().isEmpty() && it->url.authority().isEmpty())
+		// If the path in the processed url starts with '/' do not make any
+		// changes to the path in the currently created URL.
+		if (it->url.host().isEmpty() && it->url.authority().isEmpty() && !it->url.path().startsWith('/'))
 		{
 			QString path = baseUrl.path();
 			path = path.left(path.lastIndexOf('/') + 1);
 			path += it->url.path();
 			newUrl.setPath(path);
 		}
+
 
 		if (isDirectLinkToFile(wantedFiles, it->url))
 		{
