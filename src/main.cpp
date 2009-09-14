@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
 	Main::config->createSetting("CustomServersColor", (0x94 << 16) | (0xff << 8) | (0xff)); // r | g | b
 	Main::config->createSetting("MainWindowMaximized", 0);
 	Main::config->createSetting("UseTrayIcon", false); // tray icon
-	Main::config->createSetting("MinimizeToTrayIcon", false); // tray icon
+	Main::config->createSetting("CloseToTrayIcon", false); // tray icon
 	Main::config->createSetting("QueryAutoRefreshEnabled", false);
 	Main::config->createSetting("QueryAutoRefreshEverySeconds", 30);
 	Main::config->createSetting("QueryAutoRefreshDontIfActive", true);

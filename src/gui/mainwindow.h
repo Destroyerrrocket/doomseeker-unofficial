@@ -67,9 +67,14 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 */
 		bool	bWasMaximized;
 
-//		bool	event(QEvent* event);
+		/**
+		 *	If set to true the closeEvent() method will ignore tray icon
+		 *	settings and proceed to close the MainWindow. This is set by
+		 *	quitProgram() slot.
+		 */
+		bool	bWantToQuit;
 
-		void	hideEvent(QHideEvent* event);
+		void	closeEvent(QCloseEvent* event);
 
 		/**
 		 *	This will either enable or disable the auto refresh timer
@@ -94,6 +99,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 	protected slots:
 		void	autoRefreshTimer_timeout();
 		void	trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
+		void	quitProgram();
 
 	private:
 		DockBuddiesList*	buddiesList;

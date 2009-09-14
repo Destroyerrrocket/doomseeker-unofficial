@@ -24,6 +24,7 @@
 #include "gui/cfgAppearance.h"
 
 #include <QColorDialog>
+#include <QSystemTrayIcon>
 
 AppearanceConfigBox::AppearanceConfigBox(Config *cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent)
 {
@@ -64,11 +65,21 @@ void AppearanceConfigBox::readSettings()
 	customServersColor = setting->integer();
 	setWidgetBackgroundColor(btnCustomServersColor, customServersColor);
 
+	// Make sure that the tray is available. If it's not, disable tray icon
+	// completely and make sure no change can be done to the configuration in
+	// this manner.
+	if (!QSystemTrayIcon::isSystemTrayAvailable())
+	{
+		config->setting("UseTrayIcon")->setValue(false);
+		config->setting("CloseToTrayIcon")->setValue(false);
+		gboUseTrayIcon->setEnabled(false);
+	}
+
 	setting = config->setting("UseTrayIcon");
 	gboUseTrayIcon->setChecked(setting->boolean());
 
-	setting = config->setting("MinimizeToTrayIcon");
-	cbMinimizeToTrayIcon->setChecked(setting->boolean());
+	setting = config->setting("CloseToTrayIcon");
+	cbCloseToTrayIcon->setChecked(setting->boolean());
 }
 
 void AppearanceConfigBox::saveSettings()
@@ -85,8 +96,8 @@ void AppearanceConfigBox::saveSettings()
 	setting = config->setting("UseTrayIcon");
 	setting->setValue(gboUseTrayIcon->isChecked());
 
-	setting = config->setting("MinimizeToTrayIcon");
-	setting->setValue(cbMinimizeToTrayIcon->isChecked());
+	setting = config->setting("CloseToTrayIcon");
+	setting->setValue(cbCloseToTrayIcon->isChecked());
 
 	emit appearanceChanged();
 }

@@ -83,9 +83,9 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QCheckBox" name="cbMinimizeToTrayIcon">
+       <widget class="QCheckBox" name="cbCloseToTrayIcon">
         <property name="text">
-         <string>Minimize to tray icon</string>
+         <string>When close button is present, minimize to tray icon.</string>
         </property>
        </widget>
       </item>
