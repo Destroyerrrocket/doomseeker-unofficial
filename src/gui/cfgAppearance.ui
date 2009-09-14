@@ -85,7 +85,7 @@
       <item>
        <widget class="QCheckBox" name="cbCloseToTrayIcon">
         <property name="text">
-         <string>When close button is present, minimize to tray icon.</string>
+         <string>When close button is pressed, minimize to tray icon.</string>
         </property>
        </widget>
       </item>
