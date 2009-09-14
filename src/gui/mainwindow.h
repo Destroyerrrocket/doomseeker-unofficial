@@ -67,7 +67,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 */
 		bool	bWasMaximized;
 
-		bool	event(QEvent* event);
+//		bool	event(QEvent* event);
 
 		void	hideEvent(QHideEvent* event);
 

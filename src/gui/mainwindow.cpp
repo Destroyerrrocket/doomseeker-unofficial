@@ -218,25 +218,25 @@ void MainWindow::enablePort()
 	}
 }
 
-bool MainWindow::event(QEvent* event)
-{
-	if (event->type() == QEvent::WindowStateChange && trayIcon != NULL && Main::config->setting("MinimizeToTrayIcon")->boolean())
-	{
-		QWindowStateChangeEvent* wscEvent = static_cast<QWindowStateChangeEvent*>(event);
-		static int no = 0;
-		qDebug() << "Event no. " << ++no << wscEvent->oldState();
-		qDebug() << "Is hidden:" << isHidden() << "| Is visible:" << isVisible() << "| Is minimized:" << isMinimized();
-		if (isMinimized() && isVisible())
-		{
-			hide();
-			setVisible(false);
-			setHidden(true);
-			event->accept();
-			return true;
-		}
-	}
-	return false;
-}
+//bool MainWindow::event(QEvent* event)
+//{
+//	if (event->type() == QEvent::WindowStateChange && trayIcon != NULL && Main::config->setting("MinimizeToTrayIcon")->boolean())
+//	{
+//		QWindowStateChangeEvent* wscEvent = static_cast<QWindowStateChangeEvent*>(event);
+//		static int no = 0;
+//		qDebug() << "Event no. " << ++no << wscEvent->oldState();
+//		qDebug() << "Is hidden:" << isHidden() << "| Is visible:" << isVisible() << "| Is minimized:" << isMinimized();
+//		if (isMinimized() && isVisible())
+//		{
+//			hide();
+//			setVisible(false);
+//			setHidden(true);
+//			event->accept();
+//			return true;
+//		}
+//	}
+//	return false;
+//}
 
 void MainWindow::hideEvent(QHideEvent* event)
 {
