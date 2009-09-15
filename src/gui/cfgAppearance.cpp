@@ -48,10 +48,13 @@ ConfigurationBoxInfo *AppearanceConfigBox::createStructure(Config *cfg, QWidget 
 
 void AppearanceConfigBox::btnCustomServersColor_clicked()
 {
-	QColor c = QColorDialog::getColor(Qt::white, this);
+	QColor c = QColorDialog::getColor(QColor(customServersColor), this);
 
-	customServersColor = c.rgb();
-	setWidgetBackgroundColor(btnCustomServersColor, customServersColor);
+	if(c.isValid())
+	{
+		customServersColor = c.rgb();
+		setWidgetBackgroundColor(btnCustomServersColor, customServersColor);
+	}
 }
 
 void AppearanceConfigBox::readSettings()
