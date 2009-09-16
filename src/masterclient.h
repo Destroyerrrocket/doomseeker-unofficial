@@ -42,6 +42,7 @@ class MAIN_EXPORT MasterClient : public QObject
 		MasterClient(QHostAddress address, unsigned short port);
 		virtual ~MasterClient();
 
+		int						numPlayers() const;
 		int						numServers() const { return servers.size(); }
 		Server					*operator[] (int index) const { return servers[index]; }
 		QList<Server*>			&serverList() { return servers; }

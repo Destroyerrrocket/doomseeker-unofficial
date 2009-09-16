@@ -77,7 +77,6 @@ int main(int argc, char* argv[])
 	Main::enginePlugins.initConfig();
 
 	MainWindow* mw = new MainWindow(argc, argv);
-	Main::mainWindow = mw;
 	if (Main::config->setting("MainWindowMaximized")->boolean())
 	{
 		mw->showMaximized();
@@ -96,6 +95,16 @@ int main(int argc, char* argv[])
 	delete Main::ip2c;
 
 	return ret;
+}
+
+void Main::launchRefreshGuardian()
+{
+	if (!ServerRefresher::guardianExists())
+	{
+		ServerRefresher* guardian = new ServerRefresher(NULL);
+		QObject::connect(guardian, SIGNAL( allServersRefreshed() ), (MainWindow*)mainWindow, SLOT(checkRefreshFinished()) );
+		guardian->startGuardian();
+	}
 }
 
 void Main::translateServerAddress(const QString& settingValue, QString& hostname, short& port, const QString& defaultHostname, const short defaultPort)

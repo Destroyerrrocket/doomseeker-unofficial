@@ -41,6 +41,7 @@
 
 MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), trayIcon(NULL), trayIconMenu(NULL), bWantToQuit(false)
 {
+	Main::mainWindow = this;
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
 
@@ -93,7 +94,7 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), tra
 	this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
 
 	connect(btnGetServers, SIGNAL( clicked() ), this, SLOT( btnGetServers_Click() ));
-	connect(btnRefreshAll, SIGNAL( clicked() ), serverTableHandler, SLOT( refreshAll() ));
+	connect(btnRefreshAll, SIGNAL( clicked() ), this, SLOT( btnRefreshAll_Click() ));
 	connect(menuActionAbout, SIGNAL( triggered() ), this, SLOT( menuHelpAbout() ));
 	connect(menuActionBuddies, SIGNAL( triggered() ), this, SLOT( menuBuddies() ));
 	connect(menuActionConfigure, SIGNAL( triggered() ), this, SLOT( menuOptionsConfigure() ));
@@ -162,10 +163,24 @@ MainWindow::~MainWindow()
 	    }
 	}
 
+	if (trayIcon != NULL)
+	{
+		trayIcon->setVisible(false);
+		delete trayIcon;
+		trayIcon = NULL;
+	}
+
+	if (trayIconMenu != NULL)
+	{
+		delete trayIconMenu;
+		trayIconMenu = NULL;
+	}
+
 	delete serverTableHandler;
 
 	if(mc != NULL)
 		delete mc;
+
 	delete[] queryMenuPorts;
 }
 
@@ -180,6 +195,11 @@ void MainWindow::autoRefreshTimer_timeout()
 	}
 
 	btnGetServers_Click();
+}
+
+void MainWindow::btnRefreshAll_Click()
+{
+	serverTableHandler->refreshAll();
 }
 
 void MainWindow::btnGetServers_Click()
@@ -208,6 +228,12 @@ void MainWindow::checkRefreshFinished()
 	btnRefreshAll->setEnabled(true);
 	serverTableHandler->serverTable()->setAllowAllRowsRefresh(true);
 	statusBar()->showMessage(tr("Done"));
+
+	buddiesList->scan();
+
+	// This method checks whether tray icon exists before performing any actions
+	// so there's no need to perform any checks here.
+	updateTrayIconTooltip();
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -217,19 +243,12 @@ void MainWindow::closeEvent(QCloseEvent* event)
 	// quitProgram() method. This method sets bWantToQuit to true.
 	if (trayIcon != NULL && Main::config->setting("CloseToTrayIcon")->boolean() && !bWantToQuit)
 	{
+		bWasMaximized = isMaximized();
 		event->ignore();
 		hide();
 	}
 	else
 	{
-		if (trayIcon != NULL)
-		{
-			trayIcon->setVisible(false);
-			delete trayIcon;
-			trayIcon = NULL;
-			delete trayIconMenu;
-			trayIconMenu = NULL;
-		}
 		event->accept();
 	}
 }
@@ -288,6 +307,10 @@ void MainWindow::initTrayIcon()
 		{
 			delete trayIcon;
 			trayIcon = NULL;
+		}
+
+		if (trayIconMenu != NULL)
+		{
 			delete trayIconMenu;
 			trayIconMenu = NULL;
 		}
@@ -303,6 +326,8 @@ void MainWindow::initTrayIcon()
 		trayIcon = new QSystemTrayIcon(this);
 		connect(trayIcon, SIGNAL( activated(QSystemTrayIcon::ActivationReason) ), this, SLOT( trayIcon_activated(QSystemTrayIcon::ActivationReason) ) );
 
+		updateTrayIconTooltip();
+
 		trayIcon->setContextMenu(trayIconMenu);
 		trayIcon->setIcon(QIcon(":/icon.png"));
 		trayIcon->setVisible(true);
@@ -315,6 +340,7 @@ void MainWindow::menuBuddies()
 		buddiesList->hide();
 	else
 		buddiesList->show();
+
 	menuActionBuddies->setChecked(buddiesList->isVisible());
 }
 
@@ -406,7 +432,6 @@ void MainWindow::quitProgram()
 
 void MainWindow::refreshServers(bool onlyCustom)
 {
-	serverTableHandler->serverModel()->removeCustomServers();
 	CustomServers* cs = mc->customServs();
 	for(int i = 0;i < cs->numServers();i++)
 	{
@@ -422,16 +447,15 @@ void MainWindow::refreshServers(bool onlyCustom)
 			(*mc)[i]->refresh();
 		}
 
-		ServerRefresher* guardian = new ServerRefresher(NULL);
-		connect(guardian, SIGNAL( allServersRefreshed() ), this, SLOT(checkRefreshFinished()) );
-		connect(guardian, SIGNAL( allServersRefreshed() ), buddiesList, SLOT(scan()) );
-		guardian->startGuardian();
-
 		// disable refresh.
 		btnGetServers->setEnabled(false);
 		btnRefreshAll->setEnabled(false);
 		serverTableHandler->serverTable()->setAllowAllRowsRefresh(false);
 		statusBar()->showMessage(tr("Querying..."));
+		if (trayIcon != NULL)
+		{
+			trayIcon->setToolTip("Updating server list...");
+		}
 	}
 }
 
@@ -483,5 +507,16 @@ void MainWindow::updateServerInfo(QList<Server*>& servers)
 		{
 			serverInfo->updateServerInfo(servers[0]);
 		}
+	}
+}
+
+void MainWindow::updateTrayIconTooltip()
+{
+	if (trayIcon != NULL)
+	{
+		QString tip;
+		tip += "Servers: " + QString::number(mc->numServers()) + " + " + QString::number(mc->customServs()->numServers()) + " custom\n";
+		tip += "Players: " + QString::number(mc->numPlayers() + mc->customServs()->numPlayers());
+		trayIcon->setToolTip(tip);
 	}
 }

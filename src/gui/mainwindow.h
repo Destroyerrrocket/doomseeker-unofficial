@@ -24,7 +24,6 @@
 #ifndef __MAINWINDOW_H_
 #define __MAINWINDOW_H_
 
-#include "main.h"
 #include "masterclient.h"
 #include "sdeapi/config.hpp"
 #include "sdeapi/pluginloader.hpp"
@@ -47,17 +46,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		~MainWindow();
 
 	public slots:
-		void checkRefreshFinished();
-		void btnGetServers_Click();
-		void enablePort();
-		void menuBuddies();
-		void menuCreateServer();
-		void menuHelpAbout();
-		void menuOptionsConfigure();
-		void menuServerInfo();
-		void menuWadSeeker();
-		void runGame(const Server*);
-		void updateServerInfo(QList<Server*>&);
+		void 	checkRefreshFinished();
 
 	protected:
 		QTimer	autoRefreshTimer;
@@ -96,10 +85,23 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 */
 		void 	refreshServers(bool onlyCustom);
 
+		void	updateTrayIconTooltip();
+
 	protected slots:
 		void	autoRefreshTimer_timeout();
-		void	trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
+		void 	btnGetServers_Click();
+		void	btnRefreshAll_Click();
+		void 	enablePort();
+		void	menuBuddies();
+		void 	menuCreateServer();
+		void	menuHelpAbout();
+		void 	menuOptionsConfigure();
+		void	menuServerInfo();
+		void	menuWadSeeker();
 		void	quitProgram();
+		void 	runGame(const Server*);
+		void	trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
+		void 	updateServerInfo(QList<Server*>&);
 
 	private:
 		DockBuddiesList*	buddiesList;

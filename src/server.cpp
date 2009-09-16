@@ -947,9 +947,14 @@ void Server::refresh()
 		return;
 
 	startRunning();
+
 	emit begunRefreshing(this);
 	ServerRefresher* r = new ServerRefresher(this);
 	ServerRefresher::threadPool.start(r);
+
+	// It's impossible to launch more than one guardian. Do not perform
+	// any additional checks.
+	Main::launchRefreshGuardian();
 }
 
 void Server::finalizeRefreshing()

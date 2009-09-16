@@ -584,6 +584,7 @@ class MAIN_EXPORT ServerRefresher : public QThread, public QRunnable
 		friend class Server;
 
 	public:
+		static bool	guardianExists() { return bGuardianExists; }
 
 		ServerRefresher(Server* p);
 

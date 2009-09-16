@@ -76,6 +76,17 @@ void MasterClient::notifyUpdate()
 	message.showMessage(tr("Could not fetch a new server list.  The protocol you are using is too old.  An update may be available."));
 }
 
+int MasterClient::numPlayers() const
+{
+	int players = 0;
+	foreach(Server* server, servers)
+	{
+		players += server->numPlayers();
+	}
+
+	return players;
+}
+
 void MasterClient::refresh()
 {
 	// Connect to the server
