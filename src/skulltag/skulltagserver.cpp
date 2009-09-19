@@ -821,11 +821,6 @@ SkulltagRConProtocol::SkulltagRConProtocol(Server *server) : RConProtocol(server
 RConProtocol *SkulltagRConProtocol::connectToServer(Server *server)
 {
 	SkulltagRConProtocol *protocol = new SkulltagRConProtocol(server);
-	if(!protocol->connected)
-	{
-		delete protocol;
-		return NULL;
-	}
 
 	const char beginConnection[2] = { CLRC_BEGINCONNECTION, RCON_PROTOCOL_VERSION };
 	char encodedConnection[4];
@@ -836,14 +831,16 @@ RConProtocol *SkulltagRConProtocol::connectToServer(Server *server)
 	protocol->connected = false;
 	for(unsigned int attempts = 0;attempts < 3;attempts++)
 	{
-		protocol->socket.write(encodedConnection, encodedSize);
-
+		protocol->socket.writeDatagram(encodedConnection, encodedSize, server->address(), server->port());
 		if(protocol->socket.waitForReadyRead(3000))
 		{
-			QByteArray data = protocol->socket.readAll();
+			int size = protocol->socket.pendingDatagramSize();
+			char* data = new char[size];
+			protocol->socket.readDatagram(data, size);
 			char packet[64];
 			int decodedSize = 64;
-			g_Huffman.decode(data.data(), packet, data.size(), &decodedSize);
+			g_Huffman.decode(data, packet, size, &decodedSize);
+			delete[] data;
 			switch(packet[0])
 			{
 				case SVRC_BANNED:
@@ -871,7 +868,7 @@ void SkulltagRConProtocol::disconnectFromServer()
 	char encodedDisconnect[4];
 	int encodedSize = 4;
 	g_Huffman.encode(disconnectPacket, encodedDisconnect, 1, &encodedSize);
-	socket.write(encodedDisconnect, encodedSize);
+	socket.writeDatagram(encodedDisconnect, encodedSize, server->address(), server->port());
 	connected = false;
 	emit disconnected();
 }
@@ -885,7 +882,7 @@ void SkulltagRConProtocol::sendCommand(const QString &cmd)
 	char encodedPacket[4097];
 	int encodedSize = 4097;
 	g_Huffman.encode(packet, encodedPacket, cmd.length()+2, &encodedSize);
-	socket.write(encodedPacket, encodedSize);
+	socket.writeDatagram(encodedPacket, encodedSize, server->address(), server->port());
 }
 
 void SkulltagRConProtocol::sendPassword(const QString &password)
@@ -917,14 +914,17 @@ void SkulltagRConProtocol::sendPassword(const QString &password)
 
 	for(unsigned int i = 0;i < 3;i++)
 	{
-		socket.write(encodedPassword, encodedLength);
+		socket.writeDatagram(encodedPassword, encodedLength, server->address(), server->port());
 
 		if(socket.waitForReadyRead(3000))
 		{
-			QByteArray data = socket.readAll();
+			int size = socket.pendingDatagramSize();
+			char* data = new char[size];
+			socket.readDatagram(data, size);
 			char packet[4096];
 			int decodedSize = 4096;
-			g_Huffman.decode(data.data(), packet, data.size(), &decodedSize);
+			g_Huffman.decode(data, packet, size, &decodedSize);
+			delete[] data;
 			switch(packet[0])
 			{
 				default:
@@ -962,12 +962,15 @@ void SkulltagRConProtocol::run()
 	{
 		if(socket.waitForReadyRead(4800)) // Try to get 2 packets per second in order to compensate for lag and packet loss
 		{
-			QByteArray data = socket.readAll();
+			int size = socket.pendingDatagramSize();
+			char* data = new char[size];
+			socket.readDatagram(data, size);
 			char packet[4096];
 			int decodedSize = 4096;
-			g_Huffman.decode(data.constData(), packet, data.size(), &decodedSize);
+			g_Huffman.decode(data, packet, size, &decodedSize);
+			delete[] data;
 
-			processPacket(packet, data.size());
+			processPacket(packet, size);
 		}
 		else
 		{
@@ -976,7 +979,7 @@ void SkulltagRConProtocol::run()
 			char encodedPong[4];
 			int encodedSize = 4;
 			g_Huffman.encode(pong, encodedPong, 1, &encodedSize);
-			socket.write(encodedPong, encodedSize);
+			socket.writeDatagram(encodedPong, encodedSize, server->address(), server->port());
 		}
 	}
 }
