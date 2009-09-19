@@ -221,7 +221,7 @@ class SkulltagRConProtocol : public RConProtocol
 		SkulltagRConProtocol(Server *server);
 
 		void	run();
-		void	processPacket(const char *data, int length, bool initial=false, int maxUpdates=-1, int *pos=NULL);
+		void	processPacket(const char *data, int length, bool initial=false, int maxUpdates=1, int *pos=NULL);
 
 		QString	hostName;
 		QString	salt;
