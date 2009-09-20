@@ -16,7 +16,14 @@ class ServerConsole : public QWidget, private Ui::ServerConsole
 		}
 
 	public slots:
-		void	appendMessage(const QString &message) { consoleOutput->appendPlainText(message); }
+		void	appendMessage(const QString &message)
+		{
+			QString appendMessage = message;
+			if(appendMessage.endsWith('\n')) // Remove the trailing new line since appendPlainText seems to add one automatically.
+				appendMessage.chop(1);
+
+			consoleOutput->appendPlainText(appendMessage);
+		}
 
 	signals:
 		void	messageSent(const QString &message);
