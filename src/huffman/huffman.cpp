@@ -152,18 +152,25 @@ void Huffman::encode(const char *in, char *out, int inlen, int *outlen)
 
 void Huffman::decode(const char *in, char *out, int inlen, int *outlen)
 {
-	int bits,tbits;
+	if(*outlen < 1)
+	{
+		*outlen = 0;
+		return;
+	}
+
+	int bits,tbits,maxBits;
 	huffnode_t *tmp;
 	if (static_cast<unsigned char> (*in)==0xff)
 	{
-		memcpy(out,in+1,inlen-1);
+		memcpy(out, in+1, (inlen-1) > *outlen ? *outlen : (inlen-1));
 		*outlen=inlen-1;
 		return;
 	}
 	tbits=(inlen-1)*8-static_cast<unsigned char>(*in);
 	bits=0;
+	maxBits = *outlen << 3;
 	*outlen=0;
-	while (bits<tbits)
+	while ((bits<tbits) && (bits<maxBits))
 	{
 		tmp=huffTree;
 		do
