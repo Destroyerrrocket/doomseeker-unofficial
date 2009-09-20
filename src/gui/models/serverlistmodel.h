@@ -130,7 +130,7 @@ class ServerListModel : public QStandardItemModel
 		 *  Updates flag on given row.
 		 *  @param row - index of row to update
 		 */
-		void updateFlag(int row);
+		void updateFlag(int row, bool onlyIfServerHasNoFlagYet = false);
 
 		/**
 		 *	Returns row number

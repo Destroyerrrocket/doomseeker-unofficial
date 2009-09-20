@@ -215,6 +215,15 @@ const QImage *PlayersDiagram::spectatorImage = NULL;
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
+class WaitingClass : public QThread
+{
+	public:
+		static void msleep(int ms)
+		{
+			QThread::msleep(ms);
+		}
+};
+
 ServerListModel::ServerListModel(QObject* parent) : QStandardItemModel(parent)
 {
 	setSortRole(SLDT_SORT);
@@ -233,9 +242,13 @@ int ServerListModel::addServer(Server* server, int response)
 
 	// Country flag is set only once. Set it here and avoid setting it in
 	// updateServer() method.
-	setCountryFlag(columns[SLCID_SERVERNAME], server->address());
 
 	QModelIndex index = indexFromItem(columns[0]);
+	if (Main::mainWindow->isActiveWindow())
+	{
+		setCountryFlag(columns[SLCID_SERVERNAME], server->address());
+	}
+
 	return updateServer(index.row(), server, response);
 }
 
@@ -597,10 +610,14 @@ QVariant ServerListModel::columnSortData(int row, int column)
 	return it->data(SLDT_SORT);
 }
 
-void ServerListModel::updateFlag(int row)
+void ServerListModel::updateFlag(int row, bool onlyIfServerHasNoFlagYet)
 {
     Server* serv = serverFromList(row);
     QStandardItem* itm = item(row, SLCID_SERVERNAME);
+
+    if (onlyIfServerHasNoFlagYet && !itm->icon().isNull())
+		return;
+
     setCountryFlag(itm, serv->address());
 }
 //////////////////////////////////////////////////////////////
@@ -645,6 +662,9 @@ bool ServerListSortFilterProxyModel::compareColumnSortData(QVariant& var1, QVari
 
 bool ServerListSortFilterProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
 {
+	if (!Main::mainWindow->isActiveWindow())
+		return false;
+
 	ServerListModel* model = static_cast<ServerListModel*>(sourceModel());
 
 	Server* s1 = serverFromList(left);

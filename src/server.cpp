@@ -973,6 +973,12 @@ ServerRefresher::ServerRefresher(Server* p) : parent(p)
 {
 	bGuardian = false;
 	int queryThreads = Main::config->setting("QueryThreads")->integer();
+
+	if (!Main::mainWindow->isActiveWindow())
+	{
+		queryThreads = qMin(queryThreads, 3);
+	}
+
 	if(threadPool.maxThreadCount() != queryThreads)
 	{
 		threadPool.setMaxThreadCount(queryThreads);

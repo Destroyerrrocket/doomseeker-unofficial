@@ -204,6 +204,14 @@ void MainWindow::btnRefreshAll_Click()
 
 void MainWindow::btnGetServers_Click()
 {
+	// Make sure that we are allowed to refresh the servers.
+	// Exterior calls to this function (as in, not called by button's clicked()
+	// signals) must be protected like this:
+	if (!btnGetServers->isEnabled())
+	{
+		return;
+	}
+
 	mc->refresh();
 
 	if (mc->numServers() == 0 && mc->customServs()->numServers() == 0)
@@ -220,6 +228,19 @@ void MainWindow::btnGetServers_Click()
 	}
 
 	refreshServers(false);
+}
+
+void MainWindow::changeEvent(QEvent* event)
+{
+	if (event->type() == QEvent::ActivationChange && isActiveWindow() && !isMinimized() && !isHidden())
+	{
+		serverTableHandler->cleanUp();
+		event->accept();
+	}
+	else
+	{
+		event->ignore();
+	}
 }
 
 void MainWindow::checkRefreshFinished()

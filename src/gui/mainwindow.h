@@ -63,6 +63,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 */
 		bool	bWantToQuit;
 
+		void	changeEvent(QEvent* event);
+
 		void	closeEvent(QCloseEvent* event);
 
 		/**
