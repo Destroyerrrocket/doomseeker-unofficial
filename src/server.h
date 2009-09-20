@@ -268,6 +268,8 @@ class MAIN_EXPORT Server : public QObject
 {
 	Q_OBJECT
 
+	friend class RefreshingThread;
+
 	public:
 		enum Response
 		{
@@ -305,7 +307,6 @@ class MAIN_EXPORT Server : public QObject
 		bool				isCustom() const { return custom; }
 		bool				isKnown() const { return bKnown; }
 		bool				isLocked() const { return locked; }
-		bool				isRunning() const { return bRunning; }
 		bool				isSetToDelete() const { return bDelete; }
 		const QString		&iwadName() const { return iwad; }
 		int					lastResponse() const { return response; }
@@ -351,11 +352,8 @@ class MAIN_EXPORT Server : public QObject
 		void				setWebsite(const QString& site) { webSite = site; }
 
 		void				operator= (const Server &other);
-		void				finalizeRefreshing();
 		void				setCustom(bool b) { custom = b; }
 		void				setToDelete(bool b);
-		void				startRunning() { bRunning = true; }
-		void				stopRunning() { bRunning = false; }
 
 		QList<ServerAction>*	actions();
 		virtual void			actionsEx(QList<ServerAction>*) {};
@@ -408,6 +406,8 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		bool				host(const QString& serverExecutablePath, const QString& iwadPath, const QStringList& pwadsPaths, const QStringList& customParameters, const DMFlags& dmFlags, const QList<GameCVar>& cvars, QString& error);
 
+		bool				isRefreshing() const { return bIsRefreshing; }
+
 		/**
 		 *	Default behaviour returns the same string as clientBinary().
 		 *	This can be reimplemented for engines that use two different
@@ -433,10 +433,11 @@ class MAIN_EXPORT Server : public QObject
 
 		void			displayJoinCommandLine();
 		void			join(const QString &connectPassword=QString()) const;
+
 		/**
 		 * Updates the server data.
 		 */
-		bool			refresh(bool resend=false);
+		bool			refresh();
 
 	signals:
 		void				begunRefreshing(Server* server);
@@ -547,6 +548,7 @@ class MAIN_EXPORT Server : public QObject
 		static QString		teamNames[];
 
 		QTime				time;
+
 	protected slots:
 		/**
 		 * server argument here is only provided for compatibility with updated
@@ -556,11 +558,27 @@ class MAIN_EXPORT Server : public QObject
 
 	private:
 		/**
+		 *	Called when server begins refreshing routine.
+		 */
+		void				refreshStarts();
+
+		/**
+		 *	Called when server finishes refreshing routine.
+		 */
+		void				refreshStops();
+
+		/**
+		 *	Method called by the refreshing thread. Sends the query
+		 *	through refreshing thread socket.
+		 */
+		bool				sendRefreshQuery(QUdpSocket* socket);
+
+		/**
 		 * This is used to make
 		 * sure that refresh() method isn't run on
 		 * server that is already refreshing.
 		 */
-		bool				bRunning;
+		bool				bIsRefreshing;
 		QHostAddress		serverAddress;
 		unsigned short		serverPort;
 

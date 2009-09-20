@@ -200,7 +200,7 @@ Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
 	mapRandomRotation = false;
 	bDelete = false;
 	bKnown = false;
-	bRunning = false;
+	bIsRefreshing = false;
 	custom = false;
 	skill = 3;
 	for(int i = 0;i < MAX_TEAMS;i++)
@@ -861,21 +861,34 @@ QList<Server *> ServerRefresher::registeredServers;
 QUdpSocket *ServerRefresher::socket = NULL;
 unsigned int Server::packetsSent = 0;
 
-bool Server::refresh(bool resend)
+bool Server::refresh()
 {
-	if ((bRunning && !resend) || Main::guardian == NULL)
+	if (Main::guardian == NULL)
 		return false;
+}
 
-	if(!resend)
-	{
-		startRunning();
-		emit begunRefreshing(this);
-		triesLeft = Main::config->setting("QueryTries")->integer();
-		if(triesLeft > 10) // Limit the maximum number of tries
-			triesLeft = 10;
-	}
+void Server::refreshStarts()
+{
+	bIsRefreshing = true;
+	emit begunRefreshing(this);
+	triesLeft = Main::config->setting("QueryTries")->integer();
+	if(triesLeft > 10) // Limit the maximum number of tries
+		triesLeft = 10;
+}
+
+void Server::refreshStops()
+{
+	bIsRefreshing = false;
+	iwad = iwad.toLower();
+}
+
+bool Server::sendRefreshQuery(QUdpSocket* socket)
+{
 	if(triesLeft-- == 0)
+	{
+		emitUpdated(Server::RESPONSE_TIMEOUT);
 		return false;
+	}
 
 	QByteArray request;
 	if(!sendRequest(request))
@@ -883,27 +896,20 @@ bool Server::refresh(bool resend)
 		emitUpdated(Server::RESPONSE_BAD);
 		return false;
 	}
-	if(!resend)
-	{
-		time.start(); // The ping timer is only set on first query.
-		ServerRefresher::registerServer(this);
-	}
-	Main::guardian->socket->writeDatagram(request, address(), port());
+
+	time.start();
+
+	socket->writeDatagram(request, address(), port());
 
 	// try to instate a small delay in order to prevent too many packets from being sent at once.
-	Main::guardian->socket->waitForReadyRead(1);
+	socket->waitForReadyRead(1);
 	return true;
-}
-
-void Server::finalizeRefreshing()
-{
-	iwad = iwad.toLower();
 }
 
 void Server::setToDelete(bool b)
 {
 	bDelete = b;
-	if (!bRunning)
+	if (!bIsRefreshing)
 		delete this;
 }
 
@@ -965,7 +971,7 @@ void ServerRefresher::run()
 					server->currentPing = server->time.elapsed();
 					server->readRequest(dataArray);
 					server->emitUpdated(Server::RESPONSE_GOOD);
-					server->stopRunning();
+					server->refreshStops();
 					registeredServers.removeOne(server);
 					break;
 				}
@@ -994,7 +1000,7 @@ void ServerRefresher::run()
 			{
 				foreach(Server *server, registeredServers)
 				{
-					if(!server->refresh(true))
+					if(!server->refresh())
 					{
 						server->emitUpdated(Server::RESPONSE_TIMEOUT);
 						registeredServers.removeOne(server);

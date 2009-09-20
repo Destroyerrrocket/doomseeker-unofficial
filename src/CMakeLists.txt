@@ -64,6 +64,7 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	customservers.h
 	ip2c.h
 	masterclient.h
+	refresher.h
 	server.h
 )
 
@@ -102,6 +103,7 @@ set(SOURCE_FILES
 	main.cpp
 	masterclient.cpp
 	pathfinder.cpp
+	refresher.cpp
 	server.cpp
 )
 
