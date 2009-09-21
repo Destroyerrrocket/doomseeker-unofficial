@@ -190,12 +190,30 @@ QString IP2C::lookupIP(unsigned int ipaddress) const
 	if(!read)
 		return QString();
 
-	foreach(const IP2CData entry, database)
+	unsigned int upper = database.size()-1;
+	unsigned int lower = 0;
+	unsigned int index = database.size()/2;
+	unsigned int lastIndex = 0xFFFFFFFF;
+	while(true)
 	{
-		if(ipaddress >= entry.ipStart && ipaddress <= entry.ipEnd)
+		// Infinite loop protection.
+		if(index == lastIndex)
+			break;
+		lastIndex = index;
+
+		if(ipaddress < database[index].ipStart)
 		{
-			return entry.country;
+			upper = index;
+			index -= (index-lower)>>1; // If we're concerning ourselves with speed >>1 is the same as /2, but should be faster.
+			continue;
 		}
+		else if(ipaddress > database[index].ipEnd)
+		{
+			lower = index;
+			index += (upper-index)>>1;
+			continue;
+		}
+		return database[index].country;
 	}
 
 	return QString();
