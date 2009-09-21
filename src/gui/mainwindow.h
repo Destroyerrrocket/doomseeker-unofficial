@@ -46,7 +46,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		~MainWindow();
 
 	public slots:
-		void checkRefreshFinished();
 		void btnGetServers_Click();
 		void enablePort();
 		void menuBuddies();

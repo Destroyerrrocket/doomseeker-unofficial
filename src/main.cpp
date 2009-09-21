@@ -36,7 +36,6 @@ Config *Main::config = new Config();
 IP2C *Main::ip2c = NULL;
 RefreshingThread* Main::refreshingThread = new RefreshingThread();
 bool Main::running = true;
-ServerRefresher *Main::guardian = NULL;
 
 int main(int argc, char* argv[])
 {

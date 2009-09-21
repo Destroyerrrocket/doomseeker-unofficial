@@ -212,7 +212,7 @@ Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
 Server::Server(const Server &other) : QObject(), currentGameMode(GameMode::COOPERATIVE)
 {
 	(*this) = other;
-	connect(this, SIGNAL( updated(Server*, int) ), this, SLOT( setResponse(Server* server, int response) ));
+	connect(this, SIGNAL( updated(Server*, int) ), this, SLOT( setResponse(Server*, int) ));
 }
 
 Server::~Server()
@@ -854,18 +854,12 @@ QRgb Server::teamColor(int team) const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-QThreadPool ServerRefresher::threadPool;
-QMutex ServerRefresher::guardianMutex;
-bool ServerRefresher::bGuardianExists = false;
-QList<Server *> ServerRefresher::registeredServers;
-QUdpSocket *ServerRefresher::socket = NULL;
-unsigned int Server::packetsSent = 0;
-
 bool Server::refresh()
 {
 	if (Main::refreshingThread == NULL)
 	{
 		emitUpdated(RESPONSE_BAD);
+		printf("REFRESHING THREAD IS NULL\n");
 		return false;
 	}
 
@@ -893,6 +887,7 @@ bool Server::sendRefreshQuery(QUdpSocket* socket)
 	if(triesLeft-- == 0)
 	{
 		emitUpdated(Server::RESPONSE_TIMEOUT);
+		refreshStops();
 		return false;
 	}
 
@@ -900,6 +895,7 @@ bool Server::sendRefreshQuery(QUdpSocket* socket)
 	if(!sendRequest(request))
 	{
 		emitUpdated(Server::RESPONSE_BAD);
+		refreshStops();
 		return false;
 	}
 
@@ -907,8 +903,6 @@ bool Server::sendRefreshQuery(QUdpSocket* socket)
 
 	socket->writeDatagram(request, address(), port());
 
-	// try to instate a small delay in order to prevent too many packets from being sent at once.
-	socket->waitForReadyRead(1);
 	return true;
 }
 
@@ -917,116 +911,6 @@ void Server::setToDelete(bool b)
 	bDelete = b;
 	if (!bIsRefreshing)
 		delete this;
-}
-
-ServerRefresher::ServerRefresher(Server* p) : parent(p)
-{
-	if(socket == NULL)
-	{
-		socket = new QUdpSocket();
-		socket->bind();
-	}
-
-	bGuardian = false;
-	int queryThreads = Main::config->setting("QueryThreads")->integer();
-	if(threadPool.maxThreadCount() != queryThreads)
-	{
-		threadPool.setMaxThreadCount(queryThreads);
-	}
-}
-
-void ServerRefresher::startGuardian()
-{
-	guardianMutex.lock();
-	if (!bGuardianExists)
-	{
-		registeredServers.clear();
-
-		bGuardianExists = true;
-		bGuardian = true;
-		QThreadPool::globalInstance()->start(this);
-	}
-	guardianMutex.unlock();
-}
-
-void ServerRefresher::run()
-{
-	QTime time;
-	time.start();
-	int queryTimeout = Main::config->setting("QueryTimeout")->integer();
-	if(queryTimeout < 100) // Keep within a reasonable limit.
-		queryTimeout = 100;
-
-	// Give the code some time to run
-	socket->waitForReadyRead(20);
-	do
-	{
-		// Process any packets
-		while(socket->hasPendingDatagrams())
-		{
-			QHostAddress address;
-			quint16 port;
-			qint64 size = socket->pendingDatagramSize();
-			char* data = new char[size];
-			socket->readDatagram(data, size, &address, &port);
-			foreach(Server *server, registeredServers)
-			{
-				if(server->port() == port && server->address() == address)
-				{
-					QByteArray dataArray(data, size);
-					server->currentPing = server->time.elapsed();
-					server->readRequest(dataArray);
-					server->emitUpdated(Server::RESPONSE_GOOD);
-					server->refreshStops();
-					registeredServers.removeOne(server);
-					break;
-				}
-			}
-			delete[] data;
-		}
-
-		// If we got all of the servers just wait until more packets start coming in.
-		if(registeredServers.size() <= 0)
-		{
-			while(!socket->waitForReadyRead(5000) && Main::running);
-			time.start();
-			continue;
-		}
-
-		// If we haven't gone through all of the servers we have to handle resends.
-		int timeout = queryTimeout - time.elapsed();
-		// If we're not currently waiting for a server's data, we'll
-		// slow down our timeout.
-		if(timeout < 1)
-			timeout = 1;
-		if(!socket->waitForReadyRead(timeout))
-		{
-			time.start();
-			if(Main::running)
-			{
-				foreach(Server *server, registeredServers)
-				{
-					if(!server->refresh())
-					{
-						server->emitUpdated(Server::RESPONSE_TIMEOUT);
-						registeredServers.removeOne(server);
-					}
-				}
-			}
-		}
-
-		// If we have queried everything say so.
-		if(registeredServers.size() <= 0)
-			emit allServersRefreshed();
-	}
-	while(Main::running);
-
-	if (Main::running)
-	{
-		qDebug() << "Closing guardian";
-		emit allServersRefreshed();
-		bGuardianExists = false;
-	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

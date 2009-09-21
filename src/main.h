@@ -47,7 +47,6 @@ class MAIN_EXPORT Main
 		static PluginLoader			enginePlugins;
 		static bool					running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
 		static RefreshingThread*	refreshingThread;
-		static ServerRefresher*		guardian;
 
 		/**
 		 *	Global GUI method.

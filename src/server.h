@@ -31,12 +31,9 @@
 #include <QHostAddress>
 #include <QString>
 #include <QStringList>
-#include <QThreadPool>
-#include <QThread>
-#include <QRunnable>
 #include <QMetaType>
-#include <QMutex>
 #include <QPixmap>
+#include <QThread>
 #include <QTime>
 #include <QUdpSocket>
 
@@ -420,13 +417,6 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		virtual QString		serverWorkingDirectory() const;
 
-
-		/**
-		 * Returns the thread pool of the refresher.
-		 */
-		static const QThreadPool	&refresherThreadPool();
-
-		friend class ServerRefresher;
 		friend class ServerPointer;
 
 	public slots:
@@ -583,40 +573,6 @@ class MAIN_EXPORT Server : public QObject
 		unsigned short		serverPort;
 
 		int					triesLeft; /// Track how many resends we should try.
-		static unsigned int	packetsSent;
-};
-
-class MAIN_EXPORT ServerRefresher : public QThread, public QRunnable
-{
-	Q_OBJECT
-
-	private:
-		static bool				bGuardianExists;
-		bool					bGuardian;
-		Server*					parent;
-		static QList<Server *>	registeredServers;
-
-	protected:
-		static QThreadPool	threadPool;
-		static QMutex		guardianMutex;
-		static QUdpSocket	*socket;
-
-		static void registerServer(Server *server) { registeredServers.append(server); }
-		friend class Server;
-
-	public:
-
-		ServerRefresher(Server* p);
-
-		bool guardianExists() { return bGuardianExists; }
-		/**
-		 * Creates guardian thread that emits a signal
-		 * when all servers are refreshed.
-		 */
-		void startGuardian();
-		void run();
-	signals:
-		void allServersRefreshed();
 };
 
 class MAIN_EXPORT ServerPointer

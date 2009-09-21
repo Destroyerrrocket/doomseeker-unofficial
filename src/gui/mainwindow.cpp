@@ -170,7 +170,18 @@ MainWindow::~MainWindow()
 void MainWindow::btnGetServers_Click()
 {
 	Main::refreshingThread->registerMaster(mc);
+}
 
+void MainWindow::enablePort()
+{
+	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
+	{
+		mc->enableMaster(i, queryMenuPorts[i]->isChecked());
+	}
+}
+
+void MainWindow::finishedQueryingMaster(MasterClient* master)
+{
 	if (mc->numServers() == 0 && mc->customServs()->numServers() == 0)
 	{
 		return;
@@ -185,29 +196,6 @@ void MainWindow::btnGetServers_Click()
 	}
 
 	refreshServers(false);
-}
-
-void MainWindow::checkRefreshFinished()
-{
-
-}
-
-void MainWindow::enablePort()
-{
-	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
-	{
-		mc->enableMaster(i, queryMenuPorts[i]->isChecked());
-	}
-}
-
-void MainWindow::finishedQueryingMaster(MasterClient* master)
-{
-	for(int i = 0;i < mc->numServers();i++)
-	{
-		(*mc)[i]->refresh(); // This will register server with refreshing thread.
-		connect((*mc)[i], SIGNAL(updated(Server *, int)), serverTableHandler, SLOT(serverUpdated(Server *, int)) );
-		connect((*mc)[i], SIGNAL(begunRefreshing(Server *)), serverTableHandler, SLOT(serverBegunRefreshing(Server *)) );
-	}
 }
 
 void MainWindow::menuBuddies()
@@ -298,14 +286,14 @@ void MainWindow::refreshServers(bool onlyCustom)
 
 	for(int i = 0;i < cs->numServers();i++)
 	{
-		(*cs)[i]->refresh();
+		(*cs)[i]->refresh(); // This will register server with refreshing thread.
 	}
 
 	if (!onlyCustom)
 	{
 		for(int i = 0;i < mc->numServers();i++)
 		{
-			(*mc)[i]->refresh();
+			(*mc)[i]->refresh(); // This will register server with refreshing thread.
 		}
 	}
 }

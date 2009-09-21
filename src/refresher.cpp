@@ -84,14 +84,33 @@ void RefreshingThread::run()
 	while (bKeepRunning)
 	{
 		thisMutex.lock();
+
+		// Here thread goes into dormant mode if there is nothing to process.
 		while( registeredServers.count() == 0 && registeredMasters.count() == 0 && bKeepRunning)
 		{
+			// Signal that the work is finished
 			emit sleepingModeEnter();
+
+			// Release the mutex and wait until woken up.
 			thisWaitCondition.wait(&thisMutex);
+
+			// Reset variable when thread goes back to work. We assume
+			// this happens when new refresh procedure is being issued.
+			// Sending of first query shouldn't be delayed.
 			bFirstQuery = true;
+
+			// Signal that the work has begun.
 			emit sleepingModeExit();
+
+			// Since thread wakes up immediatelly after a single server is
+			// registered, assume that more servers will be registered soon
+			// and give the main thread some time to do that.
+			thisMutex.unlock();
+			msleep(20);
+			thisMutex.lock();
 		}
 
+		// Kill the thread if RefreshingThread::quit() was called.
 		if (!bKeepRunning)
 			break;
 
@@ -107,6 +126,7 @@ void RefreshingThread::run()
 		}
 		thisMutex.unlock();
 
+		// Read any received data.
 		while(socket->hasPendingDatagrams())
 		{
 			QHostAddress address;
@@ -122,13 +142,22 @@ void RefreshingThread::run()
 				{
 					if(server->port() == port && server->address() == address)
 					{
+						registeredServers.remove(server);
 						QByteArray dataArray(data, size);
 						server->currentPing = server->time.elapsed();
-						server->readRequest(dataArray);
-						server->emitUpdated(Server::RESPONSE_GOOD);
+
+						// Store the state of request read.
+						bool bIsGood = server->readRequest(dataArray);
+
 						server->refreshStops();
 
-						registeredServers.remove(server);
+						// If readRequest() returned true, emit the
+						// RESPONSE_GOOD signal. Otherwise do nothing, the
+						// plugin should decide which response to emit.
+						if (bIsGood)
+						{
+							server->emitUpdated(Server::RESPONSE_GOOD);
+						}
 						continue;
 					}
 				}
@@ -152,6 +181,10 @@ void RefreshingThread::run()
 			{
 				bSendQueries = !socket->waitForReadyRead(timeout);
 			}
+			else
+			{
+				bFirstQuery = false;
+			}
 
 			if(bSendQueries && bKeepRunning)
 			{
@@ -160,6 +193,10 @@ void RefreshingThread::run()
 				thisMutex.lock();
 				foreach(Server *server, registeredServers)
 				{
+					printf("Timeout: %d, server: %s:%d\n", timeout, server->address().toString().toAscii().constData(), server->port());
+					// sendRefreshQuery will clean up after a fail
+					// There's no need to call methods like
+					// Server::refreshStops() explicitly.
 					if(!server->sendRefreshQuery(socket))
 					{
 						registeredServers.remove(server);
