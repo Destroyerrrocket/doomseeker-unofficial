@@ -120,9 +120,11 @@ void RefreshingThread::run()
 		// refreshing algorithm will be implemented later, if needed.
 		foreach(MasterClient* master, registeredMasters)
 		{
+			printf("Refreshing master!\n");
 			master->refresh();
 			registeredMasters.remove(master);
 			emit finishedQueryingMaster(master);
+
 		}
 		thisMutex.unlock();
 

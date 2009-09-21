@@ -59,6 +59,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 	protected slots:
 		void 	finishedQueryingMaster(MasterClient* master);
+		void	masterManagerMessages(const QString& title, const QString& content, bool isError);
 		void 	refreshThreadBeginsWork();
 		void	refreshThreadEndsWork();
 

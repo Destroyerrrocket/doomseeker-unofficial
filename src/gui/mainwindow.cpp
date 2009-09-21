@@ -84,6 +84,7 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 	}
 	// Get the master
 	mc = new MasterManager();
+	connect(mc, SIGNAL( message(const QString&, const QString&, bool) ), this, SLOT( masterManagerMessages(const QString&, const QString&, bool) ) );
 
 	// Init custom servers
 	mc->customServs()->readConfig(Main::config, serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
@@ -196,6 +197,14 @@ void MainWindow::finishedQueryingMaster(MasterClient* master)
 	}
 
 	refreshServers(false);
+}
+
+void MainWindow::masterManagerMessages(const QString& title, const QString& content, bool isError)
+{
+	if (isError)
+	{
+		QMessageBox::critical(this, title, content, QMessageBox::Ok, QMessageBox::Ok);
+	}
 }
 
 void MainWindow::menuBuddies()

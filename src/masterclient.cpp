@@ -59,21 +59,19 @@ bool MasterClient::hasServer(const Server* server)
 	return false;
 }
 
-void MasterClient::notifyBanned()
+void MasterClient::notifyBanned(const QString& engineName)
 {
-	QMessageBox::critical(NULL, tr("Banned"), tr("You have been banned from the master server."), QMessageBox::Ok, QMessageBox::Ok);
+	emit message(engineName, tr("You have been banned from the master server."), true);
 }
 
-void MasterClient::notifyDelay()
+void MasterClient::notifyDelay(const QString& engineName)
 {
-	QErrorMessage message;
-	message.showMessage(tr("Could not fetch a new server list from the master because not enough time has past."));
+	emit message(engineName, tr("Could not fetch a new server list from the master because not enough time has past."), true);
 }
 
-void MasterClient::notifyUpdate()
+void MasterClient::notifyUpdate(const QString& engineName)
 {
-	QErrorMessage message;
-	message.showMessage(tr("Could not fetch a new server list.  The protocol you are using is too old.  An update may be available."));
+	emit message(engineName, tr("Could not fetch a new server list.  The protocol you are using is too old.  An update may be available."), true);
 }
 
 void MasterClient::refresh()
@@ -92,6 +90,7 @@ void MasterClient::refresh()
 	bool expectingMorePackets = false;
 	do
 	{
+		printf("!!! ### === still alive.\n");
 		if(!socket.hasPendingDatagrams())
 		{
 			if(!socket.waitForReadyRead(10000))
@@ -136,6 +135,7 @@ void MasterManager::addMaster(MasterClient *master)
 
 	masters.append(master);
 	masterEnabled.append(true);
+	connect(master, SIGNAL( message(const QString&, const QString&, bool) ), this, SLOT( readMasterMessage(const QString&, const QString&, bool) ) );
 }
 
 void MasterManager::enableMaster(int port, bool enable)
@@ -157,6 +157,7 @@ void MasterManager::loadMastersFromPlugins()
 
 void MasterManager::refresh()
 {
+	printf("Master manager refresh\n");
 	// Don't delete the servers yet!
 	servers.clear();
 

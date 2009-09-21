@@ -60,6 +60,13 @@ class MAIN_EXPORT MasterClient : public QObject
 	signals:
 		void			listUpdated();
 
+		/**
+		 *	Plugins may use this to make Doomseeker display custom messages.
+		 *	Errors are always displayed in the message box while non-errors
+		 *	are currently ignored.
+		 */
+		void			message(const QString& title, const QString& content, bool isError);
+
 	protected:
 		/**
 		 * Clears the server list.
@@ -68,16 +75,16 @@ class MAIN_EXPORT MasterClient : public QObject
 		/**
 		 * Informs the user that they have been banned from the master server.
 		 */
-		void			notifyBanned();
+		void			notifyBanned(const QString& engineName);
 		/**
 		 * Tells the user that the master server will not respond to their
 		 * query becuase they tried to refresh too quickly.
 		 */
-		void			notifyDelay();
+		void			notifyDelay(const QString& engineName);
 		/**
 		 * Tells the user they need to update since the protocol is too old.
 		 */
-		void			notifyUpdate();
+		void			notifyUpdate(const QString& engineName);
 
 		virtual bool	readRequest(QByteArray &data, bool &expectingMorePackets)=0;
 		virtual bool	sendRequest(QByteArray &data)=0;
@@ -102,7 +109,6 @@ class MasterManager : public MasterClient
 		CustomServers*	customServs() { return customServers; }
 		void			enableMaster(int port, bool enable=true);
 
-
 	public slots:
 		void	refresh();
 
@@ -114,6 +120,16 @@ class MasterManager : public MasterClient
 		QList<MasterClient *>	masters;
 		QList<bool>				masterEnabled;
 		CustomServers*			customServers;
+
+	protected slots:
+		/**
+		 *	message() signal of every master is connected to this slot.
+		 *	Doomseeker uses message() signal of MasterManager for convenience
+		 */
+		void	readMasterMessage(const QString& title, const QString& content, bool isError)
+		{
+			emit message(title, content, isError);
+		}
 };
 
 #endif /* __MASTERSERVER_H__ */
