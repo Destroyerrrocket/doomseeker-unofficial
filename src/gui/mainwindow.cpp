@@ -44,6 +44,11 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
 
+	// Connect refreshing thread.
+	connect(Main::refreshingThread, SIGNAL( finishedQueryingMaster(MasterClient*) ), this, SLOT( finishedQueryingMaster(MasterClient*) ) );
+	connect(Main::refreshingThread, SIGNAL( sleepingModeEnter() ), this, SLOT( refreshThreadEndsWork() ) );
+	connect(Main::refreshingThread, SIGNAL( sleepingModeExit() ), this, SLOT( refreshThreadBeginsWork() ) );
+
 	// Window geometry settings
 	Main::config->createSetting("MainWindowX", x());
 	Main::config->createSetting("MainWindowY", y());
@@ -164,7 +169,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::btnGetServers_Click()
 {
-	mc->refresh();
+	Main::refreshingThread->registerMaster(mc);
 
 	if (mc->numServers() == 0 && mc->customServs()->numServers() == 0)
 	{
@@ -184,10 +189,7 @@ void MainWindow::btnGetServers_Click()
 
 void MainWindow::checkRefreshFinished()
 {
-	btnGetServers->setEnabled(true);
-	btnRefreshAll->setEnabled(true);
-	serverTableHandler->serverTable()->setAllowAllRowsRefresh(true);
-	statusBar()->showMessage(tr("Done"));
+
 }
 
 void MainWindow::enablePort()
@@ -195,6 +197,16 @@ void MainWindow::enablePort()
 	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
 	{
 		mc->enableMaster(i, queryMenuPorts[i]->isChecked());
+	}
+}
+
+void MainWindow::finishedQueryingMaster(MasterClient* master)
+{
+	for(int i = 0;i < mc->numServers();i++)
+	{
+		(*mc)[i]->refresh(); // This will register server with refreshing thread.
+		connect((*mc)[i], SIGNAL(updated(Server *, int)), serverTableHandler, SLOT(serverUpdated(Server *, int)) );
+		connect((*mc)[i], SIGNAL(begunRefreshing(Server *)), serverTableHandler, SLOT(serverBegunRefreshing(Server *)) );
 	}
 }
 
@@ -284,20 +296,6 @@ void MainWindow::refreshServers(bool onlyCustom)
 	serverTableHandler->serverModel()->removeCustomServers();
 	CustomServers* cs = mc->customServs();
 
-	// Figure out what the heck we're doing regarding the guardian thread,
-	// UPDATE --- Since I've made the guardian remain running the whole time,
-	// this code probably isn't needed, but in the case the guardian does close
-	// it doesn't hurt to keep this around.
-	if(Main::guardian != NULL || !Main::guardian->guardianExists())
-	{
-		//if(Main::guardian != NULL)
-		//	delete Main::guardian;
-		Main::guardian = new ServerRefresher(NULL);
-		Main::guardian->startGuardian();
-		connect(Main::guardian, SIGNAL( allServersRefreshed() ), this, SLOT(checkRefreshFinished()) );
-		connect(Main::guardian, SIGNAL( allServersRefreshed() ), buddiesList, SLOT(scan()) );
-	}
-
 	for(int i = 0;i < cs->numServers();i++)
 	{
 		(*cs)[i]->refresh();
@@ -309,13 +307,24 @@ void MainWindow::refreshServers(bool onlyCustom)
 		{
 			(*mc)[i]->refresh();
 		}
-
-		// disable refresh.
-		btnGetServers->setEnabled(false);
-		btnRefreshAll->setEnabled(false);
-		serverTableHandler->serverTable()->setAllowAllRowsRefresh(false);
-		statusBar()->showMessage(tr("Querying..."));
 	}
+}
+
+void MainWindow::refreshThreadBeginsWork()
+{
+	// disable refresh.
+	btnGetServers->setEnabled(false);
+	btnRefreshAll->setEnabled(false);
+	serverTableHandler->serverTable()->setAllowAllRowsRefresh(false);
+	statusBar()->showMessage(tr("Querying..."));
+}
+
+void MainWindow::refreshThreadEndsWork()
+{
+	btnGetServers->setEnabled(true);
+	btnRefreshAll->setEnabled(true);
+	serverTableHandler->serverTable()->setAllowAllRowsRefresh(true);
+	statusBar()->showMessage(tr("Done"));
 }
 
 void MainWindow::runGame(const Server* server)

@@ -34,6 +34,7 @@ PluginLoader Main::enginePlugins(MAKEID('E','N','G','N'), "./engines/");
 QWidget* Main::mainWindow = NULL;
 Config *Main::config = new Config();
 IP2C *Main::ip2c = NULL;
+RefreshingThread* Main::refreshingThread = new RefreshingThread();
 bool Main::running = true;
 ServerRefresher *Main::guardian = NULL;
 
@@ -72,8 +73,11 @@ int main(int argc, char* argv[])
 	// Init plugin settings
 	Main::enginePlugins.initConfig();
 
-	//Main::guardian = new ServerRefresher(NULL);
+	// Refreshing thread setup:
+	Main::refreshingThread->setDelayBetweenResends(Main::config->setting("QueryTimeout")->integer());
+	Main::refreshingThread->start();
 
+	// Create main window
 	MainWindow* mw = new MainWindow(argc, argv);
 	Main::mainWindow = mw;
 	if (Main::config->setting("MainWindowMaximized")->boolean())
@@ -86,14 +90,14 @@ int main(int argc, char* argv[])
 	}
 
 	int ret = app.exec();
+
+	Main::refreshingThread->quit();
 	Main::running = false;
 
 	Main::config->saveConfig();
 	delete Main::config;
-
 	delete Main::ip2c;
-
-	//delete Main::guardian;
+	delete Main::refreshingThread;
 
 	return ret;
 }

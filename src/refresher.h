@@ -62,8 +62,30 @@ class RefreshingThread : public QThread, public QRunnable
 		void 	registerServer(Server* server);
 		void 	run();
 
+		/**
+		 *	Sets delay between subsequent queries send to the servers.
+		 *	Default value is 1000. Minimum value is 100.
+		 */
+		void	setDelayBetweenResends(int delay) { delayBetweenResends = qMax(delay, 100); }
+
+	signals:
+		/**
+		 *	Emitted when refreshing thread doesn't have anything more to do and
+		 *	goes into sleeping mode.
+		 */
+		void 	sleepingModeEnter();
+
+		/**
+		 *	Emitted when refreshing thread wakes up from sleeping mode and
+		 *	begins refreshing work.
+		 */
+		void	sleepingModeExit();
+
+		void	finishedQueryingMaster(MasterClient* master);
+
 	protected:
 		bool					bKeepRunning;
+		int						delayBetweenResends;
 		QSet<MasterClient*>		registeredMasters;
 		QSet<Server*>			registeredServers;
 		QUdpSocket*				socket;

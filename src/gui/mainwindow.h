@@ -58,12 +58,18 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void runGame(const Server*);
 		void updateServerInfo(QList<Server*>&);
 
+	protected slots:
+		void 	finishedQueryingMaster(MasterClient* master);
+		void 	refreshThreadBeginsWork();
+		void	refreshThreadEndsWork();
+
 	protected:
 		/**
 		 *	@param onlyCustom - if true, the refreshing buttons aren't blocked
 		 *		and servers that aren't custom aren't contacted in any way.
 		 */
 		void refreshServers(bool onlyCustom);
+
 
 	private:
 		DockBuddiesList*	buddiesList;

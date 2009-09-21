@@ -863,8 +863,14 @@ unsigned int Server::packetsSent = 0;
 
 bool Server::refresh()
 {
-	if (Main::guardian == NULL)
+	if (Main::refreshingThread == NULL)
+	{
+		emitUpdated(RESPONSE_BAD);
 		return false;
+	}
+
+	Main::refreshingThread->registerServer(this);
+	return true;
 }
 
 void Server::refreshStarts()
