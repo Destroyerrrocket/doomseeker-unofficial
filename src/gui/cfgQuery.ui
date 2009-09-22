@@ -35,6 +35,9 @@
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_4">
+       <property name="toolTip">
+        <string>How many times Doomseeker will attempt to query each server before deeming it to be not responding.</string>
+       </property>
        <property name="text">
         <string>Number of tries:</string>
        </property>
@@ -42,6 +45,9 @@
      </item>
      <item row="1" column="1">
       <widget class="QSpinBox" name="triesBox">
+       <property name="toolTip">
+        <string>How many times Doomseeker will attempt to query each server before deeming it to be not responding.</string>
+       </property>
        <property name="minimum">
         <number>3</number>
        </property>
@@ -58,6 +64,9 @@
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label">
+       <property name="toolTip">
+        <string>Delay in miliseconds between each query attempt.</string>
+       </property>
        <property name="text">
         <string>Delay between tries (ms):</string>
        </property>
@@ -65,6 +74,9 @@
      </item>
      <item row="2" column="1">
       <widget class="QSpinBox" name="timeoutBox">
+       <property name="toolTip">
+        <string>Delay in miliseconds between each query attempt.</string>
+       </property>
        <property name="minimum">
         <number>500</number>
        </property>
@@ -81,6 +93,9 @@
      </item>
      <item row="3" column="0">
       <widget class="QLabel" name="label_2">
+       <property name="toolTip">
+        <string>Number of refreshing threads. Increasing this number might increase the refresh speed but will also require more processing power.</string>
+       </property>
        <property name="text">
         <string>Number of threads:</string>
        </property>
@@ -88,6 +103,9 @@
      </item>
      <item row="3" column="1">
       <widget class="QSpinBox" name="threadsBox">
+       <property name="toolTip">
+        <string>Number of refreshing threads. Increasing this number might increase the refresh speed but will also require more processing power.</string>
+       </property>
        <property name="minimum">
         <number>1</number>
        </property>
