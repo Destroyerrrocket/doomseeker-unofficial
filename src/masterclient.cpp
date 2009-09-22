@@ -90,7 +90,6 @@ void MasterClient::refresh()
 	bool expectingMorePackets = false;
 	do
 	{
-		printf("!!! ### === still alive.\n");
 		if(!socket.hasPendingDatagrams())
 		{
 			if(!socket.waitForReadyRead(10000))
@@ -157,7 +156,6 @@ void MasterManager::loadMastersFromPlugins()
 
 void MasterManager::refresh()
 {
-	printf("Master manager refresh\n");
 	// Don't delete the servers yet!
 	servers.clear();
 

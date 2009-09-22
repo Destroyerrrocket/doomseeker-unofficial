@@ -120,7 +120,6 @@ void RefreshingThread::run()
 		// refreshing algorithm will be implemented later, if needed.
 		foreach(MasterClient* master, registeredMasters)
 		{
-			printf("Refreshing master!\n");
 			master->refresh();
 			registeredMasters.remove(master);
 			emit finishedQueryingMaster(master);
@@ -195,7 +194,6 @@ void RefreshingThread::run()
 				thisMutex.lock();
 				foreach(Server *server, registeredServers)
 				{
-					printf("Timeout: %d, server: %s:%d\n", timeout, server->address().toString().toAscii().constData(), server->port());
 					// sendRefreshQuery will clean up after a fail
 					// There's no need to call methods like
 					// Server::refreshStops() explicitly.
