@@ -212,6 +212,12 @@ void MainWindow::btnGetServers_Click()
 		return;
 	}
 
+	// Restart the timer. This function is executed either by the timer
+	// itself or by pressing the Get Servers button. If it's called by the
+	// latter we don't want the autorefresh timer to start the whole process
+	// over again as soon as it finishes.
+	initAutoRefreshTimer();
+
 	mc->refresh();
 
 	if (mc->numServers() == 0 && mc->customServs()->numServers() == 0)
