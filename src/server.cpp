@@ -976,7 +976,7 @@ ServerRefresher::ServerRefresher(Server* p) : parent(p)
 
 	if (!Main::mainWindow->isActiveWindow())
 	{
-		queryThreads = qMin(queryThreads, 3);
+		queryThreads = qMin(queryThreads, 6);
 	}
 
 	if(threadPool.maxThreadCount() != queryThreads)
