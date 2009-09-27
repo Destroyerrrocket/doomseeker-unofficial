@@ -413,6 +413,7 @@ void MainWindow::menuOptionsConfigure()
 	// Refresh custom servers list:
 	if (dlg.customServersChanged())
 	{
+		serverTableHandler->serverModel()->removeCustomServers();
 		mc->customServs()->readConfig(Main::config, serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
 		refreshServers(true);
 	}
