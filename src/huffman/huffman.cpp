@@ -1,312 +1,162 @@
-//------------------------------------------------------------------------------
-// huffman.cpp
-//------------------------------------------------------------------------------
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-//------------------------------------------------------------------------------
-// Copyright (C) 2002 Sean White, 2007 Brad Carney, 2008 Rivecoder/GhostlyDeath
-//------------------------------------------------------------------------------
-//
-// Version 4, released 8/1/2008. Compatible with Skulltag launchers and servers.
-//
-//------------------------------------------------------------------------------
+/**
+ * Drop in replacement for ZD huffman.cpp
+ * Version: 1 - Revision: 0
+ * 
+ * Copyright 2009 Timothy Landers
+ * email: code.vortexcortex@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
+/* ***** Changelog: huffman.h *****
+ * 2009.09.30 - v1 r0
+ * 		Intitial Release
+ */
+
+// required for atexit()
 #include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
 
-#include <ctype.h>
-#include <math.h>
-
-#define USE_WINDOWS_DWORD
 #include "huffman.h"
+#include "huffcodec.h"
 
-// Global Huffman decoder.
+using namespace skulltag;
+// Global Variables
+
+/** Reference to the HuffmanCodec Object that will perform the encoding and decoding. */
+
 Huffman g_Huffman;
 
-float Huffman::huffFreq[256] =
-{
-	0.14473691, 0.01147017, 0.00167522, 0.03831121, 0.00356579, 0.03811315,
-	0.00178254, 0.00199644, 0.00183511, 0.00225716, 0.00211240, 0.00308829,
-	0.00172852, 0.00186608, 0.00215921, 0.00168891, 0.00168603, 0.00218586,
-	0.00284414, 0.00161833, 0.00196043, 0.00151029, 0.00173932, 0.00218370,
-	0.00934121, 0.00220530, 0.00381211, 0.00185456, 0.00194675, 0.00161977,
-	0.00186680, 0.00182071, 0.06421956, 0.00537786, 0.00514019, 0.00487155,
-	0.00493925, 0.00503143, 0.00514019, 0.00453520, 0.00454241, 0.00485642,
-	0.00422407, 0.00593387, 0.00458130, 0.00343687, 0.00342823, 0.00531592,
-	0.00324890, 0.00333388, 0.00308613, 0.00293776, 0.00258918, 0.00259278,
-	0.00377105, 0.00267488, 0.00227516, 0.00415997, 0.00248763, 0.00301555,
+// Function Implementation
 
-	0.00220962, 0.00206990, 0.00270369, 0.00231694, 0.00273826, 0.00450928,
-	0.00384380, 0.00504728, 0.00221251, 0.00376961, 0.00232990, 0.00312574,
-	0.00291688, 0.00280236, 0.00252436, 0.00229461, 0.00294353, 0.00241201,
-	0.00366590, 0.00199860, 0.00257838, 0.00225860, 0.00260646, 0.00187256,
-	0.00266552, 0.00242641, 0.00219450, 0.00192082, 0.00182071, 0.02185930,
-	0.00157439, 0.00164353, 0.00161401, 0.00187544, 0.00186248, 0.03338637,
-	0.00186968, 0.00172132, 0.00148509, 0.00177749, 0.00144620, 0.00192442,
-	0.00169683, 0.00209439, 0.00209439, 0.00259062, 0.00194531, 0.00182359,
-	0.00159096, 0.00145196, 0.00128199, 0.00158376, 0.00171412, 0.00243433,
-	0.00345704, 0.00156359, 0.00145700, 0.00157007, 0.00232342, 0.00154198,
+/** Creates and intitializes a HuffmanCodec Object. <br>
+ * Also arranges for HUFFMAN_Destruct() to be called upon termination. */
+Huffman::Huffman(){
+	
+	// The exact structure description of a Huffman tree
+	static unsigned char const compatible_huffman_tree[] = {
+		  0,  0,  0,  1,128,  0,  0,  0,  3, 38, 34,  2,  1, 80,  3,110,
+		144, 67,  0,  2,  1, 74,  3,243,142, 37,  2,  3,124, 58,182,  0,
+		  0,  1, 36,  0,  3,221,131,  3,245,163,  1, 35,  3,113, 85,  0,
+		  1, 41,  1, 77,  3,199,130,  0,  1,206,  3,185,153,  3, 70,118,
+		  0,  3,  3,  5,  0,  0,  1, 24,  0,  2,  3,198,190, 63,  2,  3,
+		139,186, 75,  0,  1, 44,  2,  3,240,218, 56,  3, 40, 39,  0,  0,
+		  2,  2,  3,244,247, 81, 65,  0,  3,  9,125,  3, 68, 60,  0,  0,
+		  1, 25,  3,191,138,  3, 86, 17,  0,  1, 23,  3,220,178,  2,  3,
+		165,194, 14,  1,  0,  2,  2,  0,  0,  2,  2,  3,150,157,208,181,
+		  1,222,  2,  3,216,230,211,  0,  2,  2,  3,252,141, 10, 42,  0,
+		  2,  3,134,135,104,  1,103,  3,187,225, 95, 32,  0,  0,  0,  0,
+		  0,  0,  1, 57,  1, 61,  3,183,237,  0,  0,  3,233,234,  3,246,
+		203,  2,  3,250,147, 79,  1,129,  0,  1,  7,  3,143,136,  1, 20,
+		  3,179,148,  0,  0,  0,  3, 28,106,  3,101, 87,  1, 66,  0,  3,
+		180,219,  3,227,241,  0,  1, 26,  1,251,  3,229,214,  3, 54, 69,
+		  0,  0,  0,  0,  0,  3,231,212,  3,156,176,  3, 93, 83,  0,  3,
+		 96,253,  3, 30, 13,  0,  0,  2,  3,175,254, 94,  3,159, 27,  2,
+		  1,  8,  3,204,226, 78,  0,  0,  0,  3,107, 88,  1, 31,  3,137,
+		169,  2,  2,  3,215,145,  6,  4,  1,127,  0,  1, 99,  3,209,217,
+		  0,  3,213,238,  3,177,170,  1,132,  0,  0,  0,  2,  3, 22, 12,
+		114,  2,  2,  3,158,197, 97, 45,  0,  1, 46,  1,112,  3,174,249,
+		  0,  3,224,102,  2,  3,171,151,193,  0,  0,  0,  3, 15, 16,  3,
+		  2,168,  1, 49,  3, 91,146,  0,  1, 48,  3,173, 29,  0,  3, 19,
+		126,  3, 92,242,  0,  0,  0,  0,  0,  0,  3,205,192,  2,  3,235,
+		149,255,  2,  3,223,184,248,  0,  0,  3,108,236,  3,111, 90,  2,
+		  3,117,115, 71,  0,  0,  3, 11, 50,  0,  3,188,119,  1,122,  3,
+		167,162,  1,160,  1,133,  3,123, 21,  0,  0,  2,  1, 59,  2,  3,
+		155,154, 98, 43,  0,  3, 76, 51,  2,  3,201,116, 72,  2,  0,  2,
+		  3,109,100,121,  2,  3,195,232, 18,  1,  0,  2,  0,  1,164,  2,
+		  3,120,189, 73,  0,  1,196,  3,239,210,  3, 64, 62, 89,  0,  0,
+		  1, 33,  2,  3,228,161, 55,  2,  3, 84,152, 47,  0,  0,  2,  3,
+		207,172,140,  3, 82,166,  0,  3, 53,105,  1, 52,  3,202,200
+	};
 
-	0.00140730, 0.00288807, 0.00152830, 0.00151246, 0.00250203, 0.00224420,
-	0.00161761, 0.00714383, 0.08188576, 0.00802537, 0.00119484, 0.00123805,
-	0.05632671, 0.00305156, 0.00105584, 0.00105368, 0.00099246, 0.00090459,
-	0.00109473, 0.00115379, 0.00261223, 0.00105656, 0.00124381, 0.00100326,
-	0.00127550, 0.00089739, 0.00162481, 0.00100830, 0.00097229, 0.00078864,
-	0.00107240, 0.00084409, 0.00265760, 0.00116891, 0.00073102, 0.00075695,
-	0.00093916, 0.00106880, 0.00086786, 0.00185600, 0.00608367, 0.00133600,
-	0.00075695, 0.00122077, 0.00566955, 0.00108249, 0.00259638, 0.00077063,
-	0.00166586, 0.00090387, 0.00087074, 0.00084914, 0.00130935, 0.00162409,
-	0.00085922, 0.00093340, 0.00093844, 0.00087722, 0.00108249, 0.00098598,
+	// create a HuffmanCodec that is compatible with the previous implementation.
+	__codec = new HuffmanCodec( compatible_huffman_tree, sizeof compatible_huffman_tree );
+	
+	// set up the HuffmanCodec to perform in a backwards compatible fashion.
+	__codec->reversedBytes( true );
+	__codec->allowExpansion( false );
 
-	0.00095933, 0.00427593, 0.00496661, 0.00102775, 0.00159312, 0.00118404,
-	0.00114947, 0.00104936, 0.00154342, 0.00140082, 0.00115883, 0.00110769,
-	0.00161112, 0.00169107, 0.00107816, 0.00142747, 0.00279804, 0.00085922,
-	0.00116315, 0.00119484, 0.00128559, 0.00146204, 0.00130215, 0.00101551,
-	0.00091756, 0.00161184, 0.00236375, 0.00131872, 0.00214120, 0.00088875,
-	0.00138570, 0.00211960, 0.00094060, 0.00088083, 0.00094564, 0.00090243,
-	0.00106160, 0.00088659, 0.00114514, 0.00095861, 0.00108753, 0.00124165,
-	0.00427016, 0.00159384, 0.00170547, 0.00104431, 0.00091395, 0.00095789,
-	0.00134681, 0.00095213, 0.00105944, 0.00094132, 0.00141883, 0.00102127,
-	0.00101911, 0.00082105, 0.00158448, 0.00102631, 0.00087938, 0.00139290,
-
-	0.00114658, 0.00095501, 0.00161329, 0.00126542, 0.00113218, 0.00123661,
-	0.00101695, 0.00112930, 0.00317976, 0.00085346, 0.00101190, 0.00189849,
-	0.00105728, 0.00186824, 0.00092908, 0.00160896
-};
-
-//=============================================================================
-//
-//	HUFFMAN_Construct
-//
-//	Builds the Huffman tree.
-//
-//=============================================================================
-
-Huffman::Huffman() : lastCompMessageSize(0), huffTree(NULL)
-{
-	buildTree(huffFreq);
+	// request that the destruct function be called upon exit.
+	//atexit( HUFFMAN_Destruct );
 }
 
-//=============================================================================
-//
-//	HUFFMAN_Destruct
-//
-//	Frees memory allocated by the Huffman tree.
-//
-//=============================================================================
-
-Huffman::~Huffman()
-{
-	recursiveFreeNode( huffTree );
-
-	free( huffTree );
-	huffTree = NULL;
+/** Releases resources allocated by the HuffmanCodec. */
+Huffman::~Huffman(){
+	if ( __codec != 0 ) delete __codec;
 }
 
-//=============================================================================
-//
-//	HUFFMAN_Encode
-//
-//=============================================================================
-
-void Huffman::encode(const char *in, char *out, int inlen, int *outlen)
-{
-	int i,j,bitat;
-	unsigned int t;
-	bitat=0;
-	for (i=0;i<inlen;i++)
-	{
-		t=huffLookup[static_cast<unsigned char> (in[i])].bits;
-		for (j=0;j<huffLookup[static_cast<unsigned char> (in[i])].len;j++)
-		{
-			putBit(out+1,bitat+huffLookup[static_cast<unsigned char> (in[i])].len-j-1,t&1);
-			t>>=1;
+/** Applies Huffman encoding to a block of data. */
+void Huffman::encode(
+	/** in: Pointer to start of data that is to be encoded. */
+	unsigned char const * const inputBuffer,
+	/** out: Pointer to destination buffer where encoded data will be stored. */
+	unsigned char * const outputBuffer,
+	/** in: Number of chars to read from inputBuffer. */
+	int const &inputBufferSize,
+	/**< in+out: Max chars to write into outputBuffer. <br>
+	 * 		Upon return holds the number of chars stored or 0 if an error occurs. */
+	int * outputBufferSize
+){
+	int bytesWritten = __codec->encode( inputBuffer, outputBuffer, inputBufferSize, *outputBufferSize );
+	
+	// expansion occured -- provide backwards compatibility
+	if ( bytesWritten < 0 ){
+		// check buffer sizes
+		if ( *outputBufferSize < (inputBufferSize + 1) ){
+			// outputBuffer too small, return "no bytes written"
+			*outputBufferSize = 0;
+			return;
 		}
-		bitat+=huffLookup[static_cast<unsigned char> (in[i])].len;
+		
+		// perform the unencoded copy
+		for ( int i = 0; i < inputBufferSize; i++ ) outputBuffer[i+1] = inputBuffer[i];
+		// supply the "unencoded" signal and bytesWritten
+		outputBuffer[0] = 0xff;
+		*outputBufferSize = inputBufferSize + 1;
+	} else {
+		// assign the bytesWritten return value
+		*outputBufferSize = bytesWritten;
 	}
-	*outlen=1+(bitat+7)/8;
-	*out=8*((*outlen)-1)-bitat;
-	if(*outlen >= inlen+1)
-	{
-		*out=0xff;
-		memcpy(out+1,in,inlen);
-		*outlen=inlen+1;
-	}
-}
+} // end function HUFFMAN_Encode
 
-//=============================================================================
-//
-//	HUFFMAN_Decode
-//
-//=============================================================================
-
-void Huffman::decode(const char *in, char *out, int inlen, int *outlen)
-{
-	if(*outlen < 1)
-	{
-		*outlen = 0;
-		return;
-	}
-
-	int bits,tbits,maxBits;
-	huffnode_t *tmp;
-	if (static_cast<unsigned char> (*in)==0xff)
-	{
-		memcpy(out, in+1, (inlen-1) > *outlen ? *outlen : (inlen-1));
-		*outlen=inlen-1;
-		return;
-	}
-	tbits=(inlen-1)*8-static_cast<unsigned char>(*in);
-	bits=0;
-	maxBits = *outlen << 3;
-	*outlen=0;
-	while ((bits<tbits) && (bits<maxBits))
-	{
-		tmp=huffTree;
-		do
-		{
-			if (getBit(in+1,bits))
-				tmp=tmp->one;
-			else
-				tmp=tmp->zero;
-			bits++;
-		} while (tmp->zero);
-		*out++=tmp->val;
-		(*outlen)++;
-	}
-}
-
-void Huffman::findTab(huffnode_t *tmp,int len,unsigned int bits)
-{
-	if (tmp->zero)
-	{
-		findTab(tmp->zero,len+1,bits<<1);
-		findTab(tmp->one,len+1,(bits<<1)|1);
-		return;
-	}
-	huffLookup[tmp->val].len=len;
-	huffLookup[tmp->val].bits=bits;
-	return;
-}
-
-//=============================================================================
-//
-//	huffman_PutBit
-//
-//=============================================================================
-
-void Huffman::putBit(char *buf, int pos, int bit)
-{
-	if (bit)
-		buf[pos/8]|=(1<<(pos%8));
-	else
-		buf[pos/8]&=~(1<<(pos%8));
-}
-
-//=============================================================================
-//
-//	huffman_GetBit
-//
-//=============================================================================
-
-int Huffman::getBit(const char *buf, int pos)
-{
-	if (buf[pos/8]&(1<<(pos%8)))
-		return 1;
-	else
-		return 0;
-}
-
-//=============================================================================
-//
-//	huffman_BuildTree
-//
-//=============================================================================
-
-void Huffman::buildTree(float *freq)
-{
-	float min1,min2;
-	int i,j,minat1,minat2;
-	huffnode_t *work[256];	
-	huffnode_t *tmp;	
-	for (i=0;i<256;i++)
-	{
-		work[i]=(huffnode_t *)malloc(sizeof(huffnode_t));
-
-		work[i]->val=(unsigned char)i;
-		work[i]->freq=freq[i];
-		work[i]->zero=0;
-		work[i]->one=0;
-		huffLookup[i].len=0;
-	}
-	for (i=0;i<255;i++)
-	{
-		minat1=-1;
-		minat2=-1;
-		min1=1E30;
-		min2=1E30;
-		for (j=0;j<256;j++)
-		{
-			if (!work[j])
-				continue;
-			if (work[j]->freq<min1)
-			{
-				minat2=minat1;
-				min2=min1;
-				minat1=j;
-				min1=work[j]->freq;
-			}
-			else if (work[j]->freq<min2)
-			{
-				minat2=j;
-				min2=work[j]->freq;
-			}
+/** Decodes a block of data that is Huffman encoded. */
+void Huffman::decode(
+	unsigned char const * const inputBuffer,	/**< in: Pointer to start of data that is to be decoded. */
+	unsigned char * const outputBuffer,			/**< out: Pointer to destination buffer where decoded data will be stored. */
+	int const &inputBufferSize,					/**< in: Number of chars to read from inputBuffer. */
+	int *outputBufferSize						/**< in+out: Max chars to write into outputBuffer. Upon return holds the number of chars stored or 0 if an error occurs. */
+){
+	// check for "unencoded" signal & provide backwards compatibility
+	if ((inputBufferSize > 0) && ((inputBuffer[0]&0xff) == 0xff)){
+		// check buffer sizes
+		if ( *outputBufferSize < (inputBufferSize - 1) ){
+			// outputBuffer too small, return "no bytes written"
+			*outputBufferSize = 0;
+			return;			
 		}
-
-		tmp= (huffnode_t *)malloc(sizeof(huffnode_t));
-
-		tmp->zero=work[minat2];
-		tmp->one=work[minat1];
-		tmp->freq=work[minat2]->freq+work[minat1]->freq;
-		tmp->val=0xff;
-		work[minat1]=tmp;
-		work[minat2]=0;
+		
+		// perform the unencoded copy
+		for ( int i = 1; i < inputBufferSize; i++ ) outputBuffer[i-1] = inputBuffer[i];
+		
+		// supply the bytesWritten
+		*outputBufferSize = inputBufferSize - 1;
+	} else {
+		// decode the data
+		*outputBufferSize = __codec->decode( inputBuffer, outputBuffer, inputBufferSize, *outputBufferSize );
 	}
-	huffTree=tmp;
-	findTab(huffTree,0,0);
-}
-
-//=============================================================================
-//
-//	huffman_RecursiveFreeNode
-//
-//=============================================================================
-
-void Huffman::recursiveFreeNode(huffnode_t *pNode)
-{
-	if(pNode->one)
-	{
-		recursiveFreeNode(pNode->one);
-
-		free(pNode->one);
-		pNode->one = NULL;
-	}
-
-	if(pNode->zero)
-	{
-		recursiveFreeNode(pNode->zero);
-
-		free(pNode->zero);
-		pNode->zero = NULL;
-	}
-}
+} // end function HUFFMAN_Decode
