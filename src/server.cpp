@@ -972,17 +972,6 @@ void Server::setToDelete(bool b)
 ServerRefresher::ServerRefresher(Server* p) : parent(p)
 {
 	bGuardian = false;
-	int queryThreads = Main::config->setting("QueryThreads")->integer();
-
-	if (!Main::mainWindow->isActiveWindow())
-	{
-		queryThreads = qMin(queryThreads, 6);
-	}
-
-	if(threadPool.maxThreadCount() != queryThreads)
-	{
-		threadPool.setMaxThreadCount(queryThreads);
-	}
 }
 
 void ServerRefresher::startGuardian()
@@ -1001,6 +990,18 @@ void ServerRefresher::run()
 {
 	if (!bGuardian)
 	{
+		int queryThreads = Main::config->setting("QueryThreads")->integer();
+
+		if (!Main::mainWindow->isActiveWindow())
+		{
+			queryThreads = qMin(queryThreads, 6);
+		}
+
+		if(threadPool.maxThreadCount() != queryThreads)
+		{
+			threadPool.setMaxThreadCount(queryThreads);
+		}
+
 		// If the program is no longer running then do nothing.
 		bool bKillThread = false;
 		if(Main::running)

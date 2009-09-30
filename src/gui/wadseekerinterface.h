@@ -38,6 +38,7 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 
 	public:
 		WadSeekerInterface(QWidget* parent = NULL);
+		~WadSeekerInterface();
 
 		bool 		isAutomatic() { return bAutomatic; }
 

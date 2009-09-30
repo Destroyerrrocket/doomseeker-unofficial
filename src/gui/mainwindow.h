@@ -45,6 +45,16 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		MainWindow(int argc, char** argv);
 		~MainWindow();
 
+		/**
+		 *	This will either enable or disable the auto refresh timer
+		 *	depending on the settings. This method also takes care of every
+		 *	checks. It will make sure the delay between the refreshes is
+		 *	inside gives boundaries (30 - 3600 seconds).
+		 */
+		void	initAutoRefreshTimer();
+
+		void	stopAutoRefreshTimer() { autoRefreshTimer.stop(); }
+
 	public slots:
 		void 	checkRefreshFinished();
 
@@ -66,14 +76,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	changeEvent(QEvent* event);
 
 		void	closeEvent(QCloseEvent* event);
-
-		/**
-		 *	This will either enable or disable the auto refresh timer
-		 *	depending on the settings. This method also takes care of every
-		 *	checks. It will make sure the delay between the refreshes is
-		 *	inside gives boundaries (30 - 3600 seconds).
-		 */
-		void	initAutoRefreshTimer();
 
 		/**
 		 *	Checks whether the program will use the tray icon and

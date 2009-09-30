@@ -106,18 +106,6 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), tra
 	connect(serverTableHandler, SIGNAL( serverDoubleClicked(const Server*) ), this, SLOT( runGame(const Server*) ) );
 	connect(serverTableHandler, SIGNAL( serversSelected(QList<Server*>&) ), this, SLOT( updateServerInfo(QList<Server*>&) ) );
 
-	// check query on statup
-	bool queryOnStartup = Main::config->setting("QueryOnStartup")->integer() != 0;
-	if (queryOnStartup)
-		btnGetServers_Click();
-	else
-	{
-		// Custom servers should be refreshed no matter what.
-		// They will not block the app in any way, there is no reason
-		// not to refresh them.
-		refreshServers(true); // This should include only refreshing customs
-	}
-
 	// IP2C
 	connect(Main::ip2c, SIGNAL( databaseUpdated() ), serverTableHandler, SLOT( updateCountryFlags() ) );
 	if (Main::ip2c->needsUpdate() &&
@@ -136,6 +124,20 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), tra
 	// This must be executed in order to set port query booleans
 	// after the Query menu actions settings are read.
 	enablePort();
+
+	// check query on statup
+	bool queryOnStartup = Main::config->setting("QueryOnStartup")->integer() != 0;
+	if (queryOnStartup)
+	{
+		btnGetServers_Click();
+	}
+	else
+	{
+		// Custom servers should be refreshed no matter what.
+		// They will not block the app in any way, there is no reason
+		// not to refresh them.
+		refreshServers(true); // This should include only refreshing customs
+	}
 }
 
 MainWindow::~MainWindow()
