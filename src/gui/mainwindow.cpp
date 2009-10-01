@@ -190,7 +190,7 @@ void MainWindow::autoRefreshTimer_timeout()
 {
 	if (Main::config->setting("QueryAutoRefreshDontIfActive")->boolean() && !isMinimized())
 	{
-		if (isActiveWindow ())
+		if (QApplication::activeWindow() != 0)
 		{
 			return;
 		}
