@@ -89,6 +89,8 @@ int MasterClient::numPlayers() const
 
 void MasterClient::refresh()
 {
+	emptyServerList();
+
 	// Connect to the server
 	QUdpSocket socket;
 	socket.bind();
