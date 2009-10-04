@@ -54,6 +54,8 @@ TeamInfo::TeamInfo(const QString &name, const QColor &color, unsigned int score)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+const QPixmap *SkulltagServer::ICON = NULL;
+
 const DMFlagsSection SkulltagServer::DM_FLAGS[NUM_DMFLAG_SECTIONS] =
 {
 	{
@@ -405,9 +407,11 @@ void SkulltagServer::hostProperties(QStringList& args) const
 	args << "+sv_maxplayers" << QString::number(maxPlayers);
 }
 
-QPixmap SkulltagServer::icon() const
+const QPixmap &SkulltagServer::icon() const
 {
-	return QPixmap(skulltag_xpm);
+	if(ICON == NULL)
+		ICON = new QPixmap(skulltag_xpm);
+	return *ICON;
 }
 
 bool SkulltagServer::readRequest(QByteArray &data)

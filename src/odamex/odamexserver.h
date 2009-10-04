@@ -43,13 +43,13 @@ class OdamexServer : public Server
 		};
 		static const DMFlagsSection		DM_FLAGS;
 		static const GameMode			GAME_MODES[NUM_ODAMEX_GAME_MODES];
-		static const QPixmap			ICON;
+		static const QPixmap			*ICON;
 
 		OdamexServer(const QHostAddress &address, unsigned short port);
 
 		QString			clientBinary(QString& error) const;
 		void			connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
-		QPixmap			icon() const;
+		const QPixmap	&icon() const;
 
 		QString			serverBinary(QString& error) const;
 

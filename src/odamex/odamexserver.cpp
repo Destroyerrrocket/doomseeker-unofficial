@@ -33,6 +33,8 @@ const // clear warnings
 #define SPECTATOR_INFO		0x01020304
 #define EXTRA_INFO			0x01020305
 
+const QPixmap *OdamexServer::ICON = NULL;
+
 const GameMode OdamexServer::GAME_MODES[NUM_ODAMEX_GAME_MODES] =
 {
 	GameMode::COOPERATIVE,
@@ -111,9 +113,11 @@ void OdamexServer::connectParameters(QStringList &args, PathFinder &pf, bool &iw
 	}
 }
 
-QPixmap OdamexServer::icon() const
+const QPixmap &OdamexServer::icon() const
 {
-	return QPixmap(odamex_xpm);
+	if(ICON == NULL)
+		ICON = new QPixmap(odamex_xpm);
+	return *ICON;
 }
 
 bool OdamexServer::sendRequest(QByteArray &data)
