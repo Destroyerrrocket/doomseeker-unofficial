@@ -25,6 +25,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QFileInfo>
+#include <QHash>
 #include <QResource>
 #include <QTime>
 #include <QTimeLine>
@@ -34,7 +35,7 @@
 #include "sdeapi/pluginloader.hpp"
 #include "sdeapi/scanner.hpp"
 
-IP2C::IP2C(QString file, QUrl netLocation) : file(file), netLocation(netLocation), downloadProgressWidget(NULL)
+IP2C::IP2C(QString file, QUrl netLocation) : file(file), netLocation(netLocation), downloadProgressWidget(NULL), flagLan(":flags/lan-small"), flagLocalhost(":flags/localhost-small"), flagUnknown(":flags/unknown-small")
 {
 	read = readDatabase();
 	www = new WWW();
@@ -141,7 +142,7 @@ void IP2C::downloadProgress(int value, int max)
 	downloadProgressWidget->setValue(value);
 }
 
-QPixmap IP2C::flag(unsigned int ipaddress) const
+const QPixmap &IP2C::flag(unsigned int ipaddress)
 {
 	const static unsigned LOCALHOST_BEGIN = QHostAddress("127.0.0.0").toIPv4Address();
 	const static unsigned LOCALHOST_END = QHostAddress("127.255.255.255").toIPv4Address();
@@ -152,25 +153,28 @@ QPixmap IP2C::flag(unsigned int ipaddress) const
 	const static unsigned LAN_3_BEGIN = QHostAddress("192.168.0.0").toIPv4Address();
 	const static unsigned LAN_3_END = QHostAddress("192.168.255.255").toIPv4Address();
 
-	const QString unknown = ":flags/unknown";
-
 	if (ipaddress >= LOCALHOST_BEGIN && ipaddress <= LOCALHOST_END)
 	{
-		return QPixmap(":flags/localhost-small");
+		return flagLocalhost;
 	}
 
 	if (ipaddress >= LAN_1_BEGIN && ipaddress <= LAN_1_END
 	||	ipaddress >= LAN_2_BEGIN && ipaddress <= LAN_2_END
 	||	ipaddress >= LAN_3_BEGIN && ipaddress <= LAN_3_END)
 	{
-		return QPixmap(":flags/lan-small");
+		return flagLan;
 	}
 
 	QString country = lookupIP(ipaddress);
 	if (country.isEmpty())
 	{
 		printf("Unrecognized IP address: %s (%u)\n", QHostAddress(ipaddress).toString().toAscii().constData(), ipaddress);
-		return QPixmap(":flags/unknown-small");
+		return flagUnknown;
+	}
+
+	if (flags.contains(country))
+	{
+		return flags[country];
 	}
 
 	QString resName = ":flags/" + country;
@@ -179,10 +183,12 @@ QPixmap IP2C::flag(unsigned int ipaddress) const
 	if (!res.isValid())
 	{
 		printf("No flag for country: %s\n", country.toAscii().constData());
-		return QPixmap(":flags/unknown-small");
+		flags[country] = flagUnknown;
+		return flagUnknown;
 	}
 
-	return QPixmap(resName);
+	flags[country] = QPixmap(resName);
+	return flags[country];
 }
 
 QString IP2C::lookupIP(unsigned int ipaddress) const

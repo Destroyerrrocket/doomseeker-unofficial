@@ -24,6 +24,7 @@
 #ifndef __IP2C_H__
 #define __IP2C_H__
 
+#include <QHash>
 #include <QHostAddress>
 #include <QList>
 #include <QPixmap>
@@ -53,8 +54,8 @@ class MAIN_EXPORT IP2C : public QObject
 
 		void			downloadDatabase(QStatusBar *statusbar=NULL);
 		const QString& 	filename() { return file; }
-		QPixmap			flag(unsigned int ipaddress) const;
-		QPixmap 		flag(const QHostAddress& ipaddress) const { return flag(ipaddress.toIPv4Address()); }
+		const QPixmap	&flag(unsigned int ipaddress);
+		const QPixmap	&flag(const QHostAddress& ipaddress) { return flag(ipaddress.toIPv4Address()); }
 		bool			isRead() const { return read; }
 		QString			lookupIP(unsigned int ipaddress) const;
 		QString			lookupIP(const QHostAddress &ipaddress) const { return lookupIP(ipaddress.toIPv4Address()); }
@@ -93,12 +94,17 @@ class MAIN_EXPORT IP2C : public QObject
 		bool	convertAndSaveDatabase(QByteArray& downloadedData);
 
 	private:
-		QList<IP2CData>	database;
-		QString			file;
-		QUrl			netLocation;
-		bool			read;
-		QProgressBar	*downloadProgressWidget;
-		WWW*			www;
+		const QPixmap			flagLan;
+		const QPixmap			flagLocalhost;
+		const QPixmap			flagUnknown;
+		QHash<QString, QPixmap>	flags;
+
+		QList<IP2CData>			database;
+		QString					file;
+		QUrl					netLocation;
+		bool					read;
+		QProgressBar			*downloadProgressWidget;
+		WWW*					www;
 
 	private slots:
 		void	downloadProgress(int value, int max);
