@@ -482,6 +482,7 @@ void MainWindow::refreshThreadEndsWork()
 	btnRefreshAll->setEnabled(true);
 	serverTableHandler->serverTable()->setAllowAllRowsRefresh(true);
 	statusBar()->showMessage(tr("Done"));
+	updateTrayIconTooltip();
 }
 
 void MainWindow::runGame(const Server* server)
