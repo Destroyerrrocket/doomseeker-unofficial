@@ -138,8 +138,12 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 
 		void	initRules();
 
+		bool	loadConfig(const QString& filename);
+
 		void	removeDMFlagsTabs();
 		void	removeLimitWidgets();
+
+		bool	saveConfig(const QString& filename);
 };
 
 #endif

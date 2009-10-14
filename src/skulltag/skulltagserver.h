@@ -121,11 +121,11 @@ class SkulltagServer : public Server
 		static const DMFlagsSection		DM_FLAGS[NUM_DMFLAG_SECTIONS];
 		static const GameMode	GAME_MODES[NUM_SKULLTAG_GAME_MODES];
 		static const GameCVar	GAME_MODIFIERS[NUM_SKULLTAG_GAME_MODIFIERS];
-		static const QPixmap	ICON;
+		static const QPixmap	*ICON;
 
 		SkulltagServer(const QHostAddress &address, unsigned short port);
 
-		QPixmap			icon() const;
+		const QPixmap	&icon() const;
 		/**
 		 *	If this is a normal server simple path to executable file is
 		 *	returned. If this is a testing server, a shell script is created
@@ -219,7 +219,7 @@ class SkulltagRConProtocol : public RConProtocol
 		SkulltagRConProtocol(Server *server);
 
 		void	run();
-		void	processPacket(const char *data, int length, bool initial=false, int maxUpdates=-1, int *pos=NULL);
+		void	processPacket(const char *data, int length, bool initial=false, int maxUpdates=1, int *pos=NULL);
 
 		QString	hostName;
 		QString	salt;

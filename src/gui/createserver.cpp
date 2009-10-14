@@ -59,6 +59,12 @@ CreateServerDlg::CreateServerDlg(QWidget* parent) : QDialog(parent)
 	lstMaplist->setModel(new QStandardItemModel(this));
 
 	initPrimary();
+
+	QFileInfo fi("tmpserver.cfg");
+	if (fi.exists())
+	{
+		loadConfig("tmpserver.cfg");
+	}
 }
 
 CreateServerDlg::~CreateServerDlg()
@@ -86,6 +92,10 @@ void CreateServerDlg::accept()
 		if (!ok)
 		{
 			QMessageBox::critical(this, errorCapt, error);
+		}
+		else
+		{
+			saveConfig("tmpserver.cfg");
 		}
 	}
 }
@@ -269,91 +279,7 @@ void CreateServerDlg::btnLoadClicked()
 		QFileInfo fi(strFile);
 		Main::config->setting("PreviousCreateServerConfigDir")->setValue(fi.absolutePath());
 
-		QAbstractItemModel* model;
-		QStringList stringList;
-		Config cfg(strFile);
-
-		// General
-		QString engineName = cfg.setting("engine")->string();
-		int engIndex = Main::enginePlugins.pluginIndexFromName(engineName);
-		if (engIndex < 0)
-		{
-			QMessageBox::critical(this, tr("Doomseeker - load server config"), tr("Plugin for engine \"%1\" is not present!").arg(engineName));
-			return;
-		}
-
-		const PluginInfo* prevEngine = currentEngine;
-
-		cboEngine->setCurrentIndex(engIndex);
-
-		if (prevEngine != currentEngine || !cbLockExecutable->isChecked())
-		{
-			leExecutable->setText(cfg.setting("executable")->string());
-		}
-
-		leServername->setText(cfg.setting("name")->string());
-		spinPort->setValue(cfg.setting("port")->integer());
-		cboGamemode->setCurrentIndex(cfg.setting("gamemode")->integer());
-		leMap->setText(cfg.setting("map")->string());
-		addIwad(cfg.setting("iwad")->string());
-
-		stringList = cfg.setting("pwads")->string().split(";");
-		model = lstAdditionalFiles->model();
-		model->removeRows(0, model->rowCount());
-		foreach (QString s, stringList)
-		{
-			addWadPath(s);
-		}
-
-		cbBroadcastToLAN->setChecked(cfg.setting("broadcastToLAN")->boolean());
-		cbBroadcastToMaster->setChecked(cfg.setting("broadcastToMaster")->boolean());
-
-		// Rules
-		cboDifficulty->setCurrentIndex(cfg.setting("difficulty")->integer());
-		cboModifier->setCurrentIndex(cfg.setting("modifier")->integer());
-		spinMaxClients->setValue(cfg.setting("maxClients")->integer());
-		spinMaxPlayers->setValue(cfg.setting("maxPlayers")->integer());
-
-		QList<GameLimitWidget*>::iterator it;
-		for (it = limitWidgets.begin(); it != limitWidgets.end(); ++it)
-		{
-			(*it)->spinBox->setValue(cfg.setting((*it)->limit.consoleCommand)->integer());
-		}
-
-		stringList = cfg.setting("maplist")->string().split(";");
-		model = lstMaplist->model();
-		model->removeRows(0, model->rowCount());
-		foreach(QString s, stringList)
-		{
-			addMapToMaplist(s);
-		}
-		cbRandomMapRotation->setChecked(cfg.setting("randomMapRotation")->boolean());
-
-		// Misc.
-		leURL->setText(cfg.setting("URL")->string());
-		leEmail->setText(cfg.setting("eMail")->string());
-		leConnectPassword->setText(cfg.setting("connectPassword")->string());
-		leJoinPassword->setText(cfg.setting("joinPassword")->string());
-		leRConPassword->setText(cfg.setting("RConPassword")->string());
-		pteMOTD->document()->setPlainText(cfg.setting("MOTD")->string());
-
-		// DMFlags
-		foreach(DMFlagsTabWidget* p, dmFlagsTabs)
-		{
-			for (int i = 0; i < p->section->size; ++i)
-			{
-				QRegExp re("[^a-zA-Z]");
-				QString name1 = p->section->name;
-				QString name2 = p->section->flags[i].name;
-				name1 = name1.remove(re);
-				name2 = name2.remove(re);
-				bool b = cfg.setting(name1 + name2)->boolean();
-				p->checkBoxes[i]->setChecked(b);
-			}
-		}
-
-		// Custom parameters
-		pteCustomParameters->document()->setPlainText(cfg.setting("CustomParams")->string());
+		loadConfig(strFile);
 	}
 }
 
@@ -379,66 +305,7 @@ void CreateServerDlg::btnSaveClicked()
 		if (fi.suffix().isEmpty())
 			strFile += ".cfg";
 
-		QStringList stringList;
-		Config cfg(strFile, false);
-
-		// General
-		cfg.setting("engine")->setValue(cboEngine->currentText());
-		cfg.setting("executable")->setValue(leExecutable->text());
-		cfg.setting("name")->setValue(leServername->text());
-		cfg.setting("port")->setValue(spinPort->value());
-		cfg.setting("gamemode")->setValue(cboGamemode->currentIndex());
-		cfg.setting("map")->setValue(leMap->text());
-		cfg.setting("iwad")->setValue(cboIwad->currentText());
-
-		stringList = Main::listViewStandardItemsToStringList(lstAdditionalFiles);
-		cfg.setting("pwads")->setValue(stringList.join(";"));
-
-		cfg.setting("broadcastToLAN")->setValue(cbBroadcastToLAN->isChecked());
-		cfg.setting("broadcastToMaster")->setValue(cbBroadcastToMaster->isChecked());
-
-		// Rules
-		cfg.setting("difficulty")->setValue(cboDifficulty->currentIndex());
-		cfg.setting("modifier")->setValue(cboModifier->currentIndex());
-		cfg.setting("maxClients")->setValue(spinMaxClients->value());
-		cfg.setting("maxPlayers")->setValue(spinMaxPlayers->value());
-
-		QList<GameLimitWidget*>::iterator it;
-		for (it = limitWidgets.begin(); it != limitWidgets.end(); ++it)
-		{
-			cfg.setting((*it)->limit.consoleCommand)->setValue((*it)->spinBox->value());
-		}
-
-		stringList = Main::listViewStandardItemsToStringList(lstMaplist);
-		cfg.setting("maplist")->setValue(stringList.join(";"));
-		cfg.setting("randomMapRotation")->setValue(cbRandomMapRotation->isChecked());
-
-		// Misc.
-		cfg.setting("URL")->setValue(leURL->text());
-		cfg.setting("eMail")->setValue(leEmail->text());
-		cfg.setting("connectPassword")->setValue(leConnectPassword->text());
-		cfg.setting("joinPassword")->setValue(leJoinPassword->text());
-		cfg.setting("RConPassword")->setValue(leRConPassword->text());
-		cfg.setting("MOTD")->setValue(pteMOTD->toPlainText());
-
-		// DMFlags
-		foreach(DMFlagsTabWidget* p, dmFlagsTabs)
-		{
-			for (int i = 0; i < p->section->size; ++i)
-			{
-				QRegExp re("[^a-zA-Z]");
-				QString name1 = p->section->name;
-				QString name2 = p->section->flags[i].name;
-				name1 = name1.remove(re);
-				name2 = name2.remove(re);
-				cfg.setting(name1 + name2)->setValue(p->checkBoxes[i]->isChecked());
-			}
-		}
-
-		// Custom parameters
-		cfg.setting("CustomParams")->setValue(pteCustomParameters->toPlainText());
-
-		if (!cfg.saveConfig())
+		if (!saveConfig(strFile))
 		{
 			QMessageBox::critical(this, tr("Doomseeker - save server config"), tr("Unable to save server configuration!"));
 		}
@@ -750,6 +617,96 @@ void CreateServerDlg::initRules()
 	}
 }
 
+bool CreateServerDlg::loadConfig(const QString& filename)
+{
+	QAbstractItemModel* model;
+	QStringList stringList;
+	Config cfg(filename);
+
+	// General
+	QString engineName = cfg.setting("engine")->string();
+	int engIndex = Main::enginePlugins.pluginIndexFromName(engineName);
+	if (engIndex < 0)
+	{
+		QMessageBox::critical(this, tr("Doomseeker - load server config"), tr("Plugin for engine \"%1\" is not present!").arg(engineName));
+		return false;
+	}
+
+	const PluginInfo* prevEngine = currentEngine;
+
+	cboEngine->setCurrentIndex(engIndex);
+
+	if (prevEngine != currentEngine || !cbLockExecutable->isChecked())
+	{
+		leExecutable->setText(cfg.setting("executable")->string());
+	}
+
+	leServername->setText(cfg.setting("name")->string());
+	spinPort->setValue(cfg.setting("port")->integer());
+	cboGamemode->setCurrentIndex(cfg.setting("gamemode")->integer());
+	leMap->setText(cfg.setting("map")->string());
+	addIwad(cfg.setting("iwad")->string());
+
+	stringList = cfg.setting("pwads")->string().split(";");
+	model = lstAdditionalFiles->model();
+	model->removeRows(0, model->rowCount());
+	foreach (QString s, stringList)
+	{
+		addWadPath(s);
+	}
+
+	cbBroadcastToLAN->setChecked(cfg.setting("broadcastToLAN")->boolean());
+	cbBroadcastToMaster->setChecked(cfg.setting("broadcastToMaster")->boolean());
+
+	// Rules
+	cboDifficulty->setCurrentIndex(cfg.setting("difficulty")->integer());
+	cboModifier->setCurrentIndex(cfg.setting("modifier")->integer());
+	spinMaxClients->setValue(cfg.setting("maxClients")->integer());
+	spinMaxPlayers->setValue(cfg.setting("maxPlayers")->integer());
+
+	QList<GameLimitWidget*>::iterator it;
+	for (it = limitWidgets.begin(); it != limitWidgets.end(); ++it)
+	{
+		(*it)->spinBox->setValue(cfg.setting((*it)->limit.consoleCommand)->integer());
+	}
+
+	stringList = cfg.setting("maplist")->string().split(";");
+	model = lstMaplist->model();
+	model->removeRows(0, model->rowCount());
+	foreach(QString s, stringList)
+	{
+		addMapToMaplist(s);
+	}
+	cbRandomMapRotation->setChecked(cfg.setting("randomMapRotation")->boolean());
+
+	// Misc.
+	leURL->setText(cfg.setting("URL")->string());
+	leEmail->setText(cfg.setting("eMail")->string());
+	leConnectPassword->setText(cfg.setting("connectPassword")->string());
+	leJoinPassword->setText(cfg.setting("joinPassword")->string());
+	leRConPassword->setText(cfg.setting("RConPassword")->string());
+	pteMOTD->document()->setPlainText(cfg.setting("MOTD")->string());
+
+	// DMFlags
+	foreach(DMFlagsTabWidget* p, dmFlagsTabs)
+	{
+		for (int i = 0; i < p->section->size; ++i)
+		{
+			QRegExp re("[^a-zA-Z]");
+			QString name1 = p->section->name;
+			QString name2 = p->section->flags[i].name;
+			name1 = name1.remove(re);
+			name2 = name2.remove(re);
+			bool b = cfg.setting(name1 + name2)->boolean();
+			p->checkBoxes[i]->setChecked(b);
+		}
+	}
+
+	// Custom parameters
+	pteCustomParameters->document()->setPlainText(cfg.setting("CustomParams")->string());
+	return true;
+}
+
 void CreateServerDlg::removeDMFlagsTabs()
 {
 	QList<DMFlagsTabWidget*>::iterator it;
@@ -776,4 +733,68 @@ void CreateServerDlg::removeLimitWidgets()
 	}
 
 	limitWidgets.clear();
+}
+
+bool CreateServerDlg::saveConfig(const QString& filename)
+{
+	QStringList stringList;
+	Config cfg(filename, false);
+
+	// General
+	cfg.setting("engine")->setValue(cboEngine->currentText());
+	cfg.setting("executable")->setValue(leExecutable->text());
+	cfg.setting("name")->setValue(leServername->text());
+	cfg.setting("port")->setValue(spinPort->value());
+	cfg.setting("gamemode")->setValue(cboGamemode->currentIndex());
+	cfg.setting("map")->setValue(leMap->text());
+	cfg.setting("iwad")->setValue(cboIwad->currentText());
+
+	stringList = Main::listViewStandardItemsToStringList(lstAdditionalFiles);
+	cfg.setting("pwads")->setValue(stringList.join(";"));
+
+	cfg.setting("broadcastToLAN")->setValue(cbBroadcastToLAN->isChecked());
+	cfg.setting("broadcastToMaster")->setValue(cbBroadcastToMaster->isChecked());
+
+	// Rules
+	cfg.setting("difficulty")->setValue(cboDifficulty->currentIndex());
+	cfg.setting("modifier")->setValue(cboModifier->currentIndex());
+	cfg.setting("maxClients")->setValue(spinMaxClients->value());
+	cfg.setting("maxPlayers")->setValue(spinMaxPlayers->value());
+
+	QList<GameLimitWidget*>::iterator it;
+	for (it = limitWidgets.begin(); it != limitWidgets.end(); ++it)
+	{
+		cfg.setting((*it)->limit.consoleCommand)->setValue((*it)->spinBox->value());
+	}
+
+	stringList = Main::listViewStandardItemsToStringList(lstMaplist);
+	cfg.setting("maplist")->setValue(stringList.join(";"));
+	cfg.setting("randomMapRotation")->setValue(cbRandomMapRotation->isChecked());
+
+	// Misc.
+	cfg.setting("URL")->setValue(leURL->text());
+	cfg.setting("eMail")->setValue(leEmail->text());
+	cfg.setting("connectPassword")->setValue(leConnectPassword->text());
+	cfg.setting("joinPassword")->setValue(leJoinPassword->text());
+	cfg.setting("RConPassword")->setValue(leRConPassword->text());
+	cfg.setting("MOTD")->setValue(pteMOTD->toPlainText());
+
+	// DMFlags
+	foreach(DMFlagsTabWidget* p, dmFlagsTabs)
+	{
+		for (int i = 0; i < p->section->size; ++i)
+		{
+			QRegExp re("[^a-zA-Z]");
+			QString name1 = p->section->name;
+			QString name2 = p->section->flags[i].name;
+			name1 = name1.remove(re);
+			name2 = name2.remove(re);
+			cfg.setting(name1 + name2)->setValue(p->checkBoxes[i]->isChecked());
+		}
+	}
+
+	// Custom parameters
+	cfg.setting("CustomParams")->setValue(pteCustomParameters->toPlainText());
+
+	return cfg.saveConfig();
 }

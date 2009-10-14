@@ -274,7 +274,8 @@ class MAIN_EXPORT Server : public QObject
 			RESPONSE_TIMEOUT,	// Server didn't respond at all
 			RESPONSE_WAIT,	 	// Server responded with "wait"
 			RESPONSE_BAD,		// Probably refreshing too quickly
-			RESPONSE_BANNED		// Won't recieve data from this server ever.
+			RESPONSE_BANNED,	// Won't recieve data from this server ever.
+			RESPONSE_NO_RESPONSE_YET	// "Dummy" response for servers that weren't refreshed yet
 		};
 
 		Server(const QHostAddress &address, unsigned short port);
@@ -300,7 +301,7 @@ class MAIN_EXPORT Server : public QObject
 		const DMFlags		&gameFlags() const { return dmFlags; }
 		const GameMode		&gameMode() const { return currentGameMode; }
 		virtual bool		hasRcon() const { return false; }
-		virtual QPixmap		icon() const=0;
+		virtual const QPixmap	&icon() const=0;
 		bool				isCustom() const { return custom; }
 		bool				isKnown() const { return bKnown; }
 		bool				isLocked() const { return locked; }

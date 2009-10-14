@@ -33,7 +33,6 @@
 #include <QAbstractItemView>
 #include <QListView>
 #include <QStandardItemModel>
-#include <QUdpSocket>
 
 /**
  * This class holds some global information.
@@ -41,6 +40,7 @@
 class MAIN_EXPORT Main
 {
 	public:
+
 		static Config 				*config;
 		static IP2C					*ip2c;
 		static QWidget*				mainWindow;

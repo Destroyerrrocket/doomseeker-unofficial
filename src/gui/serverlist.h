@@ -54,16 +54,16 @@ class SLHandler : public QObject
 
 
 	public slots:
+		void cleanUp();
 		void redraw();
 		void refreshAll();
 		void serverBegunRefreshing(Server* server);
 		void serverUpdated(Server *server, int response);
 		void tableRightClicked(const QModelIndex&, const QPoint&);
-		void updateCountryFlags();
+		void updateCountryFlags(bool onlyIfServerHasNoFlagYet = false);
 		void updateSearch(const QString& search);
 
 	protected slots:
-		void cleanUp();
 		// Handles column sorting.
 		void columnHeaderClicked(int);
 		void doubleClicked(const QModelIndex&);

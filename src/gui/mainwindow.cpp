@@ -39,8 +39,9 @@
 #include <QHeaderView>
 #include <QMessageBox>
 
-MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
+MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), trayIcon(NULL), trayIconMenu(NULL), bWantToQuit(false)
 {
+	Main::mainWindow = this;
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
 
@@ -99,29 +100,17 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 	this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
 
 	connect(btnGetServers, SIGNAL( clicked() ), this, SLOT( btnGetServers_Click() ));
-	connect(btnRefreshAll, SIGNAL( clicked() ), serverTableHandler, SLOT( refreshAll() ));
+	connect(btnRefreshAll, SIGNAL( clicked() ), this, SLOT( btnRefreshAll_Click() ));
 	connect(menuActionAbout, SIGNAL( triggered() ), this, SLOT( menuHelpAbout() ));
 	connect(menuActionBuddies, SIGNAL( triggered() ), this, SLOT( menuBuddies() ));
 	connect(menuActionConfigure, SIGNAL( triggered() ), this, SLOT( menuOptionsConfigure() ));
 	connect(menuActionCreateServer, SIGNAL( triggered() ), this, SLOT( menuCreateServer() ));
-	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( close() ));
+	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( quitProgram() ));
 	connect(menuActionServerInfo, SIGNAL( triggered() ), this, SLOT( menuServerInfo() ));
 	connect(menuActionWadseeker, SIGNAL( triggered() ), this, SLOT( menuWadSeeker() ));
 	connect(serverSearch, SIGNAL( textChanged(const QString &) ), serverTableHandler, SLOT( updateSearch(const QString &) ));
 	connect(serverTableHandler, SIGNAL( serverDoubleClicked(const Server*) ), this, SLOT( runGame(const Server*) ) );
 	connect(serverTableHandler, SIGNAL( serversSelected(QList<Server*>&) ), this, SLOT( updateServerInfo(QList<Server*>&) ) );
-
-	// check query on statup
-	bool queryOnStartup = Main::config->setting("QueryOnStartup")->integer() != 0;
-	if (queryOnStartup)
-		btnGetServers_Click();
-	else
-	{
-		// Custom servers should be refreshed no matter what.
-		// They will not block the app in any way, there is no reason
-		// not to refresh them.
-		refreshServers(true); // This should include only refreshing customs
-	}
 
 	// IP2C
 	connect(Main::ip2c, SIGNAL( databaseUpdated() ), serverTableHandler, SLOT( updateCountryFlags() ) );
@@ -131,9 +120,30 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL)
 		Main::ip2c->downloadDatabase(statusBar());
 	}
 
+	// Auto refresh timer
+	initAutoRefreshTimer();
+	connect(&autoRefreshTimer, SIGNAL( timeout() ), this, SLOT( autoRefreshTimer_timeout() ));
+
+	// Tray icon
+	initTrayIcon();
+
 	// This must be executed in order to set port query booleans
 	// after the Query menu actions settings are read.
 	enablePort();
+
+	// check query on statup
+	bool queryOnStartup = Main::config->setting("QueryOnStartup")->integer() != 0;
+	if (queryOnStartup)
+	{
+		btnGetServers_Click();
+	}
+	else
+	{
+		// Custom servers should be refreshed no matter what.
+		// They will not block the app in any way, there is no reason
+		// not to refresh them.
+		refreshServers(true); // This should include only refreshing customs
+	}
 }
 
 MainWindow::~MainWindow()
@@ -161,16 +171,78 @@ MainWindow::~MainWindow()
 	    }
 	}
 
+	if (trayIcon != NULL)
+	{
+		trayIcon->setVisible(false);
+		delete trayIcon;
+		trayIcon = NULL;
+	}
+
+	if (trayIconMenu != NULL)
+	{
+		delete trayIconMenu;
+		trayIconMenu = NULL;
+	}
+
 	delete serverTableHandler;
 
 	if(mc != NULL)
 		delete mc;
+
 	delete[] queryMenuPorts;
+}
+
+void MainWindow::autoRefreshTimer_timeout()
+{
+	if (Main::config->setting("QueryAutoRefreshDontIfActive")->boolean() && !isMinimized())
+	{
+		if (QApplication::activeWindow() != 0)
+		{
+			return;
+		}
+	}
+
+	btnGetServers_Click();
+}
+
+void MainWindow::btnRefreshAll_Click()
+{
+	serverTableHandler->refreshAll();
 }
 
 void MainWindow::btnGetServers_Click()
 {
 	Main::refreshingThread->registerMaster(mc);
+}
+
+void MainWindow::changeEvent(QEvent* event)
+{
+	if (event->type() == QEvent::ActivationChange && isActiveWindow() && !isMinimized() && !isHidden())
+	{
+		serverTableHandler->cleanUp();
+		event->accept();
+	}
+	else
+	{
+		event->ignore();
+	}
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+	// Check if tray icon is available and if we want to minimize to tray icon
+	// when 'X' button is pressed. Real quit requests are handled by
+	// quitProgram() method. This method sets bWantToQuit to true.
+	if (trayIcon != NULL && Main::config->setting("CloseToTrayIcon")->boolean() && !bWantToQuit)
+	{
+		bWasMaximized = isMaximized();
+		event->ignore();
+		hide();
+	}
+	else
+	{
+		event->accept();
+	}
 }
 
 void MainWindow::enablePort()
@@ -207,25 +279,103 @@ void MainWindow::masterManagerMessages(const QString& title, const QString& cont
 	}
 }
 
+void MainWindow::initAutoRefreshTimer()
+{
+	const unsigned MIN_DELAY = 30;
+	const unsigned MAX_DELAY = 3600;
+
+	Config* cfg = Main::config;
+
+	bool bEnabled = cfg->setting("QueryAutoRefreshEnabled")->boolean();
+
+	if (!bEnabled)
+	{
+		autoRefreshTimer.stop();
+	}
+	else
+	{
+		SettingsData* setting = cfg->setting("QueryAutoRefreshEverySeconds");
+		unsigned delay = setting->integer();
+
+		// Make sure delay is in given limit.
+		if (delay < MIN_DELAY)
+		{
+			setting->setValue(MIN_DELAY);
+			delay = MIN_DELAY;
+		}
+		else if (delay > MAX_DELAY)
+		{
+			setting->setValue(MAX_DELAY);
+			delay = MAX_DELAY;
+		}
+
+		delay *= 1000; // seconds to miliseconds
+
+		autoRefreshTimer.setSingleShot(false);
+		autoRefreshTimer.start(delay);
+	}
+}
+
+void MainWindow::initTrayIcon()
+{
+	bool isEnabled = Main::config->setting("UseTrayIcon")->boolean();
+	if (!isEnabled || !QSystemTrayIcon::isSystemTrayAvailable())
+	{
+		if (trayIcon != NULL)
+		{
+			delete trayIcon;
+			trayIcon = NULL;
+		}
+
+		if (trayIconMenu != NULL)
+		{
+			delete trayIconMenu;
+			trayIconMenu = NULL;
+		}
+	}
+	else if (trayIcon == NULL)
+	{
+		QAction* trayAction;
+		trayIconMenu = new QMenu(this);
+		trayAction = trayIconMenu->addAction("Exit");
+		connect(trayAction, SIGNAL( triggered() ), this, SLOT( quitProgram() ) );
+
+		// This should be automatically deleted when main window closes
+		trayIcon = new QSystemTrayIcon(this);
+		connect(trayIcon, SIGNAL( activated(QSystemTrayIcon::ActivationReason) ), this, SLOT( trayIcon_activated(QSystemTrayIcon::ActivationReason) ) );
+
+		updateTrayIconTooltip();
+
+		trayIcon->setContextMenu(trayIconMenu);
+		trayIcon->setIcon(QIcon(":/icon.png"));
+		trayIcon->setVisible(true);
+	}
+}
+
 void MainWindow::menuBuddies()
 {
 	if (buddiesList->isVisible())
 		buddiesList->hide();
 	else
 		buddiesList->show();
+
 	menuActionBuddies->setChecked(buddiesList->isVisible());
 }
 
 void MainWindow::menuCreateServer()
 {
 	CreateServerDlg dlg(this);
+	autoRefreshTimer.stop();
 	dlg.exec();
+	initAutoRefreshTimer();
 }
 
 void MainWindow::menuHelpAbout()
 {
 	AboutDlg dlg(this);
+	autoRefreshTimer.stop();
 	dlg.exec();
+	initAutoRefreshTimer();
 }
 
 void MainWindow::menuOptionsConfigure()
@@ -238,18 +388,23 @@ void MainWindow::menuOptionsConfigure()
 		dlg.addEngineConfiguration(ec);
 	}
 
+	// Stop the auto refresh timer during configuration.
+	autoRefreshTimer.stop();
 	dlg.exec();
 
 	// Do some cleanups after config box finishes.
+	initAutoRefreshTimer();
 
 	if (dlg.appearanceChanged())
 	{
 		serverTableHandler->redraw();
+		initTrayIcon();
 	}
 
 	// Refresh custom servers list:
 	if (dlg.customServersChanged())
 	{
+		serverTableHandler->serverModel()->removeCustomServers();
 		mc->customServs()->readConfig(Main::config, serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
 		refreshServers(true);
 	}
@@ -288,9 +443,14 @@ void MainWindow::menuWadSeeker()
 	wsi.exec();
 }
 
+void MainWindow::quitProgram()
+{
+	bWantToQuit = true;
+	close();
+}
+
 void MainWindow::refreshServers(bool onlyCustom)
 {
-	serverTableHandler->serverModel()->removeCustomServers();
 	CustomServers* cs = mc->customServs();
 
 	for(int i = 0;i < cs->numServers();i++)
@@ -340,6 +500,26 @@ void MainWindow::runGame(const Server* server)
 	server->join(connectPassword);
 }
 
+void MainWindow::trayIcon_activated(QSystemTrayIcon::ActivationReason reason)
+{
+	if (reason == QSystemTrayIcon::Trigger)
+	{
+		if (isMinimized() || !isVisible())
+		{
+			bWasMaximized == true ? showMaximized() : showNormal();
+			activateWindow();
+		}
+		else if (Main::config->setting("CloseToTrayIcon")->boolean())
+		{
+			close();
+		}
+		else
+		{
+			showMinimized();
+		}
+	}
+}
+
 void MainWindow::updateServerInfo(QList<Server*>& servers)
 {
 	if (serverInfo != NULL)
@@ -352,5 +532,16 @@ void MainWindow::updateServerInfo(QList<Server*>& servers)
 		{
 			serverInfo->updateServerInfo(servers[0]);
 		}
+	}
+}
+
+void MainWindow::updateTrayIconTooltip()
+{
+	if (trayIcon != NULL)
+	{
+		QString tip;
+		tip += "Servers: " + QString::number(mc->numServers()) + " + " + QString::number(mc->customServs()->numServers()) + " custom\n";
+		tip += "Players: " + QString::number(mc->numPlayers() + mc->customServs()->numPlayers());
+		trayIcon->setToolTip(tip);
 	}
 }

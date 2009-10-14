@@ -25,6 +25,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QFileInfo>
+#include <QHash>
 #include <QResource>
 #include <QTime>
 #include <QTimeLine>
@@ -34,7 +35,7 @@
 #include "sdeapi/pluginloader.hpp"
 #include "sdeapi/scanner.hpp"
 
-IP2C::IP2C(QString file, QUrl netLocation) : file(file), netLocation(netLocation), downloadProgressWidget(NULL)
+IP2C::IP2C(QString file, QUrl netLocation) : file(file), netLocation(netLocation), downloadProgressWidget(NULL), flagLan(":flags/lan-small"), flagLocalhost(":flags/localhost-small"), flagUnknown(":flags/unknown-small")
 {
 	read = readDatabase();
 	www = new WWW();
@@ -141,27 +142,39 @@ void IP2C::downloadProgress(int value, int max)
 	downloadProgressWidget->setValue(value);
 }
 
-QPixmap IP2C::flag(unsigned int ipaddress) const
+const QPixmap &IP2C::flag(unsigned int ipaddress)
 {
-	const QString unknown = ":flags/unknown";
+	const static unsigned LOCALHOST_BEGIN = QHostAddress("127.0.0.0").toIPv4Address();
+	const static unsigned LOCALHOST_END = QHostAddress("127.255.255.255").toIPv4Address();
+	const static unsigned LAN_1_BEGIN = QHostAddress("10.0.0.0").toIPv4Address();
+	const static unsigned LAN_1_END = QHostAddress("10.255.255.255").toIPv4Address();
+	const static unsigned LAN_2_BEGIN = QHostAddress("172.16.0.0").toIPv4Address();
+	const static unsigned LAN_2_END = QHostAddress("127.31.255.255").toIPv4Address();
+	const static unsigned LAN_3_BEGIN = QHostAddress("192.168.0.0").toIPv4Address();
+	const static unsigned LAN_3_END = QHostAddress("192.168.255.255").toIPv4Address();
 
-	if (ipaddress >= QHostAddress("127.0.0.0").toIPv4Address() && ipaddress <= QHostAddress("127.255.255.255").toIPv4Address())
+	if (ipaddress >= LOCALHOST_BEGIN && ipaddress <= LOCALHOST_END)
 	{
-		return QPixmap(":flags/localhost-small");
+		return flagLocalhost;
 	}
 
-	if (ipaddress >= QHostAddress("10.0.0.0").toIPv4Address() && ipaddress <= QHostAddress("10.255.255.255").toIPv4Address()
-	||	ipaddress >= QHostAddress("172.16.0.0").toIPv4Address() && ipaddress <= QHostAddress("127.31.255.255").toIPv4Address()
-	||	ipaddress >= QHostAddress("192.168.0.0").toIPv4Address() && ipaddress <= QHostAddress("192.168.255.255").toIPv4Address())
+	if (ipaddress >= LAN_1_BEGIN && ipaddress <= LAN_1_END
+	||	ipaddress >= LAN_2_BEGIN && ipaddress <= LAN_2_END
+	||	ipaddress >= LAN_3_BEGIN && ipaddress <= LAN_3_END)
 	{
-		return QPixmap(":flags/lan-small");
+		return flagLan;
 	}
 
 	QString country = lookupIP(ipaddress);
 	if (country.isEmpty())
 	{
 		printf("Unrecognized IP address: %s (%u)\n", QHostAddress(ipaddress).toString().toAscii().constData(), ipaddress);
-		return QPixmap(":flags/unknown-small");
+		return flagUnknown;
+	}
+
+	if (flags.contains(country))
+	{
+		return flags[country];
 	}
 
 	QString resName = ":flags/" + country;
@@ -170,10 +183,12 @@ QPixmap IP2C::flag(unsigned int ipaddress) const
 	if (!res.isValid())
 	{
 		printf("No flag for country: %s\n", country.toAscii().constData());
-		return QPixmap(":flags/unknown-small");
+		flags[country] = flagUnknown;
+		return flagUnknown;
 	}
 
-	return QPixmap(resName);
+	flags[country] = QPixmap(resName);
+	return flags[country];
 }
 
 QString IP2C::lookupIP(unsigned int ipaddress) const
@@ -181,12 +196,30 @@ QString IP2C::lookupIP(unsigned int ipaddress) const
 	if(!read)
 		return QString();
 
-	foreach(const IP2CData entry, database)
+	unsigned int upper = database.size()-1;
+	unsigned int lower = 0;
+	unsigned int index = database.size()/2;
+	unsigned int lastIndex = 0xFFFFFFFF;
+	while(true)
 	{
-		if(ipaddress >= entry.ipStart && ipaddress <= entry.ipEnd)
+		// Infinite loop protection.
+		if(index == lastIndex)
+			break;
+		lastIndex = index;
+
+		if(ipaddress < database[index].ipStart)
 		{
-			return entry.country;
+			upper = index;
+			index -= (index-lower)>>1; // If we're concerning ourselves with speed >>1 is the same as /2, but should be faster.
+			continue;
 		}
+		else if(ipaddress > database[index].ipEnd)
+		{
+			lower = index;
+			index += (upper-index)>>1;
+			continue;
+		}
+		return database[index].country;
 	}
 
 	return QString();

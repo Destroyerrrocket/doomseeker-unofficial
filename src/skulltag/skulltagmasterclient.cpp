@@ -47,11 +47,11 @@ SkulltagMasterClient::SkulltagMasterClient(QHostAddress address, unsigned short 
 bool SkulltagMasterClient::sendRequest(QByteArray &data)
 {
 	// Send launcher challenge.
-	const char challenge[6] = {WRITEINT32_DIRECT(MASTER_CHALLENGE), WRITEINT16_DIRECT(MASTER_PROTOCOL_VERSION)};
-	char challengeOut[12];
+	const unsigned char challenge[6] = {WRITEINT32_DIRECT(MASTER_CHALLENGE), WRITEINT16_DIRECT(MASTER_PROTOCOL_VERSION)};
+	unsigned char challengeOut[12];
 	int out = 12;
 	g_Huffman.encode(challenge, challengeOut, 6, &out);
-	const QByteArray chall(challengeOut, out);
+	const QByteArray chall(reinterpret_cast<char*> (challengeOut), out);
 	data.append(chall);
 	return true;
 }
@@ -59,9 +59,9 @@ bool SkulltagMasterClient::sendRequest(QByteArray &data)
 bool SkulltagMasterClient::readRequest(QByteArray &data, bool &expectingMorePackets)
 {
 	const char* in = data.data();
-	char packetOut[2000];
+	unsigned char packetOut[2000];
 	int out = 2000;
-	g_Huffman.decode(in, packetOut, data.size(), &out);
+	g_Huffman.decode(reinterpret_cast<const unsigned char*> (in), packetOut, data.size(), &out);
 
 	// Check the response code
 	int response = READINT32(&packetOut[0]);

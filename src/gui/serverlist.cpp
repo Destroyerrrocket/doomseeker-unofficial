@@ -96,7 +96,7 @@ void SLHandler::clearTable()
 
 void SLHandler::cleanUp()
 {
-	if (needsCleaning)
+	if (needsCleaning && Main::mainWindow->isActiveWindow())
 	{
 		if (sortIndex >= 0)
 		{
@@ -105,6 +105,7 @@ void SLHandler::cleanUp()
 			pModel->sortServers(sortIndex, sortOrder);
 		}
 
+		updateCountryFlags(true);
 		table->updateAllRows();
 		needsCleaning = false;
 	}
@@ -420,11 +421,11 @@ void SLHandler::tableRightClicked(const QModelIndex& index, const QPoint& point)
 	}
 }
 
-void SLHandler::updateCountryFlags()
+void SLHandler::updateCountryFlags(bool onlyIfServerHasNoFlagYet)
 {
     for (int i = 0; i < model->rowCount(); ++i)
     {
-        model->updateFlag(i);
+        model->updateFlag(i, onlyIfServerHasNoFlagYet);
     }
 }
 

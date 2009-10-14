@@ -32,6 +32,9 @@
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QPushButton" name="btnGetServers">
+         <property name="toolTip">
+          <string>Obtains new server list from master servers enabled in &quot;Query&quot; menu.</string>
+         </property>
          <property name="text">
           <string>Get Servers</string>
          </property>
@@ -39,6 +42,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="btnRefreshAll">
+         <property name="toolTip">
+          <string>Refreshes all servers visible on the list.</string>
+         </property>
          <property name="text">
           <string>Refresh All</string>
          </property>
@@ -107,7 +113,7 @@
      <x>0</x>
      <y>0</y>
      <width>796</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <property name="locale">

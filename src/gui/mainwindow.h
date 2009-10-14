@@ -24,7 +24,6 @@
 #ifndef __MAINWINDOW_H_
 #define __MAINWINDOW_H_
 
-#include "main.h"
 #include "masterclient.h"
 #include "sdeapi/config.hpp"
 #include "sdeapi/pluginloader.hpp"
@@ -36,6 +35,7 @@
 #include <QAction>
 #include <QString>
 #include <QStandardItem>
+#include <QSystemTrayIcon>
 
 class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 {
@@ -45,17 +45,15 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		MainWindow(int argc, char** argv);
 		~MainWindow();
 
-	public slots:
-		void btnGetServers_Click();
-		void enablePort();
-		void menuBuddies();
-		void menuCreateServer();
-		void menuHelpAbout();
-		void menuOptionsConfigure();
-		void menuServerInfo();
-		void menuWadSeeker();
-		void runGame(const Server*);
-		void updateServerInfo(QList<Server*>&);
+		/**
+		 *	This will either enable or disable the auto refresh timer
+		 *	depending on the settings. This method also takes care of every
+		 *	checks. It will make sure the delay between the refreshes is
+		 *	inside gives boundaries (30 - 3600 seconds).
+		 */
+		void	initAutoRefreshTimer();
+
+		void	stopAutoRefreshTimer() { autoRefreshTimer.stop(); }
 
 	protected slots:
 		void 	finishedQueryingMaster(MasterClient* master);
@@ -64,12 +62,53 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	refreshThreadEndsWork();
 
 	protected:
+		QTimer	autoRefreshTimer;
+
+		/**
+		 *	This is required so tray icon knows how to bring the window back.
+		 */
+		bool	bWasMaximized;
+
+		/**
+		 *	If set to true the closeEvent() method will ignore tray icon
+		 *	settings and proceed to close the MainWindow. This is set by
+		 *	quitProgram() slot.
+		 */
+		bool	bWantToQuit;
+
+		void	changeEvent(QEvent* event);
+
+		void	closeEvent(QCloseEvent* event);
+
+		/**
+		 *	Checks whether the program will use the tray icon and
+		 *	deletes or instantiates a QSystemTrayIcon object.
+		 */
+		void	initTrayIcon();
+
 		/**
 		 *	@param onlyCustom - if true, the refreshing buttons aren't blocked
 		 *		and servers that aren't custom aren't contacted in any way.
 		 */
-		void refreshServers(bool onlyCustom);
+		void 	refreshServers(bool onlyCustom);
 
+		void	updateTrayIconTooltip();
+
+	protected slots:
+		void	autoRefreshTimer_timeout();
+		void 	btnGetServers_Click();
+		void	btnRefreshAll_Click();
+		void 	enablePort();
+		void	menuBuddies();
+		void 	menuCreateServer();
+		void	menuHelpAbout();
+		void 	menuOptionsConfigure();
+		void	menuServerInfo();
+		void	menuWadSeeker();
+		void	quitProgram();
+		void 	runGame(const Server*);
+		void	trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
+		void 	updateServerInfo(QList<Server*>&);
 
 	private:
 		DockBuddiesList*	buddiesList;
@@ -78,6 +117,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 		MasterManager*		mc;
 		const QAction**		queryMenuPorts;
+		QSystemTrayIcon*	trayIcon;
+		QMenu*				trayIconMenu;
 };
 
 #endif

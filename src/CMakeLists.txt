@@ -92,6 +92,8 @@ set(SOURCE_FILES
 	gui/wadseekerinterface.cpp
 	gui/models/serverlistmodel.cpp
 	gui/widgets/serverlistview.cpp
+	huffman/bitwriter.cpp
+	huffman/huffcodec.cpp
 	huffman/huffman.cpp
 	md5/md5c.c
 	md5/mddriver.c

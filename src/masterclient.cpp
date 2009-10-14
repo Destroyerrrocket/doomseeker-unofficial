@@ -74,8 +74,21 @@ void MasterClient::notifyUpdate(const QString& engineName)
 	emit message(engineName, tr("Could not fetch a new server list.  The protocol you are using is too old.  An update may be available."), true);
 }
 
+int MasterClient::numPlayers() const
+{
+	int players = 0;
+	foreach(Server* server, servers)
+	{
+		players += server->numPlayers();
+	}
+
+	return players;
+}
+
 void MasterClient::refresh()
 {
+	emptyServerList();
+
 	// Connect to the server
 	QUdpSocket socket;
 	socket.bind();

@@ -21,10 +21,12 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "gui/wadseekerinterface.h"
+#include "mainwindow.h"
 #include "main.h"
 
 WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 {
+	((MainWindow*)(Main::mainWindow))->stopAutoRefreshTimer();
 	setupUi(this);
 	setStateWaiting();
 
@@ -70,6 +72,11 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 		idgamesURL = Main::config->setting("WadseekerIdgamesURL")->string();
 
 	wadseeker.setUseIdgames(useIdgames, idgamesHasHighPriority, idgamesURL);
+}
+
+WadSeekerInterface::~WadSeekerInterface()
+{
+	((MainWindow*)(Main::mainWindow))->initAutoRefreshTimer();
 }
 
 void WadSeekerInterface::aborted()

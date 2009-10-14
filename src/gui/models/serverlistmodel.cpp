@@ -215,6 +215,15 @@ const QImage *PlayersDiagram::spectatorImage = NULL;
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
+class WaitingClass : public QThread
+{
+	public:
+		static void msleep(int ms)
+		{
+			QThread::msleep(ms);
+		}
+};
+
 ServerListModel::ServerListModel(QObject* parent) : QStandardItemModel(parent)
 {
 	setSortRole(SLDT_SORT);
@@ -230,7 +239,16 @@ int ServerListModel::addServer(Server* server, int response)
 	}
 
 	appendRow(columns);
+
+	// Country flag is set only once. Set it here and avoid setting it in
+	// updateServer() method.
+
 	QModelIndex index = indexFromItem(columns[0]);
+	if (Main::mainWindow->isActiveWindow())
+	{
+		setCountryFlag(columns[SLCID_SERVERNAME], server->address());
+	}
+
 	return updateServer(index.row(), server, response);
 }
 
@@ -323,6 +341,11 @@ void ServerListModel::redraw(int row)
 {
 	Server* server = serverFromList(row);
 	updateServer(row, server, server->lastResponse());
+
+	// Since updateServer doesn't do anything with the flags we need to
+	// explicitly redraw it here.
+	QStandardItem* itm = item(row, SLCID_SERVERNAME);
+	setCountryFlag(itm, server->address());
 }
 
 void ServerListModel::redrawAll()
@@ -399,6 +422,12 @@ void ServerListModel::setCountryFlag(QStandardItem* itm, const QHostAddress& add
 	{
 		itm->setIcon(flag);
 	}
+}
+
+void ServerListModel::setFirstQuery(int row, Server* server)
+{
+	QStandardItem* qstdItem = item(row, SLCID_HIDDEN_GROUP);
+	fillItem(qstdItem, SG_FIRST_QUERY);
 }
 
 void ServerListModel::setGood(int row, Server* server)
@@ -532,10 +561,6 @@ int ServerListModel::updateServer(int row, Server* server, int response)
 	}
 	fillItem(qstdItem, server->metaObject()->className(), icon);
 
-	// Also the flag should be set no matter what
-	qstdItem = item(row, SLCID_SERVERNAME);
-	setCountryFlag(qstdItem, server->address());
-
 	// Address is also set no matter what, so it's set here.
 	qstdItem = item(row, SLCID_ADDRESS);
 	fillItem(qstdItem, server->address(), QString(server->address().toString() + ":" + QString::number(server->port())) );
@@ -569,6 +594,10 @@ int ServerListModel::updateServer(int row, Server* server, int response)
 		    setTimeout(row, server);
 			break;
 
+		case Server::RESPONSE_NO_RESPONSE_YET:
+			setFirstQuery(row, server);
+			break;
+
 		default:
 			printf("Unkown server response (%d): %s:%d\n", response, server->address().toString().toAscii().constData(), server->port());
 			break;
@@ -585,10 +614,14 @@ QVariant ServerListModel::columnSortData(int row, int column)
 	return it->data(SLDT_SORT);
 }
 
-void ServerListModel::updateFlag(int row)
+void ServerListModel::updateFlag(int row, bool onlyIfServerHasNoFlagYet)
 {
     Server* serv = serverFromList(row);
     QStandardItem* itm = item(row, SLCID_SERVERNAME);
+
+    if (onlyIfServerHasNoFlagYet && !itm->icon().isNull())
+		return;
+
     setCountryFlag(itm, serv->address());
 }
 //////////////////////////////////////////////////////////////
@@ -633,6 +666,9 @@ bool ServerListSortFilterProxyModel::compareColumnSortData(QVariant& var1, QVari
 
 bool ServerListSortFilterProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
 {
+	if (!Main::mainWindow->isActiveWindow())
+		return false;
+
 	ServerListModel* model = static_cast<ServerListModel*>(sourceModel());
 
 	Server* s1 = serverFromList(left);

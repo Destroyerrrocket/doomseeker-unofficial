@@ -24,6 +24,7 @@
 #include "gui/cfgAppearance.h"
 
 #include <QColorDialog>
+#include <QSystemTrayIcon>
 
 AppearanceConfigBox::AppearanceConfigBox(Config *cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent)
 {
@@ -47,10 +48,13 @@ ConfigurationBoxInfo *AppearanceConfigBox::createStructure(Config *cfg, QWidget 
 
 void AppearanceConfigBox::btnCustomServersColor_clicked()
 {
-	QColor c = QColorDialog::getColor(Qt::white, this);
+	QColor c = QColorDialog::getColor(QColor(customServersColor), this);
 
-	customServersColor = c.rgb();
-	setWidgetBackgroundColor(btnCustomServersColor, customServersColor);
+	if(c.isValid())
+	{
+		customServersColor = c.rgb();
+		setWidgetBackgroundColor(btnCustomServersColor, customServersColor);
+	}
 }
 
 void AppearanceConfigBox::readSettings()
@@ -63,6 +67,22 @@ void AppearanceConfigBox::readSettings()
 	setting = config->setting("CustomServersColor");
 	customServersColor = setting->integer();
 	setWidgetBackgroundColor(btnCustomServersColor, customServersColor);
+
+	// Make sure that the tray is available. If it's not, disable tray icon
+	// completely and make sure no change can be done to the configuration in
+	// this manner.
+	if (!QSystemTrayIcon::isSystemTrayAvailable())
+	{
+		config->setting("UseTrayIcon")->setValue(false);
+		config->setting("CloseToTrayIcon")->setValue(false);
+		gboUseTrayIcon->setEnabled(false);
+	}
+
+	setting = config->setting("UseTrayIcon");
+	gboUseTrayIcon->setChecked(setting->boolean());
+
+	setting = config->setting("CloseToTrayIcon");
+	cbCloseToTrayIcon->setChecked(setting->boolean());
 }
 
 void AppearanceConfigBox::saveSettings()
@@ -76,16 +96,22 @@ void AppearanceConfigBox::saveSettings()
 	setting = config->setting("CustomServersColor");
 	setting->setValue(p.color(QPalette::Button).rgb() & 0x00ffffff); // Remove alpha value
 
+	setting = config->setting("UseTrayIcon");
+	setting->setValue(gboUseTrayIcon->isChecked());
+
+	setting = config->setting("CloseToTrayIcon");
+	setting->setValue(cbCloseToTrayIcon->isChecked());
+
 	emit appearanceChanged();
 }
 
 void AppearanceConfigBox::setWidgetBackgroundColor(QWidget* widget, unsigned color)
 {
 	const QString COLOR_STYLE("QPushButton { background-color : %1; }");
-	
+
 	// Remove alpha value
 	color &= 0x00ffffff;
-	
+
 	// Convert to hexadecimal number
 	QString colorString = QString::number(color, 16);
 	while (colorString.length() < 6)

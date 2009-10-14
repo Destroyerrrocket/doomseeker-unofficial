@@ -73,16 +73,17 @@ class ServerListModel : public QStandardItemModel
 		 *  will be SG_WAIT servers, etc.
 		 *
 		 *  !!! WARNING !!!
-		 *	Exception: custom servers will be always on top of the list
+		 *	Exception: custom servers will always be on top of the list
 		 *	and will be sorted inside their own group independentedly.
 		 */
 		enum ServerGroup
 		{
-			SG_NORMAL 	= 200,
-			SG_WAIT 	= 175,
-			SG_BANNED	= 150,
-			SG_TIMEOUT	= 125,
-			SG_BAD		= 100
+			SG_NORMAL 		= 200,
+			SG_WAIT 		= 175,
+			SG_BANNED		= 150,
+			SG_TIMEOUT		= 125,
+			SG_BAD			= 100,
+			SG_FIRST_QUERY	= 50,
 		};
 
 		enum ServerListDataTypes
@@ -129,7 +130,7 @@ class ServerListModel : public QStandardItemModel
 		 *  Updates flag on given row.
 		 *  @param row - index of row to update
 		 */
-		void updateFlag(int row);
+		void updateFlag(int row, bool onlyIfServerHasNoFlagYet = false);
 
 		/**
 		 *	Returns row number
@@ -155,6 +156,7 @@ class ServerListModel : public QStandardItemModel
 		void 					setBad(int row, Server* server);
 		void 					setBanned(int row, Server* server);
 		void                    setCountryFlag(QStandardItem* itm, const QHostAddress& addr);
+		void					setFirstQuery(int row, Server* server);
 		void 					setGood(int row, Server* server);
 		void					setTimeout(int row, Server* server);
 		void 					setWait(int row, Server* server);

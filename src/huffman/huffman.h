@@ -1,66 +1,69 @@
-//-------------------------------------------------------------------------------
-// huffman.h
-//-------------------------------------------------------------------------------
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-//-------------------------------------------------------------------------------
-// Copyright (C) 2002 Sean White, 2007 Brad Carney, 2008 Rivecoder/GhostlyDeath
-//-------------------------------------------------------------------------------
-//
-// Version 4, released 8/1/2008. Compatible with Skulltag launchers and servers.
-//
-//-------------------------------------------------------------------------------
+/**
+ * Drop in replacement for ZD huffman.h
+ * Version: 1 - Revision: 0
+ * 
+ * Copyright 2009 Timothy Landers
+ * email: code.vortexcortex@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
+/* ***** Changelog: huffman.h *****
+ * 2009.09.30 - v1 r0
+ * 		Intitial Release
+ */
+
+//Macro name kept for backwards compatibility.
 #ifndef __HUFFMAN_H__
 #define __HUFFMAN_H__
 
 #include "global.h"
-
-struct MAIN_EXPORT huffnode_t
-{
-	public:
-		huffnode_t *zero;
-		huffnode_t *one;
-		unsigned char val;
-		float freq;
-};
-
-struct MAIN_EXPORT hufftab_t
-{
-	public:
-		unsigned int bits;
-		int len;
-};
+#include "huffcodec.h"
 
 class MAIN_EXPORT Huffman
 {
-	public:
-		Huffman();
-		~Huffman();
+public:
+/** Creates and intitializes a HuffmanCodec Object. <br>
+ * Also arranges for HUFFMAN_Destruct() to be called upon termination. */
+Huffman();
 
-		void		encode(const char *in, char *out, int inlen, int *outlen);
-		void		decode(const char *in, char *out, int inlen, int *outlen);
+/** Releases resources allocated by the HuffmanCodec. */
+~Huffman();
 
-	protected:
-		void		buildTree(float *freq);
-		void		findTab(huffnode_t *tmp, int len, unsigned int bits);
-		void		putBit(char *puf, int pos, int bit);
-		int			getBit(const char *puf, int pos);
-		static void	recursiveFreeNode(huffnode_t *pNode);
+/** Applies Huffman encoding to a block of data. */
+void encode(
+	unsigned char const * const inputBuffer,	/**< in: Pointer to start of data that is to be encoded. */
+	unsigned char * const outputBuffer,			/**< out: Pointer to destination buffer where encoded data will be stored. */
+	int const &inputBufferSize,					/**< in: Number of chars to read from inputBuffer. */
+	int *outputBufferSize						/**< in+out: Max chars to write into outputBuffer. Upon return holds the number of chars stored or 0 if an error occurs. */
+);
 
-		int				lastCompMessageSize;
-		huffnode_t		*huffTree;
-		hufftab_t		huffLookup[256];
-		static float	huffFreq[256];
+/** Decodes a block of data that is Huffman encoded. */
+void decode(
+	unsigned char const * const inputBuffer,	/**< in: Pointer to start of data that is to be decoded. */
+	unsigned char * const outputBuffer,			/**< out: Pointer to destination buffer where decoded data will be stored. */
+	int const &inputBufferSize,					/**< in: Number of chars to read from inputBuffer. */
+	int *outputBufferSize						/**< in+out: Max chars to write into outputBuffer. Upon return holds the number of chars stored or 0 if an error occurs. */
+);
+
+private:
+	skulltag::HuffmanCodec * __codec;
 };
 
 extern MAIN_EXPORT Huffman g_Huffman;

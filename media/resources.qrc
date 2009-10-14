@@ -14,12 +14,14 @@
 	<file alias="slots/marines/bot">slotstyles/marines/bot.png</file>
 	<file alias="slots/marines/player">slotstyles/marines/player.png</file>
 	<file alias="slots/marines/spectator">slotstyles/marines/spectator.png</file>
+	<file alias="flags/ARG">flags/ARG.png</file>
 	<file alias="flags/AUS">flags/AUS.png</file>	
 	<file alias="flags/AUT">flags/AUT.png</file>
 	<file alias="flags/BRA">flags/BRA.png</file>
 	<file alias="flags/CAN">flags/CAN.png</file>	
 	<file alias="flags/CHE">flags/CHE.png</file>
 	<file alias="flags/CHL">flags/CHL.png</file>
+	<file alias="flags/CS">flags/CS.png</file>
 	<file alias="flags/CZE">flags/CZE.png</file>	
 	<file alias="flags/DEU">flags/DEU.png</file>
 	<file alias="flags/EST">flags/EST.png</file>
@@ -39,6 +41,7 @@
 	<file alias="flags/POL">flags/POL.png</file>
 	<file alias="flags/PRY">flags/PRY.png</file>
 	<file alias="flags/RUS">flags/RUS.png</file>
+	<file alias="flags/SAU">flags/SAU.png</file>
 	<file alias="flags/SWE">flags/SWE.png</file>
 	<file alias="flags/TWN">flags/TWN.png</file>	
 	<file alias="flags/USA">flags/USA.png</file>	
