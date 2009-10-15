@@ -46,6 +46,7 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), tra
 	setupUi(this);
 
 	// Connect refreshing thread.
+	connect(Main::refreshingThread, SIGNAL( block() ), this, SLOT( blockRefreshButtons() ) );
 	connect(Main::refreshingThread, SIGNAL( finishedQueryingMaster(MasterClient*) ), this, SLOT( finishedQueryingMaster(MasterClient*) ) );
 	connect(Main::refreshingThread, SIGNAL( sleepingModeEnter() ), this, SLOT( refreshThreadEndsWork() ) );
 	connect(Main::refreshingThread, SIGNAL( sleepingModeExit() ), this, SLOT( refreshThreadBeginsWork() ) );
@@ -142,7 +143,7 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), tra
 		// Custom servers should be refreshed no matter what.
 		// They will not block the app in any way, there is no reason
 		// not to refresh them.
-		refreshServers(true); // This should include only refreshing customs
+		refreshCustomServers();
 	}
 }
 
@@ -205,6 +206,12 @@ void MainWindow::autoRefreshTimer_timeout()
 	btnGetServers_Click();
 }
 
+void MainWindow::blockRefreshButtons()
+{
+	btnGetServers->setEnabled(false);
+	btnRefreshAll->setEnabled(false);
+}
+
 void MainWindow::btnRefreshAll_Click()
 {
 	serverTableHandler->refreshAll();
@@ -212,6 +219,8 @@ void MainWindow::btnRefreshAll_Click()
 
 void MainWindow::btnGetServers_Click()
 {
+	serverTableHandler->clearTable();
+	refreshCustomServers();
 	Main::refreshingThread->registerMaster(mc);
 }
 
@@ -255,20 +264,18 @@ void MainWindow::enablePort()
 
 void MainWindow::finishedQueryingMaster(MasterClient* master)
 {
-	if (mc->numServers() == 0 && mc->customServs()->numServers() == 0)
+	if (master == NULL)
 	{
 		return;
 	}
 
-	serverTableHandler->clearTable();
-
-	for(int i = 0;i < mc->numServers();i++)
+	for(int i = 0;i < master->numServers();i++)
 	{
-		connect((*mc)[i], SIGNAL(updated(Server *, int)), serverTableHandler, SLOT(serverUpdated(Server *, int)) );
-		connect((*mc)[i], SIGNAL(begunRefreshing(Server *)), serverTableHandler, SLOT(serverBegunRefreshing(Server *)) );
+		connect((*master)[i], SIGNAL(updated(Server *, int)), serverTableHandler, SLOT(serverUpdated(Server *, int)) );
+		connect((*master)[i], SIGNAL(begunRefreshing(Server *)), serverTableHandler, SLOT(serverBegunRefreshing(Server *)) );
 	}
 
-	refreshServers(false);
+	refreshServers(mc);
 }
 
 void MainWindow::masterManagerMessages(const QString& title, const QString& content, bool isError)
@@ -406,7 +413,7 @@ void MainWindow::menuOptionsConfigure()
 	{
 		serverTableHandler->serverModel()->removeCustomServers();
 		mc->customServs()->readConfig(Main::config, serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
-		refreshServers(true);
+		refreshCustomServers();
 	}
 }
 
@@ -449,29 +456,29 @@ void MainWindow::quitProgram()
 	close();
 }
 
-void MainWindow::refreshServers(bool onlyCustom)
+void MainWindow::refreshCustomServers()
 {
 	CustomServers* cs = mc->customServs();
 
 	for(int i = 0;i < cs->numServers();i++)
 	{
+		serverTableHandler->serverUpdated((*cs)[i], Server::RESPONSE_NO_RESPONSE_YET);
 		(*cs)[i]->refresh(); // This will register server with refreshing thread.
 	}
+}
 
-	if (!onlyCustom)
+void MainWindow::refreshServers(MasterClient* master)
+{
+	for(int i = 0;i < master->numServers();i++)
 	{
-		for(int i = 0;i < mc->numServers();i++)
-		{
-			(*mc)[i]->refresh(); // This will register server with refreshing thread.
-		}
+		serverTableHandler->serverUpdated((*master)[i], Server::RESPONSE_NO_RESPONSE_YET);
+		(*master)[i]->refresh(); // This will register server with refreshing thread.
 	}
 }
 
 void MainWindow::refreshThreadBeginsWork()
 {
 	// disable refresh.
-	btnGetServers->setEnabled(false);
-	btnRefreshAll->setEnabled(false);
 	serverTableHandler->serverTable()->setAllowAllRowsRefresh(false);
 	statusBar()->showMessage(tr("Querying..."));
 }

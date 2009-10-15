@@ -70,6 +70,11 @@ class RefreshingThread : public QThread, public QRunnable
 
 	signals:
 		/**
+		 *	Emitted when a master client of non-custom server is registered.
+		 */
+		void	block();
+
+		/**
 		 *	Emitted when refreshing thread doesn't have anything more to do and
 		 *	goes into sleeping mode.
 		 */

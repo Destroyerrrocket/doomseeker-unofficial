@@ -64,7 +64,6 @@ int main(int argc, char* argv[])
 	Main::config->createSetting("QueryAutoRefreshDontIfActive", true);
 	Main::config->createSetting("QueryOnStartup", true);
 	Main::config->createSetting("QueryTries", 7);
-	Main::config->createSetting("QueryThreads", 50);
 	Main::config->createSetting("QueryTimeout", 1000);
 	QStringList urlList = Wadseeker::defaultSitesListEncoded();
 	Main::config->createSetting("WadseekerSearchURLs", urlList.join(";"));
@@ -100,6 +99,8 @@ int main(int argc, char* argv[])
 	Main::config->saveConfig();
 	delete Main::config;
 	delete Main::ip2c;
+
+	while (Main::refreshingThread->isRunning());
 	delete Main::refreshingThread;
 
 	return ret;

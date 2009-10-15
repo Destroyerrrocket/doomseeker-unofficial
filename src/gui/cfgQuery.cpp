@@ -49,9 +49,6 @@ void QueryConfigBox::readSettings()
 	setting = config->setting("QueryTimeout");
 	timeoutBox->setValue(setting->integer());
 
-	setting = config->setting("QueryThreads");
-	threadsBox->setValue(setting->integer());
-
 	setting = config->setting("QueryAutoRefreshEnabled");
 	grbServerAutoRefresh->setChecked(setting->boolean());
 
@@ -74,9 +71,6 @@ void QueryConfigBox::saveSettings()
 
 	setting = config->setting("QueryTimeout");
 	setting->setValue(timeoutBox->value());
-
-	setting = config->setting("QueryThreads");
-	setting->setValue(threadsBox->value());
 
 	setting = config->setting("QueryAutoRefreshEnabled");
 	setting->setValue(grbServerAutoRefresh->isChecked());

@@ -51,6 +51,7 @@ void RefreshingThread::registerMaster(MasterClient* master)
 	if (!registeredMasters.contains(master))
 	{
 		registeredMasters.insert(master);
+		emit block();
 		thisWaitCondition.wakeAll();
 	}
 
@@ -64,6 +65,12 @@ void RefreshingThread::registerServer(Server* server)
 	if (!registeredServers.contains(server))
 	{
 		registeredServers.insert(server);
+
+		if (!server->isCustom())
+		{
+			emit block();
+		}
+
 		thisWaitCondition.wakeAll();
 		server->refreshStarts();
 	}
@@ -123,7 +130,6 @@ void RefreshingThread::run()
 			master->refresh();
 			registeredMasters.remove(master);
 			emit finishedQueryingMaster(master);
-
 		}
 		thisMutex.unlock();
 
