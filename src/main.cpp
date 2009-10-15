@@ -34,6 +34,7 @@ PluginLoader Main::enginePlugins(MAKEID('E','N','G','N'), "./engines/");
 QWidget* Main::mainWindow = NULL;
 Config *Main::config = new Config();
 IP2C *Main::ip2c = NULL;
+RefreshingThread* Main::refreshingThread = new RefreshingThread();
 bool Main::running = true;
 
 int main(int argc, char* argv[])
@@ -63,7 +64,6 @@ int main(int argc, char* argv[])
 	Main::config->createSetting("QueryAutoRefreshDontIfActive", true);
 	Main::config->createSetting("QueryOnStartup", true);
 	Main::config->createSetting("QueryTries", 7);
-	Main::config->createSetting("QueryThreads", 50);
 	Main::config->createSetting("QueryTimeout", 1000);
 	QStringList urlList = Wadseeker::defaultSitesListEncoded();
 	Main::config->createSetting("WadseekerSearchURLs", urlList.join(";"));
@@ -76,6 +76,11 @@ int main(int argc, char* argv[])
 	// Init plugin settings
 	Main::enginePlugins.initConfig();
 
+	// Refreshing thread setup:
+	Main::refreshingThread->setDelayBetweenResends(Main::config->setting("QueryTimeout")->integer());
+	Main::refreshingThread->start();
+
+	// Create main window
 	MainWindow* mw = new MainWindow(argc, argv);
 	if (Main::config->setting("MainWindowMaximized")->boolean())
 	{
@@ -87,24 +92,18 @@ int main(int argc, char* argv[])
 	}
 
 	int ret = app.exec();
+
+	Main::refreshingThread->quit();
 	Main::running = false;
 
 	Main::config->saveConfig();
 	delete Main::config;
-
 	delete Main::ip2c;
 
-	return ret;
-}
+	while (Main::refreshingThread->isRunning());
+	delete Main::refreshingThread;
 
-void Main::launchRefreshGuardian()
-{
-	if (!ServerRefresher::guardianExists())
-	{
-		ServerRefresher* guardian = new ServerRefresher(NULL);
-		QObject::connect(guardian, SIGNAL( allServersRefreshed() ), (MainWindow*)mainWindow, SLOT(checkRefreshFinished()) );
-		guardian->startGuardian();
-	}
+	return ret;
 }
 
 void Main::translateServerAddress(const QString& settingValue, QString& hostname, short& port, const QString& defaultHostname, const short defaultPort)

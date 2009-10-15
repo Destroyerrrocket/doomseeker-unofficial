@@ -200,7 +200,7 @@ Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
 	mapRandomRotation = false;
 	bDelete = false;
 	bKnown = false;
-	bRunning = false;
+	bIsRefreshing = false;
 	custom = false;
 	skill = 3;
 	for(int i = 0;i < MAX_TEAMS;i++)
@@ -212,7 +212,7 @@ Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
 Server::Server(const Server &other) : QObject(), currentGameMode(GameMode::COOPERATIVE)
 {
 	(*this) = other;
-	connect(this, SIGNAL( updated(Server*, int) ), this, SLOT( setResponse(Server* server, int response) ));
+	connect(this, SIGNAL( updated(Server*, int) ), this, SLOT( setResponse(Server*, int) ));
 }
 
 Server::~Server()
@@ -860,174 +860,64 @@ QRgb Server::teamColor(int team) const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-QThreadPool ServerRefresher::threadPool;
-QMutex ServerRefresher::guardianMutex;
-bool ServerRefresher::bGuardianExists = false;
-
-void Server::doRefresh(bool& bKillThread)
+bool Server::refresh()
 {
-	bKillThread = false;
-	// Connect to the server
-	QUdpSocket socket;
-
-	socket.connectToHost(address(), port());
-
-	if(!socket.waitForConnected(1000))
+	if (Main::refreshingThread == NULL)
 	{
-		printf("%s\n", socket.errorString().toAscii().data());
-		emitUpdated(Server::RESPONSE_BAD);
-		return;
+		emitUpdated(RESPONSE_BAD);
+		printf("REFRESHING THREAD IS NULL\n");
+		return false;
+	}
+
+	Main::refreshingThread->registerServer(this);
+	return true;
+}
+
+void Server::refreshStarts()
+{
+	bIsRefreshing = true;
+
+	emit begunRefreshing(this);
+	triesLeft = Main::config->setting("QueryTries")->integer();
+	if(triesLeft > 10) // Limit the maximum number of tries
+		triesLeft = 10;
+}
+
+void Server::refreshStops()
+{
+	bIsRefreshing = false;
+	iwad = iwad.toLower();
+}
+
+bool Server::sendRefreshQuery(QUdpSocket* socket)
+{
+	if(triesLeft-- == 0)
+	{
+		emitUpdated(Server::RESPONSE_TIMEOUT);
+		refreshStops();
+		return false;
 	}
 
 	QByteArray request;
-	if(!sendRequest(request))
-		return;
-
-	// start timer and write.
-	QTime time = QTime::currentTime();
-
-	int queryTries = Main::config->setting("QueryTries")->integer();
-	int queryTimeout = Main::config->setting("QueryTimeout")->integer();
-
-	// Make sure everything is in given limits
-	if (queryTries > 10)
+	if (!sendRequest(request))
 	{
-		queryTries = 10;
+		emitUpdated(Server::RESPONSE_BAD);
+		refreshStops();
+		return false;
 	}
 
-	// Make sure everything is in given limits, as above.
-	if (queryTimeout < 500)
-	{
-		queryTimeout = 500;
-	}
+	time.start();
 
-	int currentTry = 0;
-	bool bResponseReceived = false;
-	do {
-		if (currentTry >= queryTries)
-		{
-			emitUpdated(Server::RESPONSE_TIMEOUT);
-			return;
-		}
+	socket->writeDatagram(request, address(), port());
 
-		socket.write(request);
-		time.start();
-		bResponseReceived = socket.waitForReadyRead(queryTimeout);
-
-		if (!Main::running)
-		{
-			bKillThread = true;
-			return;
-		}
-
-		if (bDelete)
-		{
-			bKillThread = true;
-			delete this;
-			return;
-		}
-
-		++currentTry;
-	} while (!bResponseReceived);
-
-	// Read
-	QByteArray data = socket.readAll();
-	currentPing = time.elapsed();
-	if(!readRequest(data))
-		return;
-
-	socket.close();
-
-	emitUpdated(Server::RESPONSE_GOOD);
-}
-
-void Server::refresh()
-{
-	if (bRunning)
-		return;
-
-	startRunning();
-
-	emit begunRefreshing(this);
-	ServerRefresher* r = new ServerRefresher(this);
-	ServerRefresher::threadPool.start(r);
-
-	// It's impossible to launch more than one guardian. Do not perform
-	// any additional checks.
-	Main::launchRefreshGuardian();
-}
-
-void Server::finalizeRefreshing()
-{
-	iwad = iwad.toLower();
+	return true;
 }
 
 void Server::setToDelete(bool b)
 {
 	bDelete = b;
-	if (!bRunning)
+	if (!bIsRefreshing)
 		delete this;
-}
-
-ServerRefresher::ServerRefresher(Server* p) : parent(p)
-{
-	bGuardian = false;
-}
-
-void ServerRefresher::startGuardian()
-{
-	guardianMutex.lock();
-	if (!bGuardianExists)
-	{
-		bGuardianExists = true;
-		bGuardian = true;
-		QThreadPool::globalInstance()->start(this);
-	}
-	guardianMutex.unlock();
-}
-
-void ServerRefresher::run()
-{
-	if (!bGuardian)
-	{
-		int queryThreads = Main::config->setting("QueryThreads")->integer();
-
-		if (!Main::mainWindow->isActiveWindow())
-		{
-			queryThreads = qMin(queryThreads, 6);
-		}
-
-		if(threadPool.maxThreadCount() != queryThreads)
-		{
-			threadPool.setMaxThreadCount(queryThreads);
-		}
-
-		// If the program is no longer running then do nothing.
-		bool bKillThread = false;
-		if(Main::running)
-			parent->doRefresh(bKillThread);
-
-		if (bKillThread)
-			return;
-
-		if (Main::running)
-			parent->finalizeRefreshing();
-
-		if (Main::running)
-			parent->stopRunning();
-
-		if (Main::running && parent->isSetToDelete())
-			delete parent;
-	}
-	else
-	{
-		threadPool.waitForDone();
-		if (Main::running)
-		{
-			emit allServersRefreshed();
-			bGuardianExists = false;
-		}
-	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

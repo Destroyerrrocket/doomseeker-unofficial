@@ -45,6 +45,12 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), tra
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
 
+	// Connect refreshing thread.
+	connect(Main::refreshingThread, SIGNAL( block() ), this, SLOT( blockRefreshButtons() ) );
+	connect(Main::refreshingThread, SIGNAL( finishedQueryingMaster(MasterClient*) ), this, SLOT( finishedQueryingMaster(MasterClient*) ) );
+	connect(Main::refreshingThread, SIGNAL( sleepingModeEnter() ), this, SLOT( refreshThreadEndsWork() ) );
+	connect(Main::refreshingThread, SIGNAL( sleepingModeExit() ), this, SLOT( refreshThreadBeginsWork() ) );
+
 	// Window geometry settings
 	Main::config->createSetting("MainWindowX", x());
 	Main::config->createSetting("MainWindowY", y());
@@ -80,6 +86,7 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), tra
 	}
 	// Get the master
 	mc = new MasterManager();
+	connect(mc, SIGNAL( message(const QString&, const QString&, bool) ), this, SLOT( masterManagerMessages(const QString&, const QString&, bool) ) );
 
 	// Init custom servers
 	mc->customServs()->readConfig(Main::config, serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
@@ -136,7 +143,7 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), tra
 		// Custom servers should be refreshed no matter what.
 		// They will not block the app in any way, there is no reason
 		// not to refresh them.
-		refreshServers(true); // This should include only refreshing customs
+		refreshCustomServers();
 	}
 }
 
@@ -199,6 +206,12 @@ void MainWindow::autoRefreshTimer_timeout()
 	btnGetServers_Click();
 }
 
+void MainWindow::blockRefreshButtons()
+{
+	btnGetServers->setEnabled(false);
+	btnRefreshAll->setEnabled(false);
+}
+
 void MainWindow::btnRefreshAll_Click()
 {
 	serverTableHandler->refreshAll();
@@ -206,36 +219,9 @@ void MainWindow::btnRefreshAll_Click()
 
 void MainWindow::btnGetServers_Click()
 {
-	// Make sure that we are allowed to refresh the servers.
-	// Exterior calls to this function (as in, not called by button's clicked()
-	// signals) must be protected like this:
-	if (!btnGetServers->isEnabled())
-	{
-		return;
-	}
-
-	// Restart the timer. This function is executed either by the timer
-	// itself or by pressing the Get Servers button. If it's called by the
-	// latter we don't want the autorefresh timer to start the whole process
-	// over again as soon as it finishes.
-	initAutoRefreshTimer();
-
-	mc->refresh();
-
-	if (mc->numServers() == 0 && mc->customServs()->numServers() == 0)
-	{
-		return;
-	}
-
 	serverTableHandler->clearTable();
-
-	for(int i = 0;i < mc->numServers();i++)
-	{
-		connect((*mc)[i], SIGNAL(updated(Server *, int)), serverTableHandler, SLOT(serverUpdated(Server *, int)) );
-		connect((*mc)[i], SIGNAL(begunRefreshing(Server *)), serverTableHandler, SLOT(serverBegunRefreshing(Server *)) );
-	}
-
-	refreshServers(false);
+	refreshCustomServers();
+	Main::refreshingThread->registerMaster(mc);
 }
 
 void MainWindow::changeEvent(QEvent* event)
@@ -249,20 +235,6 @@ void MainWindow::changeEvent(QEvent* event)
 	{
 		event->ignore();
 	}
-}
-
-void MainWindow::checkRefreshFinished()
-{
-	btnGetServers->setEnabled(true);
-	btnRefreshAll->setEnabled(true);
-	serverTableHandler->serverTable()->setAllowAllRowsRefresh(true);
-	statusBar()->showMessage(tr("Done"));
-
-	buddiesList->scan();
-
-	// This method checks whether tray icon exists before performing any actions
-	// so there's no need to perform any checks here.
-	updateTrayIconTooltip();
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -287,6 +259,30 @@ void MainWindow::enablePort()
 	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
 	{
 		mc->enableMaster(i, queryMenuPorts[i]->isChecked());
+	}
+}
+
+void MainWindow::finishedQueryingMaster(MasterClient* master)
+{
+	if (master == NULL)
+	{
+		return;
+	}
+
+	for(int i = 0;i < master->numServers();i++)
+	{
+		connect((*master)[i], SIGNAL(updated(Server *, int)), serverTableHandler, SLOT(serverUpdated(Server *, int)) );
+		connect((*master)[i], SIGNAL(begunRefreshing(Server *)), serverTableHandler, SLOT(serverBegunRefreshing(Server *)) );
+	}
+
+	refreshServers(mc);
+}
+
+void MainWindow::masterManagerMessages(const QString& title, const QString& content, bool isError)
+{
+	if (isError)
+	{
+		QMessageBox::critical(this, title, content, QMessageBox::Ok, QMessageBox::Ok);
 	}
 }
 
@@ -417,7 +413,7 @@ void MainWindow::menuOptionsConfigure()
 	{
 		serverTableHandler->serverModel()->removeCustomServers();
 		mc->customServs()->readConfig(Main::config, serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
-		refreshServers(true);
+		refreshCustomServers();
 	}
 }
 
@@ -460,33 +456,40 @@ void MainWindow::quitProgram()
 	close();
 }
 
-void MainWindow::refreshServers(bool onlyCustom)
+void MainWindow::refreshCustomServers()
 {
 	CustomServers* cs = mc->customServs();
+
 	for(int i = 0;i < cs->numServers();i++)
 	{
 		serverTableHandler->serverUpdated((*cs)[i], Server::RESPONSE_NO_RESPONSE_YET);
-		(*cs)[i]->refresh();
+		(*cs)[i]->refresh(); // This will register server with refreshing thread.
 	}
+}
 
-	if (!onlyCustom)
+void MainWindow::refreshServers(MasterClient* master)
+{
+	for(int i = 0;i < master->numServers();i++)
 	{
-		for(int i = 0;i < mc->numServers();i++)
-		{
-			serverTableHandler->serverUpdated((*mc)[i], Server::RESPONSE_NO_RESPONSE_YET);
-			(*mc)[i]->refresh();
-		}
-
-		// disable refresh.
-		btnGetServers->setEnabled(false);
-		btnRefreshAll->setEnabled(false);
-		serverTableHandler->serverTable()->setAllowAllRowsRefresh(false);
-		statusBar()->showMessage(tr("Querying..."));
-		if (trayIcon != NULL)
-		{
-			trayIcon->setToolTip("Updating server list...");
-		}
+		serverTableHandler->serverUpdated((*master)[i], Server::RESPONSE_NO_RESPONSE_YET);
+		(*master)[i]->refresh(); // This will register server with refreshing thread.
 	}
+}
+
+void MainWindow::refreshThreadBeginsWork()
+{
+	// disable refresh.
+	serverTableHandler->serverTable()->setAllowAllRowsRefresh(false);
+	statusBar()->showMessage(tr("Querying..."));
+}
+
+void MainWindow::refreshThreadEndsWork()
+{
+	btnGetServers->setEnabled(true);
+	btnRefreshAll->setEnabled(true);
+	serverTableHandler->serverTable()->setAllowAllRowsRefresh(true);
+	statusBar()->showMessage(tr("Done"));
+	updateTrayIconTooltip();
 }
 
 void MainWindow::runGame(const Server* server)

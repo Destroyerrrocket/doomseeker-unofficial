@@ -31,12 +31,10 @@
 #include <QHostAddress>
 #include <QString>
 #include <QStringList>
-#include <QThreadPool>
-#include <QThread>
-#include <QRunnable>
 #include <QMetaType>
-#include <QMutex>
 #include <QPixmap>
+#include <QThread>
+#include <QTime>
 #include <QUdpSocket>
 
 #include "global.h"
@@ -267,6 +265,8 @@ class MAIN_EXPORT Server : public QObject
 {
 	Q_OBJECT
 
+	friend class RefreshingThread;
+
 	public:
 		enum Response
 		{
@@ -305,7 +305,6 @@ class MAIN_EXPORT Server : public QObject
 		bool				isCustom() const { return custom; }
 		bool				isKnown() const { return bKnown; }
 		bool				isLocked() const { return locked; }
-		bool				isRunning() const { return bRunning; }
 		bool				isSetToDelete() const { return bDelete; }
 		const QString		&iwadName() const { return iwad; }
 		int					lastResponse() const { return response; }
@@ -351,11 +350,8 @@ class MAIN_EXPORT Server : public QObject
 		void				setWebsite(const QString& site) { webSite = site; }
 
 		void				operator= (const Server &other);
-		void				finalizeRefreshing();
 		void				setCustom(bool b) { custom = b; }
 		void				setToDelete(bool b);
-		void				startRunning() { bRunning = true; }
-		void				stopRunning() { bRunning = false; }
 
 		QList<ServerAction>*	actions();
 		virtual void			actionsEx(QList<ServerAction>*) {};
@@ -408,6 +404,8 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		bool				host(const QString& serverExecutablePath, const QString& iwadPath, const QStringList& pwadsPaths, const QStringList& customParameters, const DMFlags& dmFlags, const QList<GameCVar>& cvars, QString& error);
 
+		bool				isRefreshing() const { return bIsRefreshing; }
+
 		/**
 		 *	Default behaviour returns the same string as clientBinary().
 		 *	This can be reimplemented for engines that use two different
@@ -420,23 +418,17 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		virtual QString		serverWorkingDirectory() const;
 
-
-		/**
-		 * Returns the thread pool of the refresher.
-		 */
-		static const QThreadPool	&refresherThreadPool();
-
-		friend class ServerRefresher;
 		friend class ServerPointer;
 
 	public slots:
 
 		void			displayJoinCommandLine();
 		void			join(const QString &connectPassword=QString()) const;
+
 		/**
 		 * Updates the server data.
 		 */
-		void			refresh();
+		bool			refresh();
 
 	signals:
 		void				begunRefreshing(Server* server);
@@ -546,6 +538,8 @@ class MAIN_EXPORT Server : public QObject
 
 		static QString		teamNames[];
 
+		QTime				time;
+
 	protected slots:
 		/**
 		 * server argument here is only provided for compatibility with updated
@@ -555,47 +549,31 @@ class MAIN_EXPORT Server : public QObject
 
 	private:
 		/**
+		 *	Called when server begins refreshing routine.
+		 */
+		void				refreshStarts();
+
+		/**
+		 *	Called when server finishes refreshing routine.
+		 */
+		void				refreshStops();
+
+		/**
+		 *	Method called by the refreshing thread. Sends the query
+		 *	through refreshing thread socket.
+		 */
+		bool				sendRefreshQuery(QUdpSocket* socket);
+
+		/**
 		 * This is used to make
 		 * sure that refresh() method isn't run on
 		 * server that is already refreshing.
 		 */
-		bool				bRunning;
+		bool				bIsRefreshing;
 		QHostAddress		serverAddress;
 		unsigned short		serverPort;
 
-		void 				doRefresh(bool& bKillThread);
-
-
-};
-
-class MAIN_EXPORT ServerRefresher : public QThread, public QRunnable
-{
-	Q_OBJECT
-
-	private:
-		static bool			bGuardianExists;
-		bool				bGuardian;
-		Server*				parent;
-
-	protected:
-		static QThreadPool	threadPool;
-		static QMutex		guardianMutex;
-
-		friend class Server;
-
-	public:
-		static bool	guardianExists() { return bGuardianExists; }
-
-		ServerRefresher(Server* p);
-
-		/**
-		 * Creates guardian thread that emits a signal
-		 * when all servers are refreshed.
-		 */
-		void startGuardian();
-		void run();
-	signals:
-		void allServersRefreshed();
+		int					triesLeft; /// Track how many resends we should try.
 };
 
 class MAIN_EXPORT ServerPointer

@@ -55,9 +55,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 		void	stopAutoRefreshTimer() { autoRefreshTimer.stop(); }
 
-	public slots:
-		void 	checkRefreshFinished();
-
 	protected:
 		QTimer	autoRefreshTimer;
 
@@ -83,19 +80,23 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 */
 		void	initTrayIcon();
 
+		void	refreshCustomServers();
+
 		/**
-		 *	@param onlyCustom - if true, the refreshing buttons aren't blocked
-		 *		and servers that aren't custom aren't contacted in any way.
+		 *	Excludes custom servers.
 		 */
-		void 	refreshServers(bool onlyCustom);
+		void 	refreshServers(MasterClient* master);
 
 		void	updateTrayIconTooltip();
 
 	protected slots:
 		void	autoRefreshTimer_timeout();
+		void	blockRefreshButtons();
 		void 	btnGetServers_Click();
 		void	btnRefreshAll_Click();
 		void 	enablePort();
+		void 	finishedQueryingMaster(MasterClient* master);
+		void	masterManagerMessages(const QString& title, const QString& content, bool isError);
 		void	menuBuddies();
 		void 	menuCreateServer();
 		void	menuHelpAbout();
@@ -103,6 +104,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	menuServerInfo();
 		void	menuWadSeeker();
 		void	quitProgram();
+		void 	refreshThreadBeginsWork();
+		void	refreshThreadEndsWork();
 		void 	runGame(const Server*);
 		void	trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
 		void 	updateServerInfo(QList<Server*>&);

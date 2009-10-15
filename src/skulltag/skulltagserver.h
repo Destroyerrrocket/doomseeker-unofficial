@@ -143,8 +143,6 @@ class SkulltagServer : public Server
 		QRgb			teamColor(int team) const;
 		QString			teamName(int team) const;
 
-		void			doRefresh();
-
 	protected:
 		bool			buckshot;
 		bool			instagib;

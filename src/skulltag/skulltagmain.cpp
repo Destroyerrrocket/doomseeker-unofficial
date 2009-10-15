@@ -157,7 +157,7 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 };
 
 static SkulltagEnginePlugin skulltag_engine_plugin;
-static const PluginInfo skulltag_info = {"Skulltag", "Skulltag server query plugin.", "The Skulltag Team", {0,3,0,0}, MAKEID('E','N','G','N'), &skulltag_engine_plugin};
+static const PluginInfo skulltag_info = {"Skulltag", "Skulltag server query plugin.", "The Skulltag Team", {0,4,0,0}, MAKEID('E','N','G','N'), &skulltag_engine_plugin};
 extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 {
 	return &skulltag_info;

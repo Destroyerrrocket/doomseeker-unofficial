@@ -27,6 +27,8 @@
 #include "sdeapi/pluginloader.hpp"
 #include "sdeapi/config.hpp"
 #include "ip2c.h"
+#include "refresher.h"
+#include "server.h"
 
 #include <QAbstractItemView>
 #include <QListView>
@@ -38,13 +40,13 @@
 class MAIN_EXPORT Main
 {
 	public:
-		static Config 			*config;
-		static IP2C				*ip2c;
-		static QWidget*			mainWindow;
-		static PluginLoader		enginePlugins;
-		static bool				running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
 
-		static void				launchRefreshGuardian();
+		static Config 				*config;
+		static IP2C					*ip2c;
+		static QWidget*				mainWindow;
+		static PluginLoader			enginePlugins;
+		static bool					running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
+		static RefreshingThread*	refreshingThread;
 
 		/**
 		 *	Global GUI method.

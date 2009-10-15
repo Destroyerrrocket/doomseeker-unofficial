@@ -36,6 +36,9 @@ class ServerListView : public QTableView
 	public:
 		ServerListView(QWidget* parent = 0);
 
+		/**
+		 *	Enables or disables update of row visuals.
+		 */
 		void setAllowAllRowsRefresh(bool b) { bAllowAllRowsRefresh = b; }
 
 	public slots:

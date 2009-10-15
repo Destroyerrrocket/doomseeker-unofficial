@@ -597,6 +597,10 @@ int ServerListModel::updateServer(int row, Server* server, int response)
 		case Server::RESPONSE_NO_RESPONSE_YET:
 			setFirstQuery(row, server);
 			break;
+
+		default:
+			printf("Unkown server response (%d): %s:%d\n", response, server->address().toString().toAscii().constData(), server->port());
+			break;
 	}
 
 	setBackgroundColor(row, server);

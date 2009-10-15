@@ -67,17 +67,17 @@ bool SkulltagMasterClient::readRequest(QByteArray &data, bool &expectingMorePack
 	int response = READINT32(&packetOut[0]);
 	if(response == MASTER_RESPONSE_BANNED)
 	{
-		notifyBanned();
+		notifyBanned("Skulltag");
 		return false;
 	}
 	else if(response == MASTER_RESPONSE_BAD)
 	{
-		notifyDelay();
+		notifyDelay("Skulltag");
 		return false;
 	}
 	else if(response == MASTER_RESPONSE_WRONGVERSION)
 	{
-		notifyUpdate();
+		notifyUpdate("Skulltag");
 		return false;
 	}
 	else if(response != MASTER_RESPONSE_BEGINPART)
