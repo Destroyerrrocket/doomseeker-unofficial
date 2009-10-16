@@ -41,14 +41,6 @@ CustomServersConfigBox::CustomServersConfigBox(Config *cfg, QWidget *parent) : C
 	prepareEnginesComboBox();
 }
 
-ConfigurationBoxInfo* CustomServersConfigBox::createStructure(Config *cfg, QWidget *parent)
-{
-	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
-	ec->confBox = new CustomServersConfigBox(cfg, parent);
-	ec->boxName = tr("Custom Servers");
-	return ec;
-}
-
 void CustomServersConfigBox::add()
 {
 	int pluginIndex = cboEngines->itemData(cboEngines->currentIndex()).toInt();
@@ -72,6 +64,14 @@ void CustomServersConfigBox::add(const QString& engineName, const QString& host,
 
 	model->appendRow(record);
 	tvServers->resizeRowsToContents();
+}
+
+ConfigurationBoxInfo* CustomServersConfigBox::createStructure(Config *cfg, QWidget *parent)
+{
+	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
+	ec->confBox = new CustomServersConfigBox(cfg, parent);
+	ec->boxName = tr("Custom Servers");
+	return ec;
 }
 
 void CustomServersConfigBox::dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)

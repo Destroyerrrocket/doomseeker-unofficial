@@ -31,14 +31,6 @@ OdamexMasterClient::OdamexMasterClient(QHostAddress address, unsigned short port
 {
 }
 
-bool OdamexMasterClient::sendRequest(QByteArray &data)
-{
-	const char challenge[4] = {MASTER_CHALLENGE};
-	const QByteArray chall(challenge, 4);
-	data.append(chall);
-	return true;
-}
-
 bool OdamexMasterClient::readRequest(QByteArray &data, bool &expectingMorePackets)
 {
 	// Decompress the response.
@@ -63,5 +55,13 @@ bool OdamexMasterClient::readRequest(QByteArray &data, bool &expectingMorePacket
 		servers.push_back(server);
 		pos += 6;
 	}
+	return true;
+}
+
+bool OdamexMasterClient::sendRequest(QByteArray &data)
+{
+	const char challenge[4] = {MASTER_CHALLENGE};
+	const QByteArray chall(challenge, 4);
+	data.append(chall);
 	return true;
 }

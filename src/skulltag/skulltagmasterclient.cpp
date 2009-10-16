@@ -44,18 +44,6 @@ SkulltagMasterClient::SkulltagMasterClient(QHostAddress address, unsigned short 
 {
 }
 
-bool SkulltagMasterClient::sendRequest(QByteArray &data)
-{
-	// Send launcher challenge.
-	const unsigned char challenge[6] = {WRITEINT32_DIRECT(MASTER_CHALLENGE), WRITEINT16_DIRECT(MASTER_PROTOCOL_VERSION)};
-	unsigned char challengeOut[12];
-	int out = 12;
-	g_Huffman.encode(challenge, challengeOut, 6, &out);
-	const QByteArray chall(reinterpret_cast<char*> (challengeOut), out);
-	data.append(chall);
-	return true;
-}
-
 bool SkulltagMasterClient::readRequest(QByteArray &data, bool &expectingMorePackets)
 {
 	const char* in = data.data();
@@ -127,5 +115,17 @@ bool SkulltagMasterClient::readRequest(QByteArray &data, bool &expectingMorePack
 		numPacketsRead++;
 	}
 
+	return true;
+}
+
+bool SkulltagMasterClient::sendRequest(QByteArray &data)
+{
+	// Send launcher challenge.
+	const unsigned char challenge[6] = {WRITEINT32_DIRECT(MASTER_CHALLENGE), WRITEINT16_DIRECT(MASTER_PROTOCOL_VERSION)};
+	unsigned char challengeOut[12];
+	int out = 12;
+	g_Huffman.encode(challenge, challengeOut, 6, &out);
+	const QByteArray chall(reinterpret_cast<char*> (challengeOut), out);
+	data.append(chall);
 	return true;
 }

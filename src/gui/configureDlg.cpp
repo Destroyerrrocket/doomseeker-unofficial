@@ -58,10 +58,84 @@ ConfigureDlg::~ConfigureDlg()
 		delete configBoxesList[i];
 	}
 }
-/////////////////////////////////////////////////////////
+
+bool ConfigureDlg::addConfigurationBox(QStandardItem* rootItem, ConfigurationBoxInfo* cfgBox, int pos)
+{
+	if (cfgBox == NULL || cfgBox->confBox == NULL || cfgBox->boxName.isEmpty() || cfgBox->itemOnTheList != NULL)
+	{
+		return false;
+	}
+
+	QStandardItem* item = new QStandardItem(cfgBox->boxName);
+	item->setIcon(cfgBox->icon);
+	cfgBox->itemOnTheList = item;
+	if (rootItem == NULL)
+	{
+		QStandardItemModel* model = (QStandardItemModel*)tvOptionsList->model();
+		rootItem = model->invisibleRootItem();
+	}
+
+	if (pos < 0)
+	{
+		rootItem->appendRow(item);
+	}
+	else
+	{
+		rootItem->insertRow(pos, item);
+	}
+
+	configBoxesList.push_back(cfgBox);
+	connect(cfgBox->confBox, SIGNAL( appearanceChanged() ), this, SLOT( appearanceChangedSlot() ) );
+	connect(cfgBox->confBox, SIGNAL( wantChangeDefaultButton(QPushButton*) ), this, SLOT( wantChangeDefaultButton(QPushButton*) ) );
+
+	return true;
+}
+
+bool ConfigureDlg::addEngineConfiguration(ConfigurationBoxInfo* cfgBox)
+{
+	if (enginesRoot != NULL)
+	{
+		return addConfigurationBox(enginesRoot, cfgBox);
+	}
+	return false;
+}
+
 void ConfigureDlg::appearanceChangedSlot()
 {
 	bAppearanceChanged = true;
+}
+
+void ConfigureDlg::btnClicked(QAbstractButton *button)
+{
+	// Figure out what button we pressed and perform its action.
+	switch(buttonBox->standardButton(button))
+	{
+		default:
+			break;
+		case QDialogButtonBox::Ok: // Also does the same as Apply
+			this->accept();
+		case QDialogButtonBox::Apply:
+			this->saveSettings();
+			break;
+		case QDialogButtonBox::Cancel:
+			this->reject();
+			break;
+	}
+}
+
+ConfigurationBoxInfo* ConfigureDlg::findConfigurationBoxInfo(const QStandardItem* item)
+{
+	// Cycle through known engines
+	for(int i = 0; i < configBoxesList.count(); ++i)
+	{
+		ConfigurationBoxInfo* ec = configBoxesList[i];
+		if (item == ec->itemOnTheList && ec->confBox != NULL)
+		{
+			return ec;
+		}
+	}
+
+	return NULL;
 }
 
 void ConfigureDlg::initOptionsList()
@@ -98,96 +172,6 @@ void ConfigureDlg::initOptionsList()
 	tvOptionsList->setModel(model);
 }
 
-void ConfigureDlg::saveSettings()
-{
-	qDebug() << "Saving settings:";
-	// Iterate through every engine and execute it's saving method
-	for (int i = 0; i < configBoxesList.count(); ++i)
-	{
-		if (configBoxesList[i]->confBox->save())
-		{
-			qDebug() << "Box:" << configBoxesList[i]->boxName;
-		}
-	}
-
-	bCustomServersChanged = customServersCfgBox->allowSave();
-	mainConfig->saveConfig();
-	qDebug() << "Saving completed!";
-}
-/////////////////////////////////////////////////////////
-
-bool ConfigureDlg::addConfigurationBox(QStandardItem* rootItem, ConfigurationBoxInfo* cfgBox, int pos)
-{
-	if (cfgBox == NULL || cfgBox->confBox == NULL || cfgBox->boxName.isEmpty() || cfgBox->itemOnTheList != NULL)
-	{
-		return false;
-	}
-
-	QStandardItem* item = new QStandardItem(cfgBox->boxName);
-	item->setIcon(cfgBox->icon);
-	cfgBox->itemOnTheList = item;
-	if (rootItem == NULL)
-	{
-		QStandardItemModel* model = (QStandardItemModel*)tvOptionsList->model();
-		rootItem = model->invisibleRootItem();
-	}
-
-	if (pos < 0)
-	{
-		rootItem->appendRow(item);
-	}
-	else
-	{
-		rootItem->insertRow(pos, item);
-	}
-
-	configBoxesList.push_back(cfgBox);
-	connect(cfgBox->confBox, SIGNAL( appearanceChanged() ), this, SLOT( appearanceChangedSlot() ) );
-	connect(cfgBox->confBox, SIGNAL( wantChangeDefaultButton(QPushButton*) ), this, SLOT( wantChangeDefaultButton(QPushButton*) ) );
-
-	return true;
-}
-// This will hide currently displayed box if NULL is passed
-// as w argument.
-void ConfigureDlg::showConfigurationBox(QWidget* w)
-{
-	if (currentlyDisplayedCfgBox != NULL)
-	{
-		currentlyDisplayedCfgBox->hide();
-	}
-	currentlyDisplayedCfgBox = w;
-
-	if (w != NULL)
-	{
-		mainPanel->layout()->addWidget(w);
-		w->show();
-	}
-}
-
-ConfigurationBoxInfo* ConfigureDlg::findConfigurationBoxInfo(const QStandardItem* item)
-{
-	// Cycle through known engines
-	for(int i = 0; i < configBoxesList.count(); ++i)
-	{
-		ConfigurationBoxInfo* ec = configBoxesList[i];
-		if (item == ec->itemOnTheList && ec->confBox != NULL)
-		{
-			return ec;
-		}
-	}
-
-	return NULL;
-}
-/////////////////////////////////////////////////////////
-bool ConfigureDlg::addEngineConfiguration(ConfigurationBoxInfo* cfgBox)
-{
-	if (enginesRoot != NULL)
-	{
-		return addConfigurationBox(enginesRoot, cfgBox);
-	}
-	return false;
-}
-/////////////////////////////////////////////////////////
 void ConfigureDlg::optionListClicked(const QModelIndex& index)
 {
 	QString str = index.data().toString();
@@ -215,21 +199,36 @@ void ConfigureDlg::optionListClicked(const QModelIndex& index)
 	}
 }
 
-void ConfigureDlg::btnClicked(QAbstractButton *button)
+void ConfigureDlg::saveSettings()
 {
-	// Figure out what button we pressed and perform its action.
-	switch(buttonBox->standardButton(button))
+	qDebug() << "Saving settings:";
+	// Iterate through every engine and execute it's saving method
+	for (int i = 0; i < configBoxesList.count(); ++i)
 	{
-		default:
-			break;
-		case QDialogButtonBox::Ok: // Also does the same as Apply
-			this->accept();
-		case QDialogButtonBox::Apply:
-			this->saveSettings();
-			break;
-		case QDialogButtonBox::Cancel:
-			this->reject();
-			break;
+		if (configBoxesList[i]->confBox->save())
+		{
+			qDebug() << "Box:" << configBoxesList[i]->boxName;
+		}
+	}
+
+	bCustomServersChanged = customServersCfgBox->allowSave();
+	mainConfig->saveConfig();
+	qDebug() << "Saving completed!";
+}
+
+
+void ConfigureDlg::showConfigurationBox(QWidget* widget)
+{
+	if (currentlyDisplayedCfgBox != NULL)
+	{
+		currentlyDisplayedCfgBox->hide();
+	}
+	currentlyDisplayedCfgBox = widget;
+
+	if (widget != NULL)
+	{
+		mainPanel->layout()->addWidget(widget);
+		widget->show();
 	}
 }
 

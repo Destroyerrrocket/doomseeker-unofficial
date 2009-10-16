@@ -278,14 +278,6 @@ void MainWindow::finishedQueryingMaster(MasterClient* master)
 	refreshServers(mc);
 }
 
-void MainWindow::masterManagerMessages(const QString& title, const QString& content, bool isError)
-{
-	if (isError)
-	{
-		QMessageBox::critical(this, title, content, QMessageBox::Ok, QMessageBox::Ok);
-	}
-}
-
 void MainWindow::initAutoRefreshTimer()
 {
 	const unsigned MIN_DELAY = 30;
@@ -356,6 +348,14 @@ void MainWindow::initTrayIcon()
 		trayIcon->setContextMenu(trayIconMenu);
 		trayIcon->setIcon(QIcon(":/icon.png"));
 		trayIcon->setVisible(true);
+	}
+}
+
+void MainWindow::masterManagerMessages(const QString& title, const QString& content, bool isError)
+{
+	if (isError)
+	{
+		QMessageBox::critical(this, title, content, QMessageBox::Ok, QMessageBox::Ok);
 	}
 }
 

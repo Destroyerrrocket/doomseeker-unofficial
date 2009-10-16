@@ -44,12 +44,96 @@ WadseekerConfigBox::WadseekerConfigBox(Config* cfg, QWidget* parent) : Configura
 	cboIdgamesPriority->addItem("After custom site");
 }
 
+void WadseekerConfigBox::btnBrowseTargetDirectoryClicked()
+{
+	QString filter;
+	QString strFilepath = QFileDialog::getExistingDirectory(this, tr("Wadseeker target directory"));
+
+	if(!strFilepath.isEmpty()) // don't update if nothing was selected.
+		leTargetDirectory->setText(strFilepath);
+}
+
+void WadseekerConfigBox::btnIdgamesURLDefaultClicked()
+{
+	leIdgamesURL->setText(Wadseeker::defaultIdgamesUrl());
+}
+
+void WadseekerConfigBox::btnUrlAddClicked()
+{
+	insertUrl(leUrl->text());
+}
+
+void WadseekerConfigBox::btnUrlDefaultClicked()
+{
+	for (int i = 0; !Wadseeker::defaultSites[i].isEmpty(); ++i)
+	{
+		this->insertUrl(Wadseeker::defaultSites[i]);
+	}
+}
+
+void WadseekerConfigBox::btnUrlRemoveClicked()
+{
+	QItemSelectionModel* selModel = lstUrls->selectionModel();
+	QModelIndexList indexList = selModel->selectedIndexes();
+	selModel->clear();
+
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstUrls->model());
+	QList<QStandardItem*> itemList;
+	for (int i = 0; i < indexList.count(); ++i)
+	{
+		itemList << model->itemFromIndex(indexList[i]);
+	}
+
+	for (int i = 0; i < itemList.count(); ++i)
+	{
+		QModelIndex index = model->indexFromItem(itemList[i]);
+		model->removeRow(index.row());
+	}
+}
+
 ConfigurationBoxInfo* WadseekerConfigBox::createStructure(Config* cfg, QWidget* parent)
 {
 	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
 	ec->confBox = new WadseekerConfigBox(cfg, parent);
 	ec->boxName = tr("Wadseeker");
 	return ec;
+}
+
+void WadseekerConfigBox::focusChanged(QWidget* old, QWidget* now)
+{
+	if (now == leUrl)
+	{
+		emit wantChangeDefaultButton(btnUrlAdd);
+	}
+	else
+	{
+		emit wantChangeDefaultButton(NULL);
+	}
+}
+
+void WadseekerConfigBox::insertUrl(const QUrl& url)
+{
+	if (url.isEmpty())
+		return;
+
+	// first we check whether the URL is already in the box.
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstUrls->model());
+	for (int i = 0; i < model->rowCount(); ++i)
+	{
+		QUrl existingUrl( model->item(i)->text() );
+		if (existingUrl == url)
+		{
+			return;
+		}
+	}
+
+	QStandardItem* it = new QStandardItem(url.toString());
+
+	it->setDragEnabled(true);
+	it->setDropEnabled(false);
+	it->setToolTip(url.toString());
+
+	model->appendRow(it);
 }
 
 void WadseekerConfigBox::readSettings()
@@ -111,90 +195,6 @@ void WadseekerConfigBox::saveSettings()
 	setting->setValue(spinDownloadTimeout->value());
 
 	delete urlLst;
-}
-
-void WadseekerConfigBox::btnBrowseTargetDirectoryClicked()
-{
-	QString filter;
-	QString strFilepath = QFileDialog::getExistingDirectory(this, tr("Wadseeker target directory"));
-
-	if(!strFilepath.isEmpty()) // don't update if nothing was selected.
-		leTargetDirectory->setText(strFilepath);
-}
-
-void WadseekerConfigBox::btnIdgamesURLDefaultClicked()
-{
-	leIdgamesURL->setText(Wadseeker::defaultIdgamesUrl());
-}
-
-void WadseekerConfigBox::btnUrlAddClicked()
-{
-	insertUrl(leUrl->text());
-}
-
-void WadseekerConfigBox::btnUrlDefaultClicked()
-{
-	for (int i = 0; !Wadseeker::defaultSites[i].isEmpty(); ++i)
-	{
-		this->insertUrl(Wadseeker::defaultSites[i]);
-	}
-}
-
-void WadseekerConfigBox::btnUrlRemoveClicked()
-{
-	QItemSelectionModel* selModel = lstUrls->selectionModel();
-	QModelIndexList indexList = selModel->selectedIndexes();
-	selModel->clear();
-
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstUrls->model());
-	QList<QStandardItem*> itemList;
-	for (int i = 0; i < indexList.count(); ++i)
-	{
-		itemList << model->itemFromIndex(indexList[i]);
-	}
-
-	for (int i = 0; i < itemList.count(); ++i)
-	{
-		QModelIndex index = model->indexFromItem(itemList[i]);
-		model->removeRow(index.row());
-	}
-}
-
-void WadseekerConfigBox::focusChanged(QWidget* old, QWidget* now)
-{
-	if (now == leUrl)
-	{
-		emit wantChangeDefaultButton(btnUrlAdd);
-	}
-	else
-	{
-		emit wantChangeDefaultButton(NULL);
-	}
-}
-
-void WadseekerConfigBox::insertUrl(const QUrl& url)
-{
-	if (url.isEmpty())
-		return;
-
-	// first we check whether the URL is already in the box.
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstUrls->model());
-	for (int i = 0; i < model->rowCount(); ++i)
-	{
-		QUrl existingUrl( model->item(i)->text() );
-		if (existingUrl == url)
-		{
-			return;
-		}
-	}
-
-	QStandardItem* it = new QStandardItem(url.toString());
-
-	it->setDragEnabled(true);
-	it->setDropEnabled(false);
-	it->setToolTip(url.toString());
-
-	model->appendRow(it);
 }
 
 QStringList* WadseekerConfigBox::urlListEncoded()

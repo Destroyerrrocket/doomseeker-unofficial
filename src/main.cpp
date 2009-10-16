@@ -106,6 +106,17 @@ int main(int argc, char* argv[])
 	return ret;
 }
 
+bool Main::isCharOnCharList(char c, const QString& charList)
+{
+	for (int i = 0; i < charList.length(); ++i)
+	{
+		if (charList[i] == c)
+			return true;
+	}
+
+	return false;
+}
+
 void Main::translateServerAddress(const QString& settingValue, QString& hostname, short& port, const QString& defaultHostname, const short defaultPort)
 {
 	QStringList addressAndPort = settingValue.split(":");
@@ -124,17 +135,6 @@ void Main::translateServerAddress(const QString& settingValue, QString& hostname
 
 	if (port == 0)
 		port = defaultPort;
-}
-
-bool Main::isCharOnCharList(char c, const QString& charList)
-{
-	for (int i = 0; i < charList.length(); ++i)
-	{
-		if (charList[i] == c)
-			return true;
-	}
-
-	return false;
 }
 
 QString& Main::trimr(QString& str, const QString& charList)

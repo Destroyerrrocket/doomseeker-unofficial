@@ -35,45 +35,7 @@ FilePathsConfigBox::FilePathsConfigBox(Config* cfg, QWidget* parent) : Configura
 	connect(btnAddWadPath, SIGNAL( clicked() ), this, SLOT( btnAddWadPath_Click()) );
 	connect(btnRemoveWadPath, SIGNAL( clicked() ), this, SLOT( btnRemoveWadPath_Click()) );
 }
-///////////////////////////////////////////////////
-ConfigurationBoxInfo* FilePathsConfigBox::createStructure(Config* cfg, QWidget* parent)
-{
-	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
-	ec->confBox = new FilePathsConfigBox(cfg, parent);
-	ec->boxName = tr("File paths");
-	return ec;
-}
-////////////////////////////////////////////////////
-void FilePathsConfigBox::readSettings()
-{
-	SettingsData* setting;
 
-	setting = config->setting("WadPaths");
-	QStringList strList = setting->string().split(";", QString::SkipEmptyParts);
-	for (int i = 0; i < strList.count(); ++i)
-	{
-		addPath(strList[i]);
-	}
-}
-
-void FilePathsConfigBox::saveSettings()
-{
-	QStringList strList;
-	SettingsData* setting;
-
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstIwadAndPwadPaths->model());
-	{
-		for(int i = 0; i < model->rowCount(); ++i)
-		{
-			QStandardItem* item = model->item(i);
-			strList << item->text();
-		}
-	}
-
-	setting = config->setting("WadPaths");
-	setting->setValue(strList.join(";"));
-}
-////////////////////////////////////////////////////
 void FilePathsConfigBox::addPath(const QString& strPath)
 {
 	if (strPath.isEmpty())
@@ -103,8 +65,7 @@ void FilePathsConfigBox::addPath(const QString& strPath)
 	}
 	model->appendRow(new QStandardItem(strPath));
 }
-////////////////////////////////////////////////////
-// Slots
+
 void FilePathsConfigBox::btnAddWadPath_Click()
 {
 	QString strDir = QFileDialog::getExistingDirectory(this, tr("Doomseeker - Add wad path"));
@@ -129,4 +90,42 @@ void FilePathsConfigBox::btnRemoveWadPath_Click()
 		QModelIndex index = model->indexFromItem(itemList[i]);
 		model->removeRow(index.row());
 	}
+}
+
+ConfigurationBoxInfo* FilePathsConfigBox::createStructure(Config* cfg, QWidget* parent)
+{
+	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
+	ec->confBox = new FilePathsConfigBox(cfg, parent);
+	ec->boxName = tr("File paths");
+	return ec;
+}
+
+void FilePathsConfigBox::readSettings()
+{
+	SettingsData* setting;
+
+	setting = config->setting("WadPaths");
+	QStringList strList = setting->string().split(";", QString::SkipEmptyParts);
+	for (int i = 0; i < strList.count(); ++i)
+	{
+		addPath(strList[i]);
+	}
+}
+
+void FilePathsConfigBox::saveSettings()
+{
+	QStringList strList;
+	SettingsData* setting;
+
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstIwadAndPwadPaths->model());
+	{
+		for(int i = 0; i < model->rowCount(); ++i)
+		{
+			QStandardItem* item = model->item(i);
+			strList << item->text();
+		}
+	}
+
+	setting = config->setting("WadPaths");
+	setting->setValue(strList.join(";"));
 }

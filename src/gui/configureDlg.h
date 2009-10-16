@@ -77,7 +77,10 @@ class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 		 */
 		bool 					addConfigurationBox(QStandardItem* rootItem, ConfigurationBoxInfo*, int pos = -1);
 
-		void 					showConfigurationBox(QWidget*);
+		/**
+		 * 	@param widget - hide currently displayed box if NULL.
+		 */
+		void 					showConfigurationBox(QWidget* widget);
 		ConfigurationBoxInfo*	findConfigurationBoxInfo(const QStandardItem*);
 };
 

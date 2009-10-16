@@ -97,22 +97,6 @@ ServerListView::ServerListView(QWidget* parent) : QTableView(parent)
 	setItemDelegate(new CustomItemDelegate());
 }
 
-void ServerListView::updateRowVisuals(int row)
-{
-	resizeRowToContents(row);
-}
-
-void ServerListView::updateAllRows()
-{
-	if (bAllowAllRowsRefresh)
-	{
-		for (int i = 0; i < model()->rowCount(); ++i)
-		{
-			updateRowVisuals(i);
-		}
-	}
-}
-
 void ServerListView::mouseReleaseEvent(QMouseEvent* event)
 {
 	if (event->button() != Qt::RightButton)
@@ -141,6 +125,22 @@ void ServerListView::mouseDoubleClickEvent(QMouseEvent* event)
 		if (index.isValid())
 		{
 			emit leftMouseDoubleClicked(index, event->pos());
+		}
+	}
+}
+
+void ServerListView::updateRowVisuals(int row)
+{
+	resizeRowToContents(row);
+}
+
+void ServerListView::updateAllRows()
+{
+	if (bAllowAllRowsRefresh)
+	{
+		for (int i = 0; i < model()->rowCount(); ++i)
+		{
+			updateRowVisuals(i);
 		}
 	}
 }

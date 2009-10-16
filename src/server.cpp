@@ -41,53 +41,6 @@ Player::Player(const QString &name, unsigned short score, unsigned short ping, P
 {
 }
 
-QString	Player::nameFormatted() const
-{
-	QString ret;
-	for (int i = 0; i < playerName.length(); ++i)
-	{
-		// cut out bad characters
-		if ((playerName[i] < 32 || playerName[i] > 126) && playerName[i] != ESCAPE_COLOR)
-			continue;
-
-		switch (playerName[i].toAscii())
-		{
-			case '<':
-				ret += "&lt;";
-				break;
-
-			case '>':
-				ret += "&gt;";
-				break;
-
-			default:
-				ret += playerName[i];
-				break;
-		}
-	}
-
-	return colorizeString(ret);
-}
-
-QString Player::nameColorTagsStripped() const
-{
-	QString ret;
-	for (int i = 0; i < playerName.length(); ++i)
-	{
-		if (playerName[i] < 32 || playerName[i] > 126)
-		{
-			// Lets only remove the following character on \c.
-			// Removing the control characters is still a good idea though.
-			if(playerName[i] == ESCAPE_COLOR)
-				++i;
-			continue;
-		}
-
-		ret += playerName[i];
-	}
-	return ret;
-}
-
 const char Player::colorChart[20][7] =
 {
 	"FF91A4", //a
@@ -152,6 +105,53 @@ QString Player::colorizeString(const QString &str, int current)
 	if(colored)
 		ret += "</span>";
 	return ret;
+}
+
+QString Player::nameColorTagsStripped() const
+{
+	QString ret;
+	for (int i = 0; i < playerName.length(); ++i)
+	{
+		if (playerName[i] < 32 || playerName[i] > 126)
+		{
+			// Lets only remove the following character on \c.
+			// Removing the control characters is still a good idea though.
+			if(playerName[i] == ESCAPE_COLOR)
+				++i;
+			continue;
+		}
+
+		ret += playerName[i];
+	}
+	return ret;
+}
+
+QString	Player::nameFormatted() const
+{
+	QString ret;
+	for (int i = 0; i < playerName.length(); ++i)
+	{
+		// cut out bad characters
+		if ((playerName[i] < 32 || playerName[i] > 126) && playerName[i] != ESCAPE_COLOR)
+			continue;
+
+		switch (playerName[i].toAscii())
+		{
+			case '<':
+				ret += "&lt;";
+				break;
+
+			case '>':
+				ret += "&gt;";
+				break;
+
+			default:
+				ret += playerName[i];
+				break;
+		}
+	}
+
+	return colorizeString(ret);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -235,171 +235,6 @@ QList<ServerAction>* Server::actions()
 	return lst;
 }
 
-void Server::clearDMFlags()
-{
-	DMFlagsIt it;
-	for (it = dmFlags.begin(); it != dmFlags.end(); ++it)
-	{
-		delete (*it);
-	}
-	dmFlags.clear();
-}
-
-void Server::setResponse(Server* server, int res)
-{
-	response = static_cast<Response>(res);
-	if (response == RESPONSE_GOOD)
-	{
-		bKnown = true;
-	}
-	else if (response == RESPONSE_BAD || response == RESPONSE_BANNED || response == RESPONSE_TIMEOUT)
-	{
-		bKnown = false;
-	}
-
-}
-
-unsigned int Server::longestPlayerName() const
-{
-	unsigned int x = 0;
-	for (int i = 0; i < numPlayers(); ++i)
-	{
-		unsigned int len = players[i].nameColorTagsStripped().length();
-		if (len > x)
-			x = len;
-	}
-	return x;
-}
-
-QString Server::gameInfoTableHTML() const
-{
-	const QString timelimit = tr("Timelimit");
-	const QString scorelimit = tr("Scorelimit");
-	const QString unlimited = tr("Unlimited");
-	const QString players = tr("Players");
-
-	// Timelimit
-    QString firstTableTimelimit = "<tr><td>" + timelimit + ":&nbsp;</td><td>%1 %2</td></tr>";
-    if (this->timeLimit() == 0)
-    {
-    	firstTableTimelimit = firstTableTimelimit.arg(unlimited, "");
-    }
-    else
-    {
-		QString strLeft = tr("(%1 left)").arg(this->timeLeft());
-		firstTableTimelimit = firstTableTimelimit.arg(this->timeLimit()).arg(strLeft);
-    }
-
-	// Scorelimit
-	QString firstTableScorelimit = "<tr><td>" + scorelimit + ":&nbsp;</td><td>%1</td></tr>";
-	if (this->scoreLimit() == 0)
-	{
-		firstTableScorelimit = firstTableScorelimit.arg(unlimited);
-	}
-	else
-	{
-		firstTableScorelimit = firstTableScorelimit.arg(this->scoreLimit());
-	}
-
-	// Team score
-	QString firstTableTeamscore;
-	if (this->gameMode().isTeamGame())
-	{
-		firstTableTeamscore = "<tr><td colspan=\"2\">%1</td></tr>";
-		QString teams;
-		bool bPrependBar = false;
-		for (int i = 0; i < MAX_TEAMS; ++i)
-		{
-			if (this->teamPlayerCount(i) != 0)
-			{
-				if (bPrependBar)
-					teams += " | ";
-				teams += teamName(i) + ": " + QString::number(this->score(i));
-				bPrependBar = true;
-			}
-		}
-		firstTableTeamscore = firstTableTeamscore.arg(teams);
-	}
-
-	// Players
-	QString firstTablePlayers = "<tr><td>" + players + ":&nbsp;</td><td>%1 / %2</td></tr>";
-	firstTablePlayers = firstTablePlayers.arg(this->numPlayers()).arg(this->maximumClients());
-
-	QString firstTable = "<table>";
-	firstTable += firstTableTimelimit;
-	firstTable += firstTableScorelimit;
-	firstTable += firstTableTeamscore;
-	firstTable += firstTablePlayers;
-	firstTable += "</table>";
-
-	return firstTable;
-}
-
-QList<ServerInfo>* Server::serverInfo() const
-{
-	QList<ServerInfo>* list = new QList<ServerInfo>();
-
-	ServerInfo siName = { this->name(), "<div style='white-space: pre'>" + this->name() + "</div>" };
-
-	QString addr = this->address().toString() + ":" + QString::number(this->port());
-	ServerInfo siAddress = { addr, addr };
-
-	list->append(siName);
-	list->append(siAddress);
-
-	if (!this->webSite.isEmpty())
-	{
-		QString url = "<A HREF=\"" + this->webSite + "\">" + this->webSite + "</A>";
-		ServerInfo siUrl = { tr("URL: ") + url, "<div style='white-space: pre'>" + this->webSite + "</div>"};
-		list->append(siUrl);
-	}
-	if (!this->email.isEmpty())
-	{
-		QString email = "<a href=\"mailto:" + this->email + "\">" + this->email + "</a>";
-		ServerInfo siEmail = { tr("E-mail: ") + email, "<div style='white-space: pre'>" + this->email + "</div>"};
-		list->append(siEmail);
-	}
-
-	additionalServerInfo(list);
-	return list;
-}
-
-int Server::teamPlayerCount(int team) const
-{
-	if (team >= MAX_TEAMS)
-	{
-		return -1;
-	}
-
-	int teamSize = 0;
-	for (int i = 0; i < players.count(); ++i)
-	{
-		const Player& p = players[i];
-		if (p.teamNum() == team)
-		{
-			++teamSize;
-		}
-	}
-	return teamSize;
-}
-
-void Server::operator= (const Server &other)
-{
-	serverAddress = other.address();
-	serverPort = other.port();
-
-	bDelete = other.bDelete;
-	bKnown = other.isKnown();
-	currentGameMode = other.gameMode();
-	currentPing = other.ping();
-	custom = other.isCustom();
-	locked = other.isLocked();
-	maxClients = other.maximumClients();
-	maxPlayers = other.maximumPlayers();
-	serverName = other.name();
-	serverScoreLimit = other.scoreLimit();
-}
-
 void Server::cleanArguments(QStringList& args) const
 {
 	#ifdef Q_OS_WIN32
@@ -412,6 +247,16 @@ void Server::cleanArguments(QStringList& args) const
 		}
 	}
 	#endif
+}
+
+void Server::clearDMFlags()
+{
+	DMFlagsIt it;
+	for (it = dmFlags.begin(); it != dmFlags.end(); ++it)
+	{
+		delete (*it);
+	}
+	dmFlags.clear();
 }
 
 QString Server::clientWorkingDirectory() const
@@ -636,27 +481,68 @@ void Server::displayJoinCommandLine()
 	ctd->show();
 }
 
-void Server::join(const QString &connectPassword) const
+QString Server::gameInfoTableHTML() const
 {
-	const QString errorCaption = tr("Doomseeker - error");
-	QFileInfo executable;
-	QDir applicationDir;
-	QStringList args;
+	const QString timelimit = tr("Timelimit");
+	const QString scorelimit = tr("Scorelimit");
+	const QString unlimited = tr("Unlimited");
+	const QString players = tr("Players");
 
-	if (!createJoinCommandLine(executable, applicationDir, args, connectPassword))
-		return;
+	// Timelimit
+    QString firstTableTimelimit = "<tr><td>" + timelimit + ":&nbsp;</td><td>%1 %2</td></tr>";
+    if (this->timeLimit() == 0)
+    {
+    	firstTableTimelimit = firstTableTimelimit.arg(unlimited, "");
+    }
+    else
+    {
+		QString strLeft = tr("(%1 left)").arg(this->timeLeft());
+		firstTableTimelimit = firstTableTimelimit.arg(this->timeLimit()).arg(strLeft);
+    }
 
-	printf("Starting (working dir %s): %s %s\n", applicationDir.canonicalPath().toAscii().constData(), executable.absoluteFilePath().toAscii().constData(), args.join(" ").toAscii().constData());
-
-	QProcess proc;
-
-	cleanArguments(args);
-
-	if( !proc.startDetached(executable.canonicalFilePath(), args, applicationDir.canonicalPath()) )
+	// Scorelimit
+	QString firstTableScorelimit = "<tr><td>" + scorelimit + ":&nbsp;</td><td>%1</td></tr>";
+	if (this->scoreLimit() == 0)
 	{
-		QMessageBox::critical(Main::mainWindow, errorCaption, tr("File: %1\ncannot be run").arg(executable.canonicalFilePath()));
-		return;
+		firstTableScorelimit = firstTableScorelimit.arg(unlimited);
 	}
+	else
+	{
+		firstTableScorelimit = firstTableScorelimit.arg(this->scoreLimit());
+	}
+
+	// Team score
+	QString firstTableTeamscore;
+	if (this->gameMode().isTeamGame())
+	{
+		firstTableTeamscore = "<tr><td colspan=\"2\">%1</td></tr>";
+		QString teams;
+		bool bPrependBar = false;
+		for (int i = 0; i < MAX_TEAMS; ++i)
+		{
+			if (this->teamPlayerCount(i) != 0)
+			{
+				if (bPrependBar)
+					teams += " | ";
+				teams += teamName(i) + ": " + QString::number(this->score(i));
+				bPrependBar = true;
+			}
+		}
+		firstTableTeamscore = firstTableTeamscore.arg(teams);
+	}
+
+	// Players
+	QString firstTablePlayers = "<tr><td>" + players + ":&nbsp;</td><td>%1 / %2</td></tr>";
+	firstTablePlayers = firstTablePlayers.arg(this->numPlayers()).arg(this->maximumClients());
+
+	QString firstTable = "<table>";
+	firstTable += firstTableTimelimit;
+	firstTable += firstTableScorelimit;
+	firstTable += firstTableTeamscore;
+	firstTable += firstTablePlayers;
+	firstTable += "</table>";
+
+	return firstTable;
 }
 
 QString Server::generalInfoHTML() const
@@ -702,6 +588,70 @@ bool Server::host(const QString& serverVersion, const QString& iwadPath, const Q
 #endif
 
 	return true;
+}
+
+void Server::join(const QString &connectPassword) const
+{
+	const QString errorCaption = tr("Doomseeker - error");
+	QFileInfo executable;
+	QDir applicationDir;
+	QStringList args;
+
+	if (!createJoinCommandLine(executable, applicationDir, args, connectPassword))
+		return;
+
+	printf("Starting (working dir %s): %s %s\n", applicationDir.canonicalPath().toAscii().constData(), executable.absoluteFilePath().toAscii().constData(), args.join(" ").toAscii().constData());
+
+	QProcess proc;
+
+	cleanArguments(args);
+
+	if( !proc.startDetached(executable.canonicalFilePath(), args, applicationDir.canonicalPath()) )
+	{
+		QMessageBox::critical(Main::mainWindow, errorCaption, tr("File: %1\ncannot be run").arg(executable.canonicalFilePath()));
+		return;
+	}
+}
+
+unsigned int Server::longestPlayerName() const
+{
+	unsigned int x = 0;
+	for (int i = 0; i < numPlayers(); ++i)
+	{
+		unsigned int len = players[i].nameColorTagsStripped().length();
+		if (len > x)
+			x = len;
+	}
+	return x;
+}
+
+QList<ServerInfo>* Server::serverInfo() const
+{
+	QList<ServerInfo>* list = new QList<ServerInfo>();
+
+	ServerInfo siName = { this->name(), "<div style='white-space: pre'>" + this->name() + "</div>" };
+
+	QString addr = this->address().toString() + ":" + QString::number(this->port());
+	ServerInfo siAddress = { addr, addr };
+
+	list->append(siName);
+	list->append(siAddress);
+
+	if (!this->webSite.isEmpty())
+	{
+		QString url = "<A HREF=\"" + this->webSite + "\">" + this->webSite + "</A>";
+		ServerInfo siUrl = { tr("URL: ") + url, "<div style='white-space: pre'>" + this->webSite + "</div>"};
+		list->append(siUrl);
+	}
+	if (!this->email.isEmpty())
+	{
+		QString email = "<a href=\"mailto:" + this->email + "\">" + this->email + "</a>";
+		ServerInfo siEmail = { tr("E-mail: ") + email, "<div style='white-space: pre'>" + this->email + "</div>"};
+		list->append(siEmail);
+	}
+
+	additionalServerInfo(list);
+	return list;
 }
 
 QString Server::playerTableHTML() const
@@ -802,6 +752,100 @@ QString Server::playerTableHTML() const
 	return plTab;
 }
 
+bool Server::refresh()
+{
+	if (Main::refreshingThread == NULL)
+	{
+		emitUpdated(RESPONSE_BAD);
+		printf("REFRESHING THREAD IS NULL\n");
+		return false;
+	}
+
+	Main::refreshingThread->registerServer(this);
+	return true;
+}
+
+void Server::refreshStarts()
+{
+	bIsRefreshing = true;
+
+	emit begunRefreshing(this);
+	triesLeft = Main::config->setting("QueryTries")->integer();
+	if(triesLeft > 10) // Limit the maximum number of tries
+		triesLeft = 10;
+}
+
+void Server::refreshStops()
+{
+	bIsRefreshing = false;
+	iwad = iwad.toLower();
+}
+
+bool Server::sendRefreshQuery(QUdpSocket* socket)
+{
+	if(triesLeft-- == 0)
+	{
+		emitUpdated(Server::RESPONSE_TIMEOUT);
+		refreshStops();
+		return false;
+	}
+
+	QByteArray request;
+	if (!sendRequest(request))
+	{
+		emitUpdated(Server::RESPONSE_BAD);
+		refreshStops();
+		return false;
+	}
+
+	time.start();
+
+	socket->writeDatagram(request, address(), port());
+
+	return true;
+}
+
+void Server::setResponse(Server* server, int res)
+{
+	response = static_cast<Response>(res);
+	if (response == RESPONSE_GOOD)
+	{
+		bKnown = true;
+	}
+	else if (response == RESPONSE_BAD || response == RESPONSE_BANNED || response == RESPONSE_TIMEOUT)
+	{
+		bKnown = false;
+	}
+
+}
+
+void Server::setToDelete(bool b)
+{
+	bDelete = b;
+	if (!bIsRefreshing)
+		delete this;
+}
+
+int Server::teamPlayerCount(int team) const
+{
+	if (team >= MAX_TEAMS)
+	{
+		return -1;
+	}
+
+	int teamSize = 0;
+	for (int i = 0; i < players.count(); ++i)
+	{
+		const Player& p = players[i];
+		if (p.teamNum() == team)
+		{
+			++teamSize;
+		}
+	}
+	return teamSize;
+}
+
+
 QString Server::serverWorkingDirectory() const
 {
 	QString dummy;
@@ -858,66 +902,21 @@ QRgb Server::teamColor(int team) const
 	return qRgb(0, 255, 0);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-bool Server::refresh()
+void Server::operator= (const Server &other)
 {
-	if (Main::refreshingThread == NULL)
-	{
-		emitUpdated(RESPONSE_BAD);
-		printf("REFRESHING THREAD IS NULL\n");
-		return false;
-	}
+	serverAddress = other.address();
+	serverPort = other.port();
 
-	Main::refreshingThread->registerServer(this);
-	return true;
-}
-
-void Server::refreshStarts()
-{
-	bIsRefreshing = true;
-
-	emit begunRefreshing(this);
-	triesLeft = Main::config->setting("QueryTries")->integer();
-	if(triesLeft > 10) // Limit the maximum number of tries
-		triesLeft = 10;
-}
-
-void Server::refreshStops()
-{
-	bIsRefreshing = false;
-	iwad = iwad.toLower();
-}
-
-bool Server::sendRefreshQuery(QUdpSocket* socket)
-{
-	if(triesLeft-- == 0)
-	{
-		emitUpdated(Server::RESPONSE_TIMEOUT);
-		refreshStops();
-		return false;
-	}
-
-	QByteArray request;
-	if (!sendRequest(request))
-	{
-		emitUpdated(Server::RESPONSE_BAD);
-		refreshStops();
-		return false;
-	}
-
-	time.start();
-
-	socket->writeDatagram(request, address(), port());
-
-	return true;
-}
-
-void Server::setToDelete(bool b)
-{
-	bDelete = b;
-	if (!bIsRefreshing)
-		delete this;
+	bDelete = other.bDelete;
+	bKnown = other.isKnown();
+	currentGameMode = other.gameMode();
+	currentPing = other.ping();
+	custom = other.isCustom();
+	locked = other.isLocked();
+	maxClients = other.maximumClients();
+	maxPlayers = other.maximumPlayers();
+	serverName = other.name();
+	serverScoreLimit = other.scoreLimit();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

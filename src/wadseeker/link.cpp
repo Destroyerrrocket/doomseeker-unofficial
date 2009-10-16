@@ -24,25 +24,6 @@
 #include <QString>
 #include <QStringList>
 
-bool Link::pathEndsWith(const QStringList& ends)
-{
-	QString str = url.encodedPath();
-	QStringList::const_iterator it;
-	for (it = ends.begin(); it != ends.end(); ++it)
-	{
-		if (str.endsWith(*it, Qt::CaseInsensitive))
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-/**
- *	@param comparePage		- if not empty checks if URL refers to the same host as this param
- *	@return true if URL points to another server
- */
 bool Link::isRemote(const QUrl& comparePage)
 {
 	QString str1 = url.encodedHost();
@@ -68,9 +49,6 @@ bool Link::isRemote(const QUrl& comparePage)
 	return false;
 }
 
-/**
- *	@return true if the URL refers to the same page (for example URLs with '#')
- */
 bool Link::isTheSamePage(const QUrl& comparePage)
 {
 	QString str1 = url.encodedHost();
@@ -95,11 +73,22 @@ bool Link::isTheSamePage(const QUrl& comparePage)
 	return false;
 }
 
-/**
- * @return true if URL begins from javascript: phrase
- */
 bool Link::isJavascriptURL()
 {
 	return url.toString().startsWith("javascript:", Qt::CaseInsensitive);
 }
 
+bool Link::pathEndsWith(const QStringList& ends)
+{
+	QString str = url.encodedPath();
+	QStringList::const_iterator it;
+	for (it = ends.begin(); it != ends.end(); ++it)
+	{
+		if (str.endsWith(*it, Qt::CaseInsensitive))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}

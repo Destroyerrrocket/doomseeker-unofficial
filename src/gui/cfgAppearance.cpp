@@ -38,14 +38,6 @@ AppearanceConfigBox::AppearanceConfigBox(Config *cfg, QWidget *parent) : Configu
 	btnCustomServersColor->setPalette(p);
 }
 
-ConfigurationBoxInfo *AppearanceConfigBox::createStructure(Config *cfg, QWidget *parent)
-{
-	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
-	ec->confBox = new AppearanceConfigBox(cfg, parent);
-	ec->boxName = tr("Appearance");
-	return ec;
-}
-
 void AppearanceConfigBox::btnCustomServersColor_clicked()
 {
 	QColor c = QColorDialog::getColor(QColor(customServersColor), this);
@@ -55,6 +47,14 @@ void AppearanceConfigBox::btnCustomServersColor_clicked()
 		customServersColor = c.rgb();
 		setWidgetBackgroundColor(btnCustomServersColor, customServersColor);
 	}
+}
+
+ConfigurationBoxInfo *AppearanceConfigBox::createStructure(Config *cfg, QWidget *parent)
+{
+	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
+	ec->confBox = new AppearanceConfigBox(cfg, parent);
+	ec->boxName = tr("Appearance");
+	return ec;
 }
 
 void AppearanceConfigBox::readSettings()

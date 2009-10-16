@@ -120,35 +120,6 @@ const QPixmap &OdamexServer::icon() const
 	return *ICON;
 }
 
-bool OdamexServer::sendRequest(QByteArray &data)
-{
-	const char challenge[4] = {SERVER_CHALLENGE};
-	const QByteArray chall(challenge, 4);
-	data.append(chall);
-	return true;
-}
-
-QString OdamexServer::serverBinary(QString& error) const
-{
-	SettingsData* setting = Main::config->setting("OdamexServerBinaryPath");
-
-	if (setting->string().isEmpty())
-	{
-		error = tr("No server executable specified for Odamex");
-		return QString();
-	}
-
-	QFileInfo fi(setting->string());
-
-	if (!fi.exists() || fi.isDir())
-	{
-		error = tr("%1\nis a directory or doesn't exist.").arg(setting->string());
-		return QString();
-	}
-
-	return setting->string();
-}
-
 bool OdamexServer::readRequest(QByteArray &data)
 {
 	fflush(stderr);
@@ -307,4 +278,33 @@ bool OdamexServer::readRequest(QByteArray &data)
 	}
 
 	return true;
+}
+
+bool OdamexServer::sendRequest(QByteArray &data)
+{
+	const char challenge[4] = {SERVER_CHALLENGE};
+	const QByteArray chall(challenge, 4);
+	data.append(chall);
+	return true;
+}
+
+QString OdamexServer::serverBinary(QString& error) const
+{
+	SettingsData* setting = Main::config->setting("OdamexServerBinaryPath");
+
+	if (setting->string().isEmpty())
+	{
+		error = tr("No server executable specified for Odamex");
+		return QString();
+	}
+
+	QFileInfo fi(setting->string());
+
+	if (!fi.exists() || fi.isDir())
+	{
+		error = tr("%1\nis a directory or doesn't exist.").arg(setting->string());
+		return QString();
+	}
+
+	return setting->string();
 }
