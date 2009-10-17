@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// odamexmain.cpp
+// chocolatedoommain.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -21,37 +21,32 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include <QHostInfo>
-
-#include "global.h"
 #include "main.h"
-#include "masterclient.h"
 #include "sdeapi/pluginloader.hpp"
 
-#include "odamex/engineOdamexConfig.h"
-#include "odamex/odamexmasterclient.h"
-#include "odamex/odamexserver.h"
+#include "chocolate-doom/chocolatedoomserver.h"
+#include "chocolate-doom/engineChocolateDoomConfig.h"
 
 const // clear warnings
-#include "odamex/odamex.xpm"
+#include "chocolate-doom/chocolatedoom.xpm"
 
-static GeneralEngineInfo OdamexEngineInfo =
+static GeneralEngineInfo ChocolateDoomEngineInfo =
 {
-	10666,								// Default port
-	OdamexServer::GAME_MODES,			// List of game modes
-	NUM_ODAMEX_GAME_MODES,				// Number of game modes
-	&OdamexServer::DM_FLAGS,			// List of DMFlags sections
-	1,									// Number of DMFlags sections
-	true,								// Allows URL
-	true,								// Allows E-Mail
-	true,								// Allows connect password
-	true,								// Allows join password
-	true,								// Allows rcon password
-	true,								// Allows MOTD
-	true,								// Supports random map rotation
+	2342,								// Default port
+	NULL,								// List of game modes
+	0,									// Number of game modes
+	NULL,								// List of DMFlags sections
+	0,									// Number of DMFlags sections
+	false,								// Allows URL
+	false,								// Allows E-Mail
+	false,								// Allows connect password
+	false,								// Allows join password
+	false,								// Allows rcon password
+	false,								// Allows MOTD
+	false,								// Supports random map rotation
 	NULL,								// Game modifiers
 	0,									// Number of game modifiers
-	true,								// Has Master Server
+	false,								// Has Master Server
 };
 
 class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
@@ -59,22 +54,22 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 	public:
 		QString					binaryClient() const
 		{
-			return Main::config->setting("OdamexBinaryPath")->string();
+			return Main::config->setting("ChocolateDoomBinaryPath")->string();
 		}
 
 		QString					binaryServer() const
 		{
-			return Main::config->setting("OdamexServerBinaryPath")->string();
+			return Main::config->setting("ChocolateDoomServerBinaryPath")->string();
 		}
 
 		ConfigurationBoxInfo	*configuration(Config *cfg, QWidget *parent) const
 		{
-			return EngineOdamexConfigBox::createStructure(cfg, parent);
+			return EngineChocolateDoomConfigBox::createStructure(cfg, parent);
 		}
 
 		const GeneralEngineInfo&	generalEngineInfo() const
 		{
-			return OdamexEngineInfo;
+			return ChocolateDoomEngineInfo;
 		}
 
 		virtual QList<GameCVar>	limits(const GameMode&) const
@@ -84,39 +79,27 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 
 		QPixmap			icon() const
 		{
-			return QPixmap(odamex_xpm);
+			return QPixmap(chocolatedoom_xpm);
 		}
 
 		MasterClient	*masterClient() const
 		{
-			// Get server address.
-			QString host;
-			short int port = 0;
-
-			SettingsData* setting = Main::config->setting("OdamexMasterserver");
-			QString str = setting->string();
-			Main::translateServerAddress(str, host, port, "master1.odamex.net", 15000);
-
-			QHostInfo info = QHostInfo::fromName(host);
-			if(info.addresses().size() == 0)
-				return NULL;
-			return new OdamexMasterClient(info.addresses().first(), port);
+			return NULL;
 		}
 
 		Server*			server(const QHostAddress &address, unsigned short port) const
 		{
-			return (new OdamexServer(address, port));
+			return new ChocolateDoomServer(address, port);
 		}
 };
 
-static OdamexEnginePlugin odamex_engine_plugin;
-static const PluginInfo odamex_info = {"Odamex", "Odamex server query plugin.", "The Skulltag Team", {0,4,0,0}, MAKEID('E','N','G','N'), &odamex_engine_plugin};
+static OdamexEnginePlugin chocolatedoom_engine_plugin;
+static const PluginInfo chocolatedoom_info = {"Chocolate Doom", "Chocolate Doom server query plugin.", "The Skulltag Team", {0,1,0,0}, MAKEID('E','N','G','N'), &chocolatedoom_engine_plugin};
 extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 {
-	return &odamex_info;
+	return &chocolatedoom_info;
 }
 
 extern "C" PLUGIN_EXPORT void doomSeekerInitConfig()
 {
-	Main::config->createSetting("OdamexMasterserver", "master1.odamex.net:15000");
 }

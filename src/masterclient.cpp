@@ -163,6 +163,9 @@ void MasterManager::loadMastersFromPlugins()
 	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
 	{
 		const EnginePlugin *plugin = Main::enginePlugins[i]->info->pInterface;
+		if(!plugin->generalEngineInfo().hasMasterServer)
+			continue;
+
 		addMaster(plugin->masterClient());
 	}
 }

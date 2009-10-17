@@ -94,6 +94,11 @@ struct MAIN_EXPORT GeneralEngineInfo
 	 */
 	const GameCVar*			gameModifiers;
 	unsigned				gameModifiersNum;
+
+	/**
+	 *	For plugins which have no master.
+	 */
+	bool					hasMasterServer;
 };
 
 class MAIN_EXPORT EnginePlugin

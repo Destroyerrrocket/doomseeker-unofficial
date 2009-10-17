@@ -51,6 +51,7 @@ static GeneralEngineInfo SkulltagEngineInfo =
 	true,								// Supports random map rotation
 	SkulltagServer::GAME_MODIFIERS,		// Game modifiers
 	NUM_SKULLTAG_GAME_MODIFIERS,		// Number of game modifiers
+	true,								// Has Master Server
 };
 
 class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin

@@ -67,6 +67,9 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), tra
 	queryMenuPorts = new const QAction*[Main::enginePlugins.numPlugins()];
 	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
 	{
+		if(!Main::enginePlugins[i]->info->pInterface->generalEngineInfo().hasMasterServer)
+			continue;
+
 	    QString name = Main::enginePlugins[i]->info->name;
 		QAction *query = menuQuery->addAction(name, this, SLOT( enablePort() ));
 		query->setIcon(Main::enginePlugins[i]->info->pInterface->icon());
@@ -167,7 +170,7 @@ MainWindow::~MainWindow()
 
 	    if (!action->text().isEmpty())
 	    {
-	        QString settingName = action->text() + "Query";
+	        QString settingName = QString(action->text()).replace(' ', "") + "Query";
 	        Main::config->setting(settingName)->setValue(action->isChecked());
 	    }
 	}
@@ -258,6 +261,9 @@ void MainWindow::enablePort()
 {
 	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
 	{
+		if(!Main::enginePlugins[i]->info->pInterface->generalEngineInfo().hasMasterServer)
+			continue;
+
 		mc->enableMaster(i, queryMenuPorts[i]->isChecked());
 	}
 }
