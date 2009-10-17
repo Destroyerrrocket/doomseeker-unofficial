@@ -344,7 +344,6 @@ void SkulltagServer::hostDMFlags(QStringList& args, const DMFlags& dmFlags) cons
 void SkulltagServer::hostProperties(QStringList& args) const
 {
 	args << "+alwaysapplydmflags" << QString::number(1);
-	args << "-host";
 	args << "-skill" << QString::number(skill + 1); // from 1 to 5
 
 	QString gameModeStr;

@@ -162,6 +162,8 @@ class SkulltagServer : public Server
 
 		QString			testingArchive;
 
+		QString			argForServerLaunch() const { return "-host"; }
+
 		void			hostDMFlags(QStringList& args, const DMFlags& dmFlags) const;
 		void			hostProperties(QStringList& args) const;
 

@@ -223,23 +223,16 @@ void CreateServerDlg::btnCommandLineClicked()
 
 	if (createHostInfo(hi, server))
 	{
-		QStringList args;
-		QDir applicationDir;
-		QFileInfo executablePath;
+		CommandLineInfo cli;
 		QString error;
 
-		bool ok = server->createHostCommandLine(
-			hi,
-			executablePath, 			// out
-			applicationDir, 			// out
-			args, 						// out
-			error);						// out
+		bool ok = server->createHostCommandLine(hi, cli, error);
 
 		delete server;
 
 		if (ok)
 		{
-			CopyTextDlg ctd(executablePath.absoluteFilePath() + " " + args.join(" "), "Host server command line:", this);
+			CopyTextDlg ctd(cli.executable.absoluteFilePath() + " " + cli.args.join(" "), "Host server command line:", this);
 			ctd.exec();
 		}
 		else

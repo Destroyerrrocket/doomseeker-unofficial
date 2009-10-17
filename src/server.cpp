@@ -279,8 +279,12 @@ void Server::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFoun
 	iwadFound = !iwad.isEmpty();
 }
 
-bool Server::createHostCommandLine(const HostInfo& hostInfo, QFileInfo& executablePath, QDir& applicationDir, QStringList& args, QString& error) const
+bool Server::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cli, QString& error) const
 {
+	QDir& applicationDir = cli.applicationDir;
+	QFileInfo& executablePath = cli.executable;
+	QStringList& args = cli.args;
+
 	const QString errorCaption = tr("Doomseeker - error");
 	args.clear();
 
@@ -352,7 +356,7 @@ bool Server::createHostCommandLine(const HostInfo& hostInfo, QFileInfo& executab
 	}
 
 	QString serverWorkingDirPath = serverWorkingDirectory();
-	applicationDir = serverWorkingDirPath;
+	applicationDir = serverWorkingDirectory();
 
 	if (serverWorkingDirPath.isEmpty())
 	{
@@ -365,6 +369,7 @@ bool Server::createHostCommandLine(const HostInfo& hostInfo, QFileInfo& executab
 		return false;
 	}
 
+	args << argForServerLaunch();
 	hostDMFlags(args, dmFlags);
 	hostProperties(args);
 	args.append(hostInfo.customParameters);
@@ -372,8 +377,12 @@ bool Server::createHostCommandLine(const HostInfo& hostInfo, QFileInfo& executab
 	return true;
 }
 
-bool Server::createJoinCommandLine(QFileInfo& executablePath, QDir& applicationDir, QStringList& args, const QString &connectPassword) const
+bool Server::createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword) const
 {
+	QDir& applicationDir = cli.applicationDir;
+	QFileInfo& executablePath = cli.executable;
+	QStringList& args = cli.args;
+
 	const QString errorCaption = tr("Doomseeker - error");
 	args.clear();
 
@@ -386,6 +395,7 @@ bool Server::createJoinCommandLine(QFileInfo& executablePath, QDir& applicationD
 
 		return false;
 	}
+
 	executablePath = clientBin;
 
 	QString clientWorkingDirPath = clientWorkingDirectory();
@@ -406,12 +416,12 @@ bool Server::createJoinCommandLine(QFileInfo& executablePath, QDir& applicationD
 	QStringList missingPwads;
 	bool iwadFound = false;
 
-	connectParameters(args, pf, iwadFound, connectPassword);
+	connectParameters(cli.args, pf, iwadFound, connectPassword);
 
 	// Pwads
 	if (numWads() != 0)
 	{
-		args << argForPwadLoading();
+		cli.args << argForPwadLoading();
 	}
 
 	for (int i = 0; i < numWads(); ++i)
@@ -423,7 +433,7 @@ bool Server::createJoinCommandLine(QFileInfo& executablePath, QDir& applicationD
 		}
 		else
 		{
-			args << pwad;
+			cli.args << pwad;
 		}
 	}
 
@@ -454,7 +464,7 @@ bool Server::createJoinCommandLine(QFileInfo& executablePath, QDir& applicationD
 			wsi.wadseekerRef().setCustomSite(website());
 			if (wsi.exec() == QDialog::Accepted)
 			{
-				return createJoinCommandLine(executablePath, applicationDir, args, connectPassword);
+				return createJoinCommandLine(cli, connectPassword);
 			}
 		}
 
@@ -466,9 +476,8 @@ bool Server::createJoinCommandLine(QFileInfo& executablePath, QDir& applicationD
 
 void Server::displayJoinCommandLine()
 {
-	QFileInfo executablePath;
-	QDir applicationDir;
-	QStringList args;
+	CommandLineInfo cli;
+
 	QString connectPassword;
 	if(isLocked())
 	{
@@ -479,10 +488,11 @@ void Server::displayJoinCommandLine()
 		else
 			return;
 	}
-	if (!createJoinCommandLine(executablePath, applicationDir, args, connectPassword))
+
+	if (!createJoinCommandLine(cli, connectPassword))
 		return;
 
-	CopyTextDlg* ctd = new CopyTextDlg(executablePath.absoluteFilePath() + " " + args.join(" "), "Join command line:", Main::mainWindow);
+	CopyTextDlg* ctd = new CopyTextDlg(cli.executable.absoluteFilePath() + " " + cli.args.join(" "), "Join command line:", Main::mainWindow);
 	ctd->show();
 }
 
@@ -571,51 +581,29 @@ QString Server::generalInfoHTML() const
 bool Server::host(const HostInfo& hostInfo, QString& error)
 {
 	error.clear();
-	QStringList args;
-	QFileInfo executable;
-	QDir applicationDir;
+	CommandLineInfo cli;
 
-	if (!createHostCommandLine(hostInfo, executable, applicationDir, args, error))
+	if (!createHostCommandLine(hostInfo, cli, error))
 		return false;
-
-	printf("Starting (working dir %s): %s %s\n", applicationDir.canonicalPath().toAscii().constData(), executable.absoluteFilePath().toAscii().constData(), args.join(" ").toAscii().constData());
 
 #ifdef Q_OS_WIN32
-	cleanArguments(args);
-
-	if( !QProcess::startDetached(executable.canonicalFilePath(), args, applicationDir.canonicalPath()) )
-	{
-		error = tr("File: %1\ncannot be run").arg(executable.canonicalFilePath());
-		return false;
-	}
+	const bool WRAP_IN_SSS_CONSOLE = false;
 #else
-	new StandardServerConsole(this, executable.canonicalFilePath(), args);
+	const bool WRAP_IN_SSS_CONSOLE = true;
 #endif
 
-	return true;
+	return runExecutable(cli, WRAP_IN_SSS_CONSOLE);
 }
 
 void Server::join(const QString &connectPassword) const
 {
 	const QString errorCaption = tr("Doomseeker - error");
-	QFileInfo executable;
-	QDir applicationDir;
-	QStringList args;
+	CommandLineInfo cli;
 
-	if (!createJoinCommandLine(executable, applicationDir, args, connectPassword))
+	if (!createJoinCommandLine(cli, connectPassword))
 		return;
 
-	printf("Starting (working dir %s): %s %s\n", applicationDir.canonicalPath().toAscii().constData(), executable.absoluteFilePath().toAscii().constData(), args.join(" ").toAscii().constData());
-
-	QProcess proc;
-
-	cleanArguments(args);
-
-	if( !proc.startDetached(executable.canonicalFilePath(), args, applicationDir.canonicalPath()) )
-	{
-		QMessageBox::critical(Main::mainWindow, errorCaption, tr("File: %1\ncannot be run").arg(executable.canonicalFilePath()));
-		return;
-	}
+	runExecutable(cli, false);
 }
 
 unsigned int Server::longestPlayerName() const
@@ -784,6 +772,28 @@ void Server::refreshStops()
 {
 	bIsRefreshing = false;
 	iwad = iwad.toLower();
+}
+
+bool Server::runExecutable(const CommandLineInfo& cli, bool bWrapInStandardServerConsole) const
+{
+	printf("Starting (working dir %s): %s %s\n", cli.applicationDir.canonicalPath().toAscii().constData(), cli.executable.absoluteFilePath().toAscii().constData(), cli.args.join(" ").toAscii().constData());
+	QStringList args = cli.args;
+	cleanArguments(args);
+
+	if (!bWrapInStandardServerConsole)
+	{
+		if( !QProcess::startDetached(cli.executable.canonicalFilePath(), args, cli.applicationDir.canonicalPath()) )
+		{
+			QMessageBox::critical(Main::mainWindow, tr("Doomseeker - run executable"), tr("File: %1\ncannot be run").arg(cli.executable.canonicalFilePath()));
+			return false;
+		}
+	}
+	else
+	{
+		new StandardServerConsole(this, cli.executable.canonicalFilePath(), args);
+	}
+
+	return true;
 }
 
 bool Server::sendRefreshQuery(QUdpSocket* socket)

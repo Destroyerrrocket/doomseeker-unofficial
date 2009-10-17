@@ -41,7 +41,7 @@ class StandardServerConsole : public QMainWindow
 	Q_OBJECT
 
 	public:
-		StandardServerConsole(Server *server, const QString &program, const QStringList &arguments);
+		StandardServerConsole(const Server *server, const QString &program, const QStringList &arguments);
 		~StandardServerConsole();
 
 	private slots:

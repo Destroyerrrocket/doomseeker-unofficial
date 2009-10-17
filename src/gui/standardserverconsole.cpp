@@ -23,7 +23,7 @@
 #include "standardserverconsole.h"
 #include "server.h"
 
-StandardServerConsole::StandardServerConsole(Server *server, const QString &program, const QStringList &arguments)
+StandardServerConsole::StandardServerConsole(const Server *server, const QString &program, const QStringList &arguments)
 {
 	// Have the console delete itself
 	setAttribute(Qt::WA_DeleteOnClose);

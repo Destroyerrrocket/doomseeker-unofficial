@@ -43,6 +43,16 @@
 #define MAX_TEAMS 4
 
 /**
+ *	@brief Structure holding parameters for application launch.
+ */
+struct CommandLineInfo
+{
+	QDir 			applicationDir; /// working directory
+	QStringList 	args; /// launch parameters
+	QFileInfo 		executable; /// path to the executable
+};
+
+/**
  *	@brief Generic representation of DMFlags section.
  *
  *	Note: Maximum amount of flags in one section is 32.
@@ -401,21 +411,19 @@ class MAIN_EXPORT Server : public QObject
 		virtual void		connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
 
 		/**
-		 *	@param [out] executablePath - path to the executable is saved here.
-		 *	@param [out] applicationDir - working directory of the executable
-		 *	@param [out] args - launch arguments are saved here.
+		 *	@param [out] cli - after successful call this will contain
+		 *		required command line information.
 		 *	@param [out] error - if return == false, error text will be put here
 		 *	@return	true if command line was successfully created.
 		 */
-		bool				createHostCommandLine(const HostInfo& hostInfo, QFileInfo& executablePath, QDir& applicationDir, QStringList& args, QString& error) const;
+		bool				createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cli, QString& error) const;
 
 		/**
-		 *	@param [out] executablePath - path to the executable is saved here.
-		 *	@param [out] applicationDir - working directory of the executable
-		 *	@param [out] args - launch arguments are saved here.
-		 *	@return	true if command line was successfully created.
+		 *	@param [out] cli - after successful call this will contain
+		 *		required command line information.
+		 *	@return	true if command line was successfuly created.
 		 */
-		bool				createJoinCommandLine(QFileInfo& executablePath, QDir& applicationDir, QStringList& args, const QString &connectPassword) const;
+		bool				createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword) const;
 
 		/**
 		 *	@see createHostCommandLine()
@@ -458,9 +466,26 @@ class MAIN_EXPORT Server : public QObject
 		void				updated(Server *server, int response);
 
 	protected:
+		/**
+		 *	Command line parameter that is used to set IWAD.
+		 */
 		virtual QString		argForIwadLoading() const { return "-iwad"; }
+
+		/**
+		 *	Command line parameter that is used to set internet port for the
+		 *	game.
+		 */
 		virtual QString		argForPort() const { return "-port"; }
+
+		/**
+		 *	Command line parameter that is used to load a PWAD.
+		 */
 		virtual QString		argForPwadLoading() const { return "-file"; }
+
+		/**
+		 *	Command line parameter used to launch a server.
+		 */
+		virtual QString		argForServerLaunch() const { return ""; }
 
 		virtual void		additionalServerInfo(QList<ServerInfo>* baseList) const {}
 
@@ -501,6 +526,9 @@ class MAIN_EXPORT Server : public QObject
 		virtual void		hostProperties(QStringList& args) const {};
 
 		virtual bool		readRequest(QByteArray &data)=0;
+
+		bool				runExecutable(const CommandLineInfo& cli, bool bWrapWithStandardServerConsole = false) const;
+
 		virtual bool		sendRequest(QByteArray &data)=0;
 		/**
 		 *	This will return absolutely nothing if the list in the first
