@@ -81,13 +81,15 @@ void CreateServerDlg::accept()
 		return;
 	}
 
-	HostInfo* hi = createHostInfo();
-	if (hi != NULL)
+	Server* server = currentEngine->pInterface->server(QHostAddress(), spinPort->value());
+	HostInfo hi;
+
+	if (createHostInfo(hi, server))
 	{
 		QString error;
-		bool ok = hi->server->host(hi->executablePath, hi->iwadPath, hi->pwadsPaths, hi->customParameters, hi->dmFlags, hi->cvars, error);
+		bool ok = server->host(hi, error);
 
-		delete hi;
+		delete server;
 
 		if (!ok)
 		{
@@ -216,27 +218,24 @@ void CreateServerDlg::btnCommandLineClicked()
 		return;
 	}
 
-	HostInfo* hi = createHostInfo();
-	if (hi != NULL)
+	Server* server = currentEngine->pInterface->server(QHostAddress(), spinPort->value());
+	HostInfo hi;
+
+	if (createHostInfo(hi, server))
 	{
 		QStringList args;
 		QDir applicationDir;
 		QFileInfo executablePath;
 		QString error;
 
-		bool ok = hi->server->createHostCommandLine(
-			hi->executablePath,
+		bool ok = server->createHostCommandLine(
+			hi,
 			executablePath, 			// out
 			applicationDir, 			// out
 			args, 						// out
-			hi->customParameters,
-			hi->iwadPath,
-			hi->pwadsPaths,
-			hi->dmFlags,
-			hi->cvars,
 			error);						// out
 
-		delete hi;
+		delete server;
 
 		if (ok)
 		{
@@ -336,18 +335,14 @@ void CreateServerDlg::cboGamemodeSelected(int index)
 	}
 }
 
-CreateServerDlg::HostInfo* CreateServerDlg::createHostInfo()
+bool CreateServerDlg::createHostInfo(HostInfo& hi, Server* server)
 {
-	Server* server = currentEngine->pInterface->server(QHostAddress(), spinPort->value());
-
 	if (server != NULL)
 	{
-		HostInfo* hi = new HostInfo();
-		hi->server = server;
-		hi->executablePath = leExecutable->text();
+		hi.executablePath = leExecutable->text();
 
-		hi->iwadPath = cboIwad->currentText();
-		hi->pwadsPaths = Main::listViewStandardItemsToStringList(lstAdditionalFiles);
+		hi.iwadPath = cboIwad->currentText();
+		hi.pwadsPaths = Main::listViewStandardItemsToStringList(lstAdditionalFiles);
 
 		// DMFlags
 		foreach(const DMFlagsTabWidget* p, dmFlagsTabs)
@@ -364,14 +359,14 @@ CreateServerDlg::HostInfo* CreateServerDlg::createHostInfo()
 				}
 			}
 
-			hi->dmFlags << sec;
+			hi.dmFlags << sec;
 		}
 
 		// limits
 		foreach(GameLimitWidget* p, limitWidgets)
 		{
 			p->limit.setValue(p->spinBox->value());
-			hi->cvars << p->limit;
+			hi.cvars << p->limit;
 		}
 
 		// modifier
@@ -380,11 +375,11 @@ CreateServerDlg::HostInfo* CreateServerDlg::createHostInfo()
 		{
 			--modIndex;
 			gameModifiers[modIndex].setValue(1);
-			hi->cvars << gameModifiers[modIndex];
+			hi.cvars << gameModifiers[modIndex];
 		}
 
 		// Custom parameters
-		hi->customParameters = pteCustomParameters->toPlainText().split('\n');
+		hi.customParameters = pteCustomParameters->toPlainText().split('\n');
 
 		// Other
 		server->setBroadcastToLAN(cbBroadcastToLAN->isChecked());
@@ -414,10 +409,10 @@ CreateServerDlg::HostInfo* CreateServerDlg::createHostInfo()
 			}
 		}
 
-		return hi;
+		return true;
 	}
 
-	return NULL;
+	return false;
 }
 
 void CreateServerDlg::focusChanged(QWidget* oldW, QWidget* newW)

@@ -279,18 +279,20 @@ void Server::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFoun
 	iwadFound = !iwad.isEmpty();
 }
 
-bool Server::createHostCommandLine(const QString& serverExecutablePath, QFileInfo& executablePath, QDir& applicationDir, QStringList& args, const QStringList& customParameters, const QString& iwadPath, const QStringList& pwadsPaths, const DMFlags& dmFlags, const QList<GameCVar>& cvars, QString& error) const
+bool Server::createHostCommandLine(const HostInfo& hostInfo, QFileInfo& executablePath, QDir& applicationDir, QStringList& args, QString& error) const
 {
 	const QString errorCaption = tr("Doomseeker - error");
 	args.clear();
 
 	// First some wad path checks, add wad paths to the args if check passes:
-	QFileInfo fi(iwadPath);
+	const QString& iwadPath = hostInfo.iwadPath;
 	if (iwadPath.isEmpty())
 	{
 		error = tr("Iwad is not set");
 		return false;
 	}
+
+	QFileInfo fi(iwadPath);
 
 	if (!fi.isFile())
 	{
@@ -300,6 +302,7 @@ bool Server::createHostCommandLine(const QString& serverExecutablePath, QFileInf
 
 	args << argForIwadLoading() << iwadPath;
 
+	const QStringList& pwadsPaths = hostInfo.pwadsPaths;
 	if (!pwadsPaths.isEmpty())
 	{
 		args << argForPwadLoading();
@@ -321,11 +324,13 @@ bool Server::createHostCommandLine(const QString& serverExecutablePath, QFileInf
 	args << argForPort() << QString::number(serverPort);
 
 	// CVars
+	const QList<GameCVar>& cvars = hostInfo.cvars;
 	foreach(const GameCVar c, cvars)
 	{
 		args << QString("+" + c.consoleCommand) << c.value();
 	}
 
+	const QString& serverExecutablePath = hostInfo.executablePath;
 	if (serverExecutablePath.isEmpty())
 	{
 		QString serverBin = serverBinary(error);
@@ -362,7 +367,7 @@ bool Server::createHostCommandLine(const QString& serverExecutablePath, QFileInf
 
 	hostDMFlags(args, dmFlags);
 	hostProperties(args);
-	args.append(customParameters);
+	args.append(hostInfo.customParameters);
 
 	return true;
 }
@@ -563,14 +568,14 @@ QString Server::generalInfoHTML() const
 	return ret;
 }
 
-bool Server::host(const QString& serverVersion, const QString& iwadPath, const QStringList& pwadsPaths, const QStringList& customParameters, const DMFlags& dmFlags, const QList<GameCVar>& cvars, QString& error)
+bool Server::host(const HostInfo& hostInfo, QString& error)
 {
 	error.clear();
 	QStringList args;
 	QFileInfo executable;
 	QDir applicationDir;
 
-	if (!createHostCommandLine(serverVersion, executable, applicationDir, args, customParameters, iwadPath, pwadsPaths, dmFlags, cvars, error))
+	if (!createHostCommandLine(hostInfo, executable, applicationDir, args, error))
 		return false;
 
 	printf("Starting (working dir %s): %s %s\n", applicationDir.canonicalPath().toAscii().constData(), executable.absoluteFilePath().toAscii().constData(), args.join(" ").toAscii().constData());

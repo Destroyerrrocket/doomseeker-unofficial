@@ -76,25 +76,25 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 			GameCVar	limit;
 		};
 
-		struct HostInfo
-		{
-			QString 		executablePath;
-			QString 		iwadPath;
-			QStringList 	pwadsPaths;
-			QStringList 	customParameters;
-			DMFlags 		dmFlags;
-			QList<GameCVar> cvars;
-			Server*			server;
-
-			~HostInfo()
-			{
-				if (server != NULL)
-					delete server;
-
-				foreach(DMFlagsSection* sec, dmFlags)
-					delete sec;
-			}
-		};
+//		struct HostInfo
+//		{
+//			QString 		executablePath;
+//			QString 		iwadPath;
+//			QStringList 	pwadsPaths;
+//			QStringList 	customParameters;
+//			DMFlags 		dmFlags;
+//			QList<GameCVar> cvars;
+//			Server*			server;
+//
+//			~HostInfo()
+//			{
+//				if (server != NULL)
+//					delete server;
+//
+//				foreach(DMFlagsSection* sec, dmFlags)
+//					delete sec;
+//			}
+//		};
 
 		const PluginInfo* 				currentEngine;
 		QList<DMFlagsTabWidget*>		dmFlagsTabs;
@@ -112,9 +112,11 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		void	addWadPath(const QString& path);
 
 		/**
-		 *	Needs to be deleted afterwards.
+		 *	Sets host information for both server and hi objects. Both
+		 *	parameters obtain new information after this method is called.
+		 *	@return false if fail.
 		 */
-		HostInfo*	createHostInfo();
+		bool	createHostInfo(HostInfo& hi, Server* server);
 
 		void	initDMFlagsTabs();
 

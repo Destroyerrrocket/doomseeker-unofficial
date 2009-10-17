@@ -72,7 +72,18 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 		void	changeEvent(QEvent* event);
 
+		/**
+		 *	Connects signals from objects and controls of the main window
+		 *	to their slots.
+		 */
+		void	connectEntities();
+
 		void	closeEvent(QCloseEvent* event);
+
+		/**
+		 *	Fills query menu with engines that have master server.
+		 */
+		void	fillQueryMenu();
 
 		/**
 		 *	Checks whether the program will use the tray icon and

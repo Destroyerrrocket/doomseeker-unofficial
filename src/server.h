@@ -228,6 +228,35 @@ struct MAIN_EXPORT ServerInfo
 class MAIN_EXPORT Server;
 
 /**
+ *	@brief Host launch information for Server class.
+ *
+ *	Create Server dialog uses this to setup host information.
+ *	However things that can be set through the Server class,
+ *	like MOTD, max. clients, max. players, server name, etc. should
+ *	be set through Server class' setters.
+ */
+struct MAIN_EXPORT HostInfo
+{
+	QString 		executablePath; /// if empty, serverBinary() will be used
+	QString 		iwadPath;
+	QStringList 	pwadsPaths;
+	QStringList 	customParameters;
+	DMFlags 		dmFlags;
+
+	/**
+	 *	Contents of this list will be passed as "+consoleCommand value"
+	 *	to the command line.
+	 */
+	QList<GameCVar> cvars;
+
+	~HostInfo()
+	{
+		foreach(DMFlagsSection* sec, dmFlags)
+			delete sec;
+	}
+};
+
+/**
  * An abstract interface for a remote console protocol.
  */
 class MAIN_EXPORT RConProtocol : public QThread
@@ -372,23 +401,13 @@ class MAIN_EXPORT Server : public QObject
 		virtual void		connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
 
 		/**
-		 *	@param serverExecutablePath - if empty, serverBinary() will be used
 		 *	@param [out] executablePath - path to the executable is saved here.
 		 *	@param [out] applicationDir - working directory of the executable
 		 *	@param [out] args - launch arguments are saved here.
-		 *	@param cvars - This parameter requires detailed explanation.
-		 *	This can be used to set virtually anything. Contents of this list
-		 *	will be passed as "+consoleCommand value" to the command line.
-		 *	Create Server dialog uses this list to configure some server
-		 *	settingsthat are port specific and it's easier to set them this way.
-		 *	However things that can be set globally through the Server class,
-		 *	like MOTD, max. clients, max. players, server name, etc. should
-		 *	be set through Server class' setters.
-		 *
 		 *	@param [out] error - if return == false, error text will be put here
 		 *	@return	true if command line was successfully created.
 		 */
-		bool				createHostCommandLine(const QString& serverExecutablePath, QFileInfo& executablePath, QDir& applicationDir, QStringList& args, const QStringList& customParameters, const QString& iwadPath, const QStringList& pwadsPaths, const DMFlags& dmFlags, const QList<GameCVar>& cvars, QString& error) const;
+		bool				createHostCommandLine(const HostInfo& hostInfo, QFileInfo& executablePath, QDir& applicationDir, QStringList& args, QString& error) const;
 
 		/**
 		 *	@param [out] executablePath - path to the executable is saved here.
@@ -399,10 +418,9 @@ class MAIN_EXPORT Server : public QObject
 		bool				createJoinCommandLine(QFileInfo& executablePath, QDir& applicationDir, QStringList& args, const QString &connectPassword) const;
 
 		/**
-		 *	@param serverExecutablePath - if empty, serverBinary() will be used
 		 *	@see createHostCommandLine()
 		 */
-		bool				host(const QString& serverExecutablePath, const QString& iwadPath, const QStringList& pwadsPaths, const QStringList& customParameters, const DMFlags& dmFlags, const QList<GameCVar>& cvars, QString& error);
+		bool				host(const HostInfo& hostInfo, QString& error);
 
 		bool				isRefreshing() const { return bIsRefreshing; }
 

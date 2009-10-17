@@ -45,11 +45,8 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), tra
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
 
-	// Connect refreshing thread.
-	connect(Main::refreshingThread, SIGNAL( block() ), this, SLOT( blockRefreshButtons() ) );
-	connect(Main::refreshingThread, SIGNAL( finishedQueryingMaster(MasterClient*) ), this, SLOT( finishedQueryingMaster(MasterClient*) ) );
-	connect(Main::refreshingThread, SIGNAL( sleepingModeEnter() ), this, SLOT( refreshThreadEndsWork() ) );
-	connect(Main::refreshingThread, SIGNAL( sleepingModeExit() ), this, SLOT( refreshThreadBeginsWork() ) );
+	serverTableHandler = new SLHandler(tableServers);
+	connectEntities();
 
 	// Window geometry settings
 	Main::config->createSetting("MainWindowX", x());
@@ -60,33 +57,11 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), tra
 	move(Main::config->setting("MainWindowX")->integer(), Main::config->setting("MainWindowY")->integer());
 	resize(Main::config->setting("MainWindowWidth")->integer(), Main::config->setting("MainWindowHeight")->integer());
 
-	serverTableHandler = new SLHandler(tableServers);
 	serverInfo = NULL;
 
 	// Allow us to enable and disable ports.
-	queryMenuPorts = new const QAction*[Main::enginePlugins.numPlugins()];
-	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
-	{
-		if(!Main::enginePlugins[i]->info->pInterface->generalEngineInfo().hasMasterServer)
-			continue;
+	fillQueryMenu();
 
-	    QString name = Main::enginePlugins[i]->info->name;
-		QAction *query = menuQuery->addAction(name, this, SLOT( enablePort() ));
-		query->setIcon(Main::enginePlugins[i]->info->pInterface->icon());
-		query->setCheckable(true);
-
-		if (Main::config->settingExists(name + "Query"))
-		{
-			query->setChecked( static_cast<bool>(Main::config->setting(name + "Query")->integer()) );
-		}
-		else
-		{
-			// if no setting is found for this engine
-			// set default as follows:
-			query->setChecked(true);
-		}
-		queryMenuPorts[i] = query;
-	}
 	// Get the master
 	mc = new MasterManager();
 	connect(mc, SIGNAL( message(const QString&, const QString&, bool) ), this, SLOT( masterManagerMessages(const QString&, const QString&, bool) ) );
@@ -102,19 +77,6 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), tra
 	buddiesList->scan(mc);
 	buddiesList->hide();
 	this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
-
-	connect(btnGetServers, SIGNAL( clicked() ), this, SLOT( btnGetServers_Click() ));
-	connect(btnRefreshAll, SIGNAL( clicked() ), this, SLOT( btnRefreshAll_Click() ));
-	connect(menuActionAbout, SIGNAL( triggered() ), this, SLOT( menuHelpAbout() ));
-	connect(menuActionBuddies, SIGNAL( triggered() ), this, SLOT( menuBuddies() ));
-	connect(menuActionConfigure, SIGNAL( triggered() ), this, SLOT( menuOptionsConfigure() ));
-	connect(menuActionCreateServer, SIGNAL( triggered() ), this, SLOT( menuCreateServer() ));
-	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( quitProgram() ));
-	connect(menuActionServerInfo, SIGNAL( triggered() ), this, SLOT( menuServerInfo() ));
-	connect(menuActionWadseeker, SIGNAL( triggered() ), this, SLOT( menuWadSeeker() ));
-	connect(serverSearch, SIGNAL( textChanged(const QString &) ), serverTableHandler, SLOT( updateSearch(const QString &) ));
-	connect(serverTableHandler, SIGNAL( serverDoubleClicked(const Server*) ), this, SLOT( runGame(const Server*) ) );
-	connect(serverTableHandler, SIGNAL( serversSelected(QList<Server*>&) ), this, SLOT( updateServerInfo(QList<Server*>&) ) );
 
 	// IP2C
 	connect(Main::ip2c, SIGNAL( databaseUpdated() ), serverTableHandler, SLOT( updateCountryFlags() ) );
@@ -257,6 +219,29 @@ void MainWindow::closeEvent(QCloseEvent* event)
 	}
 }
 
+void MainWindow::connectEntities()
+{
+	// Connect refreshing thread.
+	connect(Main::refreshingThread, SIGNAL( block() ), this, SLOT( blockRefreshButtons() ) );
+	connect(Main::refreshingThread, SIGNAL( finishedQueryingMaster(MasterClient*) ), this, SLOT( finishedQueryingMaster(MasterClient*) ) );
+	connect(Main::refreshingThread, SIGNAL( sleepingModeEnter() ), this, SLOT( refreshThreadEndsWork() ) );
+	connect(Main::refreshingThread, SIGNAL( sleepingModeExit() ), this, SLOT( refreshThreadBeginsWork() ) );
+
+	// Controls
+	connect(btnGetServers, SIGNAL( clicked() ), this, SLOT( btnGetServers_Click() ));
+	connect(btnRefreshAll, SIGNAL( clicked() ), this, SLOT( btnRefreshAll_Click() ));
+	connect(menuActionAbout, SIGNAL( triggered() ), this, SLOT( menuHelpAbout() ));
+	connect(menuActionBuddies, SIGNAL( triggered() ), this, SLOT( menuBuddies() ));
+	connect(menuActionConfigure, SIGNAL( triggered() ), this, SLOT( menuOptionsConfigure() ));
+	connect(menuActionCreateServer, SIGNAL( triggered() ), this, SLOT( menuCreateServer() ));
+	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( quitProgram() ));
+	connect(menuActionServerInfo, SIGNAL( triggered() ), this, SLOT( menuServerInfo() ));
+	connect(menuActionWadseeker, SIGNAL( triggered() ), this, SLOT( menuWadSeeker() ));
+	connect(serverSearch, SIGNAL( textChanged(const QString &) ), serverTableHandler, SLOT( updateSearch(const QString &) ));
+	connect(serverTableHandler, SIGNAL( serverDoubleClicked(const Server*) ), this, SLOT( runGame(const Server*) ) );
+	connect(serverTableHandler, SIGNAL( serversSelected(QList<Server*>&) ), this, SLOT( updateServerInfo(QList<Server*>&) ) );
+}
+
 void MainWindow::enablePort()
 {
 	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
@@ -265,6 +250,33 @@ void MainWindow::enablePort()
 			continue;
 
 		mc->enableMaster(i, queryMenuPorts[i]->isChecked());
+	}
+}
+
+void MainWindow::fillQueryMenu()
+{
+	queryMenuPorts = new const QAction*[Main::enginePlugins.numPlugins()];
+	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
+	{
+		if(!Main::enginePlugins[i]->info->pInterface->generalEngineInfo().hasMasterServer)
+			continue;
+
+	    QString name = Main::enginePlugins[i]->info->name;
+		QAction *query = menuQuery->addAction(name, this, SLOT( enablePort() ));
+		query->setIcon(Main::enginePlugins[i]->info->pInterface->icon());
+		query->setCheckable(true);
+
+		if (Main::config->settingExists(name + "Query"))
+		{
+			query->setChecked( static_cast<bool>(Main::config->setting(name + "Query")->integer()) );
+		}
+		else
+		{
+			// if no setting is found for this engine
+			// set default as follows:
+			query->setChecked(true);
+		}
+		queryMenuPorts[i] = query;
 	}
 }
 
