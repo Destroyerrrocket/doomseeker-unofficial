@@ -37,6 +37,26 @@
 #include <QStandardItem>
 #include <QSystemTrayIcon>
 
+/**
+ *	@brief Menu action for Query Menu
+ *
+ *	Replaces the original QAction to make toggling of master clients easier.
+ *	The constructor automatically connects the passed MasterClient's
+ *	setEnabled() slot to this QQueryMenuAction toggled() signal.
+ */
+class QQueryMenuAction : public QAction
+{
+	public:
+		QQueryMenuAction(MasterClient* mClient, QObject* parent = NULL)
+		:QAction(parent)
+		{
+			if (mClient != NULL)
+			{
+				connect(this, SIGNAL( toggled(bool) ), mClient, SLOT( setEnabled(bool) ) );
+			}
+		}
+};
+
 class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 {
 	Q_OBJECT
@@ -82,8 +102,13 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 		/**
 		 *	Fills query menu with engines that have master server.
+		 *	@param masterManager - instantiated MainWindow::mc is passed here.
+		 *		Since this method is called from the constructor it's important
+		 *		to pay attention to not call it before mc is instantiated.
+		 *		In other words: this argument exists solely to avoid "random"
+		 *		crashes.
 		 */
-		void	fillQueryMenu();
+		void	fillQueryMenu(MasterManager* masterManager);
 
 		/**
 		 *	Checks whether the program will use the tray icon and
@@ -105,7 +130,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	blockRefreshButtons();
 		void 	btnGetServers_Click();
 		void	btnRefreshAll_Click();
-		void 	enablePort();
 		void 	finishedQueryingMaster(MasterClient* master);
 		void	masterManagerMessages(const QString& title, const QString& content, bool isError);
 		void	menuBuddies();
@@ -127,7 +151,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		SLHandler*			serverTableHandler;
 
 		MasterManager*		mc;
-		const QAction**		queryMenuPorts;
+		QList<QAction*>		queryMenuPorts;
 		QSystemTrayIcon*	trayIcon;
 		QMenu*				trayIconMenu;
 };

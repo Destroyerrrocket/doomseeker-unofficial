@@ -127,7 +127,6 @@ void MasterClient::refresh()
 ////////////////////////////////////////////////////////////////////////////////
 MasterManager::MasterManager() : MasterClient(QHostAddress(), 0)
 {
-	loadMastersFromPlugins();
 	customServers = new CustomServers();
 }
 
@@ -146,28 +145,8 @@ void MasterManager::addMaster(MasterClient *master)
 		return;
 
 	masters.append(master);
-	masterEnabled.append(true);
+	master->setEnabled(true);
 	connect(master, SIGNAL( message(const QString&, const QString&, bool) ), this, SLOT( readMasterMessage(const QString&, const QString&, bool) ) );
-}
-
-void MasterManager::enableMaster(int port, bool enable)
-{
-	if(port >= masterEnabled.size())
-		return;
-
-	masterEnabled[port] = enable;
-}
-
-void MasterManager::loadMastersFromPlugins()
-{
-	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
-	{
-		const EnginePlugin *plugin = Main::enginePlugins[i]->info->pInterface;
-		if(!plugin->generalEngineInfo().hasMasterServer)
-			continue;
-
-		addMaster(plugin->masterClient());
-	}
 }
 
 void MasterManager::refresh()
@@ -177,7 +156,7 @@ void MasterManager::refresh()
 
 	for(int i = 0;i < masters.size();i++)
 	{
-		if(!masterEnabled[i])
+		if(!masters[i]->isEnabled())
 			continue;
 
 		masters[i]->refresh();
@@ -186,5 +165,5 @@ void MasterManager::refresh()
 			servers.append(server);
 	}
 
-	emit listUpdated();
+	//emit listUpdated();
 }

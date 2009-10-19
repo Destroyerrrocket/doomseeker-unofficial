@@ -609,6 +609,15 @@ bool SkulltagServer::readRequest(QByteArray &data)
 	if((flags & SQF_NUMPLAYERS) == SQF_NUMPLAYERS)
 	{
 		int numPlayers = READINT8(&packetOut[pos++]);
+
+		// If number of players is bigger than number of maximum clients
+		// we assume something went horribly wrong and emit an error signal.
+		if (numPlayers > maxClients)
+		{
+			emitUpdated(Server::RESPONSE_BAD);
+			return false;
+		}
+
 		if((flags & SQF_PLAYERDATA) == SQF_PLAYERDATA)
 		{
 			players.clear(); // Erase previous players (if any)

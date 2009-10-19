@@ -42,11 +42,18 @@ class MAIN_EXPORT MasterClient : public QObject
 		MasterClient(QHostAddress address, unsigned short port);
 		virtual ~MasterClient();
 
+		/**
+		 *	Serves as an informative role for MasterManager.
+		 *	If the master client is disabled, master manager will omit
+		 *	it during the refresh.
+		 */
+		bool					isEnabled() const { return enabled; }
 		int						numPlayers() const;
 		int						numServers() const { return servers.size(); }
 		Server					*operator[] (int index) const { return servers[index]; }
 		QList<Server*>			&serverList() { return servers; }
 		const QList<Server*>	&serverList() const { return servers; }
+
 		bool					hasServer(const Server*);
 
 	public slots:
@@ -57,6 +64,11 @@ class MAIN_EXPORT MasterClient : public QObject
 		 * This function is virtual since MasterManager overrides it.
 		 */
 		virtual void	refresh();
+
+		/**
+		 *	@see isEnabled()
+		 */
+		void					setEnabled(bool b) { enabled = b; }
 
 	signals:
 		void			listUpdated();
@@ -93,6 +105,7 @@ class MAIN_EXPORT MasterClient : public QObject
 		QList<Server *>	servers;
 
 		QHostAddress	address;
+		bool			enabled;
 		unsigned short	port;
 };
 
@@ -108,18 +121,16 @@ class MasterManager : public MasterClient
 
 		void			addMaster(MasterClient *master);
 		CustomServers*	customServs() { return customServers; }
-		void			enableMaster(int port, bool enable=true);
+
 
 	public slots:
 		void	refresh();
 
 	protected:
-		void	loadMastersFromPlugins();
 		bool	readRequest(QByteArray &data, bool &expectingMorePackets) { return true; }
 		bool	sendRequest(QByteArray &data) { return true; }
 
 		QList<MasterClient *>	masters;
-		QList<bool>				masterEnabled;
 		CustomServers*			customServers;
 
 	protected slots:

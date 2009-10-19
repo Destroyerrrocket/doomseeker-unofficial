@@ -59,12 +59,12 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), tra
 
 	serverInfo = NULL;
 
-	// Allow us to enable and disable ports.
-	fillQueryMenu();
-
 	// Get the master
 	mc = new MasterManager();
 	connect(mc, SIGNAL( message(const QString&, const QString&, bool) ), this, SLOT( masterManagerMessages(const QString&, const QString&, bool) ) );
+
+	// Allow us to enable and disable ports.
+	fillQueryMenu(mc);
 
 	// Init custom servers
 	mc->customServs()->readConfig(Main::config, serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
@@ -92,10 +92,6 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), tra
 
 	// Tray icon
 	initTrayIcon();
-
-	// This must be executed in order to set port query booleans
-	// after the Query menu actions settings are read.
-	enablePort();
 
 	// check query on statup
 	bool queryOnStartup = Main::config->setting("QueryOnStartup")->integer() != 0;
@@ -154,8 +150,6 @@ MainWindow::~MainWindow()
 
 	if(mc != NULL)
 		delete mc;
-
-	delete[] queryMenuPorts;
 }
 
 void MainWindow::autoRefreshTimer_timeout()
@@ -242,29 +236,30 @@ void MainWindow::connectEntities()
 	connect(serverTableHandler, SIGNAL( serversSelected(QList<Server*>&) ), this, SLOT( updateServerInfo(QList<Server*>&) ) );
 }
 
-void MainWindow::enablePort()
+void MainWindow::fillQueryMenu(MasterManager* masterManager)
 {
+	// This is called only once from the constructor. No clears to
+	// queryMenuPorts are ever performed. Not even in the destructor.
 	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
 	{
-		if(!Main::enginePlugins[i]->info->pInterface->generalEngineInfo().hasMasterServer)
+		const EnginePlugin* plugin = Main::enginePlugins[i]->info->pInterface;
+		if(!plugin->generalEngineInfo().hasMasterServer)
+		{
+			queryMenuPorts[i] = NULL;
 			continue;
+		}
 
-		mc->enableMaster(i, queryMenuPorts[i]->isChecked());
-	}
-}
-
-void MainWindow::fillQueryMenu()
-{
-	queryMenuPorts = new const QAction*[Main::enginePlugins.numPlugins()];
-	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
-	{
-		if(!Main::enginePlugins[i]->info->pInterface->generalEngineInfo().hasMasterServer)
-			continue;
+		MasterClient* mClient = plugin->masterClient();
+		masterManager->addMaster(mClient);
 
 	    QString name = Main::enginePlugins[i]->info->name;
-		QAction *query = menuQuery->addAction(name, this, SLOT( enablePort() ));
-		query->setIcon(Main::enginePlugins[i]->info->pInterface->icon());
+	    QQueryMenuAction* query = new QQueryMenuAction(mClient, menuQuery);
+		menuQuery->addAction(query);
+
 		query->setCheckable(true);
+		query->setIcon(plugin->icon());
+		query->setText(name);
+
 
 		if (Main::config->settingExists(name + "Query"))
 		{
@@ -276,7 +271,7 @@ void MainWindow::fillQueryMenu()
 			// set default as follows:
 			query->setChecked(true);
 		}
-		queryMenuPorts[i] = query;
+		queryMenuPorts.append(query);
 	}
 }
 
