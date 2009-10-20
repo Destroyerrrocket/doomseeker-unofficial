@@ -263,12 +263,15 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 
 		if (Main::config->settingExists(name + "Query"))
 		{
-			query->setChecked( static_cast<bool>(Main::config->setting(name + "Query")->integer()) );
+			bool enabled = static_cast<bool>(Main::config->setting(name + "Query")->integer());
+			mClient->setEnabled(enabled);
+			query->setChecked(enabled);
 		}
 		else
 		{
 			// if no setting is found for this engine
 			// set default as follows:
+			mClient->setEnabled(true);
 			query->setChecked(true);
 		}
 		queryMenuPorts.append(query);
