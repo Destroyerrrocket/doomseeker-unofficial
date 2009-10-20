@@ -421,9 +421,11 @@ class MAIN_EXPORT Server : public QObject
 		/**
 		 *	@param [out] cli - after successful call this will contain
 		 *		required command line information.
+		 *	@param [out] error - if false is returned this may contain
+		 *		a string explaining the error.
 		 *	@return	true if command line was successfuly created.
 		 */
-		bool				createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword) const;
+		bool				createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword, QString& error) const;
 
 		/**
 		 *	@see createHostCommandLine()
@@ -431,6 +433,12 @@ class MAIN_EXPORT Server : public QObject
 		bool				host(const HostInfo& hostInfo, QString& error);
 
 		bool				isRefreshing() const { return bIsRefreshing; }
+
+		/**
+		 *	@param [out] error - if false is returned this may contain
+		 *		a string explaining the error.
+		 */
+		bool				join(QString& error, const QString &connectPassword=QString()) const;
 
 		/**
 		 *	Default behaviour returns the same string as clientBinary().
@@ -449,7 +457,6 @@ class MAIN_EXPORT Server : public QObject
 	public slots:
 
 		void			displayJoinCommandLine();
-		void			join(const QString &connectPassword=QString()) const;
 
 		/**
 		 * Updates the server data.
@@ -527,7 +534,14 @@ class MAIN_EXPORT Server : public QObject
 
 		virtual bool		readRequest(QByteArray &data)=0;
 
-		bool				runExecutable(const CommandLineInfo& cli, bool bWrapWithStandardServerConsole = false) const;
+		/**
+		 *	@param cli - command line that will be executed
+		 *	@param bWrapWithStandardServerConsole - if true Doomseeker will
+		 *		attempt to wrap the input/output of the program with it's own
+		 *		console
+		 *	@param [out] error - may contain error string if false is returned
+		 */
+		bool				runExecutable(const CommandLineInfo& cli, bool bWrapWithStandardServerConsole, QString& error) const;
 
 		virtual bool		sendRequest(QByteArray &data)=0;
 		/**

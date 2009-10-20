@@ -85,7 +85,7 @@ DockBuddiesList::DockBuddiesList(QWidget *parent) : QDockWidget(parent), mc(NULL
 
 DockBuddiesList::~DockBuddiesList()
 {
-	// See if we made any modification since modifying the setting will cuase a 
+	// See if we made any modification since modifying the setting will cuase a
 	// write cycle.
 	if(!save)
 		return;
@@ -156,7 +156,10 @@ void DockBuddiesList::deleteBuddy()
 void DockBuddiesList::followBuddy(const QModelIndex &index) const
 {
 	// Folow the buddy into the server.
-	buddies[buddiesTableModel->item(index.row(), BLCID_ID)->data().toInt()].location()->join();
+	QString error;
+
+	const Server* server = buddies[buddiesTableModel->item(index.row(), BLCID_ID)->data().toInt()].location();
+	server->join(error);
 }
 
 void DockBuddiesList::patternsListContextMenu(const QPoint &pos) const

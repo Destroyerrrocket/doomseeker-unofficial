@@ -521,7 +521,15 @@ void MainWindow::runGame(const Server* server)
 		else
 			return;
 	}
-	server->join(connectPassword);
+
+	QString error;
+	if (!server->join(connectPassword, error))
+	{
+		if (!error.isEmpty())
+		{
+			QMessageBox::critical(this, tr("Doomseeker - join server"), error);
+		}
+	}
 }
 
 void MainWindow::trayIcon_activated(QSystemTrayIcon::ActivationReason reason)
