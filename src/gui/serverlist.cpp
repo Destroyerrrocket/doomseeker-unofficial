@@ -376,9 +376,9 @@ void SLHandler::tableRightClicked(const QModelIndex& index, const QPoint& point)
 {
 	Server *server = serverFromIndex(index);
 
-	QAction* copyEmail = (QAction*)(1); // anything else than null
-	QAction* copyUrl = (QAction*)(1); // anything else than null
-	QAction* openUrlInDefaultBrowser = (QAction*)(1); // anything else than null
+	QAction* copyEmail = NULL;
+	QAction* copyUrl = NULL;
+	QAction* openUrlInDefaultBrowser = NULL;
 
 	QMenu contextMenu;
 	QAction *refresh = contextMenu.addAction(tr("Refresh"));
@@ -433,7 +433,7 @@ void SLHandler::tableRightClicked(const QModelIndex& index, const QPoint& point)
 	{
 		emit displayServerJoinCommandLine(server);
 	}
-	else if (result == openUrlInDefaultBrowser)
+	else if (result == openUrlInDefaultBrowser && openUrlInDefaultBrowser != NULL)
 	{
 		QDesktopServices::openUrl(server->website());
 	}
@@ -442,7 +442,7 @@ void SLHandler::tableRightClicked(const QModelIndex& index, const QPoint& point)
 		QString addr = QString("%1:%2").arg(server->address().toString()).arg(server->port());
 		QApplication::clipboard()->setText(addr);
 	}
-	else if (result == copyEmail)
+	else if (result == copyEmail && copyEmail != NULL)
 	{
 		QApplication::clipboard()->setText(server->eMail());
 	}
@@ -450,7 +450,7 @@ void SLHandler::tableRightClicked(const QModelIndex& index, const QPoint& point)
 	{
 		QApplication::clipboard()->setText(server->name());
 	}
-	else if (result == copyUrl)
+	else if (result == copyUrl && copyUrl != NULL)
 	{
 		QApplication::clipboard()->setText(server->website());
 	}
