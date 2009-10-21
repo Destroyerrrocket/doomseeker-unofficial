@@ -23,9 +23,9 @@
 
 #include "gui/aboutDlg.h"
 #include "gui/configureDlg.h"
+#include "gui/copytextdlg.h"
 #include "gui/createserver.h"
 #include "gui/dockBuddiesList.h"
-#include "gui/dockserverinfo.h"
 #include "gui/mainwindow.h"
 #include "gui/passwordDlg.h"
 #include "gui/wadseekerinterface.h"
@@ -56,8 +56,6 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), tra
 
 	move(Main::config->setting("MainWindowX")->integer(), Main::config->setting("MainWindowY")->integer());
 	resize(Main::config->setting("MainWindowWidth")->integer(), Main::config->setting("MainWindowHeight")->integer());
-
-	serverInfo = NULL;
 
 	// Get the master
 	mc = new MasterManager();
@@ -230,11 +228,10 @@ void MainWindow::connectEntities()
 	connect(menuActionConfigure, SIGNAL( triggered() ), this, SLOT( menuOptionsConfigure() ));
 	connect(menuActionCreateServer, SIGNAL( triggered() ), this, SLOT( menuCreateServer() ));
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( quitProgram() ));
-	connect(menuActionServerInfo, SIGNAL( triggered() ), this, SLOT( menuServerInfo() ));
 	connect(menuActionWadseeker, SIGNAL( triggered() ), this, SLOT( menuWadSeeker() ));
 	connect(serverSearch, SIGNAL( textChanged(const QString &) ), serverTableHandler, SLOT( updateSearch(const QString &) ));
 	connect(serverTableHandler, SIGNAL( serverDoubleClicked(const Server*) ), this, SLOT( runGame(const Server*) ) );
-	connect(serverTableHandler, SIGNAL( serversSelected(QList<Server*>&) ), this, SLOT( updateServerInfo(QList<Server*>&) ) );
+	connect(serverTableHandler, SIGNAL( displayServerJoinCommandLine(const Server*) ), this, SLOT( showServerJoinCommandLine(const Server*) ) );
 }
 
 void MainWindow::fillQueryMenu(MasterManager* masterManager)
@@ -434,37 +431,91 @@ void MainWindow::menuOptionsConfigure()
 	}
 }
 
-void MainWindow::menuServerInfo()
-{
-	if (serverInfo == NULL)
-	{
-		serverInfo = new DockServerInfo(this);
-		connect(serverInfo, SIGNAL( visibilityChanged(bool)), menuActionServerInfo, SLOT( setChecked(bool)));
-		this->addDockWidget(Qt::RightDockWidgetArea, serverInfo);
-
-		QList<Server*> slist = serverTableHandler->selectedServers();
-		if (slist.count() == 1)
-		{
-			serverInfo->updateServerInfo(slist[0]);
-		}
-	}
-	else
-	{
-	    if (serverInfo->isVisible())
-	    {
-	        serverInfo->hide();
-	    }
-	    else
-	    {
-	        serverInfo->show();
-	    }
-	}
-}
-
 void MainWindow::menuWadSeeker()
 {
 	WadSeekerInterface wsi(this);
 	wsi.exec();
+}
+
+bool MainWindow::obtainJoinCommandLine(const Server* server, CommandLineInfo& cli, const QString& errorCaption)
+{
+	cli.applicationDir = "";
+	cli.args.clear();
+	cli.executable = QFileInfo("");
+
+	if (server != NULL)
+	{
+		const QString errorCaption = tr("Doomseeker - join server");
+
+		// For MissingWads:
+		const QString filesMissingCaption = tr("Doomseeker - files are missing");
+		QString filesMissingMessage = tr("Following files are missing:\n");
+
+		QString connectPassword;
+		if(server->isLocked())
+		{
+			PasswordDlg password(this);
+			int ret = password.exec();
+
+			if(ret == QDialog::Accepted)
+				connectPassword = password.connectPassword();
+			else
+				return false;
+		}
+
+		JoinError jError = server->createJoinCommandLine(cli, connectPassword);
+
+		switch (jError.type)
+		{
+			case JoinError::Critical:
+				if (!jError.error.isEmpty())
+				{
+					QMessageBox::critical(this, errorCaption, jError.error);
+				}
+				else
+				{
+					QMessageBox::critical(this, errorCaption, tr("Unknown error."));
+				}
+				return false;
+
+			case JoinError::MissingWads:
+				// Execute Wadseeker
+				if (!jError.missingIwad.isEmpty())
+				{
+					filesMissingMessage += tr("IWAD: ") + jError.missingIwad.toLower() + "\n";
+				}
+
+				if (!jError.missingWads.isEmpty())
+				{
+					filesMissingMessage += tr("PWADS: %1\nDo you want Wadseeker to find missing WADS?").arg(jError.missingWads.join(" "));
+				}
+
+				if (QMessageBox::question(Main::mainWindow, filesMissingCaption, filesMissingMessage, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+				{
+					if (!jError.missingIwad.isEmpty())
+					{
+						jError.missingWads.append(jError.missingIwad);
+					}
+
+					WadSeekerInterface wsi;
+					wsi.setAutomatic(true, jError.missingWads);
+					wsi.wadseekerRef().setCustomSite(server->website());
+					if (wsi.exec() == QDialog::Accepted)
+					{
+						return obtainJoinCommandLine(server, cli, errorCaption);
+					}
+				}
+				return false;
+
+			case JoinError::NoError:
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	return true;
 }
 
 void MainWindow::quitProgram()
@@ -511,25 +562,24 @@ void MainWindow::refreshThreadEndsWork()
 
 void MainWindow::runGame(const Server* server)
 {
-	QString connectPassword;
-	if(server->isLocked())
+	CommandLineInfo cli;
+	if (obtainJoinCommandLine(server, cli, tr("Doomseeker - join server")))
 	{
-		PasswordDlg password(this);
-		int ret = password.exec();
-
-		if(ret == QDialog::Accepted)
-			connectPassword = password.connectPassword();
-		else
-			return;
-	}
-
-	QString error;
-	if (!server->join(connectPassword, error))
-	{
-		if (!error.isEmpty())
+		QString error;
+		if (!server->runExecutable(cli, false, error))
 		{
-			QMessageBox::critical(this, tr("Doomseeker - join server"), error);
+			QMessageBox::critical(this, tr("Doomseeker - launch executable"), error);
 		}
+	}
+}
+
+void MainWindow::showServerJoinCommandLine(const Server* server)
+{
+	CommandLineInfo cli;
+	if (obtainJoinCommandLine(server, cli, tr("Doomseeker - join command line")))
+	{
+		CopyTextDlg ctd(cli.executable.absoluteFilePath() + " " + cli.args.join(" "), server->name(), this);
+		ctd.exec();
 	}
 }
 
@@ -549,21 +599,6 @@ void MainWindow::trayIcon_activated(QSystemTrayIcon::ActivationReason reason)
 		else
 		{
 			showMinimized();
-		}
-	}
-}
-
-void MainWindow::updateServerInfo(QList<Server*>& servers)
-{
-	if (serverInfo != NULL)
-	{
-		if (servers.isEmpty())
-		{
-			serverInfo->updateServerInfo(NULL);
-		}
-		else if (servers.count() == 1)
-		{
-			serverInfo->updateServerInfo(servers[0]);
 		}
 	}
 }

@@ -73,8 +73,12 @@ class SLHandler : public QObject
 		void resizeChangedRows(const QModelIndex&, int, int);
 
 	signals:
-		void serverDoubleClicked(const Server*);
-		void serversSelected(QList<Server*>&);
+		/**
+		 * Emitted when a request for join command line show is called.
+		 */
+		void 	displayServerJoinCommandLine(const Server*);
+		void 	serverDoubleClicked(const Server*);
+		void 	serversSelected(QList<Server*>&);
 
 	protected:
 		QTimer			cleaner;

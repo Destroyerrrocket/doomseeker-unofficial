@@ -28,7 +28,6 @@ qt4_wrap_ui(doomseekerUI
 	gui/copytextdlg.ui
 	gui/createserver.ui
 	gui/dockBuddiesList.ui
-	gui/dockserverinfo.ui
 	gui/mainwindow.ui
 	gui/passwordDlg.ui
 	gui/remoteconsole.ui
@@ -48,7 +47,6 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/copytextdlg.h
 	gui/createserver.h
 	gui/dockBuddiesList.h
-	gui/dockserverinfo.h
 	gui/mainwindow.h
 	gui/passwordDlg.h
 	gui/remoteconsole.h
@@ -82,7 +80,6 @@ set(SOURCE_FILES
 	gui/copytextdlg.cpp
 	gui/createserver.cpp
 	gui/dockBuddiesList.cpp
-	gui/dockserverinfo.cpp
 	gui/mainwindow.cpp
 	gui/passwordDlg.cpp
 	gui/remoteconsole.cpp

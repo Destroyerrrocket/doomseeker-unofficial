@@ -28,7 +28,6 @@
 #include "sdeapi/config.hpp"
 #include "sdeapi/pluginloader.hpp"
 #include "gui/dockBuddiesList.h"
-#include "gui/dockserverinfo.h"
 #include "gui/serverlist.h"
 #include "ui_mainwindow.h"
 
@@ -116,6 +115,17 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 */
 		void	initTrayIcon();
 
+		/**
+		 *	Generates command line info for specified server.
+		 *
+		 *	@param server - command line will be generated for this server
+		 *	@param [out] cli - generated command line
+		 *	@param errorCaption - caption used for QMessageBox in case of an
+		 *		error
+		 *	@return true on success, false otherwise.
+		 */
+		bool	obtainJoinCommandLine(const Server* server, CommandLineInfo& cli, const QString& errorCaption = tr("Doomseeker - error"));
+
 		void	refreshCustomServers();
 
 		/**
@@ -136,18 +146,16 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void 	menuCreateServer();
 		void	menuHelpAbout();
 		void 	menuOptionsConfigure();
-		void	menuServerInfo();
 		void	menuWadSeeker();
 		void	quitProgram();
 		void 	refreshThreadBeginsWork();
 		void	refreshThreadEndsWork();
 		void 	runGame(const Server*);
+		void	showServerJoinCommandLine(const Server*);
 		void	trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
-		void 	updateServerInfo(QList<Server*>&);
 
 	private:
 		DockBuddiesList*	buddiesList;
-		DockServerInfo*		serverInfo;
 		SLHandler*			serverTableHandler;
 
 		MasterManager*		mc;

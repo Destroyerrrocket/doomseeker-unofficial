@@ -26,6 +26,7 @@
 #include "main.h"
 #include <QApplication>
 #include <QClipboard>
+#include <QDesktopServices>
 #include <QHeaderView>
 #include <QMenu>
 #include <QStandardItem>
@@ -375,11 +376,33 @@ void SLHandler::tableRightClicked(const QModelIndex& index, const QPoint& point)
 {
 	Server *server = serverFromIndex(index);
 
+	QAction* copyEmail = (QAction*)(1); // anything else than null
+	QAction* copyUrl = (QAction*)(1); // anything else than null
+	QAction* openUrlInDefaultBrowser = (QAction*)(1); // anything else than null
+
 	QMenu contextMenu;
 	QAction *refresh = contextMenu.addAction(tr("Refresh"));
 	QAction *join = contextMenu.addAction(tr("Join"));
+	QAction* joinCommandLine = contextMenu.addAction(tr("Show join command line"));
+
+	if (!server->website().isEmpty() && !server->website().startsWith("file://", Qt::CaseInsensitive))
+	{
+		openUrlInDefaultBrowser = contextMenu.addAction(tr("Open URL in browser"));
+	}
+
 	QMenu *copyMenu = contextMenu.addMenu(tr("Copy"));
 	QAction *copyAddress = copyMenu->addAction(tr("Copy Address"));
+
+	if (!server->eMail().isEmpty())
+	{
+		copyEmail = copyMenu->addAction(tr("Copy E-Mail"));
+	}
+
+	if (!server->website().isEmpty())
+	{
+		copyUrl = copyMenu->addAction(tr("Copy URL"));
+	}
+
 	QAction *copyName = copyMenu->addAction(tr("Copy Name"));
 	QAction *rcon = NULL;
 	if(server->hasRcon())
@@ -406,14 +429,30 @@ void SLHandler::tableRightClicked(const QModelIndex& index, const QPoint& point)
 	{
 		emit serverDoubleClicked(server);
 	}
+	else if (result == joinCommandLine)
+	{
+		emit displayServerJoinCommandLine(server);
+	}
+	else if (result == openUrlInDefaultBrowser)
+	{
+		QDesktopServices::openUrl(server->website());
+	}
 	else if(result == copyAddress)
 	{
 		QString addr = QString("%1:%2").arg(server->address().toString()).arg(server->port());
 		QApplication::clipboard()->setText(addr);
 	}
+	else if (result == copyEmail)
+	{
+		QApplication::clipboard()->setText(server->eMail());
+	}
 	else if(result == copyName)
 	{
 		QApplication::clipboard()->setText(server->name());
+	}
+	else if (result == copyUrl)
+	{
+		QApplication::clipboard()->setText(server->website());
 	}
 	else if(result == rcon && rcon != NULL)
 	{

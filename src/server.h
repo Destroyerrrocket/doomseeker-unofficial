@@ -199,6 +199,36 @@ struct MAIN_EXPORT GameMode
 		bool	teamgame;
 };
 
+/**
+ *	@brief Indicator of error for the server join process.
+ *
+ *	This structure contains information about whether an error occured and
+ *	if it did - what type of error it is. Based on this GUI can make a
+ *	decision on how to handle the error and whether to try again.
+ */
+struct JoinError
+{
+	enum JoinErrorType
+	{
+		NoError = 0,
+		MissingWads = 1,
+		Critical = 2
+	};
+
+	JoinErrorType		type;
+	QString				error;
+
+	/**
+	 *	This is valid only if type == MissingWads.
+	 */
+	QString 			missingIwad;
+
+	/**
+	 *	This is valid only if type == MissingWads.
+	 */
+	QStringList 		missingWads;
+};
+
 struct MAIN_EXPORT SkillLevel
 {
 	//const QString strName;
@@ -337,6 +367,7 @@ class MAIN_EXPORT Server : public QObject
 		QList<ServerInfo>*	serverInfo() const;
 
 		const QHostAddress	&address() const { return serverAddress; }
+		const QString&		eMail() const { return email; }
 		const DMFlags		&gameFlags() const { return dmFlags; }
 		const GameMode		&gameMode() const { return currentGameMode; }
 		virtual bool		hasRcon() const { return false; }
@@ -392,9 +423,6 @@ class MAIN_EXPORT Server : public QObject
 		void				setCustom(bool b) { custom = b; }
 		void				setToDelete(bool b);
 
-		QList<ServerAction>*	actions();
-		virtual void			actionsEx(QList<ServerAction>*) {};
-
 		/**
 		 *	Returns the path to the client binary
 		 *	@param [out] error - type of error
@@ -421,11 +449,9 @@ class MAIN_EXPORT Server : public QObject
 		/**
 		 *	@param [out] cli - after successful call this will contain
 		 *		required command line information.
-		 *	@param [out] error - if false is returned this may contain
-		 *		a string explaining the error.
-		 *	@return	true if command line was successfuly created.
+		 *	@return	JoinError::type == NoError if all ok.
 		 */
-		bool				createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword, QString& error) const;
+		JoinError			createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword) const;
 
 		/**
 		 *	@see createHostCommandLine()
@@ -435,10 +461,28 @@ class MAIN_EXPORT Server : public QObject
 		bool				isRefreshing() const { return bIsRefreshing; }
 
 		/**
-		 *	@param [out] error - if false is returned this may contain
-		 *		a string explaining the error.
+		 *	!!! DEPRECATED !!!
+		 *	The proper routine is to:
+		 *	-# Call createJoinCommandLine
+		 *	-# Test JoinError in the GUI
+		 *	-# If there are missing wads, ask if the user wants to launch the
+		 *		Wadseeker. If Wadseeker is successful repeat the routine.
+		 *	-# If there are no further errors, call runExecutable with
+		 *		generated command line as parameter.
+		 *
+		 *	@return	JoinError::type == NoError if all ok.
 		 */
-		bool				join(QString& error, const QString &connectPassword=QString()) const;
+		JoinError			join(const QString &connectPassword) const;
+
+		/**
+		 *	Executes predefined command line.
+		 *	@param cli - command line that will be executed
+		 *	@param bWrapWithStandardServerConsole - if true Doomseeker will
+		 *		attempt to wrap the input/output of the program with it's own
+		 *		console
+		 *	@param [out] error - may contain error string if false is returned
+		 */
+		bool				runExecutable(const CommandLineInfo& cli, bool bWrapWithStandardServerConsole, QString& error) const;
 
 		/**
 		 *	Default behaviour returns the same string as clientBinary().
@@ -456,7 +500,7 @@ class MAIN_EXPORT Server : public QObject
 
 	public slots:
 
-		void			displayJoinCommandLine();
+		//void			displayJoinCommandLine();
 
 		/**
 		 * Updates the server data.
@@ -533,15 +577,6 @@ class MAIN_EXPORT Server : public QObject
 		virtual void		hostProperties(QStringList& args) const {};
 
 		virtual bool		readRequest(QByteArray &data)=0;
-
-		/**
-		 *	@param cli - command line that will be executed
-		 *	@param bWrapWithStandardServerConsole - if true Doomseeker will
-		 *		attempt to wrap the input/output of the program with it's own
-		 *		console
-		 *	@param [out] error - may contain error string if false is returned
-		 */
-		bool				runExecutable(const CommandLineInfo& cli, bool bWrapWithStandardServerConsole, QString& error) const;
 
 		virtual bool		sendRequest(QByteArray &data)=0;
 		/**

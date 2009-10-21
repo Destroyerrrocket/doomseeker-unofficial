@@ -23,11 +23,8 @@
 
 #include "server.h"
 #include "main.h"
-#include "gui/copytextdlg.h"
-#include "gui/passwordDlg.h"
 #include "gui/standardserverconsole.h"
 #include "gui/wadseekerinterface.h"
-#include <QMessageBox>
 #include <QProcess>
 #include <QSet>
 #include <QTime>
@@ -220,21 +217,6 @@ Server::~Server()
 	clearDMFlags();
 }
 
-QList<ServerAction>* Server::actions()
-{
-	QList<ServerAction>* lst = new QList<ServerAction>();
-
-	ServerAction sa;
-	sa.label = "Join command line";
-	sa.receiver = this;
-	sa.slot = SLOT( displayJoinCommandLine() );
-
-	lst->append(sa);
-
-	actionsEx(lst);
-	return lst;
-}
-
 void Server::cleanArguments(QStringList& args) const
 {
 	#ifdef Q_OS_WIN32
@@ -309,10 +291,10 @@ bool Server::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cl
 	const QStringList& pwadsPaths = hostInfo.pwadsPaths;
 	if (!pwadsPaths.isEmpty())
 	{
-		args << argForPwadLoading();
-
 		foreach(const QString s, pwadsPaths)
 		{
+			args << argForPwadLoading();
+
 			fi.setFile(s);
 			if (!fi.isFile())
 			{
@@ -377,8 +359,14 @@ bool Server::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cl
 	return true;
 }
 
-bool Server::createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword, QString& error) const
+JoinError Server::createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword) const
 {
+	JoinError jError;
+
+	// Init the JoinError type with critical error. We will change this upon
+	// successful return or if wads are missing.
+	jError.type = JoinError::Critical;
+
 	QDir& applicationDir = cli.applicationDir;
 	QFileInfo& executablePath = cli.executable;
 	QStringList& args = cli.args;
@@ -386,10 +374,10 @@ bool Server::createJoinCommandLine(CommandLineInfo& cli, const QString &connectP
 	const QString errorCaption = tr("Doomseeker - error");
 	args.clear();
 
-	QString clientBin = clientBinary(error);
+	QString clientBin = clientBinary(jError.error);
 	if (clientBin.isEmpty())
 	{
-		return false;
+		return jError;
 	}
 
 	executablePath = clientBin;
@@ -399,13 +387,13 @@ bool Server::createJoinCommandLine(CommandLineInfo& cli, const QString &connectP
 
 	if (clientWorkingDirPath.isEmpty())
 	{
-		error = tr("Path to working directory is empty.\nMake sure the configuration for the main binary is set properly.");
-		return false;
+		jError.error = tr("Path to working directory is empty.\nMake sure the configuration for the main binary is set properly.");
+		return jError;
 	}
 	else if (!applicationDir.exists())
 	{
-		error = tr("%1\n cannot be used as working directory for:\n%2").arg(clientWorkingDirPath, clientBin);
-		return false;
+		jError.error = tr("%1\n cannot be used as working directory for:\n%2").arg(clientWorkingDirPath, clientBin);
+		return jError;
 	}
 
 	PathFinder pf(Main::config);
@@ -413,12 +401,6 @@ bool Server::createJoinCommandLine(CommandLineInfo& cli, const QString &connectP
 	bool iwadFound = false;
 
 	connectParameters(cli.args, pf, iwadFound, connectPassword);
-
-	// Pwads
-	if (numWads() != 0)
-	{
-		cli.args << argForPwadLoading();
-	}
 
 	for (int i = 0; i < numWads(); ++i)
 	{
@@ -429,70 +411,24 @@ bool Server::createJoinCommandLine(CommandLineInfo& cli, const QString &connectP
 		}
 		else
 		{
+			cli.args << argForPwadLoading();
 			cli.args << pwad;
 		}
 	}
 
 	if (!iwadFound || !missingPwads.isEmpty())
 	{
-		const QString filesMissingCaption = tr("Doomseeker - files are missing");
-		QString filesMissingMessage = tr("Following files are missing:\n");
-
 		if (!iwadFound)
 		{
-			filesMissingMessage += tr("IWAD: ") + iwadName().toLower() + "\n";
+			jError.missingIwad = iwad;
 		}
-
-		if (!missingPwads.isEmpty())
-		{
-			filesMissingMessage += tr("PWADS: %1\nDo you want Wadseeker to find missing PWADS?").arg(missingPwads.join(" "));
-		}
-
-		if (QMessageBox::question(Main::mainWindow, filesMissingCaption, filesMissingMessage, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-		{
-			if (!iwadFound)
-			{
-				missingPwads.append(iwadName());
-			}
-
-			WadSeekerInterface wsi;
-			wsi.setAutomatic(true, missingPwads);
-			wsi.wadseekerRef().setCustomSite(website());
-			if (wsi.exec() == QDialog::Accepted)
-			{
-				return createJoinCommandLine(cli, connectPassword, error);
-			}
-		}
-
-		return false;
+		jError.missingWads = missingPwads;
+		jError.type = JoinError::MissingWads;
+		return jError;
 	}
 
-	return true;
-}
-
-void Server::displayJoinCommandLine()
-{
-	CommandLineInfo cli;
-
-	QString connectPassword;
-	if(isLocked())
-	{
-		PasswordDlg password;
-		int ret = password.exec();
-		if(ret == QDialog::Accepted)
-			connectPassword = password.connectPassword();
-		else
-			return;
-	}
-
-	QString error; // TODO: proper implementation
-	if (!createJoinCommandLine(cli, connectPassword, error))
-	{
-		return;
-	}
-
-	CopyTextDlg* ctd = new CopyTextDlg(cli.executable.absoluteFilePath() + " " + cli.args.join(" "), "Join command line:", Main::mainWindow);
-	ctd->show();
+	jError.type = JoinError::NoError;
+	return jError;
 }
 
 QString Server::gameInfoTableHTML() const
@@ -594,16 +530,22 @@ bool Server::host(const HostInfo& hostInfo, QString& error)
 	return runExecutable(cli, WRAP_IN_SSS_CONSOLE, error);
 }
 
-bool Server::join(QString& error, const QString &connectPassword) const
+JoinError Server::join(const QString &connectPassword) const
 {
 	CommandLineInfo cli;
 
-	if (!createJoinCommandLine(cli, connectPassword, error))
+	JoinError jError = createJoinCommandLine(cli, connectPassword);
+	if (jError.type != JoinError::NoError)
 	{
-		return false;
+		return jError;
 	}
 
-	return runExecutable(cli, false, error);
+	if (!runExecutable(cli, false, jError.error))
+	{
+		jError.type = JoinError::Critical;
+	}
+
+	return jError;
 }
 
 unsigned int Server::longestPlayerName() const

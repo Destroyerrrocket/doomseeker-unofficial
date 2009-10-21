@@ -21,8 +21,8 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 
-#ifndef __DOCKSERVERINFO_H_
-#define __DOCKSERVERINFO_H_
+#ifndef __COPYTEXTDLG_H_
+#define __COPYTEXTDLG_H_
 
 #include "ui_copytextdlg.h"
 
