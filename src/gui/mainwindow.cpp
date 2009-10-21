@@ -245,7 +245,7 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		const EnginePlugin* plugin = Main::enginePlugins[i]->info->pInterface;
 		if(!plugin->generalEngineInfo().hasMasterServer)
 		{
-			queryMenuPorts[i] = NULL;
+			queryMenuPorts.append(NULL);
 			continue;
 		}
 
