@@ -153,13 +153,13 @@ void DockBuddiesList::deleteBuddy()
 	save = true;
 }
 
-void DockBuddiesList::followBuddy(const QModelIndex &index) const
+void DockBuddiesList::followBuddy(const QModelIndex &index)
 {
 	// Folow the buddy into the server.
 	QString error;
 
 	const Server* server = buddies[buddiesTableModel->item(index.row(), BLCID_ID)->data().toInt()].location();
-	server->join(error);
+	emit joinServer(server);
 }
 
 void DockBuddiesList::patternsListContextMenu(const QPoint &pos) const

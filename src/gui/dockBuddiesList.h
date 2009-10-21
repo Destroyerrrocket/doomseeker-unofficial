@@ -54,6 +54,9 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 		void	addBuddy();
 		void	scan(const MasterClient *master=NULL);
 
+	signals:
+		void	joinServer(const Server* server);
+
 	protected:
 		struct BuddyInfo
 		{
@@ -67,7 +70,7 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 			private:
 				Player			player;
 				const Server	*server;
-		}; 
+		};
 
 		QList<DockBuddiesList::BuddyInfo>	buddies;
 		QStandardItemModel					*buddiesTableModel;
@@ -75,7 +78,7 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 
 	protected slots:
 		void	deleteBuddy();
-		void	followBuddy(const QModelIndex &index) const;
+		void	followBuddy(const QModelIndex &index);
 		void	patternsListContextMenu(const QPoint &pos) const;
 
 	private:

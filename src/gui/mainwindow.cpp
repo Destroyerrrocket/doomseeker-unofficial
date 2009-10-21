@@ -74,6 +74,7 @@ MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), tra
 	// The buddies list must always be available so we can perform certain operations on it
 	buddiesList = new DockBuddiesList(this);
 	connect(buddiesList, SIGNAL( visibilityChanged(bool)), menuActionBuddies, SLOT( setChecked(bool)));
+	connect(buddiesList, SIGNAL( joinServer(const Server*) ), this, SLOT( runGame(const Server*) ));
 	buddiesList->scan(mc);
 	buddiesList->hide();
 	this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
@@ -245,7 +246,7 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		const EnginePlugin* plugin = Main::enginePlugins[i]->info->pInterface;
 		if(!plugin->generalEngineInfo().hasMasterServer)
 		{
-			queryMenuPorts.append(NULL);
+//			queryMenuPorts.append(NULL);
 			continue;
 		}
 
