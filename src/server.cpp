@@ -261,7 +261,7 @@ void Server::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFoun
 	iwadFound = !iwad.isEmpty();
 }
 
-bool Server::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cli, QString& error) const
+bool Server::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cli, bool bOfflinePlay, QString& error) const
 {
 	QDir& applicationDir = cli.applicationDir;
 	QFileInfo& executablePath = cli.executable;
@@ -319,7 +319,17 @@ bool Server::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cl
 	const QString& serverExecutablePath = hostInfo.executablePath;
 	if (serverExecutablePath.isEmpty())
 	{
-		QString serverBin = serverBinary(error);
+		// Select binary depending on bOfflinePlay flag:
+		QString serverBin;
+		if (bOfflinePlay)
+		{
+			serverBin = offlineGameBinary(error);
+		}
+		else
+		{
+			serverBin = serverBinary(error);
+		}
+
 		if (serverBin.isEmpty())
 		{
 			return false;
@@ -337,7 +347,17 @@ bool Server::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cl
 		return false;
 	}
 
-	QString serverWorkingDirPath = serverWorkingDirectory();
+	QString serverWorkingDirPath;
+	// Select working dir based on bOfflinePlay flag:
+	if (bOfflinePlay)
+	{
+		serverWorkingDirPath = offlineGameWorkingDirectory();
+	}
+	else
+	{
+		serverWorkingDirPath = serverWorkingDirectory();
+	}
+
 	applicationDir = serverWorkingDirectory();
 
 	if (serverWorkingDirPath.isEmpty())
@@ -351,7 +371,12 @@ bool Server::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cl
 		return false;
 	}
 
-	args << argForServerLaunch();
+	// Add the server launch parameter only if we don't want offline game
+	if (!bOfflinePlay)
+	{
+		args << argForServerLaunch();
+	}
+
 	hostDMFlags(args, dmFlags);
 	hostProperties(args);
 	args.append(hostInfo.customParameters);
@@ -497,34 +522,51 @@ QString Server::gameInfoTableHTML() const
 
 QString Server::generalInfoHTML() const
 {
-	QString ret = QString(name()).replace('>', "&gt;").replace('<', "&lt;") + "\n";
-	if(!version().isEmpty())
+	QString ret;
+	if (isKnown())
 	{
-		ret += tr("Version") + ": " + version() + "\n";
+		ret += QString(name()).replace('>', "&gt;").replace('<', "&lt;") + "\n";
+		if(!version().isEmpty())
+		{
+			ret += tr("Version") + ": " + version() + "\n";
+		}
+		if (!email.isEmpty())
+		{
+			ret += tr("E-mail") + ": " + email + "\n";
+		}
+		if (!webSite.isEmpty())
+		{
+			ret += tr("URL") + ": <a href=\"" + webSite + "\">" + webSite + "</a>\n";
+		}
 	}
-	if (!email.isEmpty())
+
+	CountryInfo ci = Main::ip2c->obtainCountryInfo(address());
+
+	if (ci.valid)
 	{
-		ret += tr("E-mail") + ": " + email + "\n";
+		if (!ret.isEmpty())
+		{
+			ret += "\n";
+		}
+
+		ret += tr("Location: %1\n").arg(ci.name);
 	}
-	if (!webSite.isEmpty())
-	{
-		ret += tr("URL") + ": <a href=\"" + webSite + "\">" + webSite + "</a>\n";
-	}
+
 	return ret;
 }
 
-bool Server::host(const HostInfo& hostInfo, QString& error)
+bool Server::host(const HostInfo& hostInfo, bool bOfflinePlay, QString& error)
 {
 	error.clear();
 	CommandLineInfo cli;
 
-	if (!createHostCommandLine(hostInfo, cli, error))
+	if (!createHostCommandLine(hostInfo, cli, bOfflinePlay, error))
 		return false;
 
 #ifdef Q_OS_WIN32
 	const bool WRAP_IN_SSS_CONSOLE = false;
 #else
-	const bool WRAP_IN_SSS_CONSOLE = true;
+	const bool WRAP_IN_SSS_CONSOLE = !bOfflinePlay;
 #endif
 
 	return runExecutable(cli, WRAP_IN_SSS_CONSOLE, error);
@@ -560,33 +602,11 @@ unsigned int Server::longestPlayerName() const
 	return x;
 }
 
-QList<ServerInfo>* Server::serverInfo() const
+QString Server::offlineGameWorkingDirectory() const
 {
-	QList<ServerInfo>* list = new QList<ServerInfo>();
-
-	ServerInfo siName = { this->name(), "<div style='white-space: pre'>" + this->name() + "</div>" };
-
-	QString addr = this->address().toString() + ":" + QString::number(this->port());
-	ServerInfo siAddress = { addr, addr };
-
-	list->append(siName);
-	list->append(siAddress);
-
-	if (!this->webSite.isEmpty())
-	{
-		QString url = "<A HREF=\"" + this->webSite + "\">" + this->webSite + "</A>";
-		ServerInfo siUrl = { tr("URL: ") + url, "<div style='white-space: pre'>" + this->webSite + "</div>"};
-		list->append(siUrl);
-	}
-	if (!this->email.isEmpty())
-	{
-		QString email = "<a href=\"mailto:" + this->email + "\">" + this->email + "</a>";
-		ServerInfo siEmail = { tr("E-mail: ") + email, "<div style='white-space: pre'>" + this->email + "</div>"};
-		list->append(siEmail);
-	}
-
-	additionalServerInfo(list);
-	return list;
+	QString dummy;
+	QFileInfo fi(offlineGameBinary(dummy));
+	return fi.absolutePath();
 }
 
 QString Server::playerTableHTML() const

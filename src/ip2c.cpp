@@ -50,6 +50,30 @@ IP2C::~IP2C()
 		delete downloadProgressWidget;
 }
 
+void IP2C::appendEntryToDatabase(const IP2CData& entry)
+{
+	if (database.isEmpty() || entry.ipStart > database[database.count() - 1].ipStart)
+	{
+		database << entry;
+	}
+	else if (entry.ipStart < database[0].ipStart)
+	{
+		database.insert(0, entry);
+	}
+	else
+	{
+		QList<IP2CData>::iterator it;
+		for (it = database.begin(); it != database.end(); ++it)
+		{
+			if (entry.ipStart < it->ipStart)
+			{
+				database.insert(it, entry);
+				break;
+			}
+		}
+	}
+}
+
 bool IP2C::convertAndSaveDatabase(QByteArray& downloadedData)
 {
 	QTime time;
@@ -58,51 +82,11 @@ bool IP2C::convertAndSaveDatabase(QByteArray& downloadedData)
 	if (downloadedData.isEmpty())
 		return false;
 
-	// Skip over the header
-	int indexOfNewLine = -1;
-	while(downloadedData[indexOfNewLine + 1] == '#')
-	{
-		indexOfNewLine = downloadedData.indexOf('\n', indexOfNewLine + 1);
-	}
+	Countries countries;
+	readTextDatabase(downloadedData, countries);
 
-	// Trim the header
-	downloadedData = downloadedData.right(downloadedData.size() - indexOfNewLine);
-
-	Scanner sc = Scanner(downloadedData.constData(), downloadedData.count());
 	QByteArray binaryData;
-
-	unsigned fileId = MAKEID('I', 'P', '2', 'C');
-	unsigned short version = 1;
-	binaryData += QByteArray((const char*)&fileId, 4);
-	binaryData += QByteArray((const char*)&version, sizeof(unsigned short));
-
-	while(sc.tokensLeft())
-	{
-		IP2CData entry;
-		bool ok = true;
-
-		if(!sc.checkToken(TK_StringConst)) break; // ipStart
-		entry.ipStart = sc.str.toUInt(&ok);
-		if(!ok || !sc.checkToken(',')) break;
-		if(!sc.checkToken(TK_StringConst)) break; // ipEnd
-		entry.ipEnd = sc.str.toUInt(&ok);
-		if(!ok || !sc.checkToken(',')) break;
-		if(!sc.checkToken(TK_StringConst)) break; // Register
-		if(!sc.checkToken(',')) break;
-		if(!sc.checkToken(TK_StringConst)) break; // date assigned
-		if(!sc.checkToken(',')) break;
-		if(!sc.checkToken(TK_StringConst)) break; // 2 char country
-		if(!sc.checkToken(',')) break;
-		if(!sc.checkToken(TK_StringConst)) break; // 3 char country
-		entry.country = sc.str;
-		if(!sc.checkToken(',')) break;
-		if(!sc.checkToken(TK_StringConst)) break; // country string
-
-		binaryData += QByteArray((const char*)&entry.ipStart, sizeof(entry.ipStart));
-		binaryData += QByteArray((const char*)&entry.ipEnd, sizeof(entry.ipEnd));
-		binaryData += entry.country;
-		binaryData += QByteArray(1, 0); // array with one null character
-	}
+	convertCountriesIntoBinaryData(countries, binaryData);
 
 	QFile out(file);
     if(out.open(QIODevice::WriteOnly) && out.isWritable())
@@ -116,6 +100,41 @@ bool IP2C::convertAndSaveDatabase(QByteArray& downloadedData)
     }
 
     return true;
+}
+
+void IP2C::convertCountriesIntoBinaryData(const Countries& countries, QByteArray& output)
+{
+	output.clear();
+	unsigned fileId = MAKEID('I', 'P', '2', 'C');
+	unsigned short version = 2;
+	output += QByteArray((const char*)&fileId, 4);
+	output += QByteArray((const char*)&version, sizeof(unsigned short));
+
+	CountriesConstIt it;
+	for (it = countries.constBegin(); it != countries.constEnd(); ++it)
+	{
+		// Read the first IP2CData entry for country info
+		if (!it.value().empty())
+		{
+			const IP2CData& val = it.value()[0];
+			unsigned ipBlocksNum = it.value().count();
+
+			output += val.countryFullName;
+			output += QByteArray(1, 0); // array with one null character
+			output += val.country;
+			output += QByteArray(1, 0); // array with one null character
+			output += QByteArray((const char*)&ipBlocksNum, sizeof(ipBlocksNum));
+		}
+
+		foreach(IP2CData val, it.value())
+		{
+			const char ipStart[4] = { WRITEINT32_DIRECT(val.ipStart) };
+			const char ipEnd[4] = { WRITEINT32_DIRECT(val.ipEnd) };
+
+			output += QByteArray(ipStart, 4);
+			output += QByteArray(ipEnd, 4);
+		}
+	}
 }
 
 void IP2C::downloadDatabase(QStatusBar *statusbar)
@@ -142,69 +161,38 @@ void IP2C::downloadProgress(int value, int max)
 	downloadProgressWidget->setValue(value);
 }
 
-const QPixmap &IP2C::flag(unsigned int ipaddress)
+const QPixmap &IP2C::flag(unsigned int ipaddress, const QString& countryShortName)
 {
-	const static unsigned LOCALHOST_BEGIN = QHostAddress("127.0.0.0").toIPv4Address();
-	const static unsigned LOCALHOST_END = QHostAddress("127.255.255.255").toIPv4Address();
-	const static unsigned LAN_1_BEGIN = QHostAddress("10.0.0.0").toIPv4Address();
-	const static unsigned LAN_1_END = QHostAddress("10.255.255.255").toIPv4Address();
-	const static unsigned LAN_2_BEGIN = QHostAddress("172.16.0.0").toIPv4Address();
-	const static unsigned LAN_2_END = QHostAddress("127.31.255.255").toIPv4Address();
-	const static unsigned LAN_3_BEGIN = QHostAddress("192.168.0.0").toIPv4Address();
-	const static unsigned LAN_3_END = QHostAddress("192.168.255.255").toIPv4Address();
-
-	if (ipaddress >= LOCALHOST_BEGIN && ipaddress <= LOCALHOST_END)
+	if (flags.contains(countryShortName))
 	{
-		return flagLocalhost;
+		return flags[countryShortName];
 	}
 
-	if (ipaddress >= LAN_1_BEGIN && ipaddress <= LAN_1_END
-	||	ipaddress >= LAN_2_BEGIN && ipaddress <= LAN_2_END
-	||	ipaddress >= LAN_3_BEGIN && ipaddress <= LAN_3_END)
-	{
-		return flagLan;
-	}
-
-	QString country = lookupIP(ipaddress);
-	if (country.isEmpty())
-	{
-		printf("Unrecognized IP address: %s (%u)\n", QHostAddress(ipaddress).toString().toAscii().constData(), ipaddress);
-		return flagUnknown;
-	}
-
-	if (flags.contains(country))
-	{
-		return flags[country];
-	}
-
-	QString resName = ":flags/" + country;
+	QString resName = ":flags/" + countryShortName;
 	QResource res(resName);
 
 	if (!res.isValid())
 	{
-		printf("No flag for country: %s\n", country.toAscii().constData());
-		flags[country] = flagUnknown;
+		printf("No flag for country: %s\n", countryShortName.toAscii().constData());
+		flags[countryShortName] = flagUnknown;
 		return flagUnknown;
 	}
 
-	flags[country] = QPixmap(resName);
-	return flags[country];
+	flags[countryShortName] = QPixmap(resName);
+	return flags[countryShortName];
 }
 
-QString IP2C::lookupIP(unsigned int ipaddress) const
+const IP2C::IP2CData& IP2C::lookupIP(unsigned int ipaddress) const
 {
 	if(!read)
-		return QString();
+		return invalidData;
 
 	unsigned int upper = database.size()-1;
 	unsigned int lower = 0;
 	unsigned int index = database.size()/2;
 	unsigned int lastIndex = 0xFFFFFFFF;
-	while(true)
+	while(index != lastIndex) // Infinite loop protection.
 	{
-		// Infinite loop protection.
-		if(index == lastIndex)
-			break;
 		lastIndex = index;
 
 		if(ipaddress < database[index].ipStart)
@@ -219,10 +207,10 @@ QString IP2C::lookupIP(unsigned int ipaddress) const
 			index += (upper-index)>>1;
 			continue;
 		}
-		return database[index].country;
+		return database[index];
 	}
 
-	return QString();
+	return invalidData;
 }
 
 bool IP2C::needsUpdate()
@@ -239,6 +227,50 @@ bool IP2C::needsUpdate()
 	}
 
 	return true;
+}
+
+CountryInfo IP2C::obtainCountryInfo(unsigned int ipaddress)
+{
+	const static unsigned LOCALHOST_BEGIN = QHostAddress("127.0.0.0").toIPv4Address();
+	const static unsigned LOCALHOST_END = QHostAddress("127.255.255.255").toIPv4Address();
+	const static unsigned LAN_1_BEGIN = QHostAddress("10.0.0.0").toIPv4Address();
+	const static unsigned LAN_1_END = QHostAddress("10.255.255.255").toIPv4Address();
+	const static unsigned LAN_2_BEGIN = QHostAddress("172.16.0.0").toIPv4Address();
+	const static unsigned LAN_2_END = QHostAddress("127.31.255.255").toIPv4Address();
+	const static unsigned LAN_3_BEGIN = QHostAddress("192.168.0.0").toIPv4Address();
+	const static unsigned LAN_3_END = QHostAddress("192.168.255.255").toIPv4Address();
+
+	if (ipaddress >= LOCALHOST_BEGIN && ipaddress <= LOCALHOST_END)
+	{
+		CountryInfo ci = { true, flagLocalhost, tr("Localhost") };
+		return ci;
+	}
+
+	if (ipaddress >= LAN_1_BEGIN && ipaddress <= LAN_1_END
+	||	ipaddress >= LAN_2_BEGIN && ipaddress <= LAN_2_END
+	||	ipaddress >= LAN_3_BEGIN && ipaddress <= LAN_3_END)
+	{
+		CountryInfo ci = { true, flagLan, tr("LAN") };
+		return ci;
+	}
+
+	const IP2CData& data = lookupIP(ipaddress);
+
+	if (data.country.isEmpty())
+	{
+		printf("Unrecognized IP address: %s (DEC: %u / HEX: %X)\n", QHostAddress(ipaddress).toString().toAscii().constData(), ipaddress, ipaddress);
+		CountryInfo ci = { true, flagUnknown, tr("Unknown") };
+		return ci;
+	}
+
+	if (!data.isValid())
+	{
+		CountryInfo ci = {false, QPixmap(), QString() };
+		return ci;
+	}
+
+	CountryInfo ci = {true, flag(ipaddress, data.country), data.countryFullName };
+	return ci;
 }
 
 void IP2C::processHttp(QByteArray& data, const QString& filename)
@@ -314,10 +346,54 @@ bool IP2C::readDatabase()
 	time.start();
 
 	QByteArray dataArray = db.readAll();
+
+	// Read version.
+	int pos = 4;
+	if (pos >= dataArray.size())
+	{
+		return false;
+	}
+
+	const char* data = dataArray.constData();
+	unsigned short version = READINT16(&data[pos]);
+
+	bool wasReadSuccessful = false;
+	switch (version)
+	{
+		case 1:
+			wasReadSuccessful = readDatabaseVersion1(dataArray);
+			break;
+
+		case 2:
+			wasReadSuccessful = readDatabaseVersion2(dataArray);
+			break;
+
+		default:
+			wasReadSuccessful = false;
+			break;
+	}
+
+	if (!wasReadSuccessful)
+	{
+		return false;
+	}
+
+//	foreach(IP2CData data, database)
+//	{
+//		printf("%s %s: %u %X / %u %X\n", data.countryFullName.toAscii().constData(), data.country.toAscii().constData(), data.ipStart, data.ipStart, data.ipEnd, data.ipEnd);
+//	}
+
+	qDebug("IP2C Database read in %d ms. Entries read: %d", time.elapsed(), database.size());
+
+	emit databaseUpdated();
+	return true;
+}
+
+bool IP2C::readDatabaseVersion1(const QByteArray& dataArray)
+{
+	int pos = 6; // skip file tag and version number
 	const char* data = dataArray.constData();
 
-	// Currently Doomseeker ignores the IP2C database version.
-	int pos = 6; // skip the signature and the version
 	while (pos < dataArray.size())
 	{
 		IP2CData entry;
@@ -335,10 +411,109 @@ bool IP2C::readDatabase()
 		entry.country = &data[pos];
 		pos += entry.country.size() + 1;
 
+		// Entries in the file are already sorted.
 		database << entry;
 	}
-	qDebug("IP2C Database read in %d ms. Entries read: %d", time.elapsed(), database.size());
 
-	emit databaseUpdated();
 	return true;
+}
+
+bool IP2C::readDatabaseVersion2(const QByteArray& dataArray)
+{
+	int pos = 6; // skip file tag and version number
+	const char* data = dataArray.constData();
+
+	// We need to store the addresses in such hash table to make sure they
+	// are ordered in proper, ascending order. Otherwise the whole library
+	// will not work!
+	QMap<unsigned, IP2CData> hashTable;
+
+	while (pos < dataArray.size())
+	{
+		// Base entry for each IP read from the file
+		IP2CData baseEntry;
+
+		baseEntry.countryFullName = &data[pos];
+		pos += baseEntry.countryFullName.size() + 1;
+
+		baseEntry.country = &data[pos];
+		pos += baseEntry.country.size() + 1;
+
+		if (pos + 4 > dataArray.size())	return false;
+		unsigned numOfIpBlocks = READINT32(&data[pos]);
+		pos += 4;
+
+		for (unsigned x = 0; x < numOfIpBlocks; ++x)
+		{
+			// Create new entry from the base.
+			IP2CData entry = baseEntry;
+
+			// Perform error checks at each point. We don't want the app to crash
+			// due to corrupted database.
+			if (pos + 4 > dataArray.size()) return false;
+			entry.ipStart = READINT32(&data[pos]);
+			pos += 4;
+
+			if (pos + 4 > dataArray.size()) return false;
+			entry.ipEnd = READINT32(&data[pos]);
+			pos += 4;
+
+			hashTable[entry.ipStart] = entry;
+		}
+	}
+
+	database = hashTable.values();
+
+	return true;
+}
+
+void IP2C::readTextDatabase(QByteArray& textDatabase, Countries& countries)
+{
+	// Skip over the header
+	int indexOfNewLine = -1;
+	while(textDatabase[indexOfNewLine + 1] == '#')
+	{
+		indexOfNewLine = textDatabase.indexOf('\n', indexOfNewLine + 1);
+	}
+
+	// Trim the header
+	textDatabase = textDatabase.right(textDatabase.size() - indexOfNewLine);
+
+	Scanner sc = Scanner(textDatabase.constData(), textDatabase.count());
+	countries.clear();
+	while(sc.tokensLeft())
+	{
+		IP2CData entry;
+		bool ok = true;
+
+		if(!sc.checkToken(TK_StringConst)) break; // ipStart
+		entry.ipStart = sc.str.toUInt(&ok);
+		if(!ok || !sc.checkToken(',')) break;
+		if(!sc.checkToken(TK_StringConst)) break; // ipEnd
+		entry.ipEnd = sc.str.toUInt(&ok);
+		if(!ok || !sc.checkToken(',')) break;
+		if(!sc.checkToken(TK_StringConst)) break; // Register
+		if(!sc.checkToken(',')) break;
+		if(!sc.checkToken(TK_StringConst)) break; // date assigned
+		if(!sc.checkToken(',')) break;
+		if(!sc.checkToken(TK_StringConst)) break; // 2 char country
+		if(!sc.checkToken(',')) break;
+		if(!sc.checkToken(TK_StringConst)) break; // 3 char country
+		entry.country = sc.str;
+		if(!sc.checkToken(',')) break;
+		if(!sc.checkToken(TK_StringConst)) break; // country string
+		entry.countryFullName = sc.str;
+
+
+		if (countries.contains(entry.country))
+		{
+			countries[entry.country].append(entry);
+		}
+		else
+		{
+			QList<IP2CData> list;
+			list.append(entry);
+			countries[entry.country] = list;
+		}
+	}
 }

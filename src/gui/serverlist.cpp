@@ -155,7 +155,7 @@ void SLHandler::columnHeaderClicked(int index)
 
 QString SLHandler::createPlayersToolTip(const Server* server)
 {
-	if (server == NULL)
+	if (server == NULL || !server->isKnown())
 		return QString();
 
     QString ret;
@@ -181,7 +181,7 @@ QString SLHandler::createServerNameToolTip(const Server* server)
 
 QString SLHandler::createPwadsToolTip(const Server* server)
 {
-	if (server == NULL)
+	if (server == NULL || !server->isKnown() || server->numWads() == 0)
 		return QString();
 
 	QString ret;
@@ -215,37 +215,26 @@ void SLHandler::mouseEntered(const QModelIndex& index)
 	Server* server = model->serverFromList(realIndex);
 	QString tooltip;
 
-	if (!server->isKnown())
+	// Functions inside cases perform checks on the server structure
+	// to see if any tooltip should be generated. Empty string is returned
+	// in case if it should be not.
+	switch(index.column())
 	{
-		tooltip = "";
-	}
-	else
-	{
-		switch(index.column())
-		{
-			case ServerListModel::SLCID_PLAYERS:
-				tooltip = createPlayersToolTip(server);
-				break;
+		case ServerListModel::SLCID_PLAYERS:
+			tooltip = createPlayersToolTip(server);
+			break;
 
-			case ServerListModel::SLCID_SERVERNAME:
-				tooltip = createServerNameToolTip(server);
-				break;
+		case ServerListModel::SLCID_SERVERNAME:
+			tooltip = createServerNameToolTip(server);
+			break;
 
-			case ServerListModel::SLCID_WADS:
-				if (server->numWads() == 0)
-				{
-					tooltip = "";
-				}
-				else
-				{
-					tooltip = createPwadsToolTip(server);
-				}
-				break;
+		case ServerListModel::SLCID_WADS:
+			tooltip = createPwadsToolTip(server);
+			break;
 
-			default:
-				tooltip = "";
-				break;
-		}
+		default:
+			tooltip = "";
+			break;
 	}
 
 	QToolTip::showText(QCursor::pos(), tooltip, table);

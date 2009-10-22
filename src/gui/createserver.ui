@@ -619,6 +619,13 @@ p, li { white-space: pre-wrap; }
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="btnPlayOffline">
+       <property name="text">
+        <string>Play offline</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="btnCommandLine">
        <property name="toolTip">
         <string>Obtain command line required to launch this server.</string>

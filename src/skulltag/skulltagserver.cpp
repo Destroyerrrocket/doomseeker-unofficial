@@ -423,22 +423,34 @@ bool SkulltagServer::readRequest(QByteArray &data)
 
 	// Check the response code
 	int response = READINT32(&packetOut[0]);
-	if(response == SERVER_BANNED)
+
+	// Determine ping (time is sent no matter what the response is)
+	unsigned time = clock();
+	unsigned prevTime = READINT32(&packetOut[4]);
+	currentPing = time - prevTime;
+	bPingIsSet = true;
+
+	// Act according to the response
+	switch(response)
 	{
-		emit updated(this, RESPONSE_BANNED);
-		return false;
-	}
-	else if(response == SERVER_WAIT)
-	{
-		emit updated(this, RESPONSE_WAIT);
-		return false;
-	}
-	else if (response != SERVER_GOOD)
-	{
-		emit updated(this, RESPONSE_BAD);
-		return false;
+		case SERVER_BANNED:
+			emit updated(this, RESPONSE_BANNED);
+			return false;
+
+		case SERVER_WAIT:
+			emit updated(this, RESPONSE_WAIT);
+			return false;
+
+		case SERVER_GOOD:
+			// Do nothing, continue
+			break;
+
+		default:
+			emit updated(this, RESPONSE_BAD);
+			return false;
 	}
 
+	// If response was equal to SERVER_GOOD, proceed to read data.
 	serverVersion = QString(&packetOut[8]);
 	int pos = 8 + serverVersion.length() + 1;
 
@@ -696,7 +708,8 @@ bool SkulltagServer::sendRequest(QByteArray &data)
 {
 	// Send launcher challenge.
 	int query = SQF_STANDARDQUERY;
-	const unsigned char challenge[12] = {SERVER_CHALLENGE,WRITEINT32_DIRECT(query),0x00,0x00,0x00,0x00};
+	unsigned time = clock();
+	const unsigned char challenge[12] = {SERVER_CHALLENGE, WRITEINT32_DIRECT(query), WRITEINT32_DIRECT(time)};
 	char challengeOut[16];
 	int out = 16;
 	g_Huffman.encode(challenge, reinterpret_cast<unsigned char*> (challengeOut), 12, &out);

@@ -151,10 +151,16 @@ void RefreshingThread::run()
 					{
 						registeredServers.remove(server);
 						QByteArray dataArray(data, size);
-						server->currentPing = server->time.elapsed();
+						server->bPingIsSet = false;
 
 						// Store the state of request read.
 						bool bIsGood = server->readRequest(dataArray);
+
+						// Set the current ping, if plugin didn't do so already.
+						if (!server->bPingIsSet)
+						{
+							server->currentPing = server->time.elapsed();
+						}
 
 						server->refreshStops();
 
@@ -186,6 +192,8 @@ void RefreshingThread::run()
 			bool bSendQueries = bFirstQuery;
 			if (!bFirstQuery)
 			{
+				// If there are some datagrams waiting to be read no
+				// packets will be sent in the current run.
 				bSendQueries = !socket->waitForReadyRead(timeout);
 			}
 			else

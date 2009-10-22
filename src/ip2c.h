@@ -36,6 +36,74 @@
 #include "global.h"
 #include "wadseeker/www.h"
 
+/**
+ *	@brief Flag and name of the country.
+ */
+struct MAIN_EXPORT CountryInfo
+{
+	bool			valid;
+	const QPixmap&	flag;
+	QString			name;
+};
+
+/**
+ *	@brief IP to Country database handler.
+ *
+ *	IP2C class provides an interface for translating IP addresses into country
+ *	names they are in. Additional methods allow to retrieve country's flag
+ *	picture for given IP.
+ *
+ *	Class accepts text database from:
+ * 	http://software77.net/geo-ip
+ *	WWW class from Wadseeker library is used to communicate with WWW site.
+ *	The first time the text database is read it is compacted into a smaller
+ *	format and stored on the drive.
+ *	@see convertAndSaveDatabase()
+ *
+ *
+ *	Compacted database file format, version 1:
+ *	(all strings are null terminated)
+ *	Header:
+ *	@code
+ *	TYPE			LENGTH		DESCRIPTION
+ *  -----------------------------------------------------
+ *	unsigned long	4			'I' 'P' '2' 'C' bytes
+ *	unsigned short	2			Version (equal to 1)
+ *	@endcode
+ *
+ *	Block repeated until EOF:
+ *	@code
+ *	TYPE			LENGTH		DESCRIPTION
+ *  -----------------------------------------------------
+ *	unsigned long	4			Beginning of an IP range
+ *	unsigned long	4			End of an IP range
+ *	string			N/A			Country name abbreviation
+ *	@endcode
+ *
+ *	Compacted database file format, version 2:
+ *	(all strings are null terminated)
+ *	Header:
+ *	@code
+ *	TYPE			LENGTH		DESCRIPTION
+ *  -----------------------------------------------------
+ *	unsigned long	4			'I' 'P' '2' 'C' bytes
+ *	unsigned short	2			Version (equal to 2)
+ *	@endcode
+ *
+ *	Block repeated until EOF:
+ *	@code
+ *	TYPE			LENGTH		DESCRIPTION
+ *  -----------------------------------------------------
+ *	string			N/A			Country full name
+ *	string			N/A			Country abbreviation
+ *	unsigned long	4			Number of IP Blocks (N_IP_BLOCKS)
+
+ *  -- BLOCK: repeated N_IP_BLOCKS times.
+ *	unsigned long	4			Beginning of an IP range
+ *	unsigned long	4			End of an IP range
+ *	-- END OF BLOCK
+ *	@endcode
+ */
 class MAIN_EXPORT IP2C : public QObject
 {
 	Q_OBJECT
@@ -47,6 +115,21 @@ class MAIN_EXPORT IP2C : public QObject
 				unsigned int	ipStart;
 				unsigned int	ipEnd;
 				QString			country;
+				QString			countryFullName;
+
+				IP2CData()
+				{
+					ipStart = ipEnd = 0;
+				}
+
+				/**
+				 *	IP2CData struct is valid when ipStart is different from
+				 *	ipEnd.
+				 */
+				bool	isValid() const
+				{
+					return ipStart != ipEnd;
+				}
 		};
 
 		IP2C(QString file, QUrl netLocation);
@@ -54,12 +137,21 @@ class MAIN_EXPORT IP2C : public QObject
 
 		void			downloadDatabase(QStatusBar *statusbar=NULL);
 		const QString& 	filename() { return file; }
-		const QPixmap	&flag(unsigned int ipaddress);
-		const QPixmap	&flag(const QHostAddress& ipaddress) { return flag(ipaddress.toIPv4Address()); }
+
 		bool			isRead() const { return read; }
-		QString			lookupIP(unsigned int ipaddress) const;
-		QString			lookupIP(const QHostAddress &ipaddress) const { return lookupIP(ipaddress.toIPv4Address()); }
+
+		/**
+		 *	Returns a reference to the structure describing the country.
+		 */
+		const IP2CData&	lookupIP(unsigned int ipaddress) const;
+		const IP2CData&	lookupIP(const QHostAddress &ipaddress) const { return lookupIP(ipaddress.toIPv4Address()); }
 		bool			needsUpdate();
+
+		/**
+		 *	Returns country information based on given IP.
+		 */
+		CountryInfo		obtainCountryInfo(unsigned int ipaddress);
+		CountryInfo		obtainCountryInfo(const QHostAddress& ipaddress) { return obtainCountryInfo(ipaddress.toIPv4Address()); }
 
 	public slots:
 		bool	readDatabase();
@@ -69,35 +161,48 @@ class MAIN_EXPORT IP2C : public QObject
 
 	protected:
 		/**
+		 *	Key value is the abbreviation of the country name.
+		 */
+		typedef QHash<QString, QList<IP2CData> > 					Countries;
+		typedef QHash<QString, QList<IP2CData> >::iterator 			CountriesIt;
+		typedef QHash<QString, QList<IP2CData> >::const_iterator 	CountriesConstIt;
+
+		/**
+		 *	Makes sure the database is sorted in ascending order.
+		 */
+		void	appendEntryToDatabase(const IP2CData& entry);
+
+		/**
 		 *	Converts downloaded text database to a compacted binary file.
-		 *	The name of the new file is IP2C::file
-		 *
-		 *	The format of the compacted file is:
-		 *	(all strings are null terminated)
-		 *	Header:
-		 *	@code
-		 *	TYPE			LENGTH		DESCRIPTION
-		 *  -----------------------------------------------------
-		 *	unsigned long	4			'I' 'P' '2' 'C' bytes
-		 *	unsigned short	2			Version
-		 *	@endcode
-		 *
-		 *	Block repeated until EOF:
-		 *	@code
-		 *	TYPE			LENGTH		DESCRIPTION
-		 *  -----------------------------------------------------
-		 *	unsigned long	4			Beginning of an IP range
-		 *	unsigned long	4			End of an IP range
-		 *	string			N/A			Country name abbreviation
-		 *	@endcode
+		 *	The name of the new file is IP2C::file.
 		 */
 		bool	convertAndSaveDatabase(QByteArray& downloadedData);
+
+		/**
+		 *	Converts previously created by readTextDatabase() countries hash
+		 *	table into an output data that can be saved into a file.
+		 */
+		void	convertCountriesIntoBinaryData(const Countries& countries, QByteArray& output);
+
+		const QPixmap&	flag(unsigned int ipaddress, const QString& countryShortName);
+
+		bool	readDatabaseVersion1(const QByteArray& dataArray);
+		bool	readDatabaseVersion2(const QByteArray& dataArray);
+
+		/**
+		 *	Called by convertAndSaveDatabase().
+		 *	@param textDatabase - contents of the file, this will be modified
+		 *		by this function.
+		 *	@param [out] countries - returned hash table of countries.
+		 */
+		void	readTextDatabase(QByteArray& textDatabase, Countries& countries);
 
 	private:
 		const QPixmap			flagLan;
 		const QPixmap			flagLocalhost;
 		const QPixmap			flagUnknown;
 		QHash<QString, QPixmap>	flags;
+		const IP2CData			invalidData;
 
 		QList<IP2CData>			database;
 		QString					file;

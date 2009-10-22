@@ -364,8 +364,6 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		virtual QString		playerTableHTML() const;
 
-		QList<ServerInfo>*	serverInfo() const;
-
 		const QHostAddress	&address() const { return serverAddress; }
 		const QString&		eMail() const { return email; }
 		const DMFlags		&gameFlags() const { return dmFlags; }
@@ -434,6 +432,7 @@ class MAIN_EXPORT Server : public QObject
 		 *	Default behavior returns directory of clientBinary(), but
 		 *	you can override this to provide different working directory for
 		 *	Skulltag's testing binaries.
+		 *	@param [out] error - type of error
 		 */
 		virtual QString		clientWorkingDirectory() const;
 		virtual void		connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
@@ -442,9 +441,11 @@ class MAIN_EXPORT Server : public QObject
 		 *	@param [out] cli - after successful call this will contain
 		 *		required command line information.
 		 *	@param [out] error - if return == false, error text will be put here
+		 *  @param bOfflinePlay - if true a command line for single player game
+		 *		will be launched
 		 *	@return	true if command line was successfully created.
 		 */
-		bool				createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cli, QString& error) const;
+		bool				createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cli, bool bOfflinePlay, QString& error) const;
 
 		/**
 		 *	@param [out] cli - after successful call this will contain
@@ -456,7 +457,7 @@ class MAIN_EXPORT Server : public QObject
 		/**
 		 *	@see createHostCommandLine()
 		 */
-		bool				host(const HostInfo& hostInfo, QString& error);
+		bool				host(const HostInfo& hostInfo, bool bOfflinePlay, QString& error);
 
 		bool				isRefreshing() const { return bIsRefreshing; }
 
@@ -473,6 +474,20 @@ class MAIN_EXPORT Server : public QObject
 		 *	@return	JoinError::type == NoError if all ok.
 		 */
 		JoinError			join(const QString &connectPassword) const;
+
+		/**
+		 *	Returns the path to the binary for offline play.
+		 *	@param [out] error - type of error
+		 *	@return default behavior returns clientBinary().
+		 */
+		virtual QString		offlineGameBinary(QString& error) const { return clientBinary(error); }
+
+		/**
+		 *	Returns the working directory of the binary for offline game.
+		 *	@param [out] error - type of error
+		 *	@return Default behavior returns offlineGameBinary() directory
+		 */
+		virtual QString		offlineGameWorkingDirectory() const;
 
 		/**
 		 *	Executes predefined command line.
@@ -538,8 +553,6 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		virtual QString		argForServerLaunch() const { return ""; }
 
-		virtual void		additionalServerInfo(QList<ServerInfo>* baseList) const {}
-
 		void				clearDMFlags();
 
 		/**
@@ -576,8 +589,19 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		virtual void		hostProperties(QStringList& args) const {};
 
+		/**
+		 *	Reads response data.
+		 *	@return true on success and RESPONSE_GOOD signal should be emitted,
+		 *		false otherwise. Note: when false is returned Doomseeker assumes
+		 *		that the plugin will emit the proper response signal.
+		 */
 		virtual bool		readRequest(QByteArray &data)=0;
 
+		/**
+		 *	Prepares challenge data.
+		 *	@return true on success and RESPONSE_GOOD signal should be emitted,
+		 *		false otherwise.
+		 */
 		virtual bool		sendRequest(QByteArray &data)=0;
 		/**
 		 *	This will return absolutely nothing if the list in the first
@@ -599,6 +623,16 @@ class MAIN_EXPORT Server : public QObject
 		 * if the server responds with "wait before refreshing".
 		 */
 		bool				bKnown;
+
+		/**
+		 *	Refresher sets this to false before calling the virtual
+		 *	readRequest() method. If this method sets this to true, Refresher
+		 *	will not modify the currentPing field assuming that readRequest()
+		 *	set currentPing to a correct value. If it remains false after the
+		 *	readRequest() call Doomseeker will use a global method to determine
+		 *	ping, which may be less accurate.
+		 */
+		bool				bPingIsSet;
 
 
 		bool				broadcastToLAN;
@@ -656,6 +690,7 @@ class MAIN_EXPORT Server : public QObject
 		/**
 		 *	Method called by the refreshing thread. Sends the query
 		 *	through refreshing thread socket.
+		 *	@return false if it's impossible to send the query (fail)
 		 */
 		bool				sendRefreshQuery(QUdpSocket* socket);
 

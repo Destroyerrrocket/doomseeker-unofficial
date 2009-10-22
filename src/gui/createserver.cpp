@@ -44,10 +44,11 @@ CreateServerDlg::CreateServerDlg(QWidget* parent) : QDialog(parent)
 	connect(btnDefaultExecutable, SIGNAL( clicked() ), this, SLOT( btnDefaultExecutableClicked() ) );
 	connect(btnIwadBrowse, SIGNAL( clicked() ), this, SLOT ( btnIwadBrowseClicked() ) );
 	connect(btnLoad, SIGNAL( clicked() ), this, SLOT ( btnLoadClicked() ) );
+	connect(btnPlayOffline, SIGNAL( clicked() ), this, SLOT ( btnPlayOfflineClicked() ) );
 	connect(btnRemoveMapFromMaplist, SIGNAL( clicked() ), this, SLOT ( btnRemoveMapFromMaplistClicked() ) );
 	connect(btnRemovePwad, SIGNAL( clicked() ), this, SLOT ( btnRemovePwadClicked() ) );
 	connect(btnSave, SIGNAL( clicked() ), this, SLOT ( btnSaveClicked() ) );
-	connect(btnStartServer, SIGNAL( clicked() ), this, SLOT( accept() ) );
+	connect(btnStartServer, SIGNAL( clicked() ), this, SLOT( btnStartServerClicked() ) );
 
 	connect(cboEngine, SIGNAL( currentIndexChanged(int) ), this, SLOT( cboEngineSelected(int) ) );
 	connect(cboGamemode, SIGNAL( currentIndexChanged(int) ), this, SLOT( cboGamemodeSelected(int) ) );
@@ -70,36 +71,6 @@ CreateServerDlg::CreateServerDlg(QWidget* parent) : QDialog(parent)
 CreateServerDlg::~CreateServerDlg()
 {
 
-}
-
-void CreateServerDlg::accept()
-{
-	const QString errorCapt = tr("Doomseeker - create server");
-	if (currentEngine == NULL)
-	{
-		QMessageBox::critical(this, errorCapt, tr("No engine selected"));
-		return;
-	}
-
-	Server* server = currentEngine->pInterface->server(QHostAddress(), spinPort->value());
-	HostInfo hi;
-
-	if (createHostInfo(hi, server))
-	{
-		QString error;
-		bool ok = server->host(hi, error);
-
-		delete server;
-
-		if (!ok)
-		{
-			QMessageBox::critical(this, errorCapt, error);
-		}
-		else
-		{
-			saveConfig("tmpserver.cfg");
-		}
-	}
 }
 
 void CreateServerDlg::addIwad(const QString& path)
@@ -226,7 +197,7 @@ void CreateServerDlg::btnCommandLineClicked()
 		CommandLineInfo cli;
 		QString error;
 
-		bool ok = server->createHostCommandLine(hi, cli, error);
+		bool ok = server->createHostCommandLine(hi, cli, false, error);
 
 		delete server;
 
@@ -275,6 +246,11 @@ void CreateServerDlg::btnLoadClicked()
 	}
 }
 
+void CreateServerDlg::btnPlayOfflineClicked()
+{
+	runGame(true);
+}
+
 void CreateServerDlg::btnRemoveMapFromMaplistClicked()
 {
 	Main::removeSelectionFromStandardItemView(lstMaplist);
@@ -303,6 +279,11 @@ void CreateServerDlg::btnSaveClicked()
 		}
 	}
 
+}
+
+void CreateServerDlg::btnStartServerClicked()
+{
+	runGame(false);
 }
 
 void CreateServerDlg::cboEngineSelected(int index)
@@ -721,6 +702,36 @@ void CreateServerDlg::removeLimitWidgets()
 	}
 
 	limitWidgets.clear();
+}
+
+void CreateServerDlg::runGame(bool offline)
+{
+	const QString errorCapt = tr("Doomseeker - create server");
+	if (currentEngine == NULL)
+	{
+		QMessageBox::critical(this, errorCapt, tr("No engine selected"));
+		return;
+	}
+
+	Server* server = currentEngine->pInterface->server(QHostAddress(), spinPort->value());
+	HostInfo hi;
+
+	if (createHostInfo(hi, server))
+	{
+		QString error;
+		bool ok = server->host(hi, offline, error);
+
+		delete server;
+
+		if (!ok)
+		{
+			QMessageBox::critical(this, errorCapt, error);
+		}
+		else
+		{
+			saveConfig("tmpserver.cfg");
+		}
+	}
 }
 
 bool CreateServerDlg::saveConfig(const QString& filename)

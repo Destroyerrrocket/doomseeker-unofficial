@@ -39,9 +39,6 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		CreateServerDlg(QWidget* parent = NULL);
 		~CreateServerDlg();
 
-	public slots:
-		void	accept();
-
 	protected slots:
 		void	btnAddMapToMaplistClicked();
 		void	btnAddPwadClicked();
@@ -50,9 +47,11 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		void	btnDefaultExecutableClicked();
 		void	btnIwadBrowseClicked();
 		void	btnLoadClicked();
+		void	btnPlayOfflineClicked();
 		void	btnRemoveMapFromMaplistClicked();
 		void	btnRemovePwadClicked();
 		void	btnSaveClicked();
+		void	btnStartServerClicked();
 		void	cboEngineSelected(int index);
 		void	cboGamemodeSelected(int index);
 		void	focusChanged(QWidget* oldW, QWidget* newW);
@@ -144,6 +143,8 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 
 		void	removeDMFlagsTabs();
 		void	removeLimitWidgets();
+
+		void	runGame(bool offline);
 
 		bool	saveConfig(const QString& filename);
 };

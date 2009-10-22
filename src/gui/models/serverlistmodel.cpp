@@ -417,9 +417,10 @@ void ServerListModel::setBanned(int row, Server* server)
 
 void ServerListModel::setCountryFlag(QStandardItem* itm, const QHostAddress& addr)
 {
-	QPixmap flag = Main::ip2c->flag(addr);
-	if (!flag.isNull())
+	CountryInfo ci = Main::ip2c->obtainCountryInfo(addr);
+	if (ci.valid && !ci.flag.isNull())
 	{
+		QPixmap flag = ci.flag;
 		itm->setIcon(flag);
 	}
 }
