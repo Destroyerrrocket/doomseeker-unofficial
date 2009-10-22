@@ -36,21 +36,22 @@ Config *Main::config = new Config();
 IP2C *Main::ip2c = NULL;
 RefreshingThread* Main::refreshingThread = new RefreshingThread();
 bool Main::running = true;
+QString Main::workingDirectory = "./";
 
 int main(int argc, char* argv[])
 {
 	QApplication app(argc, argv);
 
-	Main::ip2c = new IP2C("IpToCountry.csv", QUrl("http://software77.net/geo-ip?DL=1"));
+	QString firstArg = argv[0];
+	int lastSlash = qMax<int>(firstArg.lastIndexOf('\\'), firstArg.lastIndexOf('/'));
+	if(lastSlash != -1)
+		Main::workingDirectory = firstArg.mid(0, lastSlash+1);
 
 	// If no plugins were found in ./ try looking in the directory in argv[0].
 	if(Main::enginePlugins.numPlugins() == 0)
-	{
-		QString workingDirectory = argv[0];
-		int lastSlash = qMax<int>(workingDirectory.lastIndexOf('\\'), workingDirectory.lastIndexOf('/'));
-		if(lastSlash != -1)
-			Main::enginePlugins.resetPluginsDirectory(workingDirectory.mid(0, lastSlash+1) + "engines/");
-	}
+		Main::enginePlugins.resetPluginsDirectory(Main::workingDirectory.mid(0, lastSlash+1) + "engines/");
+
+	Main::ip2c = new IP2C(Main::workingDirectory + "IpToCountry.csv", QUrl("http://software77.net/geo-ip?DL=1"));
 
 	Main::config->locateConfigFile(argc, argv);
 
