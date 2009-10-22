@@ -173,9 +173,14 @@ QString SLHandler::createServerNameToolTip(const Server* server)
 		return QString();
 
 	QString ret;
-	ret = "<div style='white-space: pre'>";
-	ret += server->generalInfoHTML();
-	ret += "</div>";
+	QString generalInfo = server->generalInfoHTML();
+
+	if (!generalInfo.isEmpty())
+	{
+		ret = "<div style='white-space: pre'>";
+		ret += generalInfo;
+		ret += "</div>";
+	}
 	return ret;
 }
 

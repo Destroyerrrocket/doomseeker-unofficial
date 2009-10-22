@@ -542,7 +542,7 @@ QString Server::generalInfoHTML() const
 
 	CountryInfo ci = Main::ip2c->obtainCountryInfo(address());
 
-	if (ci.valid)
+	if (ci.valid && !ci.name.isEmpty())
 	{
 		if (!ret.isEmpty())
 		{

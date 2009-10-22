@@ -424,11 +424,20 @@ bool SkulltagServer::readRequest(QByteArray &data)
 	// Check the response code
 	int response = READINT32(&packetOut[0]);
 
-	// Determine ping (time is sent no matter what the response is)
-	unsigned time = clock();
-	unsigned prevTime = READINT32(&packetOut[4]);
-	currentPing = time - prevTime;
-	bPingIsSet = true;
+	// Determine ping. Time is sent no matter what the response is, still we
+	// should check if there's enough data to read from.
+	if (out >= 8)
+	{
+		unsigned time = clock();
+		unsigned prevTime = READINT32(&packetOut[4]);
+		currentPing = time - prevTime;
+		bPingIsSet = true;
+	}
+	else
+	{
+		emit updated(this, RESPONSE_BAD);
+		return false;
+	}
 
 	// Act according to the response
 	switch(response)

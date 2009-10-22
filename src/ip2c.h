@@ -42,7 +42,7 @@
 struct MAIN_EXPORT CountryInfo
 {
 	bool			valid;
-	const QPixmap&	flag;
+	const QPixmap*	flag;
 	QString			name;
 };
 

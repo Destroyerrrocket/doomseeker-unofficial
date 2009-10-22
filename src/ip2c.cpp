@@ -242,7 +242,7 @@ CountryInfo IP2C::obtainCountryInfo(unsigned int ipaddress)
 
 	if (ipaddress >= LOCALHOST_BEGIN && ipaddress <= LOCALHOST_END)
 	{
-		CountryInfo ci = { true, flagLocalhost, tr("Localhost") };
+		CountryInfo ci = { true, &flagLocalhost, tr("Localhost") };
 		return ci;
 	}
 
@@ -250,7 +250,7 @@ CountryInfo IP2C::obtainCountryInfo(unsigned int ipaddress)
 	||	ipaddress >= LAN_2_BEGIN && ipaddress <= LAN_2_END
 	||	ipaddress >= LAN_3_BEGIN && ipaddress <= LAN_3_END)
 	{
-		CountryInfo ci = { true, flagLan, tr("LAN") };
+		CountryInfo ci = { true, &flagLan, tr("LAN") };
 		return ci;
 	}
 
@@ -259,17 +259,17 @@ CountryInfo IP2C::obtainCountryInfo(unsigned int ipaddress)
 	if (data.country.isEmpty())
 	{
 		printf("Unrecognized IP address: %s (DEC: %u / HEX: %X)\n", QHostAddress(ipaddress).toString().toAscii().constData(), ipaddress, ipaddress);
-		CountryInfo ci = { true, flagUnknown, tr("Unknown") };
+		CountryInfo ci = { true, &flagUnknown, tr("Unknown") };
 		return ci;
 	}
 
 	if (!data.isValid())
 	{
-		CountryInfo ci = {false, QPixmap(), QString() };
+		CountryInfo ci = {false, NULL, QString() };
 		return ci;
 	}
 
-	CountryInfo ci = {true, flag(ipaddress, data.country), data.countryFullName };
+	CountryInfo ci = {true, &flag(ipaddress, data.country), data.countryFullName };
 	return ci;
 }
 
