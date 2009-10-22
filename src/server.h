@@ -175,7 +175,8 @@ struct MAIN_EXPORT GameMode
 			SGMICooperative		= 900,
 			SGMIDeathmatch		= 901,
 			SGMITeamDeathmatch	= 902,
-			SGMICTF				= 903
+			SGMICTF				= 903,
+			SGMIUnknown			= 904
 		};
 
 		// Standard game mode set
@@ -184,6 +185,7 @@ struct MAIN_EXPORT GameMode
 		static MAIN_EXPORT const GameMode	DEATHMATCH;
 		static MAIN_EXPORT const GameMode	TEAM_DEATHMATCH;
 		static MAIN_EXPORT const GameMode	CAPTURE_THE_FLAG;
+		static MAIN_EXPORT const GameMode	UNKNOWN;
 
 		/**
 		 * @param name Name to display for game mode, this should be fairly short about no longer than "cooperative".

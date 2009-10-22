@@ -119,7 +119,7 @@ class SkulltagServer : public Server
 
 		static const DMFlags			DMFLAGS;
 		static const DMFlagsSection		DM_FLAGS[NUM_DMFLAG_SECTIONS];
-		static const GameMode	GAME_MODES[NUM_SKULLTAG_GAME_MODES];
+		static const GameMode	GAME_MODES[NUM_SKULLTAG_GAME_MODES + 1];
 		static const GameCVar	GAME_MODIFIERS[NUM_SKULLTAG_GAME_MODIFIERS];
 		static const QPixmap	*ICON;
 

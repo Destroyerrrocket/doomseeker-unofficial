@@ -167,7 +167,7 @@ const DMFlagsSection SkulltagServer::DM_FLAGS[NUM_DMFLAG_SECTIONS] =
 	}
 };
 
-const GameMode SkulltagServer::GAME_MODES[NUM_SKULLTAG_GAME_MODES] =
+const GameMode SkulltagServer::GAME_MODES[NUM_SKULLTAG_GAME_MODES + 1] =
 {
 	GameMode::COOPERATIVE,
 	GameMode(GAMEMODE_SURVIVAL, tr("Survival"), false),
@@ -184,7 +184,8 @@ const GameMode SkulltagServer::GAME_MODES[NUM_SKULLTAG_GAME_MODES] =
 	GameMode::CAPTURE_THE_FLAG,
 	GameMode(GAMEMODE_ONEFLAGCTF, tr("One Flag CTF"), true),
 	GameMode(GAMEMODE_SKULLTAG, tr("Skulltag"), true),
-	GameMode(GAMEMODE_DOMINATION, tr("Domination"), true)
+	GameMode(GAMEMODE_DOMINATION, tr("Domination"), true),
+	GameMode::UNKNOWN
 };
 
 const GameCVar SkulltagServer::GAME_MODIFIERS[NUM_SKULLTAG_GAME_MODIFIERS] =
@@ -415,11 +416,17 @@ const QPixmap &SkulltagServer::icon() const
 
 bool SkulltagServer::readRequest(QByteArray &data)
 {
+	const int OUT_SIZE = 6000;
 	// Decompress the response.
 	const char* in = data.data();
-	char packetOut[2000];
-	int out = 2000;
+	char packetOut[OUT_SIZE];
+	int out = OUT_SIZE;
 	g_Huffman.decode(reinterpret_cast<const unsigned char*> (in), reinterpret_cast<unsigned char*> (packetOut), data.size(), &out);
+	if (out < 4 || out > OUT_SIZE)
+	{
+		emit updated(this, RESPONSE_BAD);
+		return false;
+	}
 
 	// Check the response code
 	int response = READINT32(&packetOut[0]);
@@ -472,6 +479,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 		serverName = QString(&packetOut[pos]);
 		pos += serverName.length() + 1;
 	}
+
 	if((flags & SQF_URL) == SQF_URL)
 	{
 		webSite = QString(&packetOut[pos]);
@@ -487,6 +495,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 		mapName = QString(&packetOut[pos]);
 		pos += mapName.length() + 1;
 	}
+
 	if((flags & SQF_MAXCLIENTS) == SQF_MAXCLIENTS)
 		maxClients = READINT8(&packetOut[pos++]);
 	if((flags & SQF_MAXPLAYERS) == SQF_MAXPLAYERS)
@@ -501,23 +510,52 @@ bool SkulltagServer::readRequest(QByteArray &data)
 			pos += wad.length() + 1;
 			wads << wad;
 		}
+
+		if (pos >= OUT_SIZE)
+		{
+			emit updated(this, RESPONSE_BAD);
+			return false;
+		}
 	}
+
 	if((flags & SQF_GAMETYPE) == SQF_GAMETYPE)
 	{
-		mode = static_cast<SkulltagGameMode> (READINT8(&packetOut[pos++]));
+
+		unsigned char byMode = READINT8(&packetOut[pos++]);
+
+		if (byMode >= NUM_SKULLTAG_GAME_MODES)
+		{
+			byMode = NUM_SKULLTAG_GAME_MODES; // this will set game mode to unknown
+		}
+
+		mode = static_cast<SkulltagGameMode> (byMode);
 		currentGameMode = GAME_MODES[mode];
 		instagib = READINT8(&packetOut[pos++]) != 0;
 		buckshot = READINT8(&packetOut[pos++]) != 0;
 	}
+
 	if((flags & SQF_GAMENAME) == SQF_GAMENAME)
 	{
 		//Useless String
 		pos += strlen(&packetOut[pos]) + 1;
+
+		if (pos >= OUT_SIZE)
+		{
+			emit updated(this, RESPONSE_BAD);
+			return false;
+		}
 	}
+
 	if((flags & SQF_IWAD) == SQF_IWAD)
 	{
 		iwad = QString(&packetOut[pos]);
 		pos += iwad.length() + 1;
+
+		if (pos >= OUT_SIZE)
+		{
+			emit updated(this, RESPONSE_BAD);
+			return false;
+		}
 	}
 
 	if((flags & SQF_FORCEPASSWORD) == SQF_FORCEPASSWORD)
@@ -691,6 +729,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 			pos += 2;
 		}
 	}
+
 
 	// Due to a bug in 0.97d3 we need to add additional checks here.
 	// 0.97d3 servers also respond with SQF_TESTING_SERVER flag set

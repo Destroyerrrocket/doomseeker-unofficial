@@ -159,6 +159,7 @@ const GameMode GameMode::COOPERATIVE(SGMICooperative, QObject::tr("Cooperative")
 const GameMode GameMode::DEATHMATCH(SGMIDeathmatch, QObject::tr("Deathmatch"), false);
 const GameMode GameMode::TEAM_DEATHMATCH(SGMITeamDeathmatch, QObject::tr("Team DM"), true);
 const GameMode GameMode::CAPTURE_THE_FLAG(SGMICTF, QObject::tr("CTF"), true);
+const GameMode GameMode::UNKNOWN(SGMIUnknown, QObject::tr("Unknown"), false);
 
 GameMode::GameMode(int index, const QString &name, bool teamgame) : gameModeIndex(index), modeName(name), teamgame(teamgame)
 {

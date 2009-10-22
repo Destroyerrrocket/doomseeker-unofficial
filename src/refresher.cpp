@@ -218,7 +218,7 @@ void RefreshingThread::run()
 					else
 					{
 						// Prevent from sending too many requests at once.
-						msleep(1);
+						msleep(2);
 					}
 				}
 				thisMutex.unlock();
