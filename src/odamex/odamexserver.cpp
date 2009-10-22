@@ -122,7 +122,6 @@ const QPixmap &OdamexServer::icon() const
 
 bool OdamexServer::readRequest(QByteArray &data)
 {
-	printf("Odamex\n");
 	fflush(stderr);
 	fflush(stdout);
 	const char* in = data.data();
