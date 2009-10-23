@@ -57,10 +57,10 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 		Wadseeker&	wadseekerRef() { return wadseeker; }
 
 	protected:
-		enum STATES
+		enum States
 		{
-			DOWNLOADING 	= 0,
-			WAITING			= 1
+			Downloading 	= 0,
+			Waiting			= 1
 		};
 
 		bool			bAutomatic;
@@ -70,21 +70,21 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 		 * Interface uses this instead of line edit if bAutomatic is true.
 		 */
 		QStringList 	seekedWads;
-		STATES			state;
+		States			state;
 		Wadseeker		wadseeker;
 
-		void	accept();
 		void	fail();
-		void	reject();
 		void	setStateDownloading();
 		void	setStateWaiting();
 		void 	showEvent(QShowEvent* event);
 		void	startSeeking(const QStringList& seekedFilesList);
 
 	protected slots:
+		void	accept();
 		void	aborted();
 		void 	allDone();
 		void 	downloadProgress(int done, int total);
+		void	reject();
 		void	message(const QString& msg, Wadseeker::MessageType type);
 };
 

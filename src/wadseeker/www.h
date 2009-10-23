@@ -79,14 +79,6 @@ class WADSEEKER_API WWW : public QObject
 		virtual ~WWW();
 
 		/**
-		 *	Issues an abort command on currently working protocol and
-		 *	emits aborted() signal when it receives similar signal
-		 *	from this protocol. If no protocol is currently working
-		 *	it emits aborted() signal right away.
-		 */
-		void abort();
-
-		/**
 		 *	Used to download a file. WWWSeeker class should override
 		 *	this method to be protected, do nothing and always return false
 		 *	@param url - a valid, absolute url to a site
@@ -99,6 +91,15 @@ class WADSEEKER_API WWW : public QObject
 		 *	@param agent - string to send in HTTP queries
 		 */
 		void setUserAgent(const QString& agent);
+
+	public slots:
+		/**
+		 *	Issues an abort command on currently working protocol and
+		 *	emits aborted() signal when it receives similar signal
+		 *	from this protocol. If no protocol is currently working
+		 *	it emits aborted() signal right away.
+		 */
+		void abort();
 
 	signals:
 		/**
@@ -151,6 +152,14 @@ class WADSEEKER_API WWW : public QObject
 		Ftp*			ftp;
 
 		QUrl			processedUrl;
+
+		/**
+		 *	Executes the abort procedure setting aborting field accordingly
+		 *	to the abortCompletely argument.
+		 *	@param abortCompletely - abort() slot passes true here, while
+		 *		WWWSeeker::skipSite() passes false.
+		 */
+		void			abortExec(bool abortCompletely);
 
 		QUrl			constructValidUrl(const QUrl&);
 
@@ -232,6 +241,12 @@ class WADSEEKER_API WWWSeeker : public WWW
 		 *	@param archiveURL - URL to the idgames search page.
 		 */
 		void setUseIdgames(bool use, bool highPriority = false, QString archiveURL = defaultIdgamesUrl());
+
+	public slots:
+		/**
+		 *	Skips current site and proceeds to the next one in the queue.
+		 */
+		void				skipSite();
 
 	protected slots:
 		void	get(const QUrl&);

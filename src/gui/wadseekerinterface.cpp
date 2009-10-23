@@ -30,6 +30,11 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 	setupUi(this);
 	setStateWaiting();
 
+	connect(btnClose, SIGNAL( clicked() ), this, SLOT( reject() ) );
+	connect(btnDownload, SIGNAL( clicked() ), this, SLOT( accept() ) );
+	connect(btnStop, SIGNAL( clicked() ), &wadseeker, SLOT( abort() ) );
+	connect(btnSkipSite, SIGNAL( clicked() ), &wadseeker, SLOT( skipSite() ) );
+
 	connect(&wadseeker, SIGNAL( aborted() ), this, SLOT( aborted() ) );
 	connect(&wadseeker, SIGNAL( allDone() ), this, SLOT( allDone() ) );
 	connect(&wadseeker, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgress(int, int) ) );
@@ -160,11 +165,11 @@ void WadSeekerInterface::reject()
 {
 	switch(state)
 	{
-		case DOWNLOADING:
+		case Downloading:
 			wadseeker.abort();
 			break;
 
-		case WAITING:
+		case Waiting:
 			this->done(Rejected);
 			break;
 	}
@@ -172,18 +177,24 @@ void WadSeekerInterface::reject()
 
 void WadSeekerInterface::setStateDownloading()
 {
-	buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-	buttonBox->button(QDialogButtonBox::Cancel)->setEnabled(true);
-	buttonBox->button(QDialogButtonBox::Close)->setEnabled(false);
-	state = DOWNLOADING;
+	btnClose->setEnabled(false);
+	btnDownload->setEnabled(false);
+	btnStop->setEnabled(true);
+	btnSkipSite->setEnabled(true);
+
+	state = Downloading;
+	btnSkipSite->setDefault(true);
 }
 
 void WadSeekerInterface::setStateWaiting()
 {
-	buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
-	buttonBox->button(QDialogButtonBox::Cancel)->setEnabled(false);
-	buttonBox->button(QDialogButtonBox::Close)->setEnabled(true);
-	state = WAITING;
+	btnClose->setEnabled(true);
+	btnDownload->setEnabled(true);
+	btnStop->setEnabled(false);
+	btnSkipSite->setEnabled(false);
+
+	state = Waiting;
+	btnDownload->setDefault(true);
 }
 
 void WadSeekerInterface::showEvent(QShowEvent* event)

@@ -57,7 +57,12 @@ WWW::~WWW()
 
 void WWW::abort()
 {
-	aborting = true;
+	abortExec(true);
+}
+
+void WWW::abortExec(bool abortCompletely)
+{
+	aborting = abortCompletely;
 	if (currentProtocol != NULL)
 	{
 		currentProtocol->abort();
@@ -481,4 +486,10 @@ void WWWSeeker::setUseIdgames(bool use, bool highPriority, QString archiveURL)
 void WWWSeeker::setUserAgentEx(const QString& agent)
 {
 	idgames->setUserAgent(agent);
+}
+
+void WWWSeeker::skipSite()
+{
+	emit message(tr("Skipping site..."), Wadseeker::Notice);
+	abortExec(false);
 }

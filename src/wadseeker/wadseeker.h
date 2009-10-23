@@ -185,12 +185,6 @@ class WADSEEKER_API Wadseeker : public QObject
 		~Wadseeker();
 
 		/**
-		 * Issues abort commands throughout entire library. aborted() signal
-		 * is emitted when Wadseeker finishes aborting.
-		 */
-		void				abort();
-
-		/**
 		 * 	@return	true if all files that were passed to seekWads() method
 		 *		   	were found.
 		 */
@@ -256,7 +250,17 @@ class WADSEEKER_API Wadseeker : public QObject
 		 */
 		QString				targetDirectory() const;
 
+	public slots:
+		/**
+		 * Issues abort commands throughout entire library. aborted() signal
+		 * is emitted when Wadseeker finishes aborting.
+		 */
+		void				abort();
 
+		/**
+		 *	Skips current site and proceeds to the next one in the queue.
+		 */
+		void				skipSite();
 
 	signals:
 		/**

@@ -313,6 +313,11 @@ void Wadseeker::setTimeDownloadTimeout(int i)
 	WWW::setTimeDownloadTimeout(i);
 }
 
+void Wadseeker::skipSite()
+{
+	www->skipSite();
+}
+
 QString Wadseeker::targetDirectory() const
 {
 	return targetDir;
