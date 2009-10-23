@@ -472,58 +472,87 @@ bool SkulltagServer::readRequest(QByteArray &data)
 
 	// now read the data.
 	SkulltagGameMode mode = GAMEMODE_COOPERATIVE;
-	SkulltagQueryFlags flags = static_cast<SkulltagQueryFlags> (READINT32(&packetOut[pos]));
+
+	// Flags - set of flags returned by the server. This is compared
+	// with known set of flags and the data is read from the packet
+	// accordingly. Every flag is removed from this variable after such check.
+	// See "if SQF_NAME" for an example.
+	unsigned flags = READINT32(&packetOut[pos]);
 	pos += 4;
-	if((flags & SQF_NAME) == SQF_NAME)
+	if((flags & SQF_NAME) == SQF_NAME) // Check if SQF_NAME is inside flags var.
 	{
-		serverName = QString(&packetOut[pos]);
-		pos += serverName.length() + 1;
+		serverName = QString(&packetOut[pos]); // Read the data.
+		pos += serverName.length() + 1; // Move on to next data.
+		flags ^= SQF_NAME; // Remove SQF_NAME flag from the variable.
 	}
 
 	if((flags & SQF_URL) == SQF_URL)
 	{
 		webSite = QString(&packetOut[pos]);
 		pos += webSite.length() + 1;
+		flags ^= SQF_URL;
 	}
 	if((flags & SQF_EMAIL) == SQF_EMAIL)
 	{
 		email = QString(&packetOut[pos]);
 		pos += email.length() + 1;
+		flags ^= SQF_EMAIL;
 	}
 	if((flags & SQF_MAPNAME) == SQF_MAPNAME)
 	{
 		mapName = QString(&packetOut[pos]);
 		pos += mapName.length() + 1;
+		flags ^= SQF_MAPNAME;
 	}
 
 	if((flags & SQF_MAXCLIENTS) == SQF_MAXCLIENTS)
+	{
 		maxClients = READINT8(&packetOut[pos++]);
+		flags ^= SQF_MAXCLIENTS;
+	}
+	else
+	{
+		maxClients = 0;
+	}
+
 	if((flags & SQF_MAXPLAYERS) == SQF_MAXPLAYERS)
+	{
 		maxPlayers = READINT8(&packetOut[pos++]);
+		flags ^= SQF_MAXPLAYERS;
+	}
+	else
+	{
+		maxPlayers = 0;
+	}
+
 	if((flags & SQF_PWADS) == SQF_PWADS)
 	{
 		int numPwads = READINT8(&packetOut[pos++]);
 		wads.clear(); // clear any previous list we may have had.
+		flags ^= SQF_PWADS;
 		for(int i = 0;i < numPwads;i++)
 		{
 			QString wad(&packetOut[pos]);
 			pos += wad.length() + 1;
 			wads << wad;
-		}
 
-		if (pos >= OUT_SIZE)
-		{
-			emit updated(this, RESPONSE_BAD);
-			return false;
+			// Check everytime if pos has reached the end of array.
+			// Emit response RESPONSE_BAD if it did and there are flags
+			// remaining in the variable. Following code is used repeatedly
+			// in this method.
+			if (pos >= out && flags != 0)
+			{
+				emit updated(this, RESPONSE_BAD);
+				return false;
+			}
 		}
 	}
 
 	if((flags & SQF_GAMETYPE) == SQF_GAMETYPE)
 	{
-
 		unsigned char byMode = READINT8(&packetOut[pos++]);
 
-		if (byMode >= NUM_SKULLTAG_GAME_MODES)
+		if (byMode > NUM_SKULLTAG_GAME_MODES)
 		{
 			byMode = NUM_SKULLTAG_GAME_MODES; // this will set game mode to unknown
 		}
@@ -532,14 +561,17 @@ bool SkulltagServer::readRequest(QByteArray &data)
 		currentGameMode = GAME_MODES[mode];
 		instagib = READINT8(&packetOut[pos++]) != 0;
 		buckshot = READINT8(&packetOut[pos++]) != 0;
+
+		flags ^= SQF_GAMETYPE;
 	}
 
 	if((flags & SQF_GAMENAME) == SQF_GAMENAME)
 	{
 		//Useless String
 		pos += strlen(&packetOut[pos]) + 1;
+		flags ^= SQF_GAMETYPE;
 
-		if (pos >= OUT_SIZE)
+		if (pos >= out && flags != 0)
 		{
 			emit updated(this, RESPONSE_BAD);
 			return false;
@@ -550,8 +582,9 @@ bool SkulltagServer::readRequest(QByteArray &data)
 	{
 		iwad = QString(&packetOut[pos]);
 		pos += iwad.length() + 1;
+		flags ^= SQF_IWAD;
 
-		if (pos >= OUT_SIZE)
+		if (pos >= out && flags != 0)
 		{
 			emit updated(this, RESPONSE_BAD);
 			return false;
@@ -561,6 +594,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 	if((flags & SQF_FORCEPASSWORD) == SQF_FORCEPASSWORD)
 	{
 		locked = (READINT8(&packetOut[pos++]) != 0);
+		flags ^= SQF_FORCEPASSWORD;
 	}
 	else
 	{
@@ -570,16 +604,28 @@ bool SkulltagServer::readRequest(QByteArray &data)
 	if((flags & SQF_FORCEJOINPASSWORD) == SQF_FORCEJOINPASSWORD)
 	{
 		pos++;
+		flags ^= SQF_FORCEJOINPASSWORD;
 	}
 
 	if((flags & SQF_GAMESKILL) == SQF_GAMESKILL)
+	{
 		skill = READINT8(&packetOut[pos++]);
+		flags ^= SQF_GAMESKILL;
+	}
+
 	if((flags & SQF_BOTSKILL) == SQF_BOTSKILL)
+	{
 		botSkill = READINT8(&packetOut[pos++]);
+		flags ^= SQF_BOTSKILL;
+	}
 
 	if((flags & SQF_DMFLAGS) == SQF_DMFLAGS)
 	{
+		flags ^= SQF_DMFLAGS;
+
 		clearDMFlags();
+
+		// Read each dmflags section separately.
 		for (int i = 0; i < NUM_DMFLAG_SECTIONS; ++i)
 		{
 			unsigned int dmflags = READINT32(&packetOut[pos]);
@@ -589,6 +635,8 @@ bool SkulltagServer::readRequest(QByteArray &data)
 			dmFlagsSec->name = DM_FLAGS[i].name;
 			dmFlagsSec->size = 0;
 
+			// Iterate through every known flag to check whether it should be
+			// inserted into the structure of this server.
 			for (int j = 0; j < DM_FLAGS[i].size; ++j)
 			{
 				if ( (dmflags & (1 << DM_FLAGS[i].flags[j].value)) != 0)
@@ -603,6 +651,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 
 	if((flags & SQF_LIMITS) == SQF_LIMITS)
 	{
+		flags ^= SQF_LIMITS;
 		fragLimit = READINT16(&packetOut[pos]);
 
 		// Read timelimit and timeleft,
@@ -655,6 +704,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 	{
 		teamDamage = QByteArray(&packetOut[pos], 4).toFloat();
 		pos += 4;
+		flags ^= SQF_TEAMDAMAGE;
 	}
 	if((flags & SQF_TEAMSCORES) == SQF_TEAMSCORES)
 	{
@@ -664,10 +714,12 @@ bool SkulltagServer::readRequest(QByteArray &data)
 			scores[i] = READINT16(&packetOut[pos]);
 			pos += 2;
 		}
+		flags ^= SQF_TEAMSCORES;
 	}
 	if((flags & SQF_NUMPLAYERS) == SQF_NUMPLAYERS)
 	{
 		int numPlayers = READINT8(&packetOut[pos++]);
+		flags ^= SQF_NUMPLAYERS;
 
 		// If number of players is bigger than number of maximum clients
 		// we assume something went horribly wrong and emit an error signal.
@@ -679,6 +731,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 
 		if((flags & SQF_PLAYERDATA) == SQF_PLAYERDATA)
 		{
+			flags ^= SQF_PLAYERDATA;
 			players.clear(); // Erase previous players (if any)
 			for(int i = 0;i < numPlayers;i++)
 			{
@@ -687,6 +740,13 @@ bool SkulltagServer::readRequest(QByteArray &data)
 
 				QString name(&packetOut[pos]);
 				pos += name.length() + 1;
+
+				if (pos >= out)
+				{
+					emitUpdated(Server::RESPONSE_BAD);
+					return false;
+				}
+
 				int score = READINT16(&packetOut[pos]);
 				int ping = READINT16(&packetOut[pos+2]);
 				bool spectating = READINT8(&packetOut[pos+4]) != 0;
@@ -700,33 +760,62 @@ bool SkulltagServer::readRequest(QByteArray &data)
 			}
 		}
 	}
+
 	if((flags & SQF_TEAMINFO_NUMBER) == SQF_TEAMINFO_NUMBER)
+	{
 		numTeams = READINT8(&packetOut[pos++]);
+		flags ^= SQF_TEAMINFO_NUMBER;
+	}
+
 	if((flags & SQF_TEAMINFO_NAME) == SQF_TEAMINFO_NAME)
 	{
+		flags ^= SQF_TEAMINFO_NAME;
 		for(int i = 0;i < numTeams && i < ST_MAX_TEAMS;i++)
 		{
 			teamInfo[i].setName(tr(&packetOut[pos]));
 			pos += teamInfo[i].name().length() + 1;
+			if (pos >= out && (i != numTeams - 1 || flags != 0) )
+			{
+				emitUpdated(RESPONSE_BAD);
+				return false;
+			}
 		}
 	}
 	if((flags & SQF_TEAMINFO_COLOR) == SQF_TEAMINFO_COLOR)
 	{
+		flags ^= SQF_TEAMINFO_COLOR;
 		// NOTE: This may not be correct
-		for(int i = 0;i < numTeams && i < ST_MAX_TEAMS;i++)
+		int forLimit = qMin((int)numTeams, ST_MAX_TEAMS);
+
+		for(int i = 0; i < forLimit; i++)
 		{
 			teamInfo[i].setColor(QColor(READINT32(&packetOut[pos])));
 			pos += 4;
+
+			if (pos >= out && (i != forLimit - 1 || flags != 0))
+			{
+				emitUpdated(RESPONSE_BAD);
+				return false;
+			}
 		}
 	}
 	if((flags & SQF_TEAMINFO_SCORE) == SQF_TEAMINFO_SCORE)
 	{
-		for(int i = 0;i < numTeams && i < ST_MAX_TEAMS;i++)
+		flags ^= SQF_TEAMINFO_SCORE;
+		int forLimit = qMin((int)numTeams, ST_MAX_TEAMS);
+
+		for(int i = 0; i < forLimit; i++)
 		{
 			teamInfo[i].setScore(READINT16(&packetOut[pos]));
 			if(i < MAX_TEAMS) // Transfer to super class score array if possible.
 				scores[i] = teamInfo[i].score();
 			pos += 2;
+
+			if (pos >= out && (i != forLimit - 1 || flags != 0))
+			{
+				emitUpdated(RESPONSE_BAD);
+				return false;
+			}
 		}
 	}
 
@@ -736,6 +825,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 	// if it was previously sent to them
 	if (pos < out && version().compare("0.97d3") != 0 && (flags & SQF_TESTING_SERVER) == SQF_TESTING_SERVER)
 	{
+		flags ^= SQF_TESTING_SERVER;
 		testingServer = static_cast<bool>(READINT8(&packetOut[pos]));
 		++pos;
 
