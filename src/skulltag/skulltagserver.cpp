@@ -28,6 +28,7 @@
 #include "md5/md5.h"
 
 #include <QMessageBox>
+#include <QRegExp>
 
 const // clear warnings
 #include "skulltag/skulltag.xpm"
@@ -46,6 +47,44 @@ const // clear warnings
 #define SERVER_WAIT			5660024
 
 #define RCON_PROTOCOL_VERSION	3
+
+/**
+ * Compares versions of Skulltag.
+ */
+class SkulltagVersion
+{
+	public:
+		SkulltagVersion(QString version) : version(version)
+		{
+			versionExpression.exactMatch(version);
+			QStringList parts = versionExpression.capturedTexts();
+			major = parts[1].toUShort();
+			minor = parts[2].toUShort();
+			revision = parts[3][0].toAscii();
+			build = parts[4].toUShort();
+			tag = parts[5];
+			svnRevision = parts[6].toUShort();
+		}
+
+		bool operator> (const SkulltagVersion &other) const
+		{
+			return (major > other.major && minor > other.minor && revision > other.revision && build > other.build && tag > other.tag);
+		}
+
+	protected:
+		static const QRegExp	versionExpression;
+		QString					version;
+
+		unsigned short int		major;
+		unsigned short int		minor;
+		unsigned char			revision;
+		unsigned short int		build;
+		QString					tag;
+		unsigned short int		svnRevision;
+};
+const QRegExp SkulltagVersion::versionExpression("(\\d+).(\\d+)([a-zA-Z])(\\d*)(?:-([a-zA-Z]*)?)(?:-r(\\d+)?)");
+
+////////////////////////////////////////////////////////////////////////////////
 
 TeamInfo::TeamInfo(const QString &name, const QColor &color, unsigned int score) :
 	teamName(name), teamColor(color), teamScore(score)
@@ -860,7 +899,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 	// Due to a bug in 0.97d3 we need to add additional checks here.
 	// 0.97d3 servers also respond with SQF_TESTING_SERVER flag set
 	// if it was previously sent to them
-	if (pos < out && version().compare("0.97d3") != 0 && (flags & SQF_TESTING_SERVER) == SQF_TESTING_SERVER)
+	if (pos < out && SkulltagVersion(version()) > SkulltagVersion("0.97d3") && (flags & SQF_TESTING_SERVER) == SQF_TESTING_SERVER)
 	{
 		flags ^= SQF_TESTING_SERVER;
 		testingServer = static_cast<bool>(READINT8(&packetOut[pos]));
