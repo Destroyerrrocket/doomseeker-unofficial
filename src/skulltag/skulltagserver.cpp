@@ -202,6 +202,8 @@ SkulltagServer::SkulltagServer(const QHostAddress &address, unsigned short port)
 	teamInfo[1] = TeamInfo(tr("Red"), QColor(255, 0, 0), 0);
 	teamInfo[2] = TeamInfo(tr("Green"), QColor(0, 255, 0), 0);
 	teamInfo[3] = TeamInfo(tr("Gold"), QColor(255, 255, 0), 0);
+
+	connect(this, SIGNAL( updated(Server*, int) ), this, SLOT( updatedSlot(Server*, int) ));
 }
 
 QString SkulltagServer::clientBinary(QString& error) const
@@ -421,9 +423,20 @@ bool SkulltagServer::readRequest(QByteArray &data)
 	const char* in = data.data();
 	char packetOut[OUT_SIZE];
 	int out = OUT_SIZE;
+
 	g_Huffman.decode(reinterpret_cast<const unsigned char*> (in), reinterpret_cast<unsigned char*> (packetOut), data.size(), &out);
+
+	lastReadRequest.clear();
+	lastReadRequest = QByteArray(packetOut, qMin(out, OUT_SIZE));
+
+	if (out == OUT_SIZE)
+	{
+		fprintf(stderr, "Warning (probably an error): data size error when reading server %s:%u. Data size is IN: %u, OUT: %u\n", address().toString().toAscii().constData(), port(), data.size(), out);
+	}
+
 	if (out < 4 || out > OUT_SIZE)
 	{
+		fprintf(stderr, "Data size error when reading server %s:%u. Data size is IN: %u, OUT: %u\n", address().toString().toAscii().constData(), port(), data.size(), out);
 		emit updated(this, RESPONSE_BAD);
 		return false;
 	}
@@ -484,6 +497,12 @@ bool SkulltagServer::readRequest(QByteArray &data)
 		serverName = QString(&packetOut[pos]); // Read the data.
 		pos += serverName.length() + 1; // Move on to next data.
 		flags ^= SQF_NAME; // Remove SQF_NAME flag from the variable.
+
+		if (pos >= out && flags != 0)
+		{
+			emit updated(this, RESPONSE_BAD);
+			return false;
+		}
 	}
 
 	if((flags & SQF_URL) == SQF_URL)
@@ -491,18 +510,36 @@ bool SkulltagServer::readRequest(QByteArray &data)
 		webSite = QString(&packetOut[pos]);
 		pos += webSite.length() + 1;
 		flags ^= SQF_URL;
+
+		if (pos >= out && flags != 0)
+		{
+			emit updated(this, RESPONSE_BAD);
+			return false;
+		}
 	}
 	if((flags & SQF_EMAIL) == SQF_EMAIL)
 	{
 		email = QString(&packetOut[pos]);
 		pos += email.length() + 1;
 		flags ^= SQF_EMAIL;
+
+		if (pos >= out && flags != 0)
+		{
+			emit updated(this, RESPONSE_BAD);
+			return false;
+		}
 	}
 	if((flags & SQF_MAPNAME) == SQF_MAPNAME)
 	{
 		mapName = QString(&packetOut[pos]);
 		pos += mapName.length() + 1;
 		flags ^= SQF_MAPNAME;
+
+		if (pos >= out && flags != 0)
+		{
+			emit updated(this, RESPONSE_BAD);
+			return false;
+		}
 	}
 
 	if((flags & SQF_MAXCLIENTS) == SQF_MAXCLIENTS)
@@ -973,6 +1010,62 @@ QString	SkulltagServer::teamName(int team) const
 		return "NO TEAM";
 
 	return team >= 0 && team < ST_MAX_TEAMS ? teamInfo[team].name() : "";
+}
+
+void SkulltagServer::updatedSlot(Server* server, int response)
+{
+	if (response == RESPONSE_BAD)
+	{
+		// If response is bad we will print the read request to stderr,
+		// for debug purposes of course.
+		SkulltagServer* s = (SkulltagServer*)server;
+		QByteArray& req = s->lastReadRequest;
+
+		fprintf(stderr, "Bad response from server: %s:%u\n", address().toString().toAscii().constData(), port());
+		fprintf(stderr, "Response size: %u\n", req.size());
+		fprintf(stderr, "Data (all non-printable characters are replaced with '?'):\n");
+
+
+		for (int x = 0; x < req.size(); ++x)
+		{
+			if (req[x] < (char)0x20 || req[x] > (char)0x7e)
+			{
+				fprintf(stderr, "?");
+			}
+			else
+			{
+				fprintf(stderr, "%c", (char)req[x]);
+			}
+			fprintf(stderr, "[%02X] ", (unsigned char)req[x]);
+
+			if ((x + 1) % 20 == 0)
+			{
+				fprintf(stderr, "\n");
+			}
+		}
+
+		fprintf(stderr, "\n\n");
+
+		fprintf(stderr, "Data as text (all non-printable characters are replaced with '?'):\n");
+		for (int x = 0; x < req.size(); ++x)
+		{
+			if (req[x] < (char)0x20 || req[x] > (char)0x7e)
+			{
+				fprintf(stderr, "?");
+			}
+			else
+			{
+				fprintf(stderr, "%c", (char)req[x]);
+			}
+
+			if ((x + 1) % 70 == 0)
+			{
+				fprintf(stderr, "\n");
+			}
+		}
+
+		fprintf(stderr, "\n-- End of response --\n\n");
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

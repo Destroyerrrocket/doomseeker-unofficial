@@ -143,6 +143,9 @@ class SkulltagServer : public Server
 		QRgb			teamColor(int team) const;
 		QString			teamName(int team) const;
 
+	protected slots:
+		void			updatedSlot(Server* server, int response);
+
 	protected:
 		bool			buckshot;
 		bool			instagib;
@@ -151,6 +154,8 @@ class SkulltagServer : public Server
 		float			teamDamage;
 
 		unsigned short	botSkill;
+
+		QByteArray		lastReadRequest;
 
 		unsigned short	duelLimit;
 		unsigned short	fragLimit;
