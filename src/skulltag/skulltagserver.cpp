@@ -455,7 +455,7 @@ const QPixmap &SkulltagServer::icon() const
 	return *ICON;
 }
 
-bool SkulltagServer::readRequest(QByteArray &data)
+Server::Response SkulltagServer::readRequest(QByteArray &data)
 {
 	const int OUT_SIZE = 6000;
 	// Decompress the response.
@@ -476,8 +476,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 	if (out < 4 || out > OUT_SIZE)
 	{
 		fprintf(stderr, "Data size error when reading server %s:%u. Data size is IN: %u, OUT: %u\n", address().toString().toAscii().constData(), port(), data.size(), out);
-		emit updated(this, RESPONSE_BAD);
-		return false;
+		return RESPONSE_BAD;
 	}
 
 	// Check the response code
@@ -487,35 +486,31 @@ bool SkulltagServer::readRequest(QByteArray &data)
 	// should check if there's enough data to read from.
 	if (out >= 8)
 	{
-		unsigned time = clock();
-		unsigned prevTime = READINT32(&packetOut[4]);
-		currentPing = time - prevTime;
-		bPingIsSet = true;
+		//unsigned time = clock();
+		//unsigned prevTime = READINT32(&packetOut[4]);
+		//currentPing = time - prevTime;
+		//bPingIsSet = true;
 	}
 	else
 	{
-		emit updated(this, RESPONSE_BAD);
-		return false;
+		return RESPONSE_BAD;
 	}
 
 	// Act according to the response
 	switch(response)
 	{
 		case SERVER_BANNED:
-			emit updated(this, RESPONSE_BANNED);
-			return false;
+			return RESPONSE_BANNED;
 
 		case SERVER_WAIT:
-			emit updated(this, RESPONSE_WAIT);
-			return false;
+			return RESPONSE_WAIT;
 
 		case SERVER_GOOD:
 			// Do nothing, continue
 			break;
 
 		default:
-			emit updated(this, RESPONSE_BAD);
-			return false;
+			return RESPONSE_BAD;
 	}
 
 	// If response was equal to SERVER_GOOD, proceed to read data.
@@ -539,8 +534,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 
 		if (pos >= out && flags != 0)
 		{
-			emit updated(this, RESPONSE_BAD);
-			return false;
+			return RESPONSE_BAD;
 		}
 	}
 
@@ -552,8 +546,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 
 		if (pos >= out && flags != 0)
 		{
-			emit updated(this, RESPONSE_BAD);
-			return false;
+			return RESPONSE_BAD;
 		}
 	}
 	if((flags & SQF_EMAIL) == SQF_EMAIL)
@@ -564,8 +557,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 
 		if (pos >= out && flags != 0)
 		{
-			emit updated(this, RESPONSE_BAD);
-			return false;
+			return RESPONSE_BAD;
 		}
 	}
 	if((flags & SQF_MAPNAME) == SQF_MAPNAME)
@@ -576,8 +568,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 
 		if (pos >= out && flags != 0)
 		{
-			emit updated(this, RESPONSE_BAD);
-			return false;
+			return RESPONSE_BAD;
 		}
 	}
 
@@ -618,8 +609,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 			// in this method.
 			if (pos >= out && flags != 0)
 			{
-				emit updated(this, RESPONSE_BAD);
-				return false;
+				return RESPONSE_BAD;
 			}
 		}
 	}
@@ -649,8 +639,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 
 		if (pos >= out && flags != 0)
 		{
-			emit updated(this, RESPONSE_BAD);
-			return false;
+			return RESPONSE_BAD;
 		}
 	}
 
@@ -662,8 +651,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 
 		if (pos >= out && flags != 0)
 		{
-			emit updated(this, RESPONSE_BAD);
-			return false;
+			return RESPONSE_BAD;
 		}
 	}
 
@@ -801,8 +789,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 		// we assume something went horribly wrong and emit an error signal.
 		if (numPlayers > maxClients)
 		{
-			emitUpdated(Server::RESPONSE_BAD);
-			return false;
+			return RESPONSE_BAD;
 		}
 
 		if((flags & SQF_PLAYERDATA) == SQF_PLAYERDATA)
@@ -819,8 +806,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 
 				if (pos >= out)
 				{
-					emitUpdated(Server::RESPONSE_BAD);
-					return false;
+					return RESPONSE_BAD;
 				}
 
 				int score = READINT16(&packetOut[pos]);
@@ -852,8 +838,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 			pos += teamInfo[i].name().length() + 1;
 			if (pos >= out && (i != numTeams - 1 || flags != 0) )
 			{
-				emitUpdated(RESPONSE_BAD);
-				return false;
+				return RESPONSE_BAD;
 			}
 		}
 	}
@@ -870,8 +855,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 
 			if (pos >= out && (i != forLimit - 1 || flags != 0))
 			{
-				emitUpdated(RESPONSE_BAD);
-				return false;
+				return RESPONSE_BAD;
 			}
 		}
 	}
@@ -889,8 +873,7 @@ bool SkulltagServer::readRequest(QByteArray &data)
 
 			if (pos >= out && (i != forLimit - 1 || flags != 0))
 			{
-				emitUpdated(RESPONSE_BAD);
-				return false;
+				return RESPONSE_BAD;
 			}
 		}
 	}
@@ -915,14 +898,14 @@ bool SkulltagServer::readRequest(QByteArray &data)
 		testingArchive = QString();
 	}
 
-	return true;
+	return RESPONSE_GOOD;
 }
 
 bool SkulltagServer::sendRequest(QByteArray &data)
 {
 	// Send launcher challenge.
 	int query = SQF_STANDARDQUERY;
-	unsigned time = clock();
+	unsigned time = 0; //clock();
 	const unsigned char challenge[12] = {SERVER_CHALLENGE, WRITEINT32_DIRECT(query), WRITEINT32_DIRECT(time)};
 	char challengeOut[16];
 	int out = 16;

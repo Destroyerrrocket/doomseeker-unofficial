@@ -73,7 +73,7 @@ const QPixmap &ChocolateDoomServer::icon() const
 	return *ICON;
 }
 
-bool ChocolateDoomServer::readRequest(QByteArray &data)
+Server::Response ChocolateDoomServer::readRequest(QByteArray &data)
 {
 	static const char* playerNames[4] =
 	{
@@ -89,8 +89,7 @@ bool ChocolateDoomServer::readRequest(QByteArray &data)
 	int response = READINT8(&in[1]);
 	if(response != NET_PACKET_TYPE_QUERY_RESPONSE)
 	{
-		emit updated(this, RESPONSE_BAD);
-		return false;
+		return RESPONSE_BAD;
 	}
 
 	serverVersion = QString(&in[2]);
@@ -132,7 +131,7 @@ bool ChocolateDoomServer::readRequest(QByteArray &data)
 			}
 			break;
 	}
-	return true;
+	return RESPONSE_GOOD;
 }
 
 bool ChocolateDoomServer::sendRequest(QByteArray &data)

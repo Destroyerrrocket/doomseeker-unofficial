@@ -120,7 +120,7 @@ const QPixmap &OdamexServer::icon() const
 	return *ICON;
 }
 
-bool OdamexServer::readRequest(QByteArray &data)
+Server::Response OdamexServer::readRequest(QByteArray &data)
 {
 	fflush(stderr);
 	fflush(stdout);
@@ -130,8 +130,7 @@ bool OdamexServer::readRequest(QByteArray &data)
 	int response = READINT32(&in[0]);
 	if(response != SERVER_GOOD)
 	{
-		emit updated(this, RESPONSE_BAD);
-		return false;
+		return RESPONSE_BAD;
 	}
 
 	int pos = 8;
@@ -277,7 +276,7 @@ bool OdamexServer::readRequest(QByteArray &data)
 		serverVersion = QString("%1.%2.%3").arg(version_major).arg(version_minor).arg(version_patch);
 	}
 
-	return true;
+	return RESPONSE_GOOD;
 }
 
 bool OdamexServer::sendRequest(QByteArray &data)

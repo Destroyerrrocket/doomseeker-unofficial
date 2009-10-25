@@ -593,11 +593,11 @@ class MAIN_EXPORT Server : public QObject
 
 		/**
 		 *	Reads response data.
-		 *	@return true on success and RESPONSE_GOOD signal should be emitted,
-		 *		false otherwise. Note: when false is returned Doomseeker assumes
-		 *		that the plugin will emit the proper response signal.
+		 *	@return the resposne that should be emitted. Do NOT perform any
+		 *		signal emissions from within this functions. This is not thread
+		 *		safe and may lead to a crash.
 		 */
-		virtual bool		readRequest(QByteArray &data)=0;
+		virtual Response		readRequest(QByteArray &data)=0;
 
 		/**
 		 *	Prepares challenge data.

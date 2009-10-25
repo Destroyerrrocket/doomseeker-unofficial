@@ -154,7 +154,7 @@ void RefreshingThread::run()
 						server->bPingIsSet = false;
 
 						// Store the state of request read.
-						bool bIsGood = server->readRequest(dataArray);
+						int response = server->readRequest(dataArray);
 
 						// Set the current ping, if plugin didn't do so already.
 						if (!server->bPingIsSet)
@@ -164,13 +164,8 @@ void RefreshingThread::run()
 
 						server->refreshStops();
 
-						// If readRequest() returned true, emit the
-						// RESPONSE_GOOD signal. Otherwise do nothing, the
-						// plugin should decide which response to emit.
-						if (bIsGood)
-						{
-							server->emitUpdated(Server::RESPONSE_GOOD);
-						}
+						// Emit the response returned by readRequest.
+						server->emitUpdated(response);
 						continue;
 					}
 				}

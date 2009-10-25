@@ -54,8 +54,8 @@ class OdamexServer : public Server
 		QString			serverBinary(QString& error) const;
 
 	protected:
-		bool	readRequest(QByteArray &data);
-		bool	sendRequest(QByteArray &data);
+		Response	readRequest(QByteArray &data);
+		bool		sendRequest(QByteArray &data);
 
 		short			protocol;
 };

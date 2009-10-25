@@ -172,7 +172,7 @@ class SkulltagServer : public Server
 		void			hostDMFlags(QStringList& args, const DMFlags& dmFlags) const;
 		void			hostProperties(QStringList& args) const;
 
-		bool			readRequest(QByteArray &data);
+		Response		readRequest(QByteArray &data);
 		bool			sendRequest(QByteArray &data);
 		/**
 		 *	Creates Unix .sh file or Windows .bat file to
