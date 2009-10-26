@@ -80,6 +80,8 @@ void RefreshingThread::registerServer(Server* server)
 
 void RefreshingThread::run()
 {
+	const unsigned SERVER_BATCH_SIZE = 30;
+
 	QTime time;
 	time.start();
 
@@ -87,6 +89,9 @@ void RefreshingThread::run()
 	socket = new QUdpSocket();
 	socket->bind();
 	bool bFirstQuery = true;
+
+	// Each time this will be increased by SERVER_BATCH_SIZE
+	unsigned serverBatchIndex = 0;
 
 	while (bKeepRunning)
 	{
@@ -108,6 +113,7 @@ void RefreshingThread::run()
 
 			// Signal that the work has begun.
 			emit sleepingModeExit();
+			serverBatchIndex = 0;
 
 			// Since thread wakes up immediatelly after a single server is
 			// registered, assume that more servers will be registered soon
@@ -200,20 +206,27 @@ void RefreshingThread::run()
 			{
 				time.start();
 
+				// Select a batch of servers to query.
+				if (registeredServers.size() < SERVER_BATCH_SIZE)
+				{
+					serverBatchIndex = 0;
+				}
+				else if (serverBatchIndex + SERVER_BATCH_SIZE > registeredServers.size())
+				{
+					serverBatchIndex = registeredServers.size() - SERVER_BATCH_SIZE - 1;
+				}
+
+				QList<Server*> batch = registeredServers.toList().mid(serverBatchIndex, SERVER_BATCH_SIZE);
+
 				thisMutex.lock();
-				foreach(Server *server, registeredServers)
+				foreach(Server *server, batch)
 				{
 					// sendRefreshQuery will clean up after a fail
 					// There's no need to call methods like
 					// Server::refreshStops() explicitly.
-					if(!server->sendRefreshQuery(socket))
+					if(!server->sendRefreshQuery(socket) )
 					{
 						registeredServers.remove(server);
-					}
-					else
-					{
-						// Prevent from sending too many requests at once.
-						msleep(2);
 					}
 				}
 				thisMutex.unlock();

@@ -486,10 +486,10 @@ Server::Response SkulltagServer::readRequest(QByteArray &data)
 	// should check if there's enough data to read from.
 	if (out >= 8)
 	{
-		//unsigned time = clock();
-		//unsigned prevTime = READINT32(&packetOut[4]);
-		//currentPing = time - prevTime;
-		//bPingIsSet = true;
+		unsigned clocks = clock();
+		unsigned prevClocks = READINT32(&packetOut[4]);
+		currentPing = ((clocks - prevClocks) * 1000) / CLOCKS_PER_SEC;
+		bPingIsSet = true;
 	}
 	else
 	{
@@ -905,8 +905,8 @@ bool SkulltagServer::sendRequest(QByteArray &data)
 {
 	// Send launcher challenge.
 	int query = SQF_STANDARDQUERY;
-	unsigned time = 0; //clock();
-	const unsigned char challenge[12] = {SERVER_CHALLENGE, WRITEINT32_DIRECT(query), WRITEINT32_DIRECT(time)};
+//	const unsigned char challenge[12] = {SERVER_CHALLENGE, WRITEINT32_DIRECT(query), 0x00, 0x00, 0x00, 0x00};
+	const unsigned char challenge[12] = {SERVER_CHALLENGE, WRITEINT32_DIRECT(query), WRITEINT32_DIRECT(clock()) };
 	char challengeOut[16];
 	int out = 16;
 	g_Huffman.encode(challenge, reinterpret_cast<unsigned char*> (challengeOut), 12, &out);
