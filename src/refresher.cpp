@@ -91,8 +91,6 @@ void RefreshingThread::run()
 	bool bFirstQuery = true;
 
 	// Each time this will be increased by SERVER_BATCH_SIZE
-	unsigned serverBatchIndex = 0;
-
 	while (bKeepRunning)
 	{
 		thisMutex.lock();
@@ -113,7 +111,6 @@ void RefreshingThread::run()
 
 			// Signal that the work has begun.
 			emit sleepingModeExit();
-			serverBatchIndex = 0;
 
 			// Since thread wakes up immediatelly after a single server is
 			// registered, assume that more servers will be registered soon
@@ -207,16 +204,7 @@ void RefreshingThread::run()
 				time.start();
 
 				// Select a batch of servers to query.
-				if (registeredServers.size() < SERVER_BATCH_SIZE)
-				{
-					serverBatchIndex = 0;
-				}
-				else if (serverBatchIndex + SERVER_BATCH_SIZE > registeredServers.size())
-				{
-					serverBatchIndex = registeredServers.size() - SERVER_BATCH_SIZE - 1;
-				}
-
-				QList<Server*> batch = registeredServers.toList().mid(serverBatchIndex, SERVER_BATCH_SIZE);
+				QList<Server*> batch = registeredServers.toList().mid(0, SERVER_BATCH_SIZE);
 
 				thisMutex.lock();
 				foreach(Server *server, batch)
