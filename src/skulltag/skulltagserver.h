@@ -172,6 +172,8 @@ class SkulltagServer : public Server
 		void			hostDMFlags(QStringList& args, const DMFlags& dmFlags) const;
 		void			hostProperties(QStringList& args) const;
 
+		static unsigned int	millisecondTime();
+
 		Response		readRequest(QByteArray &data);
 		bool			sendRequest(QByteArray &data);
 		/**
