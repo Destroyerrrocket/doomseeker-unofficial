@@ -89,11 +89,21 @@ class RefreshingThread : public QThread, public QRunnable
 		void	finishedQueryingMaster(MasterClient* master);
 
 	protected:
+		struct Batch
+		{
+			public:
+				QList<Server*>	servers;
+				QTime			time;
+
+				void			sendQueries(QUdpSocket *socket, int resendDelay=1000, bool firstQuery=false);
+		};
+
 		bool					bKeepRunning;
 		int						delayBetweenResends;
 		QSet<MasterClient*>		registeredMasters;
-		QSet<Server*>			registeredServers;
+		QList<Batch>			registeredBatches;
 		QUdpSocket*				socket;
+		QList<Server*>			unbatchedServers;
 
 		/**
 		 *	Mutex used by methods of this class.
