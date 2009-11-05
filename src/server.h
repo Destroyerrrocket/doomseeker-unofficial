@@ -337,6 +337,7 @@ class MAIN_EXPORT Server : public QObject
 	Q_OBJECT
 
 	friend class RefreshingThread;
+	friend class ServerBatch;
 
 	public:
 		enum Response

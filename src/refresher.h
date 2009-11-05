@@ -33,6 +33,15 @@
 #include "masterclient.h"
 #include "server.h"
 
+struct ServerBatch
+{
+	public:
+		QList<Server*>	servers;
+		QTime			time;
+
+		void			sendQueries(QUdpSocket *socket, int resendDelay=1000, bool firstQuery=false);
+};
+
 class RefreshingThread : public QThread, public QRunnable
 {
 	Q_OBJECT
@@ -89,19 +98,10 @@ class RefreshingThread : public QThread, public QRunnable
 		void	finishedQueryingMaster(MasterClient* master);
 
 	protected:
-		struct Batch
-		{
-			public:
-				QList<Server*>	servers;
-				QTime			time;
-
-				void			sendQueries(QUdpSocket *socket, int resendDelay=1000, bool firstQuery=false);
-		};
-
 		bool					bKeepRunning;
 		int						delayBetweenResends;
 		QSet<MasterClient*>		registeredMasters;
-		QList<Batch>			registeredBatches;
+		QList<ServerBatch>		registeredBatches;
 		QUdpSocket*				socket;
 		QList<Server*>			unbatchedServers;
 

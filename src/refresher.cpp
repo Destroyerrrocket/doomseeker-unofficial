@@ -202,7 +202,7 @@ void RefreshingThread::run()
 			if(unbatchedServers.size() != 0 && querySlotsInUse < SERVER_BATCH_SIZE)
 			{
 				thisMutex.lock();
-				Batch batch;
+				ServerBatch batch;
 				// Select a batch of servers to query.
 				batch.servers = unbatchedServers.mid(0, SERVER_BATCH_SIZE-querySlotsInUse);
 				//qDebug() << "Batching " << batch.servers.size() << " servers.";
@@ -222,7 +222,7 @@ void RefreshingThread::run()
 	delete socket;
 }
 
-void RefreshingThread::Batch::sendQueries(QUdpSocket *socket, int resendDelay, bool firstQuery)
+void ServerBatch::sendQueries(QUdpSocket *socket, int resendDelay, bool firstQuery)
 {
 	if(firstQuery || resendDelay - time.elapsed() <= 0)
 	{
