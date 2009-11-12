@@ -21,7 +21,7 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include "huffman/huffman.h"
+#include "skulltag/huffman/huffman.h"
 #include "skulltag/skulltagserver.h"
 #include "global.h"
 #include "main.h"
@@ -469,7 +469,7 @@ Server::Response SkulltagServer::readRequest(QByteArray &data)
 	char packetOut[OUT_SIZE];
 	int out = OUT_SIZE;
 
-	g_Huffman.decode(reinterpret_cast<const unsigned char*> (in), reinterpret_cast<unsigned char*> (packetOut), data.size(), &out);
+	HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (in), reinterpret_cast<unsigned char*> (packetOut), data.size(), &out);
 
 	lastReadRequest.clear();
 	lastReadRequest = QByteArray(packetOut, qMin(out, OUT_SIZE));
@@ -913,7 +913,7 @@ bool SkulltagServer::sendRequest(QByteArray &data)
 	const unsigned char challenge[12] = {SERVER_CHALLENGE, WRITEINT32_DIRECT(query), WRITEINT32_DIRECT(millisecondTime()) };
 	char challengeOut[16];
 	int out = 16;
-	g_Huffman.encode(challenge, reinterpret_cast<unsigned char*> (challengeOut), 12, &out);
+	HUFFMAN_Encode(challenge, reinterpret_cast<unsigned char*> (challengeOut), 12, &out);
 	const QByteArray chall(challengeOut, out);
 	data.append(chall);
 	return true;
@@ -1107,7 +1107,7 @@ RConProtocol *SkulltagRConProtocol::connectToServer(Server *server)
 	const unsigned char beginConnection[2] = { CLRC_BEGINCONNECTION, RCON_PROTOCOL_VERSION };
 	char encodedConnection[4];
 	int encodedSize = 4;
-	g_Huffman.encode(beginConnection, reinterpret_cast<unsigned char*> (encodedConnection), 2, &encodedSize);
+	HUFFMAN_Encode(beginConnection, reinterpret_cast<unsigned char*> (encodedConnection), 2, &encodedSize);
 
 	// Try to connect, up to 3 times
 	protocol->connected = false;
@@ -1121,7 +1121,7 @@ RConProtocol *SkulltagRConProtocol::connectToServer(Server *server)
 			protocol->socket.readDatagram(data, size);
 			char packet[64];
 			int decodedSize = 64;
-			g_Huffman.decode(reinterpret_cast<const unsigned char*> (data), reinterpret_cast<unsigned char*> (packet), size, &decodedSize);
+			HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (data), reinterpret_cast<unsigned char*> (packet), size, &decodedSize);
 			delete[] data;
 			switch(packet[0])
 			{
@@ -1149,7 +1149,7 @@ void SkulltagRConProtocol::disconnectFromServer()
 	const unsigned char disconnectPacket[1] = { CLRC_DISCONNECT };
 	char encodedDisconnect[4];
 	int encodedSize = 4;
-	g_Huffman.encode(disconnectPacket, reinterpret_cast<unsigned char*> (encodedDisconnect), 1, &encodedSize);
+	HUFFMAN_Encode(disconnectPacket, reinterpret_cast<unsigned char*> (encodedDisconnect), 1, &encodedSize);
 	socket.writeDatagram(encodedDisconnect, encodedSize, server->address(), server->port());
 	connected = false;
 	emit disconnected();
@@ -1163,7 +1163,7 @@ void SkulltagRConProtocol::sendCommand(const QString &cmd)
 	memcpy(packet+1, cmd.toAscii().constData(), cmd.length());
 	char encodedPacket[4097];
 	int encodedSize = 4097;
-	g_Huffman.encode(packet, reinterpret_cast<unsigned char*> (encodedPacket), cmd.length()+2, &encodedSize);
+	HUFFMAN_Encode(packet, reinterpret_cast<unsigned char*> (encodedPacket), cmd.length()+2, &encodedSize);
 	socket.writeDatagram(encodedPacket, encodedSize, server->address(), server->port());
 }
 
@@ -1192,7 +1192,7 @@ void SkulltagRConProtocol::sendPassword(const QString &password)
 	passwordPacket[33] = 0;
 	char encodedPassword[50];
 	int encodedLength = 50;
-	g_Huffman.encode(passwordPacket, reinterpret_cast<unsigned char*> (encodedPassword), 34, &encodedLength);
+	HUFFMAN_Encode(passwordPacket, reinterpret_cast<unsigned char*> (encodedPassword), 34, &encodedLength);
 
 	for(unsigned int i = 0;i < 3;i++)
 	{
@@ -1205,7 +1205,7 @@ void SkulltagRConProtocol::sendPassword(const QString &password)
 			socket.readDatagram(data, size);
 			char packet[4096];
 			int decodedSize = 4096;
-			g_Huffman.decode(reinterpret_cast<const unsigned char*> (data), reinterpret_cast<unsigned char*> (packet), size, &decodedSize);
+			HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (data), reinterpret_cast<unsigned char*> (packet), size, &decodedSize);
 			delete[] data;
 			switch(packet[0])
 			{
@@ -1249,7 +1249,7 @@ void SkulltagRConProtocol::run()
 			socket.readDatagram(data, size);
 			char packet[4096];
 			int decodedSize = 4096;
-			g_Huffman.decode(reinterpret_cast<const unsigned char*> (data), reinterpret_cast<unsigned char*> (packet), size, &decodedSize);
+			HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (data), reinterpret_cast<unsigned char*> (packet), size, &decodedSize);
 			delete[] data;
 
 			processPacket(packet, size);
@@ -1260,7 +1260,7 @@ void SkulltagRConProtocol::run()
 			const unsigned char pong[1] = { CLRC_PONG };
 			char encodedPong[4];
 			int encodedSize = 4;
-			g_Huffman.encode(pong, reinterpret_cast<unsigned char*> (encodedPong), 1, &encodedSize);
+			HUFFMAN_Encode(pong, reinterpret_cast<unsigned char*> (encodedPong), 1, &encodedSize);
 			socket.writeDatagram(encodedPong, encodedSize, server->address(), server->port());
 		}
 	}

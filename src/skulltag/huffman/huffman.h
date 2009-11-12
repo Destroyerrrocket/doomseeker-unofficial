@@ -1,6 +1,5 @@
-/**
- * Drop in replacement for ZD huffman.h
- * Version: 1 - Revision: 0
+/*
+ * Replacement for older Skulltag Launcher Protocol's huffman.cpp
  * 
  * Copyright 2009 Timothy Landers
  * email: code.vortexcortex@gmail.com
@@ -24,30 +23,21 @@
  * THE SOFTWARE.
  */
 
-/* ***** Changelog: huffman.h *****
- * 2009.09.30 - v1 r0
- * 		Intitial Release
- */
-
 //Macro name kept for backwards compatibility.
 #ifndef __HUFFMAN_H__
 #define __HUFFMAN_H__
 
-#include "global.h"
 #include "huffcodec.h"
 
-class MAIN_EXPORT Huffman
-{
-public:
 /** Creates and intitializes a HuffmanCodec Object. <br>
  * Also arranges for HUFFMAN_Destruct() to be called upon termination. */
-Huffman();
+void HUFFMAN_Construct();
 
 /** Releases resources allocated by the HuffmanCodec. */
-~Huffman();
+void HUFFMAN_Destruct();
 
 /** Applies Huffman encoding to a block of data. */
-void encode(
+void HUFFMAN_Encode(
 	unsigned char const * const inputBuffer,	/**< in: Pointer to start of data that is to be encoded. */
 	unsigned char * const outputBuffer,			/**< out: Pointer to destination buffer where encoded data will be stored. */
 	int const &inputBufferSize,					/**< in: Number of chars to read from inputBuffer. */
@@ -55,17 +45,11 @@ void encode(
 );
 
 /** Decodes a block of data that is Huffman encoded. */
-void decode(
+void HUFFMAN_Decode(
 	unsigned char const * const inputBuffer,	/**< in: Pointer to start of data that is to be decoded. */
 	unsigned char * const outputBuffer,			/**< out: Pointer to destination buffer where decoded data will be stored. */
 	int const &inputBufferSize,					/**< in: Number of chars to read from inputBuffer. */
 	int *outputBufferSize						/**< in+out: Max chars to write into outputBuffer. Upon return holds the number of chars stored or 0 if an error occurs. */
 );
-
-private:
-	skulltag::HuffmanCodec * __codec;
-};
-
-extern MAIN_EXPORT Huffman g_Huffman;
 
 #endif // __HUFFMAN_H__

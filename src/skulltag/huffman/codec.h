@@ -1,6 +1,5 @@
-/**
+/*
  * skulltag::Codec class interface - Base class for data encoding or decoding operations.
- * Version 1 - Revision 0
  *
  * Copyright 2009 Timothy Landers
  * email: code.vortexcortex@gmail.com
@@ -24,15 +23,10 @@
  * THE SOFTWARE.
  */
 
-/* ***** Changelog: codec.h *****
- * 2009.09.30 - v1 r0
- * 		Intitial Release
- */
-
 #ifndef _CODEC_VERSION
 #define _CODEC_VERSION 1
-#define _CODEC_REV 0
 
+/** Prevents naming convention problems via encapsulation. */
 namespace skulltag {
 
 	/** Huffman tree node -- used to represent a Huffman tree. <br>

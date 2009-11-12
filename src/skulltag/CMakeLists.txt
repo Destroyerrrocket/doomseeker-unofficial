@@ -18,6 +18,10 @@ set(SKULLTAG_QT_FILES
 	skulltagserver.h
 )
 set(SKULLTAG_FILES
+	huffman/bitreader.cpp
+	huffman/bitwriter.cpp
+	huffman/huffcodec.cpp
+	huffman/huffman.cpp
 	engineSkulltagConfig.cpp
 	skulltagmain.cpp
 	skulltagmasterclient.cpp

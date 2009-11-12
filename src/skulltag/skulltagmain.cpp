@@ -28,6 +28,7 @@
 #include "sdeapi/config.hpp"
 #include "sdeapi/pluginloader.hpp"
 
+#include "skulltag/huffman/huffman.h"
 #include "skulltag/skulltagmasterclient.h"
 #include "skulltag/skulltagserver.h"
 #include "skulltag/engineSkulltagConfig.h"
@@ -161,6 +162,7 @@ static SkulltagEnginePlugin skulltag_engine_plugin;
 static const PluginInfo skulltag_info = {"Skulltag", "Skulltag server query plugin.", "The Skulltag Team", {0,4,0,0}, MAKEID('E','N','G','N'), &skulltag_engine_plugin};
 extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 {
+	HUFFMAN_Construct();
 	return &skulltag_info;
 }
 

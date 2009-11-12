@@ -1,10 +1,9 @@
-/**
+/*
  * skulltag::HuffmanCodec class - Huffman encoder and decoder.
- * Version 1 - Revision 0
  *
  * Copyright 2009 Timothy Landers
  * email: code.vortexcortex@gmail.com
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -24,21 +23,17 @@
  * THE SOFTWARE.
  */
 
-/* ***** Changelog: huffcodec.h *****
- * 2009.09.30 - v1 r0
- * 		Intitial Release
- */
-
 #ifndef _HUFFMAN_CODEC_VERSION
 #define _HUFFMAN_CODEC_VERSION 1
-#define _HUFFMAN_CODEC_REV 0
+#define _HUFFMAN_CODEC_REV 2
 
 #include "codec.h"
 #include "bitwriter.h"
 
+/** Prevents naming convention problems via encapsulation. */
 namespace skulltag {
 
-	/** HuffmanCodec class - Encodes and Decodes data using */
+	/** HuffmanCodec class - Encodes and Decodes data using a Huffman tree. */
 	class HuffmanCodec : public Codec {
 
 		/** top level node of the Huffman tree used for decoding. */
@@ -47,8 +42,8 @@ namespace skulltag {
 		/** table of Huffman codes and bit lengths used for encoding. */
 		HuffmanNode ** codeTable;
 
-		/** stores intermediary huffman codes. */
-		BitWriter * codeBuffer;
+		/** intermediary destination of huffman codes. */
+		BitWriter * writer;
 
 		/** When true this HuffmanCodec reverses its bytes after encoding and before decoding to
 		 * provide compatibility with the backwards bit ordering of the original ST Huffman Encoding.
@@ -59,19 +54,34 @@ namespace skulltag {
 		 * Default value is "true" (allow data expansion). */
 		bool expandable;
 
+		/** Determines if this HuffmanCodec owns its Huffman tree nodes. */
+		bool huffResourceOwner;
+
 		/** Reverses the order of bits in a byte.
 		 *	EG: The statement <code>reverseMap[0xAF] == 0xF5</code> is <code>true</code>. <br>
 		 *	The index <code>10101111</code> stores the reverse value: <code>11110101</code>. <br>
 		 *  Note: One array lookup is much faster than Eight bit manipulating loop iterations. */
 		static unsigned char const reverseMap[];
 
+		/** Number of bits the shortest huffman code in the tree has. */
+		int shortestCode;
+
 	public:
 
-		/** Creates a new HuffmanCodec from the tree
-		 * @param treeData 	*/
+		/** Creates a new HuffmanCodec from the Huffman tree data.
+		 * @param treeData 		pointer to a buffer containing the Huffman tree structure definition.
+		 * @param dataLength 	length in bytes of the Huffman tree structure data. */
 		HuffmanCodec( unsigned char const * const treeData, int dataLength );
 
-		/** Frees associated resources with this HuffmanCodec. */
+		/** Creates a new HuffmanCodec that uses the specified Huffman resources.
+		* @param treeRootNode	The root node of a valid huffman tree.
+		* @param leafCodeTable	A code lookup table where references to HuffmanNodes are stored with their array index equal to their value. */
+		HuffmanCodec(
+			HuffmanNode * treeRootNode,
+			HuffmanNode ** leafCodeTable
+		);
+
+		/** Frees resources used internally by this HuffmanCodec. */
 		~HuffmanCodec();
 
 		/** Decodes data read from an input buffer and stores the result in the output buffer.
@@ -108,15 +118,62 @@ namespace skulltag {
 		 * @return	 true: data expansion is allowed.  false: data is not allowed to expand. */
 		bool allowExpansion();
 
+		/** Sets the ownership of this HuffmanCodec's resources.
+		* @param ownsResources	When false the tree will not be released upon destruction of this HuffmanCodec.
+		* 						When true deleting this HuffmanCodec will cause the Huffman tree to be released. */
+		void huffmanResourceOwner( bool ownsResources );
+
+		/** Checks the ownership state of this HuffmanCodec's resources.
+		* @return ownsResources	When false the tree will not be released upon destruction of this HuffmanCodec.
+		* 						When true deleting this HuffmanCodec will cause the Huffman tree to be released. */
+		bool huffmanResourceOwner();
+
+		/** Deletes all sub nodes of a HuffmanNode by traversing and deleting its child nodes.
+		 * @param treeNode pointer to a HuffmanNode whos children will be deleted. */
+		static void deleteTree( HuffmanNode * treeNode );
+
+		/** Recursively builds a Huffman Tree. <br>
+		 * The initial root node should have the following field values: <br>
+		 * <pre>
+		 * bitCount : 0
+		 * code     : 0
+		 * value    : -1
+		 * branch   : 0 (NULL)
+		 * </pre>
+		 * @param node			in/out: branch node of the Huffman Tree.
+		 * @param treeData		in: char array containing the Huffman Tree's byte representation.
+		 * @param index			in: Current array element to read the next tree node from.
+		 * @param codeTable 	in/out: array of pointers to HuffmanNode structs.
+		 * @param tableLength	in: maximum index allowed in the codeTable.
+		 * @return the next index to read from or -1 if an error occurs.
+		 * */
+		int buildTree(
+			HuffmanNode * node,
+			unsigned char const * const treeData,
+			int index,
+			int dataLength,
+			HuffmanNode ** const &codeTable,
+			int tableLength
+		);
+
+		/** Decreases a codeLength to the shortest Huffman code bit length found in the node or any of its children. <br>
+		 * Set to Zero before calling to determine minimum code bit length.
+		 * @param node			in: The node to begin searching at.
+		 * @param codeLength	out: Variable to hold the longest code bit length found. */
+		static void minCodeLength( HuffmanNode const * const node, int &codeLength );
+
+		/** Increases a codeLength up to the longest Huffman code bit length found in the node or any of its children. <br>
+		 * Set to Zero before calling to determine maximum code bit length.
+		 * @param node			in: The node to begin searching at.
+		 * @param codeLength	out: Variable to hold the longest code bit length found. */
+		static void maxCodeLength( HuffmanNode const * const node, int &codeLength );
+
 	private:
 
-		/** Deletes a Huffman Tree structure by traversing and deleting its nodes. */
-		void deleteTree( HuffmanNode * root );
+		/** Perform initialization procedures common to all constructors. */
+		void init();
 
-		/** Recursively builds the Huffman Tree. */
-		int buildTree( HuffmanNode * node, unsigned char const treeData[], int index, int dataLength );
-
-	}; // end class Huffman Codec.
+	}; // end class HuffmanCodec
 } // end namespace skulltag
 
 #endif

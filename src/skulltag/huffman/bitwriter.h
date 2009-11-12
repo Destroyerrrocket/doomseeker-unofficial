@@ -1,6 +1,5 @@
-/**
+/*
  * skulltag::BitWriter class - Enables writing arbitrary bit lengths of data.
- * Version 1 - Revision 0
  *
  * Copyright 2009 Timothy Landers
  * email: code.vortexcortex@gmail.com
@@ -24,16 +23,11 @@
  * THE SOFTWARE.
  */
 
-/* ***** Changelog: bitwriter.h *****
- * 2009.09.30 - v1 r0
- * 		Intitial Release
- */
-
 #ifndef _BIT_WRITER_VERSION
 #define _BIT_WRITER_VERSION 1
-#define _BIT_WRITER_REV 0
-namespace skulltag { // scope limitation
 
+/** Prevents naming convention problems via encapsulation. */
+namespace skulltag { // scope limitation
 
 /** BitWriter - Allows writing of varying amounts of bits to a char buffer. <br>
  * Very usefull for outputting variable bit length encodings such as Huffman. */

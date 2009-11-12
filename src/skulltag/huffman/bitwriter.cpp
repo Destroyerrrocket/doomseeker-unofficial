@@ -1,6 +1,5 @@
-/**
+/*
  * skulltag::BitWriter class - Enables writing arbitrary bit lengths of data.
- * Version 1 - Revision 0
  *
  * Copyright 2009 Timothy Landers
  * email: code.vortexcortex@gmail.com
@@ -22,11 +21,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- */
-
-/* ***** Changelog: bitwriter.cpp *****
- * 2009.09.30 - v1 r0
- * 		Intitial Release
  */
 
 #include "bitwriter.h"
@@ -80,6 +74,7 @@
  *
  * */
 
+/** Prevents naming convention problems via encapsulation. */
 namespace skulltag {
 
 	// Static variable initially set to zero as a signal for init()
@@ -247,19 +242,29 @@ namespace skulltag {
 	 * @return true if successful, false if an error occurs. */
 	bool BitWriter::finish( int &bytesWritten, int &paddingBits ){
 		static int intBitSize = intSize << 3;
-		bytesWritten = 0;
+		// set meaningful return values even if flush() fails.
+		bytesWritten = maximumBytes - bytesAvailable;
+		paddingBits = 0;
 		if ( flush() ){
-			paddingBits = (8 - (intBitSize - bitsLeft)) & 7;
-			if ( paddingBits > 0 ){
-
+			// use a temp var to avoid setting paddingBits to invalid value on failure.
+			int pad = (8 - (intBitSize - bitsLeft)) & 7;
+			if ( pad > 0 ){
 				// all empty bits should be zero. Artificially extend by the number of bits needed.
-				bitsLeft -= paddingBits;
-				if ( !flush() ){ return false; }
+				bitsLeft -= pad;
+				if ( !flush() ){
+					// Prevent futher use even on failure.
+					init();
+					return false;
+				}
+				// return the temp bit padding value.
+				paddingBits = pad;
 			}
 			bytesWritten = maximumBytes - bytesAvailable;
 			init(); // set initial state -- no further writing can occur.
 			return true;
 		}
+		// Prevents futher use even on failure.
+		init();
 		return false;
 	}
 

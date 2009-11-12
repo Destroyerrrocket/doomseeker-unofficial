@@ -1,6 +1,5 @@
-/**
+/*
  * skulltag::HuffmanCodec class - Huffman encoder and decoder.
- * Version 1 - Revision 0
  *
  * Copyright 2009 Timothy Landers
  * email: code.vortexcortex@gmail.com
@@ -24,14 +23,9 @@
  * THE SOFTWARE.
  */
 
-/* ***** Changelog: huffcodec.cpp *****
- * 2009.09.30 - v1 r0
- * 		Intitial Release
- */
-
 #include "huffcodec.h"
 
-// implementation
+/** Prevents naming convention problems via encapsulation. */
 namespace skulltag {
 
 // HuffmanCodec Implementation
@@ -62,27 +56,117 @@ namespace skulltag {
 	/** Creates a new HuffmanCodec
 	 * @param treeData char array containing the tree data to use.
 	 * @param dataLength number of chars in treeData. */
-	HuffmanCodec::HuffmanCodec( unsigned char const * const treeData, int dataLength ) : Codec::Codec() {
-		codeBuffer = new BitWriter();
-		// init code table (256 pointer to Huffman Nodes.)
+	HuffmanCodec::HuffmanCodec(
+		unsigned char const * const treeData,
+		int dataLength
+	) : Codec::Codec() {
+		init();
+		// init code table (256 pointers to Huffman Leaf Nodes.)
 		codeTable = new HuffmanNode*[256];
 		for (int i = 0; i < 256; i++) codeTable[i] = 0;
-		// build tree.
+		// build root node
 		root = new HuffmanNode;
 		root->bitCount = 0;
 		root->code = 0;
 		root->value = -1;
-		buildTree( root, treeData, 0, dataLength );
-		reverseBits = false;
-		expandable = true;
+		// recursive Huffman tree builder.
+		buildTree( root, treeData, 0, dataLength, codeTable, 256 );
+		huffResourceOwner = true;
+	}
+	
+
+	/** Creates a new HuffmanCodec that uses the specified Huffman resources.
+	* @param treeRootNode	The root node of a valid huffman tree.
+	* @param leafCodeTable	A code lookup table where references to HuffmanNodes are stored with their array index equal to their value.
+	* Note: The tree nodes will not be released upon destruction of this HuffmanCodec. */
+	HuffmanCodec::HuffmanCodec(
+		HuffmanNode * treeRootNode,
+		HuffmanNode ** leafCodeTable
+	){
+		init();
+		// assign values -- no table building or allocations.
+		root = treeRootNode;
+		codeTable = leafCodeTable;
+		huffResourceOwner = false;
+	}
+	
+	/** Checks the ownership state of this HuffmanCodec's resources.
+	* @return true if the tree & code table will be released upon destruction of this HuffmanCodec. <br>
+	* 		A false return value means this HuffmanCodec is not responsible for deleting its resources. */
+	bool HuffmanCodec::huffmanResourceOwner(){
+		return huffResourceOwner;
 	}
 
-	/** Recursively builds a Huffman Tree.
-	 * @param node		A branch node of the Huffman Tree.
-	 * @param treeData	A char array containing the Huffman Tree's byte representation.
-	 * @param index		Current array element to read the next tree node from.
-	 * @return the next index to read from or -1 if an error occurs. */
-	int HuffmanCodec::buildTree( HuffmanNode * node, unsigned char const * const treeData, int index, int dataLength ){
+	/** Perform initialization procedures common to all constructors. */
+	void HuffmanCodec::init(){
+		writer = new BitWriter();
+		reverseBits = false;
+		expandable = true;
+		huffResourceOwner = false;
+	}
+	
+	/** Increases a codeLength up to the longest Huffman code bit length found in the node or any of its children. <br>
+	 * Set to Zero before calling to determine maximum code bit length.
+	 * @param node			in: The node to begin searching at.
+	 * @param codeLength	out: Variable to hold the longest code bit length found. */
+	void HuffmanCodec::maxCodeLength( HuffmanNode const * const node, int &codeLength ){
+		// [TL] We must walk each tree node since the codeTable may not contain the set of all leaf nodes.
+		// bail on NULL node (tree is corrupt).
+		if ( node == 0) return;
+		// Recurse across children if they exist.
+		if ( node->branch != 0 ){
+			maxCodeLength( &(node->branch[0]), codeLength );
+			maxCodeLength( &(node->branch[1]), codeLength );
+		} else if ( codeLength < node->bitCount ){
+			// set codeLength if it's smaller than current node's bitCount.
+			codeLength = node->bitCount;
+		}
+	}
+
+	/** Decreases a codeLength to the shortest Huffman code bit length found in the node or any of its children. <br>
+	 * Set to Zero before calling to determine minimum code bit length.
+	 * @param node			in: The node to begin searching at.
+	 * @param codeLength	out: Variable to hold the longest code bit length found. */
+	void HuffmanCodec::minCodeLength( HuffmanNode const * const node, int &codeLength ){
+		/* [TL] Do not optimize under the assumption child nodes will have longer code Lengths!
+		 * Future subclasses may have trees that diverge from Huffman specs. */
+		// bail on NULL node (tree is corrupt).
+		if ( node == 0 ) return;
+		// Recurse across children if they exist.
+		if ( node->branch != 0 ){			
+			minCodeLength( &(node->branch[0]), codeLength );
+			minCodeLength( &(node->branch[1]), codeLength );
+		} else if ( (codeLength > node->bitCount) || (codeLength == 0) ) {
+			// set codeLength if it's Zero or larger than current node's bitCount.
+			codeLength = node->bitCount;
+		}
+	}
+
+	/** Recursively builds a Huffman Tree. <br>
+	 * The initial root node should have the following field values: <br>
+	 * <table><thead>
+	 * <tr><td><b>field</b></td><td><b>Setting</b></td></tr>
+	 * </thead><tbody>
+	 * <td>bitCount</td><td>0</td></tr>
+	 * <td>code</td><td>0</td></tr>
+	 * <td>value</td><td>-1</td></tr>
+	 * <td>Branch</td><td>0 (NULL)</td></tr>
+	 * </tbody></table>
+	 * @param node		in/out: branch node of the Huffman Tree.
+	 * @param treeData	in: char array containing the Huffman Tree's byte representation.
+	 * @param index		in: Current array element to read the next tree node from.
+	 * @param codeTable in/out: array of pointers to HuffmanNode structs.
+	 * @param tableLenght in: maximum index allowed in the codeTable.
+	 * @return the next index to read from or -1 if an error occurs.
+	 * */
+	int HuffmanCodec::buildTree(
+		HuffmanNode * node,
+		unsigned char const * const treeData,
+		int index,
+		int dataLength,
+		HuffmanNode ** const &codeTable,
+		int tableLength
+	){
 		if ( index >= dataLength ) return -1;
 		// Read the branch description bit field
 		int desc = treeData[index];
@@ -101,7 +185,7 @@ namespace skulltag {
 			// Test a bit from the branch description (least significant bit == left)
 			if ( (desc & (1 << i)) == 0 ){
 				// Child node is a branch; Recurse.
-				if ( (index = buildTree( &(node->branch[i]), treeData, index, dataLength )) < 0 ) return -1;
+				if ( (index = buildTree( &(node->branch[i]), treeData, index, dataLength, codeTable, tableLength )) < 0 ) return -1;
 				// This means the entire left sub tree will be read before the right sub tree gets read.
 			} else {
 				// Read leaf value and map its value/index in the nodes array.
@@ -112,8 +196,10 @@ namespace skulltag {
 				node->branch[i].value = treeData[index] & 0xff;
 				// NULL the child node's branch to mark it as a leaf.
 				node->branch[i].branch = 0;
-				// store a pointer to the leaf node into the code table at the location of its byte value.
-				codeTable[ node->branch[i].value ] = &node->branch[i];
+				// buffer overflow check.
+				if ( (node->branch[i].value >= 0) && (node->branch[i].value <= tableLength ) )
+					// store a pointer to the leaf node into the code table at the location of its byte value.
+					codeTable[ node->branch[i].value ] = &node->branch[i];
 				index++;
 			}
 		}
@@ -130,19 +216,19 @@ namespace skulltag {
 		int const &outLength				/**< in: maximum length of data to output. */
 	) const {
 		// setup the bit buffer to output. if not expandable Limit output to input length.
-		if ( expandable ) codeBuffer->outputBuffer( output, outLength );
-		else codeBuffer->outputBuffer( output, ((inLength + 1) < outLength) ? inLength + 1 : outLength );
+		if ( expandable ) writer->outputBuffer( output, outLength );
+		else writer->outputBuffer( output, ((inLength + 1) < outLength) ? inLength + 1 : outLength );
 
-		codeBuffer->put( (unsigned char)0 ); // reserve place for padding signal.
+		writer->put( (unsigned char)0 ); // reserve place for padding signal.
 
 		HuffmanNode * node; // temp ptr cache;
 		for ( int i = 0; i < inLength; i++ ){
 			node = codeTable[ 0xff & input[i] ]; //lookup node
 			// Put the huffman code into the bit buffer and bail if error occurs.
-			if ( !codeBuffer->put( node->code, node->bitCount ) ) return -1;
+			if ( !writer->put( node->code, node->bitCount ) ) return -1;
 		}
 		int bytesWritten, padding;
-		if ( codeBuffer->finish( bytesWritten, padding ) ){
+		if ( writer->finish( bytesWritten, padding ) ){
 			// write padding signal byte to begining of stream.
 			output[0] = (unsigned char)padding;
 		} else return -1;
@@ -153,7 +239,7 @@ namespace skulltag {
 		}
 
 		return bytesWritten;
-	}
+	} // end function encode
 
 	/** Decodes data read from an input buffer and stores the result in the output buffer.
 	 * @return number of bytes stored in the output buffer or -1 if an error occurs while decoding. */
@@ -164,7 +250,7 @@ namespace skulltag {
 		int const &outLength				/**< in: maximum length of data to output. */
 	){
 		if ( inLength < 1 ) return 0;
-		int bitsAvailable = ((inLength-1) << 3) - (0x07 & input[0]);
+		int bitsAvailable = ((inLength-1) << 3) - (0xff & input[0]);
 		int rIndex = 1;		// read index of input buffer.
 		int wIndex = 0;		// write index of output buffer.
 		char byte = 0;		// bits of the current byte.
@@ -187,6 +273,8 @@ namespace skulltag {
 
 			// Is the node Non NULL, and a leaf?
 			if ( (node != 0) && (node->branch == 0) ){
+				// buffer overflow prevention
+				if ( wIndex >= outLength ) return wIndex;
 				// Output leaf node's value and restart traversal at root node.
 				output[ wIndex++ ] = (unsigned char)(node->value & 0xff);
 				node = root;
@@ -198,24 +286,28 @@ namespace skulltag {
 		}
 
 		return wIndex;
-	}
+	} // end function decode
 
-	/** Deletes a Huffman Tree structure by traversing and deleting its nodes. */
-	void HuffmanCodec::deleteTree( HuffmanNode * root ){
-		if ( root == 0 ) return;
-		if ( root->branch != 0 ){
-			deleteTree( &(root->branch[0]) );
-			deleteTree( &(root->branch[1]) );
-			delete root->branch;
+	/** Deletes all sub nodes of a HuffmanNode by traversing and deleting its child nodes.
+	 * @param treeNode pointer to a HuffmanNode whos children will be deleted. */
+	void HuffmanCodec::deleteTree( HuffmanNode * treeNode ){
+		if ( treeNode == 0 ) return;
+		if ( treeNode->branch != 0 ){
+			deleteTree( &(treeNode->branch[0]) );
+			deleteTree( &(treeNode->branch[1]) );
+			delete treeNode->branch;
 		}
 	}
 
 	/** Destructor - frees resources. */
 	HuffmanCodec::~HuffmanCodec() {
-		delete codeBuffer;
-		delete codeTable;
-		deleteTree( root );
-		delete root;
+		delete writer;
+		//check for resource ownership before deletion
+		if ( huffmanResourceOwner() ){
+			delete codeTable;
+			deleteTree( root );
+			delete root;
+		}
 	}
 
 	/** Enables or Disables backwards bit ordering of bytes.

@@ -1,7 +1,6 @@
-/**
- * Drop in replacement for ZD huffman.cpp
- * Version: 1 - Revision: 0
- * 
+/*
+ * Replacement for older Skulltag Launcher Protocol's huffman.cpp
+ *
  * Copyright 2009 Timothy Landers
  * email: code.vortexcortex@gmail.com
  *
@@ -24,11 +23,6 @@
  * THE SOFTWARE.
  */
 
-/* ***** Changelog: huffman.h *****
- * 2009.09.30 - v1 r0
- * 		Intitial Release
- */
-
 // required for atexit()
 #include <stdlib.h>
 
@@ -39,15 +33,14 @@ using namespace skulltag;
 // Global Variables
 
 /** Reference to the HuffmanCodec Object that will perform the encoding and decoding. */
-
-Huffman g_Huffman;
+static HuffmanCodec * __codec = 0;
 
 // Function Implementation
 
 /** Creates and intitializes a HuffmanCodec Object. <br>
  * Also arranges for HUFFMAN_Destruct() to be called upon termination. */
-Huffman::Huffman(){
-	
+void HUFFMAN_Construct(){
+
 	// The exact structure description of a Huffman tree
 	static unsigned char const compatible_huffman_tree[] = {
 		  0,  0,  0,  1,128,  0,  0,  0,  3, 38, 34,  2,  1, 80,  3,110,
@@ -58,7 +51,7 @@ Huffman::Huffman(){
 		139,186, 75,  0,  1, 44,  2,  3,240,218, 56,  3, 40, 39,  0,  0,
 		  2,  2,  3,244,247, 81, 65,  0,  3,  9,125,  3, 68, 60,  0,  0,
 		  1, 25,  3,191,138,  3, 86, 17,  0,  1, 23,  3,220,178,  2,  3,
-		165,194, 14,  1,  0,  2,  2,  0,  0,  2,  2,  3,150,157,208,181,
+		165,194, 14,  1,  0,  2,  2,  0,  0,  2,  1,208,  3,150,157,181,
 		  1,222,  2,  3,216,230,211,  0,  2,  2,  3,252,141, 10, 42,  0,
 		  2,  3,134,135,104,  1,103,  3,187,225, 95, 32,  0,  0,  0,  0,
 		  0,  0,  1, 57,  1, 61,  3,183,237,  0,  0,  3,233,234,  3,246,
@@ -86,22 +79,22 @@ Huffman::Huffman(){
 
 	// create a HuffmanCodec that is compatible with the previous implementation.
 	__codec = new HuffmanCodec( compatible_huffman_tree, sizeof compatible_huffman_tree );
-	
+
 	// set up the HuffmanCodec to perform in a backwards compatible fashion.
 	__codec->reversedBytes( true );
 	__codec->allowExpansion( false );
 
 	// request that the destruct function be called upon exit.
-	//atexit( HUFFMAN_Destruct );
+	atexit( HUFFMAN_Destruct );
 }
 
 /** Releases resources allocated by the HuffmanCodec. */
-Huffman::~Huffman(){
+void HUFFMAN_Destruct(){
 	if ( __codec != 0 ) delete __codec;
 }
 
 /** Applies Huffman encoding to a block of data. */
-void Huffman::encode(
+void HUFFMAN_Encode(
 	/** in: Pointer to start of data that is to be encoded. */
 	unsigned char const * const inputBuffer,
 	/** out: Pointer to destination buffer where encoded data will be stored. */
@@ -113,7 +106,7 @@ void Huffman::encode(
 	int * outputBufferSize
 ){
 	int bytesWritten = __codec->encode( inputBuffer, outputBuffer, inputBufferSize, *outputBufferSize );
-	
+
 	// expansion occured -- provide backwards compatibility
 	if ( bytesWritten < 0 ){
 		// check buffer sizes
@@ -122,7 +115,7 @@ void Huffman::encode(
 			*outputBufferSize = 0;
 			return;
 		}
-		
+
 		// perform the unencoded copy
 		for ( int i = 0; i < inputBufferSize; i++ ) outputBuffer[i+1] = inputBuffer[i];
 		// supply the "unencoded" signal and bytesWritten
@@ -135,7 +128,7 @@ void Huffman::encode(
 } // end function HUFFMAN_Encode
 
 /** Decodes a block of data that is Huffman encoded. */
-void Huffman::decode(
+void HUFFMAN_Decode(
 	unsigned char const * const inputBuffer,	/**< in: Pointer to start of data that is to be decoded. */
 	unsigned char * const outputBuffer,			/**< out: Pointer to destination buffer where decoded data will be stored. */
 	int const &inputBufferSize,					/**< in: Number of chars to read from inputBuffer. */
@@ -147,12 +140,12 @@ void Huffman::decode(
 		if ( *outputBufferSize < (inputBufferSize - 1) ){
 			// outputBuffer too small, return "no bytes written"
 			*outputBufferSize = 0;
-			return;			
+			return;
 		}
-		
+
 		// perform the unencoded copy
 		for ( int i = 1; i < inputBufferSize; i++ ) outputBuffer[i-1] = inputBuffer[i];
-		
+
 		// supply the bytesWritten
 		*outputBufferSize = inputBufferSize - 1;
 	} else {
