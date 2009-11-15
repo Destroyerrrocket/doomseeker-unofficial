@@ -39,7 +39,12 @@ struct ServerBatch
 		QList<Server*>	servers;
 		QTime			time;
 
-		void			sendQueries(QUdpSocket *socket, int resendDelay=1000, bool firstQuery=false);
+		/**
+		 * @param rejectedServers - servers that were removed from this
+		 *		batch due to timeout. These should be removed from registered
+		 *		servers list in the RefreshingThread.
+		 */
+		void			sendQueries(QUdpSocket *socket, QList<Server*>& rejectedServers, int resendDelay=1000, bool firstQuery=false);
 };
 
 class RefreshingThread : public QThread, public QRunnable
@@ -102,7 +107,7 @@ class RefreshingThread : public QThread, public QRunnable
 		int						delayBetweenResends;
 		QList<ServerBatch>		registeredBatches;
 		QSet<MasterClient*>		registeredMasters;
-		
+
 		/**
 		 *	This will keep list of ALL servers to make sure that no server is
 		 *	registered twice.
@@ -121,6 +126,13 @@ class RefreshingThread : public QThread, public QRunnable
 		 *	up the sleeping thread after the registerServer() is called.
 		 */
 		QWaitCondition			thisWaitCondition;
+
+		void					readPendingDatagrams();
+
+		/**
+		 *	@return Query slots used by this batch.
+		 */
+		unsigned				sendQueriesForBatch(ServerBatch& batch, int resetDelay, bool firstQuery);
 };
 
 #endif

@@ -143,49 +143,9 @@ void RefreshingThread::run()
 		// Read any received data.
 		while(socket->hasPendingDatagrams())
 		{
-			QHostAddress address;
-			quint16 port;
-			qint64 size = socket->pendingDatagramSize();
-			char* data = new char[size];
-			socket->readDatagram(data, size, &address, &port);
-
-			if (registeredBatches.size() != 0)
-			{
-				thisMutex.lock();
-				for(unsigned int i = 0; i < registeredBatches.size(); ++i)
-				{
-					for(unsigned int j = 0; j < registeredBatches[i].servers.size(); ++j)
-					{
-						Server *server = registeredBatches[i].servers[j];
-						if(server->port() == port && server->address() == address)
-						{
-							registeredBatches[i].servers.removeAt(j);
-							registeredServers.remove(server);
-							j--;
-							QByteArray dataArray(data, size);
-							server->bPingIsSet = false;
-
-							// Store the state of request read.
-							int response = server->readRequest(dataArray);
-
-							// Set the current ping, if plugin didn't do so already.
-							if (!server->bPingIsSet)
-							{
-								server->currentPing = server->time.elapsed();
-							}
-
-							server->refreshStops();
-
-							// Emit the response returned by readRequest.
-							server->emitUpdated(response);
-							continue;
-						}
-					}
-				}
-				thisMutex.unlock();
-			}
-			delete[] data;
+			readPendingDatagrams();
 		}
+
 
 		// Now send the server queries.
 		if (unbatchedServers.size() != 0 || registeredBatches.size() != 0)
@@ -201,8 +161,7 @@ void RefreshingThread::run()
 					//printf("Empty batch %u removed, now batches size is: %u\n", i + 1, registeredBatches.size());
 					continue;
 				}
-				registeredBatches[i].sendQueries(socket, delayBetweenResends, false);
-				querySlotsInUse += registeredBatches[i].servers.size();
+				querySlotsInUse += sendQueriesForBatch(registeredBatches[i], delayBetweenResends, false);
 			}
 
 			//qDebug() << querySlotsInUse << " Servers queried.";
@@ -213,7 +172,7 @@ void RefreshingThread::run()
 				// Select a batch of servers to query.
 				batch.servers = unbatchedServers.mid(0, SERVER_BATCH_SIZE-querySlotsInUse);
 				//qDebug() << "Batching " << batch.servers.size() << " servers.";
-				batch.sendQueries(socket, delayBetweenResends, true);
+				sendQueriesForBatch(batch, delayBetweenResends, true);
 
 				registeredBatches.append(batch);
 				foreach(Server *server, batch.servers)
@@ -231,8 +190,72 @@ void RefreshingThread::run()
 	delete socket;
 }
 
-void ServerBatch::sendQueries(QUdpSocket *socket, int resendDelay, bool firstQuery)
+void RefreshingThread::readPendingDatagrams()
 {
+	QHostAddress address;
+	quint16 port;
+	qint64 size = socket->pendingDatagramSize();
+	char* data = new char[size];
+	socket->readDatagram(data, size, &address, &port);
+
+	if (registeredBatches.size() != 0)
+	{
+		thisMutex.lock();
+		for(unsigned int i = 0; i < registeredBatches.size(); ++i)
+		{
+			for(unsigned int j = 0; j < registeredBatches[i].servers.size(); ++j)
+			{
+				Server *server = registeredBatches[i].servers[j];
+				if(server->port() == port && server->address() == address)
+				{
+					registeredBatches[i].servers.removeAt(j);
+					registeredServers.remove(server);
+					j--;
+					QByteArray dataArray(data, size);
+					server->bPingIsSet = false;
+
+					// Store the state of request read.
+					int response = server->readRequest(dataArray);
+
+					// Set the current ping, if plugin didn't do so already.
+					if (!server->bPingIsSet)
+					{
+						server->currentPing = server->time.elapsed();
+					}
+
+					server->refreshStops();
+
+					// Emit the response returned by readRequest.
+					server->emitUpdated(response);
+					continue;
+				}
+			}
+		}
+		thisMutex.unlock();
+	}
+	delete[] data;
+}
+
+unsigned RefreshingThread::sendQueriesForBatch(ServerBatch& batch, int resetDelay, bool firstQuery)
+{
+	QList<Server*> rejectedServers;
+	batch.sendQueries(socket, rejectedServers, delayBetweenResends, false);
+
+	// Now erase all rejected servers from the list of registered
+	// servers.
+	foreach(Server* server, rejectedServers)
+	{
+		registeredServers.remove(server);
+	}
+
+	return batch.servers.size();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ServerBatch::sendQueries(QUdpSocket *socket, QList<Server*>& rejectedServers, int resendDelay, bool firstQuery)
+{
+	rejectedServers.clear();
 	//printf("Batch size: %u, Delay: %d\n", servers.size(), resendDelay);
 	if(firstQuery || resendDelay - time.elapsed() <= 0)
 	{
@@ -247,6 +270,7 @@ void ServerBatch::sendQueries(QUdpSocket *socket, int resendDelay, bool firstQue
 			if(!server->sendRefreshQuery(socket))
 			{
 				servers.removeOne(server);
+				rejectedServers.append(server);
 			}
 		}
 	}
