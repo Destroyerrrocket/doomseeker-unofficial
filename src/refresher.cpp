@@ -62,8 +62,9 @@ void RefreshingThread::registerServer(Server* server)
 {
 	thisMutex.lock();
 
-	if (!unbatchedServers.contains(server))
+	if (!registeredServers.contains(server))
 	{
+		registeredServers.insert(server);
 		unbatchedServers.append(server);
 
 		if (!server->isCustom())
@@ -80,6 +81,7 @@ void RefreshingThread::registerServer(Server* server)
 
 void RefreshingThread::run()
 {
+	#define COUNTS (unbatchedServers.count() | registeredBatches.count() | registeredMasters.count())
 	const unsigned SERVER_BATCH_SIZE = 30;
 
 	QTime time;
@@ -96,8 +98,10 @@ void RefreshingThread::run()
 		thisMutex.lock();
 
 		// Here thread goes into dormant mode if there is nothing to process.
-		while( unbatchedServers.count() == 0 && registeredBatches.count() == 0 && registeredMasters.count() == 0 && bKeepRunning)
+		//printf("Iteration, u: %u, r: %u, masters: %u\n", unbatchedServers.count(), registeredBatches.count(), registeredMasters.count());
+		while(COUNTS == 0 && bKeepRunning)
 		{
+			//printf("Going to sleep!\n");
 			// Signal that the work is finished
 			emit sleepingModeEnter();
 
@@ -148,14 +152,15 @@ void RefreshingThread::run()
 			if (registeredBatches.size() != 0)
 			{
 				thisMutex.lock();
-				for(unsigned int i = 0;i < registeredBatches.size();i++)
+				for(unsigned int i = 0; i < registeredBatches.size(); ++i)
 				{
-					for(unsigned int j = 0;j < registeredBatches[i].servers.size();j++)
+					for(unsigned int j = 0; j < registeredBatches[i].servers.size(); ++j)
 					{
 						Server *server = registeredBatches[i].servers[j];
 						if(server->port() == port && server->address() == address)
 						{
 							registeredBatches[i].servers.removeAt(j);
+							registeredServers.remove(server);
 							j--;
 							QByteArray dataArray(data, size);
 							server->bPingIsSet = false;
@@ -189,9 +194,11 @@ void RefreshingThread::run()
 			unsigned int querySlotsInUse = 0;
 			for(unsigned int i = 0;i < registeredBatches.size();i++)
 			{
+				//printf("Sending queries from batch: %u\n", i);
 				if(registeredBatches[i].servers.size() == 0)
 				{
-					registeredBatches.removeAt(i);
+					registeredBatches.removeAt(i--);
+					//printf("Empty batch %u removed, now batches size is: %u\n", i + 1, registeredBatches.size());
 					continue;
 				}
 				registeredBatches[i].sendQueries(socket, delayBetweenResends, false);
@@ -210,7 +217,9 @@ void RefreshingThread::run()
 
 				registeredBatches.append(batch);
 				foreach(Server *server, batch.servers)
+				{
 					unbatchedServers.removeOne(server);
+				}
 				thisMutex.unlock();
 			}
 			else
@@ -224,8 +233,10 @@ void RefreshingThread::run()
 
 void ServerBatch::sendQueries(QUdpSocket *socket, int resendDelay, bool firstQuery)
 {
+	//printf("Batch size: %u, Delay: %d\n", servers.size(), resendDelay);
 	if(firstQuery || resendDelay - time.elapsed() <= 0)
 	{
+		//printf("SENT!\n");
 		time.start();
 
 		// sendRefreshQuery will clean up after a fail

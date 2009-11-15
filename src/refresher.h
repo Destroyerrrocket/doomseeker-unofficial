@@ -100,8 +100,14 @@ class RefreshingThread : public QThread, public QRunnable
 	protected:
 		bool					bKeepRunning;
 		int						delayBetweenResends;
-		QSet<MasterClient*>		registeredMasters;
 		QList<ServerBatch>		registeredBatches;
+		QSet<MasterClient*>		registeredMasters;
+		
+		/**
+		 *	This will keep list of ALL servers to make sure that no server is
+		 *	registered twice.
+		 */
+		QSet<Server*>			registeredServers;
 		QUdpSocket*				socket;
 		QList<Server*>			unbatchedServers;
 
