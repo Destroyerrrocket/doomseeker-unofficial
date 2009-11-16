@@ -38,6 +38,40 @@ RefreshingThread::~RefreshingThread()
 	}
 }
 
+void RefreshingThread::gotoSleep()
+{
+	//printf("Going to sleep!\n");
+	// Signal that the work is finished
+	emit sleepingModeEnter();
+
+	// Release the mutex and wait until woken up.
+	thisWaitCondition.wait(&thisMutex);
+
+	// Signal that the work has begun.
+	emit sleepingModeExit();
+
+	// Since thread wakes up immediatelly after a single server is
+	// registered, assume that more servers will be registered soon
+	// and give the main thread some time to do that.
+	thisMutex.unlock();
+	msleep(20);
+	thisMutex.lock();
+}
+
+Server*	RefreshingThread::obtainServerFromBatch(ServerBatch& batch, const QHostAddress& address, qint16 port)
+{
+	for(unsigned int j = 0; j < batch.servers.size(); ++j)
+	{
+		Server *server = batch.servers[j];
+		if(server->port() == port && server->address() == address)
+		{
+			return server;
+		}
+	}
+
+	return NULL;
+}
+
 void RefreshingThread::quit()
 {
 	bKeepRunning = false;
@@ -82,7 +116,6 @@ void RefreshingThread::registerServer(Server* server)
 void RefreshingThread::run()
 {
 	#define COUNTS (unbatchedServers.count() | registeredBatches.count() | registeredMasters.count())
-	const unsigned SERVER_BATCH_SIZE = 30;
 
 	QTime time;
 	time.start();
@@ -101,45 +134,21 @@ void RefreshingThread::run()
 		//printf("Iteration, u: %u, r: %u, masters: %u\n", unbatchedServers.count(), registeredBatches.count(), registeredMasters.count());
 		while(COUNTS == 0 && bKeepRunning)
 		{
-			//printf("Going to sleep!\n");
-			// Signal that the work is finished
-			emit sleepingModeEnter();
-
-			// Release the mutex and wait until woken up.
-			thisWaitCondition.wait(&thisMutex);
+			gotoSleep();
 
 			// Reset variable when thread goes back to work. We assume
 			// this happens when new refresh procedure is being issued.
 			// Sending of first query shouldn't be delayed.
 			bFirstQuery = true;
-
-			// Signal that the work has begun.
-			emit sleepingModeExit();
-
-			// Since thread wakes up immediatelly after a single server is
-			// registered, assume that more servers will be registered soon
-			// and give the main thread some time to do that.
-			thisMutex.unlock();
-			msleep(20);
-			thisMutex.lock();
 		}
 
 		// Kill the thread if RefreshingThread::quit() was called.
 		if (!bKeepRunning)
 			break;
 
-		// Refresh registered masters. Currently master servers are refreshed
-		// synchronously which blocks this thread. This shouldn't be
-		// a big problem unless master is not responding. Proper master
-		// refreshing algorithm will be implemented later, if needed.
-		foreach(MasterClient* master, registeredMasters)
-		{
-			master->refresh();
-			registeredMasters.remove(master);
-			emit finishedQueryingMaster(master);
-		}
+		// Refresh registered masters.
+		sendMasterQueries();
 		thisMutex.unlock();
-
 		// Read any received data.
 		while(socket->hasPendingDatagrams())
 		{
@@ -148,42 +157,7 @@ void RefreshingThread::run()
 
 
 		// Now send the server queries.
-		if (unbatchedServers.size() != 0 || registeredBatches.size() != 0)
-		{
-			//qDebug() << unbatchedServers.size() << " unbatched servers.";
-			unsigned int querySlotsInUse = 0;
-			for(unsigned int i = 0;i < registeredBatches.size();i++)
-			{
-				//printf("Sending queries from batch: %u\n", i);
-				if(registeredBatches[i].servers.size() == 0)
-				{
-					registeredBatches.removeAt(i--);
-					//printf("Empty batch %u removed, now batches size is: %u\n", i + 1, registeredBatches.size());
-					continue;
-				}
-				querySlotsInUse += sendQueriesForBatch(registeredBatches[i], delayBetweenResends, false);
-			}
-
-			//qDebug() << querySlotsInUse << " Servers queried.";
-			if(unbatchedServers.size() != 0 && querySlotsInUse < SERVER_BATCH_SIZE)
-			{
-				thisMutex.lock();
-				ServerBatch batch;
-				// Select a batch of servers to query.
-				batch.servers = unbatchedServers.mid(0, SERVER_BATCH_SIZE-querySlotsInUse);
-				//qDebug() << "Batching " << batch.servers.size() << " servers.";
-				sendQueriesForBatch(batch, delayBetweenResends, true);
-
-				registeredBatches.append(batch);
-				foreach(Server *server, batch.servers)
-				{
-					unbatchedServers.removeOne(server);
-				}
-				thisMutex.unlock();
-			}
-			else
-				socket->waitForReadyRead(100); // This could probably be more properly determined by searching for the nearest timeout in the batches, but this seems to work fairly well.
-		}
+		sendServerQueries();
 	} // end of main thread loop
 
 	// Remember to delete the socket when thread finishes.
@@ -203,37 +177,47 @@ void RefreshingThread::readPendingDatagrams()
 		thisMutex.lock();
 		for(unsigned int i = 0; i < registeredBatches.size(); ++i)
 		{
-			for(unsigned int j = 0; j < registeredBatches[i].servers.size(); ++j)
+			Server *server = obtainServerFromBatch(registeredBatches[i], address, port);
+			if (server != NULL)
 			{
-				Server *server = registeredBatches[i].servers[j];
-				if(server->port() == port && server->address() == address)
+				registeredBatches[i].servers.removeOne(server);
+				registeredServers.remove(server);
+				QByteArray dataArray(data, size);
+				server->bPingIsSet = false;
+
+				// Store the state of request read.
+				int response = server->readRequest(dataArray);
+
+				// Set the current ping, if plugin didn't do so already.
+				if (!server->bPingIsSet)
 				{
-					registeredBatches[i].servers.removeAt(j);
-					registeredServers.remove(server);
-					j--;
-					QByteArray dataArray(data, size);
-					server->bPingIsSet = false;
-
-					// Store the state of request read.
-					int response = server->readRequest(dataArray);
-
-					// Set the current ping, if plugin didn't do so already.
-					if (!server->bPingIsSet)
-					{
-						server->currentPing = server->time.elapsed();
-					}
-
-					server->refreshStops();
-
-					// Emit the response returned by readRequest.
-					server->emitUpdated(response);
-					continue;
+					server->currentPing = server->time.elapsed();
 				}
+
+				server->refreshStops();
+
+				// Emit the response returned by readRequest.
+				server->emitUpdated(response);
+				break; // exit for loop
 			}
 		}
 		thisMutex.unlock();
 	}
 	delete[] data;
+}
+
+void RefreshingThread::sendMasterQueries()
+{
+	// Currently master servers are refreshed
+	// synchronously which blocks this thread. This shouldn't be
+	// a big problem unless master is not responding. Proper master
+	// refreshing algorithm will be implemented later, if needed.
+	foreach(MasterClient* master, registeredMasters)
+	{
+		master->refresh();
+		registeredMasters.remove(master);
+		emit finishedQueryingMaster(master);
+	}
 }
 
 unsigned RefreshingThread::sendQueriesForBatch(ServerBatch& batch, int resetDelay, bool firstQuery)
@@ -249,6 +233,48 @@ unsigned RefreshingThread::sendQueriesForBatch(ServerBatch& batch, int resetDela
 	}
 
 	return batch.servers.size();
+}
+
+void RefreshingThread::sendServerQueries()
+{
+	const unsigned SERVER_BATCH_SIZE = 30;
+
+	if (unbatchedServers.size() != 0 || registeredBatches.size() != 0)
+	{
+		//qDebug() << unbatchedServers.size() << " unbatched servers.";
+		unsigned int querySlotsInUse = 0;
+		for(unsigned int i = 0;i < registeredBatches.size();i++)
+		{
+			//printf("Sending queries from batch: %u\n", i);
+			if(registeredBatches[i].servers.size() == 0)
+			{
+				registeredBatches.removeAt(i--);
+				//printf("Empty batch %u removed, now batches size is: %u\n", i + 1, registeredBatches.size());
+				continue;
+			}
+			querySlotsInUse += sendQueriesForBatch(registeredBatches[i], delayBetweenResends, false);
+		}
+
+		//qDebug() << querySlotsInUse << " Servers queried.";
+		if(unbatchedServers.size() != 0 && querySlotsInUse < SERVER_BATCH_SIZE)
+		{
+			thisMutex.lock();
+			ServerBatch batch;
+			// Select a batch of servers to query.
+			batch.servers = unbatchedServers.mid(0, SERVER_BATCH_SIZE-querySlotsInUse);
+			//qDebug() << "Batching " << batch.servers.size() << " servers.";
+			sendQueriesForBatch(batch, delayBetweenResends, true);
+
+			registeredBatches.append(batch);
+			foreach(Server *server, batch.servers)
+			{
+				unbatchedServers.removeOne(server);
+			}
+			thisMutex.unlock();
+		}
+		else
+			socket->waitForReadyRead(100); // This could probably be more properly determined by searching for the nearest timeout in the batches, but this seems to work fairly well.
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

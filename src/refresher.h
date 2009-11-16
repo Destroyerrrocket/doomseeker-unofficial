@@ -127,12 +127,23 @@ class RefreshingThread : public QThread, public QRunnable
 		 */
 		QWaitCondition			thisWaitCondition;
 
+		void					gotoSleep();
+
+		/**
+		 *	@return NULL if server of given address:port is not in the batch.
+		 */
+		Server*					obtainServerFromBatch(ServerBatch& batch, const QHostAddress& address, qint16 port);
+
 		void					readPendingDatagrams();
+
+		void					sendMasterQueries();
 
 		/**
 		 *	@return Query slots used by this batch.
 		 */
 		unsigned				sendQueriesForBatch(ServerBatch& batch, int resetDelay, bool firstQuery);
+
+		void					sendServerQueries();
 };
 
 #endif
