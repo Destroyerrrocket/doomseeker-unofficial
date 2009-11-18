@@ -28,6 +28,7 @@
 #include "sdeapi/config.hpp"
 #include "sdeapi/pluginloader.hpp"
 #include "gui/dockBuddiesList.h"
+#include "gui/logdock.h"
 #include "gui/serverlist.h"
 #include "ui_mainwindow.h"
 
@@ -109,6 +110,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 */
 		void	fillQueryMenu(MasterManager* masterManager);
 
+		void	initLogDock();
+
 		/**
 		 *	Checks whether the program will use the tray icon and
 		 *	deletes or instantiates a QSystemTrayIcon object.
@@ -145,6 +148,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	menuBuddies();
 		void 	menuCreateServer();
 		void	menuHelpAbout();
+		void	menuLog();
 		void 	menuOptionsConfigure();
 		void	menuWadSeeker();
 		void	quitProgram();
@@ -156,6 +160,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 	private:
 		DockBuddiesList*	buddiesList;
+		LogDock*			logDock;
 		SLHandler*			serverTableHandler;
 
 		MasterManager*		mc;

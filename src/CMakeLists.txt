@@ -28,6 +28,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/copytextdlg.ui
 	gui/createserver.ui
 	gui/dockBuddiesList.ui
+	gui/logdock.ui
 	gui/mainwindow.ui
 	gui/passwordDlg.ui
 	gui/remoteconsole.ui
@@ -47,6 +48,7 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/copytextdlg.h
 	gui/createserver.h
 	gui/dockBuddiesList.h
+	gui/logdock.h
 	gui/mainwindow.h
 	gui/passwordDlg.h
 	gui/remoteconsole.h
@@ -61,6 +63,7 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	sdeapi/config.hpp
 	customservers.h
 	ip2c.h
+	log.h
 	masterclient.h
 	refresher.h
 	server.h
@@ -80,6 +83,7 @@ set(SOURCE_FILES
 	gui/copytextdlg.cpp
 	gui/createserver.cpp
 	gui/dockBuddiesList.cpp
+	gui/logdock.cpp
 	gui/mainwindow.cpp
 	gui/passwordDlg.cpp
 	gui/remoteconsole.cpp
@@ -96,6 +100,7 @@ set(SOURCE_FILES
 	sdeapi/scanner.cpp
 	customservers.cpp
 	ip2c.cpp
+	log.cpp
 	main.cpp
 	masterclient.cpp
 	pathfinder.cpp

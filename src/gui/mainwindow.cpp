@@ -39,11 +39,15 @@
 #include <QHeaderView>
 #include <QMessageBox>
 
-MainWindow::MainWindow(int argc, char** argv) : mc(NULL), buddiesList(NULL), trayIcon(NULL), trayIconMenu(NULL), bWantToQuit(false)
+MainWindow::MainWindow(int argc, char** argv)
+: mc(NULL), buddiesList(NULL), trayIcon(NULL), trayIconMenu(NULL),
+bWantToQuit(false), logDock(NULL)
 {
 	Main::mainWindow = this;
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
+
+	initLogDock();
 
 	serverTableHandler = new SLHandler(tableServers);
 	connectEntities();
@@ -227,6 +231,7 @@ void MainWindow::connectEntities()
 	connect(menuActionBuddies, SIGNAL( triggered() ), this, SLOT( menuBuddies() ));
 	connect(menuActionConfigure, SIGNAL( triggered() ), this, SLOT( menuOptionsConfigure() ));
 	connect(menuActionCreateServer, SIGNAL( triggered() ), this, SLOT( menuCreateServer() ));
+	connect(menuActionLog, SIGNAL( triggered() ), this, SLOT( menuLog() ));
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( quitProgram() ));
 	connect(menuActionWadseeker, SIGNAL( triggered() ), this, SLOT( menuWadSeeker() ));
 	connect(serverSearch, SIGNAL( textChanged(const QString &) ), serverTableHandler, SLOT( updateSearch(const QString &) ));
@@ -329,6 +334,14 @@ void MainWindow::initAutoRefreshTimer()
 	}
 }
 
+void MainWindow::initLogDock()
+{
+	logDock = new LogDock(this);
+	connect(logDock, SIGNAL( visibilityChanged(bool)), menuActionLog, SLOT( setChecked(bool)));
+	logDock->hide();
+	this->addDockWidget(Qt::BottomDockWidgetArea, logDock);
+}
+
 void MainWindow::initTrayIcon()
 {
 	bool isEnabled = Main::config->setting("UseTrayIcon")->boolean();
@@ -375,11 +388,7 @@ void MainWindow::masterManagerMessages(const QString& title, const QString& cont
 
 void MainWindow::menuBuddies()
 {
-	if (buddiesList->isVisible())
-		buddiesList->hide();
-	else
-		buddiesList->show();
-
+	buddiesList->setVisible(!buddiesList->isVisible());
 	menuActionBuddies->setChecked(buddiesList->isVisible());
 }
 
@@ -397,6 +406,12 @@ void MainWindow::menuHelpAbout()
 	autoRefreshTimer.stop();
 	dlg.exec();
 	initAutoRefreshTimer();
+}
+
+void MainWindow::menuLog()
+{
+	logDock->setVisible(!logDock->isVisible());
+	menuActionLog->setChecked(logDock->isVisible());
 }
 
 void MainWindow::menuOptionsConfigure()

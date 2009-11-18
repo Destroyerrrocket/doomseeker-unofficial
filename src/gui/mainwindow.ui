@@ -113,7 +113,7 @@
      <x>0</x>
      <y>0</y>
      <width>796</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="locale">
@@ -148,6 +148,7 @@
      <string>View</string>
     </property>
     <addaction name="menuActionBuddies"/>
+    <addaction name="menuActionLog"/>
    </widget>
    <widget class="QMenu" name="menuQuery">
     <property name="title">
@@ -209,6 +210,17 @@
   <action name="menuActionCreateServer">
    <property name="text">
     <string>Create server</string>
+   </property>
+  </action>
+  <action name="menuActionLog">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Log</string>
+   </property>
+   <property name="shortcut">
+    <string>L</string>
    </property>
   </action>
  </widget>
