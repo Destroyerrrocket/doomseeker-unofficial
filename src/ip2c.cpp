@@ -22,7 +22,6 @@
 //------------------------------------------------------------------------------
 
 #include <QBuffer>
-#include <QDebug>
 #include <QFile>
 #include <QFileInfo>
 #include <QHash>
@@ -31,6 +30,7 @@
 #include <QTimeLine>
 #include <zlib.h>
 
+#include "log.h"
 #include "ip2c.h"
 #include "sdeapi/pluginloader.hpp"
 #include "sdeapi/scanner.hpp"
@@ -92,7 +92,7 @@ bool IP2C::convertAndSaveDatabase(QByteArray& downloadedData)
     if(out.open(QIODevice::WriteOnly) && out.isWritable())
     {
 		out.write(binaryData);
-		qDebug("Database converted in %d ms", time.elapsed());
+		Log::logger << tr("Database converted in %1 ms").arg(time.elapsed());
     }
     else
     {
@@ -146,7 +146,6 @@ void IP2C::downloadDatabase(QStatusBar *statusbar)
 	if(statusbar != NULL)
 		statusbar->addPermanentWidget(downloadProgressWidget);
 
-//	qDebug() << "Downloading";
 	connect(www, SIGNAL( fileDone(QByteArray&, const QString&) ), this, SLOT( processHttp(QByteArray&, const QString&) ));
 	connect(www, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgress(int, int) ));
 	www->getUrl(netLocation);
@@ -173,7 +172,7 @@ const QPixmap &IP2C::flag(unsigned int ipaddress, const QString& countryShortNam
 
 	if (!res.isValid())
 	{
-		printf("No flag for country: %s\n", countryShortName.toAscii().constData());
+		Log::logger << QString("No flag for country: %1").arg(countryShortName);
 		flags[countryShortName] = flagUnknown;
 		return flagUnknown;
 	}
@@ -258,7 +257,9 @@ CountryInfo IP2C::obtainCountryInfo(unsigned int ipaddress)
 
 	if (data.country.isEmpty())
 	{
-		printf("Unrecognized IP address: %s (DEC: %u / HEX: %X)\n", QHostAddress(ipaddress).toString().toAscii().constData(), ipaddress, ipaddress);
+		char buffer[1024];
+		sprintf(buffer, "Unrecognized IP address: %s (DEC: %u / HEX: %X)", QHostAddress(ipaddress).toString().toAscii().constData(), ipaddress, ipaddress);
+		Log::logger << buffer;
 		CountryInfo ci = { true, &flagUnknown, tr("Unknown") };
 		return ci;
 	}
@@ -325,12 +326,12 @@ bool IP2C::readDatabase()
 	db.seek(0);
 	if (signature.compare("IP2C") != 0)
 	{
-		qDebug() << "IP2C database is not in compacted format. Performing conversion!";
+		Log::logger << tr("IP2C database is not in compacted format. Performing conversion!");
 		QByteArray contents = db.readAll();
 
 		if (!convertAndSaveDatabase(contents))
 		{
-			qDebug() << "Conversion failed";
+			Log::logger << tr("Conversion failed");
 			return false;
 		}
 	}
@@ -383,7 +384,7 @@ bool IP2C::readDatabase()
 //		printf("%s %s: %u %X / %u %X\n", data.countryFullName.toAscii().constData(), data.country.toAscii().constData(), data.ipStart, data.ipStart, data.ipEnd, data.ipEnd);
 //	}
 
-	qDebug("IP2C Database read in %d ms. Entries read: %d", time.elapsed(), database.size());
+	Log::logger << tr("IP2C Database read in %1 ms. Entries read: %2").arg(time.elapsed()).arg(database.size());
 
 	emit databaseUpdated();
 	return true;

@@ -21,3 +21,37 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "log.h"
+#include <QDateTime>
+
+Log Log::logger;
+
+Log::Log()
+{
+	timestamps = true;
+	printToStdout = true;
+}
+
+void Log::addEntry(const QString& string)
+{
+	QString timestampString;
+	if (timestamps)
+	{
+		timestampString = QString("[%1] ").arg(QDateTime::currentDateTime().toString("hh:mm:ss"));
+	}
+
+	QString entry = timestampString + string + "\n";
+
+	if (printToStdout)
+	{
+		printf(entry.toAscii().constData());
+	}
+
+	logContent += entry;
+	emit newEntry(entry);
+}
+
+Log& Log::operator<<(const QString& string)
+{
+	addEntry(string);
+	return *this;
+}

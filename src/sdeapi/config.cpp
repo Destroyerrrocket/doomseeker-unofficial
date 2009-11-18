@@ -31,6 +31,7 @@
 
 #include "sdeapi/config.hpp"
 #include "sdeapi/scanner.hpp"
+#include "log.h"
 
 #include <QFile>
 #include <QDir>
@@ -121,7 +122,7 @@ void Config::locateConfigFile(int argc, char* argv[])
 	}
 #endif
 	configFile = configDir.absolutePath() + "/doomseeker.cfg";
-	qDebug() << "Config file is:" << configFile;
+	Log::logger << tr("Config file is: %1").arg(configFile);
 
 	readConfig();
 }

@@ -16,7 +16,11 @@
   <widget class="DockWidgetChild" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QTextEdit" name="teLogContent"/>
+     <widget class="QTextEdit" name="teContent">
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">

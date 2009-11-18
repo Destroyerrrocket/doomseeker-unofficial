@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "gui/models/serverlistmodel.h"
 #include "gui/widgets/serverlistview.h"
+#include "log.h"
 #include "main.h"
 #include <QItemDelegate>
 #include <QPainter>
@@ -600,7 +601,7 @@ int ServerListModel::updateServer(int row, Server* server, int response)
 			break;
 
 		default:
-			printf("Unkown server response (%d): %s:%d\n", response, server->address().toString().toAscii().constData(), server->port());
+			Log::logger << QString("Unkown server response (%1): %2:%3").arg(response).arg(server->address().toString()).arg(server->port());
 			break;
 	}
 

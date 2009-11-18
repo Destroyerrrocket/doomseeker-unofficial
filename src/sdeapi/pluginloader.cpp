@@ -28,6 +28,7 @@
 // Description:
 // =============================================================================
 
+#include "log.h"
 #include "sdeapi/pluginloader.hpp"
 
 #ifdef Q_OS_WIN32
@@ -63,7 +64,7 @@ Plugin::Plugin(unsigned int type, QString f) : file(f), library(NULL)
 	}
 	else
 	{
-		printf("Failed to open plugin: %s\n", file.toAscii().constData());
+		Log::logger << QString("Failed to open plugin: %1").arg(file);
 	}
 }
 
@@ -166,7 +167,7 @@ void PluginLoader::filesInDir()
 #endif
 	else
 	{ // Error
-		printf("Failed to open plugins directory. (%s)\n", pluginsDirectory.toAscii().constData());
+		Log::logger << QString("Failed to open plugins directory. (%1)").arg(pluginsDirectory);
 	}
 }
 

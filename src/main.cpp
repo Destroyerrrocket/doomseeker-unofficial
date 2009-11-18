@@ -30,13 +30,13 @@
 #include "server.h"
 #include "wadseeker/wadseeker.h"
 
-PluginLoader Main::enginePlugins(MAKEID('E','N','G','N'), "./engines/");
-QWidget* Main::mainWindow = NULL;
-Config *Main::config = new Config();
-IP2C *Main::ip2c = NULL;
-RefreshingThread* Main::refreshingThread = new RefreshingThread();
-bool Main::running = true;
-QString Main::workingDirectory = "./";
+Config*				Main::config = new Config();
+PluginLoader 		Main::enginePlugins(MAKEID('E','N','G','N'), "./engines/");
+IP2C*				Main::ip2c = NULL;
+QWidget*			Main::mainWindow = NULL;
+RefreshingThread*	Main::refreshingThread = new RefreshingThread();
+bool				Main::running = true;
+QString				Main::workingDirectory = "./";
 
 int main(int argc, char* argv[])
 {

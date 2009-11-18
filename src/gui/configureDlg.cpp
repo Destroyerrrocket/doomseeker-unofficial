@@ -27,6 +27,7 @@
 #include "gui/cfgFilePaths.h"
 #include "gui/cfgQuery.h"
 #include "gui/wadseekerconfig.h"
+#include "log.h"
 #include <Qt>
 #include <QDebug>
 #include <QStandardItemModel>
@@ -213,7 +214,7 @@ void ConfigureDlg::saveSettings()
 
 	bCustomServersChanged = customServersCfgBox->allowSave();
 	mainConfig->saveConfig();
-	qDebug() << "Saving completed!";
+	Log::logger << tr("Settings saved!");
 }
 
 

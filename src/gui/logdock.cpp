@@ -21,10 +21,32 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "logdock.h"
+#include "log.h"
+#include <QClipboard>
 
 LogDock::LogDock(QWidget* parent) : QDockWidget(parent)
 {
 	setupUi(this);
 
 	dockWidgetContents->setHintSize(175, 200);
+
+	connect(btnClear, SIGNAL( clicked() ), this, SLOT( clearContent() ) );
+	connect(btnCopy, SIGNAL( clicked() ), this, SLOT( btnCopyClicked() ) );
+}
+
+void LogDock::appendLogEntry(const QString& entry)
+{
+	teContent->append(entry);
+}
+
+void LogDock::clearContent()
+{
+	Log::logger.clearContent();
+	teContent->document()->clear();
+}
+
+void LogDock::btnCopyClicked()
+{
+	QClipboard *clipboard = QApplication::clipboard();
+	clipboard->setText(teContent->document()->toPlainText());
 }

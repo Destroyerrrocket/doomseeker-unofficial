@@ -26,12 +26,28 @@
 #include "ui_logdock.h"
 #include <QDockWidget>
 
+/**
+ *	@brief Dockable widget designed for application's log presentation.
+ */
 class LogDock : public QDockWidget, private Ui::LogDock
 {
 	Q_OBJECT;
 
 	public:
 		LogDock(QWidget* parent = NULL);
+
+	public slots:
+		/**
+		 *	New entry will be appended to the end of the current textedit
+		 *	content as it is, without any special formatting.
+		 */
+		void		appendLogEntry(const QString& entry);
+		void		clearContent();
+
+	protected slots:
+		void		btnCopyClicked();
+
+
 };
 
 #endif

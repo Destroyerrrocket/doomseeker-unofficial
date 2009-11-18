@@ -30,6 +30,7 @@
 #include "gui/passwordDlg.h"
 #include "gui/wadseekerinterface.h"
 #include "customservers.h"
+#include "log.h"
 #include "pathfinder.h"
 #include "main.h"
 #include <QAction>
@@ -340,6 +341,11 @@ void MainWindow::initLogDock()
 	connect(logDock, SIGNAL( visibilityChanged(bool)), menuActionLog, SLOT( setChecked(bool)));
 	logDock->hide();
 	this->addDockWidget(Qt::BottomDockWidgetArea, logDock);
+
+	connect(&Log::logger, SIGNAL( newEntry(const QString&) ), logDock, SLOT( appendLogEntry(const QString&) ) );
+
+	// Also add anything that already might be in the log to the box.
+	logDock->appendLogEntry(Log::logger.content());
 }
 
 void MainWindow::initTrayIcon()
