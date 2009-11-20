@@ -40,10 +40,23 @@ class MAIN_EXPORT Log : public QObject
 
 		Log();
 
-		void				addEntry(const char* str, ...);
 		bool				areTimestampsEnabled() const { return timestamps; }
 
 		const QString&		content() const { return logContent; }
+
+		/**
+		 *	Works like printf() from stdio. After the output string is
+		 *	constructed it is passed to addEntry() where additional formatting
+		 *	is applied.
+		 */
+		void				logPrintf(const char* str, ...);
+
+		/**
+		 *	Works like printf() from stdio. After the output string is
+		 *	constructed it is displayed AS IS, without any additional
+		 *	formatting.
+		 */
+		void				logUnformattedPrintf(const char* str, ...);
 
 		bool				isPrintingToStdout() const { return printToStdout; }
 
@@ -58,9 +71,16 @@ class MAIN_EXPORT Log : public QObject
 	public slots:
 		/**
 		 *	Prints the string to specified output and appends '\n' character
-		 *	to the end of that string.
+		 *	to the end of that string. Additional formatting is also applied
+		 *	if certain flags are enabled.
 		 */
 		void	addEntry(const QString& string);
+
+		/**
+		 *	Prints the string to specified output AS IT IS. No additional
+		 *	formatting is done, no '\n' character is appended.
+		 */
+		void	addUnformattedEntry(const QString& string);
 
 		/**
 		 *	Clears log content stored in the memory.
@@ -78,6 +98,8 @@ class MAIN_EXPORT Log : public QObject
 		 *	Entire content of the log.
 		 */
 		QString		logContent;
+
+		int			doLogPrintf(char* output, unsigned outputSize, const char* str, va_list argList);
 
 		/**
 		 *	If true all new entries will be also printed to stdout.

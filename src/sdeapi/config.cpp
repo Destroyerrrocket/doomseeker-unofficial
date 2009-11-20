@@ -209,7 +209,7 @@ bool Config::saveConfig()
 	if(configFile.isEmpty())
 		return false;
 
-	pLog << tr("Saving config");
+	pLog << tr("Saving configuration file: \"%1\"").arg(configFile);
 
 	QFile stream(configFile);
 	if(stream.open(QIODevice::WriteOnly | QIODevice::Truncate))

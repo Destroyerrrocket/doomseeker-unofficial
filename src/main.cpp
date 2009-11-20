@@ -102,6 +102,7 @@ int main(int argc, char* argv[])
 	}
 
 	pLog << QObject::tr("Init finished.");
+	pLog.addUnformattedEntry("================================\n");
 	int ret = app.exec();
 
 	Main::refreshingThread->quit();
