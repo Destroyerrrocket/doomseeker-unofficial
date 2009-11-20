@@ -49,6 +49,9 @@ class OdamexServer : public Server
 
 		QString			clientBinary(QString& error) const;
 		void			connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
+
+		QString			engineName() const { return tr("Odamex"); }
+
 		const QPixmap	&icon() const;
 
 		QString			serverBinary(QString& error) const;

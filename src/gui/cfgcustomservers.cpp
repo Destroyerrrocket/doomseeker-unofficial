@@ -44,7 +44,7 @@ CustomServersConfigBox::CustomServersConfigBox(Config *cfg, QWidget *parent) : C
 void CustomServersConfigBox::add()
 {
 	int pluginIndex = cboEngines->itemData(cboEngines->currentIndex()).toInt();
-	const PluginInfo* nfo = Main::enginePlugins[pluginIndex]->info;
+	const PluginInfo* nfo = (*Main::enginePlugins)[pluginIndex]->info;
 
 	QString engineName = cboEngines->itemText(cboEngines->currentIndex());
 
@@ -93,7 +93,7 @@ void CustomServersConfigBox::dataChanged(const QModelIndex& topLeft, const QMode
 				// Set port to default:
 				QStandardItem* itemEng = model->item(i, 0);
 				int pluginIndex = itemEng->data().toInt();
-				const PluginInfo* nfo = Main::enginePlugins[pluginIndex]->info;
+				const PluginInfo* nfo = (*Main::enginePlugins)[pluginIndex]->info;
 				item->setText(QString::number(nfo->pInterface->generalEngineInfo().defaultServerPort));
 			}
 		}
@@ -104,9 +104,9 @@ void CustomServersConfigBox::prepareEnginesComboBox()
 {
 	cboEngines->clear();
 
-	for (int i = 0; i < Main::enginePlugins.numPlugins(); ++i)
+	for (int i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
-		const PluginInfo* nfo = Main::enginePlugins[i]->info;
+		const PluginInfo* nfo = (*Main::enginePlugins)[i]->info;
 		cboEngines->addItem(nfo->pInterface->icon(), nfo->name, i);
 	}
 
@@ -199,13 +199,13 @@ void CustomServersConfigBox::setEngine()
 
 void CustomServersConfigBox::setEngineOnItem(QStandardItem* item, const QString& engineName)
 {
-	int engineId = Main::enginePlugins.pluginIndexFromName(engineName);
+	int engineId = Main::enginePlugins->pluginIndexFromName(engineName);
 
 	item->setData(engineName);
 	item->setToolTip(engineName);
 	if (engineId >= 0)
 	{
-		const PluginInfo* nfo = Main::enginePlugins[engineId]->info;
+		const PluginInfo* nfo = (*Main::enginePlugins)[engineId]->info;
 		item->setIcon(nfo->pInterface->icon());
 	}
 	else

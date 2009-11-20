@@ -328,7 +328,6 @@ QString SkulltagServer::clientBinary(QString& error) const
 		}
 
 		QString binPath = path + '/' + ST_BINARY_NAME;
-		qDebug() << binPath;
 		fi = QFileInfo(binPath);
 		if (!fi.exists() || fi.isDir())
 		{

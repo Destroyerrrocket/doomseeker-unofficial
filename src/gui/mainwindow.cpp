@@ -42,7 +42,7 @@
 
 MainWindow::MainWindow(int argc, char** argv)
 : mc(NULL), buddiesList(NULL), trayIcon(NULL), trayIconMenu(NULL),
-bWantToQuit(false), logDock(NULL)
+bTotalRefreshInProcess(false), bWantToQuit(false), logDock(NULL)
 {
 	Main::mainWindow = this;
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
@@ -182,6 +182,8 @@ void MainWindow::btnRefreshAll_Click()
 
 void MainWindow::btnGetServers_Click()
 {
+	bTotalRefreshInProcess = true;
+	pLog << tr("Total refresh process initialized!");
 	serverTableHandler->clearTable();
 	refreshCustomServers();
 	Main::refreshingThread->registerMaster(mc);
@@ -244,9 +246,9 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 {
 	// This is called only once from the constructor. No clears to
 	// queryMenuPorts are ever performed. Not even in the destructor.
-	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
+	for(int i = 0;i < Main::enginePlugins->numPlugins();i++)
 	{
-		const EnginePlugin* plugin = Main::enginePlugins[i]->info->pInterface;
+		const EnginePlugin* plugin = (*Main::enginePlugins)[i]->info->pInterface;
 		if(!plugin->generalEngineInfo().hasMasterServer)
 		{
 //			queryMenuPorts.append(NULL);
@@ -256,7 +258,7 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		MasterClient* mClient = plugin->masterClient();
 		masterManager->addMaster(mClient);
 
-	    QString name = Main::enginePlugins[i]->info->name;
+	    QString name = (*Main::enginePlugins)[i]->info->name;
 	    QQueryMenuAction* query = new QQueryMenuAction(mClient, menuQuery);
 		menuQuery->addAction(query);
 
@@ -342,10 +344,10 @@ void MainWindow::initLogDock()
 	logDock->hide();
 	this->addDockWidget(Qt::BottomDockWidgetArea, logDock);
 
-	connect(&Log::logger, SIGNAL( newEntry(const QString&) ), logDock, SLOT( appendLogEntry(const QString&) ) );
+	connect(&pLog, SIGNAL( newEntry(const QString&) ), logDock, SLOT( appendLogEntry(const QString&) ) );
 
 	// Also add anything that already might be in the log to the box.
-	logDock->appendLogEntry(Log::logger.content());
+	logDock->appendLogEntry(pLog.content());
 }
 
 void MainWindow::initTrayIcon()
@@ -376,7 +378,7 @@ void MainWindow::initTrayIcon()
 		trayIcon = new QSystemTrayIcon(this);
 		connect(trayIcon, SIGNAL( activated(QSystemTrayIcon::ActivationReason) ), this, SLOT( trayIcon_activated(QSystemTrayIcon::ActivationReason) ) );
 
-		updateTrayIconTooltip();
+		updateTrayIconTooltipAndLogTotalRefresh();
 
 		trayIcon->setContextMenu(trayIconMenu);
 		trayIcon->setIcon(QIcon(":/icon.png"));
@@ -386,6 +388,7 @@ void MainWindow::initTrayIcon()
 
 void MainWindow::masterManagerMessages(const QString& title, const QString& content, bool isError)
 {
+	pLog << tr("Message from master manager. TITLE: %1 | CONTENT: %2 | IS ERROR: %3").arg(title).arg(content).arg(isError ? tr("yes") : tr("no"));
 	if (isError)
 	{
 		QMessageBox::critical(this, title, content, QMessageBox::Ok, QMessageBox::Ok);
@@ -424,9 +427,9 @@ void MainWindow::menuOptionsConfigure()
 {
 	ConfigureDlg dlg(Main::config, this);
 
-	for(int i = 0;i < Main::enginePlugins.numPlugins();i++)
+	for(int i = 0;i < Main::enginePlugins->numPlugins();i++)
 	{
-		ConfigurationBoxInfo* ec = Main::enginePlugins[i]->info->pInterface->configuration(Main::config, &dlg);
+		ConfigurationBoxInfo* ec = (*Main::enginePlugins)[i]->info->pInterface->configuration(Main::config, &dlg);
 		dlg.addEngineConfiguration(ec);
 	}
 
@@ -485,18 +488,23 @@ bool MainWindow::obtainJoinCommandLine(const Server* server, CommandLineInfo& cl
 		}
 
 		JoinError jError = server->createJoinCommandLine(cli, connectPassword);
+		const QString unknownError = tr("Unknown error.");
+		const QString* error = NULL;
 
 		switch (jError.type)
 		{
 			case JoinError::Critical:
 				if (!jError.error.isEmpty())
 				{
-					QMessageBox::critical(this, errorCaption, jError.error);
+					error = &jError.error;
 				}
 				else
 				{
-					QMessageBox::critical(this, errorCaption, tr("Unknown error."));
+					error = &unknownError;
 				}
+
+				QMessageBox::critical(this, errorCaption, *error);
+				pLog << tr("Error when obtaining join parameters for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(*error);
 				return false;
 
 			case JoinError::MissingWads:
@@ -578,7 +586,9 @@ void MainWindow::refreshThreadEndsWork()
 	btnRefreshAll->setEnabled(true);
 	serverTableHandler->serverTable()->setAllowAllRowsRefresh(true);
 	statusBar()->showMessage(tr("Done"));
-	updateTrayIconTooltip();
+	updateTrayIconTooltipAndLogTotalRefresh();
+
+	bTotalRefreshInProcess = false;
 }
 
 void MainWindow::runGame(const Server* server)
@@ -589,7 +599,9 @@ void MainWindow::runGame(const Server* server)
 		QString error;
 		if (!server->runExecutable(cli, false, error))
 		{
+			pLog << tr("Error while launching executable for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(error);
 			QMessageBox::critical(this, tr("Doomseeker - launch executable"), error);
+
 		}
 	}
 }
@@ -624,13 +636,22 @@ void MainWindow::trayIcon_activated(QSystemTrayIcon::ActivationReason reason)
 	}
 }
 
-void MainWindow::updateTrayIconTooltip()
+void MainWindow::updateTrayIconTooltipAndLogTotalRefresh()
 {
+	int numServers = mc->numServers();
+	int numCustoms = mc->customServs()->numServers();
+	int numPlayers = mc->numPlayers() + mc->customServs()->numPlayers();
+
 	if (trayIcon != NULL)
 	{
 		QString tip;
-		tip += "Servers: " + QString::number(mc->numServers()) + " + " + QString::number(mc->customServs()->numServers()) + " custom\n";
-		tip += "Players: " + QString::number(mc->numPlayers() + mc->customServs()->numPlayers());
+		tip += "Servers: " + QString::number(numServers) + " + " + QString::number(numCustoms) + " custom\n";
+		tip += "Players: " + QString::number(numPlayers);
 		trayIcon->setToolTip(tip);
+	}
+
+	if (bTotalRefreshInProcess)
+	{
+		pLog << tr("Finished refreshing. Servers on the list: %1 (+ %2 custom). Players: %3.").arg(numServers).arg(numCustoms).arg(numPlayers);
 	}
 }

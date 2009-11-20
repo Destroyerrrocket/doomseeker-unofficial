@@ -37,6 +37,9 @@ class ChocolateDoomServer : public Server
 
 		QString			clientBinary(QString& error) const { return binary(false, error); }
 		void			connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
+
+		QString			engineName() const { return tr("Chocolate Doom"); }
+
 		const QPixmap	&icon() const;
 
 		QString			serverBinary(QString& error) const { return binary(true, error); }

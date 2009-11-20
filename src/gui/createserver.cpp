@@ -291,9 +291,9 @@ void CreateServerDlg::cboEngineSelected(int index)
 	if (index >= 0)
 	{
 		int enginePluginIndex = cboEngine->itemData(index).toInt();
-		if (enginePluginIndex < Main::enginePlugins.numPlugins())
+		if (enginePluginIndex < Main::enginePlugins->numPlugins())
 		{
-			const PluginInfo* nfo = Main::enginePlugins[enginePluginIndex]->info;
+			const PluginInfo* nfo = (*Main::enginePlugins)[enginePluginIndex]->info;
 
 			initEngineSpecific(nfo);
 		}
@@ -526,9 +526,9 @@ void CreateServerDlg::initPrimary()
 {
 	cboEngine->clear();
 
-	for (int i = 0; i < Main::enginePlugins.numPlugins(); ++i)
+	for (int i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
-		const PluginInfo* nfo = Main::enginePlugins[i]->info;
+		const PluginInfo* nfo = (*Main::enginePlugins)[i]->info;
 		cboEngine->addItem(nfo->pInterface->icon(), nfo->name, i);
 	}
 
@@ -594,7 +594,7 @@ bool CreateServerDlg::loadConfig(const QString& filename)
 
 	// General
 	QString engineName = cfg.setting("engine")->string();
-	int engIndex = Main::enginePlugins.pluginIndexFromName(engineName);
+	int engIndex = Main::enginePlugins->pluginIndexFromName(engineName);
 	if (engIndex < 0)
 	{
 		QMessageBox::critical(this, tr("Doomseeker - load server config"), tr("Plugin for engine \"%1\" is not present!").arg(engineName));

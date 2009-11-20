@@ -31,6 +31,7 @@
 
 #include "sdeapi/config.hpp"
 #include "sdeapi/scanner.hpp"
+#include "main.h"
 #include "log.h"
 
 #include <QFile>
@@ -100,15 +101,12 @@ void Config::locateConfigFile(int argc, char* argv[])
 {
 	QDir configDir;
 #if defined(Q_OS_WIN32)
-	configDir = argv[0];
-	//configDir.
-	unsigned int pos = static_cast<unsigned int> (configDir.path().lastIndexOf('\\')) > static_cast<unsigned int> (configDir.path().lastIndexOf('/')) ? configDir.path().lastIndexOf('\\') : configDir.path().lastIndexOf('/');
-	configDir = configDir.path().left(pos+1);
+	configDir = Main::workingDirectory;
 #else
 	QDir home = QDir::home();
 	if(!home.exists())
 	{
-		printf("%s\n", tr("Please set your HOME environment variable.").toAscii().constData());
+		pLog << tr("Please set your HOME environment variable.");
 		return;
 	}
 	configDir = home.absolutePath() + "/.doomseeker/";
@@ -116,13 +114,13 @@ void Config::locateConfigFile(int argc, char* argv[])
 	{
 		if(!home.mkdir(".doomseeker"))
 		{
-			printf("%s\n", tr("Could not create settings directory, configuration will not be saved.").toAscii().constData());
+			pLog << tr("Could not create settings directory, configuration will not be saved.")
 			return;
 		}
 	}
 #endif
 	configFile = configDir.absolutePath() + "/doomseeker.cfg";
-	Log::logger << tr("Config file is: %1").arg(configFile);
+	pLog << tr("Config file is: %1").arg(configFile);
 
 	readConfig();
 }
@@ -211,7 +209,7 @@ bool Config::saveConfig()
 	if(configFile.isEmpty())
 		return false;
 
-	qDebug() << "Saving config";
+	pLog << tr("Saving config");
 
 	QFile stream(configFile);
 	if(stream.open(QIODevice::WriteOnly | QIODevice::Truncate))

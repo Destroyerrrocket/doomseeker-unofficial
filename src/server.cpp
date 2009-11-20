@@ -21,6 +21,7 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
+#include "log.h"
 #include "server.h"
 #include "main.h"
 #include "gui/standardserverconsole.h"
@@ -713,7 +714,7 @@ bool Server::refresh()
 	if (Main::refreshingThread == NULL)
 	{
 		emitUpdated(RESPONSE_BAD);
-		printf("REFRESHING THREAD IS NULL\n");
+		pLog << tr("CRITIAL ERROR: REFRESHING THREAD IS NULL");
 		return false;
 	}
 
@@ -739,7 +740,7 @@ void Server::refreshStops()
 
 bool Server::runExecutable(const CommandLineInfo& cli, bool bWrapInStandardServerConsole, QString& error) const
 {
-	printf("Starting (working dir %s): %s %s\n", cli.applicationDir.canonicalPath().toAscii().constData(), cli.executable.absoluteFilePath().toAscii().constData(), cli.args.join(" ").toAscii().constData());
+	pLog << tr("Starting (working dir %1): %2 %3").arg(cli.applicationDir.canonicalPath()).arg(cli.executable.canonicalFilePath()).arg(cli.args.join(" "));
 	QStringList args = cli.args;
 	cleanArguments(args);
 
@@ -748,6 +749,7 @@ bool Server::runExecutable(const CommandLineInfo& cli, bool bWrapInStandardServe
 		if( !QProcess::startDetached(cli.executable.canonicalFilePath(), args, cli.applicationDir.canonicalPath()) )
 		{
 			error = tr("File: %1\ncannot be run").arg(cli.executable.canonicalFilePath());
+			pLog << error;
 			return false;
 		}
 	}

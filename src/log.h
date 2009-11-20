@@ -23,6 +23,8 @@
 #ifndef __LOG_H_
 #define __LOG_H_
 
+#define pLog Log::pLog
+
 #include "global.h"
 #include <QObject>
 
@@ -34,10 +36,11 @@ class MAIN_EXPORT Log : public QObject
 		/**
 		 *	Global instance of the logger.
 		 */
-		static Log			logger;
+		static Log			pLog;
 
 		Log();
 
+		void				addEntry(const char* str, ...);
 		bool				areTimestampsEnabled() const { return timestamps; }
 
 		const QString&		content() const { return logContent; }
@@ -48,7 +51,7 @@ class MAIN_EXPORT Log : public QObject
 		void 				setTimestampsEnabled(bool b) { timestamps = b; }
 
 		/**
-		 *	Executes addEntry().
+		 *	Executes addEntry(const QString&).
 		 */
 		Log& 				operator<<(const QString& string);
 

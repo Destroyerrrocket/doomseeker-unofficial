@@ -61,10 +61,12 @@ Plugin::Plugin(unsigned int type, QString f) : file(f), library(NULL)
 			unload();
 			return;
 		}
+
+		pLog << QObject::tr("Loaded plugin: \"%1\"!").arg(info->name);
 	}
 	else
 	{
-		Log::logger << QString("Failed to open plugin: %1").arg(file);
+		pLog << QObject::tr("Failed to open plugin: %1").arg(file);
 	}
 }
 
@@ -167,7 +169,7 @@ void PluginLoader::filesInDir()
 #endif
 	else
 	{ // Error
-		Log::logger << QString("Failed to open plugins directory. (%1)").arg(pluginsDirectory);
+		pLog << QObject::tr("Failed to open plugins directory: (%1)").arg(pluginsDirectory);
 	}
 }
 

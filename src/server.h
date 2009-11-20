@@ -367,6 +367,11 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		virtual QString		playerTableHTML() const;
 
+		/**
+		 *	Returns name of the engine for this server, for example: "Skulltag".
+		 */
+		virtual QString		engineName() const { return tr("Undefined"); }
+
 		const QHostAddress	&address() const { return serverAddress; }
 		const QString&		eMail() const { return email; }
 		const DMFlags		&gameFlags() const { return dmFlags; }

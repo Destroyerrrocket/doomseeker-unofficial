@@ -26,12 +26,13 @@
 #include <QThreadPool>
 
 #include "gui/mainwindow.h"
+#include "log.h"
 #include "main.h"
 #include "server.h"
 #include "wadseeker/wadseeker.h"
 
 Config*				Main::config = new Config();
-PluginLoader 		Main::enginePlugins(MAKEID('E','N','G','N'), "./engines/");
+PluginLoader* 		Main::enginePlugins = NULL;
 IP2C*				Main::ip2c = NULL;
 QWidget*			Main::mainWindow = NULL;
 RefreshingThread*	Main::refreshingThread = new RefreshingThread();
@@ -40,6 +41,9 @@ QString				Main::workingDirectory = "./";
 
 int main(int argc, char* argv[])
 {
+	pLog << "Starting Doomseeker. Hello World! :)";
+
+	Main::enginePlugins = new PluginLoader(MAKEID('E','N','G','N'), "./engines/");
 	QApplication app(argc, argv);
 
 	QString firstArg = argv[0];
@@ -48,11 +52,13 @@ int main(int argc, char* argv[])
 		Main::workingDirectory = firstArg.mid(0, lastSlash+1);
 
 	// If no plugins were found in ./ try looking in the directory in argv[0].
-	if(Main::enginePlugins.numPlugins() == 0)
-		Main::enginePlugins.resetPluginsDirectory(Main::workingDirectory.mid(0, lastSlash+1) + "engines/");
+	if(Main::enginePlugins->numPlugins() == 0)
+		Main::enginePlugins->resetPluginsDirectory(Main::workingDirectory.mid(0, lastSlash+1) + "engines/");
 
+	pLog << QObject::tr("Initializing IP2C database.");
 	Main::ip2c = new IP2C(Main::workingDirectory + "IpToCountry.csv", QUrl("http://software77.net/geo-ip?DL=1"));
 
+	pLog << QObject::tr("Initializing configuration file.");
 	Main::config->locateConfigFile(argc, argv);
 
 	// Initial settings values
@@ -75,13 +81,16 @@ int main(int argc, char* argv[])
 	Main::config->createSetting("WadseekerDownloadTimeoutSeconds", WADSEEKER_DOWNLOAD_TIMEOUT_SECONDS_DEFAULT);
 
 	// Init plugin settings
-	Main::enginePlugins.initConfig();
+	pLog << QObject::tr("Initializing configuration for plugins.");
+	Main::enginePlugins->initConfig();
 
 	// Refreshing thread setup:
+	pLog << QObject::tr("Starting refreshing thread.");
 	Main::refreshingThread->setDelayBetweenResends(Main::config->setting("QueryTimeout")->integer());
 	Main::refreshingThread->start();
 
 	// Create main window
+	pLog << QObject::tr("Preparing GUI.");
 	MainWindow* mw = new MainWindow(argc, argv);
 	if (Main::config->setting("MainWindowMaximized")->boolean())
 	{
@@ -92,6 +101,7 @@ int main(int argc, char* argv[])
 		mw->show();
 	}
 
+	pLog << QObject::tr("Init finished.");
 	int ret = app.exec();
 
 	Main::refreshingThread->quit();
@@ -103,6 +113,7 @@ int main(int argc, char* argv[])
 
 	while (Main::refreshingThread->isRunning());
 	delete Main::refreshingThread;
+	delete Main::enginePlugins;
 
 	return ret;
 }

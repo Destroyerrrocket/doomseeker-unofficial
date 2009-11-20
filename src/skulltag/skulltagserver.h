@@ -135,6 +135,8 @@ class SkulltagServer : public Server
 		QString			clientWorkingDirectory() const;
 		void			connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
 
+		QString			engineName() const { return tr("Skulltag"); }
+
 		bool			hasRcon() const { return true; }
 		RConProtocol	*rcon();
 

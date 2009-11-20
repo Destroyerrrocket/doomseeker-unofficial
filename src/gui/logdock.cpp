@@ -36,12 +36,13 @@ LogDock::LogDock(QWidget* parent) : QDockWidget(parent)
 
 void LogDock::appendLogEntry(const QString& entry)
 {
+	teContent->moveCursor(QTextCursor::End);
 	teContent->insertPlainText(entry);
 }
 
 void LogDock::clearContent()
 {
-	Log::logger.clearContent();
+	pLog.clearContent();
 	teContent->document()->clear();
 }
 

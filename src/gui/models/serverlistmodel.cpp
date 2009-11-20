@@ -601,7 +601,7 @@ int ServerListModel::updateServer(int row, Server* server, int response)
 			break;
 
 		default:
-			Log::logger << QString("Unkown server response (%1): %2:%3").arg(response).arg(server->address().toString()).arg(server->port());
+			pLog << tr("Unkown server response (%1): %2:%3").arg(response).arg(server->address().toString()).arg(server->port());
 			break;
 	}
 

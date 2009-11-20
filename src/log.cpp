@@ -23,7 +23,7 @@
 #include "log.h"
 #include <QDateTime>
 
-Log Log::logger;
+Log Log::pLog;
 
 Log::Log()
 {
@@ -48,6 +48,27 @@ void Log::addEntry(const QString& string)
 
 	logContent += entry;
 	emit newEntry(entry);
+}
+
+void Log::addEntry(const char* str, ...)
+{
+	va_list argList;
+	char tempText[1024];
+
+	if(str == NULL)
+	{
+		return;
+	}
+
+	va_start(argList, str);
+
+	int size = vsnprintf(tempText, sizeof(tempText), str, argList);
+	if(size == -1)
+	{
+		return;
+	}
+
+	addEntry(tempText);
 }
 
 Log& Log::operator<<(const QString& string)

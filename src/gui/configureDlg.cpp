@@ -202,19 +202,15 @@ void ConfigureDlg::optionListClicked(const QModelIndex& index)
 
 void ConfigureDlg::saveSettings()
 {
-	qDebug() << "Saving settings:";
 	// Iterate through every engine and execute it's saving method
 	for (int i = 0; i < configBoxesList.count(); ++i)
 	{
-		if (configBoxesList[i]->confBox->save())
-		{
-			qDebug() << "Box:" << configBoxesList[i]->boxName;
-		}
+		configBoxesList[i]->confBox->save();
 	}
 
 	bCustomServersChanged = customServersCfgBox->allowSave();
 	mainConfig->saveConfig();
-	Log::logger << tr("Settings saved!");
+	pLog << tr("Settings saved!");
 }
 
 

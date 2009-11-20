@@ -79,6 +79,12 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		QTimer	autoRefreshTimer;
 
 		/**
+		 *	Set to true by btnGetServers_click() process and to false
+		 *	when refreshing thread enters sleep mode.
+		 */
+		bool	bTotalRefreshInProcess;
+
+		/**
 		 *	This is required so tray icon knows how to bring the window back.
 		 */
 		bool	bWasMaximized;
@@ -136,7 +142,11 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 */
 		void 	refreshServers(MasterClient* master);
 
-		void	updateTrayIconTooltip();
+		/**
+		 *	Functionality and name of this function might not be perfect but
+		 *	it saves some copy&pasting in the end. The end justifies the means.
+		 */
+		void	updateTrayIconTooltipAndLogTotalRefresh();
 
 	protected slots:
 		void	autoRefreshTimer_timeout();

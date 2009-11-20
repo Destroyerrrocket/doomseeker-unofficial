@@ -44,7 +44,7 @@ class MAIN_EXPORT Main
 		static Config 				*config;
 		static IP2C					*ip2c;
 		static QWidget*				mainWindow;
-		static PluginLoader			enginePlugins;
+		static PluginLoader*		enginePlugins;
 		static bool					running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
 		static RefreshingThread*	refreshingThread;
 		static QString				workingDirectory;

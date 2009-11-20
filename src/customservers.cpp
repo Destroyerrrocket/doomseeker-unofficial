@@ -50,7 +50,7 @@ QList<CustomServerInfo>* CustomServers::decodeConfigEntries(const QString& str)
 			{
 				CustomServerInfo csi; // CSI: Miami
 				csi.engine = QUrl::fromPercentEncoding(entryList[0].toAscii());
-				csi.engineIndex = Main::enginePlugins.pluginIndexFromName(csi.engine);
+				csi.engineIndex = Main::enginePlugins->pluginIndexFromName(csi.engine);
 
                 csi.host = QUrl::fromPercentEncoding(entryList[1].toAscii());
 
@@ -59,7 +59,7 @@ QList<CustomServerInfo>* CustomServers::decodeConfigEntries(const QString& str)
                 if (ok && port >= 1 && port <= 65535)
                     csi.port = port;
                 else if (csi.engineIndex >= 0)
-                    csi.port = Main::enginePlugins[csi.engineIndex]->info->pInterface->generalEngineInfo().defaultServerPort;
+                    csi.port = (*Main::enginePlugins)[csi.engineIndex]->info->pInterface->generalEngineInfo().defaultServerPort;
                 else
                     csi.port = 1;
 
@@ -98,7 +98,7 @@ void CustomServers::setServers(const QList<CustomServerInfo>& csiList, QObject* 
 		if (hi.addresses().size() == 0)
 			continue;
 
-		const EnginePlugin* pInterface = Main::enginePlugins[cit->engineIndex]->info->pInterface;
+		const EnginePlugin* pInterface = (*Main::enginePlugins)[cit->engineIndex]->info->pInterface;
 		Server* p = pInterface->server(hi.addresses().first(), cit->port);
 		p->setCustom(true);
 
