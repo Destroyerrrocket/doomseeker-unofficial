@@ -23,20 +23,20 @@
 #ifndef __LOG_H_
 #define __LOG_H_
 
-#define pLog Log::pLog
+#define pLog Log::pLogInst
 
 #include "global.h"
 #include <QObject>
 
 class MAIN_EXPORT Log : public QObject
 {
-	Q_OBJECT
+	Q_OBJECT;
 
 	public:
 		/**
 		 *	Global instance of the logger.
 		 */
-		static Log			pLog;
+		static Log			pLogInst;
 
 		Log();
 

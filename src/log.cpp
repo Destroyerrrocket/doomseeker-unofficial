@@ -22,8 +22,9 @@
 //------------------------------------------------------------------------------
 #include "log.h"
 #include <QDateTime>
+#include <cstdio>
 
-Log Log::pLog;
+Log Log::pLogInst;
 
 Log::Log()
 {
