@@ -114,7 +114,7 @@ void Config::locateConfigFile(int argc, char* argv[])
 	{
 		if(!home.mkdir(".doomseeker"))
 		{
-			pLog << tr("Could not create settings directory, configuration will not be saved.")
+			pLog << tr("Could not create settings directory, configuration will not be saved.");
 			return;
 		}
 	}

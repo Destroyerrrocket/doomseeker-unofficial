@@ -49,7 +49,7 @@ void Log::addUnformattedEntry(const QString& string)
 {
 	if (printToStdout)
 	{
-		printf(string.toAscii().constData());
+		printf("%s\n", string.toAscii().constData());
 	}
 
 	logContent += string;
