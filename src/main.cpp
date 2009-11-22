@@ -22,6 +22,9 @@
 //------------------------------------------------------------------------------
 
 #include <QApplication>
+#include <QLabel>
+#include <QMainWindow>
+#include <QMessageBox>
 #include <QObject>
 #include <QThreadPool>
 
@@ -43,6 +46,21 @@ int main(int argc, char* argv[])
 {
 	pLog << "Starting Doomseeker. Hello World! :)";
 
+	// Check for command line parameters
+	bool updateip2c = false;
+	for(int i = 0;i < argc;i++)
+	{
+		if(strcmp(argv[i], "--updateip2c") == 0)
+			updateip2c = true;
+		else if(strcmp(argv[i], "--help") == 0)
+		{
+			// Print information to the log and terminate.
+			pLog << QObject::tr("Available command line parameters:");
+			pLog << QObject::tr("	--updateip2c : Updates the IP2C database.");
+			return 0;
+		}
+	}
+
 	Main::enginePlugins = new PluginLoader(MAKEID('E','N','G','N'), "./engines/");
 	QApplication app(argc, argv);
 
@@ -57,6 +75,21 @@ int main(int argc, char* argv[])
 
 	pLog << QObject::tr("Initializing IP2C database.");
 	Main::ip2c = new IP2C(Main::workingDirectory + "IpToCountry.csv", QUrl("http://software77.net/geo-ip?DL=1"));
+	if(updateip2c)
+	{
+		pLog << QObject::tr("Starting the IP2C updater.");
+		// We'll use a small window to display the update progress.
+		QMainWindow updateProgressBox;
+		updateProgressBox.setWindowTitle(QObject::tr("IP2C Updater"));
+		updateProgressBox.setCentralWidget(new QLabel("Updating the IP2C database...\nOnce the progress bar disappears you may close this window."));
+		if(QMessageBox::question(&updateProgressBox, QObject::tr("IP2C Updater"), QObject::tr("Update the IP2C database now?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
+		{
+			updateProgressBox.show();
+			Main::ip2c->downloadDatabase(updateProgressBox.statusBar());
+			return app.exec();
+		}
+		return 0;
+	}
 
 	pLog << QObject::tr("Initializing configuration file.");
 	Main::config->locateConfigFile(argc, argv);
