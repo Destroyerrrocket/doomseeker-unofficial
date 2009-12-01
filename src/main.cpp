@@ -72,6 +72,14 @@ int main(int argc, char* argv[])
 	// If no plugins were found in ./ try looking in the directory in argv[0].
 	if(Main::enginePlugins->numPlugins() == 0)
 		Main::enginePlugins->resetPluginsDirectory(Main::workingDirectory.mid(0, lastSlash+1) + "engines/");
+#if defined(Q_OS_LINUX)
+	#ifndef INSTALL_PREFIX // For safety lets check for the defintion
+		#define INSTALL_PREFIX "/usr"
+	#endif
+	// Finally check in /usr/local/share/doomseeker/ on Linux
+	if(Main::enginePlugins->numPlugins() == 0)
+		Main::enginePlugins->resetPluginsDirectory(INSTALL_PREFIX "/share/doomseeker/engines/");
+#endif
 
 	pLog << QObject::tr("Initializing IP2C database.");
 	Main::ip2c = new IP2C(Main::workingDirectory + "IpToCountry.csv", QUrl("http://software77.net/geo-ip?DL=1"));

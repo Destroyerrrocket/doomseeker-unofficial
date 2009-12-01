@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.4)
 
 if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
+	cmake_policy(SET CMP0005 NEW)
 endif(COMMAND cmake_policy)
 
 find_package(Qt4 REQUIRED)
@@ -16,6 +17,7 @@ include_directories(${ZLIB_INCLUDE_DIR})
 if(WIN32)
 	add_definitions(-DMODE_MAIN)
 endif(WIN32)
+add_definitions("-DINSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
 
 qt4_wrap_ui(doomseekerUI
 	gui/aboutDlg.ui
@@ -139,3 +141,9 @@ if(WIN32)
 	set_target_properties(doomseeker PROPERTIES LINK_FLAGS_RELEASE "-Wl,-subsystem,windows")
 	set_target_properties(doomseeker PROPERTIES LINK_FLAGS_MINSIZEREL "-Wl,-subsystem,windows")
 endif(WIN32)
+
+install(TARGETS doomseeker RUNTIME DESTINATION bin)
+if(UNIX)
+	install(FILES ${CMAKE_BINARY_DIR}/media/icon.png DESTINATION share/doomseeker)
+	install(FILES ${CMAKE_BINARY_DIR}/media/Doomseeker.desktop DESTINATION /usr/share/applications)
+endif(UNIX)
