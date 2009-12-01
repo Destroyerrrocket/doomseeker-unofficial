@@ -1,0 +1,10 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Doomseeker
+Comment=Internet Doom server browser.
+Exec=doomseeker
+Icon=/usr/local/share/doomseeker/icon.png
+Terminal=false
+Categories=Game
