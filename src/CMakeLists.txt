@@ -94,6 +94,7 @@ set(SOURCE_FILES
 	gui/wadseekerconfig.cpp
 	gui/wadseekerinterface.cpp
 	gui/models/serverlistmodel.cpp
+	gui/widgets/serverconsole.cpp
 	gui/widgets/serverlistview.cpp
 	md5/md5c.c
 	md5/mddriver.c
