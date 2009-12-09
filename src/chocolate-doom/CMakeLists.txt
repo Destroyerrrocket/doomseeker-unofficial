@@ -30,4 +30,6 @@ target_link_libraries(chocolatedoom ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} do
 
 set_target_properties(chocolatedoom PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}/engines/ RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}/engines/)
 
-install(FILES ${OUTPUT_DIR}/engines/libchocolatedoom.so DESTINATION share/doomseeker/engines)
+if(NOT WIN32)
+	install(FILES ${OUTPUT_DIR}/engines/libchocolatedoom.so DESTINATION share/doomseeker/engines)
+endif(NOT WIN32)

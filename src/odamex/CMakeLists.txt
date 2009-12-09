@@ -32,4 +32,6 @@ target_link_libraries(odamex ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} doomseeke
 
 set_target_properties(odamex PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}/engines/ RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}/engines/)
 
-install(FILES ${OUTPUT_DIR}/engines/libodamex.so DESTINATION share/doomseeker/engines)
+if(NOT WIN32)
+	install(FILES ${OUTPUT_DIR}/engines/libodamex.so DESTINATION share/doomseeker/engines)
+endif(NOT WIN32)

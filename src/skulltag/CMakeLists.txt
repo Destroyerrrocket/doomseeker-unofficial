@@ -36,4 +36,6 @@ target_link_libraries(skulltag ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} doomsee
 
 set_target_properties(skulltag PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}/engines/ RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}/engines/)
 
-install(FILES ${OUTPUT_DIR}/engines/libskulltag.so DESTINATION share/doomseeker/engines)
+if(NOT WIN32)
+	install(FILES ${OUTPUT_DIR}/engines/libskulltag.so DESTINATION share/doomseeker/engines)
+endif(NOT WIN32)

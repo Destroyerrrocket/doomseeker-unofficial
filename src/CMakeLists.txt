@@ -143,7 +143,10 @@ if(WIN32)
 	set_target_properties(doomseeker PROPERTIES LINK_FLAGS_MINSIZEREL "-Wl,-subsystem,windows")
 endif(WIN32)
 
+if(NOT WIN32)
 install(TARGETS doomseeker RUNTIME DESTINATION bin)
+endif(NOT WIN32)
+
 if(UNIX)
 	install(FILES ${CMAKE_BINARY_DIR}/media/icon.png DESTINATION share/doomseeker)
 	install(FILES ${CMAKE_BINARY_DIR}/media/Doomseeker.desktop DESTINATION /usr/share/applications)
