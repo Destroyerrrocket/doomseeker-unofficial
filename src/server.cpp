@@ -39,7 +39,7 @@ Player::Player(const QString &name, unsigned short score, unsigned short ping, P
 {
 }
 
-const char Player::colorChart[20][7] =
+const char Player::colorChart[22][7] =
 {
 	"FF91A4", //a
 	"D2B48C", //b
@@ -61,6 +61,8 @@ const char Player::colorChart[20][7] =
 	"800000", //r
 	"704214", //s
 	"A020F0", //t
+	"404040", //u
+	"007F7F", //v
 };
 QString Player::colorizeString(const QString &str, int current)
 {
@@ -83,18 +85,36 @@ QString Player::colorizeString(const QString &str, int current)
 				color = 3; // Chat color which is usally green
 			else if(colorChar == '!')
 				color = 16; // Team char (usually green, but made dark green here for distinction)
-			else if(colorChar == '-' || colored)
+			else if(colorChar == '[') // Named!
+			{
+				int end = str.indexOf(']', i);
+				if(end == -1)
+					break;
+				QString colorName = str.mid(i+1, end-i-1);
+				if(colorName.indexOf('"') == -1) // Just in case there's a security problem.
+					ret += QString("<span style=\"color: " + colorName + "\">");
+				i += colorName.length()+1;
+				colored = true;
+				continue;
+			}
+			else if(colorChar == '-')
 			{
 				if(colored)
-				{
 					ret += "</span>";
-				}
+				colored = false;
 				continue;
 			}
 
-			if(color >= 0 && color < 20)
+			if(colored)
+			{
+				ret += "</span>";
+				colored = false;
+			}
+
+			if(color >= 0 && color < 22)
 			{
 				ret += QString("<span style=\"color: #") + colorChart[color] + "\">";
+				colored = true;
 			}
 			continue;
 		}
@@ -102,6 +122,7 @@ QString Player::colorizeString(const QString &str, int current)
 	}
 	if(colored)
 		ret += "</span>";
+	qDebug() << ret;
 	return ret;
 }
 

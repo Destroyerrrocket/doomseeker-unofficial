@@ -124,7 +124,7 @@ struct MAIN_EXPORT Player
 		static QString	colorizeString(const QString &str, int def=4);
 
 	protected:
-		static const char	colorChart[20][7];
+		static const char	colorChart[22][7];
 
 		QString			playerName;
 		short			currentScore;
