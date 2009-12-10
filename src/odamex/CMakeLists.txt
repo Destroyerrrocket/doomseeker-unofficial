@@ -26,7 +26,7 @@ set(ODAMEX_FILES
 include_directories(${QT_INCLUDES})
 qt_wrap_cpp(odamexQt ODAMEX_FILES ${ODAMEX_QT_FILES})
 
-add_library(odamex SHARED ${odamexUi} ${ODAMEX_FILES})
+add_library(odamex MODULE ${odamexUi} ${ODAMEX_FILES})
 add_dependencies(odamex doomseeker)
 target_link_libraries(odamex ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} doomseeker)
 

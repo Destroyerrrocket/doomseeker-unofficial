@@ -49,7 +49,7 @@ static GeneralEngineInfo ChocolateDoomEngineInfo =
 	false,								// Has Master Server
 };
 
-class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
+class PLUGIN_EXPORT ChocolateDoomEnginePlugin : public EnginePlugin
 {
 	public:
 		QString					binaryClient() const
@@ -93,7 +93,7 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 		}
 };
 
-static OdamexEnginePlugin chocolatedoom_engine_plugin;
+static ChocolateDoomEnginePlugin chocolatedoom_engine_plugin;
 static const PluginInfo chocolatedoom_info = {"Chocolate Doom", "Chocolate Doom server query plugin.", "The Skulltag Team", {0,1,0,0}, MAKEID('E','N','G','N'), &chocolatedoom_engine_plugin};
 extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 {

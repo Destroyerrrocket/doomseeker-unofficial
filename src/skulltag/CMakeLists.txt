@@ -30,7 +30,7 @@ set(SKULLTAG_FILES
 include_directories(${QT_INCLUDES})
 qt_wrap_cpp(skulltagQt SKULLTAG_FILES ${SKULLTAG_QT_FILES})
 
-add_library(skulltag SHARED ${skulltagUi} ${SKULLTAG_FILES})
+add_library(skulltag MODULE ${skulltagUi} ${SKULLTAG_FILES})
 add_dependencies(skulltag doomseeker)
 target_link_libraries(skulltag ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} doomseeker)
 

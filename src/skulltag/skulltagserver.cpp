@@ -260,7 +260,7 @@ QString SkulltagServer::clientBinary(QString& error) const
 
 		QFileInfo fi(setting->string());
 
-		if (!fi.exists() || fi.isDir())
+		if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
 		{
 			error = tr("%1\nis a directory or doesn't exist.").arg(setting->string());
 			return QString();
@@ -329,7 +329,7 @@ QString SkulltagServer::clientBinary(QString& error) const
 
 		QString binPath = path + '/' + ST_BINARY_NAME;
 		fi = QFileInfo(binPath);
-		if (!fi.exists() || fi.isDir())
+		if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
 		{
 			error = tr("%1\ndoesn't contain Skulltag executable").arg(path);
 			return QString();

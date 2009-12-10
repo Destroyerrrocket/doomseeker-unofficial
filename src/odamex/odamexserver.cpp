@@ -82,7 +82,7 @@ QString	OdamexServer::clientBinary(QString& error) const
 
 	QFileInfo fi(setting->string());
 
-	if (!fi.exists() || fi.isDir())
+	if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
 	{
 		error = tr("%1\n is a directory or doesn't exist.").arg(setting->string());
 		return QString();
@@ -299,7 +299,7 @@ QString OdamexServer::serverBinary(QString& error) const
 
 	QFileInfo fi(setting->string());
 
-	if (!fi.exists() || fi.isDir())
+	if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
 	{
 		error = tr("%1\nis a directory or doesn't exist.").arg(setting->string());
 		return QString();

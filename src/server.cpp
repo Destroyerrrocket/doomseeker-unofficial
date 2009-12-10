@@ -746,7 +746,19 @@ bool Server::runExecutable(const CommandLineInfo& cli, bool bWrapInStandardServe
 
 	if (!bWrapInStandardServerConsole)
 	{
-		if( !QProcess::startDetached(cli.executable.canonicalFilePath(), args, cli.applicationDir.canonicalPath()) )
+		int result;
+
+		#ifdef Q_WS_MAC
+		if( cli.executable.isBundle() )
+		{
+			result = QProcess::startDetached("open", QStringList() << cli.executable.canonicalFilePath() << "--args" << args, cli.applicationDir.canonicalPath());
+		}
+		else
+		#endif
+		{
+			result = QProcess::startDetached(cli.executable.canonicalFilePath(), args, cli.applicationDir.canonicalPath());
+		}
+		if(!result)
 		{
 			error = tr("File: %1\ncannot be run").arg(cli.executable.canonicalFilePath());
 			pLog << error;

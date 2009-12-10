@@ -24,7 +24,7 @@ set(CHOCOLATEDOOM_FILES
 include_directories(${QT_INCLUDES})
 qt_wrap_cpp(chocolateDoomQt CHOCOLATEDOOM_FILES ${CHOCOLATEDOOM_QT_FILES})
 
-add_library(chocolatedoom SHARED ${chocolateDoomUi} ${CHOCOLATEDOOM_FILES})
+add_library(chocolatedoom MODULE ${chocolateDoomUi} ${CHOCOLATEDOOM_FILES})
 add_dependencies(chocolatedoom doomseeker)
 target_link_libraries(chocolatedoom ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} doomseeker)
 
