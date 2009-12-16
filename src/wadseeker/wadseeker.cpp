@@ -42,7 +42,11 @@ const QString Wadseeker::defaultSites[] =
 
 const QString Wadseeker::iwadNames[] =
 {
-	"doom", "doom2", "heretic", "hexen", "tnt", "plutonia", "hexdd", "strife1", "voices", ""
+	"attack", "blacktwr", "bloodsea", "canyon", "catwalk", "combine", "doom",
+	"doom2", "fistula", "garrison", "geryon", "heretic", "hexen", "hexdd",
+	"manor", "mephisto", "minos", "nessus", "paradox", "plutonia", "subspace",
+	"subterra", "teeth", "tnt", "ttrap", "strife1", "vesperas", "virgil",
+	"voices", ""
 };
 ///////////////////////////////////////////////////////////////////////
 Wadseeker::Wadseeker()
@@ -218,7 +222,7 @@ void Wadseeker::nextWad()
 
 		if (isIwad(wad))
 		{
-			emit message(tr("%1 is an IWAD. Ignoring.\n").arg(wad), Error);
+			emit message(tr("%1 is an IWAD or commercial mod. Ignoring.\n").arg(wad), Error);
 			notFound.append(wad);
 			wad = QString();
 		}
