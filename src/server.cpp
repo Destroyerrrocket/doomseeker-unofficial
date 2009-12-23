@@ -122,7 +122,6 @@ QString Player::colorizeString(const QString &str, int current)
 	}
 	if(colored)
 		ret += "</span>";
-	qDebug() << ret;
 	return ret;
 }
 

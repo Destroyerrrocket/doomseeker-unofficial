@@ -103,10 +103,16 @@ void *Plugin::function(const char* func) const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-PluginLoader::PluginLoader(unsigned int type, const char* directory, int directoryLength) : type(type)
+PluginLoader::PluginLoader(unsigned int type, const QStringList &baseDirectories, const char* directory, int directoryLength) : type(type)
 {
-	pluginsDirectory = QString::fromAscii(directory, directoryLength != -1 ? directoryLength : static_cast<unsigned int>(-1));
-	filesInDir();
+	foreach(QString baseDir, baseDirectories)
+	{
+		pluginsDirectory = baseDir + QString::fromAscii(directory, directoryLength != -1 ? directoryLength : static_cast<unsigned int>(-1));
+		if(filesInDir())
+			break;
+	}
+	if(numPlugins() == 0) // No plugins?!
+		pLog << QObject::tr("Failed to locate plugins.");
 }
 
 PluginLoader::~PluginLoader()
@@ -126,7 +132,7 @@ void PluginLoader::clearPlugins()
 	}
 }
 
-void PluginLoader::filesInDir()
+bool PluginLoader::filesInDir()
 {
 #ifdef Q_OS_WIN32
 	WIN32_FIND_DATA file;
@@ -168,9 +174,8 @@ void PluginLoader::filesInDir()
 	} // WARNING else statement after this
 #endif
 	else
-	{ // Error
-		pLog << QObject::tr("Failed to open plugins directory: (%1)").arg(pluginsDirectory);
-	}
+		return false;
+	return numPlugins() != 0;
 }
 
 void PluginLoader::initConfig()

@@ -132,7 +132,7 @@ class MAIN_EXPORT IP2C : public QObject
 				}
 		};
 
-		IP2C(QString file, QUrl netLocation);
+		IP2C(const QStringList &baseDirectories, QString file, QUrl netLocation);
 		~IP2C();
 
 		void			downloadDatabase(QStatusBar *statusbar=NULL);

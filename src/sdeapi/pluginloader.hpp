@@ -201,7 +201,7 @@ class MAIN_EXPORT PluginLoader
 		 * Gathers information about plugins in a particular directory.
 		 * @param directoryLength length of the directory argument.  You do not need to supply if directory is NULL terminated.
 		 */
-		PluginLoader(unsigned int type, const char* directory, int directoryLength=-1);
+		PluginLoader(unsigned int type, const QStringList &baseDirectories, const char* directory, int directoryLength=-1);
 		~PluginLoader();
 
 		/**
@@ -238,7 +238,7 @@ class MAIN_EXPORT PluginLoader
 		const Plugin* operator[] (unsigned int index) const;
 
 	private:
-		void	filesInDir();
+		bool	filesInDir();
 
 		unsigned int		type;
 		QString				pluginsDirectory;

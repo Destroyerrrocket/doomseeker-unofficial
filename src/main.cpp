@@ -46,43 +46,48 @@ int main(int argc, char* argv[])
 {
 	pLog << "Starting Doomseeker. Hello World! :)";
 
+	QStringList dataDirectories;
+	dataDirectories << "./";
+#if defined(Q_OS_LINUX)
+	#ifndef INSTALL_PREFIX // For safety lets check for the defintion
+		#define INSTALL_PREFIX "/usr"
+	#endif
+	// check in /usr/local/share/doomseeker/ on Linux
+	dataDirectories << INSTALL_PREFIX "/share/doomseeker/";
+#endif
+
 	// Check for command line parameters
 	bool updateip2c = false;
 	for(int i = 0;i < argc;i++)
 	{
-		if(strcmp(argv[i], "--updateip2c") == 0)
+		if(strcmp(argv[i], "--datadir") == 0 && i+1 < argc)
+		{
+			i++;
+			dataDirectories.prepend(argv[i]);
+		}
+		else if(strcmp(argv[i], "--updateip2c") == 0)
 			updateip2c = true;
 		else if(strcmp(argv[i], "--help") == 0)
 		{
 			// Print information to the log and terminate.
 			pLog << QObject::tr("Available command line parameters:");
+			pLog << QObject::tr("	--datadir : Sets an explicit search location for IP2C data along with plugins.");
 			pLog << QObject::tr("	--updateip2c : Updates the IP2C database.");
 			return 0;
 		}
 	}
 
-	Main::enginePlugins = new PluginLoader(MAKEID('E','N','G','N'), "./engines/");
-	QApplication app(argc, argv);
-
 	QString firstArg = argv[0];
 	int lastSlash = qMax<int>(firstArg.lastIndexOf('\\'), firstArg.lastIndexOf('/'));
 	if(lastSlash != -1)
 		Main::workingDirectory = firstArg.mid(0, lastSlash+1);
+	dataDirectories << Main::workingDirectory;
 
-	// If no plugins were found in ./ try looking in the directory in argv[0].
-	if(Main::enginePlugins->numPlugins() == 0)
-		Main::enginePlugins->resetPluginsDirectory(Main::workingDirectory.mid(0, lastSlash+1) + "engines/");
-#if defined(Q_OS_LINUX)
-	#ifndef INSTALL_PREFIX // For safety lets check for the defintion
-		#define INSTALL_PREFIX "/usr"
-	#endif
-	// Finally check in /usr/local/share/doomseeker/ on Linux
-	if(Main::enginePlugins->numPlugins() == 0)
-		Main::enginePlugins->resetPluginsDirectory(INSTALL_PREFIX "/share/doomseeker/engines/");
-#endif
+	Main::enginePlugins = new PluginLoader(MAKEID('E','N','G','N'), dataDirectories, "engines/");
+	QApplication app(argc, argv);
 
 	pLog << QObject::tr("Initializing IP2C database.");
-	Main::ip2c = new IP2C(Main::workingDirectory + "IpToCountry.csv", QUrl("http://software77.net/geo-ip?DL=1"));
+	Main::ip2c = new IP2C(dataDirectories, "IpToCountry.csv", QUrl("http://software77.net/geo-ip?DL=1"));
 	if(updateip2c)
 	{
 		pLog << QObject::tr("Starting the IP2C updater.");
@@ -94,6 +99,7 @@ int main(int argc, char* argv[])
 		{
 			updateProgressBox.show();
 			Main::ip2c->downloadDatabase(updateProgressBox.statusBar());
+			QObject::connect(Main::ip2c, SIGNAL(databaseUpdated()), &app, SLOT(quit()));
 			return app.exec();
 		}
 		return 0;
