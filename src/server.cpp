@@ -211,7 +211,7 @@ QString Server::teamNames[] =
 Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
 	serverAddress(address), serverPort(port),
 	currentGameMode(GameMode::COOPERATIVE), currentPing(999), locked(false),
-	maxClients(0), maxPlayers(0), serverName(tr("<< ERROR >>")),
+	maxClients(0), maxPlayers(0), numBots(0), serverName(tr("<< ERROR >>")),
 	serverScoreLimit(0), serverTimeLeft(0), serverTimeLimit(0)
 {
 	broadcastToLAN = false;
@@ -757,6 +757,14 @@ void Server::refreshStarts()
 
 void Server::refreshStops()
 {
+	// Count the number of bots
+	numBots = 0;
+	foreach(const Player &player, players)
+	{
+		if(player.isBot())
+			numBots++;
+	}
+
 	bIsRefreshing = false;
 	iwad = iwad.toLower();
 }

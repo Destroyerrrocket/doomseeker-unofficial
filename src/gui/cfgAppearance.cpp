@@ -83,6 +83,13 @@ void AppearanceConfigBox::readSettings()
 
 	setting = config->setting("CloseToTrayIcon");
 	cbCloseToTrayIcon->setChecked(setting->boolean());
+
+	// This is not really an appearance option, but it does change how the list
+	// appears and thus utilized the fact that the appearance options cause the 
+	// list to refresh.  It also doesn't fit into any of the other existing
+	// categories at this time.
+	setting = config->setting("BotsAreNotPlayers");
+	cbBotsNotPlayers->setChecked(setting->boolean());
 }
 
 void AppearanceConfigBox::saveSettings()
@@ -101,6 +108,9 @@ void AppearanceConfigBox::saveSettings()
 
 	setting = config->setting("CloseToTrayIcon");
 	setting->setValue(cbCloseToTrayIcon->isChecked());
+
+	setting = config->setting("BotsAreNotPlayers");
+	setting->setValue(cbBotsNotPlayers->isChecked());
 
 	emit appearanceChanged();
 }

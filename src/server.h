@@ -389,7 +389,7 @@ class MAIN_EXPORT Server : public QObject
 		unsigned short		maximumClients() const { return maxPlayers > maxClients ? maxPlayers : maxClients; }
 		unsigned short		maximumPlayers() const { return maxPlayers; }
 		const QString		&name() const { return serverName; }
-		int					numPlayers() const { return players.size(); }
+		int					numPlayers(bool includeBots=true) const { return includeBots ? players.size() : players.size()-numBots; }
 		int					numWads() const { return wads.size(); }
 		unsigned int		ping() const { return currentPing; }
 		const Player		&player(int index) const { return players[index]; }
@@ -658,6 +658,7 @@ class MAIN_EXPORT Server : public QObject
 		unsigned short		maxClients;
 		unsigned short		maxPlayers;
 		QString				motd;
+		int					numBots; // -1 means needs to be updated
 		QString				passwordConnect;
 		QString				passwordJoin;
 		QString				passwordRCon;

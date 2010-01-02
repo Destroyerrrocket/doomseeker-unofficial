@@ -447,10 +447,11 @@ void ServerListModel::setGood(int row, Server* server)
 
 	qstdItem = item(row, SLCID_PLAYERS);
 	int style = Main::config->setting("SlotStyle")->integer();
+	bool includeBots = !Main::config->setting("BotsAreNotPlayers")->boolean();
 	if(style != NUM_SLOTSTYLES)
-		fillItem(qstdItem, server->numPlayers(), PlayersDiagram(server).pixmap());
+		fillItem(qstdItem, server->numPlayers(includeBots), PlayersDiagram(server).pixmap());
 	else
-		fillItem(qstdItem, server->numPlayers(), QString("%1/%2").arg(server->numPlayers()).arg(server->maximumClients()));
+		fillItem(qstdItem, server->numPlayers(includeBots), QString("%1/%2").arg(server->numPlayers()).arg(server->maximumClients()));
 	// Unset some data if it has been set before.
 	qstdItem->setData(QVariant(QVariant::Invalid), style == NUM_SLOTSTYLES ? Qt::DecorationRole : Qt::DisplayRole);
 	qstdItem->setData(style == NUM_SLOTSTYLES ? 0 : USERROLE_RIGHTALIGNDECORATION, Qt::UserRole);
