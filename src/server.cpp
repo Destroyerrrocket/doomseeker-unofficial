@@ -529,8 +529,11 @@ QString Server::gameInfoTableHTML() const
 	}
 
 	// Players
-	QString firstTablePlayers = "<tr><td>" + players + ":&nbsp;</td><td>%1 / %2</td></tr>";
-	firstTablePlayers = firstTablePlayers.arg(this->numPlayers()).arg(this->maximumClients());
+	int canJoin = this->maximumPlayers() - this->numPlayers();
+	if(canJoin < 0)
+		canJoin = 0;
+	QString firstTablePlayers = "<tr><td>" + players + ":&nbsp;</td><td>%1 / %2 (%3 can join)</td></tr>";
+	firstTablePlayers = firstTablePlayers.arg(this->numPlayers()).arg(this->maximumClients()).arg(canJoin);
 
 	QString firstTable = "<table>";
 	firstTable += firstTableTimelimit;
