@@ -285,6 +285,14 @@ void ServerListModel::fillItem(QStandardItem* item, const QString& str)
 	item->setData(newStr, SLDT_SORT);
 }
 
+void ServerListModel::fillItem(QStandardItem* item, int sort, const QString& str)
+{
+	QVariant var = sort;
+
+	fillItem(item, str);
+	item->setData(sort, SLDT_SORT);
+}
+
 void ServerListModel::fillItem(QStandardItem* item, int num)
 {
 	QVariant var = num;
@@ -442,7 +450,7 @@ void ServerListModel::setGood(int row, Server* server)
 	if(style != NUM_SLOTSTYLES)
 		fillItem(qstdItem, server->numPlayers(), PlayersDiagram(server).pixmap());
 	else
-		fillItem(qstdItem, server->numPlayers());
+		fillItem(qstdItem, server->numPlayers(), QString("%1/%2").arg(server->numPlayers()).arg(server->maximumClients()));
 	// Unset some data if it has been set before.
 	qstdItem->setData(QVariant(QVariant::Invalid), style == NUM_SLOTSTYLES ? Qt::DecorationRole : Qt::DisplayRole);
 	qstdItem->setData(style == NUM_SLOTSTYLES ? 0 : USERROLE_RIGHTALIGNDECORATION, Qt::UserRole);
