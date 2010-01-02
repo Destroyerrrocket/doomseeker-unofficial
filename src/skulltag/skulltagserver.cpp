@@ -68,7 +68,13 @@ class SkulltagVersion
 
 		bool operator> (const SkulltagVersion &other) const
 		{
-			return (major > other.major && minor > other.minor && revision > other.revision && build > other.build && tag > other.tag);
+			if(major > other.major && minor > other.minor && revision > other.revision && build > other.build)
+				return true;
+			if((tag.isEmpty() && !other.tag.isEmpty()) || (tag > other.tag))
+				return true;
+			if(svnRevision > other.svnRevision)
+				return true;
+			return false;
 		}
 
 	protected:
