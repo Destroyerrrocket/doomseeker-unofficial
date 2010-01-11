@@ -107,7 +107,11 @@ void OdamexServer::connectParameters(QStringList &args, PathFinder &pf, bool &iw
 		{
 			QString pwaddir = pf.findWad(wad(i).toLower());
 			pwaddir.truncate(pwaddir.length() - wad(i).length());
+			#if defined(Q_OS_WIN32)
+			waddir += ";" + pwaddir;
+			#else
 			waddir += ":" + pwaddir;
+			#endif
 		}
 		args << waddir;
 	}
