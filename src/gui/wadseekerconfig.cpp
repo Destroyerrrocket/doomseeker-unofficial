@@ -23,8 +23,11 @@
 
 #include "gui/wadseekerconfig.h"
 #include "wadseeker/wadseeker.h"
+#include <QCompleter>
 #include <QDebug>
+#include <QDirModel>
 #include <QFileDialog>
+#include <QMessageBox>
 #include <QUrl>
 
 WadseekerConfigBox::WadseekerConfigBox(Config* cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
@@ -32,8 +35,8 @@ WadseekerConfigBox::WadseekerConfigBox(Config* cfg, QWidget* parent) : Configura
 	setupUi(this);
 
 	lstUrls->setModel(new QStandardItemModel());
+	cbTargetDirectory->setCompleter(new QCompleter(new QDirModel()));
 
-	connect(btnBrowseTargetDirectory, SIGNAL( clicked() ), this, SLOT( btnBrowseTargetDirectoryClicked() ) );
 	connect(btnIdgamesURLDefault, SIGNAL( clicked() ), this, SLOT( btnIdgamesURLDefaultClicked() ) );
 	connect(btnUrlAdd, SIGNAL( clicked() ), this, SLOT( btnUrlAddClicked() ) );
 	connect(btnUrlDefault, SIGNAL( clicked() ), this, SLOT( btnUrlDefaultClicked() ) );
@@ -42,15 +45,6 @@ WadseekerConfigBox::WadseekerConfigBox(Config* cfg, QWidget* parent) : Configura
 
 	cboIdgamesPriority->addItem("After all sites");
 	cboIdgamesPriority->addItem("After custom site");
-}
-
-void WadseekerConfigBox::btnBrowseTargetDirectoryClicked()
-{
-	QString filter;
-	QString strFilepath = QFileDialog::getExistingDirectory(this, tr("Wadseeker target directory"));
-
-	if(!strFilepath.isEmpty()) // don't update if nothing was selected.
-		leTargetDirectory->setText(strFilepath);
 }
 
 void WadseekerConfigBox::btnIdgamesURLDefaultClicked()
@@ -140,8 +134,11 @@ void WadseekerConfigBox::readSettings()
 {
 	SettingsData* setting;
 
+	setting = config->setting("WadPaths");
+	cbTargetDirectory->clear();
+	cbTargetDirectory->addItems(setting->string().split(";", QString::SkipEmptyParts));
 	setting = config->setting("WadseekerTargetDirectory");
-	leTargetDirectory->setText(setting->string());
+	cbTargetDirectory->setEditText(setting->string());
 
 	setting = config->setting("WadseekerSearchURLs");
 	QStringList urlLst = setting->string().split(";");
@@ -173,7 +170,10 @@ void WadseekerConfigBox::saveSettings()
 	SettingsData* setting;
 
 	setting = config->setting("WadseekerTargetDirectory");
-	setting->setValue(leTargetDirectory->text());
+	setting->setValue(cbTargetDirectory->currentText());
+	QFileInfo targetDirectoryInfo(cbTargetDirectory->currentText());
+	if(!targetDirectoryInfo.isWritable())
+		QMessageBox::warning(this, tr("Unwritable Target"), tr("The target directory you selected for Wadseeker can not be written to."));
 
 	QStringList* urlLst = this->urlListEncoded();
 	setting = config->setting("WadseekerSearchURLs");

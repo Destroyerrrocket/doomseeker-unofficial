@@ -211,6 +211,15 @@ void ConfigureDlg::saveSettings()
 	bCustomServersChanged = customServersCfgBox->allowSave();
 	mainConfig->saveConfig();
 	pLog << tr("Settings saved!");
+
+	if(isVisible())
+	{
+		// Allow panels such as the one for Wadseeker update their contents.
+		for (int i = 0; i < configBoxesList.count(); ++i)
+		{
+			configBoxesList[i]->confBox->read();
+		}
+	}
 }
 
 

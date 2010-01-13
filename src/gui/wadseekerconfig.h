@@ -37,7 +37,6 @@ class WadseekerConfigBox : public ConfigurationBaseBox, private Ui::WadseekerCon
 		void readSettings();
 
 	protected slots:
-		void btnBrowseTargetDirectoryClicked();
 		void btnIdgamesURLDefaultClicked();
 		void btnUrlAddClicked();
 		void btnUrlDefaultClicked();
