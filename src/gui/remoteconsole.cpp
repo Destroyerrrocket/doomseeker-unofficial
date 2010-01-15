@@ -21,6 +21,8 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
+#include <QMessageBox>
+
 #include "remoteconsole.h"
 #include "passwordDlg.h"
 #include "widgets/serverconsole.h"
@@ -47,19 +49,10 @@ RemoteConsole::RemoteConsole(Server *server, QWidget *parent) : QMainWindow(pare
 	connect(serverConsole, SIGNAL(messageSent(const QString &)), protocol, SLOT(sendCommand(const QString &)));
 	connect(protocol, SIGNAL(disconnected()), this, SLOT(close()));
 	connect(protocol, SIGNAL(messageReceived(const QString &)), serverConsole, SLOT(appendMessage(const QString &)));
+	connect(protocol, SIGNAL(invalidPassword()), this, SLOT(invalidPassword()));
 	connect(protocol, SIGNAL(playerListUpdated()), this, SLOT(updatePlayerList()));
 
-	// Prompt for password.
-	PasswordDlg *dlg = new PasswordDlg(this, true);
-	connect(dlg, SIGNAL(rejected()), this, SLOT(close()));
-	int ret = dlg->exec();
-	if(ret == QDialog::Accepted)
-	{
-		protocol->sendPassword(dlg->connectPassword());
-	}
-	delete dlg;
-	if(ret != QDialog::Accepted)
-		return;
+	showPasswordDialog();
 }
  
 void RemoteConsole::closeEvent(QCloseEvent *event)
@@ -69,10 +62,29 @@ void RemoteConsole::closeEvent(QCloseEvent *event)
 	event->accept();
 }
 
+void RemoteConsole::invalidPassword()
+{
+	QMessageBox::critical(NULL, tr("Invalid Password"), tr("The password you entered appears to be invalid."));
+	showPasswordDialog();
+}
+
 void RemoteConsole::disconnectFromServer()
 {
 	if(protocol->isConnected())
 		protocol->disconnectFromServer();
+}
+
+void RemoteConsole::showPasswordDialog()
+{
+	// Prompt for password.
+	PasswordDlg *dlg = new PasswordDlg(this, true);
+	connect(dlg, SIGNAL(rejected()), this, SLOT(close()));
+	int ret = dlg->exec();
+	if(ret == QDialog::Accepted)
+	{
+		protocol->sendPassword(dlg->connectPassword());
+	}
+	delete dlg;
 }
 
 void RemoteConsole::updatePlayerList()

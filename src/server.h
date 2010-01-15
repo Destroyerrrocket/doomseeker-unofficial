@@ -318,6 +318,7 @@ class MAIN_EXPORT RConProtocol : public QThread
 
 	signals:
 		void			disconnected();
+		void			invalidPassword();
 		void			messageReceived(const QString &cmd);
 		void			playerListUpdated();
 

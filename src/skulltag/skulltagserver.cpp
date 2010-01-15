@@ -1179,6 +1179,7 @@ void SkulltagRConProtocol::sendPassword(const QString &password)
 	// conversions in order to use the functions with our C++ code.
 	// Hence the mess.
 	QString hashPassword = salt + password;
+	qDebug() << hashPassword;
 	MD5_CTX context;
 	MD5Init(&context);
 	unsigned char tmp[128];
@@ -1189,6 +1190,7 @@ void SkulltagRConProtocol::sendPassword(const QString &password)
 	QString md5;
 	for(int i = 0;i < 16;i++)
 		md5 += QString("%1").arg(out[i], 2, 16, QChar('0'));
+	qDebug() << md5;
 
 	// Create the packet
 	unsigned char passwordPacket[34];
@@ -1205,39 +1207,7 @@ void SkulltagRConProtocol::sendPassword(const QString &password)
 
 		if(socket.waitForReadyRead(3000))
 		{
-			int size = socket.pendingDatagramSize();
-			char* data = new char[size];
-			socket.readDatagram(data, size);
-			char packet[4096];
-			int decodedSize = 4096;
-			HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (data), reinterpret_cast<unsigned char*> (packet), size, &decodedSize);
-			delete[] data;
-			switch(packet[0])
-			{
-				default:
-				case SVRC_INVALIDPASSWORD:
-					connected = false;
-					QMessageBox::critical(NULL, tr("Invalid Password"), tr("The password you entered appears to be invalid."));
-					disconnectFromServer();
-					break;
-				case SVRC_LOGGEDIN:
-					start();
-					serverProtocolVersion = packet[1];
-					hostName = QString(&packet[2]);
-					qDebug() << hostName;
-					int numUpdates = packet[hostName.length() + 3];
-					int position = 0;
-					processPacket(packet + hostName.length() + 4, decodedSize - hostName.length() - 4, true, numUpdates, &position);
-					position += hostName.length() + 4;
-					int numStrings = packet[position++];
-					while(numStrings-- > 0)
-					{
-						QString message(&packet[position]);
-						position += message.length() + 1;
-						emit messageReceived(message);
-					}
-					break;
-			}
+			start();
 			break;
 		}
 	}
@@ -1293,6 +1263,28 @@ void SkulltagRConProtocol::processPacket(const char *data, int length, bool init
 				if(pos != NULL)
 					*pos = position;
 				return;
+			case SVRC_INVALIDPASSWORD:
+				emit invalidPassword();
+				break;
+			case SVRC_LOGGEDIN:
+			{
+				start();
+				serverProtocolVersion = data[1];
+				hostName = QString(&data[2]);
+				qDebug() << hostName;
+				int numUpdates = data[hostName.length() + 3];
+				int position = 0;
+				processPacket(data + hostName.length() + 4, length - hostName.length() - 4, true, numUpdates, &position);
+				position += hostName.length() + 4;
+				int numStrings = data[position++];
+				while(numStrings-- > 0)
+				{
+					QString message(&data[position]);
+					position += message.length() + 1;
+					emit messageReceived(message);
+				}
+				break;
+			}
 			case SVRC_MESSAGE:
 			{
 				QString message = QString(&data[position]);

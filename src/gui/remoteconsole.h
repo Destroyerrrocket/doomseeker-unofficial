@@ -40,8 +40,10 @@ class RemoteConsole : public QMainWindow, private Ui::RemoteConsole
 
 	protected:
 		void	closeEvent(QCloseEvent *event);
+		void	showPasswordDialog();
 
 	protected slots:
+		void	invalidPassword();
 		void	updatePlayerList();
 
 	private:
