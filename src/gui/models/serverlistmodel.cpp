@@ -24,6 +24,7 @@
 #include "gui/widgets/serverlistview.h"
 #include "log.h"
 #include "main.h"
+#include <assert.h>
 #include <QItemDelegate>
 #include <QPainter>
 #include <QTime>
@@ -147,6 +148,7 @@ class PlayersDiagram
 					slot = spectatorImage;
 				else if(i < server->maximumPlayers())
 					slot = openImage;
+				assert(slot != NULL);
 				p.drawImage(position, 0, *slot);
 				position -= slotSize;
 			}
