@@ -47,7 +47,7 @@ const GameMode OdamexServer::GAME_MODES[NUM_ODAMEX_GAME_MODES] =
 const DMFlagsSection OdamexServer::DM_FLAGS =
 {
 	tr("DMFlags"),
-	13,
+	14,
 	{
 		{ tr("Items respawn"),									0 },
 		{ tr("Weapons stay"),									1 },
@@ -61,7 +61,8 @@ const DMFlagsSection OdamexServer::DM_FLAGS =
 		{ tr("Freelook allowed"),								9 },
 		{ tr("Wad can be downloaded"),							10 },
 		{ tr("Server resets on empty"),							11 },
-		{ tr("Kill anyone who tries to leave the level"),		12 }
+		{ tr("Clean Maps"),										12 },
+		{ tr("Kill anyone who tries to leave the level"),		13 }
 	}
 };
 
@@ -96,6 +97,16 @@ void OdamexServer::connectParameters(QStringList &args, PathFinder &pf, bool &iw
 	Server::connectParameters(args, pf, iwadFound, connectPassword);
 
 	args << Main::config->setting("OdamexCustomParameters")->string().split(" ", QString::SkipEmptyParts);
+
+	if(dehPatches.count() > 0)
+	{
+		args << "-deh";
+		foreach(QString patch, dehPatches)
+		{
+			QString file = pf.findWad(patch.toLower());
+			args << file;
+		}
+	}
 
 	if(iwadFound)
 	{
@@ -245,7 +256,7 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 	dmFlagsSec->size = 0;
 	dmFlagsSec->name = DM_FLAGS.name;
 	dmFlags << dmFlagsSec;
-	for(int i = 0;i < 13;i++)
+	for(int i = 0;i < 14;i++)
 	{
 		if(READINT8(&in[pos++]) == 1)
 		{
@@ -272,12 +283,24 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 	if(READINT32(&in[pos]) == EXTRA_INFO)
 	{
 		pos += 4;
-		locked = READINT8(&in[pos++]) == 1;
+		locked = READINT16(&in[pos]) == 1;
+		pos += 2;
 		int version = READINT32(&in[pos]);
 		int version_major = version/256;
 		int version_minor = (version % 256)/10;
 		int version_patch = (version % 256)%10;
 		serverVersion = QString("%1.%2.%3").arg(version_major).arg(version_minor).arg(version_patch);
+		pos += 4;
+
+		dehPatches.clear();
+		int numPatches = READINT8(&in[pos++]);
+		for(int i = 0;i < numPatches;i++)
+		{
+			QString patch(&in[pos]);
+			dehPatches << patch;
+			wads << patch; // So that it can be seeked.
+			pos += patch.length()+1;
+		}
 	}
 
 	return RESPONSE_GOOD;

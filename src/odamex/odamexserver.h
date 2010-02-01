@@ -61,6 +61,7 @@ class OdamexServer : public Server
 		bool		sendRequest(QByteArray &data);
 
 		short			protocol;
+		QStringList		dehPatches;
 };
 
 #endif /* __ODAMEXSERVER_H__ */
