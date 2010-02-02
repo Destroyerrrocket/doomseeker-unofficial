@@ -104,7 +104,7 @@ void CustomServersConfigBox::prepareEnginesComboBox()
 {
 	cboEngines->clear();
 
-	for (int i = 0; i < Main::enginePlugins->numPlugins(); ++i)
+	for (unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
 		const PluginInfo* nfo = (*Main::enginePlugins)[i]->info;
 		cboEngines->addItem(nfo->pInterface->icon(), nfo->name, i);

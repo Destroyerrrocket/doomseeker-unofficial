@@ -30,10 +30,6 @@
 #include "refresher.h"
 #include "server.h"
 
-#include <QAbstractItemView>
-#include <QListView>
-#include <QStandardItemModel>
-
 /**
  * This class holds some global information.
  */
@@ -48,44 +44,6 @@ class MAIN_EXPORT Main
 		static bool					running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
 		static RefreshingThread*	refreshingThread;
 		static QString				workingDirectory;
-
-		/**
-		 *	Global GUI method.
-		 */
-		static QStringList		listViewStandardItemsToStringList(QListView* lv)
-		{
-			QStringList list;
-			QStandardItemModel* model = static_cast<QStandardItemModel*>(lv->model());
-			for (int i = 0; i < model->rowCount(); ++i)
-			{
-				list << model->item(i)->text();
-			}
-
-			return list;
-		}
-
-		/**
-		 *	Global GUI method.
-		 */
-		static void 			removeSelectionFromStandardItemView(QAbstractItemView* view)
-		{
-			QItemSelectionModel* selModel = view->selectionModel();
-			QModelIndexList indexList = selModel->selectedIndexes();
-			selModel->clear();
-
-			QStandardItemModel* model = static_cast<QStandardItemModel*>(view->model());
-			QList<QStandardItem*> itemList;
-			for (int i = 0; i < indexList.count(); ++i)
-			{
-				itemList << model->itemFromIndex(indexList[i]);
-			}
-
-			for (int i = 0; i < itemList.count(); ++i)
-			{
-				QModelIndex index = model->indexFromItem(itemList[i]);
-				model->removeRow(index.row());
-			}
-		}
 
 		/**
 		 *	Translates string in format "hostname:port" to atomic values.

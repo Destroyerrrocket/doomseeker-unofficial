@@ -35,7 +35,10 @@
 #include "sdeapi/pluginloader.hpp"
 #include "sdeapi/scanner.hpp"
 
-IP2C::IP2C(const QStringList &baseDirectories, QString file, QUrl netLocation) : netLocation(netLocation), downloadProgressWidget(NULL), flagLan(":flags/lan-small"), flagLocalhost(":flags/localhost-small"), flagUnknown(":flags/unknown-small")
+IP2C::IP2C(const QStringList &baseDirectories, QString file, QUrl netLocation)
+: downloadProgressWidget(NULL), flagLan(":flags/lan-small"),
+  flagLocalhost(":flags/localhost-small"), flagUnknown(":flags/unknown-small"),
+  netLocation(netLocation)
 {
 	// By default use the first directory.
 	this->file = baseDirectories[0] + '/' + file;
@@ -243,24 +246,13 @@ bool IP2C::needsUpdate()
 
 CountryInfo IP2C::obtainCountryInfo(unsigned int ipaddress)
 {
-	const static unsigned LOCALHOST_BEGIN = QHostAddress("127.0.0.0").toIPv4Address();
-	const static unsigned LOCALHOST_END = QHostAddress("127.255.255.255").toIPv4Address();
-	const static unsigned LAN_1_BEGIN = QHostAddress("10.0.0.0").toIPv4Address();
-	const static unsigned LAN_1_END = QHostAddress("10.255.255.255").toIPv4Address();
-	const static unsigned LAN_2_BEGIN = QHostAddress("172.16.0.0").toIPv4Address();
-	const static unsigned LAN_2_END = QHostAddress("127.31.255.255").toIPv4Address();
-	const static unsigned LAN_3_BEGIN = QHostAddress("192.168.0.0").toIPv4Address();
-	const static unsigned LAN_3_END = QHostAddress("192.168.255.255").toIPv4Address();
-
-	if (ipaddress >= LOCALHOST_BEGIN && ipaddress <= LOCALHOST_END)
+	if (isLocalhostAddress(ipaddress))
 	{
 		CountryInfo ci = { true, &flagLocalhost, tr("Localhost") };
 		return ci;
 	}
 
-	if (ipaddress >= LAN_1_BEGIN && ipaddress <= LAN_1_END
-	||	ipaddress >= LAN_2_BEGIN && ipaddress <= LAN_2_END
-	||	ipaddress >= LAN_3_BEGIN && ipaddress <= LAN_3_END)
+	if (isLANAddress(ipaddress))
 	{
 		CountryInfo ci = { true, &flagLan, tr("LAN") };
 		return ci;

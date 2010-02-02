@@ -61,8 +61,8 @@ struct MAIN_EXPORT SettingsData : public QObject
 		QString		m_str;
 		Config*		m_parent;
 
-		SettingsData(Config* parent, int integer=0) : m_parent(parent), m_integer(0), m_str(tr("")), m_type(ST_INT) { setValue(integer); }
-		SettingsData(Config* parent, QString str) : m_parent(parent), m_integer(0), m_str(tr("")), m_type(ST_STR) { setValue(str); }
+		SettingsData(Config* parent, int integer=0) : m_type(ST_INT), m_integer(0), m_str(tr("")), m_parent(parent) { setValue(integer); }
+		SettingsData(Config* parent, QString str) : m_type(ST_STR), m_integer(0), m_str(tr("")), m_parent(parent) { setValue(str); }
 
 	friend class Config;
 };

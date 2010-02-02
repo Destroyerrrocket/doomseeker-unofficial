@@ -117,8 +117,10 @@ PluginLoader::PluginLoader(unsigned int type, const QStringList &baseDirectories
 
 PluginLoader::~PluginLoader()
 {
-	for(unsigned int i = 0;i < pluginsList.size();i++)
+	for(int i = 0; i < pluginsList.size(); ++i)
+	{
 		delete pluginsList[i];
+	}
 }
 
 void PluginLoader::clearPlugins()

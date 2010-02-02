@@ -60,7 +60,7 @@ void RefreshingThread::gotoSleep()
 
 Server*	RefreshingThread::obtainServerFromBatch(ServerBatch& batch, const QHostAddress& address, qint16 port)
 {
-	for(unsigned int j = 0; j < batch.servers.size(); ++j)
+	for(int j = 0; j < batch.servers.size(); ++j)
 	{
 		Server *server = batch.servers[j];
 		if(server->port() == port && server->address() == address)
@@ -175,7 +175,7 @@ void RefreshingThread::readPendingDatagrams()
 	if (registeredBatches.size() != 0)
 	{
 		thisMutex.lock();
-		for(unsigned int i = 0; i < registeredBatches.size(); ++i)
+		for(int i = 0; i < registeredBatches.size(); ++i)
 		{
 			Server *server = obtainServerFromBatch(registeredBatches[i], address, port);
 			if (server != NULL)
@@ -243,7 +243,7 @@ void RefreshingThread::sendServerQueries()
 	{
 		//qDebug() << unbatchedServers.size() << " unbatched servers.";
 		unsigned int querySlotsInUse = 0;
-		for(unsigned int i = 0;i < registeredBatches.size();i++)
+		for(int i = 0; i < registeredBatches.size(); ++i)
 		{
 			//printf("Sending queries from batch: %u\n", i);
 			if(registeredBatches[i].servers.size() == 0)

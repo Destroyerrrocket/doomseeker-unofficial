@@ -35,7 +35,7 @@ class AboutDlg : public QDialog, private Ui::aboutDlg
 		~AboutDlg();
 
 	public slots:
-		void	changePlugin(int plugin);
+		void	changePlugin(unsigned pluginIndex);
 };
 
 #endif /* __ABOUTDIALOG_H__ */

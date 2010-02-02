@@ -25,7 +25,7 @@
 #include "odamex/odamexmasterclient.h"
 #include "odamex/odamexserver.h"
 
-#define MASTER_CHALLENGE	0xA3,0xDB,0x0B,0x00
+#define MASTER_CHALLENGE		0x000BDBA3
 
 OdamexMasterClient::OdamexMasterClient(QHostAddress address, unsigned short port) : MasterClient(address, port)
 {
@@ -38,8 +38,12 @@ bool OdamexMasterClient::readRequest(QByteArray &data, bool &expectingMorePacket
 
 	// Check the response code
 	int response = READINT32(&in[0]);
-	if(response != MASTER_CHALLENGE)
+
+
+	if (response != MASTER_CHALLENGE)
+	{
 		return false;
+	}
 
 	// Make sure we have an empty list.
 	emptyServerList();
@@ -60,8 +64,11 @@ bool OdamexMasterClient::readRequest(QByteArray &data, bool &expectingMorePacket
 
 bool OdamexMasterClient::sendRequest(QByteArray &data)
 {
-	const char challenge[4] = {MASTER_CHALLENGE};
+	char challenge[4];
+	WRITEINT32(challenge, MASTER_CHALLENGE);
+
 	const QByteArray chall(challenge, 4);
 	data.append(chall);
+
 	return true;
 }

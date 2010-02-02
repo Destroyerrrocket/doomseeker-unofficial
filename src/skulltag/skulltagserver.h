@@ -33,7 +33,7 @@
 #define NUM_SKULLTAG_GAME_MODES	16
 #define NUM_SKULLTAG_GAME_MODIFIERS 2
 #define NUM_DMFLAG_SECTIONS		3
-#define ST_MAX_TEAMS			4
+#define ST_MAX_TEAMS			4U
 
 class SkulltagServer;
 
@@ -142,8 +142,8 @@ class SkulltagServer : public Server
 
 		QString			serverBinary(QString& error) const;
 
-		QRgb			teamColor(int team) const;
-		QString			teamName(int team) const;
+		QRgb			teamColor(unsigned team) const;
+		QString			teamName(unsigned team) const;
 
 	protected slots:
 		void			updatedSlot(Server* server, int response);

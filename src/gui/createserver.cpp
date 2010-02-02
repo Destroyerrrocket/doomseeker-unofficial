@@ -23,6 +23,7 @@
 #include "createserver.h"
 #include "copytextdlg.h"
 #include "main.h"
+#include "commonGUI.h"
 
 #include <QCheckBox>
 #include <QFileDialog>
@@ -253,12 +254,12 @@ void CreateServerDlg::btnPlayOfflineClicked()
 
 void CreateServerDlg::btnRemoveMapFromMaplistClicked()
 {
-	Main::removeSelectionFromStandardItemView(lstMaplist);
+	CommonGUI::removeSelectedItemsFromStandardItemView(lstMaplist);
 }
 
 void CreateServerDlg::btnRemovePwadClicked()
 {
-	Main::removeSelectionFromStandardItemView(lstAdditionalFiles);
+	CommonGUI::removeSelectedItemsFromStandardItemView(lstAdditionalFiles);
 }
 
 void CreateServerDlg::btnSaveClicked()
@@ -290,7 +291,7 @@ void CreateServerDlg::cboEngineSelected(int index)
 {
 	if (index >= 0)
 	{
-		int enginePluginIndex = cboEngine->itemData(index).toInt();
+		unsigned enginePluginIndex = cboEngine->itemData(index).toUInt();
 		if (enginePluginIndex < Main::enginePlugins->numPlugins())
 		{
 			const PluginInfo* nfo = (*Main::enginePlugins)[enginePluginIndex]->info;
@@ -316,7 +317,7 @@ bool CreateServerDlg::createHostInfo(HostInfo& hi, Server* server)
 		hi.executablePath = leExecutable->text();
 
 		hi.iwadPath = cboIwad->currentText();
-		hi.pwadsPaths = Main::listViewStandardItemsToStringList(lstAdditionalFiles);
+		hi.pwadsPaths = CommonGUI::listViewStandardItemsToStringList(lstAdditionalFiles);
 
 		// DMFlags
 		foreach(const DMFlagsTabWidget* p, dmFlagsTabs)
@@ -360,7 +361,7 @@ bool CreateServerDlg::createHostInfo(HostInfo& hi, Server* server)
 		server->setBroadcastToMaster(cbBroadcastToMaster->isChecked());
 		server->setHostEmail(leEmail->text());
 		server->setMap(leMap->text());
-		server->setMapList(Main::listViewStandardItemsToStringList(lstMaplist));
+		server->setMapList(CommonGUI::listViewStandardItemsToStringList(lstMaplist));
 		server->setRandomMapRotation(cbRandomMapRotation->isChecked());
 		server->setMaximumClients(spinMaxClients->value());
 		server->setMaximumPlayers(spinMaxPlayers->value());
@@ -408,7 +409,7 @@ void CreateServerDlg::initDMFlagsTabs()
 	int paramsIndex = tabWidget->indexOf(tabCustomParameters);
 	const GeneralEngineInfo& engNfo = currentEngine->pInterface->generalEngineInfo();
 	const DMFlagsSection* dmFlagsSec = engNfo.allDMFlags;
-	for (int i = 0; i < engNfo.dmFlagsSectionsNum; ++i)
+	for (unsigned i = 0; i < engNfo.dmFlagsSectionsNum; ++i)
 	{
 		DMFlagsTabWidget* dmftw = new DMFlagsTabWidget();
 
@@ -526,7 +527,7 @@ void CreateServerDlg::initPrimary()
 {
 	cboEngine->clear();
 
-	for (int i = 0; i < Main::enginePlugins->numPlugins(); ++i)
+	for (unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
 		const PluginInfo* nfo = (*Main::enginePlugins)[i]->info;
 		cboEngine->addItem(nfo->pInterface->icon(), nfo->name, i);
@@ -573,7 +574,7 @@ void CreateServerDlg::initRules()
 
 		cboModifier->addItem(tr("< NONE >"));
 
-		for (int i = 0; i < engNfo.gameModifiersNum; ++i)
+		for (unsigned i = 0; i < engNfo.gameModifiersNum; ++i)
 		{
 			cboModifier->addItem(engNfo.gameModifiers[i].name);
 			gameModifiers << engNfo.gameModifiers[i];
@@ -748,7 +749,7 @@ bool CreateServerDlg::saveConfig(const QString& filename)
 	cfg.setting("map")->setValue(leMap->text());
 	cfg.setting("iwad")->setValue(cboIwad->currentText());
 
-	stringList = Main::listViewStandardItemsToStringList(lstAdditionalFiles);
+	stringList = CommonGUI::listViewStandardItemsToStringList(lstAdditionalFiles);
 	cfg.setting("pwads")->setValue(stringList.join(";"));
 
 	cfg.setting("broadcastToLAN")->setValue(cbBroadcastToLAN->isChecked());
@@ -766,7 +767,7 @@ bool CreateServerDlg::saveConfig(const QString& filename)
 		cfg.setting((*it)->limit.consoleCommand)->setValue((*it)->spinBox->value());
 	}
 
-	stringList = Main::listViewStandardItemsToStringList(lstMaplist);
+	stringList = CommonGUI::listViewStandardItemsToStringList(lstMaplist);
 	cfg.setting("maplist")->setValue(stringList.join(";"));
 	cfg.setting("randomMapRotation")->setValue(cbRandomMapRotation->isChecked());
 

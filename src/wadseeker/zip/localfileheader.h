@@ -64,7 +64,7 @@ struct ZipLocalFileHeader
 	unsigned long	fileEntrySize() const
 	{
 		long dataDescriptorSize = 0;
-		if (generalPurposeBitFlag & DESCRIPTOR_EXISTS_FLAG == DESCRIPTOR_EXISTS_FLAG)
+		if ((generalPurposeBitFlag & DESCRIPTOR_EXISTS_FLAG) == DESCRIPTOR_EXISTS_FLAG)
 		{
 			dataDescriptorSize = 12;
 		}

@@ -81,6 +81,7 @@ set(SOURCE_FILES
 	gui/cfgcustomservers.cpp	
 	gui/cfgFilePaths.cpp
 	gui/cfgQuery.cpp
+	gui/commonGUI.cpp
 	gui/configureDlg.cpp
 	gui/copytextdlg.cpp
 	gui/createserver.cpp

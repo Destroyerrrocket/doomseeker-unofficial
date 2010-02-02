@@ -239,9 +239,11 @@ const GameCVar SkulltagServer::GAME_MODIFIERS[NUM_SKULLTAG_GAME_MODIFIERS] =
 	GameCVar("Instagib", "instagib")
 };
 
-SkulltagServer::SkulltagServer(const QHostAddress &address, unsigned short port) : Server(address, port),
-	botSkill(0), buckshot(false), duelLimit(0), fragLimit(0), instagib(false),
-	numTeams(2), pointLimit(0), teamDamage(0.0f), winLimit(0), testingServer(false)
+SkulltagServer::SkulltagServer(const QHostAddress &address, unsigned short port)
+: Server(address, port),
+  buckshot(false), instagib(false), testingServer(false), teamDamage(0.0f),
+  botSkill(0), duelLimit(0), fragLimit(0), pointLimit(0), winLimit(0),
+  numTeams(2)
 {
 	teamInfo[0] = TeamInfo(tr("Blue"), QColor(0, 0, 255), 0);
 	teamInfo[1] = TeamInfo(tr("Red"), QColor(255, 0, 0), 0);
@@ -823,7 +825,8 @@ Server::Response SkulltagServer::readRequest(QByteArray &data)
 				bool spectating = READINT8(&packetOut[pos+4]) != 0;
 				bool bot = READINT8(&packetOut[pos+5]) != 0;
 				int team = teammode ? READINT8(&packetOut[pos+6]) : Player::TEAM_NONE;
-				int time = READINT8(&packetOut[pos+(teammode ? 7 : 6)]);
+				// Unused:
+				// int time = READINT8(&packetOut[pos+(teammode ? 7 : 6)]);
 				pos += teammode ? 8 : 7;
 
 				Player player(name, score, ping, static_cast<Player::PlayerTeam> (team), spectating, bot);
@@ -841,7 +844,7 @@ Server::Response SkulltagServer::readRequest(QByteArray &data)
 	if((flags & SQF_TEAMINFO_NAME) == SQF_TEAMINFO_NAME)
 	{
 		flags ^= SQF_TEAMINFO_NAME;
-		for(int i = 0;i < numTeams && i < ST_MAX_TEAMS;i++)
+		for(unsigned i = 0; i < numTeams && i < ST_MAX_TEAMS; ++i)
 		{
 			teamInfo[i].setName(tr(&packetOut[pos]));
 			pos += teamInfo[i].name().length() + 1;
@@ -855,9 +858,9 @@ Server::Response SkulltagServer::readRequest(QByteArray &data)
 	{
 		flags ^= SQF_TEAMINFO_COLOR;
 		// NOTE: This may not be correct
-		int forLimit = qMin((int)numTeams, ST_MAX_TEAMS);
+		unsigned forLimit = qMin(numTeams, ST_MAX_TEAMS);
 
-		for(int i = 0; i < forLimit; i++)
+		for(unsigned i = 0; i < forLimit; i++)
 		{
 			teamInfo[i].setColor(QColor(READINT32(&packetOut[pos])));
 			pos += 4;
@@ -871,9 +874,9 @@ Server::Response SkulltagServer::readRequest(QByteArray &data)
 	if((flags & SQF_TEAMINFO_SCORE) == SQF_TEAMINFO_SCORE)
 	{
 		flags ^= SQF_TEAMINFO_SCORE;
-		int forLimit = qMin((int)numTeams, ST_MAX_TEAMS);
+		unsigned forLimit = qMin(numTeams, ST_MAX_TEAMS);
 
-		for(int i = 0; i < forLimit; i++)
+		for(unsigned i = 0; i < forLimit; i++)
 		{
 			teamInfo[i].setScore(READINT16(&packetOut[pos]));
 			if(i < MAX_TEAMS) // Transfer to super class score array if possible.
@@ -1027,7 +1030,7 @@ bool SkulltagServer::spawnTestingBatchFile(const QString& versionDir, QString& f
 	return true;
 }
 
-QRgb SkulltagServer::teamColor(int team) const
+QRgb SkulltagServer::teamColor(unsigned team) const
 {
 	if(team >= ST_MAX_TEAMS || team < 0)
 		return Server::teamColor(team);
@@ -1035,7 +1038,7 @@ QRgb SkulltagServer::teamColor(int team) const
 	return teamInfo[team].color().rgb();
 }
 
-QString	SkulltagServer::teamName(int team) const
+QString	SkulltagServer::teamName(unsigned team) const
 {
 	if (team == 255)
 		return "NO TEAM";
@@ -1308,7 +1311,11 @@ void SkulltagRConProtocol::processPacket(const char *data, int length, bool init
 					}
 					case SVRCU_ADMINCOUNT:
 					{
-						int admins = data[position++];
+						// Unused:
+						// int admins = data[position++];
+						// !!! MAKE SURE to remove the line below if line above
+						// is uncommented!
+						position++;
 						break;
 					}
 					case SVRCU_PLAYERDATA:

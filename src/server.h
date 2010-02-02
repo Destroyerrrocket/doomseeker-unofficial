@@ -157,7 +157,7 @@ struct MAIN_EXPORT GameCVar
 	void			setValue(const QString& str) { val = str; }
 
 	const QString&	value() const { return val; }
-	bool			valueBool() const { static_cast<bool>(val.toInt()); }
+	bool			valueBool() const { return (val.toInt() != 0); }
 	bool			valueInt() const { return val.toInt(); }
 
 	protected:

@@ -54,7 +54,7 @@ RemoteConsole::RemoteConsole(Server *server, QWidget *parent) : QMainWindow(pare
 
 	showPasswordDialog();
 }
- 
+
 void RemoteConsole::closeEvent(QCloseEvent *event)
 {
 	if(protocol->isConnected())
@@ -92,6 +92,10 @@ void RemoteConsole::updatePlayerList()
 	const QList<Player> &list = protocol->playerList();
 
 	playerTable->setRowCount(list.size());
-	for(unsigned int i = 0;i < list.size();i++)
-		playerTable->setItem(i, 0, new QTableWidgetItem(list[i].nameFormatted()));
+	for(int i = 0; i < list.size(); ++i)
+	{
+		QString name = list[i].nameFormatted();
+		QTableWidgetItem* newItem = new QTableWidgetItem(name);
+		playerTable->setItem(i, 0, newItem);
+	}
 }

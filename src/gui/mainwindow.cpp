@@ -41,8 +41,9 @@
 #include <QMessageBox>
 
 MainWindow::MainWindow(int argc, char** argv)
-: mc(NULL), buddiesList(NULL), trayIcon(NULL), trayIconMenu(NULL),
-bTotalRefreshInProcess(false), bWantToQuit(false), logDock(NULL)
+: bTotalRefreshInProcess(false), bWasMaximized(false), bWantToQuit(false),
+  // private
+  buddiesList(NULL), logDock(NULL), mc(NULL), trayIcon(NULL), trayIconMenu(NULL)
 {
 	Main::mainWindow = this;
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
@@ -246,7 +247,7 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 {
 	// This is called only once from the constructor. No clears to
 	// queryMenuPorts are ever performed. Not even in the destructor.
-	for(int i = 0;i < Main::enginePlugins->numPlugins();i++)
+	for(unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
 		const EnginePlugin* plugin = (*Main::enginePlugins)[i]->info->pInterface;
 		if(!plugin->generalEngineInfo().hasMasterServer)
@@ -427,7 +428,7 @@ void MainWindow::menuOptionsConfigure()
 {
 	ConfigureDlg dlg(Main::config, this);
 
-	for(int i = 0;i < Main::enginePlugins->numPlugins();i++)
+	for(unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
 		ConfigurationBoxInfo* ec = (*Main::enginePlugins)[i]->info->pInterface->configuration(Main::config, &dlg);
 		dlg.addEngineConfiguration(ec);

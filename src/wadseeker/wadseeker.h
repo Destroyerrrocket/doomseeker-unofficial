@@ -41,7 +41,7 @@
 #define WADSEEKER_API
 #endif
 
-class WADSEEKER_API WWWSeeker;
+class WWWSeeker;
 
 /**
  *	@mainpage Wadseeker API

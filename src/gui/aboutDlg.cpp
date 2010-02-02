@@ -44,7 +44,7 @@ AboutDlg::AboutDlg(QWidget* parent) : QDialog(parent)
 	wadseekerYearSpan->setText(Wadseeker::yearSpan());
 
 	// Populate plugins dialog
-	for(int i = 0;i < Main::enginePlugins->numPlugins();i++)
+	for(unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
 		pluginBox->addItem( (*Main::enginePlugins)[i]->info->name);
 	}
@@ -56,12 +56,12 @@ AboutDlg::~AboutDlg()
 {
 }
 
-void AboutDlg::changePlugin(int plugin)
+void AboutDlg::changePlugin(unsigned pluginIndex)
 {
-	if(plugin >= Main::enginePlugins->numPlugins())
+	if(pluginIndex >= Main::enginePlugins->numPlugins())
 		return; // Invalid plugin.
 
-	const Plugin* plug = (*Main::enginePlugins)[plugin];
+	const Plugin* plug = (*Main::enginePlugins)[pluginIndex];
 
 	pluginAuthor->setText(plug->info->author);
 	pluginVersion->setText(QString("%1.%2.%3.%4").arg(plug->info->version[0]).arg(plug->info->version[1]).arg(plug->info->version[2]).arg(plug->info->version[3]));

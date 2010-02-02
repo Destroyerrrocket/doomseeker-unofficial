@@ -34,8 +34,9 @@
 // \c = '\034'
 #define	ESCAPE_COLOR	'\034'
 
-Player::Player(const QString &name, unsigned short score, unsigned short ping, PlayerTeam team, bool spectator, bool bot) :
-	playerName(name), currentScore(score), currentPing(ping), team(team), spectator(spectator), bot(bot)
+Player::Player(const QString &name, unsigned short score, unsigned short ping, PlayerTeam team, bool spectator, bool bot)
+: playerName(name), currentScore(score), currentPing(ping),
+  spectator(spectator), bot(bot), team(team)
 {
 }
 
@@ -209,17 +210,17 @@ QString Server::teamNames[] =
 };
 
 Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
-	serverAddress(address), serverPort(port),
 	currentGameMode(GameMode::COOPERATIVE), currentPing(999), locked(false),
 	maxClients(0), maxPlayers(0), numBots(0), serverName(tr("<< ERROR >>")),
-	serverScoreLimit(0), serverTimeLeft(0), serverTimeLimit(0)
+	serverScoreLimit(0), serverTimeLeft(0), serverTimeLimit(0),
+	// private
+	bIsRefreshing(false), serverAddress(address), serverPort(port)
 {
 	broadcastToLAN = false;
 	broadcastToMaster = false;
 	mapRandomRotation = false;
 	bDelete = false;
 	bKnown = false;
-	bIsRefreshing = false;
 	custom = false;
 	skill = 3;
 	for(int i = 0;i < MAX_TEAMS;i++)

@@ -30,8 +30,13 @@
 
 DockBuddiesList::BuddyInfo &DockBuddiesList::BuddyInfo::operator= (const DockBuddiesList::BuddyInfo &other)
 {
-	player = other.buddy();
-	server = other.location();
+	if (this != &other)
+	{
+		player = other.buddy();
+		server = other.location();
+	}
+
+	return *this;
 }
 
 DockBuddiesList::DockBuddiesList(QWidget *parent) : QDockWidget(parent), mc(NULL), save(false)

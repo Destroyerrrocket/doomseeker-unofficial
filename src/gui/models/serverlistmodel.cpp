@@ -101,7 +101,7 @@ class PlayersDiagram
 			int numBots = numSpectators; // Bots not on a team
 			int numPlayersTeam[MAX_TEAMS] = {0, 0, 0, 0};
 			int numBotsTeam[MAX_TEAMS] = {0, 0, 0, 0};
-			for(unsigned int i = 0;i < server->numPlayers();i++)
+			for(int i = 0; i < server->numPlayers(); ++i)
 			{
 				if(server->player(i).isSpectating())
 				{
@@ -674,6 +674,9 @@ bool ServerListSortFilterProxyModel::compareColumnSortData(QVariant& var1, QVari
 			else
 				return false;
 			break;
+
+		default:
+			return false;
 	}
 }
 

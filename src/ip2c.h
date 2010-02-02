@@ -186,6 +186,30 @@ class MAIN_EXPORT IP2C : public QObject
 
 		const QPixmap&	flag(unsigned int ipaddress, const QString& countryShortName);
 
+		inline bool		isLANAddress(unsigned ipv4Address)
+		{
+			const static unsigned LAN_1_BEGIN = QHostAddress("10.0.0.0").toIPv4Address();
+			const static unsigned LAN_1_END = QHostAddress("10.255.255.255").toIPv4Address();
+			const static unsigned LAN_2_BEGIN = QHostAddress("172.16.0.0").toIPv4Address();
+			const static unsigned LAN_2_END = QHostAddress("127.31.255.255").toIPv4Address();
+			const static unsigned LAN_3_BEGIN = QHostAddress("192.168.0.0").toIPv4Address();
+			const static unsigned LAN_3_END = QHostAddress("192.168.255.255").toIPv4Address();
+
+			return (
+					(ipv4Address >= LAN_1_BEGIN && ipv4Address <= LAN_1_END)
+				||	(ipv4Address >= LAN_2_BEGIN && ipv4Address <= LAN_2_END)
+				||	(ipv4Address >= LAN_3_BEGIN && ipv4Address <= LAN_3_END)
+					);
+		}
+
+		inline bool		isLocalhostAddress(unsigned ipv4Address)
+		{
+			const static unsigned LOCALHOST_BEGIN = QHostAddress("127.0.0.0").toIPv4Address();
+			const static unsigned LOCALHOST_END = QHostAddress("127.255.255.255").toIPv4Address();
+
+			return (ipv4Address >= LOCALHOST_BEGIN && ipv4Address <= LOCALHOST_END);
+		}
+
 		bool	readDatabaseVersion1(const QByteArray& dataArray);
 		bool	readDatabaseVersion2(const QByteArray& dataArray);
 
@@ -198,17 +222,16 @@ class MAIN_EXPORT IP2C : public QObject
 		void	readTextDatabase(QByteArray& textDatabase, Countries& countries);
 
 	private:
+		QList<IP2CData>			database;
+		QProgressBar*			downloadProgressWidget;
+		QString					file;
 		const QPixmap			flagLan;
 		const QPixmap			flagLocalhost;
 		const QPixmap			flagUnknown;
 		QHash<QString, QPixmap>	flags;
 		const IP2CData			invalidData;
-
-		QList<IP2CData>			database;
-		QString					file;
 		QUrl					netLocation;
 		bool					read;
-		QProgressBar			*downloadProgressWidget;
 		WWW*					www;
 
 	private slots:
