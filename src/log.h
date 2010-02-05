@@ -28,13 +28,16 @@
 #include "global.h"
 #include <QObject>
 
+/**
+ *	@brief Log manager.
+ */
 class MAIN_EXPORT Log : public QObject
 {
 	Q_OBJECT;
 
 	public:
 		/**
-		 *	Global instance of the logger.
+		 *	@brief Global instance of the logger.
 		 */
 		static Log			pLogInst;
 
@@ -64,51 +67,56 @@ class MAIN_EXPORT Log : public QObject
 		void 				setTimestampsEnabled(bool b) { timestamps = b; }
 
 		/**
-		 *	Executes addEntry(const QString&).
+		 *	@brief Executes addEntry(const QString&).
 		 */
 		Log& 				operator<<(const QString& string);
 
 	public slots:
 		/**
-		 *	Prints the string to specified output and appends '\n' character
+		 *	Prints the string to specified output and appends a '\\n' character
 		 *	to the end of that string. Additional formatting is also applied
 		 *	if certain flags are enabled.
+		 *	@see newEntry()
 		 */
 		void	addEntry(const QString& string);
 
 		/**
-		 *	Prints the string to specified output AS IT IS. No additional
-		 *	formatting is done, no '\n' character is appended.
+		 *	Prints the string to specified output AS IT IS.
+		 *	@see addEntry()
+		 *	@see newEntry()
 		 */
 		void	addUnformattedEntry(const QString& string);
 
 		/**
-		 *	Clears log content stored in the memory.
+		 *	@brief Clears log content stored in the memory.
 		 */
 		void	clearContent() { logContent.clear(); }
 
 	signals:
 		/**
-		 *	Sends out already formatted new entry.
+		 *	Sends out an already formatted new entry. Please note that there
+		 *	are no additional newline character appended to the entry string.
+		 *	This is emitted by addEntry() and addUnformattedEntry() slots.
 		 */
 		void	newEntry(const QString& entry);
 
 	protected:
 		/**
-		 *	Entire content of the log.
+		 *	@brief Entire content of the log.
 		 */
 		QString		logContent;
 
 		int			doLogPrintf(char* output, unsigned outputSize, const char* str, va_list argList);
 
 		/**
-		 *	If true all new entries will be also printed to stdout.
+		 *	If true all new entries will also be printed to stdout. Otherwise
+		 *	entries are stored only in the logContent member.
 		 *	Default is true.
 		 */
 		bool		printToStdout;
 
 		/**
-		 *	Timestamps are in format [hh:mm:ss]. Enabled by default.
+		 *	@brief Timestamps are in format [hh:mm:ss]. Enabled by default.
 		 */
 		bool		timestamps;
 

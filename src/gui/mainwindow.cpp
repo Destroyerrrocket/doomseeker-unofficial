@@ -184,6 +184,7 @@ void MainWindow::btnRefreshAll_Click()
 void MainWindow::btnGetServers_Click()
 {
 	bTotalRefreshInProcess = true;
+	autoRefreshTimer.stop();
 	pLog << tr("Total refresh process initialized!");
 	serverTableHandler->clearTable();
 	refreshCustomServers();
@@ -585,9 +586,15 @@ void MainWindow::refreshThreadEndsWork()
 {
 	btnGetServers->setEnabled(true);
 	btnRefreshAll->setEnabled(true);
+
 	serverTableHandler->serverTable()->setAllowAllRowsRefresh(true);
 	statusBar()->showMessage(tr("Done"));
 	updateTrayIconTooltipAndLogTotalRefresh();
+
+	if (bTotalRefreshInProcess)
+	{
+		initAutoRefreshTimer();
+	}
 
 	bTotalRefreshInProcess = false;
 }
