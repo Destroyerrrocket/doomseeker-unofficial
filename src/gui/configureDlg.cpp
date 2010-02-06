@@ -26,7 +26,9 @@
 #include "gui/cfgcustomservers.h"
 #include "gui/cfgFilePaths.h"
 #include "gui/cfgQuery.h"
-#include "gui/wadseekerconfig.h"
+#include "gui/wadseekerconfiggeneral.h"
+#include "gui/wadseekerconfigidgames.h"
+#include "gui/wadseekerconfigsites.h"
 #include "log.h"
 #include <Qt>
 #include <QDebug>
@@ -60,9 +62,9 @@ ConfigureDlg::~ConfigureDlg()
 	}
 }
 
-bool ConfigureDlg::addConfigurationBox(QStandardItem* rootItem, ConfigurationBoxInfo* cfgBox, int pos)
+bool ConfigureDlg::addConfigurationBox(QStandardItem* rootItem, ConfigurationBoxInfo* cfgBox, int position)
 {
-	if (cfgBox == NULL || cfgBox->confBox == NULL || cfgBox->boxName.isEmpty() || cfgBox->itemOnTheList != NULL)
+	if (!canConfigurationBoxBeAddedToList(cfgBox))
 	{
 		return false;
 	}
@@ -70,19 +72,20 @@ bool ConfigureDlg::addConfigurationBox(QStandardItem* rootItem, ConfigurationBox
 	QStandardItem* item = new QStandardItem(cfgBox->boxName);
 	item->setIcon(cfgBox->icon);
 	cfgBox->itemOnTheList = item;
+
 	if (rootItem == NULL)
 	{
 		QStandardItemModel* model = (QStandardItemModel*)tvOptionsList->model();
 		rootItem = model->invisibleRootItem();
 	}
 
-	if (pos < 0)
+	if (position < 0)
 	{
 		rootItem->appendRow(item);
 	}
 	else
 	{
-		rootItem->insertRow(pos, item);
+		rootItem->insertRow(position, item);
 	}
 
 	configBoxesList.push_back(cfgBox);
@@ -106,6 +109,23 @@ void ConfigureDlg::appearanceChangedSlot()
 	bAppearanceChanged = true;
 }
 
+void ConfigureDlg::appendWadseekerConfigurationBoxes(QStandardItemModel* model)
+{
+	QStandardItem* wadseekerRoot = new QStandardItem(tr("Wadseeker"));
+	model->appendRow(wadseekerRoot);
+
+	ConfigurationBoxInfo* cfgBoxInfo = NULL;
+
+	cfgBoxInfo = WadseekerGeneralConfigBox::createStructure(mainConfig, this);
+	addConfigurationBox(wadseekerRoot, cfgBoxInfo);
+
+	cfgBoxInfo = WadseekerSitesConfigBox::createStructure(mainConfig, this);
+	addConfigurationBox(wadseekerRoot, cfgBoxInfo);
+
+	cfgBoxInfo = WadseekerIdgamesConfigBox::createStructure(mainConfig, this);
+	addConfigurationBox(wadseekerRoot, cfgBoxInfo);
+}
+
 void ConfigureDlg::btnClicked(QAbstractButton *button)
 {
 	// Figure out what button we pressed and perform its action.
@@ -113,15 +133,23 @@ void ConfigureDlg::btnClicked(QAbstractButton *button)
 	{
 		default:
 			break;
+
 		case QDialogButtonBox::Ok: // Also does the same as Apply
 			this->accept();
+
 		case QDialogButtonBox::Apply:
 			this->saveSettings();
 			break;
+
 		case QDialogButtonBox::Cancel:
 			this->reject();
 			break;
 	}
+}
+
+bool ConfigureDlg::canConfigurationBoxBeAddedToList(ConfigurationBoxInfo* cfgBoxInfo)
+{
+	return isConfigurationBoxInfoValid(cfgBoxInfo) && !cfgBoxInfo->boxName.isEmpty() && cfgBoxInfo->itemOnTheList == NULL;
 }
 
 ConfigurationBoxInfo* ConfigureDlg::findConfigurationBoxInfo(const QStandardItem* item)
@@ -129,10 +157,10 @@ ConfigurationBoxInfo* ConfigureDlg::findConfigurationBoxInfo(const QStandardItem
 	// Cycle through known engines
 	for(int i = 0; i < configBoxesList.count(); ++i)
 	{
-		ConfigurationBoxInfo* ec = configBoxesList[i];
-		if (item == ec->itemOnTheList && ec->confBox != NULL)
+		ConfigurationBoxInfo* cfgBoxInfo = configBoxesList[i];
+		if (item == cfgBoxInfo->itemOnTheList && cfgBoxInfo->confBox != NULL)
 		{
-			return ec;
+			return cfgBoxInfo;
 		}
 	}
 
@@ -142,54 +170,45 @@ ConfigurationBoxInfo* ConfigureDlg::findConfigurationBoxInfo(const QStandardItem
 void ConfigureDlg::initOptionsList()
 {
 	QStandardItemModel* model = new QStandardItemModel(this);
-	QStandardItem* root1;
 
-	root1 = new QStandardItem("Engines");
-	model->appendRow(root1);
-	enginesRoot = root1;
+	enginesRoot = new QStandardItem(tr("Engines"));
+	model->appendRow(enginesRoot);
 
-//	root1 = new QStandardItem("<HIDE>");
-//	model->appendRow(root1);
-//	hider = root1;
+	ConfigurationBoxInfo* cfgBoxInfo = NULL;
 
-	ConfigurationBoxInfo* cbi;
+	cfgBoxInfo = AppearanceConfigBox::createStructure(mainConfig, this);
+	addConfigurationBox(model->invisibleRootItem(), cfgBoxInfo);
 
-	cbi = AppearanceConfigBox::createStructure(mainConfig, this);
-	addConfigurationBox(model->invisibleRootItem(), cbi);
+	cfgBoxInfo = CustomServersConfigBox::createStructure(mainConfig, this);
+	addConfigurationBox(model->invisibleRootItem(), cfgBoxInfo);
+	customServersCfgBox = cfgBoxInfo->confBox;
 
-	cbi = CustomServersConfigBox::createStructure(mainConfig, this);
-	addConfigurationBox(model->invisibleRootItem(), cbi);
-	customServersCfgBox = cbi->confBox;
+	cfgBoxInfo = QueryConfigBox::createStructure(mainConfig, this);
+	addConfigurationBox(model->invisibleRootItem(), cfgBoxInfo);
 
-	cbi = QueryConfigBox::createStructure(mainConfig, this);
-	addConfigurationBox(model->invisibleRootItem(), cbi);
+	cfgBoxInfo = FilePathsConfigBox::createStructure(mainConfig, this);
+	addConfigurationBox(model->invisibleRootItem(), cfgBoxInfo);
 
-	cbi = FilePathsConfigBox::createStructure(mainConfig, this);
-	addConfigurationBox(model->invisibleRootItem(), cbi);
-
-	cbi = WadseekerConfigBox::createStructure(mainConfig, this);
-	addConfigurationBox(model->invisibleRootItem(), cbi);
+	appendWadseekerConfigurationBoxes(model);
 
 	tvOptionsList->setModel(model);
 }
 
+bool ConfigureDlg::isConfigurationBoxInfoValid(ConfigurationBoxInfo* cfgBoxInfo)
+{
+	return cfgBoxInfo != NULL && cfgBoxInfo->confBox != NULL;
+}
+
 void ConfigureDlg::optionListClicked(const QModelIndex& index)
 {
-	QString str = index.data().toString();
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(tvOptionsList->model());
 	QStandardItem* item = model->itemFromIndex(index);
-
-//	if (item == hider)
-//	{
-//		showConfigurationBox(NULL);
-//		return;
-//	}
 
 	ConfigurationBoxInfo *cfgBox = findConfigurationBoxInfo(item);
 
 	// Something with sense was selected, display this something
 	// and hide previous box.
-	if (cfgBox != NULL && cfgBox->confBox != NULL)
+	if (isConfigurationBoxInfoValid(cfgBox))
 	{
 		if (!cfgBox->confBox->areSettingsAlreadyRead())
 		{

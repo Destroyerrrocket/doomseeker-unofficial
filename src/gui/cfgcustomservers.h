@@ -27,6 +27,8 @@
 #include "customservers.h"
 #include "ui_cfgcustomservers.h"
 
+class PluginInfo;
+
 class CustomServersConfigBox : public ConfigurationBaseBox, private Ui::CustomServersConfigBox
 {
 	Q_OBJECT
@@ -37,20 +39,46 @@ class CustomServersConfigBox : public ConfigurationBaseBox, private Ui::CustomSe
 		void						readSettings();
 
 	protected:
+		enum CheckAndFixPorts
+		{
+			AllOk,
+			AtLeastOneFixed
+		};
+
+		enum ColumnIndices
+		{
+			EngineColumnIndex 		= 0,
+			AddressColumnIndex 		= 1,
+			PortColumnIndex			= 2
+		};
+
 		QStandardItemModel* model;
 
 		CustomServersConfigBox(Config *cfg, QWidget *parent=NULL);
 
+		/**
+		 *	@brief Moves through rows and checks if network port information
+		 *	is correct.
+		 *
+		 *	@param firstRow - First row to be checked (inclusive).
+		 *	@param lastRow - Last row to be checked (inclusive).
+		 */
+		CheckAndFixPorts	checkAndFixPorts(int firstRow, int lastRow);
+		const PluginInfo*	getPluginInfoForRow(int rowIndex);
+		bool				isPortColumnWithingRange(int leftmostColumnIndex, int rightmostColumnIndex);
+		bool				isPortCorrect(int rowIndex);
 
-		void	prepareEnginesComboBox();
-		void	prepareTable();
-		void	saveSettings();
-		void	setEngineOnItem(QStandardItem*, const QString& engineName);
+		void				prepareEnginesComboBox();
+		void				prepareTable();
+		void				saveSettings();
+		void				setEngineOnItem(QStandardItem*, const QString& engineName);
+		void				setPortToDefault(int rowIndex);
+
 		/**
 		 *	Encodes table entries into format:
 		 * `(<engine_name>;<host_name>;<port>);(...)...`
 		 */
-		QString	tableEntriesEncoded();
+		QString				tableEntriesEncoded();
 
 	protected slots:
 		void 	add();

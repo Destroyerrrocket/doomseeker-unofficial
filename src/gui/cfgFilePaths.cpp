@@ -45,25 +45,10 @@ void FilePathsConfigBox::addPath(const QString& strPath)
 
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstIwadAndPwadPaths->model());
 
-	// Check if this path exists already, if so - do nothing.
-	for(int i = 0; i < model->rowCount(); ++i)
+	if (!isPathAlreadyDefined(strPath))
 	{
-		QStandardItem* item = model->item(i);
-		QString dir = item->text();
-		Qt::CaseSensitivity cs;
-
-		#ifdef Q_OS_WIN32
-		cs = Qt::CaseInsensitive;
-		#else
-		cs = Qt::CaseSensitive;
-		#endif
-
-		if (dir.compare(strPath, cs) == 0)
-		{
-			return;
-		}
+		model->appendRow(new QStandardItem(strPath));
 	}
-	model->appendRow(new QStandardItem(strPath));
 }
 
 void FilePathsConfigBox::btnAddWadPath_Click()
@@ -98,6 +83,32 @@ ConfigurationBoxInfo* FilePathsConfigBox::createStructure(Config* cfg, QWidget* 
 	ec->confBox = new FilePathsConfigBox(cfg, parent);
 	ec->boxName = tr("File paths");
 	return ec;
+}
+
+bool FilePathsConfigBox::isPathAlreadyDefined(const QString& path)
+{
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstIwadAndPwadPaths->model());
+
+	Qt::CaseSensitivity caseSensitivity;
+
+	#ifdef Q_OS_WIN32
+	caseSensitivity = Qt::CaseInsensitive;
+	#else
+	caseSensitivity = Qt::CaseSensitive;
+	#endif
+
+	for(int i = 0; i < model->rowCount(); ++i)
+	{
+		QStandardItem* item = model->item(i);
+		QString dir = item->text();
+
+		if (dir.compare(path, caseSensitivity) == 0)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void FilePathsConfigBox::readSettings()

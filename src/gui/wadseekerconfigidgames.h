@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// cfgFilePaths.h
+// wadseekerconfigidgames.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,33 +18,32 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#ifndef __WADSEEKERCONFIG_IDGAMES_H_
+#define __WADSEEKERCONFIG_IDGAMES_H_
 
-#ifndef __CFG_FILE_PATHS_H_
-#define __CFG_FILE_PATHS_H_
-
+#include "ui_wadseekerconfigidgames.h"
 #include "gui/configBase.h"
-#include "ui_cfgFilePaths.h"
+#include <QKeyEvent>
 
-class FilePathsConfigBox : public ConfigurationBaseBox, private Ui::FilePathsConfigBox
+class WadseekerIdgamesConfigBox : public ConfigurationBaseBox, private Ui::WadseekerIdgamesConfigBox
 {
 	Q_OBJECT
 
-	protected:
-		FilePathsConfigBox(Config*, QWidget* parent = 0);
-		void 		addPath(const QString& strPath);
-		bool		isPathAlreadyDefined(const QString& path);
-		void 		saveSettings();
+	public:
+		static ConfigurationBoxInfo* createStructure(Config* cfg, QWidget* parent = NULL);
+
+		void 			readSettings();
 
 	protected slots:
-		void 		btnAddWadPath_Click();
-		void 		btnRemoveWadPath_Click();
+		void 			btnIdgamesURLDefaultClicked();
+		void			cbUseIdgamesToggled(bool checked);
 
-	public:
-		static ConfigurationBoxInfo* 	createStructure(Config* cfg, QWidget* parent = NULL);
+	protected:
+		WadseekerIdgamesConfigBox(Config*, QWidget* parent = NULL);
 
-		void 		readSettings();
+		void 			saveSettings();
 };
 
 #endif

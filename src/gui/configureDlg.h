@@ -40,6 +40,11 @@ class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 		bool	appearanceChanged() const { return bAppearanceChanged; }
 		bool 	customServersChanged() const { return bCustomServersChanged; }
 
+	protected:
+		void	appendWadseekerConfigurationBoxes(QStandardItemModel* model);
+		bool	canConfigurationBoxBeAddedToList(ConfigurationBoxInfo* cfgBoxInfo);
+		bool	isConfigurationBoxInfoValid(ConfigurationBoxInfo* cfgBoxInfo);
+
 	protected slots:
 		/**
 		 *	When called, sets bAppearanceChanged to true.
@@ -55,10 +60,6 @@ class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 		bool		bAppearanceChanged;
 		bool		bCustomServersChanged;
 
-		// hider for debug purposes, if clicked
-		// hides current box and shows nothing
-		//QStandardItem*					hider;
-
 		QStandardItem*					enginesRoot;
 		QList<ConfigurationBoxInfo*>	configBoxesList;
 		QWidget*						currentlyDisplayedCfgBox;
@@ -68,14 +69,14 @@ class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 		void		saveSettings();
 
 		/**
-		 * Passing NULL as rootItem will add the item to the tree view's root.
-		 * Passing <0 to pos parameter will use appendRow method.
+		 *	Passing NULL as rootItem will add the item to the tree view's root.
+		 *	Passing <0 to pos parameter will use appendRow method.
 		 *
-		 * Will return false and do nothing
-		 * if the ConfigurationBoxInfo is not properly filled
-		 * or if itemOnTheList member is not NULL.
+		 *	Will return false and do nothing
+		 *	if the ConfigurationBoxInfo is not properly filled
+		 *	or if itemOnTheList member is not NULL.
 		 */
-		bool 					addConfigurationBox(QStandardItem* rootItem, ConfigurationBoxInfo*, int pos = -1);
+		bool 					addConfigurationBox(QStandardItem* rootItem, ConfigurationBoxInfo*, int position = -1);
 
 		/**
 		 * 	@param widget - hide currently displayed box if NULL.

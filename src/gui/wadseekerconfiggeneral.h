@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// wadseekerconfig.h
+// wadseekerconfiggeneral.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,38 +18,28 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __WADSEEKERCONFIG_H_
-#define __WADSEEKERCONFIG_H_
+#ifndef __WADSEEKERCONFIG_GENERAL_H_
+#define __WADSEEKERCONFIG_GENERAL_H_
 
-#include "ui_wadseekerconfig.h"
+#include "ui_wadseekerconfiggeneral.h"
 #include "gui/configBase.h"
-#include <QKeyEvent>
 
-class WadseekerConfigBox : public ConfigurationBaseBox, private Ui::WadseekerConfigBox
+class WadseekerGeneralConfigBox : public ConfigurationBaseBox, private Ui::WadseekerGeneralConfigBox
 {
 	Q_OBJECT
 
 	public:
 		static ConfigurationBoxInfo* createStructure(Config* cfg, QWidget* parent = NULL);
 
-		void readSettings();
-
-	protected slots:
-		void btnIdgamesURLDefaultClicked();
-		void btnUrlAddClicked();
-		void btnUrlDefaultClicked();
-		void btnUrlRemoveClicked();
-
-		void focusChanged(QWidget* old, QWidget* now);
+		void 			readSettings();
 
 	protected:
-		WadseekerConfigBox(Config*, QWidget* parent = NULL);
+		WadseekerGeneralConfigBox(Config*, QWidget* parent = NULL);
 
+		void			fillTargetDirectoryComboBox();
 		void 			saveSettings();
-		void 			insertUrl(const QUrl& url);
-		QStringList*	urlListEncoded();
 };
 
 #endif

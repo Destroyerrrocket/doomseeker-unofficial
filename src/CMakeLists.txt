@@ -34,7 +34,9 @@ qt4_wrap_ui(doomseekerUI
 	gui/mainwindow.ui
 	gui/passwordDlg.ui
 	gui/remoteconsole.ui
-	gui/wadseekerconfig.ui
+	gui/wadseekerconfiggeneral.ui
+	gui/wadseekerconfigidgames.ui
+	gui/wadseekerconfigsites.ui
 	gui/wadseekerinterface.ui
 	gui/widgets/serverconsole.ui
 )
@@ -56,7 +58,9 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/remoteconsole.h
 	gui/serverlist.h
 	gui/standardserverconsole.h
-	gui/wadseekerconfig.h
+	gui/wadseekerconfiggeneral.h
+	gui/wadseekerconfigidgames.h
+	gui/wadseekerconfigsites.h
 	gui/wadseekerinterface.h
 	gui/models/serverlistmodel.h
 	gui/widgets/dockedwidgets.h
@@ -92,7 +96,9 @@ set(SOURCE_FILES
 	gui/remoteconsole.cpp
 	gui/serverlist.cpp
 	gui/standardserverconsole.cpp
-	gui/wadseekerconfig.cpp
+	gui/wadseekerconfiggeneral.cpp
+	gui/wadseekerconfigidgames.cpp
+	gui/wadseekerconfigsites.cpp
 	gui/wadseekerinterface.cpp
 	gui/models/serverlistmodel.cpp
 	gui/widgets/serverconsole.cpp

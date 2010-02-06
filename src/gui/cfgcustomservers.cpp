@@ -55,15 +55,33 @@ void CustomServersConfigBox::add(const QString& engineName, const QString& host,
 {
 	QList<QStandardItem* > record;
 
-	QStandardItem* engine = new QStandardItem();
-	setEngineOnItem(engine, engineName);
+	QStandardItem* engineItem = new QStandardItem();
+	setEngineOnItem(engineItem, engineName);
 
-	record.append(engine);
+	QString portString = QString::number(port);
+
+	record.append(engineItem);
 	record.append(new QStandardItem(host));
-	record.append(new QStandardItem( QString::number(port) ));
+	record.append(new QStandardItem(portString));
 
 	model->appendRow(record);
 	tvServers->resizeRowsToContents();
+}
+
+CustomServersConfigBox::CheckAndFixPorts CustomServersConfigBox::checkAndFixPorts(int firstRow, int lastRow)
+{
+	CheckAndFixPorts returnValue = AllOk;
+	for (int rowIndex = firstRow; rowIndex <= lastRow; ++rowIndex)
+	{
+		if (!isPortCorrect(rowIndex))
+		{
+			returnValue = AtLeastOneFixed;
+
+			setPortToDefault(rowIndex);
+		}
+	}
+
+	return returnValue;
 }
 
 ConfigurationBoxInfo* CustomServersConfigBox::createStructure(Config *cfg, QWidget *parent)
@@ -76,28 +94,53 @@ ConfigurationBoxInfo* CustomServersConfigBox::createStructure(Config *cfg, QWidg
 
 void CustomServersConfigBox::dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
 {
-	if (bottomRight.column() < 2)
-		return;
-	else
-	{
-		// Check if port is in correct range
-		for (int i = topLeft.row(); i <= bottomRight.row(); ++i)
-		{
-			QStandardItem* item = model->item(i, 2);
-			bool ok;
-			int port = item->text().toInt(&ok);
-			if (!ok || port < 1 || port > 65535)
-			{
-				QMessageBox::warning(this, tr("Doomseeker - custom servers"), tr("Port must be from range 1 - 65535"));
+	const QString MESSAGE_TITLE = tr("Doomseeker - custom servers");
 
-				// Set port to default:
-				QStandardItem* itemEng = model->item(i, 0);
-				int pluginIndex = itemEng->data().toInt();
-				const PluginInfo* nfo = (*Main::enginePlugins)[pluginIndex]->info;
-				item->setText(QString::number(nfo->pInterface->generalEngineInfo().defaultServerPort));
-			}
+	int leftmostColumn = topLeft.column();
+	int rightmostColumn = bottomRight.column();
+
+	if ( isPortColumnWithingRange(leftmostColumn, rightmostColumn) )
+	{
+		switch ( checkAndFixPorts(topLeft.row(), bottomRight.row()) )
+		{
+			case AllOk:
+				// Ignore
+				break;
+
+			case AtLeastOneFixed:
+				QMessageBox::warning(this, MESSAGE_TITLE, tr("Port must be within range 1 - 65535"));
+				break;
+
+			default:
+				QMessageBox::warning(this, MESSAGE_TITLE, tr("Unimplemented behavior!"));
+				break;
 		}
 	}
+}
+
+const PluginInfo* CustomServersConfigBox::getPluginInfoForRow(int rowIndex)
+{
+	QStandardItem* itemEngine = model->item(rowIndex, EngineColumnIndex);
+	QString engineName = itemEngine->data().toString();
+	int pluginIndex = Main::enginePlugins->pluginIndexFromName(engineName);
+	return (*Main::enginePlugins)[pluginIndex]->info;
+}
+
+bool CustomServersConfigBox::isPortColumnWithingRange(int leftmostColumnIndex, int rightmostColumnIndex)
+{
+	return leftmostColumnIndex <= PortColumnIndex && rightmostColumnIndex >= PortColumnIndex;
+}
+
+bool CustomServersConfigBox::isPortCorrect(int rowIndex)
+{
+	const int MIN_PORT = 1;
+	const int MAX_PORT = 65535;
+
+	QStandardItem* item = model->item(rowIndex, PortColumnIndex);
+	bool ok;
+	int port = item->text().toInt(&ok);
+
+	return ok && port >= MIN_PORT && port <= MAX_PORT;
 }
 
 void CustomServersConfigBox::prepareEnginesComboBox()
@@ -217,20 +260,29 @@ void CustomServersConfigBox::setEngineOnItem(QStandardItem* item, const QString&
 	item->setText("");
 }
 
+void CustomServersConfigBox::setPortToDefault(int rowIndex)
+{
+	const PluginInfo* pluginInfo = getPluginInfoForRow(rowIndex);
+	QString defaultPort = QString::number(pluginInfo->pInterface->generalEngineInfo().defaultServerPort);
+
+	QStandardItem* itemPort = model->item(rowIndex, PortColumnIndex);
+	itemPort->setText(defaultPort);
+}
+
 QString	CustomServersConfigBox::tableEntriesEncoded()
 {
 	QStringList allItemsList;
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
 		QStringList itemList;
-		QStandardItem* item = model->item(i, 0);
+		QStandardItem* item = model->item(i, EngineColumnIndex);
 
 		itemList << QUrl::toPercentEncoding(item->data().toString(), "", "()");
 
-		item = model->item(i, 1);
+		item = model->item(i, AddressColumnIndex);
 		itemList << QUrl::toPercentEncoding(item->text(), "", "()");
 
-		item = model->item(i, 2);
+		item = model->item(i, PortColumnIndex);
 		itemList << item->text();
 
 		allItemsList << QString("(" + itemList.join(";") + ")");

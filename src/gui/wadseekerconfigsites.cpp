@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// wadseekerconfig.cpp
+// wadseekerconfigsites.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,10 +18,10 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 
-#include "gui/wadseekerconfig.h"
+#include "gui/wadseekerconfigsites.h"
 #include "wadseeker/wadseeker.h"
 #include <QCompleter>
 #include <QDebug>
@@ -30,34 +30,24 @@
 #include <QMessageBox>
 #include <QUrl>
 
-WadseekerConfigBox::WadseekerConfigBox(Config* cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
+WadseekerSitesConfigBox::WadseekerSitesConfigBox(Config* cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
 {
 	setupUi(this);
 
 	lstUrls->setModel(new QStandardItemModel());
-	cbTargetDirectory->setCompleter(new QCompleter(new QDirModel()));
 
-	connect(btnIdgamesURLDefault, SIGNAL( clicked() ), this, SLOT( btnIdgamesURLDefaultClicked() ) );
 	connect(btnUrlAdd, SIGNAL( clicked() ), this, SLOT( btnUrlAddClicked() ) );
 	connect(btnUrlDefault, SIGNAL( clicked() ), this, SLOT( btnUrlDefaultClicked() ) );
 	connect(btnUrlRemove, SIGNAL( clicked() ), this, SLOT( btnUrlRemoveClicked() ) );
 	connect(QApplication::instance(), SIGNAL( focusChanged(QWidget*, QWidget*) ), this, SLOT( focusChanged(QWidget*, QWidget*) ));
-
-	cboIdgamesPriority->addItem("After all sites");
-	cboIdgamesPriority->addItem("After custom site");
 }
 
-void WadseekerConfigBox::btnIdgamesURLDefaultClicked()
-{
-	leIdgamesURL->setText(Wadseeker::defaultIdgamesUrl());
-}
-
-void WadseekerConfigBox::btnUrlAddClicked()
+void WadseekerSitesConfigBox::btnUrlAddClicked()
 {
 	insertUrl(leUrl->text());
 }
 
-void WadseekerConfigBox::btnUrlDefaultClicked()
+void WadseekerSitesConfigBox::btnUrlDefaultClicked()
 {
 	for (int i = 0; !Wadseeker::defaultSites[i].isEmpty(); ++i)
 	{
@@ -65,7 +55,7 @@ void WadseekerConfigBox::btnUrlDefaultClicked()
 	}
 }
 
-void WadseekerConfigBox::btnUrlRemoveClicked()
+void WadseekerSitesConfigBox::btnUrlRemoveClicked()
 {
 	QItemSelectionModel* selModel = lstUrls->selectionModel();
 	QModelIndexList indexList = selModel->selectedIndexes();
@@ -85,15 +75,15 @@ void WadseekerConfigBox::btnUrlRemoveClicked()
 	}
 }
 
-ConfigurationBoxInfo* WadseekerConfigBox::createStructure(Config* cfg, QWidget* parent)
+ConfigurationBoxInfo* WadseekerSitesConfigBox::createStructure(Config* cfg, QWidget* parent)
 {
-	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
-	ec->confBox = new WadseekerConfigBox(cfg, parent);
-	ec->boxName = tr("Wadseeker");
-	return ec;
+	ConfigurationBoxInfo* cfgBoxInfo = new ConfigurationBoxInfo();
+	cfgBoxInfo->confBox = new WadseekerSitesConfigBox(cfg, parent);
+	cfgBoxInfo->boxName = tr("Sites");
+	return cfgBoxInfo;
 }
 
-void WadseekerConfigBox::focusChanged(QWidget* old, QWidget* now)
+void WadseekerSitesConfigBox::focusChanged(QWidget* old, QWidget* now)
 {
 	if (now == leUrl)
 	{
@@ -105,10 +95,12 @@ void WadseekerConfigBox::focusChanged(QWidget* old, QWidget* now)
 	}
 }
 
-void WadseekerConfigBox::insertUrl(const QUrl& url)
+void WadseekerSitesConfigBox::insertUrl(const QUrl& url)
 {
 	if (url.isEmpty())
+	{
 		return;
+	}
 
 	// first we check whether the URL is already in the box.
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstUrls->model());
@@ -130,15 +122,9 @@ void WadseekerConfigBox::insertUrl(const QUrl& url)
 	model->appendRow(it);
 }
 
-void WadseekerConfigBox::readSettings()
+void WadseekerSitesConfigBox::readSettings()
 {
 	SettingsData* setting;
-
-	setting = config->setting("WadPaths");
-	cbTargetDirectory->clear();
-	cbTargetDirectory->addItems(setting->string().split(";", QString::SkipEmptyParts));
-	setting = config->setting("WadseekerTargetDirectory");
-	cbTargetDirectory->setEditText(setting->string());
 
 	setting = config->setting("WadseekerSearchURLs");
 	QStringList urlLst = setting->string().split(";");
@@ -147,57 +133,20 @@ void WadseekerConfigBox::readSettings()
 	{
 		this->insertUrl(QUrl::fromPercentEncoding(it->toAscii()));
 	}
-
-	setting = config->setting("WadseekerSearchInIdgames");
-	bool b = static_cast<bool>(setting->integer());
-	gboIdgamesArchive->setChecked(b);
-
-	setting = config->setting("WadseekerIdgamesPriority");
-	cboIdgamesPriority->setCurrentIndex(setting->integer());
-
-	setting = config->setting("WadseekerIdgamesURL");
-	leIdgamesURL->setText(setting->string());
-
-	setting = config->setting("WadseekerConnectTimeoutSeconds");
-	spinConnectTimeout->setValue(setting->integer());
-
-	setting = config->setting("WadseekerDownloadTimeoutSeconds");
-	spinDownloadTimeout->setValue(setting->integer());
 }
 
-void WadseekerConfigBox::saveSettings()
+void WadseekerSitesConfigBox::saveSettings()
 {
 	SettingsData* setting;
-
-	setting = config->setting("WadseekerTargetDirectory");
-	setting->setValue(cbTargetDirectory->currentText());
-	QFileInfo targetDirectoryInfo(cbTargetDirectory->currentText());
-	if(!targetDirectoryInfo.isWritable())
-		QMessageBox::warning(this, tr("Unwritable Target"), tr("The target directory you selected for Wadseeker can not be written to."));
 
 	QStringList* urlLst = this->urlListEncoded();
 	setting = config->setting("WadseekerSearchURLs");
 	setting->setValue(urlLst->join(";"));
 
-	setting = config->setting("WadseekerSearchInIdgames");
-	setting->setValue(gboIdgamesArchive->isChecked());
-
-	setting = config->setting("WadseekerIdgamesPriority");
-	setting->setValue(cboIdgamesPriority->currentIndex());
-
-	setting = config->setting("WadseekerIdgamesURL");
-	setting->setValue(leIdgamesURL->text());
-
-	setting = config->setting("WadseekerConnectTimeoutSeconds");
-	setting->setValue(spinConnectTimeout->value());
-
-	setting = config->setting("WadseekerDownloadTimeoutSeconds");
-	setting->setValue(spinDownloadTimeout->value());
-
 	delete urlLst;
 }
 
-QStringList* WadseekerConfigBox::urlListEncoded()
+QStringList* WadseekerSitesConfigBox::urlListEncoded()
 {
 	QStringList* list = new QStringList();
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstUrls->model());

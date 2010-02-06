@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// cfgFilePaths.h
+// wadseekerconfigsites.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,33 +18,37 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#ifndef __WADSEEKERCONFIG_SITES_H_
+#define __WADSEEKERCONFIG_SITES_H_
 
-#ifndef __CFG_FILE_PATHS_H_
-#define __CFG_FILE_PATHS_H_
-
+#include "ui_wadseekerconfigsites.h"
 #include "gui/configBase.h"
-#include "ui_cfgFilePaths.h"
+#include <QKeyEvent>
 
-class FilePathsConfigBox : public ConfigurationBaseBox, private Ui::FilePathsConfigBox
+class WadseekerSitesConfigBox : public ConfigurationBaseBox, private Ui::WadseekerSitesConfigBox
 {
 	Q_OBJECT
 
-	protected:
-		FilePathsConfigBox(Config*, QWidget* parent = 0);
-		void 		addPath(const QString& strPath);
-		bool		isPathAlreadyDefined(const QString& path);
-		void 		saveSettings();
+	public:
+		static ConfigurationBoxInfo* createStructure(Config* cfg, QWidget* parent = NULL);
+
+		void readSettings();
 
 	protected slots:
-		void 		btnAddWadPath_Click();
-		void 		btnRemoveWadPath_Click();
+		void btnUrlAddClicked();
+		void btnUrlDefaultClicked();
+		void btnUrlRemoveClicked();
 
-	public:
-		static ConfigurationBoxInfo* 	createStructure(Config* cfg, QWidget* parent = NULL);
+		void focusChanged(QWidget* old, QWidget* now);
 
-		void 		readSettings();
+	protected:
+		WadseekerSitesConfigBox(Config*, QWidget* parent = NULL);
+
+		void 			saveSettings();
+		void 			insertUrl(const QUrl& url);
+		QStringList*	urlListEncoded();
 };
 
 #endif
