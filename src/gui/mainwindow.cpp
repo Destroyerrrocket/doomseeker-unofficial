@@ -29,6 +29,7 @@
 #include "gui/mainwindow.h"
 #include "gui/passwordDlg.h"
 #include "gui/wadseekerinterface.h"
+#include "gui/widgets/serversstatuswidget.h"
 #include "customservers.h"
 #include "log.h"
 #include "pathfinder.h"
@@ -260,20 +261,24 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		MasterClient* mClient = plugin->masterClient();
 		masterManager->addMaster(mClient);
 
-	    QString name = (*Main::enginePlugins)[i]->info->name;
-	    QQueryMenuAction* query = new QQueryMenuAction(mClient, menuQuery);
+		// Now is a good time to also populate the status bar widgets
+		ServersStatusWidget *statusWidget = new ServersStatusWidget(plugin->icon(), mClient);
+		statusBar()->addPermanentWidget(statusWidget);
+
+		QString name = (*Main::enginePlugins)[i]->info->name;
+		QQueryMenuAction* query = new QQueryMenuAction(mClient, statusWidget, menuQuery);
 		menuQuery->addAction(query);
 
 		query->setCheckable(true);
 		query->setIcon(plugin->icon());
 		query->setText(name);
 
-
 		if (Main::config->settingExists(name + "Query"))
 		{
 			bool enabled = static_cast<bool>(Main::config->setting(name + "Query")->integer());
 			mClient->setEnabled(enabled);
 			query->setChecked(enabled);
+			statusWidget->setEnabled(enabled);
 		}
 		else
 		{
@@ -281,6 +286,7 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 			// set default as follows:
 			mClient->setEnabled(true);
 			query->setChecked(true);
+			statusWidget->setEnabled(true);
 		}
 		queryMenuPorts.append(query);
 	}

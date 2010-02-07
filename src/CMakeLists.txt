@@ -66,6 +66,7 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/widgets/dockedwidgets.h
 	gui/widgets/serverconsole.h
 	gui/widgets/serverlistview.h
+	gui/widgets/serversstatuswidget.h
 	sdeapi/config.hpp
 	customservers.h
 	ip2c.h
@@ -103,6 +104,7 @@ set(SOURCE_FILES
 	gui/models/serverlistmodel.cpp
 	gui/widgets/serverconsole.cpp
 	gui/widgets/serverlistview.cpp
+	gui/widgets/serversstatuswidget.cpp
 	md5/md5c.c
 	md5/mddriver.c
 	sdeapi/config.cpp

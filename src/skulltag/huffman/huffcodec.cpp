@@ -295,7 +295,7 @@ namespace skulltag {
 		if ( treeNode->branch != 0 ){
 			deleteTree( &(treeNode->branch[0]) );
 			deleteTree( &(treeNode->branch[1]) );
-			delete treeNode->branch;
+			delete[] treeNode->branch;
 		}
 	}
 
@@ -304,7 +304,7 @@ namespace skulltag {
 		delete writer;
 		//check for resource ownership before deletion
 		if ( huffmanResourceOwner() ){
-			delete codeTable;
+			delete[] codeTable;
 			deleteTree( root );
 			delete root;
 		}

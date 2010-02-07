@@ -30,6 +30,7 @@
 #include "gui/dockBuddiesList.h"
 #include "gui/logdock.h"
 #include "gui/serverlist.h"
+#include "gui/widgets/serversstatuswidget.h"
 #include "ui_mainwindow.h"
 
 #include <QAction>
@@ -47,12 +48,13 @@
 class QQueryMenuAction : public QAction
 {
 	public:
-		QQueryMenuAction(MasterClient* mClient, QObject* parent = NULL)
+		QQueryMenuAction(MasterClient* mClient, ServersStatusWidget *statusWidget, QObject* parent = NULL)
 		:QAction(parent)
 		{
 			if (mClient != NULL)
 			{
 				connect(this, SIGNAL( toggled(bool) ), mClient, SLOT( setEnabled(bool) ) );
+				connect(this, SIGNAL( toggled(bool) ), statusWidget, SLOT( setEnabled(bool) ) );
 			}
 		}
 };
