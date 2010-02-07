@@ -105,8 +105,6 @@ set(SOURCE_FILES
 	gui/widgets/serverconsole.cpp
 	gui/widgets/serverlistview.cpp
 	gui/widgets/serversstatuswidget.cpp
-	md5/md5c.c
-	md5/mddriver.c
 	sdeapi/config.cpp
 	sdeapi/pluginloader.cpp
 	sdeapi/scanner.cpp

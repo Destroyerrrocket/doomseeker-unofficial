@@ -25,8 +25,8 @@
 #include "skulltag/skulltagserver.h"
 #include "global.h"
 #include "main.h"
-#include "md5/md5.h"
 
+#include <QCryptographicHash>
 #include <QMessageBox>
 #include <QRegExp>
 
@@ -1178,27 +1178,15 @@ void SkulltagRConProtocol::sendCommand(const QString &cmd)
 void SkulltagRConProtocol::sendPassword(const QString &password)
 {
 	// Calculate the MD5 of the salt + password
-	// Since the md5 implementation is written in C we need to do some
-	// conversions in order to use the functions with our C++ code.
-	// Hence the mess.
 	QString hashPassword = salt + password;
-	qDebug() << hashPassword;
-	MD5_CTX context;
-	MD5Init(&context);
-	unsigned char tmp[128];
-	memcpy(tmp, hashPassword.toAscii().constData(), hashPassword.length());
-	MD5Update(&context, tmp, hashPassword.length());
-	unsigned char out[16];
-	MD5Final(out, &context);
-	QString md5;
-	for(int i = 0;i < 16;i++)
-		md5 += QString("%1").arg(out[i], 2, 16, QChar('0'));
-	qDebug() << md5;
+	QCryptographicHash hash(QCryptographicHash::Md5);
+	hash.addData(hashPassword.toAscii());
+	QByteArray md5 = hash.result().toHex();
 
 	// Create the packet
 	unsigned char passwordPacket[34];
 	passwordPacket[0] = CLRC_PASSWORD;
-	memcpy(passwordPacket+1, md5.toAscii().data(), md5.length());
+	memcpy(passwordPacket+1, md5.data(), md5.size());
 	passwordPacket[33] = 0;
 	char encodedPassword[50];
 	int encodedLength = 50;
