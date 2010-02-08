@@ -68,6 +68,11 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/widgets/serverlistview.h
 	gui/widgets/serversstatuswidget.h
 	sdeapi/config.hpp
+	serverapi/tooltips/gameinfotip.h
+	serverapi/tooltips/generalinfotip.h
+	serverapi/tooltips/playertable.h
+	serverapi/rconprotocol.h
+	serverapi/tooltipgenerator.h
 	customservers.h
 	ip2c.h
 	log.h
@@ -108,6 +113,12 @@ set(SOURCE_FILES
 	sdeapi/config.cpp
 	sdeapi/pluginloader.cpp
 	sdeapi/scanner.cpp
+	serverapi/tooltips/gameinfotip.cpp
+	serverapi/tooltips/generalinfotip.cpp
+	serverapi/tooltips/playertable.cpp
+	serverapi/player.cpp
+	serverapi/rconprotocol.cpp
+	serverapi/tooltipgenerator.cpp
 	customservers.cpp
 	ip2c.cpp
 	log.cpp
@@ -116,6 +127,7 @@ set(SOURCE_FILES
 	pathfinder.cpp
 	refresher.cpp
 	server.cpp
+	strings.cpp	
 )
 
 if(WIN32)

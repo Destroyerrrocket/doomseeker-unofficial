@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// main.h
+// tooltipgenerator.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,32 +18,43 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#ifndef __TOOLTIP_GENERATOR_H_
+#define __TOOLTIP_GENERATOR_H_
 
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#include "global.h"
+#include "player.h"
+#include <QString>
+#include <QObject>
 
-#include "sdeapi/pluginloader.hpp"
-#include "sdeapi/config.hpp"
-#include "ip2c.h"
-#include "refresher.h"
-#include "server.h"
+class Server;
 
-/**
- * This class holds some global information.
- */
-class MAIN_EXPORT Main
+class MAIN_EXPORT TooltipGenerator : public QObject
 {
 	public:
+		TooltipGenerator(const Server* server);
 
-		static Config 				*config;
-		static IP2C					*ip2c;
-		static QWidget*				mainWindow;
-		static PluginLoader*		enginePlugins;
-		static bool					running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
-		static RefreshingThread*	refreshingThread;
-		static QString				workingDirectory;
+		/**
+		 *	Should return general info about current game (fraglimit,
+		 *	team scores, etc.)
+		 */
+		virtual QString		gameInfoTableHTML();
+
+		/**
+		 *	Should return general info about server, like server name, version,
+		 *	email, etc.
+		 */
+		virtual QString		generalInfoHTML();
+
+		/**
+		 *	Should return player table (the thing that is created when cursor
+		 *	hovers over players column).
+		 */
+		virtual QString		playerTableHTML();
+
+	protected:
+		const Server*		pServer;
 };
 
-#endif /* __MAIN_H__ */
+#endif

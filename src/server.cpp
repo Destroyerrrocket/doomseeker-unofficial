@@ -24,154 +24,14 @@
 #include "log.h"
 #include "server.h"
 #include "main.h"
+#include "strings.h"
 #include "gui/standardserverconsole.h"
 #include "gui/wadseekerinterface.h"
+#include "serverapi/tooltipgenerator.h"
 #include <QProcess>
 #include <QSet>
 #include <QTime>
 #include <QUdpSocket>
-
-// \c = '\034'
-#define	ESCAPE_COLOR	'\034'
-
-Player::Player(const QString &name, unsigned short score, unsigned short ping, PlayerTeam team, bool spectator, bool bot)
-: playerName(name), currentScore(score), currentPing(ping),
-  spectator(spectator), bot(bot), team(team)
-{
-}
-
-const char Player::colorChart[22][7] =
-{
-	"FF91A4", //a
-	"D2B48C", //b
-	"808080", //c
-	"32CD32", //d
-	"918151", //e
-	"F4C430", //f
-	"E32636", //g
-	"0000FF", //h
-	"FF8C00", //i
-	"C0C0C0", //j
-	"FFD700", //k
-	"E34234", //l
-	"000000", //m
-	"4169E1", //n
-	"FFDEAD", //o
-	"465945", //p
-	"228b22", //q
-	"800000", //r
-	"704214", //s
-	"A020F0", //t
-	"404040", //u
-	"007F7F", //v
-};
-QString Player::colorizeString(const QString &str, int current)
-{
-	QString ret;
-	bool colored = false;
-	for(int i = 0;i < str.length();i++)
-	{
-		if(str[i] == ESCAPE_COLOR)
-		{
-			i++;
-			if(i >= str.length())
-				break;
-			QChar colorChar = str[i].toLower();
-			int color = colorChar.toAscii() - 97;
-
-			// special cases
-			if(colorChar == '+')
-				color = current == 0 ? 19 : current-1; // + is the current minus one, wrap if needed.
-			else if(colorChar == '*')
-				color = 3; // Chat color which is usally green
-			else if(colorChar == '!')
-				color = 16; // Team char (usually green, but made dark green here for distinction)
-			else if(colorChar == '[') // Named!
-			{
-				int end = str.indexOf(']', i);
-				if(end == -1)
-					break;
-				QString colorName = str.mid(i+1, end-i-1);
-				if(colorName.indexOf('"') == -1) // Just in case there's a security problem.
-					ret += QString("<span style=\"color: " + colorName + "\">");
-				i += colorName.length()+1;
-				colored = true;
-				continue;
-			}
-			else if(colorChar == '-')
-			{
-				if(colored)
-					ret += "</span>";
-				colored = false;
-				continue;
-			}
-
-			if(colored)
-			{
-				ret += "</span>";
-				colored = false;
-			}
-
-			if(color >= 0 && color < 22)
-			{
-				ret += QString("<span style=\"color: #") + colorChart[color] + "\">";
-				colored = true;
-			}
-			continue;
-		}
-		ret += str[i];
-	}
-	if(colored)
-		ret += "</span>";
-	return ret;
-}
-
-QString Player::nameColorTagsStripped() const
-{
-	QString ret;
-	for (int i = 0; i < playerName.length(); ++i)
-	{
-		if (playerName[i] < 32 || playerName[i] > 126)
-		{
-			// Lets only remove the following character on \c.
-			// Removing the control characters is still a good idea though.
-			if(playerName[i] == ESCAPE_COLOR)
-				++i;
-			continue;
-		}
-
-		ret += playerName[i];
-	}
-	return ret;
-}
-
-QString	Player::nameFormatted() const
-{
-	QString ret;
-	for (int i = 0; i < playerName.length(); ++i)
-	{
-		// cut out bad characters
-		if ((playerName[i] < 32 || playerName[i] > 126) && playerName[i] != ESCAPE_COLOR)
-			continue;
-
-		switch (playerName[i].toAscii())
-		{
-			case '<':
-				ret += "&lt;";
-				break;
-
-			case '>':
-				ret += "&gt;";
-				break;
-
-			default:
-				ret += playerName[i];
-				break;
-		}
-	}
-
-	return colorizeString(ret);
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -248,7 +108,7 @@ void Server::cleanArguments(QStringList& args) const
 	{
 		if (it->contains(" "))
 		{
-			Main::trim(*it, "\"");
+			Strings::trim(*it, "\"");
 		}
 	}
 	#endif
@@ -479,108 +339,6 @@ JoinError Server::createJoinCommandLine(CommandLineInfo& cli, const QString &con
 	return jError;
 }
 
-QString Server::gameInfoTableHTML() const
-{
-	const QString timelimit = tr("Timelimit");
-	const QString scorelimit = tr("Scorelimit");
-	const QString unlimited = tr("Unlimited");
-	const QString players = tr("Players");
-
-	// Timelimit
-    QString firstTableTimelimit = "<tr><td>" + timelimit + ":&nbsp;</td><td>%1 %2</td></tr>";
-    if (this->timeLimit() == 0)
-    {
-    	firstTableTimelimit = firstTableTimelimit.arg(unlimited, "");
-    }
-    else
-    {
-		QString strLeft = tr("(%1 left)").arg(this->timeLeft());
-		firstTableTimelimit = firstTableTimelimit.arg(this->timeLimit()).arg(strLeft);
-    }
-
-	// Scorelimit
-	QString firstTableScorelimit = "<tr><td>" + scorelimit + ":&nbsp;</td><td>%1</td></tr>";
-	if (this->scoreLimit() == 0)
-	{
-		firstTableScorelimit = firstTableScorelimit.arg(unlimited);
-	}
-	else
-	{
-		firstTableScorelimit = firstTableScorelimit.arg(this->scoreLimit());
-	}
-
-	// Team score
-	QString firstTableTeamscore;
-	if (this->gameMode().isTeamGame())
-	{
-		firstTableTeamscore = "<tr><td colspan=\"2\">%1</td></tr>";
-		QString teams;
-		bool bPrependBar = false;
-		for (int i = 0; i < MAX_TEAMS; ++i)
-		{
-			if (this->teamPlayerCount(i) != 0)
-			{
-				if (bPrependBar)
-					teams += " | ";
-				teams += teamName(i) + ": " + QString::number(this->score(i));
-				bPrependBar = true;
-			}
-		}
-		firstTableTeamscore = firstTableTeamscore.arg(teams);
-	}
-
-	// Players
-	int canJoin = this->maximumPlayers() - this->numPlayers();
-	if(canJoin < 0)
-		canJoin = 0;
-	QString firstTablePlayers = "<tr><td>" + players + ":&nbsp;</td><td>%1 / %2 (%3 can join)</td></tr>";
-	firstTablePlayers = firstTablePlayers.arg(this->numPlayers()).arg(this->maximumClients()).arg(canJoin);
-
-	QString firstTable = "<table>";
-	firstTable += firstTableTimelimit;
-	firstTable += firstTableScorelimit;
-	firstTable += firstTableTeamscore;
-	firstTable += firstTablePlayers;
-	firstTable += "</table>";
-
-	return firstTable;
-}
-
-QString Server::generalInfoHTML() const
-{
-	QString ret;
-	if (isKnown())
-	{
-		ret += QString(name()).replace('>', "&gt;").replace('<', "&lt;") + "\n";
-		if(!version().isEmpty())
-		{
-			ret += tr("Version") + ": " + version() + "\n";
-		}
-		if (!email.isEmpty())
-		{
-			ret += tr("E-mail") + ": " + email + "\n";
-		}
-		if (!webSite.isEmpty())
-		{
-			ret += tr("URL") + ": <a href=\"" + webSite + "\">" + webSite + "</a>\n";
-		}
-	}
-
-	CountryInfo ci = Main::ip2c->obtainCountryInfo(address());
-
-	if (ci.valid && !ci.name.isEmpty())
-	{
-		if (!ret.isEmpty())
-		{
-			ret += "\n";
-		}
-
-		ret += tr("Location: %1\n").arg(ci.name);
-	}
-
-	return ret;
-}
-
 bool Server::host(const HostInfo& hostInfo, bool bOfflinePlay, QString& error)
 {
 	error.clear();
@@ -633,104 +391,6 @@ QString Server::offlineGameWorkingDirectory() const
 	QString dummy;
 	QFileInfo fi(offlineGameBinary(dummy));
 	return fi.absolutePath();
-}
-
-QString Server::playerTableHTML() const
-{
-	// Sort the players out first.
-	QHash<int, QList<const Player*> > sortedPlayers;
-	QList<const Player*> botList;
-	QList<const Player*> specList;
-
-	for (int i = 0; i < this->numPlayers(); ++i)
-	{
-		const Player& p = this->player(i);
-
-		if (p.isSpectating())
-		{
-			specList.append(&p);
-			continue;
-		}
-
-		if (this->gameMode().isTeamGame())
-		{
-			int team = p.teamNum();
-
-			QHash<int, QList<const Player*> >::iterator it = sortedPlayers.find(team);
-			if (it == sortedPlayers.end())
-			{
-				QList<const Player*> l;
-				l.append(&p);
-				sortedPlayers.insert(team, l);
-			}
-			else
-			{
-				it.value().append(&p);
-			}
-		}
-		else
-		{
-			if (p.isBot())
-			{
-				botList.append(&p);
-				continue;
-			}
-
-			if (sortedPlayers.count() == 0)
-				sortedPlayers.insert(0, QList<const Player*>());
-
-			sortedPlayers.find(0).value().append(&p);
-		}
-
-	}
-
-	const QString team = tr("Team");
-	const QString player = tr("Player");
-	const QString score = tr("Score");
-	const QString ping = tr("Ping");
-	const QString status = tr("Status");
-
-	QString plTabTeamHeader;
-	QString plTabHeader = "<tr>";
-	int plTabColNum = 4;
-	if (this->gameMode().isTeamGame())
-	{
-		plTabColNum = 5;
-		plTabTeamHeader = "<td>" + team + "</td>";
-	}
-	plTabHeader += plTabTeamHeader + "<td>" + player + "</td><td align=\"right\">&nbsp;" + score + "</td><td align=\"right\">&nbsp;" + ping + "</td><td>" + status + "</td></tr>";
-	plTabHeader += QString("<tr><td colspan=\"%1\"><hr width=\"100%\"></td></tr>").arg(plTabColNum);
-
-	QString plTabPlayers;
-
-	QList<int> hashKeys = sortedPlayers.uniqueKeys();
-	qSort(hashKeys);
-	QList<int>::iterator keyit;
-
-	bool bAppendEmptyRowAtBeginning = false;
-	for (keyit = hashKeys.begin(); keyit != hashKeys.end(); ++keyit)
-	{
-		plTabPlayers += spawnPartOfPlayerTable(sortedPlayers[*keyit], plTabColNum, bAppendEmptyRowAtBeginning);
-		if (!bAppendEmptyRowAtBeginning)
-		{
-			bAppendEmptyRowAtBeginning = true;
-		}
-	}
-
-	bAppendEmptyRowAtBeginning = !plTabPlayers.isEmpty();
-	QString plTabBots = spawnPartOfPlayerTable(botList, plTabColNum, bAppendEmptyRowAtBeginning);
-
-	bAppendEmptyRowAtBeginning = !(plTabBots.isEmpty() && plTabPlayers.isEmpty());
-	QString plTabSpecs = spawnPartOfPlayerTable(specList, plTabColNum, bAppendEmptyRowAtBeginning);
-
-
-	QString plTab = "<table cellspacing=\"4\" style=\"background-color: #FFFFFF;color: #000000\">";
-	plTab += plTabHeader;
-	plTab += plTabPlayers;
-	plTab += plTabBots;
-	plTab += plTabSpecs;
-	plTab += "</table>";
-	return plTab;
 }
 
 bool Server::refresh()
@@ -877,42 +537,6 @@ QString Server::serverWorkingDirectory() const
 	return fi.absolutePath();
 }
 
-QString Server::spawnPartOfPlayerTable(QList<const Player*> list, int colspan, bool bAppendEmptyRowAtBeginning) const
-{
-	QString ret;
-	if (list.count() != 0)
-	{
-		if (bAppendEmptyRowAtBeginning)
-		{
-			ret = QString("<tr><td colspan=\"%1\">&nbsp;</td></tr>").arg(colspan);
-		}
-
-		for (int i = 0; i < list.count(); ++i)
-		{
-			const Player& p = *list[i];
-
-			QString status = "";
-			if (p.isBot())
-				status = tr("BOT");
-			else if (p.isSpectating())
-				status = tr("SPECTATOR");
-
-			QString strPlayer = "<tr>";
-			if (gameMode().isTeamGame())
-			{
-				strPlayer += QString("<td>%1</td>").arg(teamName(p.teamNum()));
-			}
-			strPlayer += "<td>%1</td><td align=\"right\">%2</td><td align=\"right\">%3</td><td>%4</td></tr>";
-			strPlayer = strPlayer.arg(p.nameFormatted()).arg(p.score()).arg(p.ping());
-			strPlayer = strPlayer.arg(status);
-
-			ret += strPlayer;
-		}
-	}
-
-	return ret;
-}
-
 QRgb Server::teamColor(int team) const
 {
 	switch(team)
@@ -924,6 +548,11 @@ QRgb Server::teamColor(int team) const
 		default: break;
 	}
 	return qRgb(0, 255, 0);
+}
+
+TooltipGenerator* Server::tooltipGenerator() const
+{
+	return new TooltipGenerator(this);
 }
 
 void Server::operator= (const Server &other)
@@ -941,16 +570,4 @@ void Server::operator= (const Server &other)
 	maxPlayers = other.maximumPlayers();
 	serverName = other.name();
 	serverScoreLimit = other.scoreLimit();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-RConProtocol::RConProtocol(Server *server) : server(server)
-{
-	socket.bind();
-}
-
-RConProtocol::~RConProtocol()
-{
-	socket.close();
 }

@@ -37,301 +37,13 @@
 #include <QTime>
 #include <QUdpSocket>
 
+#include "serverapi/rconprotocol.h"
+#include "serverapi/player.h"
+#include "serverapi/serverstructs.h"
 #include "global.h"
 #include "pathfinder.h"
 
-#define MAX_TEAMS 4
-
-/**
- *	@brief Structure holding parameters for application launch.
- */
-struct CommandLineInfo
-{
-	QDir 			applicationDir; /// working directory
-	QStringList 	args; /// launch parameters
-	QFileInfo 		executable; /// path to the executable
-};
-
-/**
- *	@brief Generic representation of DMFlags section.
- *
- *	Note: Maximum amount of flags in one section is 32.
- */
-struct MAIN_EXPORT DMFlagsSection
-{
-	struct DMFlag
-	{
-		QString         name;
-		unsigned char   value;
-	};
-
-	QString         name;
-	unsigned char   size;
-	DMFlag			flags[32];
-};
-
-/**
- *	List used by Server class' virtual method to return all flags sections.
- */
-typedef QList<DMFlagsSection*> 							DMFlags;
-typedef QList<DMFlagsSection*>::iterator				DMFlagsIt;
-typedef QList<DMFlagsSection*>::const_iterator 			DMFlagsItConst;
-typedef QList<const DMFlagsSection*> 					DMFlagsConst;
-typedef QList<const DMFlagsSection*>::iterator			DMFlagsConstIt;
-typedef QList<const DMFlagsSection*>::const_iterator 	DMFlagsConstItConst;
-
-/**
- * Data structure that holds information about players in a server.
- */
-struct MAIN_EXPORT Player
-{
-	public:
-		enum PlayerTeam
-		{
-			TEAM_BLUE,
-			TEAM_RED,
-			TEAM_GREEN,
-			TEAM_GOLD,
-
-			TEAM_NONE = 0xFF
-		};
-
-		Player(const QString &name, unsigned short score, unsigned short ping, PlayerTeam team=TEAM_NONE, bool spectator=false, bool bot=false);
-
-		const QString	&name() const { return playerName; }
-		short			score() const { return currentScore; }
-		unsigned short	ping() const { return currentPing; }
-		bool			isSpectating() const { return spectator; }
-		bool			isBot() const { return bot; }
-		PlayerTeam		teamNum() const { return team; }
-
-		/**
-		 * Formats string into HTML format.
-		 */
-		QString			nameFormatted() const;
-
-		/**
-		 * Seeks for characters that are not from the <32; 126> range,
-		 * removes them and the characters that appear after them,
-		 * then returns new string.
-		 */
-		QString			nameColorTagsStripped() const;
-
-		/**
-		 * Colorizes the given string.  Most useful for displaying colored
-		 * names.
-		 */
-		static QString	colorizeString(const QString &str, int def=4);
-
-	protected:
-		static const char	colorChart[22][7];
-
-		QString			playerName;
-		short			currentScore;
-		unsigned short	currentPing;
-		bool			spectator;
-		bool			bot;
-		PlayerTeam		team;
-};
-
-/**
- *	@brief Struct containing info about a game console variable (like fraglimit)
- */
-struct MAIN_EXPORT GameCVar
-{
-	/**
-	 *	Nice name to display in Create Server dialog.
-	 */
-	QString		name;
-
-	/**
-	 *	Console command used to set the given CVar.
-	 */
-	QString		consoleCommand;
-
-	GameCVar() {}
-	GameCVar(QString fname, QString fconsoleCommand):name(fname),consoleCommand(fconsoleCommand) {}
-
-	void			setValue(bool b) { b == true ? setValue("1") : setValue("0"); }
-	void			setValue(int i) { setValue(QString::number(i)); }
-	void			setValue(const QString& str) { val = str; }
-
-	const QString&	value() const { return val; }
-	bool			valueBool() const { return (val.toInt() != 0); }
-	bool			valueInt() const { return val.toInt(); }
-
-	protected:
-		QString		val;
-};
-
-/**
- * Data structure that holds information about a servers game mode.
- */
-struct MAIN_EXPORT GameMode
-{
-	public:
-		enum StandardGameModeIndexes
-		{
-			SGMICooperative		= 900,
-			SGMIDeathmatch		= 901,
-			SGMITeamDeathmatch	= 902,
-			SGMICTF				= 903,
-			SGMIUnknown			= 904
-		};
-
-		// Standard game mode set
-		// These should be used in order to keep the names uniform.
-		static MAIN_EXPORT const GameMode	COOPERATIVE;
-		static MAIN_EXPORT const GameMode	DEATHMATCH;
-		static MAIN_EXPORT const GameMode	TEAM_DEATHMATCH;
-		static MAIN_EXPORT const GameMode	CAPTURE_THE_FLAG;
-		static MAIN_EXPORT const GameMode	UNKNOWN;
-
-		/**
-		 * @param name Name to display for game mode, this should be fairly short about no longer than "cooperative".
-		 */
-		GameMode(int index, const QString &name, bool teamgame);
-
-		int				modeIndex() const { return gameModeIndex; }
-		const QString	&name() const { return modeName;}
-		bool			isTeamGame() const { return teamgame; }
-	protected:
-		int		gameModeIndex;
-		QString	modeName;
-		bool	teamgame;
-};
-
-/**
- *	@brief Indicator of error for the server join process.
- *
- *	This structure contains information about whether an error occured and
- *	if it did - what type of error it is. Based on this GUI can make a
- *	decision on how to handle the error and whether to try again.
- */
-struct JoinError
-{
-	enum JoinErrorType
-	{
-		NoError = 0,
-		MissingWads = 1,
-		Critical = 2
-	};
-
-	JoinErrorType		type;
-	QString				error;
-
-	/**
-	 *	This is valid only if type == MissingWads.
-	 */
-	QString 			missingIwad;
-
-	/**
-	 *	This is valid only if type == MissingWads.
-	 */
-	QStringList 		missingWads;
-};
-
-struct MAIN_EXPORT SkillLevel
-{
-	//const QString strName;
-
-	static const int	 numSkillLevels;
-	static const QString names[];
-};
-
-/**
- *	This structure is used by Server Info dockable widget.
- *	Each instance of this struct is one button on the widget.
- *	The button is connected to function();
- */
-struct MAIN_EXPORT ServerAction
-{
-	QString		label;
-	QObject*	receiver;
-	const char*	slot;
-
-	ServerAction()
-	{
-		receiver = NULL;
-		slot = NULL;
-	}
-};
-
-/**
- * This structure is used by Server Info dockable widget.
- * Each instance of this struct is one label on the widget.
- */
-struct MAIN_EXPORT ServerInfo
-{
-	QString richText;
-	QString toolTip;
-};
-
-class MAIN_EXPORT Server;
-
-/**
- *	@brief Host launch information for Server class.
- *
- *	Create Server dialog uses this to setup host information.
- *	However things that can be set through the Server class,
- *	like MOTD, max. clients, max. players, server name, etc. should
- *	be set through Server class' setters.
- */
-struct MAIN_EXPORT HostInfo
-{
-	QString 		executablePath; /// if empty, serverBinary() will be used
-	QString 		iwadPath;
-	QStringList 	pwadsPaths;
-	QStringList 	customParameters;
-	DMFlags 		dmFlags;
-
-	/**
-	 *	Contents of this list will be passed as "+consoleCommand value"
-	 *	to the command line.
-	 */
-	QList<GameCVar> cvars;
-
-	~HostInfo()
-	{
-		foreach(DMFlagsSection* sec, dmFlags)
-			delete sec;
-	}
-};
-
-/**
- * An abstract interface for a remote console protocol.
- */
-class MAIN_EXPORT RConProtocol : public QThread
-{
-	Q_OBJECT
-
-	public:
-		virtual ~RConProtocol();
-
-		bool				isConnected() const { return connected; }
-		const QList<Player>	&playerList() const { return players; }
-
-	public slots:
-		virtual void	disconnectFromServer()=0;
-		virtual void	sendCommand(const QString &cmd)=0;
-		virtual void	sendPassword(const QString &password)=0;
-
-	signals:
-		void			disconnected();
-		void			invalidPassword();
-		void			messageReceived(const QString &cmd);
-		void			playerListUpdated();
-
-	protected:
-		RConProtocol(Server *server);
-
-		bool			connected;
-		QList<Player>	players;
-		Server			*server;
-		QUdpSocket		socket;
-
-		friend class Server;
-};
+class TooltipGenerator;
 
 class MAIN_EXPORT Server : public QObject
 {
@@ -354,19 +66,6 @@ class MAIN_EXPORT Server : public QObject
 		Server(const QHostAddress &address, unsigned short port);
 		Server(const Server &other);
 		virtual ~Server();
-
-		/**
-		 * Should return general info about current game (fraglimit, team scores, etc.)
-		 */
-		virtual QString		gameInfoTableHTML() const;
-		/**
-		 * Should return general info about server, like server name, version, email, etc.
-		 */
-		virtual QString		generalInfoHTML() const;
-		/**
-		 * Should return player table (the thing that is created when cursor hovers over players column)
-		 */
-		virtual QString		playerTableHTML() const;
 
 		/**
 		 *	Returns name of the engine for this server, for example: "Skulltag".
@@ -520,6 +219,16 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		virtual QString		serverWorkingDirectory() const;
 
+		/**
+		 *	@brief Creates an instance of TooltipGenerator.
+		 *
+		 *	This can be replaced by a plugin to use a custom tooltip generator.
+		 *
+		 *	@return Default behaviour returns default implementation of
+		 *	TooltipGenerator.
+		 */
+		virtual TooltipGenerator*	tooltipGenerator() const;
+
 		friend class ServerPointer;
 
 	public slots:
@@ -612,11 +321,6 @@ class MAIN_EXPORT Server : public QObject
 		 *		false otherwise.
 		 */
 		virtual bool		sendRequest(QByteArray &data)=0;
-		/**
-		 *	This will return absolutely nothing if the list in the first
-		 *	argument is empty.
-		 */
-		virtual QString		spawnPartOfPlayerTable(QList<const Player*> list, int colspan, bool bAppendEmptyRowAtBeginning) const;
 
 		/**
 		 *	If this is true server will be deleted as soon as
@@ -642,7 +346,6 @@ class MAIN_EXPORT Server : public QObject
 		 *	ping, which may be less accurate.
 		 */
 		bool				bPingIsSet;
-
 
 		bool				broadcastToLAN;
 		bool				broadcastToMaster;

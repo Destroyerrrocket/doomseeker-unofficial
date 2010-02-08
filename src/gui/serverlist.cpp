@@ -23,6 +23,7 @@
 
 #include "gui/remoteconsole.h"
 #include "gui/serverlist.h"
+#include "serverapi/tooltipgenerator.h"
 #include "main.h"
 #include <QApplication>
 #include <QClipboard>
@@ -158,22 +159,32 @@ QString SLHandler::createPlayersToolTip(const Server* server)
 	if (server == NULL || !server->isKnown())
 		return QString();
 
+	TooltipGenerator* tooltipGenerator = server->tooltipGenerator();
+
     QString ret;
 	ret = "<div style='white-space: pre'>";
-	ret += server->gameInfoTableHTML();
+	ret += tooltipGenerator->gameInfoTableHTML();
 	if(server->numPlayers() != 0)
-		ret += server->playerTableHTML();
+	{
+		ret += tooltipGenerator->playerTableHTML();
+	}
 	ret += "</div>";
+
+	delete tooltipGenerator;
 	return ret;
 }
 
 QString SLHandler::createServerNameToolTip(const Server* server)
 {
 	if (server == NULL)
+	{
 		return QString();
+	}
+
+	TooltipGenerator* tooltipGenerator = server->tooltipGenerator();
 
 	QString ret;
-	QString generalInfo = server->generalInfoHTML();
+	QString generalInfo = tooltipGenerator->generalInfoHTML();
 
 	if (!generalInfo.isEmpty())
 	{
@@ -181,13 +192,17 @@ QString SLHandler::createServerNameToolTip(const Server* server)
 		ret += generalInfo;
 		ret += "</div>";
 	}
+
+	delete tooltipGenerator;
 	return ret;
 }
 
 QString SLHandler::createPwadsToolTip(const Server* server)
 {
 	if (server == NULL || !server->isKnown() || server->numWads() == 0)
+	{
 		return QString();
+	}
 
 	QString ret;
 	ret = "<div style='white-space: pre'>";

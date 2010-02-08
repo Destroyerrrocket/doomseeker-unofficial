@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// main.h
+// tooltipgenerator.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,32 +18,34 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-
-#ifndef __MAIN_H__
-#define __MAIN_H__
-
-#include "sdeapi/pluginloader.hpp"
-#include "sdeapi/config.hpp"
-#include "ip2c.h"
-#include "refresher.h"
+#include "tooltipgenerator.h"
+#include "main.h"
 #include "server.h"
+#include "tooltips/gameinfotip.h"
+#include "tooltips/generalinfotip.h"
+#include "tooltips/playertable.h"
 
-/**
- * This class holds some global information.
- */
-class MAIN_EXPORT Main
+TooltipGenerator::TooltipGenerator(const Server* server)
+: pServer(server)
 {
-	public:
+}
 
-		static Config 				*config;
-		static IP2C					*ip2c;
-		static QWidget*				mainWindow;
-		static PluginLoader*		enginePlugins;
-		static bool					running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
-		static RefreshingThread*	refreshingThread;
-		static QString				workingDirectory;
-};
+QString TooltipGenerator::gameInfoTableHTML()
+{
+	GameInfoTip tip(pServer);
+	return tip.generateHTML();
+}
 
-#endif /* __MAIN_H__ */
+QString TooltipGenerator::generalInfoHTML()
+{
+	GeneralInfoTip tip(pServer);
+	return tip.generateHTML();
+}
+
+QString TooltipGenerator::playerTableHTML()
+{
+	PlayerTable table(pServer);
+	return table.generateHTML();
+}

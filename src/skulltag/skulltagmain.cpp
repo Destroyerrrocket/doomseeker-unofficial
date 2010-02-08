@@ -25,6 +25,7 @@
 
 #include "global.h"
 #include "main.h"
+#include "strings.h"
 #include "sdeapi/config.hpp"
 #include "sdeapi/pluginloader.hpp"
 
@@ -144,7 +145,7 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 
 			SettingsData* setting = Main::config->setting("SkulltagMasterserver");
 			QString str = setting->string();
-			Main::translateServerAddress(str, host, port, "skulltag.servegame.com", 15300);
+			Strings::translateServerAddress(str, host, port, "skulltag.servegame.com", 15300);
 
 			QHostInfo info = QHostInfo::fromName(host);
 			if(info.addresses().size() == 0)

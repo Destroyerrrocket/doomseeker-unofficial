@@ -26,6 +26,7 @@
 #include "global.h"
 #include "main.h"
 #include "masterclient.h"
+#include "strings.h"
 #include "sdeapi/pluginloader.hpp"
 
 #include "odamex/engineOdamexConfig.h"
@@ -95,7 +96,7 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 
 			SettingsData* setting = Main::config->setting("OdamexMasterserver");
 			QString str = setting->string();
-			Main::translateServerAddress(str, host, port, "master1.odamex.net", 15000);
+			Strings::translateServerAddress(str, host, port, "master1.odamex.net", 15000);
 
 			QHostInfo info = QHostInfo::fromName(host);
 			if(info.addresses().size() == 0)
