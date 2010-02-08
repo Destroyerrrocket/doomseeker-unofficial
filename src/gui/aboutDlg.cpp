@@ -56,9 +56,9 @@ AboutDlg::~AboutDlg()
 {
 }
 
-void AboutDlg::changePlugin(unsigned pluginIndex)
+void AboutDlg::changePlugin(int pluginIndex)
 {
-	if(pluginIndex >= Main::enginePlugins->numPlugins())
+	if(static_cast<unsigned> (pluginIndex) >= Main::enginePlugins->numPlugins())
 		return; // Invalid plugin.
 
 	const Plugin* plug = (*Main::enginePlugins)[pluginIndex];
