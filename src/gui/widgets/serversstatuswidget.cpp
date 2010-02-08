@@ -61,6 +61,10 @@ void ServersStatusWidget::paintEvent(QPaintEvent *event)
 
 void ServersStatusWidget::registerServers()
 {
+	// Since this is done when the list changes we should reset some values
+	numPlayers = 0;
+	numBots = 0;
+
 	foreach(Server *server, serverList->serverList())
 	{
 		connect(server, SIGNAL(begunRefreshing(Server *)), this, SLOT(removeServer(Server *)));
