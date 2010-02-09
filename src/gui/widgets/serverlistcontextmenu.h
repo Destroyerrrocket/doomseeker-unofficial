@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// generalinfotip.cpp
+// serverlistcontextmenu.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,50 +20,56 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "generalinfotip.h"
-#include "ip2c.h"
-#include "main.h"
-#include "serverapi/server.h"
+#ifndef __SERVER_LIST_CONTEXT_MENU_H_
+#define __SERVER_LIST_CONTEXT_MENU_H_
 
-GeneralInfoTip::GeneralInfoTip(const Server* server)
-: pServer(server)
+#include <QMenu>
+#include <QObject>
+
+class Server;
+
+class ServerListContextMenu : public QObject
 {
-}
-
-QString GeneralInfoTip::generateHTML()
-{
-	QString ret;
-	if (pServer->isKnown())
-	{
-		ret += QString(pServer->name()).replace('>', "&gt;").replace('<', "&lt;") + "\n";
-		ret += labelString(tr("Version"), pServer->version());
-		ret += labelString(tr("E-mail"), pServer->eMail());
-		ret += labelString(tr("URL"), pServer->website());
-	}
-
-	CountryInfo countryInfo = Main::ip2c->obtainCountryInfo(pServer->address());
-
-	if (countryInfo.valid && !countryInfo.name.isEmpty())
-	{
-		if (!ret.isEmpty())
+	public:
+		enum Result
 		{
-			ret += "\n";
-		}
+			/// This is returned when something was copied to clipboard.
+			DataCopied,
+			Join,
+			OpenRemoteConsole,
+			OpenURL,
+			Refresh,
+			ShowJoinCommandLine,
 
-		ret += tr("Location: %1\n").arg(countryInfo.name);
-	}
+			/// This is returned upon cancel.
+			NothingHappened
+		};
 
-	return ret;
-}
+		ServerListContextMenu(Server* server);
 
-QString GeneralInfoTip::labelString(QString label, QString valueString)
-{
-	if (valueString.isEmpty())
-	{
-		return QString();
-	}
-	else
-	{
-		return label + ": " + valueString + "\n";
-	}
-}
+		Result					exec(const QPoint& point);
+
+	protected:
+		QMenu*					createCopyMenu(QWidget* parent);
+		void					createMembers();
+		Result					translateQMenuResult(QAction* resultAction);
+		void					initializeMembers();
+
+		QAction*				copyAddress;
+		QAction* 				copyEmail;
+		QAction*				copyName;
+		QAction* 				copyUrl;
+		QAction* 				join;
+
+		QMenu*					menu;
+
+		QAction* 				openUrlInDefaultBrowser;
+
+		Server*					pServer;
+
+		QAction*				rcon;
+		QAction* 				refresh;
+		QAction* 				showJoinCommandLine;
+};
+
+#endif

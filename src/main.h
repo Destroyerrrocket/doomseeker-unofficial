@@ -26,17 +26,19 @@
 
 #include "sdeapi/pluginloader.hpp"
 #include "sdeapi/config.hpp"
+#include "serverapi/server.h"
 #include "ip2c.h"
 #include "refresher.h"
-#include "server.h"
+#include <QApplication>
+#include <QObject>
+#include <QStringList>
 
 /**
  * This class holds some global information.
  */
-class MAIN_EXPORT Main
+class MAIN_EXPORT Main : public QObject
 {
 	public:
-
 		static Config 				*config;
 		static IP2C					*ip2c;
 		static QWidget*				mainWindow;
@@ -44,6 +46,49 @@ class MAIN_EXPORT Main
 		static bool					running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
 		static RefreshingThread*	refreshingThread;
 		static QString				workingDirectory;
+
+		Main(int argc, char* argv[]);
+		~Main();
+
+		/**
+		 *	@brief Called by main() after run() returns.
+		 *
+		 *	finalize() cleans up after Main object.
+		 */
+		void						finalize();
+
+		/**
+		 *	@brief Replaces main().
+		 */
+		int							run();
+
+	protected:
+		void						createMainWindow();
+
+		void						initDataDirectories();
+
+		/**
+		 *	If updateip2c == true, application should quit after this returns.
+		 *	@return If updateip2c == true it returns the exit code. Otherwise
+		 *		always returns zero.
+		 */
+		int							initIP2C();
+		void						initMainConfig();
+		void						initPluginConfig();
+
+		/**
+		 *	@return If false - terminate the application after this method
+		 *		returns.
+		 */
+		bool						interpretCommandLineParameters();
+		void						setupRefreshingThread();
+
+		QApplication*				application;
+		char**						arguments;
+		int							argumentsCount;
+		QStringList 				dataDirectories;
+		bool						updateIP2CAndQuit;
+
 };
 
 #endif /* __MAIN_H__ */

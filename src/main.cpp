@@ -31,7 +31,7 @@
 #include "gui/mainwindow.h"
 #include "log.h"
 #include "main.h"
-#include "server.h"
+#include "serverapi/server.h"
 #include "wadseeker/wadseeker.h"
 
 Config*				Main::config = new Config();
@@ -42,11 +42,96 @@ RefreshingThread*	Main::refreshingThread = new RefreshingThread();
 bool				Main::running = true;
 QString				Main::workingDirectory = "./";
 
-int main(int argc, char* argv[])
+Main::Main(int argc, char* argv[])
+: application(NULL), arguments(argv), argumentsCount(argc),
+  updateIP2CAndQuit(false)
 {
+}
+
+Main::~Main()
+{
+	running = false;
+	if (refreshingThread != NULL)
+	{
+		refreshingThread->quit();
+		while (refreshingThread->isRunning());
+		delete refreshingThread;
+	}
+
+	if (config != NULL)
+	{
+		config->saveConfig();
+		delete config;
+	}
+
+	if (ip2c != NULL)
+	{
+		delete ip2c;
+	}
+
+	if (enginePlugins != NULL)
+	{
+		delete enginePlugins;
+	}
+
+	if (application != NULL)
+	{
+		delete application;
+	}
+}
+
+// This method is an exception to sorting everything in alphabetical order
+// because it's... the main method.
+int Main::run()
+{
+	if (!interpretCommandLineParameters())
+	{
+		return 0;
+	}
+
 	pLog << "Starting Doomseeker. Hello World! :)";
 
-	QStringList dataDirectories;
+	enginePlugins = new PluginLoader(MAKEID('E','N','G','N'), dataDirectories, "engines/");
+	application = new QApplication(argumentsCount, arguments);
+
+	int ip2cReturn = initIP2C();
+	if (updateIP2CAndQuit)
+	{
+		return ip2cReturn;
+	}
+
+	initMainConfig();
+	initPluginConfig();
+
+	setupRefreshingThread();
+
+	createMainWindow();
+
+	pLog << tr("Init finished.");
+	pLog.addUnformattedEntry("================================\n");
+
+	return application->exec();
+}
+
+void Main::createMainWindow()
+{
+	pLog << tr("Preparing GUI.");
+
+	MainWindow* mainWnd = new MainWindow(argumentsCount, arguments, config);
+	if (config->setting("MainWindowMaximized")->boolean())
+	{
+		mainWnd->showMaximized();
+	}
+	else
+	{
+		mainWnd->show();
+	}
+
+	mainWindow = mainWnd;
+}
+
+void Main::initDataDirectories()
+{
 	dataDirectories << "./";
 #if defined(Q_OS_LINUX)
 	#ifndef INSTALL_PREFIX // For safety lets check for the defintion
@@ -55,113 +140,121 @@ int main(int argc, char* argv[])
 	// check in /usr/local/share/doomseeker/ on Linux
 	dataDirectories << INSTALL_PREFIX "/share/doomseeker/";
 #endif
+}
 
-	// Check for command line parameters
-	bool updateip2c = false;
-	for(int i = 0;i < argc;i++)
+int Main::initIP2C()
+{
+	const QString IP2C_FILENAME = "IpToCountry.csv";
+	const QUrl IP2C_URL = QUrl("http://software77.net/geo-ip?DL=1");
+
+	pLog << tr("Initializing IP2C database.");
+	ip2c = new IP2C(dataDirectories, IP2C_FILENAME, IP2C_URL);
+
+	if(updateIP2CAndQuit)
 	{
-		if(strcmp(argv[i], "--datadir") == 0 && i+1 < argc)
-		{
-			i++;
-			dataDirectories.prepend(argv[i]);
-		}
-		else if(strcmp(argv[i], "--updateip2c") == 0)
-			updateip2c = true;
-		else if(strcmp(argv[i], "--help") == 0)
-		{
-			// Print information to the log and terminate.
-			pLog << QObject::tr("Available command line parameters:");
-			pLog << QObject::tr("	--datadir : Sets an explicit search location for IP2C data along with plugins.");
-			pLog << QObject::tr("	--updateip2c : Updates the IP2C database.");
-			return 0;
-		}
-	}
-
-	QString firstArg = argv[0];
-	int lastSlash = qMax<int>(firstArg.lastIndexOf('\\'), firstArg.lastIndexOf('/'));
-	if(lastSlash != -1)
-		Main::workingDirectory = firstArg.mid(0, lastSlash+1);
-	dataDirectories << Main::workingDirectory;
-
-	Main::enginePlugins = new PluginLoader(MAKEID('E','N','G','N'), dataDirectories, "engines/");
-	QApplication app(argc, argv);
-
-	pLog << QObject::tr("Initializing IP2C database.");
-	Main::ip2c = new IP2C(dataDirectories, "IpToCountry.csv", QUrl("http://software77.net/geo-ip?DL=1"));
-	if(updateip2c)
-	{
-		pLog << QObject::tr("Starting the IP2C updater.");
+		pLog << tr("Starting the IP2C updater.");
 		// We'll use a small window to display the update progress.
 		QMainWindow updateProgressBox;
-		updateProgressBox.setWindowTitle(QObject::tr("IP2C Updater"));
-		updateProgressBox.setCentralWidget(new QLabel("Updating the IP2C database...\nOnce the progress bar disappears you may close this window."));
-		if(QMessageBox::question(&updateProgressBox, QObject::tr("IP2C Updater"), QObject::tr("Update the IP2C database now?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
+		updateProgressBox.setWindowTitle(tr("IP2C Updater"));
+
+		QLabel* label = new QLabel(tr("Updating the IP2C database...\nOnce the progress bar disappears you may close this window."));
+
+		updateProgressBox.setCentralWidget(label);
+		if(QMessageBox::question(&updateProgressBox, tr("IP2C Updater"), tr("Update the IP2C database now?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
 		{
 			updateProgressBox.show();
-			Main::ip2c->downloadDatabase(updateProgressBox.statusBar());
-			QObject::connect(Main::ip2c, SIGNAL(databaseUpdated()), &app, SLOT(quit()));
-			return app.exec();
+			ip2c->downloadDatabase(updateProgressBox.statusBar());
+			connect(ip2c, SIGNAL(databaseUpdated()), application, SLOT(quit()));
+			return application->exec();
 		}
 		return 0;
 	}
 
-	pLog << QObject::tr("Initializing configuration file.");
-	Main::config->locateConfigFile(argc, argv);
+	return 0;
+}
+
+void Main::initMainConfig()
+{
+	pLog << tr("Initializing configuration file.");
+	config->locateConfigFile(argumentsCount, arguments);
 
 	// Initial settings values
-	Main::config->createSetting("CustomServersColor", (0x94 << 16) | (0xff << 8) | (0xff)); // r | g | b
-	Main::config->createSetting("MainWindowMaximized", 0);
-	Main::config->createSetting("UseTrayIcon", false); // tray icon
-	Main::config->createSetting("CloseToTrayIcon", false); // tray icon
-	Main::config->createSetting("QueryAutoRefreshEnabled", false);
-	Main::config->createSetting("QueryAutoRefreshEverySeconds", 30);
-	Main::config->createSetting("QueryAutoRefreshDontIfActive", true);
-	Main::config->createSetting("QueryOnStartup", true);
-	Main::config->createSetting("QueryTries", 7);
-	Main::config->createSetting("QueryTimeout", 1000);
+	config->createSetting("CustomServersColor", (0x94 << 16) | (0xff << 8) | (0xff)); // r | g | b
+	config->createSetting("MainWindowMaximized", 0);
+	config->createSetting("UseTrayIcon", false); // tray icon
+	config->createSetting("CloseToTrayIcon", false); // tray icon
+	config->createSetting("QueryAutoRefreshEnabled", false);
+	config->createSetting("QueryAutoRefreshEverySeconds", 30);
+	config->createSetting("QueryAutoRefreshDontIfActive", true);
+	config->createSetting("QueryOnStartup", true);
+	config->createSetting("QueryTries", 7);
+	config->createSetting("QueryTimeout", 1000);
 	QStringList urlList = Wadseeker::defaultSitesListEncoded();
-	Main::config->createSetting("WadseekerSearchURLs", urlList.join(";"));
-	Main::config->createSetting("WadseekerSearchInIdgames", true);
-	Main::config->createSetting("WadseekerIdgamesPriority", 0); // 0 == After all other sites
-	Main::config->createSetting("WadseekerIdgamesURL", Wadseeker::defaultIdgamesUrl());
-	Main::config->createSetting("WadseekerConnectTimeoutSeconds", WADSEEKER_CONNECT_TIMEOUT_SECONDS_DEFAULT);
-	Main::config->createSetting("WadseekerDownloadTimeoutSeconds", WADSEEKER_DOWNLOAD_TIMEOUT_SECONDS_DEFAULT);
+	config->createSetting("WadseekerSearchURLs", urlList.join(";"));
+	config->createSetting("WadseekerSearchInIdgames", true);
+	config->createSetting("WadseekerIdgamesPriority", 0); // 0 == After all other sites
+	config->createSetting("WadseekerIdgamesURL", Wadseeker::defaultIdgamesUrl());
+	config->createSetting("WadseekerConnectTimeoutSeconds", WADSEEKER_CONNECT_TIMEOUT_SECONDS_DEFAULT);
+	config->createSetting("WadseekerDownloadTimeoutSeconds", WADSEEKER_DOWNLOAD_TIMEOUT_SECONDS_DEFAULT);
+}
 
-	// Init plugin settings
-	pLog << QObject::tr("Initializing configuration for plugins.");
-	Main::enginePlugins->initConfig();
+void Main::initPluginConfig()
+{
+	pLog << tr("Initializing configuration for plugins.");
+	enginePlugins->initConfig();
+}
 
-	// Refreshing thread setup:
-	pLog << QObject::tr("Starting refreshing thread.");
-	Main::refreshingThread->setDelayBetweenResends(Main::config->setting("QueryTimeout")->integer());
-	Main::refreshingThread->start();
-
-	// Create main window
-	pLog << QObject::tr("Preparing GUI.");
-	MainWindow* mw = new MainWindow(argc, argv);
-	if (Main::config->setting("MainWindowMaximized")->boolean())
+bool Main::interpretCommandLineParameters()
+{
+	for(int i = 0; i < argumentsCount; ++i)
 	{
-		mw->showMaximized();
+		if(strcmp(arguments[i], "--datadir") == 0 && i+1 < argumentsCount)
+		{
+			++i;
+			dataDirectories.prepend(arguments[i]);
+		}
+		else if(strcmp(arguments[i], "--updateip2c") == 0)
+		{
+			updateIP2CAndQuit = true;
+		}
+		else if(strcmp(arguments[i], "--help") == 0)
+		{
+			pLog.setTimestampsEnabled(false);
+			// Print information to the log and terminate.
+			pLog << tr("Available command line parameters:");
+			pLog << tr("	--datadir : Sets an explicit search location for IP2C data along with plugins.");
+			pLog << tr("	--updateip2c : Updates the IP2C database.");
+			return false;
+		}
 	}
-	else
+
+	QString firstArg = arguments[0];
+	int lastSlash = qMax<int>(firstArg.lastIndexOf('\\'), firstArg.lastIndexOf('/'));
+	if(lastSlash != -1)
 	{
-		mw->show();
+		Main::workingDirectory = firstArg.mid(0, lastSlash+1);
 	}
+	dataDirectories << Main::workingDirectory;
 
-	pLog << QObject::tr("Init finished.");
-	pLog.addUnformattedEntry("================================\n");
-	int ret = app.exec();
+	return true;
+}
 
-	Main::refreshingThread->quit();
-	Main::running = false;
+void Main::setupRefreshingThread()
+{
+	pLog << tr("Starting refreshing thread.");
+	refreshingThread->setDelayBetweenResends(config->setting("QueryTimeout")->integer());
+	refreshingThread->start();
+}
 
-	Main::config->saveConfig();
-	delete Main::config;
-	delete Main::ip2c;
+//==============================================================================
 
-	while (Main::refreshingThread->isRunning());
-	delete Main::refreshingThread;
-	delete Main::enginePlugins;
+int main(int argc, char* argv[])
+{
+	Main* pMain = new Main(argc, argv);
+	int returnValue = pMain->run();
 
-	return ret;
+	// Cleans up after the program.
+	delete pMain;
+
+	return returnValue;
 }

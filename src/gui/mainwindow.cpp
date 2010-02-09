@@ -41,38 +41,37 @@
 #include <QHeaderView>
 #include <QMessageBox>
 
-MainWindow::MainWindow(int argc, char** argv)
-: bTotalRefreshInProcess(false), bWasMaximized(false), bWantToQuit(false),
-  // private
-  buddiesList(NULL), logDock(NULL), mc(NULL), trayIcon(NULL), trayIconMenu(NULL)
+MainWindow::MainWindow(int argc, char** argv, Config* config)
+: bTotalRefreshInProcess(false), buddiesList(NULL), bWasMaximized(false),
+  bWantToQuit(false), configuration(config), logDock(NULL), masterManager(NULL),
+  trayIcon(NULL), trayIconMenu(NULL)
 {
-	Main::mainWindow = this;
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
 
 	initLogDock();
 
-	serverTableHandler = new SLHandler(tableServers);
+	serverTableHandler = new ServerListHandler(tableServers, configuration, this);
 	connectEntities();
 
 	// Window geometry settings
-	Main::config->createSetting("MainWindowX", x());
-	Main::config->createSetting("MainWindowY", y());
-	Main::config->createSetting("MainWindowWidth", width());
-	Main::config->createSetting("MainWindowHeight", height());
+	configuration->createSetting("MainWindowX", x());
+	configuration->createSetting("MainWindowY", y());
+	configuration->createSetting("MainWindowWidth", width());
+	configuration->createSetting("MainWindowHeight", height());
 
-	move(Main::config->setting("MainWindowX")->integer(), Main::config->setting("MainWindowY")->integer());
-	resize(Main::config->setting("MainWindowWidth")->integer(), Main::config->setting("MainWindowHeight")->integer());
+	move(configuration->setting("MainWindowX")->integer(), configuration->setting("MainWindowY")->integer());
+	resize(configuration->setting("MainWindowWidth")->integer(), configuration->setting("MainWindowHeight")->integer());
 
 	// Get the master
-	mc = new MasterManager();
-	connect(mc, SIGNAL( message(const QString&, const QString&, bool) ), this, SLOT( masterManagerMessages(const QString&, const QString&, bool) ) );
+	masterManager = new MasterManager();
+	connect(masterManager, SIGNAL( message(const QString&, const QString&, bool) ), this, SLOT( masterManagerMessages(const QString&, const QString&, bool) ) );
 
 	// Allow us to enable and disable ports.
-	fillQueryMenu(mc);
+	fillQueryMenu(masterManager);
 
 	// Init custom servers
-	mc->customServs()->readConfig(Main::config, serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
+	masterManager->customServs()->readConfig(configuration, serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
 
 	setWindowIcon(QIcon(":/icon.png"));
 
@@ -80,7 +79,7 @@ MainWindow::MainWindow(int argc, char** argv)
 	buddiesList = new DockBuddiesList(this);
 	connect(buddiesList, SIGNAL( visibilityChanged(bool)), menuActionBuddies, SLOT( setChecked(bool)));
 	connect(buddiesList, SIGNAL( joinServer(const Server*) ), this, SLOT( runGame(const Server*) ));
-	buddiesList->scan(mc);
+	buddiesList->scan(masterManager);
 	buddiesList->hide();
 	this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
 
@@ -100,7 +99,7 @@ MainWindow::MainWindow(int argc, char** argv)
 	initTrayIcon();
 
 	// check query on statup
-	bool queryOnStartup = Main::config->setting("QueryOnStartup")->integer() != 0;
+	bool queryOnStartup = configuration->setting("QueryOnStartup")->integer() != 0;
 	if (queryOnStartup)
 	{
 		btnGetServers_Click();
@@ -117,13 +116,13 @@ MainWindow::MainWindow(int argc, char** argv)
 MainWindow::~MainWindow()
 {
 	// Window geometry settings
-	Main::config->setting("MainWindowMaximized")->setValue(isMaximized());
+	configuration->setting("MainWindowMaximized")->setValue(isMaximized());
 	if (!isMaximized() && !isMinimized())
 	{
-		Main::config->setting("MainWindowX")->setValue(x());
-		Main::config->setting("MainWindowY")->setValue(y());
-		Main::config->setting("MainWindowWidth")->setValue(width());
-		Main::config->setting("MainWindowHeight")->setValue(height());
+		configuration->setting("MainWindowX")->setValue(x());
+		configuration->setting("MainWindowY")->setValue(y());
+		configuration->setting("MainWindowWidth")->setValue(width());
+		configuration->setting("MainWindowHeight")->setValue(height());
 	}
 
 	QList<QAction*> menuQueryActions = menuQuery->actions();
@@ -135,7 +134,7 @@ MainWindow::~MainWindow()
 	    if (!action->text().isEmpty())
 	    {
 	        QString settingName = QString(action->text()).replace(' ', "") + "Query";
-	        Main::config->setting(settingName)->setValue(action->isChecked());
+	        configuration->setting(settingName)->setValue(action->isChecked());
 	    }
 	}
 
@@ -154,13 +153,15 @@ MainWindow::~MainWindow()
 
 	delete serverTableHandler;
 
-	if(mc != NULL)
-		delete mc;
+	if(masterManager != NULL)
+	{
+		delete masterManager;
+	}
 }
 
 void MainWindow::autoRefreshTimer_timeout()
 {
-	if (Main::config->setting("QueryAutoRefreshDontIfActive")->boolean() && !isMinimized())
+	if (configuration->setting("QueryAutoRefreshDontIfActive")->boolean() && !isMinimized())
 	{
 		if (QApplication::activeWindow() != 0)
 		{
@@ -189,7 +190,7 @@ void MainWindow::btnGetServers_Click()
 	pLog << tr("Total refresh process initialized!");
 	serverTableHandler->clearTable();
 	refreshCustomServers();
-	Main::refreshingThread->registerMaster(mc);
+	Main::refreshingThread->registerMaster(masterManager);
 }
 
 void MainWindow::changeEvent(QEvent* event)
@@ -210,7 +211,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
 	// Check if tray icon is available and if we want to minimize to tray icon
 	// when 'X' button is pressed. Real quit requests are handled by
 	// quitProgram() method. This method sets bWantToQuit to true.
-	if (trayIcon != NULL && Main::config->setting("CloseToTrayIcon")->boolean() && !bWantToQuit)
+	if (trayIcon != NULL && configuration->setting("CloseToTrayIcon")->boolean() && !bWantToQuit)
 	{
 		bWasMaximized = isMaximized();
 		event->ignore();
@@ -273,9 +274,9 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		query->setIcon(plugin->icon());
 		query->setText(name);
 
-		if (Main::config->settingExists(name + "Query"))
+		if (configuration->settingExists(name + "Query"))
 		{
-			bool enabled = static_cast<bool>(Main::config->setting(name + "Query")->integer());
+			bool enabled = static_cast<bool>(configuration->setting(name + "Query")->integer());
 			mClient->setEnabled(enabled);
 			query->setChecked(enabled);
 			statusWidget->setEnabled(enabled);
@@ -305,7 +306,7 @@ void MainWindow::finishedQueryingMaster(MasterClient* master)
 		connect((*master)[i], SIGNAL(begunRefreshing(Server *)), serverTableHandler, SLOT(serverBegunRefreshing(Server *)) );
 	}
 
-	refreshServers(mc);
+	refreshServers(masterManager);
 }
 
 void MainWindow::initAutoRefreshTimer()
@@ -313,7 +314,7 @@ void MainWindow::initAutoRefreshTimer()
 	const unsigned MIN_DELAY = 30;
 	const unsigned MAX_DELAY = 3600;
 
-	Config* cfg = Main::config;
+	Config* cfg = configuration;
 
 	bool bEnabled = cfg->setting("QueryAutoRefreshEnabled")->boolean();
 
@@ -360,7 +361,7 @@ void MainWindow::initLogDock()
 
 void MainWindow::initTrayIcon()
 {
-	bool isEnabled = Main::config->setting("UseTrayIcon")->boolean();
+	bool isEnabled = configuration->setting("UseTrayIcon")->boolean();
 	if (!isEnabled || !QSystemTrayIcon::isSystemTrayAvailable())
 	{
 		if (trayIcon != NULL)
@@ -433,11 +434,11 @@ void MainWindow::menuLog()
 
 void MainWindow::menuOptionsConfigure()
 {
-	ConfigureDlg dlg(Main::config, this);
+	ConfigureDlg dlg(configuration, this);
 
 	for(unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
-		ConfigurationBoxInfo* ec = (*Main::enginePlugins)[i]->info->pInterface->configuration(Main::config, &dlg);
+		ConfigurationBoxInfo* ec = (*Main::enginePlugins)[i]->info->pInterface->configuration(configuration, &dlg);
 		dlg.addEngineConfiguration(ec);
 	}
 
@@ -458,7 +459,7 @@ void MainWindow::menuOptionsConfigure()
 	if (dlg.customServersChanged())
 	{
 		serverTableHandler->serverModel()->removeCustomServers();
-		mc->customServs()->readConfig(Main::config, serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
+		masterManager->customServs()->readConfig(configuration, serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
 		refreshCustomServers();
 	}
 }
@@ -527,7 +528,7 @@ bool MainWindow::obtainJoinCommandLine(const Server* server, CommandLineInfo& cl
 					filesMissingMessage += tr("PWADS: %1\nDo you want Wadseeker to find missing WADS?").arg(jError.missingWads.join(" "));
 				}
 
-				if (QMessageBox::question(Main::mainWindow, filesMissingCaption, filesMissingMessage, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+				if (QMessageBox::question(this, filesMissingCaption, filesMissingMessage, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 				{
 					if (!jError.missingIwad.isEmpty())
 					{
@@ -563,12 +564,13 @@ void MainWindow::quitProgram()
 
 void MainWindow::refreshCustomServers()
 {
-	CustomServers* cs = mc->customServs();
+	CustomServers* customServers = masterManager->customServs();
 
-	for(int i = 0;i < cs->numServers();i++)
+	for(int i = 0;i < customServers->numServers();i++)
 	{
-		serverTableHandler->serverUpdated((*cs)[i], Server::RESPONSE_NO_RESPONSE_YET);
-		(*cs)[i]->refresh(); // This will register server with refreshing thread.
+		Server* server = (*customServers)[i];
+		serverTableHandler->serverUpdated(server, Server::RESPONSE_NO_RESPONSE_YET);
+		server->refresh(); // This will register server with refreshing thread.
 	}
 }
 
@@ -639,7 +641,7 @@ void MainWindow::trayIcon_activated(QSystemTrayIcon::ActivationReason reason)
 			bWasMaximized == true ? showMaximized() : showNormal();
 			activateWindow();
 		}
-		else if (Main::config->setting("CloseToTrayIcon")->boolean())
+		else if (configuration->setting("CloseToTrayIcon")->boolean())
 		{
 			close();
 		}
@@ -652,9 +654,9 @@ void MainWindow::trayIcon_activated(QSystemTrayIcon::ActivationReason reason)
 
 void MainWindow::updateTrayIconTooltipAndLogTotalRefresh()
 {
-	int numServers = mc->numServers();
-	int numCustoms = mc->customServs()->numServers();
-	int numPlayers = mc->numPlayers() + mc->customServs()->numPlayers();
+	int numServers = masterManager->numServers();
+	int numCustoms = masterManager->customServs()->numServers();
+	int numPlayers = masterManager->numPlayers() + masterManager->customServs()->numPlayers();
 
 	if (trayIcon != NULL)
 	{

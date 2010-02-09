@@ -21,7 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "gameinfotip.h"
-#include "server.h"
+#include "serverapi/server.h"
 
 const QString GameInfoTip::UNLIMITED = QObject::tr("Unlimited");
 

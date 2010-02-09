@@ -24,7 +24,7 @@
 #ifndef __ODAMEXSERVER_H__
 #define __ODAMEXSERVER_H__
 
-#include "server.h"
+#include "serverapi/server.h"
 
 #define NUM_ODAMEX_GAME_MODES 5
 

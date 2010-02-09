@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "log.h"
-#include "server.h"
+#include "serverapi/server.h"
 #include "main.h"
 #include "strings.h"
 #include "gui/standardserverconsole.h"

@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------
 #include "tooltipgenerator.h"
 #include "main.h"
-#include "server.h"
+#include "serverapi/server.h"
 #include "tooltips/gameinfotip.h"
 #include "tooltips/generalinfotip.h"
 #include "tooltips/playertable.h"

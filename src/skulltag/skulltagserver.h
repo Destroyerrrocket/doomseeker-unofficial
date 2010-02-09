@@ -28,7 +28,7 @@
 #include <QColor>
 #include <QTime>
 
-#include "server.h"
+#include "serverapi/server.h"
 
 #define NUM_SKULLTAG_GAME_MODES	16
 #define NUM_SKULLTAG_GAME_MODIFIERS 2

@@ -65,6 +65,7 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/models/serverlistmodel.h
 	gui/widgets/dockedwidgets.h
 	gui/widgets/serverconsole.h
+	gui/widgets/serverlistcontextmenu.h
 	gui/widgets/serverlistview.h
 	gui/widgets/serversstatuswidget.h
 	sdeapi/config.hpp
@@ -72,13 +73,13 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	serverapi/tooltips/generalinfotip.h
 	serverapi/tooltips/playertable.h
 	serverapi/rconprotocol.h
+	serverapi/server.h
 	serverapi/tooltipgenerator.h
 	customservers.h
 	ip2c.h
 	log.h
 	masterclient.h
 	refresher.h
-	server.h
 )
 
 qt4_add_resources(doomseekerResources
@@ -108,6 +109,7 @@ set(SOURCE_FILES
 	gui/wadseekerinterface.cpp
 	gui/models/serverlistmodel.cpp
 	gui/widgets/serverconsole.cpp
+	gui/widgets/serverlistcontextmenu.cpp
 	gui/widgets/serverlistview.cpp
 	gui/widgets/serversstatuswidget.cpp
 	sdeapi/config.cpp
@@ -118,6 +120,7 @@ set(SOURCE_FILES
 	serverapi/tooltips/playertable.cpp
 	serverapi/player.cpp
 	serverapi/rconprotocol.cpp
+	serverapi/server.cpp
 	serverapi/tooltipgenerator.cpp
 	customservers.cpp
 	ip2c.cpp
@@ -126,7 +129,6 @@ set(SOURCE_FILES
 	masterclient.cpp
 	pathfinder.cpp
 	refresher.cpp
-	server.cpp
 	strings.cpp	
 )
 

@@ -39,7 +39,8 @@ DockBuddiesList::BuddyInfo &DockBuddiesList::BuddyInfo::operator= (const DockBud
 	return *this;
 }
 
-DockBuddiesList::DockBuddiesList(QWidget *parent) : QDockWidget(parent), mc(NULL), save(false)
+DockBuddiesList::DockBuddiesList(QWidget *parent)
+: QDockWidget(parent), masterClient(NULL), save(false)
 {
 	setupUi(this);
 
@@ -119,7 +120,7 @@ void DockBuddiesList::addBuddy()
 	if(pattern.isValid())
 	{
 		pBuddies << pattern;
-		scan(mc);
+		scan(masterClient);
 	}
 
 	patternsList->addItem(dlg.pattern());
@@ -153,7 +154,7 @@ void DockBuddiesList::deleteBuddy()
 		selection.removeAt(largestIndex); // remove index
 	}
 
-	scan(mc);
+	scan(masterClient);
 
 	save = true;
 }
@@ -191,15 +192,15 @@ void DockBuddiesList::patternsListContextMenu(const QPoint &pos) const
 
 void DockBuddiesList::scan(const MasterClient *master)
 {
-	if(master == NULL && mc == NULL)
+	if(master == NULL && masterClient == NULL)
 		return;
-	else if(master != mc && master != NULL)
+	else if(master != masterClient && master != NULL)
 	{ // If the master is new
-		mc = master;
+		masterClient = master;
 	}
 
 	buddies.clear(); //empty list
-	foreach(Server *server, mc->serverList())
+	foreach(Server *server, masterClient->serverList())
 	{
 		if(server->numPlayers() <= 0)
 			continue;

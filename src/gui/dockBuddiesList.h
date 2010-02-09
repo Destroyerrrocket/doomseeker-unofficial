@@ -24,7 +24,7 @@
 #ifndef __DOCKBUDDIESLIST_H__
 #define __DOCKBUDDIESLIST_H__
 
-#include "server.h"
+#include "serverapi/server.h"
 #include "masterclient.h"
 #include "ui_dockBuddiesList.h"
 #include "ui_addBuddyDlg.h"
@@ -82,7 +82,7 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 		void	patternsListContextMenu(const QPoint &pos) const;
 
 	private:
-		const MasterClient					*mc;
+		const MasterClient					*masterClient;
 		bool								save;
 };
 

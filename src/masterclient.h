@@ -28,7 +28,7 @@
 #include <QHostAddress>
 #include <QList>
 
-#include "server.h"
+#include "serverapi/server.h"
 
 /**
  * Abstract class base for all MasterClients.  This is expected to fetch a list

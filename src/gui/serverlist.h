@@ -24,7 +24,7 @@
 #ifndef __SERVERLIST_H_
 #define __SERVERLIST_H_
 
-#include "server.h"
+#include "serverapi/server.h"
 
 #include <QObject>
 #include <QStandardItem>
@@ -35,15 +35,20 @@
 #include "gui/widgets/serverlistview.h"
 #include "gui/models/serverlistmodel.h"
 
-class SLHandler : public QObject
+class ServerListHandler : public QObject
 {
 	Q_OBJECT
 
 	public:
-		SLHandler(ServerListView*);
-		~SLHandler();
+		ServerListHandler(ServerListView* serverTable, Config* config, QWidget* pMainWindow);
+		~ServerListHandler();
 
 		void 				clearTable();
+		Config*				configurationObject() { return configuration; }
+
+		QWidget*			getMainWindow() { return mainWindow; }
+
+		bool				isSortingByColumn(int columnIndex);
 
 		QList<Server*>		selectedServers();
 
@@ -52,51 +57,88 @@ class SLHandler : public QObject
 		ServerListModel*	serverModel() { return model; }
 		ServerListView*		serverTable() { return table; }
 
-
 	public slots:
-		void cleanUp();
-		void redraw();
-		void refreshAll();
-		void serverBegunRefreshing(Server* server);
-		void serverUpdated(Server *server, int response);
-		void tableRightClicked(const QModelIndex&, const QPoint&);
-		void updateCountryFlags(bool onlyIfServerHasNoFlagYet = false);
-		void updateSearch(const QString& search);
+		void 				cleanUp();
+		void 				redraw();
+		void 				refreshAll();
+		void				refreshSelected();
+		void 				serverBegunRefreshing(Server* server);
+		void 				serverUpdated(Server *server, int response);
+
+		/**
+		 *	@brief Sets country flags for servers that don't have flags
+		 *		present yet.
+		 */
+		void				setCountryFlagsIfNotPresent();
+
+		void 				tableRightClicked(const QModelIndex&, const QPoint&);
+		void 				updateCountryFlags();
+		void 				updateSearch(const QString& search);
 
 	protected slots:
-		// Handles column sorting.
-		void columnHeaderClicked(int);
-		void doubleClicked(const QModelIndex&);
-		void itemSelected(const QModelIndex&);
-		void modelCleared();
-		void mouseEntered(const QModelIndex&);
-		void resizeChangedRows(const QModelIndex&, int, int);
+		/// Handles column sorting.
+		void 				columnHeaderClicked(int);
+		void 				doubleClicked(const QModelIndex&);
+		void 				itemSelected(const QModelIndex&);
+		void 				modelCleared();
+		void 				mouseEntered(const QModelIndex&);
+		void 				resizeChangedRows(const QModelIndex&, int, int);
 
 	signals:
 		/**
 		 * Emitted when a request for join command line show is called.
 		 */
-		void 	displayServerJoinCommandLine(const Server*);
-		void 	serverDoubleClicked(const Server*);
-		void 	serversSelected(QList<Server*>&);
+		void 					displayServerJoinCommandLine(const Server*);
+		void 					serverDoubleClicked(const Server*);
+		void 					serversSelected(QList<Server*>&);
 
 	protected:
-		QTimer			cleaner;
-		bool 			needsCleaning;
+		QTimer					cleanerTimer;
+		Config*					configuration;
 
-		ServerListView*			table;
+		QWidget*				mainWindow;
 		ServerListModel* 		model;
-		QSortFilterProxyModel*	sortingModel;
+		bool 					needsCleaning;
+		QSortFilterProxyModel*	sortingProxy;
 
-		Qt::SortOrder 	sortOrder;
-		int				sortIndex;
+		Qt::SortOrder 			sortOrder;
+		int						sortIndex;
+		ServerListView*			table;
 
+		QString 				createPlayersToolTip(const Server* server);
+		QString 				createServerNameToolTip(const Server* server);
+		QString 				createPwadsToolTip(const Server* server);
 
-		void prepareServerTable();
+		bool					areColumnsWidthsSettingsChanged();
 
-		QString createPlayersToolTip(const Server* server);
-		QString createServerNameToolTip(const Server* server);
-		QString createPwadsToolTip(const Server* server);
+		void					connectTableModelProxySlots();
+
+		ServerListModel*		createModel();
+		QSortFilterProxyModel*	createSortingProxy(ServerListModel* serverListModel);
+
+		Qt::SortOrder			getColumnDefaultSortOrder(int columnId);
+
+		void					initCleanerTimer();
+
+		/**
+		 *	@brief Creates default setting entries in configuration.
+		 *
+		 *	Will not override any existing configuration.
+		 */
+		void					initDefaultColumnsWidthsSettings();
+
+		void					loadColumnsWidthsSettings();
+
+		void 					prepareServerTable();
+
+		void					saveColumnsWidthsSettings();
+
+		void					setupTableColumnWidths();
+		void					setupTableProperties(QSortFilterProxyModel* tableModel);
+
+		Qt::SortOrder			swapCurrentSortOrder();
+
+		void 					updateCountryFlags(bool force);
 };
 
 #endif

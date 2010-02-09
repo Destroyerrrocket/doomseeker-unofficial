@@ -31,7 +31,7 @@
 #include <QWaitCondition>
 
 #include "masterclient.h"
-#include "server.h"
+#include "serverapi/server.h"
 
 struct ServerBatch
 {

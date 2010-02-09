@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "gui/models/serverlistmodel.h"
 #include "gui/widgets/serverlistview.h"
+#include "gui/serverlist.h"
 #include "log.h"
 #include "main.h"
 #include <assert.h>
@@ -29,20 +30,22 @@
 #include <QPainter>
 #include <QTime>
 
+#define HIDDEN true
+#define RESIZEABLE true
 
 ServerListColumn ServerListModel::columns[] =
 {
-	{ tr("Port"), 24, false, false },
-	{ tr("Players"), 60, false, true },
-	{ tr("Ping"), 50, false, true },
-	{ tr("Servername"), 200, false, true },
-	{ tr("Address"), 120, false, true },
-	{ tr("IWAD"), 90, false, true },
-	{ tr("MAP"), 70, false, true },
-	{ tr("Wads"), 120, false, true },
-	{ tr("Gametype"), 150, false, true },
-	{ "SORT_GROUP", 0, true, false },
-	{ "SERVER_POINTER", 0, true, false }
+	{ SLCID_PORT, 					tr("Port"),			24,		!HIDDEN, !RESIZEABLE, Qt::AscendingOrder },
+	{ SLCID_PLAYERS, 				tr("Players"),		60,		!HIDDEN,  RESIZEABLE, Qt::DescendingOrder },
+	{ SLCID_PING, 					tr("Ping"),			50,		!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
+	{ SLCID_SERVERNAME, 			tr("Servername"),	200,	!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
+	{ SLCID_ADDRESS, 				tr("Address"),		120,	!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
+	{ SLCID_IWAD, 					tr("IWAD"),			90,		!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
+	{ SLCID_MAP, 					tr("MAP"),			70,		!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
+	{ SLCID_WADS, 					tr("Wads"),			120,	!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
+	{ SLCID_GAMETYPE, 				tr("Gametype"),		150,	!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
+	{ SLCID_HIDDEN_GROUP, 			"SORT_GROUP",		0,		 HIDDEN, !RESIZEABLE, Qt::DescendingOrder },
+	{ SLCID_HIDDEN_SERVER_POINTER, 	"SERVER_POINTER",	0,		 HIDDEN, !RESIZEABLE, Qt::AscendingOrder }
 };
 
 //////////////////////////////////////////////////////////////
@@ -227,7 +230,9 @@ class WaitingClass : public QThread
 		}
 };
 
-ServerListModel::ServerListModel(QObject* parent) : QStandardItemModel(parent)
+ServerListModel::ServerListModel(ServerListHandler* parent)
+: QStandardItemModel(parent),
+  parentHandler(parent)
 {
 	setSortRole(SLDT_SORT);
 }
@@ -247,7 +252,7 @@ int ServerListModel::addServer(Server* server, int response)
 	// updateServer() method.
 
 	QModelIndex index = indexFromItem(columns[0]);
-	if (Main::mainWindow->isActiveWindow())
+	if (parentHandler->getMainWindow()->isActiveWindow())
 	{
 		setCountryFlag(columns[SLCID_SERVERNAME], server->address());
 	}
@@ -389,7 +394,7 @@ void ServerListModel::setBackgroundColor(int row, Server* server)
 {
 	if (server->isCustom())
 	{
-		SettingsData* setting = Main::config->setting("CustomServersColor");
+		SettingsData* setting = parentHandler->configurationObject()->setting("CustomServersColor");
 
 
 		for (int i = 0; i < HOW_MANY_SERVERLIST_COLUMNS; ++i)
@@ -447,9 +452,11 @@ void ServerListModel::setGood(int row, Server* server)
 	QStandardItem* qstdItem;
 	QString strTmp;
 
+	Config* config = parentHandler->configurationObject();
+
 	qstdItem = item(row, SLCID_PLAYERS);
-	int style = Main::config->setting("SlotStyle")->integer();
-	bool includeBots = !Main::config->setting("BotsAreNotPlayers")->boolean();
+	int style = config->setting("SlotStyle")->integer();
+	bool includeBots = !config->setting("BotsAreNotPlayers")->boolean();
 	if(style != NUM_SLOTSTYLES)
 		fillItem(qstdItem, server->numPlayers(includeBots), PlayersDiagram(server).pixmap());
 	else
@@ -627,15 +634,15 @@ QVariant ServerListModel::columnSortData(int row, int column)
 	return it->data(SLDT_SORT);
 }
 
-void ServerListModel::updateFlag(int row, bool onlyIfServerHasNoFlagYet)
+void ServerListModel::updateFlag(int row, bool force)
 {
     Server* serv = serverFromList(row);
     QStandardItem* itm = item(row, SLCID_SERVERNAME);
 
-    if (onlyIfServerHasNoFlagYet && !itm->icon().isNull())
-		return;
-
-    setCountryFlag(itm, serv->address());
+    if (force || itm->icon().isNull())
+    {
+		setCountryFlag(itm, serv->address());
+    }
 }
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
@@ -682,8 +689,10 @@ bool ServerListSortFilterProxyModel::compareColumnSortData(QVariant& var1, QVari
 
 bool ServerListSortFilterProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
 {
-	if (!Main::mainWindow->isActiveWindow())
+	if (!parentHandler->getMainWindow()->isActiveWindow())
+	{
 		return false;
+	}
 
 	ServerListModel* model = static_cast<ServerListModel*>(sourceModel());
 

@@ -64,7 +64,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 	Q_OBJECT
 
 	public:
-		MainWindow(int argc, char** argv);
+		MainWindow(int argc, char** argv, Config* config);
 		~MainWindow();
 
 		/**
@@ -78,25 +78,36 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	stopAutoRefreshTimer() { autoRefreshTimer.stop(); }
 
 	protected:
-		QTimer	autoRefreshTimer;
+		QTimer				autoRefreshTimer;
 
 		/**
 		 *	Set to true by btnGetServers_click() process and to false
 		 *	when refreshing thread enters sleep mode.
 		 */
-		bool	bTotalRefreshInProcess;
+		bool				bTotalRefreshInProcess;
+
+		DockBuddiesList*	buddiesList;
 
 		/**
 		 *	This is required so tray icon knows how to bring the window back.
 		 */
-		bool	bWasMaximized;
+		bool				bWasMaximized;
 
 		/**
 		 *	If set to true the closeEvent() method will ignore tray icon
 		 *	settings and proceed to close the MainWindow. This is set by
 		 *	quitProgram() slot.
 		 */
-		bool	bWantToQuit;
+		bool				bWantToQuit;
+
+		Config*				configuration;
+		LogDock*			logDock;
+		ServerListHandler*			serverTableHandler;
+
+		MasterManager*		masterManager;
+		QList<QAction*>		queryMenuPorts;
+		QSystemTrayIcon*	trayIcon;
+		QMenu*				trayIconMenu;
 
 		void	changeEvent(QEvent* event);
 
@@ -112,7 +123,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 *	Fills query menu with engines that have master server.
 		 *	@param masterManager - instantiated MainWindow::mc is passed here.
 		 *		Since this method is called from the constructor it's important
-		 *		to pay attention to not call it before mc is instantiated.
+		 *		to pay attention to not call it before masterManager is
+		 *		instantiated.
 		 *		In other words: this argument exists solely to avoid "random"
 		 *		crashes.
 		 */
@@ -169,16 +181,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void 	runGame(const Server*);
 		void	showServerJoinCommandLine(const Server*);
 		void	trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
-
-	private:
-		DockBuddiesList*	buddiesList;
-		LogDock*			logDock;
-		SLHandler*			serverTableHandler;
-
-		MasterManager*		mc;
-		QList<QAction*>		queryMenuPorts;
-		QSystemTrayIcon*	trayIcon;
-		QMenu*				trayIconMenu;
 };
 
 #endif

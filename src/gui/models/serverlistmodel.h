@@ -29,23 +29,26 @@
 #include <QStandardItemModel>
 #include <QString>
 #include <QPixmap>
-#include "server.h"
+#include "serverapi/server.h"
 
 struct ServerListColumn
 {
-	QString		name;
-	int			width;
-	bool		bHidden;
-	bool		bResizable;
+	int				columnId;
+	QString			name;
+	int				width;
+	bool			bHidden;
+	bool			bResizable;
+	Qt::SortOrder	defaultSortOrder;
 };
 
 class ServerListSortFilterProxyModel;
+class ServerListHandler;
 
 class ServerListModel : public QStandardItemModel
 {
 	Q_OBJECT
 
-	friend class SLHandler;
+	friend class ServerListHandler;
 	friend class ServerListSortFilterProxyModel;
 
 	public:
@@ -95,7 +98,7 @@ class ServerListModel : public QStandardItemModel
 
 		static ServerListColumn columns[];
 
-		ServerListModel(QObject* parent = NULL);
+		ServerListModel(ServerListHandler* parent);
 
 		void destroyRows();
 
@@ -131,7 +134,7 @@ class ServerListModel : public QStandardItemModel
 		 *  Updates flag on given row.
 		 *  @param row - index of row to update
 		 */
-		void updateFlag(int row, bool onlyIfServerHasNoFlagYet = false);
+		void updateFlag(int row, bool force = true);
 
 		/**
 		 *	Returns row number
@@ -164,33 +167,41 @@ class ServerListModel : public QStandardItemModel
 		void 					setRefreshing(int row);
 
 		QVariant				columnSortData(int row, int column);
+
+		ServerListHandler*		parentHandler;
 };
 
 class ServerListSortFilterProxyModel : public QSortFilterProxyModel
 {
 	Q_OBJECT
 
-	friend class SLHandler;
+	friend class ServerListHandler;
 
 	public:
-		ServerListSortFilterProxyModel(QObject* parent = 0) : QSortFilterProxyModel(parent) {}
+		ServerListSortFilterProxyModel(ServerListHandler* serverListHandler, QObject* parent = 0)
+		: QSortFilterProxyModel(parent),
+		  parentHandler(serverListHandler)
+		{
+		}
 
-		void	sortServers(int column, Qt::SortOrder order = Qt::AscendingOrder)
+		void					sortServers(int column, Qt::SortOrder order = Qt::AscendingOrder)
 		{
 			sortOrder = order;
 			sort(column, order);
 		}
 
 	protected:
-		Qt::SortOrder sortOrder;
-
 		/**
 		 * @return true if var1 is less than var2, false if otherwise.
 		 */
-		bool	compareColumnSortData(QVariant& var1, QVariant& var2, int column) const;
-		bool	lessThan(const QModelIndex& left, const QModelIndex& right) const;
+		bool					compareColumnSortData(QVariant& var1, QVariant& var2, int column) const;
+		bool					lessThan(const QModelIndex& left, const QModelIndex& right) const;
 
-		Server* serverFromList(const QModelIndex& index) const;
+		Server* 				serverFromList(const QModelIndex& index) const;
+
+		ServerListHandler*		parentHandler;
+		Qt::SortOrder 			sortOrder;
+
 };
 
 #endif

@@ -24,7 +24,7 @@
 #ifndef __CHOCOLATEDOOMSERVER_H__
 #define __CHOCOLATEDOOMSERVER_H__
 
-#include "server.h"
+#include "serverapi/server.h"
 
 class ChocolateDoomServer : public Server
 {

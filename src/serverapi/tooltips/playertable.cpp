@@ -21,7 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "playertable.h"
-#include "server.h"
+#include "serverapi/server.h"
 
 PlayerTable::PlayerTable(const Server* server)
 : numOfColumns(0), pServer(server)

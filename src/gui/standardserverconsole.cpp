@@ -21,7 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "standardserverconsole.h"
-#include "server.h"
+#include "serverapi/server.h"
 
 StandardServerConsole::StandardServerConsole(const Server *server, const QString &program, const QStringList &arguments)
 {
