@@ -23,6 +23,8 @@
 
 #include "gui/remoteconsole.h"
 #include "gui/serverlist.h"
+#include "gui/models/serverlistcolumn.h"
+#include "gui/models/serverlistrowhandler.h"
 #include "gui/widgets/serverlistcontextmenu.h"
 #include "serverapi/tooltipgenerator.h"
 #include "main.h"
@@ -35,6 +37,7 @@
 #include <QStandardItem>
 #include <QToolTip>
 
+using namespace ServerListColumnId;
 
 ServerListHandler::ServerListHandler(ServerListView* serverTable, Config* config, QWidget* pMainWindow)
 : configuration(config), mainWindow(pMainWindow), model(NULL),
@@ -59,9 +62,9 @@ ServerListHandler::~ServerListHandler()
 
 bool ServerListHandler::areColumnsWidthsSettingsChanged()
 {
-	for(int i = 0; i < ServerListModel::HOW_MANY_SERVERLIST_COLUMNS; ++i)
+	for(int i = 0; i < NUM_SERVERLIST_COLUMNS; ++i)
 	{
-		if(ServerListModel::columns[i].width != table->columnWidth(i))
+		if(ServerListColumns::columns[i].width != table->columnWidth(i))
 		{
 			return true;
 		}
@@ -185,7 +188,7 @@ QSortFilterProxyModel* ServerListHandler::createSortingProxy(ServerListModel* se
 	proxy->setSourceModel(serverListModel);
 	proxy->setSortRole(ServerListModel::SLDT_SORT);
 	proxy->setSortCaseSensitivity( Qt::CaseInsensitive );
-	proxy->setFilterKeyColumn(ServerListModel::SLCID_SERVERNAME);
+	proxy->setFilterKeyColumn(IDServerName);
 
 	return proxy;
 }
@@ -212,7 +215,7 @@ void ServerListHandler::doubleClicked(const QModelIndex& index)
 Qt::SortOrder ServerListHandler::getColumnDefaultSortOrder(int columnId)
 {
 	// Right now we can assume that columnIndex == columnId.
-	return ServerListModel::columns[columnId].defaultSortOrder;
+	return ServerListColumns::columns[columnId].defaultSortOrder;
 }
 
 void ServerListHandler::initCleanerTimer()
@@ -224,10 +227,10 @@ void ServerListHandler::initCleanerTimer()
 
 void ServerListHandler::initDefaultColumnsWidthsSettings()
 {
-	ServerListColumn* columns = ServerListModel::columns;
+	ServerListColumn* columns = ServerListColumns::columns;
 
 	QString widths;
-	for(int i = 0; i < ServerListModel::HOW_MANY_SERVERLIST_COLUMNS; ++i)
+	for(int i = 0; i < NUM_SERVERLIST_COLUMNS; ++i)
 	{
 		if(i != 0)
 		{
@@ -251,12 +254,12 @@ void ServerListHandler::itemSelected(const QModelIndex& index)
 
 void ServerListHandler::loadColumnsWidthsSettings()
 {
-	ServerListColumn* columns = ServerListModel::columns;
+	ServerListColumn* columns = ServerListColumns::columns;
 
 	QStringList colWidths = configuration->setting("ServerListColumnWidths")->string().split(',', QString::SkipEmptyParts);
-	if(colWidths.size() == ServerListModel::HOW_MANY_SERVERLIST_COLUMNS) // If the number of columns do not match than reset this setting
+	if(colWidths.size() == NUM_SERVERLIST_COLUMNS) // If the number of columns do not match than reset this setting
 	{
-		for(int i = 0;i < ServerListModel::HOW_MANY_SERVERLIST_COLUMNS;i++)
+		for(int i = 0;i < NUM_SERVERLIST_COLUMNS;i++)
 		{
 			bool ok = false;
 			int width = colWidths[i].toInt(&ok);
@@ -286,15 +289,15 @@ void ServerListHandler::mouseEntered(const QModelIndex& index)
 	// in case if it should be not.
 	switch(index.column())
 	{
-		case ServerListModel::SLCID_PLAYERS:
+		case IDPlayers:
 			tooltip = createPlayersToolTip(server);
 			break;
 
-		case ServerListModel::SLCID_SERVERNAME:
+		case IDServerName:
 			tooltip = createServerNameToolTip(server);
 			break;
 
-		case ServerListModel::SLCID_WADS:
+		case IDWads:
 			tooltip = createPwadsToolTip(server);
 			break;
 
@@ -314,7 +317,7 @@ void ServerListHandler::prepareServerTable()
 
 	connectTableModelProxySlots();
 
-	columnHeaderClicked(ServerListModel::SLCID_PLAYERS);
+	columnHeaderClicked(IDPlayers);
 }
 
 void ServerListHandler::redraw()
@@ -347,7 +350,7 @@ void ServerListHandler::refreshSelected()
 void ServerListHandler::resizeChangedRows(const QModelIndex &parent, int start, int end)
 {
 	// This is so when the search is undone the rows don't become fat again.
-	for (int i = start;i < end; ++i)
+	for (int i = start; i < end; ++i)
 	{
 		table->resizeRowToContents(i);
 	}
@@ -358,7 +361,7 @@ void ServerListHandler::saveColumnsWidthsSettings()
 	if(areColumnsWidthsSettingsChanged())
 	{
 		QString widths;
-		for(int j = 0; j < ServerListModel::HOW_MANY_SERVERLIST_COLUMNS; ++j)
+		for(int j = 0; j < NUM_SERVERLIST_COLUMNS; ++j)
 		{
 			if(j != 0)
 			{
@@ -389,11 +392,7 @@ QList<Server*> ServerListHandler::selectedServers()
 
 void ServerListHandler::serverBegunRefreshing(Server* server)
 {
-	QModelIndex index = model->findServerOnTheList(server);
-	if (index.isValid())
-	{
-		model->setRefreshing(index.row());
-	}
+	model->setRefreshing(server);
 }
 
 Server *ServerListHandler::serverFromIndex(const QModelIndex &index)
@@ -405,18 +404,17 @@ Server *ServerListHandler::serverFromIndex(const QModelIndex &index)
 
 void ServerListHandler::serverUpdated(Server *server, int response)
 {
-	QModelIndex index = model->findServerOnTheList(server);
-	int row = 0;
-	if (index.isValid())
+	int rowIndex = model->findServerOnTheList(server);
+	if (rowIndex >= 0)
 	{
-		row = model->updateServer(index.row(), server, response);
+		rowIndex = model->updateServer(rowIndex, server, response);
 	}
 	else
 	{
-		row = model->addServer(server, response);
+		rowIndex = model->addServer(server, response);
 	}
 
-	table->resizeRowToContents(row);
+	table->resizeRowToContents(rowIndex);
 
 	needsCleaning = true;
 }
@@ -429,9 +427,9 @@ void ServerListHandler::setCountryFlagsIfNotPresent()
 
 void ServerListHandler::setupTableColumnWidths()
 {
-	for (int i = 0; i < ServerListModel::HOW_MANY_SERVERLIST_COLUMNS; ++i)
+	for (int i = 0; i < NUM_SERVERLIST_COLUMNS; ++i)
 	{
-		ServerListColumn* columns = ServerListModel::columns;
+		ServerListColumn* columns = ServerListColumns::columns;
 		table->setColumnWidth(i, columns[i].width);
 		table->setColumnHidden(i, columns[i].bHidden);
 		if(!columns[i].bResizable)

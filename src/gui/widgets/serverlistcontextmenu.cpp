@@ -59,7 +59,7 @@ void ServerListContextMenu::createMembers()
 	join = menu->addAction(tr("Join"));
 	showJoinCommandLine = menu->addAction(tr("Show join command line"));
 
-	if (!pServer->website().isEmpty() && !pServer->website().startsWith("file://", Qt::CaseInsensitive))
+	if (!pServer->website().isEmpty() && pServer->isWebsiteURLSafe())
 	{
 		openUrlInDefaultBrowser = menu->addAction(tr("Open URL in browser"));
 	}

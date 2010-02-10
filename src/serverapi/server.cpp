@@ -356,6 +356,11 @@ bool Server::host(const HostInfo& hostInfo, bool bOfflinePlay, QString& error)
 	return runExecutable(cli, WRAP_IN_SSS_CONSOLE, error);
 }
 
+bool Server::isWebsiteURLSafe() const
+{
+	return !website().startsWith("file://", Qt::CaseInsensitive);
+}
+
 JoinError Server::join(const QString &connectPassword) const
 {
 	CommandLineInfo cli;

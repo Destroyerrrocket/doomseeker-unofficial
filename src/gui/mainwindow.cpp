@@ -29,6 +29,7 @@
 #include "gui/mainwindow.h"
 #include "gui/passwordDlg.h"
 #include "gui/wadseekerinterface.h"
+#include "gui/helpers/playersdiagram.h"
 #include "gui/widgets/serversstatuswidget.h"
 #include "customservers.h"
 #include "log.h"
@@ -97,6 +98,10 @@ MainWindow::MainWindow(int argc, char** argv, Config* config)
 
 	// Tray icon
 	initTrayIcon();
+
+	// Player diagram styles
+	int slotStyle = configuration->setting("SlotStyle")->integer();
+	PlayersDiagram::loadImages(slotStyle);
 
 	// check query on statup
 	bool queryOnStartup = configuration->setting("QueryOnStartup")->integer() != 0;

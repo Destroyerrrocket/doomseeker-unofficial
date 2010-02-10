@@ -31,16 +31,6 @@
 #include <QPixmap>
 #include "serverapi/server.h"
 
-struct ServerListColumn
-{
-	int				columnId;
-	QString			name;
-	int				width;
-	bool			bHidden;
-	bool			bResizable;
-	Qt::SortOrder	defaultSortOrder;
-};
-
 class ServerListSortFilterProxyModel;
 class ServerListHandler;
 
@@ -52,30 +42,13 @@ class ServerListModel : public QStandardItemModel
 	friend class ServerListSortFilterProxyModel;
 
 	public:
-		enum ColumnId
-		{
-			SLCID_PORT,
-			SLCID_PLAYERS,
-			SLCID_PING,
-			SLCID_SERVERNAME,
-			SLCID_ADDRESS,
-			SLCID_IWAD,
-			SLCID_MAP,
-			SLCID_WADS,
-			SLCID_GAMETYPE,
-			SLCID_HIDDEN_GROUP,
-			SLCID_HIDDEN_SERVER_POINTER,
-
-			HOW_MANY_SERVERLIST_COLUMNS
-		};
-
 		/**
 		 *	Servers from the same group will be always kept together
 		 *  and sorted only inside this group. Group order is always descending:
 		 *  SG_NORMAL servers will be always on the top of the list, after them
 		 *  will be SG_WAIT servers, etc.
 		 *
-		 *  !!! WARNING !!!
+		 *  @b WARNING:
 		 *	Exception: custom servers will always be on top of the list
 		 *	and will be sorted inside their own group independentedly.
 		 */
@@ -96,75 +69,58 @@ class ServerListModel : public QStandardItemModel
 			SLDT_SORT						 = Qt::UserRole+2
 		};
 
-		static ServerListColumn columns[];
-
 		ServerListModel(ServerListHandler* parent);
 
-		void destroyRows();
+		/**
+		 *	Returns row index.
+		 */
+		int 				addServer(Server* server, int response);
+
+		void 				destroyRows();
 
 		/**
-		 * Removes content from fields that aren't
-		 * hidden and don't belong to SLCID_ADDRESS and SLCID_PORT columns.
+		 *	@brief Finds index of the row where server is contained.
+		 *
+		 *	@return -1 in case of a failure or index of the row otherwise.
 		 */
-		void clearNonVitalFields(int row);
-		void emptyItem(QStandardItem*);
-		void fillItem(QStandardItem*, const QString&);
-		void fillItem(QStandardItem*, int, const QString&);
-		void fillItem(QStandardItem*, int);
-		void fillItem(QStandardItem*, const QHostAddress&, const QString& actualDisplay = QString());
-		void fillItem(QStandardItem*, const QString&, const QPixmap&);
-		void fillItem(QStandardItem*, int, const QPixmap&);
+		int 				findServerOnTheList(const Server* server);
 
-		/**
-		 *	Returns row number
-		 */
-		int addServer(Server* server, int response);
+		ServerListHandler*	handler() { return parentHandler; }
 
 		/**
 		 *	Enforces update of a given row. No modificiation is done
 		 *	to the server info itself. Can be used to redraw things like
 		 *	background.
 		 */
-		void redraw(int row);
-		void redrawAll();
+		void 				redraw(int row);
+		void 				redrawAll();
 
-		void removeCustomServers();
+		void 				removeCustomServers();
 
 		/**
 		 *  Updates flag on given row.
 		 *  @param row - index of row to update
 		 */
-		void updateFlag(int row, bool force = true);
+		void 				updateFlag(int row, bool force = true);
 
 		/**
-		 *	Returns row number
+		 *	Returns row index.
 		 */
-		int updateServer(int row, Server* server, int response);
+		int 				updateServer(int row, Server* server, int response);
 
-		QModelIndex findServerOnTheList(const Server* server);
-		Server* serverFromList(int rowNum);
-		Server* serverFromList(const QModelIndex&);
-		Server* serverFromList(const QStandardItem*);
+		Server* 			serverFromList(int rowIndex);
+		Server* 			serverFromList(const QModelIndex&);
+
+		void				setRefreshing(Server* server);
 
 	signals:
-		void allRowsContentChanged();
-		void modelCleared();
-		void rowContentChanged(int row);
+		void 				allRowsContentChanged();
+		void 				modelCleared();
+		void 				rowContentChanged(int row);
 
 	protected:
 		void 					prepareHeaders();
 		ServerGroup 			serverGroup(int row);
-
-		void					setBackgroundColor(int row, Server* server);
-
-		void 					setBad(int row, Server* server);
-		void 					setBanned(int row, Server* server);
-		void                    setCountryFlag(QStandardItem* itm, const QHostAddress& addr);
-		void					setFirstQuery(int row, Server* server);
-		void 					setGood(int row, Server* server);
-		void					setTimeout(int row, Server* server);
-		void 					setWait(int row, Server* server);
-		void 					setRefreshing(int row);
 
 		QVariant				columnSortData(int row, int column);
 
