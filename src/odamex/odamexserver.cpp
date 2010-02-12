@@ -23,6 +23,7 @@
 
 #include "odamex/odamexserver.h"
 #include "main.h"
+#include "serverapi/playerslist.h"
 
 const // clear warnings
 #include "odamex/odamex.xpm"
@@ -195,7 +196,7 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 		currentGameMode = GAME_MODES[mode];
 	}
 	// Players
-	players.clear();
+	players->clear();
 	for(int i = 0;i < numPlayers;i++)
 	{
 		QString name(&in[pos]);
@@ -206,7 +207,7 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 		pos += 7;
 
 		Player player(name, score, ping, static_cast<Player::PlayerTeam> (team));
-		players << player;
+		(*players) << player;
 	}
 
 	// PWAD md5
@@ -275,8 +276,9 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 
 		for(int i = 0;i < numPlayers;i++)
 		{
-			Player player(players[i].name(), players[i].score(), players[i].ping(), players[i].teamNum(), READINT8(&in[pos++]) == 1);
-			players.replace(i, player);
+			Player& oldPlayer = (*players)[i];
+			Player player(oldPlayer.name(), oldPlayer.score(), oldPlayer.ping(), oldPlayer.teamNum(), READINT8(&in[pos++]) == 1);
+			players->replace(i, player);
 		}
 	}
 

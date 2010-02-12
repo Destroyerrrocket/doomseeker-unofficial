@@ -26,6 +26,7 @@
 #include "gui/models/serverlistcolumn.h"
 #include "gui/models/serverlistrowhandler.h"
 #include "gui/widgets/serverlistcontextmenu.h"
+#include "serverapi/playerslist.h"
 #include "serverapi/tooltipgenerator.h"
 #include "main.h"
 #include <QApplication>
@@ -141,7 +142,7 @@ QString ServerListHandler::createPlayersToolTip(const Server* server)
     QString ret;
 	ret = "<div style='white-space: pre'>";
 	ret += tooltipGenerator->gameInfoTableHTML();
-	if(server->numPlayers() != 0)
+	if(server->playersList()->numClients() != 0)
 	{
 		ret += tooltipGenerator->playerTableHTML();
 	}

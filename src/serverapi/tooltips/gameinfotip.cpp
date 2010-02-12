@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "gameinfotip.h"
+#include "serverapi/playerslist.h"
 #include "serverapi/server.h"
 
 const QString GameInfoTip::UNLIMITED = QObject::tr("Unlimited");
@@ -46,14 +47,15 @@ QString	GameInfoTip::playersHTML()
 {
 	const QString PLAYERS = tr("Players");
 
-	int canJoin = pServer->maximumPlayers() - pServer->numPlayers();
+	const PlayersList* playersList = pServer->playersList();
+	int canJoin = pServer->maximumPlayers() - playersList->numClients();
 	if(canJoin < 0)
 	{
 		canJoin = 0;
 	}
 
 	QString players = "<tr><td>" + PLAYERS + ":&nbsp;</td><td>%1 / %2 (%3 can join)</td></tr>";
-	players = players.arg(pServer->numPlayers()).arg(pServer->maximumClients()).arg(canJoin);
+	players = players.arg(playersList->numClients()).arg(pServer->maximumClients()).arg(canJoin);
 
 	return players;
 }
@@ -92,7 +94,7 @@ QString GameInfoTip::teamScoresHTML()
 		bool bPrependBar = false;
 		for (int i = 0; i < MAX_TEAMS; ++i)
 		{
-			if (pServer->teamPlayerCount(i) != 0)
+			if (pServer->playersList()->numPlayersOnTeam(i) != 0)
 			{
 				if (bPrependBar)
 				{

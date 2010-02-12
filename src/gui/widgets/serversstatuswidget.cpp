@@ -26,6 +26,7 @@
 #include <QPainter>
 
 #include "serversstatuswidget.h"
+#include "serverapi/playerslist.h"
 
 ServersStatusWidget::ServersStatusWidget(const QPixmap &icon, const MasterClient *serverList) : QLabel(),
 	icon(icon), numBots(0), numPlayers(0), serverList(serverList)
@@ -45,8 +46,9 @@ ServersStatusWidget::ServersStatusWidget(const QPixmap &icon, const MasterClient
 
 void ServersStatusWidget::addServer(Server *server)
 {
-	numPlayers += server->numPlayers(false);
-	numBots += server->numPlayers(true);
+	const PlayersList* playersList = server->playersList();
+	numPlayers += playersList->numClients();
+	numBots += playersList->numBots();
 	updateDisplay();
 }
 
@@ -74,12 +76,13 @@ void ServersStatusWidget::registerServers()
 
 void ServersStatusWidget::removeServer(Server *server)
 {
-	numPlayers -= server->numPlayers(false);
-	numBots -= server->numPlayers(true);
+	const PlayersList* playersList = server->playersList();
+	numPlayers -= playersList->numClients();
+	numBots -= playersList->numBots();
 	updateDisplay();
 }
 
 void ServersStatusWidget::updateDisplay()
 {
-	setText(QString("%1-%2 %3").arg(numPlayers).arg(numBots-numPlayers).arg(serverList->numServers()));
+	setText(QString("%1-%2 %3").arg(numPlayers).arg(numBots).arg(serverList->numServers()));
 }

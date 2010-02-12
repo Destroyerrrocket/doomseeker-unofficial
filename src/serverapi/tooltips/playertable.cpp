@@ -51,56 +51,7 @@ void PlayerTable::setNumberOfColumns()
 	}
 }
 
-void PlayerTable::sortPlayersOut(QHash<int, QList<const Player*> >& playersByTeams, QList<const Player* >& spectators, QList<const Player* >& bots)
-{
-	for (int i = 0; i < pServer->numPlayers(); ++i)
-	{
-		const Player& player = pServer->player(i);
-
-		if (player.isSpectating())
-		{
-			spectators.append(&player);
-			continue;
-		}
-
-		if (pServer->gameMode().isTeamGame())
-		{
-			int team = player.teamNum();
-
-			QHash<int, QList<const Player*> >::iterator it = playersByTeams.find(team);
-			if (it == playersByTeams.end())
-			{
-				QList<const Player*> l;
-				l.append(&player);
-				playersByTeams.insert(team, l);
-			}
-			else
-			{
-				it.value().append(&player);
-			}
-		}
-		else
-		{
-			const int TEAM_UNUSED = 0;
-
-			if (player.isBot())
-			{
-				bots.append(&player);
-				continue;
-			}
-
-			if (playersByTeams.count() == 0)
-			{
-				playersByTeams.insert(TEAM_UNUSED, QList<const Player*>());
-			}
-
-			playersByTeams.find(TEAM_UNUSED).value().append(&player);
-		}
-
-	}
-}
-
-QString PlayerTable::spawnPartOfPlayerTable(QList<const Player*> list, bool bAppendEmptyRowAtBeginning)
+QString PlayerTable::spawnPartOfPlayerTable(PlayersList& list, bool bAppendEmptyRowAtBeginning)
 {
 	QString ret;
 	if (list.count() != 0)
@@ -112,7 +63,7 @@ QString PlayerTable::spawnPartOfPlayerTable(QList<const Player*> list, bool bApp
 
 		for (int i = 0; i < list.count(); ++i)
 		{
-			const Player& player = *list[i];
+			const Player& player = list[i];
 
 			QString status = "";
 			if (player.isBot())
@@ -140,18 +91,15 @@ QString PlayerTable::spawnPartOfPlayerTable(QList<const Player*> list, bool bApp
 	return ret;
 }
 
-QString	PlayerTable::spawnPlayersRows(QHash<int, QList<const Player*> >& playersByTeams)
+QString	PlayerTable::spawnPlayersRows(PlayersByTeams& playersByTeams)
 {
 	QString playersRows;
 
-	QList<int> hashKeys = playersByTeams.uniqueKeys();
-	qSort(hashKeys);
-	QList<int>::iterator keyit;
-
 	bool bAppendEmptyRowAtBeginning = false;
-	for (keyit = hashKeys.begin(); keyit != hashKeys.end(); ++keyit)
+	QMap<PairPlayersByTeams>::iterator it;
+	for (it = playersByTeams.begin(); it != playersByTeams.end(); ++it)
 	{
-		playersRows += spawnPartOfPlayerTable(playersByTeams[*keyit], bAppendEmptyRowAtBeginning);
+		playersRows += spawnPartOfPlayerTable(it.value(), bAppendEmptyRowAtBeginning);
 		if (!bAppendEmptyRowAtBeginning)
 		{
 			bAppendEmptyRowAtBeginning = true;
@@ -163,20 +111,23 @@ QString	PlayerTable::spawnPlayersRows(QHash<int, QList<const Player*> >& players
 
 QString	PlayerTable::tableContent()
 {
-	QHash<int, QList<const Player*> > playersByTeams;
-	QList<const Player*> botList;
-	QList<const Player*> specList;
+	PlayersByTeams playersByTeams;
+	PlayersList bots, spectators;
 
-	sortPlayersOut(playersByTeams, botList, specList);
+	const PlayersList* playersList = pServer->playersList();
+
+	playersList->inGamePlayersByTeams(playersByTeams);
+	playersList->botsWithoutTeam(bots);
+	playersList->spectators(spectators);
 
 	bool bAppendEmptyRowAtBeginning = false;
 	QString playersRows = spawnPlayersRows(playersByTeams);
 
 	bAppendEmptyRowAtBeginning = !playersRows.isEmpty();
-	QString botsRows = spawnPartOfPlayerTable(botList, bAppendEmptyRowAtBeginning);
+	QString botsRows = spawnPartOfPlayerTable(bots, bAppendEmptyRowAtBeginning);
 
 	bAppendEmptyRowAtBeginning = !(botsRows.isEmpty() && playersRows.isEmpty());
-	QString spectatorsRows = spawnPartOfPlayerTable(specList, bAppendEmptyRowAtBeginning);
+	QString spectatorsRows = spawnPartOfPlayerTable(spectators, bAppendEmptyRowAtBeginning);
 
 	QString content = playersRows + botsRows + spectatorsRows;
 

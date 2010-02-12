@@ -21,7 +21,9 @@
 // Copyright (C) 2010 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 #include "playersdiagram.h"
+#include "serverapi/playerslist.h"
 #include "serverapi/server.h"
+#include "log.h"
 #include <QPainter>
 #include <cassert>
 
@@ -40,73 +42,8 @@ PlayersDiagram::PlayersDiagram(const Server *server)
 		return;
 	}
 
-	QPixmap diagram(server->maximumClients()*playerImage->width(), playerImage->height());
-	diagram.fill(Qt::transparent);
-
-	int slotSize = playerImage->width();
-	int position = diagram.width()-slotSize;
-	QPainter p(&diagram);
-
-	// numSpectators is actually greater than numPlayers.  This is done
-	// in order to simplify the drawing code.
-	int numSpectators = server->numPlayers();
-	int numPlayers = numSpectators;
-	int numBots = numSpectators; // Bots not on a team
-	int numPlayersTeam[MAX_TEAMS] = {0, 0, 0, 0};
-	int numBotsTeam[MAX_TEAMS] = {0, 0, 0, 0};
-	for(int i = 0; i < server->numPlayers(); ++i)
-	{
-		if(server->player(i).isSpectating())
-		{
-			numPlayers--;
-			numBots--;
-		}
-		else if(server->player(i).teamNum() != Player::TEAM_NONE)
-		{
-			if(!server->player(i).isBot())
-				numPlayersTeam[server->player(i).teamNum()]++;
-			numBotsTeam[server->player(i).teamNum()]++;
-		}
-		else if(server->player(i).isBot())
-		{
-			numPlayers--;
-		}
-	}
-
-	// Draw them
-	int currentTeam = 0;
-	int count = 0;
-	for(unsigned short i = 0;i < server->maximumClients();i++)
-	{
-		const QImage *slot = openSpecImage;
-		if(i < numPlayers)
-		{
-			while(numBotsTeam[currentTeam] == count && currentTeam < MAX_TEAMS)
-			{
-				count = 0;
-				currentTeam++;
-			}
-			if(currentTeam >= MAX_TEAMS)
-				currentTeam = Player::TEAM_NONE;
-
-			if(currentTeam == Player::TEAM_NONE || count < numPlayersTeam[currentTeam])
-				slot = colorizePlayer(playerImage, QColor(server->teamColor(currentTeam)));
-			else
-				slot = colorizePlayer(botImage, QColor(server->teamColor(currentTeam)));
-			count++;
-		}
-		else if(i < numBots)
-			slot = colorizePlayer(botImage, QColor(server->teamColor(Player::TEAM_NONE)));
-		else if(i < numSpectators)
-			slot = spectatorImage;
-		else if(i < server->maximumPlayers())
-			slot = openImage;
-		assert(slot != NULL);
-		p.drawImage(position, 0, *slot);
-		position -= slotSize;
-	}
-
-	this->diagram = diagram;
+	obtainPlayerNumbers();
+	draw();
 }
 
 PlayersDiagram::~PlayersDiagram()
@@ -118,16 +55,20 @@ PlayersDiagram::~PlayersDiagram()
 const QImage* PlayersDiagram::colorizePlayer(const QImage *image, const QColor &color)
 {
 	if(tmp != NULL)
+	{
 		delete tmp;
+	}
 	tmp = new QImage(*image);
 
 	QVector<QRgb> colors = tmp->colorTable();
 	QColor destinationColor = color.toHsv();
-	for(int i = 0;i < colors.size();i++)
+	for(int i = 0; i < colors.size(); ++i)
 	{
 		// Cyan has no red so move on if this color has red.
 		if(qRed(colors[i]) != 0 || qAlpha(colors[i]) == 0)
+		{
 			continue;
+		}
 
 		int hue = 0;
 		int saturation = 0;
@@ -141,7 +82,7 @@ const QImage* PlayersDiagram::colorizePlayer(const QImage *image, const QColor &
 	return tmp;
 }
 
-void PlayersDiagram::loadImages(int style)
+void PlayersDiagram::deleteImages()
 {
 	if(openImage != NULL)
 	{
@@ -151,17 +92,119 @@ void PlayersDiagram::loadImages(int style)
 		delete playerImage;
 		delete spectatorImage;
 	}
+}
 
-	if(style >= NUM_SLOTSTYLES || style < 0)
+void PlayersDiagram::draw()
+{
+	diagram = QPixmap(server->maximumClients() * playerImage->width(), playerImage->height());
+	diagram.fill(Qt::transparent);
+
+	slotSize = playerImage->width();
+	position = diagram.width() - slotSize;
+	painter = new QPainter(&diagram);
+
+	for (int team = 0; team < MAX_TEAMS; ++team)
+	{
+		drawTeam(Human, team, numHumansOnTeam[team]);
+		drawTeam(Bot, team, numBotsOnTeam[team]);
+	}
+
+	drawTeam(Human, Player::TEAM_NONE, numHumansWithoutTeam);
+	drawTeam(Bot, Player::TEAM_NONE, numBotsWithoutTeam);
+
+	if (numSpectators > 0)
+	{
+		drawPictures(spectatorImage, numSpectators);
+	}
+
+	if (numFreeJoinSlots > 0)
+	{
+		drawPictures(openImage, numFreeJoinSlots);
+	}
+
+	if (numFreeSpectatorSlots > 0)
+	{
+		drawPictures(openSpecImage, numFreeSpectatorSlots);
+	}
+
+	delete painter;
+}
+
+void PlayersDiagram::drawTeam(PlayerType playerType, int team, int howMany)
+{
+	if (howMany > 0)
+	{
+		const QImage* baseImage;
+
+		switch(playerType)
+		{
+			case Bot:
+				baseImage = botImage;
+				break;
+
+			case Human:
+				baseImage = playerImage;
+				break;
+
+			default:
+				pLog << "Error inside PlayersDiagram::drawTeam(): unknown PlayerType";
+				return;
+		}
+
+		const QImage* picture = colorizePlayer(baseImage, QColor(server->teamColor(team)));
+		drawPictures(picture, howMany);
+	}
+}
+
+void PlayersDiagram::drawPictures(const QImage* image, int howMany)
+{
+	assert(image != NULL);
+	for (; howMany > 0; --howMany)
+	{
+		painter->drawImage(position, 0, *image);
+		position -= slotSize;
+	}
+}
+
+bool PlayersDiagram::isStyleNumberValid(int style)
+{
+	return style >= NUM_SLOTSTYLES || style < 0;
+}
+
+void PlayersDiagram::loadImages(int style)
+{
+	deleteImages();
+
+	if(isStyleNumberValid(style))
 	{
 		style = 0;
 	}
 
-	QString filename(":/slots/");
-	filename += slotStyles[style];
-	openImage = new QImage(filename + "/open");
-	openSpecImage = new QImage(filename + "/specopen");
-	botImage = new QImage(filename + "/bot");
-	playerImage = new QImage(filename + "/player");
-	spectatorImage = new QImage(filename + "/spectator");
+	QString filepath(":/slots/");
+	filepath += slotStyles[style];
+	openImage = new QImage(filepath + "/open");
+	openSpecImage = new QImage(filepath + "/specopen");
+	botImage = new QImage(filepath + "/bot");
+	playerImage = new QImage(filepath + "/player");
+	spectatorImage = new QImage(filepath + "/spectator");
+}
+
+void PlayersDiagram::obtainPlayerNumbers()
+{
+	memset(numBotsOnTeam, 0, sizeof(int) * MAX_TEAMS);
+	memset(numHumansOnTeam, 0, sizeof(int) * MAX_TEAMS);
+
+	const PlayersList* playersList = server->playersList();
+
+	numBotsWithoutTeam = playersList->numBotsWithoutTeam();
+	numFreeJoinSlots = server->numFreeJoinSlots();
+	numFreeSpectatorSlots = server->numFreeSpectatorSlots();
+	numHumansWithoutTeam = playersList->numHumansWithoutTeam();
+	numSpectators = playersList->numSpectators();
+
+	for(int i = 0; i < MAX_TEAMS; ++i)
+	{
+		numBotsOnTeam[i] = playersList->numBotsOnTeam(i);
+		numHumansOnTeam[i] = playersList->numHumansOnTeam(i);
+	}
 }

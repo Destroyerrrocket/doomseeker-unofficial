@@ -24,6 +24,7 @@
 #include "masterclient.h"
 #include "customservers.h"
 #include "main.h"
+#include "serverapi/playerslist.h"
 
 #include <QErrorMessage>
 #include <QMessageBox>
@@ -79,7 +80,7 @@ int MasterClient::numPlayers() const
 	int players = 0;
 	foreach(Server* server, servers)
 	{
-		players += server->numPlayers();
+		players += server->playersList()->numClients();
 	}
 
 	return players;

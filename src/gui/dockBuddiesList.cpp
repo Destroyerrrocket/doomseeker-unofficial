@@ -24,6 +24,7 @@
 #include "dockBuddiesList.h"
 #include "main.h"
 #include "sdeapi/scanner.hpp"
+#include "serverapi/playerslist.h"
 #include <QMenu>
 #include <QMessageBox>
 #include <QRegExp>
@@ -202,10 +203,7 @@ void DockBuddiesList::scan(const MasterClient *master)
 	buddies.clear(); //empty list
 	foreach(Server *server, masterClient->serverList())
 	{
-		if(server->numPlayers() <= 0)
-			continue;
-
-		for(int i = 0;i < server->numPlayers();i++)
+		for(int i = 0; i < server->playersList()->numClients(); ++i)
 		{
 			const Player player = server->player(i);
 			foreach(QRegExp pattern, pBuddies)

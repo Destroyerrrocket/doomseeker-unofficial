@@ -43,6 +43,7 @@
 #include "global.h"
 #include "pathfinder.h"
 
+class PlayersList;
 class TooltipGenerator;
 
 class MAIN_EXPORT Server : public QObject
@@ -84,23 +85,24 @@ class MAIN_EXPORT Server : public QObject
 		bool				isSetToDelete() const { return bDelete; }
 		const QString		&iwadName() const { return iwad; }
 		int					lastResponse() const { return response; }
-		unsigned int		longestPlayerName() const;
 		const QString		&map() const { return mapName; }
 		unsigned short		maximumClients() const { return maxPlayers > maxClients ? maxPlayers : maxClients; }
 		unsigned short		maximumPlayers() const { return maxPlayers; }
 		const QString		&name() const { return serverName; }
-		int					numPlayers(bool includeBots=true) const { return includeBots ? players.size() : players.size()-numBots; }
+		int					numFreeClientSlots() const;
+		int					numFreeJoinSlots() const;
+		int					numFreeSpectatorSlots() const;
 		int					numWads() const { return wads.size(); }
 		unsigned int		ping() const { return currentPing; }
-		const Player		&player(int index) const { return players[index]; }
+		const Player&		player(int index) const;
+		const PlayersList*	playersList() const { return players; }
 		unsigned short		port() const { return serverPort; }
-		const QStringList	&pwads() const { return wads; }
+		const QStringList&	pwads() const { return wads; }
 		virtual RConProtocol	*rcon() { return NULL; }
 		unsigned int		score(int team=0) const { return scores[team]; }
 		unsigned int		scoreLimit() const { return serverScoreLimit; }
 		virtual QRgb		teamColor(int team) const;
 		virtual QString		teamName(int team) const { return team < MAX_TEAMS && team >= 0 ? teamNames[team] : ""; }
-		int					teamPlayerCount(int team) const;
 		unsigned short		timeLeft() const { return serverTimeLeft; }
 		unsigned short		timeLimit() const { return serverTimeLimit; }
 		const QString		version() const { return serverVersion; }
@@ -368,11 +370,10 @@ class MAIN_EXPORT Server : public QObject
 		unsigned short		maxClients;
 		unsigned short		maxPlayers;
 		QString				motd;
-		int					numBots; // -1 means needs to be updated
 		QString				passwordConnect;
 		QString				passwordJoin;
 		QString				passwordRCon;
-		QList<Player>		players;
+		PlayersList*		players;
 		Response			response;
 		unsigned int		scores[MAX_TEAMS];
 		QString				serverName;

@@ -62,10 +62,7 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/wadseekerconfigidgames.h
 	gui/wadseekerconfigsites.h
 	gui/wadseekerinterface.h
-#	gui/helpers/playersdiagram.h
-#	gui/models/serverlistcolumn.h
 	gui/models/serverlistmodel.h
-#	gui/models/serverlistrowhandler.h
 	gui/widgets/dockedwidgets.h
 	gui/widgets/serverconsole.h
 	gui/widgets/serverlistcontextmenu.h
@@ -125,6 +122,7 @@ set(SOURCE_FILES
 	serverapi/tooltips/generalinfotip.cpp
 	serverapi/tooltips/playertable.cpp
 	serverapi/player.cpp
+	serverapi/playerslist.cpp
 	serverapi/rconprotocol.cpp
 	serverapi/server.cpp
 	serverapi/tooltipgenerator.cpp

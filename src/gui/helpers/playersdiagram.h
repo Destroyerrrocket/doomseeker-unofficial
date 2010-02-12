@@ -23,6 +23,7 @@
 #ifndef __PLAYERS_DIAGRAM_H_
 #define __PLAYERS_DIAGRAM_H_
 
+#include "serverapi/player.h"
 #include <QPixmap>
 #include <QImage>
 
@@ -47,7 +48,16 @@ class PlayersDiagram
 		QPixmap pixmap() const { return diagram; }
 
 	protected:
-		static const char* slotStyles[NUM_SLOTSTYLES];
+		enum PlayerType
+		{
+			Bot,
+			Human
+		};
+
+		static void			deleteImages();
+		static bool			isStyleNumberValid(int style);
+
+		static const char* 	slotStyles[NUM_SLOTSTYLES];
 		static const QImage *openImage, *openSpecImage, *botImage, *playerImage, *spectatorImage;
 
 		/**
@@ -58,11 +68,28 @@ class PlayersDiagram
 		 * Colorization is done by keeping the hue and saturation if the passed
 		 * in color and applying the value of the color in the image.
 		 */
-		const QImage *colorizePlayer(const QImage *image, const QColor &color);
+		const QImage*		colorizePlayer(const QImage *image, const QColor &color);
+
+		void				draw();
+		void				drawTeam(PlayerType playerType, int team, int howMany);
+		void				drawPictures(const QImage* image, int howMany);
+
+		void				obtainPlayerNumbers();
+
+		int 				numBotsOnTeam[MAX_TEAMS];
+		int 				numBotsWithoutTeam;
+		int					numFreeJoinSlots;
+		int					numFreeSpectatorSlots;
+		int 				numHumansWithoutTeam;
+		int 				numHumansOnTeam[MAX_TEAMS];
+		int 				numSpectators;
 
 	private:
 		const Server	*server;
 		QPixmap			diagram;
+		QPainter*		painter;
+		int				position;
+		int 			slotSize;
 		QImage			*tmp;
 };
 

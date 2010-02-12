@@ -25,6 +25,7 @@
 #include "skulltag/skulltagserver.h"
 #include "global.h"
 #include "main.h"
+#include "serverapi/playerslist.h"
 
 #include <QCryptographicHash>
 #include <QMessageBox>
@@ -806,7 +807,7 @@ Server::Response SkulltagServer::readRequest(QByteArray &data)
 		if((flags & SQF_PLAYERDATA) == SQF_PLAYERDATA)
 		{
 			flags ^= SQF_PLAYERDATA;
-			players.clear(); // Erase previous players (if any)
+			players->clear(); // Erase previous players (if any)
 			for(int i = 0;i < numPlayers;i++)
 			{
 				// team isn't sent in non team modes.
@@ -830,7 +831,7 @@ Server::Response SkulltagServer::readRequest(QByteArray &data)
 				pos += teammode ? 8 : 7;
 
 				Player player(name, score, ping, static_cast<Player::PlayerTeam> (team), spectating, bot);
-				players << player;
+				*players << player;
 			}
 		}
 	}

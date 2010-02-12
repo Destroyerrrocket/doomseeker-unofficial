@@ -25,6 +25,7 @@
 #include "serverlistmodel.h"
 #include "gui/helpers/playersdiagram.h"
 #include "gui/serverlist.h"
+#include "serverapi/playerslist.h"
 #include "serverapi/server.h"
 #include "ip2c.h"
 #include "main.h"
@@ -123,15 +124,27 @@ void ServerListRowHandler::fillPlayerColumn()
 	QStandardItem* pItem = item(IDPlayers);
 
 	int style = config->setting("SlotStyle")->integer();
-	bool includeBots = !config->setting("BotsAreNotPlayers")->boolean();
+	bool botsAreNotPlayers = !config->setting("BotsAreNotPlayers")->boolean();
 
-	if(style != NUM_SLOTSTYLES)
+	const PlayersList* playersList = server->playersList();
+	int sortValue = 0;
+
+	if (botsAreNotPlayers)
 	{
-		fillItem(pItem, server->numPlayers(includeBots), PlayersDiagram(server).pixmap());
+		sortValue = playersList->numClientsWithoutBots();
 	}
 	else
 	{
-		fillItem(pItem, server->numPlayers(includeBots), QString("%1/%2").arg(server->numPlayers()).arg(server->maximumClients()));
+		sortValue = playersList->numClients();
+	}
+
+	if(style != NUM_SLOTSTYLES)
+	{
+		fillItem(pItem, sortValue, PlayersDiagram(server).pixmap());
+	}
+	else
+	{
+		fillItem(pItem, sortValue, QString("%1/%2").arg(playersList->numClients()).arg(server->maximumClients()));
 	}
 
 	// Unset some data if it has been set before.

@@ -23,7 +23,7 @@
 #ifndef __PLAYER_TABLE_H_
 #define __PLAYER_TABLE_H_
 
-#include "serverapi/player.h"
+#include "serverapi/playerslist.h"
 #include <QHash>
 #include <QList>
 #include <QObject>
@@ -44,14 +44,12 @@ class PlayerTable : public QObject
 		 */
 		void						setNumberOfColumns();
 
-		void						sortPlayersOut(QHash<int, QList<const Player*> >& playersByTeams, QList<const Player* >& spectators, QList<const Player* >& bots);
-
 		/**
 		 *	This will return absolutely nothing if the list in the first
 		 *	argument is empty.
 		 */
-		QString						spawnPartOfPlayerTable(QList<const Player*> list, bool bAppendEmptyRowAtBeginning);
-		QString						spawnPlayersRows(QHash<int, QList<const Player*> >& playersByTeams);
+		QString						spawnPartOfPlayerTable(PlayersList& list, bool bAppendEmptyRowAtBeginning);
+		QString						spawnPlayersRows(PlayersByTeams& playersByTeams);
 
 		QString						tableContent();
 		QString						tableHeader();

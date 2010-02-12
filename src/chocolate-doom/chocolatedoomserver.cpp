@@ -24,6 +24,7 @@
 #include "chocolate-doom/chocolatedoomserver.h"
 #include "global.h"
 #include "main.h"
+#include "serverapi/playerslist.h"
 
 const // clear warnings
 #include "chocolate-doom/chocolatedoom.xpm"
@@ -97,9 +98,11 @@ Server::Response ChocolateDoomServer::readRequest(QByteArray &data)
 
 	serverState = READINT8(&in[pos++]);
 	unsigned int numPlayers = READINT8(&in[pos++]);
-	players.clear();
+	players->clear();
 	for(unsigned int i = 0;i < numPlayers;i++)
-		players << Player(playerNames[i < 4 ? i : 4], 0, 0, static_cast<Player::PlayerTeam> (Player::TEAM_NONE), false, false);
+	{
+		*players << Player(playerNames[i < 4 ? i : 4], 0, 0, static_cast<Player::PlayerTeam> (Player::TEAM_NONE), false, false);
+	}
 	maxClients = maxPlayers = READINT8(&in[pos++]);
 	game = READINT8(&in[pos++]);
 	gameMission = READINT8(&in[pos++]);

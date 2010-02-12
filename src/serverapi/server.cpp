@@ -27,6 +27,7 @@
 #include "strings.h"
 #include "gui/standardserverconsole.h"
 #include "gui/wadseekerinterface.h"
+#include "serverapi/playerslist.h"
 #include "serverapi/tooltipgenerator.h"
 #include <QProcess>
 #include <QSet>
@@ -71,7 +72,7 @@ QString Server::teamNames[] =
 
 Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
 	currentGameMode(GameMode::COOPERATIVE), currentPing(999), locked(false),
-	maxClients(0), maxPlayers(0), numBots(0), serverName(tr("<< ERROR >>")),
+	maxClients(0), maxPlayers(0), serverName(tr("<< ERROR >>")),
 	serverScoreLimit(0), serverTimeLeft(0), serverTimeLimit(0),
 	// private
 	bIsRefreshing(false), serverAddress(address), serverPort(port)
@@ -84,7 +85,11 @@ Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
 	custom = false;
 	skill = 3;
 	for(int i = 0;i < MAX_TEAMS;i++)
+	{
 		scores[i] = 0;
+	}
+
+	players = new PlayersList();
 
 	connect(this, SIGNAL( updated(Server*, int) ), this, SLOT( setResponse(Server*, int) ));
 }
@@ -97,6 +102,7 @@ Server::Server(const Server &other) : QObject(), currentGameMode(GameMode::COOPE
 
 Server::~Server()
 {
+	delete players;
 	clearDMFlags();
 }
 
@@ -379,16 +385,22 @@ JoinError Server::join(const QString &connectPassword) const
 	return jError;
 }
 
-unsigned int Server::longestPlayerName() const
+int Server::numFreeClientSlots() const
 {
-	unsigned int x = 0;
-	for (int i = 0; i < numPlayers(); ++i)
-	{
-		unsigned int len = players[i].nameColorTagsStripped().length();
-		if (len > x)
-			x = len;
-	}
-	return x;
+	int returnValue = maxClients - players->numClients();
+	return (returnValue < 0) ? 0 : returnValue;
+}
+
+int Server::numFreeJoinSlots() const
+{
+	int returnValue = maxPlayers - players->numClients();
+	return (returnValue < 0) ? 0 : returnValue;
+}
+
+int Server::numFreeSpectatorSlots() const
+{
+	int returnValue = numFreeClientSlots() - numFreeJoinSlots();
+	return (returnValue < 0) ? 0 : returnValue;
 }
 
 QString Server::offlineGameWorkingDirectory() const
@@ -396,6 +408,11 @@ QString Server::offlineGameWorkingDirectory() const
 	QString dummy;
 	QFileInfo fi(offlineGameBinary(dummy));
 	return fi.absolutePath();
+}
+
+const Player& Server::player(int index) const
+{
+	return (*players)[index];
 }
 
 bool Server::refresh()
@@ -423,14 +440,6 @@ void Server::refreshStarts()
 
 void Server::refreshStops()
 {
-	// Count the number of bots
-	numBots = 0;
-	foreach(const Player &player, players)
-	{
-		if(player.isBot())
-			numBots++;
-	}
-
 	bIsRefreshing = false;
 	iwad = iwad.toLower();
 }
@@ -514,26 +523,6 @@ void Server::setToDelete(bool b)
 	if (!bIsRefreshing)
 		delete this;
 }
-
-int Server::teamPlayerCount(int team) const
-{
-	if (team >= MAX_TEAMS)
-	{
-		return -1;
-	}
-
-	int teamSize = 0;
-	for (int i = 0; i < players.count(); ++i)
-	{
-		const Player& p = players[i];
-		if (p.teamNum() == team)
-		{
-			++teamSize;
-		}
-	}
-	return teamSize;
-}
-
 
 QString Server::serverWorkingDirectory() const
 {

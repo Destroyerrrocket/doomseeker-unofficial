@@ -42,7 +42,7 @@ class ServersStatusWidget : public QLabel
 		void	paintEvent(QPaintEvent *event);
 
 		QPixmap				icon;
-		unsigned int		numBots; // Actually this is numPlayers+numBots
+		unsigned int		numBots;
 		unsigned int		numPlayers;
 		const MasterClient	*serverList;
 
