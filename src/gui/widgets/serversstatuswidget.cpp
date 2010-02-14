@@ -57,6 +57,7 @@ void ServersStatusWidget::paintEvent(QPaintEvent *event)
 	QPainter p(this);
 	p.setRenderHint(QPainter::SmoothPixmapTransform);
 	p.drawPixmap(2, 2, 18, 18, icon);
+	p.end();
 
 	QLabel::paintEvent(event);
 }
