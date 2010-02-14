@@ -38,7 +38,7 @@ const // clear warnings
 
 static GeneralEngineInfo VavoomEngineInfo =
 {
-	36965,								// Default port
+	26000,								// Default port
 	VavoomServer::GAME_MODES,			// List of game modes
 	NUM_VAVOOM_GAME_MODES,				// Number of game modes
 	NULL,								// List of DMFlags sections

@@ -409,6 +409,9 @@ void CreateServerDlg::initDMFlagsTabs()
 	int paramsIndex = tabWidget->indexOf(tabCustomParameters);
 	const GeneralEngineInfo& engNfo = currentEngine->pInterface->generalEngineInfo();
 	const DMFlagsSection* dmFlagsSec = engNfo.allDMFlags;
+	if(dmFlagsSec == NULL)
+		return; // Nothing to do
+
 	for (unsigned i = 0; i < engNfo.dmFlagsSectionsNum; ++i)
 	{
 		DMFlagsTabWidget* dmftw = new DMFlagsTabWidget();
