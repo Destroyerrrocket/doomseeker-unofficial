@@ -282,7 +282,8 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		if (configuration->settingExists(name + "Query"))
 		{
 			bool enabled = static_cast<bool>(configuration->setting(name + "Query")->integer());
-			mClient->setEnabled(enabled);
+			if(mClient != NULL)
+				mClient->setEnabled(enabled);
 			query->setChecked(enabled);
 			statusWidget->setEnabled(enabled);
 		}
@@ -290,7 +291,8 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		{
 			// if no setting is found for this engine
 			// set default as follows:
-			mClient->setEnabled(true);
+			if(mClient != NULL)
+				mClient->setEnabled(true);
 			query->setChecked(true);
 			statusWidget->setEnabled(true);
 		}

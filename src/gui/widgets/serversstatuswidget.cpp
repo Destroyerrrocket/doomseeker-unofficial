@@ -67,10 +67,13 @@ void ServersStatusWidget::registerServers()
 	numPlayers = 0;
 	numBots = 0;
 
-	foreach(Server *server, serverList->serverList())
+	if(serverList != NULL)
 	{
-		connect(server, SIGNAL(begunRefreshing(Server *)), this, SLOT(removeServer(Server *)));
-		connect(server, SIGNAL(updated(Server *, int)), this, SLOT(addServer(Server *)));
+		foreach(Server *server, serverList->serverList())
+		{
+			connect(server, SIGNAL(begunRefreshing(Server *)), this, SLOT(removeServer(Server *)));
+			connect(server, SIGNAL(updated(Server *, int)), this, SLOT(addServer(Server *)));
+		}
 	}
 }
 
@@ -84,5 +87,5 @@ void ServersStatusWidget::removeServer(Server *server)
 
 void ServersStatusWidget::updateDisplay()
 {
-	setText(QString("%1-%2 %3").arg(numPlayers).arg(numBots).arg(serverList->numServers()));
+	setText(QString("%1-%2 %3").arg(numPlayers).arg(numBots).arg(serverList != NULL ? serverList->numServers() : 0));
 }
