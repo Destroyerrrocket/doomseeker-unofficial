@@ -144,7 +144,9 @@ void RefreshingThread::run()
 
 		// Kill the thread if RefreshingThread::quit() was called.
 		if (!bKeepRunning)
+		{
 			break;
+		}
 
 		// Refresh registered masters.
 		sendMasterQueries();

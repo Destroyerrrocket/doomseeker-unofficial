@@ -100,7 +100,10 @@ class PLUGIN_EXPORT VavoomEnginePlugin : public EnginePlugin
 
 			QHostInfo info = QHostInfo::fromName(host);
 			if(info.addresses().size() == 0)
+			{
 				return NULL;
+			}
+
 			return new VavoomMasterClient(info.addresses().first(), port);
 		}
 

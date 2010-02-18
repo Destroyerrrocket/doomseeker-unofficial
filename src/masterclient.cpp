@@ -98,7 +98,9 @@ void MasterClient::refresh()
 	// Make request
 	QByteArray request;
 	if(!sendRequest(request))
+	{
 		return;
+	}
 	socket.writeDatagram(request, address, port);
 
 	bool expectingMorePackets = false;
@@ -107,18 +109,27 @@ void MasterClient::refresh()
 		if(!socket.hasPendingDatagrams())
 		{
 			if(!socket.waitForReadyRead(10000))
+			{
 				return;
+			}
 		}
 
 		// get data
 		qint64 datagramSize = socket.pendingDatagramSize();
-		char* datagram = new char[datagramSize];
-		socket.readDatagram(datagram, datagramSize);
-		QByteArray data(datagram, datagramSize);
-		delete[] datagram;
+		if (datagramSize > 0)
+		{
+			char* datagram = new char[datagramSize];
+			socket.readDatagram(datagram, datagramSize);
+			QByteArray data(datagram, datagramSize);
+			delete[] datagram;
 
-		if(!readRequest(data, expectingMorePackets))
-			return;
+			if(!readRequest(data, expectingMorePackets))
+				return;
+		}
+		else
+		{
+			expectingMorePackets = false;
+		}
 	}
 	while(expectingMorePackets);
 
