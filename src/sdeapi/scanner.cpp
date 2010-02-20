@@ -39,12 +39,13 @@ using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Scanner::Scanner(const char* data, unsigned int length)
-: number(0), decimal(0), boolean(false), lastToken(0), error(false), length(length), line(0), lpos(0), pos(0)
+Scanner::Scanner(const char* data, int length) : line(1), lineStart(0), scanPos(0), needNext(true)
 {
+	if(length == -1)
+		length = strlen(data);
+	this->length = length;
 	this->data = new char[length];
 	memcpy(this->data, data, length);
-	checkForWhitespace();
 }
 
 Scanner::~Scanner()
@@ -52,406 +53,267 @@ Scanner::~Scanner()
 	delete[] data;
 }
 
-void Scanner::mustGetToken(char token)
+void Scanner::checkForWhitespace()
 {
-	this->token(pos, lpos, line, token, true);
+	int comment = 0; // 1 = till next new line, 2 = till end block
+	while(scanPos < length)
+	{
+		char cur = data[scanPos];
+		char next = scanPos+1 < length ? data[scanPos+1] : 0;
+		if(comment == 2)
+		{
+			if(cur != '*' || next != '/')
+				scanPos++;
+			else
+			{
+				comment = 0;
+				scanPos += 2;
+			}
+			continue;
+		}
+
+		if(cur == ' ' || cur == '\t')
+			scanPos++;
+		else if(cur == '\n' || cur == '\r')
+		{
+			scanPos++;
+			incrementLine();
+			if(comment == 1)
+				comment = 0;
+
+			// Do a quick check for Windows style new line
+			if(cur == '\r' && next == '\n')
+				scanPos++;
+		}
+		else if(cur == '/')
+		{
+			switch(next)
+			{
+				case '/':
+					comment = 1;
+					break;
+				case '*':
+					comment = 2;
+					break;
+				default:
+					return;
+			}
+			scanPos += 2;
+		}
+		else
+		{
+			if(comment == 0)
+				return;
+			else
+				scanPos++;
+		}
+	}
 }
 
 bool Scanner::checkToken(char token)
 {
-	if(error)
-		return false;
-	unsigned int nPos = pos;
-	unsigned int nLpos = lpos;
-	unsigned int nLine = line;
-	this->token(nPos, nLpos, nLine, token, false);
-	if(!error)
+	if(needNext)
 	{
-		pos = nPos;
-		lpos = nLpos;
-		line = nLine;
+		if(!nextToken())
+			return false;
+	}
+
+	// An int can also be a float.
+	if(this->token == token || (this->token == TK_IntConst && token == TK_FloatConst))
+	{
+		needNext = true;
 		return true;
 	}
-	else
-		error = false;
+	needNext = false;
 	return false;
 }
 
-ETokenType Scanner::nextToken()
+void Scanner::incrementLine()
 {
-	if(pos >= length)
-		return TK_NoToken;
+	line++;
+	lineStart = scanPos;
+}
 
-	if(data[pos] >= '0' && data[pos] <= '9')
+bool Scanner::nextToken()
+{
+	if(!needNext)
 	{
-		if(checkToken(TK_Identifier))
-			return TK_Identifier;
-		else if(checkToken(TK_FloatConst))
-		{
-			double integerPart = 0.0;
-			if(modf(decimal, &integerPart) != 0.0)
-				return TK_FloatConst;
-			else
-			{
-				number = static_cast<unsigned int> (integerPart);
-				return TK_IntConst;
-			}
-		}
-		else if(checkToken(TK_IntConst))
-			return TK_IntConst;
+		needNext = true;
+		return true;
 	}
-	else if(data[pos] >= 'a' && data[pos] <= 'z')
+
+	checkForWhitespace();
+	if(scanPos >= length)
+		return false;
+
+	int start = scanPos;
+	int end = scanPos;
+	token = TK_NoToken;
+	bool floatHasDecimal = false;
+	bool floatHasExponent = false;
+	bool stringFinished = false; // Strings are the only things that can have 0 length tokens.
+
+	char cur = data[scanPos++];
+	// Determine by first character
+	if(cur == '_' || (cur >= 'A' && cur <= 'Z') || (cur >= 'a' && cur <= 'z'))
+		token = TK_Identifier;
+	else if(cur >= '0' && cur <= '9')
+		token = TK_IntConst;
+	else if(cur == '.')
 	{
-		if(checkToken(TK_BoolConst))
-			return TK_BoolConst;
-		else if(checkToken(TK_Void))
-			return TK_Void;
-		else if(checkToken(TK_String))
-			return TK_String;
-		else if(checkToken(TK_Int))
-			return TK_Int;
-		else if(checkToken(TK_Bool))
-			return TK_Bool;
-		else if(checkToken(TK_Identifier))
-			return TK_Identifier;
+		floatHasDecimal = true;
+		token = TK_FloatConst;
 	}
-	else if((data[pos] >= 'A' && data[pos] <= 'Z') || data[pos] == '_')
+	else if(cur == '"')
 	{
-		if(checkToken(TK_Identifier))
-			return TK_Identifier;
-	}
-	else if(data[pos] == '"')
-	{
-		if(checkToken(TK_StringConst))
-			return TK_StringConst;
+		end = ++start; // Move the start up one character so we don't have to trim it later.
+		token = TK_StringConst;
 	}
 	else
 	{
-		if(checkToken(TK_AndAnd))
-			return TK_AndAnd;
-		else if(checkToken(TK_OrOr))
-			return TK_OrOr;
-		else if(checkToken(TK_EqEq))
-			return TK_EqEq;
-		else if(checkToken(TK_NotEq))
-			return TK_NotEq;
-		else if(checkToken(TK_GtrEq))
-			return TK_GtrEq;
-		else if(checkToken(TK_LessEq))
-			return TK_LessEq;
-		else if(checkToken(TK_ShiftLeft))
-			return TK_ShiftLeft;
-		else if(checkToken(TK_ShiftRight))
-			return TK_ShiftRight;
-	}
-	if(checkToken(data[pos]))
-		return static_cast<ETokenType> (data[pos]);
-	return TK_NoToken;
-}
+		end = scanPos;
+		token = cur;
 
-void Scanner::checkForWhitespace(unsigned int *nPos, unsigned int *nLpos)
-{
-	unsigned int & uPos = (nPos ? (*nPos) : pos);
-	unsigned int & uLpos = (nLpos ? (*nLpos) : lpos);
-	while(data[uPos] == ' ' || data[uPos] == '\0' || data[uPos] == '	' || data[uPos] == '\n' || data[uPos] == '\r' ||
-		(data[uPos] == '/' && uPos+1 < length && (data[uPos+1] == '/' || data[uPos+1] == '*')))
-	{
-		//comment
-		if(data[uPos] == '/' && uPos+1 < length && (data[uPos+1] == '/' || data[uPos+1] == '*'))
+		// Now check for operator tokens
+		if(scanPos < length)
 		{
-			uPos += 2;
-			if(uPos == length)
-				return;
-			if(data[uPos-1] == '*') // multiline
+			char next = data[scanPos];
+			if(cur == '&' && next == '&')
+				token = TK_AndAnd;
+			else if(cur == '|' && next == '|')
+				token = TK_OrOr;
+			else if(cur == '<' && next == '<')
+				token = TK_ShiftLeft;
+			else if(cur == '>' && next == '>')
+				token = TK_ShiftRight;
+			else if(next == '=')
 			{
-				while(true)
+				switch(cur)
 				{
-					// Since we may be skipping end of lines lets check for them.
-					if(data[uPos] == '\r' || data[uPos] == '\n')
-					{
-						if(data[uPos] == '\r' && uPos+1 < length && data[uPos+1] == '\n')
-							uPos++;
-						line++;
-						uLpos = 0;
-					}
-
-					uPos++;
-					if(data[uPos-1] == '*' && uPos < length && data[uPos] == '/')
+					case '=':
+						token = TK_EqEq;
 						break;
-					if(uPos == length)
-						return;
+					case '!':
+						token = TK_NotEq;
+						break;
+					case '>':
+						token = TK_GtrEq;
+						break;
+					case '<':
+						token = TK_LessEq;
+						break;
+					default:
+						break;
 				}
 			}
-			else // single line
+
+			if(token != cur)
 			{
-				// Go until the end of line is reached.
-				while(data[uPos] != '\r' && data[uPos] != '\n')
-				{
-					uPos++;
-					if(uPos == length)
-						return;
-				}
+				scanPos++;
+				end = scanPos;
 			}
 		}
-
-		if(data[uPos] == '\r' || data[uPos] == '\n')
-		{
-			if(data[uPos] == '\r' && uPos+1 < length && data[uPos+1] == '\n')
-				uPos++;
-			line++;
-			uLpos = 0;
-		}
-
-		uPos++;
-		uLpos++;
-		if(uPos >= length)
-			return;
 	}
-}
 
-//For exmaple GENERIC_TOKEN(void) would do all the needed errors and such for looking for void
-#define GENERIC_GETTOKEN(token) \
-{ \
-	QString ident; \
-	if(next(ident, pos, lpos, TK_Identifier, report)) \
-	{ \
-		Qt::CaseSensitivity cs = Qt::CaseInsensitive; \
-		if(ident.compare(token, cs) == 0) \
-		{ \
-			str = ident; \
-		} \
-		else \
-		{ \
-			error = true; \
-			if(report) \
-				printf("Line %d:%d: Expected \"%s\", but got \"%s\" instead.\n", line, lpos, token, ident.toAscii().constData()); \
-		} \
-	} \
-	break; \
-}
-//For searching for symbols like == or <<
-#define GENERIC_DOUBLETOKEN(token) \
-{ \
-	const char* tkn = token; \
-	if(pos >= length-1) \
-	{ \
-		error = true; \
-		if(report) \
-			printf("Line %d:%d: Expected \"%s\".\n", line, lpos, token); \
-	} \
-	if(data[pos] == tkn[0] && data[pos+1] == tkn[1]) \
-	{ \
-		str = token; \
-		pos += 2; \
-		lpos += 2; \
-	} \
-	else \
-	{ \
-		error = true; \
-		if(report) \
-			printf("Line %d:%d: Expected \"%s\", but got \"%c%c\" instead.\n", line, lpos, token, data[pos], data[pos+1]); \
-	} \
-	break; \
-}
-void Scanner::token(unsigned int &pos, unsigned int &lpos, unsigned int &line, char token, bool report)
-{
-	if(error)
-		return;
-	if(pos >= length)
+	if(start == end)
 	{
-		if(report)
-			printf("Unexpected end of file.\n");
-		return;
-	}
-	switch(token)
-	{
-		case TK_Identifier:
+		while(scanPos < length)
 		{
-			QString ident;
-			if(next(ident, pos, lpos, TK_Identifier, report))
+			cur = data[scanPos];
+			switch(token)
 			{
-				str = ident;
-			}
-			break;
-		}
-		case TK_StringConst:
-		{
-			QString stringConst;
-			if(next(stringConst, pos, lpos, TK_StringConst, report))
-			{
-				str = stringConst;
-			}
-			break;
-		}
-		case TK_IntConst:
-		{
-			QString integer;
-			if(next(integer, pos, lpos, TK_IntConst, report))
-				number = integer.toInt();
-			break;
-		}
-		case TK_FloatConst:
-		{
-			QString integer;
-			if(next(integer, pos, lpos, TK_FloatConst, report))
-				decimal = integer.toDouble();
-			break;
-		}
-		case TK_BoolConst:
-		{
-			QString ident;
-			if(next(ident, pos, lpos, TK_Identifier, report))
-			{
-				Qt::CaseSensitivity cs = Qt::CaseInsensitive;
-				if(ident.compare("true", cs) == 0)
-					boolean = true;
-				else if(ident.compare("false", cs) == 0)
-					boolean = false;
-				else
-				{
-					error = true;
-					if(report)
-						printf("Line %d:%d: Expected true/false, but got \"%s\" instead.\n", line, lpos, ident.toAscii().constData());
+				default:
 					break;
-				}
-			}
-			break;
-		}
-		case TK_Void:
-			GENERIC_GETTOKEN("void");
-		case TK_String:
-			GENERIC_GETTOKEN("str");
-		case TK_Int:
-			GENERIC_GETTOKEN("int");
-		case TK_Float:
-			GENERIC_GETTOKEN("float");
-		case TK_Bool:
-			GENERIC_GETTOKEN("bool");
-		case TK_AndAnd:
-			GENERIC_DOUBLETOKEN("&&");
-		case TK_OrOr:
-			GENERIC_DOUBLETOKEN("||");
-		case TK_EqEq:
-			GENERIC_DOUBLETOKEN("==");
-		case TK_NotEq:
-			GENERIC_DOUBLETOKEN("!=");
-		case TK_GtrEq:
-			GENERIC_DOUBLETOKEN(">=");
-		case TK_LessEq:
-			GENERIC_DOUBLETOKEN("<=");
-		case TK_ShiftLeft:
-			GENERIC_DOUBLETOKEN("<<");
-		case TK_ShiftRight:
-			GENERIC_DOUBLETOKEN(">>");
-		default:
-			if(data[pos] != token)
-			{
-				error = true;
-				if(report)
-					printf("Line %d:%d: Expected '%c', but got '%c' instead.\n", line, lpos, token, data[pos]);
-			}
-			pos++;
-			lpos++;
-			break;
-	}
-	if(!error)
-		lastToken = token;
-	else
-		lastToken = 0;
-
-	checkForWhitespace(&pos, &lpos);
-}
-
-//Find the next identifier by looping until we find an invalid character.
-bool Scanner::next(QString &out, unsigned int &pos, unsigned int &lpos, char type, bool report)
-{
-	if(pos >= length)
-	{
-		out = QString();
-		return false;
-	}
-
-	unsigned int end = pos;
-	bool special = false;
-	bool special2 = false;
-	for(unsigned int i = pos;i < length;i++)
-	{
-		if(type == TK_Identifier)
-		{
-			if(!((data[i] >= 'a' && data[i] <= 'z') || (data[i] >= 'A' && data[i] <= 'Z') ||
-				data[i] == '_' || (i != pos && data[i] >= '0' && data[i] <= '9')))
-			{
-				break;
-			}
-		}
-		else if(type == TK_StringConst)
-		{
-			if(!special) // Did we start the string?
-			{
-				if(data[i] != '"')
+				case TK_Identifier:
+					if(cur != '_' && (cur < 'A' || cur > 'Z') && (cur < 'a' || cur > 'z') && (cur < '0' || cur > '9'))
+						end = scanPos;
 					break;
-				special = true;
+				case TK_IntConst:
+					if(cur == '.' || (scanPos-start != 0 && cur == 'e'))
+						token = TK_FloatConst;
+					else
+					{
+						if(cur < '0' || cur > '9')
+							end = scanPos;
+						break;
+					}
+				case TK_FloatConst:
+					if(cur < '0' || cur > '9')
+					{
+						if(!floatHasDecimal && cur == '.')
+						{
+							floatHasDecimal = true;
+							break;
+						}
+						else if(!floatHasExponent && cur == 'e')
+						{
+							floatHasDecimal = true;
+							floatHasExponent = true;
+							if(scanPos+1 < length)
+							{
+								char next = data[scanPos+1];
+								if((next < '0' || next > '9') && next != '+' && next != '-')
+									end = scanPos;
+								else
+									scanPos++;
+							}
+							break;
+						}
+						end = scanPos;
+					}
+					break;
+				case TK_StringConst:
+					if(cur == '"')
+					{
+						stringFinished = true;
+						end = scanPos;
+						scanPos++;
+					}
+					else if(cur == '\\')
+						scanPos++; // Will add two since the loop automatically adds one
+					break;
 			}
+			if(start == end && !stringFinished)
+				scanPos++;
 			else
-			{
-				if(!special2 && data[i] == '"')
-					break;
-				if(data[i] == '\\')
-					special2 = !special2;
-				else
-					special2 = false;
-			}
-		}
-		else if(type == TK_IntConst)
-		{
-			if(!(data[i] >= '0' && data[i] <= '9'))
 				break;
 		}
-		else
-		{
-			if(data[i] == '.')
-			{
-				if(special)
-					break;
-				special = true;
-			}
-			else if(!(data[i] >= '0' && data[i] <= '9'))
-				break;
-		}
-		end = i+1;
-	}
-	if(end == pos)
-	{
-		error = true;
-		if(report)
-		{
-			if(type == TK_Identifier)
-				printf("Line %d:%d: Expected an identifier, but got '%c' instead.\n", line, lpos, data[pos]);
-			else if(type == TK_StringConst)
-				printf("Line %d:%d: Expected a string constant, but got '%c' instead.\n", line, lpos, data[pos]);
-			else if(type == TK_IntConst)
-				printf("Line %d:%d: Expected an integer, but got '%c' instead.\n", line, lpos, data[pos]);
-			else
-				printf("Line %d:%d: Expected a decimal value, but got '%c' instead.\n", line, lpos, data[pos]);
-		}
-		return false;
-	}
-	QString result = QString::fromAscii(&data[pos], end - pos);
-	//strip \\ and \" and cut out the opening quote
-	if(type == TK_StringConst)
-	{
-		result = result.mid(1, result.length()-1);
-		Config::unescape(result);
-	}
-	result.append('\0');
-	lpos += end - pos;
-	pos = end;
-	if(type == TK_StringConst)
-	{
-		pos++;
-		lpos++;
 	}
 
-	out = result;
-	return true;
+	if(end-start > 0 || stringFinished)
+	{
+		str = QByteArray(data+start, end-start);
+		if(token == TK_FloatConst)
+		{
+			decimal = str.toDouble();
+			number = static_cast<int> (decimal);
+			boolean = (number != 0);
+		}
+		else if(token == TK_IntConst)
+		{
+			number = str.toUInt();
+			decimal = number;
+			boolean = (number != 0);
+		}
+		else if(token == TK_Identifier)
+		{
+			// Check for a boolean constant.
+			if(str.compare("true") == 0)
+			{
+				token = TK_BoolConst;
+				boolean = true;
+			}
+			else if(str.compare("false") == 0)
+			{
+				token = TK_BoolConst;
+				boolean = false;
+			}
+		}
+		else if(token == TK_StringConst)
+		{
+			str = Config::unescape(str);
+		}
+		return true;
+	}
+	return false;
 }

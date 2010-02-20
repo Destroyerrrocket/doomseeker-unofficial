@@ -43,11 +43,6 @@ enum ETokenType
 	TK_IntConst,	// Ex: 27
 	TK_FloatConst,	// Ex: 1.5
 	TK_BoolConst,	// Ex: true
-	TK_Void,		// void
-	TK_String,		// str
-	TK_Int,			// int
-	TK_Float,		// float
-	TK_Bool,		// bool
 	TK_AndAnd,		// &&
 	TK_OrOr,		// ||
 	TK_EqEq,		// ==
@@ -67,7 +62,7 @@ enum ETokenType
 class MAIN_EXPORT Scanner
 {
 	public:
-		Scanner(const char* data, unsigned int length);
+		Scanner(const char* data, int length=-1);
 		~Scanner();
 
 		/**
@@ -77,45 +72,40 @@ class MAIN_EXPORT Scanner
 		 */
 		bool		checkToken(char token);
 		/**
-		 * Gets whatever token is next.
+		 * Gets whatever token is next returning true on success.
 		 */
-		ETokenType	nextToken();
-		/**
-		 * Requires that the next token be of the specified type.  Errors will
-		 * be printed if that is not the case.
-		 */
-		void		mustGetToken(char token);
-
-		/**
-		 * Returns current position.
-		 */
-		unsigned int position() const { return pos; }
+		bool		nextToken();
 
 		/**
 		 * Returns true if there is still more to read.
 		 */
-		bool		tokensLeft() { return (error != 0) || (pos < length); }
+		bool		tokensLeft() { return scanPos < length; }
 
 		QString			str;
 		unsigned int	number;
 		double			decimal;
 		bool			boolean;
-		char			lastToken;
+		char			token;
 	protected:
 		/**
 		 * Moves the position ahead any whitespace that there might be from the
 		 * current position.
 		 */
-		void		checkForWhitespace(unsigned int *nPos = NULL, unsigned int *nLpos = NULL);
-		void		token(unsigned int &pos, unsigned int &lpos, unsigned int &line, char token, bool report=false);
-		bool		next(QString &out, unsigned int &pos, unsigned int &lpos, char type, bool report=false);
+		void		checkForWhitespace();
+		/**
+		 * Changes the values in line and lineStart, does not change the actual 
+		 * scanning position in the file.
+		 */
+		void		incrementLine();
 
-		bool			error;
 		char*			data;
 		unsigned int	length;
+
 		unsigned int	line;
-		unsigned int	lpos;
-		unsigned int	pos;
+		unsigned int	lineStart;
+		unsigned int	scanPos;
+
+		bool			needNext; // If checkToken returns false this will be false.
 };
 
 #endif /* __SCANNER_HPP__ */

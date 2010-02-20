@@ -171,9 +171,11 @@ void Config::readConfig()
 		Scanner sc(data, size);
 		while(sc.tokensLeft())  // Go until there is nothing left to read.
 		{
-			sc.mustGetToken(TK_Identifier);
+			if(!sc.checkToken(TK_Identifier))
+				break;
 			QString index = sc.str;
-			sc.mustGetToken('=');
+			if(!sc.checkToken('='))
+				break;
 			if(sc.checkToken(TK_StringConst))
 			{
 				createSetting(index, "");
@@ -182,11 +184,13 @@ void Config::readConfig()
 			else
 			{
 				bool negative = sc.checkToken('-');
-				sc.mustGetToken(TK_IntConst);
+				if(!sc.checkToken(TK_IntConst))
+					break;
 				createSetting(index, 0);
 				setting(index)->setValue(negative ? -sc.number : sc.number);
 			}
-			sc.mustGetToken(';');
+			if(!sc.checkToken(';'))
+				break;
 		}
 
 		delete[] data;
