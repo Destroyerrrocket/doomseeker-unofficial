@@ -28,7 +28,7 @@
 #include "www.h"
 #include <QFileInfo>
 
-QString WWW::ignoringMessage = tr("%1 is not a HTML file, nor a wanted file, nor a file with \'.zip\' extension. Ignoring.\n");
+QString WWW::ignoringMessage = tr("%1 is not a HTML file, nor a wanted file, nor a file with \'.zip\' or \'.7z\' extension. Ignoring.\n");
 
 WWW::WWW()
 {
@@ -347,7 +347,7 @@ bool WWWSeeker::isWantedFileOrZip(const QString& filename)
 	}
 
 	QFileInfo fi(filename);
-	if (fi.suffix().compare("zip", Qt::CaseInsensitive) == 0)
+	if (fi.suffix().compare("zip", Qt::CaseInsensitive) == 0 || fi.suffix().compare("7z", Qt::CaseInsensitive) == 0)
 		return true;
 
 	return false;

@@ -23,6 +23,7 @@
 
 #include "protocols/idgames.h"
 #include "zip/unzip.h"
+#include "zip/un7zip.h"
 #include "wadseeker.h"
 #include "www.h"
 #include <QDir>
@@ -163,6 +164,30 @@ void Wadseeker::fileDone(QByteArray& data, const QString& filename)
 				unzip.extract(*zip, path);
 				emit message(tr("%1#%2 uncompressed successfully!").arg(filename, zip->fileName), Notice);
 				delete zip;
+				bNextWad = true;
+			}
+			else
+			{
+				emit message(tr("File \"%1\" not found in \"%2\"").arg(currentWad, filename), Error);
+			}
+		}
+	}
+	else if (fi.suffix().compare("7z", Qt::CaseInsensitive) == 0)
+	{
+		// TODO: Try to merge this with the unzip code above.
+		Un7Zip un7zip(data);
+		if (!un7zip.isValid())
+		{
+			emit message(tr("Couldn't extract \"%1\".").arg(filename), Error);
+		}
+		else
+		{
+			int file = un7zip.findFileEntry(currentWad);
+
+			if(file != -1)
+			{
+				un7zip.extract(file, path);
+				emit message(tr("%1#%2 uncompressed successfully!").arg(filename, un7zip.fileNameFromIndex(file)), Notice);
 				bNextWad = true;
 			}
 			else
@@ -347,6 +372,12 @@ QStringList Wadseeker::wantedFilenames(const QString& wad, QString& zip)
 	lst.append(wad);
 
 	QFileInfo fi(wad);
+	if (fi.suffix().compare("7z", Qt::CaseInsensitive) != 0)
+	{
+		QString app = fi.completeBaseName() + ".7z";
+		lst.append(app);
+	}
+
 	if (fi.suffix().compare("zip", Qt::CaseInsensitive) != 0)
 	{
 		QString app = fi.completeBaseName() + ".zip";
