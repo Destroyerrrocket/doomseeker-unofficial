@@ -36,7 +36,7 @@ const QString Wadseeker::defaultSites[] =
 	QString("http://hs.keystone.gr/lap/"),
 	QString("http://www.rarefiles.com/download/"),
 	QString("http://supergod.servegame.com/"),
-	QString("http://wads.coffeenet.org/"),
+	QString("http://wads.coffeenet.org/zips/"),
 	QString("http://wads.interdoom.com/"),
 	QString("") // empty url is treated here like an '\0' in a string
 };
