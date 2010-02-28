@@ -93,7 +93,6 @@ Un7Zip::Un7Zip(const QByteArray &data) : out(NULL), outSize(0), data(data), vali
 	SRes tmp;
 	if((tmp = SzArEx_Open(&db, &lookStream.s, &alloc, &alloc)) != SZ_OK)
 		valid = false;
-	printf("%d\n", tmp);
 }
 
 Un7Zip::~Un7Zip()
@@ -122,14 +121,14 @@ bool Un7Zip::extract(int file, const QString &where)
 	return false;
 }
 
-QString Un7Zip::fileNameFromIndex(int file) const
+QString Un7Zip::fileNameFromIndex(int file)
 {
 	if(file < 0 || file >= static_cast<int> (db.db.NumFiles))
 		return QString();
 	return QString(db.db.Files[file].Name);
 }
 
-int Un7Zip::findFileEntry(const QString &entryName) const
+int Un7Zip::findFileEntry(const QString &entryName)
 {
 	for(unsigned int i = 0;i < db.db.NumFiles;i++)
 	{

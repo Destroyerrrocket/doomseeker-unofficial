@@ -25,11 +25,12 @@
 
 #include "../wadseeker.h"
 #include "localfileheader.h"
+#include "unarchive.h"
 #include <QFile>
 #include <QFileInfo>
 #include <QObject>
 
-class UnZip : public QObject
+class UnZip : public UnArchive
 {
 	Q_OBJECT
 
@@ -49,27 +50,29 @@ class UnZip : public QObject
 		 */
 		QList<ZipLocalFileHeader> 	allDataHeaders();
 
-		bool						extract(const ZipLocalFileHeader& header, const QString& where);
+		bool						extract(int file, const QString& where);
 
 		/**
-		 * @return position of file entry in the zip file,
-		 *	beginning from local file header signature (see: localfileheader.h)
+		 * @return the position of the header in the archive.
 		 */
-		ZipLocalFileHeader*			findFileEntry(const QString& entryName);
+		int							findFileEntry(const QString& entryName);
+
+		QString						fileNameFromIndex(int file);
 
 		/**
 		 * @return true if the zipFile is a valid file or zipData is not empty.
+		 *         and is a valid zip file.
 		 */
 		bool	isValid()
 		{
 			if (dataType == File)
 			{
 				QFileInfo fi(zipFile);
-				return (fi.exists() && !fi.isDir());
+				return (fi.exists() && !fi.isDir() && isZip());
 			}
 			else
 			{
-				return !zipData.isEmpty();
+				return !zipData.isEmpty() && isZip();
 			}
 		}
 
@@ -77,9 +80,6 @@ class UnZip : public QObject
 		 * @return true if data passed to constructor is a zip data.
 		 */
 		bool	isZip();
-
-	signals:
-		void message(const QString&, int type);
 
 	protected:
 		DataType	dataType;

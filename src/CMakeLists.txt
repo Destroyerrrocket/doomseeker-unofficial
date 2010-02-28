@@ -65,16 +65,11 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	gui/models/serverlistmodel.h
 	gui/widgets/dockedwidgets.h
 	gui/widgets/serverconsole.h
-	gui/widgets/serverlistcontextmenu.h
 	gui/widgets/serverlistview.h
 	gui/widgets/serversstatuswidget.h
 	sdeapi/config.hpp
-	serverapi/tooltips/gameinfotip.h
-	serverapi/tooltips/generalinfotip.h
-	serverapi/tooltips/playertable.h
 	serverapi/rconprotocol.h
 	serverapi/server.h
-	serverapi/tooltipgenerator.h
 	customservers.h
 	ip2c.h
 	log.h

@@ -93,16 +93,17 @@ QList<ZipLocalFileHeader> UnZip::allDataHeaders()
 	return list;
 }
 
-bool UnZip::extract(const ZipLocalFileHeader& header, const QString& where)
+bool UnZip::extract(int file, const QString& where)
 {
 	if (!isValid())
 		return false;
 
 	QByteArray array;
+	ZipLocalFileHeader header;
 	if (dataType == File)
 	{
 		zipFile.open(QFile::ReadOnly);
-
+		readHeader(zipFile, file, header);
 		qint64 pos = header.headerPosition + header.howManyBytesTillData();
 		zipFile.seek(pos);
 
@@ -116,6 +117,7 @@ bool UnZip::extract(const ZipLocalFileHeader& header, const QString& where)
 	}
 	else
 	{
+		readHeader(zipData, file, header);
 		array = zipData.mid(header.headerPosition + header.howManyBytesTillData(), header.compressedSize);
 	}
 
@@ -160,7 +162,7 @@ bool UnZip::extract(const ZipLocalFileHeader& header, const QString& where)
 
 
 
-ZipLocalFileHeader* UnZip::findFileEntry(const QString& entryName)
+int UnZip::findFileEntry(const QString& entryName)
 {
 	if (!isValid())
 		return NULL;
@@ -207,7 +209,27 @@ ZipLocalFileHeader* UnZip::findFileEntry(const QString& entryName)
 	{
 		zipFile.close();
 	}
-	return ret;
+
+	if(ret == NULL)
+		return -1;
+	delete ret;
+	return pos;
+}
+
+QString UnZip::fileNameFromIndex(int file)
+{
+	ZipLocalFileHeader header;
+
+	if (dataType == File)
+	{
+		zipFile.open(QFile::ReadOnly);
+		readHeader(zipFile, file, header);
+		zipFile.close();
+	}
+	else
+		readHeader(zipData, file, header);
+
+	return header.fileName;
 }
 
 bool UnZip::isZip()
