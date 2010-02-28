@@ -34,6 +34,7 @@
 #include "ip2c.h"
 #include "sdeapi/pluginloader.hpp"
 #include "sdeapi/scanner.hpp"
+#include "version.h"
 
 IP2C::IP2C(const QStringList &baseDirectories, QString file, QUrl netLocation)
 : downloadProgressWidget(NULL), flagLan(":flags/lan-small"),

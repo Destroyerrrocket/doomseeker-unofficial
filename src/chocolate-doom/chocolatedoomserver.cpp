@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "chocolate-doom/chocolatedoomserver.h"
+#include "chocolate-doom/chocolatedoombinaries.h"
 #include "global.h"
 #include "main.h"
 #include "serverapi/playerslist.h"
@@ -37,6 +38,11 @@ const QPixmap *ChocolateDoomServer::ICON = NULL;
 ChocolateDoomServer::ChocolateDoomServer(const QHostAddress &address, unsigned short port) : Server(address, port),
 	serverState(0), game(0), gameMission(0)
 {
+}
+
+Binaries* ChocolateDoomServer::binaries() const
+{
+	return new ChocolateDoomBinaries(engineName());
 }
 
 QString	ChocolateDoomServer::binary(bool server, QString& error) const

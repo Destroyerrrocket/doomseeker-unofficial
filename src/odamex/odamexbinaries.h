@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chocolatedoomserver.h
+// odamexbinaries.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,43 +18,22 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#ifndef __ODAMEX_BINARIES_H_
+#define __ODAMEX_BINARIES_H_
 
-#ifndef __CHOCOLATEDOOMSERVER_H__
-#define __CHOCOLATEDOOMSERVER_H__
+#include "serverapi/binaries.h"
 
-#include "serverapi/server.h"
+class OdamexServer;
 
-class Binaries;
-
-class ChocolateDoomServer : public Server
+class OdamexBinaries : public Binaries
 {
-	Q_OBJECT
-
 	public:
-		static const QPixmap	*ICON;
+		OdamexBinaries(const OdamexServer* server);
 
-		ChocolateDoomServer(const QHostAddress &address, unsigned short port);
-
-		Binaries*		binaries() const;
-		void			connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
-
-		QString			engineName() const { return tr("Chocolate Doom"); }
-
-		const QPixmap	&icon() const;
-
-	protected:
-		QString			version;
-		unsigned int	serverState;
-		unsigned int	game;
-		unsigned int	gameMission;
-		QString			description;
-
-		Response		readRequest(QByteArray &data);
-		bool			sendRequest(QByteArray &data);
-
-		QString			binary(bool server, QString &error) const;
+		QString		configKeyClientBinary() const { return "OdamexBinaryPath"; }
+		QString		configKeyServerBinary() const { return "OdamexServerBinaryPath"; }
 };
 
-#endif /* __CHOCOLATEDOOMSERVER_H__ */
+#endif

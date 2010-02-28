@@ -43,6 +43,8 @@
 #include "global.h"
 #include "pathfinder.h"
 
+class Binaries;
+class GameRunner;
 class PlayersList;
 class TooltipGenerator;
 
@@ -132,42 +134,23 @@ class MAIN_EXPORT Server : public QObject
 		void				setToDelete(bool b);
 
 		/**
-		 *	Returns the path to the client binary
-		 *	@param [out] error - type of error
-		 *	@return empty if error
+		 *	@brief Creates an instance of Binaries's descendant class.
+		 *
+		 *	Created instance should be deleted manually by the programmer.
+		 *	@return A pointer to a new instance of Binaries's descendant
+		 *		(defined by a plugin)
 		 */
-		virtual QString		clientBinary(QString& error) const=0;
+		virtual Binaries*	binaries() const = 0;
 
 		/**
-		 *	Default behavior returns directory of clientBinary(), but
-		 *	you can override this to provide different working directory for
-		 *	Skulltag's testing binaries.
-		 *	@param [out] error - type of error
+		 *	@brief Creates an instance of GameRunner class.
+		 *
+		 *	Gets a pointer to a new instance of GameRunner or GameRunner's
+		 *	descendant (defined by a plugin). Created instance should be deleted
+		 *	manually by the programmer.
+		 *	@return Default behavior returns a pointer to new GameRunner.
 		 */
-		virtual QString		clientWorkingDirectory() const;
-		virtual void		connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
-
-		/**
-		 *	@param [out] cli - after successful call this will contain
-		 *		required command line information.
-		 *	@param [out] error - if return == false, error text will be put here
-		 *  @param bOfflinePlay - if true a command line for single player game
-		 *		will be launched
-		 *	@return	true if command line was successfully created.
-		 */
-		bool				createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cli, bool bOfflinePlay, QString& error) const;
-
-		/**
-		 *	@param [out] cli - after successful call this will contain
-		 *		required command line information.
-		 *	@return	JoinError::type == NoError if all ok.
-		 */
-		JoinError			createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword) const;
-
-		/**
-		 *	@see createHostCommandLine()
-		 */
-		bool				host(const HostInfo& hostInfo, bool bOfflinePlay, QString& error);
+		virtual GameRunner*	gameRunner() const;
 
 		bool				isRefreshing() const { return bIsRefreshing; }
 
@@ -179,56 +162,6 @@ class MAIN_EXPORT Server : public QObject
 		 *	local drive and thus cause damage the system in some way.
 		 */
 		bool				isWebsiteURLSafe() const;
-
-		/**
-		 *	!!! DEPRECATED !!!
-		 *	The proper routine is to:
-		 *	-# Call createJoinCommandLine
-		 *	-# Test JoinError in the GUI
-		 *	-# If there are missing wads, ask if the user wants to launch the
-		 *		Wadseeker. If Wadseeker is successful repeat the routine.
-		 *	-# If there are no further errors, call runExecutable with
-		 *		generated command line as parameter.
-		 *
-		 *	@return	JoinError::type == NoError if all ok.
-		 */
-		JoinError			join(const QString &connectPassword) const;
-
-		/**
-		 *	Returns the path to the binary for offline play.
-		 *	@param [out] error - type of error
-		 *	@return default behavior returns clientBinary().
-		 */
-		virtual QString		offlineGameBinary(QString& error) const { return clientBinary(error); }
-
-		/**
-		 *	Returns the working directory of the binary for offline game.
-		 *	@param [out] error - type of error
-		 *	@return Default behavior returns offlineGameBinary() directory
-		 */
-		virtual QString		offlineGameWorkingDirectory() const;
-
-		/**
-		 *	Executes predefined command line.
-		 *	@param cli - command line that will be executed
-		 *	@param bWrapWithStandardServerConsole - if true Doomseeker will
-		 *		attempt to wrap the input/output of the program with it's own
-		 *		console
-		 *	@param [out] error - may contain error string if false is returned
-		 */
-		bool				runExecutable(const CommandLineInfo& cli, bool bWrapWithStandardServerConsole, QString& error) const;
-
-		/**
-		 *	Default behaviour returns the same string as clientBinary().
-		 *	This can be reimplemented for engines that use two different
-		 *	binaries for the server and for the client.
-		 */
-		virtual QString		serverBinary(QString& error) const { return clientBinary(error); }
-
-		/**
-		 *	Default behaviour returns directory of serverBinary().
-		 */
-		virtual QString		serverWorkingDirectory() const;
 
 		/**
 		 *	@brief Creates an instance of TooltipGenerator.
@@ -258,62 +191,12 @@ class MAIN_EXPORT Server : public QObject
 		void				updated(Server *server, int response);
 
 	protected:
-		/**
-		 *	Command line parameter that is used to set IWAD.
-		 */
-		virtual QString		argForIwadLoading() const { return "-iwad"; }
-
-		/**
-		 *	Command line parameter that is used to set internet port for the
-		 *	game.
-		 */
-		virtual QString		argForPort() const { return "-port"; }
-
-		/**
-		 *	Command line parameter that is used to load a PWAD.
-		 */
-		virtual QString		argForPwadLoading() const { return "-file"; }
-
-		/**
-		 *	Command line parameter used to launch a server.
-		 */
-		virtual QString		argForServerLaunch() const { return ""; }
-
 		void				clearDMFlags();
-
-		/**
-		 *	On Windows this removes any wrapping " chars.
-		 *
-		 *	Explanation:
-		 *	Draft from Qt documentation on QProcess::startDetached:
-		 *	"On Windows, arguments that contain spaces are wrapped in quotes."
-		 *	Thus, on Windows we must unwrap the arguments that are wrapped in
-		 *	quotes because thing like +sv_hostname "Started from Doomseeker"
-		 *	won't work properly and a server with empty name will be started.
-		 */
-		void				cleanArguments(QStringList& args) const;
 
 		/**
 		 * Wrapper function to allow refresher to emit the updated signal.
 		 */
 		void				emitUpdated(int response) { emit updated(this, response); }
-
-		/**
-		 *	Creates engine specific command line parameters out of passed
-		 *	dmFlags list.
-		 *	Default behavior does nothing.
-		 */
-		virtual void		hostDMFlags(QStringList& args, const DMFlags& dmFlags) const {};
-
-		/**
-		 *	Creates engine specific command line parameters out of Server class
-		 *	fields.
-		 *
-		 *	Please note that port, and some other stuff, is already set by
-		 *	createHostCommandLine().
-		 *	@see createHostCommandLine() - cvars parameter.
-		 */
-		virtual void		hostProperties(QStringList& args) const {};
 
 		/**
 		 *	Reads response data.

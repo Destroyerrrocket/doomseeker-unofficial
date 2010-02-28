@@ -22,9 +22,9 @@
 //------------------------------------------------------------------------------
 
 #include "aboutDlg.h"
-#include "global.h"
 #include "main.h"
 #include "wadseeker/wadseeker.h"
+#include "version.h"
 #include <QPixmap>
 
 AboutDlg::AboutDlg(QWidget* parent) : QDialog(parent)
@@ -34,7 +34,13 @@ AboutDlg::AboutDlg(QWidget* parent) : QDialog(parent)
 	connect(buttonBox, SIGNAL( clicked(QAbstractButton *) ), this, SLOT( close() ));
 
 	// Doomseeker
-	versionNumber->setText(VERSION);
+	QString version = VERSION;
+	QString revision = REVISION;
+	if (!revision.isEmpty())
+	{
+		version += "-" + revision;
+	}
+	versionNumber->setText(version);
 	logo->setPixmap(QPixmap(":/logo.png"));
 
 	// Wadseeker

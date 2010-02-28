@@ -24,6 +24,7 @@
 #include "main.h"
 #include "sdeapi/pluginloader.hpp"
 
+#include "chocolate-doom/chocolatedoombinaries.h"
 #include "chocolate-doom/chocolatedoomserver.h"
 #include "chocolate-doom/engineChocolateDoomConfig.h"
 
@@ -52,17 +53,12 @@ static GeneralEngineInfo ChocolateDoomEngineInfo =
 class PLUGIN_EXPORT ChocolateDoomEnginePlugin : public EnginePlugin
 {
 	public:
-		QString					binaryClient() const
+		Binaries*					binaries() const
 		{
-			return Main::config->setting("ChocolateDoomBinaryPath")->string();
+			return new ChocolateDoomBinaries(QObject::tr("Chocolate Doom"));
 		}
 
-		QString					binaryServer() const
-		{
-			return Main::config->setting("ChocolateDoomServerBinaryPath")->string();
-		}
-
-		ConfigurationBoxInfo	*configuration(Config *cfg, QWidget *parent) const
+		ConfigurationBoxInfo*		configuration(Config *cfg, QWidget *parent) const
 		{
 			return EngineChocolateDoomConfigBox::createStructure(cfg, parent);
 		}

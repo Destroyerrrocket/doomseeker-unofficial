@@ -30,7 +30,7 @@ PathFinder::PathFinder(Config* cfg)
 	config = cfg;
 }
 
-QString PathFinder::findWad(const QString& fileName)
+QString PathFinder::findFile(const QString& fileName)
 {
 	if (config == NULL)
 		return QString();
@@ -44,7 +44,9 @@ QString PathFinder::findWad(const QString& fileName)
 	{
 		QFileInfo file(strList[i] + QDir::separator() + fileName);
 		if (file.exists() && file.isFile())
+		{
 			return file.absoluteFilePath();
+		}
 	}
 	#else
 	QStringList filterList;
@@ -66,4 +68,23 @@ QString PathFinder::findWad(const QString& fileName)
 	#endif
 
 	return QString();
+}
+
+PathFinderResult PathFinder::findFiles(const QStringList& files)
+{
+	PathFinderResult result;
+	foreach(const QString file, files)
+	{
+		QString filePath = findFile(file);
+		if (filePath.isNull())
+		{
+			result.missingFiles << file;
+		}
+		else
+		{
+			result.foundFiles << filePath;
+		}
+	}
+
+	return result;
 }

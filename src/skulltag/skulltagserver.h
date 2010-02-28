@@ -126,21 +126,13 @@ class SkulltagServer : public Server
 		SkulltagServer(const QHostAddress &address, unsigned short port);
 
 		const QPixmap	&icon() const;
-		/**
-		 *	If this is a normal server simple path to executable file is
-		 *	returned. If this is a testing server, a shell script is created
-		 *	if necessary and a path to this shell script s returned.
-		 */
-		QString			clientBinary(QString& error) const;
-		QString			clientWorkingDirectory() const;
+		
 		void			connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
 
 		QString			engineName() const { return tr("Skulltag"); }
 
 		bool			hasRcon() const { return true; }
 		RConProtocol	*rcon();
-
-		QString			serverBinary(QString& error) const;
 
 		QRgb			teamColor(unsigned team) const;
 		QString			teamName(unsigned team) const;

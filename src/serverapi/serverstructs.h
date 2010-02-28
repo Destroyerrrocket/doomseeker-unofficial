@@ -23,15 +23,8 @@
 #ifndef __SERVER_STRUCTS_H_
 #define __SERVER_STRUCTS_H_
 
-/**
- *	@brief Structure holding parameters for application launch.
- */
-struct CommandLineInfo
-{
-	QDir 			applicationDir; /// working directory
-	QStringList 	args; /// launch parameters
-	QFileInfo 		executable; /// path to the executable
-};
+#include <QString>
+#include <QList>
 
 /**
  *	@brief Generic representation of DMFlags section.
@@ -128,71 +121,12 @@ struct MAIN_EXPORT GameMode
 		bool	teamgame;
 };
 
-/**
- *	@brief Indicator of error for the server join process.
- *
- *	This structure contains information about whether an error occured and
- *	if it did - what type of error it is. Based on this GUI can make a
- *	decision on how to handle the error and whether to try again.
- */
-struct JoinError
-{
-	enum JoinErrorType
-	{
-		NoError = 0,
-		MissingWads = 1,
-		Critical = 2
-	};
-
-	JoinErrorType		type;
-	QString				error;
-
-	/**
-	 *	This is valid only if type == MissingWads.
-	 */
-	QString 			missingIwad;
-
-	/**
-	 *	This is valid only if type == MissingWads.
-	 */
-	QStringList 		missingWads;
-};
-
 struct MAIN_EXPORT SkillLevel
 {
 	//const QString strName;
 
 	static const int	 numSkillLevels;
 	static const QString names[];
-};
-
-/**
- *	@brief Host launch information for Server class.
- *
- *	Create Server dialog uses this to setup host information.
- *	However things that can be set through the Server class,
- *	like MOTD, max. clients, max. players, server name, etc. should
- *	be set through Server class' setters.
- */
-struct MAIN_EXPORT HostInfo
-{
-	QString 		executablePath; /// if empty, serverBinary() will be used
-	QString 		iwadPath;
-	QStringList 	pwadsPaths;
-	QStringList 	customParameters;
-	DMFlags 		dmFlags;
-
-	/**
-	 *	Contents of this list will be passed as "+consoleCommand value"
-	 *	to the command line.
-	 */
-	QList<GameCVar> cvars;
-
-	~HostInfo()
-	{
-		foreach(DMFlagsSection* sec, dmFlags)
-			delete sec;
-	}
 };
 
 #endif

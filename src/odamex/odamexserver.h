@@ -28,6 +28,8 @@
 
 #define NUM_ODAMEX_GAME_MODES 5
 
+class Binaries;
+
 class OdamexServer : public Server
 {
 	Q_OBJECT
@@ -47,6 +49,7 @@ class OdamexServer : public Server
 
 		OdamexServer(const QHostAddress &address, unsigned short port);
 
+		Binaries*		binaries() const;
 		QString			clientBinary(QString& error) const;
 		void			connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
 

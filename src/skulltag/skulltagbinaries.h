@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chocolatedoomserver.h
+// skulltagbinaries.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,43 +18,30 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#ifndef __SKULLTAG_BINARIES_H_
+#define __SKULLTAG_BINARIES_H_
 
-#ifndef __CHOCOLATEDOOMSERVER_H__
-#define __CHOCOLATEDOOMSERVER_H__
+#include "serverapi/binaries.h"
 
-#include "serverapi/server.h"
+class SkulltagServer;
 
-class Binaries;
-
-class ChocolateDoomServer : public Server
+class SkulltagBinaries : public Binaries
 {
-	Q_OBJECT
-
 	public:
-		static const QPixmap	*ICON;
+		SkulltagBinaries(SkulltagServer* server);
+		
+		/**
+		 *	If the parent server is a normal server simple path to executable 
+		 *	file is returned. If this is a testing server, a shell script is 
+		 *	created	if necessary and a path to this shell script s returned.
+		 */
+		QString				clientBinary(QString& error) const;
+		QString				clientWorkingDirectory() const;
+	
+		QString				configKeyClientBinary() const { return "SkulltagBinaryPath"; }
+		QString				configKeyServerBinary() const;
+}
 
-		ChocolateDoomServer(const QHostAddress &address, unsigned short port);
-
-		Binaries*		binaries() const;
-		void			connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
-
-		QString			engineName() const { return tr("Chocolate Doom"); }
-
-		const QPixmap	&icon() const;
-
-	protected:
-		QString			version;
-		unsigned int	serverState;
-		unsigned int	game;
-		unsigned int	gameMission;
-		QString			description;
-
-		Response		readRequest(QByteArray &data);
-		bool			sendRequest(QByteArray &data);
-
-		QString			binary(bool server, QString &error) const;
-};
-
-#endif /* __CHOCOLATEDOOMSERVER_H__ */
+#endif

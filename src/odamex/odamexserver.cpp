@@ -21,12 +21,13 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include "odamex/odamexserver.h"
+#include "odamexbinaries.h"
+#include "odamexserver.h"
 #include "main.h"
 #include "serverapi/playerslist.h"
 
 const // clear warnings
-#include "odamex/odamex.xpm"
+#include "odamex.xpm"
 
 #define SERVER_CHALLENGE	0xA3,0xDB,0x0B,0x00
 #define SERVER_GOOD			5560020
@@ -70,6 +71,11 @@ const DMFlagsSection OdamexServer::DM_FLAGS =
 OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port) : Server(address, port),
 	protocol(0)
 {
+}
+
+Binaries* OdamexServer::binaries() const
+{
+	return new OdamexBinaries(this);
 }
 
 QString	OdamexServer::clientBinary(QString& error) const

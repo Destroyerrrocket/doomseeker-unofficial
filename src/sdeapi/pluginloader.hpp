@@ -105,10 +105,9 @@ class MAIN_EXPORT EnginePlugin
 {
 	public:
 		/**
-		 *	Return path saved in configuration.
+		 *	@brief Return instance of plugin's Binaries.
 		 */
-		virtual QString						binaryClient() const = 0;
-		virtual QString						binaryServer() const { return binaryClient(); }
+		virtual Binaries*					binaries() const = 0;
 
 		virtual ConfigurationBoxInfo		*configuration(Config *cfg, QWidget *parent) const=0;
 

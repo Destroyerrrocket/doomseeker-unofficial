@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chocolatedoomserver.h
+// chocolatedoombinaries.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,43 +18,12 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "chocolatedoombinaries.h"
+#include "chocolatedoomserver.h"
 
-#ifndef __CHOCOLATEDOOMSERVER_H__
-#define __CHOCOLATEDOOMSERVER_H__
-
-#include "serverapi/server.h"
-
-class Binaries;
-
-class ChocolateDoomServer : public Server
+ChocolateDoomBinaries::ChocolateDoomBinaries(const QString& engineName)
+: Binaries(engineName)
 {
-	Q_OBJECT
-
-	public:
-		static const QPixmap	*ICON;
-
-		ChocolateDoomServer(const QHostAddress &address, unsigned short port);
-
-		Binaries*		binaries() const;
-		void			connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
-
-		QString			engineName() const { return tr("Chocolate Doom"); }
-
-		const QPixmap	&icon() const;
-
-	protected:
-		QString			version;
-		unsigned int	serverState;
-		unsigned int	game;
-		unsigned int	gameMission;
-		QString			description;
-
-		Response		readRequest(QByteArray &data);
-		bool			sendRequest(QByteArray &data);
-
-		QString			binary(bool server, QString &error) const;
-};
-
-#endif /* __CHOCOLATEDOOMSERVER_H__ */
+}

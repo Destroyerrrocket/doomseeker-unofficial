@@ -19,6 +19,7 @@ set(ODAMEX_QT_FILES
 )
 set(ODAMEX_FILES
 	engineOdamexConfig.cpp
+	odamexbinaries.cpp
 	odamexmain.cpp
 	odamexmasterclient.cpp
 	odamexserver.cpp

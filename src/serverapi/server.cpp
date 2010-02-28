@@ -27,6 +27,8 @@
 #include "strings.h"
 #include "gui/standardserverconsole.h"
 #include "gui/wadseekerinterface.h"
+#include "serverapi/binaries.h"
+#include "serverapi/gamerunner.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/tooltipgenerator.h"
 #include <QProcess>
@@ -106,20 +108,6 @@ Server::~Server()
 	clearDMFlags();
 }
 
-void Server::cleanArguments(QStringList& args) const
-{
-	#ifdef Q_OS_WIN32
-	QStringList::iterator it;
-	for (it = args.begin(); it != args.end(); ++it)
-	{
-		if (it->contains(" "))
-		{
-			Strings::trim(*it, "\"");
-		}
-	}
-	#endif
-}
-
 void Server::clearDMFlags()
 {
 	DMFlagsIt it;
@@ -130,259 +118,14 @@ void Server::clearDMFlags()
 	dmFlags.clear();
 }
 
-QString Server::clientWorkingDirectory() const
+GameRunner*	Server::gameRunner() const
 {
-	QString dummy;
-	QFileInfo fi(clientBinary(dummy));
-	return fi.absolutePath();
-}
-
-void Server::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const
-{
-	// Connect
-	args << "-connect" << QString(address().toString() + ":" + QString::number(port()));
-	if(isLocked())
-		args << connectPassword;
-
-	// Iwad
-	QString iwad = pf.findWad(iwadName().toLower());
-	args << argForIwadLoading() << iwad;
-	iwadFound = !iwad.isEmpty();
-}
-
-bool Server::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cli, bool bOfflinePlay, QString& error) const
-{
-	QDir& applicationDir = cli.applicationDir;
-	QFileInfo& executablePath = cli.executable;
-	QStringList& args = cli.args;
-
-	const QString errorCaption = tr("Doomseeker - error");
-	args.clear();
-
-	// First some wad path checks, add wad paths to the args if check passes:
-	const QString& iwadPath = hostInfo.iwadPath;
-	if (iwadPath.isEmpty())
-	{
-		error = tr("Iwad is not set");
-		return false;
-	}
-
-	QFileInfo fi(iwadPath);
-
-	if (!fi.isFile())
-	{
-		error = tr("Iwad Path error:\n\"%1\" doesn't exist or is a directory!").arg(iwadPath);
-		return false;
-	}
-
-	args << argForIwadLoading() << iwadPath;
-
-	const QStringList& pwadsPaths = hostInfo.pwadsPaths;
-	if (!pwadsPaths.isEmpty())
-	{
-		foreach(const QString s, pwadsPaths)
-		{
-			args << argForPwadLoading();
-
-			fi.setFile(s);
-			if (!fi.isFile())
-			{
-				error = tr("Pwad path error:\n\"%1\" doesn't exist or is a directory!").arg(s);
-				return false;
-			}
-			args << s;
-		}
-	}
-	// Checks done.
-
-	// Port
-	args << argForPort() << QString::number(serverPort);
-
-	// CVars
-	const QList<GameCVar>& cvars = hostInfo.cvars;
-	foreach(const GameCVar c, cvars)
-	{
-		args << QString("+" + c.consoleCommand) << c.value();
-	}
-
-	const QString& serverExecutablePath = hostInfo.executablePath;
-	if (serverExecutablePath.isEmpty())
-	{
-		// Select binary depending on bOfflinePlay flag:
-		QString serverBin;
-		if (bOfflinePlay)
-		{
-			serverBin = offlineGameBinary(error);
-		}
-		else
-		{
-			serverBin = serverBinary(error);
-		}
-
-		if (serverBin.isEmpty())
-		{
-			return false;
-		}
-		executablePath = serverBin;
-	}
-	else
-	{
-		executablePath = serverExecutablePath;
-	}
-
-	if (!executablePath.isFile())
-	{
-		error = tr("%1\n doesn't exist or is not a file.").arg(executablePath.filePath());
-		return false;
-	}
-
-	QString serverWorkingDirPath;
-	// Select working dir based on bOfflinePlay flag:
-	if (bOfflinePlay)
-	{
-		serverWorkingDirPath = offlineGameWorkingDirectory();
-	}
-	else
-	{
-		serverWorkingDirPath = serverWorkingDirectory();
-	}
-
-	applicationDir = serverWorkingDirectory();
-
-	if (serverWorkingDirPath.isEmpty())
-	{
-		error = tr("Path to working directory is empty.\nMake sure the configuration for the main binary is set properly.");
-		return false;
-	}
-	else if (!applicationDir.exists())
-	{
-		error = tr("%1\n cannot be used as working directory for:\n%2").arg(serverWorkingDirPath, executablePath.filePath());
-		return false;
-	}
-
-	// Add the server launch parameter only if we don't want offline game
-	if (!bOfflinePlay)
-	{
-		args << argForServerLaunch();
-	}
-
-	hostDMFlags(args, dmFlags);
-	hostProperties(args);
-	args.append(hostInfo.customParameters);
-
-	return true;
-}
-
-JoinError Server::createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword) const
-{
-	JoinError jError;
-
-	// Init the JoinError type with critical error. We will change this upon
-	// successful return or if wads are missing.
-	jError.type = JoinError::Critical;
-
-	QDir& applicationDir = cli.applicationDir;
-	QFileInfo& executablePath = cli.executable;
-	QStringList& args = cli.args;
-
-	const QString errorCaption = tr("Doomseeker - error");
-	args.clear();
-
-	QString clientBin = clientBinary(jError.error);
-	if (clientBin.isEmpty())
-	{
-		return jError;
-	}
-
-	executablePath = clientBin;
-
-	QString clientWorkingDirPath = clientWorkingDirectory();
-	applicationDir = clientWorkingDirPath;
-
-	if (clientWorkingDirPath.isEmpty())
-	{
-		jError.error = tr("Path to working directory is empty.\nMake sure the configuration for the main binary is set properly.");
-		return jError;
-	}
-	else if (!applicationDir.exists())
-	{
-		jError.error = tr("%1\n cannot be used as working directory for:\n%2").arg(clientWorkingDirPath, clientBin);
-		return jError;
-	}
-
-	PathFinder pf(Main::config);
-	QStringList missingPwads;
-	bool iwadFound = false;
-
-	connectParameters(cli.args, pf, iwadFound, connectPassword);
-
-	for (int i = 0; i < numWads(); ++i)
-	{
-		QString pwad = pf.findWad(wad(i));
-		if (pwad.isEmpty())
-		{
-			missingPwads << wad(i);
-		}
-		else
-		{
-			cli.args << argForPwadLoading();
-			cli.args << pwad;
-		}
-	}
-
-	if (!iwadFound || !missingPwads.isEmpty())
-	{
-		if (!iwadFound)
-		{
-			jError.missingIwad = iwad;
-		}
-		jError.missingWads = missingPwads;
-		jError.type = JoinError::MissingWads;
-		return jError;
-	}
-
-	jError.type = JoinError::NoError;
-	return jError;
-}
-
-bool Server::host(const HostInfo& hostInfo, bool bOfflinePlay, QString& error)
-{
-	error.clear();
-	CommandLineInfo cli;
-
-	if (!createHostCommandLine(hostInfo, cli, bOfflinePlay, error))
-		return false;
-
-#ifdef Q_OS_WIN32
-	const bool WRAP_IN_SSS_CONSOLE = false;
-#else
-	const bool WRAP_IN_SSS_CONSOLE = !bOfflinePlay;
-#endif
-
-	return runExecutable(cli, WRAP_IN_SSS_CONSOLE, error);
+	return new GameRunner(this);
 }
 
 bool Server::isWebsiteURLSafe() const
 {
 	return !website().startsWith("file://", Qt::CaseInsensitive);
-}
-
-JoinError Server::join(const QString &connectPassword) const
-{
-	CommandLineInfo cli;
-
-	JoinError jError = createJoinCommandLine(cli, connectPassword);
-	if (jError.type != JoinError::NoError)
-	{
-		return jError;
-	}
-
-	if (!runExecutable(cli, false, jError.error))
-	{
-		jError.type = JoinError::Critical;
-	}
-
-	return jError;
 }
 
 int Server::numFreeClientSlots() const
@@ -401,13 +144,6 @@ int Server::numFreeSpectatorSlots() const
 {
 	int returnValue = numFreeClientSlots() - numFreeJoinSlots();
 	return (returnValue < 0) ? 0 : returnValue;
-}
-
-QString Server::offlineGameWorkingDirectory() const
-{
-	QString dummy;
-	QFileInfo fi(offlineGameBinary(dummy));
-	return fi.absolutePath();
 }
 
 const Player& Server::player(int index) const
@@ -442,41 +178,6 @@ void Server::refreshStops()
 {
 	bIsRefreshing = false;
 	iwad = iwad.toLower();
-}
-
-bool Server::runExecutable(const CommandLineInfo& cli, bool bWrapInStandardServerConsole, QString& error) const
-{
-	pLog << tr("Starting (working dir %1): %2 %3").arg(cli.applicationDir.canonicalPath()).arg(cli.executable.canonicalFilePath()).arg(cli.args.join(" "));
-	QStringList args = cli.args;
-	cleanArguments(args);
-
-	if (!bWrapInStandardServerConsole)
-	{
-		int result;
-
-		#ifdef Q_WS_MAC
-		if( cli.executable.isBundle() )
-		{
-			result = QProcess::startDetached("open", QStringList() << cli.executable.canonicalFilePath() << "--args" << args, cli.applicationDir.canonicalPath());
-		}
-		else
-		#endif
-		{
-			result = QProcess::startDetached(cli.executable.canonicalFilePath(), args, cli.applicationDir.canonicalPath());
-		}
-		if(!result)
-		{
-			error = tr("File: %1\ncannot be run").arg(cli.executable.canonicalFilePath());
-			pLog << error;
-			return false;
-		}
-	}
-	else
-	{
-		new StandardServerConsole(this, cli.executable.canonicalFilePath(), args);
-	}
-
-	return true;
 }
 
 bool Server::sendRefreshQuery(QUdpSocket* socket)
@@ -522,13 +223,6 @@ void Server::setToDelete(bool b)
 	bDelete = b;
 	if (!bIsRefreshing)
 		delete this;
-}
-
-QString Server::serverWorkingDirectory() const
-{
-	QString dummy;
-	QFileInfo fi(serverBinary(dummy));
-	return fi.absolutePath();
 }
 
 QRgb Server::teamColor(int team) const

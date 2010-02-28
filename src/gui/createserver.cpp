@@ -24,6 +24,8 @@
 #include "copytextdlg.h"
 #include "main.h"
 #include "commonGUI.h"
+#include "serverapi/binaries.h"
+#include "serverapi/gamerunner.h"
 
 #include <QCheckBox>
 #include <QFileDialog>
@@ -198,25 +200,34 @@ void CreateServerDlg::btnCommandLineClicked()
 		CommandLineInfo cli;
 		QString error;
 
-		bool ok = server->createHostCommandLine(hi, cli, false, error);
+		GameRunner* gameRunner = server->gameRunner();
+		MessageResult result = gameRunner->createHostCommandLine(hi, cli, false);
 
 		delete server;
+		delete gameRunner;
 
-		if (ok)
+		if (result.isError)
+		{
+			QMessageBox::critical(this, result.caption, result.message);
+		}
+		else
 		{
 			CopyTextDlg ctd(cli.executable.absoluteFilePath() + " " + cli.args.join(" "), "Host server command line:", this);
 			ctd.exec();
 		}
-		else
-		{
-			QMessageBox::critical(this, errorCapt, error);
-		}
+	}
+	else if (server != NULL)
+	{
+		delete server;
 	}
 }
 
 void CreateServerDlg::btnDefaultExecutableClicked()
 {
-	leExecutable->setText(currentEngine->pInterface->binaryServer());
+	QString dummy;
+	Binaries* binaries = currentEngine->pInterface->binaries();
+	leExecutable->setText(binaries->serverBinary(dummy));
+	delete binaries;
 }
 
 void CreateServerDlg::btnIwadBrowseClicked()
@@ -461,7 +472,10 @@ void CreateServerDlg::initEngineSpecific(const PluginInfo* engineInfo)
 	const GeneralEngineInfo& engNfo = currentEngine->pInterface->generalEngineInfo();
 
 	// Executable path
-	leExecutable->setText(currentEngine->pInterface->binaryServer());
+	QString dummy;
+	Binaries* binaries = currentEngine->pInterface->binaries();
+	leExecutable->setText(binaries->serverBinary(dummy));
+	delete binaries;
 
 	spinPort->setValue(engNfo.defaultServerPort);
 
@@ -556,7 +570,7 @@ void CreateServerDlg::initPrimary()
 	for (int i = 0; !iwads[i].isEmpty(); ++i)
 	{
 		PathFinder pf(Main::config);
-		QString path = pf.findWad(iwads[i]);
+		QString path = pf.findFile(iwads[i]);
 		if (!path.isEmpty())
 			cboIwad->addItem(path);
 	}
@@ -723,18 +737,26 @@ void CreateServerDlg::runGame(bool offline)
 	if (createHostInfo(hi, server))
 	{
 		QString error;
-		bool ok = server->host(hi, offline, error);
 
+		GameRunner* gameRunner = server->gameRunner();
+
+		MessageResult result = gameRunner->host(hi, offline);
+
+		delete gameRunner;
 		delete server;
 
-		if (!ok)
+		if (result.isError)
 		{
-			QMessageBox::critical(this, errorCapt, error);
+			QMessageBox::critical(this, result.caption, result.message);
 		}
 		else
 		{
 			saveConfig("tmpserver.cfg");
 		}
+	}
+	else if (server != NULL)
+	{
+		delete server;
 	}
 }
 

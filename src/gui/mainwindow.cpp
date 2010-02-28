@@ -31,6 +31,7 @@
 #include "gui/wadseekerinterface.h"
 #include "gui/helpers/playersdiagram.h"
 #include "gui/widgets/serversstatuswidget.h"
+#include "serverapi/gamerunner.h"
 #include "customservers.h"
 #include "log.h"
 #include "pathfinder.h"
@@ -503,7 +504,10 @@ bool MainWindow::obtainJoinCommandLine(const Server* server, CommandLineInfo& cl
 				return false;
 		}
 
-		JoinError jError = server->createJoinCommandLine(cli, connectPassword);
+		GameRunner* gameRunner = server->gameRunner();
+		JoinError jError = gameRunner->createJoinCommandLine(cli, connectPassword);
+		delete gameRunner;
+
 		const QString unknownError = tr("Unknown error.");
 		const QString* error = NULL;
 
@@ -619,13 +623,16 @@ void MainWindow::runGame(const Server* server)
 	CommandLineInfo cli;
 	if (obtainJoinCommandLine(server, cli, tr("Doomseeker - join server")))
 	{
+		GameRunner* gameRunner = server->gameRunner();
 		QString error;
-		if (!server->runExecutable(cli, false, error))
+		MessageResult result = gameRunner->runExecutable(cli, false);
+		if (result.isError)
 		{
 			pLog << tr("Error while launching executable for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(error);
 			QMessageBox::critical(this, tr("Doomseeker - launch executable"), error);
-
 		}
+
+		delete gameRunner;
 	}
 }
 

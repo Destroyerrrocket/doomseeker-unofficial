@@ -121,11 +121,14 @@ set(SOURCE_FILES
 	serverapi/tooltips/gameinfotip.cpp
 	serverapi/tooltips/generalinfotip.cpp
 	serverapi/tooltips/playertable.cpp
+	serverapi/binaries.cpp
+	serverapi/gamerunner.cpp
 	serverapi/player.cpp
 	serverapi/playerslist.cpp
 	serverapi/rconprotocol.cpp
 	serverapi/server.cpp
 	serverapi/tooltipgenerator.cpp
+	apprunner.cpp
 	customservers.cpp
 	ip2c.cpp
 	log.cpp
