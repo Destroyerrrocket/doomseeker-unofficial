@@ -1,15 +1,7 @@
-// Emacs style mode select   -*- C++ -*-
-// =============================================================================
-// ### ### ##   ## ###  #   ###  ##   #   #  ##   ## ### ##  ### ###  #  ###
-// #    #  # # # # #  # #   #    # # # # # # # # # # #   # #  #   #  # # #  #
-// ###  #  #  #  # ###  #   ##   # # # # # # #  #  # ##  # #  #   #  # # ###
-//   #  #  #     # #    #   #    # # # # # # #     # #   # #  #   #  # # #  #
-// ### ### #     # #    ### ###  ##   #   #  #     # ### ##  ###  #   #  #  #
-//                                     --= http://bitowl.com/sde/ =--
-// =============================================================================
-// Copyright (C) 2008 "Blzut3" (admin@maniacsvault.net)
-// The SDE Logo is a trademark of GhostlyDeath (ghostlydeath@gmail.com)
-// =============================================================================
+//------------------------------------------------------------------------------
+// scanner.hpp
+//------------------------------------------------------------------------------
+//
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
@@ -22,11 +14,12 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-// =============================================================================
-// Description:
-// =============================================================================
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+// 02110-1301, USA.
+//
+//------------------------------------------------------------------------------
+// Copyright (C) 2010 "Blzut3" <admin@maniacsvault.net>
+//------------------------------------------------------------------------------
 
 #ifndef __SCANNER_HPP__
 #define __SCANNER_HPP__
@@ -73,8 +66,9 @@ class MAIN_EXPORT Scanner
 		bool		checkToken(char token);
 		/**
 		 * Gets whatever token is next returning true on success.
+		 * @param expandState Used by checkToken, leave as true.
 		 */
-		bool		nextToken();
+		bool		nextToken(bool autoExpandState=true);
 
 		/**
 		 * Returns true if there is still more to read.
@@ -93,16 +87,33 @@ class MAIN_EXPORT Scanner
 		 */
 		void		checkForWhitespace();
 		/**
+		 * Transfers nextState over for use.
+		 */
+		void		expandState();
+		/**
 		 * Changes the values in line and lineStart, does not change the actual 
 		 * scanning position in the file.
 		 */
 		void		incrementLine();
+
+		struct ParserState
+		{
+			QString			str;
+			unsigned int	number;
+			double			decimal;
+			bool			boolean;
+			char			token;
+			unsigned int	tokenLine;
+			unsigned int	tokenLinePosition;
+		}				nextState;
 
 		char*			data;
 		unsigned int	length;
 
 		unsigned int	line;
 		unsigned int	lineStart;
+		unsigned int	tokenLine;
+		unsigned int	tokenLinePosition;
 		unsigned int	scanPos;
 
 		bool			needNext; // If checkToken returns false this will be false.

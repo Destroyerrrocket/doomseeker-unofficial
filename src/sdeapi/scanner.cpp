@@ -1,16 +1,7 @@
-// Emacs style mode select   -*- C++ -*-
-// =============================================================================
-// ### ### ##   ## ###  #   ###  ##   #   #  ##   ## ### ##  ### ###  #  ###
-// #    #  # # # # #  # #   #    # # # # # # # # # # #   # #  #   #  # # #  #
-// ###  #  #  #  # ###  #   ##   # # # # # # #  #  # ##  # #  #   #  # # ###
-//   #  #  #     # #    #   #    # # # # # # #     # #   # #  #   #  # # #  #
-// ### ### #     # #    ### ###  ##   #   #  #     # ### ##  ###  #   #  #  #
-//                                     --= http://bitowl.com/sde/ =--
-// =============================================================================
-// Copyright (C) 2008 "Blzut3" (admin@maniacsvault.net)
-// Copyright (C) 2008 GhostlyDeath (ghostlydeath@gmail.com)
-// The SDE Logo is a trademark of GhostlyDeath (ghostlydeath@gmail.com)
-// =============================================================================
+//------------------------------------------------------------------------------
+// scanner.cpp
+//------------------------------------------------------------------------------
+//
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
@@ -23,11 +14,12 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-// =============================================================================
-// Description:
-// =============================================================================
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+// 02110-1301, USA.
+//
+//------------------------------------------------------------------------------
+// Copyright (C) 2010 "Blzut3" <admin@maniacsvault.net>
+//------------------------------------------------------------------------------
 
 #include <cstdio>
 #include <cmath>
@@ -35,17 +27,17 @@
 #include "sdeapi/scanner.hpp"
 #include "sdeapi/config.hpp"
 
-using namespace std;
-
 ////////////////////////////////////////////////////////////////////////////////
 
-Scanner::Scanner(const char* data, int length) : line(1), lineStart(0), scanPos(0), needNext(true)
+Scanner::Scanner(const char* data, int length) : line(1), lineStart(0), tokenLine(1), tokenLinePosition(0), scanPos(0), needNext(true)
 {
 	if(length == -1)
 		length = strlen(data);
 	this->length = length;
 	this->data = new char[length];
 	memcpy(this->data, data, length);
+
+	checkForWhitespace();
 }
 
 Scanner::~Scanner()
@@ -72,18 +64,18 @@ void Scanner::checkForWhitespace()
 			continue;
 		}
 
-		if(cur == ' ' || cur == '\t')
+		if(cur == ' ' || cur == '\t' || cur == 0)
 			scanPos++;
 		else if(cur == '\n' || cur == '\r')
 		{
 			scanPos++;
-			incrementLine();
 			if(comment == 1)
 				comment = 0;
 
 			// Do a quick check for Windows style new line
 			if(cur == '\r' && next == '\n')
 				scanPos++;
+			incrementLine();
 		}
 		else if(cur == '/')
 		{
@@ -114,18 +106,30 @@ bool Scanner::checkToken(char token)
 {
 	if(needNext)
 	{
-		if(!nextToken())
+		if(!nextToken(false))
 			return false;
 	}
 
 	// An int can also be a float.
-	if(this->token == token || (this->token == TK_IntConst && token == TK_FloatConst))
+	if(nextState.token == token || (nextState.token == TK_IntConst && token == TK_FloatConst))
 	{
 		needNext = true;
+		expandState();
 		return true;
 	}
 	needNext = false;
 	return false;
+}
+
+void Scanner::expandState()
+{
+	str = nextState.str;
+	number = nextState.number;
+	decimal = nextState.decimal;
+	boolean = nextState.boolean;
+	token = nextState.token;
+	tokenLine = nextState.tokenLine;
+	tokenLinePosition = nextState.tokenLinePosition;
 }
 
 void Scanner::incrementLine()
@@ -134,21 +138,24 @@ void Scanner::incrementLine()
 	lineStart = scanPos;
 }
 
-bool Scanner::nextToken()
+bool Scanner::nextToken(bool autoExpandState)
 {
 	if(!needNext)
 	{
 		needNext = true;
+		expandState();
 		return true;
 	}
 
-	checkForWhitespace();
+	nextState.tokenLine = line;
+	nextState.tokenLinePosition = scanPos - lineStart;
 	if(scanPos >= length)
 		return false;
 
-	int start = scanPos;
-	int end = scanPos;
-	token = TK_NoToken;
+	unsigned int start = scanPos;
+	unsigned int end = scanPos;
+	nextState.token = TK_NoToken;
+	int integerBase = 10;
 	bool floatHasDecimal = false;
 	bool floatHasExponent = false;
 	bool stringFinished = false; // Strings are the only things that can have 0 length tokens.
@@ -156,58 +163,62 @@ bool Scanner::nextToken()
 	char cur = data[scanPos++];
 	// Determine by first character
 	if(cur == '_' || (cur >= 'A' && cur <= 'Z') || (cur >= 'a' && cur <= 'z'))
-		token = TK_Identifier;
+		nextState.token = TK_Identifier;
 	else if(cur >= '0' && cur <= '9')
-		token = TK_IntConst;
+	{
+		if(cur == '0')
+			integerBase = 8;
+		nextState.token = TK_IntConst;
+	}
 	else if(cur == '.')
 	{
 		floatHasDecimal = true;
-		token = TK_FloatConst;
+		nextState.token = TK_FloatConst;
 	}
 	else if(cur == '"')
 	{
 		end = ++start; // Move the start up one character so we don't have to trim it later.
-		token = TK_StringConst;
+		nextState.token = TK_StringConst;
 	}
 	else
 	{
 		end = scanPos;
-		token = cur;
+		nextState.token = cur;
 
 		// Now check for operator tokens
 		if(scanPos < length)
 		{
 			char next = data[scanPos];
 			if(cur == '&' && next == '&')
-				token = TK_AndAnd;
+				nextState.token = TK_AndAnd;
 			else if(cur == '|' && next == '|')
-				token = TK_OrOr;
+				nextState.token = TK_OrOr;
 			else if(cur == '<' && next == '<')
-				token = TK_ShiftLeft;
+				nextState.token = TK_ShiftLeft;
 			else if(cur == '>' && next == '>')
-				token = TK_ShiftRight;
+				nextState.token = TK_ShiftRight;
 			else if(next == '=')
 			{
 				switch(cur)
 				{
 					case '=':
-						token = TK_EqEq;
+						nextState.token = TK_EqEq;
 						break;
 					case '!':
-						token = TK_NotEq;
+						nextState.token = TK_NotEq;
 						break;
 					case '>':
-						token = TK_GtrEq;
+						nextState.token = TK_GtrEq;
 						break;
 					case '<':
-						token = TK_LessEq;
+						nextState.token = TK_LessEq;
 						break;
 					default:
 						break;
 				}
 			}
 
-			if(token != cur)
+			if(nextState.token != cur)
 			{
 				scanPos++;
 				end = scanPos;
@@ -220,7 +231,7 @@ bool Scanner::nextToken()
 		while(scanPos < length)
 		{
 			cur = data[scanPos];
-			switch(token)
+			switch(nextState.token)
 			{
 				default:
 					break;
@@ -229,12 +240,30 @@ bool Scanner::nextToken()
 						end = scanPos;
 					break;
 				case TK_IntConst:
-					if(cur == '.' || (scanPos-start != 0 && cur == 'e'))
-						token = TK_FloatConst;
+					if(cur == '.' || (scanPos-1 != start && cur == 'e'))
+						nextState.token = TK_FloatConst;
+					else if((cur == 'x' || cur == 'X') && scanPos-1 == start)
+					{
+						integerBase = 16;
+						break;
+					}
 					else
 					{
-						if(cur < '0' || cur > '9')
-							end = scanPos;
+						switch(integerBase)
+						{
+							default:
+								if(cur < '0' || cur > '9')
+									end = scanPos;
+								break;
+							case 8:
+								if(cur < '0' || cur > '7')
+									end = scanPos;
+								break;
+							case 16:
+								if((cur < '0' || cur > '9') && (cur < 'A' || cur > 'F') && (cur < 'a' || cur > 'f'))
+									end = scanPos;
+								break;
+						}
 						break;
 					}
 				case TK_FloatConst:
@@ -282,38 +311,42 @@ bool Scanner::nextToken()
 
 	if(end-start > 0 || stringFinished)
 	{
-		str = QByteArray(data+start, end-start);
-		if(token == TK_FloatConst)
+		nextState.str = QByteArray(data+start, end-start);
+		if(nextState.token == TK_FloatConst)
 		{
-			decimal = str.toDouble();
-			number = static_cast<int> (decimal);
-			boolean = (number != 0);
+			nextState.decimal = nextState.str.toDouble();
+			nextState.number = static_cast<int> (nextState.decimal);
+			nextState.boolean = (nextState.number != 0);
 		}
-		else if(token == TK_IntConst)
+		else if(nextState.token == TK_IntConst)
 		{
-			number = str.toUInt();
-			decimal = number;
-			boolean = (number != 0);
+			nextState.number = nextState.str.toUInt();
+			nextState.decimal = nextState.number;
+			nextState.boolean = (nextState.number != 0);
 		}
-		else if(token == TK_Identifier)
+		else if(nextState.token == TK_Identifier)
 		{
 			// Check for a boolean constant.
-			if(str.compare("true") == 0)
+			if(nextState.str.compare("true") == 0)
 			{
-				token = TK_BoolConst;
-				boolean = true;
+				nextState.token = TK_BoolConst;
+				nextState.boolean = true;
 			}
-			else if(str.compare("false") == 0)
+			else if(nextState.str.compare("false") == 0)
 			{
-				token = TK_BoolConst;
-				boolean = false;
+				nextState.token = TK_BoolConst;
+				nextState.boolean = false;
 			}
 		}
-		else if(token == TK_StringConst)
+		else if(nextState.token == TK_StringConst)
 		{
-			str = Config::unescape(str);
+			nextState.str = Config::unescape(nextState.str);
 		}
+		if(autoExpandState)
+			expandState();
+		checkForWhitespace();
 		return true;
 	}
+	checkForWhitespace();
 	return false;
 }
