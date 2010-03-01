@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// un7zip.h
+// unarchive.h
 //------------------------------------------------------------------------------
 //
 // This library is free software; you can redistribute it and/or
@@ -21,65 +21,23 @@
 // Copyright (C) 2010 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#ifndef __UN7ZIP_H__
-#define __UN7ZIP_H__
+#ifndef __UNARCHIVE_H__
+#define __UNARCHIVE_H__
 
-#include <QBuffer>
-#include <QByteArray>
 #include <QObject>
 
-#include "unarchive.h"
-
-extern "C"
-{
-#include "Archive/7z/7zHeader.h"
-#include "Archive/7z/7zExtract.h"
-#include "Archive/7z/7zIn.h"
-#include "7zCrc.h"
-}
-
-struct SZByteStream
-{
-	// [BL] Ugh, I really don't see a way around copying this ZDoom hack.
-	//      This must be the first variable.
-	ISeekInStream	stream;
-
-	QBuffer			buffer;
-
-	SZByteStream(QByteArray *array);
-	~SZByteStream();
-
-	static SRes Read(void *p, void *buf, size_t *size);
-	static SRes Seek(void *p, Int64 *pos, ESzSeek origin);
-};
-
-class Un7Zip : public UnArchive
+class UnArchive : public QObject
 {
 	Q_OBJECT
 
 	public:
-		Un7Zip(const QByteArray &data);
-		~Un7Zip();
+		virtual bool	extract(int file, const QString &where)=0;
+		virtual QString	fileNameFromIndex(int file)=0;
+		virtual int		findFileEntry(const QString &entryName)=0;
+		virtual bool	isValid()=0;
 
-		bool	extract(int file, const QString &where);
-		QString	fileNameFromIndex(int file);
-		int		findFileEntry(const QString &entryName);
-		bool	isValid() { return valid; }
-
-	protected:
-		static void	*SzAlloc(void *p, size_t size);
-		static void	SzFree(void *p, void *address);
-
-		SZByteStream	*byteStream;
-		CLookToRead		lookStream;
-
-		CSzArEx			db;
-		static ISzAlloc	alloc;
-		Byte*			out;
-		size_t			outSize;
-
-		QByteArray		data;
-		bool			valid;
+	signals:
+		void			message(const QString&, int type);
 };
 
-#endif
+#endif /* __UNARCHIVE_H__ */

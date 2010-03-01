@@ -143,27 +143,27 @@ void Wadseeker::fileDone(QByteArray& data, const QString& filename)
 
 		bNextWad = true;
 	}
-	else if (fi.suffix().compare("zip", Qt::CaseInsensitive) == 0)
+	else if (fi.suffix().compare("zip", Qt::CaseInsensitive) == 0 || fi.suffix().compare("7z", Qt::CaseInsensitive) == 0)
 	{
-		UnZip unzip(data);
-		if (!unzip.isValid())
+		UnArchive *unarchive = NULL;
+		if (fi.suffix().compare("zip", Qt::CaseInsensitive) == 0)
+			unarchive = new UnZip(data);
+		else
+			unarchive = new Un7Zip(data);
+
+		if (!unarchive->isValid())
 		{
-			emit message(tr("Couldn't unzip \"%1\".").arg(filename), Error);
-		}
-		else if (!unzip.isZip())
-		{
-			emit message(tr("\"%1\" is not a valid ZIP file.").arg(filename), Error);
+			emit message(tr("Couldn't unarchive \"%1\".").arg(filename), Error);
 		}
 		else
 		{
-			connect (&unzip, SIGNAL( message(const QString&, int) ), this, SLOT( messageSlot(const QString&, int) ) );
-			ZipLocalFileHeader* zip = unzip.findFileEntry(currentWad);
+			connect (unarchive, SIGNAL( message(const QString&, int) ), this, SLOT( messageSlot(const QString&, int) ) );
+			int file = unarchive->findFileEntry(currentWad);
 
-			if (zip != NULL)
+			if (file != -1)
 			{
-				unzip.extract(*zip, path);
-				emit message(tr("%1#%2 uncompressed successfully!").arg(filename, zip->fileName), Notice);
-				delete zip;
+				unarchive->extract(file, path);
+				emit message(tr("%1#%2 uncompressed successfully!").arg(filename, unarchive->fileNameFromIndex(file)), Notice);
 				bNextWad = true;
 			}
 			else
@@ -171,30 +171,7 @@ void Wadseeker::fileDone(QByteArray& data, const QString& filename)
 				emit message(tr("File \"%1\" not found in \"%2\"").arg(currentWad, filename), Error);
 			}
 		}
-	}
-	else if (fi.suffix().compare("7z", Qt::CaseInsensitive) == 0)
-	{
-		// TODO: Try to merge this with the unzip code above.
-		Un7Zip un7zip(data);
-		if (!un7zip.isValid())
-		{
-			emit message(tr("Couldn't extract \"%1\".").arg(filename), Error);
-		}
-		else
-		{
-			int file = un7zip.findFileEntry(currentWad);
-
-			if(file != -1)
-			{
-				un7zip.extract(file, path);
-				emit message(tr("%1#%2 uncompressed successfully!").arg(filename, un7zip.fileNameFromIndex(file)), Notice);
-				bNextWad = true;
-			}
-			else
-			{
-				emit message(tr("File \"%1\" not found in \"%2\"").arg(currentWad, filename), Error);
-			}
-		}
+		delete unarchive;
 	}
 
 	emit message(" ", Notice);

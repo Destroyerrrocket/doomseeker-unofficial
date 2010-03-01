@@ -28,6 +28,7 @@ set(WADSEEKER_QT_FILES
 	protocols/http.h
 	protocols/idgames.h
 	protocols/protocol.h
+	zip/unarchive.h
 	zip/un7zip.h
 	zip/unzip.h
 	wadseeker.h
