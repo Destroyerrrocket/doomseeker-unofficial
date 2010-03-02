@@ -316,7 +316,7 @@ void CreateServerDlg::cboGamemodeSelected(int index)
 {
 	if (index >= 0)
 	{
-		const GameMode* gameModes = currentEngine->pInterface->generalEngineInfo().gameModes;
+		QList<GameMode> gameModes = currentEngine->pInterface->gameModes();
 		initGamemodeSpecific(gameModes[index]);
 	}
 }
@@ -385,12 +385,12 @@ bool CreateServerDlg::createHostInfo(HostInfo& hi, Server* server)
 		server->setSkill(cboDifficulty->currentIndex());
 		server->setWebsite(leURL->text());
 
-		const GeneralEngineInfo& engNfo = currentEngine->pInterface->generalEngineInfo();
-		for (int i = 0; i < engNfo.gameModesNum; ++i)
+		const QList<GameMode>& gameModes = currentEngine->pInterface->gameModes();
+		for (int i = 0; i < gameModes.count(); ++i)
 		{
-			if (engNfo.gameModes[i].name().compare(cboGamemode->currentText()) == 0)
+			if (gameModes[i].name().compare(cboGamemode->currentText()) == 0)
 			{
-				server->setGameMode(engNfo.gameModes[i]);
+				server->setGameMode(gameModes[i]);
 				break;
 			}
 		}
@@ -418,12 +418,13 @@ void CreateServerDlg::initDMFlagsTabs()
 	removeDMFlagsTabs();
 
 	int paramsIndex = tabWidget->indexOf(tabCustomParameters);
-	const GeneralEngineInfo& engNfo = currentEngine->pInterface->generalEngineInfo();
-	const DMFlagsSection* dmFlagsSec = engNfo.allDMFlags;
-	if(dmFlagsSec == NULL)
+	const QList<DMFlagsSection>& dmFlagsSec = currentEngine->pInterface->allDMFlags();
+	if(dmFlagsSec.empty())
+	{
 		return; // Nothing to do
+	}
 
-	for (unsigned i = 0; i < engNfo.dmFlagsSectionsNum; ++i)
+	for (unsigned i = 0; i < dmFlagsSec.count(); ++i)
 	{
 		DMFlagsTabWidget* dmftw = new DMFlagsTabWidget();
 
@@ -466,23 +467,25 @@ void CreateServerDlg::initDMFlagsTabs()
 void CreateServerDlg::initEngineSpecific(const PluginInfo* engineInfo)
 {
 	if (engineInfo == currentEngine || engineInfo == NULL)
+	{
 		return;
+	}
 
 	currentEngine = engineInfo;
-	const GeneralEngineInfo& engNfo = currentEngine->pInterface->generalEngineInfo();
+	const EnginePlugin* engine = currentEngine->pInterface;
 
 	// Executable path
 	QString dummy;
-	Binaries* binaries = currentEngine->pInterface->binaries();
+	Binaries* binaries = engine->binaries();
 	leExecutable->setText(binaries->serverBinary(dummy));
 	delete binaries;
 
-	spinPort->setValue(engNfo.defaultServerPort);
+	spinPort->setValue(engine->defaultServerPort());
 
 	cboGamemode->clear();
 
-	const GameMode* gameModes = engNfo.gameModes;
-	for (int i = 0; i < engNfo.gameModesNum; ++i)
+	const QList<GameMode>& gameModes = engine->gameModes();
+	for (int i = 0; i < gameModes.count(); ++i)
 	{
 		cboGamemode->addItem(gameModes[i].name(), i);
 	}
@@ -519,25 +522,25 @@ void CreateServerDlg::initGamemodeSpecific(const GameMode& gameMode)
 
 void CreateServerDlg::initInfoAndPassword()
 {
-	const GeneralEngineInfo& engNfo = currentEngine->pInterface->generalEngineInfo();
+	const EnginePlugin* engine = currentEngine->pInterface;
 
-	labelConnectPassword->setVisible(engNfo.allowsConnectPassword);
-	leConnectPassword->setVisible(engNfo.allowsConnectPassword);
+	labelConnectPassword->setVisible(engine->allowsConnectPassword());
+	leConnectPassword->setVisible(engine->allowsConnectPassword());
 
-	labelEmail->setVisible(engNfo.allowsEmail);
-	leEmail->setVisible(engNfo.allowsEmail);
+	labelEmail->setVisible(engine->allowsEmail());
+	leEmail->setVisible(engine->allowsEmail());
 
-	labelJoinPassword->setVisible(engNfo.allowsJoinPassword);
-	leJoinPassword->setVisible(engNfo.allowsJoinPassword);
+	labelJoinPassword->setVisible(engine->allowsJoinPassword());
+	leJoinPassword->setVisible(engine->allowsJoinPassword());
 
-	labelMOTD->setVisible(engNfo.allowsMOTD);
-	pteMOTD->setVisible(engNfo.allowsMOTD);
+	labelMOTD->setVisible(engine->allowsMOTD());
+	pteMOTD->setVisible(engine->allowsMOTD());
 
-	labelRConPassword->setVisible(engNfo.allowsRConPassword);
-	leRConPassword->setVisible(engNfo.allowsRConPassword);
+	labelRConPassword->setVisible(engine->allowsRConPassword());
+	leRConPassword->setVisible(engine->allowsRConPassword());
 
-	labelURL->setVisible(engNfo.allowsURL);
-	leURL->setVisible(engNfo.allowsURL);
+	labelURL->setVisible(engine->allowsURL());
+	leURL->setVisible(engine->allowsURL());
 }
 
 void CreateServerDlg::initPrimary()
@@ -578,23 +581,26 @@ void CreateServerDlg::initPrimary()
 
 void CreateServerDlg::initRules()
 {
-	const GeneralEngineInfo& engNfo = currentEngine->pInterface->generalEngineInfo();
+	const EnginePlugin* engine = currentEngine->pInterface;
 
-	cbRandomMapRotation->setVisible(engNfo.supportsRandomMapRotation);
+	cbRandomMapRotation->setVisible(engine->supportsRandomMapRotation());
 
 	cboModifier->clear();
 	gameModifiers.clear();
-	if (engNfo.gameModifiers != NULL)
+
+	const QList<GameCVar>& engineGameModifiers = engine->gameModifiers();
+
+	if (!engineGameModifiers.isEmpty())
 	{
 		cboModifier->show();
 		labelModifiers->show();
 
 		cboModifier->addItem(tr("< NONE >"));
 
-		for (unsigned i = 0; i < engNfo.gameModifiersNum; ++i)
+		for (unsigned i = 0; i < engineGameModifiers.count(); ++i)
 		{
-			cboModifier->addItem(engNfo.gameModifiers[i].name);
-			gameModifiers << engNfo.gameModifiers[i];
+			cboModifier->addItem(engineGameModifiers[i].name);
+			gameModifiers << engineGameModifiers[i];
 		}
 	}
 	else

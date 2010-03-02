@@ -53,37 +53,37 @@ static GeneralEngineInfo ChocolateDoomEngineInfo =
 class PLUGIN_EXPORT ChocolateDoomEnginePlugin : public EnginePlugin
 {
 	public:
-		Binaries*					binaries() const
+		Binaries*						binaries() const
 		{
 			return new ChocolateDoomBinaries(QObject::tr("Chocolate Doom"));
 		}
 
-		ConfigurationBoxInfo*		configuration(Config *cfg, QWidget *parent) const
+		ConfigurationBoxInfo*			configuration(Config *cfg, QWidget *parent) const
 		{
 			return EngineChocolateDoomConfigBox::createStructure(cfg, parent);
 		}
 
-		const GeneralEngineInfo&	generalEngineInfo() const
+		const GeneralEngineInfo&		generalEngineInfo() const
 		{
 			return ChocolateDoomEngineInfo;
 		}
 
-		virtual QList<GameCVar>	limits(const GameMode&) const
+		virtual QList<GameCVar>			limits(const GameMode&) const
 		{
 			return QList<GameCVar>();
 		}
 
-		QPixmap			icon() const
+		QPixmap							icon() const
 		{
 			return QPixmap(chocolatedoom_xpm);
 		}
 
-		MasterClient	*masterClient() const
+		MasterClient*					masterClient() const
 		{
 			return NULL;
 		}
 
-		Server*			server(const QHostAddress &address, unsigned short port) const
+		Server*							server(const QHostAddress &address, unsigned short port) const
 		{
 			return new ChocolateDoomServer(address, port);
 		}
