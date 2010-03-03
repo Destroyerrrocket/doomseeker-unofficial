@@ -224,10 +224,26 @@ void CreateServerDlg::btnCommandLineClicked()
 
 void CreateServerDlg::btnDefaultExecutableClicked()
 {
-	QString dummy;
-	Binaries* binaries = currentEngine->pInterface->binaries();
-	leExecutable->setText(binaries->serverBinary(dummy));
+	QString error;
+
+	// The info here doesn't really matter. We need to create a Server instance
+	// because this is the only way to get Binaries instance.
+	//
+	// Explanation: such horrendous heresy wouldn't be necessary if not for
+	// the Skulltag testing system which requires passing a SkulltagServer*
+	// to SkulltagBinaries constructor. This renders getting Binaries through
+	// plugin's interface a not recommended feature.
+	Server* server = currentEngine->pInterface->server(QHostAddress("127.0.0.1"), 0);
+	Binaries* binaries = server->binaries();
+	leExecutable->setText(binaries->serverBinary(error));
+
+	if (!error.isNull())
+	{
+		QMessageBox::critical(this, tr("Obtaining default server binary path."), error, QMessageBox::Ok, QMessageBox::Ok);
+	}
+
 	delete binaries;
+	delete server;
 }
 
 void CreateServerDlg::btnIwadBrowseClicked()
@@ -316,8 +332,11 @@ void CreateServerDlg::cboGamemodeSelected(int index)
 {
 	if (index >= 0)
 	{
-		QList<GameMode> gameModes = currentEngine->pInterface->gameModes();
-		initGamemodeSpecific(gameModes[index]);
+		const QList<GameMode>* gameModes = currentEngine->pInterface->gameModes();
+		if (gameModes != NULL)
+		{
+			initGamemodeSpecific((*gameModes)[index]);
+		}
 	}
 }
 
@@ -335,13 +354,12 @@ bool CreateServerDlg::createHostInfo(HostInfo& hi, Server* server)
 		{
 			DMFlagsSection* sec = new DMFlagsSection();
 			sec->name = p->section->name;
-			sec->size = 0;
 
-			for (int i = 0; i < p->section->size; ++i)
+			for (int i = 0; i < p->section->flags.count(); ++i)
 			{
 				if (p->checkBoxes[i]->isChecked())
 				{
-					sec->flags[sec->size++] = p->section->flags[i];
+					sec->flags << p->section->flags[i];
 				}
 			}
 
@@ -385,13 +403,16 @@ bool CreateServerDlg::createHostInfo(HostInfo& hi, Server* server)
 		server->setSkill(cboDifficulty->currentIndex());
 		server->setWebsite(leURL->text());
 
-		const QList<GameMode>& gameModes = currentEngine->pInterface->gameModes();
-		for (int i = 0; i < gameModes.count(); ++i)
+		const QList<GameMode>* gameModes = currentEngine->pInterface->gameModes();
+		if (gameModes != NULL)
 		{
-			if (gameModes[i].name().compare(cboGamemode->currentText()) == 0)
+			for (int i = 0; i < gameModes->count(); ++i)
 			{
-				server->setGameMode(gameModes[i]);
-				break;
+				if ((*gameModes)[i].name().compare(cboGamemode->currentText()) == 0)
+				{
+					server->setGameMode((*gameModes)[i]);
+					break;
+				}
 			}
 		}
 
@@ -418,24 +439,26 @@ void CreateServerDlg::initDMFlagsTabs()
 	removeDMFlagsTabs();
 
 	int paramsIndex = tabWidget->indexOf(tabCustomParameters);
-	const QList<DMFlagsSection>& dmFlagsSec = currentEngine->pInterface->allDMFlags();
-	if(dmFlagsSec.empty())
+	const DMFlags* dmFlagsSec = currentEngine->pInterface->allDMFlags();
+	if(dmFlagsSec == NULL || dmFlagsSec->empty())
 	{
 		return; // Nothing to do
 	}
 
-	for (unsigned i = 0; i < dmFlagsSec.count(); ++i)
+	const QList<DMFlagsSection*>& dmFlagsSections = *dmFlagsSec;
+
+	for (unsigned i = 0; i < dmFlagsSections.count(); ++i)
 	{
 		DMFlagsTabWidget* dmftw = new DMFlagsTabWidget();
 
 		QWidget* flagsTab = new QWidget(this);
 		dmftw->widget = flagsTab;
-		dmftw->section = &dmFlagsSec[i];
+		dmftw->section = dmFlagsSections[i];
 
 		QHBoxLayout* hLayout = new QHBoxLayout(flagsTab);
 
 		QVBoxLayout* layout = NULL;
-		for (int j = 0; j < dmFlagsSec[i].size; ++j)
+		for (int j = 0; j < dmFlagsSections[i]->flags.count(); ++j)
 		{
 			if ((j % 16) == 0)
 			{
@@ -449,7 +472,7 @@ void CreateServerDlg::initDMFlagsTabs()
 			}
 
 			QCheckBox* checkBox = new QCheckBox();
-			checkBox->setText(dmFlagsSec[i].flags[j].name);
+			checkBox->setText(dmFlagsSections[i]->flags[j].name);
 			dmftw->checkBoxes << checkBox;
 			layout->addWidget(checkBox);
 		}
@@ -460,7 +483,7 @@ void CreateServerDlg::initDMFlagsTabs()
 		}
 
 		dmFlagsTabs << dmftw;
-		tabWidget->insertTab(paramsIndex++, flagsTab, dmFlagsSec[i].name);
+		tabWidget->insertTab(paramsIndex++, flagsTab, dmFlagsSections[i]->name);
 	}
 }
 
@@ -476,18 +499,25 @@ void CreateServerDlg::initEngineSpecific(const PluginInfo* engineInfo)
 
 	// Executable path
 	QString dummy;
-	Binaries* binaries = engine->binaries();
+
+	// See: btnDefaultExecutableClicked()
+	Server* server = engine->server(QHostAddress("127.0.0.1"), 1);
+	Binaries* binaries = server->binaries();
 	leExecutable->setText(binaries->serverBinary(dummy));
 	delete binaries;
+	delete server;
 
 	spinPort->setValue(engine->defaultServerPort());
 
 	cboGamemode->clear();
 
-	const QList<GameMode>& gameModes = engine->gameModes();
-	for (int i = 0; i < gameModes.count(); ++i)
+	const QList<GameMode>* gameModes = engine->gameModes();
+	if (gameModes != NULL)
 	{
-		cboGamemode->addItem(gameModes[i].name(), i);
+		for (int i = 0; i < gameModes->count(); ++i)
+		{
+			cboGamemode->addItem((*gameModes)[i].name(), i);
+		}
 	}
 
 	initDMFlagsTabs();
@@ -588,10 +618,12 @@ void CreateServerDlg::initRules()
 	cboModifier->clear();
 	gameModifiers.clear();
 
-	const QList<GameCVar>& engineGameModifiers = engine->gameModifiers();
+	const QList<GameCVar>* pEngineGameModifiers = engine->gameModifiers();
 
-	if (!engineGameModifiers.isEmpty())
+	if (pEngineGameModifiers != NULL && !pEngineGameModifiers->isEmpty())
 	{
+		const QList<GameCVar>& engineGameModifiers = *pEngineGameModifiers;
+
 		cboModifier->show();
 		labelModifiers->show();
 
@@ -683,7 +715,7 @@ bool CreateServerDlg::loadConfig(const QString& filename)
 	// DMFlags
 	foreach(DMFlagsTabWidget* p, dmFlagsTabs)
 	{
-		for (int i = 0; i < p->section->size; ++i)
+		for (int i = 0; i < p->section->flags.count(); ++i)
 		{
 			QRegExp re("[^a-zA-Z]");
 			QString name1 = p->section->name;
@@ -813,7 +845,7 @@ bool CreateServerDlg::saveConfig(const QString& filename)
 	// DMFlags
 	foreach(DMFlagsTabWidget* p, dmFlagsTabs)
 	{
-		for (int i = 0; i < p->section->size; ++i)
+		for (int i = 0; i < p->section->flags.count(); ++i)
 		{
 			QRegExp re("[^a-zA-Z]");
 			QString name1 = p->section->name;

@@ -35,6 +35,7 @@
 #define NUM_DMFLAG_SECTIONS		3
 #define ST_MAX_TEAMS			4U
 
+class GameRunner;
 class SkulltagServer;
 
 struct TeamInfo
@@ -97,41 +98,22 @@ class SkulltagServer : public Server
 			SQF_STANDARDQUERY =		SQF_NAME|SQF_URL|SQF_EMAIL|SQF_MAPNAME|SQF_MAXCLIENTS|SQF_MAXPLAYERS|SQF_PWADS|SQF_GAMETYPE|SQF_IWAD|SQF_FORCEPASSWORD|SQF_FORCEJOINPASSWORD|SQF_DMFLAGS|SQF_LIMITS|SQF_NUMPLAYERS|SQF_PLAYERDATA|SQF_TEAMINFO_NUMBER|SQF_TEAMINFO_NAME|SQF_TEAMINFO_SCORE|SQF_GAMESKILL|SQF_TESTING_SERVER
 		};
 
-		enum SkulltagGameMode
-		{
-			GAMEMODE_COOPERATIVE,
-			GAMEMODE_SURVIVAL,
-			GAMEMODE_INVASION,
-			GAMEMODE_DEATHMATCH,
-			GAMEMODE_TEAMPLAY,
-			GAMEMODE_DUEL,
-			GAMEMODE_TERMINATOR,
-			GAMEMODE_LASTMANSTANDING,
-			GAMEMODE_TEAMLMS,
-			GAMEMODE_POSSESSION,
-			GAMEMODE_TEAMPOSSESSION,
-			GAMEMODE_TEAMGAME,
-			GAMEMODE_CTF,
-			GAMEMODE_ONEFLAGCTF,
-			GAMEMODE_SKULLTAG,
-			GAMEMODE_DOMINATION
-		};
-
-		static const DMFlags			DMFLAGS;
-		static const DMFlagsSection		DM_FLAGS[NUM_DMFLAG_SECTIONS];
-		static const GameMode	GAME_MODES[NUM_SKULLTAG_GAME_MODES + 1];
-		static const GameCVar	GAME_MODIFIERS[NUM_SKULLTAG_GAME_MODIFIERS];
 		static const QPixmap	*ICON;
 
 		SkulltagServer(const QHostAddress &address, unsigned short port);
 
-		const QPixmap	&icon() const;
-		
-		void			connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
+		Binaries*		binaries() const;
 
-		QString			engineName() const { return tr("Skulltag"); }
+		const QPixmap	&icon() const;
+
+		bool			isTestingServer() const { return testingServer; }
+
+		GameRunner*		gameRunner() const;
 
 		bool			hasRcon() const { return true; }
+
+		const PluginInfo*	plugin() const;
+
 		RConProtocol	*rcon();
 
 		QRgb			teamColor(unsigned team) const;
@@ -161,27 +143,10 @@ class SkulltagServer : public Server
 
 		QString			testingArchive;
 
-		QString			argForServerLaunch() const { return "-host"; }
-
-		void			hostDMFlags(QStringList& args, const DMFlags& dmFlags) const;
-		void			hostProperties(QStringList& args) const;
-
 		static unsigned int	millisecondTime();
 
 		Response		readRequest(QByteArray &data);
 		bool			sendRequest(QByteArray &data);
-		/**
-		 *	Creates Unix .sh file or Windows .bat file to
-		 *	launch client for this server. Returns true if the file
-		 *	already exists.
-		 *	@param versionDir - convenience parameter. This is the directory
-		 *		where testing package was unpacked. This path was
-		 *		already created in clientBinary() method so let's reuse it.
-		 *	@param [out] fullPathToFile - path to created script file
-		 *	@param [out] error - error if return == false
-		 *	@return false if fail
-		 */
-		bool			spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, QString& error) const;
 };
 
 class SkulltagRConProtocol : public RConProtocol

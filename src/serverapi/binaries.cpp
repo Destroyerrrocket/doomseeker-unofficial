@@ -29,8 +29,7 @@
 
 Binaries::BinaryNamesDictionary Binaries::binaryNames;
 
-Binaries::Binaries(const QString& engineName)
-: engineName(engineName)
+Binaries::Binaries()
 {
 	if (binaryNames.empty()) // Is not init yet.
 	{
@@ -52,7 +51,7 @@ QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, 
 
 	if (setting->string().isEmpty())
 	{
-		error = tr("No %1 executable specified for %2").arg(binaryNames[binaryType]).arg(engineName);
+		error = tr("No %1 executable specified for %2").arg(binaryNames[binaryType]).arg(plugin()->name);
 		return QString();
 	}
 
@@ -61,7 +60,7 @@ QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, 
 	if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
 	{
 		error = tr("Engine %1, %2 executable:\n\n%3\n is a directory or doesn't exist.")
-					.arg(engineName)
+					.arg(plugin()->name)
 					.arg(binaryNames[binaryType])
 					.arg(setting->string());
 		return QString();

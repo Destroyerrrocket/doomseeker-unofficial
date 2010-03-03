@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "log.h"
+#include "sdeapi/pluginloader.hpp"
 #include "serverapi/server.h"
 #include "main.h"
 #include "strings.h"
@@ -118,10 +119,18 @@ void Server::clearDMFlags()
 	dmFlags.clear();
 }
 
-GameRunner*	Server::gameRunner() const
+QString Server::engineName() const
 {
-	return new GameRunner(this);
+	if (plugin() != NULL)
+	{
+		return plugin()->name;
+	}
+	else
+	{
+		return tr("Undefined");
+	}
 }
+
 
 bool Server::isWebsiteURLSafe() const
 {

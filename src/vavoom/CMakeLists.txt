@@ -19,6 +19,8 @@ set(VAVOOM_QT_FILES
 )
 set(VAVOOM_FILES
 	engineVavoomConfig.cpp
+	vavoomgameinfo.cpp
+	vavoomgamerunner.cpp
 	vavoommain.cpp
 	vavoommasterclient.cpp
 	vavoomserver.cpp

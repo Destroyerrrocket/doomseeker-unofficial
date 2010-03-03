@@ -51,6 +51,24 @@ void GameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwad
 	QString iwad = pf.findFile(server->iwadName().toLower());
 	args << argForIwadLoading() << iwad;
 	iwadFound = !iwad.isEmpty();
+
+	// Custom parameters
+	QString customParametersKey = configKeyCustomParameters();
+	QString customParameters = Main::config->setting(customParametersKey)->string();
+	args << customParameters.split(" ", QString::SkipEmptyParts);
+
+	// Password
+	if (server->isLocked())
+	{
+		if (argForConnectPassword().isNull())
+		{
+			// TODO: Log a warning message here.
+		}
+		else
+		{
+			args << argForConnectPassword() << connectPassword;
+		}
+	}
 }
 
 MessageResult GameRunner::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cmdLine, bool bOfflinePlay)

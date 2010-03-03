@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "global.h"
+#include "vavoom/vavoommain.h"
 #include "vavoom/vavoommasterclient.h"
 #include "vavoom/vavoomserver.h"
 
@@ -30,6 +31,11 @@
 
 VavoomMasterClient::VavoomMasterClient(QHostAddress address, unsigned short port) : MasterClient(address, port)
 {
+}
+
+const PluginInfo* VavoomMasterClient::plugin() const
+{
+	return VavoomMain::get();
 }
 
 bool VavoomMasterClient::readRequest(QByteArray &data, bool &expectingMorePackets)

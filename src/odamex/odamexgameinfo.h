@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chocolatedoombinaries.h
+// odamexgameinfo.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,21 +20,38 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __CHOCOLATE_DOOM_BINARIES_H_
-#define __CHOCOLATE_DOOM_BINARIES_H_
+#ifndef __ODAMEX_GAME_INFO_H_
+#define __ODAMEX_GAME_INFO_H_
 
-#include "serverapi/binaries.h"
-#include "chocolate-doom/chocolatedoommain.h"
+#include "serverapi/serverstructs.h"
+#include <QObject>
 
-class ChocolateDoomServer;
-
-class ChocolateDoomBinaries : public Binaries
+class OdamexGameInfo : public QObject
 {
 	public:
-		QString		configKeyClientBinary() const { return "ChocolateDoomBinaryPath"; }
-		QString		configKeyServerBinary() const { return "ChocolateDoomServerBinaryPath"; }
+		enum OdamexGameModes
+		{
+			MODE_COOPERATIVE,
+			MODE_DEATHMATCH,
+			MODE_DEATHMATCH2,
+			MODE_TEAM_DEATHMATCH,
+			MODE_CAPTURE_THE_FLAG
+		};
 
-		const PluginInfo*	plugin() const { return ChocolateDoomMain::get(); }
+		static const DMFlags*			dmFlags() { return &dmFlagsList; }
+		static const QList<GameMode>*	gameModes() { return &gameModesList; }
+
+	protected:
+		static DMFlags					dmFlagsList;
+		static QList<GameMode>			gameModesList;
+
+	private:
+		OdamexGameInfo();
+
+		void						initDMFlags();
+		void						initGameModes();
+
+		static OdamexGameInfo* 		static_constructor;
 };
 
 #endif

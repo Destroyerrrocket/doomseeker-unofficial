@@ -21,24 +21,29 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "skulltagbinaries.h"
-SkulltagBinaries::SkulltagBinaries(SkulltagServer* server)
-: Binaries(server)
+#include "skulltagmain.h"
+#include "skulltagserver.h"
+#include "main.h"
+
+#include <QMessageBox>
+
+#ifdef Q_OS_WIN32
+#define ST_BINARY_NAME "skulltag.exe"
+#define SCRIPT_FILE_EXTENSION ".bat"
+#else
+#define ST_BINARY_NAME "skulltag"
+#define SCRIPT_FILE_EXTENSION ".sh"
+#endif
+
+SkulltagBinaries::SkulltagBinaries(const SkulltagServer* server)
+: server(server)
 {
 }
 
-QString SkulltagServer::configKeyServerBinary() const
-{ 
-	#ifdef Q_OS_WIN32
-		return configKeyClientBinary();
-	#else
-		return "SkulltagServerBinaryPath"; 
-	#endif
-}
-
-QString SkulltagServer::clientBinary(QString& error) const
+QString SkulltagBinaries::clientBinary(QString& error) const
 {
 	SettingsData* setting;
-	if (!this->testingServer || !Main::config->setting("SkulltagEnableTesting")->boolean())
+	if (!server->isTestingServer() || !Main::config->setting("SkulltagEnableTesting")->boolean())
 	{
 		return Binaries::clientBinary(error);
 	}
@@ -56,20 +61,20 @@ QString SkulltagServer::clientBinary(QString& error) const
 		if (path[path.length() - 1] != '/' && path[path.length() - 1] != '\\' )
 			path += '/';
 
-		path += version();
+		path += server->version();
 
 		QFileInfo fi(path);
 		if (!fi.exists())
 		{
 			error = tr("%1\ndoesn't exist.\nYou need to install new testing binaries.").arg(path);
-			QString messageBoxContent = tr("%1\n\nDo you want Doomseeker to create %2 directory and copy all your .ini files from your base directory?\n\nNote: You will still have to manualy install the binaries.").arg(error, version());
+			QString messageBoxContent = tr("%1\n\nDo you want Doomseeker to create %2 directory and copy all your .ini files from your base directory?\n\nNote: You will still have to manualy install the binaries.").arg(error, server->version());
 
 			if (QMessageBox::question(Main::mainWindow, tr("Doomseeker - missing testing binaries"), messageBoxContent, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 			{
 				// setting->string() should still contain base dir
 				// for testing binaries
 				QDir dir(setting->string());
-				if (!dir.mkdir(version()))
+				if (!dir.mkdir(server->version()))
 				{
 					error = tr("Unable to create directory:\n%1").arg(path);
 					return QString();
@@ -77,7 +82,7 @@ QString SkulltagServer::clientBinary(QString& error) const
 
 				// Now copy all .ini's. On Linux .ini's are kept in ~/.skulltag so this will
 				// do nothing, but on Windows this should work like magic.
-				QDir baseBinaryDir(clientWorkingDirectory());
+				QDir baseBinaryDir(clientWorkingDirectory(error));
 				QStringList nameFilters;
 				nameFilters << "*.ini";
 				QStringList iniFiles = baseBinaryDir.entryList(nameFilters, QDir::Files);
@@ -89,7 +94,7 @@ QString SkulltagServer::clientBinary(QString& error) const
 					file.copy(targetPath);
 				}
 
-				QMessageBox::information(Main::mainWindow, tr("Doomseeker"), tr("Please install now version \"%1\" into:\n%2").arg(version(), path));
+				QMessageBox::information(Main::mainWindow, tr("Doomseeker"), tr("Please install now version \"%1\" into:\n%2").arg(server->version(), path));
 				error = QString();
 			}
 			return QString();
@@ -121,9 +126,109 @@ QString SkulltagServer::clientBinary(QString& error) const
 	}
 }
 
-QString SkulltagServer::clientWorkingDirectory() const
+QString SkulltagBinaries::clientWorkingDirectory(QString& error) const
 {
 	SettingsData* setting = Main::config->setting("SkulltagBinaryPath");
 	QFileInfo fi(setting->string());
 	return fi.canonicalPath();
+}
+
+QString SkulltagBinaries::configKeyServerBinary() const
+{
+	#ifdef Q_OS_WIN32
+		return configKeyClientBinary();
+	#else
+		return "SkulltagServerBinaryPath";
+	#endif
+}
+
+const PluginInfo* SkulltagBinaries::plugin() const
+{
+	return SkulltagMain::get();
+}
+
+bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, QString& error) const
+{
+	QString binaryPath = versionDir + '/' + ST_BINARY_NAME;
+	// This will create an actual path to file, because there is no '/' at the end
+	// of scriptFilepath.
+	fullPathToFile = versionDir + SCRIPT_FILE_EXTENSION;
+	QFileInfo fi(fullPathToFile);
+	QFile file(fullPathToFile);
+	if (fi.isDir())
+	{
+		error = tr("%1\n should be a script file but is a directory!").arg(fullPathToFile);
+		return false;
+	}
+
+	if (fi.exists())
+	{
+		printf("File Permissions: %X\n", (unsigned int)file.permissions());
+		if ((file.permissions() & QFile::ExeUser) == 0)
+		{
+			error = tr("You don't have permissions to execute file: %1\n").arg(fullPathToFile);
+			return false;
+		}
+		return true;
+	}
+
+	QString content;
+	Binaries* binaries = server->binaries();
+	#ifdef Q_OS_WIN32
+	// Create Windows batch file
+	// Extract drive letter:
+	QString driveLetter;
+	QString workDir = binaries->clientWorkingDirectory(error);
+	for (int i = 0; i < workDir.length(); ++i)
+	{
+		if (workDir[i] == ':')
+		{
+			driveLetter = workDir.left(i);
+		}
+	}
+
+	if (!driveLetter.isEmpty())
+	{
+		content += driveLetter + ":\r\n";
+	}
+
+	content += "cd " + binaries->clientWorkingDirectory(error).replace('/', '\\') + "\r\n";
+	content += binaryPath.replace('/', '\\') + " %*"; // %* deals with all the parameters
+	#else
+	// Create Unix script file
+	content  = "#!/bin/bash\n";
+	content += "cd " + binaries->clientWorkingDirectory(error) + "\n";
+	content += "export LANG=C\n"; // without this Skulltag won't run on my system (Zalewa)
+	content += binaryPath + " $*"; // $* deals with all the parameters
+	#endif
+	delete binaries;
+
+	if (!error.isNull())
+	{
+		error.prepend(tr("Error while creating a shell script: "));
+		return false;
+	}
+
+	if (!file.open(QIODevice::WriteOnly))
+	{
+		error = tr("Couldn't open batch file \"%1\" for writing").arg(fullPathToFile);
+		return false;
+	}
+
+	if (file.write(content.toAscii()) < 0)
+	{
+		error = tr("Error while writing batch file \"%1\"").arg(fullPathToFile);
+		file.close();
+		return false;
+	}
+
+	file.close();
+
+	if (!file.setPermissions(file.permissions() | QFile::ExeUser))
+	{
+		error = tr("Cannot set permissions for file:\n%1").arg(fullPathToFile);
+		return false;
+	}
+
+	return true;
 }

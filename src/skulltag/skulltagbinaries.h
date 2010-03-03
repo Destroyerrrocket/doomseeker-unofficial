@@ -25,23 +25,42 @@
 
 #include "serverapi/binaries.h"
 
+class PluginInfo;
 class SkulltagServer;
 
 class SkulltagBinaries : public Binaries
 {
 	public:
-		SkulltagBinaries(SkulltagServer* server);
-		
+		SkulltagBinaries(const SkulltagServer* server);
+
+		QString					configKeyClientBinary() const { return "SkulltagBinaryPath"; }
+		QString					configKeyServerBinary() const;
+
 		/**
-		 *	If the parent server is a normal server simple path to executable 
-		 *	file is returned. If this is a testing server, a shell script is 
+		 *	If the parent Server is a normal server simple path to executable
+		 *	file is returned. If this is a testing server, a shell script is
 		 *	created	if necessary and a path to this shell script s returned.
 		 */
-		QString				clientBinary(QString& error) const;
-		QString				clientWorkingDirectory() const;
-	
-		QString				configKeyClientBinary() const { return "SkulltagBinaryPath"; }
-		QString				configKeyServerBinary() const;
-}
+		QString					clientBinary(QString& error) const;
+		QString					clientWorkingDirectory(QString& error) const;
+
+		const PluginInfo*		plugin() const;
+
+	protected:
+		const SkulltagServer*	server;
+
+		/**
+		 *	Creates Unix .sh file or Windows .bat file to
+		 *	launch client for parent server. Returns true if the file
+		 *	already exists.
+		 *	@param versionDir - convenience parameter. This is the directory
+		 *		where testing package was unpacked. This path was
+		 *		already created in clientBinary() method so let's reuse it.
+		 *	@param [out] fullPathToFile - path to created script file
+		 *	@param [out] error - error if return == false
+		 *	@return false if fail
+		 */
+		bool					spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, QString& error) const;
+};
 
 #endif

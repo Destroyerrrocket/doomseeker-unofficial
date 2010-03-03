@@ -50,13 +50,15 @@
 #include "masterclient.h"
 #include "gui/configBase.h"
 
+class Binaries;
+
 class MAIN_EXPORT EnginePlugin
 {
 	public:
 		/**
-		 *	@brief List of all engine's DMFlags.
+		 *	@brief List of all engine's DMFlags or NULL if none.
 		 */
-		virtual const QList<DMFlagsSection>&	allDMFlags() const = 0;
+		virtual const DMFlags*					allDMFlags() const = 0;
 
 		virtual bool							allowsURL() const = 0;
 		virtual bool							allowsEmail() const = 0;
@@ -64,12 +66,7 @@ class MAIN_EXPORT EnginePlugin
 		virtual bool							allowsJoinPassword() const = 0;
 		virtual bool							allowsRConPassword() const = 0;
 		virtual bool							allowsMOTD() const = 0;
-
-		/**
-		 *	@brief Return instance of plugin's Binaries.
-		 */
-		virtual Binaries*						binaries() const = 0;
-
+		
 		/**
 		 *	@brief Engine's configuration widget.
 		 */
@@ -81,17 +78,18 @@ class MAIN_EXPORT EnginePlugin
 		virtual unsigned short					defaultServerPort() const = 0;
 
 		/**
-		*	@brief All available game modes for the engine.
+		*	@brief All available game modes for the engine or NULL if none.
 		*/
-		virtual const QList<GameMode>&			gameModes() const = 0;
+		virtual const QList<GameMode>*			gameModes() const = 0;
 
 		/**
 		 *	@brief Returns a list of modifiers.
 		 *
 		 *	Modifiers are used and displayed in Create Server dialog.
-		 *	If a empty list is returned, Modifier combo will be disabled.
+		 *	If an empty list (or NULL) is returned, Modifier combo will be
+		 *	disabled.
 		 */
-		virtual const QList<GameCVar>&			gameModifiers() const = 0;
+		virtual const QList<GameCVar>*			gameModifiers() const = 0;
 
 		/**
 		 *	@brief False for plugins which have no master.
@@ -102,7 +100,7 @@ class MAIN_EXPORT EnginePlugin
 		 *	@brief Returns a list of limits (like fraglimit) supported by passed
 		 *	gamemode.
 		 */
-		virtual const QList<GameCVar>&			limits(const GameMode&) const = 0;
+		virtual QList<GameCVar>					limits(const GameMode& mode) const = 0;
 
 		/**
 		 *	@return icon of the engine

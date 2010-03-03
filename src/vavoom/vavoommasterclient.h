@@ -26,12 +26,16 @@
 
 #include "masterclient.h"
 
+class PluginInfo;
+
 class VavoomMasterClient : public MasterClient
 {
 	Q_OBJECT
 
 	public:
 		VavoomMasterClient(QHostAddress address, unsigned short port);
+
+		const PluginInfo*		plugin() const;
 
 	protected:
 		bool	readRequest(QByteArray &data, bool &expectingMorePackets);

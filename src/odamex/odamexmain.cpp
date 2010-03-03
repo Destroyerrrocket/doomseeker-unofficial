@@ -30,53 +30,44 @@
 #include "sdeapi/pluginloader.hpp"
 
 #include "odamex/engineOdamexConfig.h"
+#include "odamex/odamexgameinfo.h"
 #include "odamex/odamexmasterclient.h"
+#include "odamex/odamexmain.h"
 #include "odamex/odamexserver.h"
 
 const // clear warnings
 #include "odamex/odamex.xpm"
 
-static GeneralEngineInfo OdamexEngineInfo =
-{
-	10666,								// Default port
-	OdamexServer::GAME_MODES,			// List of game modes
-	NUM_ODAMEX_GAME_MODES,				// Number of game modes
-	&OdamexServer::DM_FLAGS,			// List of DMFlags sections
-	1,									// Number of DMFlags sections
-	true,								// Allows URL
-	true,								// Allows E-Mail
-	true,								// Allows connect password
-	true,								// Allows join password
-	true,								// Allows rcon password
-	true,								// Allows MOTD
-	true,								// Supports random map rotation
-	NULL,								// Game modifiers
-	0,									// Number of game modifiers
-	true,								// Has Master Server
-};
-
 class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 {
 	public:
-		QString					binaryClient() const
+		const DMFlags*					allDMFlags() const
 		{
-			return Main::config->setting("OdamexBinaryPath")->string();
+			return OdamexGameInfo::dmFlags();
 		}
 
-		QString					binaryServer() const
-		{
-			return Main::config->setting("OdamexServerBinaryPath")->string();
-		}
+		bool							allowsURL() const { return true; }
+		bool							allowsEmail() const { return true; }
+		bool							allowsConnectPassword() const { return true; }
+		bool							allowsJoinPassword() const { return true; }
+		bool							allowsRConPassword() const { return true; }
+		bool							allowsMOTD() const { return true; }
 
-		ConfigurationBoxInfo	*configuration(Config *cfg, QWidget *parent) const
+		ConfigurationBoxInfo*			configuration(Config *cfg, QWidget *parent) const
 		{
 			return EngineOdamexConfigBox::createStructure(cfg, parent);
 		}
 
-		const GeneralEngineInfo&	generalEngineInfo() const
+		unsigned short					defaultServerPort() const { return 10666; }
+
+		const QList<GameMode>*			gameModes() const
 		{
-			return OdamexEngineInfo;
+			return OdamexGameInfo::gameModes();
 		}
+
+		const QList<GameCVar>*			gameModifiers() const {	return NULL; }
+
+		bool							hasMasterServer() const { return true; }
 
 		virtual QList<GameCVar>	limits(const GameMode&) const
 		{
@@ -108,13 +99,15 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 		{
 			return (new OdamexServer(address, port));
 		}
+
+		bool						supportsRandomMapRotation() const { return true; }
 };
 
 static OdamexEnginePlugin odamex_engine_plugin;
-static const PluginInfo odamex_info = {"Odamex", "Odamex server query plugin.", "The Skulltag Team", {0,4,0,0}, MAKEID('E','N','G','N'), &odamex_engine_plugin};
+const PluginInfo OdamexMain::info = {"Odamex", "Odamex server query plugin.", "The Skulltag Team", {0,4,0,0}, MAKEID('E','N','G','N'), &odamex_engine_plugin};
 extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 {
-	return &odamex_info;
+	return OdamexMain::get();
 }
 
 extern "C" PLUGIN_EXPORT void doomSeekerInitConfig()

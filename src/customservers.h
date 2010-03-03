@@ -60,6 +60,8 @@ class CustomServers : public MasterClient
 		 */
 		static QList<CustomServerInfo>*	decodeConfigEntries(const QString& str);
 
+		const PluginInfo*				plugin() const { return NULL; }
+
 		/**
 		 *	Convenience method - tries to read config seeking for
 		 *	"CustomServers" entry, decode it and launch setServers() method.

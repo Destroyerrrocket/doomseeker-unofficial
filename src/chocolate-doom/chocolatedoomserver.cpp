@@ -23,6 +23,8 @@
 
 #include "chocolate-doom/chocolatedoomserver.h"
 #include "chocolate-doom/chocolatedoombinaries.h"
+#include "chocolate-doom/chocolatedoomgamerunner.h"
+#include "chocolate-doom/chocolatedoommain.h"
 #include "global.h"
 #include "main.h"
 #include "serverapi/playerslist.h"
@@ -42,7 +44,7 @@ ChocolateDoomServer::ChocolateDoomServer(const QHostAddress &address, unsigned s
 
 Binaries* ChocolateDoomServer::binaries() const
 {
-	return new ChocolateDoomBinaries(engineName());
+	return new ChocolateDoomBinaries();
 }
 
 QString	ChocolateDoomServer::binary(bool server, QString& error) const
@@ -66,11 +68,9 @@ QString	ChocolateDoomServer::binary(bool server, QString& error) const
 	return setting->string();
 }
 
-void ChocolateDoomServer::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const
+GameRunner*	ChocolateDoomServer::gameRunner() const
 {
-	Server::connectParameters(args, pf, iwadFound, connectPassword);
-
-	args << Main::config->setting("ChocolateDoomCustomParameters")->string().split(" ", QString::SkipEmptyParts);
+	return new ChocolateDoomGameRunner(this);
 }
 
 const QPixmap &ChocolateDoomServer::icon() const
@@ -78,6 +78,11 @@ const QPixmap &ChocolateDoomServer::icon() const
 	if(ICON == NULL)
 		ICON = new QPixmap(chocolatedoom_xpm);
 	return *ICON;
+}
+
+const PluginInfo* ChocolateDoomServer::plugin() const
+{
+	return ChocolateDoomMain::get();
 }
 
 Server::Response ChocolateDoomServer::readRequest(QByteArray &data)

@@ -46,6 +46,7 @@
 class Binaries;
 class GameRunner;
 class PlayersList;
+class PluginInfo;
 class TooltipGenerator;
 
 class MAIN_EXPORT Server : public QObject
@@ -71,25 +72,43 @@ class MAIN_EXPORT Server : public QObject
 		virtual ~Server();
 
 		/**
-		 *	Returns name of the engine for this server, for example: "Skulltag".
+		 *	@brief Creates an instance of Binaries's descendant class.
+		 *
+		 *	Created instance should be deleted manually by the programmer.
+		 *	@return A pointer to a new instance of Binaries's descendant
+		 *		(defined by a plugin)
 		 */
-		virtual QString		engineName() const { return tr("Undefined"); }
+		virtual Binaries*						binaries() const = 0;
+
+		/**
+		 *	Returns name of the engine for this server, for example: "Skulltag".
+		 *	By default this returns name defined by the parent plugin itself,
+		 *	or "Undefined" string if there is no parent plugin.
+		 */
+		virtual QString		engineName() const;
 
 		const QHostAddress	&address() const { return serverAddress; }
+		const QString&		connectPassword() const { return passwordConnect; }
 		const QString&		eMail() const { return email; }
 		const DMFlags		&gameFlags() const { return dmFlags; }
 		const GameMode		&gameMode() const { return currentGameMode; }
+		unsigned char		gameSkill() const { return skill; }
 		virtual bool		hasRcon() const { return false; }
 		virtual const QPixmap	&icon() const=0;
+		bool				isBroadcastingToLAN() const { return broadcastToLAN; }
+		bool				isBroadcastingToMaster() const { return broadcastToMaster; }
 		bool				isCustom() const { return custom; }
 		bool				isKnown() const { return bKnown; }
 		bool				isLocked() const { return locked; }
 		bool				isSetToDelete() const { return bDelete; }
 		const QString		&iwadName() const { return iwad; }
+		const QString&		joinPassword() const { return passwordJoin; }
 		int					lastResponse() const { return response; }
 		const QString		&map() const { return mapName; }
+		const QStringList&	mapsList() const { return mapList; }
 		unsigned short		maximumClients() const { return maxPlayers > maxClients ? maxPlayers : maxClients; }
 		unsigned short		maximumPlayers() const { return maxPlayers; }
+		const QString&		messageOfTheDay() const { return motd; }
 		const QString		&name() const { return serverName; }
 		int					numFreeClientSlots() const;
 		int					numFreeJoinSlots() const;
@@ -100,7 +119,9 @@ class MAIN_EXPORT Server : public QObject
 		const PlayersList*	playersList() const { return players; }
 		unsigned short		port() const { return serverPort; }
 		const QStringList&	pwads() const { return wads; }
+		bool				randomMapRotation() const { return mapRandomRotation; }
 		virtual RConProtocol	*rcon() { return NULL; }
+		const QString&		rconPassword() const { return passwordRCon; }
 		unsigned int		score(int team=0) const { return scores[team]; }
 		unsigned int		scoreLimit() const { return serverScoreLimit; }
 		virtual QRgb		teamColor(int team) const;
@@ -134,23 +155,13 @@ class MAIN_EXPORT Server : public QObject
 		void				setToDelete(bool b);
 
 		/**
-		 *	@brief Creates an instance of Binaries's descendant class.
+		 *	@brief Creates an instance of GameRunner's derivative class.
 		 *
-		 *	Created instance should be deleted manually by the programmer.
-		 *	@return A pointer to a new instance of Binaries's descendant
-		 *		(defined by a plugin)
-		 */
-		virtual Binaries*	binaries() const = 0;
-
-		/**
-		 *	@brief Creates an instance of GameRunner class.
-		 *
-		 *	Gets a pointer to a new instance of GameRunner or GameRunner's
+		 *	Gets a pointer to a new instance of GameRunner's
 		 *	descendant (defined by a plugin). Created instance should be deleted
 		 *	manually by the programmer.
-		 *	@return Default behavior returns a pointer to new GameRunner.
 		 */
-		virtual GameRunner*	gameRunner() const;
+		virtual GameRunner*	gameRunner() const = 0;
 
 		bool				isRefreshing() const { return bIsRefreshing; }
 
@@ -162,6 +173,14 @@ class MAIN_EXPORT Server : public QObject
 		 *	local drive and thus cause damage the system in some way.
 		 */
 		bool				isWebsiteURLSafe() const;
+
+		/**
+		 *	This is supposed to return the plugin this Server belongs to.
+		 *	New instances of PluginInfo shouldn't be created here. Instead
+		 *	each plugin should keep a global instance of PluginInfo (singleton?)
+		 *	and a pointer to this instance should be returned.
+		 */
+		virtual const PluginInfo*		plugin() const = 0;
 
 		/**
 		 *	@brief Creates an instance of TooltipGenerator.

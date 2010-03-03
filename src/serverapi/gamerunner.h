@@ -30,6 +30,7 @@
 #include <QObject>
 #include <QString>
 
+class PluginInfo;
 class Server;
 
 class MAIN_EXPORT GameRunner : public QObject
@@ -38,6 +39,8 @@ class MAIN_EXPORT GameRunner : public QObject
 		GameRunner(const Server* server);
 
 		virtual void				connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword);
+		
+		virtual QString				configKeyCustomParameters() const = 0;
 
 		/**
 		 *	@param [out] cli - after successful call this will contain
@@ -63,6 +66,14 @@ class MAIN_EXPORT GameRunner : public QObject
 		MessageResult				host(const HostInfo& hostInfo, bool bOfflinePlay);
 
 		/**
+		 *	This is supposed to return the plugin this GameRunner belongs to.
+		 *	New instances of PluginInfo shouldn't be created here. Instead
+		 *	each plugin should keep a global instance of PluginInfo (singleton?)
+		 *	and a pointer to this instance should be returned.
+		 */
+		virtual const PluginInfo*	plugin() const = 0;
+
+		/**
 		 *	Executes predefined command line.
 		 *	@param cli - command line that will be executed
 		 *	@param bWrapWithStandardServerConsole - if true Doomseeker will
@@ -78,12 +89,21 @@ class MAIN_EXPORT GameRunner : public QObject
 		 *		and port.
 		 */
 		virtual QString				argForConnect() const { return "-connect"; }
+		
+		/**
+		 *	@brief Command line parameter that is used to specify connection
+		 *	password.
+		 *
+		 *	There is no common value here so the default behavior returns a
+		 *  "null" string.
+		 */
+		virtual QString				argForConnectPassword() const { return QString(); }		
 
 		/**
 		 *	@brief Command line parameter that is used to set IWAD.
 		 */
 		virtual QString				argForIwadLoading() const { return "-iwad"; }
-
+		
 		/**
 		 *	@brief Command line parameter that is used to set internet port for
 		 *	the	game.

@@ -26,22 +26,26 @@
 #include <QString>
 #include <QList>
 
+#include "global.h"
+
+struct MAIN_EXPORT DMFlag
+{
+	DMFlag(QString name, unsigned value)
+	: name(name), value(value)
+	{
+	}
+
+	QString         name;
+	unsigned    	value;
+};
+
 /**
  *	@brief Generic representation of DMFlags section.
- *
- *	Note: Maximum amount of flags in one section is 32.
  */
 struct MAIN_EXPORT DMFlagsSection
 {
-	struct DMFlag
-	{
-		QString         name;
-		unsigned char   value;
-	};
-
 	QString         name;
-	unsigned char   size;
-	DMFlag			flags[32];
+	QList<DMFlag>	flags;
 };
 
 /**

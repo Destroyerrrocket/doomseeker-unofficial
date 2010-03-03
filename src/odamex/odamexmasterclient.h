@@ -26,12 +26,16 @@
 
 #include "masterclient.h"
 
+class PluginInfo;
+
 class OdamexMasterClient : public MasterClient
 {
 	Q_OBJECT
 
 	public:
 		OdamexMasterClient(QHostAddress address, unsigned short port);
+		
+		const PluginInfo*		plugin() const;
 
 	protected:
 		bool	readRequest(QByteArray &data, bool &expectingMorePackets);

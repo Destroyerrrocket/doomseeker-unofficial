@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chocolatedoombinaries.h
+// vavoombinaries.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,21 +20,22 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __CHOCOLATE_DOOM_BINARIES_H_
-#define __CHOCOLATE_DOOM_BINARIES_H_
+#ifndef __VAVOOM_BINARIES_H_
+#define __VAVOOM_BINARIES_H_
 
 #include "serverapi/binaries.h"
-#include "chocolate-doom/chocolatedoommain.h"
+#include "vavoom/vavoommain.h"
 
-class ChocolateDoomServer;
-
-class ChocolateDoomBinaries : public Binaries
+class VavoomBinaries : public Binaries
 {
 	public:
-		QString		configKeyClientBinary() const { return "ChocolateDoomBinaryPath"; }
-		QString		configKeyServerBinary() const { return "ChocolateDoomServerBinaryPath"; }
+		QString					configKeyClientBinary() const { return "VavoomBinaryPath"; }
+		QString					configKeyServerBinary() const { return "VavoomServerBinaryPath"; }
 
-		const PluginInfo*	plugin() const { return ChocolateDoomMain::get(); }
+		const PluginInfo*		plugin() const
+		{
+			return VavoomMain::get();
+		}
 };
 
 #endif

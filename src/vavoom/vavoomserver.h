@@ -28,28 +28,25 @@
 
 #define NUM_VAVOOM_GAME_MODES 1
 
+class Binaries;
+class GameRunner;
+class PluginInfo;
+
 class VavoomServer : public Server
 {
 	Q_OBJECT
 
 	public:
-		enum VavoomGameModes
-		{
-			MODE_UNKNOWN
-		};
-		static const GameMode			GAME_MODES[NUM_VAVOOM_GAME_MODES];
 		static const QPixmap			*ICON;
 
 		VavoomServer(const QHostAddress &address, unsigned short port);
 
-		QString			clientBinary(QString& error) const;
-		void			connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
+		Binaries*			binaries() const;
+		GameRunner*			gameRunner() const;
 
-		QString			engineName() const { return tr("Vavoom"); }
+		const QPixmap&		icon() const;
 
-		const QPixmap	&icon() const;
-
-		QString			serverBinary(QString& error) const;
+		const PluginInfo*	plugin() const;
 
 	protected:
 		Response	readRequest(QByteArray &data);

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chocolatedoombinaries.cpp
+// vavoomgameinfo.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,10 +20,31 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "chocolatedoombinaries.h"
-#include "chocolatedoomserver.h"
+#ifndef __VAVOOM_GAME_INFO_H_
+#define __VAVOOM_GAME_INFO_H_
 
-ChocolateDoomBinaries::ChocolateDoomBinaries(const QString& engineName)
-: Binaries(engineName)
+#include "serverapi/serverstructs.h"
+#include <QObject>
+
+class VavoomGameInfo : public QObject
 {
-}
+	public:
+		enum VavoomGameModes
+		{
+			MODE_UNKNOWN
+		};
+
+		static const QList<GameMode>*	gameModes() { return &gameModesList; }
+
+	protected:
+		static QList<GameMode>			gameModesList;
+
+	private:
+		VavoomGameInfo();
+
+		void						initGameModes();
+
+		static VavoomGameInfo* 	static_constructor;
+};
+
+#endif
