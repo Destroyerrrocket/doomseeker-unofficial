@@ -26,6 +26,9 @@
 
 #include "serverapi/server.h"
 
+class Binaries;
+class PluginInfo;
+
 class ChocolateDoomServer : public Server
 {
 	Q_OBJECT
@@ -35,14 +38,14 @@ class ChocolateDoomServer : public Server
 
 		ChocolateDoomServer(const QHostAddress &address, unsigned short port);
 
-		QString			clientBinary(QString& error) const { return binary(false, error); }
+		Binaries*		binaries() const;
 		void			connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
 
-		QString			engineName() const { return tr("Chocolate Doom"); }
+		GameRunner*		gameRunner() const;
 
-		const QPixmap	&icon() const;
+		const QPixmap&	icon() const;
 
-		QString			serverBinary(QString& error) const { return binary(true, error); }
+		const PluginInfo*		plugin() const;
 
 	protected:
 		QString			version;

@@ -50,93 +50,73 @@
 #include "masterclient.h"
 #include "gui/configBase.h"
 
-struct MAIN_EXPORT GeneralEngineInfo
-{
-	/**
-	 *	Default port on which servers for given engine are hosted.
-	 */
-	unsigned short			defaultServerPort;
-
-	/**
-	 *	All available game modes for the engine.
-	 */
-	const GameMode*			gameModes;
-
-	/**
-	 *	Number of all available game modes for current engine.
-	 */
-	int						gameModesNum;
-
-	/**
-	 *	Pointer to the static struct (or array of structs) containing
-	 *	the list of all engine's DMFlags.
-	 */
-	const DMFlagsSection*	allDMFlags;
-
-	/**
-	 *	Number of DMFlags sections.
-	 */
-	unsigned				dmFlagsSectionsNum;
-
-	/**
-	 *	Information for Create Server dialog
-	 */
-	bool					allowsURL;
-	bool					allowsEmail;
-	bool					allowsConnectPassword;
-	bool					allowsJoinPassword;
-	bool					allowsRConPassword;
-	bool					allowsMOTD;
-	bool					supportsRandomMapRotation;
-
-	/**
-	 *	Set this to NULL to disable Modifiers combo box in Create Server dialog
-	 */
-	const GameCVar*			gameModifiers;
-	unsigned				gameModifiersNum;
-
-	/**
-	 *	For plugins which have no master.
-	 */
-	bool					hasMasterServer;
-};
+class Binaries;
 
 class MAIN_EXPORT EnginePlugin
 {
 	public:
 		/**
-		 *	Return path saved in configuration.
+		 *	@brief List of all engine's DMFlags or NULL if none.
 		 */
-		virtual QString						binaryClient() const = 0;
-		virtual QString						binaryServer() const { return binaryClient(); }
+		virtual const DMFlags*					allDMFlags() const = 0;
 
-		virtual ConfigurationBoxInfo		*configuration(Config *cfg, QWidget *parent) const=0;
+		virtual bool							allowsURL() const = 0;
+		virtual bool							allowsEmail() const = 0;
+		virtual bool							allowsConnectPassword() const = 0;
+		virtual bool							allowsJoinPassword() const = 0;
+		virtual bool							allowsRConPassword() const = 0;
+		virtual bool							allowsMOTD() const = 0;
+		
+		/**
+		 *	@brief Engine's configuration widget.
+		 */
+		virtual ConfigurationBoxInfo*			configuration(Config *cfg, QWidget *parent) const=0;
 
 		/**
-		 *	@return Reference to GeneralEngineInfo struct stored in the code
-		 *		of each plugin.
+		 *	@brief Default port on which servers for given engine are hosted.
 		 */
-		virtual	const GeneralEngineInfo&	generalEngineInfo() const = 0;
+		virtual unsigned short					defaultServerPort() const = 0;
 
 		/**
-		 *	Returns a list of limits (like fraglimit) supported by passed
+		*	@brief All available game modes for the engine or NULL if none.
+		*/
+		virtual const QList<GameMode>*			gameModes() const = 0;
+
+		/**
+		 *	@brief Returns a list of modifiers.
+		 *
+		 *	Modifiers are used and displayed in Create Server dialog.
+		 *	If an empty list (or NULL) is returned, Modifier combo will be
+		 *	disabled.
+		 */
+		virtual const QList<GameCVar>*			gameModifiers() const = 0;
+
+		/**
+		 *	@brief False for plugins which have no master.
+		 */
+		virtual bool							hasMasterServer() const = 0;
+
+		/**
+		 *	@brief Returns a list of limits (like fraglimit) supported by passed
 		 *	gamemode.
 		 */
-		virtual QList<GameCVar>				limits(const GameMode&) const = 0;
+		virtual QList<GameCVar>					limits(const GameMode& mode) const = 0;
 
 		/**
 		 *	@return icon of the engine
 		 */
-		virtual QPixmap						icon() const=0;
+		virtual QPixmap							icon() const=0;
 
-		virtual MasterClient				*masterClient() const=0;
+		virtual MasterClient*					masterClient() const=0;
 
 		/**
-		 *	Creates an instance of server object from this plugin.
+		 *	@brief Creates an instance of server object from this plugin.
 		 *	This might be useful for custom servers.
 		 * 	@return instance of plugin's server object
 		 */
-		virtual Server*						server(const QHostAddress &address, unsigned short port) const=0;
+		virtual Server*							server(const QHostAddress &address, unsigned short port) const=0;
+
+		virtual bool							supportsRandomMapRotation() const = 0;
 };
 ////////////////////////////////////////////////////////////////////////////////
 

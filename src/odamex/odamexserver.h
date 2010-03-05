@@ -28,33 +28,26 @@
 
 #define NUM_ODAMEX_GAME_MODES 5
 
+class Binaries;
+class GameRunner;
+class PluginInfo;
+
 class OdamexServer : public Server
 {
 	Q_OBJECT
 
 	public:
-		enum OdamexGameModes
-		{
-			MODE_COOPERATIVE,
-			MODE_DEATHMATCH,
-			MODE_DEATHMATCH2,
-			MODE_TEAM_DEATHMATCH,
-			MODE_CAPTURE_THE_FLAG
-		};
-		static const DMFlagsSection		DM_FLAGS;
-		static const GameMode			GAME_MODES[NUM_ODAMEX_GAME_MODES];
 		static const QPixmap			*ICON;
 
 		OdamexServer(const QHostAddress &address, unsigned short port);
 
-		QString			clientBinary(QString& error) const;
-		void			connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
+		Binaries*				binaries() const;
+		const QStringList&		dehs() const { return dehPatches; }
+		GameRunner*				gameRunner() const;
 
-		QString			engineName() const { return tr("Odamex"); }
+		const QPixmap&			icon() const;
 
-		const QPixmap	&icon() const;
-
-		QString			serverBinary(QString& error) const;
+		const PluginInfo*		plugin() const;
 
 	protected:
 		Response	readRequest(QByteArray &data);

@@ -30,6 +30,8 @@
 
 #include "serverapi/server.h"
 
+class PluginInfo;
+
 /**
  * Abstract class base for all MasterClients.  This is expected to fetch a list
  * of IP addresses which will be turned into Servers.
@@ -51,6 +53,16 @@ class MAIN_EXPORT MasterClient : public QObject
 		int						numPlayers() const;
 		int						numServers() const { return servers.size(); }
 		Server					*operator[] (int index) const { return servers[index]; }
+
+		/**
+		 *	This is supposed to return the plugin this MasterClient belongs to.
+		 *	If it doesn't belong to any plugin then return NULL.
+		 *	New instances of PluginInfo shouldn't be created here. Instead
+		 *	each plugin should keep a global instance of PluginInfo (singleton?)
+		 *	and a pointer to this instance should be returned.
+		 */
+		virtual const PluginInfo*		plugin() const = 0;
+
 		QList<Server*>			&serverList() { return servers; }
 		const QList<Server*>	&serverList() const { return servers; }
 
@@ -121,6 +133,8 @@ class MasterManager : public MasterClient
 
 		void			addMaster(MasterClient *master);
 		CustomServers*	customServs() { return customServers; }
+
+		const PluginInfo*		plugin() const { return NULL; }
 
 
 	public slots:

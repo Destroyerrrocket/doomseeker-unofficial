@@ -21,12 +21,16 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include "odamex/odamexserver.h"
+#include "odamexbinaries.h"
+#include "odamexgameinfo.h"
+#include "odamexgamerunner.h"
+#include "odamexmain.h"
+#include "odamexserver.h"
 #include "main.h"
 #include "serverapi/playerslist.h"
 
 const // clear warnings
-#include "odamex/odamex.xpm"
+#include "odamex.xpm"
 
 #define SERVER_CHALLENGE	0xA3,0xDB,0x0B,0x00
 #define SERVER_GOOD			5560020
@@ -36,97 +40,14 @@ const // clear warnings
 
 const QPixmap *OdamexServer::ICON = NULL;
 
-const GameMode OdamexServer::GAME_MODES[NUM_ODAMEX_GAME_MODES] =
-{
-	GameMode::COOPERATIVE,
-	GameMode::DEATHMATCH,
-	GameMode(MODE_DEATHMATCH2, tr("Deathmatch 2.0"), false),
-	GameMode::TEAM_DEATHMATCH,
-	GameMode::CAPTURE_THE_FLAG
-};
-
-const DMFlagsSection OdamexServer::DM_FLAGS =
-{
-	tr("DMFlags"),
-	14,
-	{
-		{ tr("Items respawn"),									0 },
-		{ tr("Weapons stay"),									1 },
-		{ tr("Friendly fire"),									2 },
-		{ tr("Allow exit"),										3 },
-		{ tr("Infinite ammo"),									4 },
-		{ tr("No monsters"),									5 },
-		{ tr("Monsters respawn"),								6 },
-		{ tr("Fast monsters"),									7 },
-		{ tr("Jumping allowed"),								8 },
-		{ tr("Freelook allowed"),								9 },
-		{ tr("Wad can be downloaded"),							10 },
-		{ tr("Server resets on empty"),							11 },
-		{ tr("Clean Maps"),										12 },
-		{ tr("Kill anyone who tries to leave the level"),		13 }
-	}
-};
-
 OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port) : Server(address, port),
 	protocol(0)
 {
 }
 
-QString	OdamexServer::clientBinary(QString& error) const
+Binaries* OdamexServer::binaries() const
 {
-	SettingsData* setting = Main::config->setting("OdamexBinaryPath");
-
-	if (setting->string().isEmpty())
-	{
-		error = tr("No executable specified for Odamex");
-		return QString();
-	}
-
-	QFileInfo fi(setting->string());
-
-	if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
-	{
-		error = tr("%1\n is a directory or doesn't exist.").arg(setting->string());
-		return QString();
-	}
-
-	return setting->string();
-}
-
-void OdamexServer::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const
-{
-	Server::connectParameters(args, pf, iwadFound, connectPassword);
-
-	args << Main::config->setting("OdamexCustomParameters")->string().split(" ", QString::SkipEmptyParts);
-
-	if(dehPatches.count() > 0)
-	{
-		args << "-deh";
-		foreach(QString patch, dehPatches)
-		{
-			QString file = pf.findWad(patch.toLower());
-			args << file;
-		}
-	}
-
-	if(iwadFound)
-	{
-		// Waddir - Work around for an Odamex bug.
-		args << "-waddir";
-		QString waddir = pf.findWad(iwadName().toLower());
-		waddir.truncate(waddir.length() - iwadName().length());
-		for(int i = 0;i < numWads();i++)
-		{
-			QString pwaddir = pf.findWad(wad(i).toLower());
-			pwaddir.truncate(pwaddir.length() - wad(i).length());
-			#if defined(Q_OS_WIN32)
-			waddir += ";" + pwaddir;
-			#else
-			waddir += ":" + pwaddir;
-			#endif
-		}
-		args << waddir;
-	}
+	return new OdamexBinaries();
 }
 
 const QPixmap &OdamexServer::icon() const
@@ -134,6 +55,16 @@ const QPixmap &OdamexServer::icon() const
 	if(ICON == NULL)
 		ICON = new QPixmap(odamex_xpm);
 	return *ICON;
+}
+
+GameRunner* OdamexServer::gameRunner() const
+{
+	return new OdamexGameRunner(this);
+}
+
+const PluginInfo* OdamexServer::plugin() const
+{
+	return OdamexMain::get();
 }
 
 Server::Response OdamexServer::readRequest(QByteArray &data)
@@ -179,21 +110,23 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 	}
 
 	// Game mode
+	const QList<GameMode>& gameModes = *plugin()->pInterface->gameModes();
+
 	int mode = READINT8(&in[pos++]);
 	skill = READINT8(&in[pos++]);
 	int teamplay = READINT8(&in[pos++]);
 	int ctf = READINT8(&in[pos++]);
 	if(ctf == 1)
 	{
-		currentGameMode = GAME_MODES[MODE_CAPTURE_THE_FLAG];
+		currentGameMode = gameModes[OdamexGameInfo::MODE_CAPTURE_THE_FLAG];
 	}
 	else if(teamplay == 1)
 	{
-		currentGameMode = GAME_MODES[MODE_TEAM_DEATHMATCH];
+		currentGameMode = gameModes[OdamexGameInfo::MODE_TEAM_DEATHMATCH];
 	}
 	else
 	{
-		currentGameMode = GAME_MODES[mode];
+		currentGameMode = gameModes[mode];
 	}
 	// Players
 	players->clear();
@@ -252,16 +185,17 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 	pos += 6;
 
 	// flags
+	const DMFlags& dmFlagsOdamex = *plugin()->pInterface->allDMFlags();
+
 	clearDMFlags();
 	DMFlagsSection* dmFlagsSec = new DMFlagsSection();
-	dmFlagsSec->size = 0;
-	dmFlagsSec->name = DM_FLAGS.name;
+	dmFlagsSec->name = dmFlagsOdamex[0]->name;
 	dmFlags << dmFlagsSec;
 	for(int i = 0;i < 14;i++)
 	{
 		if(READINT8(&in[pos++]) == 1)
 		{
-			dmFlagsSec->flags[dmFlagsSec->size++] = DM_FLAGS.flags[i];
+			dmFlagsSec->flags << dmFlagsOdamex[0]->flags[i];
 		}
 	}
 
@@ -314,25 +248,4 @@ bool OdamexServer::sendRequest(QByteArray &data)
 	const QByteArray chall(challenge, 4);
 	data.append(chall);
 	return true;
-}
-
-QString OdamexServer::serverBinary(QString& error) const
-{
-	SettingsData* setting = Main::config->setting("OdamexServerBinaryPath");
-
-	if (setting->string().isEmpty())
-	{
-		error = tr("No server executable specified for Odamex");
-		return QString();
-	}
-
-	QFileInfo fi(setting->string());
-
-	if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
-	{
-		error = tr("%1\nis a directory or doesn't exist.").arg(setting->string());
-		return QString();
-	}
-
-	return setting->string();
 }

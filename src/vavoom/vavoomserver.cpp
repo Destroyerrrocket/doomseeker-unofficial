@@ -21,6 +21,10 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
+#include "vavoom/vavoombinaries.h"
+#include "vavoom/vavoomgameinfo.h"
+#include "vavoom/vavoomgamerunner.h"
+#include "vavoom/vavoommain.h"
 #include "vavoom/vavoomserver.h"
 #include "main.h"
 #include "serverapi/playerslist.h"
@@ -35,58 +39,20 @@ const // clear warnings
 
 const QPixmap *VavoomServer::ICON = NULL;
 
-const GameMode VavoomServer::GAME_MODES[NUM_VAVOOM_GAME_MODES] =
+VavoomServer::VavoomServer(const QHostAddress &address, unsigned short port)
+: Server(address, port)
 {
-	GameMode(MODE_UNKNOWN, tr("Unknown"), false)
-};
-
-VavoomServer::VavoomServer(const QHostAddress &address, unsigned short port) : Server(address, port)
-{
-	currentGameMode = GAME_MODES[MODE_UNKNOWN];
+	currentGameMode = (*VavoomGameInfo::gameModes())[VavoomGameInfo::MODE_UNKNOWN];
 }
 
-QString VavoomServer::clientBinary(QString& error) const
+Binaries* VavoomServer::binaries() const
 {
-	SettingsData* setting = Main::config->setting("VavoomBinaryPath");
-
-	if (setting->string().isEmpty())
-	{
-		error = tr("No executable specified for Vavoom");
-		return QString();
-	}
-
-	QFileInfo fi(setting->string());
-
-	if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
-	{
-		error = tr("%1\n is a directory or doesn't exist.").arg(setting->string());
-		return QString();
-	}
-
-	return setting->string();
+	return new VavoomBinaries();
 }
 
-void VavoomServer::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const
+GameRunner* VavoomServer::gameRunner() const
 {
-	Server::connectParameters(args, pf, iwadFound, connectPassword);
-
-	args[args.indexOf("-connect")] = "+connect"; // Change -connect to +connect for Vavoom
-
-	// Remove original -iwad command
-	int iwadArg = args.indexOf("-iwad");
-	args.removeAt(iwadArg);
-	args.removeAt(iwadArg);
-
-	// What an odd thing to have to do "-iwaddir /path/to/iwads/ -doom2"
-	QString iwadLocation = pf.findWad(iwadName().toLower());
-	QString iwadDir = iwadLocation.left(iwadLocation.length() - iwadName().length());
-	QString iwadParam = iwadLocation.mid(iwadDir.length());
-	iwadParam.truncate(iwadParam.indexOf(QChar('.')));
-	args << "-iwaddir";
-	args << iwadDir;
-	args << ("-" + iwadParam);
-
-	args << Main::config->setting("VavoomCustomParameters")->string().split(" ", QString::SkipEmptyParts);
+	return new VavoomGameRunner(this);
 }
 
 const QPixmap &VavoomServer::icon() const
@@ -94,6 +60,11 @@ const QPixmap &VavoomServer::icon() const
 	if(ICON == NULL)
 		ICON = new QPixmap(vavoom_xpm);
 	return *ICON;
+}
+
+const PluginInfo* VavoomServer::plugin() const
+{
+	return VavoomMain::get();
 }
 
 Server::Response VavoomServer::readRequest(QByteArray &data)
@@ -164,25 +135,4 @@ bool VavoomServer::sendRequest(QByteArray &data)
 	const QByteArray chall(challenge, 10);
 	data.append(chall);
 	return true;
-}
-
-QString VavoomServer::serverBinary(QString& error) const
-{
-	SettingsData* setting = Main::config->setting("VavoomServerBinaryPath");
-
-	if (setting->string().isEmpty())
-	{
-		error = tr("No server executable specified for Vavoom");
-		return QString();
-	}
-
-	QFileInfo fi(setting->string());
-
-	if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
-	{
-		error = tr("%1\nis a directory or doesn't exist.").arg(setting->string());
-		return QString();
-	}
-
-	return setting->string();
 }

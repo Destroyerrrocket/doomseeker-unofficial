@@ -24,6 +24,7 @@
 #ifndef __MAINWINDOW_H_
 #define __MAINWINDOW_H_
 
+#include "apprunner.h"
 #include "masterclient.h"
 #include "sdeapi/config.hpp"
 #include "sdeapi/pluginloader.hpp"

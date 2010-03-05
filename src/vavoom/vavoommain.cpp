@@ -30,53 +30,35 @@
 #include "sdeapi/pluginloader.hpp"
 
 #include "vavoom/engineVavoomConfig.h"
+#include "vavoom/vavoommain.h"
 #include "vavoom/vavoommasterclient.h"
 #include "vavoom/vavoomserver.h"
 
 const // clear warnings
 #include "vavoom/vavoom.xpm"
 
-static GeneralEngineInfo VavoomEngineInfo =
-{
-	26000,								// Default port
-	VavoomServer::GAME_MODES,			// List of game modes
-	NUM_VAVOOM_GAME_MODES,				// Number of game modes
-	NULL,								// List of DMFlags sections
-	1,									// Number of DMFlags sections
-	true,								// Allows URL
-	true,								// Allows E-Mail
-	true,								// Allows connect password
-	true,								// Allows join password
-	true,								// Allows rcon password
-	true,								// Allows MOTD
-	true,								// Supports random map rotation
-	NULL,								// Game modifiers
-	0,									// Number of game modifiers
-	true,								// Has Master Server
-};
-
 class PLUGIN_EXPORT VavoomEnginePlugin : public EnginePlugin
 {
 	public:
-		QString					binaryClient() const
-		{
-			return Main::config->setting("VavoomBinaryPath")->string();
-		}
+		const DMFlags*					allDMFlags() const { return NULL; }
 
-		QString					binaryServer() const
-		{
-			return Main::config->setting("VavoomServerBinaryPath")->string();
-		}
+		bool							allowsURL() const { return true; }
+		bool							allowsEmail() const { return true; }
+		bool							allowsConnectPassword() const { return true; }
+		bool							allowsJoinPassword() const { return true; }
+		bool							allowsRConPassword() const { return true; }
+		bool							allowsMOTD() const { return true; }
 
-		ConfigurationBoxInfo	*configuration(Config *cfg, QWidget *parent) const
+
+		ConfigurationBoxInfo*			configuration(Config *cfg, QWidget *parent) const
 		{
 			return EngineVavoomConfigBox::createStructure(cfg, parent);
 		}
 
-		const GeneralEngineInfo&	generalEngineInfo() const
-		{
-			return VavoomEngineInfo;
-		}
+		unsigned short					defaultServerPort() const { return 26000; }
+		const QList<GameMode>*			gameModes() const { return NULL; }
+		const QList<GameCVar>*			gameModifiers() const { return NULL; }
+		bool							hasMasterServer() const { return true; }
 
 		virtual QList<GameCVar>	limits(const GameMode&) const
 		{
@@ -111,13 +93,15 @@ class PLUGIN_EXPORT VavoomEnginePlugin : public EnginePlugin
 		{
 			return (new VavoomServer(address, port));
 		}
+
+		bool							supportsRandomMapRotation() const { return false; }
 };
 
 static VavoomEnginePlugin vavoom_engine_plugin;
-static const PluginInfo vavoom_info = {"Vavoom", "Vavoom server query plugin.", "The Skulltag Team", {0,1,0,0}, MAKEID('E','N','G','N'), &vavoom_engine_plugin};
+const PluginInfo VavoomMain::info = {"Vavoom", "Vavoom server query plugin.", "The Skulltag Team", {0,1,0,0}, MAKEID('E','N','G','N'), &vavoom_engine_plugin};
 extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 {
-	return &vavoom_info;
+	return VavoomMain::get();
 }
 
 extern "C" PLUGIN_EXPORT void doomSeekerInitConfig()

@@ -25,6 +25,7 @@
 
 #include "global.h"
 #include "skulltag/huffman/huffman.h"
+#include "skulltag/skulltagmain.h"
 #include "skulltag/skulltagmasterclient.h"
 #include "skulltag/skulltagserver.h"
 
@@ -42,6 +43,11 @@
 
 SkulltagMasterClient::SkulltagMasterClient(QHostAddress address, unsigned short port) : MasterClient(address, port)
 {
+}
+
+const PluginInfo* SkulltagMasterClient::plugin() const
+{
+	return SkulltagMain::get();
 }
 
 bool SkulltagMasterClient::readRequest(QByteArray &data, bool &expectingMorePackets)

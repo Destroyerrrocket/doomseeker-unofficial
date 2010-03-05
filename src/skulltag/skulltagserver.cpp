@@ -22,7 +22,11 @@
 //------------------------------------------------------------------------------
 
 #include "skulltag/huffman/huffman.h"
+#include "skulltag/skulltagbinaries.h"
+#include "skulltag/skulltaggameinfo.h"
+#include "skulltag/skulltaggamerunner.h"
 #include "skulltag/skulltagserver.h"
+#include "skulltag/skulltagmain.h"
 #include "global.h"
 #include "main.h"
 #include "serverapi/playerslist.h"
@@ -33,14 +37,6 @@
 
 const // clear warnings
 #include "skulltag/skulltag.xpm"
-
-#ifdef Q_OS_WIN32
-#define ST_BINARY_NAME "skulltag.exe"
-#define SCRIPT_FILE_EXTENSION ".bat"
-#else
-#define ST_BINARY_NAME "skulltag"
-#define SCRIPT_FILE_EXTENSION ".sh"
-#endif
 
 #define SERVER_CHALLENGE	0xC7,0x00,0x00,0x00
 #define SERVER_GOOD			5660023
@@ -102,144 +98,6 @@ TeamInfo::TeamInfo(const QString &name, const QColor &color, unsigned int score)
 
 const QPixmap *SkulltagServer::ICON = NULL;
 
-const DMFlagsSection SkulltagServer::DM_FLAGS[NUM_DMFLAG_SECTIONS] =
-{
-	{
-		tr("DMFlags"),
-		30,
-		{
-			{ tr("Do not spawn health items (DM)"),					0 },
-			{ tr("Do not spawn powerups (DM)"),						1 },
-			{ tr("Weapons remain after pickup (DM)"),				2 },
-			{ tr("Falling damage (ZDoom/Strife)"),					3 },
-			{ tr("Falling damage (Hexen/Strife)"),					4 },
-			{ tr("Stay on same map when someone exits (DM)"),		6 },
-			{ tr("Spawn players as far as possible (DM)"),			7 },
-			{ tr("Automatically respawn dead players (DM)"),		8 },
-			{ tr("Don't spawn armor (DM)"),							9 },
-			{ tr("Kill anyone who tries to exit the level (DM)"),	10 },
-			{ tr("Infinite ammo"),									11 },
-			{ tr("No monsters"),									12 },
-			{ tr("Monsters respawn"),								13 },
-			{ tr("Items other than invuln. and invis. respawn"),	14 },
-			{ tr("Fast monsters"),									15 },
-			{ tr("No jumping"),										16 },
-			{ tr("No freelook"),									17 },
-			{ tr("Respawn invulnerability and invisibility"),		18 },
-			{ tr("Arbitrator FOV"),									19 },
-			{ tr("No multiplayer weapons in cooperative"),			20 },
-			{ tr("No crouching"),									21 },
-			{ tr("Lose all old inventory on respawn (COOP)"),		22 },
-			{ tr("Lose keys on respawn (COOP)"),					23 },
-			{ tr("Lose weapons on respawn (COOP)"),					24 },
-			{ tr("Lose armor on respawn (COOP)"),					25 },
-			{ tr("Lose powerups on respawn (COOP)"),				26 },
-			{ tr("Lose ammo on respawn (COOP)"),					27 },
-			{ tr("Lose half your ammo on respawn (COOP)"),			28 },
-			{ tr("Jumping allowed"),								29 },
-			{ tr("Crouching allowed"),								30 }
-		}
-	},
-
-	{
-		tr("DMFlags2"),
-		27,
-		{
-			{ tr("Drop weapons upon death"), 							1 },
-			{ tr("Don't spawn runes"),									2 },
-			{ tr("Instantly return flags (ST/CTF)"),					3 },
-			{ tr("Don't allow players to switch teams"),				4 },
-			{ tr("Players are automatically assigned teams"),			5 },
-			{ tr("Double the amount of ammo given"),					6 },
-			{ tr("Players slowly lose health over 100% like Quake"),	7 },
-			{ tr("Allow BFG freeaiming"),								8 },
-			{ tr("Barrels respawn"),									9 },
-			{ tr("No respawn protection"),								10 },
-			{ tr("All players start with a shotgun"),					11 },
-			{ tr("Players respawn where they died (COOP)"),				12 },
-			{ tr("Players keep teams after map change"),				13 },
-			{ tr("Don't clear frags after each level"),					14 },
-			{ tr("Player can't respawn"),								15 },
-			{ tr("Lose a frag when killed"),							16 },
-			{ tr("Infinite inventory"),									17 },
-			{ tr("No rocket jumping"),									19 },
-			{ tr("Award damage not kills"),								20 },
-			{ tr("Force drawing alpha"),								21 },
-			{ tr("All monsters must be killed before exiting"),			22 },
-			{ tr("Players can't see the automap"),						23 },
-			{ tr("Allies can't be seen on the automap"),				24 },
-			{ tr("You can't spy allies"),								25 },
-			{ tr("Players can use chase cam"),							26 },
-			{ tr("Players can suicide"),								27 },
-			{ tr("Players can not use autoaim"),						28 }
-		}
-	},
-
-	{
-		tr("Compat. flags"),
-		30,
-		{
-			{ tr("Use Doom's shortest texture behavior"),						0 },
-			{ tr("Don't fix loop index for stair building"),					1 },
-			{ tr("Pain elemental is limited to 20 lost souls"),					2 },
-			{ tr("Pickups are only heard locally"),								3 },
-			{ tr("Infinitly tall actors"),										4 },
-			{ tr("Limit actors to only one sound"),								5 },
-			{ tr("Enable wallrunning"),											6 },
-			{ tr("Dropped items spawn on floor"),								7 },
-			{ tr("Special lines block use line"),								8 },
-			{ tr("Disable BOOM local door light effect"),						9 },
-			{ tr("Raven's scrollers use their original speed"),					10 },
-			{ tr("Use sector based sound target code"),							11 },
-			{ tr("Limit dehacked MaxHealth to health bonus"),					12 },
-			{ tr("Trace ignores lines with the same sector on both sides"),		13 },
-			{ tr("Monsters can not move when hanging over a drop off"),			14 },
-			{ tr("Scrolling sectors are additive like Boom"),					15 },
-			{ tr("Monsters can see semi-invisible players"),					16 },
-			{ tr("Limited movement in the air"),								17 },
-			{ tr("Allow map01 \"plasma bump\" bug"),							18 },
-			{ tr("Allow instant respawn after death"),							19 },
-			{ tr("Disable taunting"),											20 },
-			{ tr("Use doom2.exe's original sound curve"),						21 },
-			{ tr("Use original doom2 intermission music"),						22 },
-			{ tr("Disable stealth monsters"),									23 },
-			{ tr("Disable crosshair"),											25 },
-			{ tr("Force weapon switch"),										26 },
-			{ tr("Instantly moving floors are not silent"),						28 },
-			{ tr("Sector sounds use original method for sound orgin"),			29 },
-			{ tr("Use original Doom heights for clipping against projetiles"),	30 },
-			{ tr("Monsters can't be pushed over drop offs"),					31 }
-		}
-	}
-};
-
-const GameMode SkulltagServer::GAME_MODES[NUM_SKULLTAG_GAME_MODES + 1] =
-{
-	GameMode::COOPERATIVE,
-	GameMode(GAMEMODE_SURVIVAL, tr("Survival"), false),
-	GameMode(GAMEMODE_INVASION, tr("Invasion"), false),
-	GameMode::DEATHMATCH,
-	GameMode::TEAM_DEATHMATCH,
-	GameMode(GAMEMODE_DUEL, tr("Duel"), false),
-	GameMode(GAMEMODE_TERMINATOR, tr("Terminator"), false),
-	GameMode(GAMEMODE_LASTMANSTANDING, tr("LMS"), false),
-	GameMode(GAMEMODE_TEAMLMS, tr("Team LMS"), true),
-	GameMode(GAMEMODE_POSSESSION, tr("Possession"), false),
-	GameMode(GAMEMODE_TEAMPOSSESSION, tr("Team Poss"), true),
-	GameMode(GAMEMODE_TEAMGAME, tr("Team Game"), true),
-	GameMode::CAPTURE_THE_FLAG,
-	GameMode(GAMEMODE_ONEFLAGCTF, tr("One Flag CTF"), true),
-	GameMode(GAMEMODE_SKULLTAG, tr("Skulltag"), true),
-	GameMode(GAMEMODE_DOMINATION, tr("Domination"), true),
-	GameMode::UNKNOWN
-};
-
-const GameCVar SkulltagServer::GAME_MODIFIERS[NUM_SKULLTAG_GAME_MODIFIERS] =
-{
-	GameCVar("Buckshot", "buckshot"),
-	GameCVar("Instagib", "instagib")
-};
-
 SkulltagServer::SkulltagServer(const QHostAddress &address, unsigned short port)
 : Server(address, port),
   buckshot(false), instagib(false), testingServer(false), teamDamage(0.0f),
@@ -254,206 +112,14 @@ SkulltagServer::SkulltagServer(const QHostAddress &address, unsigned short port)
 	connect(this, SIGNAL( updated(Server*, int) ), this, SLOT( updatedSlot(Server*, int) ));
 }
 
-QString SkulltagServer::clientBinary(QString& error) const
+Binaries* SkulltagServer::binaries() const
 {
-	SettingsData* setting;
-	if (!this->testingServer || !Main::config->setting("SkulltagEnableTesting")->boolean())
-	{
-		setting = Main::config->setting("SkulltagBinaryPath");
-
-		if (setting->string().isEmpty())
-		{
-			error = tr("No executable specified for Skulltag");
-			return QString();
-		}
-
-		QFileInfo fi(setting->string());
-
-		if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
-		{
-			error = tr("%1\nis a directory or doesn't exist.").arg(setting->string());
-			return QString();
-		}
-
-		return setting->string();
-	}
-	else
-	{
-		// This is common code for both Unix and Windows:
-		setting = Main::config->setting("SkulltagTestingPath");
-		QString path = setting->string();
-		if (path.isEmpty())
-		{
-			error = tr("No testing directory specified for Skulltag");
-			return QString();
-		}
-
-		if (path[path.length() - 1] != '/' && path[path.length() - 1] != '\\' )
-			path += '/';
-
-		path += version();
-
-		QFileInfo fi(path);
-		if (!fi.exists())
-		{
-			error = tr("%1\ndoesn't exist.\nYou need to install new testing binaries.").arg(path);
-			QString messageBoxContent = tr("%1\n\nDo you want Doomseeker to create %2 directory and copy all your .ini files from your base directory?\n\nNote: You will still have to manualy install the binaries.").arg(error, version());
-
-			if (QMessageBox::question(Main::mainWindow, tr("Doomseeker - missing testing binaries"), messageBoxContent, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-			{
-				// setting->string() should still contain base dir
-				// for testing binaries
-				QDir dir(setting->string());
-				if (!dir.mkdir(version()))
-				{
-					error = tr("Unable to create directory:\n%1").arg(path);
-					return QString();
-				}
-
-				// Now copy all .ini's. On Linux .ini's are kept in ~/.skulltag so this will
-				// do nothing, but on Windows this should work like magic.
-				QDir baseBinaryDir(clientWorkingDirectory());
-				QStringList nameFilters;
-				nameFilters << "*.ini";
-				QStringList iniFiles = baseBinaryDir.entryList(nameFilters, QDir::Files);
-				foreach(QString str, iniFiles)
-				{
-					QString sourcePath = baseBinaryDir.canonicalPath() + '/' + str;
-					QString targetPath = path + '/' + str;
-					QFile file(sourcePath);
-					file.copy(targetPath);
-				}
-
-				QMessageBox::information(Main::mainWindow, tr("Doomseeker"), tr("Please install now version \"%1\" into:\n%2").arg(version(), path));
-				error = QString();
-			}
-			return QString();
-		}
-
-		if (!fi.isDir())
-		{
-			error = tr("%1\nexists but is NOT a directory.\nCannot proceed.").arg(path);
-			return QString();
-		}
-
-		QString binPath = path + '/' + ST_BINARY_NAME;
-		fi = QFileInfo(binPath);
-		if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
-		{
-			error = tr("%1\ndoesn't contain Skulltag executable").arg(path);
-			return QString();
-		}
-
-		// Everything checked out, so proceed to create (if necessary) and return path to the script file.
-		QString retPath;
-		if (!spawnTestingBatchFile(path, retPath, error))
-		{
-			// error is already specified inside spawnTestingBatchFile()Ŝ
-			return QString();
-		}
-
-		return retPath;
-	}
+	return new SkulltagBinaries(this);
 }
 
-QString SkulltagServer::clientWorkingDirectory() const
+GameRunner* SkulltagServer::gameRunner() const
 {
-	SettingsData* setting = Main::config->setting("SkulltagBinaryPath");
-	QFileInfo fi(setting->string());
-	return fi.canonicalPath();
-}
-
-void SkulltagServer::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const
-{
-	Server::connectParameters(args, pf, iwadFound, connectPassword);
-
-	args << Main::config->setting("SkulltagCustomParameters")->string().split(" ", QString::SkipEmptyParts);;
-
-	if(isLocked())
-		args << "+cl_password" << connectPassword;
-}
-
-void SkulltagServer::hostDMFlags(QStringList& args, const DMFlags& dmFlags) const
-{
-	const QString argNames[] = { "+dmflags", "+dmflags2", "+compatflags" };
-	for (int i = 0; i < qMin(dmFlags.size(), 3); ++i)
-	{
-		args << argNames[i];
-		unsigned val = 0;
-		const DMFlagsSection* sec = dmFlags[i];
-
-		for (int i = 0; i < sec->size; ++i)
-		{
-			val |= 1 << sec->flags[i].value;
-		}
-
-		args << QString::number(val);
-	}
-}
-
-void SkulltagServer::hostProperties(QStringList& args) const
-{
-	args << "+alwaysapplydmflags" << QString::number(1);
-	args << "-skill" << QString::number(skill + 1); // from 1 to 5
-
-	QString gameModeStr;
-	switch(currentGameMode.modeIndex())
-	{
-		case GameMode::SGMICooperative:			gameModeStr = "+cooperative"; break;
-		case GameMode::SGMICTF:					gameModeStr = "+ctf"; break;
-		case GameMode::SGMIDeathmatch:			gameModeStr = "+deathmatch"; break;
-		case GameMode::SGMITeamDeathmatch:		gameModeStr = "+teamplay"; break;
-		case GAMEMODE_DOMINATION:				gameModeStr = "+domination"; break;
-		case GAMEMODE_DUEL:						gameModeStr = "+duel"; break;
-		case GAMEMODE_INVASION:					gameModeStr = "+invasion"; break;
-		case GAMEMODE_LASTMANSTANDING:			gameModeStr = "+lastmanstanding"; break;
-		case GAMEMODE_ONEFLAGCTF:				gameModeStr = "+oneflagctf"; break;
-		case GAMEMODE_POSSESSION:				gameModeStr = "+possession"; break;
-		case GAMEMODE_SKULLTAG:					gameModeStr = "+skulltag"; break;
-		case GAMEMODE_SURVIVAL:					gameModeStr = "+survival"; break;
-		case GAMEMODE_TEAMGAME:					gameModeStr = "+teamgame"; break;
-		case GAMEMODE_TEAMLMS:					gameModeStr = "+teamlms"; break;
-		case GAMEMODE_TEAMPOSSESSION:			gameModeStr = "+teampossession"; break;
-		case GAMEMODE_TERMINATOR:				gameModeStr = "+terminator"; break;
-	}
-	args << gameModeStr << "1";
-
-	args << "+sv_hostemail" << "\"" + email + "\"";
-
-	if (!mapName.isEmpty())
-	{
-		args << "+map" << mapName;
-	}
-
-	if (!mapList.isEmpty())
-	{
-		foreach (QString s, mapList)
-		{
-			args << "+addmap" << s;
-		}
-	}
-
-	args << "+sv_maprotation" << QString::number(static_cast<int>(mapRandomRotation));
-
-	QString md = motd;
-	args << "+sv_motd" << "\"" + md.replace("\n", "\\n") + "\"";
-
-	args << "+sv_hostname" << "\"" + name() + "\"";
-
-	args << "+sv_website" << "\"" + webSite + "\"";
-
-	args << "+sv_password" << "\"" + passwordConnect + "\"";
-	args << "+sv_forcepassword" << QString::number(static_cast<int>(!passwordConnect.isEmpty()));
-
-	args << "+sv_joinpassword" << "\"" + passwordJoin + "\"";
-	args << "+sv_forcejoinpassword" << QString::number(static_cast<int>(!passwordJoin.isEmpty()));
-
-	args << "+sv_rconpassword" << "\"" + passwordRCon + "\"";
-
-	args << "+sv_broadcast" << QString::number(static_cast<int>(broadcastToLAN));
-	args << "+sv_updatemaster" << QString::number(static_cast<int>(broadcastToMaster));
-	args << "+sv_maxclients" << QString::number(maxClients);
-	args << "+sv_maxplayers" << QString::number(maxPlayers);
+	return new SkulltagGameRunner(this);
 }
 
 const QPixmap &SkulltagServer::icon() const
@@ -467,6 +133,11 @@ unsigned int SkulltagServer::millisecondTime()
 {
 	const QTime time = QTime::currentTime();
 	return time.hour()*360000 + time.minute()*60000 + time.second()*1000 + time.msec();
+}
+
+const PluginInfo* SkulltagServer::plugin() const
+{
+	return SkulltagMain::get();
 }
 
 Server::Response SkulltagServer::readRequest(QByteArray &data)
@@ -530,7 +201,7 @@ Server::Response SkulltagServer::readRequest(QByteArray &data)
 	int pos = 8 + serverVersion.length() + 1;
 
 	// now read the data.
-	SkulltagGameMode mode = GAMEMODE_COOPERATIVE;
+	SkulltagGameInfo::SkulltagGameMode mode = SkulltagGameInfo::GAMEMODE_COOPERATIVE;
 
 	// Flags - set of flags returned by the server. This is compared
 	// with known set of flags and the data is read from the packet
@@ -635,8 +306,8 @@ Server::Response SkulltagServer::readRequest(QByteArray &data)
 			byMode = NUM_SKULLTAG_GAME_MODES; // this will set game mode to unknown
 		}
 
-		mode = static_cast<SkulltagGameMode> (byMode);
-		currentGameMode = GAME_MODES[mode];
+		mode = static_cast<SkulltagGameInfo::SkulltagGameMode> (byMode);
+		currentGameMode = (*SkulltagGameInfo::gameModes())[mode];
 		instagib = READINT8(&packetOut[pos++]) != 0;
 		buckshot = READINT8(&packetOut[pos++]) != 0;
 
@@ -701,27 +372,29 @@ Server::Response SkulltagServer::readRequest(QByteArray &data)
 
 		clearDMFlags();
 
+		const DMFlags& skulltagFlags = *SkulltagGameInfo::dmFlags();
+
 		// Read each dmflags section separately.
 		for (int i = 0; i < NUM_DMFLAG_SECTIONS; ++i)
 		{
 			unsigned int dmflags = READINT32(&packetOut[pos]);
 			pos += 4;
 
-			DMFlagsSection *dmFlagsSec = new DMFlagsSection();
-			dmFlagsSec->name = DM_FLAGS[i].name;
-			dmFlagsSec->size = 0;
+			const DMFlagsSection& skulltagFlagsSection = *skulltagFlags[i];
+			DMFlagsSection* dmFlagsSection = new DMFlagsSection();
+			dmFlagsSection->name = skulltagFlagsSection.name;
 
 			// Iterate through every known flag to check whether it should be
 			// inserted into the structure of this server.
-			for (int j = 0; j < DM_FLAGS[i].size; ++j)
+			for (int j = 0; j < skulltagFlagsSection.flags.count(); ++j)
 			{
-				if ( (dmflags & (1 << DM_FLAGS[i].flags[j].value)) != 0)
+				if ( (dmflags & (1 << skulltagFlagsSection.flags[j].value)) != 0)
 				{
-					dmFlagsSec->flags[dmFlagsSec->size++] = DM_FLAGS[i].flags[j];
+					dmFlagsSection->flags << skulltagFlagsSection.flags[j];
 				}
 			}
 
-			dmFlags << dmFlagsSec;
+			dmFlags << dmFlagsSection;
 		}
 	}
 
@@ -749,17 +422,17 @@ Server::Response SkulltagServer::readRequest(QByteArray &data)
 			default:
 				serverScoreLimit = fragLimit;
 				break;
-			case GAMEMODE_LASTMANSTANDING:
-			case GAMEMODE_TEAMLMS:
+			case SkulltagGameInfo::GAMEMODE_LASTMANSTANDING:
+			case SkulltagGameInfo::GAMEMODE_TEAMLMS:
 				serverScoreLimit = winLimit;
 				break;
-			case GAMEMODE_POSSESSION:
-			case GAMEMODE_TEAMPOSSESSION:
-			case GAMEMODE_TEAMGAME:
-			case GAMEMODE_CTF:
-			case GAMEMODE_ONEFLAGCTF:
-			case GAMEMODE_SKULLTAG:
-			case GAMEMODE_DOMINATION:
+			case SkulltagGameInfo::GAMEMODE_POSSESSION:
+			case SkulltagGameInfo::GAMEMODE_TEAMPOSSESSION:
+			case SkulltagGameInfo::GAMEMODE_TEAMGAME:
+			case SkulltagGameInfo::GAMEMODE_CTF:
+			case SkulltagGameInfo::GAMEMODE_ONEFLAGCTF:
+			case SkulltagGameInfo::GAMEMODE_SKULLTAG:
+			case SkulltagGameInfo::GAMEMODE_DOMINATION:
 				serverScoreLimit = pointLimit;
 				break;
 		}
@@ -925,109 +598,6 @@ bool SkulltagServer::sendRequest(QByteArray &data)
 	HUFFMAN_Encode(challenge, reinterpret_cast<unsigned char*> (challengeOut), 12, &out);
 	const QByteArray chall(challengeOut, out);
 	data.append(chall);
-	return true;
-}
-
-QString SkulltagServer::serverBinary(QString& error) const
-{
-	#ifdef Q_OS_WIN32
-		return clientBinary(error);
-	#else
-		SettingsData* setting = Main::config->setting("SkulltagServerBinaryPath");
-
-		if (setting->string().isEmpty())
-		{
-			error = tr("No server executable specified for Skulltag");
-			return QString();
-		}
-
-		QFileInfo fi(setting->string());
-
-		if (!fi.exists() || fi.isDir())
-		{
-			error = tr("%1\nis a directory or doesn't exist.").arg(setting->string());
-			return QString();
-		}
-
-		return setting->string();
-	#endif
-}
-
-bool SkulltagServer::spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, QString& error) const
-{
-	QString binaryPath = versionDir + '/' + ST_BINARY_NAME;
-	// This will create an actual path to file, because there is no '/' at the end
-	// of scriptFilepath.
-	fullPathToFile = versionDir + SCRIPT_FILE_EXTENSION;
-	QFileInfo fi(fullPathToFile);
-	QFile file(fullPathToFile);
-	if (fi.isDir())
-	{
-		error = tr("%1\n should be a script file but is a directory!").arg(fullPathToFile);
-		return false;
-	}
-
-	if (fi.exists())
-	{
-		printf("File Permissions: %X\n", (unsigned int)file.permissions());
-		if ((file.permissions() & QFile::ExeUser) == 0)
-		{
-			error = tr("You don't have permissions to execute file: %1\n").arg(fullPathToFile);
-			return false;
-		}
-		return true;
-	}
-
-	QString content;
-	#ifdef Q_OS_WIN32
-	// Create Windows batch file
-	// Extract drive letter:
-	QString driveLetter;
-	QString workDir = clientWorkingDirectory();
-	for (int i = 0; i < workDir.length(); ++i)
-	{
-		if (workDir[i] == ':')
-		{
-			driveLetter = workDir.left(i);
-		}
-	}
-
-	if (!driveLetter.isEmpty())
-	{
-		content += driveLetter + ":\r\n";
-	}
-
-	content += "cd " + clientWorkingDirectory().replace('/', '\\') + "\r\n";
-	content += binaryPath.replace('/', '\\') + " %*"; // %* deals with all the parameters
-	#else
-	// Create Unix script file
-	content  = "#!/bin/bash\n";
-	content += "cd " + clientWorkingDirectory() + "\n";
-	content += "export LANG=C\n"; // without this Skulltag won't run on my system (Zalewa)
-	content += binaryPath + " $*"; // $* deals with all the parameters
-	#endif
-
-	if (!file.open(QIODevice::WriteOnly))
-	{
-		error = tr("Couldn't open batch file \"%1\" for writing").arg(fullPathToFile);
-		return false;
-	}
-
-	if (file.write(content.toAscii()) < 0)
-	{
-		error = tr("Error while writing batch file \"%1\"").arg(fullPathToFile);
-		file.close();
-		return false;
-	}
-
-	file.close();
-
-	if (!file.setPermissions(file.permissions() | QFile::ExeUser))
-	{
-		error = tr("Cannot set permissions for file:\n%1").arg(fullPathToFile);
-		return false;
-	}
-
 	return true;
 }
 

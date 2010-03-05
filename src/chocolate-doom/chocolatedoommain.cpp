@@ -24,80 +24,61 @@
 #include "main.h"
 #include "sdeapi/pluginloader.hpp"
 
+#include "chocolate-doom/chocolatedoommain.h"
+#include "chocolate-doom/chocolatedoombinaries.h"
 #include "chocolate-doom/chocolatedoomserver.h"
 #include "chocolate-doom/engineChocolateDoomConfig.h"
 
 const // clear warnings
 #include "chocolate-doom/chocolatedoom.xpm"
 
-static GeneralEngineInfo ChocolateDoomEngineInfo =
-{
-	2342,								// Default port
-	NULL,								// List of game modes
-	0,									// Number of game modes
-	NULL,								// List of DMFlags sections
-	0,									// Number of DMFlags sections
-	false,								// Allows URL
-	false,								// Allows E-Mail
-	false,								// Allows connect password
-	false,								// Allows join password
-	false,								// Allows rcon password
-	false,								// Allows MOTD
-	false,								// Supports random map rotation
-	NULL,								// Game modifiers
-	0,									// Number of game modifiers
-	false,								// Has Master Server
-};
-
 class PLUGIN_EXPORT ChocolateDoomEnginePlugin : public EnginePlugin
 {
 	public:
-		QString					binaryClient() const
-		{
-			return Main::config->setting("ChocolateDoomBinaryPath")->string();
-		}
+		const DMFlags*					allDMFlags() const { return NULL; }
 
-		QString					binaryServer() const
-		{
-			return Main::config->setting("ChocolateDoomServerBinaryPath")->string();
-		}
+		bool							allowsURL() const { return false; }
+		bool							allowsEmail() const { return false; }
+		bool							allowsConnectPassword() const { return false; }
+		bool							allowsJoinPassword() const { return false; }
+		bool							allowsRConPassword() const { return false; }
+		bool							allowsMOTD() const { return false; }
 
-		ConfigurationBoxInfo	*configuration(Config *cfg, QWidget *parent) const
+		ConfigurationBoxInfo*			configuration(Config *cfg, QWidget *parent) const
 		{
 			return EngineChocolateDoomConfigBox::createStructure(cfg, parent);
 		}
 
-		const GeneralEngineInfo&	generalEngineInfo() const
-		{
-			return ChocolateDoomEngineInfo;
-		}
+		unsigned short					defaultServerPort() const { return 2342; }
+		const QList<GameMode>*			gameModes() const { return NULL; }
+		const QList<GameCVar>*			gameModifiers() const { return NULL; }
+		bool							hasMasterServer() const { return false; }
 
-		virtual QList<GameCVar>	limits(const GameMode&) const
-		{
-			return QList<GameCVar>();
-		}
+		QList<GameCVar>					limits(const GameMode& mode) const { return QList<GameCVar>(); }
 
-		QPixmap			icon() const
+		QPixmap							icon() const
 		{
 			return QPixmap(chocolatedoom_xpm);
 		}
 
-		MasterClient	*masterClient() const
+		MasterClient*					masterClient() const
 		{
 			return NULL;
 		}
 
-		Server*			server(const QHostAddress &address, unsigned short port) const
+		Server*							server(const QHostAddress &address, unsigned short port) const
 		{
 			return new ChocolateDoomServer(address, port);
 		}
+
+		bool							supportsRandomMapRotation() const { return false; }
 };
 
 static ChocolateDoomEnginePlugin chocolatedoom_engine_plugin;
-static const PluginInfo chocolatedoom_info = {"Chocolate Doom", "Chocolate Doom server query plugin.", "The Skulltag Team", {0,1,0,0}, MAKEID('E','N','G','N'), &chocolatedoom_engine_plugin};
+const PluginInfo ChocolateDoomMain::chocolatedoom_info = {"Chocolate Doom", "Chocolate Doom server query plugin.", "The Skulltag Team", {0,1,0,0}, MAKEID('E','N','G','N'), &chocolatedoom_engine_plugin};
 extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 {
-	return &chocolatedoom_info;
+	return ChocolateDoomMain::get();
 }
 
 extern "C" PLUGIN_EXPORT void doomSeekerInitConfig()

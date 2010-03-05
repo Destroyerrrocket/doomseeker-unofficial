@@ -17,6 +17,7 @@ set(CHOCOLATEDOOM_QT_FILES
 	engineChocolateDoomConfig.h
 )
 set(CHOCOLATEDOOM_FILES
+	chocolatedoomgamerunner.cpp
 	chocolatedoommain.cpp
 	chocolatedoomserver.cpp
 	engineChocolateDoomConfig.cpp

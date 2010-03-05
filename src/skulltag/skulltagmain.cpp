@@ -30,6 +30,9 @@
 #include "sdeapi/pluginloader.hpp"
 
 #include "skulltag/huffman/huffman.h"
+#include "skulltag/skulltagbinaries.h"
+#include "skulltag/skulltaggameinfo.h"
+#include "skulltag/skulltagmain.h"
 #include "skulltag/skulltagmasterclient.h"
 #include "skulltag/skulltagserver.h"
 #include "skulltag/engineSkulltagConfig.h"
@@ -37,92 +40,80 @@
 const // clear warnings
 #include "skulltag/skulltag.xpm"
 
-static GeneralEngineInfo SkulltagEngineInfo =
-{
-	10666,								// Default server port
-	SkulltagServer::GAME_MODES,			// List of game modes
-	NUM_SKULLTAG_GAME_MODES,			// Number of game modes
-	SkulltagServer::DM_FLAGS,			// List of DMFlags sections
-	3,									// Number of DMFlags sections
-	true,								// Allows URL
-	true,								// Allows E-Mail
-	true,								// Allows connect password
-	true,								// Allows join password
-	true,								// Allows rcon password
-	true,								// Allows MOTD
-	true,								// Supports random map rotation
-	SkulltagServer::GAME_MODIFIERS,		// Game modifiers
-	NUM_SKULLTAG_GAME_MODIFIERS,		// Number of game modifiers
-	true,								// Has Master Server
-};
-
 class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 {
 	public:
-		QString					binaryClient() const
+		const DMFlags*					allDMFlags() const
 		{
-			return Main::config->setting("SkulltagBinaryPath")->string();
+			return SkulltagGameInfo::dmFlags();
 		}
 
-		QString					binaryServer() const
-		{
-			#ifdef Q_OS_WIN32
-				return binaryClient();
-			#else
-				return Main::config->setting("SkulltagServerBinaryPath")->string();
-			#endif
-		}
+		bool							allowsURL() const { return true; }
+		bool							allowsEmail() const { return true; }
+		bool							allowsConnectPassword() const { return true; }
+		bool							allowsJoinPassword() const { return true; }
+		bool							allowsRConPassword() const { return true; }
+		bool							allowsMOTD() const { return true; }
 
 		ConfigurationBoxInfo *configuration(Config *cfg, QWidget *parent) const
 		{
 			return EngineSkulltagConfigBox::createStructure(cfg, parent);
 		}
 
-		const GeneralEngineInfo&	generalEngineInfo() const
+		unsigned short					defaultServerPort() const { return 10666; }
+
+		const QList<GameMode>*			gameModes() const
 		{
-			return SkulltagEngineInfo;
+			return SkulltagGameInfo::gameModes();
 		}
 
-		virtual QList<GameCVar>	limits(const GameMode& gm) const
+		const QList<GameCVar>*			gameModifiers() const
+		{
+			return SkulltagGameInfo::gameModifiers();
+		}
+
+		bool							hasMasterServer() const { return true; }
+
+		QList<GameCVar>	limits(const GameMode& gm) const
 		{
 			QList<GameCVar> gl;
 
 			int m = gm.modeIndex();
 
 			if (m != GameMode::SGMICooperative
-			&&	m != SkulltagServer::GAMEMODE_INVASION
-			&&	m != SkulltagServer::GAMEMODE_SURVIVAL)
+			&&	m != SkulltagGameInfo::GAMEMODE_INVASION
+			&&	m != SkulltagGameInfo::GAMEMODE_SURVIVAL)
 			{
 				gl << GameCVar(QObject::tr("Time limit:"), "timelimit");
 			}
 
 			if (m == GameMode::SGMIDeathmatch
-			||	m == SkulltagServer::GAMEMODE_DUEL
+			||	m == SkulltagGameInfo::GAMEMODE_DUEL
 			||	m == GameMode::SGMITeamDeathmatch
-			||	m == SkulltagServer::GAMEMODE_TERMINATOR)
+			||	m == SkulltagGameInfo::GAMEMODE_TERMINATOR)
 			{
 				gl << GameCVar(QObject::tr("Frag limit:"), "fraglimit");
 			}
 
 			if (m == GameMode::SGMICTF
-			||	m == SkulltagServer::GAMEMODE_DOMINATION
-			||	m == SkulltagServer::GAMEMODE_ONEFLAGCTF
-			||	m == SkulltagServer::GAMEMODE_POSSESSION
-			||	m == SkulltagServer::GAMEMODE_SKULLTAG
-			||	m == SkulltagServer::GAMEMODE_TEAMGAME
-			||	m == SkulltagServer::GAMEMODE_TEAMPOSSESSION)
+			||	m == SkulltagGameInfo::GAMEMODE_DOMINATION
+			||	m == SkulltagGameInfo::GAMEMODE_ONEFLAGCTF
+			||	m == SkulltagGameInfo::GAMEMODE_POSSESSION
+			||	m == SkulltagGameInfo::GAMEMODE_SKULLTAG
+			||	m == SkulltagGameInfo::GAMEMODE_TEAMGAME
+			||	m == SkulltagGameInfo::GAMEMODE_TEAMPOSSESSION)
 			{
 				gl << GameCVar(QObject::tr("Point limit:"), "pointlimit");
 			}
 
-			if (m == SkulltagServer::GAMEMODE_DUEL
-			||	m == SkulltagServer::GAMEMODE_LASTMANSTANDING
-			||	m == SkulltagServer::GAMEMODE_TEAMLMS)
+			if (m == SkulltagGameInfo::GAMEMODE_DUEL
+			||	m == SkulltagGameInfo::GAMEMODE_LASTMANSTANDING
+			||	m == SkulltagGameInfo::GAMEMODE_TEAMLMS)
 			{
 				gl << GameCVar(QObject::tr("Win limit:"), "winlimit");
 			}
 
-			if (m == SkulltagServer::GAMEMODE_DUEL)
+			if (m == SkulltagGameInfo::GAMEMODE_DUEL)
 			{
 				gl << GameCVar(QObject::tr("Duel limit:"), "duellimit");
 			}
@@ -157,14 +148,16 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 		{
 			return (new SkulltagServer(address, port));
 		}
+
+		bool						supportsRandomMapRotation() const { return true; }
 };
 
 static SkulltagEnginePlugin skulltag_engine_plugin;
-static const PluginInfo skulltag_info = {"Skulltag", "Skulltag server query plugin.", "The Skulltag Team", {0,4,0,0}, MAKEID('E','N','G','N'), &skulltag_engine_plugin};
+const PluginInfo SkulltagMain::info = {"Skulltag", "Skulltag server query plugin.", "The Skulltag Team", {0,4,0,0}, MAKEID('E','N','G','N'), &skulltag_engine_plugin};
 extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 {
 	HUFFMAN_Construct();
-	return &skulltag_info;
+	return SkulltagMain::get();
 }
 
 extern "C" PLUGIN_EXPORT void doomSeekerInitConfig()

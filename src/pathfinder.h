@@ -26,17 +26,24 @@
 
 #include "sdeapi/config.hpp"
 #include "global.h"
+#include <QStringList>
+
+struct MAIN_EXPORT PathFinderResult
+{
+	QStringList		foundFiles;
+	QStringList		missingFiles;
+};
 
 class MAIN_EXPORT PathFinder
 {
-	private:
-		Config* config;
-
 	public:
 		PathFinder(Config*);
 
-		QString findWad(const QString& fileName);
+		QString 			findFile(const QString& fileName);
+		PathFinderResult	findFiles(const QStringList& files);
 
+	protected:
+		Config* config;
 };
 
 #endif

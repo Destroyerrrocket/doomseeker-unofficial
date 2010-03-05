@@ -48,7 +48,7 @@ void CustomServersConfigBox::add()
 
 	QString engineName = cboEngines->itemText(cboEngines->currentIndex());
 
-	add(engineName, "", nfo->pInterface->generalEngineInfo().defaultServerPort);
+	add(engineName, "", nfo->pInterface->defaultServerPort());
 }
 
 void CustomServersConfigBox::add(const QString& engineName, const QString& host, short port)
@@ -263,7 +263,7 @@ void CustomServersConfigBox::setEngineOnItem(QStandardItem* item, const QString&
 void CustomServersConfigBox::setPortToDefault(int rowIndex)
 {
 	const PluginInfo* pluginInfo = getPluginInfoForRow(rowIndex);
-	QString defaultPort = QString::number(pluginInfo->pInterface->generalEngineInfo().defaultServerPort);
+	QString defaultPort = QString::number(pluginInfo->pInterface->defaultServerPort());
 
 	QStandardItem* itemPort = model->item(rowIndex, PortColumnIndex);
 	itemPort->setText(defaultPort);

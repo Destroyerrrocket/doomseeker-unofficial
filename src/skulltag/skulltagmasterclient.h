@@ -25,6 +25,7 @@
 #define __SKULLTAGMASTERCLIENT_H__
 
 #include "masterclient.h"
+class PluginInfo;
 
 class SkulltagMasterClient : public MasterClient
 {
@@ -32,6 +33,8 @@ class SkulltagMasterClient : public MasterClient
 
 	public:
 		SkulltagMasterClient(QHostAddress address, unsigned short port);
+
+		const PluginInfo*		plugin() const;
 
 	protected:
 		bool	readRequest(QByteArray &data, bool &expectingMorePackets);

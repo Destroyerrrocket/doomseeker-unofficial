@@ -23,12 +23,18 @@
 
 #include "global.h"
 #include "odamex/odamexmasterclient.h"
+#include "odamex/odamexmain.h"
 #include "odamex/odamexserver.h"
 
 #define MASTER_CHALLENGE		0x000BDBA3
 
 OdamexMasterClient::OdamexMasterClient(QHostAddress address, unsigned short port) : MasterClient(address, port)
 {
+}
+
+const PluginInfo* OdamexMasterClient::plugin() const
+{
+	return OdamexMain::get();
 }
 
 bool OdamexMasterClient::readRequest(QByteArray &data, bool &expectingMorePackets)

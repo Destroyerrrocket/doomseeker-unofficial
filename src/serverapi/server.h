@@ -43,7 +43,10 @@
 #include "global.h"
 #include "pathfinder.h"
 
+class Binaries;
+class GameRunner;
 class PlayersList;
+class PluginInfo;
 class TooltipGenerator;
 
 class MAIN_EXPORT Server : public QObject
@@ -69,25 +72,43 @@ class MAIN_EXPORT Server : public QObject
 		virtual ~Server();
 
 		/**
-		 *	Returns name of the engine for this server, for example: "Skulltag".
+		 *	@brief Creates an instance of Binaries's descendant class.
+		 *
+		 *	Created instance should be deleted manually by the programmer.
+		 *	@return A pointer to a new instance of Binaries's descendant
+		 *		(defined by a plugin)
 		 */
-		virtual QString		engineName() const { return tr("Undefined"); }
+		virtual Binaries*						binaries() const = 0;
+
+		/**
+		 *	Returns name of the engine for this server, for example: "Skulltag".
+		 *	By default this returns name defined by the parent plugin itself,
+		 *	or "Undefined" string if there is no parent plugin.
+		 */
+		virtual QString		engineName() const;
 
 		const QHostAddress	&address() const { return serverAddress; }
+		const QString&		connectPassword() const { return passwordConnect; }
 		const QString&		eMail() const { return email; }
 		const DMFlags		&gameFlags() const { return dmFlags; }
 		const GameMode		&gameMode() const { return currentGameMode; }
+		unsigned char		gameSkill() const { return skill; }
 		virtual bool		hasRcon() const { return false; }
 		virtual const QPixmap	&icon() const=0;
+		bool				isBroadcastingToLAN() const { return broadcastToLAN; }
+		bool				isBroadcastingToMaster() const { return broadcastToMaster; }
 		bool				isCustom() const { return custom; }
 		bool				isKnown() const { return bKnown; }
 		bool				isLocked() const { return locked; }
 		bool				isSetToDelete() const { return bDelete; }
 		const QString		&iwadName() const { return iwad; }
+		const QString&		joinPassword() const { return passwordJoin; }
 		int					lastResponse() const { return response; }
 		const QString		&map() const { return mapName; }
+		const QStringList&	mapsList() const { return mapList; }
 		unsigned short		maximumClients() const { return maxPlayers > maxClients ? maxPlayers : maxClients; }
 		unsigned short		maximumPlayers() const { return maxPlayers; }
+		const QString&		messageOfTheDay() const { return motd; }
 		const QString		&name() const { return serverName; }
 		int					numFreeClientSlots() const;
 		int					numFreeJoinSlots() const;
@@ -98,7 +119,9 @@ class MAIN_EXPORT Server : public QObject
 		const PlayersList*	playersList() const { return players; }
 		unsigned short		port() const { return serverPort; }
 		const QStringList&	pwads() const { return wads; }
+		bool				randomMapRotation() const { return mapRandomRotation; }
 		virtual RConProtocol	*rcon() { return NULL; }
+		const QString&		rconPassword() const { return passwordRCon; }
 		unsigned int		score(int team=0) const { return scores[team]; }
 		unsigned int		scoreLimit() const { return serverScoreLimit; }
 		virtual QRgb		teamColor(int team) const;
@@ -132,42 +155,13 @@ class MAIN_EXPORT Server : public QObject
 		void				setToDelete(bool b);
 
 		/**
-		 *	Returns the path to the client binary
-		 *	@param [out] error - type of error
-		 *	@return empty if error
+		 *	@brief Creates an instance of GameRunner's derivative class.
+		 *
+		 *	Gets a pointer to a new instance of GameRunner's
+		 *	descendant (defined by a plugin). Created instance should be deleted
+		 *	manually by the programmer.
 		 */
-		virtual QString		clientBinary(QString& error) const=0;
-
-		/**
-		 *	Default behavior returns directory of clientBinary(), but
-		 *	you can override this to provide different working directory for
-		 *	Skulltag's testing binaries.
-		 *	@param [out] error - type of error
-		 */
-		virtual QString		clientWorkingDirectory() const;
-		virtual void		connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
-
-		/**
-		 *	@param [out] cli - after successful call this will contain
-		 *		required command line information.
-		 *	@param [out] error - if return == false, error text will be put here
-		 *  @param bOfflinePlay - if true a command line for single player game
-		 *		will be launched
-		 *	@return	true if command line was successfully created.
-		 */
-		bool				createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cli, bool bOfflinePlay, QString& error) const;
-
-		/**
-		 *	@param [out] cli - after successful call this will contain
-		 *		required command line information.
-		 *	@return	JoinError::type == NoError if all ok.
-		 */
-		JoinError			createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword) const;
-
-		/**
-		 *	@see createHostCommandLine()
-		 */
-		bool				host(const HostInfo& hostInfo, bool bOfflinePlay, QString& error);
+		virtual GameRunner*	gameRunner() const = 0;
 
 		bool				isRefreshing() const { return bIsRefreshing; }
 
@@ -181,54 +175,12 @@ class MAIN_EXPORT Server : public QObject
 		bool				isWebsiteURLSafe() const;
 
 		/**
-		 *	!!! DEPRECATED !!!
-		 *	The proper routine is to:
-		 *	-# Call createJoinCommandLine
-		 *	-# Test JoinError in the GUI
-		 *	-# If there are missing wads, ask if the user wants to launch the
-		 *		Wadseeker. If Wadseeker is successful repeat the routine.
-		 *	-# If there are no further errors, call runExecutable with
-		 *		generated command line as parameter.
-		 *
-		 *	@return	JoinError::type == NoError if all ok.
+		 *	This is supposed to return the plugin this Server belongs to.
+		 *	New instances of PluginInfo shouldn't be created here. Instead
+		 *	each plugin should keep a global instance of PluginInfo (singleton?)
+		 *	and a pointer to this instance should be returned.
 		 */
-		JoinError			join(const QString &connectPassword) const;
-
-		/**
-		 *	Returns the path to the binary for offline play.
-		 *	@param [out] error - type of error
-		 *	@return default behavior returns clientBinary().
-		 */
-		virtual QString		offlineGameBinary(QString& error) const { return clientBinary(error); }
-
-		/**
-		 *	Returns the working directory of the binary for offline game.
-		 *	@param [out] error - type of error
-		 *	@return Default behavior returns offlineGameBinary() directory
-		 */
-		virtual QString		offlineGameWorkingDirectory() const;
-
-		/**
-		 *	Executes predefined command line.
-		 *	@param cli - command line that will be executed
-		 *	@param bWrapWithStandardServerConsole - if true Doomseeker will
-		 *		attempt to wrap the input/output of the program with it's own
-		 *		console
-		 *	@param [out] error - may contain error string if false is returned
-		 */
-		bool				runExecutable(const CommandLineInfo& cli, bool bWrapWithStandardServerConsole, QString& error) const;
-
-		/**
-		 *	Default behaviour returns the same string as clientBinary().
-		 *	This can be reimplemented for engines that use two different
-		 *	binaries for the server and for the client.
-		 */
-		virtual QString		serverBinary(QString& error) const { return clientBinary(error); }
-
-		/**
-		 *	Default behaviour returns directory of serverBinary().
-		 */
-		virtual QString		serverWorkingDirectory() const;
+		virtual const PluginInfo*		plugin() const = 0;
 
 		/**
 		 *	@brief Creates an instance of TooltipGenerator.
@@ -258,62 +210,12 @@ class MAIN_EXPORT Server : public QObject
 		void				updated(Server *server, int response);
 
 	protected:
-		/**
-		 *	Command line parameter that is used to set IWAD.
-		 */
-		virtual QString		argForIwadLoading() const { return "-iwad"; }
-
-		/**
-		 *	Command line parameter that is used to set internet port for the
-		 *	game.
-		 */
-		virtual QString		argForPort() const { return "-port"; }
-
-		/**
-		 *	Command line parameter that is used to load a PWAD.
-		 */
-		virtual QString		argForPwadLoading() const { return "-file"; }
-
-		/**
-		 *	Command line parameter used to launch a server.
-		 */
-		virtual QString		argForServerLaunch() const { return ""; }
-
 		void				clearDMFlags();
-
-		/**
-		 *	On Windows this removes any wrapping " chars.
-		 *
-		 *	Explanation:
-		 *	Draft from Qt documentation on QProcess::startDetached:
-		 *	"On Windows, arguments that contain spaces are wrapped in quotes."
-		 *	Thus, on Windows we must unwrap the arguments that are wrapped in
-		 *	quotes because thing like +sv_hostname "Started from Doomseeker"
-		 *	won't work properly and a server with empty name will be started.
-		 */
-		void				cleanArguments(QStringList& args) const;
 
 		/**
 		 * Wrapper function to allow refresher to emit the updated signal.
 		 */
 		void				emitUpdated(int response) { emit updated(this, response); }
-
-		/**
-		 *	Creates engine specific command line parameters out of passed
-		 *	dmFlags list.
-		 *	Default behavior does nothing.
-		 */
-		virtual void		hostDMFlags(QStringList& args, const DMFlags& dmFlags) const {};
-
-		/**
-		 *	Creates engine specific command line parameters out of Server class
-		 *	fields.
-		 *
-		 *	Please note that port, and some other stuff, is already set by
-		 *	createHostCommandLine().
-		 *	@see createHostCommandLine() - cvars parameter.
-		 */
-		virtual void		hostProperties(QStringList& args) const {};
 
 		/**
 		 *	Reads response data.

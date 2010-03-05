@@ -23,6 +23,9 @@ set(SKULLTAG_FILES
 	huffman/huffcodec.cpp
 	huffman/huffman.cpp
 	engineSkulltagConfig.cpp
+	skulltagbinaries.cpp
+	skulltaggameinfo.cpp
+	skulltaggamerunner.cpp
 	skulltagmain.cpp
 	skulltagmasterclient.cpp
 	skulltagserver.cpp
