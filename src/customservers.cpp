@@ -54,7 +54,7 @@ QList<CustomServerInfo>* CustomServers::decodeConfigEntries(const QString& str)
 
                 csi.host = QUrl::fromPercentEncoding(entryList[1].toAscii());
 
-                bool ok;
+                bool ok = false;
                 int port = QString(entryList[2]).toInt(&ok);
                 if (ok && port >= 1 && port <= 65535)
                     csi.port = port;

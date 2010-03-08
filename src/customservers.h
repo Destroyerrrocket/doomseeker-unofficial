@@ -34,7 +34,7 @@ struct CustomServerInfo
 {
 	QString engine;
 	QString host;
-	short port;
+	unsigned short port;
 	int engineIndex;
 };
 

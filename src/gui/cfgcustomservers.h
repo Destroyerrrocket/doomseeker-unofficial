@@ -82,7 +82,7 @@ class CustomServersConfigBox : public ConfigurationBaseBox, private Ui::CustomSe
 
 	protected slots:
 		void 	add();
-		void	add(const QString& engineName, const QString& host, short port);
+		void	add(const QString& engineName, const QString& host, unsigned short port);
 		void	dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
 		void 	remove();
 		void 	setEngine();

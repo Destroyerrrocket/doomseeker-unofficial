@@ -51,7 +51,7 @@ void CustomServersConfigBox::add()
 	add(engineName, "", nfo->pInterface->defaultServerPort());
 }
 
-void CustomServersConfigBox::add(const QString& engineName, const QString& host, short port)
+void CustomServersConfigBox::add(const QString& engineName, const QString& host, unsigned short port)
 {
 	QList<QStandardItem* > record;
 
