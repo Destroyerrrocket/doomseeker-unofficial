@@ -96,7 +96,7 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		 *	parameters obtain new information after this method is called.
 		 *	@return false if fail.
 		 */
-		bool	createHostInfo(HostInfo& hi, Server* server);
+		bool	createHostInfo(HostInfo& hi, Server* server, bool offline);
 
 		void	initDMFlagsTabs();
 

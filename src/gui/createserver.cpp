@@ -195,7 +195,7 @@ void CreateServerDlg::btnCommandLineClicked()
 	Server* server = currentEngine->pInterface->server(QHostAddress(), spinPort->value());
 	HostInfo hi;
 
-	if (createHostInfo(hi, server))
+	if (createHostInfo(hi, server, false))
 	{
 		CommandLineInfo cli;
 		QString error;
@@ -340,11 +340,21 @@ void CreateServerDlg::cboGamemodeSelected(int index)
 	}
 }
 
-bool CreateServerDlg::createHostInfo(HostInfo& hi, Server* server)
+bool CreateServerDlg::createHostInfo(HostInfo& hi, Server* server, bool offline)
 {
 	if (server != NULL)
 	{
-		hi.executablePath = leExecutable->text();
+		// Since some operating systems have different client and server binaries
+		// We will see if they are playing offline and switch to the client
+		// binary if the specified executable is the same as what is provided
+		// as the server.
+		Binaries *binaries = server->binaries();
+		QString error;
+		QString client = binaries->clientBinary(error);
+		if(offline && error.isEmpty() && leExecutable->text() == binaries->serverBinary(error))
+			hi.executablePath = client;
+		else
+			hi.executablePath = leExecutable->text();
 
 		hi.iwadPath = cboIwad->currentText();
 		hi.pwadsPaths = CommonGUI::listViewStandardItemsToStringList(lstAdditionalFiles);
@@ -772,7 +782,7 @@ void CreateServerDlg::runGame(bool offline)
 	Server* server = currentEngine->pInterface->server(QHostAddress(), spinPort->value());
 	HostInfo hi;
 
-	if (createHostInfo(hi, server))
+	if (createHostInfo(hi, server, offline))
 	{
 		QString error;
 
