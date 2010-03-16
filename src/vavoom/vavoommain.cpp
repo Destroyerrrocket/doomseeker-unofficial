@@ -98,7 +98,7 @@ class PLUGIN_EXPORT VavoomEnginePlugin : public EnginePlugin
 };
 
 static VavoomEnginePlugin vavoom_engine_plugin;
-const PluginInfo VavoomMain::info = {"Vavoom", "Vavoom server query plugin.", "The Skulltag Team", {0,1,0,0}, MAKEID('E','N','G','N'), &vavoom_engine_plugin};
+const PluginInfo VavoomMain::info = {"Vavoom", "Vavoom server query plugin.", "The Skulltag Team", {0,2,0,0}, MAKEID('E','N','G','N'), &vavoom_engine_plugin};
 extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 {
 	return VavoomMain::get();
