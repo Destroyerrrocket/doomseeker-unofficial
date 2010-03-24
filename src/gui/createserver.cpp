@@ -457,7 +457,7 @@ void CreateServerDlg::initDMFlagsTabs()
 
 	const QList<DMFlagsSection*>& dmFlagsSections = *dmFlagsSec;
 
-	for (unsigned i = 0; i < dmFlagsSections.count(); ++i)
+	for (int i = 0; i < dmFlagsSections.count(); ++i)
 	{
 		DMFlagsTabWidget* dmftw = new DMFlagsTabWidget();
 
@@ -639,7 +639,7 @@ void CreateServerDlg::initRules()
 
 		cboModifier->addItem(tr("< NONE >"));
 
-		for (unsigned i = 0; i < engineGameModifiers.count(); ++i)
+		for (int i = 0; i < engineGameModifiers.count(); ++i)
 		{
 			cboModifier->addItem(engineGameModifiers[i].name);
 			gameModifiers << engineGameModifiers[i];

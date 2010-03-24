@@ -36,24 +36,11 @@
 #include "sdeapi/scanner.hpp"
 #include "version.h"
 
-IP2C::IP2C(const QStringList &baseDirectories, QString file, QUrl netLocation)
-: downloadProgressWidget(NULL), flagLan(":flags/lan-small"),
+IP2C::IP2C(QString file, QUrl netLocation)
+: downloadProgressWidget(NULL), file(file), flagLan(":flags/lan-small"),
   flagLocalhost(":flags/localhost-small"), flagUnknown(":flags/unknown-small"),
   netLocation(netLocation)
 {
-	// By default use the first directory.
-	this->file = baseDirectories[0] + '/' + file;
-
-	foreach(QString baseDir, baseDirectories) // Search for existing database
-	{
-		QFileInfo fileinfo(baseDir, file);
-		if(fileinfo.exists())
-		{
-			this->file = baseDir + '/' + file;
-			break;
-		}
-	}
-
 	read = readDatabase();
 	www = new WWW();
 	www->setUserAgent(QString("Doomseeker/") + QString(VERSION));

@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include <QApplication>
+#include <QDir>
 #include <QLabel>
 #include <QMainWindow>
 #include <QMessageBox>
@@ -91,6 +92,8 @@ int Main::run()
 
 	pLog << "Starting Doomseeker. Hello World! :)";
 
+	initDataDirectories();
+
 	enginePlugins = new PluginLoader(MAKEID('E','N','G','N'), dataDirectories, "engines/");
 	application = new QApplication(argumentsCount, arguments);
 
@@ -140,15 +143,18 @@ void Main::initDataDirectories()
 	// check in /usr/local/share/doomseeker/ on Linux
 	dataDirectories << INSTALL_PREFIX "/share/doomseeker/";
 #endif
+
+	dataDirectories << ":/";
+	QDir::setSearchPaths("data", dataDirectories);
 }
 
 int Main::initIP2C()
 {
-	const QString IP2C_FILENAME = "IpToCountry.csv";
+	const QString IP2C_FILENAME = "data:IpToCountry.csv";
 	const QUrl IP2C_URL = QUrl("http://software77.net/geo-ip?DL=1");
 
 	pLog << tr("Initializing IP2C database.");
-	ip2c = new IP2C(dataDirectories, IP2C_FILENAME, IP2C_URL);
+	ip2c = new IP2C(IP2C_FILENAME, IP2C_URL);
 
 	if(updateIP2CAndQuit)
 	{
