@@ -139,7 +139,7 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 		int team = READINT8(&in[pos+6]);
 		pos += 7;
 
-		Player player(name, score, ping, static_cast<Player::PlayerTeam> (team));
+		Player player(name, score, ping, static_cast<Player::PlayerTeam> (teamplay ? team : Player::TEAM_NONE));
 		(*players) << player;
 	}
 
