@@ -26,52 +26,70 @@
 
 #include "remoteconsole.h"
 #include "passwordDlg.h"
+#include "strings.h"
+#include "sdeapi/pluginloader.hpp"
 #include "widgets/serverconsole.h"
 
-RemoteConsole::RemoteConsole(Server *server, QWidget *parent) : QMainWindow(parent), protocol(server->rcon())
+RemoteConsole::RemoteConsole(QWidget *parent) : QMainWindow(parent), protocol(NULL), server(NULL)
 {
-	setupUi(this);
-	serverConsole = new ServerConsole();
-	console->layout()->addWidget(serverConsole);
+	// Prompt for connection info & password.
+	PasswordDlg *dlg = new PasswordDlg(this, true, true);
+	connect(dlg, SIGNAL(rejected()), this, SLOT(close()));
+	int ret = dlg->exec();
+	if(ret == QDialog::Accepted)
+	{
+		QString address;
+		unsigned short port;
+		Strings::translateServerAddress(dlg->serverAddress(), address, port, "localhost", dlg->selectedEngine()->defaultServerPort());
 
-	// delete ourself on close
-	setAttribute(Qt::WA_DeleteOnClose);
+		server = dlg->selectedEngine()->server(QHostAddress(address), port);
+		if(!server->hasRcon())
+		{
+			QMessageBox::critical(this, tr("No RCon Support"), tr("The source port selected has no RCon support."));
+			close();
+			return;
+		}
+		protocol = server->rcon();
+
+		setWindowIcon(server->icon());
+		standardInit();
+
+		protocol->sendPassword(dlg->connectPassword());
+	}
+	delete dlg;
+}
+
+RemoteConsole::RemoteConsole(Server *server, QWidget *parent) : QMainWindow(parent), protocol(server->rcon()), server(NULL)
+{
+	standardInit();
 
 	setWindowIcon(server->icon());
 	changeServerName(server->name());
 
-	if(protocol == NULL)
-		return;
-
-	// If we connected show the window
-	show();
-
-	connect(actionDisconnect, SIGNAL(triggered()), this, SLOT(disconnectFromServer()));
-	connect(serverConsole, SIGNAL(messageSent(const QString &)), protocol, SLOT(sendCommand(const QString &)));
-	connect(protocol, SIGNAL(disconnected()), this, SLOT(close()));
-	connect(protocol, SIGNAL(messageReceived(const QString &)), serverConsole, SLOT(appendMessage(const QString &)));
-	connect(protocol, SIGNAL(invalidPassword()), this, SLOT(invalidPassword()));
-	connect(protocol, SIGNAL(playerListUpdated()), this, SLOT(updatePlayerList()));
-	connect(protocol, SIGNAL(serverNameChanged(const QString &)), this, SLOT(changeServerName(const QString &)));
-
 	showPasswordDialog();
+}
+
+RemoteConsole::~RemoteConsole()
+{
+	if(server != NULL)
+		delete server;
 }
 
 void RemoteConsole::changeServerName(const QString &name)
 {
-	setWindowTitle(name + tr("- Remote Console"));
+	setWindowTitle(name + tr(" - Remote Console"));
 }
 
 void RemoteConsole::closeEvent(QCloseEvent *event)
 {
-	if(protocol->isConnected())
+	if(protocol && protocol->isConnected())
 		disconnectFromServer();
 	event->accept();
 }
 
 void RemoteConsole::invalidPassword()
 {
-	QMessageBox::critical(NULL, tr("Invalid Password"), tr("The password you entered appears to be invalid."));
+	QMessageBox::critical(this, tr("Invalid Password"), tr("The password you entered appears to be invalid."));
 	showPasswordDialog();
 }
 
@@ -92,6 +110,30 @@ void RemoteConsole::showPasswordDialog()
 		protocol->sendPassword(dlg->connectPassword());
 	}
 	delete dlg;
+}
+
+void RemoteConsole::standardInit()
+{
+	setupUi(this);
+	serverConsole = new ServerConsole();
+	console->layout()->addWidget(serverConsole);
+
+	// delete ourself on close
+	setAttribute(Qt::WA_DeleteOnClose);
+
+	if(protocol == NULL)
+		return;
+
+	// If we connected show the window
+	show();
+
+	connect(actionDisconnect, SIGNAL(triggered()), this, SLOT(disconnectFromServer()));
+	connect(serverConsole, SIGNAL(messageSent(const QString &)), protocol, SLOT(sendCommand(const QString &)));
+	connect(protocol, SIGNAL(disconnected()), this, SLOT(close()));
+	connect(protocol, SIGNAL(messageReceived(const QString &)), serverConsole, SLOT(appendMessage(const QString &)));
+	connect(protocol, SIGNAL(invalidPassword()), this, SLOT(invalidPassword()));
+	connect(protocol, SIGNAL(playerListUpdated()), this, SLOT(updatePlayerList()));
+	connect(protocol, SIGNAL(serverNameChanged(const QString &)), this, SLOT(changeServerName(const QString &)));
 }
 
 void RemoteConsole::updatePlayerList()

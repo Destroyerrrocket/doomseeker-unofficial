@@ -26,15 +26,19 @@
 
 #include "ui_passwordDlg.h"
 
+class EnginePlugin;
+
 class PasswordDlg : public QDialog, private Ui::passwordDlg
 {
 	Q_OBJECT
 
 	public:
-		PasswordDlg(QWidget *parent=NULL, bool rcon=false);
+		PasswordDlg(QWidget *parent=NULL, bool rcon=false, bool connection=false);
 		~PasswordDlg();
 
-		QString	connectPassword() const { return password->text(); }
+		QString				connectPassword() const { return password->text(); }
+		const EnginePlugin	*selectedEngine() const;
+		QString				serverAddress() const { return leServerAddress->text(); }
 
 	protected:
 		bool	rcon;

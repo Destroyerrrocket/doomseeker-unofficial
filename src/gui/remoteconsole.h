@@ -33,7 +33,15 @@ class RemoteConsole : public QMainWindow, private Ui::RemoteConsole
 	Q_OBJECT
 
 	public:
+		RemoteConsole(QWidget *parent=NULL);
 		RemoteConsole(Server *server, QWidget *parent=NULL);
+		~RemoteConsole();
+
+		/**
+		 * Returns true if the remote console has been successfully created.
+		 * Should not be false unless the first constructor is used.
+		 */
+		bool	isValid() const { return protocol != NULL; }
 
 	public slots:
 		void	disconnectFromServer();
@@ -41,6 +49,7 @@ class RemoteConsole : public QMainWindow, private Ui::RemoteConsole
 	protected:
 		void	closeEvent(QCloseEvent *event);
 		void	showPasswordDialog();
+		void	standardInit();
 
 	protected slots:
 		void	changeServerName(const QString &name);
@@ -50,6 +59,8 @@ class RemoteConsole : public QMainWindow, private Ui::RemoteConsole
 	private:
 		RConProtocol		*protocol;
 		ServerConsole		*serverConsole;
+
+		Server				*server; /// Used by the first constructor.  Will be deleted.
 };
 
 #endif /* __REMOTECONSOLE_HPP__ */

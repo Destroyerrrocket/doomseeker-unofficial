@@ -91,6 +91,7 @@ class MAIN_EXPORT Main : public QObject
 		QString						rconPluginName; /// If not empty assume we want to launch an rcon client.
 		QString						rconAddress;
 		unsigned short				rconPort;
+		bool						startRcon;
 		bool						updateIP2CAndQuit;
 
 };

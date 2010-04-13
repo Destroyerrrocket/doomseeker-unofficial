@@ -47,7 +47,7 @@ QString				Main::workingDirectory = "./";
 
 Main::Main(int argc, char* argv[])
 : application(NULL), arguments(argv), argumentsCount(argc),
-  updateIP2CAndQuit(false)
+  startRcon(false), updateIP2CAndQuit(false)
 {
 }
 
@@ -108,9 +108,9 @@ int Main::run()
 	initMainConfig();
 	initPluginConfig();
 
-	if (!rconPluginName.isEmpty())
+	if (startRcon)
 	{
-		if(!createRemoteConsole())
+		if (!createRemoteConsole())
 			return 0;
 	}
 	else
@@ -145,28 +145,37 @@ void Main::createMainWindow()
 
 bool Main::createRemoteConsole()
 {
-	// Find plugin
-	int pIndex = enginePlugins->pluginIndexFromName(rconPluginName);
-	if(pIndex == -1)
-	{
-		pLog << tr("Couldn't find specified plugin: ") + rconPluginName;
-		return false;
-	}
-
-	// Check for RCon Availability.
-	const EnginePlugin *plugin = (*enginePlugins)[pIndex]->info->pInterface;
-	Server *server = plugin->server(QHostAddress(rconAddress), rconPort);
-	if(!server->hasRcon())
-	{
-		delete server;
-		pLog << tr("Plugin does not support RCon.");
-		return false;
-	}
-
-	// Start it!
 	pLog << tr("Starting RCon client.");
-	RemoteConsole *rc = new RemoteConsole(server);
-	rc->show();
+	if(rconPluginName.isEmpty())
+	{
+		RemoteConsole *rc = new RemoteConsole();
+		if(rc->isValid())
+			rc->show();
+	}
+	else
+	{
+		// Find plugin
+		int pIndex = enginePlugins->pluginIndexFromName(rconPluginName);
+		if(pIndex == -1)
+		{
+			pLog << tr("Couldn't find specified plugin: ") + rconPluginName;
+			return false;
+		}
+
+		// Check for RCon Availability.
+		const EnginePlugin *plugin = (*enginePlugins)[pIndex]->info->pInterface;
+		Server *server = plugin->server(QHostAddress(rconAddress), rconPort);
+		if(!server->hasRcon())
+		{
+			delete server;
+			pLog << tr("Plugin does not support RCon.");
+			return false;
+		}
+
+		// Start it!
+		RemoteConsole *rc = new RemoteConsole(server);
+		rc->show();
+	}
 	return true;
 }
 
@@ -256,10 +265,15 @@ bool Main::interpretCommandLineParameters()
 			++i;
 			dataDirectories.prepend(arguments[i]);
 		}
-		else if(strcmp(arguments[i], "--rcon") == 0 && i+2 < argumentsCount)
+		else if(strcmp(arguments[i], "--rcon") == 0)
 		{
-			rconPluginName = arguments[i+1];
-			Strings::translateServerAddress(arguments[i+2], rconAddress, rconPort, "localhost", 10666);
+			startRcon = true;
+			if(i+2 < argumentsCount)
+			{
+				rconPluginName = arguments[i+1];
+				Strings::translateServerAddress(arguments[i+2], rconAddress, rconPort, "localhost", 10666);
+				i += 2;
+			}
 		}
 		else if(strcmp(arguments[i], "--updateip2c") == 0)
 		{

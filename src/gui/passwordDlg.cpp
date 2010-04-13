@@ -24,13 +24,12 @@
 #include "passwordDlg.h"
 #include "main.h"
 
-PasswordDlg::PasswordDlg(QWidget *parent, bool rcon) : QDialog(parent), rcon(rcon)
+PasswordDlg::PasswordDlg(QWidget *parent, bool rcon, bool connection) : QDialog(parent), rcon(rcon)
 {
 	setupUi(this);
 
 	if(rcon)
 	{
-		//layout()->removeWidget(remember);
 		remember->hide();
 		label->setText(tr("Please enter your remote console password."));
 	}
@@ -47,6 +46,26 @@ PasswordDlg::PasswordDlg(QWidget *parent, bool rcon) : QDialog(parent), rcon(rco
 		}
 	}
 
+	if(!connection)
+	{
+		connectionBox->hide();
+	}
+	else
+	{
+		// Populate engines box.
+		engines->clear();
+		for(unsigned int i = 0;i < Main::enginePlugins->numPlugins();i++)
+		{
+			const PluginInfo* info = (*Main::enginePlugins)[i]->info;
+			engines->addItem(info->pInterface->icon(), info->name, i);
+		}
+	}
+
+	// Adjust the size and prevent resizing.
+	adjustSize();
+	setMinimumHeight(height());
+	setMaximumHeight(height());
+
 	connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
 	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
@@ -59,4 +78,13 @@ PasswordDlg::~PasswordDlg()
 	Main::config->setting("RememberConnectPassword")->setValue(remember->isChecked());
 	if(remember->isChecked())
 		Main::config->setting("ConnectPassword")->setValue(password->text());
+}
+
+const EnginePlugin *PasswordDlg::selectedEngine() const
+{
+	const Plugin *plugin = (*Main::enginePlugins)[engines->currentIndex()];
+	if(plugin == NULL)
+		return NULL;
+
+	return plugin->info->pInterface;
 }
