@@ -35,7 +35,7 @@ bool Strings::isCharOnCharList(char c, const QString& charList)
 	return false;
 }
 
-void Strings::translateServerAddress(const QString& addressString, QString& hostname, short& port, const QString& defaultHostname, const short defaultPort)
+void Strings::translateServerAddress(const QString& addressString, QString& hostname, unsigned short& port, const QString& defaultHostname, const unsigned short defaultPort)
 {
 	port = 0;
 	QStringList addressAndPort = addressString.split(":");

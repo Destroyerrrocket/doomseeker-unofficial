@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include <QMessageBox>
+#include <QString>
 
 #include "remoteconsole.h"
 #include "passwordDlg.h"
@@ -37,7 +38,7 @@ RemoteConsole::RemoteConsole(Server *server, QWidget *parent) : QMainWindow(pare
 	setAttribute(Qt::WA_DeleteOnClose);
 
 	setWindowIcon(server->icon());
-	setWindowTitle(windowTitle() + " - " + server->name());
+	changeServerName(server->name());
 
 	if(protocol == NULL)
 		return;
@@ -51,8 +52,14 @@ RemoteConsole::RemoteConsole(Server *server, QWidget *parent) : QMainWindow(pare
 	connect(protocol, SIGNAL(messageReceived(const QString &)), serverConsole, SLOT(appendMessage(const QString &)));
 	connect(protocol, SIGNAL(invalidPassword()), this, SLOT(invalidPassword()));
 	connect(protocol, SIGNAL(playerListUpdated()), this, SLOT(updatePlayerList()));
+	connect(protocol, SIGNAL(serverNameChanged(const QString &)), this, SLOT(changeServerName(const QString &)));
 
 	showPasswordDialog();
+}
+
+void RemoteConsole::changeServerName(const QString &name)
+{
+	setWindowTitle(name + tr("- Remote Console"));
 }
 
 void RemoteConsole::closeEvent(QCloseEvent *event)

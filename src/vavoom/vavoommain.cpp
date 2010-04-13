@@ -74,7 +74,7 @@ class PLUGIN_EXPORT VavoomEnginePlugin : public EnginePlugin
 		{
 			// Get server address.
 			QString host;
-			short int port = 0;
+			unsigned short port = 0;
 
 			SettingsData* setting = Main::config->setting("VavoomMasterserver");
 			QString str = setting->string();

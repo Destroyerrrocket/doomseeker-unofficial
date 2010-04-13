@@ -64,6 +64,7 @@ class MAIN_EXPORT Main : public QObject
 
 	protected:
 		void						createMainWindow();
+		bool						createRemoteConsole();
 
 		void						initDataDirectories();
 
@@ -87,6 +88,9 @@ class MAIN_EXPORT Main : public QObject
 		char**						arguments;
 		int							argumentsCount;
 		QStringList 				dataDirectories;
+		QString						rconPluginName; /// If not empty assume we want to launch an rcon client.
+		QString						rconAddress;
+		unsigned short				rconPort;
 		bool						updateIP2CAndQuit;
 
 };

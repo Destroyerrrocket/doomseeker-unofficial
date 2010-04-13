@@ -52,6 +52,7 @@ class MAIN_EXPORT RConProtocol : public QThread
 		void			invalidPassword();
 		void			messageReceived(const QString &cmd);
 		void			playerListUpdated();
+		void			serverNameChanged(const QString &name);
 
 	protected:
 		RConProtocol(Server *server);

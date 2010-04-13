@@ -132,7 +132,7 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 		{
 			// Get server address.
 			QString host;
-			short int port = 0;
+			unsigned short port = 0;
 
 			SettingsData* setting = Main::config->setting("SkulltagMasterserver");
 			QString str = setting->string();

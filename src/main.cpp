@@ -30,9 +30,11 @@
 #include <QThreadPool>
 
 #include "gui/mainwindow.h"
+#include "gui/remoteconsole.h"
 #include "log.h"
 #include "main.h"
 #include "serverapi/server.h"
+#include "strings.h"
 #include "wadseeker/wadseeker.h"
 
 Config*				Main::config = new Config();
@@ -106,9 +108,17 @@ int Main::run()
 	initMainConfig();
 	initPluginConfig();
 
-	setupRefreshingThread();
+	if (!rconPluginName.isEmpty())
+	{
+		if(!createRemoteConsole())
+			return 0;
+	}
+	else
+	{
+		setupRefreshingThread();
 
-	createMainWindow();
+		createMainWindow();
+	}
 
 	pLog << tr("Init finished.");
 	pLog.addUnformattedEntry("================================\n");
@@ -131,6 +141,33 @@ void Main::createMainWindow()
 	}
 
 	mainWindow = mainWnd;
+}
+
+bool Main::createRemoteConsole()
+{
+	// Find plugin
+	int pIndex = enginePlugins->pluginIndexFromName(rconPluginName);
+	if(pIndex == -1)
+	{
+		pLog << tr("Couldn't find specified plugin: ") + rconPluginName;
+		return false;
+	}
+
+	// Check for RCon Availability.
+	const EnginePlugin *plugin = (*enginePlugins)[pIndex]->info->pInterface;
+	Server *server = plugin->server(QHostAddress(rconAddress), rconPort);
+	if(!server->hasRcon())
+	{
+		delete server;
+		pLog << tr("Plugin does not support RCon.");
+		return false;
+	}
+
+	// Start it!
+	pLog << tr("Starting RCon client.");
+	RemoteConsole *rc = new RemoteConsole(server);
+	rc->show();
+	return true;
 }
 
 void Main::initDataDirectories()
@@ -219,6 +256,11 @@ bool Main::interpretCommandLineParameters()
 			++i;
 			dataDirectories.prepend(arguments[i]);
 		}
+		else if(strcmp(arguments[i], "--rcon") == 0 && i+2 < argumentsCount)
+		{
+			rconPluginName = arguments[i+1];
+			Strings::translateServerAddress(arguments[i+2], rconAddress, rconPort, "localhost", 10666);
+		}
 		else if(strcmp(arguments[i], "--updateip2c") == 0)
 		{
 			updateIP2CAndQuit = true;
@@ -229,6 +271,7 @@ bool Main::interpretCommandLineParameters()
 			// Print information to the log and terminate.
 			pLog << tr("Available command line parameters:");
 			pLog << tr("	--datadir : Sets an explicit search location for IP2C data along with plugins.");
+			pLog << tr("	--rcon [plugin] [ip] : Launch the rcon client for the specified ip.");
 			pLog << tr("	--updateip2c : Updates the IP2C database.");
 			return false;
 		}

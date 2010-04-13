@@ -43,6 +43,7 @@ class RemoteConsole : public QMainWindow, private Ui::RemoteConsole
 		void	showPasswordDialog();
 
 	protected slots:
+		void	changeServerName(const QString &name);
 		void	invalidPassword();
 		void	updatePlayerList();
 

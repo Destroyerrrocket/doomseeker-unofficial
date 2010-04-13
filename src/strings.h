@@ -40,7 +40,7 @@ class MAIN_EXPORT Strings
 		 *	@param defaultPort - default port to use if translation fails
 		 *		or no port inside addressString is specified.
 		 */
-		static void				translateServerAddress(const QString& addressString, QString& hostname, short& port, const QString& defaultHostname, const short defaultPort);
+		static void				translateServerAddress(const QString& addressString, QString& hostname, unsigned short& port, const QString& defaultHostname, const unsigned short defaultPort);
 
 		static QString&			trim(QString& str, const QString& charList) { return trimr(triml(str, charList), charList); }
 		static QString&			trimr(QString& str, const QString& charList);

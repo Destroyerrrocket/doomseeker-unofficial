@@ -833,7 +833,7 @@ void SkulltagRConProtocol::processPacket(const char *data, int length, bool init
 				start();
 				serverProtocolVersion = data[1];
 				hostName = QString(&data[2]);
-				qDebug() << hostName;
+				emit serverNameChanged(hostName);
 				int numUpdates = data[hostName.length() + 3];
 				int position = 0;
 				processPacket(data + hostName.length() + 4, length - hostName.length() - 4, true, numUpdates, &position);
