@@ -25,6 +25,15 @@
 // \c = '\034'
 #define	ESCAPE_COLOR	'\034'
 
+Player::Player()
+{
+	currentScore = 0;
+	currentPing = 0;
+	spectator = false;
+	bot = false;
+	team = TEAM_NONE;
+}
+
 Player::Player(const QString &name, unsigned short score, unsigned short ping, PlayerTeam team, bool spectator, bool bot)
 : playerName(name), currentScore(score), currentPing(ping),
   spectator(spectator), bot(bot), team(team)
@@ -162,4 +171,16 @@ QString	Player::nameFormatted() const
 	}
 
 	return colorizeString(ret);
+}
+
+bool Player::operator==(const Player& other) const
+{
+	return name().compare(other.name(), Qt::CaseInsensitive) == 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+uint qHash(const Player& player)
+{
+	return qHash(player.name());
 }

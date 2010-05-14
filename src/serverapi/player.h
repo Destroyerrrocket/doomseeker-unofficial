@@ -26,6 +26,7 @@
 #define MAX_TEAMS 4
 
 #include "global.h"
+#include <QHash>
 #include <QString>
 
 /**
@@ -44,6 +45,7 @@ struct MAIN_EXPORT Player
 			TEAM_NONE = 0xFF
 		};
 
+		Player();
 		Player(const QString &name, unsigned short score, unsigned short ping, PlayerTeam team=TEAM_NONE, bool spectator=false, bool bot=false);
 
 		const QString	&name() const { return playerName; }
@@ -52,6 +54,8 @@ struct MAIN_EXPORT Player
 		bool			isSpectating() const { return spectator; }
 		bool			isBot() const { return bot; }
 		PlayerTeam		teamNum() const { return team; }
+
+		bool			operator==(const Player& other) const;
 
 		/**
 		 * Formats string into HTML format.
@@ -81,5 +85,7 @@ struct MAIN_EXPORT Player
 		bool			bot;
 		PlayerTeam		team;
 };
+
+uint qHash(const Player& player);
 
 #endif

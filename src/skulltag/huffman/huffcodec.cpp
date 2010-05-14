@@ -59,7 +59,7 @@ namespace skulltag {
 	HuffmanCodec::HuffmanCodec(
 		unsigned char const * const treeData,
 		int dataLength
-	) : Codec::Codec() {
+	) : Codec() {
 		init();
 		// init code table (256 pointers to Huffman Leaf Nodes.)
 		codeTable = new HuffmanNode*[256];
