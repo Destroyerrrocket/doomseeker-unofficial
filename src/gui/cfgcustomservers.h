@@ -27,7 +27,7 @@
 #include "customservers.h"
 #include "ui_cfgcustomservers.h"
 
-class PluginInfo;
+struct PluginInfo;
 
 class CustomServersConfigBox : public ConfigurationBaseBox, private Ui::CustomServersConfigBox
 {

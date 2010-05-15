@@ -28,7 +28,7 @@
 #include <QObject>
 #include <QString>
 
-class PluginInfo;
+struct PluginInfo;
 
 class MAIN_EXPORT Binaries : public QObject
 {

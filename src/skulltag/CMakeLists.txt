@@ -7,6 +7,10 @@ if(WIN32)
 	add_definitions(-DMODE_PLUGIN)
 endif(WIN32)
 
+if (MSVC)
+	set(CMAKE_SHARED_MODULE_PREFIX "lib")
+endif (MSVC)
+
 find_package(Qt4 REQUIRED)
 include(${QT_USE_FILE})
 qt4_wrap_ui(skulltagUi
@@ -17,6 +21,7 @@ set(SKULLTAG_QT_FILES
 	skulltagmasterclient.h
 	skulltagserver.h
 )
+
 set(SKULLTAG_FILES
 	huffman/bitreader.cpp
 	huffman/bitwriter.cpp
@@ -30,15 +35,39 @@ set(SKULLTAG_FILES
 	skulltagmasterclient.cpp
 	skulltagserver.cpp
 )
+
+set(HEADER_FILES
+	${SKULLTAG_QT_FILES}
+	huffman/bitreader.h
+	huffman/bitwriter.h
+	huffman/codec.h
+	huffman/huffcodec.h
+	huffman/huffman.h
+	skulltagbinaries.h
+	skulltaggameinfo.h
+	skulltaggamerunner.h
+	skulltagmain.h
+)
+
 include_directories(${QT_INCLUDES})
 qt_wrap_cpp(skulltagQt SKULLTAG_FILES ${SKULLTAG_QT_FILES})
 
-add_library(skulltag MODULE ${skulltagUi} ${SKULLTAG_FILES})
-add_dependencies(skulltag doomseeker)
-target_link_libraries(skulltag ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} doomseeker)
+set(NAME skulltag)
+set(LIBS_OUTPUT_DIR ${OUTPUT_DIR}/engines/)
 
-set_target_properties(skulltag PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}/engines/ RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}/engines/)
+add_library(${NAME} MODULE ${skulltagUi} ${SKULLTAG_FILES} ${HEADER_FILES})
+add_dependencies(${NAME} doomseeker)
+target_link_libraries(${NAME} ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} doomseeker)
+
+set_target_properties(${NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${LIBS_OUTPUT_DIR} RUNTIME_OUTPUT_DIRECTORY ${LIBS_OUTPUT_DIR})
 
 if(NOT WIN32)
 	install(FILES ${OUTPUT_DIR}/engines/libskulltag.so DESTINATION share/doomseeker/engines)
+elseif(MSVC_IDE)
+	# This should fix the problem where built files are incorrectly placed into
+	# <build_root>/engines/<build_type>/ . The correct path is
+	# <build_root>/<build_type>/engines/
+	set(DLL_NAME libskulltag.dll)
+	set(Z_BUILD_TYPE \${CMAKE_INSTALL_CONFIG_NAME})
+	install(FILES ${OUTPUT_DIR}/engines/${Z_BUILD_TYPE}/${DLL_NAME} DESTINATION ${OUTPUT_DIR}/${Z_BUILD_TYPE}/engines/)
 endif(NOT WIN32)

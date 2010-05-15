@@ -76,8 +76,9 @@ struct MAIN_EXPORT GameCVar
 	GameCVar() {}
 	GameCVar(QString fname, QString fconsoleCommand):name(fname),consoleCommand(fconsoleCommand) {}
 
-	void			setValue(bool b) { b == true ? setValue("1") : setValue("0"); }
-	void			setValue(int i) { setValue(QString::number(i)); }
+	void			setValue(bool b) { b == true ? val = "1" : val = "0"; }
+	void			setValue(int i) { setValue(QString::number(
+		i)); }
 	void			setValue(const QString& str) { val = str; }
 
 	const QString&	value() const { return val; }

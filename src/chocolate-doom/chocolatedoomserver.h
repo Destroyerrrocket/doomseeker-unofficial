@@ -27,7 +27,7 @@
 #include "serverapi/server.h"
 
 class Binaries;
-class PluginInfo;
+struct PluginInfo;
 
 class ChocolateDoomServer : public Server
 {

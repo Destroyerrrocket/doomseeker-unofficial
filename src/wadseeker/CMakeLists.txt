@@ -4,6 +4,10 @@ if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
+if (MSVC)
+	set(CMAKE_SHARED_LIBRARY_PREFIX "lib")
+endif (MSVC)
+
 add_subdirectory(lzma)
 
 # If we are compiling wadseeker outside of doomseeker prepare its own project.
@@ -48,11 +52,18 @@ set(WADSEEKER_FILES
 	www.cpp
 )
 
+# For the purpose of generation proper project files.
+set(HEADER_FILES
+	${WADSEEKER_QT_FILES}
+	html.h
+	link.h
+)
+
 include_directories(${QT_INCLUDES})
 
 qt_wrap_cpp(wadseekerQt WADSEEKER_FILES ${WADSEEKER_QT_FILES})
 
-add_library(wadseeker SHARED ${WADSEEKER_FILES})
+add_library(wadseeker SHARED ${WADSEEKER_FILES} ${HEADER_FILES})
 
 target_link_libraries(wadseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} lzma)
 

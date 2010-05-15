@@ -150,7 +150,7 @@ class MAIN_EXPORT Config : public QObject
 		 */
 		bool							settingsChanged;
 
-	friend class SettingsData;
+	friend struct SettingsData;
 };
 
 #endif /* __CONFIG_HPP__ */

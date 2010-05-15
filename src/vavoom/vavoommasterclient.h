@@ -26,7 +26,7 @@
 
 #include "masterclient.h"
 
-class PluginInfo;
+struct PluginInfo;
 
 class VavoomMasterClient : public MasterClient
 {

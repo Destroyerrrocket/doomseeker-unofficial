@@ -30,7 +30,7 @@
 
 class Binaries;
 class GameRunner;
-class PluginInfo;
+struct PluginInfo;
 
 class OdamexServer : public Server
 {

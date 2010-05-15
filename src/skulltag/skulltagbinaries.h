@@ -25,7 +25,7 @@
 
 #include "serverapi/binaries.h"
 
-class PluginInfo;
+struct PluginInfo;
 class SkulltagServer;
 
 class SkulltagBinaries : public Binaries

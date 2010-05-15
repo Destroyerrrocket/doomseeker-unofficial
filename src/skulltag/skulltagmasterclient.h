@@ -25,7 +25,7 @@
 #define __SKULLTAGMASTERCLIENT_H__
 
 #include "masterclient.h"
-class PluginInfo;
+struct PluginInfo;
 
 class SkulltagMasterClient : public MasterClient
 {

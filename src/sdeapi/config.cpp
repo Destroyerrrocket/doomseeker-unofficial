@@ -187,7 +187,7 @@ void Config::readConfig()
 				if(!sc.checkToken(TK_IntConst))
 					break;
 				createSetting(index, 0);
-				setting(index)->setValue(negative ? -sc.number : sc.number);
+				setting(index)->setValue(negative ? -(int)(sc.number) : sc.number);
 			}
 			if(!sc.checkToken(';'))
 				break;

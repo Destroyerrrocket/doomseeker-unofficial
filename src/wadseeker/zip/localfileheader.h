@@ -121,10 +121,12 @@ struct ZipLocalFileHeader
 
     ZipLocalFileHeader& operator=(const ZipLocalFileHeader& rhs)
     {
-    	if (this == &rhs)
-			return *this;
+    	if (this != &rhs)
+		{
+			copy(rhs);
+		}
 
-		copy(rhs);
+		return *this;
     }
 
 	/* FROM ZIP FILE FORMAT DESCRIPTION */

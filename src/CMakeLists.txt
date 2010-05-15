@@ -41,7 +41,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/widgets/serverconsole.ui
 )
 
-qt_wrap_cpp(doomseekerWraps QT_FILES
+set(DOOMSEEKER_QT_FILES
 	gui/aboutDlg.h
 	gui/cfgAppearance.h
 	gui/cfgcustomservers.h	
@@ -76,6 +76,8 @@ qt_wrap_cpp(doomseekerWraps QT_FILES
 	masterclient.h
 	refresher.h
 )
+
+qt_wrap_cpp(doomseekerWraps QT_FILES ${DOOMSEEKER_QT_FILES})
 
 qt4_add_resources(doomseekerResources
 	../media/resources.qrc
@@ -134,6 +136,32 @@ set(SOURCE_FILES
 	strings.cpp	
 )
 
+# For the purpose of generation of proper project files.
+set(HEADER_FILES
+	${DOOMSEEKER_QT_FILES}
+	gui/models/serverlistcolumn.h
+	gui/models/serverlistrowhandler.h
+	gui/helpers/playersdiagram.h
+	sdeapi/pluginloader.hpp
+	sdeapi/scanner.hpp
+	serverapi/tooltips/gameinfotip.h
+	serverapi/tooltips/generalinfotip.h
+	serverapi/tooltips/playertable.h
+	serverapi/binaries.h
+	serverapi/gamerunner.h
+	serverapi/player.h
+	serverapi/playerslist.h
+	serverapi/tooltipgenerator.h
+	apprunner.h
+	global.h
+	main.h
+	messageresult.h
+	pathfinder.h
+	strings.h
+	version.h
+)
+
+
 if(WIN32)
 	# compile the Windows resource file.  How we do this depends on the compiler.
 	if(CMAKE_COMPILER_IS_GNUCXX)
@@ -155,6 +183,7 @@ add_executable(doomseeker
 	${doomseekerResources}
 	${QT_FILES}
 	${SOURCE_FILES}
+	${HEADER_FILES}
 )
 
 target_link_libraries(doomseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} wadseeker)

@@ -30,7 +30,7 @@
 
 #include "serverapi/server.h"
 
-class PluginInfo;
+struct PluginInfo;
 
 /**
  * Abstract class base for all MasterClients.  This is expected to fetch a list

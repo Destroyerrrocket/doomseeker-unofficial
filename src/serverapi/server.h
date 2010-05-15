@@ -46,7 +46,7 @@
 class Binaries;
 class GameRunner;
 class PlayersList;
-class PluginInfo;
+struct PluginInfo;
 class TooltipGenerator;
 
 class MAIN_EXPORT Server : public QObject
@@ -54,7 +54,7 @@ class MAIN_EXPORT Server : public QObject
 	Q_OBJECT
 
 	friend class RefreshingThread;
-	friend class ServerBatch;
+	friend struct ServerBatch;
 
 	public:
 		enum Response
