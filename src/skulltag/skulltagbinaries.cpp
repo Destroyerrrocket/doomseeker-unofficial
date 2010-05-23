@@ -192,14 +192,19 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 		content += driveLetter + ":\r\n";
 	}
 
-	content += "cd " + binaries->clientWorkingDirectory(error).replace('/', '\\') + "\r\n";
-	content += binaryPath.replace('/', '\\') + " %*"; // %* deals with all the parameters
+	QString cdDir = binaries->clientWorkingDirectory(error).replace('/', '\\');
+	QString exePath = binaryPath.replace('/', '\\');
+
+	content += "cd \"" + cdDir + "\"\r\n";
+	content += "\"" + exePath + "\" %*"; // %* deals with all the parameters
 	#else
+	QString cdDir = binaries->clientWorkingDirectory(error);
+
 	// Create Unix script file
 	content  = "#!/bin/bash\n";
-	content += "cd " + binaries->clientWorkingDirectory(error) + "\n";
+	content += "cd \"" + cdDir + "\" \n";
 	content += "export LANG=C\n"; // without this Skulltag won't run on my system (Zalewa)
-	content += binaryPath + " $*"; // $* deals with all the parameters
+	content += "\"" + binaryPath + "\" $*"; // $* deals with all the parameters
 	#endif
 	delete binaries;
 

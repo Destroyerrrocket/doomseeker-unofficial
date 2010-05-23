@@ -311,6 +311,88 @@ void Main::setupRefreshingThread()
 
 //==============================================================================
 
+//#ifdef _MSC_VER
+//#include <windows.h>
+//void getCommandLineArgs(QStringList& outList)
+//{
+//	QString commandLine = GetCommandLineA();
+//	bool bIsInsideQuotationMarks = false;
+//	int indexCopyFrom = 0;
+//
+//	for (int i = 0; i < commandLine.length(); ++i)
+//	{
+//		if (!bIsInsideQuotationMarks)
+//		{
+//			if (commandLine[i] == ' ' || commandLine[i] == '\t')
+//			{
+//				QString parameter = commandLine.mid(indexCopyFrom, i - indexCopyFrom).trimmed();
+//				if (!parameter.isEmpty())
+//				{
+//					outList << parameter;
+//				}
+//				indexCopyFrom = i + 1;
+//			}
+//		}
+//
+//		if (commandLine[i] == '\"')
+//		{
+//			bIsInsideQuotationMarks = !bIsInsideQuotationMarks;
+//		}
+//	}
+//
+//	if (indexCopyFrom < commandLine.length())
+//	{
+//		// Get the last parameter.
+//		// This one shouldn't be covered by the loop above.
+//		QString lastParameter = commandLine.mid(indexCopyFrom).trimmed();
+//
+//		// Better be safe than sorry though.
+//		if (!lastParameter.isEmpty())
+//		{
+//			outList << lastParameter;
+//		}
+//	}
+//}
+//
+//int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLine, int nCmdShow)
+//{
+//	int argc = 0;
+//	char** argv = NULL;
+//
+//	// Good job Microsoft. Now I have to work around your decision of removing
+//	// useful argc/argv parameters.
+//	QStringList commandLine;
+//	getCommandLineArgs(commandLine);
+//
+//	// At least one is ensured to be here.
+//	argc = commandLine.size();
+//	argv = new char*[argc];
+//
+//	for (int i = 0; i < commandLine.size(); ++i)
+//	{
+//		const QString& parameter = commandLine[i];
+//		argv[i] = new char[parameter.size() + 1];
+//		strcpy(argv[i], parameter.toAscii().constData());
+//	}
+//	
+//	Main* pMain = new Main(argc, argv);
+//	int returnValue = pMain->run();
+//
+//	// Cleans up after the program.
+//	delete pMain;
+//
+//	// On the other hand we could just ignore the fact that this array is left
+//	// hanging in the memory because Windows will clean it up for us...
+//	for (int i = 0; i < argc; ++i)
+//	{
+//		delete [] argv[i];
+//	}
+//	delete [] argv;
+//	
+//
+//	return returnValue;
+//}
+//#else
 int main(int argc, char* argv[])
 {
 	Main* pMain = new Main(argc, argv);
@@ -321,3 +403,5 @@ int main(int argc, char* argv[])
 
 	return returnValue;
 }
+//#endif
+
