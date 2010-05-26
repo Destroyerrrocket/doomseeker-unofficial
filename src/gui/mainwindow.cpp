@@ -193,7 +193,7 @@ void MainWindow::btnGetServers_Click()
 {
 	bTotalRefreshInProcess = true;
 	autoRefreshTimer.stop();
-	pLog << tr("Total refresh process initialized!");
+	gLog << tr("Total refresh process initialized!");
 	serverTableHandler->clearTable();
 	refreshCustomServers();
 	Main::refreshingThread->registerMaster(masterManager);
@@ -361,10 +361,10 @@ void MainWindow::initLogDock()
 	logDock->hide();
 	this->addDockWidget(Qt::BottomDockWidgetArea, logDock);
 
-	connect(&pLog, SIGNAL( newEntry(const QString&) ), logDock, SLOT( appendLogEntry(const QString&) ) );
+	connect(&gLog, SIGNAL( newEntry(const QString&) ), logDock, SLOT( appendLogEntry(const QString&) ) );
 
 	// Also add anything that already might be in the log to the box.
-	logDock->appendLogEntry(pLog.content());
+	logDock->appendLogEntry(gLog.content());
 }
 
 void MainWindow::initTrayIcon()
@@ -405,7 +405,7 @@ void MainWindow::initTrayIcon()
 
 void MainWindow::masterManagerMessages(const QString& title, const QString& content, bool isError)
 {
-	pLog << tr("Message from master manager. TITLE: %1 | CONTENT: %2 | IS ERROR: %3").arg(title).arg(content).arg(isError ? tr("yes") : tr("no"));
+	gLog << tr("Message from master manager. TITLE: %1 | CONTENT: %2 | IS ERROR: %3").arg(title).arg(content).arg(isError ? tr("yes") : tr("no"));
 	if (isError)
 	{
 		QMessageBox::critical(this, title, content, QMessageBox::Ok, QMessageBox::Ok);
@@ -524,7 +524,7 @@ bool MainWindow::obtainJoinCommandLine(const Server* server, CommandLineInfo& cl
 				}
 
 				QMessageBox::critical(this, errorCaption, *error);
-				pLog << tr("Error when obtaining join parameters for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(*error);
+				gLog << tr("Error when obtaining join parameters for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(*error);
 				return false;
 
 			case JoinError::MissingWads:
@@ -628,7 +628,7 @@ void MainWindow::runGame(const Server* server)
 		MessageResult result = gameRunner->runExecutable(cli, false);
 		if (result.isError)
 		{
-			pLog << tr("Error while launching executable for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(error);
+			gLog << tr("Error while launching executable for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(error);
 			QMessageBox::critical(this, tr("Doomseeker - launch executable"), error);
 		}
 
@@ -682,6 +682,6 @@ void MainWindow::updateTrayIconTooltipAndLogTotalRefresh()
 
 	if (bTotalRefreshInProcess)
 	{
-		pLog << tr("Finished refreshing. Servers on the list: %1 (+ %2 custom). Players: %3.").arg(numServers).arg(numCustoms).arg(numPlayers);
+		gLog << tr("Finished refreshing. Servers on the list: %1 (+ %2 custom). Players: %3.").arg(numServers).arg(numCustoms).arg(numPlayers);
 	}
 }

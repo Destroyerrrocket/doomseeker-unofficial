@@ -365,7 +365,7 @@ int ServerListRowHandler::updateServer(int response)
 			break;
 
 		default:
-			pLog << tr("Unkown server response (%1): %2:%3").arg(response).arg(server->address().toString()).arg(server->port());
+			gLog << tr("Unkown server response (%1): %2:%3").arg(response).arg(server->address().toString()).arg(server->port());
 			break;
 	}
 

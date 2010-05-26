@@ -42,7 +42,7 @@ void LogDock::appendLogEntry(const QString& entry)
 
 void LogDock::clearContent()
 {
-	pLog.clearContent();
+	gLog.clearContent();
 	teContent->document()->clear();
 }
 

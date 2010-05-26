@@ -92,7 +92,7 @@ int Main::run()
 		return 0;
 	}
 
-	pLog << "Starting Doomseeker. Hello World! :)";
+	gLog << "Starting Doomseeker. Hello World! :)";
 
 	initDataDirectories();
 
@@ -120,15 +120,15 @@ int Main::run()
 		createMainWindow();
 	}
 
-	pLog << tr("Init finished.");
-	pLog.addUnformattedEntry("================================\n");
+	gLog << tr("Init finished.");
+	gLog.addUnformattedEntry("================================\n");
 
 	return application->exec();
 }
 
 void Main::createMainWindow()
 {
-	pLog << tr("Preparing GUI.");
+	gLog << tr("Preparing GUI.");
 
 	MainWindow* mainWnd = new MainWindow(argumentsCount, arguments, config);
 	if (config->setting("MainWindowMaximized")->boolean())
@@ -145,7 +145,7 @@ void Main::createMainWindow()
 
 bool Main::createRemoteConsole()
 {
-	pLog << tr("Starting RCon client.");
+	gLog << tr("Starting RCon client.");
 	if(rconPluginName.isEmpty())
 	{
 		RemoteConsole *rc = new RemoteConsole();
@@ -158,7 +158,7 @@ bool Main::createRemoteConsole()
 		int pIndex = enginePlugins->pluginIndexFromName(rconPluginName);
 		if(pIndex == -1)
 		{
-			pLog << tr("Couldn't find specified plugin: ") + rconPluginName;
+			gLog << tr("Couldn't find specified plugin: ") + rconPluginName;
 			return false;
 		}
 
@@ -168,7 +168,7 @@ bool Main::createRemoteConsole()
 		if(!server->hasRcon())
 		{
 			delete server;
-			pLog << tr("Plugin does not support RCon.");
+			gLog << tr("Plugin does not support RCon.");
 			return false;
 		}
 
@@ -199,12 +199,12 @@ int Main::initIP2C()
 	const QString IP2C_FILENAME = "data:IpToCountry.csv";
 	const QUrl IP2C_URL = QUrl("http://software77.net/geo-ip?DL=1");
 
-	pLog << tr("Initializing IP2C database.");
+	gLog << tr("Initializing IP2C database.");
 	ip2c = new IP2C(IP2C_FILENAME, IP2C_URL);
 
 	if(updateIP2CAndQuit)
 	{
-		pLog << tr("Starting the IP2C updater.");
+		gLog << tr("Starting the IP2C updater.");
 		// We'll use a small window to display the update progress.
 		QMainWindow updateProgressBox;
 		updateProgressBox.setWindowTitle(tr("IP2C Updater"));
@@ -227,7 +227,7 @@ int Main::initIP2C()
 
 void Main::initMainConfig()
 {
-	pLog << tr("Initializing configuration file.");
+	gLog << tr("Initializing configuration file.");
 	config->locateConfigFile(argumentsCount, arguments);
 
 	// Initial settings values
@@ -252,7 +252,7 @@ void Main::initMainConfig()
 
 void Main::initPluginConfig()
 {
-	pLog << tr("Initializing configuration for plugins.");
+	gLog << tr("Initializing configuration for plugins.");
 	enginePlugins->initConfig();
 }
 
@@ -281,12 +281,12 @@ bool Main::interpretCommandLineParameters()
 		}
 		else if(strcmp(arguments[i], "--help") == 0)
 		{
-			pLog.setTimestampsEnabled(false);
+			gLog.setTimestampsEnabled(false);
 			// Print information to the log and terminate.
-			pLog << tr("Available command line parameters:");
-			pLog << tr("	--datadir : Sets an explicit search location for IP2C data along with plugins.");
-			pLog << tr("	--rcon [plugin] [ip] : Launch the rcon client for the specified ip.");
-			pLog << tr("	--updateip2c : Updates the IP2C database.");
+			gLog << tr("Available command line parameters:");
+			gLog << tr("	--datadir : Sets an explicit search location for IP2C data along with plugins.");
+			gLog << tr("	--rcon [plugin] [ip] : Launch the rcon client for the specified ip.");
+			gLog << tr("	--updateip2c : Updates the IP2C database.");
 			return false;
 		}
 	}
@@ -295,7 +295,8 @@ bool Main::interpretCommandLineParameters()
 	int lastSlash = qMax<int>(firstArg.lastIndexOf('\\'), firstArg.lastIndexOf('/'));
 	if(lastSlash != -1)
 	{
-		Main::workingDirectory = firstArg.mid(0, lastSlash+1);
+		QString workingDir = firstArg.mid(0, lastSlash+1);
+		Main::workingDirectory = Strings::trim(workingDir, "\"");
 	}
 	dataDirectories << Main::workingDirectory;
 
@@ -304,95 +305,102 @@ bool Main::interpretCommandLineParameters()
 
 void Main::setupRefreshingThread()
 {
-	pLog << tr("Starting refreshing thread.");
+	gLog << tr("Starting refreshing thread.");
 	refreshingThread->setDelayBetweenResends(config->setting("QueryTimeout")->integer());
 	refreshingThread->start();
 }
 
 //==============================================================================
 
-//#ifdef _MSC_VER
-//#include <windows.h>
-//void getCommandLineArgs(QStringList& outList)
-//{
-//	QString commandLine = GetCommandLineA();
-//	bool bIsInsideQuotationMarks = false;
-//	int indexCopyFrom = 0;
-//
-//	for (int i = 0; i < commandLine.length(); ++i)
-//	{
-//		if (!bIsInsideQuotationMarks)
-//		{
-//			if (commandLine[i] == ' ' || commandLine[i] == '\t')
-//			{
-//				QString parameter = commandLine.mid(indexCopyFrom, i - indexCopyFrom).trimmed();
-//				if (!parameter.isEmpty())
-//				{
-//					outList << parameter;
-//				}
-//				indexCopyFrom = i + 1;
-//			}
-//		}
-//
-//		if (commandLine[i] == '\"')
-//		{
-//			bIsInsideQuotationMarks = !bIsInsideQuotationMarks;
-//		}
-//	}
-//
-//	if (indexCopyFrom < commandLine.length())
-//	{
-//		// Get the last parameter.
-//		// This one shouldn't be covered by the loop above.
-//		QString lastParameter = commandLine.mid(indexCopyFrom).trimmed();
-//
-//		// Better be safe than sorry though.
-//		if (!lastParameter.isEmpty())
-//		{
-//			outList << lastParameter;
-//		}
-//	}
-//}
-//
-//int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLine, int nCmdShow)
-//{
-//	int argc = 0;
-//	char** argv = NULL;
-//
-//	// Good job Microsoft. Now I have to work around your decision of removing
-//	// useful argc/argv parameters.
-//	QStringList commandLine;
-//	getCommandLineArgs(commandLine);
-//
-//	// At least one is ensured to be here.
-//	argc = commandLine.size();
-//	argv = new char*[argc];
-//
-//	for (int i = 0; i < commandLine.size(); ++i)
-//	{
-//		const QString& parameter = commandLine[i];
-//		argv[i] = new char[parameter.size() + 1];
-//		strcpy(argv[i], parameter.toAscii().constData());
-//	}
-//	
-//	Main* pMain = new Main(argc, argv);
-//	int returnValue = pMain->run();
-//
-//	// Cleans up after the program.
-//	delete pMain;
-//
-//	// On the other hand we could just ignore the fact that this array is left
-//	// hanging in the memory because Windows will clean it up for us...
-//	for (int i = 0; i < argc; ++i)
-//	{
-//		delete [] argv[i];
-//	}
-//	delete [] argv;
-//	
-//
-//	return returnValue;
-//}
-//#else
+#ifdef _MSC_VER
+	#ifndef _DEBUG
+		#define USE_WINMAIN_AS_ENTRY_POINT
+	#endif
+#endif
+
+#ifdef USE_WINMAIN_AS_ENTRY_POINT
+#include <windows.h>
+void getCommandLineArgs(QStringList& outList)
+{
+	QString commandLine = GetCommandLineA();
+	bool bIsInsideQuotationMarks = false;
+	int indexCopyFrom = 0;
+
+	for (int i = 0; i < commandLine.length(); ++i)
+	{
+		if (!bIsInsideQuotationMarks)
+		{
+			if (commandLine[i] == ' ' || commandLine[i] == '\t')
+			{
+				QString parameter = commandLine.mid(indexCopyFrom, i - indexCopyFrom).trimmed();
+				if (!parameter.isEmpty())
+				{
+					outList << parameter;
+				}
+				indexCopyFrom = i + 1;
+			}
+		}
+
+		if (commandLine[i] == '\"')
+		{
+			bIsInsideQuotationMarks = !bIsInsideQuotationMarks;
+		}
+	}
+
+	if (indexCopyFrom < commandLine.length())
+	{
+		// Get the last parameter.
+		// This one shouldn't be covered by the loop above.
+		QString lastParameter = commandLine.mid(indexCopyFrom).trimmed();
+
+		// Better be safe than sorry though.
+		if (!lastParameter.isEmpty())
+		{
+			outList << lastParameter;
+		}
+	}
+}
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLine, int nCmdShow)
+{
+	int argc = 0;
+	char** argv = NULL;
+
+	// Good job Microsoft. Now I have to work around your decision of removing
+	// useful argc/argv parameters.
+	QStringList commandLine;
+	getCommandLineArgs(commandLine);
+
+	// At least one is ensured to be here.
+	argc = commandLine.size();
+	argv = new char*[argc];
+
+	gLog << "Parameters:";
+	for (int i = 0; i < commandLine.size(); ++i)
+	{
+		const QString& parameter = commandLine[i];
+		argv[i] = new char[parameter.size() + 1];
+		strcpy(argv[i], parameter.toAscii().constData());
+	}
+	
+	Main* pMain = new Main(argc, argv);
+	int returnValue = pMain->run();
+
+	// Cleans up after the program.
+	delete pMain;
+
+	// On the other hand we could just ignore the fact that this array is left
+	// hanging in the memory because Windows will clean it up for us...
+	for (int i = 0; i < argc; ++i)
+	{
+		delete [] argv[i];
+	}
+	delete [] argv;
+	
+
+	return returnValue;
+}
+#else
 int main(int argc, char* argv[])
 {
 	Main* pMain = new Main(argc, argv);
@@ -403,5 +411,5 @@ int main(int argc, char* argv[])
 
 	return returnValue;
 }
-//#endif
+#endif
 

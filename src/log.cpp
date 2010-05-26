@@ -24,7 +24,7 @@
 #include <QDateTime>
 #include <cstdio>
 
-Log Log::pLogInst;
+Log gLog;
 
 Log::Log()
 {

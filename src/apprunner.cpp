@@ -41,7 +41,7 @@ void AppRunner::cleanArguments(QStringList& args)
 
 MessageResult AppRunner::runExecutable(const CommandLineInfo& cmdInfo)
 {
-	pLog << tr("Starting (working dir %1): %2 %3").arg(cmdInfo.applicationDir.canonicalPath()).arg(cmdInfo.executable.canonicalFilePath()).arg(cmdInfo.args.join(" "));
+	gLog << tr("Starting (working dir %1): %2 %3").arg(cmdInfo.applicationDir.canonicalPath()).arg(cmdInfo.executable.canonicalFilePath()).arg(cmdInfo.args.join(" "));
 	QStringList args = cmdInfo.args;
 	cleanArguments(args);
 
@@ -61,7 +61,7 @@ MessageResult AppRunner::runExecutable(const CommandLineInfo& cmdInfo)
 	if(!result)
 	{
 		QString error = tr("File: %1\ncannot be run").arg(cmdInfo.executable.canonicalFilePath());
-		pLog << error;
+		gLog << error;
 		return MessageResult(true, tr("runExecutable"), error);
 	}
 

@@ -165,7 +165,7 @@ bool Server::refresh()
 	if (Main::refreshingThread == NULL)
 	{
 		emitUpdated(RESPONSE_BAD);
-		pLog << tr("CRITIAL ERROR: REFRESHING THREAD IS NULL");
+		gLog << tr("CRITIAL ERROR: REFRESHING THREAD IS NULL");
 		return false;
 	}
 

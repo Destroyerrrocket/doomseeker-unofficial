@@ -229,7 +229,7 @@ void ConfigureDlg::saveSettings()
 
 	bCustomServersChanged = customServersCfgBox->allowSave();
 	mainConfig->saveConfig();
-	pLog << tr("Settings saved!");
+	gLog << tr("Settings saved!");
 
 	if(isVisible())
 	{

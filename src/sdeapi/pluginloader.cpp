@@ -62,11 +62,11 @@ Plugin::Plugin(unsigned int type, QString f) : file(f), library(NULL)
 			return;
 		}
 
-		pLog << QObject::tr("Loaded plugin: \"%1\"!").arg(info->name);
+		gLog << QObject::tr("Loaded plugin: \"%1\"!").arg(info->name);
 	}
 	else
 	{
-		pLog << QObject::tr("Failed to open plugin: %1").arg(file);
+		gLog << QObject::tr("Failed to open plugin: %1").arg(file);
 	}
 }
 
@@ -112,7 +112,7 @@ PluginLoader::PluginLoader(unsigned int type, const QStringList &baseDirectories
 			break;
 	}
 	if(numPlugins() == 0) // No plugins?!
-		pLog << QObject::tr("Failed to locate plugins.");
+		gLog << QObject::tr("Failed to locate plugins.");
 }
 
 PluginLoader::~PluginLoader()

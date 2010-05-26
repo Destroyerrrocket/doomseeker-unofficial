@@ -106,7 +106,7 @@ void Config::locateConfigFile(int argc, char* argv[])
 	QDir home = QDir::home();
 	if(!home.exists())
 	{
-		pLog << tr("Please set your HOME environment variable.");
+		gLog << tr("Please set your HOME environment variable.");
 		return;
 	}
 	configDir = home.absolutePath() + "/.doomseeker/";
@@ -114,13 +114,13 @@ void Config::locateConfigFile(int argc, char* argv[])
 	{
 		if(!home.mkdir(".doomseeker"))
 		{
-			pLog << tr("Could not create settings directory, configuration will not be saved.");
+			gLog << tr("Could not create settings directory, configuration will not be saved.");
 			return;
 		}
 	}
 #endif
 	configFile = configDir.absolutePath() + "/doomseeker.cfg";
-	pLog << tr("Config file is: %1").arg(configFile);
+	gLog << tr("Config file is: %1").arg(configFile);
 
 	readConfig();
 }
@@ -213,7 +213,7 @@ bool Config::saveConfig()
 	if(configFile.isEmpty())
 		return false;
 
-	pLog << tr("Saving configuration file: \"%1\"").arg(configFile);
+	gLog << tr("Saving configuration file: \"%1\"").arg(configFile);
 
 	QFile stream(configFile);
 	if(stream.open(QIODevice::WriteOnly | QIODevice::Truncate))

@@ -147,7 +147,7 @@ void PlayersDiagram::drawTeam(PlayerType playerType, int team, int howMany)
 				break;
 
 			default:
-				pLog << "Error inside PlayersDiagram::drawTeam(): unknown PlayerType";
+				gLog << "Error inside PlayersDiagram::drawTeam(): unknown PlayerType";
 				return;
 		}
 
