@@ -375,7 +375,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLine
 	argc = commandLine.size();
 	argv = new char*[argc];
 
-	gLog << "Parameters:";
 	for (int i = 0; i < commandLine.size(); ++i)
 	{
 		const QString& parameter = commandLine[i];
