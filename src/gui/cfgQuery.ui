@@ -109,6 +109,9 @@
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="QLabel" name="label_5">
+          <property name="toolTip">
+           <string>Minimum value: 30 seconds.</string>
+          </property>
           <property name="text">
            <string>Obtain new server list every:</string>
           </property>
@@ -116,6 +119,9 @@
         </item>
         <item>
          <widget class="QSpinBox" name="numAutoRefreshEverySeconds">
+          <property name="toolTip">
+           <string>Minimum value: 30 seconds.</string>
+          </property>
           <property name="minimum">
            <number>30</number>
           </property>
@@ -126,6 +132,9 @@
         </item>
         <item>
          <widget class="QLabel" name="label_6">
+          <property name="toolTip">
+           <string>Minimum value: 30 seconds.</string>
+          </property>
           <property name="text">
            <string>seconds</string>
           </property>
