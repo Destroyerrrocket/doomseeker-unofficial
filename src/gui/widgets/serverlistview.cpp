@@ -99,17 +99,26 @@ ServerListView::ServerListView(QWidget* parent) : QTableView(parent)
 
 void ServerListView::mouseReleaseEvent(QMouseEvent* event)
 {
-	if (event->button() != Qt::RightButton)
+	QModelIndex index = indexAt(event->pos());
+	switch (event->button())
 	{
-		QTableView::mouseReleaseEvent(event);
-	}
-	else
-	{
-		QModelIndex index = indexAt(event->pos());
-		if (index.isValid())
-		{
-			emit rightMouseClick(index, event->pos());
-		}
+		case Qt::MidButton:
+			if (index.isValid())
+			{
+				emit middleMouseClick(index, event->pos());
+			}
+			break;
+
+		case Qt::RightButton:
+			if (index.isValid())
+			{
+				emit rightMouseClick(index, event->pos());
+			}
+			break;
+
+		default:
+			QTableView::mouseReleaseEvent(event);
+			break;
 	}
 }
 

@@ -236,7 +236,7 @@ void Main::initMainConfig()
 	config->createSetting("UseTrayIcon", false); // tray icon
 	config->createSetting("CloseToTrayIcon", false); // tray icon
 	config->createSetting("QueryAutoRefreshEnabled", false);
-	config->createSetting("QueryAutoRefreshEverySeconds", 30);
+	config->createSetting("QueryAutoRefreshEverySeconds", 180);
 	config->createSetting("QueryAutoRefreshDontIfActive", true);
 	config->createSetting("QueryOnStartup", true);
 	config->createSetting("QueryTries", 7);

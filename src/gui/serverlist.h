@@ -71,7 +71,8 @@ class ServerListHandler : public QObject
 		 */
 		void				setCountryFlagsIfNotPresent();
 
-		void 				tableRightClicked(const QModelIndex&, const QPoint&);
+		void				tableMiddleClicked(const QModelIndex& index, const QPoint& cursorPosition);
+		void 				tableRightClicked(const QModelIndex& index, const QPoint& cursorPosition);
 		void 				updateCountryFlags();
 		void 				updateSearch(const QString& search);
 

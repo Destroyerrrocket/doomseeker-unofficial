@@ -124,6 +124,7 @@ void ServerListHandler::connectTableModelProxySlots()
 	connect(sortingProxy, SIGNAL( rowsInserted(const QModelIndex&, int, int) ), this, SLOT( resizeChangedRows(const QModelIndex&, int, int) ));
 	connect(model, SIGNAL( modelCleared() ), this, SLOT( modelCleared() ) );
 	connect(table, SIGNAL( clicked(const QModelIndex&) ), this, SLOT( itemSelected(const QModelIndex&) ));
+	connect(table, SIGNAL( middleMouseClick(const QModelIndex&, const QPoint&) ), this, SLOT( tableMiddleClicked(const QModelIndex&, const QPoint&) ) );
 	connect(table, SIGNAL( rightMouseClick(const QModelIndex&, const QPoint&) ), this, SLOT ( itemSelected(const QModelIndex&)) );
 	connect(table, SIGNAL( rightMouseClick(const QModelIndex&, const QPoint&) ), this, SLOT ( tableRightClicked(const QModelIndex&, const QPoint&)) );
 	connect(table, SIGNAL( entered(const QModelIndex&) ), this, SLOT ( mouseEntered(const QModelIndex&)) );
@@ -467,14 +468,18 @@ Qt::SortOrder ServerListHandler::swapCurrentSortOrder()
 	}
 }
 
+void ServerListHandler::tableMiddleClicked(const QModelIndex& index, const QPoint& cursorPosition)
+{
+	refreshSelected();
+}
 
-void ServerListHandler::tableRightClicked(const QModelIndex& index, const QPoint& point)
+void ServerListHandler::tableRightClicked(const QModelIndex& index, const QPoint& cursorPosition)
 {
 	Server* server = serverFromIndex(index);
 
 	ServerListContextMenu contextMenu(server);
 
-	QPoint displayPoint = table->viewport()->mapToGlobal(point);
+	QPoint displayPoint = table->viewport()->mapToGlobal(cursorPosition);
 	ServerListContextMenu::Result contextMenuResult = contextMenu.exec(displayPoint);
 
 	switch (contextMenuResult)
