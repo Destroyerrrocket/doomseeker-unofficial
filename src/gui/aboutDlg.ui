@@ -84,7 +84,7 @@
        <item>
         <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>&lt;a href=&quot;http://skulltag.com/doomseeker&quot;&gt;http://skulltag.com/doomseeker/&lt;/a&gt;</string>
+          <string>&lt;a href=&quot;http://skulltag.net/doomseeker&quot;&gt;http://skulltag.net/doomseeker/&lt;/a&gt;</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignHCenter|Qt::AlignTop</set>
