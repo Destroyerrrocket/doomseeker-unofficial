@@ -121,7 +121,7 @@ MessageResult GameRunner::createHostCommandLine(const HostInfo& hostInfo, Comman
 		cmdLine.args << argForServerLaunch();
 	}
 
-	hostDMFlags(cmdLine.args, server->gameFlags());
+	hostDMFlags(cmdLine.args, hostInfo.dmFlags);
 	hostProperties(cmdLine.args);
 	cmdLine.args.append(hostInfo.customParameters);
 
