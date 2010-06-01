@@ -35,6 +35,7 @@ set(WADSEEKER_QT_FILES
 	zip/unarchive.h
 	zip/un7zip.h
 	zip/unzip.h
+	speedcalculator.h
 	wadseeker.h
 	www.h
 )
@@ -48,7 +49,9 @@ set(WADSEEKER_FILES
 	zip/unzip.cpp
 	html.cpp
 	link.cpp
+	speedcalculator.cpp
 	wadseeker.cpp
+	wadseekerversioninfo.cpp
 	www.cpp
 )
 
@@ -57,6 +60,8 @@ set(HEADER_FILES
 	${WADSEEKER_QT_FILES}
 	html.h
 	link.h
+	wadseekerexportinfo.h	
+	wadseekerversioninfo.h	
 )
 
 include_directories(${QT_INCLUDES})

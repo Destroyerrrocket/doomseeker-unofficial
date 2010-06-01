@@ -28,19 +28,12 @@
 #include <QStringList>
 #include <QUrl>
 
+#include "wadseekerexportinfo.h"
+
 #define WADSEEKER_CONNECT_TIMEOUT_SECONDS_DEFAULT 30
 #define WADSEEKER_DOWNLOAD_TIMEOUT_SECONDS_DEFAULT 120
 
-#ifdef Q_OS_WIN32
-#ifdef WADSEEKER_API_EXPORT
-#define WADSEEKER_API	__declspec(dllexport)
-#else
-#define WADSEEKER_API	__declspec(dllimport)
-#endif
-#else
-#define WADSEEKER_API
-#endif
-
+class SpeedCalculator;
 class WWWSeeker;
 
 /**
@@ -111,19 +104,14 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *	List of default sites to search for files.
 		 *	@see setPrimarySitesToDefault
 		 */
-		static const QString defaultSites[];
+		static const QString	defaultSites[];
 		/**
 		 *	List of file names that will be ignored as they are part of a
 		 *	commercial product. Empty string at the end of the array
 		 *	is required and indicates the end of the array.
-		 *	@see isIwad
+		 *	@see isForbiddenWad
 		 */
-		static const QString iwadNames[];
-
-		/**
-		 * @return author of the library.
-		 */
-		static const QString	author();
+		static const QString	forbiddenWads[];
 
 		/**
 		 *	@return Default URL of Idgames archive, hardcoded into the library.
@@ -137,19 +125,13 @@ class WADSEEKER_API Wadseeker : public QObject
 		 */
 		static QStringList 		defaultSitesListEncoded();
 
-
 		/**
-		 * @return description of the library.
-		 */
-		static const QString	description();
-
-		/**
-		 *	Attempts to detect if the input is an iwad.
+		 *	Attempts to detect if the input is on a list of forbidden wads.
 		 *	@param wad Name of wad trying to be searched for.
-		 *	@return True if the wad specified is an iwad.
+		 *	@return True if Wadseeker will refuse to download the wad specified.
 		 *	@see iwadNames
 		 */
-		static bool				isIwad(const QString& wad);
+		static bool				isForbiddenWad(const QString& wad);
 
 		/**
 		 *	Sets time after which to abort connecting
@@ -166,16 +148,6 @@ class WADSEEKER_API Wadseeker : public QObject
 		static void				setTimeDownloadTimeout(int seconds);
 
 		/**
-		 * @return version string of the library.
-		 */
-		static const QString	version();
-
-		/**
-		 * @return Development dates.
-		 */
-		static const QString	yearSpan();
-
-		/**
 		 * Initializes a new instance of Wadseeker.
 		 */
 		Wadseeker();
@@ -189,6 +161,24 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *		   	were found.
 		 */
 		bool				areAllFilesFound() const;
+		
+		/**
+		 *	@brief Retrieves speed of current download in bytes per second.
+		 *
+		 *	@return If it is impossible to calculate time due to insufficient 
+		 *	data being present returned value is 0.
+		 */
+		float				downloadSpeed() const;
+		
+		/**
+		 *	@brief Retrieves amount of seconds REMAINING till current download
+		 *	is finished.
+		 *
+		 *	@return If it is impossible to calculate time due to speed being
+		 *	equal to zero or insufficient data being present returned value is
+		 *	negative.
+		 */
+		float				estimatedTimeUntilArrivalOfCurrentFile() const;
 
 		/**
 		 *	@return	list of files that weren't found
@@ -319,12 +309,14 @@ class WADSEEKER_API Wadseeker : public QObject
 		void			wwwAborted();
 
 	private:
-		int				iNextWad;
-		QString			currentWad;
-		QStringList		notFound;
-		QStringList		seekedWads;
-		QString			targetDir;
-		WWWSeeker		*www;
+		int					iNextWad;
+		QString				currentWad;
+		QStringList			notFound;
+		QStringList			seekedWads;
+		SpeedCalculator*	speedCalculator;
+		QString				targetDir;
+		
+		WWWSeeker*			www;
 
 		void	nextWad();
 

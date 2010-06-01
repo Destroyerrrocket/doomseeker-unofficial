@@ -63,20 +63,7 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 		wadseeker.setPrimarySitesToDefault();
 	}
 
-	Main::config->createSetting("WadseekerSearchInIdgames", true);
-	Main::config->createSetting("WadseekerIdgamesPriority", 0); // 0 == After all other sites
-	Main::config->createSetting("WadseekerIdgamesURL", Wadseeker::defaultIdgamesUrl());
-
-	QString idgamesURL = Wadseeker::defaultIdgamesUrl();
-	bool useIdgames = true, idgamesHasHighPriority = false;
-	if (Main::config->settingExists("WadseekerSearchInIdgames"))
-		useIdgames = Main::config->setting("WadseekerSearchInIdgames")->integer();
-	if (Main::config->settingExists("WadseekerIdgamesPriority"))
-		idgamesHasHighPriority = Main::config->setting("WadseekerIdgamesPriority")->integer();
-	if (Main::config->settingExists("WadseekerIdgamesURL"))
-		idgamesURL = Main::config->setting("WadseekerIdgamesURL")->string();
-
-	wadseeker.setUseIdgames(useIdgames, idgamesHasHighPriority, idgamesURL);
+	setupIdgames();
 }
 
 WadSeekerInterface::~WadSeekerInterface()
@@ -124,6 +111,12 @@ void WadSeekerInterface::allDone()
 
 void WadSeekerInterface::downloadProgress(int done, int total)
 {
+	float speed = wadseeker.downloadSpeed();
+	float estimatedTimeUntilArrival = wadseeker.estimatedTimeUntilArrivalOfCurrentFile();
+	
+	lblCurrentSpeed->setText( QString("%1").arg(speed) );
+	lblTimeUntilArrival->setText( QString("%1").arg(estimatedTimeUntilArrival) );
+
 	pbProgress->setMaximum(total);
 	pbProgress->setValue(done);
 }
@@ -195,6 +188,23 @@ void WadSeekerInterface::setStateWaiting()
 
 	state = Waiting;
 	btnDownload->setDefault(true);
+}
+
+void WadSeekerInterface::setupIdgames()
+{
+	QString idgamesURL = Wadseeker::defaultIdgamesUrl();
+	bool useIdgames = true;
+	bool idgamesHasHighPriority = false;
+	
+	Main::config->createSetting("WadseekerSearchInIdgames", true);
+	Main::config->createSetting("WadseekerIdgamesPriority", 0); // 0 == After all other sites
+	Main::config->createSetting("WadseekerIdgamesURL", Wadseeker::defaultIdgamesUrl());
+	
+	useIdgames = Main::config->setting("WadseekerSearchInIdgames")->integer();
+	idgamesHasHighPriority = Main::config->setting("WadseekerIdgamesPriority")->boolean();
+	idgamesURL = Main::config->setting("WadseekerIdgamesURL")->string();
+
+	wadseeker.setUseIdgames(useIdgames, idgamesHasHighPriority, idgamesURL);
 }
 
 void WadSeekerInterface::showEvent(QShowEvent* event)

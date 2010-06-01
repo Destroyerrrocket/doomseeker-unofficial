@@ -76,6 +76,7 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 		void	fail();
 		void	setStateDownloading();
 		void	setStateWaiting();
+		void	setupIdgames();
 		void 	showEvent(QShowEvent* event);
 		void	startSeeking(const QStringList& seekedFilesList);
 

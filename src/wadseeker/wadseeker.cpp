@@ -20,11 +20,12 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-
 #include "protocols/idgames.h"
 #include "zip/unzip.h"
 #include "zip/un7zip.h"
+#include "speedcalculator.h"
 #include "wadseeker.h"
+#include "wadseekerversioninfo.h"
 #include "www.h"
 #include <QDir>
 #include <QFileInfo>
@@ -41,7 +42,7 @@ const QString Wadseeker::defaultSites[] =
 	QString("") // empty url is treated here like an '\0' in a string
 };
 
-const QString Wadseeker::iwadNames[] =
+const QString Wadseeker::forbiddenWads[] =
 {
 	"attack", "blacktwr", "bloodsea", "canyon", "catwalk", "combine", "doom",
 	"doom2", "fistula", "garrison", "geryon", "heretic", "hexen", "hexdd",
@@ -52,9 +53,10 @@ const QString Wadseeker::iwadNames[] =
 ///////////////////////////////////////////////////////////////////////
 Wadseeker::Wadseeker()
 {
+	speedCalculator = new SpeedCalculator();
 	www = new WWWSeeker();
 
-	www->setUserAgent("Wadseeker/" + this->version());
+	www->setUserAgent("Wadseeker/" + WadseekerVersionInfo::version());
 
 	connect(www, SIGNAL( aborted() ), this, SLOT( wwwAborted() ) );
 	connect(www, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
@@ -65,6 +67,7 @@ Wadseeker::Wadseeker()
 
 Wadseeker::~Wadseeker()
 {
+	delete speedCalculator;
 	delete www;
 }
 
@@ -80,11 +83,6 @@ void Wadseeker::abort()
 bool Wadseeker::areAllFilesFound() const
 {
 	return notFound.isEmpty();
-}
-
-const QString Wadseeker::author()
-{
-	return tr("The Skulltag Team");
 }
 
 const QStringList& Wadseeker::filesNotFound() const
@@ -107,14 +105,24 @@ QStringList Wadseeker::defaultSitesListEncoded()
 	return list;
 }
 
-const QString Wadseeker::description()
-{
-	return tr("This library is distributed under the terms of the LGPL v2.1.");
-}
-
 void Wadseeker::downloadProgressSlot(int done, int total)
 {
+	// There's no performance drop or any other argument against setting
+	// expected data size each time this slot is called.
+	// It's stupid but it's a simple solution.
+	speedCalculator->setExpectedDataSize(total);
+	speedCalculator->registerDataAmount(done);	
 	emit downloadProgress(done, total);
+}
+
+float Wadseeker::downloadSpeed() const
+{
+	return speedCalculator->getSpeed();
+}
+
+float Wadseeker::estimatedTimeUntilArrivalOfCurrentFile() const
+{
+	return speedCalculator->estimatedTimeUntilArrival();
 }
 
 void Wadseeker::fileDone(QByteArray& data, const QString& filename)
@@ -185,16 +193,16 @@ void Wadseeker::fileDone(QByteArray& data, const QString& filename)
 	}
 }
 
-bool Wadseeker::isIwad(const QString& wad)
+bool Wadseeker::isForbiddenWad(const QString& wad)
 {
 	QFileInfo fiWad(wad);
 	// Check the basename, ignore extension.
 	// This will block names like "doom2.zip" but also "doom2.pk3" and
 	// "doom2.whatever".
 	QString basename = fiWad.completeBaseName();
-	for (int i = 0; !iwadNames[i].isEmpty(); ++i)
+	for (int i = 0; !forbiddenWads[i].isEmpty(); ++i)
 	{
-		if(basename.compare(iwadNames[i], Qt::CaseInsensitive) == 0)
+		if(basename.compare(forbiddenWads[i], Qt::CaseInsensitive) == 0)
 		{
 			return true;
 		}
@@ -222,7 +230,7 @@ void Wadseeker::nextWad()
 		wad = seekedWads[iNextWad];
 		++iNextWad;
 
-		if (isIwad(wad))
+		if (isForbiddenWad(wad))
 		{
 			emit message(tr("%1 is an IWAD or commercial mod. Ignoring.\n").arg(wad), Error);
 			notFound.append(wad);
@@ -231,10 +239,13 @@ void Wadseeker::nextWad()
 	}
 
 	emit message(tr("Seeking file: %1").arg(wad), Notice);
+	
 	currentWad = wad;
 	QString zipName;
-	QStringList wfi = wantedFilenames(wad, zipName);
-	www->searchFiles(wfi, currentWad, zipName);
+	QStringList wantedFilenamesInfo = wantedFilenames(wad, zipName);
+	
+	speedCalculator->start();
+	www->searchFiles(wantedFilenamesInfo, currentWad, zipName);
 }
 
 void Wadseeker::seekWads(const QStringList& wads)
@@ -329,11 +340,6 @@ QString Wadseeker::targetDirectory() const
 	return targetDir;
 }
 
-const QString Wadseeker::version()
-{
-	return "0.5";
-}
-
 void Wadseeker::wadFail()
 {
 	QString tmp = tr("%1 WAS NOT FOUND\n").arg(seekedWads[iNextWad - 1]);
@@ -372,9 +378,4 @@ QStringList Wadseeker::wantedFilenames(const QString& wad, QString& zip)
 void Wadseeker::wwwAborted()
 {
 	emit aborted();
-}
-
-const QString Wadseeker::yearSpan()
-{
-	return "2009";
 }

@@ -23,7 +23,7 @@
 
 #include "aboutDlg.h"
 #include "main.h"
-#include "wadseeker/wadseeker.h"
+#include "wadseeker/wadseekerversioninfo.h"
 #include "version.h"
 #include <QPixmap>
 
@@ -44,10 +44,10 @@ AboutDlg::AboutDlg(QWidget* parent) : QDialog(parent)
 	logo->setPixmap(QPixmap(":/logo.png"));
 
 	// Wadseeker
-	wadseekerAuthor->setText(Wadseeker::author());
-	wadseekerDescription->setText(Wadseeker::description());
-	wadseekerVersion->setText(Wadseeker::version());
-	wadseekerYearSpan->setText(Wadseeker::yearSpan());
+	wadseekerAuthor->setText(WadseekerVersionInfo::author());
+	wadseekerDescription->setText(WadseekerVersionInfo::description());
+	wadseekerVersion->setText(WadseekerVersionInfo::version());
+	wadseekerYearSpan->setText(WadseekerVersionInfo::yearSpan());
 
 	// Populate plugins dialog
 	for(unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
