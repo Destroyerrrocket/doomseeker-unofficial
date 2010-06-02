@@ -23,9 +23,15 @@
 #include "gui/wadseekerinterface.h"
 #include "mainwindow.h"
 #include "main.h"
+#include "strings.h"
 
-WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
+const int WadSeekerInterface::UPDATE_INTERVAL_MS = 500;
+
+WadSeekerInterface::WadSeekerInterface(QWidget* parent)
+: QDialog(parent)
 {
+	bNeedsUpdate = false;
+
 	((MainWindow*)(Main::mainWindow))->stopAutoRefreshTimer();
 	setupUi(this);
 	setStateWaiting();
@@ -34,6 +40,7 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 	connect(btnDownload, SIGNAL( clicked() ), this, SLOT( accept() ) );
 	connect(btnStop, SIGNAL( clicked() ), &wadseeker, SLOT( abort() ) );
 	connect(btnSkipSite, SIGNAL( clicked() ), &wadseeker, SLOT( skipSite() ) );
+	connect(&updateTimer, SIGNAL( timeout() ), this, SLOT( registerUpdateRequest() ) );
 
 	connect(&wadseeker, SIGNAL( aborted() ), this, SLOT( aborted() ) );
 	connect(&wadseeker, SIGNAL( allDone() ), this, SLOT( allDone() ) );
@@ -64,6 +71,9 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent) : QDialog(parent)
 	}
 
 	setupIdgames();
+
+	updateTimer.setSingleShot(false);
+	updateTimer.start(UPDATE_INTERVAL_MS);
 }
 
 WadSeekerInterface::~WadSeekerInterface()
@@ -111,11 +121,31 @@ void WadSeekerInterface::allDone()
 
 void WadSeekerInterface::downloadProgress(int done, int total)
 {
-	float speed = wadseeker.downloadSpeed();
-	float estimatedTimeUntilArrival = wadseeker.estimatedTimeUntilArrivalOfCurrentFile();
-	
-	lblCurrentSpeed->setText( QString("%1").arg(speed) );
-	lblTimeUntilArrival->setText( QString("%1").arg(estimatedTimeUntilArrival) );
+	if (bNeedsUpdate)
+	{
+		float speed = wadseeker.downloadSpeed();
+		float estimatedTimeUntilArrival = wadseeker.estimatedTimeUntilArrivalOfCurrentFile();
+
+		if (speed >= 0.0f)
+		{
+			lblCurrentSpeed->setText( Strings::formatDataSpeed(speed) );
+		}
+		else
+		{
+			lblCurrentSpeed->setText( "N/A" );
+		}
+
+		if (estimatedTimeUntilArrival >= 0.0f)
+		{
+			lblTimeUntilArrival->setText( Strings::formatTime(estimatedTimeUntilArrival) );
+		}
+		else
+		{
+			lblTimeUntilArrival->setText( "N/A" );
+		}
+
+		bNeedsUpdate = false;
+	}
 
 	pbProgress->setMaximum(total);
 	pbProgress->setValue(done);
@@ -152,6 +182,11 @@ void WadSeekerInterface::message(const QString& msg, Wadseeker::MessageType type
 	}
 
 	teWadseekerOutput->append(str);
+}
+
+void WadSeekerInterface::registerUpdateRequest()
+{
+	bNeedsUpdate = true;
 }
 
 void WadSeekerInterface::reject()
@@ -195,11 +230,11 @@ void WadSeekerInterface::setupIdgames()
 	QString idgamesURL = Wadseeker::defaultIdgamesUrl();
 	bool useIdgames = true;
 	bool idgamesHasHighPriority = false;
-	
+
 	Main::config->createSetting("WadseekerSearchInIdgames", true);
 	Main::config->createSetting("WadseekerIdgamesPriority", 0); // 0 == After all other sites
 	Main::config->createSetting("WadseekerIdgamesURL", Wadseeker::defaultIdgamesUrl());
-	
+
 	useIdgames = Main::config->setting("WadseekerSearchInIdgames")->integer();
 	idgamesHasHighPriority = Main::config->setting("WadseekerIdgamesPriority")->boolean();
 	idgamesURL = Main::config->setting("WadseekerIdgamesURL")->string();

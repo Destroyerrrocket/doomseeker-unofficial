@@ -26,6 +26,7 @@
 #include "ui_wadseekerinterface.h"
 #include "wadseeker/wadseeker.h"
 #include <QStringList>
+#include <QTimer>
 
 /**
  * This dialog box returns 'Accepted' result ONLY when
@@ -63,14 +64,18 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 			Waiting			= 1
 		};
 
+		static const int	UPDATE_INTERVAL_MS;
+
 		bool			bAutomatic;
 		bool			bFirstShown;
+		bool			bNeedsUpdate;
 
 		/**
 		 * Interface uses this instead of line edit if bAutomatic is true.
 		 */
 		QStringList 	seekedWads;
 		States			state;
+		QTimer			updateTimer;
 		Wadseeker		wadseeker;
 
 		void	fail();
@@ -87,6 +92,7 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 		void 	downloadProgress(int done, int total);
 		void	reject();
 		void	message(const QString& msg, Wadseeker::MessageType type);
+		void	registerUpdateRequest();
 };
 
 #endif

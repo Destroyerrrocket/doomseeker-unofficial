@@ -29,6 +29,30 @@
 class MAIN_EXPORT Strings
 {
 	public:
+		/**
+		 *	@brief Formats a numerical speed value into a string.
+		 *
+		 *	This expects the parameter to represent speed in bytes per second.
+		 *	Data will be formatted into human readable format, ie. if speed
+		 *	is high enough it will be translated into kilobytes per second
+		 *	or megabytes per second. Also a string representing the type of
+		 *	value is appended: MB/s, kB/s or B/s.
+		 */
+		static QString			formatDataSpeed(float speedInBytesPerSecond);
+
+		/**
+		 *	@brief Formats a numerical time value into a string.
+		 *
+		 *	Parameter is expected to be an amount of seconds. Output is
+		 *	transformed into a number of hours, minutes and seconds.
+		 *	The function will always try to generate the shortest possible
+		 *	string, ie. there will be no hour information if seconds parameter
+		 *	is smaller than 3600. The same goes for minutes.
+		 *	Factorial part in the parameter represents miliseconds and is always
+		 *	rounded up to a full second.
+		 */
+		static QString			formatTime(float seconds);
+
 		static bool				isCharOnCharList(char c, const QString& charList);
 
 		/**
