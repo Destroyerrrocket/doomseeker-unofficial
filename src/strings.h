@@ -30,6 +30,14 @@ class MAIN_EXPORT Strings
 {
 	public:
 		/**
+		 *	@brief Similar to formatDataSpeed().
+		 *
+		 *	The only difference is the unit type appended to the end of the
+		 *	returned string.
+		 */
+		static QString			formatDataAmount(int bytes);
+	
+		/**
 		 *	@brief Formats a numerical speed value into a string.
 		 *
 		 *	This expects the parameter to represent speed in bytes per second.
@@ -69,6 +77,17 @@ class MAIN_EXPORT Strings
 		static QString&			trim(QString& str, const QString& charList) { return trimr(triml(str, charList), charList); }
 		static QString&			trimr(QString& str, const QString& charList);
 		static QString&			triml(QString& str, const QString& charList);
+		
+	protected:
+		enum DataUnit
+		{
+			Byte		= 0,
+			Kilobyte	= 1,
+			Megabyte	= 2,
+			Gigabyte	= 3
+		};
+	
+		static float			scaleDataUnit(float bytes, DataUnit& outUnit);
 };
 
 #endif

@@ -103,6 +103,7 @@ void WadSeekerInterface::accept()
 void WadSeekerInterface::allDone()
 {
 	teWadseekerOutput->append(tr("All done."));
+	
 	setStateWaiting();
 	if (wadseeker.areAllFilesFound())
 	{
@@ -117,6 +118,8 @@ void WadSeekerInterface::allDone()
 		fail();
 		teWadseekerOutput->append(tr("FAIL!"));
 	}
+	
+	
 }
 
 void WadSeekerInterface::downloadProgress(int done, int total)
@@ -142,6 +145,17 @@ void WadSeekerInterface::downloadProgress(int done, int total)
 		else
 		{
 			lblTimeUntilArrival->setText( "N/A" );
+		}
+		
+		if (total > 0)
+		{
+			QString strDone = Strings::formatDataAmount(done);
+			QString strTotal = Strings::formatDataAmount(total);
+			lblDataAmount->setText( strDone + " / " + strTotal );
+		}
+		else
+		{
+			lblDataAmount->setText( "N/A" );
 		}
 
 		bNeedsUpdate = false;
@@ -223,6 +237,8 @@ void WadSeekerInterface::setStateWaiting()
 
 	state = Waiting;
 	btnDownload->setDefault(true);
+	
+	lblTimeUntilArrival->setText("N/A");
 }
 
 void WadSeekerInterface::setupIdgames()

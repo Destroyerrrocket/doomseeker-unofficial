@@ -25,38 +25,62 @@
 
 #include <QStringList>
 
-QString Strings::formatDataSpeed(float speedInBytesPerSecond)
+QString Strings::formatDataAmount(int bytes)
 {
-	const static int BYTES = 0;
-	const static int KILOBYTES = 1;
-	const static int MEGABYTES = 2;
-	const static int GIGABYTES = 3; // Is this even possible?
-	const static float UPPER_BOUNDARY = 900.0f;
+	DataUnit dataUnit;
 
-	int type = BYTES;
-
-	while (speedInBytesPerSecond > UPPER_BOUNDARY && type != GIGABYTES)
+	float fBytes = (float)bytes;
+	fBytes = scaleDataUnit(fBytes, dataUnit);
+	
+	QString formattedString = QString("%1 ").arg(fBytes, 0, 'f', 2);
+	switch(dataUnit)
 	{
-		speedInBytesPerSecond /= 1024.0f;
-		++type;
+		case Byte:
+			formattedString += "B";
+			break;
+
+		case Kilobyte:
+			formattedString += "kB";
+			break;
+
+		case Megabyte:
+			formattedString += "MB";
+			break;
+
+		case Gigabyte:
+			formattedString += "GB";
+			break;
+
+		default:
+			// Shouldn't really happen.
+			return "#ERR: Formatting data amount error.";
 	}
 
+	return formattedString;
+}
+
+QString Strings::formatDataSpeed(float speedInBytesPerSecond)
+{
+	DataUnit dataUnit;
+
+	speedInBytesPerSecond = scaleDataUnit(speedInBytesPerSecond, dataUnit);
+
 	QString formattedString = QString("%1 ").arg(speedInBytesPerSecond, 0, 'f', 2);
-	switch(type)
+	switch(dataUnit)
 	{
-		case BYTES:
+		case Byte:
 			formattedString += "B/s";
 			break;
 
-		case KILOBYTES:
+		case Kilobyte:
 			formattedString += "kB/s";
 			break;
 
-		case MEGABYTES:
+		case Megabyte:
 			formattedString += "MB/s";
 			break;
 
-		case GIGABYTES:
+		case Gigabyte:
 			formattedString += "GB/s";
 			break;
 
@@ -125,6 +149,20 @@ bool Strings::isCharOnCharList(char c, const QString& charList)
 	}
 
 	return false;
+}
+
+float Strings::scaleDataUnit(float bytes, DataUnit& outUnit)
+{
+	const static float UPPER_BOUNDARY = 900.0f;	
+	outUnit = Byte;
+
+	while (bytes > UPPER_BOUNDARY && outUnit != Gigabyte)
+	{
+		bytes /= 1024.0f;
+		outUnit = (DataUnit)((int)outUnit + 1);
+	}	
+	
+	return bytes;
 }
 
 void Strings::translateServerAddress(const QString& addressString, QString& hostname, unsigned short& port, const QString& defaultHostname, const unsigned short defaultPort)

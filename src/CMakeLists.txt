@@ -1,5 +1,22 @@
 cmake_minimum_required(VERSION 2.4)
 
+# Regarding Microsoft Visual Studio:
+# Creating proper builds with MSVC required setting subsystem to windows,
+# otherwise an unwanted console window was created. However when subsystem is
+# set to windows MSVC uses WinMain() as the entry point, while MinGW simply 
+# keeps using the main() function. Also note that since console window is useful
+# for debugging, Debug builds still have subsystem set to console.
+#
+# To solve all the issues WinMain() has been implemented and is now used 
+# depending on certain defines: if _MSC_VER is defined it means that user is
+# attempting to create a build with MSVC. Also if _DEBUG is NOT defined it means
+# that user chose one of the Release builds. When both of these conditions are 
+# met then, and only then, WinMain() is used instead of main() as the
+# entry point.
+#
+# Conclusion: If current MSVC subsystem setup is changed the code may not 
+# compile, as the proper entry point will be missing.
+
 if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
 	cmake_policy(SET CMP0005 NEW)
