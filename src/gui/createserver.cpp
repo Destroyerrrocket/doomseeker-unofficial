@@ -34,6 +34,8 @@
 #include <QMessageBox>
 #include <QObject>
 
+const QString CreateServerDlg::TEMP_SERVER_CONFIG_FILENAME = "/tmpserver.cfg";
+
 CreateServerDlg::CreateServerDlg(QWidget* parent) : QDialog(parent)
 {
 	currentEngine = NULL;
@@ -44,6 +46,7 @@ CreateServerDlg::CreateServerDlg(QWidget* parent) : QDialog(parent)
 	connect(btnBrowseExecutable, SIGNAL( clicked() ), this, SLOT ( btnBrowseExecutableClicked() ) );
 	connect(btnCancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
 	connect(btnCommandLine, SIGNAL( clicked() ), this, SLOT( btnCommandLineClicked() ) );
+	connect(btnClearPwadList, SIGNAL( clicked() ), this, SLOT( btnClearPwadListClicked() ) );
 	connect(btnDefaultExecutable, SIGNAL( clicked() ), this, SLOT( btnDefaultExecutableClicked() ) );
 	connect(btnIwadBrowse, SIGNAL( clicked() ), this, SLOT ( btnIwadBrowseClicked() ) );
 	connect(btnLoad, SIGNAL( clicked() ), this, SLOT ( btnLoadClicked() ) );
@@ -63,11 +66,13 @@ CreateServerDlg::CreateServerDlg(QWidget* parent) : QDialog(parent)
 	lstMaplist->setModel(new QStandardItemModel(this));
 
 	initPrimary();
+	
+	QString tmpServerCfgPath = PathFinder::userDataDirectory() + TEMP_SERVER_CONFIG_FILENAME;
 
-	QFileInfo fi("tmpserver.cfg");
+	QFileInfo fi(tmpServerCfgPath);
 	if (fi.exists())
 	{
-		loadConfig("tmpserver.cfg");
+		loadConfig(tmpServerCfgPath);
 	}
 }
 
@@ -181,6 +186,12 @@ void CreateServerDlg::btnBrowseExecutableClicked()
 
 		leExecutable->setText(fi.absoluteFilePath());
 	}
+}
+
+void CreateServerDlg::btnClearPwadListClicked()
+{
+	QStandardItemModel* pModel = (QStandardItemModel*)lstAdditionalFiles->model();
+	pModel->clear();
 }
 
 void CreateServerDlg::btnCommandLineClicked()
@@ -562,25 +573,44 @@ void CreateServerDlg::initGamemodeSpecific(const GameMode& gameMode)
 
 void CreateServerDlg::initInfoAndPassword()
 {
+	const static int MISC_TAB_INDEX = 2;
+	
 	const EnginePlugin* engine = currentEngine->pInterface;
+	
+	bool bAtLeastOneVisible = false;
+	bool bIsVisible = false;
+	
+	bIsVisible = engine->allowsConnectPassword();
+	labelConnectPassword->setVisible(bIsVisible);
+	leConnectPassword->setVisible(bIsVisible);
+	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
 
-	labelConnectPassword->setVisible(engine->allowsConnectPassword());
-	leConnectPassword->setVisible(engine->allowsConnectPassword());
+	bIsVisible = engine->allowsEmail();
+	labelEmail->setVisible(bIsVisible);
+	leEmail->setVisible(bIsVisible);
+	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
 
-	labelEmail->setVisible(engine->allowsEmail());
-	leEmail->setVisible(engine->allowsEmail());
+	bIsVisible = engine->allowsJoinPassword();
+	labelJoinPassword->setVisible(bIsVisible);
+	leJoinPassword->setVisible(bIsVisible);
+	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
 
-	labelJoinPassword->setVisible(engine->allowsJoinPassword());
-	leJoinPassword->setVisible(engine->allowsJoinPassword());
+	bIsVisible = engine->allowsMOTD();
+	labelMOTD->setVisible(bIsVisible);
+	pteMOTD->setVisible(bIsVisible);
+	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
 
-	labelMOTD->setVisible(engine->allowsMOTD());
-	pteMOTD->setVisible(engine->allowsMOTD());
+	bIsVisible = engine->allowsRConPassword();
+	labelRConPassword->setVisible(bIsVisible);
+	leRConPassword->setVisible(bIsVisible);
+	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
 
-	labelRConPassword->setVisible(engine->allowsRConPassword());
-	leRConPassword->setVisible(engine->allowsRConPassword());
-
-	labelURL->setVisible(engine->allowsURL());
-	leURL->setVisible(engine->allowsURL());
+	bIsVisible = engine->allowsURL();
+	labelURL->setVisible(bIsVisible);
+	leURL->setVisible(bIsVisible);
+	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
+	
+	tabWidget->setTabEnabled(MISC_TAB_INDEX, bAtLeastOneVisible);
 }
 
 void CreateServerDlg::initPrimary()
@@ -799,7 +829,8 @@ void CreateServerDlg::runGame(bool offline)
 		}
 		else
 		{
-			saveConfig("tmpserver.cfg");
+			QString tmpServerConfigPath = PathFinder::userDataDirectory() + TEMP_SERVER_CONFIG_FILENAME;
+			saveConfig(tmpServerConfigPath);
 		}
 	}
 	else if (server != NULL)

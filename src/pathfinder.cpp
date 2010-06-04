@@ -22,6 +22,8 @@
 //------------------------------------------------------------------------------
 
 #include "pathfinder.h"
+#include "main.h"
+#include "log.h"
 #include <QDir>
 #include <QFileInfo>
 
@@ -87,4 +89,30 @@ PathFinderResult PathFinder::findFiles(const QStringList& files)
 	}
 
 	return result;
+}
+
+QString PathFinder::userDataDirectory()
+{
+	#ifdef Q_OS_WIN32
+		return Main::workingDirectory;
+	#else
+		QDir home = QDir::home();
+		if(!home.exists())
+		{
+			gLog << QObject::tr("Please set your HOME environment variable.");
+			return QString();
+		}
+		
+		QString configDir = home.absolutePath() + "/.doomseeker/";
+		if(!home.exists(".doomseeker"))
+		{
+			if(!home.mkdir(".doomseeker"))
+			{
+				gLog << QObject::tr("Could not create user data directory.");
+				return QString();
+			}
+		}
+		
+		return configDir;
+	#endif
 }

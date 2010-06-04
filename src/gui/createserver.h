@@ -45,6 +45,7 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		void	btnAddPwadClicked();
 		void	btnBrowseExecutableClicked();
 		void	btnCommandLineClicked();
+		void	btnClearPwadListClicked();
 		void	btnDefaultExecutableClicked();
 		void	btnIwadBrowseClicked();
 		void	btnLoadClicked();
@@ -75,6 +76,8 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 			QSpinBox*	spinBox;
 			GameCVar	limit;
 		};
+		
+		static const QString			TEMP_SERVER_CONFIG_FILENAME;
 
 		const PluginInfo* 				currentEngine;
 		QList<DMFlagsTabWidget*>		dmFlagsTabs;

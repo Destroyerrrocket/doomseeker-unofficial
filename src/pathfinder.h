@@ -37,6 +37,22 @@ struct MAIN_EXPORT PathFinderResult
 class MAIN_EXPORT PathFinder
 {
 	public:
+		/**
+		 *	@b Retrieves path to the directory where user data is stored.
+		 *
+		 *	On Windows this is the same as the current workingDirectory.
+		 *
+		 *	On Unix this is ~/.doomseeker/.
+		 *	If such directory doesn't exist yet it is created when this method
+		 *	is called.
+		 *
+		 *	On MacOS this will behave the same as on Unix.
+		 *
+		 *	@return An absolute path to the directory on success or an empty 
+		 *	string on error.
+		 */
+		static QString		userDataDirectory();
+	
 		PathFinder(Config*);
 
 		QString 			findFile(const QString& fileName);

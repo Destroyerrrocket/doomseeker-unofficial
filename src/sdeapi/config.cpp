@@ -33,6 +33,7 @@
 #include "sdeapi/scanner.hpp"
 #include "main.h"
 #include "log.h"
+#include "pathfinder.h"
 
 #include <QFile>
 #include <QDir>
@@ -99,27 +100,15 @@ void Config::clear()
 
 void Config::locateConfigFile(int argc, char* argv[])
 {
-	QDir configDir;
-#if defined(Q_OS_WIN32)
-	configDir = Main::workingDirectory;
-#else
-	QDir home = QDir::home();
-	if(!home.exists())
+	QString configDirPath = PathFinder::userDataDirectory();
+	
+	if (configDirPath.isEmpty())
 	{
-		gLog << tr("Please set your HOME environment variable.");
+		gLog << tr("Could not get an access to the settings directory. Configuration will not be saved.");
 		return;
 	}
-	configDir = home.absolutePath() + "/.doomseeker/";
-	if(!home.exists(".doomseeker"))
-	{
-		if(!home.mkdir(".doomseeker"))
-		{
-			gLog << tr("Could not create settings directory, configuration will not be saved.");
-			return;
-		}
-	}
-#endif
-	configFile = configDir.absolutePath() + "/doomseeker.cfg";
+
+	configFile = configDirPath + "/doomseeker.cfg";
 	gLog << tr("Config file is: %1").arg(configFile);
 
 	readConfig();
