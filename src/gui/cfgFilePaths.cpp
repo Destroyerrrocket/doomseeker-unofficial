@@ -121,6 +121,9 @@ void FilePathsConfigBox::readSettings()
 	{
 		addPath(strList[i]);
 	}
+	
+	setting = config->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn");
+	cbTellMeWhereAreMyWads->setChecked( setting->boolean() );
 }
 
 void FilePathsConfigBox::saveSettings()
@@ -139,4 +142,8 @@ void FilePathsConfigBox::saveSettings()
 
 	setting = config->setting("WadPaths");
 	setting->setValue(strList.join(";"));
+	
+	bool bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn = cbTellMeWhereAreMyWads->isChecked();
+	setting = config->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn");
+	setting->setValue( static_cast<int>(bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn) );
 }

@@ -241,6 +241,7 @@ void Main::initMainConfig()
 	config->createSetting("QueryOnStartup", true);
 	config->createSetting("QueryTries", 7);
 	config->createSetting("QueryTimeout", 1000);
+	config->createSetting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn", true);	
 	QStringList urlList = Wadseeker::defaultSitesListEncoded();
 	config->createSetting("WadseekerSearchURLs", urlList.join(";"));
 	config->createSetting("WadseekerSearchInIdgames", true);

@@ -201,12 +201,62 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 	{
 		return QString();
 	}
+	
+	// Prepare initial formatting.
+	QString toolTip = "<div style='white-space: pre'>%1</div>";
+	QString content;
+	
+	const QStringList& pwads = server->pwads();
+	
+	// Check if we should seek and colorize.
+	SettingsData* setting = configuration->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn");
+	bool bFindWads = setting->boolean();
+	
+	// Engage!
+	if (bFindWads)
+	{
+		QStringList pwadsFormatted;
+		foreach (QString fileName, pwads)
+		{
+			pwadsFormatted << createPwadToolTipInfo(fileName);
+		}
 
-	QString ret;
-	ret = "<div style='white-space: pre'>";
-	ret += server->pwads().join("\n");
-	ret += "</div>";
-	return ret;
+		content = "<table cellspacing=1>";
+		content += pwadsFormatted.join("\n");
+		content += "</table>";
+	}
+	else
+	{
+		content = pwads.join("\n");
+	}
+	
+	return toolTip.arg(content);
+}
+
+QString ServerListHandler::createPwadToolTipInfo(const QString& pwadName)
+{
+	static const QString FONT_COLOR_MISSING = "#ff0000";
+	static const QString FONT_COLOR_FOUND = "#009f00";
+
+	QString formattedStringBegin = "<tr style=\"color: %1;\">";
+	QString formattedStringEnd = "</tr>";
+	QString formattedStringMiddle;
+
+	PathFinder pathFinder(configuration);
+	QString pathToFile = pathFinder.findFile(pwadName);
+		
+	if (pathToFile.isEmpty())
+	{
+		formattedStringBegin = formattedStringBegin.arg(FONT_COLOR_MISSING);
+		formattedStringMiddle = tr("<td>%1</td><td> MISSING</td>").arg(pwadName);
+	}
+	else
+	{
+		formattedStringBegin = formattedStringBegin.arg(FONT_COLOR_FOUND);
+		formattedStringMiddle = QString("<td>%1</td><td> %2</td>").arg(pwadName, pathToFile);
+	}
+	
+	return formattedStringBegin + formattedStringMiddle + formattedStringEnd;
 }
 
 void ServerListHandler::doubleClicked(const QModelIndex& index)

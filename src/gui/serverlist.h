@@ -109,6 +109,7 @@ class ServerListHandler : public QObject
 		QString 				createPlayersToolTip(const Server* server);
 		QString 				createServerNameToolTip(const Server* server);
 		QString 				createPwadsToolTip(const Server* server);
+		QString					createPwadToolTipInfo(const QString& pwadName);
 
 		bool					areColumnsWidthsSettingsChanged();
 
