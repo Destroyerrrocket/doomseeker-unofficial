@@ -41,7 +41,14 @@ typedef QMap<PairPlayersByTeams>	PlayersByTeams;
 class MAIN_EXPORT PlayersList : public QList<Player>
 {
 	public:
+		/**
+		 *	@brief Lists all bots regardless if they are on a team or not.
+		 */
 		void				bots(PlayersList& botsList) const;
+		
+		/**
+		 *	@brief Lists only those bots that are not on a team.
+		 */
 		void				botsWithoutTeam(PlayersList& botsList) const;
 
 		int					numBots() const;
@@ -62,6 +69,9 @@ class MAIN_EXPORT PlayersList : public QList<Player>
 
 		/**
 		 *	@brief Divides players and bots to lists ordered by teams.
+		 *
+		 *	Bots that are not assigned to teams will not be listed here. To get
+		 *	them use botsWithoutTeam() method.
 		 *
 		 *	@param playersListMap [out] - New PlayersList objects will be stored
 		 *		in this map.

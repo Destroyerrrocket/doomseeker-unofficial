@@ -94,6 +94,10 @@ class ServerListHandler : public QObject
 		void 					serversSelected(QList<Server*>&);
 
 	protected:
+		// TODO: These two need to be set by appearance configuration.
+		static const QString	FONT_COLOR_MISSING;
+		static const QString	FONT_COLOR_FOUND;
+	
 		QTimer					cleanerTimer;
 		Config*					configuration;
 
@@ -106,10 +110,11 @@ class ServerListHandler : public QObject
 		int						sortIndex;
 		ServerListView*			table;
 
+		QString					createIwadToolTip(const Server* server);
 		QString 				createPlayersToolTip(const Server* server);
-		QString 				createServerNameToolTip(const Server* server);
 		QString 				createPwadsToolTip(const Server* server);
 		QString					createPwadToolTipInfo(const QString& pwadName);
+		QString 				createServerNameToolTip(const Server* server);
 
 		bool					areColumnsWidthsSettingsChanged();
 

@@ -38,6 +38,9 @@
 #include <QStandardItem>
 #include <QToolTip>
 
+const QString ServerListHandler::FONT_COLOR_MISSING = "#ff0000";
+const QString ServerListHandler::FONT_COLOR_FOUND = "#009f00";
+
 using namespace ServerListColumnId;
 
 ServerListHandler::ServerListHandler(ServerListView* serverTable, Config* config, QWidget* pMainWindow)
@@ -131,6 +134,45 @@ void ServerListHandler::connectTableModelProxySlots()
 	connect(table, SIGNAL( leftMouseDoubleClicked(const QModelIndex&, const QPoint&)), this, SLOT( doubleClicked(const QModelIndex&)) );
 }
 
+QString ServerListHandler::createIwadToolTip(const Server* server)
+{
+	if (!server->isKnown())
+	{
+		return QString();
+	}
+	
+	// This will only return anything if we have the "TellMe..." option enabled.
+	SettingsData* setting = configuration->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn");
+	bool bFindIwad = setting->boolean();
+	
+	if (bFindIwad)
+	{
+		static const QString FORMAT_TEMPLATE = "<font color=\"%1\">%2</font>";
+			
+		PathFinder pathFinder(configuration);
+		QString path = pathFinder.findFile(server->iwadName());
+		
+		if (path.isEmpty())
+		{
+			return FORMAT_TEMPLATE.arg(FONT_COLOR_MISSING, tr("MISSING"));
+		}
+		else
+		{
+			return FORMAT_TEMPLATE.arg(FONT_COLOR_FOUND, path);
+		}
+	}
+	
+	return QString();
+}
+
+ServerListModel* ServerListHandler::createModel()
+{
+	ServerListModel* serverListModel = new ServerListModel(this);
+	serverListModel->prepareHeaders();
+
+	return serverListModel;
+}
+
 QString ServerListHandler::createPlayersToolTip(const Server* server)
 {
 	if (server == NULL || !server->isKnown())
@@ -153,48 +195,6 @@ QString ServerListHandler::createPlayersToolTip(const Server* server)
 	return ret;
 }
 
-QString ServerListHandler::createServerNameToolTip(const Server* server)
-{
-	if (server == NULL)
-	{
-		return QString();
-	}
-
-	TooltipGenerator* tooltipGenerator = server->tooltipGenerator();
-
-	QString ret;
-	QString generalInfo = tooltipGenerator->generalInfoHTML();
-
-	if (!generalInfo.isEmpty())
-	{
-		ret = "<div style='white-space: pre'>";
-		ret += generalInfo;
-		ret += "</div>";
-	}
-
-	delete tooltipGenerator;
-	return ret;
-}
-
-ServerListModel* ServerListHandler::createModel()
-{
-	ServerListModel* serverListModel = new ServerListModel(this);
-	serverListModel->prepareHeaders();
-
-	return serverListModel;
-}
-
-QSortFilterProxyModel* ServerListHandler::createSortingProxy(ServerListModel* serverListModel)
-{
-	QSortFilterProxyModel* proxy = new ServerListSortFilterProxyModel(this);
-	proxy->setSourceModel(serverListModel);
-	proxy->setSortRole(ServerListModel::SLDT_SORT);
-	proxy->setSortCaseSensitivity( Qt::CaseInsensitive );
-	proxy->setFilterKeyColumn(IDServerName);
-
-	return proxy;
-}
-
 QString ServerListHandler::createPwadsToolTip(const Server* server)
 {
 	if (server == NULL || !server->isKnown() || server->numWads() == 0)
@@ -203,7 +203,7 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 	}
 	
 	// Prepare initial formatting.
-	QString toolTip = "<div style='white-space: pre'>%1</div>";
+	static const QString toolTip = "<div style='white-space: pre'>%1</div>";
 	QString content;
 	
 	const QStringList& pwads = server->pwads();
@@ -235,9 +235,6 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 
 QString ServerListHandler::createPwadToolTipInfo(const QString& pwadName)
 {
-	static const QString FONT_COLOR_MISSING = "#ff0000";
-	static const QString FONT_COLOR_FOUND = "#009f00";
-
 	QString formattedStringBegin = "<tr style=\"color: %1;\">";
 	QString formattedStringEnd = "</tr>";
 	QString formattedStringMiddle;
@@ -257,6 +254,40 @@ QString ServerListHandler::createPwadToolTipInfo(const QString& pwadName)
 	}
 	
 	return formattedStringBegin + formattedStringMiddle + formattedStringEnd;
+}
+
+QString ServerListHandler::createServerNameToolTip(const Server* server)
+{
+	if (server == NULL)
+	{
+		return QString();
+	}
+
+	TooltipGenerator* tooltipGenerator = server->tooltipGenerator();
+
+	QString ret;
+	QString generalInfo = tooltipGenerator->generalInfoHTML();
+
+	if (!generalInfo.isEmpty())
+	{
+		ret = "<div style='white-space: pre'>";
+		ret += generalInfo;
+		ret += "</div>";
+	}
+
+	delete tooltipGenerator;
+	return ret;
+}
+
+QSortFilterProxyModel* ServerListHandler::createSortingProxy(ServerListModel* serverListModel)
+{
+	QSortFilterProxyModel* proxy = new ServerListSortFilterProxyModel(this);
+	proxy->setSourceModel(serverListModel);
+	proxy->setSortRole(ServerListModel::SLDT_SORT);
+	proxy->setSortCaseSensitivity( Qt::CaseInsensitive );
+	proxy->setFilterKeyColumn(IDServerName);
+
+	return proxy;
 }
 
 void ServerListHandler::doubleClicked(const QModelIndex& index)
@@ -347,6 +378,10 @@ void ServerListHandler::mouseEntered(const QModelIndex& index)
 
 		case IDServerName:
 			tooltip = createServerNameToolTip(server);
+			break;
+			
+		case IDIwad:
+			tooltip = createIwadToolTip(server);
 			break;
 
 		case IDWads:

@@ -53,6 +53,7 @@ struct MAIN_EXPORT Player
 		unsigned short	ping() const { return currentPing; }
 		bool			isSpectating() const { return spectator; }
 		bool			isBot() const { return bot; }
+		bool			isTeamlessBot() const { return bot && team == TEAM_NONE; }
 		PlayerTeam		teamNum() const { return team; }
 
 		bool			operator==(const Player& other) const;

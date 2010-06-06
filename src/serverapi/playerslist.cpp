@@ -182,7 +182,7 @@ void PlayersList::inGamePlayersByTeams(QMap<PairPlayersByTeams>& playersListMap)
 
 	foreach(Player player, *this)
 	{
-		if (!player.isSpectating())
+		if (!player.isSpectating() && !player.isTeamlessBot())
 		{
 			int teamIndex = player.teamNum();
 			if (playersListMap.contains(teamIndex))
