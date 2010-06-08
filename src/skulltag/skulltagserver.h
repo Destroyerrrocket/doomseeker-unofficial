@@ -112,6 +112,8 @@ class SkulltagServer : public Server
 
 		bool			hasRcon() const { return true; }
 
+		const GameCVar	*modifier() const;
+
 		const PluginInfo*	plugin() const;
 
 		RConProtocol	*rcon();

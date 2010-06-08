@@ -109,6 +109,7 @@ class MAIN_EXPORT Server : public QObject
 		unsigned short		maximumClients() const { return maxPlayers > maxClients ? maxPlayers : maxClients; }
 		unsigned short		maximumPlayers() const { return maxPlayers; }
 		const QString&		messageOfTheDay() const { return motd; }
+		virtual const GameCVar	*modifier() const { return NULL; }
 		const QString		&name() const { return serverName; }
 		int					numFreeClientSlots() const;
 		int					numFreeJoinSlots() const;

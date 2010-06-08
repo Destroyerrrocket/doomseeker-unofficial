@@ -135,6 +135,15 @@ unsigned int SkulltagServer::millisecondTime()
 	return time.hour()*360000 + time.minute()*60000 + time.second()*1000 + time.msec();
 }
 
+const GameCVar *SkulltagServer::modifier() const
+{
+	if(instagib)
+		return &(*SkulltagGameInfo::gameModifiers())[1];
+	else if(buckshot)
+		return &(*SkulltagGameInfo::gameModifiers())[0];
+	return NULL;
+}
+
 const PluginInfo* SkulltagServer::plugin() const
 {
 	return SkulltagMain::get();
