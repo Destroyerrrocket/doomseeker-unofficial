@@ -124,7 +124,7 @@ void ServerListRowHandler::fillPlayerColumn()
 	QStandardItem* pItem = item(IDPlayers);
 
 	int style = config->setting("SlotStyle")->integer();
-	bool botsAreNotPlayers = !config->setting("BotsAreNotPlayers")->boolean();
+	bool botsAreNotPlayers = config->setting("BotsAreNotPlayers")->boolean();
 
 	const PlayersList* playersList = server->playersList();
 	int sortValue = 0;
