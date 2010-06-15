@@ -7,7 +7,7 @@
 #  - Include the footer file include(../PluginFooter.txt)
 
 if(WIN32)
-	add_definition(-DMODE_PLUGIN)
+	add_definitions(-DMODE_PLUGIN)
 	if(MSVC)
 		set(CMAKE_SHARED_MODULE_PREFIX "lib")
 	endif(MSVC)
