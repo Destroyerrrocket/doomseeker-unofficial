@@ -1,0 +1,22 @@
+# Generic Plugin CMakeList.txt
+# Usage:
+#  - Set PLUGIN_NAME to the name of your plugin set(PLUGIN_NAME skulltag)
+#  - Include this file using include(../PluginHeader.txt)
+#  - add_library(${PLUGIN_NAME} MODULE ${STUFF})
+#  - target_link_libraries(${PLUGIN_NAME} ${PLUGIN_LIBS})
+#  - Include the footer file include(../PluginFooter.txt)
+
+if(WIN32)
+	add_definition(-DMODE_PLUGIN)
+	if(MSVC)
+		set(CMAKE_SHARED_MODULE_PREFIX "lib")
+	endif(MSVC)
+endif(WIN32)
+
+find_package(Qt4 REQUIRED)
+include(${QT_USE_FILE})
+
+set(PLUGIN_LIBS ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} doomseeker)
+set(LIBS_OUTPUT_DIR ${OUTPUT_DIR}/engines)
+
+include_directories(${DOOMSEEKER_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR} ${QT_INCLUDES})

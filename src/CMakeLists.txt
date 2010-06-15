@@ -218,11 +218,11 @@ if(WIN32)
 	
 endif(WIN32)
 
-if(NOT WIN32)
+if(NOT WIN32 AND NOT XCODE_VERSION)
 install(TARGETS doomseeker RUNTIME DESTINATION bin)
-endif(NOT WIN32)
+endif(NOT WIN32 AND NOT XCODE_VERSION)
 
-if(UNIX)
+if(UNIX AND NOT XCODE_VERSION)
 	install(FILES ${CMAKE_BINARY_DIR}/media/icon.png DESTINATION share/doomseeker)
 	install(FILES ${CMAKE_BINARY_DIR}/media/Doomseeker.desktop DESTINATION /usr/share/applications)
-endif(UNIX)
+endif(UNIX AND NOT XCODE_VERSION)

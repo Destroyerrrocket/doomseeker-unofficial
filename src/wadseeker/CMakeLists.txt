@@ -35,7 +35,6 @@ set(WADSEEKER_QT_FILES
 	zip/unarchive.h
 	zip/un7zip.h
 	zip/unzip.h
-	speedcalculator.h
 	wadseeker.h
 	www.h
 )
@@ -60,6 +59,7 @@ set(HEADER_FILES
 	${WADSEEKER_QT_FILES}
 	html.h
 	link.h
+	speedcalculator.h
 	wadseekerexportinfo.h	
 	wadseekerversioninfo.h	
 )
@@ -76,6 +76,6 @@ if(DEFINED DOOMSEEKER_SOURCE_DIR)
 	set_target_properties(wadseeker PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR} RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 endif(DEFINED DOOMSEEKER_SOURCE_DIR)
 
-if(NOT WIN32)
+if(NOT WIN32 AND NOT XCODE_VERSION)
 	install(TARGETS wadseeker LIBRARY DESTINATION lib)
-endif(NOT WIN32)
+endif(NOT WIN32 AND NOT XCODE_VERSION)

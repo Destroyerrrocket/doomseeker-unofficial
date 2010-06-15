@@ -100,6 +100,8 @@ void CustomServers::setServers(const QList<CustomServerInfo>& csiList, QObject* 
 
 		const EnginePlugin* pInterface = (*Main::enginePlugins)[cit->engineIndex]->info->pInterface;
 		Server* p = pInterface->server(hi.addresses().first(), cit->port);
+		if(p == NULL)
+			continue;
 		p->setCustom(true);
 
 		connect(p, SIGNAL( updated(Server*, int) ), receiver, slotUpdated);
