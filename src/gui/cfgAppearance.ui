@@ -59,7 +59,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QPushButton" name="btnCustomServersColor">
+      <widget class="ColorButton" name="btnCustomServersColor">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -121,6 +121,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ColorButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/widgets/colorbutton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

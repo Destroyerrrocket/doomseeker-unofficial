@@ -25,6 +25,7 @@
 #define __CFG_APPEARANCE_H__
 
 #include "gui/configBase.h"
+#include "gui/widgets/colorbutton.h"
 #include "ui_cfgAppearance.h"
 
 class AppearanceConfigBox : public ConfigurationBaseBox, private Ui::AppearanceConfigBox
@@ -42,10 +43,6 @@ class AppearanceConfigBox : public ConfigurationBaseBox, private Ui::AppearanceC
 		AppearanceConfigBox(Config *cfg, QWidget *parent=NULL);
 
 		void	saveSettings();
-		void	setWidgetBackgroundColor(QWidget* widget, unsigned color);
-
-	protected slots:
-		void	btnCustomServersColor_clicked();
 };
 
 #endif /* __CFG_APPEARANCE_H__ */

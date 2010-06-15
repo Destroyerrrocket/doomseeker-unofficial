@@ -80,6 +80,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/wadseekerconfigsites.h
 	gui/wadseekerinterface.h
 	gui/models/serverlistmodel.h
+	gui/widgets/colorbutton.h
 	gui/widgets/dockedwidgets.h
 	gui/widgets/serverconsole.h
 	gui/widgets/serverlistview.h
@@ -125,6 +126,7 @@ set(SOURCE_FILES
 	gui/models/serverlistcolumn.cpp
 	gui/models/serverlistmodel.cpp
 	gui/models/serverlistrowhandler.cpp
+	gui/widgets/colorbutton.cpp
 	gui/widgets/serverconsole.cpp
 	gui/widgets/serverlistcontextmenu.cpp
 	gui/widgets/serverlistview.cpp
