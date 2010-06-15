@@ -39,6 +39,42 @@ void AppRunner::cleanArguments(QStringList& args)
 	#endif
 }
 
+#ifdef Q_WS_MAC
+QString AppRunner::findBundleBinary(const QFileInfo &file)
+{
+	// Scan the plist file for where the real binary is in a bundle.  We have
+	// to do this because some bundles (ZDaemon) don't like the --args method
+	// and I heard that only works on Mac OS X 10.6 anywyas.
+	QFile pLists(file.canonicalFilePath() + "/Contents/Info.plist");
+	if(!pLists.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		gLog << tr("Could not read bundle plist. (%1)").arg(file.canonicalFilePath() + "/Contents/Info.plist");
+		return QString();
+	}
+
+	char line[128];
+	bool keyFound = false;
+	while(pLists.readLine(line, 128) != -1)
+	{
+		if(!keyFound)
+		{
+			if(QString(line).trimmed() == "<key>CFBundleExecutable</key>")
+				keyFound = true;
+		}
+		else
+		{
+			QString binaryLine(line);
+			binaryLine = binaryLine.trimmed();
+			if(binaryLine.startsWith("<string>") && binaryLine.endsWith("</string>"))
+				return QString("/Contents/MacOS/") + binaryLine.mid(8, binaryLine.indexOf("</string>")-8);
+			keyFound = false;
+		}
+
+	}
+	return QString();
+}
+#endif
+
 MessageResult AppRunner::runExecutable(const CommandLineInfo& cmdInfo)
 {
 	gLog << tr("Starting (working dir %1): %2 %3").arg(cmdInfo.applicationDir.canonicalPath()).arg(cmdInfo.executable.canonicalFilePath()).arg(cmdInfo.args.join(" "));
@@ -50,7 +86,7 @@ MessageResult AppRunner::runExecutable(const CommandLineInfo& cmdInfo)
 	#ifdef Q_WS_MAC
 	if( cmdInfo.executable.isBundle() )
 	{
-		result = QProcess::startDetached("open", QStringList() << cmdInfo.executable.canonicalFilePath() << "--args" << args, cmdInfo.applicationDir.canonicalPath());
+		result = QProcess::startDetached(cmdInfo.executable.canonicalFilePath() + AppRunner::findBundleBinary(cmdInfo.executable), args, cmdInfo.applicationDir.canonicalPath());
 	}
 	else
 	#endif

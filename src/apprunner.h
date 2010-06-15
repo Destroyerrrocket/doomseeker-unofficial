@@ -54,6 +54,10 @@ class MAIN_EXPORT AppRunner : public QObject
 		 */
 		static void				cleanArguments(QStringList& args);
 
+#ifdef Q_WS_MAC
+		static QString			findBundleBinary(const QFileInfo &file);
+#endif
+
 		static MessageResult 	runExecutable(const CommandLineInfo& cmdInfo);
 };
 
