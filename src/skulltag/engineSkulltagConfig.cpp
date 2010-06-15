@@ -74,11 +74,11 @@ void EngineSkulltagConfigBox::btnBrowseTestingPathClicked()
 
 ConfigurationBoxInfo* EngineSkulltagConfigBox::createStructure(Config* cfg, QWidget* parent)
 {
-	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
-	ec->boxName = tr("Skulltag");
-	ec->confBox = new EngineSkulltagConfigBox(cfg, parent);
-	ec->icon = QPixmap(skulltag_xpm);
-	return ec;
+	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
+	pConfigurationBoxInfo->boxName = tr("Skulltag");
+	pConfigurationBoxInfo->confBox = new EngineSkulltagConfigBox(cfg, parent);
+	pConfigurationBoxInfo->icon = QPixmap(skulltag_xpm);
+	return pConfigurationBoxInfo;
 }
 
 void EngineSkulltagConfigBox::readSettings()

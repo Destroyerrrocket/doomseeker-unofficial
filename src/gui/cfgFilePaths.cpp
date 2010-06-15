@@ -79,10 +79,10 @@ void FilePathsConfigBox::btnRemoveWadPath_Click()
 
 ConfigurationBoxInfo* FilePathsConfigBox::createStructure(Config* cfg, QWidget* parent)
 {
-	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
-	ec->confBox = new FilePathsConfigBox(cfg, parent);
-	ec->boxName = tr("File paths");
-	return ec;
+	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
+	pConfigurationBoxInfo->confBox = new FilePathsConfigBox(cfg, parent);
+	pConfigurationBoxInfo->boxName = tr("File paths");
+	return pConfigurationBoxInfo;
 }
 
 bool FilePathsConfigBox::isPathAlreadyDefined(const QString& path)

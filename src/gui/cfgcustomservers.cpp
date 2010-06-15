@@ -86,10 +86,10 @@ CustomServersConfigBox::CheckAndFixPorts CustomServersConfigBox::checkAndFixPort
 
 ConfigurationBoxInfo* CustomServersConfigBox::createStructure(Config *cfg, QWidget *parent)
 {
-	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
-	ec->confBox = new CustomServersConfigBox(cfg, parent);
-	ec->boxName = tr("Custom Servers");
-	return ec;
+	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
+	pConfigurationBoxInfo->confBox = new CustomServersConfigBox(cfg, parent);
+	pConfigurationBoxInfo->boxName = tr("Custom Servers");
+	return pConfigurationBoxInfo;
 }
 
 void CustomServersConfigBox::dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
@@ -188,15 +188,15 @@ void CustomServersConfigBox::readSettings()
 	SettingsData *setting;
 
 	setting = config->setting("CustomServers");
-	QList<CustomServerInfo>* entrylist = CustomServers::decodeConfigEntries(setting->string());
+	QList<CustomServerInfo> customServersList;
+	
+	CustomServers::decodeConfigEntries(setting->string(), customServersList);
 	QList<CustomServerInfo>::iterator it;
 
-	for (it = entrylist->begin(); it != entrylist->end(); ++it)
+	for (it = customServersList.begin(); it != customServersList.end(); ++it)
 	{
 		add(it->engine, it->host, it->port);
 	}
-
-	delete entrylist;
 }
 
 void CustomServersConfigBox::remove()

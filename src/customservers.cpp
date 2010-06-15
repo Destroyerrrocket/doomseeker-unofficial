@@ -24,9 +24,9 @@
 #include "main.h"
 #include <QHostInfo>
 
-QList<CustomServerInfo>* CustomServers::decodeConfigEntries(const QString& str)
+void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerInfo>& outCustomServerInfoList)
 {
-	QList<CustomServerInfo>* csiList = new QList<CustomServerInfo>();
+	outCustomServerInfoList.clear();
 
 	int openingBracketIndex = 0;
 	int closingBracketIndex = 0;
@@ -48,40 +48,48 @@ QList<CustomServerInfo>* CustomServers::decodeConfigEntries(const QString& str)
 
 			if (entryList.size() == 3)
 			{
-				CustomServerInfo csi; // CSI: Miami
-				csi.engine = QUrl::fromPercentEncoding(entryList[0].toAscii());
-				csi.engineIndex = Main::enginePlugins->pluginIndexFromName(csi.engine);
+				CustomServerInfo customServerInfo;
+				customServerInfo.engine = QUrl::fromPercentEncoding(entryList[0].toAscii());
+				
+				int engineIndex = Main::enginePlugins->pluginIndexFromName(customServerInfo.engine);
+				customServerInfo.engineIndex = engineIndex;
 
-                csi.host = QUrl::fromPercentEncoding(entryList[1].toAscii());
+                customServerInfo.host = QUrl::fromPercentEncoding(entryList[1].toAscii());
 
                 bool ok = false;
                 int port = QString(entryList[2]).toInt(&ok);
                 if (ok && port >= 1 && port <= 65535)
-                    csi.port = port;
-                else if (csi.engineIndex >= 0)
-                    csi.port = (*Main::enginePlugins)[csi.engineIndex]->info->pInterface->defaultServerPort();
+                {
+					customServerInfo.port = port;
+                }
+                else if (engineIndex >= 0)
+                {
+					const Plugin* pPlugin = (*Main::enginePlugins)[engineIndex];
+					customServerInfo.port = pPlugin->info->pInterface->defaultServerPort();
+                }
                 else
-                    csi.port = 1;
+                {
+					customServerInfo.port = 1;
+				}
 
-                csiList->append(csi);
+				outCustomServerInfoList << customServerInfo;
 			} // end of if
 		} // end of else if
 	} // end of for
-
-	return csiList;
 }
 
 void CustomServers::readConfig(Config* cfg, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing)
 {
 	if (cfg == NULL)
+	{
 		return;
-
+	}	
+	
+	QList<CustomServerInfo> customServerInfoList;
 	SettingsData* setting = cfg->setting("CustomServers");
-	QList<CustomServerInfo>* csiList = decodeConfigEntries(setting->string());
+	decodeConfigEntries(setting->string(), customServerInfoList);
 
-	setServers(*csiList, receiver, slotUpdated, slotBegunRefreshing);
-
-	delete csiList;
+	setServers(customServerInfoList, receiver, slotUpdated, slotBegunRefreshing);
 }
 
 void CustomServers::setServers(const QList<CustomServerInfo>& csiList, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing)

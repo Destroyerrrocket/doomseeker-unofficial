@@ -65,11 +65,11 @@ void EngineVavoomConfigBox::btnBrowseServerBinaryClicked()
 
 ConfigurationBoxInfo* EngineVavoomConfigBox::createStructure(Config* cfg, QWidget* parent)
 {
-	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
-	ec->boxName = tr("Vavoom");
-	ec->confBox = new EngineVavoomConfigBox(cfg, parent);
-	ec->icon = QPixmap(vavoom_xpm);
-	return ec;
+	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
+	pConfigurationBoxInfo->boxName = tr("Vavoom");
+	pConfigurationBoxInfo->confBox = new EngineVavoomConfigBox(cfg, parent);
+	pConfigurationBoxInfo->icon = QPixmap(vavoom_xpm);
+	return pConfigurationBoxInfo;
 }
 
 void EngineVavoomConfigBox::readSettings()

@@ -66,11 +66,11 @@ void EngineChocolateDoomConfigBox::btnBrowseServerBinaryClicked()
 
 ConfigurationBoxInfo* EngineChocolateDoomConfigBox::createStructure(Config* cfg, QWidget* parent)
 {
-	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
-	ec->boxName = tr("Chocolate Doom");
-	ec->confBox = new EngineChocolateDoomConfigBox(cfg, parent);
-	ec->icon = QPixmap(chocolatedoom_xpm);
-	return ec;
+	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
+	pConfigurationBoxInfo->boxName = tr("Chocolate Doom");
+	pConfigurationBoxInfo->confBox = new EngineChocolateDoomConfigBox(cfg, parent);
+	pConfigurationBoxInfo->icon = QPixmap(chocolatedoom_xpm);
+	return pConfigurationBoxInfo;
 }
 
 void EngineChocolateDoomConfigBox::readSettings()

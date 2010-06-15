@@ -58,7 +58,7 @@ class CustomServers : public MasterClient
 		 *	@param str - concatenated string in required format
 		 *	@return list of custom servers
 		 */
-		static QList<CustomServerInfo>*	decodeConfigEntries(const QString& str);
+		static void						decodeConfigEntries(const QString& str, QList<CustomServerInfo>& outCustomServerInfoList);
 
 		const PluginInfo*				plugin() const { return NULL; }
 

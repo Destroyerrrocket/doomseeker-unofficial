@@ -30,10 +30,10 @@ QueryConfigBox::QueryConfigBox(Config *cfg, QWidget *parent) : ConfigurationBase
 
 ConfigurationBoxInfo *QueryConfigBox::createStructure(Config *cfg, QWidget *parent)
 {
-	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
-	ec->confBox = new QueryConfigBox(cfg, parent);
-	ec->boxName = tr("Query");
-	return ec;
+	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
+	pConfigurationBoxInfo->confBox = new QueryConfigBox(cfg, parent);
+	pConfigurationBoxInfo->boxName = tr("Query");
+	return pConfigurationBoxInfo;
 }
 
 void QueryConfigBox::readSettings()

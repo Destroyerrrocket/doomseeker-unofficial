@@ -65,11 +65,11 @@ void EngineOdamexConfigBox::btnBrowseServerBinaryClicked()
 
 ConfigurationBoxInfo* EngineOdamexConfigBox::createStructure(Config* cfg, QWidget* parent)
 {
-	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
-	ec->boxName = tr("Odamex");
-	ec->confBox = new EngineOdamexConfigBox(cfg, parent);
-	ec->icon = QPixmap(odamex_xpm);
-	return ec;
+	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
+	pConfigurationBoxInfo->boxName = tr("Odamex");
+	pConfigurationBoxInfo->confBox = new EngineOdamexConfigBox(cfg, parent);
+	pConfigurationBoxInfo->icon = QPixmap(odamex_xpm);
+	return pConfigurationBoxInfo;
 }
 
 void EngineOdamexConfigBox::readSettings()

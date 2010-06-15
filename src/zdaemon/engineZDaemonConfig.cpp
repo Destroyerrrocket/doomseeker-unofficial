@@ -65,11 +65,11 @@ void EngineZDaemonConfigBox::btnBrowseServerBinaryClicked()
 
 ConfigurationBoxInfo* EngineZDaemonConfigBox::createStructure(Config* cfg, QWidget* parent)
 {
-	ConfigurationBoxInfo* ec = new ConfigurationBoxInfo();
-	ec->boxName = tr("ZDaemon");
-	ec->confBox = new EngineZDaemonConfigBox(cfg, parent);
-	ec->icon = QPixmap(zdaemon_xpm);
-	return ec;
+	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
+	pConfigurationBoxInfo->boxName = tr("ZDaemon");
+	pConfigurationBoxInfo->confBox = new EngineZDaemonConfigBox(cfg, parent);
+	pConfigurationBoxInfo->icon = QPixmap(zdaemon_xpm);
+	return pConfigurationBoxInfo;
 }
 
 void EngineZDaemonConfigBox::readSettings()

@@ -442,29 +442,30 @@ void MainWindow::menuLog()
 
 void MainWindow::menuOptionsConfigure()
 {
-	ConfigureDlg dlg(configuration, this);
+	ConfigureDlg configDialog(configuration, this);
 
 	for(unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
-		ConfigurationBoxInfo* ec = (*Main::enginePlugins)[i]->info->pInterface->configuration(configuration, &dlg);
-		dlg.addEngineConfiguration(ec);
+		const PluginInfo* pPluginInfo = (*Main::enginePlugins)[i]->info;
+		ConfigurationBoxInfo* pConfigurationBoxInfo = pPluginInfo->pInterface->configuration(configuration, &configDialog);
+		configDialog.addEngineConfiguration(pConfigurationBoxInfo);
 	}
 
 	// Stop the auto refresh timer during configuration.
 	autoRefreshTimer.stop();
-	dlg.exec();
+	configDialog.exec();
 
 	// Do some cleanups after config box finishes.
 	initAutoRefreshTimer();
 
-	if (dlg.appearanceChanged())
+	if (configDialog.appearanceChanged())
 	{
 		serverTableHandler->redraw();
 		initTrayIcon();
 	}
 
 	// Refresh custom servers list:
-	if (dlg.customServersChanged())
+	if (configDialog.customServersChanged())
 	{
 		serverTableHandler->serverModel()->removeCustomServers();
 		masterManager->customServs()->readConfig(configuration, serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
