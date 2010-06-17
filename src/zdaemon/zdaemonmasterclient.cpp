@@ -58,7 +58,6 @@ void ZDaemonMasterClient::createQueryRequest()
 	if(address.toIPv4Address() == defaultIP)
 		server = "master.zdaemon.org";
 
-	qDebug() << "http://" + server + ":" + QString("%1").arg(port) + "/masterlist.php";
 	QNetworkRequest netRequest(QUrl("http://" + server + ":" + QString("%1").arg(port) + "/masterlist.php"));
 	netRequest.setRawHeader("User-Agent", "Doomseeker/" VERSION " (ZDaemon Plugin)");
 

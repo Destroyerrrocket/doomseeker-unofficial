@@ -40,6 +40,8 @@ IF(APPLE)
 	ENDIF(MAC_SDK_10.4)
 ENDIF(APPLE)
 
+add_subdirectory(tools/updaterevision)
+
 add_subdirectory(src/chocolate-doom)
 add_subdirectory(src/odamex)
 add_subdirectory(src/skulltag)

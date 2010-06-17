@@ -22,6 +22,14 @@ if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0005 NEW)
 endif(COMMAND cmake_policy)
 
+# Get the SVN revision
+add_custom_target(revision_check ALL
+	COMMAND ${CMAKE_BINARY_DIR}/tools/updaterevision/updaterevision . src/svnrevision.h
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+	DEPENDS updaterevision
+)
+
+
 find_package(Qt4 REQUIRED)
 find_package(ZLIB REQUIRED)
 include(${QT_USE_FILE})

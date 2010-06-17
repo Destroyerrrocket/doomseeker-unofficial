@@ -3,9 +3,7 @@
 
 #define VERSION		"0.6 Beta"
 
-#ifndef REVISION
-/// This should be defined during compilation process by -DREVISION=<string>
-#define REVISION ""
-#endif
+#include "svnrevision.h"
+#define REVISION SVN_REVISION_STRING
 
 #endif
