@@ -30,6 +30,23 @@ ZDaemonGameRunner::ZDaemonGameRunner(const ZDaemonServer* server)
 {
 }
 
+void ZDaemonGameRunner::hostDMFlags(QStringList& args, const DMFlags& dmFlags) const
+{
+	const QString argNames[] = { "+dmflags", "+dmflags2" };
+	for (int i = 0; i < qMin(dmFlags.size(), 2); ++i)
+	{
+		unsigned flagsValue = 0;
+		const DMFlagsSection* section = dmFlags[i];
+
+		for (int j = 0; j < section->flags.count(); ++j)
+		{
+			flagsValue |= 1 << section->flags[j].value;
+		}
+
+		args << argNames[i] << QString::number(flagsValue);
+	}
+}
+
 const PluginInfo* ZDaemonGameRunner::plugin() const
 {
 	return ZDaemonMain::get();

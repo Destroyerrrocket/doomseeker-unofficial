@@ -37,14 +37,19 @@ class ZDaemonGameInfo : public QObject
 			MODE_CAPTURE_THE_FLAG
 		};
 
+		static const DMFlags*			dmFlags() { return &dmFlagsList; }
 		static const QList<GameMode>*	gameModes() { return &gameModesList; }
 
 	protected:
+		static DMFlags					dmFlagsList;
 		static QList<GameMode>			gameModesList;
 
 	private:
 		ZDaemonGameInfo();
 
+		void						initDMFlags();
+		void						initDMFlags1(DMFlagsSection& section);
+		void						initDMFlags2(DMFlagsSection& section);
 		void						initGameModes();
 
 		static ZDaemonGameInfo* 	static_constructor;

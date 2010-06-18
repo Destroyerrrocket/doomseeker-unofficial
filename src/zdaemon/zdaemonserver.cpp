@@ -159,8 +159,33 @@ Server::Response ZDaemonServer::readRequest(QByteArray &data)
 	email = QString(&in[pos]);
 	pos += email.length()+1;
 
+	// [BL] OK we might need to do something about how much can be copy and
+	//      pasted between plugins...
 	clearDMFlags();
-	pos += 8;
+	const DMFlags& zdaemonFlags = *ZDaemonGameInfo::dmFlags();
+
+	// Read each dmflags section separately.
+	for (int i = 0; i < 2; ++i)
+	{
+		unsigned int dmflags = READINT32(&in[pos]);
+		pos += 4;
+
+		const DMFlagsSection& zdaemonFlagsSection = *zdaemonFlags[i];
+		DMFlagsSection* dmFlagsSection = new DMFlagsSection();
+		dmFlagsSection->name = zdaemonFlagsSection.name;
+
+		// Iterate through every known flag to check whether it should be
+		// inserted into the structure of this server.
+		for (int j = 0; j < zdaemonFlagsSection.flags.count(); ++j)
+		{
+			if ( (dmflags & (1 << zdaemonFlagsSection.flags[j].value)) != 0)
+			{
+				dmFlagsSection->flags << zdaemonFlagsSection.flags[j];
+			}
+		}
+
+		dmFlags << dmFlagsSection;
+	}
 
 	locked = in[pos++];
 	int acl = in[pos++];

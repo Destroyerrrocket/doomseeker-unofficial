@@ -30,6 +30,7 @@
 #include "sdeapi/pluginloader.hpp"
 
 #include "zdaemon/engineZDaemonConfig.h"
+#include "zdaemon/zdaemongameinfo.h"
 #include "zdaemon/zdaemonmain.h"
 #include "zdaemon/zdaemonmasterclient.h"
 #include "zdaemon/zdaemonserver.h"
@@ -40,7 +41,7 @@ const // clear warnings
 class PLUGIN_EXPORT ZDaemonEnginePlugin : public EnginePlugin
 {
 	public:
-		const DMFlags*					allDMFlags() const { return NULL; }
+		const DMFlags*					allDMFlags() const { return ZDaemonGameInfo::dmFlags(); }
 
 		bool							allowsURL() const { return true; }
 		bool							allowsEmail() const { return true; }

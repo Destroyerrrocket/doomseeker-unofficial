@@ -39,6 +39,8 @@ class ZDaemonGameRunner : public GameRunner
 
 	protected:
 		virtual QString				argForConnect() const { return "+connect"; }
+
+		void						hostDMFlags(QStringList& args, const DMFlags& dmFlags) const;
 };
 
 #endif
