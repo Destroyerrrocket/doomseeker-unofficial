@@ -23,8 +23,10 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 # Get the SVN revision
+get_target_property( UPDATEREVISION_EXE updaterevision LOCATION )
+message(STATUS ${UPDATEREVISION_EXE})
 add_custom_target(revision_check ALL
-	COMMAND ${CMAKE_BINARY_DIR}/tools/updaterevision/updaterevision . src/svnrevision.h
+	COMMAND ${UPDATEREVISION_EXE} . src/svnrevision.h
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	DEPENDS updaterevision
 )
