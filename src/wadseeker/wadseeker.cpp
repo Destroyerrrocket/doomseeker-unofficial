@@ -30,6 +30,24 @@
 #include <QDir>
 #include <QFileInfo>
 
+// TODO:
+// For the (close?) future:
+//
+// Sometimes two or more WADs that are being hosted on a server are distributed
+// within the same archive. Because of this Wadseeker should keep a cache of 
+// downloaded archives during it's search and try to retrieve subsequent 
+// wads from these archives. This should also work backwards: if we are looking
+// for 3 wads and the last one gets found inside an archive while the others 
+// are missing we check this archive for the previous files.
+//
+// We're not concerned about memory issues here. It's perfectly fine to store
+// a 100MB archive in memory... and if it's not we can use temp files that 
+// will clutter the system and fill out entire disk space upon application crash
+// eventually!
+//
+// PS. Maybe saving the archives to disk should also be allowed?
+//
+
 const QString Wadseeker::defaultSites[] =
 {
 	QString("http://doom.dogsoft.net/getwad.php?search=%WADNAME%"),
@@ -245,6 +263,7 @@ void Wadseeker::nextWad()
 	QStringList wantedFilenamesInfo = wantedFilenames(wad, zipName);
 	
 	speedCalculator->start();
+	www->clearLinksCache();
 	www->searchFiles(wantedFilenamesInfo, currentWad, zipName);
 }
 

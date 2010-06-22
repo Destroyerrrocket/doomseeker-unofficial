@@ -197,7 +197,7 @@ class WADSEEKER_API WWWSeeker : public WWW
 		 *	@return Default URL of Idgames archive, hardcoded into the library.
 		 */
 		static const QString 	defaultIdgamesUrl();
-
+		
 		/**
 		 *	Tells the class to keep looking for file on next available
 		 *	site. This method is public because WWW class stops when
@@ -206,6 +206,18 @@ class WADSEEKER_API WWWSeeker : public WWW
 		 *	by calling this method.
 		 */
 		void checkNextSite();
+		
+		/**
+		 *	@brief Erases all links that were found during the search.
+		 *
+		 *	This will leave links like customSite or primarySites untouched.
+		 *	However all links that were found during the search will be removed.
+		 *	The set containing links that were already checked is also cleared.
+		 *
+		 *	It is recommended to call this command before a new search is 
+		 *	issued.
+		 */
+		void					clearLinksCache();		
 
 		/**
 		 *	Begins the search process. This is the main entry method for this

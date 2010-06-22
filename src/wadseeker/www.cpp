@@ -244,6 +244,8 @@ WWWSeeker::~WWWSeeker()
 
 void WWWSeeker::checkNextSite()
 {
+	// TODO: Refactor the monster below.
+
 	// If link for custom site is invalid customSiteUsed will be set to true,
 	// even before customSite is checked through nextSite() method.
 	if (customSiteUsed 			// Did we check custom site already?
@@ -281,6 +283,13 @@ void WWWSeeker::checkNextSite()
 			get(site);
 		}
 	}
+}
+
+void WWWSeeker::clearLinksCache()
+{
+	this->checkedLinks.clear();
+	this->directLinks.clear();
+	this->siteLinks.clear();
 }
 
 const QString WWWSeeker::defaultIdgamesUrl()
