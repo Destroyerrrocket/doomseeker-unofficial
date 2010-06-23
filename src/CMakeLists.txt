@@ -24,13 +24,12 @@ endif(COMMAND cmake_policy)
 
 # Get the SVN revision
 get_target_property( UPDATEREVISION_EXE updaterevision LOCATION )
-message(STATUS ${UPDATEREVISION_EXE})
+
 add_custom_target(revision_check ALL
 	COMMAND ${UPDATEREVISION_EXE} . src/svnrevision.h
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	DEPENDS updaterevision
 )
-
 
 find_package(Qt4 REQUIRED)
 find_package(ZLIB REQUIRED)
@@ -214,6 +213,10 @@ add_executable(doomseeker
 	${SOURCE_FILES}
 	${HEADER_FILES}
 )
+
+# Make sure the svnrevision.h file is created before we attempt to compile
+# Doomseeker.
+add_dependencies(doomseeker revision_check)
 
 target_link_libraries(doomseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} wadseeker)
 
