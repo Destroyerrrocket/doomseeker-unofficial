@@ -105,7 +105,7 @@ void Idgames::doneEx(bool error)
 		{
 		    // We found the page and are returning it to be processed
 		    // by WWWSeeker.
-			emit message(tr("File %1 was found in Idgames archive!\n").arg(seekedFile), Wadseeker::Notice);
+			emit message(tr("File %1 was found in Idgames archive!s").arg(seekedFile), Wadseeker::Notice);
             emit done(true, data, fileType, processedFileName);
 		}
 		else
@@ -126,7 +126,7 @@ void Idgames::findFile(const QString& zipName)
     if (!idgamesBaseUrl.contains("%ZIPNAME%"))
     {
         QByteArray nul;
-        emit message(tr("Idgames error: no %ZIPNAME% present in idgames url:\n%1\n").arg(idgamesBaseUrl), Wadseeker::Error);
+        emit message(tr("Idgames error: no %ZIPNAME% present in idgames url:\n%1").arg(idgamesBaseUrl), Wadseeker::Error);
         emit done(false, nul, 0, "");
         return;
     }

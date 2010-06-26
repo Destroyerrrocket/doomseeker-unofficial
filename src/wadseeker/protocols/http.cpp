@@ -166,11 +166,6 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 	switch (resp.statusCode())
 	{
 		case OK:
-			if (resp.hasContentLength())
-			{
-				emit message(tr("File size: %1 B").arg(resp.contentLength()), Wadseeker::Notice);
-			}
-
 			if (isHTMLFile(resp))
 			{
 				fileType = Html;
@@ -190,7 +185,7 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 			tmp = resp.value("Location");
 			if (tmp.isEmpty())
 			{
-				emit message(tr("Redirect header was received but no location was specified. Aborting.\n").arg(resp.value("Location")), Wadseeker::Error);
+				emit message(tr("Redirect header was received but no location was specified. Aborting.").arg(resp.value("Location")), Wadseeker::Error);
 				abort();
 			}
 			else

@@ -137,21 +137,21 @@ class WADSEEKER_API WWW : public QObject
 		void 	message(const QString&, int type);
 
 	protected slots:
-		virtual void	get(const QUrl&);
-		void 			downloadProgressSlot(int done, int total);
-		virtual void	protocolAborted();
-		virtual void	protocolDone(bool success, QByteArray& data, int fileType, const QString& filename);
-		void 			messageSlot(const QString&, int type);
+		virtual void			get(const QUrl&);
+		void 					downloadProgressSlot(int done, int total);
+		virtual void			protocolAborted();
+		virtual void			protocolDone(bool success, QByteArray& data, int fileType, const QString& filename);
+		void 					messageSlot(const QString&, int type);
 
 	protected:
-		static QString	ignoringMessage;
+		static const QString	MESSAGE_IGNORE;
 
-		bool			aborting;
-		Protocol*		currentProtocol;
-		Http*			http;
-		Ftp*			ftp;
+		bool					aborting;
+		Protocol*				currentProtocol;
+		Http*					http;
+		Ftp*					ftp;
 
-		QUrl			processedUrl;
+		QUrl					processedUrl;
 
 		/**
 		 *	Executes the abort procedure setting aborting field accordingly
@@ -159,16 +159,16 @@ class WADSEEKER_API WWW : public QObject
 		 *	@param abortCompletely - abort() slot passes true here, while
 		 *		WWWSeeker::skipSite() passes false.
 		 */
-		void			abortExec(bool abortCompletely);
+		void					abortExec(bool abortCompletely);
 
-		QUrl			constructValidUrl(const QUrl&);
+		QUrl					constructValidUrl(const QUrl&);
 
 		/**
 		 *	Executed through setUserAgent. Descendant classes can assign
 		 *	the same user-agent to other protocols through this.
 		 *	@param agent - string to send in HTTP queries
 		 */
-		virtual void 	setUserAgentEx(const QString& agent) {}
+		virtual void 			setUserAgentEx(const QString& agent) {}
 };
 
 /**
@@ -206,18 +206,6 @@ class WADSEEKER_API WWWSeeker : public WWW
 		 *	by calling this method.
 		 */
 		void checkNextSite();
-		
-		/**
-		 *	@brief Erases all links that were found during the search.
-		 *
-		 *	This will leave links like customSite or primarySites untouched.
-		 *	However all links that were found during the search will be removed.
-		 *	The set containing links that were already checked is also cleared.
-		 *
-		 *	It is recommended to call this command before a new search is 
-		 *	issued.
-		 */
-		void					clearLinksCache();		
 
 		/**
 		 *	Begins the search process. This is the main entry method for this
@@ -225,7 +213,7 @@ class WADSEEKER_API WWWSeeker : public WWW
 		 *	@param seekedFiles - list of filenames we want to get.
 		 *	@param primaryFilename - filename used to replace %WADNAME%
 		 *		wildcards.
-		 *	@param zipFilename - filename used to replace %ZIPNAME wildcards.
+		 *	@param zipFilename - filename used to replace %ZIPNAME% wildcards.
 		 *	@see primaryFile
 		 */
 		void searchFiles(const QStringList& seekedFiles, const QString& primaryFilename, const QString& zipFilename);
@@ -258,19 +246,19 @@ class WADSEEKER_API WWWSeeker : public WWW
 		/**
 		 *	Skips current site and proceeds to the next one in the queue.
 		 */
-		void				skipSite();
+		void			skipSite();
 
 	protected slots:
-		void	get(const QUrl&);
-		void	protocolAborted();
-		void	protocolDone(bool success, QByteArray& data, int fileType, const QString& filename);
-		void	protocolNameAndTypeOfReceivedFile(const QString&, int);
+		void			get(const QUrl&);
+		void			protocolAborted();
+		void			protocolDone(bool success, QByteArray& data, int fileType, const QString& filename);
+		void			protocolNameAndTypeOfReceivedFile(const QString&, int);
 
 	protected:
 		QSet<QString>	checkedLinks;
 		int				currentPrimarySite;
 		QUrl			customSite;
-		bool			customSiteUsed;
+		bool			customSiteChecked;
 		QList<QUrl>		directLinks;
 		QStringList		filesToFind;
 
@@ -291,6 +279,9 @@ class WADSEEKER_API WWWSeeker : public WWW
 		 */
 		QString			primaryFile;
 		QStringList		primarySites;
+		
+		bool			shouldCheckIdgames() const;
+		
 		QList<QUrl> 	siteLinks;
 
 		/**
@@ -305,16 +296,40 @@ class WADSEEKER_API WWWSeeker : public WWW
 		 *	as seeked file parameter.
 		 */
 		QString			zipFile;
+		
+		/**
+		 *	@brief Erases all links that were found during the search.
+		 *
+		 *	This will leave links like customSite or primarySites untouched.
+		 *	However all links that were found during the search will be removed.
+		 *	The set containing links that were already checked is also cleared.
+		 */
+		void			clearLinksCache();		
+		
+		bool			hasCustomSiteBeenProcessed() const;
+		bool			hasMoreUrls() const;
 
-		bool 		getUrl(const QUrl& url) { return false; }
+		bool 			getUrl(const QUrl& url) { return false; }
 
-		bool		isWantedFileOrZip(const QString& filename);
-		QUrl		nextSite();
+		bool			isWantedFileOrZip(const QString& filename);
+		QUrl			nextSite();
+		
+		/**
+		 *	@brief Retrieves a URL that should be checked next.
+		 *
+		 *	The URL is removed from the queue, but its place holder strings
+		 *	are not processed. This is done by the nextSite() method which
+		 *	this method is called from.
+		 *
+		 *	@return If no URLs are left an empty URL is returned.
+		 *	@see nextSite()
+		 */
+		QUrl			popNextUrl();
 
 		/**
 		 *	Calling this method will set idgamesUsed boolean to true
 		 */
-		void		searchIdgames();
+		void			searchIdgames();
 
 		/**
 		 *	@param agent - string to send in Idgames queries

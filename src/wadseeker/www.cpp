@@ -28,7 +28,7 @@
 #include "www.h"
 #include <QFileInfo>
 
-QString WWW::ignoringMessage = tr("%1 is not a HTML file, nor a wanted file, nor a file with \'.zip\' or \'.7z\' extension. Ignoring.\n");
+const QString WWW::MESSAGE_IGNORE = tr("%1 is not a HTML file, nor a wanted file, nor a file with \'.zip\' or \'.7z\' extension. Ignoring.");
 
 WWW::WWW()
 {
@@ -129,7 +129,7 @@ void WWW::get(const QUrl& url)
 	else
 	{
 		currentProtocol = NULL;
-		message(tr("Protocol for this site is not supported\n"), Wadseeker::Error);
+		message(tr("Protocol for this site is not supported."), Wadseeker::Error);
 		emit fail();
 		return;
 	}
@@ -138,11 +138,15 @@ void WWW::get(const QUrl& url)
 bool WWW::getUrl(const QUrl& url)
 {
 	if (!isAbsoluteUrl(url))
+	{
 		return false;
+	}
 
 	QUrl urlValid = url;
 	if (urlValid.path().isEmpty())
+	{
 		urlValid.setPath("/");
+	}
 
 	if (Http::isHTTPLink(urlValid))
 	{
@@ -157,7 +161,7 @@ bool WWW::getUrl(const QUrl& url)
 	else
 	{
 		currentProtocol = NULL;
-		message(tr("Protocol for this site is not supported\n"), Wadseeker::Error);
+		message(tr("Protocol for this site is not supported."), Wadseeker::Error);
 		return false;
 	}
 
@@ -242,18 +246,37 @@ WWWSeeker::~WWWSeeker()
 	delete idgames;
 }
 
+bool WWWSeeker::hasCustomSiteBeenProcessed() const
+{
+	return customSiteChecked || !customSite.isValid();
+}
+
+bool WWWSeeker::shouldCheckIdgames() const
+{
+	// Priority checks: did we use Idgames already and do we even want to use
+	// them.
+	if (!useIdgames || idgamesUsed)
+	{
+		return false;
+	}
+	
+	// From now on checks will return true on success.
+	if (idgamesHasHighPriority && hasCustomSiteBeenProcessed())
+	{
+		return true;
+	}
+	
+	if (!hasMoreUrls())
+	{
+		return true;
+	}
+	
+	return false;
+}
+
 void WWWSeeker::checkNextSite()
 {
-	// TODO: Refactor the monster below.
-
-	// If link for custom site is invalid customSiteUsed will be set to true,
-	// even before customSite is checked through nextSite() method.
-	if (customSiteUsed 			// Did we check custom site already?
-	&&	useIdgames 				// Do we use idgames at all?
-	&&	directLinks.isEmpty() 	// Were there any direct links found on custom site?
-	&&	siteLinks.isEmpty() 	// Were there any site links found on custom site?
-	&&	idgamesHasHighPriority  // Does idgames have high priority?
-	&&	!idgamesUsed)			// Was idgames already searched?
+	if (shouldCheckIdgames())
 	{
 		this->searchIdgames();
 	}
@@ -262,20 +285,9 @@ void WWWSeeker::checkNextSite()
 		QUrl site = nextSite();
 		if (site.isEmpty())
 		{
-			// A few words of explanation:
-			// We don't need to check if idgamesHasHighPriority == false.
-			// If it is true, the idgamesUsed will already be set to true by the
-			// call to searchIdgames() above.
-			if (useIdgames && !idgamesUsed)
-			{
-				this->searchIdgames();
-			}
-			else
-			{
-				processedUrl = QUrl();
-				emit message(tr("No more sites.\n"), Wadseeker::Notice);
-				emit fail();
-			}
+			processedUrl = QUrl();
+			emit message(tr("No more sites."), Wadseeker::Notice);
+			emit fail();
 		}
 		else
 		{
@@ -290,6 +302,13 @@ void WWWSeeker::clearLinksCache()
 	this->checkedLinks.clear();
 	this->directLinks.clear();
 	this->siteLinks.clear();
+	
+	currentPrimarySite = 0;
+	
+	customSiteChecked = false;
+	idgamesUsed = false;	
+	
+	processedUrl = QUrl();
 }
 
 const QString WWWSeeker::defaultIdgamesUrl()
@@ -302,7 +321,7 @@ void WWWSeeker::get(const QUrl& url)
 	QUrl urlValid = constructValidUrl(url);
 	if (urlValid.isEmpty())
 	{
-		emit message(tr("Failed to create valid URL out of \"%1\". Ignoring.\n").arg(url.toString()), Wadseeker::Error);
+		emit message(tr("Failed to create valid URL out of \"%1\". Ignoring.").arg(url.toString()), Wadseeker::Error);
 		checkNextSite();
 		return;
 	}
@@ -316,7 +335,7 @@ void WWWSeeker::get(const QUrl& url)
 	checkedLinks.insert(urlValid.toString());
 	processedUrl = urlValid;
 
-	emit message(tr("Next site: %1").arg(urlValid.toString()), Wadseeker::Notice);
+	emit message(tr("Next site: %1").arg(urlValid.toString()), Wadseeker::NoticeImportant);
 	if (Http::isHTTPLink(urlValid))
 	{
 		currentProtocol = http;
@@ -327,7 +346,7 @@ void WWWSeeker::get(const QUrl& url)
 		QFileInfo fi(urlValid.path());
 		if (!isWantedFileOrZip(fi.fileName()))
 		{
-			emit message(ignoringMessage.arg(fi.fileName()), Wadseeker::Notice);
+			emit message(MESSAGE_IGNORE.arg(fi.fileName()), Wadseeker::Notice);
 			checkNextSite();
 			return;
 		}
@@ -340,7 +359,7 @@ void WWWSeeker::get(const QUrl& url)
 	else
 	{
 		currentProtocol = NULL;
-		message(tr("Protocol for this site is not supported\n"), Wadseeker::Error);
+		message(tr("Protocol for this site is not supported"), Wadseeker::Error);
 		checkNextSite();
 		return;
 	}
@@ -352,26 +371,64 @@ bool WWWSeeker::isWantedFileOrZip(const QString& filename)
 	if (!primaryFile.isNull())
 	{
 		if (primaryFile.compare(filename, Qt::CaseInsensitive) == 0)
+		{
 			return true;
+		}
 	}
 
-	QFileInfo fi(filename);
-	if (fi.suffix().compare("zip", Qt::CaseInsensitive) == 0 || fi.suffix().compare("7z", Qt::CaseInsensitive) == 0)
-		return true;
+	QFileInfo fileInfo(filename);
+	
+	bool bIsZip = fileInfo.suffix().compare("zip", Qt::CaseInsensitive) == 0;
+	bool bIs7Zip = fileInfo.suffix().compare("7z", Qt::CaseInsensitive) == 0;
+	
+	return bIsZip || bIs7Zip;
+}
 
+bool WWWSeeker::hasMoreUrls() const
+{
+	if (!customSiteChecked && customSite.isValid())
+	{
+		return true;
+	}
+	
+	if (!directLinks.isEmpty() || !siteLinks.isEmpty())
+	{
+		return true;
+	}
+	
+	if (currentPrimarySite < primarySites.size())
+	{
+		return true;
+	}
+	
 	return false;
 }
 
 QUrl WWWSeeker::nextSite()
 {
-	while (true)
+	QUrl url = popNextUrl();
+	
+	QString urlString = url.toString();
+	if (!urlString.isEmpty())
+	{
+		urlString = urlString.replace("%WADNAME%", primaryFile);
+		urlString = urlString.replace("%ZIPNAME%", zipFile);
+		
+		url = urlString;
+	}
+
+	return url;
+}
+
+QUrl WWWSeeker::popNextUrl()
+{
+	while (hasMoreUrls())
 	{
 		QUrl url;
-		if (!customSiteUsed && customSite.isValid())
+		if (!customSiteChecked && customSite.isValid())
 		{
-			processedUrl = QUrl();
 			url = customSite;
-			customSiteUsed = true;
+			customSiteChecked = true;
 		}
 		else if (!directLinks.isEmpty())
 		{
@@ -383,19 +440,14 @@ QUrl WWWSeeker::nextSite()
 		}
 		else if (currentPrimarySite < primarySites.size())
 		{
-			processedUrl = QUrl();
 			url = primarySites[currentPrimarySite];
 			++currentPrimarySite;
 		}
-		else
-		{
-			break;
-		}
 
 		if (url.isEmpty() || !url.isValid())
+		{
 			continue;
-
-		url = url.toString().replace("%WADNAME%", primaryFile).replace("%ZIPNAME%", zipFile);
+		}
 
 		return url;
 	}
@@ -429,7 +481,7 @@ void WWWSeeker::protocolDone(bool success, QByteArray& data, int fileType, const
 			CHtml html(data);
 			html.capitalizeHTMLTags();
 			html.linksFromHTMLByPattern(filesToFind, siteLinks, directLinks, processedUrl, siteLinksNum, directLinksNum);
-			emit message(tr("Site links found: %1 | Direct links found: %2\n").arg(siteLinksNum).arg(directLinksNum), Wadseeker::Notice);
+			emit message(tr("Site links found: %1 | Direct links found: %2").arg(siteLinksNum).arg(directLinksNum), Wadseeker::Notice);
 			checkNextSite();
 		}
 		else
@@ -437,8 +489,6 @@ void WWWSeeker::protocolDone(bool success, QByteArray& data, int fileType, const
 			emit fileDone(data, filename);
 		}
 	}
-
-	emit message(" ", Wadseeker::Notice);
 
 	if (!success)
 	{
@@ -452,7 +502,7 @@ void WWWSeeker::protocolNameAndTypeOfReceivedFile(const QString& name, int type)
 	{
 		if (!isWantedFileOrZip(name))
 		{
-			emit message(ignoringMessage.arg(name), Wadseeker::Notice);
+			emit message(MESSAGE_IGNORE.arg(name), Wadseeker::Notice);
 			if (currentProtocol != NULL)
 			{
 				currentProtocol->abort();
@@ -464,16 +514,12 @@ void WWWSeeker::protocolNameAndTypeOfReceivedFile(const QString& name, int type)
 void WWWSeeker::searchFiles(const QStringList& list, const QString& primaryFilename, const QString& zipFilename)
 {
 	aborting = false;
-	// This needs to be set here due to how Idgames archive is checked.
-	customSiteUsed = !customSite.isValid();
-	currentPrimarySite = 0;
-	checkedLinks.clear();
+
+	clearLinksCache();
+	
 	filesToFind = list;
-	idgamesUsed = false;
 	primaryFile = primaryFilename;
 	zipFile = zipFilename;
-
-	processedUrl = QUrl();
 
 	checkNextSite();
 }

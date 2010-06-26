@@ -44,8 +44,16 @@ unsigned ColorButton::colorUnsigned() const
 
 void ColorButton::setColor(unsigned colorValue)
 {
-	color.setRgb(colorValue);
-	updateAppearance();
+	QColor newColor;
+	newColor.setRgb(colorValue);
+	updateColor(newColor);
+}
+
+void ColorButton::setColorHtml(const QString& colorHtml)
+{
+	QColor newColor;
+	newColor.setNamedColor(colorHtml);
+	updateColor(newColor);
 }
 
 void ColorButton::thisClicked()
@@ -54,8 +62,7 @@ void ColorButton::thisClicked()
 
 	if(colorTmp.isValid())
 	{
-		color = colorTmp.rgb();
-		updateAppearance();
+		updateColor(colorTmp);
 	}
 }
 
@@ -65,4 +72,13 @@ void ColorButton::updateAppearance()
 	
 	QString styleSheet = COLOR_STYLE.arg(color.name());
 	setStyleSheet(styleSheet);
+}
+
+void ColorButton::updateColor(const QColor& newColor)
+{
+	QColor oldColor = color;
+	color = newColor;
+	updateAppearance();
+	
+	emit colorUpdated(oldColor, color);
 }

@@ -243,6 +243,9 @@ void Main::initMainConfig()
 	config->createSetting("QueryTimeout", 1000);
 	config->createSetting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn", true);	
 	QStringList urlList = Wadseeker::defaultSitesListEncoded();
+	config->createSetting("WadseekerColorMessageNotice", "#000000");
+	config->createSetting("WadseekerColorMessageError", "#ff0000");
+	config->createSetting("WadseekerColorMessageCriticalError", "#ff0000");
 	config->createSetting("WadseekerSearchURLs", urlList.join(";"));
 	config->createSetting("WadseekerSearchInIdgames", true);
 	config->createSetting("WadseekerIdgamesPriority", 0); // 0 == After all other sites

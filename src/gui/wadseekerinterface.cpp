@@ -27,6 +27,22 @@
 
 const int WadSeekerInterface::UPDATE_INTERVAL_MS = 500;
 
+void WadSeekerInterface::initMessageColors()
+{
+	SettingsData* setting;
+	
+	Config* pConfig = Main::config;
+	
+	setting = pConfig->setting("WadseekerColorMessageNotice");
+	colorHtmlMessageNotice = setting->string();
+	
+	setting = pConfig->setting("WadseekerColorMessageError");
+	colorHtmlMessageError = setting->string();
+	
+	setting = pConfig->setting("WadseekerColorMessageCriticalError");
+	colorHtmlMessageFatalError = setting->string();
+}
+
 WadSeekerInterface::WadSeekerInterface(QWidget* parent)
 : QDialog(parent)
 {
@@ -35,7 +51,9 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent)
 	((MainWindow*)(Main::mainWindow))->stopAutoRefreshTimer();
 	setupUi(this);
 	setStateWaiting();
-
+	
+	initMessageColors();
+	
 	connect(btnClose, SIGNAL( clicked() ), this, SLOT( reject() ) );
 	connect(btnDownload, SIGNAL( clicked() ), this, SLOT( accept() ) );
 	connect(btnStop, SIGNAL( clicked() ), &wadseeker, SLOT( abort() ) );
@@ -102,12 +120,12 @@ void WadSeekerInterface::accept()
 
 void WadSeekerInterface::allDone()
 {
-	teWadseekerOutput->append(tr("All done."));
+	displayMessage(tr("All done."), Wadseeker::NoticeImportant, false);
 	
 	setStateWaiting();
 	if (wadseeker.areAllFilesFound())
 	{
-		teWadseekerOutput->append(tr("SUCCESS!"));
+		displayMessage(tr("SUCCESS!"), Wadseeker::Notice, false);
 		if (bAutomatic)
 		{
 			this->done(Accepted);
@@ -116,10 +134,76 @@ void WadSeekerInterface::allDone()
 	else
 	{
 		fail();
-		teWadseekerOutput->append(tr("FAIL!"));
+		
 	}
 	
 	
+}
+
+void WadSeekerInterface::displayMessage(const QString& message, Wadseeker::MessageType type, bool bPrependErrorsWithMessageType)
+{
+	QString strProcessedMessage;
+	
+	bool bPrependWithNewline = false;
+	QString wrapHtmlLeft = "<div style=\"%1\">";
+	QString wrapHtmlRight = "</div>";
+	QString htmlStyle;
+	
+	switch (type)
+	{
+		case Wadseeker::CriticalError:
+			htmlStyle = QString("color: %1; font-weight: bold;").arg(colorHtmlMessageFatalError);
+			bPrependWithNewline = true;
+			
+			if (bPrependErrorsWithMessageType)
+			{
+				strProcessedMessage = tr("CRITICAL ERROR: %1").arg(message);
+			}
+			else
+			{
+				strProcessedMessage = message;
+			}
+		
+			setStateWaiting();
+			break;
+
+		case Wadseeker::Error:
+			htmlStyle = QString("color: %1;").arg(colorHtmlMessageError);
+			
+			if (bPrependErrorsWithMessageType)
+			{
+				strProcessedMessage = tr("Error: %1").arg(message);
+			}
+			else
+			{
+				strProcessedMessage = message;
+			}
+			break;
+
+		case Wadseeker::Notice:
+			htmlStyle = QString("color: %1;").arg(colorHtmlMessageNotice);
+			
+			strProcessedMessage = message;
+			break;
+			
+		case Wadseeker::NoticeImportant:
+			htmlStyle = QString("color: %1; font-weight: bold;").arg(colorHtmlMessageNotice);
+			bPrependWithNewline = true;
+			
+			strProcessedMessage = message;
+			break;
+	}
+	
+	if (bPrependWithNewline && !teWadseekerOutput->toPlainText().isEmpty())
+	{			
+		strProcessedMessage = "<br>" + strProcessedMessage;
+	}
+	
+	wrapHtmlLeft = wrapHtmlLeft.arg(htmlStyle);
+	
+	strProcessedMessage = wrapHtmlLeft + strProcessedMessage + wrapHtmlRight;
+
+	teWadseekerOutput->append(strProcessedMessage);
 }
 
 void WadSeekerInterface::downloadProgress(int done, int total)
@@ -169,33 +253,18 @@ void WadSeekerInterface::fail()
 {
 	bAutomatic = false;
 	const QStringList& notFoundWads = wadseeker.filesNotFound();
-	QString nfwStr = tr("Following files were not found: %1").arg(notFoundWads.join(", "));
-	teWadseekerOutput->append(nfwStr);
+	
+	displayMessage(tr("FAIL!"), Wadseeker::CriticalError, false);
+	QString notFoundWadsString = tr("Following files were not found: %1").arg(notFoundWads.join(", "));
+	message(notFoundWadsString, Wadseeker::Error);
 
 	pbProgress->setMaximum(100);
 	pbProgress->setValue(0);
 }
 
-void WadSeekerInterface::message(const QString& msg, Wadseeker::MessageType type)
+void WadSeekerInterface::message(const QString& message, Wadseeker::MessageType type)
 {
-	QString str;
-	switch (type)
-	{
-		case Wadseeker::CriticalError:
-			str = tr("CRITICAL ERROR: %1").arg(msg);
-			setStateWaiting();
-			break;
-
-		case Wadseeker::Error:
-			str = tr("Error: %1").arg(msg);
-			break;
-
-		case Wadseeker::Notice:
-			str = msg;
-			break;
-	}
-
-	teWadseekerOutput->append(str);
+	displayMessage(message, type, true);
 }
 
 void WadSeekerInterface::registerUpdateRequest()

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// colorbutton.h
+// wadseekerconfigappearance.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,41 +20,25 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __COLORBUTTON_H__
-#define __COLORBUTTON_H__
+#ifndef __WADSEEKERCONFIGAPPEARANCE_H__
+#define __WADSEEKERCONFIGAPPEARANCE_H__
 
-#include <QColor>
-#include <QPushButton>
+#include "ui_wadseekerconfigappearance.h"
+#include "gui/configBase.h"
 
-class ColorButton : public QPushButton
+class WadseekerAppearanceConfigBox : public ConfigurationBaseBox, private Ui::WadseekerAppearanceConfigBox
 {
 	Q_OBJECT
 
 	public:
-		ColorButton(QWidget* parent = NULL);
-	
-		QString				colorHtml() const;
-		const QColor&		colorQ() const { return color; }
-		unsigned			colorUnsigned() const;
+		static ConfigurationBoxInfo* createStructure(Config* cfg, QWidget* parent = NULL);
 
-		void				setColor(unsigned colorValue);
-		void				setColorHtml(const QString& colorHtml);
-		
-	signals:
-		void				colorUpdated(QColor oldColor, const QColor& newColor);
+		void 			readSettings();
 
 	protected:
-		QColor				color;
-	
-		void				updateAppearance();
-		
-		/**
-		 *	@brief Will always emit colorUpdated() signal.
-		 */
-		void				updateColor(const QColor& newColor);
-		
-	protected slots:
-		void				thisClicked();
+		WadseekerAppearanceConfigBox(Config*, QWidget* parent = NULL);
+
+		void 			saveSettings();
 };
 
 #endif

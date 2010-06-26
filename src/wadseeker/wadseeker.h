@@ -88,6 +88,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *
 		 *	- Notice - this is just an information of what Wadseeker
 		 *			 is currently doing
+		 *	- NoticeImportant - an information on an important event
 		 *	- Error - something bad happened but Wadseeker is able to continue
 		 *			by itself.
 		 *	- CriticalError - Wadseeker stops working after such error.
@@ -96,8 +97,9 @@ class WADSEEKER_API Wadseeker : public QObject
 		enum MessageType
 		{
 			Notice 			= 0,
-			Error	 		= 1,
-			CriticalError	= 2
+			NoticeImportant = 1,
+			Error	 		= 2,
+			CriticalError	= 3
 		};
 
 		/**

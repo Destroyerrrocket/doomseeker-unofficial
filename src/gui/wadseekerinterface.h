@@ -70,6 +70,11 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 		bool			bFirstShown;
 		bool			bNeedsUpdate;
 
+		// Setup for customization in the future.
+		QString			colorHtmlMessageFatalError;
+		QString			colorHtmlMessageError;
+		QString			colorHtmlMessageNotice;
+
 		/**
 		 * Interface uses this instead of line edit if bAutomatic is true.
 		 */
@@ -78,12 +83,14 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 		QTimer			updateTimer;
 		Wadseeker		wadseeker;
 
-		void	fail();
-		void	setStateDownloading();
-		void	setStateWaiting();
-		void	setupIdgames();
-		void 	showEvent(QShowEvent* event);
-		void	startSeeking(const QStringList& seekedFilesList);
+		void			displayMessage(const QString& message, Wadseeker::MessageType type, bool bPrependErrorsWithMessageType);
+		void			fail();
+		void			initMessageColors();
+		void			setStateDownloading();
+		void			setStateWaiting();
+		void			setupIdgames();
+		void 			showEvent(QShowEvent* event);
+		void			startSeeking(const QStringList& seekedFilesList);
 
 	protected slots:
 		void	accept();
@@ -91,7 +98,7 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 		void 	allDone();
 		void 	downloadProgress(int done, int total);
 		void	reject();
-		void	message(const QString& msg, Wadseeker::MessageType type);
+		void	message(const QString& message, Wadseeker::MessageType type);
 		void	registerUpdateRequest();
 };
 

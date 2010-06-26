@@ -26,6 +26,7 @@
 #include "gui/cfgcustomservers.h"
 #include "gui/cfgFilePaths.h"
 #include "gui/cfgQuery.h"
+#include "gui/wadseekerconfigappearance.h"
 #include "gui/wadseekerconfiggeneral.h"
 #include "gui/wadseekerconfigidgames.h"
 #include "gui/wadseekerconfigsites.h"
@@ -115,6 +116,9 @@ void ConfigureDlg::appendWadseekerConfigurationBoxes(QStandardItemModel* model)
 	model->appendRow(wadseekerRoot);
 
 	ConfigurationBoxInfo* cfgBoxInfo = NULL;
+
+	cfgBoxInfo = WadseekerAppearanceConfigBox::createStructure(mainConfig, this);
+	addConfigurationBox(wadseekerRoot, cfgBoxInfo);
 
 	cfgBoxInfo = WadseekerGeneralConfigBox::createStructure(mainConfig, this);
 	addConfigurationBox(wadseekerRoot, cfgBoxInfo);

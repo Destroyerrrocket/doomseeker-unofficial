@@ -173,9 +173,13 @@ void Wadseeker::fileDone(QByteArray& data, const QString& filename)
 	{
 		UnArchive *unarchive = NULL;
 		if (fi.suffix().compare("zip", Qt::CaseInsensitive) == 0)
+		{
 			unarchive = new UnZip(data);
+		}
 		else
+		{
 			unarchive = new Un7Zip(data);
+		}
 
 		if (!unarchive->isValid())
 		{
@@ -188,8 +192,10 @@ void Wadseeker::fileDone(QByteArray& data, const QString& filename)
 
 			if (file != -1)
 			{
+				QString extractedFileName = unarchive->fileNameFromIndex(file);
+			
 				unarchive->extract(file, path);
-				emit message(tr("%1#%2 uncompressed successfully!").arg(filename, unarchive->fileNameFromIndex(file)), Notice);
+				emit message(tr("File \"%1\" was uncompressed successfully from archive \"%2\"!").arg(extractedFileName, filename), Notice);
 				bNextWad = true;
 			}
 			else
@@ -200,7 +206,6 @@ void Wadseeker::fileDone(QByteArray& data, const QString& filename)
 		delete unarchive;
 	}
 
-	emit message(" ", Notice);
 	if (bNextWad)
 	{
 		nextWad();
@@ -250,7 +255,7 @@ void Wadseeker::nextWad()
 
 		if (isForbiddenWad(wad))
 		{
-			emit message(tr("%1 is an IWAD or commercial mod. Ignoring.\n").arg(wad), Error);
+			emit message(tr("%1 is an IWAD or commercial mod. Ignoring.").arg(wad), Error);
 			notFound.append(wad);
 			wad = QString();
 		}
@@ -263,7 +268,6 @@ void Wadseeker::nextWad()
 	QStringList wantedFilenamesInfo = wantedFilenames(wad, zipName);
 	
 	speedCalculator->start();
-	www->clearLinksCache();
 	www->searchFiles(wantedFilenamesInfo, currentWad, zipName);
 }
 

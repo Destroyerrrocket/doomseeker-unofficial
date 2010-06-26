@@ -119,7 +119,6 @@ void Ftp::listInfo(const QUrlInfo& i)
 {
 	if (i.name().compare(queryUrl.path()) == 0)
 	{
-		emit message(tr("File size: %1 B").arg(i.size()), Wadseeker::Notice);
 		size = i.size();
 	}
 }
