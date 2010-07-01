@@ -39,6 +39,7 @@
 #include <QToolTip>
 
 const QString ServerListHandler::FONT_COLOR_MISSING = "#ff0000";
+const QString ServerListHandler::FONT_COLOR_OPTIONAL = "#ff9f00";
 const QString ServerListHandler::FONT_COLOR_FOUND = "#009f00";
 
 using namespace ServerListColumnId;
@@ -206,7 +207,7 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 	static const QString toolTip = "<div style='white-space: pre'>%1</div>";
 	QString content;
 	
-	const QStringList& pwads = server->pwads();
+	const QList<PWad>& pwads = server->pwads();
 	
 	// Check if we should seek and colorize.
 	SettingsData* setting = configuration->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn");
@@ -216,9 +217,9 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 	if (bFindWads)
 	{
 		QStringList pwadsFormatted;
-		foreach (QString fileName, pwads)
+		foreach (const PWad &wad, pwads)
 		{
-			pwadsFormatted << createPwadToolTipInfo(fileName);
+			pwadsFormatted << createPwadToolTipInfo(wad);
 		}
 
 		content = "<table cellspacing=1>";
@@ -227,30 +228,42 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 	}
 	else
 	{
-		content = pwads.join("\n");
+		foreach (const PWad &wad, pwads)
+		{
+			content += wad.name + "\n";
+		}
+		content.chop(1); // Get rid of extra \n.
 	}
 	
 	return toolTip.arg(content);
 }
 
-QString ServerListHandler::createPwadToolTipInfo(const QString& pwadName)
+QString ServerListHandler::createPwadToolTipInfo(const PWad& pwad)
 {
 	QString formattedStringBegin = "<tr style=\"color: %1;\">";
 	QString formattedStringEnd = "</tr>";
 	QString formattedStringMiddle;
 
 	PathFinder pathFinder(configuration);
-	QString pathToFile = pathFinder.findFile(pwadName);
+	QString pathToFile = pathFinder.findFile(pwad.name);
 		
 	if (pathToFile.isEmpty())
 	{
-		formattedStringBegin = formattedStringBegin.arg(FONT_COLOR_MISSING);
-		formattedStringMiddle = tr("<td>%1</td><td> MISSING</td>").arg(pwadName);
+		if(pwad.optional)
+		{
+			formattedStringBegin = formattedStringBegin.arg(FONT_COLOR_OPTIONAL);
+			formattedStringMiddle = tr("<td>%1</td><td> OPTONAL</td>").arg(pwad.name);
+		}
+		else
+		{
+			formattedStringBegin = formattedStringBegin.arg(FONT_COLOR_MISSING);
+			formattedStringMiddle = tr("<td>%1</td><td> MISSING</td>").arg(pwad.name);
+		}
 	}
 	else
 	{
 		formattedStringBegin = formattedStringBegin.arg(FONT_COLOR_FOUND);
-		formattedStringMiddle = QString("<td>%1</td><td> %2</td>").arg(pwadName, pathToFile);
+		formattedStringMiddle = QString("<td>%1</td><td> %2</td>").arg(pwad.name, pathToFile);
 	}
 	
 	return formattedStringBegin + formattedStringMiddle + formattedStringEnd;

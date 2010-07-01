@@ -125,7 +125,7 @@ Server::Response ZDaemonServer::readRequest(QByteArray &data)
 			while(tmp[0] != '\0');
 		}
 
-		wads << wadFile;
+		wads << PWad(wadFile, optional != 0);
 	}
 
 	int gameMode = in[pos++];

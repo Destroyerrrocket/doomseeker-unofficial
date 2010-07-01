@@ -179,10 +179,10 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 
 	for (int i = 0; i < server->numWads(); ++i)
 	{
-		QString pwad = pf.findFile(server->wad(i));
-		if (pwad.isEmpty())
+		QString pwad = pf.findFile(server->wad(i).name);
+		if (pwad.isEmpty() && !server->wad(i).optional)
 		{
-			missingPwads << server->wad(i);
+			missingPwads << server->wad(i).name;
 		}
 		else
 		{

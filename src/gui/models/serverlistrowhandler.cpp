@@ -264,7 +264,15 @@ void ServerListRowHandler::setGood()
 	qstdItem = item(IDMap);
 	fillItem(qstdItem, server->map());
 
-	strTmp = server->pwads().join(" ");
+	strTmp.clear();
+	foreach(const PWad &wad, server->pwads())
+	{
+		if(wad.optional)
+			strTmp += QString("[%1] ").arg(wad.name);
+		else
+			strTmp += wad.name + " ";
+	}
+	strTmp.chop(1);
 	qstdItem = item(IDWads);
 	fillItem(qstdItem, strTmp);
 

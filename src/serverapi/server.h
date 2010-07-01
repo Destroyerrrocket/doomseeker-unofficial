@@ -26,11 +26,11 @@
 
 #include <QDir>
 #include <QFileInfo>
+#include <QList>
 #include <QProcess>
 #include <QObject>
 #include <QHostAddress>
 #include <QString>
-#include <QStringList>
 #include <QMetaType>
 #include <QPixmap>
 #include <QThread>
@@ -48,6 +48,16 @@ class GameRunner;
 class PlayersList;
 struct PluginInfo;
 class TooltipGenerator;
+
+// Some ports support optional wads.
+struct MAIN_EXPORT PWad
+{
+	public:
+		PWad(const QString &name, bool optional=false) : name(name), optional(optional) {}
+
+		QString	name;
+		bool	optional;
+};
 
 class MAIN_EXPORT Server : public QObject
 {
@@ -119,7 +129,7 @@ class MAIN_EXPORT Server : public QObject
 		const Player&		player(int index) const;
 		const PlayersList*	playersList() const { return players; }
 		unsigned short		port() const { return serverPort; }
-		const QStringList&	pwads() const { return wads; }
+		const QList<PWad>&	pwads() const { return wads; }
 		bool				randomMapRotation() const { return mapRandomRotation; }
 		virtual RConProtocol	*rcon() { return NULL; }
 		const QString&		rconPassword() const { return passwordRCon; }
@@ -130,7 +140,7 @@ class MAIN_EXPORT Server : public QObject
 		unsigned short		timeLeft() const { return serverTimeLeft; }
 		unsigned short		timeLimit() const { return serverTimeLimit; }
 		const QString		version() const { return serverVersion; }
-		const QString		&wad(int index) const { return wads[index]; }
+		const PWad			&wad(int index) const { return wads[index]; }
 		const QString		&website() const { return webSite; }
 
 		void				setBroadcastToLAN(bool b) { broadcastToLAN = b; }
@@ -285,7 +295,7 @@ class MAIN_EXPORT Server : public QObject
 		unsigned short		serverTimeLimit;
 		QString				serverVersion;
 		unsigned char		skill;
-		QStringList			wads;
+		QList<PWad>			wads;
 		QString				webSite;
 
 		static QString		teamNames[];
