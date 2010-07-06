@@ -72,8 +72,8 @@ void ServersStatusWidget::registerServers()
 	{
 		foreach(Server *server, serverList->serverList())
 		{
-			connect(server, SIGNAL(begunRefreshing(Server *)), this, SLOT(removeServer(Server *)));
-			connect(server, SIGNAL(updated(Server *, int)), this, SLOT(addServer(Server *)));
+			connect(server, SIGNAL(begunRefreshing(Server *)), this, SLOT(removeServer(Server *)), Qt::DirectConnection);
+			connect(server, SIGNAL(updated(Server *, int)), this, SLOT(addServer(Server *)), Qt::DirectConnection);
 		}
 	}
 }

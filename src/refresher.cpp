@@ -58,7 +58,7 @@ void RefreshingThread::gotoSleep()
 	thisMutex.lock();
 }
 
-Server*	RefreshingThread::obtainServerFromBatch(ServerBatch& batch, const QHostAddress& address, qint16 port)
+Server*	RefreshingThread::obtainServerFromBatch(ServerBatch& batch, const QHostAddress& address, quint16 port)
 {
 	for(int j = 0; j < batch.servers.size(); ++j)
 	{

@@ -132,7 +132,7 @@ class RefreshingThread : public QThread, public QRunnable
 		/**
 		 *	@return NULL if server of given address:port is not in the batch.
 		 */
-		Server*					obtainServerFromBatch(ServerBatch& batch, const QHostAddress& address, qint16 port);
+		Server*					obtainServerFromBatch(ServerBatch& batch, const QHostAddress& address, quint16 port);
 
 		void					readPendingDatagrams();
 
