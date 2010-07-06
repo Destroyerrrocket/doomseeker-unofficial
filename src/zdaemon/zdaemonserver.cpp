@@ -97,7 +97,7 @@ Server::Response ZDaemonServer::readRequest(QByteArray &data)
 	pos += serverName.length() + 1;
 
 	players->clear();
-	int numPlayers = in[pos++];
+	int numClients = in[pos++];
 	maxClients = in[pos++];
 
 	mapName = QString(&in[pos]);
@@ -189,7 +189,8 @@ Server::Response ZDaemonServer::readRequest(QByteArray &data)
 
 	locked = in[pos++];
 	int acl = in[pos++];
-	numPlayers = in[pos++];
+	//int numPlayers = in[pos++];
+	pos++;
 	maxPlayers = in[pos++];
 	serverTimeLimit = READINT16(&in[pos]);
 	serverTimeLeft = READINT16(&in[pos+2]);
@@ -202,7 +203,7 @@ Server::Response ZDaemonServer::readRequest(QByteArray &data)
 	serverVersion = QString(&in[pos]);
 	pos += serverVersion.length()+5;
 
-	for(int i = 0;i < numPlayers;i++)
+	for(int i = 0;i < numClients;i++)
 	{
 		QString name(&in[pos]);
 		pos += name.length()+1;
@@ -220,16 +221,19 @@ Server::Response ZDaemonServer::readRequest(QByteArray &data)
 		pos += 13;
 	}
 
-	if(currentGameMode.isTeamGame())
-		serverScoreLimit = READINT16(&in[pos+1]);
-	pos += 7;
-	for(int i = 0;i < ZD_MAX_TEAMS;i++)
+	int numTeams = READINT8(&in[pos++]);
+	if(numTeams >= 2)
 	{
-		teamInfo[i].setName(tr(&in[pos]));
-		pos += teamInfo[i].name().length() + 1;
-		teamInfo[i].setColor(READINT32(&in[pos]));
-		teamInfo[i].setScore(READINT16(&in[pos+4]));
+		serverScoreLimit = READINT16(&in[pos+1]);
 		pos += 6;
+		for(int i = 0;i < ZD_MAX_TEAMS;i++)
+		{
+			teamInfo[i].setName(tr(&in[pos]));
+			pos += teamInfo[i].name().length() + 1;
+			teamInfo[i].setColor(READINT32(&in[pos]));
+			teamInfo[i].setScore(READINT16(&in[pos+4]));
+			pos += 6;
+		}
 	}
 
 	return RESPONSE_GOOD;
