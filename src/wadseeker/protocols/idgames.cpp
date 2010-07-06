@@ -132,7 +132,7 @@ void Idgames::findFile(const QString& zipName)
     }
 
 	seekedFile = zipName;
-	emit message(tr("Searching Idgames archive for file: %1").arg(zipName), Wadseeker::Notice);
+	emit message(tr("Searching Idgames archive for file: %1").arg(zipName), Wadseeker::NoticeImportant);
 
 	getPage();
 }
