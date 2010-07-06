@@ -73,6 +73,15 @@ class MAIN_EXPORT Strings
 		 *		or no port inside addressString is specified.
 		 */
 		static void				translateServerAddress(const QString& addressString, QString& hostname, unsigned short& port, const QString& defaultHostname, const unsigned short defaultPort);
+		
+		/**
+		 *	@brief Unsafe URLs begin with file:// and this functions returns
+		 *	false for such URLs.
+		 *
+		 *	Someone might prepare such URL to make Doomseeker activate files on 
+		 *	user's local drive and possibly cause damage to the system.
+		 */
+		static bool				isUrlSafe(const QString& url);
 
 		static QString&			trim(QString& str, const QString& charList) { return trimr(triml(str, charList), charList); }
 		static QString&			trimr(QString& str, const QString& charList);

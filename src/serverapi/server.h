@@ -177,15 +177,6 @@ class MAIN_EXPORT Server : public QObject
 		bool				isRefreshing() const { return bIsRefreshing; }
 
 		/**
-		 *	@brief Checks if it's safe to open the URL in browser.
-		 *
-		 *	For example: URL is not safe when it begins with file:// . Someone
-		 *	may prepare such URL to make Doomseeker activate files on users
-		 *	local drive and thus cause damage the system in some way.
-		 */
-		bool				isWebsiteURLSafe() const;
-
-		/**
 		 *	This is supposed to return the plugin this Server belongs to.
 		 *	New instances of PluginInfo shouldn't be created here. Instead
 		 *	each plugin should keep a global instance of PluginInfo (singleton?)

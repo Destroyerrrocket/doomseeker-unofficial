@@ -79,6 +79,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	stopAutoRefreshTimer() { autoRefreshTimer.stop(); }
 
 	protected:
+		static const QString	HELP_SITE_URL;
+	
 		QTimer				autoRefreshTimer;
 
 		/**
@@ -103,7 +105,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 		Config*				configuration;
 		LogDock*			logDock;
-		ServerListHandler*			serverTableHandler;
+		ServerListHandler*	serverTableHandler;
 
 		MasterManager*		masterManager;
 		QList<QAction*>		queryMenuPorts;
@@ -173,6 +175,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	menuBuddies();
 		void 	menuCreateServer();
 		void	menuHelpAbout();
+		void	menuHelpHelp();
 		void	menuLog();
 		void 	menuOptionsConfigure();
 		void	menuWadSeeker();

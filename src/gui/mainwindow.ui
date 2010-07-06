@@ -124,19 +124,21 @@
      <locale language="English" country="UnitedStates"/>
     </property>
     <property name="title">
-     <string>Options</string>
+     <string>&amp;Options</string>
     </property>
     <addaction name="menuActionConfigure"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Help</string>
+     <string>&amp;Help</string>
     </property>
+    <addaction name="menuActionHelp"/>
+    <addaction name="separator"/>
     <addaction name="menuActionAbout"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
     <addaction name="menuActionCreateServer"/>
     <addaction name="menuActionWadseeker"/>
@@ -145,14 +147,14 @@
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
-     <string>View</string>
+     <string>&amp;View</string>
     </property>
     <addaction name="menuActionBuddies"/>
     <addaction name="menuActionLog"/>
    </widget>
    <widget class="QMenu" name="menuQuery">
     <property name="title">
-     <string>Query</string>
+     <string>&amp;Query</string>
     </property>
    </widget>
    <addaction name="menuFile"/>
@@ -164,17 +166,17 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="menuActionConfigure">
    <property name="text">
-    <string>Configure</string>
+    <string>&amp;Configure</string>
    </property>
   </action>
   <action name="menuActionAbout">
    <property name="text">
-    <string>About</string>
+    <string>&amp;About</string>
    </property>
   </action>
   <action name="menuActionQuit">
    <property name="text">
-    <string>Quit</string>
+    <string>&amp;Quit</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
@@ -193,7 +195,7 @@
   </action>
   <action name="menuActionWadseeker">
    <property name="text">
-    <string>Wadseeker</string>
+    <string>&amp;Wadseeker</string>
    </property>
   </action>
   <action name="menuActionBuddies">
@@ -201,7 +203,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Buddies</string>
+    <string>&amp;Buddies</string>
    </property>
    <property name="shortcut">
     <string>B</string>
@@ -209,7 +211,7 @@
   </action>
   <action name="menuActionCreateServer">
    <property name="text">
-    <string>Create server</string>
+    <string>&amp;Create server</string>
    </property>
   </action>
   <action name="menuActionLog">
@@ -217,10 +219,18 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Log</string>
+    <string>&amp;Log</string>
    </property>
    <property name="shortcut">
     <string>L</string>
+   </property>
+  </action>
+  <action name="menuActionHelp">
+   <property name="text">
+    <string>&amp;Help</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
    </property>
   </action>
  </widget>

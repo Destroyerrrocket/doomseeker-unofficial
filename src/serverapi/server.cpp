@@ -131,12 +131,6 @@ QString Server::engineName() const
 	}
 }
 
-
-bool Server::isWebsiteURLSafe() const
-{
-	return !website().startsWith("file://", Qt::CaseInsensitive);
-}
-
 int Server::numFreeClientSlots() const
 {
 	int returnValue = maxClients - players->numClients();

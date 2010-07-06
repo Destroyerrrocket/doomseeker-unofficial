@@ -151,6 +151,11 @@ bool Strings::isCharOnCharList(char c, const QString& charList)
 	return false;
 }
 
+bool Strings::isUrlSafe(const QString& url)
+{
+	return !url.startsWith("file://", Qt::CaseInsensitive);
+}
+
 float Strings::scaleDataUnit(float bytes, DataUnit& outUnit)
 {
 	const static float UPPER_BOUNDARY = 900.0f;	

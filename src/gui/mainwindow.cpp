@@ -36,12 +36,16 @@
 #include "log.h"
 #include "pathfinder.h"
 #include "main.h"
+#include "strings.h"
 #include <QAction>
+#include <QDesktopServices>
 #include <QDockWidget>
 #include <QFileInfo>
 #include <QIcon>
 #include <QHeaderView>
 #include <QMessageBox>
+
+const QString MainWindow::HELP_SITE_URL = "http://skulltag.net/wiki/Doomseeker";
 
 MainWindow::MainWindow(int argc, char** argv, Config* config)
 : bTotalRefreshInProcess(false), buddiesList(NULL), bWasMaximized(false),
@@ -244,6 +248,7 @@ void MainWindow::connectEntities()
 	connect(menuActionBuddies, SIGNAL( triggered() ), this, SLOT( menuBuddies() ));
 	connect(menuActionConfigure, SIGNAL( triggered() ), this, SLOT( menuOptionsConfigure() ));
 	connect(menuActionCreateServer, SIGNAL( triggered() ), this, SLOT( menuCreateServer() ));
+	connect(menuActionHelp, SIGNAL( triggered() ), this, SLOT ( menuHelpHelp() ) );
 	connect(menuActionLog, SIGNAL( triggered() ), this, SLOT( menuLog() ));
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( quitProgram() ));
 	connect(menuActionWadseeker, SIGNAL( triggered() ), this, SLOT( menuWadSeeker() ));
@@ -432,6 +437,23 @@ void MainWindow::menuHelpAbout()
 	autoRefreshTimer.stop();
 	dlg.exec();
 	initAutoRefreshTimer();
+}
+
+void MainWindow::menuHelpHelp()
+{
+	if (HELP_SITE_URL.isEmpty() || !Strings::isUrlSafe(HELP_SITE_URL))
+	{
+		QMessageBox::critical(this, tr("Help error"), tr("No help found"), QMessageBox::Ok, QMessageBox::Ok);
+		return;
+	}
+
+	bool bSuccess = QDesktopServices::openUrl(HELP_SITE_URL);
+	
+	if (!bSuccess)
+	{
+		QMessageBox::critical(this, tr("Help error"), tr("Failed to open URL:\n%1").arg(HELP_SITE_URL), QMessageBox::Ok, QMessageBox::Ok);
+		return;
+	}
 }
 
 void MainWindow::menuLog()

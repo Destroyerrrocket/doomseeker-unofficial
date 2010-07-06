@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "serverlistcontextmenu.h"
 #include "serverapi/server.h"
+#include "strings.h"
 #include <QApplication>
 #include <QClipboard>
 
@@ -59,11 +60,16 @@ void ServerListContextMenu::createMembers()
 	join = menu->addAction(tr("Join"));
 	showJoinCommandLine = menu->addAction(tr("Show join command line"));
 
-	if (!pServer->website().isEmpty() && pServer->isWebsiteURLSafe())
+	// Website.
+	const QString& webSite = pServer->website();
+	bool bShouldAllowOpenUrl = !webSite.isEmpty() && Strings::isUrlSafe(webSite);
+
+	if (bShouldAllowOpenUrl)
 	{
 		openUrlInDefaultBrowser = menu->addAction(tr("Open URL in browser"));
 	}
 
+	// Copy menu.
 	QMenu* copyMenu = createCopyMenu(menu);
 	menu->addMenu(copyMenu);
 
@@ -105,6 +111,12 @@ void ServerListContextMenu::initializeMembers()
 
 ServerListContextMenu::Result ServerListContextMenu::translateQMenuResult(QAction* resultAction)
 {
+	if (resultAction == NULL)
+	{
+		return NothingHappened;
+	}
+
+	// Now perform checks against menu items.
 	if(resultAction == refresh)
 	{
 		return Refresh;
@@ -117,7 +129,7 @@ ServerListContextMenu::Result ServerListContextMenu::translateQMenuResult(QActio
 	{
 		return ShowJoinCommandLine;
 	}
-	else if (resultAction == openUrlInDefaultBrowser && openUrlInDefaultBrowser != NULL)
+	else if (resultAction == openUrlInDefaultBrowser)
 	{
 		return OpenURL;
 	}
@@ -127,7 +139,7 @@ ServerListContextMenu::Result ServerListContextMenu::translateQMenuResult(QActio
 		QApplication::clipboard()->setText(addr);
 		return DataCopied;
 	}
-	else if (resultAction == copyEmail && copyEmail != NULL)
+	else if (resultAction == copyEmail)
 	{
 		QApplication::clipboard()->setText(pServer->eMail());
 		return DataCopied;
@@ -137,12 +149,12 @@ ServerListContextMenu::Result ServerListContextMenu::translateQMenuResult(QActio
 		QApplication::clipboard()->setText(pServer->name());
 		return DataCopied;
 	}
-	else if (resultAction == copyUrl && copyUrl != NULL)
+	else if (resultAction == copyUrl)
 	{
 		QApplication::clipboard()->setText(pServer->website());
 		return DataCopied;
 	}
-	else if(resultAction == rcon && rcon != NULL)
+	else if(resultAction == rcon)
 	{
 		return OpenRemoteConsole;
 	}
