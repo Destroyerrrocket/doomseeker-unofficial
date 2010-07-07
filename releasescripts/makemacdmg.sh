@@ -26,10 +26,10 @@ mkdir Doomseeker/Doomseeker.app/Contents/Frameworks
 mkdir Doomseeker/Doomseeker.app/Contents/Resources
 
 # Build
-#mkdir Doomseeker/build
+mkdir Doomseeker/build
 cd Doomseeker/build
-#cmake ../../.. -DMAC_ARCH_UNIVERSAL=ON -DMAC_SDK_10.4=ON -DCMAKE_BUILD_TYPE=Release
-#make -j 2
+cmake ../../.. -DMAC_ARCH_UNIVERSAL=ON -DMAC_SDK_10.4=ON -DCMAKE_BUILD_TYPE=Release
+make -j 2
 cd ..
 
 cp {build/,Doomseeker.app/Contents/MacOS/}doomseeker
