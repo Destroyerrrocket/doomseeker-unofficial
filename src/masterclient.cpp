@@ -145,6 +145,12 @@ MasterManager::MasterManager() : MasterClient(QHostAddress(), 0)
 MasterManager::~MasterManager()
 {
 	servers.clear();
+	
+	for (int i = 0; i < mastersMessageReceivers.size(); ++i)
+	{
+		delete mastersMessageReceivers[i];
+	}
+	
 	for(int i = 0;i < masters.size();i++)
 		delete masters[i];
 
@@ -158,7 +164,11 @@ void MasterManager::addMaster(MasterClient *master)
 
 	masters.append(master);
 	master->setEnabled(true);
-	connect(master, SIGNAL( message(const QString&, const QString&, bool) ), this, SLOT( readMasterMessage(const QString&, const QString&, bool) ) );
+	
+	MasterClientMessageReceiver* pMasterMessageReceiver = new MasterClientMessageReceiver(master);
+	connect(pMasterMessageReceiver, SIGNAL( message(MasterClient*, const QString&, const QString&, bool) ), this, SLOT( readMasterMessage(MasterClient*, const QString&, const QString&, bool) ) );
+	mastersMessageReceivers.append(pMasterMessageReceiver);
+	
 }
 
 void MasterManager::refresh()
@@ -169,12 +179,16 @@ void MasterManager::refresh()
 	for(int i = 0;i < masters.size();i++)
 	{
 		if(!masters[i]->isEnabled())
+		{
 			continue;
+		}
 
 		masters[i]->refresh();
 		// Qt 4.4 doesn't have list appending.
 		foreach(Server *server, masters[i]->serverList())
+		{
 			servers.append(server);
+		}
 	}
 
 	//emit listUpdated();

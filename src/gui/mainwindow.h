@@ -171,7 +171,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void 	btnGetServers_Click();
 		void	btnRefreshAll_Click();
 		void 	finishedQueryingMaster(MasterClient* master);
-		void	masterManagerMessages(const QString& title, const QString& content, bool isError);
+		void	masterManagerMessages(MasterClient* pSender, const QString& title, const QString& content, bool isError);
 		void	menuBuddies();
 		void 	menuCreateServer();
 		void	menuHelpAbout();

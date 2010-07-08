@@ -71,7 +71,7 @@ MainWindow::MainWindow(int argc, char** argv, Config* config)
 
 	// Get the master
 	masterManager = new MasterManager();
-	connect(masterManager, SIGNAL( message(const QString&, const QString&, bool) ), this, SLOT( masterManagerMessages(const QString&, const QString&, bool) ) );
+	connect(masterManager, SIGNAL( masterMessage(MasterClient*, const QString&, const QString&, bool) ), this, SLOT( masterManagerMessages(MasterClient*, const QString&, const QString&, bool) ) );
 
 	// Allow us to enable and disable ports.
 	fillQueryMenu(masterManager);
@@ -266,19 +266,18 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		const EnginePlugin* plugin = (*Main::enginePlugins)[i]->info->pInterface;
 		if(!plugin->hasMasterServer())
 		{
-//			queryMenuPorts.append(NULL);
 			continue;
 		}
 
-		MasterClient* mClient = plugin->masterClient();
-		masterManager->addMaster(mClient);
+		MasterClient* pMasterClient = plugin->masterClient();
+		masterManager->addMaster(pMasterClient);
 
 		// Now is a good time to also populate the status bar widgets
-		ServersStatusWidget *statusWidget = new ServersStatusWidget(plugin->icon(), mClient);
+		ServersStatusWidget *statusWidget = new ServersStatusWidget(plugin->icon(), pMasterClient);
 		statusBar()->addPermanentWidget(statusWidget);
 
 		QString name = (*Main::enginePlugins)[i]->info->name;
-		QQueryMenuAction* query = new QQueryMenuAction(mClient, statusWidget, menuQuery);
+		QQueryMenuAction* query = new QQueryMenuAction(pMasterClient, statusWidget, menuQuery);
 		menuQuery->addAction(query);
 
 		query->setCheckable(true);
@@ -288,8 +287,11 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		if (configuration->settingExists(name + "Query"))
 		{
 			bool enabled = static_cast<bool>(configuration->setting(name + "Query")->integer());
-			if(mClient != NULL)
-				mClient->setEnabled(enabled);
+			if(pMasterClient != NULL)
+			{
+				pMasterClient->setEnabled(enabled);
+			}
+			
 			query->setChecked(enabled);
 			statusWidget->setEnabled(enabled);
 		}
@@ -297,8 +299,11 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		{
 			// if no setting is found for this engine
 			// set default as follows:
-			if(mClient != NULL)
-				mClient->setEnabled(true);
+			if(pMasterClient != NULL)
+			{
+				pMasterClient->setEnabled(true);
+			}
+			
 			query->setChecked(true);
 			statusWidget->setEnabled(true);
 		}
@@ -408,13 +413,17 @@ void MainWindow::initTrayIcon()
 	}
 }
 
-void MainWindow::masterManagerMessages(const QString& title, const QString& content, bool isError)
+void MainWindow::masterManagerMessages(MasterClient* pSender, const QString& title, const QString& content, bool isError)
 {
-	gLog << tr("Message from master manager. TITLE: %1 | CONTENT: %2 | IS ERROR: %3").arg(title).arg(content).arg(isError ? tr("yes") : tr("no"));
+	QString message = tr("Master server for %1: %2").arg(pSender->plugin()->name).arg(content);
+
 	if (isError)
 	{
-		QMessageBox::critical(this, title, content, QMessageBox::Ok, QMessageBox::Ok);
+		message = tr("Error: %1").arg(message);
+		statusBar()->showMessage(message);
 	}
+	
+	gLog << message;
 }
 
 void MainWindow::menuBuddies()

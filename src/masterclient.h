@@ -87,8 +87,7 @@ class MAIN_EXPORT MasterClient : public QObject
 
 		/**
 		 *	Plugins may use this to make Doomseeker display custom messages.
-		 *	Errors are always displayed in the message box while non-errors
-		 *	are currently ignored.
+		 *	Messages are dumped into the log.
 		 */
 		void			message(const QString& title, const QString& content, bool isError);
 
@@ -122,6 +121,7 @@ class MAIN_EXPORT MasterClient : public QObject
 };
 
 class CustomServers;
+class MasterClientMessageReceiver;
 
 class MasterManager : public MasterClient
 {
@@ -131,31 +131,59 @@ class MasterManager : public MasterClient
 		MasterManager();
 		~MasterManager();
 
-		void			addMaster(MasterClient *master);
-		CustomServers*	customServs() { return customServers; }
+		void								addMaster(MasterClient *master);
+		CustomServers*						customServs() { return customServers; }
 
-		const PluginInfo*		plugin() const { return NULL; }
+		const PluginInfo*					plugin() const { return NULL; }
 
 
 	public slots:
-		void	refresh();
+		void								refresh();
+		
+	signals:
+		void								masterMessage(MasterClient* pSender, const QString& title, const QString& content, bool isError);
 
 	protected:
-		bool	readRequest(QByteArray &data, bool &expectingMorePackets) { return true; }
-		bool	sendRequest(QByteArray &data) { return true; }
+		bool								readRequest(QByteArray &data, bool &expectingMorePackets) { return true; }
+		bool								sendRequest(QByteArray &data) { return true; }
 
-		QList<MasterClient *>	masters;
-		CustomServers*			customServers;
-
+		CustomServers*						customServers;
+		QList<MasterClient *>				masters;		
+		QList<MasterClientMessageReceiver*>	mastersMessageReceivers;	
+	
 	protected slots:
-		/**
-		 *	message() signal of every master is connected to this slot.
-		 *	Doomseeker uses message() signal of MasterManager for convenience
-		 */
-		void	readMasterMessage(const QString& title, const QString& content, bool isError)
+		void								readMasterMessage(MasterClient* pSender, const QString& title, const QString& content, bool isError)
 		{
-			emit message(title, content, isError);
+			emit masterMessage(pSender, title, content, isError);
 		}
 };
+
+/**
+ *	@brief Designed to preserve the information about the MasterClient
+ *	instance that is sending the message.
+ */
+class MasterClientMessageReceiver : public QObject
+{
+	Q_OBJECT
+
+	public:
+		MasterClient*	pMaster;
+		
+		MasterClientMessageReceiver(MasterClient* pMaster)
+		{
+			this->pMaster = pMaster;
+			
+			connect(pMaster, SIGNAL( message(const QString&, const QString&, bool) ), this, SLOT( readMasterMessage(const QString&, const QString&, bool) ) );
+		}
+		
+	protected slots:
+		void			readMasterMessage(const QString& title, const QString& content, bool isError)
+		{
+			emit message(pMaster, title, content, isError);
+		}
+	
+	signals:
+		void			message(MasterClient* pSender, const QString& title, const QString& content, bool isError);
+};	
 
 #endif /* __MASTERSERVER_H__ */
