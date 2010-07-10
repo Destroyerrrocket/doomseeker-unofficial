@@ -24,6 +24,7 @@
 #include <cmath>
 
 #include <QStringList>
+#include <QUrl>
 
 QString Strings::formatDataAmount(int bytes)
 {
@@ -153,7 +154,16 @@ bool Strings::isCharOnCharList(char c, const QString& charList)
 
 bool Strings::isUrlSafe(const QString& url)
 {
-	return !url.startsWith("file://", Qt::CaseInsensitive);
+	QUrl urlObject = url;
+	
+	QString scheme = urlObject.scheme();
+	
+	bool bIsSafe1 = scheme.isEmpty();
+	bool bIsSafe2 = (scheme.compare("http", Qt::CaseInsensitive) == 0);
+	bool bIsSafe3 = (scheme.compare("ftp", Qt::CaseInsensitive) == 0);
+
+	
+	return bIsSafe1 || bIsSafe2 || bIsSafe3;
 }
 
 float Strings::scaleDataUnit(float bytes, DataUnit& outUnit)
