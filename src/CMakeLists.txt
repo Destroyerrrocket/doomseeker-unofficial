@@ -103,6 +103,7 @@ set(DOOMSEEKER_QT_FILES
 	ip2c.h
 	log.h
 	masterclient.h
+	mastermanager.h
 	refresher.h
 )
 
@@ -162,6 +163,7 @@ set(SOURCE_FILES
 	log.cpp
 	main.cpp
 	masterclient.cpp
+	mastermanager.cpp
 	pathfinder.cpp
 	refresher.cpp
 	strings.cpp	

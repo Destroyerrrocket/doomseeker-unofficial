@@ -22,7 +22,6 @@
 //------------------------------------------------------------------------------
 
 #include "masterclient.h"
-#include "customservers.h"
 #include "main.h"
 #include "serverapi/playerslist.h"
 
@@ -134,62 +133,4 @@ void MasterClient::refresh()
 	while(expectingMorePackets);
 
 	emit listUpdated();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-MasterManager::MasterManager() : MasterClient(QHostAddress(), 0)
-{
-	customServers = new CustomServers();
-}
-
-MasterManager::~MasterManager()
-{
-	servers.clear();
-	
-	for (int i = 0; i < mastersMessageReceivers.size(); ++i)
-	{
-		delete mastersMessageReceivers[i];
-	}
-	
-	for(int i = 0;i < masters.size();i++)
-		delete masters[i];
-
-	delete customServers;
-}
-
-void MasterManager::addMaster(MasterClient *master)
-{
-	if(master == NULL)
-		return;
-
-	masters.append(master);
-	master->setEnabled(true);
-	
-	MasterClientMessageReceiver* pMasterMessageReceiver = new MasterClientMessageReceiver(master);
-	connect(pMasterMessageReceiver, SIGNAL( message(MasterClient*, const QString&, const QString&, bool) ), this, SLOT( readMasterMessage(MasterClient*, const QString&, const QString&, bool) ) );
-	mastersMessageReceivers.append(pMasterMessageReceiver);
-	
-}
-
-void MasterManager::refresh()
-{
-	// Don't delete the servers yet!
-	servers.clear();
-
-	for(int i = 0;i < masters.size();i++)
-	{
-		if(!masters[i]->isEnabled())
-		{
-			continue;
-		}
-
-		masters[i]->refresh();
-		// Qt 4.4 doesn't have list appending.
-		foreach(Server *server, masters[i]->serverList())
-		{
-			servers.append(server);
-		}
-	}
-
-	//emit listUpdated();
 }
