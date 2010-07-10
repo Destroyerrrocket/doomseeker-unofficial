@@ -23,6 +23,9 @@
 #include "mastermanager.h"
 #include "customservers.h"
 
+// TODO: I don't think that MasterManager should store a duplicate of each
+// server (~Zalewa).
+
 MasterManager::MasterManager() : MasterClient(QHostAddress(), 0)
 {
 	customServers = new CustomServers();
@@ -32,9 +35,9 @@ MasterManager::~MasterManager()
 {
 	servers.clear();
 	
-	for (int i = 0; i < mastersMessageReceivers.size(); ++i)
+	for (int i = 0; i < mastersReceivers.size(); ++i)
 	{
-		delete mastersMessageReceivers[i];
+		delete mastersReceivers[i];
 	}
 	
 	for(int i = 0;i < masters.size();i++)
@@ -51,14 +54,47 @@ void MasterManager::addMaster(MasterClient *master)
 	masters.append(master);
 	master->setEnabled(true);
 	
-	MasterClientMessageReceiver* pMasterMessageReceiver = new MasterClientMessageReceiver(master);
-	connect(pMasterMessageReceiver, SIGNAL( message(MasterClient*, const QString&, const QString&, bool) ), this, SLOT( readMasterMessage(MasterClient*, const QString&, const QString&, bool) ) );
-	mastersMessageReceivers.append(pMasterMessageReceiver);
+	MasterClientReceiver* pMasterReceiver = new MasterClientReceiver(master);
+	connect(pMasterReceiver, SIGNAL( listUpdated(MasterClient*) ), this, SLOT( masterListUpdated(MasterClient*) ) );
+	connect(pMasterReceiver, SIGNAL( message(MasterClient*, const QString&, const QString&, bool) ), this, SLOT( readMasterMessage(MasterClient*, const QString&, const QString&, bool) ) );
+	connect(pMasterReceiver, SIGNAL( newServerBatchReceived(MasterClient*, const QList<Server* >&) ), this, SLOT( newServerBatchReceivedSlot(MasterClient*, const QList<Server* >&) ) );
+	mastersReceivers.append(pMasterReceiver);
 	
+}
+
+void MasterManager::masterListUpdated(MasterClient* pSender)
+{
+	const QList<Server*>& serversFromMaster = pSender->serverList();
+	foreach(Server* pServer, serversFromMaster)
+	{
+		servers.append(pServer);
+	}
+
+	emit listUpdatedForMaster(pSender);
+	mastersBeingRefreshed.remove(pSender);
+	if (mastersBeingRefreshed.isEmpty())
+	{
+		emit listUpdated();
+	}
+}
+
+bool MasterManager::readMasterResponse(QHostAddress& address, unsigned short port, QByteArray &data)
+{
+	for (int i = 0; i < masters.size(); ++i)
+	{
+		if (masters[i]->isAddressDataCorrect(address, port))
+		{
+			return masters[i]->readMasterResponse(data);
+		}
+	}
+	
+	return false;
 }
 
 void MasterManager::refresh()
 {
+	bTimeouted = false;
+
 	// Don't delete the servers yet!
 	servers.clear();
 
@@ -69,13 +105,17 @@ void MasterManager::refresh()
 			continue;
 		}
 
+		mastersBeingRefreshed.insert(masters[i]);
 		masters[i]->refresh();
-		// Qt 4.4 doesn't have list appending.
-		foreach(Server *server, masters[i]->serverList())
-		{
-			servers.append(server);
-		}
+	}
+}
+
+void MasterManager::timeoutRefreshEx()
+{
+	foreach(MasterClient* pMaster, mastersBeingRefreshed)
+	{
+		pMaster->timeoutRefresh();
 	}
 
-	//emit listUpdated();
+	mastersBeingRefreshed.clear();
 }

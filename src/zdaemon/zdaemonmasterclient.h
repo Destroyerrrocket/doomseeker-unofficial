@@ -40,11 +40,12 @@ class ZDaemonMasterClient : public MasterClient
 		ZDaemonMasterClient(QHostAddress address, unsigned short port);
 
 		const PluginInfo*		plugin() const;
+		bool					readMasterResponse(QByteArray &data);
 		void					refresh();
 
 	protected:
-		bool	readRequest(QByteArray &data, bool &expectingMorePackets);
-		bool	sendRequest(QByteArray &data);
+		
+		bool					getServerListRequest(QByteArray &data);
 
 		QNetworkAccessManager	*netAccessManager;
 		QWaitCondition			listWaitCondition;

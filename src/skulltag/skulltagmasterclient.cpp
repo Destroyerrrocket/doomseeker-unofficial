@@ -45,13 +45,26 @@ SkulltagMasterClient::SkulltagMasterClient(QHostAddress address, unsigned short 
 {
 }
 
+bool SkulltagMasterClient::getServerListRequest(QByteArray &data)
+{
+	const unsigned char challenge[6] = {WRITEINT32_DIRECT(MASTER_CHALLENGE), WRITEINT16_DIRECT(MASTER_PROTOCOL_VERSION)};
+	unsigned char challengeOut[12];
+	int out = 12;
+	HUFFMAN_Encode(challenge, challengeOut, 6, &out);
+	const QByteArray chall(reinterpret_cast<char*> (challengeOut), out);
+	data.append(chall);
+	return true;
+}
+
 const PluginInfo* SkulltagMasterClient::plugin() const
 {
 	return SkulltagMain::get();
 }
 
-bool SkulltagMasterClient::readRequest(QByteArray &data, bool &expectingMorePackets)
+bool SkulltagMasterClient::readMasterResponse(QByteArray &data)
 {
+	bool expectingMorePackets = false;
+
 	const char* in = data.data();
 	unsigned char packetOut[2000];
 	int out = 2000;
@@ -81,11 +94,7 @@ bool SkulltagMasterClient::readRequest(QByteArray &data, bool &expectingMorePack
 	// the function was executed.  So store the number of packets.
 	if(!expectingMorePackets)
 	{
-		// Make sure we have an empty list.
-		emptyServerList();
-		readLastPacket = false;
-		numPackets = 0;
-		numPacketsRead = 0;
+		
 	}
 	int packetNum = READINT8(&packetOut[4]);
 	if(packetNum+1 > numPackets) // Packet numbers start at 0
@@ -120,18 +129,22 @@ bool SkulltagMasterClient::readRequest(QByteArray &data, bool &expectingMorePack
 		expectingMorePackets = true;
 		numPacketsRead++;
 	}
+	
+	if (!expectingMorePackets)
+	{
+		emit listUpdated();
+	}
 
 	return true;
 }
 
-bool SkulltagMasterClient::sendRequest(QByteArray &data)
+void SkulltagMasterClient::refresh()
 {
-	// Send launcher challenge.
-	const unsigned char challenge[6] = {WRITEINT32_DIRECT(MASTER_CHALLENGE), WRITEINT16_DIRECT(MASTER_PROTOCOL_VERSION)};
-	unsigned char challengeOut[12];
-	int out = 12;
-	HUFFMAN_Encode(challenge, challengeOut, 6, &out);
-	const QByteArray chall(reinterpret_cast<char*> (challengeOut), out);
-	data.append(chall);
-	return true;
+	// Make sure we have an empty list.
+	emptyServerList();
+	readLastPacket = false;
+	numPackets = 0;
+	numPacketsRead = 0;	
+	
+	MasterClient::refresh();
 }

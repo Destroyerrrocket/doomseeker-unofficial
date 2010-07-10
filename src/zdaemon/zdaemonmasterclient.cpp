@@ -64,6 +64,11 @@ void ZDaemonMasterClient::createQueryRequest()
 	QNetworkReply *reply = netAccessManager->get(netRequest);
 }
 
+bool ZDaemonMasterClient::getServerListRequest(QByteArray &data)
+{
+	return true;
+}
+
 void ZDaemonMasterClient::listFetched(QNetworkReply *reply)
 {
 	char serverData[24];
@@ -83,6 +88,7 @@ void ZDaemonMasterClient::listFetched(QNetworkReply *reply)
 	reply->deleteLater();
 
 	listWaitCondition.wakeAll();
+	emit listUpdated();
 }
 
 const PluginInfo* ZDaemonMasterClient::plugin() const
@@ -92,25 +98,14 @@ const PluginInfo* ZDaemonMasterClient::plugin() const
 
 void ZDaemonMasterClient::refresh()
 {
+	bTimeouted = false;
 	emptyServerList();
 
 	// We must do this to avoid thread issues with QNetworkAccessManager
 	emit request();
-
-	QMutex mutex;
-	mutex.lock();
-	listWaitCondition.wait(&mutex);
-	mutex.unlock();
-
-	emit listUpdated();
 }
 
-bool ZDaemonMasterClient::readRequest(QByteArray &data, bool &expectingMorePackets)
-{
-	return true;
-}
-
-bool ZDaemonMasterClient::sendRequest(QByteArray &data)
+bool ZDaemonMasterClient::readMasterResponse(QByteArray &data)
 {
 	return true;
 }

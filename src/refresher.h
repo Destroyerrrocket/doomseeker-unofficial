@@ -24,6 +24,7 @@
 #ifndef __REFRESHER_H_
 #define __REFRESHER_H_
 
+#include <QHash>
 #include <QMutex>
 #include <QThread>
 #include <QRunnable>
@@ -31,6 +32,7 @@
 #include <QWaitCondition>
 
 #include "masterclient.h"
+#include "mastermanager.h"
 #include "serverapi/server.h"
 
 struct ServerBatch
@@ -66,7 +68,7 @@ class RefreshingThread : public QThread, public QRunnable
 		 *	in a hash table, therefore it's impossible to register the same
 		 *	object twice.
 		 */
-		void 	registerMaster(MasterClient* master);
+		void 	registerMaster(MasterClient* pMaster);
 
 		/**
 		 *	Registers a new server to be queried. All servers are stored
@@ -88,6 +90,8 @@ class RefreshingThread : public QThread, public QRunnable
 		 */
 		void	block();
 
+		void	finishedQueryingMaster(MasterClient* master);
+		
 		/**
 		 *	Emitted when refreshing thread doesn't have anything more to do and
 		 *	goes into sleeping mode.
@@ -100,21 +104,38 @@ class RefreshingThread : public QThread, public QRunnable
 		 */
 		void	sleepingModeExit();
 
-		void	finishedQueryingMaster(MasterClient* master);
-
 	protected:
-		bool					bKeepRunning;
-		int						delayBetweenResends;
-		QList<ServerBatch>		registeredBatches;
-		QSet<MasterClient*>		registeredMasters;
+		class MasterClientInfo
+		{
+			public:
+				MasterClientInfo(MasterClient* pMaster, RefreshingThread* pParent);
+				~MasterClientInfo();
+				
+				int							numOfChallengesSent;
+				QTime						timeLastChallengeSent;
+				
+			protected:
+				MasterClientReceiver*		pReceiver;
+		};
+		
+		typedef QHash<MasterClient*, MasterClientInfo*>				MasterHashtable;
+		typedef QHash<MasterClient*, MasterClientInfo*>::iterator	MasterHashtableIt;
+		
+		static const int							MASTER_SERVER_TIMEOUT_DELAY = 10000;
+	
+		bool										bKeepRunning;
+		int											delayBetweenResends;
+		QList<ServerBatch>							registeredBatches;
+		MasterHashtable								registeredMasters;
 
 		/**
 		 *	This will keep list of ALL servers to make sure that no server is
 		 *	registered twice.
 		 */
-		QSet<Server*>			registeredServers;
-		QUdpSocket*				socket;
-		QList<Server*>			unbatchedServers;
+		QSet<Server*>								registeredServers;
+		QUdpSocket*									socket;
+		QList<Server*>								unbatchedServers;
+		QSet<MasterClient*>							unchallengedMasters;
 
 		/**
 		 *	Mutex used by methods of this class.
@@ -126,8 +147,12 @@ class RefreshingThread : public QThread, public QRunnable
 		 *	up the sleeping thread after the registerServer() is called.
 		 */
 		QWaitCondition			thisWaitCondition;
+		
+		void					attemptTimeoutMasters();
 
 		void					gotoSleep();
+		
+		bool					isAnythingToRefresh() const;
 
 		/**
 		 *	@return NULL if server of given address:port is not in the batch.
@@ -144,6 +169,17 @@ class RefreshingThread : public QThread, public QRunnable
 		unsigned				sendQueriesForBatch(ServerBatch& batch, int resetDelay, bool firstQuery);
 
 		void					sendServerQueries();
+		
+		/**
+		 *	@brief Returns true if there are any master clients or non-custom
+		 *	servers registered.
+		 */
+		bool					shouldBlockRefreshingProcess() const;
+		
+		void					unregisterMaster(MasterClient* pMaster);
+		
+	protected slots:
+		void					masterFinishedRefreshing(MasterClient* pMaster);
 };
 
 #endif

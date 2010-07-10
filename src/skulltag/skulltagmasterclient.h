@@ -35,14 +35,19 @@ class SkulltagMasterClient : public MasterClient
 		SkulltagMasterClient(QHostAddress address, unsigned short port);
 
 		const PluginInfo*		plugin() const;
+		
+		bool					readMasterResponse(QByteArray &data);		
+		
+	public slots:
+		void					refresh();
 
 	protected:
-		bool	readRequest(QByteArray &data, bool &expectingMorePackets);
-		bool	sendRequest(QByteArray &data);
+		bool					getServerListRequest(QByteArray &data);
 
-		bool	readLastPacket; // This is used as a marker to determine if we have an accurate reading for numPackets.
-		int		numPackets;
-		int		numPacketsRead;
+		/// This is used as a marker to determine if we have an accurate reading for numPackets.
+		bool					readLastPacket; 
+		int						numPackets;
+		int						numPacketsRead;
 };
 
 #endif /* __SKULLTAGMASTERCLIENT_H__ */

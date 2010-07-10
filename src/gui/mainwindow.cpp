@@ -200,7 +200,17 @@ void MainWindow::btnGetServers_Click()
 	gLog << tr("Total refresh process initialized!");
 	serverTableHandler->clearTable();
 	refreshCustomServers();
-	Main::refreshingThread->registerMaster(masterManager);
+	
+	masterManager->clearServersList();
+	for (int i = 0; i < masterManager->numMasters(); ++i)
+	{
+		MasterClient* pMaster = (*masterManager)[i];
+		
+		if (pMaster->isEnabled())
+		{
+			Main::refreshingThread->registerMaster(pMaster);
+		}
+	}
 }
 
 void MainWindow::changeEvent(QEvent* event)
@@ -323,8 +333,6 @@ void MainWindow::finishedQueryingMaster(MasterClient* master)
 		connect((*master)[i], SIGNAL(updated(Server *, int)), serverTableHandler, SLOT(serverUpdated(Server *, int)) );
 		connect((*master)[i], SIGNAL(begunRefreshing(Server *)), serverTableHandler, SLOT(serverBegunRefreshing(Server *)) );
 	}
-
-	refreshServers(masterManager);
 }
 
 void MainWindow::initAutoRefreshTimer()
@@ -614,15 +622,6 @@ void MainWindow::refreshCustomServers()
 		Server* server = (*customServers)[i];
 		serverTableHandler->serverUpdated(server, Server::RESPONSE_NO_RESPONSE_YET);
 		server->refresh(); // This will register server with refreshing thread.
-	}
-}
-
-void MainWindow::refreshServers(MasterClient* master)
-{
-	for(int i = 0;i < master->numServers();i++)
-	{
-		serverTableHandler->serverUpdated((*master)[i], Server::RESPONSE_NO_RESPONSE_YET);
-		(*master)[i]->refresh(); // This will register server with refreshing thread.
 	}
 }
 

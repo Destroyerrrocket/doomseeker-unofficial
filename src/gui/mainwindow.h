@@ -155,11 +155,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	refreshCustomServers();
 
 		/**
-		 *	Excludes custom servers.
-		 */
-		void 	refreshServers(MasterClient* master);
-
-		/**
 		 *	Functionality and name of this function might not be perfect but
 		 *	it saves some copy&pasting in the end. The end justifies the means.
 		 */

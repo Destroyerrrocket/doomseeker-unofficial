@@ -59,7 +59,7 @@ class CustomServers : public MasterClient
 		 *	@return list of custom servers
 		 */
 		static void						decodeConfigEntries(const QString& str, QList<CustomServerInfo>& outCustomServerInfoList);
-
+		
 		const PluginInfo*				plugin() const { return NULL; }
 
 		/**
@@ -70,13 +70,15 @@ class CustomServers : public MasterClient
 		 *	@param slotUpdated - slot to receive Server::updated signals
 		 *	@param slotBegunRefreshing - slot to receive Server::begunRefreshing signals
 		 */
-		void	readConfig(Config* cfg, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing);
+		void							readConfig(Config* cfg, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing);
+		
+		bool							readMasterResponse(QByteArray &data) { return false; }		
 
 		/**
 		 *	Since this is not required here (there's no real
 		 *	master to refresh) this does nothing.
 		 */
-		void 	refresh() {}
+		void 							refresh() {}
 
 		/**
 		 *	Sets a list of custom servers.
@@ -88,11 +90,10 @@ class CustomServers : public MasterClient
 		 *	@param slotUpdated - slot to receive Server::updated signals
 		 *	@param slotBegunRefreshing - slot to receive Server::begunRefreshing signals
 		 */
-		void 	setServers(const QList<CustomServerInfo>& csiList, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing);
-
+		void 							setServers(const QList<CustomServerInfo>& csiList, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing);
+		
 	protected:
-		bool	readRequest(QByteArray &data, bool &expectingMorePackets) { return true; }
-		bool	sendRequest(QByteArray &data) { return true; }
+		bool							getServerListRequest(QByteArray &data) { return false; }
 };
 
 #endif

@@ -38,7 +38,18 @@ const PluginInfo* VavoomMasterClient::plugin() const
 	return VavoomMain::get();
 }
 
-bool VavoomMasterClient::readRequest(QByteArray &data, bool &expectingMorePackets)
+bool VavoomMasterClient::getServerListRequest(QByteArray &data)
+{
+	char challenge[1];
+	WRITEINT8(challenge, MCREQ_LIST);
+
+	const QByteArray chall(challenge, 1);
+	data.append(chall);
+
+	return true;
+}
+
+bool VavoomMasterClient::readMasterResponse(QByteArray &data)
 {
 	// Decompress the response.
 	const char* in = data.data();
@@ -65,16 +76,7 @@ bool VavoomMasterClient::readRequest(QByteArray &data, bool &expectingMorePacket
 		servers.push_back(server);
 		pos += 6;
 	}
-	return true;
-}
-
-bool VavoomMasterClient::sendRequest(QByteArray &data)
-{
-	char challenge[1];
-	WRITEINT8(challenge, MCREQ_LIST);
-
-	const QByteArray chall(challenge, 1);
-	data.append(chall);
-
+	
+	emit listUpdated();
 	return true;
 }

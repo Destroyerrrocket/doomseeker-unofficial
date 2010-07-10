@@ -36,10 +36,12 @@ class VavoomMasterClient : public MasterClient
 		VavoomMasterClient(QHostAddress address, unsigned short port);
 
 		const PluginInfo*		plugin() const;
+		
+		bool					readMasterResponse(QByteArray &data);
 
 	protected:
-		bool	readRequest(QByteArray &data, bool &expectingMorePackets);
-		bool	sendRequest(QByteArray &data);
+		
+		bool					getServerListRequest(QByteArray &data);
 };
 
 #endif /* __VAVOOMMASTERCLIENT_H__ */

@@ -32,12 +32,23 @@ OdamexMasterClient::OdamexMasterClient(QHostAddress address, unsigned short port
 {
 }
 
+bool OdamexMasterClient::getServerListRequest(QByteArray &data)
+{
+	char challenge[4];
+	WRITEINT32(challenge, MASTER_CHALLENGE);
+
+	const QByteArray chall(challenge, 4);
+	data.append(chall);
+
+	return true;
+}
+
 const PluginInfo* OdamexMasterClient::plugin() const
 {
 	return OdamexMain::get();
 }
 
-bool OdamexMasterClient::readRequest(QByteArray &data, bool &expectingMorePackets)
+bool OdamexMasterClient::readMasterResponse(QByteArray &data)
 {
 	// Decompress the response.
 	const char* in = data.data();
@@ -65,16 +76,7 @@ bool OdamexMasterClient::readRequest(QByteArray &data, bool &expectingMorePacket
 		servers.push_back(server);
 		pos += 6;
 	}
-	return true;
-}
-
-bool OdamexMasterClient::sendRequest(QByteArray &data)
-{
-	char challenge[4];
-	WRITEINT32(challenge, MASTER_CHALLENGE);
-
-	const QByteArray chall(challenge, 4);
-	data.append(chall);
-
+	
+	emit listUpdated();
 	return true;
 }

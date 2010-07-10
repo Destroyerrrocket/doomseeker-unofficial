@@ -29,6 +29,8 @@
 #include <QMessageBox>
 #include <QUdpSocket>
 
+QUdpSocket* MasterClient::pGlobalUdpSocket = NULL;
+
 MasterClient::MasterClient(QHostAddress address, unsigned short port) : QObject(), address(address), port(port)
 {
 }
@@ -79,7 +81,10 @@ int MasterClient::numPlayers() const
 	int players = 0;
 	foreach(Server* server, servers)
 	{
-		players += server->playersList()->numClients();
+		if (server != NULL)
+		{
+			players += server->playersList()->numClients();
+		}
 	}
 
 	return players;
@@ -87,50 +92,28 @@ int MasterClient::numPlayers() const
 
 void MasterClient::refresh()
 {
+	bTimeouted = false;
 	emptyServerList();
-
-	// Connect to the server
-	QUdpSocket socket;
-	socket.bind();
-
 
 	// Make request
 	QByteArray request;
-	if(!sendRequest(request))
+	if(!getServerListRequest(request))
 	{
 		return;
 	}
-	socket.writeDatagram(request, address, port);
+	pGlobalUdpSocket->writeDatagram(request, address, port);
+}
 
-	bool expectingMorePackets = false;
-	do
+void MasterClient::timeoutRefresh()
+{
+	// Avoid timeouting more than once. This would cause errors.
+	if (!bTimeouted)
 	{
-		if(!socket.hasPendingDatagrams())
-		{
-			if(!socket.waitForReadyRead(10000))
-			{
-				return;
-			}
-		}
+		bTimeouted = true;
 
-		// get data
-		qint64 datagramSize = socket.pendingDatagramSize();
-		if (datagramSize > 0)
-		{
-			char* datagram = new char[datagramSize];
-			socket.readDatagram(datagram, datagramSize);
-			QByteArray data(datagram, datagramSize);
-			delete[] datagram;
-
-			if(!readRequest(data, expectingMorePackets))
-				return;
-		}
-		else
-		{
-			expectingMorePackets = false;
-		}
+		emit message(tr("Master server timeout"), tr("Connection timeout (%1:%2).").arg(address.toString()).arg(port), true);
+	
+		timeoutRefreshEx();
+		listUpdated();
 	}
-	while(expectingMorePackets);
-
-	emit listUpdated();
 }
