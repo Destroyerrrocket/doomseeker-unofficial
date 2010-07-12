@@ -75,7 +75,7 @@ class PLUGIN_EXPORT ChocolateDoomEnginePlugin : public EnginePlugin
 };
 
 static ChocolateDoomEnginePlugin chocolatedoom_engine_plugin;
-const PluginInfo ChocolateDoomMain::chocolatedoom_info = {"Chocolate Doom", "Chocolate Doom server query plugin.", "The Skulltag Team", {0,2,0,0}, MAKEID('E','N','G','N'), &chocolatedoom_engine_plugin};
+const PluginInfo ChocolateDoomMain::chocolatedoom_info = {"Chocolate Doom", "Chocolate Doom server query plugin.", "The Skulltag Team", {0,3,0,0}, MAKEID('E','N','G','N'), &chocolatedoom_engine_plugin};
 extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 {
 	return ChocolateDoomMain::get();

@@ -99,7 +99,7 @@ class PLUGIN_EXPORT ZDaemonEnginePlugin : public EnginePlugin
 };
 
 static ZDaemonEnginePlugin zdaemon_engine_plugin;
-const PluginInfo ZDaemonMain::info = {"ZDaemon", "ZDaemon server query plugin.", "The Skulltag Team", {0,1,0,0}, MAKEID('E','N','G','N'), &zdaemon_engine_plugin};
+const PluginInfo ZDaemonMain::info = {"ZDaemon", "ZDaemon server query plugin.", "The Skulltag Team", {0,2,0,0}, MAKEID('E','N','G','N'), &zdaemon_engine_plugin};
 extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 {
 	return ZDaemonMain::get();
