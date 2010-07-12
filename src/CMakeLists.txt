@@ -160,6 +160,7 @@ set(SOURCE_FILES
 	tests/testbase.cpp
 	tests/testcore.cpp
 	tests/testdatapaths.cpp
+	tests/testruns.cpp
 	apprunner.cpp
 	customservers.cpp
 	datapaths.cpp
@@ -192,6 +193,7 @@ set(HEADER_FILES
 	tests/testbase.h	
 	tests/testcore.h
 	tests/testdatapaths.h	
+	tests/testruns.h
 	apprunner.h
 	datapaths.h	
 	global.h

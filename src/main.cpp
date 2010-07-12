@@ -35,12 +35,8 @@
 #include "main.h"
 #include "serverapi/server.h"
 #include "strings.h"
+#include "tests/testruns.h"
 #include "wadseeker/wadseeker.h"
-
-// Test includes
-#include "tests/testcore.h"
-#include "tests/testdatapaths.h"
-// END OF Test includes
 
 Config*				Main::config = new Config();
 DataPaths			Main::dataPaths;
@@ -146,8 +142,8 @@ int Main::runTestMode()
 	TestCore testCore;
 
 	// Call tests here.
-	testCore.executeTest(new TestDataPathsHomeDirectoryAccess(false));
-	testCore.executeTest(new TestDataPathsHomeDirectoryAccess(true));
+	TestRuns::pTestCore = &testCore;
+	TestRuns::callTests();
 	
 	// Summary
 	QString strSucceded   = "Tests succeeded: %1";
