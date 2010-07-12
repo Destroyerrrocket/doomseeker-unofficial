@@ -27,6 +27,7 @@
 #include "sdeapi/pluginloader.hpp"
 #include "sdeapi/config.hpp"
 #include "serverapi/server.h"
+#include "datapaths.h"
 #include "ip2c.h"
 #include "refresher.h"
 #include <QApplication>
@@ -41,6 +42,7 @@ class MAIN_EXPORT Main : public QObject
 	public:
 		static Config 				*config;
 		static IP2C					*ip2c;
+		static DataPaths			dataPaths;
 		static QWidget*				mainWindow;
 		static PluginLoader*		enginePlugins;
 		static bool					running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.

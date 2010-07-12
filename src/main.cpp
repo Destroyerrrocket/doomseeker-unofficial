@@ -38,6 +38,7 @@
 #include "wadseeker/wadseeker.h"
 
 Config*				Main::config = new Config();
+DataPaths			Main::dataPaths;
 PluginLoader* 		Main::enginePlugins = NULL;
 IP2C*				Main::ip2c = NULL;
 QWidget*			Main::mainWindow = NULL;
@@ -264,12 +265,14 @@ bool Main::interpretCommandLineParameters()
 {
 	for(int i = 0; i < argumentsCount; ++i)
 	{
-		if(strcmp(arguments[i], "--datadir") == 0 && i+1 < argumentsCount)
+		const char* arg = arguments[i]; 
+	
+		if(strcmp(arg, "--datadir") == 0 && i+1 < argumentsCount)
 		{
 			++i;
 			dataDirectories.prepend(arguments[i]);
 		}
-		else if(strcmp(arguments[i], "--rcon") == 0)
+		else if(strcmp(arg, "--rcon") == 0)
 		{
 			startRcon = true;
 			if(i+2 < argumentsCount)
@@ -279,11 +282,11 @@ bool Main::interpretCommandLineParameters()
 				i += 2;
 			}
 		}
-		else if(strcmp(arguments[i], "--updateip2c") == 0)
+		else if(strcmp(arg, "--updateip2c") == 0)
 		{
 			updateIP2CAndQuit = true;
 		}
-		else if(strcmp(arguments[i], "--help") == 0)
+		else if(strcmp(arg, "--help") == 0)
 		{
 			gLog.setTimestampsEnabled(false);
 			// Print information to the log and terminate.
@@ -291,7 +294,12 @@ bool Main::interpretCommandLineParameters()
 			gLog << tr("	--datadir : Sets an explicit search location for IP2C data along with plugins.");
 			gLog << tr("	--rcon [plugin] [ip] : Launch the rcon client for the specified ip.");
 			gLog << tr("	--updateip2c : Updates the IP2C database.");
+			gLog << tr("	--portable : Starts application in portable mode.");
 			return false;
+		}
+		else if (strcmp(arg, "--portable") == 0)
+		{
+			dataPaths.setPortableModeOn(true);
 		}
 	}
 

@@ -100,6 +100,7 @@ set(DOOMSEEKER_QT_FILES
 	serverapi/rconprotocol.h
 	serverapi/server.h
 	customservers.h
+	datapaths.h
 	ip2c.h
 	log.h
 	masterclient.h
@@ -159,6 +160,7 @@ set(SOURCE_FILES
 	serverapi/tooltipgenerator.cpp
 	apprunner.cpp
 	customservers.cpp
+	datapaths.cpp
 	ip2c.cpp
 	log.cpp
 	main.cpp
