@@ -26,6 +26,7 @@
 #include "log.h"
 #include <QDir>
 #include <QFileInfo>
+#include <cstdlib>
 
 PathFinder::PathFinder(Config* cfg)
 {
@@ -89,6 +90,47 @@ PathFinderResult PathFinder::findFiles(const QStringList& files)
 	}
 
 	return result;
+}
+
+QString PathFinder::programFilesDirectory(MachineType machineType)
+{
+	#ifdef Q_OS_WIN32
+		QString envVarName = "";
+	
+		switch (machineType)
+		{
+			case x86:
+				envVarName = "ProgramFiles(x86)";
+				break;
+				
+			case x64:
+				envVarName = "ProgramW6432";
+				break;
+				
+			case Preferred:
+				envVarName = "ProgramFiles";
+				break;
+				
+			default:
+				return QString();
+		}
+		
+		QString path = getenv(envVarName.toAscii().constData());
+		if (path.isEmpty() && machineType != Preferred)
+		{
+			// Empty outcome may happen on 32-bit systems where variables
+			// like "ProgramFiles(x86)" may not exist.
+			//
+			// If "ProgramFiles" variable is empty then something is seriously
+			// wrong with the system.
+			path = programFilesDirectory(Preferred);
+		}
+		
+		return path;
+	
+	#else
+		return QString();
+	#endif
 }
 
 QString PathFinder::userDataDirectory()

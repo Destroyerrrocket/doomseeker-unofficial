@@ -164,7 +164,12 @@ extern "C" PLUGIN_EXPORT void doomSeekerInitConfig()
 {
 	// Default to where the automatic installations install to.
 #ifdef Q_OS_WIN32
-	Main::config->createSetting("SkulltagBinaryPath", "C:\\Program Files\\Skulltag\\Skulltag.exe");
+	QString programFilesPath = PathFinder::programFilesDirectory(PathFinder::x86);
+	Strings::trimr(programFilesPath, "\\");
+	
+	QString defaultSkulltagBinaryPath = programFilesPath + "\\Skulltag\\Skulltag.exe";
+
+	Main::config->createSetting("SkulltagBinaryPath", defaultSkulltagBinaryPath);
 #else
 	Main::config->createSetting("SkulltagBinaryPath", "/usr/games/skulltag/skulltag");
 	Main::config->createSetting("SkulltagServerBinaryPath", "/usr/games/skulltag/skulltag-server");
