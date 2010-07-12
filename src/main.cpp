@@ -150,17 +150,17 @@ int Main::runTestMode()
 	testCore.executeTest(new TestDataPathsHomeDirectoryAccess(true));
 	
 	// Summary
-	QString strSucceded = "Tests succeeded: %1.";
-	QString strFailed = "Tests failed: %1.";
-	QString strPercentage = "Pass percentage: %1\%.";
+	QString strSucceded   = "Tests succeeded: %1";
+	QString strFailed     = "Tests failed:    %1";
+	QString strPercentage = "Pass percentage: %1%";
 	
 	float passPercentage = (float)testCore.numTestsSucceeded() / (float)testCore.numTests();
 	passPercentage *= 100.0f;
 	
 	gLog << "==== TESTS SUMMARY: ====";
-	gLog << strSucceded.arg(testCore.numTestsSucceeded());
-	gLog << strFailed.arg(testCore.numTestsFailed());
-	gLog << strPercentage.arg(passPercentage);
+	gLog << strSucceded.arg(testCore.numTestsSucceeded(), 6);
+	gLog << strFailed.arg(testCore.numTestsFailed(), 6);
+	gLog << strPercentage.arg(passPercentage, 6, 'f', 2);
 	gLog << "==== Done.          ====";
 	
 	return testCore.numTestsFailed();
