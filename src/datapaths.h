@@ -43,6 +43,24 @@ class DataPaths
 		DataPaths(bool bPortableModeOn = false);
 
 		/**
+		 *	@brief Gets path to the root directory for data storage.
+		 *
+		 *	If portable mode is ON this points to the appliation's directory.
+		 *	Otherwise:
+		 *
+		 *	For Windows this is determined based on %APPDATA% environment 
+		 *	variable. If this cannot be found then QDir::home() is used.
+		 *
+		 *	On other systems QDir::home() is used directly.
+		 *
+		 *	@param append - this string will be appended to the returned path.
+		 *
+		 *	@return Empty string if directory doesn't pass validateDir() check.
+		 *	Otherwise the path returned is always absolute.
+		 */
+		QString					appDataDirectory(QString append = QString()) const;
+
+		/**
 		 *	@brief Checks if all directories can be written to.
 		 *
 		 *	@return List of directories for which the test FAILED.
@@ -89,24 +107,6 @@ class DataPaths
 		static bool				validateDir(const QString& path);	
 	
 		bool					bIsPortableModeOn;
-		
-		/**
-		 *	@brief Gets path to the root directory for data storage.
-		 *
-		 *	If portable mode is ON this points to the appliation's directory.
-		 *	Otherwise:
-		 *
-		 *	For Windows this is determined based on %APPDATA% environment 
-		 *	variable. If this cannot be found then QDir::home() is used.
-		 *
-		 *	On other systems QDir::home() is used directly.
-		 *
-		 *	@param append - this string will be appended to the returned path.
-		 *
-		 *	@return Empty string if directory doesn't pass validateDir() check.
-		 *	Otherwise the path returned is always absolute.
-		 */
-		QString					appDataDirectory(QString append = QString()) const;
 		
 		/**
 		 *	@brief If directory already exists true is returned.

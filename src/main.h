@@ -67,6 +67,8 @@ class MAIN_EXPORT Main : public QObject
 	protected:
 		void						createMainWindow();
 		bool						createRemoteConsole();
+		
+		int							runTestMode();
 
 		void						initDataDirectories();
 
@@ -89,6 +91,7 @@ class MAIN_EXPORT Main : public QObject
 		QApplication*				application;
 		char**						arguments;
 		int							argumentsCount;
+		bool						bTestMode;
 		QStringList 				dataDirectories;
 		QString						rconPluginName; /// If not empty assume we want to launch an rcon client.
 		QString						rconAddress;

@@ -37,6 +37,11 @@
 #include "strings.h"
 #include "wadseeker/wadseeker.h"
 
+// Test includes
+#include "tests/testcore.h"
+#include "tests/testdatapaths.h"
+// END OF Test includes
+
 Config*				Main::config = new Config();
 DataPaths			Main::dataPaths;
 PluginLoader* 		Main::enginePlugins = NULL;
@@ -50,6 +55,7 @@ Main::Main(int argc, char* argv[])
 : application(NULL), arguments(argv), argumentsCount(argc),
   startRcon(false), updateIP2CAndQuit(false)
 {
+	bTestMode = false;
 }
 
 Main::~Main()
@@ -99,6 +105,11 @@ int Main::run()
 
 	enginePlugins = new PluginLoader(MAKEID('E','N','G','N'), dataDirectories, "engines/");
 	application = new QApplication(argumentsCount, arguments);
+	
+	if (bTestMode)
+	{
+		return runTestMode();
+	}
 
 	int ip2cReturn = initIP2C();
 	if (updateIP2CAndQuit)
@@ -125,6 +136,34 @@ int Main::run()
 	gLog.addUnformattedEntry("================================\n");
 
 	return application->exec();
+}
+
+int Main::runTestMode()
+{
+	// Setup
+	gLog << "Entering test mode.";
+	gLog << "";
+	TestCore testCore;
+
+	// Call tests here.
+	testCore.executeTest(new TestDataPathsHomeDirectoryAccess(false));
+	testCore.executeTest(new TestDataPathsHomeDirectoryAccess(true));
+	
+	// Summary
+	QString strSucceded = "Tests succeeded: %1.";
+	QString strFailed = "Tests failed: %1.";
+	QString strPercentage = "Pass percentage: %1\%.";
+	
+	float passPercentage = (float)testCore.numTestsSucceeded() / (float)testCore.numTests();
+	passPercentage *= 100.0f;
+	
+	gLog << "==== TESTS SUMMARY: ====";
+	gLog << strSucceded.arg(testCore.numTestsSucceeded());
+	gLog << strFailed.arg(testCore.numTestsFailed());
+	gLog << strPercentage.arg(passPercentage);
+	gLog << "==== Done.          ====";
+	
+	return testCore.numTestsFailed();
 }
 
 void Main::createMainWindow()
@@ -300,6 +339,10 @@ bool Main::interpretCommandLineParameters()
 		else if (strcmp(arg, "--portable") == 0)
 		{
 			dataPaths.setPortableModeOn(true);
+		}
+		else if (strcmp(arg, "--tests") == 0)
+		{
+			bTestMode = true;
 		}
 	}
 
