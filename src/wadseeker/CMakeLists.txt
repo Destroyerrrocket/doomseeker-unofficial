@@ -22,7 +22,7 @@ if(WIN32)
 	add_definitions(-DWADSEEKER_API_EXPORT)
 endif(WIN32)
 
-find_package(Qt4 REQUIRED)
+find_package(Qt4 COMPONENTS QtCore QtNetwork REQUIRED)
 find_package(ZLIB)
 
 include(${QT_USE_FILE})
