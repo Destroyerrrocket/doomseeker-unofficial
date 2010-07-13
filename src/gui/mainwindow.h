@@ -124,7 +124,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 		/**
 		 *	Fills query menu with engines that have master server.
-		 *	@param masterManager - instantiated MainWindow::mc is passed here.
+		 *	@param masterManager - instantiated MainWindow::masterManager 
+		 *		is passed here.
 		 *		Since this method is called from the constructor it's important
 		 *		to pay attention to not call it before masterManager is
 		 *		instantiated.

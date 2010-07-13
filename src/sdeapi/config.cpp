@@ -100,7 +100,7 @@ void Config::clear()
 
 void Config::locateConfigFile(int argc, char* argv[])
 {
-	QString configDirPath = Main::dataPaths.dataDirectoryPath();
+	QString configDirPath = Main::dataPaths.programsDataDirectoryPath();
 	
 	if (configDirPath.isEmpty())
 	{

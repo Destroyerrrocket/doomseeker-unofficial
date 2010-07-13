@@ -10,6 +10,9 @@ TestCore* TestRuns::pTestCore = NULL;
 		
 void TestRuns::callTests()
 {
-	pTestCore->executeTest(new TestDataPathsHomeDirectoryAccess(false));
-	pTestCore->executeTest(new TestDataPathsHomeDirectoryAccess(true));
+	pTestCore->executeTest(new TestDataPathsAppDataDirectoryAccess(false));
+	pTestCore->executeTest(new TestDataPathsAppDataDirectoryAccess(true));
+	
+	pTestCore->executeTest(new TestDataPathsAppDataDirectoryWrite(false));
+	pTestCore->executeTest(new TestDataPathsAppDataDirectoryWrite(true));
 }

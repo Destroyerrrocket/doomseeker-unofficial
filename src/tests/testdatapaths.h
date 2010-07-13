@@ -25,10 +25,21 @@
 
 #include "tests/testbase.h"
 
-class TestDataPathsHomeDirectoryAccess : public TestUnitBase
+class TestDataPathsAppDataDirectoryAccess : public TestUnitBase
 {
 	public:
-		TestDataPathsHomeDirectoryAccess(bool bPortable);
+		TestDataPathsAppDataDirectoryAccess(bool bPortable);
+	
+		bool			executeTest();
+		
+	protected:
+		bool			bPortable;
+};
+
+class TestDataPathsAppDataDirectoryWrite : public TestUnitBase
+{
+	public:
+		TestDataPathsAppDataDirectoryWrite(bool bPortable);
 	
 		bool			executeTest();
 		

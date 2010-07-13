@@ -25,72 +25,26 @@
 #include "strings.h"
 #include <cstdlib>
 
-const QString DataPaths::PROGRAM_APPDATA_DIR_NAME = ".doomseeker";
+const QString DataPaths::PROGRAMS_APPDATA_DIR_NAME = ".doomseeker";
 
 DataPaths::DataPaths(bool bPortableModeOn)
 {
 	bIsPortableModeOn = bPortableModeOn;
-}
-
-QString DataPaths::appDataDirectory(QString append) const
-{
-	if (bIsPortableModeOn)
-	{
-		return QDir(Main::workingDirectory).absolutePath();
-	}
-
-	// For non-portable model this continues here:
-	QString dir;
-
-	#ifdef Q_OS_WIN32
-	// Let's open new block to prevent variable "bleeding".
-	{
-		QString envVar = getenv("APPDATA");
-		if (validateDir(envVar))
-		{
-			dir = envVar;
-		}
-	}
-	#endif
 	
-	if (dir.isEmpty())
-	{
-		dir = QDir::homePath();
-		if (!validateDir(dir))
-		{
-			return QString();
-		}
-	}
-	
-	Strings::trimr(dir, "/\\");
-	Strings::triml(append, "/\\");
-
-	dir += QDir::separator() + append;
-	
-	return QDir(dir).absolutePath();
+	programsDirectoryName = PROGRAMS_APPDATA_DIR_NAME;
 }
 
 QStringList DataPaths::canWrite() const
 {
 	QStringList failedList;
 	
-	QString dataDirectory = dataDirectoryPath();
+	QString dataDirectory = programsDataDirectoryPath();
 	if (!validateDir(dataDirectory))
 	{
 		failedList.append(dataDirectory);
 	}
 
 	return failedList;
-}
-
-bool DataPaths::tryCreateDirectory(const QDir& rootDir, const QString& dirToCreate) const
-{
-	if (!rootDir.exists(dirToCreate))
-	{
-		return rootDir.mkdir(dirToCreate);
-	}
-	
-	return true;
 }
 		
 bool DataPaths::createDirectories()
@@ -99,9 +53,9 @@ bool DataPaths::createDirectories()
 	// fails.
 	bool bAllSuccessful = true;
 
-	QDir appDataDir(appDataDirectory());
+	QDir appDataDir(systemAppDataDirectory());
 	
-	if (tryCreateDirectory(appDataDir, PROGRAM_APPDATA_DIR_NAME))
+	if (tryCreateDirectory(appDataDir, programsDirectoryName))
 	{
 		bAllSuccessful = false;
 	}
@@ -109,17 +63,11 @@ bool DataPaths::createDirectories()
 	return bAllSuccessful;
 }
 
-QString DataPaths::dataDirectoryPath() const
-{
-	QString appDataDir = appDataDirectory(PROGRAM_APPDATA_DIR_NAME);
-	return appDataDir;
-}
-
 QStringList DataPaths::directoriesExist() const
 {
 	QStringList failedList;
 	
-	QDir dataDirectory = dataDirectoryPath();
+	QDir dataDirectory = programsDataDirectoryPath();
 	if (!dataDirectory.exists())
 	{
 		failedList.append(dataDirectory.absolutePath());
@@ -169,9 +117,65 @@ QString DataPaths::programFilesDirectory(MachineType machineType)
 	#endif
 }
 
+QString DataPaths::programsDataDirectoryPath() const
+{
+	QString appDataDir = systemAppDataDirectory(programsDirectoryName);
+	return appDataDir;
+}
+
+QString DataPaths::systemAppDataDirectory(QString append) const
+{
+	if (bIsPortableModeOn)
+	{
+		// In portable model Main class already stores the "working dir", ie.
+		// the directory where the executable resides.
+		return QDir(Main::workingDirectory).absolutePath();
+	}
+
+	// For non-portable model this continues here:
+	QString dir;
+
+	#ifdef Q_OS_WIN32
+	// Let's open new block to prevent variable "bleeding".
+	{
+		QString envVar = getenv("APPDATA");
+		if (validateDir(envVar))
+		{
+			dir = envVar;
+		}
+	}
+	#endif
+	
+	if (dir.isEmpty())
+	{
+		dir = QDir::homePath();
+		if (!validateDir(dir))
+		{
+			return QString();
+		}
+	}
+	
+	Strings::trimr(dir, "/\\");
+	Strings::triml(append, "/\\");
+
+	dir += QDir::separator() + append;
+	
+	return QDir(dir).absolutePath();
+}
+
+bool DataPaths::tryCreateDirectory(const QDir& rootDir, const QString& dirToCreate) const
+{
+	if (!rootDir.exists(dirToCreate))
+	{
+		return rootDir.mkdir(dirToCreate);
+	}
+	
+	return true;
+}
+
 bool DataPaths::validateAppDataDirectory()
 {
-	return validateDir(appDataDirectory());
+	return validateDir(systemAppDataDirectory());
 }
 
 bool DataPaths::validateDir(const QString& path)

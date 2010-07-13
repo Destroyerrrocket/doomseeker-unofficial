@@ -46,7 +46,7 @@ class MAIN_EXPORT DataPaths
 			Preferred
 		};
 	
-		static const QString	PROGRAM_APPDATA_DIR_NAME;
+		static const QString	PROGRAMS_APPDATA_DIR_NAME;
 		
 		/**
 		 *	@b Retrieves correct path to "Program Files" directory. 
@@ -61,24 +61,6 @@ class MAIN_EXPORT DataPaths
 		static QString			programFilesDirectory(MachineType machineType);		
 	
 		DataPaths(bool bPortableModeOn = false);
-
-		/**
-		 *	@brief Gets path to the root directory for data storage.
-		 *
-		 *	If portable mode is ON this points to the appliation's directory.
-		 *	Otherwise:
-		 *
-		 *	For Windows this is determined based on %APPDATA% environment 
-		 *	variable. If this cannot be found then QDir::home() is used.
-		 *
-		 *	On other systems QDir::home() is used directly.
-		 *
-		 *	@param append - this string will be appended to the returned path.
-		 *
-		 *	@return Empty string if directory doesn't pass validateDir() check.
-		 *	Otherwise the path returned is always absolute.
-		 */
-		QString					appDataDirectory(QString append = QString()) const;
 
 		/**
 		 *	@brief Checks if all directories can be written to.
@@ -100,8 +82,6 @@ class MAIN_EXPORT DataPaths
 		 */
 		bool					createDirectories();
 
-		QString					dataDirectoryPath() const;
-		
 		/**
 		 *	@brief Checks if all necessary directories exist.
 		 *
@@ -109,9 +89,41 @@ class MAIN_EXPORT DataPaths
 		 */
 		QStringList				directoriesExist() const;
 		
+		const QString&			directoryNameForProgram() const { return programsDirectoryName; }
+		
+		/**
+		 *	@brief Path to directory where this concrete application should
+		 *	store it's data.
+		 *
+		 *	Depending on model (portable or not) and operating system this might
+		 *	point to a number of different directories. However the root dir
+		 *	is determined by calling the systemAppDataDirectory() method and
+		 *	appending string contained in programsDirectoryName member.
+		 */
+		QString					programsDataDirectoryPath() const;		
+		
 		bool					isPortableModeOn() const { return bIsPortableModeOn; }
 		
 		void					setPortableModeOn(bool b) { bIsPortableModeOn = b; }
+		void					setDirectoryNameForProgram(const QString& name) { programsDirectoryName = name; }
+		
+		/**
+		 *	@brief Gets path to the root directory for data storage.
+		 *
+		 *	If portable mode is ON this points to the appliation's directory.
+		 *	Otherwise:
+		 *
+		 *	For Windows this is determined based on %APPDATA% environment 
+		 *	variable. If this cannot be found then QDir::home() is used.
+		 *
+		 *	On other systems QDir::home() is used directly.
+		 *
+		 *	@param append - this string will be appended to the returned path.
+		 *
+		 *	@return Empty string if directory doesn't pass validateDir() check.
+		 *	Otherwise the path returned is always absolute.
+		 */
+		QString					systemAppDataDirectory(QString append = QString()) const;		
 
 		/**
 		 *	@brief Checks if the root directory for Doomseeker data storage
@@ -127,6 +139,11 @@ class MAIN_EXPORT DataPaths
 		static bool				validateDir(const QString& path);	
 	
 		bool					bIsPortableModeOn;
+		
+		/**
+		 *	@brief Defaults to PROGRAMS_APPDATA_DIR_NAME.
+		 */
+		QString					programsDirectoryName;
 		
 		/**
 		 *	@brief If directory already exists true is returned.

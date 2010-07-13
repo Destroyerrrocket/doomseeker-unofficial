@@ -30,6 +30,13 @@ class MAIN_EXPORT Strings
 {
 	public:
 		/**
+		 *	@brief Creates a random string with specified length.
+		 *
+		 *	The created string consists of lowercase letters and digits.
+		 */
+		static QString			createRandomAlphaNumericString(unsigned numChars);
+	
+		/**
 		 *	@brief Similar to formatDataSpeed().
 		 *
 		 *	The only difference is the unit type appended to the end of the
@@ -95,6 +102,10 @@ class MAIN_EXPORT Strings
 			Megabyte	= 2,
 			Gigabyte	= 3
 		};
+		
+		static const unsigned	RANDOM_CHAR_POOL_SIZE = 36;
+		static const char		RANDOM_CHAR_POOL[RANDOM_CHAR_POOL_SIZE];
+		
 	
 		static float			scaleDataUnit(float bytes, DataUnit& outUnit);
 };

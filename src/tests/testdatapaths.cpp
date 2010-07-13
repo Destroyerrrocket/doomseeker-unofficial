@@ -22,9 +22,10 @@
 //------------------------------------------------------------------------------
 #include "testdatapaths.h"
 #include "datapaths.h"
+#include "strings.h"
 
-TestDataPathsHomeDirectoryAccess::TestDataPathsHomeDirectoryAccess(bool bPortable)
-: TestUnitBase("Data Paths - Home directory access")
+TestDataPathsAppDataDirectoryAccess::TestDataPathsAppDataDirectoryAccess(bool bPortable)
+: TestUnitBase("Data Paths - App Data directory access")
 {
 	if (bPortable)
 	{
@@ -34,13 +35,81 @@ TestDataPathsHomeDirectoryAccess::TestDataPathsHomeDirectoryAccess(bool bPortabl
 	this->bPortable = bPortable;
 }
 
-bool TestDataPathsHomeDirectoryAccess::executeTest()
+bool TestDataPathsAppDataDirectoryAccess::executeTest()
 {
 	DataPaths dataPaths(bPortable);
 	
-	QString appDataDir = dataPaths.appDataDirectory();
+	QString appDataDir = dataPaths.systemAppDataDirectory();
 	
 	testLog << QString("App Data directory: %1").arg(appDataDir);
 	
 	return dataPaths.validateAppDataDirectory();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+TestDataPathsAppDataDirectoryWrite::TestDataPathsAppDataDirectoryWrite(bool bPortable)
+: TestUnitBase("Data Paths - App Data directory write")
+{
+	if (bPortable)
+	{
+		_testName += " - portable";
+	}
+
+	this->bPortable = bPortable;
+}
+
+bool TestDataPathsAppDataDirectoryWrite::executeTest()
+{
+	DataPaths dataPaths(bPortable);
+	
+	QString appDataDirPath = dataPaths.systemAppDataDirectory();
+	QDir appDataDir(appDataDirPath);
+	
+	QString randomDirName;
+	bool bEntryDoesExist = false;
+	do
+	{
+		// Continue generating random directory names as long as we don't get
+		// a directory name that doesn't exist. With 32 characters this should
+		// be quite easy.
+		randomDirName = Strings::createRandomAlphaNumericString(32);
+		bEntryDoesExist = appDataDir.exists(randomDirName);
+	}
+	while (bEntryDoesExist == true);
+	
+	QString randomDirPath = appDataDirPath + "/" + randomDirName;
+	
+	testLog << "Attempting to create directory:";
+	testLog << randomDirPath;
+
+	if (!appDataDir.mkdir(randomDirName))
+	{
+		testLog << "Failed.";
+		return false;	
+	}
+	
+	QString testFilePath = randomDirPath + "/" + "tmpfile.tmp";
+	QFile testFile(testFilePath);
+	
+	testLog << "Attempting to open following file for writing:";
+	testLog << testFilePath;
+
+	bool bReturnValue = true;
+	
+	if (!testFile.open(QIODevice::WriteOnly))
+	{
+		testLog << "Failed.";
+		bReturnValue = false;
+	}
+	else
+	{
+		testFile.close();
+		testFile.remove();
+	}
+	
+	// Clean up!
+	appDataDir.rmdir(randomDirName);
+	
+	return bReturnValue;
 }
