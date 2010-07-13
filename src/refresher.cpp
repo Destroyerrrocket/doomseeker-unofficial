@@ -45,13 +45,13 @@ void RefreshingThread::attemptTimeoutMasters()
 	for (it = registeredMasters.begin(); it != registeredMasters.end(); ++it)
 	{
 		MasterClientInfo* pMasterInfo = it.value();
-		
+
 		if (pMasterInfo->timeLastChallengeSent.elapsed() > MASTER_SERVER_TIMEOUT_DELAY)
 		{
 			MasterClient* pMaster = it.key();
 			pMaster->timeoutRefresh();
 		}
-	}	
+	}
 }
 
 void RefreshingThread::gotoSleep()
@@ -65,7 +65,7 @@ void RefreshingThread::gotoSleep()
 
 	// Signal that the work has begun.
 	emit sleepingModeExit();
-	
+
 	if (shouldBlockRefreshingProcess())
 	{
 		emit block();
@@ -94,12 +94,10 @@ void RefreshingThread::masterFinishedRefreshing(MasterClient* pMaster)
 		registerServer(pServer);
 	}
 
-	printf("Master finished %s\n", pMaster->plugin()->name);
-
 	thisMutex.lock();
 	unregisterMaster(pMaster);
 	thisMutex.unlock();
-	
+
 	emit finishedQueryingMaster(pMaster);
 }
 
@@ -130,13 +128,13 @@ void RefreshingThread::registerMaster(MasterClient* pMaster)
 	if (!registeredMasters.contains(pMaster))
 	{
 		MasterClientInfo* pMasterInfo = new MasterClientInfo(pMaster, this);
-	
+
 		registeredMasters.insert(pMaster, pMasterInfo);
 		unchallengedMasters.insert(pMaster);
 		emit block();
 		thisWaitCondition.wakeAll();
 	}
-	
+
 	thisMutex.unlock();
 }
 
@@ -211,7 +209,7 @@ void RefreshingThread::run()
 		thisMutex.lock();
 		attemptTimeoutMasters();
 		thisMutex.unlock();
-	
+
 		// Now send the server queries.
 		sendServerQueries();
 	} // end of main thread loop
@@ -227,7 +225,7 @@ void RefreshingThread::readPendingDatagrams()
 	qint64 size = socket->pendingDatagramSize();
 	char* data = new char[size];
 	socket->readDatagram(data, size, &address, &port);
-	
+
 	QByteArray dataArray(data, size);
 
 	MasterHashtableIt it;
@@ -240,7 +238,7 @@ void RefreshingThread::readPendingDatagrams()
 			return;
 		}
 	}
-	
+
 	if (registeredBatches.size() != 0)
 	{
 		for(int i = 0; i < registeredBatches.size(); ++i)
@@ -250,7 +248,7 @@ void RefreshingThread::readPendingDatagrams()
 			{
 				registeredBatches[i].servers.removeOne(server);
 				registeredServers.remove(server);
-				
+
 				server->bPingIsSet = false;
 
 				// Store the state of request read.
@@ -279,11 +277,11 @@ void RefreshingThread::sendMasterQueries()
 	while(!unchallengedMasters.isEmpty())
 	{
 		MasterClient* pMaster = *unchallengedMasters.begin();
-		
+
 		MasterClientInfo* pMasterInfo = registeredMasters[pMaster];
 		++pMasterInfo->numOfChallengesSent;
 		pMasterInfo->timeLastChallengeSent.start();
-		
+
 		pMaster->refresh();
 		unchallengedMasters.remove(pMaster);
 	}
@@ -352,7 +350,7 @@ bool RefreshingThread::shouldBlockRefreshingProcess() const
 	{
 		return true;
 	}
-	
+
 	foreach(const Server* pServer, registeredServers)
 	{
 		if (!pServer->isCustom())
@@ -360,7 +358,7 @@ bool RefreshingThread::shouldBlockRefreshingProcess() const
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -396,8 +394,8 @@ void RefreshingThread::unregisterMaster(MasterClient* pMaster)
 	{
 		MasterClientInfo* pMasterInfo = it.value();
 		delete pMasterInfo;
-		
-		registeredMasters.erase(it);		
+
+		registeredMasters.erase(it);
 	}
 }
 
@@ -407,7 +405,7 @@ RefreshingThread::MasterClientInfo::MasterClientInfo(MasterClient* pMaster, Refr
 {
 	pReceiver = new MasterClientReceiver(pMaster);
 	connect(pReceiver, SIGNAL( listUpdated(MasterClient*) ), pParent, SLOT( masterFinishedRefreshing(MasterClient*) ) );
-	
+
 	numOfChallengesSent = 0;
 }
 
