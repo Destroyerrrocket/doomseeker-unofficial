@@ -42,7 +42,7 @@ class MAIN_EXPORT Main : public QObject
 	public:
 		static Config 				*config;
 		static IP2C					*ip2c;
-		static DataPaths			dataPaths;
+		static DataPaths*			dataPaths;
 		static QWidget*				mainWindow;
 		static PluginLoader*		enginePlugins;
 		static bool					running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
@@ -65,12 +65,19 @@ class MAIN_EXPORT Main : public QObject
 		int							run();
 
 	protected:
+		static const QString		DOOMSEEKER_CONFIG_FILENAME;
+
 		void						createMainWindow();
 		bool						createRemoteConsole();
-		
+
 		int							runTestMode();
 
-		void						initDataDirectories();
+		/**
+		 *	@b Creates required directories and sets up the application.
+		 *
+		 *	@return False if it was impossible to setup the directories.
+		 */
+		bool						initDataDirectories();
 
 		/**
 		 *	If updateip2c == true, application should quit after this returns.
@@ -86,11 +93,13 @@ class MAIN_EXPORT Main : public QObject
 		 *		returns.
 		 */
 		bool						interpretCommandLineParameters();
+		void						preserveOldConfigBackwardsCompatibility();
 		void						setupRefreshingThread();
 
 		QApplication*				application;
 		char**						arguments;
 		int							argumentsCount;
+		bool						bPortableMode;
 		bool						bTestMode;
 		QStringList 				dataDirectories;
 		QString						rconPluginName; /// If not empty assume we want to launch an rcon client.

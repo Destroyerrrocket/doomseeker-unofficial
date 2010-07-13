@@ -66,8 +66,8 @@ CreateServerDlg::CreateServerDlg(QWidget* parent) : QDialog(parent)
 	lstMaplist->setModel(new QStandardItemModel(this));
 
 	initPrimary();
-	
-	QString tmpServerCfgPath = Main::dataPaths.programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
+
+	QString tmpServerCfgPath = Main::dataPaths->programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
 
 	QFileInfo fi(tmpServerCfgPath);
 	if (fi.exists())
@@ -574,12 +574,12 @@ void CreateServerDlg::initGamemodeSpecific(const GameMode& gameMode)
 void CreateServerDlg::initInfoAndPassword()
 {
 	const static int MISC_TAB_INDEX = 2;
-	
+
 	const EnginePlugin* engine = currentEngine->pInterface;
-	
+
 	bool bAtLeastOneVisible = false;
 	bool bIsVisible = false;
-	
+
 	bIsVisible = engine->allowsConnectPassword();
 	labelConnectPassword->setVisible(bIsVisible);
 	leConnectPassword->setVisible(bIsVisible);
@@ -609,7 +609,7 @@ void CreateServerDlg::initInfoAndPassword()
 	labelURL->setVisible(bIsVisible);
 	leURL->setVisible(bIsVisible);
 	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
-	
+
 	tabWidget->setTabEnabled(MISC_TAB_INDEX, bAtLeastOneVisible);
 }
 
@@ -829,7 +829,7 @@ void CreateServerDlg::runGame(bool offline)
 		}
 		else
 		{
-			QString tmpServerConfigPath = Main::dataPaths.programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
+			QString tmpServerConfigPath = Main::dataPaths->programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
 			saveConfig(tmpServerConfigPath);
 		}
 	}

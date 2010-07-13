@@ -98,17 +98,17 @@ void Config::clear()
 	settings.clear();
 }
 
-void Config::locateConfigFile(int argc, char* argv[])
+void Config::locateConfigFile(const QString& fileName)
 {
-	QString configDirPath = Main::dataPaths.programsDataDirectoryPath();
-	
+	QString configDirPath = Main::dataPaths->programsDataDirectoryPath();
+
 	if (configDirPath.isEmpty())
 	{
 		gLog << tr("Could not get an access to the settings directory. Configuration will not be saved.");
 		return;
 	}
 
-	configFile = configDirPath + "/doomseeker.cfg";
+	configFile = configDirPath + "/" + fileName;
 	gLog << tr("Config file is: %1").arg(configFile);
 
 	readConfig();

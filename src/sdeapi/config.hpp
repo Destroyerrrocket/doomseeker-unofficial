@@ -113,7 +113,7 @@ class MAIN_EXPORT Config : public QObject
 		 * @see SaveConfig
 		 * @see ReadConfig
 		 */
-		void			locateConfigFile(int argc, char* argv[]);
+		void			locateConfigFile(const QString& fileName);
 		/**
 		 * Reads the configuration file for settings.  This is ~/.doomseeker/doomseeker.cfg
 		 * on unix systems.

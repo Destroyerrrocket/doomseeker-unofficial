@@ -38,8 +38,10 @@
 #include "tests/testruns.h"
 #include "wadseeker/wadseeker.h"
 
+const QString		Main::DOOMSEEKER_CONFIG_FILENAME = "doomseeker.cfg";
+
 Config*				Main::config = new Config();
-DataPaths			Main::dataPaths;
+DataPaths*			Main::dataPaths;
 PluginLoader* 		Main::enginePlugins = NULL;
 IP2C*				Main::ip2c = NULL;
 QWidget*			Main::mainWindow = NULL;
@@ -52,6 +54,7 @@ Main::Main(int argc, char* argv[])
   startRcon(false), updateIP2CAndQuit(false)
 {
 	bTestMode = false;
+	bPortableMode = false;
 }
 
 Main::~Main()
@@ -84,6 +87,11 @@ Main::~Main()
 	{
 		delete application;
 	}
+
+	if (dataPaths != NULL)
+	{
+		delete dataPaths;
+	}
 }
 
 // This method is an exception to sorting everything in alphabetical order
@@ -95,13 +103,26 @@ int Main::run()
 		return 0;
 	}
 
-	gLog << "Starting Doomseeker. Hello World! :)";
+	application = new QApplication(argumentsCount, arguments);
 
-	initDataDirectories();
+	gLog << "Starting Doomseeker. Hello World! :)";
+	gLog << "Setting up data directories.";
+
+	if (!initDataDirectories())
+	{
+		// Inform the user which directories cannot be created and QUIT.
+		QStringList failedDirsList = dataPaths->directoriesExist();
+		QString failedDirsString = failedDirsList.join("\n");
+
+		QString errorMessage = tr("Doomseeker will not run because following directories cannot be created:");
+		errorMessage += "\n" + failedDirsString;
+
+		QMessageBox::critical(NULL, tr("Doomseeker startup error"), errorMessage);
+		return 0;
+	}
 
 	enginePlugins = new PluginLoader(MAKEID('E','N','G','N'), dataDirectories, "engines/");
-	application = new QApplication(argumentsCount, arguments);
-	
+
 	if (bTestMode)
 	{
 		return runTestMode();
@@ -144,21 +165,21 @@ int Main::runTestMode()
 	// Call tests here.
 	TestRuns::pTestCore = &testCore;
 	TestRuns::callTests();
-	
+
 	// Summary
 	QString strSucceded   = "Tests succeeded: %1";
 	QString strFailed     = "Tests failed:    %1";
 	QString strPercentage = "Pass percentage: %1%";
-	
+
 	float passPercentage = (float)testCore.numTestsSucceeded() / (float)testCore.numTests();
 	passPercentage *= 100.0f;
-	
+
 	gLog << "==== TESTS SUMMARY: ====";
 	gLog << strSucceded.arg(testCore.numTestsSucceeded(), 6);
 	gLog << strFailed.arg(testCore.numTestsFailed(), 6);
 	gLog << strPercentage.arg(passPercentage, 6, 'f', 2);
 	gLog << "==== Done.          ====";
-	
+
 	return testCore.numTestsFailed();
 }
 
@@ -215,8 +236,19 @@ bool Main::createRemoteConsole()
 	return true;
 }
 
-void Main::initDataDirectories()
+bool Main::initDataDirectories()
 {
+	dataPaths = new DataPaths(bPortableMode);
+	if (!dataPaths->createDirectories())
+	{
+		return false;
+	}
+
+	// I think this directory should take priority, if user, for example,
+	// wants to update the ip2country file.
+	dataDirectories << dataPaths->programsDataDirectoryPath();
+
+	// Continue with standard dirs:
 	dataDirectories << "./";
 #if defined(Q_OS_LINUX)
 	#ifndef INSTALL_PREFIX // For safety lets check for the defintion
@@ -228,6 +260,8 @@ void Main::initDataDirectories()
 
 	dataDirectories << ":/";
 	QDir::setSearchPaths("data", dataDirectories);
+
+	return true;
 }
 
 int Main::initIP2C()
@@ -264,7 +298,12 @@ int Main::initIP2C()
 void Main::initMainConfig()
 {
 	gLog << tr("Initializing configuration file.");
-	config->locateConfigFile(argumentsCount, arguments);
+
+	// This method will only execute it's behavior if there is anything to
+	// salvage and nothing to overwrite.
+	preserveOldConfigBackwardsCompatibility();
+
+	config->locateConfigFile(DOOMSEEKER_CONFIG_FILENAME);
 
 	// Initial settings values
 	config->createSetting("CustomServersColor", (0x94 << 16) | (0xff << 8) | (0xff)); // r | g | b
@@ -277,7 +316,7 @@ void Main::initMainConfig()
 	config->createSetting("QueryOnStartup", true);
 	config->createSetting("QueryTries", 7);
 	config->createSetting("QueryTimeout", 1000);
-	config->createSetting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn", true);	
+	config->createSetting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn", true);
 	QStringList urlList = Wadseeker::defaultSitesListEncoded();
 	config->createSetting("WadseekerColorMessageNotice", "#000000");
 	config->createSetting("WadseekerColorMessageError", "#ff0000");
@@ -300,8 +339,8 @@ bool Main::interpretCommandLineParameters()
 {
 	for(int i = 0; i < argumentsCount; ++i)
 	{
-		const char* arg = arguments[i]; 
-	
+		const char* arg = arguments[i];
+
 		if(strcmp(arg, "--datadir") == 0 && i+1 < argumentsCount)
 		{
 			++i;
@@ -334,7 +373,7 @@ bool Main::interpretCommandLineParameters()
 		}
 		else if (strcmp(arg, "--portable") == 0)
 		{
-			dataPaths.setPortableModeOn(true);
+			bPortableMode = true;
 		}
 		else if (strcmp(arg, "--tests") == 0)
 		{
@@ -352,6 +391,20 @@ bool Main::interpretCommandLineParameters()
 	dataDirectories << Main::workingDirectory;
 
 	return true;
+}
+
+void Main::preserveOldConfigBackwardsCompatibility()
+{
+	QFileInfo oldConfigLocation(Main::workingDirectory + "/" + DOOMSEEKER_CONFIG_FILENAME);
+	QFileInfo newConfigLocation(dataPaths->programsDataDirectoryPath() + "/" + DOOMSEEKER_CONFIG_FILENAME);
+
+	// QFile::copy() is said not to overwrite existing files but let's check
+	// anyway.
+	if (oldConfigLocation.exists() && oldConfigLocation.isFile() && !newConfigLocation.exists())
+	{
+		// If this fails just forget about it.
+		QFile::copy(oldConfigLocation.absoluteFilePath(), newConfigLocation.absoluteFilePath());
+	}
 }
 
 void Main::setupRefreshingThread()
@@ -432,7 +485,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLine
 		argv[i] = new char[parameter.size() + 1];
 		strcpy(argv[i], parameter.toAscii().constData());
 	}
-	
+
 	Main* pMain = new Main(argc, argv);
 	int returnValue = pMain->run();
 
@@ -446,7 +499,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLine
 		delete [] argv[i];
 	}
 	delete [] argv;
-	
+
 
 	return returnValue;
 }
