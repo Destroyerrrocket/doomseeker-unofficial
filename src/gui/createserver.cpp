@@ -67,7 +67,7 @@ CreateServerDlg::CreateServerDlg(QWidget* parent) : QDialog(parent)
 
 	initPrimary();
 	
-	QString tmpServerCfgPath = PathFinder::userDataDirectory() + TEMP_SERVER_CONFIG_FILENAME;
+	QString tmpServerCfgPath = Main::dataPaths.dataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
 
 	QFileInfo fi(tmpServerCfgPath);
 	if (fi.exists())
@@ -829,7 +829,7 @@ void CreateServerDlg::runGame(bool offline)
 		}
 		else
 		{
-			QString tmpServerConfigPath = PathFinder::userDataDirectory() + TEMP_SERVER_CONFIG_FILENAME;
+			QString tmpServerConfigPath = Main::dataPaths.dataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
 			saveConfig(tmpServerConfigPath);
 		}
 	}

@@ -37,41 +37,6 @@ struct MAIN_EXPORT PathFinderResult
 class MAIN_EXPORT PathFinder
 {
 	public:
-		enum MachineType
-		{
-			x86,
-			x64,
-			Preferred
-		};
-	
-		/**
-		 *	@b Retrieves correct path to "Program Files" directory. 
-		 *	Windows only.
-		 *
-		 *	This exploits environmental variables such as %PROGRAMFILES%,
-		 *	%PROGRAMFILES(X86)% and ProgramW6432. This method is used to 
-		 *	determine the correct path to the "Program Files" directory on 
-		 *	Windows (XP and above). Since on *nix systems there is no equivalent
-		 *	it will return an empty string.
-		 */
-		static QString		programFilesDirectory(MachineType machineType);
-	
-		/**
-		 *	@b Retrieves path to the directory where user data is stored.
-		 *
-		 *	On Windows this is the same as the current workingDirectory.
-		 *
-		 *	On Unix this is ~/.doomseeker/.
-		 *	If such directory doesn't exist yet it is created when this method
-		 *	is called.
-		 *
-		 *	On MacOS this will behave the same as on Unix.
-		 *
-		 *	@return An absolute path to the directory on success or an empty 
-		 *	string on error.
-		 */
-		static QString		userDataDirectory();
-	
 		PathFinder(Config*);
 
 		QString 			findFile(const QString& fileName);

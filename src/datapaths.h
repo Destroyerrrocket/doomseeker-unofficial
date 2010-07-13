@@ -23,6 +23,7 @@
 #ifndef __DATAPATHS_H__
 #define __DATAPATHS_H__
 
+#include "global.h"
 #include <QDir>
 #include <QString>
 #include <QStringList>
@@ -32,13 +33,32 @@
  *
  *	Since Doomseeker doesn't need to store much all data is stored in a single
  *	directory. For portable model this is the same directory as in which 
- *	Doomseeker.exe resides. Otherwise .doomseeker/ directory is created
+ *	Doomseeker.exe resides. Otherwise .doomseeker/ directory can be created
  *	in a path depending on the operating system.
  */
-class DataPaths
+class MAIN_EXPORT DataPaths
 {
 	public:
+		enum MachineType
+		{
+			x86,
+			x64,
+			Preferred
+		};
+	
 		static const QString	PROGRAM_APPDATA_DIR_NAME;
+		
+		/**
+		 *	@b Retrieves correct path to "Program Files" directory. 
+		 *	Windows only.
+		 *
+		 *	This exploits environmental variables such as %PROGRAMFILES%,
+		 *	%PROGRAMFILES(X86)% and ProgramW6432. This method is used to 
+		 *	determine the correct path to the "Program Files" directory on 
+		 *	Windows (XP and above). Since on *nix systems there is no equivalent
+		 *	it will return an empty string.
+		 */
+		static QString			programFilesDirectory(MachineType machineType);		
 	
 		DataPaths(bool bPortableModeOn = false);
 

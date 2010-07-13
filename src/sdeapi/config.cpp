@@ -33,7 +33,7 @@
 #include "sdeapi/scanner.hpp"
 #include "main.h"
 #include "log.h"
-#include "pathfinder.h"
+#include "datapaths.h"
 
 #include <QFile>
 #include <QDir>
@@ -100,7 +100,7 @@ void Config::clear()
 
 void Config::locateConfigFile(int argc, char* argv[])
 {
-	QString configDirPath = PathFinder::userDataDirectory();
+	QString configDirPath = Main::dataPaths.dataDirectoryPath();
 	
 	if (configDirPath.isEmpty())
 	{

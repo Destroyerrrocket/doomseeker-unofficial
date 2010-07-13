@@ -23,6 +23,7 @@
 
 #include <QHostInfo>
 
+#include "datapaths.h"
 #include "global.h"
 #include "main.h"
 #include "strings.h"
@@ -164,7 +165,7 @@ extern "C" PLUGIN_EXPORT void doomSeekerInitConfig()
 {
 	// Default to where the automatic installations install to.
 #ifdef Q_OS_WIN32
-	QString programFilesPath = PathFinder::programFilesDirectory(PathFinder::x86);
+	QString programFilesPath = DataPaths::programFilesDirectory(DataPaths::x86);
 	Strings::trimr(programFilesPath, "\\");
 	
 	QString defaultSkulltagBinaryPath = programFilesPath + "\\Skulltag\\Skulltag.exe";
