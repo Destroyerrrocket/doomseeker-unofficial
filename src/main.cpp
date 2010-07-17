@@ -310,6 +310,7 @@ void Main::initMainConfig()
 	config->createSetting("MainWindowMaximized", 0);
 	config->createSetting("UseTrayIcon", false); // tray icon
 	config->createSetting("CloseToTrayIcon", false); // tray icon
+	config->createSetting("WadPaths", Main::dataPaths->programsDataDirectoryPath());
 	config->createSetting("QueryAutoRefreshEnabled", false);
 	config->createSetting("QueryAutoRefreshEverySeconds", 180);
 	config->createSetting("QueryAutoRefreshDontIfActive", true);
@@ -323,6 +324,7 @@ void Main::initMainConfig()
 	config->createSetting("WadseekerColorMessageCriticalError", "#ff0000");
 	config->createSetting("WadseekerSearchURLs", urlList.join(";"));
 	config->createSetting("WadseekerSearchInIdgames", true);
+	config->createSetting("WadseekerTargetDirectory", Main::dataPaths->programsDataDirectoryPath());
 	config->createSetting("WadseekerIdgamesPriority", 0); // 0 == After all other sites
 	config->createSetting("WadseekerIdgamesURL", Wadseeker::defaultIdgamesUrl());
 	config->createSetting("WadseekerConnectTimeoutSeconds", WADSEEKER_CONNECT_TIMEOUT_SECONDS_DEFAULT);
