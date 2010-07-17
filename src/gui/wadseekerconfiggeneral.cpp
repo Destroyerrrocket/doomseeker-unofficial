@@ -76,6 +76,16 @@ void WadseekerGeneralConfigBox::saveSettings()
 	{
 		QMessageBox::warning(this, tr("Unwritable Target"), tr("The target directory you selected for Wadseeker can not be written to."));
 	}
+	// Also take a look at the file paths configuration.  Warn if it is not on the list.
+	setting = config->setting("WadPaths");
+	bool pathPossible = false;
+	foreach(QString possiblePath, setting->string().split(";", QString::SkipEmptyParts))
+	{
+		if(possiblePath == cbTargetDirectory->currentText())
+			pathPossible = true;
+	}
+	if(!pathPossible)
+		QMessageBox::warning(this, tr("Target not on List"), tr("The specified target directory could not be found on the file paths list."));
 
 	setting = config->setting("WadseekerConnectTimeoutSeconds");
 	setting->setValue(spinConnectTimeout->value());
