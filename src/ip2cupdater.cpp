@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "ip2cupdater.h"
 
+#include <QDateTime>
 #include <QDir>
 #include <QFileInfo>
 #include <QTemporaryFile>
@@ -34,7 +35,7 @@ IP2CUpdater::IP2CUpdater()
 	www->setUserAgent(QString("Doomseeker/") + QString(VERSION));
 	
 	connect(www, SIGNAL( fileDone(QByteArray&, const QString&) ), this, SLOT( processHttp(QByteArray&, const QString&) ));
-	connect(www, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgress(int, int) ));	
+	connect(www, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ));	
 }
 
 IP2CUpdater::~IP2CUpdater()
@@ -53,19 +54,33 @@ void IP2CUpdater::downloadProgressSlot(int value, int max)
 	emit downloadProgress(value, max);
 }
 
-bool IP2CUpdater::needsUpdate(const QString& filePath)
+bool IP2CUpdater::needsUpdate(const QString& filePath, unsigned minimumUpdateAge)
 {
 	if (filePath.isEmpty())
 	{
 		return false;
 	}
+	
+	if (minimumUpdateAge == 0)
+	{
+		minimumUpdateAge = 1;
+	}
 
 	QFileInfo fileInfo(filePath);
 	if (fileInfo.exists())
 	{
-		// Currently there are no other criteria, if file exists
-		// it doesn't need to be downloaded.
-		return false;
+		QDateTime current = QDateTime::currentDateTime();
+		QDateTime lastModified = fileInfo.lastModified();
+		
+		int daysTo = current.daysTo(lastModified);
+		
+		// Handle file system errors.
+		if (daysTo < 0)
+		{
+			return true;
+		}
+		
+		return (unsigned)daysTo >= minimumUpdateAge;
 	}
 
 	return true;
@@ -79,7 +94,7 @@ void IP2CUpdater::processHttp(QByteArray& data, const QString& filename)
 	{
 		tmpFile.write(data);
 		
-		QString tmpFilePath = QDir::tempPath() + QDir::separator() + tmpFile.fileName();
+		QString tmpFilePath = tmpFile.fileName();
 
 		QByteArray uncompressedData;
 		gzFile gz = gzopen(tmpFilePath.toAscii().constData(), "rb");

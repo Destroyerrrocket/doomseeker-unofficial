@@ -40,13 +40,22 @@ class IP2CUpdater : public QObject
 	Q_OBJECT
 	
 	public:
+		/**
+		 *	@brief Checks if IP2C file must be updated.
+		 *
+		 *	@param filePath - Path to the file. It is assumed that this is the
+		 *		IP2Country database file.
+		 *	@param minimumUpdateAge - Maximum age of the file for which this 
+		 *		method will return false. Cannot be 0.
+		 */
+		static bool			needsUpdate(const QString& filePath, unsigned minimumUpdateAge);		
+
 		IP2CUpdater();
 		~IP2CUpdater();
 	
 		void				downloadDatabase(const QUrl& netLocation);
 		const QByteArray&	downloadedData();
-		bool				needsUpdate(const QString& filePath);		
-		
+
 	signals:
 		/**
 		 *	@brief In case of failure the downloadedData array will be empty.

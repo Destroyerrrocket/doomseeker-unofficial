@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// cfgQuery.h
+// ip2cupdatebox.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,28 +18,21 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#ifndef __IP2CUPDATEBOX_H__
+#define __IP2CUPDATEBOX_H__
 
-#ifndef __CFG_QUERY_H__
-#define __CFG_QUERY_H__
+#include <QDialog>
+#include "ui_ip2cupdatebox.h"
 
-#include "gui/configBase.h"
-#include "ui_cfgQuery.h"
-
-class QueryConfigBox : public ConfigurationBaseBox, private Ui::QueryConfigBox
+class IP2CUpdateBox : public QDialog, private Ui::IP2CUpdateBox
 {
-	Q_OBJECT
-
 	public:
-		static ConfigurationBoxInfo	*createStructure(Config *cfg, QWidget *parent=NULL);
-
-		void	readSettings();
-
+		IP2CUpdateBox(QWidget* parent = NULL);
+		
 	protected:
-		QueryConfigBox(Config *cfg, QWidget *parent=NULL);
-
-		void	saveSettings();
+		void			updateInfo();
 };
 
-#endif /* __CFG_QUERY_H__ */
+#endif

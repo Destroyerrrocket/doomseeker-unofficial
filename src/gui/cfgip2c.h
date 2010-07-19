@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// cfgQuery.h
+// cfgip2c.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,16 +18,16 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 
-#ifndef __CFG_QUERY_H__
-#define __CFG_QUERY_H__
+#ifndef __CFG_IP2C_H__
+#define __CFG_IP2C_H__
 
 #include "gui/configBase.h"
-#include "ui_cfgQuery.h"
+#include "ui_cfgip2c.h"
 
-class QueryConfigBox : public ConfigurationBaseBox, private Ui::QueryConfigBox
+class IP2CConfigBox : public ConfigurationBaseBox, private Ui::IP2CConfigBox
 {
 	Q_OBJECT
 
@@ -37,7 +37,7 @@ class QueryConfigBox : public ConfigurationBaseBox, private Ui::QueryConfigBox
 		void	readSettings();
 
 	protected:
-		QueryConfigBox(Config *cfg, QWidget *parent=NULL);
+		IP2CConfigBox(Config *cfg, QWidget *parent=NULL);
 
 		void	saveSettings();
 };

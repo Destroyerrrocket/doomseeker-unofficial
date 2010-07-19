@@ -31,6 +31,7 @@
 
 #include "gui/mainwindow.h"
 #include "gui/remoteconsole.h"
+#include "doomseekerfilepaths.h"
 #include "log.h"
 #include "main.h"
 #include "serverapi/server.h"
@@ -40,6 +41,7 @@
 
 const QString		Main::DOOMSEEKER_CONFIG_FILENAME = "doomseeker.cfg";
 const QString		Main::IP2C_DOWNLOAD_URL = "http://software77.net/geo-ip?DL=1";
+const QString		Main::IP2C_FILENAME = "IpToCountry.csv";
 
 Config*				Main::config = new Config();
 DataPaths*			Main::dataPaths;
@@ -236,6 +238,7 @@ bool Main::createRemoteConsole()
 bool Main::initDataDirectories()
 {
 	dataPaths = new DataPaths(bPortableMode);
+	DoomseekerFilePaths::pDataPaths = dataPaths;
 	if (!dataPaths->createDirectories())
 	{
 		return false;
@@ -269,26 +272,6 @@ int Main::initIP2C()
 	gLog << tr("Initializing IP2C database.");
 	ip2c = new IP2C(IP2C_FILENAME);
 
-		//gLog << tr("Starting the IP2C updater.");
-		//
-		//IP2CUpdater updater;
-		//
-		//// We'll use a small window to display the update progress.
-		//QMainWindow updateProgressBox;
-		//updateProgressBox.setWindowTitle(tr("IP2C Updater"));
-
-		//QLabel* label = new QLabel(tr("Updating the IP2C database...\nOnce the progress bar disappears you may close this window."));
-
-		//updateProgressBox.setCentralWidget(label);
-		//if(QMessageBox::question(&updateProgressBox, tr("IP2C Updater"), tr("Update the IP2C database now?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
-		//{
-		//	updateProgressBox.show();
-		//	ip2c->downloadDatabase(IP2C_DOWNLOAD_URL);
-		//	//connect(ip2c, SIGNAL(databaseUpdated()), application, SLOT(quit()));
-		//	return application->exec();
-		//}
-		//return 0;
-
 	return 0;
 }
 
@@ -308,13 +291,17 @@ void Main::initMainConfig()
 	config->createSetting("UseTrayIcon", false); // tray icon
 	config->createSetting("CloseToTrayIcon", false); // tray icon
 	config->createSetting("WadPaths", Main::dataPaths->programsDataDirectoryPath());
+	config->createSetting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn", true);	
+	
+	// Query
 	config->createSetting("QueryAutoRefreshEnabled", false);
 	config->createSetting("QueryAutoRefreshEverySeconds", 180);
 	config->createSetting("QueryAutoRefreshDontIfActive", true);
 	config->createSetting("QueryOnStartup", true);
 	config->createSetting("QueryTries", 7);
 	config->createSetting("QueryTimeout", 1000);
-	config->createSetting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn", true);
+	
+	// Wadseeker
 	QStringList urlList = Wadseeker::defaultSitesListEncoded();
 	config->createSetting("WadseekerColorMessageNotice", "#000000");
 	config->createSetting("WadseekerColorMessageError", "#ff0000");
@@ -326,6 +313,11 @@ void Main::initMainConfig()
 	config->createSetting("WadseekerIdgamesURL", Wadseeker::defaultIdgamesUrl());
 	config->createSetting("WadseekerConnectTimeoutSeconds", WADSEEKER_CONNECT_TIMEOUT_SECONDS_DEFAULT);
 	config->createSetting("WadseekerDownloadTimeoutSeconds", WADSEEKER_DOWNLOAD_TIMEOUT_SECONDS_DEFAULT);
+	
+	// IP2C
+	config->createSetting("IP2CUrl", IP2C_DOWNLOAD_URL);
+	config->createSetting("IP2CAutoUpdate", 1);
+	config->createSetting("IP2CMaximumAge", 10);
 }
 
 void Main::initPluginConfig()

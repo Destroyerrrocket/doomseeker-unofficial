@@ -25,6 +25,7 @@
 #include "gui/cfgAppearance.h"
 #include "gui/cfgcustomservers.h"
 #include "gui/cfgFilePaths.h"
+#include "gui/cfgip2c.h"
 #include "gui/cfgQuery.h"
 #include "gui/wadseekerconfigappearance.h"
 #include "gui/wadseekerconfiggeneral.h"
@@ -186,6 +187,9 @@ void ConfigureDlg::initOptionsList()
 	cfgBoxInfo = CustomServersConfigBox::createStructure(mainConfig, this);
 	addConfigurationBox(model->invisibleRootItem(), cfgBoxInfo);
 	customServersCfgBox = cfgBoxInfo->confBox;
+	
+	cfgBoxInfo = IP2CConfigBox::createStructure(mainConfig, this);
+	addConfigurationBox(model->invisibleRootItem(), cfgBoxInfo);
 
 	cfgBoxInfo = QueryConfigBox::createStructure(mainConfig, this);
 	addConfigurationBox(model->invisibleRootItem(), cfgBoxInfo);

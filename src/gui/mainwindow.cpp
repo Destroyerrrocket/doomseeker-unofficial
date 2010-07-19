@@ -26,6 +26,7 @@
 #include "gui/copytextdlg.h"
 #include "gui/createserver.h"
 #include "gui/dockBuddiesList.h"
+#include "gui/ip2cupdatebox.h"
 #include "gui/mainwindow.h"
 #include "gui/passwordDlg.h"
 #include "gui/wadseekerinterface.h"
@@ -33,6 +34,7 @@
 #include "gui/widgets/serversstatuswidget.h"
 #include "serverapi/gamerunner.h"
 #include "customservers.h"
+#include "doomseekerfilepaths.h"
 #include "log.h"
 #include "pathfinder.h"
 #include "main.h"
@@ -44,6 +46,7 @@
 #include <QIcon>
 #include <QHeaderView>
 #include <QMessageBox>
+#include <QSizePolicy>
 
 const QString MainWindow::HELP_SITE_URL = "http://skulltag.net/wiki/Doomseeker";
 
@@ -54,7 +57,8 @@ MainWindow::MainWindow(int argc, char** argv, Config* config)
 {
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
-
+	
+	initIP2CUpdater();
 	initLogDock();
 
 	serverTableHandler = new ServerListHandler(tableServers, configuration, this);
@@ -91,14 +95,6 @@ MainWindow::MainWindow(int argc, char** argv, Config* config)
 
 	// IP2C
 	connect(Main::ip2c, SIGNAL( countryDataUpdated() ), serverTableHandler, SLOT( updateCountryFlags() ) );
-	
-	/*
-	if (Main::ip2c->needsUpdate() &&
-	   QMessageBox::question(this, tr("IP2C Database Update"), tr("Your IP2C database is missing or needs to be updated.  Would you like to download the database now?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
-	{
-		Main::ip2c->downloadDatabase(statusBar());
-	}
-	*/
 
 	// Auto refresh timer
 	initAutoRefreshTimer();
@@ -170,6 +166,8 @@ MainWindow::~MainWindow()
 	{
 		delete masterManager;
 	}
+	
+	delete ip2cUpdateProgressBar;
 }
 
 void MainWindow::autoRefreshTimer_timeout()
@@ -263,6 +261,7 @@ void MainWindow::connectEntities()
 	connect(menuActionCreateServer, SIGNAL( triggered() ), this, SLOT( menuCreateServer() ));
 	connect(menuActionHelp, SIGNAL( triggered() ), this, SLOT ( menuHelpHelp() ) );
 	connect(menuActionLog, SIGNAL( triggered() ), this, SLOT( menuLog() ));
+	connect(menuActionUpdateIP2C, SIGNAL( triggered() ), this, SLOT( menuUpdateIP2C() ) );
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( quitProgram() ));
 	connect(menuActionWadseeker, SIGNAL( triggered() ), this, SLOT( menuWadSeeker() ));
 	connect(serverSearch, SIGNAL( textChanged(const QString &) ), serverTableHandler, SLOT( updateSearch(const QString &) ));
@@ -375,6 +374,20 @@ void MainWindow::initAutoRefreshTimer()
 	}
 }
 
+void MainWindow::initIP2CUpdater()
+{
+	static const int PROGRESSBAR_WIDTH = 250;
+
+	ip2cUpdater = NULL;
+	ip2cUpdateProgressBar = new QProgressBar();
+	ip2cUpdateProgressBar->setFormat(tr("IP2C Update"));
+	ip2cUpdateProgressBar->setTextVisible(true);
+	ip2cUpdateProgressBar->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+	
+	ip2cUpdateProgressBar->setMaximumWidth(PROGRESSBAR_WIDTH);
+	ip2cUpdateProgressBar->setMinimumWidth(PROGRESSBAR_WIDTH);
+}
+
 void MainWindow::initLogDock()
 {
 	logDock = new LogDock(this);
@@ -422,6 +435,107 @@ void MainWindow::initTrayIcon()
 		trayIcon->setIcon(QIcon(":/icon.png"));
 		trayIcon->setVisible(true);
 	}
+}
+
+void MainWindow::ip2cDownloadProgress(int current, int max)
+{
+	ip2cUpdateProgressBar->setMaximum(max);
+	ip2cUpdateProgressBar->setValue(current);
+}
+
+void MainWindow::ip2cFinishUpdate(const QByteArray& downloadedData)
+{
+	if (downloadedData.isEmpty())
+	{
+		QString message = tr("IP2C download has failed.");
+		gLog << message;
+		statusBar()->showMessage(message);
+	}
+	else
+	{
+		gLog << tr("IP2C database finished downloading.");
+	
+		QString filePath = DoomseekerFilePaths::ip2cDatabase();
+		
+		QFile file(filePath);
+		QByteArray oldContent;
+		
+		// Backup old database.
+		if (file.exists())
+		{
+			file.open(QIODevice::ReadOnly);
+			oldContent = file.readAll();
+			file.close();
+		}
+		
+		// Write new data.
+		if (!file.open(QIODevice::WriteOnly))
+		{
+			gLog << tr("Unable to save IP2C database at path: %1").arg(filePath);
+		}
+		
+		file.write(downloadedData);
+		file.close();
+		
+		statusBar()->showMessage(tr("Please wait. IP2C Database is being read and converted. This may take some time."));
+		// Attempt to read IP2C database.
+		if (!Main::ip2c->readDatabase())
+		{
+			QString message = tr("Failed to read new IP2C database. Reverting...");
+			gLog << message;
+			statusBar()->showMessage(message);
+			
+			if (oldContent.isEmpty())
+			{
+				// Delete file in this case.
+				file.remove();
+			}
+			else
+			{
+				// Revert to old content.
+				file.open(QIODevice::WriteOnly);
+				file.write(oldContent);
+				file.close();
+				
+				// Must succeed now.
+				Main::ip2c->readDatabase();
+			}
+		}
+		else
+		{
+			QString message = tr("IP2C database updated successfully.");
+			gLog << message;
+			statusBar()->showMessage(message);
+		}
+	}
+
+	// Clean up.
+	menuActionUpdateIP2C->setEnabled(true);
+	statusBar()->removeWidget(ip2cUpdateProgressBar);
+	
+	delete ip2cUpdater;
+	ip2cUpdater = NULL;
+}
+
+void MainWindow::ip2cStartUpdate()
+{
+	if (ip2cUpdater != NULL)
+	{
+		// If update is currently in progress then prevent re-starting.
+		return;
+	}
+
+	menuActionUpdateIP2C->setEnabled(false);
+	
+	ip2cUpdater = new IP2CUpdater();
+	
+	connect (ip2cUpdater, SIGNAL( databaseDownloadFinished(const QByteArray&) ), this, SLOT( ip2cFinishUpdate(const QByteArray&) ) );
+	connect (ip2cUpdater, SIGNAL( downloadProgress(int, int) ), this, SLOT( ip2cDownloadProgress(int, int) ) );
+	
+	QString downloadUrl = configuration->setting("IP2CUrl")->string();
+	
+	ip2cUpdater->downloadDatabase(downloadUrl);
+	statusBar()->addPermanentWidget(ip2cUpdateProgressBar);
 }
 
 void MainWindow::masterManagerMessages(MasterClient* pSender, const QString& title, const QString& content, bool isError)
@@ -515,10 +629,19 @@ void MainWindow::menuOptionsConfigure()
 	}
 }
 
+void MainWindow::menuUpdateIP2C()
+{
+	IP2CUpdateBox updateBox(this);
+	
+	connect(&updateBox, SIGNAL( accepted() ), this, SLOT( ip2cStartUpdate() ) );
+	
+	updateBox.exec();
+}
+
 void MainWindow::menuWadSeeker()
 {
-	WadSeekerInterface wsi(this);
-	wsi.exec();
+	WadSeekerInterface wadSeekerInterface(this);
+	wadSeekerInterface.exec();
 }
 
 bool MainWindow::obtainJoinCommandLine(const Server* server, CommandLineInfo& cli, const QString& errorCaption)

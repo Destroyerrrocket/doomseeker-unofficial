@@ -52,6 +52,11 @@ struct MAIN_EXPORT SettingsData : public QObject
 		const int			integer() const { return m_type == ST_INT ? m_integer : m_str.toInt(); }
 		const QString		string() const { return m_type == ST_STR ? m_str : QString::number(m_integer); }
 		const SettingType	type() const { return m_type; }
+		
+		/**
+		 *	@brief Directly translated to integer. 1 for true, 0 for false.
+		 */
+		void				setValueBoolean(bool b) { setValue(b ? 1 : 0); }
 		void				setValue(int integer);
 		void				setValue(QString str);
 

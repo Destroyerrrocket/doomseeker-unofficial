@@ -40,7 +40,7 @@
 class MAIN_EXPORT Main : public QObject
 {
 	public:
-		static const QString		IP2C_DOWNLOAD_URL;
+		static const QString		IP2C_FILENAME;
 	
 		static Config 				*config;
 		static IP2C					*ip2c;
@@ -68,6 +68,7 @@ class MAIN_EXPORT Main : public QObject
 
 	protected:
 		static const QString		DOOMSEEKER_CONFIG_FILENAME;
+		static const QString		IP2C_DOWNLOAD_URL;		
 
 		void						createMainWindow();
 		bool						createRemoteConsole();

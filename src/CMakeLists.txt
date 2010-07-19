@@ -51,11 +51,13 @@ qt4_wrap_ui(doomseekerUI
 	gui/cfgAppearance.ui
 	gui/cfgcustomservers.ui
 	gui/cfgFilePaths.ui
+	gui/cfgip2c.ui
 	gui/cfgQuery.ui
 	gui/configureDlg.ui
 	gui/copytextdlg.ui
 	gui/createserver.ui
 	gui/dockBuddiesList.ui
+	gui/ip2cupdatebox.ui	
 	gui/logdock.ui
 	gui/mainwindow.ui
 	gui/passwordDlg.ui
@@ -73,12 +75,14 @@ set(DOOMSEEKER_QT_FILES
 	gui/cfgAppearance.h
 	gui/cfgcustomservers.h	
 	gui/cfgFilePaths.h
+	gui/cfgip2c.h
 	gui/cfgQuery.h
 	gui/configBase.h
 	gui/configureDlg.h
 	gui/copytextdlg.h
 	gui/createserver.h
 	gui/dockBuddiesList.h
+	gui/ip2cupdatebox.h
 	gui/logdock.h
 	gui/mainwindow.h
 	gui/passwordDlg.h
@@ -119,12 +123,14 @@ set(SOURCE_FILES
 	gui/cfgAppearance.cpp
 	gui/cfgcustomservers.cpp	
 	gui/cfgFilePaths.cpp
+	gui/cfgip2c.cpp
 	gui/cfgQuery.cpp
 	gui/commonGUI.cpp
 	gui/configureDlg.cpp
 	gui/copytextdlg.cpp
 	gui/createserver.cpp
 	gui/dockBuddiesList.cpp
+	gui/ip2cupdatebox.cpp
 	gui/logdock.cpp
 	gui/mainwindow.cpp
 	gui/passwordDlg.cpp
@@ -165,6 +171,7 @@ set(SOURCE_FILES
 	apprunner.cpp
 	customservers.cpp
 	datapaths.cpp
+	doomseekerfilepaths.cpp
 	ip2c.cpp
 	ip2cupdater.cpp
 	log.cpp
@@ -198,6 +205,7 @@ set(HEADER_FILES
 	tests/testruns.h
 	apprunner.h
 	datapaths.h	
+	doomseekerfilepaths.h
 	global.h
 	main.h
 	messageresult.h

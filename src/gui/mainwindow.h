@@ -25,6 +25,7 @@
 #define __MAINWINDOW_H_
 
 #include "apprunner.h"
+#include "ip2cupdater.h"
 #include "mastermanager.h"
 #include "sdeapi/config.hpp"
 #include "sdeapi/pluginloader.hpp"
@@ -35,6 +36,7 @@
 #include "ui_mainwindow.h"
 
 #include <QAction>
+#include <QProgressBar>
 #include <QString>
 #include <QStandardItem>
 #include <QSystemTrayIcon>
@@ -104,6 +106,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		bool				bWantToQuit;
 
 		Config*				configuration;
+		QProgressBar*		ip2cUpdateProgressBar;
+		IP2CUpdater*		ip2cUpdater;
 		LogDock*			logDock;
 		ServerListHandler*	serverTableHandler;
 
@@ -134,6 +138,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 */
 		void	fillQueryMenu(MasterManager* masterManager);
 
+		void	initIP2CUpdater();
 		void	initLogDock();
 
 		/**
@@ -167,6 +172,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void 	btnGetServers_Click();
 		void	btnRefreshAll_Click();
 		void 	finishedQueryingMaster(MasterClient* master);
+		void	ip2cDownloadProgress(int current, int max);
+		void	ip2cFinishUpdate(const QByteArray& downloadedData);
+		void	ip2cStartUpdate();
 		void	masterManagerMessages(MasterClient* pSender, const QString& title, const QString& content, bool isError);
 		void	menuBuddies();
 		void 	menuCreateServer();
@@ -174,6 +182,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	menuHelpHelp();
 		void	menuLog();
 		void 	menuOptionsConfigure();
+		void	menuUpdateIP2C();		
 		void	menuWadSeeker();
 		void	quitProgram();
 		void 	refreshThreadBeginsWork();

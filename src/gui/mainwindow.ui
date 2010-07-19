@@ -142,6 +142,7 @@
     </property>
     <addaction name="menuActionCreateServer"/>
     <addaction name="menuActionWadseeker"/>
+    <addaction name="menuActionUpdateIP2C"/>
     <addaction name="separator"/>
     <addaction name="menuActionQuit"/>
    </widget>
@@ -231,6 +232,11 @@
    </property>
    <property name="shortcut">
     <string>F1</string>
+   </property>
+  </action>
+  <action name="menuActionUpdateIP2C">
+   <property name="text">
+    <string>Update IP2C</string>
    </property>
   </action>
  </widget>
