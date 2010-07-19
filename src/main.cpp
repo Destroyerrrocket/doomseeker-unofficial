@@ -39,6 +39,7 @@
 #include "wadseeker/wadseeker.h"
 
 const QString		Main::DOOMSEEKER_CONFIG_FILENAME = "doomseeker.cfg";
+const QString		Main::IP2C_DOWNLOAD_URL = "http://software77.net/geo-ip?DL=1";
 
 Config*				Main::config = new Config();
 DataPaths*			Main::dataPaths;
@@ -51,7 +52,7 @@ QString				Main::workingDirectory = "./";
 
 Main::Main(int argc, char* argv[])
 : application(NULL), arguments(argv), argumentsCount(argc),
-  startRcon(false), updateIP2CAndQuit(false)
+  startRcon(false)
 {
 	bTestMode = false;
 	bPortableMode = false;
@@ -129,10 +130,6 @@ int Main::run()
 	}
 
 	int ip2cReturn = initIP2C();
-	if (updateIP2CAndQuit)
-	{
-		return ip2cReturn;
-	}
 
 	initMainConfig();
 	initPluginConfig();
@@ -267,30 +264,30 @@ bool Main::initDataDirectories()
 int Main::initIP2C()
 {
 	const QString IP2C_FILENAME = "data:IpToCountry.csv";
-	const QUrl IP2C_URL = QUrl("http://software77.net/geo-ip?DL=1");
+	const QUrl IP2C_URL = QUrl();
 
 	gLog << tr("Initializing IP2C database.");
-	ip2c = new IP2C(IP2C_FILENAME, IP2C_URL);
+	ip2c = new IP2C(IP2C_FILENAME);
 
-	if(updateIP2CAndQuit)
-	{
-		gLog << tr("Starting the IP2C updater.");
-		// We'll use a small window to display the update progress.
-		QMainWindow updateProgressBox;
-		updateProgressBox.setWindowTitle(tr("IP2C Updater"));
+		//gLog << tr("Starting the IP2C updater.");
+		//
+		//IP2CUpdater updater;
+		//
+		//// We'll use a small window to display the update progress.
+		//QMainWindow updateProgressBox;
+		//updateProgressBox.setWindowTitle(tr("IP2C Updater"));
 
-		QLabel* label = new QLabel(tr("Updating the IP2C database...\nOnce the progress bar disappears you may close this window."));
+		//QLabel* label = new QLabel(tr("Updating the IP2C database...\nOnce the progress bar disappears you may close this window."));
 
-		updateProgressBox.setCentralWidget(label);
-		if(QMessageBox::question(&updateProgressBox, tr("IP2C Updater"), tr("Update the IP2C database now?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
-		{
-			updateProgressBox.show();
-			ip2c->downloadDatabase(updateProgressBox.statusBar());
-			connect(ip2c, SIGNAL(databaseUpdated()), application, SLOT(quit()));
-			return application->exec();
-		}
-		return 0;
-	}
+		//updateProgressBox.setCentralWidget(label);
+		//if(QMessageBox::question(&updateProgressBox, tr("IP2C Updater"), tr("Update the IP2C database now?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
+		//{
+		//	updateProgressBox.show();
+		//	ip2c->downloadDatabase(IP2C_DOWNLOAD_URL);
+		//	//connect(ip2c, SIGNAL(databaseUpdated()), application, SLOT(quit()));
+		//	return application->exec();
+		//}
+		//return 0;
 
 	return 0;
 }
@@ -358,10 +355,6 @@ bool Main::interpretCommandLineParameters()
 				i += 2;
 			}
 		}
-		else if(strcmp(arg, "--updateip2c") == 0)
-		{
-			updateIP2CAndQuit = true;
-		}
 		else if(strcmp(arg, "--help") == 0)
 		{
 			gLog.setTimestampsEnabled(false);
@@ -369,7 +362,6 @@ bool Main::interpretCommandLineParameters()
 			gLog << tr("Available command line parameters:");
 			gLog << tr("	--datadir : Sets an explicit search location for IP2C data along with plugins.");
 			gLog << tr("	--rcon [plugin] [ip] : Launch the rcon client for the specified ip.");
-			gLog << tr("	--updateip2c : Updates the IP2C database.");
 			gLog << tr("	--portable : Starts application in portable mode.");
 			return false;
 		}

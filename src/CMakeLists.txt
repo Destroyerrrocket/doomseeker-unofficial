@@ -101,6 +101,7 @@ set(DOOMSEEKER_QT_FILES
 	serverapi/server.h
 	customservers.h
 	ip2c.h
+	ip2cupdater.h
 	log.h
 	masterclient.h
 	mastermanager.h
@@ -165,6 +166,7 @@ set(SOURCE_FILES
 	customservers.cpp
 	datapaths.cpp
 	ip2c.cpp
+	ip2cupdater.cpp
 	log.cpp
 	main.cpp
 	masterclient.cpp

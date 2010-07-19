@@ -28,30 +28,23 @@
 #include <QResource>
 #include <QTime>
 #include <QTimeLine>
-#include <zlib.h>
 
 #include "log.h"
 #include "ip2c.h"
 #include "sdeapi/pluginloader.hpp"
 #include "sdeapi/scanner.hpp"
-#include "version.h"
 
-IP2C::IP2C(QString file, QUrl netLocation)
-: downloadProgressWidget(NULL), file(file), flagLan(":flags/lan-small"),
-  flagLocalhost(":flags/localhost-small"), flagUnknown(":flags/unknown-small"),
-  netLocation(netLocation)
+IP2C::IP2C(QString file)
+: flagLan(":flags/lan-small"), flagLocalhost(":flags/localhost-small"),
+  flagUnknown(":flags/unknown-small")
 {
+	this->file = file;
+
 	read = readDatabase();
-	www = new WWW();
-	www->setUserAgent(QString("Doomseeker/") + QString(VERSION));
 }
 
 IP2C::~IP2C()
 {
-	if(www != NULL)
-		delete www;
-	if(downloadProgressWidget != NULL)
-		delete downloadProgressWidget;
 }
 
 void IP2C::appendEntryToDatabase(const IP2CData& entry)
@@ -141,29 +134,6 @@ void IP2C::convertCountriesIntoBinaryData(const Countries& countries, QByteArray
 	}
 }
 
-void IP2C::downloadDatabase(QStatusBar *statusbar)
-{
-	if(downloadProgressWidget != NULL)
-		delete downloadProgressWidget;
-	downloadProgressWidget = new QProgressBar();
-	downloadProgressWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-	if(statusbar != NULL)
-		statusbar->addPermanentWidget(downloadProgressWidget);
-
-	connect(www, SIGNAL( fileDone(QByteArray&, const QString&) ), this, SLOT( processHttp(QByteArray&, const QString&) ));
-	connect(www, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgress(int, int) ));
-	www->getUrl(netLocation);
-}
-
-void IP2C::downloadProgress(int value, int max)
-{
-	if(downloadProgressWidget == NULL)
-		return;
-
-	downloadProgressWidget->setMaximum(max);
-	downloadProgressWidget->setValue(value);
-}
-
 const QPixmap &IP2C::flag(unsigned int ipaddress, const QString& countryShortName)
 {
 	if (flags.contains(countryShortName))
@@ -216,22 +186,6 @@ const IP2C::IP2CData& IP2C::lookupIP(unsigned int ipaddress) const
 	return invalidData;
 }
 
-bool IP2C::needsUpdate()
-{
-	if (file.isEmpty())
-		return false;
-
-	QFileInfo fi(file);
-	if (fi.exists())
-	{
-		// Currently there are no other criteria, if file exists
-		// it doesn't need to be downloaded.
-		return false;
-	}
-
-	return true;
-}
-
 CountryInfo IP2C::obtainCountryInfo(unsigned int ipaddress)
 {
 	if (isLocalhostAddress(ipaddress))
@@ -265,44 +219,6 @@ CountryInfo IP2C::obtainCountryInfo(unsigned int ipaddress)
 
 	CountryInfo ci = {true, &flag(ipaddress, data.country), data.countryFullName };
 	return ci;
-}
-
-void IP2C::processHttp(QByteArray& data, const QString& filename)
-{
-	// First we need to write it to a temporary file
-	QFile tmp(file + ".gz");
-	if(tmp.open(QIODevice::WriteOnly) && tmp.isWritable())
-	{
-		tmp.write(data);
-
-		QByteArray uncompressedData;
-		gzFile gz = gzopen((file + ".gz").toAscii().constData(), "rb");
-		if(gz != NULL)
-		{
-			char chunk[131072]; // 128k
-			int bytesRead = 0;
-			while((bytesRead = gzread(gz, chunk, 131072)) != 0)
-				uncompressedData.append(QByteArray(chunk, bytesRead));
-			gzclose(gz);
-
-			// write it to a new file.
-			// but ignore if data failed to uncompress
-			if (uncompressedData.size() > 0)
-			{
-				convertAndSaveDatabase(uncompressedData);
-			}
-		}
-
-		tmp.remove();
-	}
-
-	read = readDatabase();
-	// clear the progress bar
-	if(downloadProgressWidget != NULL)
-	{
-		delete downloadProgressWidget;
-		downloadProgressWidget = NULL;
-	}
 }
 
 bool IP2C::readDatabase()
@@ -378,8 +294,9 @@ bool IP2C::readDatabase()
 //	}
 
 	gLog << tr("IP2C Database read in %1 ms. Entries read: %2").arg(time.elapsed()).arg(database.size());
+	
+	emit countryDataUpdated();
 
-	emit databaseUpdated();
 	return true;
 }
 

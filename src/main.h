@@ -40,6 +40,8 @@
 class MAIN_EXPORT Main : public QObject
 {
 	public:
+		static const QString		IP2C_DOWNLOAD_URL;
+	
 		static Config 				*config;
 		static IP2C					*ip2c;
 		static DataPaths*			dataPaths;
@@ -106,8 +108,6 @@ class MAIN_EXPORT Main : public QObject
 		QString						rconAddress;
 		unsigned short				rconPort;
 		bool						startRcon;
-		bool						updateIP2CAndQuit;
-
 };
 
 #endif /* __MAIN_H__ */

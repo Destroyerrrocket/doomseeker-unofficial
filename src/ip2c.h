@@ -34,7 +34,6 @@
 #include <QUrl>
 
 #include "global.h"
-#include "wadseeker/www.h"
 
 /**
  *	@brief Flag and name of the country.
@@ -60,7 +59,6 @@ struct MAIN_EXPORT CountryInfo
  *
  *	Class accepts text database from:
  * 	http://software77.net/geo-ip
- *	WWW class from Wadseeker library is used to communicate with WWW site.
  *	The first time the text database is read it is compacted into a smaller
  *	format and stored on the drive.
  *	@see convertAndSaveDatabase()
@@ -137,10 +135,9 @@ class MAIN_EXPORT IP2C : public QObject
 				}
 		};
 
-		IP2C(QString file, QUrl netLocation);
+		IP2C(QString file);
 		~IP2C();
 
-		void			downloadDatabase(QStatusBar *statusbar=NULL);
 		const QString& 	filename() { return file; }
 
 		bool			isRead() const { return read; }
@@ -150,7 +147,6 @@ class MAIN_EXPORT IP2C : public QObject
 		 */
 		const IP2CData&	lookupIP(unsigned int ipaddress) const;
 		const IP2CData&	lookupIP(const QHostAddress &ipaddress) const { return lookupIP(ipaddress.toIPv4Address()); }
-		bool			needsUpdate();
 
 		/**
 		 *	Returns country information based on given IP.
@@ -159,10 +155,10 @@ class MAIN_EXPORT IP2C : public QObject
 		CountryInfo		obtainCountryInfo(const QHostAddress& ipaddress) { return obtainCountryInfo(ipaddress.toIPv4Address()); }
 
 	public slots:
-		bool	readDatabase();
-
+		bool			readDatabase();
+		
 	signals:
-		void	databaseUpdated();
+		void			countryDataUpdated();
 
 	protected:
 		/**
@@ -175,13 +171,13 @@ class MAIN_EXPORT IP2C : public QObject
 		/**
 		 *	Makes sure the database is sorted in ascending order.
 		 */
-		void	appendEntryToDatabase(const IP2CData& entry);
+		void			appendEntryToDatabase(const IP2CData& entry);
 
 		/**
 		 *	Converts downloaded text database to a compacted binary file.
 		 *	The name of the new file is IP2C::file.
 		 */
-		bool	convertAndSaveDatabase(QByteArray& downloadedData);
+		bool			convertAndSaveDatabase(QByteArray& downloadedData);
 
 		/**
 		 *	Converts previously created by readTextDatabase() countries hash
@@ -196,7 +192,7 @@ class MAIN_EXPORT IP2C : public QObject
 			const static unsigned LAN_1_BEGIN = QHostAddress("10.0.0.0").toIPv4Address();
 			const static unsigned LAN_1_END = QHostAddress("10.255.255.255").toIPv4Address();
 			const static unsigned LAN_2_BEGIN = QHostAddress("172.16.0.0").toIPv4Address();
-			const static unsigned LAN_2_END = QHostAddress("127.31.255.255").toIPv4Address();
+			const static unsigned LAN_2_END = QHostAddress("172.31.255.255").toIPv4Address();
 			const static unsigned LAN_3_BEGIN = QHostAddress("192.168.0.0").toIPv4Address();
 			const static unsigned LAN_3_END = QHostAddress("192.168.255.255").toIPv4Address();
 
@@ -215,8 +211,8 @@ class MAIN_EXPORT IP2C : public QObject
 			return (ipv4Address >= LOCALHOST_BEGIN && ipv4Address <= LOCALHOST_END);
 		}
 
-		bool	readDatabaseVersion1(const QByteArray& dataArray);
-		bool	readDatabaseVersion2(const QByteArray& dataArray);
+		bool			readDatabaseVersion1(const QByteArray& dataArray);
+		bool			readDatabaseVersion2(const QByteArray& dataArray);
 
 		/**
 		 *	Called by convertAndSaveDatabase().
@@ -224,24 +220,17 @@ class MAIN_EXPORT IP2C : public QObject
 		 *		by this function.
 		 *	@param [out] countries - returned hash table of countries.
 		 */
-		void	readTextDatabase(QByteArray& textDatabase, Countries& countries);
+		void			readTextDatabase(QByteArray& textDatabase, Countries& countries);
 
 	private:
 		QList<IP2CData>			database;
-		QProgressBar*			downloadProgressWidget;
 		QString					file;
 		const QPixmap			flagLan;
 		const QPixmap			flagLocalhost;
 		const QPixmap			flagUnknown;
 		QHash<QString, QPixmap>	flags;
 		const IP2CData			invalidData;
-		QUrl					netLocation;
 		bool					read;
-		WWW*					www;
-
-	private slots:
-		void	downloadProgress(int value, int max);
-		void	processHttp(QByteArray& data, const QString& filename);
 };
 
 #endif /* __IP2C_H__ */
