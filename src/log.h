@@ -26,6 +26,7 @@
 #define gLog Log::instance
 
 #include "global.h"
+#include <QMutex>
 #include <QObject>
 
 /**
@@ -105,6 +106,7 @@ class MAIN_EXPORT Log : public QObject
 		 *	@brief Entire content of the log.
 		 */
 		QString		logContent;
+		QMutex		thisMutex;
 
 		int			doLogPrintf(char* output, unsigned outputSize, const char* str, va_list argList);
 

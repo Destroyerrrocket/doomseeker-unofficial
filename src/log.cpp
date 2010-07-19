@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "log.h"
 #include <QDateTime>
+#include <QMutexLocker>
 #include <cstdio>
 
 Log gLog;
@@ -47,6 +48,8 @@ void Log::addEntry(const QString& string)
 
 void Log::addUnformattedEntry(const QString& string)
 {
+	QMutexLocker locker(&thisMutex);
+
 	if (printToStdout)
 	{
 		printf("%s", string.toAscii().constData());
@@ -58,6 +61,8 @@ void Log::addUnformattedEntry(const QString& string)
 
 int Log::doLogPrintf(char* output, unsigned outputSize, const char* str, va_list argList)
 {
+	QMutexLocker locker(&thisMutex);
+
 	if(str == NULL)
 	{
 		return - 1;
