@@ -35,7 +35,6 @@
 #include "serverapi/gamerunner.h"
 #include "customservers.h"
 #include "doomseekerfilepaths.h"
-#include "ip2cparser.h"
 #include "log.h"
 #include "pathfinder.h"
 #include "main.h"
@@ -58,6 +57,8 @@ MainWindow::MainWindow(int argc, char** argv, Config* config)
 {
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
+	
+	ip2cParser = NULL;
 	
 	initIP2CUpdater();
 	initLogDock();
@@ -94,9 +95,6 @@ MainWindow::MainWindow(int argc, char** argv, Config* config)
 	buddiesList->hide();
 	this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
 
-	// IP2C
-	//connect(Main::ip2c, SIGNAL( countryDataUpdated() ), serverTableHandler, SLOT( updateCountryFlags() ) );
-
 	// Auto refresh timer
 	initAutoRefreshTimer();
 	connect(&autoRefreshTimer, SIGNAL( timeout() ), this, SLOT( autoRefreshTimer_timeout() ));
@@ -121,6 +119,8 @@ MainWindow::MainWindow(int argc, char** argv, Config* config)
 		// not to refresh them.
 		refreshCustomServers();
 	}
+	
+	ip2cParseDatabase();
 }
 
 MainWindow::~MainWindow()
@@ -166,6 +166,13 @@ MainWindow::~MainWindow()
 	if(masterManager != NULL)
 	{
 		delete masterManager;
+	}
+	
+	if (ip2cParser != NULL)
+	{
+		while (ip2cParser->isParsing());
+		
+		delete ip2cParser;
 	}
 	
 	delete ip2cUpdateProgressBar;
@@ -438,6 +445,22 @@ void MainWindow::initTrayIcon()
 	}
 }
 
+void MainWindow::ip2cAllowDownload()
+{
+	menuActionUpdateIP2C->setEnabled(true);
+	
+	if (statusBar()->isAncestorOf(ip2cUpdateProgressBar))
+	{
+		statusBar()->removeWidget(ip2cUpdateProgressBar);
+	}
+	
+	if (ip2cUpdater != NULL)
+	{
+		delete ip2cUpdater;
+		ip2cUpdater = NULL;
+	}
+}
+
 void MainWindow::ip2cDownloadProgress(int current, int max)
 {
 	ip2cUpdateProgressBar->setMaximum(max);
@@ -451,21 +474,22 @@ void MainWindow::ip2cFinishUpdate(const QByteArray& downloadedData)
 		QString message = tr("IP2C download has failed.");
 		gLog << message;
 		statusBar()->showMessage(message);
+		
+		ip2cAllowDownload();
 	}
 	else
 	{
 		gLog << tr("IP2C database finished downloading.");
-	
-		QString filePath = DoomseekerFilePaths::ip2cDatabase();
 		
+		QString filePath = DoomseekerFilePaths::ip2cDatabase();
+				
 		QFile file(filePath);
-		QByteArray oldContent;
 		
 		// Backup old database.
 		if (file.exists())
 		{
 			file.open(QIODevice::ReadOnly);
-			oldContent = file.readAll();
+			ip2cOldContent = file.readAll();
 			file.close();
 		}
 		
@@ -473,50 +497,76 @@ void MainWindow::ip2cFinishUpdate(const QByteArray& downloadedData)
 		if (!file.open(QIODevice::WriteOnly))
 		{
 			gLog << tr("Unable to save IP2C database at path: %1").arg(filePath);
+			
+			ip2cOldContent.clear();
+			ip2cAllowDownload();
+			return;
 		}
 		
 		file.write(downloadedData);
-		file.close();
+		file.close();		
+	
+		ip2cParseDatabase();
+	}
+}
+
+void MainWindow::ip2cFinishedParsing(bool bSuccess)
+{
+	QString filePath = DoomseekerFilePaths::ip2cDatabase();
+	QFile file(filePath);
+
+	ip2cAllowDownload();
+	delete ip2cParser;
+	ip2cParser = NULL;
+	
+	if (!bSuccess)
+	{
+		QString message = tr("Failed to read IP2C database. Reverting...");
+		gLog << message;
+		statusBar()->showMessage(message);
 		
-		statusBar()->showMessage(tr("Please wait. IP2C Database is being read and converted. This may take some time."));
-		// Attempt to read IP2C database.
-		IP2CParser ip2cParser(Main::ip2c);
-		if (!ip2cParser.readDatabase(filePath))
+		if (ip2cOldContent.isEmpty())
 		{
-			QString message = tr("Failed to read new IP2C database. Reverting...");
-			gLog << message;
-			statusBar()->showMessage(message);
-			
-			if (oldContent.isEmpty())
-			{
-				// Delete file in this case.
-				file.remove();
-			}
-			else
-			{
-				// Revert to old content.
-				file.open(QIODevice::WriteOnly);
-				file.write(oldContent);
-				file.close();
-				
-				// Must succeed now.
-				ip2cParser.readDatabase(filePath);
-			}
+			gLog << "IP2C revert attempt failed. Nothing to go back to.";
+			// Delete file in this case.
+			file.remove();
 		}
 		else
 		{
-			QString message = tr("IP2C database updated successfully.");
-			gLog << message;
-			statusBar()->showMessage(message);
+			// Revert to old content.
+			file.open(QIODevice::WriteOnly);
+			file.write(ip2cOldContent);
+			file.close();
+			
+			// Prevent infinite recurrency.
+			ip2cOldContent.clear();
+			
+			// Must succeed now.
+			ip2cParser->readDatabase(filePath);
 		}
 	}
+	else
+	{
+		QString message = tr("IP2C database updated successfully.");
+		gLog << message;
+		statusBar()->showMessage(message);
+		
+		serverTableHandler->updateCountryFlags();
+	}
+}
 
-	// Clean up.
-	menuActionUpdateIP2C->setEnabled(true);
-	statusBar()->removeWidget(ip2cUpdateProgressBar);
+void MainWindow::ip2cParseDatabase()
+{
+	QString filePath = DoomseekerFilePaths::ip2cDatabase();
 	
-	delete ip2cUpdater;
-	ip2cUpdater = NULL;
+	menuActionUpdateIP2C->setEnabled(false);
+	
+	statusBar()->showMessage(tr("Please wait. IP2C Database is being read and converted if necessary. This may take some time."));
+	// Attempt to read IP2C database.
+	ip2cParser = new IP2CParser(Main::ip2c);
+	connect (ip2cParser, SIGNAL( parsingFinished(bool) ), this, SLOT( ip2cFinishedParsing(bool) ) );
+	
+	ip2cParser->readDatabase(filePath);
 }
 
 void MainWindow::ip2cStartUpdate()

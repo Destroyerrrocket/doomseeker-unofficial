@@ -97,8 +97,6 @@ class MAIN_EXPORT IP2C : public QObject
 		 */
 		void			appendEntryToDatabase(const IP2CData& entry);		
 
-		bool			isRead() const { return read; }
-
 		/**
 		 *	Returns a reference to the structure describing the country.
 		 */
@@ -155,7 +153,6 @@ class MAIN_EXPORT IP2C : public QObject
 		const QPixmap				flagUnknown;
 		QHash<QString, QPixmap>		flags;
 		const IP2CData				invalidData;
-		bool						read;
 };
 
 #endif /* __IP2C_H__ */

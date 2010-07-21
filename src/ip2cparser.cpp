@@ -28,11 +28,14 @@
 #include "sdeapi/scanner.hpp"
 #include <QFile>
 #include <QMap>
+#include <QMutexLocker>
 #include <QTime>
 
 IP2CParser::IP2CParser(IP2C* pTargetDatabase) 
 {
+	currentParsingThread = NULL;
 	this->pTargetDatabase = pTargetDatabase;
+	bIsParsing = false;
 }
 
 bool IP2CParser::convertAndSaveDatabase(QByteArray& downloadedData, const QString& outFilePath)
@@ -100,6 +103,9 @@ void IP2CParser::convertCountriesIntoBinaryData(const Countries& countries, QByt
 
 bool IP2CParser::doReadDatabase(const QString& filePath)
 {
+	QMutexLocker mutexLocker(&thisLock);
+	bIsParsing = true;
+
 	QFile dataBase(filePath);
 	
 	if (!dataBase.exists() 
@@ -177,7 +183,18 @@ bool IP2CParser::doReadDatabase(const QString& filePath)
 
 	gLog << tr("IP2C Database read in %1 ms. Entries read: %2").arg(time.elapsed()).arg(pTargetDatabase->numKnownEntries());
 	
+	bIsParsing = false;
 	return true;
+}
+
+void IP2CParser::parsingThreadFinished()
+{
+	bool bSuccessState = currentParsingThread->bSuccessState;
+	
+	delete currentParsingThread;
+	currentParsingThread = NULL;
+	
+	emit parsingFinished(bSuccessState);
 }
 
 bool IP2CParser::readDatabase(const QString& filePath)
@@ -190,7 +207,17 @@ bool IP2CParser::readDatabase(const QString& filePath)
 
 void IP2CParser::readDatabaseThreaded(const QString& filePath)
 {
-	readDatabase(filePath);
+	if (currentParsingThread != NULL)
+	{
+		return;
+	}
+	
+	ParsingThread* pParsingThread = new ParsingThread(this, filePath);
+	connect(pParsingThread, SIGNAL( finished() ), this, SLOT( parsingThreadFinished() ) );
+	
+	currentParsingThread = pParsingThread;
+	
+	pParsingThread->start();
 }
 
 bool IP2CParser::readDatabaseVersion1(const QByteArray& dataArray)
@@ -321,3 +348,11 @@ void IP2CParser::readTextDatabase(QByteArray& textDatabase, Countries& countries
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+void IP2CParser::ParsingThread::run()
+{
+	gLog << tr("Starting IP2C parser thread.");
+
+	bSuccessState = pParser->doReadDatabase(filePath);	
+}

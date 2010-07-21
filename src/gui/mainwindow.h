@@ -25,6 +25,7 @@
 #define __MAINWINDOW_H_
 
 #include "apprunner.h"
+#include "ip2cparser.h"
 #include "ip2cupdater.h"
 #include "mastermanager.h"
 #include "sdeapi/config.hpp"
@@ -106,6 +107,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		bool				bWantToQuit;
 
 		Config*				configuration;
+		QByteArray			ip2cOldContent;
+		IP2CParser*			ip2cParser;
 		QProgressBar*		ip2cUpdateProgressBar;
 		IP2CUpdater*		ip2cUpdater;
 		LogDock*			logDock;
@@ -115,7 +118,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		QList<QAction*>		queryMenuPorts;
 		QSystemTrayIcon*	trayIcon;
 		QMenu*				trayIconMenu;
-
+		
 		void	changeEvent(QEvent* event);
 
 		/**
@@ -140,12 +143,14 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 		void	initIP2CUpdater();
 		void	initLogDock();
-
+		
 		/**
 		 *	Checks whether the program will use the tray icon and
 		 *	deletes or instantiates a QSystemTrayIcon object.
 		 */
 		void	initTrayIcon();
+		
+		void	ip2cAllowDownload();				
 
 		/**
 		 *	Generates command line info for specified server.
@@ -157,9 +162,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 *	@return true on success, false otherwise.
 		 */
 		bool	obtainJoinCommandLine(const Server* server, CommandLineInfo& cli, const QString& errorCaption = tr("Doomseeker - error"));
-
+		
 		void	refreshCustomServers();
-
+		
 		/**
 		 *	Functionality and name of this function might not be perfect but
 		 *	it saves some copy&pasting in the end. The end justifies the means.
@@ -174,6 +179,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void 	finishedQueryingMaster(MasterClient* master);
 		void	ip2cDownloadProgress(int current, int max);
 		void	ip2cFinishUpdate(const QByteArray& downloadedData);
+		void	ip2cFinishedParsing(bool bSuccess);
+		void	ip2cParseDatabase();
 		void	ip2cStartUpdate();
 		void	masterManagerMessages(MasterClient* pSender, const QString& title, const QString& content, bool isError);
 		void	menuBuddies();

@@ -272,9 +272,6 @@ int Main::initIP2C()
 
 	gLog << tr("Initializing IP2C database.");
 	ip2c = new IP2C();
-	
-	IP2CParser ip2cParser(ip2c);
-	ip2cParser.readDatabase(DoomseekerFilePaths::IP2C_QT_SEARCH_PATH);
 
 	return 0;
 }

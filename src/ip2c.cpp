@@ -89,8 +89,10 @@ const QPixmap &IP2C::flag(unsigned int ipaddress, const QString& countryShortNam
 
 const IP2C::IP2CData& IP2C::lookupIP(unsigned int ipaddress) const
 {
-	if(!read)
+	if(database.empty())
+	{
 		return invalidData;
+	}
 
 	unsigned int upper = database.size()-1;
 	unsigned int lower = 0;

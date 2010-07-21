@@ -24,6 +24,8 @@
 #define __IP2CPARSER_H__
 
 #include "ip2c.h"
+#include <QMutex>
+#include <QThread>
 
 /**
  *	Class accepts text database from:
@@ -83,6 +85,17 @@ class IP2CParser : public QObject
 	public:
 		IP2CParser(IP2C* pTargetDatabase);
 		
+		/**
+		 *	@brief Retrieves the IP2C database this parser operates on.
+		 */
+		IP2C*					ip2c() const { return pTargetDatabase; }
+		
+		/**
+		 *	@brief For multi-threading purposes. If this is true it is not 
+		 *	recommended to delete this object nor the underlying IP2C database.
+		 */
+		bool					isParsing() const { return bIsParsing; }
+		
 		bool					readDatabase(const QString& filePath);	
 		void					readDatabaseThreaded(const QString& filePath);	
 		
@@ -96,6 +109,24 @@ class IP2CParser : public QObject
 		void					parsingFinished(bool bSuccess);
 		
 	protected:
+		class ParsingThread : public QThread
+		{
+			public:
+				bool			bSuccessState;
+				QString			filePath;
+				IP2CParser*		pParser;
+				
+				
+				ParsingThread(IP2CParser* pParser, const QString& filePath)
+				{
+					bSuccessState = false;
+					this->filePath = filePath;
+					this->pParser = pParser; 
+				}
+			
+				void			run();
+		};
+	
 		/**
 		 *	Key value is the abbreviation of the country name.
 		 */
@@ -103,6 +134,9 @@ class IP2CParser : public QObject
 		typedef QHash<QString, QList<IP2C::IP2CData> >::iterator 		CountriesIt;
 		typedef QHash<QString, QList<IP2C::IP2CData> >::const_iterator 	CountriesConstIt;	
 	
+		bool					bIsParsing;
+		ParsingThread*			currentParsingThread;
+		
 		/**
 		 *	@brief Database to which the IP2C parser will save the data it
 		 *	retrieves from IP2C file.
@@ -111,6 +145,9 @@ class IP2CParser : public QObject
 		 *	not advised to delete the IP2C object before parsing is complete.
 		 */
 		IP2C*					pTargetDatabase;
+		
+		QMutex					thisLock;
+		
 		
 		/**
 		 *	Converts downloaded text database to a compacted binary file.
@@ -136,8 +173,9 @@ class IP2CParser : public QObject
 		 *	@param [out] countries - returned hash table of countries.
 		 */
 		void					readTextDatabase(QByteArray& textDatabase, Countries& countries);
-
 		
+	protected slots:
+		void					parsingThreadFinished();
 };
 
 #endif
