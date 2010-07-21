@@ -522,7 +522,7 @@ void MainWindow::ip2cFinishedParsing(bool bSuccess)
 			ip2cOldContent.clear();
 			
 			// Must succeed now.
-			ip2cParser->readDatabase(filePath);
+			ip2cParser->readDatabaseThreaded(filePath);
 		}
 	}
 	else if (ip2cUpdater != NULL)
@@ -557,12 +557,14 @@ void MainWindow::ip2cJobsFinished()
 	{
 		delete ip2cUpdater;
 		ip2cUpdater = NULL;
+		
+		gLog << tr("IP2C update finished.");
 	}
 }
 
 void MainWindow::ip2cParseDatabase()
 {
-	QString filePath = DoomseekerFilePaths::ip2cDatabase();
+	QString filePath = DoomseekerFilePaths::IP2C_QT_SEARCH_PATH;
 	
 	menuActionUpdateIP2C->setEnabled(false);
 	
@@ -571,7 +573,7 @@ void MainWindow::ip2cParseDatabase()
 	ip2cParser = new IP2CParser(Main::ip2c);
 	connect (ip2cParser, SIGNAL( parsingFinished(bool) ), this, SLOT( ip2cFinishedParsing(bool) ) );
 	
-	ip2cParser->readDatabase(filePath);
+	ip2cParser->readDatabaseThreaded(filePath);
 }
 
 void MainWindow::ip2cStartUpdate()
@@ -582,6 +584,7 @@ void MainWindow::ip2cStartUpdate()
 		return;
 	}
 
+	gLog << tr("Starting IP2C update.");
 	menuActionUpdateIP2C->setEnabled(false);
 	
 	ip2cUpdater = new IP2CUpdater();

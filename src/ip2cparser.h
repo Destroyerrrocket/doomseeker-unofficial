@@ -109,6 +109,21 @@ class IP2CParser : public QObject
 		void					parsingFinished(bool bSuccess);
 		
 	protected:
+		/**
+		 *	@brief Sets states for IP2C when being constructed and destructed.
+		 *
+		 *	//TODO: A nicer name?
+		 */
+		class ConstructorDestructorParserStateSetter
+		{
+			public:
+				ConstructorDestructorParserStateSetter(IP2CParser* pParser);
+				~ConstructorDestructorParserStateSetter();
+			
+			private:
+				IP2CParser*	pParser;
+		};
+	
 		class ParsingThread : public QThread
 		{
 			public:

@@ -56,7 +56,7 @@ bool IP2CParser::convertAndSaveDatabase(QByteArray& downloadedData, const QStrin
     if(out.open(QIODevice::WriteOnly) && out.isWritable())
     {
 		out.write(binaryData);
-		gLog << tr("Database converted in %1 ms").arg(time.elapsed());
+		gLog << tr("IP2C database converted in %1 ms").arg(time.elapsed());
     }
     else
     {
@@ -104,14 +104,18 @@ void IP2CParser::convertCountriesIntoBinaryData(const Countries& countries, QByt
 bool IP2CParser::doReadDatabase(const QString& filePath)
 {
 	QMutexLocker mutexLocker(&thisLock);
-	bIsParsing = true;
 
+	// This will set proper state whenever and wherever this method finishes.
+	ConstructorDestructorParserStateSetter stateSetter(this);
+	
 	QFile dataBase(filePath);
+	gLog << tr("Parsing IP2C database: %1").arg(dataBase.fileName());		
 	
 	if (!dataBase.exists() 
 	||  !dataBase.open(QIODevice::ReadOnly) 
 	||  !dataBase.isReadable())
 	{
+		gLog << tr("Unable to open IP2C file.");
 		return false;
 	}
 
@@ -128,7 +132,7 @@ bool IP2CParser::doReadDatabase(const QString& filePath)
 
 		if (!convertAndSaveDatabase(contents, filePath))
 		{
-			gLog << tr("Conversion failed");
+			gLog << tr("IP2C database conversion failed");
 			return false;
 		}
 	}
@@ -183,13 +187,13 @@ bool IP2CParser::doReadDatabase(const QString& filePath)
 
 	gLog << tr("IP2C Database read in %1 ms. Entries read: %2").arg(time.elapsed()).arg(pTargetDatabase->numKnownEntries());
 	
-	bIsParsing = false;
 	return true;
 }
 
 void IP2CParser::parsingThreadFinished()
 {
 	bool bSuccessState = currentParsingThread->bSuccessState;
+	gLog << tr("IP2C Parsing thread has finished.");
 	
 	delete currentParsingThread;
 	currentParsingThread = NULL;
@@ -346,6 +350,19 @@ void IP2CParser::readTextDatabase(QByteArray& textDatabase, Countries& countries
 			countries[entry.country] = list;
 		}
 	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+IP2CParser::ConstructorDestructorParserStateSetter::ConstructorDestructorParserStateSetter(IP2CParser* pParser)
+{
+	this->pParser = pParser;
+	pParser->bIsParsing = true;
+}
+
+IP2CParser::ConstructorDestructorParserStateSetter::~ConstructorDestructorParserStateSetter()
+{
+	pParser->bIsParsing = false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
