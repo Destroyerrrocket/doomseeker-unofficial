@@ -150,7 +150,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 */
 		void	initTrayIcon();
 		
-		void	ip2cAllowDownload();				
+		void	ip2cJobsFinished();				
 
 		/**
 		 *	Generates command line info for specified server.

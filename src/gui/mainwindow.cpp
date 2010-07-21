@@ -445,22 +445,6 @@ void MainWindow::initTrayIcon()
 	}
 }
 
-void MainWindow::ip2cAllowDownload()
-{
-	menuActionUpdateIP2C->setEnabled(true);
-	
-	if (statusBar()->isAncestorOf(ip2cUpdateProgressBar))
-	{
-		statusBar()->removeWidget(ip2cUpdateProgressBar);
-	}
-	
-	if (ip2cUpdater != NULL)
-	{
-		delete ip2cUpdater;
-		ip2cUpdater = NULL;
-	}
-}
-
 void MainWindow::ip2cDownloadProgress(int current, int max)
 {
 	ip2cUpdateProgressBar->setMaximum(max);
@@ -475,7 +459,7 @@ void MainWindow::ip2cFinishUpdate(const QByteArray& downloadedData)
 		gLog << message;
 		statusBar()->showMessage(message);
 		
-		ip2cAllowDownload();
+		ip2cJobsFinished();
 	}
 	else
 	{
@@ -499,7 +483,7 @@ void MainWindow::ip2cFinishUpdate(const QByteArray& downloadedData)
 			gLog << tr("Unable to save IP2C database at path: %1").arg(filePath);
 			
 			ip2cOldContent.clear();
-			ip2cAllowDownload();
+			ip2cJobsFinished();
 			return;
 		}
 		
@@ -515,10 +499,6 @@ void MainWindow::ip2cFinishedParsing(bool bSuccess)
 	QString filePath = DoomseekerFilePaths::ip2cDatabase();
 	QFile file(filePath);
 
-	ip2cAllowDownload();
-	delete ip2cParser;
-	ip2cParser = NULL;
-	
 	if (!bSuccess)
 	{
 		QString message = tr("Failed to read IP2C database. Reverting...");
@@ -545,13 +525,38 @@ void MainWindow::ip2cFinishedParsing(bool bSuccess)
 			ip2cParser->readDatabase(filePath);
 		}
 	}
-	else
+	else if (ip2cUpdater != NULL)
 	{
 		QString message = tr("IP2C database updated successfully.");
 		gLog << message;
 		statusBar()->showMessage(message);
 		
 		serverTableHandler->updateCountryFlags();
+	}
+	
+	if (!ip2cParser->isParsing())
+	{
+		// IP2C might still be parsing if we reverted to the old database.
+	
+		ip2cJobsFinished();
+		delete ip2cParser;
+		ip2cParser = NULL;	
+	}
+}
+
+void MainWindow::ip2cJobsFinished()
+{
+	menuActionUpdateIP2C->setEnabled(true);
+	
+	if (statusBar()->isAncestorOf(ip2cUpdateProgressBar))
+	{
+		statusBar()->removeWidget(ip2cUpdateProgressBar);
+	}
+	
+	if (ip2cUpdater != NULL)
+	{
+		delete ip2cUpdater;
+		ip2cUpdater = NULL;
 	}
 }
 

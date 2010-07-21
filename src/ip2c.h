@@ -27,6 +27,7 @@
 #include <QHash>
 #include <QHostAddress>
 #include <QList>
+#include <QMutex>
 #include <QPixmap>
 #include <QProgressBar>
 #include <QStatusBar>
@@ -95,13 +96,27 @@ class MAIN_EXPORT IP2C : public QObject
 		 *
 		 *	Makes sure the database is sorted in ascending order.
 		 */
-		void			appendEntryToDatabase(const IP2CData& entry);		
+		void			appendEntryToDatabase(const IP2CData& entry);	
+		
+		bool			isDataAccessLocked() 
+		{ 
+			// This is stupid but Qt doesn't provide any other method to check
+			// if mutex is locked!
+			if (dataAccessMutex.tryLock())
+			{
+				// This succeeds if mutex was NOT locked so unlock it now 
+				// please.
+				dataAccessMutex.unlock();
+				return false;
+			}
+			return true; 
+		}	
 
 		/**
 		 *	Returns a reference to the structure describing the country.
 		 */
-		const IP2CData&	lookupIP(unsigned int ipaddress) const;
-		const IP2CData&	lookupIP(const QHostAddress &ipaddress) const { return lookupIP(ipaddress.toIPv4Address()); }
+		const IP2CData&	lookupIP(unsigned int ipaddress);
+		const IP2CData&	lookupIP(const QHostAddress &ipaddress) { return lookupIP(ipaddress.toIPv4Address()); }
 		
 		int				numKnownEntries() const { return database.size(); }
 
@@ -117,7 +132,11 @@ class MAIN_EXPORT IP2C : public QObject
 		 *	To avoid performance issues it is already assumed that the specified
 		 *	list is sorted.
 		 */
-		void			setDatabase(const QList<IP2CData>& sortedCountryData) { database = sortedCountryData; }
+		void			setDatabase(const QList<IP2CData>& sortedCountryData) 
+		{
+			QMutexLocker dataAccessMutexLocker(&dataAccessMutex);
+			database = sortedCountryData; 
+		}
 
 	protected:
 		const QPixmap&	flag(unsigned int ipaddress, const QString& countryShortName);
@@ -147,6 +166,7 @@ class MAIN_EXPORT IP2C : public QObject
 		}
 
 	private:
+		QMutex						dataAccessMutex;
 		QList<IP2CData>				database;
 		const QPixmap				flagLan;
 		const QPixmap				flagLocalhost;
