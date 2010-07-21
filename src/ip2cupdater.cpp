@@ -54,6 +54,27 @@ void IP2CUpdater::downloadProgressSlot(int value, int max)
 	emit downloadProgress(value, max);
 }
 
+bool IP2CUpdater::getRollbackData()
+{
+	rollbackData.clear();
+	
+	QFile file(pathToFile);
+	if (!file.exists())
+	{
+		return false;
+	}
+	
+	if (!file.open(QIODevice::ReadOnly))
+	{
+		return false;
+	}
+	
+	rollbackData = file.readAll();
+	file.close();
+	
+	return true;
+}
+
 bool IP2CUpdater::needsUpdate(const QString& filePath, unsigned minimumUpdateAge)
 {
 	if (filePath.isEmpty())
@@ -113,4 +134,36 @@ void IP2CUpdater::processHttp(QByteArray& data, const QString& filename)
 	}
 	
 	emit databaseDownloadFinished(retrievedData);
+}
+
+bool IP2CUpdater::rollback()
+{
+	bool bSuccess = save(rollbackData);
+	rollbackData.clear();
+
+	return bSuccess;
+}
+
+bool IP2CUpdater::save(const QByteArray& saveWhat)
+{
+	if (saveWhat.isEmpty())
+	{
+		return false;
+	}
+	
+	QFile file(pathToFile);
+	if (!file.open(QIODevice::WriteOnly))
+	{
+		return false;
+	}
+	
+	file.write(saveWhat);
+	file.close();
+	
+	return true;
+}
+
+bool IP2CUpdater::saveDownloadedData()
+{
+	return save(retrievedData);
 }

@@ -107,7 +107,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		bool				bWantToQuit;
 
 		Config*				configuration;
-		QByteArray			ip2cOldContent;
 		IP2CParser*			ip2cParser;
 		QProgressBar*		ip2cUpdateProgressBar;
 		IP2CUpdater*		ip2cUpdater;

@@ -486,28 +486,15 @@ void MainWindow::ip2cFinishUpdate(const QByteArray& downloadedData)
 		
 		QString filePath = DoomseekerFilePaths::ip2cDatabase();
 				
-		QFile file(filePath);
+		ip2cUpdater->getRollbackData();
 		
-		// Backup old database.
-		if (file.exists())
-		{
-			file.open(QIODevice::ReadOnly);
-			ip2cOldContent = file.readAll();
-			file.close();
-		}
-		
-		// Write new data.
-		if (!file.open(QIODevice::WriteOnly))
+		if (!ip2cUpdater->saveDownloadedData())
 		{
 			gLog << tr("Unable to save IP2C database at path: %1").arg(filePath);
 			
-			ip2cOldContent.clear();
 			ip2cJobsFinished();
 			return;
 		}
-		
-		file.write(downloadedData);
-		file.close();		
 	
 		ip2cParseDatabase();
 	}
@@ -516,7 +503,6 @@ void MainWindow::ip2cFinishUpdate(const QByteArray& downloadedData)
 void MainWindow::ip2cFinishedParsing(bool bSuccess)
 {
 	QString filePath = DoomseekerFilePaths::ip2cDatabase();
-	QFile file(filePath);
 
 	if (!bSuccess)
 	{
@@ -524,22 +510,19 @@ void MainWindow::ip2cFinishedParsing(bool bSuccess)
 		gLog << message;
 		statusBar()->showMessage(message);
 		
-		if (ip2cOldContent.isEmpty())
+		if (ip2cUpdater == NULL || !ip2cUpdater->hasRollbackData())
 		{
 			gLog << "IP2C revert attempt failed. Nothing to go back to.";
+
 			// Delete file in this case.
+			QFile file(filePath);			
 			file.remove();
 		}
 		else
 		{
 			// Revert to old content.
-			file.open(QIODevice::WriteOnly);
-			file.write(ip2cOldContent);
-			file.close();
-			
-			// Prevent infinite recurrency.
-			ip2cOldContent.clear();
-			
+			ip2cUpdater->rollback();			
+						
 			// Must succeed now.
 			ip2cParser->readDatabaseThreaded(filePath);
 		}
@@ -556,7 +539,6 @@ void MainWindow::ip2cFinishedParsing(bool bSuccess)
 	if (!ip2cParser->isParsing())
 	{
 		// IP2C might still be parsing if we reverted to the old database.
-	
 		ip2cJobsFinished();
 		delete ip2cParser;
 		ip2cParser = NULL;	
@@ -607,6 +589,7 @@ void MainWindow::ip2cStartUpdate()
 	menuActionUpdateIP2C->setEnabled(false);
 	
 	ip2cUpdater = new IP2CUpdater();
+	ip2cUpdater->setFilePath(DoomseekerFilePaths::ip2cDatabase());
 	
 	connect (ip2cUpdater, SIGNAL( databaseDownloadFinished(const QByteArray&) ), this, SLOT( ip2cFinishUpdate(const QByteArray&) ) );
 	connect (ip2cUpdater, SIGNAL( downloadProgress(int, int) ), this, SLOT( ip2cDownloadProgress(int, int) ) );

@@ -40,9 +40,6 @@ IP2CParser::IP2CParser(IP2C* pTargetDatabase)
 
 bool IP2CParser::convertAndSaveDatabase(QByteArray& downloadedData, const QString& outFilePath)
 {
-	QTime time;
-	time.start();
-
 	if (downloadedData.isEmpty())
 		return false;
 
@@ -56,7 +53,6 @@ bool IP2CParser::convertAndSaveDatabase(QByteArray& downloadedData, const QStrin
     if(out.open(QIODevice::WriteOnly) && out.isWritable())
     {
 		out.write(binaryData);
-		gLog << tr("IP2C database converted in %1 ms").arg(time.elapsed());
     }
     else
     {
@@ -130,10 +126,17 @@ bool IP2CParser::doReadDatabase(const QString& filePath)
 		gLog << tr("IP2C database is not in compacted format. Performing conversion!");
 		QByteArray contents = dataBase.readAll();
 
+		QTime time;
+		time.start();
 		if (!convertAndSaveDatabase(contents, filePath))
 		{
 			gLog << tr("IP2C database conversion failed");
 			return false;
+		}
+		else
+		{
+			gLog << tr("IP2C database converted in %1 ms").arg(time.elapsed());
+			gLog << tr("Parsing now compacted IP2C database");
 		}
 	}
 	dataBase.close();

@@ -56,6 +56,50 @@ class IP2CUpdater : public QObject
 		void				downloadDatabase(const QUrl& netLocation);
 		const QByteArray&	downloadedData();
 
+		const QString&		filePath() const { return pathToFile; }		
+		
+		/**
+		 *	@brief Obtains rollback data from pathToFile file.
+		 *
+		 *	This will always clear previous rollback data. You can keep only
+		 *	one instance of rollback file at a time.
+		 *
+		 *	@return True if rollback data was obtained, false otherwise. 
+		 *	Old rollback data will be cleared anyway.
+		 *
+		 *	@see rollback()
+		 */
+		bool				getRollbackData();		
+		
+		bool				hasDownloadedData() const { return !retrievedData.isEmpty(); }
+		bool				hasRollbackData() const { return !rollbackData.isEmpty(); }
+		
+		/**
+		 *	@brief Saves data to the pathToFile file. This data must be first
+		 *	obtained through the rollback method.
+		 *
+		 *	If there is nothing to rollback this will do nothing. This will also
+		 *	clear previously obtained rollback data.
+		 *
+		 *	@return True if rollback succeeded, false if there was nothing to 
+		 *	rollback to or the save failed.
+		 *
+		 *	@see getRollbackData()
+		 */		 
+		bool				rollback();		
+
+		/**
+		 *	@brief Saves recently downloaded data to the pathToFile file.
+		 *
+		 *	This will do nothing if there is no downloaded data.
+		 *
+		 *	@return True if save succeeded, false if there was nothing to save
+		 *	or the save failed.
+		 */
+		bool				saveDownloadedData();
+		
+		void				setFilePath(const QString& filePath) { pathToFile = filePath; }
+
 	signals:
 		/**
 		 *	@brief In case of failure the downloadedData array will be empty.
@@ -64,9 +108,19 @@ class IP2CUpdater : public QObject
 		void				downloadProgress(int value, int max);
 		
 	protected:
-	
+		/**
+		 *	@brief Various methods will operate on this path.
+		 *
+		 *	@see rollback()
+		 *	@see saveDownloadedData()
+		 *	@see saveRollbackData()
+		 */
+		QString				pathToFile;
 		QByteArray			retrievedData;
+		QByteArray			rollbackData;
 		WWW*				www;
+		
+		bool				save(const QByteArray& saveWhat);
 		
 	protected slots:
 		void				downloadProgressSlot(int value, int max);
