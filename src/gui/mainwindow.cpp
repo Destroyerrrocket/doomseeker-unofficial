@@ -119,8 +119,27 @@ MainWindow::MainWindow(int argc, char** argv, Config* config)
 		// not to refresh them.
 		refreshCustomServers();
 	}
+
+	// IP2C
+	bool bParseIP2CDatabase = true;
+	bool bPerformAutomaticIP2CUpdates = configuration->setting("IP2CAutoUpdate")->boolean();
 	
-	ip2cParseDatabase();
+	if (bPerformAutomaticIP2CUpdates)
+	{
+		int maxAge = configuration->setting("IP2CMaximumAge")->integer();
+	
+		QString databasePath = DoomseekerFilePaths::ip2cDatabase();
+		if (IP2CUpdater::needsUpdate(databasePath, maxAge))
+		{
+			ip2cStartUpdate();
+			bParseIP2CDatabase = false;
+		}
+	}
+	
+	if (bParseIP2CDatabase)
+	{
+		ip2cParseDatabase();
+	}
 }
 
 MainWindow::~MainWindow()
