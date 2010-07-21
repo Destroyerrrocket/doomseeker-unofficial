@@ -22,6 +22,7 @@ class MAIN_EXPORT DoomseekerFilePaths
 	public:
 		static const QString	CONFIG_FILENAME;
 		static const QString	IP2C_DATABASE_FILENAME;
+		static const QString	IP2C_QT_SEARCH_PATH;
 		static const QString	TEMP_SERVER_CONFIG_FILENAME;
 	
 		static DataPaths*		pDataPaths;

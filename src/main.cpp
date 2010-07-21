@@ -32,6 +32,7 @@
 #include "gui/mainwindow.h"
 #include "gui/remoteconsole.h"
 #include "doomseekerfilepaths.h"
+#include "ip2cparser.h"
 #include "log.h"
 #include "main.h"
 #include "serverapi/server.h"
@@ -270,7 +271,10 @@ int Main::initIP2C()
 	const QUrl IP2C_URL = QUrl();
 
 	gLog << tr("Initializing IP2C database.");
-	ip2c = new IP2C(IP2C_FILENAME);
+	ip2c = new IP2C();
+	
+	IP2CParser ip2cParser(ip2c);
+	ip2cParser.readDatabase(DoomseekerFilePaths::IP2C_QT_SEARCH_PATH);
 
 	return 0;
 }

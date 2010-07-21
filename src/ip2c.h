@@ -56,56 +56,7 @@ struct MAIN_EXPORT CountryInfo
  *	IP2C class provides an interface for translating IP addresses into country
  *	names they are in. Additional methods allow to retrieve country's flag
  *	picture for given IP.
- *
- *	Class accepts text database from:
- * 	http://software77.net/geo-ip
- *	The first time the text database is read it is compacted into a smaller
- *	format and stored on the drive.
- *	@see convertAndSaveDatabase()
- *
- *
- *	Compacted database file format, version 1:
- *	(all strings are null terminated)
- *	Header:
- *	@code
- *	TYPE			LENGTH		DESCRIPTION
- *  -----------------------------------------------------
- *	unsigned long	4			'I' 'P' '2' 'C' bytes
- *	unsigned short	2			Version (equal to 1)
- *	@endcode
- *
- *	Block repeated until EOF:
- *	@code
- *	TYPE			LENGTH		DESCRIPTION
- *  -----------------------------------------------------
- *	unsigned long	4			Beginning of an IP range
- *	unsigned long	4			End of an IP range
- *	string			N/A			Country name abbreviation
- *	@endcode
- *
- *	Compacted database file format, version 2:
- *	(all strings are null terminated)
- *	Header:
- *	@code
- *	TYPE			LENGTH		DESCRIPTION
- *  -----------------------------------------------------
- *	unsigned long	4			'I' 'P' '2' 'C' bytes
- *	unsigned short	2			Version (equal to 2)
- *	@endcode
- *
- *	Block repeated until EOF:
- *	@code
- *	TYPE			LENGTH		DESCRIPTION
- *  -----------------------------------------------------
- *	string			N/A			Country full name
- *	string			N/A			Country abbreviation
- *	unsigned long	4			Number of IP Blocks (N_IP_BLOCKS)
-
- *  -- BLOCK: repeated N_IP_BLOCKS times.
- *	unsigned long	4			Beginning of an IP range
- *	unsigned long	4			End of an IP range
- *	-- END OF BLOCK
- *	@endcode
+ *	@see IP2CParser
  */
 class MAIN_EXPORT IP2C : public QObject
 {
@@ -135,10 +86,16 @@ class MAIN_EXPORT IP2C : public QObject
 				}
 		};
 
-		IP2C(QString file);
+		IP2C();
 		~IP2C();
+		
 
-		const QString& 	filename() { return file; }
+		/**
+		 *	@brief Adds new country entry to the database.
+		 *
+		 *	Makes sure the database is sorted in ascending order.
+		 */
+		void			appendEntryToDatabase(const IP2CData& entry);		
 
 		bool			isRead() const { return read; }
 
@@ -147,44 +104,24 @@ class MAIN_EXPORT IP2C : public QObject
 		 */
 		const IP2CData&	lookupIP(unsigned int ipaddress) const;
 		const IP2CData&	lookupIP(const QHostAddress &ipaddress) const { return lookupIP(ipaddress.toIPv4Address()); }
+		
+		int				numKnownEntries() const { return database.size(); }
 
 		/**
 		 *	Returns country information based on given IP.
 		 */
 		CountryInfo		obtainCountryInfo(unsigned int ipaddress);
 		CountryInfo		obtainCountryInfo(const QHostAddress& ipaddress) { return obtainCountryInfo(ipaddress.toIPv4Address()); }
-
-	public slots:
-		bool			readDatabase();
 		
-	signals:
-		void			countryDataUpdated();
+		/**
+		 *	@brief Sets database contents to the list specified.
+		 *
+		 *	To avoid performance issues it is already assumed that the specified
+		 *	list is sorted.
+		 */
+		void			setDatabase(const QList<IP2CData>& sortedCountryData) { database = sortedCountryData; }
 
 	protected:
-		/**
-		 *	Key value is the abbreviation of the country name.
-		 */
-		typedef QHash<QString, QList<IP2CData> > 					Countries;
-		typedef QHash<QString, QList<IP2CData> >::iterator 			CountriesIt;
-		typedef QHash<QString, QList<IP2CData> >::const_iterator 	CountriesConstIt;
-
-		/**
-		 *	Makes sure the database is sorted in ascending order.
-		 */
-		void			appendEntryToDatabase(const IP2CData& entry);
-
-		/**
-		 *	Converts downloaded text database to a compacted binary file.
-		 *	The name of the new file is IP2C::file.
-		 */
-		bool			convertAndSaveDatabase(QByteArray& downloadedData);
-
-		/**
-		 *	Converts previously created by readTextDatabase() countries hash
-		 *	table into an output data that can be saved into a file.
-		 */
-		void	convertCountriesIntoBinaryData(const Countries& countries, QByteArray& output);
-
 		const QPixmap&	flag(unsigned int ipaddress, const QString& countryShortName);
 
 		inline bool		isLANAddress(unsigned ipv4Address)
@@ -211,26 +148,14 @@ class MAIN_EXPORT IP2C : public QObject
 			return (ipv4Address >= LOCALHOST_BEGIN && ipv4Address <= LOCALHOST_END);
 		}
 
-		bool			readDatabaseVersion1(const QByteArray& dataArray);
-		bool			readDatabaseVersion2(const QByteArray& dataArray);
-
-		/**
-		 *	Called by convertAndSaveDatabase().
-		 *	@param textDatabase - contents of the file, this will be modified
-		 *		by this function.
-		 *	@param [out] countries - returned hash table of countries.
-		 */
-		void			readTextDatabase(QByteArray& textDatabase, Countries& countries);
-
 	private:
-		QList<IP2CData>			database;
-		QString					file;
-		const QPixmap			flagLan;
-		const QPixmap			flagLocalhost;
-		const QPixmap			flagUnknown;
-		QHash<QString, QPixmap>	flags;
-		const IP2CData			invalidData;
-		bool					read;
+		QList<IP2CData>				database;
+		const QPixmap				flagLan;
+		const QPixmap				flagLocalhost;
+		const QPixmap				flagUnknown;
+		QHash<QString, QPixmap>		flags;
+		const IP2CData				invalidData;
+		bool						read;
 };
 
 #endif /* __IP2C_H__ */

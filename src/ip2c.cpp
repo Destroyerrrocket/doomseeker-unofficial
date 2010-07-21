@@ -31,16 +31,11 @@
 
 #include "log.h"
 #include "ip2c.h"
-#include "sdeapi/pluginloader.hpp"
-#include "sdeapi/scanner.hpp"
 
-IP2C::IP2C(QString file)
+IP2C::IP2C()
 : flagLan(":flags/lan-small"), flagLocalhost(":flags/localhost-small"),
   flagUnknown(":flags/unknown-small")
 {
-	this->file = file;
-
-	read = readDatabase();
 }
 
 IP2C::~IP2C()
@@ -49,11 +44,11 @@ IP2C::~IP2C()
 
 void IP2C::appendEntryToDatabase(const IP2CData& entry)
 {
-	if (database.isEmpty() || entry.ipStart > database[database.count() - 1].ipStart)
+	if (database.isEmpty() || entry.ipStart > database.back().ipStart)
 	{
 		database << entry;
 	}
-	else if (entry.ipStart < database[0].ipStart)
+	else if (entry.ipStart < database.first().ipStart)
 	{
 		database.insert(0, entry);
 	}
@@ -67,69 +62,6 @@ void IP2C::appendEntryToDatabase(const IP2CData& entry)
 				database.insert(it, entry);
 				break;
 			}
-		}
-	}
-}
-
-bool IP2C::convertAndSaveDatabase(QByteArray& downloadedData)
-{
-	QTime time;
-	time.start();
-
-	if (downloadedData.isEmpty())
-		return false;
-
-	Countries countries;
-	readTextDatabase(downloadedData, countries);
-
-	QByteArray binaryData;
-	convertCountriesIntoBinaryData(countries, binaryData);
-
-	QFile out(file);
-    if(out.open(QIODevice::WriteOnly) && out.isWritable())
-    {
-		out.write(binaryData);
-		gLog << tr("Database converted in %1 ms").arg(time.elapsed());
-    }
-    else
-    {
-    	return false;
-    }
-
-    return true;
-}
-
-void IP2C::convertCountriesIntoBinaryData(const Countries& countries, QByteArray& output)
-{
-	output.clear();
-	unsigned fileId = MAKEID('I', 'P', '2', 'C');
-	unsigned short version = 2;
-	output += QByteArray((const char*)&fileId, 4);
-	output += QByteArray((const char*)&version, sizeof(unsigned short));
-
-	CountriesConstIt it;
-	for (it = countries.constBegin(); it != countries.constEnd(); ++it)
-	{
-		// Read the first IP2CData entry for country info
-		if (!it.value().empty())
-		{
-			const IP2CData& val = it.value()[0];
-			unsigned ipBlocksNum = it.value().count();
-
-			output += val.countryFullName;
-			output += QByteArray(1, 0); // array with one null character
-			output += val.country;
-			output += QByteArray(1, 0); // array with one null character
-			output += QByteArray((const char*)&ipBlocksNum, sizeof(ipBlocksNum));
-		}
-
-		foreach(IP2CData val, it.value())
-		{
-			const char ipStart[4] = { WRITEINT32_DIRECT(val.ipStart) };
-			const char ipEnd[4] = { WRITEINT32_DIRECT(val.ipEnd) };
-
-			output += QByteArray(ipStart, 4);
-			output += QByteArray(ipEnd, 4);
 		}
 	}
 }
@@ -219,212 +151,4 @@ CountryInfo IP2C::obtainCountryInfo(unsigned int ipaddress)
 
 	CountryInfo ci = {true, &flag(ipaddress, data.country), data.countryFullName };
 	return ci;
-}
-
-bool IP2C::readDatabase()
-{
-	QFile db(file);
-	if(!db.exists() || !db.open(QIODevice::ReadOnly) || !db.isReadable())
-		return false;
-
-	// We need to check whether this is a text file or Doomseeker's IP2C
-	// compacted database. To determine this we see if first four bytes are
-	// equal to IP2C. If not, we perform the conversion.
-
-	QString signature = db.read(4);
-	db.seek(0);
-	if (signature.compare("IP2C") != 0)
-	{
-		gLog << tr("IP2C database is not in compacted format. Performing conversion!");
-		QByteArray contents = db.readAll();
-
-		if (!convertAndSaveDatabase(contents))
-		{
-			gLog << tr("Conversion failed");
-			return false;
-		}
-	}
-	db.close();
-
-	db.setFileName(file);
-	if (!db.open(QIODevice::ReadOnly))
-	{
-		return false;
-	}
-
-	QTime time;
-	time.start();
-
-	QByteArray dataArray = db.readAll();
-
-	// Read version.
-	int pos = 4;
-	if (pos >= dataArray.size())
-	{
-		return false;
-	}
-
-	const char* data = dataArray.constData();
-	unsigned short version = READINT16(&data[pos]);
-
-	bool wasReadSuccessful = false;
-	switch (version)
-	{
-		case 1:
-			wasReadSuccessful = readDatabaseVersion1(dataArray);
-			break;
-
-		case 2:
-			wasReadSuccessful = readDatabaseVersion2(dataArray);
-			break;
-
-		default:
-			wasReadSuccessful = false;
-			break;
-	}
-
-	if (!wasReadSuccessful)
-	{
-		return false;
-	}
-
-//	foreach(IP2CData data, database)
-//	{
-//		printf("%s %s: %u %X / %u %X\n", data.countryFullName.toAscii().constData(), data.country.toAscii().constData(), data.ipStart, data.ipStart, data.ipEnd, data.ipEnd);
-//	}
-
-	gLog << tr("IP2C Database read in %1 ms. Entries read: %2").arg(time.elapsed()).arg(database.size());
-	
-	emit countryDataUpdated();
-
-	return true;
-}
-
-bool IP2C::readDatabaseVersion1(const QByteArray& dataArray)
-{
-	int pos = 6; // skip file tag and version number
-	const char* data = dataArray.constData();
-
-	while (pos < dataArray.size())
-	{
-		IP2CData entry;
-
-		// Perform error checks at each point. We don't want the app to crash
-		// due to corrupted database.
-		if (pos + 4 > dataArray.size()) return false;
-		entry.ipStart = READINT32(&data[pos]);
-		pos += 4;
-
-		if (pos + 4 > dataArray.size()) return false;
-		entry.ipEnd = READINT32(&data[pos]);
-		pos += 4;
-
-		entry.country = &data[pos];
-		pos += entry.country.size() + 1;
-
-		// Entries in the file are already sorted.
-		database << entry;
-	}
-
-	return true;
-}
-
-bool IP2C::readDatabaseVersion2(const QByteArray& dataArray)
-{
-	int pos = 6; // skip file tag and version number
-	const char* data = dataArray.constData();
-
-	// We need to store the addresses in such hash table to make sure they
-	// are ordered in proper, ascending order. Otherwise the whole library
-	// will not work!
-	QMap<unsigned, IP2CData> hashTable;
-
-	while (pos < dataArray.size())
-	{
-		// Base entry for each IP read from the file
-		IP2CData baseEntry;
-
-		baseEntry.countryFullName = &data[pos];
-		pos += baseEntry.countryFullName.size() + 1;
-
-		baseEntry.country = &data[pos];
-		pos += baseEntry.country.size() + 1;
-
-		if (pos + 4 > dataArray.size())	return false;
-		unsigned numOfIpBlocks = READINT32(&data[pos]);
-		pos += 4;
-
-		for (unsigned x = 0; x < numOfIpBlocks; ++x)
-		{
-			// Create new entry from the base.
-			IP2CData entry = baseEntry;
-
-			// Perform error checks at each point. We don't want the app to crash
-			// due to corrupted database.
-			if (pos + 4 > dataArray.size()) return false;
-			entry.ipStart = READINT32(&data[pos]);
-			pos += 4;
-
-			if (pos + 4 > dataArray.size()) return false;
-			entry.ipEnd = READINT32(&data[pos]);
-			pos += 4;
-
-			hashTable[entry.ipStart] = entry;
-		}
-	}
-
-	database = hashTable.values();
-
-	return true;
-}
-
-void IP2C::readTextDatabase(QByteArray& textDatabase, Countries& countries)
-{
-	// Skip over the header
-	int indexOfNewLine = -1;
-	while(textDatabase[indexOfNewLine + 1] == '#')
-	{
-		indexOfNewLine = textDatabase.indexOf('\n', indexOfNewLine + 1);
-	}
-
-	// Trim the header
-	textDatabase = textDatabase.right(textDatabase.size() - indexOfNewLine);
-
-	Scanner sc = Scanner(textDatabase.constData(), textDatabase.count());
-	countries.clear();
-	while(sc.tokensLeft())
-	{
-		IP2CData entry;
-		bool ok = true;
-
-		if(!sc.checkToken(TK_StringConst)) break; // ipStart
-		entry.ipStart = sc.str.toUInt(&ok);
-		if(!ok || !sc.checkToken(',')) break;
-		if(!sc.checkToken(TK_StringConst)) break; // ipEnd
-		entry.ipEnd = sc.str.toUInt(&ok);
-		if(!ok || !sc.checkToken(',')) break;
-		if(!sc.checkToken(TK_StringConst)) break; // Register
-		if(!sc.checkToken(',')) break;
-		if(!sc.checkToken(TK_StringConst)) break; // date assigned
-		if(!sc.checkToken(',')) break;
-		if(!sc.checkToken(TK_StringConst)) break; // 2 char country
-		if(!sc.checkToken(',')) break;
-		if(!sc.checkToken(TK_StringConst)) break; // 3 char country
-		entry.country = sc.str;
-		if(!sc.checkToken(',')) break;
-		if(!sc.checkToken(TK_StringConst)) break; // country string
-		entry.countryFullName = sc.str;
-
-
-		if (countries.contains(entry.country))
-		{
-			countries[entry.country].append(entry);
-		}
-		else
-		{
-			QList<IP2CData> list;
-			list.append(entry);
-			countries[entry.country] = list;
-		}
-	}
 }

@@ -35,6 +35,7 @@
 #include "serverapi/gamerunner.h"
 #include "customservers.h"
 #include "doomseekerfilepaths.h"
+#include "ip2cparser.h"
 #include "log.h"
 #include "pathfinder.h"
 #include "main.h"
@@ -94,7 +95,7 @@ MainWindow::MainWindow(int argc, char** argv, Config* config)
 	this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
 
 	// IP2C
-	connect(Main::ip2c, SIGNAL( countryDataUpdated() ), serverTableHandler, SLOT( updateCountryFlags() ) );
+	//connect(Main::ip2c, SIGNAL( countryDataUpdated() ), serverTableHandler, SLOT( updateCountryFlags() ) );
 
 	// Auto refresh timer
 	initAutoRefreshTimer();
@@ -479,7 +480,8 @@ void MainWindow::ip2cFinishUpdate(const QByteArray& downloadedData)
 		
 		statusBar()->showMessage(tr("Please wait. IP2C Database is being read and converted. This may take some time."));
 		// Attempt to read IP2C database.
-		if (!Main::ip2c->readDatabase())
+		IP2CParser ip2cParser(Main::ip2c);
+		if (!ip2cParser.readDatabase(filePath))
 		{
 			QString message = tr("Failed to read new IP2C database. Reverting...");
 			gLog << message;
@@ -498,7 +500,7 @@ void MainWindow::ip2cFinishUpdate(const QByteArray& downloadedData)
 				file.close();
 				
 				// Must succeed now.
-				Main::ip2c->readDatabase();
+				ip2cParser.readDatabase(filePath);
 			}
 		}
 		else
