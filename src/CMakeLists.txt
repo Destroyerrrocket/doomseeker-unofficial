@@ -58,6 +58,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/createserver.ui
 	gui/dockBuddiesList.ui
 	gui/ip2cupdatebox.ui	
+	gui/ircdock.ui	
 	gui/logdock.ui
 	gui/mainwindow.ui
 	gui/passwordDlg.ui
@@ -83,6 +84,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/createserver.h
 	gui/dockBuddiesList.h
 	gui/ip2cupdatebox.h
+	gui/ircdock.h
 	gui/logdock.h
 	gui/mainwindow.h
 	gui/passwordDlg.h
@@ -132,6 +134,7 @@ set(SOURCE_FILES
 	gui/createserver.cpp
 	gui/dockBuddiesList.cpp
 	gui/ip2cupdatebox.cpp
+	gui/ircdock.cpp	
 	gui/logdock.cpp
 	gui/mainwindow.cpp
 	gui/passwordDlg.cpp
