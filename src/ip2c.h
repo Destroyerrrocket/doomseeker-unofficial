@@ -98,20 +98,11 @@ class MAIN_EXPORT IP2C : public QObject
 		 */
 		void			appendEntryToDatabase(const IP2CData& entry);	
 		
-		bool			isDataAccessLocked() 
+		bool			isDataAccessLocked() const
 		{ 
-			// This is stupid but Qt doesn't provide any other method to check
-			// if mutex is locked!
-			if (dataAccessMutex.tryLock())
-			{
-				// This succeeds if mutex was NOT locked so unlock it now 
-				// please.
-				dataAccessMutex.unlock();
-				return false;
-			}
-			return true; 
+			return bDataAccessLocked;
 		}	
-
+		
 		/**
 		 *	Returns a reference to the structure describing the country.
 		 */
@@ -125,6 +116,8 @@ class MAIN_EXPORT IP2C : public QObject
 		 */
 		CountryInfo		obtainCountryInfo(unsigned int ipaddress);
 		CountryInfo		obtainCountryInfo(const QHostAddress& ipaddress) { return obtainCountryInfo(ipaddress.toIPv4Address()); }
+		
+		void			setDataAccessLockEnabled(bool b) { bDataAccessLocked = b; }
 		
 		/**
 		 *	@brief Sets database contents to the list specified.
@@ -166,6 +159,14 @@ class MAIN_EXPORT IP2C : public QObject
 		}
 
 	private:
+		/**
+		 *	@brief Performs only an informative role for the application.
+		 *
+		 *	This might be set to true by either updater or parser. Application
+		 *	should not read from the database when this is true because 
+		 *	data inside might still be invalid.
+		 */
+		bool						bDataAccessLocked;
 		QMutex						dataAccessMutex;
 		QList<IP2CData>				database;
 		const QPixmap				flagLan;

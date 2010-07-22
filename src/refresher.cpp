@@ -199,7 +199,7 @@ void RefreshingThread::run()
 		sendMasterQueries();
 		thisMutex.unlock();
 		// Read any received data.
-		while(socket->hasPendingDatagrams())
+		while(socket->hasPendingDatagrams() && bKeepRunning)
 		{
 			thisMutex.lock();
 			readPendingDatagrams();
@@ -231,6 +231,11 @@ void RefreshingThread::readPendingDatagrams()
 	MasterHashtableIt it;
 	for (it = registeredMasters.begin(); it != registeredMasters.end(); ++it)
 	{
+		if (!bKeepRunning)
+		{
+			return;
+		}	
+	
 		MasterClient* pMaster = it.key();
 
 		if (pMaster->readMasterResponse(address, port, dataArray))
@@ -244,6 +249,11 @@ void RefreshingThread::readPendingDatagrams()
 		for(int i = 0; i < registeredBatches.size(); ++i)
 		{
 			Server *server = obtainServerFromBatch(registeredBatches[i], address, port);
+			if (!bKeepRunning)
+			{
+				return;
+			}	
+			
 			if (server != NULL)
 			{
 				registeredBatches[i].servers.removeOne(server);

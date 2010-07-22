@@ -105,21 +105,7 @@ MainWindow::MainWindow(int argc, char** argv, Config* config)
 	// Player diagram styles
 	int slotStyle = configuration->setting("SlotStyle")->integer();
 	PlayersDiagram::loadImages(slotStyle);
-
-	// check query on statup
-	bool queryOnStartup = configuration->setting("QueryOnStartup")->integer() != 0;
-	if (queryOnStartup)
-	{
-		btnGetServers_Click();
-	}
-	else
-	{
-		// Custom servers should be refreshed no matter what.
-		// They will not block the app in any way, there is no reason
-		// not to refresh them.
-		refreshCustomServers();
-	}
-
+	
 	// IP2C
 	bool bParseIP2CDatabase = true;
 	bool bPerformAutomaticIP2CUpdates = configuration->setting("IP2CAutoUpdate")->boolean();
@@ -139,6 +125,20 @@ MainWindow::MainWindow(int argc, char** argv, Config* config)
 	if (bParseIP2CDatabase)
 	{
 		ip2cParseDatabase();
+	}	
+
+	// check query on statup
+	bool queryOnStartup = configuration->setting("QueryOnStartup")->integer() != 0;
+	if (queryOnStartup)
+	{
+		btnGetServers_Click();
+	}
+	else
+	{
+		// Custom servers should be refreshed no matter what.
+		// They will not block the app in any way, there is no reason
+		// not to refresh them.
+		refreshCustomServers();
 	}
 }
 
@@ -518,6 +518,9 @@ void MainWindow::ip2cFinishedParsing(bool bSuccess)
 			// Delete file in this case.
 			QFile file(filePath);			
 			file.remove();
+			
+			gLog << "Using precompiled IP2C database.";
+			ip2cParser->readDatabaseThreaded(DoomseekerFilePaths::IP2C_QT_SEARCH_PATH);
 		}
 		else
 		{
@@ -528,31 +531,34 @@ void MainWindow::ip2cFinishedParsing(bool bSuccess)
 			ip2cParser->readDatabaseThreaded(filePath);
 		}
 	}
-	else if (ip2cUpdater != NULL)
+	else  
 	{
-		QString message = tr("IP2C database updated successfully.");
-		gLog << message;
-		statusBar()->showMessage(message);
+		if (ip2cUpdater != NULL)
+		{
+			QString message = tr("IP2C database updated successfully.");
+			gLog << message;
+			statusBar()->showMessage(message);
+		}
 		
-		serverTableHandler->updateCountryFlags();
-	}
-	
-	if (!ip2cParser->isParsing())
-	{
-		// IP2C might still be parsing if we reverted to the old database.
 		ip2cJobsFinished();
-		delete ip2cParser;
-		ip2cParser = NULL;	
 	}
 }
 
 void MainWindow::ip2cJobsFinished()
 {
 	menuActionUpdateIP2C->setEnabled(true);
+	Main::ip2c->setDataAccessLockEnabled(false);
+	serverTableHandler->updateCountryFlags();		
 	
 	if (statusBar()->isAncestorOf(ip2cUpdateProgressBar))
 	{
 		statusBar()->removeWidget(ip2cUpdateProgressBar);
+	}
+	
+	if (ip2cParser != NULL)
+	{
+		delete ip2cParser;
+		ip2cParser = NULL;	
 	}
 	
 	if (ip2cUpdater != NULL)
@@ -575,6 +581,7 @@ void MainWindow::ip2cParseDatabase()
 	ip2cParser = new IP2CParser(Main::ip2c);
 	connect (ip2cParser, SIGNAL( parsingFinished(bool) ), this, SLOT( ip2cFinishedParsing(bool) ) );
 	
+	Main::ip2c->setDataAccessLockEnabled(true);
 	ip2cParser->readDatabaseThreaded(filePath);
 }
 
@@ -588,6 +595,7 @@ void MainWindow::ip2cStartUpdate()
 
 	gLog << tr("Starting IP2C update.");
 	menuActionUpdateIP2C->setEnabled(false);
+	Main::ip2c->setDataAccessLockEnabled(true);	
 	
 	ip2cUpdater = new IP2CUpdater();
 	ip2cUpdater->setFilePath(DoomseekerFilePaths::ip2cDatabase());

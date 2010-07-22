@@ -231,11 +231,14 @@ void ServerListRowHandler::setCountryFlag()
 {
 	QStandardItem* pItem = item(IDServerName);
 
-	CountryInfo countryInfo = Main::ip2c->obtainCountryInfo(server->address());
-	if (countryInfo.isFlagOk())
+	if (!Main::ip2c->isDataAccessLocked())
 	{
-		QPixmap flag = *countryInfo.flag;
-		pItem->setIcon(flag);
+		CountryInfo countryInfo = Main::ip2c->obtainCountryInfo(server->address());
+		if (countryInfo.isFlagOk())
+		{
+			QPixmap flag = *countryInfo.flag;
+			pItem->setIcon(flag);
+		}
 	}
 }
 
