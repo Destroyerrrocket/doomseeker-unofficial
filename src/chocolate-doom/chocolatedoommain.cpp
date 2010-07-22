@@ -65,6 +65,7 @@ class PLUGIN_EXPORT ChocolateDoomEnginePlugin : public EnginePlugin
 		{
 			return NULL;
 		}
+		void							masterHost(QString &host, unsigned short &port) const {}
 
 		Server*							server(const QHostAddress &address, unsigned short port) const
 		{

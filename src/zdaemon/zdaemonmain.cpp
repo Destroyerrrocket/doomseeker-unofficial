@@ -73,21 +73,14 @@ class PLUGIN_EXPORT ZDaemonEnginePlugin : public EnginePlugin
 
 		MasterClient	*masterClient() const
 		{
-			// Get server address.
-			QString host;
-			unsigned short port = 0;
+			return new ZDaemonMasterClient();
+		}
 
+		void			masterHost(QString &host, unsigned short &port) const
+		{
 			SettingsData* setting = Main::config->setting("ZDaemonMasterserver");
 			QString str = setting->string();
 			Strings::translateServerAddress(str, host, port, "master.zdaemon.org", 80);
-
-			QHostInfo info = QHostInfo::fromName(host);
-			if(info.addresses().size() == 0)
-			{
-				return NULL;
-			}
-
-			return new ZDaemonMasterClient(info.addresses().first(), port);
 		}
 
 		Server*			server(const QHostAddress &address, unsigned short port) const

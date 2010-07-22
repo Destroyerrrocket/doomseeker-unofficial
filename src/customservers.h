@@ -47,7 +47,7 @@ class CustomServers : public MasterClient
 	Q_OBJECT;
 
 	public:
-		CustomServers() : MasterClient(QHostAddress("0.0.0.0"), 0) {}
+		CustomServers() : MasterClient() {}
 
 		/**
 		 *	Reads data in format `(<engine_name>;<host_name>;<port>);(...)...`

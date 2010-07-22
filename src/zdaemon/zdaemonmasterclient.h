@@ -37,7 +37,7 @@ class ZDaemonMasterClient : public MasterClient
 	Q_OBJECT
 
 	public:
-		ZDaemonMasterClient(QHostAddress address, unsigned short port);
+		ZDaemonMasterClient();
 
 		const PluginInfo*		plugin() const;
 		bool					readMasterResponse(QByteArray &data);

@@ -32,7 +32,7 @@ class SkulltagMasterClient : public MasterClient
 	Q_OBJECT
 
 	public:
-		SkulltagMasterClient(QHostAddress address, unsigned short port);
+		SkulltagMasterClient();
 
 		const PluginInfo*		plugin() const;
 		

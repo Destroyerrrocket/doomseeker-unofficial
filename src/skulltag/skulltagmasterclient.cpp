@@ -41,7 +41,7 @@
 #define MASTER_RESPONSE_ENDPART			7
 #define MASTER_RESPONSE_SERVERBLOCK		8
 
-SkulltagMasterClient::SkulltagMasterClient(QHostAddress address, unsigned short port) : MasterClient(address, port)
+SkulltagMasterClient::SkulltagMasterClient() : MasterClient()
 {
 }
 

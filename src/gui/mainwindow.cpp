@@ -309,6 +309,7 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		}
 
 		MasterClient* pMasterClient = plugin->masterClient();
+		pMasterClient->updateAddress();
 		masterManager->addMaster(pMasterClient);
 
 		// Now is a good time to also populate the status bar widgets
@@ -883,6 +884,14 @@ void MainWindow::trayIcon_activated(QSystemTrayIcon::ActivationReason reason)
 			showMinimized();
 		}
 	}
+}
+
+// NOTE: Probably would be better if the master manager wasn't tied to the
+//       MainWindow class?
+void MainWindow::updateMasterAddresses()
+{
+	for(int i = 0;i < masterManager->numMasters();i++)
+		(*masterManager)[i]->updateAddress();
 }
 
 void MainWindow::updateTrayIconTooltipAndLogTotalRefresh()

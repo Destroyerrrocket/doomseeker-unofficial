@@ -28,7 +28,7 @@
 
 #define MASTER_CHALLENGE		0x000BDBA3
 
-OdamexMasterClient::OdamexMasterClient(QHostAddress address, unsigned short port) : MasterClient(address, port)
+OdamexMasterClient::OdamexMasterClient() : MasterClient()
 {
 }
 

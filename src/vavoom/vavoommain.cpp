@@ -72,21 +72,14 @@ class PLUGIN_EXPORT VavoomEnginePlugin : public EnginePlugin
 
 		MasterClient	*masterClient() const
 		{
-			// Get server address.
-			QString host;
-			unsigned short port = 0;
+			return new VavoomMasterClient();
+		}
 
+		void			masterHost(QString &host, unsigned short &port) const
+		{
 			SettingsData* setting = Main::config->setting("VavoomMasterserver");
 			QString str = setting->string();
 			Strings::translateServerAddress(str, host, port, "127.0.0.1", 26001);
-
-			QHostInfo info = QHostInfo::fromName(host);
-			if(info.addresses().size() == 0)
-			{
-				return NULL;
-			}
-
-			return new VavoomMasterClient(info.addresses().first(), port);
 		}
 
 		Server*			server(const QHostAddress &address, unsigned short port) const

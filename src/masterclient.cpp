@@ -26,12 +26,13 @@
 #include "serverapi/playerslist.h"
 
 #include <QErrorMessage>
+#include <QHostInfo>
 #include <QMessageBox>
 #include <QUdpSocket>
 
 QUdpSocket* MasterClient::pGlobalUdpSocket = NULL;
 
-MasterClient::MasterClient(QHostAddress address, unsigned short port) : QObject(), address(address), port(port)
+MasterClient::MasterClient() : QObject()
 {
 }
 
@@ -95,6 +96,9 @@ void MasterClient::refresh()
 	bTimeouted = false;
 	emptyServerList();
 
+	if(address.isNull())
+		return;
+
 	// Make request
 	QByteArray request;
 	if(!getServerListRequest(request))
@@ -116,4 +120,18 @@ void MasterClient::timeoutRefresh()
 		timeoutRefreshEx();
 		listUpdated();
 	}
+}
+
+void MasterClient::updateAddress()
+{
+	QString host;
+	unsigned short port;
+	plugin()->pInterface->masterHost(host, port);
+
+	QHostInfo info = QHostInfo::fromName(host);
+	if(info.addresses().size() == 0)
+		return;
+
+	this->address = info.addresses().first();
+	this->port = port;
 }

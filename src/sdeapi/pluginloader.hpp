@@ -108,6 +108,10 @@ class MAIN_EXPORT EnginePlugin
 		virtual QPixmap							icon() const=0;
 
 		virtual MasterClient*					masterClient() const=0;
+		/**
+		 * Fills the variables with information about the master's address.
+		 */
+		virtual void							masterHost(QString &host, unsigned short &port) const=0;
 
 		/**
 		 *	@brief Creates an instance of server object from this plugin.

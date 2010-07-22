@@ -81,6 +81,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 		void	stopAutoRefreshTimer() { autoRefreshTimer.stop(); }
 
+		void	updateMasterAddresses();
+
 	protected:
 		static const QString	HELP_SITE_URL;
 	

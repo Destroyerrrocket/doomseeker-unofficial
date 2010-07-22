@@ -56,7 +56,7 @@ class MAIN_EXPORT MasterClient : public QObject
 		 */
 		static QUdpSocket*		pGlobalUdpSocket;
 	
-		MasterClient(QHostAddress address, unsigned short port);
+		MasterClient();
 		virtual ~MasterClient();
 		
 		bool					hasServer(const Server*);		
@@ -117,6 +117,8 @@ class MAIN_EXPORT MasterClient : public QObject
 
 		QList<Server*>			&serverList() { return servers; }
 		const QList<Server*>	&serverList() const { return servers; }
+
+		void					updateAddress();
 
 	public slots:
 		/**

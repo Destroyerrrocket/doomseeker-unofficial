@@ -33,7 +33,7 @@ class VavoomMasterClient : public MasterClient
 	Q_OBJECT
 
 	public:
-		VavoomMasterClient(QHostAddress address, unsigned short port);
+		VavoomMasterClient();
 
 		const PluginInfo*		plugin() const;
 		

@@ -29,7 +29,7 @@
 #define MCREQ_LIST	3
 #define MCREP_LIST	1
 
-VavoomMasterClient::VavoomMasterClient(QHostAddress address, unsigned short port) : MasterClient(address, port)
+VavoomMasterClient::VavoomMasterClient() : MasterClient()
 {
 }
 

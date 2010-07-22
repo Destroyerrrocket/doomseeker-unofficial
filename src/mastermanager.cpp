@@ -26,7 +26,7 @@
 // TODO: I don't think that MasterManager should store a duplicate of each
 // server (~Zalewa).
 
-MasterManager::MasterManager() : MasterClient(QHostAddress(), 0)
+MasterManager::MasterManager() : MasterClient()
 {
 	customServers = new CustomServers();
 }

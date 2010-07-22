@@ -33,7 +33,7 @@
 #include "zdaemon/zdaemonmasterclient.h"
 #include "zdaemon/zdaemonserver.h"
 
-ZDaemonMasterClient::ZDaemonMasterClient(QHostAddress address, unsigned short port) : MasterClient(address, port), netAccessManager(NULL)
+ZDaemonMasterClient::ZDaemonMasterClient() : MasterClient(), netAccessManager(NULL)
 {
 	// The ZDaemon master is configured such that we can't access it from just
 	// the ip.  I could probably change the headers to fix that, but it would

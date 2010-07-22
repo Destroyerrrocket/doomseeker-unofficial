@@ -33,11 +33,12 @@ class OdamexMasterClient : public MasterClient
 	Q_OBJECT
 
 	public:
-		OdamexMasterClient(QHostAddress address, unsigned short port);
+		OdamexMasterClient();
 		
 		const PluginInfo*		plugin() const;
 		
 		bool					readMasterResponse(QByteArray &data);
+		void					updateAddress();
 
 	protected:
 		

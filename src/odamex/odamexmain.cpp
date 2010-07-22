@@ -81,18 +81,14 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 
 		MasterClient	*masterClient() const
 		{
-			// Get server address.
-			QString host;
-			unsigned short port = 0;
+			return new OdamexMasterClient();
+		}
 
+		void			masterHost(QString &host, unsigned short &port) const
+		{
 			SettingsData* setting = Main::config->setting("OdamexMasterserver");
 			QString str = setting->string();
 			Strings::translateServerAddress(str, host, port, "master1.odamex.net", 15000);
-
-			QHostInfo info = QHostInfo::fromName(host);
-			if(info.addresses().size() == 0)
-				return NULL;
-			return new OdamexMasterClient(info.addresses().first(), port);
 		}
 
 		Server*			server(const QHostAddress &address, unsigned short port) const

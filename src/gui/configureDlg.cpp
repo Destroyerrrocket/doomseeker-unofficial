@@ -27,11 +27,13 @@
 #include "gui/cfgFilePaths.h"
 #include "gui/cfgip2c.h"
 #include "gui/cfgQuery.h"
+#include "gui/mainwindow.h"
 #include "gui/wadseekerconfigappearance.h"
 #include "gui/wadseekerconfiggeneral.h"
 #include "gui/wadseekerconfigidgames.h"
 #include "gui/wadseekerconfigsites.h"
 #include "log.h"
+#include "main.h"
 #include <Qt>
 #include <QDebug>
 #include <QStandardItemModel>
@@ -238,6 +240,9 @@ void ConfigureDlg::saveSettings()
 	bCustomServersChanged = customServersCfgBox->allowSave();
 	mainConfig->saveConfig();
 	gLog << tr("Settings saved!");
+
+	// In case the master server addresses changed, notify the master clients.
+	reinterpret_cast<MainWindow *> (Main::mainWindow)->updateMasterAddresses();
 
 	if(isVisible())
 	{

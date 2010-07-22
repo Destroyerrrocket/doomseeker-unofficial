@@ -131,18 +131,14 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 
 		MasterClient				*masterClient() const
 		{
-			// Get server address.
-			QString host;
-			unsigned short port = 0;
+			return new SkulltagMasterClient();
+		}
 
+		void						masterHost(QString &host, unsigned short &port) const
+		{
 			SettingsData* setting = Main::config->setting("SkulltagMasterserver");
 			QString str = setting->string();
 			Strings::translateServerAddress(str, host, port, "skulltag.servegame.com", 15300);
-
-			QHostInfo info = QHostInfo::fromName(host);
-			if(info.addresses().size() == 0)
-				return NULL;
-			return new SkulltagMasterClient(info.addresses().first(), port);
 		}
 
 		Server*						server(const QHostAddress &address, unsigned short port) const
