@@ -150,7 +150,7 @@ bool TestReadINIList::executeTest()
 	
 	if (listSize != EXPECTED_LIST_SIZE)
 	{
-		gLog << QString("List size incorrect, expected '4', got '%1'").arg(listSize);
+		gLog << QString("List size incorrect, expected '%1', got '%2'").arg(EXPECTED_LIST_SIZE).arg(listSize);
 		return false;
 	}
 	
@@ -178,7 +178,8 @@ bool TestDeleteINIVariable::executeTest()
 	}
 	
 	// Another way of removing a variable is to delete it directly from the
-	// section.
+	// Ini file through Ini::deleteSetting(). Here we remove it from the 
+	// section. This works the same and is provided for convenience.
 	IniSection* pSection = ini.section("section.sectionone");
 	pSection->deleteSetting("key1");
 	
