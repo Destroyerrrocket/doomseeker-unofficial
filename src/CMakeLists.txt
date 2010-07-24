@@ -175,11 +175,13 @@ set(SOURCE_FILES
 	tests/testbase.cpp
 	tests/testcore.cpp
 	tests/testdatapaths.cpp
+	tests/testini.cpp
 	tests/testruns.cpp
 	apprunner.cpp
 	customservers.cpp
 	datapaths.cpp
 	doomseekerfilepaths.cpp
+	ini.cpp
 	ip2c.cpp
 	ip2cparser.cpp
 	ip2cupdater.cpp
@@ -211,11 +213,13 @@ set(HEADER_FILES
 	tests/testbase.h	
 	tests/testcore.h
 	tests/testdatapaths.h	
+	tests/testini.h
 	tests/testruns.h
 	apprunner.h
 	datapaths.h	
 	doomseekerfilepaths.h
 	global.h
+	ini.h
 	main.h
 	messageresult.h
 	pathfinder.h

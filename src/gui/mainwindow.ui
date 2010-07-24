@@ -152,6 +152,7 @@
     </property>
     <addaction name="menuActionBuddies"/>
     <addaction name="menuActionLog"/>
+    <addaction name="menuActionViewIRC"/>
    </widget>
    <widget class="QMenu" name="menuQuery">
     <property name="title">
@@ -237,6 +238,17 @@
   <action name="menuActionUpdateIP2C">
    <property name="text">
     <string>Update IP2C</string>
+   </property>
+  </action>
+  <action name="menuActionViewIRC">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;IRC</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
    </property>
   </action>
  </widget>

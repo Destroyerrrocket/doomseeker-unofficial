@@ -31,6 +31,7 @@
 #include "sdeapi/config.hpp"
 #include "sdeapi/pluginloader.hpp"
 #include "gui/dockBuddiesList.h"
+#include "gui/ircdock.h"
 #include "gui/logdock.h"
 #include "gui/serverlist.h"
 #include "gui/widgets/serversstatuswidget.h"
@@ -112,6 +113,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		IP2CParser*			ip2cParser;
 		QProgressBar*		ip2cUpdateProgressBar;
 		IP2CUpdater*		ip2cUpdater;
+		IRCDock*			ircDock;
 		LogDock*			logDock;
 		ServerListHandler*	serverTableHandler;
 
@@ -143,6 +145,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	fillQueryMenu(MasterManager* masterManager);
 
 		void	initIP2CUpdater();
+		void	initIRCDock();
 		void	initLogDock();
 		
 		/**
@@ -190,7 +193,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	menuHelpHelp();
 		void	menuLog();
 		void 	menuOptionsConfigure();
-		void	menuUpdateIP2C();		
+		void	menuUpdateIP2C();
+		void	menuViewIRC();		
 		void	menuWadSeeker();
 		void	quitProgram();
 		void 	refreshThreadBeginsWork();

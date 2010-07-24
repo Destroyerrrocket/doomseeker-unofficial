@@ -61,6 +61,7 @@ MainWindow::MainWindow(int argc, char** argv, Config* config)
 	ip2cParser = NULL;
 	
 	initIP2CUpdater();
+	initIRCDock();
 	initLogDock();
 
 	serverTableHandler = new ServerListHandler(tableServers, configuration, this);
@@ -290,6 +291,7 @@ void MainWindow::connectEntities()
 	connect(menuActionLog, SIGNAL( triggered() ), this, SLOT( menuLog() ));
 	connect(menuActionUpdateIP2C, SIGNAL( triggered() ), this, SLOT( menuUpdateIP2C() ) );
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( quitProgram() ));
+	connect(menuActionViewIRC, SIGNAL( triggered() ) , this, SLOT( menuViewIRC() ));
 	connect(menuActionWadseeker, SIGNAL( triggered() ), this, SLOT( menuWadSeeker() ));
 	connect(serverSearch, SIGNAL( textChanged(const QString &) ), serverTableHandler, SLOT( updateSearch(const QString &) ));
 	connect(serverTableHandler, SIGNAL( serverDoubleClicked(const Server*) ), this, SLOT( runGame(const Server*) ) );
@@ -414,6 +416,14 @@ void MainWindow::initIP2CUpdater()
 	
 	ip2cUpdateProgressBar->setMaximumWidth(PROGRESSBAR_WIDTH);
 	ip2cUpdateProgressBar->setMinimumWidth(PROGRESSBAR_WIDTH);
+}
+
+void MainWindow::initIRCDock()
+{
+	ircDock = new IRCDock(this);
+	connect(ircDock, SIGNAL( visibilityChanged(bool)), menuActionViewIRC, SLOT( setChecked(bool)) );
+	ircDock->hide();
+	this->addDockWidget(Qt::BottomDockWidgetArea, ircDock);
 }
 
 void MainWindow::initLogDock()
@@ -625,7 +635,6 @@ void MainWindow::masterManagerMessages(MasterClient* pSender, const QString& tit
 void MainWindow::menuBuddies()
 {
 	buddiesList->setVisible(!buddiesList->isVisible());
-	menuActionBuddies->setChecked(buddiesList->isVisible());
 }
 
 void MainWindow::menuCreateServer()
@@ -664,7 +673,6 @@ void MainWindow::menuHelpHelp()
 void MainWindow::menuLog()
 {
 	logDock->setVisible(!logDock->isVisible());
-	menuActionLog->setChecked(logDock->isVisible());
 }
 
 void MainWindow::menuOptionsConfigure()
@@ -707,6 +715,11 @@ void MainWindow::menuUpdateIP2C()
 	connect(&updateBox, SIGNAL( accepted() ), this, SLOT( ip2cStartUpdate() ) );
 	
 	updateBox.exec();
+}
+
+void MainWindow::menuViewIRC()
+{
+	ircDock->setVisible(!ircDock->isVisible());
 }
 
 void MainWindow::menuWadSeeker()
