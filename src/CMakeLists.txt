@@ -26,7 +26,7 @@ endif(COMMAND cmake_policy)
 get_target_property( UPDATEREVISION_EXE updaterevision LOCATION )
 
 add_custom_target(revision_check ALL
-	COMMAND ${UPDATEREVISION_EXE} . src/svnrevision.h
+	COMMAND ${UPDATEREVISION_EXE} . ${CMAKE_CURRENT_SOURCE_DIR}/svnrevision.h
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	DEPENDS updaterevision
 )
@@ -36,8 +36,12 @@ find_package(ZLIB REQUIRED)
 include(${QT_USE_FILE})
 
 include_directories(
-	${DOOMSEEKER_SOURCE_DIR}/src ${DOOMSEEKER_SOURCE_DIR}/src/gui/
-	${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR} ${ZLIB_INCLUDE_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}/../
+	${CMAKE_CURRENT_SOURCE_DIR} 
+	${CMAKE_CURRENT_SOURCE_DIR}/gui/
+	${QT_INCLUDES} 
+	${CMAKE_CURRENT_BINARY_DIR} 
+	${ZLIB_INCLUDE_DIR}
 )
 
 if(WIN32)
@@ -118,7 +122,7 @@ set(DOOMSEEKER_QT_FILES
 qt_wrap_cpp(doomseekerWraps QT_FILES ${DOOMSEEKER_QT_FILES})
 
 qt4_add_resources(doomseekerResources
-	../media/resources.qrc
+	${DOOMSEEKER_SOURCE_DIR}/media/resources.qrc
 )
 
 set(SOURCE_FILES
@@ -224,15 +228,15 @@ if(WIN32)
 	# compile the Windows resource file.  How we do this depends on the compiler.
 	if(CMAKE_COMPILER_IS_GNUCXX)
 		add_custom_command(
-			OUTPUT ${OUTPUT_DIR}/src/windows.o
-			COMMAND windres -o ${OUTPUT_DIR}/src/windows.o -i ${CMAKE_CURRENT_SOURCE_DIR}/../media/windows.rc
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../media
+			OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/windows.o
+			COMMAND windres -o ${CMAKE_CURRENT_BINARY_DIR}/windows.o -i ${DOOMSEEKER_SOURCE_DIR}/media/windows.rc
+      WORKING_DIRECTORY ${DOOMSEEKER_SOURCE_DIR}/media
 			COMMENT "Generating windows resources (windows.rc)"
 		)
 
 		set(SOURCE_FILES ${SOURCE_FILES} windows.o)
 	else(CMAKE_COMPILER_IS_GNUCXX)
-		set(SOURCE_FILES ${SOURCE_FILES} ../media/windows.rc)
+		set(SOURCE_FILES ${SOURCE_FILES} ${DOOMSEEKER_SOURCE_DIR}/media/windows.rc)
 	endif(CMAKE_COMPILER_IS_GNUCXX)
 endif(WIN32)
 
