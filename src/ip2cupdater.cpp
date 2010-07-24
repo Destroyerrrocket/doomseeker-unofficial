@@ -93,7 +93,7 @@ bool IP2CUpdater::needsUpdate(const QString& filePath, unsigned minimumUpdateAge
 		QDateTime current = QDateTime::currentDateTime();
 		QDateTime lastModified = fileInfo.lastModified();
 		
-		int daysTo = current.daysTo(lastModified);
+		int daysTo = lastModified.daysTo(current);
 		
 		// Handle file system errors.
 		if (daysTo < 0)

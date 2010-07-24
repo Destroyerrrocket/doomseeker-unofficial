@@ -248,6 +248,7 @@ bool Main::initDataDirectories()
 	// I think this directory should take priority, if user, for example,
 	// wants to update the ip2country file.
 	dataDirectories << dataPaths->programsDataDirectoryPath();
+	dataDirectories << Main::workingDirectory;
 
 	// Continue with standard dirs:
 	dataDirectories << "./";
@@ -375,7 +376,6 @@ bool Main::interpretCommandLineParameters()
 		QString workingDir = firstArg.mid(0, lastSlash+1);
 		Main::workingDirectory = Strings::trim(workingDir, "\"");
 	}
-	dataDirectories << Main::workingDirectory;
 
 	return true;
 }

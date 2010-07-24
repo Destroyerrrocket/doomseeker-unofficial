@@ -207,7 +207,7 @@
     <string>&amp;Buddies</string>
    </property>
    <property name="shortcut">
-    <string>B</string>
+    <string>Ctrl+B</string>
    </property>
   </action>
   <action name="menuActionCreateServer">
@@ -223,7 +223,7 @@
     <string>&amp;Log</string>
    </property>
    <property name="shortcut">
-    <string>L</string>
+    <string>Ctrl+L</string>
    </property>
   </action>
   <action name="menuActionHelp">
