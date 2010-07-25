@@ -46,6 +46,7 @@
 #include <QIcon>
 #include <QHeaderView>
 #include <QMessageBox>
+#include <QToolBar>
 #include <QSizePolicy>
 
 const QString MainWindow::HELP_SITE_URL = "http://skulltag.net/wiki/Doomseeker";
@@ -57,6 +58,8 @@ MainWindow::MainWindow(int argc, char** argv, Config* config)
 {
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
+	setupIcons();
+	setupToolBar();	
 	
 	ip2cParser = NULL;
 	
@@ -132,7 +135,7 @@ MainWindow::MainWindow(int argc, char** argv, Config* config)
 	bool queryOnStartup = configuration->setting("QueryOnStartup")->integer() != 0;
 	if (queryOnStartup)
 	{
-		btnGetServers_Click();
+		getServers();
 	}
 	else
 	{
@@ -208,38 +211,13 @@ void MainWindow::autoRefreshTimer_timeout()
 		}
 	}
 
-	btnGetServers_Click();
+	getServers();
 }
 
 void MainWindow::blockRefreshButtons()
 {
-	btnGetServers->setEnabled(false);
-	btnRefreshAll->setEnabled(false);
-}
-
-void MainWindow::btnRefreshAll_Click()
-{
-	serverTableHandler->refreshAll();
-}
-
-void MainWindow::btnGetServers_Click()
-{
-	bTotalRefreshInProcess = true;
-	autoRefreshTimer.stop();
-	gLog << tr("Total refresh process initialized!");
-	serverTableHandler->clearTable();
-	refreshCustomServers();
-	
-	masterManager->clearServersList();
-	for (int i = 0; i < masterManager->numMasters(); ++i)
-	{
-		MasterClient* pMaster = (*masterManager)[i];
-		
-		if (pMaster->isEnabled())
-		{
-			Main::refreshingThread->registerMaster(pMaster);
-		}
-	}
+	toolBarGetServers->setEnabled(false);
+	toolBarRefreshAll->setEnabled(false);
 }
 
 void MainWindow::changeEvent(QEvent* event)
@@ -281,8 +259,6 @@ void MainWindow::connectEntities()
 	connect(Main::refreshingThread, SIGNAL( sleepingModeExit() ), this, SLOT( refreshThreadBeginsWork() ) );
 
 	// Controls
-	connect(btnGetServers, SIGNAL( clicked() ), this, SLOT( btnGetServers_Click() ));
-	connect(btnRefreshAll, SIGNAL( clicked() ), this, SLOT( btnRefreshAll_Click() ));
 	connect(menuActionAbout, SIGNAL( triggered() ), this, SLOT( menuHelpAbout() ));
 	connect(menuActionBuddies, SIGNAL( triggered() ), this, SLOT( menuBuddies() ));
 	connect(menuActionConfigure, SIGNAL( triggered() ), this, SLOT( menuOptionsConfigure() ));
@@ -293,9 +269,11 @@ void MainWindow::connectEntities()
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( quitProgram() ));
 	connect(menuActionViewIRC, SIGNAL( triggered() ) , this, SLOT( menuViewIRC() ));
 	connect(menuActionWadseeker, SIGNAL( triggered() ), this, SLOT( menuWadSeeker() ));
-	connect(serverSearch, SIGNAL( textChanged(const QString &) ), serverTableHandler, SLOT( updateSearch(const QString &) ));
 	connect(serverTableHandler, SIGNAL( serverDoubleClicked(const Server*) ), this, SLOT( runGame(const Server*) ) );
 	connect(serverTableHandler, SIGNAL( displayServerJoinCommandLine(const Server*) ), this, SLOT( showServerJoinCommandLine(const Server*) ) );
+	
+	// Toolbar controls (those that aren't handled by the generic toolbar slot).
+	connect(toolBarSearch, SIGNAL( textChanged(const QString &) ), serverTableHandler, SLOT( updateSearch(const QString &) ));	
 }
 
 void MainWindow::fillQueryMenu(MasterManager* masterManager)
@@ -364,6 +342,26 @@ void MainWindow::finishedQueryingMaster(MasterClient* master)
 	{
 		connect((*master)[i], SIGNAL(updated(Server *, int)), serverTableHandler, SLOT(serverUpdated(Server *, int)) );
 		connect((*master)[i], SIGNAL(begunRefreshing(Server *)), serverTableHandler, SLOT(serverBegunRefreshing(Server *)) );
+	}
+}
+
+void MainWindow::getServers()
+{
+	bTotalRefreshInProcess = true;
+	autoRefreshTimer.stop();
+	gLog << tr("Total refresh process initialized!");
+	serverTableHandler->clearTable();
+	refreshCustomServers();
+	
+	masterManager->clearServersList();
+	for (int i = 0; i < masterManager->numMasters(); ++i)
+	{
+		MasterClient* pMaster = (*masterManager)[i];
+		
+		if (pMaster->isEnabled())
+		{
+			Main::refreshingThread->registerMaster(pMaster);
+		}
 	}
 }
 
@@ -844,8 +842,8 @@ void MainWindow::refreshThreadBeginsWork()
 
 void MainWindow::refreshThreadEndsWork()
 {
-	btnGetServers->setEnabled(true);
-	btnRefreshAll->setEnabled(true);
+	toolBarGetServers->setEnabled(true);
+	toolBarRefreshAll->setEnabled(true);
 
 	serverTableHandler->serverTable()->setAllowAllRowsRefresh(true);
 	statusBar()->showMessage(tr("Done"));
@@ -877,6 +875,42 @@ void MainWindow::runGame(const Server* server)
 	}
 }
 
+void MainWindow::setupIcons()
+{
+	QStyle& style = *QApplication::style();
+
+	// File menu.
+	menuActionQuit->setIcon(style.standardIcon(QStyle::SP_TitleBarCloseButton));
+	
+	// Help menu.
+	menuActionHelp->setIcon(style.standardIcon(QStyle::SP_MessageBoxQuestion));
+	menuActionAbout->setIcon(style.standardIcon(QStyle::SP_MessageBoxInformation));
+}
+
+void MainWindow::setupToolBar()
+{
+	QToolBar* pToolBar = new QToolBar(this);
+	pToolBar->setMovable(false);
+
+	toolBarGetServers = new QAction(QIcon(":/icons/arrow-down-double.png"), tr("Get Servers"), pToolBar);
+	toolBarRefreshAll = new QAction(QIcon(":/icons/view-refresh-2.png"), tr("Refresh All"), pToolBar);
+	
+	toolBarSearch = new QLineEdit();
+	toolBarSearch->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+	toolBarSearch->setMinimumWidth(175);
+	toolBarSearch->setMaximumWidth(175);
+
+	pToolBar->addAction(toolBarGetServers);
+	pToolBar->addAction(toolBarRefreshAll);
+	pToolBar->addSeparator();
+	pToolBar->addWidget(new QLabel(tr("Search:"), pToolBar));
+	pToolBar->addWidget(toolBarSearch);
+	pToolBar->addSeparator();
+	
+	this->addToolBar(Qt::TopToolBarArea, pToolBar);
+	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( toolBarAction(QAction*) ) );
+}
+
 void MainWindow::showServerJoinCommandLine(const Server* server)
 {
 	CommandLineInfo cli;
@@ -884,6 +918,18 @@ void MainWindow::showServerJoinCommandLine(const Server* server)
 	{
 		CopyTextDlg ctd(cli.executable.absoluteFilePath() + " " + cli.args.join(" "), server->name(), this);
 		ctd.exec();
+	}
+}
+
+void MainWindow::toolBarAction(QAction* pAction)
+{
+	if (pAction == toolBarGetServers)
+	{
+		getServers();
+	}
+	else if (pAction == toolBarRefreshAll)
+	{
+		serverTableHandler->refreshAll();		
 	}
 }
 

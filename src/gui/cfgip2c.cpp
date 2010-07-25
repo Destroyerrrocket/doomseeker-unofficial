@@ -33,6 +33,7 @@ ConfigurationBoxInfo *IP2CConfigBox::createStructure(Config *cfg, QWidget *paren
 	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
 	pConfigurationBoxInfo->confBox = new IP2CConfigBox(cfg, parent);
 	pConfigurationBoxInfo->boxName = tr("IP2C");
+	pConfigurationBoxInfo->icon = QIcon(":/icons/emblem-web.png");
 	return pConfigurationBoxInfo;
 }
 

@@ -33,6 +33,7 @@ ConfigurationBoxInfo *QueryConfigBox::createStructure(Config *cfg, QWidget *pare
 	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
 	pConfigurationBoxInfo->confBox = new QueryConfigBox(cfg, parent);
 	pConfigurationBoxInfo->boxName = tr("Query");
+	pConfigurationBoxInfo->icon = QIcon(":/icons/view-refresh-2.png");
 	return pConfigurationBoxInfo;
 }
 

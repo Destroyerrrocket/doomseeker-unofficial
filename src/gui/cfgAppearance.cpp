@@ -37,6 +37,7 @@ ConfigurationBoxInfo *AppearanceConfigBox::createStructure(Config *cfg, QWidget 
 	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
 	pConfigurationBoxInfo->confBox = new AppearanceConfigBox(cfg, parent);
 	pConfigurationBoxInfo->boxName = tr("Appearance");
+	pConfigurationBoxInfo->icon = QIcon(":/icons/color-fill.png");
 	return pConfigurationBoxInfo;
 }
 

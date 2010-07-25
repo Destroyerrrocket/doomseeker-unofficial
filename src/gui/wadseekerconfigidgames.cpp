@@ -58,6 +58,7 @@ ConfigurationBoxInfo* WadseekerIdgamesConfigBox::createStructure(Config* cfg, QW
 	ConfigurationBoxInfo* cfgBoxInfo = new ConfigurationBoxInfo();
 	cfgBoxInfo->confBox = new WadseekerIdgamesConfigBox(cfg, parent);
 	cfgBoxInfo->boxName = tr("Idgames");
+	cfgBoxInfo->icon = QIcon(":/icons/arrow-down-double.png");
 	return cfgBoxInfo;
 }
 

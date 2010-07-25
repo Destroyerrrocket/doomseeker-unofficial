@@ -80,6 +80,7 @@ ConfigurationBoxInfo* WadseekerSitesConfigBox::createStructure(Config* cfg, QWid
 	ConfigurationBoxInfo* cfgBoxInfo = new ConfigurationBoxInfo();
 	cfgBoxInfo->confBox = new WadseekerSitesConfigBox(cfg, parent);
 	cfgBoxInfo->boxName = tr("Sites");
+	cfgBoxInfo->icon = QIcon(":/icons/emblem-web.png");
 	return cfgBoxInfo;
 }
 

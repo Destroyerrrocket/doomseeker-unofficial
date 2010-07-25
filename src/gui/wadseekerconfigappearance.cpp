@@ -33,6 +33,7 @@ ConfigurationBoxInfo* WadseekerAppearanceConfigBox::createStructure(Config* cfg,
 	ConfigurationBoxInfo* cfgBoxInfo = new ConfigurationBoxInfo();
 	cfgBoxInfo->confBox = new WadseekerAppearanceConfigBox(cfg, parent);
 	cfgBoxInfo->boxName = tr("Appearance");
+	cfgBoxInfo->icon = QIcon(":/icons/color-fill.png");
 	return cfgBoxInfo;
 }
 

@@ -13,82 +13,11 @@
   <property name="windowTitle">
    <string>Doomseeker</string>
   </property>
+  <property name="toolButtonStyle">
+   <enum>Qt::ToolButtonFollowStyle</enum>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QWidget" name="widget" native="true">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QPushButton" name="btnGetServers">
-         <property name="toolTip">
-          <string>Obtains new server list from master servers enabled in &quot;Query&quot; menu.</string>
-         </property>
-         <property name="text">
-          <string>Get Servers</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="btnRefreshAll">
-         <property name="toolTip">
-          <string>Refreshes all servers visible on the list.</string>
-         </property>
-         <property name="text">
-          <string>Refresh All</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Search</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="serverSearch">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>175</width>
-           <height>0</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
     <item>
      <widget class="ServerListView" name="tableServers">
       <property name="editTriggers">
@@ -167,6 +96,10 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="menuActionConfigure">
+   <property name="icon">
+    <iconset resource="../../media/resources.qrc">
+     <normaloff>:/icons/preferences-system-4.png</normaloff>:/icons/preferences-system-4.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Configure</string>
    </property>
@@ -196,6 +129,10 @@
    </property>
   </action>
   <action name="menuActionWadseeker">
+   <property name="icon">
+    <iconset resource="../../media/resources.qrc">
+     <normaloff>:/icons/download.png</normaloff>:/icons/download.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Wadseeker</string>
    </property>
@@ -212,6 +149,10 @@
    </property>
   </action>
   <action name="menuActionCreateServer">
+   <property name="icon">
+    <iconset resource="../../media/resources.qrc">
+     <normaloff>:/flags/localhost-small</normaloff>:/flags/localhost-small</iconset>
+   </property>
    <property name="text">
     <string>&amp;Create server</string>
    </property>
@@ -236,6 +177,10 @@
    </property>
   </action>
   <action name="menuActionUpdateIP2C">
+   <property name="icon">
+    <iconset resource="../../media/resources.qrc">
+     <normaloff>:/icons/emblem-web.png</normaloff>:/icons/emblem-web.png</iconset>
+   </property>
    <property name="text">
     <string>Update IP2C</string>
    </property>
@@ -259,6 +204,8 @@
    <header>gui/widgets/serverlistview.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../../media/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

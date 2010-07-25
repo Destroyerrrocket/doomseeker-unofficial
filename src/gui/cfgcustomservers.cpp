@@ -89,6 +89,7 @@ ConfigurationBoxInfo* CustomServersConfigBox::createStructure(Config *cfg, QWidg
 	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
 	pConfigurationBoxInfo->confBox = new CustomServersConfigBox(cfg, parent);
 	pConfigurationBoxInfo->boxName = tr("Custom Servers");
+	pConfigurationBoxInfo->icon = QIcon(":/flags/localhost-small");
 	return pConfigurationBoxInfo;
 }
 

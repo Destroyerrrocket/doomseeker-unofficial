@@ -116,6 +116,7 @@ void ConfigureDlg::appearanceChangedSlot()
 void ConfigureDlg::appendWadseekerConfigurationBoxes(QStandardItemModel* model)
 {
 	QStandardItem* wadseekerRoot = new QStandardItem(tr("Wadseeker"));
+	wadseekerRoot->setIcon(QIcon(":/icons/download.png"));
 	model->appendRow(wadseekerRoot);
 
 	ConfigurationBoxInfo* cfgBoxInfo = NULL;

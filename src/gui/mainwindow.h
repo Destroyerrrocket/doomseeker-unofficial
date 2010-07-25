@@ -119,6 +119,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 		MasterManager*		masterManager;
 		QList<QAction*>		queryMenuPorts;
+		QAction*			toolBarGetServers;
+		QAction*			toolBarRefreshAll;
+		QLineEdit*			toolBarSearch;
 		QSystemTrayIcon*	trayIcon;
 		QMenu*				trayIconMenu;
 		
@@ -168,6 +171,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		bool	obtainJoinCommandLine(const Server* server, CommandLineInfo& cli, const QString& errorCaption = tr("Doomseeker - error"));
 		
 		void	refreshCustomServers();
+		void	setupIcons();
+		void	setupToolBar();
 		
 		/**
 		 *	Functionality and name of this function might not be perfect but
@@ -178,9 +183,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 	protected slots:
 		void	autoRefreshTimer_timeout();
 		void	blockRefreshButtons();
-		void 	btnGetServers_Click();
-		void	btnRefreshAll_Click();
 		void 	finishedQueryingMaster(MasterClient* master);
+		void 	getServers();		
 		void	ip2cDownloadProgress(int current, int max);
 		void	ip2cFinishUpdate(const QByteArray& downloadedData);
 		void	ip2cFinishedParsing(bool bSuccess);
@@ -201,6 +205,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	refreshThreadEndsWork();
 		void 	runGame(const Server*);
 		void	showServerJoinCommandLine(const Server*);
+		void	toolBarAction(QAction* pAction);
 		void	trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
 };
 

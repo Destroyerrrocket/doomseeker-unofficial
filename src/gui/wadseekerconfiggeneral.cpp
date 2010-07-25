@@ -39,6 +39,7 @@ ConfigurationBoxInfo* WadseekerGeneralConfigBox::createStructure(Config* cfg, QW
 	ConfigurationBoxInfo* cfgBoxInfo = new ConfigurationBoxInfo();
 	cfgBoxInfo->confBox = new WadseekerGeneralConfigBox(cfg, parent);
 	cfgBoxInfo->boxName = tr("General");
+	cfgBoxInfo->icon = QIcon(":/icons/preferences-system-4.png");
 	return cfgBoxInfo;
 }
 

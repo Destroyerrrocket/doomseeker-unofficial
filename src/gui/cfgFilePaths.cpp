@@ -82,6 +82,7 @@ ConfigurationBoxInfo* FilePathsConfigBox::createStructure(Config* cfg, QWidget* 
 	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
 	pConfigurationBoxInfo->confBox = new FilePathsConfigBox(cfg, parent);
 	pConfigurationBoxInfo->boxName = tr("File paths");
+	pConfigurationBoxInfo->icon = QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon);
 	return pConfigurationBoxInfo;
 }
 
