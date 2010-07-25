@@ -734,8 +734,21 @@ bool MainWindow::obtainJoinCommandLine(const Server* server, CommandLineInfo& cl
 
 	if (server != NULL)
 	{
-		const QString errorCaption = tr("Doomseeker - join server");
-
+		// Remember to check REFRESHING status first!
+		if (server->isRefreshing())
+		{
+			QMessageBox::warning(this, errorCaption, tr("This server is still refreshing.\nPlease wait until it is finished."));
+			gLog << tr("Attempted to obtain a join command line for a \"%1\" server that is under refresh.").arg(server->addressWithPort());
+			return false;
+		}
+		// Fail if Doomseeker couldn't get data on this server.
+		else if (!server->isKnown())
+		{
+			QMessageBox::critical(this, errorCaption, tr("Data for this server is not available.\nOperation failed."));
+			gLog << tr("Attempted to obtain a join command line for an unknown server \"%1\"").arg(server->addressWithPort());
+			return false;
+		}
+	
 		// For MissingWads:
 		const QString filesMissingCaption = tr("Doomseeker - files are missing");
 		QString filesMissingMessage = tr("Following files are missing:\n");

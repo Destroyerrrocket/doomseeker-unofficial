@@ -98,6 +98,7 @@ class MAIN_EXPORT Server : public QObject
 		virtual QString		engineName() const;
 
 		const QHostAddress	&address() const { return serverAddress; }
+		QString				addressWithPort() const { return QString("%1:%2").arg(address().toString()).arg(port()); }
 		const QString&		connectPassword() const { return passwordConnect; }
 		const QString&		eMail() const { return email; }
 		const DMFlags		&gameFlags() const { return dmFlags; }
