@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// ircdock.h
+// ircnetworkconnectioninfo.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,32 +20,20 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __IRCDOCK_H_
-#define __IRCDOCK_H_
+#ifndef __IRCNETWORKCONNECTIONINFO_H__
+#define __IRCNETWORKCONNECTIONINFO_H__
 
-#include "ui_ircdock.h"
-#include <QDockWidget>
+#include <QHostAddress>
+#include <QString>
 
-/**
- *	@brief Dockable widget designed for IRC communication.
- */
-class IRCDock : public QDockWidget, private Ui::IRCDock
+struct IRCNetworkConnectionInfo
 {
-	Q_OBJECT;
-
-	public:
-		IRCDock(QWidget* parent = NULL);
-
-	protected:
-		QAction*			toolBarConnect;
-		QAction*			toolBarDisconnect;
-
-		void				setupToolbar();
-
-	protected slots:
-		void				sendMessage();
-		void				toolBarAction(QAction* pAction);
-
+	QString				alternateNick;
+	QString				nick;
+	QString				realName;
+	QHostAddress		serverAddress;
+	unsigned short		serverPort;
+	QString				serverPassword;
 };
 
 #endif

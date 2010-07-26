@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// ircdock.h
+// ircnetworkselectionbox.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,32 +20,23 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __IRCDOCK_H_
-#define __IRCDOCK_H_
+#include "ircnetworkselectionbox.h"
 
-#include "ui_ircdock.h"
-#include <QDockWidget>
+// TODO: Add validators.
 
-/**
- *	@brief Dockable widget designed for IRC communication.
- */
-class IRCDock : public QDockWidget, private Ui::IRCDock
+IRCNetworkSelectionBox::IRCNetworkSelectionBox(QWidget* parent)
+: QDialog(parent)
 {
-	Q_OBJECT;
+	setupUi(this);
+}
 
-	public:
-		IRCDock(QWidget* parent = NULL);
+void IRCNetworkSelectionBox::networkConnectionInfo(IRCNetworkConnectionInfo& outInfo) const
+{
+	outInfo.alternateNick = leAlternateNick->text();
+	outInfo.nick = leNick->text();
+	outInfo.realName = leRealName->text();
 
-	protected:
-		QAction*			toolBarConnect;
-		QAction*			toolBarDisconnect;
-
-		void				setupToolbar();
-
-	protected slots:
-		void				sendMessage();
-		void				toolBarAction(QAction* pAction);
-
-};
-
-#endif
+	outInfo.serverAddress = leServerAddress->text();
+	outInfo.serverPort = spinPort->value();
+	outInfo.serverPassword = lePassword->text();
+}

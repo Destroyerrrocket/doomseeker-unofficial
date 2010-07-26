@@ -51,6 +51,7 @@ add_definitions("-DINSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
 
 qt4_wrap_ui(doomseekerUI
 	gui/irc/ircdock.ui
+	gui/irc/ircnetworkselectionbox.ui
 	gui/widgets/serverconsole.ui
 	gui/aboutDlg.ui
 	gui/addBuddyDlg.ui
@@ -77,6 +78,7 @@ qt4_wrap_ui(doomseekerUI
 
 set(DOOMSEEKER_QT_FILES
 	gui/irc/ircdock.h
+	gui/irc/ircnetworkselectionbox.h
 	gui/models/serverlistmodel.h
 	gui/widgets/colorbutton.h
 	gui/widgets/dockedwidgets.h
@@ -129,6 +131,7 @@ qt4_add_resources(doomseekerResources
 set(SOURCE_FILES
 	gui/helpers/playersdiagram.cpp
 	gui/irc/ircdock.cpp	
+	gui/irc/ircnetworkselectionbox.cpp
 	gui/models/serverlistcolumn.cpp
 	gui/models/serverlistmodel.cpp
 	gui/models/serverlistrowhandler.cpp
@@ -202,6 +205,7 @@ set(HEADER_FILES
 	gui/helpers/playersdiagram.h
 	gui/models/serverlistcolumn.h
 	gui/models/serverlistrowhandler.h
+	irc/ircnetworkconnectioninfo.h
 	sdeapi/pluginloader.hpp
 	sdeapi/scanner.hpp
 	serverapi/tooltips/gameinfotip.h

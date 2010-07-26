@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircdock.h"
+#include "gui/irc/ircnetworkselectionbox.h"
 
 #include <QToolBar>
 
@@ -59,6 +60,13 @@ void IRCDock::toolBarAction(QAction* pAction)
 {
 	if (pAction == toolBarConnect)
 	{
+		IRCNetworkSelectionBox networkSelection(this);
+		if (networkSelection.exec() == QDialog::Accepted)
+		{
+			IRCNetworkConnectionInfo connectionInfo;
+			networkSelection.networkConnectionInfo(connectionInfo);
 
+
+		}
 	}
 }
