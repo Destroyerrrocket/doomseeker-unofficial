@@ -27,7 +27,6 @@
 
 void AppRunner::cleanArguments(QStringList& args)
 {
-	#ifdef Q_OS_WIN32
 	QStringList::iterator it;
 	for (it = args.begin(); it != args.end(); ++it)
 	{
@@ -36,7 +35,6 @@ void AppRunner::cleanArguments(QStringList& args)
 			Strings::trim(*it, "\"");
 		}
 	}
-	#endif
 }
 
 #ifdef Q_WS_MAC
