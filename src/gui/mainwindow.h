@@ -30,8 +30,8 @@
 #include "mastermanager.h"
 #include "sdeapi/config.hpp"
 #include "sdeapi/pluginloader.hpp"
+#include "gui/irc/ircdock.h"
 #include "gui/dockBuddiesList.h"
-#include "gui/ircdock.h"
 #include "gui/logdock.h"
 #include "gui/serverlist.h"
 #include "gui/widgets/serversstatuswidget.h"
@@ -86,7 +86,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 	protected:
 		static const QString	HELP_SITE_URL;
-	
+
 		QTimer				autoRefreshTimer;
 
 		/**
@@ -124,7 +124,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		QLineEdit*			toolBarSearch;
 		QSystemTrayIcon*	trayIcon;
 		QMenu*				trayIconMenu;
-		
+
 		void	changeEvent(QEvent* event);
 
 		/**
@@ -137,7 +137,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 		/**
 		 *	Fills query menu with engines that have master server.
-		 *	@param masterManager - instantiated MainWindow::masterManager 
+		 *	@param masterManager - instantiated MainWindow::masterManager
 		 *		is passed here.
 		 *		Since this method is called from the constructor it's important
 		 *		to pay attention to not call it before masterManager is
@@ -150,14 +150,14 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	initIP2CUpdater();
 		void	initIRCDock();
 		void	initLogDock();
-		
+
 		/**
 		 *	Checks whether the program will use the tray icon and
 		 *	deletes or instantiates a QSystemTrayIcon object.
 		 */
 		void	initTrayIcon();
-		
-		void	ip2cJobsFinished();				
+
+		void	ip2cJobsFinished();
 
 		/**
 		 *	Generates command line info for specified server.
@@ -169,11 +169,11 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 *	@return true on success, false otherwise.
 		 */
 		bool	obtainJoinCommandLine(const Server* server, CommandLineInfo& cli, const QString& errorCaption = tr("Doomseeker - error"));
-		
+
 		void	refreshCustomServers();
 		void	setupIcons();
 		void	setupToolBar();
-		
+
 		/**
 		 *	Functionality and name of this function might not be perfect but
 		 *	it saves some copy&pasting in the end. The end justifies the means.
@@ -184,7 +184,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	autoRefreshTimer_timeout();
 		void	blockRefreshButtons();
 		void 	finishedQueryingMaster(MasterClient* master);
-		void 	getServers();		
+		void 	getServers();
 		void	ip2cDownloadProgress(int current, int max);
 		void	ip2cFinishUpdate(const QByteArray& downloadedData);
 		void	ip2cFinishedParsing(bool bSuccess);
@@ -198,7 +198,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	menuLog();
 		void 	menuOptionsConfigure();
 		void	menuUpdateIP2C();
-		void	menuViewIRC();		
+		void	menuViewIRC();
 		void	menuWadSeeker();
 		void	quitProgram();
 		void 	refreshThreadBeginsWork();

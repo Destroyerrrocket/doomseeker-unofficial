@@ -50,6 +50,8 @@ endif(WIN32)
 add_definitions("-DINSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
 
 qt4_wrap_ui(doomseekerUI
+	gui/irc/ircdock.ui
+	gui/widgets/serverconsole.ui
 	gui/aboutDlg.ui
 	gui/addBuddyDlg.ui
 	gui/cfgAppearance.ui
@@ -62,7 +64,6 @@ qt4_wrap_ui(doomseekerUI
 	gui/createserver.ui
 	gui/dockBuddiesList.ui
 	gui/ip2cupdatebox.ui	
-	gui/ircdock.ui	
 	gui/logdock.ui
 	gui/mainwindow.ui
 	gui/passwordDlg.ui
@@ -72,10 +73,16 @@ qt4_wrap_ui(doomseekerUI
 	gui/wadseekerconfigidgames.ui
 	gui/wadseekerconfigsites.ui
 	gui/wadseekerinterface.ui
-	gui/widgets/serverconsole.ui
 )
 
 set(DOOMSEEKER_QT_FILES
+	gui/irc/ircdock.h
+	gui/models/serverlistmodel.h
+	gui/widgets/colorbutton.h
+	gui/widgets/dockedwidgets.h
+	gui/widgets/serverconsole.h
+	gui/widgets/serverlistview.h
+	gui/widgets/serversstatuswidget.h	
 	gui/aboutDlg.h
 	gui/cfgAppearance.h
 	gui/cfgcustomservers.h	
@@ -88,7 +95,6 @@ set(DOOMSEEKER_QT_FILES
 	gui/createserver.h
 	gui/dockBuddiesList.h
 	gui/ip2cupdatebox.h
-	gui/ircdock.h
 	gui/logdock.h
 	gui/mainwindow.h
 	gui/passwordDlg.h
@@ -100,12 +106,6 @@ set(DOOMSEEKER_QT_FILES
 	gui/wadseekerconfigidgames.h
 	gui/wadseekerconfigsites.h
 	gui/wadseekerinterface.h
-	gui/models/serverlistmodel.h
-	gui/widgets/colorbutton.h
-	gui/widgets/dockedwidgets.h
-	gui/widgets/serverconsole.h
-	gui/widgets/serverlistview.h
-	gui/widgets/serversstatuswidget.h
 	irc/ircclient.h
 	sdeapi/config.hpp
 	serverapi/rconprotocol.h
@@ -127,6 +127,16 @@ qt4_add_resources(doomseekerResources
 )
 
 set(SOURCE_FILES
+	gui/helpers/playersdiagram.cpp
+	gui/irc/ircdock.cpp	
+	gui/models/serverlistcolumn.cpp
+	gui/models/serverlistmodel.cpp
+	gui/models/serverlistrowhandler.cpp
+	gui/widgets/colorbutton.cpp
+	gui/widgets/serverconsole.cpp
+	gui/widgets/serverlistcontextmenu.cpp
+	gui/widgets/serverlistview.cpp
+	gui/widgets/serversstatuswidget.cpp
 	gui/aboutDlg.cpp
 	gui/cfgAppearance.cpp
 	gui/cfgcustomservers.cpp	
@@ -139,7 +149,6 @@ set(SOURCE_FILES
 	gui/createserver.cpp
 	gui/dockBuddiesList.cpp
 	gui/ip2cupdatebox.cpp
-	gui/ircdock.cpp	
 	gui/logdock.cpp
 	gui/mainwindow.cpp
 	gui/passwordDlg.cpp
@@ -151,15 +160,6 @@ set(SOURCE_FILES
 	gui/wadseekerconfigidgames.cpp
 	gui/wadseekerconfigsites.cpp
 	gui/wadseekerinterface.cpp
-	gui/helpers/playersdiagram.cpp
-	gui/models/serverlistcolumn.cpp
-	gui/models/serverlistmodel.cpp
-	gui/models/serverlistrowhandler.cpp
-	gui/widgets/colorbutton.cpp
-	gui/widgets/serverconsole.cpp
-	gui/widgets/serverlistcontextmenu.cpp
-	gui/widgets/serverlistview.cpp
-	gui/widgets/serversstatuswidget.cpp
 	irc/ircclient.cpp
 	sdeapi/config.cpp
 	sdeapi/pluginloader.cpp
@@ -199,9 +199,9 @@ set(SOURCE_FILES
 # For the purpose of generation of proper project files.
 set(HEADER_FILES
 	${DOOMSEEKER_QT_FILES}
+	gui/helpers/playersdiagram.h
 	gui/models/serverlistcolumn.h
 	gui/models/serverlistrowhandler.h
-	gui/helpers/playersdiagram.h
 	sdeapi/pluginloader.hpp
 	sdeapi/scanner.hpp
 	serverapi/tooltips/gameinfotip.h
