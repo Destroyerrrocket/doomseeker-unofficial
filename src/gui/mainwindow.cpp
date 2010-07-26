@@ -913,12 +913,15 @@ void MainWindow::setupToolBar()
 	toolBarSearch->setMinimumWidth(175);
 	toolBarSearch->setMaximumWidth(175);
 
+	QWidget* searchSeparator = new QWidget();
+	searchSeparator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
+
 	pToolBar->addAction(toolBarGetServers);
 	pToolBar->addAction(toolBarRefreshAll);
-	pToolBar->addSeparator();
+
+	pToolBar->addWidget(searchSeparator);
 	pToolBar->addWidget(new QLabel(tr("Search:"), pToolBar));
 	pToolBar->addWidget(toolBarSearch);
-	pToolBar->addSeparator();
 	
 	this->addToolBar(Qt::TopToolBarArea, pToolBar);
 	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( toolBarAction(QAction*) ) );
