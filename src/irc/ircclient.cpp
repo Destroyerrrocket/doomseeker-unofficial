@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// ircdock.h
+// ircclient.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,22 +20,44 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __IRCDOCK_H_
-#define __IRCDOCK_H_
+#include "ircclient.h"
+#include "log.h"
 
-#include "ui_ircdock.h"
-#include <QDockWidget>
-
-/**
- *	@brief Dockable widget designed for IRC communication.
- */
-class IRCDock : public QDockWidget, private Ui::IRCDock
+IrcClient::IrcClient()
 {
-	Q_OBJECT;
+}
 
-	public:
-		IRCDock(QWidget* parent = NULL);
+IrcClient::~IrcClient()
+{
+	disconnect();
+}
 
-};
+bool IrcClient::connect(const QHostAddress&	address, unsigned short port)
+{
+	socket.connectToHost(address, port);
+}
 
-#endif
+void IrcClient::disconnect()
+{
+	socket.abort();
+}
+
+bool IrcClient::isConnected() const
+{
+	return socket.state() == QTcpSocket::ConnectedState;
+}
+
+void IrcClient::receiveSocketData()
+{
+	gLog << "IRC received: ";
+	for (int i = 0; socket.bytesAvailable() > 0; ++i)
+	{
+		gLog << QString("%1: %2").arg(i).arg( QString(socket.readLine()) );
+	}
+}
+
+bool IrcClient::sendMessage(const QString& message)
+{
+	QByteArray messageContent = message.toAscii();
+	socket.write(messageContent);
+}

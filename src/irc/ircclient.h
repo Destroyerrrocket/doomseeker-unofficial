@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// ircdock.cpp
+// ircclient.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,10 +20,31 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "ircdock.h"
+#ifndef __IRCCLIENT_H__
+#define __IRCCLIENT_H__
 
-IRCDock::IRCDock(QWidget* parent)
-: QDockWidget(parent)
+#include <QTcpSocket>
+
+class IrcClient : public QObject
 {
-	setupUi(this);
-}
+	Q_OBJECT
+
+	public:
+		IrcClient();
+		~IrcClient();
+
+		bool					connect(const QHostAddress&	address, unsigned short port);
+		void					disconnect();
+
+		bool					isConnected() const;
+
+		bool					sendMessage(const QString& message);
+
+	protected:
+		QTcpSocket				socket;
+
+	protected slots:
+		void					receiveSocketData();
+};
+
+#endif

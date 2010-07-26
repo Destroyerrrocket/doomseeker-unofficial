@@ -106,6 +106,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/widgets/serverconsole.h
 	gui/widgets/serverlistview.h
 	gui/widgets/serversstatuswidget.h
+	irc/ircclient.h
 	sdeapi/config.hpp
 	serverapi/rconprotocol.h
 	serverapi/server.h
@@ -159,6 +160,7 @@ set(SOURCE_FILES
 	gui/widgets/serverlistcontextmenu.cpp
 	gui/widgets/serverlistview.cpp
 	gui/widgets/serversstatuswidget.cpp
+	irc/ircclient.cpp
 	sdeapi/config.cpp
 	sdeapi/pluginloader.cpp
 	sdeapi/scanner.cpp
