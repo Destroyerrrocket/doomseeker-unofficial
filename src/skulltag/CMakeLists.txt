@@ -3,9 +3,6 @@ cmake_minimum_required(VERSION 2.4)
 set(PLUGIN_NAME skulltag)
 include(../PluginHeader.txt)
 
-qt4_wrap_ui(skulltagUi
-	engineSkulltagConfig.ui
-)
 set(SKULLTAG_QT_FILES
 	engineSkulltagConfig.h
 	skulltagmasterclient.h
@@ -39,9 +36,9 @@ set(HEADER_FILES
 	skulltagmain.h
 )
 
-qt_wrap_cpp(skulltagQt SKULLTAG_FILES ${SKULLTAG_QT_FILES})
+qt_wrap_cpp(skulltag SKULLTAG_FILES ${SKULLTAG_QT_FILES})
 
-add_library(${PLUGIN_NAME} MODULE ${skulltagUi} ${SKULLTAG_FILES} ${HEADER_FILES})
+add_library(${PLUGIN_NAME} MODULE ${SKULLTAG_FILES} ${HEADER_FILES})
 target_link_libraries(${PLUGIN_NAME} ${PLUGIN_LIBS})
 
 include(../PluginFooter.txt)

@@ -27,9 +27,9 @@
 #include "main.h"
 #include "masterclient.h"
 #include "strings.h"
+#include "gui/engineConfigBase.h"
 #include "sdeapi/pluginloader.hpp"
 
-#include "vavoom/engineVavoomConfig.h"
 #include "vavoom/vavoommain.h"
 #include "vavoom/vavoommasterclient.h"
 #include "vavoom/vavoomserver.h"
@@ -52,7 +52,7 @@ class PLUGIN_EXPORT VavoomEnginePlugin : public EnginePlugin
 
 		ConfigurationBoxInfo*			configuration(Config *cfg, QWidget *parent) const
 		{
-			return EngineVavoomConfigBox::createStructure(cfg, parent);
+			return BaseEngineConfigBox::createStructure(VavoomMain::get(), cfg, parent);
 		}
 
 		unsigned short					defaultServerPort() const { return 26000; }

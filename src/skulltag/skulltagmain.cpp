@@ -58,7 +58,7 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 
 		ConfigurationBoxInfo *configuration(Config *cfg, QWidget *parent) const
 		{
-			return EngineSkulltagConfigBox::createStructure(cfg, parent);
+			return EngineSkulltagConfigBox::createStructure(SkulltagMain::get(), cfg, parent);
 		}
 
 		unsigned short					defaultServerPort() const { return 10666; }

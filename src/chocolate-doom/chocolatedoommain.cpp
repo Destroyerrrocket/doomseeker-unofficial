@@ -22,12 +22,12 @@
 //------------------------------------------------------------------------------
 
 #include "main.h"
+#include "gui/engineConfigBase.h"
 #include "sdeapi/pluginloader.hpp"
 
 #include "chocolate-doom/chocolatedoommain.h"
 #include "chocolate-doom/chocolatedoombinaries.h"
 #include "chocolate-doom/chocolatedoomserver.h"
-#include "chocolate-doom/engineChocolateDoomConfig.h"
 
 const // clear warnings
 #include "chocolate-doom/chocolatedoom.xpm"
@@ -46,7 +46,7 @@ class PLUGIN_EXPORT ChocolateDoomEnginePlugin : public EnginePlugin
 
 		ConfigurationBoxInfo*			configuration(Config *cfg, QWidget *parent) const
 		{
-			return EngineChocolateDoomConfigBox::createStructure(cfg, parent);
+			return BaseEngineConfigBox::createStructure(ChocolateDoomMain::get(), cfg, parent);
 		}
 
 		unsigned short					defaultServerPort() const { return 2342; }

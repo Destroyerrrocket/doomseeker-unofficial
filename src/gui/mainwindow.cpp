@@ -132,7 +132,7 @@ MainWindow::MainWindow(int argc, char** argv, Config* config)
 	}	
 
 	// check query on statup
-	bool queryOnStartup = configuration->setting("QueryOnStartup")->integer() != 0;
+	bool queryOnStartup = configuration->setting("QueryOnStartup")->boolean();
 	if (queryOnStartup)
 	{
 		getServers();

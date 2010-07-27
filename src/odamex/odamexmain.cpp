@@ -27,9 +27,9 @@
 #include "main.h"
 #include "masterclient.h"
 #include "strings.h"
+#include "gui/engineConfigBase.h"
 #include "sdeapi/pluginloader.hpp"
 
-#include "odamex/engineOdamexConfig.h"
 #include "odamex/odamexgameinfo.h"
 #include "odamex/odamexmasterclient.h"
 #include "odamex/odamexmain.h"
@@ -55,7 +55,7 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 
 		ConfigurationBoxInfo*			configuration(Config *cfg, QWidget *parent) const
 		{
-			return EngineOdamexConfigBox::createStructure(cfg, parent);
+			return BaseEngineConfigBox::createStructure(OdamexMain::get(), cfg, parent);
 		}
 
 		unsigned short					defaultServerPort() const { return 10666; }

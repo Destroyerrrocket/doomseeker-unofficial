@@ -42,7 +42,7 @@ void QueryConfigBox::readSettings()
 	SettingsData *setting;
 
 	setting = config->setting("QueryOnStartup");
-	queryOnStartup->setChecked(setting->integer() != 0);
+	queryOnStartup->setChecked(setting->boolean());
 
 	setting = config->setting("QueryTries");
 	triesBox->setValue(setting->integer());

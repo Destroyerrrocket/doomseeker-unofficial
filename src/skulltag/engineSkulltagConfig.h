@@ -24,27 +24,28 @@
 #ifndef __ENGINE_SKULLTAG_CONFIG_H_
 #define __ENGINE_SKULLTAG_CONFIG_H_
 
-#include "gui/configBase.h"
-#include "ui_engineSkulltagConfig.h"
+#include "gui/engineConfigBase.h"
 
-class EngineSkulltagConfigBox : public ConfigurationBaseBox, private Ui::EngineSkulltagConfigBox
+class EngineSkulltagConfigBox : public BaseEngineConfigBox
 {
 	Q_OBJECT
 
 	public:
-		static ConfigurationBoxInfo* createStructure(Config* cfg, QWidget* parent = NULL);
+		static ConfigurationBoxInfo* createStructure(const PluginInfo* plugin, Config* cfg, QWidget* parent = NULL);
 
 		void readSettings();
 
 
 	protected slots:
-		void btnBrowseClientBinaryClicked();
-		void btnBrowseServerBinaryClicked();
 		void btnBrowseTestingPathClicked();
 
 	protected:
-		EngineSkulltagConfigBox(Config* cfg, QWidget* parent = NULL);
+		EngineSkulltagConfigBox(const PluginInfo* plugin, Config* cfg, QWidget* parent = NULL);
 		void saveSettings();
+
+		QGroupBox	*groupTesting;
+		QLineEdit	*leTestingPath;
+		QPushButton	*btnBrowseTestingPath;
 };
 
 #endif

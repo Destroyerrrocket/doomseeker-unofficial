@@ -27,9 +27,9 @@
 #include "main.h"
 #include "masterclient.h"
 #include "strings.h"
+#include "gui/engineConfigBase.h"
 #include "sdeapi/pluginloader.hpp"
 
-#include "zdaemon/engineZDaemonConfig.h"
 #include "zdaemon/zdaemongameinfo.h"
 #include "zdaemon/zdaemonmain.h"
 #include "zdaemon/zdaemonmasterclient.h"
@@ -53,7 +53,7 @@ class PLUGIN_EXPORT ZDaemonEnginePlugin : public EnginePlugin
 
 		ConfigurationBoxInfo*			configuration(Config *cfg, QWidget *parent) const
 		{
-			return EngineZDaemonConfigBox::createStructure(cfg, parent);
+			return BaseEngineConfigBox::createStructure(ZDaemonMain::get(), cfg, parent);
 		}
 
 		unsigned short					defaultServerPort() const { return 10666; }

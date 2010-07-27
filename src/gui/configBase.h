@@ -29,7 +29,6 @@
 #include <QPushButton>
 #include <QStandardItem>
 
-
 // Base class for configuration group boxes.
 // This is the thing selected from the tree view on the left
 // of configuration dialog.

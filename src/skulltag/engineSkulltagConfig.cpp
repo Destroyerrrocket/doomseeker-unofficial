@@ -22,47 +22,32 @@
 //------------------------------------------------------------------------------
 
 #include "skulltag/engineSkulltagConfig.h"
+
 #include <QFileDialog>
 
-const // clear warnings
-#include "skulltag/skulltag.xpm"
-
-EngineSkulltagConfigBox::EngineSkulltagConfigBox(Config* cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
+EngineSkulltagConfigBox::EngineSkulltagConfigBox(const PluginInfo* plugin, Config* cfg, QWidget* parent) : BaseEngineConfigBox(plugin, cfg, parent)
 {
-	setupUi(this);
-
 	#ifdef Q_OS_WIN32
-		lblClientBinary->setText(tr("Path to executable:"));
-		frameServerBinary->hide();
+		makeClientOnly();
 	#endif
 
-	connect(btnBrowseClientBinary, SIGNAL( clicked() ), this, SLOT ( btnBrowseClientBinaryClicked() ));
-	connect(btnBrowseServerBinary, SIGNAL( clicked() ), this, SLOT ( btnBrowseServerBinaryClicked() ));
+	// Create the testing box, we might as well do this in code.
+	groupTesting = new QGroupBox();
+	groupTesting->setTitle(tr("Testing Releases"));
+	groupTesting->setCheckable(true);
+	groupTesting->setLayout(new QVBoxLayout());
+	groupTesting->layout()->addWidget(new QLabel(tr("Directory for testing releases:")));
+	addWidget(groupTesting);
+
+	QWidget *releasePathLayout = new QWidget();
+	releasePathLayout->setLayout(new QHBoxLayout());
+	leTestingPath = new QLineEdit();
+	btnBrowseTestingPath = new QPushButton("...");
+	releasePathLayout->layout()->addWidget(leTestingPath);
+	releasePathLayout->layout()->addWidget(btnBrowseTestingPath);
+	groupTesting->layout()->addWidget(releasePathLayout);
+
 	connect(btnBrowseTestingPath, SIGNAL( clicked() ), this, SLOT ( btnBrowseTestingPathClicked() ));
-}
-
-void EngineSkulltagConfigBox::btnBrowseClientBinaryClicked()
-{
-	QString filter;
-#if defined(Q_OS_WIN32)
-	filter = tr("Binary files (*.exe);;Any files (*)");
-#else
-	// Other platforms do not have an extension for their binary files.
-	filter = tr("Any files(*)");
-#endif
-	QString strFilepath = QFileDialog::getOpenFileName(this, tr("Doomseeker - choose Skulltag binary"), QString(), filter);
-	if(!strFilepath.isEmpty()) // don't update if nothing was selected.
-		leClientBinaryPath->setText(strFilepath);
-}
-
-void EngineSkulltagConfigBox::btnBrowseServerBinaryClicked()
-{
-	QString filter;
-	filter = tr("Any files(*)");
-
-	QString strFilepath = QFileDialog::getOpenFileName(this, tr("Doomseeker - choose Skulltag server binary"), QString(), filter);
-	if(!strFilepath.isEmpty()) // don't update if nothing was selected.
-		leServerBinaryPath->setText(strFilepath);
 }
 
 void EngineSkulltagConfigBox::btnBrowseTestingPathClicked()
@@ -72,31 +57,20 @@ void EngineSkulltagConfigBox::btnBrowseTestingPathClicked()
 		leTestingPath->setText(strDirpath);
 }
 
-ConfigurationBoxInfo* EngineSkulltagConfigBox::createStructure(Config* cfg, QWidget* parent)
+ConfigurationBoxInfo* EngineSkulltagConfigBox::createStructure(const PluginInfo* plugin, Config* cfg, QWidget* parent)
 {
-	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
-	pConfigurationBoxInfo->boxName = tr("Skulltag");
-	pConfigurationBoxInfo->confBox = new EngineSkulltagConfigBox(cfg, parent);
-	pConfigurationBoxInfo->icon = QPixmap(skulltag_xpm);
+	ConfigurationBoxInfo* pConfigurationBoxInfo = BaseEngineConfigBox::createStructure(plugin, cfg, parent);
+	delete pConfigurationBoxInfo->confBox;
+	pConfigurationBoxInfo->confBox = new EngineSkulltagConfigBox(plugin, cfg, parent);
 	return pConfigurationBoxInfo;
 }
 
 void EngineSkulltagConfigBox::readSettings()
 {
+	BaseEngineConfigBox::readSettings();
+
 	QString str;
 	SettingsData* setting;
-
-	setting = config->setting("SkulltagBinaryPath");
-	leClientBinaryPath->setText(setting->string());
-
-	setting = config->setting("SkulltagServerBinaryPath");
-	leServerBinaryPath->setText(setting->string());
-
-	setting = config->setting("SkulltagCustomParameters");
-	leCustomParameters->setText(setting->string());
-
-	setting = config->setting("SkulltagMasterserver");
-	leMasterserverAddress->setText(setting->string());
 
 	setting = config->setting("SkulltagEnableTesting");
 	groupTesting->setChecked(setting->boolean());
@@ -107,24 +81,10 @@ void EngineSkulltagConfigBox::readSettings()
 
 void EngineSkulltagConfigBox::saveSettings()
 {
+	BaseEngineConfigBox::saveSettings();
+
 	QString strVal;
 	SettingsData* setting;
-
-	strVal = leClientBinaryPath->text();
-	setting = config->setting("SkulltagBinaryPath");
-	setting->setValue(strVal);
-
-	strVal = leServerBinaryPath->text();
-	setting = config->setting("SkulltagServerBinaryPath");
-	setting->setValue(strVal);
-
-	strVal = leCustomParameters->text();
-	setting = config->setting("SkulltagCustomParameters");
-	setting->setValue(strVal);
-
-	strVal = leMasterserverAddress->text();
-	setting = config->setting("SkulltagMasterserver");
-	setting->setValue(strVal);
 
 	setting = config->setting("SkulltagEnableTesting");
 	setting->setValue(groupTesting->isChecked());

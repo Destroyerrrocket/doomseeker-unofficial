@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// engineVavoomConfig.h
+// engineConfigBase.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,31 +18,40 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2010 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#ifndef __ENGINE_VAVOOM_CONFIG_H_
-#define __ENGINE_VAVOOM_CONFIG_H_
+#ifndef __ENGINECONFIGBASE_H__
+#define __ENGINECONFIGBASE_H__
 
 #include "gui/configBase.h"
-#include "ui_engineVavoomConfig.h"
+#include "ui_engineConfigBase.h"
 
-class EngineVavoomConfigBox : public ConfigurationBaseBox, private Ui::EngineVavoomConfigBox
+class PluginInfo;
+
+class MAIN_EXPORT BaseEngineConfigBox : public ConfigurationBaseBox, private Ui::BaseEngineConfigBox
 {
-	Q_OBJECT
+		Q_OBJECT
 
 	public:
-		static ConfigurationBoxInfo* createStructure(Config* cfg, QWidget* parent = NULL);
+		static ConfigurationBoxInfo *createStructure(const PluginInfo *plugin, Config *cfg, QWidget *parent=NULL);
 
 		void readSettings();
 
 	protected:
-		EngineVavoomConfigBox(Config* cfg, QWidget* parent = NULL);
+		BaseEngineConfigBox(const PluginInfo *plugin, Config *cfg, QWidget *parent=NULL);
+
+		void addWidget(QWidget *widget);
+		void browseForBinary(QLineEdit *input, const QString &type);
+		void makeClientOnly();
 		void saveSettings();
 
 	protected slots:
 		void btnBrowseClientBinaryClicked();
 		void btnBrowseServerBinaryClicked();
+
+	private:
+		const PluginInfo *plugin;
 };
 
-#endif
+#endif /* __ENGINECONFIGBASE_H__ */
