@@ -27,7 +27,7 @@
 #include "gui/configBase.h"
 #include "ui_engineConfigBase.h"
 
-class PluginInfo;
+struct PluginInfo;
 
 class MAIN_EXPORT BaseEngineConfigBox : public ConfigurationBaseBox, private Ui::BaseEngineConfigBox
 {
