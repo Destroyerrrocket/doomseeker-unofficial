@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// ircclient.h
+// ircdocktabcontents.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,34 +20,41 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __IRCCLIENT_H__
-#define __IRCCLIENT_H__
+#include "ircdocktabcontents.h"
 
-#include "socketsignalsadapter.h"
-#include <QHostAddress>
-#include <QTcpSocket>
-
-class IRCClient : public QObject
+IRCDockTabContents::IRCDockTabContents(QWidget* parent)
+: QWidget(parent)
 {
-	Q_OBJECT
+	setupUi(this);
 
-	public:
-		IRCClient();
-		~IRCClient();
+	connect(btnSend, SIGNAL( clicked() ), this, SLOT( sendMessage() ));
+	connect(leCommandLine, SIGNAL( returnPressed() ), this, SLOT( sendMessage() ));
+}
 
-		void					connect(const QHostAddress&	address, unsigned short port);
-		void					connectSocketSignals(SocketSignalsAdapter* pAdapter);
-		void					disconnect();
+void IRCDockTabContents::receiveError(const QString& error)
+{
+	txtOutputWidget->moveCursor(QTextCursor::End);
+	txtOutputWidget->insertPlainText("Error: " + error + "\n");
+}
 
-		bool					isConnected() const;
+void IRCDockTabContents::receiveMessage(const QString& message)
+{
+	txtOutputWidget->moveCursor(QTextCursor::End);
+	txtOutputWidget->insertPlainText(message + "\n");
+}
 
-		bool					sendMessage(const QString& message);
-		
-	protected:
-		QTcpSocket				socket;
+void IRCDockTabContents::sendMessage()
+{
+	QString message = leCommandLine->text();
+	leCommandLine->setText("");
+	
+	pIrcAdapter->sendMessage(message);
+}
 
-	protected slots:
-		void					receiveSocketData();
-};
-
-#endif
+void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
+{
+	pIrcAdapter = pAdapter;
+	connect(pIrcAdapter, SIGNAL( error(const QString&) ), SLOT( receiveError(const QString& ) ));
+	connect(pIrcAdapter, SIGNAL( message(const QString&) ), SLOT( receiveMessage(const QString& ) ));
+	
+}

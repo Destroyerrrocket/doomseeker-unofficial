@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// ircclient.h
+// ircdocktabcontents.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,34 +20,37 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __IRCCLIENT_H__
-#define __IRCCLIENT_H__
+#ifndef __IRCDOCK_TAB_CONTENTS_H_
+#define __IRCDOCK_TAB_CONTENTS_H_
 
-#include "socketsignalsadapter.h"
-#include <QHostAddress>
-#include <QTcpSocket>
+#include "irc/ircadapterbase.h"
 
-class IRCClient : public QObject
+#include "ui_ircdocktabcontents.h"
+#include <QWidget>
+
+/**
+ *	@brief Dockable widget designed for IRC communication.
+ */
+class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 {
-	Q_OBJECT
+	Q_OBJECT;
 
 	public:
-		IRCClient();
-		~IRCClient();
-
-		void					connect(const QHostAddress&	address, unsigned short port);
-		void					connectSocketSignals(SocketSignalsAdapter* pAdapter);
-		void					disconnect();
-
-		bool					isConnected() const;
-
-		bool					sendMessage(const QString& message);
+		IRCDockTabContents(QWidget* parent = NULL);
 		
-	protected:
-		QTcpSocket				socket;
+		/**
+		 *	@brief Calling this multiple times on the same object will cause
+		 *	memory leaks.
+		 */
+		void				setIRCAdapter(IRCAdapterBase* pAdapter);
 
 	protected slots:
-		void					receiveSocketData();
+		void				receiveError(const QString& error);
+		void				receiveMessage(const QString& message);
+		void				sendMessage();
+
+	protected:
+		IRCAdapterBase*		pIrcAdapter;	
 };
 
 #endif

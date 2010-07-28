@@ -43,7 +43,6 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 		void				setupToolbar();
 
 	protected slots:
-		void				sendMessage();
 		void				toolBarAction(QAction* pAction);
 
 };

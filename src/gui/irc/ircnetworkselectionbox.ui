@@ -82,7 +82,7 @@
      <item row="0" column="1">
       <widget class="QLineEdit" name="leServerAddress">
        <property name="text">
-        <string>irc.skulltag.net</string>
+        <string>74.207.247.18</string>
        </property>
       </widget>
      </item>

@@ -23,31 +23,41 @@
 #include "ircclient.h"
 #include "log.h"
 
-IrcClient::IrcClient()
+IRCClient::IRCClient()
 {
+	QObject::connect(&socket, SIGNAL( readyRead() ), this, SLOT( receiveSocketData() ) );
 }
 
-IrcClient::~IrcClient()
+IRCClient::~IRCClient()
 {
 	disconnect();
 }
 
-bool IrcClient::connect(const QHostAddress&	address, unsigned short port)
+void IRCClient::connect(const QHostAddress&	address, unsigned short port)
 {
+	gLog << QString("Connecting: %1:%2\n").arg(address.toString()).arg(port);
 	socket.connectToHost(address, port);
 }
 
-void IrcClient::disconnect()
+void IRCClient::connectSocketSignals(SocketSignalsAdapter* pAdapter)
 {
-	socket.abort();
+	pAdapter->pSocket = &socket;
+	pAdapter->connect(&socket, SIGNAL( connected() ), SLOT( connected() ));
+	pAdapter->connect(&socket, SIGNAL( disconnected() ), SLOT( disconnected() ));
+	pAdapter->connect(&socket, SIGNAL( error(QAbstractSocket::SocketError) ), SLOT( errorReceived(QAbstractSocket::SocketError) ));
 }
 
-bool IrcClient::isConnected() const
+void IRCClient::disconnect()
+{
+	socket.disconnectFromHost();
+}
+
+bool IRCClient::isConnected() const
 {
 	return socket.state() == QTcpSocket::ConnectedState;
 }
 
-void IrcClient::receiveSocketData()
+void IRCClient::receiveSocketData()
 {
 	gLog << "IRC received: ";
 	for (int i = 0; socket.bytesAvailable() > 0; ++i)
@@ -56,8 +66,19 @@ void IrcClient::receiveSocketData()
 	}
 }
 
-bool IrcClient::sendMessage(const QString& message)
+bool IRCClient::sendMessage(const QString& message)
 {
+	if (!isConnected())
+	{
+		return false;
+	}
+
 	QByteArray messageContent = message.toAscii();
-	socket.write(messageContent);
+	messageContent.append("\r\n");
+	
+	gLog << QString("Sending message: %1").arg(QString(messageContent));
+	
+	qint64 numBytesWritten = socket.write(messageContent);
+	
+	return numBytesWritten == messageContent.size();
 }

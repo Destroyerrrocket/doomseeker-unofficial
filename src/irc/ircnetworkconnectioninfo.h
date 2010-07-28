@@ -31,7 +31,7 @@ struct IRCNetworkConnectionInfo
 	QString				alternateNick;
 	QString				nick;
 	QString				realName;
-	QHostAddress		serverAddress;
+	QString				serverAddress;
 	unsigned short		serverPort;
 	QString				serverPassword;
 };

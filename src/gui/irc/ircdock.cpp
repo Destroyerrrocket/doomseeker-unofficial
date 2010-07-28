@@ -21,7 +21,9 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircdock.h"
+#include "gui/irc/ircdocktabcontents.h"
 #include "gui/irc/ircnetworkselectionbox.h"
+#include "irc/ircnetworkadapter.h"
 
 #include <QToolBar>
 
@@ -30,15 +32,6 @@ IRCDock::IRCDock(QWidget* parent)
 {
 	setupUi(this);
 	setupToolbar();
-
-	connect(btnSend, SIGNAL( clicked() ), this, SLOT( sendMessage() ));
-	connect(leCommandLine, SIGNAL( returnPressed() ), this, SLOT( sendMessage() ));
-}
-
-void IRCDock::sendMessage()
-{
-	QString message = leCommandLine->text();
-	leCommandLine->setText("");
 }
 
 void IRCDock::setupToolbar()
@@ -65,8 +58,17 @@ void IRCDock::toolBarAction(QAction* pAction)
 		{
 			IRCNetworkConnectionInfo connectionInfo;
 			networkSelection.networkConnectionInfo(connectionInfo);
+			
+			IRCNetworkAdapter* pIRCNetworkAdapter = new IRCNetworkAdapter();
 
-
+			// Setup the UI tab for the new network.
+			IRCDockTabContents* pNewConnectionWidget = new IRCDockTabContents(this);
+			pNewConnectionWidget->setIRCAdapter(pIRCNetworkAdapter);
+			
+			// Connect to the network.
+			pIRCNetworkAdapter->connect(connectionInfo);
+			
+			tabWidget->addTab(pNewConnectionWidget, connectionInfo.serverAddress);
 		}
 	}
 }

@@ -51,6 +51,7 @@ add_definitions("-DINSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
 
 qt4_wrap_ui(doomseekerUI
 	gui/irc/ircdock.ui
+	gui/irc/ircdocktabcontents.ui
 	gui/irc/ircnetworkselectionbox.ui
 	gui/widgets/serverconsole.ui
 	gui/aboutDlg.ui
@@ -79,6 +80,7 @@ qt4_wrap_ui(doomseekerUI
 
 set(DOOMSEEKER_QT_FILES
 	gui/irc/ircdock.h
+	gui/irc/ircdocktabcontents.h
 	gui/irc/ircnetworkselectionbox.h
 	gui/models/serverlistmodel.h
 	gui/widgets/colorbutton.h
@@ -110,7 +112,9 @@ set(DOOMSEEKER_QT_FILES
 	gui/wadseekerconfigidgames.h
 	gui/wadseekerconfigsites.h
 	gui/wadseekerinterface.h
+	irc/ircadapterbase.h
 	irc/ircclient.h
+	irc/ircnetworkadapter.h
 	sdeapi/config.hpp
 	serverapi/rconprotocol.h
 	serverapi/server.h
@@ -122,6 +126,7 @@ set(DOOMSEEKER_QT_FILES
 	masterclient.h
 	mastermanager.h
 	refresher.h
+	socketsignalsadapter.h
 )
 
 qt_wrap_cpp(doomseekerWraps QT_FILES ${DOOMSEEKER_QT_FILES})
@@ -133,6 +138,7 @@ qt4_add_resources(doomseekerResources
 set(SOURCE_FILES
 	gui/helpers/playersdiagram.cpp
 	gui/irc/ircdock.cpp	
+	gui/irc/ircdocktabcontents.cpp
 	gui/irc/ircnetworkselectionbox.cpp
 	gui/models/serverlistcolumn.cpp
 	gui/models/serverlistmodel.cpp
@@ -167,6 +173,7 @@ set(SOURCE_FILES
 	gui/wadseekerconfigsites.cpp
 	gui/wadseekerinterface.cpp
 	irc/ircclient.cpp
+	irc/ircnetworkadapter.cpp
 	sdeapi/config.cpp
 	sdeapi/pluginloader.cpp
 	sdeapi/scanner.cpp
@@ -282,7 +289,7 @@ if(WIN32)
 endif(WIN32)
 
 if(NOT WIN32 AND NOT XCODE_VERSION)
-install(TARGETS doomseeker RUNTIME DESTINATION bin)
+	install(TARGETS doomseeker RUNTIME DESTINATION bin)
 endif(NOT WIN32 AND NOT XCODE_VERSION)
 
 if(UNIX AND NOT APPLE)
