@@ -350,6 +350,8 @@ void MainWindow::getServers()
 	// Check if this operation has any sense.
 	if (!isAnythingToRefresh())
 	{
+		gLog << tr("Senseless refresh operation attempted.");
+
 		QString message = tr("\
 Doomseeker is unable to proceed with the refresh \
 operation because one or more of the following problems occured:\n\
