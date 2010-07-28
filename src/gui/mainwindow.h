@@ -146,6 +146,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 *		crashes.
 		 */
 		void	fillQueryMenu(MasterManager* masterManager);
+		
+		bool	hasCustomServers() const;
 
 		void	initIP2CUpdater();
 		void	initIRCDock();
@@ -158,6 +160,16 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	initTrayIcon();
 
 		void	ip2cJobsFinished();
+		
+		/**
+		 *	@brief Will check if refresh operation has any sense.
+		 *
+		 *	@return True if there is anything to refresh (be it master or
+		 *		even a single custom server). False if pressing "Get Servers"
+		 *		button will produce no results whatsoever.
+		 */
+		bool	isAnythingToRefresh() const;
+		bool	isAnyMasterEnabled() const;
 
 		/**
 		 *	Generates command line info for specified server.

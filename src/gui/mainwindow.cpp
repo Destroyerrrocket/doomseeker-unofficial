@@ -347,11 +347,31 @@ void MainWindow::finishedQueryingMaster(MasterClient* master)
 
 void MainWindow::getServers()
 {
+	// Check if this operation has any sense.
+	if (!isAnythingToRefresh())
+	{
+		QString message = tr("\
+Doomseeker is unable to proceed with the refresh \
+operation because one or more of the following problems occured:\n\
+- Plugins are missing from the engines/ directory\n\
+- All master servers have been disabled from the query menu\n\
+- There are no custom servers present.\n");
+		QMessageBox::warning(this, tr("Doomseeker - senseless operation"), message);
+		return;
+	}
+	
 	bTotalRefreshInProcess = true;
 	autoRefreshTimer.stop();
 	gLog << tr("Total refresh process initialized!");
 	serverTableHandler->clearTable();
 	refreshCustomServers();
+	
+	bool bAtLeastOneEnabled = false;
+
+	if (!isAnyMasterEnabled())
+	{
+		gLog << tr("Warning: No master servers were enabled for this refresh. Check your query menu or engines/ directory. Custom servers will still refresh.");
+	}
 	
 	masterManager->clearServersList();
 	for (int i = 0; i < masterManager->numMasters(); ++i)
@@ -363,6 +383,12 @@ void MainWindow::getServers()
 			Main::refreshingThread->registerMaster(pMaster);
 		}
 	}
+}
+
+bool MainWindow::hasCustomServers() const
+{
+	CustomServers* customServers = masterManager->customServs();
+	return customServers->numServers() > 0;
 }
 
 void MainWindow::initAutoRefreshTimer()
@@ -615,6 +641,26 @@ void MainWindow::ip2cStartUpdate()
 	
 	ip2cUpdater->downloadDatabase(downloadUrl);
 	statusBar()->addPermanentWidget(ip2cUpdateProgressBar);
+}
+
+bool MainWindow::isAnythingToRefresh() const
+{
+	return hasCustomServers() || isAnyMasterEnabled();
+}
+
+bool MainWindow::isAnyMasterEnabled() const
+{
+	for (int i = 0; i < masterManager->numMasters(); ++i)
+	{
+		MasterClient* pMaster = (*masterManager)[i];
+		
+		if (pMaster->isEnabled())
+		{
+			return true;
+		}
+	}
+	
+	return false;
 }
 
 void MainWindow::masterManagerMessages(MasterClient* pSender, const QString& title, const QString& content, bool isError)
