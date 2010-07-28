@@ -301,7 +301,7 @@ MessageResult GameRunner::hostGetBinary(bool bOfflinePlay)
 
 	QFileInfo fi(executablePath);
 
-	if (!fi.isFile())
+	if (!fi.isFile() && !fi.isBundle())
 	{
 		QString error = tr("%1\n doesn't exist or is not a file.").arg(fi.filePath());
 		return MessageResult(true, RESULT_CAPTION, error);
