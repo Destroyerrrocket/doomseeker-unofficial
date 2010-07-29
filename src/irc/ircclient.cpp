@@ -59,10 +59,10 @@ bool IRCClient::isConnected() const
 
 void IRCClient::receiveSocketData()
 {
-	gLog << "IRC received: ";
-	for (int i = 0; socket.bytesAvailable() > 0; ++i)
+	while (socket.bytesAvailable() > 0)
 	{
-		gLog << QString("%1: %2").arg(i).arg( QString(socket.readLine()) );
+		QString responseLine = socket.readLine();
+		emit ircServerResponse(responseLine);	
 	}
 }
 
@@ -75,8 +75,6 @@ bool IRCClient::sendMessage(const QString& message)
 
 	QByteArray messageContent = message.toAscii();
 	messageContent.append("\r\n");
-	
-	gLog << QString("Sending message: %1").arg(QString(messageContent));
 	
 	qint64 numBytesWritten = socket.write(messageContent);
 	

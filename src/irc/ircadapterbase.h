@@ -25,11 +25,23 @@
 
 #include <QObject>
 
+/**
+ *	@brief Provides an unified communication interface between a client and
+ *	IRC network entities.
+ */
 class IRCAdapterBase : public QObject
 {
 	Q_OBJECT
 	
 	public slots:
+		/**
+		 *	@brief Implemented to handle and send a message to the IRC network
+		 *	entity.
+		 *
+		 *	Each implementation treats this slot a bit differently.
+		 *	Please refer to the documentation in the classes that derive from
+		 *	this one.
+		 */
 		virtual void		sendMessage(const QString& error) = 0;
 	
 	signals:

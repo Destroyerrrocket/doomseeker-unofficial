@@ -34,7 +34,7 @@ IRCDockTabContents::IRCDockTabContents(QWidget* parent)
 void IRCDockTabContents::receiveError(const QString& error)
 {
 	txtOutputWidget->moveCursor(QTextCursor::End);
-	txtOutputWidget->insertPlainText("Error: " + error + "\n");
+	txtOutputWidget->insertHtml("<font color='#ff0000'>Error: " + error + "</font><br />");
 }
 
 void IRCDockTabContents::receiveMessage(const QString& message)

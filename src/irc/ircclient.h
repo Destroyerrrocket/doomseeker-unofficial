@@ -43,6 +43,9 @@ class IRCClient : public QObject
 
 		bool					sendMessage(const QString& message);
 		
+	signals:
+		void					ircServerResponse(const QString& message);
+		
 	protected:
 		QTcpSocket				socket;
 
