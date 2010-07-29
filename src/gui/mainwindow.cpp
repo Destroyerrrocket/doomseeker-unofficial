@@ -61,6 +61,17 @@ MainWindow::MainWindow(int argc, char** argv, Config* config)
 	setupIcons();
 	setupToolBar();	
 	
+	if (Main::enginePlugins->numPlugins() == 0)
+	{
+		QString message = tr("\
+Warning: \n\
+Doomseeker failed to detect any plugins.\n\
+While the core application will still work its functionality is going to be limited.\n\
+One of the proper locations for plugin modules is the engines/ directory.\n\
+");
+		QMessageBox::warning(NULL, tr("Doomseeker - plugin load failure"), message);
+	}
+	
 	ip2cParser = NULL;
 	
 	initIP2CUpdater();
