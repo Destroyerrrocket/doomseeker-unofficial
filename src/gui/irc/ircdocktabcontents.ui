@@ -28,12 +28,17 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QLineEdit" name="leCommandLine">
+        <widget class="MemoryLineEdit" name="leCommandLine">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Courier New</family>
+          </font>
          </property>
         </widget>
        </item>
@@ -84,6 +89,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MemoryLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/widgets/memorylineedit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

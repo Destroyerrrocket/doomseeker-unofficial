@@ -32,17 +32,39 @@
 class IRCAdapterBase : public QObject
 {
 	Q_OBJECT
-	
-	public slots:
+		
+	public:
 		/**
-		 *	@brief Implemented to handle and send a message to the IRC network
+		 *	@brief Implement to handle and send a message to the IRC network
 		 *	entity.
 		 *
-		 *	Each implementation treats this slot a bit differently.
+		 *	This is meant for internal use by the IRCAdapterBase derivatives.
+		 *
+		 *	Each implementation treats this method a bit differently.
 		 *	Please refer to the documentation in the classes that derive from
 		 *	this one.
-		 */
-		virtual void		sendMessage(const QString& error) = 0;
+		 *
+		 *	@param pOrigin
+		 *		Origin of this message. Can be used to determine where the error
+		 *		and message signals should be passed.
+		 */	
+		virtual void		doSendMessage(const QString& message, IRCAdapterBase* pOrigin) = 0;
+		
+		void				emitError(const QString& strError)
+		{
+			emit error(strError);
+		}
+		
+		void				emitMessage(const QString& strMessage)
+		{
+			emit message(strMessage);
+		}
+			
+	public slots:
+		void				sendMessage(const QString& message)
+		{
+			doSendMessage(message, NULL);
+		}
 	
 	signals:
 		void				error(const QString& error);

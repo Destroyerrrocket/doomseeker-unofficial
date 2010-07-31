@@ -20,45 +20,7 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
-
 #include "serverconsole.h"
-
-MemoryLineEdit::MemoryLineEdit(QWidget *parent) : QLineEdit(parent)
-{
-	connect(this, SIGNAL(returnPressed()), this, SLOT(storeCommand()));
-}
-
-void MemoryLineEdit::keyPressEvent(QKeyEvent *event)
-{
-	if(history.count() != 0)
-	{
-		if(event->key() == Qt::Key_Up)
-		{
-			if(position != history.begin())
-				position--;
-			setText(*position);
-		}
-		else if(event->key() == Qt::Key_Down && position != history.end())
-		{
-			position++;
-			if(position != history.end())
-				setText(*position);
-			else
-				setText("");
-		}
-	}
-	QLineEdit::keyPressEvent(event);
-}
-
-void MemoryLineEdit::storeCommand()
-{
-	history.append(text());
-	if(history.count() > 50)
-		history.removeFirst();
-	position = history.end();
-}
-
-////////////////////////////////////////////////////////////////////////////////
 
 ServerConsole::ServerConsole(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f)
 {

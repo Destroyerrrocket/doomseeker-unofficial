@@ -9,6 +9,7 @@
 #include "irc/ircadapterbase.h"
 #include "irc/ircclient.h"
 #include "irc/ircnetworkconnectioninfo.h"
+#include "irc/ircresponseparser.h"
 #include "socketsignalsadapter.h"
 
 class IRCSocketSignalsAdapter;
@@ -28,7 +29,6 @@ class IRCNetworkAdapter : public IRCAdapterBase
 	
 		void						connect(const IRCNetworkConnectionInfo& connectionInfo);
 		
-	public slots:
 		/**
 		 *	@brief Implemented to support direct communication between client 
 		 *	and server.
@@ -41,16 +41,23 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 *	doesn't require clients to prepend the messages with a slash this
 		 *	class always does - the slash character is stripped, then the 
 		 *	remainder of the message is sent 'as is'.
+		 *
+		 *	@param pOrigin
+		 *		If this is not null the IRCNetworkAdapter will attempt to pass
+		 *		some message and error signals through this pOrigin. Otherwise
+		 *		these signals will be sent directly.
 		 */
-		void						sendMessage(const QString& message);
+		void						doSendMessage(const QString& message, IRCAdapterBase* pOrigin);				
 		
 	protected:
 		IRCNetworkConnectionInfo	connectionInfo;
 		IRCClient					ircClient;
+		IRCResponseParser			ircResponseParser;
 		IRCSocketSignalsAdapter*	pIrcSocketSignalsAdapter;
-		
+	
 	protected slots:
 		void						ircServerResponse(const QString& message);
+		void						sendPong(const QString& toWhom);
 };
 
 class IRCSocketSignalsAdapter : public SocketSignalsAdapter

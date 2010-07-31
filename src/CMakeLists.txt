@@ -85,6 +85,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/models/serverlistmodel.h
 	gui/widgets/colorbutton.h
 	gui/widgets/dockedwidgets.h
+	gui/widgets/memorylineedit.h
 	gui/widgets/serverconsole.h
 	gui/widgets/serverlistview.h
 	gui/widgets/serversstatuswidget.h	
@@ -113,8 +114,10 @@ set(DOOMSEEKER_QT_FILES
 	gui/wadseekerconfigsites.h
 	gui/wadseekerinterface.h
 	irc/ircadapterbase.h
+	irc/ircchatadapter.h
 	irc/ircclient.h
 	irc/ircnetworkadapter.h
+	irc/ircresponseparser.h
 	sdeapi/config.hpp
 	serverapi/rconprotocol.h
 	serverapi/server.h
@@ -144,6 +147,7 @@ set(SOURCE_FILES
 	gui/models/serverlistmodel.cpp
 	gui/models/serverlistrowhandler.cpp
 	gui/widgets/colorbutton.cpp
+	gui/widgets/memorylineedit.cpp
 	gui/widgets/serverconsole.cpp
 	gui/widgets/serverlistcontextmenu.cpp
 	gui/widgets/serverlistview.cpp
@@ -172,8 +176,10 @@ set(SOURCE_FILES
 	gui/wadseekerconfigidgames.cpp
 	gui/wadseekerconfigsites.cpp
 	gui/wadseekerinterface.cpp
+	irc/ircchatadapter.cpp
 	irc/ircclient.cpp
 	irc/ircnetworkadapter.cpp
+	irc/ircresponseparser.cpp
 	sdeapi/config.cpp
 	sdeapi/pluginloader.cpp
 	sdeapi/scanner.cpp

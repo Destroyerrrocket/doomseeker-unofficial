@@ -32,6 +32,8 @@ class IRCClient : public QObject
 	Q_OBJECT
 
 	public:
+		static const int		MAX_MESSAGE_LENGTH = 510;
+	
 		IRCClient();
 		~IRCClient();
 

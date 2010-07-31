@@ -606,6 +606,11 @@ void MainWindow::ip2cJobsFinished()
 	{
 		delete ip2cParser;
 		ip2cParser = NULL;	
+		
+		QString message = tr("IP2C parsing finished.");
+		
+		gLog << message;
+		statusBar()->showMessage(message);
 	}
 	
 	if (ip2cUpdater != NULL)
@@ -613,7 +618,10 @@ void MainWindow::ip2cJobsFinished()
 		delete ip2cUpdater;
 		ip2cUpdater = NULL;
 		
-		gLog << tr("IP2C update finished.");
+		QString message = tr("IP2C update finished.");
+		
+		gLog << message;
+		statusBar()->showMessage(message);
 	}
 }
 

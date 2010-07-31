@@ -5,27 +5,7 @@
 #include <QList>
 
 #include "ui_serverconsole.h"
-
-/**
- * Stores the input into a history that can be accessed by pressing up and down.
- */
-class MemoryLineEdit : public QLineEdit
-{
-	Q_OBJECT
-
-	public:
-		MemoryLineEdit(QWidget *parent=0);
-
-	protected:
-		void	keyPressEvent(QKeyEvent *event);
-
-	protected slots:
-		void	storeCommand();
-
-	private:
-		QList<QString>				history;
-		QList<QString>::iterator	position;
-};
+#include "gui/widgets/memorylineedit.h"
 
 class ServerConsole : public QWidget, private Ui::ServerConsole
 {

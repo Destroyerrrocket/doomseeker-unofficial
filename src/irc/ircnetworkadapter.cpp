@@ -11,6 +11,8 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 	ircClient.connectSocketSignals(pIrcSocketSignalsAdapter);
 	
 	QObject::connect(&ircClient, SIGNAL( ircServerResponse(const QString&) ), this, SLOT( ircServerResponse(const QString&) ) );
+	
+	QObject::connect(&ircResponseParser, SIGNAL ( sendPongMessage(const QString&) ), this, SLOT( sendPong(const QString&) ) );
 }
 
 IRCNetworkAdapter::~IRCNetworkAdapter()
@@ -26,13 +28,13 @@ void IRCNetworkAdapter::connect(const IRCNetworkConnectionInfo& connectionInfo)
 	ircClient.connect(address, connectionInfo.serverPort);
 }
 
-void IRCNetworkAdapter::ircServerResponse(const QString& message)
+void IRCNetworkAdapter::doSendMessage(const QString& message, IRCAdapterBase* pOrigin)
 {
-	emit this->message(message.trimmed());
-}
+	if (pOrigin == NULL)
+	{
+		pOrigin = this;
+	}
 
-void IRCNetworkAdapter::sendMessage(const QString& message)
-{
 	// First of all trim whitespaces.
 	QString formattedMessage = message.trimmed();
 	if (!formattedMessage.startsWith('/'))
@@ -42,8 +44,29 @@ void IRCNetworkAdapter::sendMessage(const QString& message)
 	else
 	{
 		formattedMessage = formattedMessage.remove(0, 1);
-		ircClient.sendMessage(formattedMessage);
+		
+		if (formattedMessage.size() > IRCClient::MAX_MESSAGE_LENGTH)
+		{
+			pOrigin->emitError(tr("Message is too large."));
+		}
+		else
+		{
+			ircClient.sendMessage(formattedMessage);
+		}
 	}
+}
+
+void IRCNetworkAdapter::ircServerResponse(const QString& message)
+{
+	ircResponseParser.parse(message);
+
+	emit this->message(message.trimmed());
+}
+
+void IRCNetworkAdapter::sendPong(const QString& toWhom)
+{
+	QString message = QString("/PONG %1").arg(toWhom);
+	sendMessage(message);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
