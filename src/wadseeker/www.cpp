@@ -261,12 +261,19 @@ bool WWWSeeker::shouldCheckIdgames() const
 	}
 	
 	// From now on checks will return true on success.
-	if (idgamesHasHighPriority && hasCustomSiteBeenProcessed())
+	if (idgamesHasHighPriority)
 	{
-		return true;
+		// The checks below see if any result can be obtained through custom
+		// site; at this point only custom side could have produced direct
+		// or site links.
+		if (hasCustomSiteBeenProcessed() 
+		&&  directLinks.isEmpty() 
+		&&  siteLinks.isEmpty())
+		{
+			return true;
+		}
 	}
-	
-	if (!hasMoreUrls())
+	else if (!hasMoreUrls())
 	{
 		return true;
 	}
