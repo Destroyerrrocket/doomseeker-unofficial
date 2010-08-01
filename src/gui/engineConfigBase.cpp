@@ -79,6 +79,11 @@ ConfigurationBoxInfo *BaseEngineConfigBox::createStructure(const PluginInfo *plu
 	return pConfigurationBoxInfo;
 }
 
+QString BaseEngineConfigBox::generatePluginsConfigKeyPrefix() const
+{
+	return QString(plugin->name).replace(" ", "_");
+}
+
 void BaseEngineConfigBox::makeClientOnly()
 {
 	lblClientBinary->setText(tr("Path to executable:"));
@@ -89,20 +94,22 @@ void BaseEngineConfigBox::readSettings()
 {
 	QString str;
 	SettingsData* setting;
+	
+	QString keyPrefix = generatePluginsConfigKeyPrefix();
 
-	setting = config->setting(QString(plugin->name) + "BinaryPath");
+	setting = config->setting(keyPrefix + "BinaryPath");
 	leClientBinaryPath->setText(setting->string());
 
-	setting = config->setting(QString(plugin->name) + "CustomParameters");
+	setting = config->setting(keyPrefix + "CustomParameters");
 	leCustomParameters->setText(setting->string());
 
 	if(plugin->pInterface->hasMasterServer())
 	{
-		setting = config->setting(QString(plugin->name) + "Masterserver");
+		setting = config->setting(keyPrefix + "Masterserver");
 		leMasterserverAddress->setText(setting->string());
 	}
 
-	setting = config->setting(QString(plugin->name) + "ServerBinaryPath");
+	setting = config->setting(keyPrefix + "ServerBinaryPath");
 	leServerBinaryPath->setText(setting->string());
 }
 
@@ -110,23 +117,25 @@ void BaseEngineConfigBox::saveSettings()
 {
 	QString strVal;
 	SettingsData *setting;
+	
+	QString keyPrefix = generatePluginsConfigKeyPrefix();
 
 	strVal = leClientBinaryPath->text();
-	setting = config->setting(QString(plugin->name) + "BinaryPath");
+	setting = config->setting(keyPrefix + "BinaryPath");
 	setting->setValue(strVal);
 
 	strVal = leCustomParameters->text();
-	setting = config->setting(QString(plugin->name) + "CustomParameters");
+	setting = config->setting(keyPrefix + "CustomParameters");
 	setting->setValue(strVal);
 
 	if(plugin->pInterface->hasMasterServer())
 	{
 		strVal = leMasterserverAddress->text();
-		setting = config->setting(QString(plugin->name) + "Masterserver");
+		setting = config->setting(keyPrefix + "Masterserver");
 		setting->setValue(strVal);
 	}
 
 	strVal = leServerBinaryPath->text();
-	setting = config->setting(QString(plugin->name) + "ServerBinaryPath");
+	setting = config->setting(keyPrefix + "ServerBinaryPath");
 	setting->setValue(strVal);
 }

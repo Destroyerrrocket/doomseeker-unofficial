@@ -52,6 +52,8 @@ class MAIN_EXPORT BaseEngineConfigBox : public ConfigurationBaseBox, private Ui:
 
 	private:
 		const PluginInfo *plugin;
+		
+		QString			generatePluginsConfigKeyPrefix() const;
 };
 
 #endif /* __ENGINECONFIGBASE_H__ */
