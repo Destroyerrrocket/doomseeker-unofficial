@@ -23,6 +23,7 @@
 #ifndef __INI_H_
 #define __INI_H_
 
+#include "global.h"
 #include <map>
 #include <QFile>
 #include <QString>
@@ -37,7 +38,7 @@ using namespace std;
  *	Structure containing variable's value and comments. The name of the
  *	variable is not contained in the structure itself to prevent redundancy.
  */
-class IniVariable
+class MAIN_EXPORT IniVariable
 {
 	public:
 		IniVariable() {}
@@ -80,7 +81,7 @@ class IniVariable
 
 	protected:
 		friend class Ini;
-		friend class IniSection;
+		friend struct IniSection;
 		friend class TestReadINIVariable;
 		friend class TestReadINIList;
 
@@ -116,7 +117,7 @@ typedef map<QString, IniVariable>::const_iterator 	IniVariablesConstIt;
  *	Contains list of variables that are in this section, section's comments
  *	and namelists.
  */
-struct IniSection
+struct MAIN_EXPORT IniSection
 {
 	/**
 	 *	@brief A name of this section with lettercase preserved.
@@ -206,7 +207,7 @@ typedef map<QString, IniSection>::const_iterator 	IniSectionsConstIt;
  *	IMPORTANT: If file's top comment should be recognised as such it needs to be
  *	separated by two empty lines from the rest of the file.
  */
-class Ini : public QObject
+class MAIN_EXPORT Ini : public QObject
 {
 	public:
 		/**

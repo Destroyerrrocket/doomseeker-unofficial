@@ -25,6 +25,8 @@
 #include "main.h"
 #include "strings.h"
 
+#include <QMessageBox>
+
 const int WadSeekerInterface::UPDATE_INTERVAL_MS = 500;
 
 void WadSeekerInterface::initMessageColors()
@@ -321,10 +323,14 @@ void WadSeekerInterface::setupIdgames()
 
 void WadSeekerInterface::showEvent(QShowEvent* event)
 {
-	if (bAutomatic && !bFirstShown)
+	if (!bFirstShown)
 	{
 		bFirstShown = true;
-		startSeeking(seekedWads);
+		
+		if (bAutomatic)
+		{
+			startSeeking(seekedWads);
+		}
 	}
 }
 

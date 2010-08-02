@@ -244,8 +244,10 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 
 bool OdamexServer::sendRequest(QByteArray &data)
 {
-	const char challenge[4] = {SERVER_CHALLENGE};
-	const QByteArray chall(challenge, 4);
-	data.append(chall);
+	// This construction and cast to (char*) removes warnings from MSVC.
+	const unsigned char challenge[] = {SERVER_CHALLENGE};
+	
+	const QByteArray challengeByteArray((char*)challenge, 4);
+	data.append(challengeByteArray);
 	return true;
 }

@@ -241,9 +241,11 @@ Server::Response ZDaemonServer::readRequest(QByteArray &data)
 
 bool ZDaemonServer::sendRequest(QByteArray &data)
 {
-	const char challenge[16] = { SERVER_CHALLENGE, SERVER_PROTOCOL, SERVER_VERSION, WRITEINT32_DIRECT(millisecondTime()) };
-	const QByteArray chall(challenge, 16);
-	data.append(chall);
+	// This construction and cast to (char*) removes warnings from MSVC.
+	const unsigned char challenge[16] = { SERVER_CHALLENGE, SERVER_PROTOCOL, SERVER_VERSION, WRITEINT32_DIRECT(millisecondTime()) };
+	
+	const QByteArray challengeByteArray((char*)challenge, 16);
+	data.append(challengeByteArray);
 	return true;
 }
 

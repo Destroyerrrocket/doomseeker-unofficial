@@ -632,7 +632,9 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 	for (sectionit = sections.begin(); sectionit != sections.end(); ++sectionit)
 	{
 		const IniSection& section = sectionit->second;
-		const QString& sectionTopComment = section.topComment;
+		QString sectionTopComment = section.topComment;
+		
+		sectionTopComment = Strings::trim(sectionTopComment, "\r\n");
 	
 		// Output section's top comment
 		if (!sectionTopComment.isEmpty())
@@ -652,11 +654,14 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 		output.append("\n[ ");
 		output.append(section.name);
 		output.append(" ]");
-		if (!section.sideComment.isEmpty())
+		
+		QString sectionSideComment = section.sideComment;
+		sectionSideComment = sectionSideComment.replace("\n", " ");
+		if (!sectionSideComment.isEmpty())
 		{
 			// Output section's side comment
 			output.append("\t# ");
-			output.append(section.sideComment);
+			output.append(sectionSideComment);
 		}
 		output.append("\n");
 
@@ -666,7 +671,9 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 			const IniVariable& variable = varit->second;
 		
 			// Output variable's top comment
-			const QString& variableTopComment = variable.topComment;
+			QString variableTopComment = variable.topComment;
+			variableTopComment = Strings::trim(variableTopComment, "\r\n");
+			
 			if (!variableTopComment.isEmpty())
 			{
 				QStringList commentList = variableTopComment.split('\n');
@@ -679,16 +686,29 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 				}
 			}
 
-			// Output variable's name and value
+			// Output variable's name and value, make sure to wrap values
+			// with '#' or whitespace characters wrapped in quotation marks.
+			QString formattedValue = variable.value;
+			
+			QRegExp whiteSpace("\\s");
+			
+			if (variable.value.contains(whiteSpace) || variable.value.contains("#"))
+			{
+				formattedValue = "\"" + formattedValue + "\"";
+			}
+			
 			output.append(variable.key);
 			output.append(" = ");
-			output.append(variable.value);
+			output.append(formattedValue);
 
 			// Output variable's side comment
-			if (!varit->second.sideComment.isEmpty())
+			QString variableSideComment = varit->second.sideComment;
+			variableSideComment = variableSideComment.replace("\n", " ");
+			
+			if (!variableSideComment.isEmpty())
 			{
 				output.append("\t#");
-				output.append(variable.sideComment);
+				output.append(variableSideComment);
 			}
 
 			output.append("\n", 1);
@@ -697,9 +717,12 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 		QVector<IniVariable>::const_iterator nameit;
 		for (nameit = sectionit->second.nameList.begin(); nameit != sectionit->second.nameList.end(); ++nameit)
 		{
-			if (!nameit->topComment.isEmpty())
+			QString nameListTopComment = nameit->topComment;
+			nameListTopComment = Strings::trim(nameListTopComment, "\r\n");
+		
+			if (!nameListTopComment.isEmpty())
 			{
-				QStringList commentList = nameit->topComment.split('\n');
+				QStringList commentList = nameListTopComment.split('\n');
 				foreach (QString comment, commentList)
 				{
 					output.append("# ");
@@ -710,9 +733,12 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 
 			// Output variable's name and value
 			output.append(nameit->value);
+			
+			QString nameListSideComment = nameit->sideComment;
+			nameListSideComment = nameListSideComment.replace("\n", " ");
 
 			// Output variable's side comment
-			if (!nameit->sideComment.isEmpty())
+			if (!nameListSideComment.isEmpty())
 			{
 				output.append("\t#");
 				output.append(nameit->sideComment);

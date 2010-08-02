@@ -126,6 +126,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		QMenu*				trayIconMenu;
 
 		void	changeEvent(QEvent* event);
+		
+		bool	checkWadseekerValidity();
 
 		/**
 		 *	Connects signals from objects and controls of the main window

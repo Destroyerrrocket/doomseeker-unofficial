@@ -243,6 +243,27 @@ void MainWindow::changeEvent(QEvent* event)
 	}
 }
 
+bool MainWindow::checkWadseekerValidity()
+{
+	QString targetDirPath = *Main::ini->setting("Wadseeker", "TargetDirectory");
+	QDir targetDir(targetDirPath);
+	QFileInfo targetDirFileInfo(targetDirPath);
+	
+	
+	if (targetDirPath.isEmpty() || !targetDir.exists() || !targetDirFileInfo.isWritable())
+	{
+		QString message = tr("Wadseeker will not work correctly: \n\
+Target directory is either not set, is invalid or cannot be written to.\n\
+Please review your Configuration and/or refer to online help available from \
+the Help menu.");
+	
+		QMessageBox::warning(this, tr("Doomseeker - Wadseeker error"), message);
+		return false;
+	}
+	
+	return true;
+}
+
 void MainWindow::closeEvent(QCloseEvent* event)
 {
 	// Check if tray icon is available and if we want to minimize to tray icon
@@ -788,6 +809,11 @@ void MainWindow::menuViewIRC()
 
 void MainWindow::menuWadSeeker()
 {
+	if (!checkWadseekerValidity())
+	{
+		return;
+	}
+
 	WadSeekerInterface wadSeekerInterface(this);
 	wadSeekerInterface.exec();
 }
@@ -868,6 +894,11 @@ bool MainWindow::obtainJoinCommandLine(const Server* server, CommandLineInfo& cl
 
 				if (QMessageBox::question(this, filesMissingCaption, filesMissingMessage, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 				{
+					if (!checkWadseekerValidity())
+					{
+						return false;
+					}
+				
 					if (!jError.missingIwad.isEmpty())
 					{
 						jError.missingWads.append(jError.missingIwad);

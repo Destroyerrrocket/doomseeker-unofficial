@@ -131,8 +131,10 @@ Server::Response VavoomServer::readRequest(QByteArray &data)
 
 bool VavoomServer::sendRequest(QByteArray &data)
 {
-	const char challenge[11] = { NETPACKET_CTL, CCREQ_SERVER_INFO, 6, 'V','A','V','O','O','M', 0, NET_PROTOCOL_VERSION };
-	const QByteArray chall(challenge, 10);
-	data.append(chall);
+	// This construction and cast to (char*) removes warnings from MSVC.
+	const unsigned char challenge[11] = { NETPACKET_CTL, CCREQ_SERVER_INFO, 6, 'V','A','V','O','O','M', 0, NET_PROTOCOL_VERSION };
+	
+	const QByteArray challengeByteArray((char*)challenge, 11);
+	data.append(challengeByteArray);
 	return true;
 }

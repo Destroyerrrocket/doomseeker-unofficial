@@ -47,6 +47,11 @@ include_directories(
 if(WIN32)
 	add_definitions(-DMODE_MAIN)
 endif(WIN32)
+
+if (MSVC)
+	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif (MSVC)
+
 add_definitions("-DINSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
 
 qt4_wrap_ui(doomseekerUI
