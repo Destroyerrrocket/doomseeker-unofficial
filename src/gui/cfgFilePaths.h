@@ -32,7 +32,7 @@ class FilePathsConfigBox : public ConfigurationBaseBox, private Ui::FilePathsCon
 	Q_OBJECT
 
 	protected:
-		FilePathsConfigBox(Config*, QWidget* parent = 0);
+		FilePathsConfigBox(IniSection*, QWidget* parent = 0);
 		void 		addPath(const QString& strPath);
 		bool		isPathAlreadyDefined(const QString& path);
 		void 		saveSettings();
@@ -42,7 +42,7 @@ class FilePathsConfigBox : public ConfigurationBaseBox, private Ui::FilePathsCon
 		void 		btnRemoveWadPath_Click();
 
 	public:
-		static ConfigurationBoxInfo* 	createStructure(Config* cfg, QWidget* parent = NULL);
+		static ConfigurationBoxInfo* 	createStructure(IniSection* cfg, QWidget* parent = NULL);
 
 		void 		readSettings();
 };

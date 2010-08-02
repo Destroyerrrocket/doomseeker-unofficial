@@ -56,8 +56,6 @@ class ChocolateDoomServer : public Server
 
 		Response		readRequest(QByteArray &data);
 		bool			sendRequest(QByteArray &data);
-
-		QString			binary(bool server, QString &error) const;
 };
 
 #endif /* __CHOCOLATEDOOMSERVER_H__ */

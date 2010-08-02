@@ -25,7 +25,7 @@
 
 #include <QFileDialog>
 
-EngineSkulltagConfigBox::EngineSkulltagConfigBox(const PluginInfo* plugin, Config* cfg, QWidget* parent) : BaseEngineConfigBox(plugin, cfg, parent)
+EngineSkulltagConfigBox::EngineSkulltagConfigBox(const PluginInfo* plugin, IniSection* cfg, QWidget* parent) : BaseEngineConfigBox(plugin, cfg, parent)
 {
 	#ifdef Q_OS_WIN32
 		makeClientOnly();
@@ -57,7 +57,7 @@ void EngineSkulltagConfigBox::btnBrowseTestingPathClicked()
 		leTestingPath->setText(strDirpath);
 }
 
-ConfigurationBoxInfo* EngineSkulltagConfigBox::createStructure(const PluginInfo* plugin, Config* cfg, QWidget* parent)
+ConfigurationBoxInfo* EngineSkulltagConfigBox::createStructure(const PluginInfo* plugin, IniSection* cfg, QWidget* parent)
 {
 	ConfigurationBoxInfo* pConfigurationBoxInfo = BaseEngineConfigBox::createStructure(plugin, cfg, parent);
 	delete pConfigurationBoxInfo->confBox;
@@ -69,14 +69,8 @@ void EngineSkulltagConfigBox::readSettings()
 {
 	BaseEngineConfigBox::readSettings();
 
-	QString str;
-	SettingsData* setting;
-
-	setting = config->setting("SkulltagEnableTesting");
-	groupTesting->setChecked(setting->boolean());
-
-	setting = config->setting("SkulltagTestingPath");
-	leTestingPath->setText(setting->string());
+	groupTesting->setChecked(*config->setting("SkulltagEnableTesting"));
+	leTestingPath->setText(*config->setting("SkulltagTestingPath"));
 }
 
 void EngineSkulltagConfigBox::saveSettings()
@@ -84,12 +78,9 @@ void EngineSkulltagConfigBox::saveSettings()
 	BaseEngineConfigBox::saveSettings();
 
 	QString strVal;
-	SettingsData* setting;
 
-	setting = config->setting("SkulltagEnableTesting");
-	setting->setValue(groupTesting->isChecked());
+	config->setting("SkulltagEnableTesting")->setValue(groupTesting->isChecked());
 
 	strVal = leTestingPath->text();
-	setting = config->setting("SkulltagTestingPath");
-	setting->setValue(strVal);
+	config->setting("SkulltagTestingPath")->setValue(strVal);
 }

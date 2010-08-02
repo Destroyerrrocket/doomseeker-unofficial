@@ -20,13 +20,14 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
+#include "main.h"
 #include "zdaemongamerunner.h"
 #include "zdaemongameinfo.h"
 #include "zdaemonmain.h"
 #include "zdaemonserver.h"
 
 ZDaemonGameRunner::ZDaemonGameRunner(const ZDaemonServer* server)
-: GameRunner(server)
+: GameRunner(server, Main::ini->createSection("ZDaemon"))
 {
 }
 

@@ -34,7 +34,7 @@ class CustomServersConfigBox : public ConfigurationBaseBox, private Ui::CustomSe
 	Q_OBJECT
 
 	public:
-		static ConfigurationBoxInfo	*createStructure(Config *cfg, QWidget *parent=NULL);
+		static ConfigurationBoxInfo	*createStructure(IniSection *cfg, QWidget *parent=NULL);
 
 		void						readSettings();
 
@@ -54,7 +54,7 @@ class CustomServersConfigBox : public ConfigurationBaseBox, private Ui::CustomSe
 
 		QStandardItemModel* model;
 
-		CustomServersConfigBox(Config *cfg, QWidget *parent=NULL);
+		CustomServersConfigBox(IniSection *cfg, QWidget *parent=NULL);
 
 		/**
 		 *	@brief Moves through rows and checks if network port information

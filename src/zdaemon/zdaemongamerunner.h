@@ -33,8 +33,6 @@ class ZDaemonGameRunner : public GameRunner
 	public:
 		ZDaemonGameRunner(const ZDaemonServer* server);
 
-		QString						configKeyCustomParameters() const { return "ZDaemonCustomParameters"; }
-
 		const PluginInfo*			plugin() const;
 
 	protected:

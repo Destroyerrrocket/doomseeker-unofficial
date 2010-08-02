@@ -96,6 +96,13 @@ class MAIN_EXPORT Config : public QObject
 		 */
 		void			createSetting(const QString index, unsigned int defaultInt);
 		void			createSetting(const QString index, QString defaultString);
+
+		/**
+		 * Get all of the settings.  This is here since we're moving away from
+		 * this Config class to the Ini class.
+		 */
+		const QHash<QString, SettingsData *> getSettings() { return settings; }
+
 		/**
 		 * Gets the specified setting.  Will create the setting if it does not
 		 * exist.

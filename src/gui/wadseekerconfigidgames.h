@@ -32,7 +32,7 @@ class WadseekerIdgamesConfigBox : public ConfigurationBaseBox, private Ui::Wadse
 	Q_OBJECT
 
 	public:
-		static ConfigurationBoxInfo* createStructure(Config* cfg, QWidget* parent = NULL);
+		static ConfigurationBoxInfo* createStructure(IniSection* cfg, QWidget* parent = NULL);
 
 		void 			readSettings();
 
@@ -41,7 +41,7 @@ class WadseekerIdgamesConfigBox : public ConfigurationBaseBox, private Ui::Wadse
 		void			cbUseIdgamesToggled(bool checked);
 
 	protected:
-		WadseekerIdgamesConfigBox(Config*, QWidget* parent = NULL);
+		WadseekerIdgamesConfigBox(IniSection*, QWidget* parent = NULL);
 
 		void 			saveSettings();
 };

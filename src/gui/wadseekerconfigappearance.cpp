@@ -22,13 +22,13 @@
 //------------------------------------------------------------------------------
 #include "wadseekerconfigappearance.h"
 
-WadseekerAppearanceConfigBox::WadseekerAppearanceConfigBox(Config* cfg, QWidget* parent) 
+WadseekerAppearanceConfigBox::WadseekerAppearanceConfigBox(IniSection* cfg, QWidget* parent) 
 : ConfigurationBaseBox(cfg, parent)
 {
 	setupUi(this);
 }
 
-ConfigurationBoxInfo* WadseekerAppearanceConfigBox::createStructure(Config* cfg, QWidget* parent)
+ConfigurationBoxInfo* WadseekerAppearanceConfigBox::createStructure(IniSection* cfg, QWidget* parent)
 {
 	ConfigurationBoxInfo* cfgBoxInfo = new ConfigurationBoxInfo();
 	cfgBoxInfo->confBox = new WadseekerAppearanceConfigBox(cfg, parent);
@@ -39,28 +39,14 @@ ConfigurationBoxInfo* WadseekerAppearanceConfigBox::createStructure(Config* cfg,
 
 void WadseekerAppearanceConfigBox::readSettings()
 {
-	SettingsData* setting;
-
-	setting = config->setting("WadseekerColorMessageNotice");
-	btnNoticeMessageColor->setColorHtml(setting->string());
-	
-	setting = config->setting("WadseekerColorMessageError");
-	btnErrorMessageColor->setColorHtml(setting->string());
-	
-	setting = config->setting("WadseekerColorMessageCriticalError");
-	btnCriticalErrorMessageColor->setColorHtml(setting->string());
+	btnNoticeMessageColor->setColorHtml(*config->setting("ColorMessageNotice"));
+	btnErrorMessageColor->setColorHtml(*config->setting("ColorMessageError"));
+	btnCriticalErrorMessageColor->setColorHtml(*config->setting("ColorMessageCriticalError"));
 }
 
 void WadseekerAppearanceConfigBox::saveSettings()
 {
-	SettingsData* setting;
-
-	setting = config->setting("WadseekerColorMessageNotice");
-	setting->setValue(btnNoticeMessageColor->colorHtml());
-	
-	setting = config->setting("WadseekerColorMessageError");
-	setting->setValue(btnErrorMessageColor->colorHtml());
-	
-	setting = config->setting("WadseekerColorMessageCriticalError");
-	setting->setValue(btnCriticalErrorMessageColor->colorHtml());
+	config->setting("ColorMessageNotice")->setValue(btnNoticeMessageColor->colorHtml());
+	config->setting("ColorMessageError")->setValue(btnErrorMessageColor->colorHtml());
+	config->setting("ColorMessageCriticalError")->setValue(btnCriticalErrorMessageColor->colorHtml());
 }

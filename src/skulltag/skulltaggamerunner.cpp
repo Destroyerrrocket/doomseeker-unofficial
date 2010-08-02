@@ -20,12 +20,13 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "main.h"
 #include "skulltaggamerunner.h"
 #include "skulltaggameinfo.h"
 #include "skulltagserver.h"
 
 SkulltagGameRunner::SkulltagGameRunner(const SkulltagServer* server)
-: GameRunner(server)
+: GameRunner(server, Main::ini->createSection("Skulltag"))
 {
 }
 

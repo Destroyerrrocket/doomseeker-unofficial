@@ -44,7 +44,7 @@ class PLUGIN_EXPORT ChocolateDoomEnginePlugin : public EnginePlugin
 		bool							allowsRConPassword() const { return false; }
 		bool							allowsMOTD() const { return false; }
 
-		ConfigurationBoxInfo*			configuration(Config *cfg, QWidget *parent) const
+		ConfigurationBoxInfo*			configuration(IniSection *cfg, QWidget *parent) const
 		{
 			return BaseEngineConfigBox::createStructure(ChocolateDoomMain::get(), cfg, parent);
 		}
@@ -82,6 +82,6 @@ extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 	return ChocolateDoomMain::get();
 }
 
-extern "C" PLUGIN_EXPORT void doomSeekerInitConfig()
+extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection *config)
 {
 }

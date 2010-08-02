@@ -54,6 +54,31 @@ QString Strings::createRandomAlphaNumericString(unsigned numChars)
 	return generatedString;
 }
 
+// NOTE: Be sure that '\\' is the first thing in the array otherwise it will re-escape.
+static char escapeCharacters[] = {'\\', '"', 0};
+const QString& Strings::escape(QString &str)
+{
+	for(unsigned int i = 0;escapeCharacters[i] != 0;i++)
+	{
+		// += 2 because we'll be inserting 1 character.
+		for(int p = 0;p < str.length() && (p = str.indexOf(escapeCharacters[i], p)) != -1;p += 2)
+		{
+			str.insert(p, '\\');
+		}
+	}
+	return str;
+}
+const QString& Strings::unescape(QString &str)
+{
+	for(unsigned int i = 0;escapeCharacters[i] != 0;i++)
+	{
+		QString sequence = "\\" + QString(escapeCharacters[i]);
+		for(int p = 0;p < str.length() && (p = str.indexOf(sequence, p)) != -1;p++)
+			str.replace(str.indexOf(sequence, p), 2, escapeCharacters[i]);
+	}
+	return str;
+}
+
 QString Strings::formatDataAmount(int bytes)
 {
 	DataUnit dataUnit;

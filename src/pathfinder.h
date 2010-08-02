@@ -24,7 +24,7 @@
 #ifndef __PATHFINDER_H_
 #define __PATHFINDER_H_
 
-#include "sdeapi/config.hpp"
+#include "ini.h"
 #include "global.h"
 #include <QStringList>
 
@@ -37,13 +37,13 @@ struct MAIN_EXPORT PathFinderResult
 class MAIN_EXPORT PathFinder
 {
 	public:
-		PathFinder(Config*);
+		PathFinder(IniSection*);
 
 		QString 			findFile(const QString& fileName);
 		PathFinderResult	findFiles(const QStringList& files);
 
 	protected:
-		Config* config;
+		IniSection* config;
 };
 
 #endif

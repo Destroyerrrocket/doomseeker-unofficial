@@ -25,9 +25,9 @@
 #define __MAIN_H__
 
 #include "sdeapi/pluginloader.hpp"
-#include "sdeapi/config.hpp"
 #include "serverapi/server.h"
 #include "datapaths.h"
+#include "ini.h"
 #include "ip2c.h"
 #include "refresher.h"
 #include <QApplication>
@@ -42,7 +42,8 @@ class MAIN_EXPORT Main : public QObject
 	public:
 		static const QString		IP2C_FILENAME;
 	
-		static Config 				*config;
+		static IniSection			*config;
+		static Ini					*ini;
 		static IP2C					*ip2c;
 		static DataPaths*			dataPaths;
 		static QWidget*				mainWindow;
@@ -68,7 +69,10 @@ class MAIN_EXPORT Main : public QObject
 
 	protected:
 		static const QString		DOOMSEEKER_CONFIG_FILENAME;
-		static const QString		IP2C_DOWNLOAD_URL;		
+		static const QString		DOOMSEEKER_INI_FILENAME;
+		static const QString		IP2C_DOWNLOAD_URL;
+
+		void						convertCfgToIni();
 
 		void						createMainWindow();
 		bool						createRemoteConsole();

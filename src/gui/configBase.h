@@ -24,7 +24,8 @@
 #ifndef __ENGINE_CONFIG_BASE_H_
 #define __ENGINE_CONFIG_BASE_H_
 
-#include "sdeapi/config.hpp"
+#include "global.h"
+#include "ini.h"
 #include <QGroupBox>
 #include <QPushButton>
 #include <QStandardItem>
@@ -37,7 +38,7 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 	Q_OBJECT;
 
 	public:
-		ConfigurationBaseBox(Config* cfg, QWidget* parent = NULL) : QGroupBox(parent)
+		ConfigurationBaseBox(IniSection* cfg, QWidget* parent = NULL) : QGroupBox(parent)
 		{
 			bAllowSave = false;
 			bSettingsAlreadyRead = false;
@@ -88,7 +89,7 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 		void 		wantChangeDefaultButton(QPushButton* btn);
 
 	protected:
-		Config* 	config;
+		IniSection* config;
 		bool		bAllowSave;
 		bool		bSettingsAlreadyRead;
 

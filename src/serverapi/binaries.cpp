@@ -29,7 +29,7 @@
 
 Binaries::BinaryNamesDictionary Binaries::binaryNames;
 
-Binaries::Binaries()
+Binaries::Binaries(IniSection *config) : config(config)
 {
 	if (binaryNames.empty()) // Is not init yet.
 	{
@@ -47,26 +47,26 @@ QString Binaries::clientWorkingDirectory(QString& error) const
 
 QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, QString& error) const
 {
-	SettingsData* setting = Main::config->setting(configKey);
+	IniVariable* setting = config->setting(configKey);
 
-	if (setting->string().isEmpty())
+	if (setting->strValue().isEmpty())
 	{
 		error = tr("No %1 executable specified for %2").arg(binaryNames[binaryType]).arg(plugin()->name);
 		return QString();
 	}
 
-	QFileInfo fi(setting->string());
+	QFileInfo fi(setting->strValue());
 
 	if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
 	{
 		error = tr("Engine %1, %2 executable:\n\n%3\n is a directory or doesn't exist.")
 					.arg(plugin()->name)
 					.arg(binaryNames[binaryType])
-					.arg(setting->string());
+					.arg(setting->strValue());
 		return QString();
 	}
 
-	return setting->string();
+	return setting->strValue();
 }
 
 QString Binaries::offlineGameWorkingDirectory(QString& error) const

@@ -31,12 +31,12 @@ class WadseekerGeneralConfigBox : public ConfigurationBaseBox, private Ui::Wadse
 	Q_OBJECT
 
 	public:
-		static ConfigurationBoxInfo* createStructure(Config* cfg, QWidget* parent = NULL);
+		static ConfigurationBoxInfo* createStructure(IniSection* cfg, QWidget* parent = NULL);
 
 		void 			readSettings();
 
 	protected:
-		WadseekerGeneralConfigBox(Config*, QWidget* parent = NULL);
+		WadseekerGeneralConfigBox(IniSection*, QWidget* parent = NULL);
 
 		void			fillTargetDirectoryComboBox();
 		void 			saveSettings();

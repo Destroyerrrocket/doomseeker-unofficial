@@ -25,7 +25,7 @@
 #include <QFileDialog>
 #include <QStandardItem>
 
-FilePathsConfigBox::FilePathsConfigBox(Config* cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
+FilePathsConfigBox::FilePathsConfigBox(IniSection* cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
 {
 	setupUi(this);
 
@@ -77,7 +77,7 @@ void FilePathsConfigBox::btnRemoveWadPath_Click()
 	}
 }
 
-ConfigurationBoxInfo* FilePathsConfigBox::createStructure(Config* cfg, QWidget* parent)
+ConfigurationBoxInfo* FilePathsConfigBox::createStructure(IniSection* cfg, QWidget* parent)
 {
 	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
 	pConfigurationBoxInfo->confBox = new FilePathsConfigBox(cfg, parent);
@@ -114,23 +114,18 @@ bool FilePathsConfigBox::isPathAlreadyDefined(const QString& path)
 
 void FilePathsConfigBox::readSettings()
 {
-	SettingsData* setting;
-
-	setting = config->setting("WadPaths");
-	QStringList strList = setting->string().split(";", QString::SkipEmptyParts);
+	QStringList strList = config->setting("WadPaths")->strValue().split(";", QString::SkipEmptyParts);
 	for (int i = 0; i < strList.count(); ++i)
 	{
 		addPath(strList[i]);
 	}
-	
-	setting = config->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn");
-	cbTellMeWhereAreMyWads->setChecked( setting->boolean() );
+
+	cbTellMeWhereAreMyWads->setChecked( *config->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn") );
 }
 
 void FilePathsConfigBox::saveSettings()
 {
 	QStringList strList;
-	SettingsData* setting;
 
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstIwadAndPwadPaths->model());
 	{
@@ -141,10 +136,8 @@ void FilePathsConfigBox::saveSettings()
 		}
 	}
 
-	setting = config->setting("WadPaths");
-	setting->setValue(strList.join(";"));
-	
+	config->setting("WadPaths")->setValue(strList.join(";"));
+
 	bool bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn = cbTellMeWhereAreMyWads->isChecked();
-	setting = config->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn");
-	setting->setValue( static_cast<int>(bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn) );
+	config->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn")->setValue( static_cast<int>(bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn) );
 }

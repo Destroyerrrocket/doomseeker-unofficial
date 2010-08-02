@@ -21,6 +21,8 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ini.h"
+#include "log.h"
+#include "main.h"
 #include "strings.h"
 #include <cstdio>
 #include <cstdlib>
@@ -49,6 +51,13 @@ void IniVariable::setValue(int i)
 {
 	char buf[32];
 	sprintf(buf, "%d", i);
+	value = buf;
+}
+
+void IniVariable::setValue(unsigned int i)
+{
+	char buf[32];
+	sprintf(buf, "%u", i);
 	value = buf;
 }
 
@@ -150,24 +159,7 @@ IniVariable* IniSection::setting(const QString& name)
 Ini::Ini(const QString& filename)
 : dataSourc(Memory), valid(false)
 {
-	this->filename = filename;
-	QFile file(filename);
-	if (!file.exists())
-	{
-		if (!file.open(QIODevice::WriteOnly))
-		{
-			errorsList << tr("Fatal error: file %1 doesn't exist and cannot be created!").arg(filename);
-			valid = false;
-			return;
-		}
-	}
-	file.close();
-
-	valid = loadAdditionalSettings(filename);
-	if (valid)
-	{
-		dataSourc = Drive;
-	}
+	loadIniFile(filename);
 }
 
 Ini::Ini(const QString& displayName, const QByteArray& memorydata)
@@ -283,6 +275,38 @@ bool Ini::loadAdditionalSettings(const QByteArray& data)
 {
 	readQByteArrayIntoStructures(data);
 	return true;
+}
+
+void Ini::loadIniFile(const QString& fileName)
+{
+	QString configDirPath = Main::dataPaths->programsDataDirectoryPath();
+
+	if (configDirPath.isEmpty())
+	{
+		gLog << tr("Could not get an access to the settings directory. Configuration will not be saved.");
+		return;
+	}
+
+	filename = configDirPath + "/" + fileName;
+	gLog << tr("Ini file is: %1").arg(filename);
+
+	QFile file(filename);
+	if (!file.exists())
+	{
+		if (!file.open(QIODevice::WriteOnly))
+		{
+			errorsList << tr("Fatal error: file %1 doesn't exist and cannot be created!").arg(filename);
+			valid = false;
+			return;
+		}
+	}
+	file.close();
+
+	valid = loadAdditionalSettings(filename);
+	if (valid)
+	{
+		dataSourc = Drive;
+	}
 }
 
 Ini& Ini::operator=(const Ini& other)

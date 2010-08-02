@@ -34,12 +34,12 @@ class MAIN_EXPORT BaseEngineConfigBox : public ConfigurationBaseBox, private Ui:
 		Q_OBJECT
 
 	public:
-		static ConfigurationBoxInfo *createStructure(const PluginInfo *plugin, Config *cfg, QWidget *parent=NULL);
+		static ConfigurationBoxInfo *createStructure(const PluginInfo *plugin, IniSection *cfg, QWidget *parent=NULL);
 
 		void readSettings();
 
 	protected:
-		BaseEngineConfigBox(const PluginInfo *plugin, Config *cfg, QWidget *parent=NULL);
+		BaseEngineConfigBox(const PluginInfo *plugin, IniSection *cfg, QWidget *parent=NULL);
 
 		void addWidget(QWidget *widget);
 		void browseForBinary(QLineEdit *input, const QString &type);
@@ -52,8 +52,6 @@ class MAIN_EXPORT BaseEngineConfigBox : public ConfigurationBaseBox, private Ui:
 
 	private:
 		const PluginInfo *plugin;
-		
-		QString			generatePluginsConfigKeyPrefix() const;
 };
 
 #endif /* __ENGINECONFIGBASE_H__ */

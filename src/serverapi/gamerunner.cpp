@@ -31,8 +31,8 @@
 #include "strings.h"
 #include <QStringList>
 
-GameRunner::GameRunner(const Server* server)
-: currentCmdLine(NULL), currentHostInfo(NULL), server(server)
+GameRunner::GameRunner(const Server* server, IniSection *config)
+: currentCmdLine(NULL), currentHostInfo(NULL), server(server), config(config)
 {
 }
 
@@ -53,8 +53,7 @@ void GameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwad
 	iwadFound = !iwad.isEmpty();
 
 	// Custom parameters
-	QString customParametersKey = configKeyCustomParameters();
-	QString customParameters = Main::config->setting(customParametersKey)->string();
+	QString customParameters = (const QString &) *config->setting("CustomParameters");
 	args << customParameters.split(" ", QString::SkipEmptyParts);
 
 	// Password

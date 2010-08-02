@@ -33,14 +33,14 @@ class AppearanceConfigBox : public ConfigurationBaseBox, private Ui::AppearanceC
 	Q_OBJECT
 
 	public:
-		static ConfigurationBoxInfo	*createStructure(Config *cfg, QWidget *parent=NULL);
+		static ConfigurationBoxInfo	*createStructure(IniSection *cfg, QWidget *parent=NULL);
 
 		void	readSettings();
 
 	protected:
 		unsigned	customServersColor;
 	
-		AppearanceConfigBox(Config *cfg, QWidget *parent=NULL);
+		AppearanceConfigBox(IniSection *cfg, QWidget *parent=NULL);
 
 		void	saveSettings();
 };

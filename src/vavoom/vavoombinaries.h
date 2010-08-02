@@ -23,14 +23,14 @@
 #ifndef __VAVOOM_BINARIES_H_
 #define __VAVOOM_BINARIES_H_
 
+#include "main.h"
 #include "serverapi/binaries.h"
 #include "vavoom/vavoommain.h"
 
 class VavoomBinaries : public Binaries
 {
 	public:
-		QString					configKeyClientBinary() const { return "VavoomBinaryPath"; }
-		QString					configKeyServerBinary() const { return "VavoomServerBinaryPath"; }
+		VavoomBinaries() : Binaries(Main::ini->createSection("Vavoom")) {}
 
 		const PluginInfo*		plugin() const
 		{

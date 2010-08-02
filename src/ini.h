@@ -37,55 +37,72 @@ using namespace std;
  *	Structure containing variable's value and comments. The name of the
  *	variable is not contained in the structure itself to prevent redundancy.
  */
-struct IniVariable
+class IniVariable
 {
-	IniVariable() {}
-	IniVariable(const QString& value) { setValue(value); }
-	IniVariable(int value) { setValue(value); }
-	IniVariable(bool value) { setValue(value); }
-	IniVariable(float value) { setValue(value); }
+	public:
+		IniVariable() {}
+		IniVariable(const QString& value) { setValue(value); }
+		IniVariable(int value) { setValue(value); }
+		IniVariable(unsigned int value) { setValue(value); }
+		IniVariable(bool value) { setValue(value); }
+		IniVariable(float value) { setValue(value); }
 
-	/**
-	 *	@brief Comment placed on the right side of the variable.
-	 */
-	QString			sideComment;
+		/**
+		*	Convert QString value to boolean, if possible. It's done by converting
+		*	to numValue() first, then to bool.
+		*/
+		bool			boolValue() const;
 
-	/**
-	 *	@brief Comment placed on top of the variable.
-	 */
-	QString			topComment;
-	
-	/**
-	 *	@brief The key name of this variable with lettercase preserved.
-	 */
-	QString			key;
+		/**
+		*	Attempts to convert the QString value to a integer.
+		*/
+		int				numValue() const;
+		unsigned int	numUnsignedValue() const;
 
-	/**
-	 *	@brief Value of the variable.
-	 */
-	QString			value;
+		/**
+		*	Attempts to convert the QString value to a float.
+		*/
+		float			numValueFloat() const;
 
-	/**
-	 *	Convert QString value to boolean, if possible. It's done by converting
-	 *	to numValue() first, then to bool.
-	 */
-	bool			boolValue() const;
+		void			setValue(const QString& str) { value = str; }
+		void			setValue(int i);
+		void			setValue(unsigned int i);
+		void			setValue(bool b);
+		void			setValue(float f);
 
-	/**
-	 *	Attempts to convert the QString value to a integer.
-	 */
-	int				numValue() const;
-	unsigned		numUnsignedValue() const;
+		const QString	&strValue() const { return value; }
 
-	/**
-	 *	Attempts to convert the QString value to a float.
-	 */
-	float			numValueFloat() const;
+		operator const QString &() { return strValue(); }
+		operator float() { return numValueFloat(); }
+		operator int() { return numValue() ;}
+		operator unsigned int() { return numUnsignedValue(); }
+		operator bool() { return boolValue(); }
 
-	void			setValue(const QString& str) { value = str; }
-	void			setValue(int i);
-	void			setValue(bool b);
-	void			setValue(float f);
+	protected:
+		friend class Ini;
+		friend class IniSection;
+		friend class TestReadINIVariable;
+		friend class TestReadINIList;
+
+		/**
+		*	@brief Comment placed on the right side of the variable.
+		*/
+		QString			sideComment;
+
+		/**
+		*	@brief Comment placed on top of the variable.
+		*/
+		QString			topComment;
+		
+		/**
+		*	@brief The key name of this variable with lettercase preserved.
+		*/
+		QString			key;
+
+		/**
+		*	@brief Value of the variable.
+		*/
+		QString			value;
 };
 
 typedef map<QString, IniVariable> 					IniVariables;	// the first QString is the name
@@ -278,6 +295,8 @@ class Ini : public QObject
 		 */
 		bool				loadAdditionalSettings(const QString& filename);
 		bool				loadAdditionalSettings(const QByteArray& data);
+
+		void				loadIniFile(const QString &fileName);
 
 		Ini&				operator=(const Ini& other);
 

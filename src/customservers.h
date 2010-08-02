@@ -70,7 +70,7 @@ class CustomServers : public MasterClient
 		 *	@param slotUpdated - slot to receive Server::updated signals
 		 *	@param slotBegunRefreshing - slot to receive Server::begunRefreshing signals
 		 */
-		void							readConfig(Config* cfg, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing);
+		void							readConfig(IniSection* cfg, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing);
 		
 		bool							readMasterResponse(QByteArray &data) { return false; }		
 

@@ -33,8 +33,6 @@ class ChocolateDoomGameRunner : public GameRunner
 	public:
 		ChocolateDoomGameRunner(const ChocolateDoomServer* server);
 
-		QString						configKeyCustomParameters() const { return "ChocolateDoomCustomParameters"; }
-
 		const PluginInfo*			plugin() const { return ChocolateDoomMain::get(); }
 };
 

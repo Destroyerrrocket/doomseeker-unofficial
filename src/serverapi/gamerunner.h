@@ -36,11 +36,9 @@ class Server;
 class MAIN_EXPORT GameRunner : public QObject
 {
 	public:
-		GameRunner(const Server* server);
+		GameRunner(const Server* server, IniSection *config);
 
 		virtual void				connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword);
-		
-		virtual QString				configKeyCustomParameters() const = 0;
 
 		/**
 		 *	@param [out] cli - after successful call this will contain
@@ -145,6 +143,8 @@ class MAIN_EXPORT GameRunner : public QObject
 		CommandLineInfo*			currentCmdLine;
 		const HostInfo*				currentHostInfo;
 		const Server*				server;
+
+		IniSection					*config;
 };
 
 #endif

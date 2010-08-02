@@ -35,7 +35,12 @@ class MAIN_EXPORT Strings
 		 *	The created string consists of lowercase letters and digits.
 		 */
 		static QString			createRandomAlphaNumericString(unsigned numChars);
-	
+
+		/**
+		 * @brief Adds escape characters to a string.
+		 */
+		static const QString	&escape(QString &str);
+
 		/**
 		 *	@brief Similar to formatDataSpeed().
 		 *
@@ -80,7 +85,9 @@ class MAIN_EXPORT Strings
 		 *		or no port inside addressString is specified.
 		 */
 		static void				translateServerAddress(const QString& addressString, QString& hostname, unsigned short& port, const QString& defaultHostname, const unsigned short defaultPort);
-		
+
+		static const QString	&unescape(QString &str);
+
 		/**
 		 *	@brief Unsafe URLs begin with file:// and this functions returns
 		 *	false for such URLs.

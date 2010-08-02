@@ -29,6 +29,7 @@
 // =============================================================================
 
 #include "log.h"
+#include "main.h"
 #include "sdeapi/pluginloader.hpp"
 
 #ifdef Q_OS_WIN32
@@ -88,10 +89,10 @@ void Plugin::initConfig()
 {
 	if(library != NULL)
 	{
-		void (*doomSeekerInitConfig)() = (void (*)()) (dlsym(library, "doomSeekerInitConfig"));
+		void (*doomSeekerInitConfig)(IniSection*) = (void (*)(IniSection*)) (dlsym(library, "doomSeekerInitConfig"));
 		if(doomSeekerInitConfig != NULL)
 		{
-			doomSeekerInitConfig();
+			doomSeekerInitConfig(Main::ini->createSection(QString(info->name).remove(" ")));
 		}
 	}
 }

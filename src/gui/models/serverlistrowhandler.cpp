@@ -120,11 +120,11 @@ void ServerListRowHandler::fillItem(QStandardItem* item, int sort, const QPixmap
 
 void ServerListRowHandler::fillPlayerColumn()
 {
-	Config* config = model->handler()->configurationObject();
+	IniSection* config = model->handler()->configurationObject();
 	QStandardItem* pItem = item(IDPlayers);
 
-	int style = config->setting("SlotStyle")->integer();
-	bool botsAreNotPlayers = config->setting("BotsAreNotPlayers")->boolean();
+	int style = *config->setting("SlotStyle");
+	bool botsAreNotPlayers = *config->setting("BotsAreNotPlayers");
 
 	const PlayersList* playersList = server->playersList();
 	int sortValue = 0;
@@ -191,12 +191,12 @@ void ServerListRowHandler::setBackgroundColor()
 {
 	if (server->isCustom())
 	{
-		SettingsData* setting = model->handler()->configurationObject()->setting("CustomServersColor");
+		int color = *model->handler()->configurationObject()->setting("CustomServersColor");
 
 		for (int column = 0; column < NUM_SERVERLIST_COLUMNS; ++column)
 		{
 			QStandardItem* pItem = item(column);
-			pItem->setBackground( QBrush(QColor(setting->integer() )) );
+			pItem->setBackground( QBrush(QColor(color )) );
 		}
 	}
 }

@@ -23,12 +23,12 @@
 
 #include "cfgip2c.h"
 
-IP2CConfigBox::IP2CConfigBox(Config *cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent)
+IP2CConfigBox::IP2CConfigBox(IniSection *cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent)
 {
 	setupUi(this);
 }
 
-ConfigurationBoxInfo *IP2CConfigBox::createStructure(Config *cfg, QWidget *parent)
+ConfigurationBoxInfo *IP2CConfigBox::createStructure(IniSection *cfg, QWidget *parent)
 {
 	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
 	pConfigurationBoxInfo->confBox = new IP2CConfigBox(cfg, parent);
@@ -39,28 +39,14 @@ ConfigurationBoxInfo *IP2CConfigBox::createStructure(Config *cfg, QWidget *paren
 
 void IP2CConfigBox::readSettings()
 {
-	SettingsData *setting;
-
-	setting = config->setting("IP2CUrl");
-	leIP2CUrl->setText(setting->string());
-	
-	setting = config->setting("IP2CAutoUpdate");
-	grbAutoUpdate->setChecked(setting->boolean());
-	
-	setting = config->setting("IP2CMaximumAge");
-	spinMaximumAge->setValue(setting->integer());
+	leIP2CUrl->setText(*config->setting("IP2CUrl"));
+	grbAutoUpdate->setChecked(*config->setting("IP2CAutoUpdate"));
+	spinMaximumAge->setValue(*config->setting("IP2CMaximumAge"));
 }
 
 void IP2CConfigBox::saveSettings()
 {
-	SettingsData *setting;
-
-	setting = config->setting("IP2CUrl");
-	setting->setValue(leIP2CUrl->text());
-	
-	setting = config->setting("IP2CAutoUpdate");
-	setting->setValueBoolean(grbAutoUpdate->isChecked());
-	
-	setting = config->setting("IP2CMaximumAge");
-	setting->setValue(spinMaximumAge->value());
+	config->setting("IP2CUrl")->setValue(leIP2CUrl->text());
+	config->setting("IP2CAutoUpdate")->setValue(grbAutoUpdate->isChecked());
+	config->setting("IP2CMaximumAge")->setValue(spinMaximumAge->value());
 }

@@ -24,6 +24,7 @@
 #include "copytextdlg.h"
 #include "main.h"
 #include "commonGUI.h"
+#include "sdeapi/config.hpp"
 #include "serverapi/binaries.h"
 #include "serverapi/gamerunner.h"
 
@@ -162,7 +163,7 @@ void CreateServerDlg::btnAddMapToMaplistClicked()
 
 void CreateServerDlg::btnAddPwadClicked()
 {
-	QString dialogDir = Main::config->setting("PreviousCreateServerWadDir")->string();
+	QString dialogDir = *Main::config->setting("PreviousCreateServerWadDir");
 	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - Add file"), dialogDir);
 
 	if (!strFile.isEmpty())
@@ -176,7 +177,7 @@ void CreateServerDlg::btnAddPwadClicked()
 
 void CreateServerDlg::btnBrowseExecutableClicked()
 {
-	QString dialogDir = Main::config->setting("PreviousCreateServerExecDir")->string();
+	QString dialogDir = *Main::config->setting("PreviousCreateServerExecDir");
 	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - Add file"), dialogDir);
 
 	if (!strFile.isEmpty())
@@ -259,7 +260,7 @@ void CreateServerDlg::btnDefaultExecutableClicked()
 
 void CreateServerDlg::btnIwadBrowseClicked()
 {
-	QString dialogDir = Main::config->setting("PreviousCreateServerWadDir")->string();
+	QString dialogDir = *Main::config->setting("PreviousCreateServerWadDir");
 	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - select IWAD"), dialogDir);
 
 	if (!strFile.isEmpty())
@@ -273,7 +274,7 @@ void CreateServerDlg::btnIwadBrowseClicked()
 
 void CreateServerDlg::btnLoadClicked()
 {
-	QString dialogDir = Main::config->setting("PreviousCreateServerConfigDir")->string();
+	QString dialogDir = *Main::config->setting("PreviousCreateServerConfigDir");
 	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - load server config"), dialogDir, tr("Config files (*.cfg)"));
 
 	if (!strFile.isEmpty())
@@ -302,7 +303,7 @@ void CreateServerDlg::btnRemovePwadClicked()
 
 void CreateServerDlg::btnSaveClicked()
 {
-	QString dialogDir = Main::config->setting("PreviousCreateServerConfigDir")->string();
+	QString dialogDir = *Main::config->setting("PreviousCreateServerConfigDir");
 	QString strFile = QFileDialog::getSaveFileName(this, tr("Doomseeker - save server config"), dialogDir, tr("Config files (*.cfg)"));
 	if (!strFile.isEmpty())
 	{

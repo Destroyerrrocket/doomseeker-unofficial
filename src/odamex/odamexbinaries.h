@@ -23,15 +23,15 @@
 #ifndef __ODAMEX_BINARIES_H_
 #define __ODAMEX_BINARIES_H_
 
+#include "main.h"
 #include "serverapi/binaries.h"
 #include "odamex/odamexmain.h"
 
 class OdamexBinaries : public Binaries
 {
 	public:
-		QString					configKeyClientBinary() const { return "OdamexBinaryPath"; }
-		QString					configKeyServerBinary() const { return "OdamexServerBinaryPath"; }
-		
+		OdamexBinaries() : Binaries(Main::ini->createSection("Odamex")) {}
+
 		const PluginInfo*		plugin() const
 		{
 			return OdamexMain::get();

@@ -32,12 +32,12 @@ class QueryConfigBox : public ConfigurationBaseBox, private Ui::QueryConfigBox
 	Q_OBJECT
 
 	public:
-		static ConfigurationBoxInfo	*createStructure(Config *cfg, QWidget *parent=NULL);
+		static ConfigurationBoxInfo	*createStructure(IniSection *cfg, QWidget *parent=NULL);
 
 		void	readSettings();
 
 	protected:
-		QueryConfigBox(Config *cfg, QWidget *parent=NULL);
+		QueryConfigBox(IniSection *cfg, QWidget *parent=NULL);
 
 		void	saveSettings();
 };

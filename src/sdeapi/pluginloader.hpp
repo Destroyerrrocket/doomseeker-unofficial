@@ -70,7 +70,7 @@ class MAIN_EXPORT EnginePlugin
 		/**
 		 *	@brief Engine's configuration widget.
 		 */
-		virtual ConfigurationBoxInfo*			configuration(Config *cfg, QWidget *parent) const=0;
+		virtual ConfigurationBoxInfo*			configuration(IniSection *cfg, QWidget *parent) const=0;
 
 		/**
 		 *	@brief Default port on which servers for given engine are hosted.

@@ -24,6 +24,7 @@
 #define __BINARIES_H_
 
 #include "global.h"
+#include "ini.h"
 #include <QHash>
 #include <QObject>
 #include <QString>
@@ -33,7 +34,7 @@ struct PluginInfo;
 class MAIN_EXPORT Binaries : public QObject
 {
 	public:
-		Binaries();
+		Binaries(IniSection *config);
 
 		/**
 		 *	@brief Returns the path to the client binary.
@@ -51,9 +52,9 @@ class MAIN_EXPORT Binaries : public QObject
 		 */
 		virtual QString					clientWorkingDirectory(QString& error) const;
 
-		virtual QString					configKeyClientBinary() const = 0;
+		virtual QString					configKeyClientBinary() const { return "BinaryPath"; }
 		virtual QString					configKeyOfflineBinary() const { return configKeyClientBinary(); }
-		virtual QString					configKeyServerBinary() const { return configKeyClientBinary(); }
+		virtual QString					configKeyServerBinary() const { return "ServerBinaryPath"; }
 
 		/**
 		 *	@brief Returns the path to the binary for offline play.
@@ -109,6 +110,7 @@ class MAIN_EXPORT Binaries : public QObject
 		typedef	QHash<BinaryType, QString>	BinaryNamesDictionary;
 
 		static BinaryNamesDictionary 		binaryNames;
+		IniSection							*config;
 
 		QString								obtainBinary(const QString& configKey, BinaryType binaryType, QString& error) const;
 };

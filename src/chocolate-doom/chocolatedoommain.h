@@ -29,7 +29,7 @@ class ChocolateDoomMain
 {
 	public:
 		static const PluginInfo*	get() { return &chocolatedoom_info; }
-	
+
 	protected:
 		static const PluginInfo 	chocolatedoom_info;
 };

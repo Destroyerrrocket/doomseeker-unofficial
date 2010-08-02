@@ -24,6 +24,7 @@
 #define __WADSEEKERINTERFACE_H_
 
 #include "ui_wadseekerinterface.h"
+#include "ini.h"
 #include "wadseeker/wadseeker.h"
 #include <QStringList>
 #include <QTimer>
@@ -74,6 +75,8 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 		QString			colorHtmlMessageFatalError;
 		QString			colorHtmlMessageError;
 		QString			colorHtmlMessageNotice;
+
+		IniSection		*config;
 
 		/**
 		 * Interface uses this instead of line edit if bAutomatic is true.

@@ -41,13 +41,11 @@
 #include <QTreeView>
 #include <QAbstractButton>
 
-ConfigureDlg::ConfigureDlg(Config* mainCfg, QWidget* parent) : QDialog(parent)
+ConfigureDlg::ConfigureDlg(QWidget* parent) : QDialog(parent)
 {
 	bAppearanceChanged = false;
 	bCustomServersChanged = false;
 
-	mainConfig = mainCfg;
-	mainConfig->readConfig();
 	setupUi(this);
 	initOptionsList();
 
@@ -121,16 +119,17 @@ void ConfigureDlg::appendWadseekerConfigurationBoxes(QStandardItemModel* model)
 
 	ConfigurationBoxInfo* cfgBoxInfo = NULL;
 
-	cfgBoxInfo = WadseekerAppearanceConfigBox::createStructure(mainConfig, this);
+	IniSection *wadseekerSection = Main::ini->createSection("Wadseeker");
+	cfgBoxInfo = WadseekerAppearanceConfigBox::createStructure(wadseekerSection, this);
 	addConfigurationBox(wadseekerRoot, cfgBoxInfo);
 
-	cfgBoxInfo = WadseekerGeneralConfigBox::createStructure(mainConfig, this);
+	cfgBoxInfo = WadseekerGeneralConfigBox::createStructure(wadseekerSection, this);
 	addConfigurationBox(wadseekerRoot, cfgBoxInfo);
 
-	cfgBoxInfo = WadseekerSitesConfigBox::createStructure(mainConfig, this);
+	cfgBoxInfo = WadseekerSitesConfigBox::createStructure(wadseekerSection, this);
 	addConfigurationBox(wadseekerRoot, cfgBoxInfo);
 
-	cfgBoxInfo = WadseekerIdgamesConfigBox::createStructure(mainConfig, this);
+	cfgBoxInfo = WadseekerIdgamesConfigBox::createStructure(wadseekerSection, this);
 	addConfigurationBox(wadseekerRoot, cfgBoxInfo);
 }
 
@@ -184,20 +183,20 @@ void ConfigureDlg::initOptionsList()
 
 	ConfigurationBoxInfo* cfgBoxInfo = NULL;
 
-	cfgBoxInfo = AppearanceConfigBox::createStructure(mainConfig, this);
+	cfgBoxInfo = AppearanceConfigBox::createStructure(Main::config, this);
 	addConfigurationBox(model->invisibleRootItem(), cfgBoxInfo);
 
-	cfgBoxInfo = CustomServersConfigBox::createStructure(mainConfig, this);
+	cfgBoxInfo = CustomServersConfigBox::createStructure(Main::config, this);
 	addConfigurationBox(model->invisibleRootItem(), cfgBoxInfo);
 	customServersCfgBox = cfgBoxInfo->confBox;
 	
-	cfgBoxInfo = IP2CConfigBox::createStructure(mainConfig, this);
+	cfgBoxInfo = IP2CConfigBox::createStructure(Main::config, this);
 	addConfigurationBox(model->invisibleRootItem(), cfgBoxInfo);
 
-	cfgBoxInfo = QueryConfigBox::createStructure(mainConfig, this);
+	cfgBoxInfo = QueryConfigBox::createStructure(Main::config, this);
 	addConfigurationBox(model->invisibleRootItem(), cfgBoxInfo);
 
-	cfgBoxInfo = FilePathsConfigBox::createStructure(mainConfig, this);
+	cfgBoxInfo = FilePathsConfigBox::createStructure(Main::config, this);
 	addConfigurationBox(model->invisibleRootItem(), cfgBoxInfo);
 
 	appendWadseekerConfigurationBoxes(model);
@@ -239,7 +238,7 @@ void ConfigureDlg::saveSettings()
 	}
 
 	bCustomServersChanged = customServersCfgBox->allowSave();
-	mainConfig->saveConfig();
+	Main::ini->save();
 	gLog << tr("Settings saved!");
 
 	// In case the master server addresses changed, notify the master clients.

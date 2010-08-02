@@ -44,7 +44,7 @@ const QString ServerListHandler::FONT_COLOR_FOUND = "#009f00";
 
 using namespace ServerListColumnId;
 
-ServerListHandler::ServerListHandler(ServerListView* serverTable, Config* config, QWidget* pMainWindow)
+ServerListHandler::ServerListHandler(ServerListView* serverTable, IniSection* config, QWidget* pMainWindow)
 : configuration(config), mainWindow(pMainWindow), model(NULL),
   needsCleaning(false), sortingProxy(NULL), sortOrder(Qt::AscendingOrder),
   sortIndex(-1), table(serverTable)
@@ -143,8 +143,7 @@ QString ServerListHandler::createIwadToolTip(const Server* server)
 	}
 	
 	// This will only return anything if we have the "TellMe..." option enabled.
-	SettingsData* setting = configuration->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn");
-	bool bFindIwad = setting->boolean();
+	bool bFindIwad = *configuration->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn");
 	
 	if (bFindIwad)
 	{
@@ -210,8 +209,7 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 	const QList<PWad>& pwads = server->pwads();
 	
 	// Check if we should seek and colorize.
-	SettingsData* setting = configuration->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn");
-	bool bFindWads = setting->boolean();
+	bool bFindWads = *configuration->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn");
 	
 	// Engage!
 	if (bFindWads)
@@ -352,7 +350,7 @@ void ServerListHandler::loadColumnsWidthsSettings()
 {
 	ServerListColumn* columns = ServerListColumns::columns;
 
-	QStringList colWidths = configuration->setting("ServerListColumnWidths")->string().split(',', QString::SkipEmptyParts);
+	QStringList colWidths = configuration->setting("ServerListColumnWidths")->strValue().split(',', QString::SkipEmptyParts);
 	if(colWidths.size() == NUM_SERVERLIST_COLUMNS) // If the number of columns do not match than reset this setting
 	{
 		for(int i = 0;i < NUM_SERVERLIST_COLUMNS;i++)

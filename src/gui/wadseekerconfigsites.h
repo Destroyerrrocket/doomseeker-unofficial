@@ -32,7 +32,7 @@ class WadseekerSitesConfigBox : public ConfigurationBaseBox, private Ui::Wadseek
 	Q_OBJECT
 
 	public:
-		static ConfigurationBoxInfo* createStructure(Config* cfg, QWidget* parent = NULL);
+		static ConfigurationBoxInfo* createStructure(IniSection* cfg, QWidget* parent = NULL);
 
 		void readSettings();
 
@@ -44,7 +44,7 @@ class WadseekerSitesConfigBox : public ConfigurationBaseBox, private Ui::Wadseek
 		void focusChanged(QWidget* old, QWidget* now);
 
 	protected:
-		WadseekerSitesConfigBox(Config*, QWidget* parent = NULL);
+		WadseekerSitesConfigBox(IniSection*, QWidget* parent = NULL);
 
 		void 			saveSettings();
 		void 			insertUrl(const QUrl& url);

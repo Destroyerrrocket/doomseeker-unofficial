@@ -20,13 +20,14 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "main.h"
 #include "vavoomgamerunner.h"
 #include "vavoomgameinfo.h"
 #include "vavoommain.h"
 #include "vavoomserver.h"
 
 VavoomGameRunner::VavoomGameRunner(const VavoomServer* server)
-: GameRunner(server)
+: GameRunner(server, Main::ini->createSection("Vavoom"))
 {
 }
 

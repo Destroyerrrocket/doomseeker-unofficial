@@ -30,7 +30,7 @@
 const // clear warnings
 #include "unknownengine.xpm"
 
-CustomServersConfigBox::CustomServersConfigBox(Config *cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent)
+CustomServersConfigBox::CustomServersConfigBox(IniSection *cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent)
 {
 	setupUi(this);
 
@@ -84,7 +84,7 @@ CustomServersConfigBox::CheckAndFixPorts CustomServersConfigBox::checkAndFixPort
 	return returnValue;
 }
 
-ConfigurationBoxInfo* CustomServersConfigBox::createStructure(Config *cfg, QWidget *parent)
+ConfigurationBoxInfo* CustomServersConfigBox::createStructure(IniSection *cfg, QWidget *parent)
 {
 	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
 	pConfigurationBoxInfo->confBox = new CustomServersConfigBox(cfg, parent);
@@ -186,12 +186,9 @@ void CustomServersConfigBox::readSettings()
 {
 	prepareTable();
 
-	SettingsData *setting;
-
-	setting = config->setting("CustomServers");
 	QList<CustomServerInfo> customServersList;
 	
-	CustomServers::decodeConfigEntries(setting->string(), customServersList);
+	CustomServers::decodeConfigEntries(*config->setting("CustomServers"), customServersList);
 	QList<CustomServerInfo>::iterator it;
 
 	for (it = customServersList.begin(); it != customServersList.end(); ++it)
@@ -221,10 +218,7 @@ void CustomServersConfigBox::remove()
 
 void CustomServersConfigBox::saveSettings()
 {
-	SettingsData *setting;
-
-	setting = config->setting("CustomServers");
-	setting->setValue(tableEntriesEncoded());
+	config->setting("CustomServers")->setValue(tableEntriesEncoded());
 }
 
 void CustomServersConfigBox::setEngine()

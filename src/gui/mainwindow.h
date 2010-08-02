@@ -69,7 +69,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 	Q_OBJECT
 
 	public:
-		MainWindow(int argc, char** argv, Config* config);
+		MainWindow(int argc, char** argv, IniSection* config);
 		~MainWindow();
 
 		/**
@@ -109,7 +109,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 */
 		bool				bWantToQuit;
 
-		Config*				configuration;
+		IniSection*			configuration;
 		IP2CParser*			ip2cParser;
 		QProgressBar*		ip2cUpdateProgressBar;
 		IP2CUpdater*		ip2cUpdater;

@@ -33,8 +33,6 @@ class VavoomGameRunner : public GameRunner
 	public:
 		VavoomGameRunner(const VavoomServer* server);
 
-		QString						configKeyCustomParameters() const { return "SkulltagCustomParameters"; }
-
 		void						connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword);
 
 		const PluginInfo*			plugin() const;

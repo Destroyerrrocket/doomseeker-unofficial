@@ -50,7 +50,7 @@ class PLUGIN_EXPORT VavoomEnginePlugin : public EnginePlugin
 		bool							allowsMOTD() const { return true; }
 
 
-		ConfigurationBoxInfo*			configuration(Config *cfg, QWidget *parent) const
+		ConfigurationBoxInfo*			configuration(IniSection *cfg, QWidget *parent) const
 		{
 			return BaseEngineConfigBox::createStructure(VavoomMain::get(), cfg, parent);
 		}
@@ -77,8 +77,7 @@ class PLUGIN_EXPORT VavoomEnginePlugin : public EnginePlugin
 
 		void			masterHost(QString &host, unsigned short &port) const
 		{
-			SettingsData* setting = Main::config->setting("VavoomMasterserver");
-			QString str = setting->string();
+			QString str = Main::ini->setting("Vavoom", "Masterserver")->strValue();
 			Strings::translateServerAddress(str, host, port, "127.0.0.1", 26001);
 		}
 
@@ -97,7 +96,7 @@ extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 	return VavoomMain::get();
 }
 
-extern "C" PLUGIN_EXPORT void doomSeekerInitConfig()
+extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection *config)
 {
-	Main::config->createSetting("VavoomMasterserver", "127.0.0.1:26001");
+	config->createSetting("VavoomMasterserver", "127.0.0.1:26001");
 }

@@ -172,7 +172,7 @@ void Server::refreshStarts()
 	bIsRefreshing = true;
 
 	emit begunRefreshing(this);
-	triesLeft = Main::config->setting("QueryTries")->integer();
+	triesLeft = *Main::config->setting("QueryTries");
 	if(triesLeft > 10) // Limit the maximum number of tries
 		triesLeft = 10;
 }

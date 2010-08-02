@@ -53,7 +53,7 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 		bool							allowsRConPassword() const { return true; }
 		bool							allowsMOTD() const { return true; }
 
-		ConfigurationBoxInfo*			configuration(Config *cfg, QWidget *parent) const
+		ConfigurationBoxInfo*			configuration(IniSection *cfg, QWidget *parent) const
 		{
 			return BaseEngineConfigBox::createStructure(OdamexMain::get(), cfg, parent);
 		}
@@ -86,8 +86,7 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 
 		void			masterHost(QString &host, unsigned short &port) const
 		{
-			SettingsData* setting = Main::config->setting("OdamexMasterserver");
-			QString str = setting->string();
+			QString str = Main::ini->setting("Odamex", "Masterserver")->strValue();
 			Strings::translateServerAddress(str, host, port, "master1.odamex.net", 15000);
 		}
 
@@ -106,7 +105,7 @@ extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 	return OdamexMain::get();
 }
 
-extern "C" PLUGIN_EXPORT void doomSeekerInitConfig()
+extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection *config)
 {
-	Main::config->createSetting("OdamexMasterserver", "master1.odamex.net:15000");
+	config->createSetting("OdamexMasterserver", "master1.odamex.net:15000");
 }

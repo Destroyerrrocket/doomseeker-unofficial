@@ -40,11 +40,11 @@ class ServerListHandler : public QObject
 	Q_OBJECT
 
 	public:
-		ServerListHandler(ServerListView* serverTable, Config* config, QWidget* pMainWindow);
+		ServerListHandler(ServerListView* serverTable, IniSection* config, QWidget* pMainWindow);
 		~ServerListHandler();
 
 		void 				clearTable();
-		Config*				configurationObject() { return configuration; }
+		IniSection*			configurationObject() { return configuration; }
 
 		QWidget*			getMainWindow() { return mainWindow; }
 
@@ -100,7 +100,7 @@ class ServerListHandler : public QObject
 		static const QString	FONT_COLOR_FOUND;
 	
 		QTimer					cleanerTimer;
-		Config*					configuration;
+		IniSection*				configuration;
 
 		QWidget*				mainWindow;
 		ServerListModel* 		model;

@@ -56,7 +56,7 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 		bool							allowsRConPassword() const { return true; }
 		bool							allowsMOTD() const { return true; }
 
-		ConfigurationBoxInfo *configuration(Config *cfg, QWidget *parent) const
+		ConfigurationBoxInfo *configuration(IniSection *cfg, QWidget *parent) const
 		{
 			return EngineSkulltagConfigBox::createStructure(SkulltagMain::get(), cfg, parent);
 		}
@@ -136,8 +136,7 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 
 		void						masterHost(QString &host, unsigned short &port) const
 		{
-			SettingsData* setting = Main::config->setting("SkulltagMasterserver");
-			QString str = setting->string();
+			QString str = Main::ini->setting("Skulltag", "Masterserver")->strValue();
 			Strings::translateServerAddress(str, host, port, "skulltag.servegame.com", 15300);
 		}
 
@@ -157,7 +156,7 @@ extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 	return SkulltagMain::get();
 }
 
-extern "C" PLUGIN_EXPORT void doomSeekerInitConfig()
+extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection *config)
 {
 	// Default to where the automatic installations install to.
 #ifdef Q_OS_WIN32
@@ -166,12 +165,12 @@ extern "C" PLUGIN_EXPORT void doomSeekerInitConfig()
 	
 	QString defaultSkulltagBinaryPath = programFilesPath + "\\Skulltag\\Skulltag.exe";
 
-	Main::config->createSetting("SkulltagBinaryPath", defaultSkulltagBinaryPath);
+	config->createSetting("SkulltagBinaryPath", defaultSkulltagBinaryPath);
 #else
-	Main::config->createSetting("SkulltagBinaryPath", "/usr/games/skulltag/skulltag");
-	Main::config->createSetting("SkulltagServerBinaryPath", "/usr/games/skulltag/skulltag-server");
+	config->createSetting("SkulltagBinaryPath", "/usr/games/skulltag/skulltag");
+	config->createSetting("SkulltagServerBinaryPath", "/usr/games/skulltag/skulltag-server");
 #endif
 
-	Main::config->createSetting("SkulltagMasterserver", "skulltag.servegame.com:15300");
-	Main::config->createSetting("SkulltagEnableTesting", true);
+	config->createSetting("SkulltagMasterserver", "skulltag.servegame.com:15300");
+	config->createSetting("SkulltagEnableTesting", true);
 }

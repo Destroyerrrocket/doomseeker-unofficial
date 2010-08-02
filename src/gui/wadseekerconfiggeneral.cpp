@@ -21,20 +21,21 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 
+#include "main.h"
 #include "gui/wadseekerconfiggeneral.h"
 #include <QCompleter>
 #include <QDebug>
 #include <QDirModel>
 #include <QMessageBox>
 
-WadseekerGeneralConfigBox::WadseekerGeneralConfigBox(Config* cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
+WadseekerGeneralConfigBox::WadseekerGeneralConfigBox(IniSection* cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
 {
 	setupUi(this);
 
 	cbTargetDirectory->setCompleter(new QCompleter(new QDirModel()));
 }
 
-ConfigurationBoxInfo* WadseekerGeneralConfigBox::createStructure(Config* cfg, QWidget* parent)
+ConfigurationBoxInfo* WadseekerGeneralConfigBox::createStructure(IniSection* cfg, QWidget* parent)
 {
 	ConfigurationBoxInfo* cfgBoxInfo = new ConfigurationBoxInfo();
 	cfgBoxInfo->confBox = new WadseekerGeneralConfigBox(cfg, parent);
@@ -45,42 +46,30 @@ ConfigurationBoxInfo* WadseekerGeneralConfigBox::createStructure(Config* cfg, QW
 
 void WadseekerGeneralConfigBox::fillTargetDirectoryComboBox()
 {
-	SettingsData* setting = config->setting("WadPaths");
 	cbTargetDirectory->clear();
-	cbTargetDirectory->addItems(setting->string().split(";", QString::SkipEmptyParts));
+	cbTargetDirectory->addItems(Main::config->setting("WadPaths")->strValue().split(";", QString::SkipEmptyParts));
 }
 
 void WadseekerGeneralConfigBox::readSettings()
 {
-	SettingsData* setting;
-
 	fillTargetDirectoryComboBox();
 
-	setting = config->setting("WadseekerTargetDirectory");
-	cbTargetDirectory->setEditText(setting->string());
-
-	setting = config->setting("WadseekerConnectTimeoutSeconds");
-	spinConnectTimeout->setValue(setting->integer());
-
-	setting = config->setting("WadseekerDownloadTimeoutSeconds");
-	spinDownloadTimeout->setValue(setting->integer());
+	cbTargetDirectory->setEditText(*config->setting("TargetDirectory"));
+	spinConnectTimeout->setValue(*config->setting("ConnectTimeoutSeconds"));
+	spinDownloadTimeout->setValue(*config->setting("DownloadTimeoutSeconds"));
 }
 
 void WadseekerGeneralConfigBox::saveSettings()
 {
-	SettingsData* setting;
-
-	setting = config->setting("WadseekerTargetDirectory");
-	setting->setValue(cbTargetDirectory->currentText());
+	config->setting("TargetDirectory")->setValue(cbTargetDirectory->currentText());
 	QFileInfo targetDirectoryInfo(cbTargetDirectory->currentText());
 	if(!targetDirectoryInfo.isWritable())
 	{
 		QMessageBox::warning(this, tr("Unwritable Target"), tr("The target directory you selected for Wadseeker can not be written to."));
 	}
 	// Also take a look at the file paths configuration.  Warn if it is not on the list.
-	setting = config->setting("WadPaths");
 	bool pathPossible = false;
-	foreach(QString possiblePath, setting->string().split(";", QString::SkipEmptyParts))
+	foreach(QString possiblePath, Main::config->setting("WadPaths")->strValue().split(";", QString::SkipEmptyParts))
 	{
 		if(possiblePath == cbTargetDirectory->currentText())
 			pathPossible = true;
@@ -88,9 +77,6 @@ void WadseekerGeneralConfigBox::saveSettings()
 	if(!pathPossible)
 		QMessageBox::warning(this, tr("Target not on List"), tr("The specified target directory could not be found on the file paths list."));
 
-	setting = config->setting("WadseekerConnectTimeoutSeconds");
-	setting->setValue(spinConnectTimeout->value());
-
-	setting = config->setting("WadseekerDownloadTimeoutSeconds");
-	setting->setValue(spinDownloadTimeout->value());
+	config->setting("ConnectTimeoutSeconds")->setValue(spinConnectTimeout->value());
+	config->setting("DownloadTimeoutSeconds")->setValue(spinDownloadTimeout->value());
 }

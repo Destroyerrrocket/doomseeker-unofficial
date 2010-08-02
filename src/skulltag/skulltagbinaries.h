@@ -33,7 +33,6 @@ class SkulltagBinaries : public Binaries
 	public:
 		SkulltagBinaries(const SkulltagServer* server);
 
-		QString					configKeyClientBinary() const { return "SkulltagBinaryPath"; }
 		QString					configKeyServerBinary() const;
 
 		/**

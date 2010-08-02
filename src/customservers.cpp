@@ -54,21 +54,21 @@ void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerIn
 				int engineIndex = Main::enginePlugins->pluginIndexFromName(customServerInfo.engine);
 				customServerInfo.engineIndex = engineIndex;
 
-                customServerInfo.host = QUrl::fromPercentEncoding(entryList[1].toAscii());
+				customServerInfo.host = QUrl::fromPercentEncoding(entryList[1].toAscii());
 
-                bool ok = false;
-                int port = QString(entryList[2]).toInt(&ok);
-                if (ok && port >= 1 && port <= 65535)
-                {
+				bool ok = false;
+				int port = QString(entryList[2]).toInt(&ok);
+				if (ok && port >= 1 && port <= 65535)
+				{
 					customServerInfo.port = port;
-                }
-                else if (engineIndex >= 0)
-                {
+				}
+				else if (engineIndex >= 0)
+				{
 					const Plugin* pPlugin = (*Main::enginePlugins)[engineIndex];
 					customServerInfo.port = pPlugin->info->pInterface->defaultServerPort();
-                }
-                else
-                {
+				}
+				else
+				{
 					customServerInfo.port = 1;
 				}
 
@@ -78,7 +78,7 @@ void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerIn
 	} // end of for
 }
 
-void CustomServers::readConfig(Config* cfg, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing)
+void CustomServers::readConfig(IniSection* cfg, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing)
 {
 	if (cfg == NULL)
 	{
@@ -86,8 +86,7 @@ void CustomServers::readConfig(Config* cfg, QObject* receiver, const char* slotU
 	}	
 	
 	QList<CustomServerInfo> customServerInfoList;
-	SettingsData* setting = cfg->setting("CustomServers");
-	decodeConfigEntries(setting->string(), customServerInfoList);
+	decodeConfigEntries(*cfg->setting("CustomServers"), customServerInfoList);
 
 	setServers(customServerInfoList, receiver, slotUpdated, slotBegunRefreshing);
 }

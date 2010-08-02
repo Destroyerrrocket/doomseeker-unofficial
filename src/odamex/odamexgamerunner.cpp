@@ -20,12 +20,13 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "main.h"
 #include "odamexgamerunner.h"
 #include "odamexgameinfo.h"
 #include "odamexserver.h"
 
 OdamexGameRunner::OdamexGameRunner(const OdamexServer* server)
-: GameRunner(server),
+: GameRunner(server, Main::ini->createSection("Odamex")),
   odamexServer(server)
 {
 }

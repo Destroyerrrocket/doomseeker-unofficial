@@ -33,8 +33,6 @@ class SkulltagGameRunner : public GameRunner
 	public:
 		SkulltagGameRunner(const SkulltagServer* server);
 
-		QString						configKeyCustomParameters() const { return "SkulltagCustomParameters"; }
-
 		const PluginInfo*			plugin() const { return SkulltagMain::get(); }
 		
 	protected:

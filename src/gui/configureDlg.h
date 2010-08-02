@@ -25,7 +25,7 @@
 #define __CONFIGUREDIALOG_H_
 
 #include "gui/configBase.h"
-#include "sdeapi/config.hpp"
+#include "ini.h"
 #include "ui_configureDlg.h"
 
 class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
@@ -33,7 +33,7 @@ class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 	Q_OBJECT
 
 	public:
-		ConfigureDlg(Config* mainCfg, QWidget* parent = NULL);
+		ConfigureDlg(QWidget* parent = NULL);
 		~ConfigureDlg();
 
 		bool 	addEngineConfiguration(ConfigurationBoxInfo*);
@@ -56,7 +56,6 @@ class ConfigureDlg : public QDialog, private Ui::ConfigureDlg
 		void 	wantChangeDefaultButton(QPushButton*);
 
 	private:
-		Config*		mainConfig;
 		bool		bAppearanceChanged;
 		bool		bCustomServersChanged;
 

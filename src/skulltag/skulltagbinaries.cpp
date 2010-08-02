@@ -36,22 +36,21 @@
 #endif
 
 SkulltagBinaries::SkulltagBinaries(const SkulltagServer* server)
-: server(server)
+: Binaries(Main::ini->createSection("Skulltag")), server(server)
 {
 }
 
 QString SkulltagBinaries::clientBinary(QString& error) const
 {
-	SettingsData* setting;
-	if (!server->isTestingServer() || !Main::config->setting("SkulltagEnableTesting")->boolean())
+	if (!server->isTestingServer() || !config->setting("EnableTesting")->boolValue())
 	{
 		return Binaries::clientBinary(error);
 	}
 	else
 	{
 		// This is common code for both Unix and Windows:
-		setting = Main::config->setting("SkulltagTestingPath");
-		QString path = setting->string();
+		IniVariable *setting = config->setting("TestingPath");
+		QString path = setting->strValue();
 		if (path.isEmpty())
 		{
 			error = tr("No testing directory specified for Skulltag");
@@ -73,7 +72,7 @@ QString SkulltagBinaries::clientBinary(QString& error) const
 			{
 				// setting->string() should still contain base dir
 				// for testing binaries
-				QDir dir(setting->string());
+				QDir dir(setting->strValue());
 				if (!dir.mkdir(server->version()))
 				{
 					error = tr("Unable to create directory:\n%1").arg(path);
@@ -128,8 +127,7 @@ QString SkulltagBinaries::clientBinary(QString& error) const
 
 QString SkulltagBinaries::clientWorkingDirectory(QString& error) const
 {
-	SettingsData* setting = Main::config->setting("SkulltagBinaryPath");
-	QFileInfo fi(setting->string());
+	QFileInfo fi(*config->setting("BinaryPath"));
 	return fi.canonicalPath();
 }
 
@@ -138,7 +136,7 @@ QString SkulltagBinaries::configKeyServerBinary() const
 	#ifdef Q_OS_WIN32
 		return configKeyClientBinary();
 	#else
-		return "SkulltagServerBinaryPath";
+		return "ServerBinaryPath";
 	#endif
 }
 

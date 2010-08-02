@@ -23,14 +23,14 @@
 #ifndef __ZDAEMON_BINARIES_H_
 #define __ZDAEMON_BINARIES_H_
 
+#include "main.h"
 #include "serverapi/binaries.h"
 #include "zdaemon/zdaemonmain.h"
 
 class ZDaemonBinaries : public Binaries
 {
 	public:
-		QString					configKeyClientBinary() const { return "ZDaemonBinaryPath"; }
-		QString					configKeyServerBinary() const { return "ZDaemonServerBinaryPath"; }
+		ZDaemonBinaries() : Binaries(Main::ini->createSection("ZDaemon")) {}
 
 		const PluginInfo*		plugin() const
 		{

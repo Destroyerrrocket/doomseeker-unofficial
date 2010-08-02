@@ -30,7 +30,7 @@
 #include <QMessageBox>
 #include <QUrl>
 
-WadseekerIdgamesConfigBox::WadseekerIdgamesConfigBox(Config* cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
+WadseekerIdgamesConfigBox::WadseekerIdgamesConfigBox(IniSection* cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
 {
 	setupUi(this);
 
@@ -53,7 +53,7 @@ void WadseekerIdgamesConfigBox::cbUseIdgamesToggled(bool checked)
 	frameWithContent->setEnabled(checked);
 }
 
-ConfigurationBoxInfo* WadseekerIdgamesConfigBox::createStructure(Config* cfg, QWidget* parent)
+ConfigurationBoxInfo* WadseekerIdgamesConfigBox::createStructure(IniSection* cfg, QWidget* parent)
 {
 	ConfigurationBoxInfo* cfgBoxInfo = new ConfigurationBoxInfo();
 	cfgBoxInfo->confBox = new WadseekerIdgamesConfigBox(cfg, parent);
@@ -64,29 +64,14 @@ ConfigurationBoxInfo* WadseekerIdgamesConfigBox::createStructure(Config* cfg, QW
 
 void WadseekerIdgamesConfigBox::readSettings()
 {
-	SettingsData* setting;
-
-	setting = config->setting("WadseekerSearchInIdgames");
-	bool b = static_cast<bool>(setting->integer());
-	cbUseIdgames->setChecked(b);
-
-	setting = config->setting("WadseekerIdgamesPriority");
-	cboIdgamesPriority->setCurrentIndex(setting->integer());
-
-	setting = config->setting("WadseekerIdgamesURL");
-	leIdgamesURL->setText(setting->string());
+	cbUseIdgames->setChecked(*config->setting("SearchInIdgames"));
+	cboIdgamesPriority->setCurrentIndex(*config->setting("IdgamesPriority"));
+	leIdgamesURL->setText(*config->setting("IdgamesURL"));
 }
 
 void WadseekerIdgamesConfigBox::saveSettings()
 {
-	SettingsData* setting;
-
-	setting = config->setting("WadseekerSearchInIdgames");
-	setting->setValue(cbUseIdgames->isChecked());
-
-	setting = config->setting("WadseekerIdgamesPriority");
-	setting->setValue(cboIdgamesPriority->currentIndex());
-
-	setting = config->setting("WadseekerIdgamesURL");
-	setting->setValue(leIdgamesURL->text());
+	config->setting("SearchInIdgames")->setValue(cbUseIdgames->isChecked());
+	config->setting("IdgamesPriority")->setValue(cboIdgamesPriority->currentIndex());
+	config->setting("IdgamesURL")->setValue(leIdgamesURL->text());
 }

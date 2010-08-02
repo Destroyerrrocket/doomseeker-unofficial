@@ -23,6 +23,7 @@
 #ifndef __CHOCOLATE_DOOM_BINARIES_H_
 #define __CHOCOLATE_DOOM_BINARIES_H_
 
+#include "main.h"
 #include "serverapi/binaries.h"
 #include "chocolate-doom/chocolatedoommain.h"
 
@@ -31,8 +32,7 @@ class ChocolateDoomServer;
 class ChocolateDoomBinaries : public Binaries
 {
 	public:
-		QString		configKeyClientBinary() const { return "ChocolateDoomBinaryPath"; }
-		QString		configKeyServerBinary() const { return "ChocolateDoomServerBinaryPath"; }
+		ChocolateDoomBinaries() : Binaries(Main::ini->createSection("ChocolateDoom")) {}
 
 		const PluginInfo*	plugin() const { return ChocolateDoomMain::get(); }
 };

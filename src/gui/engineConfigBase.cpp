@@ -26,7 +26,7 @@
 
 #include <QFileDialog>
 
-BaseEngineConfigBox::BaseEngineConfigBox(const PluginInfo *plugin, Config *cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent), plugin(plugin)
+BaseEngineConfigBox::BaseEngineConfigBox(const PluginInfo *plugin, IniSection *cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent), plugin(plugin)
 {
 	setupUi(this);
 
@@ -70,18 +70,13 @@ void BaseEngineConfigBox::btnBrowseServerBinaryClicked()
 	browseForBinary(leServerBinaryPath, tr("server binary"));
 }
 
-ConfigurationBoxInfo *BaseEngineConfigBox::createStructure(const PluginInfo *plugin, Config *cfg, QWidget *parent)
+ConfigurationBoxInfo *BaseEngineConfigBox::createStructure(const PluginInfo *plugin, IniSection *cfg, QWidget *parent)
 {
 	ConfigurationBoxInfo *pConfigurationBoxInfo = new ConfigurationBoxInfo();
 	pConfigurationBoxInfo->boxName = plugin->name;
 	pConfigurationBoxInfo->confBox = new BaseEngineConfigBox(plugin, cfg, parent);
 	pConfigurationBoxInfo->icon = plugin->pInterface->icon();
 	return pConfigurationBoxInfo;
-}
-
-QString BaseEngineConfigBox::generatePluginsConfigKeyPrefix() const
-{
-	return QString(plugin->name).replace(" ", "_");
 }
 
 void BaseEngineConfigBox::makeClientOnly()
@@ -92,50 +87,31 @@ void BaseEngineConfigBox::makeClientOnly()
 
 void BaseEngineConfigBox::readSettings()
 {
-	QString str;
-	SettingsData* setting;
-	
-	QString keyPrefix = generatePluginsConfigKeyPrefix();
-
-	setting = config->setting(keyPrefix + "BinaryPath");
-	leClientBinaryPath->setText(setting->string());
-
-	setting = config->setting(keyPrefix + "CustomParameters");
-	leCustomParameters->setText(setting->string());
+	leClientBinaryPath->setText(*config->setting("BinaryPath"));
+	leCustomParameters->setText(*config->setting("CustomParameters"));
 
 	if(plugin->pInterface->hasMasterServer())
-	{
-		setting = config->setting(keyPrefix + "Masterserver");
-		leMasterserverAddress->setText(setting->string());
-	}
+		leMasterserverAddress->setText(*config->setting("Masterserver"));
 
-	setting = config->setting(keyPrefix + "ServerBinaryPath");
-	leServerBinaryPath->setText(setting->string());
+	leServerBinaryPath->setText(*config->setting("ServerBinaryPath"));
 }
 
 void BaseEngineConfigBox::saveSettings()
 {
 	QString strVal;
-	SettingsData *setting;
-	
-	QString keyPrefix = generatePluginsConfigKeyPrefix();
 
 	strVal = leClientBinaryPath->text();
-	setting = config->setting(keyPrefix + "BinaryPath");
-	setting->setValue(strVal);
+	config->setting("BinaryPath")->setValue(strVal);
 
 	strVal = leCustomParameters->text();
-	setting = config->setting(keyPrefix + "CustomParameters");
-	setting->setValue(strVal);
+	config->setting("CustomParameters")->setValue(strVal);
 
 	if(plugin->pInterface->hasMasterServer())
 	{
 		strVal = leMasterserverAddress->text();
-		setting = config->setting(keyPrefix + "Masterserver");
-		setting->setValue(strVal);
+		config->setting("Masterserver")->setValue(strVal);
 	}
 
 	strVal = leServerBinaryPath->text();
-	setting = config->setting(keyPrefix + "ServerBinaryPath");
-	setting->setValue(strVal);
+	config->setting("ServerBinaryPath")->setValue(strVal);
 }

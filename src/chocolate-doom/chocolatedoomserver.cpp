@@ -47,27 +47,6 @@ Binaries* ChocolateDoomServer::binaries() const
 	return new ChocolateDoomBinaries();
 }
 
-QString	ChocolateDoomServer::binary(bool server, QString& error) const
-{
-	SettingsData* setting = Main::config->setting(server ? "ChocolateDoomServerBinaryPath" : "ChocolateDoomBinaryPath");
-
-	if (setting->string().isEmpty())
-	{
-		error = tr("No executable specified for Chocolate Doom");
-		return QString();
-	}
-
-	QFileInfo fi(setting->string());
-
-	if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
-	{
-		error = tr("%1\n is a directory or doesn't exist.").arg(setting->string());
-		return QString();
-	}
-
-	return setting->string();
-}
-
 GameRunner*	ChocolateDoomServer::gameRunner() const
 {
 	return new ChocolateDoomGameRunner(this);

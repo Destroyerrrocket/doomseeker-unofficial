@@ -37,12 +37,11 @@ PasswordDlg::PasswordDlg(QWidget *parent, bool rcon, bool connection) : QDialog(
 	{
 		Main::config->createSetting("RememberConnectPassword", 1);
 	
-		SettingsData *rememberConnectPassword = Main::config->setting("RememberConnectPassword");
-		remember->setChecked(rememberConnectPassword->integer() != 0);
-		if(rememberConnectPassword->integer() != 0)
+		IniVariable *rememberConnectPassword = Main::config->setting("RememberConnectPassword");
+		remember->setChecked(*rememberConnectPassword);
+		if(rememberConnectPassword->boolValue())
 		{
-			SettingsData *storedPassword = Main::config->setting("ConnectPassword");
-			password->setText(storedPassword->string());
+			password->setText(*Main::config->setting("ConnectPassword"));
 		}
 	}
 
