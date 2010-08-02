@@ -47,6 +47,7 @@ class MAIN_EXPORT IniVariable
 		IniVariable(unsigned int value) { setValue(value); }
 		IniVariable(bool value) { setValue(value); }
 		IniVariable(float value) { setValue(value); }
+		IniVariable(const char* value) { setValue(value); }
 
 		/**
 		*	Convert QString value to boolean, if possible. It's done by converting
@@ -70,6 +71,7 @@ class MAIN_EXPORT IniVariable
 		void			setValue(unsigned int i);
 		void			setValue(bool b);
 		void			setValue(float f);
+		void			setValue(const char* str) { value = str; }
 
 		const QString	&strValue() const { return value; }
 

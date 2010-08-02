@@ -99,5 +99,5 @@ extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 
 extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection *config)
 {
-	config->createSetting("ZDaemonMasterserver", "master.zdaemon.org:80");
+	config->createSetting("Masterserver", "master.zdaemon.org:80");
 }

@@ -32,7 +32,7 @@ class ChocolateDoomServer;
 class ChocolateDoomBinaries : public Binaries
 {
 	public:
-		ChocolateDoomBinaries() : Binaries(Main::ini->createSection("ChocolateDoom")) {}
+		ChocolateDoomBinaries() : Binaries(Main::ini->createSection("Chocolate Doom")) {}
 
 		const PluginInfo*	plugin() const { return ChocolateDoomMain::get(); }
 };

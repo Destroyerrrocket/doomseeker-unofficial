@@ -189,7 +189,7 @@ IniSection* Ini::createSection(const QString& name)
 	{
 		return NULL;
 	}
-		
+	
 	QString nameLower = name.toLower();
 
 	IniSectionsIt it = sections.find(nameLower);
@@ -694,7 +694,7 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 			
 			if (variable.value.contains(whiteSpace) || variable.value.contains("#"))
 			{
-				formattedValue = "\"" + formattedValue + "\"";
+				formattedValue = QString("\"%1\"").arg(formattedValue);
 			}
 			
 			output.append(variable.key);
@@ -732,12 +732,21 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 			}
 
 			// Output variable's name and value
-			output.append(nameit->value);
+			QString formattedValue = nameit->value;
 			
+			QRegExp whiteSpace("\\s");
+			
+			if (nameit->value.contains(whiteSpace) || nameit->value.contains("#"))
+			{
+				formattedValue = QString("\"%1\"").arg(formattedValue);
+			}
+			
+			output.append(formattedValue);
+			
+			// Output variable's side comment
 			QString nameListSideComment = nameit->sideComment;
 			nameListSideComment = nameListSideComment.replace("\n", " ");
 
-			// Output variable's side comment
 			if (!nameListSideComment.isEmpty())
 			{
 				output.append("\t#");

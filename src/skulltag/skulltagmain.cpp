@@ -165,12 +165,12 @@ extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection *config)
 	
 	QString defaultSkulltagBinaryPath = programFilesPath + "\\Skulltag\\Skulltag.exe";
 
-	config->createSetting("SkulltagBinaryPath", defaultSkulltagBinaryPath);
+	config->createSetting("BinaryPath", defaultSkulltagBinaryPath);
 #else
-	config->createSetting("SkulltagBinaryPath", "/usr/games/skulltag/skulltag");
-	config->createSetting("SkulltagServerBinaryPath", "/usr/games/skulltag/skulltag-server");
+	config->createSetting("BinaryPath", "/usr/games/skulltag/skulltag");
+	config->createSetting("ServerBinaryPath", "/usr/games/skulltag/skulltag-server");
 #endif
 
-	config->createSetting("SkulltagMasterserver", "skulltag.servegame.com:15300");
-	config->createSetting("SkulltagEnableTesting", true);
+	config->createSetting("Masterserver", "skulltag.servegame.com:15300");
+	config->createSetting("EnableTesting", true);
 }

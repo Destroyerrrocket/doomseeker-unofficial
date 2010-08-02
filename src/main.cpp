@@ -198,7 +198,7 @@ void Main::convertCfgToIni()
 	{
 		"Doomseeker",
 		"Wadseeker",
-		"ChocolateDoom",
+		"Chocolate Doom",
 		"Odamex",
 		"Skulltag",
 		"Vavoom",
@@ -238,6 +238,9 @@ void Main::convertCfgToIni()
 		else
 			section->createSetting(key, iter.value()->integer());
 	}
+	
+	// Allow Doomseeker to re-create following settings from scratch:
+	ini->deleteSetting("Doomseeker", "CustomServersColor");
 }
 
 void Main::createMainWindow()
@@ -342,7 +345,7 @@ void Main::initMainConfig()
 	config = ini->createSection("Doomseeker");
 
 	// Initial settings values
-	config->createSetting("CustomServersColor", (0x94 << 16) | (0xff << 8) | (0xff)); // r | g | b
+	config->createSetting("CustomServersColor", "#ffaa00"); // r | g | b
 	config->createSetting("MainWindowMaximized", 0);
 	config->createSetting("UseTrayIcon", false); // tray icon
 	config->createSetting("CloseToTrayIcon", false); // tray icon

@@ -191,7 +191,7 @@ void ServerListRowHandler::setBackgroundColor()
 {
 	if (server->isCustom())
 	{
-		int color = *model->handler()->configurationObject()->setting("CustomServersColor");
+		QString color = *model->handler()->configurationObject()->setting("CustomServersColor");
 
 		for (int column = 0; column < NUM_SERVERLIST_COLUMNS; ++column)
 		{

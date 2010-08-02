@@ -45,7 +45,7 @@ void AppearanceConfigBox::readSettings()
 {
 	slotStyle->setCurrentIndex(*config->setting("SlotStyle"));
 
-	btnCustomServersColor->setColor(config->setting("CustomServersColor")->numValue());
+	btnCustomServersColor->setColorHtml(*config->setting("CustomServersColor"));
 
 	// Make sure that the tray is available. If it's not, disable tray icon
 	// completely and make sure no change can be done to the configuration in
@@ -71,7 +71,7 @@ void AppearanceConfigBox::readSettings()
 void AppearanceConfigBox::saveSettings()
 {
 	config->setting("SlotStyle")->setValue(slotStyle->currentIndex());
-	config->setting("CustomServersColor")->setValue((signed) btnCustomServersColor->colorUnsigned());
+	config->setting("CustomServersColor")->setValue(btnCustomServersColor->colorHtml());
 	config->setting("UseTrayIcon")->setValue(gboUseTrayIcon->isChecked());
 	config->setting("CloseToTrayIcon")->setValue(cbCloseToTrayIcon->isChecked());
 	config->setting("BotsAreNotPlayers")->setValue(cbBotsNotPlayers->isChecked());

@@ -107,5 +107,5 @@ extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 
 extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection *config)
 {
-	config->createSetting("OdamexMasterserver", "master1.odamex.net:15000");
+	config->createSetting("Masterserver", "master1.odamex.net:15000");
 }

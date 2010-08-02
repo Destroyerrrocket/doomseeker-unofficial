@@ -98,5 +98,5 @@ extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 
 extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection *config)
 {
-	config->createSetting("VavoomMasterserver", "127.0.0.1:26001");
+	config->createSetting("Masterserver", "127.0.0.1:26001");
 }

@@ -92,7 +92,7 @@ void Plugin::initConfig()
 		void (*doomSeekerInitConfig)(IniSection*) = (void (*)(IniSection*)) (dlsym(library, "doomSeekerInitConfig"));
 		if(doomSeekerInitConfig != NULL)
 		{
-			doomSeekerInitConfig(Main::ini->createSection(QString(info->name).remove(" ")));
+			doomSeekerInitConfig(Main::ini->createSection( QString(info->name) ));
 		}
 	}
 }
