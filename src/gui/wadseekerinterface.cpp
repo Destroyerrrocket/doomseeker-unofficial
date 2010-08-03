@@ -106,10 +106,7 @@ void WadSeekerInterface::accept()
 	if (leWadName->text().isEmpty())
 		return;
 
-	QStringList list;
-	list << leWadName->text();
-
-	startSeeking(list);
+	startSeeking(leWadName->text().split(',', QString::SkipEmptyParts));
 }
 
 void WadSeekerInterface::allDone()
@@ -343,8 +340,8 @@ void WadSeekerInterface::startSeeking(const QStringList& seekedFilesList)
 
 	setStateDownloading();
 
-	wadseeker.setTimeConnectTimeout(*config->setting("TargetDirectory"));
-	wadseeker.setTimeDownloadTimeout(*config->setting("ConnectTimeoutSeconds"));
-	wadseeker.setTargetDirectory(*config->setting("DownloadTimeoutSeconds"));
+	wadseeker.setTimeConnectTimeout(*config->setting("ConnectTimeoutSeconds"));
+	wadseeker.setTimeDownloadTimeout(*config->setting("DownloadTimeoutSeconds"));
+	wadseeker.setTargetDirectory(*config->setting("TargetDirectory"));
 	wadseeker.seekWads(seekedFilesList);
 }
