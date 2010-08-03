@@ -337,11 +337,21 @@ void WadSeekerInterface::startSeeking(const QStringList& seekedFilesList)
 		return;
 
 	teWadseekerOutput->clear();
+	
+	// Get rid of the whitespace characters from each filename; we don't want
+	// to be searching " awad.wad".
+	QStringList seekedFilesListFormatted;
+	foreach (QString filenameFormatted, seekedFilesList)
+	{
+		filenameFormatted = filenameFormatted.trimmed();
+	
+		seekedFilesListFormatted << filenameFormatted;
+	}
 
 	setStateDownloading();
 
 	wadseeker.setTimeConnectTimeout(*config->setting("ConnectTimeoutSeconds"));
 	wadseeker.setTimeDownloadTimeout(*config->setting("DownloadTimeoutSeconds"));
 	wadseeker.setTargetDirectory(*config->setting("TargetDirectory"));
-	wadseeker.seekWads(seekedFilesList);
+	wadseeker.seekWads(seekedFilesListFormatted);
 }

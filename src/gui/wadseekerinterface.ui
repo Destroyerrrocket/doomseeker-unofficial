@@ -19,7 +19,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Seek wad:</string>
+        <string>Seek wad (or multiple wads, comma separated):</string>
        </property>
       </widget>
      </item>
