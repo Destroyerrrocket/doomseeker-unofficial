@@ -41,22 +41,23 @@ using namespace std;
 class MAIN_EXPORT IniVariable
 {
 	public:
-		IniVariable() {}
-		IniVariable(const QString& value) { *this = value; }
-		IniVariable(const char* value) { *this = QString(value); }
-		IniVariable(int value) { *this = value; }
-		IniVariable(unsigned int value) { *this = value; }
-		IniVariable(bool value) { *this = value; }
-		IniVariable(float value) { *this = value; }
+		IniVariable() : null(false) {}
+		IniVariable(const QString& value) : null(false) { *this = value; }
+		IniVariable(const char* value) : null(false) { *this = QString(value); }
+		IniVariable(int value) : null(false) { *this = value; }
+		IniVariable(unsigned int value) : null(false) { *this = value; }
+		IniVariable(bool value) : null(false) { *this = value; }
+		IniVariable(float value) : null(false) { *this = value; }
 
-		bool			isNull() const { return key.isNull(); }
+		bool			isNull() const { return null; }
 
-		const IniVariable &operator=(const QString &str) { value = str; return *this; }
+		const IniVariable &operator=(const QString &str);
 		const IniVariable &operator=(const char* str) { return *this = QString(str); }
 		const IniVariable &operator=(int i);
 		const IniVariable &operator=(unsigned int i);
 		const IniVariable &operator=(bool b);
 		const IniVariable &operator=(float f);
+		const IniVariable &operator=(const IniVariable &other);
 
 		// IniVariables can be used as pointers to QStrings as well
 		const QString *operator->() const { return &value; }
@@ -77,12 +78,16 @@ class MAIN_EXPORT IniVariable
 		*	to numValue() first, then to bool.
 		*/
 		operator bool() const;
+		operator IniVariable&() { return *this; }
 
 	protected:
 		friend class Ini;
 		friend struct IniSection;
 		friend class TestReadINIVariable;
 		friend class TestReadINIList;
+
+		static IniVariable	makeNull() { IniVariable nullVar; nullVar.null = true; return nullVar; }
+		bool				null;
 
 		/**
 		*	@brief Comment placed on the right side of the variable.
@@ -116,42 +121,55 @@ typedef map<QString, IniVariable>::const_iterator 	IniVariablesConstIt;
  *	Contains list of variables that are in this section, section's comments
  *	and namelists.
  */
-struct MAIN_EXPORT IniSection
+class MAIN_EXPORT IniSection
 {
-	static IniVariable nullVariable;
+	public:
+		IniSection() : null(false) {}
 
-	/**
-	 *	@brief A name of this section with lettercase preserved.
-	 */
-	QString					name;
+		static IniVariable nullVariable;
 
-	/**
-	 *	@brief Comment placed on the right side of the section.
-	 */
-	QString					sideComment;
+		IniVariable				&createSetting(const QString& name, const IniVariable& data);
+		void					deleteSetting(const QString& name);
+		bool					isNull() { return null; }
+		IniVariable				&retrieveSetting(const QString& name);
+		IniVariable				&setting(const QString& name);
 
-	/**
-	 *	@brief Comment placed on top of the section.
-	 */
-	QString					topComment;
+		IniVariable				&operator[](const QString& name) { return setting(name); }
 
-	/**
-	 *	@brief List of variables that belong to this section.
-	 */
-	IniVariables			variables;
+	protected:
+		friend class Ini;
+		friend class TestReadINIList;
 
-	/**
-	 *	@brief List of strings that belong to this section. 
-	 *
-	 *	This is an extension to the original INI format. 
-	 *	See Ini for more information.
-	 */
-	QVector<IniVariable>	nameList;
+		static IniSection	makeNull() { IniSection nullSect; nullSect.null = true; return nullSect; }
+		bool				null;
 
-	IniVariable				&createSetting(const QString& name, const IniVariable& data);
-	void					deleteSetting(const QString& name);
-	IniVariable				&retrieveSetting(const QString& name);
-	IniVariable				&setting(const QString& name);
+		/**
+		*	@brief A name of this section with lettercase preserved.
+		*/
+		QString					name;
+
+		/**
+		*	@brief Comment placed on the right side of the section.
+		*/
+		QString					sideComment;
+
+		/**
+		*	@brief Comment placed on top of the section.
+		*/
+		QString					topComment;
+
+		/**
+		*	@brief List of variables that belong to this section.
+		*/
+		IniVariables			variables;
+
+		/**
+		*	@brief List of strings that belong to this section. 
+		*
+		*	This is an extension to the original INI format. 
+		*	See Ini for more information.
+		*/
+		QVector<IniVariable>	nameList;
 };
 
 typedef map<QString, IniSection> 					IniSections;	// the first QString is the name
@@ -211,6 +229,8 @@ typedef map<QString, IniSection>::const_iterator 	IniSectionsConstIt;
 class MAIN_EXPORT Ini : public QObject
 {
 	public:
+		static IniSection nullSection;
+
 		/**
 		 *	DataSource determines where the data came from when the object
 		 *	was constructed.
@@ -245,7 +265,7 @@ class MAIN_EXPORT Ini : public QObject
 		 *	No change to the data will be made if section already exists.
 		 *	@return Newly created or existing section.
 		 */
-		IniSection*			createSection(const QString& name);
+		IniSection&			createSection(const QString& name);
 
 		/**
 		 *	Value of data parameter will be ignored and no changes will be
@@ -310,9 +330,8 @@ class MAIN_EXPORT Ini : public QObject
 		/**
 		 *	This won't create a variable if it doesn't exist and return NULL
 		 *	in such case.
-		 *	@return NULL if setting doesn't exist or a pointer to the
-		 *	internally stored IniVariable if it does. Do not delete the
-		 *	returned object.
+		 *	@return A reference to the internally stored IniVariable if it
+		 *	does. Be sure to check if it isNull.
 		 */
 		IniVariable&		retrieveSetting(const QString& sectionname, const QString& variablename);
 
@@ -328,7 +347,7 @@ class MAIN_EXPORT Ini : public QObject
 		 *	@return NULL if section doesn't exist or a pointer to
 		 *	internally stored IniSection object. Do not delete this object.
 		 */
-		IniSection*			section(const QString& name);
+		IniSection&			section(const QString& name);
 
 		/**
 		 *	Sets top comment of the INI file.
@@ -378,7 +397,7 @@ class MAIN_EXPORT Ini : public QObject
 
 		void				copy(const Ini& other);
 
-		IniSection*			parseSectionName(QString& line, bool& ok, const QString& topComment, unsigned lineNum);
+		IniSection&			parseSectionName(QString& line, bool& ok, const QString& topComment, unsigned lineNum);
 
 		/**
 		 *	Converts internally stored structures into an array of bytes that

@@ -31,13 +31,13 @@ const int WadSeekerInterface::UPDATE_INTERVAL_MS = 500;
 
 void WadSeekerInterface::initMessageColors()
 {
-	colorHtmlMessageNotice = *config->setting("ColorMessageNotice");
-	colorHtmlMessageError = *config->setting("ColorMessageError");
-	colorHtmlMessageFatalError = *config->setting("ColorMessageCriticalError");
+	colorHtmlMessageNotice = *config["ColorMessageNotice"];
+	colorHtmlMessageError = *config["ColorMessageError"];
+	colorHtmlMessageFatalError = *config["ColorMessageCriticalError"];
 }
 
 WadSeekerInterface::WadSeekerInterface(QWidget* parent)
-: QDialog(parent)
+: QDialog(parent), config(Ini::nullSection)
 {
 	config = Main::ini->createSection("Wadseeker");
 
@@ -63,10 +63,10 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent)
 	bAutomatic = false;
 	bFirstShown = false;
 
-	if (config->retrieveSetting("SearchURLs"))
+	if (!config.retrieveSetting("SearchURLs").isNull())
 	{
 		QStringList urlList;
-		QStringList strLst = config->setting("SearchURLs")->split(";");
+		QStringList strLst = config["SearchURLs"]->split(";");
 		QStringList::iterator it;
 		for (it = strLst.begin(); it != strLst.end(); ++it)
 		{
@@ -307,13 +307,13 @@ void WadSeekerInterface::setupIdgames()
 	bool useIdgames = true;
 	bool idgamesHasHighPriority = false;
 
-	config->createSetting("SearchInIdgames", true);
-	config->createSetting("IdgamesPriority", 0); // 0 == After all other sites
-	config->createSetting("IdgamesURL", Wadseeker::defaultIdgamesUrl());
+	config.createSetting("SearchInIdgames", true);
+	config.createSetting("IdgamesPriority", 0); // 0 == After all other sites
+	config.createSetting("IdgamesURL", Wadseeker::defaultIdgamesUrl());
 
-	useIdgames = config->setting("SearchInIdgames");
-	idgamesHasHighPriority = config->setting("IdgamesPriority");
-	idgamesURL = *config->setting("IdgamesURL");
+	useIdgames = config["SearchInIdgames"];
+	idgamesHasHighPriority = config["IdgamesPriority"];
+	idgamesURL = *config["IdgamesURL"];
 
 	wadseeker.setUseIdgames(useIdgames, idgamesHasHighPriority, idgamesURL);
 }
@@ -350,8 +350,8 @@ void WadSeekerInterface::startSeeking(const QStringList& seekedFilesList)
 
 	setStateDownloading();
 
-	wadseeker.setTimeConnectTimeout(config->setting("ConnectTimeoutSeconds"));
-	wadseeker.setTimeDownloadTimeout(config->setting("DownloadTimeoutSeconds"));
-	wadseeker.setTargetDirectory(config->setting("TargetDirectory"));
+	wadseeker.setTimeConnectTimeout(config["ConnectTimeoutSeconds"]);
+	wadseeker.setTimeDownloadTimeout(config["DownloadTimeoutSeconds"]);
+	wadseeker.setTargetDirectory(config["TargetDirectory"]);
 	wadseeker.seekWads(seekedFilesListFormatted);
 }

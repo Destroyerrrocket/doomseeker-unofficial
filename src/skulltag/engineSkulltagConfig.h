@@ -31,7 +31,7 @@ class EngineSkulltagConfigBox : public BaseEngineConfigBox
 	Q_OBJECT
 
 	public:
-		static ConfigurationBoxInfo* createStructure(const PluginInfo* plugin, IniSection* cfg, QWidget* parent = NULL);
+		static ConfigurationBoxInfo* createStructure(const PluginInfo* plugin, IniSection& cfg, QWidget* parent = NULL);
 
 		void readSettings();
 
@@ -40,7 +40,7 @@ class EngineSkulltagConfigBox : public BaseEngineConfigBox
 		void btnBrowseTestingPathClicked();
 
 	protected:
-		EngineSkulltagConfigBox(const PluginInfo* plugin, IniSection* cfg, QWidget* parent = NULL);
+		EngineSkulltagConfigBox(const PluginInfo* plugin, IniSection& cfg, QWidget* parent = NULL);
 		void saveSettings();
 
 		QGroupBox	*groupTesting;

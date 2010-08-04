@@ -26,13 +26,13 @@
 #include <QColorDialog>
 #include <QSystemTrayIcon>
 
-AppearanceConfigBox::AppearanceConfigBox(IniSection *cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent)
+AppearanceConfigBox::AppearanceConfigBox(IniSection &cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent)
 {
 	customServersColor = 0;
 	setupUi(this);
 }
 
-ConfigurationBoxInfo *AppearanceConfigBox::createStructure(IniSection *cfg, QWidget *parent)
+ConfigurationBoxInfo *AppearanceConfigBox::createStructure(IniSection &cfg, QWidget *parent)
 {
 	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
 	pConfigurationBoxInfo->confBox = new AppearanceConfigBox(cfg, parent);
@@ -43,38 +43,38 @@ ConfigurationBoxInfo *AppearanceConfigBox::createStructure(IniSection *cfg, QWid
 
 void AppearanceConfigBox::readSettings()
 {
-	slotStyle->setCurrentIndex(config->setting("SlotStyle"));
+	slotStyle->setCurrentIndex(config["SlotStyle"]);
 
-	btnCustomServersColor->setColorHtml(config->setting("CustomServersColor"));
+	btnCustomServersColor->setColorHtml(config["CustomServersColor"]);
 
 	// Make sure that the tray is available. If it's not, disable tray icon
 	// completely and make sure no change can be done to the configuration in
 	// this manner.
 	if (!QSystemTrayIcon::isSystemTrayAvailable())
 	{
-		config->setting("UseTrayIcon") = false;
-		config->setting("CloseToTrayIcon") = false;
+		config["UseTrayIcon"] = false;
+		config["CloseToTrayIcon"] = false;
 		gboUseTrayIcon->setEnabled(false);
 	}
 
-	gboUseTrayIcon->setChecked(config->setting("UseTrayIcon"));
+	gboUseTrayIcon->setChecked(config["UseTrayIcon"]);
 
-	cbCloseToTrayIcon->setChecked(config->setting("CloseToTrayIcon"));
+	cbCloseToTrayIcon->setChecked(config["CloseToTrayIcon"]);
 
 	// This is not really an appearance option, but it does change how the list
 	// appears and thus utilized the fact that the appearance options cause the 
 	// list to refresh.  It also doesn't fit into any of the other existing
 	// categories at this time.
-	cbBotsNotPlayers->setChecked(config->setting("BotsAreNotPlayers"));
+	cbBotsNotPlayers->setChecked(config["BotsAreNotPlayers"]);
 }
 
 void AppearanceConfigBox::saveSettings()
 {
-	config->setting("SlotStyle") = slotStyle->currentIndex();
-	config->setting("CustomServersColor") = btnCustomServersColor->colorHtml();
-	config->setting("UseTrayIcon") = gboUseTrayIcon->isChecked();
-	config->setting("CloseToTrayIcon") = cbCloseToTrayIcon->isChecked();
-	config->setting("BotsAreNotPlayers") = cbBotsNotPlayers->isChecked();
+	config["SlotStyle"] = slotStyle->currentIndex();
+	config["CustomServersColor"] = btnCustomServersColor->colorHtml();
+	config["UseTrayIcon"] = gboUseTrayIcon->isChecked();
+	config["CloseToTrayIcon"] = cbCloseToTrayIcon->isChecked();
+	config["BotsAreNotPlayers"] = cbBotsNotPlayers->isChecked();
 
 	emit appearanceChanged();
 }

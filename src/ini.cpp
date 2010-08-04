@@ -24,6 +24,7 @@
 #include "log.h"
 #include "main.h"
 #include "strings.h"
+#include <cassert>
 #include <cstdio>
 #include <cstdlib>
 
@@ -47,8 +48,18 @@ IniVariable::operator float() const
 	return value.toFloat();
 }
 
+const IniVariable &IniVariable::operator=(const QString &str)
+{
+	assert(!isNull());
+
+	value = str;
+	return *this;
+}
+
 const IniVariable &IniVariable::operator=(int i)
 {
+	assert(!isNull());
+
 	char buf[32];
 	sprintf(buf, "%d", i);
 	value = buf;
@@ -57,6 +68,8 @@ const IniVariable &IniVariable::operator=(int i)
 
 const IniVariable &IniVariable::operator=(unsigned int i)
 {
+	assert(!isNull());
+
 	char buf[32];
 	sprintf(buf, "%u", i);
 	value = buf;
@@ -70,9 +83,23 @@ const IniVariable &IniVariable::operator=(bool b)
 
 const IniVariable &IniVariable::operator=(float f)
 {
+	assert(!isNull());
+
 	char buf[32];
 	sprintf(buf, "%f", f);
 	value = buf;
+	return *this;
+}
+
+const IniVariable &IniVariable::operator=(const IniVariable &other)
+{
+	assert(!isNull());
+
+	null = other.null;
+	sideComment = other.sideComment;
+	topComment = other.topComment;
+	key = other.key;
+	value = other.value;
 	return *this;
 }
 
@@ -80,10 +107,11 @@ const IniVariable &IniVariable::operator=(float f)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-IniVariable IniSection::nullVariable;
+IniVariable IniSection::nullVariable = IniVariable::makeNull();
 
 IniVariable &IniSection::createSetting(const QString& name, const IniVariable& data)
 {
+	assert(!isNull());
 	if (name.isEmpty())
 	{
 		return nullVariable;
@@ -97,15 +125,23 @@ IniVariable &IniSection::createSetting(const QString& name, const IniVariable& d
 		return it->second;
 	}
 
-	variables.insert(IniVariablesPair(nameLower, data));
+	// Avoid setting a Null variable.
+	IniVariable varData;
+	varData.key = name;
+	varData = data;
+
+	variables.insert(IniVariablesPair(nameLower, varData));
 	IniVariable &pNewVariable = variables.find(nameLower)->second;
 	pNewVariable.key = name;
-	
+
+	nameList.push_back(pNewVariable);
+
 	return pNewVariable;
 }
 
 void IniSection::deleteSetting(const QString& name)
 {
+	assert(!isNull());
 	if (name.isEmpty())
 	{
 		return;
@@ -122,6 +158,7 @@ void IniSection::deleteSetting(const QString& name)
 
 IniVariable &IniSection::retrieveSetting(const QString& name)
 {
+	assert(!isNull());
 	if (name.isEmpty())
 	{
 		return nullVariable;
@@ -140,6 +177,7 @@ IniVariable &IniSection::retrieveSetting(const QString& name)
 
 IniVariable &IniSection::setting(const QString& name)
 {
+	assert(!isNull());
 	if (name.isEmpty())
 	{
 		return nullVariable;
@@ -147,12 +185,9 @@ IniVariable &IniSection::setting(const QString& name)
 	
 	QString nameLower = name.toLower();
 
-	IniVariable &pVariable = retrieveSetting(nameLower);
+	IniVariable& pVariable = retrieveSetting(nameLower);
 	if (pVariable.isNull())
-	{
-		pVariable = createSetting(name, IniVariable());
-	}
-
+		return createSetting(name, IniVariable());
 	return pVariable;
 }
 
@@ -160,6 +195,7 @@ IniVariable &IniSection::setting(const QString& name)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+IniSection Ini::nullSection = IniSection::makeNull();
 
 Ini::Ini(const QString& filename)
 : dataSourc(Memory), valid(false)
@@ -188,11 +224,11 @@ void Ini::copy(const Ini& other)
 	valid = other.valid;
 }
 
-IniSection* Ini::createSection(const QString& name)
+IniSection& Ini::createSection(const QString& name)
 {
 	if (name.isEmpty())
 	{
-		return NULL;
+		return nullSection;
 	}
 	
 	QString nameLower = name.toLower();
@@ -200,25 +236,25 @@ IniSection* Ini::createSection(const QString& name)
 	IniSectionsIt it = sections.find(nameLower);
 	if (it != sections.end())
 	{
-		return &it->second;
+		return it->second;
 	}
 	
 	IniSection newSection;
 	newSection.name = name;
 
 	sections.insert(IniSectionsPair(nameLower, newSection));
-	return &sections.find(nameLower)->second;
+	return sections.find(nameLower)->second;
 }
 
 IniVariable &Ini::createSetting(const QString& sectionName, const QString& name, const IniVariable& data)
 {
-	IniSection* pSection = createSection(sectionName);
-	if (pSection == NULL)
+	IniSection& pSection = createSection(sectionName);
+	if (pSection.isNull())
 	{
 		return IniSection::nullVariable;
 	}
 
-	return pSection->createSetting(name, data);
+	return pSection.createSetting(name, data);
 }
 
 void Ini::deleteSection(const QString& sectionName)
@@ -236,10 +272,10 @@ void Ini::deleteSection(const QString& sectionName)
 
 void Ini::deleteSetting(const QString& sectionName, const QString& settingName)
 {
-	IniSection* pSection = section(sectionName);
-	if (pSection != NULL)
+	IniSection& pSection = section(sectionName);
+	if (!pSection.isNull())
 	{
-		pSection->deleteSetting(settingName);
+		pSection.deleteSetting(settingName);
 	}
 }
 
@@ -324,7 +360,7 @@ Ini& Ini::operator=(const Ini& other)
 	return *this;
 }
 
-IniSection* Ini::parseSectionName(QString& line, bool& ok, const QString& topComment, unsigned lineNum)
+IniSection& Ini::parseSectionName(QString& line, bool& ok, const QString& topComment, unsigned lineNum)
 {
 	QString 			sectionName;
 	QString 			sideComment;
@@ -339,7 +375,7 @@ IniSection* Ini::parseSectionName(QString& line, bool& ok, const QString& topCom
 	{
 		errorsList << tr("Error in file '%1' at line %2: ] expected but not found").arg(filename).arg(lineNum);
 		ok = false;
-		return NULL;
+		return nullSection;
 	}
 
 	sectionName = line.mid(0, n);
@@ -353,26 +389,20 @@ IniSection* Ini::parseSectionName(QString& line, bool& ok, const QString& topCom
 		sideComment = line.mid(1);
 	}
 
-	IniSection section;
+	IniSection &section = this->section(sectionName);
+	if(section.isNull())
+	{
+		IniSection &newSection = createSection(sectionName);
+		newSection.topComment = topComment;
+		newSection.sideComment = sideComment;
+		newSection.name = sectionName;
+		return newSection;
+	}
 	section.topComment = topComment;
 	section.sideComment = sideComment;
 	section.name = sectionName;
-	
-	QString sectionNameLower = sectionName.toLower();	
-	
-	IniSectionsIt sectionIt = sections.find(sectionNameLower);
 
-	if ( sectionIt != sections.end())
-	{
-		sectionIt->second.topComment += "\n";
-		sectionIt->second.topComment += topComment;
-		return &sectionIt->second;
-	}
-	else
-	{
-		sections.insert(IniSectionsPair(sectionNameLower, section));
-		return &sections[sectionNameLower];
-	}
+	return section;
 }
 
 void Ini::print() const
@@ -385,9 +415,12 @@ void Ini::print() const
 
 void Ini::readQByteArrayIntoStructures(const QByteArray& array)
 {
+	assert(IniSection::nullVariable.isNull());
+	assert(nullSection.isNull());
+
 	unsigned		lineNum = 0;
 
-	IniSection*		currentSection = NULL;
+	IniSection*		currentSection = &nullSection;
 	bool 			previousLineWasEmpty = false;
 	QString			topComment;
 	IniVariables 	vars;
@@ -404,7 +437,7 @@ void Ini::readQByteArrayIntoStructures(const QByteArray& array)
 		line = Strings::trimr(line, " \t\r");
 		line = Strings::triml(line, " \t");
 
-		if (line.isEmpty() && previousLineWasEmpty && currentSection == NULL) // top comment of the entire file
+		if (line.isEmpty() && previousLineWasEmpty && currentSection->isNull()) // top comment of the entire file
 		{
 			previousLineWasEmpty = false;
 			iniTopComment += topComment;
@@ -427,7 +460,7 @@ void Ini::readQByteArrayIntoStructures(const QByteArray& array)
 			
 			topComment = Strings::trimr(topComment, "\n");
 			
-			currentSection = parseSectionName(line, ok, topComment, lineNum);
+			currentSection = &parseSectionName(line, ok, topComment, lineNum);
 			topComment.clear();
 			if (!ok)
 			{
@@ -438,7 +471,7 @@ void Ini::readQByteArrayIntoStructures(const QByteArray& array)
 		else // something else, perhaps a variable
 		{
 			previousLineWasEmpty = false;
-			if (currentSection == NULL)
+			if (currentSection->isNull())
 			{
 				errorsList << tr("Warning in file '%1' at line %2: found data that doesn't belong to any section.").arg(filename).arg(lineNum);
 			}
@@ -505,40 +538,33 @@ void Ini::readQByteArrayIntoStructures(const QByteArray& array)
 				}
 			}
 
-			IniVariable var;
-			var.topComment = topComment;
-			var.sideComment = sideComment;
-			var.key = varName;
-			var.value = varValue;
-			
-			var.topComment = Strings::trimr(var.topComment, "\n");
-
-			topComment.clear();
-
-			QString varNameLower = varName.toLower();
-			if (!varNameLower.isEmpty())
+			if(!varName.isEmpty() && !currentSection->isNull())
 			{
-				IniVariablesIt variablesIt = currentSection->variables.find(varNameLower);
+				IniVariable &var = currentSection->setting(varName);
+				assert(!var.isNull());
+				var.topComment = topComment;
+				var.sideComment = sideComment;
+				var.key = varName;
+				var.value = varValue;
 
-				if ( variablesIt != currentSection->variables.end())
-				{
-					// Replace variable with new one
-					variablesIt->second = var;
-				}
-				else
-				{
-					// Add variable
-					currentSection->variables.insert(IniVariablesPair(varNameLower, var));
-				}
+				var.topComment = Strings::trimr(var.topComment, "\n");
 			}
 			else
 			{
-				// This is a name list.
+				// I guess if we don't have a real setting, then push it on the
+				// name list anyways.
+				IniVariable var;
+				var.topComment = topComment;
+				var.sideComment = sideComment;
+				var.key = varName;
+				var.value = varValue;
 				currentSection->nameList.push_back(var);
 			}
+
+			topComment.clear();
 		}
 	}
-	
+
 	iniTopComment = Strings::trimr(iniTopComment, "\n");
 }
 
@@ -549,13 +575,13 @@ IniVariable &Ini::retrieveSetting(const QString& sectionName, const QString& var
 		return IniSection::nullVariable;
 	}
 
-	IniSection* pSection = section(sectionName);
-	if (pSection == NULL)
+	IniSection& pSection = section(sectionName);
+	if (pSection.isNull())
 	{
 		return IniSection::nullVariable;
 	}
 
-	return pSection->retrieveSetting(variableName);
+	return pSection.retrieveSetting(variableName);
 }
 
 bool Ini::save()
@@ -582,11 +608,11 @@ bool Ini::save()
 	return true;
 }
 
-IniSection* Ini::section(const QString& name)
+IniSection& Ini::section(const QString& name)
 {
 	if (name.isEmpty())
 	{
-		return NULL;
+		return nullSection;
 	}
 	
 	QString nameLower = name.toLower();
@@ -594,10 +620,10 @@ IniSection* Ini::section(const QString& name)
 	IniSectionsIt it = sections.find(nameLower);
 	if (it == sections.end())
 	{
-		return NULL;
+		return nullSection;
 	}
 
-	return &it->second;
+	return it->second;
 }
 
 IniVariable& Ini::setting(const QString& sectionName, const QString& variableName)
@@ -610,7 +636,7 @@ IniVariable& Ini::setting(const QString& sectionName, const QString& variableNam
 	IniVariable &var = retrieveSetting(sectionName, variableName);
 	if (var.isNull())
 	{
-		var = createSetting(sectionName, variableName, IniVariable());
+		return createSetting(sectionName, variableName, IniVariable());
 	}
 
 	return var;

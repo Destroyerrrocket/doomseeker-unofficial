@@ -30,7 +30,7 @@
 #include <QMessageBox>
 #include <QUrl>
 
-WadseekerIdgamesConfigBox::WadseekerIdgamesConfigBox(IniSection* cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
+WadseekerIdgamesConfigBox::WadseekerIdgamesConfigBox(IniSection& cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
 {
 	setupUi(this);
 
@@ -53,7 +53,7 @@ void WadseekerIdgamesConfigBox::cbUseIdgamesToggled(bool checked)
 	frameWithContent->setEnabled(checked);
 }
 
-ConfigurationBoxInfo* WadseekerIdgamesConfigBox::createStructure(IniSection* cfg, QWidget* parent)
+ConfigurationBoxInfo* WadseekerIdgamesConfigBox::createStructure(IniSection& cfg, QWidget* parent)
 {
 	ConfigurationBoxInfo* cfgBoxInfo = new ConfigurationBoxInfo();
 	cfgBoxInfo->confBox = new WadseekerIdgamesConfigBox(cfg, parent);
@@ -64,14 +64,14 @@ ConfigurationBoxInfo* WadseekerIdgamesConfigBox::createStructure(IniSection* cfg
 
 void WadseekerIdgamesConfigBox::readSettings()
 {
-	cbUseIdgames->setChecked(config->setting("SearchInIdgames"));
-	cboIdgamesPriority->setCurrentIndex(config->setting("IdgamesPriority"));
-	leIdgamesURL->setText(config->setting("IdgamesURL"));
+	cbUseIdgames->setChecked(config["SearchInIdgames"]);
+	cboIdgamesPriority->setCurrentIndex(config["IdgamesPriority"]);
+	leIdgamesURL->setText(config["IdgamesURL"]);
 }
 
 void WadseekerIdgamesConfigBox::saveSettings()
 {
-	config->setting("SearchInIdgames") = cbUseIdgames->isChecked();
-	config->setting("IdgamesPriority") = cboIdgamesPriority->currentIndex();
-	config->setting("IdgamesURL") = leIdgamesURL->text();
+	config["SearchInIdgames"] = cbUseIdgames->isChecked();
+	config["IdgamesPriority"] = cboIdgamesPriority->currentIndex();
+	config["IdgamesURL"] = leIdgamesURL->text();
 }

@@ -28,17 +28,16 @@
 #include <QFileInfo>
 #include <cstdlib>
 
-PathFinder::PathFinder(IniSection* cfg)
+PathFinder::PathFinder(IniSection& cfg) : config(cfg)
 {
-	config = cfg;
 }
 
 QString PathFinder::findFile(const QString& fileName)
 {
-	if (config == NULL)
+	if (config.isNull())
 		return QString();
 
-	IniVariable &setting = config->setting("WadPaths");
+	IniVariable &setting = config["WadPaths"];
 	QStringList strList = setting->split(";", QString::SkipEmptyParts);
 
 	#ifdef Q_OS_WIN32

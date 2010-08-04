@@ -36,7 +36,7 @@ class Server;
 class MAIN_EXPORT GameRunner : public QObject
 {
 	public:
-		GameRunner(const Server* server, IniSection *config);
+		GameRunner(const Server* server, IniSection &config);
 
 		virtual void				connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword);
 
@@ -144,7 +144,7 @@ class MAIN_EXPORT GameRunner : public QObject
 		const HostInfo*				currentHostInfo;
 		const Server*				server;
 
-		IniSection					*config;
+		IniSection					&config;
 };
 
 #endif

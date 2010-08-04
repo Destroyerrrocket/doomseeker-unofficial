@@ -78,15 +78,15 @@ void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerIn
 	} // end of for
 }
 
-void CustomServers::readConfig(IniSection* cfg, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing)
+void CustomServers::readConfig(IniSection& cfg, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing)
 {
-	if (cfg == NULL)
+	if (cfg.isNull())
 	{
 		return;
 	}	
 	
 	QList<CustomServerInfo> customServerInfoList;
-	decodeConfigEntries(cfg->setting("CustomServers"), customServerInfoList);
+	decodeConfigEntries(cfg["CustomServers"], customServerInfoList);
 
 	setServers(customServerInfoList, receiver, slotUpdated, slotBegunRefreshing);
 }

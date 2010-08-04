@@ -23,12 +23,12 @@
 
 #include "gui/cfgQuery.h"
 
-QueryConfigBox::QueryConfigBox(IniSection *cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent)
+QueryConfigBox::QueryConfigBox(IniSection &cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent)
 {
 	setupUi(this);
 }
 
-ConfigurationBoxInfo *QueryConfigBox::createStructure(IniSection *cfg, QWidget *parent)
+ConfigurationBoxInfo *QueryConfigBox::createStructure(IniSection &cfg, QWidget *parent)
 {
 	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
 	pConfigurationBoxInfo->confBox = new QueryConfigBox(cfg, parent);
@@ -39,20 +39,20 @@ ConfigurationBoxInfo *QueryConfigBox::createStructure(IniSection *cfg, QWidget *
 
 void QueryConfigBox::readSettings()
 {
-	queryOnStartup->setChecked(config->setting("QueryOnStartup"));
-	triesBox->setValue(config->setting("QueryTries"));
-	timeoutBox->setValue(config->setting("QueryTimeout"));
-	grbServerAutoRefresh->setChecked(config->setting("QueryAutoRefreshEnabled"));
-	numAutoRefreshEverySeconds->setValue(config->setting("QueryAutoRefreshEverySeconds"));
-	cbDontRefreshIfActive->setChecked(config->setting("QueryAutoRefreshDontIfActive"));
+	queryOnStartup->setChecked(config["QueryOnStartup"]);
+	triesBox->setValue(config["QueryTries"]);
+	timeoutBox->setValue(config["QueryTimeout"]);
+	grbServerAutoRefresh->setChecked(config["QueryAutoRefreshEnabled"]);
+	numAutoRefreshEverySeconds->setValue(config["QueryAutoRefreshEverySeconds"]);
+	cbDontRefreshIfActive->setChecked(config["QueryAutoRefreshDontIfActive"]);
 }
 
 void QueryConfigBox::saveSettings()
 {
-	config->setting("QueryOnStartup") = queryOnStartup->isChecked();
-	config->setting("QueryTries") = triesBox->value();
-	config->setting("QueryTimeout") = timeoutBox->value();
-	config->setting("QueryAutoRefreshEnabled") = grbServerAutoRefresh->isChecked();
-	config->setting("QueryAutoRefreshEverySeconds") = numAutoRefreshEverySeconds->value();
-	config->setting("QueryAutoRefreshDontIfActive") = cbDontRefreshIfActive->isChecked();
+	config["QueryOnStartup"] = queryOnStartup->isChecked();
+	config["QueryTries"] = triesBox->value();
+	config["QueryTimeout"] = timeoutBox->value();
+	config["QueryAutoRefreshEnabled"] = grbServerAutoRefresh->isChecked();
+	config["QueryAutoRefreshEverySeconds"] = numAutoRefreshEverySeconds->value();
+	config["QueryAutoRefreshDontIfActive"] = cbDontRefreshIfActive->isChecked();
 }

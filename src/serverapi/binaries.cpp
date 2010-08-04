@@ -29,7 +29,7 @@
 
 Binaries::BinaryNamesDictionary Binaries::binaryNames;
 
-Binaries::Binaries(IniSection *config) : config(config)
+Binaries::Binaries(IniSection &config) : config(config)
 {
 	if (binaryNames.empty()) // Is not init yet.
 	{
@@ -47,7 +47,7 @@ QString Binaries::clientWorkingDirectory(QString& error) const
 
 QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, QString& error) const
 {
-	IniVariable &setting = config->setting(configKey);
+	IniVariable &setting = config[configKey];
 
 	if (setting->isEmpty())
 	{

@@ -98,6 +98,11 @@ void Config::clear()
 	settings.clear();
 }
 
+void Config::remove()
+{
+	QFile::remove(configFile);
+}
+
 void Config::locateConfigFile(const QString& fileName)
 {
 	QString configDirPath = Main::dataPaths->programsDataDirectoryPath();

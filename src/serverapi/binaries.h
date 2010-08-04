@@ -34,7 +34,7 @@ struct PluginInfo;
 class MAIN_EXPORT Binaries : public QObject
 {
 	public:
-		Binaries(IniSection *config);
+		Binaries(IniSection &config);
 
 		/**
 		 *	@brief Returns the path to the client binary.
@@ -110,7 +110,7 @@ class MAIN_EXPORT Binaries : public QObject
 		typedef	QHash<BinaryType, QString>	BinaryNamesDictionary;
 
 		static BinaryNamesDictionary 		binaryNames;
-		IniSection							*config;
+		IniSection							&config;
 
 		QString								obtainBinary(const QString& configKey, BinaryType binaryType, QString& error) const;
 };

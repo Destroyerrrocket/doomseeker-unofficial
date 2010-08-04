@@ -103,6 +103,8 @@ class MAIN_EXPORT Config : public QObject
 		 */
 		const QHash<QString, SettingsData *> getSettings() { return settings; }
 
+		void			remove();
+
 		/**
 		 * Gets the specified setting.  Will create the setting if it does not
 		 * exist.

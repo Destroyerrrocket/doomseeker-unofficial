@@ -51,7 +51,7 @@
 
 const QString MainWindow::HELP_SITE_URL = "http://skulltag.net/wiki/Doomseeker";
 
-MainWindow::MainWindow(int argc, char** argv, IniSection* config)
+MainWindow::MainWindow(int argc, char** argv, IniSection& config)
 : bTotalRefreshInProcess(false), buddiesList(NULL), bWasMaximized(false),
   bWantToQuit(false), configuration(config), logDock(NULL), masterManager(NULL),
   trayIcon(NULL), trayIconMenu(NULL)
@@ -82,13 +82,13 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 	connectEntities();
 
 	// Window geometry settings
-	configuration->createSetting("MainWindowX", x());
-	configuration->createSetting("MainWindowY", y());
-	configuration->createSetting("MainWindowWidth", width());
-	configuration->createSetting("MainWindowHeight", height());
+	configuration.createSetting("MainWindowX", x());
+	configuration.createSetting("MainWindowY", y());
+	configuration.createSetting("MainWindowWidth", width());
+	configuration.createSetting("MainWindowHeight", height());
 
-	move(configuration->setting("MainWindowX"), configuration->setting("MainWindowY"));
-	resize(configuration->setting("MainWindowWidth"), configuration->setting("MainWindowHeight"));
+	move(configuration["MainWindowX"], configuration["MainWindowY"]);
+	resize(configuration["MainWindowWidth"], configuration["MainWindowHeight"]);
 
 	// Get the master
 	masterManager = new MasterManager();
@@ -118,16 +118,16 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 	initTrayIcon();
 
 	// Player diagram styles
-	int slotStyle = configuration->setting("SlotStyle");
+	int slotStyle = configuration["SlotStyle"];
 	PlayersDiagram::loadImages(slotStyle);
 	
 	// IP2C
 	bool bParseIP2CDatabase = true;
-	bool bPerformAutomaticIP2CUpdates = configuration->setting("IP2CAutoUpdate");
+	bool bPerformAutomaticIP2CUpdates = configuration["IP2CAutoUpdate"];
 	
 	if (bPerformAutomaticIP2CUpdates)
 	{
-		int maxAge = configuration->setting("IP2CMaximumAge");
+		int maxAge = configuration["IP2CMaximumAge"];
 	
 		QString databasePath = DoomseekerFilePaths::ip2cDatabase();
 		if (IP2CUpdater::needsUpdate(databasePath, maxAge))
@@ -143,7 +143,7 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 	}	
 
 	// check query on statup
-	bool queryOnStartup = configuration->setting("QueryOnStartup");
+	bool queryOnStartup = configuration["QueryOnStartup"];
 	if (queryOnStartup)
 	{
 		getServers();
@@ -160,13 +160,13 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 MainWindow::~MainWindow()
 {
 	// Window geometry settings
-	configuration->setting("MainWindowMaximized") = isMaximized();
+	configuration["MainWindowMaximized"] = isMaximized();
 	if (!isMaximized() && !isMinimized())
 	{
-		configuration->setting("MainWindowX") = x();
-		configuration->setting("MainWindowY") = y();
-		configuration->setting("MainWindowWidth") = width();
-		configuration->setting("MainWindowHeight") = height();
+		configuration["MainWindowX"] = x();
+		configuration["MainWindowY"] = y();
+		configuration["MainWindowWidth"] = width();
+		configuration["MainWindowHeight"] = height();
 	}
 
 	QList<QAction*> menuQueryActions = menuQuery->actions();
@@ -213,7 +213,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::autoRefreshTimer_timeout()
 {
-	if (configuration->setting("QueryAutoRefreshDontIfActive") && !isMinimized())
+	if (configuration["QueryAutoRefreshDontIfActive"] && !isMinimized())
 	{
 		if (QApplication::activeWindow() != 0)
 		{
@@ -269,7 +269,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
 	// Check if tray icon is available and if we want to minimize to tray icon
 	// when 'X' button is pressed. Real quit requests are handled by
 	// quitProgram() method. This method sets bWantToQuit to true.
-	if (trayIcon != NULL && configuration->setting("CloseToTrayIcon") && !bWantToQuit)
+	if (trayIcon != NULL && configuration["CloseToTrayIcon"] && !bWantToQuit)
 	{
 		bWasMaximized = isMaximized();
 		event->ignore();
@@ -429,9 +429,9 @@ void MainWindow::initAutoRefreshTimer()
 	const unsigned MIN_DELAY = 30;
 	const unsigned MAX_DELAY = 3600;
 
-	IniSection* cfg = configuration;
+	IniSection& cfg = configuration;
 
-	bool bEnabled = cfg->setting("QueryAutoRefreshEnabled");
+	bool bEnabled = cfg["QueryAutoRefreshEnabled"];
 
 	if (!bEnabled)
 	{
@@ -439,7 +439,7 @@ void MainWindow::initAutoRefreshTimer()
 	}
 	else
 	{
-		IniVariable &setting = cfg->setting("QueryAutoRefreshEverySeconds");
+		IniVariable &setting = cfg["QueryAutoRefreshEverySeconds"];
 		unsigned delay = setting;
 
 		// Make sure delay is in given limit.
@@ -498,7 +498,7 @@ void MainWindow::initLogDock()
 
 void MainWindow::initTrayIcon()
 {
-	bool isEnabled = configuration->setting("UseTrayIcon");
+	bool isEnabled = configuration["UseTrayIcon"];
 	if (!isEnabled || !QSystemTrayIcon::isSystemTrayAvailable())
 	{
 		if (trayIcon != NULL)
@@ -678,7 +678,7 @@ void MainWindow::ip2cStartUpdate()
 	connect (ip2cUpdater, SIGNAL( databaseDownloadFinished(const QByteArray&) ), this, SLOT( ip2cFinishUpdate(const QByteArray&) ) );
 	connect (ip2cUpdater, SIGNAL( downloadProgress(int, int) ), this, SLOT( ip2cDownloadProgress(int, int) ) );
 	
-	QString downloadUrl = configuration->setting("IP2CUrl");
+	QString downloadUrl = configuration["IP2CUrl"];
 	
 	ip2cUpdater->downloadDatabase(downloadUrl);
 	statusBar()->addPermanentWidget(ip2cUpdateProgressBar);
@@ -1055,7 +1055,7 @@ void MainWindow::trayIcon_activated(QSystemTrayIcon::ActivationReason reason)
 			bWasMaximized == true ? showMaximized() : showNormal();
 			activateWindow();
 		}
-		else if (configuration->setting("CloseToTrayIcon"))
+		else if (configuration["CloseToTrayIcon"])
 		{
 			close();
 		}

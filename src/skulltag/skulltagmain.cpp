@@ -56,7 +56,7 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 		bool							allowsRConPassword() const { return true; }
 		bool							allowsMOTD() const { return true; }
 
-		ConfigurationBoxInfo *configuration(IniSection *cfg, QWidget *parent) const
+		ConfigurationBoxInfo *configuration(IniSection &cfg, QWidget *parent) const
 		{
 			return EngineSkulltagConfigBox::createStructure(SkulltagMain::get(), cfg, parent);
 		}
@@ -156,7 +156,7 @@ extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 	return SkulltagMain::get();
 }
 
-extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection *config)
+extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection &config)
 {
 	// Default to where the automatic installations install to.
 #ifdef Q_OS_WIN32
@@ -165,12 +165,12 @@ extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection *config)
 	
 	QString defaultSkulltagBinaryPath = programFilesPath + "\\Skulltag\\Skulltag.exe";
 
-	config->createSetting("BinaryPath", defaultSkulltagBinaryPath);
+	config.createSetting("BinaryPath", defaultSkulltagBinaryPath);
 #else
-	config->createSetting("BinaryPath", "/usr/games/skulltag/skulltag");
-	config->createSetting("ServerBinaryPath", "/usr/games/skulltag/skulltag-server");
+	config.createSetting("BinaryPath", "/usr/games/skulltag/skulltag");
+	config.createSetting("ServerBinaryPath", "/usr/games/skulltag/skulltag-server");
 #endif
 
-	config->createSetting("Masterserver", "skulltag.servegame.com:15300");
-	config->createSetting("EnableTesting", true);
+	config.createSetting("Masterserver", "skulltag.servegame.com:15300");
+	config.createSetting("EnableTesting", true);
 }

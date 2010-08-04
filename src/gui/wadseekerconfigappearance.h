@@ -31,12 +31,12 @@ class WadseekerAppearanceConfigBox : public ConfigurationBaseBox, private Ui::Wa
 	Q_OBJECT
 
 	public:
-		static ConfigurationBoxInfo* createStructure(IniSection* cfg, QWidget* parent = NULL);
+		static ConfigurationBoxInfo* createStructure(IniSection& cfg, QWidget* parent = NULL);
 
 		void 			readSettings();
 
 	protected:
-		WadseekerAppearanceConfigBox(IniSection*, QWidget* parent = NULL);
+		WadseekerAppearanceConfigBox(IniSection&, QWidget* parent = NULL);
 
 		void 			saveSettings();
 };

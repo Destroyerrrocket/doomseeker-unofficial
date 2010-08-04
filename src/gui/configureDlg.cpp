@@ -119,7 +119,7 @@ void ConfigureDlg::appendWadseekerConfigurationBoxes(QStandardItemModel* model)
 
 	ConfigurationBoxInfo* cfgBoxInfo = NULL;
 
-	IniSection *wadseekerSection = Main::ini->createSection("Wadseeker");
+	IniSection &wadseekerSection = Main::ini->createSection("Wadseeker");
 	cfgBoxInfo = WadseekerAppearanceConfigBox::createStructure(wadseekerSection, this);
 	addConfigurationBox(wadseekerRoot, cfgBoxInfo);
 

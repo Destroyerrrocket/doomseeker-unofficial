@@ -82,8 +82,8 @@ bool TestReadINI::executeTest()
 	}
 	
 	// This should disregard characters case.
-	IniSection* pSection = ini.section("section.sectionone");
-	if (pSection == NULL)
+	IniSection& pSection = ini.section("section.sectionone");
+	if (pSection.isNull())
 	{
 		testLog << "Section.SectionOne was not read correctly from the INI file.";
 		return false;
@@ -142,9 +142,9 @@ bool TestReadINIList::executeTest()
 
 	Ini ini("ExampleINI", ExampleINIs::getExampleINI());
 	
-	IniSection *pSection = ini.section("section.list");
+	IniSection &pSection = ini.section("section.list");
 	
-	QVector<IniVariable>& nameList = pSection->nameList;
+	QVector<IniVariable>& nameList = pSection.nameList;
 	
 	int listSize = nameList.size();
 	
@@ -180,8 +180,8 @@ bool TestDeleteINIVariable::executeTest()
 	// Another way of removing a variable is to delete it directly from the
 	// Ini file through Ini::deleteSetting(). Here we remove it from the 
 	// section. This works the same and is provided for convenience.
-	IniSection* pSection = ini.section("section.sectionone");
-	pSection->deleteSetting("key1");
+	IniSection& pSection = ini.section("section.sectionone");
+	pSection.deleteSetting("key1");
 	
 	if (!ini.retrieveSetting("section.sectionone", "key1").isNull())
 	{
@@ -198,7 +198,7 @@ bool TestDeleteINISection::executeTest()
 {
 	Ini ini("ExampleINI", ExampleINIs::getExampleINI());
 	
-	if (ini.section("section.list") == NULL)
+	if (ini.section("section.list").isNull())
 	{
 		gLog << "Section doesn't exist already!";
 		return false;
@@ -206,7 +206,7 @@ bool TestDeleteINISection::executeTest()
 	
 	ini.deleteSection("section.list");
 	
-	if (ini.section("section.list") != NULL)
+	if (!ini.section("section.list").isNull())
 	{
 		gLog << "Failed to delete the section.";
 		return false;

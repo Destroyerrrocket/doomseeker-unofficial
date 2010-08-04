@@ -51,7 +51,7 @@ class PLUGIN_EXPORT ZDaemonEnginePlugin : public EnginePlugin
 		bool							allowsMOTD() const { return true; }
 
 
-		ConfigurationBoxInfo*			configuration(IniSection *cfg, QWidget *parent) const
+		ConfigurationBoxInfo*			configuration(IniSection &cfg, QWidget *parent) const
 		{
 			return BaseEngineConfigBox::createStructure(ZDaemonMain::get(), cfg, parent);
 		}
@@ -97,7 +97,7 @@ extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
 	return ZDaemonMain::get();
 }
 
-extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection *config)
+extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection &config)
 {
-	config->createSetting("Masterserver", "master.zdaemon.org:80");
+	config.createSetting("Masterserver", "master.zdaemon.org:80");
 }

@@ -42,14 +42,14 @@ SkulltagBinaries::SkulltagBinaries(const SkulltagServer* server)
 
 QString SkulltagBinaries::clientBinary(QString& error) const
 {
-	if (!server->isTestingServer() || !config->setting("EnableTesting"))
+	if (!server->isTestingServer() || !config["EnableTesting"])
 	{
 		return Binaries::clientBinary(error);
 	}
 	else
 	{
 		// This is common code for both Unix and Windows:
-		IniVariable &setting = config->setting("TestingPath");
+		IniVariable &setting = config["TestingPath"];
 		QString path = setting;
 		if (path.isEmpty())
 		{
@@ -127,7 +127,7 @@ QString SkulltagBinaries::clientBinary(QString& error) const
 
 QString SkulltagBinaries::clientWorkingDirectory(QString& error) const
 {
-	QFileInfo fi(config->setting("BinaryPath"));
+	QFileInfo fi(config["BinaryPath"]);
 	return fi.canonicalPath();
 }
 

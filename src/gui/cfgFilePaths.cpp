@@ -25,7 +25,7 @@
 #include <QFileDialog>
 #include <QStandardItem>
 
-FilePathsConfigBox::FilePathsConfigBox(IniSection* cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
+FilePathsConfigBox::FilePathsConfigBox(IniSection& cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
 {
 	setupUi(this);
 
@@ -77,7 +77,7 @@ void FilePathsConfigBox::btnRemoveWadPath_Click()
 	}
 }
 
-ConfigurationBoxInfo* FilePathsConfigBox::createStructure(IniSection* cfg, QWidget* parent)
+ConfigurationBoxInfo* FilePathsConfigBox::createStructure(IniSection& cfg, QWidget* parent)
 {
 	ConfigurationBoxInfo* pConfigurationBoxInfo = new ConfigurationBoxInfo();
 	pConfigurationBoxInfo->confBox = new FilePathsConfigBox(cfg, parent);
@@ -114,13 +114,13 @@ bool FilePathsConfigBox::isPathAlreadyDefined(const QString& path)
 
 void FilePathsConfigBox::readSettings()
 {
-	QStringList strList = config->setting("WadPaths")->split(";", QString::SkipEmptyParts);
+	QStringList strList = config["WadPaths"]->split(";", QString::SkipEmptyParts);
 	for (int i = 0; i < strList.count(); ++i)
 	{
 		addPath(strList[i]);
 	}
 
-	cbTellMeWhereAreMyWads->setChecked(config->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn") );
+	cbTellMeWhereAreMyWads->setChecked(config["TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn"]);
 }
 
 void FilePathsConfigBox::saveSettings()
@@ -136,8 +136,8 @@ void FilePathsConfigBox::saveSettings()
 		}
 	}
 
-	config->setting("WadPaths") = strList.join(";");
+	config["WadPaths"] = strList.join(";");
 
 	bool bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn = cbTellMeWhereAreMyWads->isChecked();
-	config->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn") = static_cast<int>(bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn);
+	config["TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn"] = static_cast<int>(bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn);
 }

@@ -38,11 +38,10 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 	Q_OBJECT;
 
 	public:
-		ConfigurationBaseBox(IniSection* cfg, QWidget* parent = NULL) : QGroupBox(parent)
+		ConfigurationBaseBox(IniSection& cfg, QWidget* parent = NULL) : QGroupBox(parent), config(cfg)
 		{
 			bAllowSave = false;
 			bSettingsAlreadyRead = false;
-			config = cfg;
 			hide();
 		}
 
@@ -89,7 +88,7 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 		void 		wantChangeDefaultButton(QPushButton* btn);
 
 	protected:
-		IniSection* config;
+		IniSection& config;
 		bool		bAllowSave;
 		bool		bSettingsAlreadyRead;
 

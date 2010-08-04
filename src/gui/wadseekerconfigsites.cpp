@@ -30,7 +30,7 @@
 #include <QMessageBox>
 #include <QUrl>
 
-WadseekerSitesConfigBox::WadseekerSitesConfigBox(IniSection* cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
+WadseekerSitesConfigBox::WadseekerSitesConfigBox(IniSection& cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
 {
 	setupUi(this);
 
@@ -75,7 +75,7 @@ void WadseekerSitesConfigBox::btnUrlRemoveClicked()
 	}
 }
 
-ConfigurationBoxInfo* WadseekerSitesConfigBox::createStructure(IniSection* cfg, QWidget* parent)
+ConfigurationBoxInfo* WadseekerSitesConfigBox::createStructure(IniSection& cfg, QWidget* parent)
 {
 	ConfigurationBoxInfo* cfgBoxInfo = new ConfigurationBoxInfo();
 	cfgBoxInfo->confBox = new WadseekerSitesConfigBox(cfg, parent);
@@ -125,7 +125,7 @@ void WadseekerSitesConfigBox::insertUrl(const QUrl& url)
 
 void WadseekerSitesConfigBox::readSettings()
 {
-	QStringList urlLst = config->setting("SearchURLs")->split(";");
+	QStringList urlLst = config["SearchURLs"]->split(";");
 	QStringList::iterator it;
 	for (it = urlLst.begin(); it != urlLst.end(); ++it)
 	{
@@ -136,7 +136,7 @@ void WadseekerSitesConfigBox::readSettings()
 void WadseekerSitesConfigBox::saveSettings()
 {
 	QStringList* urlLst = this->urlListEncoded();
-	config->setting("SearchURLs") = urlLst->join(";");
+	config["SearchURLs"] = urlLst->join(";");
 
 	delete urlLst;
 }

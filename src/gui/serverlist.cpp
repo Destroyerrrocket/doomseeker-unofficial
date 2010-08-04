@@ -44,7 +44,7 @@ const QString ServerListHandler::FONT_COLOR_FOUND = "#009f00";
 
 using namespace ServerListColumnId;
 
-ServerListHandler::ServerListHandler(ServerListView* serverTable, IniSection* config, QWidget* pMainWindow)
+ServerListHandler::ServerListHandler(ServerListView* serverTable, IniSection& config, QWidget* pMainWindow)
 : configuration(config), mainWindow(pMainWindow), model(NULL),
   needsCleaning(false), sortingProxy(NULL), sortOrder(Qt::AscendingOrder),
   sortIndex(-1), table(serverTable)
@@ -143,7 +143,7 @@ QString ServerListHandler::createIwadToolTip(const Server* server)
 	}
 	
 	// This will only return anything if we have the "TellMe..." option enabled.
-	bool bFindIwad = configuration->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn");
+	bool bFindIwad = configuration["TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn"];
 	
 	if (bFindIwad)
 	{
@@ -209,7 +209,7 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 	const QList<PWad>& pwads = server->pwads();
 	
 	// Check if we should seek and colorize.
-	bool bFindWads = configuration->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn");
+	bool bFindWads = configuration["TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn"];
 	
 	// Engage!
 	if (bFindWads)
@@ -332,7 +332,7 @@ void ServerListHandler::initDefaultColumnsWidthsSettings()
 		}
 		widths += QString("%1").arg(columns[i].width);
 	}
-	configuration->createSetting("ServerListColumnWidths", widths.toAscii().data());
+	configuration.createSetting("ServerListColumnWidths", widths.toAscii().data());
 }
 
 bool ServerListHandler::isSortingByColumn(int columnIndex)
@@ -350,7 +350,7 @@ void ServerListHandler::loadColumnsWidthsSettings()
 {
 	ServerListColumn* columns = ServerListColumns::columns;
 
-	QStringList colWidths = configuration->setting("ServerListColumnWidths")->split(',', QString::SkipEmptyParts);
+	QStringList colWidths = configuration["ServerListColumnWidths"]->split(',', QString::SkipEmptyParts);
 	if(colWidths.size() == NUM_SERVERLIST_COLUMNS) // If the number of columns do not match than reset this setting
 	{
 		for(int i = 0;i < NUM_SERVERLIST_COLUMNS;i++)
@@ -468,7 +468,7 @@ void ServerListHandler::saveColumnsWidthsSettings()
 
 			widths += QString("%1").arg(table->columnWidth(j));
 		}
-		configuration->setting("ServerListColumnWidths") = widths;
+		configuration["ServerListColumnWidths"] = widths;
 	}
 }
 

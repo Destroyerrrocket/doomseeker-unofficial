@@ -42,7 +42,7 @@ class MAIN_EXPORT Main : public QObject
 	public:
 		static const QString		IP2C_FILENAME;
 	
-		static IniSection			*config;
+		static IniSection			&config;
 		static Ini					*ini;
 		static IP2C					*ip2c;
 		static DataPaths*			dataPaths;

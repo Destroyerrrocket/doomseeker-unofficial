@@ -22,13 +22,13 @@
 //------------------------------------------------------------------------------
 #include "wadseekerconfigappearance.h"
 
-WadseekerAppearanceConfigBox::WadseekerAppearanceConfigBox(IniSection* cfg, QWidget* parent) 
+WadseekerAppearanceConfigBox::WadseekerAppearanceConfigBox(IniSection& cfg, QWidget* parent) 
 : ConfigurationBaseBox(cfg, parent)
 {
 	setupUi(this);
 }
 
-ConfigurationBoxInfo* WadseekerAppearanceConfigBox::createStructure(IniSection* cfg, QWidget* parent)
+ConfigurationBoxInfo* WadseekerAppearanceConfigBox::createStructure(IniSection& cfg, QWidget* parent)
 {
 	ConfigurationBoxInfo* cfgBoxInfo = new ConfigurationBoxInfo();
 	cfgBoxInfo->confBox = new WadseekerAppearanceConfigBox(cfg, parent);
@@ -39,14 +39,14 @@ ConfigurationBoxInfo* WadseekerAppearanceConfigBox::createStructure(IniSection* 
 
 void WadseekerAppearanceConfigBox::readSettings()
 {
-	btnNoticeMessageColor->setColorHtml(config->setting("ColorMessageNotice"));
-	btnErrorMessageColor->setColorHtml(config->setting("ColorMessageError"));
-	btnCriticalErrorMessageColor->setColorHtml(config->setting("ColorMessageCriticalError"));
+	btnNoticeMessageColor->setColorHtml(config["ColorMessageNotice"]);
+	btnErrorMessageColor->setColorHtml(config["ColorMessageError"]);
+	btnCriticalErrorMessageColor->setColorHtml(config["ColorMessageCriticalError"]);
 }
 
 void WadseekerAppearanceConfigBox::saveSettings()
 {
-	config->setting("ColorMessageNotice") = btnNoticeMessageColor->colorHtml();
-	config->setting("ColorMessageError") = btnErrorMessageColor->colorHtml();
-	config->setting("ColorMessageCriticalError") = btnCriticalErrorMessageColor->colorHtml();
+	config["ColorMessageNotice"] = btnNoticeMessageColor->colorHtml();
+	config["ColorMessageError"] = btnErrorMessageColor->colorHtml();
+	config["ColorMessageCriticalError"] = btnCriticalErrorMessageColor->colorHtml();
 }

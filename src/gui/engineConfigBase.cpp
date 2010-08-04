@@ -26,7 +26,7 @@
 
 #include <QFileDialog>
 
-BaseEngineConfigBox::BaseEngineConfigBox(const PluginInfo *plugin, IniSection *cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent), plugin(plugin)
+BaseEngineConfigBox::BaseEngineConfigBox(const PluginInfo *plugin, IniSection &cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent), plugin(plugin)
 {
 	setupUi(this);
 
@@ -70,7 +70,7 @@ void BaseEngineConfigBox::btnBrowseServerBinaryClicked()
 	browseForBinary(leServerBinaryPath, tr("server binary"));
 }
 
-ConfigurationBoxInfo *BaseEngineConfigBox::createStructure(const PluginInfo *plugin, IniSection *cfg, QWidget *parent)
+ConfigurationBoxInfo *BaseEngineConfigBox::createStructure(const PluginInfo *plugin, IniSection &cfg, QWidget *parent)
 {
 	ConfigurationBoxInfo *pConfigurationBoxInfo = new ConfigurationBoxInfo();
 	pConfigurationBoxInfo->boxName = plugin->name;
@@ -87,13 +87,13 @@ void BaseEngineConfigBox::makeClientOnly()
 
 void BaseEngineConfigBox::readSettings()
 {
-	leClientBinaryPath->setText(config->setting("BinaryPath"));
-	leCustomParameters->setText(config->setting("CustomParameters"));
+	leClientBinaryPath->setText(config["BinaryPath"]);
+	leCustomParameters->setText(config["CustomParameters"]);
 
 	if(plugin->pInterface->hasMasterServer())
-		leMasterserverAddress->setText(config->setting("Masterserver"));
+		leMasterserverAddress->setText(config["Masterserver"]);
 
-	leServerBinaryPath->setText(config->setting("ServerBinaryPath"));
+	leServerBinaryPath->setText(config["ServerBinaryPath"]);
 }
 
 void BaseEngineConfigBox::saveSettings()
@@ -101,17 +101,17 @@ void BaseEngineConfigBox::saveSettings()
 	QString strVal;
 
 	strVal = leClientBinaryPath->text();
-	config->setting("BinaryPath") = strVal;
+	config["BinaryPath"] = strVal;
 
 	strVal = leCustomParameters->text();
-	config->setting("CustomParameters") = strVal;
+	config["CustomParameters"] = strVal;
 
 	if(plugin->pInterface->hasMasterServer())
 	{
 		strVal = leMasterserverAddress->text();
-		config->setting("Masterserver") = strVal;
+		config["Masterserver"] = strVal;
 	}
 
 	strVal = leServerBinaryPath->text();
-	config->setting("ServerBinaryPath") = strVal;
+	config["ServerBinaryPath"] = strVal;
 }

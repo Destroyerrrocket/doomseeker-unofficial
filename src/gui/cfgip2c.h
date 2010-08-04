@@ -32,12 +32,12 @@ class IP2CConfigBox : public ConfigurationBaseBox, private Ui::IP2CConfigBox
 	Q_OBJECT
 
 	public:
-		static ConfigurationBoxInfo	*createStructure(IniSection *cfg, QWidget *parent=NULL);
+		static ConfigurationBoxInfo	*createStructure(IniSection &cfg, QWidget *parent=NULL);
 
 		void	readSettings();
 
 	protected:
-		IP2CConfigBox(IniSection *cfg, QWidget *parent=NULL);
+		IP2CConfigBox(IniSection &cfg, QWidget *parent=NULL);
 
 		void	saveSettings();
 };
