@@ -43,6 +43,7 @@ class MAIN_EXPORT IniVariable
 	public:
 		IniVariable() {}
 		IniVariable(const QString& value) { *this = value; }
+		IniVariable(const char* value) { *this = QString(value); }
 		IniVariable(int value) { *this = value; }
 		IniVariable(unsigned int value) { *this = value; }
 		IniVariable(bool value) { *this = value; }
@@ -51,6 +52,7 @@ class MAIN_EXPORT IniVariable
 		bool			isNull() const { return key.isNull(); }
 
 		const IniVariable &operator=(const QString &str) { value = str; return *this; }
+		const IniVariable &operator=(const char* str) { return *this = QString(str); }
 		const IniVariable &operator=(int i);
 		const IniVariable &operator=(unsigned int i);
 		const IniVariable &operator=(bool b);
