@@ -188,7 +188,7 @@ void CustomServersConfigBox::readSettings()
 
 	QList<CustomServerInfo> customServersList;
 	
-	CustomServers::decodeConfigEntries(*config->setting("CustomServers"), customServersList);
+	CustomServers::decodeConfigEntries(config->setting("CustomServers"), customServersList);
 	QList<CustomServerInfo>::iterator it;
 
 	for (it = customServersList.begin(); it != customServersList.end(); ++it)
@@ -218,7 +218,7 @@ void CustomServersConfigBox::remove()
 
 void CustomServersConfigBox::saveSettings()
 {
-	config->setting("CustomServers")->setValue(tableEntriesEncoded());
+	config->setting("CustomServers") = tableEntriesEncoded();
 }
 
 void CustomServersConfigBox::setEngine()

@@ -125,7 +125,7 @@ void WadseekerSitesConfigBox::insertUrl(const QUrl& url)
 
 void WadseekerSitesConfigBox::readSettings()
 {
-	QStringList urlLst = config->setting("SearchURLs")->strValue().split(";");
+	QStringList urlLst = config->setting("SearchURLs")->split(";");
 	QStringList::iterator it;
 	for (it = urlLst.begin(); it != urlLst.end(); ++it)
 	{
@@ -136,7 +136,7 @@ void WadseekerSitesConfigBox::readSettings()
 void WadseekerSitesConfigBox::saveSettings()
 {
 	QStringList* urlLst = this->urlListEncoded();
-	config->setting("SearchURLs")->setValue(urlLst->join(";"));
+	config->setting("SearchURLs") = urlLst->join(";");
 
 	delete urlLst;
 }

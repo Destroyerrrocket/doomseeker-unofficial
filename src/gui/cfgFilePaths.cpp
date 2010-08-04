@@ -114,13 +114,13 @@ bool FilePathsConfigBox::isPathAlreadyDefined(const QString& path)
 
 void FilePathsConfigBox::readSettings()
 {
-	QStringList strList = config->setting("WadPaths")->strValue().split(";", QString::SkipEmptyParts);
+	QStringList strList = config->setting("WadPaths")->split(";", QString::SkipEmptyParts);
 	for (int i = 0; i < strList.count(); ++i)
 	{
 		addPath(strList[i]);
 	}
 
-	cbTellMeWhereAreMyWads->setChecked( *config->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn") );
+	cbTellMeWhereAreMyWads->setChecked(config->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn") );
 }
 
 void FilePathsConfigBox::saveSettings()
@@ -136,8 +136,8 @@ void FilePathsConfigBox::saveSettings()
 		}
 	}
 
-	config->setting("WadPaths")->setValue(strList.join(";"));
+	config->setting("WadPaths") = strList.join(";");
 
 	bool bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn = cbTellMeWhereAreMyWads->isChecked();
-	config->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn")->setValue( static_cast<int>(bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn) );
+	config->setting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn") = static_cast<int>(bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn);
 }

@@ -42,44 +42,39 @@ class MAIN_EXPORT IniVariable
 {
 	public:
 		IniVariable() {}
-		IniVariable(const QString& value) { setValue(value); }
-		IniVariable(int value) { setValue(value); }
-		IniVariable(unsigned int value) { setValue(value); }
-		IniVariable(bool value) { setValue(value); }
-		IniVariable(float value) { setValue(value); }
-		IniVariable(const char* value) { setValue(value); }
+		IniVariable(const QString& value) { *this = value; }
+		IniVariable(int value) { *this = value; }
+		IniVariable(unsigned int value) { *this = value; }
+		IniVariable(bool value) { *this = value; }
+		IniVariable(float value) { *this = value; }
 
-		/**
-		*	Convert QString value to boolean, if possible. It's done by converting
-		*	to numValue() first, then to bool.
-		*/
-		bool			boolValue() const;
+		bool			isNull() const { return key.isNull(); }
 
-		/**
-		*	Attempts to convert the QString value to a integer.
-		*/
-		int				numValue() const;
-		unsigned int	numUnsignedValue() const;
+		const IniVariable &operator=(const QString &str) { value = str; return *this; }
+		const IniVariable &operator=(int i);
+		const IniVariable &operator=(unsigned int i);
+		const IniVariable &operator=(bool b);
+		const IniVariable &operator=(float f);
+
+		// IniVariables can be used as pointers to QStrings as well
+		const QString *operator->() const { return &value; }
+		const QString &operator*() const { return value; }
+		operator const QString &() const { return value; }
 
 		/**
 		*	Attempts to convert the QString value to a float.
 		*/
-		float			numValueFloat() const;
-
-		void			setValue(const QString& str) { value = str; }
-		void			setValue(int i);
-		void			setValue(unsigned int i);
-		void			setValue(bool b);
-		void			setValue(float f);
-		void			setValue(const char* str) { value = str; }
-
-		const QString	&strValue() const { return value; }
-
-		operator const QString &() { return strValue(); }
-		operator float() { return numValueFloat(); }
-		operator int() { return numValue() ;}
-		operator unsigned int() { return numUnsignedValue(); }
-		operator bool() { return boolValue(); }
+		operator float() const;
+		/**
+		*	Attempts to convert the QString value to a integer.
+		*/
+		operator int() const;
+		operator unsigned int() const;
+		/**
+		*	Convert QString value to boolean, if possible. It's done by converting
+		*	to numValue() first, then to bool.
+		*/
+		operator bool() const;
 
 	protected:
 		friend class Ini;
@@ -121,6 +116,8 @@ typedef map<QString, IniVariable>::const_iterator 	IniVariablesConstIt;
  */
 struct MAIN_EXPORT IniSection
 {
+	static IniVariable nullVariable;
+
 	/**
 	 *	@brief A name of this section with lettercase preserved.
 	 */
@@ -149,10 +146,10 @@ struct MAIN_EXPORT IniSection
 	 */
 	QVector<IniVariable>	nameList;
 
-	IniVariable*			createSetting(const QString& name, const IniVariable& data);
+	IniVariable				&createSetting(const QString& name, const IniVariable& data);
 	void					deleteSetting(const QString& name);
-	IniVariable*			retrieveSetting(const QString& name);
-	IniVariable*			setting(const QString& name);
+	IniVariable				&retrieveSetting(const QString& name);
+	IniVariable				&setting(const QString& name);
 };
 
 typedef map<QString, IniSection> 					IniSections;	// the first QString is the name
@@ -253,7 +250,7 @@ class MAIN_EXPORT Ini : public QObject
 		 *	performed if setting already exists.
 		 *	@return Newly created or existing setting.
 		 */
-		IniVariable*		createSetting(const QString& sectionname, const QString& name, const IniVariable& data);
+		IniVariable&		createSetting(const QString& sectionname, const QString& name, const IniVariable& data);
 
 		/**
 		 *	@return Source type of the INI data, either a physical file or
@@ -315,7 +312,7 @@ class MAIN_EXPORT Ini : public QObject
 		 *	internally stored IniVariable if it does. Do not delete the
 		 *	returned object.
 		 */
-		IniVariable*		retrieveSetting(const QString& sectionname, const QString& variablename);
+		IniVariable&		retrieveSetting(const QString& sectionname, const QString& variablename);
 
 		/**
 		 *	This will only work if dataSource() == Drive. If the data source
@@ -342,7 +339,7 @@ class MAIN_EXPORT Ini : public QObject
 		 *	@return Returns a pointer to a IniVariable object. Do not delete
 		 *	this object.
 		 */
-		IniVariable*		setting(const QString& sectionname, const QString& variablename);
+		IniVariable&		setting(const QString& sectionname, const QString& variablename);
 
 	protected:
 		/**

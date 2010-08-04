@@ -69,8 +69,8 @@ void EngineSkulltagConfigBox::readSettings()
 {
 	BaseEngineConfigBox::readSettings();
 
-	groupTesting->setChecked(*config->setting("EnableTesting"));
-	leTestingPath->setText(*config->setting("TestingPath"));
+	groupTesting->setChecked(config->setting("EnableTesting"));
+	leTestingPath->setText(config->setting("TestingPath"));
 }
 
 void EngineSkulltagConfigBox::saveSettings()
@@ -79,8 +79,8 @@ void EngineSkulltagConfigBox::saveSettings()
 
 	QString strVal;
 
-	config->setting("EnableTesting")->setValue(groupTesting->isChecked());
+	config->setting("EnableTesting") = groupTesting->isChecked();
 
 	strVal = leTestingPath->text();
-	config->setting("TestingPath")->setValue(strVal);
+	config->setting("TestingPath") = strVal;
 }

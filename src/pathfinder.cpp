@@ -38,9 +38,8 @@ QString PathFinder::findFile(const QString& fileName)
 	if (config == NULL)
 		return QString();
 
-	IniVariable* setting;
-	setting = config->setting("WadPaths");
-	QStringList strList = setting->strValue().split(";", QString::SkipEmptyParts);
+	IniVariable &setting = config->setting("WadPaths");
+	QStringList strList = setting->split(";", QString::SkipEmptyParts);
 
 	#ifdef Q_OS_WIN32
 	for (int i = 0; i < strList.count(); ++i)

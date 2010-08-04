@@ -39,14 +39,14 @@ ConfigurationBoxInfo* WadseekerAppearanceConfigBox::createStructure(IniSection* 
 
 void WadseekerAppearanceConfigBox::readSettings()
 {
-	btnNoticeMessageColor->setColorHtml(*config->setting("ColorMessageNotice"));
-	btnErrorMessageColor->setColorHtml(*config->setting("ColorMessageError"));
-	btnCriticalErrorMessageColor->setColorHtml(*config->setting("ColorMessageCriticalError"));
+	btnNoticeMessageColor->setColorHtml(config->setting("ColorMessageNotice"));
+	btnErrorMessageColor->setColorHtml(config->setting("ColorMessageError"));
+	btnCriticalErrorMessageColor->setColorHtml(config->setting("ColorMessageCriticalError"));
 }
 
 void WadseekerAppearanceConfigBox::saveSettings()
 {
-	config->setting("ColorMessageNotice")->setValue(btnNoticeMessageColor->colorHtml());
-	config->setting("ColorMessageError")->setValue(btnErrorMessageColor->colorHtml());
-	config->setting("ColorMessageCriticalError")->setValue(btnCriticalErrorMessageColor->colorHtml());
+	config->setting("ColorMessageNotice") = btnNoticeMessageColor->colorHtml();
+	config->setting("ColorMessageError") = btnErrorMessageColor->colorHtml();
+	config->setting("ColorMessageCriticalError") = btnCriticalErrorMessageColor->colorHtml();
 }

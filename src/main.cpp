@@ -248,7 +248,7 @@ void Main::createMainWindow()
 	gLog << tr("Preparing GUI.");
 
 	MainWindow* mainWnd = new MainWindow(argumentsCount, arguments, config);
-	if (config->setting("MainWindowMaximized")->boolValue())
+	if (config->setting("MainWindowMaximized"))
 	{
 		mainWnd->showMaximized();
 	}
@@ -455,7 +455,7 @@ void Main::preserveOldConfigBackwardsCompatibility()
 void Main::setupRefreshingThread()
 {
 	gLog << tr("Starting refreshing thread.");
-	refreshingThread->setDelayBetweenResends(*config->setting("QueryTimeout"));
+	refreshingThread->setDelayBetweenResends(config->setting("QueryTimeout"));
 	refreshingThread->start();
 }
 

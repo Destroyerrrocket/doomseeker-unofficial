@@ -136,7 +136,7 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 
 		void						masterHost(QString &host, unsigned short &port) const
 		{
-			QString str = Main::ini->setting("Skulltag", "Masterserver")->strValue();
+			QString str = Main::ini->setting("Skulltag", "Masterserver");
 			Strings::translateServerAddress(str, host, port, "skulltag.servegame.com", 15300);
 		}
 

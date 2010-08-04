@@ -42,15 +42,15 @@ SkulltagBinaries::SkulltagBinaries(const SkulltagServer* server)
 
 QString SkulltagBinaries::clientBinary(QString& error) const
 {
-	if (!server->isTestingServer() || !config->setting("EnableTesting")->boolValue())
+	if (!server->isTestingServer() || !config->setting("EnableTesting"))
 	{
 		return Binaries::clientBinary(error);
 	}
 	else
 	{
 		// This is common code for both Unix and Windows:
-		IniVariable *setting = config->setting("TestingPath");
-		QString path = setting->strValue();
+		IniVariable &setting = config->setting("TestingPath");
+		QString path = setting;
 		if (path.isEmpty())
 		{
 			error = tr("No testing directory specified for Skulltag");
@@ -72,7 +72,7 @@ QString SkulltagBinaries::clientBinary(QString& error) const
 			{
 				// setting->string() should still contain base dir
 				// for testing binaries
-				QDir dir(setting->strValue());
+				QDir dir(setting);
 				if (!dir.mkdir(server->version()))
 				{
 					error = tr("Unable to create directory:\n%1").arg(path);
@@ -127,7 +127,7 @@ QString SkulltagBinaries::clientBinary(QString& error) const
 
 QString SkulltagBinaries::clientWorkingDirectory(QString& error) const
 {
-	QFileInfo fi(*config->setting("BinaryPath"));
+	QFileInfo fi(config->setting("BinaryPath"));
 	return fi.canonicalPath();
 }
 

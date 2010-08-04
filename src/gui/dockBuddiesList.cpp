@@ -60,7 +60,7 @@ DockBuddiesList::DockBuddiesList(QWidget *parent)
 	buddiesTable->setColumnHidden(0, true); // Hide the ID
 
 	// Read config
-	QString buddiesList = *Main::config->setting("BuddiesList");
+	QString buddiesList = Main::config->setting("BuddiesList");
 	Scanner listReader(buddiesList.toAscii().constData(), buddiesList.length());
 	// Syntax: {basic|advanced} "pattern";...
 	while(listReader.tokensLeft())
@@ -98,7 +98,7 @@ DockBuddiesList::~DockBuddiesList()
 	if(!save)
 		return;
 
-	IniVariable *settingBuddiesList = Main::config->setting("BuddiesList");
+	IniVariable &settingBuddiesList = Main::config->setting("BuddiesList");
 	QString settingValue;
 
 	foreach(QRegExp pattern, pBuddies)
@@ -107,7 +107,7 @@ DockBuddiesList::~DockBuddiesList()
 		settingValue.append((pattern.patternSyntax() == QRegExp::Wildcard ? "basic \"" : "advanced \"") + Strings::escape(pat) + "\";");
 	}
 
-	settingBuddiesList->setValue(settingValue);
+	settingBuddiesList = settingValue;
 }
 
 void DockBuddiesList::addBuddy()

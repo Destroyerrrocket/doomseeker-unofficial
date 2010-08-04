@@ -43,38 +43,38 @@ ConfigurationBoxInfo *AppearanceConfigBox::createStructure(IniSection *cfg, QWid
 
 void AppearanceConfigBox::readSettings()
 {
-	slotStyle->setCurrentIndex(*config->setting("SlotStyle"));
+	slotStyle->setCurrentIndex(config->setting("SlotStyle"));
 
-	btnCustomServersColor->setColorHtml(*config->setting("CustomServersColor"));
+	btnCustomServersColor->setColorHtml(config->setting("CustomServersColor"));
 
 	// Make sure that the tray is available. If it's not, disable tray icon
 	// completely and make sure no change can be done to the configuration in
 	// this manner.
 	if (!QSystemTrayIcon::isSystemTrayAvailable())
 	{
-		config->setting("UseTrayIcon")->setValue(false);
-		config->setting("CloseToTrayIcon")->setValue(false);
+		config->setting("UseTrayIcon") = false;
+		config->setting("CloseToTrayIcon") = false;
 		gboUseTrayIcon->setEnabled(false);
 	}
 
-	gboUseTrayIcon->setChecked(*config->setting("UseTrayIcon"));
+	gboUseTrayIcon->setChecked(config->setting("UseTrayIcon"));
 
-	cbCloseToTrayIcon->setChecked(*config->setting("CloseToTrayIcon"));
+	cbCloseToTrayIcon->setChecked(config->setting("CloseToTrayIcon"));
 
 	// This is not really an appearance option, but it does change how the list
 	// appears and thus utilized the fact that the appearance options cause the 
 	// list to refresh.  It also doesn't fit into any of the other existing
 	// categories at this time.
-	cbBotsNotPlayers->setChecked(*config->setting("BotsAreNotPlayers"));
+	cbBotsNotPlayers->setChecked(config->setting("BotsAreNotPlayers"));
 }
 
 void AppearanceConfigBox::saveSettings()
 {
-	config->setting("SlotStyle")->setValue(slotStyle->currentIndex());
-	config->setting("CustomServersColor")->setValue(btnCustomServersColor->colorHtml());
-	config->setting("UseTrayIcon")->setValue(gboUseTrayIcon->isChecked());
-	config->setting("CloseToTrayIcon")->setValue(cbCloseToTrayIcon->isChecked());
-	config->setting("BotsAreNotPlayers")->setValue(cbBotsNotPlayers->isChecked());
+	config->setting("SlotStyle") = slotStyle->currentIndex();
+	config->setting("CustomServersColor") = btnCustomServersColor->colorHtml();
+	config->setting("UseTrayIcon") = gboUseTrayIcon->isChecked();
+	config->setting("CloseToTrayIcon") = cbCloseToTrayIcon->isChecked();
+	config->setting("BotsAreNotPlayers") = cbBotsNotPlayers->isChecked();
 
 	emit appearanceChanged();
 }

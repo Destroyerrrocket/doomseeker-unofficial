@@ -39,14 +39,14 @@ ConfigurationBoxInfo *IP2CConfigBox::createStructure(IniSection *cfg, QWidget *p
 
 void IP2CConfigBox::readSettings()
 {
-	leIP2CUrl->setText(*config->setting("IP2CUrl"));
-	grbAutoUpdate->setChecked(*config->setting("IP2CAutoUpdate"));
-	spinMaximumAge->setValue(*config->setting("IP2CMaximumAge"));
+	leIP2CUrl->setText(config->setting("IP2CUrl"));
+	grbAutoUpdate->setChecked(config->setting("IP2CAutoUpdate"));
+	spinMaximumAge->setValue(config->setting("IP2CMaximumAge"));
 }
 
 void IP2CConfigBox::saveSettings()
 {
-	config->setting("IP2CUrl")->setValue(leIP2CUrl->text());
-	config->setting("IP2CAutoUpdate")->setValue(grbAutoUpdate->isChecked());
-	config->setting("IP2CMaximumAge")->setValue(spinMaximumAge->value());
+	config->setting("IP2CUrl") = leIP2CUrl->text();
+	config->setting("IP2CAutoUpdate") = grbAutoUpdate->isChecked();
+	config->setting("IP2CMaximumAge") = spinMaximumAge->value();
 }

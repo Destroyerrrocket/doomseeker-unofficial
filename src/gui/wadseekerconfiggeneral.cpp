@@ -47,21 +47,21 @@ ConfigurationBoxInfo* WadseekerGeneralConfigBox::createStructure(IniSection* cfg
 void WadseekerGeneralConfigBox::fillTargetDirectoryComboBox()
 {
 	cbTargetDirectory->clear();
-	cbTargetDirectory->addItems(Main::config->setting("WadPaths")->strValue().split(";", QString::SkipEmptyParts));
+	cbTargetDirectory->addItems(Main::config->setting("WadPaths")->split(";", QString::SkipEmptyParts));
 }
 
 void WadseekerGeneralConfigBox::readSettings()
 {
 	fillTargetDirectoryComboBox();
 
-	cbTargetDirectory->setEditText(*config->setting("TargetDirectory"));
-	spinConnectTimeout->setValue(*config->setting("ConnectTimeoutSeconds"));
-	spinDownloadTimeout->setValue(*config->setting("DownloadTimeoutSeconds"));
+	cbTargetDirectory->setEditText(config->setting("TargetDirectory"));
+	spinConnectTimeout->setValue(config->setting("ConnectTimeoutSeconds"));
+	spinDownloadTimeout->setValue(config->setting("DownloadTimeoutSeconds"));
 }
 
 void WadseekerGeneralConfigBox::saveSettings()
 {
-	config->setting("TargetDirectory")->setValue(cbTargetDirectory->currentText());
+	config->setting("TargetDirectory") = cbTargetDirectory->currentText();
 	QFileInfo targetDirectoryInfo(cbTargetDirectory->currentText());
 	if(!targetDirectoryInfo.isWritable())
 	{
@@ -69,7 +69,7 @@ void WadseekerGeneralConfigBox::saveSettings()
 	}
 	// Also take a look at the file paths configuration.  Warn if it is not on the list.
 	bool pathPossible = false;
-	foreach(QString possiblePath, Main::config->setting("WadPaths")->strValue().split(";", QString::SkipEmptyParts))
+	foreach(QString possiblePath, Main::config->setting("WadPaths")->split(";", QString::SkipEmptyParts))
 	{
 		if(possiblePath == cbTargetDirectory->currentText())
 			pathPossible = true;
@@ -77,6 +77,6 @@ void WadseekerGeneralConfigBox::saveSettings()
 	if(!pathPossible)
 		QMessageBox::warning(this, tr("Target not on List"), tr("The specified target directory could not be found on the file paths list."));
 
-	config->setting("ConnectTimeoutSeconds")->setValue(spinConnectTimeout->value());
-	config->setting("DownloadTimeoutSeconds")->setValue(spinDownloadTimeout->value());
+	config->setting("ConnectTimeoutSeconds") = spinConnectTimeout->value();
+	config->setting("DownloadTimeoutSeconds") = spinDownloadTimeout->value();
 }

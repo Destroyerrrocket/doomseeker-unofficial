@@ -86,7 +86,7 @@ void CustomServers::readConfig(IniSection* cfg, QObject* receiver, const char* s
 	}	
 	
 	QList<CustomServerInfo> customServerInfoList;
-	decodeConfigEntries(*cfg->setting("CustomServers"), customServerInfoList);
+	decodeConfigEntries(cfg->setting("CustomServers"), customServerInfoList);
 
 	setServers(customServerInfoList, receiver, slotUpdated, slotBegunRefreshing);
 }

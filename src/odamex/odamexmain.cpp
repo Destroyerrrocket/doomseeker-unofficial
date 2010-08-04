@@ -86,7 +86,7 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 
 		void			masterHost(QString &host, unsigned short &port) const
 		{
-			QString str = Main::ini->setting("Odamex", "Masterserver")->strValue();
+			QString str = Main::ini->setting("Odamex", "Masterserver");
 			Strings::translateServerAddress(str, host, port, "master1.odamex.net", 15000);
 		}
 

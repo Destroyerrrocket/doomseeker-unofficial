@@ -27,61 +27,66 @@
 #include <cstdio>
 #include <cstdlib>
 
-bool IniVariable::boolValue() const
+IniVariable::operator bool() const
 {
-	return numValue() != 0;
+	return value.toInt() != 0;
 }
 
-int IniVariable::numValue() const
+IniVariable::operator int() const
 {
 	return value.toInt();
 }
 
-unsigned IniVariable::numUnsignedValue() const
+IniVariable::operator unsigned int() const
 {
 	return value.toUInt();
 }
 
-float IniVariable::numValueFloat() const
+IniVariable::operator float() const
 {
 	return value.toFloat();
 }
 
-void IniVariable::setValue(int i)
+const IniVariable &IniVariable::operator=(int i)
 {
 	char buf[32];
 	sprintf(buf, "%d", i);
 	value = buf;
+	return *this;
 }
 
-void IniVariable::setValue(unsigned int i)
+const IniVariable &IniVariable::operator=(unsigned int i)
 {
 	char buf[32];
 	sprintf(buf, "%u", i);
 	value = buf;
+	return *this;
 }
 
-void IniVariable::setValue(bool b)
+const IniVariable &IniVariable::operator=(bool b)
 {
-	setValue(static_cast<int>(b));
+	return *this = static_cast<int>(b);
 }
 
-void IniVariable::setValue(float f)
+const IniVariable &IniVariable::operator=(float f)
 {
 	char buf[32];
 	sprintf(buf, "%f", f);
 	value = buf;
+	return *this;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-IniVariable* IniSection::createSetting(const QString& name, const IniVariable& data)
+IniVariable IniSection::nullVariable;
+
+IniVariable &IniSection::createSetting(const QString& name, const IniVariable& data)
 {
 	if (name.isEmpty())
 	{
-		return NULL;
+		return nullVariable;
 	}
 	
 	QString nameLower = name.toLower();
@@ -89,12 +94,12 @@ IniVariable* IniSection::createSetting(const QString& name, const IniVariable& d
 	IniVariablesIt it = variables.find(nameLower);
 	if (it != variables.end())
 	{
-		return &it->second;
+		return it->second;
 	}
 
 	variables.insert(IniVariablesPair(nameLower, data));
-	IniVariable* pNewVariable = &variables.find(nameLower)->second;
-	pNewVariable->key = name;
+	IniVariable &pNewVariable = variables.find(nameLower)->second;
+	pNewVariable.key = name;
 	
 	return pNewVariable;
 }
@@ -115,11 +120,11 @@ void IniSection::deleteSetting(const QString& name)
 	}
 }
 
-IniVariable* IniSection::retrieveSetting(const QString& name)
+IniVariable &IniSection::retrieveSetting(const QString& name)
 {
 	if (name.isEmpty())
 	{
-		return NULL;
+		return nullVariable;
 	}
 	
 	QString nameLower = name.toLower();
@@ -127,23 +132,23 @@ IniVariable* IniSection::retrieveSetting(const QString& name)
 	IniVariablesIt it = variables.find(nameLower);
 	if (it == variables.end())
 	{
-		return NULL;
+		return nullVariable;
 	}
 
-	return &it->second;
+	return it->second;
 }
 
-IniVariable* IniSection::setting(const QString& name)
+IniVariable &IniSection::setting(const QString& name)
 {
 	if (name.isEmpty())
 	{
-		return NULL;
+		return nullVariable;
 	}
 	
 	QString nameLower = name.toLower();
 
-	IniVariable* pVariable = retrieveSetting(nameLower);
-	if (pVariable == NULL)
+	IniVariable &pVariable = retrieveSetting(nameLower);
+	if (pVariable.isNull())
 	{
 		pVariable = createSetting(name, IniVariable());
 	}
@@ -205,12 +210,12 @@ IniSection* Ini::createSection(const QString& name)
 	return &sections.find(nameLower)->second;
 }
 
-IniVariable* Ini::createSetting(const QString& sectionName, const QString& name, const IniVariable& data)
+IniVariable &Ini::createSetting(const QString& sectionName, const QString& name, const IniVariable& data)
 {
 	IniSection* pSection = createSection(sectionName);
 	if (pSection == NULL)
 	{
-		return NULL;
+		return IniSection::nullVariable;
 	}
 
 	return pSection->createSetting(name, data);
@@ -537,17 +542,17 @@ void Ini::readQByteArrayIntoStructures(const QByteArray& array)
 	iniTopComment = Strings::trimr(iniTopComment, "\n");
 }
 
-IniVariable* Ini::retrieveSetting(const QString& sectionName, const QString& variableName)
+IniVariable &Ini::retrieveSetting(const QString& sectionName, const QString& variableName)
 {
 	if (sectionName.isEmpty() || variableName.isEmpty())
 	{
-		return NULL;
+		return IniSection::nullVariable;
 	}
 
 	IniSection* pSection = section(sectionName);
 	if (pSection == NULL)
 	{
-		return NULL;
+		return IniSection::nullVariable;
 	}
 
 	return pSection->retrieveSetting(variableName);
@@ -595,15 +600,15 @@ IniSection* Ini::section(const QString& name)
 	return &it->second;
 }
 
-IniVariable* Ini::setting(const QString& sectionName, const QString& variableName)
+IniVariable& Ini::setting(const QString& sectionName, const QString& variableName)
 {
 	if (sectionName.isEmpty() || variableName.isEmpty())
 	{
-		return NULL;
+		return IniSection::nullVariable;
 	}
 
-	IniVariable* var = retrieveSetting(sectionName, variableName);
-	if (var == NULL)
+	IniVariable &var = retrieveSetting(sectionName, variableName);
+	if (var.isNull())
 	{
 		var = createSetting(sectionName, variableName, IniVariable());
 	}

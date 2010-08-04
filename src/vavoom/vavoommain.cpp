@@ -77,7 +77,7 @@ class PLUGIN_EXPORT VavoomEnginePlugin : public EnginePlugin
 
 		void			masterHost(QString &host, unsigned short &port) const
 		{
-			QString str = Main::ini->setting("Vavoom", "Masterserver")->strValue();
+			QString str = Main::ini->setting("Vavoom", "Masterserver");
 			Strings::translateServerAddress(str, host, port, "127.0.0.1", 26001);
 		}
 

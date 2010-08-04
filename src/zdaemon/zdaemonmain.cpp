@@ -78,7 +78,7 @@ class PLUGIN_EXPORT ZDaemonEnginePlugin : public EnginePlugin
 
 		void			masterHost(QString &host, unsigned short &port) const
 		{
-			QString str = Main::ini->setting("ZDaemon", "Masterserver")->strValue();
+			QString str = Main::ini->setting("ZDaemon", "Masterserver");
 			Strings::translateServerAddress(str, host, port, "master.zdaemon.org", 80);
 		}
 

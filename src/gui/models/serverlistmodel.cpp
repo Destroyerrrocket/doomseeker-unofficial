@@ -94,7 +94,7 @@ void ServerListModel::redraw(int row)
 
 void ServerListModel::redrawAll()
 {
-	int slotstyle = *parentHandler->configurationObject()->setting("SlotStyle");
+	int slotstyle = parentHandler->configurationObject()->setting("SlotStyle");
 	PlayersDiagram::loadImages(slotstyle);
 
 	for (int i = 0; i < rowCount(); ++i)

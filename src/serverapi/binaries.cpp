@@ -47,26 +47,26 @@ QString Binaries::clientWorkingDirectory(QString& error) const
 
 QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, QString& error) const
 {
-	IniVariable* setting = config->setting(configKey);
+	IniVariable &setting = config->setting(configKey);
 
-	if (setting->strValue().isEmpty())
+	if (setting->isEmpty())
 	{
 		error = tr("No %1 executable specified for %2").arg(binaryNames[binaryType]).arg(plugin()->name);
 		return QString();
 	}
 
-	QFileInfo fi(setting->strValue());
+	QFileInfo fi(setting);
 
 	if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
 	{
 		error = tr("Engine %1, %2 executable:\n\n%3\n is a directory or doesn't exist.")
 					.arg(plugin()->name)
 					.arg(binaryNames[binaryType])
-					.arg(setting->strValue());
+					.arg(*setting);
 		return QString();
 	}
 
-	return setting->strValue();
+	return setting;
 }
 
 QString Binaries::offlineGameWorkingDirectory(QString& error) const

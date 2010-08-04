@@ -123,8 +123,8 @@ void ServerListRowHandler::fillPlayerColumn()
 	IniSection* config = model->handler()->configurationObject();
 	QStandardItem* pItem = item(IDPlayers);
 
-	int style = *config->setting("SlotStyle");
-	bool botsAreNotPlayers = *config->setting("BotsAreNotPlayers");
+	int style = config->setting("SlotStyle");
+	bool botsAreNotPlayers = config->setting("BotsAreNotPlayers");
 
 	const PlayersList* playersList = server->playersList();
 	int sortValue = 0;
@@ -191,7 +191,7 @@ void ServerListRowHandler::setBackgroundColor()
 {
 	if (server->isCustom())
 	{
-		QString color = *model->handler()->configurationObject()->setting("CustomServersColor");
+		QString color = model->handler()->configurationObject()->setting("CustomServersColor");
 
 		for (int column = 0; column < NUM_SERVERLIST_COLUMNS; ++column)
 		{

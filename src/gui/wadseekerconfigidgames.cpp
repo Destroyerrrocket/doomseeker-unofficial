@@ -64,14 +64,14 @@ ConfigurationBoxInfo* WadseekerIdgamesConfigBox::createStructure(IniSection* cfg
 
 void WadseekerIdgamesConfigBox::readSettings()
 {
-	cbUseIdgames->setChecked(*config->setting("SearchInIdgames"));
-	cboIdgamesPriority->setCurrentIndex(*config->setting("IdgamesPriority"));
-	leIdgamesURL->setText(*config->setting("IdgamesURL"));
+	cbUseIdgames->setChecked(config->setting("SearchInIdgames"));
+	cboIdgamesPriority->setCurrentIndex(config->setting("IdgamesPriority"));
+	leIdgamesURL->setText(config->setting("IdgamesURL"));
 }
 
 void WadseekerIdgamesConfigBox::saveSettings()
 {
-	config->setting("SearchInIdgames")->setValue(cbUseIdgames->isChecked());
-	config->setting("IdgamesPriority")->setValue(cboIdgamesPriority->currentIndex());
-	config->setting("IdgamesURL")->setValue(leIdgamesURL->text());
+	config->setting("SearchInIdgames") = cbUseIdgames->isChecked();
+	config->setting("IdgamesPriority") = cboIdgamesPriority->currentIndex();
+	config->setting("IdgamesURL") = leIdgamesURL->text();
 }

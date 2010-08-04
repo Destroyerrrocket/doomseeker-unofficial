@@ -53,7 +53,7 @@ void GameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwad
 	iwadFound = !iwad.isEmpty();
 
 	// Custom parameters
-	QString customParameters = (const QString &) *config->setting("CustomParameters");
+	QString customParameters = *config->setting("CustomParameters");
 	args << customParameters.split(" ", QString::SkipEmptyParts);
 
 	// Password

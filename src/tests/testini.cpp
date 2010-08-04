@@ -98,15 +98,15 @@ bool TestReadINIVariable::executeTest()
 {
 	Ini ini("ExampleINI", ExampleINIs::getExampleINI());
 
-	IniVariable* pVariable = ini.retrieveSetting("section.sectionone", "key1");
+	IniVariable &pVariable = ini.retrieveSetting("section.sectionone", "key1");
 	
-	if (pVariable == NULL)
+	if (pVariable.isNull())
 	{
 		gLog << "Failed to obtain key.";
 		return false;
 	}
 	
-	int varValue = pVariable->numValue();
+	int varValue = pVariable;
 	
 	/*if (pVariable->key.compare("Key1", Qt::CaseSensitive) != 0)
 	{
@@ -171,7 +171,7 @@ bool TestDeleteINIVariable::executeTest()
 {
 	Ini ini("ExampleINI", ExampleINIs::getExampleINI());
 	
-	if (ini.retrieveSetting("section.sectionone", "key1") == NULL)
+	if (ini.retrieveSetting("section.sectionone", "key1").isNull())
 	{
 		gLog << "Variable doesn't exist already!";
 		return false;
@@ -183,7 +183,7 @@ bool TestDeleteINIVariable::executeTest()
 	IniSection* pSection = ini.section("section.sectionone");
 	pSection->deleteSetting("key1");
 	
-	if (ini.retrieveSetting("section.sectionone", "key1") != NULL)
+	if (!ini.retrieveSetting("section.sectionone", "key1").isNull())
 	{
 		gLog << "Failed to delete the variable.";
 		return false;

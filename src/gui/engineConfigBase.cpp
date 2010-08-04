@@ -87,13 +87,13 @@ void BaseEngineConfigBox::makeClientOnly()
 
 void BaseEngineConfigBox::readSettings()
 {
-	leClientBinaryPath->setText(*config->setting("BinaryPath"));
-	leCustomParameters->setText(*config->setting("CustomParameters"));
+	leClientBinaryPath->setText(config->setting("BinaryPath"));
+	leCustomParameters->setText(config->setting("CustomParameters"));
 
 	if(plugin->pInterface->hasMasterServer())
-		leMasterserverAddress->setText(*config->setting("Masterserver"));
+		leMasterserverAddress->setText(config->setting("Masterserver"));
 
-	leServerBinaryPath->setText(*config->setting("ServerBinaryPath"));
+	leServerBinaryPath->setText(config->setting("ServerBinaryPath"));
 }
 
 void BaseEngineConfigBox::saveSettings()
@@ -101,17 +101,17 @@ void BaseEngineConfigBox::saveSettings()
 	QString strVal;
 
 	strVal = leClientBinaryPath->text();
-	config->setting("BinaryPath")->setValue(strVal);
+	config->setting("BinaryPath") = strVal;
 
 	strVal = leCustomParameters->text();
-	config->setting("CustomParameters")->setValue(strVal);
+	config->setting("CustomParameters") = strVal;
 
 	if(plugin->pInterface->hasMasterServer())
 	{
 		strVal = leMasterserverAddress->text();
-		config->setting("Masterserver")->setValue(strVal);
+		config->setting("Masterserver") = strVal;
 	}
 
 	strVal = leServerBinaryPath->text();
-	config->setting("ServerBinaryPath")->setValue(strVal);
+	config->setting("ServerBinaryPath") = strVal;
 }

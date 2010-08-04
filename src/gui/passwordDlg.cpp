@@ -37,11 +37,11 @@ PasswordDlg::PasswordDlg(QWidget *parent, bool rcon, bool connection) : QDialog(
 	{
 		Main::config->createSetting("RememberConnectPassword", 1);
 	
-		IniVariable *rememberConnectPassword = Main::config->setting("RememberConnectPassword");
-		remember->setChecked(*rememberConnectPassword);
-		if(rememberConnectPassword->boolValue())
+		IniVariable &rememberConnectPassword = Main::config->setting("RememberConnectPassword");
+		remember->setChecked(rememberConnectPassword);
+		if(rememberConnectPassword)
 		{
-			password->setText(*Main::config->setting("ConnectPassword"));
+			password->setText(Main::config->setting("ConnectPassword"));
 		}
 	}
 
@@ -74,9 +74,9 @@ PasswordDlg::~PasswordDlg()
 	if(rcon)
 		return;
 
-	Main::config->setting("RememberConnectPassword")->setValue(remember->isChecked());
+	Main::config->setting("RememberConnectPassword") = remember->isChecked();
 	if(remember->isChecked())
-		Main::config->setting("ConnectPassword")->setValue(password->text());
+		Main::config->setting("ConnectPassword") = password->text();
 }
 
 const EnginePlugin *PasswordDlg::selectedEngine() const
