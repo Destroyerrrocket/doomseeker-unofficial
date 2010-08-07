@@ -32,7 +32,7 @@
 const // clear warnings
 #include "odamex.xpm"
 
-#define SERVER_CHALLENGE	0xA3,0xDB,0x0B,0x00
+#define SERVER_CHALLENGE	0x02,0x10,0x01,0xAD, 0x2C,0x00,0x00,0x00, 0x02,0x00,0x00,0x00
 #define SERVER_GOOD			5560020
 
 #define SPECTATOR_INFO		0x01020304
@@ -69,174 +69,99 @@ const PluginInfo* OdamexServer::plugin() const
 
 Server::Response OdamexServer::readRequest(QByteArray &data)
 {
-	fflush(stderr);
-	fflush(stdout);
 	const char* in = data.data();
 
 	// Check the response code
 	int response = READINT32(&in[0]);
-	if(response != SERVER_GOOD)
-	{
+	if((response&0xFFF00000) != 0xAD000000)
 		return RESPONSE_BAD;
-	}
 
-	int pos = 8;
+	unsigned int version = READINT32(&in[4]);
+	short version_major = version/256;
+	short version_minor = (version % 256)/10;
+	short version_patch = (version % 256)%10;
+	serverVersion = QString("%1.%2.%3").arg(version_major).arg(version_minor).arg(version_patch);
 
-	// Server name
-	serverName = QString(&in[pos]);
-	pos += serverName.length() + 1;
-
-	// Players
-	int numPlayers = READINT8(&in[pos++]);
-	maxClients = maxPlayers = READINT8(&in[pos++]);
-
-	// Map
-	mapName = QString(&in[pos]);
-	pos += mapName.length() + 1;
-
-	// Wads
-	wads.clear();
-	int wadCount = READINT8(&in[pos++]);
-	if(wadCount > 0)
+	unsigned int protocolVersion = READINT32(&in[8]);
+	unsigned int pos = 12;
+	if(protocolVersion >= 2)
 	{
-		iwad = QString(&in[pos]);
-		pos += iwad.length() + 1;
-		for(int i = 1;i < wadCount;i++)
-		{
-			QString wad(&in[pos]);
-			wads << wad;
-			pos += wad.length() + 1;
-		}
-	}
-
-	// Game mode
-	const QList<GameMode>& gameModes = *plugin()->pInterface->gameModes();
-
-	int mode = READINT8(&in[pos++]);
-	skill = READINT8(&in[pos++]);
-	int teamplay = READINT8(&in[pos++]);
-	int ctf = READINT8(&in[pos++]);
-	if(ctf == 1)
-	{
-		currentGameMode = gameModes[OdamexGameInfo::MODE_CAPTURE_THE_FLAG];
-	}
-	else if(teamplay == 1)
-	{
-		currentGameMode = gameModes[OdamexGameInfo::MODE_TEAM_DEATHMATCH];
-	}
-	else
-	{
-		currentGameMode = gameModes[mode];
-	}
-	// Players
-	players->clear();
-	for(int i = 0;i < numPlayers;i++)
-	{
-		QString name(&in[pos]);
-		pos += name.length() + 1;
-		short score = READINT16(&in[pos]);
-		int ping = READINT32(&in[pos+2]);
-		int team = READINT8(&in[pos+6]);
-		pos += 7;
-
-		Player player(name, score, ping, static_cast<Player::PlayerTeam> (teamplay ? team : Player::TEAM_NONE));
-		(*players) << player;
-	}
-
-	// PWAD md5
-	for(int i = 0;i < wads.size() + 1;i++)
-	{
-		QString md5 = QString(&in[pos]);
-		pos += md5.length() + 1;
-	}
-
-	// Website
-	webSite = QString(&in[pos]);
-	pos += webSite.length() + 1;
-
-	// team scores
-	if(currentGameMode.isTeamGame())
-	{
-		serverScoreLimit = READINT32(&in[pos]);
+		serverVersion += QString(" r%1").arg(READINT32(&in[pos]));
 		pos += 4;
-		for(int i = 0;i < 3;i++)
+	}
+
+	short cvarCount = READINT8(&in[pos++]);
+	while(cvarCount-- > 0)
+	{
+		QString cvarName(&in[pos]);
+		pos += cvarName.length()+1;
+		QString cvarValue(&in[pos]);
+		pos += cvarValue.length()+1;
+
+		if(cvarName == "sv_hostname")
+			serverName = cvarValue;
+		else if(cvarName == "sv_maxplayers")
+			maxPlayers = cvarValue.toUInt();
+		else if(cvarName == "sv_scorelimit")
+			serverScoreLimit = cvarValue.toUInt();
+		else if(cvarName == "sv_gametype")
 		{
-			if(READINT8(&in[pos++]) == 1)
-			{
-				scores[i] = READINT32(&in[pos]);
-				pos += 4;
-			}
+			unsigned int mode = cvarValue.toUInt();
+			if(mode < plugin()->pInterface->gameModes()->size())
+				currentGameMode = (*plugin()->pInterface->gameModes())[cvarValue.toUInt()];
 		}
 	}
 
-	// protocol version
-	protocol = READINT16(&in[pos]);
+	QString passwordHash(&in[pos]);
+	pos += passwordHash.length()+1;
+
+	mapName = QString(&in[pos]);
+	pos += mapName.length()+1;
+
+	serverTimeLeft = READINT16(&in[pos]);
 	pos += 2;
 
-	// email
-	email = QString(&in[pos]);
-	pos += email.length() + 1;
-
-	// time and frag limit
-	serverTimeLimit = READINT16(&in[pos]);
-	serverTimeLeft = READINT16(&in[pos+2]);
-	if(!currentGameMode.isTeamGame())
-		serverScoreLimit = READINT16(&in[pos+4]);
-	pos += 6;
-
-	// flags
-	const DMFlags& dmFlagsOdamex = *plugin()->pInterface->allDMFlags();
-
-	clearDMFlags();
-	DMFlagsSection* dmFlagsSec = new DMFlagsSection();
-	dmFlagsSec->name = dmFlagsOdamex[0]->name;
-	dmFlags << dmFlagsSec;
-	for(int i = 0;i < 14;i++)
+	short teamCount = READINT8(&in[pos++]);
+	while(teamCount-- > 0)
 	{
-		if(READINT8(&in[pos++]) == 1)
-		{
-			dmFlagsSec->flags << dmFlagsOdamex[0]->flags[i];
-		}
-	}
-
-	// Players 2
-	pos += numPlayers*6;
-
-	// [BL] Whoever decided this was a good idea needs to be shot.
-	if(READINT32(&in[pos]) == SPECTATOR_INFO)
-	{
-		maxPlayers -= maxPlayers - READINT16(&in[pos+4]);
+		QString teamName(&in[pos]);
+		pos += teamName.length()+1;
 		pos += 6;
-
-		for(int i = 0;i < numPlayers;i++)
-		{
-			Player& oldPlayer = (*players)[i];
-			Player player(oldPlayer.name(), oldPlayer.score(), oldPlayer.ping(), oldPlayer.teamNum(), READINT8(&in[pos++]) == 1);
-			players->replace(i, player);
-		}
 	}
 
-	if(READINT32(&in[pos]) == EXTRA_INFO)
+	dehPatches.clear();
+	short patchCount = READINT8(&in[pos++]);
+	while(patchCount-- > 0)
 	{
-		pos += 4;
-		locked = READINT16(&in[pos]) == 1;
-		pos += 2;
-		int version = READINT32(&in[pos]);
-		int version_major = version/256;
-		int version_minor = (version % 256)/10;
-		int version_patch = (version % 256)%10;
-		serverVersion = QString("%1.%2.%3").arg(version_major).arg(version_minor).arg(version_patch);
-		pos += 4;
+		QString patch(&in[pos]);
+		pos += patch.length()+1;
+		dehPatches << patch;
+	}
 
-		dehPatches.clear();
-		int numPatches = READINT8(&in[pos++]);
-		for(int i = 0;i < numPatches;i++)
-		{
-			QString patch(&in[pos]);
-			dehPatches << patch;
-			wads << patch; // So that it can be seeked.
-			pos += patch.length()+1;
-		}
+	wads.clear();
+	short wadCount = READINT8(&in[pos++]);
+	for(short i = 0;i < wadCount;i++)
+	{
+		QString wad(&in[pos]);
+		if(i >= 2)
+			wads << wad;
+		else if(i == 1)
+			iwad = wad;
+		pos += wad.length()+1;
+
+		QString hash(&in[pos]);
+		pos += hash.length()+1;
+	}
+
+	players->clear();
+	short playerCount = READINT8(&in[pos++]);
+	while(playerCount-- > 0)
+	{
+		QString playerName(&in[pos]);
+		pos += playerName.length()+1;
+		Player player(playerName, READINT16(&in[pos+6]), READINT16(&in[pos+1]), static_cast<Player::PlayerTeam> (READINT8(&in[pos])), READINT8(&in[pos+5]));
+		pos += 12;
+		players->append(player);
 	}
 
 	return RESPONSE_GOOD;
@@ -247,7 +172,7 @@ bool OdamexServer::sendRequest(QByteArray &data)
 	// This construction and cast to (char*) removes warnings from MSVC.
 	const unsigned char challenge[] = {SERVER_CHALLENGE};
 	
-	const QByteArray challengeByteArray((char*)challenge, 4);
+	const QByteArray challengeByteArray((char*)challenge, 12);
 	data.append(challengeByteArray);
 	return true;
 }

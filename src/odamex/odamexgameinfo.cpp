@@ -62,7 +62,7 @@ void OdamexGameInfo::initGameModes()
 {
 	gameModesList << GameMode::COOPERATIVE;
 	gameModesList << GameMode::DEATHMATCH;
-	gameModesList << GameMode(MODE_DEATHMATCH2, tr("Deathmatch 2.0"), false);
 	gameModesList << GameMode::TEAM_DEATHMATCH;
 	gameModesList << GameMode::CAPTURE_THE_FLAG;
+//	gameModesList << GameMode(MODE_DEATHMATCH2, tr("Deathmatch 2.0"), false);
 }
