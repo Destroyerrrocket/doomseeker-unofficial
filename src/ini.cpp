@@ -25,8 +25,6 @@
 #include "main.h"
 #include "strings.h"
 #include <cassert>
-#include <cstdio>
-#include <cstdlib>
 
 IniVariable::operator bool() const
 {
@@ -60,9 +58,7 @@ const IniVariable &IniVariable::operator=(int i)
 {
 	assert(!isNull());
 
-	char buf[32];
-	sprintf(buf, "%d", i);
-	value = buf;
+	value = QString("%1").arg(i);
 	return *this;
 }
 
@@ -70,9 +66,7 @@ const IniVariable &IniVariable::operator=(unsigned int i)
 {
 	assert(!isNull());
 
-	char buf[32];
-	sprintf(buf, "%u", i);
-	value = buf;
+	value = QString("%1").arg(i);
 	return *this;
 }
 
@@ -85,9 +79,7 @@ const IniVariable &IniVariable::operator=(float f)
 {
 	assert(!isNull());
 
-	char buf[32];
-	sprintf(buf, "%f", f);
-	value = buf;
+	value = QString("%1").arg(f);
 	return *this;
 }
 
@@ -122,7 +114,7 @@ IniVariable &IniSection::createSetting(const QString& name, const IniVariable& d
 	IniVariablesIt it = variables.find(nameLower);
 	if (it != variables.end())
 	{
-		return it->second;
+		return *it;
 	}
 
 	// Avoid setting a Null variable.
@@ -130,8 +122,8 @@ IniVariable &IniSection::createSetting(const QString& name, const IniVariable& d
 	varData.key = name;
 	varData = data;
 
-	variables.insert(IniVariablesPair(nameLower, varData));
-	IniVariable &pNewVariable = variables.find(nameLower)->second;
+	variables.insert(nameLower, varData);
+	IniVariable &pNewVariable = *variables.find(nameLower);
 	pNewVariable.key = name;
 
 	nameList.push_back(pNewVariable);
@@ -172,7 +164,7 @@ IniVariable &IniSection::retrieveSetting(const QString& name)
 		return nullVariable;
 	}
 
-	return it->second;
+	return *it;
 }
 
 IniVariable &IniSection::setting(const QString& name)
@@ -236,14 +228,14 @@ IniSection& Ini::createSection(const QString& name)
 	IniSectionsIt it = sections.find(nameLower);
 	if (it != sections.end())
 	{
-		return it->second;
+		return *it;
 	}
 	
 	IniSection newSection;
 	newSection.name = name;
 
-	sections.insert(IniSectionsPair(nameLower, newSection));
-	return sections.find(nameLower)->second;
+	sections.insert(nameLower, newSection);
+	return *sections.find(nameLower);
 }
 
 IniVariable &Ini::createSetting(const QString& sectionName, const QString& name, const IniVariable& data)
@@ -591,6 +583,8 @@ bool Ini::save()
 		return false;
 	}
 
+	gLog << tr("Saving ini file: \"%1\"").arg(filename);
+
 	QByteArray output;
 	structuresIntoQByteArray(output);
 
@@ -623,7 +617,7 @@ IniSection& Ini::section(const QString& name)
 		return nullSection;
 	}
 
-	return it->second;
+	return *it;
 }
 
 IniVariable& Ini::setting(const QString& sectionName, const QString& variableName)
@@ -662,7 +656,7 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 
 	for (sectionit = sections.begin(); sectionit != sections.end(); ++sectionit)
 	{
-		const IniSection& section = sectionit->second;
+		const IniSection& section = *sectionit;
 		QString sectionTopComment = section.topComment;
 		
 		sectionTopComment = Strings::trim(sectionTopComment, "\r\n");
@@ -697,9 +691,9 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 		output.append("\n");
 
 		IniVariablesConstIt varit;
-		for (varit = sectionit->second.variables.begin(); varit != sectionit->second.variables.end(); ++varit)
+		for (varit = sectionit->variables.begin(); varit != sectionit->variables.end(); ++varit)
 		{
-			const IniVariable& variable = varit->second;
+			const IniVariable& variable = *varit;
 		
 			// Output variable's top comment
 			QString variableTopComment = variable.topComment;
@@ -733,7 +727,7 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 			output.append(formattedValue);
 
 			// Output variable's side comment
-			QString variableSideComment = varit->second.sideComment;
+			QString variableSideComment = varit->sideComment;
 			variableSideComment = variableSideComment.replace("\n", " ");
 			
 			if (!variableSideComment.isEmpty())
@@ -745,7 +739,7 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 			output.append("\n", 1);
 		}
 
-		QVector<IniVariable>::const_iterator nameit;
+		/*QVector<IniVariable>::const_iterator nameit;
 		for (nameit = sectionit->second.nameList.begin(); nameit != sectionit->second.nameList.end(); ++nameit)
 		{
 			QString nameListTopComment = nameit->topComment;
@@ -785,7 +779,7 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 			}
 
 			output.append("\n");
-		}
+		}*/
 
 		output.append("\n");
 	}

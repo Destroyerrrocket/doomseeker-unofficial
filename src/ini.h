@@ -24,13 +24,11 @@
 #define __INI_H_
 
 #include "global.h"
-#include <map>
 #include <QFile>
+#include <QHash>
 #include <QString>
 #include <QStringList>
 #include <QVector>
-
-using namespace std;
 
 /**
  *	@brief INI variable representation.
@@ -110,10 +108,9 @@ class MAIN_EXPORT IniVariable
 		QString			value;
 };
 
-typedef map<QString, IniVariable> 					IniVariables;	// the first QString is the name
-typedef pair<QString, IniVariable> 					IniVariablesPair;
-typedef map<QString, IniVariable>::iterator 			IniVariablesIt;
-typedef map<QString, IniVariable>::const_iterator 	IniVariablesConstIt;
+typedef QHash<QString, IniVariable>					IniVariables;	// the first QString is the name
+typedef QHash<QString, IniVariable>::iterator		IniVariablesIt;
+typedef QHash<QString, IniVariable>::const_iterator	IniVariablesConstIt;
 
 /**
  *	@brief INI section representation.
@@ -172,10 +169,9 @@ class MAIN_EXPORT IniSection
 		QVector<IniVariable>	nameList;
 };
 
-typedef map<QString, IniSection> 					IniSections;	// the first QString is the name
-typedef pair<QString, IniSection> 					IniSectionsPair;
-typedef map<QString, IniSection>::iterator 			IniSectionsIt;
-typedef map<QString, IniSection>::const_iterator 	IniSectionsConstIt;
+typedef QHash<QString, IniSection> 					IniSections;	// the first QString is the name
+typedef QHash<QString, IniSection>::iterator 		IniSectionsIt;
+typedef QHash<QString, IniSection>::const_iterator 	IniSectionsConstIt;
 
 /**
  *	@brief INI configuration files handler.

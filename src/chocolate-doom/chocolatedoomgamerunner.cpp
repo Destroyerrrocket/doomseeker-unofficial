@@ -25,6 +25,6 @@
 #include "main.h"
 
 ChocolateDoomGameRunner::ChocolateDoomGameRunner(const ChocolateDoomServer* server)
-: GameRunner(server, Main::ini->createSection("Chocolate Doom"))
+: GameRunner(server, Main::ini->createSection("ChocolateDoom"))
 {
 }

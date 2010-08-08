@@ -767,7 +767,7 @@ void MainWindow::menuOptionsConfigure()
 	for(unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
 		const PluginInfo* pPluginInfo = (*Main::enginePlugins)[i]->info;
-		ConfigurationBoxInfo* pConfigurationBoxInfo = pPluginInfo->pInterface->configuration(Main::ini->createSection(pPluginInfo->name), &configDialog);
+		ConfigurationBoxInfo* pConfigurationBoxInfo = pPluginInfo->pInterface->configuration(Main::ini->createSection(QString(pPluginInfo->name).replace(' ', "")), &configDialog);
 		configDialog.addEngineConfiguration(pConfigurationBoxInfo);
 	}
 
