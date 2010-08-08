@@ -126,8 +126,6 @@ IniVariable &IniSection::createSetting(const QString& name, const IniVariable& d
 	IniVariable &pNewVariable = *variables.find(nameLower);
 	pNewVariable.key = name;
 
-	nameList.push_back(pNewVariable);
-
 	return pNewVariable;
 }
 
@@ -543,8 +541,7 @@ void Ini::readQByteArrayIntoStructures(const QByteArray& array)
 			}
 			else
 			{
-				// I guess if we don't have a real setting, then push it on the
-				// name list anyways.
+				// String list
 				IniVariable var;
 				var.topComment = topComment;
 				var.sideComment = sideComment;
@@ -739,8 +736,8 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 			output.append("\n", 1);
 		}
 
-		/*QVector<IniVariable>::const_iterator nameit;
-		for (nameit = sectionit->second.nameList.begin(); nameit != sectionit->second.nameList.end(); ++nameit)
+		QVector<IniVariable>::const_iterator nameit;
+		for (nameit = sectionit->nameList.begin(); nameit != sectionit->nameList.end(); ++nameit)
 		{
 			QString nameListTopComment = nameit->topComment;
 			nameListTopComment = Strings::trim(nameListTopComment, "\r\n");
@@ -779,7 +776,7 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 			}
 
 			output.append("\n");
-		}*/
+		}
 
 		output.append("\n");
 	}
