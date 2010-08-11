@@ -183,6 +183,10 @@ bool DataPaths::validateAppDataDirectory()
 bool DataPaths::validateDir(const QString& path)
 {
 	QFileInfo fileInfo(path);
-	return !path.isEmpty() && fileInfo.exists()
-	&&		fileInfo.isDir() && fileInfo.isWritable();
+
+	bool bCondition1 = !path.isEmpty();
+	bool bCondition2 = fileInfo.exists();
+	bool bCondition3 = fileInfo.isDir();
+
+	return bCondition1 && bCondition2 && bCondition3;
 }
