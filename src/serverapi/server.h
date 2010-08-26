@@ -41,7 +41,6 @@
 #include "serverapi/player.h"
 #include "serverapi/serverstructs.h"
 #include "global.h"
-#include "pathfinder.h"
 
 class Binaries;
 class GameRunner;

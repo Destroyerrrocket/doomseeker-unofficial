@@ -24,7 +24,9 @@
 #define __CUSTOMSERVERS_H_
 
 #include "masterclient.h"
-#include <QList>
+#include <QtContainerFwd>
+
+class IniSection;
 
 /**
  *  If server for unknown engine is found, the engineIndex should be set

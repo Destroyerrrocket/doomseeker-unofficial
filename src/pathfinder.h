@@ -24,9 +24,11 @@
 #ifndef __PATHFINDER_H_
 #define __PATHFINDER_H_
 
-#include "ini.h"
 #include "global.h"
 #include <QStringList>
+
+class IniSection;
+class IniVariable;
 
 struct MAIN_EXPORT PathFinderResult
 {
@@ -37,13 +39,14 @@ struct MAIN_EXPORT PathFinderResult
 class MAIN_EXPORT PathFinder
 {
 	public:
-		PathFinder(IniSection&);
+		PathFinder(const IniSection&);
+		PathFinder(const QString&);
 
-		QString 			findFile(const QString& fileName);
-		PathFinderResult	findFiles(const QStringList& files);
+		QString 			findFile(const QString& fileName) const;
+		PathFinderResult	findFiles(const QStringList& files) const;
 
 	protected:
-		IniSection& config;
+		const QStringList strList;
 };
 
 #endif

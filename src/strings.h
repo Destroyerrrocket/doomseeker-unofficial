@@ -23,8 +23,9 @@
 #ifndef __STRINGS_H_
 #define __STRINGS_H_
 
-#include <QString>
 #include "global.h"
+
+class QString;
 
 class MAIN_EXPORT Strings
 {

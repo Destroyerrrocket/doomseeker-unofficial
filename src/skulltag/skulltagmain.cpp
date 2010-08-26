@@ -26,6 +26,7 @@
 #include "datapaths.h"
 #include "global.h"
 #include "main.h"
+#include "pathfinder.h"
 #include "strings.h"
 #include "sdeapi/config.hpp"
 #include "sdeapi/pluginloader.hpp"
@@ -160,15 +161,12 @@ extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection &config)
 {
 	// Default to where the automatic installations install to.
 #ifdef Q_OS_WIN32
-	QString programFilesPath = DataPaths::programFilesDirectory(DataPaths::x86);
-	Strings::trimr(programFilesPath, "\\");
-	
-	QString defaultSkulltagBinaryPath = programFilesPath + "\\Skulltag\\Skulltag.exe";
-
-	config.createSetting("BinaryPath", defaultSkulltagBinaryPath);
+	PathFinder pf(Strings::trimr(DataPaths::programFilesDirectory(DataPaths::x86), "\\") + "\\Skulltag;" + Main::workingDirectory + ";.");
+	config.createSetting("BinaryPath", pf.findFile("skulltag.exe"));
 #else
-	config.createSetting("BinaryPath", "/usr/games/skulltag/skulltag");
-	config.createSetting("ServerBinaryPath", "/usr/games/skulltag/skulltag-server");
+	PathFinder pf(QString("/usr/games/skulltag;/usr/local/games/skulltag;/usr/share/games/skulltag;") + Main::workingDirectory + ";.");
+	config.createSetting("BinaryPath", pf.findFile("skulltag"));
+	config.createSetting("ServerBinaryPath", pf.findFile("skulltag-server"));
 #endif
 
 	config.createSetting("Masterserver", "skulltag.servegame.com:15300");

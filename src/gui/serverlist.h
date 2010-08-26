@@ -35,6 +35,8 @@
 #include "gui/widgets/serverlistview.h"
 #include "gui/models/serverlistmodel.h"
 
+class IniSection;
+
 class ServerListHandler : public QObject
 {
 	Q_OBJECT

@@ -164,6 +164,23 @@ IniVariable &IniSection::retrieveSetting(const QString& name)
 
 	return *it;
 }
+const IniVariable &IniSection::retrieveSetting(const QString& name) const
+{
+	if (name.isEmpty())
+	{
+		return nullVariable;
+	}
+	
+	QString nameLower = name.toLower();
+
+	IniVariablesConstIt it = variables.find(nameLower);
+	if (it == variables.end())
+	{
+		return nullVariable;
+	}
+
+	return *it;
+}
 
 IniVariable &IniSection::setting(const QString& name)
 {

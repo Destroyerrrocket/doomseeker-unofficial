@@ -39,7 +39,6 @@ class ChocolateDoomServer : public Server
 		ChocolateDoomServer(const QHostAddress &address, unsigned short port);
 
 		Binaries*		binaries() const;
-		void			connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword) const;
 
 		GameRunner*		gameRunner() const;
 

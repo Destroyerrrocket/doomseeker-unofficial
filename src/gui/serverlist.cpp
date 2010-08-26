@@ -29,6 +29,7 @@
 #include "serverapi/playerslist.h"
 #include "serverapi/tooltipgenerator.h"
 #include "main.h"
+#include "pathfinder.h"
 #include <QApplication>
 #include <QClipboard>
 #include <QDesktopServices>

@@ -28,17 +28,18 @@
 #include <QFileInfo>
 #include <cstdlib>
 
-PathFinder::PathFinder(IniSection& cfg) : config(cfg)
+PathFinder::PathFinder(const IniSection& cfg) : strList(cfg["WadPaths"]->split(";", QString::SkipEmptyParts))
 {
 }
 
-QString PathFinder::findFile(const QString& fileName)
+PathFinder::PathFinder(const QString& paths) : strList(paths.split(";", QString::SkipEmptyParts))
 {
-	if (config.isNull())
-		return QString();
+}
 
-	IniVariable &setting = config["WadPaths"];
-	QStringList strList = setting->split(";", QString::SkipEmptyParts);
+QString PathFinder::findFile(const QString& fileName) const
+{
+	if (strList.count() == 0)
+		return QString();
 
 	#ifdef Q_OS_WIN32
 	for (int i = 0; i < strList.count(); ++i)
@@ -71,7 +72,7 @@ QString PathFinder::findFile(const QString& fileName)
 	return QString();
 }
 
-PathFinderResult PathFinder::findFiles(const QStringList& files)
+PathFinderResult PathFinder::findFiles(const QStringList& files) const
 {
 	PathFinderResult result;
 	foreach(const QString file, files)

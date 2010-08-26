@@ -24,7 +24,6 @@
 #define __INI_H_
 
 #include "global.h"
-#include <QFile>
 #include <QHash>
 #include <QString>
 #include <QStringList>
@@ -127,11 +126,13 @@ class MAIN_EXPORT IniSection
 
 		IniVariable				&createSetting(const QString& name, const IniVariable& data);
 		void					deleteSetting(const QString& name);
-		bool					isNull() { return null; }
+		bool					isNull() const { return null; }
 		IniVariable				&retrieveSetting(const QString& name);
+		const IniVariable		&retrieveSetting(const QString& name) const;
 		IniVariable				&setting(const QString& name);
 
 		IniVariable				&operator[](const QString& name) { return setting(name); }
+		const IniVariable		&operator[](const QString& name) const { return retrieveSetting(name); }
 
 	protected:
 		friend class Ini;
