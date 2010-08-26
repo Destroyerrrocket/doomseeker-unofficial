@@ -80,7 +80,7 @@ class MAIN_EXPORT IniVariable
 
 	protected:
 		friend class Ini;
-		friend struct IniSection;
+		friend class IniSection;
 		friend class TestReadINIVariable;
 		friend class TestReadINIList;
 
