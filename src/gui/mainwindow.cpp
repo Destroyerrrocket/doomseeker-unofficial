@@ -885,20 +885,22 @@ bool MainWindow::obtainJoinCommandLine(const Server* server, CommandLineInfo& cl
 				// Execute Wadseeker
 				if (!joinError.missingIwad.isEmpty())
 				{
-					QString additionalInfo = tr("\nMake sure that this file is in one of the paths specified in Options -> File Paths.\n\
-												 If you don't have this file you need to purchase the game associated with this IWAD.\n\
-												 Wadseeker will not download IWADs.\n\n");
+					QString additionalInfo = tr("\n\
+Make sure that this file is in one of the paths specified in Options -> File Paths.\n\
+If you don't have this file you need to purchase the game associated with this IWAD.\n\
+Wadseeker will not download IWADs.\n\n");
+
 					filesMissingMessage += tr("IWAD: ") + joinError.missingIwad.toLower() + additionalInfo;
 				}
 
 				if (!joinError.missingWads.isEmpty())
 				{
-					filesMissingMessage += tr("PWADS: %1\nDo you want Wadseeker to find missing PWADS?").arg(joinError.missingWads.join(" "));
+					filesMissingMessage += tr("PWADS: %1\nDo you want Wadseeker to find missing PWADs?").arg(joinError.missingWads.join(" "));
 				}
 
 				if (joinError.isMissingIwadOnly())
 				{
-					QMessageBox::warning(this, filesMissingCaption, filesMissingMessage, QMessageBox::Ok);
+					QMessageBox::critical(this, filesMissingCaption, filesMissingMessage, QMessageBox::Ok);
 				}
 				else
 				{
