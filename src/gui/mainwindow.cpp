@@ -33,6 +33,7 @@
 #include "gui/helpers/playersdiagram.h"
 #include "gui/widgets/serversstatuswidget.h"
 #include "serverapi/gamerunner.h"
+#include "serverapi/messages.h"
 #include "customservers.h"
 #include "doomseekerfilepaths.h"
 #include "log.h"
@@ -858,18 +859,18 @@ bool MainWindow::obtainJoinCommandLine(const Server* server, CommandLineInfo& cl
 		}
 
 		GameRunner* gameRunner = server->gameRunner();
-		JoinError jError = gameRunner->createJoinCommandLine(cli, connectPassword);
+		JoinError joinError = gameRunner->createJoinCommandLine(cli, connectPassword);
 		delete gameRunner;
 
 		const QString unknownError = tr("Unknown error.");
 		const QString* error = NULL;
 
-		switch (jError.type)
+		switch (joinError.type)
 		{
 			case JoinError::Critical:
-				if (!jError.error.isEmpty())
+				if (!joinError.error.isEmpty())
 				{
-					error = &jError.error;
+					error = &joinError.error;
 				}
 				else
 				{
@@ -882,34 +883,44 @@ bool MainWindow::obtainJoinCommandLine(const Server* server, CommandLineInfo& cl
 
 			case JoinError::MissingWads:
 				// Execute Wadseeker
-				if (!jError.missingIwad.isEmpty())
+				if (!joinError.missingIwad.isEmpty())
 				{
-					filesMissingMessage += tr("IWAD: ") + jError.missingIwad.toLower() + "\n";
+					QString additionalInfo = tr("\nMake sure that this file is in one of the paths specified in Options -> File Paths.\n\
+												 If you don't have this file you need to purchase the game associated with this IWAD.\n\
+												 Wadseeker will not download IWADs.\n\n");
+					filesMissingMessage += tr("IWAD: ") + joinError.missingIwad.toLower() + additionalInfo;
 				}
 
-				if (!jError.missingWads.isEmpty())
+				if (!joinError.missingWads.isEmpty())
 				{
-					filesMissingMessage += tr("PWADS: %1\nDo you want Wadseeker to find missing WADS?").arg(jError.missingWads.join(" "));
+					filesMissingMessage += tr("PWADS: %1\nDo you want Wadseeker to find missing PWADS?").arg(joinError.missingWads.join(" "));
 				}
 
-				if (QMessageBox::question(this, filesMissingCaption, filesMissingMessage, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+				if (joinError.isMissingIwadOnly())
 				{
-					if (!checkWadseekerValidity())
+					QMessageBox::warning(this, filesMissingCaption, filesMissingMessage, QMessageBox::Ok);
+				}
+				else
+				{
+					if (QMessageBox::question(this, filesMissingCaption, filesMissingMessage, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 					{
-						return false;
-					}
-				
-					if (!jError.missingIwad.isEmpty())
-					{
-						jError.missingWads.append(jError.missingIwad);
-					}
+						if (!checkWadseekerValidity())
+						{
+							return false;
+						}
+					
+						if (!joinError.missingIwad.isEmpty())
+						{
+							joinError.missingWads.append(joinError.missingIwad);
+						}
 
-					WadSeekerInterface wsi;
-					wsi.setAutomatic(true, jError.missingWads);
-					wsi.wadseekerRef().setCustomSite(server->website());
-					if (wsi.exec() == QDialog::Accepted)
-					{
-						return obtainJoinCommandLine(server, cli, errorCaption);
+						WadSeekerInterface wsi;
+						wsi.setAutomatic(true, joinError.missingWads);
+						wsi.wadseekerRef().setCustomSite(server->website());
+						if (wsi.exec() == QDialog::Accepted)
+						{
+							return obtainJoinCommandLine(server, cli, errorCaption);
+						}
 					}
 				}
 				return false;
@@ -973,12 +984,12 @@ void MainWindow::runGame(const Server* server)
 	if (obtainJoinCommandLine(server, cli, tr("Doomseeker - join server")))
 	{
 		GameRunner* gameRunner = server->gameRunner();
-		QString error;
-		MessageResult result = gameRunner->runExecutable(cli, false);
-		if (result.isError)
+
+		Message message = gameRunner->runExecutable(cli, false);
+		if (message.isError())
 		{
-			gLog << tr("Error while launching executable for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(error);
-			QMessageBox::critical(this, tr("Doomseeker - launch executable"), error);
+			gLog << tr("Error while launching executable for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(message.content);
+			QMessageBox::critical(this, tr("Doomseeker - launch executable"), message.content);
 		}
 
 		delete gameRunner;

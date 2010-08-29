@@ -30,6 +30,7 @@
 #include <QString>
 
 struct PluginInfo;
+class Message;
 
 class MAIN_EXPORT Binaries : public QObject
 {
@@ -39,10 +40,10 @@ class MAIN_EXPORT Binaries : public QObject
 		/**
 		 *	@brief Returns the path to the client binary.
 		 *
-		 *	@param [out] error - error message.
+		 *	@param [out] message - information message, if any.
 		 *	@return Empty if error is not empty.
 		 */
-		virtual QString					clientBinary(QString& error) const { return obtainBinary(configKeyClientBinary(), Client, error); }
+		virtual QString					clientBinary(Message& message) const { return obtainBinary(configKeyClientBinary(), Client, message); }
 
 		/**
 		 *	Default behavior returns directory of clientBinary(), but
@@ -50,7 +51,7 @@ class MAIN_EXPORT Binaries : public QObject
 		 *	Skulltag's testing binaries.
 		 *	@param [out] error - type of error
 		 */
-		virtual QString					clientWorkingDirectory(QString& error) const;
+		virtual QString					clientWorkingDirectory(Message& message) const;
 
 		virtual QString					configKeyClientBinary() const { return "BinaryPath"; }
 		virtual QString					configKeyOfflineBinary() const { return configKeyClientBinary(); }
@@ -59,17 +60,17 @@ class MAIN_EXPORT Binaries : public QObject
 		/**
 		 *	@brief Returns the path to the binary for offline play.
 		 *
-		 *	@param [out] error - error message.
+		 *	@param [out] message - information message, if any.
 		 *	@return Empty if error is not empty.
 		 */
-		virtual QString					offlineGameBinary(QString& error) const { return obtainBinary(configKeyOfflineBinary(), Offline, error); }
+		virtual QString					offlineGameBinary(Message& message) const { return obtainBinary(configKeyOfflineBinary(), Offline, message); }
 
 		/**
 		 *	Returns the working directory of the binary for offline game.
-		 *	@param [out] error - type of error
+		 *	@param [out] message - information message, if any.
 		 *	@return Default behavior returns offlineGameBinary() directory
 		 */
-		virtual QString					offlineGameWorkingDirectory(QString& error) const;
+		virtual QString					offlineGameWorkingDirectory(Message& message) const;
 
 		/**
 		 *	This is supposed to return the plugin this Binaries belongs to.
@@ -82,15 +83,15 @@ class MAIN_EXPORT Binaries : public QObject
 		/**
 		 *	@brief Returns the path to the server binary.
 		 *
-		 *	@param [out] error - error message.
+		 *	@param [out] message - information message, if any.
 		 *	@return Empty if error is not empty.
 		 */
-		virtual QString					serverBinary(QString& error) const { return obtainBinary(configKeyServerBinary(), TServer, error); }
+		virtual QString					serverBinary(Message& message) const { return obtainBinary(configKeyServerBinary(), TServer, message); }
 
 		/**
 		 *	Default behaviour returns directory of serverBinary().
 		 */
-		virtual QString					serverWorkingDirectory(QString& error) const;
+		virtual QString					serverWorkingDirectory(Message& message) const;
 
 	protected:
 		enum BinaryType
@@ -112,7 +113,7 @@ class MAIN_EXPORT Binaries : public QObject
 		static BinaryNamesDictionary 		binaryNames;
 		IniSection							&config;
 
-		QString								obtainBinary(const QString& configKey, BinaryType binaryType, QString& error) const;
+		QString								obtainBinary(const QString& configKey, BinaryType binaryType, Message& message) const;
 };
 
 #endif

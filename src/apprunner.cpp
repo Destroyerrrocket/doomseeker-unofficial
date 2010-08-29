@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "apprunner.h"
+#include "serverapi/messages.h"
 #include "log.h"
 #include "strings.h"
 #include <QProcess>
@@ -73,7 +74,7 @@ QString AppRunner::findBundleBinary(const QFileInfo &file)
 }
 #endif
 
-MessageResult AppRunner::runExecutable(const CommandLineInfo& cmdInfo)
+Message AppRunner::runExecutable(const CommandLineInfo& cmdInfo)
 {
 	gLog << tr("Starting (working dir %1): %2 %3").arg(cmdInfo.applicationDir.canonicalPath()).arg(cmdInfo.executable.canonicalFilePath()).arg(cmdInfo.args.join(" "));
 	QStringList args = cmdInfo.args;
@@ -92,12 +93,15 @@ MessageResult AppRunner::runExecutable(const CommandLineInfo& cmdInfo)
 		result = QProcess::startDetached(cmdInfo.executable.canonicalFilePath(), args, cmdInfo.applicationDir.canonicalPath());
 	}
 
+	Message message;
+
 	if(!result)
 	{
 		QString error = tr("File: %1\ncannot be run").arg(cmdInfo.executable.canonicalFilePath());
 		gLog << error;
-		return MessageResult(true, tr("runExecutable"), error);
+		message.setCustomError(error);
+		return message;
 	}
 
-	return MessageResult(false, tr("runExecutable"));
+	return message;
 }

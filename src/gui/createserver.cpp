@@ -27,6 +27,7 @@
 #include "sdeapi/config.hpp"
 #include "serverapi/binaries.h"
 #include "serverapi/gamerunner.h"
+#include "serverapi/messages.h"
 
 #include <QCheckBox>
 #include <QFileDialog>
@@ -213,14 +214,14 @@ void CreateServerDlg::btnCommandLineClicked()
 		QString error;
 
 		GameRunner* gameRunner = server->gameRunner();
-		MessageResult result = gameRunner->createHostCommandLine(hi, cli, false);
+		Message message = gameRunner->createHostCommandLine(hi, cli, false);
 
 		delete server;
 		delete gameRunner;
 
-		if (result.isError)
+		if (message.isError())
 		{
-			QMessageBox::critical(this, result.caption, result.message);
+			QMessageBox::critical(this, tr("Doomseeker - error"), message.content);
 		}
 		else
 		{
@@ -247,11 +248,12 @@ void CreateServerDlg::btnDefaultExecutableClicked()
 	// plugin's interface a not recommended feature.
 	Server* server = currentEngine->pInterface->server(QHostAddress("127.0.0.1"), 0);
 	Binaries* binaries = server->binaries();
-	leExecutable->setText(binaries->serverBinary(error));
+	Message message;
+	leExecutable->setText(binaries->serverBinary(message));
 
-	if (!error.isNull())
+	if (!message.isIgnore())
 	{
-		QMessageBox::critical(this, tr("Obtaining default server binary path."), error, QMessageBox::Ok, QMessageBox::Ok);
+		QMessageBox::critical(this, tr("Obtaining default server binary path."), message.content, QMessageBox::Ok, QMessageBox::Ok);
 	}
 
 	delete binaries;
@@ -352,7 +354,7 @@ void CreateServerDlg::cboGamemodeSelected(int index)
 	}
 }
 
-bool CreateServerDlg::createHostInfo(HostInfo& hi, Server* server, bool offline)
+bool CreateServerDlg::createHostInfo(HostInfo& hostInfo, Server* server, bool offline)
 {
 	if (server != NULL)
 	{
@@ -361,15 +363,23 @@ bool CreateServerDlg::createHostInfo(HostInfo& hi, Server* server, bool offline)
 		// binary if the specified executable is the same as what is provided
 		// as the server.
 		Binaries *binaries = server->binaries();
-		QString error;
-		QString client = binaries->clientBinary(error);
-		if(offline && error.isEmpty() && leExecutable->text() == binaries->serverBinary(error))
-			hi.executablePath = client;
-		else
-			hi.executablePath = leExecutable->text();
+		Message message;
+		QString client = binaries->clientBinary(message);
 
-		hi.iwadPath = cboIwad->currentText();
-		hi.pwadsPaths = CommonGUI::listViewStandardItemsToStringList(lstAdditionalFiles);
+		bool bIsLineEditPotiningToServerBinary = (leExecutable->text() == binaries->serverBinary(message));
+		bool bShouldUseClientBinary = offline && message.isIgnore() && bIsLineEditPotiningToServerBinary;
+
+		if(bShouldUseClientBinary)
+		{
+			hostInfo.executablePath = client;
+		}
+		else
+		{
+			hostInfo.executablePath = leExecutable->text();
+		}
+
+		hostInfo.iwadPath = cboIwad->currentText();
+		hostInfo.pwadsPaths = CommonGUI::listViewStandardItemsToStringList(lstAdditionalFiles);
 
 		// DMFlags
 		foreach(const DMFlagsTabWidget* p, dmFlagsTabs)
@@ -385,14 +395,14 @@ bool CreateServerDlg::createHostInfo(HostInfo& hi, Server* server, bool offline)
 				}
 			}
 
-			hi.dmFlags << sec;
+			hostInfo.dmFlags << sec;
 		}
 
 		// limits
 		foreach(GameLimitWidget* p, limitWidgets)
 		{
 			p->limit.setValue(p->spinBox->value());
-			hi.cvars << p->limit;
+			hostInfo.cvars << p->limit;
 		}
 
 		// modifier
@@ -401,11 +411,11 @@ bool CreateServerDlg::createHostInfo(HostInfo& hi, Server* server, bool offline)
 		{
 			--modIndex;
 			gameModifiers[modIndex].setValue(1);
-			hi.cvars << gameModifiers[modIndex];
+			hostInfo.cvars << gameModifiers[modIndex];
 		}
 
 		// Custom parameters
-		hi.customParameters = pteCustomParameters->toPlainText().split('\n');
+		hostInfo.customParameters = pteCustomParameters->toPlainText().split('\n');
 
 		// Other
 		server->setBroadcastToLAN(cbBroadcastToLAN->isChecked());
@@ -520,12 +530,21 @@ void CreateServerDlg::initEngineSpecific(const PluginInfo* engineInfo)
 	const EnginePlugin* engine = currentEngine->pInterface;
 
 	// Executable path
-	QString dummy;
+	Message message;
 
 	// See: btnDefaultExecutableClicked()
 	Server* server = engine->server(QHostAddress("127.0.0.1"), 1);
 	Binaries* binaries = server->binaries();
-	leExecutable->setText(binaries->serverBinary(dummy));
+	leExecutable->setText(binaries->serverBinary(message));
+
+	if (message.isError())
+	{
+		QString caption = tr("Doomseeker - error obtaining server binary");
+		QString error = tr("Server binary for engine \"%1\" cannot be obtained.\nFollowing error has occured:\n%2").arg(engineInfo->name, message.content);
+
+		QMessageBox::warning(NULL, caption, error);
+	}
+
 	delete binaries;
 	delete server;
 
@@ -819,14 +838,14 @@ void CreateServerDlg::runGame(bool offline)
 
 		GameRunner* gameRunner = server->gameRunner();
 
-		MessageResult result = gameRunner->host(hi, offline);
+		Message message = gameRunner->host(hi, offline);
 
 		delete gameRunner;
 		delete server;
 
-		if (result.isError)
+		if (message.isError())
 		{
-			QMessageBox::critical(this, result.caption, result.message);
+			QMessageBox::critical(this, tr("Doomseeker - error"), message.content);
 		}
 		else
 		{

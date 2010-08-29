@@ -40,8 +40,8 @@ class SkulltagBinaries : public Binaries
 		 *	file is returned. If this is a testing server, a shell script is
 		 *	created	if necessary and a path to this shell script s returned.
 		 */
-		QString					clientBinary(QString& error) const;
-		QString					clientWorkingDirectory(QString& error) const;
+		QString					clientBinary(Message& message) const;
+		QString					clientWorkingDirectory(Message& message) const;
 
 		const PluginInfo*		plugin() const;
 
@@ -59,7 +59,7 @@ class SkulltagBinaries : public Binaries
 		 *	@param [out] error - error if return == false
 		 *	@return false if fail
 		 */
-		bool					spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, QString& error) const;
+		bool					spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, Message& message) const;
 };
 
 #endif

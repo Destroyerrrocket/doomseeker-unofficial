@@ -87,6 +87,13 @@ struct JoinError
 	 *	This is valid only if type == MissingWads.
 	 */
 	QStringList 		missingWads;
+
+	bool				isMissingIwadOnly() const
+	{
+		return type == MissingWads
+			&& !missingIwad.isEmpty() 
+			&& missingWads.isEmpty();
+	}
 };
 
 #endif

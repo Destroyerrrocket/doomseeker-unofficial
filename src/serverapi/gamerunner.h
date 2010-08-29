@@ -49,7 +49,7 @@ class MAIN_EXPORT GameRunner : public QObject
 		 *	@return	MessageResult::isError == false if command line was
 		 *		successfully created.
 		 */
-		MessageResult				createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cmdLine, bool bOfflinePlay);
+		Message						createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cmdLine, bool bOfflinePlay);
 
 		/**
 		 *	@param [out] cli - after successful call this will contain
@@ -61,7 +61,7 @@ class MAIN_EXPORT GameRunner : public QObject
 		/**
 		 *	@see createHostCommandLine()
 		 */
-		MessageResult				host(const HostInfo& hostInfo, bool bOfflinePlay);
+		Message						host(const HostInfo& hostInfo, bool bOfflinePlay);
 
 		/**
 		 *	This is supposed to return the plugin this GameRunner belongs to.
@@ -78,7 +78,7 @@ class MAIN_EXPORT GameRunner : public QObject
 		 *		attempt to wrap the input/output of the program with it's own
 		 *		console
 		 */
-		MessageResult				runExecutable(const CommandLineInfo& cli, bool bWrapWithStandardServerConsole);
+		Message						runExecutable(const CommandLineInfo& cli, bool bWrapWithStandardServerConsole);
 
 
 	protected:
@@ -118,10 +118,10 @@ class MAIN_EXPORT GameRunner : public QObject
 		 */
 		virtual QString				argForServerLaunch() const { return ""; }
 
-		virtual MessageResult		hostAppendIwad();
-		virtual MessageResult		hostAppendPwads();
-		virtual MessageResult		hostGetBinary(bool bOfflinePlay);
-		virtual MessageResult		hostGetWorkingDirectory(bool bOfflinePlay);
+		virtual Message				hostAppendIwad();
+		virtual Message				hostAppendPwads();
+		virtual Message				hostGetBinary(bool bOfflinePlay);
+		virtual Message				hostGetWorkingDirectory(bool bOfflinePlay);
 
 		/**
 		 *	Creates engine specific command line parameters out of passed

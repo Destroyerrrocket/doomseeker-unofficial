@@ -107,7 +107,7 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 		else if(cvarName == "sv_gametype")
 		{
 			unsigned int mode = cvarValue.toUInt();
-			if(mode < plugin()->pInterface->gameModes()->size())
+			if(mode < (unsigned)plugin()->pInterface->gameModes()->size())
 				currentGameMode = (*plugin()->pInterface->gameModes())[cvarValue.toUInt()];
 		}
 	}

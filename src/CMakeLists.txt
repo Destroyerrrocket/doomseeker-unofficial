@@ -193,6 +193,7 @@ set(SOURCE_FILES
 	serverapi/tooltips/playertable.cpp
 	serverapi/binaries.cpp
 	serverapi/gamerunner.cpp
+	serverapi/messages.cpp
 	serverapi/player.cpp
 	serverapi/playerslist.cpp
 	serverapi/rconprotocol.cpp
@@ -234,6 +235,7 @@ set(HEADER_FILES
 	serverapi/tooltips/playertable.h
 	serverapi/binaries.h
 	serverapi/gamerunner.h
+	serverapi/messages.h
 	serverapi/player.h
 	serverapi/playerslist.h
 	serverapi/tooltipgenerator.h
@@ -248,7 +250,6 @@ set(HEADER_FILES
 	global.h
 	ini.h
 	main.h
-	messageresult.h
 	pathfinder.h
 	strings.h
 	version.h

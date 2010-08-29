@@ -364,7 +364,7 @@ void Main::initMainConfig()
 	config.createSetting("QueryAutoRefreshEverySeconds", 180);
 	config.createSetting("QueryAutoRefreshDontIfActive", true);
 	config.createSetting("QueryOnStartup", true);
-	config.createSetting("QueryTries", 7);
+	config.createSetting("QueryTries", 3);
 	config.createSetting("QueryTimeout", 1000);
 	
 	// Wadseeker

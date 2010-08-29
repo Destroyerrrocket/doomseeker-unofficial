@@ -24,6 +24,7 @@
 #include "skulltagmain.h"
 #include "skulltagserver.h"
 #include "main.h"
+#include "serverapi/messages.h"
 
 #include <QMessageBox>
 
@@ -40,25 +41,31 @@ SkulltagBinaries::SkulltagBinaries(const SkulltagServer* server)
 {
 }
 
-QString SkulltagBinaries::clientBinary(QString& error) const
+QString SkulltagBinaries::clientBinary(Message& message) const
 {
 	if (!server->isTestingServer() || !config["EnableTesting"])
 	{
-		return Binaries::clientBinary(error);
+		return Binaries::clientBinary(message);
 	}
 	else
 	{
+		message.setToIgnore();
+		QString error;
+
 		// This is common code for both Unix and Windows:
 		IniVariable &setting = config["TestingPath"];
 		QString path = setting;
 		if (path.isEmpty())
 		{
 			error = tr("No testing directory specified for Skulltag");
+			message.setCustomError(error);
 			return QString();
 		}
 
 		if (path[path.length() - 1] != '/' && path[path.length() - 1] != '\\' )
+		{
 			path += '/';
+		}
 
 		path += server->version();
 
@@ -66,7 +73,9 @@ QString SkulltagBinaries::clientBinary(QString& error) const
 		if (!fi.exists())
 		{
 			error = tr("%1\ndoesn't exist.\nYou need to install new testing binaries.").arg(path);
-			QString messageBoxContent = tr("%1\n\nDo you want Doomseeker to create %2 directory and copy all your .ini files from your base directory?\n\nNote: You will still have to manualy install the binaries.").arg(error, server->version());
+			QString messageBoxContent = tr("%1\n\nDo you want Doomseeker to create %2 directory and copy all your .ini files from your base directory?\n\n\
+										   Note: You will still have to manualy install the binaries."\
+										   ).arg(error, server->version());
 
 			if (QMessageBox::question(Main::mainWindow, tr("Doomseeker - missing testing binaries"), messageBoxContent, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 			{
@@ -76,12 +85,13 @@ QString SkulltagBinaries::clientBinary(QString& error) const
 				if (!dir.mkdir(server->version()))
 				{
 					error = tr("Unable to create directory:\n%1").arg(path);
+					message.setCustomError(error);
 					return QString();
 				}
 
 				// Now copy all .ini's. On Linux .ini's are kept in ~/.skulltag so this will
 				// do nothing, but on Windows this should work like magic.
-				QDir baseBinaryDir(clientWorkingDirectory(error));
+				QDir baseBinaryDir(clientWorkingDirectory(message));
 				QStringList nameFilters;
 				nameFilters << "*.ini";
 				QStringList iniFiles = baseBinaryDir.entryList(nameFilters, QDir::Files);
@@ -94,7 +104,7 @@ QString SkulltagBinaries::clientBinary(QString& error) const
 				}
 
 				QMessageBox::information(Main::mainWindow, tr("Doomseeker"), tr("Please install now version \"%1\" into:\n%2").arg(server->version(), path));
-				error = QString();
+				message.setToIgnore();
 			}
 			return QString();
 		}
@@ -102,6 +112,7 @@ QString SkulltagBinaries::clientBinary(QString& error) const
 		if (!fi.isDir())
 		{
 			error = tr("%1\nexists but is NOT a directory.\nCannot proceed.").arg(path);
+			message.setCustomError(error);
 			return QString();
 		}
 
@@ -110,14 +121,15 @@ QString SkulltagBinaries::clientBinary(QString& error) const
 		if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
 		{
 			error = tr("%1\ndoesn't contain Skulltag executable").arg(path);
+			message.setCustomError(error);
 			return QString();
 		}
 
 		// Everything checked out, so proceed to create (if necessary) and return path to the script file.
 		QString retPath;
-		if (!spawnTestingBatchFile(path, retPath, error))
+		if (!spawnTestingBatchFile(path, retPath, message))
 		{
-			// error is already specified inside spawnTestingBatchFile()S
+			// message is already specified inside spawnTestingBatchFile()S
 			return QString();
 		}
 
@@ -125,7 +137,7 @@ QString SkulltagBinaries::clientBinary(QString& error) const
 	}
 }
 
-QString SkulltagBinaries::clientWorkingDirectory(QString& error) const
+QString SkulltagBinaries::clientWorkingDirectory(Message& message) const
 {
 	QFileInfo fi(config["BinaryPath"]);
 	return fi.canonicalPath();
@@ -145,8 +157,9 @@ const PluginInfo* SkulltagBinaries::plugin() const
 	return SkulltagMain::get();
 }
 
-bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, QString& error) const
+bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, Message& message) const
 {
+	QString error = "";
 	QString binaryPath = versionDir + '/' + ST_BINARY_NAME;
 	// This will create an actual path to file, because there is no '/' at the end
 	// of scriptFilepath.
@@ -156,6 +169,7 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 	if (fi.isDir())
 	{
 		error = tr("%1\n should be a script file but is a directory!").arg(fullPathToFile);
+		message.setCustomError(error);
 		return false;
 	}
 
@@ -165,6 +179,7 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 		if ((file.permissions() & QFile::ExeUser) == 0)
 		{
 			error = tr("You don't have permissions to execute file: %1\n").arg(fullPathToFile);
+			message.setCustomError(error);
 			return false;
 		}
 		return true;
@@ -176,7 +191,7 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 	// Create Windows batch file
 	// Extract drive letter:
 	QString driveLetter;
-	QString workDir = binaries->clientWorkingDirectory(error);
+	QString workDir = binaries->clientWorkingDirectory(message);
 	for (int i = 0; i < workDir.length(); ++i)
 	{
 		if (workDir[i] == ':')
@@ -190,13 +205,13 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 		content += driveLetter + ":\r\n";
 	}
 
-	QString cdDir = binaries->clientWorkingDirectory(error).replace('/', '\\');
+	QString cdDir = binaries->clientWorkingDirectory(message).replace('/', '\\');
 	QString exePath = binaryPath.replace('/', '\\');
 
 	content += "cd \"" + cdDir + "\"\r\n";
 	content += "\"" + exePath + "\" %*"; // %* deals with all the parameters
 	#else
-	QString cdDir = binaries->clientWorkingDirectory(error);
+	QString cdDir = binaries->clientWorkingDirectory(message);
 
 	// Create Unix script file
 	content  = "#!/bin/bash\n";
@@ -209,18 +224,21 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 	if (!error.isNull())
 	{
 		error.prepend(tr("Error while creating a shell script: "));
+		message.setCustomError(error);
 		return false;
 	}
 
 	if (!file.open(QIODevice::WriteOnly))
 	{
 		error = tr("Couldn't open batch file \"%1\" for writing").arg(fullPathToFile);
+		message.setCustomError(error);
 		return false;
 	}
 
 	if (file.write(content.toAscii()) < 0)
 	{
 		error = tr("Error while writing batch file \"%1\"").arg(fullPathToFile);
+		message.setCustomError(error);
 		file.close();
 		return false;
 	}
@@ -230,6 +248,7 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 	if (!file.setPermissions(file.permissions() | QFile::ExeUser))
 	{
 		error = tr("Cannot set permissions for file:\n%1").arg(fullPathToFile);
+		message.setCustomError(error);
 		return false;
 	}
 

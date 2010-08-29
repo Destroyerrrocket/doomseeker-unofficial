@@ -23,6 +23,7 @@
 #include "binaries.h"
 #include "server.h"
 #include "main.h"
+#include "messages.h"
 
 #include <QString>
 #include <QFileInfo>
@@ -34,24 +35,27 @@ Binaries::Binaries(IniSection &config) : config(config)
 	if (binaryNames.empty()) // Is not init yet.
 	{
 		binaryNames.insert(Client, "client");
-		binaryNames.insert(Offline, "server");
-		binaryNames.insert(TServer, "offline play");
+		binaryNames.insert(Offline, "offline play");
+		binaryNames.insert(TServer, "server");
 	}
 }
 
-QString Binaries::clientWorkingDirectory(QString& error) const
+QString Binaries::clientWorkingDirectory(Message& message) const
 {
-	QFileInfo fi(clientBinary(error));
+	QFileInfo fi(clientBinary(message));
 	return fi.absolutePath();
 }
 
-QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, QString& error) const
+QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, Message& message) const
 {
 	IniVariable &setting = config[configKey];
 
+	message.setToIgnore();
+	QString error = "";
 	if (setting->isEmpty())
 	{
 		error = tr("No %1 executable specified for %2").arg(binaryNames[binaryType]).arg(plugin()->name);
+		message.setValues(Messages::Types::CUSTOM_ERROR, error);
 		return QString();
 	}
 
@@ -63,20 +67,21 @@ QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, 
 					.arg(plugin()->name)
 					.arg(binaryNames[binaryType])
 					.arg(*setting);
+		message.setValues(Messages::Types::CUSTOM_ERROR, error);
 		return QString();
 	}
 
 	return setting;
 }
 
-QString Binaries::offlineGameWorkingDirectory(QString& error) const
+QString Binaries::offlineGameWorkingDirectory(Message& message) const
 {
-	QFileInfo fi(offlineGameBinary(error));
+	QFileInfo fi(offlineGameBinary(message));
 	return fi.absolutePath();
 }
 
-QString Binaries::serverWorkingDirectory(QString& error) const
+QString Binaries::serverWorkingDirectory(Message& message) const
 {
-	QFileInfo fi(serverBinary(error));
+	QFileInfo fi(serverBinary(message));
 	return fi.absolutePath();
 }

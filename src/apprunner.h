@@ -24,10 +24,11 @@
 #define __APP_RUNNER_H_
 
 #include "global.h"
-#include "messageresult.h"
 #include <QDir>
 #include <QFileInfo>
 #include <QStringList>
+
+class Message;
 
 /**
  *	@brief Structure holding parameters for application launch.
@@ -58,7 +59,7 @@ class MAIN_EXPORT AppRunner : public QObject
 		static QString			findBundleBinary(const QFileInfo &file);
 #endif
 
-		static MessageResult 	runExecutable(const CommandLineInfo& cmdInfo);
+		static Message		 	runExecutable(const CommandLineInfo& cmdInfo);
 };
 
 #endif

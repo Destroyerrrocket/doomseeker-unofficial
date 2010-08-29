@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "serverapi/gamerunner.h"
+#include "serverapi/messages.h"
 #include "serverapi/server.h"
 #include "serverapi/binaries.h"
 #include "gui/standardserverconsole.h"
@@ -70,26 +71,26 @@ void GameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwad
 	}
 }
 
-MessageResult GameRunner::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cmdLine, bool bOfflinePlay)
+Message GameRunner::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cmdLine, bool bOfflinePlay)
 {
 	const QString RUN_RESULT_CAPTION = tr("createHostCommandLine");
-	MessageResult result(false);
+	Message message;
 
 	currentCmdLine = &cmdLine;
 	currentHostInfo = &hostInfo;
 
 	cmdLine.args.clear();
 
-	result = hostAppendIwad();
-	if (result.isError)
+	message = hostAppendIwad();
+	if (!message.isIgnore())
 	{
-		return result;
+		return message;
 	}
 
-	result = hostAppendPwads();
-	if (result.isError)
+	message = hostAppendPwads();
+	if (!message.isIgnore())
 	{
-		return result;
+		return message;
 	}
 
 	// Port
@@ -102,16 +103,16 @@ MessageResult GameRunner::createHostCommandLine(const HostInfo& hostInfo, Comman
 		cmdLine.args << QString("+" + c.consoleCommand) << c.value();
 	}
 
-	result = hostGetBinary(bOfflinePlay);
-	if (result.isError)
+	message = hostGetBinary(bOfflinePlay);
+	if (!message.isIgnore())
 	{
-		return result;
+		return message;
 	}
 
-	result = hostGetWorkingDirectory(bOfflinePlay);
-	if (result.isError)
+	message = hostGetWorkingDirectory(bOfflinePlay);
+	if (!message.isIgnore())
 	{
-		return result;
+		return message;
 	}
 
 	// Add the server launch parameter only if we don't want offline game
@@ -124,50 +125,57 @@ MessageResult GameRunner::createHostCommandLine(const HostInfo& hostInfo, Comman
 	hostProperties(cmdLine.args);
 	cmdLine.args.append(hostInfo.customParameters);
 
-	return MessageResult(false);
+	return message;
 }
 
 JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword)
 {
-	JoinError jError;
+	const QString PLUGIN_NAME = this->plugin()->name;
+	JoinError joinError;
 
 	// Init the JoinError type with critical error. We will change this upon
 	// successful return or if wads are missing.
-	jError.type = JoinError::Critical;
+	joinError.type = JoinError::Critical;
 
 	QDir& applicationDir = cli.applicationDir;
 	QFileInfo& executablePath = cli.executable;
 	QStringList& args = cli.args;
 
-	const QString errorCaption = tr("Doomseeker - error");
+	//const QString errorCaption = tr("Doomseeker - error for plugin");
 	args.clear();
 
 	Binaries* binaries = server->binaries();
 
-	QString clientBin = binaries->clientBinary(jError.error);
+	Message message;
+	QString clientBin = binaries->clientBinary(message);
 	if (clientBin.isEmpty())
 	{
+		joinError.error = tr("Client binary cannot be obtained for game: %1").arg(PLUGIN_NAME);
+		if (!message.isIgnore())
+		{
+			joinError.error += "\n" + message.content;
+		}
+
 		delete binaries;
-		return jError;
+		return joinError;
 	}
 
 	executablePath = clientBin;
 
-	QString error;
-	QString clientWorkingDirPath = binaries->clientWorkingDirectory(error);
+	QString clientWorkingDirPath = binaries->clientWorkingDirectory(message);
 	applicationDir = clientWorkingDirPath;
 
 	delete binaries;
 
 	if (clientWorkingDirPath.isEmpty())
 	{
-		jError.error = tr("Path to working directory is empty.\nMake sure the configuration for the main binary is set properly.");
-		return jError;
+		joinError.error = tr("Path to working directory for \"%1\" is empty.\nMake sure the configuration for the main binary is set properly.").arg(PLUGIN_NAME);
+		return joinError;
 	}
 	else if (!applicationDir.exists())
 	{
-		jError.error = tr("%1\n cannot be used as working directory for:\n%2").arg(clientWorkingDirPath, clientBin);
-		return jError;
+		joinError.error = tr("%1\n cannot be used as working directory for game:\n%2\nExecutable: %3").arg(clientWorkingDirPath, PLUGIN_NAME, clientBin);
+		return joinError;
 	}
 
 	PathFinder pf(Main::config);
@@ -194,25 +202,25 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 	{
 		if (!iwadFound)
 		{
-			jError.missingIwad = server->iwadName();
+			joinError.missingIwad = server->iwadName();
 		}
-		jError.missingWads = missingPwads;
-		jError.type = JoinError::MissingWads;
-		return jError;
+		joinError.missingWads = missingPwads;
+		joinError.type = JoinError::MissingWads;
+		return joinError;
 	}
 
-	jError.type = JoinError::NoError;
-	return jError;
+	joinError.type = JoinError::NoError;
+	return joinError;
 }
 
-MessageResult GameRunner::host(const HostInfo& hostInfo, bool bOfflinePlay)
+Message GameRunner::host(const HostInfo& hostInfo, bool bOfflinePlay)
 {
 	CommandLineInfo cmdLine;
 
-	MessageResult result = createHostCommandLine(hostInfo, cmdLine, bOfflinePlay);
-	if (result.isError)
+	Message message = createHostCommandLine(hostInfo, cmdLine, bOfflinePlay);
+	if (!message.isIgnore())
 	{
-		return result;
+		return message;
 	}
 
 #ifdef Q_OS_WIN32
@@ -224,13 +232,17 @@ MessageResult GameRunner::host(const HostInfo& hostInfo, bool bOfflinePlay)
 	return runExecutable(cmdLine, WRAP_IN_SSS_CONSOLE);
 }
 
-MessageResult GameRunner::hostAppendIwad()
+Message GameRunner::hostAppendIwad()
 {
 	const QString RESULT_CAPTION = tr("Doomseeker - host - appending IWAD");
 	const QString& iwadPath = currentHostInfo->iwadPath;
+
+	Message message;
+
 	if (iwadPath.isEmpty())
 	{
-		return MessageResult(true, RESULT_CAPTION, tr("Iwad is not set"));
+		message.setCustomError(tr("Iwad is not set"));
+		return message;
 	}
 
 	QFileInfo fi(iwadPath);
@@ -238,17 +250,21 @@ MessageResult GameRunner::hostAppendIwad()
 	if (!fi.isFile())
 	{
 		QString error = tr("Iwad Path error:\n\"%1\" doesn't exist or is a directory!").arg(iwadPath);
-		return MessageResult(true, RESULT_CAPTION, error);
+		message.setCustomError(error);
+		return message;
 	}
 
 	currentCmdLine->args << argForIwadLoading() << iwadPath;
-	return MessageResult(false);
+	return message;
 }
 
-MessageResult GameRunner::hostAppendPwads()
+Message GameRunner::hostAppendPwads()
 {
 	const QString RESULT_CAPTION = tr("Doomseeker - host - appending PWADs");
 	const QStringList& pwadsPaths = currentHostInfo->pwadsPaths;
+
+	Message message;
+
 	if (!pwadsPaths.isEmpty())
 	{
 		QStringList& args = currentCmdLine->args;
@@ -260,16 +276,17 @@ MessageResult GameRunner::hostAppendPwads()
 			if (!fi.isFile())
 			{
 				QString error = tr("Pwad path error:\n\"%1\" doesn't exist or is a directory!").arg(pwad);
-				return MessageResult(true, RESULT_CAPTION, error);
+				message.setCustomError(error);
+				return message;
 			}
 			args << pwad;
 		}
 	}
 
-	return MessageResult(false);
+	return message;
 }
 
-MessageResult GameRunner::hostGetBinary(bool bOfflinePlay)
+Message GameRunner::hostGetBinary(bool bOfflinePlay)
 {
 	const QString RESULT_CAPTION = tr("Doomseeker - host - getting executable");
 	QString executablePath = currentHostInfo->executablePath;
@@ -278,23 +295,23 @@ MessageResult GameRunner::hostGetBinary(bool bOfflinePlay)
 	{
 		Binaries* binaries = server->binaries();
 
-		QString error;
+		Message message;
 
 		// Select binary depending on bOfflinePlay flag:
 		if (bOfflinePlay)
 		{
-			executablePath = binaries->offlineGameBinary(error);
+			executablePath = binaries->offlineGameBinary(message);
 		}
 		else
 		{
-			executablePath = binaries->serverBinary(error);
+			executablePath = binaries->serverBinary(message);
 		}
 
 		delete binaries;
 
 		if (executablePath.isEmpty())
 		{
-			return MessageResult(true, RESULT_CAPTION, error);
+			return message;
 		}
 	}
 
@@ -302,29 +319,33 @@ MessageResult GameRunner::hostGetBinary(bool bOfflinePlay)
 
 	if (!fi.isFile() && !fi.isBundle())
 	{
+		Message message;
 		QString error = tr("%1\n doesn't exist or is not a file.").arg(fi.filePath());
-		return MessageResult(true, RESULT_CAPTION, error);
+		message.setCustomError(error);
+		return message;
 	}
 
 	currentCmdLine->executable = executablePath;
-	return MessageResult(false);
+	return Message();
 }
 
-MessageResult GameRunner::hostGetWorkingDirectory(bool bOfflinePlay)
+Message GameRunner::hostGetWorkingDirectory(bool bOfflinePlay)
 {
 	const QString RESULT_CAPTION = tr("Doomseeker - host - getting working directory");
 	QString error;
 	QString serverWorkingDirPath;
 
+	Message message;
+
 	Binaries* binaries = server->binaries();
 	// Select working dir based on bOfflinePlay flag:
 	if (bOfflinePlay)
 	{
-		serverWorkingDirPath = binaries->offlineGameWorkingDirectory(error);
+		serverWorkingDirPath = binaries->offlineGameWorkingDirectory(message);
 	}
 	else
 	{
-		serverWorkingDirPath = binaries->serverWorkingDirectory(error);
+		serverWorkingDirPath = binaries->serverWorkingDirectory(message);
 	}
 
 	delete binaries;
@@ -333,19 +354,21 @@ MessageResult GameRunner::hostGetWorkingDirectory(bool bOfflinePlay)
 	if (serverWorkingDirPath.isEmpty())
 	{
 		QString error = tr("Path to working directory is empty.\nMake sure the configuration for the main binary is set properly.");
-		return MessageResult(true, RESULT_CAPTION, error);
+		message.setCustomError(error);
+		return message;
 	}
 	else if (!applicationDir.exists())
 	{
 		QString error = tr("%1\n doesn't exist or is not a directory.").arg(serverWorkingDirPath);
-		return MessageResult(true, RESULT_CAPTION, error);
+		message.setCustomError(error);
+		return message;
 	}
 
 	currentCmdLine->applicationDir = applicationDir;
-	return MessageResult(false);
+	return message;
 }
 
-MessageResult GameRunner::runExecutable(const CommandLineInfo& cli, bool bWrapInStandardServerConsole)
+Message GameRunner::runExecutable(const CommandLineInfo& cli, bool bWrapInStandardServerConsole)
 {
 	if (!bWrapInStandardServerConsole)
 	{
@@ -359,5 +382,5 @@ MessageResult GameRunner::runExecutable(const CommandLineInfo& cli, bool bWrapIn
 		new StandardServerConsole(server, cli.executable.canonicalFilePath(), args);
 	}
 
-	return MessageResult(false, tr("runExecutable"));
+	return Message();
 }
