@@ -103,6 +103,7 @@ Server::Response ZDaemonServer::readRequest(QByteArray &data)
 	mapName = QString(&in[pos]);
 	pos += mapName.length() + 1;
 
+	wads.clear();
 	int numwads = in[pos++];
 	for(int i = 0;i < numwads;i++)
 	{
