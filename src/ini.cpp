@@ -99,7 +99,7 @@ const IniVariable &IniVariable::operator=(const IniVariable &other)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-IniVariable IniSection::nullVariable = IniVariable::makeNull();
+IniVariable IniSection::nullVariable((const IniVariable &)IniVariable::makeNull());
 
 IniVariable &IniSection::createSetting(const QString& name, const IniVariable& data)
 {

@@ -41,7 +41,9 @@
 #include "main.h"
 #include "strings.h"
 #include <QAction>
+#include <QApplication>
 #include <QDesktopServices>
+#include <QDesktopWidget>
 #include <QDockWidget>
 #include <QFileInfo>
 #include <QIcon>
@@ -60,7 +62,7 @@ MainWindow::MainWindow(int argc, char** argv, IniSection& config)
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
 	setupIcons();
-	setupToolBar();	
+	setupToolBar();
 	
 	if (Main::enginePlugins->numPlugins() == 0)
 	{
@@ -82,9 +84,13 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 	serverTableHandler = new ServerListHandler(tableServers, configuration, this);
 	connectEntities();
 
+	// Calculate screen center.
+	int screenWidth = QApplication::desktop()->width();
+	int screenHeight = QApplication::desktop()->height();
+
 	// Window geometry settings
-	configuration.createSetting("MainWindowX", x());
-	configuration.createSetting("MainWindowY", y());
+	configuration.createSetting("MainWindowX", (screenWidth - width())/2);
+	configuration.createSetting("MainWindowY", (screenHeight - height())/2);
 	configuration.createSetting("MainWindowWidth", width());
 	configuration.createSetting("MainWindowHeight", height());
 
@@ -1034,6 +1040,7 @@ void MainWindow::setupToolBar()
 	pToolBar->addWidget(toolBarSearch);
 	
 	this->addToolBar(Qt::TopToolBarArea, pToolBar);
+	setUnifiedTitleAndToolBarOnMac(true);
 	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( toolBarAction(QAction*) ) );
 }
 
