@@ -32,8 +32,7 @@
 const // clear warnings
 #include "odamex.xpm"
 
-#define SERVER_CHALLENGE	0x02,0x10,0x01,0xAD, 0x2C,0x00,0x00,0x00, 0x02,0x00,0x00,0x00
-#define SERVER_GOOD			5560020
+#define SERVER_CHALLENGE	0x02,0x10,0x01,0xAD, 0x32,0x00,0x00,0x00, 0x02,0x00,0x00,0x00, 0,0,0,0
 
 #define SPECTATOR_INFO		0x01020304
 #define EXTRA_INFO			0x01020305
@@ -86,9 +85,10 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 	unsigned int pos = 12;
 	if(protocolVersion >= 2)
 	{
-		serverVersion += QString(" r%1").arg(READINT32(&in[pos]));
-		pos += 4;
+		pos += 8;
 	}
+	serverVersion += QString(" r%1").arg(READINT32(&in[pos]));
+	pos += 4;
 
 	short cvarCount = READINT8(&in[pos++]);
 	while(cvarCount-- > 0)
@@ -172,7 +172,7 @@ bool OdamexServer::sendRequest(QByteArray &data)
 	// This construction and cast to (char*) removes warnings from MSVC.
 	const unsigned char challenge[] = {SERVER_CHALLENGE};
 	
-	const QByteArray challengeByteArray((char*)challenge, 12);
+	const QByteArray challengeByteArray((char*)challenge, 16);
 	data.append(challengeByteArray);
 	return true;
 }
