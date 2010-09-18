@@ -21,10 +21,12 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
+#include "log.h"
 #include "masterclient.h"
 #include "main.h"
 #include "serverapi/playerslist.h"
 
+#include <QDataStream>
 #include <QErrorMessage>
 #include <QHostInfo>
 #include <QMessageBox>
@@ -32,13 +34,14 @@
 
 QUdpSocket* MasterClient::pGlobalUdpSocket = NULL;
 
-MasterClient::MasterClient() : QObject()
+MasterClient::MasterClient() : QObject(), cache(NULL)
 {
 }
 
 MasterClient::~MasterClient()
 {
 	emptyServerList();
+	resetPacketCaching();
 }
 
 void MasterClient::emptyServerList()
@@ -91,6 +94,63 @@ int MasterClient::numPlayers() const
 	return players;
 }
 
+bool MasterClient::preparePacketCache(bool write)
+{
+	if(cache == NULL)
+	{
+		if(plugin() == NULL)
+			return false;
+
+		QString cacheFile(Main::dataPaths->programsDataDirectoryPath() + "/" + QString(plugin()->name).replace(' ', ""));
+		cache = new QFile(cacheFile);
+		if(!cache->open(write ? QIODevice::WriteOnly|QIODevice::Truncate : QIODevice::ReadOnly))
+		{
+			resetPacketCaching();
+			return false;
+		}
+	}
+	return cache != NULL;
+}
+
+void MasterClient::pushPacketToCache(QByteArray &data)
+{
+	if(!preparePacketCache(true))
+		return;
+
+	QDataStream strm(cache);
+	strm << static_cast<quint16>(data.size());
+	strm << data;
+}
+
+void MasterClient::readPacketCache()
+{
+	if(!preparePacketCache(false))
+		return;
+
+	gLog << tr("Reloading master server results from cache for %1!").arg(plugin()->name);
+	QDataStream strm(cache);
+	while(!strm.atEnd())
+	{
+		quint16 size;
+		strm >> size;
+
+		QByteArray data(size, '\0');
+		strm >> data;
+
+		if(!readMasterResponse(data))
+			break;
+	}
+}
+
+void MasterClient::resetPacketCaching()
+{
+	if(cache != NULL)
+	{
+		delete cache;
+		cache = NULL;
+	}
+}
+
 void MasterClient::refresh()
 {
 	bTimeouted = false;
@@ -116,7 +176,8 @@ void MasterClient::timeoutRefresh()
 		bTimeouted = true;
 
 		emit message(tr("Master server timeout"), tr("Connection timeout (%1:%2).").arg(address.toString()).arg(port), true);
-	
+		readPacketCache();
+
 		timeoutRefreshEx();
 		listUpdated();
 	}

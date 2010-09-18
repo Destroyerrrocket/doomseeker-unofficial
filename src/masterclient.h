@@ -31,6 +31,7 @@
 #include "serverapi/server.h"
 
 struct PluginInfo;
+class QFile;
 
 /**
  * Abstract class base for all MasterClients.  This is expected to fetch a list
@@ -89,7 +90,10 @@ class MAIN_EXPORT MasterClient : public QObject
 		 *	and a pointer to this instance should be returned.
 		 */
 		virtual const PluginInfo*		plugin() const = 0;
-		
+
+		void					pushPacketToCache(QByteArray &data);
+		void					resetPacketCaching();
+
 		/**
 		 *	@brief Called to read and analyze the response from the 
 		 *	MasterServer.
@@ -109,7 +113,13 @@ class MAIN_EXPORT MasterClient : public QObject
 		{
 			if (isAddressDataCorrect(address, port))
 			{
-				return readMasterResponse(data);
+				pushPacketToCache(data);
+				if(readMasterResponse(data))
+				{
+					resetPacketCaching();
+					return true;
+				}
+				return false;
 			}
 			
 			return false;
@@ -175,6 +185,8 @@ class MAIN_EXPORT MasterClient : public QObject
 		unsigned short			port;
 		QList<Server *>			servers;
 
+		QFile					*cache;
+
 		/**
 		 * Clears the server list.
 		 */
@@ -202,6 +214,9 @@ class MAIN_EXPORT MasterClient : public QObject
 		 * Tells the user they need to update since the protocol is too old.
 		 */
 		void					notifyUpdate(const QString& engineName);
+
+		bool					preparePacketCache(bool write);
+		void					readPacketCache();
 		
 		/**
 		 *	@brief Reimplement this for clean up purposes.

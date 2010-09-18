@@ -78,13 +78,20 @@ void MasterManager::masterListUpdated(MasterClient* pSender)
 	}
 }
 
+// [BL] is this actually called anymore?
 bool MasterManager::readMasterResponse(QHostAddress& address, unsigned short port, QByteArray &data)
 {
 	for (int i = 0; i < masters.size(); ++i)
 	{
 		if (masters[i]->isAddressDataCorrect(address, port))
 		{
-			return masters[i]->readMasterResponse(data);
+			masters[i]->pushPacketToCache(data);
+			if(masters[i]->readMasterResponse(data))
+			{
+				masters[i]->resetPacketCaching();
+				return true;
+			}
+			return false;
 		}
 	}
 	
