@@ -73,8 +73,9 @@ QString SkulltagBinaries::clientBinary(Message& message) const
 		if (!fi.exists())
 		{
 			error = tr("%1\ndoesn't exist.\nYou need to install new testing binaries.").arg(path);
-			QString messageBoxContent = tr("%1\n\nDo you want Doomseeker to create %2 directory and copy all your .ini files from your base directory?\n\n\
-										   Note: You will still have to manualy install the binaries."\
+			QString messageBoxContent = tr("%1\n\n\
+Do you want Doomseeker to create %2 directory and copy all your .ini files from your base directory?\n\n\
+Note: You will still have to manualy install the binaries."
 										   ).arg(error, server->version());
 
 			if (QMessageBox::question(Main::mainWindow, tr("Doomseeker - missing testing binaries"), messageBoxContent, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
@@ -103,8 +104,11 @@ QString SkulltagBinaries::clientBinary(Message& message) const
 					file.copy(targetPath);
 				}
 
+				// Show user the prompt to install the binaries.
 				QMessageBox::information(Main::mainWindow, tr("Doomseeker"), tr("Please install now version \"%1\" into:\n%2").arg(server->version(), path));
-				message.setToIgnore();
+				
+				// Try this method again.
+				return clientBinary(message);
 			}
 			return QString();
 		}
