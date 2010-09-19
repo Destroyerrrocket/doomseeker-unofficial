@@ -63,7 +63,7 @@ QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, 
 
 	if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
 	{
-		error = tr("Engine %1, %2 executable:\n\n%3\n is a directory or doesn't exist.")
+		error = tr("Executable for %1 %2:\n%3\nis a directory or doesn't exist.")
 					.arg(plugin()->name)
 					.arg(binaryNames[binaryType])
 					.arg(*setting);

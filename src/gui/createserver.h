@@ -56,6 +56,7 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		void	btnStartServerClicked();
 		void	cboEngineSelected(int index);
 		void	cboGamemodeSelected(int index);
+		void	firstLoadConfigTimer();
 		void	focusChanged(QWidget* oldW, QWidget* newW);
 
 	protected:
@@ -79,11 +80,11 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		
 		static const QString			TEMP_SERVER_CONFIG_FILENAME;
 
+		bool							bSuppressMissingExeErrors;
 		const PluginInfo* 				currentEngine;
 		QList<DMFlagsTabWidget*>		dmFlagsTabs;
 		QList<GameLimitWidget*>			limitWidgets;
 		QList<GameCVar>					gameModifiers;
-
 
 		/**
 		 *	Adds IWAD path to the IWAD ComboBox.
@@ -120,16 +121,12 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		 *	engine is.
 		 */
 		void	initPrimary();
-
 		void	initRules();
 
 		bool	loadConfig(const QString& filename);
-
 		void	removeDMFlagsTabs();
 		void	removeLimitWidgets();
-
 		void	runGame(bool offline);
-
 		bool	saveConfig(const QString& filename);
 };
 

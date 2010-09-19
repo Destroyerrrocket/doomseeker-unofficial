@@ -35,11 +35,13 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QObject>
+#include <QTimer>
 
 const QString CreateServerDlg::TEMP_SERVER_CONFIG_FILENAME = "/tmpserver.cfg";
 
 CreateServerDlg::CreateServerDlg(QWidget* parent) : QDialog(parent)
 {
+	bSuppressMissingExeErrors = true;
 	currentEngine = NULL;
 
 	setupUi(this);
@@ -68,14 +70,13 @@ CreateServerDlg::CreateServerDlg(QWidget* parent) : QDialog(parent)
 	lstMaplist->setModel(new QStandardItemModel(this));
 
 	initPrimary();
+	bSuppressMissingExeErrors = false;
 
-	QString tmpServerCfgPath = Main::dataPaths->programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
-
-	QFileInfo fi(tmpServerCfgPath);
-	if (fi.exists())
-	{
-		loadConfig(tmpServerCfgPath);
-	}
+	// This is a crude solution to the problem where message boxes appear
+	// before the actual Create Server dialog. We need to give some time
+	// for the Dialog to appear. Unfortunately reimplementing
+	// QDialog::showEvent() didn't work very well.
+	QTimer::singleShot(1, this, SLOT(firstLoadConfigTimer()) );
 }
 
 CreateServerDlg::~CreateServerDlg()
@@ -201,7 +202,7 @@ void CreateServerDlg::btnCommandLineClicked()
 	const QString errorCapt = tr("Doomseeker - create server");
 	if (currentEngine == NULL)
 	{
-		QMessageBox::critical(this, errorCapt, tr("No engine selected"));
+		QMessageBox::critical(NULL, errorCapt, tr("No engine selected"));
 		return;
 	}
 
@@ -221,7 +222,7 @@ void CreateServerDlg::btnCommandLineClicked()
 
 		if (message.isError())
 		{
-			QMessageBox::critical(this, tr("Doomseeker - error"), message.content);
+			QMessageBox::critical(NULL, tr("Doomseeker - error"), message.content);
 		}
 		else
 		{
@@ -253,7 +254,7 @@ void CreateServerDlg::btnDefaultExecutableClicked()
 
 	if (!message.isIgnore())
 	{
-		QMessageBox::critical(this, tr("Obtaining default server binary path."), message.content, QMessageBox::Ok, QMessageBox::Ok);
+		QMessageBox::critical(NULL, tr("Obtaining default server binary path."), message.content, QMessageBox::Ok, QMessageBox::Ok);
 	}
 
 	delete binaries;
@@ -317,7 +318,7 @@ void CreateServerDlg::btnSaveClicked()
 
 		if (!saveConfig(strFile))
 		{
-			QMessageBox::critical(this, tr("Doomseeker - save server config"), tr("Unable to save server configuration!"));
+			QMessageBox::critical(NULL, tr("Doomseeker - save server config"), tr("Unable to save server configuration!"));
 		}
 	}
 
@@ -454,6 +455,18 @@ bool CreateServerDlg::createHostInfo(HostInfo& hostInfo, Server* server, bool of
 	return false;
 }
 
+void CreateServerDlg::firstLoadConfigTimer()
+{
+	QString tmpServerCfgPath = Main::dataPaths->programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
+
+	QFileInfo fi(tmpServerCfgPath);
+	if (fi.exists())
+	{
+		loadConfig(tmpServerCfgPath);
+	}
+}
+
+
 void CreateServerDlg::focusChanged(QWidget* oldW, QWidget* newW)
 {
 	if (newW == leMapname)
@@ -537,7 +550,7 @@ void CreateServerDlg::initEngineSpecific(const PluginInfo* engineInfo)
 	Binaries* binaries = server->binaries();
 	leExecutable->setText(binaries->serverBinary(message));
 
-	if (message.isError())
+	if (message.isError() && !bSuppressMissingExeErrors)
 	{
 		QString caption = tr("Doomseeker - error obtaining server binary");
 		QString error = tr("Server binary for engine \"%1\" cannot be obtained.\nFollowing error has occured:\n%2").arg(engineInfo->name, message.content);
@@ -665,7 +678,9 @@ void CreateServerDlg::initPrimary()
 		PathFinder pf(Main::config);
 		QString path = pf.findFile(iwads[i]);
 		if (!path.isEmpty())
+		{
 			cboIwad->addItem(path);
+		}
 	}
 }
 
@@ -713,17 +728,39 @@ bool CreateServerDlg::loadConfig(const QString& filename)
 	int engIndex = Main::enginePlugins->pluginIndexFromName(engineName);
 	if (engIndex < 0)
 	{
-		QMessageBox::critical(this, tr("Doomseeker - load server config"), tr("Plugin for engine \"%1\" is not present!").arg(engineName));
+		QMessageBox::critical(NULL, tr("Doomseeker - load server config"), tr("Plugin for engine \"%1\" is not present!").arg(engineName));
 		return false;
 	}
 
 	const PluginInfo* prevEngine = currentEngine;
+	const PluginInfo* newEngine = (*Main::enginePlugins)[engIndex]->info;
 
+	bool bChangeExecutable = (prevEngine != newEngine || !cbLockExecutable->isChecked());
+
+	// First let's check if we can use executable stored in the server's config.
+	// We will save the path to this executable in a local variable.
+	QString executablePath = "";
+	if (bChangeExecutable)
+	{
+		QString executablePath = cfg.setting("executable")->string();
+		QFileInfo fileInfo(executablePath);
+		if (!fileInfo.exists())
+		{
+			// Executable cannot be found, display error message and reset
+			// the local variable.
+			QMessageBox::warning(NULL, tr("Doomseeker - load server config"), tr("Game executable saved in config cannot be found.\nDefault executable will be used."));
+			executablePath = "";
+		}
+	}
+
+	// Select engine. This will also select the default executable path.
 	cboEngine->setCurrentIndex(engIndex);
 
-	if (prevEngine != currentEngine || !cbLockExecutable->isChecked())
+	// If we successfuly retrieved path from the config we shall
+	// set this path in the line edit control.
+	if (!executablePath.isEmpty())
 	{
-		leExecutable->setText(cfg.setting("executable")->string());
+		leExecutable->setText(executablePath);
 	}
 
 	leServername->setText(cfg.setting("name")->string());
@@ -825,7 +862,7 @@ void CreateServerDlg::runGame(bool offline)
 	const QString errorCapt = tr("Doomseeker - create server");
 	if (currentEngine == NULL)
 	{
-		QMessageBox::critical(this, errorCapt, tr("No engine selected"));
+		QMessageBox::critical(NULL, errorCapt, tr("No engine selected"));
 		return;
 	}
 
@@ -845,7 +882,7 @@ void CreateServerDlg::runGame(bool offline)
 
 		if (message.isError())
 		{
-			QMessageBox::critical(this, tr("Doomseeker - error"), message.content);
+			QMessageBox::critical(NULL, tr("Doomseeker - error"), message.content);
 		}
 		else
 		{
