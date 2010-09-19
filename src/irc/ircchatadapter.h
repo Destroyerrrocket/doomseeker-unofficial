@@ -42,8 +42,13 @@ class IRCChatAdapter : public IRCAdapterBase
 		/**
 		 *	@param pNetwork
 		 *		A pointer to the network this channel or user exists on.
+		 *	@param recipient
+		 *		Full name of the entity this adapter will be talking to.
 		 */
-		IRCChatAdapter(IRCNetworkAdapter* pNetwork);
+		IRCChatAdapter(IRCNetworkAdapter* pNetwork, const QString& recipient);
+		~IRCChatAdapter();
+
+		AdapterType				adapterType() const { return ChatAdapter; }
 		
 		/**
 		 *	All messages starting with '/' character will be passed to the
@@ -56,10 +61,20 @@ class IRCChatAdapter : public IRCAdapterBase
 		 *	@endcode
 		 */
 		void					doSendMessage(const QString& message, IRCAdapterBase* pOrigin);				
+
+		const QString&			recipient() const { return this->recipientName; }
+
+		/**
+		 *	@brief Sets IRCNetworkAdapter for this chat window. This adapter
+		 *	is not detached from the old network.
+		 */	
+		void					setNetwork(IRCNetworkAdapter* pNetwork);
+
+		QString					title() const;
 		
 	protected:
 		IRCNetworkAdapter*		pNetwork;
-		QString					recipient;
+		QString					recipientName;
 		
 		/**
 		 *	Makes sure the sent message will not exceed the IRC character limit.

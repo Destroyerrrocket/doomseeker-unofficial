@@ -26,6 +26,9 @@
 #include "ui_ircdock.h"
 #include <QDockWidget>
 
+class IRCAdapterBase;
+class IRCDockTabContents;
+
 /**
  *	@brief Dockable widget designed for IRC communication.
  */
@@ -36,6 +39,8 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 	public:
 		IRCDock(QWidget* parent = NULL);
 
+		void				addIRCAdapter(IRCAdapterBase* pIRCAdapter);
+
 	protected:
 		QAction*			toolBarConnect;
 		QAction*			toolBarDisconnect;
@@ -43,6 +48,7 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 		void				setupToolbar();
 
 	protected slots:
+		void				titleChange(IRCDockTabContents* pCaller);
 		void				toolBarAction(QAction* pAction);
 
 };

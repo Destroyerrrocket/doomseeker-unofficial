@@ -34,6 +34,16 @@ IRCDock::IRCDock(QWidget* parent)
 	setupToolbar();
 }
 
+void IRCDock::addIRCAdapter(IRCAdapterBase* pIRCAdapter)
+{
+	IRCDockTabContents* pNewConnectionWidget = new IRCDockTabContents(this);
+
+	connect(pNewConnectionWidget, SIGNAL( titleChange(IRCDockTabContents*) ), SLOT( titleChange(IRCDockTabContents*) ) );
+
+	pNewConnectionWidget->setIRCAdapter(pIRCAdapter);
+	tabWidget->addTab(pNewConnectionWidget, pIRCAdapter->title());
+}
+
 void IRCDock::setupToolbar()
 {
 	QToolBar* pToolBar = new QToolBar(this);
@@ -49,6 +59,16 @@ void IRCDock::setupToolbar()
 	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( toolBarAction(QAction*) ) );
 }
 
+void IRCDock::titleChange(IRCDockTabContents* pCaller)
+{
+	int tabIndex = tabWidget->indexOf(pCaller);
+	if (tabIndex >= 0)
+	{
+		QString newTitle = pCaller->ircAdapter()->title();
+		tabWidget->setTabText(tabIndex, newTitle);
+	}
+}
+
 void IRCDock::toolBarAction(QAction* pAction)
 {
 	if (pAction == toolBarConnect)
@@ -62,13 +82,10 @@ void IRCDock::toolBarAction(QAction* pAction)
 			IRCNetworkAdapter* pIRCNetworkAdapter = new IRCNetworkAdapter();
 
 			// Setup the UI tab for the new network.
-			IRCDockTabContents* pNewConnectionWidget = new IRCDockTabContents(this);
-			pNewConnectionWidget->setIRCAdapter(pIRCNetworkAdapter);
+			addIRCAdapter(pIRCNetworkAdapter);
 			
 			// Connect to the network.
 			pIRCNetworkAdapter->connect(connectionInfo);
-			
-			tabWidget->addTab(pNewConnectionWidget, connectionInfo.serverAddress);
 		}
 	}
 }

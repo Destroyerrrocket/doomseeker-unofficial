@@ -35,6 +35,20 @@ class IRCAdapterBase : public QObject
 		
 	public:
 		/**
+		 *	@brief Defines all possible types of IRC adapters.
+		 */
+		enum AdapterType
+		{
+			NetworkAdapter,
+			ChatAdapter
+		};
+
+		/**
+		 *	@brief Gets adapter type for this adapter instance.
+		 */
+		virtual AdapterType adapterType() const = 0;
+
+		/**
 		 *	@brief Implement to handle and send a message to the IRC network
 		 *	entity.
 		 *
@@ -59,7 +73,12 @@ class IRCAdapterBase : public QObject
 		{
 			emit message(strMessage);
 		}
-			
+
+		/**
+		 *	@brief Gets title for this adapter.
+		 */
+		virtual QString		title() const = 0;
+
 	public slots:
 		void				sendMessage(const QString& message)
 		{
@@ -69,6 +88,13 @@ class IRCAdapterBase : public QObject
 	signals:
 		void				error(const QString& error);
 		void				message(const QString& message);
+
+		/**
+		 *	@brief Can be called when the variable returned by title()
+		 *	might have changed and the application should be notified of this
+		 *	fact.
+		 */
+		void				titleChange();
 };
 
 #endif

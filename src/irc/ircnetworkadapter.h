@@ -12,6 +12,9 @@
 #include "irc/ircresponseparser.h"
 #include "socketsignalsadapter.h"
 
+#include <QHash>
+
+class IRCChatAdapter;
 class IRCSocketSignalsAdapter;
 
 /**
@@ -26,8 +29,16 @@ class IRCNetworkAdapter : public IRCAdapterBase
 	public:
 		IRCNetworkAdapter();
 		~IRCNetworkAdapter();
+
+		AdapterType							adapterType() const { return NetworkAdapter; }
 	
-		void						connect(const IRCNetworkConnectionInfo& connectionInfo);
+		void								connect(const IRCNetworkConnectionInfo& connectionInfo);
+
+		/**
+		 *	@brief Detaches the IRCChatAdapter instance from this network
+		 *  @b without deleting the instance.
+		 */
+		void								detachChatWindow(const IRCChatAdapter* pAdapter);
 		
 		/**
 		 *	@brief Implemented to support direct communication between client 
@@ -47,17 +58,43 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 *		some message and error signals through this pOrigin. Otherwise
 		 *		these signals will be sent directly.
 		 */
-		void						doSendMessage(const QString& message, IRCAdapterBase* pOrigin);				
+		void								doSendMessage(const QString& message, IRCAdapterBase* pOrigin);				
+
+		bool								hasRecipient(const QString& recipient) const;
+		bool								isMyNickname(const QString& nickname) const;
+
+		void								killAllChatWindows();
+
+		QString								title() const;
+
+	signals:
+		void								newChatWindowIsOpened(IRCChatAdapter* pWindow);
 		
 	protected:
-		IRCNetworkConnectionInfo	connectionInfo;
-		IRCClient					ircClient;
-		IRCResponseParser			ircResponseParser;
-		IRCSocketSignalsAdapter*	pIrcSocketSignalsAdapter;
-	
+		QHash<QString, IRCChatAdapter*>		chatWindows;
+		IRCNetworkConnectionInfo			connectionInfo;
+		IRCClient							ircClient;
+		IRCResponseParser					ircResponseParser;
+		IRCSocketSignalsAdapter*			pIrcSocketSignalsAdapter;
+
+		/**
+		 *	@brief Creates the new IRCChatAdapter object and immedaitelly 
+		 *	adds it to the chatWindows hashmap.
+		 *
+		 *	@b Note: If such recipient is already registered no new object 
+		 *	is created.
+		 *
+		 *	@return Pointer to the adapter object.
+		 */
+		IRCChatAdapter*						createNewChatAdapter(const QString& recipient);
+
 	protected slots:
-		void						ircServerResponse(const QString& message);
-		void						sendPong(const QString& toWhom);
+		void								ircServerResponse(const QString& message);
+		void								privMsgReceived(const QString& recipient, const QString& sender, const QString& content);
+		void								sendPong(const QString& toWhom);
+		void								userChangesNickname(const QString& oldNickname, const QString& newNickname);
+		void								userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature);
+
 };
 
 class IRCSocketSignalsAdapter : public SocketSignalsAdapter

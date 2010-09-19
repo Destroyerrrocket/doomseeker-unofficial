@@ -34,6 +34,7 @@ class IRCResponseParser : public QObject
 		void			parse(const QString& message);
 		
 	signals:
+		void			privMsgReceived(const QString& recipient, const QString& sender, const QString& content);
 		void			sendPongMessage(const QString& sendWhere);
 		void			userChangesNickname(const QString& oldNickname, const QString& newNickname);
 		void			userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature);

@@ -24,20 +24,35 @@
 
 #include "irc/ircnetworkadapter.h"
 
-IRCChatAdapter::IRCChatAdapter(IRCNetworkAdapter* pNetwork)
+IRCChatAdapter::IRCChatAdapter(IRCNetworkAdapter* pNetwork, const QString& recipient)
 {
 	this->pNetwork = pNetwork;
+	this->recipientName = recipient;
+}
+
+IRCChatAdapter::~IRCChatAdapter()
+{
+	if (this->pNetwork != NULL)
+	{
+		this->pNetwork->detachChatWindow(this);
+	}
 }
 
 void IRCChatAdapter::doSendMessage(const QString& message, IRCAdapterBase* pOrigin)
 {
-	if (message.startsWith("/"))
+	// Trim whitespaces to make sure the '/' character gets detected properly.
+	QString messageTrimmed = message.trimmed();
+
+	if (messageTrimmed.startsWith("/"))
 	{
-		pNetwork->doSendMessage(message, this);
+		// This is a IRC comand. Send it as is to the network.
+		pNetwork->doSendMessage(messageTrimmed, this);
 	}
 	else
 	{
-		sendChatMessage(message);
+		// This is a chat message. We need to process this before
+		// sending.
+		sendChatMessage(messageTrimmed);
 	}
 }
 
@@ -80,10 +95,8 @@ void IRCChatAdapter::sendChatMessage(const QString& message)
 	// Here we will split too long messages to make sure they don't
 	// exceed the 512 character limit as stated in RFC 1459.
 	
-	QString ircCall = QString("/PRIVMSG %1 ").arg(recipient);
-	
+	QString ircCall = QString("/PRIVMSG %1 ").arg(recipientName);
 	int maxLength = IRCClient::MAX_MESSAGE_LENGTH - ircCall.length();
-	
 	QStringList wordLines = message.split("\n");
 	
 	foreach(QString line, wordLines)
@@ -96,4 +109,14 @@ void IRCChatAdapter::sendChatMessage(const QString& message)
 			pNetwork->doSendMessage(ircCall + sentence, this);
 		}
 	}
+}
+
+void IRCChatAdapter::setNetwork(IRCNetworkAdapter* pNetwork)
+{
+	this->pNetwork = pNetwork;
+}
+
+QString IRCChatAdapter::title() const
+{
+	return recipientName;
 }

@@ -28,6 +28,9 @@
 #include "ui_ircdocktabcontents.h"
 #include <QWidget>
 
+class IRCChatAdapter;
+class IRCDock;
+
 /**
  *	@brief Dockable widget designed for IRC communication.
  */
@@ -36,7 +39,9 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 	Q_OBJECT;
 
 	public:
-		IRCDockTabContents(QWidget* parent = NULL);
+		IRCDockTabContents(IRCDock* pParentIRCDock);
+
+		IRCAdapterBase*		ircAdapter() const { return pIrcAdapter; }
 		
 		/**
 		 *	@brief Calling this multiple times on the same object will cause
@@ -44,13 +49,28 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 */
 		void				setIRCAdapter(IRCAdapterBase* pAdapter);
 
+	signals:
+		/**
+		 *	@brief Called when the variable returned by IRCAdapterBase::title()
+		 *	might have changed and the application should be notified of this
+		 *	fact.
+		 */
+		void				titleChange(IRCDockTabContents* pCaller);
+
 	protected slots:
+		void				adapterTitleChange()
+		{
+			emit titleChange(this);
+		}
+
+		void				newChatWindowIsOpened(IRCChatAdapter* pAdapter);
 		void				receiveError(const QString& error);
 		void				receiveMessage(const QString& message);
 		void				sendMessage();
 
 	protected:
-		IRCAdapterBase*		pIrcAdapter;	
+		IRCAdapterBase*		pIrcAdapter;
+		IRCDock*			pParentIRCDock;
 };
 
 #endif

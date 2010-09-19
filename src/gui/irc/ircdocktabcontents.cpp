@@ -21,14 +21,24 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircdocktabcontents.h"
+#include "irc/ircchatadapter.h"
+#include "irc/ircdock.h"
+#include "irc/ircnetworkadapter.h"
 
-IRCDockTabContents::IRCDockTabContents(QWidget* parent)
-: QWidget(parent)
+IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
+: QWidget(pParentIRCDock)
 {
 	setupUi(this);
 
+	this->pParentIRCDock = pParentIRCDock;
+
 	connect(btnSend, SIGNAL( clicked() ), this, SLOT( sendMessage() ));
 	connect(leCommandLine, SIGNAL( returnPressed() ), this, SLOT( sendMessage() ));
+}
+
+void IRCDockTabContents::newChatWindowIsOpened(IRCChatAdapter* pAdapter)
+{
+	pParentIRCDock->addIRCAdapter(pAdapter);
 }
 
 void IRCDockTabContents::receiveError(const QString& error)
@@ -56,5 +66,12 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 	pIrcAdapter = pAdapter;
 	connect(pIrcAdapter, SIGNAL( error(const QString&) ), SLOT( receiveError(const QString& ) ));
 	connect(pIrcAdapter, SIGNAL( message(const QString&) ), SLOT( receiveMessage(const QString& ) ));
+	connect(pIrcAdapter, SIGNAL( titleChange() ), SLOT( adapterTitleChange() ) );
+
+	if (pIrcAdapter->adapterType() == IRCAdapterBase::NetworkAdapter)
+	{
+		IRCNetworkAdapter* pNetworkAdapter = (IRCNetworkAdapter*)pAdapter;
+		connect(pNetworkAdapter, SIGNAL( newChatWindowIsOpened(IRCChatAdapter*) ), SLOT( newChatWindowIsOpened(IRCChatAdapter*) ) );
+	}
 	
 }

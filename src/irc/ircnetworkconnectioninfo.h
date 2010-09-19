@@ -26,13 +26,42 @@
 #include <QHostAddress>
 #include <QString>
 
+/**
+ *	@brief Struct containing information about client's connection to the
+ *	IRC server.
+ */
 struct IRCNetworkConnectionInfo
 {
+	/**
+	 *	@brief Alternate nickname in case if ' nick  ' is taken when 
+	 *	connecting.
+	 */
 	QString				alternateNick;
+
+	/**
+	 *	@brief Original nickname. This variable will always store the current
+	 *	nickname of the client.
+	 */
 	QString				nick;
+
+	/**
+	 *	@brief User's real name. Optional.
+	 */
 	QString				realName;
+
+	/**
+	 *	@brief Address of the server or network to connect to.
+	 */
 	QString				serverAddress;
+
+	/**
+	 *	@brief Port of the server or network to connect to.
+	 */
 	unsigned short		serverPort;
+
+	/**
+	 *	@brief Password for the server or network. Ignored if empty.
+	 */
 	QString				serverPassword;
 };
 

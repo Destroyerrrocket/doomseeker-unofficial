@@ -81,4 +81,16 @@ void IRCResponseParser::parse(const QString& message)
 		
 		emit userPartsChannel(channel, sender);
 	}
+	else if (remainder.startsWith("PRIVMSG "))
+	{
+		QStringList msgParameters = remainder.split(" ");
+		QString recipient = msgParameters[1];
+		QString content = msgParameters[2];
+		if (content[0] == ':')
+		{
+			content = content.remove(0, 1);
+		}
+
+		emit privMsgReceived(recipient, sender, content);
+	}
 }
