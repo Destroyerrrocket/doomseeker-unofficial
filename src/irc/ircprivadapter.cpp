@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// commonGUI.h
+// ircprivadapter.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,39 +20,36 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __COMMON_GUI_H
-#define __COMMON_GUI_H
+#include "ircprivadapter.h"
+#include "irc/ircglobal.h"
 
-#include <QAbstractItemView>
-#include <QListView>
-#include <QStringList>
-
-class CommonGUI
+IRCPrivAdapter::IRCPrivAdapter(IRCNetworkAdapter* pNetwork, const QString& recipient)
+: IRCChatAdapter(pNetwork, recipient)
 {
-	public:
-		/**
-		 *	@brief Reads items from a QListView that uses QStandardItemModel
-		 *	and puts texts of these items into a list of strings.
-		 *	@param listview - QListView that uses QStandardItemModel.
-		 */
-		static QStringList		listViewStandardItemsToStringList(QListView* listview);
+}
 
-		/**
-		 *	@brief Removes all selected items from a QAbstractItemView.
-		 *	@param view - QAbstractItemView from which items will be removed.
-		 */
-		static void 			removeSelectedItemsFromStandardItemView(QAbstractItemView* view);
+void IRCPrivAdapter::userChangesNickname(const QString& oldNickname, const QString& newNickname)
+{
+	if (recipientName.compare(oldNickname, Qt::CaseInsensitive) == 0)
+	{
+		recipientName = newNickname;
+	}
+}
 
-		/**
-		 *	@brief Puts a list of strings into a QListView that uses
-		 *	QStandardItemModel.
-		 *	@param targetListview
-		 *		QListView that uses QStandardItemModel. This list view will
-		 *		be filled with data.
-		 *	@param stringList
-		 *		Source data.
-		 */
-		static void				stringListToStandardItemsListView(QListView* targetListview, const QStringList& stringList);
-};
+void IRCPrivAdapter::userJoins(const QString& nickname, const QString& fullSignature)
+{
+	// Ignore. This has no sensible application here.
+}
 
-#endif
+void IRCPrivAdapter::userLeaves(const QString& nickname, const QString& farewellMessage, IRCQuitType quitType)
+{
+	if (quitType == IRCChatAdapter::NetworkQuit)
+	{
+		// Make sure that this user is the recipient of this adapter.
+		if (recipientName.compare(nickname, Qt::CaseInsensitive) == 0)
+		{
+			QString message = tr("This user has left the network. (QUIT: %1)").arg(farewellMessage);
+			emit messageColored(message, IRCGlobal::COLOR_CHANNEL_ACTION);
+		}
+	}
+}

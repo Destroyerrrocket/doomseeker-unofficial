@@ -81,9 +81,12 @@
      </property>
      <property name="font">
       <font>
-       <family>Cordia New</family>
+       <family>Courier New</family>
        <pointsize>8</pointsize>
       </font>
+     </property>
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
      </property>
     </widget>
    </item>

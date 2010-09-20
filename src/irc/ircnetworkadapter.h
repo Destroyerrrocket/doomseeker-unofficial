@@ -65,12 +65,22 @@ class IRCNetworkAdapter : public IRCAdapterBase
 
 		void								killAllChatWindows();
 
+		const QString&						myNickname() const { return connectionInfo.nick; }
+
 		QString								title() const;
 
 	signals:
 		void								newChatWindowIsOpened(IRCChatAdapter* pWindow);
 		
 	protected:
+		/**
+		 *	@brief Stores all chat adapters associated with this network.
+		 *
+		 *	Key values are recipient names. To avoid confusion and errors
+		 *	all key values are @b lower-case.
+		 *	Values stored here can be any form of IRCChatAdapter -  be it
+		 *	a private conversation or a channel.
+		 */
 		QHash<QString, IRCChatAdapter*>		chatWindows;
 		IRCNetworkConnectionInfo			connectionInfo;
 		IRCClient							ircClient;
@@ -86,14 +96,19 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 *
 		 *	@return Pointer to the adapter object.
 		 */
-		IRCChatAdapter*						createNewChatAdapter(const QString& recipient);
+		IRCChatAdapter*						getOrCreateNewChatAdapter(const QString& recipient);
 
 	protected slots:
 		void								ircServerResponse(const QString& message);
+		void								namesListReceived(const QString& channel, const QStringList& names);
+		void								namesListEndReceived(const QString& channel);
+		void								parseError(const QString& error);
 		void								privMsgReceived(const QString& recipient, const QString& sender, const QString& content);
 		void								sendPong(const QString& toWhom);
 		void								userChangesNickname(const QString& oldNickname, const QString& newNickname);
 		void								userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature);
+		void								userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage);
+		void								userQuitsNetwork(const QString& nickname, const QString& farewellMessage);
 
 };
 

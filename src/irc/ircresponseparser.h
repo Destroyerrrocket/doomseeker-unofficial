@@ -34,11 +34,15 @@ class IRCResponseParser : public QObject
 		void			parse(const QString& message);
 		
 	signals:
+		void			namesListReceived(const QString& channel, const QStringList& names);
+		void			namesListEndReceived(const QString& channel);
+		void			parseError(const QString& error);
 		void			privMsgReceived(const QString& recipient, const QString& sender, const QString& content);
 		void			sendPongMessage(const QString& sendWhere);
 		void			userChangesNickname(const QString& oldNickname, const QString& newNickname);
 		void			userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature);
-		void			userPartsChannel(const QString& channel, const QString& nickname);
+		void			userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage);
+		void			userQuitsNetwork(const QString& nickname, const QString& farewellMessage);
 };
 
 #endif

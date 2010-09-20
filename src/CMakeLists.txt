@@ -119,8 +119,10 @@ set(DOOMSEEKER_QT_FILES
 	gui/wadseekerconfigsites.h
 	gui/wadseekerinterface.h
 	irc/ircadapterbase.h
+	irc/ircchanneladapter.h
 	irc/ircchatadapter.h
 	irc/ircclient.h
+	irc/ircprivadapter.h
 	irc/ircnetworkadapter.h
 	irc/ircresponseparser.h
 	sdeapi/config.hpp
@@ -181,9 +183,12 @@ set(SOURCE_FILES
 	gui/wadseekerconfigidgames.cpp
 	gui/wadseekerconfigsites.cpp
 	gui/wadseekerinterface.cpp
+	irc/ircchanneladapter.cpp
 	irc/ircchatadapter.cpp
 	irc/ircclient.cpp
+	irc/ircglobal.cpp
 	irc/ircnetworkadapter.cpp
+	irc/ircprivadapter.cpp
 	irc/ircresponseparser.cpp
 	sdeapi/config.cpp
 	sdeapi/pluginloader.cpp
@@ -227,6 +232,7 @@ set(HEADER_FILES
 	gui/helpers/playersdiagram.h
 	gui/models/serverlistcolumn.h
 	gui/models/serverlistrowhandler.h
+	irc/ircglobal.h
 	irc/ircnetworkconnectioninfo.h
 	sdeapi/pluginloader.hpp
 	sdeapi/scanner.hpp

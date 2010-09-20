@@ -54,3 +54,16 @@ void CommonGUI::removeSelectedItemsFromStandardItemView(QAbstractItemView* view)
 		model->removeRow(index.row());
 	}
 }
+
+void CommonGUI::stringListToStandardItemsListView(QListView* targetListview, const QStringList& stringList)
+{
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(targetListview->model());
+	model->removeRows(0, model->rowCount());
+
+	foreach (const QString& str, stringList)
+	{
+		QStandardItem* pItem = new QStandardItem();
+		pItem->setText(str);
+		model->appendRow(pItem);
+	}
+}

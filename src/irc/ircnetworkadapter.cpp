@@ -4,7 +4,10 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircnetworkadapter.h"
-#include "irc/ircchatadapter.h"
+#include "irc/ircchanneladapter.h"
+#include "irc/ircglobal.h"
+#include "irc/ircprivadapter.h"
+#include "log.h"
 
 IRCNetworkAdapter::IRCNetworkAdapter()
 {
@@ -12,14 +15,32 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 	ircClient.connectSocketSignals(pIrcSocketSignalsAdapter);
 	
 	QObject::connect(&ircClient, SIGNAL( ircServerResponse(const QString&) ), this, SLOT( ircServerResponse(const QString&) ) );
-	
+
+	QObject::connect(&ircResponseParser, SIGNAL( namesListReceived(const QString&, const QStringList&) ), 
+		this, SLOT( namesListReceived(const QString&, const QStringList&) ) );
+
+	QObject::connect(&ircResponseParser, SIGNAL( namesListEndReceived(const QString&) ), 
+		this, SLOT( namesListEndReceived(const QString&) ) );
+
+	QObject::connect(&ircResponseParser, SIGNAL ( parseError(const QString&) ), 
+		this, SLOT( parseError(const QString&) ) );
+
 	QObject::connect(&ircResponseParser, SIGNAL ( privMsgReceived(const QString&, const QString&, const QString&) ), 
 		this, SLOT( privMsgReceived(const QString&, const QString&, const QString&) ) );
+
 	QObject::connect(&ircResponseParser, SIGNAL ( sendPongMessage(const QString&) ), this, SLOT( sendPong(const QString&) ) );
+
 	QObject::connect(&ircResponseParser, SIGNAL ( userChangesNickname(const QString&, const QString&) ), 
 		this, SLOT( userChangesNickname(const QString&, const QString&) ) );
+
 	QObject::connect(&ircResponseParser, SIGNAL ( userJoinsChannel(const QString&, const QString&, const QString&) ), 
 		this, SLOT( userJoinsChannel(const QString&, const QString&, const QString&) ) );
+
+	QObject::connect(&ircResponseParser, SIGNAL ( userPartsChannel(const QString&, const QString&, const QString&) ), 
+		this, SLOT( userPartsChannel(const QString&, const QString&, const QString&) ) );
+
+	QObject::connect(&ircResponseParser, SIGNAL ( userQuitsNetwork(const QString&, const QString&) ), 
+		this, SLOT( userQuitsNetwork(const QString&, const QString&) ) );
 }
 
 IRCNetworkAdapter::~IRCNetworkAdapter()
@@ -36,22 +57,6 @@ void IRCNetworkAdapter::connect(const IRCNetworkConnectionInfo& connectionInfo)
 
 	QHostAddress address(connectionInfo.serverAddress);
 	ircClient.connect(address, connectionInfo.serverPort);
-}
-
-IRCChatAdapter* IRCNetworkAdapter::createNewChatAdapter(const QString& recipient)
-{
-	IRCChatAdapter* pAdapter = NULL;
-	
-	if (hasRecipient(recipient))
-	{
-		return chatWindows[recipient];
-	}
-	
-	pAdapter = new IRCChatAdapter(this, recipient);
-	chatWindows.insert(recipient, pAdapter);
-	emit newChatWindowIsOpened(pAdapter);
-
-	return pAdapter;
 }
 
 void IRCNetworkAdapter::detachChatWindow(const IRCChatAdapter* pAdapter)
@@ -103,23 +108,69 @@ void IRCNetworkAdapter::killAllChatWindows()
 
 bool IRCNetworkAdapter::hasRecipient(const QString& recipient) const
 {
+	QString recipientLowercase = recipient.toLower();
+
 	return (chatWindows.find(recipient) != chatWindows.end());
+}
+
+IRCChatAdapter* IRCNetworkAdapter::getOrCreateNewChatAdapter(const QString& recipient)
+{
+	IRCChatAdapter* pAdapter = NULL;
+
+	if (recipient.isEmpty())
+	{
+		emit error("Doomseeker error: getOrCreateNewChatAdapter() received empty recipient");
+		return NULL;
+	}
+
+	QString recipientLowercase = recipient.toLower();
+	
+	if (hasRecipient(recipientLowercase))
+	{
+		return chatWindows[recipient];
+	}
+
+#ifdef _DEBUG
+	Log::instance << QString("IRCNetworkAdapter::getOrCreateNewChatAdapter() Creating new adapter for recipient: %1").arg(recipientLowercase);
+#endif
+	
+	if (IRCGlobal::isChannelName(recipient))
+	{
+		pAdapter = new IRCChannelAdapter(this, recipient);
+	}
+	else
+	{
+		pAdapter = new IRCPrivAdapter(this, recipient);
+	}
+
+	chatWindows.insert(recipientLowercase, pAdapter);
+	emit newChatWindowIsOpened(pAdapter);
+
+	return pAdapter;
+}
+
+
+void IRCNetworkAdapter::namesListReceived(const QString& channel, const QStringList& names)
+{
+	IRCChannelAdapter* pAdapter = (IRCChannelAdapter*) this->getOrCreateNewChatAdapter(channel);
+	pAdapter->appendNamesToCachedList(names);
+}
+
+void IRCNetworkAdapter::namesListEndReceived(const QString& channel)
+{
+	IRCChannelAdapter* pAdapter = (IRCChannelAdapter*) this->getOrCreateNewChatAdapter(channel);
+	pAdapter->emitCachedNameListUpdated();
+}
+
+void IRCNetworkAdapter::parseError(const QString& error)
+{
+	emit this->error(tr("IRC Parse error: %1").arg(error));
 }
 
 void IRCNetworkAdapter::privMsgReceived(const QString& recipient, const QString& sender, const QString& content)
 {
-	IRCChatAdapter* pAdapter = NULL;
-
-	if (hasRecipient(recipient))
-	{
-		pAdapter = chatWindows[recipient];
-	}
-	else
-	{
-		pAdapter = this->createNewChatAdapter(recipient);
-	}
-
-	pAdapter->emitMessage(QString("<%1>: %2").arg(sender, content));
+	IRCChatAdapter* pAdapter = this->getOrCreateNewChatAdapter(recipient);
+	pAdapter->emitChatMessage(sender, content);
 }
 
 void IRCNetworkAdapter::ircServerResponse(const QString& message)
@@ -155,18 +206,58 @@ void IRCNetworkAdapter::userChangesNickname(const QString& oldNickname, const QS
 		connectionInfo.nick = newNickname;
 	}
 	
-	// TODO Update user roster.
+	QList<IRCChatAdapter*> adaptersList = chatWindows.values();
+	foreach (IRCChatAdapter* pAdapter, adaptersList)
+	{
+		pAdapter->userChangesNickname(oldNickname, newNickname);
+	}
+	
+	// MAKE SURE TO SEE IF WE HAVE A CHAT WINDOW OPEN WITH THIS 
+	// USER AND FIX THE KEY IN THE MAP!!!
+	if (hasRecipient(oldNickname))
+	{
+		QString oldNicknameLowercase = oldNickname.toLower();
+		QString newNicknameLowercase = newNickname.toLower();
+
+		IRCChatAdapter* pAdapter = chatWindows[oldNicknameLowercase];
+		chatWindows.remove(oldNicknameLowercase);
+		chatWindows.insert(newNicknameLowercase, pAdapter);
+	}
 }
 
 void IRCNetworkAdapter::userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature)
 {
-	if (isMyNickname(nickname))
-	{
-		// We should now open a new channel window.
-		IRCChatAdapter* pNewChatWindow = createNewChatAdapter(channel);
-	}
+	emit message(QString("User %1 joins channel %2").arg(nickname, channel));
 
-	// TODO Update user roster.
+	IRCChannelAdapter* pChannel = (IRCChannelAdapter*)this->getOrCreateNewChatAdapter(channel);
+	if (!isMyNickname(nickname))
+	{
+		pChannel->userJoins(nickname, fullSignature);
+	}
+}
+
+void IRCNetworkAdapter::userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage)
+{
+	emit message(QString("User %1 parts channel %2").arg(nickname, channel));
+
+	IRCChannelAdapter* pChannel = (IRCChannelAdapter*)this->getOrCreateNewChatAdapter(channel);
+	
+	pChannel->userLeaves(nickname, farewellMessage, IRCChatAdapter::ChannelPart);
+}
+
+void IRCNetworkAdapter::userQuitsNetwork(const QString& nickname, const QString& farewellMessage)
+{
+	emit message(QString("User %1 quits network.").arg(nickname));
+
+	// We need to iterate through EVERY adapter and notify them
+	// about this quit.
+	// Implementation of each adapter should recognize if this quit actually
+	// has anything to do with that adapter.
+	QList<IRCChatAdapter*> adaptersList = chatWindows.values();
+	foreach (IRCChatAdapter* pAdapter, adaptersList)
+	{
+		pAdapter->userLeaves(nickname, farewellMessage, IRCChatAdapter::NetworkQuit);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

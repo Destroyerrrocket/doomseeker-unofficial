@@ -63,9 +63,13 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 			emit titleChange(this);
 		}
 
+		void				nameAdded(const QString& nickname);
+		void				nameListUpdated(const QStringList& names);
+		void				nameRemoved(const QString& nickname);
 		void				newChatWindowIsOpened(IRCChatAdapter* pAdapter);
 		void				receiveError(const QString& error);
 		void				receiveMessage(const QString& message);
+		void				receiveMessageColored(const QString& message, const QString& htmlColor);
 		void				sendMessage();
 
 	protected:

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// commonGUI.h
+// ircglobal.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,39 +20,25 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __COMMON_GUI_H
-#define __COMMON_GUI_H
+#include "ircglobal.h"
 
-#include <QAbstractItemView>
-#include <QListView>
-#include <QStringList>
+#include <QChar>
 
-class CommonGUI
+QString IRCGlobal::COLOR_CHANNEL_ACTION = "#38A800";
+QString IRCGlobal::COLOR_NETWORK_ACTION = "#1119FF";
+
+bool IRCGlobal::isChannelDenotingCharacter(char character)
 {
-	public:
-		/**
-		 *	@brief Reads items from a QListView that uses QStandardItemModel
-		 *	and puts texts of these items into a list of strings.
-		 *	@param listview - QListView that uses QStandardItemModel.
-		 */
-		static QStringList		listViewStandardItemsToStringList(QListView* listview);
+	return (character == '&' || character == '#');
+}
 
-		/**
-		 *	@brief Removes all selected items from a QAbstractItemView.
-		 *	@param view - QAbstractItemView from which items will be removed.
-		 */
-		static void 			removeSelectedItemsFromStandardItemView(QAbstractItemView* view);
+bool IRCGlobal::isChannelName(const QString& name)
+{
+	if (name.isEmpty())
+	{
+		return false;
+	}
 
-		/**
-		 *	@brief Puts a list of strings into a QListView that uses
-		 *	QStandardItemModel.
-		 *	@param targetListview
-		 *		QListView that uses QStandardItemModel. This list view will
-		 *		be filled with data.
-		 *	@param stringList
-		 *		Source data.
-		 */
-		static void				stringListToStandardItemsListView(QListView* targetListview, const QStringList& stringList);
-};
-
-#endif
+	QChar c = name[0];
+	return isChannelDenotingCharacter(c.toAscii());
+}

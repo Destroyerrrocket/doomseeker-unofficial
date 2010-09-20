@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// commonGUI.h
+// ircprivadapter.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,39 +20,25 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __COMMON_GUI_H
-#define __COMMON_GUI_H
+#ifndef __IRCPRIVADAPTER_H__
+#define __IRCPRIVADAPTER_H__
 
-#include <QAbstractItemView>
-#include <QListView>
-#include <QStringList>
+#include "irc/ircchatadapter.h"
 
-class CommonGUI
+/**
+ *	@brief Class type that is used for private conversations with other
+ *	users directly.
+ */
+class IRCPrivAdapter : public IRCChatAdapter
 {
 	public:
-		/**
-		 *	@brief Reads items from a QListView that uses QStandardItemModel
-		 *	and puts texts of these items into a list of strings.
-		 *	@param listview - QListView that uses QStandardItemModel.
-		 */
-		static QStringList		listViewStandardItemsToStringList(QListView* listview);
+		IRCPrivAdapter(IRCNetworkAdapter* pNetwork, const QString& recipient);
 
-		/**
-		 *	@brief Removes all selected items from a QAbstractItemView.
-		 *	@param view - QAbstractItemView from which items will be removed.
-		 */
-		static void 			removeSelectedItemsFromStandardItemView(QAbstractItemView* view);
+		AdapterType				adapterType() const { return PrivAdapter; }
 
-		/**
-		 *	@brief Puts a list of strings into a QListView that uses
-		 *	QStandardItemModel.
-		 *	@param targetListview
-		 *		QListView that uses QStandardItemModel. This list view will
-		 *		be filled with data.
-		 *	@param stringList
-		 *		Source data.
-		 */
-		static void				stringListToStandardItemsListView(QListView* targetListview, const QStringList& stringList);
+		void					userChangesNickname(const QString& oldNickname, const QString& newNickname);
+		void					userJoins(const QString& nickname, const QString& fullSignature);
+		void					userLeaves(const QString& nickname, const QString& farewellMessage, IRCQuitType quitType);
 };
 
 #endif

@@ -39,6 +39,12 @@ class IRCNetworkAdapter;
 class IRCChatAdapter : public IRCAdapterBase
 {
 	public:
+		enum IRCQuitType
+		{
+			NetworkQuit,
+			ChannelPart
+		};
+
 		/**
 		 *	@param pNetwork
 		 *		A pointer to the network this channel or user exists on.
@@ -46,10 +52,8 @@ class IRCChatAdapter : public IRCAdapterBase
 		 *		Full name of the entity this adapter will be talking to.
 		 */
 		IRCChatAdapter(IRCNetworkAdapter* pNetwork, const QString& recipient);
-		~IRCChatAdapter();
+		virtual ~IRCChatAdapter();
 
-		AdapterType				adapterType() const { return ChatAdapter; }
-		
 		/**
 		 *	All messages starting with '/' character will be passed to the
 		 *	parent network directly. Also the pOrigin parameter for the parent
@@ -62,6 +66,11 @@ class IRCChatAdapter : public IRCAdapterBase
 		 */
 		void					doSendMessage(const QString& message, IRCAdapterBase* pOrigin);				
 
+		/**
+		 *	@brief Emits message() signal formatting it to present sender's message.
+		 */
+		void					emitChatMessage(const QString& sender, const QString& content);
+
 		const QString&			recipient() const { return this->recipientName; }
 
 		/**
@@ -70,7 +79,26 @@ class IRCChatAdapter : public IRCAdapterBase
 		 */	
 		void					setNetwork(IRCNetworkAdapter* pNetwork);
 
+		/**
+		 *	@brief For chat adapters this will return recipientName.
+		 */
 		QString					title() const;
+
+		/**
+		 *	@brief Use this to register the fact that user has changed
+		 *	his/hers nickname.
+		 */
+		virtual void			userChangesNickname(const QString& oldNickname, const QString& newNickname) = 0;
+
+		/**
+		 *	@brief Use this to register the fact that user has joined the chat.
+		 */	
+		virtual void			userJoins(const QString& nickname, const QString& fullSignature) = 0;
+
+		/**
+		 *	@brief Use this to register the fact that user has left the chat.
+		 */
+		virtual void			userLeaves(const QString& nickname, const QString& farewellMessage, IRCQuitType quitType) = 0;
 		
 	protected:
 		IRCNetworkAdapter*		pNetwork;

@@ -40,7 +40,8 @@ class IRCAdapterBase : public QObject
 		enum AdapterType
 		{
 			NetworkAdapter,
-			ChatAdapter
+			ChannelAdapter,
+			PrivAdapter
 		};
 
 		/**
@@ -74,6 +75,11 @@ class IRCAdapterBase : public QObject
 			emit message(strMessage);
 		}
 
+		void				emitMessageColored(const QString& strMessage, const QString& htmlColor)
+		{
+			emit messageColored(strMessage, htmlColor);
+		}
+
 		/**
 		 *	@brief Gets title for this adapter.
 		 */
@@ -88,6 +94,7 @@ class IRCAdapterBase : public QObject
 	signals:
 		void				error(const QString& error);
 		void				message(const QString& message);
+		void				messageColored(const QString& message, const QString& htmlColor);
 
 		/**
 		 *	@brief Can be called when the variable returned by title()
