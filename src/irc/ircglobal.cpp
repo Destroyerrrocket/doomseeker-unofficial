@@ -29,7 +29,8 @@ QString IRCGlobal::COLOR_NETWORK_ACTION = "#1119FF";
 
 bool IRCGlobal::isChannelDenotingCharacter(char character)
 {
-	return (character == '&' || character == '#');
+	return (character == '&' || character == '#'
+		|| character == '+' || character == '!');
 }
 
 bool IRCGlobal::isChannelName(const QString& name)
