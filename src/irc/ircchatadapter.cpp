@@ -132,6 +132,12 @@ void IRCChatAdapter::setNetwork(IRCNetworkAdapter* pNetwork)
 	this->pNetwork = pNetwork;
 }
 
+void IRCChatAdapter::setRecipient(const QString& name)
+{
+	this->recipientName = name;
+	emit titleChange();
+}
+
 QString IRCChatAdapter::title() const
 {
 	return recipientName;

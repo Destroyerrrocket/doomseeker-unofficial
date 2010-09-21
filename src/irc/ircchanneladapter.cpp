@@ -22,81 +22,70 @@
 //------------------------------------------------------------------------------
 #include "ircchanneladapter.h"
 #include "irc/ircglobal.h"
+#include "irc/ircuserinfo.h"
+#include "irc/ircuserlist.h"
 
 IRCChannelAdapter::IRCChannelAdapter(IRCNetworkAdapter* pNetwork, const QString& recipient)
 : IRCChatAdapter(pNetwork, recipient)
 {
+	users = new IRCUserList();
 }
 
-bool IRCChannelAdapter::addName(const QString& name)
+IRCChannelAdapter::~IRCChannelAdapter()
 {
-	if (cachedNames.isEmpty())
-	{
-		cachedNames.append(name);
-	}
-
-	if (hasUser(name))
-	{
-		printf("HasNotUser: %s\n", name.toAscii().constData());
-		return false;
-	}
-
-	// Lower-case both names to avoid crazy Penguin name sorting.
-	QString nameLower = name.toLower();
-	for (int i = 0; i < cachedNames.size(); ++i)
-	{
-		const QString& cachedName = cachedNames[i];
-		QString cachedNameLower = cachedName.toLower();
-		if (nameLower <= cachedNameLower )
-		{
-			cachedNames.insert(i, name);
-			return true;
-		}
-	}
-
-	// This name should be sorted last.
-	cachedNames.append(name);
-	return true;
+	delete users;
 }
 
 void IRCChannelAdapter::appendNameToCachedList(const QString& name)
 {
-	if (addName(name))
+	if (users->appendNameToCachedList(name))
 	{
-		emit nameAdded(name);
+		IRCUserInfo user = users->userCopy(name);
+		emit nameAdded(user);
 	}
 }
 
 void IRCChannelAdapter::appendNamesToCachedList(const QStringList& names)
 {
-	foreach (const QString& name, names)
-	{
-		addName(name);
-	}
+	users->appendNamesToCachedList(names);
 }
 
 void IRCChannelAdapter::emitCachedNameListUpdated()
 {
-	emit nameListUpdated(cachedNames);
+	emit nameListUpdated(*users);
+}
+
+void IRCChannelAdapter::emitChatMessage(const QString& sender, const QString& content)
+{
+	// Ensure that all nickname artifacts are preserved.
+	const IRCUserInfo* pUserInfo = users->user(sender);
+	
+	QString actualSenderName = sender;
+	if (pUserInfo != NULL)
+	{
+		actualSenderName = pUserInfo->prefixedName();
+	}
+	
+	IRCChatAdapter::emitChatMessage(actualSenderName, content);
 }
 
 bool IRCChannelAdapter::hasUser(const QString& nickname)
 {
-	return cachedNames.contains(nickname, Qt::CaseInsensitive);
+	return users->hasUser(nickname);
 }
 
 void IRCChannelAdapter::removeNameFromCachedList(const QString& name)
 {
-	QRegExp regExp(name, Qt::CaseInsensitive, QRegExp::FixedString);
-	int index = cachedNames.indexOf(name);
-	if (index == -1)
+	IRCUserInfo user = users->userCopy(name);
+
+	if (!users->removeNameFromCachedList(name))
 	{
 		emit error(QString("Attempted to remove name \"%1\" from the \"%2\" channel's name list but no such name is on the list.").arg(name, this->recipientName));
-		return;
 	}
-
-	cachedNames.removeAt(index);
-	emit nameRemoved(name);
+	else
+	{
+		emit nameRemoved(user);
+	}
 }
 
 void IRCChannelAdapter::userChangesNickname(const QString& oldNickname, const QString& newNickname)
@@ -105,8 +94,11 @@ void IRCChannelAdapter::userChangesNickname(const QString& oldNickname, const QS
 
 	if (hasUser(oldNickname))
 	{
-		removeNameFromCachedList(oldNickname);
-		appendNameToCachedList(newNickname);
+		IRCUserInfo oldName = users->userCopy(oldNickname);
+	
+		users->changeNick(oldNickname, newNickname);
+		emit nameRemoved(oldName);
+		emit nameAdded(users->userCopy(newNickname));
 
 		emit messageColored(tr("%1 is now known as %2").arg(oldNickname, newNickname), 
 			IRCGlobal::COLOR_CHANNEL_ACTION);
@@ -141,6 +133,11 @@ void IRCChannelAdapter::userLeaves(const QString& nickname, const QString& farew
 			emit messageColored(tr("User %1 has left the channel. (PART: %2)").arg(nickname, farewellMessage), 
 				IRCGlobal::COLOR_CHANNEL_ACTION);
 			break;
+			
+		case IRCChatAdapter::NetworkKill:
+			emit messageColored(tr("Connection for user %1 has been killed. (KILL: %2)").arg(nickname, farewellMessage), 
+				IRCGlobal::COLOR_NETWORK_ACTION);
+			break;
 
 		case IRCChatAdapter::NetworkQuit:
 			emit messageColored(tr("User %1 has quit the network. (QUIT: %2)").arg(nickname, farewellMessage), 
@@ -153,3 +150,19 @@ void IRCChannelAdapter::userLeaves(const QString& nickname, const QString& farew
 	}
 }
 
+void IRCChannelAdapter::userModeChanges(const QString& nickname, unsigned flagsAdded, unsigned flagsRemoved)
+{
+	const IRCUserInfo* pUserInfo = this->users->user(nickname);
+	IRCUserInfo oldInfoCopy = *pUserInfo;
+	if (pUserInfo != NULL)
+	{
+		unsigned flags = pUserInfo->flags();
+		flags |= flagsAdded;
+		flags &= ~flagsRemoved;
+	
+		this->users->setUserFlags(nickname, flags);
+		
+		emit nameRemoved(oldInfoCopy);
+		emit nameAdded(this->users->userCopy(nickname));
+	}
+}

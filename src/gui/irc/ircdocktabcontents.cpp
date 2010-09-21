@@ -24,7 +24,10 @@
 #include "gui/commonGUI.h"
 #include "irc/ircchanneladapter.h"
 #include "irc/ircdock.h"
+#include "irc/ircglobal.h"
 #include "irc/ircnetworkadapter.h"
+#include "irc/ircuserinfo.h"
+#include "irc/ircuserlist.h"
 #include <QStandardItemModel>
 
 IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
@@ -43,50 +46,66 @@ IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 	connect(leCommandLine, SIGNAL( returnPressed() ), this, SLOT( sendMessage() ));
 }
 
-void IRCDockTabContents::nameAdded(const QString& nickname)
+QStandardItem* IRCDockTabContents::findUserListItem(const QString& nickname)
 {
+	QStandardItemModel* pModel = (QStandardItemModel*)this->lvUserList->model();
+	IRCUserInfo userInfo(nickname);
+	
+	for (int i = 0; i < pModel->rowCount(); ++i)
+	{
+		QStandardItem* pItem = pModel->item(i);
+		if (userInfo == pItem->text())
+		{
+			return pItem;
+		}
+	}
+	
+	return NULL;
+}
+
+void IRCDockTabContents::nameAdded(const IRCUserInfo& userInfo)
+{
+	QString nickname = userInfo.prefixedName();
 	printf("IRCDockTabContents Name added! %s\n", nickname.toAscii().constData());
 
 	QStandardItemModel* pModel = (QStandardItemModel*)this->lvUserList->model();
 	QStandardItem* pItem = new QStandardItem(nickname);
 
 	// Try to append the nickname at the proper place in the list.
-	QString nicknameLower = nickname.toLower();
 	for (int i = 0; i < pModel->rowCount(); ++i)
 	{
 		QStandardItem* pExistingItem = pModel->item(i);
-		QString existingNicknameLower = pExistingItem->text().toLower();
+		QString existingNickname = pExistingItem->text();
 
-		if (nicknameLower <= existingNicknameLower)
+		if (userInfo <= existingNickname)
 		{
 			pModel->insertRow(i, pItem);
 			return;
 		}
 	}
 
-	// If above code didn't return
+	// If above code didn't return then
 	// this nickname should be appended to the end of the list.
 	pModel->appendRow(pItem);
 }
 
-void IRCDockTabContents::nameListUpdated(const QStringList& names)
+void IRCDockTabContents::nameListUpdated(const IRCUserList& userList)
 {
-	foreach(const QString& p, names)
+	for (unsigned i = 0; i < userList.size(); ++i)
 	{
-		printf("%s\n", p.toAscii().constData());
+		nameAdded(*userList[i]);
 	}
-	CommonGUI::stringListToStandardItemsListView(this->lvUserList, names);
 }
 
-void IRCDockTabContents::nameRemoved(const QString& nickname)
+void IRCDockTabContents::nameRemoved(const IRCUserInfo& userInfo)
 {
 	QStandardItemModel* pModel = (QStandardItemModel*)this->lvUserList->model();
 	for (int i = 0; i < pModel->rowCount(); ++i)
 	{
 		QStandardItem* pItem = pModel->item(i);
-		if (pItem->text().compare(nickname, Qt::CaseInsensitive) == 0)
+		if (userInfo == pItem->text())
 		{
-			printf("IRCDockTabContents Name removed! %s\n", nickname.toAscii().constData());
+			printf("IRCDockTabContents Name removed! %s\n", userInfo.prefixedName().toAscii().constData());
 
 			pModel->removeRow(i);
 			break;
@@ -96,6 +115,8 @@ void IRCDockTabContents::nameRemoved(const QString& nickname)
 
 void IRCDockTabContents::newChatWindowIsOpened(IRCChatAdapter* pAdapter)
 {
+	this->lvUserList->setModel(new QStandardItemModel(this));
+
 	pParentIRCDock->addIRCAdapter(pAdapter);
 }
 
@@ -144,9 +165,9 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 		case IRCAdapterBase::ChannelAdapter:
 		{
 			IRCChannelAdapter* pChannelAdapter = (IRCChannelAdapter*)pAdapter;
-			connect(pChannelAdapter, SIGNAL( nameAdded(const QString&) ), SLOT( nameAdded(const QString&) ) );
-			connect(pChannelAdapter, SIGNAL( nameListUpdated(const QStringList&) ), SLOT( nameListUpdated(const QStringList&) ) );
-			connect(pChannelAdapter, SIGNAL( nameRemoved(const QString&) ), SLOT( nameRemoved(const QString&) ) );
+			connect(pChannelAdapter, SIGNAL( nameAdded(const IRCUserInfo&) ), SLOT( nameAdded(const IRCUserInfo&) ) );
+			connect(pChannelAdapter, SIGNAL( nameListUpdated(const IRCUserList&) ), SLOT( nameListUpdated(const IRCUserList&) ) );
+			connect(pChannelAdapter, SIGNAL( nameRemoved(const IRCUserInfo&) ), SLOT( nameRemoved(const IRCUserInfo&) ) );
 
 			this->lvUserList->setVisible(true);
 			break;

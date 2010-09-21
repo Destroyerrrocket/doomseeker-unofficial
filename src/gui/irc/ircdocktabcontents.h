@@ -26,10 +26,13 @@
 #include "irc/ircadapterbase.h"
 
 #include "ui_ircdocktabcontents.h"
+#include <QStandardItem>
 #include <QWidget>
 
 class IRCChatAdapter;
 class IRCDock;
+class IRCUserInfo;
+class IRCUserList;
 
 /**
  *	@brief Dockable widget designed for IRC communication.
@@ -63,9 +66,9 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 			emit titleChange(this);
 		}
 
-		void				nameAdded(const QString& nickname);
-		void				nameListUpdated(const QStringList& names);
-		void				nameRemoved(const QString& nickname);
+		void				nameAdded(const IRCUserInfo& userInfo);
+		void				nameListUpdated(const IRCUserList& userList);
+		void				nameRemoved(const IRCUserInfo& userInfo);
 		void				newChatWindowIsOpened(IRCChatAdapter* pAdapter);
 		void				receiveError(const QString& error);
 		void				receiveMessage(const QString& message);
@@ -75,6 +78,9 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 	protected:
 		IRCAdapterBase*		pIrcAdapter;
 		IRCDock*			pParentIRCDock;
+		
+	private:
+		QStandardItem*		findUserListItem(const QString& nickname);
 };
 
 #endif

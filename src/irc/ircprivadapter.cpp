@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "ircprivadapter.h"
 #include "irc/ircglobal.h"
+#include "irc/ircuserinfo.h"
 
 IRCPrivAdapter::IRCPrivAdapter(IRCNetworkAdapter* pNetwork, const QString& recipient)
 : IRCChatAdapter(pNetwork, recipient)
@@ -32,7 +33,7 @@ void IRCPrivAdapter::userChangesNickname(const QString& oldNickname, const QStri
 {
 	if (recipientName.compare(oldNickname, Qt::CaseInsensitive) == 0)
 	{
-		recipientName = newNickname;
+		setRecipient(newNickname);
 	}
 }
 
@@ -43,13 +44,30 @@ void IRCPrivAdapter::userJoins(const QString& nickname, const QString& fullSigna
 
 void IRCPrivAdapter::userLeaves(const QString& nickname, const QString& farewellMessage, IRCQuitType quitType)
 {
-	if (quitType == IRCChatAdapter::NetworkQuit)
+	// Make sure that this user is the recipient of this adapter.
+	IRCUserInfo recipientUserInfo(recipientName);	
+	if (recipientUserInfo == nickname)
 	{
-		// Make sure that this user is the recipient of this adapter.
-		if (recipientName.compare(nickname, Qt::CaseInsensitive) == 0)
+		QString message = "";
+	
+		switch (quitType)
 		{
-			QString message = tr("This user has left the network. (QUIT: %1)").arg(farewellMessage);
-			emit messageColored(message, IRCGlobal::COLOR_CHANNEL_ACTION);
+			case IRCChatAdapter::NetworkKill:
+				message = tr("This user connection has been killed. (KILL: %1)").arg(farewellMessage);
+				break;
+		
+			case IRCChatAdapter::NetworkQuit:
+				message = tr("This user has left the network. (QUIT: %1)").arg(farewellMessage);
+				break;
+				
+			default:
+				emit error(tr("Unhandled IRCQuitType in IRCPrivAdapter::userLeaves()"));
+				break;
+		}
+		
+		if (!message.isEmpty())
+		{
+			emit messageColored(message, IRCGlobal::COLOR_NETWORK_ACTION);
 		}
 	}
 }

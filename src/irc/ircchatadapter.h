@@ -41,8 +41,9 @@ class IRCChatAdapter : public IRCAdapterBase
 	public:
 		enum IRCQuitType
 		{
-			NetworkQuit,
-			ChannelPart
+			ChannelPart,
+			NetworkKill,
+			NetworkQuit
 		};
 
 		/**
@@ -69,7 +70,7 @@ class IRCChatAdapter : public IRCAdapterBase
 		/**
 		 *	@brief Emits message() signal formatting it to present sender's message.
 		 */
-		void					emitChatMessage(const QString& sender, const QString& content);
+		virtual void			emitChatMessage(const QString& sender, const QString& content);
 
 		const QString&			recipient() const { return this->recipientName; }
 
@@ -94,11 +95,16 @@ class IRCChatAdapter : public IRCAdapterBase
 		 *	@brief Use this to register the fact that user has joined the chat.
 		 */	
 		virtual void			userJoins(const QString& nickname, const QString& fullSignature) = 0;
-
+		
 		/**
 		 *	@brief Use this to register the fact that user has left the chat.
 		 */
 		virtual void			userLeaves(const QString& nickname, const QString& farewellMessage, IRCQuitType quitType) = 0;
+		
+		/**
+		 *	@brief Use this to register the fact that user MODE flags have changed.
+		 */
+		virtual void			userModeChanges(const QString& nickname, unsigned flagsAdded, unsigned flagsRemoved) = 0;		
 		
 	protected:
 		IRCNetworkAdapter*		pNetwork;
@@ -115,6 +121,7 @@ class IRCChatAdapter : public IRCAdapterBase
 		QString					extractMessageLine(QStringList& words, int maxLength);
 		
 		void					sendChatMessage(const QString& message);
+		void					setRecipient(const QString& name);
 };
 
 

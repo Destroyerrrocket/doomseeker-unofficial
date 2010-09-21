@@ -39,6 +39,10 @@ class IRCPrivAdapter : public IRCChatAdapter
 		void					userChangesNickname(const QString& oldNickname, const QString& newNickname);
 		void					userJoins(const QString& nickname, const QString& fullSignature);
 		void					userLeaves(const QString& nickname, const QString& farewellMessage, IRCQuitType quitType);
+		void					userModeChanges(const QString& nickname, unsigned flagsAdded, unsigned flagsRemoved)
+		{
+			// This is ignored here.
+		}		
 };
 
 #endif

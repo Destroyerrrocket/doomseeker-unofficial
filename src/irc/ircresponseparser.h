@@ -34,6 +34,13 @@ class IRCResponseParser : public QObject
 		void			parse(const QString& message);
 		
 	signals:
+		void			kick(const QString& channel, const QString& byWhom, const QString& whoIsKicked, const QString& reason);
+		void			kill(const QString& victim, const QString& comment);
+	
+		/**
+		 *	@brief Carries info about MODE for display.
+		 */
+		void			modeInfo(const QString& channel, const QString& whoSetThis, const QString& modeParams);
 		void			namesListReceived(const QString& channel, const QStringList& names);
 		void			namesListEndReceived(const QString& channel);
 		void			parseError(const QString& error);
@@ -41,8 +48,37 @@ class IRCResponseParser : public QObject
 		void			sendPongMessage(const QString& sendWhere);
 		void			userChangesNickname(const QString& oldNickname, const QString& newNickname);
 		void			userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature);
+		void			userModeChanged(const QString& channel, const QString& nickname, unsigned flagsAdded, unsigned flagsRemoved);
 		void			userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage);
 		void			userQuitsNetwork(const QString& nickname, const QString& farewellMessage);
+		
+	private:
+		enum FlagModes
+		{
+			FlagModeAdd,
+			FlagModeRemove,
+			FlagModeError
+		};
+		
+		QString			joinAndTrimColonIfNecessary(const QStringList& strList) const;
+	
+		/**
+		 *	@brief Will return FlagModeError if the given character cannot be 
+		 *	translated.
+		 */
+		FlagModes		getFlagMode(char c);
+	
+		void			parseMessage(const QString& prefix, const QString& sender, const QString& type, QStringList params);
+		
+		/**
+		 *	@brief Will emit userModeChanged() for each character in flagsString.
+		 *
+		 *	This method will "damage" the passed nicknames parameter.
+		 *	Use with care.
+		 */
+		void			parseUserModeMessage(const QString& channel, QString flagsString, QStringList& nicknames);
+		
+		QString&		trimColonIfNecessary(QString& str) const;
 };
 
 #endif

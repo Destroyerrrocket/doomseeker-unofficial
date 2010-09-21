@@ -43,3 +43,14 @@ bool IRCGlobal::isChannelName(const QString& name)
 	QChar c = name[0];
 	return isChannelDenotingCharacter(c.toAscii());
 }
+
+QString IRCGlobal::toIrcLower(const QString& str)
+{
+	QString lowered = str.toLower();
+
+	lowered.replace('[', '{');
+	lowered.replace(']', '}');
+	lowered.replace('\\', '|');
+
+	return lowered;
+}

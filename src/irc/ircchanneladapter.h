@@ -26,6 +26,9 @@
 #include <QStringList>
 #include "irc/ircchatadapter.h"
 
+class IRCUserInfo;
+class IRCUserList;
+
 /**
  *	@brief Class type that is used for conversations within a channel.
  */
@@ -35,6 +38,7 @@ class IRCChannelAdapter : public IRCChatAdapter
 
 	public:
 		IRCChannelAdapter(IRCNetworkAdapter* pNetwork, const QString& recipient);
+		~IRCChannelAdapter();
 
 		AdapterType				adapterType() const { return ChannelAdapter; }
 
@@ -57,6 +61,7 @@ class IRCChannelAdapter : public IRCChatAdapter
 		 *	when end of names list message is received for this channel.
 		 */
 		void					emitCachedNameListUpdated();
+		void					emitChatMessage(const QString& sender, const QString& content);
 
 		bool					hasUser(const QString& nickname);
 
@@ -67,17 +72,27 @@ class IRCChannelAdapter : public IRCChatAdapter
 		 */
 		void					removeNameFromCachedList(const QString& name);
 
+		/**
+		 *	This will emit nameRemoved() for oldNickname and nameAdded() 
+		 *	for the newNickname.
+		 */
 		void					userChangesNickname(const QString& oldNickname, const QString& newNickname);
 		void					userJoins(const QString& nickname, const QString& fullSignature);
 		void					userLeaves(const QString& nickname, const QString& farewellMessage, IRCQuitType quitType);
+		
+		/**
+		 *	this will first emit nameRemoved() for the nickname and then
+		 *	nameAdded() for the same nickname.
+		 */
+		void					userModeChanges(const QString& nickname, unsigned flagsAdded, unsigned flagsRemoved);		
 
 	signals:
-		void					nameAdded(const QString& name);
-		void					nameListUpdated(const QStringList& names);
-		void					nameRemoved(const QString& name);
+		void					nameAdded(const IRCUserInfo& userInfo);
+		void					nameListUpdated(const IRCUserList& names);
+		void					nameRemoved(const IRCUserInfo& userInfo);
 	
 	private:
-		QStringList				cachedNames;
+		IRCUserList*			users;
 
 		/**
 		 *	@brief Adds a name to the cachedNames list.

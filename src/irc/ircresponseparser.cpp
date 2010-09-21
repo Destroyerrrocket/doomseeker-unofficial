@@ -25,15 +25,33 @@
 #include <QRegExp>
 #include <QStringList>
 #include "irc/ircglobal.h"
+#include "irc/ircuserinfo.h"
 #include "log.h"
 #include "strings.h"
 
+IRCResponseParser::FlagModes IRCResponseParser::getFlagMode(char c)
+{
+	switch (c)
+	{
+		case '+':
+			return FlagModeAdd;
+			
+		case '-':
+			return FlagModeRemove;
+			
+		default:
+			return FlagModeError;
+	}
+}
+
+QString IRCResponseParser::joinAndTrimColonIfNecessary(const QStringList& strList) const
+{
+	QString joined = strList.join(" ");
+	return this->trimColonIfNecessary(joined);
+}
+
 void IRCResponseParser::parse(const QString& message)
 {
-	// Remember to add a spacebar after each string here.
-	static const QString RPL_NAMREPLY = "353 ";
-	static const QString RPL_ENDOFNAMES = "366 ";
-
 	QString formattedMessage = message.trimmed();
 
 	QRegExp prefixRegExp("(^:\\S+\\s)(.*)");
@@ -57,62 +75,64 @@ void IRCResponseParser::parse(const QString& message)
 	}
 
 	QStringList msgParameters = remainder.split(" ");
-
-	// Parse the actual message.	
-	if (remainder.startsWith("PING "))
+	if (!msgParameters.isEmpty())
 	{
-		QString pongToWhom = msgParameters[1];
+		QString type = msgParameters[0];
+		msgParameters.pop_front();
+	
+		parseMessage(prefix, sender, type, msgParameters);
+	}
+}
+
+void IRCResponseParser::parseMessage(const QString& prefix, const QString& sender, const QString& type, QStringList params)
+{
+	static const QString RPL_NAMREPLY = "353";
+	static const QString RPL_ENDOFNAMES = "366";
+
+	if (type == "PING")
+	{
+		QString pongToWhom = params[0];
 		
 		emit sendPongMessage(pongToWhom);
 	}		
-	else if (remainder.startsWith("NICK "))
+	else if (type == "NICK")
 	{
 		QString oldNickname = sender;
-		QString newNickname = msgParameters[1];
-		newNickname = Strings::triml(newNickname, ":");
+		QString newNickname = params[0];
+		trimColonIfNecessary(newNickname);
 		
 		emit userChangesNickname(oldNickname, newNickname);
 	}
-	else if (remainder.startsWith("JOIN "))
+	else if (type == "JOIN")
 	{
-		QString channel = msgParameters[1];
-		channel = Strings::triml(channel, ":");
+		QString channel = params[0];
+		trimColonIfNecessary(channel);
 		
 		emit userJoinsChannel(channel, sender, prefix);
 	}
-	else if (remainder.startsWith("PART "))
+	else if (type == "PART")
 	{
 		QString farewellMessage = QString();
-		QString channel = msgParameters[1];
+		QString channel = params[0];
 		
-		if (msgParameters.size() > 2)
+		if (params.size() > 1)
 		{
-			msgParameters.pop_front();
-			msgParameters.pop_front();
+			params.pop_front();
 
-			farewellMessage = msgParameters.join(" ");
-			if (farewellMessage[0] == ':')
-			{
-				farewellMessage.remove(0, 1);
-			}
+			farewellMessage = joinAndTrimColonIfNecessary(params);
 		}
 		
 		emit userPartsChannel(channel, sender, farewellMessage);
 	}
-	else if (remainder.startsWith("PRIVMSG "))
+	else if (type == "PRIVMSG")
 	{
-		QString recipient = msgParameters[1];
+		QString recipient = params[0];
 
-		// Remove the two now redundant parameters from the list
-		msgParameters.pop_front();
-		msgParameters.pop_front();
+		// Remove the now redundant parameter from the list
+		params.pop_front();
 
 		// Join the list to form message contents.
-		QString content = msgParameters.join(" ");
-		if (content[0] == ':')
-		{
-			content = content.remove(0, 1);
-		}
+		QString content = joinAndTrimColonIfNecessary(params);
 
 		if (!IRCGlobal::isChannelName(recipient))
 		{
@@ -125,29 +145,19 @@ void IRCResponseParser::parse(const QString& message)
 
 		emit privMsgReceived(recipient, sender, content);
 	}
-	else if (remainder.startsWith("QUIT "))
+	else if (type == "QUIT")
 	{
-		msgParameters.pop_front();
 		// This is the :Quit: part of the message (??)
-		msgParameters.pop_front();
+		params.pop_front();
 
 		QString farewellMessage = QString();
-		if (!msgParameters.isEmpty())
-		{
-			farewellMessage = msgParameters.join(" ");
-			if (farewellMessage[0] == ':')
-			{
-				farewellMessage.remove(0, 1);
-			}
-		}
+		farewellMessage = joinAndTrimColonIfNecessary(params);
 
 		emit userQuitsNetwork(sender, farewellMessage);
 	}
-	else if (remainder.startsWith(RPL_NAMREPLY))
+	else if (type == RPL_NAMREPLY)
 	{
 		// Namelists.
-		// Remove the message type signature.
-		msgParameters.pop_front();
 
 		// Attempt to extract the channel name. For some reason 
 		// irc.skulltag.net returns a '=' character between the message type 
@@ -155,9 +165,9 @@ void IRCResponseParser::parse(const QString& message)
 		// such behavior, at least not in the chapter 6. We should protect 
 		// ourselves from such unwelcome surprises.
 		QString channelName = "";
-		while (!IRCGlobal::isChannelName(channelName) && !msgParameters.isEmpty())
+		while (!IRCGlobal::isChannelName(channelName) && !params.isEmpty())
 		{
-			channelName = msgParameters.takeFirst();
+			channelName = params.takeFirst();
 		}
 
 		if (channelName.isEmpty())
@@ -168,16 +178,125 @@ void IRCResponseParser::parse(const QString& message)
 
 		// Remaining values will be user names. Send them all as a strings list.
 		// Remember to remove the ":" character from the first name.
-		if (!msgParameters.isEmpty())
+		if (!params.isEmpty())
 		{
-			msgParameters[0] = msgParameters[0].remove(0, 1);
+			params[0] = params[0].remove(0, 1);
 		}
 
-		emit namesListReceived(channelName, msgParameters);
+		emit namesListReceived(channelName, params);
 	}
-	else if (remainder.startsWith(RPL_ENDOFNAMES))
+	else if (type == RPL_ENDOFNAMES)
 	{
-		QString channel = msgParameters[2];
+		QString channel = params[1];
 		emit namesListEndReceived(channel);
 	}
+	else if (type == "MODE")
+	{
+		QString channel = params[0];
+		QString flagsString = params[1];
+		params.pop_front();
+		params.pop_front();
+		
+		// If there are no more params left on the list then this modes
+		// are for the channel itself. Otherwise they are for the users.
+		if (!params.isEmpty())
+		{
+			emit modeInfo(channel, sender, flagsString + " " + params.join(" "));		
+			parseUserModeMessage(channel, flagsString, params);
+		}
+	}
+	else if (type == "KICK")
+	{
+		QString channel = params[0];
+		QString whoIsKicked = params[1];
+		params.pop_front();
+		params.pop_front();
+		
+		QString reason = joinAndTrimColonIfNecessary(params);
+		
+		emit kick(channel, sender, whoIsKicked, reason);
+	}
+	else if (type == "KILL")
+	{
+		QString victim = params[0];
+		params.pop_front();
+		
+		QString comment = joinAndTrimColonIfNecessary(params);
+		
+		emit kill(victim, comment);
+	}
+}
+
+void IRCResponseParser::parseUserModeMessage(const QString& channel, QString flagsString, QStringList& nicknames)
+{
+	// For each flag character there should be one nickname on the list.
+	// If there are less nicknames than characters we will simply abort.
+	// Of course add/subtract characters are not counted here.
+		
+	// The first character should always define the flagMode.
+	FlagModes flagMode = getFlagMode(flagsString[0].toAscii());
+	
+	if (flagMode == FlagModeError)
+	{
+		emit parseError(tr("MODE flags string from IRC server are incorrect: \"%1\". Information for channel \"%2\" might not be correct anymore.").arg(flagsString, channel));
+		return;
+	}
+	
+	for (int i = 1; i < flagsString.size(); ++i)
+	{
+		char flagChar = flagsString[i].toAscii();
+	
+		FlagModes tmpFlagMode = getFlagMode(flagChar);
+		if (tmpFlagMode == FlagModeError)
+		{
+			if (nicknames.empty())
+			{
+				return;
+			}
+		
+			unsigned flag = IRCUserInfo::convertModeCharToFlag(flagChar);
+			if (flag != 0)
+			{
+				unsigned flagsAdded = 0;
+				unsigned flagsRemoved = 0;
+				
+				QString name = nicknames[0];
+				
+				switch (flagMode)
+				{
+					case FlagModeAdd:
+						flagsAdded = flag;
+						break;
+						
+					case FlagModeRemove:
+						flagsRemoved = flag;
+						break;
+						
+					default:
+						emit parseError(tr("IRCResponseParser::parseUserModeMessage(): wrong FlagMode. Information for channel \"%2\" might not be correct anymore."));
+						return;
+				}
+				
+				emit userModeChanged(channel, name, flagsAdded, flagsRemoved);
+			}
+
+			// Drop a name from the list and continue.
+			nicknames.pop_front();
+		}
+		else
+		{
+			flagMode = tmpFlagMode;
+			continue;
+		}
+	}
+}
+
+QString& IRCResponseParser::trimColonIfNecessary(QString& str) const
+{
+	if (!str.isEmpty() && str[0] == ':')
+	{
+		str.remove(0, 1);
+	}
+	
+	return str;
 }

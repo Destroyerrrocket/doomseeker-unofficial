@@ -7,6 +7,7 @@
 #include "irc/ircchanneladapter.h"
 #include "irc/ircglobal.h"
 #include "irc/ircprivadapter.h"
+#include "irc/ircuserinfo.h"
 #include "log.h"
 
 IRCNetworkAdapter::IRCNetworkAdapter()
@@ -15,6 +16,15 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 	ircClient.connectSocketSignals(pIrcSocketSignalsAdapter);
 	
 	QObject::connect(&ircClient, SIGNAL( ircServerResponse(const QString&) ), this, SLOT( ircServerResponse(const QString&) ) );
+
+	QObject::connect(&ircResponseParser, SIGNAL( kick(const QString&, const QString&, const QString&, const QString&) ), 
+		this, SLOT( kick(const QString&, const QString&, const QString&, const QString&) ) );
+		
+		QObject::connect(&ircResponseParser, SIGNAL( kill(const QString&, const QString&) ), 
+		this, SLOT( kill(const QString&, const QString&) ) );
+
+	QObject::connect(&ircResponseParser, SIGNAL( modeInfo(const QString&, const QString&, const QString&) ), 
+		this, SLOT( modeInfo(const QString&, const QString&, const QString&) ) );
 
 	QObject::connect(&ircResponseParser, SIGNAL( namesListReceived(const QString&, const QStringList&) ), 
 		this, SLOT( namesListReceived(const QString&, const QStringList&) ) );
@@ -35,6 +45,9 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 
 	QObject::connect(&ircResponseParser, SIGNAL ( userJoinsChannel(const QString&, const QString&, const QString&) ), 
 		this, SLOT( userJoinsChannel(const QString&, const QString&, const QString&) ) );
+		
+	QObject::connect(&ircResponseParser, SIGNAL ( userModeChanged(const QString&, const QString&, unsigned, unsigned) ), 
+		this, SLOT( userModeChanged(const QString&, const QString&, unsigned, unsigned) ) );		
 
 	QObject::connect(&ircResponseParser, SIGNAL ( userPartsChannel(const QString&, const QString&, const QString&) ), 
 		this, SLOT( userPartsChannel(const QString&, const QString&, const QString&) ) );
@@ -92,27 +105,6 @@ void IRCNetworkAdapter::doSendMessage(const QString& message, IRCAdapterBase* pO
 	}
 }
 
-void IRCNetworkAdapter::killAllChatWindows()
-{	
-	QList<IRCChatAdapter*> pWindows = chatWindows.values();
-	foreach (IRCChatAdapter* pAdapter, pWindows)
-	{
-		// Make sure that the adapter destructor won't call the
-		// detachChatWindow() method or the program will be shot to oblivion.
-		pAdapter->setNetwork(NULL);
-		delete pAdapter;
-	}
-
-	chatWindows.clear();
-}
-
-bool IRCNetworkAdapter::hasRecipient(const QString& recipient) const
-{
-	QString recipientLowercase = recipient.toLower();
-
-	return (chatWindows.find(recipient) != chatWindows.end());
-}
-
 IRCChatAdapter* IRCNetworkAdapter::getOrCreateNewChatAdapter(const QString& recipient)
 {
 	IRCChatAdapter* pAdapter = NULL;
@@ -149,6 +141,68 @@ IRCChatAdapter* IRCNetworkAdapter::getOrCreateNewChatAdapter(const QString& reci
 	return pAdapter;
 }
 
+bool IRCNetworkAdapter::hasRecipient(const QString& recipient) const
+{
+	QString recipientLowercase = recipient.toLower();
+
+	return (chatWindows.find(recipient) != chatWindows.end());
+}
+
+void IRCNetworkAdapter::ircServerResponse(const QString& message)
+{
+	ircResponseParser.parse(message);
+
+	emit this->message(message.trimmed());
+}
+
+bool IRCNetworkAdapter::isMyNickname(const QString& nickname) const
+{
+	IRCUserInfo myUserInfo(this->connectionInfo.nick);
+
+	return (myUserInfo == nickname);
+}
+
+void IRCNetworkAdapter::kick(const QString& channel, const QString& byWhom, const QString& whoIsKicked, const QString& reason)
+{
+	IRCChannelAdapter* pAdapter = (IRCChannelAdapter*) this->getOrCreateNewChatAdapter(channel);
+	pAdapter->emitMessageColored(tr("%1 was kicked by %2 (%3)").arg(whoIsKicked, byWhom, reason), IRCGlobal::COLOR_CHANNEL_ACTION);
+	pAdapter->removeNameFromCachedList(whoIsKicked);
+}
+
+void IRCNetworkAdapter::kill(const QString& victim, const QString& comment)
+{
+	emit message(QString("Connection for user %1 was killed. (%2)").arg(victim, comment));
+
+	// We need to iterate through EVERY adapter and notify them
+	// about this quit.
+	// Implementation of each adapter should recognize if this quit actually
+	// has anything to do with that adapter.
+	QList<IRCChatAdapter*> adaptersList = chatWindows.values();
+	foreach (IRCChatAdapter* pAdapter, adaptersList)
+	{
+		pAdapter->userLeaves(victim, comment, IRCChatAdapter::NetworkKill);
+	}
+}
+
+void IRCNetworkAdapter::killAllChatWindows()
+{	
+	QList<IRCChatAdapter*> pWindows = chatWindows.values();
+	foreach (IRCChatAdapter* pAdapter, pWindows)
+	{
+		// Make sure that the adapter destructor won't call the
+		// detachChatWindow() method or the program will be shot to oblivion.
+		pAdapter->setNetwork(NULL);
+		delete pAdapter;
+	}
+
+	chatWindows.clear();
+}
+
+void IRCNetworkAdapter::modeInfo(const QString& channel, const QString& whoSetThis, const QString& modeParams)
+{
+	IRCChannelAdapter* pAdapter = (IRCChannelAdapter*) this->getOrCreateNewChatAdapter(channel);
+	pAdapter->emitMessageColored(tr("%1 sets mode: %2").arg(whoSetThis, modeParams), IRCGlobal::COLOR_CHANNEL_ACTION);
+}
 
 void IRCNetworkAdapter::namesListReceived(const QString& channel, const QStringList& names)
 {
@@ -171,18 +225,6 @@ void IRCNetworkAdapter::privMsgReceived(const QString& recipient, const QString&
 {
 	IRCChatAdapter* pAdapter = this->getOrCreateNewChatAdapter(recipient);
 	pAdapter->emitChatMessage(sender, content);
-}
-
-void IRCNetworkAdapter::ircServerResponse(const QString& message)
-{
-	ircResponseParser.parse(message);
-
-	emit this->message(message.trimmed());
-}
-
-bool IRCNetworkAdapter::isMyNickname(const QString& nickname) const
-{
-	return (connectionInfo.nick.compare(nickname) == 0);
 }
 
 void IRCNetworkAdapter::sendPong(const QString& toWhom)
@@ -234,6 +276,12 @@ void IRCNetworkAdapter::userJoinsChannel(const QString& channel, const QString& 
 	{
 		pChannel->userJoins(nickname, fullSignature);
 	}
+}
+
+void IRCNetworkAdapter::userModeChanged(const QString& channel, const QString& nickname, unsigned flagsAdded, unsigned flagsRemoved)
+{
+	IRCChatAdapter* pAdapter = this->getOrCreateNewChatAdapter(channel);
+	pAdapter->userModeChanges(nickname, flagsAdded, flagsRemoved);
 }
 
 void IRCNetworkAdapter::userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage)

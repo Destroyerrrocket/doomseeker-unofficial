@@ -190,6 +190,8 @@ set(SOURCE_FILES
 	irc/ircnetworkadapter.cpp
 	irc/ircprivadapter.cpp
 	irc/ircresponseparser.cpp
+	irc/ircuserinfo.cpp
+	irc/ircuserlist.cpp
 	sdeapi/config.cpp
 	sdeapi/pluginloader.cpp
 	sdeapi/scanner.cpp
@@ -234,6 +236,8 @@ set(HEADER_FILES
 	gui/models/serverlistrowhandler.h
 	irc/ircglobal.h
 	irc/ircnetworkconnectioninfo.h
+	irc/ircuserinfo.h
+	irc/ircuserlist.h
 	sdeapi/pluginloader.hpp
 	sdeapi/scanner.hpp
 	serverapi/tooltips/gameinfotip.h

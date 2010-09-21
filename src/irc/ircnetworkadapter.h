@@ -99,7 +99,10 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		IRCChatAdapter*						getOrCreateNewChatAdapter(const QString& recipient);
 
 	protected slots:
+		void								kick(const QString& channel, const QString& byWhom, const QString& whoIsKicked, const QString& reason);
+		void								kill(const QString& victim, const QString& comment);
 		void								ircServerResponse(const QString& message);
+		void								modeInfo(const QString& channel, const QString& whoSetThis, const QString& modeParams);
 		void								namesListReceived(const QString& channel, const QStringList& names);
 		void								namesListEndReceived(const QString& channel);
 		void								parseError(const QString& error);
@@ -107,6 +110,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		void								sendPong(const QString& toWhom);
 		void								userChangesNickname(const QString& oldNickname, const QString& newNickname);
 		void								userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature);
+		void								userModeChanged(const QString& channel, const QString& nickname, unsigned flagsAdded, unsigned flagsRemoved);
 		void								userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage);
 		void								userQuitsNetwork(const QString& nickname, const QString& farewellMessage);
 
