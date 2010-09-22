@@ -90,6 +90,11 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		IRCSocketSignalsAdapter*			pIrcSocketSignalsAdapter;
 
 		/**
+		 *	@brief Retrieves IRCChatAdapter for specified recipient.
+		 */
+		IRCChatAdapter*						getChatAdapter(const QString& recipient);
+
+		/**
 		 *	@brief Creates the new IRCChatAdapter object and immedaitelly 
 		 *	adds it to the chatWindows hashmap.
 		 *

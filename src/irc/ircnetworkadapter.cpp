@@ -78,7 +78,7 @@ void IRCNetworkAdapter::connect(const IRCNetworkConnectionInfo& connectionInfo)
 
 void IRCNetworkAdapter::detachChatWindow(const IRCChatAdapter* pAdapter)
 {
-	chatWindows.remove(pAdapter->recipient());
+	chatWindows.remove(pAdapter->recipient().toLower());
 }
 
 void IRCNetworkAdapter::disconnect(const QString& farewellMessage)
@@ -132,13 +132,32 @@ void IRCNetworkAdapter::doSendMessage(const QString& message, IRCAdapterBase* pO
 	}
 }
 
+IRCChatAdapter* IRCNetworkAdapter::getChatAdapter(const QString& recipient)
+{
+	IRCChatAdapter* pAdapter = NULL;
+	
+	if (recipient.isEmpty())
+	{
+		emit error("Doomseeker error: getChatAdapter() received empty recipient.");
+		return NULL;
+	}
+	
+	QString recipientLowercase = recipient.toLower();
+	if (hasRecipient(recipientLowercase))
+	{
+		return chatWindows[recipientLowercase];
+	}
+	
+	return NULL;
+}
+
 IRCChatAdapter* IRCNetworkAdapter::getOrCreateNewChatAdapter(const QString& recipient)
 {
 	IRCChatAdapter* pAdapter = NULL;
 
 	if (recipient.isEmpty())
 	{
-		emit error("Doomseeker error: getOrCreateNewChatAdapter() received empty recipient");
+		emit error("Doomseeker error: getOrCreateNewChatAdapter() received empty recipient.");
 		return NULL;
 	}
 
@@ -146,7 +165,7 @@ IRCChatAdapter* IRCNetworkAdapter::getOrCreateNewChatAdapter(const QString& reci
 	
 	if (hasRecipient(recipientLowercase))
 	{
-		return chatWindows[recipient];
+		return chatWindows[recipientLowercase];
 	}
 
 #ifdef _DEBUG
@@ -172,7 +191,7 @@ bool IRCNetworkAdapter::hasRecipient(const QString& recipient) const
 {
 	QString recipientLowercase = recipient.toLower();
 
-	return (chatWindows.find(recipient) != chatWindows.end());
+	return (chatWindows.find(recipientLowercase) != chatWindows.end());
 }
 
 void IRCNetworkAdapter::ircServerResponse(const QString& message)
@@ -229,8 +248,8 @@ void IRCNetworkAdapter::killChatWindow(const QString& recipient)
 {
 	if (hasRecipient(recipient))
 	{
-		IRCChatAdapter* pAdapter = chatWindows[recipient];
-		chatWindows.remove(recipient);
+		IRCChatAdapter* pAdapter = getChatAdapter(recipient);
+		chatWindows.remove(recipient.toLower());
 		
 		// Make sure that the adapter destructor won't call the
 		// detachChatWindow() method or the program will be shot to oblivion.
@@ -302,7 +321,7 @@ void IRCNetworkAdapter::userChangesNickname(const QString& oldNickname, const QS
 		QString oldNicknameLowercase = oldNickname.toLower();
 		QString newNicknameLowercase = newNickname.toLower();
 
-		IRCChatAdapter* pAdapter = chatWindows[oldNicknameLowercase];
+		IRCChatAdapter* pAdapter = getChatAdapter(oldNickname);
 		chatWindows.remove(oldNicknameLowercase);
 		chatWindows.insert(newNicknameLowercase, pAdapter);
 	}
@@ -339,7 +358,7 @@ void IRCNetworkAdapter::userPartsChannel(const QString& channel, const QString& 
 {
 	if (hasRecipient(channel))
 	{
-		IRCChannelAdapter* pChannel = (IRCChannelAdapter*)chatWindows[channel];
+		IRCChannelAdapter* pChannel = (IRCChannelAdapter*)getChatAdapter(channel);
 			
 		if (isMyNickname(nickname))
 		{
