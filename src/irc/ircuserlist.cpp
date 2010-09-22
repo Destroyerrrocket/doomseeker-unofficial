@@ -35,7 +35,6 @@ bool IRCUserList::appendNameToCachedList(const QString& nickname)
 {
 	if (hasUser(nickname))
 	{
-		printf("HasUser: %s\n", nickname.toAscii().constData());
 		return false;
 	}
 

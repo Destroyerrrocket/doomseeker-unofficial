@@ -7,6 +7,7 @@
 #include "irc/ircchanneladapter.h"
 #include "irc/ircglobal.h"
 #include "irc/ircprivadapter.h"
+#include "irc/ircrequestparser.h"
 #include "irc/ircuserinfo.h"
 #include "log.h"
 
@@ -71,11 +72,8 @@ IRCNetworkAdapter::~IRCNetworkAdapter()
 void IRCNetworkAdapter::connect(const IRCNetworkConnectionInfo& connectionInfo)
 {
 	this->connectionInfo = connectionInfo;
-
 	emit titleChange();
-
-	QHostAddress address(connectionInfo.serverAddress);
-	ircClient.connect(address, connectionInfo.serverPort);
+	ircClient.connect(connectionInfo.serverAddress, connectionInfo.serverPort);
 }
 
 void IRCNetworkAdapter::detachChatWindow(const IRCChatAdapter* pAdapter)
@@ -95,25 +93,42 @@ void IRCNetworkAdapter::doSendMessage(const QString& message, IRCAdapterBase* pO
 	{
 		pOrigin = this;
 	}
-
-	// First of all trim whitespaces.
-	QString formattedMessage = message.trimmed();
-	if (!formattedMessage.startsWith('/'))
+	
+	if (!ircClient.isConnected())
 	{
-		emit error(tr("This is a server window. All commands must be prepended with a '/' character."));
+		pOrigin->emitError(tr("You are not connected to the network."));
+		return;
 	}
-	else
+
+	QString parsedMessage;
+	IRCRequestParser::IRCRequestParseResult result = IRCRequestParser::parse(message, parsedMessage);
+	
+	switch (result)
 	{
-		formattedMessage = formattedMessage.remove(0, 1);
+		case IRCRequestParser::ErrorInputInsufficientParameters:
+			pOrigin->emitError(tr("Insufficient parameters."));
+			break;
 		
-		if (formattedMessage.size() > IRCClient::MAX_MESSAGE_LENGTH)
-		{
-			pOrigin->emitError(tr("Message is too long."));
-		}
-		else
-		{
-			ircClient.sendMessage(formattedMessage);
-		}
+		case IRCRequestParser::ErrorInputNotPrependedWithSlash:
+			emit error(tr("This is a server window. All commands must be prepended with a '/' character."));
+			break;
+			
+		case IRCRequestParser::ErrorMessageEmpty:
+			pOrigin->emitError(tr("Attempted to send empty message"));
+			break;
+		
+		case IRCRequestParser::ErrorMessageTooLong:
+			pOrigin->emitError(tr("Command is too long"));
+			break;
+			
+		case IRCRequestParser::Ok:
+			ircClient.sendMessage(parsedMessage);
+			break;
+			
+		case IRCRequestParser::QuitCommand:
+			ircClient.sendMessage(parsedMessage);
+			emit messageColored(tr("Quit"), IRCGlobal::COLOR_NETWORK_ACTION);
+			break;
 	}
 }
 
@@ -375,15 +390,37 @@ void IRCSocketSignalsAdapter::connected()
 	
 	pParent->sendMessage(messageNick.arg(connectionInfo.nick).arg(connectionInfo.alternateNick));
 	pParent->sendMessage(messageUser.arg(connectionInfo.nick).arg(connectionInfo.nick).arg(connectionInfo.nick).arg(connectionInfo.realName));
+	pParent->sendMessage(messageUser.arg(connectionInfo.nick));
 }
 
 void IRCSocketSignalsAdapter::disconnected()
 {
 	pParent->killAllChatWindows();
+	gLog << tr("IRC: Disconnected from network %1").arg(pParent->connectionInfo.serverAddress);
 	emit pParent->message("Disconnected");
 }
 
 void IRCSocketSignalsAdapter::errorReceived(QAbstractSocket::SocketError error)
 {
 	emit pParent->error(pSocket->errorString());
+}
+
+void IRCSocketSignalsAdapter::infoMessage(const QString& message)
+{
+	gLog << message;
+	emit pParent->message(message);
+}
+
+void IRCSocketSignalsAdapter::hostLookupError(QHostInfo::HostInfoError errorValue)
+{
+	switch (errorValue)
+	{
+		case QHostInfo::HostNotFound:
+			emit pParent->error("Host lookup error: host not found.");
+			break;
+			
+		default:
+			emit pParent->error("Unknown host lookup error.");
+			break;
+	}
 }

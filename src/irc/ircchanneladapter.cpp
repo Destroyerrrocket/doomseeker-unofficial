@@ -95,8 +95,6 @@ void IRCChannelAdapter::removeNameFromCachedList(const QString& name)
 
 void IRCChannelAdapter::userChangesNickname(const QString& oldNickname, const QString& newNickname)
 {
-	printf("IRCChannelAdapter::userChangesNickname()\n");
-
 	if (hasUser(oldNickname))
 	{
 		IRCUserInfo oldName = users->userCopy(oldNickname);
@@ -112,8 +110,6 @@ void IRCChannelAdapter::userChangesNickname(const QString& oldNickname, const QS
 
 void IRCChannelAdapter::userJoins(const QString& nickname, const QString& fullSignature)
 {
-	printf("IRCChannelAdapter::userJoins()\n");
-
 	appendNameToCachedList(nickname);
 
 	emit messageColored(tr("User %1 [%2] has joined the channel.").arg(nickname, fullSignature), 
@@ -122,8 +118,6 @@ void IRCChannelAdapter::userJoins(const QString& nickname, const QString& fullSi
 
 void IRCChannelAdapter::userLeaves(const QString& nickname, const QString& farewellMessage, IRCQuitType quitType)
 {
-	printf("IRCChannelAdapter::userLeaves()\n");
-
 	if (!hasUser(nickname))
 	{
 		// Nothing to do here. This user was not even on the channel.

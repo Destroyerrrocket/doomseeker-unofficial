@@ -24,7 +24,7 @@
 #define __IRCCLIENT_H__
 
 #include "socketsignalsadapter.h"
-#include <QHostAddress>
+#include <QHostInfo>
 #include <QTcpSocket>
 
 class IRCClient : public QObject
@@ -37,7 +37,7 @@ class IRCClient : public QObject
 		IRCClient();
 		~IRCClient();
 
-		void					connect(const QHostAddress&	address, unsigned short port);
+		void					connect(const QString& address, unsigned short port);
 		void					connectSocketSignals(SocketSignalsAdapter* pAdapter);
 		void					disconnect();
 
@@ -46,13 +46,35 @@ class IRCClient : public QObject
 		bool					sendMessage(const QString& message);
 		
 	signals:
+		void					hostLookupError(QHostInfo::HostInfoError errorValue);
+		
+		/**
+		 *	@brief These are the messages that IRCClient class sends to
+		 *	inform the upper layers of progress.
+		 *
+		 *	These messages should be used for informational purposes only.
+		 */
+		void					infoMessage(const QString& message);
 		void					ircServerResponse(const QString& message);
 		
-	protected:
+	private:
+		bool					bIsInHostLookupMode;
+		QString					hostName;
+		int						lookUpId;
+		unsigned short			port;
 		QTcpSocket				socket;
+		
+		/**
+		 *	@brief Will prefer IPv4 addresses.
+		 *
+		 *	@return Pointer to a element on the list.
+		 */
+		const QHostAddress*		pickAddress(const QList<QHostAddress>& addressesList);
 
-	protected slots:
+	private slots:
+		void					hostLookupFinished(const QHostInfo& hostInfo);
 		void					receiveSocketData();
+		
 };
 
 #endif

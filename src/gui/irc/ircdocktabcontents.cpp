@@ -93,7 +93,6 @@ QStandardItem* IRCDockTabContents::findUserListItem(const QString& nickname)
 void IRCDockTabContents::nameAdded(const IRCUserInfo& userInfo)
 {
 	QString nickname = userInfo.prefixedName();
-	printf("IRCDockTabContents Name added! %s\n", nickname.toAscii().constData());
 
 	QStandardItemModel* pModel = (QStandardItemModel*)this->lvUserList->model();
 	QStandardItem* pItem = new QStandardItem(nickname);
@@ -132,8 +131,6 @@ void IRCDockTabContents::nameRemoved(const IRCUserInfo& userInfo)
 		QStandardItem* pItem = pModel->item(i);
 		if (userInfo == pItem->text())
 		{
-			printf("IRCDockTabContents Name removed! %s\n", userInfo.prefixedName().toAscii().constData());
-
 			pModel->removeRow(i);
 			break;
 		}
@@ -175,7 +172,10 @@ void IRCDockTabContents::sendMessage()
 	QString message = leCommandLine->text();
 	leCommandLine->setText("");
 	
-	pIrcAdapter->sendMessage(message);
+	if (!message.trimmed().isEmpty())
+	{
+		pIrcAdapter->sendMessage(message);
+	}
 }
 
 void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)

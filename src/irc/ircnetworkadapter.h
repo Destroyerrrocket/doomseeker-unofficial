@@ -136,6 +136,8 @@ class IRCSocketSignalsAdapter : public SocketSignalsAdapter
 		void					connected();
 		void					disconnected();
 		void					errorReceived(QAbstractSocket::SocketError error);
+		void					infoMessage(const QString& message);
+		void					hostLookupError(QHostInfo::HostInfoError errorValue);
 };
 
 #endif

@@ -44,6 +44,14 @@ IRCChatAdapter::~IRCChatAdapter()
 
 void IRCChatAdapter::doSendMessage(const QString& message, IRCAdapterBase* pOrigin)
 {
+	// If network is null and we can still send messages this might be a bug 
+	// in the application.
+	if (pNetwork == NULL)
+	{
+		emit error("This chat window is not attached to any network. This is probably a bug in Doomseeker.");
+		return;
+	}
+
 	// Trim whitespaces to make sure the '/' character gets detected properly.
 	QString messageTrimmed = message.trimmed();
 

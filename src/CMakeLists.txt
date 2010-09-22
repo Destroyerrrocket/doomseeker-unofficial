@@ -189,6 +189,7 @@ set(SOURCE_FILES
 	irc/ircglobal.cpp
 	irc/ircnetworkadapter.cpp
 	irc/ircprivadapter.cpp
+	irc/ircrequestparser.cpp
 	irc/ircresponseparser.cpp
 	irc/ircuserinfo.cpp
 	irc/ircuserlist.cpp
@@ -236,6 +237,7 @@ set(HEADER_FILES
 	gui/models/serverlistrowhandler.h
 	irc/ircglobal.h
 	irc/ircnetworkconnectioninfo.h
+	irc/ircrequestparser.h	
 	irc/ircuserinfo.h
 	irc/ircuserlist.h
 	sdeapi/pluginloader.hpp
