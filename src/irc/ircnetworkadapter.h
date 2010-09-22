@@ -40,6 +40,8 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 */
 		void								detachChatWindow(const IRCChatAdapter* pAdapter);
 		
+		void								disconnect(const QString& farewellMessage = tr("Doomseeker End Of Line"));
+		
 		/**
 		 *	@brief Implemented to support direct communication between client 
 		 *	and server.
@@ -66,7 +68,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		void								killAllChatWindows();
 
 		const QString&						myNickname() const { return connectionInfo.nick; }
-
+		
 		QString								title() const;
 
 	signals:
@@ -97,7 +99,9 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 *	@return Pointer to the adapter object.
 		 */
 		IRCChatAdapter*						getOrCreateNewChatAdapter(const QString& recipient);
-
+		
+		void								killChatWindow(const QString& recipient);		
+		
 	protected slots:
 		void								kick(const QString& channel, const QString& byWhom, const QString& whoIsKicked, const QString& reason);
 		void								kill(const QString& victim, const QString& comment);

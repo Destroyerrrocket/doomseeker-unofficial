@@ -43,6 +43,14 @@ class IRCAdapterBase : public QObject
 			ChannelAdapter,
 			PrivAdapter
 		};
+		
+		/**
+		 *	@brief Destructor emits terminating() signal.
+		 */
+		virtual ~IRCAdapterBase()
+		{
+			emit terminating();
+		}
 
 		/**
 		 *	@brief Gets adapter type for this adapter instance.
@@ -95,6 +103,8 @@ class IRCAdapterBase : public QObject
 		void				error(const QString& error);
 		void				message(const QString& message);
 		void				messageColored(const QString& message, const QString& htmlColor);
+		
+		void				terminating();
 
 		/**
 		 *	@brief Can be called when the variable returned by title()

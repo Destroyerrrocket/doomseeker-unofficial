@@ -90,6 +90,7 @@ class IRCChannelAdapter : public IRCChatAdapter
 		void					nameAdded(const IRCUserInfo& userInfo);
 		void					nameListUpdated(const IRCUserList& names);
 		void					nameRemoved(const IRCUserInfo& userInfo);
+		void					nameUpdated(const IRCUserInfo& userInfo);
 	
 	private:
 		IRCUserList*			users;

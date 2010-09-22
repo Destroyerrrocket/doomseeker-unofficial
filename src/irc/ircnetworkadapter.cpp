@@ -15,12 +15,15 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 	pIrcSocketSignalsAdapter = new IRCSocketSignalsAdapter(this);
 	ircClient.connectSocketSignals(pIrcSocketSignalsAdapter);
 	
-	QObject::connect(&ircClient, SIGNAL( ircServerResponse(const QString&) ), this, SLOT( ircServerResponse(const QString&) ) );
+	QObject::connect(&ircClient, SIGNAL( ircServerResponse(const QString&) ), 
+		this, SLOT( ircServerResponse(const QString&) ) );
 
+
+	// Response parser begins here.
 	QObject::connect(&ircResponseParser, SIGNAL( kick(const QString&, const QString&, const QString&, const QString&) ), 
 		this, SLOT( kick(const QString&, const QString&, const QString&, const QString&) ) );
 		
-		QObject::connect(&ircResponseParser, SIGNAL( kill(const QString&, const QString&) ), 
+	QObject::connect(&ircResponseParser, SIGNAL( kill(const QString&, const QString&) ), 
 		this, SLOT( kill(const QString&, const QString&) ) );
 
 	QObject::connect(&ircResponseParser, SIGNAL( modeInfo(const QString&, const QString&, const QString&) ), 
@@ -38,7 +41,8 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 	QObject::connect(&ircResponseParser, SIGNAL ( privMsgReceived(const QString&, const QString&, const QString&) ), 
 		this, SLOT( privMsgReceived(const QString&, const QString&, const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL ( sendPongMessage(const QString&) ), this, SLOT( sendPong(const QString&) ) );
+	QObject::connect(&ircResponseParser, SIGNAL ( sendPongMessage(const QString&) ), 
+		this, SLOT( sendPong(const QString&) ) );
 
 	QObject::connect(&ircResponseParser, SIGNAL ( userChangesNickname(const QString&, const QString&) ), 
 		this, SLOT( userChangesNickname(const QString&, const QString&) ) );
@@ -58,6 +62,8 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 
 IRCNetworkAdapter::~IRCNetworkAdapter()
 {
+	disconnect();
+
 	killAllChatWindows();
 	delete pIrcSocketSignalsAdapter;
 }
@@ -75,6 +81,12 @@ void IRCNetworkAdapter::connect(const IRCNetworkConnectionInfo& connectionInfo)
 void IRCNetworkAdapter::detachChatWindow(const IRCChatAdapter* pAdapter)
 {
 	chatWindows.remove(pAdapter->recipient());
+}
+
+void IRCNetworkAdapter::disconnect(const QString& farewellMessage)
+{
+	sendMessage("/quit " + farewellMessage);
+	ircClient.disconnect();	
 }
 
 void IRCNetworkAdapter::doSendMessage(const QString& message, IRCAdapterBase* pOrigin)
@@ -198,6 +210,20 @@ void IRCNetworkAdapter::killAllChatWindows()
 	chatWindows.clear();
 }
 
+void IRCNetworkAdapter::killChatWindow(const QString& recipient)
+{
+	if (hasRecipient(recipient))
+	{
+		IRCChatAdapter* pAdapter = chatWindows[recipient];
+		chatWindows.remove(recipient);
+		
+		// Make sure that the adapter destructor won't call the
+		// detachChatWindow() method or the program will be shot to oblivion.
+		pAdapter->setNetwork(NULL);
+		delete pAdapter;
+	}
+}
+
 void IRCNetworkAdapter::modeInfo(const QString& channel, const QString& whoSetThis, const QString& modeParams)
 {
 	IRCChannelAdapter* pAdapter = (IRCChannelAdapter*) this->getOrCreateNewChatAdapter(channel);
@@ -269,34 +295,56 @@ void IRCNetworkAdapter::userChangesNickname(const QString& oldNickname, const QS
 
 void IRCNetworkAdapter::userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature)
 {
-	emit message(QString("User %1 joins channel %2").arg(nickname, channel));
-
-	IRCChannelAdapter* pChannel = (IRCChannelAdapter*)this->getOrCreateNewChatAdapter(channel);
-	if (!isMyNickname(nickname))
+	if (hasRecipient(channel))
 	{
-		pChannel->userJoins(nickname, fullSignature);
+		emit messageColored(tr("User %1 joins channel %2").arg(nickname, channel), IRCGlobal::COLOR_CHANNEL_ACTION);
+
+		IRCChannelAdapter* pChannel = (IRCChannelAdapter*)this->getOrCreateNewChatAdapter(channel);
+		if (!isMyNickname(nickname))
+		{
+			pChannel->userJoins(nickname, fullSignature);
+		}
+	}
+	else
+	{
+		emit error(tr("User %1 joins channel %2, but we are not on this channel!").arg(nickname, channel));
 	}
 }
 
 void IRCNetworkAdapter::userModeChanged(const QString& channel, const QString& nickname, unsigned flagsAdded, unsigned flagsRemoved)
 {
-	IRCChatAdapter* pAdapter = this->getOrCreateNewChatAdapter(channel);
-	pAdapter->userModeChanges(nickname, flagsAdded, flagsRemoved);
+	if (hasRecipient(channel))
+	{
+		IRCChatAdapter* pAdapter = this->getOrCreateNewChatAdapter(channel);
+		pAdapter->userModeChanges(nickname, flagsAdded, flagsRemoved);
+	}
 }
 
 void IRCNetworkAdapter::userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage)
 {
-	emit message(QString("User %1 parts channel %2").arg(nickname, channel));
-
-	IRCChannelAdapter* pChannel = (IRCChannelAdapter*)this->getOrCreateNewChatAdapter(channel);
+	if (hasRecipient(channel))
+	{
+		IRCChannelAdapter* pChannel = (IRCChannelAdapter*)chatWindows[channel];
+			
+		if (isMyNickname(nickname))
+		{
+			emit messageColored(tr("You left channel %1").arg(channel), IRCGlobal::COLOR_CHANNEL_ACTION);
+			killChatWindow(channel);
+		}
+		else
+		{
+			emit messageColored(tr("User %1 parts channel %2").arg(nickname, channel), IRCGlobal::COLOR_CHANNEL_ACTION);
+			pChannel->userLeaves(nickname, farewellMessage, IRCChatAdapter::ChannelPart);
+		}
+	}
 	
-	pChannel->userLeaves(nickname, farewellMessage, IRCChatAdapter::ChannelPart);
+	
 }
 
 void IRCNetworkAdapter::userQuitsNetwork(const QString& nickname, const QString& farewellMessage)
 {
-	emit message(QString("User %1 quits network.").arg(nickname));
-
+	emit messageColored(QString("User %1 quits network.").arg(nickname), IRCGlobal::COLOR_NETWORK_ACTION);
+	
 	// We need to iterate through EVERY adapter and notify them
 	// about this quit.
 	// Implementation of each adapter should recognize if this quit actually

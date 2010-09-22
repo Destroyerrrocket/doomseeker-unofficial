@@ -43,6 +43,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 
 	public:
 		IRCDockTabContents(IRCDock* pParentIRCDock);
+		~IRCDockTabContents();
 
 		IRCAdapterBase*		ircAdapter() const { return pIrcAdapter; }
 		
@@ -54,6 +55,14 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 
 	signals:
 		/**
+		 *	@brief Emitted when the IRCAdapterBase that is associated
+		 *	with this widget is no longer valid - possibly even deleted.
+		 *
+		 *	Capture this to close this widget.
+		 */
+		void				chatWindowCloseRequest(IRCDockTabContents*);
+	
+		/**
 		 *	@brief Called when the variable returned by IRCAdapterBase::title()
 		 *	might have changed and the application should be notified of this
 		 *	fact.
@@ -61,6 +70,8 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		void				titleChange(IRCDockTabContents* pCaller);
 
 	protected slots:
+		void				adapterTerminating();
+	
 		void				adapterTitleChange()
 		{
 			emit titleChange(this);
@@ -69,6 +80,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		void				nameAdded(const IRCUserInfo& userInfo);
 		void				nameListUpdated(const IRCUserList& userList);
 		void				nameRemoved(const IRCUserInfo& userInfo);
+		void				nameUpdated(const IRCUserInfo& userInfo);
 		void				newChatWindowIsOpened(IRCChatAdapter* pAdapter);
 		void				receiveError(const QString& error);
 		void				receiveMessage(const QString& message);
@@ -80,6 +92,8 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		IRCDock*			pParentIRCDock;
 		
 	private:
+		bool				bIsDestroying;
+	
 		QStandardItem*		findUserListItem(const QString& nickname);
 };
 

@@ -49,7 +49,10 @@ void IRCClient::connectSocketSignals(SocketSignalsAdapter* pAdapter)
 
 void IRCClient::disconnect()
 {
-	socket.disconnectFromHost();
+	if (socket.state() != QAbstractSocket::UnconnectedState && socket.isValid())
+	{
+		socket.close();
+	}
 }
 
 bool IRCClient::isConnected() const
@@ -77,6 +80,7 @@ bool IRCClient::sendMessage(const QString& message)
 	messageContent.append("\r\n");
 	
 	qint64 numBytesWritten = socket.write(messageContent);
+	socket.flush();
 	
 	return numBytesWritten == messageContent.size();
 }

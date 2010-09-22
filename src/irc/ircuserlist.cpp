@@ -112,14 +112,11 @@ bool IRCUserList::removeNameFromCachedList(const QString& nickname)
 
 void IRCUserList::setUserFlags(const QString& nickname, unsigned flags)
 {
-	if (hasUser(nickname))
+	int index = this->indexOfName(nickname);
+	if (index >= 0)
 	{
-		IRCUserInfo tmpInfo(nickname);
-		tmpInfo.setFlags(flags);
-
-		// Remember to keep proper list sort order.		
-		this->removeNameFromCachedList(nickname);
-		this->appendNameToCachedList(tmpInfo);
+		IRCUserInfo& userInfo = *usersArray[index];
+		userInfo.setFlags(flags);
 	}
 }
 

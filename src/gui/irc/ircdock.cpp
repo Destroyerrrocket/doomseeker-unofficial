@@ -32,16 +32,28 @@ IRCDock::IRCDock(QWidget* parent)
 {
 	setupUi(this);
 	setupToolbar();
+	
+	connect(tabWidget, SIGNAL( tabCloseRequested(int) ), SLOT( tabCloseRequestedSlot(int) ));
 }
 
 void IRCDock::addIRCAdapter(IRCAdapterBase* pIRCAdapter)
 {
 	IRCDockTabContents* pNewConnectionWidget = new IRCDockTabContents(this);
 
+	connect(pNewConnectionWidget, SIGNAL( chatWindowCloseRequest(IRCDockTabContents*) ), SLOT( chatWindowCloseRequestSlot(IRCDockTabContents*) ) );
 	connect(pNewConnectionWidget, SIGNAL( titleChange(IRCDockTabContents*) ), SLOT( titleChange(IRCDockTabContents*) ) );
 
 	pNewConnectionWidget->setIRCAdapter(pIRCAdapter);
 	tabWidget->addTab(pNewConnectionWidget, pIRCAdapter->title());
+}
+
+void IRCDock::chatWindowCloseRequestSlot(IRCDockTabContents* pCaller)
+{
+	int tabIndex = tabWidget->indexOf(pCaller);
+	if (tabIndex >= 0)
+	{
+		tabCloseRequestedSlot(tabIndex);
+	}
 }
 
 void IRCDock::setupToolbar()
@@ -57,6 +69,14 @@ void IRCDock::setupToolbar()
 
 	verticalLayout->insertWidget(0, pToolBar);
 	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( toolBarAction(QAction*) ) );
+}
+
+void IRCDock::tabCloseRequestedSlot(int index)
+{
+	QWidget* pPageWidget = tabWidget->widget(index);
+	tabWidget->removeTab(index);
+	
+	delete pPageWidget;
 }
 
 void IRCDock::titleChange(IRCDockTabContents* pCaller)

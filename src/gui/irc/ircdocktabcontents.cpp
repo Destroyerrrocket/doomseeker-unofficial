@@ -28,12 +28,14 @@
 #include "irc/ircnetworkadapter.h"
 #include "irc/ircuserinfo.h"
 #include "irc/ircuserlist.h"
+#include "log.h"
 #include <QStandardItemModel>
 
 IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
-: QWidget(pParentIRCDock)
 {
 	setupUi(this);
+	
+	this->bIsDestroying = false;
 
 	this->pParentIRCDock = pParentIRCDock;
 	this->lvUserList->setModel(new QStandardItemModel(this->lvUserList));
@@ -44,6 +46,31 @@ IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 
 	connect(btnSend, SIGNAL( clicked() ), this, SLOT( sendMessage() ));
 	connect(leCommandLine, SIGNAL( returnPressed() ), this, SLOT( sendMessage() ));
+}
+
+IRCDockTabContents::~IRCDockTabContents()
+{
+	this->bIsDestroying = true;
+
+	if (pIrcAdapter != NULL)
+	{
+		disconnect(pIrcAdapter, 0, 0, 0);
+		IRCAdapterBase* pTmpAdapter = pIrcAdapter;
+		pIrcAdapter = NULL;
+		delete pTmpAdapter;	
+	}
+}
+
+void IRCDockTabContents::adapterTerminating()
+{
+	if (pIrcAdapter != NULL && !this->bIsDestroying)
+	{
+		// Disconnect the adapter from this tab.
+		disconnect(pIrcAdapter, 0, 0, 0);
+		pIrcAdapter = NULL;
+		
+		emit chatWindowCloseRequest(this);
+	}
 }
 
 QStandardItem* IRCDockTabContents::findUserListItem(const QString& nickname)
@@ -113,6 +140,12 @@ void IRCDockTabContents::nameRemoved(const IRCUserInfo& userInfo)
 	}
 }
 
+void IRCDockTabContents::nameUpdated(const IRCUserInfo& userInfo)
+{
+	nameRemoved(userInfo);
+	nameAdded(userInfo);
+}
+
 void IRCDockTabContents::newChatWindowIsOpened(IRCChatAdapter* pAdapter)
 {
 	this->lvUserList->setModel(new QStandardItemModel(this));
@@ -151,6 +184,7 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 	connect(pIrcAdapter, SIGNAL( error(const QString&) ), SLOT( receiveError(const QString& ) ));
 	connect(pIrcAdapter, SIGNAL( message(const QString&) ), SLOT( receiveMessage(const QString& ) ));
 	connect(pIrcAdapter, SIGNAL( messageColored(const QString&, const QString&) ), SLOT( receiveMessageColored(const QString&, const QString&) ));
+	connect(pIrcAdapter, SIGNAL( terminating() ), SLOT( adapterTerminating() ) );
 	connect(pIrcAdapter, SIGNAL( titleChange() ), SLOT( adapterTitleChange() ) );
 
 	switch (pIrcAdapter->adapterType())
@@ -168,6 +202,7 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 			connect(pChannelAdapter, SIGNAL( nameAdded(const IRCUserInfo&) ), SLOT( nameAdded(const IRCUserInfo&) ) );
 			connect(pChannelAdapter, SIGNAL( nameListUpdated(const IRCUserList&) ), SLOT( nameListUpdated(const IRCUserList&) ) );
 			connect(pChannelAdapter, SIGNAL( nameRemoved(const IRCUserInfo&) ), SLOT( nameRemoved(const IRCUserInfo&) ) );
+			connect(pChannelAdapter, SIGNAL( nameUpdated(const IRCUserInfo&) ), SLOT( nameUpdated(const IRCUserInfo&) ) );
 
 			this->lvUserList->setVisible(true);
 			break;

@@ -33,6 +33,11 @@ IRCChannelAdapter::IRCChannelAdapter(IRCNetworkAdapter* pNetwork, const QString&
 
 IRCChannelAdapter::~IRCChannelAdapter()
 {
+	if (this->pNetwork != NULL)
+	{
+		sendMessage("/part " + this->recipientName + " " + tr("Doomseeker End Of Line"));
+	}
+
 	delete users;
 }
 
@@ -153,7 +158,6 @@ void IRCChannelAdapter::userLeaves(const QString& nickname, const QString& farew
 void IRCChannelAdapter::userModeChanges(const QString& nickname, unsigned flagsAdded, unsigned flagsRemoved)
 {
 	const IRCUserInfo* pUserInfo = this->users->user(nickname);
-	IRCUserInfo oldInfoCopy = *pUserInfo;
 	if (pUserInfo != NULL)
 	{
 		unsigned flags = pUserInfo->flags();
@@ -162,7 +166,6 @@ void IRCChannelAdapter::userModeChanges(const QString& nickname, unsigned flagsA
 	
 		this->users->setUserFlags(nickname, flags);
 		
-		emit nameRemoved(oldInfoCopy);
-		emit nameAdded(this->users->userCopy(nickname));
+		emit nameUpdated(*pUserInfo);
 	}
 }

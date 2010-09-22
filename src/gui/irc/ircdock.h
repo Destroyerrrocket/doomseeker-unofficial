@@ -40,7 +40,7 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 		IRCDock(QWidget* parent = NULL);
 
 		void				addIRCAdapter(IRCAdapterBase* pIRCAdapter);
-
+		
 	protected:
 		QAction*			toolBarConnect;
 		QAction*			toolBarDisconnect;
@@ -48,8 +48,11 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 		void				setupToolbar();
 
 	protected slots:
+		void				chatWindowCloseRequestSlot(IRCDockTabContents* pCaller);
+		void				tabCloseRequestedSlot(int index);
 		void				titleChange(IRCDockTabContents* pCaller);
 		void				toolBarAction(QAction* pAction);
+		
 
 };
 
