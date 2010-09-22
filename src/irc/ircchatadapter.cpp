@@ -114,7 +114,7 @@ void IRCChatAdapter::sendChatMessage(const QString& message)
 	// Here we will split too long messages to make sure they don't
 	// exceed the 512 character limit as stated in RFC 1459.
 	
-	QString ircCall = QString("/PRIVMSG %1 :").arg(recipientName);
+	QString ircCall = QString("/PRIVMSG %1 ").arg(recipientName);
 	int maxLength = IRCClient::MAX_MESSAGE_LENGTH - ircCall.length();
 	QStringList wordLines = message.split("\n");
 	

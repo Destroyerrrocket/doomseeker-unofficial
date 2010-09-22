@@ -85,6 +85,17 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::parse(QString input, Q
 		QString reason = inputSplit.join(" ");
 		output = QString("%1 %2 %3 :%4").arg(message, channel, user, reason);
 	}
+	else if (message == "PRIVMSG")
+	{
+		if (inputSplit.length() < 2)
+		{
+			return ErrorInputInsufficientParameters;
+		}
+		
+		QString recipient = inputSplit.takeFirst();
+		QString content = inputSplit.join(" ");
+		output = QString("%1 %2 :%3").arg(message, recipient, content);
+	}
 	else
 	{
 		output = QString("%1 %2").arg(message, inputSplit.join(" "));
