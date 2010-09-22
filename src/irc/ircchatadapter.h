@@ -72,8 +72,13 @@ class IRCChatAdapter : public IRCAdapterBase
 		 */
 		virtual void			emitChatMessage(const QString& sender, const QString& content);
 
-		const QString&			recipient() const { return this->recipientName; }
+		IRCNetworkAdapter*		network()
+		{
+			return this->pNetwork;
+		}
 
+		const QString&			recipient() const { return this->recipientName; }
+		
 		/**
 		 *	@brief Sets IRCNetworkAdapter for this chat window. This adapter
 		 *	is not detached from the old network.

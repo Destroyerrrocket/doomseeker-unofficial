@@ -21,6 +21,9 @@
        <property name="font">
         <font>
          <family>Courier New</family>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
         </font>
        </property>
       </widget>
@@ -83,6 +86,8 @@
       <font>
        <family>Courier New</family>
        <pointsize>8</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
       </font>
      </property>
      <property name="editTriggers">

@@ -25,6 +25,7 @@
 #include <QChar>
 
 QString IRCGlobal::COLOR_CHANNEL_ACTION = "#008000";
+QString IRCGlobal::COLOR_ERROR			= "#ff0000";
 QString IRCGlobal::COLOR_NETWORK_ACTION = "#1119FF";
 
 bool IRCGlobal::isChannelDenotingCharacter(char character)

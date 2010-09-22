@@ -23,6 +23,7 @@
 #include "ircdock.h"
 #include "gui/irc/ircdocktabcontents.h"
 #include "gui/irc/ircnetworkselectionbox.h"
+#include "irc/ircglobalmessages.h"
 #include "irc/ircnetworkadapter.h"
 
 #include <QToolBar>
@@ -33,7 +34,16 @@ IRCDock::IRCDock(QWidget* parent)
 	setupUi(this);
 	setupToolbar();
 	
-	connect(tabWidget, SIGNAL( tabCloseRequested(int) ), SLOT( tabCloseRequestedSlot(int) ));
+	IRCGlobalMessages& ircGlobalMessages = IRCGlobalMessages::instance();
+	
+	connect(tabWidget, SIGNAL( tabCloseRequested(int) ), 
+		SLOT( tabCloseRequestedSlot(int) ));
+	
+	connect(&ircGlobalMessages, SIGNAL( message(const QString&, IRCAdapterBase*) ), 
+		SLOT( globalMessage(const QString&, IRCAdapterBase*) ) );
+	
+	connect(&ircGlobalMessages, SIGNAL( messageColored(const QString&, const QString&, IRCAdapterBase*) ), 
+		SLOT( globalMessageColored(const QString&, const QString&, IRCAdapterBase*) ) );
 }
 
 void IRCDock::addIRCAdapter(IRCAdapterBase* pIRCAdapter)
@@ -54,6 +64,40 @@ void IRCDock::chatWindowCloseRequestSlot(IRCDockTabContents* pCaller)
 	{
 		tabCloseRequestedSlot(tabIndex);
 	}
+}
+
+void IRCDock::globalMessage(const QString& message, IRCAdapterBase* pMessageSender)
+{
+	IRCDockTabContents* pWidget = (IRCDockTabContents*)tabWidget->currentWidget();
+	if (pWidget != NULL)
+	{
+		QString prefixedMessage = prefixMessage(pWidget->ircAdapter(), pMessageSender, message);
+		pWidget->receiveMessage(prefixedMessage);
+	}
+}
+
+void IRCDock::globalMessageColored(const QString& message, const QString& htmlColor, IRCAdapterBase* pMessageSender)
+{
+	IRCDockTabContents* pWidget =  (IRCDockTabContents*)tabWidget->currentWidget();
+	if (pWidget != NULL)
+	{
+		QString prefixedMessage = prefixMessage(pWidget->ircAdapter(), pMessageSender, message);
+		pWidget->receiveMessageColored(prefixedMessage, htmlColor);
+	}
+}
+
+QString IRCDock::prefixMessage(IRCAdapterBase* pTargetChatWindow, IRCAdapterBase* pMessageSender, const QString& message)
+{
+	if (pMessageSender != NULL)
+	{
+		IRCNetworkAdapter* pTargetNetwork = pTargetChatWindow->network();
+		if (pTargetNetwork !=  pMessageSender)
+		{
+			return QString("%1: %2").arg(pMessageSender->title(), message);
+		}
+	}
+	
+	return message;
 }
 
 void IRCDock::setupToolbar()

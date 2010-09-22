@@ -6,6 +6,7 @@
 #include "ircnetworkadapter.h"
 #include "irc/ircchanneladapter.h"
 #include "irc/ircglobal.h"
+#include "irc/ircglobalmessages.h"
 #include "irc/ircprivadapter.h"
 #include "irc/ircrequestparser.h"
 #include "irc/ircuserinfo.h"
@@ -35,6 +36,9 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 
 	QObject::connect(&ircResponseParser, SIGNAL( namesListEndReceived(const QString&) ), 
 		this, SLOT( namesListEndReceived(const QString&) ) );
+		
+	QObject::connect(&ircResponseParser, SIGNAL( noSuchNickname(const QString&) ), 
+		this, SLOT( noSuchNickname(const QString&) ) );
 
 	QObject::connect(&ircResponseParser, SIGNAL ( parseError(const QString&) ), 
 		this, SLOT( parseError(const QString&) ) );
@@ -276,6 +280,11 @@ void IRCNetworkAdapter::namesListEndReceived(const QString& channel)
 	pAdapter->emitCachedNameListUpdated();
 }
 
+void IRCNetworkAdapter::noSuchNickname(const QString& nickname)
+{
+	IRCGlobalMessages::instance().emitError(tr("User %1 is not logged in.").arg(nickname), this);
+}
+
 void IRCNetworkAdapter::parseError(const QString& error)
 {
 	emit this->error(tr("IRC Parse error: %1").arg(error));
@@ -338,10 +347,6 @@ void IRCNetworkAdapter::userJoinsChannel(const QString& channel, const QString& 
 		{
 			pChannel->userJoins(nickname, fullSignature);
 		}
-	}
-	else
-	{
-		emit error(tr("User %1 joins channel %2, but we are not on this channel!").arg(nickname, channel));
 	}
 }
 

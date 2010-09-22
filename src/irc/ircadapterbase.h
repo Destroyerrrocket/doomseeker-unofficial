@@ -25,6 +25,8 @@
 
 #include <QObject>
 
+class IRCNetworkAdapter;
+
 /**
  *	@brief Provides an unified communication interface between a client and
  *	IRC network entities.
@@ -55,7 +57,7 @@ class IRCAdapterBase : public QObject
 		/**
 		 *	@brief Gets adapter type for this adapter instance.
 		 */
-		virtual AdapterType adapterType() const = 0;
+		virtual AdapterType			adapterType() const = 0;
 
 		/**
 		 *	@brief Implement to handle and send a message to the IRC network
@@ -71,47 +73,56 @@ class IRCAdapterBase : public QObject
 		 *		Origin of this message. Can be used to determine where the error
 		 *		and message signals should be passed.
 		 */	
-		virtual void		doSendMessage(const QString& message, IRCAdapterBase* pOrigin) = 0;
+		virtual void				doSendMessage(const QString& message, IRCAdapterBase* pOrigin) = 0;
 		
-		void				emitError(const QString& strError)
+		void						emitError(const QString& strError)
 		{
 			emit error(strError);
 		}
 		
-		void				emitMessage(const QString& strMessage)
+		void						emitMessage(const QString& strMessage)
 		{
 			emit message(strMessage);
 		}
 
-		void				emitMessageColored(const QString& strMessage, const QString& htmlColor)
+		void						emitMessageColored(const QString& strMessage, const QString& htmlColor)
 		{
 			emit messageColored(strMessage, htmlColor);
 		}
+		
+		/**
+		 *	@brief The idea of the adapter system is that each adapter
+		 *	is either a network or is a child of a network.
+		 *
+		 *	This method is supposed to return a pointer to a network
+		 *	to which this adapter belongs.
+		 */
+		virtual IRCNetworkAdapter*	network() = 0;
 
 		/**
 		 *	@brief Gets title for this adapter.
 		 */
-		virtual QString		title() const = 0;
+		virtual QString				title() const = 0;
 
 	public slots:
-		void				sendMessage(const QString& message)
+		void						sendMessage(const QString& message)
 		{
 			doSendMessage(message, NULL);
 		}
 	
 	signals:
-		void				error(const QString& error);
-		void				message(const QString& message);
-		void				messageColored(const QString& message, const QString& htmlColor);
+		void						error(const QString& error);
+		void						message(const QString& message);
+		void						messageColored(const QString& message, const QString& htmlColor);
 		
-		void				terminating();
+		void						terminating();
 
 		/**
 		 *	@brief Can be called when the variable returned by title()
 		 *	might have changed and the application should be notified of this
 		 *	fact.
 		 */
-		void				titleChange();
+		void						titleChange();
 };
 
 #endif

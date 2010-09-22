@@ -52,6 +52,10 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 *	memory leaks.
 		 */
 		void				setIRCAdapter(IRCAdapterBase* pAdapter);
+		
+	public slots:
+		void				receiveMessage(const QString& message);
+		void				receiveMessageColored(const QString& message, const QString& htmlColor);
 
 	signals:
 		/**
@@ -83,8 +87,6 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		void				nameUpdated(const IRCUserInfo& userInfo);
 		void				newChatWindowIsOpened(IRCChatAdapter* pAdapter);
 		void				receiveError(const QString& error);
-		void				receiveMessage(const QString& message);
-		void				receiveMessageColored(const QString& message, const QString& htmlColor);
 		void				sendMessage();
 
 	protected:

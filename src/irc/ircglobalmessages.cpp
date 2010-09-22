@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// ircglobal.h
+// ircglobalmessages.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,27 +20,6 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __IRCGLOBAL_H__
-#define __IRCGLOBAL_H__
+#include "ircglobalmessages.h"
 
-#include <QString>
-
-class IRCGlobal
-{
-	public:
-		static QString COLOR_CHANNEL_ACTION;
-		static QString COLOR_ERROR;
-		static QString COLOR_NETWORK_ACTION;
-
-		static bool isChannelDenotingCharacter(char character);
-		static bool isChannelName(const QString& name);
-
-		/**
-		 *	@brief RFC 1459 compliant toLower() method.
-		 *
-		 *	This will treat {}| characters as lower-case of []\.
-		 */
-		static QString toIrcLower(const QString& str);
-};
-
-#endif
+IRCGlobalMessages* IRCGlobalMessages::pInstance = NULL;

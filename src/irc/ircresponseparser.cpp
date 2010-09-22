@@ -88,8 +88,19 @@ void IRCResponseParser::parseMessage(const QString& prefix, const QString& sende
 {
 	static const QString RPL_NAMREPLY = "353";
 	static const QString RPL_ENDOFNAMES = "366";
+	static const QString ERR_NOSUCHNICK = "401";
 
-	if (type == "PING")
+	if (type == ERR_NOSUCHNICK)
+	{
+		// Drop the first param.
+		params.takeFirst();
+		
+		// This is the real nickname.
+		QString nickname = params.takeFirst();
+		
+		emit noSuchNickname(nickname);
+	}
+	else if (type == "PING")
 	{
 		QString pongToWhom = params[0];
 		

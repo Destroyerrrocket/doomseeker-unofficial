@@ -41,13 +41,20 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 
 		void				addIRCAdapter(IRCAdapterBase* pIRCAdapter);
 		
-	protected:
+	private:
 		QAction*			toolBarConnect;
 
+		/**
+		 *	@brief This will prefix message with network name if message
+		 *	comes from a different network.
+		 */
+		QString				prefixMessage(IRCAdapterBase* pTargetChatWindow, IRCAdapterBase* pMessageSender, const QString& message);
 		void				setupToolbar();
 
-	protected slots:
+	private slots:
 		void				chatWindowCloseRequestSlot(IRCDockTabContents* pCaller);
+		void				globalMessage(const QString& message, IRCAdapterBase* pMessageSender);
+		void				globalMessageColored(const QString& message, const QString& htmlColor, IRCAdapterBase* pMessageSender);
 		void				tabCloseRequestedSlot(int index);
 		void				titleChange(IRCDockTabContents* pCaller);
 		void				toolBarAction(QAction* pAction);

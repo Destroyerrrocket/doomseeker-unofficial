@@ -43,6 +43,7 @@ class IRCResponseParser : public QObject
 		void			modeInfo(const QString& channel, const QString& whoSetThis, const QString& modeParams);
 		void			namesListReceived(const QString& channel, const QStringList& names);
 		void			namesListEndReceived(const QString& channel);
+		void			noSuchNickname(const QString& nickname);
 		void			parseError(const QString& error);
 		void			privMsgReceived(const QString& recipient, const QString& sender, const QString& content);
 		void			sendPongMessage(const QString& sendWhere);
