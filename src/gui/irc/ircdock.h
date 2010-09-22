@@ -43,7 +43,6 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 		
 	protected:
 		QAction*			toolBarConnect;
-		QAction*			toolBarDisconnect;
 
 		void				setupToolbar();
 

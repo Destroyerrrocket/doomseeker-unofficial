@@ -62,10 +62,8 @@ void IRCDock::setupToolbar()
 	pToolBar->setMovable(false);
 
 	toolBarConnect = new QAction(QIcon(":/icons/network-connect-3.png"), tr("Connect"), pToolBar);
-	toolBarDisconnect = new QAction(QIcon(":/icons/network-disconnect-3.png"), tr("Disconnect"), pToolBar);
 
 	pToolBar->addAction(toolBarConnect);
-	pToolBar->addAction(toolBarDisconnect);
 
 	verticalLayout->insertWidget(0, pToolBar);
 	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( toolBarAction(QAction*) ) );
