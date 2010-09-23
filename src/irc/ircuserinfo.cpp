@@ -23,11 +23,6 @@
 #include "ircuserinfo.h"
 #include "irc/ircglobal.h"
 
-bool xor(bool b1, bool b2)
-{
-	return ((b1 && !b2) || (!b1 && b2));
-}
-
 IRCUserInfo::IRCUserInfo(const QString& nickname)
 {
 	this->userFlags = 0;
@@ -118,12 +113,12 @@ bool IRCUserInfo::operator==(const IRCUserInfo& otherUser) const
 
 bool IRCUserInfo::operator<=(const IRCUserInfo& otherUser) const
 {
-	if (xor(this->isOp(), otherUser.isOp()))
+	if (this->isOp() ^ otherUser.isOp())
 	{
 		return this->isOp();
 	}
 	// Op overrides voice.
-	else if (xor(this->isVoiced(), otherUser.isVoiced()))
+	else if (this->isVoiced() ^ otherUser.isVoiced())
 	{
 		return this->isVoiced();
 	}
