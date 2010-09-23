@@ -55,6 +55,8 @@ endif (MSVC)
 add_definitions("-DINSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
 
 qt4_wrap_ui(doomseekerUI
+	gui/configuration/irc/cfgircdefinenetworkdialog.ui
+	gui/configuration/irc/cfgircnetworks.ui
 	gui/configuration/cfgappearance.ui
 	gui/configuration/cfgcustomservers.ui
 	gui/configuration/cfgfilepaths.ui
@@ -84,6 +86,8 @@ qt4_wrap_ui(doomseekerUI
 )
 
 set(DOOMSEEKER_QT_FILES
+	gui/configuration/irc/cfgircdefinenetworkdialog.h
+	gui/configuration/irc/cfgircnetworks.h
 	gui/configuration/cfgappearance.h
 	gui/configuration/cfgcustomservers.h	
 	gui/configuration/cfgfilepaths.h
@@ -148,6 +152,8 @@ qt4_add_resources(doomseekerResources
 )
 
 set(SOURCE_FILES
+	gui/configuration/irc/cfgircdefinenetworkdialog.cpp
+	gui/configuration/irc/cfgircnetworks.cpp
 	gui/configuration/cfgappearance.cpp
 	gui/configuration/cfgcustomservers.cpp	
 	gui/configuration/cfgfilepaths.cpp
@@ -192,6 +198,7 @@ set(SOURCE_FILES
 	irc/ircglobal.cpp
 	irc/ircglobalmessages.cpp
 	irc/ircnetworkadapter.cpp
+	irc/ircnetworkentity.cpp
 	irc/ircprivadapter.cpp
 	irc/ircrequestparser.cpp
 	irc/ircresponseparser.cpp
@@ -241,6 +248,7 @@ set(HEADER_FILES
 	gui/models/serverlistrowhandler.h
 	irc/ircglobal.h
 	irc/ircnetworkconnectioninfo.h
+	irc/ircnetworkentity.h
 	irc/ircrequestparser.h	
 	irc/ircuserinfo.h
 	irc/ircuserlist.h
