@@ -20,9 +20,10 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-
+#include "gui/configuration/doomseekerconfigurationdialog.h"
+#include "gui/helpers/playersdiagram.h"
+#include "gui/widgets/serversstatuswidget.h"
 #include "gui/aboutDlg.h"
-#include "gui/configureDlg.h"
 #include "gui/copytextdlg.h"
 #include "gui/createserver.h"
 #include "gui/dockBuddiesList.h"
@@ -30,8 +31,6 @@
 #include "gui/mainwindow.h"
 #include "gui/passwordDlg.h"
 #include "gui/wadseekerinterface.h"
-#include "gui/helpers/playersdiagram.h"
-#include "gui/widgets/serversstatuswidget.h"
 #include "serverapi/gamerunner.h"
 #include "serverapi/messages.h"
 #include "customservers.h"
@@ -769,13 +768,14 @@ void MainWindow::menuLog()
 
 void MainWindow::menuOptionsConfigure()
 {
-	ConfigureDlg configDialog(this);
+	DoomseekerConfigurationDialog configDialog(this);
+	configDialog.initOptionsList();
 
 	for(unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
 		const PluginInfo* pPluginInfo = (*Main::enginePlugins)[i]->info;
-		ConfigurationBoxInfo* pConfigurationBoxInfo = pPluginInfo->pInterface->configuration(Main::ini->createSection(QString(pPluginInfo->name).replace(' ', "")), &configDialog);
-		configDialog.addEngineConfiguration(pConfigurationBoxInfo);
+		ConfigurationBaseBox* pConfigurationBox = pPluginInfo->pInterface->configuration(Main::ini->createSection(QString(pPluginInfo->name).replace(' ', "")), &configDialog);
+		configDialog.addEngineConfiguration(pConfigurationBox);
 	}
 
 	// Stop the auto refresh timer during configuration.

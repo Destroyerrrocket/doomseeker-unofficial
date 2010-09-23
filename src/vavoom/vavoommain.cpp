@@ -27,7 +27,7 @@
 #include "main.h"
 #include "masterclient.h"
 #include "strings.h"
-#include "gui/engineConfigBase.h"
+#include "gui/configuration/engineconfigurationbasebox.h"
 #include "sdeapi/pluginloader.hpp"
 
 #include "vavoom/vavoommain.h"
@@ -50,9 +50,9 @@ class PLUGIN_EXPORT VavoomEnginePlugin : public EnginePlugin
 		bool							allowsMOTD() const { return true; }
 
 
-		ConfigurationBoxInfo*			configuration(IniSection &cfg, QWidget *parent) const
+		ConfigurationBaseBox*			configuration(IniSection &cfg, QWidget *parent) const
 		{
-			return BaseEngineConfigBox::createStructure(VavoomMain::get(), cfg, parent);
+			return new EngineConfigurationBaseBox(VavoomMain::get(), cfg, parent);
 		}
 
 		unsigned short					defaultServerPort() const { return 26000; }

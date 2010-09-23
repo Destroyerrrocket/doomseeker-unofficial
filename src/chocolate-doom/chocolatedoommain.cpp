@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "main.h"
-#include "gui/engineConfigBase.h"
+#include "gui/configuration/engineconfigurationbasebox.h"
 #include "sdeapi/pluginloader.hpp"
 
 #include "chocolate-doom/chocolatedoommain.h"
@@ -44,9 +44,9 @@ class PLUGIN_EXPORT ChocolateDoomEnginePlugin : public EnginePlugin
 		bool							allowsRConPassword() const { return false; }
 		bool							allowsMOTD() const { return false; }
 
-		ConfigurationBoxInfo*			configuration(IniSection &cfg, QWidget *parent) const
+		ConfigurationBaseBox*			configuration(IniSection &cfg, QWidget *parent) const
 		{
-			return BaseEngineConfigBox::createStructure(ChocolateDoomMain::get(), cfg, parent);
+			return new EngineConfigurationBaseBox(ChocolateDoomMain::get(), cfg, parent);
 		}
 
 		unsigned short					defaultServerPort() const { return 2342; }

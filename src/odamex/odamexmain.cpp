@@ -27,7 +27,7 @@
 #include "main.h"
 #include "masterclient.h"
 #include "strings.h"
-#include "gui/engineConfigBase.h"
+#include "gui/configuration/engineconfigurationbasebox.h"
 #include "sdeapi/pluginloader.hpp"
 
 #include "odamex/odamexgameinfo.h"
@@ -53,9 +53,9 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 		bool							allowsRConPassword() const { return true; }
 		bool							allowsMOTD() const { return true; }
 
-		ConfigurationBoxInfo*			configuration(IniSection &cfg, QWidget *parent) const
+		ConfigurationBaseBox*			configuration(IniSection &cfg, QWidget *parent) const
 		{
-			return BaseEngineConfigBox::createStructure(OdamexMain::get(), cfg, parent);
+			return new EngineConfigurationBaseBox(OdamexMain::get(), cfg, parent);
 		}
 
 		unsigned short					defaultServerPort() const { return 10666; }

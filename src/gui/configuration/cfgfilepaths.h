@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// engineSkulltagConfig.h
+// cfgfilepaths.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -21,31 +21,32 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 
-#ifndef __ENGINE_SKULLTAG_CONFIG_H_
-#define __ENGINE_SKULLTAG_CONFIG_H_
+#ifndef __CFG_FILE_PATHS_H_
+#define __CFG_FILE_PATHS_H_
 
-#include "gui/configuration/engineconfigurationbasebox.h"
+#include "gui/configuration/configurationbasebox.h"
+#include "ui_cfgfilepaths.h"
 
-class EngineSkulltagConfigBox : public EngineConfigurationBaseBox
+class CFGFilePaths : public ConfigurationBaseBox, private Ui::CFGFilePaths
 {
 	Q_OBJECT
-
+	
 	public:
-		EngineSkulltagConfigBox(const PluginInfo* plugin, IniSection& cfg, QWidget* parent = NULL);
+		CFGFilePaths(IniSection&, QWidget* parent = 0);
 
-		void readSettings();
-
-
-	protected slots:
-		void btnBrowseTestingPathClicked();
+		void 							readSettings();	
 
 	protected:
-		
-		void saveSettings();
+		void 							addPath(const QString& strPath);
+		QIcon							icon() const { return QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon); }
+		bool							isPathAlreadyDefined(const QString& path);
+		QString							name() const { return tr("File paths"); }		
+		void 							saveSettings();
 
-		QGroupBox	*groupTesting;
-		QLineEdit	*leTestingPath;
-		QPushButton	*btnBrowseTestingPath;
+	protected slots:
+		void 							btnAddWadPath_Click();
+		void 							btnRemoveWadPath_Click();
+
 };
 
 #endif

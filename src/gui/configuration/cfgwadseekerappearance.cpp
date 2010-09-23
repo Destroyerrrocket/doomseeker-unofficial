@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// engineSkulltagConfig.h
+// cfgwadseekerappearance.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,34 +18,26 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "cfgwadseekerappearance.h"
 
-#ifndef __ENGINE_SKULLTAG_CONFIG_H_
-#define __ENGINE_SKULLTAG_CONFIG_H_
-
-#include "gui/configuration/engineconfigurationbasebox.h"
-
-class EngineSkulltagConfigBox : public EngineConfigurationBaseBox
+CFGWadseekerAppearance::CFGWadseekerAppearance(IniSection& cfg, QWidget* parent) 
+: ConfigurationBaseBox(cfg, parent)
 {
-	Q_OBJECT
+	setupUi(this);
+}
 
-	public:
-		EngineSkulltagConfigBox(const PluginInfo* plugin, IniSection& cfg, QWidget* parent = NULL);
+void CFGWadseekerAppearance::readSettings()
+{
+	btnNoticeMessageColor->setColorHtml(config["ColorMessageNotice"]);
+	btnErrorMessageColor->setColorHtml(config["ColorMessageError"]);
+	btnCriticalErrorMessageColor->setColorHtml(config["ColorMessageCriticalError"]);
+}
 
-		void readSettings();
-
-
-	protected slots:
-		void btnBrowseTestingPathClicked();
-
-	protected:
-		
-		void saveSettings();
-
-		QGroupBox	*groupTesting;
-		QLineEdit	*leTestingPath;
-		QPushButton	*btnBrowseTestingPath;
-};
-
-#endif
+void CFGWadseekerAppearance::saveSettings()
+{
+	config["ColorMessageNotice"] = btnNoticeMessageColor->colorHtml();
+	config["ColorMessageError"] = btnErrorMessageColor->colorHtml();
+	config["ColorMessageCriticalError"] = btnCriticalErrorMessageColor->colorHtml();
+}

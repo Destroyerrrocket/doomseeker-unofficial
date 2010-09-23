@@ -55,35 +55,48 @@ endif (MSVC)
 add_definitions("-DINSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
 
 qt4_wrap_ui(doomseekerUI
+	gui/configuration/cfgappearance.ui
+	gui/configuration/cfgcustomservers.ui
+	gui/configuration/cfgfilepaths.ui
+	gui/configuration/cfgip2country.ui
+	gui/configuration/cfgquery.ui
+	gui/configuration/configurationdialog.ui
+	gui/configuration/cfgwadseekerappearance.ui
+	gui/configuration/cfgwadseekergeneral.ui
+	gui/configuration/cfgwadseekeridgames.ui
+	gui/configuration/cfgwadseekersites.ui
+	gui/configuration/engineconfigurationbasebox.ui
 	gui/irc/ircdock.ui
 	gui/irc/ircdocktabcontents.ui
 	gui/irc/ircnetworkselectionbox.ui
 	gui/widgets/serverconsole.ui
 	gui/aboutDlg.ui
 	gui/addBuddyDlg.ui
-	gui/cfgAppearance.ui
-	gui/cfgcustomservers.ui
-	gui/cfgFilePaths.ui
-	gui/cfgip2c.ui
-	gui/cfgQuery.ui
-	gui/configureDlg.ui
 	gui/copytextdlg.ui
 	gui/createserver.ui
-	gui/engineConfigBase.ui
 	gui/dockBuddiesList.ui
 	gui/ip2cupdatebox.ui	
 	gui/logdock.ui
 	gui/mainwindow.ui
 	gui/passwordDlg.ui
 	gui/remoteconsole.ui
-	gui/wadseekerconfigappearance.ui
-	gui/wadseekerconfiggeneral.ui
-	gui/wadseekerconfigidgames.ui
-	gui/wadseekerconfigsites.ui
 	gui/wadseekerinterface.ui
 )
 
 set(DOOMSEEKER_QT_FILES
+	gui/configuration/cfgappearance.h
+	gui/configuration/cfgcustomservers.h	
+	gui/configuration/cfgfilepaths.h
+	gui/configuration/cfgip2country.h
+	gui/configuration/cfgquery.h
+	gui/configuration/cfgwadseekerappearance.h
+	gui/configuration/cfgwadseekergeneral.h
+	gui/configuration/cfgwadseekeridgames.h
+	gui/configuration/cfgwadseekersites.h	
+	gui/configuration/configurationbasebox.h
+	gui/configuration/configurationdialog.h	
+	gui/configuration/doomseekerconfigurationdialog.h
+	gui/configuration/engineconfigurationbasebox.h
 	gui/irc/ircdock.h
 	gui/irc/ircdocktabcontents.h
 	gui/irc/ircnetworkselectionbox.h
@@ -95,17 +108,9 @@ set(DOOMSEEKER_QT_FILES
 	gui/widgets/serverlistview.h
 	gui/widgets/serversstatuswidget.h	
 	gui/aboutDlg.h
-	gui/cfgAppearance.h
-	gui/cfgcustomservers.h	
-	gui/cfgFilePaths.h
-	gui/cfgip2c.h
-	gui/cfgQuery.h
-	gui/configBase.h
-	gui/configureDlg.h
 	gui/copytextdlg.h
 	gui/createserver.h
 	gui/dockBuddiesList.h
-	gui/engineConfigBase.h
 	gui/ip2cupdatebox.h
 	gui/logdock.h
 	gui/mainwindow.h
@@ -113,10 +118,6 @@ set(DOOMSEEKER_QT_FILES
 	gui/remoteconsole.h
 	gui/serverlist.h
 	gui/standardserverconsole.h
-	gui/wadseekerconfigappearance.h
-	gui/wadseekerconfiggeneral.h
-	gui/wadseekerconfigidgames.h
-	gui/wadseekerconfigsites.h
 	gui/wadseekerinterface.h
 	irc/ircadapterbase.h
 	irc/ircchanneladapter.h
@@ -147,6 +148,18 @@ qt4_add_resources(doomseekerResources
 )
 
 set(SOURCE_FILES
+	gui/configuration/cfgappearance.cpp
+	gui/configuration/cfgcustomservers.cpp	
+	gui/configuration/cfgfilepaths.cpp
+	gui/configuration/cfgip2country.cpp
+	gui/configuration/cfgquery.cpp
+	gui/configuration/cfgwadseekerappearance.cpp	
+	gui/configuration/cfgwadseekergeneral.cpp
+	gui/configuration/cfgwadseekeridgames.cpp
+	gui/configuration/cfgwadseekersites.cpp	
+	gui/configuration/configurationdialog.cpp
+	gui/configuration/doomseekerconfigurationdialog.cpp
+	gui/configuration/engineconfigurationbasebox.cpp
 	gui/helpers/playersdiagram.cpp
 	gui/irc/ircdock.cpp	
 	gui/irc/ircdocktabcontents.cpp
@@ -161,17 +174,10 @@ set(SOURCE_FILES
 	gui/widgets/serverlistview.cpp
 	gui/widgets/serversstatuswidget.cpp
 	gui/aboutDlg.cpp
-	gui/cfgAppearance.cpp
-	gui/cfgcustomservers.cpp	
-	gui/cfgFilePaths.cpp
-	gui/cfgip2c.cpp
-	gui/cfgQuery.cpp
 	gui/commonGUI.cpp
-	gui/configureDlg.cpp
 	gui/copytextdlg.cpp
 	gui/createserver.cpp
 	gui/dockBuddiesList.cpp
-	gui/engineConfigBase.cpp
 	gui/ip2cupdatebox.cpp
 	gui/logdock.cpp
 	gui/mainwindow.cpp
@@ -179,10 +185,6 @@ set(SOURCE_FILES
 	gui/remoteconsole.cpp
 	gui/serverlist.cpp
 	gui/standardserverconsole.cpp
-	gui/wadseekerconfigappearance.cpp	
-	gui/wadseekerconfiggeneral.cpp
-	gui/wadseekerconfigidgames.cpp
-	gui/wadseekerconfigsites.cpp
 	gui/wadseekerinterface.cpp
 	irc/ircchanneladapter.cpp
 	irc/ircchatadapter.cpp
@@ -265,6 +267,7 @@ set(HEADER_FILES
 	ini.h
 	main.h
 	pathfinder.h
+	qtmetapointer.h	
 	strings.h
 	version.h
 )

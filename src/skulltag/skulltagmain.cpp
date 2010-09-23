@@ -57,9 +57,9 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 		bool							allowsRConPassword() const { return true; }
 		bool							allowsMOTD() const { return true; }
 
-		ConfigurationBoxInfo *configuration(IniSection &cfg, QWidget *parent) const
+		ConfigurationBaseBox *configuration(IniSection &cfg, QWidget *parent) const
 		{
-			return EngineSkulltagConfigBox::createStructure(SkulltagMain::get(), cfg, parent);
+			return new EngineSkulltagConfigBox(SkulltagMain::get(), cfg, parent);
 		}
 
 		unsigned short					defaultServerPort() const { return 10666; }

@@ -48,9 +48,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #include "masterclient.h"
-#include "gui/configBase.h"
 
 class Binaries;
+class ConfigurationBaseBox;
+class IniSection;
 
 class MAIN_EXPORT EnginePlugin
 {
@@ -70,7 +71,7 @@ class MAIN_EXPORT EnginePlugin
 		/**
 		 *	@brief Engine's configuration widget.
 		 */
-		virtual ConfigurationBoxInfo*			configuration(IniSection &cfg, QWidget *parent) const=0;
+		virtual ConfigurationBaseBox*			configuration(IniSection& cfg, QWidget *parent) const=0;
 
 		/**
 		 *	@brief Default port on which servers for given engine are hosted.

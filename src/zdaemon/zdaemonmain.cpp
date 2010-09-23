@@ -27,7 +27,7 @@
 #include "main.h"
 #include "masterclient.h"
 #include "strings.h"
-#include "gui/engineConfigBase.h"
+#include "gui/configuration/engineconfigurationbasebox.h"
 #include "sdeapi/pluginloader.hpp"
 
 #include "zdaemon/zdaemongameinfo.h"
@@ -51,9 +51,9 @@ class PLUGIN_EXPORT ZDaemonEnginePlugin : public EnginePlugin
 		bool							allowsMOTD() const { return true; }
 
 
-		ConfigurationBoxInfo*			configuration(IniSection &cfg, QWidget *parent) const
+		ConfigurationBaseBox*			configuration(IniSection &cfg, QWidget *parent) const
 		{
-			return BaseEngineConfigBox::createStructure(ZDaemonMain::get(), cfg, parent);
+			return new EngineConfigurationBaseBox(ZDaemonMain::get(), cfg, parent);
 		}
 
 		unsigned short					defaultServerPort() const { return 10666; }

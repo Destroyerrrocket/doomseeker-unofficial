@@ -35,6 +35,7 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QObject>
+#include <QStandardItemModel>
 #include <QTimer>
 
 const QString CreateServerDlg::TEMP_SERVER_CONFIG_FILENAME = "/tmpserver.cfg";
