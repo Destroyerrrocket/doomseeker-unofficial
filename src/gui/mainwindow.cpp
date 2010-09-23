@@ -774,7 +774,14 @@ void MainWindow::menuOptionsConfigure()
 	for(unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
 		const PluginInfo* pPluginInfo = (*Main::enginePlugins)[i]->info;
-		ConfigurationBaseBox* pConfigurationBox = pPluginInfo->pInterface->configuration(Main::ini->createSection(QString(pPluginInfo->name).replace(' ', "")), &configDialog);
+		
+		// Retrieve INI Section for this plugin.
+		QString pluginName = pPluginInfo->name;
+		QString pluginNameWithoutSpaces = pluginName.replace(' ', "");
+		IniSection& configSection = Main::ini->createSection(pluginNameWithoutSpaces);
+		
+		// Create the config box.
+		ConfigurationBaseBox* pConfigurationBox = pPluginInfo->pInterface->configuration(configSection, &configDialog);
 		configDialog.addEngineConfiguration(pConfigurationBox);
 	}
 

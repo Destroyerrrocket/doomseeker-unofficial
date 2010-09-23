@@ -20,7 +20,6 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-
 #include "configurationdialog.h"
 #include "qtmetapointer.h"
 #include <Qt>
@@ -30,7 +29,8 @@
 #include <QTreeView>
 #include <QAbstractButton>
 
-ConfigurationDialog::ConfigurationDialog(QWidget* parent) : QDialog(parent)
+ConfigurationDialog::ConfigurationDialog(QWidget* parent) 
+: QDialog(parent)
 {
 	setupUi(this);
 
@@ -72,7 +72,8 @@ QStandardItem* ConfigurationDialog::addConfigurationBox(QStandardItem* rootItem,
 	pNewItem->setIcon(pConfigurationBox->icon());
 	
 	void* pointerConfigurationBox = pConfigurationBox;
-	QVariant variantConfigurationBox = qVariantFromValue(pointerConfigurationBox);
+	QtMetaPointer metaPointer = pointerConfigurationBox;
+	QVariant variantConfigurationBox = qVariantFromValue(metaPointer);
 	pNewItem->setData(variantConfigurationBox);
 	
 	if (position < 0)
@@ -104,7 +105,12 @@ QStandardItem* ConfigurationDialog::addLabel(QStandardItem* rootItem, const QStr
 		return NULL;
 	}
 	
+	QtMetaPointer metaPointer = (void*)NULL;
+	QVariant variantMetaPointer = qVariantFromValue(metaPointer);
+	
 	QStandardItem* pNewItem = new QStandardItem(label);
+	pNewItem->setData(variantMetaPointer);	
+	
 	if (position < 0)
 	{
 		rootItem->appendRow(pNewItem);
@@ -182,7 +188,8 @@ void ConfigurationDialog::optionListClicked(const QModelIndex& index)
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(tvOptionsList->model());
 	QStandardItem* item = model->itemFromIndex(index);
 
-	void* pointer = qVariantValue<QtMetaPointer>(item->data());
+	QtMetaPointer metaPointer = qVariantValue<QtMetaPointer>(item->data());
+	void* pointer = metaPointer;
 	ConfigurationBaseBox* pConfigBox = (ConfigurationBaseBox*)pointer;
 
 	// Something with sense was selected, display this something

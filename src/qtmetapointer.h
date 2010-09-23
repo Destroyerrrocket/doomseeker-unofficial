@@ -20,7 +20,7 @@ class QtMetaPointer
 
 	public:
 		QtMetaPointer() {}
-		QtMetaPointer(ConfigurationBaseBox* ptr)
+		QtMetaPointer(void* ptr)
 		{
 			this->ptr = ptr;
 		}
