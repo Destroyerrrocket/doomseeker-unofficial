@@ -20,15 +20,16 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-
 #include "main.h"
 #include "cfgwadseekergeneral.h"
+#include "configuration/doomseekerconfig.h"
 #include <QCompleter>
 #include <QDebug>
 #include <QDirModel>
 #include <QMessageBox>
 
-CFGWadseekerGeneral::CFGWadseekerGeneral(IniSection& cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
+CFGWadseekerGeneral::CFGWadseekerGeneral(QWidget* parent) 
+: ConfigurationBaseBox(parent)
 {
 	setupUi(this);
 
@@ -38,21 +39,21 @@ CFGWadseekerGeneral::CFGWadseekerGeneral(IniSection& cfg, QWidget* parent) : Con
 void CFGWadseekerGeneral::fillTargetDirectoryComboBox()
 {
 	cbTargetDirectory->clear();
-	cbTargetDirectory->addItems(Main::config["WadPaths"]->split(";", QString::SkipEmptyParts));
+	cbTargetDirectory->addItems(gConfig.doomseeker.wadPaths);
 }
 
 void CFGWadseekerGeneral::readSettings()
 {
 	fillTargetDirectoryComboBox();
 
-	cbTargetDirectory->setEditText(config["TargetDirectory"]);
-	spinConnectTimeout->setValue(config["ConnectTimeoutSeconds"]);
-	spinDownloadTimeout->setValue(config["DownloadTimeoutSeconds"]);
+	cbTargetDirectory->setEditText(gConfig.wadseeker.targetDirectory);
+	spinConnectTimeout->setValue(gConfig.wadseeker.connectTimeoutSeconds);
+	spinDownloadTimeout->setValue(gConfig.wadseeker.downloadTimeoutSeconds);
 }
 
 void CFGWadseekerGeneral::saveSettings()
 {
-	config["TargetDirectory"] = cbTargetDirectory->currentText();
+	gConfig.wadseeker.targetDirectory = cbTargetDirectory->currentText();
 	QFileInfo targetDirectoryInfo(cbTargetDirectory->currentText());
 	if(!targetDirectoryInfo.isWritable())
 	{
@@ -60,14 +61,18 @@ void CFGWadseekerGeneral::saveSettings()
 	}
 	// Also take a look at the file paths configuration.  Warn if it is not on the list.
 	bool pathPossible = false;
-	foreach(QString possiblePath, Main::config["WadPaths"]->split(";", QString::SkipEmptyParts))
+	foreach(QString possiblePath, gConfig.doomseeker.wadPaths)
 	{
 		if(possiblePath == cbTargetDirectory->currentText())
+		{
 			pathPossible = true;
+		}
 	}
 	if(!pathPossible)
+	{
 		QMessageBox::warning(this, tr("Target not on List"), tr("The specified target directory could not be found on the file paths list."));
+	}
 
-	config["ConnectTimeoutSeconds"] = spinConnectTimeout->value();
-	config["DownloadTimeoutSeconds"] = spinDownloadTimeout->value();
+	gConfig.wadseeker.connectTimeoutSeconds = spinConnectTimeout->value();
+	gConfig.wadseeker.downloadTimeoutSeconds = spinDownloadTimeout->value();
 }

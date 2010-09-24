@@ -20,8 +20,8 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
-
 #include "dockBuddiesList.h"
+#include "configuration/doomseekerconfig.h"
 #include "main.h"
 #include "strings.h"
 #include "sdeapi/scanner.hpp"
@@ -30,7 +30,7 @@
 #include <QMessageBox>
 #include <QRegExp>
 
-DockBuddiesList::BuddyInfo &DockBuddiesList::BuddyInfo::operator= (const DockBuddiesList::BuddyInfo &other)
+DockBuddiesList::BuddyLocationInfo &DockBuddiesList::BuddyLocationInfo::operator= (const DockBuddiesList::BuddyLocationInfo &other)
 {
 	if (this != &other)
 	{
@@ -60,29 +60,12 @@ DockBuddiesList::DockBuddiesList(QWidget *parent)
 	buddiesTable->setColumnHidden(0, true); // Hide the ID
 
 	// Read config
-	QString buddiesList = Main::config["BuddiesList"];
-	Scanner listReader(buddiesList.toAscii().constData(), buddiesList.length());
-	// Syntax: {basic|advanced} "pattern";...
-	while(listReader.tokensLeft())
+	const QVector<BuddyInfo>& buddies = gConfig.doomseeker.buddiesList;
+	
+	foreach (const BuddyInfo& buddy, buddies)
 	{
-		if(!listReader.checkToken(TK_Identifier))
-			break; // Invalid so lets just use what we have.
-		int type = AddBuddyDlg::PT_BASIC;
-		if(listReader.str.compare("basic") == 0)
-			type = AddBuddyDlg::PT_BASIC;
-		else if(listReader.str.compare("advanced") == 0)
-			type = AddBuddyDlg::PT_ADVANCED;
-
-		if(!listReader.checkToken(TK_StringConst))
-			break;
-		QRegExp pattern(listReader.str, Qt::CaseInsensitive, type == AddBuddyDlg::PT_BASIC ? QRegExp::Wildcard : QRegExp::RegExp);
-		if(pattern.isValid())
-			pBuddies << pattern;
-
-		patternsList->addItem(listReader.str);
-
-		if(!listReader.checkToken(';'))
-			break;
+		pBuddies << buddy.pattern;
+		patternsList->addItem(buddy.pattern.pattern());
 	}
 
 	connect(addButton, SIGNAL( clicked() ), this, SLOT( addBuddy() ));
@@ -93,21 +76,23 @@ DockBuddiesList::DockBuddiesList(QWidget *parent)
 
 DockBuddiesList::~DockBuddiesList()
 {
-	// See if we made any modification since modifying the setting will cuase a
+	// See if we made any modification since modifying the setting will cause a
 	// write cycle.
 	if(!save)
-		return;
-
-	IniVariable &settingBuddiesList = Main::config["BuddiesList"];
-	QString settingValue;
-
-	foreach(QRegExp pattern, pBuddies)
 	{
-		QString pat = pattern.pattern();
-		settingValue.append((pattern.patternSyntax() == QRegExp::Wildcard ? "basic \"" : "advanced \"") + Strings::escape(pat) + "\";");
+		return;
 	}
-
-	settingBuddiesList = settingValue;
+	
+	gConfig.doomseeker.buddiesList.clear();
+	foreach (QRegExp pattern, pBuddies)
+	{
+		BuddyInfo buddyInfo;
+		
+		buddyInfo.pattern = pattern;
+		buddyInfo.patternType = pattern.patternSyntax() == QRegExp::Wildcard ? BuddyInfo::PT_BASIC : BuddyInfo::PT_ADVANCED;
+	
+		gConfig.doomseeker.buddiesList << buddyInfo;
+	}
 }
 
 void DockBuddiesList::addBuddy()
@@ -117,7 +102,7 @@ void DockBuddiesList::addBuddy()
 	if(result != QDialog::Accepted)
 		return;
 
-	QRegExp pattern(dlg.pattern(), Qt::CaseInsensitive, dlg.patternType() == AddBuddyDlg::PT_BASIC ? QRegExp::Wildcard : QRegExp::RegExp);
+	QRegExp pattern(dlg.pattern(), Qt::CaseInsensitive, dlg.patternType() == BuddyInfo::PT_BASIC ? QRegExp::Wildcard : QRegExp::RegExp);
 
 	if(pattern.isValid())
 	{
@@ -211,7 +196,7 @@ void DockBuddiesList::scan(const MasterClient *master)
 			{
 				if(pattern.exactMatch(player.nameColorTagsStripped()))
 				{
-					buddies << BuddyInfo(player, server);
+					buddies << BuddyLocationInfo(player, server);
 				}
 			}
 		}
@@ -221,7 +206,7 @@ void DockBuddiesList::scan(const MasterClient *master)
 	buddiesTableModel->removeRows(0, buddiesTableModel->rowCount());
 	for(int i = 0;i < buddies.size();i++)
 	{
-		BuddyInfo info = buddies[i];
+		BuddyLocationInfo info = buddies[i];
 		QList<QStandardItem *> columns;
 
 		for(int j = 0;j < HOW_MANY_BUDDIESLIST_COLUMNS;j++)
@@ -267,7 +252,7 @@ void AddBuddyDlg::buttonBoxClicked(QAbstractButton *button)
 {
 	if(buttonBox->standardButton(button) == QDialogButtonBox::Ok)
 	{
-		if(patternType() == PT_ADVANCED)
+		if(patternType() == BuddyInfo::PT_ADVANCED)
 		{
 			QRegExp test(pattern());
 			if(!test.isValid())

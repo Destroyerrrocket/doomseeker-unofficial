@@ -26,7 +26,7 @@
 #include "odamexserver.h"
 
 OdamexGameRunner::OdamexGameRunner(const OdamexServer* server)
-: GameRunner(server, Main::ini->createSection("Odamex")),
+: GameRunner(server),
   odamexServer(server)
 {
 }

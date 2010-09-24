@@ -26,6 +26,7 @@
 #include "gui/helpers/playersdiagram.h"
 #include "gui/widgets/serverlistview.h"
 #include "gui/serverlist.h"
+#include "configuration/doomseekerconfig.h"
 #include "log.h"
 #include "main.h"
 #include <QItemDelegate>
@@ -94,7 +95,7 @@ void ServerListModel::redraw(int row)
 
 void ServerListModel::redrawAll()
 {
-	int slotstyle = parentHandler->configurationObject()["SlotStyle"];
+	int slotstyle = gConfig.doomseeker.slotStyle;
 	PlayersDiagram::loadImages(slotstyle);
 
 	for (int i = 0; i < rowCount(); ++i)

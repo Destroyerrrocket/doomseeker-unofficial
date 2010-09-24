@@ -28,10 +28,10 @@
 class OdamexMain
 {
 	public:
-		static const PluginInfo*	get() { return &info; }
+		static PluginInfo*	get() { return &info; }
 	
 	protected:
-		static const PluginInfo 	info;
+		static PluginInfo 	info;
 };
 
 #endif

@@ -35,7 +35,7 @@ class CFGCustomServers : public ConfigurationBaseBox, private Ui::CFGCustomServe
 	Q_OBJECT
 
 	public:
-		CFGCustomServers(IniSection &cfg, QWidget *parent=NULL);
+		CFGCustomServers(QWidget *parent=NULL);
 		
 		QIcon							icon() const { return QIcon(":/flags/localhost-small"); }
 		QString							name() const { return tr("Custom Servers"); }
@@ -75,11 +75,8 @@ class CFGCustomServers : public ConfigurationBaseBox, private Ui::CFGCustomServe
 		void							setEngineOnItem(QStandardItem*, const QString& engineName);
 		void							setPortToDefault(int rowIndex);
 
-		/**
-		 *	Encodes table entries into format:
-		 * `(<engine_name>;<host_name>;<port>);(...)...`
-		 */
-		QString							tableEntriesEncoded();
+		
+		QVector<CustomServerInfo>		tableGetServers();
 
 	protected slots:
 		void 							add();

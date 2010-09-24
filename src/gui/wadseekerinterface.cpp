@@ -21,6 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "gui/wadseekerinterface.h"
+#include "configuration/doomseekerconfig.h"
 #include "mainwindow.h"
 #include "main.h"
 #include "strings.h"
@@ -31,16 +32,14 @@ const int WadSeekerInterface::UPDATE_INTERVAL_MS = 500;
 
 void WadSeekerInterface::initMessageColors()
 {
-	colorHtmlMessageNotice = *config["ColorMessageNotice"];
-	colorHtmlMessageError = *config["ColorMessageError"];
-	colorHtmlMessageFatalError = *config["ColorMessageCriticalError"];
+	colorHtmlMessageNotice = gConfig.wadseeker.colorMessageNotice;
+	colorHtmlMessageError = gConfig.wadseeker.colorMessageError;
+	colorHtmlMessageFatalError = gConfig.wadseeker.colorMessageCriticalError;
 }
 
 WadSeekerInterface::WadSeekerInterface(QWidget* parent)
-: QDialog(parent), config(Ini::nullSection)
+: QDialog(parent)
 {
-	config = Main::ini->createSection("Wadseeker");
-
 	bNeedsUpdate = false;
 
 	((MainWindow*)(Main::mainWindow))->stopAutoRefreshTimer();
@@ -62,23 +61,15 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent)
 
 	bAutomatic = false;
 	bFirstShown = false;
+	
+	const QStringList& urlList = gConfig.wadseeker.searchURLs;
 
-	if (!config.retrieveSetting("SearchURLs").isNull())
+	if (!urlList.isEmpty())
 	{
-		QStringList urlList;
-		QStringList strLst = config["SearchURLs"]->split(";");
-		QStringList::iterator it;
-		for (it = strLst.begin(); it != strLst.end(); ++it)
-		{
-			urlList << QUrl::fromPercentEncoding(it->toAscii());
-		}
-
 		wadseeker.setPrimarySites(urlList);
 	}
 	else
 	{
-		// Theoreticaly this else should never happen due to config initialization in main.cpp.
-		// theoreticaly...
 		wadseeker.setPrimarySitesToDefault();
 	}
 
@@ -307,13 +298,9 @@ void WadSeekerInterface::setupIdgames()
 	bool useIdgames = true;
 	bool idgamesHasHighPriority = false;
 
-	config.createSetting("SearchInIdgames", true);
-	config.createSetting("IdgamesPriority", 0); // 0 == After all other sites
-	config.createSetting("IdgamesURL", Wadseeker::defaultIdgamesUrl());
-
-	useIdgames = config["SearchInIdgames"];
-	idgamesHasHighPriority = config["IdgamesPriority"];
-	idgamesURL = *config["IdgamesURL"];
+	useIdgames = gConfig.wadseeker.bSearchInIdgames;
+	idgamesHasHighPriority = gConfig.wadseeker.idgamesPriority != 0;
+	idgamesURL = gConfig.wadseeker.idgamesURL;
 
 	wadseeker.setUseIdgames(useIdgames, idgamesHasHighPriority, idgamesURL);
 }
@@ -350,8 +337,8 @@ void WadSeekerInterface::startSeeking(const QStringList& seekedFilesList)
 
 	setStateDownloading();
 
-	wadseeker.setTimeConnectTimeout(config["ConnectTimeoutSeconds"]);
-	wadseeker.setTimeDownloadTimeout(config["DownloadTimeoutSeconds"]);
-	wadseeker.setTargetDirectory(config["TargetDirectory"]);
+	wadseeker.setTimeConnectTimeout(gConfig.wadseeker.connectTimeoutSeconds);
+	wadseeker.setTimeDownloadTimeout(gConfig.wadseeker.downloadTimeoutSeconds);
+	wadseeker.setTargetDirectory(gConfig.wadseeker.targetDirectory);
 	wadseeker.seekWads(seekedFilesListFormatted);
 }

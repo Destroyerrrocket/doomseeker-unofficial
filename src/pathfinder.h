@@ -39,14 +39,14 @@ struct MAIN_EXPORT PathFinderResult
 class MAIN_EXPORT PathFinder
 {
 	public:
-		PathFinder(const IniSection&);
+		PathFinder();
 		PathFinder(const QString&);
 
 		QString 			findFile(const QString& fileName) const;
 		PathFinderResult	findFiles(const QStringList& files) const;
 
 	protected:
-		const QStringList strList;
+		QStringList			pathList;
 };
 
 #endif

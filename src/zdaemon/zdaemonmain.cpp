@@ -78,7 +78,7 @@ class PLUGIN_EXPORT ZDaemonEnginePlugin : public EnginePlugin
 
 		void			masterHost(QString &host, unsigned short &port) const
 		{
-			QString str = Main::ini->setting("ZDaemon", "Masterserver");
+			QString str = pConfig->setting("Masterserver");
 			Strings::translateServerAddress(str, host, port, "master.zdaemon.org", 80);
 		}
 
@@ -91,8 +91,8 @@ class PLUGIN_EXPORT ZDaemonEnginePlugin : public EnginePlugin
 };
 
 static ZDaemonEnginePlugin zdaemon_engine_plugin;
-const PluginInfo ZDaemonMain::info = {"ZDaemon", "ZDaemon server query plugin.", "The Skulltag Team", {0,2,0,0}, MAKEID('E','N','G','N'), &zdaemon_engine_plugin};
-extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
+PluginInfo ZDaemonMain::info = {"ZDaemon", "ZDaemon server query plugin.", "The Skulltag Team", {0,2,0,0}, MAKEID('E','N','G','N'), &zdaemon_engine_plugin};
+extern "C" PLUGIN_EXPORT PluginInfo *doomSeekerInit()
 {
 	return ZDaemonMain::get();
 }

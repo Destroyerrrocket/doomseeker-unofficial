@@ -51,6 +51,7 @@ class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox, priv
 		void				btnBrowseServerBinaryClicked();
 
 	private:
+		IniSection&			config;	
 		const PluginInfo*	plugin;
 };
 

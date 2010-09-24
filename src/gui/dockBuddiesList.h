@@ -24,6 +24,7 @@
 #ifndef __DOCKBUDDIESLIST_H__
 #define __DOCKBUDDIESLIST_H__
 
+#include "serverapi/buddyinfo.h"
 #include "serverapi/server.h"
 #include "masterclient.h"
 #include "ui_dockBuddiesList.h"
@@ -58,23 +59,23 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 		void	joinServer(const Server* server);
 
 	protected:
-		struct BuddyInfo
+		struct BuddyLocationInfo
 		{
 			public:
-				BuddyInfo(const Player &buddy, const Server *location) : player(buddy), server(location) {}
+				BuddyLocationInfo(const Player &buddy, const Server *location) : player(buddy), server(location) {}
 
 				const Player	&buddy() const { return player; }
 				const Server	*location() const { return server; }
-				BuddyInfo		&operator= (const BuddyInfo &other);
+				BuddyLocationInfo		&operator= (const BuddyLocationInfo &other);
 
 			private:
 				Player			player;
 				const Server	*server;
 		};
 
-		QList<DockBuddiesList::BuddyInfo>	buddies;
-		QStandardItemModel					*buddiesTableModel;
-		QList<QRegExp>						pBuddies;
+		QList<DockBuddiesList::BuddyLocationInfo>	buddies;
+		QStandardItemModel							*buddiesTableModel;
+		QList<QRegExp>								pBuddies;
 
 	protected slots:
 		void	deleteBuddy();
@@ -82,8 +83,8 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 		void	patternsListContextMenu(const QPoint &pos) const;
 
 	private:
-		const MasterClient					*masterClient;
-		bool								save;
+		const MasterClient							*masterClient;
+		bool										save;
 };
 
 class AddBuddyDlg : public QDialog, private Ui::AddBuddyDlg
@@ -91,19 +92,13 @@ class AddBuddyDlg : public QDialog, private Ui::AddBuddyDlg
 	Q_OBJECT
 
 	public:
-		enum PatternType
-		{
-			PT_BASIC,
-			PT_ADVANCED
-		};
-
 		AddBuddyDlg(QWidget *parent=NULL);
 
-		PatternType	patternType() const { return basicPattern->isChecked() ? PT_BASIC : PT_ADVANCED; }
-		QString		pattern() const { return patternBox->text(); }
+		BuddyInfo::PatternType	patternType() const { return basicPattern->isChecked() ? BuddyInfo::PT_BASIC : BuddyInfo::PT_ADVANCED; }
+		QString					pattern() const { return patternBox->text(); }
 
 	protected slots:
-		void		buttonBoxClicked(QAbstractButton *button);
+		void					buttonBoxClicked(QAbstractButton *button);
 };
 
 #endif /* __DOCKBUDDIESLIST_H__ */

@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "doomseekerconfigurationdialog.h"
+#include "configuration/doomseekerconfig.h"
 #include "gui/configuration/cfgappearance.h"
 #include "gui/configuration/cfgcustomservers.h"
 #include "gui/configuration/cfgfilepaths.h"
@@ -75,25 +76,30 @@ void DoomseekerConfigurationDialog::appendWadseekerConfigurationBoxes()
 
 	ConfigurationBaseBox* pConfigBox = NULL;
 
-	IniSection &wadseekerSection = Main::ini->createSection("Wadseeker");
-	pConfigBox = new CFGWadseekerAppearance(wadseekerSection, this);
+	pConfigBox = new CFGWadseekerAppearance(this);
 	addConfigurationBox(wadseekerRoot, pConfigBox);
 
-	pConfigBox = new CFGWadseekerGeneral(wadseekerSection, this);
+	pConfigBox = new CFGWadseekerGeneral(this);
 	addConfigurationBox(wadseekerRoot, pConfigBox);
 
-	pConfigBox = new CFGWadseekerSites(wadseekerSection, this);
+	pConfigBox = new CFGWadseekerSites(this);
 	addConfigurationBox(wadseekerRoot, pConfigBox);
 
-	pConfigBox = new CFGWadseekerIdgames(wadseekerSection, this);
+	pConfigBox = new CFGWadseekerIdgames(this);
 	addConfigurationBox(wadseekerRoot, pConfigBox);
 }
 
 void DoomseekerConfigurationDialog::doSaveSettings()
 {
 	bCustomServersChanged = customServersCfgBox->allowSave();
-	Main::ini->save();
-	gLog << tr("Settings saved!");
+	if (gConfig.saveToFile())
+	{
+		gLog << tr("Settings saved!");
+	}
+	else
+	{
+		gLog << tr("Settings save failed!");
+	}
 
 	// In case the master server addresses changed, notify the master clients.
 	reinterpret_cast<MainWindow *> (Main::mainWindow)->updateMasterAddresses();
@@ -105,20 +111,20 @@ void DoomseekerConfigurationDialog::initOptionsList()
 
 	ConfigurationBaseBox* pConfigBox = NULL;
 
-	pConfigBox = new CFGAppearance(Main::config, this);
+	pConfigBox = new CFGAppearance(this);
 	addConfigurationBox(NULL, pConfigBox);
 
-	pConfigBox = new CFGCustomServers(Main::config, this);
+	pConfigBox = new CFGCustomServers(this);
 	addConfigurationBox(NULL, pConfigBox);
 	customServersCfgBox = pConfigBox;
 	
-	pConfigBox = new CFGIP2Country(Main::config, this);
+	pConfigBox = new CFGIP2Country(this);
 	addConfigurationBox(NULL, pConfigBox);
 
-	pConfigBox = new CFGQuery(Main::config, this);
+	pConfigBox = new CFGQuery(this);
 	addConfigurationBox(NULL, pConfigBox);
 
-	pConfigBox = new CFGFilePaths(Main::config, this);
+	pConfigBox = new CFGFilePaths(this);
 	addConfigurationBox(NULL, pConfigBox);
 
 	appendWadseekerConfigurationBoxes();

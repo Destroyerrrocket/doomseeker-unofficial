@@ -21,6 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "createserver.h"
+#include "configuration/doomseekerconfig.h"
 #include "copytextdlg.h"
 #include "main.h"
 #include "commonGUI.h"
@@ -166,13 +167,13 @@ void CreateServerDlg::btnAddMapToMaplistClicked()
 
 void CreateServerDlg::btnAddPwadClicked()
 {
-	QString dialogDir = Main::config["PreviousCreateServerWadDir"];
+	QString dialogDir = gConfig.doomseeker.previousCreateServerWadDir;
 	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - Add file"), dialogDir);
 
 	if (!strFile.isEmpty())
 	{
 		QFileInfo fi(strFile);
-		Main::config["PreviousCreateServerWadDir"] = fi.absolutePath();
+		gConfig.doomseeker.previousCreateServerWadDir = fi.absolutePath();
 
 		addWadPath(strFile);
 	}
@@ -180,13 +181,13 @@ void CreateServerDlg::btnAddPwadClicked()
 
 void CreateServerDlg::btnBrowseExecutableClicked()
 {
-	QString dialogDir = Main::config["PreviousCreateServerExecDir"];
+	QString dialogDir = gConfig.doomseeker.previousCreateServerExecDir;
 	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - Add file"), dialogDir);
 
 	if (!strFile.isEmpty())
 	{
 		QFileInfo fi(strFile);
-		Main::config["PreviousCreateServerExecDir"] = fi.absolutePath();
+		gConfig.doomseeker.previousCreateServerExecDir = fi.absolutePath();
 
 		leExecutable->setText(fi.absoluteFilePath());
 	}
@@ -264,13 +265,13 @@ void CreateServerDlg::btnDefaultExecutableClicked()
 
 void CreateServerDlg::btnIwadBrowseClicked()
 {
-	QString dialogDir = Main::config["PreviousCreateServerWadDir"];
+	QString dialogDir = gConfig.doomseeker.previousCreateServerWadDir;
 	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - select IWAD"), dialogDir);
 
 	if (!strFile.isEmpty())
 	{
 		QFileInfo fi(strFile);
-		Main::config["PreviousCreateServerWadDir"] = fi.absolutePath();
+		gConfig.doomseeker.previousCreateServerWadDir = fi.absolutePath();
 
 		addIwad(strFile);
 	}
@@ -278,13 +279,13 @@ void CreateServerDlg::btnIwadBrowseClicked()
 
 void CreateServerDlg::btnLoadClicked()
 {
-	QString dialogDir = Main::config["PreviousCreateServerConfigDir"];
+	QString dialogDir = gConfig.doomseeker.previousCreateServerConfigDir;
 	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - load server config"), dialogDir, tr("Config files (*.cfg)"));
 
 	if (!strFile.isEmpty())
 	{
 		QFileInfo fi(strFile);
-		Main::config["PreviousCreateServerConfigDir"] = fi.absolutePath();
+		gConfig.doomseeker.previousCreateServerConfigDir = fi.absolutePath();
 
 		loadConfig(strFile);
 	}
@@ -307,15 +308,17 @@ void CreateServerDlg::btnRemovePwadClicked()
 
 void CreateServerDlg::btnSaveClicked()
 {
-	QString dialogDir = Main::config["PreviousCreateServerConfigDir"];
+	QString dialogDir = gConfig.doomseeker.previousCreateServerConfigDir;
 	QString strFile = QFileDialog::getSaveFileName(this, tr("Doomseeker - save server config"), dialogDir, tr("Config files (*.cfg)"));
 	if (!strFile.isEmpty())
 	{
 		QFileInfo fi(strFile);
-		Main::config["PreviousCreateServerConfigDir"] = fi.absolutePath();
+		gConfig.doomseeker.previousCreateServerConfigDir = fi.absolutePath();
 
 		if (fi.suffix().isEmpty())
+		{
 			strFile += ".cfg";
+		}
 
 		if (!saveConfig(strFile))
 		{
@@ -676,8 +679,8 @@ void CreateServerDlg::initPrimary()
 
 	for (int i = 0; !iwads[i].isEmpty(); ++i)
 	{
-		PathFinder pf(Main::config);
-		QString path = pf.findFile(iwads[i]);
+		PathFinder pathFinder;
+		QString path = pathFinder.findFile(iwads[i]);
 		if (!path.isEmpty())
 		{
 			cboIwad->addItem(path);

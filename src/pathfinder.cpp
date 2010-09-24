@@ -20,7 +20,7 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-
+#include "configuration/doomseekerconfig.h"
 #include "pathfinder.h"
 #include "main.h"
 #include "log.h"
@@ -28,23 +28,27 @@
 #include <QFileInfo>
 #include <cstdlib>
 
-PathFinder::PathFinder(const IniSection& cfg) : strList(cfg["WadPaths"]->split(";", QString::SkipEmptyParts))
+PathFinder::PathFinder()
 {
+	pathList = gConfig.doomseeker.wadPaths;
 }
 
-PathFinder::PathFinder(const QString& paths) : strList(paths.split(";", QString::SkipEmptyParts))
+PathFinder::PathFinder(const QString& paths) 
+: pathList(paths.split(";", QString::SkipEmptyParts))
 {
 }
 
 QString PathFinder::findFile(const QString& fileName) const
 {
-	if (strList.count() == 0)
+	if (pathList.count() == 0)
+	{
 		return QString();
+	}
 
 	#ifdef Q_OS_WIN32
-	for (int i = 0; i < strList.count(); ++i)
+	for (int i = 0; i < pathList.count(); ++i)
 	{
-		QFileInfo file(strList[i] + QDir::separator() + fileName);
+		QFileInfo file(pathList[i] + QDir::separator() + fileName);
 		if (file.exists() && file.isFile())
 		{
 			return file.absoluteFilePath();
@@ -53,9 +57,9 @@ QString PathFinder::findFile(const QString& fileName) const
 	#else
 	QStringList filterList;
 	filterList << fileName;
-	for (int i = 0; i < strList.count(); ++i)
+	for (int i = 0; i < pathList.count(); ++i)
 	{
-		QDir dir(strList[i]);
+		QDir dir(pathList[i]);
 
 		QFileInfoList fiList = dir.entryInfoList(filterList, QDir::Files);
 		for (int j = 0; j < fiList.count(); ++j)

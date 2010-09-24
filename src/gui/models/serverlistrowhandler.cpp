@@ -23,6 +23,7 @@
 #include "serverlistrowhandler.h"
 #include "serverlistcolumn.h"
 #include "serverlistmodel.h"
+#include "configuration/doomseekerconfig.h"
 #include "gui/helpers/playersdiagram.h"
 #include "gui/serverlist.h"
 #include "serverapi/playerslist.h"
@@ -120,11 +121,10 @@ void ServerListRowHandler::fillItem(QStandardItem* item, int sort, const QPixmap
 
 void ServerListRowHandler::fillPlayerColumn()
 {
-	IniSection& config = model->handler()->configurationObject();
 	QStandardItem* pItem = item(IDPlayers);
 
-	int style = config["SlotStyle"];
-	bool botsAreNotPlayers = config["BotsAreNotPlayers"];
+	int style = gConfig.doomseeker.slotStyle;
+	bool botsAreNotPlayers = gConfig.doomseeker.bBotsAreNotPlayers;
 
 	const PlayersList* playersList = server->playersList();
 	int sortValue = 0;
@@ -191,7 +191,7 @@ void ServerListRowHandler::setBackgroundColor()
 {
 	if (server->isCustom())
 	{
-		QString color = model->handler()->configurationObject()["CustomServersColor"];
+		QString color = gConfig.doomseeker.customServersColor;
 
 		for (int column = 0; column < NUM_SERVERLIST_COLUMNS; ++column)
 		{

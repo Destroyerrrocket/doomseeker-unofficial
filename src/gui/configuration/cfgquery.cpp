@@ -20,30 +20,31 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
-
 #include "cfgquery.h"
+#include "configuration/doomseekerconfig.h"
 
-CFGQuery::CFGQuery(IniSection &cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent)
+CFGQuery::CFGQuery(QWidget *parent) 
+: ConfigurationBaseBox(parent)
 {
 	setupUi(this);
 }
 
 void CFGQuery::readSettings()
 {
-	queryOnStartup->setChecked(config["QueryOnStartup"]);
-	triesBox->setValue(config["QueryTries"]);
-	timeoutBox->setValue(config["QueryTimeout"]);
-	grbServerAutoRefresh->setChecked(config["QueryAutoRefreshEnabled"]);
-	numAutoRefreshEverySeconds->setValue(config["QueryAutoRefreshEverySeconds"]);
-	cbDontRefreshIfActive->setChecked(config["QueryAutoRefreshDontIfActive"]);
+	queryOnStartup->setChecked(gConfig.doomseeker.bQueryOnStartup);
+	triesBox->setValue(gConfig.doomseeker.queryTries);
+	timeoutBox->setValue(gConfig.doomseeker.queryTimeout);
+	grbServerAutoRefresh->setChecked(gConfig.doomseeker.bQueryAutoRefreshEnabled);
+	numAutoRefreshEverySeconds->setValue(gConfig.doomseeker.queryAutoRefreshEverySeconds);
+	cbDontRefreshIfActive->setChecked(gConfig.doomseeker.bQueryAutoRefreshDontIfActive);
 }
 
 void CFGQuery::saveSettings()
 {
-	config["QueryOnStartup"] = queryOnStartup->isChecked();
-	config["QueryTries"] = triesBox->value();
-	config["QueryTimeout"] = timeoutBox->value();
-	config["QueryAutoRefreshEnabled"] = grbServerAutoRefresh->isChecked();
-	config["QueryAutoRefreshEverySeconds"] = numAutoRefreshEverySeconds->value();
-	config["QueryAutoRefreshDontIfActive"] = cbDontRefreshIfActive->isChecked();
+	gConfig.doomseeker.bQueryOnStartup = queryOnStartup->isChecked();
+	gConfig.doomseeker.queryTries = triesBox->value();
+	gConfig.doomseeker.queryTimeout = timeoutBox->value();
+	gConfig.doomseeker.bQueryAutoRefreshEnabled = grbServerAutoRefresh->isChecked();
+	gConfig.doomseeker.queryAutoRefreshEverySeconds = numAutoRefreshEverySeconds->value();
+	gConfig.doomseeker.bQueryAutoRefreshDontIfActive = cbDontRefreshIfActive->isChecked();
 }

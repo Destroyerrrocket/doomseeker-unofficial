@@ -32,7 +32,7 @@ class CFGWadseekerIdgames : public ConfigurationBaseBox, private Ui::CFGWadseeke
 	Q_OBJECT
 
 	public:
-		CFGWadseekerIdgames(IniSection&, QWidget* parent = NULL);
+		CFGWadseekerIdgames(QWidget* parent = NULL);
 
 		QIcon			icon() const { return QIcon(":/icons/arrow-down-double.png"); }
 		QString			name() const { return tr("Idgames"); }

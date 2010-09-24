@@ -32,7 +32,7 @@ class CFGWadseekerSites : public ConfigurationBaseBox, private Ui::CFGWadseekerS
 	Q_OBJECT
 
 	public:
-		CFGWadseekerSites(IniSection&, QWidget* parent = NULL);
+		CFGWadseekerSites(QWidget* parent = NULL);
 
 		QIcon			icon() const { return QIcon(":/icons/emblem-web.png"); }
 		QString			name() const { return tr("Sites"); }
@@ -48,7 +48,6 @@ class CFGWadseekerSites : public ConfigurationBaseBox, private Ui::CFGWadseekerS
 	protected:
 		void 			saveSettings();
 		void 			insertUrl(const QUrl& url);
-		QStringList*	urlListEncoded();
 };
 
 #endif

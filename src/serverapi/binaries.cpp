@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "binaries.h"
+#include "configuration/doomseekerconfig.h"
 #include "server.h"
 #include "main.h"
 #include "messages.h"
@@ -30,7 +31,7 @@
 
 Binaries::BinaryNamesDictionary Binaries::binaryNames;
 
-Binaries::Binaries(IniSection &config) : config(config)
+Binaries::Binaries() 
 {
 	if (binaryNames.empty()) // Is not init yet.
 	{
@@ -48,7 +49,8 @@ QString Binaries::clientWorkingDirectory(Message& message) const
 
 QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, Message& message) const
 {
-	IniVariable &setting = config[configKey];
+	IniSection& config = gConfig.iniSectionForPlugin(plugin());
+	IniVariable& setting = config[configKey];
 
 	message.setToIgnore();
 	QString error = "";

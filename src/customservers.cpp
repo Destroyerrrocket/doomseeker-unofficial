@@ -21,6 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "customservers.h"
+#include "configuration/doomseekerconfig.h"
 #include "main.h"
 #include <QHostInfo>
 
@@ -78,16 +79,10 @@ void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerIn
 	} // end of for
 }
 
-void CustomServers::readConfig(IniSection& cfg, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing)
+void CustomServers::readConfig(QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing)
 {
-	if (cfg.isNull())
-	{
-		return;
-	}	
+	QList<CustomServerInfo> customServerInfoList = gConfig.doomseeker.customServers.toList();
 	
-	QList<CustomServerInfo> customServerInfoList;
-	decodeConfigEntries(cfg["CustomServers"], customServerInfoList);
-
 	setServers(customServerInfoList, receiver, slotUpdated, slotBegunRefreshing);
 }
 
@@ -98,6 +93,8 @@ void CustomServers::setServers(const QList<CustomServerInfo>& csiList, QObject* 
 	QList<CustomServerInfo>::const_iterator cit;
 	for (cit = csiList.begin(); cit != csiList.end(); ++cit)
 	{
+		printf("%s\n", cit->host.toAscii().constData());
+	
 		if (cit->engineIndex < 0)
 			continue;
 

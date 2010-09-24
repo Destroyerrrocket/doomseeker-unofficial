@@ -26,7 +26,8 @@
 
 #include <QFileDialog>
 
-EngineConfigurationBaseBox::EngineConfigurationBaseBox(const PluginInfo *plugin, IniSection &cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent), plugin(plugin)
+EngineConfigurationBaseBox::EngineConfigurationBaseBox(const PluginInfo *plugin, IniSection &cfg, QWidget *parent) 
+: ConfigurationBaseBox(parent), config(cfg), plugin(plugin)
 {
 	setupUi(this);
 

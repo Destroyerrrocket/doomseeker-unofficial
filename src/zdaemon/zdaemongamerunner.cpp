@@ -27,7 +27,7 @@
 #include "zdaemonserver.h"
 
 ZDaemonGameRunner::ZDaemonGameRunner(const ZDaemonServer* server)
-: GameRunner(server, Main::ini->createSection("ZDaemon"))
+: GameRunner(server)
 {
 }
 

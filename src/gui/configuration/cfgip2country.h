@@ -32,7 +32,7 @@ class CFGIP2Country : public ConfigurationBaseBox, private Ui::CFGIP2Country
 	Q_OBJECT
 
 	public:
-		CFGIP2Country(IniSection &cfg, QWidget *parent=NULL);
+		CFGIP2Country(QWidget *parent=NULL);
 		
 		QIcon							icon() const { return QIcon(":/icons/emblem-web.png"); }
 		QString							name() const { return tr("IP2C"); }

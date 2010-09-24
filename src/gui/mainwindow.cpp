@@ -20,6 +20,7 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "configuration/doomseekerconfig.h"
 #include "gui/configuration/doomseekerconfigurationdialog.h"
 #include "gui/helpers/playersdiagram.h"
 #include "gui/widgets/serversstatuswidget.h"
@@ -53,9 +54,9 @@
 
 const QString MainWindow::HELP_SITE_URL = "http://skulltag.net/wiki/Doomseeker";
 
-MainWindow::MainWindow(int argc, char** argv, IniSection& config)
+MainWindow::MainWindow(int argc, char** argv)
 : bTotalRefreshInProcess(false), buddiesList(NULL), bWasMaximized(false),
-  bWantToQuit(false), configuration(config), logDock(NULL), masterManager(NULL),
+  bWantToQuit(false), logDock(NULL), masterManager(NULL),
   trayIcon(NULL), trayIconMenu(NULL)
 {
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
@@ -80,7 +81,7 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 	initIRCDock();
 	initLogDock();
 
-	serverTableHandler = new ServerListHandler(tableServers, configuration, this);
+	serverTableHandler = new ServerListHandler(tableServers, this);
 	connectEntities();
 
 	// Calculate screen center.
@@ -88,13 +89,22 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 	int screenHeight = QApplication::desktop()->height();
 
 	// Window geometry settings
-	configuration.createSetting("MainWindowX", (screenWidth - width())/2);
-	configuration.createSetting("MainWindowY", (screenHeight - height())/2);
-	configuration.createSetting("MainWindowWidth", width());
-	configuration.createSetting("MainWindowHeight", height());
+	if (!gConfig.doomseeker.areMainWindowSizeSettingsValid(screenWidth, screenHeight))
+	{
+		gConfig.doomseeker.mainWindowX = (screenWidth - width()) / 2;
+		gConfig.doomseeker.mainWindowY = (screenHeight - height()) / 2;
+		gConfig.doomseeker.mainWindowWidth = width();
+		gConfig.doomseeker.mainWindowHeight = height();
+	}
+	else if (gConfig.doomseeker.mainWindowY < 0)
+	{
+		// Do not allow y values less than zero anyway.
+		// We do not want to loose the titlebar.
+		gConfig.doomseeker.mainWindowY = 0;
+	}
 
-	move(configuration["MainWindowX"], configuration["MainWindowY"]);
-	resize(configuration["MainWindowWidth"], configuration["MainWindowHeight"]);
+	move(gConfig.doomseeker.mainWindowX, gConfig.doomseeker.mainWindowY);
+	resize(gConfig.doomseeker.mainWindowWidth, gConfig.doomseeker.mainWindowHeight);
 
 	// Get the master
 	masterManager = new MasterManager();
@@ -104,7 +114,7 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 	fillQueryMenu(masterManager);
 
 	// Init custom servers
-	masterManager->customServs()->readConfig(configuration, serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
+	masterManager->customServs()->readConfig(serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
 
 	setWindowIcon(QIcon(":/icon.png"));
 
@@ -124,16 +134,16 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 	initTrayIcon();
 
 	// Player diagram styles
-	int slotStyle = configuration["SlotStyle"];
+	int slotStyle = gConfig.doomseeker.slotStyle;
 	PlayersDiagram::loadImages(slotStyle);
 	
 	// IP2C
 	bool bParseIP2CDatabase = true;
-	bool bPerformAutomaticIP2CUpdates = configuration["IP2CAutoUpdate"];
+	bool bPerformAutomaticIP2CUpdates = gConfig.doomseeker.bIP2CountryAutoUpdate;
 	
 	if (bPerformAutomaticIP2CUpdates)
 	{
-		int maxAge = configuration["IP2CMaximumAge"];
+		int maxAge = gConfig.doomseeker.ip2CountryDatabaseMaximumAge;
 	
 		QString databasePath = DoomseekerFilePaths::ip2cDatabase();
 		if (IP2CUpdater::needsUpdate(databasePath, maxAge))
@@ -149,7 +159,7 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 	}	
 
 	// check query on statup
-	bool queryOnStartup = configuration["QueryOnStartup"];
+	bool queryOnStartup = gConfig.doomseeker.bQueryOnStartup;
 	if (queryOnStartup)
 	{
 		getServers();
@@ -166,13 +176,13 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 MainWindow::~MainWindow()
 {
 	// Window geometry settings
-	configuration["MainWindowMaximized"] = isMaximized();
+	gConfig.doomseeker.bMainWindowMaximized = isMaximized();
 	if (!isMaximized() && !isMinimized())
 	{
-		configuration["MainWindowX"] = x();
-		configuration["MainWindowY"] = y();
-		configuration["MainWindowWidth"] = width();
-		configuration["MainWindowHeight"] = height();
+		gConfig.doomseeker.mainWindowX = x();
+		gConfig.doomseeker.mainWindowY = y();
+		gConfig.doomseeker.mainWindowWidth = width();
+		gConfig.doomseeker.mainWindowHeight = height();
 	}
 
 	QList<QAction*> menuQueryActions = menuQuery->actions();
@@ -180,10 +190,12 @@ MainWindow::~MainWindow()
 	for (it = menuQueryActions.begin(); it != menuQueryActions.end(); ++it)
 	{
 	    QAction* action = *it;
+	    QString pluginName = action->text();
 
-	    if (!action->text().isEmpty())
+	    if (!pluginName.isEmpty())
 	    {
-	        Main::ini->setting(QString(action->text()).replace(' ', ""), "Query") = action->isChecked();
+			IniSection& pluginConfig = gConfig.iniSectionForPlugin(pluginName);
+	        pluginConfig["Query"] = action->isChecked();
 	    }
 	}
 
@@ -219,7 +231,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::autoRefreshTimer_timeout()
 {
-	if (configuration["QueryAutoRefreshDontIfActive"] && !isMinimized())
+	if (gConfig.doomseeker.bQueryAutoRefreshDontIfActive && !isMinimized())
 	{
 		if (QApplication::activeWindow() != 0)
 		{
@@ -251,7 +263,7 @@ void MainWindow::changeEvent(QEvent* event)
 
 bool MainWindow::checkWadseekerValidity()
 {
-	QString targetDirPath = Main::ini->setting("Wadseeker", "TargetDirectory");
+	QString targetDirPath = gConfig.wadseeker.targetDirectory;
 	QDir targetDir(targetDirPath);
 	QFileInfo targetDirFileInfo(targetDirPath);
 	
@@ -275,7 +287,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
 	// Check if tray icon is available and if we want to minimize to tray icon
 	// when 'X' button is pressed. Real quit requests are handled by
 	// quitProgram() method. This method sets bWantToQuit to true.
-	if (trayIcon != NULL && configuration["CloseToTrayIcon"] && !bWantToQuit)
+	if (trayIcon != NULL && gConfig.doomseeker.bCloseToTrayIcon && !bWantToQuit)
 	{
 		bWasMaximized = isMaximized();
 		event->ignore();
@@ -340,10 +352,12 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		query->setCheckable(true);
 		query->setIcon(plugin->icon());
 		query->setText(name);
-
-		if (!Main::ini->retrieveSetting(name, "Query").isNull())
+		
+		IniSection& pluginConfig = gConfig.iniSectionForPlugin(name);
+		
+		if (!pluginConfig.retrieveSetting("Query").isNull())
 		{
-			bool enabled = Main::ini->retrieveSetting(name, "Query");
+			bool enabled = pluginConfig["Query"];
 			if(pMasterClient != NULL)
 			{
 				pMasterClient->setEnabled(enabled);
@@ -435,9 +449,7 @@ void MainWindow::initAutoRefreshTimer()
 	const unsigned MIN_DELAY = 30;
 	const unsigned MAX_DELAY = 3600;
 
-	IniSection& cfg = configuration;
-
-	bool bEnabled = cfg["QueryAutoRefreshEnabled"];
+	bool bEnabled = gConfig.doomseeker.bQueryAutoRefreshEnabled;
 
 	if (!bEnabled)
 	{
@@ -445,25 +457,24 @@ void MainWindow::initAutoRefreshTimer()
 	}
 	else
 	{
-		IniVariable &setting = cfg["QueryAutoRefreshEverySeconds"];
-		unsigned delay = setting;
+		// If delay value is out of bounds we should adjust
+		// config value as well.
+		unsigned& delay = gConfig.doomseeker.queryAutoRefreshEverySeconds;
 
 		// Make sure delay is in given limit.
 		if (delay < MIN_DELAY)
 		{
-			setting = MIN_DELAY;
 			delay = MIN_DELAY;
 		}
 		else if (delay > MAX_DELAY)
 		{
-			setting = MAX_DELAY;
 			delay = MAX_DELAY;
 		}
 
-		delay *= 1000; // seconds to miliseconds
+		unsigned delayMs = delay * 1000;
 
 		autoRefreshTimer.setSingleShot(false);
-		autoRefreshTimer.start(delay);
+		autoRefreshTimer.start(delayMs);
 	}
 }
 
@@ -504,7 +515,7 @@ void MainWindow::initLogDock()
 
 void MainWindow::initTrayIcon()
 {
-	bool isEnabled = configuration["UseTrayIcon"];
+	bool isEnabled = gConfig.doomseeker.bUseTrayIcon;
 	if (!isEnabled || !QSystemTrayIcon::isSystemTrayAvailable())
 	{
 		if (trayIcon != NULL)
@@ -684,7 +695,7 @@ void MainWindow::ip2cStartUpdate()
 	connect (ip2cUpdater, SIGNAL( databaseDownloadFinished(const QByteArray&) ), this, SLOT( ip2cFinishUpdate(const QByteArray&) ) );
 	connect (ip2cUpdater, SIGNAL( downloadProgress(int, int) ), this, SLOT( ip2cDownloadProgress(int, int) ) );
 	
-	QString downloadUrl = configuration["IP2CUrl"];
+	QString downloadUrl = gConfig.doomseeker.ip2CountryUrl;
 	
 	ip2cUpdater->downloadDatabase(downloadUrl);
 	statusBar()->addPermanentWidget(ip2cUpdateProgressBar);
@@ -777,8 +788,7 @@ void MainWindow::menuOptionsConfigure()
 		
 		// Retrieve INI Section for this plugin.
 		QString pluginName = pPluginInfo->name;
-		QString pluginNameWithoutSpaces = pluginName.replace(' ', "");
-		IniSection& configSection = Main::ini->createSection(pluginNameWithoutSpaces);
+		IniSection& configSection = gConfig.iniSectionForPlugin(pluginName);
 		
 		// Create the config box.
 		ConfigurationBaseBox* pConfigurationBox = pPluginInfo->pInterface->configuration(configSection, &configDialog);
@@ -802,7 +812,7 @@ void MainWindow::menuOptionsConfigure()
 	if (configDialog.customServersChanged())
 	{
 		serverTableHandler->serverModel()->removeCustomServers();
-		masterManager->customServs()->readConfig(configuration, serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
+		masterManager->customServs()->readConfig(serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
 		refreshCustomServers();
 	}
 }
@@ -1082,7 +1092,7 @@ void MainWindow::trayIcon_activated(QSystemTrayIcon::ActivationReason reason)
 			bWasMaximized == true ? showMaximized() : showNormal();
 			activateWindow();
 		}
-		else if (configuration["CloseToTrayIcon"])
+		else if (gConfig.doomseeker.bCloseToTrayIcon)
 		{
 			close();
 		}

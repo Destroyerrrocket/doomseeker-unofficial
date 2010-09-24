@@ -86,7 +86,7 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 
 		void			masterHost(QString &host, unsigned short &port) const
 		{
-			QString str = Main::ini->setting("Odamex", "Masterserver");
+			QString str = pConfig->setting("Masterserver");
 			Strings::translateServerAddress(str, host, port, "master1.odamex.net", 15000);
 		}
 
@@ -99,8 +99,8 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 };
 
 static OdamexEnginePlugin odamex_engine_plugin;
-const PluginInfo OdamexMain::info = {"Odamex", "Odamex server query plugin.", "The Skulltag Team", {0,6,0,0}, MAKEID('E','N','G','N'), &odamex_engine_plugin};
-extern "C" PLUGIN_EXPORT const PluginInfo *doomSeekerInit()
+PluginInfo OdamexMain::info = {"Odamex", "Odamex server query plugin.", "The Skulltag Team", {0,6,0,0}, MAKEID('E','N','G','N'), &odamex_engine_plugin};
+extern "C" PLUGIN_EXPORT PluginInfo *doomSeekerInit()
 {
 	return OdamexMain::get();
 }

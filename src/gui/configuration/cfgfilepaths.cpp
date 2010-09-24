@@ -20,12 +20,13 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-
 #include "cfgfilepaths.h"
+#include "configuration/doomseekerconfig.h"
 #include <QFileDialog>
 #include <QStandardItem>
 
-CFGFilePaths::CFGFilePaths(IniSection& cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
+CFGFilePaths::CFGFilePaths(QWidget* parent) 
+: ConfigurationBaseBox(parent)
 {
 	setupUi(this);
 
@@ -105,30 +106,28 @@ bool CFGFilePaths::isPathAlreadyDefined(const QString& path)
 
 void CFGFilePaths::readSettings()
 {
-	QStringList strList = config["WadPaths"]->split(";", QString::SkipEmptyParts);
-	for (int i = 0; i < strList.count(); ++i)
+	const QStringList& wadPaths = gConfig.doomseeker.wadPaths;
+	for (int i = 0; i < wadPaths.count(); ++i)
 	{
-		addPath(strList[i]);
+		addPath(wadPaths[i]);
 	}
 
-	cbTellMeWhereAreMyWads->setChecked(config["TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn"]);
+	cbTellMeWhereAreMyWads->setChecked(gConfig.doomseeker.bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn);
 }
 
 void CFGFilePaths::saveSettings()
 {
-	QStringList strList;
+	QStringList wadPaths;
 
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstIwadAndPwadPaths->model());
 	{
 		for(int i = 0; i < model->rowCount(); ++i)
 		{
 			QStandardItem* item = model->item(i);
-			strList << item->text();
+			wadPaths << item->text();
 		}
 	}
 
-	config["WadPaths"] = strList.join(";");
-
-	bool bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn = cbTellMeWhereAreMyWads->isChecked();
-	config["TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn"] = static_cast<int>(bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn);
+	gConfig.doomseeker.wadPaths = wadPaths;
+	gConfig.doomseeker.bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn = cbTellMeWhereAreMyWads->isChecked();
 }

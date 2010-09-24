@@ -20,8 +20,8 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-
 #include "cfgwadseekersites.h"
+#include "configuration/doomseekerconfig.h"
 #include "wadseeker/wadseeker.h"
 #include <QCompleter>
 #include <QDebug>
@@ -30,7 +30,8 @@
 #include <QMessageBox>
 #include <QUrl>
 
-CFGWadseekerSites::CFGWadseekerSites(IniSection& cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
+CFGWadseekerSites::CFGWadseekerSites(QWidget* parent) 
+: ConfigurationBaseBox(parent)
 {
 	setupUi(this);
 
@@ -116,31 +117,22 @@ void CFGWadseekerSites::insertUrl(const QUrl& url)
 
 void CFGWadseekerSites::readSettings()
 {
-	QStringList urlLst = config["SearchURLs"]->split(";");
-	QStringList::iterator it;
-	for (it = urlLst.begin(); it != urlLst.end(); ++it)
+	const QStringList& urlList = gConfig.wadseeker.searchURLs;
+	foreach (const QString& url, urlList)
 	{
-		this->insertUrl(QUrl::fromPercentEncoding(it->toAscii()));
+		this->insertUrl(url);
 	}
 }
 
 void CFGWadseekerSites::saveSettings()
 {
-	QStringList* urlLst = this->urlListEncoded();
-	config["SearchURLs"] = urlLst->join(";");
-
-	delete urlLst;
-}
-
-QStringList* CFGWadseekerSites::urlListEncoded()
-{
-	QStringList* list = new QStringList();
+	QStringList urlList;
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstUrls->model());
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
 		QUrl existingUrl( model->item(i)->text() );
-		(*list) << QUrl::toPercentEncoding(existingUrl.toString());
+		urlList << existingUrl.toString();
 	}
 
-	return list;
+	gConfig.wadseeker.searchURLs = urlList;
 }

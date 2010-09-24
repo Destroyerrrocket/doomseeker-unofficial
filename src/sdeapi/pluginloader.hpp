@@ -56,6 +56,16 @@ class IniSection;
 class MAIN_EXPORT EnginePlugin
 {
 	public:
+		EnginePlugin()
+		{
+			this->pConfig = NULL;
+		}
+	
+		/**
+		 * This value is set by Doomseeker when the plugin is initialized
+		 */
+		IniSection*			pConfig;
+	
 		/**
 		 *	@brief List of all engine's DMFlags or NULL if none.
 		 */
@@ -133,13 +143,12 @@ class MAIN_EXPORT EnginePlugin
 struct MAIN_EXPORT PluginInfo
 {
 	public:
-
 		const char*			name;
 		const char*			description;
 		const char*			author;
 		quint8				version[4];
 		quint32				type; ///< Use MAKEID to generate a check type.
-		const EnginePlugin	*pInterface;
+		EnginePlugin*		pInterface;
 };
 
 /**
@@ -168,6 +177,11 @@ class MAIN_EXPORT Plugin
 		const PluginInfo	*info;
 
 	private:
+		/**
+		 *	@brief The same as info but not const.
+		 */
+		PluginInfo*			editableInfo;
+	
 		void	unload();
 
 		QString	file;

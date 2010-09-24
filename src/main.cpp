@@ -30,6 +30,7 @@
 #include <QObject>
 #include <QThreadPool>
 
+#include "configuration/doomseekerconfig.h"
 #include "gui/mainwindow.h"
 #include "gui/remoteconsole.h"
 #include "doomseekerfilepaths.h"
@@ -45,19 +46,18 @@
 
 const QString		Main::DOOMSEEKER_CONFIG_FILENAME = "doomseeker.cfg";
 const QString		Main::DOOMSEEKER_INI_FILENAME = "doomseeker.ini";
-const QString		Main::IP2C_DOWNLOAD_URL = "http://software77.net/geo-ip?DL=1";
 const QString		Main::IP2C_FILENAME = "IpToCountry.csv";
 
 DataPaths*			Main::dataPaths;
 PluginLoader* 		Main::enginePlugins = NULL;
-Ini*				Main::ini = new Ini();
+//Ini*				Main::ini = new Ini();
 IP2C*				Main::ip2c = NULL;
 QWidget*			Main::mainWindow = NULL;
 RefreshingThread*	Main::refreshingThread = new RefreshingThread();
 bool				Main::running = true;
 QString				Main::workingDirectory = "./";
 
-IniSection&			Main::config = Main::ini->createSection("Doomseeker");
+//IniSection&			Main::config = Main::ini->createSection("Doomseeker");
 
 Main::Main(int argc, char* argv[])
 : application(NULL), arguments(argv), argumentsCount(argc),
@@ -77,11 +77,8 @@ Main::~Main()
 		delete refreshingThread;
 	}
 
-	if (ini != NULL)
-	{
-		ini->save();
-		delete ini;
-	}
+	gConfig.saveToFile();
+	gConfig.dispose();
 
 	if (ip2c != NULL)
 	{
@@ -218,9 +215,15 @@ void Main::convertCfgToIni()
 	preserveOldConfigBackwardsCompatibility();
 	oldConfig.locateConfigFile(DOOMSEEKER_CONFIG_FILENAME);
 	
+	QString configDirPath = dataPaths->programsDataDirectoryPath();
+	QString iniFilePath = configDirPath + "/" + DOOMSEEKER_INI_FILENAME;
+	
+	Ini ini(iniFilePath);
 
 	for(unsigned short i = 0;i < NUM_SECTIONS;i++)
-		sections[i] = &ini->createSection(sectionNames[i]);
+	{
+		sections[i] = &ini.createSection(sectionNames[i]);
+	}
 
 	const QHash<QString, SettingsData *> settings = oldConfig.getSettings();
 	QHashIterator<QString, SettingsData *> iter(settings);
@@ -248,15 +251,15 @@ void Main::convertCfgToIni()
 	oldConfig.remove();
 
 	// Allow Doomseeker to re-create following settings from scratch:
-	ini->deleteSetting("Doomseeker", "CustomServersColor");
+	ini.deleteSetting("Doomseeker", "CustomServersColor");
 }
 
 void Main::createMainWindow()
 {
 	gLog << tr("Preparing GUI.");
 
-	MainWindow* mainWnd = new MainWindow(argumentsCount, arguments, config);
-	if (config["MainWindowMaximized"])
+	MainWindow* mainWnd = new MainWindow(argumentsCount, arguments);
+	if (gConfig.doomseeker.bMainWindowMaximized)
 	{
 		mainWnd->showMaximized();
 	}
@@ -348,43 +351,23 @@ int Main::initIP2C()
 void Main::initMainConfig()
 {
 	gLog << tr("Initializing configuration file.");
+	
+	// This macro initialize the Singleton.
+	gConfig;
+	
+	// Now try to access the configuration stored on drive.
+	QString configDirPath = dataPaths->programsDataDirectoryPath();
+	if (configDirPath.isEmpty())
+	{
+		gLog << tr("Could not get an access to the settings directory. Configuration will not be saved.");
+		return;
+	}
 
-	ini->loadIniFile(DOOMSEEKER_INI_FILENAME);
-
-	// Initial settings values
-	config.createSetting("CustomServersColor", "#ffaa00"); // r | g | b
-	config.createSetting("MainWindowMaximized", 0);
-	config.createSetting("UseTrayIcon", false); // tray icon
-	config.createSetting("CloseToTrayIcon", false); // tray icon
-	config.createSetting("WadPaths", Main::dataPaths->programsDataDirectoryPath());
-	config.createSetting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn", true);	
-	
-	// Query
-	config.createSetting("QueryAutoRefreshEnabled", false);
-	config.createSetting("QueryAutoRefreshEverySeconds", 180);
-	config.createSetting("QueryAutoRefreshDontIfActive", true);
-	config.createSetting("QueryOnStartup", true);
-	config.createSetting("QueryTries", 3);
-	config.createSetting("QueryTimeout", 1000);
-	
-	// Wadseeker
-	QStringList urlList = Wadseeker::defaultSitesListEncoded();
-	IniSection &wConfig = ini->createSection("Wadseeker");
-	wConfig.createSetting("ColorMessageNotice", "#000000");
-	wConfig.createSetting("ColorMessageError", "#ff0000");
-	wConfig.createSetting("ColorMessageCriticalError", "#ff0000");
-	wConfig.createSetting("SearchURLs", urlList.join(";"));
-	wConfig.createSetting("SearchInIdgames", true);
-	wConfig.createSetting("TargetDirectory", Main::dataPaths->programsDataDirectoryPath());
-	wConfig.createSetting("IdgamesPriority", 0); // 0 == After all other sites
-	wConfig.createSetting("IdgamesURL", Wadseeker::defaultIdgamesUrl());
-	wConfig.createSetting("ConnectTimeoutSeconds", WADSEEKER_CONNECT_TIMEOUT_SECONDS_DEFAULT);
-	wConfig.createSetting("DownloadTimeoutSeconds", WADSEEKER_DOWNLOAD_TIMEOUT_SECONDS_DEFAULT);
-	
-	// IP2C
-	config.createSetting("IP2CUrl", IP2C_DOWNLOAD_URL);
-	config.createSetting("IP2CAutoUpdate", 1);
-	config.createSetting("IP2CMaximumAge", 10);
+	QString filePath = configDirPath + "/" + DOOMSEEKER_INI_FILENAME;
+	if (gConfig.setIniFile(filePath))
+	{
+		gConfig.readFromFile();
+	}
 }
 
 void Main::initPluginConfig()
@@ -462,7 +445,7 @@ void Main::preserveOldConfigBackwardsCompatibility()
 void Main::setupRefreshingThread()
 {
 	gLog << tr("Starting refreshing thread.");
-	refreshingThread->setDelayBetweenResends(config["QueryTimeout"]);
+	refreshingThread->setDelayBetweenResends(gConfig.doomseeker.queryTimeout);
 	refreshingThread->start();
 }
 

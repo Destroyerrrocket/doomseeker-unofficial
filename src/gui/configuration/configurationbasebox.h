@@ -43,8 +43,8 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 	Q_OBJECT;
 
 	public:
-		ConfigurationBaseBox(IniSection& cfg, QWidget* parent = NULL) 
-		: QGroupBox(parent), config(cfg)
+		ConfigurationBaseBox(QWidget* parent = NULL) 
+		: QGroupBox(parent)
 		{
 			this->bAllowSave = false;
 			this->bSettingsAlreadyRead = false;
@@ -112,7 +112,6 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 	protected:
 		bool			bAllowSave;
 		bool			bSettingsAlreadyRead;
-		IniSection&		config;		
 
 		/**
 		 *	These shouldn't execute Config::readConfig() and 

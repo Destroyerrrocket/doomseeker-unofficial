@@ -20,7 +20,7 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-
+#include "configuration/doomseekerconfig.h"
 #include "gui/remoteconsole.h"
 #include "gui/serverlist.h"
 #include "gui/models/serverlistcolumn.h"
@@ -45,8 +45,8 @@ const QString ServerListHandler::FONT_COLOR_FOUND = "#009f00";
 
 using namespace ServerListColumnId;
 
-ServerListHandler::ServerListHandler(ServerListView* serverTable, IniSection& config, QWidget* pMainWindow)
-: configuration(config), mainWindow(pMainWindow), model(NULL),
+ServerListHandler::ServerListHandler(ServerListView* serverTable, QWidget* pMainWindow)
+: mainWindow(pMainWindow), model(NULL),
   needsCleaning(false), sortingProxy(NULL), sortOrder(Qt::AscendingOrder),
   sortIndex(-1), table(serverTable)
 {
@@ -144,13 +144,13 @@ QString ServerListHandler::createIwadToolTip(const Server* server)
 	}
 	
 	// This will only return anything if we have the "TellMe..." option enabled.
-	bool bFindIwad = configuration["TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn"];
+	bool bFindIwad = gConfig.doomseeker.bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn;
 	
 	if (bFindIwad)
 	{
 		static const QString FORMAT_TEMPLATE = "<font color=\"%1\">%2</font>";
 			
-		PathFinder pathFinder(configuration);
+		PathFinder pathFinder;
 		QString path = pathFinder.findFile(server->iwadName());
 		
 		if (path.isEmpty())
@@ -210,7 +210,7 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 	const QList<PWad>& pwads = server->pwads();
 	
 	// Check if we should seek and colorize.
-	bool bFindWads = configuration["TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn"];
+	bool bFindWads = gConfig.doomseeker.bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn;
 	
 	// Engage!
 	if (bFindWads)
@@ -243,7 +243,7 @@ QString ServerListHandler::createPwadToolTipInfo(const PWad& pwad)
 	QString formattedStringEnd = "</tr>";
 	QString formattedStringMiddle;
 
-	PathFinder pathFinder(configuration);
+	PathFinder pathFinder;
 	QString pathToFile = pathFinder.findFile(pwad.name);
 		
 	if (pathToFile.isEmpty())
@@ -324,16 +324,13 @@ void ServerListHandler::initDefaultColumnsWidthsSettings()
 {
 	ServerListColumn* columns = ServerListColumns::columns;
 
-	QString widths;
-	for(int i = 0; i < NUM_SERVERLIST_COLUMNS; ++i)
+	if (gConfig.doomseeker.serverListColumnWidths.isEmpty())
 	{
-		if(i != 0)
+		for(int i = 0; i < NUM_SERVERLIST_COLUMNS; ++i)
 		{
-			widths += ",";
+			gConfig.doomseeker.serverListColumnWidths.append(columns[i].width);
 		}
-		widths += QString("%1").arg(columns[i].width);
 	}
-	configuration.createSetting("ServerListColumnWidths", widths.toAscii().data());
 }
 
 bool ServerListHandler::isSortingByColumn(int columnIndex)
@@ -351,18 +348,19 @@ void ServerListHandler::loadColumnsWidthsSettings()
 {
 	ServerListColumn* columns = ServerListColumns::columns;
 
-	QStringList colWidths = configuration["ServerListColumnWidths"]->split(',', QString::SkipEmptyParts);
-	if(colWidths.size() == NUM_SERVERLIST_COLUMNS) // If the number of columns do not match than reset this setting
+	const QVector<int>& colWidths = gConfig.doomseeker.serverListColumnWidths;
+	if(colWidths.size() == NUM_SERVERLIST_COLUMNS)
 	{
 		for(int i = 0;i < NUM_SERVERLIST_COLUMNS;i++)
 		{
-			bool ok = false;
-			int width = colWidths[i].toInt(&ok);
-			if(ok)
-			{
-				columns[i].width = width;
-			}
+			columns[i].width = colWidths[i];
 		}
+	}
+	else
+	{
+		// If the number of columns do not match then reset this setting
+		gConfig.doomseeker.serverListColumnWidths.clear();
+		this->initDefaultColumnsWidthsSettings();
 	}
 }
 
@@ -459,17 +457,10 @@ void ServerListHandler::saveColumnsWidthsSettings()
 {
 	if(areColumnsWidthsSettingsChanged())
 	{
-		QString widths;
 		for(int j = 0; j < NUM_SERVERLIST_COLUMNS; ++j)
 		{
-			if(j != 0)
-			{
-				widths += ",";
-			}
-
-			widths += QString("%1").arg(table->columnWidth(j));
+			gConfig.doomseeker.serverListColumnWidths[j] = table->columnWidth(j);
 		}
-		configuration["ServerListColumnWidths"] = widths;
 	}
 }
 

@@ -325,36 +325,31 @@ bool Ini::loadAdditionalSettings(const QByteArray& data)
 	return true;
 }
 
-void Ini::loadIniFile(const QString& fileName)
+bool Ini::loadIniFile(const QString& filePath)
 {
-	QString configDirPath = Main::dataPaths->programsDataDirectoryPath();
+	gLog << tr("Ini file is: %1").arg(filePath);
+	
+	this->filename = filePath;
 
-	if (configDirPath.isEmpty())
-	{
-		gLog << tr("Could not get an access to the settings directory. Configuration will not be saved.");
-		return;
-	}
-
-	filename = configDirPath + "/" + fileName;
-	gLog << tr("Ini file is: %1").arg(filename);
-
-	QFile file(filename);
+	QFile file(filePath);
 	if (!file.exists())
 	{
 		if (!file.open(QIODevice::WriteOnly))
 		{
-			errorsList << tr("Fatal error: file %1 doesn't exist and cannot be created!").arg(filename);
+			errorsList << tr("Fatal error: file %1 doesn't exist and cannot be created!").arg(filePath);
 			valid = false;
-			return;
+			return false;
 		}
 	}
 	file.close();
 
-	valid = loadAdditionalSettings(filename);
+	valid = loadAdditionalSettings(filePath);
 	if (valid)
 	{
 		dataSourc = Drive;
 	}
+	
+	return valid;
 }
 
 Ini& Ini::operator=(const Ini& other)

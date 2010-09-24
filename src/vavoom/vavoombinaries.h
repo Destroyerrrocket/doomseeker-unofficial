@@ -30,8 +30,6 @@
 class VavoomBinaries : public Binaries
 {
 	public:
-		VavoomBinaries() : Binaries(Main::ini->createSection("Vavoom")) {}
-
 		const PluginInfo*		plugin() const
 		{
 			return VavoomMain::get();

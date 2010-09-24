@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "log.h"
+#include "configuration/doomseekerconfig.h"
 #include "sdeapi/pluginloader.hpp"
 #include "serverapi/server.h"
 #include "main.h"
@@ -172,9 +173,11 @@ void Server::refreshStarts()
 	bIsRefreshing = true;
 
 	emit begunRefreshing(this);
-	triesLeft = Main::config["QueryTries"];
+	triesLeft = gConfig.doomseeker.queryTries;
 	if(triesLeft > 10) // Limit the maximum number of tries
+	{
 		triesLeft = 10;
+	}
 }
 
 void Server::refreshStops()

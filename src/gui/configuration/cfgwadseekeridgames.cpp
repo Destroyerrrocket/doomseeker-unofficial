@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "cfgwadseekeridgames.h"
+#include "configuration/doomseekerconfig.h"
 #include "wadseeker/wadseeker.h"
 #include <QCompleter>
 #include <QDebug>
@@ -29,7 +30,8 @@
 #include <QMessageBox>
 #include <QUrl>
 
-CFGWadseekerIdgames::CFGWadseekerIdgames(IniSection& cfg, QWidget* parent) : ConfigurationBaseBox(cfg, parent)
+CFGWadseekerIdgames::CFGWadseekerIdgames(QWidget* parent) 
+: ConfigurationBaseBox(parent)
 {
 	setupUi(this);
 
@@ -54,14 +56,14 @@ void CFGWadseekerIdgames::cbUseIdgamesToggled(bool checked)
 
 void CFGWadseekerIdgames::readSettings()
 {
-	cbUseIdgames->setChecked(config["SearchInIdgames"]);
-	cboIdgamesPriority->setCurrentIndex(config["IdgamesPriority"]);
-	leIdgamesURL->setText(config["IdgamesURL"]);
+	cbUseIdgames->setChecked(gConfig.wadseeker.bSearchInIdgames);
+	cboIdgamesPriority->setCurrentIndex(gConfig.wadseeker.idgamesPriority);
+	leIdgamesURL->setText(gConfig.wadseeker.idgamesURL);
 }
 
 void CFGWadseekerIdgames::saveSettings()
 {
-	config["SearchInIdgames"] = cbUseIdgames->isChecked();
-	config["IdgamesPriority"] = cboIdgamesPriority->currentIndex();
-	config["IdgamesURL"] = leIdgamesURL->text();
+	gConfig.wadseeker.bSearchInIdgames = cbUseIdgames->isChecked();
+	gConfig.wadseeker.idgamesPriority = cboIdgamesPriority->currentIndex();
+	gConfig.wadseeker.idgamesURL = leIdgamesURL->text();
 }

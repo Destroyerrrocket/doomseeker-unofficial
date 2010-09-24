@@ -76,8 +76,6 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 		QString			colorHtmlMessageError;
 		QString			colorHtmlMessageNotice;
 
-		IniSection		&config;
-
 		/**
 		 * Interface uses this instead of line edit if bAutomatic is true.
 		 */

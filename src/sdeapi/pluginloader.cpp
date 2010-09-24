@@ -29,6 +29,7 @@
 // =============================================================================
 
 #include "log.h"
+#include "configuration/doomseekerconfig.h"
 #include "main.h"
 #include "sdeapi/pluginloader.hpp"
 
@@ -50,13 +51,16 @@ Plugin::Plugin(unsigned int type, QString f) : file(f), library(NULL)
 
 	if(library != NULL)
 	{
-		const PluginInfo *(*doomSeekerInit)() = (const PluginInfo *(*)()) (dlsym(library, "doomSeekerInit"));
+		PluginInfo *(*doomSeekerInit)() = (PluginInfo *(*)()) (dlsym(library, "doomSeekerInit"));
 		if(doomSeekerInit == NULL)
 		{ // This is not a valid plugin.
 			unload();
 			return;
 		}
-		info = doomSeekerInit();
+
+		editableInfo = doomSeekerInit();
+		info = editableInfo;
+		
 		if(info->type != type)
 		{ // Make sure this is the right kind of plugin
 			unload();
@@ -92,7 +96,9 @@ void Plugin::initConfig()
 		void (*doomSeekerInitConfig)(IniSection&) = (void (*)(IniSection&)) (dlsym(library, "doomSeekerInitConfig"));
 		if(doomSeekerInitConfig != NULL)
 		{
-			doomSeekerInitConfig(Main::ini->createSection( QString(info->name).replace(' ', "") ));
+			IniSection& cfgSection = gConfig.iniSectionForPlugin(info->name);
+			editableInfo->pInterface->pConfig = &cfgSection;
+			doomSeekerInitConfig(cfgSection);
 		}
 	}
 }
@@ -186,7 +192,8 @@ void PluginLoader::initConfig()
 	QList<Plugin*>::iterator it;
 	for (it = pluginsList.begin(); it != pluginsList.end(); ++it)
 	{
-		(*it)->initConfig();
+		Plugin* plugin = (*it);
+		plugin->initConfig();
 	}
 }
 

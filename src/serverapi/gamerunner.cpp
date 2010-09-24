@@ -24,6 +24,7 @@
 #include "serverapi/messages.h"
 #include "serverapi/server.h"
 #include "serverapi/binaries.h"
+#include "configuration/doomseekerconfig.h"
 #include "gui/standardserverconsole.h"
 #include "apprunner.h"
 #include "log.h"
@@ -32,8 +33,8 @@
 #include "strings.h"
 #include <QStringList>
 
-GameRunner::GameRunner(const Server* server, IniSection &config)
-: currentCmdLine(NULL), currentHostInfo(NULL), server(server), config(config)
+GameRunner::GameRunner(const Server* server)
+: currentCmdLine(NULL), currentHostInfo(NULL), server(server)
 {
 }
 
@@ -54,6 +55,7 @@ void GameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwad
 	iwadFound = !iwad.isEmpty();
 
 	// Custom parameters
+	IniSection& config = gConfig.iniSectionForPlugin(plugin());
 	QString customParameters = *config["CustomParameters"];
 	args << customParameters.split(" ", QString::SkipEmptyParts);
 
@@ -178,15 +180,15 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 		return joinError;
 	}
 
-	PathFinder pf(Main::config);
+	PathFinder pathFinder;
 	QStringList missingPwads;
 	bool iwadFound = false;
 
-	connectParameters(cli.args, pf, iwadFound, connectPassword);
+	connectParameters(cli.args, pathFinder, iwadFound, connectPassword);
 
 	for (int i = 0; i < server->numWads(); ++i)
 	{
-		QString pwad = pf.findFile(server->wad(i).name);
+		QString pwad = pathFinder.findFile(server->wad(i).name);
 		if (pwad.isEmpty() && !server->wad(i).optional)
 		{
 			missingPwads << server->wad(i).name;

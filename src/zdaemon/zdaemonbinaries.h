@@ -30,7 +30,7 @@
 class ZDaemonBinaries : public Binaries
 {
 	public:
-		ZDaemonBinaries() : Binaries(Main::ini->createSection("ZDaemon")) {}
+		ZDaemonBinaries() {}
 
 		const PluginInfo*		plugin() const
 		{

@@ -21,23 +21,24 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "cfgwadseekerappearance.h"
+#include "configuration/doomseekerconfig.h"
 
-CFGWadseekerAppearance::CFGWadseekerAppearance(IniSection& cfg, QWidget* parent) 
-: ConfigurationBaseBox(cfg, parent)
+CFGWadseekerAppearance::CFGWadseekerAppearance(QWidget* parent) 
+: ConfigurationBaseBox(parent)
 {
 	setupUi(this);
 }
 
 void CFGWadseekerAppearance::readSettings()
 {
-	btnNoticeMessageColor->setColorHtml(config["ColorMessageNotice"]);
-	btnErrorMessageColor->setColorHtml(config["ColorMessageError"]);
-	btnCriticalErrorMessageColor->setColorHtml(config["ColorMessageCriticalError"]);
+	btnNoticeMessageColor->setColorHtml(gConfig.wadseeker.colorMessageNotice);
+	btnErrorMessageColor->setColorHtml(gConfig.wadseeker.colorMessageError);
+	btnCriticalErrorMessageColor->setColorHtml(gConfig.wadseeker.colorMessageCriticalError);
 }
 
 void CFGWadseekerAppearance::saveSettings()
 {
-	config["ColorMessageNotice"] = btnNoticeMessageColor->colorHtml();
-	config["ColorMessageError"] = btnErrorMessageColor->colorHtml();
-	config["ColorMessageCriticalError"] = btnCriticalErrorMessageColor->colorHtml();
+	gConfig.wadseeker.colorMessageNotice = btnNoticeMessageColor->colorHtml();
+	gConfig.wadseeker.colorMessageError = btnErrorMessageColor->colorHtml();
+	gConfig.wadseeker.colorMessageCriticalError = btnCriticalErrorMessageColor->colorHtml();
 }

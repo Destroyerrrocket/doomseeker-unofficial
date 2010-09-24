@@ -35,7 +35,7 @@ class Message;
 class MAIN_EXPORT Binaries : public QObject
 {
 	public:
-		Binaries(IniSection &config);
+		Binaries();
 
 		/**
 		 *	@brief Returns the path to the client binary.
@@ -111,7 +111,6 @@ class MAIN_EXPORT Binaries : public QObject
 		typedef	QHash<BinaryType, QString>	BinaryNamesDictionary;
 
 		static BinaryNamesDictionary 		binaryNames;
-		IniSection							&config;
 
 		QString								obtainBinary(const QString& configKey, BinaryType binaryType, Message& message) const;
 };

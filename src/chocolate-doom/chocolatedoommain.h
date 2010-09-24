@@ -28,10 +28,10 @@
 class ChocolateDoomMain
 {
 	public:
-		static const PluginInfo*	get() { return &chocolatedoom_info; }
+		static PluginInfo*	get() { return &chocolatedoom_info; }
 
 	protected:
-		static const PluginInfo 	chocolatedoom_info;
+		static PluginInfo 	chocolatedoom_info;
 };
 
 #endif

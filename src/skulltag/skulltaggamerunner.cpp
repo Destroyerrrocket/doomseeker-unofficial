@@ -26,7 +26,7 @@
 #include "skulltagserver.h"
 
 SkulltagGameRunner::SkulltagGameRunner(const SkulltagServer* server)
-: GameRunner(server, Main::ini->createSection("Skulltag"))
+: GameRunner(server)
 {
 }
 

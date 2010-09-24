@@ -32,7 +32,7 @@ class CFGQuery : public ConfigurationBaseBox, private Ui::CFGQuery
 	Q_OBJECT
 
 	public:
-		CFGQuery(IniSection &cfg, QWidget *parent=NULL);
+		CFGQuery(QWidget *parent=NULL);
 
 		QIcon							icon() const { return QIcon(":/icons/view-refresh-2.png"); }
 		QString							name() const { return tr("Query"); }

@@ -20,7 +20,7 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
-
+#include "configuration/doomseekerconfig.h"
 #include "passwordDlg.h"
 #include "main.h"
 
@@ -35,13 +35,11 @@ PasswordDlg::PasswordDlg(QWidget *parent, bool rcon, bool connection) : QDialog(
 	}
 	else
 	{
-		Main::config.createSetting("RememberConnectPassword", 1);
-	
-		IniVariable &rememberConnectPassword = Main::config["RememberConnectPassword"];
-		remember->setChecked(rememberConnectPassword);
-		if(rememberConnectPassword)
+		bool bRememberConnectPassword = gConfig.doomseeker.bRememberConnectPassword;
+		remember->setChecked(bRememberConnectPassword);
+		if(bRememberConnectPassword)
 		{
-			password->setText(Main::config["ConnectPassword"]);
+			password->setText(gConfig.doomseeker.connectPassword);
 		}
 	}
 
@@ -74,9 +72,11 @@ PasswordDlg::~PasswordDlg()
 	if(rcon)
 		return;
 
-	Main::config["RememberConnectPassword"] = remember->isChecked();
+	gConfig.doomseeker.bRememberConnectPassword = remember->isChecked();
 	if(remember->isChecked())
-		Main::config["ConnectPassword"] = password->text();
+	{
+		gConfig.doomseeker.connectPassword = password->text();
+	}
 }
 
 const EnginePlugin *PasswordDlg::selectedEngine() const

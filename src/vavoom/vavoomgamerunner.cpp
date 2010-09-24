@@ -27,7 +27,7 @@
 #include "vavoomserver.h"
 
 VavoomGameRunner::VavoomGameRunner(const VavoomServer* server)
-: GameRunner(server, Main::ini->createSection("Vavoom"))
+: GameRunner(server)
 {
 }
 

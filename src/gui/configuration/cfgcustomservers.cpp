@@ -20,6 +20,7 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "configuration/doomseekerconfig.h"
 #include "cfgcustomservers.h"
 #include "sdeapi/pluginloader.hpp"
 #include "main.h"
@@ -30,7 +31,8 @@
 const // clear warnings
 #include "unknownengine.xpm"
 
-CFGCustomServers::CFGCustomServers(IniSection &cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent)
+CFGCustomServers::CFGCustomServers(QWidget *parent) 
+: ConfigurationBaseBox(parent)
 {
 	setupUi(this);
 
@@ -177,11 +179,8 @@ void CFGCustomServers::readSettings()
 {
 	prepareTable();
 
-	QList<CustomServerInfo> customServersList;
-	
-	CustomServers::decodeConfigEntries(config["CustomServers"], customServersList);
+	QList<CustomServerInfo> customServersList = gConfig.doomseeker.customServers.toList();
 	QList<CustomServerInfo>::iterator it;
-
 	for (it = customServersList.begin(); it != customServersList.end(); ++it)
 	{
 		add(it->engine, it->host, it->port);
@@ -209,7 +208,7 @@ void CFGCustomServers::remove()
 
 void CFGCustomServers::saveSettings()
 {
-	config["CustomServers"] = tableEntriesEncoded();
+	gConfig.doomseeker.customServers = this->tableGetServers();
 }
 
 void CFGCustomServers::setEngine()
@@ -255,24 +254,26 @@ void CFGCustomServers::setPortToDefault(int rowIndex)
 	itemPort->setText(defaultPort);
 }
 
-QString	CFGCustomServers::tableEntriesEncoded()
+QVector<CustomServerInfo> CFGCustomServers::tableGetServers()
 {
-	QStringList allItemsList;
+	QVector<CustomServerInfo> servers;
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
-		QStringList itemList;
+		CustomServerInfo customServer;
+	
 		QStandardItem* item = model->item(i, EngineColumnIndex);
-
-		itemList << QUrl::toPercentEncoding(item->data().toString(), "", "()");
+		customServer.engine = item->data().toString();
+		
+		customServer.engineIndex = Main::enginePlugins->pluginIndexFromName(customServer.engine);
 
 		item = model->item(i, AddressColumnIndex);
-		itemList << QUrl::toPercentEncoding(item->text(), "", "()");
+		customServer.host = item->text();
 
 		item = model->item(i, PortColumnIndex);
-		itemList << item->text();
+		customServer.port = item->text().toUShort();
 
-		allItemsList << QString("(" + itemList.join(";") + ")");
+		servers << customServer;
 	}
 
-	return allItemsList.join(";");
+	return servers;
 }

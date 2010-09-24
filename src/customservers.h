@@ -67,12 +67,11 @@ class CustomServers : public MasterClient
 		/**
 		 *	Convenience method - tries to read config seeking for
 		 *	"CustomServers" entry, decode it and launch setServers() method.
-		 *	@param cfg - instance of the config that will be read
 		 *	@param receiver - object to receive server signals
 		 *	@param slotUpdated - slot to receive Server::updated signals
 		 *	@param slotBegunRefreshing - slot to receive Server::begunRefreshing signals
 		 */
-		void							readConfig(IniSection& cfg, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing);
+		void							readConfig(QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing);
 		
 		bool							readMasterResponse(QByteArray &data) { return false; }		
 

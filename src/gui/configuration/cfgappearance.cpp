@@ -20,49 +20,51 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "configuration/doomseekerconfig.h"
 #include "cfgappearance.h"
 #include <QColorDialog>
 #include <QSystemTrayIcon>
 
-CFGAppearance::CFGAppearance(IniSection &cfg, QWidget *parent) : ConfigurationBaseBox(cfg, parent)
+CFGAppearance::CFGAppearance(QWidget *parent) 
+: ConfigurationBaseBox(parent)
 {
 	setupUi(this);
 }
 
 void CFGAppearance::readSettings()
 {
-	slotStyle->setCurrentIndex(config["SlotStyle"]);
+	slotStyle->setCurrentIndex(gConfig.doomseeker.slotStyle);
 
-	btnCustomServersColor->setColorHtml(config["CustomServersColor"]);
+	btnCustomServersColor->setColorHtml(gConfig.doomseeker.customServersColor);
 
 	// Make sure that the tray is available. If it's not, disable tray icon
 	// completely and make sure no change can be done to the configuration in
 	// this manner.
 	if (!QSystemTrayIcon::isSystemTrayAvailable())
 	{
-		config["UseTrayIcon"] = false;
-		config["CloseToTrayIcon"] = false;
+		gConfig.doomseeker.bUseTrayIcon = false;
+		gConfig.doomseeker.bCloseToTrayIcon = false;
 		gboUseTrayIcon->setEnabled(false);
 	}
 
-	gboUseTrayIcon->setChecked(config["UseTrayIcon"]);
+	gboUseTrayIcon->setChecked(gConfig.doomseeker.bUseTrayIcon);
 
-	cbCloseToTrayIcon->setChecked(config["CloseToTrayIcon"]);
+	cbCloseToTrayIcon->setChecked(gConfig.doomseeker.bCloseToTrayIcon);
 
 	// This is not really an appearance option, but it does change how the list
 	// appears and thus utilized the fact that the appearance options cause the 
 	// list to refresh.  It also doesn't fit into any of the other existing
 	// categories at this time.
-	cbBotsNotPlayers->setChecked(config["BotsAreNotPlayers"]);
+	cbBotsNotPlayers->setChecked(gConfig.doomseeker.bBotsAreNotPlayers);
 }
 
 void CFGAppearance::saveSettings()
 {
-	config["SlotStyle"] = slotStyle->currentIndex();
-	config["CustomServersColor"] = btnCustomServersColor->colorHtml();
-	config["UseTrayIcon"] = gboUseTrayIcon->isChecked();
-	config["CloseToTrayIcon"] = cbCloseToTrayIcon->isChecked();
-	config["BotsAreNotPlayers"] = cbBotsNotPlayers->isChecked();
+	gConfig.doomseeker.slotStyle = slotStyle->currentIndex();
+	gConfig.doomseeker.customServersColor = btnCustomServersColor->colorHtml();
+	gConfig.doomseeker.bUseTrayIcon = gboUseTrayIcon->isChecked();
+	gConfig.doomseeker.bCloseToTrayIcon = cbCloseToTrayIcon->isChecked();
+	gConfig.doomseeker.bBotsAreNotPlayers = cbBotsNotPlayers->isChecked();
 
 	emit appearanceChanged();
 }

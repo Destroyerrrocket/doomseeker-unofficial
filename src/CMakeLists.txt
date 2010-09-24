@@ -152,6 +152,7 @@ qt4_add_resources(doomseekerResources
 )
 
 set(SOURCE_FILES
+	configuration/doomseekerconfig.cpp
 	gui/configuration/irc/cfgircdefinenetworkdialog.cpp
 	gui/configuration/irc/cfgircnetworks.cpp
 	gui/configuration/cfgappearance.cpp
@@ -211,6 +212,7 @@ set(SOURCE_FILES
 	serverapi/tooltips/generalinfotip.cpp
 	serverapi/tooltips/playertable.cpp
 	serverapi/binaries.cpp
+	serverapi/buddyinfo.cpp
 	serverapi/gamerunner.cpp
 	serverapi/messages.cpp
 	serverapi/player.cpp
@@ -243,6 +245,7 @@ set(SOURCE_FILES
 # For the purpose of generation of proper project files.
 set(HEADER_FILES
 	${DOOMSEEKER_QT_FILES}
+	configuration/doomseekerconfig.h
 	gui/helpers/playersdiagram.h
 	gui/models/serverlistcolumn.h
 	gui/models/serverlistrowhandler.h
@@ -258,6 +261,7 @@ set(HEADER_FILES
 	serverapi/tooltips/generalinfotip.h
 	serverapi/tooltips/playertable.h
 	serverapi/binaries.h
+	serverapi/buddyinfo.h
 	serverapi/gamerunner.h
 	serverapi/messages.h
 	serverapi/player.h

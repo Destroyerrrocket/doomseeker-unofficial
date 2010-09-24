@@ -47,6 +47,7 @@ class MAIN_EXPORT IniVariable
 		IniVariable(float value) : null(false) { *this = value; }
 
 		bool			isNull() const { return null; }
+		QString			valueString() const { return this->value; }
 
 		const IniVariable &operator=(const QString &str);
 		const IniVariable &operator=(const char* str) { return *this = QString(str); }
@@ -315,7 +316,15 @@ class MAIN_EXPORT Ini : public QObject
 		bool				loadAdditionalSettings(const QString& filename);
 		bool				loadAdditionalSettings(const QByteArray& data);
 
-		void				loadIniFile(const QString &fileName);
+		/**
+		 *	@brief Loads .ini file from drive.
+		 *
+		 *	@param filePath
+		 *		Full path to the INI file.
+		 *
+		 *	@return True if load was successful.
+		 */
+		bool				loadIniFile(const QString &filePath);
 
 		Ini&				operator=(const Ini& other);
 

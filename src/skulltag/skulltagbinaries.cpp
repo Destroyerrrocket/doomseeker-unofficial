@@ -37,12 +37,14 @@
 #endif
 
 SkulltagBinaries::SkulltagBinaries(const SkulltagServer* server)
-: Binaries(Main::ini->createSection("Skulltag")), server(server)
+: server(server)
 {
 }
 
 QString SkulltagBinaries::clientBinary(Message& message) const
 {
+	IniSection& config = *SkulltagMain::get()->pInterface->pConfig;
+
 	if (!server->isTestingServer() || !config["EnableTesting"])
 	{
 		return Binaries::clientBinary(message);
@@ -143,6 +145,8 @@ Note: You will still have to manualy install the binaries."
 
 QString SkulltagBinaries::clientWorkingDirectory(Message& message) const
 {
+	IniSection& config = *SkulltagMain::get()->pInterface->pConfig;
+
 	QFileInfo fi(config["BinaryPath"]);
 	return fi.canonicalPath();
 }

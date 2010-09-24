@@ -32,7 +32,7 @@ class CFGFilePaths : public ConfigurationBaseBox, private Ui::CFGFilePaths
 	Q_OBJECT
 	
 	public:
-		CFGFilePaths(IniSection&, QWidget* parent = 0);
+		CFGFilePaths(QWidget* parent = 0);
 
 		void 							readSettings();	
 

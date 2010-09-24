@@ -33,7 +33,7 @@ class CFGAppearance : public ConfigurationBaseBox, private Ui::CFGAppearance
 	Q_OBJECT
 
 	public:
-		CFGAppearance(IniSection &cfg, QWidget *parent=NULL);
+		CFGAppearance(QWidget *parent=NULL);
 		
 		QIcon							icon() const { return QIcon(":/icons/color-fill.png"); }
 		QString							name() const { return tr("Appearance"); }

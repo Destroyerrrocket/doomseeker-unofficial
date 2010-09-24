@@ -30,8 +30,6 @@
 class OdamexBinaries : public Binaries
 {
 	public:
-		OdamexBinaries() : Binaries(Main::ini->createSection("Odamex")) {}
-
 		const PluginInfo*		plugin() const
 		{
 			return OdamexMain::get();
