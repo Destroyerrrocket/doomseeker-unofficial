@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// ircconfigurationdialog.cpp
+// fontbutton.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,39 +20,42 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "ircconfigurationdialog.h"
-#include "gui/configuration/irc/cfgircappearance.h"
-#include "gui/configuration/irc/cfgircnetworks.h"
-#include "irc/configuration/ircconfig.h"
-#include "log.h"
+#ifndef __FONTBUTTON_H__
+#define __FONTBUTTON_H__
 
-IRCConfigurationDialog::IRCConfigurationDialog(QWidget* parent)
-: ConfigurationDialog(parent)
+#include <QPushButton>
+
+/**
+ *	@brief A button widget designed to select a font.
+ *
+ *	The principal of working is the same as ColorButton.
+ */
+class FontButton : public QPushButton
 {
-	this->setWindowTitle(tr("Doomseeker - IRC Options"));
-}
+	Q_OBJECT
 
-void IRCConfigurationDialog::doSaveSettings()
-{
-	if (gIRCConfig.saveToFile())
-	{
-		gLog << tr("Settings saved!");
-	}
-	else
-	{
-		gLog << tr("Settings save failed!");
-	}
-}
+	public:
+		FontButton(QWidget* parent = NULL);
 
-void IRCConfigurationDialog::initOptionsList()
-{
-	ConfigurationBaseBox* pConfigBox = NULL;
-
-	pConfigBox = new CFGIRCAppearance(this);
-	this->addConfigurationBox(NULL, pConfigBox);
+		const QFont&		selectedFont() const { return currentFont; }
+		
+		void				setSelectedFont(const QFont& font);
 	
-	pConfigBox = new CFGIRCNetworks(this);
-	this->addConfigurationBox(NULL, pConfigBox);
-}
+	signals:
+		void				fontUpdated(QFont oldFont, const QFont& newFont);
 
+	protected:
+		QFont				currentFont;
+	
+		void				updateAppearance();
+		
+		/**
+		 *	@brief Will always emit fontUpdated() signal.
+		 */
+		void				updateFont(const QFont& newFont);
+		
+	protected slots:
+		void				thisClicked();
+};
 
+#endif

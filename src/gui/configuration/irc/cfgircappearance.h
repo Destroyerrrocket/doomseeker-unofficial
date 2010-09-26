@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// cfgircnetworks.h
+// cfgircappearance.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,48 +20,23 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __CFGIRCNETWORKS_H__
-#define __CFGIRCNETWORKS_H__
+#ifndef __CFGIRCAPPEARANCE_H__
+#define __CFGIRCAPPEARANCE_H__
 
-#include "ui_cfgircnetworks.h"
+#include "ui_cfgircappearance.h"
 #include "gui/configuration/configurationbasebox.h"
-#include <QList>
-#include <QStandardItem>
-#include <QVector>
 
-class IRCNetworkEntity;
-
-class CFGIRCNetworks : public ConfigurationBaseBox, private Ui::CFGIRCNetworks
+class CFGIRCAppearance : public ConfigurationBaseBox, private Ui::CFGIRCAppearance 
 {
-	Q_OBJECT
-
 	public:
-		CFGIRCNetworks(QWidget* parent = NULL);
-		~CFGIRCNetworks();
+		CFGIRCAppearance(QWidget* parent = NULL);
 		
-		QIcon							icon() const { return QIcon(":/flags/lan-small"); }
-		QString							name() const { return tr("Networks"); }
+		QIcon							icon() const { return QIcon(":/icons/color-fill.png"); }
+		QString							name() const { return tr("Appearance"); }
 		void							readSettings();
 		
 	protected:
 		void							saveSettings();		
-		
-	private:
-		void							addRecord(IRCNetworkEntity* pNetworkEntity);
-		void							cleanUpTable();
-		QList<QStandardItem*>			generateTableRecord(IRCNetworkEntity* pNetworkEntity);
-		IRCNetworkEntity*				network(int row);
-		QVector<IRCNetworkEntity*>		networks();
-		IRCNetworkEntity*				obtainNetworkEntity(QStandardItem* pItem);
-		void							prepareTable();
-		IRCNetworkEntity*				selectedNetwork();
-		int								selectedRow();
-		void							updateRecord(int row);
-
-	private slots:
-		void							addButtonClicked();
-		void							editButtonClicked();
-		void							removeButtonClicked();
 };
 
 #endif

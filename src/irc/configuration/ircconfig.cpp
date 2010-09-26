@@ -67,6 +67,9 @@ bool IRCConfig::readFromFile()
 	
 	IniSection* pSection;
 	
+	pSection = &pIni->section(AppearanceCfg::SECTION_NAME);
+	general.load(*pSection);
+	
 	pSection = &pIni->section(GeneralCfg::SECTION_NAME);
 	general.load(*pSection);
 	
@@ -92,6 +95,9 @@ Any modification done manually to this file is on your own risk.").arg(Version::
 	
 	IniSection* pSection;
 	
+	pSection = &pIni->section(AppearanceCfg::SECTION_NAME);
+	general.save(*pSection);
+	
 	pSection = &pIni->section(GeneralCfg::SECTION_NAME);
 	general.save(*pSection);
 	
@@ -113,7 +119,56 @@ bool IRCConfig::setIniFile(const QString& filePath)
 	gLog << QObject::tr("Setting IRC INI file: %1").arg(filePath);
 	this->pIni = new Ini(filePath);
 	
+	appearance.init(this->pIni->section(AppearanceCfg::SECTION_NAME));
+	
 	return this->pIni->isValid();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+const QString IRCConfig::AppearanceCfg::SECTION_NAME = "Appearance";
+
+IRCConfig::AppearanceCfg::AppearanceCfg()
+{
+	this->backgroundColor = "#000000";
+	this->channelActionColor = "#008000";
+	this->defaultTextColor = "#999999";
+	this->errorColor = "#ff0000";
+	this->mainFont = QFont("Courier");
+	this->networkActionColor = "#079CFF";
+	this->userListFont = QFont("Courier");
+}
+
+void IRCConfig::AppearanceCfg::init(IniSection& section)
+{
+	section.createSetting("BackgroundColor", this->backgroundColor);	
+	section.createSetting("ChannelActionColor", this->channelActionColor);
+	section.createSetting("DefaultTextColor", this->defaultTextColor);
+	section.createSetting("ErrorColor", this->errorColor);
+	section.createSetting("MainFont", this->mainFont.toString());
+	section.createSetting("NetworkActionColor", this->networkActionColor);
+	section.createSetting("UserListFont", this->userListFont.toString());
+}
+
+void IRCConfig::AppearanceCfg::load(IniSection& section)
+{
+	this->backgroundColor = section["BackgroundColor"];
+	this->channelActionColor = section["ChannelActionColor"];
+	this->defaultTextColor = section["DefaultTextColor"];
+	this->errorColor = section["ErrorColor"];
+	this->mainFont.fromString(section["MainFont"]);
+	this->networkActionColor = section["NetworkActionColor"];
+	this->userListFont.fromString(section["UserListFont"]);
+}
+
+void IRCConfig::AppearanceCfg::save(IniSection& section)
+{
+	section["BackgroundColor"] = this->backgroundColor;
+	section["ChannelActionColor"] = this->channelActionColor;
+	section["DefaultTextColor"] = this->defaultTextColor;
+	section["ErrorColor"] = this->errorColor;
+	section["MainFont"] = this->mainFont.toString();
+	section["NetworkActionColor"] = this->networkActionColor;
+	section["UserListFont"] = this->userListFont.toString();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -133,6 +188,7 @@ void IRCConfig::GeneralCfg::save(IniSection& section)
 {
 	
 }
+
 //////////////////////////////////////////////////////////////////////////////
 const QString IRCConfig::NetworksDataCfg::SECTIONS_NAMES_PREFIX = "Network.";
 

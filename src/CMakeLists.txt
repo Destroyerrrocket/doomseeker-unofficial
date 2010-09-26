@@ -55,6 +55,7 @@ endif (MSVC)
 add_definitions("-DINSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
 
 qt4_wrap_ui(doomseekerUI
+	gui/configuration/irc/cfgircappearance.ui
 	gui/configuration/irc/cfgircdefinenetworkdialog.ui
 	gui/configuration/irc/cfgircnetworks.ui
 	gui/configuration/cfgappearance.ui
@@ -86,6 +87,7 @@ qt4_wrap_ui(doomseekerUI
 )
 
 set(DOOMSEEKER_QT_FILES
+	gui/configuration/irc/cfgircappearance.h
 	gui/configuration/irc/cfgircdefinenetworkdialog.h
 	gui/configuration/irc/cfgircnetworks.h
 	gui/configuration/irc/ircconfigurationdialog.h
@@ -108,6 +110,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/models/serverlistmodel.h
 	gui/widgets/colorbutton.h
 	gui/widgets/dockedwidgets.h
+	gui/widgets/fontbutton.h	
 	gui/widgets/memorylineedit.h
 	gui/widgets/serverconsole.h
 	gui/widgets/serverlistview.h
@@ -154,6 +157,7 @@ qt4_add_resources(doomseekerResources
 
 set(SOURCE_FILES
 	configuration/doomseekerconfig.cpp
+	gui/configuration/irc/cfgircappearance.cpp
 	gui/configuration/irc/cfgircdefinenetworkdialog.cpp
 	gui/configuration/irc/cfgircnetworks.cpp
 	gui/configuration/irc/ircconfigurationdialog.cpp
@@ -177,6 +181,7 @@ set(SOURCE_FILES
 	gui/models/serverlistmodel.cpp
 	gui/models/serverlistrowhandler.cpp
 	gui/widgets/colorbutton.cpp
+	gui/widgets/fontbutton.cpp
 	gui/widgets/memorylineedit.cpp
 	gui/widgets/serverconsole.cpp
 	gui/widgets/serverlistcontextmenu.cpp

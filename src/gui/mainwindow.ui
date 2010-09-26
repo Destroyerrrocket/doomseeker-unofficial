@@ -183,7 +183,7 @@
      <normaloff>:/icons/emblem-web.png</normaloff>:/icons/emblem-web.png</iconset>
    </property>
    <property name="text">
-    <string>Update IP2C</string>
+    <string>&amp;Update IP2C</string>
    </property>
   </action>
   <action name="menuActionViewIRC">

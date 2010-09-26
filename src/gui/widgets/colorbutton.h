@@ -26,6 +26,15 @@
 #include <QColor>
 #include <QPushButton>
 
+/**
+ *	@brief A button widget designed to select a color.
+ *
+ *	This will paint itself in a color it represents. Clicking this button
+ *	will bring up a standard color selection dialog box. Operating this control
+ *	is as easy as it gets:
+ *	Just drop it inside a container and either capture colorUpdated() signals
+ *	or extract the color when ready through one of the color methods.
+ */
 class ColorButton : public QPushButton
 {
 	Q_OBJECT

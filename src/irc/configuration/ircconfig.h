@@ -27,6 +27,7 @@
 
 #include "ini.h"
 #include "irc/ircnetworkentity.h"
+#include <QFont>
 
 
 /**
@@ -40,6 +41,26 @@
 class IRCConfig
 {
 	public:
+		class AppearanceCfg
+		{
+			public:
+			static const QString		SECTION_NAME;
+			
+			QString						backgroundColor;
+			QString						channelActionColor;
+			QString						defaultTextColor;
+			QString						errorColor;
+			QFont						mainFont;
+			QString						networkActionColor;
+			QFont						userListFont;
+			
+			AppearanceCfg();
+			
+			void						init(IniSection& section);
+			void						load(IniSection& section);
+			void						save(IniSection& section);
+		};
+	
 		class GeneralCfg
 		{
 			public:
@@ -61,8 +82,10 @@ class IRCConfig
 			QString						fullName;
 			QString						nickname;
 			
-		
 			PersonalCfg();
+			
+			// This does not require a init since all values are meant
+			// to be empty by default.
 			
 			void						load(IniSection& section);
 			void						save(IniSection& section);
@@ -104,6 +127,7 @@ class IRCConfig
 		 */
 		static void					dispose();
 		
+		AppearanceCfg				appearance;
 		GeneralCfg					general;
 		NetworksDataCfg				networks;
 		PersonalCfg					personal;
