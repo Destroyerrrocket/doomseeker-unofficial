@@ -91,6 +91,13 @@ class DoomseekerConfig
 			 */
 			bool						areMainWindowSizeSettingsValid(int maxValidX, int maxValidY) const;
 			
+			/**
+			 *	@brief Initializes values that are not present in the section
+			 *	yet.
+			 *
+			 *	All values already present are left alone.
+			 */
+			void						init(IniSection& section);
 			void						load(IniSection& section);
 			void						save(IniSection& section);
 			
@@ -113,6 +120,14 @@ class DoomseekerConfig
 			QString						targetDirectory;
 			
 			WadseekerCfg();
+			
+			/**
+			 *	@brief Initializes values that are not present in the section
+			 *	yet.
+			 *
+			 *	All values already present are left alone.
+			 */
+			void						init(IniSection& section);
 			void						load(IniSection& section);
 			void						save(IniSection& section);
 		};

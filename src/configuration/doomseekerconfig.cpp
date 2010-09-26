@@ -161,6 +161,9 @@ bool DoomseekerConfig::setIniFile(const QString& filePath)
 	gLog << QObject::tr("Setting INI file: %1").arg(filePath);
 	this->pIni = new Ini(filePath);
 	
+	doomseeker.init(this->pIni->section(doomseeker.SECTION_NAME));
+	wadseeker.init(this->pIni->section(wadseeker.SECTION_NAME));
+	
 	return this->pIni->isValid();
 }
 
@@ -195,6 +198,7 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->previousCreateServerWadDir = "";
 	this->slotStyle = 1;
 	this->wadPaths << Main::dataPaths->programsDataDirectoryPath();
+	this->wadPaths << Main::workingDirectory;
 }
 
 bool DoomseekerConfig::DoomseekerCfg::areMainWindowSizeSettingsValid(int maxValidX, int maxValidY) const
@@ -232,6 +236,28 @@ bool DoomseekerConfig::DoomseekerCfg::areMainWindowSizeSettingsValid(int maxVali
 	}
 	
 	return true;
+}
+
+void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
+{
+	section.createSetting("BotsAreNotPlayers", this->bBotsAreNotPlayers);
+	section.createSetting("CloseToTrayIcon", this->bCloseToTrayIcon);
+	section.createSetting("IP2CAutoUpdate", this->bIP2CountryAutoUpdate);
+	section.createSetting("QueryAutoRefreshDontIfActive", this->bQueryAutoRefreshDontIfActive);
+	section.createSetting("QueryAutoRefreshEnabled", this->bQueryAutoRefreshEnabled);
+	section.createSetting("QueryOnStartup", this->bQueryOnStartup);
+	section.createSetting("MainWindowMaximized", this->bMainWindowMaximized);
+	section.createSetting("RememberConnectPassword", this->bRememberConnectPassword);
+	section.createSetting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn", this->bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn);
+	section.createSetting("UseTrayIcon", this->bUseTrayIcon);
+	section.createSetting("CustomServersColor", this->customServersColor);
+	section.createSetting("IP2CMaximumAge", this->ip2CountryDatabaseMaximumAge);
+	section.createSetting("IP2CUrl", this->ip2CountryUrl);
+	section.createSetting("QueryAutoRefreshEverySeconds", this->queryAutoRefreshEverySeconds);
+	section.createSetting("QueryTimeout", this->queryTimeout);
+	section.createSetting("QueryTries", this->queryTries);
+	section.createSetting("SlotStyle", this->slotStyle);
+	section.createSetting("WadPaths", this->wadPaths.join(";"));
 }
 
 void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
@@ -366,6 +392,19 @@ DoomseekerConfig::WadseekerCfg::WadseekerCfg()
 	this->idgamesURL = Wadseeker::defaultIdgamesUrl();
 	this->searchURLs = Wadseeker::defaultSitesListEncoded();
 	this->targetDirectory = Main::dataPaths->programsDataDirectoryPath();
+}
+
+void DoomseekerConfig::WadseekerCfg::init(IniSection& section)
+{
+	section.createSetting("SearchInIdgames", this->bSearchInIdgames);
+	section.createSetting("ColorMessageCriticalError", this->colorMessageCriticalError);
+	section.createSetting("ColorMessageError", this->colorMessageError);
+	section.createSetting("ColorMessageNotice", this->colorMessageNotice);
+	section.createSetting("ConnectTimeoutSeconds", this->connectTimeoutSeconds);
+	section.createSetting("DownloadTimeoutSeconds", this->downloadTimeoutSeconds);
+	section.createSetting("IdgamesPriority", this->idgamesPriority);
+	section.createSetting("IdgamesURL", this->idgamesURL);
+	section.createSetting("TargetDirectory", this->targetDirectory);
 }
 
 void DoomseekerConfig::WadseekerCfg::load(IniSection& section)
