@@ -96,6 +96,12 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::parse(QString input, Q
 		QString content = inputSplit.join(" ");
 		output = QString("%1 %2 :%3").arg(message, recipient, content);
 	}
+	else if (message == "MSG")
+	{
+		// This is an alias to the PRIVMSG command but it is so popular
+		// that I decided to implement this permanently.
+		parse(QString("/PRIVMSG %2").arg(inputSplit.join(" ")), output);
+	}
 	else
 	{
 		output = QString("%1 %2").arg(message, inputSplit.join(" "));
