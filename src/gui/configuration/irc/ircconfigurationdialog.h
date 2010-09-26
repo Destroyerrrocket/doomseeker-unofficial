@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// ircnetworkentity.h
+// ircconfigurationdialog.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,52 +20,20 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __IRCNETWORKENTITY_H__
-#define __IRCNETWORKENTITY_H__
+#ifndef __IRCCONFIGURATIONDIALOG_H__
+#define __IRCCONFIGURATIONDIALOG_H__
 
-#include <QString>
-	
-class IRCNetworkEntity
+#include "gui/configuration/configurationdialog.h"
+
+class IRCConfigurationDialog : public ConfigurationDialog
 {
 	public:
-		IRCNetworkEntity()
-		{
-			this->port = 6667;
-		}
+		IRCConfigurationDialog(QWidget* parent = NULL);
 	
-		/**
-		 *	@brief Address of the server or network to connect to.
-		 */
-		QString				address;
-		
-		/**
-		 *	@brief A short, human-readable description for the network.
-		 *	(Preferably a single word).
-		 */
-		QString				description;
-		QString				nickservCommand;
-		QString				nickservPassword;
-		
-		/**
-		 *	@brief Password for the server or network. Ignored if empty.
-		 */
-		QString				password;
-		
-		/**
-		 *	@brief Port of the server or network to connect to.
-		 *
-		 *	Default value: 6667
-		 */
-		unsigned short		port;
-		
-		/**
-		 *	@brief Sorts by description.
-		 */
-		bool				operator< (const IRCNetworkEntity& other) const
-		{
-			return this->description.toLower().trimmed() < other.description.toLower().trimmed();
-		}
-		
+		void 							initOptionsList();	
+
+	protected:
+		void							doSaveSettings();
 };
 
 #endif

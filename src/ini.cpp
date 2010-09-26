@@ -41,6 +41,16 @@ IniVariable::operator unsigned int() const
 	return value.toUInt();
 }
 
+IniVariable::operator short() const
+{
+	return value.toShort();
+}
+
+IniVariable::operator unsigned short() const
+{
+	return value.toUShort();
+}
+
 IniVariable::operator float() const
 {
 	return value.toFloat();
@@ -63,6 +73,22 @@ const IniVariable &IniVariable::operator=(int i)
 }
 
 const IniVariable &IniVariable::operator=(unsigned int i)
+{
+	assert(!isNull());
+
+	value = QString("%1").arg(i);
+	return *this;
+}
+
+const IniVariable &IniVariable::operator=(short i)
+{
+	assert(!isNull());
+
+	value = QString("%1").arg(i);
+	return *this;
+}
+
+const IniVariable &IniVariable::operator=(unsigned short i)
 {
 	assert(!isNull());
 
@@ -569,6 +595,24 @@ void Ini::readQByteArrayIntoStructures(const QByteArray& array)
 	iniTopComment = Strings::trimr(iniTopComment, "\n");
 }
 
+IniSection& Ini::retrieveSection(const QString& name)
+{
+	if (name.isEmpty())
+	{
+		return nullSection;
+	}
+	
+	QString nameLower = name.toLower();
+
+	IniSectionsIt it = sections.find(nameLower);
+	if (it == sections.end())
+	{
+		return nullSection;
+	}
+
+	return *it;
+}
+
 IniVariable &Ini::retrieveSetting(const QString& sectionName, const QString& variableName)
 {
 	if (sectionName.isEmpty() || variableName.isEmpty())
@@ -613,20 +657,26 @@ bool Ini::save()
 
 IniSection& Ini::section(const QString& name)
 {
-	if (name.isEmpty())
+	return createSection(name);
+}
+
+QVector<IniSection*> Ini::sectionsArray(const QString& regexPattern)
+{
+	QVector<IniSection*> sectionsReferencesArray;
+	
+	QRegExp regExp(regexPattern, Qt::CaseInsensitive);
+	
+	IniSectionsIt it;
+	for (it = sections.begin(); it != sections.end(); ++it)
 	{
-		return nullSection;
+		const QString& key = it.key();
+		if (key.contains(regExp))
+		{
+			sectionsReferencesArray << &it.value();
+		}
 	}
 	
-	QString nameLower = name.toLower();
-
-	IniSectionsIt it = sections.find(nameLower);
-	if (it == sections.end())
-	{
-		return nullSection;
-	}
-
-	return *it;
+	return sectionsReferencesArray;
 }
 
 IniVariable& Ini::setting(const QString& sectionName, const QString& variableName)

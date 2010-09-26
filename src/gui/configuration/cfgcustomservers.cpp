@@ -160,7 +160,7 @@ void CFGCustomServers::prepareTable()
 	connect(model, SIGNAL( dataChanged(const QModelIndex&, const QModelIndex&) ), this, SLOT( dataChanged(const QModelIndex&, const QModelIndex&) ) );
 
 	QStringList labels;
-	labels << "" << "Host" << "Port";
+	labels << "" << tr("Host") << tr("Port");
 	model->setHorizontalHeaderLabels(labels);
 
 	tvServers->setModel(model);

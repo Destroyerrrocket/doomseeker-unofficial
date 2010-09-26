@@ -88,6 +88,7 @@ qt4_wrap_ui(doomseekerUI
 set(DOOMSEEKER_QT_FILES
 	gui/configuration/irc/cfgircdefinenetworkdialog.h
 	gui/configuration/irc/cfgircnetworks.h
+	gui/configuration/irc/ircconfigurationdialog.h
 	gui/configuration/cfgappearance.h
 	gui/configuration/cfgcustomservers.h	
 	gui/configuration/cfgfilepaths.h
@@ -155,6 +156,7 @@ set(SOURCE_FILES
 	configuration/doomseekerconfig.cpp
 	gui/configuration/irc/cfgircdefinenetworkdialog.cpp
 	gui/configuration/irc/cfgircnetworks.cpp
+	gui/configuration/irc/ircconfigurationdialog.cpp
 	gui/configuration/cfgappearance.cpp
 	gui/configuration/cfgcustomservers.cpp	
 	gui/configuration/cfgfilepaths.cpp
@@ -193,6 +195,7 @@ set(SOURCE_FILES
 	gui/serverlist.cpp
 	gui/standardserverconsole.cpp
 	gui/wadseekerinterface.cpp
+	irc/configuration/ircconfig.cpp
 	irc/ircchanneladapter.cpp
 	irc/ircchatadapter.cpp
 	irc/ircclient.cpp
@@ -240,6 +243,7 @@ set(SOURCE_FILES
 	pathfinder.cpp
 	refresher.cpp
 	strings.cpp	
+	version.cpp
 )
 
 # For the purpose of generation of proper project files.
@@ -249,6 +253,7 @@ set(HEADER_FILES
 	gui/helpers/playersdiagram.h
 	gui/models/serverlistcolumn.h
 	gui/models/serverlistrowhandler.h
+	irc/configuration/ircconfig.h
 	irc/ircglobal.h
 	irc/ircnetworkconnectioninfo.h
 	irc/ircnetworkentity.h

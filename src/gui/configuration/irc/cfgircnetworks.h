@@ -24,5 +24,44 @@
 #define __CFGIRCNETWORKS_H__
 
 #include "ui_cfgircnetworks.h"
+#include "gui/configuration/configurationbasebox.h"
+#include <QList>
+#include <QStandardItem>
+#include <QVector>
+
+class IRCNetworkEntity;
+
+class CFGIRCNetworks : public ConfigurationBaseBox, private Ui::CFGIRCNetworks
+{
+	Q_OBJECT
+
+	public:
+		CFGIRCNetworks(QWidget* parent = NULL);
+		~CFGIRCNetworks();
+		
+		QIcon							icon() const { return QIcon(); }
+		QString							name() const { return tr("Networks"); }
+		void							readSettings();
+		
+	protected:
+		void							saveSettings();		
+		
+	private:
+		void							addRecord(IRCNetworkEntity* pNetworkEntity);
+		void							cleanUpTable();
+		QList<QStandardItem*>			generateTableRecord(IRCNetworkEntity* pNetworkEntity);
+		IRCNetworkEntity*				network(int row);
+		QVector<IRCNetworkEntity*>		networks();
+		IRCNetworkEntity*				obtainNetworkEntity(QStandardItem* pItem);
+		void							prepareTable();
+		IRCNetworkEntity*				selectedNetwork();
+		int								selectedRow();
+		void							updateRecord(int row);
+
+	private slots:
+		void							addButtonClicked();
+		void							editButtonClicked();
+		void							removeButtonClicked();
+};
 
 #endif

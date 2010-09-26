@@ -24,8 +24,7 @@
 #define __CFGIRCDEFINENETWORKDIALOG_H__
 
 #include "ui_cfgircdefinenetworkdialog.h"
-
-class IRCNetworkEntity;
+#include "irc/ircnetworkentity.h"
 
 class CFGIRCDefineNetworkDialog : public QDialog, private Ui::CFGIRCDefineNetworkDialog
 {
@@ -38,6 +37,7 @@ class CFGIRCDefineNetworkDialog : public QDialog, private Ui::CFGIRCDefineNetwor
 		IRCNetworkEntity				getNetworkEntity() const;
 		
 	private:
+		void							construct();
 		void							initFrom(const IRCNetworkEntity& networkEntity);
 		
 	private slots:

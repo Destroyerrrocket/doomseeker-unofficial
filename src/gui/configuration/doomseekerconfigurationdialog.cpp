@@ -100,9 +100,6 @@ void DoomseekerConfigurationDialog::doSaveSettings()
 	{
 		gLog << tr("Settings save failed!");
 	}
-
-	// In case the master server addresses changed, notify the master clients.
-	reinterpret_cast<MainWindow *> (Main::mainWindow)->updateMasterAddresses();
 }
 
 void DoomseekerConfigurationDialog::initOptionsList()

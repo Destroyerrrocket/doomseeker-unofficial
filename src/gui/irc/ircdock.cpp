@@ -23,6 +23,7 @@
 #include "ircdock.h"
 #include "gui/irc/ircdocktabcontents.h"
 #include "gui/irc/ircnetworkselectionbox.h"
+#include "irc/configuration/ircconfig.h"
 #include "irc/ircglobalmessages.h"
 #include "irc/ircnetworkadapter.h"
 
@@ -138,8 +139,12 @@ void IRCDock::toolBarAction(QAction* pAction)
 		IRCNetworkSelectionBox networkSelection(this);
 		if (networkSelection.exec() == QDialog::Accepted)
 		{
-			IRCNetworkConnectionInfo connectionInfo;
-			networkSelection.networkConnectionInfo(connectionInfo);
+			IRCNetworkConnectionInfo connectionInfo = networkSelection.networkConnectionInfo();
+			
+			// We will attempt to remember user credentials for further use.
+			gIRCConfig.personal.alternativeNickname = connectionInfo.alternateNick;
+			gIRCConfig.personal.nickname = connectionInfo.nick;
+			gIRCConfig.personal.fullName = connectionInfo.realName;		
 			
 			IRCNetworkAdapter* pIRCNetworkAdapter = new IRCNetworkAdapter();
 

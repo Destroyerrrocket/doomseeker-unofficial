@@ -21,17 +21,19 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "cfgircdefinenetworkdialog.h"
-#include "irc/ircnetworkentity.h"
 
 CFGIRCDefineNetworkDialog::CFGIRCDefineNetworkDialog(const IRCNetworkEntity& initValuesEntity, QWidget* parent)
 : QDialog(parent)
 {
+	construct();
+
 	initFrom(initValuesEntity);
 }
 
 CFGIRCDefineNetworkDialog::CFGIRCDefineNetworkDialog(QWidget* parent)
 : QDialog(parent)
 {
+	construct();
 }
 
 void CFGIRCDefineNetworkDialog::buttonClicked(QAbstractButton* button)
@@ -46,14 +48,21 @@ void CFGIRCDefineNetworkDialog::buttonClicked(QAbstractButton* button)
 		this->reject();
 	}	
 }
+
+void CFGIRCDefineNetworkDialog::construct()
+{
+	setupUi(this);
+	
+	connect(buttonBox, SIGNAL( clicked(QAbstractButton*) ), SLOT( buttonClicked(QAbstractButton*) ) );
+}
 		
 IRCNetworkEntity CFGIRCDefineNetworkDialog::getNetworkEntity() const
 {
 	IRCNetworkEntity entity;
 	
-	entity.address = this->leAddress->text();
-	entity.description = this->leDescription->text();
-	entity.nickservCommand = this->leNickservCommand->text();
+	entity.address = this->leAddress->text().trimmed();
+	entity.description = this->leDescription->text().trimmed();
+	entity.nickservCommand = this->leNickservCommand->text().trimmed();
 	entity.nickservPassword = this->leNickservPassword->text();
 	entity.password = this->leServerPassword->text();
 	entity.port = this->spinPort->value();

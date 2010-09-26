@@ -42,8 +42,6 @@ class MAIN_EXPORT Main : public QObject
 	public:
 		static const QString		IP2C_FILENAME;
 	
-		//static IniSection			&config;
-		//static Ini					*ini;
 		static IP2C					*ip2c;
 		static DataPaths*			dataPaths;
 		static QWidget*				mainWindow;
@@ -70,6 +68,7 @@ class MAIN_EXPORT Main : public QObject
 	protected:
 		static const QString		DOOMSEEKER_CONFIG_FILENAME;
 		static const QString		DOOMSEEKER_INI_FILENAME;
+		static const QString		DOOMSEEKER_IRC_INI_FILENAME;
 
 		void						convertCfgToIni();
 
@@ -91,6 +90,7 @@ class MAIN_EXPORT Main : public QObject
 		 *		always returns zero.
 		 */
 		int							initIP2C();
+		void						initIRCConfig();
 		void						initMainConfig();
 		void						initPluginConfig();
 

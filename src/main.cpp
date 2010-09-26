@@ -33,6 +33,7 @@
 #include "configuration/doomseekerconfig.h"
 #include "gui/mainwindow.h"
 #include "gui/remoteconsole.h"
+#include "irc/configuration/ircconfig.h"
 #include "doomseekerfilepaths.h"
 #include "ini.h"
 #include "ip2cparser.h"
@@ -46,18 +47,16 @@
 
 const QString		Main::DOOMSEEKER_CONFIG_FILENAME = "doomseeker.cfg";
 const QString		Main::DOOMSEEKER_INI_FILENAME = "doomseeker.ini";
+const QString		Main::DOOMSEEKER_IRC_INI_FILENAME = "doomseeker-irc.ini";
 const QString		Main::IP2C_FILENAME = "IpToCountry.csv";
 
 DataPaths*			Main::dataPaths;
 PluginLoader* 		Main::enginePlugins = NULL;
-//Ini*				Main::ini = new Ini();
 IP2C*				Main::ip2c = NULL;
 QWidget*			Main::mainWindow = NULL;
 RefreshingThread*	Main::refreshingThread = new RefreshingThread();
 bool				Main::running = true;
 QString				Main::workingDirectory = "./";
-
-//IniSection&			Main::config = Main::ini->createSection("Doomseeker");
 
 Main::Main(int argc, char* argv[])
 : application(NULL), arguments(argv), argumentsCount(argc),
@@ -79,6 +78,9 @@ Main::~Main()
 
 	gConfig.saveToFile();
 	gConfig.dispose();
+	
+	gIRCConfig.saveToFile();
+	gIRCConfig.dispose();
 
 	if (ip2c != NULL)
 	{
@@ -140,6 +142,7 @@ int Main::run()
 	convertCfgToIni();
 	initMainConfig();
 	initPluginConfig();
+	initIRCConfig();
 
 	if (startRcon)
 	{
@@ -348,11 +351,32 @@ int Main::initIP2C()
 	return 0;
 }
 
+void Main::initIRCConfig()
+{
+	gLog << tr("Initializing IRC configuration file.");
+	
+	// This macro initializes the Singleton.
+	gIRCConfig;
+	
+	// Now try to access the configuration stored on drive.
+	QString configDirPath = dataPaths->programsDataDirectoryPath();
+	if (configDirPath.isEmpty())
+	{
+		return;
+	}
+
+	QString filePath = configDirPath + "/" + DOOMSEEKER_IRC_INI_FILENAME;
+	if (gIRCConfig.setIniFile(filePath))
+	{
+		gIRCConfig.readFromFile();
+	}
+}
+
 void Main::initMainConfig()
 {
 	gLog << tr("Initializing configuration file.");
 	
-	// This macro initialize the Singleton.
+	// This macro initializes the Singleton.
 	gConfig;
 	
 	// Now try to access the configuration stored on drive.

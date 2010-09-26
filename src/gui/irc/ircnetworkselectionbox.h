@@ -26,6 +26,7 @@
 #include "ui_ircnetworkselectionbox.h"
 
 #include "irc/ircnetworkconnectioninfo.h"
+#include "irc/ircnetworkentity.h"
 #include <QDialog>
 
 class IRCNetworkSelectionBox : public QDialog, private Ui::IRCNetworkSelectionBox
@@ -35,7 +36,32 @@ class IRCNetworkSelectionBox : public QDialog, private Ui::IRCNetworkSelectionBo
 	public:
 		IRCNetworkSelectionBox(QWidget* parent = NULL);
 
-		void					networkConnectionInfo(IRCNetworkConnectionInfo& outInfo) const;
+		/**
+		 *	@brief Extracts network specified in this dialog.
+		 *
+		 *	This will take all information from the entity selected
+		 *	from the combo box. Some values that are directly editable
+		 *	through this dialog will be substituted (if changed).
+		 */
+		IRCNetworkEntity			network() const;
+
+		IRCNetworkConnectionInfo	networkConnectionInfo() const;
+		
+	private:
+		QVector<IRCNetworkEntity>	networksArray;
+	
+		void						fetchNetworks();
+		void						initWidgets();
+		
+		/**
+		 *	@brief Extracts selected network from combo box.
+		 */
+		IRCNetworkEntity			networkComboBox() const;
+		void						updateNetworkInfo();
+		
+	private slots:
+		void						btnNewNetworkClicked();
+		void						networkChanged(int index);
 };
 
 #endif

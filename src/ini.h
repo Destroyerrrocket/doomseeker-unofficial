@@ -38,11 +38,24 @@
 class MAIN_EXPORT IniVariable
 {
 	public:
+		/**
+		 *	@brief Comment placed on the right side of the variable.
+		 */
+		QString			sideComment;
+
+		/**
+		 *	@brief Comment placed on top of the variable.
+		 */
+		QString			topComment;
+			
+	
 		IniVariable() : null(false) {}
 		IniVariable(const QString& value) : null(false) { *this = value; }
 		IniVariable(const char* value) : null(false) { *this = QString(value); }
 		IniVariable(int value) : null(false) { *this = value; }
 		IniVariable(unsigned int value) : null(false) { *this = value; }
+		IniVariable(short value) : null(false) { *this = value; }
+		IniVariable(unsigned short value) : null(false) { *this = value; }
 		IniVariable(bool value) : null(false) { *this = value; }
 		IniVariable(float value) : null(false) { *this = value; }
 
@@ -53,6 +66,8 @@ class MAIN_EXPORT IniVariable
 		const IniVariable &operator=(const char* str) { return *this = QString(str); }
 		const IniVariable &operator=(int i);
 		const IniVariable &operator=(unsigned int i);
+		const IniVariable &operator=(short i);
+		const IniVariable &operator=(unsigned short i);
 		const IniVariable &operator=(bool b);
 		const IniVariable &operator=(float f);
 		const IniVariable &operator=(const IniVariable &other);
@@ -71,6 +86,9 @@ class MAIN_EXPORT IniVariable
 		*/
 		operator int() const;
 		operator unsigned int() const;
+		
+		operator short() const;
+		operator unsigned short() const;
 		/**
 		*	Convert QString value to boolean, if possible. It's done by converting
 		*	to numValue() first, then to bool.
@@ -88,23 +106,13 @@ class MAIN_EXPORT IniVariable
 		bool				null;
 
 		/**
-		*	@brief Comment placed on the right side of the variable.
-		*/
-		QString			sideComment;
-
-		/**
-		*	@brief Comment placed on top of the variable.
-		*/
-		QString			topComment;
-		
-		/**
-		*	@brief The key name of this variable with lettercase preserved.
-		*/
+		 *	@brief The key name of this variable with lettercase preserved.
+		 */
 		QString			key;
 
 		/**
-		*	@brief Value of the variable.
-		*/
+		 *	@brief Value of the variable.
+		 */
 		QString			value;
 };
 
@@ -122,6 +130,24 @@ class MAIN_EXPORT IniSection
 {
 	public:
 		IniSection() : null(false) {}
+		
+		/**
+		 *	@brief Comment placed on the right side of the section.
+		 */
+		QString					sideComment;
+
+		/**
+		 *	@brief Comment placed on top of the section.
+		 */
+		QString					topComment;
+
+		/**
+		 *	@brief List of strings that belong to this section. 
+		 *
+		 *	This is an extension to the original INI format. 
+		 *	See Ini for more information.
+		 */
+		QVector<IniVariable>	nameList;
 
 		static IniVariable nullVariable;
 
@@ -130,6 +156,7 @@ class MAIN_EXPORT IniSection
 		bool					isNull() const { return null; }
 		IniVariable				&retrieveSetting(const QString& name);
 		const IniVariable		&retrieveSetting(const QString& name) const;
+		const QString&			sectionName() const { return this->name; }
 		IniVariable				&setting(const QString& name);
 
 		IniVariable				&operator[](const QString& name) { return setting(name); }
@@ -143,32 +170,15 @@ class MAIN_EXPORT IniSection
 		bool				null;
 
 		/**
-		*	@brief A name of this section with lettercase preserved.
-		*/
+		 *	@brief A name of this section with lettercase preserved.
+		 */
 		QString					name;
 
-		/**
-		*	@brief Comment placed on the right side of the section.
-		*/
-		QString					sideComment;
 
 		/**
-		*	@brief Comment placed on top of the section.
-		*/
-		QString					topComment;
-
-		/**
-		*	@brief List of variables that belong to this section.
-		*/
+		 *	@brief List of variables that belong to this section.
+		 */
 		IniVariables			variables;
-
-		/**
-		*	@brief List of strings that belong to this section. 
-		*
-		*	This is an extension to the original INI format. 
-		*	See Ini for more information.
-		*/
-		QVector<IniVariable>	nameList;
 };
 
 typedef QHash<QString, IniSection> 					IniSections;	// the first QString is the name
@@ -332,6 +342,13 @@ class MAIN_EXPORT Ini : public QObject
 		 *	For debug purposes. Prints internally stored data to stdout.
 		 */
 		void				print() const;
+		
+		/**
+		 *	This method will not create a new section if it doesn't exist yet.
+		 *	@return NULL if section doesn't exist or a pointer to
+		 *	internally stored IniSection object. Do not delete this object.
+		 */
+		IniSection&			retrieveSection(const QString& name);
 
 		/**
 		 *	This won't create a variable if it doesn't exist and return NULL
@@ -349,11 +366,26 @@ class MAIN_EXPORT Ini : public QObject
 		bool				save();
 
 		/**
-		 *	This method will not create a new section if it doesn't exist yet.
+		 *	This method will attempt to retrieve an existing section.
+		 *	If this section does not exist a new section will be created.
+		 *
+		 *	This is in fact an alias to createSection() and it has been
+		 *	introduced to fit the IniVariable create/retrieve/setting set
+		 *	of methods and to avoid further confusion 
+		 *	(ie. "why does this crash").
+		 *
 		 *	@return NULL if section doesn't exist or a pointer to
 		 *	internally stored IniSection object. Do not delete this object.
 		 */
 		IniSection&			section(const QString& name);
+		
+		/**
+		 *	Retrieves references to all sections whose names fit a certain
+		 *	pattern. Please remember that internally all sections are stored
+		 *	as lower-case strings. The regex pattern will be instructed to 
+		 *	ignore the case size.
+		 */
+		QVector<IniSection*>	sectionsArray(const QString& regexPattern);		
 
 		/**
 		 *	Sets top comment of the INI file.

@@ -93,8 +93,6 @@ void CustomServers::setServers(const QList<CustomServerInfo>& csiList, QObject* 
 	QList<CustomServerInfo>::const_iterator cit;
 	for (cit = csiList.begin(); cit != csiList.end(); ++cit)
 	{
-		printf("%s\n", cit->host.toAscii().constData());
-	
 		if (cit->engineIndex < 0)
 			continue;
 

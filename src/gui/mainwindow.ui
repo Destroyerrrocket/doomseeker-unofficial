@@ -56,6 +56,7 @@
      <string>&amp;Options</string>
     </property>
     <addaction name="menuActionConfigure"/>
+    <addaction name="menuActionIRCOptions"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -194,6 +195,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="menuActionIRCOptions">
+   <property name="text">
+    <string>&amp;IRC Options</string>
    </property>
   </action>
  </widget>

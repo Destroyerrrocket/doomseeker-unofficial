@@ -34,13 +34,7 @@ AboutDlg::AboutDlg(QWidget* parent) : QDialog(parent)
 	connect(buttonBox, SIGNAL( clicked(QAbstractButton *) ), this, SLOT( close() ));
 
 	// Doomseeker
-	QString version = VERSION;
-	QString revision = REVISION;
-	if (!revision.isEmpty())
-	{
-		version += "-" + revision;
-	}
-	versionNumber->setText(version);
+	versionNumber->setText(Version::versionRevision());
 	logo->setPixmap(QPixmap(":/logo.png"));
 
 	// Wadseeker

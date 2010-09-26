@@ -21,6 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "configuration/doomseekerconfig.h"
+#include "gui/configuration/irc/ircconfigurationdialog.h"
 #include "gui/configuration/doomseekerconfigurationdialog.h"
 #include "gui/helpers/playersdiagram.h"
 #include "gui/widgets/serversstatuswidget.h"
@@ -313,6 +314,7 @@ void MainWindow::connectEntities()
 	connect(menuActionConfigure, SIGNAL( triggered() ), this, SLOT( menuOptionsConfigure() ));
 	connect(menuActionCreateServer, SIGNAL( triggered() ), this, SLOT( menuCreateServer() ));
 	connect(menuActionHelp, SIGNAL( triggered() ), this, SLOT ( menuHelpHelp() ) );
+	connect(menuActionIRCOptions, SIGNAL( triggered() ), this, SLOT( menuIRCOptions() ) );
 	connect(menuActionLog, SIGNAL( triggered() ), this, SLOT( menuLog() ));
 	connect(menuActionUpdateIP2C, SIGNAL( triggered() ), this, SLOT( menuUpdateIP2C() ) );
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( quitProgram() ));
@@ -772,6 +774,13 @@ void MainWindow::menuHelpHelp()
 	}
 }
 
+void MainWindow::menuIRCOptions()
+{
+	IRCConfigurationDialog dialog(this);
+	dialog.initOptionsList();
+	dialog.exec();
+}
+
 void MainWindow::menuLog()
 {
 	logDock->setVisible(!logDock->isVisible());
@@ -801,7 +810,11 @@ void MainWindow::menuOptionsConfigure()
 
 	// Do some cleanups after config box finishes.
 	initAutoRefreshTimer();
+	
+	// In case the master server addresses changed, notify the master clients.
+	updateMasterAddresses();
 
+	// If appearance changed - update the widgets.
 	if (configDialog.appearanceChanged())
 	{
 		serverTableHandler->redraw();

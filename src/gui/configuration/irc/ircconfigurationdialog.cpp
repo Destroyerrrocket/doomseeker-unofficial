@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// ircnetworkentity.h
+// ircconfigurationdialog.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,52 +20,35 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __IRCNETWORKENTITY_H__
-#define __IRCNETWORKENTITY_H__
+#include "ircconfigurationdialog.h"
+#include "gui/configuration/irc/cfgircnetworks.h"
+#include "irc/configuration/ircconfig.h"
+#include "log.h"
 
-#include <QString>
-	
-class IRCNetworkEntity
+IRCConfigurationDialog::IRCConfigurationDialog(QWidget* parent)
+: ConfigurationDialog(parent)
 {
-	public:
-		IRCNetworkEntity()
-		{
-			this->port = 6667;
-		}
-	
-		/**
-		 *	@brief Address of the server or network to connect to.
-		 */
-		QString				address;
-		
-		/**
-		 *	@brief A short, human-readable description for the network.
-		 *	(Preferably a single word).
-		 */
-		QString				description;
-		QString				nickservCommand;
-		QString				nickservPassword;
-		
-		/**
-		 *	@brief Password for the server or network. Ignored if empty.
-		 */
-		QString				password;
-		
-		/**
-		 *	@brief Port of the server or network to connect to.
-		 *
-		 *	Default value: 6667
-		 */
-		unsigned short		port;
-		
-		/**
-		 *	@brief Sorts by description.
-		 */
-		bool				operator< (const IRCNetworkEntity& other) const
-		{
-			return this->description.toLower().trimmed() < other.description.toLower().trimmed();
-		}
-		
-};
+	this->setWindowTitle(tr("Doomseeker - IRC Options"));
+}
 
-#endif
+void IRCConfigurationDialog::doSaveSettings()
+{
+	if (gIRCConfig.saveToFile())
+	{
+		gLog << tr("Settings saved!");
+	}
+	else
+	{
+		gLog << tr("Settings save failed!");
+	}
+}
+
+void IRCConfigurationDialog::initOptionsList()
+{
+	ConfigurationBaseBox* pConfigBox = NULL;
+	
+	pConfigBox = new CFGIRCNetworks(this);
+	this->addConfigurationBox(NULL, pConfigBox);
+}
+
+

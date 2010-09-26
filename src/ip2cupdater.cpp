@@ -32,7 +32,7 @@
 IP2CUpdater::IP2CUpdater()
 {
 	www = new WWW();
-	www->setUserAgent(QString("Doomseeker/") + QString(VERSION));
+	www->setUserAgent(QString("Doomseeker/") + QString(Version::versionRevision()));
 	
 	connect(www, SIGNAL( fileDone(QByteArray&, const QString&) ), this, SLOT( processHttp(QByteArray&, const QString&) ));
 	connect(www, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ));	

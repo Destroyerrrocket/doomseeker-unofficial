@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// ircnetworkentity.h
+// version.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,52 +20,38 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __IRCNETWORKENTITY_H__
-#define __IRCNETWORKENTITY_H__
+#include "version.h"
+#include "svnrevision.h"
 
-#include <QString>
-	
-class IRCNetworkEntity
+QString Version::name() 
+{ 
+	return "Doomseeker";
+}
+
+QString Version::revision()
 {
-	public:
-		IRCNetworkEntity()
-		{
-			this->port = 6667;
-		}
-	
-		/**
-		 *	@brief Address of the server or network to connect to.
-		 */
-		QString				address;
-		
-		/**
-		 *	@brief A short, human-readable description for the network.
-		 *	(Preferably a single word).
-		 */
-		QString				description;
-		QString				nickservCommand;
-		QString				nickservPassword;
-		
-		/**
-		 *	@brief Password for the server or network. Ignored if empty.
-		 */
-		QString				password;
-		
-		/**
-		 *	@brief Port of the server or network to connect to.
-		 *
-		 *	Default value: 6667
-		 */
-		unsigned short		port;
-		
-		/**
-		 *	@brief Sorts by description.
-		 */
-		bool				operator< (const IRCNetworkEntity& other) const
-		{
-			return this->description.toLower().trimmed() < other.description.toLower().trimmed();
-		}
-		
-};
+	return SVN_REVISION_STRING;
+}
 
-#endif
+int Version::revisionNumber()
+{
+	return SVN_REVISION_NUMBER;
+}
+
+QString Version::version()
+{
+	return "0.7 Beta";
+}
+
+QString Version::versionRevision()
+{ 
+	if (revision().isEmpty())
+	{
+		return version();
+	}
+	else
+	{
+		return version() + "-" + revision(); 
+	}
+}
+

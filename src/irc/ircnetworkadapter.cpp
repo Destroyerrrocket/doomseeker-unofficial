@@ -94,7 +94,7 @@ void IRCNetworkAdapter::connect(const IRCNetworkConnectionInfo& connectionInfo)
 {
 	this->connectionInfo = connectionInfo;
 	emit titleChange();
-	ircClient.connect(connectionInfo.serverAddress, connectionInfo.serverPort);
+	ircClient.connect(connectionInfo.networkEntity.address, connectionInfo.networkEntity.port);
 }
 
 void IRCNetworkAdapter::detachChatWindow(const IRCChatAdapter* pAdapter)
@@ -321,7 +321,7 @@ void IRCNetworkAdapter::sendPong(const QString& toWhom)
 
 QString IRCNetworkAdapter::title() const
 {
-	return connectionInfo.serverAddress;
+	return connectionInfo.networkEntity.description;
 }
 
 void IRCNetworkAdapter::userChangesNickname(const QString& oldNickname, const QString& newNickname)
@@ -424,20 +424,30 @@ void IRCSocketSignalsAdapter::connected()
 	QString messageNick = "/NICK %1 %2";
 	QString messageUser = "/USER %1 %2 %3 :%4";
 	
-	if (!connectionInfo.serverPassword.isEmpty())
+	IRCNetworkEntity& network = connectionInfo.networkEntity;
+	
+	if (!network.password.isEmpty())
 	{
-		pParent->sendMessage(messagePass.arg(connectionInfo.serverPassword));
+		pParent->sendMessage(messagePass.arg(network.password));
 	}
 	
 	pParent->sendMessage(messageNick.arg(connectionInfo.nick).arg(connectionInfo.alternateNick));
 	pParent->sendMessage(messageUser.arg(connectionInfo.nick).arg(connectionInfo.nick).arg(connectionInfo.nick).arg(connectionInfo.realName));
 	pParent->sendMessage(messageUser.arg(connectionInfo.nick));
+	
+	if (!network.nickservPassword.isEmpty())
+	{
+		QString messageNickserv = network.nickservCommand;
+		messageNickserv = messageNickserv.arg(network.nickservPassword);
+		
+		pParent->sendMessage(messageNickserv);
+	}
 }
 
 void IRCSocketSignalsAdapter::disconnected()
 {
 	pParent->killAllChatWindows();
-	gLog << tr("IRC: Disconnected from network %1").arg(pParent->connectionInfo.serverAddress);
+	gLog << tr("IRC: Disconnected from network %1").arg(pParent->connectionInfo.networkEntity.description);
 	emit pParent->message("Disconnected");
 }
 
