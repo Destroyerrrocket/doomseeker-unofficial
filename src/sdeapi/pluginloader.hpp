@@ -34,6 +34,7 @@
 #include <QObject>
 #include <QString>
 #include <QList>
+#include <QVector>
 
 #include "global.h"
 
@@ -52,6 +53,7 @@
 class Binaries;
 class ConfigurationBaseBox;
 class IniSection;
+class IRCNetworkEntity;
 
 class MAIN_EXPORT EnginePlugin
 {
@@ -123,6 +125,8 @@ class MAIN_EXPORT EnginePlugin
 		 * Fills the variables with information about the master's address.
 		 */
 		virtual void							masterHost(QString &host, unsigned short &port) const=0;
+
+		virtual void							registerIRCServer(QVector<IRCNetworkEntity> &networks) const {};
 
 		/**
 		 *	@brief Creates an instance of server object from this plugin.

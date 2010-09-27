@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "main.h"
+#include "irc/ircnetworkentity.h"
 #include "gui/configuration/engineconfigurationbasebox.h"
 #include "sdeapi/pluginloader.hpp"
 
@@ -70,6 +71,16 @@ class PLUGIN_EXPORT ChocolateDoomEnginePlugin : public EnginePlugin
 		Server*							server(const QHostAddress &address, unsigned short port) const
 		{
 			return new ChocolateDoomServer(address, port);
+		}
+
+		void						registerIRCServer(QVector<IRCNetworkEntity> &networks) const
+		{
+			IRCNetworkEntity entity;
+			entity.address = "irc.oftc.net";
+			entity.description = "Chocolate Doom";
+
+			if(!networks.contains(entity))
+				networks << entity;
 		}
 
 		bool							supportsRandomMapRotation() const { return false; }

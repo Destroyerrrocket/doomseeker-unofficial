@@ -272,10 +272,10 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->bRememberConnectPassword = section["RememberConnectPassword"];
 	this->bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn = section["TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn"];
 	this->bUseTrayIcon = section["UseTrayIcon"];
-	this->connectPassword = section["ConnectPassword"];
-	this->customServersColor = section["CustomServersColor"];
+	this->connectPassword = (const QString &)section["ConnectPassword"];
+	this->customServersColor = (const QString &)section["CustomServersColor"];
 	this->ip2CountryDatabaseMaximumAge = section["IP2CMaximumAge"];
-	this->ip2CountryUrl = section["IP2CUrl"];
+	this->ip2CountryUrl = (const QString &)section["IP2CUrl"];
 	this->mainWindowHeight = section["MainWindowHeight"];
 	this->mainWindowWidth = section["MainWindowWidth"];
 	this->mainWindowX = section["MainWindowX"];
@@ -283,9 +283,9 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->queryAutoRefreshEverySeconds = section["QueryAutoRefreshEverySeconds"];
 	this->queryTimeout = section["QueryTimeout"];
 	this->queryTries = section["QueryTries"];
-	this->previousCreateServerConfigDir = section["PreviousCreateServerConfigDir"];
-	this->previousCreateServerExecDir = section["PreviousCreateServerExecDir"];
-	this->previousCreateServerWadDir = section["PreviousCreateServerWadDir"];
+	this->previousCreateServerConfigDir = (const QString &)section["PreviousCreateServerConfigDir"];
+	this->previousCreateServerExecDir = (const QString &)section["PreviousCreateServerExecDir"];
+	this->previousCreateServerWadDir = (const QString &)section["PreviousCreateServerWadDir"];
 	this->slotStyle = section["SlotStyle"];
 	
 	// Complex data variables.
@@ -410,14 +410,14 @@ void DoomseekerConfig::WadseekerCfg::init(IniSection& section)
 void DoomseekerConfig::WadseekerCfg::load(IniSection& section)
 {
 	this->bSearchInIdgames = section["SearchInIdgames"];
-	this->colorMessageCriticalError = section["ColorMessageCriticalError"];
-	this->colorMessageError = section["ColorMessageError"];
-	this->colorMessageNotice = section["ColorMessageNotice"];
+	this->colorMessageCriticalError = (const QString &)section["ColorMessageCriticalError"];
+	this->colorMessageError = (const QString &)section["ColorMessageError"];
+	this->colorMessageNotice = (const QString &)section["ColorMessageNotice"];
 	this->connectTimeoutSeconds = section["ConnectTimeoutSeconds"];
 	this->downloadTimeoutSeconds = section["DownloadTimeoutSeconds"];
 	this->idgamesPriority = section["IdgamesPriority"];
-	this->idgamesURL = section["IdgamesURL"];
-	this->targetDirectory = section["TargetDirectory"];
+	this->idgamesURL = (const QString &)section["IdgamesURL"];
+	this->targetDirectory = (const QString &)section["TargetDirectory"];
 	
 	// Complex data values
 	this->searchURLs.clear();

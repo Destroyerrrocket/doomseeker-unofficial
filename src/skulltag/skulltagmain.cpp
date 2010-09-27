@@ -28,6 +28,7 @@
 #include "main.h"
 #include "pathfinder.h"
 #include "strings.h"
+#include "irc/ircnetworkentity.h"
 #include "sdeapi/config.hpp"
 #include "sdeapi/pluginloader.hpp"
 
@@ -139,6 +140,16 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 		{
 			QString str = pConfig->setting("Masterserver");
 			Strings::translateServerAddress(str, host, port, "skulltag.servegame.com", 15300);
+		}
+
+		void						registerIRCServer(QVector<IRCNetworkEntity> &networks) const
+		{
+			IRCNetworkEntity entity;
+			entity.address = "irc.skulltag.net";
+			entity.description = "Skulltag";
+
+			if(!networks.contains(entity))
+				networks << entity;
 		}
 
 		Server*						server(const QHostAddress &address, unsigned short port) const

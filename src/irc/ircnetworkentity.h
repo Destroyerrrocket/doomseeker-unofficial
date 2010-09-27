@@ -65,7 +65,14 @@ class IRCNetworkEntity
 		{
 			return this->description.toLower().trimmed() < other.description.toLower().trimmed();
 		}
-		
+
+		/**
+		 * @brief Checks to see if this is the same server.
+		 */
+		bool				operator== (const IRCNetworkEntity& other) const
+		{
+			return address == other.address && port == other.port;
+		}
 };
 
 #endif

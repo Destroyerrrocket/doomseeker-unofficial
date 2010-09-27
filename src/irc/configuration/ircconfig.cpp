@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "ircconfig.h"
 #include "log.h"
+#include "main.h"
 #include "version.h"
 
 IRCConfig* IRCConfig::instance = NULL;
@@ -151,12 +152,12 @@ void IRCConfig::AppearanceCfg::init(IniSection& section)
 
 void IRCConfig::AppearanceCfg::load(IniSection& section)
 {
-	this->backgroundColor = section["BackgroundColor"];
-	this->channelActionColor = section["ChannelActionColor"];
-	this->defaultTextColor = section["DefaultTextColor"];
-	this->errorColor = section["ErrorColor"];
+	this->backgroundColor = (const QString &)section["BackgroundColor"];
+	this->channelActionColor = (const QString &)section["ChannelActionColor"];
+	this->defaultTextColor = (const QString &)section["DefaultTextColor"];
+	this->errorColor = (const QString &)section["ErrorColor"];
 	this->mainFont.fromString(section["MainFont"]);
-	this->networkActionColor = section["NetworkActionColor"];
+	this->networkActionColor = (const QString &)section["NetworkActionColor"];
 	this->userListFont.fromString(section["UserListFont"]);
 }
 
@@ -215,14 +216,20 @@ void IRCConfig::NetworksDataCfg::load(Ini& ini)
 		IniSection& iniSection = *pSection;
 	
 		IRCNetworkEntity network;
-		network.address = iniSection["Address"];
-		network.description = iniSection["Description"];
-		network.nickservCommand = iniSection["NickservCommand"];
-		network.nickservPassword = iniSection["NickservPassword"];
-		network.password = iniSection["Password"];
+		network.address = (const QString &)iniSection["Address"];
+		network.description = (const QString &)iniSection["Description"];
+		network.nickservCommand = (const QString &)iniSection["NickservCommand"];
+		network.nickservPassword = (const QString &)iniSection["NickservPassword"];
+		network.password = (const QString &)iniSection["Password"];
 		network.port = iniSection["Port"];
 		
 		this->networks << network;
+	}
+
+	// Go through the plugins and register their IRC servers.
+	for(unsigned int i = 0;i < Main::enginePlugins->numPlugins();i++)
+	{
+		(*Main::enginePlugins)[i]->info->pInterface->registerIRCServer(this->networks);
 	}
 }
 
@@ -256,9 +263,9 @@ IRCConfig::PersonalCfg::PersonalCfg()
 
 void IRCConfig::PersonalCfg::load(IniSection& section)
 {
-	this->alternativeNickname = section["AlternativeNickname"];
-	this->fullName = section["FullName"];
-	this->nickname = section["Nickname"];
+	this->alternativeNickname = (const QString &)section["AlternativeNickname"];
+	this->fullName = (const QString &)section["FullName"];
+	this->nickname = (const QString &)section["Nickname"];
 }
 
 void IRCConfig::PersonalCfg::save(IniSection& section)

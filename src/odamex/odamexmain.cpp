@@ -27,6 +27,7 @@
 #include "main.h"
 #include "masterclient.h"
 #include "strings.h"
+#include "irc/ircnetworkentity.h"
 #include "gui/configuration/engineconfigurationbasebox.h"
 #include "sdeapi/pluginloader.hpp"
 
@@ -88,6 +89,16 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 		{
 			QString str = pConfig->setting("Masterserver");
 			Strings::translateServerAddress(str, host, port, "master1.odamex.net", 15000);
+		}
+
+		void						registerIRCServer(QVector<IRCNetworkEntity> &networks) const
+		{
+			IRCNetworkEntity entity;
+			entity.address = "irc.oftc.net";
+			entity.description = "Odamex";
+
+			if(!networks.contains(entity))
+				networks << entity;
 		}
 
 		Server*			server(const QHostAddress &address, unsigned short port) const
