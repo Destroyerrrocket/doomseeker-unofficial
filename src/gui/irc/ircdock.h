@@ -28,6 +28,7 @@
 
 class IRCAdapterBase;
 class IRCDockTabContents;
+class IRCMessageClass;
 
 /**
  *	@brief Dockable widget designed for IRC communication.
@@ -40,6 +41,11 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 		IRCDock(QWidget* parent = NULL);
 
 		void				addIRCAdapter(IRCAdapterBase* pIRCAdapter);
+		
+		/**
+		 *	@brief Applies IRC appearance settings to all open tabs.
+		 */
+		void				applyAppearanceSettings();
 		
 	private:
 		QAction*			toolBarConnect;
@@ -54,7 +60,7 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 	private slots:
 		void				chatWindowCloseRequestSlot(IRCDockTabContents* pCaller);
 		void				globalMessage(const QString& message, IRCAdapterBase* pMessageSender);
-		void				globalMessageColored(const QString& message, const QString& htmlColor, IRCAdapterBase* pMessageSender);
+		void				globalMessageWithClass(const QString& message, const IRCMessageClass& messageClass, IRCAdapterBase* pMessageSender);
 		void				tabCloseRequestedSlot(int index);
 		void				titleChange(IRCDockTabContents* pCaller);
 		void				toolBarAction(QAction* pAction);

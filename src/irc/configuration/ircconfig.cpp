@@ -69,7 +69,7 @@ bool IRCConfig::readFromFile()
 	IniSection* pSection;
 	
 	pSection = &pIni->section(AppearanceCfg::SECTION_NAME);
-	general.load(*pSection);
+	appearance.load(*pSection);
 	
 	pSection = &pIni->section(GeneralCfg::SECTION_NAME);
 	general.load(*pSection);
@@ -97,7 +97,7 @@ Any modification done manually to this file is on your own risk.").arg(Version::
 	IniSection* pSection;
 	
 	pSection = &pIni->section(AppearanceCfg::SECTION_NAME);
-	general.save(*pSection);
+	appearance.save(*pSection);
 	
 	pSection = &pIni->section(GeneralCfg::SECTION_NAME);
 	general.save(*pSection);
@@ -132,7 +132,7 @@ IRCConfig::AppearanceCfg::AppearanceCfg()
 {
 	this->backgroundColor = "#000000";
 	this->channelActionColor = "#008000";
-	this->defaultTextColor = "#999999";
+	this->defaultTextColor = "#b9b9b9";
 	this->errorColor = "#ff0000";
 	this->mainFont = QFont("Courier");
 	this->networkActionColor = "#079CFF";

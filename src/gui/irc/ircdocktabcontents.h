@@ -44,6 +44,11 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 	public:
 		IRCDockTabContents(IRCDock* pParentIRCDock);
 		~IRCDockTabContents();
+		
+		/**
+		 *	@brief Applies current appearance settings from the IRC config.
+		 */
+		void				applyAppearanceSettings();
 
 		IRCAdapterBase*		ircAdapter() const { return pIrcAdapter; }
 		
@@ -55,7 +60,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		
 	public slots:
 		void				receiveMessage(const QString& message);
-		void				receiveMessageColored(const QString& message, const QString& htmlColor);
+		void				receiveMessageWithClass(const QString& message, const IRCMessageClass& messageClass);
 
 	signals:
 		/**
@@ -95,8 +100,15 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		
 	private:
 		bool				bIsDestroying;
+		
+		/**
+		 *	@brief This is required to properly refresh colors when
+		 *	appearance is changed.
+		 */
+		QStringList			textOutputContents;		
 	
 		QStandardItem*		findUserListItem(const QString& nickname);
+		void				insertMessage(const QString& htmlString);
 };
 
 #endif

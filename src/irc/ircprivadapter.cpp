@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircprivadapter.h"
+#include "irc/ircmessageclass.h"
 #include "irc/ircglobal.h"
 #include "irc/ircuserinfo.h"
 
@@ -67,7 +68,7 @@ void IRCPrivAdapter::userLeaves(const QString& nickname, const QString& farewell
 		
 		if (!message.isEmpty())
 		{
-			emit messageColored(message, IRCGlobal::COLOR_NETWORK_ACTION);
+			emit messageWithClass(message, IRCMessageClass::NetworkAction);
 		}
 	}
 }

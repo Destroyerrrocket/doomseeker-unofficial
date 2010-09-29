@@ -779,6 +779,11 @@ void MainWindow::menuIRCOptions()
 	IRCConfigurationDialog dialog(this);
 	dialog.initOptionsList();
 	dialog.exec();
+	
+	if (ircDock != NULL)
+	{
+		ircDock->applyAppearanceSettings();
+	}
 }
 
 void MainWindow::menuLog()

@@ -43,19 +43,28 @@ IRCDock::IRCDock(QWidget* parent)
 	connect(&ircGlobalMessages, SIGNAL( message(const QString&, IRCAdapterBase*) ), 
 		SLOT( globalMessage(const QString&, IRCAdapterBase*) ) );
 	
-	connect(&ircGlobalMessages, SIGNAL( messageColored(const QString&, const QString&, IRCAdapterBase*) ), 
-		SLOT( globalMessageColored(const QString&, const QString&, IRCAdapterBase*) ) );
+	connect(&ircGlobalMessages, SIGNAL( messageWithClass(const QString&, const IRCMessageClass&, IRCAdapterBase*) ), 
+		SLOT( globalMessageWithClass(const QString&, const IRCMessageClass&, IRCAdapterBase*) ) );
 }
 
 void IRCDock::addIRCAdapter(IRCAdapterBase* pIRCAdapter)
 {
-	IRCDockTabContents* pNewConnectionWidget = new IRCDockTabContents(this);
+	IRCDockTabContents* pNewAdapterWidget = new IRCDockTabContents(this);
 
-	connect(pNewConnectionWidget, SIGNAL( chatWindowCloseRequest(IRCDockTabContents*) ), SLOT( chatWindowCloseRequestSlot(IRCDockTabContents*) ) );
-	connect(pNewConnectionWidget, SIGNAL( titleChange(IRCDockTabContents*) ), SLOT( titleChange(IRCDockTabContents*) ) );
+	connect(pNewAdapterWidget, SIGNAL( chatWindowCloseRequest(IRCDockTabContents*) ), SLOT( chatWindowCloseRequestSlot(IRCDockTabContents*) ) );
+	connect(pNewAdapterWidget, SIGNAL( titleChange(IRCDockTabContents*) ), SLOT( titleChange(IRCDockTabContents*) ) );
 
-	pNewConnectionWidget->setIRCAdapter(pIRCAdapter);
-	tabWidget->addTab(pNewConnectionWidget, pIRCAdapter->title());
+	pNewAdapterWidget->setIRCAdapter(pIRCAdapter);
+	tabWidget->addTab(pNewAdapterWidget, pIRCAdapter->title());
+}
+
+void IRCDock::applyAppearanceSettings()
+{
+	for (int i = 0; i < tabWidget->count(); ++i)
+	{
+		IRCDockTabContents* pWidget = (IRCDockTabContents*)tabWidget->widget(i);
+		pWidget->applyAppearanceSettings();
+	}
 }
 
 void IRCDock::chatWindowCloseRequestSlot(IRCDockTabContents* pCaller)
@@ -77,13 +86,13 @@ void IRCDock::globalMessage(const QString& message, IRCAdapterBase* pMessageSend
 	}
 }
 
-void IRCDock::globalMessageColored(const QString& message, const QString& htmlColor, IRCAdapterBase* pMessageSender)
+void IRCDock::globalMessageWithClass(const QString& message, const IRCMessageClass& messageClass, IRCAdapterBase* pMessageSender)
 {
 	IRCDockTabContents* pWidget =  (IRCDockTabContents*)tabWidget->currentWidget();
 	if (pWidget != NULL)
 	{
 		QString prefixedMessage = prefixMessage(pWidget->ircAdapter(), pMessageSender, message);
-		pWidget->receiveMessageColored(prefixedMessage, htmlColor);
+		pWidget->receiveMessageWithClass(prefixedMessage, messageClass);
 	}
 }
 

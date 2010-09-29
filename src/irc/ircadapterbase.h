@@ -25,6 +25,8 @@
 
 #include <QObject>
 
+
+class IRCMessageClass;
 class IRCNetworkAdapter;
 
 /**
@@ -85,9 +87,9 @@ class IRCAdapterBase : public QObject
 			emit message(strMessage);
 		}
 
-		void						emitMessageColored(const QString& strMessage, const QString& htmlColor)
+		void						emitMessageWithClass(const QString& strMessage, const IRCMessageClass& messageClass)
 		{
-			emit messageColored(strMessage, htmlColor);
+			emit messageWithClass(strMessage, messageClass);
 		}
 		
 		/**
@@ -113,7 +115,7 @@ class IRCAdapterBase : public QObject
 	signals:
 		void						error(const QString& error);
 		void						message(const QString& message);
-		void						messageColored(const QString& message, const QString& htmlColor);
+		void						messageWithClass(const QString& message, const IRCMessageClass& messageClass);
 		
 		void						terminating();
 

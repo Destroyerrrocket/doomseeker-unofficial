@@ -24,6 +24,7 @@
 #include "irc/ircchanneladapter.h"
 #include "irc/ircglobal.h"
 #include "irc/ircglobalmessages.h"
+#include "irc/ircmessageclass.h"
 #include "irc/ircprivadapter.h"
 #include "irc/ircrequestparser.h"
 #include "irc/ircuserinfo.h"
@@ -148,7 +149,7 @@ void IRCNetworkAdapter::doSendMessage(const QString& message, IRCAdapterBase* pO
 			
 		case IRCRequestParser::QuitCommand:
 			ircClient.sendMessage(parsedMessage);
-			emit messageColored(tr("Quit"), IRCGlobal::COLOR_NETWORK_ACTION);
+			emit messageWithClass(tr("Quit"), IRCMessageClass::NetworkAction);
 			break;
 	}
 }
@@ -232,7 +233,7 @@ bool IRCNetworkAdapter::isMyNickname(const QString& nickname) const
 void IRCNetworkAdapter::kick(const QString& channel, const QString& byWhom, const QString& whoIsKicked, const QString& reason)
 {
 	IRCChannelAdapter* pAdapter = (IRCChannelAdapter*) this->getOrCreateNewChatAdapter(channel);
-	pAdapter->emitMessageColored(tr("%1 was kicked by %2 (%3)").arg(whoIsKicked, byWhom, reason), IRCGlobal::COLOR_CHANNEL_ACTION);
+	pAdapter->emitMessageWithClass(tr("%1 was kicked by %2 (%3)").arg(whoIsKicked, byWhom, reason), IRCMessageClass::ChannelAction);
 	pAdapter->removeNameFromCachedList(whoIsKicked);
 }
 
@@ -282,7 +283,7 @@ void IRCNetworkAdapter::killChatWindow(const QString& recipient)
 void IRCNetworkAdapter::modeInfo(const QString& channel, const QString& whoSetThis, const QString& modeParams)
 {
 	IRCChannelAdapter* pAdapter = (IRCChannelAdapter*) this->getOrCreateNewChatAdapter(channel);
-	pAdapter->emitMessageColored(tr("%1 sets mode: %2").arg(whoSetThis, modeParams), IRCGlobal::COLOR_CHANNEL_ACTION);
+	pAdapter->emitMessageWithClass(tr("%1 sets mode: %2").arg(whoSetThis, modeParams), IRCMessageClass::ChannelAction);
 }
 
 void IRCNetworkAdapter::namesListReceived(const QString& channel, const QStringList& names)
@@ -321,7 +322,7 @@ void IRCNetworkAdapter::sendPong(const QString& toWhom)
 
 QString IRCNetworkAdapter::title() const
 {
-	return connectionInfo.networkEntity.description;
+	return connectionInfo.networkEntity.description + " ( " + myNickname() + " )";
 }
 
 void IRCNetworkAdapter::userChangesNickname(const QString& oldNickname, const QString& newNickname)
@@ -332,6 +333,8 @@ void IRCNetworkAdapter::userChangesNickname(const QString& oldNickname, const QS
 	{
 		emit message("Updating own nickname");
 		connectionInfo.nick = newNickname;
+		
+		emit titleChange();
 	}
 	
 	QList<IRCChatAdapter*> adaptersList = chatWindows.values();
@@ -357,7 +360,7 @@ void IRCNetworkAdapter::userJoinsChannel(const QString& channel, const QString& 
 {
 	if (hasRecipient(channel))
 	{
-		emit messageColored(tr("User %1 joins channel %2").arg(nickname, channel), IRCGlobal::COLOR_CHANNEL_ACTION);
+		emit messageWithClass(tr("User %1 joins channel %2").arg(nickname, channel), IRCMessageClass::ChannelAction);
 
 		IRCChannelAdapter* pChannel = (IRCChannelAdapter*)this->getOrCreateNewChatAdapter(channel);
 		if (!isMyNickname(nickname))
@@ -384,12 +387,12 @@ void IRCNetworkAdapter::userPartsChannel(const QString& channel, const QString& 
 			
 		if (isMyNickname(nickname))
 		{
-			emit messageColored(tr("You left channel %1").arg(channel), IRCGlobal::COLOR_CHANNEL_ACTION);
+			emit messageWithClass(tr("You left channel %1").arg(channel), IRCMessageClass::ChannelAction);
 			killChatWindow(channel);
 		}
 		else
 		{
-			emit messageColored(tr("User %1 parts channel %2").arg(nickname, channel), IRCGlobal::COLOR_CHANNEL_ACTION);
+			emit messageWithClass(tr("User %1 parts channel %2").arg(nickname, channel), IRCMessageClass::ChannelAction);
 			pChannel->userLeaves(nickname, farewellMessage, IRCChatAdapter::ChannelPart);
 		}
 	}
@@ -399,7 +402,7 @@ void IRCNetworkAdapter::userPartsChannel(const QString& channel, const QString& 
 
 void IRCNetworkAdapter::userQuitsNetwork(const QString& nickname, const QString& farewellMessage)
 {
-	emit messageColored(QString("User %1 quits network.").arg(nickname), IRCGlobal::COLOR_NETWORK_ACTION);
+	emit messageWithClass(QString("User %1 quits network.").arg(nickname), IRCMessageClass::ChannelAction);
 	
 	// We need to iterate through EVERY adapter and notify them
 	// about this quit.

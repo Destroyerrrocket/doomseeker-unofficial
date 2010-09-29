@@ -21,5 +21,11 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircglobalmessages.h"
+#include "irc/ircmessageclass.h"
 
 IRCGlobalMessages* IRCGlobalMessages::pInstance = NULL;
+
+void IRCGlobalMessages::emitError(const QString& message, IRCAdapterBase* pMessageSender)
+{
+	emit this->messageWithClass(message, IRCMessageClass::Error, pMessageSender);
+}

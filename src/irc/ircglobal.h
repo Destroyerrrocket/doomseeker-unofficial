@@ -28,10 +28,6 @@
 class IRCGlobal
 {
 	public:
-		static QString COLOR_CHANNEL_ACTION;
-		static QString COLOR_ERROR;
-		static QString COLOR_NETWORK_ACTION;
-
 		static bool isChannelDenotingCharacter(char character);
 		static bool isChannelName(const QString& name);
 

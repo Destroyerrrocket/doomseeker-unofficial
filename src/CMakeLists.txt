@@ -206,6 +206,7 @@ set(SOURCE_FILES
 	irc/ircclient.cpp
 	irc/ircglobal.cpp
 	irc/ircglobalmessages.cpp
+	irc/ircmessageclass.cpp
 	irc/ircnetworkadapter.cpp
 	irc/ircnetworkentity.cpp
 	irc/ircprivadapter.cpp
@@ -260,6 +261,7 @@ set(HEADER_FILES
 	gui/models/serverlistrowhandler.h
 	irc/configuration/ircconfig.h
 	irc/ircglobal.h
+	irc/ircmessageclass.h
 	irc/ircnetworkconnectioninfo.h
 	irc/ircnetworkentity.h
 	irc/ircrequestparser.h	

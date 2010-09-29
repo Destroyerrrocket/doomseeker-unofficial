@@ -22,9 +22,11 @@
 //------------------------------------------------------------------------------
 #include "ircdocktabcontents.h"
 #include "gui/commonGUI.h"
+#include "irc/configuration/ircconfig.h"
 #include "irc/ircchanneladapter.h"
 #include "irc/ircdock.h"
 #include "irc/ircglobal.h"
+#include "irc/ircmessageclass.h"
 #include "irc/ircnetworkadapter.h"
 #include "irc/ircuserinfo.h"
 #include "irc/ircuserlist.h"
@@ -46,6 +48,8 @@ IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 
 	connect(btnSend, SIGNAL( clicked() ), this, SLOT( sendMessage() ));
 	connect(leCommandLine, SIGNAL( returnPressed() ), this, SLOT( sendMessage() ));
+	
+	applyAppearanceSettings();
 }
 
 IRCDockTabContents::~IRCDockTabContents()
@@ -73,6 +77,51 @@ void IRCDockTabContents::adapterTerminating()
 	}
 }
 
+void IRCDockTabContents::applyAppearanceSettings()
+{
+	const static QString STYLE_SHEET_BASE_TEMPLATE = 
+		"QListView, QTextEdit, QLineEdit { background: %1; color: %2; } ";
+		
+	const IRCConfig::AppearanceCfg& appearance = gIRCConfig.appearance;
+		
+	QString qtStyleSheet = STYLE_SHEET_BASE_TEMPLATE
+		.arg(appearance.backgroundColor)
+		.arg(appearance.defaultTextColor);
+		
+	QColor colorSelectedText("#cbcb0f");
+	QColor colorSelectedBackground("#B74600");
+	
+	QColor colorHoverText = colorSelectedText.lighter();
+	QColor colorHoverBackground = colorSelectedBackground.lighter();
+		
+	qtStyleSheet += QString("QListView::item:selected { color: %1; background: %2; } ").arg(colorSelectedText.name(), colorSelectedBackground.name());
+	qtStyleSheet += QString("QListView::item:hover  { color: %1; background: %2; } ").arg(colorHoverText.name(), colorHoverBackground.name());
+		
+	QString channelActionClassName = IRCMessageClass::toStyleSheetClassName(IRCMessageClass::ChannelAction);
+	QString errorClassName = IRCMessageClass::toStyleSheetClassName(IRCMessageClass::Error);
+	QString networkActionClassName = IRCMessageClass::toStyleSheetClassName(IRCMessageClass::NetworkAction);
+	
+	QString htmlStyleSheetMessageArea = "";
+	htmlStyleSheetMessageArea += QString("." + channelActionClassName + " { color: %1; }").arg(appearance.channelActionColor);
+	htmlStyleSheetMessageArea += QString("." + errorClassName + " { color: %1; }").arg(appearance.errorColor);
+	htmlStyleSheetMessageArea += QString("." + networkActionClassName + " { color: %1; }").arg(appearance.networkActionColor);
+	
+		 
+	this->lvUserList->setStyleSheet(qtStyleSheet);
+	this->lvUserList->setFont(appearance.userListFont);
+	
+	this->leCommandLine->setStyleSheet(qtStyleSheet);
+	this->leCommandLine->setFont(appearance.mainFont);
+	
+	this->txtOutputWidget->setStyleSheet(qtStyleSheet);
+	this->txtOutputWidget->setFont(appearance.mainFont);
+	
+	this->txtOutputWidget->document()->setDefaultStyleSheet(htmlStyleSheetMessageArea);
+	this->txtOutputWidget->clear();
+	this->txtOutputWidget->insertHtml(this->textOutputContents.join(""));
+	this->txtOutputWidget->moveCursor(QTextCursor::End);
+}
+
 QStandardItem* IRCDockTabContents::findUserListItem(const QString& nickname)
 {
 	QStandardItemModel* pModel = (QStandardItemModel*)this->lvUserList->model();
@@ -88,6 +137,14 @@ QStandardItem* IRCDockTabContents::findUserListItem(const QString& nickname)
 	}
 	
 	return NULL;
+}
+
+void IRCDockTabContents::insertMessage(const QString& htmlString)
+{
+	this->textOutputContents << htmlString;
+	
+	this->txtOutputWidget->moveCursor(QTextCursor::End);
+	this->txtOutputWidget->insertHtml(htmlString);
 }
 
 void IRCDockTabContents::nameAdded(const IRCUserInfo& userInfo)
@@ -152,19 +209,32 @@ void IRCDockTabContents::newChatWindowIsOpened(IRCChatAdapter* pAdapter)
 
 void IRCDockTabContents::receiveError(const QString& error)
 {
-	receiveMessageColored(tr("Error: %1").arg(error), "#ff0000");
+	receiveMessageWithClass(tr("Error: %1").arg(error), IRCMessageClass::Error);
 }
 
 void IRCDockTabContents::receiveMessage(const QString& message)
 {
-	txtOutputWidget->moveCursor(QTextCursor::End);
-	txtOutputWidget->insertPlainText(message + "\n");
+	receiveMessageWithClass(message, IRCMessageClass::Normal);
 }
 
-void IRCDockTabContents::receiveMessageColored(const QString& message, const QString& htmlColor)
+void IRCDockTabContents::receiveMessageWithClass(const QString& message, const IRCMessageClass& messageClass)
 {
-	txtOutputWidget->moveCursor(QTextCursor::End);
-	txtOutputWidget->insertHtml("<font color='" + htmlColor + "'>" + message + "</font><br />");
+	QString className = messageClass.toStyleSheetClassName();
+	this->txtOutputWidget->moveCursor(QTextCursor::End);
+	
+	QString messageHtmlEscaped = message;
+	messageHtmlEscaped.replace("<", "&lt;").replace(">", "&gt;");
+	
+	if (className.isEmpty())
+	{
+		messageHtmlEscaped = ("<span>" + messageHtmlEscaped + "</span><br />");
+	}
+	else
+	{
+		messageHtmlEscaped = ("<span class='" + className + "'>" + messageHtmlEscaped + "</span><br />");
+	}
+	
+	this->insertMessage(messageHtmlEscaped);
 }
 
 void IRCDockTabContents::sendMessage()
@@ -183,7 +253,7 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 	pIrcAdapter = pAdapter;
 	connect(pIrcAdapter, SIGNAL( error(const QString&) ), SLOT( receiveError(const QString& ) ));
 	connect(pIrcAdapter, SIGNAL( message(const QString&) ), SLOT( receiveMessage(const QString& ) ));
-	connect(pIrcAdapter, SIGNAL( messageColored(const QString&, const QString&) ), SLOT( receiveMessageColored(const QString&, const QString&) ));
+	connect(pIrcAdapter, SIGNAL( messageWithClass(const QString&, const IRCMessageClass&) ), SLOT( receiveMessageWithClass(const QString&, const IRCMessageClass&) ));
 	connect(pIrcAdapter, SIGNAL( terminating() ), SLOT( adapterTerminating() ) );
 	connect(pIrcAdapter, SIGNAL( titleChange() ), SLOT( adapterTitleChange() ) );
 

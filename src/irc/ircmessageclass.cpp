@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// ircglobal.cpp
+// ircmessageclass.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,34 +20,25 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "ircglobal.h"
+#include "ircmessageclass.h"
 
-#include <QChar>
-
-bool IRCGlobal::isChannelDenotingCharacter(char character)
+QString IRCMessageClass::toStyleSheetClassName(ClassName className)
 {
-	return (character == '&' || character == '#'
-		|| character == '+' || character == '!');
-}
-
-bool IRCGlobal::isChannelName(const QString& name)
-{
-	if (name.isEmpty())
+	switch (className)
 	{
-		return false;
+		case ChannelAction:
+			return "channelAction";
+			
+		case Error:
+			return "error";
+			
+		case Normal:
+			return "";
+			
+		case NetworkAction:
+			return "networkAction";
+		
+		default:
+			return "appErr";
 	}
-
-	QChar c = name[0];
-	return isChannelDenotingCharacter(c.toAscii());
-}
-
-QString IRCGlobal::toIrcLower(const QString& str)
-{
-	QString lowered = str.toLower();
-
-	lowered.replace('[', '{');
-	lowered.replace(']', '}');
-	lowered.replace('\\', '|');
-
-	return lowered;
 }

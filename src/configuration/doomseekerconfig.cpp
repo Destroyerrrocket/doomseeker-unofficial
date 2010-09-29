@@ -390,8 +390,11 @@ DoomseekerConfig::WadseekerCfg::WadseekerCfg()
 	this->downloadTimeoutSeconds = WADSEEKER_DOWNLOAD_TIMEOUT_SECONDS_DEFAULT;
 	this->idgamesPriority = 0;
 	this->idgamesURL = Wadseeker::defaultIdgamesUrl();
-	this->searchURLs = Wadseeker::defaultSitesListEncoded();
 	this->targetDirectory = Main::dataPaths->programsDataDirectoryPath();
+	
+	// Search URLs remains unitizalized here. It will be initialized
+	// by init() and then load() since Doomseeker always calls these
+	// methods in this order.
 }
 
 void DoomseekerConfig::WadseekerCfg::init(IniSection& section)
@@ -404,6 +407,7 @@ void DoomseekerConfig::WadseekerCfg::init(IniSection& section)
 	section.createSetting("DownloadTimeoutSeconds", this->downloadTimeoutSeconds);
 	section.createSetting("IdgamesPriority", this->idgamesPriority);
 	section.createSetting("IdgamesURL", this->idgamesURL);
+	section.createSetting("SearchURLs", Wadseeker::defaultSitesListEncoded().join(";"));
 	section.createSetting("TargetDirectory", this->targetDirectory);
 }
 
@@ -448,12 +452,3 @@ void DoomseekerConfig::WadseekerCfg::save(IniSection& section)
 	}
 	section["SearchURLs"] = urlEncodedList.join(";");
 }
-
-/*
-QStringList strLst = config["SearchURLs"]->split(";");
-for (it = strLst.begin(); it != strLst.end(); ++it)
-		{
-			urlList << QUrl::fromPercentEncoding(it->toAscii());
-		}
-
-		*/

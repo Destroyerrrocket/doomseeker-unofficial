@@ -27,6 +27,7 @@
 #include <QObject>
 
 class IRCAdapterBase;
+class IRCMessageClass;
 
 /**
  *	@brief Singleton designed to deliver messages to whatever chat tab
@@ -47,24 +48,20 @@ class IRCGlobalMessages : public QObject
 			return *pInstance;
 		}
 		
-		void					emitError(const QString& message, IRCAdapterBase* pMessageSender = NULL)
-		{
-			emit this->messageColored(message, IRCGlobal::COLOR_ERROR, pMessageSender);
-		}
-		
+		void					emitError(const QString& message, IRCAdapterBase* pMessageSender = NULL);		
 		void					emitMessage(const QString& message, IRCAdapterBase* pMessageSender = NULL)
 		{
 			emit this->message(message, pMessageSender);
 		}
 		
-		void					emitMessageColored(const QString& message, const QString& htmlColor, IRCAdapterBase* pMessageSender = NULL)
+		void					emitMessageWithClass(const QString& message, const IRCMessageClass& messageClass, IRCAdapterBase* pMessageSender = NULL)
 		{
-			emit this->messageColored(message, htmlColor, pMessageSender);
+			emit this->messageWithClass(message, messageClass, pMessageSender);
 		}
 		
 	signals:
 		void						message(const QString& message, IRCAdapterBase* pMessageSender);
-		void						messageColored(const QString& message, const QString& htmlColor, IRCAdapterBase* pMessageSender);	
+		void						messageWithClass(const QString& message, const IRCMessageClass& messageClass, IRCAdapterBase* pMessageSender);	
 	
 	private:
 		static IRCGlobalMessages*	pInstance;

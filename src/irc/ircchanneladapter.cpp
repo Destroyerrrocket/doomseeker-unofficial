@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "ircchanneladapter.h"
 #include "irc/ircglobal.h"
+#include "irc/ircmessageclass.h"
 #include "irc/ircuserinfo.h"
 #include "irc/ircuserlist.h"
 
@@ -103,8 +104,8 @@ void IRCChannelAdapter::userChangesNickname(const QString& oldNickname, const QS
 		emit nameRemoved(oldName);
 		emit nameAdded(users->userCopy(newNickname));
 
-		emit messageColored(tr("%1 is now known as %2").arg(oldNickname, newNickname), 
-			IRCGlobal::COLOR_CHANNEL_ACTION);
+		emit messageWithClass(tr("%1 is now known as %2").arg(oldNickname, newNickname), 
+			IRCMessageClass::ChannelAction);
 	}
 }
 
@@ -112,8 +113,8 @@ void IRCChannelAdapter::userJoins(const QString& nickname, const QString& fullSi
 {
 	appendNameToCachedList(nickname);
 
-	emit messageColored(tr("User %1 [%2] has joined the channel.").arg(nickname, fullSignature), 
-		IRCGlobal::COLOR_CHANNEL_ACTION);
+	emit messageWithClass(tr("User %1 [%2] has joined the channel.").arg(nickname, fullSignature), 
+		IRCMessageClass::ChannelAction);
 }
 
 void IRCChannelAdapter::userLeaves(const QString& nickname, const QString& farewellMessage, IRCQuitType quitType)
@@ -129,18 +130,18 @@ void IRCChannelAdapter::userLeaves(const QString& nickname, const QString& farew
 	switch (quitType)
 	{
 		case IRCChatAdapter::ChannelPart:
-			emit messageColored(tr("User %1 has left the channel. (PART: %2)").arg(nickname, farewellMessage), 
-				IRCGlobal::COLOR_CHANNEL_ACTION);
+			emit messageWithClass(tr("User %1 has left the channel. (PART: %2)").arg(nickname, farewellMessage), 
+				IRCMessageClass::ChannelAction);
 			break;
 			
 		case IRCChatAdapter::NetworkKill:
-			emit messageColored(tr("Connection for user %1 has been killed. (KILL: %2)").arg(nickname, farewellMessage), 
-				IRCGlobal::COLOR_NETWORK_ACTION);
+			emit messageWithClass(tr("Connection for user %1 has been killed. (KILL: %2)").arg(nickname, farewellMessage), 
+				IRCMessageClass::NetworkAction);
 			break;
 
 		case IRCChatAdapter::NetworkQuit:
-			emit messageColored(tr("User %1 has quit the network. (QUIT: %2)").arg(nickname, farewellMessage), 
-				IRCGlobal::COLOR_NETWORK_ACTION);
+			emit messageWithClass(tr("User %1 has quit the network. (QUIT: %2)").arg(nickname, farewellMessage), 
+				IRCMessageClass::NetworkAction);
 			break;
 
 		default:
