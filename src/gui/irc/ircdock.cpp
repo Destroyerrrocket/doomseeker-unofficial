@@ -27,6 +27,8 @@
 #include "irc/ircglobalmessages.h"
 #include "irc/ircnetworkadapter.h"
 
+#include <QInputDialog>
+#include <QMessageBox>
 #include <QToolBar>
 
 IRCDock::IRCDock(QWidget* parent)
@@ -52,6 +54,7 @@ void IRCDock::addIRCAdapter(IRCAdapterBase* pIRCAdapter)
 	IRCDockTabContents* pNewAdapterWidget = new IRCDockTabContents(this);
 
 	connect(pNewAdapterWidget, SIGNAL( chatWindowCloseRequest(IRCDockTabContents*) ), SLOT( chatWindowCloseRequestSlot(IRCDockTabContents*) ) );
+	connect(pNewAdapterWidget, SIGNAL( focusRequest(IRCDockTabContents*) ), SLOT( tabFocusRequest(IRCDockTabContents*) ) );
 	connect(pNewAdapterWidget, SIGNAL( titleChange(IRCDockTabContents*) ), SLOT( titleChange(IRCDockTabContents*) ) );
 
 	pNewAdapterWidget->setIRCAdapter(pIRCAdapter);
@@ -96,6 +99,17 @@ void IRCDock::globalMessageWithClass(const QString& message, const IRCMessageCla
 	}
 }
 
+IRCNetworkAdapter* IRCDock::networkWithUiFocus()
+{
+	IRCDockTabContents* pWidget = (IRCDockTabContents*)tabWidget->currentWidget();
+	if (pWidget == NULL)
+	{
+		return NULL;
+	}
+	
+	return pWidget->ircAdapter()->network();
+}
+
 QString IRCDock::prefixMessage(IRCAdapterBase* pTargetChatWindow, IRCAdapterBase* pMessageSender, const QString& message)
 {
 	if (pMessageSender != NULL)
@@ -116,8 +130,10 @@ void IRCDock::setupToolbar()
 	pToolBar->setMovable(false);
 
 	toolBarConnect = new QAction(QIcon(":/icons/network-connect-3.png"), tr("Connect"), pToolBar);
+	toolBarOpenChatWindow = new QAction(QIcon(":/icons/irc_channel.png"), tr("Open chat window"), pToolBar);
 
 	pToolBar->addAction(toolBarConnect);
+	pToolBar->addAction(toolBarOpenChatWindow);
 
 	verticalLayout->insertWidget(0, pToolBar);
 	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( toolBarAction(QAction*) ) );
@@ -129,6 +145,11 @@ void IRCDock::tabCloseRequestedSlot(int index)
 	tabWidget->removeTab(index);
 	
 	delete pPageWidget;
+}
+
+void IRCDock::tabFocusRequest(IRCDockTabContents* pCaller)
+{
+	tabWidget->setCurrentWidget(pCaller);
 }
 
 void IRCDock::titleChange(IRCDockTabContents* pCaller)
@@ -162,6 +183,26 @@ void IRCDock::toolBarAction(QAction* pAction)
 			
 			// Connect to the network.
 			pIRCNetworkAdapter->connect(connectionInfo);
+		}
+	}
+	else if (pAction == toolBarOpenChatWindow)
+	{
+		IRCNetworkAdapter* pNetwork = networkWithUiFocus();
+		if (pNetwork == NULL)
+		{
+			QMessageBox::warning(NULL, tr("Doomseeker IRC - Open chat window"), tr("Cannot obtain network connection adapter."));
+		}
+		else if (!pNetwork->isConnected())
+		{
+			QMessageBox::warning(NULL, tr("Doomseeker IRC - Open chat window"), tr("You are not connected to this network."));
+		}
+		else
+		{
+			QString recipientName = QInputDialog::getText(NULL, tr("Open chat window"), tr("Specify a channel or user name:"));
+			if (!recipientName.isEmpty())
+			{
+				pNetwork->openNewAdapter(recipientName);
+			}
 		}
 	}
 }

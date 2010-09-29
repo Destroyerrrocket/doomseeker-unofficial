@@ -318,6 +318,24 @@ void IRCNetworkAdapter::noSuchNickname(const QString& nickname)
 	IRCGlobalMessages::instance().emitError(tr("User %1 is not logged in.").arg(nickname), this);
 }
 
+void IRCNetworkAdapter::openNewAdapter(const QString& recipientName)
+{
+	if (!isConnected() || recipientName.isEmpty() || hasRecipient(recipientName))
+	{
+		return;
+	}
+
+	if (IRCGlobal::isChannelName(recipientName))
+	{
+		this->sendMessage("/join " + recipientName);
+	}
+	else
+	{
+		IRCChatAdapter* pAdapter = this->getOrCreateNewChatAdapter(recipientName);
+		pAdapter->emitFocusRequest();
+	}
+}
+
 void IRCNetworkAdapter::parseError(const QString& error)
 {
 	emit this->error(tr("IRC Parse error: %1").arg(error));
@@ -373,15 +391,20 @@ void IRCNetworkAdapter::userChangesNickname(const QString& oldNickname, const QS
 
 void IRCNetworkAdapter::userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature)
 {
-	if (hasRecipient(channel))
+	if (!isMyNickname(nickname))
 	{
-		emit messageWithClass(tr("User %1 joins channel %2").arg(nickname, channel), IRCMessageClass::ChannelAction);
-
-		IRCChannelAdapter* pChannel = (IRCChannelAdapter*)this->getOrCreateNewChatAdapter(channel);
-		if (!isMyNickname(nickname))
+		if (hasRecipient(channel))
 		{
+			emit messageWithClass(tr("User %1 joins channel %2").arg(nickname, channel), IRCMessageClass::ChannelAction);
+
+			IRCChannelAdapter* pChannel = (IRCChannelAdapter*)this->getOrCreateNewChatAdapter(channel);
 			pChannel->userJoins(nickname, fullSignature);
 		}
+	}
+	else
+	{
+		IRCChannelAdapter* pChannel = (IRCChannelAdapter*)this->getOrCreateNewChatAdapter(channel);
+		pChannel->emitFocusRequest();
 	}
 }
 

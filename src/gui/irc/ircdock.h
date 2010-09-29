@@ -29,6 +29,7 @@
 class IRCAdapterBase;
 class IRCDockTabContents;
 class IRCMessageClass;
+class IRCNetworkAdapter;
 
 /**
  *	@brief Dockable widget designed for IRC communication.
@@ -49,6 +50,9 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 		
 	private:
 		QAction*			toolBarConnect;
+		QAction*			toolBarOpenChatWindow;
+		
+		IRCNetworkAdapter*	networkWithUiFocus();
 
 		/**
 		 *	@brief This will prefix message with network name if message
@@ -62,6 +66,7 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 		void				globalMessage(const QString& message, IRCAdapterBase* pMessageSender);
 		void				globalMessageWithClass(const QString& message, const IRCMessageClass& messageClass, IRCAdapterBase* pMessageSender);
 		void				tabCloseRequestedSlot(int index);
+		void				tabFocusRequest(IRCDockTabContents* pCaller);
 		void				titleChange(IRCDockTabContents* pCaller);
 		void				toolBarAction(QAction* pAction);
 		

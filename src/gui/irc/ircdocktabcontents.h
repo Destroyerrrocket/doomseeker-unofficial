@@ -72,13 +72,20 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		void				chatWindowCloseRequest(IRCDockTabContents*);
 	
 		/**
-		 *	@brief Called when the variable returned by IRCAdapterBase::title()
-		 *	might have changed and the application should be notified of this
-		 *	fact.
+		 *	@brief Emitted when the variable returned by 
+		 *	IRCAdapterBase::title() might have changed and the 
+		 *	application should be notified of this fact.
 		 */
 		void				titleChange(IRCDockTabContents* pCaller);
+		
+		/**
+		 *	@brief Emitted when network adapter for this dock emits
+		 *	its focusRequest() signal.
+		 */
+		void				focusRequest(IRCDockTabContents* pCaller);
 
 	protected slots:
+		void				adapterFocusRequest();
 		void				adapterTerminating();
 	
 		void				adapterTitleChange()

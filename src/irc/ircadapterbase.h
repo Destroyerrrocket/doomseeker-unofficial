@@ -82,6 +82,11 @@ class IRCAdapterBase : public QObject
 			emit error(strError);
 		}
 		
+		void						emitFocusRequest()
+		{
+			emit focusRequest();
+		}
+		
 		void						emitMessage(const QString& strMessage)
 		{
 			emit message(strMessage);
@@ -114,6 +119,12 @@ class IRCAdapterBase : public QObject
 	
 	signals:
 		void						error(const QString& error);
+		
+		/**
+		 *	@brief Called when this adapter requests UI focus.
+		 */
+		void						focusRequest();
+		
 		void						message(const QString& message);
 		void						messageWithClass(const QString& message, const IRCMessageClass& messageClass);
 		

@@ -65,6 +65,11 @@ IRCDockTabContents::~IRCDockTabContents()
 	}
 }
 
+void IRCDockTabContents::adapterFocusRequest()
+{
+	emit focusRequest(this);
+}
+
 void IRCDockTabContents::adapterTerminating()
 {
 	if (pIrcAdapter != NULL && !this->bIsDestroying)
@@ -252,6 +257,7 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 {
 	pIrcAdapter = pAdapter;
 	connect(pIrcAdapter, SIGNAL( error(const QString&) ), SLOT( receiveError(const QString& ) ));
+	connect(pIrcAdapter, SIGNAL( focusRequest() ), SLOT( adapterFocusRequest() ));
 	connect(pIrcAdapter, SIGNAL( message(const QString&) ), SLOT( receiveMessage(const QString& ) ));
 	connect(pIrcAdapter, SIGNAL( messageWithClass(const QString&, const IRCMessageClass&) ), SLOT( receiveMessageWithClass(const QString&, const IRCMessageClass&) ));
 	connect(pIrcAdapter, SIGNAL( terminating() ), SLOT( adapterTerminating() ) );

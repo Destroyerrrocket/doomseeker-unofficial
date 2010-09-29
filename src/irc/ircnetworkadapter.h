@@ -64,11 +64,25 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		void								doSendMessage(const QString& message, IRCAdapterBase* pOrigin);				
 
 		bool								hasRecipient(const QString& recipient) const;
+		bool								isConnected() const { return ircClient.isConnected(); }
 		bool								isMyNickname(const QString& nickname) const;
 
 		void								killAllChatWindows();
 
 		const QString&						myNickname() const { return connectionInfo.nick; }
+		
+		/**
+		 *	@brief Opens a new chat adapter for specified recipient.
+		 *
+		 *	If specified recipient is a channel a /join command will be sent
+		 *	to that channel. If recipient is a user a chat window will simply
+		 *	be opened.
+		 *
+		 *	If adapter is not connected to a network or empty name is specified
+		 *	this becomes a no-op. Also nothing occurs if such recipient
+		 *	is already present.
+		 */
+		void								openNewAdapter(const QString& recipientName);
 		
 		IRCNetworkAdapter*					network()
 		{
