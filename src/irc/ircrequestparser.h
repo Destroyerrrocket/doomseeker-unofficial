@@ -23,17 +23,21 @@
 #ifndef __IRCREQUESTPARSER_H__
 #define __IRCREQUESTPARSER_H__
 
+#include <QObject>
 #include <QString>
+
+class IRCAdapterBase;
 
 /**
  *	@brief Parses request and interprets them in a way that emulates
  *	mIRC (or any even slightly sane IRC client for that matter).
  *
  *	The above statement means that a non-RFC compliant request form that users 
- *	grew accustomed to will be onverted to RFC 1459 compliant form.
+ *	grew accustomed to will be understood correctly by this parser and
+ *	converted to RFC 1459 compliant form.
  *
  *	For example:
- *	- If command begins with '/' character this character will be always 
+ *	- If RFC command begins with '/' character this character will be always 
  *	  trimmed. If command doesn't begin with '/' character error will be 
  *	  returned.
  *	  @b Example: "/who <nickname>" will be converted to "who <nickname>"
@@ -43,8 +47,10 @@
  *	
  *	For more information refer to parse() method.
  */
-class IRCRequestParser
+class IRCRequestParser : public QObject
 {
+	Q_OBJECT
+
 	public:
 		enum IRCRequestParseResult
 		{
@@ -60,6 +66,8 @@ class IRCRequestParser
 		 *	@brief Parses input string and returns it through output string.
 		 *	Additional information is passed through return value.
 		 *
+		 *	@param pAdapter
+		 *		Adapter that sends the message.
 		 *	@param input
 		 *		Input message in common format. See IRCRequestParser 
 		 *		description.
@@ -79,7 +87,19 @@ class IRCRequestParser
 		 *	- QuitCommand is returned if "/quit" command is specified.
 		 *	- Ok is returned if it is ok to send the output message.
 		 */
-		static IRCRequestParseResult	parse(QString input, QString& output);
+		IRCRequestParseResult		parse(IRCAdapterBase* pAdapter, QString input, QString& output);
+	
+	signals:
+		/**
+		 *	@brief Echoes back all PRIVMSG commands.
+		 *	
+		 *	@param recipient
+		 *		Recipient of the message. This is extracted
+		 *		directly from the privmsg request.
+		 *	@param messageContent
+		 *		Content of the message.
+		 */
+		void						echoPrivmsg(const QString& recipient, const QString& content);
 };
 
 #endif

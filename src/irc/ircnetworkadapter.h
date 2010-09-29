@@ -9,6 +9,7 @@
 #include "irc/ircadapterbase.h"
 #include "irc/ircclient.h"
 #include "irc/ircnetworkconnectioninfo.h"
+#include "irc/ircrequestparser.h"
 #include "irc/ircresponseparser.h"
 #include "socketsignalsadapter.h"
 
@@ -91,6 +92,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		QHash<QString, IRCChatAdapter*>		chatWindows;
 		IRCNetworkConnectionInfo			connectionInfo;
 		IRCClient							ircClient;
+		IRCRequestParser					ircRequestParser;
 		IRCResponseParser					ircResponseParser;
 		IRCSocketSignalsAdapter*			pIrcSocketSignalsAdapter;
 
@@ -113,6 +115,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		void								killChatWindow(const QString& recipient);		
 		
 	protected slots:
+		void								echoPrivmsg(const QString& recipient, const QString& content);
 		void								kick(const QString& channel, const QString& byWhom, const QString& whoIsKicked, const QString& reason);
 		void								kill(const QString& victim, const QString& comment);
 		void								ircServerResponse(const QString& message);

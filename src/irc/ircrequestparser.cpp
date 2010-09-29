@@ -25,7 +25,7 @@
 #include "irc/ircclient.h"
 #include <QStringList>
 
-IRCRequestParser::IRCRequestParseResult IRCRequestParser::parse(QString input, QString& output)
+IRCRequestParser::IRCRequestParseResult IRCRequestParser::parse(IRCAdapterBase* pAdapter, QString input, QString& output)
 {
 	input = input.trimmed();
 
@@ -95,12 +95,14 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::parse(QString input, Q
 		QString recipient = inputSplit.takeFirst();
 		QString content = inputSplit.join(" ");
 		output = QString("%1 %2 :%3").arg(message, recipient, content);
+		
+		emit echoPrivmsg(recipient, content);
 	}
 	else if (message == "MSG")
 	{
 		// This is an alias to the PRIVMSG command but it is so popular
 		// that I decided to implement this permanently.
-		parse(QString("/PRIVMSG %2").arg(inputSplit.join(" ")), output);
+		parse(pAdapter, QString("/PRIVMSG %2").arg(inputSplit.join(" ")), output);
 	}
 	else
 	{

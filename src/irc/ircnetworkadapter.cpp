@@ -37,6 +37,10 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 	
 	QObject::connect(&ircClient, SIGNAL( ircServerResponse(const QString&) ), 
 		this, SLOT( ircServerResponse(const QString&) ) );
+		
+	// Request parser
+	QObject::connect(&ircRequestParser, SIGNAL( echoPrivmsg(const QString&, const QString&) ), 
+		this, SLOT( echoPrivmsg(const QString&, const QString&) ) );
 
 
 	// Response parser begins here.
@@ -123,7 +127,7 @@ void IRCNetworkAdapter::doSendMessage(const QString& message, IRCAdapterBase* pO
 	}
 
 	QString parsedMessage;
-	IRCRequestParser::IRCRequestParseResult result = IRCRequestParser::parse(message, parsedMessage);
+	IRCRequestParser::IRCRequestParseResult result = ircRequestParser.parse(pOrigin, message, parsedMessage);
 	
 	switch (result)
 	{
@@ -151,6 +155,17 @@ void IRCNetworkAdapter::doSendMessage(const QString& message, IRCAdapterBase* pO
 			ircClient.sendMessage(parsedMessage);
 			emit messageWithClass(tr("Quit"), IRCMessageClass::NetworkAction);
 			break;
+	}
+}
+
+void IRCNetworkAdapter::echoPrivmsg(const QString& recipient, const QString& content)
+{
+	// We will echo only chat messages for recipients for whom
+	// we have windows open.
+	if (hasRecipient(recipient))
+	{
+		const QString& sender = this->myNickname();	
+		privMsgReceived(recipient, sender, content);
 	}
 }
 

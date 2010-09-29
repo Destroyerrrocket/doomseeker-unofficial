@@ -134,6 +134,7 @@ set(DOOMSEEKER_QT_FILES
 	irc/ircglobalmessages.h
 	irc/ircprivadapter.h
 	irc/ircnetworkadapter.h
+	irc/ircrequestparser.h		
 	irc/ircresponseparser.h
 	sdeapi/config.hpp
 	serverapi/rconprotocol.h
@@ -264,7 +265,6 @@ set(HEADER_FILES
 	irc/ircmessageclass.h
 	irc/ircnetworkconnectioninfo.h
 	irc/ircnetworkentity.h
-	irc/ircrequestparser.h	
 	irc/ircuserinfo.h
 	irc/ircuserlist.h
 	sdeapi/pluginloader.hpp
