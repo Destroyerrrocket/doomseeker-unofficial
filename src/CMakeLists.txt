@@ -131,6 +131,8 @@ set(DOOMSEEKER_QT_FILES
 	irc/ircchanneladapter.h
 	irc/ircchatadapter.h
 	irc/ircclient.h
+	irc/ircdelayedoperation.h
+	irc/ircdelayedoperationlist.h
 	irc/ircglobalmessages.h
 	irc/ircprivadapter.h
 	irc/ircnetworkadapter.h
@@ -205,6 +207,8 @@ set(SOURCE_FILES
 	irc/ircchanneladapter.cpp
 	irc/ircchatadapter.cpp
 	irc/ircclient.cpp
+	irc/ircdelayedoperation.cpp
+	irc/ircdelayedoperationlist.cpp
 	irc/ircglobal.cpp
 	irc/ircglobalmessages.cpp
 	irc/ircmessageclass.cpp

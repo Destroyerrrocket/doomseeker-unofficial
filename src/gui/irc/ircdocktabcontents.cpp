@@ -38,6 +38,7 @@ IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 	setupUi(this);
 	
 	this->bIsDestroying = false;
+	this->userListContextMenu = NULL;
 
 	this->pParentIRCDock = pParentIRCDock;
 	this->lvUserList->setModel(new QStandardItemModel(this->lvUserList));
@@ -55,6 +56,11 @@ IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 IRCDockTabContents::~IRCDockTabContents()
 {
 	this->bIsDestroying = true;
+
+	if (this->userListContextMenu != NULL)
+	{
+		delete this->userListContextMenu;
+	}
 
 	if (pIrcAdapter != NULL)
 	{
@@ -144,6 +150,16 @@ QStandardItem* IRCDockTabContents::findUserListItem(const QString& nickname)
 	return NULL;
 }
 
+IRCDockTabContents::UserListMenu& IRCDockTabContents::getUserListContextMenu()
+{
+	if (this->userListContextMenu == NULL)
+	{
+		this->userListContextMenu = new UserListMenu();
+	}
+	
+	return *this->userListContextMenu;
+}
+
 void IRCDockTabContents::insertMessage(const QString& htmlString)
 {
 	this->textOutputContents << htmlString;
@@ -179,6 +195,8 @@ void IRCDockTabContents::nameAdded(const IRCUserInfo& userInfo)
 
 void IRCDockTabContents::nameListUpdated(const IRCUserList& userList)
 {
+	this->lvUserList->setModel(new QStandardItemModel(this->lvUserList));
+
 	for (unsigned i = 0; i < userList.size(); ++i)
 	{
 		nameAdded(*userList[i]);
@@ -242,6 +260,22 @@ void IRCDockTabContents::receiveMessageWithClass(const QString& message, const I
 	this->insertMessage(messageHtmlEscaped);
 }
 
+QString IRCDockTabContents::selectedNickname()
+{
+	QModelIndexList selectedIndexes = this->lvUserList->selectionModel()->selectedRows();
+	// There can be only one.
+	if (!selectedIndexes.isEmpty())
+	{
+		int row = selectedIndexes[0].row();
+		QStandardItemModel* pModel = (QStandardItemModel*)this->lvUserList->model();
+		QStandardItem* pItem = pModel->item(row);
+	
+		return pItem->text();
+	}
+	
+	return "";
+}
+
 void IRCDockTabContents::sendMessage()
 {
 	QString message = leCommandLine->text();
@@ -281,6 +315,11 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 			connect(pChannelAdapter, SIGNAL( nameUpdated(const IRCUserInfo&) ), SLOT( nameUpdated(const IRCUserInfo&) ) );
 
 			this->lvUserList->setVisible(true);
+			connect(this->lvUserList, SIGNAL( customContextMenuRequested(const QPoint&) ), 
+				SLOT( userListCustomContextMenuRequested(const QPoint&) ) );
+			
+			this->lvUserList->setContextMenuPolicy(Qt::CustomContextMenu);
+			
 			break;
 		}
 
@@ -295,4 +334,100 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 			break;
 		}
 	}
+}
+
+void IRCDockTabContents::userListCustomContextMenuRequested(const QPoint& pos)
+{
+	if (this->pIrcAdapter->adapterType() != IRCAdapterBase::ChannelAdapter)
+	{
+		// Prevent illegal calls.
+		return;
+	}
+	
+	QString nickname = this->selectedNickname();	
+	if (nickname.isEmpty())
+	{
+		// Prevent calls if there is no one selected.
+		return;
+	}
+	QString cleanNickname = IRCUserInfo(nickname).cleanNickname();
+	
+	IRCChannelAdapter* pAdapter = (IRCChannelAdapter*) this->pIrcAdapter;	
+	const QString& channel = pAdapter->recipient();
+
+	UserListMenu& menu = this->getUserListContextMenu();
+	menu.setIsOperator(pAdapter->amIOperator());
+	QPoint posGlobal = this->lvUserList->mapToGlobal(pos);
+	
+	QAction* pAction = menu.exec(posGlobal);
+	
+	if (pAction == NULL)
+	{
+		return;
+	}
+	
+	if (pAction == menu.ban)
+	{
+		bool bOk = false;
+	
+		QString reason = CommonGUI::askString(tr("Ban user"), tr("Input reason for banning user %1 from channel %2").arg(nickname, channel), &bOk);
+		if (bOk)
+		{
+			pAdapter->banUser(cleanNickname, reason);
+		}
+	}
+	else if (pAction == menu.deop)
+	{
+		// TODO stub
+	}
+	else if (pAction == menu.devoice)
+	{
+		// TODO stub
+	}
+	else if (pAction == menu.kick)
+	{
+		bool bOk = false;
+	
+		QString reason = CommonGUI::askString(tr("Kick user"), tr("Input reason for kicking user %1 from channel %2").arg(nickname, channel), &bOk);
+		if (bOk)
+		{
+			pAdapter->kickUser(cleanNickname, reason);
+		}
+	}
+	else if (pAction == menu.op)
+	{
+		// TODO stub
+	}
+	else if (pAction == menu.openChatWindow)
+	{
+		// TODO stub
+	}
+	else if (pAction == menu.voice)
+	{
+		// TODO stub
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+IRCDockTabContents::UserListMenu::UserListMenu()
+{
+	this->openChatWindow = this->addAction(tr("Open chat window"));
+	this->addSeparator();
+	this->op = this->addAction(tr("Op"));
+	this->deop = this->addAction(tr("Deop"));
+	this->voice = this->addAction(tr("Voice"));
+	this->devoice = this->addAction(tr("Devoice"));
+	this->addSeparator();
+	this->kick = this->addAction(tr("Kick"));
+	this->ban = this->addAction(tr("Ban"));
+}
+
+void IRCDockTabContents::UserListMenu::setIsOperator(bool bOperator)
+{
+	this->op->setEnabled(bOperator);
+	this->deop->setEnabled(bOperator);
+	this->voice->setEnabled(bOperator);
+	this->devoice->setEnabled(bOperator);
+	this->kick->setEnabled(bOperator);
+	this->ban->setEnabled(bOperator);
 }

@@ -53,6 +53,11 @@ class IRCResponseParser : public QObject
 		void			userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage);
 		void			userQuitsNetwork(const QString& nickname, const QString& farewellMessage);
 		
+		/**
+		 *	@brief Emitted with response 311 RPL_WHOISUSER.
+		 */
+		void			whoIsUser(const QString& nickname, const QString& user, const QString& hostName, const QString& realName);
+		
 	private:
 		enum FlagModes
 		{

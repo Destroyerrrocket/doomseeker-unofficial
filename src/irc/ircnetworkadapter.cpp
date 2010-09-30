@@ -28,6 +28,7 @@
 #include "irc/ircprivadapter.h"
 #include "irc/ircrequestparser.h"
 #include "irc/ircuserinfo.h"
+#include "irc/ircuserlist.h"
 #include "log.h"
 
 IRCNetworkAdapter::IRCNetworkAdapter()
@@ -85,6 +86,9 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 
 	QObject::connect(&ircResponseParser, SIGNAL ( userQuitsNetwork(const QString&, const QString&) ), 
 		this, SLOT( userQuitsNetwork(const QString&, const QString&) ) );
+		
+	QObject::connect(&ircResponseParser, SIGNAL ( whoIsUser(const QString&, const QString&, const QString&, const QString&) ), 
+		this, SLOT( whoIsUser(const QString&, const QString&, const QString&, const QString&) ) );
 }
 
 IRCNetworkAdapter::~IRCNetworkAdapter()
@@ -92,7 +96,18 @@ IRCNetworkAdapter::~IRCNetworkAdapter()
 	disconnect();
 
 	killAllChatWindows();
-	delete pIrcSocketSignalsAdapter;
+	delete this->pIrcSocketSignalsAdapter;
+}
+
+void IRCNetworkAdapter::banUser(const QString& nickname, const QString& reason, const QString& channel)
+{
+	QString cleanNickname = IRCUserInfo(nickname).cleanNickname();
+
+	IRCDelayedOperation operation(IRCDelayedOperation::Ban, cleanNickname, channel);
+	operation.setAttribute("reason", reason);
+	delayedOperations << operation;
+	
+	this->sendMessage(QString("/whois %1").arg(cleanNickname));
 }
 
 void IRCNetworkAdapter::connect(const IRCNetworkConnectionInfo& connectionInfo)
@@ -188,6 +203,24 @@ IRCChatAdapter* IRCNetworkAdapter::getChatAdapter(const QString& recipient)
 	return NULL;
 }
 
+const IRCChatAdapter* IRCNetworkAdapter::getChatAdapter(const QString& recipient) const
+{
+	const IRCChatAdapter* pAdapter = NULL;
+	
+	if (recipient.isEmpty())
+	{
+		return NULL;
+	}
+	
+	QString recipientLowercase = recipient.toLower();
+	if (hasRecipient(recipientLowercase))
+	{
+		return chatWindows[recipientLowercase];
+	}
+	
+	return NULL;
+}
+
 IRCChatAdapter* IRCNetworkAdapter::getOrCreateNewChatAdapter(const QString& recipient)
 {
 	IRCChatAdapter* pAdapter = NULL;
@@ -243,6 +276,20 @@ bool IRCNetworkAdapter::isMyNickname(const QString& nickname) const
 	IRCUserInfo myUserInfo(this->connectionInfo.nick);
 
 	return (myUserInfo == nickname);
+}
+
+bool IRCNetworkAdapter::isOperator(const QString& nickname, const QString& channel) const
+{
+	if (IRCGlobal::isChannelName(channel))
+	{
+		const IRCChannelAdapter* pChannelAdapter = (const IRCChannelAdapter*) this->getChatAdapter(channel);
+		if (pChannelAdapter != NULL)
+		{
+			return pChannelAdapter->isOperator(nickname);
+		}
+	}
+	
+	return false;
 }
 
 void IRCNetworkAdapter::kick(const QString& channel, const QString& byWhom, const QString& whoIsKicked, const QString& reason)
@@ -303,14 +350,20 @@ void IRCNetworkAdapter::modeInfo(const QString& channel, const QString& whoSetTh
 
 void IRCNetworkAdapter::namesListReceived(const QString& channel, const QStringList& names)
 {
-	IRCChannelAdapter* pAdapter = (IRCChannelAdapter*) this->getOrCreateNewChatAdapter(channel);
-	pAdapter->appendNamesToCachedList(names);
+	if (this->hasRecipient(channel))
+	{
+		IRCChannelAdapter* pAdapter = (IRCChannelAdapter*) this->getOrCreateNewChatAdapter(channel);
+		pAdapter->appendNamesToCachedList(names);
+	}
 }
 
 void IRCNetworkAdapter::namesListEndReceived(const QString& channel)
 {
-	IRCChannelAdapter* pAdapter = (IRCChannelAdapter*) this->getOrCreateNewChatAdapter(channel);
-	pAdapter->emitCachedNameListUpdated();
+	if (this->hasRecipient(channel))
+	{
+		IRCChannelAdapter* pAdapter = (IRCChannelAdapter*) this->getOrCreateNewChatAdapter(channel);
+		pAdapter->emitCachedNameListUpdated();
+	}
 }
 
 void IRCNetworkAdapter::noSuchNickname(const QString& nickname)
@@ -450,6 +503,26 @@ void IRCNetworkAdapter::userQuitsNetwork(const QString& nickname, const QString&
 	foreach (IRCChatAdapter* pAdapter, adaptersList)
 	{
 		pAdapter->userLeaves(nickname, farewellMessage, IRCChatAdapter::NetworkQuit);
+	}
+}
+
+void IRCNetworkAdapter::whoIsUser(const QString& nickname, const QString& user, const QString& hostName, const QString& realName)
+{
+	// Deliver pending bans.
+	while(true)
+	{
+		const IRCDelayedOperation* pBanOperation = delayedOperations.operationForNickname(IRCDelayedOperation::Ban, nickname);
+		if (pBanOperation == NULL)
+		{
+			break;
+		}
+		
+		QString banString = "*!*@" + hostName;
+		QString reason = pBanOperation->attribute("reason");
+		this->sendMessage(QString("/mode %1 +b %2").arg(pBanOperation->channel(), banString));
+		this->sendMessage(QString("/kick %1 %2 %3").arg(pBanOperation->channel(), nickname, reason));
+		
+		delayedOperations.remove(pBanOperation);
 	}
 }
 

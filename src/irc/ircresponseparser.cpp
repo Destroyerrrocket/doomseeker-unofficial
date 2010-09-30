@@ -86,7 +86,11 @@ void IRCResponseParser::parse(const QString& message)
 
 void IRCResponseParser::parseMessage(const QString& prefix, const QString& sender, const QString& type, QStringList params)
 {
+	// Contains host info.
+	static const QString RPL_WHOISUSER = "311";
+	// Names list
 	static const QString RPL_NAMREPLY = "353";
+	// End of names list
 	static const QString RPL_ENDOFNAMES = "366";
 	static const QString ERR_NOSUCHNICK = "401";
 
@@ -235,6 +239,19 @@ void IRCResponseParser::parseMessage(const QString& prefix, const QString& sende
 		QString comment = joinAndTrimColonIfNecessary(params);
 		
 		emit kill(victim, comment);
+	}
+	else if (type == RPL_WHOISUSER)
+	{
+		// First param is unnecessary
+		params.takeFirst();
+		
+		// Extract user info.
+		QString nickname = params.takeFirst();
+		QString user = params.takeFirst();
+		QString hostName = params.takeFirst();
+		QString realName = joinAndTrimColonIfNecessary(params);
+		
+		emit whoIsUser(nickname, user, hostName, realName);
 	}
 }
 

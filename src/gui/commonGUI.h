@@ -31,6 +31,11 @@ class CommonGUI
 {
 	public:
 		/**
+		 *	@brief Calls QInputDialog::getText().
+		 */
+		static QString			askString(const QString& title, const QString& label, bool* ok = NULL, const QString& defaultString = "");
+	
+		/**
 		 *	@brief Reads items from a QListView that uses QStandardItemModel
 		 *	and puts texts of these items into a list of strings.
 		 *	@param listview - QListView that uses QStandardItemModel.

@@ -21,7 +21,13 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "commonGUI.h"
+#include <QInputDialog>
 #include <QStandardItemModel>
+
+QString CommonGUI::askString(const QString& title, const QString& label, bool* ok, const QString& defaultString)
+{
+	return QInputDialog::getText(NULL, title,label, QLineEdit::Normal, defaultString, ok);
+}
 
 QStringList CommonGUI::listViewStandardItemsToStringList(QListView* listview)
 {

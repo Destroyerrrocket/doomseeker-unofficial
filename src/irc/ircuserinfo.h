@@ -43,12 +43,23 @@ class IRCUserInfo
 		 *	@brief Converts a character fron nickname to a flag.
 		 */
 		static unsigned		convertNickCharToFlag(char c);
+		
+		/**
+		 *	@brief Full user signature with nickname and hostname.
+		 *
+		 *	It must be noted that this variable value might not be
+		 *	valid even if IRCUserInfo is containing a valid nickname
+		 *	information. In fact this value will always be empty
+		 *	for chat adapters. However network adapters will require
+		 *	this signature info to deliver bans.
+		 */
+		QString				fullSignature;
 
 		/**
 		 *	@brief Constructor will set flags based on nickname's
 		 *	prefix.
 		 */
-		IRCUserInfo(const QString& nickname);
+		IRCUserInfo(const QString& nickname, const QString& fullSignature = "");
 
 		/**
 		 *	@brief Returns nickname with no prefixes, contrary to the
@@ -61,6 +72,8 @@ class IRCUserInfo
 		 *	IRCGlobal::toIrcLower() .
 		 */
 		QString				cleanNicknameLowerCase() const;
+		
+		QString				extractHostnameFromFullSignature() const;
 
 		unsigned			flags() const { return this->userFlags; }
 

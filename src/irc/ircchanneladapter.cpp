@@ -23,6 +23,7 @@
 #include "ircchanneladapter.h"
 #include "irc/ircglobal.h"
 #include "irc/ircmessageclass.h"
+#include "irc/ircnetworkadapter.h"
 #include "irc/ircuserinfo.h"
 #include "irc/ircuserlist.h"
 
@@ -42,6 +43,12 @@ IRCChannelAdapter::~IRCChannelAdapter()
 	delete users;
 }
 
+bool IRCChannelAdapter::amIOperator() const
+{
+	const QString& myNickname = pNetwork->myNickname();
+	return isOperator(myNickname);
+}
+
 void IRCChannelAdapter::appendNameToCachedList(const QString& name)
 {
 	if (users->appendNameToCachedList(name))
@@ -54,6 +61,11 @@ void IRCChannelAdapter::appendNameToCachedList(const QString& name)
 void IRCChannelAdapter::appendNamesToCachedList(const QStringList& names)
 {
 	users->appendNamesToCachedList(names);
+}
+
+void IRCChannelAdapter::banUser(const QString& nickName, const QString& reason)
+{
+	pNetwork->banUser(nickName, reason, this->recipientName);
 }
 
 void IRCChannelAdapter::emitCachedNameListUpdated()
@@ -78,6 +90,26 @@ void IRCChannelAdapter::emitChatMessage(const QString& sender, const QString& co
 bool IRCChannelAdapter::hasUser(const QString& nickname)
 {
 	return users->hasUser(nickname);
+}
+
+bool IRCChannelAdapter::isOperator(const QString& nickname) const
+{
+	const IRCUserInfo* pUser = users->user(nickname);
+	if (pUser != NULL)
+	{
+		return pUser->isOp();
+	}
+	
+	return false;
+}
+
+void IRCChannelAdapter::kickUser(const QString& nickname, const QString& reason)
+{
+	if (hasUser(nickname))
+	{
+		QString cleanNickname = IRCUserInfo(nickname).cleanNickname();
+		this->sendMessage(QString("/kick %1 %2 %3").arg(this->recipientName, cleanNickname, reason));
+	}
 }
 
 void IRCChannelAdapter::removeNameFromCachedList(const QString& name)

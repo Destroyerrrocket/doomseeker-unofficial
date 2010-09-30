@@ -44,15 +44,17 @@ class IRCUserList
 	public:
 		~IRCUserList();
 
+		bool					appendNameToCachedList(const QString& nickname);
+		
 		/**
 		 *	@brief Appends a single name to the users array.
 		 *
-		 *	Ensures that no duplicate names are found on the lsit. 
+		 *	Ensures that no duplicate names are found on the list. If
+		 *	a duplicate is found then info is updated.
 		 *
 		 *	@return True if name was actually added to the list. False
 		 *	if duplicate names were detected.
 		 */
-		bool					appendNameToCachedList(const QString& nickname);
 		bool					appendNameToCachedList(const IRCUserInfo& userInfo);
 
 		/**

@@ -23,9 +23,10 @@
 #include "ircuserinfo.h"
 #include "irc/ircglobal.h"
 
-IRCUserInfo::IRCUserInfo(const QString& nickname)
+IRCUserInfo::IRCUserInfo(const QString& nickname, const QString& fullSignature)
 {
 	this->userFlags = 0;
+	this->fullSignature = fullSignature;
 
 	if (nickname.isEmpty())
 	{
@@ -90,6 +91,20 @@ unsigned IRCUserInfo::extractFlags(QString& name)
 	}
 	
 	return flag;
+}
+
+QString IRCUserInfo::extractHostnameFromFullSignature() const
+{
+	if (!this->fullSignature.isEmpty())
+	{
+		int indexOfDelimiterChar = this->fullSignature.indexOf('@');
+		QString hostName = this->fullSignature;
+		hostName.remove(0, indexOfDelimiterChar + 1);
+		
+		return hostName;
+	}
+	
+	return "";
 }
 
 bool IRCUserInfo::isFlag(unsigned flag) const

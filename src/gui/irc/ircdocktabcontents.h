@@ -26,7 +26,9 @@
 #include "irc/ircadapterbase.h"
 
 #include "ui_ircdocktabcontents.h"
+#include <QAction>
 #include <QStandardItem>
+#include <QMenu>
 #include <QWidget>
 
 class IRCChatAdapter;
@@ -100,12 +102,33 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		void				newChatWindowIsOpened(IRCChatAdapter* pAdapter);
 		void				receiveError(const QString& error);
 		void				sendMessage();
+		void				userListCustomContextMenuRequested(const QPoint& pos);
 
 	protected:
 		IRCAdapterBase*		pIrcAdapter;
 		IRCDock*			pParentIRCDock;
 		
 	private:
+		class UserListMenu : public QMenu
+		{
+			public:
+				UserListMenu();
+			
+				QAction*		ban;
+				QAction*		deop;
+				QAction*		devoice;
+				QAction*		kick;
+				QAction*		op;
+				QAction*		openChatWindow;
+				QAction*		voice;
+				
+				/**
+				 *	@brief Disabled or enables certain actions basing on the passed
+				 *	flag.
+				 */
+				void			setIsOperator(bool bOperator);
+		};
+	
 		bool				bIsDestroying;
 		
 		/**
@@ -113,9 +136,13 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 *	appearance is changed.
 		 */
 		QStringList			textOutputContents;		
+		UserListMenu*		userListContextMenu;
 	
 		QStandardItem*		findUserListItem(const QString& nickname);
+		UserListMenu&		getUserListContextMenu();
 		void				insertMessage(const QString& htmlString);
+		QString				selectedNickname();
+		
 };
 
 #endif

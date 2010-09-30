@@ -8,6 +8,7 @@
 
 #include "irc/ircadapterbase.h"
 #include "irc/ircclient.h"
+#include "irc/ircdelayedoperationlist.h"
 #include "irc/ircnetworkconnectioninfo.h"
 #include "irc/ircrequestparser.h"
 #include "irc/ircresponseparser.h"
@@ -17,6 +18,7 @@
 
 class IRCChatAdapter;
 class IRCSocketSignalsAdapter;
+class IRCUserList;
 
 /**
  *	@brief Interprets communication between the client and the IRC server.
@@ -32,6 +34,33 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		~IRCNetworkAdapter();
 
 		AdapterType							adapterType() const { return NetworkAdapter; }
+		
+		/**
+		 *	@brief Checks if client is an operator on a specified channel.
+		 */
+		bool								amIOperator(const QString& channel) const
+		{
+			return this->isOperator(this->myNickname(), channel);
+		}
+		
+		/**
+		 *	@brief Bans specified user from a channel.
+		 *
+		 *	This will create a IRCDelayedOperation object and first send
+		 *	/whois <nickname> query. When the /whois returns the delayed
+		 *	operations are searched for pending bans. This is when
+		 *	bans are delivered. 
+		 *
+		 *	For end-user this effect should be almost completely invisible.
+		 *
+		  *	@param nickName
+		 *		Victim's nick.
+		 *	@param reason
+		 *		Reason for ban (this will be delivered to /kick message).
+		 *	@param channel
+		 *		Channel from which the user will be banned.
+		 */
+		void								banUser(const QString& nickname, const QString& reason, const QString& channel);
 	
 		void								connect(const IRCNetworkConnectionInfo& connectionInfo);
 
@@ -66,6 +95,16 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		bool								hasRecipient(const QString& recipient) const;
 		bool								isConnected() const { return ircClient.isConnected(); }
 		bool								isMyNickname(const QString& nickname) const;
+		
+		/**
+		 *	@brief Checks if user is an operator on a given channel.
+		 *
+		 *	This will work only for known channels (ie. the ones the client
+		 *	is registered on).
+		 *
+		 *	@return True if given nickname has op privileges on given channel.
+		 */
+		bool								isOperator(const QString& nickname, const QString& channel) const;
 
 		void								killAllChatWindows();
 
@@ -105,6 +144,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 */
 		QHash<QString, IRCChatAdapter*>		chatWindows;
 		IRCNetworkConnectionInfo			connectionInfo;
+		IRCDelayedOperationList				delayedOperations;
 		IRCClient							ircClient;
 		IRCRequestParser					ircRequestParser;
 		IRCResponseParser					ircResponseParser;
@@ -114,7 +154,8 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 *	@brief Retrieves IRCChatAdapter for specified recipient.
 		 */
 		IRCChatAdapter*						getChatAdapter(const QString& recipient);
-
+		const IRCChatAdapter*				getChatAdapter(const QString& recipient) const;
+		
 		/**
 		 *	@brief Creates the new IRCChatAdapter object and immedaitelly 
 		 *	adds it to the chatWindows hashmap.
@@ -126,7 +167,10 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 */
 		IRCChatAdapter*						getOrCreateNewChatAdapter(const QString& recipient);
 		
+		int									indexOfDelayedOperationForNickname(const QString& nickname) const;
 		void								killChatWindow(const QString& recipient);		
+		
+		
 		
 	protected slots:
 		void								echoPrivmsg(const QString& recipient, const QString& content);
@@ -145,6 +189,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		void								userModeChanged(const QString& channel, const QString& nickname, unsigned flagsAdded, unsigned flagsRemoved);
 		void								userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage);
 		void								userQuitsNetwork(const QString& nickname, const QString& farewellMessage);
+		void								whoIsUser(const QString& nickname, const QString& user, const QString& hostName, const QString& realName);
 
 };
 

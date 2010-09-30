@@ -33,19 +33,26 @@ IRCUserList::~IRCUserList()
 
 bool IRCUserList::appendNameToCachedList(const QString& nickname)
 {
-	if (hasUser(nickname))
-	{
-		return false;
-	}
-
-	IRCUserInfo* pUserInfo = new IRCUserInfo(nickname);
-	usersArray.append(pUserInfo);
-	return true;
+	IRCUserInfo userInfo(nickname);
+	return appendNameToCachedList(userInfo);
 }
 
 bool IRCUserList::appendNameToCachedList(const IRCUserInfo& userInfo)
 {
-	return appendNameToCachedList(userInfo.prefixedName());
+	int index = this->indexOfName(userInfo.cleanNickname());
+	if (index >= 0)
+	{
+		printf("Updateing name: %s\n", userInfo.prefixedName().toAscii().constData());
+		*usersArray[index] = userInfo;
+		return false;
+	}
+	else
+	{
+		printf("Appending name: %s\n", userInfo.prefixedName().toAscii().constData());
+		IRCUserInfo* pUserInfo = new IRCUserInfo(userInfo);
+		usersArray.append(pUserInfo);
+		return true;
+	}
 }
 
 void IRCUserList::appendNamesToCachedList(const QStringList& names)

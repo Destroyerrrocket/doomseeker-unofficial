@@ -41,6 +41,11 @@ class IRCChannelAdapter : public IRCChatAdapter
 		~IRCChannelAdapter();
 
 		AdapterType				adapterType() const { return ChannelAdapter; }
+		
+		/**
+		 *	@brief Checks if this client is an operator on this channel.
+		 */
+		bool					amIOperator() const;
 
 		/**
 		 *	@brief Appends a single name to the sorted cachedNames list.
@@ -55,6 +60,16 @@ class IRCChannelAdapter : public IRCChatAdapter
 		 *	duplicate names are found on the list.
 		 */
 		void					appendNamesToCachedList(const QStringList& names);
+		
+		/**
+		 *	@brief Bans and kicks user from the channel.
+		 *
+		 *	@param nickName
+		 *		Victim's nick.
+		 *	@param reason
+		 *		Reason for ban (this will be delivered to /kick message).
+		 */
+		void					banUser(const QString& nickName, const QString& reason);
 
 		/**
 		 *	@brief Emits cached list of names. This should be called
@@ -64,6 +79,14 @@ class IRCChannelAdapter : public IRCChatAdapter
 		void					emitChatMessage(const QString& sender, const QString& content);
 
 		bool					hasUser(const QString& nickname);
+		
+		/**
+		 *	@brief Checks if user is an operator on this channel.
+		 */
+		bool					isOperator(const QString& nickname) const;
+		
+		void					kickUser(const QString& nickname, const QString& reason);
+		
 
 		/**
 		 *	@brief Removes a name from the sortecd cachedNames list.
