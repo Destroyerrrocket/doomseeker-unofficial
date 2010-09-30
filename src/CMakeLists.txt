@@ -264,6 +264,7 @@ set(HEADER_FILES
 	gui/helpers/playersdiagram.h
 	gui/models/serverlistcolumn.h
 	gui/models/serverlistrowhandler.h
+	gui/widgets/qtabwidgetext.h
 	irc/configuration/ircconfig.h
 	irc/ircglobal.h
 	irc/ircmessageclass.h

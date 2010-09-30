@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// ircmessageclass.cpp
+// qtabwidgetext.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,48 +20,23 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "ircmessageclass.h"
-#include "irc/configuration/ircconfig.h"
+#ifndef __QTABWIDGETEXT_H__
+#define __QTABWIDGETEXT_H__
 
-QString IRCMessageClass::colorFromConfig() const
-{
-	IRCConfig::AppearanceCfg& appearance = gIRCConfig.appearance;
-	switch (className)
-	{
-		case ChannelAction:
-			return appearance.channelActionColor;
-			
-		case Error:
-			return appearance.errorColor;
-			
-		case Normal:
-			return appearance.defaultTextColor;
-			
-		case NetworkAction:
-			return appearance.networkActionColor;
-		
-		default:
-			return "#000000";
-	}
-}
+#include <QTabWidget>
 
-QString IRCMessageClass::toStyleSheetClassName(ClassName className)
+class QTabWidgetExt : public QTabWidget
 {
-	switch (className)
-	{
-		case ChannelAction:
-			return "channelAction";
-			
-		case Error:
-			return "error";
-			
-		case Normal:
-			return "";
-			
-		case NetworkAction:
-			return "networkAction";
-		
-		default:
-			return "appErr";
-	}
-}
+	public:
+		QTabWidgetExt(QWidget* parent = NULL)
+		: QTabWidget(parent)
+		{
+		}
+	
+		QTabBar* tabBarPublic()
+		{
+			return tabBar();
+		}
+};
+
+#endif

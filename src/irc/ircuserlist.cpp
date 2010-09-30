@@ -63,8 +63,6 @@ void IRCUserList::appendNamesToCachedList(const QStringList& names)
 
 bool IRCUserList::changeNick(const QString& oldNickname, const QString& newNickname)
 {
-	// Perhaps this is a non-optimal way but it will preserve
-	// proper name sorting.
 	const IRCUserInfo* pExistingInfo = user(oldNickname);
 	if (pExistingInfo == NULL)
 	{

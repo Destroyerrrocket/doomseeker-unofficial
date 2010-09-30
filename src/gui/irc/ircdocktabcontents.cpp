@@ -38,6 +38,7 @@ IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 	setupUi(this);
 	
 	this->bIsDestroying = false;
+	this->lastMessageClass = NULL;
 	this->userListContextMenu = NULL;
 
 	this->pParentIRCDock = pParentIRCDock;
@@ -56,6 +57,11 @@ IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 IRCDockTabContents::~IRCDockTabContents()
 {
 	this->bIsDestroying = true;
+	
+	if (this->lastMessageClass != NULL)
+	{
+		delete this->lastMessageClass;
+	}
 
 	if (this->userListContextMenu != NULL)
 	{
@@ -160,12 +166,28 @@ IRCDockTabContents::UserListMenu& IRCDockTabContents::getUserListContextMenu()
 	return *this->userListContextMenu;
 }
 
-void IRCDockTabContents::insertMessage(const QString& htmlString)
+bool IRCDockTabContents::hasTabFocus() const
 {
+	return this->pParentIRCDock->hasTabFocus(this);
+}
+
+void IRCDockTabContents::insertMessage(const IRCMessageClass& messageClass, const QString& htmlString)
+{
+	if (this->lastMessageClass == NULL)
+	{
+		this->lastMessageClass = new IRCMessageClass();
+	}
+	*this->lastMessageClass = messageClass;
+	
 	this->textOutputContents << htmlString;
 	
 	this->txtOutputWidget->moveCursor(QTextCursor::End);
 	this->txtOutputWidget->insertHtml(htmlString);
+	
+	if (!this->hasTabFocus())
+	{
+		emit titleChange(this);
+	}
 }
 
 void IRCDockTabContents::nameAdded(const IRCUserInfo& userInfo)
@@ -257,7 +279,7 @@ void IRCDockTabContents::receiveMessageWithClass(const QString& message, const I
 		messageHtmlEscaped = ("<span class='" + className + "'>" + messageHtmlEscaped + "</span><br />");
 	}
 	
-	this->insertMessage(messageHtmlEscaped);
+	this->insertMessage(messageClass, messageHtmlEscaped);
 }
 
 QString IRCDockTabContents::selectedNickname()
@@ -337,6 +359,28 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 			break;
 		}
 	}
+}
+
+QString IRCDockTabContents::title() const
+{
+	return pIrcAdapter->title();
+}
+
+QString IRCDockTabContents::titleColor() const
+{
+	if (this->lastMessageClass != NULL && !this->hasTabFocus())
+	{
+		if (*this->lastMessageClass == IRCMessageClass::Normal)
+		{
+			return "#ff0000";
+		}
+		else
+		{
+			return this->lastMessageClass->colorFromConfig();
+		}
+	}
+	
+	return "";
 }
 
 void IRCDockTabContents::userListCustomContextMenuRequested(const QPoint& pos)

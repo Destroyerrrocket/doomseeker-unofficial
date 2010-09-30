@@ -83,6 +83,12 @@ class IRCMessageClass
 		return this->className;
 	}
 	
+	/**
+	 *	@brief Obtains HTML color from config for this message
+	 *	class.	
+	 */
+	QString			colorFromConfig() const;
+	
 	QString			toStyleSheetClassName() const
 	{
 		return toStyleSheetClassName(this->className);

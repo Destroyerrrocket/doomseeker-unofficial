@@ -39,6 +39,9 @@ IRCDock::IRCDock(QWidget* parent)
 	
 	IRCGlobalMessages& ircGlobalMessages = IRCGlobalMessages::instance();
 	
+	connect(tabWidget, SIGNAL( currentChanged(int) ), 
+		SLOT( tabCurrentChanged(int) ));
+	
 	connect(tabWidget, SIGNAL( tabCloseRequested(int) ), 
 		SLOT( tabCloseRequestedSlot(int) ));
 	
@@ -99,6 +102,11 @@ void IRCDock::globalMessageWithClass(const QString& message, const IRCMessageCla
 	}
 }
 
+bool IRCDock::hasTabFocus(const IRCDockTabContents* pTab) const
+{
+	return (this->tabWidget->currentWidget() == pTab);
+}
+
 IRCNetworkAdapter* IRCDock::networkWithUiFocus()
 {
 	IRCDockTabContents* pWidget = (IRCDockTabContents*)tabWidget->currentWidget();
@@ -147,6 +155,11 @@ void IRCDock::tabCloseRequestedSlot(int index)
 	delete pPageWidget;
 }
 
+void IRCDock::tabCurrentChanged(int index)
+{
+	tabWidget->tabBarPublic()->setTabTextColor(index, "");
+}
+
 void IRCDock::tabFocusRequest(IRCDockTabContents* pCaller)
 {
 	tabWidget->setCurrentWidget(pCaller);
@@ -157,8 +170,9 @@ void IRCDock::titleChange(IRCDockTabContents* pCaller)
 	int tabIndex = tabWidget->indexOf(pCaller);
 	if (tabIndex >= 0)
 	{
-		QString newTitle = pCaller->ircAdapter()->title();
+		QString newTitle = pCaller->title();
 		tabWidget->setTabText(tabIndex, newTitle);
+		tabWidget->tabBarPublic()->setTabTextColor(tabIndex, pCaller->titleColor());
 	}
 }
 

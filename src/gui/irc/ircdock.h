@@ -47,6 +47,7 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 		 *	@brief Applies IRC appearance settings to all open tabs.
 		 */
 		void				applyAppearanceSettings();
+		bool				hasTabFocus(const IRCDockTabContents* pTab) const;
 		
 	private:
 		QAction*			toolBarConnect;
@@ -66,6 +67,7 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 		void				globalMessage(const QString& message, IRCAdapterBase* pMessageSender);
 		void				globalMessageWithClass(const QString& message, const IRCMessageClass& messageClass, IRCAdapterBase* pMessageSender);
 		void				tabCloseRequestedSlot(int index);
+		void				tabCurrentChanged(int index);
 		void				tabFocusRequest(IRCDockTabContents* pCaller);
 		void				titleChange(IRCDockTabContents* pCaller);
 		void				toolBarAction(QAction* pAction);

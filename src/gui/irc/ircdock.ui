@@ -21,7 +21,7 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QTabWidget" name="tabWidget">
+       <widget class="QTabWidgetExt" name="tabWidget">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -44,6 +44,14 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QTabWidgetExt</class>
+   <extends>QTabWidget</extends>
+   <header location="global">gui/widgets/qtabwidgetext.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

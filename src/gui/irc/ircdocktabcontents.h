@@ -24,6 +24,7 @@
 #define __IRCDOCK_TAB_CONTENTS_H_
 
 #include "irc/ircadapterbase.h"
+#include "irc/ircmessageclass.h"
 
 #include "ui_ircdocktabcontents.h"
 #include <QAction>
@@ -51,6 +52,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 *	@brief Applies current appearance settings from the IRC config.
 		 */
 		void				applyAppearanceSettings();
+		bool				hasTabFocus() const;
 
 		IRCAdapterBase*		ircAdapter() const { return pIrcAdapter; }
 		
@@ -59,6 +61,9 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 *	memory leaks.
 		 */
 		void				setIRCAdapter(IRCAdapterBase* pAdapter);
+		
+		QString				title() const;
+		QString				titleColor() const;
 		
 	public slots:
 		void				receiveMessage(const QString& message);
@@ -145,6 +150,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 	
 		bool				bIsDestroying;
 		
+		IRCMessageClass*	lastMessageClass;
 		/**
 		 *	@brief This is required to properly refresh colors when
 		 *	appearance is changed.
@@ -154,7 +160,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 	
 		QStandardItem*		findUserListItem(const QString& nickname);
 		UserListMenu&		getUserListContextMenu();
-		void				insertMessage(const QString& htmlString);
+		void				insertMessage(const IRCMessageClass& messageClass, const QString& htmlString);
 		QString				selectedNickname();
 		
 };
