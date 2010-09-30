@@ -63,9 +63,9 @@ void IRCChannelAdapter::appendNamesToCachedList(const QStringList& names)
 	users->appendNamesToCachedList(names);
 }
 
-void IRCChannelAdapter::banUser(const QString& nickName, const QString& reason)
+void IRCChannelAdapter::banUser(const QString& nickname, const QString& reason)
 {
-	pNetwork->banUser(nickName, reason, this->recipientName);
+	pNetwork->banUser(nickname, reason, this->recipientName);
 }
 
 void IRCChannelAdapter::emitCachedNameListUpdated()
@@ -124,6 +124,16 @@ void IRCChannelAdapter::removeNameFromCachedList(const QString& name)
 	{
 		emit nameRemoved(user);
 	}
+}
+
+void IRCChannelAdapter::setOp(const QString& nickname, bool bSet)
+{
+	pNetwork->setChannelMode(this->recipientName, nickname, "o", bSet);
+}
+
+void IRCChannelAdapter::setVoiced(const QString& nickname, bool bSet)
+{
+	pNetwork->setChannelMode(this->recipientName, nickname, "v", bSet);
 }
 
 void IRCChannelAdapter::userChangesNickname(const QString& oldNickname, const QString& newNickname)

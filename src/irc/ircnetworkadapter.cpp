@@ -385,19 +385,22 @@ void IRCNetworkAdapter::noSuchNickname(const QString& nickname)
 
 void IRCNetworkAdapter::openNewAdapter(const QString& recipientName)
 {
-	if (!isConnected() || recipientName.isEmpty() || hasRecipient(recipientName))
+	if (!isConnected() || recipientName.isEmpty())
 	{
 		return;
 	}
+	
+	bool bStandardRoutine = !IRCGlobal::isChannelName(recipientName)
+		|| hasRecipient(recipientName);
 
-	if (IRCGlobal::isChannelName(recipientName))
-	{
-		this->sendMessage("/join " + recipientName);
-	}
-	else
+	if (bStandardRoutine)
 	{
 		IRCChatAdapter* pAdapter = this->getOrCreateNewChatAdapter(recipientName);
 		pAdapter->emitFocusRequest();
+	}
+	else if (IRCGlobal::isChannelName(recipientName))
+	{
+		this->sendMessage("/join " + recipientName);
 	}
 }
 
@@ -416,6 +419,24 @@ void IRCNetworkAdapter::sendPong(const QString& toWhom)
 {
 	QString message = QString("/PONG %1").arg(toWhom);
 	sendMessage(message);
+}
+
+void IRCNetworkAdapter::setChannelMode(const QString& channel, const QString& nickname, const QString& flag, bool bSet)
+{
+	QString cleanNickname = IRCUserInfo(nickname).cleanNickname();
+	
+	QString flagPrefixed;
+	if (bSet)
+	{
+		flagPrefixed = "+" + flag.trimmed();
+	}
+	else
+	{
+		flagPrefixed = "-" + flag.trimmed();
+	}
+	
+	QString message = QString("/mode %1 %2 %3").arg(channel, flagPrefixed, cleanNickname);
+	this->sendMessage(message);
 }
 
 QString IRCNetworkAdapter::title() const

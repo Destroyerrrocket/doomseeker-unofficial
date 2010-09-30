@@ -64,12 +64,13 @@ class IRCChannelAdapter : public IRCChatAdapter
 		/**
 		 *	@brief Bans and kicks user from the channel.
 		 *
-		 *	@param nickName
+		 *	Op privileges required.
+		 *	@param nickname
 		 *		Victim's nick.
 		 *	@param reason
 		 *		Reason for ban (this will be delivered to /kick message).
 		 */
-		void					banUser(const QString& nickName, const QString& reason);
+		void					banUser(const QString& nickname, const QString& reason);
 
 		/**
 		 *	@brief Emits cached list of names. This should be called
@@ -85,6 +86,15 @@ class IRCChannelAdapter : public IRCChatAdapter
 		 */
 		bool					isOperator(const QString& nickname) const;
 		
+		/**
+		 *	@brief Kicks user from the channel.
+		 *
+		 *	Op privileges required.
+		 *	@param nickname
+		 *		Victim's nick.
+		 *	@param reason
+		 *		Reason for kick.
+		 */
 		void					kickUser(const QString& nickname, const QString& reason);
 		
 
@@ -94,6 +104,20 @@ class IRCChannelAdapter : public IRCChatAdapter
 		 *	This will emit nameRemoved() signal.
 		 */
 		void					removeNameFromCachedList(const QString& name);
+		
+		/**
+		 *	@brief Sets op mode for given user.
+		 *
+		 *	Op privileges required.
+		 */
+		void					setOp(const QString& nickname, bool bSet);
+		
+		/**
+		 *	@brief Sets voice mode for given user.
+		 *
+		 *	Op privileges required.
+		 */
+		void					setVoiced(const QString& nickname, bool bSet);
 
 		/**
 		 *	This will emit nameRemoved() for oldNickname and nameAdded() 

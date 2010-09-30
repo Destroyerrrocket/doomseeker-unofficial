@@ -103,6 +103,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		void				receiveError(const QString& error);
 		void				sendMessage();
 		void				userListCustomContextMenuRequested(const QPoint& pos);
+		void				userListDoubleClicked(const QModelIndex& index);
 
 	protected:
 		IRCAdapterBase*		pIrcAdapter;
@@ -123,10 +124,23 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 				QAction*		voice;
 				
 				/**
-				 *	@brief Disabled or enables certain actions basing on the passed
+				 *	@brief Disables or enables certain actions basing on the passed
+				 *	user info flags (op, voice).
+				 *
+				 *	@b WARNING: This must @b ALWAYS be called after 
+				 *	setIsOperator() and @b NEVER before.
+				 */
+				void			applyTargetUserFlags(const IRCUserInfo& userInfo);
+				
+				/**
+				 *	@brief Disables or enables certain actions basing on the passed
 				 *	flag.
 				 */
 				void			setIsOperator(bool bOperator);
+				
+			private:
+				bool			bIsOperator;
+			
 		};
 	
 		bool				bIsDestroying;

@@ -118,8 +118,8 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 *	be opened.
 		 *
 		 *	If adapter is not connected to a network or empty name is specified
-		 *	this becomes a no-op. Also nothing occurs if such recipient
-		 *	is already present.
+		 *	this becomes a no-op. Also if such recipient
+		 *	is already present the window will emit focus signal request.
 		 */
 		void								openNewAdapter(const QString& recipientName);
 		
@@ -127,7 +127,16 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		{
 			return this;
 		}
-		
+
+		/**
+		 *	@brief Sets channel flags.
+		 *
+		 *	Flags are set using following command:
+		 *	@code
+		 * /mode <channel> [-|+]<flag> <nickname> command
+		 *	@endcode
+		 */
+		void								setChannelMode(const QString& channel, const QString& nickname, const QString& flag, bool bSet);
 		QString								title() const;
 
 	signals:

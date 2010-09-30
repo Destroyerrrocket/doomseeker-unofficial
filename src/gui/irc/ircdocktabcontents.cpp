@@ -317,6 +317,9 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 			this->lvUserList->setVisible(true);
 			connect(this->lvUserList, SIGNAL( customContextMenuRequested(const QPoint&) ), 
 				SLOT( userListCustomContextMenuRequested(const QPoint&) ) );
+				
+			connect(this->lvUserList, SIGNAL( doubleClicked(const QModelIndex&) ),
+				SLOT( userListDoubleClicked(const QModelIndex&) ) ); 
 			
 			this->lvUserList->setContextMenuPolicy(Qt::CustomContextMenu);
 			
@@ -357,6 +360,7 @@ void IRCDockTabContents::userListCustomContextMenuRequested(const QPoint& pos)
 
 	UserListMenu& menu = this->getUserListContextMenu();
 	menu.setIsOperator(pAdapter->amIOperator());
+	menu.applyTargetUserFlags(nickname);
 	QPoint posGlobal = this->lvUserList->mapToGlobal(pos);
 	
 	QAction* pAction = menu.exec(posGlobal);
@@ -378,11 +382,11 @@ void IRCDockTabContents::userListCustomContextMenuRequested(const QPoint& pos)
 	}
 	else if (pAction == menu.deop)
 	{
-		// TODO stub
+		pAdapter->setOp(cleanNickname, false);
 	}
 	else if (pAction == menu.devoice)
 	{
-		// TODO stub
+		pAdapter->setVoiced(cleanNickname, false);
 	}
 	else if (pAction == menu.kick)
 	{
@@ -396,16 +400,35 @@ void IRCDockTabContents::userListCustomContextMenuRequested(const QPoint& pos)
 	}
 	else if (pAction == menu.op)
 	{
-		// TODO stub
+		pAdapter->setOp(cleanNickname, true);
 	}
 	else if (pAction == menu.openChatWindow)
 	{
-		// TODO stub
+		pAdapter->network()->openNewAdapter(cleanNickname);
 	}
 	else if (pAction == menu.voice)
 	{
-		// TODO stub
+		pAdapter->setVoiced(cleanNickname, true);
 	}
+}
+
+void IRCDockTabContents::userListDoubleClicked(const QModelIndex& index)
+{
+	if (this->pIrcAdapter->adapterType() != IRCAdapterBase::ChannelAdapter)
+	{
+		// Prevent illegal calls.
+		return;
+	}
+
+	QString nickname = this->selectedNickname();	
+	if (nickname.isEmpty())
+	{
+		// Prevent calls if there is no one selected.
+		return;
+	}
+	QString cleanNickname = IRCUserInfo(nickname).cleanNickname();
+	
+	this->pIrcAdapter->network()->openNewAdapter(cleanNickname);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -420,10 +443,34 @@ IRCDockTabContents::UserListMenu::UserListMenu()
 	this->addSeparator();
 	this->kick = this->addAction(tr("Kick"));
 	this->ban = this->addAction(tr("Ban"));
+	
+	this->bIsOperator = false;
+}
+
+void IRCDockTabContents::UserListMenu::applyTargetUserFlags(const IRCUserInfo& userInfo)
+{
+	if (this->bIsOperator)
+	{
+		if (userInfo.isOp())
+		{
+			this->devoice->setEnabled(false);
+			this->op->setEnabled(false);
+			this->voice->setEnabled(false);
+		}
+		else
+		{
+			this->devoice->setEnabled(userInfo.isVoiced());
+			this->deop->setEnabled(false);
+			this->voice->setEnabled(!userInfo.isVoiced());
+			
+		}
+	}
 }
 
 void IRCDockTabContents::UserListMenu::setIsOperator(bool bOperator)
 {
+	this->bIsOperator = bOperator;
+
 	this->op->setEnabled(bOperator);
 	this->deop->setEnabled(bOperator);
 	this->voice->setEnabled(bOperator);

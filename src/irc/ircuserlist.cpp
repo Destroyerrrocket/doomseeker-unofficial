@@ -42,13 +42,11 @@ bool IRCUserList::appendNameToCachedList(const IRCUserInfo& userInfo)
 	int index = this->indexOfName(userInfo.cleanNickname());
 	if (index >= 0)
 	{
-		printf("Updateing name: %s\n", userInfo.prefixedName().toAscii().constData());
 		*usersArray[index] = userInfo;
 		return false;
 	}
 	else
 	{
-		printf("Appending name: %s\n", userInfo.prefixedName().toAscii().constData());
 		IRCUserInfo* pUserInfo = new IRCUserInfo(userInfo);
 		usersArray.append(pUserInfo);
 		return true;
