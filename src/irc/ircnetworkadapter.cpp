@@ -294,9 +294,21 @@ bool IRCNetworkAdapter::isOperator(const QString& nickname, const QString& chann
 
 void IRCNetworkAdapter::kick(const QString& channel, const QString& byWhom, const QString& whoIsKicked, const QString& reason)
 {
-	IRCChannelAdapter* pAdapter = (IRCChannelAdapter*) this->getOrCreateNewChatAdapter(channel);
-	pAdapter->emitMessageWithClass(tr("%1 was kicked by %2 (%3)").arg(whoIsKicked, byWhom, reason), IRCMessageClass::ChannelAction);
-	pAdapter->removeNameFromCachedList(whoIsKicked);
+	if (hasRecipient(channel))
+	{
+		IRCChannelAdapter* pAdapter = (IRCChannelAdapter*) this->getOrCreateNewChatAdapter(channel);
+		
+		if (isMyNickname(whoIsKicked))
+		{
+			this->emitMessageWithClass(tr("You have been kicked from channel %1 by %2 (Reason: %3)").arg(channel, byWhom, reason), IRCMessageClass::ChannelAction);
+			killChatWindow(channel);
+		}
+		else
+		{
+			pAdapter->emitMessageWithClass(tr("%1 was kicked by %2 (%3)").arg(whoIsKicked, byWhom, reason), IRCMessageClass::ChannelAction);
+			pAdapter->removeNameFromCachedList(whoIsKicked);
+		}
+	}
 }
 
 void IRCNetworkAdapter::kill(const QString& victim, const QString& comment)
