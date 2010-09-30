@@ -84,7 +84,7 @@ class IRCRequestParser : public QObject
 		 *	  If not ErrorInputNotPrependedWithSlash is returned.
 		 *	- Return ErrorInputInsufficientParameters if parsed command expects
 		 *	  more parameters to work correctly.
-		 *	- QuitCommand is returned if "/quit" command is specified.
+		 *	- QuitCommand is returned if "/quit" command is used.
 		 *	- Ok is returned if it is ok to send the output message.
 		 */
 		IRCRequestParseResult		parse(IRCAdapterBase* pAdapter, QString input, QString& output);
@@ -100,6 +100,17 @@ class IRCRequestParser : public QObject
 		 *		Content of the message.
 		 */
 		void						echoPrivmsg(const QString& recipient, const QString& content);
+		
+		/**
+		 *	@brief Emitted when "/query" alias is used.
+		 *
+		 *	This signal will only be emitted if the query
+		 *	parameter specifies a valid user name.
+		 *
+		 *	@param who
+		 *		A clean nickname.
+		 */
+		void						query(const QString& who);
 };
 
 #endif

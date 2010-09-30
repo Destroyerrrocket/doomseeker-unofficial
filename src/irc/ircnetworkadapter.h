@@ -110,19 +110,6 @@ class IRCNetworkAdapter : public IRCAdapterBase
 
 		const QString&						myNickname() const { return connectionInfo.nick; }
 		
-		/**
-		 *	@brief Opens a new chat adapter for specified recipient.
-		 *
-		 *	If specified recipient is a channel a /join command will be sent
-		 *	to that channel. If recipient is a user a chat window will simply
-		 *	be opened.
-		 *
-		 *	If adapter is not connected to a network or empty name is specified
-		 *	this becomes a no-op. Also if such recipient
-		 *	is already present the window will emit focus signal request.
-		 */
-		void								openNewAdapter(const QString& recipientName);
-		
 		IRCNetworkAdapter*					network()
 		{
 			return this;
@@ -138,6 +125,20 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 */
 		void								setChannelMode(const QString& channel, const QString& nickname, const QString& flag, bool bSet);
 		QString								title() const;
+		
+	public slots:
+		/**
+		 *	@brief Opens a new chat adapter for specified recipient.
+		 *
+		 *	If specified recipient is a channel a /join command will be sent
+		 *	to that channel. If recipient is a user a chat window will simply
+		 *	be opened.
+		 *
+		 *	If adapter is not connected to a network or empty name is specified
+		 *	this becomes a no-op. Also if such recipient
+		 *	is already present the window will emit focus signal request.
+		 */
+		void								openNewAdapter(const QString& recipientName);
 
 	signals:
 		void								newChatWindowIsOpened(IRCChatAdapter* pWindow);

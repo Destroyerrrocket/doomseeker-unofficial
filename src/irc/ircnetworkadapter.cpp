@@ -42,7 +42,9 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 	// Request parser
 	QObject::connect(&ircRequestParser, SIGNAL( echoPrivmsg(const QString&, const QString&) ), 
 		this, SLOT( echoPrivmsg(const QString&, const QString&) ) );
-
+		
+	QObject::connect(&ircRequestParser, SIGNAL( query(const QString&) ), 
+		this, SLOT( openNewAdapter(const QString&) ) );
 
 	// Response parser begins here.
 	QObject::connect(&ircResponseParser, SIGNAL( kick(const QString&, const QString&, const QString&, const QString&) ), 

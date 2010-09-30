@@ -23,6 +23,8 @@
 //------------------------------------------------------------------------------
 #include "ircrequestparser.h"
 #include "irc/ircclient.h"
+#include "irc/ircglobal.h"
+#include "irc/ircuserinfo.h"
 #include <QStringList>
 
 IRCRequestParser::IRCRequestParseResult IRCRequestParser::parse(IRCAdapterBase* pAdapter, QString input, QString& output)
@@ -103,6 +105,18 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::parse(IRCAdapterBase* 
 		// This is an alias to the PRIVMSG command but it is so popular
 		// that I decided to implement this permanently.
 		parse(pAdapter, QString("/PRIVMSG %2").arg(inputSplit.join(" ")), output);
+	}
+	else if (message == "QUERY")
+	{
+		if (!inputSplit.isEmpty())
+		{
+			QString recipient = inputSplit.takeFirst();
+			if (!IRCGlobal::isChannelName(recipient))
+			{
+				IRCUserInfo userInfo(recipient);
+				emit query(userInfo.cleanNickname());
+			}
+		}
 	}
 	else
 	{
