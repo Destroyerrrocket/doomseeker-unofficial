@@ -23,17 +23,14 @@
 #ifndef __IRCNETWORKENTITY_H__
 #define __IRCNETWORKENTITY_H__
 
+#include "global.h"
 #include <QString>
 #include <QStringList>
 	
-class IRCNetworkEntity
+class MAIN_EXPORT IRCNetworkEntity
 {
 	public:
-		IRCNetworkEntity()
-		{
-			this->bAutojoinNetwork = false;
-			this->port = 6667;
-		}
+		IRCNetworkEntity();
 	
 		/**
 		 *	@brief Address of the server or network to connect to.

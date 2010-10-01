@@ -21,3 +21,10 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircnetworkentity.h"
+
+IRCNetworkEntity::IRCNetworkEntity()
+{
+	this->bAutojoinNetwork = false;
+	this->port = 6667;
+	this->nickservCommand = "/msg nickserv identify %1";
+}
