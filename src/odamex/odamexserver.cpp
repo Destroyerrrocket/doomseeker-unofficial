@@ -32,6 +32,12 @@
 const // clear warnings
 #include "odamex.xpm"
 
+/// Macro that checks the readRequest() validity.
+#define CHECK_POS if (pos >= dataLength) \
+		{ \
+			return RESPONSE_BAD; \
+		}
+
 #define SERVER_CHALLENGE	0x02,0x10,0x01,0xAD, 0x32,0x00,0x00,0x00, 0x02,0x00,0x00,0x00, 0,0,0,0
 
 #define SPECTATOR_INFO		0x01020304
@@ -69,6 +75,7 @@ const PluginInfo* OdamexServer::plugin() const
 Server::Response OdamexServer::readRequest(QByteArray &data)
 {
 	const char* in = data.data();
+	unsigned int dataLength = (unsigned)data.length();
 
 	// Check the response code
 	int response = READINT32(&in[0]);
@@ -87,16 +94,24 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 	{
 		pos += 8;
 	}
+	
+	CHECK_POS;
+	
 	serverVersion += QString(" r%1").arg(READINT32(&in[pos]));
 	pos += 4;
+	
+	CHECK_POS;
 
 	short cvarCount = READINT8(&in[pos++]);
 	while(cvarCount-- > 0)
 	{
 		QString cvarName(&in[pos]);
 		pos += cvarName.length()+1;
+		CHECK_POS;
+		
 		QString cvarValue(&in[pos]);
 		pos += cvarValue.length()+1;
+		CHECK_POS;
 
 		if(cvarName == "sv_hostname")
 			serverName = cvarValue;
@@ -114,9 +129,11 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 
 	QString passwordHash(&in[pos]);
 	pos += passwordHash.length()+1;
+	CHECK_POS;
 
 	mapName = QString(&in[pos]);
 	pos += mapName.length()+1;
+	CHECK_POS;
 
 	serverTimeLeft = READINT16(&in[pos]);
 	pos += 2;
@@ -124,6 +141,8 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 	short teamCount = READINT8(&in[pos++]);
 	while(teamCount-- > 0)
 	{
+		CHECK_POS;
+	
 		QString teamName(&in[pos]);
 		pos += teamName.length()+1;
 		pos += 6;
@@ -133,6 +152,8 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 	short patchCount = READINT8(&in[pos++]);
 	while(patchCount-- > 0)
 	{
+		CHECK_POS;
+		
 		QString patch(&in[pos]);
 		pos += patch.length()+1;
 		dehPatches << patch;
@@ -142,12 +163,16 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 	short wadCount = READINT8(&in[pos++]);
 	for(short i = 0;i < wadCount;i++)
 	{
+		CHECK_POS;
+	
 		QString wad(&in[pos]);
 		if(i >= 2)
 			wads << wad;
 		else if(i == 1)
 			iwad = wad;
 		pos += wad.length()+1;
+		
+		CHECK_POS;
 
 		QString hash(&in[pos]);
 		pos += hash.length()+1;
@@ -157,6 +182,8 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 	short playerCount = READINT8(&in[pos++]);
 	while(playerCount-- > 0)
 	{
+		CHECK_POS;
+	
 		QString playerName(&in[pos]);
 		pos += playerName.length()+1;
 		Player player(playerName, READINT16(&in[pos+6]), READINT16(&in[pos+1]), static_cast<Player::PlayerTeam> (READINT8(&in[pos])), READINT8(&in[pos+5]));
