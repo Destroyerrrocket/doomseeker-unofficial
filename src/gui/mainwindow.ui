@@ -137,6 +137,9 @@
    <property name="text">
     <string>&amp;Wadseeker</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
+   </property>
   </action>
   <action name="menuActionBuddies">
    <property name="checkable">
@@ -156,6 +159,9 @@
    </property>
    <property name="text">
     <string>&amp;Create server</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="menuActionLog">
