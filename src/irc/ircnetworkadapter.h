@@ -93,6 +93,12 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		void								doSendMessage(const QString& message, IRCAdapterBase* pOrigin);				
 
 		bool								hasRecipient(const QString& recipient) const;
+		
+		/**
+		 *	@brief Checks if pAdapter equals this or is one of
+		 *	chat windows of this network.
+		 */
+		bool								isAdapterRelated(const IRCAdapterBase* pAdapter) const;
 		bool								isConnected() const { return ircClient.isConnected(); }
 		bool								isMyNickname(const QString& nickname) const;
 		
@@ -145,6 +151,12 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		
 	protected:
 		/**
+		 *	@brief If set to true this network adapter is in a state
+		 *	of joining to a network.
+		 */
+		bool								bIsJoining;
+		
+		/**
 		 *	@brief Stores all chat adapters associated with this network.
 		 *
 		 *	Key values are recipient names. To avoid confusion and errors
@@ -177,19 +189,18 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 */
 		IRCChatAdapter*						getOrCreateNewChatAdapter(const QString& recipient);
 		
-		int									indexOfDelayedOperationForNickname(const QString& nickname) const;
 		void								killChatWindow(const QString& recipient);		
-		
-		
 		
 	protected slots:
 		void								echoPrivmsg(const QString& recipient, const QString& content);
+		void								helloClient(const QString& nickname);
 		void								kick(const QString& channel, const QString& byWhom, const QString& whoIsKicked, const QString& reason);
 		void								kill(const QString& victim, const QString& comment);
 		void								ircServerResponse(const QString& message);
 		void								modeInfo(const QString& channel, const QString& whoSetThis, const QString& modeParams);
 		void								namesListReceived(const QString& channel, const QStringList& names);
 		void								namesListEndReceived(const QString& channel);
+		void								nicknameInUse(const QString& nickname);
 		void								noSuchNickname(const QString& nickname);
 		void								parseError(const QString& error);
 		void								privMsgReceived(const QString& recipient, const QString& sender, const QString& content);

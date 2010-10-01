@@ -35,6 +35,8 @@ class IRCNetworkSelectionBox : public QDialog, private Ui::IRCNetworkSelectionBo
 
 	public:
 		IRCNetworkSelectionBox(QWidget* parent = NULL);
+		
+		void						accept();
 
 		/**
 		 *	@brief Extracts network specified in this dialog.
@@ -53,11 +55,13 @@ class IRCNetworkSelectionBox : public QDialog, private Ui::IRCNetworkSelectionBo
 		void						fetchNetworks();
 		void						initWidgets();
 		
+		void						addNetworkToComboBox(const IRCNetworkEntity& network, bool bLastUsed = false);
 		/**
 		 *	@brief Extracts selected network from combo box.
 		 */
 		IRCNetworkEntity			networkComboBox() const;
 		void						updateNetworkInfo();
+		bool						validate();
 		
 	private slots:
 		void						btnNewNetworkClicked();

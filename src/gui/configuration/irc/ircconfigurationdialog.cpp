@@ -23,6 +23,7 @@
 #include "ircconfigurationdialog.h"
 #include "gui/configuration/irc/cfgircappearance.h"
 #include "gui/configuration/irc/cfgircnetworks.h"
+#include "gui/commonGUI.h"
 #include "irc/configuration/ircconfig.h"
 #include "log.h"
 
@@ -51,8 +52,42 @@ void IRCConfigurationDialog::initOptionsList()
 	pConfigBox = new CFGIRCAppearance(this);
 	this->addConfigurationBox(NULL, pConfigBox);
 	
-	pConfigBox = new CFGIRCNetworks(this);
+	cfgNetworks = new CFGIRCNetworks(this); 
+	pConfigBox = cfgNetworks;
 	this->addConfigurationBox(NULL, pConfigBox);
+}
+
+bool IRCConfigurationDialog::isNetworkAutojoinEnabled()
+{
+	QVector<IRCNetworkEntity*> networks = cfgNetworks->networks();
+	foreach (IRCNetworkEntity* pNetwork, networks)
+	{
+		if (pNetwork->bAutojoinNetwork)
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+bool IRCConfigurationDialog::validate()
+{
+	if (this->isNetworkAutojoinEnabled())
+	{
+		if (gIRCConfig.personal.nickname.isEmpty())
+		{
+			QString nick = CommonGUI::askString(tr("Config validation"), tr("You have chosen one or more networks for autojoin startup but you have not defined any nickname. Please define it now"));
+			if (nick.isEmpty())
+			{
+				return false;
+			}
+			
+			gIRCConfig.personal.nickname = nick;
+		}
+	}
+	
+	return true;
 }
 
 

@@ -25,6 +25,8 @@
 
 #include "gui/configuration/configurationdialog.h"
 
+class CFGIRCNetworks;
+
 class IRCConfigurationDialog : public ConfigurationDialog
 {
 	public:
@@ -33,7 +35,11 @@ class IRCConfigurationDialog : public ConfigurationDialog
 		void 							initOptionsList();	
 
 	protected:
+		CFGIRCNetworks*					cfgNetworks;
+	
 		void							doSaveSettings();
+		bool							isNetworkAutojoinEnabled();
+		bool							validate();
 };
 
 #endif

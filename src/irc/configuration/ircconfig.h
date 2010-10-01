@@ -103,14 +103,19 @@ class IRCConfig
 			public:
 			static const QString		SECTIONS_NAMES_PREFIX;
 			
+			IRCNetworkEntity			lastUsedNetwork;
 			QVector<IRCNetworkEntity>	networks;
 			
+			QVector<IRCNetworkEntity>	autojoinNetworks() const;
 			void						networksSortedByDescription(QVector<IRCNetworkEntity>& outVector);
 			void						load(Ini& ini);
 			void						save(Ini& ini);
 			
 			private:
 				void					clearNetworkSections(Ini& ini);
+				
+				void					loadNetwork(const IniSection& iniSection, IRCNetworkEntity& network);
+				void					saveNetwork(IniSection& iniSection, const IRCNetworkEntity& network);
 		};
 	
 		/**
@@ -133,6 +138,14 @@ class IRCConfig
 		PersonalCfg					personal;
 			
 		Ini*						ini() { return this->pIni; }
+		
+		/**
+		 *	@brief Returns true if at least one network has autojoin
+		 *	enabled.
+		 *
+		 *	NetworksDataCfg::lastUsedNetwork is not considered here.
+		 */
+		bool						isAutojoinNetworksEnabled() const;
 		
 		/**
 		 *	@brief Reads settings from ini file. This file must be

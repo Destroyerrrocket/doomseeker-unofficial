@@ -61,7 +61,8 @@ void IRCDock::addIRCAdapter(IRCAdapterBase* pIRCAdapter)
 	connect(pNewAdapterWidget, SIGNAL( titleChange(IRCDockTabContents*) ), SLOT( titleChange(IRCDockTabContents*) ) );
 
 	pNewAdapterWidget->setIRCAdapter(pIRCAdapter);
-	tabWidget->addTab(pNewAdapterWidget, pIRCAdapter->title());
+	tabWidget->addTab(pNewAdapterWidget, pNewAdapterWidget->icon(), pNewAdapterWidget->title());
+	this->titleChange(pNewAdapterWidget);
 }
 
 void IRCDock::applyAppearanceSettings()
@@ -95,10 +96,18 @@ void IRCDock::globalMessage(const QString& message, IRCAdapterBase* pMessageSend
 void IRCDock::globalMessageWithClass(const QString& message, const IRCMessageClass& messageClass, IRCAdapterBase* pMessageSender)
 {
 	IRCDockTabContents* pWidget =  (IRCDockTabContents*)tabWidget->currentWidget();
-	if (pWidget != NULL)
+	
+	bool bIsAdapterRelated = pWidget != NULL
+		&& pWidget->ircAdapter()->network()->isAdapterRelated(pMessageSender);
+	
+	if (bIsAdapterRelated || pMessageSender == NULL)
 	{
 		QString prefixedMessage = prefixMessage(pWidget->ircAdapter(), pMessageSender, message);
 		pWidget->receiveMessageWithClass(prefixedMessage, messageClass);
+	}
+	else
+	{
+		pMessageSender->emitMessageWithClass(message, messageClass);
 	}
 }
 
@@ -116,6 +125,30 @@ IRCNetworkAdapter* IRCDock::networkWithUiFocus()
 	}
 	
 	return pWidget->ircAdapter()->network();
+}
+
+void IRCDock::performNetworkAutojoins()
+{
+	IRCNetworkConnectionInfo connectionInfo;
+	connectionInfo.alternateNick = gIRCConfig.personal.alternativeNickname;
+	connectionInfo.nick = gIRCConfig.personal.nickname;
+	connectionInfo.realName = gIRCConfig.personal.fullName;
+	
+	connectionInfo.fillInMissingFields();
+
+	QVector<IRCNetworkEntity> autojoinNetworks = gIRCConfig.networks.autojoinNetworks();
+	foreach (const IRCNetworkEntity& network, autojoinNetworks)
+	{
+		connectionInfo.networkEntity = network;
+		
+		IRCNetworkAdapter* pIRCNetworkAdapter = new IRCNetworkAdapter();
+
+		// Setup the UI tab for the new network.
+		addIRCAdapter(pIRCNetworkAdapter);
+				
+		// Connect to the network.
+		pIRCNetworkAdapter->connect(connectionInfo);
+	}
 }
 
 QString IRCDock::prefixMessage(IRCAdapterBase* pTargetChatWindow, IRCAdapterBase* pMessageSender, const QString& message)
@@ -184,11 +217,14 @@ void IRCDock::toolBarAction(QAction* pAction)
 		if (networkSelection.exec() == QDialog::Accepted)
 		{
 			IRCNetworkConnectionInfo connectionInfo = networkSelection.networkConnectionInfo();
+			gIRCConfig.networks.lastUsedNetwork = connectionInfo.networkEntity;
 			
 			// We will attempt to remember user credentials for further use.
 			gIRCConfig.personal.alternativeNickname = connectionInfo.alternateNick;
 			gIRCConfig.personal.nickname = connectionInfo.nick;
 			gIRCConfig.personal.fullName = connectionInfo.realName;		
+			
+			connectionInfo.fillInMissingFields();
 			
 			IRCNetworkAdapter* pIRCNetworkAdapter = new IRCNetworkAdapter();
 

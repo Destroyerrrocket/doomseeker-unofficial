@@ -86,6 +86,8 @@ void IRCResponseParser::parse(const QString& message)
 
 void IRCResponseParser::parseMessage(const QString& prefix, const QString& sender, const QString& type, QStringList params)
 {
+	// This is the first thing delivered after successful client registration.
+	static const QString HELLO_CLIENT_MESSAGE = "001";
 	// Contains host info.
 	static const QString RPL_WHOISUSER = "311";
 	// Names list
@@ -93,8 +95,15 @@ void IRCResponseParser::parseMessage(const QString& prefix, const QString& sende
 	// End of names list
 	static const QString RPL_ENDOFNAMES = "366";
 	static const QString ERR_NOSUCHNICK = "401";
+	static const QString ERR_NICKNAMEINUSE = "433";
 
-	if (type == ERR_NOSUCHNICK)
+	if (type == HELLO_CLIENT_MESSAGE)
+	{
+		QString nickname = params.takeFirst();
+	
+		emit helloClient(nickname);
+	}
+	else if (type == ERR_NOSUCHNICK)
 	{
 		// Drop the first param.
 		params.takeFirst();
@@ -103,6 +112,15 @@ void IRCResponseParser::parseMessage(const QString& prefix, const QString& sende
 		QString nickname = params.takeFirst();
 		
 		emit noSuchNickname(nickname);
+	}
+	else if (type == ERR_NICKNAMEINUSE)
+	{
+		// Drop the first param.
+		params.takeFirst();
+		
+		QString nickname = params.takeFirst();
+	
+		emit nicknameInUse(nickname);
 	}
 	else if (type == "PING")
 	{

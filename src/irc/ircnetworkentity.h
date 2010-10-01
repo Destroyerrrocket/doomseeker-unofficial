@@ -24,12 +24,14 @@
 #define __IRCNETWORKENTITY_H__
 
 #include <QString>
+#include <QStringList>
 	
 class IRCNetworkEntity
 {
 	public:
 		IRCNetworkEntity()
 		{
+			this->bAutojoinNetwork = false;
 			this->port = 6667;
 		}
 	
@@ -37,6 +39,17 @@ class IRCNetworkEntity
 		 *	@brief Address of the server or network to connect to.
 		 */
 		QString				address;
+		
+		/**
+		 *	@brief List of channels to which a /join command will be issued
+		 *	automatically when a connection with this network is established.
+		 */
+		QStringList			autojoinChannels;
+		
+		/**
+		 *	@brief Join this network when Doomseeker starts up.
+		 */
+		bool				bAutojoinNetwork;
 		
 		/**
 		 *	@brief A short, human-readable description for the network.
@@ -57,6 +70,11 @@ class IRCNetworkEntity
 		 *	Default value: 6667
 		 */
 		unsigned short		port;
+		
+		bool				isValid() const
+		{
+			return !address.isEmpty() && port != 0;
+		}
 		
 		/**
 		 *	@brief Sorts by description.

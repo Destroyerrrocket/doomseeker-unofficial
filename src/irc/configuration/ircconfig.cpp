@@ -59,6 +59,19 @@ void IRCConfig::dispose()
 	}
 }
 	
+bool IRCConfig::isAutojoinNetworksEnabled() const
+{
+	foreach (const IRCNetworkEntity& network, networks.networks)
+	{
+		if (network.bAutojoinNetwork)
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+	
 bool IRCConfig::readFromFile()
 {
 	if (pIni == NULL)
@@ -193,6 +206,20 @@ void IRCConfig::GeneralCfg::save(IniSection& section)
 //////////////////////////////////////////////////////////////////////////////
 const QString IRCConfig::NetworksDataCfg::SECTIONS_NAMES_PREFIX = "Network.";
 
+QVector<IRCNetworkEntity> IRCConfig::NetworksDataCfg::autojoinNetworks() const
+{
+	QVector<IRCNetworkEntity> autoNetworks;
+	foreach (const IRCNetworkEntity& network, this->networks)
+	{
+		if (network.bAutojoinNetwork)
+		{
+			autoNetworks << network;
+		}
+	}
+	
+	return autoNetworks;
+}
+
 void IRCConfig::NetworksDataCfg::clearNetworkSections(Ini& ini)
 {
 	QVector<IniSection*> sections = ini.sectionsArray("^" + SECTIONS_NAMES_PREFIX);
@@ -214,23 +241,33 @@ void IRCConfig::NetworksDataCfg::load(Ini& ini)
 	foreach (IniSection* pSection, sections)
 	{
 		IniSection& iniSection = *pSection;
-	
 		IRCNetworkEntity network;
-		network.address = (const QString &)iniSection["Address"];
-		network.description = (const QString &)iniSection["Description"];
-		network.nickservCommand = (const QString &)iniSection["NickservCommand"];
-		network.nickservPassword = (const QString &)iniSection["NickservPassword"];
-		network.password = (const QString &)iniSection["Password"];
-		network.port = iniSection["Port"];
+		
+		this->loadNetwork(iniSection, network);
 		
 		this->networks << network;
 	}
+	
+	IniSection& lastUsedNetworkSection = ini.section("LastUsedNetwork");
+	this->loadNetwork(lastUsedNetworkSection, this->lastUsedNetwork);
 
 	// Go through the plugins and register their IRC servers.
 	for(unsigned int i = 0;i < Main::enginePlugins->numPlugins();i++)
 	{
 		(*Main::enginePlugins)[i]->info->pInterface->registerIRCServer(this->networks);
 	}
+}
+
+void IRCConfig::NetworksDataCfg::loadNetwork(const IniSection& iniSection, IRCNetworkEntity& network)
+{
+	network.address = (const QString &)iniSection["Address"];
+	network.bAutojoinNetwork = iniSection["bAutojoinNetwork"];
+	network.autojoinChannels = ((const QString &)iniSection["AutojoinChannels"]).split(" ", QString::SkipEmptyParts);
+	network.description = (const QString &)iniSection["Description"];
+	network.nickservCommand = (const QString &)iniSection["NickservCommand"];
+	network.nickservPassword = (const QString &)iniSection["NickservPassword"];
+	network.password = (const QString &)iniSection["Password"];
+	network.port = iniSection["Port"];
 }
 
 void IRCConfig::NetworksDataCfg::save(Ini& ini)
@@ -244,15 +281,25 @@ void IRCConfig::NetworksDataCfg::save(Ini& ini)
 		QString sectionName = SECTIONS_NAMES_PREFIX + QString::number(i);
 		
 		const IRCNetworkEntity& network = this->networks[i];
-		
 		IniSection& iniSection = ini.section(sectionName);
-		iniSection["Address"] = network.address;
-		iniSection["Description"] = network.description;
-		iniSection["NickservCommand"] = network.nickservCommand;
-		iniSection["NickservPassword"] = network.nickservPassword;
-		iniSection["Password"] = network.password;
-		iniSection["Port"] = network.port;
+		
+		this->saveNetwork(iniSection, network);
 	}
+	
+	IniSection& lastUsedNetworkSection = ini.section("LastUsedNetwork");
+	this->saveNetwork(lastUsedNetworkSection, this->lastUsedNetwork);
+}
+
+void IRCConfig::NetworksDataCfg::saveNetwork(IniSection& iniSection, const IRCNetworkEntity& network)
+{
+	iniSection["Address"] = network.address;
+	iniSection["bAutojoinNetwork"] = network.bAutojoinNetwork;
+	iniSection["AutojoinChannels"] = network.autojoinChannels.join(" ");
+	iniSection["Description"] = network.description;
+	iniSection["NickservCommand"] = network.nickservCommand;
+	iniSection["NickservPassword"] = network.nickservPassword;
+	iniSection["Password"] = network.password;
+	iniSection["Port"] = network.port;
 }
 //////////////////////////////////////////////////////////////////////////////
 const QString IRCConfig::PersonalCfg::SECTION_NAME = "Personal";

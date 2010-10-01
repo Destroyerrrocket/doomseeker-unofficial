@@ -49,6 +49,8 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 		void				applyAppearanceSettings();
 		bool				hasTabFocus(const IRCDockTabContents* pTab) const;
 		
+		void				performNetworkAutojoins();
+		
 	private:
 		QAction*			toolBarConnect;
 		QAction*			toolBarOpenChatWindow;

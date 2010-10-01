@@ -41,6 +41,7 @@ class CFGIRCNetworks : public ConfigurationBaseBox, private Ui::CFGIRCNetworks
 		
 		QIcon							icon() const { return QIcon(":/flags/lan-small"); }
 		QString							name() const { return tr("Networks"); }
+		QVector<IRCNetworkEntity*>		networks();
 		void							readSettings();
 		
 	protected:
@@ -51,8 +52,12 @@ class CFGIRCNetworks : public ConfigurationBaseBox, private Ui::CFGIRCNetworks
 		void							cleanUpTable();
 		QList<QStandardItem*>			generateTableRecord(IRCNetworkEntity* pNetworkEntity);
 		IRCNetworkEntity*				network(int row);
-		QVector<IRCNetworkEntity*>		networks();
+		
+		/**
+		 *	@brief Never call this function directly. Use network() instead.
+		 */
 		IRCNetworkEntity*				obtainNetworkEntity(QStandardItem* pItem);
+		
 		void							prepareTable();
 		IRCNetworkEntity*				selectedNetwork();
 		int								selectedRow();
@@ -62,6 +67,7 @@ class CFGIRCNetworks : public ConfigurationBaseBox, private Ui::CFGIRCNetworks
 		void							addButtonClicked();
 		void							editButtonClicked();
 		void							removeButtonClicked();
+		void							tableDoubleClicked(const QModelIndex& index);
 };
 
 #endif

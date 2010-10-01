@@ -26,6 +26,7 @@
 #include <QHostAddress>
 #include <QString>
 #include "irc/ircnetworkentity.h"
+#include "strings.h"
 
 /**
  *	@brief Struct containing information about client's connection to the
@@ -54,6 +55,32 @@ struct IRCNetworkConnectionInfo
 	 *	@brief User's real name. Optional.
 	 */
 	QString				realName;
+	
+	/**
+	 *	@brief Fills missing data with presets.
+	 *
+	 *	- If nick is empty it is changed to 
+	 *	  Doomseeker_ + <4 random alphanum chars>
+	 *	- If alternateNick is empty it is changed to nick + "`"
+	 *	- If realName is empty it is changed to nick.
+	 */	
+	void				fillInMissingFields()
+	{
+		if (nick.isEmpty())
+		{
+			nick = "Doomseeker_" + Strings::createRandomAlphaNumericString(4);
+		}
+
+		if (alternateNick.isEmpty())
+		{
+			alternateNick = nick + "`";
+		}
+		
+		if (realName.isEmpty())
+		{
+			realName = nick;
+		}
+	}
 };
 
 #endif

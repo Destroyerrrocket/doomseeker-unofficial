@@ -85,6 +85,8 @@ class ConfigurationDialog : public QDialog, private Ui::ConfigurationDialog
 		 */
 		void 							showConfigurationBox(QWidget* widget);
 		void							saveSettings();		
+		
+		virtual bool					validate() { return true; }
 
 	protected slots:
 		void 							btnClicked(QAbstractButton *button);

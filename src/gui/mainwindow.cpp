@@ -33,6 +33,7 @@
 #include "gui/mainwindow.h"
 #include "gui/passwordDlg.h"
 #include "gui/wadseekerinterface.h"
+#include "irc/configuration/ircconfig.h"
 #include "serverapi/gamerunner.h"
 #include "serverapi/messages.h"
 #include "customservers.h"
@@ -500,6 +501,12 @@ void MainWindow::initIRCDock()
 	connect(ircDock, SIGNAL( visibilityChanged(bool)), menuActionViewIRC, SLOT( setChecked(bool)) );
 	ircDock->hide();
 	this->addDockWidget(Qt::BottomDockWidgetArea, ircDock);
+	
+	if (gIRCConfig.isAutojoinNetworksEnabled())
+	{
+		this->ircDock->setVisible(true);
+		this->ircDock->performNetworkAutojoins();
+	}
 }
 
 void MainWindow::initLogDock()

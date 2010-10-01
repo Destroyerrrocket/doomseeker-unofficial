@@ -132,10 +132,18 @@ void ConfigurationDialog::btnClicked(QAbstractButton *button)
 			break;
 
 		case QDialogButtonBox::Ok: // Also does the same as Apply
-			this->accept();
+			if (this->validate())
+			{
+				this->accept();
+				this->saveSettings();
+			}
+			break;
 
 		case QDialogButtonBox::Apply:
-			this->saveSettings();
+			if (this->validate())
+			{
+				this->saveSettings();
+			}
 			break;
 
 		case QDialogButtonBox::Cancel:

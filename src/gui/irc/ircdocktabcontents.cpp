@@ -171,6 +171,29 @@ bool IRCDockTabContents::hasTabFocus() const
 	return this->pParentIRCDock->hasTabFocus(this);
 }
 
+QIcon IRCDockTabContents::icon() const
+{
+	if (pIrcAdapter == NULL)
+	{
+		return QIcon();
+	}
+	
+	switch (pIrcAdapter->adapterType())
+	{
+		case IRCAdapterBase::ChannelAdapter:
+			return QIcon(":/icons/irc_channel.png");
+			
+		case IRCAdapterBase::NetworkAdapter:
+			return QIcon(":/flags/lan-small");
+			
+		case IRCAdapterBase::PrivAdapter:
+			return QIcon(":/icons/person.png");
+			
+		default:
+			return QIcon();
+	}
+}
+
 void IRCDockTabContents::insertMessage(const IRCMessageClass& messageClass, const QString& htmlString)
 {
 	if (this->lastMessageClass == NULL)

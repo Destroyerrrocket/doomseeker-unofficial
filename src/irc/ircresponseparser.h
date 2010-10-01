@@ -34,6 +34,14 @@ class IRCResponseParser : public QObject
 		void			parse(const QString& message);
 		
 	signals:
+		/**
+		 *	@brief Emitted when user successfuly joins the network.
+		 *
+		 *	@param nickname
+		 *		Nickname with which the user has just registered.
+		 */
+		void			helloClient(const QString& nickname);
+		
 		void			kick(const QString& channel, const QString& byWhom, const QString& whoIsKicked, const QString& reason);
 		void			kill(const QString& victim, const QString& comment);
 	
@@ -43,6 +51,7 @@ class IRCResponseParser : public QObject
 		void			modeInfo(const QString& channel, const QString& whoSetThis, const QString& modeParams);
 		void			namesListReceived(const QString& channel, const QStringList& names);
 		void			namesListEndReceived(const QString& channel);
+		void			nicknameInUse(const QString& nickname);
 		void			noSuchNickname(const QString& nickname);
 		void			parseError(const QString& error);
 		void			privMsgReceived(const QString& recipient, const QString& sender, const QString& content);

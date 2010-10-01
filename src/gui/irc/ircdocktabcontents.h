@@ -53,6 +53,8 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 */
 		void				applyAppearanceSettings();
 		bool				hasTabFocus() const;
+		
+		QIcon				icon() const;
 
 		IRCAdapterBase*		ircAdapter() const { return pIrcAdapter; }
 		

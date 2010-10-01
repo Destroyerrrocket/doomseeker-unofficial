@@ -33,6 +33,8 @@
 
 IRCNetworkAdapter::IRCNetworkAdapter()
 {
+	this->bIsJoining = false;
+
 	pIrcSocketSignalsAdapter = new IRCSocketSignalsAdapter(this);
 	ircClient.connectSocketSignals(pIrcSocketSignalsAdapter);
 	
@@ -47,6 +49,9 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 		this, SLOT( openNewAdapter(const QString&) ) );
 
 	// Response parser begins here.
+	QObject::connect(&ircResponseParser, SIGNAL( helloClient(const QString&) ), 
+		this, SLOT( helloClient(const QString&) ) );
+	
 	QObject::connect(&ircResponseParser, SIGNAL( kick(const QString&, const QString&, const QString&, const QString&) ), 
 		this, SLOT( kick(const QString&, const QString&, const QString&, const QString&) ) );
 		
@@ -61,6 +66,9 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 
 	QObject::connect(&ircResponseParser, SIGNAL( namesListEndReceived(const QString&) ), 
 		this, SLOT( namesListEndReceived(const QString&) ) );
+	
+	QObject::connect(&ircResponseParser, SIGNAL( nicknameInUse(const QString&) ), 
+		this, SLOT( nicknameInUse(const QString&) ) );
 		
 	QObject::connect(&ircResponseParser, SIGNAL( noSuchNickname(const QString&) ), 
 		this, SLOT( noSuchNickname(const QString&) ) );
@@ -266,11 +274,62 @@ bool IRCNetworkAdapter::hasRecipient(const QString& recipient) const
 	return (chatWindows.find(recipientLowercase) != chatWindows.end());
 }
 
+void IRCNetworkAdapter::helloClient(const QString& nickname)
+{
+	// This method can only be called 
+	// when network is in joining state.
+	
+	connectionInfo.nick = nickname;
+	IRCNetworkEntity& network = connectionInfo.networkEntity;
+	
+	gLog << tr("IRC: Successfuly registered on network %1 [%2:%3]").arg(network.description, network.address).arg(network.port);
+	
+	this->bIsJoining = false;
+
+	if (!network.nickservPassword.isEmpty())
+	{
+		QString messageNickserv = network.nickservCommand;
+		messageNickserv = messageNickserv.arg(network.nickservPassword);
+		
+		this->sendMessage(messageNickserv);
+	}
+	
+	foreach (const QString& channel, network.autojoinChannels)
+	{
+		if (IRCGlobal::isChannelName(channel))
+		{
+			this->openNewAdapter(channel);
+		}
+	}
+	
+	// Emit this just to be safe.
+	emit titleChange();
+}
+
 void IRCNetworkAdapter::ircServerResponse(const QString& message)
 {
 	ircResponseParser.parse(message);
 
 	emit this->message(message.trimmed());
+}
+
+bool IRCNetworkAdapter::isAdapterRelated(const IRCAdapterBase* pAdapter) const
+{
+	if (this == pAdapter)
+	{
+		return true;
+	}
+	
+	QList<IRCChatAdapter*> adaptersList = chatWindows.values();
+	foreach (IRCChatAdapter* pChatWindow, adaptersList)
+	{
+		if (pChatWindow == pAdapter)
+		{
+			return true;
+		}
+	}
+	
+	return false;
 }
 
 bool IRCNetworkAdapter::isMyNickname(const QString& nickname) const
@@ -380,6 +439,32 @@ void IRCNetworkAdapter::namesListEndReceived(const QString& channel)
 	}
 }
 
+void IRCNetworkAdapter::nicknameInUse(const QString& nickname)
+{
+	IRCGlobalMessages::instance().emitMessageWithClass(tr("Nickname %1 is already taken.").arg(nickname), IRCMessageClass::NetworkAction, this);
+	if (this->bIsJoining)
+	{	
+		const QString& altNick = this->connectionInfo.alternateNick;
+	
+		if (this->connectionInfo.nick.compare(altNick, Qt::CaseInsensitive) == 0)
+		{
+			IRCGlobalMessages::instance().emitError(tr("Both nickname and alternate nickname are taken on this network."), this);
+		}
+		else if (altNick.isEmpty())
+		{
+			IRCGlobalMessages::instance().emitError(tr("No alternate nickname specified."), this);
+		}
+		else
+		{
+			this->connectionInfo.nick = altNick;
+		
+			IRCGlobalMessages::instance().emitMessageWithClass(tr("Using alternate nickname %1 to join.").arg(altNick), IRCMessageClass::NetworkAction, this);
+			QString message = QString("/nick %1").arg(altNick);
+			sendMessage(message);
+		}
+	}
+}
+
 void IRCNetworkAdapter::noSuchNickname(const QString& nickname)
 {
 	IRCGlobalMessages::instance().emitError(tr("User %1 is not logged in.").arg(nickname), this);
@@ -448,11 +533,11 @@ QString IRCNetworkAdapter::title() const
 
 void IRCNetworkAdapter::userChangesNickname(const QString& oldNickname, const QString& newNickname)
 {
-	emit message(QString("User changes nickname: %1 to %2").arg(oldNickname, newNickname));
+	emit messageWithClass(QString("User changes nickname: %1 to %2").arg(oldNickname, newNickname), IRCMessageClass::NetworkAction);
 
 	if (isMyNickname(oldNickname))
 	{
-		emit message("Updating own nickname");
+		emit messageWithClass(tr("Updating own nickname"), IRCMessageClass::NetworkAction);
 		connectionInfo.nick = newNickname;
 		
 		emit titleChange();
@@ -465,7 +550,7 @@ void IRCNetworkAdapter::userChangesNickname(const QString& oldNickname, const QS
 	}
 	
 	// MAKE SURE TO SEE IF WE HAVE A CHAT WINDOW OPEN WITH THIS 
-	// USER AND FIX THE KEY IN THE MAP!!!
+	// USER AND FIX THE KEY IN THE CHAT WINDOW MAP FOR THIS NETWORK!!!
 	if (hasRecipient(oldNickname))
 	{
 		QString oldNicknameLowercase = oldNickname.toLower();
@@ -565,12 +650,13 @@ void IRCNetworkAdapter::whoIsUser(const QString& nickname, const QString& user, 
 
 void IRCSocketSignalsAdapter::connected()
 {
-	emit pParent->message(tr("Connected. Sending registration messages."));
+	pParent->bIsJoining = true;
+	pParent->emitMessageWithClass(tr("Connected. Sending registration messages."), IRCMessageClass::NetworkAction);
 	
 	IRCNetworkConnectionInfo& connectionInfo = pParent->connectionInfo;
 	
 	QString messagePass = "/PASS %1";
-	QString messageNick = "/NICK %1 %2";
+	QString messageNick = "/NICK %1";
 	QString messageUser = "/USER %1 %2 %3 :%4";
 	
 	IRCNetworkEntity& network = connectionInfo.networkEntity;
@@ -580,17 +666,8 @@ void IRCSocketSignalsAdapter::connected()
 		pParent->sendMessage(messagePass.arg(network.password));
 	}
 	
-	pParent->sendMessage(messageNick.arg(connectionInfo.nick).arg(connectionInfo.alternateNick));
+	pParent->sendMessage(messageNick.arg(connectionInfo.nick));
 	pParent->sendMessage(messageUser.arg(connectionInfo.nick).arg(connectionInfo.nick).arg(connectionInfo.nick).arg(connectionInfo.realName));
-	pParent->sendMessage(messageUser.arg(connectionInfo.nick));
-	
-	if (!network.nickservPassword.isEmpty())
-	{
-		QString messageNickserv = network.nickservCommand;
-		messageNickserv = messageNickserv.arg(network.nickservPassword);
-		
-		pParent->sendMessage(messageNickserv);
-	}
 }
 
 void IRCSocketSignalsAdapter::disconnected()
