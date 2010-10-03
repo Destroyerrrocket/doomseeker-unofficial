@@ -78,6 +78,7 @@ class PLUGIN_EXPORT ChocolateDoomEnginePlugin : public EnginePlugin
 			IRCNetworkEntity entity;
 			entity.address = "irc.oftc.net";
 			entity.description = "Chocolate Doom";
+			entity.autojoinChannels << "#chocolate-doom";
 
 			if(!networks.contains(entity))
 				networks << entity;

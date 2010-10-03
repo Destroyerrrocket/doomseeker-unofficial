@@ -96,6 +96,7 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 			IRCNetworkEntity entity;
 			entity.address = "irc.oftc.net";
 			entity.description = "Odamex";
+			entity.autojoinChannels << "#odamex";
 
 			if(!networks.contains(entity))
 				networks << entity;

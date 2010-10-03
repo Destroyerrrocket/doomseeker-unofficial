@@ -35,26 +35,34 @@ RemoteConsole::RemoteConsole(QWidget *parent) : QMainWindow(parent), protocol(NU
 	// Prompt for connection info & password.
 	PasswordDlg *dlg = new PasswordDlg(this, true, true);
 	connect(dlg, SIGNAL(rejected()), this, SLOT(close()));
-	int ret = dlg->exec();
-	if(ret == QDialog::Accepted)
+	while(protocol == NULL)
 	{
-		QString address;
-		unsigned short port;
-		Strings::translateServerAddress(dlg->serverAddress(), address, port, "localhost", dlg->selectedEngine()->defaultServerPort());
-
-		server = dlg->selectedEngine()->server(QHostAddress(address), port);
-		if(!server->hasRcon())
+		int ret = dlg->exec();
+		if(ret == QDialog::Accepted)
 		{
-			QMessageBox::critical(this, tr("No RCon Support"), tr("The source port selected has no RCon support."));
-			close();
-			return;
+			QString address;
+			unsigned short port;
+			Strings::translateServerAddress(dlg->serverAddress(), address, port, "localhost", dlg->selectedEngine()->defaultServerPort());
+
+			server = dlg->selectedEngine()->server(QHostAddress(address), port);
+			if(!server->hasRcon())
+			{
+				QMessageBox::critical(this, tr("No RCon Support"), tr("The source port selected has no RCon support."));
+				close();
+				return;
+			}
+			protocol = server->rcon();
+
+			if(protocol != NULL)
+			{
+				setWindowIcon(server->icon());
+				standardInit();
+
+				protocol->sendPassword(dlg->connectPassword());
+			}
 		}
-		protocol = server->rcon();
-
-		setWindowIcon(server->icon());
-		standardInit();
-
-		protocol->sendPassword(dlg->connectPassword());
+		else
+			break;
 	}
 	delete dlg;
 }

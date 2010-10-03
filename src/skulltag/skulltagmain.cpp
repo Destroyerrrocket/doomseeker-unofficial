@@ -147,6 +147,7 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 			IRCNetworkEntity entity;
 			entity.address = "irc.skulltag.net";
 			entity.description = "Skulltag";
+			entity.autojoinChannels << "#skulltag";
 
 			if(!networks.contains(entity))
 				networks << entity;

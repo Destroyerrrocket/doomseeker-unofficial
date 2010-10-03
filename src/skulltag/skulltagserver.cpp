@@ -788,7 +788,8 @@ void SkulltagRConProtocol::run()
 {
 	while(connected)
 	{
-		if(socket.waitForReadyRead(4800)) // Try to get 2 packets per second in order to compensate for lag and packet loss
+		// Note: the original rcon utility did TIMEOUT/4.
+		if(socket.waitForReadyRead(2500)) // Try to get 4 packets per second in order to compensate for lag and packet loss
 		{
 			int size = socket.pendingDatagramSize();
 			char* data = new char[size];
