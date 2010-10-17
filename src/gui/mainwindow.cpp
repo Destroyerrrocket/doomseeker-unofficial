@@ -84,6 +84,13 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 	initLogDock();
 	initMainDock();
 
+	// The buddies list must always be available so we can perform certain operations on it
+	buddiesList = new DockBuddiesList(this);
+	connect(buddiesList, SIGNAL( visibilityChanged(bool)), menuActionBuddies, SLOT( setChecked(bool)));
+	connect(buddiesList, SIGNAL( joinServer(const Server*) ), this, SLOT( runGame(const Server*) ));
+	buddiesList->hide();
+	this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
+
 	serverTableHandler = new ServerListHandler(tableServers, this);
 	connectEntities();
 
@@ -113,6 +120,7 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 
 	// Get the master
 	masterManager = new MasterManager();
+	buddiesList->scan(masterManager);
 	connect(masterManager, SIGNAL( masterMessage(MasterClient*, const QString&, const QString&, bool) ), this, SLOT( masterManagerMessages(MasterClient*, const QString&, const QString&, bool) ) );
 
 	// Allow us to enable and disable ports.
@@ -122,14 +130,6 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 	masterManager->customServs()->readConfig(serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
 
 	setWindowIcon(QIcon(":/icon.png"));
-
-	// The buddies list must always be available so we can perform certain operations on it
-	buddiesList = new DockBuddiesList(this);
-	connect(buddiesList, SIGNAL( visibilityChanged(bool)), menuActionBuddies, SLOT( setChecked(bool)));
-	connect(buddiesList, SIGNAL( joinServer(const Server*) ), this, SLOT( runGame(const Server*) ));
-	buddiesList->scan(masterManager);
-	buddiesList->hide();
-	this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
 
 	// Auto refresh timer
 	initAutoRefreshTimer();
