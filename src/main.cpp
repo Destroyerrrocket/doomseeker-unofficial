@@ -76,11 +76,15 @@ Main::~Main()
 		delete refreshingThread;
 	}
 
-	gConfig.saveToFile();
-	gConfig.dispose();
-	
-	gIRCConfig.saveToFile();
-	gIRCConfig.dispose();
+	// We can't save a config if we haven't initalized the program!
+	if(application != NULL)
+	{
+		gConfig.saveToFile();
+		gConfig.dispose();
+		
+		gIRCConfig.saveToFile();
+		gIRCConfig.dispose();
+	}
 
 	if (ip2c != NULL)
 	{
