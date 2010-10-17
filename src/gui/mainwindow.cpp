@@ -109,6 +109,8 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 	move(gConfig.doomseeker.mainWindowX, gConfig.doomseeker.mainWindowY);
 	resize(gConfig.doomseeker.mainWindowWidth, gConfig.doomseeker.mainWindowHeight);
 
+	restoreState(QByteArray::fromBase64(gConfig.doomseeker.mainWindowState.toAscii()));
+
 	// Get the master
 	masterManager = new MasterManager();
 	connect(masterManager, SIGNAL( masterMessage(MasterClient*, const QString&, const QString&, bool) ), this, SLOT( masterManagerMessages(MasterClient*, const QString&, const QString&, bool) ) );
@@ -187,6 +189,8 @@ MainWindow::~MainWindow()
 		gConfig.doomseeker.mainWindowWidth = width();
 		gConfig.doomseeker.mainWindowHeight = height();
 	}
+
+	gConfig.doomseeker.mainWindowState = saveState().toBase64();
 
 	QList<QAction*> menuQueryActions = menuQuery->actions();
 	QList<QAction*>::iterator it;
@@ -530,6 +534,7 @@ void MainWindow::initMainDock()
 	// Make a dock out of the server table and then get rid of the central
 	// widget.
 	QDockWidget *mainDock = new QDockWidget(tr("Servers"));
+	mainDock->setObjectName("ServerList");
 	mainDock->setFeatures(QDockWidget::NoDockWidgetFeatures);
 	mainDock->setWidget(tableServers);
 	setCentralWidget(0);

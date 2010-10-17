@@ -187,6 +187,7 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->customServersColor = "#ffaa00";
 	this->ip2CountryDatabaseMaximumAge = 10;
 	this->ip2CountryUrl = "http://software77.net/geo-ip?DL=1";
+	this->mainWindowState = "";
 	this->mainWindowHeight = 0xffff;
 	this->mainWindowWidth = 0xffff;
 	this->mainWindowX = 0xffff;
@@ -279,6 +280,7 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->customServersColor = (const QString &)section["CustomServersColor"];
 	this->ip2CountryDatabaseMaximumAge = section["IP2CMaximumAge"];
 	this->ip2CountryUrl = (const QString &)section["IP2CUrl"];
+	this->mainWindowState = (const QString &)section["MainWindowState"];
 	this->mainWindowHeight = section["MainWindowHeight"];
 	this->mainWindowWidth = section["MainWindowWidth"];
 	this->mainWindowX = section["MainWindowX"];
@@ -334,6 +336,7 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["CustomServersColor"] = this->customServersColor;
 	section["IP2CMaximumAge"] = this->ip2CountryDatabaseMaximumAge;
 	section["IP2CUrl"] = this->ip2CountryUrl;
+	section["MainWindowState"] = this->mainWindowState;
 	section["MainWindowHeight"] = this->mainWindowHeight;
 	section["MainWindowWidth"] = this->mainWindowWidth;
 	section["MainWindowX"] = this->mainWindowX;

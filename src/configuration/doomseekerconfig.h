@@ -68,6 +68,7 @@ class DoomseekerConfig
 			QString						customServersColor;
 			unsigned					ip2CountryDatabaseMaximumAge;
 			QString						ip2CountryUrl;
+			QString						mainWindowState;
 			unsigned					mainWindowWidth;
 			unsigned					mainWindowHeight;
 			int							mainWindowX;
