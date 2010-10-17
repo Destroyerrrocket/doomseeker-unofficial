@@ -82,6 +82,7 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 	initIP2CUpdater();
 	initIRCDock();
 	initLogDock();
+	initMainDock();
 
 	serverTableHandler = new ServerListHandler(tableServers, this);
 	connectEntities();
@@ -520,6 +521,19 @@ void MainWindow::initLogDock()
 
 	// Also add anything that already might be in the log to the box.
 	logDock->appendLogEntry(gLog.content());
+}
+
+void MainWindow::initMainDock()
+{
+	setDockNestingEnabled(true); // This line allows us to essentually treat a dock as a central widget.
+
+	// Make a dock out of the server table and then get rid of the central
+	// widget.
+	QDockWidget *mainDock = new QDockWidget(tr("Servers"));
+	mainDock->setFeatures(QDockWidget::NoDockWidgetFeatures);
+	mainDock->setWidget(tableServers);
+	setCentralWidget(0);
+	addDockWidget(Qt::TopDockWidgetArea, mainDock);
 }
 
 void MainWindow::initTrayIcon()

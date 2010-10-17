@@ -153,6 +153,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	initIP2CUpdater();
 		void	initIRCDock();
 		void	initLogDock();
+		void	initMainDock();
 
 		/**
 		 *	Checks whether the program will use the tray icon and
