@@ -32,6 +32,7 @@
 #include "serverapi/playerslist.h"
 
 #include <QCryptographicHash>
+#include <QDateTime>
 #include <QMessageBox>
 #include <QRegExp>
 
@@ -853,13 +854,13 @@ void SkulltagRConProtocol::processPacket(const char *data, int length, bool init
 				{
 					QString message(&data[position]);
 					position += message.length() + 1;
-					emit messageReceived(message);
+					emit messageReceived(message.trimmed());
 				}
 				break;
 			}
 			case SVRC_MESSAGE:
 			{
-				QString message = QString(&data[position]);
+				QString message = QDateTime::currentDateTime().toString("[hh:mm:ss ap] ") + QString(&data[position]);
 				position += message.length() + 1;
 				emit messageReceived(message);
 				break;

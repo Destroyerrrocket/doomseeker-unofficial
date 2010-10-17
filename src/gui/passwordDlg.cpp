@@ -58,6 +58,9 @@ PasswordDlg::PasswordDlg(QWidget *parent, bool rcon, bool connection) : QDialog(
 		}
 	}
 
+	if(gConfig.doomseeker.bHidePasswords)
+		password->setEchoMode(QLineEdit::Password);
+
 	// Adjust the size and prevent resizing.
 	adjustSize();
 	setMinimumHeight(height());

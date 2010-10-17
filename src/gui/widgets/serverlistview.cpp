@@ -25,6 +25,7 @@
 #include <QDebug>
 #include <QItemDelegate>
 #include <QPainter>
+#include <QTextDocument>
 
 /**
  * Custom delegate class.  This allows us to right align the decoration images.

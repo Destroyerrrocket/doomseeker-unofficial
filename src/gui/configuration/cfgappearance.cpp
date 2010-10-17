@@ -51,6 +51,8 @@ void CFGAppearance::readSettings()
 
 	cbCloseToTrayIcon->setChecked(gConfig.doomseeker.bCloseToTrayIcon);
 
+	cbHidePasswords->setChecked(gConfig.doomseeker.bHidePasswords);
+
 	// This is not really an appearance option, but it does change how the list
 	// appears and thus utilized the fact that the appearance options cause the 
 	// list to refresh.  It also doesn't fit into any of the other existing
@@ -65,6 +67,7 @@ void CFGAppearance::saveSettings()
 	gConfig.doomseeker.bUseTrayIcon = gboUseTrayIcon->isChecked();
 	gConfig.doomseeker.bCloseToTrayIcon = cbCloseToTrayIcon->isChecked();
 	gConfig.doomseeker.bBotsAreNotPlayers = cbBotsNotPlayers->isChecked();
+	gConfig.doomseeker.bHidePasswords = cbHidePasswords->isChecked();
 
 	emit appearanceChanged();
 }
