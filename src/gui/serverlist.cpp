@@ -50,12 +50,6 @@ ServerListHandler::ServerListHandler(ServerListView* serverTable, QWidget* pMain
   needsCleaning(false), sortingProxy(NULL), sortOrder(Qt::AscendingOrder),
   sortIndex(-1), table(serverTable)
 {
-	// We will be saving the column widths to the config, but lets get the defaults
-	initDefaultColumnsWidthsSettings();
-
-	// Now we see if we have a different configuration.
-	loadColumnsWidthsSettings();
-
 	prepareServerTable();
 
 	initCleanerTimer();
@@ -320,19 +314,6 @@ void ServerListHandler::initCleanerTimer()
 	connect(&cleanerTimer, SIGNAL( timeout() ), this, SLOT ( cleanUp() ) );
 }
 
-void ServerListHandler::initDefaultColumnsWidthsSettings()
-{
-	ServerListColumn* columns = ServerListColumns::columns;
-
-	if (gConfig.doomseeker.serverListColumnWidths.isEmpty())
-	{
-		for(int i = 0; i < NUM_SERVERLIST_COLUMNS; ++i)
-		{
-			gConfig.doomseeker.serverListColumnWidths.append(columns[i].width);
-		}
-	}
-}
-
 bool ServerListHandler::isSortingByColumn(int columnIndex)
 {
 	return sortIndex == columnIndex;
@@ -342,26 +323,6 @@ void ServerListHandler::itemSelected(const QModelIndex& index)
 {
 	QList<Server*> servers = selectedServers();
 	emit serversSelected(servers);
-}
-
-void ServerListHandler::loadColumnsWidthsSettings()
-{
-	ServerListColumn* columns = ServerListColumns::columns;
-
-	const QVector<int>& colWidths = gConfig.doomseeker.serverListColumnWidths;
-	if(colWidths.size() == NUM_SERVERLIST_COLUMNS)
-	{
-		for(int i = 0;i < NUM_SERVERLIST_COLUMNS;i++)
-		{
-			columns[i].width = colWidths[i];
-		}
-	}
-	else
-	{
-		// If the number of columns do not match then reset this setting
-		gConfig.doomseeker.serverListColumnWidths.clear();
-		this->initDefaultColumnsWidthsSettings();
-	}
 }
 
 void ServerListHandler::modelCleared()
@@ -455,13 +416,7 @@ void ServerListHandler::resizeChangedRows(const QModelIndex &parent, int start, 
 
 void ServerListHandler::saveColumnsWidthsSettings()
 {
-	if(areColumnsWidthsSettingsChanged())
-	{
-		for(int j = 0; j < NUM_SERVERLIST_COLUMNS; ++j)
-		{
-			gConfig.doomseeker.serverListColumnWidths[j] = table->columnWidth(j);
-		}
-	}
+	gConfig.doomseeker.serverListColumnState = table->horizontalHeader()->saveState().toBase64();
 }
 
 QList<Server*> ServerListHandler::selectedServers()
@@ -517,16 +472,24 @@ void ServerListHandler::setCountryFlagsIfNotPresent()
 
 void ServerListHandler::setupTableColumnWidths()
 {
-	for (int i = 0; i < NUM_SERVERLIST_COLUMNS; ++i)
+	QString &headerState = gConfig.doomseeker.serverListColumnState;
+	if(headerState.isEmpty())
 	{
-		ServerListColumn* columns = ServerListColumns::columns;
-		table->setColumnWidth(i, columns[i].width);
-		table->setColumnHidden(i, columns[i].bHidden);
-		if(!columns[i].bResizable)
+		for (int i = 0; i < NUM_SERVERLIST_COLUMNS; ++i)
 		{
-			table->horizontalHeader()->setResizeMode(i, QHeaderView::Fixed);
+			ServerListColumn* columns = ServerListColumns::columns;
+			table->setColumnWidth(i, columns[i].width);
+			table->setColumnHidden(i, columns[i].bHidden);
+			if(!columns[i].bResizable)
+			{
+				table->horizontalHeader()->setResizeMode(i, QHeaderView::Fixed);
+			}
 		}
 	}
+	else
+		table->horizontalHeader()->restoreState(QByteArray::fromBase64(headerState.toAscii()));
+
+	table->horizontalHeader()->setMovable(true);
 }
 
 void ServerListHandler::setupTableProperties(QSortFilterProxyModel* tableModel)

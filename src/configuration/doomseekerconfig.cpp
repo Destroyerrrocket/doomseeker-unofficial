@@ -291,19 +291,10 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->previousCreateServerConfigDir = (const QString &)section["PreviousCreateServerConfigDir"];
 	this->previousCreateServerExecDir = (const QString &)section["PreviousCreateServerExecDir"];
 	this->previousCreateServerWadDir = (const QString &)section["PreviousCreateServerWadDir"];
+	this->serverListColumnState = (const QString &)section["ServerListColumnState"];
 	this->slotStyle = section["SlotStyle"];
 	
 	// Complex data variables.
-	
-	// Server column widths.
-	this->serverListColumnWidths.clear();
-	QString serverColumnWidthsString = section["ServerListColumnWidths"];
-	QStringList serverColumnWidths = serverColumnWidthsString.split(",");
-	foreach (const QString& column, serverColumnWidths)
-	{
-		int width = column.toInt();
-		this->serverListColumnWidths.append(width);
-	}
 	
 	// Custom servers
 	QList<CustomServerInfo> customServersList;
@@ -347,19 +338,10 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["PreviousCreateServerConfigDir"] = this->previousCreateServerConfigDir;
 	section["PreviousCreateServerExecDir"] = this->previousCreateServerExecDir;
 	section["PreviousCreateServerWadDir"] = this->previousCreateServerWadDir;
+	section["ServerListColumnState"] = this->serverListColumnState;
 	section["SlotStyle"] = this->slotStyle;
 	
 	// Complex data variables.
-	
-	// Server list column widths.
-	QString serverListColumnWidth = "";
-	for (int i = 0; i < this->serverListColumnWidths.size(); ++i)
-	{
-		int width = this->serverListColumnWidths[i];
-		serverListColumnWidth += QString::number(width) + ",";
-	}
-	serverListColumnWidth = Strings::trimr(serverListColumnWidth, ",");
-	section["ServerListColumnWidths"] = serverListColumnWidth;
 	
 	// Custom servers
 	QStringList allCustomServers;

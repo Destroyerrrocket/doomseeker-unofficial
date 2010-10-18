@@ -79,7 +79,7 @@ class DoomseekerConfig
 			QString						previousCreateServerConfigDir;
 			QString						previousCreateServerExecDir;
 			QString						previousCreateServerWadDir;
-			QVector<int>				serverListColumnWidths;
+			QString						serverListColumnState;
 			int							slotStyle;
 			QStringList					wadPaths;
 			

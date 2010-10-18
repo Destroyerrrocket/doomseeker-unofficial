@@ -128,15 +128,6 @@ class ServerListHandler : public QObject
 
 		void					initCleanerTimer();
 
-		/**
-		 *	@brief Creates default setting entries in configuration.
-		 *
-		 *	Will not override any existing configuration.
-		 */
-		void					initDefaultColumnsWidthsSettings();
-
-		void					loadColumnsWidthsSettings();
-
 		void 					prepareServerTable();
 
 		void					saveColumnsWidthsSettings();
