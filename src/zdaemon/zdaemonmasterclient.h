@@ -50,7 +50,7 @@ class ZDaemonMasterClient : public MasterClient
 		QNetworkAccessManager	*netAccessManager;
 		QWaitCondition			listWaitCondition;
 
-		quint32					defaultIP;
+		//quint32					defaultIP;
 
 	protected slots:
 		void	createQueryRequest();

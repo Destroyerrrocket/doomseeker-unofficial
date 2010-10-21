@@ -79,7 +79,7 @@ class PLUGIN_EXPORT ZDaemonEnginePlugin : public EnginePlugin
 		void			masterHost(QString &host, unsigned short &port) const
 		{
 			QString str = pConfig->setting("Masterserver");
-			Strings::translateServerAddress(str, host, port, "master.zdaemon.org", 80);
+			Strings::translateServerAddress(str, host, port, "altdeath.com", 80);
 		}
 
 		Server*			server(const QHostAddress &address, unsigned short port) const
@@ -99,5 +99,6 @@ extern "C" PLUGIN_EXPORT PluginInfo *doomSeekerInit()
 
 extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection &config)
 {
-	config.createSetting("Masterserver", "master.zdaemon.org:80");
+	//config.createSetting("Masterserver", "master.zdaemon.org:80");
+	config.createSetting("Masterserver", "altdeath.com:80");
 }

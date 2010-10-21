@@ -38,11 +38,11 @@ ZDaemonMasterClient::ZDaemonMasterClient() : MasterClient(), netAccessManager(NU
 	// The ZDaemon master is configured such that we can't access it from just
 	// the ip.  I could probably change the headers to fix that, but it would
 	// require the same amount of work anyways.
-	QHostInfo info = QHostInfo::fromName("master.zdaemon.org");
+	/*QHostInfo info = QHostInfo::fromName("master.zdaemon.org");
 	if(info.addresses().size() == 0)
 		defaultIP = 0;
 	else
-		defaultIP = info.addresses().first().toIPv4Address();
+		defaultIP = info.addresses().first().toIPv4Address();*/
 
 	connect(this, SIGNAL(request()), this, SLOT(createQueryRequest()));
 }
@@ -55,12 +55,12 @@ void ZDaemonMasterClient::createQueryRequest()
 	connect(netAccessManager, SIGNAL(finished(QNetworkReply *)), this, SLOT(listFetched(QNetworkReply *)));
 
 	QString server = address.toString();
-	if(address.toIPv4Address() == defaultIP)
-		server = "master.zdaemon.org";
+	/*if(address.toIPv4Address() == defaultIP)
+		server = "master.zdaemon.org";*/
 
 	QString userAgent = Version::name() + "/" + Version::version() + " (ZDaemon Plugin)";
 
-	QNetworkRequest netRequest(QUrl("http://" + server + ":" + QString("%1").arg(port) + "/masterlist.php"));
+	QNetworkRequest netRequest(QUrl("http://" + server + ":" + QString("%1").arg(port) + "/servers/zdaemon.txt")); // Used to be masterlist.php
 	netRequest.setRawHeader("User-Agent", userAgent.toAscii());
 
 	QNetworkReply *reply = netAccessManager->get(netRequest);
