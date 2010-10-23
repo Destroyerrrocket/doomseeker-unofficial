@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="allowedAreas">
-   <set>Qt::BottomDockWidgetArea|Qt::TopDockWidgetArea</set>
+   <set>Qt::AllDockWidgetAreas</set>
   </property>
   <property name="windowTitle">
    <string>IRC</string>

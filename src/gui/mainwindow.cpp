@@ -538,7 +538,7 @@ void MainWindow::initMainDock()
 	mainDock->setFeatures(QDockWidget::NoDockWidgetFeatures);
 	mainDock->setWidget(tableServers);
 	setCentralWidget(0);
-	addDockWidget(Qt::TopDockWidgetArea, mainDock);
+	addDockWidget(Qt::RightDockWidgetArea, mainDock);
 }
 
 void MainWindow::initTrayIcon()
