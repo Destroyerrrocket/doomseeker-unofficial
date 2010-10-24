@@ -41,7 +41,7 @@ class ZDaemonMasterClient : public MasterClient
 
 		const PluginInfo*		plugin() const;
 		bool					readMasterResponse(QByteArray &data);
-		void					refresh();
+		//void					refresh();
 
 	protected:
 		
@@ -51,6 +51,7 @@ class ZDaemonMasterClient : public MasterClient
 		QWaitCondition			listWaitCondition;
 
 		//quint32					defaultIP;
+		QString					key;
 
 	protected slots:
 		void	createQueryRequest();
