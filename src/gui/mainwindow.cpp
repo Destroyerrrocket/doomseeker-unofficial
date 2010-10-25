@@ -80,16 +80,16 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 	ip2cParser = NULL;
 	
 	initIP2CUpdater();
-	initIRCDock();
-	initLogDock();
-	initMainDock();
 
 	// The buddies list must always be available so we can perform certain operations on it
 	buddiesList = new DockBuddiesList(this);
-	connect(buddiesList, SIGNAL( visibilityChanged(bool)), menuActionBuddies, SLOT( setChecked(bool)));
+	menuView->addAction(buddiesList->toggleViewAction());
 	connect(buddiesList, SIGNAL( joinServer(const Server*) ), this, SLOT( runGame(const Server*) ));
 	buddiesList->hide();
 	this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
+	initLogDock();
+	initIRCDock();
+	initMainDock();
 
 	serverTableHandler = new ServerListHandler(tableServers, this);
 	connectEntities();
@@ -503,7 +503,7 @@ void MainWindow::initIP2CUpdater()
 void MainWindow::initIRCDock()
 {
 	ircDock = new IRCDock(this);
-	connect(ircDock, SIGNAL( visibilityChanged(bool)), menuActionViewIRC, SLOT( setChecked(bool)) );
+	menuView->addAction(ircDock->toggleViewAction());
 	ircDock->hide();
 	this->addDockWidget(Qt::BottomDockWidgetArea, ircDock);
 	
@@ -517,7 +517,7 @@ void MainWindow::initIRCDock()
 void MainWindow::initLogDock()
 {
 	logDock = new LogDock(this);
-	connect(logDock, SIGNAL( visibilityChanged(bool)), menuActionLog, SLOT( setChecked(bool)));
+	menuView->addAction(logDock->toggleViewAction());
 	logDock->hide();
 	this->addDockWidget(Qt::BottomDockWidgetArea, logDock);
 

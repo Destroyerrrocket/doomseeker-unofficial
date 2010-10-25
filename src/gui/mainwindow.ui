@@ -80,9 +80,6 @@
     <property name="title">
      <string>&amp;View</string>
     </property>
-    <addaction name="menuActionBuddies"/>
-    <addaction name="menuActionLog"/>
-    <addaction name="menuActionViewIRC"/>
    </widget>
    <widget class="QMenu" name="menuQuery">
     <property name="title">
