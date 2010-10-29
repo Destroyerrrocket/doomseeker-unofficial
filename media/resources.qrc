@@ -5,10 +5,13 @@
 	<file alias="logo.png">logo_small.png</file>
 	<file>locked.png</file>
 	<file>icons/arrow-down-double.png</file>
+	<file>icons/buddies.png</file>
 	<file>icons/color-fill.png</file>
 	<file>icons/download.png</file>
 	<file>icons/emblem-web.png</file>
+	<file>icons/irc.png</file>
 	<file>icons/irc_channel.png</file>
+	<file>icons/log.png</file>
 	<file>icons/network-connect-3.png</file>
 	<file>icons/person.png</file>
 	<file>icons/preferences-system-4.png</file>

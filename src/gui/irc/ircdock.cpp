@@ -35,6 +35,8 @@ IRCDock::IRCDock(QWidget* parent)
 : QDockWidget(parent)
 {
 	setupUi(this);
+	this->toggleViewAction()->setIcon(QIcon(":/icons/irc.png"));
+	
 	setupToolbar();
 	
 	IRCGlobalMessages& ircGlobalMessages = IRCGlobalMessages::instance();

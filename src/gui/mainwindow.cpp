@@ -64,7 +64,6 @@ MainWindow::MainWindow(int argc, char** argv)
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
 	setupIcons();
-	setupToolBar();
 	
 	if (Main::enginePlugins->numPlugins() == 0)
 	{
@@ -137,6 +136,8 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 
 	// Tray icon
 	initTrayIcon();
+	
+	setupToolBar();
 
 	// Player diagram styles
 	int slotStyle = gConfig.doomseeker.slotStyle;
@@ -328,9 +329,6 @@ void MainWindow::connectEntities()
 	connect(menuActionWadseeker, SIGNAL( triggered() ), this, SLOT( menuWadSeeker() ));
 	connect(serverTableHandler, SIGNAL( serverDoubleClicked(const Server*) ), this, SLOT( runGame(const Server*) ) );
 	connect(serverTableHandler, SIGNAL( displayServerJoinCommandLine(const Server*) ), this, SLOT( showServerJoinCommandLine(const Server*) ) );
-	
-	// Toolbar controls (those that aren't handled by the generic toolbar slot).
-	connect(toolBarSearch, SIGNAL( textChanged(const QString &) ), serverTableHandler, SLOT( updateSearch(const QString &) ));	
 }
 
 void MainWindow::fillQueryMenu(MasterManager* masterManager)
@@ -1082,9 +1080,11 @@ void MainWindow::setupToolBar()
 	QToolBar* pToolBar = new QToolBar(this);
 	pToolBar->setMovable(false);
 
+	// Refresh buttons
 	toolBarGetServers = new QAction(QIcon(":/icons/arrow-down-double.png"), tr("Get Servers"), pToolBar);
 	toolBarRefreshAll = new QAction(QIcon(":/icons/view-refresh-2.png"), tr("Refresh All"), pToolBar);
 	
+	// Search widgets
 	toolBarSearch = new QLineEdit();
 	toolBarSearch->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 	toolBarSearch->setMinimumWidth(175);
@@ -1093,8 +1093,22 @@ void MainWindow::setupToolBar()
 	QWidget* searchSeparator = new QWidget();
 	searchSeparator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
 
+	// Setup menu
+	// Refresh buttons
 	pToolBar->addAction(toolBarGetServers);
 	pToolBar->addAction(toolBarRefreshAll);
+	
+	// File menu buttons.
+	pToolBar->addSeparator();
+	pToolBar->addAction(menuActionCreateServer);
+	pToolBar->addAction(menuActionWadseeker);
+	
+	pToolBar->addSeparator();
+
+	// Dockable windows buttons.
+	pToolBar->addAction(buddiesList->toggleViewAction());
+	pToolBar->addAction(logDock->toggleViewAction());
+	pToolBar->addAction(ircDock->toggleViewAction());
 
 	pToolBar->addWidget(searchSeparator);
 	pToolBar->addWidget(new QLabel(tr("Search:"), pToolBar));
@@ -1103,6 +1117,9 @@ void MainWindow::setupToolBar()
 	this->addToolBar(Qt::TopToolBarArea, pToolBar);
 	setUnifiedTitleAndToolBarOnMac(true);
 	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( toolBarAction(QAction*) ) );
+	
+	// Toolbar controls (those that aren't handled by the generic toolbar slot).
+	connect(toolBarSearch, SIGNAL( textChanged(const QString &) ), serverTableHandler, SLOT( updateSearch(const QString &) ));		
 }
 
 void MainWindow::showServerJoinCommandLine(const Server* server)

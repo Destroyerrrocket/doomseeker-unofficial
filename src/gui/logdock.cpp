@@ -27,6 +27,7 @@
 LogDock::LogDock(QWidget* parent) : QDockWidget(parent)
 {
 	setupUi(this);
+	this->toggleViewAction()->setIcon(QIcon(":/icons/log.png"));
 
 	dockWidgetContents->setHintSize(175, 200);
 

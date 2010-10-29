@@ -45,6 +45,7 @@ DockBuddiesList::DockBuddiesList(QWidget *parent)
 : QDockWidget(parent), masterClient(NULL), save(false)
 {
 	setupUi(this);
+	this->toggleViewAction()->setIcon(QIcon(":/icons/buddies.png"));
 
 	// Set up the model
 	buddiesTableModel = new QStandardItemModel();
