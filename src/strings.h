@@ -98,9 +98,19 @@ class MAIN_EXPORT Strings
 		 */
 		static bool				isUrlSafe(const QString& url);
 
+		static QString			timestamp(const QString& format);
 		static QString&			trim(QString& str, const QString& charList) { return trimr(triml(str, charList), charList); }
 		static QString&			trimr(QString& str, const QString& charList);
 		static QString&			triml(QString& str, const QString& charList);
+		
+		/**
+		 *	@brief Detects all links within a given string and wraps them in
+		 *	&lt;a href&gt; tags.
+		 *
+		 *	Valid URLs are found by seeking continuous no-whitespace substrings
+		 *	starting either with http://, ftp:// or REGEX: www\..*+
+		 */
+		static QString			wrapUrlsWithHtmlATags(const QString& str);
 		
 	protected:
 		enum DataUnit

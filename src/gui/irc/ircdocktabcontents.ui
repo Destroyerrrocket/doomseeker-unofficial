@@ -26,6 +26,12 @@
          <bold>true</bold>
         </font>
        </property>
+       <property name="openExternalLinks">
+        <bool>true</bool>
+       </property>
+       <property name="openLinks">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -53,8 +59,28 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>24</height>
+          </size>
+         </property>
          <property name="text">
           <string>Send</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnPauseTextArea">
+         <property name="toolTip">
+          <string>Do not scroll text area</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../media/resources.qrc">
+           <normaloff>:/icons/pause.png</normaloff>:/icons/pause.png</iconset>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -104,6 +130,8 @@
    <header location="global">gui/widgets/memorylineedit.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../../../media/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

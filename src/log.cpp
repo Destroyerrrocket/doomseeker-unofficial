@@ -21,6 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "log.h"
+#include "strings.h"
 #include <QDateTime>
 #include <QMutexLocker>
 #include <cstdio>
@@ -38,7 +39,7 @@ void Log::addEntry(const QString& string)
 	QString timestampString;
 	if (timestamps)
 	{
-		timestampString = QString("[%1] ").arg(QDateTime::currentDateTime().toString("hh:mm:ss"));
+		timestampString = Strings::timestamp("[hh:mm:ss] ");
 	}
 
 	QString entry = timestampString + string + "\n";

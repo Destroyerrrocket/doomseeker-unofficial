@@ -31,6 +31,7 @@
 #include "irc/ircuserinfo.h"
 #include "irc/ircuserlist.h"
 #include "log.h"
+#include <QScrollBar>
 #include <QStandardItemModel>
 
 IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
@@ -119,9 +120,10 @@ void IRCDockTabContents::applyAppearanceSettings()
 	QString networkActionClassName = IRCMessageClass::toStyleSheetClassName(IRCMessageClass::NetworkAction);
 	
 	QString htmlStyleSheetMessageArea = "";
-	htmlStyleSheetMessageArea += QString("." + channelActionClassName + " { color: %1; }").arg(appearance.channelActionColor);
-	htmlStyleSheetMessageArea += QString("." + errorClassName + " { color: %1; }").arg(appearance.errorColor);
-	htmlStyleSheetMessageArea += QString("." + networkActionClassName + " { color: %1; }").arg(appearance.networkActionColor);
+	htmlStyleSheetMessageArea += QString("a { color: %1; } ").arg(appearance.urlColor);
+	htmlStyleSheetMessageArea += QString("." + channelActionClassName + " { color: %1; } ").arg(appearance.channelActionColor);
+	htmlStyleSheetMessageArea += QString("." + errorClassName + " { color: %1; } ").arg(appearance.errorColor);
+	htmlStyleSheetMessageArea += QString("." + networkActionClassName + " { color: %1; } ").arg(appearance.networkActionColor);
 	
 		 
 	this->lvUserList->setStyleSheet(qtStyleSheet);
@@ -203,9 +205,12 @@ void IRCDockTabContents::insertMessage(const IRCMessageClass& messageClass, cons
 	*this->lastMessageClass = messageClass;
 	
 	this->textOutputContents << htmlString;
-	
-	this->txtOutputWidget->moveCursor(QTextCursor::End);
 	this->txtOutputWidget->insertHtml(htmlString);
+	
+	if (!btnPauseTextArea->isChecked())
+	{
+		this->txtOutputWidget->moveCursor(QTextCursor::End);
+	}
 	
 	if (!this->hasTabFocus())
 	{
@@ -288,10 +293,15 @@ void IRCDockTabContents::receiveMessage(const QString& message)
 void IRCDockTabContents::receiveMessageWithClass(const QString& message, const IRCMessageClass& messageClass)
 {
 	QString className = messageClass.toStyleSheetClassName();
-	this->txtOutputWidget->moveCursor(QTextCursor::End);
 	
 	QString messageHtmlEscaped = message;
 	messageHtmlEscaped.replace("<", "&lt;").replace(">", "&gt;");
+	
+	messageHtmlEscaped = Strings::wrapUrlsWithHtmlATags(messageHtmlEscaped);
+	if (gIRCConfig.appearance.timestamps)
+	{
+		messageHtmlEscaped = Strings::timestamp("[hh:mm:ss] ") + messageHtmlEscaped;
+	}
 	
 	if (className.isEmpty())
 	{

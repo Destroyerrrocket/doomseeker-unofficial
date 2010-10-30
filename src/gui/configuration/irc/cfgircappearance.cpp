@@ -37,10 +37,14 @@ void CFGIRCAppearance::readSettings()
 	this->btnDefaultTextColor->setColorHtml(gIRCConfig.appearance.defaultTextColor);
 	this->btnErrorColor->setColorHtml(gIRCConfig.appearance.errorColor);
 	this->btnNetworkActionColor->setColorHtml(gIRCConfig.appearance.networkActionColor);
+	this->btnUrlColor->setColorHtml(gIRCConfig.appearance.urlColor);
 	
 	// Fonts
 	this->btnMainFont->setSelectedFont(gIRCConfig.appearance.mainFont);
 	this->btnUserListFont->setSelectedFont(gIRCConfig.appearance.userListFont);
+	
+	// Others
+	this->cbTimestamps->setChecked(gIRCConfig.appearance.timestamps);
 }
 		
 void CFGIRCAppearance::saveSettings()
@@ -51,10 +55,14 @@ void CFGIRCAppearance::saveSettings()
 	gIRCConfig.appearance.defaultTextColor = this->btnDefaultTextColor->colorHtml();
 	gIRCConfig.appearance.errorColor = this->btnErrorColor->colorHtml();
 	gIRCConfig.appearance.networkActionColor = this->btnNetworkActionColor->colorHtml();
+	gIRCConfig.appearance.urlColor = this->btnUrlColor->colorHtml();
 	
 	// Fonts
 	gIRCConfig.appearance.mainFont = this->btnMainFont->selectedFont();
 	gIRCConfig.appearance.userListFont = this->btnUserListFont->selectedFont();
+	
+	// Others
+	gIRCConfig.appearance.timestamps = this->cbTimestamps->isChecked();
 }
 
 

@@ -6,6 +6,7 @@
 #include "testruns.h"
 #include "tests/testdatapaths.h"
 #include "tests/testini.h"
+#include "tests/teststrings.h"
 
 TestCore* TestRuns::pTestCore = NULL;
 		
@@ -24,4 +25,5 @@ void TestRuns::callTests()
 	pTestCore->executeTest(new TestReadINIWithErrors());
 	pTestCore->executeTest(new TestDeleteINISection());
 	pTestCore->executeTest(new TestDeleteINIVariable());
+	pTestCore->executeTest(new TestStringsWrapUrls());
 }

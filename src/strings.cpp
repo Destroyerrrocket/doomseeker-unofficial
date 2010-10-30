@@ -233,6 +233,11 @@ float Strings::scaleDataUnit(float bytes, DataUnit& outUnit)
 	return bytes;
 }
 
+QString Strings::timestamp(const QString& format)
+{
+	return QDateTime::currentDateTime().toString(format);
+}
+
 void Strings::translateServerAddress(const QString& addressString, QString& hostname, unsigned short& port, const QString& defaultHostname, const unsigned short defaultPort)
 {
 	port = 0;
@@ -280,4 +285,22 @@ QString& Strings::triml(QString& str, const QString& charList)
 	}
 
 	return str.remove(0, i);
+}
+
+QString Strings::wrapUrlsWithHtmlATags(const QString& str)
+{
+	//QRegExp pattern("(((http|https|ftp)://\\S+)|(www\\.\\S+))", Qt::CaseInsensitive);
+	QRegExp pattern("(\
+(\
+(http|https|ftp)://\
+|(www\\.)\
+)[\\w\\-\\.,@?^=%&amp;:/~\\+#]+\
+)", Qt::CaseInsensitive);
+	//QRegExp pattern("((http://\\B+)|(ftp://\\B+)|(www\\.\\B+))", Qt::CaseInsensitive);
+	QString newString = str;
+	
+	newString.replace(pattern, "<a href=\"\\1\">\\1</a>");
+
+	
+	return newString;
 }

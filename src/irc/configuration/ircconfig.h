@@ -52,6 +52,8 @@ class IRCConfig
 			QString						errorColor;
 			QFont						mainFont;
 			QString						networkActionColor;
+			bool						timestamps;
+			QString						urlColor;
 			QFont						userListFont;
 			
 			AppearanceCfg();

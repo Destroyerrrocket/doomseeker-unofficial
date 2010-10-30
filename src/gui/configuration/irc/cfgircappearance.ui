@@ -19,10 +19,20 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QFormLayout" name="formLayout">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     </property>
      <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
         <string>Default text color:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="ColorButton" name="btnDefaultTextColor">
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </item>
@@ -33,10 +43,24 @@
        </property>
       </widget>
      </item>
+     <item row="1" column="1">
+      <widget class="ColorButton" name="btnChannelActionColor">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_3">
        <property name="text">
         <string>Network action color:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="ColorButton" name="btnNetworkActionColor">
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </item>
@@ -50,52 +74,17 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>Background color:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string>Main font:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>User list font:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="ColorButton" name="btnDefaultTextColor">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="ColorButton" name="btnChannelActionColor">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="ColorButton" name="btnNetworkActionColor">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
      <item row="3" column="1">
       <widget class="ColorButton" name="btnErrorColor">
        <property name="text">
         <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Background color:</string>
        </property>
       </widget>
      </item>
@@ -107,12 +96,63 @@
       </widget>
      </item>
      <item row="5" column="1">
-      <widget class="FontButton" name="btnMainFont"/>
+      <widget class="ColorButton" name="btnUrlColor">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Main font:</string>
+       </property>
+      </widget>
      </item>
      <item row="6" column="1">
+      <widget class="FontButton" name="btnMainFont"/>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>User list font:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
       <widget class="FontButton" name="btnUserListFont"/>
      </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>URL color:</string>
+       </property>
+      </widget>
+     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="cbTimestamps">
+     <property name="toolTip">
+      <string>Prepends all entries with [hh:mm:ss] timestamps.</string>
+     </property>
+     <property name="text">
+      <string>Enable Timestamps</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

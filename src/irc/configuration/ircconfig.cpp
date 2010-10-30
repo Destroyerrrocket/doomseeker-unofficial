@@ -149,7 +149,9 @@ IRCConfig::AppearanceCfg::AppearanceCfg()
 	this->errorColor = "#ff0000";
 	this->mainFont = QFont("Courier");
 	this->networkActionColor = "#079CFF";
+	this->timestamps = true;
 	this->userListFont = QFont("Courier");
+	this->urlColor = "#00F6FF";
 }
 
 void IRCConfig::AppearanceCfg::init(IniSection& section)
@@ -160,7 +162,9 @@ void IRCConfig::AppearanceCfg::init(IniSection& section)
 	section.createSetting("ErrorColor", this->errorColor);
 	section.createSetting("MainFont", this->mainFont.toString());
 	section.createSetting("NetworkActionColor", this->networkActionColor);
+	section.createSetting("TimeStamps", this->timestamps);
 	section.createSetting("UserListFont", this->userListFont.toString());
+	section.createSetting("UrlColor", this->urlColor);
 }
 
 void IRCConfig::AppearanceCfg::load(IniSection& section)
@@ -171,7 +175,9 @@ void IRCConfig::AppearanceCfg::load(IniSection& section)
 	this->errorColor = (const QString &)section["ErrorColor"];
 	this->mainFont.fromString(section["MainFont"]);
 	this->networkActionColor = (const QString &)section["NetworkActionColor"];
+	this->timestamps = section["TimeStamps"];
 	this->userListFont.fromString(section["UserListFont"]);
+	this->urlColor = (const QString &)section["UrlColor"];
 }
 
 void IRCConfig::AppearanceCfg::save(IniSection& section)
@@ -182,7 +188,9 @@ void IRCConfig::AppearanceCfg::save(IniSection& section)
 	section["ErrorColor"] = this->errorColor;
 	section["MainFont"] = this->mainFont.toString();
 	section["NetworkActionColor"] = this->networkActionColor;
+	section["TimeStamps"] = this->timestamps;
 	section["UserListFont"] = this->userListFont.toString();
+	section["UrlColor"] = this->urlColor;
 }
 
 //////////////////////////////////////////////////////////////////////////////
