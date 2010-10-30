@@ -128,7 +128,7 @@ bool ZDaemonMasterClient::readMasterResponse(QByteArray &data)
 	}
 	else if(READINT32(in) == RESPONSE_LIST)
 	{
-		char compressionHeader[4] = { WRITEINT32_DIRECT(READINT32(&in[30])) };
+		char compressionHeader[4] = { in[33], in[32], in[31], in[30] }; // To big endian for Qt
 		QByteArray compressedData(compressionHeader, 4);
 		compressedData.push_back(QByteArray(&in[34], data.size()-34));
 
