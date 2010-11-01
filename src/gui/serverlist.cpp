@@ -245,7 +245,7 @@ QString ServerListHandler::createPwadToolTipInfo(const PWad& pwad)
 		if(pwad.optional)
 		{
 			formattedStringBegin = formattedStringBegin.arg(FONT_COLOR_OPTIONAL);
-			formattedStringMiddle = tr("<td>%1</td><td> OPTONAL</td>").arg(pwad.name);
+			formattedStringMiddle = tr("<td>%1</td><td> OPTIONAL</td>").arg(pwad.name);
 		}
 		else
 		{

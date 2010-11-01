@@ -113,7 +113,9 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 		pos += cvarValue.length()+1;
 		CHECK_POS;
 
-		if(cvarName == "sv_hostname")
+		if(cvarName == "sv_email")
+			email = cvarValue;
+		else if(cvarName == "sv_hostname")
 			serverName = cvarValue;
 		else if(cvarName == "sv_maxplayers")
 			maxPlayers = cvarValue.toUInt();
@@ -125,6 +127,8 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 			if(mode < (unsigned)plugin()->pInterface->gameModes()->size())
 				currentGameMode = (*plugin()->pInterface->gameModes())[cvarValue.toUInt()];
 		}
+		else if(cvarName == "sv_website")
+			webSite = cvarValue;
 	}
 
 	QString passwordHash(&in[pos]);
