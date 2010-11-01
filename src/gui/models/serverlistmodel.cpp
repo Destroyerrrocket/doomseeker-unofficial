@@ -129,14 +129,12 @@ void ServerListModel::removeCustomServers()
 
 Server* ServerListModel::serverFromList(int rowIndex)
 {
-	ServerListRowHandler rowHandler(this, rowIndex);
-    return rowHandler.getServer();
+    return ServerListRowHandler::serverFromList(this, rowIndex);
 }
 
 Server* ServerListModel::serverFromList(const QModelIndex& index)
 {
-	ServerListRowHandler rowHandler(this, index.row());
-    return rowHandler.getServer();
+	return ServerListRowHandler::serverFromList(this, index.row());
 }
 
 ServerListModel::ServerGroup ServerListModel::serverGroup(int row)

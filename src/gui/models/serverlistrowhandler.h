@@ -85,6 +85,7 @@ class ServerListRowHandler : public QObject
 
 		int 					updateServer(int response);
 
+		static Server* 			serverFromList(ServerListModel* parentModel, int rowIndex);
 	protected:
 		void 					emptyItem(QStandardItem*);
 
@@ -102,7 +103,6 @@ class ServerListRowHandler : public QObject
 		void					fillServerPointerColumn();
 
 		void 					prepareHeaders();
-		Server* 				serverFromList();
 		//ServerGroup 			serverGroup(int row);
 
 

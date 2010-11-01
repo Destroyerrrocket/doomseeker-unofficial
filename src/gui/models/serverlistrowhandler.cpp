@@ -43,7 +43,7 @@ ServerListRowHandler::ServerListRowHandler(ServerListModel* parentModel, int row
 ServerListRowHandler::ServerListRowHandler(ServerListModel* parentModel, int rowIndex)
 : model(parentModel), row(rowIndex)
 {
-	server = serverFromList();
+	server = serverFromList(parentModel, rowIndex);
 }
 
 void ServerListRowHandler::clearNonVitalFields()
@@ -319,9 +319,9 @@ void ServerListRowHandler::setWait()
 	fillItem(qstdItem, SGWait);
 }
 
-Server* ServerListRowHandler::serverFromList()
+Server* ServerListRowHandler::serverFromList(ServerListModel* parentModel, int rowIndex)
 {
-	QStandardItem* pItem = item(IDHiddenServerPointer);
+	QStandardItem* pItem = parentModel->item(rowIndex, IDHiddenServerPointer);
 	QVariant pointer = qVariantFromValue(pItem->data(DTPointerToServerStructure));
     if (!pointer.isValid())
     {
