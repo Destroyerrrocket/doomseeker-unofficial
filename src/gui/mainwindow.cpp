@@ -884,6 +884,16 @@ void MainWindow::menuWadSeeker()
 	wadSeekerInterface.exec();
 }
 
+void MainWindow::notifyFirstRun()
+{
+	// On first run prompt configuration box.
+	if (gConfig.ini()->isFirstRun())
+	{
+		QMessageBox::information(NULL, tr("Welcome to Doomseeker"), tr("Before you start browsing for servers, please ensure that Doomseeker is properly configured."));
+		menuActionConfigure->trigger();
+	}
+}
+
 bool MainWindow::obtainJoinCommandLine(const Server* server, CommandLineInfo& cli, const QString& errorCaption)
 {
 	cli.applicationDir = "";

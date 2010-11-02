@@ -231,12 +231,12 @@ IniVariable &IniSection::setting(const QString& name)
 IniSection Ini::nullSection = IniSection::makeNull();
 
 Ini::Ini(const QString& filename)
-: dataSourc(Memory), valid(false)
+: dataSourc(Memory), firstRun(false), valid(false)
 {
 	loadIniFile(filename);
 }
 
-Ini::Ini(const QString& displayName, const QByteArray& memorydata)
+Ini::Ini(const QString& displayName, const QByteArray& memorydata) : firstRun(false)
 {
 	filename = displayName;
 	valid = loadAdditionalSettings(memorydata);
@@ -254,6 +254,7 @@ void Ini::copy(const Ini& other)
 	filename = other.filename;
 	iniTopComment = other.iniTopComment;
 	sections = other.sections;
+	firstRun = other.firstRun;
 	valid = other.valid;
 }
 
@@ -360,6 +361,7 @@ bool Ini::loadIniFile(const QString& filePath)
 	QFile file(filePath);
 	if (!file.exists())
 	{
+		firstRun = true;
 		if (!file.open(QIODevice::WriteOnly))
 		{
 			errorsList << tr("Fatal error: file %1 doesn't exist and cannot be created!").arg(filePath);

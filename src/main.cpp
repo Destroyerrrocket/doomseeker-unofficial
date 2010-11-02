@@ -276,6 +276,8 @@ void Main::createMainWindow()
 	}
 
 	mainWindow = mainWnd;
+
+	mainWnd->notifyFirstRun();
 }
 
 bool Main::createRemoteConsole()

@@ -80,6 +80,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 */
 		void	initAutoRefreshTimer();
 
+		void	notifyFirstRun();
+
 		void	stopAutoRefreshTimer() { autoRefreshTimer.stop(); }
 
 		void	updateMasterAddresses();

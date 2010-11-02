@@ -310,6 +310,8 @@ class MAIN_EXPORT Ini : public QObject
 		 */
 		QByteArray			iniData();
 
+		bool				isFirstRun() const { return firstRun; }
+
 		/**
 		 *	This is set by the constructor depening on whether it was able
 		 *	to read the input data or not.
@@ -426,6 +428,11 @@ class MAIN_EXPORT Ini : public QObject
 		 *	Variables are stored within this.
 		 */
 		IniSections			sections;
+
+		/**
+		 *	True if the file didn't ini file didn't exist.
+		 */
+		bool				firstRun;
 
 		/**
 		 *	False if it was impossible to process the input data while
