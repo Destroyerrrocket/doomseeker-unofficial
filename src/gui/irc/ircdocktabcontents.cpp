@@ -205,7 +205,14 @@ void IRCDockTabContents::insertMessage(const IRCMessageClass& messageClass, cons
 	*this->lastMessageClass = messageClass;
 	
 	this->textOutputContents << htmlString;
-	this->txtOutputWidget->insertHtml(htmlString);
+
+	// Text insertion must be done this way to allow proper
+	// handling of "Pause" button. Note that the cursor
+	// in the widget is not affected as textCursor() creates a copy
+	// of cursor object.	
+	QTextCursor cursor = this->txtOutputWidget->textCursor();
+	cursor.movePosition(QTextCursor::End);
+	cursor.insertHtml(htmlString);
 	
 	if (!btnPauseTextArea->isChecked())
 	{
