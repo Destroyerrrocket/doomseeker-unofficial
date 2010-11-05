@@ -168,6 +168,11 @@ IRCDockTabContents::UserListMenu& IRCDockTabContents::getUserListContextMenu()
 	return *this->userListContextMenu;
 }
 
+void IRCDockTabContents::grabFocus()
+{
+	this->leCommandLine->setFocus();
+}
+
 bool IRCDockTabContents::hasTabFocus() const
 {
 	return this->pParentIRCDock->hasTabFocus(this);

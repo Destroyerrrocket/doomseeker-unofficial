@@ -52,6 +52,13 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 *	@brief Applies current appearance settings from the IRC config.
 		 */
 		void				applyAppearanceSettings();
+		
+		/** 
+		 *	@brief Informs the tab that it should grab keyboard focus.
+		 *
+		 *	Text input widget will be selected.
+		 */
+		void				grabFocus();
 		bool				hasTabFocus() const;
 		
 		QIcon				icon() const;

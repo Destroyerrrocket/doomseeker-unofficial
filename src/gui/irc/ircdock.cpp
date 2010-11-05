@@ -54,7 +54,7 @@ IRCDock::IRCDock(QWidget* parent)
 		SLOT( globalMessageWithClass(const QString&, const IRCMessageClass&, IRCAdapterBase*) ) );
 }
 
-void IRCDock::addIRCAdapter(IRCAdapterBase* pIRCAdapter)
+IRCDockTabContents* IRCDock::addIRCAdapter(IRCAdapterBase* pIRCAdapter)
 {
 	IRCDockTabContents* pNewAdapterWidget = new IRCDockTabContents(this);
 
@@ -65,6 +65,8 @@ void IRCDock::addIRCAdapter(IRCAdapterBase* pIRCAdapter)
 	pNewAdapterWidget->setIRCAdapter(pIRCAdapter);
 	tabWidget->addTab(pNewAdapterWidget, pNewAdapterWidget->icon(), pNewAdapterWidget->title());
 	this->titleChange(pNewAdapterWidget);
+	
+	return pNewAdapterWidget;
 }
 
 void IRCDock::applyAppearanceSettings()
@@ -193,6 +195,8 @@ void IRCDock::tabCloseRequestedSlot(int index)
 void IRCDock::tabCurrentChanged(int index)
 {
 	tabWidget->tabBarPublic()->setTabTextColor(index, "");
+	IRCDockTabContents* pTab = (IRCDockTabContents*) tabWidget->widget(index);
+	pTab->grabFocus();
 }
 
 void IRCDock::tabFocusRequest(IRCDockTabContents* pCaller)
@@ -231,10 +235,12 @@ void IRCDock::toolBarAction(QAction* pAction)
 			IRCNetworkAdapter* pIRCNetworkAdapter = new IRCNetworkAdapter();
 
 			// Setup the UI tab for the new network.
-			addIRCAdapter(pIRCNetworkAdapter);
+			IRCDockTabContents* pTab = addIRCAdapter(pIRCNetworkAdapter);
 			
 			// Connect to the network.
 			pIRCNetworkAdapter->connect(connectionInfo);
+			
+			tabFocusRequest(pTab);
 		}
 	}
 	else if (pAction == toolBarOpenChatWindow)

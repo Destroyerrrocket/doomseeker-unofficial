@@ -41,7 +41,7 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 	public:
 		IRCDock(QWidget* parent = NULL);
 
-		void				addIRCAdapter(IRCAdapterBase* pIRCAdapter);
+		IRCDockTabContents*	addIRCAdapter(IRCAdapterBase* pIRCAdapter);
 		
 		/**
 		 *	@brief Applies IRC appearance settings to all open tabs.
