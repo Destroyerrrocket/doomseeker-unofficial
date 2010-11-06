@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Get the version number
-version_info=`grep --only-matching -E '[0-9.]{3,}|Beta|Alpha' ../src/version.h`
+version_info=`grep --only-matching -E '[0-9.]{3,}|Beta|Alpha' ../src/version.cpp`
 version="0.0"
 tag=""
 for i in $version_info
