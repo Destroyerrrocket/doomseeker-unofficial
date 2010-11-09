@@ -40,7 +40,7 @@ int Version::revisionNumber()
 
 QString Version::version()
 {
-	return "0.7 Beta";
+	return "0.8 Beta";
 }
 
 QString Version::versionRevision()

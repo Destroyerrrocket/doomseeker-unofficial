@@ -162,7 +162,7 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 };
 
 static SkulltagEnginePlugin skulltag_engine_plugin;
-PluginInfo SkulltagMain::info = {"Skulltag", "Skulltag server query plugin.", "The Skulltag Team", {0,6,0,0}, MAKEID('E','N','G','N'), &skulltag_engine_plugin};
+PluginInfo SkulltagMain::info = {"Skulltag", "Skulltag server query plugin.", "The Skulltag Team", {0,7,0,0}, MAKEID('E','N','G','N'), &skulltag_engine_plugin};
 extern "C" PLUGIN_EXPORT PluginInfo *doomSeekerInit()
 {
 	HUFFMAN_Construct();

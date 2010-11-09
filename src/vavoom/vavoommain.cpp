@@ -90,7 +90,7 @@ class PLUGIN_EXPORT VavoomEnginePlugin : public EnginePlugin
 };
 
 static VavoomEnginePlugin vavoom_engine_plugin;
-PluginInfo VavoomMain::info = {"Vavoom", "Vavoom server query plugin.", "The Skulltag Team", {0,3,0,0}, MAKEID('E','N','G','N'), &vavoom_engine_plugin};
+PluginInfo VavoomMain::info = {"Vavoom", "Vavoom server query plugin.", "The Skulltag Team", {0,4,0,0}, MAKEID('E','N','G','N'), &vavoom_engine_plugin};
 extern "C" PLUGIN_EXPORT PluginInfo *doomSeekerInit()
 {
 	return VavoomMain::get();

@@ -111,7 +111,7 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 };
 
 static OdamexEnginePlugin odamex_engine_plugin;
-PluginInfo OdamexMain::info = {"Odamex", "Odamex server query plugin.", "The Skulltag Team", {0,6,0,0}, MAKEID('E','N','G','N'), &odamex_engine_plugin};
+PluginInfo OdamexMain::info = {"Odamex", "Odamex server query plugin.", "The Skulltag Team", {0,7,0,0}, MAKEID('E','N','G','N'), &odamex_engine_plugin};
 extern "C" PLUGIN_EXPORT PluginInfo *doomSeekerInit()
 {
 	return OdamexMain::get();
