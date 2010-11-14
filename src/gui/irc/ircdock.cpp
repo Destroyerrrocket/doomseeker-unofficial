@@ -194,9 +194,12 @@ void IRCDock::tabCloseRequestedSlot(int index)
 
 void IRCDock::tabCurrentChanged(int index)
 {
-	tabWidget->tabBarPublic()->setTabTextColor(index, "");
-	IRCDockTabContents* pTab = (IRCDockTabContents*) tabWidget->widget(index);
-	pTab->grabFocus();
+	if (index >= 0)
+	{
+		tabWidget->tabBarPublic()->setTabTextColor(index, "");
+		IRCDockTabContents* pTab = (IRCDockTabContents*) tabWidget->widget(index);
+		pTab->grabFocus();
+	}
 }
 
 void IRCDock::tabFocusRequest(IRCDockTabContents* pCaller)
