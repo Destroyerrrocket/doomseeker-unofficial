@@ -124,15 +124,29 @@ bool ZDaemonMasterClient::readMasterResponse(QByteArray &data)
 		request.push_back(QByteArray(key.toAscii().constData(), key.length()+1));
 		request.push_back(QByteArray(requestHeader+8, 4));
 		pGlobalUdpSocket->writeDatagram(request, address, port);
+
+		packetBuffer.clear();
+		packetMask = 0; // Keep track of what packet #s we recieved.
 		return false;
 	}
 	else if(READINT32(in) == RESPONSE_LIST)
 	{
-		char compressionHeader[4] = { in[33], in[32], in[31], in[30] }; // To big endian for Qt
-		QByteArray compressedData(compressionHeader, 4);
-		compressedData.push_back(QByteArray(&in[34], data.size()-34));
+		quint8 numPackets = in[8]; // Not to sure about this actually.
+		quint32 expectedSize = READINT32(&in[9]);
+		quint8 packetNumber = in[25];
+		packetMask |= 1<<packetNumber;
+		quint32 packetPosition = READINT32(&in[26]);
+		if(packetBuffer.size() == 0)
+		{
+			char compressionHeader[4] = { in[33], in[32], in[31], in[30] }; // To big endian for Qt
+			QByteArray compressedData(compressionHeader, 4);
+			packetBuffer.push_back(compressionHeader);
+		}
+		packetBuffer.insert(packetPosition+4, QByteArray(&in[34], data.size()-34));
+		if(packetBuffer.size() != expectedSize+4 || packetMask != ((1<<numPackets)-1))
+			return false;
 
-		QByteArray uncompressedData = qUncompress(compressedData);
+		QByteArray uncompressedData = qUncompress(packetBuffer);
 		const char* serverList = uncompressedData.data();
 		int pos = 0;
 		quint8 next = 0;

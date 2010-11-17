@@ -24,6 +24,7 @@
 #ifndef __ZDAEMONMASTERCLIENT_H__
 #define __ZDAEMONMASTERCLIENT_H__
 
+#include <QByteArray>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QWaitCondition>
@@ -49,6 +50,9 @@ class ZDaemonMasterClient : public MasterClient
 
 		QNetworkAccessManager	*netAccessManager;
 		QWaitCondition			listWaitCondition;
+
+		QByteArray				packetBuffer;
+		quint32					packetMask;
 
 		//quint32					defaultIP;
 		QString					key;
