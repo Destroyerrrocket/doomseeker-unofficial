@@ -119,6 +119,8 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 			serverName = cvarValue;
 		else if(cvarName == "sv_maxplayers")
 			maxPlayers = cvarValue.toUInt();
+		else if(cvarName == "sv_maxclients")
+			maxClients = cvarValue.toUInt();
 		else if(cvarName == "sv_scorelimit")
 			serverScoreLimit = cvarValue.toUInt();
 		else if(cvarName == "sv_gametype")
