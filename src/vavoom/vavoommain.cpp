@@ -78,7 +78,7 @@ class PLUGIN_EXPORT VavoomEnginePlugin : public EnginePlugin
 		void			masterHost(QString &host, unsigned short &port) const
 		{
 			QString str = pConfig->setting("Masterserver");
-			Strings::translateServerAddress(str, host, port, "127.0.0.1", 26001);
+			Strings::translateServerAddress(str, host, port, "altdeath.com", 26001);
 		}
 
 		Server*			server(const QHostAddress &address, unsigned short port) const
@@ -98,5 +98,5 @@ extern "C" PLUGIN_EXPORT PluginInfo *doomSeekerInit()
 
 extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection &config)
 {
-	config.createSetting("Masterserver", "127.0.0.1:26001");
+	config.createSetting("Masterserver", "altdeath.com:26001");
 }
