@@ -167,7 +167,6 @@ const PluginInfo* SkulltagBinaries::plugin() const
 
 bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, Message& message) const
 {
-	QString error = "";
 	QString binaryPath = versionDir + '/' + ST_BINARY_NAME;
 	// This will create an actual path to file, because there is no '/' at the end
 	// of scriptFilepath.
@@ -176,7 +175,7 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 	QFile file(fullPathToFile);
 	if (fi.isDir())
 	{
-		error = tr("%1\n should be a script file but is a directory!").arg(fullPathToFile);
+		QString error = tr("%1\n should be a script file but is a directory!").arg(fullPathToFile);
 		message.setCustomError(error);
 		return false;
 	}
@@ -186,7 +185,7 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 		printf("File Permissions: %X\n", (unsigned int)file.permissions());
 		if ((file.permissions() & QFile::ExeUser) == 0)
 		{
-			error = tr("You don't have permissions to execute file: %1\n").arg(fullPathToFile);
+			QString error = tr("You don't have permissions to execute file: %1\n").arg(fullPathToFile);
 			message.setCustomError(error);
 			return false;
 		}
@@ -229,23 +228,16 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 	#endif
 	delete binaries;
 
-	if (!error.isNull())
-	{
-		error.prepend(tr("Error while creating a shell script: "));
-		message.setCustomError(error);
-		return false;
-	}
-
 	if (!file.open(QIODevice::WriteOnly))
 	{
-		error = tr("Couldn't open batch file \"%1\" for writing").arg(fullPathToFile);
+		QString error = tr("Couldn't open batch file \"%1\" for writing").arg(fullPathToFile);
 		message.setCustomError(error);
 		return false;
 	}
 
 	if (file.write(content.toAscii()) < 0)
 	{
-		error = tr("Error while writing batch file \"%1\"").arg(fullPathToFile);
+		QString error = tr("Error while writing batch file \"%1\"").arg(fullPathToFile);
 		message.setCustomError(error);
 		file.close();
 		return false;
@@ -255,7 +247,7 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 
 	if (!file.setPermissions(file.permissions() | QFile::ExeUser))
 	{
-		error = tr("Cannot set permissions for file:\n%1").arg(fullPathToFile);
+		QString error = tr("Cannot set permissions for file:\n%1").arg(fullPathToFile);
 		message.setCustomError(error);
 		return false;
 	}
