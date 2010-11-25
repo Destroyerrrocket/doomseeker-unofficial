@@ -332,7 +332,7 @@ add_executable(doomseeker
 # Doomseeker.
 add_dependencies(doomseeker revision_check)
 
-target_link_libraries(doomseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} wadseeker)
+target_link_libraries(doomseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} wadseeker ${CMAKE_DL_LIBS})
 
 # Allow plugins to link with doomseeker
 set_target_properties(doomseeker PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR} ENABLE_EXPORTS 1)
