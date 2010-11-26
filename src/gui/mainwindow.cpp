@@ -71,9 +71,10 @@ MainWindow::MainWindow(int argc, char** argv)
 Warning: \n\
 Doomseeker failed to detect any plugins.\n\
 While the core application will still work its functionality is going to be limited.\n\
-One of the proper locations for plugin modules is the engines/ directory.\n\
+One of the proper locations for plugin modules is the \"engines/\" directory.\n\
 ");
-		QMessageBox::warning(NULL, tr("Doomseeker - plugin load failure"), message);
+		gLog << message;
+		QMessageBox::critical(NULL, tr("Doomseeker - plugin load failure"), message);
 	}
 	
 	ip2cParser = NULL;
@@ -83,6 +84,9 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 	// The buddies list must always be available so we can perform certain operations on it
 	buddiesList = new DockBuddiesList(this);
 	menuView->addAction(buddiesList->toggleViewAction());
+	buddiesList->toggleViewAction()->setText(tr("&Buddies"));
+	buddiesList->toggleViewAction()->setShortcut(tr("CTRL+B"));
+	
 	connect(buddiesList, SIGNAL( joinServer(const Server*) ), this, SLOT( runGame(const Server*) ));
 	buddiesList->hide();
 	this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
@@ -164,18 +168,48 @@ One of the proper locations for plugin modules is the engines/ directory.\n\
 		ip2cParseDatabase();
 	}	
 
-	// check query on statup
-	bool queryOnStartup = gConfig.doomseeker.bQueryOnStartup;
-	if (queryOnStartup)
+	// Check query on statup
+	// Let's see if we have any plugins first. If not, display error.
+	if (Main::enginePlugins->numPlugins() > 0)
 	{
-		getServers();
+		bool bGettingServers = false;
+		bool queryOnStartup = gConfig.doomseeker.bQueryOnStartup;
+		if (queryOnStartup)
+		{
+			// If "Query on startup" option is enabled we should
+			// attempt to refresh any masters that are enabled
+			// in the Query menu.
+		
+			if (isAnyMasterEnabled())
+			{
+				bGettingServers = true;
+				getServers();				
+			}
+			else
+			{
+				gLog << tr("Query on startup warning: No master servers are enabled in the Query menu.");
+			}
+		}
+		
+		// If we already successfully called the getServers() method
+		// there is no need to call refreshCustomsServers().
+		if (!bGettingServers && hasCustomServers())
+		{
+			// Custom servers should be refreshed no matter what.
+			// They will not block the app in any way, there is no reason
+			// not to refresh them.
+			refreshCustomServers();
+		}
 	}
 	else
 	{
-		// Custom servers should be refreshed no matter what.
-		// They will not block the app in any way, there is no reason
-		// not to refresh them.
-		refreshCustomServers();
+		// There are no plugins so something is really bad. 
+		// Display error message.
+		QMessageBox::critical(NULL, tr("Doomseeker critical error"), tr("Doomseeker was unable to find any plugin libraries. \
+\nAlthough the application will still work it will not be possible to fetch any server info or launch any game.\n\
+\n\
+Please check if there are any files in \"engines/\" directory.\n\
+To fix this problem you may try downloading Doomseeker again from the site specified in the Help|About box and reinstalling Doomseeker."));
 	}
 }
 
@@ -409,12 +443,23 @@ void MainWindow::getServers()
 	{
 		gLog << tr("Senseless refresh operation attempted.");
 
-		QString message = tr("\
-Doomseeker is unable to proceed with the refresh \
-operation because one or more of the following problems occured:\n\
-- Plugins are missing from the engines/ directory\n\
-- All master servers have been disabled from the query menu\n\
-- There are no custom servers present.\n");
+		QString message = tr("Doomseeker is unable to proceed with the refresh \
+operation because the following problem has occured:\n\n");
+		
+		if (Main::enginePlugins->numPlugins() == 0)
+		{
+			message += tr("Plugins are missing from the \"engines/\" directory.");
+		}
+		else if (!isAnyMasterEnabled())
+		{
+			message += tr("No master servers are enabled in the \"Query\" menu.");
+		}
+		else
+		{
+			message += tr("Unknown error occured.");
+		}
+		
+		gLog << message;
 		QMessageBox::warning(this, tr("Doomseeker - senseless operation"), message);
 		return;
 	}
@@ -429,7 +474,7 @@ operation because one or more of the following problems occured:\n\
 
 	if (!isAnyMasterEnabled())
 	{
-		gLog << tr("Warning: No master servers were enabled for this refresh. Check your query menu or engines/ directory. Custom servers will still refresh.");
+		gLog << tr("Warning: No master servers were enabled for this refresh. Check your Query menu or \"engines/\" directory. Custom servers will still refresh.");
 	}
 	
 	masterManager->clearServersList();
@@ -502,6 +547,8 @@ void MainWindow::initIRCDock()
 {
 	ircDock = new IRCDock(this);
 	menuView->addAction(ircDock->toggleViewAction());
+	ircDock->toggleViewAction()->setText(tr("&IRC"));
+	ircDock->toggleViewAction()->setShortcut(tr("CTRL+I"));
 	ircDock->hide();
 	this->addDockWidget(Qt::BottomDockWidgetArea, ircDock);
 	
@@ -516,6 +563,8 @@ void MainWindow::initLogDock()
 {
 	logDock = new LogDock(this);
 	menuView->addAction(logDock->toggleViewAction());
+	logDock->toggleViewAction()->setText(tr("&Log"));
+	logDock->toggleViewAction()->setShortcut(tr("CTRL+L"));
 	logDock->hide();
 	this->addDockWidget(Qt::BottomDockWidgetArea, logDock);
 
@@ -1150,7 +1199,15 @@ void MainWindow::toolBarAction(QAction* pAction)
 	}
 	else if (pAction == toolBarRefreshAll)
 	{
-		serverTableHandler->refreshAll();		
+		if (serverTableHandler->hasAtLeastOneServer())
+		{
+			serverTableHandler->refreshAll();		
+		}
+		else
+		{
+			gLog << "Attempted a refresh on an empty table. Getting servers instead.";
+			getServers();
+		}
 	}
 }
 

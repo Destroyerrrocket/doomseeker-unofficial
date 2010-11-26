@@ -48,6 +48,7 @@ class ServerListHandler : public QObject
 		void 				clearTable();
 
 		QWidget*			getMainWindow() { return mainWindow; }
+		bool				hasAtLeastOneServer() const;
 
 		bool				isSortingByColumn(int columnIndex);
 

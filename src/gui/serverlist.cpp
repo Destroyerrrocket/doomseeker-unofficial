@@ -307,6 +307,11 @@ Qt::SortOrder ServerListHandler::getColumnDefaultSortOrder(int columnId)
 	return ServerListColumns::columns[columnId].defaultSortOrder;
 }
 
+bool ServerListHandler::hasAtLeastOneServer() const
+{
+	return model->rowCount() > 0;
+}
+
 void ServerListHandler::initCleanerTimer()
 {
 	cleanerTimer.setInterval(200);
