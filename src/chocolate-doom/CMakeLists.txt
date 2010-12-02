@@ -5,10 +5,12 @@ include(../PluginHeader.txt)
 
 set(CHOCOLATEDOOM_QT_FILES
 	chocolatedoomserver.h
+	chocolatedoommasterclient.h
 )
 set(CHOCOLATEDOOM_FILES
 	chocolatedoomgamerunner.cpp
 	chocolatedoommain.cpp
+	chocolatedoommasterclient.cpp
 	chocolatedoomserver.cpp
 )
 

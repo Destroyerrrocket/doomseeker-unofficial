@@ -22,11 +22,13 @@
 //------------------------------------------------------------------------------
 
 #include "main.h"
+#include "strings.h"
 #include "irc/ircnetworkentity.h"
 #include "gui/configuration/engineconfigurationbasebox.h"
 #include "sdeapi/pluginloader.hpp"
 
 #include "chocolate-doom/chocolatedoommain.h"
+#include "chocolate-doom/chocolatedoommasterclient.h"
 #include "chocolate-doom/chocolatedoombinaries.h"
 #include "chocolate-doom/chocolatedoomserver.h"
 
@@ -53,7 +55,7 @@ class PLUGIN_EXPORT ChocolateDoomEnginePlugin : public EnginePlugin
 		unsigned short					defaultServerPort() const { return 2342; }
 		const QList<GameMode>*			gameModes() const { return NULL; }
 		const QList<GameCVar>*			gameModifiers() const { return NULL; }
-		bool							hasMasterServer() const { return false; }
+		bool							hasMasterServer() const { return true; }
 
 		QList<GameCVar>					limits(const GameMode& mode) const { return QList<GameCVar>(); }
 
@@ -64,9 +66,13 @@ class PLUGIN_EXPORT ChocolateDoomEnginePlugin : public EnginePlugin
 
 		MasterClient*					masterClient() const
 		{
-			return NULL;
+			return new ChocolateDoomMasterClient();
 		}
-		void							masterHost(QString &host, unsigned short &port) const {}
+		void							masterHost(QString &host, unsigned short &port) const
+		{
+			QString str = pConfig->setting("Masterserver");
+			Strings::translateServerAddress(str, host, port, "master.chocolate-doom.org", 2342);
+		}
 
 		Server*							server(const QHostAddress &address, unsigned short port) const
 		{
@@ -96,4 +102,5 @@ extern "C" PLUGIN_EXPORT PluginInfo *doomSeekerInit()
 
 extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection &config)
 {
+	config.createSetting("Masterserver", "master.chocolate-doom.org:2342");
 }
