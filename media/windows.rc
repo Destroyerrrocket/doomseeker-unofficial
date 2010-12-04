@@ -4,8 +4,8 @@
 #include "../src/svnrevision.h"
 
 1 VERSIONINFO
-FILEVERSION 0,7,0,SVN_REVISION_NUMBER
-PRODUCTVERSION 0,7,0,SVN_REVISION_NUMBER
+FILEVERSION 0,8,0,SVN_REVISION_NUMBER
+PRODUCTVERSION 0,8,0,SVN_REVISION_NUMBER
 FILETYPE VFT_APP
 {
   BLOCK "StringFileInfo"
@@ -13,14 +13,14 @@ FILETYPE VFT_APP
 		 BLOCK "040904E4"
 		 {
 			 VALUE "CompanyName", "The Skulltag Team"
-			 VALUE "FileVersion", "0.7.0.0"
+			 VALUE "FileVersion", "0.8.0.0"
 			 VALUE "FileDescription", "Doom server browser"
 			 VALUE "InternalName", "doomseeker"
 			 VALUE "LegalCopyright", "The Skulltag Team 2009 - 2010"
 			 VALUE "LegalTrademarks", ""
 			 VALUE "OriginalFilename", "doomseeker.exe"
 			 VALUE "ProductName", "Doomseeker"
-			 VALUE "ProductVersion", "0.7.0.0"
+			 VALUE "ProductVersion", "0.8.0.0"
 		 }
 	 }
 }
