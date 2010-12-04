@@ -65,6 +65,7 @@
     <addaction name="menuActionHelp"/>
     <addaction name="separator"/>
     <addaction name="menuActionAbout"/>
+    <addaction name="menuActionAboutQt"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -203,6 +204,11 @@
   <action name="menuActionIRCOptions">
    <property name="text">
     <string>&amp;IRC Options</string>
+   </property>
+  </action>
+  <action name="menuActionAboutQt">
+   <property name="text">
+    <string>About &amp;Qt</string>
    </property>
   </action>
  </widget>

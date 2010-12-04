@@ -53,6 +53,9 @@ IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 	connect(leCommandLine, SIGNAL( returnPressed() ), this, SLOT( sendMessage() ));
 	
 	applyAppearanceSettings();
+	
+	// Performance check line, keep commented for non-testing builds:
+	//receiveMessage(Strings::createRandomAlphaNumericStringWithNewLines(80, 5000));
 }
 
 IRCDockTabContents::~IRCDockTabContents()
@@ -120,11 +123,11 @@ void IRCDockTabContents::applyAppearanceSettings()
 	QString networkActionClassName = IRCMessageClass::toStyleSheetClassName(IRCMessageClass::NetworkAction);
 	
 	QString htmlStyleSheetMessageArea = "";
-	htmlStyleSheetMessageArea += QString("a { color: %1; } ").arg(appearance.urlColor);
+	htmlStyleSheetMessageArea += "span { white-space: pre; }";
+	htmlStyleSheetMessageArea += QString("a { color: %1; white-space: pre; } ").arg(appearance.urlColor);
 	htmlStyleSheetMessageArea += QString("." + channelActionClassName + " { color: %1; } ").arg(appearance.channelActionColor);
 	htmlStyleSheetMessageArea += QString("." + errorClassName + " { color: %1; } ").arg(appearance.errorColor);
 	htmlStyleSheetMessageArea += QString("." + networkActionClassName + " { color: %1; } ").arg(appearance.networkActionColor);
-	
 		 
 	this->lvUserList->setStyleSheet(qtStyleSheet);
 	this->lvUserList->setFont(appearance.userListFont);
@@ -287,8 +290,8 @@ void IRCDockTabContents::nameUpdated(const IRCUserInfo& userInfo)
 
 void IRCDockTabContents::newChatWindowIsOpened(IRCChatAdapter* pAdapter)
 {
-	this->lvUserList->setModel(new QStandardItemModel(this));
-
+	// Once a new chat adapter is opened we need to add it to the master
+	// dock widget.
 	pParentIRCDock->addIRCAdapter(pAdapter);
 }
 
@@ -307,9 +310,16 @@ void IRCDockTabContents::receiveMessageWithClass(const QString& message, const I
 	QString className = messageClass.toStyleSheetClassName();
 	
 	QString messageHtmlEscaped = message;
+	
+	// As the new-line character is stripped by the lower levels we should
+	// assume that each message ends with a new-line char, as specified
+	// by RFC 1459.
+	messageHtmlEscaped += "\n";
+	
 	messageHtmlEscaped.replace("<", "&lt;").replace(">", "&gt;");
 	
 	messageHtmlEscaped = Strings::wrapUrlsWithHtmlATags(messageHtmlEscaped);
+	
 	if (gIRCConfig.appearance.timestamps)
 	{
 		messageHtmlEscaped = Strings::timestamp("[hh:mm:ss] ") + messageHtmlEscaped;
@@ -317,11 +327,11 @@ void IRCDockTabContents::receiveMessageWithClass(const QString& message, const I
 	
 	if (className.isEmpty())
 	{
-		messageHtmlEscaped = ("<span>" + messageHtmlEscaped + "</span><br />");
+		messageHtmlEscaped = "<span>" + messageHtmlEscaped + "</span>";
 	}
 	else
 	{
-		messageHtmlEscaped = ("<span class='" + className + "'>" + messageHtmlEscaped + "</span><br />");
+		messageHtmlEscaped = ("<span class='" + className + "'>" + messageHtmlEscaped + "</span>");
 	}
 	
 	this->insertMessage(messageClass, messageHtmlEscaped);

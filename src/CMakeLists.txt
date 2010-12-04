@@ -253,6 +253,7 @@ set(SOURCE_FILES
 	masterclient.cpp
 	mastermanager.cpp
 	pathfinder.cpp
+	random.cpp
 	refresher.cpp
 	strings.cpp	
 	version.cpp
@@ -297,6 +298,7 @@ set(HEADER_FILES
 	global.h
 	ini.h
 	main.h
+	random.h
 	pathfinder.h
 	qtmetapointer.h	
 	strings.h

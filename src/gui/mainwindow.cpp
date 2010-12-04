@@ -56,11 +56,13 @@
 
 const QString MainWindow::HELP_SITE_URL = "http://skulltag.net/wiki/Doomseeker";
 
-MainWindow::MainWindow(int argc, char** argv)
+MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 : bTotalRefreshInProcess(false), buddiesList(NULL), bWasMaximized(false),
   bWantToQuit(false), logDock(NULL), masterManager(NULL),
   trayIcon(NULL), trayIconMenu(NULL)
 {
+	this->application = application;
+
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
 	setupIcons();
@@ -351,6 +353,7 @@ void MainWindow::connectEntities()
 
 	// Controls
 	connect(menuActionAbout, SIGNAL( triggered() ), this, SLOT( menuHelpAbout() ));
+	connect(menuActionAboutQt, SIGNAL( triggered() ), application, SLOT( aboutQt() ));
 	connect(menuActionBuddies, SIGNAL( triggered() ), this, SLOT( menuBuddies() ));
 	connect(menuActionConfigure, SIGNAL( triggered() ), this, SLOT( menuOptionsConfigure() ));
 	connect(menuActionCreateServer, SIGNAL( triggered() ), this, SLOT( menuCreateServer() ));

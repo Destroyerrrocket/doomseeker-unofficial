@@ -49,7 +49,7 @@ class MAIN_EXPORT Main : public QObject
 		static bool					running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
 		static RefreshingThread*	refreshingThread;
 		static QString				workingDirectory;
-
+		
 		Main(int argc, char* argv[]);
 		~Main();
 

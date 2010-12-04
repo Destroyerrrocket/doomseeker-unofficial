@@ -36,6 +36,7 @@ class MAIN_EXPORT Strings
 		 *	The created string consists of lowercase letters and digits.
 		 */
 		static QString			createRandomAlphaNumericString(unsigned numChars);
+		static QString			createRandomAlphaNumericStringWithNewLines(unsigned numCharsPerLine, unsigned numLines);
 
 		/**
 		 * @brief Adds escape characters to a string.

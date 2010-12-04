@@ -113,6 +113,11 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		void				nameListUpdated(const IRCUserList& userList);
 		void				nameRemoved(const IRCUserInfo& userInfo);
 		void				nameUpdated(const IRCUserInfo& userInfo);
+		
+		/**
+		 *	@brief Captures signals from IRC Networks which indicate that a new
+		 *	chat window is being opened.
+		 */
 		void				newChatWindowIsOpened(IRCChatAdapter* pAdapter);
 		void				receiveError(const QString& error);
 		void				sendMessage();

@@ -21,9 +21,10 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "strings.h"
+
+#include "random.h"
+
 #include <cmath>
-#include <cstdlib>
-#include <ctime>
 
 #include <QDateTime>
 #include <QStringList>
@@ -41,14 +42,22 @@ const char Strings::RANDOM_CHAR_POOL[RANDOM_CHAR_POOL_SIZE] =
 
 QString Strings::createRandomAlphaNumericString(unsigned numChars)
 {
-	QDateTime currentTime = QDateTime::currentDateTime();
-	srand(clock() + currentTime.toTime_t());
-	
 	QString generatedString = "";
 	for (unsigned i = 0; i < numChars; ++i)
 	{
-		unsigned index = rand() % RANDOM_CHAR_POOL_SIZE;
+		unsigned index = (unsigned) Random::nextUShort(RANDOM_CHAR_POOL_SIZE);
 		generatedString += RANDOM_CHAR_POOL[index];
+	}
+	
+	return generatedString;
+}
+
+QString Strings::createRandomAlphaNumericStringWithNewLines(unsigned numCharsPerLine, unsigned numLines)
+{
+	QString generatedString = "";
+	for (unsigned i = 0; i < numLines; ++i)
+	{
+		generatedString += createRandomAlphaNumericString(numCharsPerLine) + "\n";
 	}
 	
 	return generatedString;

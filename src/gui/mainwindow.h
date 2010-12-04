@@ -69,7 +69,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 	Q_OBJECT
 
 	public:
-		MainWindow(int argc, char** argv);
+		MainWindow(QApplication* application, int argc, char** argv);
 		~MainWindow();
 
 		/**
@@ -89,6 +89,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 	protected:
 		static const QString	HELP_SITE_URL;
 
+		QApplication*		application;
 		QTimer				autoRefreshTimer;
 
 		/**

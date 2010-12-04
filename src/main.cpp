@@ -265,7 +265,7 @@ void Main::createMainWindow()
 {
 	gLog << tr("Preparing GUI.");
 
-	MainWindow* mainWnd = new MainWindow(argumentsCount, arguments);
+	MainWindow* mainWnd = new MainWindow(application, argumentsCount, arguments);
 	if (gConfig.doomseeker.bMainWindowMaximized)
 	{
 		mainWnd->showMaximized();

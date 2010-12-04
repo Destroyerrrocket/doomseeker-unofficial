@@ -147,6 +147,10 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		void								openNewAdapter(const QString& recipientName);
 
 	signals:
+		/**
+		 *	@brief Signal emitted when a new chat (priv or channel) is opened
+		 *	from this network.
+		 */
 		void								newChatWindowIsOpened(IRCChatAdapter* pWindow);
 		
 	protected:
