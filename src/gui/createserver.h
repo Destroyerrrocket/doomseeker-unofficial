@@ -40,6 +40,8 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		CreateServerDlg(QWidget* parent = NULL);
 		~CreateServerDlg();
 
+		bool	commandLineArguments(QString &executable, QStringList &args);
+		void	makeSetupServerDialog(const PluginInfo *plugin);
 	protected slots:
 		void	btnAddMapToMaplistClicked();
 		void	btnAddPwadClicked();
@@ -81,6 +83,7 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		static const QString			TEMP_SERVER_CONFIG_FILENAME;
 
 		bool							bSuppressMissingExeErrors;
+		bool							bIsServerSetup;
 		const PluginInfo* 				currentEngine;
 		QList<DMFlagsTabWidget*>		dmFlagsTabs;
 		QList<GameLimitWidget*>			limitWidgets;
@@ -128,6 +131,7 @@ class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		void	removeLimitWidgets();
 		void	runGame(bool offline);
 		bool	saveConfig(const QString& filename);
+		bool	setEngine(const QString &engineName);
 };
 
 #endif

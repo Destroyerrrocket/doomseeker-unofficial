@@ -38,7 +38,10 @@ class MAIN_EXPORT GameRunner : public QObject
 	public:
 		GameRunner(const Server* server);
 
-		virtual void				connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword);
+		/**
+		 * @return false to terminate the join process.
+		 */
+		virtual bool				connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword);
 
 		/**
 		 *	@param [out] cli - after successful call this will contain

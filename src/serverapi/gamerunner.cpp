@@ -38,7 +38,7 @@ GameRunner::GameRunner(const Server* server)
 {
 }
 
-void GameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword)
+bool GameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword)
 {
 	QString address = QString("%1:%2").arg(server->address().toString()).arg(server->port());
 
@@ -71,6 +71,7 @@ void GameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwad
 			args << argForConnectPassword() << connectPassword;
 		}
 	}
+	return true;
 }
 
 Message GameRunner::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cmdLine, bool bOfflinePlay)
@@ -96,7 +97,8 @@ Message GameRunner::createHostCommandLine(const HostInfo& hostInfo, CommandLineI
 	}
 
 	// Port
-	cmdLine.args << argForPort() << QString::number(server->port());
+	if(!bOfflinePlay)
+		cmdLine.args << argForPort() << QString::number(server->port());
 
 	// CVars
 	const QList<GameCVar>& cvars = hostInfo.cvars;
@@ -184,7 +186,11 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 	QStringList missingPwads;
 	bool iwadFound = false;
 
-	connectParameters(cli.args, pathFinder, iwadFound, connectPassword);
+	if(!connectParameters(cli.args, pathFinder, iwadFound, connectPassword))
+	{
+		joinError.type = JoinError::Terminate;
+		return joinError;
+	}
 
 	for (int i = 0; i < server->numWads(); ++i)
 	{

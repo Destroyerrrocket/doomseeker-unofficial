@@ -31,9 +31,10 @@ OdamexGameRunner::OdamexGameRunner(const OdamexServer* server)
 {
 }
 
-void OdamexGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword)
+bool OdamexGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword)
 {
-	GameRunner::connectParameters(args, pf, iwadFound, connectPassword);
+	if(!GameRunner::connectParameters(args, pf, iwadFound, connectPassword))
+		return false;
 
 	const QStringList& dehPatches = odamexServer->dehs();
 	if(dehPatches.count() > 0)
@@ -66,4 +67,5 @@ void OdamexGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool
 		}
 		args << waddir;
 	}
+	return true;
 }

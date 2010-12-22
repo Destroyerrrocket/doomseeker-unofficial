@@ -994,6 +994,8 @@ bool MainWindow::obtainJoinCommandLine(const Server* server, CommandLineInfo& cl
 
 		switch (joinError.type)
 		{
+			case JoinError::Terminate:
+				return false;
 			case JoinError::Critical:
 				if (!joinError.error.isEmpty())
 				{

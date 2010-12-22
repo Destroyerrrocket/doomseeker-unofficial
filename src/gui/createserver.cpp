@@ -44,6 +44,7 @@ const QString CreateServerDlg::TEMP_SERVER_CONFIG_FILENAME = "/tmpserver.cfg";
 CreateServerDlg::CreateServerDlg(QWidget* parent) : QDialog(parent)
 {
 	bSuppressMissingExeErrors = true;
+	bIsServerSetup = false;
 	currentEngine = NULL;
 
 	setupUi(this);
@@ -201,40 +202,12 @@ void CreateServerDlg::btnClearPwadListClicked()
 
 void CreateServerDlg::btnCommandLineClicked()
 {
-	const QString errorCapt = tr("Doomseeker - create server");
-	if (currentEngine == NULL)
+	QString executable;
+	QStringList args;
+	if(commandLineArguments(executable, args))
 	{
-		QMessageBox::critical(NULL, errorCapt, tr("No engine selected"));
-		return;
-	}
-
-	Server* server = currentEngine->pInterface->server(QHostAddress(), spinPort->value());
-	HostInfo hi;
-
-	if (createHostInfo(hi, server, false))
-	{
-		CommandLineInfo cli;
-		QString error;
-
-		GameRunner* gameRunner = server->gameRunner();
-		Message message = gameRunner->createHostCommandLine(hi, cli, false);
-
-		delete server;
-		delete gameRunner;
-
-		if (message.isError())
-		{
-			QMessageBox::critical(NULL, tr("Doomseeker - error"), message.content);
-		}
-		else
-		{
-			CopyTextDlg ctd(cli.executable.absoluteFilePath() + " " + cli.args.join(" "), "Host server command line:", this);
-			ctd.exec();
-		}
-	}
-	else if (server != NULL)
-	{
-		delete server;
+		CopyTextDlg ctd(executable + " " + args.join(" "), "Host server command line:", this);
+		ctd.exec();
 	}
 }
 
@@ -330,7 +303,10 @@ void CreateServerDlg::btnSaveClicked()
 
 void CreateServerDlg::btnStartServerClicked()
 {
-	runGame(false);
+	if(!bIsServerSetup)
+		runGame(false);
+	else
+		accept();
 }
 
 void CreateServerDlg::cboEngineSelected(int index)
@@ -359,6 +335,48 @@ void CreateServerDlg::cboGamemodeSelected(int index)
 	}
 }
 
+bool CreateServerDlg::commandLineArguments(QString &executable, QStringList &args)
+{
+	const QString errorCapt = tr("Doomseeker - create server");
+	if (currentEngine == NULL)
+	{
+		QMessageBox::critical(NULL, errorCapt, tr("No engine selected"));
+		return false;
+	}
+
+	Server* server = currentEngine->pInterface->server(QHostAddress(), spinPort->value());
+	HostInfo hi;
+
+	if (createHostInfo(hi, server, bIsServerSetup))
+	{
+		CommandLineInfo cli;
+		QString error;
+
+		GameRunner* gameRunner = server->gameRunner();
+		Message message = gameRunner->createHostCommandLine(hi, cli, bIsServerSetup);
+
+		delete server;
+		delete gameRunner;
+
+		if (message.isError())
+		{
+			QMessageBox::critical(NULL, tr("Doomseeker - error"), message.content);
+			return false;
+		}
+		else
+		{
+			executable = cli.executable.absoluteFilePath();
+			args = cli.args;
+			return true;
+		}
+	}
+	else if (server != NULL)
+	{
+		delete server;
+	}
+	return false;
+}
+
 bool CreateServerDlg::createHostInfo(HostInfo& hostInfo, Server* server, bool offline)
 {
 	if (server != NULL)
@@ -372,7 +390,7 @@ bool CreateServerDlg::createHostInfo(HostInfo& hostInfo, Server* server, bool of
 		QString client = binaries->clientBinary(message);
 
 		bool bIsLineEditPotiningToServerBinary = (leExecutable->text() == binaries->serverBinary(message));
-		bool bShouldUseClientBinary = offline && message.isIgnore() && bIsLineEditPotiningToServerBinary;
+		bool bShouldUseClientBinary = (offline || bIsServerSetup) && message.isIgnore() && bIsLineEditPotiningToServerBinary;
 
 		if(bShouldUseClientBinary)
 		{
@@ -552,7 +570,10 @@ void CreateServerDlg::initEngineSpecific(const PluginInfo* engineInfo)
 	// See: btnDefaultExecutableClicked()
 	Server* server = engine->server(QHostAddress("127.0.0.1"), 1);
 	Binaries* binaries = server->binaries();
-	leExecutable->setText(binaries->serverBinary(message));
+	if(bIsServerSetup)
+		leExecutable->setText(binaries->clientBinary(message));
+	else
+		leExecutable->setText(binaries->serverBinary(message));
 
 	if (message.isError() && !bSuppressMissingExeErrors)
 	{
@@ -728,43 +749,37 @@ bool CreateServerDlg::loadConfig(const QString& filename)
 	Config cfg(filename);
 
 	// General
-	QString engineName = cfg.setting("engine")->string();
-	int engIndex = Main::enginePlugins->pluginIndexFromName(engineName);
-	if (engIndex < 0)
+	if(!bIsServerSetup)
 	{
-		QMessageBox::critical(NULL, tr("Doomseeker - load server config"), tr("Plugin for engine \"%1\" is not present!").arg(engineName));
-		return false;
-	}
+		QString engineName = cfg.setting("engine")->string();
+		const PluginInfo* prevEngine = currentEngine;
+		if(!setEngine(engineName))
+			return false;
 
-	const PluginInfo* prevEngine = currentEngine;
-	const PluginInfo* newEngine = (*Main::enginePlugins)[engIndex]->info;
+		bool bChangeExecutable = (prevEngine != currentEngine || !cbLockExecutable->isChecked());
 
-	bool bChangeExecutable = (prevEngine != newEngine || !cbLockExecutable->isChecked());
-
-	// First let's check if we can use executable stored in the server's config.
-	// We will save the path to this executable in a local variable.
-	QString executablePath = "";
-	if (bChangeExecutable)
-	{
-		QString executablePath = cfg.setting("executable")->string();
-		QFileInfo fileInfo(executablePath);
-		if (!fileInfo.exists())
+		// First let's check if we can use executable stored in the server's config.
+		// We will save the path to this executable in a local variable.
+		QString executablePath = "";
+		if (bChangeExecutable)
 		{
-			// Executable cannot be found, display error message and reset
-			// the local variable.
-			QMessageBox::warning(NULL, tr("Doomseeker - load server config"), tr("Game executable saved in config cannot be found.\nDefault executable will be used."));
-			executablePath = "";
+			executablePath = cfg.setting("executable")->string();
+			QFileInfo fileInfo(executablePath);
+			if (!fileInfo.exists())
+			{
+				// Executable cannot be found, display error message and reset
+				// the local variable.
+				QMessageBox::warning(NULL, tr("Doomseeker - load server config"), tr("Game executable saved in config cannot be found.\nDefault executable will be used."));
+				executablePath = "";
+			}
 		}
-	}
 
-	// Select engine. This will also select the default executable path.
-	cboEngine->setCurrentIndex(engIndex);
-
-	// If we successfuly retrieved path from the config we shall
-	// set this path in the line edit control.
-	if (!executablePath.isEmpty())
-	{
-		leExecutable->setText(executablePath);
+		// If we successfuly retrieved path from the config we shall
+		// set this path in the line edit control.
+		if (!executablePath.isEmpty())
+		{
+			leExecutable->setText(executablePath);
+		}
 	}
 
 	leServername->setText(cfg.setting("name")->string());
@@ -831,6 +846,25 @@ bool CreateServerDlg::loadConfig(const QString& filename)
 	// Custom parameters
 	pteCustomParameters->document()->setPlainText(cfg.setting("CustomParams")->string());
 	return true;
+}
+
+void CreateServerDlg::makeSetupServerDialog(const PluginInfo *plugin)
+{
+	bSuppressMissingExeErrors = true;
+	bIsServerSetup = true;
+	setEngine(plugin->name);
+
+	// Disable some stuff
+	QWidget *disableControls[] =
+	{
+		cboEngine, leExecutable, btnBrowseExecutable, btnDefaultExecutable,
+		cbLockExecutable, leServername, spinPort, cbBroadcastToLAN,
+		cbBroadcastToMaster, btnPlayOffline, spinMaxClients, spinMaxPlayers,
+
+		NULL
+	};
+	for(int i = 0;disableControls[i] != NULL;++i)
+		disableControls[i]->setDisabled(true);
 }
 
 void CreateServerDlg::removeDMFlagsTabs()
@@ -962,4 +996,18 @@ bool CreateServerDlg::saveConfig(const QString& filename)
 	cfg.setting("CustomParams")->setValue(pteCustomParameters->toPlainText());
 
 	return cfg.saveConfig();
+}
+
+bool CreateServerDlg::setEngine(const QString &engineName)
+{
+	int engIndex = Main::enginePlugins->pluginIndexFromName(engineName);
+	if (engIndex < 0)
+	{
+		QMessageBox::critical(NULL, tr("Doomseeker - load server config"), tr("Plugin for engine \"%1\" is not present!").arg(engineName));
+		return false;
+	}
+
+	// Select engine. This will also select the default executable path.
+	cboEngine->setCurrentIndex(engIndex);
+	return true;
 }

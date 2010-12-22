@@ -72,7 +72,9 @@ struct JoinError
 	{
 		NoError = 0,
 		MissingWads = 1,
-		Critical = 2
+		Critical = 2,
+
+		Terminate = 3, // Special use to terminate the connection process.
 	};
 
 	JoinErrorType		type;

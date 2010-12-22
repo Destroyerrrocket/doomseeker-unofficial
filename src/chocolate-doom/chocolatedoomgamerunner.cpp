@@ -22,9 +22,31 @@
 //------------------------------------------------------------------------------
 #include "chocolate-doom/chocolatedoomgamerunner.h"
 #include "chocolate-doom/chocolatedoomserver.h"
+#include "gui/createserver.h"
+#include "serverapi/playerslist.h"
 #include "main.h"
 
 ChocolateDoomGameRunner::ChocolateDoomGameRunner(const ChocolateDoomServer* server)
 : GameRunner(server)
 {
+}
+
+bool ChocolateDoomGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword)
+{
+	if(server->playersList()->size() > 0)
+		return GameRunner::connectParameters(args, pf, iwadFound, connectPassword);
+	else
+	{
+		QString tmp;
+		CreateServerDlg *csd = new CreateServerDlg();
+		csd->makeSetupServerDialog(plugin());
+		if(csd->exec() == QDialog::Accepted)
+		{
+			csd->commandLineArguments(tmp, args);
+			return GameRunner::connectParameters(args, pf, iwadFound, connectPassword);
+		}
+		else
+			return false;
+	}
+	return true;
 }

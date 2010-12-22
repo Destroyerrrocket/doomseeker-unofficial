@@ -31,9 +31,10 @@ VavoomGameRunner::VavoomGameRunner(const VavoomServer* server)
 {
 }
 
-void VavoomGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword)
+bool VavoomGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword)
 {
-	GameRunner::connectParameters(args, pf, iwadFound, connectPassword);
+	if(!GameRunner::connectParameters(args, pf, iwadFound, connectPassword))
+		return false;
 
 	// Remove original -iwad command
 	int iwadArg = args.indexOf("-iwad");
@@ -49,6 +50,7 @@ void VavoomGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool
 	args << "-iwaddir";
 	args << iwadDir;
 	args << ("-" + iwadParam);
+	return true;
 }
 
 const PluginInfo* VavoomGameRunner::plugin() const
