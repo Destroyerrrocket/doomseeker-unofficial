@@ -27,6 +27,7 @@
 #include <cmath>
 
 #include <QDateTime>
+#include <QDir>
 #include <QStringList>
 #include <QUrl>
 
@@ -39,6 +40,30 @@ const char Strings::RANDOM_CHAR_POOL[RANDOM_CHAR_POOL_SIZE] =
 	'2', '3', '4', '5', '6', '7', '8',
 	'9'
 };
+
+QString Strings::combinePaths(QString pathFront, QString pathEnd)
+{
+	QString combinedPath;
+
+	// One of them is NULL
+	if (pathFront.isEmpty())
+	{
+		return pathEnd;
+	}
+	
+	if (pathEnd.isEmpty())
+	{
+		return pathFront;
+	}
+
+	pathFront = Strings::trimr(pathFront, "/\\");
+	pathEnd = Strings::triml(pathEnd, "/\\");
+
+	combinedPath = pathFront + "/" + pathEnd;
+	combinedPath = QDir::fromNativeSeparators( combinedPath );
+
+	return combinedPath;
+}
 
 QString Strings::createRandomAlphaNumericString(unsigned numChars)
 {

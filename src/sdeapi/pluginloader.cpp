@@ -32,6 +32,7 @@
 #include "configuration/doomseekerconfig.h"
 #include "main.h"
 #include "sdeapi/pluginloader.hpp"
+#include "strings.h"
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -72,6 +73,12 @@ Plugin::Plugin(unsigned int type, QString f) : file(f), library(NULL)
 	else
 	{
 		gLog << QObject::tr("Failed to open plugin: %1").arg(file);
+		
+		#ifdef Q_OS_WIN32
+		// This is helpful on Windows to determine why the library
+		// couldn't load.
+		gLog << QString("Last error was: %1").arg(GetLastError());
+		#endif
 	}
 }
 
@@ -151,7 +158,9 @@ bool PluginLoader::filesInDir()
 		do {
 			if(!(file.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 			{
-				Plugin *plugin = new Plugin(type, pluginsDirectory + "/" + file.cFileName);
+				QString pluginFilePath = Strings::combinePaths(pluginsDirectory, file.cFileName);
+			
+				Plugin *plugin = new Plugin(type, pluginFilePath);
 				if(plugin->isValid())
 					pluginsList.push_back(plugin);
 				else
@@ -167,7 +176,9 @@ bool PluginLoader::filesInDir()
 		dirent *file = NULL;
 		while((file = readdir(directory)) != NULL)
 		{
-			DIR *temp = opendir((pluginsDirectory + "/" + file->d_name).toAscii().constData());
+			QString pluginFilePath = Strings::combinePaths(pluginsDirectory, QString(file->d_name));
+		
+			DIR *temp = opendir(pluginFilePath.toAscii().constData());
 			if(temp == NULL) // this is a file
 			{
 				Plugin *plugin = new Plugin(type, pluginsDirectory + "/" + file->d_name);

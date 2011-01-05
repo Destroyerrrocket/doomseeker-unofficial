@@ -31,6 +31,25 @@ class MAIN_EXPORT Strings
 {
 	public:
 		/**
+		 *	Combines two strings into single path making sure there are no
+		 *	redundant slahes/backslashes present. Paths will be combined
+		 *	using backslash ('\\') on Windows systems and slash ('/') on
+		 *	non-Windows systems.
+		 *	Example:
+		 *	@code
+		 * QString pathBase = "C:\\games\\";
+		 * QString pathSuffix = "\\doom\\doom.exe";
+		 * QString fullPath = Strings::combinePaths(pathBase, pathSuffix);
+		 * printf("%s\n", fullPath.toAscii().constData());
+		 * // Output: "C:/games/doom/doom.exe"
+		 *	@endcode
+		 *	@param pathFront - base path
+		 *	@param pathEnd - part of the path that will be appended
+		 *	@return A string containing combined paths.
+		 */
+		static QString 			combinePaths(QString pathFront, QString pathEnd);	
+	
+		/**
 		 *	@brief Creates a random string with specified length.
 		 *
 		 *	The created string consists of lowercase letters and digits.
