@@ -32,7 +32,7 @@
 /**
  *	@brief Dialog window allowing user to host a game.
  */
-class CreateServerDlg : public QDialog, private Ui::CreateServerDlg
+class MAIN_EXPORT CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 {
 	Q_OBJECT
 
