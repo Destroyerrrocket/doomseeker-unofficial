@@ -25,5 +25,4 @@ FILETYPE VFT_APP
 	 }
 }
 
-CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST		"doomseeker.exe.manifest"
 IDI_ICON1   ICON    DISCARDABLE "icon_windows.ico"
