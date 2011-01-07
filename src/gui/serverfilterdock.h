@@ -63,9 +63,9 @@ class ServerFilterDock : public QDockWidget, private Ui::ServerFilterDock
 		void					doConnections();
 		
 	private slots:
+		void					btnClearClicked();
 		void					emitUpdated();		
 		void					emitUpdated(const QString& dummy);
-		
 		void					thisVisibilityChanged(bool bVisible);
 };
 

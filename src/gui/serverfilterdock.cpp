@@ -62,6 +62,11 @@ void ServerFilterDock::addGameModeToComboBox(const QString& gameMode)
 	}
 }
 
+void ServerFilterDock::btnClearClicked()
+{
+	this->setFilterInfo(ServerListFilterInfo());
+}
+
 void ServerFilterDock::clearGameModes()
 {
 	cboGameMode->clear();
@@ -74,6 +79,9 @@ void ServerFilterDock::doConnections()
 {
 	this->connect(this, SIGNAL( visibilityChanged(bool) ),
 		SLOT( thisVisibilityChanged(bool) ) );
+		
+	this->connect(btnClear, SIGNAL( clicked() ),
+		SLOT( btnClearClicked() ) );
 	
 	this->connect(cbShowEmpty, SIGNAL( clicked() ),
 		SLOT( emitUpdated() ) );	
