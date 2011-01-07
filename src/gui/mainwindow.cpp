@@ -1194,6 +1194,18 @@ void MainWindow::setupToolBar()
 	pToolBar->addAction(ircDock->toggleViewAction());
 	pToolBar->addAction(serverFilterDock->toggleViewAction());
 
+	// Quick Search
+	QLineEdit *qs = serverFilterDock->createQuickSearch();
+	qs->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+	qs->setMinimumWidth(175);
+	qs->setMaximumWidth(175);
+
+	QWidget* searchSeparator = new QWidget();
+	searchSeparator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
+	pToolBar->addWidget(searchSeparator);
+	pToolBar->addWidget(new QLabel(tr("Search:"), pToolBar));
+	pToolBar->addWidget(qs);
+
 	this->addToolBar(Qt::TopToolBarArea, pToolBar);
 	setUnifiedTitleAndToolBarOnMac(true);
 	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( toolBarAction(QAction*) ) );

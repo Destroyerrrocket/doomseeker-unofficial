@@ -75,6 +75,17 @@ void ServerFilterDock::clearGameModes()
 	emit filterUpdated(filterInfo());
 }
 
+QLineEdit *ServerFilterDock::createQuickSearch() const
+{
+	QLineEdit *qs = new QLineEdit();
+	qs->setText(leServerName->text());
+
+	connect(leServerName, SIGNAL( textChanged(const QString &) ), qs, SLOT( setText(const QString &) ));
+	connect(qs, SIGNAL( textChanged(const QString &) ), leServerName, SLOT( setText(const QString &) ));
+
+	return qs;
+}
+
 void ServerFilterDock::doConnections()
 {
 	this->connect(this, SIGNAL( visibilityChanged(bool) ),
@@ -95,7 +106,7 @@ void ServerFilterDock::doConnections()
 	this->connect(cboGameMode, SIGNAL( currentIndexChanged(const QString &) ),
 		SLOT( emitUpdated(const QString&) ) );	
 	
-	this->connect(leServerName, SIGNAL( textEdited(const QString &) ),
+	this->connect(leServerName, SIGNAL( textChanged(const QString &) ),
 		SLOT( emitUpdated(const QString&) ) );	
 		
 	this->connect(leWads, SIGNAL( textEdited(const QString &) ),

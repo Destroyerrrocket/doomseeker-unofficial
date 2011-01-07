@@ -37,7 +37,9 @@ class ServerFilterDock : public QDockWidget, private Ui::ServerFilterDock
 		ServerFilterDock(QWidget* pParent = NULL);
 
 		void					addGameModeToComboBox(const QString& gameMode);
-		
+
+		QLineEdit				*createQuickSearch() const;
+
 		/**
 		 *	@brief Removes all cached items from Game Modes combo box.
 		 *
