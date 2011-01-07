@@ -43,6 +43,8 @@
 #include <QStandardItem>
 #include <QSystemTrayIcon>
 
+class ServerFilterDock;
+
 /**
  *	@brief Menu action for Query Menu
  *
@@ -117,13 +119,13 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		IP2CUpdater*		ip2cUpdater;
 		IRCDock*			ircDock;
 		LogDock*			logDock;
+		ServerFilterDock*	serverFilterDock;
 		ServerListHandler*	serverTableHandler;
 
 		MasterManager*		masterManager;
 		QList<QAction*>		queryMenuPorts;
 		QAction*			toolBarGetServers;
 		QAction*			toolBarRefreshAll;
-		QLineEdit*			toolBarSearch;
 		QSystemTrayIcon*	trayIcon;
 		QMenu*				trayIconMenu;
 
@@ -157,6 +159,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	initIRCDock();
 		void	initLogDock();
 		void	initMainDock();
+		void	initServerFilterDock();
 
 		/**
 		 *	Checks whether the program will use the tray icon and
@@ -222,6 +225,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void 	refreshThreadBeginsWork();
 		void	refreshThreadEndsWork();
 		void 	runGame(const Server*);
+		void	serverAddedToList(const Server*);
 		void	showServerJoinCommandLine(const Server*);
 		void	toolBarAction(QAction* pAction);
 		void	trayIcon_activated(QSystemTrayIcon::ActivationReason reason);

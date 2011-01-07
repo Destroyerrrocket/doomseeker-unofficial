@@ -108,6 +108,8 @@ class MAIN_EXPORT Server : public QObject
 		bool				isBroadcastingToLAN() const { return broadcastToLAN; }
 		bool				isBroadcastingToMaster() const { return broadcastToMaster; }
 		bool				isCustom() const { return custom; }
+		bool				isEmpty() const;
+		bool				isFull() const;
 		bool				isKnown() const { return bKnown; }
 		bool				isLocked() const { return locked; }
 		bool				isSetToDelete() const { return bDelete; }

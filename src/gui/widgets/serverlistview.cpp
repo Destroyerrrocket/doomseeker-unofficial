@@ -25,6 +25,7 @@
 #include <QDebug>
 #include <QItemDelegate>
 #include <QPainter>
+#include <QSortFilterProxyModel>
 #include <QTextDocument>
 
 /**
@@ -148,7 +149,10 @@ void ServerListView::updateAllRows()
 {
 	if (bAllowAllRowsRefresh)
 	{
-		for (int i = 0; i < model()->rowCount(); ++i)
+		QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(model());
+		int rowCount = pModel->sourceModel()->rowCount();
+
+		for (int i = 0; i < rowCount; ++i)
 		{
 			updateRowVisuals(i);
 		}

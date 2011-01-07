@@ -36,6 +36,7 @@
 #include "gui/models/serverlistmodel.h"
 
 class IniSection;
+class ServerListFilterInfo;
 
 class ServerListHandler : public QObject
 {
@@ -46,6 +47,7 @@ class ServerListHandler : public QObject
 		~ServerListHandler();
 
 		void 				clearTable();
+		void				cleanUpForce();
 
 		QWidget*			getMainWindow() { return mainWindow; }
 		bool				hasAtLeastOneServer() const;
@@ -60,6 +62,7 @@ class ServerListHandler : public QObject
 		ServerListView*		serverTable() { return table; }
 
 	public slots:
+		void				applyFilter(const ServerListFilterInfo& filterInfo);
 		void 				cleanUp();
 		void 				redraw();
 		void 				refreshAll();
@@ -92,6 +95,12 @@ class ServerListHandler : public QObject
 		 * Emitted when a request for join command line show is called.
 		 */
 		void 					displayServerJoinCommandLine(const Server*);
+		
+		/**
+		 *	@brief Emitted every time when a server info is updated through
+		 *	serverUpdated()
+		 */
+		void					serverInfoUpdated(const Server*);
 		void 					serverDoubleClicked(const Server*);
 		void 					serversSelected(QList<Server*>&);
 
@@ -105,7 +114,7 @@ class ServerListHandler : public QObject
 
 		QWidget*				mainWindow;
 		ServerListModel* 		model;
-		bool 					needsCleaning;
+		bool					needsCleaning;
 		QSortFilterProxyModel*	sortingProxy;
 
 		Qt::SortOrder 			sortOrder;

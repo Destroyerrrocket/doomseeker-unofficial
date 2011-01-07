@@ -39,7 +39,7 @@ class ServerListModel : public QStandardItemModel
 	Q_OBJECT
 
 	friend class ServerListHandler;
-	friend class ServerListSortFilterProxyModel;
+	friend class ServerListProxyModel;
 
 	public:
 		/**
@@ -125,39 +125,6 @@ class ServerListModel : public QStandardItemModel
 		QVariant				columnSortData(int row, int column);
 
 		ServerListHandler*		parentHandler;
-};
-
-class ServerListSortFilterProxyModel : public QSortFilterProxyModel
-{
-	Q_OBJECT
-
-	friend class ServerListHandler;
-
-	public:
-		ServerListSortFilterProxyModel(ServerListHandler* serverListHandler, QObject* parent = 0)
-		: QSortFilterProxyModel(parent),
-		  parentHandler(serverListHandler)
-		{
-		}
-
-		void					sortServers(int column, Qt::SortOrder order = Qt::AscendingOrder)
-		{
-			sortOrder = order;
-			sort(column, order);
-		}
-
-	protected:
-		/**
-		 * @return true if var1 is less than var2, false if otherwise.
-		 */
-		bool					compareColumnSortData(QVariant& var1, QVariant& var2, int column) const;
-		bool					lessThan(const QModelIndex& left, const QModelIndex& right) const;
-
-		Server* 				serverFromList(const QModelIndex& index) const;
-
-		ServerListHandler*		parentHandler;
-		Qt::SortOrder 			sortOrder;
-
 };
 
 #endif

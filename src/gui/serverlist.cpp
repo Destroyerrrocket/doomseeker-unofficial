@@ -24,6 +24,7 @@
 #include "gui/remoteconsole.h"
 #include "gui/serverlist.h"
 #include "gui/models/serverlistcolumn.h"
+#include "gui/models/serverlistproxymodel.h"
 #include "gui/models/serverlistrowhandler.h"
 #include "gui/widgets/serverlistcontextmenu.h"
 #include "serverapi/playerslist.h"
@@ -47,10 +48,12 @@ using namespace ServerListColumnId;
 
 ServerListHandler::ServerListHandler(ServerListView* serverTable, QWidget* pMainWindow)
 : mainWindow(pMainWindow), model(NULL),
-  needsCleaning(false), sortingProxy(NULL), sortOrder(Qt::AscendingOrder),
+  sortingProxy(NULL), sortOrder(Qt::AscendingOrder),
   sortIndex(-1), table(serverTable)
 {
 	prepareServerTable();
+	
+	needsCleaning = false;
 
 	initCleanerTimer();
 }
@@ -58,6 +61,14 @@ ServerListHandler::ServerListHandler(ServerListView* serverTable, QWidget* pMain
 ServerListHandler::~ServerListHandler()
 {
 	saveColumnsWidthsSettings();
+}
+
+void ServerListHandler::applyFilter(const ServerListFilterInfo& filterInfo)
+{
+	ServerListProxyModel* pModel = static_cast<ServerListProxyModel*>(table->model());
+	pModel->setFilterInfo(filterInfo);
+	
+	needsCleaning = true;
 }
 
 bool ServerListHandler::areColumnsWidthsSettingsChanged()
@@ -84,7 +95,7 @@ void ServerListHandler::cleanUp()
 	{
 		if (sortIndex >= 0)
 		{
-			ServerListSortFilterProxyModel* pModel = static_cast<ServerListSortFilterProxyModel*>(table->model());
+			ServerListProxyModel* pModel = static_cast<ServerListProxyModel*>(table->model());
 			pModel->invalidate();
 			pModel->sortServers(sortIndex, sortOrder);
 		}
@@ -93,6 +104,12 @@ void ServerListHandler::cleanUp()
 		table->updateAllRows();
 		needsCleaning = false;
 	}
+}
+
+void ServerListHandler::cleanUpForce()
+{
+	needsCleaning = true;
+	cleanUp();
 }
 
 void ServerListHandler::columnHeaderClicked(int index)
@@ -107,8 +124,7 @@ void ServerListHandler::columnHeaderClicked(int index)
 	}
 	sortIndex = index;
 
-	needsCleaning = true;
-	cleanUp();
+	cleanUpForce();
 
 	QHeaderView* header = table->horizontalHeader();
 	header->setSortIndicator(sortIndex, sortOrder);
@@ -287,7 +303,7 @@ QString ServerListHandler::createServerNameToolTip(const Server* server)
 
 QSortFilterProxyModel* ServerListHandler::createSortingProxy(ServerListModel* serverListModel)
 {
-	QSortFilterProxyModel* proxy = new ServerListSortFilterProxyModel(this);
+	ServerListProxyModel* proxy = new ServerListProxyModel(this);
 	proxy->setSourceModel(serverListModel);
 	proxy->setSortRole(ServerListModel::SLDT_SORT);
 	proxy->setSortCaseSensitivity( Qt::CaseInsensitive );
@@ -467,6 +483,7 @@ void ServerListHandler::serverUpdated(Server *server, int response)
 	table->resizeRowToContents(rowIndex);
 
 	needsCleaning = true;
+	emit serverInfoUpdated(server);
 }
 
 void ServerListHandler::setCountryFlagsIfNotPresent()

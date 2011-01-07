@@ -83,6 +83,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/mainwindow.ui
 	gui/passwordDlg.ui
 	gui/remoteconsole.ui
+	gui/serverfilterdock.ui
 	gui/wadseekerinterface.ui
 )
 
@@ -108,6 +109,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/irc/ircdocktabcontents.h
 	gui/irc/ircnetworkselectionbox.h
 	gui/models/serverlistmodel.h
+	gui/models/serverlistproxymodel.h
 	gui/widgets/colorbutton.h
 	gui/widgets/dockedwidgets.h
 	gui/widgets/fontbutton.h	
@@ -124,6 +126,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/mainwindow.h
 	gui/passwordDlg.h
 	gui/remoteconsole.h
+	gui/serverfilterdock.h
 	gui/serverlist.h
 	gui/standardserverconsole.h
 	gui/wadseekerinterface.h
@@ -176,12 +179,14 @@ set(SOURCE_FILES
 	gui/configuration/configurationdialog.cpp
 	gui/configuration/doomseekerconfigurationdialog.cpp
 	gui/configuration/engineconfigurationbasebox.cpp
+	gui/entity/serverlistfilterinfo.cpp
 	gui/helpers/playersdiagram.cpp
 	gui/irc/ircdock.cpp	
 	gui/irc/ircdocktabcontents.cpp
 	gui/irc/ircnetworkselectionbox.cpp
 	gui/models/serverlistcolumn.cpp
 	gui/models/serverlistmodel.cpp
+	gui/models/serverlistproxymodel.cpp
 	gui/models/serverlistrowhandler.cpp
 	gui/widgets/colorbutton.cpp
 	gui/widgets/fontbutton.cpp
@@ -200,6 +205,7 @@ set(SOURCE_FILES
 	gui/mainwindow.cpp
 	gui/passwordDlg.cpp
 	gui/remoteconsole.cpp
+	gui/serverfilterdock.cpp
 	gui/serverlist.cpp
 	gui/standardserverconsole.cpp
 	gui/wadseekerinterface.cpp
@@ -263,6 +269,7 @@ set(SOURCE_FILES
 set(HEADER_FILES
 	${DOOMSEEKER_QT_FILES}
 	configuration/doomseekerconfig.h
+	gui/entity/serverlistfilterinfo.h
 	gui/helpers/playersdiagram.h
 	gui/models/serverlistcolumn.h
 	gui/models/serverlistrowhandler.h

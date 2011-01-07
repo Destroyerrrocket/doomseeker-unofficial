@@ -32,6 +32,7 @@
 #include "gui/ip2cupdatebox.h"
 #include "gui/mainwindow.h"
 #include "gui/passwordDlg.h"
+#include "gui/serverfilterdock.h"
 #include "gui/wadseekerinterface.h"
 #include "irc/configuration/ircconfig.h"
 #include "serverapi/gamerunner.h"
@@ -94,6 +95,7 @@ One of the proper locations for plugin modules is the \"engines/\" directory.\n\
 	this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
 	initLogDock();
 	initIRCDock();
+	initServerFilterDock();
 	initMainDock();
 
 	serverTableHandler = new ServerListHandler(tableServers, this);
@@ -364,8 +366,10 @@ void MainWindow::connectEntities()
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( quitProgram() ));
 	connect(menuActionViewIRC, SIGNAL( triggered() ) , this, SLOT( menuViewIRC() ));
 	connect(menuActionWadseeker, SIGNAL( triggered() ), this, SLOT( menuWadSeeker() ));
+	connect(serverFilterDock, SIGNAL( filterUpdated(const ServerListFilterInfo&) ), serverTableHandler, SLOT( applyFilter(const ServerListFilterInfo&) ) );	
 	connect(serverTableHandler, SIGNAL( serverDoubleClicked(const Server*) ), this, SLOT( runGame(const Server*) ) );
 	connect(serverTableHandler, SIGNAL( displayServerJoinCommandLine(const Server*) ), this, SLOT( showServerJoinCommandLine(const Server*) ) );
+	connect(serverTableHandler, SIGNAL( serverInfoUpdated(const Server*) ), this, SLOT( serverAddedToList(const Server*) ) );
 }
 
 void MainWindow::fillQueryMenu(MasterManager* masterManager)
@@ -589,6 +593,14 @@ void MainWindow::initMainDock()
 	mainDock->setWidget(tableServers);
 	setCentralWidget(0);
 	addDockWidget(Qt::RightDockWidgetArea, mainDock);
+}
+
+void MainWindow::initServerFilterDock()
+{
+	serverFilterDock = new ServerFilterDock(this);
+	menuView->addAction(serverFilterDock->toggleViewAction());
+	serverFilterDock->hide();
+	this->addDockWidget(Qt::RightDockWidgetArea, serverFilterDock);
 }
 
 void MainWindow::initTrayIcon()
@@ -1098,6 +1110,7 @@ void MainWindow::refreshThreadEndsWork()
 	toolBarRefreshAll->setEnabled(true);
 
 	serverTableHandler->serverTable()->setAllowAllRowsRefresh(true);
+	serverTableHandler->cleanUpForce();
 	statusBar()->showMessage(tr("Done"));
 	updateTrayIconTooltipAndLogTotalRefresh();
 
@@ -1127,6 +1140,15 @@ void MainWindow::runGame(const Server* server)
 	}
 }
 
+void MainWindow::serverAddedToList(const Server* pServer)
+{
+	if (pServer->isKnown())
+	{
+		const QString& gameMode = pServer->gameMode().name();
+		serverFilterDock->addGameModeToComboBox(gameMode);
+	}
+}
+
 void MainWindow::setupIcons()
 {
 	QStyle& style = *QApplication::style();
@@ -1148,15 +1170,6 @@ void MainWindow::setupToolBar()
 	toolBarGetServers = new QAction(QIcon(":/icons/arrow-down-double.png"), tr("Get Servers"), pToolBar);
 	toolBarRefreshAll = new QAction(QIcon(":/icons/view-refresh-2.png"), tr("Refresh All"), pToolBar);
 	
-	// Search widgets
-	toolBarSearch = new QLineEdit();
-	toolBarSearch->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-	toolBarSearch->setMinimumWidth(175);
-	toolBarSearch->setMaximumWidth(175);
-
-	QWidget* searchSeparator = new QWidget();
-	searchSeparator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
-
 	// Setup menu
 	// Refresh buttons
 	pToolBar->addAction(toolBarGetServers);
@@ -1173,17 +1186,11 @@ void MainWindow::setupToolBar()
 	pToolBar->addAction(buddiesList->toggleViewAction());
 	pToolBar->addAction(logDock->toggleViewAction());
 	pToolBar->addAction(ircDock->toggleViewAction());
+	pToolBar->addAction(serverFilterDock->toggleViewAction());
 
-	pToolBar->addWidget(searchSeparator);
-	pToolBar->addWidget(new QLabel(tr("Search:"), pToolBar));
-	pToolBar->addWidget(toolBarSearch);
-	
 	this->addToolBar(Qt::TopToolBarArea, pToolBar);
 	setUnifiedTitleAndToolBarOnMac(true);
 	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( toolBarAction(QAction*) ) );
-	
-	// Toolbar controls (those that aren't handled by the generic toolbar slot).
-	connect(toolBarSearch, SIGNAL( textChanged(const QString &) ), serverTableHandler, SLOT( updateSearch(const QString &) ));		
 }
 
 void MainWindow::showServerJoinCommandLine(const Server* server)

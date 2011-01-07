@@ -132,9 +132,19 @@ QString Server::engineName() const
 	}
 }
 
+bool Server::isEmpty() const
+{
+	return players->numClients() == 0;
+}
+		
+bool Server::isFull() const
+{
+	return players->numClients() == maximumClients();
+}
+
 int Server::numFreeClientSlots() const
 {
-	int returnValue = maxClients - players->numClients();
+	int returnValue = maximumClients() - players->numClients();
 	return (returnValue < 0) ? 0 : returnValue;
 }
 
