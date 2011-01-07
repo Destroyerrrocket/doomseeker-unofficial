@@ -98,8 +98,12 @@ One of the proper locations for plugin modules is the \"engines/\" directory.\n\
 	initServerFilterDock();
 	initMainDock();
 
+	// Spawn Server Table Handler.
 	serverTableHandler = new ServerListHandler(tableServers, this);
 	connectEntities();
+	
+	// Apply server filter which is stored in config.
+	serverTableHandler->applyFilter(gConfig.serverFilter.info);
 
 	// Calculate screen center.
 	int screenWidth = QApplication::desktop()->width();
