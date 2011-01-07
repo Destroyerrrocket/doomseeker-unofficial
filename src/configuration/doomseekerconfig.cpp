@@ -120,6 +120,9 @@ bool DoomseekerConfig::readFromFile()
 	IniSection& sectionDoomseeker = pIni->section(doomseeker.SECTION_NAME);
 	doomseeker.load(sectionDoomseeker);
 	
+	IniSection& sectionServerFilter = pIni->section(serverFilter.SECTION_NAME);
+	serverFilter.load(sectionServerFilter);
+	
 	IniSection& sectionWadseeker = pIni->section(wadseeker.SECTION_NAME);
 	wadseeker.load(sectionWadseeker);
 	
@@ -143,6 +146,9 @@ Any modification done manually to this file is on your own risk.").arg(Version::
 	IniSection& sectionDoomseeker = pIni->section(doomseeker.SECTION_NAME);
 	doomseeker.save(sectionDoomseeker);
 	
+	IniSection& sectionServerFilter = pIni->section(serverFilter.SECTION_NAME);
+	serverFilter.save(sectionServerFilter);
+	
 	IniSection& sectionWadseeker = pIni->section(wadseeker.SECTION_NAME);
 	wadseeker.save(sectionWadseeker);
 	
@@ -162,6 +168,7 @@ bool DoomseekerConfig::setIniFile(const QString& filePath)
 	this->pIni = new Ini(filePath);
 	
 	doomseeker.init(this->pIni->section(doomseeker.SECTION_NAME));
+	serverFilter.init(this->pIni->section(serverFilter.SECTION_NAME));
 	wadseeker.init(this->pIni->section(wadseeker.SECTION_NAME));
 	
 	return this->pIni->isValid();
@@ -367,6 +374,41 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["BuddiesList"] = buddiesList;
 }
 //////////////////////////////////////////////////////////////////////////////
+const QString DoomseekerConfig::ServerFilter::SECTION_NAME = "ServerFilter";
+
+void DoomseekerConfig::ServerFilter::init(IniSection& section)
+{
+	section.createSetting("bShowEmpty", true);
+	section.createSetting("bShowFull", true);
+	section.createSetting("bShowOnlyValid", false);
+	section.createSetting("GameMode", "");
+	section.createSetting("MaxPing", 0);
+	section.createSetting("ServerName", "");
+	section.createSetting("WADs", "");
+}
+
+void DoomseekerConfig::ServerFilter::load(IniSection& section)
+{
+	info.bShowEmpty = section["bShowEmpty"];
+	info.bShowFull = section["bShowFull"];
+	info.bShowOnlyValid = section["bShowOnlyValid"];
+	info.gameMode = (const QString &)section["GameMode"];
+	info.maxPing = section["MaxPing"];
+	info.serverName = (const QString &)section["ServerName"];
+	info.wads = ((const QString&)section["WADs"]).split(";");
+}
+
+void DoomseekerConfig::ServerFilter::save(IniSection& section)
+{
+	section["bShowEmpty"] = info.bShowEmpty;
+	section["bShowFull"] = info.bShowFull;
+	section["bShowOnlyValid"] = info.bShowOnlyValid;
+	section["GameMode"] = info.gameMode;
+	section["MaxPing"] = info.maxPing;
+	section["ServerName"] = info.serverName;
+	section["WADs"] = info.wads.join(";");
+}
+//////////////////////////////////////////////////////////////////////////////
 const QString DoomseekerConfig::WadseekerCfg::SECTION_NAME = "Wadseeker";
 
 DoomseekerConfig::WadseekerCfg::WadseekerCfg()
@@ -441,3 +483,4 @@ void DoomseekerConfig::WadseekerCfg::save(IniSection& section)
 	}
 	section["SearchURLs"] = urlEncodedList.join(";");
 }
+

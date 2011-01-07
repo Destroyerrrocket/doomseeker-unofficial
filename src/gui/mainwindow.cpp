@@ -230,7 +230,7 @@ MainWindow::~MainWindow()
 	}
 
 	gConfig.doomseeker.mainWindowState = saveState().toBase64();
-
+	
 	QList<QAction*> menuQueryActions = menuQuery->actions();
 	QList<QAction*>::iterator it;
 	for (it = menuQueryActions.begin(); it != menuQueryActions.end(); ++it)
@@ -598,6 +598,8 @@ void MainWindow::initMainDock()
 void MainWindow::initServerFilterDock()
 {
 	serverFilterDock = new ServerFilterDock(this);
+	serverFilterDock->setFilterInfo(gConfig.serverFilter.info);
+	
 	menuView->addAction(serverFilterDock->toggleViewAction());
 	serverFilterDock->hide();
 	this->addDockWidget(Qt::RightDockWidgetArea, serverFilterDock);

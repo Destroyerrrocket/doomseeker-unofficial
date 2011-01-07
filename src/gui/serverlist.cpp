@@ -65,6 +65,8 @@ ServerListHandler::~ServerListHandler()
 
 void ServerListHandler::applyFilter(const ServerListFilterInfo& filterInfo)
 {
+	gConfig.serverFilter.info = filterInfo;
+
 	ServerListProxyModel* pModel = static_cast<ServerListProxyModel*>(table->model());
 	pModel->setFilterInfo(filterInfo);
 	

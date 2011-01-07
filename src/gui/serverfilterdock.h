@@ -48,6 +48,12 @@ class ServerFilterDock : public QDockWidget, private Ui::ServerFilterDock
 		void					clearGameModes();
 		
 		ServerListFilterInfo	filterInfo() const;
+		
+		/**
+		 *	@brief Sets widgets to new filter info.
+		 *
+		 *	Emits filterUpdated() signal.
+		 */
 		void					setFilterInfo(const ServerListFilterInfo& filterInfo);
 		
 	signals:

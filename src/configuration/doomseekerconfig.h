@@ -24,6 +24,7 @@
 #define __DOOMSEEKERCONFIG_H__
 
 #include "customservers.h"
+#include "gui/entity/serverlistfilterinfo.h"
 #include "serverapi/buddyinfo.h"
 #include <QString>
 #include <QStringList>
@@ -105,6 +106,18 @@ class DoomseekerConfig
 			
 		};
 		
+		class ServerFilter
+		{
+			public:
+			static const QString		SECTION_NAME;
+			
+			ServerListFilterInfo		info;
+			
+			void						init(IniSection& section);
+			void						load(IniSection& section);
+			void						save(IniSection& section);
+		};		
+		
 		class WadseekerCfg
 		{
 			public:
@@ -149,6 +162,7 @@ class DoomseekerConfig
 		static void					dispose();
 		
 		DoomseekerCfg				doomseeker;
+		ServerFilter				serverFilter;
 		WadseekerCfg				wadseeker;
 			
 		Ini*						ini() { return this->pIni; }

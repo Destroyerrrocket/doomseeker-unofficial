@@ -136,6 +136,8 @@ void ServerFilterDock::setFilterInfo(const ServerListFilterInfo& filterInfo)
 	spinMaxPing->setValue(filterInfo.maxPing);
 	leServerName->setText(filterInfo.serverName.trimmed());
 	leWads->setText(filterInfo.wads.join(";"));
+	
+	emitUpdated();
 }
 
 void ServerFilterDock::thisVisibilityChanged(bool bVisible)
