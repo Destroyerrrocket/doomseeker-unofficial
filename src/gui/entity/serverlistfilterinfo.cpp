@@ -27,7 +27,7 @@ ServerListFilterInfo::ServerListFilterInfo()
 	bShowEmpty = true;
 	bShowFull = true;
 	bShowOnlyValid = false;
-	maxPing = 200;
+	maxPing = 0;
 }
 
 void ServerListFilterInfo::copy(const ServerListFilterInfo& other)

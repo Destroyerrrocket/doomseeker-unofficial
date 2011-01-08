@@ -36,6 +36,13 @@ public:
 	bool				bShowFull;
 	bool				bShowOnlyValid;
 	QString				gameMode;
+	
+	/**
+	 *	@brief Maximum allowed ping.
+	 *
+	 *	The default value is 0 and it means that ping filter
+	 *	is disabled.
+	 */
 	unsigned			maxPing;
 	QString				serverName;
 	QStringList			wads;
