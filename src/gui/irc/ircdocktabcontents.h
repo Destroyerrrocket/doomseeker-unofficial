@@ -119,6 +119,9 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 *	chat window is being opened.
 		 */
 		void				newChatWindowIsOpened(IRCChatAdapter* pAdapter);
+		
+		void				playNicknameUsedSound();
+		
 		void				receiveError(const QString& error);
 		void				sendMessage();
 		void				userListCustomContextMenuRequested(const QPoint& pos);

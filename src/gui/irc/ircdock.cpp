@@ -23,6 +23,7 @@
 #include "ircdock.h"
 #include "gui/irc/ircdocktabcontents.h"
 #include "gui/irc/ircnetworkselectionbox.h"
+#include "gui/irc/ircsounds.h"
 #include "irc/configuration/ircconfig.h"
 #include "irc/ircglobalmessages.h"
 #include "irc/ircnetworkadapter.h"
@@ -36,6 +37,9 @@ IRCDock::IRCDock(QWidget* parent)
 {
 	setupUi(this);
 	this->toggleViewAction()->setIcon(QIcon(":/icons/irc.png"));
+	
+	pSounds = new IRCSounds();
+	pSounds->loadFromConfig();
 	
 	setupToolbar();
 	
@@ -52,6 +56,11 @@ IRCDock::IRCDock(QWidget* parent)
 	
 	connect(&ircGlobalMessages, SIGNAL( messageWithClass(const QString&, const IRCMessageClass&, IRCAdapterBase*) ), 
 		SLOT( globalMessageWithClass(const QString&, const IRCMessageClass&, IRCAdapterBase*) ) );
+}
+
+IRCDock::~IRCDock()
+{
+	delete pSounds;
 }
 
 IRCDockTabContents* IRCDock::addIRCAdapter(IRCAdapterBase* pIRCAdapter)
@@ -182,6 +191,11 @@ void IRCDock::setupToolbar()
 
 	verticalLayout->insertWidget(0, pToolBar);
 	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( toolBarAction(QAction*) ) );
+}
+
+IRCSounds& IRCDock::sounds()
+{
+	return *pSounds;
 }
 
 void IRCDock::tabCloseRequestedSlot(int index)

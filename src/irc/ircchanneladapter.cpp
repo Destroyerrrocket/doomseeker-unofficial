@@ -84,6 +84,15 @@ void IRCChannelAdapter::emitChatMessage(const QString& sender, const QString& co
 		actualSenderName = pUserInfo->prefixedName();
 	}
 	
+	// Check if content has our nickname.
+	// (do not play sounds for our own messages)
+	const QString& myNickname = pNetwork->myNickname();
+	if (content.contains(myNickname, Qt::CaseInsensitive)
+	&&	sender.compare(myNickname, Qt::CaseInsensitive) != 0)
+	{
+		emit myNicknameUsed();
+	}
+	
 	IRCChatAdapter::emitChatMessage(actualSenderName, content);
 }
 

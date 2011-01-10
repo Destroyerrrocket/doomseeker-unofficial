@@ -24,6 +24,7 @@
 #include "gui/configuration/irc/ircconfigurationdialog.h"
 #include "gui/configuration/doomseekerconfigurationdialog.h"
 #include "gui/helpers/playersdiagram.h"
+#include "gui/irc/ircsounds.h"
 #include "gui/widgets/serversstatuswidget.h"
 #include "gui/aboutDlg.h"
 #include "gui/copytextdlg.h"
@@ -877,6 +878,11 @@ void MainWindow::menuIRCOptions()
 	if (ircDock != NULL)
 	{
 		ircDock->applyAppearanceSettings();
+		
+		// This could probably be optimized to not re-read files from drive 
+		// if audio options didn't change but currently there are only two 
+		// files, so no harm should be done.
+		ircDock->sounds().loadFromConfig();
 	}
 }
 

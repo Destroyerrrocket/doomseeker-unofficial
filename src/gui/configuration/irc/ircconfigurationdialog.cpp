@@ -23,6 +23,7 @@
 #include "ircconfigurationdialog.h"
 #include "gui/configuration/irc/cfgircappearance.h"
 #include "gui/configuration/irc/cfgircnetworks.h"
+#include "gui/configuration/irc/cfgircsounds.h"
 #include "gui/commonGUI.h"
 #include "irc/configuration/ircconfig.h"
 #include "log.h"
@@ -54,6 +55,9 @@ void IRCConfigurationDialog::initOptionsList()
 	
 	cfgNetworks = new CFGIRCNetworks(this); 
 	pConfigBox = cfgNetworks;
+	this->addConfigurationBox(NULL, pConfigBox);
+	
+	pConfigBox = new CFGIRCSounds(this);
 	this->addConfigurationBox(NULL, pConfigBox);
 }
 

@@ -119,6 +119,22 @@ class IRCConfig
 				void					loadNetwork(const IniSection& iniSection, IRCNetworkEntity& network);
 				void					saveNetwork(IniSection& iniSection, const IRCNetworkEntity& network);
 		};
+		
+		class SoundsCfg
+		{
+			public:
+			static const QString		SECTION_NAME;
+			
+			bool						bUseNicknameUsedSound;
+			bool						bUsePrivateMessageReceivedSound;
+			QString						nicknameUsedSound;;	
+			QString						privateMessageReceivedSound;
+			
+			SoundsCfg();
+			
+			void						load(IniSection& section);
+			void						save(IniSection& section);
+		};		
 	
 		/**
 		 *	@brief Returns the Singleton.
@@ -138,6 +154,7 @@ class IRCConfig
 		GeneralCfg					general;
 		NetworksDataCfg				networks;
 		PersonalCfg					personal;
+		SoundsCfg					sounds;
 			
 		Ini*						ini() { return this->pIni; }
 		

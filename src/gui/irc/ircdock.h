@@ -30,6 +30,7 @@ class IRCAdapterBase;
 class IRCDockTabContents;
 class IRCMessageClass;
 class IRCNetworkAdapter;
+class IRCSounds;
 
 /**
  *	@brief Dockable widget designed for IRC communication.
@@ -40,6 +41,7 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 
 	public:
 		IRCDock(QWidget* parent = NULL);
+		~IRCDock();
 
 		IRCDockTabContents*	addIRCAdapter(IRCAdapterBase* pIRCAdapter);
 		
@@ -51,7 +53,10 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 		
 		void				performNetworkAutojoins();
 		
+		IRCSounds&			sounds();
+		
 	private:
+		IRCSounds*			pSounds;
 		QAction*			toolBarConnect;
 		QAction*			toolBarOpenChatWindow;
 		

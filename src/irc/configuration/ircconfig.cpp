@@ -90,6 +90,9 @@ bool IRCConfig::readFromFile()
 	pSection = &pIni->section(PersonalCfg::SECTION_NAME);
 	personal.load(*pSection);
 	
+	pSection = &pIni->section(SoundsCfg::SECTION_NAME);
+	sounds.load(*pSection);	
+	
 	networks.load(*pIni);
 	
 	return true;	
@@ -117,6 +120,9 @@ Any modification done manually to this file is on your own risk.").arg(Version::
 	
 	pSection = &pIni->section(PersonalCfg::SECTION_NAME);
 	personal.save(*pSection);
+	
+	pSection = &pIni->section(SoundsCfg::SECTION_NAME);
+	sounds.save(*pSection);
 	
 	networks.save(*pIni);
 	
@@ -328,4 +334,28 @@ void IRCConfig::PersonalCfg::save(IniSection& section)
 	section["AlternativeNickname"] = this->alternativeNickname;
 	section["FullName"] = this->fullName;
 	section["Nickname"] = this->nickname;
+}
+//////////////////////////////////////////////////////////////////////////////
+const QString IRCConfig::SoundsCfg::SECTION_NAME = "Sounds";
+
+IRCConfig::SoundsCfg::SoundsCfg()
+{
+	this->bUseNicknameUsedSound = false;
+	this->bUsePrivateMessageReceivedSound = false;
+}
+
+void IRCConfig::SoundsCfg::load(IniSection& section)
+{
+	this->bUseNicknameUsedSound = section["bUseNicknameUsedSound"];
+	this->bUsePrivateMessageReceivedSound = section["bUsePrivateMessageReceivedSound"];
+	this->nicknameUsedSound = (const QString&)section["NicknameUsedSound"];
+	this->privateMessageReceivedSound = (const QString&)section["PrivateMessageReceivedSound"];
+}
+
+void IRCConfig::SoundsCfg::save(IniSection& section)
+{
+	section["bUseNicknameUsedSound"] = this->bUseNicknameUsedSound;
+	section["bUsePrivateMessageReceivedSound"] = this->bUsePrivateMessageReceivedSound;
+	section["NicknameUsedSound"] = this->nicknameUsedSound;
+	section["PrivateMessageReceivedSound"] = this->privateMessageReceivedSound;
 }

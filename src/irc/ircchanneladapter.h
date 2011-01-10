@@ -134,6 +134,12 @@ class IRCChannelAdapter : public IRCChatAdapter
 		void					userModeChanges(const QString& nickname, unsigned flagsAdded, unsigned flagsRemoved);		
 
 	signals:
+		/**
+		 *	@brief Emitted when nickname is used in a message.
+		 *
+		 *	This is played for other user's chat messages.
+		 */
+		void					myNicknameUsed();
 		void					nameAdded(const IRCUserInfo& userInfo);
 		void					nameListUpdated(const IRCUserList& names);
 		void					nameRemoved(const IRCUserInfo& userInfo);

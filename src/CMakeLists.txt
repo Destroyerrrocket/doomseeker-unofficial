@@ -58,6 +58,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/configuration/irc/cfgircappearance.ui
 	gui/configuration/irc/cfgircdefinenetworkdialog.ui
 	gui/configuration/irc/cfgircnetworks.ui
+	gui/configuration/irc/cfgircsounds.ui
 	gui/configuration/cfgappearance.ui
 	gui/configuration/cfgcustomservers.ui
 	gui/configuration/cfgfilepaths.ui
@@ -91,6 +92,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/configuration/irc/cfgircappearance.h
 	gui/configuration/irc/cfgircdefinenetworkdialog.h
 	gui/configuration/irc/cfgircnetworks.h
+	gui/configuration/irc/cfgircsounds.h
 	gui/configuration/irc/ircconfigurationdialog.h
 	gui/configuration/cfgappearance.h
 	gui/configuration/cfgcustomservers.h	
@@ -166,6 +168,7 @@ set(SOURCE_FILES
 	gui/configuration/irc/cfgircappearance.cpp
 	gui/configuration/irc/cfgircdefinenetworkdialog.cpp
 	gui/configuration/irc/cfgircnetworks.cpp
+	gui/configuration/irc/cfgircsounds.cpp
 	gui/configuration/irc/ircconfigurationdialog.cpp
 	gui/configuration/cfgappearance.cpp
 	gui/configuration/cfgcustomservers.cpp	
@@ -184,6 +187,7 @@ set(SOURCE_FILES
 	gui/irc/ircdock.cpp	
 	gui/irc/ircdocktabcontents.cpp
 	gui/irc/ircnetworkselectionbox.cpp
+	gui/irc/ircsounds.cpp	
 	gui/models/serverlistcolumn.cpp
 	gui/models/serverlistmodel.cpp
 	gui/models/serverlistproxymodel.cpp
@@ -271,6 +275,7 @@ set(HEADER_FILES
 	configuration/doomseekerconfig.h
 	gui/entity/serverlistfilterinfo.h
 	gui/helpers/playersdiagram.h
+	gui/irc/ircsounds.h		
 	gui/models/serverlistcolumn.h
 	gui/models/serverlistrowhandler.h
 	gui/widgets/qtabwidgetext.h

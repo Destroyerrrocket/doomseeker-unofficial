@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircdocktabcontents.h"
+#include "gui/irc/ircsounds.h"
 #include "gui/commonGUI.h"
 #include "irc/configuration/ircconfig.h"
 #include "irc/ircchanneladapter.h"
@@ -295,6 +296,11 @@ void IRCDockTabContents::newChatWindowIsOpened(IRCChatAdapter* pAdapter)
 	pParentIRCDock->addIRCAdapter(pAdapter);
 }
 
+void IRCDockTabContents::playNicknameUsedSound()
+{
+	pParentIRCDock->sounds().playIfAvailable(IRCSounds::NicknameUsed);
+}
+
 void IRCDockTabContents::receiveError(const QString& error)
 {
 	receiveMessageWithClass(tr("Error: %1").arg(error), IRCMessageClass::Error);
@@ -332,6 +338,12 @@ void IRCDockTabContents::receiveMessageWithClass(const QString& message, const I
 	else
 	{
 		messageHtmlEscaped = ("<span class='" + className + "'>" + messageHtmlEscaped + "</span>");
+	}
+	
+	// Play sound if this is Priv adapter.
+	if (pIrcAdapter->adapterType() == IRCAdapterBase::PrivAdapter)
+	{
+		pParentIRCDock->sounds().playIfAvailable(IRCSounds::PrivateMessageReceived);
 	}
 	
 	this->insertMessage(messageClass, messageHtmlEscaped);
@@ -386,6 +398,7 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 		case IRCAdapterBase::ChannelAdapter:
 		{
 			IRCChannelAdapter* pChannelAdapter = (IRCChannelAdapter*)pAdapter;
+			connect(pChannelAdapter, SIGNAL( myNicknameUsed() ), SLOT( playNicknameUsedSound() ) );
 			connect(pChannelAdapter, SIGNAL( nameAdded(const IRCUserInfo&) ), SLOT( nameAdded(const IRCUserInfo&) ) );
 			connect(pChannelAdapter, SIGNAL( nameListUpdated(const IRCUserList&) ), SLOT( nameListUpdated(const IRCUserList&) ) );
 			connect(pChannelAdapter, SIGNAL( nameRemoved(const IRCUserInfo&) ), SLOT( nameRemoved(const IRCUserInfo&) ) );
