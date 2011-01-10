@@ -30,6 +30,7 @@
 #include <QAction>
 #include <QStandardItem>
 #include <QMenu>
+#include <QTimer>
 #include <QWidget>
 
 class IRCChatAdapter;
@@ -54,8 +55,9 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		void				applyAppearanceSettings();
 		
 		/** 
-		 *	@brief Informs the tab that it should grab keyboard focus.
+		 *	@brief Called when tab becomes active.
 		 *
+		 *	Informs the tab that it should grab keyboard focus.
 		 *	Text input widget will be selected.
 		 */
 		void				grabFocus();
@@ -86,7 +88,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 *	Capture this to close this widget.
 		 */
 		void				chatWindowCloseRequest(IRCDockTabContents*);
-	
+		
 		/**
 		 *	@brief Emitted when the variable returned by 
 		 *	IRCAdapterBase::title() might have changed and the 
@@ -120,7 +122,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 */
 		void				newChatWindowIsOpened(IRCChatAdapter* pAdapter);
 		
-		void				playNicknameUsedSound();
+		void				myNicknameUsedSlot();
 		
 		void				receiveError(const QString& error);
 		void				sendMessage();
@@ -164,8 +166,20 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 				bool			bIsOperator;
 			
 		};
+		
+		static const int	BLINK_TIMER_DELAY_MS;
 	
+		/**
+		 *	@brief Holds blinkTimer state.
+		 *
+		 *	Either text shows in usual color (false) or inverted one (true).
+		 *	Change to this variable should be accompanied by emitting
+		 *	titleChange() signal.
+		 */
+		bool				bBlinkTitle;
 		bool				bIsDestroying;
+		
+		QTimer				blinkTimer;
 		
 		IRCMessageClass*	lastMessageClass;
 		/**
@@ -180,6 +194,15 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		void				insertMessage(const IRCMessageClass& messageClass, const QString& htmlString);
 		QString				selectedNickname();
 		
+		/**
+		 *	Sets bBlinkTitle to specified value and emits
+		 *	titleChange() signal if new value was different than the
+		 *	previous one.
+		 */
+		void				setBlinkTitle(bool b);
+		
+	private slots:
+		void				blinkTimerSlot();
 };
 
 #endif

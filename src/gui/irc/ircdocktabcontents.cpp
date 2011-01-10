@@ -35,10 +35,13 @@
 #include <QScrollBar>
 #include <QStandardItemModel>
 
+const int IRCDockTabContents::BLINK_TIMER_DELAY_MS = 650;
+
 IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 {
 	setupUi(this);
 	
+	this->bBlinkTitle = false;
 	this->bIsDestroying = false;
 	this->lastMessageClass = NULL;
 	this->userListContextMenu = NULL;
@@ -54,6 +57,10 @@ IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 	connect(leCommandLine, SIGNAL( returnPressed() ), this, SLOT( sendMessage() ));
 	
 	applyAppearanceSettings();
+	
+	blinkTimer.setSingleShot(false);
+	this->connect(&blinkTimer, SIGNAL( timeout() ),
+		SLOT( blinkTimerSlot() ) );
 	
 	// Performance check line, keep commented for non-testing builds:
 	//receiveMessage(Strings::createRandomAlphaNumericStringWithNewLines(80, 5000));
@@ -145,6 +152,11 @@ void IRCDockTabContents::applyAppearanceSettings()
 	this->txtOutputWidget->moveCursor(QTextCursor::End);
 }
 
+void IRCDockTabContents::blinkTimerSlot()
+{
+	setBlinkTitle(!bBlinkTitle);
+}
+
 QStandardItem* IRCDockTabContents::findUserListItem(const QString& nickname)
 {
 	QStandardItemModel* pModel = (QStandardItemModel*)this->lvUserList->model();
@@ -174,6 +186,10 @@ IRCDockTabContents::UserListMenu& IRCDockTabContents::getUserListContextMenu()
 
 void IRCDockTabContents::grabFocus()
 {
+	// Make sure the tab title is not "blinked out" anymore.
+	blinkTimer.stop();
+	setBlinkTitle(false);
+
 	this->leCommandLine->setFocus();
 }
 
@@ -231,6 +247,15 @@ void IRCDockTabContents::insertMessage(const IRCMessageClass& messageClass, cons
 	if (!this->hasTabFocus())
 	{
 		emit titleChange(this);
+	}
+}
+
+void IRCDockTabContents::myNicknameUsedSlot()
+{
+	pParentIRCDock->sounds().playIfAvailable(IRCSounds::NicknameUsed);
+	if (!hasTabFocus())
+	{
+		blinkTimer.start(BLINK_TIMER_DELAY_MS);
 	}
 }
 
@@ -296,11 +321,6 @@ void IRCDockTabContents::newChatWindowIsOpened(IRCChatAdapter* pAdapter)
 	pParentIRCDock->addIRCAdapter(pAdapter);
 }
 
-void IRCDockTabContents::playNicknameUsedSound()
-{
-	pParentIRCDock->sounds().playIfAvailable(IRCSounds::NicknameUsed);
-}
-
 void IRCDockTabContents::receiveError(const QString& error)
 {
 	receiveMessageWithClass(tr("Error: %1").arg(error), IRCMessageClass::Error);
@@ -344,6 +364,12 @@ void IRCDockTabContents::receiveMessageWithClass(const QString& message, const I
 	if (pIrcAdapter->adapterType() == IRCAdapterBase::PrivAdapter)
 	{
 		pParentIRCDock->sounds().playIfAvailable(IRCSounds::PrivateMessageReceived);
+		
+		// If this tab doesn't have focus, also start blinking the title.
+		if (!hasTabFocus())
+		{
+			blinkTimer.start(BLINK_TIMER_DELAY_MS);
+		}
 	}
 	
 	this->insertMessage(messageClass, messageHtmlEscaped);
@@ -376,6 +402,23 @@ void IRCDockTabContents::sendMessage()
 	}
 }
 
+void IRCDockTabContents::setBlinkTitle(bool b)
+{
+	bool bEmit = false;
+	if (bBlinkTitle != b)
+	{
+		// Delay signal emit until after we change the variable.
+		bEmit = true;
+	}
+	
+	this->bBlinkTitle = b;
+	
+	if (bEmit)
+	{
+		emit titleChange(this);
+	}
+}
+
 void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 {
 	pIrcAdapter = pAdapter;
@@ -398,7 +441,7 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 		case IRCAdapterBase::ChannelAdapter:
 		{
 			IRCChannelAdapter* pChannelAdapter = (IRCChannelAdapter*)pAdapter;
-			connect(pChannelAdapter, SIGNAL( myNicknameUsed() ), SLOT( playNicknameUsedSound() ) );
+			connect(pChannelAdapter, SIGNAL( myNicknameUsed() ), SLOT( myNicknameUsedSlot() ) );
 			connect(pChannelAdapter, SIGNAL( nameAdded(const IRCUserInfo&) ), SLOT( nameAdded(const IRCUserInfo&) ) );
 			connect(pChannelAdapter, SIGNAL( nameListUpdated(const IRCUserList&) ), SLOT( nameListUpdated(const IRCUserList&) ) );
 			connect(pChannelAdapter, SIGNAL( nameRemoved(const IRCUserInfo&) ), SLOT( nameRemoved(const IRCUserInfo&) ) );
@@ -438,13 +481,32 @@ QString IRCDockTabContents::titleColor() const
 {
 	if (this->lastMessageClass != NULL && !this->hasTabFocus())
 	{
+		QString color;
+	
 		if (*this->lastMessageClass == IRCMessageClass::Normal)
 		{
-			return "#ff0000";
+			color = "#ff0000";
 		}
 		else
 		{
-			return this->lastMessageClass->colorFromConfig();
+			color = this->lastMessageClass->colorFromConfig();
+		}
+		
+		if (bBlinkTitle)
+		{
+			QColor c(color);
+			
+			int rInverted = 0xff - c.red();
+			int gInverted = 0xff - c.green();
+			int bInverted = 0xff - c.blue();
+			
+			QColor inverted(rInverted, gInverted, bInverted);
+			
+			return inverted.name();
+		}
+		else
+		{
+			return color;
 		}
 	}
 	
