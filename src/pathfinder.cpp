@@ -51,7 +51,7 @@ QString PathFinder::findFile(const QString& fileName) const
 		QFileInfo file(pathList[i] + QDir::separator() + fileName);
 		if (file.exists() && file.isFile())
 		{
-			return file.absoluteFilePath();
+			return file.canonicalFilePath();
 		}
 	}
 	#else
@@ -67,7 +67,7 @@ QString PathFinder::findFile(const QString& fileName) const
 			QString tmpName = fiList[j].fileName();
 			if (tmpName.compare(fileName, Qt::CaseInsensitive) == 0)
 			{
-				return fiList[j].absoluteFilePath();
+				return fiList[j].canonicalFilePath();
 			}
 		}
 	}

@@ -29,6 +29,7 @@
 #include "serverapi/binaries.h"
 #include "serverapi/gamerunner.h"
 #include "serverapi/messages.h"
+#include "strings.h"
 
 #include <QCheckBox>
 #include <QFileDialog>
@@ -102,8 +103,10 @@ void CreateServerDlg::addIwad(const QString& path)
 			return;
 		}
 	}
-
-	cboIwad->addItem(path);
+	
+	QString cleanPath = Strings::normalizePath(path);
+	
+	cboIwad->addItem(cleanPath);
 	cboIwad->setCurrentIndex(cboIwad->count() - 1);
 }
 

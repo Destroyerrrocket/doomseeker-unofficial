@@ -60,8 +60,8 @@ QString Strings::combinePaths(QString pathFront, QString pathEnd)
 	pathEnd = Strings::triml(pathEnd, "/\\");
 
 	combinedPath = pathFront + "/" + pathEnd;
-	combinedPath = QDir::fromNativeSeparators( combinedPath );
-
+	combinedPath = normalizePath(combinedPath);
+	
 	return combinedPath;
 }
 
@@ -251,6 +251,14 @@ bool Strings::isUrlSafe(const QString& url)
 
 	
 	return bIsSafe1 || bIsSafe2 || bIsSafe3;
+}
+
+QString Strings::normalizePath(QString path)
+{
+	path = QDir::fromNativeSeparators(path);
+	path = QDir::cleanPath(path);
+	
+	return path;
 }
 
 float Strings::scaleDataUnit(float bytes, DataUnit& outUnit)

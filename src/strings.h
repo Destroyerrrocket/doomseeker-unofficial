@@ -95,6 +95,15 @@ class MAIN_EXPORT Strings
 		static QString			formatTime(float seconds);
 
 		static bool				isCharOnCharList(char c, const QString& charList);
+		
+		/**
+		 *  @brief Creates a clean path.
+		 *
+		 *  Calls both QDir::fromNativeSeparators() and QDir::cleanPath().
+		 *  The returned string will have only '/' separators, no '.' or
+		 *	'..' markers and no double separators.
+		 */
+		static QString			normalizePath(QString path);
 
 		/**
 		 *	@brief Translates string in format "hostname:port" to atomic values.

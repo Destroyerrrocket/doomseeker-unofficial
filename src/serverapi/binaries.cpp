@@ -44,7 +44,7 @@ Binaries::Binaries()
 QString Binaries::clientWorkingDirectory(Message& message) const
 {
 	QFileInfo fi(clientBinary(message));
-	return fi.absolutePath();
+	return fi.canonicalPath();
 }
 
 QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, Message& message) const
@@ -68,22 +68,22 @@ QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, 
 		error = tr("Executable for %1 %2:\n%3\nis a directory or doesn't exist.")
 					.arg(plugin()->name)
 					.arg(binaryNames[binaryType])
-					.arg(*setting);
+					.arg(fi.canonicalFilePath());
 		message.setValues(Messages::Types::CUSTOM_ERROR, error);
 		return QString();
 	}
 
-	return setting;
+	return fi.canonicalFilePath();
 }
 
 QString Binaries::offlineGameWorkingDirectory(Message& message) const
 {
 	QFileInfo fi(offlineGameBinary(message));
-	return fi.absolutePath();
+	return fi.canonicalPath();
 }
 
 QString Binaries::serverWorkingDirectory(Message& message) const
 {
 	QFileInfo fi(serverBinary(message));
-	return fi.absolutePath();
+	return fi.canonicalPath();
 }
