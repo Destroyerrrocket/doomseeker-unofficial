@@ -138,7 +138,6 @@ void ServerListHandler::connectTableModelProxySlots()
 {
 	QHeaderView* header = table->horizontalHeader();
 	connect(header, SIGNAL( sectionClicked(int) ), this, SLOT ( columnHeaderClicked(int) ) );
-	connect(sortingProxy, SIGNAL( rowsInserted(const QModelIndex&, int, int) ), this, SLOT( resizeChangedRows(const QModelIndex&, int, int) ));
 	connect(model, SIGNAL( modelCleared() ), this, SLOT( modelCleared() ) );
 	connect(table, SIGNAL( clicked(const QModelIndex&) ), this, SLOT( itemSelected(const QModelIndex&) ));
 	connect(table, SIGNAL( middleMouseClick(const QModelIndex&, const QPoint&) ), this, SLOT( tableMiddleClicked(const QModelIndex&, const QPoint&) ) );
@@ -428,15 +427,6 @@ void ServerListHandler::refreshSelected()
 	}
 }
 
-void ServerListHandler::resizeChangedRows(const QModelIndex &parent, int start, int end)
-{
-	// This is so when the search is undone the rows don't become fat again.
-	for (int i = start; i < end; ++i)
-	{
-		table->resizeRowToContents(i);
-	}
-}
-
 void ServerListHandler::saveColumnsWidthsSettings()
 {
 	gConfig.doomseeker.serverListColumnState = table->horizontalHeader()->saveState().toBase64();
@@ -481,8 +471,6 @@ void ServerListHandler::serverUpdated(Server *server, int response)
 	{
 		rowIndex = model->addServer(server, response);
 	}
-
-	table->resizeRowToContents(rowIndex);
 
 	needsCleaning = true;
 	emit serverInfoUpdated(server);

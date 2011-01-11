@@ -23,6 +23,7 @@
 
 #include "gui/widgets/serverlistview.h"
 #include <QDebug>
+#include <QHeaderView>
 #include <QItemDelegate>
 #include <QPainter>
 #include <QSortFilterProxyModel>
@@ -95,6 +96,9 @@ class CustomItemDelegate : public QItemDelegate
 
 ServerListView::ServerListView(QWidget* parent) : QTableView(parent)
 {
+	// Prevent the fat rows problem.
+	verticalHeader()->setDefaultSectionSize(fontMetrics().height() + 6);
+
 	bAllowAllRowsRefresh = true;
 	setItemDelegate(new CustomItemDelegate());
 }
