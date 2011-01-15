@@ -121,7 +121,8 @@ PluginLoader::PluginLoader(unsigned int type, const QStringList &baseDirectories
 {
 	foreach(QString baseDir, baseDirectories)
 	{
-		pluginsDirectory = baseDir + QString::fromAscii(directory, directoryLength != -1 ? directoryLength : static_cast<unsigned int>(-1));
+		QString subDir = QString::fromAscii(directory, directoryLength != -1 ? directoryLength : static_cast<unsigned int>(-1));
+		pluginsDirectory = Strings::combinePaths(baseDir, subDir);
 		if(filesInDir())
 			break;
 	}
@@ -150,6 +151,7 @@ void PluginLoader::clearPlugins()
 
 bool PluginLoader::filesInDir()
 {
+	gLog << QString("Attempting to load plugins from directory: %1").arg(pluginsDirectory);
 #ifdef Q_OS_WIN32
 	WIN32_FIND_DATA file;
 	HANDLE directory = FindFirstFile((pluginsDirectory + "*.dll").toAscii().constData(), &file);
@@ -183,7 +185,7 @@ bool PluginLoader::filesInDir()
 			DIR *temp = opendir(pluginFilePath.toAscii().constData());
 			if(temp == NULL) // this is a file
 			{
-				Plugin *plugin = new Plugin(type, pluginsDirectory + "/" + file->d_name);
+				Plugin *plugin = new Plugin(type, pluginFilePath);
 				if(plugin->isValid())
 					pluginsList.push_back(plugin);
 				else
