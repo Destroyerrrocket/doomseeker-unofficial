@@ -159,6 +159,7 @@ bool PluginLoader::filesInDir()
 			if(!(file.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 			{
 				QString pluginFilePath = Strings::combinePaths(pluginsDirectory, file.cFileName);
+				pluginFilePath = QDir::toNativeSeparators(pluginFilePath);
 			
 				Plugin *plugin = new Plugin(type, pluginFilePath);
 				if(plugin->isValid())
@@ -177,6 +178,7 @@ bool PluginLoader::filesInDir()
 		while((file = readdir(directory)) != NULL)
 		{
 			QString pluginFilePath = Strings::combinePaths(pluginsDirectory, QString(file->d_name));
+			pluginFilePath = QDir::toNativeSeparators(pluginFilePath);
 		
 			DIR *temp = opendir(pluginFilePath.toAscii().constData());
 			if(temp == NULL) // this is a file
