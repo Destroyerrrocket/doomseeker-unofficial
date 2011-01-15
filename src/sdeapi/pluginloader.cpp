@@ -154,7 +154,14 @@ bool PluginLoader::filesInDir()
 	gLog << QString("Attempting to load plugins from directory: %1").arg(pluginsDirectory);
 #ifdef Q_OS_WIN32
 	WIN32_FIND_DATA file;
-	HANDLE directory = FindFirstFile((pluginsDirectory + "*.dll").toAscii().constData(), &file);
+	
+	// Remember that paths here are also handled by WinAPI functions.
+	// It is advisable to convert directory separators to the native '\' 
+	// separators.
+	QString searchPath = Strings::combinePaths(pluginsDirectory, "*.dll");
+	searchPath = QDir::toNativeSeparators(searchPath);
+	
+	HANDLE directory = FindFirstFile(searchPath.toAscii().constData(), &file);
 	if(directory != INVALID_HANDLE_VALUE)
 	{
 		do {
