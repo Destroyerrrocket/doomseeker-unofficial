@@ -72,6 +72,7 @@
 	<file alias="flags/NLD">flags/NLD.png</file>
 	<file alias="flags/NOR">flags/NOR.png</file>
 	<file alias="flags/NZL">flags/NZL.png</file>
+	<file alias="flags/PAN">flags/PAN.png</file>	
 	<file alias="flags/POL">flags/POL.png</file>
 	<file alias="flags/PRT">flags/PRT.png</file>
 	<file alias="flags/PRY">flags/PRY.png</file>
@@ -79,6 +80,7 @@
 	<file alias="flags/RUS">flags/RUS.png</file>
 	<file alias="flags/SAU">flags/SAU.png</file>
 	<file alias="flags/SVK">flags/SVK.png</file>
+	<file alias="flags/SVN">flags/SVN.png</file>		
 	<file alias="flags/SWE">flags/SWE.png</file>
 	<file alias="flags/TWN">flags/TWN.png</file>	
 	<file alias="flags/UKR">flags/UKR.png</file>	
