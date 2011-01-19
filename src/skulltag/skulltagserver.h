@@ -27,6 +27,7 @@
 #include <QString>
 #include <QColor>
 #include <QTime>
+#include <QTimer>
 
 #include "serverapi/server.h"
 
@@ -184,16 +185,20 @@ class SkulltagRConProtocol : public RConProtocol
 		void	disconnectFromServer();
 		void	sendCommand(const QString &cmd);
 		void	sendPassword(const QString &password);
+		void	sendPong();
 
 	protected:
 		SkulltagRConProtocol(Server *server);
 
-		void	run();
 		void	processPacket(const char *data, int length, bool initial=false, int maxUpdates=1, int *pos=NULL);
 
+		QTimer	pingTimer;
 		QString	hostName;
 		QString	salt;
 		int		serverProtocolVersion;
+
+	protected slots:
+		void	packetReady();
 };
 
 #endif /* __SKULLTAGSERVER_H__ */

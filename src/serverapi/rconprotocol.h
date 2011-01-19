@@ -32,7 +32,7 @@ class Server;
 /**
  *	@brief An abstract interface for a remote console protocol.
  */
-class MAIN_EXPORT RConProtocol : public QThread
+class MAIN_EXPORT RConProtocol : public QObject
 {
 	Q_OBJECT
 
@@ -63,6 +63,9 @@ class MAIN_EXPORT RConProtocol : public QThread
 		QUdpSocket		socket;
 
 		friend class Server;
+
+	protected slots:
+		virtual void	packetReady()=0;
 };
 
 #endif

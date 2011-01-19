@@ -687,6 +687,10 @@ void SkulltagServer::updatedSlot(Server* server, int response)
 
 SkulltagRConProtocol::SkulltagRConProtocol(Server *server) : RConProtocol(server)
 {
+	// Note: the original rcon utility did TIMEOUT/4.
+	// Try to get at least 4 packets in before timing out,
+	pingTimer.setInterval(2500);
+	connect(&pingTimer, SIGNAL( timeout() ), this, SLOT( sendPong() ));
 }
 
 RConProtocol *SkulltagRConProtocol::connectToServer(Server *server)
@@ -724,6 +728,7 @@ RConProtocol *SkulltagRConProtocol::connectToServer(Server *server)
 				case SVRC_SALT:
 					protocol->connected = true;
 					protocol->salt = QString(&packet[1]);
+					protocol->pingTimer.start();
 					return protocol;
 			}
 			break;
@@ -741,6 +746,7 @@ void SkulltagRConProtocol::disconnectFromServer()
 	HUFFMAN_Encode(disconnectPacket, reinterpret_cast<unsigned char*> (encodedDisconnect), 1, &encodedSize);
 	socket.writeDatagram(encodedDisconnect, encodedSize, server->address(), server->port());
 	connected = false;
+	pingTimer.stop();
 	emit disconnected();
 }
 
@@ -779,38 +785,39 @@ void SkulltagRConProtocol::sendPassword(const QString &password)
 
 		if(socket.waitForReadyRead(3000))
 		{
-			start();
+			packetReady();
+			connect(&socket, SIGNAL( readyRead() ), this, SLOT( packetReady() ));
 			break;
 		}
 	}
 }
 
-void SkulltagRConProtocol::run()
+void SkulltagRConProtocol::sendPong()
 {
-	while(connected)
-	{
-		// Note: the original rcon utility did TIMEOUT/4.
-		if(socket.waitForReadyRead(2500)) // Try to get 4 packets per second in order to compensate for lag and packet loss
-		{
-			int size = socket.pendingDatagramSize();
-			char* data = new char[size];
-			socket.readDatagram(data, size);
-			char packet[4096];
-			int decodedSize = 4096;
-			HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (data), reinterpret_cast<unsigned char*> (packet), size, &decodedSize);
-			delete[] data;
+	// create a "PONG" packet
+	const unsigned char pong[1] = { CLRC_PONG };
+	char encodedPong[4];
+	int encodedSize = 4;
+	HUFFMAN_Encode(pong, reinterpret_cast<unsigned char*> (encodedPong), 1, &encodedSize);
+	socket.writeDatagram(encodedPong, encodedSize, server->address(), server->port());
+}
 
-			processPacket(packet, size);
-		}
-		else
-		{
-			// create a "PONG" packet
-			const unsigned char pong[1] = { CLRC_PONG };
-			char encodedPong[4];
-			int encodedSize = 4;
-			HUFFMAN_Encode(pong, reinterpret_cast<unsigned char*> (encodedPong), 1, &encodedSize);
-			socket.writeDatagram(encodedPong, encodedSize, server->address(), server->port());
-		}
+void SkulltagRConProtocol::packetReady()
+{
+	if(!connected)
+		return;
+
+	while(socket.hasPendingDatagrams())
+	{
+		int size = socket.pendingDatagramSize();
+		char* data = new char[size];
+		socket.readDatagram(data, size);
+		char packet[4096];
+		int decodedSize = 4096;
+		HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (data), reinterpret_cast<unsigned char*> (packet), size, &decodedSize);
+		delete[] data;
+
+		processPacket(packet, size);
 	}
 }
 
@@ -841,7 +848,7 @@ void SkulltagRConProtocol::processPacket(const char *data, int length, bool init
 				break;
 			case SVRC_LOGGEDIN:
 			{
-				start();
+				connect(&socket, SIGNAL( readyRead() ), this, SLOT( packetReady() ));
 				serverProtocolVersion = data[1];
 				hostName = QString(&data[2]);
 				emit serverNameChanged(hostName);
