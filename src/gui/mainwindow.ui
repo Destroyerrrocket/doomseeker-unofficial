@@ -75,6 +75,8 @@
     <addaction name="menuActionWadseeker"/>
     <addaction name="menuActionUpdateIP2C"/>
     <addaction name="separator"/>
+    <addaction name="menuActionRecordDemo"/>
+    <addaction name="separator"/>
     <addaction name="menuActionQuit"/>
    </widget>
    <widget class="QMenu" name="menuView">
@@ -209,6 +211,18 @@
   <action name="menuActionAboutQt">
    <property name="text">
     <string>About &amp;Qt</string>
+   </property>
+  </action>
+  <action name="menuActionRecordDemo">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../media/resources.qrc">
+     <normaloff>:/icons/media-record.png</normaloff>:/icons/media-record.png</iconset>
+   </property>
+   <property name="text">
+    <string>Record Demo</string>
    </property>
   </action>
  </widget>

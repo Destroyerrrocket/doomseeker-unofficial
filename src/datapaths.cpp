@@ -26,12 +26,14 @@
 #include <cstdlib>
 
 const QString DataPaths::PROGRAMS_APPDATA_DIR_NAME = ".doomseeker";
+const QString DataPaths::DEMOS_DIR_NAME = "demos";
 
 DataPaths::DataPaths(bool bPortableModeOn)
 {
 	bIsPortableModeOn = bPortableModeOn;
 
 	programsDirectoryName = PROGRAMS_APPDATA_DIR_NAME;
+	demosDirectoryName = PROGRAMS_APPDATA_DIR_NAME + QDir::separator() + DEMOS_DIR_NAME;
 }
 
 QStringList DataPaths::canWrite() const
@@ -54,13 +56,24 @@ bool DataPaths::createDirectories()
 	bool bAllSuccessful = true;
 
 	QDir appDataDir(systemAppDataDirectory());
-
 	if (!tryCreateDirectory(appDataDir, programsDirectoryName))
 	{
 		bAllSuccessful = false;
 	}
 
+	QDir programDirectory(programsDataDirectoryPath());
+	if (!tryCreateDirectory(programDirectory, "demos"))
+	{
+		bAllSuccessful = false;
+	}
+
 	return bAllSuccessful;
+}
+
+QString DataPaths::demosDirectoryPath() const
+{
+	QString demosDir = systemAppDataDirectory(demosDirectoryName);
+	return demosDir;
 }
 
 QStringList DataPaths::directoriesExist() const

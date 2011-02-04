@@ -130,6 +130,9 @@ One of the proper locations for plugin modules is the \"engines/\" directory.\n\
 
 	restoreState(QByteArray::fromBase64(gConfig.doomseeker.mainWindowState.toAscii()));
 
+	// Restore checked states.
+	menuActionRecordDemo->setChecked(gConfig.doomseeker.bRecordDemo);
+
 	// Get the master
 	masterManager = new MasterManager();
 	buddiesList->scan(masterManager);
@@ -367,6 +370,7 @@ void MainWindow::connectEntities()
 	connect(menuActionHelp, SIGNAL( triggered() ), this, SLOT ( menuHelpHelp() ) );
 	connect(menuActionIRCOptions, SIGNAL( triggered() ), this, SLOT( menuIRCOptions() ) );
 	connect(menuActionLog, SIGNAL( triggered() ), this, SLOT( menuLog() ));
+	connect(menuActionRecordDemo, SIGNAL( triggered() ), this, SLOT( menuRecordDemo() ) );
 	connect(menuActionUpdateIP2C, SIGNAL( triggered() ), this, SLOT( menuUpdateIP2C() ) );
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( quitProgram() ));
 	connect(menuActionViewIRC, SIGNAL( triggered() ) , this, SLOT( menuViewIRC() ));
@@ -935,6 +939,11 @@ void MainWindow::menuOptionsConfigure()
 	}
 }
 
+void MainWindow::menuRecordDemo()
+{
+	gConfig.doomseeker.bRecordDemo = menuActionRecordDemo->isChecked();
+}
+
 void MainWindow::menuUpdateIP2C()
 {
 	IP2CUpdateBox updateBox(this);
@@ -1177,6 +1186,7 @@ void MainWindow::setupToolBar()
 {
 	QToolBar* pToolBar = new QToolBar(this);
 	pToolBar->setMovable(false);
+	pToolBar->setObjectName("Toolbar");
 
 	// Refresh buttons
 	toolBarGetServers = new QAction(QIcon(":/icons/arrow-down-double.png"), tr("Get Servers"), pToolBar);
@@ -1191,6 +1201,7 @@ void MainWindow::setupToolBar()
 	pToolBar->addSeparator();
 	pToolBar->addAction(menuActionCreateServer);
 	pToolBar->addAction(menuActionWadseeker);
+	pToolBar->addAction(menuActionRecordDemo);
 	
 	pToolBar->addSeparator();
 

@@ -31,6 +31,7 @@
 #include "main.h"
 #include "pathfinder.h"
 #include "strings.h"
+#include <QDateTime>
 #include <QStringList>
 
 GameRunner::GameRunner(const Server* server)
@@ -190,6 +191,28 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 	{
 		joinError.type = JoinError::Terminate;
 		return joinError;
+	}
+
+	// Record
+	if(gConfig.doomseeker.bRecordDemo)
+	{
+		args << argForDemoRecord();
+
+		// Get a list of wads for demo name:
+		QStringList wadList;
+		wadList << server->iwadName().toLower();
+		for (int i = 0; i < server->numWads(); ++i)
+		{
+			wadList << server->wad(i).name.toLower();
+		}
+
+		// Generate demo name.
+		// port-iwad-date-wad
+		QString demoName = Main::dataPaths->demosDirectoryPath() + QDir::separator() + QString("%1_%2_%3.cld").
+			arg(server->engineName()).
+			arg(QDateTime::currentDateTime().toString("dd.MM.yyyy_hh.mm.ss")).
+			arg(wadList.join("_"));
+		args << demoName;
 	}
 
 	for (int i = 0; i < server->numWads(); ++i)

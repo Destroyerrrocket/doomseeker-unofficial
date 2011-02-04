@@ -117,6 +117,11 @@ class MAIN_EXPORT GameRunner : public QObject
 		virtual QString				argForPwadLoading() const { return "-file"; }
 
 		/**
+		 *	@brief Command line parameter for recording a demo.
+		 */
+		virtual QString				argForDemoRecord() const { return "-record"; }
+
+		/**
 		 *	@brief Command line parameter used to launch a server.
 		 */
 		virtual QString				argForServerLaunch() const { return ""; }

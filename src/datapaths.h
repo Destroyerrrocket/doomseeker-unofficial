@@ -47,6 +47,7 @@ class MAIN_EXPORT DataPaths
 		};
 	
 		static const QString	PROGRAMS_APPDATA_DIR_NAME;
+		static const QString	DEMOS_DIR_NAME;
 		
 		/**
 		 *	@b Retrieves correct path to "Program Files" directory. 
@@ -82,6 +83,8 @@ class MAIN_EXPORT DataPaths
 		 */
 		bool					createDirectories();
 
+		QString					demosDirectoryPath() const;
+
 		/**
 		 *	@brief Checks if all necessary directories exist.
 		 *
@@ -100,7 +103,7 @@ class MAIN_EXPORT DataPaths
 		 *	is determined by calling the systemAppDataDirectory() method and
 		 *	appending string contained in programsDirectoryName member.
 		 */
-		QString					programsDataDirectoryPath() const;		
+		QString					programsDataDirectoryPath() const;
 		
 		bool					isPortableModeOn() const { return bIsPortableModeOn; }
 		
@@ -144,6 +147,7 @@ class MAIN_EXPORT DataPaths
 		 *	@brief Defaults to PROGRAMS_APPDATA_DIR_NAME.
 		 */
 		QString					programsDirectoryName;
+		QString					demosDirectoryName;
 		
 		/**
 		 *	@brief If directory already exists true is returned.

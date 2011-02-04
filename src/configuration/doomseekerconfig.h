@@ -60,6 +60,7 @@ class DoomseekerConfig
 			bool						bQueryAutoRefreshDontIfActive;
 			bool						bQueryAutoRefreshEnabled;
 			bool						bQueryOnStartup;
+			bool						bRecordDemo;
 			bool						bRememberConnectPassword;
 			bool						bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn;
 			QVector<BuddyInfo>			buddiesList;
