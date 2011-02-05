@@ -75,6 +75,7 @@
     <addaction name="menuActionWadseeker"/>
     <addaction name="menuActionUpdateIP2C"/>
     <addaction name="separator"/>
+    <addaction name="menuActionManageDemos"/>
     <addaction name="menuActionRecordDemo"/>
     <addaction name="separator"/>
     <addaction name="menuActionQuit"/>
@@ -223,6 +224,15 @@
    </property>
    <property name="text">
     <string>Record Demo</string>
+   </property>
+  </action>
+  <action name="menuActionManageDemos">
+   <property name="icon">
+    <iconset resource="../../media/resources.qrc">
+     <normaloff>:/icons/media-playback-start.png</normaloff>:/icons/media-playback-start.png</iconset>
+   </property>
+   <property name="text">
+    <string>Demo Manager</string>
    </property>
   </action>
  </widget>

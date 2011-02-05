@@ -78,6 +78,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/addBuddyDlg.ui
 	gui/copytextdlg.ui
 	gui/createserver.ui
+	gui/demomanager.ui
 	gui/dockBuddiesList.ui
 	gui/ip2cupdatebox.ui	
 	gui/logdock.ui
@@ -89,11 +90,9 @@ qt4_wrap_ui(doomseekerUI
 )
 
 set(DOOMSEEKER_QT_FILES
-	gui/configuration/irc/cfgircappearance.h
 	gui/configuration/irc/cfgircdefinenetworkdialog.h
 	gui/configuration/irc/cfgircnetworks.h
 	gui/configuration/irc/cfgircsounds.h
-	gui/configuration/irc/ircconfigurationdialog.h
 	gui/configuration/cfgappearance.h
 	gui/configuration/cfgcustomservers.h	
 	gui/configuration/cfgfilepaths.h
@@ -111,7 +110,6 @@ set(DOOMSEEKER_QT_FILES
 	gui/irc/ircdocktabcontents.h
 	gui/irc/ircnetworkselectionbox.h
 	gui/models/serverlistmodel.h
-	gui/models/serverlistproxymodel.h
 	gui/widgets/colorbutton.h
 	gui/widgets/dockedwidgets.h
 	gui/widgets/fontbutton.h	
@@ -122,8 +120,8 @@ set(DOOMSEEKER_QT_FILES
 	gui/aboutDlg.h
 	gui/copytextdlg.h
 	gui/createserver.h
+	gui/demomanager.h
 	gui/dockBuddiesList.h
-	gui/ip2cupdatebox.h
 	gui/logdock.h
 	gui/mainwindow.h
 	gui/passwordDlg.h
@@ -134,12 +132,8 @@ set(DOOMSEEKER_QT_FILES
 	gui/wadseekerinterface.h
 	irc/ircadapterbase.h
 	irc/ircchanneladapter.h
-	irc/ircchatadapter.h
 	irc/ircclient.h
-	irc/ircdelayedoperation.h
-	irc/ircdelayedoperationlist.h
 	irc/ircglobalmessages.h
-	irc/ircprivadapter.h
 	irc/ircnetworkadapter.h
 	irc/ircrequestparser.h		
 	irc/ircresponseparser.h
@@ -203,6 +197,7 @@ set(SOURCE_FILES
 	gui/commonGUI.cpp
 	gui/copytextdlg.cpp
 	gui/createserver.cpp
+	gui/demomanager.cpp
 	gui/dockBuddiesList.cpp
 	gui/ip2cupdatebox.cpp
 	gui/logdock.cpp
@@ -273,17 +268,25 @@ set(SOURCE_FILES
 set(HEADER_FILES
 	${DOOMSEEKER_QT_FILES}
 	configuration/doomseekerconfig.h
+	gui/configuration/irc/cfgircappearance.h
+	gui/configuration/irc/ircconfigurationdialog.h
 	gui/entity/serverlistfilterinfo.h
 	gui/helpers/playersdiagram.h
 	gui/irc/ircsounds.h		
 	gui/models/serverlistcolumn.h
+	gui/models/serverlistproxymodel.h
 	gui/models/serverlistrowhandler.h
 	gui/widgets/qtabwidgetext.h
+	gui/ip2cupdatebox.h
 	irc/configuration/ircconfig.h
+	irc/ircchatadapter.h
+	irc/ircdelayedoperation.h
+	irc/ircdelayedoperationlist.h
 	irc/ircglobal.h
 	irc/ircmessageclass.h
 	irc/ircnetworkconnectioninfo.h
 	irc/ircnetworkentity.h
+	irc/ircprivadapter.h
 	irc/ircuserinfo.h
 	irc/ircuserlist.h
 	sdeapi/pluginloader.hpp

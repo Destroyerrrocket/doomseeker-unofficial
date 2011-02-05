@@ -217,6 +217,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	menuHelpHelp();
 		void	menuIRCOptions();
 		void	menuLog();
+		void	menuManageDemos();
 		void 	menuOptionsConfigure();
 		void	menuRecordDemo();
 		void	menuUpdateIP2C();

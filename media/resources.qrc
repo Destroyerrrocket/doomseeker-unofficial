@@ -20,6 +20,7 @@
 	<file>icons/preferences-system-4.png</file>
 	<file>icons/view-refresh-2.png</file>
 	<file>icons/media-record.png</file>
+	<file>icons/media-playback-start.png</file>
 	<file alias="slots/blocks/open">slotstyles/blocks/openslot.png</file>
 	<file alias="slots/blocks/specopen">slotstyles/blocks/openspecslot.png</file>
 	<file alias="slots/blocks/bot">slotstyles/blocks/bot.png</file>

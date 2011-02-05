@@ -29,6 +29,7 @@
 #include "gui/aboutDlg.h"
 #include "gui/copytextdlg.h"
 #include "gui/createserver.h"
+#include "gui/demomanager.h"
 #include "gui/dockBuddiesList.h"
 #include "gui/ip2cupdatebox.h"
 #include "gui/mainwindow.h"
@@ -370,6 +371,7 @@ void MainWindow::connectEntities()
 	connect(menuActionHelp, SIGNAL( triggered() ), this, SLOT ( menuHelpHelp() ) );
 	connect(menuActionIRCOptions, SIGNAL( triggered() ), this, SLOT( menuIRCOptions() ) );
 	connect(menuActionLog, SIGNAL( triggered() ), this, SLOT( menuLog() ));
+	connect(menuActionManageDemos, SIGNAL( triggered() ), this, SLOT( menuManageDemos() ) );
 	connect(menuActionRecordDemo, SIGNAL( triggered() ), this, SLOT( menuRecordDemo() ) );
 	connect(menuActionUpdateIP2C, SIGNAL( triggered() ), this, SLOT( menuUpdateIP2C() ) );
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( quitProgram() ));
@@ -895,6 +897,12 @@ void MainWindow::menuLog()
 	logDock->setVisible(!logDock->isVisible());
 }
 
+void MainWindow::menuManageDemos()
+{
+	DemoManagerDlg dm;
+	dm.exec();
+}
+
 void MainWindow::menuOptionsConfigure()
 {
 	DoomseekerConfigurationDialog configDialog(this);
@@ -1201,6 +1209,10 @@ void MainWindow::setupToolBar()
 	pToolBar->addSeparator();
 	pToolBar->addAction(menuActionCreateServer);
 	pToolBar->addAction(menuActionWadseeker);
+
+	// Demo buttons
+	pToolBar->addSeparator();
+	pToolBar->addAction(menuActionManageDemos);
 	pToolBar->addAction(menuActionRecordDemo);
 	
 	pToolBar->addSeparator();
