@@ -29,6 +29,7 @@
 #include "www.h"
 #include <QDir>
 #include <QFileInfo>
+#include <QStack>
 
 // TODO:
 // For the (close?) future:
@@ -187,15 +188,32 @@ void Wadseeker::fileDone(QByteArray& data, const QString& filename)
 		else
 		{
 			connect (unarchive, SIGNAL( message(const QString&, int) ), this, SLOT( messageSlot(const QString&, int) ) );
-			int file = unarchive->findFileEntry(currentWad);
-
-			if (file != -1)
+			// Check the archive for any of the files we're trying to locate.
+			QStack<int> filesToExtract;
+			int file;
+			if ((file = unarchive->findFileEntry(currentWad)) != -1)
+				filesToExtract.push(file);
+			for (int i = iNextWad;i < seekedWads.size();i++)
 			{
-				QString extractedFileName = unarchive->fileNameFromIndex(file);
-			
-				unarchive->extract(file, path);
-				emit message(tr("File \"%1\" was uncompressed successfully from archive \"%2\"!").arg(extractedFileName, filename), Notice);
-				bNextWad = true;
+				if ((file = unarchive->findFileEntry(seekedWads[i])) != -1)
+				{
+					seekedWads[i] = QString();
+					filesToExtract.push(file);
+				}
+			}
+
+			if(!filesToExtract.isEmpty())
+			{
+				do
+				{
+					file = filesToExtract.pop();
+					QString extractedFileName = unarchive->fileNameFromIndex(file);
+				
+					unarchive->extract(file, path);
+					emit message(tr("File \"%1\" was uncompressed successfully from archive \"%2\"!").arg(extractedFileName, filename), Notice);
+					bNextWad = true;
+				}
+				while(!filesToExtract.isEmpty());
 			}
 			else
 			{
