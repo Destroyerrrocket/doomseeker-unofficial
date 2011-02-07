@@ -124,22 +124,20 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 				QMessageBox::critical(this, tr("Unable to delete"), tr("Could not delete the selected demo."));
 			else
 			{
-				// Adjust the tree
-				adjustDemoList();
+				selectedDemo = NULL;
 
-				// I think I just need to figure out how to signal a model
-				// update here...
-				/*QModelIndex index = demoList->selectionModel()->currentIndex();
+				// Adjust the tree
+				QModelIndex index = demoList->selectionModel()->currentIndex();
 				int dateRow = index.parent().row();
 				int timeRow = index.row();
 
-				demoModel->takeItem(dateRow)->removeRow(timeRow);
+				demoModel->removeRow(timeRow, index.parent());
 				demoTree[dateRow].removeAt(timeRow);
 				if(demoTree[dateRow].size() == 0)
 				{
 					demoModel->removeRow(dateRow);
 					demoTree.removeAt(dateRow);
-				}*/
+				}
 			}
 		}
 	}
