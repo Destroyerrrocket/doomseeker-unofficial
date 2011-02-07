@@ -75,7 +75,7 @@ bool GameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwad
 	return true;
 }
 
-Message GameRunner::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cmdLine, bool bOfflinePlay)
+Message GameRunner::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cmdLine, HostMode mode)
 {
 	const QString RUN_RESULT_CAPTION = tr("createHostCommandLine");
 	Message message;
@@ -98,7 +98,7 @@ Message GameRunner::createHostCommandLine(const HostInfo& hostInfo, CommandLineI
 	}
 
 	// Port
-	if(!bOfflinePlay)
+	if(mode == GameRunner::HOST)
 		cmdLine.args << argForPort() << QString::number(server->port());
 
 	// CVars
@@ -108,22 +108,28 @@ Message GameRunner::createHostCommandLine(const HostInfo& hostInfo, CommandLineI
 		cmdLine.args << QString("+" + c.consoleCommand) << c.value();
 	}
 
-	message = hostGetBinary(bOfflinePlay);
+	message = hostGetBinary(mode != GameRunner::HOST);
 	if (!message.isIgnore())
 	{
 		return message;
 	}
 
-	message = hostGetWorkingDirectory(bOfflinePlay);
+	message = hostGetWorkingDirectory(mode != GameRunner::HOST);
 	if (!message.isIgnore())
 	{
 		return message;
 	}
 
 	// Add the server launch parameter only if we don't want offline game
-	if (!bOfflinePlay)
+	if (mode == GameRunner::HOST)
 	{
 		cmdLine.args << argForServerLaunch();
+	}
+	// Demo play back
+	else if (mode == GameRunner::DEMO)
+	{
+		cmdLine.args << argForDemoPlayback();
+		cmdLine.args << hostInfo.demoPath;
 	}
 
 	hostDMFlags(cmdLine.args, hostInfo.dmFlags);
@@ -244,11 +250,11 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 	return joinError;
 }
 
-Message GameRunner::host(const HostInfo& hostInfo, bool bOfflinePlay)
+Message GameRunner::host(const HostInfo& hostInfo, HostMode mode)
 {
 	CommandLineInfo cmdLine;
 
-	Message message = createHostCommandLine(hostInfo, cmdLine, bOfflinePlay);
+	Message message = createHostCommandLine(hostInfo, cmdLine, mode);
 	if (!message.isIgnore())
 	{
 		return message;
@@ -257,7 +263,7 @@ Message GameRunner::host(const HostInfo& hostInfo, bool bOfflinePlay)
 #ifdef Q_OS_WIN32
 	const bool WRAP_IN_SSS_CONSOLE = false;
 #else
-	const bool WRAP_IN_SSS_CONSOLE = !bOfflinePlay;
+	const bool WRAP_IN_SSS_CONSOLE = mode == HOST;
 #endif
 
 	return runExecutable(cmdLine, WRAP_IN_SSS_CONSOLE);

@@ -23,6 +23,12 @@
 
 #include "demomanager.h"
 #include "main.h"
+#include "pathfinder.h"
+#include "sdeapi/pluginloader.hpp"
+#include "serverapi/messages.h"
+#include "serverapi/server.h"
+#include "serverapi/gamerunner.h"
+#include "serverapi/gamerunnerstructs.h"
 
 #include <QDir>
 #include <QFileDialog>
@@ -36,8 +42,8 @@ DemoManagerDlg::DemoManagerDlg() : selectedDemo(NULL)
 	setupUi(this);
 
 	// Add a play button
-	//QPushButton *playButton = buttonBox->addButton("Play", QDialogButtonBox::ActionRole);
-	//playButton->setIcon(QIcon(":/icons/media-playback-start.png"));
+	QPushButton *playButton = buttonBox->addButton("Play", QDialogButtonBox::ActionRole);
+	playButton->setIcon(QIcon(":/icons/media-playback-start.png"));
 
 	demoModel = new QStandardItemModel();
 	adjustDemoList();
@@ -136,6 +142,51 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 				}*/
 			}
 		}
+	}
+	else // Play
+	{
+		if(selectedDemo == NULL)
+			return;
+
+		// Look for the plugin used to record.
+		const EnginePlugin *plugin = NULL;
+		for(int i = 0;i < Main::enginePlugins->numPlugins();i++)
+		{
+			if(selectedDemo->port == (*Main::enginePlugins)[i]->info->name)
+				plugin = (*Main::enginePlugins)[i]->info->pInterface;
+		}
+		if(plugin == NULL)
+		{
+			QMessageBox::critical(this, tr("No plugin"), tr("The \"") + selectedDemo->port + tr("\" plugin does not appear to be loaded."));
+			return;
+		}
+
+		// Locate all the files needed to play the demo
+		PathFinder pf;
+		PathFinderResult result = pf.findFiles(selectedDemo->wads);
+		if(!result.missingFiles.isEmpty())
+		{
+			QMessageBox::critical(this, tr("Files not found"), tr("The following files could not be located: ") + result.missingFiles.join(", "));
+			return;
+		}
+
+		// Play the demo
+		Server *server = plugin->server(QHostAddress(), 5029); // No specific port needed since we're basically "playing offline"
+		HostInfo hostInfo;
+		hostInfo.demoPath = Main::dataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename;
+		hostInfo.iwadPath = result.foundFiles[0];
+		hostInfo.pwadsPaths = result.foundFiles.mid(1);
+
+		GameRunner* gameRunner = server->gameRunner();
+		Message message = gameRunner->host(hostInfo, GameRunner::DEMO);
+
+		if (message.isError())
+		{
+			QMessageBox::critical(this, tr("Doomseeker - error"), message.content);
+		}
+
+		delete gameRunner;
+		delete server;
 	}
 }
 

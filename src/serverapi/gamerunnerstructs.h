@@ -41,6 +41,7 @@
 struct MAIN_EXPORT HostInfo
 {
 	QString 		executablePath; /// if empty, serverBinary() will be used
+	QString			demoPath; /// Use if running in DEMO mode.
 	QString 		iwadPath;
 	QStringList 	pwadsPaths;
 	QStringList 	customParameters;

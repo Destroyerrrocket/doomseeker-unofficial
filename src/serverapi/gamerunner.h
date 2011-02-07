@@ -36,6 +36,13 @@ class Server;
 class MAIN_EXPORT GameRunner : public QObject
 {
 	public:
+		enum HostMode
+		{
+			HOST,
+			OFFLINE,
+			DEMO
+		};
+
 		GameRunner(const Server* server);
 
 		/**
@@ -47,12 +54,12 @@ class MAIN_EXPORT GameRunner : public QObject
 		 *	@param [out] cli - after successful call this will contain
 		 *		required command line information.
 		 *	@param [out] error - if return == false, error text will be put here
-		 *  @param bOfflinePlay - if true a command line for single player game
+		 *  @param bOfflinePlay - if not HOST a command line for single player game
 		 *		will be launched
 		 *	@return	MessageResult::isError == false if command line was
 		 *		successfully created.
 		 */
-		Message						createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cmdLine, bool bOfflinePlay);
+		Message						createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cmdLine, HostMode mode);
 
 		/**
 		 *	@param [out] cli - after successful call this will contain
@@ -64,7 +71,7 @@ class MAIN_EXPORT GameRunner : public QObject
 		/**
 		 *	@see createHostCommandLine()
 		 */
-		Message						host(const HostInfo& hostInfo, bool bOfflinePlay);
+		Message						host(const HostInfo& hostInfo, HostMode mode);
 
 		/**
 		 *	This is supposed to return the plugin this GameRunner belongs to.
@@ -116,6 +123,10 @@ class MAIN_EXPORT GameRunner : public QObject
 		 */
 		virtual QString				argForPwadLoading() const { return "-file"; }
 
+		/**
+		 *	@brief Command line parameter for playing back a demo.
+		 */
+		virtual QString				argForDemoPlayback() const { return "-playdemo"; }
 		/**
 		 *	@brief Command line parameter for recording a demo.
 		 */

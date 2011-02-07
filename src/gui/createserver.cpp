@@ -349,14 +349,15 @@ bool CreateServerDlg::commandLineArguments(QString &executable, QStringList &arg
 
 	Server* server = currentEngine->pInterface->server(QHostAddress(), spinPort->value());
 	HostInfo hi;
+	GameRunner::HostMode mode = bIsServerSetup ? GameRunner::OFFLINE : GameRunner::HOST;
 
-	if (createHostInfo(hi, server, bIsServerSetup))
+	if (createHostInfo(hi, server, mode))
 	{
 		CommandLineInfo cli;
 		QString error;
 
 		GameRunner* gameRunner = server->gameRunner();
-		Message message = gameRunner->createHostCommandLine(hi, cli, bIsServerSetup);
+		Message message = gameRunner->createHostCommandLine(hi, cli, mode);
 
 		delete server;
 		delete gameRunner;
@@ -916,7 +917,7 @@ void CreateServerDlg::runGame(bool offline)
 
 		GameRunner* gameRunner = server->gameRunner();
 
-		Message message = gameRunner->host(hi, offline);
+		Message message = gameRunner->host(hi, offline ? GameRunner::OFFLINE : GameRunner::HOST);
 
 		delete gameRunner;
 		delete server;
