@@ -135,6 +135,7 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 
 	QString passwordHash(&in[pos]);
 	pos += passwordHash.length()+1;
+	locked = !passwordHash.isEmpty();
 	CHECK_POS;
 
 	mapName = QString(&in[pos]);
