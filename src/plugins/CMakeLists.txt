@@ -1,0 +1,5 @@
+add_subdirectory(chocolate-doom)
+add_subdirectory(odamex)
+add_subdirectory(skulltag)
+add_subdirectory(vavoom)
+add_subdirectory(zdaemon)
