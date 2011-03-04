@@ -42,10 +42,6 @@ ENDIF(APPLE)
 
 add_subdirectory(tools/updaterevision)
 
-add_subdirectory(src/chocolate-doom)
-add_subdirectory(src/odamex)
-add_subdirectory(src/skulltag)
+add_subdirectory(src/core)
+add_subdirectory(src/plugins)
 add_subdirectory(src/wadseeker)
-add_subdirectory(src/vavoom)
-add_subdirectory(src/zdaemon)
-add_subdirectory(src)
