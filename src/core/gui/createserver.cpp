@@ -23,6 +23,7 @@
 #include "createserver.h"
 #include "configuration/doomseekerconfig.h"
 #include "copytextdlg.h"
+#include "ini.h"
 #include "main.h"
 #include "commonGUI.h"
 #include "sdeapi/config.hpp"
@@ -40,7 +41,7 @@
 #include <QStandardItemModel>
 #include <QTimer>
 
-const QString CreateServerDlg::TEMP_SERVER_CONFIG_FILENAME = "/tmpserver.cfg";
+const QString CreateServerDlg::TEMP_SERVER_CONFIG_FILENAME = "/tmpserver.ini";
 
 CreateServerDlg::CreateServerDlg(QWidget* parent) : QDialog(parent)
 {
@@ -256,14 +257,17 @@ void CreateServerDlg::btnIwadBrowseClicked()
 void CreateServerDlg::btnLoadClicked()
 {
 	QString dialogDir = gConfig.doomseeker.previousCreateServerConfigDir;
-	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - load server config"), dialogDir, tr("Config files (*.cfg)"));
+	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - load server config"), dialogDir, tr("Config files (*.ini *.cfg)"));
 
 	if (!strFile.isEmpty())
 	{
 		QFileInfo fi(strFile);
 		gConfig.doomseeker.previousCreateServerConfigDir = fi.absolutePath();
 
-		loadConfig(strFile);
+		if (fi.suffix().compare("cfg", Qt::CaseInsensitive) == 0)
+			loadOldConfig(strFile);
+		else
+			loadConfig(strFile);
 	}
 }
 
@@ -285,7 +289,7 @@ void CreateServerDlg::btnRemovePwadClicked()
 void CreateServerDlg::btnSaveClicked()
 {
 	QString dialogDir = gConfig.doomseeker.previousCreateServerConfigDir;
-	QString strFile = QFileDialog::getSaveFileName(this, tr("Doomseeker - save server config"), dialogDir, tr("Config files (*.cfg)"));
+	QString strFile = QFileDialog::getSaveFileName(this, tr("Doomseeker - save server config"), dialogDir, tr("Config files (*.ini)"));
 	if (!strFile.isEmpty())
 	{
 		QFileInfo fi(strFile);
@@ -293,7 +297,7 @@ void CreateServerDlg::btnSaveClicked()
 
 		if (fi.suffix().isEmpty())
 		{
-			strFile += ".cfg";
+			strFile += ".ini";
 		}
 
 		if (!saveConfig(strFile))
@@ -750,6 +754,115 @@ bool CreateServerDlg::loadConfig(const QString& filename)
 {
 	QAbstractItemModel* model;
 	QStringList stringList;
+	Ini ini(filename);
+	IniSection &general = ini.section("General");
+	IniSection &rules = ini.section("Rules");
+	IniSection &misc = ini.section("Misc");
+	IniSection &dmflags = ini.section("DMFlags");
+
+	// General
+	if(!bIsServerSetup)
+	{
+		QString engineName = general["engine"];
+		const PluginInfo* prevEngine = currentEngine;
+		if(!setEngine(engineName))
+			return false;
+
+		bool bChangeExecutable = (prevEngine != currentEngine || !cbLockExecutable->isChecked());
+
+		// First let's check if we can use executable stored in the server's config.
+		// We will save the path to this executable in a local variable.
+		QString executablePath = "";
+		if (bChangeExecutable)
+		{
+			executablePath = *general["executable"];
+			QFileInfo fileInfo(executablePath);
+			if (!fileInfo.exists())
+			{
+				// Executable cannot be found, display error message and reset
+				// the local variable.
+				QMessageBox::warning(NULL, tr("Doomseeker - load server config"), tr("Game executable saved in config cannot be found.\nDefault executable will be used."));
+				executablePath = "";
+			}
+		}
+
+		// If we successfuly retrieved path from the config we shall
+		// set this path in the line edit control.
+		if (!executablePath.isEmpty())
+		{
+			leExecutable->setText(executablePath);
+		}
+	}
+
+	leServername->setText(general["name"]);
+	spinPort->setValue(general["port"]);
+	cboGamemode->setCurrentIndex(general["gamemode"]);
+	leMap->setText(general["map"]);
+	addIwad(general["iwad"]);
+
+	stringList = general["pwads"]->split(";");
+	model = lstAdditionalFiles->model();
+	model->removeRows(0, model->rowCount());
+	foreach (QString s, stringList)
+	{
+		addWadPath(s);
+	}
+
+	cbBroadcastToLAN->setChecked(general["broadcastToLAN"]);
+	cbBroadcastToMaster->setChecked(general["broadcastToMaster"]);
+
+	// Rules
+	cboDifficulty->setCurrentIndex(rules["difficulty"]);
+	cboModifier->setCurrentIndex(rules["modifier"]);
+	spinMaxClients->setValue(rules["maxClients"]);
+	spinMaxPlayers->setValue(rules["maxPlayers"]);
+
+	QList<GameLimitWidget*>::iterator it;
+	for (it = limitWidgets.begin(); it != limitWidgets.end(); ++it)
+	{
+		(*it)->spinBox->setValue(rules[(*it)->limit.consoleCommand]);
+	}
+
+	stringList = rules["maplist"]->split(";");
+	model = lstMaplist->model();
+	model->removeRows(0, model->rowCount());
+	foreach(QString s, stringList)
+	{
+		addMapToMaplist(s);
+	}
+	cbRandomMapRotation->setChecked(rules["randomMapRotation"]);
+
+	// Misc.
+	leURL->setText(misc["URL"]);
+	leEmail->setText(misc["eMail"]);
+	leConnectPassword->setText(misc["connectPassword"]);
+	leJoinPassword->setText(misc["joinPassword"]);
+	leRConPassword->setText(misc["RConPassword"]);
+	pteMOTD->document()->setPlainText(misc["MOTD"]);
+
+	// DMFlags
+	foreach(DMFlagsTabWidget* p, dmFlagsTabs)
+	{
+		for (int i = 0; i < p->section->flags.count(); ++i)
+		{
+			QRegExp re("[^a-zA-Z]");
+			QString name1 = p->section->name;
+			QString name2 = p->section->flags[i].name;
+			name1 = name1.remove(re);
+			name2 = name2.remove(re);
+			p->checkBoxes[i]->setChecked(dmflags[name1 + name2]);
+		}
+	}
+
+	// Custom parameters
+	pteCustomParameters->document()->setPlainText(misc["CustomParams"]);
+	return true;
+}
+// NOTE: Remove for 0.9
+bool CreateServerDlg::loadOldConfig(const QString& filename)
+{
+	QAbstractItemModel* model;
+	QStringList stringList;
 	Config cfg(filename);
 
 	// General
@@ -941,46 +1054,50 @@ void CreateServerDlg::runGame(bool offline)
 bool CreateServerDlg::saveConfig(const QString& filename)
 {
 	QStringList stringList;
-	Config cfg(filename, false);
+	Ini ini(filename);
+	IniSection &general = ini.createSection("General");
+	IniSection &rules = ini.createSection("Rules");
+	IniSection &misc = ini.createSection("Misc");
+	IniSection &dmflags = ini.createSection("DMFlags");
 
 	// General
-	cfg.setting("engine")->setValue(cboEngine->currentText());
-	cfg.setting("executable")->setValue(leExecutable->text());
-	cfg.setting("name")->setValue(leServername->text());
-	cfg.setting("port")->setValue(spinPort->value());
-	cfg.setting("gamemode")->setValue(cboGamemode->currentIndex());
-	cfg.setting("map")->setValue(leMap->text());
-	cfg.setting("iwad")->setValue(cboIwad->currentText());
+	general["engine"] = cboEngine->currentText();
+	general["executable"] = leExecutable->text();
+	general["name"] = leServername->text();
+	general["port"] = spinPort->value();
+	general["gamemode"] = cboGamemode->currentIndex();
+	general["map"] = leMap->text();
+	general["iwad"] = cboIwad->currentText();
 
 	stringList = CommonGUI::listViewStandardItemsToStringList(lstAdditionalFiles);
-	cfg.setting("pwads")->setValue(stringList.join(";"));
+	general["pwads"] = stringList.join(";");
 
-	cfg.setting("broadcastToLAN")->setValue(cbBroadcastToLAN->isChecked());
-	cfg.setting("broadcastToMaster")->setValue(cbBroadcastToMaster->isChecked());
+	general["broadcastToLAN"] = cbBroadcastToLAN->isChecked();
+	general["broadcastToMaster"] = cbBroadcastToMaster->isChecked();
 
 	// Rules
-	cfg.setting("difficulty")->setValue(cboDifficulty->currentIndex());
-	cfg.setting("modifier")->setValue(cboModifier->currentIndex());
-	cfg.setting("maxClients")->setValue(spinMaxClients->value());
-	cfg.setting("maxPlayers")->setValue(spinMaxPlayers->value());
+	rules["difficulty"] = cboDifficulty->currentIndex();
+	rules["modifier"] = cboModifier->currentIndex();
+	rules["maxClients"] = spinMaxClients->value();
+	rules["maxPlayers"] = spinMaxPlayers->value();
 
 	QList<GameLimitWidget*>::iterator it;
 	for (it = limitWidgets.begin(); it != limitWidgets.end(); ++it)
 	{
-		cfg.setting((*it)->limit.consoleCommand)->setValue((*it)->spinBox->value());
+		rules[(*it)->limit.consoleCommand] = (*it)->spinBox->value();
 	}
 
 	stringList = CommonGUI::listViewStandardItemsToStringList(lstMaplist);
-	cfg.setting("maplist")->setValue(stringList.join(";"));
-	cfg.setting("randomMapRotation")->setValue(cbRandomMapRotation->isChecked());
+	rules["maplist"] = stringList.join(";");
+	rules["randomMapRotation"] = cbRandomMapRotation->isChecked();
 
 	// Misc.
-	cfg.setting("URL")->setValue(leURL->text());
-	cfg.setting("eMail")->setValue(leEmail->text());
-	cfg.setting("connectPassword")->setValue(leConnectPassword->text());
-	cfg.setting("joinPassword")->setValue(leJoinPassword->text());
-	cfg.setting("RConPassword")->setValue(leRConPassword->text());
-	cfg.setting("MOTD")->setValue(pteMOTD->toPlainText());
+	misc["URL"] = leURL->text();
+	misc["eMail"] = leEmail->text();
+	misc["connectPassword"] = leConnectPassword->text();
+	misc["joinPassword"] = leJoinPassword->text();
+	misc["RConPassword"] = leRConPassword->text();
+	misc["MOTD"] = pteMOTD->toPlainText();
 
 	// DMFlags
 	foreach(DMFlagsTabWidget* p, dmFlagsTabs)
@@ -992,14 +1109,14 @@ bool CreateServerDlg::saveConfig(const QString& filename)
 			QString name2 = p->section->flags[i].name;
 			name1 = name1.remove(re);
 			name2 = name2.remove(re);
-			cfg.setting(name1 + name2)->setValue(p->checkBoxes[i]->isChecked());
+			dmflags[name1 + name2] = p->checkBoxes[i]->isChecked();
 		}
 	}
 
 	// Custom parameters
-	cfg.setting("CustomParams")->setValue(pteCustomParameters->toPlainText());
+	misc["CustomParams"] = pteCustomParameters->toPlainText();
 
-	return cfg.saveConfig();
+	return ini.save();
 }
 
 bool CreateServerDlg::setEngine(const QString &engineName)
