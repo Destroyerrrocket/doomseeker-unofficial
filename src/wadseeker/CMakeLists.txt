@@ -44,6 +44,7 @@ set(WADSEEKER_FILES
 	protocols/http.cpp
 	protocols/idgames.cpp
 	protocols/protocol.cpp
+	zip/unarchive.cpp
 	zip/un7zip.cpp
 	zip/unzip.cpp
 	html.cpp

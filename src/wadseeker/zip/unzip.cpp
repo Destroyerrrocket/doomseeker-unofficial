@@ -23,19 +23,23 @@
 #include "unzip.h"
 #include <zlib.h>
 
+#include <QBuffer>
 #include <QDebug>
 #include <QFileInfo>
 
-UnZip::UnZip(const QByteArray& data)
+UnZip::UnZip(const QByteArray& data) : zipData(data)
 {
-	dataType = ByteArray;
-	zipData = data;
+	zipFile = new QBuffer(&zipData);
 }
 
 UnZip::UnZip(const QString& file)
 {
-	dataType = File;
-	zipFile.setFileName(file);
+	zipFile = new QFile(file);
+}
+
+UnZip::~UnZip()
+{
+	delete zipFile;
 }
 
 QList<ZipLocalFileHeader> UnZip::allDataHeaders()
@@ -45,34 +49,21 @@ QList<ZipLocalFileHeader> UnZip::allDataHeaders()
 
 	if (!isValid())
 	{
-		if (dataType == File)
-			emit message(tr("\"%1\" doesn't exist or is a directory.").arg(zipFile.fileName()), Wadseeker::Error);
-		else
-			emit message(tr("No data is present."), Wadseeker::Error);
+		emit message(tr("No valid zip data is present."), Wadseeker::Error);
 		return list;
 	}
 
-	if (dataType == File)
-	{
-		zipFile.open(QFile::ReadOnly);
-	}
+	zipFile->open(QFile::ReadOnly);
 	while(true)
 	{
 		ZipLocalFileHeader zip;
 
 		int readError;
-		if (dataType == File)
-		{
-			readError = this->readHeader(zipFile, pos, zip);
-		}
-		else
-		{
-			readError = this->readHeader(zipData, pos, zip);
-		}
+		this->readHeader(pos, zip);
 
 		if(readError == ZipLocalFileHeader::Corrupted)
 		{
-			emit message(tr("ZIP file \"%1\" is corrupted!").arg(zipFile.fileName()), Wadseeker::Error);
+			emit message(tr("ZIP file is corrupted!"), Wadseeker::Error);
 			break;
 		}
 		else if (readError == ZipLocalFileHeader::NoError)
@@ -85,10 +76,7 @@ QList<ZipLocalFileHeader> UnZip::allDataHeaders()
 			break;
 		}
 	}
-	if (dataType == File)
-	{
-		zipFile.close();
-	}
+	zipFile->close();
 
 	return list;
 }
@@ -100,26 +88,18 @@ bool UnZip::extract(int file, const QString& where)
 
 	QByteArray array;
 	ZipLocalFileHeader header;
-	if (dataType == File)
-	{
-		zipFile.open(QFile::ReadOnly);
-		readHeader(zipFile, file, header);
-		qint64 pos = header.headerPosition + header.howManyBytesTillData();
-		zipFile.seek(pos);
+	zipFile->open(QFile::ReadOnly);
+	readHeader(file, header);
+	qint64 pos = header.headerPosition + header.howManyBytesTillData();
+	zipFile->seek(pos);
 
-		array = zipFile.read(header.compressedSize);
-		if (array.isNull())
-		{
-			zipFile.close();
-			return false;
-		}
-		zipFile.close();
-	}
-	else
+	array = zipFile->read(header.compressedSize);
+	if (array.isNull())
 	{
-		readHeader(zipData, file, header);
-		array = zipData.mid(header.headerPosition + header.howManyBytesTillData(), header.compressedSize);
+		zipFile->close();
+		return false;
 	}
+	zipFile->close();
 
 	QFile outputFile(where);
 	if (header.compressionMethod != 0)
@@ -170,23 +150,13 @@ int UnZip::findFileEntry(const QString& entryName)
 	qint64 pos = 0;
 	ZipLocalFileHeader* ret = NULL;
 
-	if (dataType == File)
-	{
-		zipFile.open(QFile::ReadOnly);
-	}
+	zipFile->open(QFile::ReadOnly);
 	while(true)
 	{
 		ZipLocalFileHeader* zip = new ZipLocalFileHeader();
 
 		int err;
-		if (dataType == File)
-		{
-			err = this->readHeader(zipFile, pos, *zip);
-		}
-		else
-		{
-			err = this->readHeader(zipData, pos, *zip);
-		}
+		err = this->readHeader(pos, *zip);
 		if (err != ZipLocalFileHeader::NoError)
 		{
 			delete zip;
@@ -205,10 +175,7 @@ int UnZip::findFileEntry(const QString& entryName)
 		pos += zip->fileEntrySize();
 		delete zip;
 	}
-	if (dataType == File)
-	{
-		zipFile.close();
-	}
+	zipFile->close();
 
 	if(ret == NULL)
 		return -1;
@@ -220,14 +187,9 @@ QString UnZip::fileNameFromIndex(int file)
 {
 	ZipLocalFileHeader header;
 
-	if (dataType == File)
-	{
-		zipFile.open(QFile::ReadOnly);
-		readHeader(zipFile, file, header);
-		zipFile.close();
-	}
-	else
-		readHeader(zipData, file, header);
+	zipFile->open(QFile::ReadOnly);
+	readHeader(file, header);
+	zipFile->close();
 
 	return header.fileName;
 }
@@ -236,16 +198,9 @@ bool UnZip::isZip()
 {
 	ZipLocalFileHeader zip;
 	int err;
-	if (dataType == File)
-	{
-		zipFile.open(QIODevice::ReadOnly);
-		err = readHeader(zipFile, 0, zip);
-		zipFile.close();
-	}
-	else
-	{
-		err = readHeader(zipData, 0, zip);
-	}
+	zipFile->open(QIODevice::ReadOnly);
+	err = readHeader(0, zip);
+	zipFile->close();
 
 	if (err != ZipLocalFileHeader::NoError)
 	{
@@ -255,43 +210,13 @@ bool UnZip::isZip()
 	return true;
 }
 
-int UnZip::readHeader(QByteArray& zipData, qint64 pos, ZipLocalFileHeader& zip)
-{
-	int readErr;
-
-	QByteArray array = zipData.mid(pos, ZIP_LOCAL_FILE_HEADER_SIZE);
-
-	zip.headerPosition = pos;
-	readErr = zip.fromByteArray(array);
-	if (readErr != ZipLocalFileHeader::NoError)
-	{
-		return readErr;
-	}
-
-	pos += ZIP_LOCAL_FILE_HEADER_SIZE;
-	array = zipData.mid(pos, zip.fileNameLength);
-	if (array.size() < zip.fileNameLength)
-		return ZipLocalFileHeader::Corrupted;
-
-	zip.fileName = array;
-
-	pos += zip.fileNameLength;
-	array = zipData.mid(pos, zip.extraFieldLength);
-	if (array.size() < zip.extraFieldLength)
-		return ZipLocalFileHeader::Corrupted;
-
-	zip.extraField = array;
-
-	return ZipLocalFileHeader::NoError;
-}
-
-int UnZip::readHeader(QFile& zipFile, qint64 pos, ZipLocalFileHeader& zip)
+int UnZip::readHeader(qint64 pos, ZipLocalFileHeader& zip)
 {
 	// This expects the file to be already open and doesn't close it.
 	int readErr;
-	zipFile.seek(pos);
+	zipFile->seek(pos);
 
-	QByteArray array = zipFile.read(ZIP_LOCAL_FILE_HEADER_SIZE);
+	QByteArray array = zipFile->read(ZIP_LOCAL_FILE_HEADER_SIZE);
 
 	readErr = zip.fromByteArray(array);
 	if (readErr != ZipLocalFileHeader::NoError)
@@ -299,13 +224,13 @@ int UnZip::readHeader(QFile& zipFile, qint64 pos, ZipLocalFileHeader& zip)
 		return readErr;
 	}
 
-	array = zipFile.read(zip.fileNameLength);
+	array = zipFile->read(zip.fileNameLength);
 	if (array.size() < zip.fileNameLength)
 		return ZipLocalFileHeader::Corrupted;
 
 	zip.fileName = array.constData();
 
-	array = zipFile.read(zip.extraFieldLength);
+	array = zipFile->read(zip.extraFieldLength);
 	if (array.size() < zip.extraFieldLength)
 		return ZipLocalFileHeader::Corrupted;
 

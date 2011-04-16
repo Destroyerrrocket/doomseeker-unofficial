@@ -27,9 +27,12 @@
 #include <cstdlib>
 #include <cstdio>
 
-SZByteStream::SZByteStream(QByteArray *array) : buffer(array)
+#include <QBuffer>
+#include <QFile>
+
+SZByteStream::SZByteStream(QIODevice *buffer) : buffer(buffer)
 {
-	buffer.open(QIODevice::ReadOnly);
+	buffer->open(QIODevice::ReadOnly);
 
 	stream.Read = Read;
 	stream.Seek = Seek;
@@ -37,13 +40,13 @@ SZByteStream::SZByteStream(QByteArray *array) : buffer(array)
 
 SZByteStream::~SZByteStream()
 {
-	buffer.close();
+	buffer->close();
 }
 
 SRes SZByteStream::Read(void *p, void *buf, size_t *size)
 {
 	SZByteStream *s = reinterpret_cast<SZByteStream *> (p);
-	qint64 numRead = s->buffer.read(reinterpret_cast<char *> (buf), *size);
+	qint64 numRead = s->buffer->read(reinterpret_cast<char *> (buf), *size);
 	if(numRead < 0)
 	{
 		*size = 0;
@@ -60,16 +63,16 @@ SRes SZByteStream::Seek(void *p, Int64 *pos, ESzSeek origin)
 	switch(origin)
 	{
 		default:
-			ret = s->buffer.seek(*pos);
+			ret = s->buffer->seek(*pos);
 			break;
 		case SZ_SEEK_CUR:
-			ret = s->buffer.seek(s->buffer.pos() + *pos);
+			ret = s->buffer->seek(s->buffer->pos() + *pos);
 			break;
 		case SZ_SEEK_END:
-			ret = s->buffer.seek(s->buffer.size() + *pos);
+			ret = s->buffer->seek(s->buffer->size() + *pos);
 			break;
 	}
-	*pos = s->buffer.pos();
+	*pos = s->buffer->pos();
 	return ret ? SZ_OK : SZ_ERROR_DATA;
 }
 
@@ -81,18 +84,14 @@ ISzAlloc Un7Zip::alloc = { SzAlloc, SzFree };
 
 Un7Zip::Un7Zip(const QByteArray &data) : out(NULL), outSize(0), data(data), valid(true)
 {
-	if (g_CrcTable[1] == 0)
-		CrcGenerateTable();
+	device = new QBuffer(&this->data);
+	Init();
+}
 
-	byteStream = new SZByteStream(&this->data);
-	LookToRead_CreateVTable(&lookStream, false);
-	lookStream.realStream = &byteStream->stream;
-	LookToRead_Init(&lookStream);
-
-	SzArEx_Init(&db);
-	SRes tmp;
-	if((tmp = SzArEx_Open(&db, &lookStream.s, &alloc, &alloc)) != SZ_OK)
-		valid = false;
+Un7Zip::Un7Zip(const QString &filename) : out(NULL), outSize(0), valid(true)
+{
+	device = new QFile(filename);
+	Init();
 }
 
 Un7Zip::~Un7Zip()
@@ -102,6 +101,7 @@ Un7Zip::~Un7Zip()
 	SzArEx_Free(&db, &alloc);
 
 	delete byteStream;
+	delete device;
 }
 
 bool Un7Zip::extract(int file, const QString &where)
@@ -137,4 +137,20 @@ int Un7Zip::findFileEntry(const QString &entryName)
 			return i;
 	}
 	return -1;
+}
+
+void Un7Zip::Init()
+{
+	if (g_CrcTable[1] == 0)
+		CrcGenerateTable();
+
+	byteStream = new SZByteStream(device);
+	LookToRead_CreateVTable(&lookStream, false);
+	lookStream.realStream = &byteStream->stream;
+	LookToRead_Init(&lookStream);
+
+	SzArEx_Init(&db);
+	SRes tmp;
+	if((tmp = SzArEx_Open(&db, &lookStream.s, &alloc, &alloc)) != SZ_OK)
+		valid = false;
 }

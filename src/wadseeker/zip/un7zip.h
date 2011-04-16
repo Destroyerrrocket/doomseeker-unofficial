@@ -24,7 +24,7 @@
 #ifndef __UN7ZIP_H__
 #define __UN7ZIP_H__
 
-#include <QBuffer>
+#include <QIODevice>
 #include <QByteArray>
 #include <QObject>
 
@@ -44,9 +44,9 @@ struct SZByteStream
 	//      This must be the first variable.
 	ISeekInStream	stream;
 
-	QBuffer			buffer;
+	QIODevice		*buffer;
 
-	SZByteStream(QByteArray *array);
+	SZByteStream(QIODevice *buffer);
 	~SZByteStream();
 
 	static SRes Read(void *p, void *buf, size_t *size);
@@ -59,6 +59,7 @@ class Un7Zip : public UnArchive
 
 	public:
 		Un7Zip(const QByteArray &data);
+		Un7Zip(const QString &filename);
 		~Un7Zip();
 
 		bool	extract(int file, const QString &where);
@@ -70,8 +71,11 @@ class Un7Zip : public UnArchive
 		static void	*SzAlloc(void *p, size_t size);
 		static void	SzFree(void *p, void *address);
 
+		void	Init();
+
 		SZByteStream	*byteStream;
 		CLookToRead		lookStream;
+		QIODevice		*device;
 
 		CSzArEx			db;
 		static ISzAlloc	alloc;

@@ -171,17 +171,9 @@ void Wadseeker::fileDone(QByteArray& data, const QString& filename)
 	}
 	else if (fi.suffix().compare("zip", Qt::CaseInsensitive) == 0 || fi.suffix().compare("7z", Qt::CaseInsensitive) == 0)
 	{
-		UnArchive *unarchive = NULL;
-		if (fi.suffix().compare("zip", Qt::CaseInsensitive) == 0)
-		{
-			unarchive = new UnZip(data);
-		}
-		else
-		{
-			unarchive = new Un7Zip(data);
-		}
+		UnArchive *unarchive = UnArchive::OpenArchive(fi, data);
 
-		if (!unarchive->isValid())
+		if (unarchive == NULL || !unarchive->isValid())
 		{
 			emit message(tr("Couldn't unarchive \"%1\".").arg(filename), Error);
 		}

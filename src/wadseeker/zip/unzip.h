@@ -35,14 +35,9 @@ class UnZip : public UnArchive
 	Q_OBJECT
 
 	public:
-		enum DataType
-		{
-			File		= 0,
-			ByteArray	= 1
-		};
-
 		UnZip(const QByteArray& data);
 		UnZip(const QString& file);
+		~UnZip();
 
 
 		/**
@@ -65,15 +60,7 @@ class UnZip : public UnArchive
 		 */
 		bool	isValid()
 		{
-			if (dataType == File)
-			{
-				QFileInfo fi(zipFile);
-				return (fi.exists() && !fi.isDir() && isZip());
-			}
-			else
-			{
-				return !zipData.isEmpty() && isZip();
-			}
+			return isZip();
 		}
 
 		/**
@@ -82,15 +69,13 @@ class UnZip : public UnArchive
 		bool	isZip();
 
 	protected:
-		DataType	dataType;
-		QFile		zipFile;
+		QIODevice	*zipFile;
 		QByteArray	zipData;
 
-		int			readHeader(QByteArray& zipData, qint64 pos, ZipLocalFileHeader& zip);
 		/**
 		 *	This method expects zipFile to be already open and it won't close it.
 		 */
-		int			readHeader(QFile& zipFile, qint64 pos, ZipLocalFileHeader& zip);
+		int			readHeader(qint64 pos, ZipLocalFileHeader& zip);
 		int			uncompress(char* out, unsigned long uncompressedSize, const QByteArray& inArray);
 };
 

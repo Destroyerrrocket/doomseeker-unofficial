@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// unarchive.h
+// unarchive.cpp
 //------------------------------------------------------------------------------
 //
 // This library is free software; you can redistribute it and/or
@@ -18,32 +18,32 @@
 // 02110-1301  USA
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2010 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2011 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#ifndef __UNARCHIVE_H__
-#define __UNARCHIVE_H__
+#include "unarchive.h"
+#include "un7zip.h"
+#include "unzip.h"
 
-#include <QObject>
-#include "../wadseekerexportinfo.h"
-
-class QFileInfo;
-
-class WADSEEKER_API UnArchive : public QObject
+UnArchive *UnArchive::OpenArchive(const QFileInfo &fi, const QByteArray &data)
 {
-	Q_OBJECT
+	if(fi.suffix().compare("zip", Qt::CaseInsensitive) == 0)
+		return new UnZip(data);
+	else if(fi.suffix().compare("7z", Qt::CaseInsensitive) == 0)
+		return new Un7Zip(data);
+	return NULL;
+}
 
-	public:
-		virtual bool	extract(int file, const QString &where)=0;
-		virtual QString	fileNameFromIndex(int file)=0;
-		virtual int		findFileEntry(const QString &entryName)=0;
-		virtual bool	isValid()=0;
+UnArchive *UnArchive::OpenArchive(const QString &filename)
+{
+	QFileInfo fi(filename);
+	if(!fi.isReadable())
+		return NULL;
 
-		static UnArchive *OpenArchive(const QFileInfo &fi, const QByteArray &data);
-		static UnArchive *OpenArchive(const QString &filename);
+	if(fi.suffix().compare("zip", Qt::CaseInsensitive) == 0)
+		return new UnZip(filename);
+	else if(fi.suffix().compare("7z", Qt::CaseInsensitive) == 0)
+		return new Un7Zip(filename);
 
-	signals:
-		void			message(const QString&, int type);
-};
-
-#endif /* __UNARCHIVE_H__ */
+	return NULL;
+}
