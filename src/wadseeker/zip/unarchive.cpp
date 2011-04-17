@@ -23,6 +23,7 @@
 
 #include "unarchive.h"
 #include "un7zip.h"
+#include "untar.h"
 #include "unzip.h"
 
 UnArchive *UnArchive::OpenArchive(const QFileInfo &fi, const QByteArray &data)
@@ -31,6 +32,8 @@ UnArchive *UnArchive::OpenArchive(const QFileInfo &fi, const QByteArray &data)
 		return new UnZip(data);
 	else if(fi.suffix().compare("7z", Qt::CaseInsensitive) == 0)
 		return new Un7Zip(data);
+	else if(fi.suffix().compare("tar", Qt::CaseInsensitive) == 0)
+		return new UnTar(data);
 	return NULL;
 }
 
@@ -44,6 +47,8 @@ UnArchive *UnArchive::OpenArchive(const QString &filename)
 		return new UnZip(filename);
 	else if(fi.suffix().compare("7z", Qt::CaseInsensitive) == 0)
 		return new Un7Zip(filename);
+	else if(fi.suffix().compare("tar", Qt::CaseInsensitive) == 0)
+		return new UnTar(filename);
 
 	return NULL;
 }

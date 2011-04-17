@@ -387,8 +387,9 @@ bool WWWSeeker::isWantedFileOrZip(const QString& filename)
 	
 	bool bIsZip = fileInfo.suffix().compare("zip", Qt::CaseInsensitive) == 0;
 	bool bIs7Zip = fileInfo.suffix().compare("7z", Qt::CaseInsensitive) == 0;
+	bool bIsTar = fileInfo.suffix().compare("tar", Qt::CaseInsensitive) == 0;
 	
-	return bIsZip || bIs7Zip;
+	return bIsZip || bIs7Zip || bIsTar;
 }
 
 bool WWWSeeker::hasMoreUrls() const
