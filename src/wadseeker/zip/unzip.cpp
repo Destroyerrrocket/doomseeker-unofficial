@@ -27,14 +27,8 @@
 #include <QDebug>
 #include <QFileInfo>
 
-UnZip::UnZip(const QByteArray& data) : zipData(data)
+UnZip::UnZip(QIODevice *device) : UnArchive(), zipFile(device)
 {
-	zipFile = new QBuffer(&zipData);
-}
-
-UnZip::UnZip(const QString& file)
-{
-	zipFile = new QFile(file);
 }
 
 UnZip::~UnZip()

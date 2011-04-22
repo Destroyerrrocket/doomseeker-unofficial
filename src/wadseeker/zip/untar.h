@@ -36,8 +36,7 @@ class UnTar : public UnArchive
 	Q_OBJECT
 
 	public:
-		UnTar(const QByteArray &data);
-		UnTar(const QString &filename);
+		UnTar(QIODevice *device);
 		~UnTar();
 
 		bool	extract(int file, const QString &where);
@@ -57,7 +56,6 @@ class UnTar : public UnArchive
 
 		bool			valid;
 		QList<TarFile>	directory;
-		QByteArray		data;
 		QIODevice		*stream;
 };
 

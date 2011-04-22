@@ -58,8 +58,7 @@ class Un7Zip : public UnArchive
 	Q_OBJECT
 
 	public:
-		Un7Zip(const QByteArray &data);
-		Un7Zip(const QString &filename);
+		Un7Zip(QIODevice *device);
 		~Un7Zip();
 
 		bool	extract(int file, const QString &where);
@@ -82,7 +81,6 @@ class Un7Zip : public UnArchive
 		Byte*			out;
 		size_t			outSize;
 
-		QByteArray		data;
 		bool			valid;
 };
 

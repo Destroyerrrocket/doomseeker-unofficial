@@ -26,15 +26,8 @@
 #include <QBuffer>
 #include <QFile>
 
-UnTar::UnTar(const QByteArray &data) : valid(true), data(data)
+UnTar::UnTar(QIODevice *device) : UnArchive(), valid(true), stream(device)
 {
-	stream = new QBuffer(&this->data);
-	scanTarFile();
-}
-
-UnTar::UnTar(const QString &filename) : valid(true)
-{
-	stream = new QFile(filename);
 	scanTarFile();
 }
 

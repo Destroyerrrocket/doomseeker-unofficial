@@ -35,8 +35,7 @@ class UnZip : public UnArchive
 	Q_OBJECT
 
 	public:
-		UnZip(const QByteArray& data);
-		UnZip(const QString& file);
+		UnZip(QIODevice *device);
 		~UnZip();
 
 
@@ -70,7 +69,6 @@ class UnZip : public UnArchive
 
 	protected:
 		QIODevice	*zipFile;
-		QByteArray	zipData;
 
 		/**
 		 *	This method expects zipFile to be already open and it won't close it.

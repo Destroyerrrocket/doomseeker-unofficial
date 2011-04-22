@@ -27,6 +27,8 @@
 #include <QObject>
 #include "../wadseekerexportinfo.h"
 
+class QByteArray;
+class QIODevice;
 class QFileInfo;
 
 class WADSEEKER_API UnArchive : public QObject
@@ -34,6 +36,9 @@ class WADSEEKER_API UnArchive : public QObject
 	Q_OBJECT
 
 	public:
+		UnArchive();
+		virtual ~UnArchive();
+
 		virtual bool	extract(int file, const QString &where)=0;
 		virtual QString	fileNameFromIndex(int file)=0;
 		virtual int		findFileEntry(const QString &entryName)=0;
@@ -44,6 +49,11 @@ class WADSEEKER_API UnArchive : public QObject
 
 	signals:
 		void			message(const QString&, int type);
+
+	private:
+		static UnArchive *DetectArchive(const QFileInfo &fi, QIODevice *&device);
+
+		QByteArray		*bufferData;
 };
 
 #endif /* __UNARCHIVE_H__ */

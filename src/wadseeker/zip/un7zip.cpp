@@ -82,15 +82,8 @@ void *Un7Zip::SzAlloc(void *p, size_t size) { return malloc(size); }
 void Un7Zip::SzFree(void *p, void *address) { free(address); }
 ISzAlloc Un7Zip::alloc = { SzAlloc, SzFree };
 
-Un7Zip::Un7Zip(const QByteArray &data) : out(NULL), outSize(0), data(data), valid(true)
+Un7Zip::Un7Zip(QIODevice *device) : UnArchive(), out(NULL), outSize(0), device(device), valid(true)
 {
-	device = new QBuffer(&this->data);
-	Init();
-}
-
-Un7Zip::Un7Zip(const QString &filename) : out(NULL), outSize(0), valid(true)
-{
-	device = new QFile(filename);
 	Init();
 }
 

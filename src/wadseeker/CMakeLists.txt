@@ -23,10 +23,11 @@ if(WIN32)
 endif(WIN32)
 
 find_package(Qt4 COMPONENTS QtCore QtNetwork REQUIRED)
-find_package(ZLIB)
+find_package(ZLIB REQUIRED)
+find_package(BZip2 REQUIRED)
 
 include(${QT_USE_FILE})
-include_directories(${ZLIB_INCLUDE_DIR})
+include_directories(${ZLIB_INCLUDE_DIR} ${BZIP2_INCLUDE_DIR})
 set(WADSEEKER_QT_FILES
 	protocols/ftp.h
 	protocols/http.h
@@ -73,7 +74,7 @@ qt_wrap_cpp(wadseekerQt WADSEEKER_FILES ${WADSEEKER_QT_FILES})
 
 add_library(wadseeker SHARED ${WADSEEKER_FILES} ${HEADER_FILES})
 
-target_link_libraries(wadseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} ${ZLIB_LIBRARIES} lzma)
+target_link_libraries(wadseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} ${ZLIB_LIBRARIES} ${BZIP2_LIBRARIES} lzma)
 
 if(DEFINED DOOMSEEKER_SOURCE_DIR)
 	set_target_properties(wadseeker PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR} RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
