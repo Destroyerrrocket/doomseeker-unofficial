@@ -27,6 +27,7 @@
 #include "unzip.h"
 
 #include <bzlib.h>
+#include <zlib.h>
 #include <QBuffer>
 #include <QIODevice>
 
@@ -111,6 +112,96 @@ class CompressedIODevice : public QIODevice
 		qint64		position;
 		QByteArray	bufferedData;
 		QBuffer		*stream;
+};
+
+/**
+ * GZip Wrapper
+ */
+class GZDevice : public CompressedIODevice
+{
+	public:
+		GZDevice(QIODevice *wrap) : CompressedIODevice(), wrap(wrap)
+		{
+			gzCompress.zalloc = gzDecompress.zalloc = Z_NULL;
+			gzCompress.zfree = gzDecompress.zfree = Z_NULL;
+			gzCompress.opaque = gzDecompress.opaque = Z_NULL;
+		}
+		~GZDevice()
+		{
+			delete wrap;
+		}
+
+		void close()
+		{
+			if(openMode() | QIODevice::ReadOnly)
+				inflateEnd(&gzDecompress);
+			if(openMode() | QIODevice::WriteOnly)
+				deflateEnd(&gzCompress);
+
+			wrap->close();
+			CompressedIODevice::close();
+		}
+
+		bool open(OpenMode mode)
+		{
+			if(CompressedIODevice::open(mode) && wrap->open(mode))
+			{
+				if(mode | QIODevice::ReadOnly)
+				{
+					init(gzDecompress);
+					if(inflateInit2(&gzDecompress, 31) != Z_OK)
+						return false;
+				}
+				if(mode | QIODevice::WriteOnly)
+				{
+					init(gzCompress);
+					if(deflateInit(&gzCompress, 9) != Z_OK)
+						return false;
+				}
+				return true;
+			}
+			return false;
+		}
+
+	protected:
+		static void init(z_stream &stream)
+		{
+			stream.next_out = stream.next_in = Z_NULL;
+			stream.avail_out = stream.avail_in = 0;
+		}
+
+		qint64 readCompressedData(char* data, qint64 len)
+		{
+			gzDecompress.next_out = (Bytef*)data;
+			gzDecompress.avail_out = len;
+
+			while(gzDecompress.avail_out > 0)
+			{
+				gzDecompress.next_in = (Bytef*)buffer;
+				gzDecompress.avail_in = wrap->read(buffer, BUFFER_SIZE);
+
+				int ret = inflate(&gzDecompress, Z_NO_FLUSH);
+				if(ret == Z_STREAM_END)
+					break;
+				if(ret != Z_OK)
+					return -1;
+
+				if(gzDecompress.avail_in > 0)
+				{
+					wrap->seek(wrap->pos()-gzDecompress.avail_in);
+					break;
+				}
+			}
+
+			return len-gzDecompress.avail_out;
+		}
+
+	private:
+		char		buffer[BUFFER_SIZE];
+		z_stream	gzDecompress;
+		z_stream	gzCompress;
+
+		QIODevice	*wrap;
 };
 
 /**
@@ -233,6 +324,11 @@ UnArchive *UnArchive::DetectArchive(const QFileInfo &fi, QIODevice *&device)
 	if(file.suffix().compare("bz2", Qt::CaseInsensitive) == 0)
 	{
 		device = new BZ2Device(device);
+		file = QFileInfo(file.completeBaseName());
+	}
+	else if(file.suffix().compare("gz", Qt::CaseInsensitive) == 0)
+	{
+		device = new GZDevice(device);
 		file = QFileInfo(file.completeBaseName());
 	}
 

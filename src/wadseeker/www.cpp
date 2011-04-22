@@ -389,6 +389,7 @@ bool WWWSeeker::isWantedFileOrZip(const QString& filename)
 		fileInfo.suffix().compare("zip", Qt::CaseInsensitive) == 0 ||
 		fileInfo.suffix().compare("7z", Qt::CaseInsensitive) == 0 ||
 		fileInfo.suffix().compare("tar", Qt::CaseInsensitive) == 0 ||
+		fileInfo.suffix().compare("gz", Qt::CaseInsensitive) == 0 ||
 		fileInfo.suffix().compare("bz2", Qt::CaseInsensitive) == 0;
 }
 
