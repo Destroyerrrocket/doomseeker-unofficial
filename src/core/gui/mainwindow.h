@@ -130,7 +130,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		QMenu*				trayIconMenu;
 
 		void	changeEvent(QEvent* event);
-		
+
 		bool	checkWadseekerValidity();
 
 		/**
@@ -152,7 +152,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 *		crashes.
 		 */
 		void	fillQueryMenu(MasterManager* masterManager);
-		
+
 		bool	hasCustomServers() const;
 
 		void	initIP2CUpdater();
@@ -168,7 +168,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	initTrayIcon();
 
 		void	ip2cJobsFinished();
-		
+
 		/**
 		 *	@brief Will check if refresh operation has any sense.
 		 *
@@ -201,6 +201,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	updateTrayIconTooltipAndLogTotalRefresh();
 
 	protected slots:
+        void    appStartupRefresh();
 		void	autoRefreshTimer_timeout();
 		void	blockRefreshButtons();
 		void 	finishedQueryingMaster(MasterClient* master);
@@ -211,6 +212,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	ip2cParseDatabase();
 		void	ip2cStartUpdate();
 		void	masterManagerMessages(MasterClient* pSender, const QString& title, const QString& content, bool isError);
+		void    masterManagerMessagesImportant(MasterClient* pSender, const Message& objMessage);
 		void	menuBuddies();
 		void 	menuCreateServer();
 		void	menuHelpAbout();

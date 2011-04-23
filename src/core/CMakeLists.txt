@@ -113,6 +113,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/widgets/colorbutton.h
 	gui/widgets/dockedwidgets.h
 	gui/widgets/fontbutton.h	
+	gui/widgets/importantmessageswidget.h	
 	gui/widgets/memorylineedit.h
 	gui/widgets/serverconsole.h
 	gui/widgets/serverlistview.h
@@ -138,6 +139,7 @@ set(DOOMSEEKER_QT_FILES
 	irc/ircrequestparser.h		
 	irc/ircresponseparser.h
 	sdeapi/config.hpp
+	serverapi/message.h	
 	serverapi/rconprotocol.h
 	serverapi/server.h
 	customservers.h
@@ -188,6 +190,7 @@ set(SOURCE_FILES
 	gui/models/serverlistrowhandler.cpp
 	gui/widgets/colorbutton.cpp
 	gui/widgets/fontbutton.cpp
+	gui/widgets/importantmessageswidget.cpp		
 	gui/widgets/memorylineedit.cpp
 	gui/widgets/serverconsole.cpp
 	gui/widgets/serverlistcontextmenu.cpp
@@ -297,7 +300,6 @@ set(HEADER_FILES
 	serverapi/binaries.h
 	serverapi/buddyinfo.h
 	serverapi/gamerunner.h
-	serverapi/message.h
 	serverapi/player.h
 	serverapi/playerslist.h
 	serverapi/serverstructs.h	

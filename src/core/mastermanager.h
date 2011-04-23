@@ -24,6 +24,7 @@
 #define __MASTERMANAGER_H__
 
 #include "masterclient.h"
+#include "serverapi/message.h"
 
 class CustomServers;
 class MasterClientReceiver;
@@ -45,15 +46,15 @@ class MasterManager : public MasterClient
 		void								addMaster(MasterClient *master);
 		void								clearServersList() { servers.clear(); }
 		CustomServers*						customServs() { return customServers; }
-		
+
 		int									numMasters() const { return masters.size(); }
 
 		const PluginInfo*					plugin() const { return NULL; }
-		
+
 		MasterClient*						operator[](int index) { return masters[index]; }
-		
-		bool								readMasterResponse(QByteArray &data) { return false; }		
-		
+
+		bool								readMasterResponse(QByteArray &data) { return false; }
+
 		/**
 		 *	@brief Redirects the response to appropriate MasterClient.
 		 */
@@ -62,33 +63,34 @@ class MasterManager : public MasterClient
 
 	public slots:
 		void								refresh();
-		
+
 	signals:
 		/**
-		 *	@brief Emitted for every MasterClient that emits listUpdated() 
+		 *	@brief Emitted for every MasterClient that emits listUpdated()
 		 *	signal.
 		 */
 		void								listUpdatedForMaster(MasterClient* pSender);
 		void								masterMessage(MasterClient* pSender, const QString& title, const QString& content, bool isError);
+		void								masterMessageImportant(MasterClient* pSender, const Message& objMessage);
 		void								newServerBatchReceivedFromMaster(MasterClient* pSender, const QList<Server* >& servers);
 
 	protected:
 		CustomServers*						customServers;
-		QList<MasterClient *>				masters;		
+		QList<MasterClient *>				masters;
 		QSet<MasterClient *>				mastersBeingRefreshed;
-		QList<MasterClientReceiver*>		mastersReceivers;	
+		QList<MasterClientReceiver*>		mastersReceivers;
 
 		bool								getServerListRequest(QByteArray &data) { return false; }
 		void								timeoutRefreshEx();
-	
+
 	protected slots:
 		void								masterListUpdated(MasterClient* pSender);
-	
+
 		void								readMasterMessage(MasterClient* pSender, const QString& title, const QString& content, bool isError)
 		{
 			emit masterMessage(pSender, title, content, isError);
 		}
-		
+
 		/// Forwards the signal to newServerBatchReceivedFromMaster();
 		void								newServerBatchReceivedSlot(MasterClient* pSender, const QList<Server* >& servers)
 		{
@@ -106,36 +108,43 @@ class MasterClientReceiver : public QObject
 
 	public:
 		MasterClient*	pMaster;
-		
+
 		MasterClientReceiver(MasterClient* pMaster)
 		{
 			this->pMaster = pMaster;
-			
+
 			connect(pMaster, SIGNAL( listUpdated() ), this, SLOT( listUpdatedSlot() ) );
 			connect(pMaster, SIGNAL( message(const QString&, const QString&, bool) ), this, SLOT( readMasterMessage(const QString&, const QString&, bool) ) );
+			connect(pMaster, SIGNAL( messageImportant(const Message&) ), this, SLOT( readMasterMessageImportant(const Message&) ) );
 			connect(pMaster, SIGNAL( newServerBatchReceived(const QList<Server* >&) ), this, SLOT( newServerBatchReceivedSlot(const QList<Server* >&) ) );
 		}
 
 	signals:
 		void			listUpdated(MasterClient* pSender);
 		void			message(MasterClient* pSender, const QString& title, const QString& content, bool isError);
+		void			messageImportant(MasterClient* pSender, const Message& objMessage);
 		void			newServerBatchReceived(MasterClient* pSender, const QList<Server* >& servers);
-		
+
 	protected slots:
 		void			listUpdatedSlot()
 		{
 			emit listUpdated(pMaster);
 		}
-	
+
 		void			readMasterMessage(const QString& title, const QString& content, bool isError)
 		{
 			emit message(pMaster, title, content, isError);
 		}
-		
+
+		void			readMasterMessageImportant(const Message& objMessage)
+		{
+			emit messageImportant(pMaster, objMessage);
+		}
+
 		void			newServerBatchReceivedSlot(const QList<Server* >& servers)
 		{
 			emit newServerBatchReceived(pMaster, servers);
 		}
-};	
+};
 
 #endif

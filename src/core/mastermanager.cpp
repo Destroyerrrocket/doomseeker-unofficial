@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "mastermanager.h"
 #include "customservers.h"
+#include "serverapi/message.h"
 
 // TODO: I don't think that MasterManager should store a duplicate of each
 // server (~Zalewa).
@@ -34,12 +35,12 @@ MasterManager::MasterManager() : MasterClient()
 MasterManager::~MasterManager()
 {
 	servers.clear();
-	
+
 	for (int i = 0; i < mastersReceivers.size(); ++i)
 	{
 		delete mastersReceivers[i];
 	}
-	
+
 	for(int i = 0;i < masters.size();i++)
 		delete masters[i];
 
@@ -53,13 +54,18 @@ void MasterManager::addMaster(MasterClient *master)
 
 	masters.append(master);
 	master->setEnabled(true);
-	
+
 	MasterClientReceiver* pMasterReceiver = new MasterClientReceiver(master);
-	connect(pMasterReceiver, SIGNAL( listUpdated(MasterClient*) ), this, SLOT( masterListUpdated(MasterClient*) ) );
-	connect(pMasterReceiver, SIGNAL( message(MasterClient*, const QString&, const QString&, bool) ), this, SLOT( readMasterMessage(MasterClient*, const QString&, const QString&, bool) ) );
-	connect(pMasterReceiver, SIGNAL( newServerBatchReceived(MasterClient*, const QList<Server* >&) ), this, SLOT( newServerBatchReceivedSlot(MasterClient*, const QList<Server* >&) ) );
+	connect(pMasterReceiver, SIGNAL( listUpdated(MasterClient*) ),
+        this, SLOT( masterListUpdated(MasterClient*) ) );
+	connect(pMasterReceiver, SIGNAL( message(MasterClient*, const QString&, const QString&, bool) ),
+        this, SIGNAL( masterMessage(MasterClient*, const QString&, const QString&, bool) ) );
+    connect(pMasterReceiver, SIGNAL( messageImportant(MasterClient*, const Message&) ),
+        this, SIGNAL( masterMessageImportant(MasterClient*, const Message&) ));
+	connect(pMasterReceiver, SIGNAL( newServerBatchReceived(MasterClient*, const QList<Server* >&) ),
+        this, SLOT( newServerBatchReceivedSlot(MasterClient*, const QList<Server* >&) ) );
 	mastersReceivers.append(pMasterReceiver);
-	
+
 }
 
 void MasterManager::masterListUpdated(MasterClient* pSender)
@@ -94,7 +100,7 @@ bool MasterManager::readMasterResponse(QHostAddress& address, unsigned short por
 			return false;
 		}
 	}
-	
+
 	return false;
 }
 

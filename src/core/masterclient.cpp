@@ -24,6 +24,7 @@
 #include "log.h"
 #include "masterclient.h"
 #include "main.h"
+#include "serverapi/message.h"
 #include "serverapi/playerslist.h"
 
 #include <QDataStream>
@@ -78,6 +79,10 @@ bool MasterClient::hasServer(const Server* server)
 void MasterClient::notifyBanned()
 {
 	emit message(engineName(), tr("You have been banned from the master server."), true);
+
+	Message msg = Message(Message::Types::BANNED_FROM_MASTERSERVER);
+
+	emit messageImportant(msg);
 }
 
 void MasterClient::notifyDelay()

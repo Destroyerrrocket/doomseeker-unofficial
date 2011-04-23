@@ -63,11 +63,7 @@ const PluginInfo* SkulltagMasterClient::plugin() const
 
 bool SkulltagMasterClient::readMasterResponse(QByteArray &data)
 {
-    // TODO Remove this!
-    notifyBanned();
-		return false;
-
-	bool expectingMorePackets = false;
+    bool expectingMorePackets = false;
 
 	const char* in = data.data();
 	unsigned char packetOut[2000];

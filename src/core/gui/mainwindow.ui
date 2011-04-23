@@ -19,6 +19,22 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
+     <widget class="ImportantMessagesWidget" name="importantMessagesWidget" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <family>Monospace</family>
+        <pointsize>8</pointsize>
+       </font>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="ServerListView" name="tableServers">
       <property name="editTriggers">
        <set>QAbstractItemView::NoEditTriggers</set>
@@ -42,7 +58,7 @@
      <x>0</x>
      <y>0</y>
      <width>796</width>
-     <height>21</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="locale">
@@ -99,7 +115,7 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="menuActionConfigure">
    <property name="icon">
-    <iconset resource="../../media/resources.qrc">
+    <iconset resource="../../../media/resources.qrc">
      <normaloff>:/icons/preferences-system-4.png</normaloff>:/icons/preferences-system-4.png</iconset>
    </property>
    <property name="text">
@@ -132,7 +148,7 @@
   </action>
   <action name="menuActionWadseeker">
    <property name="icon">
-    <iconset resource="../../media/resources.qrc">
+    <iconset resource="../../../media/resources.qrc">
      <normaloff>:/icons/download.png</normaloff>:/icons/download.png</iconset>
    </property>
    <property name="text">
@@ -155,7 +171,7 @@
   </action>
   <action name="menuActionCreateServer">
    <property name="icon">
-    <iconset resource="../../media/resources.qrc">
+    <iconset resource="../../../media/resources.qrc">
      <normaloff>:/flags/localhost-small</normaloff>:/flags/localhost-small</iconset>
    </property>
    <property name="text">
@@ -186,7 +202,7 @@
   </action>
   <action name="menuActionUpdateIP2C">
    <property name="icon">
-    <iconset resource="../../media/resources.qrc">
+    <iconset resource="../../../media/resources.qrc">
      <normaloff>:/icons/emblem-web.png</normaloff>:/icons/emblem-web.png</iconset>
    </property>
    <property name="text">
@@ -219,7 +235,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../media/resources.qrc">
+    <iconset resource="../../../media/resources.qrc">
      <normaloff>:/icons/media-record.png</normaloff>:/icons/media-record.png</iconset>
    </property>
    <property name="text">
@@ -228,7 +244,7 @@
   </action>
   <action name="menuActionManageDemos">
    <property name="icon">
-    <iconset resource="../../media/resources.qrc">
+    <iconset resource="../../../media/resources.qrc">
      <normaloff>:/icons/media-playback-start.png</normaloff>:/icons/media-playback-start.png</iconset>
    </property>
    <property name="text">
@@ -242,9 +258,15 @@
    <extends>QTableView</extends>
    <header>gui/widgets/serverlistview.h</header>
   </customwidget>
+  <customwidget>
+   <class>ImportantMessagesWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/widgets/importantmessageswidget.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../media/resources.qrc"/>
+  <include location="../../../media/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

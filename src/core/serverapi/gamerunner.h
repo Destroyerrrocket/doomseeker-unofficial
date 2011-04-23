@@ -97,7 +97,7 @@ class MAIN_EXPORT GameRunner : public QObject
 		 *		and port.
 		 */
 		virtual QString				argForConnect() const { return "-connect"; }
-		
+
 		/**
 		 *	@brief Command line parameter that is used to specify connection
 		 *	password.
@@ -105,13 +105,13 @@ class MAIN_EXPORT GameRunner : public QObject
 		 *	There is no common value here so the default behavior returns a
 		 *  "null" string.
 		 */
-		virtual QString				argForConnectPassword() const { return QString(); }		
+		virtual QString				argForConnectPassword() const { return QString(); }
 
 		/**
 		 *	@brief Command line parameter that is used to set IWAD.
 		 */
 		virtual QString				argForIwadLoading() const { return "-iwad"; }
-		
+
 		/**
 		 *	@brief Command line parameter that is used to set internet port for
 		 *	the	game.
