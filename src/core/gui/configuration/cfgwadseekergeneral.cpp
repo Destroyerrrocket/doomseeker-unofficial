@@ -83,8 +83,8 @@ void CFGWadseekerGeneral::saveSettings()
         if (!pathPossible)
         {
             QMessageBox::warning(this, tr("Target not on List"),
-                tr("The specified target directory for Wadseeker could not be found on the file paths list.\n\n\
-                    Doomseeker will automatically add this path to the file search paths."));
+                tr("The specified target directory for Wadseeker could not be found on the file paths list.\n\n")
+			        + tr("Doomseeker will automatically add this path to the file search paths."));
         }
 	}
 
