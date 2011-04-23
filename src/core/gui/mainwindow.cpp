@@ -38,7 +38,7 @@
 #include "gui/wadseekerinterface.h"
 #include "irc/configuration/ircconfig.h"
 #include "serverapi/gamerunner.h"
-#include "serverapi/messages.h"
+#include "serverapi/message.h"
 #include "customservers.h"
 #include "doomseekerfilepaths.h"
 #include "log.h"
@@ -69,7 +69,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	setupUi(this);
 	setupIcons();
-	
+
 	if (Main::enginePlugins->numPlugins() == 0)
 	{
 		QString message = tr("\
@@ -81,9 +81,9 @@ One of the proper locations for plugin modules is the \"engines/\" directory.\n\
 		gLog << message;
 		QMessageBox::critical(NULL, tr("Doomseeker - plugin load failure"), message);
 	}
-	
+
 	ip2cParser = NULL;
-	
+
 	initIP2CUpdater();
 
 	// The buddies list must always be available so we can perform certain operations on it
@@ -91,7 +91,7 @@ One of the proper locations for plugin modules is the \"engines/\" directory.\n\
 	menuView->addAction(buddiesList->toggleViewAction());
 	buddiesList->toggleViewAction()->setText(tr("&Buddies"));
 	buddiesList->toggleViewAction()->setShortcut(tr("CTRL+B"));
-	
+
 	connect(buddiesList, SIGNAL( joinServer(const Server*) ), this, SLOT( runGame(const Server*) ));
 	buddiesList->hide();
 	this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
@@ -103,7 +103,7 @@ One of the proper locations for plugin modules is the \"engines/\" directory.\n\
 	// Spawn Server Table Handler.
 	serverTableHandler = new ServerListHandler(tableServers, this);
 	connectEntities();
-	
+
 	// Apply server filter which is stored in config.
 	serverTableHandler->applyFilter(gConfig.serverFilter.info);
 
@@ -153,21 +153,21 @@ One of the proper locations for plugin modules is the \"engines/\" directory.\n\
 
 	// Tray icon
 	initTrayIcon();
-	
+
 	setupToolBar();
 
 	// Player diagram styles
 	int slotStyle = gConfig.doomseeker.slotStyle;
 	PlayersDiagram::loadImages(slotStyle);
-	
+
 	// IP2C
 	bool bParseIP2CDatabase = true;
 	bool bPerformAutomaticIP2CUpdates = gConfig.doomseeker.bIP2CountryAutoUpdate;
-	
+
 	if (bPerformAutomaticIP2CUpdates)
 	{
 		int maxAge = gConfig.doomseeker.ip2CountryDatabaseMaximumAge;
-	
+
 		QString databasePath = DoomseekerFilePaths::ip2cDatabase();
 		if (IP2CUpdater::needsUpdate(databasePath, maxAge))
 		{
@@ -175,11 +175,11 @@ One of the proper locations for plugin modules is the \"engines/\" directory.\n\
 			bParseIP2CDatabase = false;
 		}
 	}
-	
+
 	if (bParseIP2CDatabase)
 	{
 		ip2cParseDatabase();
-	}	
+	}
 
 	// Check query on statup
 	// Let's see if we have any plugins first. If not, display error.
@@ -192,18 +192,18 @@ One of the proper locations for plugin modules is the \"engines/\" directory.\n\
 			// If "Query on startup" option is enabled we should
 			// attempt to refresh any masters that are enabled
 			// in the Query menu.
-		
+
 			if (isAnyMasterEnabled())
 			{
 				bGettingServers = true;
-				getServers();				
+				getServers();
 			}
 			else
 			{
 				gLog << tr("Query on startup warning: No master servers are enabled in the Query menu.");
 			}
 		}
-		
+
 		// If we already successfully called the getServers() method
 		// there is no need to call refreshCustomsServers().
 		if (!bGettingServers && hasCustomServers())
@@ -216,7 +216,7 @@ One of the proper locations for plugin modules is the \"engines/\" directory.\n\
 	}
 	else
 	{
-		// There are no plugins so something is really bad. 
+		// There are no plugins so something is really bad.
 		// Display error message.
 		QMessageBox::critical(NULL, tr("Doomseeker critical error"), tr("Doomseeker was unable to find any plugin libraries. \
 \nAlthough the application will still work it will not be possible to fetch any server info or launch any game.\n\
@@ -239,7 +239,7 @@ MainWindow::~MainWindow()
 	}
 
 	gConfig.doomseeker.mainWindowState = saveState().toBase64();
-	
+
 	QList<QAction*> menuQueryActions = menuQuery->actions();
 	QList<QAction*>::iterator it;
 	for (it = menuQueryActions.begin(); it != menuQueryActions.end(); ++it)
@@ -273,14 +273,14 @@ MainWindow::~MainWindow()
 	{
 		delete masterManager;
 	}
-	
+
 	if (ip2cParser != NULL)
 	{
 		while (ip2cParser->isParsing());
-		
+
 		delete ip2cParser;
 	}
-	
+
 	delete ip2cUpdateProgressBar;
 }
 
@@ -321,19 +321,19 @@ bool MainWindow::checkWadseekerValidity()
 	QString targetDirPath = gConfig.wadseeker.targetDirectory;
 	QDir targetDir(targetDirPath);
 	QFileInfo targetDirFileInfo(targetDirPath);
-	
-	
+
+
 	if (targetDirPath.isEmpty() || !targetDir.exists() || !targetDirFileInfo.isWritable())
 	{
 		QString message = tr("Wadseeker will not work correctly: \n\
 Target directory is either not set, is invalid or cannot be written to.\n\
 Please review your Configuration and/or refer to online help available from \
 the Help menu.");
-	
+
 		QMessageBox::warning(this, tr("Doomseeker - Wadseeker error"), message);
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -377,7 +377,7 @@ void MainWindow::connectEntities()
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( quitProgram() ));
 	connect(menuActionViewIRC, SIGNAL( triggered() ) , this, SLOT( menuViewIRC() ));
 	connect(menuActionWadseeker, SIGNAL( triggered() ), this, SLOT( menuWadSeeker() ));
-	connect(serverFilterDock, SIGNAL( filterUpdated(const ServerListFilterInfo&) ), serverTableHandler, SLOT( applyFilter(const ServerListFilterInfo&) ) );	
+	connect(serverFilterDock, SIGNAL( filterUpdated(const ServerListFilterInfo&) ), serverTableHandler, SLOT( applyFilter(const ServerListFilterInfo&) ) );
 	connect(serverTableHandler, SIGNAL( serverDoubleClicked(const Server*) ), this, SLOT( runGame(const Server*) ) );
 	connect(serverTableHandler, SIGNAL( displayServerJoinCommandLine(const Server*) ), this, SLOT( showServerJoinCommandLine(const Server*) ) );
 	connect(serverTableHandler, SIGNAL( serverInfoUpdated(const Server*) ), this, SLOT( serverAddedToList(const Server*) ) );
@@ -410,9 +410,9 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		query->setCheckable(true);
 		query->setIcon(plugin->icon());
 		query->setText(name);
-		
+
 		IniSection& pluginConfig = gConfig.iniSectionForPlugin(name);
-		
+
 		if (!pluginConfig.retrieveSetting("Query").isNull())
 		{
 			bool enabled = pluginConfig["Query"];
@@ -420,7 +420,7 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 			{
 				pMasterClient->setEnabled(enabled);
 			}
-			
+
 			query->setChecked(enabled);
 			statusWidget->setEnabled(enabled);
 		}
@@ -432,7 +432,7 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 			{
 				pMasterClient->setEnabled(true);
 			}
-			
+
 			query->setChecked(true);
 			statusWidget->setEnabled(true);
 		}
@@ -463,7 +463,7 @@ void MainWindow::getServers()
 
 		QString message = tr("Doomseeker is unable to proceed with the refresh \
 operation because the following problem has occured:\n\n");
-		
+
 		if (Main::enginePlugins->numPlugins() == 0)
 		{
 			message += tr("Plugins are missing from the \"engines/\" directory.");
@@ -476,30 +476,30 @@ operation because the following problem has occured:\n\n");
 		{
 			message += tr("Unknown error occured.");
 		}
-		
+
 		gLog << message;
 		QMessageBox::warning(this, tr("Doomseeker - senseless operation"), message);
 		return;
 	}
-	
+
 	bTotalRefreshInProcess = true;
 	autoRefreshTimer.stop();
 	gLog << tr("Total refresh process initialized!");
 	serverTableHandler->clearTable();
 	refreshCustomServers();
-	
+
 	bool bAtLeastOneEnabled = false;
 
 	if (!isAnyMasterEnabled())
 	{
 		gLog << tr("Warning: No master servers were enabled for this refresh. Check your Query menu or \"engines/\" directory. Custom servers will still refresh.");
 	}
-	
+
 	masterManager->clearServersList();
 	for (int i = 0; i < masterManager->numMasters(); ++i)
 	{
 		MasterClient* pMaster = (*masterManager)[i];
-		
+
 		if (pMaster->isEnabled())
 		{
 			Main::refreshingThread->registerMaster(pMaster);
@@ -556,7 +556,7 @@ void MainWindow::initIP2CUpdater()
 	ip2cUpdateProgressBar->setFormat(tr("IP2C Update"));
 	ip2cUpdateProgressBar->setTextVisible(true);
 	ip2cUpdateProgressBar->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-	
+
 	ip2cUpdateProgressBar->setMaximumWidth(PROGRESSBAR_WIDTH);
 	ip2cUpdateProgressBar->setMinimumWidth(PROGRESSBAR_WIDTH);
 }
@@ -569,7 +569,7 @@ void MainWindow::initIRCDock()
 	ircDock->toggleViewAction()->setShortcut(tr("CTRL+I"));
 	ircDock->hide();
 	this->addDockWidget(Qt::BottomDockWidgetArea, ircDock);
-	
+
 	if (gIRCConfig.isAutojoinNetworksEnabled())
 	{
 		this->ircDock->setVisible(true);
@@ -610,7 +610,7 @@ void MainWindow::initServerFilterDock()
 {
 	serverFilterDock = new ServerFilterDock(this);
 	serverFilterDock->setFilterInfo(gConfig.serverFilter.info);
-	
+
 	menuView->addAction(serverFilterDock->toggleViewAction());
 	serverFilterDock->hide();
 	this->addDockWidget(Qt::RightDockWidgetArea, serverFilterDock);
@@ -665,25 +665,25 @@ void MainWindow::ip2cFinishUpdate(const QByteArray& downloadedData)
 		QString message = tr("IP2C download has failed.");
 		gLog << message;
 		statusBar()->showMessage(message);
-		
+
 		ip2cJobsFinished();
 	}
 	else
 	{
 		gLog << tr("IP2C database finished downloading.");
-		
+
 		QString filePath = DoomseekerFilePaths::ip2cDatabase();
-				
+
 		ip2cUpdater->getRollbackData();
-		
+
 		if (!ip2cUpdater->saveDownloadedData())
 		{
 			gLog << tr("Unable to save IP2C database at path: %1").arg(filePath);
-			
+
 			ip2cJobsFinished();
 			return;
 		}
-	
+
 		ip2cParseDatabase();
 	}
 }
@@ -697,28 +697,28 @@ void MainWindow::ip2cFinishedParsing(bool bSuccess)
 		QString message = tr("Failed to read IP2C database. Reverting...");
 		gLog << message;
 		statusBar()->showMessage(message);
-		
+
 		if (ip2cUpdater == NULL || !ip2cUpdater->hasRollbackData())
 		{
 			gLog << "IP2C revert attempt failed. Nothing to go back to.";
 
 			// Delete file in this case.
-			QFile file(filePath);			
+			QFile file(filePath);
 			file.remove();
-			
+
 			gLog << "Using precompiled IP2C database.";
 			ip2cParser->readDatabaseThreaded(DoomseekerFilePaths::IP2C_QT_SEARCH_PATH);
 		}
 		else
 		{
 			// Revert to old content.
-			ip2cUpdater->rollback();			
-						
+			ip2cUpdater->rollback();
+
 			// Must succeed now.
 			ip2cParser->readDatabaseThreaded(filePath);
 		}
 	}
-	else  
+	else
 	{
 		if (ip2cUpdater != NULL)
 		{
@@ -726,7 +726,7 @@ void MainWindow::ip2cFinishedParsing(bool bSuccess)
 			gLog << message;
 			statusBar()->showMessage(message);
 		}
-		
+
 		ip2cJobsFinished();
 	}
 }
@@ -735,31 +735,31 @@ void MainWindow::ip2cJobsFinished()
 {
 	menuActionUpdateIP2C->setEnabled(true);
 	Main::ip2c->setDataAccessLockEnabled(false);
-	serverTableHandler->updateCountryFlags();		
-	
+	serverTableHandler->updateCountryFlags();
+
 	if (statusBar()->isAncestorOf(ip2cUpdateProgressBar))
 	{
 		statusBar()->removeWidget(ip2cUpdateProgressBar);
 	}
-	
+
 	if (ip2cParser != NULL)
 	{
 		delete ip2cParser;
-		ip2cParser = NULL;	
-		
+		ip2cParser = NULL;
+
 		QString message = tr("IP2C parsing finished.");
-		
+
 		gLog << message;
 		statusBar()->showMessage(message);
 	}
-	
+
 	if (ip2cUpdater != NULL)
 	{
 		delete ip2cUpdater;
 		ip2cUpdater = NULL;
-		
+
 		QString message = tr("IP2C update finished.");
-		
+
 		gLog << message;
 		statusBar()->showMessage(message);
 	}
@@ -768,14 +768,14 @@ void MainWindow::ip2cJobsFinished()
 void MainWindow::ip2cParseDatabase()
 {
 	QString filePath = DoomseekerFilePaths::IP2C_QT_SEARCH_PATH;
-	
+
 	menuActionUpdateIP2C->setEnabled(false);
-	
+
 	statusBar()->showMessage(tr("Please wait. IP2C Database is being read and converted if necessary. This may take some time."));
 	// Attempt to read IP2C database.
 	ip2cParser = new IP2CParser(Main::ip2c);
 	connect (ip2cParser, SIGNAL( parsingFinished(bool) ), this, SLOT( ip2cFinishedParsing(bool) ) );
-	
+
 	Main::ip2c->setDataAccessLockEnabled(true);
 	ip2cParser->readDatabaseThreaded(filePath);
 }
@@ -790,16 +790,16 @@ void MainWindow::ip2cStartUpdate()
 
 	gLog << tr("Starting IP2C update.");
 	menuActionUpdateIP2C->setEnabled(false);
-	Main::ip2c->setDataAccessLockEnabled(true);	
-	
+	Main::ip2c->setDataAccessLockEnabled(true);
+
 	ip2cUpdater = new IP2CUpdater();
 	ip2cUpdater->setFilePath(DoomseekerFilePaths::ip2cDatabase());
-	
+
 	connect (ip2cUpdater, SIGNAL( databaseDownloadFinished(const QByteArray&) ), this, SLOT( ip2cFinishUpdate(const QByteArray&) ) );
 	connect (ip2cUpdater, SIGNAL( downloadProgress(int, int) ), this, SLOT( ip2cDownloadProgress(int, int) ) );
-	
+
 	QString downloadUrl = gConfig.doomseeker.ip2CountryUrl;
-	
+
 	ip2cUpdater->downloadDatabase(downloadUrl);
 	statusBar()->addPermanentWidget(ip2cUpdateProgressBar);
 }
@@ -814,13 +814,13 @@ bool MainWindow::isAnyMasterEnabled() const
 	for (int i = 0; i < masterManager->numMasters(); ++i)
 	{
 		MasterClient* pMaster = (*masterManager)[i];
-		
+
 		if (pMaster->isEnabled())
 		{
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -833,7 +833,7 @@ void MainWindow::masterManagerMessages(MasterClient* pSender, const QString& tit
 		message = tr("Error: %1").arg(message);
 		statusBar()->showMessage(message);
 	}
-	
+
 	gLog << message;
 }
 
@@ -867,7 +867,7 @@ void MainWindow::menuHelpHelp()
 	}
 
 	bool bSuccess = QDesktopServices::openUrl(HELP_SITE_URL);
-	
+
 	if (!bSuccess)
 	{
 		QMessageBox::critical(this, tr("Help error"), tr("Failed to open URL:\n%1").arg(HELP_SITE_URL), QMessageBox::Ok, QMessageBox::Ok);
@@ -880,13 +880,13 @@ void MainWindow::menuIRCOptions()
 	IRCConfigurationDialog dialog(this);
 	dialog.initOptionsList();
 	dialog.exec();
-	
+
 	if (ircDock != NULL)
 	{
 		ircDock->applyAppearanceSettings();
-		
-		// This could probably be optimized to not re-read files from drive 
-		// if audio options didn't change but currently there are only two 
+
+		// This could probably be optimized to not re-read files from drive
+		// if audio options didn't change but currently there are only two
 		// files, so no harm should be done.
 		ircDock->sounds().loadFromConfig();
 	}
@@ -911,11 +911,11 @@ void MainWindow::menuOptionsConfigure()
 	for(unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
 		const PluginInfo* pPluginInfo = (*Main::enginePlugins)[i]->info;
-		
+
 		// Retrieve INI Section for this plugin.
 		QString pluginName = pPluginInfo->name;
 		IniSection& configSection = gConfig.iniSectionForPlugin(pluginName);
-		
+
 		// Create the config box.
 		ConfigurationBaseBox* pConfigurationBox = pPluginInfo->pInterface->configuration(configSection, &configDialog);
 		configDialog.addEngineConfiguration(pConfigurationBox);
@@ -927,7 +927,7 @@ void MainWindow::menuOptionsConfigure()
 
 	// Do some cleanups after config box finishes.
 	initAutoRefreshTimer();
-	
+
 	// In case the master server addresses changed, notify the master clients.
 	updateMasterAddresses();
 
@@ -955,9 +955,9 @@ void MainWindow::menuRecordDemo()
 void MainWindow::menuUpdateIP2C()
 {
 	IP2CUpdateBox updateBox(this);
-	
+
 	connect(&updateBox, SIGNAL( accepted() ), this, SLOT( ip2cStartUpdate() ) );
-	
+
 	updateBox.exec();
 }
 
@@ -1009,7 +1009,7 @@ bool MainWindow::obtainJoinCommandLine(const Server* server, CommandLineInfo& cl
 			gLog << tr("Attempted to obtain a join command line for an unknown server \"%1\"").arg(server->addressWithPort());
 			return false;
 		}
-	
+
 		// For MissingWads:
 		const QString filesMissingCaption = tr("Doomseeker - files are missing");
 		QString filesMissingMessage = tr("Following files are missing:\n");
@@ -1080,7 +1080,7 @@ Wadseeker will not download IWADs.\n\n");
 						{
 							return false;
 						}
-					
+
 						if (!joinError.missingIwad.isEmpty())
 						{
 							joinError.missingWads.append(joinError.missingIwad);
@@ -1161,8 +1161,8 @@ void MainWindow::runGame(const Server* server)
 		Message message = gameRunner->runExecutable(cli, false);
 		if (message.isError())
 		{
-			gLog << tr("Error while launching executable for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(message.content);
-			QMessageBox::critical(this, tr("Doomseeker - launch executable"), message.content);
+			gLog << tr("Error while launching executable for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(message.contents());
+			QMessageBox::critical(this, tr("Doomseeker - launch executable"), message.contents());
 		}
 
 		delete gameRunner;
@@ -1184,7 +1184,7 @@ void MainWindow::setupIcons()
 
 	// File menu.
 	menuActionQuit->setIcon(style.standardIcon(QStyle::SP_TitleBarCloseButton));
-	
+
 	// Help menu.
 	menuActionHelp->setIcon(style.standardIcon(QStyle::SP_MessageBoxQuestion));
 	menuActionAbout->setIcon(style.standardIcon(QStyle::SP_MessageBoxInformation));
@@ -1199,12 +1199,12 @@ void MainWindow::setupToolBar()
 	// Refresh buttons
 	toolBarGetServers = new QAction(QIcon(":/icons/arrow-down-double.png"), tr("Get Servers"), pToolBar);
 	toolBarRefreshAll = new QAction(QIcon(":/icons/view-refresh-2.png"), tr("Refresh All"), pToolBar);
-	
+
 	// Setup menu
 	// Refresh buttons
 	pToolBar->addAction(toolBarGetServers);
 	pToolBar->addAction(toolBarRefreshAll);
-	
+
 	// File menu buttons.
 	pToolBar->addSeparator();
 	pToolBar->addAction(menuActionCreateServer);
@@ -1214,7 +1214,7 @@ void MainWindow::setupToolBar()
 	pToolBar->addSeparator();
 	pToolBar->addAction(menuActionManageDemos);
 	pToolBar->addAction(menuActionRecordDemo);
-	
+
 	pToolBar->addSeparator();
 
 	// Dockable windows buttons.
@@ -1260,7 +1260,7 @@ void MainWindow::toolBarAction(QAction* pAction)
 	{
 		if (serverTableHandler->hasAtLeastOneServer())
 		{
-			serverTableHandler->refreshAll();		
+			serverTableHandler->refreshAll();
 		}
 		else
 		{

@@ -25,7 +25,7 @@
 #include "main.h"
 #include "pathfinder.h"
 #include "sdeapi/pluginloader.hpp"
-#include "serverapi/messages.h"
+#include "serverapi/message.h"
 #include "serverapi/server.h"
 #include "serverapi/gamerunner.h"
 #include "serverapi/gamerunnerstructs.h"
@@ -180,7 +180,7 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 
 		if (message.isError())
 		{
-			QMessageBox::critical(this, tr("Doomseeker - error"), message.content);
+			QMessageBox::critical(this, tr("Doomseeker - error"), message.contents());
 		}
 
 		delete gameRunner;

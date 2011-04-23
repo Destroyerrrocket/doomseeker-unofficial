@@ -29,7 +29,7 @@
 #include "sdeapi/config.hpp"
 #include "serverapi/binaries.h"
 #include "serverapi/gamerunner.h"
-#include "serverapi/messages.h"
+#include "serverapi/message.h"
 #include "strings.h"
 
 #include <QCheckBox>
@@ -104,9 +104,9 @@ void CreateServerDlg::addIwad(const QString& path)
 			return;
 		}
 	}
-	
+
 	QString cleanPath = Strings::normalizePath(path);
-	
+
 	cboIwad->addItem(cleanPath);
 	cboIwad->setCurrentIndex(cboIwad->count() - 1);
 }
@@ -233,7 +233,7 @@ void CreateServerDlg::btnDefaultExecutableClicked()
 
 	if (!message.isIgnore())
 	{
-		QMessageBox::critical(NULL, tr("Obtaining default server binary path."), message.content, QMessageBox::Ok, QMessageBox::Ok);
+		QMessageBox::critical(NULL, tr("Obtaining default server binary path."), message.contents(), QMessageBox::Ok, QMessageBox::Ok);
 	}
 
 	delete binaries;
@@ -368,7 +368,7 @@ bool CreateServerDlg::commandLineArguments(QString &executable, QStringList &arg
 
 		if (message.isError())
 		{
-			QMessageBox::critical(NULL, tr("Doomseeker - error"), message.content);
+			QMessageBox::critical(NULL, tr("Doomseeker - error"), message.contents());
 			return false;
 		}
 		else
@@ -586,7 +586,7 @@ void CreateServerDlg::initEngineSpecific(const PluginInfo* engineInfo)
 	if (message.isError() && !bSuppressMissingExeErrors)
 	{
 		QString caption = tr("Doomseeker - error obtaining server binary");
-		QString error = tr("Server binary for engine \"%1\" cannot be obtained.\nFollowing error has occured:\n%2").arg(engineInfo->name, message.content);
+		QString error = tr("Server binary for engine \"%1\" cannot be obtained.\nFollowing error has occured:\n%2").arg(engineInfo->name, message.contents());
 
 		QMessageBox::warning(NULL, caption, error);
 	}
@@ -1037,7 +1037,7 @@ void CreateServerDlg::runGame(bool offline)
 
 		if (message.isError())
 		{
-			QMessageBox::critical(NULL, tr("Doomseeker - error"), message.content);
+			QMessageBox::critical(NULL, tr("Doomseeker - error"), message.contents());
 		}
 		else
 		{

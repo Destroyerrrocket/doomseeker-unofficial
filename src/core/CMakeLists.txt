@@ -233,7 +233,7 @@ set(SOURCE_FILES
 	serverapi/binaries.cpp
 	serverapi/buddyinfo.cpp
 	serverapi/gamerunner.cpp
-	serverapi/messages.cpp
+	serverapi/message.cpp
 	serverapi/player.cpp
 	serverapi/playerslist.cpp
 	serverapi/rconprotocol.cpp
@@ -297,7 +297,7 @@ set(HEADER_FILES
 	serverapi/binaries.h
 	serverapi/buddyinfo.h
 	serverapi/gamerunner.h
-	serverapi/messages.h
+	serverapi/message.h
 	serverapi/player.h
 	serverapi/playerslist.h
 	serverapi/serverstructs.h	

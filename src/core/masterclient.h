@@ -24,6 +24,7 @@
 #ifndef __MASTERSERVER_H__
 #define __MASTERSERVER_H__
 
+#include <QFile>
 #include <QObject>
 #include <QHostAddress>
 #include <QList>
@@ -31,7 +32,7 @@
 #include "serverapi/server.h"
 
 struct PluginInfo;
-class QFile;
+class Message;
 
 /**
  * Abstract class base for all MasterClients.  This is expected to fetch a list
@@ -158,6 +159,18 @@ class MAIN_EXPORT MasterClient : public QObject
 		 *	Messages are dumped into the log.
 		 */
 		void					message(const QString& title, const QString& content, bool isError);
+
+		/**
+		 * @brief Signal used to forward important message to Doomseeker.
+		 *
+		 * Important messages will be treated differently by Doomseeker than
+		 * regular ones thrown by the message() signal. Doomseeker will display
+		 * them in a location that will ensure that users see this message.
+		 *
+		 * <b>Example use:</b> notify user that they have been banned from the
+		 * master server.
+		 */
+		void                    messageImportant(const Message& message);
 
 		/**
 		 *	@brief Emit this signal each time a new batch of servers is

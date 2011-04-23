@@ -24,14 +24,14 @@
 #include "configuration/doomseekerconfig.h"
 #include "server.h"
 #include "main.h"
-#include "messages.h"
+#include "message.h"
 
 #include <QString>
 #include <QFileInfo>
 
 Binaries::BinaryNamesDictionary Binaries::binaryNames;
 
-Binaries::Binaries() 
+Binaries::Binaries()
 {
 	if (binaryNames.empty()) // Is not init yet.
 	{
@@ -52,12 +52,12 @@ QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, 
 	IniSection& config = gConfig.iniSectionForPlugin(plugin());
 	IniVariable& setting = config[configKey];
 
-	message.setToIgnore();
+	message = Message();
 	QString error = "";
 	if (setting->isEmpty())
 	{
 		error = tr("No %1 executable specified for %2").arg(binaryNames[binaryType]).arg(plugin()->name);
-		message.setValues(Messages::Types::CUSTOM_ERROR, error);
+		message = Message::customError(error);
 		return QString();
 	}
 
@@ -69,7 +69,7 @@ QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, 
 					.arg(plugin()->name)
 					.arg(binaryNames[binaryType])
 					.arg(fi.canonicalFilePath());
-		message.setValues(Messages::Types::CUSTOM_ERROR, error);
+		message = Message::customError(error);
 		return QString();
 	}
 

@@ -21,7 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "serverapi/gamerunner.h"
-#include "serverapi/messages.h"
+#include "serverapi/message.h"
 #include "serverapi/server.h"
 #include "serverapi/binaries.h"
 #include "configuration/doomseekerconfig.h"
@@ -164,7 +164,7 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 		joinError.error = tr("Client binary cannot be obtained for game: %1").arg(PLUGIN_NAME);
 		if (!message.isIgnore())
 		{
-			joinError.error += "\n" + message.content;
+			joinError.error += "\n" + message.contents();
 		}
 
 		delete binaries;
@@ -278,7 +278,7 @@ Message GameRunner::hostAppendIwad()
 
 	if (iwadPath.isEmpty())
 	{
-		message.setCustomError(tr("Iwad is not set"));
+		message = Message::customError(tr("Iwad is not set"));
 		return message;
 	}
 
@@ -287,7 +287,7 @@ Message GameRunner::hostAppendIwad()
 	if (!fi.isFile())
 	{
 		QString error = tr("Iwad Path error:\n\"%1\" doesn't exist or is a directory!").arg(iwadPath);
-		message.setCustomError(error);
+		message = Message::customError(error);
 		return message;
 	}
 
@@ -313,7 +313,7 @@ Message GameRunner::hostAppendPwads()
 			if (!fi.isFile())
 			{
 				QString error = tr("Pwad path error:\n\"%1\" doesn't exist or is a directory!").arg(pwad);
-				message.setCustomError(error);
+				message = Message::customError(error);
 				return message;
 			}
 			args << pwad;
@@ -358,7 +358,7 @@ Message GameRunner::hostGetBinary(bool bOfflinePlay)
 	{
 		Message message;
 		QString error = tr("%1\n doesn't exist or is not a file.").arg(fi.filePath());
-		message.setCustomError(error);
+		message = Message::customError(error);
 		return message;
 	}
 
@@ -391,13 +391,13 @@ Message GameRunner::hostGetWorkingDirectory(bool bOfflinePlay)
 	if (serverWorkingDirPath.isEmpty())
 	{
 		QString error = tr("Path to working directory is empty.\nMake sure the configuration for the main binary is set properly.");
-		message.setCustomError(error);
+		message = Message::customError(error);
 		return message;
 	}
 	else if (!applicationDir.exists())
 	{
 		QString error = tr("%1\n doesn't exist or is not a directory.").arg(serverWorkingDirPath);
-		message.setCustomError(error);
+		message = Message::customError(error);
 		return message;
 	}
 

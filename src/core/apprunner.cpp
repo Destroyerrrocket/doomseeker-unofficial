@@ -21,7 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "apprunner.h"
-#include "serverapi/messages.h"
+#include "serverapi/message.h"
 #include "log.h"
 #include "strings.h"
 #include <QProcess>
@@ -99,7 +99,7 @@ Message AppRunner::runExecutable(const CommandLineInfo& cmdInfo)
 	{
 		QString error = tr("File: %1\ncannot be run").arg(cmdInfo.executable.canonicalFilePath());
 		gLog << error;
-		message.setCustomError(error);
+		message = Message::customError(error);
 		return message;
 	}
 

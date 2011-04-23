@@ -24,7 +24,7 @@
 #include "skulltagmain.h"
 #include "skulltagserver.h"
 #include "main.h"
-#include "serverapi/messages.h"
+#include "serverapi/message.h"
 
 #include <QMessageBox>
 
@@ -51,7 +51,7 @@ QString SkulltagBinaries::clientBinary(Message& message) const
 	}
 	else
 	{
-		message.setToIgnore();
+		message = Message();
 		QString error;
 
 		// This is common code for both Unix and Windows:
@@ -60,7 +60,7 @@ QString SkulltagBinaries::clientBinary(Message& message) const
 		if (path.isEmpty())
 		{
 			error = tr("No testing directory specified for Skulltag");
-			message.setCustomError(error);
+			message = Message::customError(error);
 			return QString();
 		}
 
@@ -88,7 +88,7 @@ Note: You will still have to manualy install the binaries."
 				if (!dir.mkdir(server->version()))
 				{
 					error = tr("Unable to create directory:\n%1").arg(path);
-					message.setCustomError(error);
+					message = Message::customError(error);
 					return QString();
 				}
 
@@ -108,7 +108,7 @@ Note: You will still have to manualy install the binaries."
 
 				// Show user the prompt to install the binaries.
 				QMessageBox::information(Main::mainWindow, tr("Doomseeker"), tr("Please install now version \"%1\" into:\n%2").arg(server->version(), path));
-				
+
 				// Try this method again.
 				return clientBinary(message);
 			}
@@ -118,7 +118,7 @@ Note: You will still have to manualy install the binaries."
 		if (!fi.isDir())
 		{
 			error = tr("%1\nexists but is NOT a directory.\nCannot proceed.").arg(path);
-			message.setCustomError(error);
+			message = Message::customError(error);
 			return QString();
 		}
 
@@ -127,7 +127,7 @@ Note: You will still have to manualy install the binaries."
 		if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
 		{
 			error = tr("%1\ndoesn't contain Skulltag executable").arg(path);
-			message.setCustomError(error);
+			message = Message::customError(error);
 			return QString();
 		}
 
@@ -176,7 +176,7 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 	if (fi.isDir())
 	{
 		QString error = tr("%1\n should be a script file but is a directory!").arg(fullPathToFile);
-		message.setCustomError(error);
+		message = Message::customError(error);
 		return false;
 	}
 
@@ -186,7 +186,7 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 		if ((file.permissions() & QFile::ExeUser) == 0)
 		{
 			QString error = tr("You don't have permissions to execute file: %1\n").arg(fullPathToFile);
-			message.setCustomError(error);
+			message = Message::customError(error);
 			return false;
 		}
 		return true;
@@ -231,14 +231,14 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 	if (!file.open(QIODevice::WriteOnly))
 	{
 		QString error = tr("Couldn't open batch file \"%1\" for writing").arg(fullPathToFile);
-		message.setCustomError(error);
+		message = Message::customError(error);
 		return false;
 	}
 
 	if (file.write(content.toAscii()) < 0)
 	{
 		QString error = tr("Error while writing batch file \"%1\"").arg(fullPathToFile);
-		message.setCustomError(error);
+		message = Message::customError(error);
 		file.close();
 		return false;
 	}
@@ -248,7 +248,7 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 	if (!file.setPermissions(file.permissions() | QFile::ExeUser))
 	{
 		QString error = tr("Cannot set permissions for file:\n%1").arg(fullPathToFile);
-		message.setCustomError(error);
+		message = Message::customError(error);
 		return false;
 	}
 
