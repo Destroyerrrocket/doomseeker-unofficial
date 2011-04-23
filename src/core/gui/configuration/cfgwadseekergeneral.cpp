@@ -28,7 +28,7 @@
 #include <QDirModel>
 #include <QMessageBox>
 
-CFGWadseekerGeneral::CFGWadseekerGeneral(QWidget* parent) 
+CFGWadseekerGeneral::CFGWadseekerGeneral(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
 	setupUi(this);
@@ -54,23 +54,38 @@ void CFGWadseekerGeneral::readSettings()
 void CFGWadseekerGeneral::saveSettings()
 {
 	gConfig.wadseeker.targetDirectory = cbTargetDirectory->currentText();
+
 	QFileInfo targetDirectoryInfo(cbTargetDirectory->currentText());
 	if(!targetDirectoryInfo.isWritable())
 	{
 		QMessageBox::warning(this, tr("Unwritable Target"), tr("The target directory you selected for Wadseeker can not be written to."));
 	}
-	// Also take a look at the file paths configuration.  Warn if it is not on the list.
-	bool pathPossible = false;
-	foreach(QString possiblePath, gConfig.doomseeker.wadPaths)
+	else
 	{
-		if(possiblePath == cbTargetDirectory->currentText())
-		{
-			pathPossible = true;
-		}
-	}
-	if(!pathPossible)
-	{
-		QMessageBox::warning(this, tr("Target not on List"), tr("The specified target directory could not be found on the file paths list."));
+        // If path seems valid:
+        // Also take a look at the file paths configuration.  Warn if it is not on the list.
+        bool pathPossible = false;
+
+        QFileInfo wadseekerTargetDirectoryFileInfo(cbTargetDirectory->currentText());
+        foreach(QString possiblePath, gConfig.doomseeker.wadPaths)
+        {
+            // Bring paths to QFileInfo before string comparison. Two same paths
+            // may have different string representations.
+            QFileInfo possiblePathFileInfo(possiblePath);
+
+            if (possiblePathFileInfo == wadseekerTargetDirectoryFileInfo)
+            {
+                pathPossible = true;
+                break;
+            }
+        }
+
+        if (!pathPossible)
+        {
+            QMessageBox::warning(this, tr("Target not on List"),
+                tr("The specified target directory for Wadseeker could not be found on the file paths list.\n\n\
+                    Doomseeker will automatically add this path to the file search paths."));
+        }
 	}
 
 	gConfig.wadseeker.connectTimeoutSeconds = spinConnectTimeout->value();

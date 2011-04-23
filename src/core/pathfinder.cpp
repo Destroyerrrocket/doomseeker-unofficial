@@ -31,9 +31,10 @@
 PathFinder::PathFinder()
 {
 	pathList = gConfig.doomseeker.wadPaths;
+	pathList << gConfig.wadseeker.targetDirectory;
 }
 
-PathFinder::PathFinder(const QString& paths) 
+PathFinder::PathFinder(const QString& paths)
 : pathList(paths.split(";", QString::SkipEmptyParts))
 {
 }
