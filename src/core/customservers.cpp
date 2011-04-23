@@ -51,7 +51,7 @@ void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerIn
 			{
 				CustomServerInfo customServerInfo;
 				customServerInfo.engine = QUrl::fromPercentEncoding(entryList[0].toAscii());
-				
+
 				int engineIndex = Main::enginePlugins->pluginIndexFromName(customServerInfo.engine);
 				customServerInfo.engineIndex = engineIndex;
 
@@ -82,7 +82,7 @@ void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerIn
 void CustomServers::readConfig(QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing)
 {
 	QList<CustomServerInfo> customServerInfoList = gConfig.doomseeker.customServers.toList();
-	
+
 	setServers(customServerInfoList, receiver, slotUpdated, slotBegunRefreshing);
 }
 

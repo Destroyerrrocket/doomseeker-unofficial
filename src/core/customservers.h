@@ -61,7 +61,7 @@ class CustomServers : public MasterClient
 		 *	@return list of custom servers
 		 */
 		static void						decodeConfigEntries(const QString& str, QList<CustomServerInfo>& outCustomServerInfoList);
-		
+
 		const PluginInfo*				plugin() const { return NULL; }
 
 		/**
@@ -72,8 +72,8 @@ class CustomServers : public MasterClient
 		 *	@param slotBegunRefreshing - slot to receive Server::begunRefreshing signals
 		 */
 		void							readConfig(QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing);
-		
-		bool							readMasterResponse(QByteArray &data) { return false; }		
+
+		bool							readMasterResponse(QByteArray &data) { return false; }
 
 		/**
 		 *	Since this is not required here (there's no real
@@ -92,7 +92,7 @@ class CustomServers : public MasterClient
 		 *	@param slotBegunRefreshing - slot to receive Server::begunRefreshing signals
 		 */
 		void 							setServers(const QList<CustomServerInfo>& csiList, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing);
-		
+
 	protected:
 		bool							getServerListRequest(QByteArray &data) { return false; }
 };

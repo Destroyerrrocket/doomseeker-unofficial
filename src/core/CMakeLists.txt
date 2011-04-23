@@ -300,6 +300,7 @@ set(HEADER_FILES
 	serverapi/messages.h
 	serverapi/player.h
 	serverapi/playerslist.h
+	serverapi/serverstructs.h	
 	serverapi/tooltipgenerator.h
 	tests/testbase.h	
 	tests/testcore.h

@@ -31,12 +31,15 @@
 #ifndef __PLUGINLOADER_HPP__
 #define __PLUGINLOADER_HPP__
 
-#include <QObject>
-#include <QString>
+#include <QHostAddress>
 #include <QList>
+#include <QObject>
+#include <QPixmap>
+#include <QString>
 #include <QVector>
 
 #include "global.h"
+#include "serverapi/serverstructs.h"
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -48,12 +51,12 @@
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
-#include "masterclient.h"
-
 class Binaries;
 class ConfigurationBaseBox;
 class IniSection;
 class IRCNetworkEntity;
+class MasterClient;
+class Server;
 
 class MAIN_EXPORT EnginePlugin
 {
@@ -62,12 +65,12 @@ class MAIN_EXPORT EnginePlugin
 		{
 			this->pConfig = NULL;
 		}
-	
+
 		/**
 		 * This value is set by Doomseeker when the plugin is initialized
 		 */
 		IniSection*			pConfig;
-	
+
 		/**
 		 *	@brief List of all engine's DMFlags or NULL if none.
 		 */
@@ -79,7 +82,7 @@ class MAIN_EXPORT EnginePlugin
 		virtual bool							allowsJoinPassword() const = 0;
 		virtual bool							allowsRConPassword() const = 0;
 		virtual bool							allowsMOTD() const = 0;
-		
+
 		/**
 		 *	@brief Engine's configuration widget.
 		 */
@@ -185,7 +188,7 @@ class MAIN_EXPORT Plugin
 		 *	@brief The same as info but not const.
 		 */
 		PluginInfo*			editableInfo;
-	
+
 		void	unload();
 
 		QString	file;

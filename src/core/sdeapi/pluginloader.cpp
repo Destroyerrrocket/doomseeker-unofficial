@@ -32,6 +32,7 @@
 #include "configuration/doomseekerconfig.h"
 #include "main.h"
 #include "sdeapi/pluginloader.hpp"
+#include "masterclient.h"
 #include "strings.h"
 
 #ifdef Q_OS_WIN32
@@ -61,7 +62,7 @@ Plugin::Plugin(unsigned int type, QString f) : file(f), library(NULL)
 
 		editableInfo = doomSeekerInit();
 		info = editableInfo;
-		
+
 		if(info->type != type)
 		{ // Make sure this is the right kind of plugin
 			unload();
@@ -73,7 +74,7 @@ Plugin::Plugin(unsigned int type, QString f) : file(f), library(NULL)
 	else
 	{
 		gLog << QObject::tr("Failed to open plugin: %1").arg(file);
-		
+
 		#ifdef Q_OS_WIN32
 		// This is helpful on Windows to determine why the library
 		// couldn't load.
@@ -154,13 +155,13 @@ bool PluginLoader::filesInDir()
 	gLog << QString("Attempting to load plugins from directory: %1").arg(pluginsDirectory);
 #ifdef Q_OS_WIN32
 	WIN32_FIND_DATA file;
-	
+
 	// Remember that paths here are also handled by WinAPI functions.
-	// It is advisable to convert directory separators to the native '\' 
+	// It is advisable to convert directory separators to the native '\'
 	// separators.
 	QString searchPath = Strings::combinePaths(pluginsDirectory, "*.dll");
 	searchPath = QDir::toNativeSeparators(searchPath);
-	
+
 	HANDLE directory = FindFirstFile(searchPath.toAscii().constData(), &file);
 	if(directory != INVALID_HANDLE_VALUE)
 	{
@@ -169,7 +170,7 @@ bool PluginLoader::filesInDir()
 			{
 				QString pluginFilePath = Strings::combinePaths(pluginsDirectory, file.cFileName);
 				pluginFilePath = QDir::toNativeSeparators(pluginFilePath);
-			
+
 				Plugin *plugin = new Plugin(type, pluginFilePath);
 				if(plugin->isValid())
 					pluginsList.push_back(plugin);
@@ -188,7 +189,7 @@ bool PluginLoader::filesInDir()
 		{
 			QString pluginFilePath = Strings::combinePaths(pluginsDirectory, QString(file->d_name));
 			pluginFilePath = QDir::toNativeSeparators(pluginFilePath);
-		
+
 			DIR *temp = opendir(pluginFilePath.toAscii().constData());
 			if(temp == NULL) // this is a file
 			{

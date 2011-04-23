@@ -48,20 +48,20 @@ class MAIN_EXPORT MasterClient : public QObject
 		 *	If this is not NULL plugins may use this socket to send UDP packets.
 		 *	In fact the default implementation of MasterClient::refresh() method
 		 *	will use this socket in order to send the challenge data.
-		 *	In this case any responses that arrive on this socket will 
+		 *	In this case any responses that arrive on this socket will
 		 *	automatically be redirected to appropriate master client instance
 		 *	by the Doomseeker's Refreshing thread.
 		 *
-		 *	If engine requires a customized way to obtain the server list it 
+		 *	If engine requires a customized way to obtain the server list it
 		 *	must be implemented within the plugin itself.
 		 */
 		static QUdpSocket*		pGlobalUdpSocket;
-	
+
 		MasterClient();
 		virtual ~MasterClient();
-		
-		bool					hasServer(const Server*);		
-		
+
+		bool					hasServer(const Server*);
+
 		/**
 		 *	@brief Returns true if the passed address:port is the same as this
 		 *	master server's.
@@ -70,7 +70,7 @@ class MAIN_EXPORT MasterClient : public QObject
 		{
 			return (this->address == address && this->port == port);
 		}
-		
+
 		/**
 		 *	Serves as an informative role for MasterManager.
 		 *	If the master client is disabled, master manager will omit
@@ -95,20 +95,20 @@ class MAIN_EXPORT MasterClient : public QObject
 		void					resetPacketCaching();
 
 		/**
-		 *	@brief Called to read and analyze the response from the 
+		 *	@brief Called to read and analyze the response from the
 		 *	MasterServer.
 		 *
 		 *	@return If false is returned refreshing of this master server is
 		 *	immediatelly aborted.
 		 */
-		virtual bool			readMasterResponse(QByteArray &data)=0;	
-		
+		virtual bool			readMasterResponse(QByteArray &data)=0;
+
 		/**
-		 *	@brief Reads master response only if address and port are of this 
+		 *	@brief Reads master response only if address and port are of this
 		 *	server.
 		 *
 		 *	Reimplemented by MasterManager.
-		 */	
+		 */
 		virtual bool			readMasterResponse(QHostAddress& address, unsigned short port, QByteArray &data)
 		{
 			if (isAddressDataCorrect(address, port))
@@ -121,7 +121,7 @@ class MAIN_EXPORT MasterClient : public QObject
 				}
 				return false;
 			}
-			
+
 			return false;
 		}
 
@@ -142,7 +142,7 @@ class MAIN_EXPORT MasterClient : public QObject
 		 *	@see isEnabled()
 		 */
 		void					setEnabled(bool b) { enabled = b; }
-		
+
 		/**
 		 *	@brief Times the refreshing process out.
 		 *
@@ -152,15 +152,15 @@ class MAIN_EXPORT MasterClient : public QObject
 
 	signals:
 		void					listUpdated();
-	
+
 		/**
 		 *	Plugins may use this to make Doomseeker display custom messages.
 		 *	Messages are dumped into the log.
 		 */
 		void					message(const QString& title, const QString& content, bool isError);
-		
+
 		/**
-		 *	@brief Emit this signal each time a new batch of servers is 
+		 *	@brief Emit this signal each time a new batch of servers is
 		 *	received.
 		 *
 		 *	This signal should be called by the plugin after the response packet
@@ -169,14 +169,14 @@ class MAIN_EXPORT MasterClient : public QObject
 		 *	nicely by this.
 		 */
 		void					newServerBatchReceived(const QList<Server* >& servers);
-		
+
 	protected:
 		QHostAddress			address;
-		
+
 		/**
 		 *	@brief Indicates that the server has timeouted recently.
 		 *
-		 *	This is reset to false by refresh() and set to true by 
+		 *	This is reset to false by refresh() and set to true by
 		 *	timeoutRefresh(). If you reimplement refresh() please remember
 		 *	to set this to false.
 		 */
@@ -191,33 +191,43 @@ class MAIN_EXPORT MasterClient : public QObject
 		 * Clears the server list.
 		 */
 		void					emptyServerList();
-		
+
 		/**
-		 *	@brief Method that is supposed to produce the contents of server 
+		 * @brief Extracts engine name from pluginInfo() if available.
+		 *
+		 * @return If pluginInfo() is NULL then this returns an empty string.
+		 */
+		QString                 engineName() const;
+
+		/**
+		 *	@brief Method that is supposed to produce the contents of server
 		 *	list request packet that is sent to the master server.
 		 *
 		 *	@return If false is returned refreshing of this master server is
 		 *	immediatelly aborted.
 		 */
-		virtual bool			getServerListRequest(QByteArray &data)=0;		
-		
+		virtual bool			getServerListRequest(QByteArray &data)=0;
+
 		/**
-		 * Informs the user that they have been banned from the master server.
+		 * @brief Informs the user that they have been banned from the master
+		 * server.
 		 */
-		void					notifyBanned(const QString& engineName);
+		void					notifyBanned();
 		/**
-		 * Tells the user that the master server will not respond to their
-		 * query becuase they tried to refresh too quickly.
+		 * @brief Tells the user that the master server will not respond to
+		 * their query becuase they tried to refresh too quickly.
 		 */
-		void					notifyDelay(const QString& engineName);
+		void					notifyDelay();
+
 		/**
-		 * Tells the user they need to update since the protocol is too old.
+		 * @brief Tells the user they need to update since the protocol is too
+		 * old.
 		 */
-		void					notifyUpdate(const QString& engineName);
+		void					notifyUpdate();
 
 		bool					preparePacketCache(bool write);
 		void					readPacketCache();
-		
+
 		/**
 		 *	@brief Reimplement this for clean up purposes.
 		 */

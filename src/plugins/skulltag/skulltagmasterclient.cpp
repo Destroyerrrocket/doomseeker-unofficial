@@ -74,17 +74,17 @@ bool SkulltagMasterClient::readMasterResponse(QByteArray &data)
 	int response = READINT32(&packetOut[0]);
 	if(response == MASTER_RESPONSE_BANNED)
 	{
-		notifyBanned("Skulltag");
+		notifyBanned();
 		return false;
 	}
 	else if(response == MASTER_RESPONSE_BAD)
 	{
-		notifyDelay("Skulltag");
+		notifyDelay();
 		return false;
 	}
 	else if(response == MASTER_RESPONSE_WRONGVERSION)
 	{
-		notifyUpdate("Skulltag");
+		notifyUpdate();
 		return false;
 	}
 	else if(response != MASTER_RESPONSE_BEGINPART)
@@ -94,7 +94,7 @@ bool SkulltagMasterClient::readMasterResponse(QByteArray &data)
 	// the function was executed.  So store the number of packets.
 	if(!expectingMorePackets)
 	{
-		
+
 	}
 	int packetNum = READINT8(&packetOut[4]);
 	if(packetNum+1 > numPackets) // Packet numbers start at 0
@@ -129,7 +129,7 @@ bool SkulltagMasterClient::readMasterResponse(QByteArray &data)
 		expectingMorePackets = true;
 		numPacketsRead++;
 	}
-	
+
 	if (!expectingMorePackets)
 	{
 		emit listUpdated();
@@ -144,7 +144,7 @@ void SkulltagMasterClient::refresh()
 	emptyServerList();
 	readLastPacket = false;
 	numPackets = 0;
-	numPacketsRead = 0;	
-	
+	numPacketsRead = 0;
+
 	MasterClient::refresh();
 }

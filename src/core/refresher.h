@@ -27,13 +27,15 @@
 #include <QHash>
 #include <QMutex>
 #include <QThread>
+#include <QTime>
 #include <QRunnable>
 #include <QSet>
+#include <QUdpSocket>
 #include <QWaitCondition>
 
-#include "masterclient.h"
-#include "mastermanager.h"
-#include "serverapi/server.h"
+class MasterClient;
+class MasterClientReceiver;
+class Server;
 
 struct ServerBatch
 {
@@ -91,7 +93,7 @@ class RefreshingThread : public QThread, public QRunnable
 		void	block();
 
 		void	finishedQueryingMaster(MasterClient* master);
-		
+
 		/**
 		 *	Emitted when refreshing thread doesn't have anything more to do and
 		 *	goes into sleeping mode.
@@ -110,19 +112,19 @@ class RefreshingThread : public QThread, public QRunnable
 			public:
 				MasterClientInfo(MasterClient* pMaster, RefreshingThread* pParent);
 				~MasterClientInfo();
-				
+
 				int							numOfChallengesSent;
 				QTime						timeLastChallengeSent;
-				
+
 			protected:
 				MasterClientReceiver*		pReceiver;
 		};
-		
+
 		typedef QHash<MasterClient*, MasterClientInfo*>				MasterHashtable;
 		typedef QHash<MasterClient*, MasterClientInfo*>::iterator	MasterHashtableIt;
-		
+
 		static const int							MASTER_SERVER_TIMEOUT_DELAY = 10000;
-	
+
 		bool										bKeepRunning;
 		int											delayBetweenResends;
 		QList<ServerBatch>							registeredBatches;
@@ -147,11 +149,11 @@ class RefreshingThread : public QThread, public QRunnable
 		 *	up the sleeping thread after the registerServer() is called.
 		 */
 		QWaitCondition			thisWaitCondition;
-		
+
 		void					attemptTimeoutMasters();
 
 		void					gotoSleep();
-		
+
 		bool					isAnythingToRefresh() const;
 
 		/**
@@ -169,15 +171,15 @@ class RefreshingThread : public QThread, public QRunnable
 		unsigned				sendQueriesForBatch(ServerBatch& batch, int resetDelay, bool firstQuery);
 
 		void					sendServerQueries();
-		
+
 		/**
 		 *	@brief Returns true if there are any master clients or non-custom
 		 *	servers registered.
 		 */
 		bool					shouldBlockRefreshingProcess() const;
-		
+
 		void					unregisterMaster(MasterClient* pMaster);
-		
+
 	protected slots:
 		void					masterFinishedRefreshing(MasterClient* pMaster);
 };

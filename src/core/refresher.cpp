@@ -21,6 +21,9 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "refresher.h"
+#include "masterclient.h"
+#include "mastermanager.h"
+#include "serverapi/server.h"
 #include "sdeapi/pluginloader.hpp"
 
 RefreshingThread::RefreshingThread()
@@ -234,8 +237,8 @@ void RefreshingThread::readPendingDatagrams()
 		if (!bKeepRunning)
 		{
 			return;
-		}	
-	
+		}
+
 		MasterClient* pMaster = it.key();
 
 		if (pMaster->readMasterResponse(address, port, dataArray))
@@ -252,8 +255,8 @@ void RefreshingThread::readPendingDatagrams()
 			if (!bKeepRunning)
 			{
 				return;
-			}	
-			
+			}
+
 			if (server != NULL)
 			{
 				registeredBatches[i].servers.removeOne(server);

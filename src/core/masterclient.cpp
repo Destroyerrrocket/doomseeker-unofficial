@@ -54,6 +54,16 @@ void MasterClient::emptyServerList()
 	servers.clear();
 }
 
+QString MasterClient::engineName() const
+{
+    if (plugin() == NULL)
+    {
+        return "";
+    }
+
+    return plugin()->name;
+}
+
 bool MasterClient::hasServer(const Server* server)
 {
 	for (int i = 0; i < servers.count(); ++i)
@@ -65,19 +75,19 @@ bool MasterClient::hasServer(const Server* server)
 	return false;
 }
 
-void MasterClient::notifyBanned(const QString& engineName)
+void MasterClient::notifyBanned()
 {
-	emit message(engineName, tr("You have been banned from the master server."), true);
+	emit message(engineName(), tr("You have been banned from the master server."), true);
 }
 
-void MasterClient::notifyDelay(const QString& engineName)
+void MasterClient::notifyDelay()
 {
-	emit message(engineName, tr("Could not fetch a new server list from the master because not enough time has past."), true);
+	emit message(engineName(), tr("Could not fetch a new server list from the master because not enough time has past."), true);
 }
 
-void MasterClient::notifyUpdate(const QString& engineName)
+void MasterClient::notifyUpdate()
 {
-	emit message(engineName, tr("Could not fetch a new server list.  The protocol you are using is too old.  An update may be available."), true);
+	emit message(engineName(), tr("Could not fetch a new server list.  The protocol you are using is too old.  An update may be available."), true);
 }
 
 int MasterClient::numPlayers() const

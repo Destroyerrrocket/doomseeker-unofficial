@@ -23,23 +23,14 @@
 #include "dockBuddiesList.h"
 #include "configuration/doomseekerconfig.h"
 #include "main.h"
+#include "masterclient.h"
 #include "strings.h"
 #include "sdeapi/scanner.hpp"
 #include "serverapi/playerslist.h"
+#include "serverapi/server.h"
 #include <QMenu>
 #include <QMessageBox>
 #include <QRegExp>
-
-DockBuddiesList::BuddyLocationInfo &DockBuddiesList::BuddyLocationInfo::operator= (const DockBuddiesList::BuddyLocationInfo &other)
-{
-	if (this != &other)
-	{
-		player = other.buddy();
-		server = other.location();
-	}
-
-	return *this;
-}
 
 DockBuddiesList::DockBuddiesList(QWidget *parent)
 : QDockWidget(parent), masterClient(NULL), save(false)
@@ -62,7 +53,7 @@ DockBuddiesList::DockBuddiesList(QWidget *parent)
 
 	// Read config
 	const QVector<BuddyInfo>& buddies = gConfig.doomseeker.buddiesList;
-	
+
 	foreach (const BuddyInfo& buddy, buddies)
 	{
 		pBuddies << buddy.pattern;
@@ -83,15 +74,15 @@ DockBuddiesList::~DockBuddiesList()
 	{
 		return;
 	}
-	
+
 	gConfig.doomseeker.buddiesList.clear();
 	foreach (QRegExp pattern, pBuddies)
 	{
 		BuddyInfo buddyInfo;
-		
+
 		buddyInfo.pattern = pattern;
 		buddyInfo.patternType = pattern.patternSyntax() == QRegExp::Wildcard ? BuddyInfo::PT_BASIC : BuddyInfo::PT_ADVANCED;
-	
+
 		gConfig.doomseeker.buddiesList << buddyInfo;
 	}
 }
@@ -266,4 +257,28 @@ void AddBuddyDlg::buttonBoxClicked(QAbstractButton *button)
 	}
 	else
 		reject();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+DockBuddiesList::BuddyLocationInfo::BuddyLocationInfo(const Player &buddy, const Server *location)
+{
+    this->player = new Player(buddy);
+    this->server = location;
+}
+
+DockBuddiesList::BuddyLocationInfo::~BuddyLocationInfo()
+{
+    delete player;
+}
+
+DockBuddiesList::BuddyLocationInfo &DockBuddiesList::BuddyLocationInfo::operator= (const DockBuddiesList::BuddyLocationInfo &other)
+{
+	if (this != &other)
+	{
+		player = new Player(other.buddy());
+		server = other.location();
+	}
+
+	return *this;
 }

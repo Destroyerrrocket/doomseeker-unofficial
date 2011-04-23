@@ -25,14 +25,16 @@
 #define __DOCKBUDDIESLIST_H__
 
 #include "serverapi/buddyinfo.h"
-#include "serverapi/server.h"
-#include "masterclient.h"
 #include "ui_dockBuddiesList.h"
 #include "ui_addBuddyDlg.h"
 
 #include <QList>
 #include <QRegExp>
 #include <QStandardItemModel>
+
+class MasterClient;
+class Player;
+class Server;
 
 class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 {
@@ -62,14 +64,15 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 		struct BuddyLocationInfo
 		{
 			public:
-				BuddyLocationInfo(const Player &buddy, const Server *location) : player(buddy), server(location) {}
+				BuddyLocationInfo(const Player &buddy, const Server *location);
+				~BuddyLocationInfo();
 
-				const Player	&buddy() const { return player; }
+				const Player	&buddy() const { return *player; }
 				const Server	*location() const { return server; }
 				BuddyLocationInfo		&operator= (const BuddyLocationInfo &other);
 
 			private:
-				Player			player;
+				Player			*player;
 				const Server	*server;
 		};
 

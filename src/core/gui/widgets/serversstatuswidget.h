@@ -26,7 +26,8 @@
 
 #include <QLabel>
 
-#include "masterclient.h"
+class MasterClient;
+class Server;
 
 class ServersStatusWidget : public QLabel
 {

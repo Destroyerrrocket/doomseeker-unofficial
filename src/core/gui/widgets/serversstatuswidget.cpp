@@ -25,6 +25,7 @@
 #include <QLabel>
 #include <QPainter>
 
+#include "masterclient.h"
 #include "serversstatuswidget.h"
 #include "serverapi/playerslist.h"
 

@@ -179,7 +179,7 @@ bool ZDaemonMasterClient::readMasterResponse(QByteArray &data)
 	}
 	else
 	{
-		notifyBanned("ZDaemon"); // Uhh not sure?
+		notifyBanned(); // Uhh not sure?
 		return false;
 	}
 
