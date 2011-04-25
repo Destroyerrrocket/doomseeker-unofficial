@@ -31,6 +31,7 @@
 	<file alias="slots/marines/bot">slotstyles/marines/bot.png</file>
 	<file alias="slots/marines/player">slotstyles/marines/player.png</file>
 	<file alias="slots/marines/spectator">slotstyles/marines/spectator.png</file>
+	<file alias="flags/ARE">flags/ARE.png</file> <!-- United Arab Emirates -->	
 	<file alias="flags/ARG">flags/ARG.png</file> <!-- Argentina -->
 	<file alias="flags/AUS">flags/AUS.png</file> <!-- Australia -->
 	<file alias="flags/AUT">flags/AUT.png</file> <!-- Austria -->
@@ -84,6 +85,7 @@
 	<file alias="flags/ROM">flags/ROM.png</file> <!-- Romania -->
 	<file alias="flags/RUS">flags/RUS.png</file> <!-- Russian Federation (VODKA POWER!) -->
 	<file alias="flags/SAU">flags/SAU.png</file> <!-- Saudi Arabia -->
+	<file alias="flags/SRB">flags/SRB.png</file> <!-- Serbia -->	
 	<file alias="flags/SVK">flags/SVK.png</file> <!-- Slovakia -->
 	<file alias="flags/SVN">flags/SVN.png</file> <!-- Slovenia (or Subversion?) -->		
 	<file alias="flags/SWE">flags/SWE.png</file> <!-- Sweden -->
