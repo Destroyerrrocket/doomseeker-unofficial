@@ -44,6 +44,7 @@
 #include <QSystemTrayIcon>
 
 class ServerFilterDock;
+class ServersStatusWidget;
 
 /**
  *	@brief Menu action for Query Menu
@@ -58,12 +59,22 @@ class QQueryMenuAction : public QAction
 		QQueryMenuAction(MasterClient* mClient, ServersStatusWidget *statusWidget, QObject* parent = NULL)
 		:QAction(parent)
 		{
+            this->pClient = mClient;
+
 			if (mClient != NULL)
 			{
 				connect(this, SIGNAL( toggled(bool) ), mClient, SLOT( setEnabled(bool) ) );
-				connect(this, SIGNAL( toggled(bool) ), statusWidget, SLOT( setEnabled(bool) ) );
+				connect(this, SIGNAL( toggled(bool) ), statusWidget, SLOT( setMasterEnabledStatus(bool) ) );
 			}
 		}
+
+		MasterClient*     masterClient()
+		{
+            return pClient;
+		}
+
+    private:
+		MasterClient* pClient;
 };
 
 class MainWindow : public QMainWindow, private Ui::MainWindowWnd
@@ -83,6 +94,12 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	initAutoRefreshTimer();
 
 		void	notifyFirstRun();
+
+		/**
+		 * @brief Sets query for selected MasterClient object to enabled
+		 * or disabled.
+		 */
+		void    setQueryMasterServerEnabled(MasterClient* pClient, bool bEnabled);
 
 		void	stopAutoRefreshTimer() { autoRefreshTimer.stop(); }
 
@@ -123,7 +140,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		ServerListHandler*	serverTableHandler;
 
 		MasterManager*		masterManager;
-		QList<QAction*>		queryMenuPorts;
+		QHash<MasterClient*, QQueryMenuAction*>	    queryMenuPorts;
+		QHash<MasterClient*, ServersStatusWidget*>	serversStatusesWidgets;
 		QAction*			toolBarGetServers;
 		QAction*			toolBarRefreshAll;
 		QSystemTrayIcon*	trayIcon;
@@ -190,6 +208,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 */
 		bool	obtainJoinCommandLine(const Server* server, CommandLineInfo& cli, const QString& errorCaption = tr("Doomseeker - error"));
 
+		QQueryMenuAction* queryMenuActionForMasterClient(MasterClient* pClient);
+
 		void	refreshCustomServers();
 		void	setupIcons();
 		void	setupToolBar();
@@ -231,6 +251,14 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void 	runGame(const Server*);
 		void	serverAddedToList(const Server*);
 		void	showServerJoinCommandLine(const Server*);
+
+		/**
+		 * @brief Toggles specified MasterClient object enabled or disabled.
+		 *
+		 * This affects the query menu, servers status widgets and the master
+		 * client itself.
+		 */
+		void    toggleMasterClientEnabled(MasterClient* pClient);
 		void	toolBarAction(QAction* pAction);
 		void	trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
 };

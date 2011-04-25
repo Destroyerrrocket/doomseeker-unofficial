@@ -45,6 +45,7 @@
 #include "pathfinder.h"
 #include "main.h"
 #include "strings.h"
+#include <cassert>
 #include <QAction>
 #include <QApplication>
 #include <QDesktopServices>
@@ -411,10 +412,17 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 
 		// Now is a good time to also populate the status bar widgets
 		ServersStatusWidget *statusWidget = new ServersStatusWidget(plugin->icon(), pMasterClient);
+		serversStatusesWidgets.insert(pMasterClient, statusWidget);
+
+		this->connect(statusWidget, SIGNAL( clicked(MasterClient*) ) ,
+            SLOT( toggleMasterClientEnabled(MasterClient*) ) );
+
 		statusBar()->addPermanentWidget(statusWidget);
 
 		QString name = (*Main::enginePlugins)[i]->info->name;
 		QQueryMenuAction* query = new QQueryMenuAction(pMasterClient, statusWidget, menuQuery);
+		queryMenuPorts.insert(pMasterClient, query);
+
 		menuQuery->addAction(query);
 
 		query->setCheckable(true);
@@ -426,27 +434,14 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		if (!pluginConfig.retrieveSetting("Query").isNull())
 		{
 			bool enabled = pluginConfig["Query"];
-			if(pMasterClient != NULL)
-			{
-				pMasterClient->setEnabled(enabled);
-			}
-
-			query->setChecked(enabled);
-			statusWidget->setEnabled(enabled);
+			setQueryMasterServerEnabled(pMasterClient, enabled);
 		}
 		else
 		{
 			// if no setting is found for this engine
-			// set default as follows:
-			if(pMasterClient != NULL)
-			{
-				pMasterClient->setEnabled(true);
-			}
-
-			query->setChecked(true);
-			statusWidget->setEnabled(true);
+			// set default to true:
+			setQueryMasterServerEnabled(pMasterClient, true);
 		}
-		queryMenuPorts.append(query);
 	}
 }
 
@@ -1141,6 +1136,21 @@ Wadseeker will not download IWADs.\n\n");
 	return true;
 }
 
+QQueryMenuAction* MainWindow::queryMenuActionForMasterClient(MasterClient* pClient)
+{
+    if (pClient == NULL)
+    {
+        return NULL;
+    }
+
+    if (queryMenuPorts.contains(pClient))
+    {
+        return queryMenuPorts[pClient];
+    }
+
+    return NULL;
+}
+
 void MainWindow::quitProgram()
 {
 	bWantToQuit = true;
@@ -1200,6 +1210,19 @@ void MainWindow::runGame(const Server* server)
 
 		delete gameRunner;
 	}
+}
+
+void MainWindow::setQueryMasterServerEnabled(MasterClient* pClient, bool bEnabled)
+{
+    assert(pClient != NULL);
+
+    QQueryMenuAction* pAction = queryMenuActionForMasterClient(pClient);
+    if (pAction != NULL)
+    {
+        pAction->setChecked(bEnabled);
+        pClient->setEnabled(bEnabled);
+        serversStatusesWidgets[pClient]->setMasterEnabledStatus(bEnabled);
+    }
 }
 
 void MainWindow::serverAddedToList(const Server* pServer)
@@ -1281,6 +1304,14 @@ void MainWindow::showServerJoinCommandLine(const Server* server)
 		CopyTextDlg ctd(cli.executable.absoluteFilePath() + " " + cli.args.join(" "), server->name(), this);
 		ctd.exec();
 	}
+}
+
+void MainWindow::toggleMasterClientEnabled(MasterClient* pClient)
+{
+    QQueryMenuAction* pAction = queryMenuActionForMasterClient(pClient);
+    assert(pAction != NULL);
+
+    setQueryMasterServerEnabled(pClient, !pAction->isChecked());
 }
 
 void MainWindow::toolBarAction(QAction* pAction)

@@ -23,15 +23,36 @@
 
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QMouseEvent>
 #include <QPainter>
 
 #include "masterclient.h"
 #include "serversstatuswidget.h"
 #include "serverapi/playerslist.h"
 
-ServersStatusWidget::ServersStatusWidget(const QPixmap &icon, const MasterClient *serverList) : QLabel(),
+ServersStatusWidget::ServersStatusWidget(const QPixmap &icon, MasterClient *serverList) : QLabel(),
 	icon(icon), numBots(0), numPlayers(0), serverList(serverList)
 {
+    // Transform icon to grayscale format for disabled appearance
+    QImage iconImage = icon.toImage();
+    int width = iconImage.width();
+    int height = iconImage.height();
+    for (int x = 0; x < width; ++x)
+    {
+        for (int y = 0; y < height; ++y)
+        {
+            QRgb pixel = iconImage.pixel(x, y);
+            int alpha = qAlpha(pixel);
+            int gray = qGray(pixel);
+
+            pixel = qRgba(gray, gray, gray, alpha);
+
+            iconImage.setPixel(x, y, pixel);
+        }
+    }
+
+    iconDisabled = QPixmap::fromImage(iconImage);
+
 	setFrameShape(QFrame::Panel);
 	setFrameShadow(QFrame::Sunken);
 	setFixedHeight(22);
@@ -53,11 +74,19 @@ void ServersStatusWidget::addServer(Server *server)
 	updateDisplay();
 }
 
+void ServersStatusWidget::mousePressEvent(QMouseEvent* event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
+        emit clicked(serverList);
+    }
+}
+
 void ServersStatusWidget::paintEvent(QPaintEvent *event)
 {
 	QPainter p(this);
 	p.setRenderHint(QPainter::SmoothPixmapTransform);
-	p.drawPixmap(2, 2, 18, 18, icon);
+	p.drawPixmap(2, 2, 18, 18, bMasterIsEnabled ? icon : iconDisabled);
 	p.end();
 
 	QLabel::paintEvent(event);
@@ -87,7 +116,20 @@ void ServersStatusWidget::removeServer(Server *server)
 	updateDisplay();
 }
 
+void ServersStatusWidget::setMasterEnabledStatus(bool bEnabled)
+{
+    this->bMasterIsEnabled = bEnabled;
+    updateDisplay();
+}
+
 void ServersStatusWidget::updateDisplay()
 {
-	setText(QString("%1-%2 %3").arg(numPlayers).arg(numBots).arg(serverList != NULL ? serverList->numServers() : 0));
+    if (bMasterIsEnabled)
+    {
+        setText(QString("%1-%2 %3").arg(numPlayers).arg(numBots).arg(serverList != NULL ? serverList->numServers() : 0));
+    }
+	else
+	{
+        setText("N/A");
+	}
 }
