@@ -101,7 +101,7 @@ class CompressedIODevice : public QIODevice
 				position += compressedBytesRead;
 				return compressedBytesRead + bytesRead;
 			}
-			return -1;
+			return bytesRead;
 		}
 
 		qint64 writeData(const char* data, qint64 maxSize)

@@ -39,6 +39,33 @@
 class GameRunner;
 class SkulltagServer;
 
+/**
+ * Compares versions of Skulltag.
+ */
+class SkulltagVersion
+{
+	public:
+		SkulltagVersion(QString version);
+
+		unsigned short int	majorVersion() const { return major; }
+		unsigned short int	minorVersion() const { return minor; }
+		unsigned char		revisionLetter() const { return revision; }
+		unsigned short int	svnVersion() const { return svnRevision; }
+
+		bool operator> (const SkulltagVersion &other) const;
+
+	protected:
+		static const QRegExp	versionExpression;
+		QString					version;
+
+		unsigned short int		major;
+		unsigned short int		minor;
+		unsigned char			revision;
+		unsigned short int		build;
+		QString					tag;
+		unsigned short int		svnRevision;
+};
+
 struct TeamInfo
 {
 	public:

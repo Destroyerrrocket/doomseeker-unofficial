@@ -92,7 +92,8 @@ void UnTar::scanTarFile()
 			break;
 		file.size = QString::fromAscii(&buffer[124], 12).toUInt(&valid, 8);
 		file.offset = offset;
-		offset += 512 + file.size;
+		// Tar files are aligned along 512 blocks
+		offset += 512 + file.size + (file.size%512 != 0 ? 512-(file.size%512) : 0);
 		stream->seek(offset-512); 
 
 		directory.append(file);

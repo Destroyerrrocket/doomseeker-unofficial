@@ -49,43 +49,29 @@ const // clear warnings
 /**
  * Compares versions of Skulltag.
  */
-class SkulltagVersion
+SkulltagVersion::SkulltagVersion(QString version) : version(version)
 {
-	public:
-		SkulltagVersion(QString version) : version(version)
-		{
-			versionExpression.exactMatch(version);
-			QStringList parts = versionExpression.capturedTexts();
-			major = parts[1].toUShort();
-			minor = parts[2].toUShort();
-			revision = parts[3][0].toAscii();
-			build = parts[4].toUShort();
-			tag = parts[5];
-			svnRevision = parts[6].toUShort();
-		}
+	versionExpression.exactMatch(version);
+	QStringList parts = versionExpression.capturedTexts();
+	major = parts[1].toUShort();
+	minor = parts[2].toUShort();
+	revision = parts[3][0].toAscii();
+	build = parts[4].toUShort();
+	tag = parts[5];
+	svnRevision = parts[6].toUShort();
+}
 
-		bool operator> (const SkulltagVersion &other) const
-		{
-			if(major > other.major && minor > other.minor && revision > other.revision && build > other.build)
-				return true;
-			if((tag.isEmpty() && !other.tag.isEmpty()) || (tag > other.tag))
-				return true;
-			if(svnRevision > other.svnRevision)
-				return true;
-			return false;
-		}
+bool SkulltagVersion::operator> (const SkulltagVersion &other) const
+{
+	if(major > other.major && minor > other.minor && revision > other.revision && build > other.build)
+		return true;
+	if((tag.isEmpty() && !other.tag.isEmpty()) || (tag > other.tag))
+		return true;
+	if(svnRevision > other.svnRevision)
+		return true;
+	return false;
+}
 
-	protected:
-		static const QRegExp	versionExpression;
-		QString					version;
-
-		unsigned short int		major;
-		unsigned short int		minor;
-		unsigned char			revision;
-		unsigned short int		build;
-		QString					tag;
-		unsigned short int		svnRevision;
-};
 const QRegExp SkulltagVersion::versionExpression("(\\d+).(\\d+)([a-zA-Z])(\\d*)(?:-([a-zA-Z]*)?)(?:-r(\\d+)?)");
 
 ////////////////////////////////////////////////////////////////////////////////

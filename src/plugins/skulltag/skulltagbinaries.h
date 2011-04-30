@@ -23,10 +23,14 @@
 #ifndef __SKULLTAG_BINARIES_H_
 #define __SKULLTAG_BINARIES_H_
 
+#include <QProgressDialog>
+
 #include "serverapi/binaries.h"
 
 struct PluginInfo;
 class SkulltagServer;
+class WWW;
+class QDir;
 
 class SkulltagBinaries : public Binaries
 {
@@ -48,6 +52,7 @@ class SkulltagBinaries : public Binaries
 	protected:
 		const SkulltagServer*	server;
 
+		bool					downloadTestingBinaries(const QDir &destination) const;
 		/**
 		 *	Creates Unix .sh file or Windows .bat file to
 		 *	launch client for parent server. Returns true if the file
@@ -60,6 +65,24 @@ class SkulltagBinaries : public Binaries
 		 *	@return false if fail
 		 */
 		bool					spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, Message& message) const;
+};
+
+class TestingProgressDialog : public QProgressDialog
+{
+	Q_OBJECT
+
+	public:
+		TestingProgressDialog(WWW &www);
+
+		const QByteArray	&data() const { return downloadedFileData; }
+		const QString		&filename() const { return downloadedFilename; }
+	protected slots:
+		void	downloadProgress(int value, int max);
+		void	storeFile(QByteArray &data, const QString &filename);
+
+	private:
+		QByteArray	downloadedFileData;
+		QString		downloadedFilename;
 };
 
 #endif

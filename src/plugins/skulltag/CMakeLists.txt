@@ -5,6 +5,7 @@ include(../PluginHeader.txt)
 
 set(SKULLTAG_QT_FILES
 	engineSkulltagConfig.h
+	skulltagbinaries.h
 	skulltagmasterclient.h
 	skulltagserver.h
 )
@@ -30,7 +31,6 @@ set(HEADER_FILES
 	huffman/codec.h
 	huffman/huffcodec.h
 	huffman/huffman.h
-	skulltagbinaries.h
 	skulltaggameinfo.h
 	skulltaggamerunner.h
 	skulltagmain.h
@@ -39,6 +39,6 @@ set(HEADER_FILES
 qt_wrap_cpp(skulltag SKULLTAG_FILES ${SKULLTAG_QT_FILES})
 
 add_library(${PLUGIN_NAME} MODULE ${SKULLTAG_FILES} ${HEADER_FILES})
-target_link_libraries(${PLUGIN_NAME} ${PLUGIN_LIBS})
+target_link_libraries(${PLUGIN_NAME} ${PLUGIN_LIBS} wadseeker)
 
 include(../PluginFooter.txt)

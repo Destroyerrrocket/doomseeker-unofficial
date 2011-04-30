@@ -25,13 +25,29 @@
 #include "skulltagserver.h"
 #include "main.h"
 #include "serverapi/message.h"
+#include "../wadseeker/www.h"
+#include "../wadseeker/zip/unarchive.h"
 
+#include <QDir>
+#include <QFileInfo>
 #include <QMessageBox>
+#include <QProgressDialog>
+
+//#define TESTING_BINARY_URL_BASE "http://skulltag.net/download/files/testing/%1/SkullDev%1-%2"
+#define TESTING_BINARY_URL_BASE "http://localhost/SkullDev%1-%2"
 
 #ifdef Q_OS_WIN32
+#define TESTING_BINARY_URL TESTING_BINARY_URL_BASE"windows.zip"
 #define ST_BINARY_NAME "skulltag.exe"
 #define SCRIPT_FILE_EXTENSION ".bat"
 #else
+
+#ifndef __x86_64__
+#define TESTING_BINARY_URL TESTING_BINARY_URL_BASE"linux-x86.tar.bz2"
+#else
+#define TESTING_BINARY_URL TESTING_BINARY_URL_BASE"linux-x86_64.tar.bz2"
+#endif
+
 #define ST_BINARY_NAME "skulltag"
 #define SCRIPT_FILE_EXTENSION ".sh"
 #endif
@@ -76,8 +92,7 @@ QString SkulltagBinaries::clientBinary(Message& message) const
 		{
 			error = tr("%1\ndoesn't exist.\nYou need to install new testing binaries.").arg(path);
 			QString messageBoxContent = tr("%1\n\n\
-Do you want Doomseeker to create %2 directory and copy all your .ini files from your base directory?\n\n\
-Note: You will still have to manualy install the binaries."
+Do you want Doomseeker to create %2 directory and copy all your .ini files from your base directory?"
 										   ).arg(error, server->version());
 
 			if (QMessageBox::question(Main::mainWindow, tr("Doomseeker - missing testing binaries"), messageBoxContent, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
@@ -106,8 +121,11 @@ Note: You will still have to manualy install the binaries."
 					file.copy(targetPath);
 				}
 
-				// Show user the prompt to install the binaries.
-				QMessageBox::information(Main::mainWindow, tr("Doomseeker"), tr("Please install now version \"%1\" into:\n%2").arg(server->version(), path));
+				if(!downloadTestingBinaries(path))
+				{
+					// Show user the prompt to install the binaries.
+					QMessageBox::information(Main::mainWindow, tr("Doomseeker"), tr("Please install now version \"%1\" into:\n%2").arg(server->version(), path));
+				}
 
 				// Try this method again.
 				return clientBinary(message);
@@ -158,6 +176,45 @@ QString SkulltagBinaries::configKeyServerBinary() const
 	#else
 		return "ServerBinaryPath";
 	#endif
+}
+
+bool SkulltagBinaries::downloadTestingBinaries(const QDir &destination) const
+{
+#ifdef Q_OS_MAC
+	// Can't do anything for Mac OS X at this time. :/
+	return false;
+#else
+	// Download testing binaries
+	SkulltagVersion version(server->version());
+	QUrl url(QString(TESTING_BINARY_URL).arg(QString("%1%2").arg(version.minorVersion()).arg(QChar(version.revisionLetter()))).arg(version.svnVersion()));
+	WWW www;
+	TestingProgressDialog dialog(www);
+
+	www.getUrl(url);
+	if(dialog.exec() == QDialog::Accepted)
+	{
+		// Extract the needed files.
+		QString filename;
+		QFileInfo fi(dialog.filename());
+		UnArchive *archive = UnArchive::OpenArchive(fi, dialog.data());
+		if(archive != NULL)
+		{
+			for(int i = 0;!(filename = archive->fileNameFromIndex(i)).isNull();++i)
+			{
+				archive->extract(i, destination.path() + QDir::separator() + filename);
+				// Make sure we can execute the binary.
+				if(filename == ST_BINARY_NAME)
+				{
+					QFile binaryFile(destination.path() + QDir::separator() + filename);
+					binaryFile.setPermissions(binaryFile.permissions() | QFile::ExeUser);
+				}
+			}
+			delete archive;
+			return true;
+		}
+	}
+	return false;
+#endif
 }
 
 const PluginInfo* SkulltagBinaries::plugin() const
@@ -253,4 +310,32 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 	}
 
 	return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+TestingProgressDialog::TestingProgressDialog(WWW &www) : QProgressDialog(tr("Downloading testing binaries..."), tr("Cancel"), 0, 0, Main::mainWindow)
+{
+	connect(this, SIGNAL(canceled()), &www, SLOT(abort()));
+
+	connect(&www, SIGNAL(downloadProgress(int, int)), this, SLOT(downloadProgress(int, int)));
+	connect(&www, SIGNAL(fileDone(QByteArray&, const QString&)), this, SLOT(storeFile(QByteArray&, const QString&)));
+
+	setAutoClose(false);
+	setAutoReset(false);
+	setMinimumDuration(0);
+}
+
+void TestingProgressDialog::downloadProgress(int value, int max)
+{
+	setValue(value);
+	setMaximum(max);
+}
+
+void TestingProgressDialog::storeFile(QByteArray &data, const QString &filename)
+{
+	accept();
+
+	downloadedFilename = filename;
+	downloadedFileData = data;
 }
