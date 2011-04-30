@@ -33,6 +33,8 @@ class OdamexGameRunner : public GameRunner
 	public:
 		OdamexGameRunner(const OdamexServer* server);
 
+		QString						argForDemoRecord() const { return ""; }
+
 		bool						connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword);
 
 		const PluginInfo*			plugin() const { return OdamexMain::get(); }
