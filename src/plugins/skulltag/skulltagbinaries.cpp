@@ -33,8 +33,7 @@
 #include <QMessageBox>
 #include <QProgressDialog>
 
-//#define TESTING_BINARY_URL_BASE "http://skulltag.net/download/files/testing/%1/SkullDev%1-%2"
-#define TESTING_BINARY_URL_BASE "http://localhost/SkullDev%1-%2"
+#define TESTING_BINARY_URL_BASE "http://skulltag.net/download/files/testing/%1/SkullDev%1-%2"
 
 #ifdef Q_OS_WIN32
 #define TESTING_BINARY_URL TESTING_BINARY_URL_BASE"windows.zip"
