@@ -163,15 +163,15 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *		   	were found.
 		 */
 		bool				areAllFilesFound() const;
-		
+
 		/**
 		 *	@brief Retrieves speed of current download in bytes per second.
 		 *
-		 *	@return If it is impossible to calculate time due to insufficient 
+		 *	@return If it is impossible to calculate time due to insufficient
 		 *	data being present returned value is 0.
 		 */
 		float				downloadSpeed() const;
-		
+
 		/**
 		 *	@brief Retrieves amount of seconds REMAINING till current download
 		 *	is finished.
@@ -186,6 +186,35 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *	@return	list of files that weren't found
 		 */
 		const QStringList&	filesNotFound() const;
+
+		/**
+		 * @brief Count of files that were already finished in the current seek
+		 * request.
+		 *
+		 * If no seek is in progress, zero is returned.
+		 */
+        int                 numAlreadyFinishedFiles() const;
+
+        /**
+         * @brief Amount of data already downloaded in Bytes for current file.
+         *
+         * Might be zero if no download is currently in progress.
+         */
+        int                 numBytesAlreadyDownloadedForCurrentDownload() const;
+
+        /**
+         * @brief Size of current download in Bytes.
+         *
+         * Might be zero if no download is currently in progress.
+         */
+        int                 numTotalBytesForCurrentDownload() const;
+
+		/**
+		 * @brief Number of files that were passed to the seek request.
+		 *
+		 * If no seek is in progress, zero is returned.
+		 */
+		int                 numTotalCurrentlySeekedFiles() const;
 
 		/**
 		 *	Library's "entry" method. This is where Wadseeker begins
@@ -314,10 +343,11 @@ class WADSEEKER_API Wadseeker : public QObject
 		int					iNextWad;
 		QString				currentWad;
 		QStringList			notFound;
+		int                 numBytesForCurrentFile;
 		QStringList			seekedWads;
 		SpeedCalculator*	speedCalculator;
 		QString				targetDir;
-		
+
 		WWWSeeker*			www;
 
 		void	nextWad();

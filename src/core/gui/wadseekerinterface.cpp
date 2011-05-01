@@ -30,13 +30,6 @@
 
 const int WadSeekerInterface::UPDATE_INTERVAL_MS = 500;
 
-void WadSeekerInterface::initMessageColors()
-{
-	colorHtmlMessageNotice = gConfig.wadseeker.colorMessageNotice;
-	colorHtmlMessageError = gConfig.wadseeker.colorMessageError;
-	colorHtmlMessageFatalError = gConfig.wadseeker.colorMessageCriticalError;
-}
-
 WadSeekerInterface::WadSeekerInterface(QWidget* parent)
 : QDialog(parent)
 {
@@ -45,9 +38,11 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent)
 	((MainWindow*)(Main::mainWindow))->stopAutoRefreshTimer();
 	setupUi(this);
 	setStateWaiting();
-	
+
 	initMessageColors();
-	
+
+	this->setWindowIcon(QIcon(":/icon.png"));
+
 	connect(btnClose, SIGNAL( clicked() ), this, SLOT( reject() ) );
 	connect(btnDownload, SIGNAL( clicked() ), this, SLOT( accept() ) );
 	connect(btnStop, SIGNAL( clicked() ), &wadseeker, SLOT( abort() ) );
@@ -61,7 +56,7 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent)
 
 	bAutomatic = false;
 	bFirstShown = false;
-	
+
 	const QStringList& urlList = gConfig.wadseeker.searchURLs;
 
 	if (!urlList.isEmpty())
@@ -103,7 +98,7 @@ void WadSeekerInterface::accept()
 void WadSeekerInterface::allDone()
 {
 	displayMessage(tr("All done."), Wadseeker::NoticeImportant, false);
-	
+
 	setStateWaiting();
 	if (wadseeker.areAllFilesFound())
 	{
@@ -112,31 +107,32 @@ void WadSeekerInterface::allDone()
 		{
 			this->done(Accepted);
 		}
+
+        pbProgress->setMaximum(100);
+        pbProgress->setValue(100);
+		resetTitleToDefault();
 	}
 	else
 	{
 		fail();
-		
 	}
-	
-	
 }
 
 void WadSeekerInterface::displayMessage(const QString& message, Wadseeker::MessageType type, bool bPrependErrorsWithMessageType)
 {
 	QString strProcessedMessage;
-	
+
 	bool bPrependWithNewline = false;
 	QString wrapHtmlLeft = "<div style=\"%1\">";
 	QString wrapHtmlRight = "</div>";
 	QString htmlStyle;
-	
+
 	switch (type)
 	{
 		case Wadseeker::CriticalError:
 			htmlStyle = QString("color: %1; font-weight: bold;").arg(colorHtmlMessageFatalError);
 			bPrependWithNewline = true;
-			
+
 			if (bPrependErrorsWithMessageType)
 			{
 				strProcessedMessage = tr("CRITICAL ERROR: %1").arg(message);
@@ -145,13 +141,13 @@ void WadSeekerInterface::displayMessage(const QString& message, Wadseeker::Messa
 			{
 				strProcessedMessage = message;
 			}
-		
+
 			setStateWaiting();
 			break;
 
 		case Wadseeker::Error:
 			htmlStyle = QString("color: %1;").arg(colorHtmlMessageError);
-			
+
 			if (bPrependErrorsWithMessageType)
 			{
 				strProcessedMessage = tr("Error: %1").arg(message);
@@ -164,25 +160,25 @@ void WadSeekerInterface::displayMessage(const QString& message, Wadseeker::Messa
 
 		case Wadseeker::Notice:
 			htmlStyle = QString("color: %1;").arg(colorHtmlMessageNotice);
-			
+
 			strProcessedMessage = message;
 			break;
-			
+
 		case Wadseeker::NoticeImportant:
 			htmlStyle = QString("color: %1; font-weight: bold;").arg(colorHtmlMessageNotice);
 			bPrependWithNewline = true;
-			
+
 			strProcessedMessage = message;
 			break;
 	}
-	
+
 	if (bPrependWithNewline && !teWadseekerOutput->toPlainText().isEmpty())
-	{			
+	{
 		strProcessedMessage = "<br>" + strProcessedMessage;
 	}
-	
+
 	wrapHtmlLeft = wrapHtmlLeft.arg(htmlStyle);
-	
+
 	strProcessedMessage = wrapHtmlLeft + strProcessedMessage + wrapHtmlRight;
 
 	teWadseekerOutput->append(strProcessedMessage);
@@ -212,7 +208,7 @@ void WadSeekerInterface::downloadProgress(int done, int total)
 		{
 			lblTimeUntilArrival->setText( "N/A" );
 		}
-		
+
 		if (total > 0)
 		{
 			QString strDone = Strings::formatDataAmount(done);
@@ -225,6 +221,7 @@ void WadSeekerInterface::downloadProgress(int done, int total)
 		}
 
 		bNeedsUpdate = false;
+		updateTitle();
 	}
 
 	pbProgress->setMaximum(total);
@@ -235,13 +232,22 @@ void WadSeekerInterface::fail()
 {
 	bAutomatic = false;
 	const QStringList& notFoundWads = wadseeker.filesNotFound();
-	
+
 	displayMessage(tr("FAIL!"), Wadseeker::CriticalError, false);
 	QString notFoundWadsString = tr("Following files were not found: %1").arg(notFoundWads.join(", "));
 	message(notFoundWadsString, Wadseeker::Error);
 
 	pbProgress->setMaximum(100);
 	pbProgress->setValue(0);
+
+	resetTitleToDefault();
+}
+
+void WadSeekerInterface::initMessageColors()
+{
+	colorHtmlMessageNotice = gConfig.wadseeker.colorMessageNotice;
+	colorHtmlMessageError = gConfig.wadseeker.colorMessageError;
+	colorHtmlMessageFatalError = gConfig.wadseeker.colorMessageCriticalError;
 }
 
 void WadSeekerInterface::message(const QString& message, Wadseeker::MessageType type)
@@ -268,6 +274,11 @@ void WadSeekerInterface::reject()
 	}
 }
 
+void WadSeekerInterface::resetTitleToDefault()
+{
+    setWindowTitle(tr("Wadseeker"));
+}
+
 void WadSeekerInterface::setStateDownloading()
 {
 	btnClose->setEnabled(false);
@@ -288,7 +299,7 @@ void WadSeekerInterface::setStateWaiting()
 
 	state = Waiting;
 	btnDownload->setDefault(true);
-	
+
 	lblTimeUntilArrival->setText("N/A");
 }
 
@@ -310,7 +321,7 @@ void WadSeekerInterface::showEvent(QShowEvent* event)
 	if (!bFirstShown)
 	{
 		bFirstShown = true;
-		
+
 		if (bAutomatic)
 		{
 			startSeeking(seekedWads);
@@ -324,14 +335,14 @@ void WadSeekerInterface::startSeeking(const QStringList& seekedFilesList)
 		return;
 
 	teWadseekerOutput->clear();
-	
+
 	// Get rid of the whitespace characters from each filename; we don't want
 	// to be searching " awad.wad".
 	QStringList seekedFilesListFormatted;
 	foreach (QString filenameFormatted, seekedFilesList)
 	{
 		filenameFormatted = filenameFormatted.trimmed();
-	
+
 		seekedFilesListFormatted << filenameFormatted;
 	}
 
@@ -341,4 +352,43 @@ void WadSeekerInterface::startSeeking(const QStringList& seekedFilesList)
 	wadseeker.setTimeDownloadTimeout(gConfig.wadseeker.downloadTimeoutSeconds);
 	wadseeker.setTargetDirectory(gConfig.wadseeker.targetDirectory);
 	wadseeker.seekWads(seekedFilesListFormatted);
+}
+
+void WadSeekerInterface::updateTitle()
+{
+    switch (state)
+    {
+        case Downloading:
+            {
+                // In download state title will include:
+                // - number of files completed by total number of files,
+                // - current progress for a single file.
+
+                int currentBytes = wadseeker.numBytesAlreadyDownloadedForCurrentDownload();
+                int totalBytes = wadseeker.numTotalBytesForCurrentDownload();
+
+                int completedFiles = wadseeker.numAlreadyFinishedFiles();
+                int totalFiles = wadseeker.numTotalCurrentlySeekedFiles();
+
+                if (totalBytes != 0 && totalFiles != 0)
+                {
+                    float percentage = ((float) currentBytes / (float) totalBytes)
+                        * 100.0f;
+
+                    QString title = tr("[ %1% - %2 / %3 files ] Wadseeker")
+                        .arg(percentage, 0, 'f', 1).arg(completedFiles).arg(totalFiles);
+
+                    setWindowTitle(title);
+                }
+                else
+                {
+                    resetTitleToDefault();
+                }
+            }
+            break;
+
+        default:
+            resetTitleToDefault();
+            break;
+    }
 }

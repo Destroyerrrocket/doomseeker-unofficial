@@ -87,11 +87,18 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 		void			displayMessage(const QString& message, Wadseeker::MessageType type, bool bPrependErrorsWithMessageType);
 		void			fail();
 		void			initMessageColors();
+
+		/**
+		 * @brief Sets default window title to default.
+		 */
+		void            resetTitleToDefault();
+
 		void			setStateDownloading();
 		void			setStateWaiting();
 		void			setupIdgames();
 		void 			showEvent(QShowEvent* event);
 		void			startSeeking(const QStringList& seekedFilesList);
+		void            updateTitle();
 
 	protected slots:
 		void	accept();

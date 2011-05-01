@@ -30,7 +30,7 @@ class SpeedCalculator
 {
 	public:
 		SpeedCalculator();
-	
+
 		/**
 		 *	@brief In seconds.
 		 *
@@ -38,38 +38,45 @@ class SpeedCalculator
 		 *	properly.
 		 */
 		float						estimatedTimeUntilArrival() const;
-	
+
 		unsigned					expectedDataSize() const { return dataSizeExpected; }
-	
+
 		/**
 		 *	@brief In bytes per second.
 		 */
-		float						getSpeed() const;	
-		
+		float						getSpeed() const;
+
 		int							maxResolution() const { return _maxResolution; }
-		
+
 		void						registerDataAmount(unsigned totalAmountOfArrivedData);
-		
+
 		void						setExpectedDataSize(unsigned size);
-		
+
 		/**
 		 *	@brief The maximum amount of data that can be stored in
 		 *	arrivalData vector.
 		 *
-		 *	Values below 2 are not allowed here and will be automatically 
+		 *	Values below 2 are not allowed here and will be automatically
 		 *	changed to 2.
 		 *	This is the number that will be also used to calculate mean in
-		 *	getSpeed() method. The higher the number the more accurate the 
+		 *	getSpeed() method. The higher the number the more accurate the
 		 *	result but also the longer it is required to wait to fill the entire
 		 *	vector.
 		 *
-		 *	If a new data is registered and the vector's size is already as big 
+		 *	If a new data is registered and the vector's size is already as big
 		 *	as the maxResolution value the oldest data will be discarded.
 		 */
-		void						setMaxResolution(int max);	
-		
-		void						start();	
-	
+		void						setMaxResolution(int max);
+
+		/**
+		 * @brief Clears all values. Prepares SpeedCalculator for new speed
+		 * measure.
+		 *
+		 * This will clear arrivalData and dataSizeExpected variables and
+		 * restart the clock.
+		 */
+		void						start();
+
 	protected:
 		struct DataArrivalInfo
 		{
@@ -77,33 +84,33 @@ class SpeedCalculator
 			 *	@brief In bytes.
 			 */
 			unsigned				totalAmountOfArrivedData;
-			
+
 			/**
 			 *	@brief In miliseconds.
 			 */
 			unsigned				timeOfArrival;
-			
+
 			DataArrivalInfo()
 			{
 				this->totalAmountOfArrivedData = 0;
 				this->timeOfArrival = 0;
 			}
-			
+
 			DataArrivalInfo(unsigned totalAmountOfArrivedData, unsigned timeOfArrival)
 			{
 				this->totalAmountOfArrivedData = totalAmountOfArrivedData;
 				this->timeOfArrival = timeOfArrival;
 			}
 		};
-	
+
 		QVector<DataArrivalInfo>	arrivalData;
 		QTime						clock;
 		unsigned					dataSizeExpected;
-		
+
 		/// Default value is 50.
 		int							_maxResolution;
-		
-		
+
+
 		unsigned					maxTimeDifference() const;
 };
 

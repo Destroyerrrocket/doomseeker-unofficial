@@ -31,24 +31,6 @@
 #include <QFileInfo>
 #include <QStack>
 
-// TODO:
-// For the (close?) future:
-//
-// Sometimes two or more WADs that are being hosted on a server are distributed
-// within the same archive. Because of this Wadseeker should keep a cache of 
-// downloaded archives during it's search and try to retrieve subsequent 
-// wads from these archives. This should also work backwards: if we are looking
-// for 3 wads and the last one gets found inside an archive while the others 
-// are missing we check this archive for the previous files.
-//
-// We're not concerned about memory issues here. It's perfectly fine to store
-// a 100MB archive in memory... and if it's not we can use temp files that 
-// will clutter the system and fill out entire disk space upon application crash
-// eventually!
-//
-// PS. Maybe saving the archives to disk should also be allowed?
-//
-
 const QString Wadseeker::defaultSites[] =
 {
 	QString("http://doom.dogsoft.net/getwad.php?search=%WADNAME%"),
@@ -71,6 +53,7 @@ const QString Wadseeker::forbiddenWads[] =
 ///////////////////////////////////////////////////////////////////////
 Wadseeker::Wadseeker()
 {
+    this->numBytesForCurrentFile = 0;
 	speedCalculator = new SpeedCalculator();
 	www = new WWWSeeker();
 
@@ -125,11 +108,13 @@ QStringList Wadseeker::defaultSitesListEncoded()
 
 void Wadseeker::downloadProgressSlot(int done, int total)
 {
+    this->numBytesForCurrentFile = done;
+
 	// There's no performance drop or any other argument against setting
 	// expected data size each time this slot is called.
 	// It's stupid but it's a simple solution.
 	speedCalculator->setExpectedDataSize(total);
-	speedCalculator->registerDataAmount(done);	
+	speedCalculator->registerDataAmount(done);
 	emit downloadProgress(done, total);
 }
 
@@ -184,7 +169,10 @@ void Wadseeker::fileDone(QByteArray& data, const QString& filename)
 			QStack<int> filesToExtract;
 			int file;
 			if ((file = unarchive->findFileEntry(currentWad)) != -1)
-				filesToExtract.push(file);
+			{
+                filesToExtract.push(file);
+            }
+
 			for (int i = iNextWad;i < seekedWads.size();i++)
 			{
 				if ((file = unarchive->findFileEntry(seekedWads[i])) != -1)
@@ -200,7 +188,7 @@ void Wadseeker::fileDone(QByteArray& data, const QString& filename)
 				{
 					file = filesToExtract.pop();
 					QString extractedFileName = unarchive->fileNameFromIndex(file);
-				
+
 					unarchive->extract(file, path);
 					emit message(tr("File \"%1\" was uncompressed successfully from archive \"%2\"!").arg(extractedFileName, filename), Notice);
 					bNextWad = true;
@@ -271,13 +259,37 @@ void Wadseeker::nextWad()
 	}
 
 	emit message(tr("Seeking file: %1").arg(wad), Notice);
-	
+
 	currentWad = wad;
 	QString zipName;
 	QStringList wantedFilenamesInfo = wantedFilenames(wad, zipName);
-	
+
 	speedCalculator->start();
+	this->numBytesForCurrentFile = 0;
+
 	www->searchFiles(wantedFilenamesInfo, currentWad, zipName);
+}
+
+int Wadseeker::numAlreadyFinishedFiles() const
+{
+    // Make sure that iNextWad doesn't point outside the seekedWads array.
+    return iNextWad <= seekedWads.size() ? iNextWad - 1 : 0;
+}
+
+int Wadseeker::numBytesAlreadyDownloadedForCurrentDownload() const
+{
+    return numBytesForCurrentFile;
+}
+
+int Wadseeker::numTotalBytesForCurrentDownload() const
+{
+    // SpeedCalculator already holds this info. Extract it from there.
+    return speedCalculator->expectedDataSize();
+}
+
+int Wadseeker::numTotalCurrentlySeekedFiles() const
+{
+    return seekedWads.size();
 }
 
 void Wadseeker::seekWads(const QStringList& wads)

@@ -38,13 +38,13 @@ float SpeedCalculator::estimatedTimeUntilArrival() const
 
 	const DataArrivalInfo& endInfo = arrivalData[arrivalData.size() - 1];
 	unsigned currentData = endInfo.totalAmountOfArrivedData;
-	
+
 	// This happens if dataSizeExpected isn't set properly.
 	if (dataSizeExpected < currentData)
 	{
 		return -1.0f;
 	}
-	
+
 	unsigned remainingData = dataSizeExpected - currentData;
 	return (float)remainingData / speed;
 }
@@ -56,18 +56,18 @@ float SpeedCalculator::getSpeed() const
 	{
 		return 0.0f;
 	}
-	
+
 	float dataDifference = 0.0f;
-	
+
 	const DataArrivalInfo& beginInfo = arrivalData[0];
 	const DataArrivalInfo& endInfo = arrivalData[arrivalData.size() - 1];
-	
+
 	dataDifference = endInfo.totalAmountOfArrivedData - beginInfo.totalAmountOfArrivedData;
 	float speed = dataDifference / (float)timeDifference;
-	
+
 	// Scale speed to 1 second.
 	speed *= 1000.0f;
-	
+
 	return speed;
 }
 
@@ -106,7 +106,7 @@ void SpeedCalculator::setMaxResolution(int max)
 		max = 2;
 	}
 	_maxResolution = max;
-	
+
 	while (arrivalData.size() > max)
 	{
 		arrivalData.pop_front();
@@ -116,5 +116,6 @@ void SpeedCalculator::setMaxResolution(int max)
 void SpeedCalculator::start()
 {
 	arrivalData.clear();
+	dataSizeExpected = 0;
 	clock.start();
 }
