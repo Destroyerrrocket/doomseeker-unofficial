@@ -221,7 +221,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	updateTrayIconTooltipAndLogTotalRefresh();
 
 	protected slots:
-        void    appStartupRefresh();
 		void	autoRefreshTimer_timeout();
 		void	blockRefreshButtons();
 		void 	finishedQueryingMaster(MasterClient* master);
@@ -246,6 +245,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	menuViewIRC();
 		void	menuWadSeeker();
 		void	quitProgram();
+        void    postInitAppStartup();
 		void 	refreshThreadBeginsWork();
 		void	refreshThreadEndsWork();
 		void 	runGame(const Server*);

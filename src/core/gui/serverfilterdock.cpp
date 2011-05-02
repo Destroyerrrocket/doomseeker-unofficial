@@ -28,6 +28,8 @@ ServerFilterDock::ServerFilterDock(QWidget* pParent)
 : QDockWidget(pParent)
 {
 	setupUi(this);
+	leQuickSearch = NULL;
+
 	doConnections();
 
 	this->toggleViewAction()->setIcon(QIcon(":/icons/filter.png"));
@@ -75,15 +77,20 @@ void ServerFilterDock::clearGameModes()
 	emit filterUpdated(filterInfo());
 }
 
-QLineEdit *ServerFilterDock::createQuickSearch() const
+QLineEdit *ServerFilterDock::createQuickSearch()
 {
-	QLineEdit *qs = new QLineEdit();
-	qs->setText(leServerName->text());
+    if (leQuickSearch == NULL)
+    {
+        QLineEdit *qs = new QLineEdit();
+        qs->setText(leServerName->text());
 
-	connect(leServerName, SIGNAL( textEdited(const QString &) ), qs, SLOT( setText(const QString &) ));
-	connect(qs, SIGNAL( textEdited(const QString &) ), leServerName, SLOT( setText(const QString &) ));
+        connect(leServerName, SIGNAL( textEdited(const QString &) ), qs, SLOT( setText(const QString &) ));
+        connect(qs, SIGNAL( textEdited(const QString &) ), leServerName, SLOT( setText(const QString &) ));
 
-	return qs;
+        leQuickSearch = qs;
+    }
+
+	return leQuickSearch;
 }
 
 void ServerFilterDock::doConnections()
@@ -153,6 +160,11 @@ void ServerFilterDock::setFilterInfo(const ServerListFilterInfo& filterInfo)
 	cboGameMode->setCurrentIndex(cboGameMode->findText(gameMode));
 
 	spinMaxPing->setValue(filterInfo.maxPing);
+	if (leQuickSearch != NULL)
+	{
+        leQuickSearch->setText(filterInfo.serverName.trimmed());
+	}
+
 	leServerName->setText(filterInfo.serverName.trimmed());
 	leWads->setText(filterInfo.wads.join(",").trimmed());
 

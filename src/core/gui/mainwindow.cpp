@@ -187,7 +187,7 @@ One of the proper locations for plugin modules is the \"engines/\" directory.\n\
 
     // Start first refresh from a timer. We want the main window fully
     // set up before refresh.
-    QTimer::singleShot(1, this, SLOT(appStartupRefresh()));
+    QTimer::singleShot(1, this, SLOT(postInitAppStartup()));
 }
 
 MainWindow::~MainWindow()
@@ -246,53 +246,6 @@ MainWindow::~MainWindow()
 	}
 
 	delete ip2cUpdateProgressBar;
-}
-
-void MainWindow::appStartupRefresh()
-{
-    // Check query on statup
-	// Let's see if we have any plugins first. If not, display error.
-	if (Main::enginePlugins->numPlugins() > 0)
-	{
-		bool bGettingServers = false;
-		bool queryOnStartup = gConfig.doomseeker.bQueryOnStartup;
-		if (queryOnStartup)
-		{
-			// If "Query on startup" option is enabled we should
-			// attempt to refresh any masters that are enabled
-			// in the Query menu.
-
-			if (isAnyMasterEnabled())
-			{
-				bGettingServers = true;
-				getServers();
-			}
-			else
-			{
-				gLog << tr("Query on startup warning: No master servers are enabled in the Query menu.");
-			}
-		}
-
-		// If we already successfully called the getServers() method
-		// there is no need to call refreshCustomsServers().
-		if (!bGettingServers && hasCustomServers())
-		{
-			// Custom servers should be refreshed no matter what.
-			// They will not block the app in any way, there is no reason
-			// not to refresh them.
-			refreshCustomServers();
-		}
-	}
-	else
-	{
-		// There are no plugins so something is really bad.
-		// Display error message.
-		QMessageBox::critical(NULL, tr("Doomseeker critical error"), tr("Doomseeker was unable to find any plugin libraries. \
-\nAlthough the application will still work it will not be possible to fetch any server info or launch any game.\n\
-\n\
-Please check if there are any files in \"engines/\" directory.\n\
-To fix this problem you may try downloading Doomseeker again from the site specified in the Help|About box and reinstalling Doomseeker."));
-	}
 }
 
 void MainWindow::autoRefreshTimer_timeout()
@@ -615,7 +568,6 @@ void MainWindow::initMainDock()
 void MainWindow::initServerFilterDock()
 {
 	serverFilterDock = new ServerFilterDock(this);
-	serverFilterDock->setFilterInfo(gConfig.serverFilter.info);
 
 	menuView->addAction(serverFilterDock->toggleViewAction());
 	serverFilterDock->hide();
@@ -1134,6 +1086,56 @@ Wadseeker will not download IWADs.\n\n");
 	}
 
 	return true;
+}
+
+void MainWindow::postInitAppStartup()
+{
+    // Load server filter from config.
+    serverFilterDock->setFilterInfo(gConfig.serverFilter.info);
+
+    // Check query on statup
+	// Let's see if we have any plugins first. If not, display error.
+	if (Main::enginePlugins->numPlugins() > 0)
+	{
+		bool bGettingServers = false;
+		bool queryOnStartup = gConfig.doomseeker.bQueryOnStartup;
+		if (queryOnStartup)
+		{
+			// If "Query on startup" option is enabled we should
+			// attempt to refresh any masters that are enabled
+			// in the Query menu.
+
+			if (isAnyMasterEnabled())
+			{
+				bGettingServers = true;
+				getServers();
+			}
+			else
+			{
+				gLog << tr("Query on startup warning: No master servers are enabled in the Query menu.");
+			}
+		}
+
+		// If we already successfully called the getServers() method
+		// there is no need to call refreshCustomsServers().
+		if (!bGettingServers && hasCustomServers())
+		{
+			// Custom servers should be refreshed no matter what.
+			// They will not block the app in any way, there is no reason
+			// not to refresh them.
+			refreshCustomServers();
+		}
+	}
+	else
+	{
+		// There are no plugins so something is really bad.
+		// Display error message.
+		QMessageBox::critical(NULL, tr("Doomseeker critical error"), tr("Doomseeker was unable to find any plugin libraries. \
+\nAlthough the application will still work it will not be possible to fetch any server info or launch any game.\n\
+\n\
+Please check if there are any files in \"engines/\" directory.\n\
+To fix this problem you may try downloading Doomseeker again from the site specified in the Help|About box and reinstalling Doomseeker."));
+	}
 }
 
 QQueryMenuAction* MainWindow::queryMenuActionForMasterClient(MasterClient* pClient)

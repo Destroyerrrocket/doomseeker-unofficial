@@ -32,13 +32,17 @@ class ServerListFilterInfo;
 class ServerFilterDock : public QDockWidget, private Ui::ServerFilterDock
 {
 	Q_OBJECT
-	
+
 	public:
 		ServerFilterDock(QWidget* pParent = NULL);
 
 		void					addGameModeToComboBox(const QString& gameMode);
 
-		QLineEdit				*createQuickSearch() const;
+        /**
+         * @brief Creates and/or returns an instance of widget that is located
+         * in the MainWindow toolbar.
+         */
+		QLineEdit				*createQuickSearch();
 
 		/**
 		 *	@brief Removes all cached items from Game Modes combo box.
@@ -48,25 +52,34 @@ class ServerFilterDock : public QDockWidget, private Ui::ServerFilterDock
 		 *	Emits filterUpdated() signal.
 		 */
 		void					clearGameModes();
-		
+
 		ServerListFilterInfo	filterInfo() const;
-		
+
 		/**
 		 *	@brief Sets widgets to new filter info.
 		 *
 		 *	Emits filterUpdated() signal.
 		 */
 		void					setFilterInfo(const ServerListFilterInfo& filterInfo);
-		
+
 	signals:
 		void					filterUpdated(const ServerListFilterInfo& filterInfo);
-		
+
 	private:
+        /**
+         * @brief Quick Search widget that is actually located outside the
+         * ServerFilterDock.
+         *
+         * ServerFilterDock needs to keep track of this widget in order to
+         * update the changing value appropriately.
+         */
+        QLineEdit*              leQuickSearch;
+
 		void					doConnections();
-		
+
 	private slots:
 		void					btnClearClicked();
-		void					emitUpdated();		
+		void					emitUpdated();
 		void					emitUpdated(const QString& dummy);
 		void					thisVisibilityChanged(bool bVisible);
 };
