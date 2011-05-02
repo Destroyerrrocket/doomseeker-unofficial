@@ -38,7 +38,7 @@ void ServerListFilterInfo::copy(const ServerListFilterInfo& other)
 	gameMode = other.gameMode.trimmed();
 	maxPing = other.maxPing;
 	serverName = other.serverName.trimmed();
-	
+
 	this->wads.clear();
 	for (int i = 0; i < other.wads.count(); ++i)
 	{
@@ -49,21 +49,45 @@ void ServerListFilterInfo::copy(const ServerListFilterInfo& other)
 		{
 			this->wads << wad;
 		}
-	}	
+	}
+}
+
+#include "log.h"
+
+bool ServerListFilterInfo::isFilteringAnything() const
+{
+    if (!bShowEmpty || !bShowFull)
+    {
+        return true;
+    }
+
+    if (bShowOnlyValid || maxPing > 0)
+    {
+        return true;
+    }
+
+    if (!gameMode.isEmpty()
+    ||  !serverName.isEmpty()
+    ||  !wads.isEmpty())
+    {
+        return true;
+    }
+
+    return false;
 }
 
 QString ServerListFilterInfo::toString() const
 {
 	QString ret = "";
-	
+
 	ret += QString("bShowEmpty: ") + (bShowEmpty ? "Yes" : "No") + "\n";
 	ret += QString("bShowFull: ") + (bShowFull ? "Yes" : "No") + "\n";
 	ret += QString("bShowOnlyValid: ") + (bShowOnlyValid ? "Yes" : "No") + "\n";
 	ret += QString("GameMode: ") + gameMode + "\n";
 	ret += QString("MaxPing: ") + QString::number(maxPing) + "\n";
 	ret += QString("ServerName: ") + serverName + "\n";
-	ret += QString("WADs: ") + wads.join(";") + "\n";
-		
+	ret += QString("WADs: ") + wads.join(",") + "\n";
+
 	return ret;
 }
 

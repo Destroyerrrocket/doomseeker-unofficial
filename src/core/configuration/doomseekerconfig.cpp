@@ -43,7 +43,7 @@ DoomseekerConfig::~DoomseekerConfig()
 	{
 		delete this->pIni;
 	}
-	
+
 	delete this->dummySection;
 }
 
@@ -53,7 +53,7 @@ DoomseekerConfig& DoomseekerConfig::config()
 	{
 		instance = new DoomseekerConfig();
 	}
-	
+
 	return *instance;
 }
 
@@ -65,7 +65,7 @@ void DoomseekerConfig::dispose()
 		instance = NULL;
 	}
 }
-	
+
 IniSection& DoomseekerConfig::iniSectionForPlugin(const QString& pluginName)
 {
 	if (pluginName.isEmpty())
@@ -73,25 +73,25 @@ IniSection& DoomseekerConfig::iniSectionForPlugin(const QString& pluginName)
 		gLog << QObject::tr("DoomseekerConfig.iniSectionForPlugin(): empty plugin name has been specified, returning dummy IniSection.");
 		return *dummySection;
 	}
-	
+
 	if (!isValidPluginName(pluginName))
 	{
 		gLog << QObject::tr("DoomseekerConfig.iniSectionForPlugin(): plugin name is invalid: %1").arg(pluginName);
 		return *dummySection;
 	}
-	
+
 	if (this->pIni == NULL)
 	{
 		setIniFile("");
 	}
-	
+
 	QString sectionName = pluginName;
 	sectionName = sectionName.replace(' ', "");
 	return this->pIni->createSection(sectionName);
 }
 
 IniSection& DoomseekerConfig::iniSectionForPlugin(const PluginInfo* plugin)
-{ 
+{
 	return iniSectionForPlugin(plugin->name);
 }
 
@@ -106,54 +106,54 @@ bool DoomseekerConfig::isValidPluginName(const QString& pluginName) const
 			return false;
 		}
 	}
-	
+
 	return true;
 }
-	
+
 bool DoomseekerConfig::readFromFile()
 {
 	if (pIni == NULL)
 	{
 		return false;
 	}
-	
+
 	IniSection& sectionDoomseeker = pIni->section(doomseeker.SECTION_NAME);
 	doomseeker.load(sectionDoomseeker);
-	
+
 	IniSection& sectionServerFilter = pIni->section(serverFilter.SECTION_NAME);
 	serverFilter.load(sectionServerFilter);
-	
+
 	IniSection& sectionWadseeker = pIni->section(wadseeker.SECTION_NAME);
 	wadseeker.load(sectionWadseeker);
-	
+
 	// Plugins should read their sections manually.
-	
-	return true;	
+
+	return true;
 }
-		
+
 bool DoomseekerConfig::saveToFile()
 {
 	if (pIni == NULL)
 	{
 		return false;
 	}
-	
+
 	const QString TOP_COMMENT = QObject::tr("This is %1 configuration file.\n\
 Any modification done manually to this file is on your own risk.").arg(Version::fullVersionInfo());
-	
+
 	pIni->setIniTopComment(TOP_COMMENT);
-	
+
 	IniSection& sectionDoomseeker = pIni->section(doomseeker.SECTION_NAME);
 	doomseeker.save(sectionDoomseeker);
-	
+
 	IniSection& sectionServerFilter = pIni->section(serverFilter.SECTION_NAME);
 	serverFilter.save(sectionServerFilter);
-	
+
 	IniSection& sectionWadseeker = pIni->section(wadseeker.SECTION_NAME);
 	wadseeker.save(sectionWadseeker);
-	
+
 	// Plugins should save their sections manually.
-	
+
 	return pIni->save();
 }
 
@@ -163,14 +163,14 @@ bool DoomseekerConfig::setIniFile(const QString& filePath)
 	{
 		delete this->pIni;
 	}
-	
+
 	gLog << QObject::tr("Setting INI file: %1").arg(filePath);
 	this->pIni = new Ini(filePath);
-	
+
 	doomseeker.init(this->pIni->section(doomseeker.SECTION_NAME));
 	serverFilter.init(this->pIni->section(serverFilter.SECTION_NAME));
 	wadseeker.init(this->pIni->section(wadseeker.SECTION_NAME));
-	
+
 	return this->pIni->isValid();
 }
 
@@ -185,7 +185,7 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->bIP2CountryAutoUpdate = true;
 	this->bQueryAutoRefreshDontIfActive = true;
 	this->bQueryAutoRefreshEnabled = false;
-	this->bQueryOnStartup = true;	
+	this->bQueryOnStartup = true;
 	this->bMainWindowMaximized = false;
 	this->bRecordDemo = false;
 	this->bRememberConnectPassword = true;
@@ -215,7 +215,7 @@ bool DoomseekerConfig::DoomseekerCfg::areMainWindowSizeSettingsValid(int maxVali
 {
 	int endX = this->mainWindowX + this->mainWindowWidth;
 	int endY = this->mainWindowY + this->mainWindowHeight;
-	
+
 	if (endX <= 0 || endY <= 0)
 	{
 		return false;
@@ -226,25 +226,25 @@ bool DoomseekerConfig::DoomseekerCfg::areMainWindowSizeSettingsValid(int maxVali
 	{
 		return false;
 	}
-	
+
 	if (this->mainWindowX < -2 * maxValidX
 	||  this->mainWindowY < -2 * maxValidY)
 	{
 		return false;
 	}
-	
+
 	if (this->mainWindowWidth > 2 * (unsigned)maxValidX
 	||  this->mainWindowWidth == 0)
 	{
 		return false;
 	}
-	
+
 	if (this->mainWindowHeight > 2 * (unsigned)maxValidY
 	|| this->mainWindowHeight == 0)
 	{
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -303,9 +303,9 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->previousCreateServerWadDir = (const QString &)section["PreviousCreateServerWadDir"];
 	this->serverListColumnState = (const QString &)section["ServerListColumnState"];
 	this->slotStyle = section["SlotStyle"];
-	
+
 	// Complex data variables.
-	
+
 	// Custom servers
 	QList<CustomServerInfo> customServersList;
 	CustomServers::decodeConfigEntries(section["CustomServers"], customServersList);
@@ -314,7 +314,7 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	// Wad paths
 	QString wadPathsString = section["WadPaths"];
 	wadPaths = wadPathsString.split(";", QString::SkipEmptyParts);
-	
+
 	// Buddies list
 	QString buddiesConfigEntry = section["BuddiesList"];
 	BuddyInfo::readConfigEntry(buddiesConfigEntry, this->buddiesList);
@@ -351,28 +351,28 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["PreviousCreateServerWadDir"] = this->previousCreateServerWadDir;
 	section["ServerListColumnState"] = this->serverListColumnState;
 	section["SlotStyle"] = this->slotStyle;
-	
+
 	// Complex data variables.
-	
+
 	// Custom servers
 	QStringList allCustomServers;
 	foreach (const CustomServerInfo& customServer, this->customServers)
 	{
 		QString engineName = QUrl::toPercentEncoding(customServer.engine, "", "()");
 		QString address = QUrl::toPercentEncoding(customServer.host, "", "()");
-	
+
 		QString customServerString = QString("(%1;%2;%3)")
 			.arg(engineName).arg(address)
 			.arg(customServer.port);
-			
+
 		allCustomServers << customServerString;
 	}
 	section["CustomServers"] = allCustomServers.join(";");
-	
+
 	// Wad paths
 	QString wadPathsString = this->wadPaths.join(";");
 	section["WadPaths"] = wadPathsString;
-	
+
 	// Buddies lists
 	QString buddiesList = BuddyInfo::createConfigEntry(this->buddiesList);
 	section["BuddiesList"] = buddiesList;
@@ -399,7 +399,7 @@ void DoomseekerConfig::ServerFilter::load(IniSection& section)
 	info.gameMode = (const QString &)section["GameMode"];
 	info.maxPing = section["MaxPing"];
 	info.serverName = (const QString &)section["ServerName"];
-	info.wads = ((const QString&)section["WADs"]).split(";");
+	info.wads = ((const QString&)section["WADs"]).split(",", QString::SkipEmptyParts);
 }
 
 void DoomseekerConfig::ServerFilter::save(IniSection& section)
@@ -410,7 +410,7 @@ void DoomseekerConfig::ServerFilter::save(IniSection& section)
 	section["GameMode"] = info.gameMode;
 	section["MaxPing"] = info.maxPing;
 	section["ServerName"] = info.serverName;
-	section["WADs"] = info.wads.join(";");
+	section["WADs"] = info.wads.join(",");
 }
 //////////////////////////////////////////////////////////////////////////////
 const QString DoomseekerConfig::WadseekerCfg::SECTION_NAME = "Wadseeker";
@@ -426,7 +426,7 @@ DoomseekerConfig::WadseekerCfg::WadseekerCfg()
 	this->idgamesPriority = 0;
 	this->idgamesURL = Wadseeker::defaultIdgamesUrl();
 	this->targetDirectory = Main::dataPaths->programsDataDirectoryPath();
-	
+
 	// Search URLs remains unitizalized here. It will be initialized
 	// by init() and then load() since Doomseeker always calls these
 	// methods in this order.
@@ -457,7 +457,7 @@ void DoomseekerConfig::WadseekerCfg::load(IniSection& section)
 	this->idgamesPriority = section["IdgamesPriority"];
 	this->idgamesURL = (const QString &)section["IdgamesURL"];
 	this->targetDirectory = (const QString &)section["TargetDirectory"];
-	
+
 	// Complex data values
 	this->searchURLs.clear();
 	QStringList urlList = section["SearchURLs"].valueString().split(";", QString::SkipEmptyParts);
@@ -478,7 +478,7 @@ void DoomseekerConfig::WadseekerCfg::save(IniSection& section)
 	section["IdgamesPriority"] = this->idgamesPriority;
 	section["IdgamesURL"] = this->idgamesURL;
 	section["TargetDirectory"] = this->targetDirectory;
-	
+
 	// Complex data values
 	QStringList urlEncodedList;
 	foreach (const QString& url, this->searchURLs)

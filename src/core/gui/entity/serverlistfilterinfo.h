@@ -36,7 +36,7 @@ public:
 	bool				bShowFull;
 	bool				bShowOnlyValid;
 	QString				gameMode;
-	
+
 	/**
 	 *	@brief Maximum allowed ping.
 	 *
@@ -52,19 +52,28 @@ public:
 	{
 		copy(other);
 	}
-	
+
 	ServerListFilterInfo&	operator=(const ServerListFilterInfo& other)
 	{
 		if (this != &other)
 		{
 			copy(other);
 		}
-		
+
 		return *this;
 	}
-	
+
+	/**
+	 * @brief Informs if filter will apply to any server.
+	 *
+	 * @return true is returned if this filter will cause servers to become
+	 * hidden from the server table, false if filter will never apply to any
+	 * server.
+	 */
+	bool                    isFilteringAnything() const;
+
 	QString					toString() const;
-	
+
 private:
 	void					copy(const ServerListFilterInfo& other);
 };

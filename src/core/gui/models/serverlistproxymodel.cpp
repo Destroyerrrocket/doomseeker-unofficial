@@ -42,7 +42,7 @@ ServerListProxyModel::~ServerListProxyModel()
 bool ServerListProxyModel::compareColumnSortData(QVariant& var1, QVariant& var2, int column) const
 {
 	using namespace ServerListColumnId;
-	
+
 	if ( !(var1.isValid() && var2.isValid()) )
 		return false;
 
@@ -75,7 +75,7 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 	{
 		return false;
 	}
-	
+
 	if (!s->isKnown())
 	{
 		if (pFilterInfo->bShowOnlyValid)
@@ -95,17 +95,17 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 		{
 			return false;
 		}
-		
+
 		if (!pFilterInfo->bShowFull && s->isFull())
 		{
 			return false;
 		}
-		
+
 		if (pFilterInfo->maxPing > 0 && pFilterInfo->maxPing < s->ping())
 		{
 			return false;
 		}
-		
+
 		const QString& nameFilter = pFilterInfo->serverName;
 		if (!nameFilter.isEmpty())
 		{
@@ -114,7 +114,7 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 				return false;
 			}
 		}
-		
+
 		if (!pFilterInfo->gameMode.isEmpty())
 		{
 			if (s->gameMode().name().compare(pFilterInfo->gameMode, Qt::CaseInsensitive) != 0)
@@ -122,17 +122,23 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 				return false;
 			}
 		}
-		
+
 		if (!pFilterInfo->wads.isEmpty())
 		{
 			bool bWadFound = false;
-			
+
 			// TODO
 			// This may cause performance drops. Testing is required
 			for (int i = 0; i < pFilterInfo->wads.count(); ++i)
-			{	
+			{
 				const QString& wad = pFilterInfo->wads[i];
-			
+
+				if (s->iwadName().contains(wad, Qt::CaseInsensitive))
+				{
+                    bWadFound = true;
+                    break;
+				}
+
 				for (int j = 0; j < s->numWads(); ++j)
 				{
 					const PWad& pwad = s->wad(j);
@@ -142,21 +148,21 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 						break;
 					}
 				}
-				
+
 				if (bWadFound)
 				{
 					// Exit loop, wad was found.
 					break;
 				}
 			}
-			
+
 			if (!bWadFound)
 			{
 				return false;
 			}
 		}
 	}
-		
+
 	return true;
 }
 
@@ -209,7 +215,7 @@ bool ServerListProxyModel::lessThan(const QModelIndex& left, const QModelIndex& 
 void ServerListProxyModel::setFilterInfo(const ServerListFilterInfo& filterInfo)
 {
 	*pFilterInfo = filterInfo;
-	
+
 	invalidate();
 }
 

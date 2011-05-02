@@ -35,6 +35,22 @@
      </widget>
     </item>
     <item>
+     <widget class="QLabel" name="lblServerFilterApplied">
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Server filter is applied</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="ServerListView" name="tableServers">
       <property name="editTriggers">
        <set>QAbstractItemView::NoEditTriggers</set>

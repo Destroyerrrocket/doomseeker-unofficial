@@ -25,24 +25,24 @@
 #include "gui/entity/serverlistfilterinfo.h"
 
 ServerFilterDock::ServerFilterDock(QWidget* pParent)
-: QDockWidget(pParent) 
+: QDockWidget(pParent)
 {
 	setupUi(this);
 	doConnections();
-	
+
 	this->toggleViewAction()->setIcon(QIcon(":/icons/filter.png"));
-	
+
 	// Empty item means no filter.
 	cboGameMode->addItem("");
-	
+
 	toggleViewAction()->setText(tr("Server &Filter"));
-	toggleViewAction()->setShortcut(tr("CTRL+F"));	
+	toggleViewAction()->setShortcut(tr("CTRL+F"));
 }
 
 void ServerFilterDock::addGameModeToComboBox(const QString& gameMode)
 {
 	QString name = gameMode.trimmed();
-	
+
 	// No duplicates allowed.
 	if (cboGameMode->findText(name, Qt::MatchFixedString) < 0)
 	{
@@ -55,7 +55,7 @@ void ServerFilterDock::addGameModeToComboBox(const QString& gameMode)
 				return;
 			}
 		}
-		
+
 		// The above routine didn't return.
 		// This item belongs to the end of the list.
 		cboGameMode->addItem(name);
@@ -71,7 +71,7 @@ void ServerFilterDock::clearGameModes()
 {
 	cboGameMode->clear();
 	cboGameMode->addItem("");
-	
+
 	emit filterUpdated(filterInfo());
 }
 
@@ -80,8 +80,8 @@ QLineEdit *ServerFilterDock::createQuickSearch() const
 	QLineEdit *qs = new QLineEdit();
 	qs->setText(leServerName->text());
 
-	connect(leServerName, SIGNAL( textChanged(const QString &) ), qs, SLOT( setText(const QString &) ));
-	connect(qs, SIGNAL( textChanged(const QString &) ), leServerName, SLOT( setText(const QString &) ));
+	connect(leServerName, SIGNAL( textEdited(const QString &) ), qs, SLOT( setText(const QString &) ));
+	connect(qs, SIGNAL( textEdited(const QString &) ), leServerName, SLOT( setText(const QString &) ));
 
 	return qs;
 }
@@ -90,30 +90,30 @@ void ServerFilterDock::doConnections()
 {
 	this->connect(this, SIGNAL( visibilityChanged(bool) ),
 		SLOT( thisVisibilityChanged(bool) ) );
-		
+
 	this->connect(btnClear, SIGNAL( clicked() ),
 		SLOT( btnClearClicked() ) );
-	
+
 	this->connect(cbShowEmpty, SIGNAL( clicked() ),
-		SLOT( emitUpdated() ) );	
-	
+		SLOT( emitUpdated() ) );
+
 	this->connect(cbShowFull, SIGNAL( clicked() ),
-		SLOT( emitUpdated() ) );	
-		
+		SLOT( emitUpdated() ) );
+
 	this->connect(cbShowOnlyValid, SIGNAL( clicked() ),
-		SLOT( emitUpdated() ) );	
-		
+		SLOT( emitUpdated() ) );
+
 	this->connect(cboGameMode, SIGNAL( currentIndexChanged(const QString &) ),
-		SLOT( emitUpdated(const QString&) ) );	
-	
+		SLOT( emitUpdated(const QString&) ) );
+
 	this->connect(leServerName, SIGNAL( textChanged(const QString &) ),
-		SLOT( emitUpdated(const QString&) ) );	
-		
+		SLOT( emitUpdated(const QString&) ) );
+
 	this->connect(leWads, SIGNAL( textEdited(const QString &) ),
-		SLOT( emitUpdated(const QString&) ) );	
-		
+		SLOT( emitUpdated(const QString&) ) );
+
 	this->connect(spinMaxPing, SIGNAL( editingFinished() ),
-		SLOT( emitUpdated() ) );		
+		SLOT( emitUpdated() ) );
 }
 
 void ServerFilterDock::emitUpdated()
@@ -129,15 +129,15 @@ void ServerFilterDock::emitUpdated(const QString& dummy)
 ServerListFilterInfo ServerFilterDock::filterInfo() const
 {
 	ServerListFilterInfo filterInfo;
-	
+
 	filterInfo.bShowEmpty = cbShowEmpty->isChecked();
 	filterInfo.bShowFull = cbShowFull->isChecked();
 	filterInfo.bShowOnlyValid = cbShowOnlyValid->isChecked();
 	filterInfo.gameMode = cboGameMode->currentText();
 	filterInfo.maxPing = spinMaxPing->value();
 	filterInfo.serverName = leServerName->text();
-	filterInfo.wads = leWads->text().split(";");
-	
+	filterInfo.wads = leWads->text().trimmed().split(",", QString::SkipEmptyParts);
+
 	return filterInfo;
 }
 
@@ -146,16 +146,16 @@ void ServerFilterDock::setFilterInfo(const ServerListFilterInfo& filterInfo)
 	cbShowEmpty->setChecked(filterInfo.bShowEmpty);
 	cbShowFull->setChecked(filterInfo.bShowFull);
 	cbShowOnlyValid->setChecked(filterInfo.bShowOnlyValid);
-	
+
 	QString gameMode = filterInfo.gameMode.trimmed();
-	
+
 	addGameModeToComboBox(gameMode);
 	cboGameMode->setCurrentIndex(cboGameMode->findText(gameMode));
-	
+
 	spinMaxPing->setValue(filterInfo.maxPing);
 	leServerName->setText(filterInfo.serverName.trimmed());
-	leWads->setText(filterInfo.wads.join(";"));
-	
+	leWads->setText(filterInfo.wads.join(",").trimmed());
+
 	emitUpdated();
 }
 

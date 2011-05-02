@@ -106,7 +106,7 @@ One of the proper locations for plugin modules is the \"engines/\" directory.\n\
 	connectEntities();
 
 	// Apply server filter which is stored in config.
-	serverTableHandler->applyFilter(gConfig.serverFilter.info);
+	updateServerFilter(gConfig.serverFilter.info);
 
 	// Calculate screen center.
 	int screenWidth = QApplication::desktop()->width();
@@ -388,7 +388,7 @@ void MainWindow::connectEntities()
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( quitProgram() ));
 	connect(menuActionViewIRC, SIGNAL( triggered() ) , this, SLOT( menuViewIRC() ));
 	connect(menuActionWadseeker, SIGNAL( triggered() ), this, SLOT( menuWadSeeker() ));
-	connect(serverFilterDock, SIGNAL( filterUpdated(const ServerListFilterInfo&) ), serverTableHandler, SLOT( applyFilter(const ServerListFilterInfo&) ) );
+	connect(serverFilterDock, SIGNAL( filterUpdated(const ServerListFilterInfo&) ), this, SLOT( updateServerFilter(const ServerListFilterInfo&) ) );
 	connect(serverTableHandler, SIGNAL( serverDoubleClicked(const Server*) ), this, SLOT( runGame(const Server*) ) );
 	connect(serverTableHandler, SIGNAL( displayServerJoinCommandLine(const Server*) ), this, SLOT( showServerJoinCommandLine(const Server*) ) );
 	connect(serverTableHandler, SIGNAL( serverInfoUpdated(const Server*) ), this, SLOT( serverAddedToList(const Server*) ) );
@@ -1359,7 +1359,16 @@ void MainWindow::trayIcon_activated(QSystemTrayIcon::ActivationReason reason)
 void MainWindow::updateMasterAddresses()
 {
 	for(int i = 0;i < masterManager->numMasters();i++)
-		(*masterManager)[i]->updateAddress();
+	{
+        (*masterManager)[i]->updateAddress();
+	}
+
+}
+
+void MainWindow::updateServerFilter(const ServerListFilterInfo& filterInfo)
+{
+    serverTableHandler->applyFilter(filterInfo);
+    lblServerFilterApplied->setVisible(filterInfo.isFilteringAnything());
 }
 
 void MainWindow::updateTrayIconTooltipAndLogTotalRefresh()

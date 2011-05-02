@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>170</width>
-    <height>399</height>
+    <width>204</width>
+    <height>416</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -73,7 +73,7 @@
       <item>
        <widget class="QLineEdit" name="leWads">
         <property name="toolTip">
-         <string>Use ';' to separate multiple wads.</string>
+         <string>Use ',' (a comma) to separate multiple wads.</string>
         </property>
        </widget>
       </item>

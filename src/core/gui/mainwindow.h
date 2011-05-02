@@ -261,6 +261,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void    toggleMasterClientEnabled(MasterClient* pClient);
 		void	toolBarAction(QAction* pAction);
 		void	trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
+        void    updateServerFilter(const ServerListFilterInfo& filterInfo);
 };
 
 #endif
