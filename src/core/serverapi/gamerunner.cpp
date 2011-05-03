@@ -413,7 +413,7 @@ Message GameRunner::runExecutable(const CommandLineInfo& cli, bool bWrapInStanda
 	}
 	else
 	{
-		gLog << tr("Starting (working dir %1): %2 %3").arg(cli.applicationDir.canonicalPath()).arg(cli.executable.canonicalFilePath()).arg(cli.args.join(" "));
+		gLog << tr("Starting (working dir %1): %2").arg(cli.applicationDir.canonicalPath()).arg(cli.executable.canonicalFilePath());
 		QStringList args = cli.args;
 		AppRunner::cleanArguments(args);
 		new StandardServerConsole(server, cli.executable.canonicalFilePath(), args);

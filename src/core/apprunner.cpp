@@ -76,7 +76,7 @@ QString AppRunner::findBundleBinary(const QFileInfo &file)
 
 Message AppRunner::runExecutable(const CommandLineInfo& cmdInfo)
 {
-	gLog << tr("Starting (working dir %1): %2 %3").arg(cmdInfo.applicationDir.canonicalPath()).arg(cmdInfo.executable.canonicalFilePath()).arg(cmdInfo.args.join(" "));
+	gLog << tr("Starting (working dir %1): %2").arg(cmdInfo.applicationDir.canonicalPath()).arg(cmdInfo.executable.canonicalFilePath());
 	QStringList args = cmdInfo.args;
 	cleanArguments(args);
 
