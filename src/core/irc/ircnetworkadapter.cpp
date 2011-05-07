@@ -37,67 +37,67 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 
 	pIrcSocketSignalsAdapter = new IRCSocketSignalsAdapter(this);
 	ircClient.connectSocketSignals(pIrcSocketSignalsAdapter);
-	
-	QObject::connect(&ircClient, SIGNAL( ircServerResponse(const QString&) ), 
+
+	QObject::connect(&ircClient, SIGNAL( ircServerResponse(const QString&) ),
 		this, SLOT( ircServerResponse(const QString&) ) );
-		
+
 	// Request parser
-	QObject::connect(&ircRequestParser, SIGNAL( echoPrivmsg(const QString&, const QString&) ), 
+	QObject::connect(&ircRequestParser, SIGNAL( echoPrivmsg(const QString&, const QString&) ),
 		this, SLOT( echoPrivmsg(const QString&, const QString&) ) );
-		
-	QObject::connect(&ircRequestParser, SIGNAL( query(const QString&) ), 
+
+	QObject::connect(&ircRequestParser, SIGNAL( query(const QString&) ),
 		this, SLOT( openNewAdapter(const QString&) ) );
 
 	// Response parser begins here.
-	QObject::connect(&ircResponseParser, SIGNAL( helloClient(const QString&) ), 
+	QObject::connect(&ircResponseParser, SIGNAL( helloClient(const QString&) ),
 		this, SLOT( helloClient(const QString&) ) );
-	
-	QObject::connect(&ircResponseParser, SIGNAL( kick(const QString&, const QString&, const QString&, const QString&) ), 
+
+	QObject::connect(&ircResponseParser, SIGNAL( kick(const QString&, const QString&, const QString&, const QString&) ),
 		this, SLOT( kick(const QString&, const QString&, const QString&, const QString&) ) );
-		
-	QObject::connect(&ircResponseParser, SIGNAL( kill(const QString&, const QString&) ), 
+
+	QObject::connect(&ircResponseParser, SIGNAL( kill(const QString&, const QString&) ),
 		this, SLOT( kill(const QString&, const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL( modeInfo(const QString&, const QString&, const QString&) ), 
+	QObject::connect(&ircResponseParser, SIGNAL( modeInfo(const QString&, const QString&, const QString&) ),
 		this, SLOT( modeInfo(const QString&, const QString&, const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL( namesListReceived(const QString&, const QStringList&) ), 
+	QObject::connect(&ircResponseParser, SIGNAL( namesListReceived(const QString&, const QStringList&) ),
 		this, SLOT( namesListReceived(const QString&, const QStringList&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL( namesListEndReceived(const QString&) ), 
+	QObject::connect(&ircResponseParser, SIGNAL( namesListEndReceived(const QString&) ),
 		this, SLOT( namesListEndReceived(const QString&) ) );
-	
-	QObject::connect(&ircResponseParser, SIGNAL( nicknameInUse(const QString&) ), 
+
+	QObject::connect(&ircResponseParser, SIGNAL( nicknameInUse(const QString&) ),
 		this, SLOT( nicknameInUse(const QString&) ) );
-		
-	QObject::connect(&ircResponseParser, SIGNAL( noSuchNickname(const QString&) ), 
+
+	QObject::connect(&ircResponseParser, SIGNAL( noSuchNickname(const QString&) ),
 		this, SLOT( noSuchNickname(const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL ( parseError(const QString&) ), 
+	QObject::connect(&ircResponseParser, SIGNAL ( parseError(const QString&) ),
 		this, SLOT( parseError(const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL ( privMsgReceived(const QString&, const QString&, const QString&) ), 
+	QObject::connect(&ircResponseParser, SIGNAL ( privMsgReceived(const QString&, const QString&, const QString&) ),
 		this, SLOT( privMsgReceived(const QString&, const QString&, const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL ( sendPongMessage(const QString&) ), 
+	QObject::connect(&ircResponseParser, SIGNAL ( sendPongMessage(const QString&) ),
 		this, SLOT( sendPong(const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL ( userChangesNickname(const QString&, const QString&) ), 
+	QObject::connect(&ircResponseParser, SIGNAL ( userChangesNickname(const QString&, const QString&) ),
 		this, SLOT( userChangesNickname(const QString&, const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL ( userJoinsChannel(const QString&, const QString&, const QString&) ), 
+	QObject::connect(&ircResponseParser, SIGNAL ( userJoinsChannel(const QString&, const QString&, const QString&) ),
 		this, SLOT( userJoinsChannel(const QString&, const QString&, const QString&) ) );
-		
-	QObject::connect(&ircResponseParser, SIGNAL ( userModeChanged(const QString&, const QString&, unsigned, unsigned) ), 
-		this, SLOT( userModeChanged(const QString&, const QString&, unsigned, unsigned) ) );		
 
-	QObject::connect(&ircResponseParser, SIGNAL ( userPartsChannel(const QString&, const QString&, const QString&) ), 
+	QObject::connect(&ircResponseParser, SIGNAL ( userModeChanged(const QString&, const QString&, unsigned, unsigned) ),
+		this, SLOT( userModeChanged(const QString&, const QString&, unsigned, unsigned) ) );
+
+	QObject::connect(&ircResponseParser, SIGNAL ( userPartsChannel(const QString&, const QString&, const QString&) ),
 		this, SLOT( userPartsChannel(const QString&, const QString&, const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL ( userQuitsNetwork(const QString&, const QString&) ), 
+	QObject::connect(&ircResponseParser, SIGNAL ( userQuitsNetwork(const QString&, const QString&) ),
 		this, SLOT( userQuitsNetwork(const QString&, const QString&) ) );
-		
-	QObject::connect(&ircResponseParser, SIGNAL ( whoIsUser(const QString&, const QString&, const QString&, const QString&) ), 
+
+	QObject::connect(&ircResponseParser, SIGNAL ( whoIsUser(const QString&, const QString&, const QString&, const QString&) ),
 		this, SLOT( whoIsUser(const QString&, const QString&, const QString&, const QString&) ) );
 }
 
@@ -116,7 +116,7 @@ void IRCNetworkAdapter::banUser(const QString& nickname, const QString& reason, 
 	IRCDelayedOperation operation(IRCDelayedOperation::Ban, cleanNickname, channel);
 	operation.setAttribute("reason", reason);
 	delayedOperations << operation;
-	
+
 	this->sendMessage(QString("/whois %1").arg(cleanNickname));
 }
 
@@ -135,7 +135,7 @@ void IRCNetworkAdapter::detachChatWindow(const IRCChatAdapter* pAdapter)
 void IRCNetworkAdapter::disconnect(const QString& farewellMessage)
 {
 	sendMessage("/quit " + farewellMessage);
-	ircClient.disconnect();	
+	ircClient.disconnect();
 }
 
 void IRCNetworkAdapter::doSendMessage(const QString& message, IRCAdapterBase* pOrigin)
@@ -144,7 +144,7 @@ void IRCNetworkAdapter::doSendMessage(const QString& message, IRCAdapterBase* pO
 	{
 		pOrigin = this;
 	}
-	
+
 	if (!ircClient.isConnected())
 	{
 		pOrigin->emitError(tr("You are not connected to the network."));
@@ -153,29 +153,29 @@ void IRCNetworkAdapter::doSendMessage(const QString& message, IRCAdapterBase* pO
 
 	QString parsedMessage;
 	IRCRequestParser::IRCRequestParseResult result = ircRequestParser.parse(pOrigin, message, parsedMessage);
-	
+
 	switch (result)
 	{
 		case IRCRequestParser::ErrorInputInsufficientParameters:
 			pOrigin->emitError(tr("Insufficient parameters."));
 			break;
-		
+
 		case IRCRequestParser::ErrorInputNotPrependedWithSlash:
 			emit error(tr("This is a server window. All commands must be prepended with a '/' character."));
 			break;
-			
+
 		case IRCRequestParser::ErrorMessageEmpty:
 			pOrigin->emitError(tr("Attempted to send empty message"));
 			break;
-		
+
 		case IRCRequestParser::ErrorMessageTooLong:
 			pOrigin->emitError(tr("Command is too long"));
 			break;
-			
+
 		case IRCRequestParser::Ok:
 			ircClient.sendMessage(parsedMessage);
 			break;
-			
+
 		case IRCRequestParser::QuitCommand:
 			ircClient.sendMessage(parsedMessage);
 			emit messageWithClass(tr("Quit"), IRCMessageClass::NetworkAction);
@@ -189,7 +189,7 @@ void IRCNetworkAdapter::echoPrivmsg(const QString& recipient, const QString& con
 	// we have windows open.
 	if (hasRecipient(recipient))
 	{
-		const QString& sender = this->myNickname();	
+		const QString& sender = this->myNickname();
 		privMsgReceived(recipient, sender, content);
 	}
 }
@@ -197,37 +197,37 @@ void IRCNetworkAdapter::echoPrivmsg(const QString& recipient, const QString& con
 IRCChatAdapter* IRCNetworkAdapter::getChatAdapter(const QString& recipient)
 {
 	IRCChatAdapter* pAdapter = NULL;
-	
+
 	if (recipient.isEmpty())
 	{
 		emit error("Doomseeker error: getChatAdapter() received empty recipient.");
 		return NULL;
 	}
-	
+
 	QString recipientLowercase = recipient.toLower();
 	if (hasRecipient(recipientLowercase))
 	{
 		return chatWindows[recipientLowercase];
 	}
-	
+
 	return NULL;
 }
 
 const IRCChatAdapter* IRCNetworkAdapter::getChatAdapter(const QString& recipient) const
 {
 	const IRCChatAdapter* pAdapter = NULL;
-	
+
 	if (recipient.isEmpty())
 	{
 		return NULL;
 	}
-	
+
 	QString recipientLowercase = recipient.toLower();
 	if (hasRecipient(recipientLowercase))
 	{
 		return chatWindows[recipientLowercase];
 	}
-	
+
 	return NULL;
 }
 
@@ -242,16 +242,16 @@ IRCChatAdapter* IRCNetworkAdapter::getOrCreateNewChatAdapter(const QString& reci
 	}
 
 	QString recipientLowercase = recipient.toLower();
-	
+
 	if (hasRecipient(recipientLowercase))
 	{
 		return chatWindows[recipientLowercase];
 	}
 
-#ifdef _DEBUG
+#ifndef NDEBUG
 	Log::instance << QString("IRCNetworkAdapter::getOrCreateNewChatAdapter() Creating new adapter for recipient: %1").arg(recipientLowercase);
 #endif
-	
+
 	if (IRCGlobal::isChannelName(recipient))
 	{
 		pAdapter = new IRCChannelAdapter(this, recipient);
@@ -276,24 +276,24 @@ bool IRCNetworkAdapter::hasRecipient(const QString& recipient) const
 
 void IRCNetworkAdapter::helloClient(const QString& nickname)
 {
-	// This method can only be called 
+	// This method can only be called
 	// when network is in joining state.
-	
+
 	connectionInfo.nick = nickname;
 	IRCNetworkEntity& network = connectionInfo.networkEntity;
-	
+
 	gLog << tr("IRC: Successfuly registered on network %1 [%2:%3]").arg(network.description, network.address).arg(network.port);
-	
+
 	this->bIsJoining = false;
 
 	if (!network.nickservPassword.isEmpty())
 	{
 		QString messageNickserv = network.nickservCommand;
 		messageNickserv = messageNickserv.arg(network.nickservPassword);
-		
+
 		this->sendMessage(messageNickserv);
 	}
-	
+
 	foreach (const QString& channel, network.autojoinChannels)
 	{
 		if (IRCGlobal::isChannelName(channel))
@@ -301,7 +301,7 @@ void IRCNetworkAdapter::helloClient(const QString& nickname)
 			this->openNewAdapter(channel);
 		}
 	}
-	
+
 	// Emit this just to be safe.
 	emit titleChange();
 }
@@ -319,7 +319,7 @@ bool IRCNetworkAdapter::isAdapterRelated(const IRCAdapterBase* pAdapter) const
 	{
 		return true;
 	}
-	
+
 	QList<IRCChatAdapter*> adaptersList = chatWindows.values();
 	foreach (IRCChatAdapter* pChatWindow, adaptersList)
 	{
@@ -328,7 +328,7 @@ bool IRCNetworkAdapter::isAdapterRelated(const IRCAdapterBase* pAdapter) const
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -349,7 +349,7 @@ bool IRCNetworkAdapter::isOperator(const QString& nickname, const QString& chann
 			return pChannelAdapter->isOperator(nickname);
 		}
 	}
-	
+
 	return false;
 }
 
@@ -358,7 +358,7 @@ void IRCNetworkAdapter::kick(const QString& channel, const QString& byWhom, cons
 	if (hasRecipient(channel))
 	{
 		IRCChannelAdapter* pAdapter = (IRCChannelAdapter*) this->getOrCreateNewChatAdapter(channel);
-		
+
 		if (isMyNickname(whoIsKicked))
 		{
 			this->emitMessageWithClass(tr("You have been kicked from channel %1 by %2 (Reason: %3)").arg(channel, byWhom, reason), IRCMessageClass::ChannelAction);
@@ -388,7 +388,7 @@ void IRCNetworkAdapter::kill(const QString& victim, const QString& comment)
 }
 
 void IRCNetworkAdapter::killAllChatWindows()
-{	
+{
 	QList<IRCChatAdapter*> pWindows = chatWindows.values();
 	foreach (IRCChatAdapter* pAdapter, pWindows)
 	{
@@ -407,7 +407,7 @@ void IRCNetworkAdapter::killChatWindow(const QString& recipient)
 	{
 		IRCChatAdapter* pAdapter = getChatAdapter(recipient);
 		chatWindows.remove(recipient.toLower());
-		
+
 		// Make sure that the adapter destructor won't call the
 		// detachChatWindow() method or the program will be shot to oblivion.
 		pAdapter->setNetwork(NULL);
@@ -443,9 +443,9 @@ void IRCNetworkAdapter::nicknameInUse(const QString& nickname)
 {
 	IRCGlobalMessages::instance().emitMessageWithClass(tr("Nickname %1 is already taken.").arg(nickname), IRCMessageClass::NetworkAction, this);
 	if (this->bIsJoining)
-	{	
+	{
 		const QString& altNick = this->connectionInfo.alternateNick;
-	
+
 		if (this->connectionInfo.nick.compare(altNick, Qt::CaseInsensitive) == 0)
 		{
 			IRCGlobalMessages::instance().emitError(tr("Both nickname and alternate nickname are taken on this network."), this);
@@ -457,7 +457,7 @@ void IRCNetworkAdapter::nicknameInUse(const QString& nickname)
 		else
 		{
 			this->connectionInfo.nick = altNick;
-		
+
 			IRCGlobalMessages::instance().emitMessageWithClass(tr("Using alternate nickname %1 to join.").arg(altNick), IRCMessageClass::NetworkAction, this);
 			QString message = QString("/nick %1").arg(altNick);
 			sendMessage(message);
@@ -476,7 +476,7 @@ void IRCNetworkAdapter::openNewAdapter(const QString& recipientName)
 	{
 		return;
 	}
-	
+
 	bool bStandardRoutine = !IRCGlobal::isChannelName(recipientName)
 		|| hasRecipient(recipientName);
 
@@ -511,7 +511,7 @@ void IRCNetworkAdapter::sendPong(const QString& toWhom)
 void IRCNetworkAdapter::setChannelMode(const QString& channel, const QString& nickname, const QString& flag, bool bSet)
 {
 	QString cleanNickname = IRCUserInfo(nickname).cleanNickname();
-	
+
 	QString flagPrefixed;
 	if (bSet)
 	{
@@ -521,7 +521,7 @@ void IRCNetworkAdapter::setChannelMode(const QString& channel, const QString& ni
 	{
 		flagPrefixed = "-" + flag.trimmed();
 	}
-	
+
 	QString message = QString("/mode %1 %2 %3").arg(channel, flagPrefixed, cleanNickname);
 	this->sendMessage(message);
 }
@@ -539,17 +539,17 @@ void IRCNetworkAdapter::userChangesNickname(const QString& oldNickname, const QS
 	{
 		emit messageWithClass(tr("Updating own nickname"), IRCMessageClass::NetworkAction);
 		connectionInfo.nick = newNickname;
-		
+
 		emit titleChange();
 	}
-	
+
 	QList<IRCChatAdapter*> adaptersList = chatWindows.values();
 	foreach (IRCChatAdapter* pAdapter, adaptersList)
 	{
 		pAdapter->userChangesNickname(oldNickname, newNickname);
 	}
-	
-	// MAKE SURE TO SEE IF WE HAVE A CHAT WINDOW OPEN WITH THIS 
+
+	// MAKE SURE TO SEE IF WE HAVE A CHAT WINDOW OPEN WITH THIS
 	// USER AND FIX THE KEY IN THE CHAT WINDOW MAP FOR THIS NETWORK!!!
 	if (hasRecipient(oldNickname))
 	{
@@ -595,7 +595,7 @@ void IRCNetworkAdapter::userPartsChannel(const QString& channel, const QString& 
 	if (hasRecipient(channel))
 	{
 		IRCChannelAdapter* pChannel = (IRCChannelAdapter*)getChatAdapter(channel);
-			
+
 		if (isMyNickname(nickname))
 		{
 			emit messageWithClass(tr("You left channel %1").arg(channel), IRCMessageClass::ChannelAction);
@@ -607,14 +607,14 @@ void IRCNetworkAdapter::userPartsChannel(const QString& channel, const QString& 
 			pChannel->userLeaves(nickname, farewellMessage, IRCChatAdapter::ChannelPart);
 		}
 	}
-	
-	
+
+
 }
 
 void IRCNetworkAdapter::userQuitsNetwork(const QString& nickname, const QString& farewellMessage)
 {
 	emit messageWithClass(QString("User %1 quits network.").arg(nickname), IRCMessageClass::ChannelAction);
-	
+
 	// We need to iterate through EVERY adapter and notify them
 	// about this quit.
 	// Implementation of each adapter should recognize if this quit actually
@@ -636,12 +636,12 @@ void IRCNetworkAdapter::whoIsUser(const QString& nickname, const QString& user, 
 		{
 			break;
 		}
-		
+
 		QString banString = "*!*@" + hostName;
 		QString reason = pBanOperation->attribute("reason");
 		this->sendMessage(QString("/mode %1 +b %2").arg(pBanOperation->channel(), banString));
 		this->sendMessage(QString("/kick %1 %2 %3").arg(pBanOperation->channel(), nickname, reason));
-		
+
 		delayedOperations.remove(pBanOperation);
 	}
 }
@@ -652,20 +652,20 @@ void IRCSocketSignalsAdapter::connected()
 {
 	pParent->bIsJoining = true;
 	pParent->emitMessageWithClass(tr("Connected. Sending registration messages."), IRCMessageClass::NetworkAction);
-	
+
 	IRCNetworkConnectionInfo& connectionInfo = pParent->connectionInfo;
-	
+
 	QString messagePass = "/PASS %1";
 	QString messageNick = "/NICK %1";
 	QString messageUser = "/USER %1 %2 %3 :%4";
-	
+
 	IRCNetworkEntity& network = connectionInfo.networkEntity;
-	
+
 	if (!network.password.isEmpty())
 	{
 		pParent->sendMessage(messagePass.arg(network.password));
 	}
-	
+
 	pParent->sendMessage(messageNick.arg(connectionInfo.nick));
 	pParent->sendMessage(messageUser.arg(connectionInfo.nick).arg(connectionInfo.nick).arg(connectionInfo.nick).arg(connectionInfo.realName));
 }
@@ -695,7 +695,7 @@ void IRCSocketSignalsAdapter::hostLookupError(QHostInfo::HostInfoError errorValu
 		case QHostInfo::HostNotFound:
 			emit pParent->error("Host lookup error: host not found.");
 			break;
-			
+
 		default:
 			emit pParent->error("Unknown host lookup error.");
 			break;

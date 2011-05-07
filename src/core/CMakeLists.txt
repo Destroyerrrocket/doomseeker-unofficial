@@ -3,18 +3,18 @@ cmake_minimum_required(VERSION 2.4)
 # Regarding Microsoft Visual Studio:
 # Creating proper builds with MSVC required setting subsystem to windows,
 # otherwise an unwanted console window was created. However when subsystem is
-# set to windows MSVC uses WinMain() as the entry point, while MinGW simply 
+# set to windows MSVC uses WinMain() as the entry point, while MinGW simply
 # keeps using the main() function. Also note that since console window is useful
 # for debugging, Debug builds still have subsystem set to console.
 #
-# To solve all the issues WinMain() has been implemented and is now used 
+# To solve all the issues WinMain() has been implemented and is now used
 # depending on certain defines: if _MSC_VER is defined it means that user is
-# attempting to create a build with MSVC. Also if _DEBUG is NOT defined it means
-# that user chose one of the Release builds. When both of these conditions are 
+# attempting to create a build with MSVC. Also if NDEBUG is defined it means
+# that user chose one of the Release builds. When both of these conditions are
 # met then, and only then, WinMain() is used instead of main() as the
 # entry point.
 #
-# Conclusion: If current MSVC subsystem setup is changed the code may not 
+# Conclusion: If current MSVC subsystem setup is changed the code may not
 # compile, as the proper entry point will be missing.
 
 if(COMMAND cmake_policy)
@@ -37,10 +37,10 @@ include(${QT_USE_FILE})
 
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/../
-	${CMAKE_CURRENT_SOURCE_DIR} 
+	${CMAKE_CURRENT_SOURCE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/gui/
-	${QT_INCLUDES} 
-	${CMAKE_CURRENT_BINARY_DIR} 
+	${QT_INCLUDES}
+	${CMAKE_CURRENT_BINARY_DIR}
 	${ZLIB_INCLUDE_DIR}
 )
 
@@ -80,7 +80,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/createserver.ui
 	gui/demomanager.ui
 	gui/dockBuddiesList.ui
-	gui/ip2cupdatebox.ui	
+	gui/ip2cupdatebox.ui
 	gui/logdock.ui
 	gui/mainwindow.ui
 	gui/passwordDlg.ui
@@ -94,16 +94,16 @@ set(DOOMSEEKER_QT_FILES
 	gui/configuration/irc/cfgircnetworks.h
 	gui/configuration/irc/cfgircsounds.h
 	gui/configuration/cfgappearance.h
-	gui/configuration/cfgcustomservers.h	
+	gui/configuration/cfgcustomservers.h
 	gui/configuration/cfgfilepaths.h
 	gui/configuration/cfgip2country.h
 	gui/configuration/cfgquery.h
 	gui/configuration/cfgwadseekerappearance.h
 	gui/configuration/cfgwadseekergeneral.h
 	gui/configuration/cfgwadseekeridgames.h
-	gui/configuration/cfgwadseekersites.h	
+	gui/configuration/cfgwadseekersites.h
 	gui/configuration/configurationbasebox.h
-	gui/configuration/configurationdialog.h	
+	gui/configuration/configurationdialog.h
 	gui/configuration/doomseekerconfigurationdialog.h
 	gui/configuration/engineconfigurationbasebox.h
 	gui/irc/ircdock.h
@@ -112,12 +112,12 @@ set(DOOMSEEKER_QT_FILES
 	gui/models/serverlistmodel.h
 	gui/widgets/colorbutton.h
 	gui/widgets/dockedwidgets.h
-	gui/widgets/fontbutton.h	
-	gui/widgets/importantmessageswidget.h	
+	gui/widgets/fontbutton.h
+	gui/widgets/importantmessageswidget.h
 	gui/widgets/memorylineedit.h
 	gui/widgets/serverconsole.h
 	gui/widgets/serverlistview.h
-	gui/widgets/serversstatuswidget.h	
+	gui/widgets/serversstatuswidget.h
 	gui/aboutDlg.h
 	gui/copytextdlg.h
 	gui/createserver.h
@@ -136,10 +136,10 @@ set(DOOMSEEKER_QT_FILES
 	irc/ircclient.h
 	irc/ircglobalmessages.h
 	irc/ircnetworkadapter.h
-	irc/ircrequestparser.h		
+	irc/ircrequestparser.h
 	irc/ircresponseparser.h
 	sdeapi/config.hpp
-	serverapi/message.h	
+	serverapi/message.h
 	serverapi/rconprotocol.h
 	serverapi/server.h
 	customservers.h
@@ -167,30 +167,30 @@ set(SOURCE_FILES
 	gui/configuration/irc/cfgircsounds.cpp
 	gui/configuration/irc/ircconfigurationdialog.cpp
 	gui/configuration/cfgappearance.cpp
-	gui/configuration/cfgcustomservers.cpp	
+	gui/configuration/cfgcustomservers.cpp
 	gui/configuration/cfgfilepaths.cpp
 	gui/configuration/cfgip2country.cpp
 	gui/configuration/cfgquery.cpp
-	gui/configuration/cfgwadseekerappearance.cpp	
+	gui/configuration/cfgwadseekerappearance.cpp
 	gui/configuration/cfgwadseekergeneral.cpp
 	gui/configuration/cfgwadseekeridgames.cpp
-	gui/configuration/cfgwadseekersites.cpp	
+	gui/configuration/cfgwadseekersites.cpp
 	gui/configuration/configurationdialog.cpp
 	gui/configuration/doomseekerconfigurationdialog.cpp
 	gui/configuration/engineconfigurationbasebox.cpp
 	gui/entity/serverlistfilterinfo.cpp
 	gui/helpers/playersdiagram.cpp
-	gui/irc/ircdock.cpp	
+	gui/irc/ircdock.cpp
 	gui/irc/ircdocktabcontents.cpp
 	gui/irc/ircnetworkselectionbox.cpp
-	gui/irc/ircsounds.cpp	
+	gui/irc/ircsounds.cpp
 	gui/models/serverlistcolumn.cpp
 	gui/models/serverlistmodel.cpp
 	gui/models/serverlistproxymodel.cpp
 	gui/models/serverlistrowhandler.cpp
 	gui/widgets/colorbutton.cpp
 	gui/widgets/fontbutton.cpp
-	gui/widgets/importantmessageswidget.cpp		
+	gui/widgets/importantmessageswidget.cpp
 	gui/widgets/memorylineedit.cpp
 	gui/widgets/serverconsole.cpp
 	gui/widgets/serverlistcontextmenu.cpp
@@ -263,7 +263,7 @@ set(SOURCE_FILES
 	pathfinder.cpp
 	random.cpp
 	refresher.cpp
-	strings.cpp	
+	strings.cpp
 	version.cpp
 )
 
@@ -275,7 +275,7 @@ set(HEADER_FILES
 	gui/configuration/irc/ircconfigurationdialog.h
 	gui/entity/serverlistfilterinfo.h
 	gui/helpers/playersdiagram.h
-	gui/irc/ircsounds.h		
+	gui/irc/ircsounds.h
 	gui/models/serverlistcolumn.h
 	gui/models/serverlistproxymodel.h
 	gui/models/serverlistrowhandler.h
@@ -302,23 +302,23 @@ set(HEADER_FILES
 	serverapi/gamerunner.h
 	serverapi/player.h
 	serverapi/playerslist.h
-	serverapi/serverstructs.h	
+	serverapi/serverstructs.h
 	serverapi/tooltipgenerator.h
-	tests/testbase.h	
+	tests/testbase.h
 	tests/testcore.h
-	tests/testdatapaths.h	
+	tests/testdatapaths.h
 	tests/testini.h
 	tests/testruns.h
 	tests/teststrings.h
 	apprunner.h
-	datapaths.h	
+	datapaths.h
 	doomseekerfilepaths.h
 	global.h
 	ini.h
 	main.h
 	random.h
 	pathfinder.h
-	qtmetapointer.h	
+	qtmetapointer.h
 	strings.h
 	version.h
 )
@@ -365,7 +365,7 @@ if(WIN32)
 		set_target_properties(doomseeker PROPERTIES LINK_FLAGS_RELEASE "-Wl,-subsystem,windows")
 		set_target_properties(doomseeker PROPERTIES LINK_FLAGS_MINSIZEREL "-Wl,-subsystem,windows")
 	endif(MSVC)
-	
+
 endif(WIN32)
 
 if(NOT WIN32 AND NOT XCODE_VERSION)

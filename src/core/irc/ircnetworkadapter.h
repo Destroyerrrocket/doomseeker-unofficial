@@ -26,7 +26,7 @@ class IRCUserList;
 class IRCNetworkAdapter : public IRCAdapterBase
 {
 	Q_OBJECT
-	
+
 	friend class IRCSocketSignalsAdapter;
 
 	public:
@@ -34,7 +34,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		~IRCNetworkAdapter();
 
 		AdapterType							adapterType() const { return NetworkAdapter; }
-		
+
 		/**
 		 *	@brief Checks if client is an operator on a specified channel.
 		 */
@@ -42,14 +42,17 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		{
 			return this->isOperator(this->myNickname(), channel);
 		}
-		
+
 		/**
 		 *	@brief Bans specified user from a channel.
+		 *
+		 *  The data that is required to deliver a ban is contained inside the
+		 *  string returned by /whois query.
 		 *
 		 *	This will create a IRCDelayedOperation object and first send
 		 *	/whois <nickname> query. When the /whois returns the delayed
 		 *	operations are searched for pending bans. This is when
-		 *	bans are delivered. 
+		 *	bans are delivered.
 		 *
 		 *	For end-user this effect should be almost completely invisible.
 		 *
@@ -61,28 +64,28 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 *		Channel from which the user will be banned.
 		 */
 		void								banUser(const QString& nickname, const QString& reason, const QString& channel);
-	
+
 		void								connect(const IRCNetworkConnectionInfo& connectionInfo);
 
 		/**
-		 *	@brief Detaches the IRCChatAdapter instance from this network
-		 *  @b without deleting the instance.
+		 *	@brief Detaches the specified IRCChatAdapter instance from this
+		 *  network @b without deleting it.
 		 */
 		void								detachChatWindow(const IRCChatAdapter* pAdapter);
-		
+
 		void								disconnect(const QString& farewellMessage = tr("Doomseeker End Of Line"));
-		
+
 		/**
-		 *	@brief Implemented to support direct communication between client 
+		 *	@brief Implemented to support direct communication between client
 		 *	and server.
 		 *
-		 *	All messages that do not begin with '/' character will be ignored 
+		 *	All messages that do not begin with '/' character will be ignored
 		 *	here. In fact if the '/' character is missing an error() signal
 		 *	will be emitted to notify the user of this fact.
 		 *
 		 *	Programmers must remember that although IRC protocol itself
 		 *	doesn't require clients to prepend the messages with a slash this
-		 *	class always does - the slash character is stripped, then the 
+		 *	class always does - the slash character is stripped, then the
 		 *	remainder of the message is sent 'as is'.
 		 *
 		 *	@param pOrigin
@@ -90,10 +93,10 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 *		some message and error signals through this pOrigin. Otherwise
 		 *		these signals will be sent directly.
 		 */
-		void								doSendMessage(const QString& message, IRCAdapterBase* pOrigin);				
+		void								doSendMessage(const QString& message, IRCAdapterBase* pOrigin);
 
 		bool								hasRecipient(const QString& recipient) const;
-		
+
 		/**
 		 *	@brief Checks if pAdapter equals this or is one of
 		 *	chat windows of this network.
@@ -101,7 +104,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		bool								isAdapterRelated(const IRCAdapterBase* pAdapter) const;
 		bool								isConnected() const { return ircClient.isConnected(); }
 		bool								isMyNickname(const QString& nickname) const;
-		
+
 		/**
 		 *	@brief Checks if user is an operator on a given channel.
 		 *
@@ -115,7 +118,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		void								killAllChatWindows();
 
 		const QString&						myNickname() const { return connectionInfo.nick; }
-		
+
 		IRCNetworkAdapter*					network()
 		{
 			return this;
@@ -131,7 +134,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 */
 		void								setChannelMode(const QString& channel, const QString& nickname, const QString& flag, bool bSet);
 		QString								title() const;
-		
+
 	public slots:
 		/**
 		 *	@brief Opens a new chat adapter for specified recipient.
@@ -152,14 +155,14 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 *	from this network.
 		 */
 		void								newChatWindowIsOpened(IRCChatAdapter* pWindow);
-		
+
 	protected:
 		/**
 		 *	@brief If set to true this network adapter is in a state
 		 *	of joining to a network.
 		 */
 		bool								bIsJoining;
-		
+
 		/**
 		 *	@brief Stores all chat adapters associated with this network.
 		 *
@@ -181,20 +184,20 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 */
 		IRCChatAdapter*						getChatAdapter(const QString& recipient);
 		const IRCChatAdapter*				getChatAdapter(const QString& recipient) const;
-		
+
 		/**
-		 *	@brief Creates the new IRCChatAdapter object and immedaitelly 
+		 *	@brief Creates the new IRCChatAdapter object and immedaitelly
 		 *	adds it to the chatWindows hashmap.
 		 *
-		 *	@b Note: If such recipient is already registered no new object 
+		 *	@b Note: If such recipient is already registered no new object
 		 *	is created.
 		 *
 		 *	@return Pointer to the adapter object.
 		 */
 		IRCChatAdapter*						getOrCreateNewChatAdapter(const QString& recipient);
-		
-		void								killChatWindow(const QString& recipient);		
-		
+
+		void								killChatWindow(const QString& recipient);
+
 	protected slots:
 		void								echoPrivmsg(const QString& recipient, const QString& content);
 		void								helloClient(const QString& nickname);
@@ -221,10 +224,10 @@ class IRCNetworkAdapter : public IRCAdapterBase
 class IRCSocketSignalsAdapter : public SocketSignalsAdapter
 {
 	Q_OBJECT
-	
+
 	public:
 		IRCNetworkAdapter*		pParent;
-	
+
 		IRCSocketSignalsAdapter(IRCNetworkAdapter* pParent)
 		{
 			this->pParent = pParent;

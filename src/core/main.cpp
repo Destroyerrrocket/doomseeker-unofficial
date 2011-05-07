@@ -81,7 +81,7 @@ Main::~Main()
 	{
 		gConfig.saveToFile();
 		gConfig.dispose();
-		
+
 		gIRCConfig.saveToFile();
 		gIRCConfig.dispose();
 	}
@@ -221,10 +221,10 @@ void Main::convertCfgToIni()
 	// salvage and nothing to overwrite.
 	preserveOldConfigBackwardsCompatibility();
 	oldConfig.locateConfigFile(DOOMSEEKER_CONFIG_FILENAME);
-	
+
 	QString configDirPath = dataPaths->programsDataDirectoryPath();
 	QString iniFilePath = configDirPath + "/" + DOOMSEEKER_INI_FILENAME;
-	
+
 	Ini ini(iniFilePath);
 
 	for(unsigned short i = 0;i < NUM_SECTIONS;i++)
@@ -360,10 +360,10 @@ int Main::initIP2C()
 void Main::initIRCConfig()
 {
 	gLog << tr("Initializing IRC configuration file.");
-	
+
 	// This macro initializes the Singleton.
 	gIRCConfig;
-	
+
 	// Now try to access the configuration stored on drive.
 	QString configDirPath = dataPaths->programsDataDirectoryPath();
 	if (configDirPath.isEmpty())
@@ -381,10 +381,10 @@ void Main::initIRCConfig()
 void Main::initMainConfig()
 {
 	gLog << tr("Initializing configuration file.");
-	
+
 	// This macro initializes the Singleton.
 	gConfig;
-	
+
 	// Now try to access the configuration stored on drive.
 	QString configDirPath = dataPaths->programsDataDirectoryPath();
 	if (configDirPath.isEmpty())
@@ -482,7 +482,7 @@ void Main::setupRefreshingThread()
 //==============================================================================
 
 #ifdef _MSC_VER
-	#ifndef _DEBUG
+	#ifdef NDEBUG
 		#define USE_WINMAIN_AS_ENTRY_POINT
 	#endif
 #endif
