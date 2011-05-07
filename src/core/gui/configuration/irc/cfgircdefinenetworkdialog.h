@@ -24,25 +24,25 @@
 #define __CFGIRCDEFINENETWORKDIALOG_H__
 
 #include "ui_cfgircdefinenetworkdialog.h"
-#include "irc/ircnetworkentity.h"
+#include "irc/entities/ircnetworkentity.h"
 
 class CFGIRCDefineNetworkDialog : public QDialog, private Ui::CFGIRCDefineNetworkDialog
 {
 	Q_OBJECT
-	
+
 	public:
 		CFGIRCDefineNetworkDialog(const IRCNetworkEntity& initValuesEntity, QWidget* parent = NULL);
 		CFGIRCDefineNetworkDialog(QWidget* parent = NULL);
-		
+
 		IRCNetworkEntity				getNetworkEntity() const;
-		
+
 	private:
 		void							construct();
 		void							initFrom(const IRCNetworkEntity& networkEntity);
-		
+
 	private slots:
 		void							buttonClicked(QAbstractButton* button);
-	
+
 };
 
 #endif

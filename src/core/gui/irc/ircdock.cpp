@@ -37,24 +37,24 @@ IRCDock::IRCDock(QWidget* parent)
 {
 	setupUi(this);
 	this->toggleViewAction()->setIcon(QIcon(":/icons/irc.png"));
-	
+
 	pSounds = new IRCSounds();
 	pSounds->loadFromConfig();
-	
+
 	setupToolbar();
-	
+
 	IRCGlobalMessages& ircGlobalMessages = IRCGlobalMessages::instance();
-	
-	connect(tabWidget, SIGNAL( currentChanged(int) ), 
+
+	connect(tabWidget, SIGNAL( currentChanged(int) ),
 		SLOT( tabCurrentChanged(int) ));
-	
-	connect(tabWidget, SIGNAL( tabCloseRequested(int) ), 
+
+	connect(tabWidget, SIGNAL( tabCloseRequested(int) ),
 		SLOT( tabCloseRequestedSlot(int) ));
-	
-	connect(&ircGlobalMessages, SIGNAL( message(const QString&, IRCAdapterBase*) ), 
+
+	connect(&ircGlobalMessages, SIGNAL( message(const QString&, IRCAdapterBase*) ),
 		SLOT( globalMessage(const QString&, IRCAdapterBase*) ) );
-	
-	connect(&ircGlobalMessages, SIGNAL( messageWithClass(const QString&, const IRCMessageClass&, IRCAdapterBase*) ), 
+
+	connect(&ircGlobalMessages, SIGNAL( messageWithClass(const QString&, const IRCMessageClass&, IRCAdapterBase*) ),
 		SLOT( globalMessageWithClass(const QString&, const IRCMessageClass&, IRCAdapterBase*) ) );
 }
 
@@ -74,7 +74,7 @@ IRCDockTabContents* IRCDock::addIRCAdapter(IRCAdapterBase* pIRCAdapter)
 	pNewAdapterWidget->setIRCAdapter(pIRCAdapter);
 	tabWidget->addTab(pNewAdapterWidget, pNewAdapterWidget->icon(), pNewAdapterWidget->title());
 	this->titleChange(pNewAdapterWidget);
-	
+
 	return pNewAdapterWidget;
 }
 
@@ -96,6 +96,25 @@ void IRCDock::chatWindowCloseRequestSlot(IRCDockTabContents* pCaller)
 	}
 }
 
+void IRCDock::connectToNewNetwork(IRCNetworkConnectionInfo& connectionInfo, bool bFocusOnNewTab)
+{
+    IRCNetworkAdapter* pIRCNetworkAdapter = new IRCNetworkAdapter();
+
+    // Switch this to true only for debug.
+    pIRCNetworkAdapter->setEmitAllIRCMessagesEnabled(false);
+
+    // Setup the UI tab for the new network.
+    IRCDockTabContents* pTab = addIRCAdapter(pIRCNetworkAdapter);
+
+    // Connect to the network.
+    pIRCNetworkAdapter->connect(connectionInfo);
+
+    if (bFocusOnNewTab)
+    {
+        tabFocusRequest(pTab);
+    }
+}
+
 void IRCDock::globalMessage(const QString& message, IRCAdapterBase* pMessageSender)
 {
 	IRCDockTabContents* pWidget = (IRCDockTabContents*)tabWidget->currentWidget();
@@ -109,10 +128,10 @@ void IRCDock::globalMessage(const QString& message, IRCAdapterBase* pMessageSend
 void IRCDock::globalMessageWithClass(const QString& message, const IRCMessageClass& messageClass, IRCAdapterBase* pMessageSender)
 {
 	IRCDockTabContents* pWidget =  (IRCDockTabContents*)tabWidget->currentWidget();
-	
+
 	bool bIsAdapterRelated = pWidget != NULL
 		&& pWidget->ircAdapter()->network()->isAdapterRelated(pMessageSender);
-	
+
 	if (bIsAdapterRelated || pMessageSender == NULL)
 	{
 		QString prefixedMessage = prefixMessage(pWidget->ircAdapter(), pMessageSender, message);
@@ -136,7 +155,7 @@ IRCNetworkAdapter* IRCDock::networkWithUiFocus()
 	{
 		return NULL;
 	}
-	
+
 	return pWidget->ircAdapter()->network();
 }
 
@@ -146,21 +165,15 @@ void IRCDock::performNetworkAutojoins()
 	connectionInfo.alternateNick = gIRCConfig.personal.alternativeNickname;
 	connectionInfo.nick = gIRCConfig.personal.nickname;
 	connectionInfo.realName = gIRCConfig.personal.fullName;
-	
+
 	connectionInfo.fillInMissingFields();
 
 	QVector<IRCNetworkEntity> autojoinNetworks = gIRCConfig.networks.autojoinNetworks();
 	foreach (const IRCNetworkEntity& network, autojoinNetworks)
 	{
 		connectionInfo.networkEntity = network;
-		
-		IRCNetworkAdapter* pIRCNetworkAdapter = new IRCNetworkAdapter();
 
-		// Setup the UI tab for the new network.
-		addIRCAdapter(pIRCNetworkAdapter);
-				
-		// Connect to the network.
-		pIRCNetworkAdapter->connect(connectionInfo);
+		connectToNewNetwork(connectionInfo, false);
 	}
 }
 
@@ -174,7 +187,7 @@ QString IRCDock::prefixMessage(IRCAdapterBase* pTargetChatWindow, IRCAdapterBase
 			return QString("%1: %2").arg(pMessageSender->title(), message);
 		}
 	}
-	
+
 	return message;
 }
 
@@ -202,7 +215,7 @@ void IRCDock::tabCloseRequestedSlot(int index)
 {
 	QWidget* pPageWidget = tabWidget->widget(index);
 	tabWidget->removeTab(index);
-	
+
 	delete pPageWidget;
 }
 
@@ -241,23 +254,15 @@ void IRCDock::toolBarAction(QAction* pAction)
 		{
 			IRCNetworkConnectionInfo connectionInfo = networkSelection.networkConnectionInfo();
 			gIRCConfig.networks.lastUsedNetwork = connectionInfo.networkEntity;
-			
+
 			// We will attempt to remember user credentials for further use.
 			gIRCConfig.personal.alternativeNickname = connectionInfo.alternateNick;
 			gIRCConfig.personal.nickname = connectionInfo.nick;
-			gIRCConfig.personal.fullName = connectionInfo.realName;		
-			
-			connectionInfo.fillInMissingFields();
-			
-			IRCNetworkAdapter* pIRCNetworkAdapter = new IRCNetworkAdapter();
+			gIRCConfig.personal.fullName = connectionInfo.realName;
 
-			// Setup the UI tab for the new network.
-			IRCDockTabContents* pTab = addIRCAdapter(pIRCNetworkAdapter);
-			
-			// Connect to the network.
-			pIRCNetworkAdapter->connect(connectionInfo);
-			
-			tabFocusRequest(pTab);
+			connectionInfo.fillInMissingFields();
+
+			connectToNewNetwork(connectionInfo, true);
 		}
 	}
 	else if (pAction == toolBarOpenChatWindow)

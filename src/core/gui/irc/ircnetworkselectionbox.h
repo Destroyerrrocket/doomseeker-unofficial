@@ -25,8 +25,8 @@
 
 #include "ui_ircnetworkselectionbox.h"
 
+#include "irc/entities/ircnetworkentity.h"
 #include "irc/ircnetworkconnectioninfo.h"
-#include "irc/ircnetworkentity.h"
 #include <QDialog>
 
 class IRCNetworkSelectionBox : public QDialog, private Ui::IRCNetworkSelectionBox
@@ -35,7 +35,7 @@ class IRCNetworkSelectionBox : public QDialog, private Ui::IRCNetworkSelectionBo
 
 	public:
 		IRCNetworkSelectionBox(QWidget* parent = NULL);
-		
+
 		void						accept();
 
 		/**
@@ -48,13 +48,13 @@ class IRCNetworkSelectionBox : public QDialog, private Ui::IRCNetworkSelectionBo
 		IRCNetworkEntity			network() const;
 
 		IRCNetworkConnectionInfo	networkConnectionInfo() const;
-		
+
 	private:
 		QVector<IRCNetworkEntity>	networksArray;
-	
+
 		void						fetchNetworks();
 		void						initWidgets();
-		
+
 		void						addNetworkToComboBox(const IRCNetworkEntity& network, bool bLastUsed = false);
 		/**
 		 *	@brief Extracts selected network from combo box.
@@ -62,7 +62,7 @@ class IRCNetworkSelectionBox : public QDialog, private Ui::IRCNetworkSelectionBo
 		IRCNetworkEntity			networkComboBox() const;
 		void						updateNetworkInfo();
 		bool						validate();
-		
+
 	private slots:
 		void						btnNewNetworkClicked();
 		void						networkChanged(int index);

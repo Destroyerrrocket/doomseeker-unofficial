@@ -34,6 +34,7 @@
 IRCNetworkAdapter::IRCNetworkAdapter()
 {
 	this->bIsJoining = false;
+	this->bEmitAllIRCMessages = false;
 
 	pIrcSocketSignalsAdapter = new IRCSocketSignalsAdapter(this);
 	ircClient.connectSocketSignals(pIrcSocketSignalsAdapter);
@@ -75,6 +76,11 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 
 	QObject::connect(&ircResponseParser, SIGNAL ( parseError(const QString&) ),
 		this, SLOT( parseError(const QString&) ) );
+
+    // This connect must be direct as it might interfere with other operations
+    // of printing done in the window.
+	QObject::connect(&ircResponseParser, SIGNAL ( print(const QString&, const QString&) ),
+		this, SLOT( printResponse(const QString&, const QString&) ), Qt::DirectConnection );
 
 	QObject::connect(&ircResponseParser, SIGNAL ( privMsgReceived(const QString&, const QString&, const QString&) ),
 		this, SLOT( privMsgReceived(const QString&, const QString&, const QString&) ) );
@@ -308,9 +314,17 @@ void IRCNetworkAdapter::helloClient(const QString& nickname)
 
 void IRCNetworkAdapter::ircServerResponse(const QString& message)
 {
-	ircResponseParser.parse(message);
+	IRCResponseParseResult result = ircResponseParser.parse(message);
 
-	emit this->message(message.trimmed());
+    if (this->bEmitAllIRCMessages || !result.wasParsed())
+    {
+        emit this->message(message.trimmed().replace("\n", "\\n"));
+    }
+
+    if (!result.isValid())
+    {
+        emit this->error(tr("Invalid parse result for mesage: %1").arg(message));
+    }
 }
 
 bool IRCNetworkAdapter::isAdapterRelated(const IRCAdapterBase* pAdapter) const
@@ -496,6 +510,35 @@ void IRCNetworkAdapter::parseError(const QString& error)
 	emit this->error(tr("IRC Parse error: %1").arg(error));
 }
 
+void IRCNetworkAdapter::printResponse(const QString& printWhat, const QString& printWhere)
+{
+    IRCAdapterBase* pAdapter = this;
+
+    if (!printWhere.isEmpty())
+    {
+        IRCAdapterBase* pAdapter = getChatAdapter(printWhere);
+    }
+
+    // In case if the target adapter is unknown, the message will still get
+    // printed to this adapter.
+    if (pAdapter == NULL)
+    {
+        this->emitMessage(tr("FROM %1: %2").arg(printWhere, printWhat));
+    }
+    else
+    {
+        // If bEmitAllIRCMessages is set to true, the message will be already
+        // printed for this adapter in ircServerResponse().
+        // There is no need to print it again.
+        if ( pAdapter == this && this->bEmitAllIRCMessages )
+        {
+            return;
+        }
+
+        pAdapter->emitMessage(printWhat);
+    }
+}
+
 void IRCNetworkAdapter::privMsgReceived(const QString& recipient, const QString& sender, const QString& content)
 {
 	IRCChatAdapter* pAdapter = this->getOrCreateNewChatAdapter(recipient);
@@ -568,8 +611,6 @@ void IRCNetworkAdapter::userJoinsChannel(const QString& channel, const QString& 
 	{
 		if (hasRecipient(channel))
 		{
-			emit messageWithClass(tr("User %1 joins channel %2").arg(nickname, channel), IRCMessageClass::ChannelAction);
-
 			IRCChannelAdapter* pChannel = (IRCChannelAdapter*)this->getOrCreateNewChatAdapter(channel);
 			pChannel->userJoins(nickname, fullSignature);
 		}
@@ -603,7 +644,6 @@ void IRCNetworkAdapter::userPartsChannel(const QString& channel, const QString& 
 		}
 		else
 		{
-			emit messageWithClass(tr("User %1 parts channel %2").arg(nickname, channel), IRCMessageClass::ChannelAction);
 			pChannel->userLeaves(nickname, farewellMessage, IRCChatAdapter::ChannelPart);
 		}
 	}

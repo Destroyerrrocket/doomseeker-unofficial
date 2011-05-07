@@ -212,6 +212,9 @@ set(SOURCE_FILES
 	gui/standardserverconsole.cpp
 	gui/wadseekerinterface.cpp
 	irc/configuration/ircconfig.cpp
+	irc/constants/ircresponsetype.cpp
+    irc/entities/ircnetworkentity.cpp
+    irc/entities/ircresponseparseresult.cpp    
 	irc/ircchanneladapter.cpp
 	irc/ircchatadapter.cpp
 	irc/ircclient.cpp
@@ -221,7 +224,6 @@ set(SOURCE_FILES
 	irc/ircglobalmessages.cpp
 	irc/ircmessageclass.cpp
 	irc/ircnetworkadapter.cpp
-	irc/ircnetworkentity.cpp
 	irc/ircprivadapter.cpp
 	irc/ircrequestparser.cpp
 	irc/ircresponseparser.cpp
@@ -282,13 +284,15 @@ set(HEADER_FILES
 	gui/widgets/qtabwidgetext.h
 	gui/ip2cupdatebox.h
 	irc/configuration/ircconfig.h
+	irc/constants/ircresponsetype.h
+    irc/entities/ircnetworkentity.h
+    irc/entities/ircresponseparseresult.h
 	irc/ircchatadapter.h
 	irc/ircdelayedoperation.h
 	irc/ircdelayedoperationlist.h
 	irc/ircglobal.h
 	irc/ircmessageclass.h
 	irc/ircnetworkconnectioninfo.h
-	irc/ircnetworkentity.h
 	irc/ircprivadapter.h
 	irc/ircuserinfo.h
 	irc/ircuserlist.h

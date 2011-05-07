@@ -133,6 +133,15 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 *	@endcode
 		 */
 		void								setChannelMode(const QString& channel, const QString& nickname, const QString& flag, bool bSet);
+
+        /**
+         * @see bEmitAllIRCMessages
+         */
+		void                                setEmitAllIRCMessagesEnabled(bool b)
+		{
+            this->bEmitAllIRCMessages = b;
+		}
+
 		QString								title() const;
 
 	public slots:
@@ -156,12 +165,25 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 */
 		void								newChatWindowIsOpened(IRCChatAdapter* pWindow);
 
-	protected:
+	private:
 		/**
 		 *	@brief If set to true this network adapter is in a state
 		 *	of joining to a network.
+		 *
+		 *  Default: false.
 		 */
 		bool								bIsJoining;
+
+		/**
+		 * @brief If true, will make the adapter emit message() signal for
+		 * every message it received.
+		 *
+		 * Such messages are emitted in an unformatted state - in a form they
+		 * were received from the server.
+		 *
+		 * Default: false.
+		 */
+		bool                                bEmitAllIRCMessages;
 
 		/**
 		 *	@brief Stores all chat adapters associated with this network.
@@ -198,7 +220,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 
 		void								killChatWindow(const QString& recipient);
 
-	protected slots:
+	private slots:
 		void								echoPrivmsg(const QString& recipient, const QString& content);
 		void								helloClient(const QString& nickname);
 		void								kick(const QString& channel, const QString& byWhom, const QString& whoIsKicked, const QString& reason);
@@ -210,6 +232,12 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		void								nicknameInUse(const QString& nickname);
 		void								noSuchNickname(const QString& nickname);
 		void								parseError(const QString& error);
+
+		/**
+		 * @see IRCResponseParser::print()
+		 */
+		void                                printResponse(const QString& printWhat, const QString& printWhere);
+
 		void								privMsgReceived(const QString& recipient, const QString& sender, const QString& content);
 		void								sendPong(const QString& toWhom);
 		void								userChangesNickname(const QString& oldNickname, const QString& newNickname);

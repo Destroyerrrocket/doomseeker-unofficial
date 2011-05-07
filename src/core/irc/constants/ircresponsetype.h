@@ -1,0 +1,216 @@
+//------------------------------------------------------------------------------
+// ircresponsetype.h
+//
+// Copyright (C) 2011 "Zalewa" <zalewapl@gmail.com>
+//------------------------------------------------------------------------------
+#ifndef __IRCRESPONSETYPE_H__
+#define __IRCRESPONSETYPE_H__
+
+#include <QString>
+
+/**
+ * @brief Defines types of IRC network response message.
+ *
+ * Types are compliant to the response types defined by RFC 1459.
+ */
+class IRCResponseType
+{
+    public:
+        /**
+         * @brief Represents types defined by RFC 1459.
+         *
+         * In order to learn what each type represents please refer to
+         * RFC 1459 document.
+         */
+        enum MsgType
+        {
+            // === IMPORTANT!!! ===
+            // Remember to fix typeFromRfcString() and toRfcString()
+            // if values here change!
+            // Also IRCResponseParser::parseMessage() must be
+            // fixed.
+
+            /**
+             * @brief Type unknown to this IRC client.
+             *
+             * Messages with Invalid types may still be valid IRC messages
+             * that are complaint with the RFC 1459 document. However they
+             * may not be supported by this client.
+             */
+            Invalid = 0,
+
+            /**
+             * @brief 001 - sent when client connects.
+             *
+             * This is the first thing delivered after successful client
+             * registration.
+             */
+            HelloClient,
+
+            // === Here are types with no text representation ===
+
+            /// 311
+            RPLWhoIsUser,
+
+            /// 353 - names list for a channel
+            RPLNamReply,
+
+            /// 366 - end of names list
+            RPLEndOfNames,
+
+            /// 372 - message of the day
+            RPLMOTD,
+
+            /// 375 - start of the message of the day
+            RPLMOTDStart,
+
+            /// 376 - end of the message of the day
+            RPLEndOfMOTD,
+
+            // === Here are errors with no text representation ===
+
+            /// 401
+            ERRNoSuchNick,
+
+            /// 433
+            ERRNicknameInUse,
+
+            // === Here are types which convert to their string counterparts
+            // === letter-by-letter
+
+            Join,
+            Kick,
+            Kill,
+            Mode,
+            Nick,
+            Part,
+            Ping,
+            PrivMsg,
+            Quit,
+
+            /// Not a real type, denotes number of all types.
+            NUM_TYPES
+        };
+
+        /**
+         * @brief Creates IRCResponseType objects taking numeric value as the
+         *        more important here.
+         *
+         * The MsgType, returned by type(), in the created object may still
+         * point to Invalid value but the numericValue() will be set to whatever
+         * was specified as the parameter of this method.
+         */
+        static IRCResponseType  fromIntegerResponseValue(int responseType);
+
+        /**
+         * @brief If type can be represented as an integer, this will convert
+         *        it.
+         *
+         * Some IRC message types are represented by words like KILL or PING,
+         * but some are represented by numbers like 001, 311, 401, etc.
+         * This method will convert MsgType value to numeric value, if such
+         * value can be found.
+         *
+         * Internally, type is converted to string using the toRfcString()
+         * method and then that string is converted to integer.
+         *
+         * @return Either a valid, non-negative number on success, or negative
+         *         value on failure.
+         */
+        static int          toRfcNumber(MsgType type);
+
+        /**
+         * @brief String representation of specified message type.
+         *
+         * This returns the RFC 1459 representation of the message type!
+         *
+         * @return If type is invalid or unknown, null QString is returned.
+         *         All returned strings are upper-case.
+         */
+        static QString      toRfcString(MsgType type);
+
+        /**
+         * @brief Returns MsgType basing on typeRepresentation.
+         *
+         * It is either one of the known and implemented types or
+         * <code>Invalid</code> if string cannot be successfuly converted.
+         */
+        static MsgType      typeFromRfcString(const QString& typeRepresentation);
+
+        /**
+         * @brief Initializes an invalid IRCResponseType object.
+         */
+        IRCResponseType();
+
+        /**
+         * @brief Initializes object with specified type.
+         */
+        IRCResponseType(MsgType type);
+
+        /**
+         * @brief Initializes object by attempting to convert specified string
+         *        to MsgType through typeFromRfcString().
+         */
+        IRCResponseType(const QString& typeRepresentation);
+
+        bool                isCommandResponse() const
+        {
+            return d.numericType >= 200 && d.numericType <= 399;
+        }
+
+        bool                isErrorMessage() const
+        {
+            return d.numericType >= 400;
+        }
+
+        bool                isValid() const
+        {
+            return d.type == Invalid;
+        }
+
+        bool                operator==(const IRCResponseType& other) const;
+        bool                operator!=(const IRCResponseType& other) const;
+
+        /**
+         * @brief If message type can be represented as number,
+         *        this will contain its value.
+         *
+         * Numeric types values are stored to easilly distinct a message family.
+         * For example all errors start with 400 and above.
+         */
+        int                 numericType() const
+        {
+            return d.numericType;
+        }
+
+        /**
+         * @brief String representation of the message type.
+         *
+         * This returns the RFC 1459 representation of the message type!
+         */
+        QString             toRfcString() const
+        {
+            return toRfcString(d.type);
+        }
+
+        MsgType             type() const
+        {
+            return d.type;
+        }
+
+    private:
+        class PrivData
+        {
+            public:
+                /**
+                 * @brief If message type can be represented as number,
+                 *        this will contain its value.
+                 */
+                int             numericType;
+                MsgType         type;
+        };
+
+        PrivData            d;
+};
+
+#endif

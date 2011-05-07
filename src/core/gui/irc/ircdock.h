@@ -30,6 +30,7 @@ class IRCAdapterBase;
 class IRCDockTabContents;
 class IRCMessageClass;
 class IRCNetworkAdapter;
+class IRCNetworkConnectionInfo;
 class IRCSounds;
 
 /**
@@ -44,23 +45,36 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 		~IRCDock();
 
 		IRCDockTabContents*	addIRCAdapter(IRCAdapterBase* pIRCAdapter);
-		
+
 		/**
 		 *	@brief Applies IRC appearance settings to all open tabs.
 		 */
 		void				applyAppearanceSettings();
 		bool				hasTabFocus(const IRCDockTabContents* pTab) const;
-		
+
 		void				performNetworkAutojoins();
-		
+
 		IRCSounds&			sounds();
-		
+
 	private:
 		IRCSounds*			pSounds;
 		QAction*			toolBarConnect;
 		QAction*			toolBarOpenChatWindow;
-		
+
 		IRCNetworkAdapter*	networkWithUiFocus();
+
+        /**
+         * @brief Connects to new network.
+         *
+         * Opens new IRC network tab and starts the connection basing on the
+         * passed IRCNetworkConnectionInfo.
+         *
+         * @param connectionInfo
+         *      Defines connection parameters.
+         * @param bFocusOnNewTab
+         *      If <code>true</code> the new tab will gain focus when opened.
+         */
+        void                connectToNewNetwork(IRCNetworkConnectionInfo& connectionInfo, bool bFocusOnNewTab);
 
 		/**
 		 *	@brief This will prefix message with network name if message
@@ -78,7 +92,7 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 		void				tabFocusRequest(IRCDockTabContents* pCaller);
 		void				titleChange(IRCDockTabContents* pCaller);
 		void				toolBarAction(QAction* pAction);
-		
+
 
 };
 

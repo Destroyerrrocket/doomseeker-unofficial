@@ -26,28 +26,32 @@
 #include "global.h"
 #include <QString>
 #include <QStringList>
-	
+
+/**
+ * @brief Data structure that describes and defines a connection to an IRC
+ * network or server.
+ */
 class MAIN_EXPORT IRCNetworkEntity
 {
 	public:
 		IRCNetworkEntity();
-	
+
 		/**
 		 *	@brief Address of the server or network to connect to.
 		 */
 		QString				address;
-		
+
 		/**
 		 *	@brief List of channels to which a /join command will be issued
 		 *	automatically when a connection with this network is established.
 		 */
 		QStringList			autojoinChannels;
-		
+
 		/**
 		 *	@brief Join this network when Doomseeker starts up.
 		 */
 		bool				bAutojoinNetwork;
-		
+
 		/**
 		 *	@brief A short, human-readable description for the network.
 		 *	(Preferably a single word).
@@ -55,24 +59,24 @@ class MAIN_EXPORT IRCNetworkEntity
 		QString				description;
 		QString				nickservCommand;
 		QString				nickservPassword;
-		
+
 		/**
 		 *	@brief Password for the server or network. Ignored if empty.
 		 */
 		QString				password;
-		
+
 		/**
 		 *	@brief Port of the server or network to connect to.
 		 *
 		 *	Default value: 6667
 		 */
 		unsigned short		port;
-		
+
 		bool				isValid() const
 		{
 			return !address.isEmpty() && port != 0;
 		}
-		
+
 		/**
 		 *	@brief Sorts by description.
 		 */
