@@ -28,7 +28,7 @@
 #include "main.h"
 #include "pathfinder.h"
 #include "strings.h"
-#include "irc/ircnetworkentity.h"
+#include "irc/entities/ircnetworkentity.h"
 #include "sdeapi/config.hpp"
 #include "sdeapi/pluginloader.hpp"
 
@@ -176,7 +176,7 @@ extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection &config)
 	QString programFilesDirectory = DataPaths::programFilesDirectory(DataPaths::x86);
 	QString trimPattern = QString("\\/");
 	QString paths = Strings::trimr(programFilesDirectory, trimPattern);
-	
+
 	paths += "\\Skulltag;" + Main::workingDirectory + ";.";
 
 	PathFinder pf(paths);

@@ -23,7 +23,7 @@
 
 #include "main.h"
 #include "strings.h"
-#include "irc/ircnetworkentity.h"
+#include "irc/entities/ircnetworkentity.h"
 #include "gui/configuration/engineconfigurationbasebox.h"
 #include "sdeapi/pluginloader.hpp"
 
