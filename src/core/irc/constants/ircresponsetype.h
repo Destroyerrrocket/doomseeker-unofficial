@@ -178,19 +178,32 @@ class IRCResponseType
          */
         IRCResponseType(const QString& typeRepresentation);
 
+        /**
+         * @brief Check if numeric value is between 200 and 399 (inclusive).
+         *
+         * See: RFC 1459.
+         */
         bool                isCommandResponse() const
         {
             return d.numericType >= 200 && d.numericType <= 399;
         }
 
+        /**
+         * @brief Check if numeric value is equal to or above 400.
+         *
+         * See: RFC 1459.
+         */
         bool                isErrorMessage() const
         {
             return d.numericType >= 400;
         }
 
+        /**
+         * @brief Response is valid if type is different than Invalid.
+         */
         bool                isValid() const
         {
-            return d.type == Invalid;
+            return d.type != Invalid;
         }
 
         bool                operator==(const IRCResponseType& other) const;
