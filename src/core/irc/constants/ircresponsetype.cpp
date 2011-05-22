@@ -80,6 +80,21 @@ QString IRCResponseType::toRfcString(MsgType type)
         case HelloClient:
             return "001";
 
+        case RPLLUserClient:
+            return "251";
+
+        case RPLLUserOp:
+            return "252";
+
+        case RPLLUserUnknown:
+            return "253";
+
+        case RPLLUserChannels:
+            return "254";
+
+        case RPLLUserMe:
+            return "255";
+
         case RPLWhoIsUser:
             return "331";
 
@@ -118,6 +133,9 @@ QString IRCResponseType::toRfcString(MsgType type)
 
         case Nick:
             return "NICK";
+
+        case Notice:
+            return "NOTICE";
 
         case Part:
             return "PART";

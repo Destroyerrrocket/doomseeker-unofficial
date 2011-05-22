@@ -40,7 +40,7 @@ const int IRCDockTabContents::BLINK_TIMER_DELAY_MS = 650;
 IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 {
 	setupUi(this);
-	
+
 	this->bBlinkTitle = false;
 	this->bIsDestroying = false;
 	this->lastMessageClass = NULL;
@@ -55,13 +55,13 @@ IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 
 	connect(btnSend, SIGNAL( clicked() ), this, SLOT( sendMessage() ));
 	connect(leCommandLine, SIGNAL( returnPressed() ), this, SLOT( sendMessage() ));
-	
+
 	applyAppearanceSettings();
-	
+
 	blinkTimer.setSingleShot(false);
 	this->connect(&blinkTimer, SIGNAL( timeout() ),
 		SLOT( blinkTimerSlot() ) );
-	
+
 	// Performance check line, keep commented for non-testing builds:
 	//receiveMessage(Strings::createRandomAlphaNumericStringWithNewLines(80, 5000));
 }
@@ -69,7 +69,7 @@ IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 IRCDockTabContents::~IRCDockTabContents()
 {
 	this->bIsDestroying = true;
-	
+
 	if (this->lastMessageClass != NULL)
 	{
 		delete this->lastMessageClass;
@@ -85,7 +85,7 @@ IRCDockTabContents::~IRCDockTabContents()
 		disconnect(pIrcAdapter, 0, 0, 0);
 		IRCAdapterBase* pTmpAdapter = pIrcAdapter;
 		pIrcAdapter = NULL;
-		delete pTmpAdapter;	
+		delete pTmpAdapter;
 	}
 }
 
@@ -101,51 +101,51 @@ void IRCDockTabContents::adapterTerminating()
 		// Disconnect the adapter from this tab.
 		disconnect(pIrcAdapter, 0, 0, 0);
 		pIrcAdapter = NULL;
-		
+
 		emit chatWindowCloseRequest(this);
 	}
 }
 
 void IRCDockTabContents::applyAppearanceSettings()
 {
-	const static QString STYLE_SHEET_BASE_TEMPLATE = 
+	const static QString STYLE_SHEET_BASE_TEMPLATE =
 		"QListView, QTextEdit, QLineEdit { background: %1; color: %2; } ";
-		
+
 	const IRCConfig::AppearanceCfg& appearance = gIRCConfig.appearance;
-		
+
 	QString qtStyleSheet = STYLE_SHEET_BASE_TEMPLATE
 		.arg(appearance.backgroundColor)
 		.arg(appearance.defaultTextColor);
-		
+
 	QColor colorSelectedText("#cbcb0f");
 	QColor colorSelectedBackground("#B74600");
-	
+
 	QColor colorHoverText = colorSelectedText.lighter();
 	QColor colorHoverBackground = colorSelectedBackground.lighter();
-		
+
 	qtStyleSheet += QString("QListView::item:selected { color: %1; background: %2; } ").arg(colorSelectedText.name(), colorSelectedBackground.name());
 	qtStyleSheet += QString("QListView::item:hover  { color: %1; background: %2; } ").arg(colorHoverText.name(), colorHoverBackground.name());
-		
+
 	QString channelActionClassName = IRCMessageClass::toStyleSheetClassName(IRCMessageClass::ChannelAction);
 	QString errorClassName = IRCMessageClass::toStyleSheetClassName(IRCMessageClass::Error);
 	QString networkActionClassName = IRCMessageClass::toStyleSheetClassName(IRCMessageClass::NetworkAction);
-	
+
 	QString htmlStyleSheetMessageArea = "";
 	htmlStyleSheetMessageArea += "span { white-space: pre; }";
 	htmlStyleSheetMessageArea += QString("a { color: %1; white-space: pre; } ").arg(appearance.urlColor);
 	htmlStyleSheetMessageArea += QString("." + channelActionClassName + " { color: %1; } ").arg(appearance.channelActionColor);
 	htmlStyleSheetMessageArea += QString("." + errorClassName + " { color: %1; } ").arg(appearance.errorColor);
 	htmlStyleSheetMessageArea += QString("." + networkActionClassName + " { color: %1; } ").arg(appearance.networkActionColor);
-		 
+
 	this->lvUserList->setStyleSheet(qtStyleSheet);
 	this->lvUserList->setFont(appearance.userListFont);
-	
+
 	this->leCommandLine->setStyleSheet(qtStyleSheet);
 	this->leCommandLine->setFont(appearance.mainFont);
-	
+
 	this->txtOutputWidget->setStyleSheet(qtStyleSheet);
 	this->txtOutputWidget->setFont(appearance.mainFont);
-	
+
 	this->txtOutputWidget->document()->setDefaultStyleSheet(htmlStyleSheetMessageArea);
 	this->txtOutputWidget->clear();
 	this->txtOutputWidget->insertHtml(this->textOutputContents.join(""));
@@ -161,7 +161,7 @@ QStandardItem* IRCDockTabContents::findUserListItem(const QString& nickname)
 {
 	QStandardItemModel* pModel = (QStandardItemModel*)this->lvUserList->model();
 	IRCUserInfo userInfo(nickname);
-	
+
 	for (int i = 0; i < pModel->rowCount(); ++i)
 	{
 		QStandardItem* pItem = pModel->item(i);
@@ -170,7 +170,7 @@ QStandardItem* IRCDockTabContents::findUserListItem(const QString& nickname)
 			return pItem;
 		}
 	}
-	
+
 	return NULL;
 }
 
@@ -180,7 +180,7 @@ IRCDockTabContents::UserListMenu& IRCDockTabContents::getUserListContextMenu()
 	{
 		this->userListContextMenu = new UserListMenu();
 	}
-	
+
 	return *this->userListContextMenu;
 }
 
@@ -204,18 +204,18 @@ QIcon IRCDockTabContents::icon() const
 	{
 		return QIcon();
 	}
-	
+
 	switch (pIrcAdapter->adapterType())
 	{
 		case IRCAdapterBase::ChannelAdapter:
 			return QIcon(":/icons/irc_channel.png");
-			
+
 		case IRCAdapterBase::NetworkAdapter:
 			return QIcon(":/flags/lan-small");
-			
+
 		case IRCAdapterBase::PrivAdapter:
 			return QIcon(":/icons/person.png");
-			
+
 		default:
 			return QIcon();
 	}
@@ -228,22 +228,22 @@ void IRCDockTabContents::insertMessage(const IRCMessageClass& messageClass, cons
 		this->lastMessageClass = new IRCMessageClass();
 	}
 	*this->lastMessageClass = messageClass;
-	
+
 	this->textOutputContents << htmlString;
 
 	// Text insertion must be done this way to allow proper
 	// handling of "Pause" button. Note that the cursor
 	// in the widget is not affected as textCursor() creates a copy
-	// of cursor object.	
+	// of cursor object.
 	QTextCursor cursor = this->txtOutputWidget->textCursor();
 	cursor.movePosition(QTextCursor::End);
 	cursor.insertHtml(htmlString);
-	
+
 	if (!btnPauseTextArea->isChecked())
 	{
 		this->txtOutputWidget->moveCursor(QTextCursor::End);
 	}
-	
+
 	if (!this->hasTabFocus())
 	{
 		emit titleChange(this);
@@ -334,23 +334,28 @@ void IRCDockTabContents::receiveMessage(const QString& message)
 void IRCDockTabContents::receiveMessageWithClass(const QString& message, const IRCMessageClass& messageClass)
 {
 	QString className = messageClass.toStyleSheetClassName();
-	
+
 	QString messageHtmlEscaped = message;
-	
+
+	if (gIRCConfig.appearance.timestamps)
+	{
+        QString timestamp = Strings::timestamp("[hh:mm:ss] ") ;
+
+		messageHtmlEscaped = timestamp + messageHtmlEscaped;
+
+		// It is also required to replace all '\n' characters with timestamp
+		// markers to ensure that timestamp is in every line of text.
+		messageHtmlEscaped = messageHtmlEscaped.replace("\n", "\n" + timestamp);
+	}
+
 	// As the new-line character is stripped by the lower levels we should
 	// assume that each message ends with a new-line char, as specified
 	// by RFC 1459.
 	messageHtmlEscaped += "\n";
-	
+
 	messageHtmlEscaped.replace("<", "&lt;").replace(">", "&gt;");
-	
 	messageHtmlEscaped = Strings::wrapUrlsWithHtmlATags(messageHtmlEscaped);
-	
-	if (gIRCConfig.appearance.timestamps)
-	{
-		messageHtmlEscaped = Strings::timestamp("[hh:mm:ss] ") + messageHtmlEscaped;
-	}
-	
+
 	if (className.isEmpty())
 	{
 		messageHtmlEscaped = "<span>" + messageHtmlEscaped + "</span>";
@@ -359,19 +364,19 @@ void IRCDockTabContents::receiveMessageWithClass(const QString& message, const I
 	{
 		messageHtmlEscaped = ("<span class='" + className + "'>" + messageHtmlEscaped + "</span>");
 	}
-	
+
 	// Play sound if this is Priv adapter.
 	if (pIrcAdapter->adapterType() == IRCAdapterBase::PrivAdapter)
 	{
 		pParentIRCDock->sounds().playIfAvailable(IRCSounds::PrivateMessageReceived);
-		
+
 		// If this tab doesn't have focus, also start blinking the title.
 		if (!hasTabFocus())
 		{
 			blinkTimer.start(BLINK_TIMER_DELAY_MS);
 		}
 	}
-	
+
 	this->insertMessage(messageClass, messageHtmlEscaped);
 }
 
@@ -384,10 +389,10 @@ QString IRCDockTabContents::selectedNickname()
 		int row = selectedIndexes[0].row();
 		QStandardItemModel* pModel = (QStandardItemModel*)this->lvUserList->model();
 		QStandardItem* pItem = pModel->item(row);
-	
+
 		return pItem->text();
 	}
-	
+
 	return "";
 }
 
@@ -395,7 +400,7 @@ void IRCDockTabContents::sendMessage()
 {
 	QString message = leCommandLine->text();
 	leCommandLine->setText("");
-	
+
 	if (!message.trimmed().isEmpty())
 	{
 		pIrcAdapter->sendMessage(message);
@@ -410,9 +415,9 @@ void IRCDockTabContents::setBlinkTitle(bool b)
 		// Delay signal emit until after we change the variable.
 		bEmit = true;
 	}
-	
+
 	this->bBlinkTitle = b;
-	
+
 	if (bEmit)
 	{
 		emit titleChange(this);
@@ -437,7 +442,7 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 			connect(pNetworkAdapter, SIGNAL( newChatWindowIsOpened(IRCChatAdapter*) ), SLOT( newChatWindowIsOpened(IRCChatAdapter*) ) );
 			break;
 		}
-		
+
 		case IRCAdapterBase::ChannelAdapter:
 		{
 			IRCChannelAdapter* pChannelAdapter = (IRCChannelAdapter*)pAdapter;
@@ -448,14 +453,14 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 			connect(pChannelAdapter, SIGNAL( nameUpdated(const IRCUserInfo&) ), SLOT( nameUpdated(const IRCUserInfo&) ) );
 
 			this->lvUserList->setVisible(true);
-			connect(this->lvUserList, SIGNAL( customContextMenuRequested(const QPoint&) ), 
+			connect(this->lvUserList, SIGNAL( customContextMenuRequested(const QPoint&) ),
 				SLOT( userListCustomContextMenuRequested(const QPoint&) ) );
-				
+
 			connect(this->lvUserList, SIGNAL( doubleClicked(const QModelIndex&) ),
-				SLOT( userListDoubleClicked(const QModelIndex&) ) ); 
-			
+				SLOT( userListDoubleClicked(const QModelIndex&) ) );
+
 			this->lvUserList->setContextMenuPolicy(Qt::CustomContextMenu);
-			
+
 			break;
 		}
 
@@ -482,7 +487,7 @@ QString IRCDockTabContents::titleColor() const
 	if (this->lastMessageClass != NULL && !this->hasTabFocus())
 	{
 		QString color;
-	
+
 		if (*this->lastMessageClass == IRCMessageClass::Normal)
 		{
 			color = "#ff0000";
@@ -491,17 +496,17 @@ QString IRCDockTabContents::titleColor() const
 		{
 			color = this->lastMessageClass->colorFromConfig();
 		}
-		
+
 		if (bBlinkTitle)
 		{
 			QColor c(color);
-			
+
 			int rInverted = 0xff - c.red();
 			int gInverted = 0xff - c.green();
 			int bInverted = 0xff - c.blue();
-			
+
 			QColor inverted(rInverted, gInverted, bInverted);
-			
+
 			return inverted.name();
 		}
 		else
@@ -509,7 +514,7 @@ QString IRCDockTabContents::titleColor() const
 			return color;
 		}
 	}
-	
+
 	return "";
 }
 
@@ -520,34 +525,34 @@ void IRCDockTabContents::userListCustomContextMenuRequested(const QPoint& pos)
 		// Prevent illegal calls.
 		return;
 	}
-	
-	QString nickname = this->selectedNickname();	
+
+	QString nickname = this->selectedNickname();
 	if (nickname.isEmpty())
 	{
 		// Prevent calls if there is no one selected.
 		return;
 	}
 	QString cleanNickname = IRCUserInfo(nickname).cleanNickname();
-	
-	IRCChannelAdapter* pAdapter = (IRCChannelAdapter*) this->pIrcAdapter;	
+
+	IRCChannelAdapter* pAdapter = (IRCChannelAdapter*) this->pIrcAdapter;
 	const QString& channel = pAdapter->recipient();
 
 	UserListMenu& menu = this->getUserListContextMenu();
 	menu.setIsOperator(pAdapter->amIOperator());
 	menu.applyTargetUserFlags(nickname);
 	QPoint posGlobal = this->lvUserList->mapToGlobal(pos);
-	
+
 	QAction* pAction = menu.exec(posGlobal);
-	
+
 	if (pAction == NULL)
 	{
 		return;
 	}
-	
+
 	if (pAction == menu.ban)
 	{
 		bool bOk = false;
-	
+
 		QString reason = CommonGUI::askString(tr("Ban user"), tr("Input reason for banning user %1 from channel %2").arg(nickname, channel), &bOk);
 		if (bOk)
 		{
@@ -565,7 +570,7 @@ void IRCDockTabContents::userListCustomContextMenuRequested(const QPoint& pos)
 	else if (pAction == menu.kick)
 	{
 		bool bOk = false;
-	
+
 		QString reason = CommonGUI::askString(tr("Kick user"), tr("Input reason for kicking user %1 from channel %2").arg(nickname, channel), &bOk);
 		if (bOk)
 		{
@@ -594,14 +599,14 @@ void IRCDockTabContents::userListDoubleClicked(const QModelIndex& index)
 		return;
 	}
 
-	QString nickname = this->selectedNickname();	
+	QString nickname = this->selectedNickname();
 	if (nickname.isEmpty())
 	{
 		// Prevent calls if there is no one selected.
 		return;
 	}
 	QString cleanNickname = IRCUserInfo(nickname).cleanNickname();
-	
+
 	this->pIrcAdapter->network()->openNewAdapter(cleanNickname);
 }
 
@@ -617,7 +622,7 @@ IRCDockTabContents::UserListMenu::UserListMenu()
 	this->addSeparator();
 	this->kick = this->addAction(tr("Kick"));
 	this->ban = this->addAction(tr("Ban"));
-	
+
 	this->bIsOperator = false;
 }
 
@@ -636,7 +641,7 @@ void IRCDockTabContents::UserListMenu::applyTargetUserFlags(const IRCUserInfo& u
 			this->devoice->setEnabled(userInfo.isVoiced());
 			this->deop->setEnabled(false);
 			this->voice->setEnabled(!userInfo.isVoiced());
-			
+
 		}
 	}
 }

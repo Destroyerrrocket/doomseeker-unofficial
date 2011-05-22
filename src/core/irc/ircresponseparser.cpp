@@ -164,7 +164,49 @@ IRCResponseParseResult IRCResponseParser::parseMessage(const QString& prefix, co
             // First param is username, drop it.
             params.takeFirst();
 
-            emit print(responseType.toRfcString() + " " + joinAndTrimColonIfNecessary(params), QString());
+            if (enumType == IRCResponseType::RPLMOTDStart)
+            {
+                // We will print additional separator line if it's a start of
+                // the MOTD.
+                emit print("\n----------------------", QString());
+            }
+
+            emit print(joinAndTrimColonIfNecessary(params), QString());
+
+            if (enumType == IRCResponseType::RPLEndOfMOTD)
+            {
+                // Again, we will print additional separator line if it's the
+                // end of the MOTD.
+                emit print("----------------------\n", QString());
+            }
+
+            break;
+        }
+
+        // Extract correct message and print it.
+        case IRCResponseType::RPLLUserClient:
+        case IRCResponseType::RPLLUserMe:
+        {
+            // Drop the first param.
+            params.takeFirst();
+
+            // Join and print the rest.
+            emit print(joinAndTrimColonIfNecessary(params), QString());
+            break;
+        }
+
+        // Extract correct message and print it.
+        case IRCResponseType::RPLLUserOp:
+        case IRCResponseType::RPLLUserUnknown:
+        case IRCResponseType::RPLLUserChannels:
+        {
+            // Drop the first param.
+            params.takeFirst();
+
+            // Here the first param is always an integer, and colon is located
+            // afterwards.
+            QString number = params.takeFirst();
+            emit print(number + " " + joinAndTrimColonIfNecessary(params), QString());
             break;
         }
 
@@ -277,6 +319,7 @@ IRCResponseParseResult IRCResponseParser::parseMessage(const QString& prefix, co
         }
 
         case IRCResponseType::PrivMsg:
+        case IRCResponseType::Notice:
         {
             QString recipient = params[0];
 
@@ -295,7 +338,19 @@ IRCResponseParseResult IRCResponseParser::parseMessage(const QString& prefix, co
                 recipient = sender;
             }
 
-            emit privMsgReceived(recipient, sender, content);
+            if (responseType == IRCResponseType::PrivMsg)
+            {
+                emit privMsgReceived(recipient, sender, content);
+            }
+            else if (responseType == IRCResponseType::Notice)
+            {
+                emit print(QString("[%1]: %2").arg(sender, content), QString());
+            }
+            else
+            {
+                emit parseError(tr("Type '%1' was incorrectly parsed in PrivMsg block.").arg(type));
+            }
+
             break;
         }
 
@@ -315,7 +370,7 @@ IRCResponseParseResult IRCResponseParser::parseMessage(const QString& prefix, co
         {
             // Messages below 100 are some generic server responses to connect
             // event.
-            if (responseType.numericType() < 100)
+            if (responseType.numericType() > 1)
             {
                 emit print(joinAndTrimColonIfNecessary(params), "");
                 return IRCResponseParseResult(responseType, true);

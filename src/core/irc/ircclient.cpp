@@ -45,11 +45,11 @@ IRCClient::~IRCClient()
 void IRCClient::connect(const QString& address, unsigned short port)
 {
 	emit infoMessage(tr("IRC: attempting host lookup: %1").arg(address));
-	
+
 	this->bIsInHostLookupMode = true;
 	this->port = port;
 	this->hostName = address;
-	
+
 	this->lookUpId = QHostInfo::lookupHost(address, this, SLOT( hostLookupFinished(const QHostInfo&) ) );
 }
 
@@ -60,7 +60,7 @@ void IRCClient::connectSocketSignals(SocketSignalsAdapter* pAdapter)
 	pAdapter->connect(&socket, SIGNAL( disconnected() ), SLOT( disconnected() ));
 	pAdapter->connect(&socket, SIGNAL( error(QAbstractSocket::SocketError) ), SLOT( errorReceived(QAbstractSocket::SocketError) ));
 	pAdapter->connect(this, SIGNAL( hostLookupError(QHostInfo::HostInfoError) ), SLOT( hostLookupError(QHostInfo::HostInfoError) ));
-	pAdapter->connect(this, SIGNAL( infoMessage(const QString&) ), SLOT( infoMessage(const QString&) ));	
+	pAdapter->connect(this, SIGNAL( infoMessage(const QString&) ), SLOT( infoMessage(const QString&) ));
 }
 
 void IRCClient::disconnect()
@@ -82,7 +82,7 @@ void IRCClient::hostLookupFinished(const QHostInfo& hostInfo)
 	else
 	{
 		const QHostAddress* pIp = this->pickAddress(hostInfo.addresses());
-		
+
 		if (pIp == NULL)
 		{
 			emit hostLookupError(QHostInfo::HostNotFound);
@@ -103,7 +103,7 @@ bool IRCClient::isConnected() const
 const QHostAddress* IRCClient::pickAddress(const QList<QHostAddress>& addressesList)
 {
 	const QHostAddress* pIPv6 = NULL;;
-	
+
 	foreach (const QHostAddress& addr, addressesList)
 	{
 		if (addr.protocol() != QAbstractSocket::IPv4Protocol)
@@ -114,12 +114,12 @@ const QHostAddress* IRCClient::pickAddress(const QList<QHostAddress>& addressesL
 				pIPv6 = &addr;
 			}
 		}
-		else 
+		else
 		{
 			return &addr;
 		}
 	}
-	
+
 	// If we didn't return yet we must return the IPv6 addreses.
 	// If it is not null that is...
 	return pIPv6;
@@ -127,10 +127,10 @@ const QHostAddress* IRCClient::pickAddress(const QList<QHostAddress>& addressesL
 
 void IRCClient::receiveSocketData()
 {
-	while (socket.bytesAvailable() > 0)
+	while (socket.canReadLine())
 	{
 		QString responseLine = socket.readLine();
-		emit ircServerResponse(responseLine);	
+		emit ircServerResponse(responseLine);
 	}
 }
 
@@ -143,9 +143,9 @@ bool IRCClient::sendMessage(const QString& message)
 
 	QByteArray messageContent = message.toAscii();
 	messageContent.append("\r\n");
-	
+
 	qint64 numBytesWritten = socket.write(messageContent);
 	socket.flush();
-	
+
 	return numBytesWritten == messageContent.size();
 }

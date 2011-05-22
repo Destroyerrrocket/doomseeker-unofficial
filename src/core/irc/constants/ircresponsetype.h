@@ -49,6 +49,30 @@ class IRCResponseType
 
             // === Here are types with no text representation ===
 
+            /**
+             * @brief 251 - how many users on how many servers
+             *
+             * @see RPLLUserMe
+             */
+            RPLLUserClient,
+
+            /// 252 - how many ops
+            RPLLUserOp,
+
+            /// 253 - how many unknown connections
+            RPLLUserUnknown,
+
+            /// 254 - how many channels,
+            RPLLUserChannels,
+
+            /**
+             * @brief 255 - how many clients on how many servers,
+             *
+             * Server must send that and RPLLUserClient (251). Other values
+             * in between are sent only if they are not zero.
+             */
+            RPLLUserMe,
+
             /// 311
             RPLWhoIsUser,
 
@@ -83,6 +107,7 @@ class IRCResponseType
             Kill,
             Mode,
             Nick,
+            Notice,
             Part,
             Ping,
             PrivMsg,

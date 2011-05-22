@@ -35,34 +35,34 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::parse(IRCAdapterBase* 
 	{
 		return ErrorMessageEmpty;
 	}
-	
+
 	if (input[0] != '/')
 	{
 		return ErrorInputNotPrependedWithSlash;
 	}
-	
+
 	input.remove(0, 1);
 	if (input.isEmpty())
 	{
 		return ErrorMessageEmpty;
 	}
-	
+
 	if (input.length() > IRCClient::MAX_MESSAGE_LENGTH)
 	{
 		return ErrorMessageTooLong;
 	}
-	
+
 	QStringList inputSplit = input.split(" ", QString::SkipEmptyParts);
 	QString message = inputSplit.takeFirst();
 	message = message.toUpper();
-	
+
 	// As of this point inputSplit param list doesn't contain the message
 	// type anymore.
-	
+
 	if (message == "QUIT")
 	{
 		output = QString("%1 :%2").arg(message, inputSplit.join(" "));
-		return QuitCommand;	
+		return QuitCommand;
 	}
 	else if (message == "PART")
 	{
@@ -70,7 +70,7 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::parse(IRCAdapterBase* 
 		{
 			return ErrorInputInsufficientParameters;
 		}
-	
+
 		QString channel = inputSplit.takeFirst();
 		QString farewellMessage = inputSplit.join(" ");
 		output = QString("%1 %2 :%3").arg(message, channel, farewellMessage);
@@ -81,24 +81,28 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::parse(IRCAdapterBase* 
 		{
 			return ErrorInputInsufficientParameters;
 		}
-	
+
 		QString channel = inputSplit.takeFirst();
 		QString user = inputSplit.takeFirst();
 		QString reason = inputSplit.join(" ");
 		output = QString("%1 %2 %3 :%4").arg(message, channel, user, reason);
 	}
-	else if (message == "PRIVMSG")
+	else if (message == "PRIVMSG" || message == "NOTICE")
 	{
+        // Notice and Privmsg are handled the same way.
 		if (inputSplit.length() < 2)
 		{
 			return ErrorInputInsufficientParameters;
 		}
-		
+
 		QString recipient = inputSplit.takeFirst();
 		QString content = inputSplit.join(" ");
 		output = QString("%1 %2 :%3").arg(message, recipient, content);
-		
-		emit echoPrivmsg(recipient, content);
+
+		if (message == "PRIVMSG")
+		{
+            emit echoPrivmsg(recipient, content);
+		}
 	}
 	else if (message == "MSG")
 	{
@@ -122,6 +126,6 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::parse(IRCAdapterBase* 
 	{
 		output = QString("%1 %2").arg(message, inputSplit.join(" "));
 	}
-	
+
 	return Ok;
 }
