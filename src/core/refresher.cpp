@@ -230,6 +230,7 @@ void RefreshingThread::readPendingDatagrams()
 	socket->readDatagram(data, size, &address, &port);
 
 	QByteArray dataArray(data, size);
+	delete[] data;
 
 	MasterHashtableIt it;
 	for (it = registeredMasters.begin(); it != registeredMasters.end(); ++it)
@@ -281,8 +282,6 @@ void RefreshingThread::readPendingDatagrams()
 			}
 		}
 	}
-
-	delete[] data;
 }
 
 void RefreshingThread::sendMasterQueries()

@@ -377,6 +377,6 @@ if(NOT WIN32 AND NOT XCODE_VERSION)
 endif(NOT WIN32 AND NOT XCODE_VERSION)
 
 if(UNIX AND NOT APPLE)
-	install(FILES ${CMAKE_BINARY_DIR}/media/icon.png DESTINATION share/doomseeker)
-	install(FILES ${CMAKE_BINARY_DIR}/media/Doomseeker.desktop DESTINATION /usr/share/applications)
+	install(FILES ${CMAKE_SOURCE_DIR}/media/icon.png DESTINATION share/doomseeker)
+	install(FILES ${CMAKE_SOURCE_DIR}/media/Doomseeker.desktop DESTINATION /usr/share/applications)
 endif(UNIX AND NOT APPLE)

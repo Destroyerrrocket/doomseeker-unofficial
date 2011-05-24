@@ -31,7 +31,7 @@
 #include "serverapi/playerslist.h"
 
 ServersStatusWidget::ServersStatusWidget(const QPixmap &icon, MasterClient *serverList) : QLabel(),
-	icon(icon), numBots(0), numPlayers(0), serverList(serverList)
+	bMasterIsEnabled(false), icon(icon), numBots(0), numPlayers(0), serverList(serverList)
 {
     // Transform icon to grayscale format for disabled appearance
     QImage iconImage = icon.toImage();
