@@ -26,7 +26,7 @@
 #include "speedcalculator.h"
 #include "wadseeker.h"
 #include "wadseekerversioninfo.h"
-#include "www.h"
+#include "wwwseeker.h"
 #include <QDir>
 #include <QFileInfo>
 #include <QStack>

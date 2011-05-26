@@ -39,6 +39,7 @@ set(WADSEEKER_QT_FILES
 	zip/unzip.h
 	wadseeker.h
 	www.h
+	wwwseeker.h
 )
 
 set(WADSEEKER_FILES
@@ -56,6 +57,7 @@ set(WADSEEKER_FILES
 	wadseeker.cpp
 	wadseekerversioninfo.cpp
 	www.cpp
+	wwwseeker.cpp
 )
 
 # For the purpose of generation proper project files.

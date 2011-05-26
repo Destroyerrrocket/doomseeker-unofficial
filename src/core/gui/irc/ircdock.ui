@@ -10,6 +10,9 @@
     <height>491</height>
    </rect>
   </property>
+  <property name="features">
+   <set>QDockWidget::AllDockWidgetFeatures</set>
+  </property>
   <property name="allowedAreas">
    <set>Qt::AllDockWidgetAreas</set>
   </property>
@@ -19,7 +22,7 @@
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QTabWidgetExt" name="tabWidget">
         <property name="minimumSize">

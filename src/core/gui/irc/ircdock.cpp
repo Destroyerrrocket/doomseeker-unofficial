@@ -195,6 +195,7 @@ void IRCDock::setupToolbar()
 {
 	QToolBar* pToolBar = new QToolBar(this);
 	pToolBar->setMovable(false);
+	pToolBar->setOrientation(Qt::Vertical);
 
 	toolBarConnect = new QAction(QIcon(":/icons/network-connect-3.png"), tr("Connect"), pToolBar);
 	toolBarOpenChatWindow = new QAction(QIcon(":/icons/irc_channel.png"), tr("Open chat window"), pToolBar);
@@ -202,7 +203,7 @@ void IRCDock::setupToolbar()
 	pToolBar->addAction(toolBarConnect);
 	pToolBar->addAction(toolBarOpenChatWindow);
 
-	verticalLayout->insertWidget(0, pToolBar);
+	horizontalLayout->insertWidget(0, pToolBar);
 	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( toolBarAction(QAction*) ) );
 }
 

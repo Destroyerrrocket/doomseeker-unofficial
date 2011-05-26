@@ -44,6 +44,7 @@
 	<file alias="flags/CHL">flags/CHL.png</file> <!-- Chile -->
 	<file alias="flags/CHN">flags/CHN.png</file> <!-- China -->
 	<file alias="flags/COL">flags/COL.png</file> <!-- Colombia -->
+	<file alias="flags/CRI">flags/CRI.png</file> <!-- Costa Rica -->	
 	<file alias="flags/CS" >flags/CS.png</file>  <!-- Serbia and Montenegro -->
 	<file alias="flags/CZE">flags/CZE.png</file> <!-- Czech Republic -->	
 	<file alias="flags/DEU">flags/DEU.png</file> <!-- Germany -->
@@ -56,6 +57,7 @@
 	<file alias="flags/FRA">flags/FRA.png</file> <!-- France -->
 	<file alias="flags/GBR">flags/GBR.png</file> <!-- United Kingdom -->
 	<file alias="flags/GRC">flags/GRC.png</file> <!-- Greece -->
+	<file alias="flags/GTM">flags/GTM.png</file> <!-- Guatemala -->
 	<file alias="flags/HKG">flags/HKG.png</file> <!-- Hong Kong -->
 	<file alias="flags/HRV">flags/HRV.png</file> <!-- Croatia -->
 	<file alias="flags/HUN">flags/HUN.png</file> <!-- Hungary -->
