@@ -131,6 +131,9 @@ set(DOOMSEEKER_QT_FILES
 	gui/serverlist.h
 	gui/standardserverconsole.h
 	gui/wadseekerinterface.h
+	ip2c/ip2c.h
+	ip2c/ip2cparser.h
+	ip2c/ip2cupdater.h
 	irc/ircadapterbase.h
 	irc/ircchanneladapter.h
 	irc/ircclient.h
@@ -138,17 +141,15 @@ set(DOOMSEEKER_QT_FILES
 	irc/ircnetworkadapter.h
 	irc/ircrequestparser.h
 	irc/ircresponseparser.h
+	masterserver/masterclient.h
+	masterserver/masterclientsignalproxy.h
+	masterserver/mastermanager.h
 	sdeapi/config.hpp
 	serverapi/message.h
 	serverapi/rconprotocol.h
 	serverapi/server.h
 	customservers.h
-	ip2c.h
-	ip2cparser.h
-	ip2cupdater.h
 	log.h
-	masterclient.h
-	mastermanager.h
 	refresher.h
 	socketsignalsadapter.h
 )
@@ -211,6 +212,13 @@ set(SOURCE_FILES
 	gui/serverlist.cpp
 	gui/standardserverconsole.cpp
 	gui/wadseekerinterface.cpp
+	ini/inisection.cpp
+	ini/inivariable.cpp
+	ini/ini.cpp
+	ip2c/entities/ip2ccountryinfo.cpp	
+	ip2c/ip2c.cpp
+	ip2c/ip2cparser.cpp
+	ip2c/ip2cupdater.cpp
 	irc/configuration/ircconfig.cpp
 	irc/constants/ircresponsetype.cpp
     irc/entities/ircnetworkentity.cpp
@@ -229,6 +237,9 @@ set(SOURCE_FILES
 	irc/ircresponseparser.cpp
 	irc/ircuserinfo.cpp
 	irc/ircuserlist.cpp
+	masterserver/masterclient.cpp
+	masterserver/masterclientsignalproxy.cpp	
+	masterserver/mastermanager.cpp	
 	sdeapi/config.cpp
 	sdeapi/pluginloader.cpp
 	sdeapi/scanner.cpp
@@ -254,14 +265,8 @@ set(SOURCE_FILES
 	customservers.cpp
 	datapaths.cpp
 	doomseekerfilepaths.cpp
-	ini.cpp
-	ip2c.cpp
-	ip2cparser.cpp
-	ip2cupdater.cpp
 	log.cpp
 	main.cpp
-	masterclient.cpp
-	mastermanager.cpp
 	pathfinder.cpp
 	random.cpp
 	refresher.cpp
@@ -283,6 +288,10 @@ set(HEADER_FILES
 	gui/models/serverlistrowhandler.h
 	gui/widgets/qtabwidgetext.h
 	gui/ip2cupdatebox.h
+	ini/inisection.h
+	ini/inivariable.h	
+	ini/ini.h
+	ip2c/entities/ip2ccountryinfo.h
 	irc/configuration/ircconfig.h
 	irc/constants/ircresponsetype.h
     irc/entities/ircnetworkentity.h
@@ -318,7 +327,6 @@ set(HEADER_FILES
 	datapaths.h
 	doomseekerfilepaths.h
 	global.h
-	ini.h
 	main.h
 	random.h
 	pathfinder.h

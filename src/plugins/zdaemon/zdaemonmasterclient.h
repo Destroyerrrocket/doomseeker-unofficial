@@ -24,12 +24,12 @@
 #ifndef __ZDAEMONMASTERCLIENT_H__
 #define __ZDAEMONMASTERCLIENT_H__
 
+#include "masterserver/masterclient.h"
+
 #include <QByteArray>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QWaitCondition>
-
-#include "masterclient.h"
 
 class PluginInfo;
 

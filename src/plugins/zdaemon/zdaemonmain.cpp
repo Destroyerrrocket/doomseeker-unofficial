@@ -23,12 +23,12 @@
 
 #include <QHostInfo>
 
+#include "gui/configuration/engineconfigurationbasebox.h"
+#include "masterserver/masterclient.h"
+#include "sdeapi/pluginloader.hpp"
 #include "global.h"
 #include "main.h"
-#include "masterclient.h"
 #include "strings.h"
-#include "gui/configuration/engineconfigurationbasebox.h"
-#include "sdeapi/pluginloader.hpp"
 
 #include "zdaemongameinfo.h"
 #include "zdaemonmain.h"

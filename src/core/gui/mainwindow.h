@@ -24,18 +24,19 @@
 #ifndef __MAINWINDOW_H_
 #define __MAINWINDOW_H_
 
-#include "apprunner.h"
-#include "ip2cparser.h"
-#include "ip2cupdater.h"
-#include "mastermanager.h"
-#include "sdeapi/config.hpp"
-#include "sdeapi/pluginloader.hpp"
+#include "ui_mainwindow.h"
+
 #include "gui/irc/ircdock.h"
 #include "gui/dockBuddiesList.h"
 #include "gui/logdock.h"
 #include "gui/serverlist.h"
 #include "gui/widgets/serversstatuswidget.h"
-#include "ui_mainwindow.h"
+#include "ip2c/ip2cparser.h"
+#include "ip2c/ip2cupdater.h"
+#include "masterserver/mastermanager.h"
+#include "sdeapi/config.hpp"
+#include "sdeapi/pluginloader.hpp"
+#include "apprunner.h"
 
 #include <QAction>
 #include <QProgressBar>

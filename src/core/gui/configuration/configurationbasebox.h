@@ -24,8 +24,8 @@
 #ifndef __CONFIGURATION_BASE_BOX_H_
 #define __CONFIGURATION_BASE_BOX_H_
 
+#include "ini/ini.h"
 #include "global.h"
-#include "ini.h"
 #include <QGroupBox>
 #include <QPushButton>
 #include <QStandardItem>
@@ -37,13 +37,13 @@
  *	in order to configure program's modules. Settings are being
  *	read() and save()'d through virtual methods, however the
  *	implementation of such methods can do basicaly anything.
- */ 
+ */
 class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 {
 	Q_OBJECT;
 
 	public:
-		ConfigurationBaseBox(QWidget* parent = NULL) 
+		ConfigurationBaseBox(QWidget* parent = NULL)
 		: QGroupBox(parent)
 		{
 			this->bAllowSave = false;
@@ -55,7 +55,7 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 
 		bool			allowSave() { return this->bAllowSave; }
 		bool			areSettingsAlreadyRead() { return this->bSettingsAlreadyRead; }
-		
+
 		/**
 		 *	@brief Reimplement this to return displayable icon for the
 		 *	ConfigurationBaseBox.
@@ -64,7 +64,7 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 		 *	QIcon object with argument-less constructor.
 		 */
 		virtual QIcon	icon() const = 0;
-		
+
 		/**
 		 *	@brief Reimplement this to return displayable name for the
 		 *	ConfigurationBaseBox.
@@ -83,7 +83,7 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 		}
 
 		bool			save()
-		{	
+		{
 			if (this->bAllowSave)
 			{
 				saveSettings();
@@ -97,14 +97,14 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 
 	signals:
 		/**
-		 *	This will send a request to the Doomseeker through 
+		 *	This will send a request to the Doomseeker through
 		 *	ConfigurationDialog to redraw some graphics.
 		 */
 		void			appearanceChanged();
 
 		/**
-		 *	This will change default button (the one that is 
-		 *	activated when user hits ENTER) to 'btn'. If NULL is 
+		 *	This will change default button (the one that is
+		 *	activated when user hits ENTER) to 'btn'. If NULL is
 		 *	passed as 'btn' argument it will revert to OK button.
 		 */
 		void 			wantChangeDefaultButton(QPushButton* btn);
@@ -114,14 +114,14 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 		bool			bSettingsAlreadyRead;
 
 		/**
-		 *	These shouldn't execute Config::readConfig() and 
+		 *	These shouldn't execute Config::readConfig() and
 		 *	Config::saveConfig() methods. They're here to read settings
 		 *	from and write them to controls.
 		 */
 		virtual void	readSettings()=0;
 
 		/**
-		 *	These shouldn't execute Config::readConfig() and 
+		 *	These shouldn't execute Config::readConfig() and
 		 *	Config::saveConfig() methods. They're here to read settings
 		 *	from and write them to controls.
 		 */

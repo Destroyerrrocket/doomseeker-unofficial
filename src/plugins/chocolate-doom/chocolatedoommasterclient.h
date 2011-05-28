@@ -24,7 +24,7 @@
 #ifndef __CHOCOLATEDOOMMASTERCLIENT_H__
 #define __CHOCOLATEDOOMMASTERCLIENT_H__
 
-#include "masterclient.h"
+#include "masterserver/masterclient.h"
 
 class PluginInfo;
 

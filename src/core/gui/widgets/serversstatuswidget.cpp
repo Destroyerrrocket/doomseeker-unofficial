@@ -26,7 +26,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 
-#include "masterclient.h"
+#include "masterserver/masterclient.h"
 #include "serversstatuswidget.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"

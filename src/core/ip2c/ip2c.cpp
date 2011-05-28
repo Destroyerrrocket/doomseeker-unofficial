@@ -20,6 +20,7 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
+#include "ip2c.h"
 
 #include <QBuffer>
 #include <QFile>
@@ -30,7 +31,6 @@
 #include <QTimeLine>
 
 #include "log.h"
-#include "ip2c.h"
 
 IP2C::IP2C()
 : flagLan(":flags/lan-small"), flagLocalhost(":flags/localhost-small"),
@@ -124,18 +124,16 @@ const IP2C::IP2CData& IP2C::lookupIP(unsigned int ipaddress)
 	return invalidData;
 }
 
-CountryInfo IP2C::obtainCountryInfo(unsigned int ipaddress)
+IP2CCountryInfo IP2C::obtainCountryInfo(unsigned int ipaddress)
 {
 	if (isLocalhostAddress(ipaddress))
 	{
-		CountryInfo ci = { true, &flagLocalhost, tr("Localhost") };
-		return ci;
+		return IP2CCountryInfo(&flagLocalhost, tr("Localhost"));
 	}
 
 	if (isLANAddress(ipaddress))
 	{
-		CountryInfo ci = { true, &flagLan, tr("LAN") };
-		return ci;
+        return IP2CCountryInfo(&flagLan, tr("LAN"));
 	}
 
 	const IP2CData& data = lookupIP(ipaddress);
@@ -143,18 +141,18 @@ CountryInfo IP2C::obtainCountryInfo(unsigned int ipaddress)
 	if (data.country.isEmpty())
 	{
 		char buffer[1024];
+
 		sprintf(buffer, "Unrecognized IP address: %s (DEC: %u / HEX: %X)", QHostAddress(ipaddress).toString().toAscii().constData(), ipaddress, ipaddress);
 		gLog << buffer;
-		CountryInfo ci = { true, &flagUnknown, tr("Unknown") };
-		return ci;
+
+		return IP2CCountryInfo(&flagUnknown, tr("Unknown"));
 	}
 
 	if (!data.isValid())
 	{
-		CountryInfo ci = {false, NULL, QString() };
-		return ci;
+		return IP2CCountryInfo();
 	}
 
-	CountryInfo ci = {true, &flag(ipaddress, data.country), data.countryFullName };
-	return ci;
+	const QPixmap* pFlag = &flag(ipaddress, data.country);
+	return IP2CCountryInfo(pFlag, data.countryFullName);
 }

@@ -21,10 +21,11 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "refresher.h"
-#include "masterclient.h"
-#include "mastermanager.h"
-#include "serverapi/server.h"
+#include "masterserver/masterclient.h"
+#include "masterserver/masterclientsignalproxy.h"
+#include "masterserver/mastermanager.h"
 #include "sdeapi/pluginloader.hpp"
+#include "serverapi/server.h"
 
 RefreshingThread::RefreshingThread()
 {
@@ -415,7 +416,7 @@ void RefreshingThread::unregisterMaster(MasterClient* pMaster)
 
 RefreshingThread::MasterClientInfo::MasterClientInfo(MasterClient* pMaster, RefreshingThread* pParent)
 {
-	pReceiver = new MasterClientReceiver(pMaster);
+	pReceiver = new MasterClientSignalProxy(pMaster);
 	connect(pReceiver, SIGNAL( listUpdated(MasterClient*) ), pParent, SLOT( masterFinishedRefreshing(MasterClient*) ) );
 
 	numOfChallengesSent = 0;

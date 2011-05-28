@@ -24,7 +24,7 @@
 #define __CONFIGUREDIALOG_H_
 
 #include "gui/configuration/configurationbasebox.h"
-#include "ini.h"
+#include "ini/ini.h"
 #include "ui_configurationdialog.h"
 
 class ConfigurationDialog : public QDialog, private Ui::ConfigurationDialog
@@ -34,10 +34,10 @@ class ConfigurationDialog : public QDialog, private Ui::ConfigurationDialog
 	public:
 		ConfigurationDialog(QWidget* parent = NULL);
 		~ConfigurationDialog();
-		
+
 		/**
 		 *	@brief Adds a new configuration box to the options tree view.
-		 *	
+		 *
 		 *	@param rootItem
 		 *		Pointer to the root node of the tree to which the new box
 		 *		will be attached. If NULL the standard model root is used.
@@ -50,8 +50,8 @@ class ConfigurationDialog : public QDialog, private Ui::ConfigurationDialog
 		 *	@return NULL if ConfigurationBox was not added. Pointer to a new
 		 *	tree node if operation was successful.
 		 */
-		virtual QStandardItem*			addConfigurationBox(QStandardItem* rootItem, ConfigurationBaseBox* pConfigurationBox, int position = -1);			
-		
+		virtual QStandardItem*			addConfigurationBox(QStandardItem* rootItem, ConfigurationBaseBox* pConfigurationBox, int position = -1);
+
 		/**
 		 *	@brief Adds a label node to the options tree view.
 		 *
@@ -71,21 +71,21 @@ class ConfigurationDialog : public QDialog, private Ui::ConfigurationDialog
 		 */
 		QStandardItem*					addLabel(QStandardItem* rootItem, const QString& label, int position = -1);
 		bool							isConfigurationBoxOnTheList(ConfigurationBaseBox* pConfigurationBox);
-		
+
 
 	protected:
 		bool							canConfigurationBoxBeAddedToList(ConfigurationBaseBox* pConfigurationBox);
-		
+
 		virtual void					doSaveSettings() {};
-		
+
 		bool							isConfigurationBoxInfoValid(ConfigurationBaseBox* pConfigurationBox);
 
 		/**
 		 * 	@param widget - hide currently displayed box if NULL.
 		 */
 		void 							showConfigurationBox(QWidget* widget);
-		void							saveSettings();		
-		
+		void							saveSettings();
+
 		virtual bool					validate() { return true; }
 
 	protected slots:
@@ -96,10 +96,10 @@ class ConfigurationDialog : public QDialog, private Ui::ConfigurationDialog
 	private:
 		QList<ConfigurationBaseBox*>	configBoxesList;
 		QWidget*						currentlyDisplayedCfgBox;
-		
+
 		bool							hasItemOnList(QStandardItem* pItem) const;
 
-		
+
 };
 
 #endif

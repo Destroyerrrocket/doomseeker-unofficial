@@ -24,6 +24,9 @@
 #ifndef __IP2C_H__
 #define __IP2C_H__
 
+#include "ip2c/entities/ip2ccountryinfo.h"
+#include "global.h"
+
 #include <QHash>
 #include <QHostAddress>
 #include <QList>
@@ -33,24 +36,6 @@
 #include <QStatusBar>
 #include <QString>
 #include <QUrl>
-
-#include "global.h"
-
-/**
- *	@brief Flag and name of the country.
- */
-class MAIN_EXPORT CountryInfo
-{
-    public:
-        bool			valid;
-        const QPixmap*	flag;
-        QString			name;
-
-        bool isFlagOk() const
-        {
-            return valid && flag != NULL && !flag->isNull();
-        }
-};
 
 /**
  *	@brief IP to Country database handler.
@@ -115,8 +100,8 @@ class MAIN_EXPORT IP2C : public QObject
 		/**
 		 *	Returns country information based on given IP.
 		 */
-		CountryInfo		obtainCountryInfo(unsigned int ipaddress);
-		CountryInfo		obtainCountryInfo(const QHostAddress& ipaddress) { return obtainCountryInfo(ipaddress.toIPv4Address()); }
+		IP2CCountryInfo	obtainCountryInfo(unsigned int ipaddress);
+		IP2CCountryInfo	obtainCountryInfo(const QHostAddress& ipaddress) { return obtainCountryInfo(ipaddress.toIPv4Address()); }
 
 		void			setDataAccessLockEnabled(bool b) { bDataAccessLocked = b; }
 

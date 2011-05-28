@@ -25,7 +25,7 @@
 
 #define gIRCConfig IRCConfig::config()
 
-#include "ini.h"
+#include "ini/ini.h"
 #include "irc/entities/ircnetworkentity.h"
 #include <QFont>
 

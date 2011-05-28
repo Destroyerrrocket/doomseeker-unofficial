@@ -24,7 +24,8 @@
 #define __WADSEEKERINTERFACE_H_
 
 #include "ui_wadseekerinterface.h"
-#include "ini.h"
+
+#include "ini/ini.h"
 #include "wadseeker/wadseeker.h"
 #include <QStringList>
 #include <QTimer>

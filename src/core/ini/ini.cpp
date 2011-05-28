@@ -24,209 +24,8 @@
 #include "log.h"
 #include "main.h"
 #include "strings.h"
+
 #include <cassert>
-
-IniVariable::operator bool() const
-{
-	return value.toInt() != 0;
-}
-
-IniVariable::operator int() const
-{
-	return value.toInt();
-}
-
-IniVariable::operator unsigned int() const
-{
-	return value.toUInt();
-}
-
-IniVariable::operator short() const
-{
-	return value.toShort();
-}
-
-IniVariable::operator unsigned short() const
-{
-	return value.toUShort();
-}
-
-IniVariable::operator float() const
-{
-	return value.toFloat();
-}
-
-const IniVariable &IniVariable::operator=(const QString &str)
-{
-	assert(!isNull());
-
-	value = str;
-	return *this;
-}
-
-const IniVariable &IniVariable::operator=(int i)
-{
-	assert(!isNull());
-
-	value = QString("%1").arg(i);
-	return *this;
-}
-
-const IniVariable &IniVariable::operator=(unsigned int i)
-{
-	assert(!isNull());
-
-	value = QString("%1").arg(i);
-	return *this;
-}
-
-const IniVariable &IniVariable::operator=(short i)
-{
-	assert(!isNull());
-
-	value = QString("%1").arg(i);
-	return *this;
-}
-
-const IniVariable &IniVariable::operator=(unsigned short i)
-{
-	assert(!isNull());
-
-	value = QString("%1").arg(i);
-	return *this;
-}
-
-const IniVariable &IniVariable::operator=(bool b)
-{
-	return *this = static_cast<int>(b);
-}
-
-const IniVariable &IniVariable::operator=(float f)
-{
-	assert(!isNull());
-
-	value = QString("%1").arg(f);
-	return *this;
-}
-
-const IniVariable &IniVariable::operator=(const IniVariable &other)
-{
-	assert(!isNull());
-
-	null = other.null;
-	sideComment = other.sideComment;
-	topComment = other.topComment;
-	key = other.key;
-	value = other.value;
-	return *this;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-IniVariable IniSection::nullVariable((const IniVariable &)IniVariable::makeNull());
-
-IniVariable &IniSection::createSetting(const QString& name, const IniVariable& data)
-{
-	assert(!isNull());
-	if (name.isEmpty())
-	{
-		return nullVariable;
-	}
-	
-	QString nameLower = name.toLower();
-
-	IniVariablesIt it = variables.find(nameLower);
-	if (it != variables.end())
-	{
-		return *it;
-	}
-
-	// Avoid setting a Null variable.
-	IniVariable varData;
-	varData.key = name;
-	varData = data;
-
-	variables.insert(nameLower, varData);
-	IniVariable &pNewVariable = *variables.find(nameLower);
-	pNewVariable.key = name;
-
-	return pNewVariable;
-}
-
-void IniSection::deleteSetting(const QString& name)
-{
-	assert(!isNull());
-	if (name.isEmpty())
-	{
-		return;
-	}
-	
-	QString nameLower = name.toLower();
-
-	IniVariablesIt it = variables.find(nameLower);
-	if (it != variables.end())
-	{
-		variables.erase(it);
-	}
-}
-
-IniVariable &IniSection::retrieveSetting(const QString& name)
-{
-	assert(!isNull());
-	if (name.isEmpty())
-	{
-		return nullVariable;
-	}
-	
-	QString nameLower = name.toLower();
-
-	IniVariablesIt it = variables.find(nameLower);
-	if (it == variables.end())
-	{
-		return nullVariable;
-	}
-
-	return *it;
-}
-const IniVariable &IniSection::retrieveSetting(const QString& name) const
-{
-	if (name.isEmpty())
-	{
-		return nullVariable;
-	}
-	
-	QString nameLower = name.toLower();
-
-	IniVariablesConstIt it = variables.find(nameLower);
-	if (it == variables.end())
-	{
-		return nullVariable;
-	}
-
-	return *it;
-}
-
-IniVariable &IniSection::setting(const QString& name)
-{
-	assert(!isNull());
-	if (name.isEmpty())
-	{
-		return nullVariable;
-	}
-	
-	QString nameLower = name.toLower();
-
-	IniVariable& pVariable = retrieveSetting(nameLower);
-	if (pVariable.isNull())
-		return createSetting(name, IniVariable());
-	return pVariable;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 
 IniSection Ini::nullSection = IniSection::makeNull();
 
@@ -249,7 +48,7 @@ void Ini::copy(const Ini& other)
 	{
 		errorsList << str;
 	}
-	
+
 	dataSourc = other.dataSourc;
 	filename = other.filename;
 	iniTopComment = other.iniTopComment;
@@ -264,7 +63,7 @@ IniSection& Ini::createSection(const QString& name)
 	{
 		return nullSection;
 	}
-	
+
 	QString nameLower = name.toLower();
 
 	IniSectionsIt it = sections.find(nameLower);
@@ -272,7 +71,7 @@ IniSection& Ini::createSection(const QString& name)
 	{
 		return *it;
 	}
-	
+
 	IniSection newSection;
 	newSection.name = name;
 
@@ -355,7 +154,7 @@ bool Ini::loadAdditionalSettings(const QByteArray& data)
 bool Ini::loadIniFile(const QString& filePath)
 {
 	gLog << tr("Ini file is: %1").arg(filePath);
-	
+
 	this->filename = filePath;
 
 	QFile file(filePath);
@@ -376,7 +175,7 @@ bool Ini::loadIniFile(const QString& filePath)
 	{
 		dataSourc = Drive;
 	}
-	
+
 	return valid;
 }
 
@@ -454,16 +253,16 @@ void Ini::readQByteArrayIntoStructures(const QByteArray& array)
 	bool 			previousLineWasEmpty = false;
 	QString			topComment;
 	IniVariables 	vars;
-	
+
 	QList<QByteArray> arrayLines = array.split('\n');
 
 	foreach(QByteArray arrayLine, arrayLines)
 	{
 		++lineNum;
-		
-		QString	sideComment;			
+
+		QString	sideComment;
 		QString line = arrayLine;
-		
+
 		line = Strings::trimr(line, " \t\r");
 		line = Strings::triml(line, " \t");
 
@@ -487,9 +286,9 @@ void Ini::readQByteArrayIntoStructures(const QByteArray& array)
 		{
 			previousLineWasEmpty = false;
 			bool ok;
-			
+
 			topComment = Strings::trimr(topComment, "\n");
-			
+
 			currentSection = &parseSectionName(line, ok, topComment, lineNum);
 			topComment.clear();
 			if (!ok)
@@ -564,7 +363,7 @@ void Ini::readQByteArrayIntoStructures(const QByteArray& array)
 				}
 				else
 				{
-					errorsList << tr("Warning in file '%1' at line %2: Unknown data after variable's value. Ignoring.").arg(filename).arg(lineNum);				
+					errorsList << tr("Warning in file '%1' at line %2: Unknown data after variable's value. Ignoring.").arg(filename).arg(lineNum);
 				}
 			}
 
@@ -603,7 +402,7 @@ IniSection& Ini::retrieveSection(const QString& name)
 	{
 		return nullSection;
 	}
-	
+
 	QString nameLower = name.toLower();
 
 	IniSectionsIt it = sections.find(nameLower);
@@ -665,9 +464,9 @@ IniSection& Ini::section(const QString& name)
 QVector<IniSection*> Ini::sectionsArray(const QString& regexPattern)
 {
 	QVector<IniSection*> sectionsReferencesArray;
-	
+
 	QRegExp regExp(regexPattern, Qt::CaseInsensitive);
-	
+
 	IniSectionsIt it;
 	for (it = sections.begin(); it != sections.end(); ++it)
 	{
@@ -677,7 +476,7 @@ QVector<IniSection*> Ini::sectionsArray(const QString& regexPattern)
 			sectionsReferencesArray << &it.value();
 		}
 	}
-	
+
 	return sectionsReferencesArray;
 }
 
@@ -719,15 +518,15 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 	{
 		const IniSection& section = *sectionit;
 		QString sectionTopComment = section.topComment;
-		
+
 		sectionTopComment = Strings::trim(sectionTopComment, "\r\n");
-	
+
 		// Output section's top comment
 		if (!sectionTopComment.isEmpty())
 		{
 			QStringList commentList;
 			commentList = sectionTopComment.split('\n');
-			
+
 			foreach (QString comment, commentList)
 			{
 				output.append("# ");
@@ -735,12 +534,12 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 				output.append("\n");
 			}
 		}
-		
+
 		// Output section's name
 		output.append("\n[ ");
 		output.append(section.name);
 		output.append(" ]");
-		
+
 		QString sectionSideComment = section.sideComment;
 		sectionSideComment = sectionSideComment.replace("\n", " ");
 		if (!sectionSideComment.isEmpty())
@@ -755,15 +554,15 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 		for (varit = sectionit->variables.begin(); varit != sectionit->variables.end(); ++varit)
 		{
 			const IniVariable& variable = *varit;
-		
+
 			// Output variable's top comment
 			QString variableTopComment = variable.topComment;
 			variableTopComment = Strings::trim(variableTopComment, "\r\n");
-			
+
 			if (!variableTopComment.isEmpty())
 			{
 				QStringList commentList = variableTopComment.split('\n');
-				
+
 				foreach (QString comment, commentList)
 				{
 					output.append("# ");
@@ -775,14 +574,14 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 			// Output variable's name and value, make sure to wrap values
 			// with '#' or whitespace characters wrapped in quotation marks.
 			QString formattedValue = variable.value;
-			
+
 			QRegExp whiteSpace("\\s");
-			
+
 			if (variable.value.contains(whiteSpace) || variable.value.contains("#"))
 			{
 				formattedValue = QString("\"%1\"").arg(formattedValue);
 			}
-			
+
 			output.append(variable.key);
 			output.append(" = ");
 			output.append(formattedValue);
@@ -790,7 +589,7 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 			// Output variable's side comment
 			QString variableSideComment = varit->sideComment;
 			variableSideComment = variableSideComment.replace("\n", " ");
-			
+
 			if (!variableSideComment.isEmpty())
 			{
 				output.append("\t#");
@@ -805,7 +604,7 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 		{
 			QString nameListTopComment = nameit->topComment;
 			nameListTopComment = Strings::trim(nameListTopComment, "\r\n");
-		
+
 			if (!nameListTopComment.isEmpty())
 			{
 				QStringList commentList = nameListTopComment.split('\n');
@@ -819,16 +618,16 @@ void Ini::structuresIntoQByteArray(QByteArray& output) const
 
 			// Output variable's name and value
 			QString formattedValue = nameit->value;
-			
+
 			QRegExp whiteSpace("\\s");
-			
+
 			if (nameit->value.contains(whiteSpace) || nameit->value.contains("#"))
 			{
 				formattedValue = QString("\"%1\"").arg(formattedValue);
 			}
-			
+
 			output.append(formattedValue);
-			
+
 			// Output variable's side comment
 			QString nameListSideComment = nameit->sideComment;
 			nameListSideComment = nameListSideComment.replace("\n", " ");

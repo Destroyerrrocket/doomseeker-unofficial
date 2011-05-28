@@ -24,7 +24,8 @@
 #ifndef __SKULLTAGMASTERCLIENT_H__
 #define __SKULLTAGMASTERCLIENT_H__
 
-#include "masterclient.h"
+#include "masterserver/masterclient.h"
+
 class PluginInfo;
 
 class SkulltagMasterClient : public MasterClient

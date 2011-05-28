@@ -22,12 +22,12 @@
 //------------------------------------------------------------------------------
 #include "dockBuddiesList.h"
 #include "configuration/doomseekerconfig.h"
-#include "main.h"
-#include "masterclient.h"
-#include "strings.h"
+#include "masterserver/masterclient.h"
 #include "sdeapi/scanner.hpp"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
+#include "main.h"
+#include "strings.h"
 #include <QMenu>
 #include <QMessageBox>
 #include <QRegExp>

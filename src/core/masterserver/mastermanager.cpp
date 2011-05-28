@@ -21,8 +21,10 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 #include "mastermanager.h"
-#include "customservers.h"
+
+#include "masterserver/masterclientsignalproxy.h"
 #include "serverapi/message.h"
+#include "customservers.h"
 
 // TODO: I don't think that MasterManager should store a duplicate of each
 // server (~Zalewa).
@@ -55,7 +57,7 @@ void MasterManager::addMaster(MasterClient *master)
 	masters.append(master);
 	master->setEnabled(true);
 
-	MasterClientReceiver* pMasterReceiver = new MasterClientReceiver(master);
+	MasterClientSignalProxy* pMasterReceiver = new MasterClientSignalProxy(master);
 	connect(pMasterReceiver, SIGNAL( listUpdated(MasterClient*) ),
         this, SLOT( masterListUpdated(MasterClient*) ) );
 	connect(pMasterReceiver, SIGNAL( message(MasterClient*, const QString&, const QString&, bool) ),
@@ -64,6 +66,7 @@ void MasterManager::addMaster(MasterClient *master)
         this, SIGNAL( masterMessageImportant(MasterClient*, const Message&) ));
 	connect(pMasterReceiver, SIGNAL( newServerBatchReceived(MasterClient*, const QList<Server* >&) ),
         this, SLOT( newServerBatchReceivedSlot(MasterClient*, const QList<Server* >&) ) );
+
 	mastersReceivers.append(pMasterReceiver);
 
 }

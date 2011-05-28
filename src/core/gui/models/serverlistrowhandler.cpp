@@ -26,9 +26,9 @@
 #include "configuration/doomseekerconfig.h"
 #include "gui/helpers/playersdiagram.h"
 #include "gui/serverlist.h"
+#include "ip2c/ip2c.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
-#include "ip2c.h"
 #include "main.h"
 #include "log.h"
 #include <QPainter>
@@ -233,8 +233,8 @@ void ServerListRowHandler::setCountryFlag()
 
 	if (!Main::ip2c->isDataAccessLocked())
 	{
-		CountryInfo countryInfo = Main::ip2c->obtainCountryInfo(server->address());
-		if (countryInfo.isFlagOk())
+		IP2CCountryInfo countryInfo = Main::ip2c->obtainCountryInfo(server->address());
+		if (countryInfo.isValid())
 		{
 			QPixmap flag = *countryInfo.flag;
 			pItem->setIcon(flag);

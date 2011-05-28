@@ -22,11 +22,11 @@
 //------------------------------------------------------------------------------
 
 #include "log.h"
-#include "masterclient.h"
-#include "main.h"
+#include "masterserver/masterclient.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
 #include "serverapi/playerslist.h"
+#include "main.h"
 
 #include <QDataStream>
 #include <QErrorMessage>

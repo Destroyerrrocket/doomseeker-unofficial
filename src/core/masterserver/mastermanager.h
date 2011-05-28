@@ -23,11 +23,11 @@
 #ifndef __MASTERMANAGER_H__
 #define __MASTERMANAGER_H__
 
-#include "masterclient.h"
+#include "masterserver/masterclient.h"
 #include "serverapi/message.h"
 
 class CustomServers;
-class MasterClientReceiver;
+class MasterClientSignalProxy;
 
 /**
  *	@brief Manager class for a number of MasterClient instances.
@@ -78,7 +78,7 @@ class MasterManager : public MasterClient
 		CustomServers*						customServers;
 		QList<MasterClient *>				masters;
 		QSet<MasterClient *>				mastersBeingRefreshed;
-		QList<MasterClientReceiver*>		mastersReceivers;
+		QList<MasterClientSignalProxy*>		mastersReceivers;
 
 		bool								getServerListRequest(QByteArray &data) { return false; }
 		void								timeoutRefreshEx();
@@ -98,53 +98,5 @@ class MasterManager : public MasterClient
 		}
 };
 
-/**
- *	@brief Designed to preserve the information about the MasterClient
- *	instance that is sending the signal.
- */
-class MasterClientReceiver : public QObject
-{
-	Q_OBJECT
-
-	public:
-		MasterClient*	pMaster;
-
-		MasterClientReceiver(MasterClient* pMaster)
-		{
-			this->pMaster = pMaster;
-
-			connect(pMaster, SIGNAL( listUpdated() ), this, SLOT( listUpdatedSlot() ) );
-			connect(pMaster, SIGNAL( message(const QString&, const QString&, bool) ), this, SLOT( readMasterMessage(const QString&, const QString&, bool) ) );
-			connect(pMaster, SIGNAL( messageImportant(const Message&) ), this, SLOT( readMasterMessageImportant(const Message&) ) );
-			connect(pMaster, SIGNAL( newServerBatchReceived(const QList<Server* >&) ), this, SLOT( newServerBatchReceivedSlot(const QList<Server* >&) ) );
-		}
-
-	signals:
-		void			listUpdated(MasterClient* pSender);
-		void			message(MasterClient* pSender, const QString& title, const QString& content, bool isError);
-		void			messageImportant(MasterClient* pSender, const Message& objMessage);
-		void			newServerBatchReceived(MasterClient* pSender, const QList<Server* >& servers);
-
-	protected slots:
-		void			listUpdatedSlot()
-		{
-			emit listUpdated(pMaster);
-		}
-
-		void			readMasterMessage(const QString& title, const QString& content, bool isError)
-		{
-			emit message(pMaster, title, content, isError);
-		}
-
-		void			readMasterMessageImportant(const Message& objMessage)
-		{
-			emit messageImportant(pMaster, objMessage);
-		}
-
-		void			newServerBatchReceivedSlot(const QList<Server* >& servers)
-		{
-			emit newServerBatchReceived(pMaster, servers);
-		}
-};
-
 #endif
+

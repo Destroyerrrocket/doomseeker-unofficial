@@ -30,9 +30,9 @@
 
 #include "log.h"
 #include "configuration/doomseekerconfig.h"
-#include "main.h"
+#include "masterserver/masterclient.h"
 #include "sdeapi/pluginloader.hpp"
-#include "masterclient.h"
+#include "main.h"
 #include "strings.h"
 
 #ifdef Q_OS_WIN32

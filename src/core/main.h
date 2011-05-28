@@ -24,10 +24,10 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
+#include "ini/ini.h"
+#include "ip2c/ip2c.h"
 #include "sdeapi/pluginloader.hpp"
 #include "datapaths.h"
-#include "ini.h"
-#include "ip2c.h"
 #include "refresher.h"
 #include <QApplication>
 #include <QObject>

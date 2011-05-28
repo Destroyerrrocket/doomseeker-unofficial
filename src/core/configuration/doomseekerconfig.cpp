@@ -21,9 +21,9 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "doomseekerconfig.h"
+#include "ini/ini.h"
 #include "sdeapi/pluginloader.hpp"
 #include "wadseeker/wadseeker.h"
-#include "ini.h"
 #include "log.h"
 #include "main.h"
 #include "strings.h"

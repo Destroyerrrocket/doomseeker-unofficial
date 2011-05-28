@@ -23,6 +23,8 @@
 #ifndef __INI_H_
 #define __INI_H_
 
+#include "inisection.h"
+
 #include "global.h"
 #include <QHash>
 #include <QString>
@@ -30,167 +32,11 @@
 #include <QVector>
 
 /**
- *	@brief INI variable representation.
- *
- *	Structure containing variable's value and comments. The name of the
- *	variable is not contained in the structure itself to prevent redundancy.
- */
-class MAIN_EXPORT IniVariable
-{
-	public:
-		/**
-		 *	@brief Comment placed on the right side of the variable.
-		 */
-		QString			sideComment;
-
-		/**
-		 *	@brief Comment placed on top of the variable.
-		 */
-		QString			topComment;
-			
-	
-		IniVariable() : null(false) {}
-		IniVariable(const QString& value) : null(false) { *this = value; }
-		IniVariable(const char* value) : null(false) { *this = QString(value); }
-		IniVariable(int value) : null(false) { *this = value; }
-		IniVariable(unsigned int value) : null(false) { *this = value; }
-		IniVariable(short value) : null(false) { *this = value; }
-		IniVariable(unsigned short value) : null(false) { *this = value; }
-		IniVariable(bool value) : null(false) { *this = value; }
-		IniVariable(float value) : null(false) { *this = value; }
-
-		bool			isNull() const { return null; }
-		QString			valueString() const { return this->value; }
-
-		const IniVariable &operator=(const QString &str);
-		const IniVariable &operator=(const char* str) { return *this = QString(str); }
-		const IniVariable &operator=(int i);
-		const IniVariable &operator=(unsigned int i);
-		const IniVariable &operator=(short i);
-		const IniVariable &operator=(unsigned short i);
-		const IniVariable &operator=(bool b);
-		const IniVariable &operator=(float f);
-		const IniVariable &operator=(const IniVariable &other);
-
-		// IniVariables can be used as pointers to QStrings as well
-		const QString *operator->() const { return &value; }
-		const QString &operator*() const { return value; }
-		operator const QString &() const { return value; }
-
-		/**
-		*	Attempts to convert the QString value to a float.
-		*/
-		operator float() const;
-		/**
-		*	Attempts to convert the QString value to a integer.
-		*/
-		operator int() const;
-		operator unsigned int() const;
-		
-		operator short() const;
-		operator unsigned short() const;
-		/**
-		*	Convert QString value to boolean, if possible. It's done by converting
-		*	to numValue() first, then to bool.
-		*/
-		operator bool() const;
-		operator IniVariable&() { return *this; }
-
-	protected:
-		friend class Ini;
-		friend class IniSection;
-		friend class TestReadINIVariable;
-		friend class TestReadINIList;
-
-		static IniVariable	makeNull() { IniVariable nullVar; nullVar.null = true; return nullVar; }
-		bool				null;
-
-		/**
-		 *	@brief The key name of this variable with lettercase preserved.
-		 */
-		QString			key;
-
-		/**
-		 *	@brief Value of the variable.
-		 */
-		QString			value;
-};
-
-typedef QHash<QString, IniVariable>					IniVariables;	// the first QString is the name
-typedef QHash<QString, IniVariable>::iterator		IniVariablesIt;
-typedef QHash<QString, IniVariable>::const_iterator	IniVariablesConstIt;
-
-/**
- *	@brief INI section representation.
- *
- *	Contains list of variables that are in this section, section's comments
- *	and namelists.
- */
-class MAIN_EXPORT IniSection
-{
-	public:
-		IniSection() : null(false) {}
-		
-		/**
-		 *	@brief Comment placed on the right side of the section.
-		 */
-		QString					sideComment;
-
-		/**
-		 *	@brief Comment placed on top of the section.
-		 */
-		QString					topComment;
-
-		/**
-		 *	@brief List of strings that belong to this section. 
-		 *
-		 *	This is an extension to the original INI format. 
-		 *	See Ini for more information.
-		 */
-		QVector<IniVariable>	nameList;
-
-		static IniVariable nullVariable;
-
-		IniVariable				&createSetting(const QString& name, const IniVariable& data);
-		void					deleteSetting(const QString& name);
-		bool					isNull() const { return null; }
-		IniVariable				&retrieveSetting(const QString& name);
-		const IniVariable		&retrieveSetting(const QString& name) const;
-		const QString&			sectionName() const { return this->name; }
-		IniVariable				&setting(const QString& name);
-
-		IniVariable				&operator[](const QString& name) { return setting(name); }
-		const IniVariable		&operator[](const QString& name) const { return retrieveSetting(name); }
-
-	protected:
-		friend class Ini;
-		friend class TestReadINIList;
-
-		static IniSection	makeNull() { IniSection nullSect; nullSect.null = true; return nullSect; }
-		bool				null;
-
-		/**
-		 *	@brief A name of this section with lettercase preserved.
-		 */
-		QString					name;
-
-
-		/**
-		 *	@brief List of variables that belong to this section.
-		 */
-		IniVariables			variables;
-};
-
-typedef QHash<QString, IniSection> 					IniSections;	// the first QString is the name
-typedef QHash<QString, IniSection>::iterator 		IniSectionsIt;
-typedef QHash<QString, IniSection>::const_iterator 	IniSectionsConstIt;
-
-/**
  *	@brief INI configuration files handler.
  *
  *	This can read INI files from a disk or from memory.
  *
- *	Names of sections and keys are not case sensitive but the letter case is 
+ *	Names of sections and keys are not case sensitive but the letter case is
  *	being preserved when the file is read and saved. This way the programmer
  *	doesn't need to bother with keeping each character 100% accurate and at the
  *	same time is able to format the INI file content in a nice and clean way.
@@ -344,7 +190,7 @@ class MAIN_EXPORT Ini : public QObject
 		 *	For debug purposes. Prints internally stored data to stdout.
 		 */
 		void				print() const;
-		
+
 		/**
 		 *	This method will not create a new section if it doesn't exist yet.
 		 *	@return NULL if section doesn't exist or a pointer to
@@ -373,21 +219,21 @@ class MAIN_EXPORT Ini : public QObject
 		 *
 		 *	This is in fact an alias to createSection() and it has been
 		 *	introduced to fit the IniVariable create/retrieve/setting set
-		 *	of methods and to avoid further confusion 
+		 *	of methods and to avoid further confusion
 		 *	(ie. "why does this crash").
 		 *
 		 *	@return NULL if section doesn't exist or a pointer to
 		 *	internally stored IniSection object. Do not delete this object.
 		 */
 		IniSection&			section(const QString& name);
-		
+
 		/**
 		 *	Retrieves references to all sections whose names fit a certain
 		 *	pattern. Please remember that internally all sections are stored
-		 *	as lower-case strings. The regex pattern will be instructed to 
+		 *	as lower-case strings. The regex pattern will be instructed to
 		 *	ignore the case size.
 		 */
-		QVector<IniSection*>	sectionsArray(const QString& regexPattern);		
+		QVector<IniSection*>	sectionsArray(const QString& regexPattern);
 
 		/**
 		 *	Sets top comment of the INI file.

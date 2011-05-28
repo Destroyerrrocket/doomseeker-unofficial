@@ -23,13 +23,13 @@
 
 #include <QHostInfo>
 
+#include "gui/configuration/engineconfigurationbasebox.h"
+#include "masterserver/masterclient.h"
+#include "irc/entities/ircnetworkentity.h"
+#include "sdeapi/pluginloader.hpp"
 #include "global.h"
 #include "main.h"
-#include "masterclient.h"
 #include "strings.h"
-#include "irc/entities/ircnetworkentity.h"
-#include "gui/configuration/engineconfigurationbasebox.h"
-#include "sdeapi/pluginloader.hpp"
 
 #include "odamexgameinfo.h"
 #include "odamexmasterclient.h"

@@ -21,9 +21,10 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "generalinfotip.h"
-#include "ip2c.h"
-#include "main.h"
+
+#include "ip2c/ip2c.h"
 #include "serverapi/server.h"
+#include "main.h"
 
 GeneralInfoTip::GeneralInfoTip(const Server* server)
 : pServer(server)
@@ -41,9 +42,9 @@ QString GeneralInfoTip::generateHTML()
 		ret += labelString(tr("URL"), pServer->website());
 	}
 
-	CountryInfo countryInfo = Main::ip2c->obtainCountryInfo(pServer->address());
+	IP2CCountryInfo countryInfo = Main::ip2c->obtainCountryInfo(pServer->address());
 
-	if (countryInfo.valid && !countryInfo.name.isEmpty())
+	if (countryInfo.isValid())
 	{
 		if (!ret.isEmpty())
 		{

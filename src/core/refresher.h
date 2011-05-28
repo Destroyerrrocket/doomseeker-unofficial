@@ -34,7 +34,7 @@
 #include <QWaitCondition>
 
 class MasterClient;
-class MasterClientReceiver;
+class MasterClientSignalProxy;
 class Server;
 
 class ServerBatch
@@ -117,7 +117,7 @@ class RefreshingThread : public QThread, public QRunnable
 				QTime						timeLastChallengeSent;
 
 			protected:
-				MasterClientReceiver*		pReceiver;
+				MasterClientSignalProxy*	pReceiver;
 		};
 
 		typedef QHash<MasterClient*, MasterClientInfo*>				MasterHashtable;
