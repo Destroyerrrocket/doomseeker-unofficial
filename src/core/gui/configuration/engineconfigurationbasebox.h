@@ -27,7 +27,7 @@
 #include "gui/configuration/configurationbasebox.h"
 #include "ui_engineconfigurationbasebox.h"
 
-struct PluginInfo;
+class PluginInfo;
 
 class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox, private Ui::EngineConfigurationBaseBox
 {
@@ -51,7 +51,7 @@ class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox, priv
 		void				btnBrowseServerBinaryClicked();
 
 	private:
-		IniSection&			config;	
+		IniSection&			config;
 		const PluginInfo*	plugin;
 };
 

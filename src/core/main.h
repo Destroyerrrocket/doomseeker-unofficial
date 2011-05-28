@@ -25,7 +25,6 @@
 #define __MAIN_H__
 
 #include "sdeapi/pluginloader.hpp"
-#include "serverapi/server.h"
 #include "datapaths.h"
 #include "ini.h"
 #include "ip2c.h"
@@ -41,7 +40,7 @@ class MAIN_EXPORT Main : public QObject
 {
 	public:
 		static const QString		IP2C_FILENAME;
-	
+
 		static IP2C					*ip2c;
 		static DataPaths*			dataPaths;
 		static QWidget*				mainWindow;
@@ -49,7 +48,7 @@ class MAIN_EXPORT Main : public QObject
 		static bool					running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
 		static RefreshingThread*	refreshingThread;
 		static QString				workingDirectory;
-		
+
 		Main(int argc, char* argv[]);
 		~Main();
 

@@ -29,7 +29,7 @@
 #include <QObject>
 #include <QString>
 
-struct PluginInfo;
+class PluginInfo;
 class Message;
 
 class MAIN_EXPORT Binaries : public QObject

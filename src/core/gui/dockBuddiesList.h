@@ -61,7 +61,7 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 		void	joinServer(const Server* server);
 
 	protected:
-		struct BuddyLocationInfo
+		class BuddyLocationInfo
 		{
 			public:
 				BuddyLocationInfo(const Player &buddy, const Server *location);

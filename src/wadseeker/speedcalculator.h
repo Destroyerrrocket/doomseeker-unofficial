@@ -78,29 +78,30 @@ class SpeedCalculator
 		void						start();
 
 	protected:
-		struct DataArrivalInfo
+		class DataArrivalInfo
 		{
-			/**
-			 *	@brief In bytes.
-			 */
-			unsigned				totalAmountOfArrivedData;
+            public:
+                /**
+                 *	@brief In bytes.
+                 */
+                unsigned				totalAmountOfArrivedData;
 
-			/**
-			 *	@brief In miliseconds.
-			 */
-			unsigned				timeOfArrival;
+                /**
+                 *	@brief In miliseconds.
+                 */
+                unsigned				timeOfArrival;
 
-			DataArrivalInfo()
-			{
-				this->totalAmountOfArrivedData = 0;
-				this->timeOfArrival = 0;
-			}
+                DataArrivalInfo()
+                {
+                    this->totalAmountOfArrivedData = 0;
+                    this->timeOfArrival = 0;
+                }
 
-			DataArrivalInfo(unsigned totalAmountOfArrivedData, unsigned timeOfArrival)
-			{
-				this->totalAmountOfArrivedData = totalAmountOfArrivedData;
-				this->timeOfArrival = timeOfArrival;
-			}
+                DataArrivalInfo(unsigned totalAmountOfArrivedData, unsigned timeOfArrival)
+                {
+                    this->totalAmountOfArrivedData = totalAmountOfArrivedData;
+                    this->timeOfArrival = timeOfArrival;
+                }
 		};
 
 		QVector<DataArrivalInfo>	arrivalData;

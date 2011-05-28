@@ -26,7 +26,7 @@
 
 #include "masterclient.h"
 
-struct PluginInfo;
+class PluginInfo;
 
 class OdamexMasterClient : public MasterClient
 {
@@ -34,14 +34,14 @@ class OdamexMasterClient : public MasterClient
 
 	public:
 		OdamexMasterClient();
-		
+
 		const PluginInfo*		plugin() const;
-		
+
 		bool					readMasterResponse(QByteArray &data);
 		void					updateAddress();
 
 	protected:
-		
+
 		bool					getServerListRequest(QByteArray &data);
 };
 

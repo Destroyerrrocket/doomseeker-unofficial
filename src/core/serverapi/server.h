@@ -45,11 +45,11 @@
 class Binaries;
 class GameRunner;
 class PlayersList;
-struct PluginInfo;
+class PluginInfo;
 class TooltipGenerator;
 
 // Some ports support optional wads.
-struct MAIN_EXPORT PWad
+class MAIN_EXPORT PWad
 {
 	public:
 		PWad(const QString &name, bool optional=false) : name(name), optional(optional) {}
@@ -63,7 +63,7 @@ class MAIN_EXPORT Server : public QObject
 	Q_OBJECT
 
 	friend class RefreshingThread;
-	friend struct ServerBatch;
+	friend class ServerBatch;
 
 	public:
 		enum Response

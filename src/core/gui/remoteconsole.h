@@ -25,8 +25,10 @@
 #define __REMOTECONSOLE_H__
 
 #include "ui_remoteconsole.h"
-#include "serverapi/server.h"
 #include "widgets/serverconsole.h"
+
+class RConProtocol;
+class Server;
 
 class RemoteConsole : public QMainWindow, private Ui::RemoteConsole
 {

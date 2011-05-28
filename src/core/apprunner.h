@@ -33,11 +33,12 @@ class Message;
 /**
  *	@brief Structure holding parameters for application launch.
  */
-struct CommandLineInfo
+class CommandLineInfo
 {
-	QDir 			applicationDir; /// working directory
-	QStringList 	args; /// launch parameters
-	QFileInfo 		executable; /// path to the executable
+    public:
+        QDir 			applicationDir; /// working directory
+        QStringList 	args; /// launch parameters
+        QFileInfo 		executable; /// path to the executable
 };
 
 class MAIN_EXPORT AppRunner : public QObject

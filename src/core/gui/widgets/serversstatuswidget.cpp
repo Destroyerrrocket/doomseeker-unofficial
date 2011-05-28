@@ -29,6 +29,7 @@
 #include "masterclient.h"
 #include "serversstatuswidget.h"
 #include "serverapi/playerslist.h"
+#include "serverapi/server.h"
 
 ServersStatusWidget::ServersStatusWidget(const QPixmap &icon, MasterClient *serverList) : QLabel(),
 	bMasterIsEnabled(false), icon(icon), numBots(0), numPlayers(0), serverList(serverList)

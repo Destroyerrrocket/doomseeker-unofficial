@@ -24,11 +24,12 @@
 #include <QMessageBox>
 #include <QString>
 
+#include "sdeapi/pluginloader.hpp"
+#include "serverapi/server.h"
+#include "widgets/serverconsole.h"
 #include "remoteconsole.h"
 #include "passwordDlg.h"
 #include "strings.h"
-#include "sdeapi/pluginloader.hpp"
-#include "widgets/serverconsole.h"
 
 RemoteConsole::RemoteConsole(QWidget *parent) : QMainWindow(parent), protocol(NULL), server(NULL)
 {

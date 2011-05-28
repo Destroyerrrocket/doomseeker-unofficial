@@ -34,6 +34,7 @@
 #include "gui/mainwindow.h"
 #include "gui/remoteconsole.h"
 #include "irc/configuration/ircconfig.h"
+#include "serverapi/server.h"
 #include "doomseekerfilepaths.h"
 #include "ini.h"
 #include "ip2cparser.h"

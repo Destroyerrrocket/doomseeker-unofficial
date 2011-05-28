@@ -25,7 +25,7 @@
 
 #include "serverapi/gamerunner.h"
 
-struct PluginInfo;
+class PluginInfo;
 class ZDaemonServer;
 
 class ZDaemonGameRunner : public GameRunner

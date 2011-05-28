@@ -31,7 +31,7 @@
 
 #include "masterclient.h"
 
-struct PluginInfo;
+class PluginInfo;
 
 class ZDaemonMasterClient : public MasterClient
 {
@@ -45,7 +45,7 @@ class ZDaemonMasterClient : public MasterClient
 		//void					refresh();
 
 	protected:
-		
+
 		bool					getServerListRequest(QByteArray &data);
 
 		QNetworkAccessManager	*netAccessManager;

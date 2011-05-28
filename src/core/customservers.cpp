@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "customservers.h"
 #include "configuration/doomseekerconfig.h"
+#include "serverapi/server.h"
 #include "main.h"
 #include <QHostInfo>
 

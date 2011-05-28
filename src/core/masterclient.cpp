@@ -25,6 +25,7 @@
 #include "masterclient.h"
 #include "main.h"
 #include "serverapi/message.h"
+#include "serverapi/server.h"
 #include "serverapi/playerslist.h"
 
 #include <QDataStream>

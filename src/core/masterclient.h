@@ -28,11 +28,13 @@
 #include <QObject>
 #include <QHostAddress>
 #include <QList>
+#include <QUdpSocket>
 
-#include "serverapi/message.h"
-#include "serverapi/server.h"
+#include "global.h"
 
-struct PluginInfo;
+class Message;
+class PluginInfo;
+class Server;
 
 /**
  * Abstract class base for all MasterClients.  This is expected to fetch a list

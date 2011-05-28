@@ -27,7 +27,7 @@
 
 #include "serverapi/binaries.h"
 
-struct PluginInfo;
+class PluginInfo;
 class SkulltagServer;
 class WWW;
 class QDir;

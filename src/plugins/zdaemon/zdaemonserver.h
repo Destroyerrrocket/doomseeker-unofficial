@@ -30,9 +30,9 @@
 
 class Binaries;
 class GameRunner;
-struct PluginInfo;
+class PluginInfo;
 
-struct TeamInfo
+class TeamInfo
 {
 	public:
 		TeamInfo(const QString &name=QObject::tr("<< Unknown >>"), const QColor &color=QColor(0,0,0), unsigned int score=0);

@@ -44,7 +44,7 @@ class MAIN_EXPORT DemoManagerDlg : public QDialog, private Ui::DemoManagerDlg
 		DemoManagerDlg();
 
 	protected:
-		struct Demo
+		class Demo
 		{
 			public:
 				QString		filename;

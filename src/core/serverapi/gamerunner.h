@@ -30,7 +30,7 @@
 #include <QObject>
 #include <QString>
 
-struct PluginInfo;
+class PluginInfo;
 class Server;
 
 class MAIN_EXPORT GameRunner : public QObject

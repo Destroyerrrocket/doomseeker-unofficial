@@ -281,7 +281,7 @@ bool CHtml::isDirectLinkToFile(const QStringList& wantedFileNames, const QUrl& l
  * 6. Find "</A>" character sequence starting from 2.
  *		if nothing found return.
  * 7. Get everything between 2. and 6.
- * 8. Append Link struct to list.
+ * 8. Append Link class to list.
  * 9. Goto 1. starting from index returned by 6.
  */
 QList<Link>	CHtml::linksFromHTML()

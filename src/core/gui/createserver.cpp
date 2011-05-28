@@ -30,6 +30,7 @@
 #include "serverapi/binaries.h"
 #include "serverapi/gamerunner.h"
 #include "serverapi/message.h"
+#include "serverapi/server.h"
 #include "strings.h"
 
 #include <QCheckBox>

@@ -28,7 +28,7 @@
 #include "ui_cfgcustomservers.h"
 
 class ConfigurationBoxInfo;
-struct PluginInfo;
+class PluginInfo;
 
 class CFGCustomServers : public ConfigurationBaseBox, private Ui::CFGCustomServers
 {
@@ -36,7 +36,7 @@ class CFGCustomServers : public ConfigurationBaseBox, private Ui::CFGCustomServe
 
 	public:
 		CFGCustomServers(QWidget *parent=NULL);
-		
+
 		QIcon							icon() const { return QIcon(":/flags/localhost-small"); }
 		QString							name() const { return tr("Custom Servers"); }
 		void							readSettings();
@@ -75,7 +75,7 @@ class CFGCustomServers : public ConfigurationBaseBox, private Ui::CFGCustomServe
 		void							setEngineOnItem(QStandardItem*, const QString& engineName);
 		void							setPortToDefault(int rowIndex);
 
-		
+
 		QVector<CustomServerInfo>		tableGetServers();
 
 	protected slots:

@@ -24,8 +24,6 @@
 #ifndef __SERVERLIST_H_
 #define __SERVERLIST_H_
 
-#include "serverapi/server.h"
-
 #include <QObject>
 #include <QStandardItem>
 #include <QString>
@@ -35,7 +33,9 @@
 #include "gui/widgets/serverlistview.h"
 #include "gui/models/serverlistmodel.h"
 
+class PWad;
 class IniSection;
+class Server;
 class ServerListFilterInfo;
 
 class ServerListHandler : public QObject
@@ -94,7 +94,7 @@ class ServerListHandler : public QObject
 		 * Emitted when a request for join command line show is called.
 		 */
 		void 					displayServerJoinCommandLine(const Server*);
-		
+
 		/**
 		 *	@brief Emitted every time when a server info is updated through
 		 *	serverUpdated()
@@ -108,7 +108,7 @@ class ServerListHandler : public QObject
 		static const QString	FONT_COLOR_MISSING;
 		static const QString	FONT_COLOR_OPTIONAL;
 		static const QString	FONT_COLOR_FOUND;
-	
+
 		QTimer					cleanerTimer;
 
 		QWidget*				mainWindow;

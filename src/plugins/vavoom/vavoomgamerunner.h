@@ -25,7 +25,7 @@
 
 #include "serverapi/gamerunner.h"
 
-struct PluginInfo;
+class PluginInfo;
 class VavoomServer;
 
 class VavoomGameRunner : public GameRunner

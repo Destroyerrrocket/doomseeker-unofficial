@@ -33,7 +33,7 @@
 #define gConfig DoomseekerConfig::config()
 
 class Ini;
-struct PluginInfo;
+class PluginInfo;
 
 /**
  *	@brief This Singleton holds entire Doomseeker configuration in memory.
@@ -50,8 +50,8 @@ class DoomseekerConfig
 		{
 			public:
 			static const QString		SECTION_NAME;
-			
-			
+
+
 			bool						bBotsAreNotPlayers;
 			bool						bCloseToTrayIcon;
 			bool						bHidePasswords;
@@ -84,9 +84,9 @@ class DoomseekerConfig
 			QString						serverListColumnState;
 			int							slotStyle;
 			QStringList					wadPaths;
-			
+
 			DoomseekerCfg();
-			
+
 			/**
 			 *	@brief Will return false if at least one of them is out of
 			 *	bounds.
@@ -94,7 +94,7 @@ class DoomseekerConfig
 			 *	This will ensure that window remains accessible.
 			 */
 			bool						areMainWindowSizeSettingsValid(int maxValidX, int maxValidY) const;
-			
+
 			/**
 			 *	@brief Initializes values that are not present in the section
 			 *	yet.
@@ -104,26 +104,26 @@ class DoomseekerConfig
 			void						init(IniSection& section);
 			void						load(IniSection& section);
 			void						save(IniSection& section);
-			
+
 		};
-		
+
 		class ServerFilter
 		{
 			public:
 			static const QString		SECTION_NAME;
-			
+
 			ServerListFilterInfo		info;
-			
+
 			void						init(IniSection& section);
 			void						load(IniSection& section);
 			void						save(IniSection& section);
-		};		
-		
+		};
+
 		class WadseekerCfg
 		{
 			public:
 			static const QString		SECTION_NAME;
-			
+
 			bool						bSearchInIdgames;
 			QString						colorMessageCriticalError;
 			QString						colorMessageError;
@@ -134,9 +134,9 @@ class DoomseekerConfig
 			QString						idgamesURL;
 			QStringList					searchURLs;
 			QString						targetDirectory;
-			
+
 			WadseekerCfg();
-			
+
 			/**
 			 *	@brief Initializes values that are not present in the section
 			 *	yet.
@@ -147,12 +147,12 @@ class DoomseekerConfig
 			void						load(IniSection& section);
 			void						save(IniSection& section);
 		};
-	
+
 		/**
 		 *	@brief Returns the Singleton.
 		 */
 		static DoomseekerConfig&	config();
-		
+
 		/**
 		 *	@brief Disposes of the Singleton.
 		 *
@@ -161,13 +161,13 @@ class DoomseekerConfig
 		 *	first.
 		 */
 		static void					dispose();
-		
+
 		DoomseekerCfg				doomseeker;
 		ServerFilter				serverFilter;
 		WadseekerCfg				wadseeker;
-			
+
 		Ini*						ini() { return this->pIni; }
-		
+
 		/**
 		 *	@brief This will assume that the .ini file is initialized.
 		 *
@@ -176,7 +176,7 @@ class DoomseekerConfig
 		 *
 		 *	@param pluginName
 		 *		Name of the plugin, equals name of the Ini section stripped
-		 *		of all spacebars. Cannot be equal to "wadseeker" or 
+		 *		of all spacebars. Cannot be equal to "wadseeker" or
 		 *		"doomseeker". If invalid pluginName is specified a dummy
 		 *		trashcan IniSection is returned and a proper log message
 		 *		is generated.
@@ -185,13 +185,13 @@ class DoomseekerConfig
 		 */
 		IniSection&					iniSectionForPlugin(const QString& pluginName);
 		IniSection&					iniSectionForPlugin(const PluginInfo* plugin);
-	
+
 		/**
 		 *	@brief Reads settings from ini file. This file must be
 		 *	previously set by setIniFile() method.
 		 */
 		bool						readFromFile();
-		
+
 		/**
 		 *	@brief Saves current settings to ini file. This file must
 		 *	be previously set by setIniFile() method.
@@ -207,21 +207,21 @@ class DoomseekerConfig
 		 *	or read the new one.
 		 */
 		bool						setIniFile(const QString& filePath);
-		
+
 
 	private:
 		static DoomseekerConfig*	instance;
-		
+
 		bool						isValidPluginName(const QString& pluginName) const;
-		
+
 		/**
 		 *	@brief Exists to allow iniSectionForPlugin() to return
 		 *	a trash can if meaningless plugin name is specified.
 		 */
 		IniSection*					dummySection;
-		
+
 		Ini*						pIni;
-	
+
 		DoomseekerConfig();
 		~DoomseekerConfig();
 };

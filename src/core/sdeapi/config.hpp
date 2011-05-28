@@ -37,7 +37,7 @@
 
 class MAIN_EXPORT Config;
 
-struct MAIN_EXPORT SettingsData : public QObject
+class MAIN_EXPORT SettingsData : public QObject
 {
 	Q_OBJECT
 
@@ -52,7 +52,7 @@ struct MAIN_EXPORT SettingsData : public QObject
 		const int			integer() const { return m_type == ST_INT ? m_integer : m_str.toInt(); }
 		const QString		string() const { return m_type == ST_STR ? m_str : QString::number(m_integer); }
 		const SettingType	type() const { return m_type; }
-		
+
 		/**
 		 *	@brief Directly translated to integer. 1 for true, 0 for false.
 		 */
@@ -164,7 +164,7 @@ class MAIN_EXPORT Config : public QObject
 		 */
 		bool							settingsChanged;
 
-	friend struct SettingsData;
+	friend class SettingsData;
 };
 
 #endif /* __CONFIG_HPP__ */

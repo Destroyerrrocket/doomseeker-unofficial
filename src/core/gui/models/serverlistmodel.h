@@ -29,8 +29,8 @@
 #include <QStandardItemModel>
 #include <QString>
 #include <QPixmap>
-#include "serverapi/server.h"
 
+class Server;
 class ServerListSortFilterProxyModel;
 class ServerListHandler;
 

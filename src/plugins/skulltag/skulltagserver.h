@@ -66,7 +66,7 @@ class SkulltagVersion
 		unsigned short int		svnRevision;
 };
 
-struct TeamInfo
+class TeamInfo
 {
 	public:
 		TeamInfo(const QString &name=QObject::tr("<< Unknown >>"), const QColor &color=QColor(0,0,0), unsigned int score=0);

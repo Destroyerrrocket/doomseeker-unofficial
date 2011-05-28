@@ -39,16 +39,17 @@
 /**
  *	@brief Flag and name of the country.
  */
-struct MAIN_EXPORT CountryInfo
+class MAIN_EXPORT CountryInfo
 {
-	bool			valid;
-	const QPixmap*	flag;
-	QString			name;
+    public:
+        bool			valid;
+        const QPixmap*	flag;
+        QString			name;
 
-	bool isFlagOk() const
-	{
-		return valid && flag != NULL && !flag->isNull();
-	}
+        bool isFlagOk() const
+        {
+            return valid && flag != NULL && !flag->isNull();
+        }
 };
 
 /**
@@ -64,7 +65,7 @@ class MAIN_EXPORT IP2C : public QObject
 	Q_OBJECT
 
 	public:
-		struct IP2CData
+		class IP2CData
 		{
 			public:
 				unsigned int	ipStart;
@@ -78,7 +79,7 @@ class MAIN_EXPORT IP2C : public QObject
 				}
 
 				/**
-				 *	IP2CData struct is valid when ipStart is different from
+				 *	IP2CData class is valid when ipStart is different from
 				 *	ipEnd.
 				 */
 				bool	isValid() const
@@ -89,26 +90,26 @@ class MAIN_EXPORT IP2C : public QObject
 
 		IP2C();
 		~IP2C();
-		
+
 
 		/**
 		 *	@brief Adds new country entry to the database.
 		 *
 		 *	Makes sure the database is sorted in ascending order.
 		 */
-		void			appendEntryToDatabase(const IP2CData& entry);	
-		
+		void			appendEntryToDatabase(const IP2CData& entry);
+
 		bool			isDataAccessLocked() const
-		{ 
+		{
 			return bDataAccessLocked;
-		}	
-		
+		}
+
 		/**
 		 *	Returns a reference to the structure describing the country.
 		 */
 		const IP2CData&	lookupIP(unsigned int ipaddress);
 		const IP2CData&	lookupIP(const QHostAddress &ipaddress) { return lookupIP(ipaddress.toIPv4Address()); }
-		
+
 		int				numKnownEntries() const { return database.size(); }
 
 		/**
@@ -116,19 +117,19 @@ class MAIN_EXPORT IP2C : public QObject
 		 */
 		CountryInfo		obtainCountryInfo(unsigned int ipaddress);
 		CountryInfo		obtainCountryInfo(const QHostAddress& ipaddress) { return obtainCountryInfo(ipaddress.toIPv4Address()); }
-		
+
 		void			setDataAccessLockEnabled(bool b) { bDataAccessLocked = b; }
-		
+
 		/**
 		 *	@brief Sets database contents to the list specified.
 		 *
 		 *	To avoid performance issues it is already assumed that the specified
 		 *	list is sorted.
 		 */
-		void			setDatabase(const QList<IP2CData>& sortedCountryData) 
+		void			setDatabase(const QList<IP2CData>& sortedCountryData)
 		{
 			QMutexLocker dataAccessMutexLocker(&dataAccessMutex);
-			database = sortedCountryData; 
+			database = sortedCountryData;
 		}
 
 	protected:
@@ -163,7 +164,7 @@ class MAIN_EXPORT IP2C : public QObject
 		 *	@brief Performs only an informative role for the application.
 		 *
 		 *	This might be set to true by either updater or parser. Application
-		 *	should not read from the database when this is true because 
+		 *	should not read from the database when this is true because
 		 *	data inside might still be invalid.
 		 */
 		bool						bDataAccessLocked;

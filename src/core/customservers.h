@@ -32,12 +32,13 @@ class IniSection;
  *  If server for unknown engine is found, the engineIndex should be set
  *  to a negative value.
  */
-struct CustomServerInfo
+class CustomServerInfo
 {
-	QString engine;
-	QString host;
-	unsigned short port;
-	int engineIndex;
+    public:
+        QString engine;
+        QString host;
+        unsigned short port;
+        int engineIndex;
 };
 
 /**

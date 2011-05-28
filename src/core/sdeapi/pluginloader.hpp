@@ -144,10 +144,10 @@ class MAIN_EXPORT EnginePlugin
 
 #define MAKEID(a,b,c,d) (quint32(a)|(quint32(b)<<8)|(quint32(c)<<16)|(quint32(d)<<24))
 /**
- * This is a struct to store information about a specific plugin.  This should
+ * This is a class to store information about a specific plugin.  This should
  * returned by the plugins themselves.
  */
-struct MAIN_EXPORT PluginInfo
+class MAIN_EXPORT PluginInfo
 {
 	public:
 		const char*			name;

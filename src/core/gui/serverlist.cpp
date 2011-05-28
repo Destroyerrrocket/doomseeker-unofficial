@@ -28,6 +28,7 @@
 #include "gui/models/serverlistrowhandler.h"
 #include "gui/widgets/serverlistcontextmenu.h"
 #include "serverapi/playerslist.h"
+#include "serverapi/server.h"
 #include "serverapi/tooltipgenerator.h"
 #include "main.h"
 #include "pathfinder.h"
@@ -52,7 +53,7 @@ ServerListHandler::ServerListHandler(ServerListView* serverTable, QWidget* pMain
   sortIndex(-1), table(serverTable)
 {
 	prepareServerTable();
-	
+
 	needsCleaning = false;
 
 	initCleanerTimer();
@@ -69,7 +70,7 @@ void ServerListHandler::applyFilter(const ServerListFilterInfo& filterInfo)
 
 	ServerListProxyModel* pModel = static_cast<ServerListProxyModel*>(table->model());
 	pModel->setFilterInfo(filterInfo);
-	
+
 	needsCleaning = true;
 }
 
@@ -153,17 +154,17 @@ QString ServerListHandler::createIwadToolTip(const Server* server)
 	{
 		return QString();
 	}
-	
+
 	// This will only return anything if we have the "TellMe..." option enabled.
 	bool bFindIwad = gConfig.doomseeker.bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn;
-	
+
 	if (bFindIwad)
 	{
 		static const QString FORMAT_TEMPLATE = "<font color=\"%1\">%2</font>";
-			
+
 		PathFinder pathFinder;
 		QString path = pathFinder.findFile(server->iwadName());
-		
+
 		if (path.isEmpty())
 		{
 			return FORMAT_TEMPLATE.arg(FONT_COLOR_MISSING, tr("MISSING"));
@@ -173,7 +174,7 @@ QString ServerListHandler::createIwadToolTip(const Server* server)
 			return FORMAT_TEMPLATE.arg(FONT_COLOR_FOUND, path);
 		}
 	}
-	
+
 	return QString();
 }
 
@@ -213,16 +214,16 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 	{
 		return QString();
 	}
-	
+
 	// Prepare initial formatting.
 	static const QString toolTip = "<div style='white-space: pre'>%1</div>";
 	QString content;
-	
+
 	const QList<PWad>& pwads = server->pwads();
-	
+
 	// Check if we should seek and colorize.
 	bool bFindWads = gConfig.doomseeker.bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn;
-	
+
 	// Engage!
 	if (bFindWads)
 	{
@@ -244,7 +245,7 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 		}
 		content.chop(1); // Get rid of extra \n.
 	}
-	
+
 	return toolTip.arg(content);
 }
 
@@ -256,7 +257,7 @@ QString ServerListHandler::createPwadToolTipInfo(const PWad& pwad)
 
 	PathFinder pathFinder;
 	QString pathToFile = pathFinder.findFile(pwad.name);
-		
+
 	if (pathToFile.isEmpty())
 	{
 		if(pwad.optional)
@@ -275,7 +276,7 @@ QString ServerListHandler::createPwadToolTipInfo(const PWad& pwad)
 		formattedStringBegin = formattedStringBegin.arg(FONT_COLOR_FOUND);
 		formattedStringMiddle = QString("<td>%1</td><td> %2</td>").arg(pwad.name, pathToFile);
 	}
-	
+
 	return formattedStringBegin + formattedStringMiddle + formattedStringEnd;
 }
 
@@ -372,7 +373,7 @@ void ServerListHandler::mouseEntered(const QModelIndex& index)
 		case IDServerName:
 			tooltip = createServerNameToolTip(server);
 			break;
-			
+
 		case IDIwad:
 			tooltip = createIwadToolTip(server);
 			break;

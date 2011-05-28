@@ -91,20 +91,21 @@ class MAIN_EXPORT Scanner
 		 */
 		void		expandState();
 		/**
-		 * Changes the values in line and lineStart, does not change the actual 
+		 * Changes the values in line and lineStart, does not change the actual
 		 * scanning position in the file.
 		 */
 		void		incrementLine();
 
-		struct ParserState
+		class ParserState
 		{
-			QString			str;
-			unsigned int	number;
-			double			decimal;
-			bool			boolean;
-			char			token;
-			unsigned int	tokenLine;
-			unsigned int	tokenLinePosition;
+            public:
+                QString			str;
+                unsigned int	number;
+                double			decimal;
+                bool			boolean;
+                char			token;
+                unsigned int	tokenLine;
+                unsigned int	tokenLinePosition;
 		}				nextState;
 
 		char*			data;

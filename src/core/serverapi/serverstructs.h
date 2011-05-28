@@ -28,24 +28,26 @@
 
 #include "global.h"
 
-struct MAIN_EXPORT DMFlag
+class MAIN_EXPORT DMFlag
 {
-	DMFlag(QString name, unsigned value)
-	: name(name), value(value)
-	{
-	}
+    public:
+        DMFlag(QString name, unsigned value)
+        : name(name), value(value)
+        {
+        }
 
-	QString         name;
-	unsigned    	value;
+        QString         name;
+        unsigned    	value;
 };
 
 /**
  *	@brief Generic representation of DMFlags section.
  */
-struct MAIN_EXPORT DMFlagsSection
+class MAIN_EXPORT DMFlagsSection
 {
-	QString         name;
-	QList<DMFlag>	flags;
+    public:
+        QString         name;
+        QList<DMFlag>	flags;
 };
 
 /**
@@ -61,28 +63,29 @@ typedef QList<const DMFlagsSection*>::const_iterator 	DMFlagsConstItConst;
 /**
  *	@brief Struct containing info about a game console variable (like fraglimit)
  */
-struct MAIN_EXPORT GameCVar
+class MAIN_EXPORT GameCVar
 {
-	/**
-	 *	Nice name to display in Create Server dialog.
-	 */
-	QString		name;
+    public:
+        /**
+         *	Nice name to display in Create Server dialog.
+         */
+        QString		name;
 
-	/**
-	 *	Console command used to set the given CVar.
-	 */
-	QString		consoleCommand;
+        /**
+         *	Console command used to set the given CVar.
+         */
+        QString		consoleCommand;
 
-	GameCVar() {}
-	GameCVar(QString fname, QString fconsoleCommand):name(fname),consoleCommand(fconsoleCommand) {}
+        GameCVar() {}
+        GameCVar(QString fname, QString fconsoleCommand):name(fname),consoleCommand(fconsoleCommand) {}
 
-	void			setValue(bool b) { b == true ? val = "1" : val = "0"; }
-	void			setValue(int i) { setValue(QString::number(i)); }
-	void			setValue(const QString& str) { val = str; }
+        void			setValue(bool b) { b == true ? val = "1" : val = "0"; }
+        void			setValue(int i) { setValue(QString::number(i)); }
+        void			setValue(const QString& str) { val = str; }
 
-	const QString&	value() const { return val; }
-	bool			valueBool() const { return (val.toInt() != 0); }
-	bool			valueInt() const { return val.toInt(); }
+        const QString&	value() const { return val; }
+        bool			valueBool() const { return (val.toInt() != 0); }
+        bool			valueInt() const { return val.toInt(); }
 
 	protected:
 		QString		val;
@@ -91,7 +94,7 @@ struct MAIN_EXPORT GameCVar
 /**
  * Data structure that holds information about a servers game mode.
  */
-struct MAIN_EXPORT GameMode
+class MAIN_EXPORT GameMode
 {
 	public:
 		enum StandardGameModeIndexes
@@ -125,7 +128,7 @@ struct MAIN_EXPORT GameMode
 		bool	teamgame;
 };
 
-struct MAIN_EXPORT SkillLevel
+class MAIN_EXPORT SkillLevel
 {
 	//const QString strName;
 

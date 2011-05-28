@@ -25,6 +25,7 @@
 #include "gui/entity/serverlistfilterinfo.h"
 #include "gui/models/serverlistcolumn.h"
 #include "gui/serverlist.h"
+#include "serverapi/server.h"
 
 ServerListProxyModel::ServerListProxyModel(ServerListHandler* serverListHandler)
 : QSortFilterProxyModel(serverListHandler)

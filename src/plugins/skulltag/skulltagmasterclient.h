@@ -25,7 +25,7 @@
 #define __SKULLTAGMASTERCLIENT_H__
 
 #include "masterclient.h"
-struct PluginInfo;
+class PluginInfo;
 
 class SkulltagMasterClient : public MasterClient
 {
@@ -35,9 +35,9 @@ class SkulltagMasterClient : public MasterClient
 		SkulltagMasterClient();
 
 		const PluginInfo*		plugin() const;
-		
-		bool					readMasterResponse(QByteArray &data);		
-		
+
+		bool					readMasterResponse(QByteArray &data);
+
 	public slots:
 		void					refresh();
 
@@ -45,7 +45,7 @@ class SkulltagMasterClient : public MasterClient
 		bool					getServerListRequest(QByteArray &data);
 
 		/// This is used as a marker to determine if we have an accurate reading for numPackets.
-		bool					readLastPacket; 
+		bool					readLastPacket;
 		int						numPackets;
 		int						numPacketsRead;
 };

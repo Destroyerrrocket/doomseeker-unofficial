@@ -32,7 +32,7 @@
 /**
  *	@brief Data structure that holds information about players in a server.
  */
-struct MAIN_EXPORT Player
+class MAIN_EXPORT Player
 {
 	public:
 		enum PlayerTeam

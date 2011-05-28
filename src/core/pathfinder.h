@@ -30,10 +30,11 @@
 class IniSection;
 class IniVariable;
 
-struct MAIN_EXPORT PathFinderResult
+class MAIN_EXPORT PathFinderResult
 {
-	QStringList		foundFiles;
-	QStringList		missingFiles;
+    public:
+        QStringList		foundFiles;
+        QStringList		missingFiles;
 };
 
 class MAIN_EXPORT PathFinder

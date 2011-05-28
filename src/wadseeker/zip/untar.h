@@ -45,11 +45,12 @@ class UnTar : public UnArchive
 		bool	isValid() { return valid; }
 
 	protected:
-		struct TarFile
+		class TarFile
 		{
-			QString			filename;
-			unsigned int	size;
-			unsigned int	offset;
+            public:
+                QString			filename;
+                unsigned int	size;
+                unsigned int	offset;
 		};
 
 		void	scanTarFile();

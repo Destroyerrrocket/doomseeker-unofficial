@@ -37,7 +37,7 @@ class MasterClient;
 class MasterClientReceiver;
 class Server;
 
-struct ServerBatch
+class ServerBatch
 {
 	public:
 		QList<Server*>	servers;

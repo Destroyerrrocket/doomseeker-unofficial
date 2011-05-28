@@ -62,24 +62,26 @@ class MAIN_EXPORT CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		void	focusChanged(QWidget* oldW, QWidget* newW);
 
 	protected:
-		struct DMFlagsTabWidget
+		class DMFlagsTabWidget
 		{
-			QWidget*				widget;
-			const DMFlagsSection*	section;
+            public:
+                QWidget*				widget;
+                const DMFlagsSection*	section;
 
-			/**
-			 *	Check boxes in the same order the flags are stored in the plugin.
-			 */
-			QList<QCheckBox*>		checkBoxes;
+                /**
+                 *	Check boxes in the same order the flags are stored in the plugin.
+                 */
+                QList<QCheckBox*>		checkBoxes;
 		};
 
-		struct GameLimitWidget
+		class GameLimitWidget
 		{
-			QWidget*	label;
-			QSpinBox*	spinBox;
-			GameCVar	limit;
+            public:
+                QWidget*	label;
+                QSpinBox*	spinBox;
+                GameCVar	limit;
 		};
-		
+
 		static const QString			TEMP_SERVER_CONFIG_FILENAME;
 
 		bool							bSuppressMissingExeErrors;

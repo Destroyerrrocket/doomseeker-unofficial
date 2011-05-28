@@ -39,6 +39,7 @@
 #include "irc/configuration/ircconfig.h"
 #include "serverapi/gamerunner.h"
 #include "serverapi/message.h"
+#include "serverapi/server.h"
 #include "customservers.h"
 #include "doomseekerfilepaths.h"
 #include "log.h"
@@ -407,8 +408,11 @@ void MainWindow::finishedQueryingMaster(MasterClient* master)
 
 	for(int i = 0;i < master->numServers();i++)
 	{
-		connect((*master)[i], SIGNAL(updated(Server *, int)), serverTableHandler, SLOT(serverUpdated(Server *, int)) );
-		connect((*master)[i], SIGNAL(begunRefreshing(Server *)), serverTableHandler, SLOT(serverBegunRefreshing(Server *)) );
+		connect((*master)[i], SIGNAL(updated(Server *, int)),
+            serverTableHandler, SLOT(serverUpdated(Server *, int)) );
+
+		connect((*master)[i], SIGNAL(begunRefreshing(Server *)),
+            serverTableHandler, SLOT(serverBegunRefreshing(Server *)) );
 	}
 }
 
