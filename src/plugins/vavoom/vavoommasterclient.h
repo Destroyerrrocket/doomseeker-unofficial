@@ -26,7 +26,7 @@
 
 #include "masterserver/masterclient.h"
 
-class PluginInfo;
+class EnginePlugin;
 
 class VavoomMasterClient : public MasterClient
 {
@@ -35,7 +35,7 @@ class VavoomMasterClient : public MasterClient
 	public:
 		VavoomMasterClient();
 
-		const PluginInfo*		plugin() const;
+		const EnginePlugin*		plugin() const;
 
 		bool					readMasterResponse(QByteArray &data);
 

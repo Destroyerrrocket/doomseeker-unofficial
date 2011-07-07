@@ -21,16 +21,13 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include "odamexbinaries.h"
 #include "odamexgameinfo.h"
 #include "odamexgamerunner.h"
 #include "odamexmain.h"
 #include "odamexserver.h"
 #include "main.h"
+#include "plugins/engineplugin.h"
 #include "serverapi/playerslist.h"
-
-const // clear warnings
-#include "odamex.xpm"
 
 /// Macro that checks the readRequest() validity.
 #define CHECK_POS if (pos >= dataLength) \
@@ -43,23 +40,9 @@ const // clear warnings
 #define SPECTATOR_INFO		0x01020304
 #define EXTRA_INFO			0x01020305
 
-const QPixmap *OdamexServer::ICON = NULL;
-
 OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port) : Server(address, port),
 	protocol(0)
 {
-}
-
-Binaries* OdamexServer::binaries() const
-{
-	return new OdamexBinaries();
-}
-
-const QPixmap &OdamexServer::icon() const
-{
-	if(ICON == NULL)
-		ICON = new QPixmap(odamex_xpm);
-	return *ICON;
 }
 
 GameRunner* OdamexServer::gameRunner() const
@@ -67,7 +50,7 @@ GameRunner* OdamexServer::gameRunner() const
 	return new OdamexGameRunner(this);
 }
 
-const PluginInfo* OdamexServer::plugin() const
+const EnginePlugin* OdamexServer::plugin() const
 {
 	return OdamexMain::get();
 }
@@ -126,8 +109,8 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 		else if(cvarName == "sv_gametype")
 		{
 			unsigned int mode = cvarValue.toUInt();
-			if(mode < (unsigned)plugin()->pInterface->gameModes()->size())
-				currentGameMode = (*plugin()->pInterface->gameModes())[cvarValue.toUInt()];
+			if(mode < (unsigned)plugin()->data()->gameModes->size())
+				currentGameMode = (*plugin()->data()->gameModes)[cvarValue.toUInt()];
 		}
 		else if(cvarName == "sv_website")
 			webSite = cvarValue;

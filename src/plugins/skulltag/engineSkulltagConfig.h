@@ -31,7 +31,7 @@ class EngineSkulltagConfigBox : public EngineConfigurationBaseBox
 	Q_OBJECT
 
 	public:
-		EngineSkulltagConfigBox(const PluginInfo* plugin, IniSection& cfg, QWidget* parent = NULL);
+		EngineSkulltagConfigBox(const EnginePlugin* plugin, IniSection& cfg, QWidget* parent = NULL);
 
 		void readSettings();
 

@@ -29,13 +29,13 @@
 #include <QObject>
 #include <QString>
 
-class PluginInfo;
+class EnginePlugin;
 class Message;
 
 class MAIN_EXPORT Binaries : public QObject
 {
 	public:
-		Binaries();
+		Binaries(const EnginePlugin *plugin);
 
 		/**
 		 *	@brief Returns the path to the client binary.
@@ -74,11 +74,11 @@ class MAIN_EXPORT Binaries : public QObject
 
 		/**
 		 *	This is supposed to return the plugin this Binaries belongs to.
-		 *	New instances of PluginInfo shouldn't be created here. Instead
-		 *	each plugin should keep a global instance of PluginInfo (singleton?)
+		 *	New instances of EnginePlugin shouldn't be created here. Instead
+		 *	each plugin should keep a global instance of EnginePlugin (singleton?)
 		 *	and a pointer to this instance should be returned.
 		 */
-		virtual const PluginInfo*		plugin() const = 0;
+		const EnginePlugin*		plugin() const { return enginePlugin; }
 
 		/**
 		 *	@brief Returns the path to the server binary.
@@ -113,6 +113,8 @@ class MAIN_EXPORT Binaries : public QObject
 		static BinaryNamesDictionary 		binaryNames;
 
 		QString								obtainBinary(const QString& configKey, BinaryType binaryType, Message& message) const;
+
+		const EnginePlugin					*enginePlugin;
 };
 
 #endif

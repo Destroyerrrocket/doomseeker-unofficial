@@ -31,6 +31,7 @@
 #include "log.h"
 #include "configuration/doomseekerconfig.h"
 #include "masterserver/masterclient.h"
+#include "plugins/engineplugin.h"
 #include "sdeapi/pluginloader.hpp"
 #include "main.h"
 #include "strings.h"
@@ -40,6 +41,7 @@
 #define dlopen(a,b)	LoadLibrary(a)
 #define dlsym(a,b)	GetProcAddress(a, b)
 #define dlclose(a)	FreeLibrary(a)
+#define dlerror()	GetLastError()
 #else
 #include <dlfcn.h>
 #include <dirent.h>
@@ -53,33 +55,27 @@ Plugin::Plugin(unsigned int type, QString f) : file(f), library(NULL)
 
 	if(library != NULL)
 	{
-		PluginInfo *(*doomSeekerInit)() = (PluginInfo *(*)()) (dlsym(library, "doomSeekerInit"));
+		EnginePlugin *(*doomSeekerInit)() = (EnginePlugin *(*)()) (dlsym(library, "doomSeekerInit"));
 		if(doomSeekerInit == NULL)
 		{ // This is not a valid plugin.
 			unload();
 			return;
 		}
 
-		editableInfo = doomSeekerInit();
-		info = editableInfo;
-
-		if(info->type != type)
-		{ // Make sure this is the right kind of plugin
+		info = doomSeekerInit();
+		if(!info->data()->valid)
+		{
 			unload();
 			return;
 		}
 
-		gLog << QObject::tr("Loaded plugin: \"%1\"!").arg(info->name);
+		gLog << QObject::tr("Loaded plugin: \"%1\"!").arg(info->data()->name);
 	}
 	else
 	{
 		gLog << QObject::tr("Failed to open plugin: %1").arg(file);
 
-		#ifdef Q_OS_WIN32
-		// This is helpful on Windows to determine why the library
-		// couldn't load.
-		gLog << QString("Last error was: %1").arg(GetLastError());
-		#endif
+		gLog << QString("Last error was: %1").arg(dlerror());
 	}
 }
 
@@ -101,13 +97,8 @@ void Plugin::initConfig()
 {
 	if(library != NULL)
 	{
-		void (*doomSeekerInitConfig)(IniSection&) = (void (*)(IniSection&)) (dlsym(library, "doomSeekerInitConfig"));
-		if(doomSeekerInitConfig != NULL)
-		{
-			IniSection& cfgSection = gConfig.iniSectionForPlugin(info->name);
-			editableInfo->pInterface->pConfig = &cfgSection;
-			doomSeekerInitConfig(cfgSection);
-		}
+		IniSection& cfgSection = gConfig.iniSectionForPlugin(info->data()->name);
+		info->setConfig(cfgSection);
 	}
 }
 
@@ -229,7 +220,7 @@ int PluginLoader::pluginIndexFromName(const QString& name) const
 {
 	for (int i = 0; i < pluginsList.size(); ++i)
 	{
-		if (name.compare(pluginsList[i]->info->name) == 0)
+		if (name.compare(pluginsList[i]->info->data()->name) == 0)
 			return i;
 	}
 

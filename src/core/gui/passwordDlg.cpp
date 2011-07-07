@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "configuration/doomseekerconfig.h"
 #include "passwordDlg.h"
+#include "plugins/engineplugin.h"
 #include "main.h"
 
 PasswordDlg::PasswordDlg(QWidget *parent, bool rcon, bool connection) : QDialog(parent), rcon(rcon)
@@ -53,8 +54,8 @@ PasswordDlg::PasswordDlg(QWidget *parent, bool rcon, bool connection) : QDialog(
 		engines->clear();
 		for(unsigned int i = 0;i < Main::enginePlugins->numPlugins();i++)
 		{
-			const PluginInfo* info = (*Main::enginePlugins)[i]->info;
-			engines->addItem(info->pInterface->icon(), info->name, i);
+			const EnginePlugin* info = (*Main::enginePlugins)[i]->info;
+			engines->addItem(info->icon(), info->data()->name, i);
 		}
 	}
 
@@ -88,5 +89,5 @@ const EnginePlugin *PasswordDlg::selectedEngine() const
 	if(plugin == NULL)
 		return NULL;
 
-	return plugin->info->pInterface;
+	return plugin->info;
 }

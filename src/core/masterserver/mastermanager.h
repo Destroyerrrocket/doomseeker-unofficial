@@ -49,7 +49,7 @@ class MasterManager : public MasterClient
 
 		int									numMasters() const { return masters.size(); }
 
-		const PluginInfo*					plugin() const { return NULL; }
+		const EnginePlugin*					plugin() const { return NULL; }
 
 		MasterClient*						operator[](int index) { return masters[index]; }
 

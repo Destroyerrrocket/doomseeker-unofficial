@@ -22,11 +22,13 @@
 //------------------------------------------------------------------------------
 
 #include <QHostInfo>
+#include <QDateTime>
 
 #include "gui/configuration/engineconfigurationbasebox.h"
 #include "masterserver/masterclient.h"
 #include "irc/entities/ircnetworkentity.h"
 #include "sdeapi/pluginloader.hpp"
+#include "plugins/engineplugin.h"
 #include "global.h"
 #include "main.h"
 #include "strings.h"
@@ -36,62 +38,48 @@
 #include "odamexmain.h"
 #include "odamexserver.h"
 
-const // clear warnings
-#include "odamex.xpm"
+EnginePlugin *OdamexMain::info;
 
-class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
+class OdamexEnginePlugin : public EnginePlugin
 {
 	public:
-		const DMFlags*					allDMFlags() const
+		OdamexEnginePlugin()
 		{
-			return OdamexGameInfo::dmFlags();
+			static const unsigned int NUM_MASTERS = 2;
+			static const char* masters[NUM_MASTERS] = {
+				"master1.odamex.net:15000", "master2.odamex.net:15000"
+			};
+			qsrand(QDateTime::currentMSecsSinceEpoch());
+
+			OdamexMain::info = this;
+
+			const // clear warnings
+			#include "odamex.xpm"
+
+			init("Odamex", odamex_xpm,
+				EP_Author, "The Doomseeker Team",
+				EP_Version, 7,
+
+				EP_AllowsURL,
+				EP_AllowsEmail,
+				EP_AllowsConnectPassword,
+				EP_AllowsJoinPassword,
+				EP_AllowsMOTD,
+				EP_DefaultMaster, masters[qrand()%NUM_MASTERS],
+				EP_DefaultServerPort, 10666,
+				EP_GameModes, OdamexGameInfo::gameModes(),
+				EP_HasMasterServer,
+				EP_SupportsRandomMapRotation,
+				EP_Done
+			);
 		}
 
-		bool							allowsURL() const { return true; }
-		bool							allowsEmail() const { return true; }
-		bool							allowsConnectPassword() const { return true; }
-		bool							allowsJoinPassword() const { return true; }
-		bool							allowsRConPassword() const { return true; }
-		bool							allowsMOTD() const { return true; }
-
-		ConfigurationBaseBox*			configuration(IniSection &cfg, QWidget *parent) const
-		{
-			return new EngineConfigurationBaseBox(OdamexMain::get(), cfg, parent);
-		}
-
-		unsigned short					defaultServerPort() const { return 10666; }
-
-		const QList<GameMode>*			gameModes() const
-		{
-			return OdamexGameInfo::gameModes();
-		}
-
-		const QList<GameCVar>*			gameModifiers() const {	return NULL; }
-
-		bool							hasMasterServer() const { return true; }
-
-		virtual QList<GameCVar>	limits(const GameMode&) const
-		{
-			return QList<GameCVar>();
-		}
-
-		QPixmap			icon() const
-		{
-			return QPixmap(odamex_xpm);
-		}
-
-		MasterClient	*masterClient() const
+		MasterClient *masterClient() const
 		{
 			return new OdamexMasterClient();
 		}
 
-		void			masterHost(QString &host, unsigned short &port) const
-		{
-			QString str = pConfig->setting("Masterserver");
-			Strings::translateServerAddress(str, host, port, "master1.odamex.net", 15000);
-		}
-
-		void						registerIRCServer(QVector<IRCNetworkEntity> &networks) const
+		void registerIRCServer(QVector<IRCNetworkEntity> &networks) const
 		{
 			IRCNetworkEntity entity;
 			entity.address = "irc.oftc.net";
@@ -102,22 +90,9 @@ class PLUGIN_EXPORT OdamexEnginePlugin : public EnginePlugin
 				networks << entity;
 		}
 
-		Server*			server(const QHostAddress &address, unsigned short port) const
+		Server* server(const QHostAddress &address, unsigned short port) const
 		{
-			return (new OdamexServer(address, port));
+			return new OdamexServer(address, port);
 		}
-
-		bool						supportsRandomMapRotation() const { return true; }
 };
-
-static OdamexEnginePlugin odamex_engine_plugin;
-PluginInfo OdamexMain::info = {"Odamex", "Odamex server query plugin.", "The Skulltag Team", {0,7,0,0}, MAKEID('E','N','G','N'), &odamex_engine_plugin};
-extern "C" PLUGIN_EXPORT PluginInfo *doomSeekerInit()
-{
-	return OdamexMain::get();
-}
-
-extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection &config)
-{
-	config.createSetting("Masterserver", "master1.odamex.net:15000");
-}
+INSTALL_PLUGIN(OdamexEnginePlugin)

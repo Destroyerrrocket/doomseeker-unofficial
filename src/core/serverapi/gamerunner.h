@@ -30,7 +30,6 @@
 #include <QObject>
 #include <QString>
 
-class PluginInfo;
 class Server;
 
 class MAIN_EXPORT GameRunner : public QObject
@@ -72,14 +71,6 @@ class MAIN_EXPORT GameRunner : public QObject
 		 *	@see createHostCommandLine()
 		 */
 		Message						host(const HostInfo& hostInfo, HostMode mode);
-
-		/**
-		 *	This is supposed to return the plugin this GameRunner belongs to.
-		 *	New instances of PluginInfo shouldn't be created here. Instead
-		 *	each plugin should keep a global instance of PluginInfo (singleton?)
-		 *	and a pointer to this instance should be returned.
-		 */
-		virtual const PluginInfo*	plugin() const = 0;
 
 		/**
 		 *	Executes predefined command line.

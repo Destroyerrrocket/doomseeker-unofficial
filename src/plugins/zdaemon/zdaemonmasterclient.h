@@ -31,7 +31,7 @@
 #include <QNetworkReply>
 #include <QWaitCondition>
 
-class PluginInfo;
+class EnginePlugin;
 
 class ZDaemonMasterClient : public MasterClient
 {
@@ -40,7 +40,7 @@ class ZDaemonMasterClient : public MasterClient
 	public:
 		ZDaemonMasterClient();
 
-		const PluginInfo*		plugin() const;
+		const EnginePlugin*		plugin() const;
 		bool					readMasterResponse(QByteArray &data);
 		//void					refresh();
 

@@ -20,6 +20,7 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "plugins/engineplugin.h"
 #include "ircconfig.h"
 #include "log.h"
 #include "main.h"
@@ -268,7 +269,7 @@ void IRCConfig::NetworksDataCfg::load(Ini& ini)
 	// Go through the plugins and register their IRC servers.
 	for(unsigned int i = 0;i < Main::enginePlugins->numPlugins();i++)
 	{
-		(*Main::enginePlugins)[i]->info->pInterface->registerIRCServer(this->networks);
+		(*Main::enginePlugins)[i]->info->registerIRCServer(this->networks);
 	}
 }
 

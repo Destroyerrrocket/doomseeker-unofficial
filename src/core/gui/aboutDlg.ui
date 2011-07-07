@@ -35,7 +35,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -333,7 +333,7 @@ p, li { white-space: pre-wrap; }
             </font>
            </property>
            <property name="text">
-            <string>0.0.0.0</string>
+            <string>Version: 0.0.0.0</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -353,13 +353,6 @@ p, li { white-space: pre-wrap; }
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="pluginDescription">
-           <property name="text">
-            <string>This is dummy information to fill the dialog.</string>
            </property>
           </widget>
          </item>

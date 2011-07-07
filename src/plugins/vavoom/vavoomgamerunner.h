@@ -25,7 +25,7 @@
 
 #include "serverapi/gamerunner.h"
 
-class PluginInfo;
+class EnginePlugin;
 class VavoomServer;
 
 class VavoomGameRunner : public GameRunner
@@ -35,7 +35,7 @@ class VavoomGameRunner : public GameRunner
 
 		bool						connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword);
 
-		const PluginInfo*			plugin() const;
+		const EnginePlugin*			plugin() const;
 
 	protected:
 		virtual QString				argForConnect() const { return "+connect"; }

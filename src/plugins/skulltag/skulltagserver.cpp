@@ -36,9 +36,6 @@
 #include <QMessageBox>
 #include <QRegExp>
 
-const // clear warnings
-#include "skulltag.xpm"
-
 #define SERVER_CHALLENGE	0xC7,0x00,0x00,0x00
 #define SERVER_GOOD			5660023
 #define SERVER_BANNED		5660025
@@ -83,8 +80,6 @@ TeamInfo::TeamInfo(const QString &name, const QColor &color, unsigned int score)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-const QPixmap *SkulltagServer::ICON = NULL;
-
 SkulltagServer::SkulltagServer(const QHostAddress &address, unsigned short port)
 : Server(address, port),
   buckshot(false), instagib(false), testingServer(false), teamDamage(0.0f),
@@ -109,13 +104,6 @@ GameRunner* SkulltagServer::gameRunner() const
 	return new SkulltagGameRunner(this);
 }
 
-const QPixmap &SkulltagServer::icon() const
-{
-	if(ICON == NULL)
-		ICON = new QPixmap(skulltag_xpm);
-	return *ICON;
-}
-
 unsigned int SkulltagServer::millisecondTime()
 {
 	const QTime time = QTime::currentTime();
@@ -131,7 +119,7 @@ const GameCVar *SkulltagServer::modifier() const
 	return NULL;
 }
 
-const PluginInfo* SkulltagServer::plugin() const
+const EnginePlugin* SkulltagServer::plugin() const
 {
 	return SkulltagMain::get();
 }
@@ -587,7 +575,6 @@ bool SkulltagServer::sendRequest(QByteArray &data)
 {
 	// Send launcher challenge.
 	int query = SQF_STANDARDQUERY;
-//	const unsigned char challenge[12] = {SERVER_CHALLENGE, WRITEINT32_DIRECT(query), 0x00, 0x00, 0x00, 0x00};
 	const unsigned char challenge[12] = {SERVER_CHALLENGE, WRITEINT32_DIRECT(query), WRITEINT32_DIRECT(millisecondTime()) };
 	char challengeOut[16];
 	int out = 16;

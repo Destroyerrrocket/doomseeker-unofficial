@@ -23,15 +23,16 @@
 #ifndef __ODAMEX_MAIN_H_
 #define __ODAMEX_MAIN_H_
 
-#include "sdeapi/pluginloader.hpp"
+class EnginePlugin;
 
 class OdamexMain
 {
 	public:
-		static PluginInfo*	get() { return &info; }
+		static EnginePlugin*	get() { return info; }
 	
 	protected:
-		static PluginInfo 	info;
+		friend class OdamexEnginePlugin;
+		static EnginePlugin* 	info;
 };
 
 #endif

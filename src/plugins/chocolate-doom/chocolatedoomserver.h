@@ -26,25 +26,18 @@
 
 #include "serverapi/server.h"
 
-class Binaries;
-class PluginInfo;
+class EnginePlugin;
 
 class ChocolateDoomServer : public Server
 {
 	Q_OBJECT
 
 	public:
-		static const QPixmap	*ICON;
-
 		ChocolateDoomServer(const QHostAddress &address, unsigned short port);
-
-		Binaries*		binaries() const;
 
 		GameRunner*		gameRunner() const;
 
-		const QPixmap&	icon() const;
-
-		const PluginInfo*		plugin() const;
+		const EnginePlugin*		plugin() const;
 
 	protected:
 		QString			version;

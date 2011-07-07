@@ -28,25 +28,21 @@
 
 #define NUM_VAVOOM_GAME_MODES 1
 
-class Binaries;
 class GameRunner;
-class PluginInfo;
+class EnginePlugin;
 
 class VavoomServer : public Server
 {
 	Q_OBJECT
 
 	public:
-		static const QPixmap			*ICON;
-
 		VavoomServer(const QHostAddress &address, unsigned short port);
 
-		Binaries*			binaries() const;
 		GameRunner*			gameRunner() const;
 
 		const QPixmap&		icon() const;
 
-		const PluginInfo*	plugin() const;
+		const EnginePlugin*	plugin() const;
 
 	protected:
 		Response	readRequest(QByteArray &data);

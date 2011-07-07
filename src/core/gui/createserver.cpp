@@ -26,6 +26,7 @@
 #include "main.h"
 #include "commonGUI.h"
 #include "ini/ini.h"
+#include "plugins/engineplugin.h"
 #include "sdeapi/config.hpp"
 #include "serverapi/binaries.h"
 #include "serverapi/gamerunner.h"
@@ -227,7 +228,7 @@ void CreateServerDlg::btnDefaultExecutableClicked()
 	// the Skulltag testing system which requires passing a SkulltagServer*
 	// to SkulltagBinaries constructor. This renders getting Binaries through
 	// plugin's interface a not recommended feature.
-	Server* server = currentEngine->pInterface->server(QHostAddress("127.0.0.1"), 0);
+	Server* server = currentEngine->server(QHostAddress("127.0.0.1"), 0);
 	Binaries* binaries = server->binaries();
 	Message message;
 	leExecutable->setText(binaries->serverBinary(message));
@@ -324,7 +325,7 @@ void CreateServerDlg::cboEngineSelected(int index)
 		unsigned enginePluginIndex = cboEngine->itemData(index).toUInt();
 		if (enginePluginIndex < Main::enginePlugins->numPlugins())
 		{
-			const PluginInfo* nfo = (*Main::enginePlugins)[enginePluginIndex]->info;
+			const EnginePlugin* nfo = (*Main::enginePlugins)[enginePluginIndex]->info;
 
 			initEngineSpecific(nfo);
 		}
@@ -335,7 +336,7 @@ void CreateServerDlg::cboGamemodeSelected(int index)
 {
 	if (index >= 0)
 	{
-		const QList<GameMode>* gameModes = currentEngine->pInterface->gameModes();
+		const QList<GameMode>* gameModes = currentEngine->data()->gameModes;
 		if (gameModes != NULL)
 		{
 			initGamemodeSpecific((*gameModes)[index]);
@@ -352,7 +353,7 @@ bool CreateServerDlg::commandLineArguments(QString &executable, QStringList &arg
 		return false;
 	}
 
-	Server* server = currentEngine->pInterface->server(QHostAddress(), spinPort->value());
+	Server* server = currentEngine->server(QHostAddress(), spinPort->value());
 	HostInfo hi;
 	GameRunner::HostMode mode = bIsServerSetup ? GameRunner::OFFLINE : GameRunner::HOST;
 
@@ -467,7 +468,7 @@ bool CreateServerDlg::createHostInfo(HostInfo& hostInfo, Server* server, bool of
 		server->setSkill(cboDifficulty->currentIndex());
 		server->setWebsite(leURL->text());
 
-		const QList<GameMode>* gameModes = currentEngine->pInterface->gameModes();
+		const QList<GameMode>* gameModes = currentEngine->data()->gameModes;
 		if (gameModes != NULL)
 		{
 			for (int i = 0; i < gameModes->count(); ++i)
@@ -515,7 +516,7 @@ void CreateServerDlg::initDMFlagsTabs()
 	removeDMFlagsTabs();
 
 	int paramsIndex = tabWidget->indexOf(tabCustomParameters);
-	const DMFlags* dmFlagsSec = currentEngine->pInterface->allDMFlags();
+	const DMFlags* dmFlagsSec = currentEngine->data()->allDMFlags;
 	if(dmFlagsSec == NULL || dmFlagsSec->empty())
 	{
 		return; // Nothing to do
@@ -563,7 +564,7 @@ void CreateServerDlg::initDMFlagsTabs()
 	}
 }
 
-void CreateServerDlg::initEngineSpecific(const PluginInfo* engineInfo)
+void CreateServerDlg::initEngineSpecific(const EnginePlugin* engineInfo)
 {
 	if (engineInfo == currentEngine || engineInfo == NULL)
 	{
@@ -571,13 +572,12 @@ void CreateServerDlg::initEngineSpecific(const PluginInfo* engineInfo)
 	}
 
 	currentEngine = engineInfo;
-	const EnginePlugin* engine = currentEngine->pInterface;
 
 	// Executable path
 	Message message;
 
 	// See: btnDefaultExecutableClicked()
-	Server* server = engine->server(QHostAddress("127.0.0.1"), 1);
+	Server* server = currentEngine->server(QHostAddress("127.0.0.1"), 1);
 	Binaries* binaries = server->binaries();
 	if(bIsServerSetup)
 		leExecutable->setText(binaries->clientBinary(message));
@@ -587,7 +587,7 @@ void CreateServerDlg::initEngineSpecific(const PluginInfo* engineInfo)
 	if (message.isError() && !bSuppressMissingExeErrors)
 	{
 		QString caption = tr("Doomseeker - error obtaining server binary");
-		QString error = tr("Server binary for engine \"%1\" cannot be obtained.\nFollowing error has occured:\n%2").arg(engineInfo->name, message.contents());
+		QString error = tr("Server binary for engine \"%1\" cannot be obtained.\nFollowing error has occured:\n%2").arg(engineInfo->data()->name, message.contents());
 
 		QMessageBox::warning(NULL, caption, error);
 	}
@@ -595,11 +595,11 @@ void CreateServerDlg::initEngineSpecific(const PluginInfo* engineInfo)
 	delete binaries;
 	delete server;
 
-	spinPort->setValue(engine->defaultServerPort());
+	spinPort->setValue(currentEngine->data()->defaultServerPort);
 
 	cboGamemode->clear();
 
-	const QList<GameMode>* gameModes = engine->gameModes();
+	const QList<GameMode>* gameModes = currentEngine->data()->gameModes;
 	if (gameModes != NULL)
 	{
 		for (int i = 0; i < gameModes->count(); ++i)
@@ -617,7 +617,7 @@ void CreateServerDlg::initGamemodeSpecific(const GameMode& gameMode)
 {
 	// Rules tab
 	removeLimitWidgets();
-	QList<GameCVar> limits = currentEngine->pInterface->limits(gameMode);
+	QList<GameCVar> limits = currentEngine->limits(gameMode);
 	QList<GameCVar>::iterator it;
 
 	int number = 0;
@@ -642,37 +642,35 @@ void CreateServerDlg::initInfoAndPassword()
 {
 	const static int MISC_TAB_INDEX = 2;
 
-	const EnginePlugin* engine = currentEngine->pInterface;
-
 	bool bAtLeastOneVisible = false;
 	bool bIsVisible = false;
 
-	bIsVisible = engine->allowsConnectPassword();
+	bIsVisible = currentEngine->data()->allowsConnectPassword;
 	labelConnectPassword->setVisible(bIsVisible);
 	leConnectPassword->setVisible(bIsVisible);
 	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
 
-	bIsVisible = engine->allowsEmail();
+	bIsVisible = currentEngine->data()->allowsEmail;
 	labelEmail->setVisible(bIsVisible);
 	leEmail->setVisible(bIsVisible);
 	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
 
-	bIsVisible = engine->allowsJoinPassword();
+	bIsVisible = currentEngine->data()->allowsJoinPassword;
 	labelJoinPassword->setVisible(bIsVisible);
 	leJoinPassword->setVisible(bIsVisible);
 	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
 
-	bIsVisible = engine->allowsMOTD();
+	bIsVisible = currentEngine->data()->allowsMOTD;
 	labelMOTD->setVisible(bIsVisible);
 	pteMOTD->setVisible(bIsVisible);
 	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
 
-	bIsVisible = engine->allowsRConPassword();
+	bIsVisible = currentEngine->data()->allowsRConPassword;
 	labelRConPassword->setVisible(bIsVisible);
 	leRConPassword->setVisible(bIsVisible);
 	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
 
-	bIsVisible = engine->allowsURL();
+	bIsVisible = currentEngine->data()->allowsURL;
 	labelURL->setVisible(bIsVisible);
 	leURL->setVisible(bIsVisible);
 	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
@@ -686,8 +684,8 @@ void CreateServerDlg::initPrimary()
 
 	for (unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
-		const PluginInfo* nfo = (*Main::enginePlugins)[i]->info;
-		cboEngine->addItem(nfo->pInterface->icon(), nfo->name, i);
+		const EnginePlugin* nfo = (*Main::enginePlugins)[i]->info;
+		cboEngine->addItem(nfo->icon(), nfo->data()->name, i);
 	}
 
 	if (cboEngine->count() > 0)
@@ -720,14 +718,12 @@ void CreateServerDlg::initPrimary()
 
 void CreateServerDlg::initRules()
 {
-	const EnginePlugin* engine = currentEngine->pInterface;
-
-	cbRandomMapRotation->setVisible(engine->supportsRandomMapRotation());
+	cbRandomMapRotation->setVisible(currentEngine->data()->supportsRandomMapRotation);
 
 	cboModifier->clear();
 	gameModifiers.clear();
 
-	const QList<GameCVar>* pEngineGameModifiers = engine->gameModifiers();
+	const QList<GameCVar>* pEngineGameModifiers = currentEngine->data()->gameModifiers;
 
 	if (pEngineGameModifiers != NULL && !pEngineGameModifiers->isEmpty())
 	{
@@ -765,7 +761,7 @@ bool CreateServerDlg::loadConfig(const QString& filename)
 	if(!bIsServerSetup)
 	{
 		QString engineName = general["engine"];
-		const PluginInfo* prevEngine = currentEngine;
+		const EnginePlugin* prevEngine = currentEngine;
 		if(!setEngine(engineName))
 			return false;
 
@@ -870,7 +866,7 @@ bool CreateServerDlg::loadOldConfig(const QString& filename)
 	if(!bIsServerSetup)
 	{
 		QString engineName = cfg.setting("engine")->string();
-		const PluginInfo* prevEngine = currentEngine;
+		const EnginePlugin* prevEngine = currentEngine;
 		if(!setEngine(engineName))
 			return false;
 
@@ -966,11 +962,11 @@ bool CreateServerDlg::loadOldConfig(const QString& filename)
 	return true;
 }
 
-void CreateServerDlg::makeSetupServerDialog(const PluginInfo *plugin)
+void CreateServerDlg::makeSetupServerDialog(const EnginePlugin *plugin)
 {
 	bSuppressMissingExeErrors = true;
 	bIsServerSetup = true;
-	setEngine(plugin->name);
+	setEngine(plugin->data()->name);
 
 	// Disable some stuff
 	QWidget *disableControls[] =
@@ -1022,7 +1018,7 @@ void CreateServerDlg::runGame(bool offline)
 		return;
 	}
 
-	Server* server = currentEngine->pInterface->server(QHostAddress(), spinPort->value());
+	Server* server = currentEngine->server(QHostAddress(), spinPort->value());
 	HostInfo hi;
 
 	if (createHostInfo(hi, server, offline))

@@ -56,7 +56,7 @@ bool SkulltagMasterClient::getServerListRequest(QByteArray &data)
 	return true;
 }
 
-const PluginInfo* SkulltagMasterClient::plugin() const
+const EnginePlugin* SkulltagMasterClient::plugin() const
 {
 	return SkulltagMain::get();
 }
@@ -66,9 +66,9 @@ bool SkulltagMasterClient::readMasterResponse(QByteArray &data)
     bool expectingMorePackets = false;
 
 	const char* in = data.data();
-	unsigned char packetOut[2000];
+	char packetOut[2000];
 	int out = 2000;
-	HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (in), packetOut, data.size(), &out);
+	HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (in), reinterpret_cast<unsigned char*>(packetOut), data.size(), &out);
 
 	// Check the response code
 	int response = READINT32(&packetOut[0]);

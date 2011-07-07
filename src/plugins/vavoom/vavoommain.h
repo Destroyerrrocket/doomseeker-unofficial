@@ -28,10 +28,11 @@
 class VavoomMain
 {
 	public:
-		static PluginInfo*	get() { return &info; }
+		static EnginePlugin*	get() { return info; }
 	
 	protected:
-		static PluginInfo 	info;
+		friend class VavoomEnginePlugin;
+		static EnginePlugin* 	info;
 };
 
 #endif

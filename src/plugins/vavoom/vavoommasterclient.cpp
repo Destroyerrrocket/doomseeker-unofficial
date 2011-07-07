@@ -33,7 +33,7 @@ VavoomMasterClient::VavoomMasterClient() : MasterClient()
 {
 }
 
-const PluginInfo* VavoomMasterClient::plugin() const
+const EnginePlugin* VavoomMasterClient::plugin() const
 {
 	return VavoomMain::get();
 }

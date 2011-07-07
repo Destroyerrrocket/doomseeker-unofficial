@@ -28,26 +28,20 @@
 
 #define NUM_ODAMEX_GAME_MODES 5
 
-class Binaries;
 class GameRunner;
-class PluginInfo;
+class EnginePlugin;
 
 class OdamexServer : public Server
 {
 	Q_OBJECT
 
 	public:
-		static const QPixmap			*ICON;
-
 		OdamexServer(const QHostAddress &address, unsigned short port);
 
-		Binaries*				binaries() const;
 		const QStringList&		dehs() const { return dehPatches; }
 		GameRunner*				gameRunner() const;
 
-		const QPixmap&			icon() const;
-
-		const PluginInfo*		plugin() const;
+		const EnginePlugin*		plugin() const;
 
 	protected:
 		Response	readRequest(QByteArray &data);

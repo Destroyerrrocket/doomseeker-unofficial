@@ -3,18 +3,48 @@
 
 #include <QtGlobal>
 
-#define READINT32(pointer) ((quint32((quint8)(*pointer))) | (quint32(quint8(*(pointer+1)))<<8) | (quint32(quint8(*(pointer+2)))<<16) | (quint32(quint8(*(pointer+3)))<<24))
-#define READINT16(pointer) ((quint16((quint8)(*pointer))) | (quint16(quint8(*(pointer+1)))<<8))
-#define READBIGINT16(pointer) ((quint16((quint8)(*pointer))<<8) | (quint16(quint8(*(pointer+1)))))
-#define READINT8(pointer) ((quint8)(*pointer))
+static inline quint32 READINT32(const char *pointer)
+{
+	return ((quint32((quint8)(*pointer))) | (quint32(quint8(*(pointer+1)))<<8) | (quint32(quint8(*(pointer+2)))<<16) | (quint32(quint8(*(pointer+3)))<<24));
+}
+static inline quint16 READINT16(const char *pointer)
+{
+	return ((quint16((quint8)(*pointer))) | (quint16(quint8(*(pointer+1)))<<8));
+}
+static inline quint16 READBIGINT16(const char *pointer)
+{
+	return ((quint16((quint8)(*pointer))<<8) | (quint16(quint8(*(pointer+1)))));
+}
+static inline quint8 READINT8(const char *pointer)
+{
+	return quint8(*pointer);
+}
 
 #define WRITEINT32_DIRECT(integer) (quint8)(integer&0xFF),(quint8)((integer>>8)&0xFF),(quint8)((integer>>16)&0xFF),(quint8)((integer>>24)&0xFF)
 #define WRITEINT16_DIRECT(integer) (quint8)(integer&0xFF),(quint8)((integer>>8)&0xFF)
 #define WRITEINT8_DIRECT(integer) (quint8)(integer&0xFF)
 
-#define WRITEINT32(pointer, integer) *pointer = (quint8)(integer&0xFF);*(pointer+1) = (quint8)((integer>>8)&0xFF);*(pointer+2) = (quint8)((integer>>16)&0xFF);*(pointer+3) = (quint8)((integer>>24)&0xFF);
-#define WRITEINT16(pointer, integer) *pointer = (quint8)(integer&0xFF);*(pointer+1) = (quint8)((integer>>8)&0xFF);
-#define WRITEINT8(pointer, integer) *pointer = (quint8)(integer&0xFF);
+static inline void WRITEINT32(char *pointer, const quint32 integer)
+{
+	*pointer = (quint8)(integer&0xFF);
+	*(pointer+1) = (quint8)((integer>>8)&0xFF);
+	*(pointer+2) = (quint8)((integer>>16)&0xFF);
+	*(pointer+3) = (quint8)((integer>>24)&0xFF);
+}
+static inline void WRITEINT16(char *pointer, const quint16 integer)
+{
+	*pointer = (quint8)(integer&0xFF);
+	*(pointer+1) = (quint8)((integer>>8)&0xFF);
+}
+static inline void WRITEINT8(char *pointer, const quint8 integer)
+{
+	*pointer = (quint8)(integer&0xFF);
+}
+
+static inline quint32 MAKEID(quint8 a, quint8 b, quint8 c, quint8 d)
+{
+	return (quint32(a)|(quint32(b)<<8)|(quint32(c)<<16)|(quint32(d)<<24));
+}
 
 // Now we set it up so symbols are properly exported/imported on Windows
 #ifdef Q_OS_WIN32

@@ -53,7 +53,7 @@ bool VavoomGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool
 	return true;
 }
 
-const PluginInfo* VavoomGameRunner::plugin() const
+const EnginePlugin* VavoomGameRunner::plugin() const
 {
 	return VavoomMain::get();
 }

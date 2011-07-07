@@ -63,7 +63,7 @@ class CustomServers : public MasterClient
 		 */
 		static void						decodeConfigEntries(const QString& str, QList<CustomServerInfo>& outCustomServerInfoList);
 
-		const PluginInfo*				plugin() const { return NULL; }
+		const EnginePlugin*				plugin() const { return NULL; }
 
 		/**
 		 *	Convenience method - tries to read config seeking for

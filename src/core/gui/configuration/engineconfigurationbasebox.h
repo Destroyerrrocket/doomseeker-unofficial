@@ -27,14 +27,14 @@
 #include "gui/configuration/configurationbasebox.h"
 #include "ui_engineconfigurationbasebox.h"
 
-class PluginInfo;
+class EnginePlugin;
 
 class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox, private Ui::EngineConfigurationBaseBox
 {
 		Q_OBJECT
 
 	public:
-		EngineConfigurationBaseBox(const PluginInfo *plugin, IniSection &cfg, QWidget *parent=NULL);
+		EngineConfigurationBaseBox(const EnginePlugin *plugin, IniSection &cfg, QWidget *parent=NULL);
 
 		QIcon				icon() const;
 		QString				name() const;
@@ -52,7 +52,7 @@ class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox, priv
 
 	private:
 		IniSection&			config;
-		const PluginInfo*	plugin;
+		const EnginePlugin*	plugin;
 };
 
 #endif /* __ENGINECONFIGBASE_H__ */

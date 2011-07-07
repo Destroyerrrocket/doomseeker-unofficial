@@ -48,7 +48,7 @@ void ZDaemonGameRunner::hostDMFlags(QStringList& args, const DMFlags& dmFlags) c
 	}
 }
 
-const PluginInfo* ZDaemonGameRunner::plugin() const
+const EnginePlugin* ZDaemonGameRunner::plugin() const
 {
 	return ZDaemonMain::get();
 }

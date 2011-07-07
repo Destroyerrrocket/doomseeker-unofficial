@@ -24,7 +24,7 @@
 #include "demomanager.h"
 #include "main.h"
 #include "pathfinder.h"
-#include "sdeapi/pluginloader.hpp"
+#include "plugins/engineplugin.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
 #include "serverapi/gamerunner.h"
@@ -150,8 +150,8 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 		const EnginePlugin *plugin = NULL;
 		for(int i = 0;i < Main::enginePlugins->numPlugins();i++)
 		{
-			if(selectedDemo->port == (*Main::enginePlugins)[i]->info->name)
-				plugin = (*Main::enginePlugins)[i]->info->pInterface;
+			if(selectedDemo->port == (*Main::enginePlugins)[i]->info->data()->name)
+				plugin = (*Main::enginePlugins)[i]->info;
 		}
 		if(plugin == NULL)
 		{

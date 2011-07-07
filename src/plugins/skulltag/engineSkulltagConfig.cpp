@@ -23,10 +23,11 @@
 
 #include "engineSkulltagConfig.h"
 #include "skulltagmain.h"
+#include "plugins/engineplugin.h"
 
 #include <QFileDialog>
 
-EngineSkulltagConfigBox::EngineSkulltagConfigBox(const PluginInfo* plugin, IniSection& cfg, QWidget* parent) 
+EngineSkulltagConfigBox::EngineSkulltagConfigBox(const EnginePlugin* plugin, IniSection& cfg, QWidget* parent) 
 : EngineConfigurationBaseBox(plugin, cfg, parent)
 {
 	#ifdef Q_OS_WIN32
@@ -63,7 +64,7 @@ void EngineSkulltagConfigBox::readSettings()
 {
 	EngineConfigurationBaseBox::readSettings();
 	
-	IniSection& config = *SkulltagMain::get()->pInterface->pConfig;
+	IniSection& config = *SkulltagMain::get()->data()->pConfig;
 
 	groupTesting->setChecked(config["EnableTesting"]);
 	leTestingPath->setText(config["TestingPath"]);
@@ -75,7 +76,7 @@ void EngineSkulltagConfigBox::saveSettings()
 
 	QString strVal;
 	
-	IniSection& config = *SkulltagMain::get()->pInterface->pConfig;
+	IniSection& config = *SkulltagMain::get()->data()->pConfig;
 
 	config["EnableTesting"] = groupTesting->isChecked();
 

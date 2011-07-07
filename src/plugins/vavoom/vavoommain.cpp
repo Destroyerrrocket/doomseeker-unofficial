@@ -25,78 +25,54 @@
 
 #include "gui/configuration/engineconfigurationbasebox.h"
 #include "masterserver/masterclient.h"
-#include "sdeapi/pluginloader.hpp"
+#include "plugins/engineplugin.h"
 #include "global.h"
 #include "main.h"
 #include "strings.h"
 
+#include "vavoomgameinfo.h"
 #include "vavoommain.h"
 #include "vavoommasterclient.h"
 #include "vavoomserver.h"
 
-const // clear warnings
-#include "vavoom.xpm"
+EnginePlugin* VavoomMain::info;
 
-class PLUGIN_EXPORT VavoomEnginePlugin : public EnginePlugin
+class VavoomEnginePlugin : public EnginePlugin
 {
 	public:
-		const DMFlags*					allDMFlags() const { return NULL; }
-
-		bool							allowsURL() const { return true; }
-		bool							allowsEmail() const { return true; }
-		bool							allowsConnectPassword() const { return true; }
-		bool							allowsJoinPassword() const { return true; }
-		bool							allowsRConPassword() const { return true; }
-		bool							allowsMOTD() const { return true; }
-
-
-		ConfigurationBaseBox*			configuration(IniSection &cfg, QWidget *parent) const
+		VavoomEnginePlugin()
 		{
-			return new EngineConfigurationBaseBox(VavoomMain::get(), cfg, parent);
+			VavoomMain::info = this;
+
+			const // clear warnings
+			#include "vavoom.xpm"
+
+			init("Vavoom", vavoom_xpm,
+				EP_Author, "The Doomseeker Team",
+				EP_Version, 4,
+
+				EP_AllowsURL,
+				EP_AllowsEmail,
+				EP_AllowsConnectPassword,
+				EP_AllowsJoinPassword,
+				EP_AllowsRConPassword,
+				EP_AllowsMOTD,
+				EP_DefaultServerPort, 26000,
+				EP_HasMasterServer,
+				EP_DefaultMaster, "altdeath.com:26001",
+				EP_GameModes, VavoomGameInfo::gameModes(),
+				EP_Done
+			);
 		}
 
-		unsigned short					defaultServerPort() const { return 26000; }
-		const QList<GameMode>*			gameModes() const { return NULL; }
-		const QList<GameCVar>*			gameModifiers() const { return NULL; }
-		bool							hasMasterServer() const { return true; }
-
-		virtual QList<GameCVar>	limits(const GameMode&) const
-		{
-			return QList<GameCVar>();
-		}
-
-		QPixmap			icon() const
-		{
-			return QPixmap(vavoom_xpm);
-		}
-
-		MasterClient	*masterClient() const
+		MasterClient *masterClient() const
 		{
 			return new VavoomMasterClient();
 		}
 
-		void			masterHost(QString &host, unsigned short &port) const
+		Server* server(const QHostAddress &address, unsigned short port) const
 		{
-			QString str = pConfig->setting("Masterserver");
-			Strings::translateServerAddress(str, host, port, "altdeath.com", 26001);
+			return new VavoomServer(address, port);
 		}
-
-		Server*			server(const QHostAddress &address, unsigned short port) const
-		{
-			return (new VavoomServer(address, port));
-		}
-
-		bool							supportsRandomMapRotation() const { return false; }
 };
-
-static VavoomEnginePlugin vavoom_engine_plugin;
-PluginInfo VavoomMain::info = {"Vavoom", "Vavoom server query plugin.", "The Skulltag Team", {0,4,0,0}, MAKEID('E','N','G','N'), &vavoom_engine_plugin};
-extern "C" PLUGIN_EXPORT PluginInfo *doomSeekerInit()
-{
-	return VavoomMain::get();
-}
-
-extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection &config)
-{
-	config.createSetting("Masterserver", "altdeath.com:26001");
-}
+INSTALL_PLUGIN(VavoomEnginePlugin)

@@ -37,6 +37,7 @@
 #include "gui/serverfilterdock.h"
 #include "gui/wadseekerinterface.h"
 #include "irc/configuration/ircconfig.h"
+#include "plugins/engineplugin.h"
 #include "serverapi/gamerunner.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
@@ -354,8 +355,8 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 	// queryMenuPorts are ever performed. Not even in the destructor.
 	for(unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
-		const EnginePlugin* plugin = (*Main::enginePlugins)[i]->info->pInterface;
-		if(!plugin->hasMasterServer())
+		const EnginePlugin* plugin = (*Main::enginePlugins)[i]->info;
+		if(!plugin->data()->hasMasterServer)
 		{
 			continue;
 		}
@@ -373,7 +374,7 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 
 		statusBar()->addPermanentWidget(statusWidget);
 
-		QString name = (*Main::enginePlugins)[i]->info->name;
+		QString name = (*Main::enginePlugins)[i]->info->data()->name;
 		QQueryMenuAction* query = new QQueryMenuAction(pMasterClient, statusWidget, menuQuery);
 		queryMenuPorts.insert(pMasterClient, query);
 
@@ -788,7 +789,7 @@ bool MainWindow::isAnyMasterEnabled() const
 
 void MainWindow::masterManagerMessages(MasterClient* pSender, const QString& title, const QString& content, bool isError)
 {
-	QString message = tr("Master server for %1: %2").arg(pSender->plugin()->name).arg(content);
+	QString message = tr("Master server for %1: %2").arg(pSender->plugin()->data()->name).arg(content);
 
 	if (isError)
 	{
@@ -811,7 +812,7 @@ void MainWindow::masterManagerMessagesImportant(MasterClient* pSender, const Mes
         msgContent = objMessage.getStringBasingOnType();
     }
 
-    QString strFullMessage = tr("Master server for %1: %2").arg(pSender->plugin()->name).arg(msgContent);
+    QString strFullMessage = tr("Master server for %1: %2").arg(pSender->plugin()->data()->name).arg(msgContent);
 
     if (objMessage.isError())
     {
@@ -894,14 +895,10 @@ void MainWindow::menuOptionsConfigure()
 
 	for(unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
-		const PluginInfo* pPluginInfo = (*Main::enginePlugins)[i]->info;
-
-		// Retrieve INI Section for this plugin.
-		QString pluginName = pPluginInfo->name;
-		IniSection& configSection = gConfig.iniSectionForPlugin(pluginName);
+		const EnginePlugin* pPluginInfo = (*Main::enginePlugins)[i]->info;
 
 		// Create the config box.
-		ConfigurationBaseBox* pConfigurationBox = pPluginInfo->pInterface->configuration(configSection, &configDialog);
+		ConfigurationBaseBox* pConfigurationBox = pPluginInfo->configuration(&configDialog);
 		configDialog.addEngineConfiguration(pConfigurationBox);
 	}
 

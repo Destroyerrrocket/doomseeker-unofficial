@@ -24,10 +24,12 @@
 #define __CREATESERVER_H_
 
 #include "ui_createserver.h"
-#include "sdeapi/pluginloader.hpp"
 #include "serverapi/gamerunnerstructs.h"
 #include <QCheckBox>
 #include <QDialog>
+
+class EnginePlugin;
+class Server;
 
 /**
  *	@brief Dialog window allowing user to host a game.
@@ -41,7 +43,7 @@ class MAIN_EXPORT CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		~CreateServerDlg();
 
 		bool	commandLineArguments(QString &executable, QStringList &args);
-		void	makeSetupServerDialog(const PluginInfo *plugin);
+		void	makeSetupServerDialog(const EnginePlugin *plugin);
 	protected slots:
 		void	btnAddMapToMaplistClicked();
 		void	btnAddPwadClicked();
@@ -86,7 +88,7 @@ class MAIN_EXPORT CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 
 		bool							bSuppressMissingExeErrors;
 		bool							bIsServerSetup;
-		const PluginInfo* 				currentEngine;
+		const EnginePlugin* 			currentEngine;
 		QList<DMFlagsTabWidget*>		dmFlagsTabs;
 		QList<GameLimitWidget*>			limitWidgets;
 		QList<GameCVar>					gameModifiers;
@@ -114,7 +116,7 @@ class MAIN_EXPORT CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		 *	Resets most of the controls and puts engine specific information
 		 *	and controls where applicable.
 		 */
-		void	initEngineSpecific(const PluginInfo* engineInfo);
+		void	initEngineSpecific(const EnginePlugin* engineInfo);
 
 		void	initGamemodeSpecific(const GameMode& gameMode);
 

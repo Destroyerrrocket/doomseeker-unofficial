@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------
 #include "doomseekerconfig.h"
 #include "ini/ini.h"
-#include "sdeapi/pluginloader.hpp"
+#include "plugins/engineplugin.h"
 #include "wadseeker/wadseeker.h"
 #include "log.h"
 #include "main.h"
@@ -90,9 +90,9 @@ IniSection& DoomseekerConfig::iniSectionForPlugin(const QString& pluginName)
 	return this->pIni->createSection(sectionName);
 }
 
-IniSection& DoomseekerConfig::iniSectionForPlugin(const PluginInfo* plugin)
+IniSection& DoomseekerConfig::iniSectionForPlugin(const EnginePlugin* plugin)
 {
-	return iniSectionForPlugin(plugin->name);
+	return iniSectionForPlugin(plugin->data()->name);
 }
 
 bool DoomseekerConfig::isValidPluginName(const QString& pluginName) const

@@ -99,7 +99,7 @@ void ZDaemonMasterClient::listFetched(QNetworkReply *reply)
 	emit listUpdated();
 }
 
-const PluginInfo* ZDaemonMasterClient::plugin() const
+const EnginePlugin* ZDaemonMasterClient::plugin() const
 {
 	return ZDaemonMain::get();
 }

@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "customservers.h"
 #include "configuration/doomseekerconfig.h"
+#include "plugins/engineplugin.h"
 #include "serverapi/server.h"
 #include "main.h"
 #include <QHostInfo>
@@ -67,7 +68,7 @@ void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerIn
 				else if (engineIndex >= 0)
 				{
 					const Plugin* pPlugin = (*Main::enginePlugins)[engineIndex];
-					customServerInfo.port = pPlugin->info->pInterface->defaultServerPort();
+					customServerInfo.port = pPlugin->info->data()->defaultServerPort;
 				}
 				else
 				{
@@ -101,7 +102,7 @@ void CustomServers::setServers(const QList<CustomServerInfo>& csiList, QObject* 
 		if (hi.addresses().size() == 0)
 			continue;
 
-		const EnginePlugin* pInterface = (*Main::enginePlugins)[cit->engineIndex]->info->pInterface;
+		const EnginePlugin* pInterface = (*Main::enginePlugins)[cit->engineIndex]->info;
 		Server* p = pInterface->server(hi.addresses().first(), cit->port);
 		if(p == NULL)
 			continue;

@@ -24,6 +24,7 @@
 
 #include "random.h"
 
+#include <cassert>
 #include <cmath>
 
 #include <QDateTime>
@@ -280,27 +281,29 @@ QString Strings::timestamp(const QString& format)
 	return QDateTime::currentDateTime().toString(format);
 }
 
-void Strings::translateServerAddress(const QString& addressString, QString& hostname, unsigned short& port, const QString& defaultHostname, const unsigned short defaultPort)
+void Strings::translateServerAddress(const QString& addressString, QString& hostname, unsigned short& port, const QString& defaultAddress)
 {
 	port = 0;
 	QStringList addressAndPort = addressString.split(":");
+	QStringList defaultAddressAndPort = defaultAddress.split(":");
+	assert(defaultAddressAndPort.size() == 2);
 
 	if (addressAndPort.size() == 0 || addressAndPort.size() > 2)
 	{ // if something is not right set default settings
-		hostname = defaultHostname;
+		hostname = defaultAddressAndPort[0];
 	}
 	else
 	{
 		hostname = addressAndPort[0];
 		if (addressAndPort.size() == 2)
 		{
-			port = addressAndPort[1].toShort();
+			port = addressAndPort[1].toUShort();
 		}
 	}
 
 	if (port == 0)
 	{
-		port = defaultPort;
+		port = defaultAddressAndPort[1].toUShort();
 	}
 }
 

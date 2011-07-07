@@ -28,10 +28,11 @@
 class SkulltagMain
 {
 	public:
-		static PluginInfo*	get() { return &info; }
+		static EnginePlugin*	get() { return info; }
 	
 	protected:
-		static PluginInfo 	info;
+		friend class SkulltagEnginePlugin;
+		static EnginePlugin* 	info;
 };
 
 #endif

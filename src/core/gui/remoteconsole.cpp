@@ -24,7 +24,7 @@
 #include <QMessageBox>
 #include <QString>
 
-#include "sdeapi/pluginloader.hpp"
+#include "plugins/engineplugin.h"
 #include "serverapi/server.h"
 #include "widgets/serverconsole.h"
 #include "remoteconsole.h"
@@ -43,7 +43,7 @@ RemoteConsole::RemoteConsole(QWidget *parent) : QMainWindow(parent), protocol(NU
 		{
 			QString address;
 			unsigned short port;
-			Strings::translateServerAddress(dlg->serverAddress(), address, port, "localhost", dlg->selectedEngine()->defaultServerPort());
+			Strings::translateServerAddress(dlg->serverAddress(), address, port, QString("localhost:%1").arg(dlg->selectedEngine()->data()->defaultServerPort));
 
 			server = dlg->selectedEngine()->server(QHostAddress(address), port);
 			if(!server->hasRcon())

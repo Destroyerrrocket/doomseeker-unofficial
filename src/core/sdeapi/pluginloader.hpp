@@ -31,15 +31,10 @@
 #ifndef __PLUGINLOADER_HPP__
 #define __PLUGINLOADER_HPP__
 
-#include <QHostAddress>
 #include <QList>
-#include <QObject>
-#include <QPixmap>
 #include <QString>
-#include <QVector>
 
 #include "global.h"
-#include "serverapi/serverstructs.h"
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -50,113 +45,7 @@
 
 #endif
 
-////////////////////////////////////////////////////////////////////////////////
-class Binaries;
-class ConfigurationBaseBox;
-class IniSection;
-class IRCNetworkEntity;
-class MasterClient;
-class Server;
-
-class MAIN_EXPORT EnginePlugin
-{
-	public:
-		EnginePlugin()
-		{
-			this->pConfig = NULL;
-		}
-
-		/**
-		 * This value is set by Doomseeker when the plugin is initialized
-		 */
-		IniSection*			pConfig;
-
-		/**
-		 *	@brief List of all engine's DMFlags or NULL if none.
-		 */
-		virtual const DMFlags*					allDMFlags() const = 0;
-
-		virtual bool							allowsURL() const = 0;
-		virtual bool							allowsEmail() const = 0;
-		virtual bool							allowsConnectPassword() const = 0;
-		virtual bool							allowsJoinPassword() const = 0;
-		virtual bool							allowsRConPassword() const = 0;
-		virtual bool							allowsMOTD() const = 0;
-
-		/**
-		 *	@brief Engine's configuration widget.
-		 */
-		virtual ConfigurationBaseBox*			configuration(IniSection& cfg, QWidget *parent) const=0;
-
-		/**
-		 *	@brief Default port on which servers for given engine are hosted.
-		 */
-		virtual unsigned short					defaultServerPort() const = 0;
-
-		/**
-		*	@brief All available game modes for the engine or NULL if none.
-		*/
-		virtual const QList<GameMode>*			gameModes() const = 0;
-
-		/**
-		 *	@brief Returns a list of modifiers.
-		 *
-		 *	Modifiers are used and displayed in Create Server dialog.
-		 *	If an empty list (or NULL) is returned, Modifier combo will be
-		 *	disabled.
-		 */
-		virtual const QList<GameCVar>*			gameModifiers() const = 0;
-
-		/**
-		 *	@brief False for plugins which have no master.
-		 */
-		virtual bool							hasMasterServer() const = 0;
-
-		/**
-		 *	@brief Returns a list of limits (like fraglimit) supported by passed
-		 *	gamemode.
-		 */
-		virtual QList<GameCVar>					limits(const GameMode& mode) const = 0;
-
-		/**
-		 *	@return icon of the engine
-		 */
-		virtual QPixmap							icon() const=0;
-
-		virtual MasterClient*					masterClient() const=0;
-		/**
-		 * Fills the variables with information about the master's address.
-		 */
-		virtual void							masterHost(QString &host, unsigned short &port) const=0;
-
-		virtual void							registerIRCServer(QVector<IRCNetworkEntity> &networks) const {};
-
-		/**
-		 *	@brief Creates an instance of server object from this plugin.
-		 *	This might be useful for custom servers.
-		 * 	@return instance of plugin's server object
-		 */
-		virtual Server*							server(const QHostAddress &address, unsigned short port) const=0;
-
-		virtual bool							supportsRandomMapRotation() const = 0;
-};
-////////////////////////////////////////////////////////////////////////////////
-
-#define MAKEID(a,b,c,d) (quint32(a)|(quint32(b)<<8)|(quint32(c)<<16)|(quint32(d)<<24))
-/**
- * This is a class to store information about a specific plugin.  This should
- * returned by the plugins themselves.
- */
-class MAIN_EXPORT PluginInfo
-{
-	public:
-		const char*			name;
-		const char*			description;
-		const char*			author;
-		quint8				version[4];
-		quint32				type; ///< Use MAKEID to generate a check type.
-		EnginePlugin*		pInterface;
-};
+class EnginePlugin;
 
 /**
  * This class handles one specific plugin.  It allows for cross-platform access
@@ -181,14 +70,9 @@ class MAIN_EXPORT Plugin
 
 		bool	isValid() const { return library != NULL; }
 
-		const PluginInfo	*info;
+		const EnginePlugin	*info;
 
 	private:
-		/**
-		 *	@brief The same as info but not const.
-		 */
-		PluginInfo*			editableInfo;
-
 		void	unload();
 
 		QString	file;

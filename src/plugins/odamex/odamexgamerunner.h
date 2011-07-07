@@ -37,8 +37,6 @@ class OdamexGameRunner : public GameRunner
 
 		bool						connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword);
 
-		const PluginInfo*			plugin() const { return OdamexMain::get(); }
-
 	protected:
 		const OdamexServer*			odamexServer;
 

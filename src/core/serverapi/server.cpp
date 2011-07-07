@@ -23,7 +23,7 @@
 
 #include "log.h"
 #include "configuration/doomseekerconfig.h"
-#include "sdeapi/pluginloader.hpp"
+#include "plugins/engineplugin.h"
 #include "serverapi/server.h"
 #include "main.h"
 #include "strings.h"
@@ -110,6 +110,11 @@ Server::~Server()
 	clearDMFlags();
 }
 
+Binaries *Server::binaries() const
+{
+	return new Binaries(plugin());
+}
+
 void Server::clearDMFlags()
 {
 	DMFlagsIt it;
@@ -124,12 +129,22 @@ QString Server::engineName() const
 {
 	if (plugin() != NULL)
 	{
-		return plugin()->name;
+		return plugin()->data()->name;
 	}
 	else
 	{
 		return tr("Undefined");
 	}
+}
+
+GameRunner *Server::gameRunner() const
+{
+	return new GameRunner(this);
+}
+
+const QPixmap &Server::icon() const
+{
+	return plugin()->icon();
 }
 
 bool Server::isEmpty() const

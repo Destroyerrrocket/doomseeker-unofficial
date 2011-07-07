@@ -23,6 +23,7 @@
 
 #include "log.h"
 #include "masterserver/masterclient.h"
+#include "plugins/engineplugin.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
 #include "serverapi/playerslist.h"
@@ -63,7 +64,7 @@ QString MasterClient::engineName() const
         return "";
     }
 
-    return plugin()->name;
+    return plugin()->data()->name;
 }
 
 bool MasterClient::hasServer(const Server* server)
@@ -117,7 +118,7 @@ bool MasterClient::preparePacketCache(bool write)
 		if(plugin() == NULL)
 			return false;
 
-		QString cacheFile(Main::dataPaths->programsDataDirectoryPath() + "/" + QString(plugin()->name).replace(' ', ""));
+		QString cacheFile(Main::dataPaths->programsDataDirectoryPath() + "/" + QString(plugin()->data()->name).replace(' ', ""));
 		cache = new QFile(cacheFile);
 		if(!cache->open(write ? QIODevice::WriteOnly|QIODevice::Truncate : QIODevice::ReadOnly))
 		{
@@ -143,7 +144,7 @@ void MasterClient::readPacketCache()
 	if(!preparePacketCache(false))
 		return;
 
-	gLog << tr("Reloading master server results from cache for %1!").arg(plugin()->name);
+	gLog << tr("Reloading master server results from cache for %1!").arg(plugin()->data()->name);
 	QDataStream strm(cache);
 	while(!strm.atEnd())
 	{
@@ -203,7 +204,7 @@ void MasterClient::updateAddress()
 {
 	QString host;
 	unsigned short port;
-	plugin()->pInterface->masterHost(host, port);
+	plugin()->masterHost(host, port);
 
 	QHostInfo info = QHostInfo::fromName(host);
 	if(info.addresses().size() == 0)

@@ -25,14 +25,16 @@
 #include "server.h"
 #include "main.h"
 #include "message.h"
+#include "plugins/engineplugin.h"
 
 #include <QString>
 #include <QFileInfo>
 
 Binaries::BinaryNamesDictionary Binaries::binaryNames;
 
-Binaries::Binaries()
+Binaries::Binaries(const EnginePlugin *plugin)
 {
+	enginePlugin = plugin;
 	if (binaryNames.empty()) // Is not init yet.
 	{
 		binaryNames.insert(Client, "client");
@@ -56,7 +58,7 @@ QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, 
 	QString error = "";
 	if (setting->isEmpty())
 	{
-		error = tr("No %1 executable specified for %2").arg(binaryNames[binaryType]).arg(plugin()->name);
+		error = tr("No %1 executable specified for %2").arg(binaryNames[binaryType]).arg(plugin()->data()->name);
 		message = Message::customError(error);
 		return QString();
 	}
@@ -66,7 +68,7 @@ QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, 
 	if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
 	{
 		error = tr("Executable for %1 %2:\n%3\nis a directory or doesn't exist.")
-					.arg(plugin()->name)
+					.arg(plugin()->data()->name)
 					.arg(binaryNames[binaryType])
 					.arg(fi.canonicalFilePath());
 		message = Message::customError(error);

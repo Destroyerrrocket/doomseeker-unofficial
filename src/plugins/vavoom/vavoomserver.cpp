@@ -21,7 +21,6 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include "vavoombinaries.h"
 #include "vavoomgameinfo.h"
 #include "vavoomgamerunner.h"
 #include "vavoommain.h"
@@ -29,15 +28,10 @@
 #include "main.h"
 #include "serverapi/playerslist.h"
 
-const // clear warnings
-#include "vavoom.xpm"
-
 #define NET_PROTOCOL_VERSION	1
 #define CCREQ_SERVER_INFO		2
 #define CCREP_SERVER_INFO		13
 #define NETPACKET_CTL			0x80
-
-const QPixmap *VavoomServer::ICON = NULL;
 
 VavoomServer::VavoomServer(const QHostAddress &address, unsigned short port)
 : Server(address, port)
@@ -45,24 +39,12 @@ VavoomServer::VavoomServer(const QHostAddress &address, unsigned short port)
 	currentGameMode = (*VavoomGameInfo::gameModes())[VavoomGameInfo::MODE_UNKNOWN];
 }
 
-Binaries* VavoomServer::binaries() const
-{
-	return new VavoomBinaries();
-}
-
 GameRunner* VavoomServer::gameRunner() const
 {
 	return new VavoomGameRunner(this);
 }
 
-const QPixmap &VavoomServer::icon() const
-{
-	if(ICON == NULL)
-		ICON = new QPixmap(vavoom_xpm);
-	return *ICON;
-}
-
-const PluginInfo* VavoomServer::plugin() const
+const EnginePlugin* VavoomServer::plugin() const
 {
 	return VavoomMain::get();
 }

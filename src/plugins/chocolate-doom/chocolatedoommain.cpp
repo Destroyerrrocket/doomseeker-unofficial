@@ -24,62 +24,41 @@
 #include "main.h"
 #include "strings.h"
 #include "irc/entities/ircnetworkentity.h"
-#include "gui/configuration/engineconfigurationbasebox.h"
-#include "sdeapi/pluginloader.hpp"
+#include "plugins/engineplugin.h"
 
 #include "chocolatedoommain.h"
 #include "chocolatedoommasterclient.h"
-#include "chocolatedoombinaries.h"
 #include "chocolatedoomserver.h"
 
-const // clear warnings
-#include "chocolatedoom.xpm"
+EnginePlugin *ChocolateDoomMain::chocolatedoom_info;
 
-class PLUGIN_EXPORT ChocolateDoomEnginePlugin : public EnginePlugin
+class ChocolateDoomEnginePlugin : public EnginePlugin
 {
 	public:
-		const DMFlags*					allDMFlags() const { return NULL; }
-
-		bool							allowsURL() const { return false; }
-		bool							allowsEmail() const { return false; }
-		bool							allowsConnectPassword() const { return false; }
-		bool							allowsJoinPassword() const { return false; }
-		bool							allowsRConPassword() const { return false; }
-		bool							allowsMOTD() const { return false; }
-
-		ConfigurationBaseBox*			configuration(IniSection &cfg, QWidget *parent) const
+		ChocolateDoomEnginePlugin()
 		{
-			return new EngineConfigurationBaseBox(ChocolateDoomMain::get(), cfg, parent);
+			ChocolateDoomMain::chocolatedoom_info = this;
+
+			const // clear warnings
+			#include "chocolatedoom.xpm"
+
+			init("Chocolate Doom", chocolatedoom_xpm,
+				EP_Author, "The Doomseeker Team",
+				EP_Version, 4,
+
+				EP_DefaultMaster, "master.chocolate-doom.org:2342",
+				EP_DefaultServerPort, 2342,
+				EP_HasMasterServer,
+				EP_Done
+			);
 		}
 
-		unsigned short					defaultServerPort() const { return 2342; }
-		const QList<GameMode>*			gameModes() const { return NULL; }
-		const QList<GameCVar>*			gameModifiers() const { return NULL; }
-		bool							hasMasterServer() const { return true; }
-
-		QList<GameCVar>					limits(const GameMode& mode) const { return QList<GameCVar>(); }
-
-		QPixmap							icon() const
-		{
-			return QPixmap(chocolatedoom_xpm);
-		}
-
-		MasterClient*					masterClient() const
+		MasterClient *masterClient() const
 		{
 			return new ChocolateDoomMasterClient();
 		}
-		void							masterHost(QString &host, unsigned short &port) const
-		{
-			QString str = pConfig->setting("Masterserver");
-			Strings::translateServerAddress(str, host, port, "master.chocolate-doom.org", 2342);
-		}
 
-		Server*							server(const QHostAddress &address, unsigned short port) const
-		{
-			return new ChocolateDoomServer(address, port);
-		}
-
-		void						registerIRCServer(QVector<IRCNetworkEntity> &networks) const
+		void registerIRCServer(QVector<IRCNetworkEntity> &networks) const
 		{
 			IRCNetworkEntity entity;
 			entity.address = "irc.oftc.net";
@@ -90,17 +69,9 @@ class PLUGIN_EXPORT ChocolateDoomEnginePlugin : public EnginePlugin
 				networks << entity;
 		}
 
-		bool							supportsRandomMapRotation() const { return false; }
+		Server* server(const QHostAddress &address, unsigned short port) const
+		{
+			return new ChocolateDoomServer(address, port);
+		}
 };
-
-static ChocolateDoomEnginePlugin chocolatedoom_engine_plugin;
-PluginInfo ChocolateDoomMain::chocolatedoom_info = {"Chocolate Doom", "Chocolate Doom server query plugin.", "The Skulltag Team", {0,4,0,0}, MAKEID('E','N','G','N'), &chocolatedoom_engine_plugin};
-extern "C" PLUGIN_EXPORT PluginInfo *doomSeekerInit()
-{
-	return ChocolateDoomMain::get();
-}
-
-extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection &config)
-{
-	config.createSetting("Masterserver", "master.chocolate-doom.org:2342");
-}
+INSTALL_PLUGIN(ChocolateDoomEnginePlugin)

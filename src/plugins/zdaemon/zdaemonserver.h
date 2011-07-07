@@ -30,7 +30,7 @@
 
 class Binaries;
 class GameRunner;
-class PluginInfo;
+class EnginePlugin;
 
 class TeamInfo
 {
@@ -59,16 +59,11 @@ class ZDaemonServer : public Server
 	Q_OBJECT
 
 	public:
-		static const QPixmap			*ICON;
-
 		ZDaemonServer(const QHostAddress &address, unsigned short port);
 
-		Binaries*			binaries() const;
 		GameRunner*			gameRunner() const;
 
-		const QPixmap&		icon() const;
-
-		const PluginInfo*	plugin() const;
+		const EnginePlugin*	plugin() const;
 
 		QRgb				teamColor(int team) const;
 		QString				teamName(int team) const;

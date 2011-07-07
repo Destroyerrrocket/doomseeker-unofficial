@@ -24,7 +24,6 @@
 
 #include "global.h"
 #include "log.h"
-#include "sdeapi/pluginloader.hpp"
 #include "sdeapi/scanner.hpp"
 #include <QFile>
 #include <QMap>

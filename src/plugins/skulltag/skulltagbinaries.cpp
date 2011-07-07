@@ -27,6 +27,7 @@
 #include "serverapi/message.h"
 #include "../wadseeker/www.h"
 #include "../wadseeker/zip/unarchive.h"
+#include "plugins/engineplugin.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -52,13 +53,13 @@
 #endif
 
 SkulltagBinaries::SkulltagBinaries(const SkulltagServer* server)
-: server(server)
+: Binaries(SkulltagMain::get()), server(server)
 {
 }
 
 QString SkulltagBinaries::clientBinary(Message& message) const
 {
-	IniSection& config = *SkulltagMain::get()->pInterface->pConfig;
+	IniSection& config = *SkulltagMain::get()->data()->pConfig;
 
 	if (!server->isTestingServer() || !config["EnableTesting"])
 	{
@@ -162,7 +163,7 @@ Do you want Doomseeker to create %2 directory and copy all your .ini files from 
 
 QString SkulltagBinaries::clientWorkingDirectory(Message& message) const
 {
-	IniSection& config = *SkulltagMain::get()->pInterface->pConfig;
+	IniSection& config = *SkulltagMain::get()->data()->pConfig;
 
 	QFileInfo fi(config["BinaryPath"]);
 	return fi.canonicalPath();
@@ -216,7 +217,7 @@ bool SkulltagBinaries::downloadTestingBinaries(const QDir &destination) const
 #endif
 }
 
-const PluginInfo* SkulltagBinaries::plugin() const
+const EnginePlugin* SkulltagBinaries::plugin() const
 {
 	return SkulltagMain::get();
 }

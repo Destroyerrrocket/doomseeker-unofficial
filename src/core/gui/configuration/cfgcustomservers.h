@@ -28,7 +28,7 @@
 #include "ui_cfgcustomservers.h"
 
 class ConfigurationBoxInfo;
-class PluginInfo;
+class EnginePlugin;
 
 class CFGCustomServers : public ConfigurationBaseBox, private Ui::CFGCustomServers
 {
@@ -65,7 +65,7 @@ class CFGCustomServers : public ConfigurationBaseBox, private Ui::CFGCustomServe
 		 *	@param lastRow - Last row to be checked (inclusive).
 		 */
 		CheckAndFixPorts				checkAndFixPorts(int firstRow, int lastRow);
-		const PluginInfo*				getPluginInfoForRow(int rowIndex);
+		const EnginePlugin*				getPluginInfoForRow(int rowIndex);
 		bool							isPortColumnWithingRange(int leftmostColumnIndex, int rightmostColumnIndex);
 		bool							isPortCorrect(int rowIndex);
 

@@ -40,6 +40,7 @@
 #include "doomseekerfilepaths.h"
 #include "log.h"
 #include "main.h"
+#include "plugins/engineplugin.h"
 #include "sdeapi/config.hpp"
 #include "serverapi/server.h"
 #include "strings.h"
@@ -301,7 +302,7 @@ bool Main::createRemoteConsole()
 		}
 
 		// Check for RCon Availability.
-		const EnginePlugin *plugin = (*enginePlugins)[pIndex]->info->pInterface;
+		const EnginePlugin *plugin = (*enginePlugins)[pIndex]->info;
 		Server *server = plugin->server(QHostAddress(rconAddress), rconPort);
 		if(!server->hasRcon())
 		{
@@ -424,7 +425,7 @@ bool Main::interpretCommandLineParameters()
 			if(i+2 < argumentsCount)
 			{
 				rconPluginName = arguments[i+1];
-				Strings::translateServerAddress(arguments[i+2], rconAddress, rconPort, "localhost", 10666);
+				Strings::translateServerAddress(arguments[i+2], rconAddress, rconPort, "localhost:10666");
 				i += 2;
 			}
 		}

@@ -20,6 +20,7 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "plugins/engineplugin.h"
 #include "serverapi/gamerunner.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
@@ -56,7 +57,7 @@ bool GameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwad
 	iwadFound = !iwad.isEmpty();
 
 	// Custom parameters
-	IniSection& config = gConfig.iniSectionForPlugin(plugin());
+	IniSection& config = gConfig.iniSectionForPlugin(server->plugin());
 	QString customParameters = *config["CustomParameters"];
 	args << customParameters.split(" ", QString::SkipEmptyParts);
 
@@ -141,7 +142,7 @@ Message GameRunner::createHostCommandLine(const HostInfo& hostInfo, CommandLineI
 
 JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword)
 {
-	const QString PLUGIN_NAME = this->plugin()->name;
+	const QString &PLUGIN_NAME = server->plugin()->data()->name;
 	JoinError joinError;
 
 	// Init the JoinError type with critical error. We will change this upon

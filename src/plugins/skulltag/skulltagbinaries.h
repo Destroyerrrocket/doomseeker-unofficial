@@ -27,7 +27,7 @@
 
 #include "serverapi/binaries.h"
 
-class PluginInfo;
+class EnginePlugin;
 class SkulltagServer;
 class WWW;
 class QDir;
@@ -47,7 +47,7 @@ class SkulltagBinaries : public Binaries
 		QString					clientBinary(Message& message) const;
 		QString					clientWorkingDirectory(Message& message) const;
 
-		const PluginInfo*		plugin() const;
+		const EnginePlugin*		plugin() const;
 
 	protected:
 		const SkulltagServer*	server;

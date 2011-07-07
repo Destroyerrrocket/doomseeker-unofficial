@@ -33,7 +33,7 @@ class SkulltagGameRunner : public GameRunner
 	public:
 		SkulltagGameRunner(const SkulltagServer* server);
 
-		const PluginInfo*			plugin() const { return SkulltagMain::get(); }
+		const EnginePlugin*			plugin() const { return SkulltagMain::get(); }
 		
 	protected:
 		QString						argForConnectPassword() const { return "+cl_password"; }	

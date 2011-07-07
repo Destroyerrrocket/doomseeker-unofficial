@@ -22,29 +22,18 @@
 //------------------------------------------------------------------------------
 
 #include "chocolatedoomserver.h"
-#include "chocolatedoombinaries.h"
 #include "chocolatedoomgamerunner.h"
 #include "chocolatedoommain.h"
 #include "global.h"
 #include "main.h"
 #include "serverapi/playerslist.h"
 
-const // clear warnings
-#include "chocolatedoom.xpm"
-
 #define NET_PACKET_TYPE_QUERY			0,13
 #define NET_PACKET_TYPE_QUERY_RESPONSE	14
-
-const QPixmap *ChocolateDoomServer::ICON = NULL;
 
 ChocolateDoomServer::ChocolateDoomServer(const QHostAddress &address, unsigned short port) : Server(address, port),
 	serverState(0), game(0), gameMission(0)
 {
-}
-
-Binaries* ChocolateDoomServer::binaries() const
-{
-	return new ChocolateDoomBinaries();
 }
 
 GameRunner*	ChocolateDoomServer::gameRunner() const
@@ -52,14 +41,7 @@ GameRunner*	ChocolateDoomServer::gameRunner() const
 	return new ChocolateDoomGameRunner(this);
 }
 
-const QPixmap &ChocolateDoomServer::icon() const
-{
-	if(ICON == NULL)
-		ICON = new QPixmap(chocolatedoom_xpm);
-	return *ICON;
-}
-
-const PluginInfo* ChocolateDoomServer::plugin() const
+const EnginePlugin* ChocolateDoomServer::plugin() const
 {
 	return ChocolateDoomMain::get();
 }

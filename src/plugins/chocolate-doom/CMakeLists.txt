@@ -16,7 +16,6 @@ set(CHOCOLATEDOOM_FILES
 
 set(HEADER_FILES
 	${CHOCOLATEDOOM_QT_FILES}
-	chocolatedoombinaries.h
 	chocolatedoomgamerunner.h
 	chocolatedoommain.h
 )

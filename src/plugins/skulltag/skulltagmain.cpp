@@ -29,8 +29,7 @@
 #include "pathfinder.h"
 #include "strings.h"
 #include "irc/entities/ircnetworkentity.h"
-#include "sdeapi/config.hpp"
-#include "sdeapi/pluginloader.hpp"
+#include "plugins/engineplugin.h"
 
 #include "huffman/huffman.h"
 #include "skulltagbinaries.h"
@@ -40,42 +39,66 @@
 #include "skulltagserver.h"
 #include "engineSkulltagConfig.h"
 
-const // clear warnings
-#include "skulltag.xpm"
+EnginePlugin* SkulltagMain::info;
 
-class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
+class SkulltagEnginePlugin : public EnginePlugin
 {
 	public:
-		const DMFlags*					allDMFlags() const
+		SkulltagEnginePlugin()
 		{
-			return SkulltagGameInfo::dmFlags();
+			HUFFMAN_Construct();
+			SkulltagMain::info = this;
+
+			const // clear warnings
+			#include "skulltag.xpm"
+
+			init("Skulltag", skulltag_xpm,
+				EP_Author, "The Doomseeker Team",
+				EP_Version, 7,
+
+				EP_AllowsURL,
+				EP_AllowsEmail,
+				EP_AllowsConnectPassword,
+				EP_AllowsJoinPassword,
+				EP_AllowsRConPassword,
+				EP_AllowsMOTD,
+				EP_DefaultServerPort, 10666,
+				EP_HasMasterServer,
+				EP_DefaultMaster, "skulltag.servegame.com:15300",
+				EP_SupportsRandomMapRotation,
+				EP_GameModes, SkulltagGameInfo::gameModes(),
+				EP_GameModifiers, SkulltagGameInfo::gameModifiers(),
+				EP_AllDMFlags, SkulltagGameInfo::dmFlags(),
+				EP_Done
+			);
 		}
 
-		bool							allowsURL() const { return true; }
-		bool							allowsEmail() const { return true; }
-		bool							allowsConnectPassword() const { return true; }
-		bool							allowsJoinPassword() const { return true; }
-		bool							allowsRConPassword() const { return true; }
-		bool							allowsMOTD() const { return true; }
-
-		ConfigurationBaseBox *configuration(IniSection &cfg, QWidget *parent) const
+		void setupConfig(IniSection &config)
 		{
-			return new EngineSkulltagConfigBox(SkulltagMain::get(), cfg, parent);
+			// Default to where the automatic installations install to.
+#ifdef Q_OS_WIN32
+			QString programFilesDirectory = DataPaths::programFilesDirectory(DataPaths::x86);
+			QString trimPattern = QString("\\/");
+			QString paths = Strings::trimr(programFilesDirectory, trimPattern);
+
+			paths += "\\Skulltag;" + Main::workingDirectory + ";.";
+
+			PathFinder pf(paths);
+			config.createSetting("BinaryPath", pf.findFile("skulltag.exe"));
+#else
+			PathFinder pf(QString("/usr/games/skulltag;/usr/local/games/skulltag;/usr/share/games/skulltag;") + Main::workingDirectory + ";.");
+			config.createSetting("BinaryPath", pf.findFile("skulltag"));
+			config.createSetting("ServerBinaryPath", pf.findFile("skulltag-server"));
+#endif
+
+			config.createSetting("Masterserver", "skulltag.servegame.com:15300");
+			config.createSetting("EnableTesting", true);
 		}
 
-		unsigned short					defaultServerPort() const { return 10666; }
-
-		const QList<GameMode>*			gameModes() const
+		ConfigurationBaseBox *configuration(QWidget *parent) const
 		{
-			return SkulltagGameInfo::gameModes();
+			return new EngineSkulltagConfigBox(SkulltagMain::get(), *data()->pConfig, parent);
 		}
-
-		const QList<GameCVar>*			gameModifiers() const
-		{
-			return SkulltagGameInfo::gameModifiers();
-		}
-
-		bool							hasMasterServer() const { return true; }
 
 		QList<GameCVar>	limits(const GameMode& gm) const
 		{
@@ -126,20 +149,9 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 			return gl;
 		}
 
-		QPixmap						icon() const
-		{
-			return QPixmap(skulltag_xpm);
-		}
-
 		MasterClient				*masterClient() const
 		{
 			return new SkulltagMasterClient();
-		}
-
-		void						masterHost(QString &host, unsigned short &port) const
-		{
-			QString str = pConfig->setting("Masterserver");
-			Strings::translateServerAddress(str, host, port, "skulltag.servegame.com", 15300);
 		}
 
 		void						registerIRCServer(QVector<IRCNetworkEntity> &networks) const
@@ -155,38 +167,7 @@ class PLUGIN_EXPORT SkulltagEnginePlugin : public EnginePlugin
 
 		Server*						server(const QHostAddress &address, unsigned short port) const
 		{
-			return (new SkulltagServer(address, port));
+			return new SkulltagServer(address, port);
 		}
-
-		bool						supportsRandomMapRotation() const { return true; }
 };
-
-static SkulltagEnginePlugin skulltag_engine_plugin;
-PluginInfo SkulltagMain::info = {"Skulltag", "Skulltag server query plugin.", "The Skulltag Team", {0,7,0,0}, MAKEID('E','N','G','N'), &skulltag_engine_plugin};
-extern "C" PLUGIN_EXPORT PluginInfo *doomSeekerInit()
-{
-	HUFFMAN_Construct();
-	return SkulltagMain::get();
-}
-
-extern "C" PLUGIN_EXPORT void doomSeekerInitConfig(IniSection &config)
-{
-	// Default to where the automatic installations install to.
-#ifdef Q_OS_WIN32
-	QString programFilesDirectory = DataPaths::programFilesDirectory(DataPaths::x86);
-	QString trimPattern = QString("\\/");
-	QString paths = Strings::trimr(programFilesDirectory, trimPattern);
-
-	paths += "\\Skulltag;" + Main::workingDirectory + ";.";
-
-	PathFinder pf(paths);
-	config.createSetting("BinaryPath", pf.findFile("skulltag.exe"));
-#else
-	PathFinder pf(QString("/usr/games/skulltag;/usr/local/games/skulltag;/usr/share/games/skulltag;") + Main::workingDirectory + ";.");
-	config.createSetting("BinaryPath", pf.findFile("skulltag"));
-	config.createSetting("ServerBinaryPath", pf.findFile("skulltag-server"));
-#endif
-
-	config.createSetting("Masterserver", "skulltag.servegame.com:15300");
-	config.createSetting("EnableTesting", true);
-}
+INSTALL_PLUGIN(SkulltagEnginePlugin)

@@ -33,7 +33,7 @@
 #include "global.h"
 
 class Message;
-class PluginInfo;
+class EnginePlugin;
 class Server;
 
 /**
@@ -88,11 +88,11 @@ class MAIN_EXPORT MasterClient : public QObject
 		/**
 		 *	This is supposed to return the plugin this MasterClient belongs to.
 		 *	If it doesn't belong to any plugin then return NULL.
-		 *	New instances of PluginInfo shouldn't be created here. Instead
-		 *	each plugin should keep a global instance of PluginInfo (singleton?)
+		 *	New instances of EnginePlugin shouldn't be created here. Instead
+		 *	each plugin should keep a global instance of EnginePlugin (singleton?)
 		 *	and a pointer to this instance should be returned.
 		 */
-		virtual const PluginInfo*		plugin() const = 0;
+		virtual const EnginePlugin*		plugin() const = 0;
 
 		void					pushPacketToCache(QByteArray &data);
 		void					resetPacketCaching();

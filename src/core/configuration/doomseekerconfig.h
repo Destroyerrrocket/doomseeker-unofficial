@@ -33,7 +33,7 @@
 #define gConfig DoomseekerConfig::config()
 
 class Ini;
-class PluginInfo;
+class EnginePlugin;
 
 /**
  *	@brief This Singleton holds entire Doomseeker configuration in memory.
@@ -184,7 +184,7 @@ class DoomseekerConfig
 		 *	@see dummySection
 		 */
 		IniSection&					iniSectionForPlugin(const QString& pluginName);
-		IniSection&					iniSectionForPlugin(const PluginInfo* plugin);
+		IniSection&					iniSectionForPlugin(const EnginePlugin* plugin);
 
 		/**
 		 *	@brief Reads settings from ini file. This file must be

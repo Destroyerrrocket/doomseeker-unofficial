@@ -26,7 +26,7 @@
 
 #include "masterserver/masterclient.h"
 
-class PluginInfo;
+class EnginePlugin;
 
 class ChocolateDoomMasterClient : public MasterClient
 {
@@ -35,7 +35,7 @@ class ChocolateDoomMasterClient : public MasterClient
 	public:
 		ChocolateDoomMasterClient();
 
-		const PluginInfo*		plugin() const;
+		const EnginePlugin*		plugin() const;
 
 		bool					readMasterResponse(QByteArray &data);
 		void					updateAddress();

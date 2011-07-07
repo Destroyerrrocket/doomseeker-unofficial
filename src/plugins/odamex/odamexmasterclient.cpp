@@ -43,7 +43,7 @@ bool OdamexMasterClient::getServerListRequest(QByteArray &data)
 	return true;
 }
 
-const PluginInfo* OdamexMasterClient::plugin() const
+const EnginePlugin* OdamexMasterClient::plugin() const
 {
 	return OdamexMain::get();
 }

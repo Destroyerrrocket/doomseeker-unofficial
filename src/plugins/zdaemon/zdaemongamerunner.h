@@ -25,7 +25,7 @@
 
 #include "serverapi/gamerunner.h"
 
-class PluginInfo;
+class EnginePlugin;
 class ZDaemonServer;
 
 class ZDaemonGameRunner : public GameRunner
@@ -33,7 +33,7 @@ class ZDaemonGameRunner : public GameRunner
 	public:
 		ZDaemonGameRunner(const ZDaemonServer* server);
 
-		const PluginInfo*			plugin() const;
+		const EnginePlugin*			plugin() const;
 
 	protected:
 		virtual QString				argForConnect() const { return "+connect"; }

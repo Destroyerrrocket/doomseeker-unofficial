@@ -126,13 +126,9 @@ class SkulltagServer : public Server
 			SQF_STANDARDQUERY =		SQF_NAME|SQF_URL|SQF_EMAIL|SQF_MAPNAME|SQF_MAXCLIENTS|SQF_MAXPLAYERS|SQF_PWADS|SQF_GAMETYPE|SQF_IWAD|SQF_FORCEPASSWORD|SQF_FORCEJOINPASSWORD|SQF_DMFLAGS|SQF_LIMITS|SQF_NUMPLAYERS|SQF_PLAYERDATA|SQF_TEAMINFO_NUMBER|SQF_TEAMINFO_NAME|SQF_TEAMINFO_SCORE|SQF_GAMESKILL|SQF_TESTING_SERVER
 		};
 
-		static const QPixmap	*ICON;
-
 		SkulltagServer(const QHostAddress &address, unsigned short port);
 
 		Binaries*		binaries() const;
-
-		const QPixmap	&icon() const;
 
 		bool			isTestingServer() const { return testingServer; }
 
@@ -142,7 +138,7 @@ class SkulltagServer : public Server
 
 		const GameCVar	*modifier() const;
 
-		const PluginInfo*	plugin() const;
+		const EnginePlugin*	plugin() const;
 
 		RConProtocol	*rcon();
 

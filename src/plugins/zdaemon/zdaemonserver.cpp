@@ -23,7 +23,6 @@
 
 #include <QTime>
 
-#include "zdaemonbinaries.h"
 #include "zdaemongameinfo.h"
 #include "zdaemongamerunner.h"
 #include "zdaemonmain.h"
@@ -46,29 +45,15 @@ const // clear warnings
 #define SERVER_VERSION 0x03,0x00,0x00,0x00
 #define SERVER_RESPONSE 0x54D6D6
 
-const QPixmap *ZDaemonServer::ICON = NULL;
-
 ZDaemonServer::ZDaemonServer(const QHostAddress &address, unsigned short port)
 : Server(address, port)
 {
 	currentGameMode = (*ZDaemonGameInfo::gameModes())[ZDaemonGameInfo::MODE_DEATHMATCH];
 }
 
-Binaries* ZDaemonServer::binaries() const
-{
-	return new ZDaemonBinaries();
-}
-
 GameRunner* ZDaemonServer::gameRunner() const
 {
 	return new ZDaemonGameRunner(this);
-}
-
-const QPixmap &ZDaemonServer::icon() const
-{
-	if(ICON == NULL)
-		ICON = new QPixmap(zdaemon_xpm);
-	return *ICON;
 }
 
 unsigned int ZDaemonServer::millisecondTime()
@@ -77,7 +62,7 @@ unsigned int ZDaemonServer::millisecondTime()
 	return time.hour()*360000 + time.minute()*60000 + time.second()*1000 + time.msec();
 }
 
-const PluginInfo* ZDaemonServer::plugin() const
+const EnginePlugin* ZDaemonServer::plugin() const
 {
 	return ZDaemonMain::get();
 }

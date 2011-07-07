@@ -43,7 +43,7 @@ bool ChocolateDoomMasterClient::getServerListRequest(QByteArray &data)
 	return true;
 }
 
-const PluginInfo* ChocolateDoomMasterClient::plugin() const
+const EnginePlugin* ChocolateDoomMasterClient::plugin() const
 {
 	return ChocolateDoomMain::get();
 }

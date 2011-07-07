@@ -28,10 +28,11 @@
 class ChocolateDoomMain
 {
 	public:
-		static PluginInfo*	get() { return &chocolatedoom_info; }
+		static EnginePlugin*	get() { return chocolatedoom_info; }
 
 	protected:
-		static PluginInfo 	chocolatedoom_info;
+		friend class ChocolateDoomEnginePlugin;
+		static EnginePlugin* 	chocolatedoom_info;
 };
 
 #endif

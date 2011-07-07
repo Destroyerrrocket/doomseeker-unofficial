@@ -26,7 +26,7 @@
 
 #include "masterserver/masterclient.h"
 
-class PluginInfo;
+class EnginePlugin;
 
 class SkulltagMasterClient : public MasterClient
 {
@@ -35,7 +35,7 @@ class SkulltagMasterClient : public MasterClient
 	public:
 		SkulltagMasterClient();
 
-		const PluginInfo*		plugin() const;
+		const EnginePlugin*		plugin() const;
 
 		bool					readMasterResponse(QByteArray &data);
 

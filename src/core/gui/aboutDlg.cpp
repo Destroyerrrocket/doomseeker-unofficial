@@ -23,6 +23,7 @@
 
 #include "aboutDlg.h"
 #include "main.h"
+#include "plugins/engineplugin.h"
 #include "wadseeker/wadseekerversioninfo.h"
 #include "version.h"
 #include <QPixmap>
@@ -46,7 +47,7 @@ AboutDlg::AboutDlg(QWidget* parent) : QDialog(parent)
 	// Populate plugins dialog
 	for(unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
-		pluginBox->addItem( (*Main::enginePlugins)[i]->info->name);
+		pluginBox->addItem( (*Main::enginePlugins)[i]->info->data()->name);
 	}
 	connect(pluginBox, SIGNAL( currentIndexChanged(int) ), this, SLOT( changePlugin(int) ));
 	changePlugin(0);
@@ -61,9 +62,8 @@ void AboutDlg::changePlugin(int pluginIndex)
 	if(static_cast<unsigned> (pluginIndex) >= Main::enginePlugins->numPlugins())
 		return; // Invalid plugin.
 
-	const Plugin* plug = (*Main::enginePlugins)[pluginIndex];
+	const EnginePlugin* plug = (*Main::enginePlugins)[pluginIndex]->info;
 
-	pluginAuthor->setText(plug->info->author);
-	pluginVersion->setText(QString("%1.%2.%3.%4").arg(plug->info->version[0]).arg(plug->info->version[1]).arg(plug->info->version[2]).arg(plug->info->version[3]));
-	pluginDescription->setText(plug->info->description);
+	pluginAuthor->setText(plug->data()->author);
+	pluginVersion->setText(QString("Version: %1").arg(plug->data()->version));
 }

@@ -24,6 +24,7 @@
 #ifndef __SERVER_H__
 #define __SERVER_H__
 
+#include <QColor>
 #include <QDir>
 #include <QFileInfo>
 #include <QList>
@@ -32,7 +33,6 @@
 #include <QHostAddress>
 #include <QString>
 #include <QMetaType>
-#include <QPixmap>
 #include <QThread>
 #include <QTime>
 #include <QUdpSocket>
@@ -45,8 +45,9 @@
 class Binaries;
 class GameRunner;
 class PlayersList;
-class PluginInfo;
+class EnginePlugin;
 class TooltipGenerator;
+class QPixmap;
 
 // Some ports support optional wads.
 class MAIN_EXPORT PWad
@@ -87,7 +88,7 @@ class MAIN_EXPORT Server : public QObject
 		 *	@return A pointer to a new instance of Binaries's descendant
 		 *		(defined by a plugin)
 		 */
-		virtual Binaries*						binaries() const = 0;
+		virtual Binaries*						binaries() const;
 
 		/**
 		 *	Returns name of the engine for this server, for example: "Skulltag".
@@ -104,7 +105,7 @@ class MAIN_EXPORT Server : public QObject
 		const GameMode		&gameMode() const { return currentGameMode; }
 		unsigned char		gameSkill() const { return skill; }
 		virtual bool		hasRcon() const { return false; }
-		virtual const QPixmap	&icon() const=0;
+		const QPixmap		&icon() const;
 		bool				isBroadcastingToLAN() const { return broadcastToLAN; }
 		bool				isBroadcastingToMaster() const { return broadcastToMaster; }
 		bool				isCustom() const { return custom; }
@@ -174,17 +175,17 @@ class MAIN_EXPORT Server : public QObject
 		 *	descendant (defined by a plugin). Created instance should be deleted
 		 *	manually by the programmer.
 		 */
-		virtual GameRunner*	gameRunner() const = 0;
+		virtual GameRunner*	gameRunner() const;
 
 		bool				isRefreshing() const { return bIsRefreshing; }
 
 		/**
 		 *	This is supposed to return the plugin this Server belongs to.
-		 *	New instances of PluginInfo shouldn't be created here. Instead
-		 *	each plugin should keep a global instance of PluginInfo (singleton?)
+		 *	New instances of EnginePlugin shouldn't be created here. Instead
+		 *	each plugin should keep a global instance of EnginePlugin (singleton?)
 		 *	and a pointer to this instance should be returned.
 		 */
-		virtual const PluginInfo*		plugin() const = 0;
+		virtual const EnginePlugin*		plugin() const = 0;
 
 		/**
 		 *	@brief Creates an instance of TooltipGenerator.

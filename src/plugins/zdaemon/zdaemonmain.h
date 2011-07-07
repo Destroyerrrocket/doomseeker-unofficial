@@ -23,15 +23,16 @@
 #ifndef __ZDAEMON_MAIN_H_
 #define __ZDAEMON_MAIN_H_
 
-#include "sdeapi/pluginloader.hpp"
+class EnginePlugin;
 
 class ZDaemonMain
 {
 	public:
-		static PluginInfo*	get() { return &info; }
+		static EnginePlugin*	get() { return info; }
 	
 	protected:
-		static PluginInfo 	info;
+		friend class ZDaemonEnginePlugin;
+		static EnginePlugin* 	info;
 };
 
 #endif
