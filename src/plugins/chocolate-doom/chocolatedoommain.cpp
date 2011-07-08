@@ -21,9 +21,6 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include "main.h"
-#include "strings.h"
-#include "irc/entities/ircnetworkentity.h"
 #include "plugins/engineplugin.h"
 
 #include "chocolatedoommain.h"
@@ -49,6 +46,7 @@ class ChocolateDoomEnginePlugin : public EnginePlugin
 				EP_DefaultMaster, "master.chocolate-doom.org:2342",
 				EP_DefaultServerPort, 2342,
 				EP_HasMasterServer,
+				EP_IRCChannel, "Chocolate Doom", "irc.oftc.net", "#chocolate-doom",
 				EP_Done
 			);
 		}
@@ -56,17 +54,6 @@ class ChocolateDoomEnginePlugin : public EnginePlugin
 		MasterClient *masterClient() const
 		{
 			return new ChocolateDoomMasterClient();
-		}
-
-		void registerIRCServer(QVector<IRCNetworkEntity> &networks) const
-		{
-			IRCNetworkEntity entity;
-			entity.address = "irc.oftc.net";
-			entity.description = "Chocolate Doom";
-			entity.autojoinChannels << "#chocolate-doom";
-
-			if(!networks.contains(entity))
-				networks << entity;
 		}
 
 		Server* server(const QHostAddress &address, unsigned short port) const

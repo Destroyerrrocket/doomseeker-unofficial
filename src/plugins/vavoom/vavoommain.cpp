@@ -21,14 +21,7 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include <QHostInfo>
-
-#include "gui/configuration/engineconfigurationbasebox.h"
-#include "masterserver/masterclient.h"
 #include "plugins/engineplugin.h"
-#include "global.h"
-#include "main.h"
-#include "strings.h"
 
 #include "vavoomgameinfo.h"
 #include "vavoommain.h"

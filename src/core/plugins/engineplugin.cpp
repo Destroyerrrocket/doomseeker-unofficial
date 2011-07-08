@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------ 
 
 #include "gui/configuration/engineconfigurationbasebox.h"
+#include "irc/entities/ircnetworkentity.h"
 #include "plugins/engineplugin.h"
 #include "log.h"
 #include "strings.h"
@@ -130,6 +131,23 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 			case EP_HasMasterServer:
 				d->hasMasterServer = true;
 				break;
+			case EP_IRCChannel:
+			{
+				// Either create an entity or put the channel in an existing one.
+				IRCNetworkEntity entity;
+				entity.description = va_arg(va, const char*);
+				entity.address = va_arg(va, const char*);
+				entity.autojoinChannels << va_arg(va, const char*);
+
+				if(d->ircChannels.contains(entity))
+				{
+					IRCNetworkEntity &existingEntity = d->ircChannels[d->ircChannels.indexOf(entity)];
+					existingEntity.autojoinChannels << entity.autojoinChannels[0];
+				}
+				else
+					d->ircChannels << entity;
+				break;
+			}
 			case EP_SupportsRandomMapRotation:
 				d->supportsRandomMapRotation = true;
 				break;

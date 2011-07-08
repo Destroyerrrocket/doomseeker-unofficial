@@ -26,6 +26,8 @@
 #include "main.h"
 #include "version.h"
 
+#include <QMessageBox>
+
 IRCConfig* IRCConfig::instance = NULL;
 
 IRCConfig::IRCConfig()
@@ -269,7 +271,39 @@ void IRCConfig::NetworksDataCfg::load(Ini& ini)
 	// Go through the plugins and register their IRC servers.
 	for(unsigned int i = 0;i < Main::enginePlugins->numPlugins();i++)
 	{
-		(*Main::enginePlugins)[i]->info->registerIRCServer(this->networks);
+		if((*Main::enginePlugins)[i]->info->data()->ircChannels.size() == 0)
+			continue;
+
+		// OK so maybe registering only on first run is a good idea after all...
+		IniVariable &registered = (*Main::enginePlugins)[i]->info->data()->pConfig->createSetting("IRCRegistered", false);
+		if(!registered)
+		{
+			registered = true;
+
+			foreach(const IRCNetworkEntity &entity, (*Main::enginePlugins)[i]->info->data()->ircChannels)
+			{
+				// If we have a unique server add it to the list...
+				if(!networks.contains(entity))
+					networks << entity;
+				else
+				{
+					// otherwise add the channel to the auto join.
+					IRCNetworkEntity &existingEntity = networks[networks.indexOf(entity)];
+					if(existingEntity.autojoinChannels.contains(entity.autojoinChannels[0]))
+						continue;
+					if(existingEntity.bAutojoinNetwork)
+					{
+						// If we have this set to auto join ask first.
+						if(QMessageBox::question(NULL, QObject::tr("Add plugin's IRC channel?"),
+							QObject::tr("Would you like the %1 plugin to add its channel to %2's auto join?").arg(entity.description).arg(existingEntity.description),
+							QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes) == QMessageBox::No)
+							continue;
+					}
+
+					existingEntity.autojoinChannels << entity.autojoinChannels[0];
+				}
+			}
+		}
 	}
 }
 

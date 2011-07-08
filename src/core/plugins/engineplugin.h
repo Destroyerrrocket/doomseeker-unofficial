@@ -26,6 +26,7 @@
 
 #include <QtContainerFwd>
 #include <QString>
+#include <QVector>
 #include "global.h"
 #include "serverapi/serverstructs.h"
 
@@ -75,6 +76,7 @@ class MAIN_EXPORT EnginePlugin
 			EP_GameModes, // (const QList<GameMode>*)
 			EP_GameModifiers, // (const QList<GameCVar>*)
 			EP_HasMasterServer,
+			EP_IRCChannel, // (const char*)server, (const char*)channel - Can be repeated
 			EP_SupportsRandomMapRotation
 		};
 
@@ -114,6 +116,7 @@ class MAIN_EXPORT EnginePlugin
 				bool					hasMasterServer;
 				/// icon of the engine
 				QPixmap					*icon;
+				QVector<IRCNetworkEntity> ircChannels;
 				QString					name;
 				IniSection				*pConfig;
 				bool					supportsRandomMapRotation;
@@ -150,14 +153,12 @@ class MAIN_EXPORT EnginePlugin
 		 */
 		void							masterHost(QString &host, unsigned short &port) const;
 
-		virtual void					registerIRCServer(QVector<IRCNetworkEntity> &networks) const {}
-
 		/**
 		 *	@brief Creates an instance of server object from this plugin.
 		 *	This might be useful for custom servers.
 		 * 	@return instance of plugin's server object
 		 */
-		virtual Server*					server(const QHostAddress &address, unsigned short port) const { return NULL; }
+		virtual Server*					server(const QHostAddress &address, unsigned short port) const = 0;
 
 	private:
 		Data	*d;

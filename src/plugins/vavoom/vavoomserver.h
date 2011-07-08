@@ -40,8 +40,6 @@ class VavoomServer : public Server
 
 		GameRunner*			gameRunner() const;
 
-		const QPixmap&		icon() const;
-
 		const EnginePlugin*	plugin() const;
 
 	protected:

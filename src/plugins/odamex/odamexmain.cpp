@@ -21,17 +21,10 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include <QHostInfo>
 #include <QDateTime>
 
-#include "gui/configuration/engineconfigurationbasebox.h"
-#include "masterserver/masterclient.h"
 #include "irc/entities/ircnetworkentity.h"
-#include "sdeapi/pluginloader.hpp"
 #include "plugins/engineplugin.h"
-#include "global.h"
-#include "main.h"
-#include "strings.h"
 
 #include "odamexgameinfo.h"
 #include "odamexmasterclient.h"
@@ -69,6 +62,7 @@ class OdamexEnginePlugin : public EnginePlugin
 				EP_DefaultServerPort, 10666,
 				EP_GameModes, OdamexGameInfo::gameModes(),
 				EP_HasMasterServer,
+				EP_IRCChannel, "Odamex", "irc.oftc.net", "#odamex",
 				EP_SupportsRandomMapRotation,
 				EP_Done
 			);
@@ -77,17 +71,6 @@ class OdamexEnginePlugin : public EnginePlugin
 		MasterClient *masterClient() const
 		{
 			return new OdamexMasterClient();
-		}
-
-		void registerIRCServer(QVector<IRCNetworkEntity> &networks) const
-		{
-			IRCNetworkEntity entity;
-			entity.address = "irc.oftc.net";
-			entity.description = "Odamex";
-			entity.autojoinChannels << "#odamex";
-
-			if(!networks.contains(entity))
-				networks << entity;
 		}
 
 		Server* server(const QHostAddress &address, unsigned short port) const

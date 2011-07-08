@@ -21,14 +21,9 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include <QHostInfo>
-
 #include "datapaths.h"
-#include "global.h"
 #include "main.h"
 #include "pathfinder.h"
-#include "strings.h"
-#include "irc/entities/ircnetworkentity.h"
 #include "plugins/engineplugin.h"
 
 #include "huffman/huffman.h"
@@ -69,6 +64,7 @@ class SkulltagEnginePlugin : public EnginePlugin
 				EP_GameModes, SkulltagGameInfo::gameModes(),
 				EP_GameModifiers, SkulltagGameInfo::gameModifiers(),
 				EP_AllDMFlags, SkulltagGameInfo::dmFlags(),
+				EP_IRCChannel, "Skulltag", "irc.skulltag.net", "#skulltag",
 				EP_Done
 			);
 		}
@@ -152,17 +148,6 @@ class SkulltagEnginePlugin : public EnginePlugin
 		MasterClient				*masterClient() const
 		{
 			return new SkulltagMasterClient();
-		}
-
-		void						registerIRCServer(QVector<IRCNetworkEntity> &networks) const
-		{
-			IRCNetworkEntity entity;
-			entity.address = "irc.skulltag.net";
-			entity.description = "Skulltag";
-			entity.autojoinChannels << "#skulltag";
-
-			if(!networks.contains(entity))
-				networks << entity;
 		}
 
 		Server*						server(const QHostAddress &address, unsigned short port) const
