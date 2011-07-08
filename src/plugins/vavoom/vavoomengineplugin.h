@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// odamexmain.h
+// vavoomengineplugin.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,19 +20,20 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __ODAMEX_MAIN_H_
-#define __ODAMEX_MAIN_H_
+#ifndef __VAVOOMENGINEPLUGIN_H_
+#define __VAVOOMENGINEPLUGIN_H_
 
-class EnginePlugin;
+#include "plugins/engineplugin.h"
 
-class OdamexMain
+class VavoomEnginePlugin : public EnginePlugin
 {
+	DECLARE_PLUGIN(VavoomEnginePlugin)
 	public:
-		static EnginePlugin*	get() { return info; }
-	
-	protected:
-		friend class OdamexEnginePlugin;
-		static EnginePlugin* 	info;
+		VavoomEnginePlugin();
+
+		MasterClient *masterClient() const;
+
+		Server* server(const QHostAddress &address, unsigned short port) const;
 };
 
 #endif

@@ -24,7 +24,7 @@
 #define __CHOCOLATE_DOOM_GAME_RUNNER_H_
 
 #include "serverapi/gamerunner.h"
-#include "chocolatedoommain.h"
+#include "chocolatedoomengineplugin.h"
 
 class ChocolateDoomServer;
 
@@ -34,7 +34,7 @@ class ChocolateDoomGameRunner : public GameRunner
 		ChocolateDoomGameRunner(const ChocolateDoomServer* server);
 
 		bool						connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword);
-		const EnginePlugin*			plugin() const { return ChocolateDoomMain::get(); }
+		const EnginePlugin*			plugin() const { return ChocolateDoomEnginePlugin::staticInstance(); }
 };
 
 #endif

@@ -24,7 +24,6 @@
 #define __ODAMEX_GAME_RUNNER_H_
 
 #include "serverapi/gamerunner.h"
-#include "odamexmain.h"
 
 class OdamexServer;
 

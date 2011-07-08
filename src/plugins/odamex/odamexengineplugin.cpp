@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// odamexmain.cpp
+// odamexengineplugin.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -28,54 +28,47 @@
 
 #include "odamexgameinfo.h"
 #include "odamexmasterclient.h"
-#include "odamexmain.h"
+#include "odamexengineplugin.h"
 #include "odamexserver.h"
 
-EnginePlugin *OdamexMain::info;
-
-class OdamexEnginePlugin : public EnginePlugin
-{
-	public:
-		OdamexEnginePlugin()
-		{
-			static const unsigned int NUM_MASTERS = 2;
-			static const char* masters[NUM_MASTERS] = {
-				"master1.odamex.net:15000", "master2.odamex.net:15000"
-			};
-			qsrand(QDateTime::currentMSecsSinceEpoch());
-
-			OdamexMain::info = this;
-
-			const // clear warnings
-			#include "odamex.xpm"
-
-			init("Odamex", odamex_xpm,
-				EP_Author, "The Doomseeker Team",
-				EP_Version, 7,
-
-				EP_AllowsURL,
-				EP_AllowsEmail,
-				EP_AllowsConnectPassword,
-				EP_AllowsJoinPassword,
-				EP_AllowsMOTD,
-				EP_DefaultMaster, masters[qrand()%NUM_MASTERS],
-				EP_DefaultServerPort, 10666,
-				EP_GameModes, OdamexGameInfo::gameModes(),
-				EP_HasMasterServer,
-				EP_IRCChannel, "Odamex", "irc.oftc.net", "#odamex",
-				EP_SupportsRandomMapRotation,
-				EP_Done
-			);
-		}
-
-		MasterClient *masterClient() const
-		{
-			return new OdamexMasterClient();
-		}
-
-		Server* server(const QHostAddress &address, unsigned short port) const
-		{
-			return new OdamexServer(address, port);
-		}
-};
 INSTALL_PLUGIN(OdamexEnginePlugin)
+
+OdamexEnginePlugin::OdamexEnginePlugin()
+{
+	static const unsigned int NUM_MASTERS = 2;
+	static const char* masters[NUM_MASTERS] = {
+		"master1.odamex.net:15000", "master2.odamex.net:15000"
+	};
+	qsrand(QDateTime::currentMSecsSinceEpoch());
+
+	const // clear warnings
+	#include "odamex.xpm"
+
+	init("Odamex", odamex_xpm,
+		EP_Author, "The Doomseeker Team",
+		EP_Version, 7,
+
+		EP_AllowsURL,
+		EP_AllowsEmail,
+		EP_AllowsConnectPassword,
+		EP_AllowsJoinPassword,
+		EP_AllowsMOTD,
+		EP_DefaultMaster, masters[qrand()%NUM_MASTERS],
+		EP_DefaultServerPort, 10666,
+		EP_GameModes, OdamexGameInfo::gameModes(),
+		EP_HasMasterServer,
+		EP_IRCChannel, "Odamex", "irc.oftc.net", "#odamex",
+		EP_SupportsRandomMapRotation,
+		EP_Done
+	);
+}
+
+MasterClient *OdamexEnginePlugin::masterClient() const
+{
+	return new OdamexMasterClient();
+}
+
+Server* OdamexEnginePlugin::server(const QHostAddress &address, unsigned short port) const
+{
+	return new OdamexServer(address, port);
+}

@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "global.h"
-#include "vavoommain.h"
+#include "vavoomengineplugin.h"
 #include "vavoommasterclient.h"
 #include "vavoomserver.h"
 
@@ -35,7 +35,7 @@ VavoomMasterClient::VavoomMasterClient() : MasterClient()
 
 const EnginePlugin* VavoomMasterClient::plugin() const
 {
-	return VavoomMain::get();
+	return VavoomEnginePlugin::staticInstance();
 }
 
 bool VavoomMasterClient::getServerListRequest(QByteArray &data)

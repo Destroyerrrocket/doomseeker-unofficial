@@ -8,16 +8,16 @@ set(CHOCOLATEDOOM_QT_FILES
 	chocolatedoommasterclient.h
 )
 set(CHOCOLATEDOOM_FILES
+	chocolatedoomengineplugin.cpp
 	chocolatedoomgamerunner.cpp
-	chocolatedoommain.cpp
 	chocolatedoommasterclient.cpp
 	chocolatedoomserver.cpp
 )
 
 set(HEADER_FILES
 	${CHOCOLATEDOOM_QT_FILES}
+	chocolatedoomengineplugin.h
 	chocolatedoomgamerunner.h
-	chocolatedoommain.h
 )
 
 qt_wrap_cpp(chocolateDoom CHOCOLATEDOOM_FILES ${CHOCOLATEDOOM_QT_FILES})

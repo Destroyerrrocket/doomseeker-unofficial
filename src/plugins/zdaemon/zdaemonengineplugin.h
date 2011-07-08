@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// vavoommain.h
+// zdaemonengineplugin.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,21 +18,22 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2010 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
-#ifndef __VAVOOM_MAIN_H_
-#define __VAVOOM_MAIN_H_
+#ifndef __ZDAEMONENGINEPLUGIN_H_
+#define __ZDAEMONENGINEPLUGIN_H_
 
-#include "sdeapi/pluginloader.hpp"
+#include "plugins/engineplugin.h"
 
-class VavoomMain
+class ZDaemonEnginePlugin : public EnginePlugin
 {
+	DECLARE_PLUGIN(ZDaemonEnginePlugin)
 	public:
-		static EnginePlugin*	get() { return info; }
-	
-	protected:
-		friend class VavoomEnginePlugin;
-		static EnginePlugin* 	info;
+		ZDaemonEnginePlugin();
+
+		MasterClient *masterClient() const;
+
+		Server* server(const QHostAddress &address, unsigned short port) const;
 };
 
 #endif

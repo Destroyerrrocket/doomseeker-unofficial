@@ -30,11 +30,17 @@
 #include "global.h"
 #include "serverapi/serverstructs.h"
 
+#define DECLARE_PLUGIN(XEnginePlugin) \
+	public: \
+		static EnginePlugin *staticInstance() { return &__Static_Instance; } \
+	protected: \
+		static XEnginePlugin __Static_Instance;
+
 #define INSTALL_PLUGIN(XEnginePlugin) \
+	XEnginePlugin XEnginePlugin::__Static_Instance; \
 	extern "C" PLUGIN_EXPORT EnginePlugin *doomSeekerInit() \
 	{ \
-		static XEnginePlugin plInf; \
-		return &plInf; \
+		return XEnginePlugin::staticInstance(); \
 	}
 
 class Binaries;

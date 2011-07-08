@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// skulltagmain.h
+// odamexengineplugin.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,19 +20,19 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __SKULLTAG_MAIN_H_
-#define __SKULLTAG_MAIN_H_
+#ifndef __ODAMEXENGINEPLUGIN_H_
+#define __ODAMEXENGINEPLUGIN_H_
 
-#include "sdeapi/pluginloader.hpp"
+#include "plugins/engineplugin.h"
 
-class SkulltagMain
+class OdamexEnginePlugin : public EnginePlugin
 {
+	DECLARE_PLUGIN(OdamexEnginePlugin)
 	public:
-		static EnginePlugin*	get() { return info; }
-	
-	protected:
-		friend class SkulltagEnginePlugin;
-		static EnginePlugin* 	info;
+		OdamexEnginePlugin();
+
+		MasterClient *masterClient() const;
+		Server* server(const QHostAddress &address, unsigned short port) const;
 };
 
 #endif

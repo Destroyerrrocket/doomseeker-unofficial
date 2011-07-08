@@ -17,9 +17,9 @@ set(SKULLTAG_FILES
 	huffman/huffman.cpp
 	engineSkulltagConfig.cpp
 	skulltagbinaries.cpp
+	skulltagengineplugin.cpp
 	skulltaggameinfo.cpp
 	skulltaggamerunner.cpp
-	skulltagmain.cpp
 	skulltagmasterclient.cpp
 	skulltagserver.cpp
 )
@@ -31,9 +31,9 @@ set(HEADER_FILES
 	huffman/codec.h
 	huffman/huffcodec.h
 	huffman/huffman.h
+	skulltagengineplugin.h
 	skulltaggameinfo.h
 	skulltaggamerunner.h
-	skulltagmain.h
 )
 
 qt_wrap_cpp(skulltag SKULLTAG_FILES ${SKULLTAG_QT_FILES})

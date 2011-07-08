@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chocolatedoommain.cpp
+// vavoomengineplugin.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -23,42 +23,42 @@
 
 #include "plugins/engineplugin.h"
 
-#include "chocolatedoommain.h"
-#include "chocolatedoommasterclient.h"
-#include "chocolatedoomserver.h"
+#include "vavoomgameinfo.h"
+#include "vavoomengineplugin.h"
+#include "vavoommasterclient.h"
+#include "vavoomserver.h"
 
-EnginePlugin *ChocolateDoomMain::chocolatedoom_info;
+INSTALL_PLUGIN(VavoomEnginePlugin)
 
-class ChocolateDoomEnginePlugin : public EnginePlugin
+VavoomEnginePlugin::VavoomEnginePlugin()
 {
-	public:
-		ChocolateDoomEnginePlugin()
-		{
-			ChocolateDoomMain::chocolatedoom_info = this;
+	const // clear warnings
+	#include "vavoom.xpm"
 
-			const // clear warnings
-			#include "chocolatedoom.xpm"
+	init("Vavoom", vavoom_xpm,
+		EP_Author, "The Doomseeker Team",
+		EP_Version, 4,
 
-			init("Chocolate Doom", chocolatedoom_xpm,
-				EP_Author, "The Doomseeker Team",
-				EP_Version, 4,
+		EP_AllowsURL,
+		EP_AllowsEmail,
+		EP_AllowsConnectPassword,
+		EP_AllowsJoinPassword,
+		EP_AllowsRConPassword,
+		EP_AllowsMOTD,
+		EP_DefaultServerPort, 26000,
+		EP_HasMasterServer,
+		EP_DefaultMaster, "altdeath.com:26001",
+		EP_GameModes, VavoomGameInfo::gameModes(),
+		EP_Done
+	);
+}
 
-				EP_DefaultMaster, "master.chocolate-doom.org:2342",
-				EP_DefaultServerPort, 2342,
-				EP_HasMasterServer,
-				EP_IRCChannel, "Chocolate Doom", "irc.oftc.net", "#chocolate-doom",
-				EP_Done
-			);
-		}
+MasterClient *VavoomEnginePlugin::masterClient() const
+{
+	return new VavoomMasterClient();
+}
 
-		MasterClient *masterClient() const
-		{
-			return new ChocolateDoomMasterClient();
-		}
-
-		Server* server(const QHostAddress &address, unsigned short port) const
-		{
-			return new ChocolateDoomServer(address, port);
-		}
-};
-INSTALL_PLUGIN(ChocolateDoomEnginePlugin)
+Server* VavoomEnginePlugin::server(const QHostAddress &address, unsigned short port) const
+{
+	return new VavoomServer(address, port);
+}

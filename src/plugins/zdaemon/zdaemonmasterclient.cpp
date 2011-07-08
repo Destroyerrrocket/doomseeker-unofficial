@@ -29,7 +29,7 @@
 
 #include "global.h"
 #include "version.h"
-#include "zdaemonmain.h"
+#include "zdaemonengineplugin.h"
 #include "zdaemonmasterclient.h"
 #include "zdaemonserver.h"
 
@@ -101,7 +101,7 @@ void ZDaemonMasterClient::listFetched(QNetworkReply *reply)
 
 const EnginePlugin* ZDaemonMasterClient::plugin() const
 {
-	return ZDaemonMain::get();
+	return ZDaemonEnginePlugin::staticInstance();
 }
 
 /*void ZDaemonMasterClient::refresh()

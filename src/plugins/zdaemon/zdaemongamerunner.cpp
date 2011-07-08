@@ -23,7 +23,7 @@
 #include "main.h"
 #include "zdaemongamerunner.h"
 #include "zdaemongameinfo.h"
-#include "zdaemonmain.h"
+#include "zdaemonengineplugin.h"
 #include "zdaemonserver.h"
 
 ZDaemonGameRunner::ZDaemonGameRunner(const ZDaemonServer* server)
@@ -50,5 +50,5 @@ void ZDaemonGameRunner::hostDMFlags(QStringList& args, const DMFlags& dmFlags) c
 
 const EnginePlugin* ZDaemonGameRunner::plugin() const
 {
-	return ZDaemonMain::get();
+	return ZDaemonEnginePlugin::staticInstance();
 }

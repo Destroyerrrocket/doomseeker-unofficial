@@ -9,18 +9,18 @@ set(VAVOOM_QT_FILES
 )
 
 set(VAVOOM_FILES
+	vavoomengineplugin.cpp
 	vavoomgameinfo.cpp
 	vavoomgamerunner.cpp
-	vavoommain.cpp
 	vavoommasterclient.cpp
 	vavoomserver.cpp
 )
 
 set(HEADER_FILES
 	${VAVOOM_QT_FILES}
+	vavoomengineplugin.h
 	vavoomgameinfo.h
 	vavoomgamerunner.h
-	vavoommain.h
 )
 
 qt_wrap_cpp(vavoomQt VAVOOM_FILES ${VAVOOM_QT_FILES})

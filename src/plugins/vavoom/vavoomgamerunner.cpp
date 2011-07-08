@@ -23,7 +23,7 @@
 #include "main.h"
 #include "vavoomgamerunner.h"
 #include "vavoomgameinfo.h"
-#include "vavoommain.h"
+#include "vavoomengineplugin.h"
 #include "vavoomserver.h"
 
 VavoomGameRunner::VavoomGameRunner(const VavoomServer* server)
@@ -55,5 +55,5 @@ bool VavoomGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool
 
 const EnginePlugin* VavoomGameRunner::plugin() const
 {
-	return VavoomMain::get();
+	return VavoomEnginePlugin::staticInstance();
 }

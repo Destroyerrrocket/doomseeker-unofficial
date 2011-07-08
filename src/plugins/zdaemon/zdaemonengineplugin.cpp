@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// vavoommain.cpp
+// zdaemonmain.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,54 +18,47 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2010 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
 #include "plugins/engineplugin.h"
 
-#include "vavoomgameinfo.h"
-#include "vavoommain.h"
-#include "vavoommasterclient.h"
-#include "vavoomserver.h"
+#include "zdaemongameinfo.h"
+#include "zdaemonengineplugin.h"
+#include "zdaemonmasterclient.h"
+#include "zdaemonserver.h"
 
-EnginePlugin* VavoomMain::info;
+INSTALL_PLUGIN(ZDaemonEnginePlugin)
 
-class VavoomEnginePlugin : public EnginePlugin
+ZDaemonEnginePlugin::ZDaemonEnginePlugin()
 {
-	public:
-		VavoomEnginePlugin()
-		{
-			VavoomMain::info = this;
+	const // clear warnings
+	#include "zdaemon.xpm"
 
-			const // clear warnings
-			#include "vavoom.xpm"
+	init("ZDaemon", zdaemon_xpm,
+		EP_Author, "The Doomseeker Team",
+		EP_Version, 3,
 
-			init("Vavoom", vavoom_xpm,
-				EP_Author, "The Doomseeker Team",
-				EP_Version, 4,
+		EP_AllDMFlags, ZDaemonGameInfo::dmFlags(),
+		EP_AllowsURL,
+		EP_AllowsEmail,
+		EP_AllowsConnectPassword,
+		EP_AllowsJoinPassword,
+		EP_AllowsRConPassword,
+		EP_AllowsMOTD,
+		EP_DefaultServerPort, 10666,
+		EP_HasMasterServer,
+		EP_DefaultMaster, "master.zdaemon.org:15300",
+		EP_Done
+	);
+}
 
-				EP_AllowsURL,
-				EP_AllowsEmail,
-				EP_AllowsConnectPassword,
-				EP_AllowsJoinPassword,
-				EP_AllowsRConPassword,
-				EP_AllowsMOTD,
-				EP_DefaultServerPort, 26000,
-				EP_HasMasterServer,
-				EP_DefaultMaster, "altdeath.com:26001",
-				EP_GameModes, VavoomGameInfo::gameModes(),
-				EP_Done
-			);
-		}
+MasterClient *ZDaemonEnginePlugin::masterClient() const
+{
+	return new ZDaemonMasterClient();
+}
 
-		MasterClient *masterClient() const
-		{
-			return new VavoomMasterClient();
-		}
-
-		Server* server(const QHostAddress &address, unsigned short port) const
-		{
-			return new VavoomServer(address, port);
-		}
-};
-INSTALL_PLUGIN(VavoomEnginePlugin)
+Server* ZDaemonEnginePlugin::server(const QHostAddress &address, unsigned short port) const
+{
+	return new ZDaemonServer(address, port);
+}

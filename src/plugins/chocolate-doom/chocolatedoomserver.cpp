@@ -23,7 +23,7 @@
 
 #include "chocolatedoomserver.h"
 #include "chocolatedoomgamerunner.h"
-#include "chocolatedoommain.h"
+#include "chocolatedoomengineplugin.h"
 #include "global.h"
 #include "main.h"
 #include "serverapi/playerslist.h"
@@ -43,7 +43,7 @@ GameRunner*	ChocolateDoomServer::gameRunner() const
 
 const EnginePlugin* ChocolateDoomServer::plugin() const
 {
-	return ChocolateDoomMain::get();
+	return ChocolateDoomEnginePlugin::staticInstance();
 }
 
 Server::Response ChocolateDoomServer::readRequest(QByteArray &data)

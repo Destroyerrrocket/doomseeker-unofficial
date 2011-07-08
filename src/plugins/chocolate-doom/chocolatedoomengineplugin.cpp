@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// zdaemonmain.cpp
+// chocolatedoomengineplugin.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,54 +18,40 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2010 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
 #include "plugins/engineplugin.h"
 
-#include "zdaemongameinfo.h"
-#include "zdaemonmain.h"
-#include "zdaemonmasterclient.h"
-#include "zdaemonserver.h"
+#include "chocolatedoomengineplugin.h"
+#include "chocolatedoommasterclient.h"
+#include "chocolatedoomserver.h"
 
-EnginePlugin* ZDaemonMain::info;
+INSTALL_PLUGIN(ChocolateDoomEnginePlugin)
 
-class ZDaemonEnginePlugin : public EnginePlugin
+ChocolateDoomEnginePlugin::ChocolateDoomEnginePlugin()
 {
-	public:
-		ZDaemonEnginePlugin()
-		{
-			ZDaemonMain::info = this;
+	const // clear warnings
+	#include "chocolatedoom.xpm"
 
-			const // clear warnings
-			#include "zdaemon.xpm"
+	init("Chocolate Doom", chocolatedoom_xpm,
+		EP_Author, "The Doomseeker Team",
+		EP_Version, 4,
 
-			init("ZDaemon", zdaemon_xpm,
-				EP_Author, "The Doomseeker Team",
-				EP_Version, 3,
+		EP_DefaultMaster, "master.chocolate-doom.org:2342",
+		EP_DefaultServerPort, 2342,
+		EP_HasMasterServer,
+		EP_IRCChannel, "Chocolate Doom", "irc.oftc.net", "#chocolate-doom",
+		EP_Done
+	);
+}
 
-				EP_AllDMFlags, ZDaemonGameInfo::dmFlags(),
-				EP_AllowsURL,
-				EP_AllowsEmail,
-				EP_AllowsConnectPassword,
-				EP_AllowsJoinPassword,
-				EP_AllowsRConPassword,
-				EP_AllowsMOTD,
-				EP_DefaultServerPort, 10666,
-				EP_HasMasterServer,
-				EP_DefaultMaster, "master.zdaemon.org:15300",
-				EP_Done
-			);
-		}
+MasterClient *ChocolateDoomEnginePlugin::masterClient() const
+{
+	return new ChocolateDoomMasterClient();
+}
 
-		MasterClient *masterClient() const
-		{
-			return new ZDaemonMasterClient();
-		}
-
-		Server* server(const QHostAddress &address, unsigned short port) const
-		{
-			return new ZDaemonServer(address, port);
-		}
-};
-INSTALL_PLUGIN(ZDaemonEnginePlugin)
+Server* ChocolateDoomEnginePlugin::server(const QHostAddress &address, unsigned short port) const
+{
+	return new ChocolateDoomServer(address, port);
+}

@@ -25,7 +25,7 @@
 
 #include "zdaemongameinfo.h"
 #include "zdaemongamerunner.h"
-#include "zdaemonmain.h"
+#include "zdaemonengineplugin.h"
 #include "zdaemonserver.h"
 #include "main.h"
 #include "serverapi/playerslist.h"
@@ -36,9 +36,6 @@ TeamInfo::TeamInfo(const QString &name, const QColor &color, unsigned int score)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-const // clear warnings
-#include "zdaemon.xpm"
 
 #define SERVER_CHALLENGE 0xA3,0xDB,0x0B,0x00
 #define SERVER_PROTOCOL 0xFC,0xFD,0xFE,0xFF
@@ -64,7 +61,7 @@ unsigned int ZDaemonServer::millisecondTime()
 
 const EnginePlugin* ZDaemonServer::plugin() const
 {
-	return ZDaemonMain::get();
+	return ZDaemonEnginePlugin::staticInstance();
 }
 
 Server::Response ZDaemonServer::readRequest(QByteArray &data)

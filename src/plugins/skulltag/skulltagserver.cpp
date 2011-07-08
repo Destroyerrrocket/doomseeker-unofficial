@@ -26,7 +26,7 @@
 #include "skulltaggameinfo.h"
 #include "skulltaggamerunner.h"
 #include "skulltagserver.h"
-#include "skulltagmain.h"
+#include "skulltagengineplugin.h"
 #include "global.h"
 #include "main.h"
 #include "serverapi/playerslist.h"
@@ -121,7 +121,7 @@ const GameCVar *SkulltagServer::modifier() const
 
 const EnginePlugin* SkulltagServer::plugin() const
 {
-	return SkulltagMain::get();
+	return SkulltagEnginePlugin::staticInstance();
 }
 
 Server::Response SkulltagServer::readRequest(QByteArray &data)

@@ -23,7 +23,7 @@
 
 #include "global.h"
 #include "odamexmasterclient.h"
-#include "odamexmain.h"
+#include "odamexengineplugin.h"
 #include "odamexserver.h"
 
 #define MASTER_CHALLENGE		0x000BDBA3
@@ -45,7 +45,7 @@ bool OdamexMasterClient::getServerListRequest(QByteArray &data)
 
 const EnginePlugin* OdamexMasterClient::plugin() const
 {
-	return OdamexMain::get();
+	return OdamexEnginePlugin::staticInstance();
 }
 
 bool OdamexMasterClient::readMasterResponse(QByteArray &data)

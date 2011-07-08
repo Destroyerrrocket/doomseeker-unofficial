@@ -24,7 +24,7 @@
 #define __SKULLTAG_GAME_RUNNER_H_
 
 #include "serverapi/gamerunner.h"
-#include "skulltagmain.h"
+#include "skulltagengineplugin.h"
 
 class SkulltagServer;
 
@@ -33,7 +33,7 @@ class SkulltagGameRunner : public GameRunner
 	public:
 		SkulltagGameRunner(const SkulltagServer* server);
 
-		const EnginePlugin*			plugin() const { return SkulltagMain::get(); }
+		const EnginePlugin*			plugin() const { return SkulltagEnginePlugin::staticInstance(); }
 		
 	protected:
 		QString						argForConnectPassword() const { return "+cl_password"; }	

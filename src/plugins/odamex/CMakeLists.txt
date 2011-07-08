@@ -8,18 +8,18 @@ set(ODAMEX_QT_FILES
 	odamexserver.h
 )
 set(ODAMEX_FILES
+	odamexengineplugin.cpp
 	odamexgameinfo.cpp
 	odamexgamerunner.cpp
-	odamexmain.cpp
 	odamexmasterclient.cpp
 	odamexserver.cpp
 )
 
 set(HEADER_FILES
 	${ODAMEX_QT_FILES}
+	odamexengineplugin.h
 	odamexgameinfo.h
 	odamexgamerunner.h
-	odamexmain.h
 )
 
 qt_wrap_cpp(odamex ODAMEX_FILES ${ODAMEX_QT_FILES})

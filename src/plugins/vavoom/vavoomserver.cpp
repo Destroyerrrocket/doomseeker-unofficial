@@ -23,7 +23,7 @@
 
 #include "vavoomgameinfo.h"
 #include "vavoomgamerunner.h"
-#include "vavoommain.h"
+#include "vavoomengineplugin.h"
 #include "vavoomserver.h"
 #include "main.h"
 #include "serverapi/playerslist.h"
@@ -46,7 +46,7 @@ GameRunner* VavoomServer::gameRunner() const
 
 const EnginePlugin* VavoomServer::plugin() const
 {
-	return VavoomMain::get();
+	return VavoomEnginePlugin::staticInstance();
 }
 
 Server::Response VavoomServer::readRequest(QByteArray &data)

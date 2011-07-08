@@ -25,7 +25,7 @@
 
 #include "global.h"
 #include "huffman/huffman.h"
-#include "skulltagmain.h"
+#include "skulltagengineplugin.h"
 #include "skulltagmasterclient.h"
 #include "skulltagserver.h"
 
@@ -58,7 +58,7 @@ bool SkulltagMasterClient::getServerListRequest(QByteArray &data)
 
 const EnginePlugin* SkulltagMasterClient::plugin() const
 {
-	return SkulltagMain::get();
+	return SkulltagEnginePlugin::staticInstance();
 }
 
 bool SkulltagMasterClient::readMasterResponse(QByteArray &data)

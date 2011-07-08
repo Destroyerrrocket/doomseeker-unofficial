@@ -9,18 +9,18 @@ set(ZDAEMON_QT_FILES
 )
 
 set(ZDAEMON_FILES
+	zdaemonengineplugin.cpp
 	zdaemongameinfo.cpp
 	zdaemongamerunner.cpp
-	zdaemonmain.cpp
 	zdaemonmasterclient.cpp
 	zdaemonserver.cpp
 )
 
 set(HEADER_FILES
 	${ZDAEMON_QT_FILES}
+	zdaemonengineplugin.h
 	zdaemongameinfo.h
 	zdaemongamerunner.h
-	zdaemonmain.h
 )
 
 qt_wrap_cpp(zdaemonQt ZDAEMON_FILES ${ZDAEMON_QT_FILES})

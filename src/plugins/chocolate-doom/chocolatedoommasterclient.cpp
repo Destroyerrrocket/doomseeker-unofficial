@@ -23,7 +23,7 @@
 
 #include "global.h"
 #include "chocolatedoommasterclient.h"
-#include "chocolatedoommain.h"
+#include "chocolatedoomengineplugin.h"
 #include "chocolatedoomserver.h"
 
 #define NET_MASTER_PACKET_TYPE_QUERY 2
@@ -45,7 +45,7 @@ bool ChocolateDoomMasterClient::getServerListRequest(QByteArray &data)
 
 const EnginePlugin* ChocolateDoomMasterClient::plugin() const
 {
-	return ChocolateDoomMain::get();
+	return ChocolateDoomEnginePlugin::staticInstance();
 }
 
 bool ChocolateDoomMasterClient::readMasterResponse(QByteArray &data)

@@ -21,7 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "skulltagbinaries.h"
-#include "skulltagmain.h"
+#include "skulltagengineplugin.h"
 #include "skulltagserver.h"
 #include "main.h"
 #include "serverapi/message.h"
@@ -53,13 +53,13 @@
 #endif
 
 SkulltagBinaries::SkulltagBinaries(const SkulltagServer* server)
-: Binaries(SkulltagMain::get()), server(server)
+: Binaries(SkulltagEnginePlugin::staticInstance()), server(server)
 {
 }
 
 QString SkulltagBinaries::clientBinary(Message& message) const
 {
-	IniSection& config = *SkulltagMain::get()->data()->pConfig;
+	IniSection& config = *SkulltagEnginePlugin::staticInstance()->data()->pConfig;
 
 	if (!server->isTestingServer() || !config["EnableTesting"])
 	{
@@ -163,7 +163,7 @@ Do you want Doomseeker to create %2 directory and copy all your .ini files from 
 
 QString SkulltagBinaries::clientWorkingDirectory(Message& message) const
 {
-	IniSection& config = *SkulltagMain::get()->data()->pConfig;
+	IniSection& config = *SkulltagEnginePlugin::staticInstance()->data()->pConfig;
 
 	QFileInfo fi(config["BinaryPath"]);
 	return fi.canonicalPath();
@@ -219,7 +219,7 @@ bool SkulltagBinaries::downloadTestingBinaries(const QDir &destination) const
 
 const EnginePlugin* SkulltagBinaries::plugin() const
 {
-	return SkulltagMain::get();
+	return SkulltagEnginePlugin::staticInstance();
 }
 
 bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, Message& message) const

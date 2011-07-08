@@ -23,7 +23,7 @@
 
 #include "odamexgameinfo.h"
 #include "odamexgamerunner.h"
-#include "odamexmain.h"
+#include "odamexengineplugin.h"
 #include "odamexserver.h"
 #include "main.h"
 #include "plugins/engineplugin.h"
@@ -52,7 +52,7 @@ GameRunner* OdamexServer::gameRunner() const
 
 const EnginePlugin* OdamexServer::plugin() const
 {
-	return OdamexMain::get();
+	return OdamexEnginePlugin::staticInstance();
 }
 
 Server::Response OdamexServer::readRequest(QByteArray &data)

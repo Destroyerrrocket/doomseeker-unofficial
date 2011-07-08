@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// zdaemonmain.h
+// skulltagengineplugin.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,21 +18,28 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2010 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __ZDAEMON_MAIN_H_
-#define __ZDAEMON_MAIN_H_
+#ifndef __SKULLTAGENGINEPLUGIN_H_
+#define __SKULLTAGENGINEPLUGIN_H_
 
-class EnginePlugin;
+#include "plugins/engineplugin.h"
 
-class ZDaemonMain
+class SkulltagEnginePlugin : public EnginePlugin
 {
+	DECLARE_PLUGIN(SkulltagEnginePlugin)
 	public:
-		static EnginePlugin*	get() { return info; }
-	
-	protected:
-		friend class ZDaemonEnginePlugin;
-		static EnginePlugin* 	info;
+		SkulltagEnginePlugin();
+
+		void setupConfig(IniSection &config);
+
+		ConfigurationBaseBox *configuration(QWidget *parent) const;
+
+		QList<GameCVar>	limits(const GameMode& gm) const;
+
+		MasterClient				*masterClient() const;
+
+		Server*						server(const QHostAddress &address, unsigned short port) const;
 };
 
 #endif
