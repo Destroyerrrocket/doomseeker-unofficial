@@ -241,8 +241,8 @@ set(SOURCE_FILES
 	masterserver/masterclientsignalproxy.cpp	
 	masterserver/mastermanager.cpp	
 	plugins/engineplugin.cpp
+	plugins/pluginloader.cpp
 	sdeapi/config.cpp
-	sdeapi/pluginloader.cpp
 	sdeapi/scanner.cpp
 	serverapi/tooltips/gameinfotip.cpp
 	serverapi/tooltips/generalinfotip.cpp
@@ -307,7 +307,7 @@ set(HEADER_FILES
 	irc/ircuserinfo.h
 	irc/ircuserlist.h
 	plugins/engineplugin.h
-	sdeapi/pluginloader.hpp
+	plugins/pluginloader.h
 	sdeapi/scanner.hpp
 	serverapi/tooltips/gameinfotip.h
 	serverapi/tooltips/generalinfotip.h

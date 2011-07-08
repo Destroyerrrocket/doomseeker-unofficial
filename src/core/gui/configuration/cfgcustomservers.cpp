@@ -23,7 +23,7 @@
 #include "configuration/doomseekerconfig.h"
 #include "cfgcustomservers.h"
 #include "plugins/engineplugin.h"
-#include "sdeapi/pluginloader.hpp"
+#include "plugins/pluginloader.h"
 #include "main.h"
 #include <QHeaderView>
 #include <QMessageBox>

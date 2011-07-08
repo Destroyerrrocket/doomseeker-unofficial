@@ -85,7 +85,7 @@ PasswordDlg::~PasswordDlg()
 
 const EnginePlugin *PasswordDlg::selectedEngine() const
 {
-	const Plugin *plugin = (*Main::enginePlugins)[engines->currentIndex()];
+	const PluginLoader::Plugin *plugin = (*Main::enginePlugins)[engines->currentIndex()];
 	if(plugin == NULL)
 		return NULL;
 

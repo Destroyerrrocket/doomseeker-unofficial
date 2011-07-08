@@ -24,7 +24,7 @@
 #include "masterserver/masterclient.h"
 #include "masterserver/masterclientsignalproxy.h"
 #include "masterserver/mastermanager.h"
-#include "sdeapi/pluginloader.hpp"
+#include "plugins/pluginloader.h"
 #include "serverapi/server.h"
 
 RefreshingThread::RefreshingThread()

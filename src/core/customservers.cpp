@@ -67,7 +67,7 @@ void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerIn
 				}
 				else if (engineIndex >= 0)
 				{
-					const Plugin* pPlugin = (*Main::enginePlugins)[engineIndex];
+					const PluginLoader::Plugin* pPlugin = (*Main::enginePlugins)[engineIndex];
 					customServerInfo.port = pPlugin->info->data()->defaultServerPort;
 				}
 				else

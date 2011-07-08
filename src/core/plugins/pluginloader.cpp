@@ -1,15 +1,7 @@
-// Emacs style mode select   -*- C++ -*-
-// =============================================================================
-// ### ### ##   ## ###  #   ###  ##   #   #  ##   ## ### ##  ### ###  #  ###
-// #    #  # # # # #  # #   #    # # # # # # # # # # #   # #  #   #  # # #  #
-// ###  #  #  #  # ###  #   ##   # # # # # # #  #  # ##  # #  #   #  # # ###
-//   #  #  #     # #    #   #    # # # # # # #     # #   # #  #   #  # # #  #
-// ### ### #     # #    ### ###  ##   #   #  #     # ### ##  ###  #   #  #  #
-//                                     --= http://bitowl.com/sde/ =--
-// =============================================================================
-// Copyright (C) 2008 "Blzut3" (admin@maniacsvault.net)
-// The SDE Logo is a trademark of GhostlyDeath (ghostlydeath@gmail.com)
-// =============================================================================
+//------------------------------------------------------------------------------
+// pluginloader.cpp
+//------------------------------------------------------------------------------
+//
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
@@ -22,17 +14,18 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-// =============================================================================
-// Description:
-// =============================================================================
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+// 02110-1301, USA.
+//
+//------------------------------------------------------------------------------
+// Copyright (C) 2011 "Blzut3" <admin@maniacsvault.net>
+//------------------------------------------------------------------------------ 
 
 #include "log.h"
 #include "configuration/doomseekerconfig.h"
 #include "masterserver/masterclient.h"
 #include "plugins/engineplugin.h"
-#include "sdeapi/pluginloader.hpp"
+#include "plugins/pluginloader.h"
 #include "main.h"
 #include "strings.h"
 
@@ -48,7 +41,7 @@
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
-Plugin::Plugin(unsigned int type, QString f) : file(f), library(NULL)
+PluginLoader::Plugin::Plugin(unsigned int type, QString f) : file(f), library(NULL)
 {
 	// Load the library
 	library = dlopen(file.toAscii().constData(), RTLD_NOW);
@@ -79,12 +72,12 @@ Plugin::Plugin(unsigned int type, QString f) : file(f), library(NULL)
 	}
 }
 
-Plugin::~Plugin()
+PluginLoader::Plugin::~Plugin()
 {
 	unload();
 }
 
-void Plugin::unload()
+void PluginLoader::Plugin::unload()
 {
 	if(library != NULL)
 	{
@@ -93,7 +86,7 @@ void Plugin::unload()
 	}
 }
 
-void Plugin::initConfig()
+void PluginLoader::Plugin::initConfig()
 {
 	if(library != NULL)
 	{
@@ -102,7 +95,7 @@ void Plugin::initConfig()
 	}
 }
 
-void *Plugin::function(const char* func) const
+void *PluginLoader::Plugin::function(const char* func) const
 {
 	return (void *) dlsym(library, func);
 }
@@ -235,7 +228,7 @@ void PluginLoader::resetPluginsDirectory(const QString& pluginsDirectory)
 	filesInDir();
 }
 
-const Plugin* PluginLoader::operator[] (unsigned int index) const
+const PluginLoader::Plugin* PluginLoader::operator[] (unsigned int index) const
 {
 	return pluginsList[index];
 }

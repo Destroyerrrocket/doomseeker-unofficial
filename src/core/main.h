@@ -26,7 +26,7 @@
 
 #include "ini/ini.h"
 #include "ip2c/ip2c.h"
-#include "sdeapi/pluginloader.hpp"
+#include "plugins/pluginloader.h"
 #include "datapaths.h"
 #include "refresher.h"
 #include <QApplication>

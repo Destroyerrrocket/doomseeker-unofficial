@@ -35,7 +35,7 @@
 #include "ip2c/ip2cupdater.h"
 #include "masterserver/mastermanager.h"
 #include "sdeapi/config.hpp"
-#include "sdeapi/pluginloader.hpp"
+#include "plugins/pluginloader.h"
 #include "apprunner.h"
 
 #include <QAction>
