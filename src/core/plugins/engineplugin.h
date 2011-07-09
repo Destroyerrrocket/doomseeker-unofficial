@@ -82,6 +82,7 @@ class MAIN_EXPORT EnginePlugin
 			EP_GameModes, // (const QList<GameMode>*)
 			EP_GameModifiers, // (const QList<GameCVar>*)
 			EP_HasMasterServer,
+			EP_InGameFileDownloads,
 			EP_IRCChannel, // (const char*)server, (const char*)channel - Can be repeated
 			EP_SupportsRandomMapRotation
 		};
@@ -122,6 +123,7 @@ class MAIN_EXPORT EnginePlugin
 				bool					hasMasterServer;
 				/// icon of the engine
 				QPixmap					*icon;
+				bool					inGameFileDownloads;
 				QVector<IRCNetworkEntity> ircChannels;
 				QString					name;
 				IniSection				*pConfig;

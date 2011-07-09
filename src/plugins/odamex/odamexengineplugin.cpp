@@ -59,6 +59,7 @@ OdamexEnginePlugin::OdamexEnginePlugin()
 		EP_HasMasterServer,
 		EP_IRCChannel, "Odamex", "irc.oftc.net", "#odamex",
 		EP_SupportsRandomMapRotation,
+		EP_InGameFileDownloads,
 		EP_Done
 	);
 }

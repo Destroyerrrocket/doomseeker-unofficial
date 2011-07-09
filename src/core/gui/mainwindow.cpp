@@ -1052,10 +1052,19 @@ Wadseeker will not download IWADs.\n\n");
 				if (joinError.isMissingIwadOnly())
 				{
 					QMessageBox::critical(this, filesMissingCaption, filesMissingMessage, QMessageBox::Ok);
+					return false;
 				}
 				else
 				{
-					if (QMessageBox::question(this, filesMissingCaption, filesMissingMessage, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+					QMessageBox::StandardButtons buttons = QMessageBox::Yes|QMessageBox::No;
+					if (server->plugin()->data()->inGameFileDownloads)
+					{
+						filesMissingMessage += tr("\nAlternatively use ignore to connect anyways.");
+						buttons |= QMessageBox::Ignore;
+					}
+
+					QMessageBox::StandardButtons ret = QMessageBox::question(this, filesMissingCaption, filesMissingMessage, buttons);
+					if (ret == QMessageBox::Yes)
 					{
 						if (!checkWadseekerValidity())
 						{
@@ -1075,8 +1084,10 @@ Wadseeker will not download IWADs.\n\n");
 							return obtainJoinCommandLine(server, cli, errorCaption);
 						}
 					}
+					if (ret != QMessageBox::Ignore)
+						return false;
 				}
-				return false;
+				// Intentional fall through
 
 			case JoinError::NoError:
 				break;

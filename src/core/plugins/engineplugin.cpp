@@ -45,6 +45,7 @@ EnginePlugin::Data::Data()
 	gameModifiers = NULL;
 	hasMasterServer = false;
 	icon = NULL;
+	inGameFileDownloads = false;
 	pConfig = NULL;
 	supportsRandomMapRotation = false;
 	valid = true;
@@ -130,6 +131,9 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 				break;
 			case EP_HasMasterServer:
 				d->hasMasterServer = true;
+				break;
+			case EP_InGameFileDownloads:
+				d->inGameFileDownloads = true;
 				break;
 			case EP_IRCChannel:
 			{
