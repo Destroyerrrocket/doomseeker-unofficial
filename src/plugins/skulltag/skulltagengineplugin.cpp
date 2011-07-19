@@ -25,6 +25,7 @@
 #include "main.h"
 #include "pathfinder.h"
 #include "plugins/engineplugin.h"
+#include "strings.h"
 
 #include "huffman/huffman.h"
 #include "skulltagbinaries.h"
