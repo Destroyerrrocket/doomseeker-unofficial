@@ -30,24 +30,29 @@ class WADSEEKER_API WadseekerVersionInfo
 {
 	public:
 		/**
-		 * @return Author of the library.
+		 * @brief Author of the library.
 		 */
 		static QString			author();
-		
+
 		/**
-		 * @return Description of the library.
+		 * @brief Description of the library.
 		 */
-		static QString			description();	
-		
+		static QString			description();
+
 		/**
-		 * @return Version string of the library.
+		 * @brief WWW User Agent used for HTTP communications.
 		 */
-		static QString			version();	
-		
+		static QString			userAgent();
+
 		/**
-		 * @return Development dates.
+		 * @brief Version string of the library.
 		 */
-		static QString			yearSpan();	
+		static QString			version();
+
+		/**
+		 * @brief Development dates.
+		 */
+		static QString			yearSpan();
 };
 
 #endif

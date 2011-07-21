@@ -24,6 +24,17 @@
 #include <QString>
 #include <QStringList>
 
+Link::Link()
+{
+
+}
+
+Link::Link(const QUrl& url, const QString& text)
+{
+	this->url = url;
+	this->text = text;
+}
+
 bool Link::isRemote(const QUrl& comparePage)
 {
 	QString str1 = url.encodedHost();

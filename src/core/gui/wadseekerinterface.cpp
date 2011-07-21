@@ -97,12 +97,12 @@ void WadSeekerInterface::accept()
 
 void WadSeekerInterface::allDone()
 {
-	displayMessage(tr("All done."), Wadseeker::NoticeImportant, false);
+	displayMessage(tr("All done."), WadseekerLib::NoticeImportant, false);
 
 	setStateWaiting();
 	if (wadseeker.areAllFilesFound())
 	{
-		displayMessage(tr("SUCCESS!"), Wadseeker::Notice, false);
+		displayMessage(tr("SUCCESS!"), WadseekerLib::Notice, false);
 		if (bAutomatic)
 		{
 			this->done(Accepted);
@@ -118,7 +118,7 @@ void WadSeekerInterface::allDone()
 	}
 }
 
-void WadSeekerInterface::displayMessage(const QString& message, Wadseeker::MessageType type, bool bPrependErrorsWithMessageType)
+void WadSeekerInterface::displayMessage(const QString& message, WadseekerLib::MessageType type, bool bPrependErrorsWithMessageType)
 {
 	QString strProcessedMessage;
 
@@ -129,7 +129,7 @@ void WadSeekerInterface::displayMessage(const QString& message, Wadseeker::Messa
 
 	switch (type)
 	{
-		case Wadseeker::CriticalError:
+		case WadseekerLib::CriticalError:
 			htmlStyle = QString("color: %1; font-weight: bold;").arg(colorHtmlMessageFatalError);
 			bPrependWithNewline = true;
 
@@ -145,7 +145,7 @@ void WadSeekerInterface::displayMessage(const QString& message, Wadseeker::Messa
 			setStateWaiting();
 			break;
 
-		case Wadseeker::Error:
+		case WadseekerLib::Error:
 			htmlStyle = QString("color: %1;").arg(colorHtmlMessageError);
 
 			if (bPrependErrorsWithMessageType)
@@ -158,13 +158,13 @@ void WadSeekerInterface::displayMessage(const QString& message, Wadseeker::Messa
 			}
 			break;
 
-		case Wadseeker::Notice:
+		case WadseekerLib::Notice:
 			htmlStyle = QString("color: %1;").arg(colorHtmlMessageNotice);
 
 			strProcessedMessage = message;
 			break;
 
-		case Wadseeker::NoticeImportant:
+		case WadseekerLib::NoticeImportant:
 			htmlStyle = QString("color: %1; font-weight: bold;").arg(colorHtmlMessageNotice);
 			bPrependWithNewline = true;
 
@@ -233,9 +233,9 @@ void WadSeekerInterface::fail()
 	bAutomatic = false;
 	const QStringList& notFoundWads = wadseeker.filesNotFound();
 
-	displayMessage(tr("FAIL!"), Wadseeker::CriticalError, false);
+	displayMessage(tr("FAIL!"), WadseekerLib::CriticalError, false);
 	QString notFoundWadsString = tr("Following files were not found: %1").arg(notFoundWads.join(", "));
-	message(notFoundWadsString, Wadseeker::Error);
+	message(notFoundWadsString, WadseekerLib::Error);
 
 	pbProgress->setMaximum(100);
 	pbProgress->setValue(0);
@@ -250,7 +250,7 @@ void WadSeekerInterface::initMessageColors()
 	colorHtmlMessageFatalError = gConfig.wadseeker.colorMessageCriticalError;
 }
 
-void WadSeekerInterface::message(const QString& message, Wadseeker::MessageType type)
+void WadSeekerInterface::message(const QString& message, WadseekerLib::MessageType type)
 {
 	displayMessage(message, type, true);
 }

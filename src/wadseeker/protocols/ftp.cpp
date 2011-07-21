@@ -65,7 +65,7 @@ void Ftp::doneEx(bool error)
 {
 	if (error)
 	{
-		emit message(tr("FTP error: %1").arg(qFtp->errorString()), Wadseeker::Error);
+		emit message(tr("FTP error: %1").arg(qFtp->errorString()), WadseekerLib::Error);
 		noData = true;
 	}
 

@@ -25,7 +25,7 @@
 #include "protocols/ftp.h"
 #include "protocols/http.h"
 #include "protocols/idgames.h"
-#include "html.h"
+#include "htmlparser.h"
 
 #include <QFileInfo>
 
@@ -97,7 +97,7 @@ void WWWSeeker::checkNextSite()
 		if (site.isEmpty())
 		{
 			processedUrl = QUrl();
-			emit message(tr("No more sites."), Wadseeker::Notice);
+			emit message(tr("No more sites."), WadseekerLib::Notice);
 			emit fail();
 		}
 		else
@@ -132,7 +132,7 @@ void WWWSeeker::get(const QUrl& url)
 	QUrl urlValid = constructValidUrl(url);
 	if (urlValid.isEmpty())
 	{
-		emit message(tr("Failed to create valid URL out of \"%1\". Ignoring.").arg(url.toString()), Wadseeker::Error);
+		emit message(tr("Failed to create valid URL out of \"%1\". Ignoring.").arg(url.toString()), WadseekerLib::Error);
 		checkNextSite();
 		return;
 	}
@@ -146,7 +146,7 @@ void WWWSeeker::get(const QUrl& url)
 	checkedLinks.insert(urlValid.toString());
 	processedUrl = urlValid;
 
-	emit message(tr("Next site: %1").arg(urlValid.toString()), Wadseeker::NoticeImportant);
+	emit message(tr("Next site: %1").arg(urlValid.toString()), WadseekerLib::NoticeImportant);
 	if (Http::isHTTPLink(urlValid))
 	{
 		currentProtocol = http;
@@ -157,7 +157,7 @@ void WWWSeeker::get(const QUrl& url)
 		QFileInfo fi(urlValid.path());
 		if (!isWantedFileOrZip(fi.fileName()))
 		{
-			emit message(MESSAGE_IGNORE.arg(fi.fileName()), Wadseeker::Notice);
+			emit message(MESSAGE_IGNORE.arg(fi.fileName()), WadseekerLib::Notice);
 			checkNextSite();
 			return;
 		}
@@ -170,7 +170,7 @@ void WWWSeeker::get(const QUrl& url)
 	else
 	{
 		currentProtocol = NULL;
-		message(tr("Protocol for this site is not supported"), Wadseeker::Error);
+		message(tr("Protocol for this site is not supported"), WadseekerLib::Error);
 		checkNextSite();
 		return;
 	}
@@ -286,15 +286,15 @@ void WWWSeeker::protocolDone(bool success, QByteArray& data, int fileType, const
 	currentProtocol = NULL;
 	if (success)
 	{
-		emit message(tr("Got file %1.").arg(filename), Wadseeker::Notice);
+		emit message(tr("Got file %1.").arg(filename), WadseekerLib::Notice);
 		if (fileType == Protocol::Html)
 		{
 			int siteLinksNum, directLinksNum; // CHtml::linksFromHTMLByPattern will zero this
-			emit message(tr("Parsing file as HTML looking for links."), Wadseeker::Notice);
-			CHtml html(data);
+			emit message(tr("Parsing file as HTML looking for links."), WadseekerLib::Notice);
+			HtmlParser html(data);
 			html.capitalizeHTMLTags();
 			html.linksFromHTMLByPattern(filesToFind, siteLinks, directLinks, processedUrl, siteLinksNum, directLinksNum);
-			emit message(tr("Site links found: %1 | Direct links found: %2").arg(siteLinksNum).arg(directLinksNum), Wadseeker::Notice);
+			emit message(tr("Site links found: %1 | Direct links found: %2").arg(siteLinksNum).arg(directLinksNum), WadseekerLib::Notice);
 			checkNextSite();
 		}
 		else
@@ -315,7 +315,7 @@ void WWWSeeker::protocolNameAndTypeOfReceivedFile(const QString& name, int type)
 	{
 		if (!isWantedFileOrZip(name))
 		{
-			emit message(MESSAGE_IGNORE.arg(name), Wadseeker::Notice);
+			emit message(MESSAGE_IGNORE.arg(name), WadseekerLib::Notice);
 			if (currentProtocol != NULL)
 			{
 				currentProtocol->abort();
@@ -358,7 +358,7 @@ void WWWSeeker::setUserAgentEx(const QString& agent)
 
 void WWWSeeker::skipSite()
 {
-	emit message(tr("Skipping site..."), Wadseeker::Notice);
+	emit message(tr("Skipping site..."), WadseekerLib::Notice);
 	abortExec(false);
 }
 

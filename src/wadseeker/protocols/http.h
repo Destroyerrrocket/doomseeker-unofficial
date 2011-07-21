@@ -61,8 +61,9 @@ class WADSEEKER_API Http : public Protocol
 		void 	        abortEx();
 
 		/**
-		 * Looks for attachment information in http header.
-		 * @return empty string if nothing found or string of values (like filename="something")
+		 *	Looks for attachment information in http header.
+		 *	@return empty string if nothing found or string
+		 *	        of values (like filename="something")
 		 */
 		QString		    attachmentInformation(const QHttpHeader&, QString& filename);
 

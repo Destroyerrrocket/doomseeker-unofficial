@@ -31,20 +31,26 @@ class Link
         QUrl 		url;
         QString 	text;
 
+		Link();
+		Link(const QUrl& url, const QString& text);
+
         bool 		pathEndsWith(const QStringList& ends);
         /**
-         *	@param comparePage		- if not empty checks if URL refers to the same host as this param
-         *	@return true if URL points to another server
+         *	@param comparePage
+         *       If not empty checks if URL refers to the same host as
+         *       this param.
+         *	@return True if URL points to another server
          */
         bool		isRemote(const QUrl& comparePage);
 
         /**
-         *	@return true if the URL refers to the same page (for example URLs with '#')
+         *	@return True if the URL refers to the same page
+         *          (for example URLs with '#')
          */
         bool		isTheSamePage(const QUrl& comparePage);
 
         /**
-         * @return true if URL begins from javascript: phrase
+         * @return True if URL begins from javascript: phrase
          */
         bool		isJavascriptURL();
 };

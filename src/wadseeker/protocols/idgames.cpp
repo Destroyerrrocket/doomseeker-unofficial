@@ -34,17 +34,17 @@ void Idgames::afterProcess(PageProcessResults result, const QString& url)
 	switch (result)
 	{
 		case NotIdgames:
-			emit message(tr("%1 is not Idgames archive! Aborting.").arg(idgamesBaseUrl), Wadseeker::Error);
+			emit message(tr("%1 is not Idgames archive! Aborting.").arg(idgamesBaseUrl), WadseekerLib::Error);
 			abort();
 			break;
 
 		case StringTooShort:
-			emit message(tr("Idgames: String %1 is too short. Aborting.").arg(seekedFile), Wadseeker::Error);
+			emit message(tr("Idgames: String %1 is too short. Aborting.").arg(seekedFile), WadseekerLib::Error);
 			abort();
 			break;
 
 		case NoPositions:
-			emit message(tr("Idgames: File not found."), Wadseeker::Notice);
+			emit message(tr("Idgames: File not found."), WadseekerLib::Notice);
 			emit done(false, nul, 0, processedFileName);
 			break;
 
@@ -74,7 +74,7 @@ void Idgames::doneEx(bool error)
 {
 	if (error)
 	{
-		emit message(tr("Idgames HTTP error: %1").arg(qHttp->errorString()), Wadseeker::Error);
+		emit message(tr("Idgames HTTP error: %1").arg(qHttp->errorString()), WadseekerLib::Error);
 		noData = true;
 	}
 
@@ -105,7 +105,7 @@ void Idgames::doneEx(bool error)
 		{
 		    // We found the page and are returning it to be processed
 		    // by WWWSeeker.
-			emit message(tr("File %1 was found in Idgames archive!s").arg(seekedFile), Wadseeker::Notice);
+			emit message(tr("File %1 was found in Idgames archive!s").arg(seekedFile), WadseekerLib::Notice);
             emit done(true, data, fileType, processedFileName);
 		}
 		else
@@ -126,20 +126,20 @@ void Idgames::findFile(const QString& zipName)
     if (!idgamesBaseUrl.contains("%ZIPNAME%"))
     {
         QByteArray nul;
-        emit message(tr("Idgames error: no %ZIPNAME% present in idgames url:\n%1").arg(idgamesBaseUrl), Wadseeker::Error);
+        emit message(tr("Idgames error: no %ZIPNAME% present in idgames url:\n%1").arg(idgamesBaseUrl), WadseekerLib::Error);
         emit done(false, nul, 0, "");
         return;
     }
 
 	seekedFile = zipName;
-	emit message(tr("Searching Idgames archive for file: %1").arg(zipName), Wadseeker::NoticeImportant);
+	emit message(tr("Searching Idgames archive for file: %1").arg(zipName), WadseekerLib::NoticeImportant);
 
 	getPage();
 }
 
 void Idgames::getPage()
 {
-	emit message(tr("Page %1...").arg(currentPage), Wadseeker::Notice);
+	emit message(tr("Page %1...").arg(currentPage), WadseekerLib::Notice);
 	QString tmpUrl = idgamesBaseUrl;
 	QUrl url = tmpUrl.replace("%PAGENUM%", QString::number(currentPage)).replace("%ZIPNAME%", seekedFile);
 	++currentPage;
@@ -241,7 +241,7 @@ Idgames::PageProcessResults Idgames::processPage(QByteArray& pageData, QString& 
 			int indexOfHref = positionData.indexOf(aHref);
 			if (indexOfHref < 0)
 			{
-				emit message(tr("Idgames error: File %1 was found, but cannot locate link to it's page").arg(seekedFile), Wadseeker::Error);
+				emit message(tr("Idgames error: File %1 was found, but cannot locate link to it's page").arg(seekedFile), WadseekerLib::Error);
 				return NoPositions;
 			}
 

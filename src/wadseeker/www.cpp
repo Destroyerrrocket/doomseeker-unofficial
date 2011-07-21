@@ -105,7 +105,7 @@ void WWW::get(const QUrl& url)
 	QUrl urlValid = constructValidUrl(url);
 	if (urlValid.isEmpty())
 	{
-		emit message(tr("Failed to create valid URL out of \"%1\". Ignoring.\n").arg(url.toString()), Wadseeker::Error);
+		emit message(tr("Failed to create valid URL out of \"%1\". Ignoring.\n").arg(url.toString()), WadseekerLib::Error);
 		emit fail();
 		return;
 	}
@@ -125,7 +125,7 @@ void WWW::get(const QUrl& url)
 	else
 	{
 		currentProtocol = NULL;
-		message(tr("Protocol for this site is not supported."), Wadseeker::Error);
+		message(tr("Protocol for this site is not supported."), WadseekerLib::Error);
 		emit fail();
 		return;
 	}
@@ -157,7 +157,7 @@ bool WWW::getUrl(const QUrl& url)
 	else
 	{
 		currentProtocol = NULL;
-		message(tr("Protocol for this site is not supported."), Wadseeker::Error);
+		message(tr("Protocol for this site is not supported."), WadseekerLib::Error);
 		return false;
 	}
 

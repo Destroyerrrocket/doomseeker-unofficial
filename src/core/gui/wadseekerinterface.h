@@ -85,7 +85,7 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 		QTimer			updateTimer;
 		Wadseeker		wadseeker;
 
-		void			displayMessage(const QString& message, Wadseeker::MessageType type, bool bPrependErrorsWithMessageType);
+		void			displayMessage(const QString& message, WadseekerLib::MessageType type, bool bPrependErrorsWithMessageType);
 		void			fail();
 		void			initMessageColors();
 
@@ -107,7 +107,7 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 		void 	allDone();
 		void 	downloadProgress(int done, int total);
 		void	reject();
-		void	message(const QString& message, Wadseeker::MessageType type);
+		void	message(const QString& message, WadseekerLib::MessageType type);
 		void	registerUpdateRequest();
 };
 

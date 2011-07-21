@@ -21,7 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "http.h"
-#include "../html.h"
+#include "../htmlparser.h"
 #include <QTcpSocket>
 
 Http::Http()
@@ -61,7 +61,7 @@ QString Http::attachmentInformation(const QHttpHeader& header, QString& filename
 
 			QString ret = it->trimmed();
 			QByteArray asciiStr = ret.toAscii();
-			CHtml html(asciiStr);
+			HtmlParser html(asciiStr);
 			filename = html.htmlValue("filename");
 			return ret;
 		}
@@ -86,7 +86,7 @@ void Http::doneEx(bool error)
 {
 	if (error)
 	{
-		emit message(tr("HTTP error: %1").arg(qHttp->errorString()), Wadseeker::Error);
+		emit message(tr("HTTP error: %1").arg(qHttp->errorString()), WadseekerLib::Error);
 		noData = true;
 	}
 
@@ -159,7 +159,7 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 	if (!attachmentInfo.isEmpty())
 	{
 		fileType = Other;
-		emit message(tr("Downloading attached file: %1").arg(processedFileName), Wadseeker::Notice);
+		emit message(tr("Downloading attached file: %1").arg(processedFileName), WadseekerLib::Notice);
 		emit nameAndTypeOfReceivedFile(processedFileName, fileType);
 	}
 
@@ -181,11 +181,11 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 		case PermamentlyMoved:
 		case Redirect:
 			noData = attachmentInfo.isEmpty();
-			emit message(tr("Redirecting"), Wadseeker::Notice);
+			emit message(tr("Redirecting"), WadseekerLib::Notice);
 			tmp = resp.value("Location");
 			if (tmp.isEmpty())
 			{
-				emit message(tr("Redirect header was received but no location was specified. Aborting.").arg(resp.value("Location")), Wadseeker::Error);
+				emit message(tr("Redirect header was received but no location was specified. Aborting.").arg(resp.value("Location")), WadseekerLib::Error);
 				abort();
 			}
 			else
@@ -197,7 +197,7 @@ void Http::headerReceived(const QHttpResponseHeader& resp)
 
 		default:
 			noData = attachmentInfo.isEmpty();
-			emit message(tr("HTTP response %1 - %2.").arg(QString::number(resp.statusCode())).arg(resp.reasonPhrase()), Wadseeker::Error);
+			emit message(tr("HTTP response %1 - %2.").arg(QString::number(resp.statusCode())).arg(resp.reasonPhrase()), WadseekerLib::Error);
 			break;
 	}
 }

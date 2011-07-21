@@ -51,9 +51,10 @@ set(WADSEEKER_FILES
 	zip/un7zip.cpp
 	zip/untar.cpp
 	zip/unzip.cpp
-	html.cpp
+	htmlparser.cpp
 	link.cpp
 	speedcalculator.cpp
+	urlparser.cpp
 	wadseeker.cpp
 	wadseekerversioninfo.cpp
 	www.cpp
@@ -63,10 +64,12 @@ set(WADSEEKER_FILES
 # For the purpose of generation proper project files.
 set(HEADER_FILES
 	${WADSEEKER_QT_FILES}
-	html.h
+	htmlparser.h
 	link.h
 	speedcalculator.h
+	urlparser.h
 	wadseekerexportinfo.h	
+	wadseekermessagetype.h
 	wadseekerversioninfo.h	
 )
 

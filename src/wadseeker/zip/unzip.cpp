@@ -43,7 +43,7 @@ QList<ZipLocalFileHeader> UnZip::allDataHeaders()
 
 	if (!isValid())
 	{
-		emit message(tr("No valid zip data is present."), Wadseeker::Error);
+		emit message(tr("No valid zip data is present."), WadseekerLib::Error);
 		return list;
 	}
 
@@ -57,7 +57,7 @@ QList<ZipLocalFileHeader> UnZip::allDataHeaders()
 
 		if(readError == ZipLocalFileHeader::Corrupted)
 		{
-			emit message(tr("ZIP file is corrupted!"), Wadseeker::Error);
+			emit message(tr("ZIP file is corrupted!"), WadseekerLib::Error);
 			break;
 		}
 		else if (readError == ZipLocalFileHeader::NoError)

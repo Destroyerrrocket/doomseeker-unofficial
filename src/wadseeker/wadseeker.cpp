@@ -54,42 +54,16 @@ const QString Wadseeker::forbiddenWads[] =
 ///////////////////////////////////////////////////////////////////////
 Wadseeker::Wadseeker()
 {
-    this->numBytesForCurrentFile = 0;
-	speedCalculator = new SpeedCalculator();
-	www = new WWWSeeker();
-
-	www->setUserAgent("Wadseeker/" + WadseekerVersionInfo::version());
-
-	connect(www, SIGNAL( aborted() ), this, SLOT( wwwAborted() ) );
-	connect(www, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
-	connect(www, SIGNAL( fileDone(QByteArray&, const QString&) ), this, SLOT( fileDone(QByteArray&, const QString&) ));
-	connect(www, SIGNAL( message(const QString&, int) ), this, SLOT( messageSlot(const QString&, int) ) );
-	connect(www, SIGNAL( fail() ), this, SLOT( wadFail() ) );
+	this->seekParametersForCurrentSeek = NULL;
 }
 
 Wadseeker::~Wadseeker()
 {
-	delete speedCalculator;
-	delete www;
 }
 
 void Wadseeker::abort()
 {
-	www->abort();
-	for (int i = iNextWad - 1; i < seekedWads.size(); ++i)
-	{
-		notFound.append(seekedWads[i]);
-	}
-}
 
-bool Wadseeker::areAllFilesFound() const
-{
-	return notFound.isEmpty();
-}
-
-const QStringList& Wadseeker::filesNotFound() const
-{
-	return notFound;
 }
 
 const QString Wadseeker::defaultIdgamesUrl()
@@ -107,112 +81,90 @@ QStringList Wadseeker::defaultSitesListEncoded()
 	return list;
 }
 
-void Wadseeker::downloadProgressSlot(int done, int total)
-{
-    this->numBytesForCurrentFile = done;
-
-	// There's no performance drop or any other argument against setting
-	// expected data size each time this slot is called.
-	// It's stupid but it's a simple solution.
-	speedCalculator->setExpectedDataSize(total);
-	speedCalculator->registerDataAmount(done);
-	emit downloadProgress(done, total);
-}
-
-float Wadseeker::downloadSpeed() const
-{
-	return speedCalculator->getSpeed();
-}
-
-float Wadseeker::estimatedTimeUntilArrivalOfCurrentFile() const
-{
-	return speedCalculator->estimatedTimeUntilArrival();
-}
-
-void Wadseeker::fileDone(QByteArray& data, const QString& filename)
-{
-	QFileInfo fi(filename);
-	bool bNextWad = false; // if set to false it will perform WWW::checkNextSite().
-
-	QString path = this->targetDir + currentWad;
-	if (filename.compare(currentWad, Qt::CaseInsensitive) == 0)
-	{
-		QFile f(path);
-		if (!f.open(QIODevice::WriteOnly))
-		{
-			emit message(tr("Failed to save file: %1").arg(path), CriticalError);
-			return;
-		}
-
-		int writeLen = f.write(data);
-		f.close();
-
-		if (writeLen != data.length())
-		{
-			emit message(tr("Failed to save file: %1").arg(path), CriticalError);
-			return;
-		}
-
-		bNextWad = true;
-	}
-	else
-	{
-		UnArchive *unarchive = UnArchive::OpenArchive(fi, data);
-
-		if (unarchive == NULL || !unarchive->isValid())
-		{
-			emit message(tr("Couldn't unarchive \"%1\".").arg(filename), Error);
-		}
-		else
-		{
-			connect (unarchive, SIGNAL( message(const QString&, int) ), this, SLOT( messageSlot(const QString&, int) ) );
-			// Check the archive for any of the files we're trying to locate.
-			QStack<int> filesToExtract;
-			int file;
-			if ((file = unarchive->findFileEntry(currentWad)) != -1)
-			{
-                filesToExtract.push(file);
-            }
-
-			for (int i = iNextWad;i < seekedWads.size();i++)
-			{
-				if ((file = unarchive->findFileEntry(seekedWads[i])) != -1)
-				{
-					seekedWads[i] = QString();
-					filesToExtract.push(file);
-				}
-			}
-
-			if(!filesToExtract.isEmpty())
-			{
-				do
-				{
-					file = filesToExtract.pop();
-					QString extractedFileName = unarchive->fileNameFromIndex(file);
-
-					unarchive->extract(file, path);
-					emit message(tr("File \"%1\" was uncompressed successfully from archive \"%2\"!").arg(extractedFileName, filename), Notice);
-					bNextWad = true;
-				}
-				while(!filesToExtract.isEmpty());
-			}
-			else
-			{
-				emit message(tr("File \"%1\" not found in \"%2\"").arg(currentWad, filename), Error);
-			}
-		}
-		delete unarchive;
-	}
-
-	if (bNextWad)
-	{
-		nextWad();
-	}
-	else
-	{
-		www->checkNextSite();
-	}
-}
+//void Wadseeker::fileDone(QByteArray& data, const QString& filename)
+//{
+//	QFileInfo fi(filename);
+//	bool bNextWad = false; // if set to false it will perform WWW::checkNextSite().
+//
+//	QString path = this->targetDir + currentWad;
+//	if (filename.compare(currentWad, Qt::CaseInsensitive) == 0)
+//	{
+//		QFile f(path);
+//		if (!f.open(QIODevice::WriteOnly))
+//		{
+//			emit message(tr("Failed to save file: %1").arg(path), WadseekerLib::CriticalError);
+//			return;
+//		}
+//
+//		int writeLen = f.write(data);
+//		f.close();
+//
+//		if (writeLen != data.length())
+//		{
+//			emit message(tr("Failed to save file: %1").arg(path), WadseekerLib::CriticalError);
+//			return;
+//		}
+//
+//		bNextWad = true;
+//	}
+//	else
+//	{
+//		UnArchive *unarchive = UnArchive::OpenArchive(fi, data);
+//
+//		if (unarchive == NULL || !unarchive->isValid())
+//		{
+//			emit message(tr("Couldn't unarchive \"%1\".").arg(filename), WadseekerLib::Error);
+//		}
+//		else
+//		{
+//			connect (unarchive, SIGNAL( message(const QString&, int) ), this, SLOT( messageSlot(const QString&, int) ) );
+//			// Check the archive for any of the files we're trying to locate.
+//			QStack<int> filesToExtract;
+//			int file;
+//			if ((file = unarchive->findFileEntry(currentWad)) != -1)
+//			{
+//                filesToExtract.push(file);
+//            }
+//
+//			for (int i = iNextWad;i < seekedWads.size();i++)
+//			{
+//				if ((file = unarchive->findFileEntry(seekedWads[i])) != -1)
+//				{
+//					seekedWads[i] = QString();
+//					filesToExtract.push(file);
+//				}
+//			}
+//
+//			if(!filesToExtract.isEmpty())
+//			{
+//				do
+//				{
+//					file = filesToExtract.pop();
+//					QString extractedFileName = unarchive->fileNameFromIndex(file);
+//
+//					unarchive->extract(file, path);
+//					emit message(tr("File \"%1\" was uncompressed successfully from archive \"%2\"!").arg(extractedFileName, filename), WadseekerLib::Notice);
+//					bNextWad = true;
+//				}
+//				while(!filesToExtract.isEmpty());
+//			}
+//			else
+//			{
+//				emit message(tr("File \"%1\" not found in \"%2\"").arg(currentWad, filename), WadseekerLib::Error);
+//			}
+//		}
+//		delete unarchive;
+//	}
+//
+//	if (bNextWad)
+//	{
+//		nextWad();
+//	}
+//	else
+//	{
+//		www->checkNextSite();
+//	}
+//}
 
 bool Wadseeker::isForbiddenWad(const QString& wad)
 {
@@ -232,112 +184,70 @@ bool Wadseeker::isForbiddenWad(const QString& wad)
 	return false;
 }
 
-void Wadseeker::messageSlot(const QString& msg, int type)
+void Wadseeker::messageSlot(const QString& msg, WadseekerLib::MessageType type)
 {
-	emit message(msg, static_cast<Wadseeker::MessageType>(type));
+	emit message(msg, type);
 }
 
-void Wadseeker::nextWad()
+void Wadseeker::startSeek(const QStringList& wads)
 {
-	QString wad;
-	while (wad.isNull() || wad.isEmpty())
+	if (seekParametersForCurrentSeek != NULL)
 	{
-		if (iNextWad >= seekedWads.size())
-		{
-			emit allDone();
-			return;
-		}
-
-		wad = seekedWads[iNextWad];
-		++iNextWad;
-
-		if (isForbiddenWad(wad))
-		{
-			emit message(tr("%1 is an IWAD or commercial mod. Ignoring.").arg(wad), Error);
-			notFound.append(wad);
-			wad = QString();
-		}
+		emit message(tr("Seek already in progress. Please abort the current seek before starting a new one."),
+					WadseekerLib::CriticalError);
+		return;
 	}
-
-	emit message(tr("Seeking file: %1").arg(wad), Notice);
-
-	currentWad = wad;
-	QString zipName;
-	QStringList wantedFilenamesInfo = wantedFilenames(wad, zipName);
-
-	speedCalculator->start();
-	this->numBytesForCurrentFile = 0;
-
-	www->searchFiles(wantedFilenamesInfo, currentWad, zipName);
-}
-
-int Wadseeker::numAlreadyFinishedFiles() const
-{
-    // Make sure that iNextWad doesn't point outside the seekedWads array.
-    return iNextWad <= seekedWads.size() ? iNextWad - 1 : 0;
-}
-
-int Wadseeker::numBytesAlreadyDownloadedForCurrentDownload() const
-{
-    return numBytesForCurrentFile;
-}
-
-int Wadseeker::numTotalBytesForCurrentDownload() const
-{
-    // SpeedCalculator already holds this info. Extract it from there.
-    return speedCalculator->expectedDataSize();
-}
-
-int Wadseeker::numTotalCurrentlySeekedFiles() const
-{
-    return seekedWads.size();
-}
-
-void Wadseeker::seekWads(const QStringList& wads)
-{
-	iNextWad = 0;
-	notFound.clear();
-	seekedWads = wads;
 
 	if (wads.isEmpty())
-		return;
-
-	if (targetDir.isEmpty())
 	{
-		QString err = tr("No target directory specified! Aborting");
-		emit message(err, CriticalError);
+		emit message(tr("Specified no files to seek. Aborting."), WadseekerLib::CriticalError);
 		return;
 	}
 
-	QFileInfo fi(targetDir);
-	fi.isWritable();
-
-	if (!fi.exists() || !fi.isDir())
+	if (seekParameters.saveDirectoryPath.isEmpty())
 	{
-		QString err = tr("Target directory: \"%1\" doesn't exist! Aborting").arg(targetDir);
-		emit message(err, CriticalError);
+		QString err = tr("No target directory specified! Aborting.");
+		emit message(err, WadseekerLib::CriticalError);
 		return;
 	}
 
-	if (!fi.isWritable())
+	QDir targetDir(seekParameters.saveDirectoryPath);
+	if (!targetDir.exists())
 	{
-		QString err = tr("You cannot write to directory: \"%1\"! Aborting").arg(targetDir);
-		emit message(err, CriticalError);
+		emit message(tr("File save directory \"%1\" doesn't exist or is a file. Aborting.").arg(seekParameters.saveDirectoryPath),
+					WadseekerLib::CriticalError);
 		return;
 	}
 
-	nextWad();
+	seekParameters.seekedWads = wads;
+	seekParametersForCurrentSeek = new SeekParameters(seekParameters);
+	emit seekStarted(wads);
 }
 
 
 void Wadseeker::setCustomSite(const QUrl& url)
 {
-	www->setCustomSite(url);
+	seekParameters.customSiteUrl = url;
 }
 
-void Wadseeker::setPrimarySites(const QStringList& lst)
+void Wadseeker::setIdgamesEnabled(bool bEnabled)
 {
-	www->setPrimarySites(lst);
+	seekParameters.bIdgamesEnabled = bEnabled;
+}
+
+void Wadseeker::setIdgamesHighPriority(bool bHighPriority)
+{
+	seekParameters.bIdgamesHighPriority = bHighPriority;
+}
+
+void Wadseeker::setIdgamesUrl(QString archiveUrl)
+{
+	seekParameters.idgamesUrl = archiveUrl;
+}
+
+void Wadseeker::setPrimarySites(const QStringList& urlList)
+{
+	seekParameters.sitesUrls = urlList;
 }
 
 void Wadseeker::setPrimarySitesToDefault()
@@ -352,75 +262,55 @@ void Wadseeker::setPrimarySitesToDefault()
 
 void Wadseeker::setTargetDirectory(const QString& dir)
 {
-	targetDir = dir;
+	QString targetDir = dir;
 	if (!dir.isEmpty())
 	{
 		if (dir[dir.length() - 1] != QDir::separator())
+		{
 			targetDir += '/';
+		}
 	}
-}
 
-void Wadseeker::setUseIdgames(bool use, bool highPriority, QString archiveURL)
-{
-	www->setUseIdgames(use, highPriority, archiveURL);
-}
-
-void Wadseeker::setTimeConnectTimeout(int i)
-{
-	WWW::setTimeConnectTimeout(i);
-}
-
-void Wadseeker::setTimeDownloadTimeout(int i)
-{
-	WWW::setTimeDownloadTimeout(i);
-}
-
-void Wadseeker::skipSite()
-{
-	www->skipSite();
+	seekParameters.saveDirectoryPath = targetDir;
 }
 
 QString Wadseeker::targetDirectory() const
 {
-	return targetDir;
+	return seekParameters.saveDirectoryPath;
 }
 
-void Wadseeker::wadFail()
+QStringList Wadseeker::wantedFilenames(const QString& wadName, QString& zipName)
 {
-	QString tmp = tr("%1 WAS NOT FOUND\n").arg(seekedWads[iNextWad - 1]);
-	notFound.append(seekedWads[iNextWad - 1]);
-	emit message(tmp, Error);
-	emit downloadProgress(100, 100);
-	nextWad();
-}
+	QStringList list;
+	list.append(wadName);
 
-QStringList Wadseeker::wantedFilenames(const QString& wad, QString& zip)
-{
-	QStringList lst;
-	lst.append(wad);
-
-	QFileInfo fi(wad);
+	QFileInfo fi(wadName);
 	if (fi.suffix().compare("7z", Qt::CaseInsensitive) != 0)
 	{
-		QString app = fi.completeBaseName() + ".7z";
-		lst.append(app);
+		QString archiveName = fi.completeBaseName() + ".7z";
+		list.append(archiveName);
 	}
 
 	if (fi.suffix().compare("zip", Qt::CaseInsensitive) != 0)
 	{
-		QString app = fi.completeBaseName() + ".zip";
-		zip = app;
-		lst.append(app);
+		QString archiveName = fi.completeBaseName() + ".zip";
+		zipName = archiveName;
+		list.append(archiveName);
 	}
 	else
 	{
-		zip = wad;
+		zipName = wadName;
 	}
 
-	return lst;
+	return list;
 }
 
-void Wadseeker::wwwAborted()
+////////////////////////////////////////////////////////////////////////////////
+
+Wadseeker::SeekParameters::SeekParameters()
 {
-	emit aborted();
+	this->bIdgamesEnabled = true;
+	this->bIdgamesHighPriority = true;
+	this->idgamesUrl = Wadseeker::defaultIdgamesUrl();
+	this->sitesUrls = Wadseeker::defaultSitesListEncoded();
 }
