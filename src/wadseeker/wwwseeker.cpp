@@ -22,343 +22,154 @@
 //------------------------------------------------------------------------------
 #include "wwwseeker.h"
 
-#include "protocols/ftp.h"
-#include "protocols/http.h"
-#include "protocols/idgames.h"
 #include "htmlparser.h"
 
 #include <QFileInfo>
 
 WWWSeeker::WWWSeeker()
 {
-	idgames = new Idgames(Idgames::defaultIdgamesUrl());
-
-	idgamesHasHighPriority = false;
-	useIdgames = true;
-
-	connect(http, SIGNAL( nameAndTypeOfReceivedFile(const QString&, int) ), this, SLOT( protocolNameAndTypeOfReceivedFile(const QString&, int) ) );
-
-	connect(idgames, SIGNAL( aborted() ), this, SLOT( protocolAborted() ) );
-	connect(idgames, SIGNAL( dataReadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ) );
-	connect(idgames, SIGNAL( done(bool, QByteArray&, int, const QString&) ), this, SLOT( protocolDone(bool, QByteArray&, int, const QString&) ) );
-	connect(idgames, SIGNAL( message(const QString&, int) ), this, SLOT( messageSlot(const QString&, int) ) );
-	connect(idgames, SIGNAL( nameAndTypeOfReceivedFile(const QString&, int) ), this, SLOT( protocolNameAndTypeOfReceivedFile(const QString&, int) ) );
+	d.bIsWorking = false;
+	d.pNetworkAccessManager = new QNetworkAccessManager();
 }
 
 WWWSeeker::~WWWSeeker()
 {
-	delete idgames;
-}
-
-bool WWWSeeker::hasCustomSiteBeenProcessed() const
-{
-	return customSiteChecked || !customSite.isValid();
-}
-
-bool WWWSeeker::shouldCheckIdgames() const
-{
-	// Priority checks: did we use Idgames already and do we even want to use
-	// them.
-	if (!useIdgames || idgamesUsed)
+	if (d.pCurrentNetworkReply != NULL)
 	{
-		return false;
+		delete d.pCurrentNetworkReply;
 	}
 
-	// From now on checks will return true on success.
-	if (idgamesHasHighPriority)
+	delete d.pNetworkAccessManager;
+}
+
+void WWWSeeker::abort()
+{
+	if (d.pCurrentNetworkReply != NULL)
 	{
-		// The checks below see if any result can be obtained through custom
-		// site; at this point only custom side could have produced direct
-		// or site links.
-		if (hasCustomSiteBeenProcessed()
-		&&  directLinks.isEmpty()
-		&&  siteLinks.isEmpty())
+		d.pCurrentNetworkReply->abort();
+	}
+}
+
+void WWWSeeker::addNetworkReply(QNetworkReply* pReply);
+{
+	NetworkQueryInfo* pQueryInfo = new NetworkQueryInfo(pReply);
+
+
+
+	d.networkQueries << pQueryInfo;
+}
+
+void WWWSeeker::addSiteUrl(const QUrl& url)
+{
+	if (!wasUrlUsed(url))
+	{
+		d.sitesUrls << url;
+	}
+}
+
+void WWWSeeker::addSitesUrls(const QList<QUrl>& urlsList)
+{
+	foreach (const QUrl& url, urlsList)
+	{
+		addSiteUrl(url);
+	}
+}
+
+void WWWSeeker::currentReplyFinished()
+{
+
+}
+
+NetworkQueryInfo* WWWSeeker::findNetworkQueryInfo(QNetworkReply* pReply)
+{
+	foreach (NetworkQueryInfo* info, d.networkQueries)
+	{
+		if (*info == pReply)
 		{
-			return true;
+			return info;
 		}
 	}
-	else if (!hasMoreUrls())
-	{
-		return true;
-	}
 
-	return false;
+	return NULL;
 }
 
-void WWWSeeker::checkNextSite()
+void WWWSeeker::setUserAgent(const QString& userAgent)
 {
-	if (shouldCheckIdgames())
-	{
-		this->searchIdgames();
-	}
-	else
-	{
-		QUrl site = nextSite();
-		if (site.isEmpty())
-		{
-			processedUrl = QUrl();
-			emit message(tr("No more sites."), WadseekerLib::Notice);
-			emit fail();
-		}
-		else
-		{
-			emit downloadProgress(0, 100);
-			get(site);
-		}
-	}
+	d.userAgent = userAgent;
 }
 
-void WWWSeeker::clearLinksCache()
+void WWWSeeker::startSearch(const QStringList& seekedFilenames)
 {
-	this->checkedLinks.clear();
-	this->directLinks.clear();
-	this->siteLinks.clear();
-
-	currentPrimarySite = 0;
-
-	customSiteChecked = false;
-	idgamesUsed = false;
-
-	processedUrl = QUrl();
-}
-
-const QString WWWSeeker::defaultIdgamesUrl()
-{
-	return Idgames::defaultIdgamesUrl();
-}
-
-void WWWSeeker::get(const QUrl& url)
-{
-	QUrl urlValid = constructValidUrl(url);
-	if (urlValid.isEmpty())
+	if (isWorking())
 	{
-		emit message(tr("Failed to create valid URL out of \"%1\". Ignoring.").arg(url.toString()), WadseekerLib::Error);
-		checkNextSite();
 		return;
 	}
 
-	if (checkedLinks.find(urlValid.toString()) != checkedLinks.end())
-	{
-		checkNextSite();
-		return;
-	}
+	d.bIsWorking = true;
 
-	checkedLinks.insert(urlValid.toString());
-	processedUrl = urlValid;
-
-	emit message(tr("Next site: %1").arg(urlValid.toString()), WadseekerLib::NoticeImportant);
-	if (Http::isHTTPLink(urlValid))
-	{
-		currentProtocol = http;
-		http->get(urlValid);
-	}
-	else if (Ftp::isFTPLink(urlValid))
-	{
-		QFileInfo fi(urlValid.path());
-		if (!isWantedFileOrZip(fi.fileName()))
-		{
-			emit message(MESSAGE_IGNORE.arg(fi.fileName()), WadseekerLib::Notice);
-			checkNextSite();
-			return;
-		}
-		else
-		{
-			currentProtocol = ftp;
-			ftp->get(urlValid);
-		}
-	}
-	else
-	{
-		currentProtocol = NULL;
-		message(tr("Protocol for this site is not supported"), WadseekerLib::Error);
-		checkNextSite();
-		return;
-	}
-
+	d.seekedFilenames = seekedFilenames;
 }
 
-bool WWWSeeker::isWantedFileOrZip(const QString& filename)
+const QString& WWWSeeker::userAgent() const
 {
-	if (!primaryFile.isNull())
+	d.userAgent;
+}
+
+bool WWWSeeker::wasUrlUsed(const QUrl& url) const
+{
+	foreach (const QUrl& usedUrl, d.usedUrls)
 	{
-		if (primaryFile.compare(filename, Qt::CaseInsensitive) == 0)
+		if (usedUrl == url)
 		{
 			return true;
 		}
 	}
 
-	QFileInfo fileInfo(filename);
-
-	return
-		fileInfo.suffix().compare("zip", Qt::CaseInsensitive) == 0 ||
-		fileInfo.suffix().compare("7z", Qt::CaseInsensitive) == 0 ||
-		fileInfo.suffix().compare("tar", Qt::CaseInsensitive) == 0 ||
-		fileInfo.suffix().compare("gz", Qt::CaseInsensitive) == 0 ||
-		fileInfo.suffix().compare("bz2", Qt::CaseInsensitive) == 0;
-}
-
-bool WWWSeeker::hasMoreUrls() const
-{
-	if (!customSiteChecked && customSite.isValid())
-	{
-		return true;
-	}
-
-	if (!directLinks.isEmpty() || !siteLinks.isEmpty())
-	{
-		return true;
-	}
-
-	if (currentPrimarySite < primarySites.size())
-	{
-		return true;
-	}
-
 	return false;
 }
 
-QUrl WWWSeeker::nextSite()
+////////////////////////////////////////////////////////////////////////////////
+
+WWWSeeker::NetworkQueryInfo::NetworkQueryInfo(QNetworkReply* pReply)
 {
-	QUrl url = popNextUrl();
+	this->pReply = pReply;
 
-	QString urlString = url.toString();
-	if (!urlString.isEmpty())
+	if (pReply != NULL)
 	{
-		urlString = urlString.replace("%WADNAME%", primaryFile);
-		urlString = urlString.replace("%ZIPNAME%", zipFile);
-
-		url = urlString;
-	}
-
-	return url;
-}
-
-QUrl WWWSeeker::popNextUrl()
-{
-	while (hasMoreUrls())
-	{
-		QUrl url;
-		if (!customSiteChecked && customSite.isValid())
-		{
-			url = customSite;
-			customSiteChecked = true;
-		}
-		else if (!directLinks.isEmpty())
-		{
-			url = directLinks.takeFirst();
-		}
-		else if (!siteLinks.isEmpty())
-		{
-			url = siteLinks.takeFirst();
-		}
-		else if (currentPrimarySite < primarySites.size())
-		{
-			url = primarySites[currentPrimarySite];
-			++currentPrimarySite;
-		}
-
-		if (url.isEmpty() || !url.isValid())
-		{
-			continue;
-		}
-
-		return url;
-	}
-
-	return QUrl();
-}
-
-void WWWSeeker::protocolAborted()
-{
-	currentProtocol = NULL;
-	if (!aborting)
-	{
-		checkNextSite();
+		pSignalWrapper = new NetworkReplySignalWrapper(pReply);
 	}
 	else
 	{
-		emit aborted();
+		pSignalWrapper = NULL;
 	}
 }
 
-void WWWSeeker::protocolDone(bool success, QByteArray& data, int fileType, const QString& filename)
+NetworkQueryInfo::~NetworkQueryInfo()
 {
-	currentProtocol = NULL;
-	if (success)
+	if (pReply != NULL)
 	{
-		emit message(tr("Got file %1.").arg(filename), WadseekerLib::Notice);
-		if (fileType == Protocol::Html)
-		{
-			int siteLinksNum, directLinksNum; // CHtml::linksFromHTMLByPattern will zero this
-			emit message(tr("Parsing file as HTML looking for links."), WadseekerLib::Notice);
-			HtmlParser html(data);
-			html.capitalizeHTMLTags();
-			html.linksFromHTMLByPattern(filesToFind, siteLinks, directLinks, processedUrl, siteLinksNum, directLinksNum);
-			emit message(tr("Site links found: %1 | Direct links found: %2").arg(siteLinksNum).arg(directLinksNum), WadseekerLib::Notice);
-			checkNextSite();
-		}
-		else
-		{
-			emit fileDone(data, filename);
-		}
+		delete pSignalWrapper;
+		delete pReply;
 	}
+}
 
-	if (!success)
+void WWWSeeker::NetworkQueryInfo::deleteMembersLater()
+{
+	if (pReply != NULL)
 	{
-		checkNextSite();
+		delete pSignalWrapper;
+		pReply->deleteLater();
+
+		pReply = NULL;
 	}
 }
 
-void WWWSeeker::protocolNameAndTypeOfReceivedFile(const QString& name, int type)
+bool WWWSeeker::NetworkQueryInfo::operator==(const NetworkQueryInfo& other) const
 {
-	if (type == Protocol::Other)
-	{
-		if (!isWantedFileOrZip(name))
-		{
-			emit message(MESSAGE_IGNORE.arg(name), WadseekerLib::Notice);
-			if (currentProtocol != NULL)
-			{
-				currentProtocol->abort();
-			}
-		}
-	}
+	return *this == other.pReply;
 }
 
-void WWWSeeker::searchFiles(const QStringList& list, const QString& primaryFilename, const QString& zipFilename)
+bool WWWSeeker::NetworkQueryInfo::operator==(const QNetworkReply* pReply) const
 {
-	aborting = false;
-
-	clearLinksCache();
-
-	filesToFind = list;
-	primaryFile = primaryFilename;
-	zipFile = zipFilename;
-
-	checkNextSite();
+	return this->pReply == other.pReply;
 }
-
-void WWWSeeker::searchIdgames()
-{
-	idgamesUsed = true;
-	currentProtocol = idgames;
-	idgames->findFile(zipFile);
-}
-
-void WWWSeeker::setUseIdgames(bool use, bool highPriority, QString archiveURL)
-{
-	useIdgames = use;
-	idgamesHasHighPriority = highPriority;
-	idgames->setPage(archiveURL);
-}
-
-void WWWSeeker::setUserAgentEx(const QString& agent)
-{
-	idgames->setUserAgent(agent);
-}
-
-void WWWSeeker::skipSite()
-{
-	emit message(tr("Skipping site..."), WadseekerLib::Notice);
-	abortExec(false);
-}
-

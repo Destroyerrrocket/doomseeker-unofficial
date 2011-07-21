@@ -184,11 +184,6 @@ bool Wadseeker::isForbiddenWad(const QString& wad)
 	return false;
 }
 
-void Wadseeker::messageSlot(const QString& msg, WadseekerLib::MessageType type)
-{
-	emit message(msg, type);
-}
-
 void Wadseeker::startSeek(const QStringList& wads)
 {
 	if (seekParametersForCurrentSeek != NULL)

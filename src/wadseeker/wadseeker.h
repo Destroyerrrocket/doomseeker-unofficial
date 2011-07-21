@@ -290,13 +290,6 @@ class WADSEEKER_API Wadseeker : public QObject
 		 */
 		void seekStarted(const QStringList& filenames);
 
-	private slots:
-		/**
-		 * This slot acts as a pipe to the message signal.
-		 * @see message
-		 */
-		void			messageSlot(const QString& msg, WadseekerLib::MessageType type);
-
 	private:
 		class SeekParameters
 		{

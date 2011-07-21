@@ -23,7 +23,15 @@
 #ifndef __WWWSEEKER_H__
 #define __WWWSEEKER_H__
 
-#include "www.h"
+#include <QList>
+#include <QNetworkAccessManager>
+#include <QStringList>
+#include <QString>
+#include <QUrl>
+
+#include "wadseekerexportinfo.h"
+
+class NetworkReplySignalWrapper;
 
 /**
  *	@brief Search and protocol wrapper class.
@@ -39,7 +47,7 @@
  *
  *	URLs with wildcards can be used, see: primaryFile
  */
-class WADSEEKER_API WWWSeeker : public WWW
+class WADSEEKER_API WWWSeeker : public QObject
 {
 	Q_OBJECT
 
@@ -48,147 +56,166 @@ class WADSEEKER_API WWWSeeker : public WWW
 		virtual ~WWWSeeker();
 
 		/**
-		 *	@return Default URL of Idgames archive, hardcoded into the library.
+		 * @brief Adds a URL to a site that will be used in the search.
+		 *
+		 * URLs that were already used by this WWWSeeker object are rejected.
 		 */
-		static const QString 	defaultIdgamesUrl();
+		void addSiteUrl(const QUrl& url);
 
 		/**
-		 *	Tells the class to keep looking for file on next available
-		 *	site. This method is public because WWW class stops when
-		 *	it finds and downloads seeked file. If end-programmer decides
-		 *	this is not the file he wants he can resume WWW class progress
-		 *	by calling this method.
+		 * @brief Convenience method. Calls addSiteUrl() for each URL on The
+		 * list.
+		 *
+		 * URLs that were already used by this WWWSeeker object are rejected.
 		 */
-		void checkNextSite();
+		void addSitesUrls(const QList<QUrl>& urlsList);
 
 		/**
-		 *	Begins the search process. This is the main entry method for this
-		 *	class.
-		 *	@param seekedFiles - list of filenames we want to get.
-		 *	@param primaryFilename - filename used to replace %WADNAME%
-		 *		wildcards.
-		 *	@param zipFilename - filename used to replace %ZIPNAME% wildcards.
-		 *	@see primaryFile
+		 * @brief Clears visited URLs list.
+		 *
+		 * This allows URLs to be reused by the current WWWSeeker object.
+		 * Such URLs however need to be readded by using addSiteUrl() method.
 		 */
-		void searchFiles(const QStringList& seekedFiles, const QString& primaryFilename, const QString& zipFilename);
+		void clearUsedUrlsList()
+		{
+			d.usedUrls.clear();
+		}
 
 		/**
-		 *	Sets a custom site. This site has priority over all other
-		 *	sites and will be searched first. For example a link
-		 *	provided by the server can be passed here.
-		 *	@param url - a valid, absolute URL
+		 * @brief Checks if WWWSeeker is processing any data.
 		 */
-		void setCustomSite(const QUrl& url) { customSite = url; }
+		bool isWorking() const
+		{
+			return d.bIsWorking;
+		}
+
+		void setUserAgent(const QString& userAgent);
 
 		/**
-		 *	Sets a list of primary sites. This is where Wadseeker begins
-		 *	it's search and where it returns to if nothing of interest
-		 *	was found on other pages.
-		 *	@param lst - list of valid, absolute URLs
+		 * @brief Begins search for files.
+		 *
+		 * Search is performed by downloading sites specified by sitesUrls
+		 * list and seeking out links on these sites that either directly
+		 * point to one of the specified filenames or may lead to subsites
+		 * that may contain links to these files.
+		 *
+		 * WWWSeeker will look for all filenames specified on the list.
+		 *
+		 * This will do nothing if isWorking() returns true.
 		 */
-		void setPrimarySites(const QStringList& lst) { primarySites = lst; }
+		void startSearch(const QStringList& seekedFilenames);
 
-		/**
-		 *	Sets parameters for Idgames protocol.
-		 *	@param use - @see useIdgames
-		 *	@param highPriority - @see idgamesHasHighPriority
-		 *	@param archiveURL - URL to the idgames search page.
-		 */
-		void setUseIdgames(bool use, bool highPriority = false, QString archiveURL = defaultIdgamesUrl());
+		const QString& userAgent() const;
 
 	public slots:
 		/**
-		 *	Skips current site and proceeds to the next one in the queue.
-		 */
-		void			skipSite();
-
-	protected slots:
-		void			get(const QUrl&);
-		void			protocolAborted();
-		void			protocolDone(bool success, QByteArray& data, int fileType, const QString& filename);
-		void			protocolNameAndTypeOfReceivedFile(const QString&, int);
-
-	protected:
-		QSet<QString>	checkedLinks;
-		int				currentPrimarySite;
-		QUrl			customSite;
-		bool			customSiteChecked;
-		QList<QUrl>		directLinks;
-		QStringList		filesToFind;
-
-		Idgames*		idgames;
-		bool			idgamesUsed;
-
-		/**
-		 *	If true, idgames archive will be searched right after
-		 *	the custom site.
-		 *	If false, idgames archive will be searched after all other
-		 *	sites fail.
-		 */
-		bool			idgamesHasHighPriority;
-
-		/**
-		 *	This will replace all occurences of %WADNAME%
-		 *	string in all URLs.
-		 */
-		QString			primaryFile;
-		QStringList		primarySites;
-
-		bool			shouldCheckIdgames() const;
-
-		QList<QUrl> 	siteLinks;
-
-		/**
-		 *	If true, idgames search will be performed.
-		 *	If false, idgames archive will be skipped.
-		 */
-		bool			useIdgames;
-
-		/**
-		 *	This will replace all occurences of %ZIPNAME% string in
-		 *	all URLs. Also this will be passed to Idgames::findFile()
-		 *	as seeked file parameter.
-		 */
-		QString			zipFile;
-
-		/**
-		 *	@brief Erases all links that were found during the search.
+		 * @brief Aborts the current search operation.
 		 *
-		 *	This will leave links like customSite or primarySites untouched.
-		 *	However all links that were found during the search will be removed.
-		 *	The set containing links that were already checked is also cleared.
+		 * aborted() signal is emitted once the abort completes.
 		 */
-		void			clearLinksCache();
+		void abort();
 
-		bool			hasCustomSiteBeenProcessed() const;
-		bool			hasMoreUrls() const;
-
-		bool 			getUrl(const QUrl& url) { return false; }
-
-		bool			isWantedFileOrZip(const QString& filename);
-		QUrl			nextSite();
+	signals:
+		/**
+		 * @brief Emitted when seeker aborts or there is nothing more to search.
+		 */
+		void finished();
 
 		/**
-		 *	@brief Retrieves a URL that should be checked next.
+		 * @brief Emitted for each direct link to a file that is found.
 		 *
-		 *	The URL is removed from the queue, but its place holder strings
-		 *	are not processed. This is done by the nextSite() method which
-		 *	this method is called from.
-		 *
-		 *	@return If no URLs are left an empty URL is returned.
-		 *	@see nextSite()
+		 * @param filename
+		 *      Filename to which the URL refers to.
+		 * @param url
+		 *      URL under which the file resides.
 		 */
-		QUrl			popNextUrl();
+		void linkFound(const QString& filename, const QUrl& url);
 
 		/**
-		 *	Calling this method will set idgamesUsed boolean to true
+		 * @brief Emitted when a WWW site finishes download.
 		 */
-		void			searchIdgames();
+		void siteFinished(const QUrl& site, int subsiteLinksFound, int directLinksFound);
 
 		/**
-		 *	@param agent - string to send in Idgames queries
+		 * @brief Emitted when a WWW site is being downloaded.
 		 */
-		virtual void 	setUserAgentEx(const QString& agent);
+		void siteProgress(const QUrl& site, qint64 bytes, qint64 total);
+
+		/**
+		 * @brief Emitted when a download of a WWW site starts.
+		 */
+		void siteStarted(const QUrl& site);
+
+	private:
+		class NetworkQueryInfo
+		{
+			public:
+				NetworkReplySignalWrapper* pSignalWrapper;
+				QNetworkReply* pReply;
+
+				NetworkQueryInfo(QNetworkReply* pReply);
+				~NetworkQueryInfo();
+
+				void deleteMembersLater();
+
+				/**
+				 * @brief NetworkQueryInfo objects are equal if their pReply
+				 * is the same.
+				 */
+				bool operator==(const NetworkQueryInfo& other) const;
+				bool operator!=(const NetworkQueryInfo& other) const
+				{
+					return ! (*this == other);
+				}
+
+				bool operator==(const QNetworkReply* pReply) const;
+				bool operator!=(const QNetworkReply* pReply) const
+				{
+					return ! (*this == pReply);
+				}
+		};
+
+		class PrivData
+		{
+			public:
+				bool bIsWorking;
+
+				/**
+				 * @brief Currently running network queries.
+				 */
+				QList<NetworkQueryInfo*> networkQueries;
+
+				QNetworkAccessManager* pNetworkAccessManager;
+
+				QStringList seekedFilenames;
+
+				/**
+				 * @brief URLs that will be used in a search.
+				 */
+				QList<QUrl> sitesUrls;
+
+				/**
+				 * @brief Holds list of all used URLs.
+				 *
+				 * Prevents checking the same site twice.
+				 */
+				QList<QUrl> usedUrls;
+
+				/**
+				 * @brief User Agent used in WWW queries.
+				 */
+				QString userAgent;
+		};
+
+		PrivData d;
+
+		void addNetworkReply(QNetworkReply* pReply);
+		NetworkQueryInfo* findNetworkQueryInfo(QNetworkReply* pReply);
+		bool wasUrlUsed(const QUrl& url) const;
+
+
+	private slots:
+		void networkQueryFinished(QNetworkReply* pReply);
 };
 
 #endif
