@@ -226,7 +226,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	blockRefreshButtons();
 		void 	finishedQueryingMaster(MasterClient* master);
 		void 	getServers();
-		void	ip2cDownloadProgress(int current, int max);
+		void	ip2cDownloadProgress(qint64 current, qint64 max);
 		void	ip2cFinishUpdate(const QByteArray& downloadedData);
 		void	ip2cFinishedParsing(bool bSuccess);
 		void	ip2cParseDatabase();

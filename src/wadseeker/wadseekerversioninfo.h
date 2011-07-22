@@ -25,6 +25,7 @@
 
 #include "wadseekerexportinfo.h"
 #include <QString>
+#include <QStringList>
 
 class WADSEEKER_API WadseekerVersionInfo
 {
@@ -38,6 +39,11 @@ class WADSEEKER_API WadseekerVersionInfo
 		 * @brief Description of the library.
 		 */
 		static QString			description();
+
+		/**
+		 * @brief List of extractable archive extensions.
+		 */
+		static QStringList 		supportedArchiveExtensions();
 
 		/**
 		 * @brief WWW User Agent used for HTTP communications.

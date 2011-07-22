@@ -615,7 +615,7 @@ void MainWindow::initTrayIcon()
 	}
 }
 
-void MainWindow::ip2cDownloadProgress(int current, int max)
+void MainWindow::ip2cDownloadProgress(qint64 current, qint64 max)
 {
 	ip2cUpdateProgressBar->setMaximum(max);
 	ip2cUpdateProgressBar->setValue(current);
@@ -759,7 +759,7 @@ void MainWindow::ip2cStartUpdate()
 	ip2cUpdater->setFilePath(DoomseekerFilePaths::ip2cDatabase());
 
 	connect (ip2cUpdater, SIGNAL( databaseDownloadFinished(const QByteArray&) ), this, SLOT( ip2cFinishUpdate(const QByteArray&) ) );
-	connect (ip2cUpdater, SIGNAL( downloadProgress(int, int) ), this, SLOT( ip2cDownloadProgress(int, int) ) );
+	connect (ip2cUpdater, SIGNAL( downloadProgress(qint64, qint64) ), this, SLOT( ip2cDownloadProgress(qint64, qint64) ) );
 
 	QString downloadUrl = gConfig.doomseeker.ip2CountryUrl;
 

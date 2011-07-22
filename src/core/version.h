@@ -40,15 +40,21 @@ class MAIN_EXPORT Version
 		static QString			name();
 		static QString			revision();
 		static int				revisionNumber();
+
+		/**
+		 * @brief WWW User Agent used for HTTP communications.
+		 */
+		static QString			userAgent();
+
 		static QString			version();
-		
+
 		/**
 		 *	@brief Combines version and revision strings.
 		 *	If revision is not available only version is returned.
 		 */
 		static QString			versionRevision();
-	
-	
+
+
 };
 
 #endif

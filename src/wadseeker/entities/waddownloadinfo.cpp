@@ -4,19 +4,56 @@
 // Copyright (C) 2011 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "waddownloadinfo.h"
+#include "wadseekerversioninfo.h"
 
 #include <QFileInfo>
+#include <QStringList>
 
 WadDownloadInfo::WadDownloadInfo(const QString& name)
 {
 	d.name = name;
 }
 
-bool WadDownloadInfo::isArchive() const
+QString WadDownloadInfo::archiveName(const QString& suffix) const
+{
+	if (isArchive())
+	{
+		return name();
+	}
+	else
+	{
+		QFileInfo fi(d.name);
+
+		QString baseName = fi.completeBaseName();
+		return baseName + "." + suffix;
+	}
+}
+
+QString WadDownloadInfo::basename() const
 {
 	QFileInfo fi(d.name);
+	return fi.completeBaseName();
+}
 
-	return fi.suffix().compare("zip", Qt::CaseInsensitive) == 0
-		|| fi.suffix().compare("7z", Qt::CaseInsensitive) == 0;
+bool WadDownloadInfo::isArchive() const
+{
+	QStringList supportedArchives = WadseekerVersionInfo::supportedArchiveExtensions();
+	QFileInfo fi(d.name);
+
+	foreach (const QString& suffix, supportedArchives)
+	{
+		if (fi.suffix().compare("zip", Qt::CaseInsensitive) == 0)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool WadDownloadInfo::isFilenameIndicatingSameWad(const QString& filename) const
+{
+	QFileInfo fi(filename);
+	return fi.completeBaseName().compare(basename(), Qt::CaseInsensitive) == 0;
 }
 

@@ -23,8 +23,8 @@
 #include "version.h"
 #include "svnrevision.h"
 
-QString Version::name() 
-{ 
+QString Version::name()
+{
 	return "Doomseeker";
 }
 
@@ -38,20 +38,25 @@ int Version::revisionNumber()
 	return SVN_REVISION_NUMBER;
 }
 
+QString Version::userAgent()
+{
+	return "Doomseeker/" + versionRevision();
+}
+
 QString Version::version()
 {
 	return "0.8 Beta";
 }
 
 QString Version::versionRevision()
-{ 
+{
 	if (revision().isEmpty())
 	{
 		return version();
 	}
 	else
 	{
-		return version() + "-" + revision(); 
+		return version() + "-" + revision();
 	}
 }
 

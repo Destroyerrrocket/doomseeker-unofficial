@@ -23,20 +23,24 @@
 #include "wwwseeker.h"
 
 #include "htmlparser.h"
+#include "networkreplysignalwrapper.h"
 
 #include <QFileInfo>
 
 WWWSeeker::WWWSeeker()
 {
+	d.bIsAborting = false;
 	d.bIsWorking = false;
+	d.maxConcurrentSiteDownloads = 3;
 	d.pNetworkAccessManager = new QNetworkAccessManager();
 }
 
 WWWSeeker::~WWWSeeker()
 {
-	if (d.pCurrentNetworkReply != NULL)
+	foreach (NetworkQueryInfo* pInfo, d.networkQueries)
 	{
-		delete d.pCurrentNetworkReply;
+		pInfo->deleteMembersLater();
+		delete pInfo;
 	}
 
 	delete d.pNetworkAccessManager;
@@ -44,17 +48,29 @@ WWWSeeker::~WWWSeeker()
 
 void WWWSeeker::abort()
 {
-	if (d.pCurrentNetworkReply != NULL)
+	d.bIsAborting = true;
+
+	if (d.networkQueries.isEmpty())
 	{
-		d.pCurrentNetworkReply->abort();
+		emit finished();
+	}
+	else
+	{
+		foreach (NetworkQueryInfo* pInfo, d.networkQueries)
+		{
+			pInfo->pReply->abort();
+		}
+
+		d.sitesUrls.clear();
 	}
 }
 
-void WWWSeeker::addNetworkReply(QNetworkReply* pReply);
+void WWWSeeker::addNetworkReply(QNetworkReply* pReply)
 {
 	NetworkQueryInfo* pQueryInfo = new NetworkQueryInfo(pReply);
 
-
+	this->connect(pQueryInfo->pSignalWrapper, SIGNAL( finished(QNetworkReply*) ),
+		SLOT( networkQueryFinished(QNetworkReply*) ));
 
 	d.networkQueries << pQueryInfo;
 }
@@ -75,12 +91,38 @@ void WWWSeeker::addSitesUrls(const QList<QUrl>& urlsList)
 	}
 }
 
-void WWWSeeker::currentReplyFinished()
+void WWWSeeker::networkQueryFinished(QNetworkReply* pReply)
 {
+	NetworkQueryInfo* pQueryInfo = findNetworkQueryInfo(pReply);
 
+	// TODO
+	// Get URLs from downloaded site.
+
+	QUrl url = pReply->url();
+	printf("Finished URL %s\n", pReply->url().toEncoded().constData());
+
+	pQueryInfo->deleteMembersLater();
+	d.networkQueries.removeOne(pQueryInfo);
+	delete pQueryInfo;
+
+	emit siteFinished(url, 0, 0);
+
+	if (d.networkQueries.isEmpty() && d.sitesUrls.isEmpty())
+	{
+		// Work is finished if there are no more site URLs to find.
+		d.bIsWorking = false;
+		emit finished();
+	}
+	else
+	{
+		if (!d.bIsAborting)
+		{
+			startNextSites();
+		}
+	}
 }
 
-NetworkQueryInfo* WWWSeeker::findNetworkQueryInfo(QNetworkReply* pReply)
+WWWSeeker::NetworkQueryInfo* WWWSeeker::findNetworkQueryInfo(QNetworkReply* pReply)
 {
 	foreach (NetworkQueryInfo* info, d.networkQueries)
 	{
@@ -98,6 +140,27 @@ void WWWSeeker::setUserAgent(const QString& userAgent)
 	d.userAgent = userAgent;
 }
 
+void WWWSeeker::startNextSites()
+{
+	while (d.networkQueries.size() < d.maxConcurrentSiteDownloads
+			&& !d.sitesUrls.isEmpty())
+	{
+		QUrl url = d.sitesUrls.takeFirst();
+		printf("Starting site: %s\n", url.toEncoded().constData());
+
+		d.visitedUrls << url;
+
+		QNetworkRequest request;
+		request.setUrl(url);
+		request.setRawHeader("User-Agent", d.userAgent.toAscii());
+
+		QNetworkReply* pReply = d.pNetworkAccessManager->get(request);
+		addNetworkReply(pReply);
+
+		emit siteStarted(url);
+	}
+}
+
 void WWWSeeker::startSearch(const QStringList& seekedFilenames)
 {
 	if (isWorking())
@@ -105,9 +168,13 @@ void WWWSeeker::startSearch(const QStringList& seekedFilenames)
 		return;
 	}
 
+	d.bIsAborting = false;
 	d.bIsWorking = true;
 
 	d.seekedFilenames = seekedFilenames;
+	d.visitedUrls.clear();
+
+	startNextSites();
 }
 
 const QString& WWWSeeker::userAgent() const
@@ -117,7 +184,7 @@ const QString& WWWSeeker::userAgent() const
 
 bool WWWSeeker::wasUrlUsed(const QUrl& url) const
 {
-	foreach (const QUrl& usedUrl, d.usedUrls)
+	foreach (const QUrl& usedUrl, d.visitedUrls)
 	{
 		if (usedUrl == url)
 		{
@@ -144,7 +211,7 @@ WWWSeeker::NetworkQueryInfo::NetworkQueryInfo(QNetworkReply* pReply)
 	}
 }
 
-NetworkQueryInfo::~NetworkQueryInfo()
+WWWSeeker::NetworkQueryInfo::~NetworkQueryInfo()
 {
 	if (pReply != NULL)
 	{
@@ -171,5 +238,5 @@ bool WWWSeeker::NetworkQueryInfo::operator==(const NetworkQueryInfo& other) cons
 
 bool WWWSeeker::NetworkQueryInfo::operator==(const QNetworkReply* pReply) const
 {
-	return this->pReply == other.pReply;
+	return this->pReply == pReply;
 }

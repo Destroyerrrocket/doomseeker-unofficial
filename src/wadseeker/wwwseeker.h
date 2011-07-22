@@ -25,11 +25,10 @@
 
 #include <QList>
 #include <QNetworkAccessManager>
+#include <QNetworkReply>
 #include <QStringList>
 #include <QString>
 #include <QUrl>
-
-#include "wadseekerexportinfo.h"
 
 class NetworkReplySignalWrapper;
 
@@ -47,7 +46,7 @@ class NetworkReplySignalWrapper;
  *
  *	URLs with wildcards can be used, see: primaryFile
  */
-class WADSEEKER_API WWWSeeker : public QObject
+class WWWSeeker : public QObject
 {
 	Q_OBJECT
 
@@ -76,9 +75,9 @@ class WADSEEKER_API WWWSeeker : public QObject
 		 * This allows URLs to be reused by the current WWWSeeker object.
 		 * Such URLs however need to be readded by using addSiteUrl() method.
 		 */
-		void clearUsedUrlsList()
+		void clearVisitedUrlsList()
 		{
-			d.usedUrls.clear();
+			d.visitedUrls.clear();
 		}
 
 		/**
@@ -87,6 +86,20 @@ class WADSEEKER_API WWWSeeker : public QObject
 		bool isWorking() const
 		{
 			return d.bIsWorking;
+		}
+
+		int maxConcurrentSiteDownloads() const
+		{
+			return d.maxConcurrentSiteDownloads;
+		}
+
+		/**
+		 * @brief Maximum amount of URLs the WWWSeeker will go through
+		 * at the same time.
+		 */
+		void setMaxConcurrectSiteDownloads(int value)
+		{
+			d.maxConcurrentSiteDownloads = value;
 		}
 
 		void setUserAgent(const QString& userAgent);
@@ -111,7 +124,7 @@ class WADSEEKER_API WWWSeeker : public QObject
 		/**
 		 * @brief Aborts the current search operation.
 		 *
-		 * aborted() signal is emitted once the abort completes.
+		 * finished() signal is emitted once the abort completes.
 		 */
 		void abort();
 
@@ -178,10 +191,18 @@ class WADSEEKER_API WWWSeeker : public QObject
 		class PrivData
 		{
 			public:
+				bool bIsAborting;
 				bool bIsWorking;
 
 				/**
+				 * @brief Default value: 3
+				 */
+				int maxConcurrentSiteDownloads;
+
+				/**
 				 * @brief Currently running network queries.
+				 *
+				 * Amount here will not go above the maxConcurrentSiteDownloads.
 				 */
 				QList<NetworkQueryInfo*> networkQueries;
 
@@ -199,7 +220,7 @@ class WADSEEKER_API WWWSeeker : public QObject
 				 *
 				 * Prevents checking the same site twice.
 				 */
-				QList<QUrl> usedUrls;
+				QList<QUrl> visitedUrls;
 
 				/**
 				 * @brief User Agent used in WWW queries.
@@ -211,6 +232,7 @@ class WADSEEKER_API WWWSeeker : public QObject
 
 		void addNetworkReply(QNetworkReply* pReply);
 		NetworkQueryInfo* findNetworkQueryInfo(QNetworkReply* pReply);
+		void startNextSites();
 		bool wasUrlUsed(const QUrl& url) const;
 
 

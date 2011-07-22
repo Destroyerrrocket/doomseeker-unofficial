@@ -27,7 +27,13 @@ find_package(ZLIB REQUIRED)
 find_package(BZip2 REQUIRED)
 
 include(${QT_USE_FILE})
-include_directories(${ZLIB_INCLUDE_DIR} ${BZIP2_INCLUDE_DIR})
+include_directories(
+	${CMAKE_CURRENT_BINARY_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}	
+	${ZLIB_INCLUDE_DIR} 
+	${BZIP2_INCLUDE_DIR}
+)
+
 set(WADSEEKER_QT_FILES
 	protocols/ftp.h
 	protocols/http.h

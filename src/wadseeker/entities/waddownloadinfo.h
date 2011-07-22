@@ -35,12 +35,21 @@ class WadDownloadInfo
 		WadDownloadInfo(const QString& name);
 
 		/**
- 		 * @brief Downloaded contents of the file.
+		 * @brief Gets name for the archive that may contain the mentioned file.
+		 *
+		 * @b NOTE: If isArchive() returns true this will return the same value
+		 * as name().
+		 *
+		 * @param suffix
+		 *      Archive's extensions without the '.' character. For example
+		 *      "zip" or "7z".
 		 */
-		const QByteArray& fileData() const
-		{
-			return d.fileData;
-		}
+		QString archiveName(const QString& suffix) const;
+
+		/**
+		 * @brief Gets the name() minus the extension.
+		 */
+		QString basename() const;
 
 		/**
  		 * @brief Recognizes if download is an archive basing on the extension
@@ -48,21 +57,23 @@ class WadDownloadInfo
 		 */
 		bool isArchive() const;
 
+		/**
+		 * @brief Checks if filename is the same WAD as this object.
+		 *
+		 * The check is done by comparing the basenames parts of the filename
+		 * with suffixes stripped.
+		 */
+		bool isFilenameIndicatingSameWad(const QString& filename) const;
+
 		const QString& name() const
 		{
 			return d.name;
-		}
-
-		void setFileData(const QByteArray& fileData)
-		{
-			d.fileData = fileData;
 		}
 
 	private:
 		class PrivData
 		{
 			public:
-				QByteArray fileData;
 				QString name;
 		};
 

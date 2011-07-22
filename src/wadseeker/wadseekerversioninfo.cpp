@@ -33,6 +33,16 @@ QString WadseekerVersionInfo::description()
 	return QObject::tr("This library is distributed under the terms of the LGPL v2.1.");
 }
 
+QStringList WadseekerVersionInfo::supportedArchiveExtensions()
+{
+	QStringList list;
+
+	list << "7z";
+	list << "zip";
+
+	return list;
+}
+
 QString	WadseekerVersionInfo::userAgent()
 {
 	return "Wadseeker/" + WadseekerVersionInfo::version();

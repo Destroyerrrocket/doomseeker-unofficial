@@ -27,51 +27,102 @@
 #include <QFileInfo>
 #include <QTemporaryFile>
 #include <zlib.h>
+
+#include "log.h"
 #include "version.h"
 
 IP2CUpdater::IP2CUpdater()
 {
-	www = new WWW();
-	www->setUserAgent(QString("Doomseeker/") + QString(Version::versionRevision()));
-	
-	connect(www, SIGNAL( fileDone(QByteArray&, const QString&) ), this, SLOT( processHttp(QByteArray&, const QString&) ));
-	connect(www, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgressSlot(int, int) ));	
+	pCurrentNetworkReply = NULL;
 }
 
 IP2CUpdater::~IP2CUpdater()
 {
-	delete www;
+	if (pCurrentNetworkReply != NULL)
+	{
+		pCurrentNetworkReply->abort();
+		pCurrentNetworkReply->deleteLater();
+	}
 }
 
 void IP2CUpdater::downloadDatabase(const QUrl& netLocation)
 {
 	retrievedData.clear();
-	www->getUrl(netLocation);
+
+	QNetworkRequest request;
+	request.setUrl(netLocation);
+	request.setRawHeader("User-Agent", Version::userAgent().toAscii());
+
+	pCurrentNetworkReply = networkAccessManager.get(request);
+	this->connect(pCurrentNetworkReply, SIGNAL(	downloadProgress(qint64, qint64) ),
+				SIGNAL( downloadProgress(qint64, qint64) ) );
+	this->connect(pCurrentNetworkReply, SIGNAL(	finished() ),
+				SLOT( downloadFinished() ) );
 }
 
-void IP2CUpdater::downloadProgressSlot(int value, int max)
+void IP2CUpdater::downloadFinished()
 {
-	emit downloadProgress(value, max);
+	QByteArray data = pCurrentNetworkReply->readAll();
+
+	QUrl possibleRedirectUrl = pCurrentNetworkReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+	if (!possibleRedirectUrl.isEmpty()
+		&& possibleRedirectUrl != pCurrentNetworkReply->request().url())
+	{
+		// Redirect.
+		pCurrentNetworkReply->deleteLater();
+		downloadDatabase(possibleRedirectUrl);
+	}
+	else
+	{
+		pCurrentNetworkReply->deleteLater();
+		pCurrentNetworkReply = NULL;
+
+		// First we need to write it to a temporary file
+		QTemporaryFile tmpFile;
+		if(tmpFile.open())
+		{
+			tmpFile.write(data);
+
+			QString tmpFilePath = tmpFile.fileName();
+
+			QByteArray uncompressedData;
+			gzFile gz = gzopen(tmpFilePath.toAscii().constData(), "rb");
+			if(gz != NULL)
+			{
+				char chunk[131072]; // 128k
+				int bytesRead = 0;
+				while((bytesRead = gzread(gz, chunk, 131072)) != 0)
+				{
+					uncompressedData.append(QByteArray(chunk, bytesRead));
+				}
+				gzclose(gz);
+
+				retrievedData = uncompressedData;
+			}
+		}
+
+		emit databaseDownloadFinished(retrievedData);
+	}
 }
 
 bool IP2CUpdater::getRollbackData()
 {
 	rollbackData.clear();
-	
+
 	QFile file(pathToFile);
 	if (!file.exists())
 	{
 		return false;
 	}
-	
+
 	if (!file.open(QIODevice::ReadOnly))
 	{
 		return false;
 	}
-	
+
 	rollbackData = file.readAll();
 	file.close();
-	
+
 	return true;
 }
 
@@ -81,7 +132,7 @@ bool IP2CUpdater::needsUpdate(const QString& filePath, unsigned minimumUpdateAge
 	{
 		return false;
 	}
-	
+
 	if (minimumUpdateAge == 0)
 	{
 		minimumUpdateAge = 1;
@@ -92,48 +143,19 @@ bool IP2CUpdater::needsUpdate(const QString& filePath, unsigned minimumUpdateAge
 	{
 		QDateTime current = QDateTime::currentDateTime();
 		QDateTime lastModified = fileInfo.lastModified();
-		
+
 		int daysTo = lastModified.daysTo(current);
-		
+
 		// Handle file system errors.
 		if (daysTo < 0)
 		{
 			return true;
 		}
-		
+
 		return (unsigned)daysTo >= minimumUpdateAge;
 	}
 
 	return true;
-}
-
-void IP2CUpdater::processHttp(QByteArray& data, const QString& filename)
-{
-	// First we need to write it to a temporary file
-	QTemporaryFile tmpFile;
-	if(tmpFile.open())
-	{
-		tmpFile.write(data);
-		
-		QString tmpFilePath = tmpFile.fileName();
-
-		QByteArray uncompressedData;
-		gzFile gz = gzopen(tmpFilePath.toAscii().constData(), "rb");
-		if(gz != NULL)
-		{
-			char chunk[131072]; // 128k
-			int bytesRead = 0;
-			while((bytesRead = gzread(gz, chunk, 131072)) != 0)
-			{
-				uncompressedData.append(QByteArray(chunk, bytesRead));
-			}
-			gzclose(gz);
-
-			retrievedData = uncompressedData;
-		}
-	}
-	
-	emit databaseDownloadFinished(retrievedData);
 }
 
 bool IP2CUpdater::rollback()
@@ -150,16 +172,16 @@ bool IP2CUpdater::save(const QByteArray& saveWhat)
 	{
 		return false;
 	}
-	
+
 	QFile file(pathToFile);
 	if (!file.open(QIODevice::WriteOnly))
 	{
 		return false;
 	}
-	
+
 	file.write(saveWhat);
 	file.close();
-	
+
 	return true;
 }
 

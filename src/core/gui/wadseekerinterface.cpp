@@ -97,25 +97,7 @@ void WadSeekerInterface::accept()
 
 void WadSeekerInterface::allDone()
 {
-	displayMessage(tr("All done."), WadseekerLib::NoticeImportant, false);
 
-	setStateWaiting();
-	if (wadseeker.areAllFilesFound())
-	{
-		displayMessage(tr("SUCCESS!"), WadseekerLib::Notice, false);
-		if (bAutomatic)
-		{
-			this->done(Accepted);
-		}
-
-        pbProgress->setMaximum(100);
-        pbProgress->setValue(100);
-		resetTitleToDefault();
-	}
-	else
-	{
-		fail();
-	}
 }
 
 void WadSeekerInterface::displayMessage(const QString& message, WadseekerLib::MessageType type, bool bPrependErrorsWithMessageType)
@@ -188,59 +170,13 @@ void WadSeekerInterface::downloadProgress(int done, int total)
 {
 	if (bNeedsUpdate)
 	{
-		float speed = wadseeker.downloadSpeed();
-		float estimatedTimeUntilArrival = wadseeker.estimatedTimeUntilArrivalOfCurrentFile();
 
-		if (speed >= 0.0f)
-		{
-			lblCurrentSpeed->setText( Strings::formatDataSpeed(speed) );
-		}
-		else
-		{
-			lblCurrentSpeed->setText( "N/A" );
-		}
-
-		if (estimatedTimeUntilArrival >= 0.0f)
-		{
-			lblTimeUntilArrival->setText( Strings::formatTime(estimatedTimeUntilArrival) );
-		}
-		else
-		{
-			lblTimeUntilArrival->setText( "N/A" );
-		}
-
-		if (total > 0)
-		{
-			QString strDone = Strings::formatDataAmount(done);
-			QString strTotal = Strings::formatDataAmount(total);
-			lblDataAmount->setText( strDone + " / " + strTotal );
-		}
-		else
-		{
-			lblDataAmount->setText( "N/A" );
-		}
-
-		bNeedsUpdate = false;
-		updateTitle();
 	}
-
-	pbProgress->setMaximum(total);
-	pbProgress->setValue(done);
 }
 
 void WadSeekerInterface::fail()
 {
-	bAutomatic = false;
-	const QStringList& notFoundWads = wadseeker.filesNotFound();
 
-	displayMessage(tr("FAIL!"), WadseekerLib::CriticalError, false);
-	QString notFoundWadsString = tr("Following files were not found: %1").arg(notFoundWads.join(", "));
-	message(notFoundWadsString, WadseekerLib::Error);
-
-	pbProgress->setMaximum(100);
-	pbProgress->setValue(0);
-
-	resetTitleToDefault();
 }
 
 void WadSeekerInterface::initMessageColors()
@@ -305,15 +241,17 @@ void WadSeekerInterface::setStateWaiting()
 
 void WadSeekerInterface::setupIdgames()
 {
-	QString idgamesURL = Wadseeker::defaultIdgamesUrl();
+	QString idgamesUrl = Wadseeker::defaultIdgamesUrl();
 	bool useIdgames = true;
 	bool idgamesHasHighPriority = false;
 
 	useIdgames = gConfig.wadseeker.bSearchInIdgames;
 	idgamesHasHighPriority = gConfig.wadseeker.idgamesPriority != 0;
-	idgamesURL = gConfig.wadseeker.idgamesURL;
+	idgamesUrl = gConfig.wadseeker.idgamesURL;
 
-	wadseeker.setUseIdgames(useIdgames, idgamesHasHighPriority, idgamesURL);
+	wadseeker.setIdgamesEnabled(useIdgames);
+	wadseeker.setIdgamesHighPriority(idgamesHasHighPriority);
+	wadseeker.setIdgamesUrl(idgamesUrl);
 }
 
 void WadSeekerInterface::showEvent(QShowEvent* event)
@@ -348,10 +286,8 @@ void WadSeekerInterface::startSeeking(const QStringList& seekedFilesList)
 
 	setStateDownloading();
 
-	wadseeker.setTimeConnectTimeout(gConfig.wadseeker.connectTimeoutSeconds);
-	wadseeker.setTimeDownloadTimeout(gConfig.wadseeker.downloadTimeoutSeconds);
 	wadseeker.setTargetDirectory(gConfig.wadseeker.targetDirectory);
-	wadseeker.seekWads(seekedFilesListFormatted);
+	wadseeker.startSeek(seekedFilesListFormatted);
 }
 
 void WadSeekerInterface::updateTitle()
@@ -360,30 +296,7 @@ void WadSeekerInterface::updateTitle()
     {
         case Downloading:
             {
-                // In download state title will include:
-                // - number of files completed by total number of files,
-                // - current progress for a single file.
 
-                int currentBytes = wadseeker.numBytesAlreadyDownloadedForCurrentDownload();
-                int totalBytes = wadseeker.numTotalBytesForCurrentDownload();
-
-                int completedFiles = wadseeker.numAlreadyFinishedFiles();
-                int totalFiles = wadseeker.numTotalCurrentlySeekedFiles();
-
-                if (totalBytes != 0 && totalFiles != 0)
-                {
-                    float percentage = ((float) currentBytes / (float) totalBytes)
-                        * 100.0f;
-
-                    QString title = tr("[ %1% - %2 / %3 files ] Wadseeker")
-                        .arg(percentage, 0, 'f', 1).arg(completedFiles).arg(totalFiles);
-
-                    setWindowTitle(title);
-                }
-                else
-                {
-                    resetTitleToDefault();
-                }
             }
             break;
 

@@ -25,9 +25,9 @@
 #include "skulltagserver.h"
 #include "main.h"
 #include "serverapi/message.h"
-#include "../wadseeker/www.h"
 #include "../wadseeker/zip/unarchive.h"
 #include "plugins/engineplugin.h"
+#include "version.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -187,20 +187,26 @@ bool SkulltagBinaries::downloadTestingBinaries(const QDir &destination) const
 	// Download testing binaries
 	SkulltagVersion version(server->version());
 	QUrl url(QString(TESTING_BINARY_URL).arg(QString("%1%2").arg(version.minorVersion()).arg(QChar(version.revisionLetter()))).arg(version.svnVersion()));
-	WWW www;
-	TestingProgressDialog dialog(www);
 
-	www.getUrl(url);
+	TestingProgressDialog dialog(url);
 	if(dialog.exec() == QDialog::Accepted)
 	{
 		// Extract the needed files.
 		QString filename;
 		QFileInfo fi(dialog.filename());
 		UnArchive *archive = UnArchive::OpenArchive(fi, dialog.data());
+
 		if(archive != NULL)
 		{
-			for(int i = 0;!(filename = archive->fileNameFromIndex(i)).isNull();++i)
+			for(int i = 0;;++i)
 			{
+				filename = archive->fileNameFromIndex(i);
+
+				if (filename.isNull())
+				{
+					break;
+				}
+
 				archive->extract(i, destination.path() + QDir::separator() + filename);
 				// Make sure we can execute the binary.
 				if(filename == ST_BINARY_NAME)
@@ -213,6 +219,7 @@ bool SkulltagBinaries::downloadTestingBinaries(const QDir &destination) const
 			return true;
 		}
 	}
+
 	return false;
 #endif
 }
@@ -314,28 +321,60 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TestingProgressDialog::TestingProgressDialog(WWW &www) : QProgressDialog(tr("Downloading testing binaries..."), tr("Cancel"), 0, 0, Main::mainWindow)
+TestingProgressDialog::TestingProgressDialog(const QUrl& url)
+: QProgressDialog(tr("Downloading testing binaries..."), tr("Cancel"), 0, 0, Main::mainWindow)
 {
-	connect(this, SIGNAL(canceled()), &www, SLOT(abort()));
+	connect(this, SIGNAL(canceled()), this, SLOT(abort()));
 
-	connect(&www, SIGNAL(downloadProgress(int, int)), this, SLOT(downloadProgress(int, int)));
-	connect(&www, SIGNAL(fileDone(QByteArray&, const QString&)), this, SLOT(storeFile(QByteArray&, const QString&)));
+	getUrl(url);
 
 	setAutoClose(false);
 	setAutoReset(false);
 	setMinimumDuration(0);
 }
 
-void TestingProgressDialog::downloadProgress(int value, int max)
+void TestingProgressDialog::abort()
+{
+	pNetworkReply->abort();
+}
+
+void TestingProgressDialog::downloadProgress(qint64 value, qint64 max)
 {
 	setValue(value);
 	setMaximum(max);
 }
 
-void TestingProgressDialog::storeFile(QByteArray &data, const QString &filename)
+void TestingProgressDialog::downloadFinished()
 {
-	accept();
+	QUrl possibleRedirectUrl = pNetworkReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+	if (!possibleRedirectUrl.isEmpty()
+		&& possibleRedirectUrl != pNetworkReply->request().url())
+	{
+		// Redirect.
+		pNetworkReply->deleteLater();
+		getUrl(possibleRedirectUrl);
+	}
+	else
+	{
+		QUrl url = pNetworkReply->request().url();
+		QFileInfo fi(url.path());
+		QString filename = fi.fileName();
 
-	downloadedFilename = filename;
-	downloadedFileData = data;
+		downloadedFilename = filename;
+		downloadedFileData = pNetworkReply->readAll();
+
+		accept();
+	}
+}
+
+void TestingProgressDialog::getUrl(const QUrl& url)
+{
+	QNetworkRequest request;
+	request.setUrl(url);
+	request.setRawHeader("User-Agent", Version::userAgent().toAscii());
+
+	this->pNetworkReply = networkAccessManager.get(request);
+
+	connect(pNetworkReply, SIGNAL(downloadProgress(qint64, qint64)), this, SLOT(downloadProgress(qint64, qint64)));
+	connect(pNetworkReply, SIGNAL(finished()), this, SLOT(downloadFinished()));
 }
