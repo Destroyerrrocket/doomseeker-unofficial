@@ -39,7 +39,7 @@ OdamexEnginePlugin::OdamexEnginePlugin()
 	static const char* masters[NUM_MASTERS] = {
 		"master1.odamex.net:15000", "master2.odamex.net:15000"
 	};
-	qsrand(QDateTime::currentMSecsSinceEpoch());
+	qsrand(QDateTime::currentDateTime().toTime_t());
 
 	const // clear warnings
 	#include "odamex.xpm"
