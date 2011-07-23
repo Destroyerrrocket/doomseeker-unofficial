@@ -23,6 +23,7 @@
 #ifndef __WWWSEEKER_H__
 #define __WWWSEEKER_H__
 
+#include <QHash>
 #include <QList>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -53,6 +54,20 @@ class WWWSeeker : public QObject
 	public:
 		WWWSeeker();
 		virtual ~WWWSeeker();
+
+		/**
+		 * @brief Adds a URL to a site where a specified filename may reside.
+		 *
+		 * Such site will be searched in a different order than global site
+		 * URLs. Since it is suspected that these sites may contain specified
+		 * files, they will have the priority.
+		 *
+		 * Naturally, such sites are also searched for all other seeked
+		 * filenames, not the only specified one.
+		 *
+		 * If specified URL is on visited URLs list this becomes a no-op.
+		 */
+		void addFileSiteUrl(const QString& filename, const QUrl& url);
 
 		/**
 		 * @brief Adds a URL to a site that will be used in the search.
@@ -92,6 +107,21 @@ class WWWSeeker : public QObject
 		{
 			return d.maxConcurrentSiteDownloads;
 		}
+
+		/**
+		 * @brief Removes seeked filename from the current search.
+		 *
+		 * This filename will no longer be seeked on the downloaded sites.
+		 *
+		 * All sites that are suspected to refer to this filename will also
+		 * be dropped.
+		 *
+		 * If all filenames are removed this is equal to abort().
+		 *
+		 * @param Case-insensitive filename to be removed. Only exact matches
+		 * are dropped.
+		 */
+		void removeSeekedFilename(const QString& filename);
 
 		/**
 		 * @brief Maximum amount of URLs the WWWSeeker will go through
@@ -147,7 +177,12 @@ class WWWSeeker : public QObject
 		/**
 		 * @brief Emitted when a WWW site finishes download.
 		 */
-		void siteFinished(const QUrl& site, int subsiteLinksFound, int directLinksFound);
+		void siteFinished(const QUrl& site);
+
+		/**
+		 * @brief Emitted when a WWW site redirects to a different site.
+		 */
+		void siteRedirect(const QUrl& oldUrl, const QUrl& newUrl);
 
 		/**
 		 * @brief Emitted when a WWW site is being downloaded.
@@ -195,6 +230,20 @@ class WWWSeeker : public QObject
 				bool bIsWorking;
 
 				/**
+				 * @brief URLs to sites where specified files may reside.
+				 *
+				 * Key - name of the file.
+				 * Value - URLs to the site.
+				 */
+				QHash<QString, QList<QUrl> > fileSiteUrls;
+
+				/**
+				 * @brief Used to rotate over files on the fileSiteUrls
+				 * hash map.
+				 */
+				QStringList fileSiteKeyRotationList;
+
+				/**
 				 * @brief Default value: 3
 				 */
 				int maxConcurrentSiteDownloads;
@@ -231,8 +280,32 @@ class WWWSeeker : public QObject
 		PrivData d;
 
 		void addNetworkReply(QNetworkReply* pReply);
+		void deleteNetworkQueryInfo(QNetworkReply* pReply);
 		NetworkQueryInfo* findNetworkQueryInfo(QNetworkReply* pReply);
+		bool isMoreToSearch() const;
+
+		/**
+		 * @brief Starts network query using specified URL.
+		 *
+		 * No limitation checks are performed here.
+		 */
+		void startNetworkQuery(const QUrl& url);
+
+		/**
+		 * @brief Takes next available URLs and starts queries to their sites.
+		 *
+		 * Limitation checks are performed here to make sure that given URL
+		 * will not be visited twice and that not too many queries
+		 * are running at once.
+		 */
 		void startNextSites();
+
+		/**
+		 * @brief Takes next non-visited site URL from the list and returns it.
+		 *
+		 * Taken URL is removed from the URLs list.
+		 */
+		QUrl takeNextUrl();
 		bool wasUrlUsed(const QUrl& url) const;
 
 

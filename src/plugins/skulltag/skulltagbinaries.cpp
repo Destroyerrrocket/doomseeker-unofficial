@@ -347,10 +347,16 @@ void TestingProgressDialog::downloadProgress(qint64 value, qint64 max)
 void TestingProgressDialog::downloadFinished()
 {
 	QUrl possibleRedirectUrl = pNetworkReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+	QUrl url = pNetworkReply->request().url();
 	if (!possibleRedirectUrl.isEmpty()
-		&& possibleRedirectUrl != pNetworkReply->request().url())
+		&& possibleRedirectUrl != url)
 	{
 		// Redirect.
+		if (possibleRedirectUrl.isRelative())
+		{
+			possibleRedirectUrl = url.resolved(possibleRedirectUrl);
+		}
+
 		pNetworkReply->deleteLater();
 		getUrl(possibleRedirectUrl);
 	}

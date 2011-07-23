@@ -47,10 +47,9 @@ class UrlParser
 		 * @brief Extracts a list of URLs leading directly to any of the
 		 *        wanted files.
 		 *
-		 * @param wantedFiles
-		 *      List of files we wish to extract from the URLs specified
-		 *      in the constructor. Any URL that matches any of the filenames
-		 *      specified here will be matched.
+		 * @param wantedFilename
+		 *      A filename we wish to extract from the URLs specified
+		 *      in the constructor.
 		 * @param baseUrl
 		 *      Relative URLs will be converted to absolute
 		 *   	URLs using this URL as a base
@@ -58,16 +57,15 @@ class UrlParser
 		 * @return A list of URLs that match one or more of the filenames
 		 *         on the wantedFiles list.
 		 */
-		QList<Link> directLinks(const QStringList& wantedFiles, const QUrl& baseUrl);
+		QList<Link> directLinks(const QString& wantedFilename, const QUrl& baseUrl);
 
 		/**
 		 * @brief Extracts a list of URLs leading to subsites that may contain
 		 *        any of the wanted files.
 		 *
-		 * @param wantedFiles
-		 *      List of files we wish to extract from the URLs specified
-		 *      in the constructor. Any URL that matches any of the filenames
-		 *      specified here will be matched.
+		 * @param wantedFilename
+		 *      A filename we wish to extract from the URLs specified
+		 *      in the constructor.
 		 * @param baseUrl
 		 *      Relative URLs will be converted to absolute
 		 *   	URLs using this URL as a base
@@ -75,7 +73,7 @@ class UrlParser
 		 * @return A list of URLs that match one or more of the filenames
 		 *         on the wantedFiles list.
 		 */
-		QList<Link> siteLinks(const QStringList& wantedFiles, const QUrl& baseUrl);
+		QList<Link> siteLinks(const QString& wantedFilename, const QUrl& baseUrl);
 
 	private:
 		class PrivData
@@ -86,20 +84,8 @@ class UrlParser
 
 		PrivData d;
 
-		/**
-		 * @brief Creates absolute URL by combining information derived from
-		 *        relativeUrl and baseUrl.
-		 *
-		 * @b NOTE: If relativeUrl is already absolute, the returned URL will
-		 * match the relativeUrl parameter.
-		 *
-		 * @return Absolute URL to a web resource. If a valid URL cannot be
-		 * created a QUrl() object is returned.
-		 */
-		static QUrl createAbsoluteUrl(const QUrl& relativeUrl, const QUrl& baseUrl);
-
-		static bool	hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link);
-		static bool	isDirectLinkToFile(const QStringList& wantedFileNames, const Link& link);
+		static bool	hasFileReferenceSomewhere(const QString& wantedFilename, const Link& link);
+		static bool	isDirectLinkToFile(const QString& wantedFilename, const Link& link);
 };
 
 #endif

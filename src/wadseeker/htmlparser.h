@@ -23,7 +23,7 @@
 #ifndef __HTML_H_
 #define __HTML_H_
 
-#include "link.h"
+#include "entities/link.h"
 #include <QByteArray>
 #include <QString>
 #include <QStringList>

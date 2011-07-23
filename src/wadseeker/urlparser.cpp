@@ -24,73 +24,27 @@
 
 #include <QFileInfo>
 
-#include "link.h"
+#include "entities/link.h"
 
 UrlParser::UrlParser(const QList<Link>& links)
 {
 	d.links = links;
 }
 
-QUrl UrlParser::createAbsoluteUrl(const QUrl& relativeUrl, const QUrl& baseUrl)
-{
-	// Create a new URL from the processed link.
-	QUrl newUrl = relativeUrl;
-	if (relativeUrl.authority().isEmpty())
-	{
-		// If the authority is not defined in the URL
-		// we revert to the default http protocol.
-		newUrl.setAuthority("http");
-	}
-
-	if (relativeUrl.host().isEmpty())
-	{
-		if (baseUrl.host().isEmpty())
-		{
-			// Cannot define host. This URL will be useless.
-			return QUrl();
-		}
-
-		newUrl.setHost(baseUrl.host());
-	}
-
-	if (relativeUrl.host().isEmpty() && relativeUrl.port() < 0
-		&& baseUrl.port() >= 0)
-	{
-		// Port to the new URL will only be appended if the URL was
-		// not absolute in the first place. If URL was absolute it is
-		// most likely not a very good idea to tamper with the port.
-		newUrl.setPort(baseUrl.port());
-	}
-
-	// If the path in the processed url starts with '/' do not make any
-	// changes to the path in the currently created URL.
-	if (relativeUrl.host().isEmpty() && relativeUrl.authority().isEmpty()
-		&& !relativeUrl.path().startsWith('/'))
-	{
-		QString path = baseUrl.path();
-		path = path.left(path.lastIndexOf('/') + 1);
-		path += relativeUrl.path();
-		newUrl.setPath(path);
-	}
-
-	return newUrl;
-}
-
-QList<Link> UrlParser::directLinks(const QStringList& wantedFiles, const QUrl& baseUrl)
+QList<Link> UrlParser::directLinks(const QString& wantedFilename, const QUrl& baseUrl)
 {
 	QList<Link> linksList;
 
-	foreach (const Link& link, d.links)
+	foreach (Link link, d.links)
 	{
-		if (isDirectLinkToFile(wantedFiles, link))
+		if (isDirectLinkToFile(wantedFilename, link))
 		{
-			QUrl absoluteUrl = createAbsoluteUrl(link.url, baseUrl);
-			if (absoluteUrl.isValid())
+			if (link.url.isRelative())
 			{
-				Link absoluteLink = link;
-				absoluteLink.url = absoluteUrl;
-				linksList << absoluteLink;
+				link.url = baseUrl.resolved(link.url);
 			}
+
+			linksList << link;
 		}
 	}
 
@@ -98,50 +52,36 @@ QList<Link> UrlParser::directLinks(const QStringList& wantedFiles, const QUrl& b
 }
 
 
-bool UrlParser::hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link)
+bool UrlParser::hasFileReferenceSomewhere(const QString& wantedFilename, const Link& link)
 {
 	QString strQuery = link.url.encodedQuery();
 
-	for (int i = 0; i < wantedFileNames.count(); ++i)
-	{
-		if (strQuery.contains(wantedFileNames[i], Qt::CaseInsensitive) || link.text.contains(wantedFileNames[i], Qt::CaseInsensitive) )
-		{
-			return true;
-		}
-	}
-
-	return false;
+	return strQuery.contains(wantedFilename, Qt::CaseInsensitive)
+		|| link.text.contains(wantedFilename, Qt::CaseInsensitive);
 }
 
-bool UrlParser::isDirectLinkToFile(const QStringList& wantedFileNames, const Link& link)
+bool UrlParser::isDirectLinkToFile(const QString& wantedFilename, const Link& link)
 {
 	QFileInfo fi(link.url.encodedPath());
-	for (int i = 0; i < wantedFileNames.count(); ++i)
-	{
-		if (fi.fileName().compare(wantedFileNames[i], Qt::CaseInsensitive) == 0)
-		{
-			return true;
-		}
-	}
-
-	return false;
+	return (fi.fileName().compare(wantedFilename, Qt::CaseInsensitive) == 0);
 }
 
-QList<Link> UrlParser::siteLinks(const QStringList& wantedFiles, const QUrl& baseUrl)
+QList<Link> UrlParser::siteLinks(const QString& wantedFilename, const QUrl& baseUrl)
 {
 	QList<Link> linksList;
 
-	foreach (const Link& link, d.links)
+	foreach (Link link, d.links)
 	{
-		if (hasFileReferenceSomewhere(wantedFiles, link))
+		if (hasFileReferenceSomewhere(wantedFilename, link))
 		{
-			QUrl absoluteUrl = createAbsoluteUrl(link.url, baseUrl);
-			if (absoluteUrl.isValid())
+			if (link.url.isRelative())
 			{
-				Link absoluteLink = link;
-				absoluteLink.url = absoluteUrl;
-				linksList << absoluteLink;
+				link.url = baseUrl.resolved(link.url);
 			}
+
+			linksList << link;
 		}
 	}
+
+	return linksList;
 }

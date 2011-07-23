@@ -28,9 +28,9 @@
 
 #include <QMessageBox>
 
-const int WadSeekerInterface::UPDATE_INTERVAL_MS = 500;
+const int WadseekerInterface::UPDATE_INTERVAL_MS = 500;
 
-WadSeekerInterface::WadSeekerInterface(QWidget* parent)
+WadseekerInterface::WadseekerInterface(QWidget* parent)
 : QDialog(parent)
 {
 	bNeedsUpdate = false;
@@ -49,10 +49,20 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent)
 	connect(btnSkipSite, SIGNAL( clicked() ), &wadseeker, SLOT( skipSite() ) );
 	connect(&updateTimer, SIGNAL( timeout() ), this, SLOT( registerUpdateRequest() ) );
 
-	connect(&wadseeker, SIGNAL( aborted() ), this, SLOT( aborted() ) );
-	connect(&wadseeker, SIGNAL( allDone() ), this, SLOT( allDone() ) );
-	connect(&wadseeker, SIGNAL( downloadProgress(int, int) ), this, SLOT( downloadProgress(int, int) ) );
-	connect(&wadseeker, SIGNAL( message(const QString&, Wadseeker::MessageType) ), this, SLOT( message(const QString&, Wadseeker::MessageType) ) );
+	this->connect(&wadseeker, SIGNAL( allDone(bool) ),
+		SLOT( allDone(bool) ) );
+	this->connect(&wadseeker, SIGNAL( message(const QString&, WadseekerLib::MessageType) ),
+		SLOT( message(const QString&, WadseekerLib::MessageType) ) );
+	this->connect(&wadseeker, SIGNAL( seekStarted(const QStringList&) ),
+		SLOT( seekStarted(const QStringList&) ) );
+	this->connect(&wadseeker, SIGNAL( siteFinished(const QUrl&) ),
+		SLOT( siteFinished(const QUrl&) ) );
+	this->connect(&wadseeker, SIGNAL( siteProgress(const QUrl&, qint64, qint64) ),
+		SLOT( siteProgress(const QUrl&, qint64, qint64) ) );
+	this->connect(&wadseeker, SIGNAL( siteRedirect(const QUrl&, const QUrl&) ),
+		SLOT( siteRedirect(const QUrl&, const QUrl&) ) );
+	this->connect(&wadseeker, SIGNAL( siteStarted(const QUrl&) ),
+		SLOT( siteStarted(const QUrl&) ) );
 
 	bAutomatic = false;
 	bFirstShown = false;
@@ -68,26 +78,16 @@ WadSeekerInterface::WadSeekerInterface(QWidget* parent)
 		wadseeker.setPrimarySitesToDefault();
 	}
 
-	setupIdgames();
-
 	updateTimer.setSingleShot(false);
 	updateTimer.start(UPDATE_INTERVAL_MS);
 }
 
-WadSeekerInterface::~WadSeekerInterface()
+WadseekerInterface::~WadseekerInterface()
 {
 	((MainWindow*)(Main::mainWindow))->initAutoRefreshTimer();
 }
 
-void WadSeekerInterface::aborted()
-{
-	teWadseekerOutput->append(tr("Aborted!"));
-	fail();
-
-	this->setStateWaiting();
-}
-
-void WadSeekerInterface::accept()
+void WadseekerInterface::accept()
 {
 	if (leWadName->text().isEmpty())
 		return;
@@ -95,12 +95,12 @@ void WadSeekerInterface::accept()
 	startSeeking(leWadName->text().split(',', QString::SkipEmptyParts));
 }
 
-void WadSeekerInterface::allDone()
+void WadseekerInterface::allDone(bool bSuccess)
 {
 
 }
 
-void WadSeekerInterface::displayMessage(const QString& message, WadseekerLib::MessageType type, bool bPrependErrorsWithMessageType)
+void WadseekerInterface::displayMessage(const QString& message, WadseekerLib::MessageType type, bool bPrependErrorsWithMessageType)
 {
 	QString strProcessedMessage;
 
@@ -166,7 +166,7 @@ void WadSeekerInterface::displayMessage(const QString& message, WadseekerLib::Me
 	teWadseekerOutput->append(strProcessedMessage);
 }
 
-void WadSeekerInterface::downloadProgress(int done, int total)
+void WadseekerInterface::downloadProgress(int done, int total)
 {
 	if (bNeedsUpdate)
 	{
@@ -174,29 +174,29 @@ void WadSeekerInterface::downloadProgress(int done, int total)
 	}
 }
 
-void WadSeekerInterface::fail()
+void WadseekerInterface::fail()
 {
 
 }
 
-void WadSeekerInterface::initMessageColors()
+void WadseekerInterface::initMessageColors()
 {
 	colorHtmlMessageNotice = gConfig.wadseeker.colorMessageNotice;
 	colorHtmlMessageError = gConfig.wadseeker.colorMessageError;
 	colorHtmlMessageFatalError = gConfig.wadseeker.colorMessageCriticalError;
 }
 
-void WadSeekerInterface::message(const QString& message, WadseekerLib::MessageType type)
+void WadseekerInterface::message(const QString& message, WadseekerLib::MessageType type)
 {
 	displayMessage(message, type, true);
 }
 
-void WadSeekerInterface::registerUpdateRequest()
+void WadseekerInterface::registerUpdateRequest()
 {
 	bNeedsUpdate = true;
 }
 
-void WadSeekerInterface::reject()
+void WadseekerInterface::reject()
 {
 	switch(state)
 	{
@@ -210,12 +210,17 @@ void WadSeekerInterface::reject()
 	}
 }
 
-void WadSeekerInterface::resetTitleToDefault()
+void WadseekerInterface::resetTitleToDefault()
 {
     setWindowTitle(tr("Wadseeker"));
 }
 
-void WadSeekerInterface::setStateDownloading()
+void WadseekerInterface::seekStarted(const QStringList& filenames)
+{
+	displayMessage("Seek started on filenames: " + filenames.join(", "), WadseekerLib::Notice, false);
+}
+
+void WadseekerInterface::setStateDownloading()
 {
 	btnClose->setEnabled(false);
 	btnDownload->setEnabled(false);
@@ -226,7 +231,7 @@ void WadSeekerInterface::setStateDownloading()
 	btnSkipSite->setDefault(true);
 }
 
-void WadSeekerInterface::setStateWaiting()
+void WadseekerInterface::setStateWaiting()
 {
 	btnClose->setEnabled(true);
 	btnDownload->setEnabled(true);
@@ -239,7 +244,7 @@ void WadSeekerInterface::setStateWaiting()
 	lblTimeUntilArrival->setText("N/A");
 }
 
-void WadSeekerInterface::setupIdgames()
+void WadseekerInterface::setupIdgames()
 {
 	QString idgamesUrl = Wadseeker::defaultIdgamesUrl();
 	bool useIdgames = true;
@@ -254,7 +259,7 @@ void WadSeekerInterface::setupIdgames()
 	wadseeker.setIdgamesUrl(idgamesUrl);
 }
 
-void WadSeekerInterface::showEvent(QShowEvent* event)
+void WadseekerInterface::showEvent(QShowEvent* event)
 {
 	if (!bFirstShown)
 	{
@@ -267,10 +272,32 @@ void WadSeekerInterface::showEvent(QShowEvent* event)
 	}
 }
 
-void WadSeekerInterface::startSeeking(const QStringList& seekedFilesList)
+void WadseekerInterface::siteFinished(const QUrl& site)
+{
+	displayMessage("Site finished: " + site.toEncoded(), WadseekerLib::Notice, false);
+}
+
+void WadseekerInterface::siteProgress(const QUrl& site, qint64 bytes, qint64 total)
+{
+
+}
+
+void WadseekerInterface::siteRedirect(const QUrl& oldUrl, const QUrl& newUrl)
+{
+	displayMessage("Site redirect: " + oldUrl.toEncoded() + " -> " + newUrl.toEncoded(), WadseekerLib::Notice, false);
+}
+
+void WadseekerInterface::siteStarted(const QUrl& site)
+{
+	displayMessage("Site started: " + site.toEncoded(), WadseekerLib::Notice, false);
+}
+
+void WadseekerInterface::startSeeking(const QStringList& seekedFilesList)
 {
 	if (seekedFilesList.isEmpty())
+	{
 		return;
+	}
 
 	teWadseekerOutput->clear();
 
@@ -284,13 +311,15 @@ void WadSeekerInterface::startSeeking(const QStringList& seekedFilesList)
 		seekedFilesListFormatted << filenameFormatted;
 	}
 
-	setStateDownloading();
+	setupIdgames();
 
+	// TODO
+	//wadseeker.setCustomSite("a");
 	wadseeker.setTargetDirectory(gConfig.wadseeker.targetDirectory);
 	wadseeker.startSeek(seekedFilesListFormatted);
 }
 
-void WadSeekerInterface::updateTitle()
+void WadseekerInterface::updateTitle()
 {
     switch (state)
     {

@@ -54,16 +54,36 @@ const QString Wadseeker::forbiddenWads[] =
 ///////////////////////////////////////////////////////////////////////
 Wadseeker::Wadseeker()
 {
-	this->seekParametersForCurrentSeek = NULL;
+	d.seekParametersForCurrentSeek = NULL;
+	d.wwwSeeker = new WWWSeeker();
+
+	// Forward signals up to outside of the library.
+	this->connect(d.wwwSeeker, SIGNAL( siteFinished(const QUrl&) ),
+		SIGNAL( siteFinished(const QUrl&) ) );
+	this->connect(d.wwwSeeker, SIGNAL( siteProgress(const QUrl&, qint64, qint64) ),
+		SIGNAL( siteProgress(const QUrl&, qint64, qint64) ) );
+	this->connect(d.wwwSeeker, SIGNAL( siteRedirect(const QUrl&, const QUrl&) ),
+		SIGNAL( siteRedirect(const QUrl&, const QUrl&) ) );
+	this->connect(d.wwwSeeker, SIGNAL( siteStarted(const QUrl&) ),
+		SIGNAL( siteStarted(const QUrl&) ) );
 }
 
 Wadseeker::~Wadseeker()
 {
+	delete d.wwwSeeker;
 }
 
 void Wadseeker::abort()
 {
+	d.wwwSeeker->abort();
+}
 
+void Wadseeker::cleanUpAfterFinish()
+{
+	delete d.seekParametersForCurrentSeek;
+	d.seekParametersForCurrentSeek = NULL;
+
+	emit allDone(false);
 }
 
 const QString Wadseeker::defaultIdgamesUrl()
@@ -166,6 +186,11 @@ QStringList Wadseeker::defaultSitesListEncoded()
 //	}
 //}
 
+bool Wadseeker::isAllFinished() const
+{
+	return !d.wwwSeeker->isWorking();
+}
+
 bool Wadseeker::isForbiddenWad(const QString& wad)
 {
 	QFileInfo fiWad(wad);
@@ -184,65 +209,34 @@ bool Wadseeker::isForbiddenWad(const QString& wad)
 	return false;
 }
 
-void Wadseeker::startSeek(const QStringList& wads)
+bool Wadseeker::isWorking() const
 {
-	if (seekParametersForCurrentSeek != NULL)
-	{
-		emit message(tr("Seek already in progress. Please abort the current seek before starting a new one."),
-					WadseekerLib::CriticalError);
-		return;
-	}
-
-	if (wads.isEmpty())
-	{
-		emit message(tr("Specified no files to seek. Aborting."), WadseekerLib::CriticalError);
-		return;
-	}
-
-	if (seekParameters.saveDirectoryPath.isEmpty())
-	{
-		QString err = tr("No target directory specified! Aborting.");
-		emit message(err, WadseekerLib::CriticalError);
-		return;
-	}
-
-	QDir targetDir(seekParameters.saveDirectoryPath);
-	if (!targetDir.exists())
-	{
-		emit message(tr("File save directory \"%1\" doesn't exist or is a file. Aborting.").arg(seekParameters.saveDirectoryPath),
-					WadseekerLib::CriticalError);
-		return;
-	}
-
-	seekParameters.seekedWads = wads;
-	seekParametersForCurrentSeek = new SeekParameters(seekParameters);
-	emit seekStarted(wads);
+	return d.wwwSeeker->isWorking();
 }
-
 
 void Wadseeker::setCustomSite(const QUrl& url)
 {
-	seekParameters.customSiteUrl = url;
+	d.seekParameters.customSiteUrl = url;
 }
 
 void Wadseeker::setIdgamesEnabled(bool bEnabled)
 {
-	seekParameters.bIdgamesEnabled = bEnabled;
+	d.seekParameters.bIdgamesEnabled = bEnabled;
 }
 
 void Wadseeker::setIdgamesHighPriority(bool bHighPriority)
 {
-	seekParameters.bIdgamesHighPriority = bHighPriority;
+	d.seekParameters.bIdgamesHighPriority = bHighPriority;
 }
 
 void Wadseeker::setIdgamesUrl(QString archiveUrl)
 {
-	seekParameters.idgamesUrl = archiveUrl;
+	d.seekParameters.idgamesUrl = archiveUrl;
 }
 
 void Wadseeker::setPrimarySites(const QStringList& urlList)
 {
-	seekParameters.sitesUrls = urlList;
+	d.seekParameters.sitesUrls = urlList;
 }
 
 void Wadseeker::setPrimarySitesToDefault()
@@ -266,16 +260,118 @@ void Wadseeker::setTargetDirectory(const QString& dir)
 		}
 	}
 
-	seekParameters.saveDirectoryPath = targetDir;
+	d.seekParameters.saveDirectoryPath = targetDir;
+}
+
+void Wadseeker::setupSitesUrls()
+{
+	d.wwwSeeker->clearVisitedUrlsList();
+
+	if (d.seekParametersForCurrentSeek->customSiteUrl.isValid())
+	{
+		d.wwwSeeker->addSiteUrl(d.seekParametersForCurrentSeek->customSiteUrl);
+	}
+
+	foreach (const QString& strSiteUrl, d.seekParametersForCurrentSeek->sitesUrls)
+	{
+		// If URL containts %WADNAME% placeholder we need to create a unique
+		// URL for each searched wad.
+		if (strSiteUrl.contains("%WADNAME%"))
+		{
+			foreach (const QString& wad, d.seekParametersForCurrentSeek->seekedWads)
+			{
+				QString strProperUrl = strSiteUrl;
+				strProperUrl.replace("%WADNAME%", wad);
+
+				QUrl url(strProperUrl);
+				if (url.isValid())
+				{
+					d.wwwSeeker->addFileSiteUrl(wad, url);
+				}
+			}
+		}
+		else
+		{
+			QUrl url(strSiteUrl);
+			if (url.isValid())
+			{
+				d.wwwSeeker->addSiteUrl(url);
+			}
+		}
+	}
+}
+
+bool Wadseeker::startSeek(const QStringList& wads)
+{
+	if (d.seekParametersForCurrentSeek != NULL)
+	{
+		emit message(tr("Seek already in progress. Please abort the current seek before starting a new one."),
+					WadseekerLib::CriticalError);
+		return false;
+	}
+
+	if (d.seekParameters.saveDirectoryPath.isEmpty())
+	{
+		QString err = tr("No target directory specified! Aborting.");
+		emit message(err, WadseekerLib::CriticalError);
+		return false;
+	}
+
+	QDir targetDir(d.seekParameters.saveDirectoryPath);
+	if (!targetDir.exists())
+	{
+		emit message(tr("File save directory \"%1\" doesn't exist or is a file. Aborting.").arg(d.seekParameters.saveDirectoryPath),
+					WadseekerLib::CriticalError);
+		return false;
+	}
+
+	QStringList filteredWadsList;
+	foreach (QString wad, wads)
+	{
+		wad = wad.trimmed();
+		if (wad.isEmpty())
+		{
+			continue;
+		}
+
+		if (isForbiddenWad(wad))
+		{
+			emit message(tr("WAD \"%1\" is on the forbidden list. Wadseeker will not download this WAD.").arg(wad),
+				WadseekerLib::Error);
+			continue;
+		}
+
+		filteredWadsList << wad;
+	}
+
+	if (filteredWadsList.isEmpty())
+	{
+		emit message(tr("Cannot start search. No WADs to seek."),
+			WadseekerLib::CriticalError);
+		return false;
+	}
+
+	d.seekParameters.seekedWads = filteredWadsList;
+	d.seekParametersForCurrentSeek = new SeekParameters(d.seekParameters);
+
+	setupSitesUrls();
+
+	emit seekStarted(wads);
+	d.wwwSeeker->startSearch(wads);
+
+	return true;
 }
 
 QString Wadseeker::targetDirectory() const
 {
-	return seekParameters.saveDirectoryPath;
+	return d.seekParameters.saveDirectoryPath;
 }
 
 QStringList Wadseeker::wantedFilenames(const QString& wadName, QString& zipName)
 {
+	// TODO
+	// Use supported archives list here.
+
 	QStringList list;
 	list.append(wadName);
 
@@ -298,6 +394,14 @@ QStringList Wadseeker::wantedFilenames(const QString& wadName, QString& zipName)
 	}
 
 	return list;
+}
+
+void Wadseeker::wwwSeekerFinished()
+{
+	if (isAllFinished())
+	{
+		cleanUpAfterFinish();
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

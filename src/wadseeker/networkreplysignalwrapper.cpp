@@ -26,18 +26,18 @@ NetworkReplySignalWrapper::NetworkReplySignalWrapper(QNetworkReply* pReply)
 {
 	this->pReply = pReply;
 
-	this->connect(pReply, SIGNAL( downloadProgress() ),
-		SLOT( downloadProgressSlot() ));
-	this->connect(pReply, SIGNAL( error() ),
-		SLOT( errorSlot() ));
+	this->connect(pReply, SIGNAL( downloadProgress(qint64, qint64) ),
+		SLOT( downloadProgressSlot(qint64, qint64) ));
+	this->connect(pReply, SIGNAL( error(QNetworkReply::NetworkError) ),
+		SLOT( errorSlot(QNetworkReply::NetworkError) ));
 	this->connect(pReply, SIGNAL( finished() ),
 		SLOT( finishedSlot() ));
 	this->connect(pReply, SIGNAL( metaDataChanged() ),
 		SLOT( metaDataChangedSlot() ));
-	this->connect(pReply, SIGNAL( sslErrors() ),
-		SLOT( sslErrorsSlot() ));
-	this->connect(pReply, SIGNAL( uploadProgress() ),
-		SLOT( uploadProgressSlot() ));
+	this->connect(pReply, SIGNAL( sslErrors(const QList<QSslError>&) ),
+		SLOT( sslErrorsSlot(const QList<QSslError>&) ));
+	this->connect(pReply, SIGNAL( uploadProgress(qint64, qint64) ),
+		SLOT( uploadProgressSlot(qint64, qint64) ));
 }
 
 void NetworkReplySignalWrapper::downloadProgressSlot(qint64 bytesReceived, qint64 bytesTotal)

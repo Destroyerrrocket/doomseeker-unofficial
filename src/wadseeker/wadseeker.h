@@ -132,6 +132,13 @@ class WADSEEKER_API Wadseeker : public QObject
 		~Wadseeker();
 
 		/**
+		 * @brief Check if Wadseeker is still working.
+		 *
+		 * @return True if any search or download is still in progress.
+		 */
+		bool				isWorking() const;
+
+		/**
 		 *	Sets a custom site. This site has priority over all other
 		 *	sites and will be searched first. For example a link
 		 *	provided by the server can be passed here.
@@ -206,8 +213,9 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *
 		 *	@param wads
 		 *		List of files that will be searched for.
+		 *	@return True if seek was started. False otherwise.
 		 */
-		void 				startSeek(const QStringList& wads);
+		bool				startSeek(const QStringList& wads);
 
 		/**
 		 *	Target directory is a directory where all seeked files will
@@ -226,17 +234,12 @@ class WADSEEKER_API Wadseeker : public QObject
 
 	signals:
 		/**
-		 *	Emitted after abort() method is used and when it's safe
-		 *	to assume that Wadseeker finished all its jobs.
-		 */
-		void aborted();
-
-		/**
-		 *	Emitted when Wadseeker finishes iterating through all
-		 *	files passed to seekWads() method.
+		 * Emitted when Wadseeker finishes iterating through all
+		 * files passed to seekWads() method.
 		 *
-		 *	@param bSuccess
-		 *		True
+		 * @param bSuccess
+		 *      True if all seeked WADs were installed. False if any single
+		 *      one of the WADs was not found or if abort was issued.
 		 */
 		void allDone(bool bSuccess);
 
@@ -269,7 +272,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 */
 		void fileDone(const QString& filename, bool bSuccess);
 
-		void fileMessage(const QString& filename, WadseekerLib::MessageType type);
+		void fileMessage(const QString& filename, const QString& message, WadseekerLib::MessageType type);
 
 		/**
 		 *	Emitted when Wadseeker wants to communicate about its progress
@@ -290,6 +293,26 @@ class WADSEEKER_API Wadseeker : public QObject
 		 */
 		void seekStarted(const QStringList& filenames);
 
+		/**
+		 * @brief Emitted when a WWW site finishes download.
+		 */
+		void siteFinished(const QUrl& site);
+
+		/**
+		 * @brief Emitted when a WWW site is being downloaded.
+		 */
+		void siteProgress(const QUrl& site, qint64 bytes, qint64 total);
+
+		/**
+		 * @brief Emitted when a WWW site redirects to a different site.
+		 */
+		void siteRedirect(const QUrl& oldUrl, const QUrl& newUrl);
+
+		/**
+		 * @brief Emitted when a download of a WWW site starts.
+		 */
+		void siteStarted(const QUrl& site);
+
 	private:
 		class SeekParameters
 		{
@@ -305,14 +328,29 @@ class WADSEEKER_API Wadseeker : public QObject
 				SeekParameters();
 		};
 
-		SeekParameters seekParameters;
+		class PrivData
+		{
+			public:
+				bool bIsAborting;
+				SeekParameters seekParameters;
 
-		/**
-		 *	This object is created when startSeek() method is called. This will
-		 *	ensure that the parameters won't change during the seek operation.
-		 *	When seek is not in progress this is NULL.
-		 */
-		SeekParameters* seekParametersForCurrentSeek;
+				/**
+				 *	This object is created when startSeek() method is called. This will
+				 *	ensure that the parameters won't change during the seek operation.
+				 *	When seek is not in progress this is NULL.
+				 */
+				SeekParameters* seekParametersForCurrentSeek;
+
+				WWWSeeker* wwwSeeker;
+		};
+
+		PrivData d;
+
+		void cleanUpAfterFinish();
+
+		bool isAllFinished() const;
+
+		void setupSitesUrls();
 
 		/**
 		 *	Returns the name of the actual files that will be searched for.
@@ -324,6 +362,9 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *		Returns name of according zip file.
 		 */
 		static QStringList	wantedFilenames(const QString& wadName, QString& zipName);
+
+	private slots:
+		void wwwSeekerFinished();
 };
 
 #endif

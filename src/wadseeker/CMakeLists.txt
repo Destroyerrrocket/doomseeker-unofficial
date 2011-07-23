@@ -49,6 +49,7 @@ set(WADSEEKER_QT_FILES
 )
 
 set(WADSEEKER_FILES
+	entities/link.cpp
 	entities/waddownloadinfo.cpp
 	protocols/ftp.cpp
 	protocols/http.cpp
@@ -60,7 +61,6 @@ set(WADSEEKER_FILES
 	zip/unzip.cpp
 	htmlparser.cpp
 	networkreplysignalwrapper.cpp
-	link.cpp
 	speedcalculator.cpp
 	urlparser.cpp
 	wadseeker.cpp
@@ -71,9 +71,9 @@ set(WADSEEKER_FILES
 # For the purpose of generation proper project files.
 set(HEADER_FILES
 	${WADSEEKER_QT_FILES}
+	entities/link.h
 	entities/waddownloadinfo.h
 	htmlparser.h
-	link.h
 	speedcalculator.h
 	urlparser.h
 	wadseekerexportinfo.h	

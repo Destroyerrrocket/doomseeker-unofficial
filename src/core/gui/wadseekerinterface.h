@@ -35,13 +35,13 @@
  * automaticCloseOnSuccess is set to true and when
  * it succeedes finding all wads.
  */
-class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
+class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 {
 	Q_OBJECT
 
 	public:
-		WadSeekerInterface(QWidget* parent = NULL);
-		~WadSeekerInterface();
+		WadseekerInterface(QWidget* parent = NULL);
+		~WadseekerInterface();
 
 		bool 		isAutomatic() { return bAutomatic; }
 
@@ -101,14 +101,18 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 		void			startSeeking(const QStringList& seekedFilesList);
 		void            updateTitle();
 
-	protected slots:
-		void	accept();
-		void	aborted();
-		void 	allDone();
-		void 	downloadProgress(int done, int total);
-		void	reject();
-		void	message(const QString& message, WadseekerLib::MessageType type);
-		void	registerUpdateRequest();
+	private slots:
+		void accept();
+		void allDone(bool bSuccess);
+		void downloadProgress(int done, int total);
+		void reject();
+		void message(const QString& message, WadseekerLib::MessageType type);
+		void registerUpdateRequest();
+		void seekStarted(const QStringList& filenames);
+		void siteFinished(const QUrl& site);
+		void siteProgress(const QUrl& site, qint64 bytes, qint64 total);
+		void siteRedirect(const QUrl& oldUrl, const QUrl& newUrl);
+		void siteStarted(const QUrl& site);
 };
 
 #endif

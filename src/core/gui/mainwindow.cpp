@@ -954,8 +954,8 @@ void MainWindow::menuWadSeeker()
 		return;
 	}
 
-	WadSeekerInterface wadSeekerInterface(NULL);
-	wadSeekerInterface.exec();
+	WadseekerInterface wadseekerInterface(NULL);
+	wadseekerInterface.exec();
 }
 
 void MainWindow::notifyFirstRun()
@@ -1076,7 +1076,7 @@ Wadseeker will not download IWADs.\n\n");
 							joinError.missingWads.append(joinError.missingIwad);
 						}
 
-						WadSeekerInterface wsi(NULL);
+						WadseekerInterface wsi(NULL);
 						wsi.setAutomatic(true, joinError.missingWads);
 						wsi.wadseekerRef().setCustomSite(server->website());
 						if (wsi.exec() == QDialog::Accepted)

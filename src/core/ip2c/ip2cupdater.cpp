@@ -65,10 +65,16 @@ void IP2CUpdater::downloadFinished()
 	QByteArray data = pCurrentNetworkReply->readAll();
 
 	QUrl possibleRedirectUrl = pCurrentNetworkReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+	QUrl url = pCurrentNetworkReply->request().url();
 	if (!possibleRedirectUrl.isEmpty()
-		&& possibleRedirectUrl != pCurrentNetworkReply->request().url())
+		&& possibleRedirectUrl != url)
 	{
 		// Redirect.
+		if (possibleRedirectUrl.isRelative())
+		{
+			possibleRedirectUrl = url.resolved(possibleRedirectUrl);
+		}
+
 		pCurrentNetworkReply->deleteLater();
 		downloadDatabase(possibleRedirectUrl);
 	}
