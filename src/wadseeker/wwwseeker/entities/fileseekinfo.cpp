@@ -15,7 +15,7 @@ FileSeekInfo::FileSeekInfo(const QString& file, const QStringList& possibleFilen
 	d.file = file;
 	foreach (QString filename, possibleFilenames)
 	{
-		if (!filename.trimmed().isEmpty() && isFilenameListed(filename))
+		if (!filename.trimmed().isEmpty() && !isFilenameListed(filename))
 		{
 			d.possibleFilenames << filename.trimmed();
 		}

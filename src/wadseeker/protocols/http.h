@@ -18,60 +18,77 @@
 // 02110-1301  USA
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2011 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #ifndef __HTTP_H_
 #define __HTTP_H_
 
-#include "protocol.h"
-#include <QHttp>
+#include <QNetworkReply>
+#include <QStringList>
 
-class WADSEEKER_API Http : public Protocol
+/**
+ * @brief Extracts information from QNetworkReply assuming it's a HTTP reply.
+ */
+class Http
 {
-	Q_OBJECT
-
 	public:
-		enum	HTTPResponseCodes
+		enum HttpResponseCodes
 		{
 			OK 					= 200,
-			PermamentlyMoved 	= 301,
+			PermanentlyMoved 	= 301,
 			Redirect 			= 302,
 		};
 
-		static bool	isHTTPLink(const QUrl&);
-
-		Http();
-
-		void	setUserAgent(const QString& s) { useragent = s; }
-
-	signals:
-		void	redirect(const QUrl& where);
-
-	protected slots:
-		void	headerReceived(const QHttpResponseHeader&);
-		void	stateChanged(int);
-
-	protected:
-		QHttp*		qHttp;
-		FileType	fileType;
-		bool		redirected;
-		QString		redirectUrl;
-		QString		useragent;
-
-		void 	        abortEx();
+		Http(const QNetworkReply* pReply);
 
 		/**
-		 *	Looks for attachment information in http header.
-		 *	@return empty string if nothing found or string
-		 *	        of values (like filename="something")
+		 * @brief Extracts attachment name form contentDisposition() list.
+		 *
+		 * Attachment must be present - hasAttachment() must return true.
+		 * Attachment name is located as the next element on the content
+		 * disposition list.
+		 *
+		 * @return Attachment name is returned if attachment is present
+		 *         and name can be extracted.
 		 */
-		QString		    attachmentInformation(const QHttpHeader&, QString& filename);
+		QString attachmentName() const;
 
-		void	        disconnectQHttp();
+		/**
+		 * @brief Splits "Content-Disposition" by ';' delimiter.
+		 *
+		 * Returned values are trimmed.
+		 */
+		QStringList contentDisposition() const;
 
-		void 	        getEx(const QUrl&);
-		virtual void	doneEx(bool error);
-		bool 	        isHTMLFile(const QHttpHeader& http);
+		/**
+		 * @brief Value under "Content-Length" field.
+		 */
+		qint64 contentLength() const;
+
+		/**
+		 * @brief Value under "Content-Type" field.
+		 */
+		QString contentType() const;
+
+		/**
+		 * @brief Checks for "attachment" value in contentDisposition() list.
+		 */
+		bool hasAttachment() const;
+
+		/**
+		 * @brief True if Content-Type starts with "application/"
+		 */
+		bool isApplicationContentType() const;
+
+		/**
+		 * @brief True if Content-Type indicates HTML content.
+		 *
+		 * @return True for "text/html".
+		 */
+		bool isHtmlContentType() const;
+
+	private:
+		const QNetworkReply* pReply;
 };
 
 #endif

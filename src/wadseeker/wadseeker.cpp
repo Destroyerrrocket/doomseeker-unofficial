@@ -58,10 +58,15 @@ Wadseeker::Wadseeker()
 {
 	d.seekParametersForCurrentSeek = NULL;
 	d.wwwSeeker = new WWWSeeker();
+	d.wwwSeeker->setUserAgent(WadseekerVersionInfo::userAgent());
 
-	// Forward signals up to outside of the library.
+	// Connect signals to slots.
+	this->connect(d.wwwSeeker, SIGNAL( attachmentDownloaded(const QString&, const QByteArray&) ),
+		SLOT( wwwSeekerAttachmentDownloaded(const QString&, const QByteArray&) ) );
 	this->connect(d.wwwSeeker, SIGNAL( finished() ),
 		SLOT( wwwSeekerFinished() ) );
+
+	// Forward signals up to outside of the library.
 	this->connect(d.wwwSeeker, SIGNAL( siteFinished(const QUrl&) ),
 		SIGNAL( siteFinished(const QUrl&) ) );
 	this->connect(d.wwwSeeker, SIGNAL( siteProgress(const QUrl&, qint64, qint64) ),
@@ -92,7 +97,10 @@ void Wadseeker::cleanUpAfterFinish()
 
 const QString Wadseeker::defaultIdgamesUrl()
 {
-	return Idgames::defaultIdgamesUrl();
+	// TODO
+	// Fix me
+	return "a";
+	//return Idgames::defaultIdgamesUrl();
 }
 
 QStringList Wadseeker::defaultSitesListEncoded()
@@ -382,6 +390,7 @@ bool Wadseeker::startSeek(const QStringList& wads)
 		possibleFilenames << wad;
 
 		fileSeekInfosList << FileSeekInfo(wad, possibleFilenames);
+		emit message(tr("WAD %1: %2").arg(wad, fileSeekInfosList.last().possibleFilenames().join(", ")), WadseekerLib::Notice);
 	}
 
 	emit seekStarted(filteredWadsList);
@@ -422,6 +431,12 @@ QStringList Wadseeker::wantedFilenames(const QString& wadName, QString& zipName)
 	}
 
 	return list;
+}
+
+void Wadseeker::wwwSeekerAttachmentDownloaded(const QString& name, const QByteArray& data)
+{
+	emit message(tr("Attachment downloaded: %1. Size %2").arg(name).arg(data.size()),
+		WadseekerLib::NoticeImportant);
 }
 
 void Wadseeker::wwwSeekerFinished()

@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "wwwseeker.h"
 
+#include "protocols/http.h"
 #include "wwwseeker/entities/fileseekinfo.h"
 #include "htmlparser.h"
 #include "networkreplysignalwrapper.h"
@@ -166,74 +167,98 @@ void WWWSeeker::networkQueryFinished(QNetworkReply* pReply)
 	NetworkQueryInfo* pQueryInfo = findNetworkQueryInfo(pReply);
 	QUrl url = pReply->request().url();
 
-	QUrl possibleRedirectUrl = pReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
-	if (!possibleRedirectUrl.isEmpty()
-		&& possibleRedirectUrl != url)
+#ifndef NDEBUG
+	QList<QByteArray> headers = pReply->rawHeaderList();
+	printf("HEADERS\n");
+	printf("URL %s\n", url.toEncoded().constData());
+	foreach (const QByteArray& headerName, headers)
 	{
-		// Redirect URL cannot be simply added to the site URLs as those URLs
-		// will throw away all visited URLs. In at least one case a redirect
-		// leads to the same page but with different attachments.
-		// In this case let's start a new query omitting the entire limitation
-		// system here.
-		if (possibleRedirectUrl.isRelative())
-		{
-			possibleRedirectUrl = url.resolved(possibleRedirectUrl);
-		}
+		QByteArray headerData = pReply->rawHeader(headerName);
+		printf("%s: %s\n", headerName.constData(), headerData.constData());
+	}
+	printf("END OF HEADERS\n");
+#endif
 
-		deleteNetworkQueryInfo(pReply);
+	Http http(pReply);
+	if (http.isApplicationContentType())
+	{
+		QString attachmentName = http.attachmentName();
+		QByteArray data = pReply->readAll();
 
-		if (!d.bIsAborting)
-		{
-			emit siteRedirect(url, possibleRedirectUrl);
-			startNetworkQuery(possibleRedirectUrl);
-		}
-
-		printf("Finished URL %s - redirect to %s\n", url.toEncoded().constData(), possibleRedirectUrl.toEncoded().constData());
+		emit attachmentDownloaded(attachmentName, data);
 	}
 	else
 	{
-		// TODO
-		// Get URLs from downloaded site.
-		QByteArray downloadedData = pReply->readAll();
+		QUrl possibleRedirectUrl = pReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+		if (!possibleRedirectUrl.isEmpty()
+			&& possibleRedirectUrl != url)
+		{
+			// Redirect URL cannot be simply added to the site URLs as those URLs
+			// will throw away all visited URLs. In at least one case a redirect
+			// leads to the same page but with different attachments.
+			// In this case let's start a new query omitting the entire limitation
+			// system here.
+			if (possibleRedirectUrl.isRelative())
+			{
+				possibleRedirectUrl = url.resolved(possibleRedirectUrl);
+			}
 
-		// Get all <A HREFs> from HTML.
-		HtmlParser html(downloadedData);
-		QList<Link> links = html.linksFromHtml();
+			deleteNetworkQueryInfo(pReply);
 
-		printf("Finished URL %s - content type %s. Data size: %d\n", url.toEncoded().constData(),
-			pReply->header(QNetworkRequest::ContentTypeHeader).toByteArray().constData(), downloadedData.size());
+			if (!d.bIsAborting)
+			{
+				emit siteRedirect(url, possibleRedirectUrl);
+				startNetworkQuery(possibleRedirectUrl);
+			}
 
-		printf("Links: %d\n", links.size());
-
-		// Extrat URLs of interest from <A HREFs>
-		UrlParser urlParser(links);
-
-		foreach (const FileSeekInfo& fileSeekInfo, d.seekedFiles)
+			printf("Finished URL %s - redirect to %s\n", url.toEncoded().constData(), possibleRedirectUrl.toEncoded().constData());
+		}
+		else
 		{
 			// TODO
-			// Rewrite
+			// Prepare for data different than HTML.
+			QByteArray downloadedData = pReply->readAll();
 
-//			QList<Link> siteLinks = urlParser.siteLinks(filename, url);
-//			QList<Link> directLinks = urlParser.directLinks(filename, url);
-//
-//			printf("Site links: %d\n", siteLinks.size());
-//			printf("Direct links: %d\n", directLinks.size());
-//
-//			foreach (const Link& link, siteLinks)
-//			{
-//				printf("Adding url %s\n", link.url.toEncoded().constData());
-//				addFileSiteUrl(filename, link.url);
-//			}
-//
-//			foreach (const Link& link, directLinks)
-//			{
-//				emit linkFound(filename, link.url);
-//			}
+			// Get all <A HREFs> from HTML.
+			HtmlParser html(downloadedData);
+			QList<Link> links = html.linksFromHtml();
+
+			printf("Finished URL %s - content type %s. Data size: %d\n", url.toEncoded().constData(),
+				pReply->header(QNetworkRequest::ContentTypeHeader).toByteArray().constData(), downloadedData.size());
+
+			printf("Links: %d\n", links.size());
+
+			// Extrat URLs of interest from <A HREFs>
+			UrlParser urlParser(links);
+
+			foreach (const FileSeekInfo& fileSeekInfo, d.seekedFiles)
+			{
+				const QString& file = fileSeekInfo.file();
+				const QStringList& possibleFilenames = fileSeekInfo.possibleFilenames();
+
+				QList<Link> siteLinks = urlParser.siteLinks(possibleFilenames, url);
+				QList<Link> directLinks = urlParser.directLinks(possibleFilenames, url);
+
+				printf("Site links: %d\n", siteLinks.size());
+				printf("Direct links: %d\n", directLinks.size());
+
+				foreach (const Link& link, siteLinks)
+				{
+					printf("Adding url %s\n", link.url.toEncoded().constData());
+					addFileSiteUrl(file, link.url);
+				}
+
+				foreach (const Link& link, directLinks)
+				{
+					emit linkFound(file, link.url);
+				}
+			}
+
+			deleteNetworkQueryInfo(pReply);
+			emit siteFinished(url);
 		}
-
-		deleteNetworkQueryInfo(pReply);
-		emit siteFinished(url);
 	}
+
 
 	if (d.networkQueries.isEmpty() && !isMoreToSearch())
 	{

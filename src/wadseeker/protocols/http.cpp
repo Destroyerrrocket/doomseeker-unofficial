@@ -18,221 +18,86 @@
 // 02110-1301  USA
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2011 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "http.h"
 #include "wwwseeker/htmlparser.h"
-#include <QTcpSocket>
 
-Http::Http()
+Http::Http(const QNetworkReply* pReply)
 {
-	qHttp = NULL;
-
-	useragent = "Wadseeker";
-
-	noData = false;
-	redirected = false;
+	this->pReply = pReply;
 }
 
-void Http::abortEx()
+QString Http::attachmentName() const
 {
-	if (qHttp != NULL)
+	QStringList contentDisposition = this->contentDisposition();
+
+	int attachmentIndex = contentDisposition.indexOf("attachment");
+	if (attachmentIndex < 0 || attachmentIndex == contentDisposition.length() - 1)
 	{
-		qHttp->abort();
+		// No attachment found or no attachment info available as the attachment
+		// is the last element on the list.
+		return "";
 	}
-	else
-	{
-		emit aborted();
-	}
+
+	QString attachmentInfo = contentDisposition[attachmentIndex + 1];
+
+	// Now we need to extract the filename from the INI-like list.
+	// HtmlParser already has appropriate method.
+	HtmlParser parser(attachmentInfo.toAscii());
+	return parser.htmlValue("filename");
 }
 
-QString Http::attachmentInformation(const QHttpHeader& header, QString& filename)
+QStringList Http::contentDisposition() const
 {
-	QString val = header.value("Content-Disposition");
-	QStringList values = val.split(";");
-	QStringList::iterator it;
-	for (it = values.begin(); it != values.end(); ++it)
-	{
-		if (it->trimmed().compare("attachment") == 0)
-		{
-			++it;
-			if (it == values.end())
-				break;
+	// Byte array will be empty if header doesn't exist.
+	QByteArray headerData = pReply->rawHeader("Content-Disposition");
+	QString headerContent(headerData);
 
-			QString ret = it->trimmed();
-			QByteArray asciiStr = ret.toAscii();
-			HtmlParser html(asciiStr);
-			filename = html.htmlValue("filename");
-			return ret;
-		}
+	QStringList contentDisposition = headerContent.split(";");
+
+	QStringList filteredContentDisposition;
+
+	// Check if there is any real content and not just 1 size list with nothing
+	// inside.
+	if (contentDisposition.size() == 1 && contentDisposition.first().trimmed().isEmpty())
+	{
+		// No real content. Return empty list.
+		return filteredContentDisposition;
 	}
 
-	return QString();
+	foreach (QString value, contentDisposition)
+	{
+		value = value.trimmed();
+		filteredContentDisposition << value;
+	}
+
+	return filteredContentDisposition;
 }
 
-void Http::disconnectQHttp()
+qint64 Http::contentLength() const
 {
-	if (qHttp != NULL)
-	{
-		qHttp->disconnect(this, SLOT( dataReadProgressSlot(int, int) ) );
-		qHttp->disconnect(this, SLOT( doneSlot(bool) ) );
-		qHttp->disconnect(this, SLOT( headerReceived(const QHttpResponseHeader&) ) );
-		qHttp->disconnect(this, SLOT( stateChanged(int) ) );
-		qHttp = NULL;
-	}
+	return pReply->header(QNetworkRequest::ContentLengthHeader).toULongLong();
 }
 
-void Http::doneEx(bool error)
+QString Http::contentType() const
 {
-	if (error)
-	{
-		emit message(tr("HTTP error: %1").arg(qHttp->errorString()), WadseekerLib::Error);
-		noData = true;
-	}
-
-	if (redirected)
-	{
-		emit redirect(redirectUrl);
-		return;
-	}
-
-	if (aborting)
-	{
-		return;
-	}
-
-	if (noData)
-	{
-		QByteArray data = QByteArray();
-		disconnectQHttp();
-		emit done(false, data, 0, processedFileName);
-	}
-	else
-	{
-		QByteArray data = qHttp->readAll();
-		disconnectQHttp();
-		emit done(true, data, fileType, processedFileName);
-	}
+	return pReply->header(QNetworkRequest::ContentTypeHeader).toString();
 }
 
-void Http::getEx(const QUrl& url)
+bool Http::hasAttachment() const
 {
-	disconnectQHttp();
-
-	qHttp = new QHttp(this);
-
-	connect(qHttp, SIGNAL( dataReadProgress(int, int) ), this, SLOT ( dataReadProgressSlot(int, int) ) );
-	connect(qHttp, SIGNAL( done(bool) ), this, SLOT ( doneSlot(bool) ) );
-	connect(qHttp, SIGNAL( responseHeaderReceived(const QHttpResponseHeader&) ), this, SLOT ( headerReceived(const QHttpResponseHeader&) ) );
-	connect(qHttp, SIGNAL( stateChanged(int) ), this, SLOT ( stateChanged(int) ) );
-
-	qHttp->setHost(url.host(), url.port(80));
-	QString query = url.encodedPath();
-	if (!url.encodedQuery().isNull())
-	{
-		query += "?" + url.encodedQuery();
-	}
-
-	if (query.size() == 0 || query[0] != '/')
-	{
-		query.prepend('/');
-	}
-
-	QHttpRequestHeader header("GET", query);
-	header.setValue("Host", url.host());
-	header.setValue("User-Agent", useragent);
-	qHttp->request(header);
+	QStringList disposition = contentDisposition();
+	return disposition.contains("attachment");
 }
 
-void Http::headerReceived(const QHttpResponseHeader& resp)
+bool Http::isApplicationContentType() const
 {
-	QString attachmentInfo;
-	QString tmp;
-	// qDebug() << resp.toString();
-
-	// Set defaults
-	noData = false;
-	redirected = false;
-
-	attachmentInfo = attachmentInformation(resp, processedFileName);
-
-	if (!attachmentInfo.isEmpty())
-	{
-		fileType = Other;
-		emit message(tr("Downloading attached file: %1").arg(processedFileName), WadseekerLib::Notice);
-		emit nameAndTypeOfReceivedFile(processedFileName, fileType);
-	}
-
-	switch (resp.statusCode())
-	{
-		case OK:
-			if (isHTMLFile(resp))
-			{
-				fileType = Html;
-			}
-			else
-			{
-				fileType = Other;
-				emit nameAndTypeOfReceivedFile(processedFileName, fileType);
-			}
-
-			break;
-
-		case PermamentlyMoved:
-		case Redirect:
-			noData = attachmentInfo.isEmpty();
-			emit message(tr("Redirecting"), WadseekerLib::Notice);
-			tmp = resp.value("Location");
-			if (tmp.isEmpty())
-			{
-				emit message(tr("Redirect header was received but no location was specified. Aborting.").arg(resp.value("Location")), WadseekerLib::Error);
-				abort();
-			}
-			else
-			{
-				redirected = true;
-				redirectUrl = tmp;
-			}
-			break;
-
-		default:
-			noData = attachmentInfo.isEmpty();
-			emit message(tr("HTTP response %1 - %2.").arg(QString::number(resp.statusCode())).arg(resp.reasonPhrase()), WadseekerLib::Error);
-			break;
-	}
+	return contentType().startsWith("application/");
 }
 
-bool Http::isHTMLFile(const QHttpHeader& http)
+bool Http::isHtmlContentType() const
 {
-	if (!http.hasKey("Content-type"))
-	{
-		return false;
-	}
-
-	QString contentType = http.value("Content-type");
-
-	if (contentType.contains("text/html", Qt::CaseInsensitive))
-	{
-		return true;
-	}
-
-	return false;
+	return contentType() == "text/html";
 }
 
-bool Http::isHTTPLink(const QUrl& url)
-{
-	const QString& scheme = url.scheme();
-	if(scheme.compare("http", Qt::CaseInsensitive) == 0)
-		return true;
-
-	return false;
-}
-
-void Http::stateChanged(int state)
-{
-	if (state == QHttp::Unconnected && aborting)
-	{
-		disconnectQHttp();
-		emit aborted();
-	}
-}

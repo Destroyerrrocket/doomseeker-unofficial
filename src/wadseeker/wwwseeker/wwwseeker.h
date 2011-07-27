@@ -161,6 +161,18 @@ class WWWSeeker : public QObject
 
 	signals:
 		/**
+		 * @brief Emitted when the WWW page contains an attached file with data.
+		 *
+		 * It is propable that such page actually used the attachment to send
+		 * seeked file. This signal is also emitted when a "application/"
+		 * Content-Type is detected, although in such case "name" might be
+		 * undefined.
+		 *
+		 * Hint: Use doom1weaps.wad on dogsoft to test this.
+		 */
+		void attachmentDownloaded(const QString& name, const QByteArray& data);
+
+		/**
 		 * @brief Emitted when seeker aborts or there is nothing more to search.
 		 */
 		void finished();

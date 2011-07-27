@@ -31,13 +31,13 @@ UrlParser::UrlParser(const QList<Link>& links)
 	d.links = links;
 }
 
-QList<Link> UrlParser::directLinks(const QString& wantedFilename, const QUrl& baseUrl)
+QList<Link> UrlParser::directLinks(const QStringList& wantedFilenames, const QUrl& baseUrl)
 {
 	QList<Link> linksList;
 
 	foreach (Link link, d.links)
 	{
-		if (isDirectLinkToFile(wantedFilename, link))
+		if (isDirectLinkToFile(wantedFilenames, link))
 		{
 			if (link.url.isRelative())
 			{
@@ -52,29 +52,51 @@ QList<Link> UrlParser::directLinks(const QString& wantedFilename, const QUrl& ba
 }
 
 
-bool UrlParser::hasFileReferenceSomewhere(const QString& wantedFilename, const Link& link)
+bool UrlParser::hasFileReferenceSomewhere(const QStringList& wantedFilenames, const Link& link)
 {
 	QString strQuery = link.url.encodedQuery();
 
-	return strQuery.contains(wantedFilename, Qt::CaseInsensitive)
-		|| link.text.contains(wantedFilename, Qt::CaseInsensitive);
+	foreach (const QString& filename, wantedFilenames)
+	{
+		if (strQuery.contains(filename, Qt::CaseInsensitive)
+			|| link.text.contains(filename, Qt::CaseInsensitive))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
-bool UrlParser::isDirectLinkToFile(const QString& wantedFilename, const Link& link)
+bool UrlParser::isDirectLinkToFile(const QStringList& wantedFilenames, const QUrl& url)
 {
-	QFileInfo fi(link.url.encodedPath());
-	return (fi.fileName().compare(wantedFilename, Qt::CaseInsensitive) == 0);
+	QFileInfo fi(url.encodedPath());
+
+	foreach (const QString& filename, wantedFilenames)
+	{
+		if (fi.fileName().compare(filename, Qt::CaseInsensitive) == 0)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
-QList<Link> UrlParser::siteLinks(const QString& wantedFilename, const QUrl& baseUrl)
+bool UrlParser::isDirectLinkToFile(const QStringList& wantedFilenames, const Link& link)
+{
+	return isDirectLinkToFile(wantedFilenames, link.url);
+}
+
+QList<Link> UrlParser::siteLinks(const QStringList& wantedFilenames, const QUrl& baseUrl)
 {
 	QList<Link> linksList;
 
 	foreach (Link link, d.links)
 	{
 		// Make sure direct links are not listed here.
-		if (hasFileReferenceSomewhere(wantedFilename, link)
-			&& !isDirectLinkToFile(wantedFilename, link))
+		if (hasFileReferenceSomewhere(wantedFilenames, link)
+			&& !isDirectLinkToFile(wantedFilenames, link))
 		{
 			if (link.url.isRelative())
 			{
