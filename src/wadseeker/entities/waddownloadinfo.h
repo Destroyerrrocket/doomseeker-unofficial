@@ -70,6 +70,26 @@ class WadDownloadInfo
 			return d.name;
 		}
 
+		/**
+		 * @brief Return possible archive names.
+		 *
+		 * @return If isArchive() returns true, list will contain only the
+		 *         name() value. Otherwise, the returned list will contain
+		 *         filenames for all supported archives, where the archive
+		 *         extension will replace the extension from name().
+		 */
+		QStringList possibleArchiveNames();
+
+		/**
+		 * @brief Return possible WAD names.
+		 *
+		 * @return If name() has extension, list will contain only the
+		 *         name() value. Otherwise, the returend list will contain
+		 *         filenames for all possible WAD extensions.
+		 */
+		QStringList possibleWadNames();
+
+
 	private:
 		class PrivData
 		{

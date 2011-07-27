@@ -97,6 +97,14 @@ void WadseekerInterface::accept()
 
 void WadseekerInterface::allDone(bool bSuccess)
 {
+	if (bSuccess)
+	{
+		displayMessage(tr("All done. Success."), WadseekerLib::NoticeImportant, false);
+	}
+	else
+	{
+		displayMessage(tr("All done. Fail."), WadseekerLib::CriticalError, false);
+	}
 
 }
 

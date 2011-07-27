@@ -21,12 +21,14 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "protocols/idgames.h"
+#include "entities/waddownloadinfo.h"
+#include "wwwseeker/entities/fileseekinfo.h"
+#include "wwwseeker/wwwseeker.h"
 #include "zip/unzip.h"
 #include "zip/un7zip.h"
 #include "speedcalculator.h"
 #include "wadseeker.h"
 #include "wadseekerversioninfo.h"
-#include "wwwseeker.h"
 #include <QDir>
 #include <QFileInfo>
 #include <QStack>
@@ -58,6 +60,8 @@ Wadseeker::Wadseeker()
 	d.wwwSeeker = new WWWSeeker();
 
 	// Forward signals up to outside of the library.
+	this->connect(d.wwwSeeker, SIGNAL( finished() ),
+		SLOT( wwwSeekerFinished() ) );
 	this->connect(d.wwwSeeker, SIGNAL( siteFinished(const QUrl&) ),
 		SIGNAL( siteFinished(const QUrl&) ) );
 	this->connect(d.wwwSeeker, SIGNAL( siteProgress(const QUrl&, qint64, qint64) ),
@@ -185,6 +189,11 @@ QStringList Wadseeker::defaultSitesListEncoded()
 //		www->checkNextSite();
 //	}
 //}
+
+void Wadseeker::fileLinkFound(const QString& filename, const QUrl& url)
+{
+	emit message(tr("Found link to file \"%1\": %2").arg(filename).arg(url.toEncoded().constData()), WadseekerLib::Notice);
+}
 
 bool Wadseeker::isAllFinished() const
 {
@@ -356,8 +365,27 @@ bool Wadseeker::startSeek(const QStringList& wads)
 
 	setupSitesUrls();
 
-	emit seekStarted(wads);
-	d.wwwSeeker->startSearch(wads);
+	QList<FileSeekInfo> fileSeekInfosList;
+
+	foreach (const QString& wad, filteredWadsList)
+	{
+		// Create download info object for this WAD.
+		WadDownloadInfo wadDownloadInfo(wad);
+
+		// TODO
+		// Store the object in order to keep download status.
+
+		// Generate all possible filenames.
+		QStringList possibleFilenames;
+		possibleFilenames << wadDownloadInfo.possibleArchiveNames();
+		possibleFilenames << wadDownloadInfo.possibleWadNames();
+		possibleFilenames << wad;
+
+		fileSeekInfosList << FileSeekInfo(wad, possibleFilenames);
+	}
+
+	emit seekStarted(filteredWadsList);
+	d.wwwSeeker->startSearch(fileSeekInfosList);
 
 	return true;
 }

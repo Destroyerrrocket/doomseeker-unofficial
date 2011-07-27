@@ -72,7 +72,9 @@ QList<Link> UrlParser::siteLinks(const QString& wantedFilename, const QUrl& base
 
 	foreach (Link link, d.links)
 	{
-		if (hasFileReferenceSomewhere(wantedFilename, link))
+		// Make sure direct links are not listed here.
+		if (hasFileReferenceSomewhere(wantedFilename, link)
+			&& !isDirectLinkToFile(wantedFilename, link))
 		{
 			if (link.url.isRelative())
 			{

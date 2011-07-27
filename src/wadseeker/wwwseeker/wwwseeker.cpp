@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "wwwseeker.h"
 
+#include "wwwseeker/entities/fileseekinfo.h"
 #include "htmlparser.h"
 #include "networkreplysignalwrapper.h"
 #include "urlparser.h"
@@ -53,7 +54,7 @@ void WWWSeeker::abort()
 
 	d.fileSiteUrls.clear();
 	d.sitesUrls.clear();
-	d.seekedFilenames.clear();
+	d.seekedFiles.clear();
 
 	if (d.networkQueries.isEmpty())
 	{
@@ -67,7 +68,7 @@ void WWWSeeker::abort()
 		}
 
 		d.sitesUrls.clear();
-		d.seekedFilenames.clear();
+		d.seekedFiles.clear();
 	}
 }
 
@@ -138,7 +139,7 @@ void WWWSeeker::deleteNetworkQueryInfo(QNetworkReply* pReply)
 
 bool WWWSeeker::isMoreToSearch() const
 {
-	if (d.seekedFilenames.isEmpty())
+	if (d.seekedFiles.isEmpty())
 	{
 		return false;
 	}
@@ -199,33 +200,42 @@ void WWWSeeker::networkQueryFinished(QNetworkReply* pReply)
 		HtmlParser html(downloadedData);
 		QList<Link> links = html.linksFromHtml();
 
+		printf("Finished URL %s - content type %s. Data size: %d\n", url.toEncoded().constData(),
+			pReply->header(QNetworkRequest::ContentTypeHeader).toByteArray().constData(), downloadedData.size());
+
+		printf("Links: %d\n", links.size());
+
 		// Extrat URLs of interest from <A HREFs>
 		UrlParser urlParser(links);
 
-		foreach (const QString& filename, d.seekedFilenames)
+		foreach (const FileSeekInfo& fileSeekInfo, d.seekedFiles)
 		{
-			QList<Link> siteLinks = urlParser.siteLinks(filename, url);
-			QList<Link> directLinks = urlParser.directLinks(filename, url);
+			// TODO
+			// Rewrite
 
-			foreach (const Link& link, siteLinks)
-			{
-				addFileSiteUrl(filename, link.url);
-			}
-
-			foreach (const Link& link, directLinks)
-			{
-
-			}
+//			QList<Link> siteLinks = urlParser.siteLinks(filename, url);
+//			QList<Link> directLinks = urlParser.directLinks(filename, url);
+//
+//			printf("Site links: %d\n", siteLinks.size());
+//			printf("Direct links: %d\n", directLinks.size());
+//
+//			foreach (const Link& link, siteLinks)
+//			{
+//				printf("Adding url %s\n", link.url.toEncoded().constData());
+//				addFileSiteUrl(filename, link.url);
+//			}
+//
+//			foreach (const Link& link, directLinks)
+//			{
+//				emit linkFound(filename, link.url);
+//			}
 		}
-
-		printf("Finished URL %s - content type %s. Data size: %d\n", url.toEncoded().constData(),
-			pReply->header(QNetworkRequest::ContentTypeHeader).toByteArray().constData(), downloadedData.size());
 
 		deleteNetworkQueryInfo(pReply);
 		emit siteFinished(url);
 	}
 
-	if (d.networkQueries.isEmpty() && d.sitesUrls.isEmpty())
+	if (d.networkQueries.isEmpty() && !isMoreToSearch())
 	{
 		// Work is finished if there are no more site URLs to find.
 		d.bIsWorking = false;
@@ -240,25 +250,25 @@ void WWWSeeker::networkQueryFinished(QNetworkReply* pReply)
 	}
 }
 
-void WWWSeeker::removeSeekedFilename(const QString& filename)
+void WWWSeeker::removeSeekedFile(const QString& file)
 {
 	// Make sure to remove all occurences of the filename.
-	QStringList toRemove;
+	QList<FileSeekInfo> toRemove;
 
-	foreach (const QString& nameOnList, d.seekedFilenames)
+	foreach (const FileSeekInfo& fileOnList, d.seekedFiles)
 	{
-		if (nameOnList.compare(filename, Qt::CaseInsensitive) == 0)
+		if (fileOnList == file)
 		{
-			toRemove << nameOnList;
+			toRemove << fileOnList;
 		}
 	}
 
-	foreach (const QString& nameToRemove, toRemove)
+	foreach (const FileSeekInfo& fileToRemove, toRemove)
 	{
-		d.seekedFilenames.removeAll(nameToRemove);
+		d.seekedFiles.removeAll(fileToRemove);
 	}
 
-	if (d.seekedFilenames.isEmpty() && isWorking())
+	if (d.seekedFiles.isEmpty() && isWorking())
 	{
 		abort();
 	}
@@ -303,7 +313,7 @@ void WWWSeeker::startNextSites()
 	}
 }
 
-void WWWSeeker::startSearch(const QStringList& seekedFilenames)
+void WWWSeeker::startSearch(const QList<FileSeekInfo>& seekedFiles)
 {
 	if (isWorking())
 	{
@@ -313,7 +323,7 @@ void WWWSeeker::startSearch(const QStringList& seekedFilenames)
 	d.bIsAborting = false;
 	d.bIsWorking = true;
 
-	d.seekedFilenames = seekedFilenames;
+	d.seekedFiles = seekedFiles;
 	d.visitedUrls.clear();
 
 	startNextSites();
@@ -321,7 +331,6 @@ void WWWSeeker::startSearch(const QStringList& seekedFilenames)
 
 QUrl WWWSeeker::takeNextUrl()
 {
-	printf("d.fileSiteKeyRotationList: %s\n", d.fileSiteKeyRotationList.join(", ").toAscii().constData());
 	// Try to take one of the sites that are suspected to contain at least
 	// one of the seeked files.
 	while (!d.fileSiteKeyRotationList.isEmpty())

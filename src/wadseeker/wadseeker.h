@@ -364,6 +364,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		static QStringList	wantedFilenames(const QString& wadName, QString& zipName);
 
 	private slots:
+		void fileLinkFound(const QString& filename, const QUrl& url);
 		void wwwSeekerFinished();
 };
 

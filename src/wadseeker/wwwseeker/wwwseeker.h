@@ -31,6 +31,7 @@
 #include <QString>
 #include <QUrl>
 
+class FileSeekInfo;
 class NetworkReplySignalWrapper;
 
 /**
@@ -109,19 +110,19 @@ class WWWSeeker : public QObject
 		}
 
 		/**
-		 * @brief Removes seeked filename from the current search.
+		 * @brief Removes seeked file from the current search.
 		 *
-		 * This filename will no longer be seeked on the downloaded sites.
+		 * This file will no longer be seeked on the downloaded sites.
 		 *
-		 * All sites that are suspected to refer to this filename will also
+		 * All sites that are suspected to refer to this file will also
 		 * be dropped.
 		 *
-		 * If all filenames are removed this is equal to abort().
+		 * If all files are removed this is equal to abort().
 		 *
-		 * @param Case-insensitive filename to be removed. Only exact matches
-		 * are dropped.
+		 * @param Case-insensitive name of the file to be removed.
+		 * Only exact matches are dropped.
 		 */
-		void removeSeekedFilename(const QString& filename);
+		void removeSeekedFile(const QString& file);
 
 		/**
 		 * @brief Maximum amount of URLs the WWWSeeker will go through
@@ -146,7 +147,7 @@ class WWWSeeker : public QObject
 		 *
 		 * This will do nothing if isWorking() returns true.
 		 */
-		void startSearch(const QStringList& seekedFilenames);
+		void startSearch(const QList<FileSeekInfo>& seekedFiles);
 
 		const QString& userAgent() const;
 
@@ -257,7 +258,7 @@ class WWWSeeker : public QObject
 
 				QNetworkAccessManager* pNetworkAccessManager;
 
-				QStringList seekedFilenames;
+				QList<FileSeekInfo> seekedFiles;
 
 				/**
 				 * @brief URLs that will be used in a search.

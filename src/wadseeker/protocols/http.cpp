@@ -21,7 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "http.h"
-#include "../htmlparser.h"
+#include "wwwseeker/htmlparser.h"
 #include <QTcpSocket>
 
 Http::Http()

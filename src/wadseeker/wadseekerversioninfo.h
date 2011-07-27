@@ -41,6 +41,11 @@ class WADSEEKER_API WadseekerVersionInfo
 		static QString			description();
 
 		/**
+		 * @brief List of known extensions for "WAD" files (pk3, wad).
+		 */
+		static QStringList      knownWadExtensions();
+
+		/**
 		 * @brief List of extractable archive extensions.
 		 */
 		static QStringList 		supportedArchiveExtensions();

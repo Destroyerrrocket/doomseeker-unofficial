@@ -39,13 +39,13 @@ set(WADSEEKER_QT_FILES
 	protocols/http.h
 	protocols/idgames.h
 	protocols/protocol.h
+	wwwseeker/wwwseeker.h
 	zip/unarchive.h
 	zip/un7zip.h
 	zip/untar.h
 	zip/unzip.h
 	networkreplysignalwrapper.h
 	wadseeker.h
-	wwwseeker.h
 )
 
 set(WADSEEKER_FILES
@@ -55,17 +55,18 @@ set(WADSEEKER_FILES
 	protocols/http.cpp
 	protocols/idgames.cpp
 	protocols/protocol.cpp
+	wwwseeker/entities/fileseekinfo.cpp
+	wwwseeker/htmlparser.cpp
+	wwwseeker/urlparser.cpp
+	wwwseeker/wwwseeker.cpp
 	zip/unarchive.cpp
 	zip/un7zip.cpp
 	zip/untar.cpp
 	zip/unzip.cpp
-	htmlparser.cpp
 	networkreplysignalwrapper.cpp
 	speedcalculator.cpp
-	urlparser.cpp
 	wadseeker.cpp
 	wadseekerversioninfo.cpp
-	wwwseeker.cpp
 )
 
 # For the purpose of generation proper project files.
@@ -73,9 +74,10 @@ set(HEADER_FILES
 	${WADSEEKER_QT_FILES}
 	entities/link.h
 	entities/waddownloadinfo.h
-	htmlparser.h
+	wwwseeker/entities/fileseekinfo.h
+	wwwseeker/htmlparser.h
+	wwwseeker/urlparser.h
 	speedcalculator.h
-	urlparser.h
 	wadseekerexportinfo.h	
 	wadseekermessagetype.h
 	wadseekerversioninfo.h	
