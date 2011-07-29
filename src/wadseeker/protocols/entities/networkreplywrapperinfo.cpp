@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// ftp.h
+// networkreplywrapperinfo.cpp
 //------------------------------------------------------------------------------
 //
 // This library is free software; you can redistribute it and/or
@@ -18,43 +18,54 @@
 // 02110-1301  USA
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2011 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __FTP_H_
-#define __FTP_H_
+#include "networkreplywrapperinfo.h"
 
-#include "protocol.h"
-#include <QFtp>
+#include "protocols/networkreplysignalwrapper.h"
 
-class Ftp : public Protocol
+NetworkReplyWrapperInfo::NetworkReplyWrapperInfo(QNetworkReply* pReply)
 {
-	Q_OBJECT
+	this->pReply = pReply;
 
-	public:
-		static bool	isFTPLink(const QUrl&);
+	if (pReply != NULL)
+	{
+		pSignalWrapper = new NetworkReplySignalWrapper(pReply);
+	}
+	else
+	{
+		pSignalWrapper = NULL;
+	}
+}
 
-		Ftp();
+NetworkReplyWrapperInfo::~NetworkReplyWrapperInfo()
+{
+	if (pReply != NULL)
+	{
+		delete pSignalWrapper;
+		delete pReply;
+	}
+}
 
-	protected slots:
-		void	commandFinished(int id, bool error);
-		void	dataTransferProgressSlot(qint64 done, qint64 total);
-		void	listInfo(const QUrlInfo& i);
-		void	stateChanged(int);
+void NetworkReplyWrapperInfo::deleteMembersLater()
+{
+	if (pReply != NULL)
+	{
+		delete pSignalWrapper;
+		pReply->deleteLater();
 
-	protected:
-		void 	abortEx();
-		void	disconnectQFtp();
-		void	doneEx(bool error);
-		void 	getEx(const QUrl&);
+		pReply = NULL;
+	}
+}
 
-		int		listCommandId;
-		QFtp*	qFtp;
-		QUrl	queryUrl;
+bool NetworkReplyWrapperInfo::operator==(const NetworkReplyWrapperInfo& other) const
+{
+	return *this == other.pReply;
+}
 
-		/**
-		 * Size of the downloaded file.
-		 */
-		int		size;
-};
+bool NetworkReplyWrapperInfo::operator==(const QNetworkReply* pReply) const
+{
+	return this->pReply == pReply;
+}
 
-#endif
+

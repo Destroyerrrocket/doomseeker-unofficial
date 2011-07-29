@@ -35,26 +35,27 @@ include_directories(
 )
 
 set(WADSEEKER_QT_FILES
-	protocols/ftp.h
-	protocols/http.h
 	protocols/idgames.h
+	protocols/networkreplysignalwrapper.h
 	protocols/protocol.h
+	wadretriever/wadretriever.h
 	wwwseeker/wwwseeker.h
 	zip/unarchive.h
 	zip/un7zip.h
 	zip/untar.h
 	zip/unzip.h
-	networkreplysignalwrapper.h
 	wadseeker.h
 )
 
 set(WADSEEKER_FILES
 	entities/link.cpp
 	entities/waddownloadinfo.cpp
-	protocols/ftp.cpp
+	protocols/entities/networkreplywrapperinfo.cpp
 	protocols/http.cpp
 	protocols/idgames.cpp
+	protocols/networkreplysignalwrapper.cpp
 	protocols/protocol.cpp
+	wadretriever/wadretriever.cpp
 	wwwseeker/entities/fileseekinfo.cpp
 	wwwseeker/htmlparser.cpp
 	wwwseeker/urlparser.cpp
@@ -63,7 +64,6 @@ set(WADSEEKER_FILES
 	zip/un7zip.cpp
 	zip/untar.cpp
 	zip/unzip.cpp
-	networkreplysignalwrapper.cpp
 	speedcalculator.cpp
 	wadseeker.cpp
 	wadseekerversioninfo.cpp
@@ -74,6 +74,8 @@ set(HEADER_FILES
 	${WADSEEKER_QT_FILES}
 	entities/link.h
 	entities/waddownloadinfo.h
+	protocols/entities/networkreplywrapperinfo.h
+	protocols/http.h
 	wwwseeker/entities/fileseekinfo.h
 	wwwseeker/htmlparser.h
 	wwwseeker/urlparser.h

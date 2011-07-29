@@ -57,7 +57,31 @@ bool WadDownloadInfo::isFilenameIndicatingSameWad(const QString& filename) const
 	return fi.completeBaseName().compare(basename(), Qt::CaseInsensitive) == 0;
 }
 
-QStringList WadDownloadInfo::possibleArchiveNames()
+bool WadDownloadInfo::operator==(const WadDownloadInfo& other) const
+{
+	QStringList possibleNames = possibleWadNames();
+	QStringList possibleOtherNames = other.possibleWadNames();
+
+	foreach (const QString& name, possibleNames)
+	{
+		foreach (const QString& otherName, possibleOtherNames)
+		{
+			if (name.compare(otherName) == 0)
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool WadDownloadInfo::operator!=(const WadDownloadInfo& other) const
+{
+	return !(*this == other);
+}
+
+QStringList WadDownloadInfo::possibleArchiveNames() const
 {
 	QStringList names;
 
@@ -78,7 +102,7 @@ QStringList WadDownloadInfo::possibleArchiveNames()
 	return names;
 }
 
-QStringList WadDownloadInfo::possibleWadNames()
+QStringList WadDownloadInfo::possibleWadNames() const
 {
 	QStringList names;
 

@@ -22,10 +22,11 @@
 //------------------------------------------------------------------------------
 #include "wwwseeker.h"
 
+#include "protocols/entities/networkreplywrapperinfo.h"
+#include "protocols/networkreplysignalwrapper.h"
 #include "protocols/http.h"
 #include "wwwseeker/entities/fileseekinfo.h"
 #include "htmlparser.h"
-#include "networkreplysignalwrapper.h"
 #include "urlparser.h"
 
 #include <QFileInfo>
@@ -40,7 +41,7 @@ WWWSeeker::WWWSeeker()
 
 WWWSeeker::~WWWSeeker()
 {
-	foreach (NetworkQueryInfo* pInfo, d.networkQueries)
+	foreach (NetworkReplyWrapperInfo* pInfo, d.networkQueries)
 	{
 		pInfo->deleteMembersLater();
 		delete pInfo;
@@ -63,7 +64,7 @@ void WWWSeeker::abort()
 	}
 	else
 	{
-		foreach (NetworkQueryInfo* pInfo, d.networkQueries)
+		foreach (NetworkReplyWrapperInfo* pInfo, d.networkQueries)
 		{
 			pInfo->pReply->abort();
 		}
@@ -100,7 +101,7 @@ void WWWSeeker::addFileSiteUrl(const QString& filename, const QUrl& url)
 
 void WWWSeeker::addNetworkReply(QNetworkReply* pReply)
 {
-	NetworkQueryInfo* pQueryInfo = new NetworkQueryInfo(pReply);
+	NetworkReplyWrapperInfo* pQueryInfo = new NetworkReplyWrapperInfo(pReply);
 
 	this->connect(pQueryInfo->pSignalWrapper, SIGNAL( finished(QNetworkReply*) ),
 		SLOT( networkQueryFinished(QNetworkReply*) ));
@@ -124,9 +125,9 @@ void WWWSeeker::addSitesUrls(const QList<QUrl>& urlsList)
 	}
 }
 
-void WWWSeeker::deleteNetworkQueryInfo(QNetworkReply* pReply)
+void WWWSeeker::deleteNetworkReplyWrapperInfo(QNetworkReply* pReply)
 {
-	NetworkQueryInfo* pInfo = findNetworkQueryInfo(pReply);
+	NetworkReplyWrapperInfo* pInfo = findNetworkReplyWrapperInfo(pReply);
 	if (pInfo != NULL)
 	{
 		pInfo->deleteMembersLater();
@@ -149,9 +150,9 @@ bool WWWSeeker::isMoreToSearch() const
 		|| !d.fileSiteUrls.isEmpty();
 }
 
-WWWSeeker::NetworkQueryInfo* WWWSeeker::findNetworkQueryInfo(QNetworkReply* pReply)
+NetworkReplyWrapperInfo* WWWSeeker::findNetworkReplyWrapperInfo(QNetworkReply* pReply)
 {
-	foreach (NetworkQueryInfo* info, d.networkQueries)
+	foreach (NetworkReplyWrapperInfo* info, d.networkQueries)
 	{
 		if (*info == pReply)
 		{
@@ -164,7 +165,7 @@ WWWSeeker::NetworkQueryInfo* WWWSeeker::findNetworkQueryInfo(QNetworkReply* pRep
 
 void WWWSeeker::networkQueryFinished(QNetworkReply* pReply)
 {
-	NetworkQueryInfo* pQueryInfo = findNetworkQueryInfo(pReply);
+	NetworkReplyWrapperInfo* pQueryInfo = findNetworkReplyWrapperInfo(pReply);
 	QUrl url = pReply->request().url();
 
 #ifndef NDEBUG
@@ -203,7 +204,7 @@ void WWWSeeker::networkQueryFinished(QNetworkReply* pReply)
 				possibleRedirectUrl = url.resolved(possibleRedirectUrl);
 			}
 
-			deleteNetworkQueryInfo(pReply);
+			deleteNetworkReplyWrapperInfo(pReply);
 
 			if (!d.bIsAborting)
 			{
@@ -254,7 +255,7 @@ void WWWSeeker::networkQueryFinished(QNetworkReply* pReply)
 				}
 			}
 
-			deleteNetworkQueryInfo(pReply);
+			deleteNetworkReplyWrapperInfo(pReply);
 			emit siteFinished(url);
 		}
 	}
@@ -411,50 +412,4 @@ bool WWWSeeker::wasUrlUsed(const QUrl& url) const
 	}
 
 	return false;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-WWWSeeker::NetworkQueryInfo::NetworkQueryInfo(QNetworkReply* pReply)
-{
-	this->pReply = pReply;
-
-	if (pReply != NULL)
-	{
-		pSignalWrapper = new NetworkReplySignalWrapper(pReply);
-	}
-	else
-	{
-		pSignalWrapper = NULL;
-	}
-}
-
-WWWSeeker::NetworkQueryInfo::~NetworkQueryInfo()
-{
-	if (pReply != NULL)
-	{
-		delete pSignalWrapper;
-		delete pReply;
-	}
-}
-
-void WWWSeeker::NetworkQueryInfo::deleteMembersLater()
-{
-	if (pReply != NULL)
-	{
-		delete pSignalWrapper;
-		pReply->deleteLater();
-
-		pReply = NULL;
-	}
-}
-
-bool WWWSeeker::NetworkQueryInfo::operator==(const NetworkQueryInfo& other) const
-{
-	return *this == other.pReply;
-}
-
-bool WWWSeeker::NetworkQueryInfo::operator==(const QNetworkReply* pReply) const
-{
-	return this->pReply == pReply;
 }

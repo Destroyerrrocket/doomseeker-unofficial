@@ -71,6 +71,20 @@ class WadDownloadInfo
 		}
 
 		/**
+		 * @brief Check if any of possible WAD names match.
+		 *
+		 * Check is case-insensitive.
+		 */
+		bool operator==(const WadDownloadInfo& other) const;
+
+		/**
+		 * @brief Check if none of possible WAD names match.
+		 *
+		 * Check is case-insensitive.
+		 */
+		bool operator!=(const WadDownloadInfo& other) const;
+
+		/**
 		 * @brief Return possible archive names.
 		 *
 		 * @return If isArchive() returns true, list will contain only the
@@ -78,16 +92,16 @@ class WadDownloadInfo
 		 *         filenames for all supported archives, where the archive
 		 *         extension will replace the extension from name().
 		 */
-		QStringList possibleArchiveNames();
+		QStringList possibleArchiveNames() const;
 
 		/**
 		 * @brief Return possible WAD names.
 		 *
 		 * @return If name() has extension, list will contain only the
-		 *         name() value. Otherwise, the returend list will contain
+		 *         name() value. Otherwise, the returned list will contain
 		 *         filenames for all possible WAD extensions.
 		 */
-		QStringList possibleWadNames();
+		QStringList possibleWadNames() const;
 
 
 	private:

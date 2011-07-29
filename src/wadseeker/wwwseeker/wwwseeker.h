@@ -33,6 +33,7 @@
 
 class FileSeekInfo;
 class NetworkReplySignalWrapper;
+class NetworkReplyWrapperInfo;
 
 /**
  *	@brief Search and protocol wrapper class.
@@ -208,34 +209,6 @@ class WWWSeeker : public QObject
 		void siteStarted(const QUrl& site);
 
 	private:
-		class NetworkQueryInfo
-		{
-			public:
-				NetworkReplySignalWrapper* pSignalWrapper;
-				QNetworkReply* pReply;
-
-				NetworkQueryInfo(QNetworkReply* pReply);
-				~NetworkQueryInfo();
-
-				void deleteMembersLater();
-
-				/**
-				 * @brief NetworkQueryInfo objects are equal if their pReply
-				 * is the same.
-				 */
-				bool operator==(const NetworkQueryInfo& other) const;
-				bool operator!=(const NetworkQueryInfo& other) const
-				{
-					return ! (*this == other);
-				}
-
-				bool operator==(const QNetworkReply* pReply) const;
-				bool operator!=(const QNetworkReply* pReply) const
-				{
-					return ! (*this == pReply);
-				}
-		};
-
 		class PrivData
 		{
 			public:
@@ -266,7 +239,7 @@ class WWWSeeker : public QObject
 				 *
 				 * Amount here will not go above the maxConcurrentSiteDownloads.
 				 */
-				QList<NetworkQueryInfo*> networkQueries;
+				QList<NetworkReplyWrapperInfo*> networkQueries;
 
 				QNetworkAccessManager* pNetworkAccessManager;
 
@@ -293,8 +266,8 @@ class WWWSeeker : public QObject
 		PrivData d;
 
 		void addNetworkReply(QNetworkReply* pReply);
-		void deleteNetworkQueryInfo(QNetworkReply* pReply);
-		NetworkQueryInfo* findNetworkQueryInfo(QNetworkReply* pReply);
+		void deleteNetworkReplyWrapperInfo(QNetworkReply* pReply);
+		NetworkReplyWrapperInfo* findNetworkReplyWrapperInfo(QNetworkReply* pReply);
 		bool isMoreToSearch() const;
 
 		/**
