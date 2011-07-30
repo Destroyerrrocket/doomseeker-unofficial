@@ -103,6 +103,8 @@ void WWWSeeker::addNetworkReply(QNetworkReply* pReply)
 {
 	NetworkReplyWrapperInfo* pQueryInfo = new NetworkReplyWrapperInfo(pReply);
 
+	this->connect(pQueryInfo->pSignalWrapper, SIGNAL( downloadProgress(QNetworkReply*, qint64, qint64) ),
+		SLOT( networkQueryDownloadProgress(QNetworkReply*, qint64, qint64) ));
 	this->connect(pQueryInfo->pSignalWrapper, SIGNAL( finished(QNetworkReply*) ),
 		SLOT( networkQueryFinished(QNetworkReply*) ));
 
@@ -161,6 +163,11 @@ NetworkReplyWrapperInfo* WWWSeeker::findNetworkReplyWrapperInfo(QNetworkReply* p
 	}
 
 	return NULL;
+}
+
+void WWWSeeker::networkQueryDownloadProgress(QNetworkReply* pReply, qint64 current, qint64 total)
+{
+	emit siteProgress(pReply->request().url(), current, total);
 }
 
 void WWWSeeker::networkQueryFinished(QNetworkReply* pReply)

@@ -78,6 +78,21 @@ class WadRetriever : public QObject
 		 */
 		bool hasWad(const WadDownloadInfo& wad) const;
 
+		/**
+		 * @brief Returns true if at least one WAD is being downloaded or has
+		 *        an URL on the queue.
+		 */
+		bool isAnyDownloadWorking() const;
+
+		/**
+		 * @brief Number of WADs that are still being downloaded or waiting for
+		 *        download to start.
+		 */
+		int numWadsDownloads() const
+		{
+			return d.wads.size();
+		}
+
 		int numCurrentRunningDownloads() const;
 
 		/**
@@ -96,6 +111,14 @@ class WadRetriever : public QObject
 		void setTargetSavePath(const QString& path)
 		{
 			d.targetSavePath = path;
+		}
+
+		/**
+		 * @brief "User-Agent" to use in WWW queries.
+		 */
+		void setUserAgent(const QString& value)
+		{
+			d.userAgent = value;
 		}
 
 		/**
@@ -128,6 +151,21 @@ class WadRetriever : public QObject
 		void tryInstall(const QString& filename, const QByteArray& data);
 
 	signals:
+		/**
+		 * @brief Emitted when all WADs are successfully installed.
+		 *
+		 * All WADs on the list set by setWads() method must be successfully
+		 * installed in order for this signal to fire. WADs which are not
+		 * installed but have no more download URLs will not cause this signal
+		 * to be emitted. The object will just wait for URLs for those WADs.
+		 */
+		void finished();
+
+		/**
+		 * @brief Emitted when a WAD is being downloaded.
+		 */
+		void wadDownloadProgress(const WadDownloadInfo& wadDownloadInfo, qint64 current, qint64 total);
+
 		/**
 		 * @brief Emitted when a WAD is successfully installed.
 		 *
@@ -162,18 +200,56 @@ class WadRetriever : public QObject
 		class PrivData
 		{
 			public:
+				bool bIsAborting;
 				int maxConcurrentWadDownloads;
 				QNetworkAccessManager networkAccessManager;
 				QString targetSavePath;
+
+				/**
+				 * @brief User agent to use in WWW queries.
+				 */
+				QString userAgent;
+
+				/**
+				 * @brief Global list of used download URLs. Makes sure
+				 *        no URL is used twice.
+				 */
+				QList<QUrl> usedDownloadUrls;
 				QList<WadRetrieverInfo> wads;
+
 		};
 
 		PrivData d;
 
+		/**
+		 * @brief Extracts next valid download URL.
+		 *
+		 * Modifies the downloadUrls and usedDownloadUrls lists.
+		 *
+		 * @return Next URL that points to this WAD or invalid QUrl if
+		 *         URL cannot be extracted.
+		 */
+		QUrl extractNextValidUrl(WadRetrieverInfo& wadRetrieverInfo);
 		WadRetrieverInfo* findRetrieverInfo(const WadDownloadInfo& wad);
 		WadRetrieverInfo* findRetrieverInfo(const QString& wadName);
 		WadRetrieverInfo* findRetrieverInfo(const QNetworkReply* pNetworkReply);
+
+		/**
+		 * @brief Next WAD that is not being downloaded but has download URLs.
+		 */
+		WadRetrieverInfo* getNextWaitingRetrieverInfo();
+
+		/**
+		 * @brief True if URL is either on the queue or already used.
+		 */
+		bool hasUrl(const WadRetrieverInfo& wadRetrieverInfo, const QUrl& url) const;
+		void setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, QNetworkReply* pReply);
 		void startNextDownloads();
+		void startNetworkQuery(WadRetrieverInfo& wadRetrieverInfo, const QUrl& url);
+
+	private slots:
+		void networkQueryDownloadProgress(QNetworkReply* pReply, qint64 current, qint64 total);
+		void networkQueryFinished(QNetworkReply* pReply);
 };
 
 #endif

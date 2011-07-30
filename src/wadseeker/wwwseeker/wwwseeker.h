@@ -294,9 +294,10 @@ class WWWSeeker : public QObject
 		QUrl takeNextUrl();
 		bool wasUrlUsed(const QUrl& url) const;
 
-
 	private slots:
+		void networkQueryDownloadProgress(QNetworkReply* pReply, qint64 current, qint64 total);
 		void networkQueryFinished(QNetworkReply* pReply);
+
 };
 
 #endif
