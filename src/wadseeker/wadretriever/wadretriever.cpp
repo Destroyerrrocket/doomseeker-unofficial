@@ -22,14 +22,24 @@
 //------------------------------------------------------------------------------
 #include "wadretriever.h"
 
+#include "entities/waddownloadinfo.h"
 #include "protocols/entities/networkreplywrapperinfo.h"
 #include "protocols/networkreplysignalwrapper.h"
-#include "entities/waddownloadinfo.h"
+#include "wadretriever/wadinstaller.h"
+#include "zip/unarchive.h"
+
+#include <QFileInfo>
 
 WadRetriever::WadRetriever()
 {
 	d.bIsAborting = false;
 	d.maxConcurrentWadDownloads = 3;
+}
+
+void WadRetriever::abort()
+{
+	d.bIsAborting = true;
+	d.wads.clear();
 }
 
 void WadRetriever::addUrl(const WadDownloadInfo& wad, const QUrl& url)
@@ -141,6 +151,19 @@ bool WadRetriever::hasWad(const WadDownloadInfo& wad) const
 	return false;
 }
 
+QList< WadDownloadInfo* > WadRetriever::getWadDownloadInfoList()
+{
+	QList< WadDownloadInfo* > list;
+
+	QList<WadRetrieverInfo>::iterator it;
+	for (it = d.wads.begin(); it != d.wads.end(); ++it)
+	{
+		list << it->wad;
+	}
+
+	return list;
+}
+
 bool WadRetriever::isAnyDownloadWorking() const
 {
 	foreach (const WadRetrieverInfo& wadInfo, d.wads)
@@ -200,7 +223,7 @@ void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 	}
 	else
 	{
-		// if NULL then WTF
+		// if pInfo is NULL then WTF
 		pReply->deleteLater();
 	}
 }
@@ -219,6 +242,22 @@ int WadRetriever::numCurrentRunningDownloads() const
 	}
 
 	return num;
+}
+
+void WadRetriever::removeWadRetrieverInfo(WadRetrieverInfo* pWadRetrieverInfo)
+{
+	QList<WadRetrieverInfo>::iterator it;
+	for (it = d.wads.begin(); it != d.wads.end(); ++it)
+	{
+		WadRetrieverInfo& info = *it;
+		if (&info == pWadRetrieverInfo)
+		{
+			d.wads.erase(it);
+			delete pWadRetrieverInfo;
+
+			break;
+		}
+	}
 }
 
 void WadRetriever::setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, QNetworkReply* pReply)
@@ -279,8 +318,53 @@ void WadRetriever::startNetworkQuery(WadRetrieverInfo& wadRetrieverInfo, const Q
 
 void WadRetriever::tryInstall(const QString& filename, const QByteArray& byteArray)
 {
-	// TODO
-	// Implement.
+	QFileInfo fileInfo(filename);
+	UnArchive* archive = UnArchive::openArchive(fileInfo, byteArray);
+
+	WadInstaller installer(d.targetSavePath);
+	WadInstaller::WadInstallerResult result;
+	if (archive != NULL)
+	{
+		result = installer.installArchive(*archive, getWadDownloadInfoList());
+	}
+	else
+	{
+		result = installer.installFile(filename, byteArray);
+	}
+
+	if (result.isError())
+	{
+		QString errorPrefix;
+		if (archive != NULL)
+		{
+			errorPrefix = tr("Error when extracting archive \"%1\": ").arg(filename);
+		}
+		else
+		{
+			errorPrefix = tr("Error when installing file \"%1\": ").arg(filename);
+		}
+
+		emit message(errorPrefix + result.error, result.isCriticalError() ? WadseekerLib::CriticalError : WadseekerLib::Error);
+	}
+	else
+	{
+		foreach (const QString& installedWadName, result.installedWads)
+		{
+			WadRetrieverInfo* pInfo = findRetrieverInfo(installedWadName);
+			emit wadInstalled(*pInfo->wad);
+
+			removeWadRetrieverInfo(pInfo);
+			if (d.wads.isEmpty())
+			{
+				emit finished();
+			}
+		}
+	}
+
+	if (!d.bIsAborting)
+	{
+		startNextDownloads();
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

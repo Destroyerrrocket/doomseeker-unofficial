@@ -194,7 +194,7 @@ bool SkulltagBinaries::downloadTestingBinaries(const QDir &destination) const
 		// Extract the needed files.
 		QString filename;
 		QFileInfo fi(dialog.filename());
-		UnArchive *archive = UnArchive::OpenArchive(fi, dialog.data());
+		UnArchive *archive = UnArchive::openArchive(fi, dialog.data());
 
 		if(archive != NULL)
 		{

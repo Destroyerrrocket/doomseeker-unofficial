@@ -20,8 +20,9 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "protocols/idgames.h"
 #include "entities/waddownloadinfo.h"
+#include "protocols/idgames.h"
+#include "wadretriever/wadretriever.h"
 #include "wwwseeker/entities/fileseekinfo.h"
 #include "wwwseeker/wwwseeker.h"
 #include "zip/unzip.h"
@@ -57,6 +58,8 @@ const QString Wadseeker::forbiddenWads[] =
 Wadseeker::Wadseeker()
 {
 	d.seekParametersForCurrentSeek = NULL;
+
+	// WWWSeeker
 	d.wwwSeeker = new WWWSeeker();
 	d.wwwSeeker->setUserAgent(WadseekerVersionInfo::userAgent());
 
@@ -75,6 +78,13 @@ Wadseeker::Wadseeker()
 		SIGNAL( siteRedirect(const QUrl&, const QUrl&) ) );
 	this->connect(d.wwwSeeker, SIGNAL( siteStarted(const QUrl&) ),
 		SIGNAL( siteStarted(const QUrl&) ) );
+
+	// WadRetriever
+	d.wadRetriever = new WadRetriever();
+	d.wadRetriever->setUserAgent(WadseekerVersionInfo::userAgent());
+
+	// TODO
+	// Connect stuff.
 }
 
 Wadseeker::~Wadseeker()
@@ -92,7 +102,9 @@ void Wadseeker::cleanUpAfterFinish()
 	delete d.seekParametersForCurrentSeek;
 	d.seekParametersForCurrentSeek = NULL;
 
-	emit allDone(false);
+	// If there are no more WAD downloads pending for URLs during finish the
+	// Wadeeker procedure is a success.
+	emit allDone(d.wadRetriever->numWadsDownloads() == 0);
 }
 
 const QString Wadseeker::defaultIdgamesUrl()
@@ -113,91 +125,6 @@ QStringList Wadseeker::defaultSitesListEncoded()
 	return list;
 }
 
-//void Wadseeker::fileDone(QByteArray& data, const QString& filename)
-//{
-//	QFileInfo fi(filename);
-//	bool bNextWad = false; // if set to false it will perform WWW::checkNextSite().
-//
-//	QString path = this->targetDir + currentWad;
-//	if (filename.compare(currentWad, Qt::CaseInsensitive) == 0)
-//	{
-//		QFile f(path);
-//		if (!f.open(QIODevice::WriteOnly))
-//		{
-//			emit message(tr("Failed to save file: %1").arg(path), WadseekerLib::CriticalError);
-//			return;
-//		}
-//
-//		int writeLen = f.write(data);
-//		f.close();
-//
-//		if (writeLen != data.length())
-//		{
-//			emit message(tr("Failed to save file: %1").arg(path), WadseekerLib::CriticalError);
-//			return;
-//		}
-//
-//		bNextWad = true;
-//	}
-//	else
-//	{
-//		UnArchive *unarchive = UnArchive::OpenArchive(fi, data);
-//
-//		if (unarchive == NULL || !unarchive->isValid())
-//		{
-//			emit message(tr("Couldn't unarchive \"%1\".").arg(filename), WadseekerLib::Error);
-//		}
-//		else
-//		{
-//			connect (unarchive, SIGNAL( message(const QString&, int) ), this, SLOT( messageSlot(const QString&, int) ) );
-//			// Check the archive for any of the files we're trying to locate.
-//			QStack<int> filesToExtract;
-//			int file;
-//			if ((file = unarchive->findFileEntry(currentWad)) != -1)
-//			{
-//                filesToExtract.push(file);
-//            }
-//
-//			for (int i = iNextWad;i < seekedWads.size();i++)
-//			{
-//				if ((file = unarchive->findFileEntry(seekedWads[i])) != -1)
-//				{
-//					seekedWads[i] = QString();
-//					filesToExtract.push(file);
-//				}
-//			}
-//
-//			if(!filesToExtract.isEmpty())
-//			{
-//				do
-//				{
-//					file = filesToExtract.pop();
-//					QString extractedFileName = unarchive->fileNameFromIndex(file);
-//
-//					unarchive->extract(file, path);
-//					emit message(tr("File \"%1\" was uncompressed successfully from archive \"%2\"!").arg(extractedFileName, filename), WadseekerLib::Notice);
-//					bNextWad = true;
-//				}
-//				while(!filesToExtract.isEmpty());
-//			}
-//			else
-//			{
-//				emit message(tr("File \"%1\" not found in \"%2\"").arg(currentWad, filename), WadseekerLib::Error);
-//			}
-//		}
-//		delete unarchive;
-//	}
-//
-//	if (bNextWad)
-//	{
-//		nextWad();
-//	}
-//	else
-//	{
-//		www->checkNextSite();
-//	}
-//}
-
 void Wadseeker::fileLinkFound(const QString& filename, const QUrl& url)
 {
 	emit message(tr("Found link to file \"%1\": %2").arg(filename).arg(url.toEncoded().constData()), WadseekerLib::Notice);
@@ -205,7 +132,7 @@ void Wadseeker::fileLinkFound(const QString& filename, const QUrl& url)
 
 bool Wadseeker::isAllFinished() const
 {
-	return !d.wwwSeeker->isWorking();
+	return !d.wwwSeeker->isWorking() && !d.wadRetriever->isAnyDownloadWorking();
 }
 
 bool Wadseeker::isForbiddenWad(const QString& wad)
@@ -374,14 +301,13 @@ bool Wadseeker::startSeek(const QStringList& wads)
 	setupSitesUrls();
 
 	QList<FileSeekInfo> fileSeekInfosList;
+	QList<WadDownloadInfo> wadDownloadInfoList;
 
 	foreach (const QString& wad, filteredWadsList)
 	{
 		// Create download info object for this WAD.
 		WadDownloadInfo wadDownloadInfo(wad);
-
-		// TODO
-		// Store the object in order to keep download status.
+		wadDownloadInfoList << wad;
 
 		// Generate all possible filenames.
 		QStringList possibleFilenames;
@@ -392,6 +318,9 @@ bool Wadseeker::startSeek(const QStringList& wads)
 		fileSeekInfosList << FileSeekInfo(wad, possibleFilenames);
 		emit message(tr("WAD %1: %2").arg(wad, fileSeekInfosList.last().possibleFilenames().join(", ")), WadseekerLib::Notice);
 	}
+
+	d.wadRetriever->setTargetSavePath(d.seekParametersForCurrentSeek->saveDirectoryPath);
+	d.wadRetriever->setWads(wadDownloadInfoList);
 
 	emit seekStarted(filteredWadsList);
 	d.wwwSeeker->startSearch(fileSeekInfosList);
@@ -404,34 +333,36 @@ QString Wadseeker::targetDirectory() const
 	return d.seekParameters.saveDirectoryPath;
 }
 
-QStringList Wadseeker::wantedFilenames(const QString& wadName, QString& zipName)
+void Wadseeker::wadRetrieverFinished()
 {
-	// TODO
-	// Use supported archives list here.
-
-	QStringList list;
-	list.append(wadName);
-
-	QFileInfo fi(wadName);
-	if (fi.suffix().compare("7z", Qt::CaseInsensitive) != 0)
+	if (isAllFinished())
 	{
-		QString archiveName = fi.completeBaseName() + ".7z";
-		list.append(archiveName);
+		cleanUpAfterFinish();
 	}
-
-	if (fi.suffix().compare("zip", Qt::CaseInsensitive) != 0)
-	{
-		QString archiveName = fi.completeBaseName() + ".zip";
-		zipName = archiveName;
-		list.append(archiveName);
-	}
-	else
-	{
-		zipName = wadName;
-	}
-
-	return list;
 }
+
+void Wadseeker::wadRetrieverMessage(const QString& message, WadseekerLib::MessageType type)
+{
+	emit this->message(message, type);
+
+	if (type == WadseekerLib::CriticalError)
+	{
+		abort();
+	}
+}
+
+void Wadseeker::wadRetrieverDownloadProgress(const WadDownloadInfo& wadDownloadInfo, qint64 current, qint64 total)
+{
+	emit fileDownloadProgress(wadDownloadInfo.name(), current, total);
+}
+
+void Wadseeker::wadRetrieverWadInstalled(const WadDownloadInfo& wadDownloadInfo)
+{
+	emit fileDone(wadDownloadInfo.name());
+
+	d.wwwSeeker->removeSeekedFile(wadDownloadInfo.name());
+}
+
 
 void Wadseeker::wwwSeekerAttachmentDownloaded(const QString& name, const QByteArray& data)
 {

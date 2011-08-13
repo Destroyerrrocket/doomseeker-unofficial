@@ -318,7 +318,7 @@ UnArchive::~UnArchive()
 	delete bufferData;
 }
 
-UnArchive *UnArchive::DetectArchive(const QFileInfo &fi, QIODevice *&device)
+UnArchive *UnArchive::detectArchive(const QFileInfo &fi, QIODevice *&device)
 {
 	QFileInfo file = fi;
 	if(file.suffix().compare("bz2", Qt::CaseInsensitive) == 0)
@@ -341,11 +341,11 @@ UnArchive *UnArchive::DetectArchive(const QFileInfo &fi, QIODevice *&device)
 	return NULL;
 }
 
-UnArchive *UnArchive::OpenArchive(const QFileInfo &fi, const QByteArray &data)
+UnArchive *UnArchive::openArchive(const QFileInfo &fi, const QByteArray &data)
 {
 	QByteArray *bufferData = new QByteArray(data);
 	QIODevice *stream = new QBuffer(bufferData);
-	UnArchive *ret = DetectArchive(fi, stream);
+	UnArchive *ret = detectArchive(fi, stream);
 
 	if(ret == NULL)
 	{
@@ -357,14 +357,14 @@ UnArchive *UnArchive::OpenArchive(const QFileInfo &fi, const QByteArray &data)
 	return ret;
 }
 
-UnArchive *UnArchive::OpenArchive(const QString &filename)
+UnArchive *UnArchive::openArchive(const QString &filename)
 {
 	QFileInfo fi(filename);
 	if(!fi.isReadable())
 		return NULL;
 
 	QIODevice *stream = new QFile(filename);
-	UnArchive *ret = DetectArchive(fi, stream);
+	UnArchive *ret = detectArchive(fi, stream);
 	if(ret != NULL)
 		return ret;
 

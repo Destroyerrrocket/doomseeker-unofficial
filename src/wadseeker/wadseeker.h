@@ -35,6 +35,8 @@
 #define WADSEEKER_DOWNLOAD_TIMEOUT_SECONDS_DEFAULT 120
 
 class SpeedCalculator;
+class WadDownloadInfo;
+class WadRetriever;
 class WWWSeeker;
 
 /**
@@ -244,6 +246,16 @@ class WADSEEKER_API Wadseeker : public QObject
 		void allDone(bool bSuccess);
 
 		/**
+		 *	@brief Emitted when a particular file is finished.
+		 *
+		 *	@param filename
+		 *		Unique filename for the affected file.
+		 *		Emitted previously by seekStarted() signal as an entry on the
+		 *		filenames list.
+		 */
+		void fileDone(const QString& filename);
+
+		/**
 		 *	@brief Emits download progress.
 		 *
 		 *	Programmer may use this for example to update
@@ -258,19 +270,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *	@param total
 		 *		Total size of the downloaded file.
 		 */
-		void downloadProgress(const QString& filename, int done, int total);
-
-		/**
-		 *	@brief Emitted when a particular file is finished.
-		 *
-		 *	@param filename
-		 *		Unique filename for the affected file.
-		 *		Emitted previously by seekStarted() signal as an entry on the
-		 *		filenames list.
-		 *	@param bSuccess
-		 *		True if file was found successfully. False otherwise.
-		 */
-		void fileDone(const QString& filename, bool bSuccess);
+		void fileDownloadProgress(const QString& filename, int done, int total);
 
 		void fileMessage(const QString& filename, const QString& message, WadseekerLib::MessageType type);
 
@@ -335,12 +335,13 @@ class WADSEEKER_API Wadseeker : public QObject
 				SeekParameters seekParameters;
 
 				/**
-				 *	This object is created when startSeek() method is called. This will
-				 *	ensure that the parameters won't change during the seek operation.
-				 *	When seek is not in progress this is NULL.
+				 * This object is created when startSeek() method is called. This will
+				 * ensure that the parameters won't change during the seek operation.
+				 * When seek is not in progress this is NULL.
 				 */
 				SeekParameters* seekParametersForCurrentSeek;
 
+				WadRetriever* wadRetriever;
 				WWWSeeker* wwwSeeker;
 		};
 
@@ -352,19 +353,12 @@ class WADSEEKER_API Wadseeker : public QObject
 
 		void setupSitesUrls();
 
-		/**
-		 *	Returns the name of the actual files that will be searched for.
-		 *	For example, if somemod.wad was searched for, this would return
-		 *	somemod.wad and somemod.zip
-		 *	@param wadName
-		 *		Absolute file name being searched for. (ex: somemod.wad)
-		 *	@param [out] zip
-		 *		Returns name of according zip file.
-		 */
-		static QStringList	wantedFilenames(const QString& wadName, QString& zipName);
-
 	private slots:
 		void fileLinkFound(const QString& filename, const QUrl& url);
+		void wadRetrieverFinished();
+		void wadRetrieverMessage(const QString& message, WadseekerLib::MessageType type);
+		void wadRetrieverDownloadProgress(const WadDownloadInfo& wadDownloadInfo, qint64 current, qint64 total);
+		void wadRetrieverWadInstalled(const WadDownloadInfo& wadDownloadInfo);
 		void wwwSeekerAttachmentDownloaded(const QString& name, const QByteArray& data);
 		void wwwSeekerFinished();
 };

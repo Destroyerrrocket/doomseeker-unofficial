@@ -39,19 +39,39 @@ class WADSEEKER_API UnArchive : public QObject
 		UnArchive();
 		virtual ~UnArchive();
 
+		/**
+		 * @brief Extracts file from specified entry to a specified path.
+		 *
+		 * @param file
+		 *      File index retrieved by findFileEntry() method.
+		 * @param where
+		 *      Path to the file name under which the extracted file will be
+		 *      saved.
+		 *
+		 * @return true if extract was successful.
+		 */
 		virtual bool	extract(int file, const QString &where)=0;
 		virtual QString	fileNameFromIndex(int file)=0;
+
+		/**
+		 * @brief Finds index of file entry basing on specified entry name.
+		 *
+		 * The extracted index can be used in extract() method to retrieve the
+		 * file's data.
+		 *
+		 * @return The index is negative if entry was not found.
+		 */
 		virtual int		findFileEntry(const QString &entryName)=0;
 		virtual bool	isValid()=0;
 
-		static UnArchive *OpenArchive(const QFileInfo &fi, const QByteArray &data);
-		static UnArchive *OpenArchive(const QString &filename);
+		static UnArchive *openArchive(const QFileInfo &fi, const QByteArray &data);
+		static UnArchive *openArchive(const QString &filename);
 
 	signals:
 		void			message(const QString&, int type);
 
 	private:
-		static UnArchive *DetectArchive(const QFileInfo &fi, QIODevice *&device);
+		static UnArchive *detectArchive(const QFileInfo &fi, QIODevice *&device);
 
 		QByteArray		*bufferData;
 };

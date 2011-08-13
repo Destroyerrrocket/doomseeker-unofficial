@@ -55,6 +55,7 @@ set(WADSEEKER_FILES
 	protocols/idgames.cpp
 	protocols/networkreplysignalwrapper.cpp
 	protocols/protocol.cpp
+	wadretriever/wadinstaller.cpp
 	wadretriever/wadretriever.cpp
 	wwwseeker/entities/fileseekinfo.cpp
 	wwwseeker/htmlparser.cpp
@@ -76,6 +77,7 @@ set(HEADER_FILES
 	entities/waddownloadinfo.h
 	protocols/entities/networkreplywrapperinfo.h
 	protocols/http.h
+	wadretriever/wadinstaller.h
 	wwwseeker/entities/fileseekinfo.h
 	wwwseeker/htmlparser.h
 	wwwseeker/urlparser.h

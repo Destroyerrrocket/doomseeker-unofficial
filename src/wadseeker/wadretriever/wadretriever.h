@@ -29,6 +29,8 @@
 #include <QString>
 #include <QUrl>
 
+#include "wadseekermessagetype.h"
+
 class NetworkReplyWrapperInfo;
 class WadDownloadInfo;
 
@@ -57,6 +59,8 @@ class WadRetriever : public QObject
 
 	public:
 		WadRetriever();
+
+		void abort();
 
 		/**
 		 * @brief Provides new URL for a WAD download.
@@ -162,6 +166,14 @@ class WadRetriever : public QObject
 		void finished();
 
 		/**
+		 * @brief Emitted when WadRetriever has something to announce.
+		 *
+		 * Note that critical errors mean that WadRetriever has no means
+		 * to continue and the whole Wadseeker operation should abort.
+		 */
+		void message(const QString& msg, WadseekerLib::MessageType type);
+
+		/**
 		 * @brief Emitted when a WAD is being downloaded.
 		 */
 		void wadDownloadProgress(const WadDownloadInfo& wadDownloadInfo, qint64 current, qint64 total);
@@ -238,11 +250,18 @@ class WadRetriever : public QObject
 		 * @brief Next WAD that is not being downloaded but has download URLs.
 		 */
 		WadRetrieverInfo* getNextWaitingRetrieverInfo();
+		QList< WadDownloadInfo* > getWadDownloadInfoList();
 
 		/**
 		 * @brief True if URL is either on the queue or already used.
 		 */
 		bool hasUrl(const WadRetrieverInfo& wadRetrieverInfo, const QUrl& url) const;
+
+		/**
+		 * @brief Removes WadRetrieverInfo and aborts any downloads in progress.
+		 */
+		void removeWadRetrieverInfo(WadRetrieverInfo* pWadRetrieverInfo);
+
 		void setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, QNetworkReply* pReply);
 		void startNextDownloads();
 		void startNetworkQuery(WadRetrieverInfo& wadRetrieverInfo, const QUrl& url);

@@ -52,6 +52,7 @@ void NetworkReplyWrapperInfo::deleteMembersLater()
 	if (pReply != NULL)
 	{
 		delete pSignalWrapper;
+		pReply->abort();
 		pReply->deleteLater();
 
 		pReply = NULL;
