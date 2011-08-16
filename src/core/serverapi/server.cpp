@@ -157,6 +157,11 @@ bool Server::isFull() const
 	return players->numClients() == maximumClients();
 }
 
+bool Server::isRefreshable() const
+{
+	return time.secsTo(QTime::currentTime()) >= plugin()->data()->refreshThreshold;
+}
+
 int Server::numFreeClientSlots() const
 {
 	int returnValue = maximumClients() - players->numClients();
@@ -189,8 +194,12 @@ bool Server::refresh()
 		return false;
 	}
 
-	Main::refreshingThread->registerServer(this);
-	return true;
+	if(isRefreshable())
+	{
+		Main::refreshingThread->registerServer(this);
+		return true;
+	}
+	return false;
 }
 
 void Server::refreshStarts()

@@ -67,6 +67,8 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
   bWantToQuit(false), logDock(NULL), masterManager(NULL),
   trayIcon(NULL), trayIconMenu(NULL)
 {
+	waitingToJoin = NULL;
+
 	this->application = application;
 
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
@@ -95,7 +97,7 @@ One of the proper locations for plugin modules is the \"engines/\" directory.\n\
 	buddiesList->toggleViewAction()->setText(tr("&Buddies"));
 	buddiesList->toggleViewAction()->setShortcut(tr("CTRL+B"));
 
-	connect(buddiesList, SIGNAL( joinServer(const Server*) ), this, SLOT( runGame(const Server*) ));
+	connect(buddiesList, SIGNAL( joinServer(Server*) ), this, SLOT( runGame(Server*) ));
 	buddiesList->hide();
 	this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
 	initLogDock();
@@ -344,9 +346,9 @@ void MainWindow::connectEntities()
 	connect(menuActionViewIRC, SIGNAL( triggered() ) , this, SLOT( menuViewIRC() ));
 	connect(menuActionWadseeker, SIGNAL( triggered() ), this, SLOT( menuWadSeeker() ));
 	connect(serverFilterDock, SIGNAL( filterUpdated(const ServerListFilterInfo&) ), this, SLOT( updateServerFilter(const ServerListFilterInfo&) ) );
-	connect(serverTableHandler, SIGNAL( serverDoubleClicked(const Server*) ), this, SLOT( runGame(const Server*) ) );
+	connect(serverTableHandler, SIGNAL( serverDoubleClicked(Server*) ), this, SLOT( refreshToJoin(Server*) ) );
 	connect(serverTableHandler, SIGNAL( displayServerJoinCommandLine(const Server*) ), this, SLOT( showServerJoinCommandLine(const Server*) ) );
-	connect(serverTableHandler, SIGNAL( serverInfoUpdated(const Server*) ), this, SLOT( serverAddedToList(const Server*) ) );
+	connect(serverTableHandler, SIGNAL( serverInfoUpdated(Server*) ), this, SLOT( serverAddedToList(Server*) ) );
 }
 
 void MainWindow::fillQueryMenu(MasterManager* masterManager)
@@ -968,7 +970,7 @@ void MainWindow::notifyFirstRun()
 	}
 }
 
-bool MainWindow::obtainJoinCommandLine(const Server* server, CommandLineInfo& cli, const QString& errorCaption)
+bool MainWindow::obtainJoinCommandLine(const Server* server, CommandLineInfo& cli, const QString& errorCaption, bool *hadMissing)
 {
 	cli.applicationDir = "";
 	cli.args.clear();
@@ -1081,6 +1083,8 @@ Wadseeker will not download IWADs.\n\n");
 						wsi.wadseekerRef().setCustomSite(server->website());
 						if (wsi.exec() == QDialog::Accepted)
 						{
+							if(hadMissing)
+								*hadMissing = true;
 							return obtainJoinCommandLine(server, cli, errorCaption);
 						}
 					}
@@ -1208,11 +1212,33 @@ void MainWindow::refreshThreadEndsWork()
 	bTotalRefreshInProcess = false;
 }
 
-void MainWindow::runGame(const Server* server)
+void MainWindow::refreshToJoin(Server *server)
 {
-	CommandLineInfo cli;
-	if (obtainJoinCommandLine(server, cli, tr("Doomseeker - join server")))
+	// If the data we have is old we should refresh first to check if we can
+	// still properly join the server.
+	if(server->isRefreshable())
 	{
+		waitingToJoin = server;
+		server->refresh();
+	}
+	else
+		runGame(server);
+}
+
+void MainWindow::runGame(Server* server)
+{
+	bool hadMissing = false;
+	CommandLineInfo cli;
+	if (obtainJoinCommandLine(server, cli, tr("Doomseeker - join server"), &hadMissing))
+	{
+		if(hadMissing)
+		{
+			// Downloading wads takes an unknown amount of time, a server may
+			// have rotated wads, players could have joined, etc so lets refresh.
+			refreshToJoin(server);
+			return;
+		}
+
 		GameRunner* gameRunner = server->gameRunner();
 
 		Message message = gameRunner->runExecutable(cli, false);
@@ -1239,12 +1265,18 @@ void MainWindow::setQueryMasterServerEnabled(MasterClient* pClient, bool bEnable
     }
 }
 
-void MainWindow::serverAddedToList(const Server* pServer)
+void MainWindow::serverAddedToList(Server* pServer)
 {
 	if (pServer->isKnown())
 	{
 		const QString& gameMode = pServer->gameMode().name();
 		serverFilterDock->addGameModeToComboBox(gameMode);
+	}
+
+	if (pServer == waitingToJoin)
+	{
+		waitingToJoin = NULL;
+		runGame(pServer);
 	}
 }
 

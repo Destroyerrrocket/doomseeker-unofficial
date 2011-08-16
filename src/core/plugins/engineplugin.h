@@ -84,7 +84,8 @@ class MAIN_EXPORT EnginePlugin
 			EP_HasMasterServer,
 			EP_InGameFileDownloads,
 			EP_IRCChannel, // (const char*)server, (const char*)channel - Can be repeated
-			EP_SupportsRandomMapRotation
+			EP_SupportsRandomMapRotation,
+			EP_RefreshThreshold // (quint8)
 		};
 
 		/// Reimplement if you want to perform some ini initialization manually.
@@ -127,6 +128,7 @@ class MAIN_EXPORT EnginePlugin
 				QVector<IRCNetworkEntity> ircChannels;
 				QString					name;
 				IniSection				*pConfig;
+				quint8					refreshThreshold;
 				bool					supportsRandomMapRotation;
 				bool					valid;
 				unsigned int			version;

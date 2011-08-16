@@ -99,8 +99,8 @@ class ServerListHandler : public QObject
 		 *	@brief Emitted every time when a server info is updated through
 		 *	serverUpdated()
 		 */
-		void					serverInfoUpdated(const Server*);
-		void 					serverDoubleClicked(const Server*);
+		void					serverInfoUpdated(Server*);
+		void 					serverDoubleClicked(Server*);
 		void 					serversSelected(QList<Server*>&);
 
 	protected:

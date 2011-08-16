@@ -143,7 +143,7 @@ void DockBuddiesList::followBuddy(const QModelIndex &index)
 	// Folow the buddy into the server.
 	QString error;
 
-	const Server* server = buddies[buddiesTableModel->item(index.row(), BLCID_ID)->data().toInt()].location();
+	Server* server = buddies[buddiesTableModel->item(index.row(), BLCID_ID)->data().toInt()].location();
 	emit joinServer(server);
 }
 
@@ -261,7 +261,7 @@ void AddBuddyDlg::buttonBoxClicked(QAbstractButton *button)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-DockBuddiesList::BuddyLocationInfo::BuddyLocationInfo(const Player &buddy, const Server *location)
+DockBuddiesList::BuddyLocationInfo::BuddyLocationInfo(const Player &buddy, Server *location)
 {
     this->player = new Player(buddy);
     this->server = location;

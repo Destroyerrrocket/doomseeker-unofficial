@@ -113,6 +113,7 @@ class MAIN_EXPORT Server : public QObject
 		bool				isFull() const;
 		bool				isKnown() const { return bKnown; }
 		bool				isLocked() const { return locked; }
+		bool				isRefreshable() const;
 		bool				isSetToDelete() const { return bDelete; }
 		const QString		&iwadName() const { return iwad; }
 		const QString&		joinPassword() const { return passwordJoin; }

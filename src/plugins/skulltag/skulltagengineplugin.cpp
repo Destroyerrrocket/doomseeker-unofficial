@@ -62,6 +62,7 @@ SkulltagEnginePlugin::SkulltagEnginePlugin()
 		EP_GameModifiers, SkulltagGameInfo::gameModifiers(),
 		EP_AllDMFlags, SkulltagGameInfo::dmFlags(),
 		EP_IRCChannel, "Skulltag", "irc.skulltag.net", "#skulltag",
+		EP_RefreshThreshold, 10,
 		EP_Done
 	);
 }

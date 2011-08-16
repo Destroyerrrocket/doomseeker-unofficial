@@ -47,6 +47,7 @@ EnginePlugin::Data::Data()
 	icon = NULL;
 	inGameFileDownloads = false;
 	pConfig = NULL;
+	refreshThreshold = 2;
 	supportsRandomMapRotation = false;
 	valid = true;
 	version = 0;
@@ -154,6 +155,9 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 			}
 			case EP_SupportsRandomMapRotation:
 				d->supportsRandomMapRotation = true;
+				break;
+			case EP_RefreshThreshold:
+				d->refreshThreshold = va_arg(va, unsigned int);
 				break;
 		}
 	}

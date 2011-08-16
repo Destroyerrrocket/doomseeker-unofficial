@@ -58,22 +58,22 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 		void	scan(const MasterClient *master=NULL);
 
 	signals:
-		void	joinServer(const Server* server);
+		void	joinServer(Server* server);
 
 	protected:
 		class BuddyLocationInfo
 		{
 			public:
-				BuddyLocationInfo(const Player &buddy, const Server *location);
+				BuddyLocationInfo(const Player &buddy, Server *location);
 				~BuddyLocationInfo();
 
 				const Player	&buddy() const { return *player; }
-				const Server	*location() const { return server; }
+				Server			*location() const { return server; }
 				BuddyLocationInfo		&operator= (const BuddyLocationInfo &other);
 
 			private:
-				Player			*player;
-				const Server	*server;
+				Player	*player;
+				Server	*server;
 		};
 
 		QList<DockBuddiesList::BuddyLocationInfo>	buddies;

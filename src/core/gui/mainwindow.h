@@ -148,6 +148,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		QSystemTrayIcon*	trayIcon;
 		QMenu*				trayIconMenu;
 
+		Server				*waitingToJoin;
+
 		void	changeEvent(QEvent* event);
 
 		bool	checkWadseekerValidity();
@@ -205,9 +207,11 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 *	@param [out] cli - generated command line
 		 *	@param errorCaption - caption used for QMessageBox in case of an
 		 *		error
+		 *	@param hadMissing - If set to a non-NULL value the pointer will be
+		 *		set to true if Wadseeker downloaded files.
 		 *	@return true on success, false otherwise.
 		 */
-		bool	obtainJoinCommandLine(const Server* server, CommandLineInfo& cli, const QString& errorCaption = tr("Doomseeker - error"));
+		bool	obtainJoinCommandLine(const Server* server, CommandLineInfo& cli, const QString& errorCaption = tr("Doomseeker - error"), bool *hadMissing=NULL);
 
 		QQueryMenuAction* queryMenuActionForMasterClient(MasterClient* pClient);
 
@@ -249,8 +253,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
         void    postInitAppStartup();
 		void 	refreshThreadBeginsWork();
 		void	refreshThreadEndsWork();
-		void 	runGame(const Server*);
-		void	serverAddedToList(const Server*);
+		void	refreshToJoin(Server*);
+		void 	runGame(Server*);
+		void	serverAddedToList(Server*);
 		void	showServerJoinCommandLine(const Server*);
 
 		/**
