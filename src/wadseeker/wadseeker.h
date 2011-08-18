@@ -28,6 +28,7 @@
 #include <QStringList>
 #include <QUrl>
 
+#include "entities/waddownloadinfo.h"
 #include "wadseekerexportinfo.h"
 #include "wadseekermessagetype.h"
 
@@ -35,7 +36,6 @@
 #define WADSEEKER_DOWNLOAD_TIMEOUT_SECONDS_DEFAULT 120
 
 class SpeedCalculator;
-class WadDownloadInfo;
 class WadRetriever;
 class WWWSeeker;
 
@@ -256,40 +256,50 @@ class WADSEEKER_API Wadseeker : public QObject
 		void fileDone(const QString& filename);
 
 		/**
-		 *	@brief Emits download progress.
+		 * @brief Emits download progress.
 		 *
-		 *	Programmer may use this for example to update
-		 *	a progress bar.
+		 * Programmer may use this for example to update
+		 * a progress bar.
 		 *
-		 *	@param filename
-		 *		Unique filename for the affected file.
-		 *		Emitted previously by seekStarted() signal as an entry on the
-		 *		filenames list.
-		 *	@param done
-		 *		Bytes already downloaded.
-		 *	@param total
-		 *		Total size of the downloaded file.
+		 * @param filename
+		 *     Unique filename for the affected file.
+		 *     Emitted previously by seekStarted() signal as an entry on the
+		 *     filenames list.
+		 * @param done
+		 *     Bytes already downloaded.
+		 * @param total
+		 *     Total size of the downloaded file.
 		 */
-		void fileDownloadProgress(const QString& filename, int done, int total);
+		void fileDownloadProgress(const QString& filename, qint64 done, qint64 total);
+
+		/**
+		 * @brief Emitted when a file download starts.
+		 *
+		 * @param filename
+		 *     Name of the downloaded file.
+		 * @param url
+		 *     URL from which the file is being downloaded.
+		 */
+		void fileDownloadStarted(const QString& filename, const QUrl& url);
 
 		void fileMessage(const QString& filename, const QString& message, WadseekerLib::MessageType type);
 
 		/**
-		 *	Emitted when Wadseeker wants to communicate about its progress
-		 *	with outside world.
+		 * @brief Emitted when Wadseeker wants to communicate about its
+		 *        progress with outside world.
 		 *
-		 *	@param msg - content of the message
-		 *	@param type - See: Wadseeker::MessageType
+		 * @param msg - content of the message
+		 * @param type - See: Wadseeker::MessageType
 		 */
 		void message(const QString& msg, WadseekerLib::MessageType type);
 
 		/**
-		 *	@brief Emitted when Wadseeker begins the seek operation.
+		 * @brief Emitted when Wadseeker begins the seek operation.
 		 *
-		 *	@param filenames
-		 *		Contains unique names of all files that will be seeked.
-		 *		Wadseeker will continue to refer to those filenames in other
-		 *		signals.
+		 * @param filenames
+		 *     Contains unique names of all files that will be seeked.
+		 *     Wadseeker will continue to refer to those filenames in other
+		 *     signals.
 		 */
 		void seekStarted(const QStringList& filenames);
 
@@ -348,17 +358,22 @@ class WADSEEKER_API Wadseeker : public QObject
 		PrivData d;
 
 		void cleanUpAfterFinish();
-
 		bool isAllFinished() const;
+
+		/**
+		 * @brief Spawns WWWSeeker and WadRetriever instances.
+		 */
+		void prepareSeekObjects();
 
 		void setupSitesUrls();
 
 	private slots:
 		void fileLinkFound(const QString& filename, const QUrl& url);
+		void wadRetrieverDownloadProgress(WadDownloadInfo wadDownloadInfo, qint64 current, qint64 total);
+		void wadRetrieverDownloadStarted(WadDownloadInfo wadDownloadInfo, const QUrl& url);
 		void wadRetrieverFinished();
 		void wadRetrieverMessage(const QString& message, WadseekerLib::MessageType type);
-		void wadRetrieverDownloadProgress(const WadDownloadInfo& wadDownloadInfo, qint64 current, qint64 total);
-		void wadRetrieverWadInstalled(const WadDownloadInfo& wadDownloadInfo);
+		void wadRetrieverWadInstalled(WadDownloadInfo wadDownloadInfo);
 		void wwwSeekerAttachmentDownloaded(const QString& name, const QByteArray& data);
 		void wwwSeekerFinished();
 };

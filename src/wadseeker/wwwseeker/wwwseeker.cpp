@@ -47,7 +47,8 @@ WWWSeeker::~WWWSeeker()
 		delete pInfo;
 	}
 
-	delete d.pNetworkAccessManager;
+	// Produces crashes if simply deleted.
+	d.pNetworkAccessManager->deleteLater();
 }
 
 void WWWSeeker::abort()

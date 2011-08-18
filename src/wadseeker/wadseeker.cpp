@@ -58,38 +58,26 @@ const QString Wadseeker::forbiddenWads[] =
 Wadseeker::Wadseeker()
 {
 	d.seekParametersForCurrentSeek = NULL;
-
-	// WWWSeeker
-	d.wwwSeeker = new WWWSeeker();
-	d.wwwSeeker->setUserAgent(WadseekerVersionInfo::userAgent());
-
-	// Connect signals to slots.
-	this->connect(d.wwwSeeker, SIGNAL( attachmentDownloaded(const QString&, const QByteArray&) ),
-		SLOT( wwwSeekerAttachmentDownloaded(const QString&, const QByteArray&) ) );
-	this->connect(d.wwwSeeker, SIGNAL( finished() ),
-		SLOT( wwwSeekerFinished() ) );
-
-	// Forward signals up to outside of the library.
-	this->connect(d.wwwSeeker, SIGNAL( siteFinished(const QUrl&) ),
-		SIGNAL( siteFinished(const QUrl&) ) );
-	this->connect(d.wwwSeeker, SIGNAL( siteProgress(const QUrl&, qint64, qint64) ),
-		SIGNAL( siteProgress(const QUrl&, qint64, qint64) ) );
-	this->connect(d.wwwSeeker, SIGNAL( siteRedirect(const QUrl&, const QUrl&) ),
-		SIGNAL( siteRedirect(const QUrl&, const QUrl&) ) );
-	this->connect(d.wwwSeeker, SIGNAL( siteStarted(const QUrl&) ),
-		SIGNAL( siteStarted(const QUrl&) ) );
-
-	// WadRetriever
-	d.wadRetriever = new WadRetriever();
-	d.wadRetriever->setUserAgent(WadseekerVersionInfo::userAgent());
-
-	// TODO
-	// Connect stuff.
+	d.wadRetriever = NULL;
+	d.wwwSeeker = NULL;
 }
 
 Wadseeker::~Wadseeker()
 {
-	delete d.wwwSeeker;
+	if (d.wwwSeeker != NULL)
+	{
+		delete d.wwwSeeker;
+	}
+
+	if (d.wadRetriever != NULL)
+	{
+		delete d.wadRetriever;
+	}
+
+	if (d.seekParametersForCurrentSeek != NULL)
+	{
+		delete d.seekParametersForCurrentSeek;
+	}
 }
 
 void Wadseeker::abort()
@@ -99,12 +87,20 @@ void Wadseeker::abort()
 
 void Wadseeker::cleanUpAfterFinish()
 {
+	// If there are no more WAD downloads pending for URLs when finish is
+	// announced, then the Wadeeker procedure is a success.
+	bool bSuccess = (d.wadRetriever->numWadsDownloads() == 0);
+
 	delete d.seekParametersForCurrentSeek;
 	d.seekParametersForCurrentSeek = NULL;
 
-	// If there are no more WAD downloads pending for URLs during finish the
-	// Wadeeker procedure is a success.
-	emit allDone(d.wadRetriever->numWadsDownloads() == 0);
+	delete d.wadRetriever;
+	d.wadRetriever = NULL;
+
+	delete d.wwwSeeker;
+	d.wwwSeeker = NULL;
+
+	emit allDone(bSuccess);
 }
 
 const QString Wadseeker::defaultIdgamesUrl()
@@ -156,6 +152,45 @@ bool Wadseeker::isForbiddenWad(const QString& wad)
 bool Wadseeker::isWorking() const
 {
 	return d.wwwSeeker->isWorking();
+}
+
+void Wadseeker::prepareSeekObjects()
+{
+	// WWWSeeker
+	d.wwwSeeker = new WWWSeeker();
+	d.wwwSeeker->setUserAgent(WadseekerVersionInfo::userAgent());
+
+	// Connect signals to slots.
+	this->connect(d.wwwSeeker, SIGNAL( attachmentDownloaded(const QString&, const QByteArray&) ),
+		SLOT( wwwSeekerAttachmentDownloaded(const QString&, const QByteArray&) ) );
+	this->connect(d.wwwSeeker, SIGNAL( finished() ),
+		SLOT( wwwSeekerFinished() ) );
+
+	// Forward signals up to outside of the library.
+	this->connect(d.wwwSeeker, SIGNAL( siteFinished(const QUrl&) ),
+		SIGNAL( siteFinished(const QUrl&) ) );
+	this->connect(d.wwwSeeker, SIGNAL( siteProgress(const QUrl&, qint64, qint64) ),
+		SIGNAL( siteProgress(const QUrl&, qint64, qint64) ) );
+	this->connect(d.wwwSeeker, SIGNAL( siteRedirect(const QUrl&, const QUrl&) ),
+		SIGNAL( siteRedirect(const QUrl&, const QUrl&) ) );
+	this->connect(d.wwwSeeker, SIGNAL( siteStarted(const QUrl&) ),
+		SIGNAL( siteStarted(const QUrl&) ) );
+
+	// WadRetriever
+	d.wadRetriever = new WadRetriever();
+	d.wadRetriever->setUserAgent(WadseekerVersionInfo::userAgent());
+
+	// Connect signals to slots.
+	this->connect(d.wadRetriever, SIGNAL( finished() ),
+		SLOT(wadRetrieverFinished()) );
+	this->connect(d.wadRetriever, SIGNAL( message(const QString&, WadseekerLib::MessageType) ),
+		SLOT( wadRetrieverMessage(const QString&, WadseekerLib::MessageType) ) );
+	this->connect(d.wadRetriever, SIGNAL( wadDownloadStarted(WadDownloadInfo, const QUrl&) ),
+		SLOT(wadRetrieverDownloadStarted(WadDownloadInfo, const QUrl&) ) );
+	this->connect(d.wadRetriever, SIGNAL( wadDownloadProgress(WadDownloadInfo, qint64, qint64) ),
+		SLOT(wadRetrieverDownloadProgress(WadDownloadInfo, qint64, qint64) ) );
+	this->connect(d.wadRetriever, SIGNAL( wadInstalled(WadDownloadInfo) ),
+		SLOT( wadRetrieverWadInstalled(WadDownloadInfo) ) );
 }
 
 void Wadseeker::setCustomSite(const QUrl& url)
@@ -298,6 +333,10 @@ bool Wadseeker::startSeek(const QStringList& wads)
 	d.seekParameters.seekedWads = filteredWadsList;
 	d.seekParametersForCurrentSeek = new SeekParameters(d.seekParameters);
 
+	// Important call - creates new objects. These objects will be deleted
+	// either in destructor or in cleanUpAfterFinish() method.
+	prepareSeekObjects();
+
 	setupSitesUrls();
 
 	QList<FileSeekInfo> fileSeekInfosList;
@@ -333,6 +372,16 @@ QString Wadseeker::targetDirectory() const
 	return d.seekParameters.saveDirectoryPath;
 }
 
+void Wadseeker::wadRetrieverDownloadProgress(WadDownloadInfo wadDownloadInfo, qint64 current, qint64 total)
+{
+	emit fileDownloadProgress(wadDownloadInfo.name(), current, total);
+}
+
+void Wadseeker::wadRetrieverDownloadStarted(WadDownloadInfo wadDownloadInfo, const QUrl& url)
+{
+	emit fileDownloadStarted(wadDownloadInfo.name(), url);
+}
+
 void Wadseeker::wadRetrieverFinished()
 {
 	if (isAllFinished())
@@ -351,12 +400,7 @@ void Wadseeker::wadRetrieverMessage(const QString& message, WadseekerLib::Messag
 	}
 }
 
-void Wadseeker::wadRetrieverDownloadProgress(const WadDownloadInfo& wadDownloadInfo, qint64 current, qint64 total)
-{
-	emit fileDownloadProgress(wadDownloadInfo.name(), current, total);
-}
-
-void Wadseeker::wadRetrieverWadInstalled(const WadDownloadInfo& wadDownloadInfo)
+void Wadseeker::wadRetrieverWadInstalled(WadDownloadInfo wadDownloadInfo)
 {
 	emit fileDone(wadDownloadInfo.name());
 

@@ -29,6 +29,7 @@
 #include <QString>
 #include <QUrl>
 
+#include "entities/waddownloadinfo.h"
 #include "wadseekermessagetype.h"
 
 class NetworkReplyWrapperInfo;
@@ -59,6 +60,7 @@ class WadRetriever : public QObject
 
 	public:
 		WadRetriever();
+		~WadRetriever();
 
 		void abort();
 
@@ -176,7 +178,12 @@ class WadRetriever : public QObject
 		/**
 		 * @brief Emitted when a WAD is being downloaded.
 		 */
-		void wadDownloadProgress(const WadDownloadInfo& wadDownloadInfo, qint64 current, qint64 total);
+		void wadDownloadProgress(WadDownloadInfo wadDownloadInfo, qint64 current, qint64 total);
+
+		/**
+		 * @brief Emitted when a WAD download just started.
+		 */
+		void wadDownloadStarted(WadDownloadInfo wadDownloadInfo, const QUrl& url);
 
 		/**
 		 * @brief Emitted when a WAD is successfully installed.
@@ -185,7 +192,7 @@ class WadRetriever : public QObject
 		 *      Instance of WadDownloadInfo describing the WAD that was
 		 *      installed.
 		 */
-		void wadInstalled(const WadDownloadInfo& wad);
+		void wadInstalled(WadDownloadInfo wad);
 
 	private:
 		class WadRetrieverInfo
@@ -207,6 +214,11 @@ class WadRetriever : public QObject
 				 */
 				bool operator==(const WadRetrieverInfo& other) const;
 				bool operator!=(const WadRetrieverInfo& other) const;
+
+			private:
+				WadRetrieverInfo(const WadRetrieverInfo& other) {}
+				WadRetrieverInfo& operator=(const WadRetrieverInfo& other) {}
+
 		};
 
 		class PrivData
@@ -214,7 +226,7 @@ class WadRetriever : public QObject
 			public:
 				bool bIsAborting;
 				int maxConcurrentWadDownloads;
-				QNetworkAccessManager networkAccessManager;
+				QNetworkAccessManager* pNetworkAccessManager;
 				QString targetSavePath;
 
 				/**
@@ -227,7 +239,7 @@ class WadRetriever : public QObject
 				 *        no URL is used twice.
 				 */
 				QList<QUrl> usedDownloadUrls;
-				QList<WadRetrieverInfo> wads;
+				QList<WadRetrieverInfo* > wads;
 
 		};
 

@@ -43,12 +43,14 @@ WadseekerInterface::WadseekerInterface(QWidget* parent)
 
 	this->setWindowIcon(QIcon(":/icon.png"));
 
-	connect(btnClose, SIGNAL( clicked() ), this, SLOT( reject() ) );
-	connect(btnDownload, SIGNAL( clicked() ), this, SLOT( accept() ) );
-	connect(btnStop, SIGNAL( clicked() ), &wadseeker, SLOT( abort() ) );
-	connect(btnSkipSite, SIGNAL( clicked() ), &wadseeker, SLOT( skipSite() ) );
-	connect(&updateTimer, SIGNAL( timeout() ), this, SLOT( registerUpdateRequest() ) );
+	this->connect(btnClose, SIGNAL( clicked() ),
+		SLOT( reject() ) );
+	this->connect(btnDownload, SIGNAL( clicked() ),
+		SLOT( accept() ) );
+	this->connect(&updateTimer, SIGNAL( timeout() ),
+		SLOT( registerUpdateRequest() ) );
 
+	// Connect Wadseeker to the dialog box.
 	this->connect(&wadseeker, SIGNAL( allDone(bool) ),
 		SLOT( allDone(bool) ) );
 	this->connect(&wadseeker, SIGNAL( message(const QString&, WadseekerLib::MessageType) ),
@@ -63,6 +65,12 @@ WadseekerInterface::WadseekerInterface(QWidget* parent)
 		SLOT( siteRedirect(const QUrl&, const QUrl&) ) );
 	this->connect(&wadseeker, SIGNAL( siteStarted(const QUrl&) ),
 		SLOT( siteStarted(const QUrl&) ) );
+
+	// Connect Wadseeker to the WADs table widget.
+	twWads->connect(&wadseeker, SIGNAL( fileDownloadProgress(const QString&, qint64, qint64) ),
+		SLOT( setFileProgress(const QString&, qint64, qint64) ) );
+	twWads->connect(&wadseeker, SIGNAL( fileDownloadStarted(const QString&, const QUrl&) ),
+		SLOT( setFileUrl(const QString&, const QUrl&) ) );
 
 	bAutomatic = false;
 	bFirstShown = false;
@@ -174,17 +182,9 @@ void WadseekerInterface::displayMessage(const QString& message, WadseekerLib::Me
 	teWadseekerOutput->append(strProcessedMessage);
 }
 
-void WadseekerInterface::downloadProgress(int done, int total)
-{
-	if (bNeedsUpdate)
-	{
-
-	}
-}
-
 void WadseekerInterface::fail()
 {
-
+	displayMessage("Fail?", WadseekerLib::Error, true);
 }
 
 void WadseekerInterface::initMessageColors()
@@ -226,30 +226,23 @@ void WadseekerInterface::resetTitleToDefault()
 void WadseekerInterface::seekStarted(const QStringList& filenames)
 {
 	displayMessage("Seek started on filenames: " + filenames.join(", "), WadseekerLib::Notice, false);
+
+	foreach (const QString& name, filenames)
+	{
+		twWads->addFile(name);
+	}
 }
 
 void WadseekerInterface::setStateDownloading()
 {
-	btnClose->setEnabled(false);
-	btnDownload->setEnabled(false);
-	btnStop->setEnabled(true);
-	btnSkipSite->setEnabled(true);
-
+	btnClose->setText(tr("Abort"));
 	state = Downloading;
-	btnSkipSite->setDefault(true);
 }
 
 void WadseekerInterface::setStateWaiting()
 {
-	btnClose->setEnabled(true);
-	btnDownload->setEnabled(true);
-	btnStop->setEnabled(false);
-	btnSkipSite->setEnabled(false);
-
+	btnClose->setText(tr("Close"));
 	state = Waiting;
-	btnDownload->setDefault(true);
-
-	lblTimeUntilArrival->setText("N/A");
 }
 
 void WadseekerInterface::setupIdgames()
@@ -329,16 +322,5 @@ void WadseekerInterface::startSeeking(const QStringList& seekedFilesList)
 
 void WadseekerInterface::updateTitle()
 {
-    switch (state)
-    {
-        case Downloading:
-            {
 
-            }
-            break;
-
-        default:
-            resetTitleToDefault();
-            break;
-    }
 }

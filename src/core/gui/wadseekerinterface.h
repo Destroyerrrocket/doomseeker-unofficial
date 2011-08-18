@@ -104,7 +104,6 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 	private slots:
 		void accept();
 		void allDone(bool bSuccess);
-		void downloadProgress(int done, int total);
 		void reject();
 		void message(const QString& message, WadseekerLib::MessageType type);
 		void registerUpdateRequest();
