@@ -30,8 +30,30 @@ class WadseekerSitesTable : public QTableWidget
 	Q_OBJECT;
 
 	public:
+		static const int IDX_URL_COLUMN = 0;
+		static const int IDX_PROGRESS_COLUMN = 1;
+
 		WadseekerSitesTable(QWidget* pParent = NULL);
 
+		void addUrl(const QUrl& url);
+		void removeUrl(const QUrl& url);
+
+	public slots:
+		void setUrlProgress(const QUrl& url, qint64 current, qint64 total);
+
+	protected:
+		void showEvent(QShowEvent* pEvent);
+
+	private:
+		class PrivData
+		{
+			public:
+				bool bAlreadyShownOnce;
+		};
+
+		PrivData d;
+
+		int findUrlRow(const QUrl& url);
 };
 
 #endif

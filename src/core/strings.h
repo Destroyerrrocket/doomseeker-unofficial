@@ -47,8 +47,8 @@ class MAIN_EXPORT Strings
 		 *	@param pathEnd - part of the path that will be appended
 		 *	@return A string containing combined paths.
 		 */
-		static QString 			combinePaths(QString pathFront, QString pathEnd);	
-	
+		static QString 			combinePaths(QString pathFront, QString pathEnd);
+
 		/**
 		 *	@brief Creates a random string with specified length.
 		 *
@@ -68,8 +68,8 @@ class MAIN_EXPORT Strings
 		 *	The only difference is the unit type appended to the end of the
 		 *	returned string.
 		 */
-		static QString			formatDataAmount(int bytes);
-	
+		static QString			formatDataAmount(qint64 bytes);
+
 		/**
 		 *	@brief Formats a numerical speed value into a string.
 		 *
@@ -95,7 +95,7 @@ class MAIN_EXPORT Strings
 		static QString			formatTime(float seconds);
 
 		static bool				isCharOnCharList(char c, const QString& charList);
-		
+
 		/**
 		 *  @brief Creates a clean path.
 		 *
@@ -122,7 +122,7 @@ class MAIN_EXPORT Strings
 		 *	@brief Unsafe URLs begin with file:// and this functions returns
 		 *	false for such URLs.
 		 *
-		 *	Someone might prepare such URL to make Doomseeker activate files on 
+		 *	Someone might prepare such URL to make Doomseeker activate files on
 		 *	user's local drive and possibly cause damage to the system.
 		 */
 		static bool				isUrlSafe(const QString& url);
@@ -131,7 +131,7 @@ class MAIN_EXPORT Strings
 		static QString&			trim(QString& str, const QString& charList) { return trimr(triml(str, charList), charList); }
 		static QString&			trimr(QString& str, const QString& charList);
 		static QString&			triml(QString& str, const QString& charList);
-		
+
 		/**
 		 *	@brief Detects all links within a given string and wraps them in
 		 *	&lt;a href&gt; tags.
@@ -140,7 +140,7 @@ class MAIN_EXPORT Strings
 		 *	starting either with http://, ftp:// or REGEX: www\..*+
 		 */
 		static QString			wrapUrlsWithHtmlATags(const QString& str);
-		
+
 	protected:
 		enum DataUnit
 		{
@@ -149,11 +149,11 @@ class MAIN_EXPORT Strings
 			Megabyte	= 2,
 			Gigabyte	= 3
 		};
-		
+
 		static const unsigned	RANDOM_CHAR_POOL_SIZE = 36;
 		static const char		RANDOM_CHAR_POOL[RANDOM_CHAR_POOL_SIZE];
-		
-	
+
+
 		static float			scaleDataUnit(float bytes, DataUnit& outUnit);
 };
 

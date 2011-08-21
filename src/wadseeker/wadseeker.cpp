@@ -27,7 +27,6 @@
 #include "wwwseeker/wwwseeker.h"
 #include "zip/unzip.h"
 #include "zip/un7zip.h"
-#include "speedcalculator.h"
 #include "wadseeker.h"
 #include "wadseekerversioninfo.h"
 #include <QDir>
@@ -89,12 +88,12 @@ void Wadseeker::cleanUpAfterFinish()
 {
 	// If there are no more WAD downloads pending for URLs when finish is
 	// announced, then the Wadeeker procedure is a success.
-	bool bSuccess = (d.wadRetriever->numWadsDownloads() == 0);
+	bool bSuccess = !d.wadRetriever->isAnyWadPending();
 
 	delete d.seekParametersForCurrentSeek;
 	d.seekParametersForCurrentSeek = NULL;
 
-	delete d.wadRetriever;
+	d.wadRetriever->deleteLater();
 	d.wadRetriever = NULL;
 
 	delete d.wwwSeeker;
@@ -123,7 +122,9 @@ QStringList Wadseeker::defaultSitesListEncoded()
 
 void Wadseeker::fileLinkFound(const QString& filename, const QUrl& url)
 {
+	printf("Found link %s\n", url.toString().toAscii().constData());
 	emit message(tr("Found link to file \"%1\": %2").arg(filename).arg(url.toEncoded().constData()), WadseekerLib::Notice);
+	d.wadRetriever->addUrl(filename, url);
 }
 
 bool Wadseeker::isAllFinished() const
@@ -140,7 +141,7 @@ bool Wadseeker::isForbiddenWad(const QString& wad)
 	QString basename = fiWad.completeBaseName();
 	for (int i = 0; !forbiddenWads[i].isEmpty(); ++i)
 	{
-		if(basename.compare(forbiddenWads[i], Qt::CaseInsensitive) == 0)
+		if (basename.compare(forbiddenWads[i], Qt::CaseInsensitive) == 0)
 		{
 			return true;
 		}
@@ -165,6 +166,8 @@ void Wadseeker::prepareSeekObjects()
 		SLOT( wwwSeekerAttachmentDownloaded(const QString&, const QByteArray&) ) );
 	this->connect(d.wwwSeeker, SIGNAL( finished() ),
 		SLOT( wwwSeekerFinished() ) );
+	this->connect(d.wwwSeeker, SIGNAL( linkFound(const QString&, const QUrl&)),
+		SLOT( fileLinkFound(const QString&, const QUrl&) ) );
 
 	// Forward signals up to outside of the library.
 	this->connect(d.wwwSeeker, SIGNAL( siteFinished(const QUrl&) ),
@@ -181,10 +184,18 @@ void Wadseeker::prepareSeekObjects()
 	d.wadRetriever->setUserAgent(WadseekerVersionInfo::userAgent());
 
 	// Connect signals to slots.
+
+	// The slot will handle difference between finished() and pendingUrls()
+	// signals.
 	this->connect(d.wadRetriever, SIGNAL( finished() ),
 		SLOT(wadRetrieverFinished()) );
+	this->connect(d.wadRetriever, SIGNAL( pendingUrls() ),
+		SLOT(wadRetrieverFinished()) );
+
 	this->connect(d.wadRetriever, SIGNAL( message(const QString&, WadseekerLib::MessageType) ),
 		SLOT( wadRetrieverMessage(const QString&, WadseekerLib::MessageType) ) );
+	this->connect(d.wadRetriever, SIGNAL( wadDownloadFinished(WadDownloadInfo) ),
+		SLOT( wadRetrieverDownloadFinished(WadDownloadInfo) ) );
 	this->connect(d.wadRetriever, SIGNAL( wadDownloadStarted(WadDownloadInfo, const QUrl&) ),
 		SLOT(wadRetrieverDownloadStarted(WadDownloadInfo, const QUrl&) ) );
 	this->connect(d.wadRetriever, SIGNAL( wadDownloadProgress(WadDownloadInfo, qint64, qint64) ),
@@ -246,10 +257,7 @@ void Wadseeker::setupSitesUrls()
 {
 	d.wwwSeeker->clearVisitedUrlsList();
 
-	if (d.seekParametersForCurrentSeek->customSiteUrl.isValid())
-	{
-		d.wwwSeeker->addSiteUrl(d.seekParametersForCurrentSeek->customSiteUrl);
-	}
+	d.wwwSeeker->setCustomSiteUrl(d.seekParametersForCurrentSeek->customSiteUrl);
 
 	foreach (const QString& strSiteUrl, d.seekParametersForCurrentSeek->sitesUrls)
 	{
@@ -346,13 +354,12 @@ bool Wadseeker::startSeek(const QStringList& wads)
 	{
 		// Create download info object for this WAD.
 		WadDownloadInfo wadDownloadInfo(wad);
-		wadDownloadInfoList << wad;
+		wadDownloadInfoList << wadDownloadInfo;
 
 		// Generate all possible filenames.
 		QStringList possibleFilenames;
 		possibleFilenames << wadDownloadInfo.possibleArchiveNames();
-		possibleFilenames << wadDownloadInfo.possibleWadNames();
-		possibleFilenames << wad;
+		possibleFilenames << wadDownloadInfo.name();
 
 		fileSeekInfosList << FileSeekInfo(wad, possibleFilenames);
 		emit message(tr("WAD %1: %2").arg(wad, fileSeekInfosList.last().possibleFilenames().join(", ")), WadseekerLib::Notice);
@@ -372,6 +379,11 @@ QString Wadseeker::targetDirectory() const
 	return d.seekParameters.saveDirectoryPath;
 }
 
+void Wadseeker::wadRetrieverDownloadFinished(WadDownloadInfo wadDownloadInfo)
+{
+	emit fileDownloadFinished(wadDownloadInfo.name());
+}
+
 void Wadseeker::wadRetrieverDownloadProgress(WadDownloadInfo wadDownloadInfo, qint64 current, qint64 total)
 {
 	emit fileDownloadProgress(wadDownloadInfo.name(), current, total);
@@ -384,6 +396,15 @@ void Wadseeker::wadRetrieverDownloadStarted(WadDownloadInfo wadDownloadInfo, con
 
 void Wadseeker::wadRetrieverFinished()
 {
+	if (d.wadRetriever->isAnyWadPending())
+	{
+		emit message(tr("WadRetriever is pending for download URLs."), WadseekerLib::Notice);
+	}
+	else
+	{
+		emit message(tr("WadRetriever is finished."), WadseekerLib::NoticeImportant);
+	}
+
 	if (isAllFinished())
 	{
 		cleanUpAfterFinish();
@@ -402,7 +423,7 @@ void Wadseeker::wadRetrieverMessage(const QString& message, WadseekerLib::Messag
 
 void Wadseeker::wadRetrieverWadInstalled(WadDownloadInfo wadDownloadInfo)
 {
-	emit fileDone(wadDownloadInfo.name());
+	emit fileInstalled(wadDownloadInfo.name());
 
 	d.wwwSeeker->removeSeekedFile(wadDownloadInfo.name());
 }
@@ -412,10 +433,13 @@ void Wadseeker::wwwSeekerAttachmentDownloaded(const QString& name, const QByteAr
 {
 	emit message(tr("Attachment downloaded: %1. Size %2").arg(name).arg(data.size()),
 		WadseekerLib::NoticeImportant);
+
+	d.wadRetriever->tryInstall(name, data);
 }
 
 void Wadseeker::wwwSeekerFinished()
 {
+	emit message("WWWSeeker is finished.", WadseekerLib::NoticeImportant);
 	if (isAllFinished())
 	{
 		cleanUpAfterFinish();

@@ -67,6 +67,10 @@ WadseekerInterface::WadseekerInterface(QWidget* parent)
 		SLOT( siteStarted(const QUrl&) ) );
 
 	// Connect Wadseeker to the WADs table widget.
+	twWads->connect(&wadseeker, SIGNAL( fileInstalled(const QString&) ),
+		SLOT( setFileSuccessful(const QString&) ) );
+	twWads->connect(&wadseeker, SIGNAL( fileDownloadFinished(const QString&) ),
+		SLOT( setFileDownloadFinished(const QString&) ) );
 	twWads->connect(&wadseeker, SIGNAL( fileDownloadProgress(const QString&, qint64, qint64) ),
 		SLOT( setFileProgress(const QString&, qint64, qint64) ) );
 	twWads->connect(&wadseeker, SIGNAL( fileDownloadStarted(const QString&, const QUrl&) ),
@@ -225,7 +229,11 @@ void WadseekerInterface::resetTitleToDefault()
 
 void WadseekerInterface::seekStarted(const QStringList& filenames)
 {
+	teWadseekerOutput->clear();
 	displayMessage("Seek started on filenames: " + filenames.join(", "), WadseekerLib::Notice, false);
+
+	twSites->setRowCount(0);
+	twWads->setRowCount(0);
 
 	foreach (const QString& name, filenames)
 	{
@@ -275,21 +283,25 @@ void WadseekerInterface::showEvent(QShowEvent* event)
 
 void WadseekerInterface::siteFinished(const QUrl& site)
 {
+	twSites->removeUrl(site);
 	displayMessage("Site finished: " + site.toEncoded(), WadseekerLib::Notice, false);
 }
 
 void WadseekerInterface::siteProgress(const QUrl& site, qint64 bytes, qint64 total)
 {
-
+	twSites->setUrlProgress(site, bytes, total);
 }
 
 void WadseekerInterface::siteRedirect(const QUrl& oldUrl, const QUrl& newUrl)
 {
+	twSites->removeUrl(oldUrl);
+	twSites->addUrl(newUrl);
 	displayMessage("Site redirect: " + oldUrl.toEncoded() + " -> " + newUrl.toEncoded(), WadseekerLib::Notice, false);
 }
 
 void WadseekerInterface::siteStarted(const QUrl& site)
 {
+	twSites->addUrl(site);
 	displayMessage("Site started: " + site.toEncoded(), WadseekerLib::Notice, false);
 }
 
@@ -299,8 +311,6 @@ void WadseekerInterface::startSeeking(const QStringList& seekedFilesList)
 	{
 		return;
 	}
-
-	teWadseekerOutput->clear();
 
 	// Get rid of the whitespace characters from each filename; we don't want
 	// to be searching " awad.wad".
@@ -315,7 +325,7 @@ void WadseekerInterface::startSeeking(const QStringList& seekedFilesList)
 	setupIdgames();
 
 	// TODO
-	//wadseeker.setCustomSite("a");
+	wadseeker.setCustomSite(QUrl("http://192.168.1.1/robert/wadseeker_test/fake_test/test.zip"));
 	wadseeker.setTargetDirectory(gConfig.wadseeker.targetDirectory);
 	wadseeker.startSeek(seekedFilesListFormatted);
 }

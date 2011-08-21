@@ -46,6 +46,16 @@ class WADSEEKER_API WadseekerVersionInfo
 		static QStringList      knownWadExtensions();
 
 		/**
+		 * @brief Checks if passed argument is on
+		 *        the supportedArchiveExtensions() list.
+		 *
+		 * Check is case-insensitive.
+		 *
+		 * @return True if suffix is on the list.
+		 */
+		static bool				isSupportedArchiveExtension(const QString& suffix);
+
+		/**
 		 * @brief List of extractable archive extensions.
 		 */
 		static QStringList 		supportedArchiveExtensions();

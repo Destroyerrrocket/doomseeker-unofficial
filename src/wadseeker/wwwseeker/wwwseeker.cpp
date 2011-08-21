@@ -28,6 +28,7 @@
 #include "wwwseeker/entities/fileseekinfo.h"
 #include "htmlparser.h"
 #include "urlparser.h"
+#include "wadseekerversioninfo.h"
 
 #include <QFileInfo>
 
@@ -149,8 +150,13 @@ bool WWWSeeker::isMoreToSearch() const
 		return false;
 	}
 
-	return !d.sitesUrls.isEmpty()
-		|| !d.fileSiteUrls.isEmpty();
+	bool hasSiteUrls = !d.sitesUrls.isEmpty();
+	bool hasFileSiteUrls = !d.fileSiteUrls.isEmpty();
+	bool hasCustomUrl = d.customSiteUrl.isValid();
+
+	return hasSiteUrls
+		|| hasFileSiteUrls
+		|| hasCustomUrl;
 }
 
 NetworkReplyWrapperInfo* WWWSeeker::findNetworkReplyWrapperInfo(QNetworkReply* pReply)
@@ -164,6 +170,29 @@ NetworkReplyWrapperInfo* WWWSeeker::findNetworkReplyWrapperInfo(QNetworkReply* p
 	}
 
 	return NULL;
+}
+
+bool WWWSeeker::isDirectUrl(const QUrl& url, QString& outFileName) const
+{
+	// Utilize what UrlParser gives us for this.
+	QList<Link> links;
+	links << Link(url, "");
+
+	UrlParser urlParser(links);
+	foreach (const FileSeekInfo& fileSeekInfo, d.seekedFiles)
+	{
+		const QString& file = fileSeekInfo.file();
+		const QStringList& possibleFilenames = fileSeekInfo.possibleFilenames();
+
+		QList<Link> directLinks = urlParser.directLinks(possibleFilenames, url);
+		if (!directLinks.isEmpty())
+		{
+			outFileName = file;
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void WWWSeeker::networkQueryDownloadProgress(QNetworkReply* pReply, qint64 current, qint64 total)
@@ -192,8 +221,21 @@ void WWWSeeker::networkQueryFinished(QNetworkReply* pReply)
 	if (http.isApplicationContentType())
 	{
 		QString attachmentName = http.attachmentName();
-		QByteArray data = pReply->readAll();
+		// If attachment name is empty at this point we should try to attempt
+		// to extract it from URL. It is important to have a proper attachment
+		// name.
+		if (attachmentName.isEmpty())
+		{
+			attachmentName = http.urlFilename();
+		}
 
+		QByteArray data = pReply->readAll();
+		deleteNetworkReplyWrapperInfo(pReply);
+
+#ifndef NDEBUG
+		printf("Attachment downloaded from URL %s\n", url.toString().toAscii().constData());
+#endif
+		emit siteFinished(url);
 		emit attachmentDownloaded(attachmentName, data);
 	}
 	else
@@ -226,50 +268,16 @@ void WWWSeeker::networkQueryFinished(QNetworkReply* pReply)
 		{
 			// TODO
 			// Prepare for data different than HTML.
-			QByteArray downloadedData = pReply->readAll();
-
-			// Get all <A HREFs> from HTML.
-			HtmlParser html(downloadedData);
-			QList<Link> links = html.linksFromHtml();
-
-			printf("Finished URL %s - content type %s. Data size: %d\n", url.toEncoded().constData(),
-				pReply->header(QNetworkRequest::ContentTypeHeader).toByteArray().constData(), downloadedData.size());
-
-			printf("Links: %d\n", links.size());
-
-			// Extrat URLs of interest from <A HREFs>
-			UrlParser urlParser(links);
-
-			foreach (const FileSeekInfo& fileSeekInfo, d.seekedFiles)
-			{
-				const QString& file = fileSeekInfo.file();
-				const QStringList& possibleFilenames = fileSeekInfo.possibleFilenames();
-
-				QList<Link> siteLinks = urlParser.siteLinks(possibleFilenames, url);
-				QList<Link> directLinks = urlParser.directLinks(possibleFilenames, url);
-
-				printf("Site links: %d\n", siteLinks.size());
-				printf("Direct links: %d\n", directLinks.size());
-
-				foreach (const Link& link, siteLinks)
-				{
-					printf("Adding url %s\n", link.url.toEncoded().constData());
-					addFileSiteUrl(file, link.url);
-				}
-
-				foreach (const Link& link, directLinks)
-				{
-					emit linkFound(file, link.url);
-				}
-			}
+			parseAsHtml(pReply);
 
 			deleteNetworkReplyWrapperInfo(pReply);
 			emit siteFinished(url);
 		}
 	}
 
+	bool bAreNetworkQueriesEmpty = d.networkQueries.isEmpty();
 
-	if (d.networkQueries.isEmpty() && !isMoreToSearch())
+	if (bAreNetworkQueriesEmpty && !isMoreToSearch())
 	{
 		// Work is finished if there are no more site URLs to find.
 		d.bIsWorking = false;
@@ -280,6 +288,54 @@ void WWWSeeker::networkQueryFinished(QNetworkReply* pReply)
 		if (!d.bIsAborting)
 		{
 			startNextSites();
+		}
+	}
+}
+
+void WWWSeeker::parseAsHtml(QNetworkReply* pReply)
+{
+	QByteArray downloadedData = pReply->readAll();
+	QUrl url = pReply->request().url();
+
+	// Get all <A HREFs> from HTML.
+	HtmlParser html(downloadedData);
+	QList<Link> links = html.linksFromHtml();
+
+#ifndef NDEBUG
+	printf("Finished URL %s - content type %s. Data size: %d\n", url.toEncoded().constData(),
+		pReply->header(QNetworkRequest::ContentTypeHeader).toByteArray().constData(), downloadedData.size());
+
+	printf("Links: %d\n", links.size());
+#endif
+
+	// Extrat URLs of interest from <A HREFs>
+	UrlParser urlParser(links);
+
+	foreach (const FileSeekInfo& fileSeekInfo, d.seekedFiles)
+	{
+		const QString& file = fileSeekInfo.file();
+		const QStringList& possibleFilenames = fileSeekInfo.possibleFilenames();
+
+		QList<Link> siteLinks = urlParser.siteLinks(possibleFilenames, url);
+		QList<Link> directLinks = urlParser.directLinks(possibleFilenames, url);
+
+#ifndef NDEBUG
+		printf("File %s\n", file.toAscii().constData());
+		printf("Site links: %d\n", siteLinks.size());
+		printf("Direct links: %d\n", directLinks.size());
+#endif
+
+		foreach (const Link& link, siteLinks)
+		{
+#ifndef NDEBUG
+			printf("Adding url %s\n", link.url.toEncoded().constData());
+#endif
+			addFileSiteUrl(file, link.url);
+		}
+
+		foreach (const Link& link, directLinks)
+		{
+			emit linkFound(file, link.url);
 		}
 	}
 }
@@ -329,14 +385,26 @@ void WWWSeeker::startNextSites()
 			&& isMoreToSearch())
 	{
 		QUrl url = takeNextUrl();
+		printf("Took URL: %s\n", url.toString().toAscii().constData());
 
 		if (url.isValid())
 		{
-			printf("Starting site: %s\n", url.toEncoded().constData());
-
 			d.visitedUrls << url;
-			startNetworkQuery(url);
-			emit siteStarted(url);
+
+			// It is possible that a direct URL will be placed here. Detect
+			// it and forward it to the WadRetriever.
+			QString filename;
+			if (isDirectUrl(url, filename))
+			{
+				emit linkFound(filename, url);
+			}
+			else
+			{
+				printf("Starting site: %s\n", url.toEncoded().constData());
+
+				startNetworkQuery(url);
+				emit siteStarted(url);
+			}
 		}
 	}
 
@@ -365,6 +433,18 @@ void WWWSeeker::startSearch(const QList<FileSeekInfo>& seekedFiles)
 
 QUrl WWWSeeker::takeNextUrl()
 {
+	printf("Taking next URL\n");
+
+	// Custom site has priority above all else.
+	if (d.customSiteUrl.isValid())
+	{
+		printf("Taking custom URL\n");
+		QUrl tmp = d.customSiteUrl;
+		d.customSiteUrl = QUrl(); // Make it invalid.
+
+		return tmp;
+	}
+
 	// Try to take one of the sites that are suspected to contain at least
 	// one of the seeked files.
 	while (!d.fileSiteKeyRotationList.isEmpty())

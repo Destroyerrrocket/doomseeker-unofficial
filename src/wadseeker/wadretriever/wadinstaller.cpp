@@ -35,6 +35,7 @@ WadInstaller::WadInstaller(const QString& installPath)
 
 WadInstaller::WadInstallerResult WadInstaller::installArchive(UnArchive& archive, const QList< WadDownloadInfo* >& requestedWads)
 {
+	printf("Install path is %s\n", d.installPath.toAscii().constData());
 	QDir installDir(d.installPath);
 	WadInstallerResult dirResult = makeSureDirPathExists(installDir);
 	if (dirResult.isError())
@@ -47,20 +48,16 @@ WadInstaller::WadInstallerResult WadInstaller::installArchive(UnArchive& archive
 	// We will try to find all requested WADs in the single archive.
 	foreach (const WadDownloadInfo* pWadInfo, requestedWads)
 	{
-		QStringList possibleNames = pWadInfo->possibleWadNames();
+		const QString& name = pWadInfo->name();
 
-		// And search all possible filenames for the given file.
-		foreach (const QString& name, possibleNames)
+		int entryIndex = archive.findFileEntry(name);
+		if (entryIndex >= 0)
 		{
-			int entryIndex = archive.findFileEntry(name);
-			if (entryIndex >= 0)
+			// File was found in the archive. Attempt extraction.
+			QString filePath = installDir.absoluteFilePath(name);
+			if (archive.extract(entryIndex, filePath))
 			{
-				// File was found in the archive. Attempt extraction.
-				QString filePath = installDir.absoluteFilePath(name);
-				if (archive.extract(entryIndex, filePath))
-				{
-					result.installedWads << name;
-				}
+				result.installedWads << name;
 			}
 		}
 	}
@@ -104,6 +101,7 @@ WadInstaller::WadInstallerResult WadInstaller::makeSureDirPathExists(QDir& dir)
 {
 	if (!dir.exists())
 	{
+		printf("Dir %s does not exist!\n", dir.canonicalPath().toAscii().constData());
 		if (!dir.mkpath("."))
 		{
 			return WadInstallerResult::makeCriticalError(

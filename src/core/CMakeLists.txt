@@ -275,6 +275,7 @@ set(SOURCE_FILES
 	pathfinder.cpp
 	random.cpp
 	refresher.cpp
+	speedcalculator.cpp
 	strings.cpp
 	version.cpp
 )
@@ -337,6 +338,7 @@ set(HEADER_FILES
 	random.h
 	pathfinder.h
 	qtmetapointer.h
+	speedcalculator.h
 	strings.h
 	version.h
 )

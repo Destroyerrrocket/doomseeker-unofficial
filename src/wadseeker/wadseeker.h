@@ -246,14 +246,18 @@ class WADSEEKER_API Wadseeker : public QObject
 		void allDone(bool bSuccess);
 
 		/**
-		 *	@brief Emitted when a particular file is finished.
+		 * @brief Emitted when a particular file finishes downloading.
 		 *
-		 *	@param filename
-		 *		Unique filename for the affected file.
-		 *		Emitted previously by seekStarted() signal as an entry on the
-		 *		filenames list.
+		 * @b NOTE: This doesn't mean that the WAD was successfully installed.
+		 * It only servers as a notification that a download has been
+		 * completed.
+		 *
+		 * @param filename
+		 *      Unique filename for the affected file.
+		 *      Emitted previously by seekStarted() signal as an entry on the
+		 *      filenames list.
 		 */
-		void fileDone(const QString& filename);
+		void fileDownloadFinished(const QString& filename);
 
 		/**
 		 * @brief Emits download progress.
@@ -281,6 +285,16 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *     URL from which the file is being downloaded.
 		 */
 		void fileDownloadStarted(const QString& filename, const QUrl& url);
+
+		/**
+		 * @brief Emitted when a particular file is installed correctly.
+		 *
+		 * @param filename
+		 *      Unique filename for the affected file.
+		 *      Emitted previously by seekStarted() signal as an entry on the
+		 *      filenames list.
+		 */
+		void fileInstalled(const QString& filename);
 
 		void fileMessage(const QString& filename, const QString& message, WadseekerLib::MessageType type);
 
@@ -369,6 +383,7 @@ class WADSEEKER_API Wadseeker : public QObject
 
 	private slots:
 		void fileLinkFound(const QString& filename, const QUrl& url);
+		void wadRetrieverDownloadFinished(WadDownloadInfo wadDownloadInfo);
 		void wadRetrieverDownloadProgress(WadDownloadInfo wadDownloadInfo, qint64 current, qint64 total);
 		void wadRetrieverDownloadStarted(WadDownloadInfo wadDownloadInfo, const QUrl& url);
 		void wadRetrieverFinished();

@@ -41,12 +41,17 @@ WadRetriever::~WadRetriever()
 {
 	// Produces crashes if simply deleted.
 	d.pNetworkAccessManager->deleteLater();
+	abort();
 }
 
 void WadRetriever::abort()
 {
 	d.bIsAborting = true;
-	d.wads.clear();
+
+	while (!d.wads.isEmpty())
+	{
+		delete d.wads.takeFirst();
+	}
 }
 
 void WadRetriever::addUrl(const WadDownloadInfo& wad, const QUrl& url)
@@ -185,6 +190,16 @@ bool WadRetriever::isAnyDownloadWorking() const
 	return false;
 }
 
+bool WadRetriever::isAnyWadPending() const
+{
+	if (numWadsDownloads() <= 0)
+	{
+		return false;
+	}
+
+	return numWadsDownloads() > numCurrentRunningDownloads();
+}
+
 void WadRetriever::networkQueryDownloadProgress(QNetworkReply* pReply, qint64 current, qint64 total)
 {
 	WadRetrieverInfo* pInfo = findRetrieverInfo(pReply);
@@ -200,6 +215,7 @@ void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 	if (pInfo != NULL)
 	{
 		NetworkReplyWrapperInfo* pReplyWrapperInfo = pInfo->pNetworkReply;
+		emit wadDownloadFinished(*pInfo->wad);
 
 		// Clear for later reuse of pointer.
 		pInfo->pNetworkReply = NULL;
@@ -221,7 +237,21 @@ void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 		}
 		else
 		{
-			tryInstall(pInfo->wad->name(), pReply->readAll());
+			// Get filename, if possible extract the filename from the URL,
+			// if not, use the wad stored in the pInfo.
+			QFileInfo urlPathInfo(url.path());
+			QString filename = urlPathInfo.fileName();
+
+			if (filename.isEmpty())
+			{
+				filename = pInfo->wad->name();
+			}
+
+			tryInstall(filename, pReply->readAll());
+			if (isAnyWadPending())
+			{
+				emit pendingUrls();
+			}
 		}
 
 		// Remember to clean up.
@@ -249,6 +279,46 @@ int WadRetriever::numCurrentRunningDownloads() const
 	}
 
 	return num;
+}
+
+bool WadRetriever::parseInstallerResult(const WadInstaller::WadInstallerResult& result, const QString& filename, bool bWasArchive)
+{
+	if (result.isError())
+	{
+		QString errorPrefix;
+		if (bWasArchive)
+		{
+			errorPrefix = tr("Error when extracting archive \"%1\": ").arg(filename);
+		}
+		else
+		{
+			errorPrefix = tr("Error when installing file \"%1\": ").arg(filename);
+		}
+
+		emit message(errorPrefix + result.error, result.isCriticalError() ? WadseekerLib::CriticalError : WadseekerLib::Error);
+		if (result.isCriticalError())
+		{
+			return false;
+		}
+	}
+	else
+	{
+		foreach (const QString& installedWadName, result.installedWads)
+		{
+			WadRetrieverInfo* pInfo = findRetrieverInfo(installedWadName);
+			emit wadInstalled(*pInfo->wad);
+
+			removeWadRetrieverInfo(pInfo);
+		}
+
+		if (d.wads.isEmpty())
+		{
+			emit finished();
+			return false;
+		}
+	}
+
+	return true;
 }
 
 void WadRetriever::removeWadRetrieverInfo(WadRetrieverInfo* pWadRetrieverInfo)
@@ -327,46 +397,30 @@ void WadRetriever::startNetworkQuery(WadRetrieverInfo& wadRetrieverInfo, const Q
 
 void WadRetriever::tryInstall(const QString& filename, const QByteArray& byteArray)
 {
+	const bool IS_ARCHIVE = true;
+	WadInstaller installer(d.targetSavePath);
+
+	// Install file directly.
+	if (findRetrieverInfo(filename) != NULL)
+	{
+		WadInstaller::WadInstallerResult result = installer.installFile(filename, byteArray);
+		if (!parseInstallerResult(result, filename, !IS_ARCHIVE))
+		{
+			return;
+		}
+	}
+
+	// Detect archive.
 	QFileInfo fileInfo(filename);
 	UnArchive* archive = UnArchive::openArchive(fileInfo, byteArray);
-
-	WadInstaller installer(d.targetSavePath);
-	WadInstaller::WadInstallerResult result;
 	if (archive != NULL)
 	{
-		result = installer.installArchive(*archive, getWadDownloadInfoList());
-	}
-	else
-	{
-		result = installer.installFile(filename, byteArray);
-	}
+		WadInstaller::WadInstallerResult result = installer.installArchive(*archive, getWadDownloadInfoList());
+		delete archive;
 
-	if (result.isError())
-	{
-		QString errorPrefix;
-		if (archive != NULL)
+		if (!parseInstallerResult(result, filename, IS_ARCHIVE))
 		{
-			errorPrefix = tr("Error when extracting archive \"%1\": ").arg(filename);
-		}
-		else
-		{
-			errorPrefix = tr("Error when installing file \"%1\": ").arg(filename);
-		}
-
-		emit message(errorPrefix + result.error, result.isCriticalError() ? WadseekerLib::CriticalError : WadseekerLib::Error);
-	}
-	else
-	{
-		foreach (const QString& installedWadName, result.installedWads)
-		{
-			WadRetrieverInfo* pInfo = findRetrieverInfo(installedWadName);
-			emit wadInstalled(*pInfo->wad);
-
-			removeWadRetrieverInfo(pInfo);
-			if (d.wads.isEmpty())
-			{
-				emit finished();
-			}
+			return;
 		}
 	}
 

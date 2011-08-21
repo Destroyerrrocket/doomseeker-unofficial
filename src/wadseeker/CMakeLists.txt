@@ -65,7 +65,6 @@ set(WADSEEKER_FILES
 	zip/un7zip.cpp
 	zip/untar.cpp
 	zip/unzip.cpp
-	speedcalculator.cpp
 	wadseeker.cpp
 	wadseekerversioninfo.cpp
 )
@@ -81,7 +80,6 @@ set(HEADER_FILES
 	wwwseeker/entities/fileseekinfo.h
 	wwwseeker/htmlparser.h
 	wwwseeker/urlparser.h
-	speedcalculator.h
 	wadseekerexportinfo.h	
 	wadseekermessagetype.h
 	wadseekerversioninfo.h	

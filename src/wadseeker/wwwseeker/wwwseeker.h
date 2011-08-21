@@ -125,6 +125,11 @@ class WWWSeeker : public QObject
 		 */
 		void removeSeekedFile(const QString& file);
 
+		void setCustomSiteUrl(const QUrl& url)
+		{
+			d.customSiteUrl = url;
+		}
+
 		/**
 		 * @brief Maximum amount of URLs the WWWSeeker will go through
 		 * at the same time.
@@ -215,6 +220,8 @@ class WWWSeeker : public QObject
 				bool bIsAborting;
 				bool bIsWorking;
 
+				QUrl customSiteUrl;
+
 				/**
 				 * @brief URLs to sites where specified files may reside.
 				 *
@@ -268,7 +275,22 @@ class WWWSeeker : public QObject
 		void addNetworkReply(QNetworkReply* pReply);
 		void deleteNetworkReplyWrapperInfo(QNetworkReply* pReply);
 		NetworkReplyWrapperInfo* findNetworkReplyWrapperInfo(QNetworkReply* pReply);
+
+		/**
+		 * @brief Detects if URL leads to one of the requested files.
+		 *
+		 * @param url
+		 *      URL to check.
+		 * @param [out] outFileName
+		 *      Name of the file that this URL affects.
+		 *
+		 * @return True if URL is a direct URL to one of the seeked files.
+		 */
+		bool isDirectUrl(const QUrl& url, QString& outFileName) const;
+
 		bool isMoreToSearch() const;
+
+		void parseAsHtml(QNetworkReply* pReply);
 
 		/**
 		 * @brief Starts network query using specified URL.

@@ -30,6 +30,7 @@
 #include <QUrl>
 
 #include "entities/waddownloadinfo.h"
+#include "wadretriever/wadinstaller.h"
 #include "wadseekermessagetype.h"
 
 class NetworkReplyWrapperInfo;
@@ -89,6 +90,11 @@ class WadRetriever : public QObject
 		 *        an URL on the queue.
 		 */
 		bool isAnyDownloadWorking() const;
+
+		/**
+		 * @brief Returns true if at least one WAD is pending for download URL.
+		 */
+		bool isAnyWadPending() const;
 
 		/**
 		 * @brief Number of WADs that are still being downloaded or waiting for
@@ -174,6 +180,21 @@ class WadRetriever : public QObject
 		 * to continue and the whole Wadseeker operation should abort.
 		 */
 		void message(const QString& msg, WadseekerLib::MessageType type);
+
+		/**
+		 * @brief Emitted when WadRetriever has finished current downloads
+		 *        but is still pending for more URLs.
+		 */
+		void pendingUrls();
+
+		/**
+		 * @brief Emitted when WadRetriever finishes a download.
+		 *
+		 * @b NOTE: This doesn't mean that the WAD was successfully installed.
+		 * It only servers as a notification that a download has been
+		 * completed.
+		 */
+		void wadDownloadFinished(WadDownloadInfo wadDownloadInfo);
 
 		/**
 		 * @brief Emitted when a WAD is being downloaded.
@@ -268,6 +289,16 @@ class WadRetriever : public QObject
 		 * @brief True if URL is either on the queue or already used.
 		 */
 		bool hasUrl(const WadRetrieverInfo& wadRetrieverInfo, const QUrl& url) const;
+
+		/**
+		 * @brief Performs operations basing on the result contents.
+		 *
+		 * Pending WADs list will be modified here and signals will be emitted.
+		 *
+		 * @return If false is returned the tryInstall() method must return
+		 *         immediatelly. Otherwise is is allowed to continue.
+		 */
+		bool parseInstallerResult(const WadInstaller::WadInstallerResult& result, const QString& filename, bool bWasArchive);
 
 		/**
 		 * @brief Removes WadRetrieverInfo and aborts any downloads in progress.

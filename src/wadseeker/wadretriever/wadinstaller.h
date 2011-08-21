@@ -58,7 +58,7 @@ class WadInstaller : public QObject
 				{
 					WadInstallerResult result;
 
-					result.bCriticalError = true;
+					result.errorLevel = Critical;
 					result.error = error;
 
 					return result;
@@ -68,7 +68,7 @@ class WadInstaller : public QObject
 				{
 					WadInstallerResult result;
 
-					result.bError = true;
+					result.errorLevel = Normal;
 					result.error = error;
 
 					return result;
@@ -85,22 +85,27 @@ class WadInstaller : public QObject
 
 				WadInstallerResult()
 				{
-					bError = false;
+					errorLevel = None;
 				}
 
 				bool isCriticalError() const
 				{
-					return bCriticalError;
+					return errorLevel == Critical;
 				}
 
 				bool isError() const
 				{
-					return bError || bCriticalError;
+					return errorLevel != None;
 				}
 
 			private:
-				bool bCriticalError;
-				bool bError;
+				enum ErrorLevel
+				{
+					None,
+					Normal,
+					Critical
+				};
+				ErrorLevel errorLevel;
 		};
 
 		WadInstaller(const QString& installPath);

@@ -23,7 +23,10 @@
 #ifndef __WADSEEKERWADSTABLE_H__
 #define __WADSEEKERWADSTABLE_H__
 
+#include <QMap>
 #include <QTableWidget>
+
+class SpeedCalculator;
 
 class WadseekerWadsTable : public QTableWidget
 {
@@ -33,13 +36,19 @@ class WadseekerWadsTable : public QTableWidget
 		static const int IDX_NAME_COLUMN = 0;
 		static const int IDX_URL_COLUMN = 1;
 		static const int IDX_PROGRESS_COLUMN = 2;
+		static const int IDX_SPEED_COLUMN = 3;
+		static const int IDX_ETA_COLUMN = 4;
+		static const int IDX_SIZE_COLUMN = 5;
 
 		WadseekerWadsTable(QWidget* pParent = NULL);
+		~WadseekerWadsTable();
 
 		void addFile(const QString& filename);
 
 	public slots:
+		void setFileDownloadFinished(const QString& filename);
 		void setFileProgress(const QString& filename, qint64 current, qint64 total);
+		void setFileSuccessful(const QString& filename);
 		void setFileUrl(const QString& filename, const QUrl& url);
 
 	protected:
@@ -50,6 +59,15 @@ class WadseekerWadsTable : public QTableWidget
 		{
 			public:
 				bool bAlreadyShownOnce;
+
+				/**
+				 * @brief Hash Map containing SpeedCalculator objects for each
+				 *        downloaded WAD.
+				 *
+				 * Key - filename
+				 * Value - Pointer to SpeedCalculator instance.
+				 */
+				QMap<QString, SpeedCalculator* > speedCalculators;
 		};
 
 		PrivData d;

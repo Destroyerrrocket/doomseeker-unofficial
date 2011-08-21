@@ -87,6 +87,11 @@ class Http
 		 */
 		bool isHtmlContentType() const;
 
+		/**
+		 * @brief Extracts filename from URL.
+		 */
+		QString urlFilename() const;
+
 	private:
 		const QNetworkReply* pReply;
 };

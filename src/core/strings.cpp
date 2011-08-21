@@ -51,7 +51,7 @@ QString Strings::combinePaths(QString pathFront, QString pathEnd)
 	{
 		return pathEnd;
 	}
-	
+
 	if (pathEnd.isEmpty())
 	{
 		return pathFront;
@@ -62,7 +62,7 @@ QString Strings::combinePaths(QString pathFront, QString pathEnd)
 
 	combinedPath = pathFront + "/" + pathEnd;
 	combinedPath = normalizePath(combinedPath);
-	
+
 	return combinedPath;
 }
 
@@ -74,7 +74,7 @@ QString Strings::createRandomAlphaNumericString(unsigned numChars)
 		unsigned index = (unsigned) Random::nextUShort(RANDOM_CHAR_POOL_SIZE);
 		generatedString += RANDOM_CHAR_POOL[index];
 	}
-	
+
 	return generatedString;
 }
 
@@ -85,7 +85,7 @@ QString Strings::createRandomAlphaNumericStringWithNewLines(unsigned numCharsPer
 	{
 		generatedString += createRandomAlphaNumericString(numCharsPerLine) + "\n";
 	}
-	
+
 	return generatedString;
 }
 
@@ -114,13 +114,13 @@ const QString& Strings::unescape(QString &str)
 	return str;
 }
 
-QString Strings::formatDataAmount(int bytes)
+QString Strings::formatDataAmount(qint64 bytes)
 {
 	DataUnit dataUnit;
 
 	float fBytes = (float)bytes;
 	fBytes = scaleDataUnit(fBytes, dataUnit);
-	
+
 	QString formattedString = QString("%1 ").arg(fBytes, 0, 'f', 2);
 	switch(dataUnit)
 	{
@@ -243,14 +243,14 @@ bool Strings::isCharOnCharList(char c, const QString& charList)
 bool Strings::isUrlSafe(const QString& url)
 {
 	QUrl urlObject = url;
-	
+
 	QString scheme = urlObject.scheme();
-	
+
 	bool bIsSafe1 = scheme.isEmpty();
 	bool bIsSafe2 = (scheme.compare("http", Qt::CaseInsensitive) == 0);
 	bool bIsSafe3 = (scheme.compare("ftp", Qt::CaseInsensitive) == 0);
 
-	
+
 	return bIsSafe1 || bIsSafe2 || bIsSafe3;
 }
 
@@ -258,21 +258,21 @@ QString Strings::normalizePath(QString path)
 {
 	path = QDir::fromNativeSeparators(path);
 	path = QDir::cleanPath(path);
-	
+
 	return path;
 }
 
 float Strings::scaleDataUnit(float bytes, DataUnit& outUnit)
 {
-	const static float UPPER_BOUNDARY = 900.0f;	
+	const static float UPPER_BOUNDARY = 900.0f;
 	outUnit = Byte;
 
 	while (bytes > UPPER_BOUNDARY && outUnit != Gigabyte)
 	{
 		bytes /= 1024.0f;
 		outUnit = (DataUnit)((int)outUnit + 1);
-	}	
-	
+	}
+
 	return bytes;
 }
 
@@ -343,9 +343,9 @@ QString Strings::wrapUrlsWithHtmlATags(const QString& str)
 )", Qt::CaseInsensitive);
 	//QRegExp pattern("((http://\\B+)|(ftp://\\B+)|(www\\.\\B+))", Qt::CaseInsensitive);
 	QString newString = str;
-	
+
 	newString.replace(pattern, "<a href=\"\\1\">\\1</a>");
 
-	
+
 	return newString;
 }
