@@ -31,10 +31,10 @@ ChocolateDoomGameRunner::ChocolateDoomGameRunner(const ChocolateDoomServer* serv
 {
 }
 
-bool ChocolateDoomGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword)
+bool ChocolateDoomGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory)
 {
 	if(server->playersList()->size() > 0)
-		return GameRunner::connectParameters(args, pf, iwadFound, connectPassword);
+		return GameRunner::connectParameters(args, pf, iwadFound, connectPassword, wadTargetDirectory);
 	else
 	{
 		QString tmp;
@@ -43,7 +43,7 @@ bool ChocolateDoomGameRunner::connectParameters(QStringList &args, PathFinder &p
 		if(csd->exec() == QDialog::Accepted)
 		{
 			csd->commandLineArguments(tmp, args);
-			return GameRunner::connectParameters(args, pf, iwadFound, connectPassword);
+			return GameRunner::connectParameters(args, pf, iwadFound, connectPassword, wadTargetDirectory);
 		}
 		else
 			return false;

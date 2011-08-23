@@ -40,7 +40,7 @@ GameRunner::GameRunner(const Server* server)
 {
 }
 
-bool GameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword)
+bool GameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory)
 {
 	QString address = QString("%1:%2").arg(server->address().toString()).arg(server->port());
 
@@ -194,7 +194,7 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 	QStringList missingPwads;
 	bool iwadFound = false;
 
-	if(!connectParameters(cli.args, pathFinder, iwadFound, connectPassword))
+	if(!connectParameters(cli.args, pathFinder, iwadFound, connectPassword, DoomseekerConfig::config().wadseeker.targetDirectory))
 	{
 		joinError.type = JoinError::Terminate;
 		return joinError;

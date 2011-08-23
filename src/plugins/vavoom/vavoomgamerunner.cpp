@@ -31,9 +31,9 @@ VavoomGameRunner::VavoomGameRunner(const VavoomServer* server)
 {
 }
 
-bool VavoomGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword)
+bool VavoomGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory)
 {
-	if(!GameRunner::connectParameters(args, pf, iwadFound, connectPassword))
+	if(!GameRunner::connectParameters(args, pf, iwadFound, connectPassword, wadTargetDirectory))
 		return false;
 
 	// Remove original -iwad command

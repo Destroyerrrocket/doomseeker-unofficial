@@ -33,7 +33,7 @@ class ChocolateDoomGameRunner : public GameRunner
 	public:
 		ChocolateDoomGameRunner(const ChocolateDoomServer* server);
 
-		bool						connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword);
+		bool						connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory);
 		const EnginePlugin*			plugin() const { return ChocolateDoomEnginePlugin::staticInstance(); }
 };
 

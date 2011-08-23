@@ -33,7 +33,7 @@ class VavoomGameRunner : public GameRunner
 	public:
 		VavoomGameRunner(const VavoomServer* server);
 
-		bool						connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword);
+		bool						connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory);
 
 		const EnginePlugin*			plugin() const;
 

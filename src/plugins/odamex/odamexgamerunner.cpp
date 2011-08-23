@@ -20,6 +20,7 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "datapaths.h"
 #include "main.h"
 #include "odamexgamerunner.h"
 #include "odamexgameinfo.h"
@@ -31,9 +32,9 @@ OdamexGameRunner::OdamexGameRunner(const OdamexServer* server)
 {
 }
 
-bool OdamexGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword)
+bool OdamexGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory)
 {
-	if(!GameRunner::connectParameters(args, pf, iwadFound, connectPassword))
+	if(!GameRunner::connectParameters(args, pf, iwadFound, connectPassword, wadTargetDirectory))
 		return false;
 
 	const QStringList& dehPatches = odamexServer->dehs();
@@ -49,21 +50,29 @@ bool OdamexGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool
 
 	if(iwadFound)
 	{
+#ifdef Q_OS_WIN32
+		const char* const PATH_SEPARATOR = ";";
+#else
+		const char* const PATH_SEPARATOR = ":";
+#endif
+		QString waddir;
+
 		// Waddir - Work around for an Odamex bug.
+		// Also, we want to pass the wadseeker target directory here so in the
+		// case where the server changes wads Odamex can download to it as well.
 		args << "-waddir";
 		QString iwad = server->iwadName();
-		QString waddir = pf.findFile(iwad.toLower());
+		if(!wadTargetDirectory.isEmpty())
+			waddir = wadTargetDirectory + PATH_SEPARATOR;
+		waddir += pf.findFile(iwad.toLower());
 		waddir.truncate(waddir.length() - iwad.length());
 		for(int i = 0;i < server->numWads();i++)
 		{
 			QString wad = server->wad(i).name;
 			QString pwaddir = pf.findFile(wad.toLower());
 			pwaddir.truncate(pwaddir.length() - wad.length());
-			#if defined(Q_OS_WIN32)
-			waddir += ";" + pwaddir;
-			#else
-			waddir += ":" + pwaddir;
-			#endif
+			if(!pwaddir.isEmpty())
+				waddir += PATH_SEPARATOR + pwaddir;
 		}
 		args << waddir;
 	}

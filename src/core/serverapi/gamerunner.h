@@ -47,7 +47,7 @@ class MAIN_EXPORT GameRunner : public QObject
 		/**
 		 * @return false to terminate the join process.
 		 */
-		virtual bool				connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword);
+		virtual bool				connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory);
 
 		/**
 		 *	@param [out] cli - after successful call this will contain
