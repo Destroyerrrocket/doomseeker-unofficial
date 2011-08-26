@@ -210,7 +210,8 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 		wadList << server->iwadName().toLower();
 		for (int i = 0; i < server->numWads(); ++i)
 		{
-			wadList << server->wad(i).name.toLower();
+			// Also be sure to escape any underscores.
+			wadList << server->wad(i).name.toLower().replace("_", "__");
 		}
 
 		// Generate demo name.

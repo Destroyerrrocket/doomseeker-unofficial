@@ -56,6 +56,7 @@ void DemoManagerDlg::adjustDemoList()
 {
 	// Populate the demos list (*.cld* because some ports add .lmp extension automatically)
 	// In order to index the demos we'll convert the dates to integers by calculating the days until today.
+	// Also we need to convert double underscores to a single underscore
 	QDate today = QDate::currentDate();
 	QTime referenceTime(23, 59, 59);
 	QDir demosDirectory(Main::dataPaths->demosDirectoryPath());
@@ -64,7 +65,28 @@ void DemoManagerDlg::adjustDemoList()
 	QMap<int, DemoMap> demoMap;
 	foreach(const QString &demoName, demos)
 	{
-		QStringList demoData = demoName.left(demoName.lastIndexOf(".cld")).split("_");
+		QStringList demoData;
+		QString metaData = demoName.left(demoName.lastIndexOf(".cld"));
+		// We need to split manually to handle escaping.
+		for(unsigned int i = 0;i < metaData.length();++i)
+		{
+			if(metaData[i] == '_')
+			{
+				// If our underscore is followed by another just continue on...
+				if(i+1 < metaData.length() && metaData[i+1] == '_')
+				{
+					++i;
+					continue;
+				}
+
+				// Split the meta data and then restart from the beginning.
+				demoData << metaData.left(i).replace("__", "_");
+				metaData = metaData.mid(i+1);
+				i = 0;
+			}
+		}
+		// Whatever is left is a part of our data.
+		demoData << metaData.replace("__", "_");
 		if(demoData.size() < 4) // Should have at least 4 elements port, date, time, iwad[, pwads]
 			continue;
 
