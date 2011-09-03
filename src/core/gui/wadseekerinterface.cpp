@@ -117,7 +117,7 @@ void WadseekerInterface::allDone(bool bSuccess)
 	{
 		displayMessage(tr("All done. Fail."), WadseekerLib::CriticalError, false);
 	}
-
+	setStateWaiting();
 }
 
 void WadseekerInterface::displayMessage(const QString& message, WadseekerLib::MessageType type, bool bPrependErrorsWithMessageType)
@@ -186,11 +186,6 @@ void WadseekerInterface::displayMessage(const QString& message, WadseekerLib::Me
 	teWadseekerOutput->append(strProcessedMessage);
 }
 
-void WadseekerInterface::fail()
-{
-	displayMessage("Fail?", WadseekerLib::Error, true);
-}
-
 void WadseekerInterface::initMessageColors()
 {
 	colorHtmlMessageNotice = gConfig.wadseeker.colorMessageNotice;
@@ -234,6 +229,7 @@ void WadseekerInterface::seekStarted(const QStringList& filenames)
 
 	twSites->setRowCount(0);
 	twWads->setRowCount(0);
+	setStateDownloading();
 
 	foreach (const QString& name, filenames)
 	{
@@ -244,12 +240,14 @@ void WadseekerInterface::seekStarted(const QStringList& filenames)
 void WadseekerInterface::setStateDownloading()
 {
 	btnClose->setText(tr("Abort"));
+	btnDownload->setEnabled(false);
 	state = Downloading;
 }
 
 void WadseekerInterface::setStateWaiting()
 {
 	btnClose->setText(tr("Close"));
+	btnDownload->setEnabled(true);
 	state = Waiting;
 }
 
@@ -325,7 +323,6 @@ void WadseekerInterface::startSeeking(const QStringList& seekedFilesList)
 	setupIdgames();
 
 	// TODO
-	wadseeker.setCustomSite(QUrl("http://192.168.1.1/robert/wadseeker_test/fake_test/test.zip"));
 	wadseeker.setTargetDirectory(gConfig.wadseeker.targetDirectory);
 	wadseeker.startSeek(seekedFilesListFormatted);
 }

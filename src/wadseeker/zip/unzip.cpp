@@ -139,7 +139,7 @@ bool UnZip::extract(int file, const QString& where)
 int UnZip::findFileEntry(const QString& entryName)
 {
 	if (!isValid())
-		return NULL;
+		return -1;
 
 	qint64 pos = 0;
 	ZipLocalFileHeader* ret = NULL;

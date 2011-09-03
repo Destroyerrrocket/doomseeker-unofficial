@@ -137,6 +137,10 @@ class WADSEEKER_API Wadseeker : public QObject
 		 * @brief Check if Wadseeker is still working.
 		 *
 		 * @return True if any search or download is still in progress.
+		 *         False if all site searches are finished and there are no
+		 *         downloads in progress - in such case false will also be
+		 *         returned if there are still WADs pending for URLs but there
+		 *         is no way for these URLs to be provided.
 		 */
 		bool				isWorking() const;
 

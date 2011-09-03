@@ -25,6 +25,7 @@
 #include "entities/waddownloadinfo.h"
 #include "zip/unarchive.h"
 
+#include <QDebug>
 #include <QDir>
 #include <QFile>
 
@@ -35,7 +36,6 @@ WadInstaller::WadInstaller(const QString& installPath)
 
 WadInstaller::WadInstallerResult WadInstaller::installArchive(UnArchive& archive, const QList< WadDownloadInfo* >& requestedWads)
 {
-	printf("Install path is %s\n", d.installPath.toAscii().constData());
 	QDir installDir(d.installPath);
 	WadInstallerResult dirResult = makeSureDirPathExists(installDir);
 	if (dirResult.isError())

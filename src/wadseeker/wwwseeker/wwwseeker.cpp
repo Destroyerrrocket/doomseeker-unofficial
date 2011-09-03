@@ -66,13 +66,13 @@ void WWWSeeker::abort()
 	}
 	else
 	{
+		d.sitesUrls.clear();
+		d.seekedFiles.clear();
+
 		foreach (NetworkReplyWrapperInfo* pInfo, d.networkQueries)
 		{
 			pInfo->pReply->abort();
 		}
-
-		d.sitesUrls.clear();
-		d.seekedFiles.clear();
 	}
 }
 

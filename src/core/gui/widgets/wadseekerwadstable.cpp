@@ -25,6 +25,7 @@
 #include "speedcalculator.h"
 #include "strings.h"
 
+#include <QDebug>
 #include <QHeaderView>
 #include <QProgressBar>
 #include <QUrl>
@@ -137,6 +138,7 @@ void WadseekerWadsTable::setFileProgress(const QString& filename, qint64 current
 
 void WadseekerWadsTable::setFileSuccessful(const QString& filename)
 {
+	qDebug() << "File sucessful: " << filename;
 	int row = findFileRow(filename);
 
 	if (row >= 0)

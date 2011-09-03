@@ -59,7 +59,7 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 
 		Wadseeker&	wadseekerRef() { return wadseeker; }
 
-	protected:
+	private:
 		enum States
 		{
 			Downloading 	= 0,
@@ -86,7 +86,6 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 		Wadseeker		wadseeker;
 
 		void			displayMessage(const QString& message, WadseekerLib::MessageType type, bool bPrependErrorsWithMessageType);
-		void			fail();
 		void			initMessageColors();
 
 		/**
