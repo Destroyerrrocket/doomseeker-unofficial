@@ -324,6 +324,9 @@ void WadseekerInterface::startSeeking(const QStringList& seekedFilesList)
 
 	// TODO
 	wadseeker.setTargetDirectory(gConfig.wadseeker.targetDirectory);
+	wadseeker.setCustomSite(customSite);
+	wadseeker.setMaximumConcurrentSeeks(gConfig.wadseeker.maxConcurrentSiteDownloads);
+	wadseeker.setMaximumConcurrentDownloads(gConfig.wadseeker.maxConcurrentWadDownloads);
 	wadseeker.startSeek(seekedFilesListFormatted);
 }
 

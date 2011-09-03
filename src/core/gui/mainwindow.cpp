@@ -1078,7 +1078,7 @@ Wadseeker will not download IWADs.\n\n");
 
 						WadseekerInterface wsi(NULL);
 						wsi.setAutomatic(true, joinError.missingWads);
-						wsi.wadseekerRef().setCustomSite(server->website());
+						wsi.setCustomSite(server->website());
 						if (wsi.exec() == QDialog::Accepted)
 						{
 							return obtainJoinCommandLine(server, cli, errorCaption);

@@ -425,6 +425,8 @@ DoomseekerConfig::WadseekerCfg::WadseekerCfg()
 	this->downloadTimeoutSeconds = WADSEEKER_DOWNLOAD_TIMEOUT_SECONDS_DEFAULT;
 	this->idgamesPriority = 0;
 	this->idgamesURL = Wadseeker::defaultIdgamesUrl();
+	this->maxConcurrentSiteDownloads = 3;
+	this->maxConcurrentWadDownloads = 3;
 	this->targetDirectory = Main::dataPaths->programsDataDirectoryPath();
 
 	// Search URLs remains unitizalized here. It will be initialized
@@ -442,6 +444,8 @@ void DoomseekerConfig::WadseekerCfg::init(IniSection& section)
 	section.createSetting("DownloadTimeoutSeconds", this->downloadTimeoutSeconds);
 	section.createSetting("IdgamesPriority", this->idgamesPriority);
 	section.createSetting("IdgamesURL", this->idgamesURL);
+	section.createSetting("MaxConcurrentSiteDownloads", this->maxConcurrentSiteDownloads);
+	section.createSetting("MaxConcurrentWadDownloads", this->maxConcurrentWadDownloads);
 	section.createSetting("SearchURLs", Wadseeker::defaultSitesListEncoded().join(";"));
 	section.createSetting("TargetDirectory", this->targetDirectory);
 }
@@ -456,6 +460,8 @@ void DoomseekerConfig::WadseekerCfg::load(IniSection& section)
 	this->downloadTimeoutSeconds = section["DownloadTimeoutSeconds"];
 	this->idgamesPriority = section["IdgamesPriority"];
 	this->idgamesURL = (const QString &)section["IdgamesURL"];
+	this->maxConcurrentSiteDownloads = section["MaxConcurrentSiteDownloads"];
+	this->maxConcurrentWadDownloads = section["MaxConcurrentWadDownloads"];
 	this->targetDirectory = (const QString &)section["TargetDirectory"];
 
 	// Complex data values
@@ -477,6 +483,8 @@ void DoomseekerConfig::WadseekerCfg::save(IniSection& section)
 	section["DownloadTimeoutSeconds"] = this->downloadTimeoutSeconds;
 	section["IdgamesPriority"] = this->idgamesPriority;
 	section["IdgamesURL"] = this->idgamesURL;
+	section["MaxConcurrentSiteDownloads"] = this->maxConcurrentSiteDownloads;
+	section["MaxConcurrentWadDownloads"] = this->maxConcurrentWadDownloads;
 	section["TargetDirectory"] = this->targetDirectory;
 
 	// Complex data values

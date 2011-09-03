@@ -128,7 +128,7 @@ void WadseekerWadsTable::setFileProgress(const QString& filename, qint64 current
 		pCalculator->setExpectedDataSize(total);
 		pCalculator->registerDataAmount(current);
 
-		QString eta = QString("%1s").arg(pCalculator->estimatedTimeUntilArrival());
+		QString eta = Strings::formatTime(pCalculator->estimatedTimeUntilArrival());
 		item(row, IDX_ETA_COLUMN)->setText(eta);
 
 		QString speed = Strings::formatDataSpeed(pCalculator->getSpeed());
@@ -176,14 +176,17 @@ void WadseekerWadsTable::showEvent(QShowEvent* pEvent)
 		QHeaderView* pHeader = horizontalHeader();
 
 		// Setup resizing
-		pHeader->setResizeMode(IDX_ETA_COLUMN, QHeaderView::ResizeToContents);
-		pHeader->setResizeMode(IDX_SIZE_COLUMN, QHeaderView::ResizeToContents);
-		pHeader->setResizeMode(IDX_SPEED_COLUMN, QHeaderView::ResizeToContents);
-		pHeader->setResizeMode(IDX_PROGRESS_COLUMN, QHeaderView::ResizeToContents);
+//		pHeader->setResizeMode(IDX_ETA_COLUMN, QHeaderView::ResizeToContents);
+//		pHeader->setResizeMode(IDX_SIZE_COLUMN, QHeaderView::ResizeToContents);
+//		pHeader->setResizeMode(IDX_SPEED_COLUMN, QHeaderView::ResizeToContents);
+//		pHeader->setResizeMode(IDX_PROGRESS_COLUMN, QHeaderView::ResizeToContents);
 		pHeader->setResizeMode(IDX_URL_COLUMN, QHeaderView::Stretch);
 
 		pHeader->resizeSection(IDX_NAME_COLUMN, 140);
-		//pHeader->resizeSection(IDX_PROGRESS_COLUMN, 85);
+		pHeader->resizeSection(IDX_PROGRESS_COLUMN, 85);
+		pHeader->resizeSection(IDX_ETA_COLUMN, 85);
+		pHeader->resizeSection(IDX_SIZE_COLUMN, 150);
+		pHeader->resizeSection(IDX_SPEED_COLUMN, 85);
 
 	}
 }

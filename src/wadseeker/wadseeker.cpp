@@ -56,6 +56,7 @@ const QString Wadseeker::forbiddenWads[] =
 ///////////////////////////////////////////////////////////////////////
 Wadseeker::Wadseeker()
 {
+	d.bIsAborting = false;
 	d.seekParametersForCurrentSeek = NULL;
 	d.wadRetriever = NULL;
 	d.wwwSeeker = NULL;
@@ -91,7 +92,7 @@ void Wadseeker::abort()
 
 void Wadseeker::cleanUpAfterFinish()
 {
-	if (d.wadRetriever == NULL || d.wwwSeeker == NULL)
+	if (d.seekParametersForCurrentSeek == NULL)
 	{
 		return;
 	}
@@ -164,11 +165,9 @@ bool Wadseeker::isForbiddenWad(const QString& wad)
 
 bool Wadseeker::isWorking() const
 {
-	// wwwSeeker/wadRetriever are both NULL or both NOT NULL at the same time.
-	if (d.wwwSeeker == NULL)
+	if (d.seekParametersForCurrentSeek == NULL)
 	{
-		// If either WWWSeeker or WadRetriever objects are NULL then we are
-		// in a "waiting for orders" state, ie. seek is not in progress.
+		// We're in a "waiting for orders" state, ie. seek is not in progress.
 		return false;
 	}
 
@@ -205,8 +204,8 @@ void Wadseeker::prepareSeekObjects()
 
 	// Connect signals to slots.
 
-	// The slot will handle difference between finished() and pendingUrls()
-	// signals.
+	// The wadRetrieverFinished() slot will handle difference between finished()
+	// and pendingUrls() signals.
 	this->connect(d.wadRetriever, SIGNAL( finished() ),
 		SLOT(wadRetrieverFinished()), Qt::QueuedConnection);
 	this->connect(d.wadRetriever, SIGNAL( pendingUrls() ),
@@ -246,6 +245,26 @@ void Wadseeker::setIdgamesHighPriority(bool bHighPriority)
 void Wadseeker::setIdgamesUrl(QString archiveUrl)
 {
 	d.seekParameters.idgamesUrl = archiveUrl;
+}
+
+void Wadseeker::setMaximumConcurrentDownloads(unsigned max)
+{
+	if (max < 1)
+	{
+		max = 1;
+	}
+
+	d.seekParameters.maxConcurrentDownloads = max;
+}
+
+void Wadseeker::setMaximumConcurrentSeeks(unsigned max)
+{
+	if (max < 1)
+	{
+		max = 1;
+	}
+
+	d.seekParameters.maxConcurrentSeeks = max;
 }
 
 void Wadseeker::setPrimarySites(const QStringList& urlList)
@@ -362,6 +381,7 @@ bool Wadseeker::startSeek(const QStringList& wads)
 		return false;
 	}
 
+	d.bIsAborting = false;
 	d.seekParameters.seekedWads = filteredWadsList;
 	d.seekParametersForCurrentSeek = new SeekParameters(d.seekParameters);
 
@@ -389,8 +409,11 @@ bool Wadseeker::startSeek(const QStringList& wads)
 		emit message(tr("WAD %1: %2").arg(wad, fileSeekInfosList.last().possibleFilenames().join(", ")), WadseekerLib::Notice);
 	}
 
+	d.wadRetriever->setMaxConcurrentWadDownloads(d.seekParametersForCurrentSeek->maxConcurrentDownloads);
 	d.wadRetriever->setTargetSavePath(d.seekParametersForCurrentSeek->saveDirectoryPath);
 	d.wadRetriever->setWads(wadDownloadInfoList);
+
+	d.wwwSeeker->setMaxConcurrectSiteDownloads(d.seekParametersForCurrentSeek->maxConcurrentSeeks);
 
 	emit seekStarted(filteredWadsList);
 	d.wwwSeeker->startSearch(fileSeekInfosList);
@@ -480,5 +503,7 @@ Wadseeker::SeekParameters::SeekParameters()
 	this->bIdgamesEnabled = true;
 	this->bIdgamesHighPriority = true;
 	this->idgamesUrl = Wadseeker::defaultIdgamesUrl();
+	this->maxConcurrentDownloads = 3;
+	this->maxConcurrentSeeks = 3;
 	this->sitesUrls = Wadseeker::defaultSitesListEncoded();
 }

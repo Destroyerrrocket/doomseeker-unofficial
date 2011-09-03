@@ -57,6 +57,11 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 			this->seekedWads = seekedWads;
 		}
 
+		void		setCustomSite(const QString& site)
+		{
+			this->customSite = site;
+		}
+
 		Wadseeker&	wadseekerRef() { return wadseeker; }
 
 	private:
@@ -76,6 +81,8 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 		QString			colorHtmlMessageFatalError;
 		QString			colorHtmlMessageError;
 		QString			colorHtmlMessageNotice;
+
+		QString			customSite;
 
 		/**
 		 * Interface uses this instead of line edit if bAutomatic is true.

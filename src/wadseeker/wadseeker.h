@@ -177,19 +177,39 @@ class WADSEEKER_API Wadseeker : public QObject
 		void 				setIdgamesHighPriority(bool bHighPriority);
 
 		/**
-		 *	@brief Sets URL to Idgames search page.
+		 * @brief Sets URL to Idgames search page.
 		 */
 		void 				setIdgamesUrl(QString archiveURL);
 
 		/**
-		 *	Sets a list of primary sites. This is where Wadseeker begins
-		 *	it's search and where it returns to if nothing of interest
-		 *	was found on other pages.
+		 * @brief Sets maximum number of concurrent WAD downloads.
 		 *
-		 *	Primary sites must be set before the seek is started.
+		 * Default value: 3
 		 *
-		 *	@param urlList
-		 *		List of valid, absolute URLs
+		 * @param max
+		 *      Number of max. concurrent downloads. Cannot be lesser than one.
+		 */
+		void				setMaximumConcurrentDownloads(unsigned max);
+
+		/**
+		 * @brief Sets maximum number of concurrent site seeks.
+		 *
+		 * Default value: 3
+		 *
+		 * @param max
+		 *      Number of max. concurrent seeks. Cannot be lesser than one.
+		 */
+		void				setMaximumConcurrentSeeks(unsigned max);
+
+		/**
+		 * Sets a list of primary sites. This is where Wadseeker begins
+		 * it's search and where it returns to if nothing of interest
+		 * was found on other pages.
+		 *
+		 * Primary sites must be set before the seek is started.
+		 *
+		 * @param urlList
+		 *      List of valid, absolute URLs
 		 */
 		void 				setPrimarySites(const QStringList& urlList);
 
@@ -349,6 +369,8 @@ class WADSEEKER_API Wadseeker : public QObject
 				bool bIdgamesHighPriority;
 				QUrl customSiteUrl;
 				QString idgamesUrl;
+				unsigned maxConcurrentDownloads;
+				unsigned maxConcurrentSeeks;
 				QString saveDirectoryPath;
 				QStringList seekedWads;
 				QStringList sitesUrls;

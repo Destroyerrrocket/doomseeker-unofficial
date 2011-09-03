@@ -130,6 +130,8 @@ class DoomseekerConfig
 			QString						colorMessageNotice;
 			int							connectTimeoutSeconds;
 			int							downloadTimeoutSeconds;
+			int							maxConcurrentSiteDownloads;
+			int							maxConcurrentWadDownloads;
 			int							idgamesPriority;
 			QString						idgamesURL;
 			QStringList					searchURLs;
