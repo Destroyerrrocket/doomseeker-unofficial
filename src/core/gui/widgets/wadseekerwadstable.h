@@ -77,7 +77,7 @@ class WadseekerWadsTable : public QTableWidget
 		PrivData d;
 
 		int findFileRow(const QString& filename);
-		void updateDataInfoValues();
+		void updateDataInfoValues(bool bForce);
 };
 
 #endif

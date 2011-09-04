@@ -41,24 +41,44 @@
 ****************************************************************************/
 #include "fixedftpreply.h"
 
-#include <QTextDocument>
+#include <QDebug>
 #include <QtNetwork>
 
 FixedFtpReply::FixedFtpReply(const QUrl &url)
     : QNetworkReply()
 {
+    offset = 0;
+    fileSize = 0;
+
     ftp = new QFtp(this);
+    connect(ftp, SIGNAL(done(bool)), this, SLOT(processDone(bool)));
     connect(ftp, SIGNAL(listInfo(QUrlInfo)), this, SLOT(processListInfo(QUrlInfo)));
     connect(ftp, SIGNAL(readyRead()), this, SLOT(processData()));
     connect(ftp, SIGNAL(commandFinished(int, bool)), this, SLOT(processCommand(int, bool)));
 
     this->connect(ftp, SIGNAL(dataTransferProgress(qint64, qint64)),
-			SIGNAL( downloadProgress(qint64, qint64) ));
-
-    offset = 0;
+			SLOT( dataProgressSlot(qint64, qint64) ));
 
     setUrl(url);
     ftp->connectToHost(url.host());
+}
+
+void FixedFtpReply::dataProgressSlot(qint64 current, qint64 total)
+{
+    if (total <= 0)
+    {
+        // Replace total with file size stored in the object's memory, if
+        // current total is invalid.
+        total = fileSize;
+    }
+
+    emit downloadProgress(current, total);
+}
+
+void FixedFtpReply::fetchSize()
+{
+    QString cmd = QString("SIZE %1").arg(url().path());
+    ftp->rawCommand(cmd);
 }
 
 void FixedFtpReply::processCommand(int, bool err)
@@ -66,6 +86,7 @@ void FixedFtpReply::processCommand(int, bool err)
     if (err) {
         setError(ContentNotFoundError, "Unknown command");
         emit error(ContentNotFoundError);
+        abort();
         return;
     }
 
@@ -84,15 +105,21 @@ void FixedFtpReply::processCommand(int, bool err)
 
     case QFtp::Get:
         setContent();
+        break;
 
     default:
         ;
     }
 }
 
+void FixedFtpReply::processDone(bool bError)
+{
+    emit finished();
+}
+
 void FixedFtpReply::processListInfo(const QUrlInfo &urlInfo)
 {
-    items.append(urlInfo);
+    this->fileSize = urlInfo.size() > 0 ? urlInfo.size() : 0;
 }
 
 void FixedFtpReply::processData()

@@ -104,6 +104,9 @@ void WadseekerWadsTable::setFileDownloadFinished(const QString& filename)
 
 		item(row, IDX_URL_COLUMN)->setText(tr("Awaiting URLs"));
 		item(row, IDX_URL_COLUMN)->setToolTip(tr("Awaiting URLs"));
+
+        const bool FORCE = true;
+		updateDataInfoValues(FORCE);
 	}
 }
 
@@ -122,13 +125,13 @@ void WadseekerWadsTable::setFileProgress(const QString& filename, qint64 current
 		pCalculator->setExpectedDataSize(total);
 		pCalculator->registerDataAmount(current);
 
-		updateDataInfoValues();
+		const bool FORCE = true;
+		updateDataInfoValues(!FORCE);
 	}
 }
 
 void WadseekerWadsTable::setFileSuccessful(const QString& filename)
 {
-	qDebug() << "File sucessful: " << filename;
 	int row = findFileRow(filename);
 
 	if (row >= 0)
@@ -142,6 +145,9 @@ void WadseekerWadsTable::setFileSuccessful(const QString& filename)
 
 		item(row, IDX_ETA_COLUMN)->setText(tr("DONE"));
 		item(row, IDX_SPEED_COLUMN)->setText("");
+
+		const bool FORCE = true;
+		updateDataInfoValues(FORCE);
 	}
 }
 
@@ -166,10 +172,6 @@ void WadseekerWadsTable::showEvent(QShowEvent* pEvent)
 		QHeaderView* pHeader = horizontalHeader();
 
 		// Setup resizing
-//		pHeader->setResizeMode(IDX_ETA_COLUMN, QHeaderView::ResizeToContents);
-//		pHeader->setResizeMode(IDX_SIZE_COLUMN, QHeaderView::ResizeToContents);
-//		pHeader->setResizeMode(IDX_SPEED_COLUMN, QHeaderView::ResizeToContents);
-//		pHeader->setResizeMode(IDX_PROGRESS_COLUMN, QHeaderView::ResizeToContents);
 		pHeader->setResizeMode(IDX_URL_COLUMN, QHeaderView::Stretch);
 
 		pHeader->resizeSection(IDX_NAME_COLUMN, 140);
@@ -181,10 +183,10 @@ void WadseekerWadsTable::showEvent(QShowEvent* pEvent)
 	}
 }
 
-void WadseekerWadsTable::updateDataInfoValues()
+void WadseekerWadsTable::updateDataInfoValues(bool bForce)
 {
     // Make sure updates are not performed before certain interval passes.
-    if (d.updateClock.elapsed() > UPDATE_INTERVAL_MS)
+    if (d.updateClock.elapsed() > UPDATE_INTERVAL_MS || bForce)
     {
         d.updateClock.start();
 
