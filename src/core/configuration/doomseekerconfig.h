@@ -132,7 +132,6 @@ class DoomseekerConfig
 			int							downloadTimeoutSeconds;
 			int							maxConcurrentSiteDownloads;
 			int							maxConcurrentWadDownloads;
-			int							idgamesPriority;
 			QString						idgamesURL;
 			QStringList					searchURLs;
 			QString						targetDirectory;

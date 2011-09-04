@@ -35,7 +35,7 @@
 #define WADSEEKER_CONNECT_TIMEOUT_SECONDS_DEFAULT 30
 #define WADSEEKER_DOWNLOAD_TIMEOUT_SECONDS_DEFAULT 120
 
-class SpeedCalculator;
+class Idgames;
 class WadRetriever;
 class WWWSeeker;
 
@@ -163,18 +163,6 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *	If false, Idgames archive will be skipped.
 		 */
 		void 				setIdgamesEnabled(bool bEnabled);
-
-		/**
-		 *	@brief Toggles Idgames priority state.
-		 *
-		 *	Ignored if Idgames is disabled.
-		 *
-		 *	If true, Idgames archive will be
-		 *	searched right after the custom site.
-		 *	If false, Idgames archive will be searched after all other
-		 *	sites fail.
-		 */
-		void 				setIdgamesHighPriority(bool bHighPriority);
 
 		/**
 		 * @brief Sets URL to Idgames search page.
@@ -320,8 +308,6 @@ class WADSEEKER_API Wadseeker : public QObject
 		 */
 		void fileInstalled(const QString& filename);
 
-		void fileMessage(const QString& filename, const QString& message, WadseekerLib::MessageType type);
-
 		/**
 		 * @brief Emitted when Wadseeker wants to communicate about its
 		 *        progress with outside world.
@@ -366,7 +352,6 @@ class WADSEEKER_API Wadseeker : public QObject
 		{
 			public:
 				bool bIdgamesEnabled;
-				bool bIdgamesHighPriority;
 				QUrl customSiteUrl;
 				QString idgamesUrl;
 				unsigned maxConcurrentDownloads;
@@ -382,6 +367,21 @@ class WADSEEKER_API Wadseeker : public QObject
 		{
 			public:
 				bool bIsAborting;
+
+				/**
+				 * @brief Idgames objects that will handle each file
+				 *        separately.
+				 *
+				 * Each file is probed one-at-a-time on the IDGames page. This
+				 * was designed to prevent creating too many request to the
+				 * IDGames page.
+				 *
+				 * As long as there are Idgames clients on the
+				 * list the Wadseeker will return true on isWorking() as there
+				 * is a potential chance that new links to files will be found.
+				 */
+				QList<Idgames* > idgamesClients;
+
 				SeekParameters seekParameters;
 
 				/**
@@ -405,10 +405,15 @@ class WADSEEKER_API Wadseeker : public QObject
 		 */
 		void prepareSeekObjects();
 
+		void setupIdgamesClients(const QList<WadDownloadInfo>& wadDownloadInfoList);
 		void setupSitesUrls();
+
+
+		void startNextIdgamesClient();
 
 	private slots:
 		void fileLinkFound(const QString& filename, const QUrl& url);
+		void idgamesClientFinished(Idgames* pEmitter);
 		void wadRetrieverDownloadFinished(WadDownloadInfo wadDownloadInfo);
 		void wadRetrieverDownloadProgress(WadDownloadInfo wadDownloadInfo, qint64 current, qint64 total);
 		void wadRetrieverDownloadStarted(WadDownloadInfo wadDownloadInfo, const QUrl& url);

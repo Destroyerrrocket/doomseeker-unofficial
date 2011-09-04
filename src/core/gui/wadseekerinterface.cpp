@@ -258,11 +258,9 @@ void WadseekerInterface::setupIdgames()
 	bool idgamesHasHighPriority = false;
 
 	useIdgames = gConfig.wadseeker.bSearchInIdgames;
-	idgamesHasHighPriority = gConfig.wadseeker.idgamesPriority != 0;
 	idgamesUrl = gConfig.wadseeker.idgamesURL;
 
 	wadseeker.setIdgamesEnabled(useIdgames);
-	wadseeker.setIdgamesHighPriority(idgamesHasHighPriority);
 	wadseeker.setIdgamesUrl(idgamesUrl);
 }
 

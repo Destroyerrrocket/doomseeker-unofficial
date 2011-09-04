@@ -28,13 +28,14 @@
 #include "wadretriever/wadinstaller.h"
 #include "zip/unarchive.h"
 
+#include <QDebug>
 #include <QFileInfo>
 
 WadRetriever::WadRetriever()
 {
 	d.bIsAborting = false;
 	d.maxConcurrentWadDownloads = 3;
-	d.pNetworkAccessManager = new QNetworkAccessManager();
+	d.pNetworkAccessManager = new FixedNetworkAccessManager();
 }
 
 WadRetriever::~WadRetriever()
@@ -209,8 +210,31 @@ void WadRetriever::networkQueryDownloadProgress(QNetworkReply* pReply, qint64 cu
 	}
 }
 
+void WadRetriever::networkQueryError(QNetworkReply* pReply, QNetworkReply::NetworkError code)
+{
+	qDebug() << "WadRetriever::networkQueryError() " << code;
+}
+
 void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 {
+#ifndef NDEBUG
+	{
+		QUrl url = pReply->request().url();
+		QUrl replyUrl = pReply->url();
+		QList<QByteArray> headers = pReply->rawHeaderList();
+		printf("WadRetriever HEADERS\n");
+		printf("URL %s\n", url.toEncoded().constData());
+		printf("Reply URL %s\n", replyUrl.toEncoded().constData());
+		foreach (const QByteArray& headerName, headers)
+		{
+			QByteArray headerData = pReply->rawHeader(headerName);
+			printf("%s: %s\n", headerName.constData(), headerData.constData());
+		}
+		printf("END OF HEADERS\n");
+	}
+
+	qDebug() << "WadRetriever: Finished network query for URL: " << pReply->request().url().toString();
+#endif
 	WadRetrieverInfo* pInfo = findRetrieverInfo(pReply);
 	if (pInfo != NULL)
 	{
@@ -344,6 +368,8 @@ void WadRetriever::setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, QNetworkR
 
 	this->connect(pWrapperInfo->pSignalWrapper, SIGNAL( downloadProgress(QNetworkReply*, qint64, qint64) ),
 		SLOT( networkQueryDownloadProgress(QNetworkReply*, qint64, qint64) ));
+	this->connect(pWrapperInfo->pSignalWrapper, SIGNAL( error(QNetworkReply*, QNetworkReply::NetworkError) ),
+		SLOT( networkQueryError(QNetworkReply*, QNetworkReply::NetworkError) ));
 	this->connect(pWrapperInfo->pSignalWrapper, SIGNAL( finished(QNetworkReply*) ),
 		SLOT( networkQueryFinished(QNetworkReply*) ));
 }
@@ -389,6 +415,10 @@ void WadRetriever::startNetworkQuery(WadRetrieverInfo& wadRetrieverInfo, const Q
 	request.setUrl(url);
 	request.setRawHeader("User-Agent", d.userAgent.toAscii());
 
+#ifndef NDEBUG
+	qDebug() << "WadRetriever: Starting network query for URL: " << url.toString();
+#endif
+
 	QNetworkReply* pReply = d.pNetworkAccessManager->get(request);
 	setNetworkReply(wadRetrieverInfo, pReply);
 
@@ -399,6 +429,10 @@ void WadRetriever::tryInstall(const QString& filename, const QByteArray& byteArr
 {
 	const bool IS_ARCHIVE = true;
 	WadInstaller installer(d.targetSavePath);
+
+#ifndef NDEBUG
+	qDebug() << "WadRetriever: Attempting to install file " << filename << " of size " << byteArray.size();
+#endif
 
 	// Install file directly.
 	if (findRetrieverInfo(filename) != NULL)

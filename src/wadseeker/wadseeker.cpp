@@ -21,9 +21,9 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "entities/waddownloadinfo.h"
-#include "protocols/idgames.h"
 #include "wadretriever/wadretriever.h"
 #include "wwwseeker/entities/fileseekinfo.h"
+#include "wwwseeker/idgames.h"
 #include "wwwseeker/wwwseeker.h"
 #include "zip/unzip.h"
 #include "zip/un7zip.h"
@@ -64,6 +64,11 @@ Wadseeker::Wadseeker()
 
 Wadseeker::~Wadseeker()
 {
+	while (!d.idgamesClients.isEmpty())
+	{
+		delete d.idgamesClients.takeFirst();
+	}
+
 	if (d.wwwSeeker != NULL)
 	{
 		delete d.wwwSeeker;
@@ -85,8 +90,21 @@ void Wadseeker::abort()
 	if (isWorking() && !d.bIsAborting)
 	{
 		d.bIsAborting = true;
-		d.wwwSeeker->abort();
-		d.wadRetriever->abort();
+
+		foreach (Idgames* pIdgamesClient, d.idgamesClients)
+		{
+			pIdgamesClient->abort();
+		}
+
+		if (d.wwwSeeker != NULL)
+		{
+			d.wwwSeeker->abort();
+		}
+
+		if (d.wadRetriever != NULL)
+		{
+			d.wadRetriever->abort();
+		}
 	}
 }
 
@@ -116,10 +134,7 @@ void Wadseeker::cleanUpAfterFinish()
 
 const QString Wadseeker::defaultIdgamesUrl()
 {
-	// TODO
-	// Fix me
-	return "a";
-	//return Idgames::defaultIdgamesUrl();
+	return Idgames::defaultIdgamesUrl();
 }
 
 QStringList Wadseeker::defaultSitesListEncoded()
@@ -138,6 +153,25 @@ void Wadseeker::fileLinkFound(const QString& filename, const QUrl& url)
 				.arg(url.toEncoded().constData()), WadseekerLib::Notice);
 
 	d.wadRetriever->addUrl(filename, url);
+}
+
+void Wadseeker::idgamesClientFinished(Idgames* pEmitter)
+{
+	emit message(tr("IDGames client for file \"%1\" has finished.").arg(pEmitter->file().name()),
+				WadseekerLib::NoticeImportant);
+
+	d.idgamesClients.removeOne(pEmitter);
+	delete pEmitter;
+
+	if (!d.bIsAborting)
+	{
+		startNextIdgamesClient();
+	}
+
+	if (isAllFinished())
+	{
+		cleanUpAfterFinish();
+	}
 }
 
 bool Wadseeker::isAllFinished() const
@@ -171,7 +205,9 @@ bool Wadseeker::isWorking() const
 		return false;
 	}
 
-	return d.wwwSeeker->isWorking() || d.wadRetriever->isAnyDownloadWorking();
+	return d.wwwSeeker->isWorking()
+	    || d.wadRetriever->isAnyDownloadWorking()
+	    || !d.idgamesClients.isEmpty();
 }
 
 void Wadseeker::prepareSeekObjects()
@@ -237,11 +273,6 @@ void Wadseeker::setIdgamesEnabled(bool bEnabled)
 	d.seekParameters.bIdgamesEnabled = bEnabled;
 }
 
-void Wadseeker::setIdgamesHighPriority(bool bHighPriority)
-{
-	d.seekParameters.bIdgamesHighPriority = bHighPriority;
-}
-
 void Wadseeker::setIdgamesUrl(QString archiveUrl)
 {
 	d.seekParameters.idgamesUrl = archiveUrl;
@@ -296,6 +327,36 @@ void Wadseeker::setTargetDirectory(const QString& dir)
 	d.seekParameters.saveDirectoryPath = targetDir;
 }
 
+void Wadseeker::setupIdgamesClients(const QList<WadDownloadInfo>& wadDownloadInfoList)
+{
+	foreach (const WadDownloadInfo& wad, wadDownloadInfoList)
+	{
+		Idgames* pIdgames = new Idgames(d.seekParametersForCurrentSeek->idgamesUrl);
+
+		pIdgames->setUserAgent(WadseekerVersionInfo::userAgent());
+		pIdgames->setFile(wad);
+
+		this->connect(pIdgames, SIGNAL( finished(Idgames*) ),
+			SLOT( idgamesClientFinished(Idgames*) ) );
+
+		this->connect(pIdgames, SIGNAL( message(const QString&, WadseekerLib::MessageType) ),
+			SIGNAL( message(const QString&, WadseekerLib::MessageType) ) );
+
+		this->connect(pIdgames, SIGNAL( fileLinkFound(const QString&, const QUrl&) ),
+			SLOT( fileLinkFound(const QString&, const QUrl&) ) );
+
+		// Forward signals as with WWWSeeker
+		this->connect(pIdgames, SIGNAL( siteFinished(const QUrl&) ),
+			SIGNAL( siteFinished(const QUrl&) ), Qt::QueuedConnection);
+		this->connect(pIdgames, SIGNAL( siteProgress(const QUrl&, qint64, qint64) ),
+			SIGNAL( siteProgress(const QUrl&, qint64, qint64) ), Qt::QueuedConnection);
+		this->connect(pIdgames, SIGNAL( siteStarted(const QUrl&) ),
+			SIGNAL( siteStarted(const QUrl&) ), Qt::QueuedConnection);
+
+		d.idgamesClients << pIdgames;
+	}
+}
+
 void Wadseeker::setupSitesUrls()
 {
 	d.wwwSeeker->clearVisitedUrlsList();
@@ -328,6 +389,21 @@ void Wadseeker::setupSitesUrls()
 				d.wwwSeeker->addSiteUrl(url);
 			}
 		}
+	}
+}
+
+void Wadseeker::startNextIdgamesClient()
+{
+	if (!d.bIsAborting && !d.idgamesClients.isEmpty())
+	{
+		Idgames* pIdgames = d.idgamesClients.first();
+
+		pIdgames->startSearch();
+	}
+
+	if (isAllFinished())
+	{
+		cleanUpAfterFinish();
 	}
 }
 
@@ -409,6 +485,11 @@ bool Wadseeker::startSeek(const QStringList& wads)
 		emit message(tr("WAD %1: %2").arg(wad, fileSeekInfosList.last().possibleFilenames().join(", ")), WadseekerLib::Notice);
 	}
 
+	if (d.seekParametersForCurrentSeek->bIdgamesEnabled)
+	{
+		setupIdgamesClients(wadDownloadInfoList);
+	}
+
 	d.wadRetriever->setMaxConcurrentWadDownloads(d.seekParametersForCurrentSeek->maxConcurrentDownloads);
 	d.wadRetriever->setTargetSavePath(d.seekParametersForCurrentSeek->saveDirectoryPath);
 	d.wadRetriever->setWads(wadDownloadInfoList);
@@ -416,6 +497,7 @@ bool Wadseeker::startSeek(const QStringList& wads)
 	d.wwwSeeker->setMaxConcurrectSiteDownloads(d.seekParametersForCurrentSeek->maxConcurrentSeeks);
 
 	emit seekStarted(filteredWadsList);
+	startNextIdgamesClient();
 	d.wwwSeeker->startSearch(fileSeekInfosList);
 
 	return true;
@@ -501,7 +583,6 @@ void Wadseeker::wwwSeekerFinished()
 Wadseeker::SeekParameters::SeekParameters()
 {
 	this->bIdgamesEnabled = true;
-	this->bIdgamesHighPriority = true;
 	this->idgamesUrl = Wadseeker::defaultIdgamesUrl();
 	this->maxConcurrentDownloads = 3;
 	this->maxConcurrentSeeks = 3;
