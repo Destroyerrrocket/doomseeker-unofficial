@@ -25,6 +25,7 @@
 
 #include <QMap>
 #include <QTableWidget>
+#include <QTime>
 
 class SpeedCalculator;
 
@@ -68,11 +69,15 @@ class WadseekerWadsTable : public QTableWidget
 				 * Value - Pointer to SpeedCalculator instance.
 				 */
 				QMap<QString, SpeedCalculator* > speedCalculators;
+				QTime updateClock;
 		};
+
+		static const int UPDATE_INTERVAL_MS = 1000;
 
 		PrivData d;
 
 		int findFileRow(const QString& filename);
+		void updateDataInfoValues();
 };
 
 #endif

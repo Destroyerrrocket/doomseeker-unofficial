@@ -37,20 +37,29 @@ class SpeedCalculator
 		 *	@return A negative value is returned if time cannot be calculated
 		 *	properly.
 		 */
-		float						estimatedTimeUntilArrival() const;
+		long double					estimatedTimeUntilArrival() const;
 
-		unsigned					expectedDataSize() const { return dataSizeExpected; }
+		qint64  					expectedDataSize() const { return dataSizeExpected; }
 
 		/**
 		 *	@brief In bytes per second.
 		 */
-		float						getSpeed() const;
+		long double					getSpeed() const;
+
+		/**
+		 * @brief Last amount of data registered through registerDataAmount()
+		 *        method.
+		 *
+		 * If SpeedCalculator is used properly this will equal to
+		 * total amount of downloaded data.
+		 */
+		qint64                      lastRegisteredDataAmount() const;
 
 		int							maxResolution() const { return _maxResolution; }
 
-		void						registerDataAmount(unsigned totalAmountOfArrivedData);
+		void						registerDataAmount(qint64 totalAmountOfArrivedData);
 
-		void						setExpectedDataSize(unsigned size);
+		void						setExpectedDataSize(qint64 size);
 
 		/**
 		 *	@brief The maximum amount of data that can be stored in
@@ -84,12 +93,12 @@ class SpeedCalculator
                 /**
                  *	@brief In bytes.
                  */
-                unsigned				totalAmountOfArrivedData;
+                qint64				totalAmountOfArrivedData;
 
                 /**
                  *	@brief In miliseconds.
                  */
-                unsigned				timeOfArrival;
+                qint64				timeOfArrival;
 
                 DataArrivalInfo()
                 {
@@ -97,7 +106,7 @@ class SpeedCalculator
                     this->timeOfArrival = 0;
                 }
 
-                DataArrivalInfo(unsigned totalAmountOfArrivedData, unsigned timeOfArrival)
+                DataArrivalInfo(qint64 totalAmountOfArrivedData, qint64 timeOfArrival)
                 {
                     this->totalAmountOfArrivedData = totalAmountOfArrivedData;
                     this->timeOfArrival = timeOfArrival;
@@ -106,13 +115,13 @@ class SpeedCalculator
 
 		QVector<DataArrivalInfo>	arrivalData;
 		QTime						clock;
-		unsigned					dataSizeExpected;
+		qint64  					dataSizeExpected;
 
 		/// Default value is 50.
 		int							_maxResolution;
 
 
-		unsigned					maxTimeDifference() const;
+		qint64  					maxTimeDifference() const;
 };
 
 #endif

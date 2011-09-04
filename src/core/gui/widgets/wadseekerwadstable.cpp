@@ -34,6 +34,7 @@ WadseekerWadsTable::WadseekerWadsTable(QWidget* pParent)
 : QTableWidget(pParent)
 {
 	d.bAlreadyShownOnce = false;
+	d.updateClock.start();
 }
 
 WadseekerWadsTable::~WadseekerWadsTable()
@@ -116,23 +117,12 @@ void WadseekerWadsTable::setFileProgress(const QString& filename, qint64 current
 		pBar->setMaximum(total);
 		pBar->setValue(current);
 
-		// Update size
-		QString strCurrent = Strings::formatDataAmount(current);
-		QString strTotal = Strings::formatDataAmount(total);
-
-		QString size = QString("%1 / %2").arg(strCurrent, strTotal);
-		item(row, IDX_SIZE_COLUMN)->setText(size);
-
 		// Update ETA and speed
 		SpeedCalculator* pCalculator = d.speedCalculators.value(filename);
 		pCalculator->setExpectedDataSize(total);
 		pCalculator->registerDataAmount(current);
 
-		QString eta = Strings::formatTime(pCalculator->estimatedTimeUntilArrival());
-		item(row, IDX_ETA_COLUMN)->setText(eta);
-
-		QString speed = Strings::formatDataSpeed(pCalculator->getSpeed());
-		item(row, IDX_SPEED_COLUMN)->setText(speed);
+		updateDataInfoValues();
 	}
 }
 
@@ -189,4 +179,34 @@ void WadseekerWadsTable::showEvent(QShowEvent* pEvent)
 		pHeader->resizeSection(IDX_SPEED_COLUMN, 85);
 
 	}
+}
+
+void WadseekerWadsTable::updateDataInfoValues()
+{
+    // Make sure updates are not performed before certain interval passes.
+    if (d.updateClock.elapsed() > UPDATE_INTERVAL_MS)
+    {
+        d.updateClock.start();
+
+        for (int i = 0; i < this->rowCount(); ++i)
+        {
+            // Find the calculator for specified row.
+            QString filename = this->item(i, IDX_NAME_COLUMN)->text();
+            SpeedCalculator* pCalculator = d.speedCalculators.value(filename);
+
+            // Update data amount.
+            QString strCurrent = Strings::formatDataAmount(pCalculator->lastRegisteredDataAmount());
+            QString strTotal = Strings::formatDataAmount(pCalculator->expectedDataSize());
+
+            QString size = QString("%1 / %2").arg(strCurrent, strTotal);
+            item(i, IDX_SIZE_COLUMN)->setText(size);
+
+            // Update ETA and speed.
+            QString eta = Strings::formatTime(pCalculator->estimatedTimeUntilArrival());
+            item(i, IDX_ETA_COLUMN)->setText(eta);
+
+            QString speed = Strings::formatDataSpeed(pCalculator->getSpeed());
+            item(i, IDX_SPEED_COLUMN)->setText(speed);
+        }
+    }
 }

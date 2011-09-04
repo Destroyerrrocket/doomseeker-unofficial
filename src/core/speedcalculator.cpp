@@ -28,63 +28,84 @@ SpeedCalculator::SpeedCalculator()
 	_maxResolution = 50;
 }
 
-float SpeedCalculator::estimatedTimeUntilArrival() const
+long double SpeedCalculator::estimatedTimeUntilArrival() const
 {
-	float speed = getSpeed();
-	if (speed == 0.0f)
+	long double speed = getSpeed();
+	if (speed == 0.0)
 	{
-		return -1.0f;
+		return -1.0;
 	}
 
-	const DataArrivalInfo& endInfo = arrivalData[arrivalData.size() - 1];
+	const DataArrivalInfo& endInfo = arrivalData.last();
 	unsigned currentData = endInfo.totalAmountOfArrivedData;
 
 	// This happens if dataSizeExpected isn't set properly.
 	if (dataSizeExpected < currentData)
 	{
-		return -1.0f;
+		return -1.0;
 	}
 
 	unsigned remainingData = dataSizeExpected - currentData;
-	return (float)remainingData / speed;
+	return (double)remainingData / speed;
 }
 
-float SpeedCalculator::getSpeed() const
+long double SpeedCalculator::getSpeed() const
 {
-	int timeDifference = maxTimeDifference();
-	if (timeDifference == 0)
+    if (arrivalData.size() < 2)
+    {
+        return 0.0;
+    }
+
+    // Let's calculate weighted mean.
+	long double numerator = 0.0;
+	long double denominator = 0.0;
+
+	const DataArrivalInfo* prevDataPacket = &arrivalData[0];
+	for (int i = 1; i < arrivalData.size(); ++i)
 	{
-		return 0.0f;
+        const DataArrivalInfo& dataPacket = arrivalData[i];
+
+        long double dataDiff = dataPacket.totalAmountOfArrivedData - prevDataPacket->totalAmountOfArrivedData;
+        long double timeDiff = dataPacket.timeOfArrival - prevDataPacket->timeOfArrival;
+
+        numerator += timeDiff * dataDiff;
+        denominator += timeDiff;
+
+        prevDataPacket = &dataPacket;
 	}
 
-	float dataDifference = 0.0f;
-
-	const DataArrivalInfo& beginInfo = arrivalData[0];
-	const DataArrivalInfo& endInfo = arrivalData[arrivalData.size() - 1];
-
-	dataDifference = endInfo.totalAmountOfArrivedData - beginInfo.totalAmountOfArrivedData;
-	float speed = dataDifference / (float)timeDifference;
+	long double speed = numerator / denominator;
 
 	// Scale speed to 1 second.
-	speed *= 1000.0f;
+	speed *= 1000.0;
 
 	return speed;
 }
 
-unsigned SpeedCalculator::maxTimeDifference() const
+qint64 SpeedCalculator::lastRegisteredDataAmount() const
+{
+    if (arrivalData.isEmpty())
+    {
+        return 0;
+    }
+
+    return arrivalData.last().totalAmountOfArrivedData;
+}
+
+qint64 SpeedCalculator::maxTimeDifference() const
 {
 	if (arrivalData.size() < 2)
 	{
 		return 0;
 	}
 
-	const DataArrivalInfo& beginInfo = arrivalData[0];
-	const DataArrivalInfo& endInfo = arrivalData[arrivalData.size() - 1];
+	const DataArrivalInfo& beginInfo = arrivalData.first();
+	const DataArrivalInfo& endInfo = arrivalData.last();
 
 	return endInfo.timeOfArrival - beginInfo.timeOfArrival;
 }
 
-void SpeedCalculator::registerDataAmount(unsigned totalAmountOfArrivedData)
+void SpeedCalculator::registerDataAmount(qint64 totalAmountOfArrivedData)
 {
 	DataArrivalInfo dataArrivalInfo(totalAmountOfArrivedData, clock.elapsed());
 	arrivalData << dataArrivalInfo;
@@ -94,7 +115,7 @@ void SpeedCalculator::registerDataAmount(unsigned totalAmountOfArrivedData)
 	}
 }
 
-void SpeedCalculator::setExpectedDataSize(unsigned size)
+void SpeedCalculator::setExpectedDataSize(qint64 size)
 {
 	dataSizeExpected = size;
 }
