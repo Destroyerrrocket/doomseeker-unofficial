@@ -46,8 +46,18 @@ class WadseekerWadsTable : public QTableWidget
 
 		void addFile(const QString& filename);
 
+		/**
+		 * @brief Total done percentage calculated basing on the data set by
+		 *        siteFileProgress().
+		 *
+		 * @return A value between 0.0 and 100.0. If percentage cannot be
+		 *         calculated a negative value is returned.
+		 */
+		double totalDonePercentage() const;
+
 	public slots:
 		void setFileDownloadFinished(const QString& filename);
+		void setFileFailed(const QString& filename);
 		void setFileProgress(const QString& filename, qint64 current, qint64 total);
 		void setFileSuccessful(const QString& filename);
 		void setFileUrl(const QString& filename, const QUrl& url);

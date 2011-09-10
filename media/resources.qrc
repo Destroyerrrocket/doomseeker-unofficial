@@ -14,13 +14,15 @@
 	<file>icons/irc.png</file>
 	<file>icons/irc_channel.png</file>
 	<file>icons/log.png</file>
+	<file>icons/media-record.png</file>
+	<file>icons/media-playback-start.png</file>
 	<file>icons/network-connect-3.png</file>
+	<file>icons/ok.png</file>
 	<file>icons/pause.png</file>
 	<file>icons/person.png</file>
 	<file>icons/preferences-system-4.png</file>
 	<file>icons/view-refresh-2.png</file>
-	<file>icons/media-record.png</file>
-	<file>icons/media-playback-start.png</file>
+	<file>icons/x.png</file>
 	<file alias="slots/blocks/open">slotstyles/blocks/openslot.png</file>
 	<file alias="slots/blocks/specopen">slotstyles/blocks/openspecslot.png</file>
 	<file alias="slots/blocks/bot">slotstyles/blocks/bot.png</file>

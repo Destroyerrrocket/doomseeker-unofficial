@@ -33,8 +33,6 @@ const int WadseekerInterface::UPDATE_INTERVAL_MS = 500;
 WadseekerInterface::WadseekerInterface(QWidget* parent)
 : QDialog(parent)
 {
-	bNeedsUpdate = false;
-
 	((MainWindow*)(Main::mainWindow))->stopAutoRefreshTimer();
 	setupUi(this);
 	setStateWaiting();
@@ -57,6 +55,8 @@ WadseekerInterface::WadseekerInterface(QWidget* parent)
 		SLOT( message(const QString&, WadseekerLib::MessageType) ) );
 	this->connect(&wadseeker, SIGNAL( seekStarted(const QStringList&) ),
 		SLOT( seekStarted(const QStringList&) ) );
+	this->connect(&wadseeker, SIGNAL( fileInstalled(const QString&) ),
+		SLOT( fileDownloadSuccessful(const QString&) ) );
 	this->connect(&wadseeker, SIGNAL( siteFinished(const QUrl&) ),
 		SLOT( siteFinished(const QUrl&) ) );
 	this->connect(&wadseeker, SIGNAL( siteProgress(const QUrl&, qint64, qint64) ),
@@ -67,8 +67,6 @@ WadseekerInterface::WadseekerInterface(QWidget* parent)
 		SLOT( siteStarted(const QUrl&) ) );
 
 	// Connect Wadseeker to the WADs table widget.
-	twWads->connect(&wadseeker, SIGNAL( fileInstalled(const QString&) ),
-		SLOT( setFileSuccessful(const QString&) ) );
 	twWads->connect(&wadseeker, SIGNAL( fileDownloadFinished(const QString&) ),
 		SLOT( setFileDownloadFinished(const QString&) ) );
 	twWads->connect(&wadseeker, SIGNAL( fileDownloadProgress(const QString&, qint64, qint64) ),
@@ -109,15 +107,29 @@ void WadseekerInterface::accept()
 
 void WadseekerInterface::allDone(bool bSuccess)
 {
+	setStateWaiting();
+
 	if (bSuccess)
 	{
 		displayMessage(tr("All done. Success."), WadseekerLib::NoticeImportant, false);
+
+		if (bAutomatic)
+		{
+			// Close the dialog box.
+			done(QDialog::Accepted);
+		}
 	}
 	else
 	{
+		QStringList failures = unsuccessfulWads();
+
+		foreach (const QString& failure, failures)
+		{
+			twWads->setFileFailed(failure);
+		}
+
 		displayMessage(tr("All done. Fail."), WadseekerLib::CriticalError, false);
 	}
-	setStateWaiting();
 }
 
 void WadseekerInterface::displayMessage(const QString& message, WadseekerLib::MessageType type, bool bPrependErrorsWithMessageType)
@@ -186,6 +198,12 @@ void WadseekerInterface::displayMessage(const QString& message, WadseekerLib::Me
 	teWadseekerOutput->append(strProcessedMessage);
 }
 
+void WadseekerInterface::fileDownloadSuccessful(const QString& filename)
+{
+	successfulWads << filename;
+	twWads->setFileSuccessful(filename);
+}
+
 void WadseekerInterface::initMessageColors()
 {
 	colorHtmlMessageNotice = gConfig.wadseeker.colorMessageNotice;
@@ -200,7 +218,7 @@ void WadseekerInterface::message(const QString& message, WadseekerLib::MessageTy
 
 void WadseekerInterface::registerUpdateRequest()
 {
-	bNeedsUpdate = true;
+	updateTitle();
 }
 
 void WadseekerInterface::reject()
@@ -227,6 +245,8 @@ void WadseekerInterface::seekStarted(const QStringList& filenames)
 	teWadseekerOutput->clear();
 	displayMessage("Seek started on filenames: " + filenames.join(", "), WadseekerLib::Notice, false);
 
+	seekedWads = filenames;
+	successfulWads.clear();
 	twSites->setRowCount(0);
 	twWads->setRowCount(0);
 	setStateDownloading();
@@ -330,5 +350,35 @@ void WadseekerInterface::startSeeking(const QStringList& seekedFilesList)
 
 void WadseekerInterface::updateTitle()
 {
+	switch (state)
+	{
+		case Downloading:
+		{
+			double totalPercentage = twWads->totalDonePercentage();
+			if (totalPercentage < 0.0)
+			{
+				totalPercentage = 0.0;
+			}
 
+			setWindowTitle(tr("[%1%] Wadseeker").arg(totalPercentage, 6, 'f', 2));
+			break;
+		}
+
+		default:
+		case Waiting:
+			resetTitleToDefault();
+			break;
+	}
+}
+
+QStringList	WadseekerInterface::unsuccessfulWads() const
+{
+	QStringList allWads = seekedWads;
+
+	foreach (const QString& success, successfulWads)
+	{
+		allWads.removeAll(success);
+	}
+
+	return allWads;
 }

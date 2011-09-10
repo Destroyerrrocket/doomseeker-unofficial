@@ -75,7 +75,6 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 
 		bool			bAutomatic;
 		bool			bFirstShown;
-		bool			bNeedsUpdate;
 
 		// Setup for customization in the future.
 		QString			colorHtmlMessageFatalError;
@@ -88,7 +87,15 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 		 * Interface uses this instead of line edit if bAutomatic is true.
 		 */
 		QStringList 	seekedWads;
+
 		States			state;
+
+		/**
+		 * @brief A subset of seekedWads list. Contains all WADs that were
+		 *        successfully installed.
+		 */
+		QStringList		successfulWads;
+
 		QTimer			updateTimer;
 		Wadseeker		wadseeker;
 
@@ -107,9 +114,16 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 		void			startSeeking(const QStringList& seekedFilesList);
 		void            updateTitle();
 
+		/**
+		 * @brief Subtracts successulWads list from seekedWads and returns the
+		 *        difference.
+		 */
+		QStringList		unsuccessfulWads() const;
+
 	private slots:
 		void accept();
 		void allDone(bool bSuccess);
+		void fileDownloadSuccessful(const QString& filename);
 		void reject();
 		void message(const QString& message, WadseekerLib::MessageType type);
 		void registerUpdateRequest();

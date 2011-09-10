@@ -110,6 +110,16 @@ void WadseekerWadsTable::setFileDownloadFinished(const QString& filename)
 	}
 }
 
+void WadseekerWadsTable::setFileFailed(const QString& filename)
+{
+	int row = findFileRow(filename);
+
+	if (row >= 0)
+	{
+		item(row, IDX_NAME_COLUMN)->setIcon(QIcon(":/icons/x.png"));
+	}
+}
+
 void WadseekerWadsTable::setFileProgress(const QString& filename, qint64 current, qint64 total)
 {
 	int row = findFileRow(filename);
@@ -138,9 +148,11 @@ void WadseekerWadsTable::setFileSuccessful(const QString& filename)
 	{
 		// Set progress bar to 100%.
 		QProgressBar* pBar = (QProgressBar*) this->cellWidget(row, IDX_PROGRESS_COLUMN);
+
 		pBar->setMaximum(100);
 		pBar->setValue(100);
 
+		item(row, IDX_NAME_COLUMN)->setIcon(QIcon(":/icons/ok.png"));
 		item(row, IDX_URL_COLUMN)->setText("");
 
 		item(row, IDX_ETA_COLUMN)->setText(tr("DONE"));
@@ -181,6 +193,38 @@ void WadseekerWadsTable::showEvent(QShowEvent* pEvent)
 		pHeader->resizeSection(IDX_SPEED_COLUMN, 85);
 
 	}
+}
+
+double WadseekerWadsTable::totalDonePercentage() const
+{
+	double sumDownloadPercentages = 0.0;
+
+	if (this->rowCount() == 0)
+	{
+		return -1.0;
+	}
+
+	for (int i = 0; i < this->rowCount(); ++i)
+	{
+		const QProgressBar* pBar = (const QProgressBar*) this->cellWidget(i, IDX_PROGRESS_COLUMN);
+		if (pBar != NULL)
+		{
+			int val = pBar->value();
+			int max = pBar->maximum();
+
+			if (max > 0)
+			{
+				double curPercentage = 	(double) val / (double) max;
+				sumDownloadPercentages += curPercentage;
+			}
+		}
+	}
+
+	// We need to multiply the value by 100 to get actual percents.
+	sumDownloadPercentages *= 100.0;
+	double averageDownloadPercentages = sumDownloadPercentages / (double) this->rowCount();
+
+	return averageDownloadPercentages;
 }
 
 void WadseekerWadsTable::updateDataInfoValues(bool bForce)

@@ -499,8 +499,11 @@ bool Wadseeker::startSeek(const QStringList& wads)
 	d.wwwSeeker->setMaxConcurrectSiteDownloads(d.seekParametersForCurrentSeek->maxConcurrentSeeks);
 
 	emit seekStarted(filteredWadsList);
-	startNextIdgamesClient();
 	d.wwwSeeker->startSearch(fileSeekInfosList);
+	if (d.seekParametersForCurrentSeek->bIdgamesEnabled)
+	{
+		startNextIdgamesClient();
+	}
 
 	return true;
 }

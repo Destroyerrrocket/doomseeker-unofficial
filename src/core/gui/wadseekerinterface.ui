@@ -99,16 +99,6 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="btnSkipSite">
-       <property name="toolTip">
-        <string>Skips the current site and proceeds to the next one in the queue. You can use ENTER to active this.</string>
-       </property>
-       <property name="text">
-        <string>Skip site</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
