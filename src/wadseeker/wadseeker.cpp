@@ -225,6 +225,8 @@ void Wadseeker::prepareSeekObjects()
 		SLOT( fileLinkFound(const QString&, const QUrl&) ), Qt::QueuedConnection);
 
 	// Forward signals up to outside of the library.
+	this->connect(d.wwwSeeker, SIGNAL( message(const QString&, WadseekerLib::MessageType) ),
+		SIGNAL( message(const QString&, WadseekerLib::MessageType) ) );
 	this->connect(d.wwwSeeker, SIGNAL( siteFinished(const QUrl&) ),
 		SIGNAL( siteFinished(const QUrl&) ), Qt::QueuedConnection);
 	this->connect(d.wwwSeeker, SIGNAL( siteProgress(const QUrl&, qint64, qint64) ),

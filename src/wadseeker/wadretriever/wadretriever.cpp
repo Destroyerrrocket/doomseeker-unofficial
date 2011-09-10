@@ -217,9 +217,9 @@ void WadRetriever::networkQueryError(QNetworkReply* pReply, QNetworkReply::Netwo
 
 void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 {
+		QUrl url = pReply->request().url();
 #ifndef NDEBUG
 	{
-		QUrl url = pReply->request().url();
 		QUrl replyUrl = pReply->url();
 		QList<QByteArray> headers = pReply->rawHeaderList();
 		printf("WadRetriever HEADERS\n");
@@ -233,8 +233,11 @@ void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 		printf("END OF HEADERS\n");
 	}
 
-	qDebug() << "WadRetriever: Finished network query for URL: " << pReply->request().url().toString();
+	qDebug() << "WadRetriever: Finished network query for URL: " << url.toString();
 #endif
+	emit message(tr("Finished downloading URL: %1").arg(url.toString()),
+				WadseekerLib::Notice);
+
 	WadRetrieverInfo* pInfo = findRetrieverInfo(pReply);
 	if (pInfo != NULL)
 	{
@@ -244,7 +247,6 @@ void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 		// Clear for later reuse of pointer.
 		pInfo->pNetworkReply = NULL;
 
-		QUrl url = pReply->request().url();
 		QUrl possibleRedirectUrl = pReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
 		if (!possibleRedirectUrl.isEmpty()
 			&& possibleRedirectUrl != url)
@@ -261,15 +263,8 @@ void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 		}
 		else
 		{
-			// Get filename, if possible extract the filename from the URL,
-			// if not, use the wad stored in the pInfo.
-			QFileInfo urlPathInfo(url.path());
-			QString filename = urlPathInfo.fileName();
-
-			if (filename.isEmpty())
-			{
-				filename = pInfo->wad->name();
-			}
+			// Get filename, use the wad stored in the pInfo.
+			QString filename = pInfo->wad->name();
 
 			tryInstall(filename, pReply->readAll());
 			if (isAnyWadPending())
@@ -330,6 +325,9 @@ bool WadRetriever::parseInstallerResult(const WadInstaller::WadInstallerResult& 
 		foreach (const QString& installedWadName, result.installedWads)
 		{
 			WadRetrieverInfo* pInfo = findRetrieverInfo(installedWadName);
+			emit message(tr("Installed WAD: %1").arg(pInfo->wad->name()),
+				WadseekerLib::Notice);
+
 			emit wadInstalled(*pInfo->wad);
 
 			removeWadRetrieverInfo(pInfo);
@@ -429,6 +427,9 @@ void WadRetriever::tryInstall(const QString& filename, const QByteArray& byteArr
 {
 	const bool IS_ARCHIVE = true;
 	WadInstaller installer(d.targetSavePath);
+
+	emit message(tr("Attempting to install file %1 of size %2").arg(filename).arg(byteArray.size()),
+				WadseekerLib::Notice);
 
 #ifndef NDEBUG
 	qDebug() << "WadRetriever: Attempting to install file " << filename << " of size " << byteArray.size();

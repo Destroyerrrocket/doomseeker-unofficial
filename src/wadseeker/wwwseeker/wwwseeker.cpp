@@ -109,6 +109,8 @@ void WWWSeeker::addNetworkReply(QNetworkReply* pReply)
 		SLOT( networkQueryDownloadProgress(QNetworkReply*, qint64, qint64) ));
 	this->connect(pQueryInfo->pSignalWrapper, SIGNAL( finished(QNetworkReply*) ),
 		SLOT( networkQueryFinished(QNetworkReply*) ));
+	this->connect(pQueryInfo->pSignalWrapper, SIGNAL( metaDataChanged(QNetworkReply*) ),
+		SLOT( networkQueryMetaDataChanged(QNetworkReply*) ));
 
 	d.networkQueries << pQueryInfo;
 }
@@ -159,6 +161,25 @@ bool WWWSeeker::isMoreToSearch() const
 		|| hasCustomUrl;
 }
 
+FileSeekInfo* WWWSeeker::findFileSeekInfo(const QString& seekedName)
+{
+	QList<FileSeekInfo>::iterator it;
+	for (it = d.seekedFiles.begin(); it != d.seekedFiles.end(); ++it)
+	{
+		FileSeekInfo& info = *it;
+		QStringList possibleFilenames = info.possibleFilenames();
+		foreach (const QString& possibleFilename, possibleFilenames)
+		{
+			if (seekedName.compare(seekedName, Qt::CaseInsensitive) == 0)
+			{
+				return &info;
+			}
+		}
+	}
+
+	return NULL;
+}
+
 NetworkReplyWrapperInfo* WWWSeeker::findNetworkReplyWrapperInfo(QNetworkReply* pReply)
 {
 	foreach (NetworkReplyWrapperInfo* info, d.networkQueries)
@@ -206,6 +227,7 @@ void WWWSeeker::networkQueryFinished(QNetworkReply* pReply)
 	QUrl url = pReply->request().url();
 
 #ifndef NDEBUG
+	printf("WWWSeeker::networkQueryFinished()");
 	QList<QByteArray> headers = pReply->rawHeaderList();
 	printf("HEADERS\n");
 	printf("URL %s\n", url.toEncoded().constData());
@@ -217,62 +239,36 @@ void WWWSeeker::networkQueryFinished(QNetworkReply* pReply)
 	printf("END OF HEADERS\n");
 #endif
 
-	Http http(pReply);
-	if (http.isApplicationContentType())
+	QUrl possibleRedirectUrl = pReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+	if (!possibleRedirectUrl.isEmpty()
+		&& possibleRedirectUrl != url)
 	{
-		QString attachmentName = http.attachmentName();
-		// If attachment name is empty at this point we should try to attempt
-		// to extract it from URL. It is important to have a proper attachment
-		// name.
-		if (attachmentName.isEmpty())
+		// Redirect URL cannot be simply added to the site URLs as those URLs
+		// will throw away all visited URLs. In at least one case a redirect
+		// leads to the same page but with different attachments.
+		// In this case let's start a new query omitting the entire limitation
+		// system here.
+		if (possibleRedirectUrl.isRelative())
 		{
-			attachmentName = http.urlFilename();
+			possibleRedirectUrl = url.resolved(possibleRedirectUrl);
 		}
 
-		QByteArray data = pReply->readAll();
 		deleteNetworkReplyWrapperInfo(pReply);
 
-#ifndef NDEBUG
-		printf("Attachment downloaded from URL %s\n", url.toString().toAscii().constData());
-#endif
-		emit siteFinished(url);
-		emit attachmentDownloaded(attachmentName, data);
+		if (!d.bIsAborting)
+		{
+			emit siteRedirect(url, possibleRedirectUrl);
+			startNetworkQuery(possibleRedirectUrl);
+		}
+
+		printf("Finished URL %s - redirect to %s\n", url.toEncoded().constData(), possibleRedirectUrl.toEncoded().constData());
 	}
 	else
 	{
-		QUrl possibleRedirectUrl = pReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
-		if (!possibleRedirectUrl.isEmpty()
-			&& possibleRedirectUrl != url)
-		{
-			// Redirect URL cannot be simply added to the site URLs as those URLs
-			// will throw away all visited URLs. In at least one case a redirect
-			// leads to the same page but with different attachments.
-			// In this case let's start a new query omitting the entire limitation
-			// system here.
-			if (possibleRedirectUrl.isRelative())
-			{
-				possibleRedirectUrl = url.resolved(possibleRedirectUrl);
-			}
+		parseAsHtml(pReply);
 
-			deleteNetworkReplyWrapperInfo(pReply);
-
-			if (!d.bIsAborting)
-			{
-				emit siteRedirect(url, possibleRedirectUrl);
-				startNetworkQuery(possibleRedirectUrl);
-			}
-
-			printf("Finished URL %s - redirect to %s\n", url.toEncoded().constData(), possibleRedirectUrl.toEncoded().constData());
-		}
-		else
-		{
-			// TODO
-			// Prepare for data different than HTML.
-			parseAsHtml(pReply);
-
-			deleteNetworkReplyWrapperInfo(pReply);
-			emit siteFinished(url);
-		}
+		deleteNetworkReplyWrapperInfo(pReply);
+		emit siteFinished(url);
 	}
 
 	bool bAreNetworkQueriesEmpty = d.networkQueries.isEmpty();
@@ -292,10 +288,87 @@ void WWWSeeker::networkQueryFinished(QNetworkReply* pReply)
 	}
 }
 
+void WWWSeeker::networkQueryMetaDataChanged(QNetworkReply* pReply)
+{
+	NetworkReplyWrapperInfo* pQueryInfo = findNetworkReplyWrapperInfo(pReply);
+	QUrl url = pReply->request().url();
+
+#ifndef NDEBUG
+	printf("WWWSeeker::networkQueryMetaDataChanged()\n");
+	QList<QByteArray> headers = pReply->rawHeaderList();
+	printf("HEADERS\n");
+	printf("URL %s\n", url.toEncoded().constData());
+	foreach (const QByteArray& headerName, headers)
+	{
+		QByteArray headerData = pReply->rawHeader(headerName);
+		printf("%s: %s\n", headerName.constData(), headerData.constData());
+	}
+	printf("END OF HEADERS\n");
+#endif
+
+	Http http(pReply);
+	if (!http.isHtmlContentType())
+	{
+		bool bAttachmentDetected = false;
+		if (http.isApplicationContentType())
+		{
+			// In this block we recognize and handle file downloads for data types
+			// different than HTML.
+
+			QString attachmentName = http.attachmentName();
+			// If attachment name is empty at this point we should try to attempt
+			// to extract it from URL. It is important to have a proper attachment
+			// name.
+			if (attachmentName.isEmpty())
+			{
+				attachmentName = http.urlFilename();
+			}
+
+			// See if we just stumbled upon a download link for a file we seek.
+			FileSeekInfo* attachmentSeekInfo = findFileSeekInfo(attachmentName);
+
+#ifndef NDEBUG
+			printf("Attachment detected on URL %s\n", url.toString().toAscii().constData());
+			if (attachmentSeekInfo != NULL)
+			{
+				printf("Forwarding the detected attachment to \"%s\" download queue\n",
+						attachmentSeekInfo->file().toAscii().constData());
+			}
+#endif
+			// Abort further download here.
+			// This should execute networkQueryFinished() request.
+
+			if (attachmentSeekInfo != NULL)
+			{
+				bAttachmentDetected = true;
+
+				// Forward the current download URL to the WAD download queue.
+				emit message(tr("Attachment %1 detected on URL: %2. Forwarding to WAD download queue.").arg(attachmentName, url.toString()),
+					WadseekerLib::Notice);
+				emit linkFound(attachmentName, url);
+			}
+		}
+
+		pReply->abort();
+
+		if (!bAttachmentDetected)
+		{
+			emit message(tr("Non-HTML data on URL: %1. Aborting.").arg(url.toString()),
+				WadseekerLib::Notice);
+		}
+	}
+}
+
 void WWWSeeker::parseAsHtml(QNetworkReply* pReply)
 {
 	QByteArray downloadedData = pReply->readAll();
 	QUrl url = pReply->request().url();
+
+	if (downloadedData.isEmpty())
+	{
+		// Nothing to parse.
+		return;
+	}
 
 	// Get all <A HREFs> from HTML.
 	HtmlParser html(downloadedData);

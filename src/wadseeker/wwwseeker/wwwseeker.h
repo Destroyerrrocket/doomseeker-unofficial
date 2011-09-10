@@ -23,6 +23,8 @@
 #ifndef __WWWSEEKER_H__
 #define __WWWSEEKER_H__
 
+#include "wadseekermessagetype.h"
+
 #include <QHash>
 #include <QList>
 #include <QNetworkAccessManager>
@@ -193,6 +195,8 @@ class WWWSeeker : public QObject
 		 */
 		void linkFound(const QString& filename, const QUrl& url);
 
+		void message(const QString& message, WadseekerLib::MessageType type);
+
 		/**
 		 * @brief Emitted when a WWW site finishes download.
 		 */
@@ -277,6 +281,11 @@ class WWWSeeker : public QObject
 		NetworkReplyWrapperInfo* findNetworkReplyWrapperInfo(QNetworkReply* pReply);
 
 		/**
+		 * @brief Find FileSeekInfo object by comparing possible filenames.
+		 */
+		FileSeekInfo* findFileSeekInfo(const QString& seekedName);
+
+		/**
 		 * @brief Detects if URL leads to one of the requested files.
 		 *
 		 * @param url
@@ -319,6 +328,7 @@ class WWWSeeker : public QObject
 	private slots:
 		void networkQueryDownloadProgress(QNetworkReply* pReply, qint64 current, qint64 total);
 		void networkQueryFinished(QNetworkReply* pReply);
+		void networkQueryMetaDataChanged(QNetworkReply* pReply);
 
 };
 

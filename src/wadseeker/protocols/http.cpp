@@ -100,7 +100,7 @@ bool Http::isApplicationContentType() const
 
 bool Http::isHtmlContentType() const
 {
-	return contentType() == "text/html";
+	return contentType().contains("text/html");
 }
 
 QString Http::urlFilename() const
