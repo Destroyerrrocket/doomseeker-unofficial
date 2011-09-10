@@ -55,27 +55,22 @@ class SpeedCalculator
 		 */
 		qint64                      lastRegisteredDataAmount() const;
 
-		int							maxResolution() const { return _maxResolution; }
-
+		/**
+		 * @brief Register new total amount of data.
+		 *
+		 * This will be used to calculate speed and ETA. Internally this will
+		 * store data only once per second. It is not a problem to call
+		 * this method more often as in such case it will change no data
+		 * inside the object of this class.
+		 */
 		void						registerDataAmount(qint64 totalAmountOfArrivedData);
 
-		void						setExpectedDataSize(qint64 size);
-
 		/**
-		 *	@brief The maximum amount of data that can be stored in
-		 *	arrivalData vector.
+		 * @brief Maximum expected size of the data.
 		 *
-		 *	Values below 2 are not allowed here and will be automatically
-		 *	changed to 2.
-		 *	This is the number that will be also used to calculate mean in
-		 *	getSpeed() method. The higher the number the more accurate the
-		 *	result but also the longer it is required to wait to fill the entire
-		 *	vector.
-		 *
-		 *	If a new data is registered and the vector's size is already as big
-		 *	as the maxResolution value the oldest data will be discarded.
+		 * This value is used to calculate ETA.
 		 */
-		void						setMaxResolution(int max);
+		void						setExpectedDataSize(qint64 size);
 
 		/**
 		 * @brief Clears all values. Prepares SpeedCalculator for new speed
@@ -86,7 +81,7 @@ class SpeedCalculator
 		 */
 		void						start();
 
-	protected:
+	private:
 		class DataArrivalInfo
 		{
             public:
@@ -113,15 +108,17 @@ class SpeedCalculator
                 }
 		};
 
+		static const int 			NUM_ARRIVAL_DATA = 2;
+
 		QVector<DataArrivalInfo>	arrivalData;
+
+		/**
+		 * @brief
+		 */
+		QVector<long double>		averageSpeeds;
+
 		QTime						clock;
 		qint64  					dataSizeExpected;
-
-		/// Default value is 50.
-		int							_maxResolution;
-
-
-		qint64  					maxTimeDifference() const;
 };
 
 #endif

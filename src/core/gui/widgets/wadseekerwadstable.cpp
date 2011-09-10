@@ -67,7 +67,6 @@ void WadseekerWadsTable::addFile(const QString& filename)
 		setItem(rowIndex, IDX_SIZE_COLUMN, new QTableWidgetItem(tr("N/A")));
 
 		SpeedCalculator* pCalculator = new SpeedCalculator();
-		pCalculator->setMaxResolution(10);
 		pCalculator->start();
 
 		d.speedCalculators.insert(filename, pCalculator);

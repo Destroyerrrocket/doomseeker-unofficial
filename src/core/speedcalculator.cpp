@@ -25,7 +25,6 @@
 SpeedCalculator::SpeedCalculator()
 {
 	dataSizeExpected = 0;
-	_maxResolution = 50;
 }
 
 long double SpeedCalculator::estimatedTimeUntilArrival() const
@@ -60,23 +59,12 @@ long double SpeedCalculator::getSpeed() const
 	long double numerator = 0.0;
 	long double denominator = 0.0;
 
-	const DataArrivalInfo* prevDataPacket = &arrivalData[0];
-	for (int i = 1; i < arrivalData.size(); ++i)
-	{
-        const DataArrivalInfo& dataPacket = arrivalData[i];
-
-        long double dataDiff = dataPacket.totalAmountOfArrivedData - prevDataPacket->totalAmountOfArrivedData;
-        long double timeDiff = dataPacket.timeOfArrival - prevDataPacket->timeOfArrival;
-
-        numerator += timeDiff * dataDiff;
-        denominator += timeDiff;
-
-        prevDataPacket = &dataPacket;
-	}
+	numerator = arrivalData.last().totalAmountOfArrivedData - arrivalData.first().totalAmountOfArrivedData;
+	denominator = arrivalData.last().timeOfArrival - arrivalData.first().timeOfArrival;
 
 	long double speed = numerator / denominator;
 
-	// Scale speed to 1 second.
+	// Scale speed to 1 second (multiply by 1000ms).
 	speed *= 1000.0;
 
 	return speed;
@@ -92,24 +80,25 @@ qint64 SpeedCalculator::lastRegisteredDataAmount() const
     return arrivalData.last().totalAmountOfArrivedData;
 }
 
-qint64 SpeedCalculator::maxTimeDifference() const
-{
-	if (arrivalData.size() < 2)
-	{
-		return 0;
-	}
-
-	const DataArrivalInfo& beginInfo = arrivalData.first();
-	const DataArrivalInfo& endInfo = arrivalData.last();
-
-	return endInfo.timeOfArrival - beginInfo.timeOfArrival;
-}
-
 void SpeedCalculator::registerDataAmount(qint64 totalAmountOfArrivedData)
 {
 	DataArrivalInfo dataArrivalInfo(totalAmountOfArrivedData, clock.elapsed());
-	arrivalData << dataArrivalInfo;
-	if (arrivalData.size() > _maxResolution)
+
+	if (arrivalData.isEmpty())
+	{
+		arrivalData << dataArrivalInfo;
+	}
+	else
+	{
+		DataArrivalInfo& lastPacket = arrivalData.last();
+		if (lastPacket.timeOfArrival + 1000 < dataArrivalInfo.timeOfArrival)
+		{
+			// Circulate the DataArrivalInfo objects.
+			arrivalData << dataArrivalInfo;
+		}
+	}
+
+	if (arrivalData.size() > NUM_ARRIVAL_DATA)
 	{
 		arrivalData.pop_front();
 	}
@@ -118,21 +107,6 @@ void SpeedCalculator::registerDataAmount(qint64 totalAmountOfArrivedData)
 void SpeedCalculator::setExpectedDataSize(qint64 size)
 {
 	dataSizeExpected = size;
-}
-
-void SpeedCalculator::setMaxResolution(int max)
-{
-	if (max < 2)
-	{
-		max = 2;
-	}
-	_maxResolution = max;
-
-	while (arrivalData.size() > max)
-	{
-		// Drop the oldest data if it doesn't fit the vector anymore.
-		arrivalData.pop_front();
-	}
 }
 
 void SpeedCalculator::start()
