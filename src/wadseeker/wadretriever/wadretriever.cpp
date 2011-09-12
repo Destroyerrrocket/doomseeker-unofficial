@@ -24,6 +24,7 @@
 
 #include "entities/waddownloadinfo.h"
 #include "protocols/entities/networkreplywrapperinfo.h"
+#include "protocols/http.h"
 #include "protocols/networkreplysignalwrapper.h"
 #include "wadretriever/wadinstaller.h"
 #include "zip/unarchive.h"
@@ -263,9 +264,23 @@ void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 		}
 		else
 		{
-			// Get filename, use the wad stored in the pInfo.
-			QString filename = pInfo->wad->name();
-
+			// We need to determine the correct filename.
+			QString filename = pInfo->wad->name(); 
+			Http http(pReply);
+			if (!http.attachmentName().trimmed().isEmpty())
+			{
+				filename = http.attachmentName().trimmed();
+			}
+			else
+			{
+				QFileInfo urlInfo(url.path());
+				if (!urlInfo.fileName().trimmed().isEmpty())
+				{
+					filename = urlInfo.fileName().trimmed();
+				}
+			}
+			
+			// Now try to install the file under downloaded filename.
 			tryInstall(filename, pReply->readAll());
 			if (isAnyWadPending())
 			{
@@ -322,12 +337,13 @@ bool WadRetriever::parseInstallerResult(const WadInstaller::WadInstallerResult& 
 	}
 	else
 	{
-		foreach (const QString& installedWadName, result.installedWads)
+		foreach (const QFileInfo& installedWad, result.installedWads)
 		{
-			WadRetrieverInfo* pInfo = findRetrieverInfo(installedWadName);
-			emit message(tr("Installed WAD: %1").arg(pInfo->wad->name()),
+			WadRetrieverInfo* pInfo = findRetrieverInfo(installedWad.fileName());
+			emit message(tr("Installed WAD: %1 [%2 bytes]").arg(pInfo->wad->name()).arg(installedWad.size()),
 				WadseekerLib::Notice);
-
+				
+			pInfo->wad->setSize(installedWad.size());
 			emit wadInstalled(*pInfo->wad);
 
 			removeWadRetrieverInfo(pInfo);

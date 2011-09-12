@@ -12,6 +12,7 @@
 WadDownloadInfo::WadDownloadInfo(const QString& name)
 {
 	d.name = name;
+	d.size = -1;
 }
 
 QString WadDownloadInfo::archiveName(const QString& suffix) const

@@ -25,6 +25,7 @@
 SpeedCalculator::SpeedCalculator()
 {
 	dataSizeExpected = 0;
+	lastRegisterAttemptDataSize = 0;
 }
 
 long double SpeedCalculator::estimatedTimeUntilArrival() const

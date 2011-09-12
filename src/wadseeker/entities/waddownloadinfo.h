@@ -93,12 +93,36 @@ class WadDownloadInfo
 		 *         extension will replace the extension from name().
 		 */
 		QStringList possibleArchiveNames() const;
+		
+		/**
+		 * @brief Size of the file.
+		 *
+		 * @param size 
+		 *      Size of the file in bytes if known. If unknown
+		 *      then a negative value should be set.
+		 */
+		void setSize(qint64 size)
+		{
+			d.size = size;
+		}
+		
+		/**
+		 * @brief Size of the file if known.
+		 *
+		 * @return Size of the file in bytes if known. If unknown
+		 *         then a negative value is returned.
+		 */
+		qint64 size() const
+		{
+			return d.size;
+		}
 
 	private:
 		class PrivData
 		{
 			public:
 				QString name;
+				qint64 size;
 		};
 
 		PrivData d;

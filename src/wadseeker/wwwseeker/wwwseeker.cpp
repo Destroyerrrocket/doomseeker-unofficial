@@ -345,7 +345,7 @@ void WWWSeeker::networkQueryMetaDataChanged(QNetworkReply* pReply)
 				// Forward the current download URL to the WAD download queue.
 				emit message(tr("Attachment %1 detected on URL: %2. Forwarding to WAD download queue.").arg(attachmentName, url.toString()),
 					WadseekerLib::Notice);
-				emit linkFound(attachmentName, url);
+				emit linkFound(attachmentSeekInfo->file(), url);
 			}
 		}
 

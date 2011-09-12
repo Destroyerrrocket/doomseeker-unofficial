@@ -560,6 +560,11 @@ void Wadseeker::wadRetrieverMessage(const QString& message, WadseekerLib::Messag
 
 void Wadseeker::wadRetrieverWadInstalled(WadDownloadInfo wadDownloadInfo)
 {
+	if (wadDownloadInfo.size() > 0)
+	{
+		// If size of the file is known it is a good idea to emit it now.
+		emit fileDownloadProgress(wadDownloadInfo.name(), wadDownloadInfo.size(), wadDownloadInfo.size());
+	}
 	emit fileInstalled(wadDownloadInfo.name());
 
 	d.wwwSeeker->removeSeekedFile(wadDownloadInfo.name());

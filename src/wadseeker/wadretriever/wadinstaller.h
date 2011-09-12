@@ -24,6 +24,7 @@
 #define __WADINSTALLER_H__
 
 #include <QDir>
+#include <QFileInfo>
 #include <QObject>
 #include <QString>
 #include <QStringList>
@@ -50,9 +51,9 @@ class WadInstaller : public QObject
 				QString error;
 
 				/**
- 				 * @brief Filenames of installed WADs.
+ 				 * @brief QFileInfo objects denoting installed WADs.
 				 */
-				QStringList installedWads;
+				QList<QFileInfo> installedWads;
 
 				static WadInstallerResult makeCriticalError(const QString& error)
 				{
@@ -74,11 +75,11 @@ class WadInstaller : public QObject
 					return result;
 				}
 
-				static WadInstallerResult makeSuccess(const QString& fileName)
+				static WadInstallerResult makeSuccess(const QFileInfo& file)
 				{
 					WadInstallerResult result;
 
-					result.installedWads << fileName;
+					result.installedWads << file;
 
 					return result;
 				}

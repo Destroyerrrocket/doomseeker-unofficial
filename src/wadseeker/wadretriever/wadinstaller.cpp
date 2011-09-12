@@ -57,7 +57,7 @@ WadInstaller::WadInstallerResult WadInstaller::installArchive(UnArchive& archive
 			QString filePath = installDir.absoluteFilePath(name);
 			if (archive.extract(entryIndex, filePath))
 			{
-				result.installedWads << name;
+				result.installedWads << filePath;
 			}
 		}
 	}
@@ -94,7 +94,7 @@ WadInstaller::WadInstallerResult WadInstaller::installFile(const QString& fileNa
 	file.write(fileData);
 	file.close();
 
-	return WadInstallerResult::makeSuccess(fileName);
+	return WadInstallerResult::makeSuccess(filePath);
 }
 
 WadInstaller::WadInstallerResult WadInstaller::makeSureDirPathExists(QDir& dir)

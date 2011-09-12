@@ -52,8 +52,7 @@ QList<ZipLocalFileHeader> UnZip::allDataHeaders()
 	{
 		ZipLocalFileHeader zip;
 
-		int readError;
-		this->readHeader(pos, zip);
+		int readError = this->readHeader(pos, zip);
 
 		if(readError == ZipLocalFileHeader::Corrupted)
 		{
