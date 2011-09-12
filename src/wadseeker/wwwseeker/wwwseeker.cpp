@@ -559,7 +559,7 @@ QUrl WWWSeeker::takeNextUrl()
 
 const QString& WWWSeeker::userAgent() const
 {
-	d.userAgent;
+	return d.userAgent;
 }
 
 bool WWWSeeker::wasUrlUsed(const QUrl& url) const

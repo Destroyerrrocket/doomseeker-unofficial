@@ -44,6 +44,7 @@ void WadseekerSitesTable::addUrl(const QUrl& url)
 		setSortingEnabled(false);
 
 		QProgressBar* pBar = new QProgressBar();
+		pBar->setAlignment(Qt::AlignCenter);
 		pBar->setMinimum(0);
 		pBar->setMaximum(0);
 

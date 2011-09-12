@@ -58,6 +58,7 @@ void WadseekerWadsTable::addFile(const QString& filename)
 		setSortingEnabled(false);
 
 		QProgressBar* pBar = new QProgressBar();
+		pBar->setAlignment(Qt::AlignCenter);
 
 		setItem(rowIndex, IDX_NAME_COLUMN, new QTableWidgetItem(filename));
 		setItem(rowIndex, IDX_URL_COLUMN, new QTableWidgetItem());
@@ -92,9 +93,17 @@ void WadseekerWadsTable::setFileDownloadFinished(const QString& filename)
 
 	if (row >= 0)
 	{
+		SpeedCalculator* pCalculator = d.speedCalculators[filename];
+		if (pCalculator->expectedDataSize() == 0)
+		{
+			pCalculator->setExpectedDataSize(1);
+		}
+		
+		pCalculator->registerDataAmount(pCalculator->expectedDataSize());
+	
 		QProgressBar* pBar = (QProgressBar*) this->cellWidget(row, IDX_PROGRESS_COLUMN);
-		pBar->setMaximum(1);
-		pBar->setValue(1);
+		pBar->setMaximum(pCalculator->expectedDataSize());
+		pBar->setValue(pCalculator->expectedDataSize());
 
 		// Update ETA
 		// ETA will be changed to DONE if wad is installed successfully.
@@ -147,9 +156,16 @@ void WadseekerWadsTable::setFileSuccessful(const QString& filename)
 	{
 		// Set progress bar to 100%.
 		QProgressBar* pBar = (QProgressBar*) this->cellWidget(row, IDX_PROGRESS_COLUMN);
+		SpeedCalculator* pCalculator = d.speedCalculators[filename];
+		if (pCalculator->expectedDataSize() == 0)
+		{
+			pCalculator->setExpectedDataSize(1);
+		}
+		
+		pCalculator->registerDataAmount(pCalculator->expectedDataSize());		
 
-		pBar->setMaximum(100);
-		pBar->setValue(100);
+		pBar->setMaximum(pCalculator->expectedDataSize());
+		pBar->setValue(pCalculator->expectedDataSize());
 
 		item(row, IDX_NAME_COLUMN)->setIcon(QIcon(":/icons/ok.png"));
 		item(row, IDX_URL_COLUMN)->setText("");
@@ -240,18 +256,28 @@ void WadseekerWadsTable::updateDataInfoValues(bool bForce)
             SpeedCalculator* pCalculator = d.speedCalculators.value(filename);
 
             // Update data amount.
-            QString strCurrent = Strings::formatDataAmount(pCalculator->lastRegisteredDataAmount());
+            QString strCurrent = Strings::formatDataAmount(pCalculator->lastRegisterAttemptedDataAmount());
             QString strTotal = Strings::formatDataAmount(pCalculator->expectedDataSize());
 
             QString size = QString("%1 / %2").arg(strCurrent, strTotal);
             item(i, IDX_SIZE_COLUMN)->setText(size);
 
             // Update ETA and speed.
-            QString eta = Strings::formatTime(pCalculator->estimatedTimeUntilArrival());
-            item(i, IDX_ETA_COLUMN)->setText(eta);
-
-            QString speed = Strings::formatDataSpeed(pCalculator->getSpeed());
-            item(i, IDX_SPEED_COLUMN)->setText(speed);
+			if (pCalculator->expectedDataSize() != pCalculator->lastRegisterAttemptedDataAmount())
+			{
+				// If both above values are equal it means we have finished
+				// the download and shouldn't change the speed display.			
+				QString eta = Strings::formatTime(pCalculator->estimatedTimeUntilArrival());
+				item(i, IDX_ETA_COLUMN)->setText(eta);
+				
+				QString speed = Strings::formatDataSpeed(pCalculator->getSpeed());
+				item(i, IDX_SPEED_COLUMN)->setText(speed);
+			}
+			else
+			{
+				QString eta = tr("Done");
+				item(i, IDX_ETA_COLUMN)->setText(eta);
+			}
         }
     }
 }

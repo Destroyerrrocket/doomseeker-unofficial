@@ -54,6 +54,17 @@ class SpeedCalculator
 		 * total amount of downloaded data.
 		 */
 		qint64                      lastRegisteredDataAmount() const;
+		
+		/**
+		 * @brief Last amount of data that was passed to registerDataAmount()
+		 *
+		 * It doesn't matter whether the data was actually registered for the
+		 * speed calculation or not.
+		 */
+		qint64                      lastRegisterAttemptedDataAmount() const
+		{
+			return lastRegisterAttemptDataSize;
+		}
 
 		/**
 		 * @brief Register new total amount of data.
@@ -112,13 +123,16 @@ class SpeedCalculator
 
 		QVector<DataArrivalInfo>	arrivalData;
 
-		/**
-		 * @brief
-		 */
-		QVector<long double>		averageSpeeds;
+//		QVector<long double>		averageSpeeds;
 
 		QTime						clock;
 		qint64  					dataSizeExpected;
+		
+		/**
+		 * @brief Holds last amount of data that was passed to
+		 *        registerDataAmount() method.
+		 */
+		qint64						lastRegisterAttemptDataSize;
 };
 
 #endif

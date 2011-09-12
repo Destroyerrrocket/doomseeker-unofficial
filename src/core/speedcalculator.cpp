@@ -83,6 +83,7 @@ qint64 SpeedCalculator::lastRegisteredDataAmount() const
 void SpeedCalculator::registerDataAmount(qint64 totalAmountOfArrivedData)
 {
 	DataArrivalInfo dataArrivalInfo(totalAmountOfArrivedData, clock.elapsed());
+	this->lastRegisterAttemptDataSize = totalAmountOfArrivedData;
 
 	if (arrivalData.isEmpty())
 	{
