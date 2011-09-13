@@ -56,7 +56,7 @@ SkulltagEnginePlugin::SkulltagEnginePlugin()
 		EP_AllowsMOTD,
 		EP_DefaultServerPort, 10666,
 		EP_HasMasterServer,
-		EP_DefaultMaster, "skulltag.servegame.com:15300",
+		EP_DefaultMaster, "master.skulltag.net:15300",
 		EP_SupportsRandomMapRotation,
 		EP_GameModes, SkulltagGameInfo::gameModes(),
 		EP_GameModifiers, SkulltagGameInfo::gameModifiers(),
