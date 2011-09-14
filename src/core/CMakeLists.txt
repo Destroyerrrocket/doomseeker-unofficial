@@ -118,6 +118,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/widgets/serverconsole.h
 	gui/widgets/serverlistview.h
 	gui/widgets/serversstatuswidget.h
+	gui/widgets/tablewidgetmouseaware.h
 	gui/widgets/wadseekersitestable.h
 	gui/widgets/wadseekerwadstable.h
 	gui/aboutDlg.h
@@ -195,6 +196,7 @@ set(SOURCE_FILES
 	gui/widgets/fontbutton.cpp
 	gui/widgets/importantmessageswidget.cpp
 	gui/widgets/memorylineedit.cpp
+	gui/widgets/tablewidgetmouseaware.cpp
 	gui/widgets/serverconsole.cpp
 	gui/widgets/serverlistcontextmenu.cpp
 	gui/widgets/serverlistview.cpp

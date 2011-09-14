@@ -117,7 +117,7 @@ void Wadseeker::cleanUpAfterFinish()
 
 	// If there are no more WAD downloads pending for URLs when finish is
 	// announced, then the Wadeeker procedure is a success.
-	bool bSuccess = !d.wadRetriever->isAnyWadPending() && !d.bIsAborting;
+	bool bSuccess = !d.wadRetriever->isAnyWadPendingUrl() && !d.bIsAborting;
 	d.bIsAborting = false;
 
 	delete d.seekParametersForCurrentSeek;
@@ -177,6 +177,16 @@ void Wadseeker::idgamesClientFinished(Idgames* pEmitter)
 bool Wadseeker::isAllFinished() const
 {
 	return !isWorking();
+}
+
+bool Wadseeker::isDownloadingFile(const QString& file) const
+{
+	if (d.wadRetriever != NULL)
+	{
+		return d.wadRetriever->isDownloadingWad(file);
+	}
+	
+	return false;
 }
 
 bool Wadseeker::isForbiddenWad(const QString& wad)
@@ -394,6 +404,19 @@ void Wadseeker::setupSitesUrls()
 	}
 }
 
+void Wadseeker::skipFileCurrentUrl(const QString& fileName)
+{
+	if (d.wadRetriever != NULL)
+	{
+		d.wadRetriever->skipCurrentUrl(fileName);
+	}
+}
+
+void Wadseeker::skipSiteSeek(const QUrl& url)
+{
+	
+}
+
 void Wadseeker::startNextIdgamesClient()
 {
 	if (!d.bIsAborting && !d.idgamesClients.isEmpty())
@@ -532,7 +555,7 @@ void Wadseeker::wadRetrieverFinished()
 {
 	if (!isAllFinished())
 	{
-		if (d.wadRetriever->isAnyWadPending())
+		if (d.wadRetriever->areAllWadsPendingUrls())
 		{
 			emit message(tr("WadRetriever is pending for download URLs."), WadseekerLib::Notice);
 		}

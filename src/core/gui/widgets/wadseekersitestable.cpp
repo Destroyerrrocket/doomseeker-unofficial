@@ -27,7 +27,7 @@
 #include <QUrl>
 
 WadseekerSitesTable::WadseekerSitesTable(QWidget* pParent)
-: QTableWidget(pParent)
+: TableWidgetMouseAware(pParent)
 {
 	d.bAlreadyShownOnce = false;
 }

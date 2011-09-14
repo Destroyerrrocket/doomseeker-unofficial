@@ -24,16 +24,29 @@
 #define __WADSEEKERWADSTABLE_H__
 
 #include <QMap>
-#include <QTableWidget>
+#include <QMenu>
 #include <QTime>
+
+#include "gui/widgets/tablewidgetmouseaware.h"
 
 class SpeedCalculator;
 
-class WadseekerWadsTable : public QTableWidget
+class WadseekerWadsTable : public TableWidgetMouseAware
 {
 	Q_OBJECT;
 
 	public:
+		class ContextMenu : public QMenu
+		{
+			friend class WadseekerWadsTable;
+		
+			public:
+				QAction* actionSkipCurrentSite;
+				
+			private:
+				ContextMenu(QWidget* pParent = NULL);
+		};
+
 		static const int IDX_NAME_COLUMN = 0;
 		static const int IDX_URL_COLUMN = 1;
 		static const int IDX_PROGRESS_COLUMN = 2;
@@ -45,6 +58,18 @@ class WadseekerWadsTable : public QTableWidget
 		~WadseekerWadsTable();
 
 		void addFile(const QString& filename);
+		
+		ContextMenu* contextMenu(const QModelIndex& index, const QPoint& cursorPosition);
+		
+		/**
+		 * @brief Total size of data in bytes for specified row.
+		 *
+		 * @return Amount of bytes if successful, negative value if
+		 *         row is invalid.
+		 */
+		qint64 expectedDataSize(int row) const;
+		
+		QString fileNameAtRow(int row) const; 
 
 		/**
 		 * @brief Total done percentage calculated basing on the data set by
@@ -54,7 +79,7 @@ class WadseekerWadsTable : public QTableWidget
 		 *         calculated a negative value is returned.
 		 */
 		double totalDonePercentage() const;
-
+		
 	public slots:
 		void setFileDownloadFinished(const QString& filename);
 		void setFileFailed(const QString& filename);

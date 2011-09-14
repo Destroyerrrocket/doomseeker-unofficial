@@ -73,6 +73,10 @@ WadseekerInterface::WadseekerInterface(QWidget* parent)
 		SLOT( setFileProgress(const QString&, qint64, qint64) ) );
 	twWads->connect(&wadseeker, SIGNAL( fileDownloadStarted(const QString&, const QUrl&) ),
 		SLOT( setFileUrl(const QString&, const QUrl&) ) );
+		
+	// Connect tables.
+	this->connect(twWads, SIGNAL( rightMouseClick(const QModelIndex&, const QPoint&) ),
+		SLOT( wadsTableRightClicked(const QModelIndex&, const QPoint&) ) );
 
 	bAutomatic = false;
 	bFirstShown = false;
@@ -381,4 +385,32 @@ QStringList	WadseekerInterface::unsuccessfulWads() const
 	}
 
 	return allWads;
+}
+
+void WadseekerInterface::wadsTableRightClicked(const QModelIndex& index, const QPoint& cursorPosition)
+{
+	WadseekerWadsTable::ContextMenu* menu = twWads->contextMenu(index, cursorPosition);
+	
+	// Disable actions depending on Wadseeker's state.
+	QString fileName = twWads->fileNameAtRow(index.row());
+	if (!wadseeker.isDownloadingFile(fileName))
+	{
+		menu->actionSkipCurrentSite->setEnabled(false);
+	}
+	
+	QAction* pResult = menu->exec();
+	
+	if (pResult == menu->actionSkipCurrentSite)
+	{
+		QString wadName = twWads->fileNameAtRow(index.row());
+		twWads->setFileUrl(fileName, QUrl());
+		
+		wadseeker.skipFileCurrentUrl(wadName);
+	}
+	else if (pResult != NULL)
+	{
+		QMessageBox::warning(this, tr("Context Menu error"), tr("Unknown action selected"));
+	}
+	
+	delete menu;
 }

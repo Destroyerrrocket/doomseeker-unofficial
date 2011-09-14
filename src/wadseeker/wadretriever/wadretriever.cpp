@@ -70,6 +70,17 @@ void WadRetriever::addUrl(const WadDownloadInfo& wad, const QUrl& url)
 	}
 }
 
+bool WadRetriever::areAllWadsPendingUrls() const
+{
+	if (numTotalWadsDownloads() <= 0)
+	{
+		return false;
+	}
+
+	return numDownloadsPendingUrls() == numTotalWadsDownloads();
+}
+
+
 QUrl WadRetriever::extractNextValidUrl(WadRetrieverInfo& wadRetrieverInfo)
 {
 	while (!wadRetrieverInfo.downloadUrls.isEmpty())
@@ -117,6 +128,54 @@ WadRetriever::WadRetrieverInfo* WadRetriever::findRetrieverInfo(const QString& w
 WadRetriever::WadRetrieverInfo* WadRetriever::findRetrieverInfo(const QNetworkReply* pNetworkReply)
 {
 	QList<WadRetrieverInfo* >::iterator it;
+	for (it = d.wads.begin(); it != d.wads.end(); ++it)
+	{
+		WadRetrieverInfo& wadInfo = **it;
+		if (wadInfo.pNetworkReply != NULL)
+		{
+			if (*wadInfo.pNetworkReply == pNetworkReply)
+			{
+				return &wadInfo;
+			}
+		}
+	}
+
+	return NULL;
+}
+
+const WadRetriever::WadRetrieverInfo* WadRetriever::findRetrieverInfo(const WadDownloadInfo& wad) const
+{
+	QList<WadRetrieverInfo* >::const_iterator it;
+	for (it = d.wads.begin(); it != d.wads.end(); ++it)
+	{
+		WadRetrieverInfo& wadInfo = **it;
+		if (wadInfo == wad)
+		{
+			return &wadInfo;
+		}
+	}
+
+	return NULL;
+}
+
+const WadRetriever::WadRetrieverInfo* WadRetriever::findRetrieverInfo(const QString& wadName) const
+{
+	QList<WadRetrieverInfo* >::const_iterator it;
+	for (it = d.wads.begin(); it != d.wads.end(); ++it)
+	{
+		WadRetrieverInfo& wadInfo = **it;
+		if (wadInfo == wadName)
+		{
+			return &wadInfo;
+		}
+	}
+
+	return NULL;
+}
+
+const WadRetriever::WadRetrieverInfo* WadRetriever::findRetrieverInfo(const QNetworkReply* pNetworkReply) const
+{
+	QList<WadRetrieverInfo* >::const_iterator it;
 	for (it = d.wads.begin(); it != d.wads.end(); ++it)
 	{
 		WadRetrieverInfo& wadInfo = **it;
@@ -180,26 +239,24 @@ QList< WadDownloadInfo* > WadRetriever::getWadDownloadInfoList()
 
 bool WadRetriever::isAnyDownloadWorking() const
 {
-	foreach (const WadRetrieverInfo* wadInfo, d.wads)
-	{
-		if (wadInfo->pNetworkReply != NULL
-		|| !wadInfo->downloadUrls.isEmpty())
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-bool WadRetriever::isAnyWadPending() const
-{
-	if (numWadsDownloads() <= 0)
+	if (numTotalWadsDownloads() <= 0)
 	{
 		return false;
 	}
 
-	return numWadsDownloads() > numCurrentRunningDownloads();
+	return numDownloadsPendingUrls() < numTotalWadsDownloads();
+}
+
+bool WadRetriever::isAnyWadPendingUrl() const
+{
+	return numDownloadsPendingUrls() != 0;
+}
+
+bool WadRetriever::isDownloadingWad(const WadDownloadInfo& wad) const
+{
+	const WadRetrieverInfo* pInfo = findRetrieverInfo(wad);
+	
+	return pInfo != NULL && pInfo->pNetworkReply != NULL;
 }
 
 void WadRetriever::networkQueryDownloadProgress(QNetworkReply* pReply, qint64 current, qint64 total)
@@ -264,28 +321,7 @@ void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 		}
 		else
 		{
-			// We need to determine the correct filename.
-			QString filename = pInfo->wad->name(); 
-			Http http(pReply);
-			if (!http.attachmentName().trimmed().isEmpty())
-			{
-				filename = http.attachmentName().trimmed();
-			}
-			else
-			{
-				QFileInfo urlInfo(url.path());
-				if (!urlInfo.fileName().trimmed().isEmpty())
-				{
-					filename = urlInfo.fileName().trimmed();
-				}
-			}
-			
-			// Now try to install the file under downloaded filename.
-			tryInstall(filename, pReply->readAll());
-			if (isAnyWadPending())
-			{
-				emit pendingUrls();
-			}
+			resolveDownloadFinish(pReply, pInfo);
 		}
 
 		// Remember to clean up.
@@ -307,6 +343,23 @@ int WadRetriever::numCurrentRunningDownloads() const
 	foreach (const WadRetrieverInfo* info, d.wads)
 	{
 		if (info->pNetworkReply != NULL)
+		{
+			++num;
+		}
+	}
+
+	return num;
+}
+
+int WadRetriever::numDownloadsPendingUrls() const
+{
+	int num = 0;
+
+	// Count each retriever info.
+	foreach (const WadRetrieverInfo* info, d.wads)
+	{
+		if (info->pNetworkReply == NULL &&
+			info->downloadUrls.isEmpty())
 		{
 			++num;
 		}
@@ -375,6 +428,41 @@ void WadRetriever::removeWadRetrieverInfo(WadRetrieverInfo* pWadRetrieverInfo)
 	}
 }
 
+void WadRetriever::resolveDownloadFinish(QNetworkReply* pReply, WadRetrieverInfo* pWadRetrieverInfo)
+{
+	QByteArray data = pReply->readAll();
+	QUrl url = pReply->request().url();
+			
+	// If data is empty we assume that abort was commenced
+	if (!data.isEmpty())
+	{
+		// We need to determine the correct filename.
+		QString filename = pWadRetrieverInfo->wad->name(); 
+		Http http(pReply);
+		if (!http.attachmentName().trimmed().isEmpty())
+		{
+			filename = http.attachmentName().trimmed();
+		}
+		else
+		{
+			QFileInfo urlInfo(url.path());
+			if (!urlInfo.fileName().trimmed().isEmpty())
+			{
+				filename = urlInfo.fileName().trimmed();
+			}
+		}
+		
+		// Now try to install the file under downloaded filename.
+		tryInstall(filename, data);
+	}	
+	else if (!d.bIsAborting)
+	{
+		// Abort was commenced, but it might have been only an abort
+		// for that particular file and not a global one.
+		startNextDownloads();
+	}
+}
+
 void WadRetriever::setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, QNetworkReply* pReply)
 {
 	NetworkReplyWrapperInfo* pWrapperInfo = new NetworkReplyWrapperInfo(pReply);
@@ -401,11 +489,32 @@ void WadRetriever::setWads(const QList<WadDownloadInfo>& wads)
 	}
 }
 
+void WadRetriever::skipCurrentUrl(const WadDownloadInfo& wad)
+{
+	WadRetrieverInfo* pInfo = findRetrieverInfo(wad);
+	if (pInfo != NULL && pInfo->pNetworkReply != NULL) 
+	{
+		pInfo->pNetworkReply->pReply->abort();
+	}
+}
+
 void WadRetriever::startNextDownloads()
 {
 	if (d.wads.isEmpty())
 	{
 		emit finished();
+		return;
+	}
+	
+	if (areAllWadsPendingUrls())
+	{
+		emit pendingUrls();
+		return;
+	}
+	
+	if (d.bIsAborting)
+	{
+		return;
 	}
 
 	while (numCurrentRunningDownloads() < d.maxConcurrentWadDownloads)

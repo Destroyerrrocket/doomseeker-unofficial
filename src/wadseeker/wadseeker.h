@@ -132,6 +132,14 @@ class WADSEEKER_API Wadseeker : public QObject
 		 * Deallocates an instance of Wadseeker.
 		 */
 		~Wadseeker();
+		
+		/**
+		 * @brief Check if Wadseeker is currently downloading given file.
+		 *
+		 * @param wad
+		 *      Name of the file as specified by seekStarted() signal.
+		 */
+		bool				isDownloadingFile(const QString& file) const;
 
 		/**
 		 * @brief Check if Wadseeker is still working.
@@ -220,6 +228,33 @@ class WADSEEKER_API Wadseeker : public QObject
 		 */
 		void				setTargetDirectory(const QString& dir);
 
+		/**
+		 * @brief Skips current URL for the specified file.
+		 *
+		 * If available a new file URL will be immediately taken from the queue
+		 * and new download will begin.
+		 *
+		 * @param fileName
+		 *      This must be a file name specified by seekStarted()
+		 *      signal. If file name is not valid or download for this
+		 *      file is not in progress then no operation will be
+		 *      performed.
+		 */
+		void				skipFileCurrentUrl(const QString& fileName);
+		
+		/**
+		 * @brief Skips site seeks for specified URL.
+		 *
+		 * If available a new site URL will be immediately taken from the queue
+		 * for inspection.
+		 *
+		 * @param url
+		 *      This must be one of the URLs that was emitted through
+		 *		siteStarted() or siteRedirect() signals. If unknown URL
+		 *      is passed no operation will be performed.
+		 */
+		void				skipSiteSeek(const QUrl& url);
+		
 		/**
 		 *	Library's "entry" method. This is where Wadseeker begins
 		 *	to iterate through WWW sites to find all files specified

@@ -31,7 +31,7 @@
 #include <QUrl>
 
 WadseekerWadsTable::WadseekerWadsTable(QWidget* pParent)
-: QTableWidget(pParent)
+: TableWidgetMouseAware(pParent)
 {
 	d.bAlreadyShownOnce = false;
 	d.updateClock.start();
@@ -76,6 +76,41 @@ void WadseekerWadsTable::addFile(const QString& filename)
 	}
 }
 
+WadseekerWadsTable::ContextMenu* WadseekerWadsTable::contextMenu(const QModelIndex& index, const QPoint& cursorPosition)
+{
+	WadseekerWadsTable::ContextMenu* menu = new ContextMenu(this);
+	QPoint displayPoint = this->viewport()->mapToGlobal(cursorPosition);
+	menu->move(displayPoint);
+	
+	if (!index.isValid())
+	{
+		menu->actionSkipCurrentSite->setEnabled(false);
+	}
+
+	return menu;
+}
+
+qint64 WadseekerWadsTable::expectedDataSize(int row) const
+{
+	if (row < 0 || row >= this->rowCount())
+	{
+		return -1;
+	}
+	
+	QString fileName = fileNameAtRow(row);
+	return d.speedCalculators[fileName]->expectedDataSize();
+}
+
+QString WadseekerWadsTable::fileNameAtRow(int row) const
+{
+	if (row < 0 || row >= this->rowCount())
+	{
+		return QString();
+	}
+
+	return item(row, IDX_NAME_COLUMN)->text();
+}
+
 int WadseekerWadsTable::findFileRow(const QString& filename)
 {
 	QList<QTableWidgetItem *> list = findItems(filename, Qt::MatchFixedString);
@@ -93,17 +128,17 @@ void WadseekerWadsTable::setFileDownloadFinished(const QString& filename)
 
 	if (row >= 0)
 	{
-		SpeedCalculator* pCalculator = d.speedCalculators[filename];
-		if (pCalculator->expectedDataSize() == 0)
-		{
-			pCalculator->setExpectedDataSize(1);
-		}
-		
-		pCalculator->registerDataAmount(pCalculator->expectedDataSize());
+		//SpeedCalculator* pCalculator = d.speedCalculators[filename];
+		//if (pCalculator->expectedDataSize() == 0)
+		//{
+		//	pCalculator->setExpectedDataSize(1);
+		//}
+		//
+		//pCalculator->registerDataAmount(pCalculator->expectedDataSize());
 	
-		QProgressBar* pBar = (QProgressBar*) this->cellWidget(row, IDX_PROGRESS_COLUMN);
-		pBar->setMaximum(pCalculator->expectedDataSize());
-		pBar->setValue(pCalculator->expectedDataSize());
+		//QProgressBar* pBar = (QProgressBar*) this->cellWidget(row, IDX_PROGRESS_COLUMN);
+		//pBar->setMaximum(pCalculator->expectedDataSize());
+		//pBar->setValue(pCalculator->expectedDataSize());
 
 		// Update ETA
 		// ETA will be changed to DONE if wad is installed successfully.
@@ -280,4 +315,12 @@ void WadseekerWadsTable::updateDataInfoValues(bool bForce)
 			}
         }
     }
+}
+///////////////////////////////////////////////////////////////////////////////
+WadseekerWadsTable::ContextMenu::ContextMenu(QWidget* pParent)
+: QMenu(pParent)
+{
+	this->actionSkipCurrentSite = new QAction(tr("Skip current URL"), this);
+	
+	this->addAction(this->actionSkipCurrentSite);
 }

@@ -142,6 +142,14 @@ class WWWSeeker : public QObject
 		}
 
 		void setUserAgent(const QString& userAgent);
+		
+		/**
+		 * @brief Skips site seeks for specified URL.
+		 *
+		 * If available a new site URL will be immediately taken from the queue
+		 * for inspection.
+		 */
+		void skipSite(const QUrl& url);
 
 		/**
 		 * @brief Begins search for files.
@@ -279,6 +287,7 @@ class WWWSeeker : public QObject
 		void addNetworkReply(QNetworkReply* pReply);
 		void deleteNetworkReplyWrapperInfo(QNetworkReply* pReply);
 		NetworkReplyWrapperInfo* findNetworkReplyWrapperInfo(QNetworkReply* pReply);
+		NetworkReplyWrapperInfo* findNetworkReplyWrapperInfo(const QUrl& url);
 
 		/**
 		 * @brief Find FileSeekInfo object by comparing possible filenames.

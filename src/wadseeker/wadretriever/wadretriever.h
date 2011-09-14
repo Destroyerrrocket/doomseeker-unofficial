@@ -79,6 +79,11 @@ class WadRetriever : public QObject
 		 *      Download URL that will be queued for specified WAD.
 		 */
 		void addUrl(const WadDownloadInfo& wad, const QUrl& url);
+		
+		/**
+		 * @brief Returns true if all WADs are pending for download URLs.
+		 */
+		bool areAllWadsPendingUrls() const;
 
 		/**
 		 * @brief Checks if WadRetriever has specified WAD on the list.
@@ -94,18 +99,32 @@ class WadRetriever : public QObject
 		/**
 		 * @brief Returns true if at least one WAD is pending for download URL.
 		 */
-		bool isAnyWadPending() const;
-
+		bool isAnyWadPendingUrl() const;
+		
+		/**
+		 * @brief Returns true if wad is currently being downloaded.
+		 */
+		bool isDownloadingWad(const WadDownloadInfo& wad) const;
+		
+		/**
+		 * @brief Number of WADs that are currently being downloaded.
+		 */
+		int numCurrentRunningDownloads() const;
+		
+		/**
+		 * @brief Number of WADs which are not being currently downloaded.
+		 *        and which have no URLs on the queue.
+		 */
+		int numDownloadsPendingUrls() const;
+		
 		/**
 		 * @brief Number of WADs that are still being downloaded or waiting for
 		 *        download to start.
 		 */
-		int numWadsDownloads() const
+		int numTotalWadsDownloads() const
 		{
 			return d.wads.size();
-		}
-
-		int numCurrentRunningDownloads() const;
+		}		
 
 		/**
 		 * @brief Max concurrent downloads of different WADs.
@@ -144,6 +163,14 @@ class WadRetriever : public QObject
 		 *      downloaded and installed. Contents of this list are copied.
 		 */
 		void setWads(const QList<WadDownloadInfo>& wads);
+		
+		/**
+		 * @brief Skips current URL for the specified file.
+		 *
+		 * If available a new file URL will be immediately taken from the queue
+		 * and new download will begin.
+		 */
+		void skipCurrentUrl(const WadDownloadInfo& wad);
 
 		/**
 		 * @brief Directory where the installed WADs will be saved.
@@ -278,6 +305,9 @@ class WadRetriever : public QObject
 		WadRetrieverInfo* findRetrieverInfo(const WadDownloadInfo& wad);
 		WadRetrieverInfo* findRetrieverInfo(const QString& wadName);
 		WadRetrieverInfo* findRetrieverInfo(const QNetworkReply* pNetworkReply);
+		const WadRetrieverInfo* findRetrieverInfo(const WadDownloadInfo& wad) const;
+		const WadRetrieverInfo* findRetrieverInfo(const QString& wadName) const;
+		const WadRetrieverInfo* findRetrieverInfo(const QNetworkReply* pNetworkReply) const;
 
 		/**
 		 * @brief Next WAD that is not being downloaded but has download URLs.
@@ -304,6 +334,12 @@ class WadRetriever : public QObject
 		 * @brief Removes WadRetrieverInfo and aborts any downloads in progress.
 		 */
 		void removeWadRetrieverInfo(WadRetrieverInfo* pWadRetrieverInfo);
+		
+		/**
+		 * @brief Attempts to extract meaningful file data from 
+		 *        the QNetworkReply.
+		 */
+		void resolveDownloadFinish(QNetworkReply* pReply, WadRetrieverInfo* pWadRetrieverInfo);
 
 		void setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, QNetworkReply* pReply);
 		void startNextDownloads();

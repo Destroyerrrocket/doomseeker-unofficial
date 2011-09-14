@@ -193,6 +193,19 @@ NetworkReplyWrapperInfo* WWWSeeker::findNetworkReplyWrapperInfo(QNetworkReply* p
 	return NULL;
 }
 
+NetworkReplyWrapperInfo* WWWSeeker::findNetworkReplyWrapperInfo(const QUrl& url)
+{
+	foreach (NetworkReplyWrapperInfo* info, d.networkQueries)
+	{
+		if (info->pReply->request().url() == url)
+		{
+			return info;
+		}
+	}
+
+	return NULL;
+}
+
 bool WWWSeeker::isDirectUrl(const QUrl& url, QString& outFileName) const
 {
 	// Utilize what UrlParser gives us for this.
@@ -227,7 +240,7 @@ void WWWSeeker::networkQueryFinished(QNetworkReply* pReply)
 	QUrl url = pReply->request().url();
 
 #ifndef NDEBUG
-	printf("WWWSeeker::networkQueryFinished()");
+	printf("WWWSeeker::networkQueryFinished()\n");
 	QList<QByteArray> headers = pReply->rawHeaderList();
 	printf("HEADERS\n");
 	printf("URL %s\n", url.toEncoded().constData());
@@ -440,6 +453,15 @@ void WWWSeeker::removeSeekedFile(const QString& file)
 void WWWSeeker::setUserAgent(const QString& userAgent)
 {
 	d.userAgent = userAgent;
+}
+
+void WWWSeeker::skipSite(const QUrl& url)
+{
+	NetworkReplyWrapperInfo* pInfo = findNetworkReplyWrapperInfo(url);
+	if (pInfo != NULL)
+	{
+		pInfo->pReply->abort();
+	}
 }
 
 void WWWSeeker::startNetworkQuery(const QUrl& url)

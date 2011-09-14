@@ -23,9 +23,9 @@
 #ifndef __WADSEEKERSITESTABLE_H__
 #define __WADSEEKERSITESTABLE_H__
 
-#include <QTableWidget>
+#include "gui/widgets/tablewidgetmouseaware.h"
 
-class WadseekerSitesTable : public QTableWidget
+class WadseekerSitesTable : public TableWidgetMouseAware
 {
 	Q_OBJECT;
 

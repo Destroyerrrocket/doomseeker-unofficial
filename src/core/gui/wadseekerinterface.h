@@ -132,6 +132,7 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 		void siteProgress(const QUrl& site, qint64 bytes, qint64 total);
 		void siteRedirect(const QUrl& oldUrl, const QUrl& newUrl);
 		void siteStarted(const QUrl& site);
+		void wadsTableRightClicked(const QModelIndex& index, const QPoint& cursorPosition);
 };
 
 #endif
