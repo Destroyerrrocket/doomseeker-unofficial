@@ -32,17 +32,20 @@ class SpeedCalculator
 		SpeedCalculator();
 
 		/**
-		 *	@brief In seconds.
+		 * @brief In seconds.
 		 *
-		 *	@return A negative value is returned if time cannot be calculated
-		 *	properly.
+		 * @return A negative value is returned if time cannot be calculated
+		 * properly.
 		 */
 		long double					estimatedTimeUntilArrival() const;
 
 		qint64  					expectedDataSize() const { return dataSizeExpected; }
 
 		/**
-		 *	@brief In bytes per second.
+		 * @brief In bytes per second.
+		 *
+		 * @return Non-negative value if speed was calculated properly.
+		 *         A negative value if it was impossible to calculate speed.
 		 */
 		long double					getSpeed() const;
 
@@ -54,7 +57,7 @@ class SpeedCalculator
 		 * total amount of downloaded data.
 		 */
 		qint64                      lastRegisteredDataAmount() const;
-		
+
 		/**
 		 * @brief Last amount of data that was passed to registerDataAmount()
 		 *
@@ -97,12 +100,12 @@ class SpeedCalculator
 		{
             public:
                 /**
-                 *	@brief In bytes.
+                 * @brief In bytes.
                  */
                 qint64				totalAmountOfArrivedData;
 
                 /**
-                 *	@brief In miliseconds.
+                 * @brief In miliseconds.
                  */
                 qint64				timeOfArrival;
 
@@ -127,7 +130,7 @@ class SpeedCalculator
 
 		QTime						clock;
 		qint64  					dataSizeExpected;
-		
+
 		/**
 		 * @brief Holds last amount of data that was passed to
 		 *        registerDataAmount() method.

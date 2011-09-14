@@ -81,7 +81,7 @@ WadseekerWadsTable::ContextMenu* WadseekerWadsTable::contextMenu(const QModelInd
 	WadseekerWadsTable::ContextMenu* menu = new ContextMenu(this);
 	QPoint displayPoint = this->viewport()->mapToGlobal(cursorPosition);
 	menu->move(displayPoint);
-	
+
 	if (!index.isValid())
 	{
 		menu->actionSkipCurrentSite->setEnabled(false);
@@ -96,7 +96,7 @@ qint64 WadseekerWadsTable::expectedDataSize(int row) const
 	{
 		return -1;
 	}
-	
+
 	QString fileName = fileNameAtRow(row);
 	return d.speedCalculators[fileName]->expectedDataSize();
 }
@@ -128,18 +128,6 @@ void WadseekerWadsTable::setFileDownloadFinished(const QString& filename)
 
 	if (row >= 0)
 	{
-		//SpeedCalculator* pCalculator = d.speedCalculators[filename];
-		//if (pCalculator->expectedDataSize() == 0)
-		//{
-		//	pCalculator->setExpectedDataSize(1);
-		//}
-		//
-		//pCalculator->registerDataAmount(pCalculator->expectedDataSize());
-	
-		//QProgressBar* pBar = (QProgressBar*) this->cellWidget(row, IDX_PROGRESS_COLUMN);
-		//pBar->setMaximum(pCalculator->expectedDataSize());
-		//pBar->setValue(pCalculator->expectedDataSize());
-
 		// Update ETA
 		// ETA will be changed to DONE if wad is installed successfully.
 		item(row, IDX_ETA_COLUMN)->setText(tr("N/A"));
@@ -160,6 +148,8 @@ void WadseekerWadsTable::setFileFailed(const QString& filename)
 	if (row >= 0)
 	{
 		item(row, IDX_NAME_COLUMN)->setIcon(QIcon(":/icons/x.png"));
+
+		item(row, IDX_URL_COLUMN)->setText("");
 	}
 }
 
@@ -196,8 +186,8 @@ void WadseekerWadsTable::setFileSuccessful(const QString& filename)
 		{
 			pCalculator->setExpectedDataSize(1);
 		}
-		
-		pCalculator->registerDataAmount(pCalculator->expectedDataSize());		
+
+		pCalculator->registerDataAmount(pCalculator->expectedDataSize());
 
 		pBar->setMaximum(pCalculator->expectedDataSize());
 		pBar->setValue(pCalculator->expectedDataSize());
@@ -222,6 +212,9 @@ void WadseekerWadsTable::setFileUrl(const QString& filename, const QUrl& url)
 		QTableWidgetItem* pItem = this->item(row, IDX_URL_COLUMN);
 		pItem->setText(url.toString());
 		pItem->setToolTip(url.toString());
+
+		SpeedCalculator* pCalculator = d.speedCalculators[filename];
+		pCalculator->start();
 	}
 }
 
@@ -301,12 +294,29 @@ void WadseekerWadsTable::updateDataInfoValues(bool bForce)
 			if (pCalculator->expectedDataSize() != pCalculator->lastRegisterAttemptedDataAmount())
 			{
 				// If both above values are equal it means we have finished
-				// the download and shouldn't change the speed display.			
-				QString eta = Strings::formatTime(pCalculator->estimatedTimeUntilArrival());
-				item(i, IDX_ETA_COLUMN)->setText(eta);
-				
-				QString speed = Strings::formatDataSpeed(pCalculator->getSpeed());
-				item(i, IDX_SPEED_COLUMN)->setText(speed);
+				// the download and shouldn't change the speed display.
+				long double ldEta = pCalculator->estimatedTimeUntilArrival();
+				long double ldSpeed = pCalculator->getSpeed();
+
+				if (ldEta >= 0.0)
+				{
+					QString strEta = Strings::formatTime(pCalculator->estimatedTimeUntilArrival());
+					item(i, IDX_ETA_COLUMN)->setText(strEta);
+				}
+				else
+				{
+					item(i, IDX_ETA_COLUMN)->setText(tr("N/A"));
+				}
+
+				if (ldSpeed >= 0.0)
+				{
+					QString strSpeed = Strings::formatDataSpeed(pCalculator->getSpeed());
+					item(i, IDX_SPEED_COLUMN)->setText(strSpeed);
+				}
+				else
+				{
+					item(i, IDX_SPEED_COLUMN)->setText(tr("N/A"));
+				}
 			}
 			else
 			{
@@ -321,6 +331,6 @@ WadseekerWadsTable::ContextMenu::ContextMenu(QWidget* pParent)
 : QMenu(pParent)
 {
 	this->actionSkipCurrentSite = new QAction(tr("Skip current URL"), this);
-	
+
 	this->addAction(this->actionSkipCurrentSite);
 }

@@ -53,7 +53,7 @@ long double SpeedCalculator::getSpeed() const
 {
     if (arrivalData.size() < 2)
     {
-        return 0.0;
+        return -1.0;
     }
 
     // Let's calculate weighted mean.
@@ -115,5 +115,6 @@ void SpeedCalculator::start()
 {
 	arrivalData.clear();
 	dataSizeExpected = 0;
+	lastRegisterAttemptDataSize = 0;
 	clock.start();
 }

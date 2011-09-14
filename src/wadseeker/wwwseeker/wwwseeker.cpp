@@ -170,7 +170,7 @@ FileSeekInfo* WWWSeeker::findFileSeekInfo(const QString& seekedName)
 		QStringList possibleFilenames = info.possibleFilenames();
 		foreach (const QString& possibleFilename, possibleFilenames)
 		{
-			if (seekedName.compare(seekedName, Qt::CaseInsensitive) == 0)
+			if (possibleFilename.compare(seekedName, Qt::CaseInsensitive) == 0)
 			{
 				return &info;
 			}
@@ -335,6 +335,11 @@ void WWWSeeker::networkQueryMetaDataChanged(QNetworkReply* pReply)
 			if (attachmentName.isEmpty())
 			{
 				attachmentName = http.urlFilename();
+			}
+
+			if (attachmentName == "mage-rav.zip")
+			{
+				bool b = true;
 			}
 
 			// See if we just stumbled upon a download link for a file we seek.

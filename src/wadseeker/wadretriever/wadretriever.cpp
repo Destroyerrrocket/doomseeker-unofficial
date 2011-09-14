@@ -255,7 +255,7 @@ bool WadRetriever::isAnyWadPendingUrl() const
 bool WadRetriever::isDownloadingWad(const WadDownloadInfo& wad) const
 {
 	const WadRetrieverInfo* pInfo = findRetrieverInfo(wad);
-	
+
 	return pInfo != NULL && pInfo->pNetworkReply != NULL;
 }
 
@@ -395,7 +395,7 @@ bool WadRetriever::parseInstallerResult(const WadInstaller::WadInstallerResult& 
 			WadRetrieverInfo* pInfo = findRetrieverInfo(installedWad.fileName());
 			emit message(tr("Installed WAD: %1 [%2 bytes]").arg(pInfo->wad->name()).arg(installedWad.size()),
 				WadseekerLib::Notice);
-				
+
 			pInfo->wad->setSize(installedWad.size());
 			emit wadInstalled(*pInfo->wad);
 
@@ -432,12 +432,12 @@ void WadRetriever::resolveDownloadFinish(QNetworkReply* pReply, WadRetrieverInfo
 {
 	QByteArray data = pReply->readAll();
 	QUrl url = pReply->request().url();
-			
+
 	// If data is empty we assume that abort was commenced
 	if (!data.isEmpty())
 	{
 		// We need to determine the correct filename.
-		QString filename = pWadRetrieverInfo->wad->name(); 
+		QString filename = pWadRetrieverInfo->wad->name();
 		Http http(pReply);
 		if (!http.attachmentName().trimmed().isEmpty())
 		{
@@ -451,10 +451,10 @@ void WadRetriever::resolveDownloadFinish(QNetworkReply* pReply, WadRetrieverInfo
 				filename = urlInfo.fileName().trimmed();
 			}
 		}
-		
+
 		// Now try to install the file under downloaded filename.
 		tryInstall(filename, data);
-	}	
+	}
 	else if (!d.bIsAborting)
 	{
 		// Abort was commenced, but it might have been only an abort
@@ -492,7 +492,7 @@ void WadRetriever::setWads(const QList<WadDownloadInfo>& wads)
 void WadRetriever::skipCurrentUrl(const WadDownloadInfo& wad)
 {
 	WadRetrieverInfo* pInfo = findRetrieverInfo(wad);
-	if (pInfo != NULL && pInfo->pNetworkReply != NULL) 
+	if (pInfo != NULL && pInfo->pNetworkReply != NULL)
 	{
 		pInfo->pNetworkReply->pReply->abort();
 	}
@@ -505,13 +505,13 @@ void WadRetriever::startNextDownloads()
 		emit finished();
 		return;
 	}
-	
+
 	if (areAllWadsPendingUrls())
 	{
 		emit pendingUrls();
 		return;
 	}
-	
+
 	if (d.bIsAborting)
 	{
 		return;
@@ -537,6 +537,8 @@ void WadRetriever::startNetworkQuery(WadRetrieverInfo& wadRetrieverInfo, const Q
 	QNetworkRequest request;
 	request.setUrl(url);
 	request.setRawHeader("User-Agent", d.userAgent.toAscii());
+
+	d.usedDownloadUrls << url;
 
 #ifndef NDEBUG
 	qDebug() << "WadRetriever: Starting network query for URL: " << url.toString();
