@@ -27,6 +27,7 @@
 #include "protocols/http.h"
 #include "protocols/networkreplysignalwrapper.h"
 #include "wadretriever/wadinstaller.h"
+#include "wwwseeker/urlparser.h"
 #include "zip/unarchive.h"
 
 #include <QDebug>
@@ -86,7 +87,7 @@ QUrl WadRetriever::extractNextValidUrl(WadRetrieverInfo& wadRetrieverInfo)
 	while (!wadRetrieverInfo.downloadUrls.isEmpty())
 	{
 		QUrl url = wadRetrieverInfo.downloadUrls.takeFirst();
-		if (url.isValid() && !d.usedDownloadUrls.contains(url))
+		if (url.isValid() && !wasUrlUsed(url))
 		{
 			return url;
 		}
@@ -208,7 +209,15 @@ WadRetriever::WadRetrieverInfo* WadRetriever::getNextWaitingRetrieverInfo()
 
 bool WadRetriever::hasUrl(const WadRetrieverInfo& wadRetrieverInfo, const QUrl& url) const
 {
-	return wadRetrieverInfo.downloadUrls.contains(url) || d.usedDownloadUrls.contains(url);
+	foreach (const QUrl& tmpUrl, wadRetrieverInfo.downloadUrls)
+	{
+		if (UrlParser::urlEqualsCaseInsensitive(tmpUrl, url))
+		{
+			return true;
+		}
+	}
+
+	return wasUrlUsed(url);
 }
 
 bool WadRetriever::hasWad(const WadDownloadInfo& wad) const
@@ -590,6 +599,19 @@ void WadRetriever::tryInstall(const QString& filename, const QByteArray& byteArr
 	{
 		startNextDownloads();
 	}
+}
+
+bool WadRetriever::wasUrlUsed(const QUrl& url) const
+{
+	foreach (const QUrl& tmpUrl, d.usedDownloadUrls)
+	{
+		if (UrlParser::urlEqualsCaseInsensitive(tmpUrl, url))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

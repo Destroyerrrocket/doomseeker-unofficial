@@ -109,3 +109,12 @@ QList<Link> UrlParser::siteLinks(const QStringList& wantedFilenames, const QUrl&
 
 	return linksList;
 }
+
+bool UrlParser::urlEqualsCaseInsensitive(QUrl url1, QUrl url2)
+{
+	// Normalize URLs to lower-case.
+	url1 = QUrl(url1.toString().toLower());
+	url2 = QUrl(url2.toString().toLower());
+
+	return url1 == url2;
+}

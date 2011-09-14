@@ -593,7 +593,7 @@ bool WWWSeeker::wasUrlUsed(const QUrl& url) const
 {
 	foreach (const QUrl& usedUrl, d.visitedUrls)
 	{
-		if (usedUrl == url)
+		if (UrlParser::urlEqualsCaseInsensitive(usedUrl, url))
 		{
 			return true;
 		}

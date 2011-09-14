@@ -345,6 +345,8 @@ class WadRetriever : public QObject
 		void startNextDownloads();
 		void startNetworkQuery(WadRetrieverInfo& wadRetrieverInfo, const QUrl& url);
 
+		bool wasUrlUsed(const QUrl& url) const;
+
 	private slots:
 		void networkQueryDownloadProgress(QNetworkReply* pReply, qint64 current, qint64 total);
 		void networkQueryError(QNetworkReply* pReply, QNetworkReply::NetworkError code);

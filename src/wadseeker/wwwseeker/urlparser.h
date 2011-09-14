@@ -49,6 +49,11 @@ class UrlParser
 		 */
 		static bool isDirectLinkToFile(const QStringList& wantedFilenames, const QUrl& url);
 
+		/**
+		 * @brief Checks if URLs are the same. Ignores character case.
+		 */
+		static bool urlEqualsCaseInsensitive(QUrl url1, QUrl url2);
+
 		UrlParser(const QList<Link>& links);
 
 		/**

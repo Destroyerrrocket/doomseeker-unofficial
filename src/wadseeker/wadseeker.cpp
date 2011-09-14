@@ -185,7 +185,7 @@ bool Wadseeker::isDownloadingFile(const QString& file) const
 	{
 		return d.wadRetriever->isDownloadingWad(file);
 	}
-	
+
 	return false;
 }
 
@@ -414,7 +414,10 @@ void Wadseeker::skipFileCurrentUrl(const QString& fileName)
 
 void Wadseeker::skipSiteSeek(const QUrl& url)
 {
-	
+	if (d.wwwSeeker != NULL)
+	{
+		d.wwwSeeker->skipSite(url);
+	}
 }
 
 void Wadseeker::startNextIdgamesClient()
@@ -548,6 +551,8 @@ void Wadseeker::wadRetrieverDownloadProgress(WadDownloadInfo wadDownloadInfo, qi
 
 void Wadseeker::wadRetrieverDownloadStarted(WadDownloadInfo wadDownloadInfo, const QUrl& url)
 {
+	emit message(tr("Started downloading file \"%1\" from URL \"%2\"")
+				.arg(wadDownloadInfo.name(), url.toString()), WadseekerLib::Notice);
 	emit fileDownloadStarted(wadDownloadInfo.name(), url);
 }
 
