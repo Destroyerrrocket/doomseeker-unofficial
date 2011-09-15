@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// protocol.cpp
+// link.h
 //------------------------------------------------------------------------------
 //
 // This library is free software; you can redistribute it and/or
@@ -20,57 +20,39 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "protocol.h"
-#include <QDebug>
-#include <QFileInfo>
+#ifndef __LINK_H_
+#define __LINK_H_
 
-int Protocol::timeConnectTimeoutSeconds = WADSEEKER_CONNECT_TIMEOUT_SECONDS_DEFAULT;
-int Protocol::timeDownloadTimeoutSeconds = WADSEEKER_DOWNLOAD_TIMEOUT_SECONDS_DEFAULT;
+#include <QUrl>
 
-Protocol::Protocol()
+class Link
 {
-	connect(&timeoutTimer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
+    public:
+        QUrl 		url;
+        QString 	text;
 
-	timeoutTimer.setSingleShot(true);
-}
+		Link();
+		Link(const QUrl& url, const QString& text);
 
-void Protocol::abort()
-{
-	aborting = true;
-	timeoutTimer.stop();
-	abortEx();
-}
+        bool 		pathEndsWith(const QStringList& ends);
+        /**
+         *	@param comparePage
+         *       If not empty checks if URL refers to the same host as
+         *       this param.
+         *	@return True if URL points to another server
+         */
+        bool		isRemote(const QUrl& comparePage);
 
-void Protocol::dataReadProgressSlot(int done, int total)
-{
-	timeoutTimer.start(timeConnectTimeoutSeconds * 1000);
-	emit dataReadProgress(done, total);
-}
+        /**
+         *	@return True if the URL refers to the same page
+         *          (for example URLs with '#')
+         */
+        bool		isTheSamePage(const QUrl& comparePage);
 
-void Protocol::doneSlot(bool error)
-{
-	timeoutTimer.stop();
-	if (!aborting)
-	{
-		doneEx(error);
-	}
-}
+        /**
+         * @return True if URL begins from javascript: phrase
+         */
+        bool		isJavascriptURL();
+};
 
-void Protocol::get(const QUrl& url)
-{
-	aborting = false;
-	noData = false;
-
-	QFileInfo fi(url.path());
-	processedFileName = fi.fileName();
-
-	timeoutTimer.start(timeDownloadTimeoutSeconds * 1000);
-
-	getEx(url);
-}
-
-void Protocol::timeout()
-{
-	emit message(tr("Request timeout!"), Wadseeker::Error);
-	abort();
-}
+#endif

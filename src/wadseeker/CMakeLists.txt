@@ -27,46 +27,63 @@ find_package(ZLIB REQUIRED)
 find_package(BZip2 REQUIRED)
 
 include(${QT_USE_FILE})
-include_directories(${ZLIB_INCLUDE_DIR} ${BZIP2_INCLUDE_DIR})
+include_directories(
+	${CMAKE_CURRENT_BINARY_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}	
+	${ZLIB_INCLUDE_DIR} 
+	${BZIP2_INCLUDE_DIR}
+)
+
 set(WADSEEKER_QT_FILES
-	protocols/ftp.h
-	protocols/http.h
-	protocols/idgames.h
-	protocols/protocol.h
+	protocols/fixednetworkaccessmanager.h
+	protocols/fixedftpreply.h
+	protocols/networkreplysignalwrapper.h
+	wadretriever/wadretriever.h
+	wwwseeker/idgames.h
+	wwwseeker/wwwseeker.h
 	zip/unarchive.h
 	zip/un7zip.h
 	zip/untar.h
 	zip/unzip.h
 	wadseeker.h
-	www.h
-	wwwseeker.h
 )
 
 set(WADSEEKER_FILES
-	protocols/ftp.cpp
+	entities/link.cpp
+	entities/waddownloadinfo.cpp
+	protocols/entities/networkreplywrapperinfo.cpp
+	protocols/fixednetworkaccessmanager.cpp
+	protocols/fixedftpreply.cpp
 	protocols/http.cpp
-	protocols/idgames.cpp
-	protocols/protocol.cpp
+	protocols/networkreplysignalwrapper.cpp
+	wadretriever/wadinstaller.cpp
+	wadretriever/wadretriever.cpp
+	wwwseeker/entities/fileseekinfo.cpp
+	wwwseeker/htmlparser.cpp
+	wwwseeker/idgames.cpp
+	wwwseeker/urlparser.cpp
+	wwwseeker/wwwseeker.cpp
 	zip/unarchive.cpp
 	zip/un7zip.cpp
 	zip/untar.cpp
 	zip/unzip.cpp
-	html.cpp
-	link.cpp
-	speedcalculator.cpp
 	wadseeker.cpp
 	wadseekerversioninfo.cpp
-	www.cpp
-	wwwseeker.cpp
 )
 
 # For the purpose of generation proper project files.
 set(HEADER_FILES
 	${WADSEEKER_QT_FILES}
-	html.h
-	link.h
-	speedcalculator.h
+	entities/link.h
+	entities/waddownloadinfo.h
+	protocols/entities/networkreplywrapperinfo.h
+	protocols/http.h
+	wadretriever/wadinstaller.h
+	wwwseeker/entities/fileseekinfo.h
+	wwwseeker/htmlparser.h
+	wwwseeker/urlparser.h
 	wadseekerexportinfo.h	
+	wadseekermessagetype.h
 	wadseekerversioninfo.h	
 )
 

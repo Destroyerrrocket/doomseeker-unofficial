@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// link.h
+// networkreplywrapperinfo.h
 //------------------------------------------------------------------------------
 //
 // This library is free software; you can redistribute it and/or
@@ -18,35 +18,41 @@
 // 02110-1301  USA
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2011 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __LINK_H_
-#define __LINK_H_
+#ifndef __NETWORKREPLYWRAPPERINFO_H__
+#define __NETWORKREPLYWRAPPERINFO_H__
 
-#include <QUrl>
+#include <QNetworkReply>
 
-class Link
+class NetworkReplySignalWrapper;
+
+class NetworkReplyWrapperInfo
 {
-    public:
-        QUrl 		url;
-        QString 	text;
+	public:
+		NetworkReplySignalWrapper* pSignalWrapper;
+		QNetworkReply* pReply;
 
-        bool 		pathEndsWith(const QStringList& ends);
-        /**
-         *	@param comparePage		- if not empty checks if URL refers to the same host as this param
-         *	@return true if URL points to another server
-         */
-        bool		isRemote(const QUrl& comparePage);
+		NetworkReplyWrapperInfo(QNetworkReply* pReply);
+		~NetworkReplyWrapperInfo();
 
-        /**
-         *	@return true if the URL refers to the same page (for example URLs with '#')
-         */
-        bool		isTheSamePage(const QUrl& comparePage);
+		void deleteMembersLater();
 
-        /**
-         * @return true if URL begins from javascript: phrase
-         */
-        bool		isJavascriptURL();
+		/**
+		 * @brief NetworkReplyWrapperInfo objects are equal if their pReply
+		 * is the same.
+		 */
+		bool operator==(const NetworkReplyWrapperInfo& other) const;
+		bool operator!=(const NetworkReplyWrapperInfo& other) const
+		{
+			return ! (*this == other);
+		}
+
+		bool operator==(const QNetworkReply* pReply) const;
+		bool operator!=(const QNetworkReply* pReply) const
+		{
+			return ! (*this == pReply);
+		}
 };
 
 #endif

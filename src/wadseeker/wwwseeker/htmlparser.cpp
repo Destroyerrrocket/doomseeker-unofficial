@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// html.cpp
+// htmlparser.cpp
 //------------------------------------------------------------------------------
 //
 // This library is free software; you can redistribute it and/or
@@ -20,18 +20,18 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "html.h"
+#include "htmlparser.h"
 
 #include <QFileInfo>
 
-CHtml::CHtml(QByteArray& data)
+HtmlParser::HtmlParser(const QByteArray& data)
 {
 	this->data = data;
+	capitalizeHtmlTags();
 }
 
-void CHtml::capitalizeHTMLTags()
+void HtmlParser::capitalizeHtmlTags()
 {
-	QByteArray& byte = data;
 	int begin = 0;
 	int end = 0;
 
@@ -49,7 +49,7 @@ void CHtml::capitalizeHTMLTags()
 		{
 			if (bNext)
 			{
-				if (byte[i] == endingChar)
+				if (data[i] == endingChar)
 				{
 					bNext = false;
 					bValueBegin = false;
@@ -60,12 +60,12 @@ void CHtml::capitalizeHTMLTags()
 			{
 				if (bValueBegin)
 				{
-					if (byte[i] == '\"')
+					if (data[i] == '\"')
 					{
 						bNext = true;
 						endingChar = '\"';
 					}
-					else if (byte[i] != ' ')
+					else if (data[i] != ' ')
 					{
 						bNext = true;
 						endingChar = ' ';
@@ -73,13 +73,13 @@ void CHtml::capitalizeHTMLTags()
 				}
 				else
 				{
-					if (byte[i] == '=')
+					if (data[i] == '=')
 					{
 						bValueBegin = true;
 					}
 					else
 					{
-						byte[i] = toupper(byte[i]);
+						data[i] = toupper(data[i]);
 					}
 				} // end of else
 			} // end of else
@@ -87,17 +87,20 @@ void CHtml::capitalizeHTMLTags()
 	} // end of while
 }
 
-int	 CHtml::findTag(int beginAt, int* end)
+int	HtmlParser::findTag(int beginAt, int* end)
 {
 	if (end == NULL)
+	{
 		return -1;
+	}
 
-	QByteArray& byte = data;
 	int begin = -1;
 	*end = -1;
-	for (int i = beginAt; i < byte.length(); ++i)
+
+	// Find first occurence of '<' character.
+	for (int i = beginAt; i < data.length(); ++i)
 	{
-		if (byte[i] == '<')
+		if (data[i] == '<')
 		{
 			begin = i;
 			break;
@@ -105,11 +108,15 @@ int	 CHtml::findTag(int beginAt, int* end)
 	}
 
 	if (begin < 0)
-		return -1;
-
-	for (int i = begin; i < byte.length(); ++i)
 	{
-		if (byte[i] == '>')
+		return -1;
+	}
+
+	// Find first occurence of '>' character that exists directly after
+	// previously found '<' character.
+	for (int i = begin; i < data.length(); ++i)
+	{
+		if (data[i] == '>')
 		{
 			*end = i;
 			break;
@@ -119,22 +126,7 @@ int	 CHtml::findTag(int beginAt, int* end)
 	return begin;
 }
 
-bool CHtml::hasFileReferenceSomewhere(const QStringList& wantedFileNames, const Link& link)
-{
-	QString strQuery = link.url.encodedQuery();
-
-	for (int i = 0; i < wantedFileNames.count(); ++i)
-	{
-		if (strQuery.contains(wantedFileNames[i], Qt::CaseInsensitive) || link.text.contains(wantedFileNames[i], Qt::CaseInsensitive) )
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-QString CHtml::htmlValue(int beginIndex, int endIndex)
+QString HtmlParser::htmlValue(int beginIndex, int endIndex)
 {
 	const QByteArray& byte = this->data;
 	int indexStartValue = -1;
@@ -193,7 +185,7 @@ QString CHtml::htmlValue(int beginIndex, int endIndex)
 	return ret;
 }
 
-QString CHtml::htmlValue(const QString& key)
+QString HtmlParser::htmlValue(const QString& key)
 {
 	const QByteArray& byte = this->data;
 	QByteArray upperByte = byte.toUpper();
@@ -246,45 +238,15 @@ QString CHtml::htmlValue(const QString& key)
 	}
 
 	if (indexStartValue < 0)
+	{
 		return QString();
+	}
 
 	QString ret = byte.mid(indexStartValue, indexEndValue - indexStartValue + 1);
 	return ret;
 }
 
-bool CHtml::isDirectLinkToFile(const QStringList& wantedFileNames, const QUrl& link)
-{
-	QFileInfo fi(link.encodedPath());
-	for (int i = 0; i < wantedFileNames.count(); ++i)
-	{
-		if (fi.fileName().compare(wantedFileNames[i], Qt::CaseInsensitive) == 0)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-/**
- * Steps:
- * 1. Find an occurence of "<A " character sequence,
- *		if nothing found return.
- * 2. Find an occurence of ">" character starting
- *		from index returned by 1, if nothing found return.
- * 3. Find an occurence of " HREF" character sequence
- *		starting from index returned by 1.
- * 4. Check if HREF is between 1. and 2. and if there is ' ' or '='
- *		character after " HREF"	if not goto 1. starting
- *		from index returned by 2.
- * 5. Get HREF value.
- * 6. Find "</A>" character sequence starting from 2.
- *		if nothing found return.
- * 7. Get everything between 2. and 6.
- * 8. Append Link class to list.
- * 9. Goto 1. starting from index returned by 6.
- */
-QList<Link>	CHtml::linksFromHTML()
+QList<Link>	HtmlParser::linksFromHtml()
 {
 	QList<Link> list;
 
@@ -294,20 +256,29 @@ QList<Link>	CHtml::linksFromHTML()
 		int indexCloseBracket = 0;
 		int indexHref = 0;
 
-		// 1
+		// Find an occurence of "<A " character sequence,
+		// if nothing found then return.
 		indexBeginTag = data.indexOf("<A ", indexBeginTag);
 		if (indexBeginTag < 0)
+		{
 			break;
+		}
 
-		// 2
+		// Find an occurence of ">" character starting
+		// from index returned by 1, if nothing found then return.
 		indexCloseBracket = data.indexOf(">", indexBeginTag);
 		if (indexCloseBracket < 0)
+		{
 			break;
+		}
 
-		// 3
+		// Find an occurence of " HREF" character sequence
+		// starting from index returned by previous steps.
 		indexHref = data.indexOf(" HREF", indexBeginTag) + 1;
 
-		// 4
+		// Check if HREF is inside the A tag and if there is ' ' or '='
+		// character after " HREF"	if not go to first step starting
+		// from index at the previously found '>' character.
 		int strLength = QString("HREF").length();
 		if (indexHref > indexCloseBracket || (data[indexHref + strLength] != ' ' && data[indexHref + strLength] != '=') )
 		{
@@ -316,80 +287,30 @@ QList<Link>	CHtml::linksFromHTML()
 		}
 		else
 		{
-			// 5
+			// Get HREF value.
 			QString url = htmlValue(indexHref, indexCloseBracket);
 
-			// 6
+			// Find "</A>" character sequence starting from index at
+			// the previously found '>' character. If nothing found then return.
 			int indexEndA = 0;
 
 			indexEndA = data.indexOf("</A>", indexCloseBracket);
 			if (indexEndA < 0)
+			{
 				break;
+			}
 
-			// 7
+			// Get all text between '>' and "</A>".
 			QString text = data.mid(indexCloseBracket + 1, indexEndA - (indexCloseBracket + 1) );
 
-			// 8
-			Link link = {url, text};
+			// Append Link object to list.
+			Link link(url, text);
 			list.append(link);
 
-			// 9
+			// Begin searching for the next URL.
 			indexBeginTag = indexEndA;
 		}
 	}
 
 	return list;
-}
-
-void CHtml::linksFromHTMLByPattern(const QStringList& wantedFiles, QList<QUrl>& siteLinks, QList<QUrl>& directLinks, const QUrl& baseUrl, int& siteLinksOut, int& directLinksOut)
-{
-	siteLinksOut = 0;
-	directLinksOut = 0;
-	QList<Link> list = linksFromHTML();
-	QList<Link>::iterator it;
-
-	for (it = list.begin(); it != list.end(); ++it)
-	{
-		QUrl newUrl = it->url;
-		if (it->url.authority().isEmpty())
-		{
-			newUrl.setAuthority("http");
-		}
-
-		if (it->url.host().isEmpty())
-		{
-			if (baseUrl.host().isEmpty())
-				continue;
-
-			newUrl.setHost(baseUrl.host());
-		}
-
-		if (it->url.port() < 0 && baseUrl.port() >= 0 && baseUrl.port() != 80)
-		{
-			newUrl.setPort(baseUrl.port());
-		}
-
-		// If the path in the processed url starts with '/' do not make any
-		// changes to the path in the currently created URL.
-		if (it->url.host().isEmpty() && it->url.authority().isEmpty() && !it->url.path().startsWith('/'))
-		{
-			QString path = baseUrl.path();
-			path = path.left(path.lastIndexOf('/') + 1);
-			path += it->url.path();
-			newUrl.setPath(path);
-		}
-
-
-		if (isDirectLinkToFile(wantedFiles, it->url))
-		{
-			directLinks.append(newUrl);
-			++directLinksOut;
-		}
-		else if (hasFileReferenceSomewhere(wantedFiles, *it))
-		{
-			// here we append all links that contain this filename somewhere else than in path
-			siteLinks.append(newUrl);
-			++siteLinksOut;
-		}
-	}
 }

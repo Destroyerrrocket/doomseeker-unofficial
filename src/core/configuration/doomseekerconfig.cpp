@@ -423,8 +423,9 @@ DoomseekerConfig::WadseekerCfg::WadseekerCfg()
 	this->colorMessageNotice = "#000000";
 	this->connectTimeoutSeconds = WADSEEKER_CONNECT_TIMEOUT_SECONDS_DEFAULT;
 	this->downloadTimeoutSeconds = WADSEEKER_DOWNLOAD_TIMEOUT_SECONDS_DEFAULT;
-	this->idgamesPriority = 0;
 	this->idgamesURL = Wadseeker::defaultIdgamesUrl();
+	this->maxConcurrentSiteDownloads = 3;
+	this->maxConcurrentWadDownloads = 3;
 	this->targetDirectory = Main::dataPaths->programsDataDirectoryPath();
 
 	// Search URLs remains unitizalized here. It will be initialized
@@ -440,8 +441,9 @@ void DoomseekerConfig::WadseekerCfg::init(IniSection& section)
 	section.createSetting("ColorMessageNotice", this->colorMessageNotice);
 	section.createSetting("ConnectTimeoutSeconds", this->connectTimeoutSeconds);
 	section.createSetting("DownloadTimeoutSeconds", this->downloadTimeoutSeconds);
-	section.createSetting("IdgamesPriority", this->idgamesPriority);
 	section.createSetting("IdgamesURL", this->idgamesURL);
+	section.createSetting("MaxConcurrentSiteDownloads", this->maxConcurrentSiteDownloads);
+	section.createSetting("MaxConcurrentWadDownloads", this->maxConcurrentWadDownloads);
 	section.createSetting("SearchURLs", Wadseeker::defaultSitesListEncoded().join(";"));
 	section.createSetting("TargetDirectory", this->targetDirectory);
 }
@@ -454,8 +456,9 @@ void DoomseekerConfig::WadseekerCfg::load(IniSection& section)
 	this->colorMessageNotice = (const QString &)section["ColorMessageNotice"];
 	this->connectTimeoutSeconds = section["ConnectTimeoutSeconds"];
 	this->downloadTimeoutSeconds = section["DownloadTimeoutSeconds"];
-	this->idgamesPriority = section["IdgamesPriority"];
 	this->idgamesURL = (const QString &)section["IdgamesURL"];
+	this->maxConcurrentSiteDownloads = section["MaxConcurrentSiteDownloads"];
+	this->maxConcurrentWadDownloads = section["MaxConcurrentWadDownloads"];
 	this->targetDirectory = (const QString &)section["TargetDirectory"];
 
 	// Complex data values
@@ -475,8 +478,9 @@ void DoomseekerConfig::WadseekerCfg::save(IniSection& section)
 	section["ColorMessageNotice"] = this->colorMessageNotice;
 	section["ConnectTimeoutSeconds"] = this->connectTimeoutSeconds;
 	section["DownloadTimeoutSeconds"] = this->downloadTimeoutSeconds;
-	section["IdgamesPriority"] = this->idgamesPriority;
 	section["IdgamesURL"] = this->idgamesURL;
+	section["MaxConcurrentSiteDownloads"] = this->maxConcurrentSiteDownloads;
+	section["MaxConcurrentWadDownloads"] = this->maxConcurrentWadDownloads;
 	section["TargetDirectory"] = this->targetDirectory;
 
 	// Complex data values

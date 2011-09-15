@@ -30,16 +30,13 @@
 #include <QMessageBox>
 #include <QUrl>
 
-CFGWadseekerIdgames::CFGWadseekerIdgames(QWidget* parent) 
+CFGWadseekerIdgames::CFGWadseekerIdgames(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
 	setupUi(this);
 
 	connect(btnIdgamesURLDefault, SIGNAL( clicked() ), this, SLOT( btnIdgamesURLDefaultClicked() ) );
 	connect(cbUseIdgames, SIGNAL( toggled(bool) ), this, SLOT( cbUseIdgamesToggled(bool) ) );
-
-	cboIdgamesPriority->addItem("After all sites");
-	cboIdgamesPriority->addItem("After custom site");
 
 	cbUseIdgamesToggled(cbUseIdgames->isChecked());
 }
@@ -57,13 +54,11 @@ void CFGWadseekerIdgames::cbUseIdgamesToggled(bool checked)
 void CFGWadseekerIdgames::readSettings()
 {
 	cbUseIdgames->setChecked(gConfig.wadseeker.bSearchInIdgames);
-	cboIdgamesPriority->setCurrentIndex(gConfig.wadseeker.idgamesPriority);
 	leIdgamesURL->setText(gConfig.wadseeker.idgamesURL);
 }
 
 void CFGWadseekerIdgames::saveSettings()
 {
 	gConfig.wadseeker.bSearchInIdgames = cbUseIdgames->isChecked();
-	gConfig.wadseeker.idgamesPriority = cboIdgamesPriority->currentIndex();
 	gConfig.wadseeker.idgamesURL = leIdgamesURL->text();
 }

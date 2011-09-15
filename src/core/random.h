@@ -23,6 +23,8 @@
 #ifndef __RANDOM_H__
 #define __RANDOM_H__
 
+#include "global.h"
+
 /**
  *	@brief Random values generator.
  *
@@ -33,14 +35,14 @@
  *
  *	Internally this uses srand() and rand() functions from C Standard Library.
  */
-class Random
+class MAIN_EXPORT Random
 {
 	public:
 		/**
 		 *	@brief Inits or re-inits the Random class with specified seed.
 		 */
 		static void				init(int seed);
-		
+
 		/**
 		 *	@brief Generates a new random unsigned short.
 		 *
@@ -49,10 +51,10 @@ class Random
 		 *		ie. generated value is in range 0 <= x < max
 		 */
 		static unsigned short	nextUShort(unsigned short max);
-		
+
 	private:
 		static bool				bIsInit;
-		
+
 		static void				builtInInit();
 };
 

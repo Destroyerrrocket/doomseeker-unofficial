@@ -33,6 +33,45 @@ QString WadseekerVersionInfo::description()
 	return QObject::tr("This library is distributed under the terms of the LGPL v2.1.");
 }
 
+QStringList WadseekerVersionInfo::knownWadExtensions()
+{
+	QStringList list;
+
+	list << "wad";
+	list << "pk3";
+
+	return list;
+}
+
+bool WadseekerVersionInfo::isSupportedArchiveExtension(const QString& suffix)
+{
+	QStringList extensions = supportedArchiveExtensions();
+	foreach (const QString& supported, extensions)
+	{
+		if (suffix.compare(supported, Qt::CaseInsensitive) == 0)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+QStringList WadseekerVersionInfo::supportedArchiveExtensions()
+{
+	QStringList list;
+
+	list << "7z";
+	list << "zip";
+
+	return list;
+}
+
+QString	WadseekerVersionInfo::userAgent()
+{
+	return "Wadseeker/" + WadseekerVersionInfo::version();
+}
+
 QString WadseekerVersionInfo::version()
 {
 	return "0.7";
@@ -40,6 +79,6 @@ QString WadseekerVersionInfo::version()
 
 QString WadseekerVersionInfo::yearSpan()
 {
-	return "2009 - 2010";
+	return "2009 - 2011";
 }
 

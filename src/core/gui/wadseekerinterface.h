@@ -35,13 +35,13 @@
  * automaticCloseOnSuccess is set to true and when
  * it succeedes finding all wads.
  */
-class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
+class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 {
 	Q_OBJECT
 
 	public:
-		WadSeekerInterface(QWidget* parent = NULL);
-		~WadSeekerInterface();
+		WadseekerInterface(QWidget* parent = NULL);
+		~WadseekerInterface();
 
 		bool 		isAutomatic() { return bAutomatic; }
 
@@ -57,9 +57,14 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 			this->seekedWads = seekedWads;
 		}
 
+		void		setCustomSite(const QString& site)
+		{
+			this->customSite = site;
+		}
+
 		Wadseeker&	wadseekerRef() { return wadseeker; }
 
-	protected:
+	private:
 		enum States
 		{
 			Downloading 	= 0,
@@ -70,23 +75,31 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 
 		bool			bAutomatic;
 		bool			bFirstShown;
-		bool			bNeedsUpdate;
 
 		// Setup for customization in the future.
 		QString			colorHtmlMessageFatalError;
 		QString			colorHtmlMessageError;
 		QString			colorHtmlMessageNotice;
 
+		QString			customSite;
+
 		/**
 		 * Interface uses this instead of line edit if bAutomatic is true.
 		 */
 		QStringList 	seekedWads;
+
 		States			state;
+
+		/**
+		 * @brief A subset of seekedWads list. Contains all WADs that were
+		 *        successfully installed.
+		 */
+		QStringList		successfulWads;
+
 		QTimer			updateTimer;
 		Wadseeker		wadseeker;
 
-		void			displayMessage(const QString& message, Wadseeker::MessageType type, bool bPrependErrorsWithMessageType);
-		void			fail();
+		void			displayMessage(const QString& message, WadseekerLib::MessageType type, bool bPrependErrorsWithMessageType);
 		void			initMessageColors();
 
 		/**
@@ -101,14 +114,25 @@ class WadSeekerInterface : public QDialog, Ui::WadSeekerInterface
 		void			startSeeking(const QStringList& seekedFilesList);
 		void            updateTitle();
 
-	protected slots:
-		void	accept();
-		void	aborted();
-		void 	allDone();
-		void 	downloadProgress(int done, int total);
-		void	reject();
-		void	message(const QString& message, Wadseeker::MessageType type);
-		void	registerUpdateRequest();
+		/**
+		 * @brief Subtracts successulWads list from seekedWads and returns the
+		 *        difference.
+		 */
+		QStringList		unsuccessfulWads() const;
+
+	private slots:
+		void accept();
+		void allDone(bool bSuccess);
+		void fileDownloadSuccessful(const QString& filename);
+		void reject();
+		void message(const QString& message, WadseekerLib::MessageType type);
+		void registerUpdateRequest();
+		void seekStarted(const QStringList& filenames);
+		void siteFinished(const QUrl& site);
+		void siteProgress(const QUrl& site, qint64 bytes, qint64 total);
+		void siteRedirect(const QUrl& oldUrl, const QUrl& newUrl);
+		void siteStarted(const QUrl& site);
+		void wadsTableRightClicked(const QModelIndex& index, const QPoint& cursorPosition);
 };
 
 #endif

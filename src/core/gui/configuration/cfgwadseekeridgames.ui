@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>407</width>
+    <width>416</width>
     <height>419</height>
    </rect>
   </property>
@@ -45,20 +45,6 @@
       <property name="bottomMargin">
        <number>0</number>
       </property>
-      <item>
-       <widget class="QLabel" name="label_6">
-        <property name="text">
-         <string>Idgames archive search priority:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="cboIdgamesPriority">
-        <property name="currentIndex">
-         <number>-1</number>
-        </property>
-       </widget>
-      </item>
       <item>
        <widget class="QLabel" name="label_7">
         <property name="text">

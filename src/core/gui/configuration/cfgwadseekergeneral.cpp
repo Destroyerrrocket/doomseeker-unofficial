@@ -33,6 +33,9 @@ CFGWadseekerGeneral::CFGWadseekerGeneral(QWidget* parent)
 {
 	setupUi(this);
 
+	// Settings defined in this widget are ATM unused.
+	widgetTimeouts->setVisible(false);
+
 	cbTargetDirectory->setCompleter(new QCompleter(new QDirModel()));
 }
 
@@ -49,6 +52,8 @@ void CFGWadseekerGeneral::readSettings()
 	cbTargetDirectory->setEditText(gConfig.wadseeker.targetDirectory);
 	spinConnectTimeout->setValue(gConfig.wadseeker.connectTimeoutSeconds);
 	spinDownloadTimeout->setValue(gConfig.wadseeker.downloadTimeoutSeconds);
+	spinMaxConcurrentSiteSeeks->setValue(gConfig.wadseeker.maxConcurrentSiteDownloads);
+	spinMaxConcurrentWadDownloads->setValue(gConfig.wadseeker.maxConcurrentWadDownloads);
 }
 
 void CFGWadseekerGeneral::saveSettings()
@@ -90,4 +95,6 @@ void CFGWadseekerGeneral::saveSettings()
 
 	gConfig.wadseeker.connectTimeoutSeconds = spinConnectTimeout->value();
 	gConfig.wadseeker.downloadTimeoutSeconds = spinDownloadTimeout->value();
+	gConfig.wadseeker.maxConcurrentSiteDownloads = spinMaxConcurrentSiteSeeks->value();
+	gConfig.wadseeker.maxConcurrentWadDownloads = spinMaxConcurrentWadDownloads->value();
 }

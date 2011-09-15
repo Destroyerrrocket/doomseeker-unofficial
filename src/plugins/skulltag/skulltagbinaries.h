@@ -24,12 +24,12 @@
 #define __SKULLTAG_BINARIES_H_
 
 #include <QProgressDialog>
+#include <QNetworkReply>
 
 #include "serverapi/binaries.h"
 
 class EnginePlugin;
 class SkulltagServer;
-class WWW;
 class QDir;
 
 class SkulltagBinaries : public Binaries
@@ -72,17 +72,24 @@ class TestingProgressDialog : public QProgressDialog
 	Q_OBJECT
 
 	public:
-		TestingProgressDialog(WWW &www);
+		TestingProgressDialog(const QUrl& url);
 
 		const QByteArray	&data() const { return downloadedFileData; }
 		const QString		&filename() const { return downloadedFilename; }
-	protected slots:
-		void	downloadProgress(int value, int max);
-		void	storeFile(QByteArray &data, const QString &filename);
+
+	private slots:
+		void	abort();
+		void	downloadFinished();
+		void	downloadProgress(qint64 value, qint64 max);
+
 
 	private:
 		QByteArray	downloadedFileData;
 		QString		downloadedFilename;
+		QNetworkAccessManager networkAccessManager;
+		QNetworkReply* pNetworkReply;
+
+		void getUrl(const QUrl& url);
 };
 
 #endif

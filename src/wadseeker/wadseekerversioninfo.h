@@ -25,29 +25,55 @@
 
 #include "wadseekerexportinfo.h"
 #include <QString>
+#include <QStringList>
 
 class WADSEEKER_API WadseekerVersionInfo
 {
 	public:
 		/**
-		 * @return Author of the library.
+		 * @brief Author of the library.
 		 */
 		static QString			author();
-		
+
 		/**
-		 * @return Description of the library.
+		 * @brief Description of the library.
 		 */
-		static QString			description();	
-		
+		static QString			description();
+
 		/**
-		 * @return Version string of the library.
+		 * @brief List of known extensions for "WAD" files (pk3, wad).
 		 */
-		static QString			version();	
-		
+		static QStringList      knownWadExtensions();
+
 		/**
-		 * @return Development dates.
+		 * @brief Checks if passed argument is on
+		 *        the supportedArchiveExtensions() list.
+		 *
+		 * Check is case-insensitive.
+		 *
+		 * @return True if suffix is on the list.
 		 */
-		static QString			yearSpan();	
+		static bool				isSupportedArchiveExtension(const QString& suffix);
+
+		/**
+		 * @brief List of extractable archive extensions.
+		 */
+		static QStringList 		supportedArchiveExtensions();
+
+		/**
+		 * @brief WWW User Agent used for HTTP communications.
+		 */
+		static QString			userAgent();
+
+		/**
+		 * @brief Version string of the library.
+		 */
+		static QString			version();
+
+		/**
+		 * @brief Development dates.
+		 */
+		static QString			yearSpan();
 };
 
 #endif

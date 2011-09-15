@@ -617,7 +617,7 @@ void MainWindow::initTrayIcon()
 	}
 }
 
-void MainWindow::ip2cDownloadProgress(int current, int max)
+void MainWindow::ip2cDownloadProgress(qint64 current, qint64 max)
 {
 	ip2cUpdateProgressBar->setMaximum(max);
 	ip2cUpdateProgressBar->setValue(current);
@@ -761,7 +761,7 @@ void MainWindow::ip2cStartUpdate()
 	ip2cUpdater->setFilePath(DoomseekerFilePaths::ip2cDatabase());
 
 	connect (ip2cUpdater, SIGNAL( databaseDownloadFinished(const QByteArray&) ), this, SLOT( ip2cFinishUpdate(const QByteArray&) ) );
-	connect (ip2cUpdater, SIGNAL( downloadProgress(int, int) ), this, SLOT( ip2cDownloadProgress(int, int) ) );
+	connect (ip2cUpdater, SIGNAL( downloadProgress(qint64, qint64) ), this, SLOT( ip2cDownloadProgress(qint64, qint64) ) );
 
 	QString downloadUrl = gConfig.doomseeker.ip2CountryUrl;
 
@@ -956,8 +956,8 @@ void MainWindow::menuWadSeeker()
 		return;
 	}
 
-	WadSeekerInterface wadSeekerInterface(NULL);
-	wadSeekerInterface.exec();
+	WadseekerInterface wadseekerInterface(NULL);
+	wadseekerInterface.exec();
 }
 
 void MainWindow::notifyFirstRun()
@@ -1078,9 +1078,9 @@ Wadseeker will not download IWADs.\n\n");
 							joinError.missingWads.append(joinError.missingIwad);
 						}
 
-						WadSeekerInterface wsi(NULL);
+						WadseekerInterface wsi(NULL);
 						wsi.setAutomatic(true, joinError.missingWads);
-						wsi.wadseekerRef().setCustomSite(server->website());
+						wsi.setCustomSite(server->website());
 						if (wsi.exec() == QDialog::Accepted)
 						{
 							if(hadMissing)
