@@ -25,7 +25,7 @@
 
 QString WadseekerVersionInfo::author()
 {
-	return QObject::tr("The Skulltag Team");
+	return QObject::tr("The Doomseeker Team");
 }
 
 QString WadseekerVersionInfo::description()
