@@ -59,6 +59,7 @@ class DoomseekerConfig
 			bool						bMainWindowMaximized;
 			bool						bQueryAutoRefreshDontIfActive;
 			bool						bQueryAutoRefreshEnabled;
+			bool						bQueryBeforeLaunch;
 			bool						bQueryOnStartup;
 			bool						bRecordDemo;
 			bool						bRememberConnectPassword;
@@ -76,6 +77,8 @@ class DoomseekerConfig
 			int							mainWindowX;
 			int							mainWindowY;
 			unsigned					queryAutoRefreshEverySeconds;
+			unsigned					queryBatchSize;
+			unsigned					queryBatchDelay;
 			unsigned					queryTimeout;
 			unsigned					queryTries;
 			QString						previousCreateServerConfigDir;

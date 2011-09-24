@@ -125,6 +125,7 @@ class RefreshingThread : public QThread, public QRunnable
 
 		static const int							MASTER_SERVER_TIMEOUT_DELAY = 10000;
 
+		QTime										batchTime;
 		bool										bKeepRunning;
 		int											delayBetweenResends;
 		QList<ServerBatch>							registeredBatches;

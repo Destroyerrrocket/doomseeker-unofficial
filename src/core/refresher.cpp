@@ -26,6 +26,7 @@
 #include "masterserver/mastermanager.h"
 #include "plugins/pluginloader.h"
 #include "serverapi/server.h"
+#include "configuration/doomseekerconfig.h"
 
 RefreshingThread::RefreshingThread()
 {
@@ -317,7 +318,7 @@ unsigned RefreshingThread::sendQueriesForBatch(ServerBatch& batch, int resetDela
 
 void RefreshingThread::sendServerQueries()
 {
-	const unsigned SERVER_BATCH_SIZE = 30;
+	const unsigned SERVER_BATCH_SIZE = gConfig.doomseeker.queryBatchSize;
 
 	if (unbatchedServers.size() != 0 || registeredBatches.size() != 0)
 	{
@@ -336,8 +337,10 @@ void RefreshingThread::sendServerQueries()
 		}
 
 		//qDebug() << querySlotsInUse << " Servers queried.";
-		if(unbatchedServers.size() != 0 && querySlotsInUse < SERVER_BATCH_SIZE)
+		if(unbatchedServers.size() != 0 && querySlotsInUse < SERVER_BATCH_SIZE &&
+			batchTime.elapsed() >= gConfig.doomseeker.queryBatchDelay)
 		{
+			batchTime.start();
 			thisMutex.lock();
 			ServerBatch batch;
 			// Select a batch of servers to query.

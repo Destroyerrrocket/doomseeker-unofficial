@@ -31,20 +31,26 @@ CFGQuery::CFGQuery(QWidget *parent)
 
 void CFGQuery::readSettings()
 {
+	queryBeforeLaunch->setChecked(gConfig.doomseeker.bQueryBeforeLaunch);
 	queryOnStartup->setChecked(gConfig.doomseeker.bQueryOnStartup);
 	triesBox->setValue(gConfig.doomseeker.queryTries);
 	timeoutBox->setValue(gConfig.doomseeker.queryTimeout);
 	grbServerAutoRefresh->setChecked(gConfig.doomseeker.bQueryAutoRefreshEnabled);
 	numAutoRefreshEverySeconds->setValue(gConfig.doomseeker.queryAutoRefreshEverySeconds);
 	cbDontRefreshIfActive->setChecked(gConfig.doomseeker.bQueryAutoRefreshDontIfActive);
+	batchSizeBox->setValue(gConfig.doomseeker.queryBatchSize);
+	batchDelayBox->setValue(gConfig.doomseeker.queryBatchDelay);
 }
 
 void CFGQuery::saveSettings()
 {
+	gConfig.doomseeker.bQueryBeforeLaunch = queryBeforeLaunch->isChecked();
 	gConfig.doomseeker.bQueryOnStartup = queryOnStartup->isChecked();
 	gConfig.doomseeker.queryTries = triesBox->value();
 	gConfig.doomseeker.queryTimeout = timeoutBox->value();
 	gConfig.doomseeker.bQueryAutoRefreshEnabled = grbServerAutoRefresh->isChecked();
 	gConfig.doomseeker.queryAutoRefreshEverySeconds = numAutoRefreshEverySeconds->value();
 	gConfig.doomseeker.bQueryAutoRefreshDontIfActive = cbDontRefreshIfActive->isChecked();
+	gConfig.doomseeker.queryBatchSize = batchSizeBox->value();
+	gConfig.doomseeker.queryBatchDelay = batchDelayBox->value();
 }

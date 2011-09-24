@@ -1213,7 +1213,7 @@ void MainWindow::refreshToJoin(Server *server)
 {
 	// If the data we have is old we should refresh first to check if we can
 	// still properly join the server.
-	if(server->isRefreshable())
+	if(server->isRefreshable() && gConfig.doomseeker.bQueryBeforeLaunch)
 	{
 		waitingToJoin = server;
 		server->refresh();

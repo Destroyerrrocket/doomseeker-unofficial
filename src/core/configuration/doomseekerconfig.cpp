@@ -196,6 +196,7 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->bIP2CountryAutoUpdate = true;
 	this->bQueryAutoRefreshDontIfActive = true;
 	this->bQueryAutoRefreshEnabled = false;
+	this->bQueryBeforeLaunch = true;
 	this->bQueryOnStartup = true;
 	this->bMainWindowMaximized = false;
 	this->bRecordDemo = false;
@@ -212,6 +213,8 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->mainWindowX = 0xffff;
 	this->mainWindowY = 0xffff;
 	this->queryAutoRefreshEverySeconds = 180;
+	this->queryBatchSize = 30;
+	this->queryBatchDelay = 0;
 	this->queryTimeout = 1000;
 	this->queryTries = 3;
 	this->previousCreateServerConfigDir = "";
@@ -277,6 +280,8 @@ void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 	section.createSetting("IP2CMaximumAge", this->ip2CountryDatabaseMaximumAge);
 	section.createSetting("IP2CUrl", this->ip2CountryUrl);
 	section.createSetting("QueryAutoRefreshEverySeconds", this->queryAutoRefreshEverySeconds);
+	section.createSetting("QueryBatchSize", this->queryBatchSize);
+	section.createSetting("QueryBatchDelay", this->queryBatchDelay);
 	section.createSetting("QueryTimeout", this->queryTimeout);
 	section.createSetting("QueryTries", this->queryTries);
 	section.createSetting("SlotStyle", this->slotStyle);
@@ -291,6 +296,7 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->bIP2CountryAutoUpdate = section["IP2CAutoUpdate"];
 	this->bQueryAutoRefreshDontIfActive = section["QueryAutoRefreshDontIfActive"];
 	this->bQueryAutoRefreshEnabled = section["QueryAutoRefreshEnabled"];
+	this->bQueryBeforeLaunch = section["QueryBeforeLaunch"];
 	this->bQueryOnStartup = section["QueryOnStartup"];
 	this->bMainWindowMaximized = section["MainWindowMaximized"];
 	this->bRecordDemo = section["RecordDemo"];
@@ -307,6 +313,8 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->mainWindowX = section["MainWindowX"];
 	this->mainWindowY = section["MainWindowY"];
 	this->queryAutoRefreshEverySeconds = section["QueryAutoRefreshEverySeconds"];
+	this->queryBatchSize = section["QueryBatchSize"];
+	this->queryBatchDelay = section["QueryBatchDelay"];
 	this->queryTimeout = section["QueryTimeout"];
 	this->queryTries = section["QueryTries"];
 	this->previousCreateServerConfigDir = (const QString &)section["PreviousCreateServerConfigDir"];
@@ -339,6 +347,7 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["IP2CAutoUpdate"] = this->bIP2CountryAutoUpdate;
 	section["QueryAutoRefreshDontIfActive"] = this->bQueryAutoRefreshDontIfActive;
 	section["QueryAutoRefreshEnabled"] = this->bQueryAutoRefreshEnabled;
+	section["QueryBeforeLaunch"] = this->bQueryBeforeLaunch;
 	section["QueryOnStartup"] = this->bQueryOnStartup;
 	section["MainWindowMaximized"] = this->bMainWindowMaximized;
 	section["RecordDemo"] = this->bRecordDemo;
@@ -355,6 +364,8 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["MainWindowX"] = this->mainWindowX;
 	section["MainWindowY"] = this->mainWindowY;
 	section["QueryAutoRefreshEverySeconds"] = this->queryAutoRefreshEverySeconds;
+	section["QueryBatchSize"] = this->queryBatchSize;
+	section["QueryBatchDelay"] = this->queryBatchDelay;
 	section["QueryTimeout"] = this->queryTimeout;
 	section["QueryTries"] = this->queryTries;
 	section["PreviousCreateServerConfigDir"] = this->previousCreateServerConfigDir;
