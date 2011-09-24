@@ -22,6 +22,8 @@
 //------------------------------------------------------------------------------
 #include "doomseekerconfig.h"
 #include "ini/ini.h"
+#include "ini/inisection.h"
+#include "ini/inivariable.h"
 #include "plugins/engineplugin.h"
 #include "wadseeker/wadseeker.h"
 #include "log.h"
@@ -34,7 +36,7 @@ DoomseekerConfig* DoomseekerConfig::instance = NULL;
 DoomseekerConfig::DoomseekerConfig()
 {
 	this->pIni = NULL;
-	this->dummySection = new IniSection();
+	this->dummySection = new IniSection(NULL, QString());
 }
 
 DoomseekerConfig::~DoomseekerConfig()
@@ -66,7 +68,7 @@ void DoomseekerConfig::dispose()
 	}
 }
 
-IniSection& DoomseekerConfig::iniSectionForPlugin(const QString& pluginName)
+IniSection DoomseekerConfig::iniSectionForPlugin(const QString& pluginName)
 {
 	if (pluginName.isEmpty())
 	{
@@ -90,7 +92,7 @@ IniSection& DoomseekerConfig::iniSectionForPlugin(const QString& pluginName)
 	return this->pIni->createSection(sectionName);
 }
 
-IniSection& DoomseekerConfig::iniSectionForPlugin(const EnginePlugin* plugin)
+IniSection DoomseekerConfig::iniSectionForPlugin(const EnginePlugin* plugin)
 {
 	return iniSectionForPlugin(plugin->data()->name);
 }
@@ -117,13 +119,13 @@ bool DoomseekerConfig::readFromFile()
 		return false;
 	}
 
-	IniSection& sectionDoomseeker = pIni->section(doomseeker.SECTION_NAME);
+	IniSection sectionDoomseeker = pIni->section(doomseeker.SECTION_NAME);
 	doomseeker.load(sectionDoomseeker);
 
-	IniSection& sectionServerFilter = pIni->section(serverFilter.SECTION_NAME);
+	IniSection sectionServerFilter = pIni->section(serverFilter.SECTION_NAME);
 	serverFilter.load(sectionServerFilter);
 
-	IniSection& sectionWadseeker = pIni->section(wadseeker.SECTION_NAME);
+	IniSection sectionWadseeker = pIni->section(wadseeker.SECTION_NAME);
 	wadseeker.load(sectionWadseeker);
 
 	// Plugins should read their sections manually.
@@ -138,18 +140,20 @@ bool DoomseekerConfig::saveToFile()
 		return false;
 	}
 
-	const QString TOP_COMMENT = QObject::tr("This is %1 configuration file.\n\
-Any modification done manually to this file is on your own risk.").arg(Version::fullVersionInfo());
+// TODO:
+// Find a way to work around this.
+//	const QString TOP_COMMENT = QObject::tr("This is %1 configuration file.\n\
+//Any modification done manually to this file is on your own risk.").arg(Version::fullVersionInfo());
+//
+//	pIni->setIniTopComment(TOP_COMMENT);
 
-	pIni->setIniTopComment(TOP_COMMENT);
-
-	IniSection& sectionDoomseeker = pIni->section(doomseeker.SECTION_NAME);
+	IniSection sectionDoomseeker = pIni->section(doomseeker.SECTION_NAME);
 	doomseeker.save(sectionDoomseeker);
 
-	IniSection& sectionServerFilter = pIni->section(serverFilter.SECTION_NAME);
+	IniSection sectionServerFilter = pIni->section(serverFilter.SECTION_NAME);
 	serverFilter.save(sectionServerFilter);
 
-	IniSection& sectionWadseeker = pIni->section(wadseeker.SECTION_NAME);
+	IniSection sectionWadseeker = pIni->section(wadseeker.SECTION_NAME);
 	wadseeker.save(sectionWadseeker);
 
 	// Plugins should save their sections manually.
@@ -167,11 +171,18 @@ bool DoomseekerConfig::setIniFile(const QString& filePath)
 	gLog << QObject::tr("Setting INI file: %1").arg(filePath);
 	this->pIni = new Ini(filePath);
 
-	doomseeker.init(this->pIni->section(doomseeker.SECTION_NAME));
-	serverFilter.init(this->pIni->section(serverFilter.SECTION_NAME));
-	wadseeker.init(this->pIni->section(wadseeker.SECTION_NAME));
+    IniSection section;
 
-	return this->pIni->isValid();
+    section = this->pIni->section(doomseeker.SECTION_NAME);
+	doomseeker.init(section);
+
+	section = this->pIni->section(serverFilter.SECTION_NAME);
+	serverFilter.init(section);
+
+	section = this->pIni->section(wadseeker.SECTION_NAME);
+	wadseeker.init(section);
+
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////

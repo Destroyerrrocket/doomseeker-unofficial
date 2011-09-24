@@ -49,7 +49,7 @@ IRCConfig& IRCConfig::config()
 	{
 		instance = new IRCConfig();
 	}
-	
+
 	return *instance;
 }
 
@@ -61,7 +61,7 @@ void IRCConfig::dispose()
 		instance = NULL;
 	}
 }
-	
+
 bool IRCConfig::isAutojoinNetworksEnabled() const
 {
 	foreach (const IRCNetworkEntity& network, networks.networks)
@@ -71,64 +71,65 @@ bool IRCConfig::isAutojoinNetworksEnabled() const
 			return true;
 		}
 	}
-	
+
 	return false;
 }
-	
+
 bool IRCConfig::readFromFile()
 {
 	if (pIni == NULL)
 	{
 		return false;
 	}
-	
-	IniSection* pSection;
-	
-	pSection = &pIni->section(AppearanceCfg::SECTION_NAME);
-	appearance.load(*pSection);
-	
-	pSection = &pIni->section(GeneralCfg::SECTION_NAME);
-	general.load(*pSection);
-	
-	pSection = &pIni->section(PersonalCfg::SECTION_NAME);
-	personal.load(*pSection);
-	
-	pSection = &pIni->section(SoundsCfg::SECTION_NAME);
-	sounds.load(*pSection);	
-	
+
+	IniSection section;
+
+	section = pIni->section(AppearanceCfg::SECTION_NAME);
+	appearance.load(section);
+
+	section = pIni->section(GeneralCfg::SECTION_NAME);
+	general.load(section);
+
+	section = pIni->section(PersonalCfg::SECTION_NAME);
+	personal.load(section);
+
+	section = pIni->section(SoundsCfg::SECTION_NAME);
+	sounds.load(section);
+
 	networks.load(*pIni);
-	
-	return true;	
+
+	return true;
 }
-		
+
 bool IRCConfig::saveToFile()
 {
 	if (pIni == NULL)
 	{
 		return false;
 	}
-	
-	const QString TOP_COMMENT = QObject::tr("This is %1 IRC module configuration file.\n\
-Any modification done manually to this file is on your own risk.").arg(Version::fullVersionInfo());
-	
-	pIni->setIniTopComment(TOP_COMMENT);	
-	
-	IniSection* pSection;
-	
-	pSection = &pIni->section(AppearanceCfg::SECTION_NAME);
-	appearance.save(*pSection);
-	
-	pSection = &pIni->section(GeneralCfg::SECTION_NAME);
-	general.save(*pSection);
-	
-	pSection = &pIni->section(PersonalCfg::SECTION_NAME);
-	personal.save(*pSection);
-	
-	pSection = &pIni->section(SoundsCfg::SECTION_NAME);
-	sounds.save(*pSection);
-	
+
+// TODO: Find a workaround for this.
+//	const QString TOP_COMMENT = QObject::tr("This is %1 IRC module configuration file.\n\
+//Any modification done manually to this file is on your own risk.").arg(Version::fullVersionInfo());
+//
+//	pIni->setIniTopComment(TOP_COMMENT);
+
+	IniSection section;
+
+	section = pIni->section(AppearanceCfg::SECTION_NAME);
+	appearance.save(section);
+
+	section = pIni->section(GeneralCfg::SECTION_NAME);
+	general.save(section);
+
+	section = pIni->section(PersonalCfg::SECTION_NAME);
+	personal.save(section);
+
+	section = pIni->section(SoundsCfg::SECTION_NAME);
+	sounds.save(section);
+
 	networks.save(*pIni);
-	
+
 	return pIni->save();
 }
 
@@ -138,13 +139,16 @@ bool IRCConfig::setIniFile(const QString& filePath)
 	{
 		delete this->pIni;
 	}
-	
+
 	gLog << QObject::tr("Setting IRC INI file: %1").arg(filePath);
 	this->pIni = new Ini(filePath);
-	
-	appearance.init(this->pIni->section(AppearanceCfg::SECTION_NAME));
-	
-	return this->pIni->isValid();
+
+	IniSection section;
+
+	section = this->pIni->section(AppearanceCfg::SECTION_NAME);
+	appearance.init(section);
+
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -165,7 +169,7 @@ IRCConfig::AppearanceCfg::AppearanceCfg()
 
 void IRCConfig::AppearanceCfg::init(IniSection& section)
 {
-	section.createSetting("BackgroundColor", this->backgroundColor);	
+	section.createSetting("BackgroundColor", this->backgroundColor);
 	section.createSetting("ChannelActionColor", this->channelActionColor);
 	section.createSetting("DefaultTextColor", this->defaultTextColor);
 	section.createSetting("ErrorColor", this->errorColor);
@@ -207,17 +211,17 @@ const QString IRCConfig::GeneralCfg::SECTION_NAME = "General";
 
 IRCConfig::GeneralCfg::GeneralCfg()
 {
-	
+
 }
 
 void IRCConfig::GeneralCfg::load(IniSection& section)
 {
-	
+
 }
 
 void IRCConfig::GeneralCfg::save(IniSection& section)
 {
-	
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -233,39 +237,39 @@ QVector<IRCNetworkEntity> IRCConfig::NetworksDataCfg::autojoinNetworks() const
 			autoNetworks << network;
 		}
 	}
-	
+
 	return autoNetworks;
 }
 
 void IRCConfig::NetworksDataCfg::clearNetworkSections(Ini& ini)
 {
-	QVector<IniSection*> sections = ini.sectionsArray("^" + SECTIONS_NAMES_PREFIX);
-	foreach (IniSection* pSection, sections)
+	QVector<IniSection> sections = ini.sectionsArray("^" + SECTIONS_NAMES_PREFIX);
+	foreach (const IniSection& section, sections)
 	{
-		ini.deleteSection(pSection->sectionName());
+		ini.deleteSection(section.sectionName());
 	}
 }
-	
+
 void IRCConfig::NetworksDataCfg::networksSortedByDescription(QVector<IRCNetworkEntity>& outVector)
 {
 	outVector = this->networks;
 	qSort(outVector);
 }
-	
+
 void IRCConfig::NetworksDataCfg::load(Ini& ini)
 {
-	QVector<IniSection*> sections = ini.sectionsArray("^" + SECTIONS_NAMES_PREFIX);
-	foreach (IniSection* pSection, sections)
+	QVector<IniSection> sections = ini.sectionsArray("^" + SECTIONS_NAMES_PREFIX);
+	for (int i = 0; i < sections.size(); ++i)
 	{
-		IniSection& iniSection = *pSection;
+		IniSection& iniSection = sections[i];
 		IRCNetworkEntity network;
-		
+
 		this->loadNetwork(iniSection, network);
-		
+
 		this->networks << network;
 	}
-	
-	IniSection& lastUsedNetworkSection = ini.section("LastUsedNetwork");
+
+	IniSection lastUsedNetworkSection = ini.section("LastUsedNetwork");
 	this->loadNetwork(lastUsedNetworkSection, this->lastUsedNetwork);
 
 	// Go through the plugins and register their IRC servers.
@@ -275,7 +279,7 @@ void IRCConfig::NetworksDataCfg::load(Ini& ini)
 			continue;
 
 		// OK so maybe registering only on first run is a good idea after all...
-		IniVariable &registered = (*Main::enginePlugins)[i]->info->data()->pConfig->createSetting("IRCRegistered", false);
+		IniVariable registered = (*Main::enginePlugins)[i]->info->data()->pConfig->createSetting("IRCRegistered", false);
 		if(!registered)
 		{
 			registered = true;
@@ -328,14 +332,14 @@ void IRCConfig::NetworksDataCfg::save(Ini& ini)
 	for (int i = 0; i < this->networks.size(); ++i)
 	{
 		QString sectionName = SECTIONS_NAMES_PREFIX + QString::number(i);
-		
+
 		const IRCNetworkEntity& network = this->networks[i];
-		IniSection& iniSection = ini.section(sectionName);
-		
+		IniSection iniSection = ini.section(sectionName);
+
 		this->saveNetwork(iniSection, network);
 	}
-	
-	IniSection& lastUsedNetworkSection = ini.section("LastUsedNetwork");
+
+	IniSection lastUsedNetworkSection = ini.section("LastUsedNetwork");
 	this->saveNetwork(lastUsedNetworkSection, this->lastUsedNetwork);
 }
 

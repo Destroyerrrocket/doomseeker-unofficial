@@ -217,7 +217,7 @@ MainWindow::~MainWindow()
 
 	    if (!pluginName.isEmpty())
 	    {
-			IniSection& pluginConfig = gConfig.iniSectionForPlugin(pluginName);
+			IniSection pluginConfig = gConfig.iniSectionForPlugin(pluginName);
 	        pluginConfig["Query"] = action->isChecked();
 	    }
 	}
@@ -386,7 +386,7 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		query->setIcon(plugin->icon());
 		query->setText(name);
 
-		IniSection& pluginConfig = gConfig.iniSectionForPlugin(name);
+		IniSection pluginConfig = gConfig.iniSectionForPlugin(name);
 
 		if (!pluginConfig.retrieveSetting("Query").isNull())
 		{
@@ -963,11 +963,8 @@ void MainWindow::menuWadSeeker()
 void MainWindow::notifyFirstRun()
 {
 	// On first run prompt configuration box.
-	if (gConfig.ini()->isFirstRun())
-	{
-		QMessageBox::information(NULL, tr("Welcome to Doomseeker"), tr("Before you start browsing for servers, please ensure that Doomseeker is properly configured."));
-		menuActionConfigure->trigger();
-	}
+    QMessageBox::information(NULL, tr("Welcome to Doomseeker"), tr("Before you start browsing for servers, please ensure that Doomseeker is properly configured."));
+    menuActionConfigure->trigger();
 }
 
 bool MainWindow::obtainJoinCommandLine(const Server* server, CommandLineInfo& cli, const QString& errorCaption, bool *hadMissing)

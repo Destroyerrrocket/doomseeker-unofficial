@@ -184,8 +184,8 @@ class DoomseekerConfig
 		 *
 		 *	@see dummySection
 		 */
-		IniSection&					iniSectionForPlugin(const QString& pluginName);
-		IniSection&					iniSectionForPlugin(const EnginePlugin* plugin);
+		IniSection					iniSectionForPlugin(const QString& pluginName);
+		IniSection					iniSectionForPlugin(const EnginePlugin* plugin);
 
 		/**
 		 *	@brief Reads settings from ini file. This file must be

@@ -27,6 +27,9 @@
 
 #include <QHash>
 #include <QString>
+#include <QVariant>
+
+class IniSection;
 
 /**
  *	@brief INI variable representation.
@@ -37,29 +40,16 @@
 class MAIN_EXPORT IniVariable
 {
 	public:
-		/**
-		 *	@brief Comment placed on the right side of the variable.
-		 */
-		QString			sideComment;
+        /**
+         * @brief Creates NULL variable.
+         */
+        IniVariable();
 
-		/**
-		 *	@brief Comment placed on top of the variable.
-		 */
-		QString			topComment;
+		IniVariable(IniSection* pSection, const QString& key);
+		IniVariable(const IniSection* pSection, const QString& key);
 
-
-		IniVariable() : null(false) {}
-		IniVariable(const QString& value) : null(false) { *this = value; }
-		IniVariable(const char* value) : null(false) { *this = QString(value); }
-		IniVariable(int value) : null(false) { *this = value; }
-		IniVariable(unsigned int value) : null(false) { *this = value; }
-		IniVariable(short value) : null(false) { *this = value; }
-		IniVariable(unsigned short value) : null(false) { *this = value; }
-		IniVariable(bool value) : null(false) { *this = value; }
-		IniVariable(float value) : null(false) { *this = value; }
-
-		bool			isNull() const { return null; }
-		QString			valueString() const { return this->value; }
+		bool			isNull() const { return pConstSection == NULL; }
+		QString			valueString() const { return this->value().toString(); }
 
 		const IniVariable &operator=(const QString &str);
 		const IniVariable &operator=(const char* str) { return *this = QString(str); }
@@ -71,10 +61,8 @@ class MAIN_EXPORT IniVariable
 		const IniVariable &operator=(float f);
 		const IniVariable &operator=(const IniVariable &other);
 
-		// IniVariables can be used as pointers to QStrings as well
-		const QString *operator->() const { return &value; }
-		const QString &operator*() const { return value; }
-		operator const QString &() const { return value; }
+		QString operator*() const { return value().toString(); }
+		operator QString () const { return value().toString(); }
 
 		/**
 		*	Attempts to convert the QString value to a float.
@@ -95,24 +83,31 @@ class MAIN_EXPORT IniVariable
 		operator bool() const;
 		operator IniVariable&() { return *this; }
 
-	protected:
-		friend class Ini;
-		friend class IniSection;
+		void				setValue(const QVariant& value);
+		QVariant			value() const;
+
+	private:
 		friend class TestReadINIVariable;
 		friend class TestReadINIList;
 
-		static IniVariable	makeNull() { IniVariable nullVar; nullVar.null = true; return nullVar; }
-		bool				null;
+		/**
+		 * @brief For non-const operations. Might be NULL even if pConstSection
+		 *        is not NULL.
+		 */
+        IniSection*			pSection;
+
+        /**
+         * @brief For const operations. If NULL then IniVariable object is
+         *        invalid.
+         */
+        const IniSection*	pConstSection;
 
 		/**
-		 *	@brief The key name of this variable with lettercase preserved.
+		 *	@brief The key name of this variable.
 		 */
-		QString			key;
+		QString				key;
 
-		/**
-		 *	@brief Value of the variable.
-		 */
-		QString			value;
+
 };
 
 typedef QHash<QString, IniVariable>					IniVariables;	// the first QString is the name

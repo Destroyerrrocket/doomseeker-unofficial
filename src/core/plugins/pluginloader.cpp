@@ -19,7 +19,7 @@
 //
 //------------------------------------------------------------------------------
 // Copyright (C) 2011 "Blzut3" <admin@maniacsvault.net>
-//------------------------------------------------------------------------------ 
+//------------------------------------------------------------------------------
 
 #include "log.h"
 #include "configuration/doomseekerconfig.h"
@@ -90,7 +90,7 @@ void PluginLoader::Plugin::initConfig()
 {
 	if(library != NULL)
 	{
-		IniSection& cfgSection = gConfig.iniSectionForPlugin(info->data()->name);
+		IniSection cfgSection = gConfig.iniSectionForPlugin(info->data()->name);
 		info->setConfig(cfgSection);
 	}
 }

@@ -19,7 +19,7 @@
 //
 //------------------------------------------------------------------------------
 // Copyright (C) 2011 "Blzut3" <admin@maniacsvault.net>
-//------------------------------------------------------------------------------ 
+//------------------------------------------------------------------------------
 
 #include "gui/configuration/engineconfigurationbasebox.h"
 #include "irc/entities/ircnetworkentity.h"
@@ -63,6 +63,7 @@ EnginePlugin::EnginePlugin()
 EnginePlugin::~EnginePlugin()
 {
 	delete d->icon;
+	delete d->pConfig;
 	delete d;
 }
 
@@ -173,7 +174,7 @@ void EnginePlugin::masterHost(QString &host, unsigned short &port) const
 
 void EnginePlugin::setConfig(IniSection &ini) const
 {
-	d->pConfig = &ini;
+	d->pConfig = new IniSection(ini);
 
 	ini.createSetting("Masterserver", data()->defaultMaster);
 

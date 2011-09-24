@@ -23,72 +23,66 @@
 #ifndef __INISECTION_H__
 #define __INISECTION_H__
 
-#include "inivariable.h"
-
+#include <QVariant>
 #include <QVector>
+#include "global.h"
+
+class Ini;
+class IniVariable;
 
 /**
- *	@brief INI section representation.
+ * @brief INI section representation.
  *
- *	Contains list of variables that are in this section, section's comments
- *	and namelists.
+ * Contains list of variables that are in this section.
  */
 class MAIN_EXPORT IniSection
 {
 	public:
-		IniSection() : null(false) {}
+        /**
+         * @brief Creates invalid IniSection object.
+         */
+        IniSection();
 
-		/**
-		 *	@brief Comment placed on the right side of the section.
-		 */
-		QString					sideComment;
+        /**
+         *
+         */
+		IniSection(Ini* pIni, const QString& sectionName);
 
-		/**
-		 *	@brief Comment placed on top of the section.
-		 */
-		QString					topComment;
-
-		/**
-		 *	@brief List of strings that belong to this section.
-		 *
-		 *	This is an extension to the original INI format.
-		 *	See Ini for more information.
-		 */
-		QVector<IniVariable>	nameList;
-
-		static IniVariable nullVariable;
-
-		IniVariable				&createSetting(const QString& name, const IniVariable& data);
+		IniVariable				createSetting(const QString& name, const QVariant& data);
 		void					deleteSetting(const QString& name);
-		bool					isNull() const { return null; }
-		IniVariable				&retrieveSetting(const QString& name);
-		const IniVariable		&retrieveSetting(const QString& name) const;
-		const QString&			sectionName() const { return this->name; }
-		IniVariable				&setting(const QString& name);
+		bool					isNull() const { return d.pIni == NULL; }
+		IniVariable				retrieveSetting(const QString& name);
+		const IniVariable		retrieveSetting(const QString& name) const;
+		const QString&			sectionName() const { return d.name; }
+		IniVariable				setting(const QString& name);
+		void 					setValue(const QString& key, const QVariant& value);
 
-		IniVariable				&operator[](const QString& name) { return setting(name); }
-		const IniVariable		&operator[](const QString& name) const { return retrieveSetting(name); }
+		IniVariable				operator[](const QString& name);
+		const IniVariable		operator[](const QString& name) const;
 
-	protected:
-		friend class Ini;
-		friend class TestReadINIList;
+		QVariant 				value(const QString& key) const;
 
-		static IniSection	makeNull() { IniSection nullSect; nullSect.null = true; return nullSect; }
-		bool				null;
+	private:
+        class PrivData
+        {
+            public:
+                /**
+                 * @brief A name of this section with lettercase preserved.
+                 */
+                QString					name;
 
-		/**
-		 *	@brief A name of this section with lettercase preserved.
-		 */
-		QString					name;
+                /**
+                 * @brief Ini file to which this section belongs to.
+                 */
+                Ini*                    pIni;
+        };
 
+        PrivData d;
 
-		/**
-		 *	@brief List of variables that belong to this section.
-		 */
-		IniVariables			variables;
+        void remove(const QString& key);
 };
 
-typedef QHash<QString, IniSection> 					IniSections;	// the first QString is the name
+typedef QHash<QString, IniSection> 					IniSections;	/// the first QString is the name
 typedef QHash<QString, IniSection>::iterator 		IniSectionsIt;
 typedef QHash<QString, IniSection>::const_iterator 	IniSectionsConstIt;
 

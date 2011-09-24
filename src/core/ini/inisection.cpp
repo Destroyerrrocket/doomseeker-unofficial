@@ -21,36 +21,36 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "inisection.h"
+
+#include "ini.h"
 #include <cassert>
+#include <QDebug>
 
-IniVariable IniSection::nullVariable((const IniVariable &)IniVariable::makeNull());
+IniSection::IniSection()
+{
+    d.pIni = NULL;
+}
 
-IniVariable &IniSection::createSetting(const QString& name, const IniVariable& data)
+IniSection::IniSection(Ini* pIni, const QString& sectionName)
+{
+    d.pIni = pIni;
+    d.name = sectionName;
+}
+
+IniVariable IniSection::createSetting(const QString& name, const QVariant& data)
 {
 	assert(!isNull());
 	if (name.isEmpty())
 	{
-		return nullVariable;
+		return IniVariable();
 	}
 
-	QString nameLower = name.toLower();
+    if (value(name).isNull())
+    {
+        setValue(name, data);
+    }
 
-	IniVariablesIt it = variables.find(nameLower);
-	if (it != variables.end())
-	{
-		return *it;
-	}
-
-	// Avoid setting a Null variable.
-	IniVariable varData;
-	varData.key = name;
-	varData = data;
-
-	variables.insert(nameLower, varData);
-	IniVariable &pNewVariable = *variables.find(nameLower);
-	pNewVariable.key = name;
-
-	return pNewVariable;
+	return retrieveSetting(name);
 }
 
 void IniSection::deleteSetting(const QString& name)
@@ -61,63 +61,80 @@ void IniSection::deleteSetting(const QString& name)
 		return;
 	}
 
-	QString nameLower = name.toLower();
-
-	IniVariablesIt it = variables.find(nameLower);
-	if (it != variables.end())
-	{
-		variables.erase(it);
-	}
+    remove(name);
 }
 
-IniVariable &IniSection::retrieveSetting(const QString& name)
+IniVariable IniSection::operator[](const QString& name)
+{
+    return setting(name);
+}
+
+const IniVariable IniSection::operator[](const QString& name) const
+{
+    return retrieveSetting(name);
+}
+
+void IniSection::remove(const QString& key)
+{
+    d.pIni->removeKey(d.name + "/" + key);
+}
+
+IniVariable IniSection::retrieveSetting(const QString& name)
 {
 	assert(!isNull());
 	if (name.isEmpty())
 	{
-		return nullVariable;
+		return IniVariable();
 	}
 
-	QString nameLower = name.toLower();
-
-	IniVariablesIt it = variables.find(nameLower);
-	if (it == variables.end())
-	{
-		return nullVariable;
-	}
-
-	return *it;
-}
-const IniVariable &IniSection::retrieveSetting(const QString& name) const
-{
-	if (name.isEmpty())
-	{
-		return nullVariable;
-	}
-
-	QString nameLower = name.toLower();
-
-	IniVariablesConstIt it = variables.find(nameLower);
-	if (it == variables.end())
-	{
-		return nullVariable;
-	}
-
-	return *it;
+	return IniVariable(this, name);
 }
 
-IniVariable &IniSection::setting(const QString& name)
+const IniVariable IniSection::retrieveSetting(const QString& name) const
 {
 	assert(!isNull());
 	if (name.isEmpty())
 	{
-		return nullVariable;
+		return IniVariable();
 	}
 
-	QString nameLower = name.toLower();
+	QVariant var = value(name);
+	return IniVariable(this, name);
+}
 
-	IniVariable& pVariable = retrieveSetting(nameLower);
+IniVariable IniSection::setting(const QString& name)
+{
+	assert(!isNull());
+	if (name.isEmpty())
+	{
+		return IniVariable();
+	}
+
+	IniVariable pVariable = retrieveSetting(name);
 	if (pVariable.isNull())
-		return createSetting(name, IniVariable());
+	{
+		return createSetting(name, QVariant());
+	}
+
 	return pVariable;
+}
+
+void IniSection::setValue(const QString& key, const QVariant& value)
+{
+	assert(!isNull());
+
+	if (!isNull())
+	{
+		d.pIni->setValue(d.name + "/" + key, value);
+	}
+}
+
+QVariant IniSection::value(const QString& key) const
+{
+	if (!isNull())
+	{
+		return d.pIni->value(d.name + "/" + key);
+	}
+
+	return QVariant();
 }

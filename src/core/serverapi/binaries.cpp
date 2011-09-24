@@ -51,12 +51,12 @@ QString Binaries::clientWorkingDirectory(Message& message) const
 
 QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, Message& message) const
 {
-	IniSection& config = gConfig.iniSectionForPlugin(plugin());
-	IniVariable& setting = config[configKey];
+	IniSection config = gConfig.iniSectionForPlugin(plugin());
+	IniVariable setting = config[configKey];
 
 	message = Message();
 	QString error = "";
-	if (setting->isEmpty())
+	if (setting.value().isNull())
 	{
 		error = tr("No %1 executable specified for %2").arg(binaryNames[binaryType]).arg(plugin()->data()->name);
 		message = Message::customError(error);

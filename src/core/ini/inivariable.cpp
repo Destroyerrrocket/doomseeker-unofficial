@@ -22,43 +22,71 @@
 //------------------------------------------------------------------------------
 #include "inivariable.h"
 
+#include "ini/inisection.h"
+
 #include <cassert>
+
+IniVariable::IniVariable()
+{
+	this->pConstSection = NULL;
+    this->pSection = NULL;
+}
+
+IniVariable::IniVariable(IniSection* pSection, const QString& key)
+{
+	this->pConstSection = pSection;
+    this->pSection = pSection;
+    this->key = key;
+}
+
+IniVariable::IniVariable(const IniSection* pSection, const QString& key)
+{
+	this->pConstSection = pSection;
+    this->pSection = NULL;
+    this->key = key;
+}
 
 IniVariable::operator bool() const
 {
-	return value.toInt() != 0;
+	return value().toInt() != 0;
 }
 
 IniVariable::operator int() const
 {
-	return value.toInt();
+	return value().toInt();
 }
 
 IniVariable::operator unsigned int() const
 {
-	return value.toUInt();
+	return value().toUInt();
 }
 
 IniVariable::operator short() const
 {
-	return value.toShort();
+	// It's a mystery why QVariant can't convert to short directly.
+	return value().toString().toShort();
 }
 
 IniVariable::operator unsigned short() const
 {
-	return value.toUShort();
+	// It's a mystery why QVariant can't convert to u-short directly.
+	return value().toString().toUShort();
 }
 
 IniVariable::operator float() const
 {
-	return value.toFloat();
+	return value().toFloat();
 }
 
 const IniVariable &IniVariable::operator=(const QString &str)
 {
+	if (isNull())
+	{
+		bool breakpoint = true;
+	}
 	assert(!isNull());
 
-	value = str;
+	setValue(str);
 	return *this;
 }
 
@@ -66,7 +94,7 @@ const IniVariable &IniVariable::operator=(int i)
 {
 	assert(!isNull());
 
-	value = QString("%1").arg(i);
+	setValue(i);
 	return *this;
 }
 
@@ -74,7 +102,7 @@ const IniVariable &IniVariable::operator=(unsigned int i)
 {
 	assert(!isNull());
 
-	value = QString("%1").arg(i);
+	setValue(i);
 	return *this;
 }
 
@@ -82,7 +110,7 @@ const IniVariable &IniVariable::operator=(short i)
 {
 	assert(!isNull());
 
-	value = QString("%1").arg(i);
+	setValue(i);
 	return *this;
 }
 
@@ -90,7 +118,7 @@ const IniVariable &IniVariable::operator=(unsigned short i)
 {
 	assert(!isNull());
 
-	value = QString("%1").arg(i);
+	setValue(i);
 	return *this;
 }
 
@@ -103,7 +131,7 @@ const IniVariable &IniVariable::operator=(float f)
 {
 	assert(!isNull());
 
-	value = QString("%1").arg(f);
+	setValue(f);
 	return *this;
 }
 
@@ -111,10 +139,28 @@ const IniVariable &IniVariable::operator=(const IniVariable &other)
 {
 	assert(!isNull());
 
-	null = other.null;
-	sideComment = other.sideComment;
-	topComment = other.topComment;
 	key = other.key;
-	value = other.value;
+	pConstSection = other.pConstSection;
+	pSection = other.pSection;
 	return *this;
+}
+
+void IniVariable::setValue(const QVariant& value)
+{
+	assert(!isNull());
+
+	if (pSection != NULL)
+	{
+		pSection->setValue(key, value);
+	}
+}
+
+QVariant IniVariable::value() const
+{
+	if (pConstSection != NULL)
+	{
+		return pConstSection->value(key);
+	}
+
+	return QVariant();
 }

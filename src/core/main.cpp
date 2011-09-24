@@ -64,6 +64,7 @@ Main::Main(int argc, char* argv[])
 : application(NULL), arguments(argv), argumentsCount(argc),
   startRcon(false)
 {
+	bIsFirstRun = false;
 	bTestMode = false;
 	bPortableMode = false;
 }
@@ -216,7 +217,7 @@ void Main::convertCfgToIni()
 		"Vavoom",
 		"ZDaemon"
 	};
-	IniSection *sections[7];
+	IniSection sections[7];
 
 	Config oldConfig;
 	// This method will only execute it's behavior if there is anything to
@@ -231,7 +232,7 @@ void Main::convertCfgToIni()
 
 	for(unsigned short i = 0;i < NUM_SECTIONS;i++)
 	{
-		sections[i] = &ini.createSection(sectionNames[i]);
+		sections[i] = ini.createSection(sectionNames[i]);
 	}
 
 	const QHash<QString, SettingsData *> settings = oldConfig.getSettings();
@@ -240,7 +241,7 @@ void Main::convertCfgToIni()
 	{
 		iter.next();
 
-		IniSection *section = sections[0];
+		IniSection section = sections[0];
 		QString key = iter.key();
 		for(unsigned short i = 1;i < NUM_SECTIONS;i++)
 		{
@@ -252,9 +253,9 @@ void Main::convertCfgToIni()
 			}
 		}
 		if(iter.value()->type() == SettingsData::ST_STR)
-			section->createSetting(key, iter.value()->string());
+			section.createSetting(key, iter.value()->string());
 		else
-			section->createSetting(key, iter.value()->integer());
+			section.createSetting(key, iter.value()->integer());
 	}
 
 	oldConfig.remove();
@@ -279,7 +280,10 @@ void Main::createMainWindow()
 
 	mainWindow = mainWnd;
 
-	mainWnd->notifyFirstRun();
+    if (bIsFirstRun)
+    {
+        mainWnd->notifyFirstRun();
+    }
 }
 
 bool Main::createRemoteConsole()
@@ -396,6 +400,12 @@ void Main::initMainConfig()
 	}
 
 	QString filePath = configDirPath + "/" + DOOMSEEKER_INI_FILENAME;
+
+	// Check for first run.
+	QFileInfo iniFileInfo(filePath);
+	bIsFirstRun = !iniFileInfo.exists();
+
+    // Init the config.
 	if (gConfig.setIniFile(filePath))
 	{
 		gConfig.readFromFile();

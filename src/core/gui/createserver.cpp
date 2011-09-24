@@ -752,10 +752,10 @@ bool CreateServerDlg::loadConfig(const QString& filename)
 	QAbstractItemModel* model;
 	QStringList stringList;
 	Ini ini(filename);
-	IniSection &general = ini.section("General");
-	IniSection &rules = ini.section("Rules");
-	IniSection &misc = ini.section("Misc");
-	IniSection &dmflags = ini.section("DMFlags");
+	IniSection general = ini.section("General");
+	IniSection rules = ini.section("Rules");
+	IniSection misc = ini.section("Misc");
+	IniSection dmflags = ini.section("DMFlags");
 
 	// General
 	if(!bIsServerSetup)
@@ -797,7 +797,7 @@ bool CreateServerDlg::loadConfig(const QString& filename)
 	leMap->setText(general["map"]);
 	addIwad(general["iwad"]);
 
-	stringList = general["pwads"]->split(";");
+	stringList = general["pwads"].valueString().split(";");
 	model = lstAdditionalFiles->model();
 	model->removeRows(0, model->rowCount());
 	foreach (QString s, stringList)
@@ -820,7 +820,7 @@ bool CreateServerDlg::loadConfig(const QString& filename)
 		(*it)->spinBox->setValue(rules[(*it)->limit.consoleCommand]);
 	}
 
-	stringList = rules["maplist"]->split(";");
+	stringList = rules["maplist"].valueString().split(";");
 	model = lstMaplist->model();
 	model->removeRows(0, model->rowCount());
 	foreach(QString s, stringList)
@@ -1052,10 +1052,10 @@ bool CreateServerDlg::saveConfig(const QString& filename)
 {
 	QStringList stringList;
 	Ini ini(filename);
-	IniSection &general = ini.createSection("General");
-	IniSection &rules = ini.createSection("Rules");
-	IniSection &misc = ini.createSection("Misc");
-	IniSection &dmflags = ini.createSection("DMFlags");
+	IniSection general = ini.createSection("General");
+	IniSection rules = ini.createSection("Rules");
+	IniSection misc = ini.createSection("Misc");
+	IniSection dmflags = ini.createSection("DMFlags");
 
 	// General
 	general["engine"] = cboEngine->currentText();

@@ -71,7 +71,7 @@ QString SkulltagBinaries::clientBinary(Message& message) const
 		QString error;
 
 		// This is common code for both Unix and Windows:
-		IniVariable &setting = config["TestingPath"];
+		IniVariable setting = config["TestingPath"];
 		QString path = setting;
 		if (path.isEmpty())
 		{

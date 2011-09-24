@@ -68,59 +68,61 @@ TestReadINI::TestReadINI()
 
 bool TestReadINI::executeTest()
 {
-	Ini ini("ExampleINI", ExampleINIs::getExampleINI());
+//	Ini ini("ExampleINI", ExampleINIs::getExampleINI());
+//
+//	const QStringList& errors = ini.errors();
+//	if (!errors.isEmpty())
+//	{
+//		testLog << "Errors were detected in a correct INI file:";
+//		foreach (QString error, errors)
+//		{
+//			testLog << QString("\t%1").arg(error);
+//		}
+//		return false;
+//	}
+//
+//	// This should disregard characters case.
+//	IniSection& pSection = ini.section("section.sectionone");
+//	if (pSection.isNull())
+//	{
+//		testLog << "Section.SectionOne was not read correctly from the INI file.";
+//		return false;
+//	}
 
-	const QStringList& errors = ini.errors();
-	if (!errors.isEmpty())
-	{
-		testLog << "Errors were detected in a correct INI file:";
-		foreach (QString error, errors)
-		{
-			testLog << QString("\t%1").arg(error);
-		}
-		return false;
-	}
-
-	// This should disregard characters case.
-	IniSection& pSection = ini.section("section.sectionone");
-	if (pSection.isNull())
-	{
-		testLog << "Section.SectionOne was not read correctly from the INI file.";
-		return false;
-	}
-
-	return true;
+	testLog << "Untested";
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool TestReadINIVariable::executeTest()
 {
-	Ini ini("ExampleINI", ExampleINIs::getExampleINI());
+//	Ini ini("ExampleINI", ExampleINIs::getExampleINI());
+//
+//	IniVariable &pVariable = ini.retrieveSetting("section.sectionone", "key1");
+//
+//	if (pVariable.isNull())
+//	{
+//		gLog << "Failed to obtain key.";
+//		return false;
+//	}
+//
+//	int varValue = pVariable;
+//
+//	/*if (pVariable->key.compare("Key1", Qt::CaseSensitive) != 0)
+//	{
+//		gLog << QString("Key name incorrect, expected 'Key1', got '%1'").arg(pVariable->key);
+//		return false;
+//	}*/
+//
+//	if (varValue != 10)
+//	{
+//		gLog << QString("Value incorrect, expected '10', got '%1'").arg(varValue);
+//		return false;
+//	}
 
-	IniVariable &pVariable = ini.retrieveSetting("section.sectionone", "key1");
-
-	if (pVariable.isNull())
-	{
-		gLog << "Failed to obtain key.";
-		return false;
-	}
-
-	int varValue = pVariable;
-
-	/*if (pVariable->key.compare("Key1", Qt::CaseSensitive) != 0)
-	{
-		gLog << QString("Key name incorrect, expected 'Key1', got '%1'").arg(pVariable->key);
-		return false;
-	}*/
-
-	if (varValue != 10)
-	{
-		gLog << QString("Value incorrect, expected '10', got '%1'").arg(varValue);
-		return false;
-	}
-
-	return true;
+	testLog << "Untested";
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -140,100 +142,106 @@ bool TestReadINIList::executeTest()
 {
 	const int EXPECTED_LIST_SIZE = 4;
 
-	Ini ini("ExampleINI", ExampleINIs::getExampleINI());
+//	Ini ini("ExampleINI", ExampleINIs::getExampleINI());
+//
+//	IniSection &pSection = ini.section("section.list");
+//
+//	QVector<IniVariable>& nameList = pSection.nameList;
+//
+//	int listSize = nameList.size();
+//
+//	if (listSize != EXPECTED_LIST_SIZE)
+//	{
+//		gLog << QString("List size incorrect, expected '%1', got '%2'").arg(EXPECTED_LIST_SIZE).arg(listSize);
+//		return false;
+//	}
+//
+//	for (int i = 0; i < EXPECTED_LIST_SIZE; ++i)
+//	{
+//		if ( !compareEntry(nameList[i].value, QString('A' + i)) )
+//		{
+//			return false;
+//		}
+//	}
 
-	IniSection &pSection = ini.section("section.list");
-
-	QVector<IniVariable>& nameList = pSection.nameList;
-
-	int listSize = nameList.size();
-
-	if (listSize != EXPECTED_LIST_SIZE)
-	{
-		gLog << QString("List size incorrect, expected '%1', got '%2'").arg(EXPECTED_LIST_SIZE).arg(listSize);
-		return false;
-	}
-
-	for (int i = 0; i < EXPECTED_LIST_SIZE; ++i)
-	{
-		if ( !compareEntry(nameList[i].value, QString('A' + i)) )
-		{
-			return false;
-		}
-	}
-
-	return true;
+	testLog << "Untested";
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool TestDeleteINIVariable::executeTest()
 {
-	Ini ini("ExampleINI", ExampleINIs::getExampleINI());
+//	Ini ini("ExampleINI", ExampleINIs::getExampleINI());
+//
+//	if (ini.retrieveSetting("section.sectionone", "key1").isNull())
+//	{
+//		gLog << "Variable doesn't exist already!";
+//		return false;
+//	}
+//
+//	// Another way of removing a variable is to delete it directly from the
+//	// Ini file through Ini::deleteSetting(). Here we remove it from the
+//	// section. This works the same and is provided for convenience.
+//	IniSection& pSection = ini.section("section.sectionone");
+//	pSection.deleteSetting("key1");
+//
+//	if (!ini.retrieveSetting("section.sectionone", "key1").isNull())
+//	{
+//		gLog << "Failed to delete the variable.";
+//		return false;
+//	}
 
-	if (ini.retrieveSetting("section.sectionone", "key1").isNull())
-	{
-		gLog << "Variable doesn't exist already!";
-		return false;
-	}
-
-	// Another way of removing a variable is to delete it directly from the
-	// Ini file through Ini::deleteSetting(). Here we remove it from the
-	// section. This works the same and is provided for convenience.
-	IniSection& pSection = ini.section("section.sectionone");
-	pSection.deleteSetting("key1");
-
-	if (!ini.retrieveSetting("section.sectionone", "key1").isNull())
-	{
-		gLog << "Failed to delete the variable.";
-		return false;
-	}
-
-	return true;
+	testLog << "Untested";
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool TestDeleteINISection::executeTest()
 {
-	Ini ini("ExampleINI", ExampleINIs::getExampleINI());
+//	Ini ini("ExampleINI", ExampleINIs::getExampleINI());
+//
+//	if (ini.section("section.list").isNull())
+//	{
+//		gLog << "Section doesn't exist already!";
+//		return false;
+//	}
+//
+//	ini.deleteSection("section.list");
+//
+//	if (!ini.section("section.list").isNull())
+//	{
+//		gLog << "Failed to delete the section.";
+//		return false;
+//	}
 
-	if (ini.section("section.list").isNull())
-	{
-		gLog << "Section doesn't exist already!";
-		return false;
-	}
-
-	ini.deleteSection("section.list");
-
-	if (!ini.section("section.list").isNull())
-	{
-		gLog << "Failed to delete the section.";
-		return false;
-	}
-
-	return true;
+	testLog << "Untested";
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool TestReadINIWithErrors::executeTest()
 {
-	Ini ini("ErrorINI", ExampleINIs::getExampleError1());
+//	Ini ini("ErrorINI", ExampleINIs::getExampleError1());
+//
+//	const QStringList& errors = ini.errors();
+//	if (errors.isEmpty())
+//	{
+//		gLog << "No errors detected in a bad file";
+//		return false;
+//	}
+//	else
+//	{
+//		gLog << "Following errors were detected:";
+//		foreach(QString error, errors)
+//		{
+//			gLog << QString("\t%1").arg(error);
+//		}
+//		return true;
+//	}
 
-	const QStringList& errors = ini.errors();
-	if (errors.isEmpty())
-	{
-		gLog << "No errors detected in a bad file";
-		return false;
-	}
-	else
-	{
-		gLog << "Following errors were detected:";
-		foreach(QString error, errors)
-		{
-			gLog << QString("\t%1").arg(error);
-		}
-		return true;
-	}
+	testLog << "Untested";
+	return false;
 }

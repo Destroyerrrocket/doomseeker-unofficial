@@ -57,8 +57,8 @@ bool GameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwad
 	iwadFound = !iwad.isEmpty();
 
 	// Custom parameters
-	IniSection& config = gConfig.iniSectionForPlugin(server->plugin());
-	QString customParameters = *config["CustomParameters"];
+	IniSection config = gConfig.iniSectionForPlugin(server->plugin());
+	QString customParameters = config["CustomParameters"];
 	args << customParameters.split(" ", QString::SkipEmptyParts);
 
 	// Password

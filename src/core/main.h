@@ -104,6 +104,7 @@ class MAIN_EXPORT Main : public QObject
 		QApplication*				application;
 		char**						arguments;
 		int							argumentsCount;
+		bool                        bIsFirstRun;
 		bool						bPortableMode;
 		bool						bTestMode;
 		QStringList 				dataDirectories;
