@@ -1,7 +1,7 @@
 #define VOS_NT_WINDOWS32    0x00040004L
 #define VFT_APP                      0x00000001L
 
-#include "../src/svnrevision.h"
+#include "svnrevision.h"
 
 1 VERSIONINFO
 FILEVERSION 0,8,0,SVN_REVISION_NUMBER
@@ -16,7 +16,7 @@ FILETYPE VFT_APP
 			 VALUE "FileVersion", "0.8.0.0"
 			 VALUE "FileDescription", "Doom server browser"
 			 VALUE "InternalName", "doomseeker"
-			 VALUE "LegalCopyright", "The Skulltag Team 2009 - 2010"
+			 VALUE "LegalCopyright", "The Skulltag Team 2009 - 2011"
 			 VALUE "LegalTrademarks", ""
 			 VALUE "OriginalFilename", "doomseeker.exe"
 			 VALUE "ProductName", "Doomseeker"

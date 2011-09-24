@@ -78,6 +78,7 @@ bool Ini::loadIniFile(const QString& filePath)
 	}
 
 	pIni = new QSettings(filePath, QSettings::IniFormat);
+	return pIni != NULL;
 }
 
 void Ini::removeKey(const QString& key)
