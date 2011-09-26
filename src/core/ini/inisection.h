@@ -39,7 +39,8 @@ class MAIN_EXPORT IniSection
 {
 	public:
         /**
-         * @brief Creates invalid IniSection object.
+         * @brief Creates an invalid IniSection object. Such object should not
+         *        be used for read/write operations.
          */
         IniSection();
 

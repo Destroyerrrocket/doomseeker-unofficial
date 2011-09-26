@@ -41,14 +41,36 @@ class MAIN_EXPORT IniVariable
 {
 	public:
         /**
-         * @brief Creates NULL variable.
+         * @brief Creates an invalid IniVariable object. Such object should not
+         *        be used for read/write operations.
          */
         IniVariable();
 
+		/**
+		 * @brief Creates a valid IniVariable object. Read/write operations are
+		 *        permitted.
+		 */
 		IniVariable(IniSection* pSection, const QString& key);
+
+		/**
+	     * @brief Creates a valid IniVariable, read-only object.
+	     *
+		 * Only read operations are permitted. Performing write operations
+		 * on such object will fail.
+		 */
 		IniVariable(const IniSection* pSection, const QString& key);
 
+		/**
+		 * @brief If true, IniSection object is not valid and should not be
+		 *        used to perform any actions on the Ini file.
+		 */
 		bool			isNull() const { return pConstSection == NULL; }
+
+		/**
+		 * @brief Returns the underlying value as a QString.
+		 *
+		 * Internally the value is always accessed as QVariant.
+		 */
 		QString			valueString() const { return this->value().toString(); }
 
 		const IniVariable &operator=(const QString &str);
@@ -57,33 +79,55 @@ class MAIN_EXPORT IniVariable
 		const IniVariable &operator=(unsigned int i);
 		const IniVariable &operator=(short i);
 		const IniVariable &operator=(unsigned short i);
+
+		/**
+		 * @brief Sets the value to bool.
+		 *
+		 * The value is set by converting the bool to a integer, 0 for false
+		 * and 1 for true.
+		 */
 		const IniVariable &operator=(bool b);
 		const IniVariable &operator=(float f);
 		const IniVariable &operator=(const IniVariable &other);
 
+		/**
+		 * @brief Attempts to convert the value to QString.
+		 */
 		QString operator*() const { return value().toString(); }
+
+		/**
+		 * @brief Attempts to convert the value to QString.
+		 */
 		operator QString () const { return value().toString(); }
 
 		/**
-		*	Attempts to convert the QString value to a float.
-		*/
+		 * @brief Attempts to convert the value to a float.
+		 */
 		operator float() const;
 		/**
-		*	Attempts to convert the QString value to a integer.
-		*/
+		 * @brief Attempts to convert the value to a integer.
+		 */
 		operator int() const;
 		operator unsigned int() const;
 
 		operator short() const;
 		operator unsigned short() const;
+
 		/**
-		*	Convert QString value to boolean, if possible. It's done by converting
-		*	to numValue() first, then to bool.
+		* @brief Convert value to boolean, if possible. It's done by converting
+		*        to numValue() first, then to bool.
 		*/
 		operator bool() const;
 		operator IniVariable&() { return *this; }
 
+		/**
+		 * @brief Explicitly sets the value from QVariant.
+		 */
 		void				setValue(const QVariant& value);
+
+		/**
+		 * @brief Extracts the value as QVariant.
+		 */
 		QVariant			value() const;
 
 	private:
@@ -103,7 +147,7 @@ class MAIN_EXPORT IniVariable
         const IniSection*	pConstSection;
 
 		/**
-		 *	@brief The key name of this variable.
+		 * @brief The key name of this variable.
 		 */
 		QString				key;
 

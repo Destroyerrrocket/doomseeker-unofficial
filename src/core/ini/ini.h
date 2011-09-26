@@ -33,53 +33,36 @@
 #include <QVector>
 
 /**
- *	@brief INI configuration files handler.
+ * @brief INI configuration files handler.
  *
- *	This can read INI files from a disk or from memory.
+ * This class can read INI files from a disk.
  *
- *	Names of sections and keys are not case sensitive but the letter case is
- *	being preserved when the file is read and saved. This way the programmer
- *	doesn't need to bother with keeping each character 100% accurate and at the
- *	same time is able to format the INI file content in a nice and clean way.
+ * This is a wrapper for QSettings class that provides a hierarchical access
+ * to the INI file. The hierarchy is resolved through the use of IniSection
+ * and IniVariable classes. The Ini class provides methods necessary to obtain
+ * valid instances of these objects.
  *
- *	This class implements an extension to the original INI file format:
- *	- ability to create a QString list, by applying names under section with no
- *	'=' character. For example:
- *	@code
- *	[ IniSection ]
- *	name1
- *	name2
- *	name3
- *	@endcode
+ * Objects of IniSection and IniVariable classes can be copied over as they
+ * hold no actual data. They are used to generate valid paths and internally
+ * use methods provided by the Ini class objects that are associated with them.
+ * However, Ini object @b must remain valid when associated IniSection and
+ * IniVariable objects are in use or segmentation fault will occur.
  *
- *	The currently supported file format is:
- *	@code
- *	# File's top comment line 1
- *	# File's top comment line 2
- *	#
- *	# File's top comment line 4
+ * Names of sections and variables are case sensitive.
  *
+ * The currently supported file format is:
+ * @code
  *
- *	# Section1's top comment line 1
- *	# Section1's top comment line 2
- *	[ section1 ]	# section1's side comment
- *	# var1's top comment line 1
- *	# var1's top comment line 2
- *	var1=1	# var1's side comment
- * 	var2="Exit game"
+ * [ section1 ]
+ * var1=1
+ * var2="Exit game"
  *
- *	[ section2 ]
- *	var1=10
- *	var2="New Game"
+ * [ section2 ]
+ * var1=10
+ * var2="New Game"
  *
- *	[ namelist ]
- *	name1
- *	name2
- *	name3
- *	@endcode
+ * @endcode
  *
- *	IMPORTANT: If file's top comment should be recognised as such it needs to be
- *	separated by two empty lines from the rest of the file.
  */
 class MAIN_EXPORT Ini : public QObject
 {
