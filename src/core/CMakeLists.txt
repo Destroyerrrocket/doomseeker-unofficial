@@ -221,6 +221,11 @@ set(SOURCE_FILES
 	ini/inisection.cpp
 	ini/inivariable.cpp
 	ini/ini.cpp
+	# TODO: Drop these below once 0.8 is released
+	oldini/oldinisection.cpp
+	oldini/oldinivariable.cpp
+	oldini/oldini.cpp
+	# end of drop
 	ip2c/entities/ip2ccountryinfo.cpp	
 	ip2c/ip2c.cpp
 	ip2c/ip2cparser.cpp
@@ -299,6 +304,11 @@ set(HEADER_FILES
 	ini/inisection.h
 	ini/inivariable.h	
 	ini/ini.h
+	# TODO: Drop these below once 0.8 is released
+	oldini/oldinisection.h
+	oldini/oldinivariable.h
+	oldini/oldini.h
+	# end of drop
 	ip2c/entities/ip2ccountryinfo.h
 	irc/configuration/ircconfig.h
 	irc/constants/ircresponsetype.h
