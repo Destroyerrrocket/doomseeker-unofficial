@@ -59,6 +59,7 @@ class MAIN_EXPORT OldIniVariable
 		OldIniVariable(float value) : null(false) { *this = value; }
 
 		bool			isNull() const { return null; }
+		const QString&	name() const { return key; }
 		QString			valueString() const { return this->value; }
 
 		const OldIniVariable &operator=(const QString &str);

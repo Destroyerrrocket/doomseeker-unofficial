@@ -95,6 +95,13 @@ class MAIN_EXPORT OldIni : public QObject
 			Memory	= 1
 		};
 
+		/**
+		 * @brief For backward compatibility resolve.
+		 *
+		 * @return True if specified file is the old format INI.
+		 */
+		static bool isOldFileFormat(const QString& path);
+
 		OldIni()
 		{
 			dataSourc = Memory;

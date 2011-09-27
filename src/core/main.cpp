@@ -36,6 +36,7 @@
 #include "ini/ini.h"
 #include "ip2c/ip2cparser.h"
 #include "irc/configuration/ircconfig.h"
+#include "oldini/oldini.h"
 #include "serverapi/server.h"
 #include "doomseekerfilepaths.h"
 #include "log.h"
@@ -147,6 +148,7 @@ int Main::run()
 	int ip2cReturn = initIP2C();
 
 	convertCfgToIni();
+	convertOldIniToQSettingsIni();
 	initMainConfig();
 	initPluginConfig();
 	initIRCConfig();
@@ -262,6 +264,44 @@ void Main::convertCfgToIni()
 
 	// Allow Doomseeker to re-create following settings from scratch:
 	ini.deleteSetting("Doomseeker", "CustomServersColor");
+}
+
+void Main::convertOldIniToQSettingsIni()
+{
+	QString configFile = Main::dataPaths->programsDataDirectoryPath() + "/" + DOOMSEEKER_INI_FILENAME;
+	if (OldIni::isOldFileFormat(configFile))
+	{
+		gLog << tr("Converting old INI format to new.");
+
+		OldIni oldIni(configFile);
+		// At this point the whole file is read into memory and we can
+		// overwrite it.
+
+		// New ini class may overwrite the file at unknown intervals.
+		Ini newIni(configFile);
+
+		// Get all sections.
+		QVector<OldIniSection*> sections = oldIni.sectionsArray(".*");
+
+		// Extract all variables from old sections and write them to the new
+		// INI.
+		foreach (const OldIniSection* pSection, sections)
+		{
+			const OldIniVariables& vars = pSection->settings();
+			foreach (const OldIniVariable& var, vars)
+			{
+				const QString& key = pSection->sectionName() + "/" + var.name();
+				QString value = var.valueString();
+
+				newIni.setValue(key, value);
+			}
+		}
+
+		// Save!
+		newIni.save();
+
+		gLog << tr("Old INI converted and saved.");
+	}
 }
 
 void Main::createMainWindow()

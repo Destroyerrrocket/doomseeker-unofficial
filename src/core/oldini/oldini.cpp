@@ -644,3 +644,32 @@ void OldIni::structuresIntoQByteArray(QByteArray& output) const
 		output.append("\n");
 	}
 }
+
+bool OldIni::isOldFileFormat(const QString& path)
+{
+	QFile file(path);
+	if (!file.exists())
+	{
+		return false;
+	}
+
+	file.open(QFile::ReadOnly);
+	QByteArray data = file.readAll();
+	file.close();
+
+	QStringList lines = QString(data).split("\n");
+	foreach (const QString& line, lines)
+	{
+		// This relies on the fact that the new INI format keeps no spacebars
+		// between the '[' and ']' characters.
+		if (line.contains("[ Doomseeker ]"))
+		{
+			return true;
+		}
+
+		// Alternatively we could check if the first line contains the '#'
+		// character.
+	}
+
+	return false;
+}

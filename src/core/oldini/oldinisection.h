@@ -65,6 +65,7 @@ class MAIN_EXPORT OldIniSection
 		const OldIniVariable		&retrieveSetting(const QString& name) const;
 		const QString&			sectionName() const { return this->name; }
 		OldIniVariable				&setting(const QString& name);
+		const OldIniVariables&		settings() const;
 
 		OldIniVariable				&operator[](const QString& name) { return setting(name); }
 		const OldIniVariable		&operator[](const QString& name) const { return retrieveSetting(name); }

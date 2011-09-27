@@ -121,3 +121,8 @@ OldIniVariable &OldIniSection::setting(const QString& name)
 		return createSetting(name, OldIniVariable());
 	return pVariable;
 }
+
+const OldIniVariables& OldIniSection::settings() const
+{
+	return variables;
+}

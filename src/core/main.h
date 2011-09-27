@@ -70,6 +70,7 @@ class MAIN_EXPORT Main : public QObject
 		static const QString		DOOMSEEKER_IRC_INI_FILENAME;
 
 		void						convertCfgToIni();
+		void						convertOldIniToQSettingsIni();
 
 		void						createMainWindow();
 		bool						createRemoteConsole();
