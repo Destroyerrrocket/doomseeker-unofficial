@@ -34,7 +34,9 @@ class ZDaemonGameInfo : public QObject
 			MODE_DEATHMATCH,
 			MODE_TEAM_DEATHMATCH,
 			MODE_COOPERATIVE,
-			MODE_CAPTURE_THE_FLAG
+			MODE_CAPTURE_THE_FLAG,
+			MODE_SURVIVAL,
+			MODE_DOUBLE_DOMINATION
 		};
 
 		static const DMFlags*			dmFlags() { return &dmFlagsList; }

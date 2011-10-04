@@ -111,4 +111,6 @@ void ZDaemonGameInfo::initGameModes()
 	gameModesList << GameMode::TEAM_DEATHMATCH;
 	gameModesList << GameMode::COOPERATIVE;
 	gameModesList << GameMode::CAPTURE_THE_FLAG;
+	gameModesList << GameMode(MODE_SURVIVAL, tr("Survival"), false);
+	gameModesList << GameMode(MODE_DOUBLE_DOMINATION, tr("Domination"), true);
 }
