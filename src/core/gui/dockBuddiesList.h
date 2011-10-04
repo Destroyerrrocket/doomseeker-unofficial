@@ -65,6 +65,7 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 		{
 			public:
 				BuddyLocationInfo(const Player &buddy, Server *location);
+				BuddyLocationInfo(const BuddyLocationInfo &other);
 				~BuddyLocationInfo();
 
 				const Player	&buddy() const { return *player; }

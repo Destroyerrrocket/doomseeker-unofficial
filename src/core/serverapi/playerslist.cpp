@@ -180,7 +180,7 @@ void PlayersList::inGamePlayersByTeams(QMap<PairPlayersByTeams>& playersListMap)
 {
 	playersListMap.clear();
 
-	foreach(Player player, *this)
+	foreach(const Player &player, *this)
 	{
 		if (!player.isSpectating() && !player.isTeamlessBot())
 		{

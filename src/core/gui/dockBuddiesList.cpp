@@ -198,7 +198,7 @@ void DockBuddiesList::scan(const MasterClient *master)
 	buddiesTableModel->removeRows(0, buddiesTableModel->rowCount());
 	for(int i = 0;i < buddies.size();i++)
 	{
-		BuddyLocationInfo info = buddies[i];
+		const BuddyLocationInfo &info = buddies[i];
 		QList<QStandardItem *> columns;
 
 		for(int j = 0;j < HOW_MANY_BUDDIESLIST_COLUMNS;j++)
@@ -265,6 +265,11 @@ DockBuddiesList::BuddyLocationInfo::BuddyLocationInfo(const Player &buddy, Serve
 {
     this->player = new Player(buddy);
     this->server = location;
+}
+
+DockBuddiesList::BuddyLocationInfo::BuddyLocationInfo(const DockBuddiesList::BuddyLocationInfo &other)
+{
+	*this = other;
 }
 
 DockBuddiesList::BuddyLocationInfo::~BuddyLocationInfo()
