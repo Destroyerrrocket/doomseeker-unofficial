@@ -29,6 +29,8 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 
+#include <wadseeker/protocols/fixednetworkaccessmanager.h>
+
 /**
  *	@brief IP2CUpdater is responsible for downloading a new version of database
  *	from the site.
@@ -110,7 +112,7 @@ class IP2CUpdater : public QObject
 		void				downloadProgress(qint64 value, qint64 max);
 
 	private:
-		QNetworkAccessManager networkAccessManager;
+		FixedNetworkAccessManager networkAccessManager;
 		QNetworkReply* pCurrentNetworkReply;
 
 		/**

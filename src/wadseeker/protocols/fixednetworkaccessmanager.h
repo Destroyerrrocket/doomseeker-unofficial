@@ -45,6 +45,8 @@
 
 #include <QNetworkAccessManager>
 
+#include "../wadseekerexportinfo.h"
+
 /**
  * @brief This is here because the QNetworkAccessManager treats FTP servers
  * incorrectly.
@@ -54,8 +56,12 @@
  *
  * Original class comes from:
  * http://doc.qt.nokia.com/qq/32/qq32-webkit-protocols.html
+ *
+ * @note
+ * This class is exported and can be used outside this library. This was done
+ * to allow other applications to benefit from this fixed subclass of QNAM.
  */
-class FixedNetworkAccessManager : public QNetworkAccessManager
+class WADSEEKER_API FixedNetworkAccessManager : public QNetworkAccessManager
 {
     Q_OBJECT
 
