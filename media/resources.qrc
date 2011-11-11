@@ -69,6 +69,7 @@
 	<file alias="flags/ITA">flags/ITA.png</file> <!-- Italy -->
 	<file alias="flags/JPN">flags/JPN.png</file> <!-- Japan -->
 	<file alias="flags/KAZ">flags/KAZ.png</file> <!-- Kazakhstan -->
+	<file alias="flags/KGZ">flags/KGZ.png</file> <!-- Kyrgyzstan -->
 	<file alias="flags/KOR">flags/KOR.png</file> <!-- Republic of Korea -->
 	<file alias="flags/LTU">flags/LTU.png</file> <!-- Lithuania -->
 	<file alias="flags/LUX">flags/LUX.png</file> <!-- Luxembourg -->
