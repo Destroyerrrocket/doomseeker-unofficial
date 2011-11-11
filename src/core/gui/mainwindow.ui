@@ -74,7 +74,7 @@
      <x>0</x>
      <y>0</y>
      <width>796</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="locale">
@@ -136,6 +136,9 @@
    </property>
    <property name="text">
     <string>&amp;Configure</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
    </property>
   </action>
   <action name="menuActionAbout">
@@ -240,6 +243,9 @@
    <property name="text">
     <string>&amp;IRC Options</string>
    </property>
+   <property name="shortcut">
+    <string>F6</string>
+   </property>
   </action>
   <action name="menuActionAboutQt">
    <property name="text">
@@ -255,7 +261,7 @@
      <normaloff>:/icons/media-record.png</normaloff>:/icons/media-record.png</iconset>
    </property>
    <property name="text">
-    <string>Record Demo</string>
+    <string>&amp;Record Demo</string>
    </property>
   </action>
   <action name="menuActionManageDemos">
@@ -264,7 +270,7 @@
      <normaloff>:/icons/media-playback-start.png</normaloff>:/icons/media-playback-start.png</iconset>
    </property>
    <property name="text">
-    <string>Demo Manager</string>
+    <string>&amp;Demo Manager</string>
    </property>
   </action>
  </widget>
