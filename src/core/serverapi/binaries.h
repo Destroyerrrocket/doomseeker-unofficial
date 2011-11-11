@@ -61,14 +61,23 @@ class MAIN_EXPORT Binaries : public QObject
 		 *	@brief Returns the path to the binary for offline play.
 		 *
 		 *	@param [out] message - information message, if any.
-		 *	@return Empty if error is not empty.
+		 *	@return Empty string if error is not empty.
 		 */
 		virtual QString					offlineGameBinary(Message& message) const { return obtainBinary(configKeyOfflineBinary(), Offline, message); }
 
 		/**
-		 *	Returns the working directory of the binary for offline game.
-		 *	@param [out] message - information message, if any.
-		 *	@return Default behavior returns offlineGameBinary() directory
+		 * @brief Working directory for offline play.
+		 *
+		 * Default behavior prompts Doomseeker to use a path to the directory
+		 * where the executable selected for the offline game resides. 
+		 * This executable is always selected directly in Create Server dialog.
+		 *
+		 * @note
+		 * This method should be overriden ONLY IF it is ABSOLUTELY required
+		 * to return a non-standard path to make the game run correctly.
+		 *
+		 * @return Path to the working directory for the server binary.
+		 *         Default behavior returns an empty string.
 		 */
 		virtual QString					offlineGameWorkingDirectory(Message& message) const;
 
@@ -89,7 +98,18 @@ class MAIN_EXPORT Binaries : public QObject
 		virtual QString					serverBinary(Message& message) const { return obtainBinary(configKeyServerBinary(), TServer, message); }
 
 		/**
-		 *	Default behaviour returns directory of serverBinary().
+		 * @brief Working directory for server.
+		 *
+		 * Default behavior prompts Doomseeker to use a path to the directory
+		 * where the executable selected for the server launch resides. 
+		 * This executable is always selected directly in Create Server dialog.
+		 *
+		 * @note
+		 * This method should be overriden ONLY IF it is ABSOLUTELY required
+		 * to return a non-standard path to make the game run correctly.
+		 *
+		 * @return Path to the working directory for the server binary.
+		 *         Default behavior returns an empty string.
 		 */
 		virtual QString					serverWorkingDirectory(Message& message) const;
 

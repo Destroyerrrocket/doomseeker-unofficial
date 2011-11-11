@@ -376,11 +376,42 @@ Message GameRunner::hostGetWorkingDirectory(bool bOfflinePlay)
 
 	Message message;
 	
-	// Assume that working directory is the same as executable's directory.
-	// Executable should be known at this point.
-	QFileInfo fileInfo(currentCmdLine->executable);
+	// First, we should try to extract the working dir from plugin.
+	// [Zalewa]:
+	// A plugin may insist on doing that for a reason that is currently
+	// unknown to me. Let's try to predict every possible situation.
+	QString workingDirFromPlugin;
+	Binaries* binaries = server->binaries();
+	if (bOfflinePlay)
+	{
+		workingDirFromPlugin = binaries->offlineGameWorkingDirectory(message);
+	}
+	else
+	{
+		workingDirFromPlugin = binaries->serverWorkingDirectory(message);
+	}
+	
+	// Check if all went well on the plugin side.
+	if (!message.isIgnore())
+	{
+		// Something's gone wrong. Report the error.
+		return message;
+	}
+	
+	if (workingDirFromPlugin.isEmpty())
+	{
+		// Assume that working directory is the same as executable's directory.
+		// Path to executable should be known at this point.
+		QFileInfo fileInfo(currentCmdLine->executable);
 
-	serverWorkingDirPath = fileInfo.canonicalPath();
+		serverWorkingDirPath = fileInfo.absolutePath();
+	}
+	else
+	{
+		// Plugin returned the directory. Use that.
+		serverWorkingDirPath = workingDirFromPlugin;
+	}
+	
 	QDir serverWorkingDir(serverWorkingDirPath);
 
 	if (serverWorkingDirPath.isEmpty())
@@ -408,10 +439,10 @@ Message GameRunner::runExecutable(const CommandLineInfo& cli, bool bWrapInStanda
 	}
 	else
 	{
-		gLog << tr("Starting (working dir %1): %2").arg(cli.applicationDir.canonicalPath()).arg(cli.executable.canonicalFilePath());
+		gLog << tr("Starting (working dir %1): %2").arg(cli.applicationDir.absolutePath()).arg(cli.executable.absoluteFilePath());
 		QStringList args = cli.args;
 		AppRunner::cleanArguments(args);
-		new StandardServerConsole(server, cli.executable.canonicalFilePath(), args);
+		new StandardServerConsole(server, cli.executable.absoluteFilePath(), args);
 	}
 
 	return Message();

@@ -101,7 +101,6 @@ WadInstaller::WadInstallerResult WadInstaller::makeSureDirPathExists(QDir& dir)
 {
 	if (!dir.exists())
 	{
-		printf("Dir %s does not exist!\n", dir.canonicalPath().toAscii().constData());
 		if (!dir.mkpath("."))
 		{
 			return WadInstallerResult::makeCriticalError(

@@ -46,7 +46,7 @@ Binaries::Binaries(const EnginePlugin *plugin)
 QString Binaries::clientWorkingDirectory(Message& message) const
 {
 	QFileInfo fi(clientBinary(message));
-	return fi.canonicalPath();
+	return fi.absolutePath();
 }
 
 QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, Message& message) const
@@ -80,12 +80,12 @@ QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, 
 
 QString Binaries::offlineGameWorkingDirectory(Message& message) const
 {
-	QFileInfo fi(offlineGameBinary(message));
-	return fi.canonicalPath();
+	// Generated when game is launched. See doxy.
+	return QString();
 }
 
 QString Binaries::serverWorkingDirectory(Message& message) const
 {
-	QFileInfo fi(serverBinary(message));
-	return fi.canonicalPath();
+	// Generated when game is launched. See doxy.
+	return QString();
 }

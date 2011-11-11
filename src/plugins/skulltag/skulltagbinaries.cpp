@@ -115,7 +115,7 @@ Do you want Doomseeker to create %2 directory and copy all your .ini files from 
 				QStringList iniFiles = baseBinaryDir.entryList(nameFilters, QDir::Files);
 				foreach(QString str, iniFiles)
 				{
-					QString sourcePath = baseBinaryDir.canonicalPath() + '/' + str;
+					QString sourcePath = baseBinaryDir.absolutePath() + '/' + str;
 					QString targetPath = path + '/' + str;
 					QFile file(sourcePath);
 					file.copy(targetPath);
@@ -165,8 +165,8 @@ QString SkulltagBinaries::clientWorkingDirectory(Message& message) const
 {
 	IniSection& config = *SkulltagEnginePlugin::staticInstance()->data()->pConfig;
 
-	QFileInfo fi(config["BinaryPath"]);
-	return fi.canonicalPath();
+	QFileInfo fi((QString)config["BinaryPath"]);
+	return fi.absolutePath();
 }
 
 QString SkulltagBinaries::configKeyServerBinary() const

@@ -76,7 +76,7 @@ QString AppRunner::findBundleBinary(const QFileInfo &file)
 
 Message AppRunner::runExecutable(const CommandLineInfo& cmdInfo)
 {
-	gLog << tr("Starting (working dir %1): %2").arg(cmdInfo.applicationDir.canonicalPath()).arg(cmdInfo.executable.canonicalFilePath());
+	gLog << tr("Starting (working dir %1): %2").arg(cmdInfo.applicationDir.absolutePath()).arg(cmdInfo.executable.absoluteFilePath());
 	QStringList args = cmdInfo.args;
 	cleanArguments(args);
 
@@ -85,19 +85,19 @@ Message AppRunner::runExecutable(const CommandLineInfo& cmdInfo)
 	#ifdef Q_WS_MAC
 	if( cmdInfo.executable.isBundle() )
 	{
-		result = QProcess::startDetached(cmdInfo.executable.canonicalFilePath() + AppRunner::findBundleBinary(cmdInfo.executable), args, cmdInfo.applicationDir.canonicalPath());
+		result = QProcess::startDetached(cmdInfo.executable.absoluteFilePath() + AppRunner::findBundleBinary(cmdInfo.executable), args, cmdInfo.applicationDir.absolutePath());
 	}
 	else
 	#endif
 	{
-		result = QProcess::startDetached(cmdInfo.executable.canonicalFilePath(), args, cmdInfo.applicationDir.canonicalPath());
+		result = QProcess::startDetached(cmdInfo.executable.absoluteFilePath(), args, cmdInfo.applicationDir.absolutePath());
 	}
 
 	Message message;
 
-	if(!result)
+	if (!result)
 	{
-		QString error = tr("File: %1\ncannot be run").arg(cmdInfo.executable.canonicalFilePath());
+		QString error = tr("File: %1\ncannot be run").arg(cmdInfo.executable.absoluteFilePath());
 		gLog << error;
 		message = Message::customError(error);
 		return message;
