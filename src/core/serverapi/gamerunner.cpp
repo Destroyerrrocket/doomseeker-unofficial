@@ -375,35 +375,28 @@ Message GameRunner::hostGetWorkingDirectory(bool bOfflinePlay)
 	QString serverWorkingDirPath;
 
 	Message message;
+	
+	// Assume that working directory is the same as executable's directory.
+	// Executable should be known at this point.
+	QFileInfo fileInfo(currentCmdLine->executable);
 
-	Binaries* binaries = server->binaries();
-	// Select working dir based on bOfflinePlay flag:
-	if (bOfflinePlay)
-	{
-		serverWorkingDirPath = binaries->offlineGameWorkingDirectory(message);
-	}
-	else
-	{
-		serverWorkingDirPath = binaries->serverWorkingDirectory(message);
-	}
-
-	delete binaries;
-	QDir applicationDir = serverWorkingDirPath;
+	serverWorkingDirPath = fileInfo.canonicalPath();
+	QDir serverWorkingDir(serverWorkingDirPath);
 
 	if (serverWorkingDirPath.isEmpty())
 	{
-		QString error = tr("Path to working directory is empty.\nMake sure the configuration for the main binary is set properly.");
+		QString error = tr("Path to working directory is empty.\nMake sure the configuration for the executable file is set properly.");
 		message = Message::customError(error);
 		return message;
 	}
-	else if (!applicationDir.exists())
+	else if (!serverWorkingDir.exists())
 	{
 		QString error = tr("%1\n doesn't exist or is not a directory.").arg(serverWorkingDirPath);
 		message = Message::customError(error);
 		return message;
 	}
 
-	currentCmdLine->applicationDir = applicationDir;
+	currentCmdLine->applicationDir = serverWorkingDir;
 	return message;
 }
 
