@@ -79,7 +79,18 @@ void IniSection::remove(const QString& key)
 	d.pIni->removeKey(d.name + "/" + key);
 }
 
-IniVariable IniSection::retrieveSetting(const QString& name) const
+IniVariable IniSection::retrieveSetting(const QString& name)
+{
+	assert(!isNull());
+	if (name.isEmpty())
+	{
+		return IniVariable();
+	}
+
+	return IniVariable(this, name);
+}
+
+const IniVariable IniSection::retrieveSetting(const QString& name) const
 {
 	assert(!isNull());
 	if (name.isEmpty())

@@ -104,7 +104,12 @@ class MAIN_EXPORT IniSection
 		 * @return IniVariable object that wraps around the variable. May be
 		 *         invalid if name is empty.
 		 */
-		IniVariable				retrieveSetting(const QString& name) const;
+		IniVariable				retrieveSetting(const QString& name);
+
+		/**
+		* @brief const version of retrieveSetting()
+		*/
+		const IniVariable		retrieveSetting(const QString& name) const;
 
 		/**
 		 * @brief Name (or path) of the current section

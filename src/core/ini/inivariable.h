@@ -119,6 +119,7 @@ class MAIN_EXPORT IniVariable
 		*/
 		operator bool() const;
 		operator IniVariable&() { return *this; }
+		operator const IniVariable&() const { return *this; }
 
 		/**
 		 * @brief Explicitly sets the value from QVariant.
