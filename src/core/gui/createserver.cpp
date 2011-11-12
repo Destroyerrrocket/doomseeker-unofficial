@@ -178,14 +178,19 @@ void CreateServerDlg::btnAddMapToMaplistClicked()
 void CreateServerDlg::btnAddPwadClicked()
 {
 	QString dialogDir = gConfig.doomseeker.previousCreateServerWadDir;
-	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - Add file"), dialogDir);
-
-	if (!strFile.isEmpty())
+	QStringList filesNames = QFileDialog::getOpenFileNames(this, tr("Doomseeker - Add file(s)"), dialogDir);
+	
+	if (!filesNames.isEmpty())
 	{
-		QFileInfo fi(strFile);
-		gConfig.doomseeker.previousCreateServerWadDir = fi.absolutePath();
-
-		addWadPath(strFile);
+		// Remember the directory of the first file. This directory will be
+		// restored the next time this dialog is opened.
+		QFileInfo fi(filesNames[0]);
+		gConfig.doomseeker.previousCreateServerWadDir = fi.absolutePath();	
+		
+		foreach (const QString& strFile, filesNames)
+		{
+			addWadPath(strFile);
+		}
 	}
 }
 
