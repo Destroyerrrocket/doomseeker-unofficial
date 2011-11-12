@@ -45,10 +45,10 @@ IniVariable IniSection::createSetting(const QString& name, const QVariant& data)
 		return IniVariable();
 	}
 
-    if (value(name).isNull())
-    {
-        setValue(name, data);
-    }
+	if (value(name).isNull())
+	{
+		setValue(name, data);
+	}
 
 	return retrieveSetting(name);
 }
@@ -61,25 +61,25 @@ void IniSection::deleteSetting(const QString& name)
 		return;
 	}
 
-    remove(name);
+	remove(name);
 }
 
 IniVariable IniSection::operator[](const QString& name)
 {
-    return setting(name);
+	return setting(name);
 }
 
 const IniVariable IniSection::operator[](const QString& name) const
 {
-    return retrieveSetting(name);
+	return retrieveSetting(name);
 }
 
 void IniSection::remove(const QString& key)
 {
-    d.pIni->removeKey(d.name + "/" + key);
+	d.pIni->removeKey(d.name + "/" + key);
 }
 
-IniVariable IniSection::retrieveSetting(const QString& name)
+IniVariable IniSection::retrieveSetting(const QString& name) const
 {
 	assert(!isNull());
 	if (name.isEmpty())
@@ -87,18 +87,6 @@ IniVariable IniSection::retrieveSetting(const QString& name)
 		return IniVariable();
 	}
 
-	return IniVariable(this, name);
-}
-
-const IniVariable IniSection::retrieveSetting(const QString& name) const
-{
-	assert(!isNull());
-	if (name.isEmpty())
-	{
-		return IniVariable();
-	}
-
-	QVariant var = value(name);
 	return IniVariable(this, name);
 }
 
