@@ -44,7 +44,8 @@ class MAIN_EXPORT CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 
 		bool	commandLineArguments(QString &executable, QStringList &args);
 		void	makeSetupServerDialog(const EnginePlugin *plugin);
-	protected slots:
+	
+	private slots:
 		void	btnAddMapToMaplistClicked();
 		void	btnAddPwadClicked();
 		void	btnBrowseExecutableClicked();
@@ -62,8 +63,13 @@ class MAIN_EXPORT CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		void	cboGamemodeSelected(int index);
 		void	firstLoadConfigTimer();
 		void	focusChanged(QWidget* oldW, QWidget* newW);
+		
+		/**
+		 * @brief Files drag'n'drop on WADs list view.
+		 */
+		void	lstAdditionalFilesPathDnd(const QString& path);
 
-	protected:
+	private:
 		class DMFlagsTabWidget
 		{
             public:

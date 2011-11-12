@@ -69,6 +69,9 @@ CreateServerDlg::CreateServerDlg(QWidget* parent) : QDialog(parent)
 
 	connect(cboEngine, SIGNAL( currentIndexChanged(int) ), this, SLOT( cboEngineSelected(int) ) );
 	connect(cboGamemode, SIGNAL( currentIndexChanged(int) ), this, SLOT( cboGamemodeSelected(int) ) );
+	
+	connect(lstAdditionalFiles, SIGNAL( fileSystemPathDropped(const QString& ) ),
+		this, SLOT( lstAdditionalFilesPathDnd(const QString&) ) );
 
 	connect(QApplication::instance(), SIGNAL( focusChanged(QWidget*, QWidget*) ), this, SLOT( focusChanged(QWidget*, QWidget*) ));
 
@@ -960,6 +963,15 @@ bool CreateServerDlg::loadOldConfig(const QString& filename)
 	// Custom parameters
 	pteCustomParameters->document()->setPlainText(cfg.setting("CustomParams")->string());
 	return true;
+}
+
+void CreateServerDlg::lstAdditionalFilesPathDnd(const QString& path)
+{
+	QFileInfo fileInfo(path);
+	if (fileInfo.isFile())
+	{
+		addWadPath(path);
+	}
 }
 
 void CreateServerDlg::makeSetupServerDialog(const EnginePlugin *plugin)
