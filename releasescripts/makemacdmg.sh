@@ -54,12 +54,19 @@ do
 	done
 done
 
-install_name_tool -change `otool -L Doomseeker.app/Contents/MacOS/doomseeker | grep -m 1 --only-matching '[/@].*libwadseeker.dylib'` @executable_path/../Frameworks/libwadseeker.dylib Doomseeker.app/Contents/MacOS/doomseeker
+RELINK_LIST="`ls Doomseeker.app/Contents/{MacOS/{doomseeker,engines/*.so},Frameworks/libwadseeker.dylib}` $QTPLUGINS_LIST"
+for i in $RELINK_LIST
+do
+	if [ "`otool -L $i | grep libwadseeker.dylib`" ]
+	then
+		install_name_tool -change `otool -L $i | grep -m 1 --only-matching '[/@].*libwadseeker.dylib'` @executable_path/../Frameworks/libwadseeker.dylib $i
+	fi
+done
 for i in QtCore QtGui QtNetwork
 do
 	install_name_tool -id {@executable_path/../,Doomseeker.app/Contents/}Frameworks/${i}.framework/Versions/4/$i
 	install_name_tool -change {,@executable_path/../Frameworks/}QtCore.framework/Versions/4/QtCore Doomseeker.app/Contents/Frameworks/${i}.framework/Versions/4/$i
-	for j in `ls Doomseeker.app/Contents/{MacOS/{doomseeker,engines/*.so},Frameworks/libwadseeker.dylib}` $QTPLUGINS_LIST
+	for j in $RELINK_LIST
 	do
 		install_name_tool -change {,@executable_path/../Frameworks/}${i}.framework/Versions/4/$i $j
 	done
