@@ -148,6 +148,7 @@ const IniVariable &IniVariable::operator=(const IniVariable &other)
 void IniVariable::setValue(const QVariant& value)
 {
 	assert(!isNull());
+	assert(pSection != NULL);
 
 	if (pSection != NULL)
 	{
