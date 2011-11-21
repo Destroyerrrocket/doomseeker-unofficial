@@ -171,9 +171,9 @@ bool DoomseekerConfig::setIniFile(const QString& filePath)
 	gLog << QObject::tr("Setting INI file: %1").arg(filePath);
 	this->pIni = new Ini(filePath);
 
-    IniSection section;
+	IniSection section;
 
-    section = this->pIni->section(doomseeker.SECTION_NAME);
+	section = this->pIni->section(doomseeker.SECTION_NAME);
 	doomseeker.init(section);
 
 	section = this->pIni->section(serverFilter.SECTION_NAME);

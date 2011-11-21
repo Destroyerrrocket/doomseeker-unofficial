@@ -59,13 +59,13 @@ void MasterManager::addMaster(MasterClient *master)
 
 	MasterClientSignalProxy* pMasterReceiver = new MasterClientSignalProxy(master);
 	connect(pMasterReceiver, SIGNAL( listUpdated(MasterClient*) ),
-        this, SLOT( masterListUpdated(MasterClient*) ) );
+		this, SLOT( masterListUpdated(MasterClient*) ) );
 	connect(pMasterReceiver, SIGNAL( message(MasterClient*, const QString&, const QString&, bool) ),
-        this, SIGNAL( masterMessage(MasterClient*, const QString&, const QString&, bool) ) );
-    connect(pMasterReceiver, SIGNAL( messageImportant(MasterClient*, const Message&) ),
-        this, SIGNAL( masterMessageImportant(MasterClient*, const Message&) ));
+		this, SIGNAL( masterMessage(MasterClient*, const QString&, const QString&, bool) ) );
+	connect(pMasterReceiver, SIGNAL( messageImportant(MasterClient*, const Message&) ),
+		this, SIGNAL( masterMessageImportant(MasterClient*, const Message&) ));
 	connect(pMasterReceiver, SIGNAL( newServerBatchReceived(MasterClient*, const QList<Server* >&) ),
-        this, SLOT( newServerBatchReceivedSlot(MasterClient*, const QList<Server* >&) ) );
+		this, SLOT( newServerBatchReceivedSlot(MasterClient*, const QList<Server* >&) ) );
 
 	mastersReceivers.append(pMasterReceiver);
 

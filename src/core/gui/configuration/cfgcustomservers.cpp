@@ -239,7 +239,7 @@ void CFGCustomServers::setEngineOnItem(QStandardItem* item, const QString& engin
 	}
 	else
 	{
-	    item->setIcon(QPixmap(unknownengine_xpm));
+		item->setIcon(QPixmap(unknownengine_xpm));
 	}
 
 	item->setEditable(false);

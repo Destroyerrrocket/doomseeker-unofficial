@@ -89,7 +89,7 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::parse(IRCAdapterBase* 
 	}
 	else if (message == "PRIVMSG" || message == "NOTICE")
 	{
-        // Notice and Privmsg are handled the same way.
+		// Notice and Privmsg are handled the same way.
 		if (inputSplit.length() < 2)
 		{
 			return ErrorInputInsufficientParameters;
@@ -101,7 +101,7 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::parse(IRCAdapterBase* 
 
 		if (message == "PRIVMSG")
 		{
-            emit echoPrivmsg(recipient, content);
+			emit echoPrivmsg(recipient, content);
 		}
 	}
 	else if (message == "MSG")

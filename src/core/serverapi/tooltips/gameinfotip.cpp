@@ -124,5 +124,5 @@ QString	GameInfoTip::timelimitHTML()
 	}
 	row = row.arg(timeLeft);
 
-    return row;
+	return row;
 }

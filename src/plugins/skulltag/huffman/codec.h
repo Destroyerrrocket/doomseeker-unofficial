@@ -32,11 +32,11 @@ namespace skulltag {
 	/** Huffman tree node -- used to represent a Huffman tree. <br>
 	 * Huffman trees are use by compression / decompression codecs. */
 	class HuffmanNode {
-        public:
-            int bitCount;			/**< number of bits in the Huffman code. */
-            int code;				/**< bit representation of a Huffman code. */
-            int value;				/**< the value the Huffman code represents. */
-            HuffmanNode * branch;	/**< the left and right child branches or NULL (0) if leaf. */
+		public:
+			int bitCount;			/**< number of bits in the Huffman code. */
+			int code;				/**< bit representation of a Huffman code. */
+			int value;				/**< the value the Huffman code represents. */
+			HuffmanNode * branch;	/**< the left and right child branches or NULL (0) if leaf. */
 	};
 
 // Codec Class Interface

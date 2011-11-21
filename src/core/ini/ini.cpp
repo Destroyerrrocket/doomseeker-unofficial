@@ -29,7 +29,7 @@
 
 Ini::Ini(const QString& filename)
 {
-    pIni = new QSettings(filename, QSettings::IniFormat);
+	pIni = new QSettings(filename, QSettings::IniFormat);
 }
 
 Ini::~Ini()
@@ -44,7 +44,7 @@ IniSection Ini::createSection(const QString& name)
 		return IniSection();
 	}
 
-    return IniSection(this, name);
+	return IniSection(this, name);
 }
 
 IniVariable Ini::createSetting(const QString& sectionName, const QString& name, const QVariant& data)
@@ -109,10 +109,10 @@ IniVariable Ini::retrieveSetting(const QString& sectionName, const QString& vari
 
 bool Ini::save()
 {
-    if (!pIni->isWritable())
-    {
-        return false;
-    }
+	if (!pIni->isWritable())
+	{
+		return false;
+	}
 
 	pIni->sync();
 	return true;

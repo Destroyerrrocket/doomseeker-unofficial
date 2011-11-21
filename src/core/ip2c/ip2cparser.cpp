@@ -49,16 +49,16 @@ bool IP2CParser::convertAndSaveDatabase(QByteArray& downloadedData, const QStrin
 	convertCountriesIntoBinaryData(countries, binaryData);
 
 	QFile out(outFilePath);
-    if(out.open(QIODevice::WriteOnly) && out.isWritable())
-    {
+	if(out.open(QIODevice::WriteOnly) && out.isWritable())
+	{
 		out.write(binaryData);
-    }
-    else
-    {
-    	return false;
-    }
+	}
+	else
+	{
+		return false;
+	}
 
-    return true;
+	return true;
 }
 
 void IP2CParser::convertCountriesIntoBinaryData(const Countries& countries, QByteArray& output)

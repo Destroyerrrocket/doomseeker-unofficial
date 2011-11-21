@@ -29,21 +29,21 @@
 IniVariable::IniVariable()
 {
 	this->pConstSection = NULL;
-    this->pSection = NULL;
+	this->pSection = NULL;
 }
 
 IniVariable::IniVariable(IniSection* pSection, const QString& key)
 {
 	this->pConstSection = pSection;
-    this->pSection = pSection;
-    this->key = key;
+	this->pSection = pSection;
+	this->key = key;
 }
 
 IniVariable::IniVariable(const IniSection* pSection, const QString& key)
 {
 	this->pConstSection = pSection;
-    this->pSection = NULL;
-    this->key = key;
+	this->pSection = NULL;
+	this->key = key;
 }
 
 IniVariable::operator bool() const

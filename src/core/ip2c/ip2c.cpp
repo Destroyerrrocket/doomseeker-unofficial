@@ -133,7 +133,7 @@ IP2CCountryInfo IP2C::obtainCountryInfo(unsigned int ipaddress)
 
 	if (isLANAddress(ipaddress))
 	{
-        return IP2CCountryInfo(&flagLan, tr("LAN"));
+		return IP2CCountryInfo(&flagLan, tr("LAN"));
 	}
 
 	const IP2CData& data = lookupIP(ipaddress);

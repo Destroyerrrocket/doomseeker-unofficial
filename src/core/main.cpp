@@ -320,10 +320,10 @@ void Main::createMainWindow()
 
 	mainWindow = mainWnd;
 
-    if (bIsFirstRun)
-    {
-        mainWnd->notifyFirstRun();
-    }
+	if (bIsFirstRun)
+	{
+		mainWnd->notifyFirstRun();
+	}
 }
 
 bool Main::createRemoteConsole()
@@ -445,7 +445,7 @@ void Main::initMainConfig()
 	QFileInfo iniFileInfo(filePath);
 	bIsFirstRun = !iniFileInfo.exists();
 
-    // Init the config.
+	// Init the config.
 	if (gConfig.setIniFile(filePath))
 	{
 		gConfig.readFromFile();

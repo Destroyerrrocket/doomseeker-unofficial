@@ -35,10 +35,10 @@ class Message;
  */
 class CommandLineInfo
 {
-    public:
-        QDir 			applicationDir; /// working directory
-        QStringList 	args; /// launch parameters
-        QFileInfo 		executable; /// path to the executable
+	public:
+		QDir 			applicationDir; /// working directory
+		QStringList 	args; /// launch parameters
+		QFileInfo 		executable; /// path to the executable
 };
 
 class MAIN_EXPORT AppRunner : public QObject

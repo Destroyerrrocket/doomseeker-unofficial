@@ -79,16 +79,16 @@ void ServerFilterDock::clearGameModes()
 
 QLineEdit *ServerFilterDock::createQuickSearch()
 {
-    if (leQuickSearch == NULL)
-    {
-        QLineEdit *qs = new QLineEdit();
-        qs->setText(leServerName->text());
+	if (leQuickSearch == NULL)
+	{
+		QLineEdit *qs = new QLineEdit();
+		qs->setText(leServerName->text());
 
-        connect(leServerName, SIGNAL( textEdited(const QString &) ), qs, SLOT( setText(const QString &) ));
-        connect(qs, SIGNAL( textEdited(const QString &) ), leServerName, SLOT( setText(const QString &) ));
+		connect(leServerName, SIGNAL( textEdited(const QString &) ), qs, SLOT( setText(const QString &) ));
+		connect(qs, SIGNAL( textEdited(const QString &) ), leServerName, SLOT( setText(const QString &) ));
 
-        leQuickSearch = qs;
-    }
+		leQuickSearch = qs;
+	}
 
 	return leQuickSearch;
 }
@@ -162,7 +162,7 @@ void ServerFilterDock::setFilterInfo(const ServerListFilterInfo& filterInfo)
 	spinMaxPing->setValue(filterInfo.maxPing);
 	if (leQuickSearch != NULL)
 	{
-        leQuickSearch->setText(filterInfo.serverName.trimmed());
+		leQuickSearch->setText(filterInfo.serverName.trimmed());
 	}
 
 	leServerName->setText(filterInfo.serverName.trimmed());

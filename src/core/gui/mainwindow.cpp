@@ -143,9 +143,9 @@ One of the proper locations for plugin modules is the \"engines/\" directory.\n\
 	masterManager = new MasterManager();
 	buddiesList->scan(masterManager);
 	connect(masterManager, SIGNAL( masterMessage(MasterClient*, const QString&, const QString&, bool) ),
-        this, SLOT( masterManagerMessages(MasterClient*, const QString&, const QString&, bool) ) );
-    connect(masterManager, SIGNAL( masterMessageImportant(MasterClient*, const Message&) ),
-        this, SLOT( masterManagerMessagesImportant(MasterClient*, const Message&) ));
+		this, SLOT( masterManagerMessages(MasterClient*, const QString&, const QString&, bool) ) );
+	connect(masterManager, SIGNAL( masterMessageImportant(MasterClient*, const Message&) ),
+		this, SLOT( masterManagerMessagesImportant(MasterClient*, const Message&) ));
 
 	// Allow us to enable and disable ports.
 	fillQueryMenu(masterManager);
@@ -189,9 +189,9 @@ One of the proper locations for plugin modules is the \"engines/\" directory.\n\
 		ip2cParseDatabase();
 	}
 
-    // Start first refresh from a timer. We want the main window fully
-    // set up before refresh.
-    QTimer::singleShot(1, this, SLOT(postInitAppStartup()));
+	// Start first refresh from a timer. We want the main window fully
+	// set up before refresh.
+	QTimer::singleShot(1, this, SLOT(postInitAppStartup()));
 }
 
 MainWindow::~MainWindow()
@@ -212,14 +212,14 @@ MainWindow::~MainWindow()
 	QList<QAction*>::iterator it;
 	for (it = menuQueryActions.begin(); it != menuQueryActions.end(); ++it)
 	{
-	    QAction* action = *it;
-	    QString pluginName = action->text();
+		QAction* action = *it;
+		QString pluginName = action->text();
 
-	    if (!pluginName.isEmpty())
-	    {
+		if (!pluginName.isEmpty())
+		{
 			IniSection pluginConfig = gConfig.iniSectionForPlugin(pluginName);
-	        pluginConfig["Query"] = action->isChecked();
-	    }
+			pluginConfig["Query"] = action->isChecked();
+		}
 	}
 
 	if (trayIcon != NULL)
@@ -372,7 +372,7 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		serversStatusesWidgets.insert(pMasterClient, statusWidget);
 
 		this->connect(statusWidget, SIGNAL( clicked(MasterClient*) ) ,
-            SLOT( toggleMasterClientEnabled(MasterClient*) ) );
+			SLOT( toggleMasterClientEnabled(MasterClient*) ) );
 
 		statusBar()->addPermanentWidget(statusWidget);
 
@@ -412,10 +412,10 @@ void MainWindow::finishedQueryingMaster(MasterClient* master)
 	for(int i = 0;i < master->numServers();i++)
 	{
 		connect((*master)[i], SIGNAL(updated(Server *, int)),
-            serverTableHandler, SLOT(serverUpdated(Server *, int)) );
+			serverTableHandler, SLOT(serverUpdated(Server *, int)) );
 
 		connect((*master)[i], SIGNAL(begunRefreshing(Server *)),
-            serverTableHandler, SLOT(serverBegunRefreshing(Server *)) );
+			serverTableHandler, SLOT(serverBegunRefreshing(Server *)) );
 	}
 }
 
@@ -804,24 +804,24 @@ void MainWindow::masterManagerMessages(MasterClient* pSender, const QString& tit
 
 void MainWindow::masterManagerMessagesImportant(MasterClient* pSender, const Message& objMessage)
 {
-    QString msgContent;
-    if (objMessage.isCustom())
-    {
-        msgContent = objMessage.contents();
-    }
-    else
-    {
-        msgContent = objMessage.getStringBasingOnType();
-    }
+	QString msgContent;
+	if (objMessage.isCustom())
+	{
+		msgContent = objMessage.contents();
+	}
+	else
+	{
+		msgContent = objMessage.getStringBasingOnType();
+	}
 
-    QString strFullMessage = tr("Master server for %1: %2").arg(pSender->plugin()->data()->name).arg(msgContent);
+	QString strFullMessage = tr("Master server for %1: %2").arg(pSender->plugin()->data()->name).arg(msgContent);
 
-    if (objMessage.isError())
-    {
-        strFullMessage = "<font color=\"#ff0000\">" + strFullMessage + "</font>";
-    }
+	if (objMessage.isError())
+	{
+		strFullMessage = "<font color=\"#ff0000\">" + strFullMessage + "</font>";
+	}
 
-    importantMessagesWidget->addMessage(strFullMessage, objMessage.timestamp());
+	importantMessagesWidget->addMessage(strFullMessage, objMessage.timestamp());
 }
 
 void MainWindow::menuBuddies()
@@ -963,8 +963,8 @@ void MainWindow::menuWadSeeker()
 void MainWindow::notifyFirstRun()
 {
 	// On first run prompt configuration box.
-    QMessageBox::information(NULL, tr("Welcome to Doomseeker"), tr("Before you start browsing for servers, please ensure that Doomseeker is properly configured."));
-    menuActionConfigure->trigger();
+	QMessageBox::information(NULL, tr("Welcome to Doomseeker"), tr("Before you start browsing for servers, please ensure that Doomseeker is properly configured."));
+	menuActionConfigure->trigger();
 }
 
 bool MainWindow::obtainJoinCommandLine(const Server* server, CommandLineInfo& cli, const QString& errorCaption, bool *hadMissing)
@@ -1103,10 +1103,10 @@ Wadseeker will not download IWADs.\n\n");
 
 void MainWindow::postInitAppStartup()
 {
-    // Load server filter from config.
-    serverFilterDock->setFilterInfo(gConfig.serverFilter.info);
+	// Load server filter from config.
+	serverFilterDock->setFilterInfo(gConfig.serverFilter.info);
 
-    // Check query on statup
+	// Check query on statup
 	// Let's see if we have any plugins first. If not, display error.
 	if (Main::enginePlugins->numPlugins() > 0)
 	{
@@ -1153,17 +1153,17 @@ To fix this problem you may try downloading Doomseeker again from the site speci
 
 QQueryMenuAction* MainWindow::queryMenuActionForMasterClient(MasterClient* pClient)
 {
-    if (pClient == NULL)
-    {
-        return NULL;
-    }
+	if (pClient == NULL)
+	{
+		return NULL;
+	}
 
-    if (queryMenuPorts.contains(pClient))
-    {
-        return queryMenuPorts[pClient];
-    }
+	if (queryMenuPorts.contains(pClient))
+	{
+		return queryMenuPorts[pClient];
+	}
 
-    return NULL;
+	return NULL;
 }
 
 void MainWindow::quitProgram()
@@ -1251,15 +1251,15 @@ void MainWindow::runGame(Server* server)
 
 void MainWindow::setQueryMasterServerEnabled(MasterClient* pClient, bool bEnabled)
 {
-    assert(pClient != NULL);
+	assert(pClient != NULL);
 
-    QQueryMenuAction* pAction = queryMenuActionForMasterClient(pClient);
-    if (pAction != NULL)
-    {
-        pAction->setChecked(bEnabled);
-        pClient->setEnabled(bEnabled);
-        serversStatusesWidgets[pClient]->setMasterEnabledStatus(bEnabled);
-    }
+	QQueryMenuAction* pAction = queryMenuActionForMasterClient(pClient);
+	if (pAction != NULL)
+	{
+		pAction->setChecked(bEnabled);
+		pClient->setEnabled(bEnabled);
+		serversStatusesWidgets[pClient]->setMasterEnabledStatus(bEnabled);
+	}
 }
 
 void MainWindow::serverAddedToList(Server* pServer)
@@ -1351,10 +1351,10 @@ void MainWindow::showServerJoinCommandLine(const Server* server)
 
 void MainWindow::toggleMasterClientEnabled(MasterClient* pClient)
 {
-    QQueryMenuAction* pAction = queryMenuActionForMasterClient(pClient);
-    assert(pAction != NULL);
+	QQueryMenuAction* pAction = queryMenuActionForMasterClient(pClient);
+	assert(pAction != NULL);
 
-    setQueryMasterServerEnabled(pClient, !pAction->isChecked());
+	setQueryMasterServerEnabled(pClient, !pAction->isChecked());
 }
 
 void MainWindow::toolBarAction(QAction* pAction)
@@ -1403,15 +1403,15 @@ void MainWindow::updateMasterAddresses()
 {
 	for(int i = 0;i < masterManager->numMasters();i++)
 	{
-        (*masterManager)[i]->updateAddress();
+		(*masterManager)[i]->updateAddress();
 	}
 
 }
 
 void MainWindow::updateServerFilter(const ServerListFilterInfo& filterInfo)
 {
-    serverTableHandler->applyFilter(filterInfo);
-    lblServerFilterApplied->setVisible(filterInfo.isFilteringAnything());
+	serverTableHandler->applyFilter(filterInfo);
+	lblServerFilterApplied->setVisible(filterInfo.isFilteringAnything());
 }
 
 void MainWindow::updateTrayIconTooltipAndLogTotalRefresh()

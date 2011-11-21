@@ -136,8 +136,8 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 
 				if (s->iwadName().contains(wad, Qt::CaseInsensitive))
 				{
-                    bWadFound = true;
-                    break;
+					bWadFound = true;
+					break;
 				}
 
 				for (int j = 0; j < s->numWads(); ++j)
@@ -222,13 +222,13 @@ void ServerListProxyModel::setFilterInfo(const ServerListFilterInfo& filterInfo)
 
 Server* ServerListProxyModel::serverFromList(const QModelIndex& index) const
 {
-    return serverFromList(index.row());
+	return serverFromList(index.row());
 }
 
 Server* ServerListProxyModel::serverFromList(int row) const
 {
 	ServerListModel* model = static_cast<ServerListModel*>(sourceModel());
 
-    return model->serverFromList(row);
+	return model->serverFromList(row);
 }
 

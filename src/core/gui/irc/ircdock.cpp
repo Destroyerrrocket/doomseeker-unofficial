@@ -98,21 +98,21 @@ void IRCDock::chatWindowCloseRequestSlot(IRCDockTabContents* pCaller)
 
 void IRCDock::connectToNewNetwork(IRCNetworkConnectionInfo& connectionInfo, bool bFocusOnNewTab)
 {
-    IRCNetworkAdapter* pIRCNetworkAdapter = new IRCNetworkAdapter();
+	IRCNetworkAdapter* pIRCNetworkAdapter = new IRCNetworkAdapter();
 
-    // Switch this to true only for debug.
-    pIRCNetworkAdapter->setEmitAllIRCMessagesEnabled(false);
+	// Switch this to true only for debug.
+	pIRCNetworkAdapter->setEmitAllIRCMessagesEnabled(false);
 
-    // Setup the UI tab for the new network.
-    IRCDockTabContents* pTab = addIRCAdapter(pIRCNetworkAdapter);
+	// Setup the UI tab for the new network.
+	IRCDockTabContents* pTab = addIRCAdapter(pIRCNetworkAdapter);
 
-    // Connect to the network.
-    pIRCNetworkAdapter->connect(connectionInfo);
+	// Connect to the network.
+	pIRCNetworkAdapter->connect(connectionInfo);
 
-    if (bFocusOnNewTab)
-    {
-        tabFocusRequest(pTab);
-    }
+	if (bFocusOnNewTab)
+	{
+		tabFocusRequest(pTab);
+	}
 }
 
 void IRCDock::globalMessage(const QString& message, IRCAdapterBase* pMessageSender)

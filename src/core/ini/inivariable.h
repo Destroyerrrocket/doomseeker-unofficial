@@ -40,11 +40,11 @@ class IniSection;
 class MAIN_EXPORT IniVariable
 {
 	public:
-        /**
-         * @brief Creates an invalid IniVariable object. Such object should not
-         *        be used for read/write operations.
-         */
-        IniVariable();
+		/**
+ 		* @brief Creates an invalid IniVariable object. Such object should not
+ 		*        be used for read/write operations.
+ 		*/
+		IniVariable();
 
 		/**
 		 * @brief Creates a valid IniVariable object. Read/write operations are
@@ -53,8 +53,8 @@ class MAIN_EXPORT IniVariable
 		IniVariable(IniSection* pSection, const QString& key);
 
 		/**
-	     * @brief Creates a valid IniVariable, read-only object.
-	     *
+	 	* @brief Creates a valid IniVariable, read-only object.
+	 	*
 		 * Only read operations are permitted. Performing write operations
 		 * on such object will fail.
 		 */
@@ -139,13 +139,13 @@ class MAIN_EXPORT IniVariable
 		 * @brief For non-const operations. Might be NULL even if pConstSection
 		 *        is not NULL.
 		 */
-        IniSection*			pSection;
+		IniSection*			pSection;
 
-        /**
-         * @brief For const operations. If NULL then IniVariable object is
-         *        invalid.
-         */
-        const IniSection*	pConstSection;
+		/**
+ 		* @brief For const operations. If NULL then IniVariable object is
+ 		*        invalid.
+ 		*/
+		const IniSection*	pConstSection;
 
 		/**
 		 * @brief The key name of this variable.

@@ -136,7 +136,7 @@ void WadseekerWadsTable::setFileDownloadFinished(const QString& filename)
 		item(row, IDX_URL_COLUMN)->setText(tr("Awaiting URLs"));
 		item(row, IDX_URL_COLUMN)->setToolTip(tr("Awaiting URLs"));
 
-        const bool FORCE = true;
+		const bool FORCE = true;
 		updateDataInfoValues(FORCE);
 	}
 }
@@ -272,25 +272,25 @@ double WadseekerWadsTable::totalDonePercentage() const
 
 void WadseekerWadsTable::updateDataInfoValues(bool bForce)
 {
-    // Make sure updates are not performed before certain interval passes.
-    if (d.updateClock.elapsed() > UPDATE_INTERVAL_MS || bForce)
-    {
-        d.updateClock.start();
+	// Make sure updates are not performed before certain interval passes.
+	if (d.updateClock.elapsed() > UPDATE_INTERVAL_MS || bForce)
+	{
+		d.updateClock.start();
 
-        for (int i = 0; i < this->rowCount(); ++i)
-        {
-            // Find the calculator for specified row.
-            QString filename = this->item(i, IDX_NAME_COLUMN)->text();
-            SpeedCalculator* pCalculator = d.speedCalculators.value(filename);
+		for (int i = 0; i < this->rowCount(); ++i)
+		{
+			// Find the calculator for specified row.
+			QString filename = this->item(i, IDX_NAME_COLUMN)->text();
+			SpeedCalculator* pCalculator = d.speedCalculators.value(filename);
 
-            // Update data amount.
-            QString strCurrent = Strings::formatDataAmount(pCalculator->lastRegisterAttemptedDataAmount());
-            QString strTotal = Strings::formatDataAmount(pCalculator->expectedDataSize());
+			// Update data amount.
+			QString strCurrent = Strings::formatDataAmount(pCalculator->lastRegisterAttemptedDataAmount());
+			QString strTotal = Strings::formatDataAmount(pCalculator->expectedDataSize());
 
-            QString size = QString("%1 / %2").arg(strCurrent, strTotal);
-            item(i, IDX_SIZE_COLUMN)->setText(size);
+			QString size = QString("%1 / %2").arg(strCurrent, strTotal);
+			item(i, IDX_SIZE_COLUMN)->setText(size);
 
-            // Update ETA and speed.
+			// Update ETA and speed.
 			if (pCalculator->expectedDataSize() != pCalculator->lastRegisterAttemptedDataAmount())
 			{
 				// If both above values are equal it means we have finished
@@ -323,8 +323,8 @@ void WadseekerWadsTable::updateDataInfoValues(bool bForce)
 				QString eta = tr("Done");
 				item(i, IDX_ETA_COLUMN)->setText(eta);
 			}
-        }
-    }
+		}
+	}
 }
 ///////////////////////////////////////////////////////////////////////////////
 WadseekerWadsTable::ContextMenu::ContextMenu(QWidget* pParent)

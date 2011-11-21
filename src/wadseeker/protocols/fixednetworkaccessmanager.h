@@ -63,13 +63,13 @@
  */
 class WADSEEKER_API FixedNetworkAccessManager : public QNetworkAccessManager
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    FixedNetworkAccessManager(QObject *parent = 0);
+	FixedNetworkAccessManager(QObject *parent = 0);
 
 protected:
-    QNetworkReply *createRequest(Operation operation, const QNetworkRequest &request, QIODevice *device);
+	QNetworkReply *createRequest(Operation operation, const QNetworkRequest &request, QIODevice *device);
 };
 
 #endif

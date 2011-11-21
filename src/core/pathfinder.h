@@ -32,9 +32,9 @@ class IniVariable;
 
 class MAIN_EXPORT PathFinderResult
 {
-    public:
-        QStringList		foundFiles;
-        QStringList		missingFiles;
+	public:
+		QStringList		foundFiles;
+		QStringList		missingFiles;
 };
 
 class MAIN_EXPORT PathFinder

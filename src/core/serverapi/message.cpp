@@ -27,20 +27,20 @@ QString Message::getStringBasingOnType(unsigned type)
 	// Currently nothing to return.
 	switch (type)
 	{
-        case Types::BANNED_FROM_MASTERSERVER:
-            return QObject::tr("You have been banned from master server.");
+		case Types::BANNED_FROM_MASTERSERVER:
+			return QObject::tr("You have been banned from master server.");
 
-        default:
-            return QString("%1 IS NOT A VALID ERROR MESSAGE! FIX THIS!").arg(type);
+		default:
+			return QString("%1 IS NOT A VALID ERROR MESSAGE! FIX THIS!").arg(type);
 	}
 }
 
 void Message::construct()
 {
-    qRegisterMetaType<Message>("Message");
+	qRegisterMetaType<Message>("Message");
 
-    this->_type = Types::IGNORE_TYPE;
+	this->_type = Types::IGNORE_TYPE;
 
-    // Seconds since the epoch.
-    this->_timestamp = QDateTime::currentDateTime().toTime_t();
+	// Seconds since the epoch.
+	this->_timestamp = QDateTime::currentDateTime().toTime_t();
 }

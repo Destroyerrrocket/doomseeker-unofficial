@@ -63,18 +63,18 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 
 		IRCNetworkAdapter*	networkWithUiFocus();
 
-        /**
-         * @brief Connects to new network.
-         *
-         * Opens new IRC network tab and starts the connection basing on the
-         * passed IRCNetworkConnectionInfo.
-         *
-         * @param connectionInfo
-         *      Defines connection parameters.
-         * @param bFocusOnNewTab
-         *      If <code>true</code> the new tab will gain focus when opened.
-         */
-        void                connectToNewNetwork(IRCNetworkConnectionInfo& connectionInfo, bool bFocusOnNewTab);
+		/**
+ 		* @brief Connects to new network.
+ 		*
+ 		* Opens new IRC network tab and starts the connection basing on the
+ 		* passed IRCNetworkConnectionInfo.
+ 		*
+ 		* @param connectionInfo
+ 		*      Defines connection parameters.
+ 		* @param bFocusOnNewTab
+ 		*      If <code>true</code> the new tab will gain focus when opened.
+ 		*/
+		void                connectToNewNetwork(IRCNetworkConnectionInfo& connectionInfo, bool bFocusOnNewTab);
 
 		/**
 		 *	@brief This will prefix message with network name if message

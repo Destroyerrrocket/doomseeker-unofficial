@@ -339,7 +339,7 @@ void IRCDockTabContents::receiveMessageWithClass(const QString& message, const I
 
 	if (gIRCConfig.appearance.timestamps)
 	{
-        QString timestamp = Strings::timestamp("[hh:mm:ss] ") ;
+		QString timestamp = Strings::timestamp("[hh:mm:ss] ") ;
 
 		messageHtmlEscaped = timestamp + messageHtmlEscaped;
 

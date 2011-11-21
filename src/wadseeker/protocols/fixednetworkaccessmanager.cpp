@@ -45,21 +45,21 @@
 #include "protocols/fixedftpreply.h"
 
 FixedNetworkAccessManager::FixedNetworkAccessManager(QObject *parent)
-    : QNetworkAccessManager(parent)
+	: QNetworkAccessManager(parent)
 {
 }
 
 QNetworkReply *FixedNetworkAccessManager::createRequest(
-    QNetworkAccessManager::Operation operation, const QNetworkRequest &request,
-    QIODevice *device)
+	QNetworkAccessManager::Operation operation, const QNetworkRequest &request,
+	QIODevice *device)
 {
-    if (request.url().scheme() != "ftp")
-        return QNetworkAccessManager::createRequest(operation, request, device);
+	if (request.url().scheme() != "ftp")
+		return QNetworkAccessManager::createRequest(operation, request, device);
 
-    if (operation == GetOperation)
-        // Handle ftp:// URLs separately by creating custom QNetworkReply
-        // objects.
-        return new FixedFtpReply(request.url());
-    else
-        return QNetworkAccessManager::createRequest(operation, request, device);
+	if (operation == GetOperation)
+		// Handle ftp:// URLs separately by creating custom QNetworkReply
+		// objects.
+		return new FixedFtpReply(request.url());
+	else
+		return QNetworkAccessManager::createRequest(operation, request, device);
 }

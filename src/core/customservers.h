@@ -34,11 +34,11 @@ class IniSection;
  */
 class CustomServerInfo
 {
-    public:
-        QString engine;
-        QString host;
-        unsigned short port;
-        int engineIndex;
+	public:
+		QString engine;
+		QString host;
+		unsigned short port;
+		int engineIndex;
 };
 
 /**

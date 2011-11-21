@@ -28,13 +28,13 @@
 
 IniSection::IniSection()
 {
-    d.pIni = NULL;
+	d.pIni = NULL;
 }
 
 IniSection::IniSection(Ini* pIni, const QString& sectionName)
 {
-    d.pIni = pIni;
-    d.name = sectionName;
+	d.pIni = pIni;
+	d.name = sectionName;
 }
 
 IniVariable IniSection::createSetting(const QString& name, const QVariant& data)

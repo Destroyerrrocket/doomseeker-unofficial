@@ -61,39 +61,39 @@ class QFtp;
  */
 class FixedFtpReply : public QNetworkReply
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    FixedFtpReply(const QUrl &url);
-    void abort();
-    qint64 bytesAvailable() const;
-    bool isSequential() const;
+	FixedFtpReply(const QUrl &url);
+	void abort();
+	qint64 bytesAvailable() const;
+	bool isSequential() const;
 
 protected:
-    qint64 readData(char *data, qint64 maxSize);
+	qint64 readData(char *data, qint64 maxSize);
 
 private slots:
-    void dataProgressSlot(qint64 current, qint64 total);
-    void processCommand(int command, bool error);
-    void processListInfo(const QUrlInfo &urlInfo);
-    void processData();
-    void processDone(bool bError);
+	void dataProgressSlot(qint64 current, qint64 total);
+	void processCommand(int command, bool error);
+	void processListInfo(const QUrlInfo &urlInfo);
+	void processData();
+	void processDone(bool bError);
 
 
 private:
-    QFtp *ftp;
-    QByteArray content;
-    qint64 offset;
+	QFtp *ftp;
+	QByteArray content;
+	qint64 offset;
 
-    /**
-     * @brief File size retrieved from listInfo signal. Might not be valid.
-     *
-     * If invalid then zero.
-     */
-    qint64 fileSize;
+	/**
+ 	* @brief File size retrieved from listInfo signal. Might not be valid.
+ 	*
+ 	* If invalid then zero.
+ 	*/
+	qint64 fileSize;
 
-    void fetchSize();
-    void setContent();
+	void fetchSize();
+	void setContent();
 };
 
 #endif

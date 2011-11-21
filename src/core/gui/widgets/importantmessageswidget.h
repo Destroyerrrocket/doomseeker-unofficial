@@ -25,116 +25,116 @@
  */
 class ImportantMessagesWidget : public QWidget
 {
-    Q_OBJECT
+	Q_OBJECT
 
-    public:
-        static const unsigned DEFAULT_MAX_MESSAGES = 0;
-        static const unsigned MAX_MSG_KEEP_TIME_SEC = 10;
+	public:
+		static const unsigned DEFAULT_MAX_MESSAGES = 0;
+		static const unsigned MAX_MSG_KEEP_TIME_SEC = 10;
 
-        ImportantMessagesWidget(QWidget* pParent = NULL);
-        ~ImportantMessagesWidget();
+		ImportantMessagesWidget(QWidget* pParent = NULL);
+		~ImportantMessagesWidget();
 
-        /**
-         * @see _maxMessages
-         */
-        unsigned        maxMessages() const
-        {
-            return _maxMessages;
-        }
+		/**
+ 		* @see _maxMessages
+ 		*/
+		unsigned        maxMessages() const
+		{
+			return _maxMessages;
+		}
 
-        /**
-         * @see _maxMessages
-         */
-        void            setMaxMessages(unsigned num)
-        {
-            _maxMessages = num;
-        }
+		/**
+ 		* @see _maxMessages
+ 		*/
+		void            setMaxMessages(unsigned num)
+		{
+			_maxMessages = num;
+		}
 
-    public slots:
-        /**
-         * @brief Adds a new message without a timestamp.
-         */
-        void            addMessage(const QString& message);
+	public slots:
+		/**
+ 		* @brief Adds a new message without a timestamp.
+ 		*/
+		void            addMessage(const QString& message);
 
-        /**
-         * @brief Adds a message with a timestamp.
-         *
-         * @param message
-         *      Message to add.
-         * @param timestamp
-         *      QDateTime object representing time.
-         */
-        void            addMessage(const QString& message, const QDateTime& dateTime);
+		/**
+ 		* @brief Adds a message with a timestamp.
+ 		*
+ 		* @param message
+ 		*      Message to add.
+ 		* @param timestamp
+ 		*      QDateTime object representing time.
+ 		*/
+		void            addMessage(const QString& message, const QDateTime& dateTime);
 
-        /**
-         * @brief Adds a message with a timestamp.
-         *
-         * @param message
-         *      Message to add.
-         * @param timestamp
-         *      Time in seconds since the epoch.
-         */
-        void            addMessage(const QString& message, unsigned timestamp);
+		/**
+ 		* @brief Adds a message with a timestamp.
+ 		*
+ 		* @param message
+ 		*      Message to add.
+ 		* @param timestamp
+ 		*      Time in seconds since the epoch.
+ 		*/
+		void            addMessage(const QString& message, unsigned timestamp);
 
-        /**
-         * @brief Clears all messages from the widghet.
-         *
-         * Widget will shrink itself in a way that will make it invisible.
-         */
-        void            clear();
+		/**
+ 		* @brief Clears all messages from the widghet.
+ 		*
+ 		* Widget will shrink itself in a way that will make it invisible.
+ 		*/
+		void            clear();
 
-        /**
-         * @brief Removes a number of oldest messages from the widget.
-         *
-         * Widget will shrink with each message removed.
-         *
-         * @param num
-         *      Amount of messages to remove. If higher than the actual count
-         *      of messages, will work the same as clear().
-         */
-        void            removeOldest(int num);
+		/**
+ 		* @brief Removes a number of oldest messages from the widget.
+ 		*
+ 		* Widget will shrink with each message removed.
+ 		*
+ 		* @param num
+ 		*      Amount of messages to remove. If higher than the actual count
+ 		*      of messages, will work the same as clear().
+ 		*/
+		void            removeOldest(int num);
 
-        /**
-         * @brief Will remove one oldest message.
-         */
-        void            removeOneOldest();
+		/**
+ 		* @brief Will remove one oldest message.
+ 		*/
+		void            removeOneOldest();
 
-    private:
-        class MessageLabel
-        {
-            public:
-                MessageLabel(QLabel* pLabel)
-                {
-                    this->pLabel = pLabel;
-                    this->timeCreated = QDateTime::currentDateTime();
-                }
+	private:
+		class MessageLabel
+		{
+			public:
+				MessageLabel(QLabel* pLabel)
+				{
+					this->pLabel = pLabel;
+					this->timeCreated = QDateTime::currentDateTime();
+				}
 
-                QLabel*         pLabel;
-                QDateTime       timeCreated;
-        };
+				QLabel*         pLabel;
+				QDateTime       timeCreated;
+		};
 
-        QList<MessageLabel>     labelWidgets;
+		QList<MessageLabel>     labelWidgets;
 
-        /**
-         * @brief Amount of messages that can be displayed in the widget at
-         * the same time.
-         */
-        unsigned                _maxMessages;
+		/**
+ 		* @brief Amount of messages that can be displayed in the widget at
+ 		* the same time.
+ 		*/
+		unsigned                _maxMessages;
 
-        /**
-         * @brief Will periodically clean up old label widgets.
-         */
-        QTimer                  oldLabelCleaner;
-        QVBoxLayout*            pLayout;
+		/**
+ 		* @brief Will periodically clean up old label widgets.
+ 		*/
+		QTimer                  oldLabelCleaner;
+		QVBoxLayout*            pLayout;
 
-    private slots:
-        /**
-         * @brief Removes old label widgets.
-         *
-         * Removes old label widgets only if they are both beyond maximum amount
-         * of widgets limit AND beyond the MAX_MSG_KEEP_TIME_SEC time limit.
-         */
-        void                    dropOldWidgetsIfBeyondLimit();
+	private slots:
+		/**
+ 		* @brief Removes old label widgets.
+ 		*
+ 		* Removes old label widgets only if they are both beyond maximum amount
+ 		* of widgets limit AND beyond the MAX_MSG_KEEP_TIME_SEC time limit.
+ 		*/
+		void                    dropOldWidgetsIfBeyondLimit();
 };
 
 #endif

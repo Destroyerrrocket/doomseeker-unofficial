@@ -119,41 +119,41 @@ struct ZipLocalFileHeader
 		return ZIP_LOCAL_FILE_HEADER_SIZE + fileNameLength + extraFieldLength;
 	}
 
-    ZipLocalFileHeader& operator=(const ZipLocalFileHeader& rhs)
-    {
-    	if (this != &rhs)
+	ZipLocalFileHeader& operator=(const ZipLocalFileHeader& rhs)
+	{
+		if (this != &rhs)
 		{
 			copy(rhs);
 		}
 
 		return *this;
-    }
+	}
 
 	/* FROM ZIP FILE FORMAT DESCRIPTION */
 	unsigned long 	localFileHeaderSignature; // (0x04034b50), if anything fails this will be set to 0
 	unsigned short 	versionNeededToExtract;
-    unsigned short 	generalPurposeBitFlag;
-    unsigned short 	compressionMethod;
-    unsigned short 	lastModFileTime;
+	unsigned short 	generalPurposeBitFlag;
+	unsigned short 	compressionMethod;
+	unsigned short 	lastModFileTime;
 	unsigned short 	lastModFileDate;
-    unsigned long  	crc32;
-    unsigned long  	compressedSize;
+	unsigned long  	crc32;
+	unsigned long  	compressedSize;
 	unsigned long	uncompressedSize;
-    unsigned short	fileNameLength;
+	unsigned short	fileNameLength;
 	unsigned short	extraFieldLength;
 
-    QString			fileName;
-    QByteArray		extraField;
-    /* END OF ZIP FILE FORMAT DESCRIPTION */
+	QString			fileName;
+	QByteArray		extraField;
+	/* END OF ZIP FILE FORMAT DESCRIPTION */
 
 	/**
-     * Position in the ZIP file at which the header begins.
-     * Data position can be calculated from this using
-     * howManyBytesTillData() method.
-     */
+ 	* Position in the ZIP file at which the header begins.
+ 	* Data position can be calculated from this using
+ 	* howManyBytesTillData() method.
+ 	*/
 	unsigned long 	headerPosition;
 
-    protected:
+	protected:
 		void copy(const ZipLocalFileHeader& o)
 		{
 			localFileHeaderSignature = o.localFileHeaderSignature;

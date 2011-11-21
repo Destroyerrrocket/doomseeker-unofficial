@@ -323,12 +323,12 @@ Server* ServerListRowHandler::serverFromList(ServerListModel* parentModel, int r
 {
 	QStandardItem* pItem = parentModel->item(rowIndex, IDHiddenServerPointer);
 	QVariant pointer = qVariantFromValue(pItem->data(DTPointerToServerStructure));
-    if (!pointer.isValid())
-    {
-        return NULL;
-    }
-    ServerPointer savedServ = qVariantValue<ServerPointer>(pointer);
-    return savedServ.ptr;
+	if (!pointer.isValid())
+	{
+		return NULL;
+	}
+	ServerPointer savedServ = qVariantValue<ServerPointer>(pointer);
+	return savedServ.ptr;
 }
 
 //ServerListRowHandler::ServerGroup ServerListRowHandler::serverGroup()
@@ -339,7 +339,7 @@ Server* ServerListRowHandler::serverFromList(ServerListModel* parentModel, int r
 
 int ServerListRowHandler::updateServer(int response)
 {
-    fillServerPointerColumn();
+	fillServerPointerColumn();
 	fillPortIconColumn();
 	fillAddressColumn();
 
@@ -369,7 +369,7 @@ int ServerListRowHandler::updateServer(int response)
 			break;
 
 		case Server::RESPONSE_TIMEOUT:
-		    setTimeout();
+			setTimeout();
 			break;
 
 		case Server::RESPONSE_NO_RESPONSE_YET:

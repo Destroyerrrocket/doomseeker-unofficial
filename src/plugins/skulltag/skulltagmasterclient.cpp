@@ -63,7 +63,7 @@ const EnginePlugin* SkulltagMasterClient::plugin() const
 
 bool SkulltagMasterClient::readMasterResponse(QByteArray &data)
 {
-    bool expectingMorePackets = false;
+	bool expectingMorePackets = false;
 
 	const char* in = data.data();
 	char packetOut[2000];

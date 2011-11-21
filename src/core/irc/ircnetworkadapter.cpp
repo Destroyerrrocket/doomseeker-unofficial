@@ -77,8 +77,8 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 	QObject::connect(&ircResponseParser, SIGNAL ( parseError(const QString&) ),
 		this, SLOT( parseError(const QString&) ) );
 
-    // This connect must be direct as it might interfere with other operations
-    // of printing done in the window.
+	// This connect must be direct as it might interfere with other operations
+	// of printing done in the window.
 	QObject::connect(&ircResponseParser, SIGNAL ( print(const QString&, const QString&) ),
 		this, SLOT( printResponse(const QString&, const QString&) ), Qt::DirectConnection );
 
@@ -316,15 +316,15 @@ void IRCNetworkAdapter::ircServerResponse(const QString& message)
 {
 	IRCResponseParseResult result = ircResponseParser.parse(message);
 
-    if (this->bEmitAllIRCMessages || !result.wasParsed())
-    {
-        emit this->message(message.trimmed().replace("\n", "\\n"));
-    }
+	if (this->bEmitAllIRCMessages || !result.wasParsed())
+	{
+		emit this->message(message.trimmed().replace("\n", "\\n"));
+	}
 
-    if (!result.isValid())
-    {
-        emit this->error(tr("Invalid parse result for mesage: %1").arg(message));
-    }
+	if (!result.isValid())
+	{
+		emit this->error(tr("Invalid parse result for mesage: %1").arg(message));
+	}
 }
 
 bool IRCNetworkAdapter::isAdapterRelated(const IRCAdapterBase* pAdapter) const
@@ -512,31 +512,31 @@ void IRCNetworkAdapter::parseError(const QString& error)
 
 void IRCNetworkAdapter::printResponse(const QString& printWhat, const QString& printWhere)
 {
-    IRCAdapterBase* pAdapter = this;
+	IRCAdapterBase* pAdapter = this;
 
-    if (!printWhere.isEmpty())
-    {
-        IRCAdapterBase* pAdapter = getChatAdapter(printWhere);
-    }
+	if (!printWhere.isEmpty())
+	{
+		IRCAdapterBase* pAdapter = getChatAdapter(printWhere);
+	}
 
-    // In case if the target adapter is unknown, the message will still get
-    // printed to this adapter.
-    if (pAdapter == NULL)
-    {
-        this->emitMessage(tr("FROM %1: %2").arg(printWhere, printWhat));
-    }
-    else
-    {
-        // If bEmitAllIRCMessages is set to true, the message will be already
-        // printed for this adapter in ircServerResponse().
-        // There is no need to print it again.
-        if ( pAdapter == this && this->bEmitAllIRCMessages )
-        {
-            return;
-        }
+	// In case if the target adapter is unknown, the message will still get
+	// printed to this adapter.
+	if (pAdapter == NULL)
+	{
+		this->emitMessage(tr("FROM %1: %2").arg(printWhere, printWhat));
+	}
+	else
+	{
+		// If bEmitAllIRCMessages is set to true, the message will be already
+		// printed for this adapter in ircServerResponse().
+		// There is no need to print it again.
+		if ( pAdapter == this && this->bEmitAllIRCMessages )
+		{
+			return;
+		}
 
-        pAdapter->emitMessage(printWhat);
-    }
+		pAdapter->emitMessage(printWhat);
+	}
 }
 
 void IRCNetworkAdapter::privMsgReceived(const QString& recipient, const QString& sender, const QString& content)

@@ -33,16 +33,16 @@ class IRCResponseParser : public QObject
 	Q_OBJECT
 
 	public:
-        /**
-         * @brief Parses the message received from the network.
-         *
-         * Parsing a message will result in emitting an appropriate signal.
-         * For example is message says that some user was kicked, a kick()
-         * signal will be emitted.
-         *
-         * @return Instance of IRCResponseParseResult with defined type of
-         *         the message and info if message was actually parsed or not.
-         */
+		/**
+ 		* @brief Parses the message received from the network.
+ 		*
+ 		* Parsing a message will result in emitting an appropriate signal.
+ 		* For example is message says that some user was kicked, a kick()
+ 		* signal will be emitted.
+ 		*
+ 		* @return Instance of IRCResponseParseResult with defined type of
+ 		*         the message and info if message was actually parsed or not.
+ 		*/
 		IRCResponseParseResult  		parse(const QString& message);
 
 	signals:

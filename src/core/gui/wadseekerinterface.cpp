@@ -241,7 +241,7 @@ void WadseekerInterface::reject()
 
 void WadseekerInterface::resetTitleToDefault()
 {
-    setWindowTitle(tr("Wadseeker"));
+	setWindowTitle(tr("Wadseeker"));
 }
 
 void WadseekerInterface::seekStarted(const QStringList& filenames)

@@ -13,61 +13,61 @@ const IRCResponseType invalidResponseType;
 
 IRCResponseParseResult::IRCResponseParseResult()
 {
-    d.pResponseType = NULL;
-    d.bWasParsed = false;
+	d.pResponseType = NULL;
+	d.bWasParsed = false;
 }
 
 IRCResponseParseResult::IRCResponseParseResult(const IRCResponseType& responseType, bool bWasParsed)
 {
-    d.bWasParsed = bWasParsed;
-    d.pResponseType = new IRCResponseType(responseType);
+	d.bWasParsed = bWasParsed;
+	d.pResponseType = new IRCResponseType(responseType);
 }
 
 IRCResponseParseResult::IRCResponseParseResult(const IRCResponseParseResult& other)
 {
-    d.pResponseType = NULL;
-    copyIn(other);
+	d.pResponseType = NULL;
+	copyIn(other);
 }
 
 IRCResponseParseResult::~IRCResponseParseResult()
 {
-    if (d.pResponseType != NULL)
-    {
-        delete d.pResponseType;
-    }
+	if (d.pResponseType != NULL)
+	{
+		delete d.pResponseType;
+	}
 }
 
 void IRCResponseParseResult::copyIn(const IRCResponseParseResult& other)
 {
-    d.bWasParsed = other.d.bWasParsed;
-    if (d.pResponseType != NULL)
-    {
-        delete d.pResponseType;
-        d.pResponseType = NULL;
-    }
+	d.bWasParsed = other.d.bWasParsed;
+	if (d.pResponseType != NULL)
+	{
+		delete d.pResponseType;
+		d.pResponseType = NULL;
+	}
 
-    if (other.d.pResponseType != NULL)
-    {
-        d.pResponseType = new IRCResponseType(*other.d.pResponseType);
-    }
+	if (other.d.pResponseType != NULL)
+	{
+		d.pResponseType = new IRCResponseType(*other.d.pResponseType);
+	}
 }
 
 IRCResponseParseResult& IRCResponseParseResult::operator=(const IRCResponseParseResult& other)
 {
-    if (this != &other)
-    {
-        copyIn(other);
-    }
+	if (this != &other)
+	{
+		copyIn(other);
+	}
 
-    return *this;
+	return *this;
 }
 
 const IRCResponseType& IRCResponseParseResult::type() const
 {
-    if (d.pResponseType == NULL)
-    {
-        return invalidResponseType;
-    }
+	if (d.pResponseType == NULL)
+	{
+		return invalidResponseType;
+	}
 
-    return *d.pResponseType;
+	return *d.pResponseType;
 }

@@ -38,24 +38,24 @@ class IniVariable;
 class MAIN_EXPORT IniSection
 {
 	public:
-        /**
-         * @brief Creates an invalid IniSection object. Such object should not
-         *        be used for read/write operations.
-         */
-        IniSection();
+		/**
+ 		* @brief Creates an invalid IniSection object. Such object should not
+ 		*        be used for read/write operations.
+ 		*/
+		IniSection();
 
-        /**
-         * @brief Creates a valid IniSection object.
-         *
-         * IniSection object will operate on specified Ini object and provide
-         * access to variables in specified section.
-         * @param pIni
-         *      Pointer to Ini object on which this object will operate on.
-         *      pIni is not deleted when this is deleted. pIni pointer is copied
-         *      over when this is copied over.
-         * @param sectionName
-         *      Name of the section for which the variables will be accessed.
-         */
+		/**
+ 		* @brief Creates a valid IniSection object.
+ 		*
+ 		* IniSection object will operate on specified Ini object and provide
+ 		* access to variables in specified section.
+ 		* @param pIni
+ 		*      Pointer to Ini object on which this object will operate on.
+ 		*      pIni is not deleted when this is deleted. pIni pointer is copied
+ 		*      over when this is copied over.
+ 		* @param sectionName
+ 		*      Name of the section for which the variables will be accessed.
+ 		*/
 		IniSection(Ini* pIni, const QString& sectionName);
 
 		/**
@@ -157,26 +157,26 @@ class MAIN_EXPORT IniSection
 		QVariant 				value(const QString& key) const;
 
 	private:
-        class PrivData
-        {
-            public:
-                /**
-                 * @brief A name of this section with lettercase preserved.
-                 */
-                QString					name;
+		class PrivData
+		{
+			public:
+				/**
+ 				* @brief A name of this section with lettercase preserved.
+ 				*/
+				QString					name;
 
-                /**
-                 * @brief Ini file to which this section belongs to.
-                 */
-                Ini*                    pIni;
-        };
+				/**
+ 				* @brief Ini file to which this section belongs to.
+ 				*/
+				Ini*                    pIni;
+		};
 
-        PrivData d;
+		PrivData d;
 
 		/**
 		 * @brief Removes specified key in this section.
 		 */
-        void remove(const QString& key);
+		void remove(const QString& key);
 };
 
 typedef QHash<QString, IniSection> 					IniSections;	/// the first QString is the name

@@ -51,12 +51,12 @@ long double SpeedCalculator::estimatedTimeUntilArrival() const
 
 long double SpeedCalculator::getSpeed() const
 {
-    if (arrivalData.size() < 2)
-    {
-        return -1.0;
-    }
+	if (arrivalData.size() < 2)
+	{
+		return -1.0;
+	}
 
-    // Let's calculate weighted mean.
+	// Let's calculate weighted mean.
 	long double numerator = 0.0;
 	long double denominator = 0.0;
 
@@ -73,12 +73,12 @@ long double SpeedCalculator::getSpeed() const
 
 qint64 SpeedCalculator::lastRegisteredDataAmount() const
 {
-    if (arrivalData.isEmpty())
-    {
-        return 0;
-    }
+	if (arrivalData.isEmpty())
+	{
+		return 0;
+	}
 
-    return arrivalData.last().totalAmountOfArrivedData;
+	return arrivalData.last().totalAmountOfArrivedData;
 }
 
 void SpeedCalculator::registerDataAmount(qint64 totalAmountOfArrivedData)

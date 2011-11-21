@@ -38,10 +38,10 @@ class ServerFilterDock : public QDockWidget, private Ui::ServerFilterDock
 
 		void					addGameModeToComboBox(const QString& gameMode);
 
-        /**
-         * @brief Creates and/or returns an instance of widget that is located
-         * in the MainWindow toolbar.
-         */
+		/**
+ 		* @brief Creates and/or returns an instance of widget that is located
+ 		* in the MainWindow toolbar.
+ 		*/
 		QLineEdit				*createQuickSearch();
 
 		/**
@@ -66,14 +66,14 @@ class ServerFilterDock : public QDockWidget, private Ui::ServerFilterDock
 		void					filterUpdated(const ServerListFilterInfo& filterInfo);
 
 	private:
-        /**
-         * @brief Quick Search widget that is actually located outside the
-         * ServerFilterDock.
-         *
-         * ServerFilterDock needs to keep track of this widget in order to
-         * update the changing value appropriately.
-         */
-        QLineEdit*              leQuickSearch;
+		/**
+ 		* @brief Quick Search widget that is actually located outside the
+ 		* ServerFilterDock.
+ 		*
+ 		* ServerFilterDock needs to keep track of this widget in order to
+ 		* update the changing value appropriately.
+ 		*/
+		QLineEdit*              leQuickSearch;
 
 		void					doConnections();
 

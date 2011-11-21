@@ -30,13 +30,13 @@
 
 class ServerListColumn
 {
-    public:
-        int				columnId;
-        QString			name;
-        int				width;
-        bool			bHidden;
-        bool			bResizable;
-        Qt::SortOrder	defaultSortOrder;
+	public:
+		int				columnId;
+		QString			name;
+		int				width;
+		bool			bHidden;
+		bool			bResizable;
+		Qt::SortOrder	defaultSortOrder;
 };
 
 namespace ServerListColumnId

@@ -72,22 +72,22 @@ class MAIN_EXPORT CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 	private:
 		class DMFlagsTabWidget
 		{
-            public:
-                QWidget*				widget;
-                const DMFlagsSection*	section;
+			public:
+				QWidget*				widget;
+				const DMFlagsSection*	section;
 
-                /**
-                 *	Check boxes in the same order the flags are stored in the plugin.
-                 */
-                QList<QCheckBox*>		checkBoxes;
+				/**
+ 				*	Check boxes in the same order the flags are stored in the plugin.
+ 				*/
+				QList<QCheckBox*>		checkBoxes;
 		};
 
 		class GameLimitWidget
 		{
-            public:
-                QWidget*	label;
-                QSpinBox*	spinBox;
-                GameCVar	limit;
+			public:
+				QWidget*	label;
+				QSpinBox*	spinBox;
+				GameCVar	limit;
 		};
 
 		static const QString			TEMP_SERVER_CONFIG_FILENAME;

@@ -45,95 +45,95 @@
 #include <QtNetwork>
 
 FixedFtpReply::FixedFtpReply(const QUrl &url)
-    : QNetworkReply()
+	: QNetworkReply()
 {
-    offset = 0;
-    fileSize = 0;
+	offset = 0;
+	fileSize = 0;
 
-    ftp = new QFtp(this);
-    connect(ftp, SIGNAL(done(bool)), this, SLOT(processDone(bool)));
-    connect(ftp, SIGNAL(listInfo(QUrlInfo)), this, SLOT(processListInfo(QUrlInfo)));
-    connect(ftp, SIGNAL(readyRead()), this, SLOT(processData()));
-    connect(ftp, SIGNAL(commandFinished(int, bool)), this, SLOT(processCommand(int, bool)));
+	ftp = new QFtp(this);
+	connect(ftp, SIGNAL(done(bool)), this, SLOT(processDone(bool)));
+	connect(ftp, SIGNAL(listInfo(QUrlInfo)), this, SLOT(processListInfo(QUrlInfo)));
+	connect(ftp, SIGNAL(readyRead()), this, SLOT(processData()));
+	connect(ftp, SIGNAL(commandFinished(int, bool)), this, SLOT(processCommand(int, bool)));
 
-    this->connect(ftp, SIGNAL(dataTransferProgress(qint64, qint64)),
+	this->connect(ftp, SIGNAL(dataTransferProgress(qint64, qint64)),
 			SLOT( dataProgressSlot(qint64, qint64) ));
 
-    setUrl(url);
-    ftp->connectToHost(url.host());
+	setUrl(url);
+	ftp->connectToHost(url.host());
 }
 
 void FixedFtpReply::dataProgressSlot(qint64 current, qint64 total)
 {
-    if (total <= 0)
-    {
-        // Replace total with file size stored in the object's memory, if
-        // current total is invalid.
-        total = fileSize;
-    }
+	if (total <= 0)
+	{
+		// Replace total with file size stored in the object's memory, if
+		// current total is invalid.
+		total = fileSize;
+	}
 
-    emit downloadProgress(current, total);
+	emit downloadProgress(current, total);
 }
 
 void FixedFtpReply::fetchSize()
 {
-    QString cmd = QString("SIZE %1").arg(url().path());
-    ftp->rawCommand(cmd);
+	QString cmd = QString("SIZE %1").arg(url().path());
+	ftp->rawCommand(cmd);
 }
 
 void FixedFtpReply::processCommand(int, bool err)
 {
-    if (err) {
-        setError(ContentNotFoundError, "Unknown command");
-        emit error(ContentNotFoundError);
-        abort();
-        return;
-    }
+	if (err) {
+		setError(ContentNotFoundError, "Unknown command");
+		emit error(ContentNotFoundError);
+		abort();
+		return;
+	}
 
-    switch (ftp->currentCommand()) {
-    case QFtp::ConnectToHost:
-        ftp->login();
-        break;
+	switch (ftp->currentCommand()) {
+	case QFtp::ConnectToHost:
+		ftp->login();
+		break;
 
-    case QFtp::Login:
-        ftp->list(url().path());
-        break;
+	case QFtp::Login:
+		ftp->list(url().path());
+		break;
 
-    case QFtp::List:
-        ftp->get(url().path());
-        break;
+	case QFtp::List:
+		ftp->get(url().path());
+		break;
 
-    case QFtp::Get:
-        setContent();
-        break;
+	case QFtp::Get:
+		setContent();
+		break;
 
-    default:
-        ;
-    }
+	default:
+		;
+	}
 }
 
 void FixedFtpReply::processDone(bool bError)
 {
-    emit finished();
+	emit finished();
 }
 
 void FixedFtpReply::processListInfo(const QUrlInfo &urlInfo)
 {
-    this->fileSize = urlInfo.size() > 0 ? urlInfo.size() : 0;
+	this->fileSize = urlInfo.size() > 0 ? urlInfo.size() : 0;
 }
 
 void FixedFtpReply::processData()
 {
-    content += ftp->readAll();
+	content += ftp->readAll();
 }
 
 void FixedFtpReply::setContent()
 {
-    open(ReadOnly | Unbuffered);
-    setHeader(QNetworkRequest::ContentLengthHeader, QVariant(content.size()));
-    emit readyRead();
-    emit finished();
-    ftp->close();
+	open(ReadOnly | Unbuffered);
+	setHeader(QNetworkRequest::ContentLengthHeader, QVariant(content.size()));
+	emit readyRead();
+	emit finished();
+	ftp->close();
 }
 
 // QIODevice methods
@@ -145,21 +145,21 @@ void FixedFtpReply::abort()
 
 qint64 FixedFtpReply::bytesAvailable() const
 {
-    return content.size() - offset;
+	return content.size() - offset;
 }
 
 bool FixedFtpReply::isSequential() const
 {
-    return true;
+	return true;
 }
 
 qint64 FixedFtpReply::readData(char *data, qint64 maxSize)
 {
-    if (offset < content.size()) {
-        qint64 number = qMin(maxSize, content.size() - offset);
-        memcpy(data, content.constData() + offset, number);
-        offset += number;
-        return number;
-    } else
-        return -1;
+	if (offset < content.size()) {
+		qint64 number = qMin(maxSize, content.size() - offset);
+		memcpy(data, content.constData() + offset, number);
+		offset += number;
+		return number;
+	} else
+		return -1;
 }

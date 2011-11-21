@@ -216,8 +216,8 @@ bool Wadseeker::isWorking() const
 	}
 
 	return d.wwwSeeker->isWorking()
-	    || d.wadRetriever->isAnyDownloadWorking()
-	    || !d.idgamesClients.isEmpty();
+		|| d.wadRetriever->isAnyDownloadWorking()
+		|| !d.idgamesClients.isEmpty();
 }
 
 void Wadseeker::prepareSeekObjects()

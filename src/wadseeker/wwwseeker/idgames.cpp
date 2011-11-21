@@ -102,7 +102,7 @@ void Idgames::afterProcess(PageProcessResults result, const QUrl& url)
 
 QString Idgames::defaultIdgamesUrl()
 {
-    return "http://www.doomworld.com/idgames/index.php?search=1&page=%PAGENUM%&field=filename&word=%ZIPNAME%&sort=time&order=asc";
+	return "http://www.doomworld.com/idgames/index.php?search=1&page=%PAGENUM%&field=filename&word=%ZIPNAME%&sort=time&order=asc";
 }
 
 
@@ -134,22 +134,22 @@ void Idgames::setFile(const WadDownloadInfo& wad)
 
 void Idgames::startSearch()
 {
-    currentPage = 1;
-    filePageFound = false;
+	currentPage = 1;
+	filePageFound = false;
 
-    if (!idgamesBaseUrl.contains("%ZIPNAME%"))
-    {
-        emit message(tr("Idgames error: no %ZIPNAME% present in idgames url:\n%1").arg(idgamesBaseUrl), WadseekerLib::Error);
-        emit finished(this);
-        return;
-    }
+	if (!idgamesBaseUrl.contains("%ZIPNAME%"))
+	{
+		emit message(tr("Idgames error: no %ZIPNAME% present in idgames url:\n%1").arg(idgamesBaseUrl), WadseekerLib::Error);
+		emit finished(this);
+		return;
+	}
 
-    if (seekedFile->name().isEmpty())
-    {
-    	emit message(tr("Idgames error: Specified search filename is empty or invalid."), WadseekerLib::Error);
-        emit finished(this);
-        return;
-    }
+	if (seekedFile->name().isEmpty())
+	{
+		emit message(tr("Idgames error: Specified search filename is empty or invalid."), WadseekerLib::Error);
+		emit finished(this);
+		return;
+	}
 
 	emit message(tr("Searching Idgames archive for file: %1").arg(zipName()), WadseekerLib::NoticeImportant);
 

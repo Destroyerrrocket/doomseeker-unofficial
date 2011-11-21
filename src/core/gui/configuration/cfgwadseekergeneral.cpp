@@ -67,30 +67,30 @@ void CFGWadseekerGeneral::saveSettings()
 	}
 	else
 	{
-        // If path seems valid:
-        // Also take a look at the file paths configuration.  Warn if it is not on the list.
-        bool pathPossible = false;
+		// If path seems valid:
+		// Also take a look at the file paths configuration.  Warn if it is not on the list.
+		bool pathPossible = false;
 
-        QFileInfo wadseekerTargetDirectoryFileInfo(cbTargetDirectory->currentText());
-        foreach(QString possiblePath, gConfig.doomseeker.wadPaths)
-        {
-            // Bring paths to QFileInfo before string comparison. Two same paths
-            // may have different string representations.
-            QFileInfo possiblePathFileInfo(possiblePath);
+		QFileInfo wadseekerTargetDirectoryFileInfo(cbTargetDirectory->currentText());
+		foreach(QString possiblePath, gConfig.doomseeker.wadPaths)
+		{
+			// Bring paths to QFileInfo before string comparison. Two same paths
+			// may have different string representations.
+			QFileInfo possiblePathFileInfo(possiblePath);
 
-            if (possiblePathFileInfo == wadseekerTargetDirectoryFileInfo)
-            {
-                pathPossible = true;
-                break;
-            }
-        }
+			if (possiblePathFileInfo == wadseekerTargetDirectoryFileInfo)
+			{
+				pathPossible = true;
+				break;
+			}
+		}
 
-        if (!pathPossible)
-        {
-            QMessageBox::warning(this, tr("Target not on List"),
-                tr("The specified target directory for Wadseeker could not be found on the file paths list.\n\n")
-			        + tr("Doomseeker will automatically add this path to the file search paths."));
-        }
+		if (!pathPossible)
+		{
+			QMessageBox::warning(this, tr("Target not on List"),
+				tr("The specified target directory for Wadseeker could not be found on the file paths list.\n\n")
+					+ tr("Doomseeker will automatically add this path to the file search paths."));
+		}
 	}
 
 	gConfig.wadseeker.connectTimeoutSeconds = spinConnectTimeout->value();

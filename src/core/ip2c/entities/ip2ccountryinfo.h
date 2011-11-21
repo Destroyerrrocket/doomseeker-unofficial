@@ -16,14 +16,14 @@
  */
 class MAIN_EXPORT IP2CCountryInfo
 {
-    public:
-        const QPixmap*	flag;
-        QString			name;
+	public:
+		const QPixmap*	flag;
+		QString			name;
 
-        IP2CCountryInfo();
-        IP2CCountryInfo(const QPixmap* flag, QString name);
+		IP2CCountryInfo();
+		IP2CCountryInfo(const QPixmap* flag, QString name);
 
-        bool isValid() const;
+		bool isValid() const;
 };
 
 #endif

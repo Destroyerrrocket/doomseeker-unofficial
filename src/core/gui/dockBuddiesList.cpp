@@ -263,8 +263,8 @@ void AddBuddyDlg::buttonBoxClicked(QAbstractButton *button)
 
 DockBuddiesList::BuddyLocationInfo::BuddyLocationInfo(const Player &buddy, Server *location)
 {
-    this->player = new Player(buddy);
-    this->server = location;
+	this->player = new Player(buddy);
+	this->server = location;
 }
 
 DockBuddiesList::BuddyLocationInfo::BuddyLocationInfo(const DockBuddiesList::BuddyLocationInfo &other)
@@ -274,7 +274,7 @@ DockBuddiesList::BuddyLocationInfo::BuddyLocationInfo(const DockBuddiesList::Bud
 
 DockBuddiesList::BuddyLocationInfo::~BuddyLocationInfo()
 {
-    delete player;
+	delete player;
 }
 
 DockBuddiesList::BuddyLocationInfo &DockBuddiesList::BuddyLocationInfo::operator= (const DockBuddiesList::BuddyLocationInfo &other)

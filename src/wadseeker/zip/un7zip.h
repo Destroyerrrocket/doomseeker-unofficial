@@ -40,18 +40,18 @@ extern "C"
 
 class SZByteStream
 {
-    public:
-        // [BL] Ugh, I really don't see a way around copying this ZDoom hack.
-        //      This must be the first variable.
-        ISeekInStream	stream;
+	public:
+		// [BL] Ugh, I really don't see a way around copying this ZDoom hack.
+		//      This must be the first variable.
+		ISeekInStream	stream;
 
-        QIODevice		*buffer;
+		QIODevice		*buffer;
 
-        SZByteStream(QIODevice *buffer);
-        ~SZByteStream();
+		SZByteStream(QIODevice *buffer);
+		~SZByteStream();
 
-        static SRes Read(void *p, void *buf, size_t *size);
-        static SRes Seek(void *p, Int64 *pos, ESzSeek origin);
+		static SRes Read(void *p, void *buf, size_t *size);
+		static SRes Seek(void *p, Int64 *pos, ESzSeek origin);
 };
 
 class Un7Zip : public UnArchive

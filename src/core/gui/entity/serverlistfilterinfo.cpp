@@ -56,24 +56,24 @@ void ServerListFilterInfo::copy(const ServerListFilterInfo& other)
 
 bool ServerListFilterInfo::isFilteringAnything() const
 {
-    if (!bShowEmpty || !bShowFull)
-    {
-        return true;
-    }
+	if (!bShowEmpty || !bShowFull)
+	{
+		return true;
+	}
 
-    if (bShowOnlyValid || maxPing > 0)
-    {
-        return true;
-    }
+	if (bShowOnlyValid || maxPing > 0)
+	{
+		return true;
+	}
 
-    if (!gameMode.isEmpty()
-    ||  !serverName.isEmpty()
-    ||  !wads.isEmpty())
-    {
-        return true;
-    }
+	if (!gameMode.isEmpty()
+	||  !serverName.isEmpty()
+	||  !wads.isEmpty())
+	{
+		return true;
+	}
 
-    return false;
+	return false;
 }
 
 QString ServerListFilterInfo::toString() const

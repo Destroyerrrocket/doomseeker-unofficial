@@ -98,28 +98,28 @@ class SpeedCalculator
 	private:
 		class DataArrivalInfo
 		{
-            public:
-                /**
-                 * @brief In bytes.
-                 */
-                qint64				totalAmountOfArrivedData;
+			public:
+				/**
+ 				* @brief In bytes.
+ 				*/
+				qint64				totalAmountOfArrivedData;
 
-                /**
-                 * @brief In miliseconds.
-                 */
-                qint64				timeOfArrival;
+				/**
+ 				* @brief In miliseconds.
+ 				*/
+				qint64				timeOfArrival;
 
-                DataArrivalInfo()
-                {
-                    this->totalAmountOfArrivedData = 0;
-                    this->timeOfArrival = 0;
-                }
+				DataArrivalInfo()
+				{
+					this->totalAmountOfArrivedData = 0;
+					this->timeOfArrival = 0;
+				}
 
-                DataArrivalInfo(qint64 totalAmountOfArrivedData, qint64 timeOfArrival)
-                {
-                    this->totalAmountOfArrivedData = totalAmountOfArrivedData;
-                    this->timeOfArrival = timeOfArrival;
-                }
+				DataArrivalInfo(qint64 totalAmountOfArrivedData, qint64 timeOfArrival)
+				{
+					this->totalAmountOfArrivedData = totalAmountOfArrivedData;
+					this->timeOfArrival = timeOfArrival;
+				}
 		};
 
 		static const int 			NUM_ARRIVAL_DATA = 2;

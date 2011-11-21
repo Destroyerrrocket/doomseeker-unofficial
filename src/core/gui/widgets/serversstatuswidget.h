@@ -37,24 +37,24 @@ class ServersStatusWidget : public QLabel
 		ServersStatusWidget(const QPixmap &icon, MasterClient *serverList);
 
 	public slots:
-        /**
-         * @brief Changes the appearance of the widget basing on the boolean
-         * value.
-         *
-         * If set to true, apperance will be clear. If set to false, appearance
-         * will be "grayed out".
-         */
-        void    setMasterEnabledStatus(bool bEnabled);
+		/**
+ 		* @brief Changes the appearance of the widget basing on the boolean
+ 		* value.
+ 		*
+ 		* If set to true, apperance will be clear. If set to false, appearance
+ 		* will be "grayed out".
+ 		*/
+		void    setMasterEnabledStatus(bool bEnabled);
 		void	updateDisplay();
 
-    signals:
-        void    clicked(MasterClient* pClient);
+	signals:
+		void    clicked(MasterClient* pClient);
 
 	protected:
 		void    mousePressEvent(QMouseEvent* event);
 		void	paintEvent(QPaintEvent *event);
 
-        bool                bMasterIsEnabled;
+		bool                bMasterIsEnabled;
 		QPixmap				icon;
 		QPixmap				iconDisabled;
 		unsigned int		numBots;

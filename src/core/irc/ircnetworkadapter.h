@@ -134,12 +134,12 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 */
 		void								setChannelMode(const QString& channel, const QString& nickname, const QString& flag, bool bSet);
 
-        /**
-         * @see bEmitAllIRCMessages
-         */
+		/**
+ 		* @see bEmitAllIRCMessages
+ 		*/
 		void                                setEmitAllIRCMessagesEnabled(bool b)
 		{
-            this->bEmitAllIRCMessages = b;
+			this->bEmitAllIRCMessages = b;
 		}
 
 		QString								title() const;

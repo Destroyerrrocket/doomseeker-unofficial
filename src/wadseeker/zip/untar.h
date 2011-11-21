@@ -47,10 +47,10 @@ class UnTar : public UnArchive
 	protected:
 		class TarFile
 		{
-            public:
-                QString			filename;
-                unsigned int	size;
-                unsigned int	offset;
+			public:
+				QString			filename;
+				unsigned int	size;
+				unsigned int	offset;
 		};
 
 		void	scanTarFile();

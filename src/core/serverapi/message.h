@@ -40,10 +40,10 @@
  */
 class MAIN_EXPORT Message : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 
 	public:
-	    class Types
+		class Types
 		{
 			public:
 				static const unsigned IGNORE_TYPE = 0;
@@ -54,13 +54,13 @@ class MAIN_EXPORT Message : public QObject
 				static const unsigned BANNED_FROM_MASTERSERVER = CUSTOM_ERROR + 1;
 		};
 
-        /**
+		/**
 		 *	@brief Convenience method. Sets type
 		 *	to Types::CUSTOM_ERROR.
 		 */
 		static Message	    customError(const QString& content)
 		{
-		    return Message(Types::CUSTOM_ERROR, content);
+			return Message(Types::CUSTOM_ERROR, content);
 		}
 
 		/**
@@ -74,10 +74,10 @@ class MAIN_EXPORT Message : public QObject
 
 		static QString	    getStringBasingOnType(unsigned type);
 
-        static bool         isCustom(unsigned type)
-        {
-            return type == Types::CUSTOM_ERROR || type == Types::CUSTOM_INFORMATION;
-        }
+		static bool         isCustom(unsigned type)
+		{
+			return type == Types::CUSTOM_ERROR || type == Types::CUSTOM_INFORMATION;
+		}
 
 		static bool			isError(unsigned type)
 		{
@@ -96,7 +96,7 @@ class MAIN_EXPORT Message : public QObject
 
 		Message()
 		{
-		    construct();
+			construct();
 			this->_type = Types::IGNORE_TYPE;
 		}
 
@@ -104,7 +104,7 @@ class MAIN_EXPORT Message : public QObject
 
 		Message(const Message& other)
 		{
-            copy(other);
+			copy(other);
 		}
 
 		Message(unsigned type)
@@ -115,35 +115,35 @@ class MAIN_EXPORT Message : public QObject
 
 		Message(unsigned type, const QString& content)
 		{
-		    construct();
+			construct();
 			this->content = content;
 			this->_type = type;
 		}
 
 		Message& operator=(const Message& other)
 		{
-            if (this != &other)
-            {
-                copy(other);
-            }
+			if (this != &other)
+			{
+				copy(other);
+			}
 
-            return *this;
+			return *this;
 		}
 
 		const QString&  contents() const
 		{
-		    return content;
+			return content;
 		}
 
-        QString		    getStringBasingOnType() const
-        {
-            return getStringBasingOnType(_type);
-        }
+		QString		    getStringBasingOnType() const
+		{
+			return getStringBasingOnType(_type);
+		}
 
-        bool            isCustom() const
-        {
-            return isCustom(_type);
-        }
+		bool            isCustom() const
+		{
+			return isCustom(_type);
+		}
 
 		bool			isError() const
 		{
@@ -162,25 +162,25 @@ class MAIN_EXPORT Message : public QObject
 
 		unsigned        timestamp() const
 		{
-		    return _timestamp;
+			return _timestamp;
 		}
 
 		unsigned        type() const
 		{
-		    return _type;
+			return _type;
 		}
 
-    private:
+	private:
 		QString			content;
 		unsigned        _timestamp;
 		unsigned		_type;
 
-        void            copy(const Message& other)
-        {
-            this->content = other.content;
-            this->_timestamp = other._timestamp;
-            this->_type = other._type;
-        }
+		void            copy(const Message& other)
+		{
+			this->content = other.content;
+			this->_timestamp = other._timestamp;
+			this->_type = other._type;
+		}
 
 		void            construct();
 };

@@ -195,7 +195,7 @@ QString ServerListHandler::createPlayersToolTip(const Server* server)
 
 	TooltipGenerator* tooltipGenerator = server->tooltipGenerator();
 
-    QString ret;
+	QString ret;
 	ret = "<div style='white-space: pre'>";
 	ret += tooltipGenerator->gameInfoTableHTML();
 	if(server->playersList()->numClients() != 0)
@@ -590,10 +590,10 @@ void ServerListHandler::updateCountryFlags()
 
 void ServerListHandler::updateCountryFlags(bool force)
 {
-    for (int i = 0; i < model->rowCount(); ++i)
-    {
-        model->updateFlag(i, force);
-    }
+	for (int i = 0; i < model->rowCount(); ++i)
+	{
+		model->updateFlag(i, force);
+	}
 }
 
 void ServerListHandler::updateSearch(const QString& search)

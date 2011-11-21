@@ -67,7 +67,7 @@
 class MAIN_EXPORT Ini : public QObject
 {
 	public:
-    	/**
+		/**
 		 *	Constructor that will load the file from a drive.
 		 */
 		Ini(const QString& filename);
@@ -165,7 +165,7 @@ class MAIN_EXPORT Ini : public QObject
 		QVariant			value(const QString& key) const;
 
 	private:
-        QSettings*          pIni;
+		QSettings*          pIni;
 };
 
 #endif

@@ -130,7 +130,7 @@ void ServerListModel::removeCustomServers()
 
 Server* ServerListModel::serverFromList(int rowIndex)
 {
-    return ServerListRowHandler::serverFromList(this, rowIndex);
+	return ServerListRowHandler::serverFromList(this, rowIndex);
 }
 
 Server* ServerListModel::serverFromList(const QModelIndex& index)
@@ -177,12 +177,12 @@ QVariant ServerListModel::columnSortData(int row, int column)
 
 void ServerListModel::updateFlag(int row, bool force)
 {
-    Server* server = serverFromList(row);
-    ServerListRowHandler rowHandler(this, row, server);
-    QStandardItem* itm = item(row, IDServerName);
+	Server* server = serverFromList(row);
+	ServerListRowHandler rowHandler(this, row, server);
+	QStandardItem* itm = item(row, IDServerName);
 
-    if (force || itm->icon().isNull())
-    {
+	if (force || itm->icon().isNull())
+	{
 		rowHandler.setCountryFlag();
-    }
+	}
 }

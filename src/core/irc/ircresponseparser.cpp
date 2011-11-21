@@ -90,306 +90,306 @@ IRCResponseParseResult IRCResponseParser::parse(const QString& message)
 
 IRCResponseParseResult IRCResponseParser::parseMessage(const QString& prefix, const QString& sender, const QString& type, QStringList params)
 {
-    IRCResponseType responseType(type);
-    IRCResponseType::MsgType enumType = responseType.type();
+	IRCResponseType responseType(type);
+	IRCResponseType::MsgType enumType = responseType.type();
 
-    switch (enumType)
-    {
-        case IRCResponseType::HelloClient:
-        {
-            QString nickname = params.takeFirst();
+	switch (enumType)
+	{
+		case IRCResponseType::HelloClient:
+		{
+			QString nickname = params.takeFirst();
 
-            emit helloClient(nickname);
-            break;
-        }
+			emit helloClient(nickname);
+			break;
+		}
 
-        case IRCResponseType::RPLWhoIsUser:
-        {
-            // First param is unnecessary
-            params.takeFirst();
+		case IRCResponseType::RPLWhoIsUser:
+		{
+			// First param is unnecessary
+			params.takeFirst();
 
-            // Extract user info.
-            QString nickname = params.takeFirst();
-            QString user = params.takeFirst();
-            QString hostName = params.takeFirst();
-            QString realName = joinAndTrimColonIfNecessary(params);
+			// Extract user info.
+			QString nickname = params.takeFirst();
+			QString user = params.takeFirst();
+			QString hostName = params.takeFirst();
+			QString realName = joinAndTrimColonIfNecessary(params);
 
-            emit whoIsUser(nickname, user, hostName, realName);
-            break;
-        }
+			emit whoIsUser(nickname, user, hostName, realName);
+			break;
+		}
 
-        case IRCResponseType::RPLNamReply:
-        {
-            // Namelists.
+		case IRCResponseType::RPLNamReply:
+		{
+			// Namelists.
 
-            // Attempt to extract the channel name. For some reason
-            // irc.skulltag.net returns a '=' character between the message type
-            // signature and the channel name. RFC 1459 doesn't say anything about
-            // such behavior, at least not in the chapter 6. We should protect
-            // ourselves from such unwelcome surprises.
-            QString channelName = "";
-            while (!IRCGlobal::isChannelName(channelName) && !params.isEmpty())
-            {
-                channelName = params.takeFirst();
-            }
+			// Attempt to extract the channel name. For some reason
+			// irc.skulltag.net returns a '=' character between the message type
+			// signature and the channel name. RFC 1459 doesn't say anything about
+			// such behavior, at least not in the chapter 6. We should protect
+			// ourselves from such unwelcome surprises.
+			QString channelName = "";
+			while (!IRCGlobal::isChannelName(channelName) && !params.isEmpty())
+			{
+				channelName = params.takeFirst();
+			}
 
-            if (channelName.isEmpty())
-            {
-                emit parseError(tr("RPLNamReply: Received names list but no channel name."));
-                return IRCResponseParseResult();
-            }
+			if (channelName.isEmpty())
+			{
+				emit parseError(tr("RPLNamReply: Received names list but no channel name."));
+				return IRCResponseParseResult();
+			}
 
-            // Remaining values will be user names. Send them all as a strings list.
-            // Remember to remove the ":" character from the first name.
-            if (!params.isEmpty())
-            {
-                params[0] = params[0].remove(0, 1);
-            }
+			// Remaining values will be user names. Send them all as a strings list.
+			// Remember to remove the ":" character from the first name.
+			if (!params.isEmpty())
+			{
+				params[0] = params[0].remove(0, 1);
+			}
 
-            emit namesListReceived(channelName, params);
-            break;
-        }
+			emit namesListReceived(channelName, params);
+			break;
+		}
 
-        case IRCResponseType::RPLEndOfNames:
-        {
-            QString channel = params[1];
-            emit namesListEndReceived(channel);
-            break;
-        }
+		case IRCResponseType::RPLEndOfNames:
+		{
+			QString channel = params[1];
+			emit namesListEndReceived(channel);
+			break;
+		}
 
-        case IRCResponseType::RPLMOTDStart:
-        case IRCResponseType::RPLMOTD:
-        case IRCResponseType::RPLEndOfMOTD:
-        {
-            // First param is username, drop it.
-            params.takeFirst();
+		case IRCResponseType::RPLMOTDStart:
+		case IRCResponseType::RPLMOTD:
+		case IRCResponseType::RPLEndOfMOTD:
+		{
+			// First param is username, drop it.
+			params.takeFirst();
 
-            if (enumType == IRCResponseType::RPLMOTDStart)
-            {
-                // We will print additional separator line if it's a start of
-                // the MOTD.
-                emit print("\n----------------------", QString());
-            }
+			if (enumType == IRCResponseType::RPLMOTDStart)
+			{
+				// We will print additional separator line if it's a start of
+				// the MOTD.
+				emit print("\n----------------------", QString());
+			}
 
-            emit print(joinAndTrimColonIfNecessary(params), QString());
+			emit print(joinAndTrimColonIfNecessary(params), QString());
 
-            if (enumType == IRCResponseType::RPLEndOfMOTD)
-            {
-                // Again, we will print additional separator line if it's the
-                // end of the MOTD.
-                emit print("----------------------\n", QString());
-            }
+			if (enumType == IRCResponseType::RPLEndOfMOTD)
+			{
+				// Again, we will print additional separator line if it's the
+				// end of the MOTD.
+				emit print("----------------------\n", QString());
+			}
 
-            break;
-        }
+			break;
+		}
 
-        // Extract correct message and print it.
-        case IRCResponseType::RPLLUserClient:
-        case IRCResponseType::RPLLUserMe:
-        {
-            // Drop the first param.
-            params.takeFirst();
+		// Extract correct message and print it.
+		case IRCResponseType::RPLLUserClient:
+		case IRCResponseType::RPLLUserMe:
+		{
+			// Drop the first param.
+			params.takeFirst();
 
-            // Join and print the rest.
-            emit print(joinAndTrimColonIfNecessary(params), QString());
-            break;
-        }
+			// Join and print the rest.
+			emit print(joinAndTrimColonIfNecessary(params), QString());
+			break;
+		}
 
-        // Extract correct message and print it.
-        case IRCResponseType::RPLLUserOp:
-        case IRCResponseType::RPLLUserUnknown:
-        case IRCResponseType::RPLLUserChannels:
-        {
-            // Drop the first param.
-            params.takeFirst();
+		// Extract correct message and print it.
+		case IRCResponseType::RPLLUserOp:
+		case IRCResponseType::RPLLUserUnknown:
+		case IRCResponseType::RPLLUserChannels:
+		{
+			// Drop the first param.
+			params.takeFirst();
 
-            // Here the first param is always an integer, and colon is located
-            // afterwards.
-            QString number = params.takeFirst();
-            emit print(number + " " + joinAndTrimColonIfNecessary(params), QString());
-            break;
-        }
+			// Here the first param is always an integer, and colon is located
+			// afterwards.
+			QString number = params.takeFirst();
+			emit print(number + " " + joinAndTrimColonIfNecessary(params), QString());
+			break;
+		}
 
-        case IRCResponseType::ERRNoSuchNick:
-        {
-            // Drop the first param.
-            params.takeFirst();
+		case IRCResponseType::ERRNoSuchNick:
+		{
+			// Drop the first param.
+			params.takeFirst();
 
-            // This is the real nickname.
-            QString nickname = params.takeFirst();
+			// This is the real nickname.
+			QString nickname = params.takeFirst();
 
-            emit noSuchNickname(nickname);
-            break;
-        }
+			emit noSuchNickname(nickname);
+			break;
+		}
 
-        case IRCResponseType::ERRNicknameInUse:
-        {
-            // Drop the first param.
-            params.takeFirst();
+		case IRCResponseType::ERRNicknameInUse:
+		{
+			// Drop the first param.
+			params.takeFirst();
 
-            QString nickname = params.takeFirst();
+			QString nickname = params.takeFirst();
 
-            emit nicknameInUse(nickname);
-            break;
-        }
+			emit nicknameInUse(nickname);
+			break;
+		}
 
-        case IRCResponseType::Join:
-        {
-            QString channel = params[0];
-            trimColonIfNecessary(channel);
+		case IRCResponseType::Join:
+		{
+			QString channel = params[0];
+			trimColonIfNecessary(channel);
 
-            emit userJoinsChannel(channel, sender, prefix);
-            break;
-        }
+			emit userJoinsChannel(channel, sender, prefix);
+			break;
+		}
 
-        case IRCResponseType::Kick:
-        {
-            QString channel = params[0];
-            QString whoIsKicked = params[1];
-            params.pop_front();
-            params.pop_front();
+		case IRCResponseType::Kick:
+		{
+			QString channel = params[0];
+			QString whoIsKicked = params[1];
+			params.pop_front();
+			params.pop_front();
 
-            QString reason = joinAndTrimColonIfNecessary(params);
+			QString reason = joinAndTrimColonIfNecessary(params);
 
-            emit kick(channel, sender, whoIsKicked, reason);
-            break;
-        }
+			emit kick(channel, sender, whoIsKicked, reason);
+			break;
+		}
 
-        case IRCResponseType::Kill:
-        {
-            QString victim = params[0];
-            params.pop_front();
+		case IRCResponseType::Kill:
+		{
+			QString victim = params[0];
+			params.pop_front();
 
-            QString comment = joinAndTrimColonIfNecessary(params);
+			QString comment = joinAndTrimColonIfNecessary(params);
 
-            emit kill(victim, comment);
-            break;
-        }
+			emit kill(victim, comment);
+			break;
+		}
 
-        case IRCResponseType::Mode:
-        {
-            QString channel = params[0];
-            QString flagsString = params[1];
-            params.pop_front();
-            params.pop_front();
+		case IRCResponseType::Mode:
+		{
+			QString channel = params[0];
+			QString flagsString = params[1];
+			params.pop_front();
+			params.pop_front();
 
-            // If there are no more params left on the list then this modes
-            // are for the channel itself. Otherwise they are for the users.
-            if (!params.isEmpty())
-            {
-                emit modeInfo(channel, sender, flagsString + " " + params.join(" "));
-                parseUserModeMessage(channel, flagsString, params);
-            }
+			// If there are no more params left on the list then this modes
+			// are for the channel itself. Otherwise they are for the users.
+			if (!params.isEmpty())
+			{
+				emit modeInfo(channel, sender, flagsString + " " + params.join(" "));
+				parseUserModeMessage(channel, flagsString, params);
+			}
 
-            break;
-        }
+			break;
+		}
 
-        case IRCResponseType::Nick:
-        {
-            QString oldNickname = sender;
-            QString newNickname = params[0];
-            trimColonIfNecessary(newNickname);
+		case IRCResponseType::Nick:
+		{
+			QString oldNickname = sender;
+			QString newNickname = params[0];
+			trimColonIfNecessary(newNickname);
 
-            emit userChangesNickname(oldNickname, newNickname);
-            break;
-        }
+			emit userChangesNickname(oldNickname, newNickname);
+			break;
+		}
 
-        case IRCResponseType::Part:
-        {
-            QString farewellMessage = QString();
-            QString channel = params[0];
+		case IRCResponseType::Part:
+		{
+			QString farewellMessage = QString();
+			QString channel = params[0];
 
-            if (params.size() > 1)
-            {
-                params.pop_front();
+			if (params.size() > 1)
+			{
+				params.pop_front();
 
-                farewellMessage = joinAndTrimColonIfNecessary(params);
-            }
+				farewellMessage = joinAndTrimColonIfNecessary(params);
+			}
 
-            emit userPartsChannel(channel, sender, farewellMessage);
-            break;
-        }
+			emit userPartsChannel(channel, sender, farewellMessage);
+			break;
+		}
 
-        case IRCResponseType::Ping:
-        {
-            QString pongToWhom = params[0];
+		case IRCResponseType::Ping:
+		{
+			QString pongToWhom = params[0];
 
-            emit sendPongMessage(pongToWhom);
-            break;
-        }
+			emit sendPongMessage(pongToWhom);
+			break;
+		}
 
-        case IRCResponseType::PrivMsg:
-        case IRCResponseType::Notice:
-        {
-            QString recipient = params[0];
+		case IRCResponseType::PrivMsg:
+		case IRCResponseType::Notice:
+		{
+			QString recipient = params[0];
 
-            // Remove the now redundant parameter from the list
-            params.pop_front();
+			// Remove the now redundant parameter from the list
+			params.pop_front();
 
-            // Join the list to form message contents.
-            QString content = joinAndTrimColonIfNecessary(params);
+			// Join the list to form message contents.
+			QString content = joinAndTrimColonIfNecessary(params);
 
-            if (!IRCGlobal::isChannelName(recipient))
-            {
-                // If recipient name is not the channel the
-                // "recipient" QString will point to this client's user.
-                // In order to get a proper recipient we need to use the
-                // "sender" QString instead.
-                recipient = sender;
-            }
+			if (!IRCGlobal::isChannelName(recipient))
+			{
+				// If recipient name is not the channel the
+				// "recipient" QString will point to this client's user.
+				// In order to get a proper recipient we need to use the
+				// "sender" QString instead.
+				recipient = sender;
+			}
 
-            if (responseType == IRCResponseType::PrivMsg)
-            {
-                emit privMsgReceived(recipient, sender, content);
-            }
-            else if (responseType == IRCResponseType::Notice)
-            {
-                emit print(QString("[%1]: %2").arg(sender, content), QString());
-            }
-            else
-            {
-                emit parseError(tr("Type '%1' was incorrectly parsed in PrivMsg block.").arg(type));
-            }
+			if (responseType == IRCResponseType::PrivMsg)
+			{
+				emit privMsgReceived(recipient, sender, content);
+			}
+			else if (responseType == IRCResponseType::Notice)
+			{
+				emit print(QString("[%1]: %2").arg(sender, content), QString());
+			}
+			else
+			{
+				emit parseError(tr("Type '%1' was incorrectly parsed in PrivMsg block.").arg(type));
+			}
 
-            break;
-        }
+			break;
+		}
 
-        case IRCResponseType::Quit:
-        {
-            // This is the :Quit: part of the message (??)
-            params.pop_front();
+		case IRCResponseType::Quit:
+		{
+			// This is the :Quit: part of the message (??)
+			params.pop_front();
 
-            QString farewellMessage = QString();
-            farewellMessage = joinAndTrimColonIfNecessary(params);
+			QString farewellMessage = QString();
+			farewellMessage = joinAndTrimColonIfNecessary(params);
 
-            emit userQuitsNetwork(sender, farewellMessage);
-            break;
-        }
+			emit userQuitsNetwork(sender, farewellMessage);
+			break;
+		}
 
-        case IRCResponseType::Invalid:
-        {
-            // Messages below 100 are some generic server responses to connect
-            // event.
-            if (responseType.numericType() > 1)
-            {
-                emit print(joinAndTrimColonIfNecessary(params), "");
-                return IRCResponseParseResult(responseType, true);
-            }
+		case IRCResponseType::Invalid:
+		{
+			// Messages below 100 are some generic server responses to connect
+			// event.
+			if (responseType.numericType() > 1)
+			{
+				emit print(joinAndTrimColonIfNecessary(params), "");
+				return IRCResponseParseResult(responseType, true);
+			}
 
-            return IRCResponseParseResult(responseType, false);
-        }
+			return IRCResponseParseResult(responseType, false);
+		}
 
-        default:
-            emit parseError(tr(
-                "IRCResponseParser: Type '%1' was recognized but there has been no parse code implemented for it.\
+		default:
+			emit parseError(tr(
+				"IRCResponseParser: Type '%1' was recognized but there has been no parse code implemented for it.\
 (yep, it's a bug in the application!)"
-                ).arg(type));
-            return IRCResponseParseResult(responseType, true);
+				).arg(type));
+			return IRCResponseParseResult(responseType, true);
 
 
-    }
+	}
 
-    return IRCResponseParseResult(responseType, true);
+	return IRCResponseParseResult(responseType, true);
 }
 
 void IRCResponseParser::parseUserModeMessage(const QString& channel, QString flagsString, QStringList& nicknames)

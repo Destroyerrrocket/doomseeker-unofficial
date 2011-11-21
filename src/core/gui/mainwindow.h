@@ -60,7 +60,7 @@ class QQueryMenuAction : public QAction
 		QQueryMenuAction(MasterClient* mClient, ServersStatusWidget *statusWidget, QObject* parent = NULL)
 		:QAction(parent)
 		{
-            this->pClient = mClient;
+			this->pClient = mClient;
 
 			if (mClient != NULL)
 			{
@@ -71,10 +71,10 @@ class QQueryMenuAction : public QAction
 
 		MasterClient*     masterClient()
 		{
-            return pClient;
+			return pClient;
 		}
 
-    private:
+	private:
 		MasterClient* pClient;
 };
 
@@ -250,7 +250,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	menuViewIRC();
 		void	menuWadSeeker();
 		void	quitProgram();
-        void    postInitAppStartup();
+		void    postInitAppStartup();
 		void 	refreshThreadBeginsWork();
 		void	refreshThreadEndsWork();
 		void	refreshToJoin(Server*);
@@ -267,7 +267,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void    toggleMasterClientEnabled(MasterClient* pClient);
 		void	toolBarAction(QAction* pAction);
 		void	trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
-        void    updateServerFilter(const ServerListFilterInfo& filterInfo);
+		void    updateServerFilter(const ServerListFilterInfo& filterInfo);
 };
 
 #endif

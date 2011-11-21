@@ -59,12 +59,12 @@ void MasterClient::emptyServerList()
 
 QString MasterClient::engineName() const
 {
-    if (plugin() == NULL)
-    {
-        return "";
-    }
+	if (plugin() == NULL)
+	{
+		return "";
+	}
 
-    return plugin()->data()->name;
+	return plugin()->data()->name;
 }
 
 bool MasterClient::hasServer(const Server* server)
