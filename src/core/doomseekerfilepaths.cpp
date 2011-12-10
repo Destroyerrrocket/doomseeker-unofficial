@@ -19,7 +19,7 @@ QString DoomseekerFilePaths::config()
 
 QString DoomseekerFilePaths::ip2cDatabase()
 {
-	return pDataPaths->programsDataDirectoryPath() + "/" + IP2C_DATABASE_FILENAME;
+	return pDataPaths->programsDataSupportDirectoryPath() + "/" + IP2C_DATABASE_FILENAME;
 }
 
 QString DoomseekerFilePaths::tempServerConfig()

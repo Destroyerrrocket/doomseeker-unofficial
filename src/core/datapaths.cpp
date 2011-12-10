@@ -25,7 +25,13 @@
 #include "strings.h"
 #include <cstdlib>
 
+#ifdef Q_OS_MAC
+const QString DataPaths::PROGRAMS_APPDATA_DIR_NAME = "Library/Preferences/Doomseeker";
+const QString DataPaths::PROGRAMS_APPDATASUPPORT_DIR_NAME = "Library/Application Support/Doomseeker";
+#else
 const QString DataPaths::PROGRAMS_APPDATA_DIR_NAME = ".doomseeker";
+const QString DataPaths::PROGRAMS_APPDATASUPPORT_DIR_NAME = "";
+#endif
 const QString DataPaths::DEMOS_DIR_NAME = "demos";
 
 DataPaths::DataPaths(bool bPortableModeOn)
@@ -33,6 +39,7 @@ DataPaths::DataPaths(bool bPortableModeOn)
 	bIsPortableModeOn = bPortableModeOn;
 
 	programsDirectoryName = PROGRAMS_APPDATA_DIR_NAME;
+	programsSupportDirectoryName = PROGRAMS_APPDATASUPPORT_DIR_NAME;
 	demosDirectoryName = PROGRAMS_APPDATA_DIR_NAME + QDir::separator() + DEMOS_DIR_NAME;
 }
 
@@ -60,6 +67,10 @@ bool DataPaths::createDirectories()
 	{
 		bAllSuccessful = false;
 	}
+	if (!programsSupportDirectoryName.isEmpty() && !tryCreateDirectory(appDataDir, programsSupportDirectoryName))
+	{
+		bAllSuccessful = false;
+	}
 
 	QDir programDirectory(programsDataDirectoryPath());
 	if (!tryCreateDirectory(programDirectory, "demos"))
@@ -79,11 +90,18 @@ QString DataPaths::demosDirectoryPath() const
 QStringList DataPaths::directoriesExist() const
 {
 	QStringList failedList;
+	QList<QDir> checkList;
 
-	QDir dataDirectory = programsDataDirectoryPath();
-	if (!dataDirectory.exists())
+	checkList << programsDataDirectoryPath();
+	if (!programsSupportDirectoryName.isEmpty())
+		checkList << programsDataSupportDirectoryPath();
+
+	foreach(const QDir &dataDirectory, checkList)
 	{
-		failedList.append(dataDirectory.absolutePath());
+		if (!dataDirectory.exists())
+		{
+			failedList.append(dataDirectory.absolutePath());
+		}
 	}
 
 	return failedList;
@@ -134,6 +152,15 @@ QString DataPaths::programsDataDirectoryPath() const
 {
 	QString appDataDir = systemAppDataDirectory(programsDirectoryName);
 	return appDataDir;
+}
+
+QString DataPaths::programsDataSupportDirectoryPath() const
+{
+	if (bIsPortableModeOn || programsSupportDirectoryName.isEmpty())
+		return programsDataDirectoryPath();
+
+	QString appSupportDataDir = systemAppDataDirectory(programsSupportDirectoryName);
+	return appSupportDataDir;
 }
 
 QString DataPaths::systemAppDataDirectory(QString append) const

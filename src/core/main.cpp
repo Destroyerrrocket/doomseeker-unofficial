@@ -373,7 +373,7 @@ bool Main::initDataDirectories()
 
 	// I think this directory should take priority, if user, for example,
 	// wants to update the ip2country file.
-	dataDirectories << dataPaths->programsDataDirectoryPath();
+	dataDirectories << dataPaths->programsDataSupportDirectoryPath();
 	dataDirectories << Main::workingDirectory;
 
 	// Continue with standard dirs:
@@ -394,9 +394,6 @@ bool Main::initDataDirectories()
 
 int Main::initIP2C()
 {
-	const QString IP2C_FILENAME = "data:IpToCountry.csv";
-	const QUrl IP2C_URL = QUrl();
-
 	gLog << tr("Initializing IP2C database.");
 	ip2c = new IP2C();
 

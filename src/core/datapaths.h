@@ -47,6 +47,7 @@ class MAIN_EXPORT DataPaths
 		};
 	
 		static const QString	PROGRAMS_APPDATA_DIR_NAME;
+		static const QString    PROGRAMS_APPDATASUPPORT_DIR_NAME;
 		static const QString	DEMOS_DIR_NAME;
 		
 		/**
@@ -104,6 +105,13 @@ class MAIN_EXPORT DataPaths
 		 *	appending string contained in programsDirectoryName member.
 		 */
 		QString					programsDataDirectoryPath() const;
+
+		/**
+		 *  @brief Allows switching from Preferences to Application Support on OS X.
+		 *
+		 *  Same as programsDataDirectoryPath() on other systems or in portable mode.
+		 */
+		QString					programsDataSupportDirectoryPath() const;
 		
 		bool					isPortableModeOn() const { return bIsPortableModeOn; }
 		
@@ -147,6 +155,7 @@ class MAIN_EXPORT DataPaths
 		 *	@brief Defaults to PROGRAMS_APPDATA_DIR_NAME.
 		 */
 		QString					programsDirectoryName;
+		QString					programsSupportDirectoryName;
 		QString					demosDirectoryName;
 		
 		/**
