@@ -46,6 +46,7 @@ class StandardServerConsole : public QMainWindow
 
 	private slots:
 		void	errorDataReady();
+		void	finish(int exitCode, QProcess::ExitStatus exitStatus);
 		void	outputDataReady();
 		void	writeToStandardInput(const QString &message);
 

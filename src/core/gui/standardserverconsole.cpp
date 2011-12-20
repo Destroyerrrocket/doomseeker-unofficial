@@ -23,6 +23,8 @@
 #include "standardserverconsole.h"
 #include "serverapi/server.h"
 
+#include <QMessageBox>
+
 StandardServerConsole::StandardServerConsole(const Server *server, const QString &program, const QStringList &arguments)
 {
 	// Have the console delete itself
@@ -46,6 +48,7 @@ StandardServerConsole::StandardServerConsole(const Server *server, const QString
 		connect(console, SIGNAL(messageSent(const QString &)), this, SLOT(writeToStandardInput(const QString &)));
 		connect(process, SIGNAL(readyReadStandardError()), this, SLOT(errorDataReady()));
 		connect(process, SIGNAL(readyReadStandardOutput()), this, SLOT(outputDataReady()));
+		connect(process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(finish(int, QProcess::ExitStatus)));
 	}
 	else // Didn't start get rid of this console.
 		close();
@@ -61,6 +64,14 @@ StandardServerConsole::~StandardServerConsole()
 void StandardServerConsole::errorDataReady()
 {
 	console->appendMessage(QString(process->readAllStandardError()));
+}
+
+void StandardServerConsole::finish(int exitCode, QProcess::ExitStatus exitStatus)
+{
+	if(exitStatus == QProcess::CrashExit)
+		QMessageBox::critical(this, "Server crash", QString("The server terminated unexpectedly with exit code: %1").arg(exitCode));
+
+	close();
 }
 
 void StandardServerConsole::outputDataReady()
