@@ -113,13 +113,19 @@ int MasterClient::numPlayers() const
 
 bool MasterClient::preparePacketCache(bool write)
 {
-	if(cache == NULL)
+	if(cache == NULL || cache->isWritable() != write)
 	{
 		if(plugin() == NULL)
 			return false;
 
-		QString cacheFile(Main::dataPaths->programsDataDirectoryPath() + "/" + QString(plugin()->data()->name).replace(' ', ""));
-		cache = new QFile(cacheFile);
+		if(cache == NULL)
+		{
+			QString cacheFile(Main::dataPaths->programsDataDirectoryPath() + "/" + QString(plugin()->data()->name).replace(' ', ""));
+			cache = new QFile(cacheFile);
+		}
+		else
+			cache->close();
+
 		if(!cache->open(write ? QIODevice::WriteOnly|QIODevice::Truncate : QIODevice::ReadOnly))
 		{
 			resetPacketCaching();
@@ -137,6 +143,19 @@ void MasterClient::pushPacketToCache(QByteArray &data)
 	QDataStream strm(cache);
 	strm << static_cast<quint16>(data.size());
 	strm << data;
+}
+
+bool MasterClient::readMasterResponse(QHostAddress& address, unsigned short port, QByteArray &data)
+{
+	if (isAddressDataCorrect(address, port))
+	{
+		pushPacketToCache(data);
+		if(readMasterResponse(data))
+			return true;
+		return false;
+	}
+
+	return false;
 }
 
 void MasterClient::readPacketCache()
@@ -172,6 +191,7 @@ void MasterClient::refresh()
 {
 	bTimeouted = false;
 	emptyServerList();
+	resetPacketCaching();
 
 	if(address.isNull())
 		return;

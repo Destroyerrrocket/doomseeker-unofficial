@@ -24,17 +24,17 @@
 #ifndef __MASTERSERVER_H__
 #define __MASTERSERVER_H__
 
-#include <QFile>
 #include <QObject>
 #include <QHostAddress>
 #include <QList>
-#include <QUdpSocket>
 
 #include "global.h"
 
 class Message;
 class EnginePlugin;
 class Server;
+class QFile;
+class QUdpSocket;
 
 /**
  * Abstract class base for all MasterClients.  This is expected to fetch a list
@@ -112,21 +112,7 @@ class MAIN_EXPORT MasterClient : public QObject
 		 *
 		 *	Reimplemented by MasterManager.
 		 */
-		virtual bool			readMasterResponse(QHostAddress& address, unsigned short port, QByteArray &data)
-		{
-			if (isAddressDataCorrect(address, port))
-			{
-				pushPacketToCache(data);
-				if(readMasterResponse(data))
-				{
-					resetPacketCaching();
-					return true;
-				}
-				return false;
-			}
-
-			return false;
-		}
+		virtual bool			readMasterResponse(QHostAddress& address, unsigned short port, QByteArray &data);
 
 		QList<Server*>			&serverList() { return servers; }
 		const QList<Server*>	&serverList() const { return servers; }
