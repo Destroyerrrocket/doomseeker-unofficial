@@ -205,7 +205,7 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->bUseTrayIcon = false;
 	this->connectPassword = "";
 	this->customServersColor = "#ffaa00";
-	this->ip2CountryDatabaseMaximumAge = 10;
+	this->ip2CountryDatabaseMaximumAge = 60;
 	this->ip2CountryUrl = "http://software77.net/geo-ip?DL=1";
 	this->mainWindowState = "";
 	this->mainWindowHeight = 0xffff;
