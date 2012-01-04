@@ -24,8 +24,7 @@
 #include <cstdio>
 #include <cmath>
 
-#include "sdeapi/scanner.hpp"
-#include "sdeapi/config.hpp"
+#include "scanner.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -340,7 +339,7 @@ bool Scanner::nextToken(bool autoExpandState)
 		}
 		else if(nextState.token == TK_StringConst)
 		{
-			nextState.str = Config::unescape(nextState.str);
+			nextState.str = unescape(nextState.str);
 		}
 		if(autoExpandState)
 			expandState();
@@ -349,4 +348,30 @@ bool Scanner::nextToken(bool autoExpandState)
 	}
 	checkForWhitespace();
 	return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// NOTE: Be sure that '\\' is the first thing in the array otherwise it will re-escape.
+static char escapeCharacters[] = {'\\', '"', 0};
+const QString& Scanner::escape(QString &str)
+{
+	for(unsigned int i = 0;escapeCharacters[i] != 0;i++)
+	{
+		// += 2 because we'll be inserting 1 character.
+		for(int p = 0;p < str.length() && (p = str.indexOf(escapeCharacters[i], p)) != -1;p += 2)
+		{
+			str.insert(p, '\\');
+		}
+	}
+	return str;
+}
+const QString& Scanner::unescape(QString &str)
+{
+	for(unsigned int i = 0;escapeCharacters[i] != 0;i++)
+	{
+		QString sequence = "\\" + QString(escapeCharacters[i]);
+		for(int p = 0;p < str.length() && (p = str.indexOf(sequence, p)) != -1;p++)
+			str.replace(str.indexOf(sequence, p), 2, escapeCharacters[i]);
+	}
+	return str;
 }

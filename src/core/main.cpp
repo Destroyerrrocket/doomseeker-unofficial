@@ -42,7 +42,6 @@
 #include "log.h"
 #include "main.h"
 #include "plugins/engineplugin.h"
-#include "sdeapi/config.hpp"
 #include "serverapi/server.h"
 #include "strings.h"
 #include "tests/testruns.h"
@@ -147,7 +146,6 @@ int Main::run()
 
 	int ip2cReturn = initIP2C();
 
-	convertCfgToIni();
 	convertOldIniToQSettingsIni();
 	initMainConfig();
 	initPluginConfig();
@@ -197,73 +195,6 @@ int Main::runTestMode()
 	gLog << "==== Done.          ====";
 
 	return testCore.numTestsFailed();
-}
-
-void Main::convertCfgToIni()
-{
-	// Check to see if an old config exists
-	QString configFile = Main::dataPaths->programsDataDirectoryPath() + "/" + DOOMSEEKER_CONFIG_FILENAME;
-	if(!QFileInfo(configFile).exists())
-		return;
-
-	gLog << "Converting old configuration file.";
-
-	const unsigned int NUM_SECTIONS = 7;
-	static const char* const sectionNames[7] =
-	{
-		"Doomseeker",
-		"Wadseeker",
-		"Chocolate Doom",
-		"Odamex",
-		"Skulltag",
-		"Vavoom",
-		"ZDaemon"
-	};
-	IniSection sections[7];
-
-	Config oldConfig;
-	// This method will only execute it's behavior if there is anything to
-	// salvage and nothing to overwrite.
-	preserveOldConfigBackwardsCompatibility();
-	oldConfig.locateConfigFile(DOOMSEEKER_CONFIG_FILENAME);
-
-	QString configDirPath = dataPaths->programsDataDirectoryPath();
-	QString iniFilePath = configDirPath + "/" + DOOMSEEKER_INI_FILENAME;
-
-	Ini ini(iniFilePath);
-
-	for(unsigned short i = 0;i < NUM_SECTIONS;i++)
-	{
-		sections[i] = ini.createSection(sectionNames[i]);
-	}
-
-	const QHash<QString, SettingsData *> settings = oldConfig.getSettings();
-	QHashIterator<QString, SettingsData *> iter(settings);
-	while(iter.hasNext())
-	{
-		iter.next();
-
-		IniSection section = sections[0];
-		QString key = iter.key();
-		for(unsigned short i = 1;i < NUM_SECTIONS;i++)
-		{
-			if(key.startsWith(sectionNames[i]))
-			{
-				section = sections[i];
-				key = key.right(key.length() - strlen(sectionNames[i]));
-				break;
-			}
-		}
-		if(iter.value()->type() == SettingsData::ST_STR)
-			section.createSetting(key, iter.value()->string());
-		else
-			section.createSetting(key, iter.value()->integer());
-	}
-
-	oldConfig.remove();
-
-	// Allow Doomseeker to re-create following settings from scratch:
-	ini.deleteSetting("Doomseeker", "CustomServersColor");
 }
 
 void Main::convertOldIniToQSettingsIni()

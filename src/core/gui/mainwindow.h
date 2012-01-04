@@ -34,7 +34,6 @@
 #include "ip2c/ip2cparser.h"
 #include "ip2c/ip2cupdater.h"
 #include "masterserver/mastermanager.h"
-#include "sdeapi/config.hpp"
 #include "plugins/pluginloader.h"
 #include "apprunner.h"
 

@@ -148,7 +148,6 @@ set(DOOMSEEKER_QT_FILES
 	masterserver/masterclient.h
 	masterserver/masterclientsignalproxy.h
 	masterserver/mastermanager.h
-	sdeapi/config.hpp
 	serverapi/message.h
 	serverapi/rconprotocol.h
 	serverapi/server.h
@@ -255,8 +254,6 @@ set(SOURCE_FILES
 	masterserver/mastermanager.cpp	
 	plugins/engineplugin.cpp
 	plugins/pluginloader.cpp
-	sdeapi/config.cpp
-	sdeapi/scanner.cpp
 	serverapi/tooltips/gameinfotip.cpp
 	serverapi/tooltips/generalinfotip.cpp
 	serverapi/tooltips/playertable.cpp
@@ -284,6 +281,7 @@ set(SOURCE_FILES
 	pathfinder.cpp
 	random.cpp
 	refresher.cpp
+	scanner.cpp
 	speedcalculator.cpp
 	strings.cpp
 	version.cpp
@@ -327,7 +325,6 @@ set(HEADER_FILES
 	irc/ircuserlist.h
 	plugins/engineplugin.h
 	plugins/pluginloader.h
-	sdeapi/scanner.hpp
 	serverapi/tooltips/gameinfotip.h
 	serverapi/tooltips/generalinfotip.h
 	serverapi/tooltips/playertable.h
@@ -352,6 +349,7 @@ set(HEADER_FILES
 	random.h
 	pathfinder.h
 	qtmetapointer.h
+	scanner.h
 	speedcalculator.h
 	strings.h
 	version.h

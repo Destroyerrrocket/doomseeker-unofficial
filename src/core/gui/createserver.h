@@ -137,7 +137,6 @@ class MAIN_EXPORT CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		void	initRules();
 
 		bool	loadConfig(const QString& filename);
-		bool	loadOldConfig(const QString& filename);
 		void	removeDMFlagsTabs();
 		void	removeLimitWidgets();
 		void	runGame(bool offline);

@@ -45,7 +45,7 @@ QString Version::userAgent()
 
 QString Version::version()
 {
-	return "0.8 Beta";
+	return "0.9 Beta";
 }
 
 QString Version::versionRevision()

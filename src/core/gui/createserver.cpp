@@ -27,7 +27,6 @@
 #include "commonGUI.h"
 #include "ini/ini.h"
 #include "plugins/engineplugin.h"
-#include "sdeapi/config.hpp"
 #include "serverapi/binaries.h"
 #include "serverapi/gamerunner.h"
 #include "serverapi/message.h"
@@ -267,17 +266,14 @@ void CreateServerDlg::btnIwadBrowseClicked()
 void CreateServerDlg::btnLoadClicked()
 {
 	QString dialogDir = gConfig.doomseeker.previousCreateServerConfigDir;
-	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - load server config"), dialogDir, tr("Config files (*.ini *.cfg)"));
+	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - load server config"), dialogDir, tr("Config files (*.ini)"));
 
 	if (!strFile.isEmpty())
 	{
 		QFileInfo fi(strFile);
 		gConfig.doomseeker.previousCreateServerConfigDir = fi.absolutePath();
 
-		if (fi.suffix().compare("cfg", Qt::CaseInsensitive) == 0)
-			loadOldConfig(strFile);
-		else
-			loadConfig(strFile);
+		loadConfig(strFile);
 	}
 }
 
@@ -861,112 +857,6 @@ bool CreateServerDlg::loadConfig(const QString& filename)
 
 	// Custom parameters
 	pteCustomParameters->document()->setPlainText(misc["CustomParams"]);
-	return true;
-}
-// NOTE: Remove for 0.9
-bool CreateServerDlg::loadOldConfig(const QString& filename)
-{
-	QAbstractItemModel* model;
-	QStringList stringList;
-	Config cfg(filename);
-
-	// General
-	if(!bIsServerSetup)
-	{
-		QString engineName = cfg.setting("engine")->string();
-		const EnginePlugin* prevEngine = currentEngine;
-		if(!setEngine(engineName))
-			return false;
-
-		bool bChangeExecutable = (prevEngine != currentEngine || !cbLockExecutable->isChecked());
-
-		// First let's check if we can use executable stored in the server's config.
-		// We will save the path to this executable in a local variable.
-		QString executablePath = "";
-		if (bChangeExecutable)
-		{
-			executablePath = cfg.setting("executable")->string();
-			QFileInfo fileInfo(executablePath);
-			if (!fileInfo.exists())
-			{
-				// Executable cannot be found, display error message and reset
-				// the local variable.
-				QMessageBox::warning(NULL, tr("Doomseeker - load server config"), tr("Game executable saved in config cannot be found.\nDefault executable will be used."));
-				executablePath = "";
-			}
-		}
-
-		// If we successfuly retrieved path from the config we shall
-		// set this path in the line edit control.
-		if (!executablePath.isEmpty())
-		{
-			leExecutable->setText(executablePath);
-		}
-	}
-
-	leServername->setText(cfg.setting("name")->string());
-	spinPort->setValue(cfg.setting("port")->integer());
-	cboGamemode->setCurrentIndex(cfg.setting("gamemode")->integer());
-	leMap->setText(cfg.setting("map")->string());
-	addIwad(cfg.setting("iwad")->string());
-
-	stringList = cfg.setting("pwads")->string().split(";");
-	model = lstAdditionalFiles->model();
-	model->removeRows(0, model->rowCount());
-	foreach (QString s, stringList)
-	{
-		addWadPath(s);
-	}
-
-	cbBroadcastToLAN->setChecked(cfg.setting("broadcastToLAN")->boolean());
-	cbBroadcastToMaster->setChecked(cfg.setting("broadcastToMaster")->boolean());
-
-	// Rules
-	cboDifficulty->setCurrentIndex(cfg.setting("difficulty")->integer());
-	cboModifier->setCurrentIndex(cfg.setting("modifier")->integer());
-	spinMaxClients->setValue(cfg.setting("maxClients")->integer());
-	spinMaxPlayers->setValue(cfg.setting("maxPlayers")->integer());
-
-	QList<GameLimitWidget*>::iterator it;
-	for (it = limitWidgets.begin(); it != limitWidgets.end(); ++it)
-	{
-		(*it)->spinBox->setValue(cfg.setting((*it)->limit.consoleCommand)->integer());
-	}
-
-	stringList = cfg.setting("maplist")->string().split(";");
-	model = lstMaplist->model();
-	model->removeRows(0, model->rowCount());
-	foreach(QString s, stringList)
-	{
-		addMapToMaplist(s);
-	}
-	cbRandomMapRotation->setChecked(cfg.setting("randomMapRotation")->boolean());
-
-	// Misc.
-	leURL->setText(cfg.setting("URL")->string());
-	leEmail->setText(cfg.setting("eMail")->string());
-	leConnectPassword->setText(cfg.setting("connectPassword")->string());
-	leJoinPassword->setText(cfg.setting("joinPassword")->string());
-	leRConPassword->setText(cfg.setting("RConPassword")->string());
-	pteMOTD->document()->setPlainText(cfg.setting("MOTD")->string());
-
-	// DMFlags
-	foreach(DMFlagsTabWidget* p, dmFlagsTabs)
-	{
-		for (int i = 0; i < p->section->flags.count(); ++i)
-		{
-			QRegExp re("[^a-zA-Z]");
-			QString name1 = p->section->name;
-			QString name2 = p->section->flags[i].name;
-			name1 = name1.remove(re);
-			name2 = name2.remove(re);
-			bool b = cfg.setting(name1 + name2)->boolean();
-			p->checkBoxes[i]->setChecked(b);
-		}
-	}
-
-	// Custom parameters
-	pteCustomParameters->document()->setPlainText(cfg.setting("CustomParams")->string());
 	return true;
 }
 

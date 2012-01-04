@@ -24,7 +24,7 @@
 
 #include "global.h"
 #include "log.h"
-#include "sdeapi/scanner.hpp"
+#include "scanner.h"
 #include <QFile>
 #include <QMap>
 #include <QMutexLocker>

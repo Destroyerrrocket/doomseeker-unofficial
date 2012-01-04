@@ -4,7 +4,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "buddyinfo.h"
-#include "sdeapi/scanner.hpp"
+#include "scanner.h"
 #include "strings.h"
 
 QString BuddyInfo::createConfigEntry(const QVector<BuddyInfo>& buddies)

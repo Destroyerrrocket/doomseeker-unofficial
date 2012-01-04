@@ -75,6 +75,9 @@ class MAIN_EXPORT Scanner
 		 */
 		bool		tokensLeft() { return scanPos < length; }
 
+		static const QString& escape(QString &str);
+		static const QString& unescape(QString &str);
+
 		QString			str;
 		unsigned int	number;
 		double			decimal;

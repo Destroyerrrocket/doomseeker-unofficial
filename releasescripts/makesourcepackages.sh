@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Get the version number
-version_info=`grep --only-matching -E '[0-9.]{3,}|Beta|Alpha' ../src/version.h`
+version_info=`grep --only-matching -E '[0-9.]{3,}|Beta|Alpha' ../src/core/version.cpp`
 ws_version=`grep -E 'return "[0-9.]+"' ../src/wadseeker/wadseekerversioninfo.cpp | grep --only-matching -E '[0-9.]{3,}|Beta|Alpha'`
 version="0.0"
 tag=""

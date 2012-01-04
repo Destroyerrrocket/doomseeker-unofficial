@@ -23,7 +23,6 @@
 #include "dockBuddiesList.h"
 #include "configuration/doomseekerconfig.h"
 #include "masterserver/masterclient.h"
-#include "sdeapi/scanner.hpp"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
 #include "main.h"
