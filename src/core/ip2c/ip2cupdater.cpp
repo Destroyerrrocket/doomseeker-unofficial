@@ -23,6 +23,7 @@
 #include "ip2cupdater.h"
 
 #include <QDateTime>
+#include <QDebug>
 #include <QDir>
 #include <QFileInfo>
 #include <QTemporaryFile>
@@ -34,14 +35,21 @@
 IP2CUpdater::IP2CUpdater()
 {
 	pCurrentNetworkReply = NULL;
+	pNetworkAccessManager = new FixedNetworkAccessManager();
 }
 
 IP2CUpdater::~IP2CUpdater()
 {
 	if (pCurrentNetworkReply != NULL)
 	{
+		pCurrentNetworkReply->disconnect();
 		pCurrentNetworkReply->abort();
 		pCurrentNetworkReply->deleteLater();
+	}
+	
+	if (pNetworkAccessManager != NULL)
+	{
+		pNetworkAccessManager->deleteLater();
 	}
 }
 
@@ -51,9 +59,10 @@ void IP2CUpdater::downloadDatabase(const QUrl& netLocation)
 
 	QNetworkRequest request;
 	request.setUrl(netLocation);
+	qDebug() << netLocation;
 	request.setRawHeader("User-Agent", Version::userAgent().toAscii());
 
-	pCurrentNetworkReply = networkAccessManager.get(request);
+	pCurrentNetworkReply = pNetworkAccessManager->get(request);
 	this->connect(pCurrentNetworkReply, SIGNAL(	downloadProgress(qint64, qint64) ),
 				SIGNAL( downloadProgress(qint64, qint64) ) );
 	this->connect(pCurrentNetworkReply, SIGNAL(	finished() ),
