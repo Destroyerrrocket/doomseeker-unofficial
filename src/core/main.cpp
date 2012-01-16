@@ -119,6 +119,10 @@ int Main::run()
 	}
 
 	application = new QApplication(argumentsCount, arguments);
+#ifdef Q_OS_MAC
+	// In Mac OS X it is abnormal to have menu icons unless it's a shortcut to a file of some kind.
+	application->setAttribute(Qt::AA_DontShowIconsInMenus);
+#endif
 
 	gLog << "Starting Doomseeker. Hello World! :)";
 	gLog << "Setting up data directories.";
