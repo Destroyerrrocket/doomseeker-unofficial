@@ -28,22 +28,36 @@ mkdir Doomseeker/Doomseeker.app/Contents/Resources
 # Build
 mkdir Doomseeker/build
 cd Doomseeker/build
-cmake ../../.. -DMAC_ARCH_UNIVERSAL=ON -DMAC_SDK_10.4=ON -DCMAKE_BUILD_TYPE=Release
+cmake ../../.. -DMAC_ARCH_UNIVERSAL=ON -DMAC_SDK_10.4=ON -DCMAKE_BUILD_TYPE=Release $@
 make -j 2
 cd ..
 
+# Detect Qt installation
+QTCORE_STRING=`otool -L build/doomseeker | grep QtCore.framework`
+QTPATH=`echo $QTCORE_STRING | sed 's,QtCore.framework.*,,'`
+QTNTPATH=$QTPATH
+QTPLPATH=${QTPATH}../
+if [ -z "$QTPATH" ]
+then
+	QTPATH=/Library/Frameworks/
+	QTPLPATH=/Developer/Applications/Qt/
+fi
+echo "Qt Located: $QTPATH"
+echo "Qt Plugins: $QTPLPATH"
+echo
+
 cp {build/,Doomseeker.app/Contents/MacOS/}doomseeker
 cp {build/,Doomseeker.app/Contents/Frameworks/}libwadseeker.dylib
-cp -R {/Library/Frameworks/,Doomseeker.app/Contents/Frameworks/}QtCore.framework
-cp -R {/Library/Frameworks/,Doomseeker.app/Contents/Frameworks/}QtGui.framework
-cp -R {/Library/Frameworks/,Doomseeker.app/Contents/Frameworks/}QtNetwork.framework
-cp -R {/Developer/Applications/Qt/,Doomseeker.app/Contents/}plugins
+cp -R {${QTPATH},Doomseeker.app/Contents/Frameworks/}QtCore.framework
+cp -R {${QTPATH},Doomseeker.app/Contents/Frameworks/}QtGui.framework
+cp -R {${QTPATH},Doomseeker.app/Contents/Frameworks/}QtNetwork.framework
+cp -R {${QTPLPATH},Doomseeker.app/Contents/}plugins
 cp -R {build/,Doomseeker.app/Contents/MacOS/}engines
 cp {../../media/,Doomseeker.app/Contents/}Info.plist
 cp {../../media/,Doomseeker.app/Contents/Resources/}icon-osx.icns
 cp {../../media/,Doomseeker.app/Contents/Resources/}qt.conf
-rm -r Doomseeker.app/Contents/Frameworks/{QtCore,QtGui,QtNetwork}.framework/{*_debug.dSYM,Versions/4/Headers}
-rm Doomseeker.app/Contents/Frameworks/{QtCore,QtGui,QtNetwork}.framework/{Versions/4/,}*_debug*
+rm -rf Doomseeker.app/Contents/Frameworks/{QtCore,QtGui,QtNetwork}.framework/{*_debug.dSYM,Versions/4/Headers}
+rm -f Doomseeker.app/Contents/Frameworks/{QtCore,QtGui,QtNetwork}.framework/{Versions/4/,}*_debug*
 
 QTPLUGINS_LIST=''
 for i in `ls Doomseeker.app/Contents/plugins`
@@ -65,10 +79,10 @@ done
 for i in QtCore QtGui QtNetwork
 do
 	install_name_tool -id {@executable_path/../,Doomseeker.app/Contents/}Frameworks/${i}.framework/Versions/4/$i
-	install_name_tool -change {,@executable_path/../Frameworks/}QtCore.framework/Versions/4/QtCore Doomseeker.app/Contents/Frameworks/${i}.framework/Versions/4/$i
+	install_name_tool -change {${QTNTPATH},@executable_path/../Frameworks/}QtCore.framework/Versions/4/QtCore Doomseeker.app/Contents/Frameworks/${i}.framework/Versions/4/$i
 	for j in $RELINK_LIST
 	do
-		install_name_tool -change {,@executable_path/../Frameworks/}${i}.framework/Versions/4/$i $j
+		install_name_tool -change {${QTNTPATH},@executable_path/../Frameworks/}${i}.framework/Versions/4/$i $j
 	done
 done
 
