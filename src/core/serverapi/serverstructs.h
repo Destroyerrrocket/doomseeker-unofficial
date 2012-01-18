@@ -28,6 +28,8 @@
 
 #include "global.h"
 
+/*! \file serverstructs.h */
+
 class MAIN_EXPORT DMFlag
 {
 	public:
@@ -50,7 +52,7 @@ class MAIN_EXPORT DMFlagsSection
 		QList<DMFlag>	flags;
 };
 
-/**
+/*! /typedef QList<DMFlagsSection*> DMFlags
  *	List used by Server class' virtual method to return all flags sections.
  */
 typedef QList<DMFlagsSection*> 							DMFlags;
