@@ -24,6 +24,7 @@
 #include "pathfinder.h"
 #include "main.h"
 #include "log.h"
+#include "strings.h"
 #include <QDir>
 #include <QFileInfo>
 #include <cstdlib>
@@ -49,10 +50,10 @@ QString PathFinder::findFile(const QString& fileName) const
 	#ifdef Q_OS_WIN32
 	for (int i = 0; i < pathList.count(); ++i)
 	{
-		QFileInfo file(pathList[i] + QDir::separator() + fileName);
+		QFileInfo file(Strings::combinePaths(pathList[i], fileName));
 		if (file.exists() && file.isFile())
 		{
-			return file.canonicalFilePath();
+			return file.absoluteFilePath();
 		}
 	}
 	#else
@@ -68,7 +69,7 @@ QString PathFinder::findFile(const QString& fileName) const
 			QString tmpName = fiList[j].fileName();
 			if (tmpName.compare(fileName, Qt::CaseInsensitive) == 0)
 			{
-				return fiList[j].canonicalFilePath();
+				return fiList[j].absoluteFilePath();
 			}
 		}
 	}
