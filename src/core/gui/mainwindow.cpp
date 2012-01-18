@@ -388,7 +388,7 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 
 		IniSection pluginConfig = gConfig.iniSectionForPlugin(name);
 
-		if (!pluginConfig.retrieveSetting("Query").isNull())
+		if (!pluginConfig.retrieveSetting("Query").value().isNull())
 		{
 			bool enabled = pluginConfig["Query"];
 			setQueryMasterServerEnabled(pMasterClient, enabled);

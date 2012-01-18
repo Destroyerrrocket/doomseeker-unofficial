@@ -112,7 +112,7 @@ class IP2CUpdater : public QObject
 		void				downloadProgress(qint64 value, qint64 max);
 
 	private:
-		FixedNetworkAccessManager networkAccessManager;
+		FixedNetworkAccessManager* pNetworkAccessManager;
 		QNetworkReply* pCurrentNetworkReply;
 
 		/**
