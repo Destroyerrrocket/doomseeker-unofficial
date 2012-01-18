@@ -67,15 +67,17 @@ QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, 
 
 	if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
 	{
+		// Remember: if the file doesn't exist
+		// canonicalFilePath() will return an empty string!
 		error = tr("Executable for %1 %2:\n%3\nis a directory or doesn't exist.")
 					.arg(plugin()->data()->name)
 					.arg(binaryNames[binaryType])
-					.arg(fi.canonicalFilePath());
+					.arg(fi.absoluteFilePath());
 		message = Message::customError(error);
 		return QString();
 	}
 
-	return fi.canonicalFilePath();
+	return fi.absoluteFilePath();
 }
 
 QString Binaries::offlineGameWorkingDirectory(Message& message) const
