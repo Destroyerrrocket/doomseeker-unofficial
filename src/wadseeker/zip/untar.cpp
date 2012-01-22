@@ -90,7 +90,7 @@ void UnTar::scanTarFile()
 		file.filename = QString::fromAscii(buffer, qMin(static_cast<int>(strlen(buffer)), 100));
 		if(file.filename.isEmpty())
 			break;
-		file.size = QString(&buffer[124]).toUInt(&valid, 8);
+		file.size = QString(&buffer[124]).left(12).toUInt(&valid, 8);
 		file.offset = offset;
 		// Tar files are aligned along 512 blocks
 		offset += 512 + file.size + (file.size%512 != 0 ? 512-(file.size%512) : 0);
