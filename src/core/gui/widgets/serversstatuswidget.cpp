@@ -54,8 +54,14 @@ ServersStatusWidget::ServersStatusWidget(const QPixmap &icon, MasterClient *serv
 
 	iconDisabled = QPixmap::fromImage(iconImage);
 
+	// Have an inset frame unless we're on the Mac
+#ifndef Q_OS_MAC
 	setFrameShape(QFrame::Panel);
 	setFrameShadow(QFrame::Sunken);
+#else
+	setFrameShape(QFrame::NoFrame);
+#endif
+
 	setFixedHeight(22);
 	setToolTip(tr("Players-Bots Servers"));
 

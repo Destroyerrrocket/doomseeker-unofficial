@@ -65,27 +65,27 @@ class MAIN_EXPORT EnginePlugin
 		*/
 		enum InitFeatures
 		{
-			EP_Done,
+			EP_Done, ///< Signals the end of init parameters.
 
-			EP_Author, // (const char*)
-			EP_Version, // (unsigned int)
+			EP_Author, ///< (const char*) Author of the plugin.
+			EP_Version, ///< (unsigned int) Single version number for plugin.
 
-			EP_AllDMFlags, // (const DMFlags*)
-			EP_AllowsConnectPassword,
-			EP_AllowsEmail,
-			EP_AllowsURL,
-			EP_AllowsJoinPassword,
-			EP_AllowsRConPassword,
-			EP_AllowsMOTD,
-			EP_DefaultMaster, // (const char*)
-			EP_DefaultServerPort, // (quint16)
-			EP_GameModes, // (const QList<GameMode>*)
-			EP_GameModifiers, // (const QList<GameCVar>*)
-			EP_HasMasterServer,
-			EP_InGameFileDownloads,
-			EP_IRCChannel, // (const char*)server, (const char*)channel - Can be repeated
-			EP_SupportsRandomMapRotation,
-			EP_RefreshThreshold // (quint8)
+			EP_AllDMFlags, ///< (const DMFlags*) Array of DMFlags objects.
+			EP_AllowsConnectPassword, ///< Signifies that servers can be created with a connection password.
+			EP_AllowsEmail, ///< Signifies that servers can have an administrative contact email attached.
+			EP_AllowsURL, ///< Signifies that servers can provide a URL for potential wad downloads.
+			EP_AllowsJoinPassword, ///< Signifies that servers can be created with a join password.
+			EP_AllowsRConPassword, ///< Signifies that servers can be created for remote console access.
+			EP_AllowsMOTD, ///< Signifies that servers can have a message of the day.
+			EP_DefaultMaster, ///< (const char*) Default ip address and port ("address:port") for master server.  Requires EP_HasMasterServer.
+			EP_DefaultServerPort, ///< (quint16) Default port for custom server creation.
+			EP_GameModes, ///< (const QList&lt;GameMode&gt;*) List of all possible game modes supported.
+			EP_GameModifiers, ///< (const QList&lt;GameCVar&gt;*) List of potential game modifiers.
+			EP_HasMasterServer, ///< Signifies that the plugin implements a master server protocol.
+			EP_InGameFileDownloads, ///< Allows the player to join a server without downloading files through Wadseeker.
+			EP_IRCChannel, ///< (const char*)server, (const char*)channel - Can be repeated. Default IRC channels.
+			EP_SupportsRandomMapRotation, ///< Signifies that a server can be created with a random map rotation.
+			EP_RefreshThreshold ///< (quint8) The amount of time (in seconds) that must pass before a server can be requeried.
 		};
 
 		/// Reimplement if you want to perform some ini initialization manually.
@@ -139,6 +139,15 @@ class MAIN_EXPORT EnginePlugin
 		EnginePlugin();
 		virtual ~EnginePlugin();
 
+		/**
+		 * Initializes a plugin based on a feature set passed in. A name for
+		 * the plugin and its icon (in XPM format) must be provided. The list
+		 * of features must be terminated with EP_Done.
+		 *
+		 * @see InitFeatures
+		 * @param name Name of the plugin which will be presented to the user.
+		 * @param icon XPM icon used to represent this plugin.
+		 */
 		void init(const char* name, const char* const icon[], ...);
 
 		/**
@@ -156,7 +165,9 @@ class MAIN_EXPORT EnginePlugin
 		 */
 		virtual QList<GameCVar>			limits(const GameMode& mode) const { return QList<GameCVar>(); }
 
-
+		/**
+		 * Creates an MasterClient instace for this plugin.
+		 */
 		virtual MasterClient*			masterClient() const { return NULL; }
 		/**
 		 * Fills the variables with information about the master's address.

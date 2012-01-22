@@ -67,6 +67,7 @@
 	<file alias="flags/IRL">flags/IRL.png</file> <!-- Ireland -->
 	<file alias="flags/ISR">flags/ISR.png</file> <!-- Israel -->
 	<file alias="flags/ITA">flags/ITA.png</file> <!-- Italy -->
+	<file alias="flags/JOR">flags/JOR.png</file> <!-- Jordan -->
 	<file alias="flags/JPN">flags/JPN.png</file> <!-- Japan -->
 	<file alias="flags/KAZ">flags/KAZ.png</file> <!-- Kazakhstan -->
 	<file alias="flags/KGZ">flags/KGZ.png</file> <!-- Kyrgyzstan -->
@@ -94,6 +95,8 @@
 	<file alias="flags/SVK">flags/SVK.png</file> <!-- Slovakia -->
 	<file alias="flags/SVN">flags/SVN.png</file> <!-- Slovenia (or Subversion?) -->		
 	<file alias="flags/SWE">flags/SWE.png</file> <!-- Sweden -->
+	<file alias="flags/THA">flags/THA.png</file> <!-- Thailand -->	
+	<file alias="flags/TUN">flags/TUN.png</file> <!-- Tunisia -->
 	<file alias="flags/TUR">flags/TUR.png</file> <!-- Turkey -->
 	<file alias="flags/TWN">flags/TWN.png</file> <!-- Taiwan -->
 	<file alias="flags/UKR">flags/UKR.png</file> <!-- Ukraine -->

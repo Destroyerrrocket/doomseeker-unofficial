@@ -48,7 +48,7 @@ OdamexEnginePlugin::OdamexEnginePlugin()
 
 	init("Odamex", odamex_xpm,
 		EP_Author, "The Doomseeker Team",
-		EP_Version, 7,
+		EP_Version, 8,
 
 		EP_AllowsURL,
 		EP_AllowsEmail,
@@ -59,7 +59,7 @@ OdamexEnginePlugin::OdamexEnginePlugin()
 		EP_DefaultServerPort, 10666,
 		EP_GameModes, OdamexGameInfo::gameModes(),
 		EP_HasMasterServer,
-		EP_IRCChannel, "Odamex", "irc.oftc.net", "#odamex",
+		EP_IRCChannel, "Odamex", "irc.quakenet.org", "#odamex",
 		EP_SupportsRandomMapRotation,
 		EP_InGameFileDownloads,
 		EP_Done

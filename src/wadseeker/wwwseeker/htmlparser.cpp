@@ -23,6 +23,7 @@
 #include "htmlparser.h"
 
 #include <QFileInfo>
+#include <cctype>
 
 HtmlParser::HtmlParser(const QByteArray& data)
 {
