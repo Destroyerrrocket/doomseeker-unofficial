@@ -73,7 +73,7 @@ void DoomseekerConfigurationDialog::appendWadseekerConfigurationBoxes()
 {
 	QStandardItem* wadseekerRoot = addLabel(NULL, tr("Wadseeker"));
 	wadseekerRoot->setIcon(QIcon(":/icons/download.png"));
-
+	
 	ConfigurationBaseBox* pConfigBox = NULL;
 
 	pConfigBox = new CFGWadseekerAppearance(this);
@@ -105,6 +105,7 @@ void DoomseekerConfigurationDialog::doSaveSettings()
 void DoomseekerConfigurationDialog::initOptionsList()
 {
 	enginesRoot = addLabel(NULL, tr("Engines"));
+	enginesRoot->setIcon(QIcon(":/icons/joystick.png"));
 
 	ConfigurationBaseBox* pConfigBox = NULL;
 
@@ -125,4 +126,6 @@ void DoomseekerConfigurationDialog::initOptionsList()
 	addConfigurationBox(NULL, pConfigBox);
 
 	appendWadseekerConfigurationBoxes();
+	
+	optionsTree()->expandAll();
 }

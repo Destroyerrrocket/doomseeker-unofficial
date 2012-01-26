@@ -79,6 +79,12 @@ class ConfigurationDialog : public QDialog, private Ui::ConfigurationDialog
 		virtual void					doSaveSettings() {};
 
 		bool							isConfigurationBoxInfoValid(ConfigurationBaseBox* pConfigurationBox);
+		
+		/**
+		 * @brief Returns pointer to the tree widget that contains
+		 *        configuration sections list.
+		 */
+		QTreeView*						optionsTree();
 
 		/**
 		 * 	@param widget - hide currently displayed box if NULL.

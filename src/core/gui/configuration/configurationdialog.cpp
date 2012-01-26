@@ -213,6 +213,11 @@ void ConfigurationDialog::optionListClicked(const QModelIndex& index)
 	}
 }
 
+QTreeView* ConfigurationDialog::optionsTree()
+{
+	return tvOptionsList;
+}
+
 void ConfigurationDialog::saveSettings()
 {
 	// Iterate through every engine and execute it's saving method
