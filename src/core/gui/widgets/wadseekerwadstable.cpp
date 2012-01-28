@@ -195,7 +195,7 @@ void WadseekerWadsTable::setFileSuccessful(const QString& filename)
 		item(row, IDX_NAME_COLUMN)->setIcon(QIcon(":/icons/ok.png"));
 		item(row, IDX_URL_COLUMN)->setText("");
 
-		item(row, IDX_ETA_COLUMN)->setText(tr("DONE"));
+		item(row, IDX_ETA_COLUMN)->setText(tr("Done"));
 		item(row, IDX_SPEED_COLUMN)->setText("");
 
 		const bool FORCE = true;
@@ -317,11 +317,6 @@ void WadseekerWadsTable::updateDataInfoValues(bool bForce)
 				{
 					item(i, IDX_SPEED_COLUMN)->setText(tr("N/A"));
 				}
-			}
-			else
-			{
-				QString eta = tr("Done");
-				item(i, IDX_ETA_COLUMN)->setText(eta);
 			}
 		}
 	}
