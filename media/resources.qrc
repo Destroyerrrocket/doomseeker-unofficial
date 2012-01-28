@@ -53,6 +53,7 @@
 	<file alias="flags/DEU">flags/DEU.png</file> <!-- Germany -->
 	<file alias="flags/DNK">flags/DNK.png</file> <!-- Denmark -->
 	<file alias="flags/DZA">flags/DZA.png</file> <!-- Algeria -->
+	<file alias="flags/EGY">flags/EGY.png</file> <!-- Egypt -->
 	<file alias="flags/EST">flags/EST.png</file> <!-- Estonia -->
 	<file alias="flags/ESP">flags/ESP.png</file> <!-- Spain -->
 	<file alias="flags/EU" >flags/EU.png</file>  <!-- European Union (not really a country, but included in the database) -->
@@ -78,6 +79,7 @@
 	<file alias="flags/LVA">flags/LVA.png</file> <!-- Latvia -->
 	<file alias="flags/MAR">flags/MAR.png</file> <!-- Morocco -->
 	<file alias="flags/MEX">flags/MEX.png</file> <!-- Mexico -->
+	<file alias="flags/MYS">flags/MYS.png</file> <!-- Malaysia -->
 	<file alias="flags/NGA">flags/NGA.png</file> <!-- Nigeria -->
 	<file alias="flags/NLD">flags/NLD.png</file> <!-- Netherlands -->
 	<file alias="flags/NOR">flags/NOR.png</file> <!-- Norway -->
