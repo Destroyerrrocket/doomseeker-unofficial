@@ -293,8 +293,9 @@ void WadseekerWadsTable::updateDataInfoValues(bool bForce)
 			// Update ETA and speed.
 			if (pCalculator->expectedDataSize() != pCalculator->lastRegisterAttemptedDataAmount())
 			{
-				// If both above values are equal it means we have finished
-				// the download and shouldn't change the speed display.
+				// If both above values are equal it means we have either 
+				// finished the download or didn't start it yet. In either case
+				// we shouldn't change the speed and ETA displays.
 				long double ldEta = pCalculator->estimatedTimeUntilArrival();
 				long double ldSpeed = pCalculator->getSpeed();
 
