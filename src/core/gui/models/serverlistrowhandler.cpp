@@ -60,6 +60,7 @@ void ServerListRowHandler::clearNonVitalFields()
 void ServerListRowHandler::emptyItem(QStandardItem* item)
 {
 	item->setData("", Qt::DisplayRole);
+	item->setData(QVariant(), Qt::DecorationRole);
 	item->setData(QVariant(), DTSort);
 }
 
