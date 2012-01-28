@@ -55,15 +55,16 @@ QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, 
 	IniVariable setting = config[configKey];
 
 	message = Message();
+	QString path = setting.value().toString();
 	QString error = "";
-	if (setting.value().isNull())
+	if (path.trimmed().isEmpty())
 	{
 		error = tr("No %1 executable specified for %2").arg(binaryNames[binaryType]).arg(plugin()->data()->name);
 		message = Message::customError(error);
 		return QString();
 	}
 
-	QFileInfo fi(setting);
+	QFileInfo fi(path);
 
 	if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
 	{
