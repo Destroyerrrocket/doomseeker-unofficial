@@ -284,12 +284,14 @@ void CreateServerDlg::btnPlayOfflineClicked()
 
 void CreateServerDlg::btnRemoveMapFromMaplistClicked()
 {
-	CommonGUI::removeSelectedItemsFromStandardItemView(lstMaplist);
+	const bool bSelectNextLowest = true;
+	CommonGUI::removeSelectedRowsFromStandardItemView(lstMaplist, bSelectNextLowest);
 }
 
 void CreateServerDlg::btnRemovePwadClicked()
 {
-	CommonGUI::removeSelectedItemsFromStandardItemView(lstAdditionalFiles);
+	const bool bSelectNextLowest = true;
+	CommonGUI::removeSelectedRowsFromStandardItemView(lstAdditionalFiles, bSelectNextLowest);
 }
 
 void CreateServerDlg::btnSaveClicked()

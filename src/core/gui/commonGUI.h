@@ -43,10 +43,15 @@ class CommonGUI
 		static QStringList		listViewStandardItemsToStringList(QListView* listview);
 
 		/**
-		 *	@brief Removes all selected items from a QAbstractItemView.
-		 *	@param view - QAbstractItemView from which items will be removed.
+		 * @brief Removes all selected rows from a QAbstractItemView.
+		 *
+		 * @param view 
+		 *      QAbstractItemView from which items will be removed.
+		 * @param bSelectNextItem
+		 *      If true then next lowest item on the list is selected.
+		 *      Default: false.
 		 */
-		static void 			removeSelectedItemsFromStandardItemView(QAbstractItemView* view);
+		static void 			removeSelectedRowsFromStandardItemView(QAbstractItemView* view, bool bSelectNextItem = false);
 
 		/**
 		 *	@brief Puts a list of strings into a QListView that uses

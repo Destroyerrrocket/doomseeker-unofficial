@@ -41,7 +41,7 @@ QStringList CommonGUI::listViewStandardItemsToStringList(QListView* listview)
 	return list;
 }
 
-void CommonGUI::removeSelectedItemsFromStandardItemView(QAbstractItemView* view)
+void CommonGUI::removeSelectedRowsFromStandardItemView(QAbstractItemView* view, bool bSelectNextItem)
 {
 	QItemSelectionModel* selModel = view->selectionModel();
 	QModelIndexList indexList = selModel->selectedIndexes();
@@ -49,15 +49,38 @@ void CommonGUI::removeSelectedItemsFromStandardItemView(QAbstractItemView* view)
 
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(view->model());
 	QList<QStandardItem*> itemList;
+	int lowestRemovedRow = 0;
 	for (int i = 0; i < indexList.count(); ++i)
 	{
-		itemList << model->itemFromIndex(indexList[i]);
+		const QModelIndex& index = indexList[i];
+		itemList << model->itemFromIndex(index);
+		if (index.row() > lowestRemovedRow)
+		{
+			lowestRemovedRow = index.row();
+		}		
 	}
 
 	for (int i = 0; i < itemList.count(); ++i)
 	{
 		QModelIndex index = model->indexFromItem(itemList[i]);
 		model->removeRow(index.row());
+	}
+	
+	if (bSelectNextItem && !indexList.isEmpty())
+	{
+		int selectRowIdx = lowestRemovedRow;
+		selectRowIdx -= indexList.size();
+		
+		if (selectRowIdx + 1 < model->rowCount())
+		{
+			++selectRowIdx;
+		}
+		
+		if (selectRowIdx >= 0)
+		{
+			QModelIndex newIdx = model->index(selectRowIdx, 0);
+			selModel->select(newIdx, QItemSelectionModel::ClearAndSelect);
+		}
 	}
 }
 

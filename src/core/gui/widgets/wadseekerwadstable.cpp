@@ -195,7 +195,7 @@ void WadseekerWadsTable::setFileSuccessful(const QString& filename)
 		item(row, IDX_NAME_COLUMN)->setIcon(QIcon(":/icons/ok.png"));
 		item(row, IDX_URL_COLUMN)->setText("");
 
-		item(row, IDX_ETA_COLUMN)->setText(tr("DONE"));
+		item(row, IDX_ETA_COLUMN)->setText(tr("Done"));
 		item(row, IDX_SPEED_COLUMN)->setText("");
 
 		const bool FORCE = true;
@@ -293,8 +293,9 @@ void WadseekerWadsTable::updateDataInfoValues(bool bForce)
 			// Update ETA and speed.
 			if (pCalculator->expectedDataSize() != pCalculator->lastRegisterAttemptedDataAmount())
 			{
-				// If both above values are equal it means we have finished
-				// the download and shouldn't change the speed display.
+				// If both above values are equal it means we have either 
+				// finished the download or didn't start it yet. In either case
+				// we shouldn't change the speed and ETA displays.
 				long double ldEta = pCalculator->estimatedTimeUntilArrival();
 				long double ldSpeed = pCalculator->getSpeed();
 
@@ -317,11 +318,6 @@ void WadseekerWadsTable::updateDataInfoValues(bool bForce)
 				{
 					item(i, IDX_SPEED_COLUMN)->setText(tr("N/A"));
 				}
-			}
-			else
-			{
-				QString eta = tr("Done");
-				item(i, IDX_ETA_COLUMN)->setText(eta);
 			}
 		}
 	}
