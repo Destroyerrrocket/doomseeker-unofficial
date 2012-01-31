@@ -22,15 +22,22 @@
 //------------------------------------------------------------------------------
 #include "ioutils.h"
 
-bool IOUtils::copy(QIODevice& src, QIODevice& dst, unsigned bufferSize)
+bool IOUtils::copy(QIODevice& src, QIODevice& dst, unsigned long long maxCount, unsigned bufferSize)
 {
+	if (bufferSize > maxCount)
+	{
+		bufferSize = maxCount;
+	}
+
 	QByteArray buffer = src.read(bufferSize);
-	while (!buffer.isEmpty())
+	unsigned copiedCount = 0;
+	while (!buffer.isEmpty() || copiedCount >= maxCount)
 	{
 		if (dst.write(buffer) != buffer.size())
 		{
 			return false;	
 		}
+		copiedCount += buffer.size();
 		buffer = src.read(bufferSize);
 	}
 	

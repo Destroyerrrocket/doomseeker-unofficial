@@ -24,6 +24,7 @@
 #define __IOUTILS_H__
 
 #include <QIODevice>
+#include <climits>
 
 class IOUtils
 {
@@ -34,18 +35,23 @@ class IOUtils
 		 * @b Note:
 		 * IODevices must be open before the method is called.
 		 * IODevices are not closed when copy operation finishes.
+		 * There are no seek operations performed. Data is read from src 
+		 * current position and written to dst current position.
 		 *
 		 * @param src
 		 *      Source QIODevice. Must be open for reading.
 		 * @param dst
 		 *      Target QIODevice. Must be open for writing.
+		 * @param maxCount
+		 *      Maximum number of bytes copied from src to dst.
+		 *      Default value: ULLONG_MAX
 		 * @param bufferSize
 		 *      Memory buffer size. How many bytes will be copied in one burst.
 		 *      Default value: 4MB
 		 *
 		 * @return true on success.
 		 */
-		static bool copy(QIODevice& src, QIODevice& dst, unsigned bufferSize = 4 * 1024 * 1024);
+		static bool copy(QIODevice& src, QIODevice& dst, unsigned long long maxCount = ULLONG_MAX, unsigned bufferSize = 4 * 1024 * 1024);
 };
 
 #endif

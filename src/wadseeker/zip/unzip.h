@@ -72,7 +72,7 @@ class UnZip : public UnArchive
 		 *	This method expects zipFile to be already open and it won't close it.
 		 */
 		int			readHeader(qint64 pos, ZipLocalFileHeader& zip);
-		int			uncompress(char* out, unsigned long uncompressedSize, const QByteArray& inArray);
+		int         uncompress(QIODevice& streamIn, QIODevice& streamOut, unsigned long compressedSize);
 };
 
 #endif

@@ -26,6 +26,7 @@
 #include <QBuffer>
 #include <QDebug>
 #include <QFileInfo>
+#include "ioutils.h"
 
 UnZip::UnZip(QIODevice *device) 
 : UnArchive(device)
@@ -79,58 +80,28 @@ bool UnZip::extract(int file, const QString& where)
 	if (!isValid())
 		return false;
 
-	QByteArray array;
 	ZipLocalFileHeader header;
 	stream->open(QFile::ReadOnly);
 	readHeader(file, header);
 	qint64 pos = header.headerPosition + header.howManyBytesTillData();
 	stream->seek(pos);
-
-	array = stream->read(header.compressedSize);
-	if (array.isNull())
-	{
-		stream->close();
-		return false;
-	}
-	stream->close();
-
+	
 	QFile outputFile(where);
+	outputFile.open(QFile::WriteOnly);
+	bool bOk = true;
 	if (header.compressionMethod != 0)
 	{
-		char* uncompressed = new char[header.uncompressedSize];
-		if (uncompressed == NULL)
-		{
-			return false;
-		}
-
-
-		int err = uncompress(uncompressed, header.uncompressedSize, array);
-
-		bool bRet = false;
-		switch (err)
-		{
-			case Z_OK:
-				outputFile.open(QFile::WriteOnly);
-				outputFile.write(uncompressed, header.uncompressedSize);
-				outputFile.close();
-				bRet = true;
-				break;
-
-			case Z_DATA_ERROR:
-				break;
-		}
-
-		delete [] uncompressed;
-		return bRet;
+		int err = uncompress(*stream, outputFile, header.compressedSize);
+		bOk = (err == Z_OK);
 	}
 	else
 	{
 		// No compression, simply copy.
-		outputFile.open(QFile::WriteOnly);
-		outputFile.write(array, header.uncompressedSize);
-		outputFile.close();
-		return true;
+		bOk = IOUtils::copy(*stream, outputFile, header.uncompressedSize);
 	}
+	outputFile.close();
+	stream->close();
+	return bOk;		
 }
 
 
@@ -234,31 +205,70 @@ int UnZip::readHeader(qint64 pos, ZipLocalFileHeader& zip)
 	return ZipLocalFileHeader::NoError;
 }
 
-int	UnZip::uncompress(char* out, unsigned long uncompressedSize, const QByteArray& inArray)
+int UnZip::uncompress(QIODevice& streamIn, QIODevice& streamOut, unsigned long compressedSize)
 {
-	// Code here was blatantly ripped from SDE.
-	unsigned char* in = new unsigned char[inArray.size()];
-	memcpy(in, inArray.constData(), inArray.size());
-
+	const unsigned long BUFFER_SIZE = 2 * 1024 * 1024;
+	char* out = new char[BUFFER_SIZE];
+	
 	z_stream zstream;
-	zstream.next_in = in;
-	zstream.avail_in = inArray.size();
 	zstream.next_out = (unsigned char*)out;
-	zstream.avail_out = uncompressedSize;
+	zstream.avail_out = BUFFER_SIZE;
 	zstream.zalloc = Z_NULL;
 	zstream.zfree = Z_NULL;
 	unsigned int err = inflateInit2(&zstream, -15);
-	while(err == Z_OK && zstream.avail_out != 0)
+	
+	int ret = Z_OK;
+	bool bOk = true;
+	do 
 	{
-		err = inflate(&zstream, Z_SYNC_FLUSH);
-	}
+		QByteArray inData = streamIn.read(BUFFER_SIZE);
+		if (inData.isEmpty()) 
+		{
+			err = Z_STREAM_END;
+			break;
+		}
+		zstream.avail_in = inData.size();
+		zstream.next_in = (Bytef*)inData.data();
+
+		// run inflate() on input until output buffer not full
+		do 
+		{
+			zstream.avail_out = BUFFER_SIZE;
+			zstream.next_out = (Bytef*)out;
+			ret = inflate(&zstream, Z_NO_FLUSH);
+			
+			switch (ret) 
+			{
+				case Z_NEED_DICT:
+					ret = Z_DATA_ERROR;
+				case Z_DATA_ERROR:
+				case Z_MEM_ERROR:
+					bOk = false;
+					break;
+			}
+			
+			if (!bOk)
+			{
+				break;
+			}
+			
+			int have = BUFFER_SIZE - zstream.avail_out;
+			if (streamOut.write(out, have) != have) 
+			{
+				bOk = false;
+				ret = Z_ERRNO;
+				break;
+			}
+		} while (zstream.avail_out == 0 && bOk);
+
+        // done when inflate() says it's done
+    } while (ret != Z_STREAM_END && bOk);
+	
+	int inflateEndErr = inflateEnd(&zstream);
 	if(err != Z_STREAM_END)
 	{
-		delete[] in;
-		return Z_DATA_ERROR;
+		return err;
 	}
-	err = inflateEnd(&zstream);
-
-	delete[] in;
-	return err;
+	
+	return inflateEndErr;
 }
