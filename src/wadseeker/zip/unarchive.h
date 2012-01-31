@@ -36,7 +36,7 @@ class WADSEEKER_API UnArchive : public QObject
 	Q_OBJECT
 
 	public:
-		UnArchive();
+		UnArchive(QIODevice* dataStream);
 		virtual ~UnArchive();
 
 		/**
@@ -64,16 +64,34 @@ class WADSEEKER_API UnArchive : public QObject
 		virtual int		findFileEntry(const QString &entryName)=0;
 		virtual bool	isValid()=0;
 
-		static UnArchive *openArchive(const QFileInfo &fi, const QByteArray &data);
+		/**
+		 * @brief Opens an archive stored in undefined QIODevice.
+		 *
+		 * @b WARNING:
+		 * UnArchive will not take ownership of the dataStream QIODevice.
+		 * The device needs to be deleted manually.
+		 */
+		static UnArchive *openArchive(const QFileInfo &fi, QIODevice* dataStream);
+		
+		/**
+		 * @brief Opens an archive stored in the known path in the
+		 *        file system.
+		 */
 		static UnArchive *openArchive(const QString &filename);
 
 	signals:
 		void			message(const QString&, int type);
 
+	protected:
+		QIODevice* stream;
+
 	private:
 		static UnArchive *detectArchive(const QFileInfo &fi, QIODevice *&device);
-
-		QByteArray		*bufferData;
+		
+		/**
+		 * @brief If true will cause delete of stream QIODevice.
+		 */
+		bool bHasIODeviceOwnership;
 };
 
 #endif /* __UNARCHIVE_H__ */

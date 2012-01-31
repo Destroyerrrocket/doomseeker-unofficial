@@ -26,14 +26,13 @@
 #include <QBuffer>
 #include <QFile>
 
-UnTar::UnTar(QIODevice *device) : UnArchive(), valid(true), stream(device)
+UnTar::UnTar(QIODevice *device) : UnArchive(device), valid(true)
 {
 	scanTarFile();
 }
 
 UnTar::~UnTar()
 {
-	delete stream;
 }
 
 bool UnTar::extract(int file, const QString &where)

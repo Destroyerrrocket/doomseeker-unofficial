@@ -57,7 +57,6 @@ class UnTar : public UnArchive
 
 		bool			valid;
 		QList<TarFile>	directory;
-		QIODevice		*stream;
 };
 
 #endif

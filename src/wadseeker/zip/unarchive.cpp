@@ -48,7 +48,6 @@ class CompressedIODevice : public QIODevice
 		}
 		~CompressedIODevice()
 		{
-			delete stream;
 		}
 
 		bool isSequential() const { return false; }
@@ -128,7 +127,6 @@ class GZDevice : public CompressedIODevice
 		}
 		~GZDevice()
 		{
-			delete wrap;
 		}
 
 		void close()
@@ -218,7 +216,6 @@ class BZ2Device : public CompressedIODevice
 		}
 		~BZ2Device()
 		{
-			delete wrap;
 		}
 
 		void close()
@@ -309,13 +306,18 @@ class BZ2Device : public CompressedIODevice
 
 ////////////////////////////////////////////////////////////////////////////////
 
-UnArchive::UnArchive() : bufferData(NULL)
+UnArchive::UnArchive(QIODevice* dataStream)
 {
+	this->stream = dataStream;
+	bHasIODeviceOwnership = false;
 }
 
 UnArchive::~UnArchive()
 {
-	delete bufferData;
+	if (bHasIODeviceOwnership && this->stream != NULL)
+	{
+		delete this->stream;
+	}
 }
 
 UnArchive *UnArchive::detectArchive(const QFileInfo &fi, QIODevice *&device)
@@ -341,19 +343,9 @@ UnArchive *UnArchive::detectArchive(const QFileInfo &fi, QIODevice *&device)
 	return NULL;
 }
 
-UnArchive *UnArchive::openArchive(const QFileInfo &fi, const QByteArray &data)
+UnArchive *UnArchive::openArchive(const QFileInfo &fi, QIODevice* dataStream)
 {
-	QByteArray *bufferData = new QByteArray(data);
-	QIODevice *stream = new QBuffer(bufferData);
-	UnArchive *ret = detectArchive(fi, stream);
-
-	if(ret == NULL)
-	{
-		delete bufferData;
-		delete stream;
-	}
-	else
-		ret->bufferData = bufferData;
+	UnArchive *ret = detectArchive(fi, dataStream);
 	return ret;
 }
 
@@ -366,7 +358,10 @@ UnArchive *UnArchive::openArchive(const QString &filename)
 	QIODevice *stream = new QFile(filename);
 	UnArchive *ret = detectArchive(fi, stream);
 	if(ret != NULL)
+	{
+		ret->bHasIODeviceOwnership = true;
 		return ret;
+	}
 
 	delete stream;
 	return NULL;

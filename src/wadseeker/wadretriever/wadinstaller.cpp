@@ -24,6 +24,7 @@
 
 #include "entities/waddownloadinfo.h"
 #include "zip/unarchive.h"
+#include "ioutils.h"
 
 #include <QDebug>
 #include <QDir>
@@ -65,14 +66,9 @@ WadInstaller::WadInstallerResult WadInstaller::installArchive(UnArchive& archive
 	return result;
 }
 
-WadInstaller::WadInstallerResult WadInstaller::installFile(const QString& fileName, const QByteArray& fileData)
+WadInstaller::WadInstallerResult WadInstaller::installFile(const QString& fileName, QIODevice* stream)
 {
 	// Check for problems.
-	if (fileData.isEmpty())
-	{
-		return WadInstallerResult::makeError(tr("Attempt to save an empty file."));
-	}
-
 	QDir installDir(d.installPath);
 	WadInstallerResult dirResult = makeSureDirPathExists(installDir);
 	if (dirResult.isError())
@@ -80,18 +76,40 @@ WadInstaller::WadInstallerResult WadInstaller::installFile(const QString& fileNa
 		return dirResult;
 	}
 
-	// Save the file from memory buffer to the media storage device.
+	// Save the file from input stream to the media storage device.
 	QString filePath = installDir.absoluteFilePath(fileName);
 	QFile file(filePath);
-
+	
 	if (!file.open(QFile::WriteOnly))
 	{
 		return WadInstallerResult::makeCriticalError(
 				tr("Failed to open file \"%1\" for write.")
 					.arg(filePath) );
 	}
-
-	file.write(fileData);
+	
+	if (!stream->isOpen())
+	{
+		stream->open(QIODevice::ReadOnly);
+	}
+	else if (stream->isOpen() && !stream->isReadable())
+	{
+		return WadInstallerResult::makeCriticalError(
+				tr("Developer failure in WadInstaller::installFile(): ") 
+				+ tr("input stream is open but is not readable."));
+	}
+	
+	if (stream->size() <= 0)
+	{
+		return WadInstallerResult::makeError(tr("Attempt to save an empty file."));
+	}
+	
+	if (!IOUtils::copy(*stream, file))
+	{
+		return WadInstallerResult::makeCriticalError(
+				tr("Failed to save file \"%1\".")
+					.arg(filePath) );
+	}
+	
 	file.close();
 
 	return WadInstallerResult::makeSuccess(filePath);

@@ -75,7 +75,6 @@ class Un7Zip : public UnArchive
 
 		SZByteStream	*byteStream;
 		CLookToRead		lookStream;
-		QIODevice		*device;
 
 		CSzArEx			db;
 		static ISzAlloc	alloc;

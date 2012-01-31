@@ -185,9 +185,12 @@ class WadRetriever : public QObject
 		 *
 		 * This omits the download procedure treating data param as already
 		 * downloaded file contents. If data is recognized as an archive
-		 * it will be
+		 * it will be inspected for seeked filenames and if desired files 
+		 * are found then they will be extracted.
+		 *
+		 * @param
 		 */
-		void tryInstall(const QString& filename, const QByteArray& data);
+		void tryInstall(const QString& filename, QIODevice* dataStream);
 
 	signals:
 		/**

@@ -29,9 +29,12 @@
 #include "wadretriever/wadinstaller.h"
 #include "wwwseeker/urlparser.h"
 #include "zip/unarchive.h"
+#include "ioutils.h"
 
+#include <QBuffer>
 #include <QDebug>
 #include <QFileInfo>
+#include <QTemporaryFile>
 
 WadRetriever::WadRetriever()
 {
@@ -284,7 +287,7 @@ void WadRetriever::networkQueryError(QNetworkReply* pReply, QNetworkReply::Netwo
 
 void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 {
-		QUrl url = pReply->request().url();
+	QUrl url = pReply->request().url();
 #ifndef NDEBUG
 	{
 		QUrl replyUrl = pReply->url();
@@ -439,12 +442,17 @@ void WadRetriever::removeWadRetrieverInfo(WadRetrieverInfo* pWadRetrieverInfo)
 
 void WadRetriever::resolveDownloadFinish(QNetworkReply* pReply, WadRetrieverInfo* pWadRetrieverInfo)
 {
-	QByteArray data = pReply->readAll();
 	QUrl url = pReply->request().url();
 
 	// If data is empty we assume that abort was commenced
-	if (!data.isEmpty())
+	if (pReply->bytesAvailable() > 0)
 	{
+		// Save the contents to temporary file so it can be seeked freely.
+		QTemporaryFile tempFile;
+		tempFile.open();
+		IOUtils::copy(*pReply, tempFile);
+		tempFile.seek(0);
+	
 		// We need to determine the correct filename.
 		QString filename = pWadRetrieverInfo->wad->name();
 		Http http(pReply);
@@ -462,7 +470,7 @@ void WadRetriever::resolveDownloadFinish(QNetworkReply* pReply, WadRetrieverInfo
 		}
 
 		// Now try to install the file under downloaded filename.
-		tryInstall(filename, data);
+		tryInstall(filename, &tempFile);
 	}
 	else if (!d.bIsAborting)
 	{
@@ -559,22 +567,36 @@ void WadRetriever::startNetworkQuery(WadRetrieverInfo& wadRetrieverInfo, const Q
 	emit wadDownloadStarted(*wadRetrieverInfo.wad, url);
 }
 
-void WadRetriever::tryInstall(const QString& filename, const QByteArray& byteArray)
+void WadRetriever::tryInstall(const QString& filename, QIODevice* dataStream)
 {
 	const bool IS_ARCHIVE = true;
 	WadInstaller installer(d.targetSavePath);
+	
+	QTemporaryFile tempFile;
+	QIODevice* stream = dataStream;
+	if (dataStream->isSequential())
+	{
+		tempFile.open();
+		// We need to be able to seek the IO device because it needs
+		// to be reusable. If the current IO device cannot be seeked
+		// we need to copy its contents into a temp file.
+		IOUtils::copy(*dataStream, tempFile);
+		tempFile.seek(0);
+		stream = &tempFile;
+	}	
 
-	emit message(tr("Attempting to install file %1 of size %2").arg(filename).arg(byteArray.size()),
+	emit message(tr("Attempting to install file %1 of size %2").arg(filename).arg(stream->size()),
 				WadseekerLib::Notice);
 
 #ifndef NDEBUG
-	qDebug() << "WadRetriever: Attempting to install file " << filename << " of size " << byteArray.size();
+	qDebug() << "WadRetriever: Attempting to install file " << filename << " of size " << stream->size();
 #endif
 
 	// Install file directly.
 	if (findRetrieverInfo(filename) != NULL)
 	{
-		WadInstaller::WadInstallerResult result = installer.installFile(filename, byteArray);
+		stream->seek(0);
+		WadInstaller::WadInstallerResult result = installer.installFile(filename, stream);
 		if (!parseInstallerResult(result, filename, !IS_ARCHIVE))
 		{
 			return;
@@ -583,7 +605,8 @@ void WadRetriever::tryInstall(const QString& filename, const QByteArray& byteArr
 
 	// Detect archive.
 	QFileInfo fileInfo(filename);
-	UnArchive* archive = UnArchive::openArchive(fileInfo, byteArray);
+	stream->seek(0);
+	UnArchive* archive = UnArchive::openArchive(fileInfo, stream);
 	if (archive != NULL)
 	{
 		WadInstaller::WadInstallerResult result = installer.installArchive(*archive, getWadDownloadInfoList());

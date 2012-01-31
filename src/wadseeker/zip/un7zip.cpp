@@ -82,7 +82,8 @@ void *Un7Zip::SzAlloc(void *p, size_t size) { return malloc(size); }
 void Un7Zip::SzFree(void *p, void *address) { free(address); }
 ISzAlloc Un7Zip::alloc = { SzAlloc, SzFree };
 
-Un7Zip::Un7Zip(QIODevice *device) : UnArchive(), out(NULL), outSize(0), device(device), valid(true)
+Un7Zip::Un7Zip(QIODevice *device) 
+: UnArchive(device), out(NULL), outSize(0), valid(true)
 {
 	Init();
 }
@@ -94,7 +95,6 @@ Un7Zip::~Un7Zip()
 	SzArEx_Free(&db, &alloc);
 
 	delete byteStream;
-	delete device;
 }
 
 bool Un7Zip::extract(int file, const QString &where)
@@ -137,7 +137,7 @@ void Un7Zip::Init()
 	if (g_CrcTable[1] == 0)
 		CrcGenerateTable();
 
-	byteStream = new SZByteStream(device);
+	byteStream = new SZByteStream(stream);
 	LookToRead_CreateVTable(&lookStream, false);
 	lookStream.realStream = &byteStream->stream;
 	LookToRead_Init(&lookStream);

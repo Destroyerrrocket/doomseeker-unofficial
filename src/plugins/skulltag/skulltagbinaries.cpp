@@ -29,6 +29,7 @@
 #include "plugins/engineplugin.h"
 #include "version.h"
 
+#include <QBuffer>
 #include <QDir>
 #include <QFileInfo>
 #include <QMessageBox>
@@ -194,7 +195,9 @@ bool SkulltagBinaries::downloadTestingBinaries(const QDir &destination) const
 		// Extract the needed files.
 		QString filename;
 		QFileInfo fi(dialog.filename());
-		UnArchive *archive = UnArchive::openArchive(fi, dialog.data());
+		QByteArray data = dialog.data();
+		QBuffer dataBuffer(&data);
+		UnArchive *archive = UnArchive::openArchive(fi, &dataBuffer);
 
 		if(archive != NULL)
 		{

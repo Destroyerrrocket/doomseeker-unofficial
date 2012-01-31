@@ -67,9 +67,7 @@ class UnZip : public UnArchive
 		 */
 		bool	isZip();
 
-	protected:
-		QIODevice	*zipFile;
-
+	private:
 		/**
 		 *	This method expects zipFile to be already open and it won't close it.
 		 */

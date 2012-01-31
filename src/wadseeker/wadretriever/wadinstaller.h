@@ -128,12 +128,12 @@ class WadInstaller : public QObject
 		 *
 		 * @param fileName
 		 *      Name under which the file will be saved.
-		 * @param fileData
-		 *      File's data.
+		 * @param stream
+		 *      QIODevice ready for read operations.
 		 *
 		 * @return WadInstallerResult object.
 		 */
-		WadInstallerResult installFile(const QString& fileName, const QByteArray& fileData);
+		WadInstallerResult installFile(const QString& fileName, QIODevice* stream);
 
 	private:
 		class PrivData
