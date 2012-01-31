@@ -227,8 +227,6 @@ void Wadseeker::prepareSeekObjects()
 	d.wwwSeeker->setUserAgent(WadseekerVersionInfo::userAgent());
 
 	// Connect signals to slots.
-	this->connect(d.wwwSeeker, SIGNAL( attachmentDownloaded(const QString&, const QByteArray&) ),
-		SLOT( wwwSeekerAttachmentDownloaded(const QString&, const QByteArray&) ), Qt::QueuedConnection);
 	this->connect(d.wwwSeeker, SIGNAL( finished() ),
 		SLOT( wwwSeekerFinished() ), Qt::QueuedConnection);
 	this->connect(d.wwwSeeker, SIGNAL( linkFound(const QString&, const QUrl&)),
@@ -596,15 +594,6 @@ void Wadseeker::wadRetrieverWadInstalled(WadDownloadInfo wadDownloadInfo)
 	emit fileInstalled(wadDownloadInfo.name());
 
 	d.wwwSeeker->removeSeekedFile(wadDownloadInfo.name());
-}
-
-
-void Wadseeker::wwwSeekerAttachmentDownloaded(const QString& name, const QByteArray& data)
-{
-	emit message(tr("Attachment downloaded: %1. Size %2").arg(name).arg(data.size()),
-		WadseekerLib::NoticeImportant);
-
-	d.wadRetriever->tryInstall(name, data);
 }
 
 void Wadseeker::wwwSeekerFinished()

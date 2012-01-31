@@ -455,7 +455,6 @@ class WADSEEKER_API Wadseeker : public QObject
 		void wadRetrieverFinished();
 		void wadRetrieverMessage(const QString& message, WadseekerLib::MessageType type);
 		void wadRetrieverWadInstalled(WadDownloadInfo wadDownloadInfo);
-		void wwwSeekerAttachmentDownloaded(const QString& name, const QByteArray& data);
 		void wwwSeekerFinished();
 };
 
