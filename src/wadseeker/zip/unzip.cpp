@@ -28,6 +28,26 @@
 #include <QFileInfo>
 #include "ioutils.h"
 
+/**
+ * @brief A try-finally block for QIODevice.
+ */
+class IODeviceCloser
+{
+	public:
+		IODeviceCloser(QIODevice* d)
+		{
+			this->d = d;
+		}
+		
+		~IODeviceCloser()
+		{
+			this->d->close();
+		}
+		
+	private:
+		QIODevice* d;
+};
+
 UnZip::UnZip(QIODevice *device) 
 : UnArchive(device)
 {
@@ -48,7 +68,13 @@ QList<ZipLocalFileHeader> UnZip::allDataHeaders()
 		return list;
 	}
 
-	stream->open(QFile::ReadOnly);
+	if (!stream->open(QFile::ReadOnly))
+	{
+		emit message(tr("Failed to open archive for reading."), WadseekerLib::Error);
+		return list;
+	}
+	
+	IODeviceCloser ioDevCloser(stream);
 	while(true)
 	{
 		ZipLocalFileHeader zip;
@@ -70,7 +96,6 @@ QList<ZipLocalFileHeader> UnZip::allDataHeaders()
 			break;
 		}
 	}
-	stream->close();
 
 	return list;
 }
@@ -78,13 +103,34 @@ QList<ZipLocalFileHeader> UnZip::allDataHeaders()
 bool UnZip::extract(int file, const QString& where)
 {
 	if (!isValid())
+	{
+		qDebug() << "UnZip::extract(): Archive is invalid";
 		return false;
+	}
 
 	ZipLocalFileHeader header;
-	stream->open(QFile::ReadOnly);
-	readHeader(file, header);
+	if (!stream->open(QFile::ReadOnly))
+	{
+		qDebug() << "UnZip::extract(): Failed to open archive for reading.";
+		return false;
+	}
+	IODeviceCloser ioDevCloser(stream);
+	
+	int headerResult = readHeaderFromFileIndex(file, header);
+	if (headerResult != ZipLocalFileHeader::NoError)
+	{
+		qDebug() << "UnZip::extract(): Failed to extract file" << file 
+			<< ", result:" << headerResult;
+		return false;
+	}
 	qint64 pos = header.headerPosition + header.howManyBytesTillData();
-	stream->seek(pos);
+	
+	if (!stream->seek(pos))
+	{
+		qDebug() << "UnZip::extract(): Failed to seek archive to pos" << pos
+			<< "for file:" << file << ", result:" << headerResult;
+		return false;
+	}
 	
 	QFile outputFile(where);
 	outputFile.open(QFile::WriteOnly);
@@ -100,85 +146,97 @@ bool UnZip::extract(int file, const QString& where)
 		bOk = IOUtils::copy(*stream, outputFile, header.uncompressedSize);
 	}
 	outputFile.close();
-	stream->close();
 	return bOk;		
 }
-
-
 
 int UnZip::findFileEntry(const QString& entryName)
 {
 	if (!isValid())
+	{
 		return -1;
+	}
 
 	qint64 pos = 0;
-	ZipLocalFileHeader* ret = NULL;
+	int fileIndex = 0;
 
-	stream->open(QFile::ReadOnly);
+	if (!stream->open(QFile::ReadOnly))
+	{
+		return -1;
+	}
+	
+	IODeviceCloser ioDevCloser(stream);
 	while(true)
 	{
-		ZipLocalFileHeader* zip = new ZipLocalFileHeader();
+		ZipLocalFileHeader zip;
 
 		int err;
-		err = this->readHeader(pos, *zip);
+		err = this->readHeader(pos, zip);
 		if (err != ZipLocalFileHeader::NoError)
 		{
-			delete zip;
+			fileIndex = -1;
 			break;
 		}
 
-		QFileInfo fi(zip->fileName);
+		QFileInfo fi(zip.fileName);
 		QString strFile = fi.fileName();
 		// If file was found return it's header.
 		if (strFile.compare(entryName, Qt::CaseInsensitive) == 0)
 		{
-			ret = zip;
 			break;
 		}
 
-		pos += zip->fileEntrySize();
-		delete zip;
+		pos += zip.fileEntrySize();
+		++fileIndex;
 	}
-	stream->close();
-
-	if(ret == NULL)
-		return -1;
-	delete ret;
-	return pos;
+	
+	return fileIndex;
 }
 
 QString UnZip::fileNameFromIndex(int file)
 {
 	ZipLocalFileHeader header;
 
-	stream->open(QFile::ReadOnly);
-	readHeader(file, header);
+	if (!stream->open(QFile::ReadOnly))
+	{
+		return QString();
+	}
+	
+	int result = readHeaderFromFileIndex(file, header);
 	stream->close();
 
-	return header.fileName;
+	return result == ZipLocalFileHeader::NoError 
+		? header.fileName 
+		: QString();
 }
 
 bool UnZip::isZip()
 {
 	ZipLocalFileHeader zip;
 	int err;
-	stream->open(QIODevice::ReadOnly);
-	err = readHeader(0, zip);
-	stream->close();
-
-	if (err != ZipLocalFileHeader::NoError)
+	if (!stream->open(QIODevice::ReadOnly))
 	{
 		return false;
 	}
+	
+	err = readHeader(0, zip);
+	stream->close();
 
-	return true;
+	return err == ZipLocalFileHeader::NoError;
 }
 
 int UnZip::readHeader(qint64 pos, ZipLocalFileHeader& zip)
 {
 	// This expects the file to be already open and doesn't close it.
 	int readErr;
-	stream->seek(pos);
+	if (pos >= stream->size())
+	{
+		return ZipLocalFileHeader::EndOfFileReached;
+	}
+	
+	if (!stream->seek(pos))
+	{
+		return ZipLocalFileHeader::Corrupted;
+	}
 
 	QByteArray array = stream->read(ZIP_LOCAL_FILE_HEADER_SIZE);
 
@@ -190,18 +248,41 @@ int UnZip::readHeader(qint64 pos, ZipLocalFileHeader& zip)
 
 	array = stream->read(zip.fileNameLength);
 	if (array.size() < zip.fileNameLength)
+	{
 		return ZipLocalFileHeader::Corrupted;
+	}
 
 	zip.fileName = array.constData();
 
 	array = stream->read(zip.extraFieldLength);
 	if (array.size() < zip.extraFieldLength)
+	{
 		return ZipLocalFileHeader::Corrupted;
+	}
 
 	zip.extraField = array;
 
 	zip.headerPosition = pos;
 
+	return ZipLocalFileHeader::NoError;
+}
+
+int UnZip::readHeaderFromFileIndex(int file, ZipLocalFileHeader& zip)
+{
+	ZipLocalFileHeader tempHeader;
+	qint64 pos = 0;
+	for (int i = 0; i <= file; ++i)
+	{
+		int result = readHeader(pos, tempHeader);
+		if (result != ZipLocalFileHeader::NoError)
+		{
+			return result;
+		}
+		
+		pos += tempHeader.fileEntrySize();
+	}
+	
+	zip = tempHeader; 
 	return ZipLocalFileHeader::NoError;
 }
 

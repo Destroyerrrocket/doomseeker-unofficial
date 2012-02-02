@@ -37,9 +37,10 @@ struct ZipLocalFileHeader
 {
 	enum HeaderError
 	{
-		NoError 				= 0,
-		Corrupted				= 1,
-		NotLocalFileHeader 		= 2
+		NoError,
+		Corrupted,
+		NotLocalFileHeader,
+		EndOfFileReached
 	};
 
 	ZipLocalFileHeader()
@@ -59,10 +60,11 @@ struct ZipLocalFileHeader
 	}
 
 	/**
-	 * Calculated depending on below variables.
+	 * @brief Size of entire file entry. Header size + data size.
 	 */
 	unsigned long	fileEntrySize() const
 	{
+		// Calculated depending on variables below.
 		long dataDescriptorSize = 0;
 		if ((generalPurposeBitFlag & DESCRIPTOR_EXISTS_FLAG) == DESCRIPTOR_EXISTS_FLAG)
 		{
