@@ -55,7 +55,7 @@ DataPaths*			Main::dataPaths;
 PluginLoader* 		Main::enginePlugins = NULL;
 IP2C*				Main::ip2c = NULL;
 QWidget*			Main::mainWindow = NULL;
-RefreshingThread*	Main::refreshingThread = new RefreshingThread();
+RefreshingThread*	Main::refreshingThread = RefreshingThread::createRefreshingThread();
 bool				Main::running = true;
 QString				Main::workingDirectory = "./";
 

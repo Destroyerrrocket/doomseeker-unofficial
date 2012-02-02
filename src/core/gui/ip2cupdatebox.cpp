@@ -24,6 +24,8 @@
 #include "doomseekerfilepaths.h"
 #include "main.h"
 
+#include <QDateTime>
+
 IP2CUpdateBox::IP2CUpdateBox(QWidget* parent)
 : QDialog(parent)
 {

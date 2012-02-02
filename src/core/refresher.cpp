@@ -28,30 +28,181 @@
 #include "serverapi/server.h"
 #include "configuration/doomseekerconfig.h"
 
-RefreshingThread::RefreshingThread()
+#include <QHash>
+#include <QList>
+#include <QMutex>
+#include <QTimer>
+#include <QThread>
+#include <QRunnable>
+#include <QSet>
+#include <QUdpSocket>
+
+class RefreshingThread::Data
 {
-	bKeepRunning = true;
-	delayBetweenResends = 1000;
-	socket = NULL;
+	public:
+		typedef QHash<MasterClient*, MasterClientInfo*>				MasterHashtable;
+		typedef QHash<MasterClient*, MasterClientInfo*>::iterator	MasterHashtableIt;
+
+		Controller				*controller;
+
+		QTime					batchTime;
+		bool					bSleeping;
+		bool					bKeepRunning;
+		int						delayBetweenResends;
+		QList<ServerBatch>		registeredBatches;
+		MasterHashtable			registeredMasters;
+
+		/**
+		 *	This will keep list of ALL servers to make sure that no server is
+		 *	registered twice.
+		 */
+		QSet<Server*>			registeredServers;
+		QUdpSocket*				socket;
+		QList<Server*>			unbatchedServers;
+		QSet<MasterClient*>		unchallengedMasters;
+
+		/**
+		 *	Mutex used by methods of this class.
+		 */
+		QMutex					thisMutex;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * The actual thread in the refreshing thread.  This must be separate in order
+ * to keep the signal/slot system wroking properly.
+ */
+class RefreshingThread::Controller : public QThread, public QRunnable
+{
+	public:
+		Controller()
+		{
+			worker = new RefreshingThread(this);
+		}
+
+		RefreshingThread *refreshingThread() const
+		{
+			return worker;
+		}
+
+		void run()
+		{
+			// Allocate the new socket when the thread is executed.
+			worker->d->socket = new QUdpSocket();
+			worker->d->socket->bind();
+			MasterClient::pGlobalUdpSocket = worker->d->socket;
+			bool bFirstQuery = true;
+
+			connect(worker->d->socket, SIGNAL(readyRead()), worker, SLOT(readAllPendingDatagrams()));
+
+			exec();
+
+			// Remember to delete the socket when thread finishes.
+			delete worker->d->socket;
+		}
+
+	private:
+		RefreshingThread *worker;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+class RefreshingThread::MasterClientInfo
+{
+	public:
+		MasterClientInfo(MasterClient* pMaster, RefreshingThread* pParent)
+		{
+			pReceiver = new MasterClientSignalProxy(pMaster);
+			connect(pReceiver, SIGNAL( listUpdated(MasterClient*) ), pParent, SLOT( masterFinishedRefreshing(MasterClient*) ) );
+
+			numOfChallengesSent = 0;
+
+			timeLastChallengeSent.setSingleShot(true);
+			timeLastChallengeSent.setInterval(MASTER_SERVER_TIMEOUT_DELAY);
+			connect(&timeLastChallengeSent, SIGNAL(timeout()), pParent, SLOT(attemptTimeoutMasters()));
+		}
+		~MasterClientInfo()
+		{
+			delete pReceiver;
+		}
+
+		int							numOfChallengesSent;
+		QTimer						timeLastChallengeSent;
+
+	protected:
+		MasterClientSignalProxy*	pReceiver;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+class RefreshingThread::ServerBatch
+{
+	public:
+		QList<Server*>	servers;
+		QTime			time;
+
+		/**
+		 * @param rejectedServers - servers that were removed from this
+		 *		batch due to timeout. These should be removed from registered
+		 *		servers list in the RefreshingThread.
+		 */
+		void sendQueries(QUdpSocket *socket, QList<Server*>& rejectedServers, int resendDelay=1000, bool firstQuery=false)
+		{
+			rejectedServers.clear();
+			//printf("Batch size: %u, Delay: %d\n", servers.size(), resendDelay);
+			if(firstQuery || resendDelay - time.elapsed() <= 0)
+			{
+				//printf("SENT!\n");
+				time.start();
+
+				// sendRefreshQuery will clean up after a fail
+				// There's no need to call methods like
+				// Server::refreshStops() explicitly.
+				foreach(Server *server, servers)
+				{
+					if(!server->sendRefreshQuery(socket))
+					{
+						servers.removeOne(server);
+						rejectedServers.append(server);
+					}
+				}
+			}
+		}
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+RefreshingThread::RefreshingThread(Controller *controller)
+{
+	d = new Data;
+	d->controller = controller;
+	moveToThread(controller);
+
+	d->bSleeping = true;
+	d->bKeepRunning = true;
+	d->delayBetweenResends = 1000;
+	d->socket = NULL;
 }
 
 RefreshingThread::~RefreshingThread()
 {
 	// If quit() wasn't called yet, call it now.
-	if (bKeepRunning)
+	if (d->bKeepRunning)
 	{
-		quit();
+		d->controller->exit();
 	}
+	delete d->controller;
 }
 
 void RefreshingThread::attemptTimeoutMasters()
 {
-	MasterHashtableIt it;
-	for (it = registeredMasters.begin(); it != registeredMasters.end(); ++it)
+	Data::MasterHashtableIt it;
+	for (it = d->registeredMasters.begin(); it != d->registeredMasters.end(); ++it)
 	{
 		MasterClientInfo* pMasterInfo = it.value();
 
-		if (pMasterInfo->timeLastChallengeSent.elapsed() > MASTER_SERVER_TIMEOUT_DELAY)
+		if (!pMasterInfo->timeLastChallengeSent.isActive())
 		{
 			MasterClient* pMaster = it.key();
 			pMaster->timeoutRefresh();
@@ -59,36 +210,21 @@ void RefreshingThread::attemptTimeoutMasters()
 	}
 }
 
-void RefreshingThread::gotoSleep()
+RefreshingThread *RefreshingThread::createRefreshingThread()
 {
-	//printf("Going to sleep!\n");
-	// Signal that the work is finished
-	emit sleepingModeEnter();
-
-	// Release the mutex and wait until woken up.
-	thisWaitCondition.wait(&thisMutex);
-
-	// Signal that the work has begun.
-	emit sleepingModeExit();
-
-	if (shouldBlockRefreshingProcess())
-	{
-		emit block();
-	}
-
-	// Since thread wakes up immediatelly after a single server is
-	// registered, assume that more servers will be registered soon
-	// and give the main thread some time to do that.
-	thisMutex.unlock();
-	msleep(20);
-	thisMutex.lock();
+	return (new Controller())->refreshingThread();
 }
 
 bool RefreshingThread::isAnythingToRefresh() const
 {
-	int value = unbatchedServers.count() | registeredBatches.count() | registeredMasters.count() | unchallengedMasters.count();
+	int value = d->unbatchedServers.count() | d->registeredBatches.count() | d->registeredMasters.count() | d->unchallengedMasters.count();
 
 	return value != 0;
+}
+
+bool RefreshingThread::isRunning() const
+{
+	return d->controller->isRunning();
 }
 
 void RefreshingThread::masterFinishedRefreshing(MasterClient* pMaster)
@@ -99,9 +235,15 @@ void RefreshingThread::masterFinishedRefreshing(MasterClient* pMaster)
 		registerServer(pServer);
 	}
 
-	thisMutex.lock();
+	d->thisMutex.lock();
 	unregisterMaster(pMaster);
-	thisMutex.unlock();
+
+	if(servers.size() == 0 && !isAnythingToRefresh())
+	{
+		d->bSleeping = true;
+		emit sleepingModeEnter();
+	}
+	d->thisMutex.unlock();
 
 	emit finishedQueryingMaster(pMaster);
 }
@@ -122,122 +264,92 @@ Server*	RefreshingThread::obtainServerFromBatch(ServerBatch& batch, const QHostA
 
 void RefreshingThread::quit()
 {
-	bKeepRunning = false;
-	thisWaitCondition.wakeAll();
+	d->bKeepRunning = false;
+	
+	d->controller->exit();
 }
 
 void RefreshingThread::registerMaster(MasterClient* pMaster)
 {
-	thisMutex.lock();
+	d->thisMutex.lock();
 
-	if (!registeredMasters.contains(pMaster))
+	if (!d->registeredMasters.contains(pMaster))
 	{
 		MasterClientInfo* pMasterInfo = new MasterClientInfo(pMaster, this);
 
-		registeredMasters.insert(pMaster, pMasterInfo);
-		unchallengedMasters.insert(pMaster);
+		d->registeredMasters.insert(pMaster, pMasterInfo);
+		d->unchallengedMasters.insert(pMaster);
 		emit block();
-		thisWaitCondition.wakeAll();
+
+		if(d->registeredMasters.size() == 1)
+		{
+			if(!d->bSleeping)
+			{
+				d->bSleeping = false;
+				emit sleepingModeExit();
+			}
+			QTimer::singleShot(20, this, SLOT(sendMasterQueries()));
+		}
 	}
 
-	thisMutex.unlock();
+	d->thisMutex.unlock();
 }
 
 void RefreshingThread::registerServer(Server* server)
 {
-	thisMutex.lock();
+	d->thisMutex.lock();
 
-	if (!registeredServers.contains(server))
+	if (!d->registeredServers.contains(server))
 	{
-		registeredServers.insert(server);
-		unbatchedServers.append(server);
+		d->registeredServers.insert(server);
+		d->unbatchedServers.append(server);
 
 		if (!server->isCustom())
 		{
 			emit block();
 		}
 
-		thisWaitCondition.wakeAll();
 		server->refreshStarts();
+
+		if(d->registeredServers.size() == 1)
+		{
+			if(!d->bSleeping)
+			{
+				d->bSleeping = false;
+				emit sleepingModeExit();
+			}
+			QTimer::singleShot(20, this, SLOT(sendServerQueries()));
+		}
 	}
 
-	thisMutex.unlock();
+	d->thisMutex.unlock();
 }
 
-void RefreshingThread::run()
+void RefreshingThread::readAllPendingDatagrams()
 {
-	#define COUNTS (unbatchedServers.count() | registeredBatches.count() | registeredMasters.count() | unchallengedMasters.count())
-
-	QTime time;
-	time.start();
-
-	// Allocate the new socket when the thread is executed.
-	socket = new QUdpSocket();
-	socket->bind();
-	MasterClient::pGlobalUdpSocket = socket;
-	bool bFirstQuery = true;
-
-	// Each time this will be increased by SERVER_BATCH_SIZE
-	while (bKeepRunning)
+	while(d->socket->hasPendingDatagrams() && d->bKeepRunning)
 	{
-		thisMutex.lock();
-
-		// Here thread goes into dormant mode if there is nothing to process.
-		//printf("Iteration, u: %u, r: %u, masters: %u\n", unbatchedServers.count(), registeredBatches.count(), registeredMasters.count());
-		while(!isAnythingToRefresh() && bKeepRunning)
-		{
-			gotoSleep();
-
-			// Reset variable when thread goes back to work. We assume
-			// this happens when new refresh procedure is being issued.
-			// Sending of first query shouldn't be delayed.
-			bFirstQuery = true;
-		}
-
-		// Kill the thread if RefreshingThread::quit() was called.
-		if (!bKeepRunning)
-		{
-			break;
-		}
-
-		// Refresh registered masters.
-		sendMasterQueries();
-		thisMutex.unlock();
-		// Read any received data.
-		while(socket->hasPendingDatagrams() && bKeepRunning)
-		{
-			thisMutex.lock();
-			readPendingDatagrams();
-			thisMutex.unlock();
-		}
-
-		thisMutex.lock();
-		attemptTimeoutMasters();
-		thisMutex.unlock();
-
-		// Now send the server queries.
-		sendServerQueries();
-	} // end of main thread loop
-
-	// Remember to delete the socket when thread finishes.
-	delete socket;
+		d->thisMutex.lock();
+		readPendingDatagrams();
+		d->thisMutex.unlock();
+	}
 }
 
 void RefreshingThread::readPendingDatagrams()
 {
 	QHostAddress address;
 	quint16 port;
-	qint64 size = socket->pendingDatagramSize();
+	qint64 size = d->socket->pendingDatagramSize();
 	char* data = new char[size];
-	socket->readDatagram(data, size, &address, &port);
+	d->socket->readDatagram(data, size, &address, &port);
 
 	QByteArray dataArray(data, size);
 	delete[] data;
 
-	MasterHashtableIt it;
-	for (it = registeredMasters.begin(); it != registeredMasters.end(); ++it)
+	Data::MasterHashtableIt it;
+	for (it = d->registeredMasters.begin(); it != d->registeredMasters.end(); ++it)
 	{
-		if (!bKeepRunning)
+		if (!d->bKeepRunning)
 		{
 			return;
 		}
@@ -250,20 +362,20 @@ void RefreshingThread::readPendingDatagrams()
 		}
 	}
 
-	if (registeredBatches.size() != 0)
+	if (d->registeredBatches.size() != 0)
 	{
-		for(int i = 0; i < registeredBatches.size(); ++i)
+		for(int i = 0; i < d->registeredBatches.size(); ++i)
 		{
-			Server *server = obtainServerFromBatch(registeredBatches[i], address, port);
-			if (!bKeepRunning)
+			Server *server = obtainServerFromBatch(d->registeredBatches[i], address, port);
+			if (!d->bKeepRunning)
 			{
 				return;
 			}
 
 			if (server != NULL)
 			{
-				registeredBatches[i].servers.removeOne(server);
-				registeredServers.remove(server);
+				d->registeredBatches[i].servers.removeOne(server);
+				d->registeredServers.remove(server);
 
 				server->bPingIsSet = false;
 
@@ -288,29 +400,29 @@ void RefreshingThread::readPendingDatagrams()
 
 void RefreshingThread::sendMasterQueries()
 {
-	while(!unchallengedMasters.isEmpty())
+	while(!d->unchallengedMasters.isEmpty())
 	{
-		MasterClient* pMaster = *unchallengedMasters.begin();
+		MasterClient* pMaster = *d->unchallengedMasters.begin();
 
-		MasterClientInfo* pMasterInfo = registeredMasters[pMaster];
+		MasterClientInfo* pMasterInfo = d->registeredMasters[pMaster];
 		++pMasterInfo->numOfChallengesSent;
 		pMasterInfo->timeLastChallengeSent.start();
 
 		pMaster->refresh();
-		unchallengedMasters.remove(pMaster);
+		d->unchallengedMasters.remove(pMaster);
 	}
 }
 
 unsigned RefreshingThread::sendQueriesForBatch(ServerBatch& batch, int resetDelay, bool firstQuery)
 {
 	QList<Server*> rejectedServers;
-	batch.sendQueries(socket, rejectedServers, delayBetweenResends, false);
+	batch.sendQueries(d->socket, rejectedServers, d->delayBetweenResends, false);
 
 	// Now erase all rejected servers from the list of registered
 	// servers.
 	foreach(Server* server, rejectedServers)
 	{
-		registeredServers.remove(server);
+		d->registeredServers.remove(server);
 	}
 
 	return batch.servers.size();
@@ -320,54 +432,64 @@ void RefreshingThread::sendServerQueries()
 {
 	const unsigned SERVER_BATCH_SIZE = gConfig.doomseeker.queryBatchSize;
 
-	if (unbatchedServers.size() != 0 || registeredBatches.size() != 0)
+	while (d->unbatchedServers.size() != 0 || d->registeredBatches.size() != 0)
 	{
-		//qDebug() << unbatchedServers.size() << " unbatched servers.";
+		//qDebug() << d->unbatchedServers.size() << " unbatched servers.";
 		unsigned int querySlotsInUse = 0;
-		for(int i = 0; i < registeredBatches.size(); ++i)
+		for(int i = 0; i < d->registeredBatches.size(); ++i)
 		{
 			//printf("Sending queries from batch: %u\n", i);
-			if(registeredBatches[i].servers.size() == 0)
+			if(d->registeredBatches[i].servers.size() == 0)
 			{
-				registeredBatches.removeAt(i--);
-				//printf("Empty batch %u removed, now batches size is: %u\n", i + 1, registeredBatches.size());
+				d->registeredBatches.removeAt(i--);
+				//printf("Empty batch %u removed, now batches size is: %u\n", i + 1, d->registeredBatches.size());
+				if(!isAnythingToRefresh())
+				{
+					d->bSleeping = true;
+					emit sleepingModeEnter();
+				}
 				continue;
 			}
-			querySlotsInUse += sendQueriesForBatch(registeredBatches[i], delayBetweenResends, false);
+			querySlotsInUse += sendQueriesForBatch(d->registeredBatches[i], d->delayBetweenResends, false);
 		}
 
 		//qDebug() << querySlotsInUse << " Servers queried.";
-		if(unbatchedServers.size() != 0 && querySlotsInUse < SERVER_BATCH_SIZE &&
-			batchTime.elapsed() >= gConfig.doomseeker.queryBatchDelay)
+		if(d->unbatchedServers.size() != 0 && querySlotsInUse < SERVER_BATCH_SIZE &&
+			d->batchTime.elapsed() >= gConfig.doomseeker.queryBatchDelay)
 		{
-			batchTime.start();
-			thisMutex.lock();
+			d->batchTime.start();
+			d->thisMutex.lock();
 			ServerBatch batch;
 			// Select a batch of servers to query.
-			batch.servers = unbatchedServers.mid(0, SERVER_BATCH_SIZE-querySlotsInUse);
+			batch.servers = d->unbatchedServers.mid(0, SERVER_BATCH_SIZE-querySlotsInUse);
 			//qDebug() << "Batching " << batch.servers.size() << " servers.";
-			sendQueriesForBatch(batch, delayBetweenResends, true);
+			sendQueriesForBatch(batch, d->delayBetweenResends, true);
 
-			registeredBatches.append(batch);
+			d->registeredBatches.append(batch);
 			foreach(Server *server, batch.servers)
 			{
-				unbatchedServers.removeOne(server);
+				d->unbatchedServers.removeOne(server);
 			}
-			thisMutex.unlock();
+			d->thisMutex.unlock();
 		}
 		else
-			socket->waitForReadyRead(100); // This could probably be more properly determined by searching for the nearest timeout in the batches, but this seems to work fairly well.
+			d->socket->waitForReadyRead(100); // This could probably be more properly determined by searching for the nearest timeout in the batches, but this seems to work fairly well.
 	}
+}
+
+void RefreshingThread::setDelayBetweenResends(int delay)
+{
+	d->delayBetweenResends = qMax(delay, 100);
 }
 
 bool RefreshingThread::shouldBlockRefreshingProcess() const
 {
-	if (!registeredMasters.isEmpty())
+	if (!d->registeredMasters.isEmpty())
 	{
 		return true;
 	}
 
-	foreach(const Server* pServer, registeredServers)
+	foreach(const Server* pServer, d->registeredServers)
 	{
 		if (!pServer->isCustom())
 		{
@@ -378,54 +500,19 @@ bool RefreshingThread::shouldBlockRefreshingProcess() const
 	return false;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-void ServerBatch::sendQueries(QUdpSocket *socket, QList<Server*>& rejectedServers, int resendDelay, bool firstQuery)
+void RefreshingThread::start() const
 {
-	rejectedServers.clear();
-	//printf("Batch size: %u, Delay: %d\n", servers.size(), resendDelay);
-	if(firstQuery || resendDelay - time.elapsed() <= 0)
-	{
-		//printf("SENT!\n");
-		time.start();
-
-		// sendRefreshQuery will clean up after a fail
-		// There's no need to call methods like
-		// Server::refreshStops() explicitly.
-		foreach(Server *server, servers)
-		{
-			if(!server->sendRefreshQuery(socket))
-			{
-				servers.removeOne(server);
-				rejectedServers.append(server);
-			}
-		}
-	}
+	d->controller->start();
 }
 
 void RefreshingThread::unregisterMaster(MasterClient* pMaster)
 {
-	MasterHashtableIt it = registeredMasters.find(pMaster);
-	if (it != registeredMasters.end())
+	Data::MasterHashtableIt it = d->registeredMasters.find(pMaster);
+	if (it != d->registeredMasters.end())
 	{
 		MasterClientInfo* pMasterInfo = it.value();
 		delete pMasterInfo;
 
-		registeredMasters.erase(it);
+		d->registeredMasters.erase(it);
 	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-RefreshingThread::MasterClientInfo::MasterClientInfo(MasterClient* pMaster, RefreshingThread* pParent)
-{
-	pReceiver = new MasterClientSignalProxy(pMaster);
-	connect(pReceiver, SIGNAL( listUpdated(MasterClient*) ), pParent, SLOT( masterFinishedRefreshing(MasterClient*) ) );
-
-	numOfChallengesSent = 0;
-}
-
-RefreshingThread::MasterClientInfo::~MasterClientInfo()
-{
-	delete pReceiver;
 }

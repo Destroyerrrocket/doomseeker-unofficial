@@ -24,40 +24,20 @@
 #ifndef __REFRESHER_H_
 #define __REFRESHER_H_
 
-#include <QHash>
-#include <QMutex>
-#include <QThread>
-#include <QTime>
-#include <QRunnable>
-#include <QSet>
-#include <QUdpSocket>
-#include <QWaitCondition>
+#include <QObject>
 
 class MasterClient;
-class MasterClientSignalProxy;
 class Server;
+class QHostAddress;
 
-class ServerBatch
-{
-	public:
-		QList<Server*>	servers;
-		QTime			time;
-
-		/**
-		 * @param rejectedServers - servers that were removed from this
-		 *		batch due to timeout. These should be removed from registered
-		 *		servers list in the RefreshingThread.
-		 */
-		void			sendQueries(QUdpSocket *socket, QList<Server*>& rejectedServers, int resendDelay=1000, bool firstQuery=false);
-};
-
-class RefreshingThread : public QThread, public QRunnable
+class RefreshingThread : public QObject
 {
 	Q_OBJECT
 
 	public:
-		RefreshingThread();
 		~RefreshingThread();
+
+		bool	isRunning() const;
 
 		/**
 		 *	This will set bKeepRunning to false which will tell the refreshing
@@ -78,14 +58,16 @@ class RefreshingThread : public QThread, public QRunnable
 		 *	object twice.
 		 */
 		void 	registerServer(Server* server);
-		void 	run();
 
 		/**
 		 *	Sets delay between subsequent queries send to the servers.
 		 *	Default value is 1000. Minimum value is 100.
 		 */
-		void	setDelayBetweenResends(int delay) { delayBetweenResends = qMax(delay, 100); }
+		void	setDelayBetweenResends(int delay);
 
+		void	start() const;
+
+		static RefreshingThread *createRefreshingThread();
 	signals:
 		/**
 		 *	Emitted when a master client of non-custom server is registered.
@@ -107,53 +89,12 @@ class RefreshingThread : public QThread, public QRunnable
 		void	sleepingModeExit();
 
 	protected:
-		class MasterClientInfo
-		{
-			public:
-				MasterClientInfo(MasterClient* pMaster, RefreshingThread* pParent);
-				~MasterClientInfo();
+		class Controller;
+		class Data;
+		class MasterClientInfo;
+		class ServerBatch;
 
-				int							numOfChallengesSent;
-				QTime						timeLastChallengeSent;
-
-			protected:
-				MasterClientSignalProxy*	pReceiver;
-		};
-
-		typedef QHash<MasterClient*, MasterClientInfo*>				MasterHashtable;
-		typedef QHash<MasterClient*, MasterClientInfo*>::iterator	MasterHashtableIt;
-
-		static const int							MASTER_SERVER_TIMEOUT_DELAY = 10000;
-
-		QTime										batchTime;
-		bool										bKeepRunning;
-		int											delayBetweenResends;
-		QList<ServerBatch>							registeredBatches;
-		MasterHashtable								registeredMasters;
-
-		/**
-		 *	This will keep list of ALL servers to make sure that no server is
-		 *	registered twice.
-		 */
-		QSet<Server*>								registeredServers;
-		QUdpSocket*									socket;
-		QList<Server*>								unbatchedServers;
-		QSet<MasterClient*>							unchallengedMasters;
-
-		/**
-		 *	Mutex used by methods of this class.
-		 */
-		QMutex					thisMutex;
-
-		/**
-		 *	Wait condition used by the methods of this class. Used to wake
-		 *	up the sleeping thread after the registerServer() is called.
-		 */
-		QWaitCondition			thisWaitCondition;
-
-		void					attemptTimeoutMasters();
-
-		void					gotoSleep();
+		RefreshingThread(Controller *controller);
 
 		bool					isAnythingToRefresh() const;
 
@@ -164,14 +105,10 @@ class RefreshingThread : public QThread, public QRunnable
 
 		void					readPendingDatagrams();
 
-		void					sendMasterQueries();
-
 		/**
 		 *	@return Query slots used by this batch.
 		 */
 		unsigned				sendQueriesForBatch(ServerBatch& batch, int resetDelay, bool firstQuery);
-
-		void					sendServerQueries();
 
 		/**
 		 *	@brief Returns true if there are any master clients or non-custom
@@ -182,7 +119,20 @@ class RefreshingThread : public QThread, public QRunnable
 		void					unregisterMaster(MasterClient* pMaster);
 
 	protected slots:
+		void					attemptTimeoutMasters();
+
 		void					masterFinishedRefreshing(MasterClient* pMaster);
+
+		void					readAllPendingDatagrams();
+
+		void					sendMasterQueries();
+
+		void					sendServerQueries();
+
+	private:
+		static const int	MASTER_SERVER_TIMEOUT_DELAY = 10000;
+
+		Data *d;
 };
 
 #endif
