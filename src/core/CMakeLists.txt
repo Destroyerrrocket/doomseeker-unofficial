@@ -155,6 +155,7 @@ set(DOOMSEEKER_QT_FILES
 	log.h
 	refresher.h
 	socketsignalsadapter.h
+	connectionhandler.h
 )
 
 qt_wrap_cpp(doomseekerWraps QT_FILES ${DOOMSEEKER_QT_FILES})
@@ -279,6 +280,7 @@ set(SOURCE_FILES
 	scanner.cpp
 	speedcalculator.cpp
 	strings.cpp
+	connectionhandler.cpp
 	version.cpp
 )
 

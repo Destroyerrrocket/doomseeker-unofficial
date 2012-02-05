@@ -31,6 +31,7 @@
 #include <QThreadPool>
 
 #include "configuration/doomseekerconfig.h"
+#include "connectionhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/remoteconsole.h"
 #include "ini/ini.h"
@@ -109,6 +110,20 @@ Main::~Main()
 	}
 }
 
+int Main::connectToServerByURL()
+{
+	ConnectionHandler *handler = ConnectionHandler::connectByUrl(connectUrl);
+
+	if(handler)
+	{
+		connect(handler, SIGNAL(finished(int)), application, SLOT(quit()));
+		int ret = application->exec();
+		delete handler;
+		return ret;
+	}
+	return 0;
+}
+
 // This method is an exception to sorting everything in alphabetical order
 // because it's... the main method.
 int Main::run()
@@ -157,6 +172,11 @@ int Main::run()
 	{
 		if (!createRemoteConsole())
 			return 0;
+	}
+	else if (connectUrl.isValid())
+	{
+		setupRefreshingThread();
+		return connectToServerByURL();
 	}
 	else
 	{
@@ -356,7 +376,11 @@ bool Main::interpretCommandLineParameters()
 	{
 		const char* arg = arguments[i];
 
-		if(strcmp(arg, "--datadir") == 0 && i+1 < argumentsCount)
+		if(strcmp(arg, "--connect") == 0 && i+1 < argumentsCount)
+		{
+			connectUrl = QUrl(arguments[++i]);
+		}
+		else if(strcmp(arg, "--datadir") == 0 && i+1 < argumentsCount)
 		{
 			++i;
 			dataDirectories.prepend(arguments[i]);
@@ -376,6 +400,7 @@ bool Main::interpretCommandLineParameters()
 			gLog.setTimestampsEnabled(false);
 			// Print information to the log and terminate.
 			gLog << tr("Available command line parameters:");
+			gLog << tr("	--connect protocol://ip[:port] : Attempts to connect to the specified server.");
 			gLog << tr("	--datadir : Sets an explicit search location for IP2C data along with plugins.");
 			gLog << tr("	--rcon [plugin] [ip] : Launch the rcon client for the specified ip.");
 			gLog << tr("	--portable : Starts application in portable mode.");

@@ -43,6 +43,7 @@
 #include <QStandardItem>
 #include <QSystemTrayIcon>
 
+class ConnectionHandler;
 class ServerFilterDock;
 class ServersStatusWidget;
 
@@ -147,11 +148,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		QSystemTrayIcon*	trayIcon;
 		QMenu*				trayIconMenu;
 
-		Server				*waitingToJoin;
+		ConnectionHandler	*connectionHandler;
 
 		void	changeEvent(QEvent* event);
-
-		bool	checkWadseekerValidity();
 
 		/**
 		 *	Connects signals from objects and controls of the main window
@@ -199,19 +198,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		bool	isAnythingToRefresh() const;
 		bool	isAnyMasterEnabled() const;
 
-		/**
-		 *	Generates command line info for specified server.
-		 *
-		 *	@param server - command line will be generated for this server
-		 *	@param [out] cli - generated command line
-		 *	@param errorCaption - caption used for QMessageBox in case of an
-		 *		error
-		 *	@param hadMissing - If set to a non-NULL value the pointer will be
-		 *		set to true if Wadseeker downloaded files.
-		 *	@return true on success, false otherwise.
-		 */
-		bool	obtainJoinCommandLine(const Server* server, CommandLineInfo& cli, const QString& errorCaption = tr("Doomseeker - error"), bool *hadMissing=NULL);
-
 		QQueryMenuAction* queryMenuActionForMasterClient(MasterClient* pClient);
 
 		void	refreshCustomServers();
@@ -252,7 +238,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void    postInitAppStartup();
 		void 	refreshThreadBeginsWork();
 		void	refreshThreadEndsWork();
-		void	refreshToJoin(Server*);
 		void 	runGame(Server*);
 		void	serverAddedToList(Server*);
 		void	showServerJoinCommandLine(const Server*);

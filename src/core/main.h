@@ -32,6 +32,7 @@
 #include <QApplication>
 #include <QObject>
 #include <QStringList>
+#include <QUrl>
 
 /**
  * This class holds some global information.
@@ -69,6 +70,7 @@ class MAIN_EXPORT Main : public QObject
 		static const QString		DOOMSEEKER_INI_FILENAME;
 		static const QString		DOOMSEEKER_IRC_INI_FILENAME;
 
+		int							connectToServerByURL();
 		void						convertOldIniToQSettingsIni();
 
 		void						createMainWindow();
@@ -112,6 +114,7 @@ class MAIN_EXPORT Main : public QObject
 		QString						rconAddress;
 		unsigned short				rconPort;
 		bool						startRcon;
+		QUrl						connectUrl;
 };
 
 #endif /* __MAIN_H__ */

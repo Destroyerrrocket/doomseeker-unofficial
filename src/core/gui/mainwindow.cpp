@@ -41,6 +41,7 @@
 #include "serverapi/gamerunner.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
+#include "connectionhandler.h"
 #include "customservers.h"
 #include "doomseekerfilepaths.h"
 #include "log.h"
@@ -67,7 +68,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
   bWantToQuit(false), logDock(NULL), masterManager(NULL),
   trayIcon(NULL), trayIconMenu(NULL)
 {
-	waitingToJoin = NULL;
+	connectionHandler = NULL;
 
 	this->application = application;
 
@@ -196,6 +197,9 @@ One of the proper locations for plugin modules is the \"engines/\" directory.\n\
 
 MainWindow::~MainWindow()
 {
+	if(connectionHandler)
+		delete connectionHandler;
+
 	// Window geometry settings
 	gConfig.doomseeker.bMainWindowMaximized = isMaximized();
 	if (!isMaximized() && !isMinimized())
@@ -284,27 +288,6 @@ void MainWindow::changeEvent(QEvent* event)
 	}
 }
 
-bool MainWindow::checkWadseekerValidity()
-{
-	QString targetDirPath = gConfig.wadseeker.targetDirectory;
-	QDir targetDir(targetDirPath);
-	QFileInfo targetDirFileInfo(targetDirPath);
-
-
-	if (targetDirPath.isEmpty() || !targetDir.exists() || !targetDirFileInfo.isWritable())
-	{
-		QString message = tr("Wadseeker will not work correctly: \n\
-Target directory is either not set, is invalid or cannot be written to.\n\
-Please review your Configuration and/or refer to online help available from \
-the Help menu.");
-
-		QMessageBox::warning(this, tr("Doomseeker - Wadseeker error"), message);
-		return false;
-	}
-
-	return true;
-}
-
 void MainWindow::closeEvent(QCloseEvent* event)
 {
 	// Check if tray icon is available and if we want to minimize to tray icon
@@ -346,7 +329,7 @@ void MainWindow::connectEntities()
 	connect(menuActionViewIRC, SIGNAL( triggered() ) , this, SLOT( menuViewIRC() ));
 	connect(menuActionWadseeker, SIGNAL( triggered() ), this, SLOT( menuWadSeeker() ));
 	connect(serverFilterDock, SIGNAL( filterUpdated(const ServerListFilterInfo&) ), this, SLOT( updateServerFilter(const ServerListFilterInfo&) ) );
-	connect(serverTableHandler, SIGNAL( serverDoubleClicked(Server*) ), this, SLOT( refreshToJoin(Server*) ) );
+	connect(serverTableHandler, SIGNAL( serverDoubleClicked(Server*) ), this, SLOT( runGame(Server*) ) );
 	connect(serverTableHandler, SIGNAL( displayServerJoinCommandLine(const Server*) ), this, SLOT( showServerJoinCommandLine(const Server*) ) );
 	connect(serverTableHandler, SIGNAL( serverInfoUpdated(Server*) ), this, SLOT( serverAddedToList(Server*) ) );
 }
@@ -951,7 +934,7 @@ void MainWindow::menuViewIRC()
 
 void MainWindow::menuWadSeeker()
 {
-	if (!checkWadseekerValidity())
+	if (!ConnectionHandler::checkWadseekerValidity(this))
 	{
 		return;
 	}
@@ -965,140 +948,6 @@ void MainWindow::notifyFirstRun()
 	// On first run prompt configuration box.
 	QMessageBox::information(NULL, tr("Welcome to Doomseeker"), tr("Before you start browsing for servers, please ensure that Doomseeker is properly configured."));
 	menuActionConfigure->trigger();
-}
-
-bool MainWindow::obtainJoinCommandLine(const Server* server, CommandLineInfo& cli, const QString& errorCaption, bool *hadMissing)
-{
-	cli.applicationDir = "";
-	cli.args.clear();
-	cli.executable = QFileInfo("");
-
-	if (server != NULL)
-	{
-		// Remember to check REFRESHING status first!
-		if (server->isRefreshing())
-		{
-			QMessageBox::warning(this, errorCaption, tr("This server is still refreshing.\nPlease wait until it is finished."));
-			gLog << tr("Attempted to obtain a join command line for a \"%1\" server that is under refresh.").arg(server->addressWithPort());
-			return false;
-		}
-		// Fail if Doomseeker couldn't get data on this server.
-		else if (!server->isKnown())
-		{
-			QMessageBox::critical(this, errorCaption, tr("Data for this server is not available.\nOperation failed."));
-			gLog << tr("Attempted to obtain a join command line for an unknown server \"%1\"").arg(server->addressWithPort());
-			return false;
-		}
-
-		// For MissingWads:
-		const QString filesMissingCaption = tr("Doomseeker - files are missing");
-		QString filesMissingMessage = tr("Following files are missing:\n");
-
-		QString connectPassword;
-		if(server->isLocked())
-		{
-			PasswordDlg password(this);
-			int ret = password.exec();
-
-			if(ret == QDialog::Accepted)
-				connectPassword = password.connectPassword();
-			else
-				return false;
-		}
-
-		GameRunner* gameRunner = server->gameRunner();
-		JoinError joinError = gameRunner->createJoinCommandLine(cli, connectPassword);
-		delete gameRunner;
-
-		const QString unknownError = tr("Unknown error.");
-		const QString* error = NULL;
-
-		switch (joinError.type)
-		{
-			case JoinError::Terminate:
-				return false;
-			case JoinError::Critical:
-				if (!joinError.error.isEmpty())
-				{
-					error = &joinError.error;
-				}
-				else
-				{
-					error = &unknownError;
-				}
-
-				QMessageBox::critical(this, errorCaption, *error);
-				gLog << tr("Error when obtaining join parameters for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(*error);
-				return false;
-
-			case JoinError::MissingWads:
-				// Execute Wadseeker
-				if (!joinError.missingIwad.isEmpty())
-				{
-					QString additionalInfo = tr("\n\
-Make sure that this file is in one of the paths specified in Options -> File Paths.\n\
-If you don't have this file you need to purchase the game associated with this IWAD.\n\
-Wadseeker will not download IWADs.\n\n");
-
-					filesMissingMessage += tr("IWAD: ") + joinError.missingIwad.toLower() + additionalInfo;
-				}
-
-				if (!joinError.missingWads.isEmpty())
-				{
-					filesMissingMessage += tr("PWADS: %1\nDo you want Wadseeker to find missing PWADs?").arg(joinError.missingWads.join(" "));
-				}
-
-				if (joinError.isMissingIwadOnly())
-				{
-					QMessageBox::critical(this, filesMissingCaption, filesMissingMessage, QMessageBox::Ok);
-					return false;
-				}
-				else
-				{
-					QMessageBox::StandardButtons buttons = QMessageBox::Yes|QMessageBox::No;
-					if (server->plugin()->data()->inGameFileDownloads)
-					{
-						filesMissingMessage += tr("\nAlternatively use ignore to connect anyways.");
-						buttons |= QMessageBox::Ignore;
-					}
-
-					QMessageBox::StandardButtons ret = QMessageBox::question(this, filesMissingCaption, filesMissingMessage, buttons);
-					if (ret == QMessageBox::Yes)
-					{
-						if (!checkWadseekerValidity())
-						{
-							return false;
-						}
-
-						if (!joinError.missingIwad.isEmpty())
-						{
-							joinError.missingWads.append(joinError.missingIwad);
-						}
-
-						WadseekerInterface wsi(NULL);
-						wsi.setAutomatic(true, joinError.missingWads);
-						wsi.setCustomSite(server->website());
-						if (wsi.exec() == QDialog::Accepted)
-						{
-							if(hadMissing)
-								*hadMissing = true;
-							return obtainJoinCommandLine(server, cli, errorCaption);
-						}
-					}
-					if (ret != QMessageBox::Ignore)
-						return false;
-				}
-				// Intentional fall through
-
-			case JoinError::NoError:
-				break;
-
-			default:
-				break;
-		}
-	}
-
-	return true;
 }
 
 void MainWindow::postInitAppStartup()
@@ -1209,44 +1058,13 @@ void MainWindow::refreshThreadEndsWork()
 	bTotalRefreshInProcess = false;
 }
 
-void MainWindow::refreshToJoin(Server *server)
+void MainWindow::runGame(Server *server)
 {
-	// If the data we have is old we should refresh first to check if we can
-	// still properly join the server.
-	if(server->isRefreshable() && gConfig.doomseeker.bQueryBeforeLaunch)
-	{
-		waitingToJoin = server;
-		server->refresh();
-	}
-	else
-		runGame(server);
-}
+	if(connectionHandler)
+		delete connectionHandler;
 
-void MainWindow::runGame(Server* server)
-{
-	bool hadMissing = false;
-	CommandLineInfo cli;
-	if (obtainJoinCommandLine(server, cli, tr("Doomseeker - join server"), &hadMissing))
-	{
-		if(hadMissing)
-		{
-			// Downloading wads takes an unknown amount of time, a server may
-			// have rotated wads, players could have joined, etc so lets refresh.
-			refreshToJoin(server);
-			return;
-		}
-
-		GameRunner* gameRunner = server->gameRunner();
-
-		Message message = gameRunner->runExecutable(cli, false);
-		if (message.isError())
-		{
-			gLog << tr("Error while launching executable for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(message.contents());
-			QMessageBox::critical(this, tr("Doomseeker - launch executable"), message.contents());
-		}
-
-		delete gameRunner;
-	}
+	connectionHandler = new ConnectionHandler(server, this);
+	connectionHandler->run();
 }
 
 void MainWindow::setQueryMasterServerEnabled(MasterClient* pClient, bool bEnabled)
@@ -1268,12 +1086,6 @@ void MainWindow::serverAddedToList(Server* pServer)
 	{
 		const QString& gameMode = pServer->gameMode().name();
 		serverFilterDock->addGameModeToComboBox(gameMode);
-	}
-
-	if (pServer == waitingToJoin)
-	{
-		waitingToJoin = NULL;
-		runGame(pServer);
 	}
 }
 
@@ -1342,7 +1154,7 @@ void MainWindow::setupToolBar()
 void MainWindow::showServerJoinCommandLine(const Server* server)
 {
 	CommandLineInfo cli;
-	if (obtainJoinCommandLine(server, cli, tr("Doomseeker - join command line")))
+	if (ConnectionHandler::obtainJoinCommandLine(this, server, cli, tr("Doomseeker - join command line")))
 	{
 		CopyTextDlg ctd(cli.executable.absoluteFilePath() + " " + cli.args.join(" "), server->name(), this);
 		ctd.exec();

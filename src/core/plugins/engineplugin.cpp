@@ -76,6 +76,7 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 {
 	d->name = name;
 	d->icon = new QPixmap(icon);
+	d->scheme = d->name.replace(' ', "");
 
 	va_list va;
 	va_start(va, icon);
@@ -156,6 +157,9 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 			}
 			case EP_SupportsRandomMapRotation:
 				d->supportsRandomMapRotation = true;
+				break;
+			case EP_URLScheme:
+				d->scheme = va_arg(va, const char*);
 				break;
 			case EP_RefreshThreshold:
 				d->refreshThreshold = va_arg(va, unsigned int);

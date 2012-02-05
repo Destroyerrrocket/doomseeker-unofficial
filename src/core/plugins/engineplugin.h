@@ -85,7 +85,8 @@ class MAIN_EXPORT EnginePlugin
 			EP_InGameFileDownloads, ///< Allows the player to join a server without downloading files through Wadseeker.
 			EP_IRCChannel, ///< (const char*)server, (const char*)channel - Can be repeated. Default IRC channels.
 			EP_SupportsRandomMapRotation, ///< Signifies that a server can be created with a random map rotation.
-			EP_RefreshThreshold ///< (quint8) The amount of time (in seconds) that must pass before a server can be requeried.
+			EP_RefreshThreshold, ///< (quint8) The amount of time (in seconds) that must pass before a server can be requeried.
+			EP_URLScheme ///< (const char*) Overrides the URL scheme which Doomseeker sets for this plugin. By default it is the port's name without spaces.
 		};
 
 		/// Reimplement if you want to perform some ini initialization manually.
@@ -129,6 +130,7 @@ class MAIN_EXPORT EnginePlugin
 				QString					name;
 				IniSection				*pConfig;
 				quint8					refreshThreshold;
+				QString					scheme;
 				bool					supportsRandomMapRotation;
 				bool					valid;
 				unsigned int			version;
