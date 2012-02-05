@@ -176,7 +176,8 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 	
 		QString playerName(&in[pos]);
 		pos += playerName.length()+1;
-		Player player(playerName, READINT16(&in[pos+6]), READINT16(&in[pos+1]), static_cast<Player::PlayerTeam> (READINT8(&in[pos])), READINT8(&in[pos+5]));
+		Player::PlayerTeam team = currentGameMode.isTeamGame() ? static_cast<Player::PlayerTeam> (READINT8(&in[pos])) : Player::TEAM_NONE;
+		Player player(playerName, READINT16(&in[pos+6]), READINT16(&in[pos+1]), team, READINT8(&in[pos+5]));
 		pos += 12;
 		players->append(player);
 	}
