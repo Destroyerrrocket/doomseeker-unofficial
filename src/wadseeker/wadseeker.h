@@ -448,6 +448,7 @@ class WADSEEKER_API Wadseeker : public QObject
 
 	private slots:
 		void fileLinkFound(const QString& filename, const QUrl& url);
+		void fileMirrorLinksFound(const QString& filename, const QList<QUrl>& urls);
 		void idgamesClientFinished(Idgames* pEmitter);
 		void wadRetrieverDownloadFinished(WadDownloadInfo wadDownloadInfo);
 		void wadRetrieverDownloadProgress(WadDownloadInfo wadDownloadInfo, qint64 current, qint64 total);

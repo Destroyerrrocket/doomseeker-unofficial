@@ -24,9 +24,10 @@
 
 #include "protocols/networkreplysignalwrapper.h"
 
-NetworkReplyWrapperInfo::NetworkReplyWrapperInfo(QNetworkReply* pReply)
+NetworkReplyWrapperInfo::NetworkReplyWrapperInfo(QNetworkReply* pReply, const QUrl& requestUrl)
 {
 	this->pReply = pReply;
+	this->requestUrl = requestUrl;
 
 	if (pReply != NULL)
 	{

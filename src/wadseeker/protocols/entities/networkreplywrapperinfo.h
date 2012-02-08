@@ -32,8 +32,9 @@ class NetworkReplyWrapperInfo
 	public:
 		NetworkReplySignalWrapper* pSignalWrapper;
 		QNetworkReply* pReply;
+		QUrl requestUrl;
 
-		NetworkReplyWrapperInfo(QNetworkReply* pReply);
+		NetworkReplyWrapperInfo(QNetworkReply* pReply, const QUrl& requestUrl);
 		~NetworkReplyWrapperInfo();
 
 		void deleteMembersLater();

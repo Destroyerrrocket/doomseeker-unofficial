@@ -34,6 +34,7 @@
 #include "wadseekermessagetype.h"
 
 class NetworkReplyWrapperInfo;
+class URLProvider;
 class WadDownloadInfo;
 
 /**
@@ -64,6 +65,24 @@ class WadRetriever : public QObject
 		~WadRetriever();
 
 		void abort();
+		
+		/**
+		 * @brief Provides a list of mirror URLs for a WAD download.
+		 *
+		 * This will start download if necessary. Please note that only one
+		 * download of a single WAD may be running at single time. However
+		 * multiple different WADs may be downloaded concurrently.
+		 *
+		 * @param wad
+		 *      WAD for which the URL will be added. If WAD is not on the list
+		 *      set by setWads() the URL will not be added.
+		 * @param urls
+		 *      A list of mirror download URLs that will be queued for 
+		 *      specified WAD. If file is downloaded but then discarded because
+		 *      Wadseeker decides that this is not a file it wants then all
+		 *      mirror URLs will also be discarded.
+		 */
+		void addMirrorUrls(const WadDownloadInfo& wad, const QList<QUrl>& urls);		
 
 		/**
 		 * @brief Provides new URL for a WAD download.
@@ -249,7 +268,7 @@ class WadRetriever : public QObject
 		class WadRetrieverInfo
 		{
 			public:
-				QList<QUrl> downloadUrls;
+				URLProvider* downloadUrls;
 				NetworkReplyWrapperInfo* pNetworkReply;
 				WadDownloadInfo* wad;
 
@@ -342,9 +361,9 @@ class WadRetriever : public QObject
 		 * @brief Attempts to extract meaningful file data from
 		 *        the QNetworkReply.
 		 */
-		void resolveDownloadFinish(QNetworkReply* pReply, WadRetrieverInfo* pWadRetrieverInfo);
+		void resolveDownloadFinish(NetworkReplyWrapperInfo* pReply, WadRetrieverInfo* pWadRetrieverInfo);
 
-		void setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, QNetworkReply* pReply);
+		void setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, QNetworkReply* pReply, const QUrl& requestUrl);
 		void startNextDownloads();
 		void startNetworkQuery(WadRetrieverInfo& wadRetrieverInfo, const QUrl& url);
 

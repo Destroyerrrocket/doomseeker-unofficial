@@ -105,7 +105,7 @@ bool Http::isHtmlContentType() const
 
 QString Http::urlFilename() const
 {
-	const QUrl& url = pReply->request().url();
+	const QUrl& url = pReply->url();
 	QFileInfo fileInfo(url.path());
 
 	return fileInfo.fileName();

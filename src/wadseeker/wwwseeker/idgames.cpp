@@ -118,10 +118,17 @@ void Idgames::extractAndEmitLinks(QByteArray& pageData, const QUrl& pageUrl)
 	QStringList possibleFilenames;
 	possibleFilenames << zipName();
 	QList<Link> directLinks = urlParser.directLinks(possibleFilenames, pageUrl);
-
+	
+	
 	if (!directLinks.isEmpty())
 	{
-		emit fileLinkFound(this->seekedFile->name(), directLinks.first().url);
+		QList<QUrl> directUrls;
+		foreach (const Link& link, directLinks)
+		{
+			directUrls << link.url;
+		}
+		
+		emit fileLinksFound(this->seekedFile->name(), directUrls);
 	}
 
 	emit finished(this);
@@ -173,7 +180,7 @@ void Idgames::networkRequestFinished()
 	}
 
 	QByteArray pageData = pCurrentRequest->readAll();
-	QUrl pageUrl = pCurrentRequest->request().url();
+	QUrl pageUrl = pCurrentRequest->url();
 
 	emit siteFinished(pageUrl);
 
@@ -207,7 +214,7 @@ void Idgames::networkRequestProgress(qint64 done, qint64 total)
 {
 	if (pCurrentRequest != NULL)
 	{
-		emit siteProgress(pCurrentRequest->request().url(), done, total);
+		emit siteProgress(pCurrentRequest->url(), done, total);
 	}
 }
 

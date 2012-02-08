@@ -155,6 +155,18 @@ void Wadseeker::fileLinkFound(const QString& filename, const QUrl& url)
 	d.wadRetriever->addUrl(filename, url);
 }
 
+void Wadseeker::fileMirrorLinksFound(const QString& filename, const QList<QUrl>& urls)
+{
+	emit message(tr("Found mirror links to file \"%1\":").arg(filename), WadseekerLib::Notice);
+	foreach (const QUrl& url, urls)
+	{
+		QString strUrl = url.toEncoded().constData();
+		emit message(tr("    %2").arg(strUrl), WadseekerLib::Notice);
+	}
+
+	d.wadRetriever->addMirrorUrls(filename, urls);
+}
+
 void Wadseeker::idgamesClientFinished(Idgames* pEmitter)
 {
 	emit message(tr("IDGames client for file \"%1\" has finished.").arg(pEmitter->file().name()),
@@ -352,8 +364,8 @@ void Wadseeker::setupIdgamesClients(const QList<WadDownloadInfo>& wadDownloadInf
 		this->connect(pIdgames, SIGNAL( message(const QString&, WadseekerLib::MessageType) ),
 			SIGNAL( message(const QString&, WadseekerLib::MessageType) ) );
 
-		this->connect(pIdgames, SIGNAL( fileLinkFound(const QString&, const QUrl&) ),
-			SLOT( fileLinkFound(const QString&, const QUrl&) ) );
+		this->connect(pIdgames, SIGNAL( fileLinksFound(const QString&, const QList<QUrl>&)),
+			SLOT( fileMirrorLinksFound(const QString&, const QList<QUrl>&) ) );		
 
 		// Forward signals as with WWWSeeker
 		this->connect(pIdgames, SIGNAL( siteFinished(const QUrl&) ),

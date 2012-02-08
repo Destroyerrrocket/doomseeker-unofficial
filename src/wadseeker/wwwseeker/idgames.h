@@ -87,10 +87,11 @@ class Idgames : public QObject
 		 *
 		 * @param wadName
 		 *      The name of the WAD passed to setFile()
-		 * @param url
-		 *      Download URL for the file.
+		 * @param mirrorUrls
+		 *      Download URLs for the file. These are all mirrors of the same
+		 *      file on different servers.
 		 */
-		void fileLinkFound(const QString& wadName, const QUrl& url);
+		void fileLinksFound(const QString& wadName, const QList<QUrl>& mirrorUrls);
 
 		void message(const QString& msg, WadseekerLib::MessageType type);
 

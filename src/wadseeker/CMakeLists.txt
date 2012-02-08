@@ -56,6 +56,7 @@ set(WADSEEKER_FILES
 	protocols/fixedftpreply.cpp
 	protocols/http.cpp
 	protocols/networkreplysignalwrapper.cpp
+	protocols/urlprovider.cpp
 	wadretriever/wadinstaller.cpp
 	wadretriever/wadretriever.cpp
 	wwwseeker/entities/fileseekinfo.cpp
@@ -79,6 +80,7 @@ set(HEADER_FILES
 	entities/waddownloadinfo.h
 	protocols/entities/networkreplywrapperinfo.h
 	protocols/http.h
+	protocols/urlprovider.h
 	wadretriever/wadinstaller.h
 	wwwseeker/entities/fileseekinfo.h
 	wwwseeker/htmlparser.h
