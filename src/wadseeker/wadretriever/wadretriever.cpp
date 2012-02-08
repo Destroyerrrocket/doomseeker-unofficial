@@ -311,7 +311,7 @@ void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 	WadRetrieverInfo* pInfo = findRetrieverInfo(pReply);
 	if (pInfo != NULL)
 	{
-		QUrl url = pInfo->pNetworkReply->requestUrl;
+		QUrl url = pReply->request().url();
 		if (url.isEmpty())
 		{
 			url = pReply->url();
@@ -323,7 +323,7 @@ void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 			QList<QByteArray> headers = pReply->rawHeaderList();
 			printf("WadRetriever HEADERS\n");
 			printf("Error: %d\n", pReply->error());
-			printf("Wadseeker request URL: %s\n",pInfo->pNetworkReply->requestUrl.toEncoded().constData());
+			printf("Wadseeker request URL: %s\n", pReply->request().url().toEncoded().constData());
 			printf("Request URL %s\n", pReply->request().url().toEncoded().constData());
 			printf("Reply URL %s\n", replyUrl.toEncoded().constData());
 			foreach (const QByteArray& headerName, headers)
@@ -361,7 +361,7 @@ void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 		}
 		else
 		{
-			resolveDownloadFinish(pReplyWrapperInfo, pInfo);
+			resolveDownloadFinish(pReply, pInfo);
 		}
 
 		// Remember to clean up.
@@ -468,10 +468,9 @@ void WadRetriever::removeWadRetrieverInfo(WadRetrieverInfo* pWadRetrieverInfo)
 	}
 }
 
-void WadRetriever::resolveDownloadFinish(NetworkReplyWrapperInfo* pReplyInfo, WadRetrieverInfo* pWadRetrieverInfo)
+void WadRetriever::resolveDownloadFinish(QNetworkReply* pReply, WadRetrieverInfo* pWadRetrieverInfo)
 {
-	QUrl url = pReplyInfo->requestUrl;
-	QNetworkReply* pReply = pReplyInfo->pReply;
+	QUrl url = pReply->request().url();
 	if (url.isEmpty())
 	{
 		url = pReply->url();
@@ -518,9 +517,9 @@ void WadRetriever::resolveDownloadFinish(NetworkReplyWrapperInfo* pReplyInfo, Wa
 	}
 }
 
-void WadRetriever::setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, QNetworkReply* pReply, const QUrl& requestUrl)
+void WadRetriever::setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, QNetworkReply* pReply)
 {
-	NetworkReplyWrapperInfo* pWrapperInfo = new NetworkReplyWrapperInfo(pReply, requestUrl);
+	NetworkReplyWrapperInfo* pWrapperInfo = new NetworkReplyWrapperInfo(pReply);
 	wadRetrieverInfo.pNetworkReply = pWrapperInfo;
 
 	this->connect(pWrapperInfo->pSignalWrapper, SIGNAL( downloadProgress(QNetworkReply*, qint64, qint64) ),
@@ -600,7 +599,7 @@ void WadRetriever::startNetworkQuery(WadRetrieverInfo& wadRetrieverInfo, const Q
 #endif
 
 	QNetworkReply* pReply = d.pNetworkAccessManager->get(request);
-	setNetworkReply(wadRetrieverInfo, pReply, url);
+	setNetworkReply(wadRetrieverInfo, pReply);
 
 	emit wadDownloadStarted(*wadRetrieverInfo.wad, url);
 }

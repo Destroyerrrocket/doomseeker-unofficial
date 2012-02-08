@@ -272,7 +272,7 @@ class WWWSeeker : public QObject
 
 		PrivData d;
 
-		void addNetworkReply(QNetworkReply* pReply, const QUrl& requestUrl);
+		void addNetworkReply(QNetworkReply* pReply);
 		void deleteNetworkReplyWrapperInfo(QNetworkReply* pReply);
 		NetworkReplyWrapperInfo* findNetworkReplyWrapperInfo(QNetworkReply* pReply);
 		NetworkReplyWrapperInfo* findNetworkReplyWrapperInfo(const QUrl& url);
@@ -296,7 +296,7 @@ class WWWSeeker : public QObject
 
 		bool isMoreToSearch() const;
 
-		void parseAsHtml(NetworkReplyWrapperInfo* pReplyInfo);
+		void parseAsHtml(QNetworkReply* pReply);
 
 		/**
 		 * @brief Starts network query using specified URL.

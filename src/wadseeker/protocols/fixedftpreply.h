@@ -64,7 +64,7 @@ class FixedFtpReply : public QNetworkReply
 	Q_OBJECT
 
 public:
-	FixedFtpReply(const QUrl &url);
+	FixedFtpReply(const QNetworkRequest& request);
 	void abort();
 	void close();
 	qint64 bytesAvailable() const;

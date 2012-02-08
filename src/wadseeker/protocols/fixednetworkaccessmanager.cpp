@@ -59,7 +59,7 @@ QNetworkReply *FixedNetworkAccessManager::createRequest(
 	if (operation == GetOperation)
 		// Handle ftp:// URLs separately by creating custom QNetworkReply
 		// objects.
-		return new FixedFtpReply(request.url());
+		return new FixedFtpReply(request);
 	else
 		return QNetworkAccessManager::createRequest(operation, request, device);
 }

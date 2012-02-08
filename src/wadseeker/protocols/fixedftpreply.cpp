@@ -44,12 +44,14 @@
 #include <QDebug>
 #include <QtNetwork>
 
-FixedFtpReply::FixedFtpReply(const QUrl &url)
+FixedFtpReply::FixedFtpReply(const QNetworkRequest& request)
 	: QNetworkReply()
 {
 	bIsAborting = false;
 	offset = 0;
 	fileSize = 0;
+	
+	QUrl url = request.url();
 
 	ftp = new QFtp(this);
 	connect(ftp, SIGNAL(done(bool)), this, SLOT(processDone(bool)));
@@ -60,6 +62,7 @@ FixedFtpReply::FixedFtpReply(const QUrl &url)
 	this->connect(ftp, SIGNAL(dataTransferProgress(qint64, qint64)),
 			SLOT( dataProgressSlot(qint64, qint64) ));
 
+	setRequest(request);
 	setUrl(url);
 	ftp->connectToHost(url.host());
 }

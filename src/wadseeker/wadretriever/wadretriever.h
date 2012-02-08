@@ -361,9 +361,9 @@ class WadRetriever : public QObject
 		 * @brief Attempts to extract meaningful file data from
 		 *        the QNetworkReply.
 		 */
-		void resolveDownloadFinish(NetworkReplyWrapperInfo* pReply, WadRetrieverInfo* pWadRetrieverInfo);
+		void resolveDownloadFinish(QNetworkReply* pReply, WadRetrieverInfo* pWadRetrieverInfo);
 
-		void setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, QNetworkReply* pReply, const QUrl& requestUrl);
+		void setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, QNetworkReply* pReply);
 		void startNextDownloads();
 		void startNetworkQuery(WadRetrieverInfo& wadRetrieverInfo, const QUrl& url);
 
