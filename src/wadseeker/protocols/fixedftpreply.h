@@ -66,6 +66,7 @@ class FixedFtpReply : public QNetworkReply
 public:
 	FixedFtpReply(const QUrl &url);
 	void abort();
+	void close();
 	qint64 bytesAvailable() const;
 	bool isSequential() const;
 
@@ -81,6 +82,7 @@ private slots:
 
 
 private:
+	bool bIsAborting;
 	QFtp *ftp;
 	QByteArray content;
 	qint64 offset;

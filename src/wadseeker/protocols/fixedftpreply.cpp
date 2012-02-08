@@ -47,6 +47,7 @@
 FixedFtpReply::FixedFtpReply(const QUrl &url)
 	: QNetworkReply()
 {
+	bIsAborting = false;
 	offset = 0;
 	fileSize = 0;
 
@@ -83,6 +84,10 @@ void FixedFtpReply::fetchSize()
 
 void FixedFtpReply::processCommand(int, bool err)
 {
+#ifndef NDEBUG
+	qDebug() << "FTP - process command:" << ftp->currentCommand() << "err:" << err;
+#endif
+
 	if (err) {
 		setError(ContentNotFoundError, "Unknown command");
 		emit error(ContentNotFoundError);
@@ -92,7 +97,10 @@ void FixedFtpReply::processCommand(int, bool err)
 
 	switch (ftp->currentCommand()) {
 	case QFtp::ConnectToHost:
-		ftp->login();
+		if (!bIsAborting)
+		{
+			ftp->login();
+		}
 		break;
 
 	case QFtp::Login:
@@ -140,7 +148,19 @@ void FixedFtpReply::setContent()
 
 void FixedFtpReply::abort()
 {
+	bIsAborting = true;
 	ftp->abort();
+	if (ftp->currentCommand() == QFtp::ConnectToHost)
+	{
+		// We haven't even yet connected to the host so the
+		// abort is successful.
+		emit finished();
+	}
+}
+
+void FixedFtpReply::close()
+{
+	ftp->close();
 }
 
 qint64 FixedFtpReply::bytesAvailable() const
