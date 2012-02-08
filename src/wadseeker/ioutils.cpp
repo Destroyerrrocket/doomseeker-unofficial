@@ -30,15 +30,25 @@ bool IOUtils::copy(QIODevice& src, QIODevice& dst, unsigned long long maxCount, 
 	}
 
 	QByteArray buffer = src.read(bufferSize);
-	unsigned copiedCount = 0;
-	while (!buffer.isEmpty() || copiedCount >= maxCount)
+	unsigned long long copiedCount = 0;
+	while (!buffer.isEmpty() && copiedCount < maxCount)
 	{
 		if (dst.write(buffer) != buffer.size())
 		{
 			return false;	
 		}
+		
 		copiedCount += buffer.size();
-		buffer = src.read(bufferSize);
+		if (copiedCount < maxCount)
+		{
+			unsigned long long nextRead = bufferSize;
+			unsigned long long remainingData = maxCount - copiedCount;
+			if (nextRead > remainingData)
+			{
+				nextRead = remainingData;
+			}
+			buffer = src.read(nextRead);
+		}
 	}
 	
 	return true;
