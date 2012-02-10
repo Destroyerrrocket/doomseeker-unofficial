@@ -113,25 +113,56 @@ class RefreshingThread::MasterClientInfo
 	public:
 		MasterClientInfo(MasterClient* pMaster, RefreshingThread* pParent)
 		{
+			pParentThread = pParent;
+			pLastChallengeTimer = NULL;
 			pReceiver = new MasterClientSignalProxy(pMaster);
 			connect(pReceiver, SIGNAL( listUpdated(MasterClient*) ), pParent, SLOT( masterFinishedRefreshing(MasterClient*) ) );
 
 			numOfChallengesSent = 0;
-
-			timeLastChallengeSent.setSingleShot(true);
-			timeLastChallengeSent.setInterval(MASTER_SERVER_TIMEOUT_DELAY);
-			connect(&timeLastChallengeSent, SIGNAL(timeout()), pParent, SLOT(attemptTimeoutMasters()));
 		}
 		~MasterClientInfo()
 		{
 			delete pReceiver;
+			if (pLastChallengeTimer != NULL)
+			{
+				delete pLastChallengeTimer;
+			}
+		}
+		
+		void						fireLastChallengeSentTimer()
+		{
+			// This was previously done with an object of QTimer
+			// instead of a pointer.
+			// Unfortunately on Windows it produced a cross-threading
+			// warning messages saying that timer cannot be started
+			// from a different thread.
+			if (pLastChallengeTimer == NULL)
+			{
+				pLastChallengeTimer = new QTimer();
+			}
+									
+			pLastChallengeTimer->setSingleShot(true);
+			pLastChallengeTimer->setInterval(MASTER_SERVER_TIMEOUT_DELAY);
+			connect(pLastChallengeTimer, SIGNAL(timeout()), 
+				pParentThread, SLOT(attemptTimeoutMasters()));
+		}
+		
+		bool						isLastChallengeTimerActive() const
+		{
+			if (pLastChallengeTimer == NULL)
+			{
+				return false;
+			}
+		
+			return pLastChallengeTimer->isActive();
 		}
 
 		int							numOfChallengesSent;
-		QTimer						timeLastChallengeSent;
 
 	protected:
 		MasterClientSignalProxy*	pReceiver;
+		RefreshingThread*			pParentThread;
+		QTimer*						pLastChallengeTimer;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -202,7 +233,7 @@ void RefreshingThread::attemptTimeoutMasters()
 	{
 		MasterClientInfo* pMasterInfo = it.value();
 
-		if (!pMasterInfo->timeLastChallengeSent.isActive())
+		if (!pMasterInfo->isLastChallengeTimerActive())
 		{
 			MasterClient* pMaster = it.key();
 			pMaster->timeoutRefresh();
@@ -406,7 +437,7 @@ void RefreshingThread::sendMasterQueries()
 
 		MasterClientInfo* pMasterInfo = d->registeredMasters[pMaster];
 		++pMasterInfo->numOfChallengesSent;
-		pMasterInfo->timeLastChallengeSent.start();
+		pMasterInfo->fireLastChallengeSentTimer();
 
 		pMaster->refresh();
 		d->unchallengedMasters.remove(pMaster);
