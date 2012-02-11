@@ -23,6 +23,7 @@
 #include "wwwseeker.h"
 
 #include "protocols/entities/networkreplywrapperinfo.h"
+#include "protocols/fixednetworkaccessmanager.h"
 #include "protocols/networkreplysignalwrapper.h"
 #include "protocols/http.h"
 #include "wwwseeker/entities/fileseekinfo.h"
@@ -30,6 +31,7 @@
 #include "urlparser.h"
 #include "wadseekerversioninfo.h"
 
+#include <QDebug>
 #include <QFileInfo>
 
 WWWSeeker::WWWSeeker()
@@ -104,9 +106,13 @@ void WWWSeeker::addFileSiteUrl(const QString& filename, const QUrl& url)
 void WWWSeeker::addNetworkReply(QNetworkReply* pReply)
 {
 	NetworkReplyWrapperInfo* pQueryInfo = new NetworkReplyWrapperInfo(pReply);
+	pQueryInfo->setProgressTimeout(NetworkReplyWrapperInfo::SUGGESTED_PROGRESS_TIMEOUT_MSECS);
+	pQueryInfo->startConnectionTimeoutTimer();
 
 	this->connect(pQueryInfo->pSignalWrapper, SIGNAL( downloadProgress(QNetworkReply*, qint64, qint64) ),
 		SLOT( networkQueryDownloadProgress(QNetworkReply*, qint64, qint64) ));
+	this->connect(pQueryInfo->pSignalWrapper, SIGNAL( error(QNetworkReply*, QNetworkReply::NetworkError) ),
+		SLOT( networkQueryError(QNetworkReply*, QNetworkReply::NetworkError) ));
 	this->connect(pQueryInfo->pSignalWrapper, SIGNAL( finished(QNetworkReply*) ),
 		SLOT( networkQueryFinished(QNetworkReply*) ));
 	this->connect(pQueryInfo->pSignalWrapper, SIGNAL( metaDataChanged(QNetworkReply*) ),
@@ -232,6 +238,18 @@ bool WWWSeeker::isDirectUrl(const QUrl& url, QString& outFileName) const
 void WWWSeeker::networkQueryDownloadProgress(QNetworkReply* pReply, qint64 current, qint64 total)
 {
 	emit siteProgress(pReply->request().url(), current, total);
+}
+
+void WWWSeeker::networkQueryError(QNetworkReply* pReply, QNetworkReply::NetworkError code)
+{
+	if (code != QNetworkReply::NoError) 
+	{
+		QString errorString = FixedNetworkAccessManager::networkErrorToString(code);
+		
+		emit message(tr("Site \"%1\": network error occurred: %2")
+			.arg(pReply->request().url().toString(), errorString), WadseekerLib::Error);
+	}
+	qDebug() << "WWWSeeker::networkQueryError() " << code;
 }
 
 void WWWSeeker::networkQueryFinished(QNetworkReply* pReply)

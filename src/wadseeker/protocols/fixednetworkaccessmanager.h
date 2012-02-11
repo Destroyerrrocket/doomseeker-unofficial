@@ -44,6 +44,7 @@
 #define NETWORKACCESSMANAGER_H
 
 #include <QNetworkAccessManager>
+#include <QNetworkReply>
 
 #include "../wadseekerexportinfo.h"
 
@@ -65,11 +66,13 @@ class WADSEEKER_API FixedNetworkAccessManager : public QNetworkAccessManager
 {
 	Q_OBJECT
 
-public:
-	FixedNetworkAccessManager(QObject *parent = 0);
-
-protected:
-	QNetworkReply *createRequest(Operation operation, const QNetworkRequest &request, QIODevice *device);
+	public:
+		static QString networkErrorToString(QNetworkReply::NetworkError error);
+		
+		FixedNetworkAccessManager(QObject *parent = 0);
+		
+	protected:
+		QNetworkReply *createRequest(Operation operation, const QNetworkRequest &request, QIODevice *device);
 };
 
 #endif

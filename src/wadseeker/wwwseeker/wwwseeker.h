@@ -324,6 +324,7 @@ class WWWSeeker : public QObject
 
 	private slots:
 		void networkQueryDownloadProgress(QNetworkReply* pReply, qint64 current, qint64 total);
+		void networkQueryError(QNetworkReply* pReply, QNetworkReply::NetworkError code);
 		void networkQueryFinished(QNetworkReply* pReply);
 		void networkQueryMetaDataChanged(QNetworkReply* pReply);
 

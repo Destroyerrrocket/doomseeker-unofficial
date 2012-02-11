@@ -23,6 +23,7 @@
 #include "networkreplywrapperinfo.h"
 
 #include "protocols/networkreplysignalwrapper.h"
+#include "protocols/networkreplytimeouter.h"
 
 NetworkReplyWrapperInfo::NetworkReplyWrapperInfo(QNetworkReply* pReply)
 {
@@ -31,10 +32,12 @@ NetworkReplyWrapperInfo::NetworkReplyWrapperInfo(QNetworkReply* pReply)
 	if (pReply != NULL)
 	{
 		pSignalWrapper = new NetworkReplySignalWrapper(pReply);
+		pTimeouter = new NetworkReplyTimeouter(pReply);
 	}
 	else
 	{
 		pSignalWrapper = NULL;
+		pTimeouter = NULL;
 	}
 }
 
@@ -43,6 +46,7 @@ NetworkReplyWrapperInfo::~NetworkReplyWrapperInfo()
 	if (pReply != NULL)
 	{
 		delete pSignalWrapper;
+		delete pTimeouter;
 		delete pReply;
 	}
 }
@@ -52,10 +56,27 @@ void NetworkReplyWrapperInfo::deleteMembersLater()
 	if (pReply != NULL)
 	{
 		delete pSignalWrapper;
+		delete pTimeouter;
 		pReply->abort();
 		pReply->deleteLater();
 
 		pReply = NULL;
+	}
+}
+
+void NetworkReplyWrapperInfo::setProgressTimeout(unsigned timeoutMsecs)
+{
+	if (pTimeouter != NULL)
+	{
+		pTimeouter->setProgressTimeout(timeoutMsecs);
+	}
+}
+
+void NetworkReplyWrapperInfo::startConnectionTimeoutTimer(unsigned timeoutMsecs)
+{
+	if (pTimeouter != NULL)
+	{
+		pTimeouter->startConnectionTimeoutTimer(timeoutMsecs);
 	}
 }
 

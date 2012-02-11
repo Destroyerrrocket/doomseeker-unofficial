@@ -63,3 +63,19 @@ QNetworkReply *FixedNetworkAccessManager::createRequest(
 	else
 		return QNetworkAccessManager::createRequest(operation, request, device);
 }
+
+
+QString FixedNetworkAccessManager::networkErrorToString(QNetworkReply::NetworkError error) 
+{
+	QMetaObject meta = QNetworkReply::staticMetaObject;
+	for (int i=0; i < meta.enumeratorCount(); ++i) 
+	{
+		QMetaEnum m = meta.enumerator(i);
+		if (m.name() == QLatin1String("NetworkError")) 
+		{
+			return QLatin1String(m.valueToKey(error));
+		}
+	}
+	
+	return tr("Unknown Error");
+}

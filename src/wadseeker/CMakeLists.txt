@@ -38,6 +38,7 @@ set(WADSEEKER_QT_FILES
 	protocols/fixednetworkaccessmanager.h
 	protocols/fixedftpreply.h
 	protocols/networkreplysignalwrapper.h
+	protocols/networkreplytimeouter.h
 	wadretriever/wadretriever.h
 	wwwseeker/idgames.h
 	wwwseeker/wwwseeker.h
@@ -56,6 +57,7 @@ set(WADSEEKER_FILES
 	protocols/fixedftpreply.cpp
 	protocols/http.cpp
 	protocols/networkreplysignalwrapper.cpp
+	protocols/networkreplytimeouter.cpp
 	protocols/urlprovider.cpp
 	wadretriever/wadinstaller.cpp
 	wadretriever/wadretriever.cpp

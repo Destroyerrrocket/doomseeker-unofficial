@@ -303,6 +303,14 @@ void WadRetriever::networkQueryDownloadProgress(QNetworkReply* pReply, qint64 cu
 
 void WadRetriever::networkQueryError(QNetworkReply* pReply, QNetworkReply::NetworkError code)
 {
+	if (code != QNetworkReply::NoError) 
+	{
+		WadRetrieverInfo* pInfo = findRetrieverInfo(pReply);
+		QString errorString = FixedNetworkAccessManager::networkErrorToString(code);
+		
+		emit message(tr("File \"%1\": network error occurred: %2")
+			.arg(pInfo->wad->name(), errorString), WadseekerLib::Error);
+	}
 	qDebug() << "WadRetriever::networkQueryError() " << code;
 }
 
@@ -520,6 +528,8 @@ void WadRetriever::resolveDownloadFinish(QNetworkReply* pReply, WadRetrieverInfo
 void WadRetriever::setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, QNetworkReply* pReply)
 {
 	NetworkReplyWrapperInfo* pWrapperInfo = new NetworkReplyWrapperInfo(pReply);
+	pWrapperInfo->startConnectionTimeoutTimer();
+	pWrapperInfo->setProgressTimeout(NetworkReplyWrapperInfo::SUGGESTED_PROGRESS_TIMEOUT_MSECS);
 	wadRetrieverInfo.pNetworkReply = pWrapperInfo;
 
 	this->connect(pWrapperInfo->pSignalWrapper, SIGNAL( downloadProgress(QNetworkReply*, qint64, qint64) ),
