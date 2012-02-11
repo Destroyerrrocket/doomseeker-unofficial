@@ -344,7 +344,7 @@ void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 		    qDebug() << "WadRetriever: Finished network query for URL: " << url.toString();
 		}
 #endif
-		emit message(tr("Finished downloading URL: %1").arg(url.toString()),
+		emit message(tr("Finished URL: %1").arg(url.toString()),
 					WadseekerLib::Notice);
 	
 		NetworkReplyWrapperInfo* pReplyWrapperInfo = pInfo->pNetworkReply;
