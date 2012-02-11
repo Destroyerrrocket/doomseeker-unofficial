@@ -447,7 +447,7 @@ DoomseekerConfig::WadseekerCfg::WadseekerCfg()
 	this->downloadTimeoutSeconds = WADSEEKER_DOWNLOAD_TIMEOUT_SECONDS_DEFAULT;
 	this->idgamesURL = Wadseeker::defaultIdgamesUrl();
 	this->maxConcurrentSiteDownloads = 3;
-	this->maxConcurrentWadDownloads = 3;
+	this->maxConcurrentWadDownloads = 2;
 	this->targetDirectory = Main::dataPaths->programsDataDirectoryPath();
 
 	// Search URLs remains unitizalized here. It will be initialized
