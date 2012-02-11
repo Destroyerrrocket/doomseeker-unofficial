@@ -139,12 +139,13 @@ class RefreshingThread::MasterClientInfo
 			if (pLastChallengeTimer == NULL)
 			{
 				pLastChallengeTimer = new QTimer();
+				connect(pLastChallengeTimer, SIGNAL(timeout()), 
+					pParentThread, SLOT(attemptTimeoutMasters()));				
+				pLastChallengeTimer->setSingleShot(true);
+				pLastChallengeTimer->setInterval(MASTER_SERVER_TIMEOUT_DELAY);					
 			}
 									
-			pLastChallengeTimer->setSingleShot(true);
-			pLastChallengeTimer->setInterval(MASTER_SERVER_TIMEOUT_DELAY);
-			connect(pLastChallengeTimer, SIGNAL(timeout()), 
-				pParentThread, SLOT(attemptTimeoutMasters()));
+			pLastChallengeTimer->start();
 		}
 		
 		bool						isLastChallengeTimerActive() const
