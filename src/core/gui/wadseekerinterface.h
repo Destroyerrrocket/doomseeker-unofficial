@@ -112,6 +112,7 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 		void			setupIdgames();
 		void 			showEvent(QShowEvent* event);
 		void			startSeeking(const QStringList& seekedFilesList);
+		void			updateProgressBar();
 		void            updateTitle();
 
 		/**

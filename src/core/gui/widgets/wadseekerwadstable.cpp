@@ -205,6 +205,8 @@ void WadseekerWadsTable::setFileSuccessful(const QString& filename)
 
 void WadseekerWadsTable::setFileUrl(const QString& filename, const QUrl& url)
 {
+	// At this point we know that a new download has sstarted.
+	// We should reset certain values.
 	int row = findFileRow(filename);
 
 	if (row >= 0)
@@ -212,6 +214,10 @@ void WadseekerWadsTable::setFileUrl(const QString& filename, const QUrl& url)
 		QTableWidgetItem* pItem = this->item(row, IDX_URL_COLUMN);
 		pItem->setText(url.toString());
 		pItem->setToolTip(url.toString());
+		
+		QProgressBar* pBar = (QProgressBar*) this->cellWidget(row, IDX_PROGRESS_COLUMN);
+		pBar->setMaximum(0);
+		pBar->setValue(0);
 
 		SpeedCalculator* pCalculator = d.speedCalculators[filename];
 		pCalculator->start();

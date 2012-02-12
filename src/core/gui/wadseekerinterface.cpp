@@ -224,6 +224,7 @@ void WadseekerInterface::message(const QString& message, WadseekerLib::MessageTy
 
 void WadseekerInterface::registerUpdateRequest()
 {
+	updateProgressBar();
 	updateTitle();
 }
 
@@ -249,6 +250,7 @@ void WadseekerInterface::resetTitleToDefault()
 void WadseekerInterface::seekStarted(const QStringList& filenames)
 {
 	teWadseekerOutput->clear();
+	pbOverallProgress->setValue(0);
 	displayMessage("Seek started on filenames: " + filenames.join(", "), WadseekerLib::Notice, false);
 
 	seekedWads = filenames;
@@ -346,12 +348,19 @@ void WadseekerInterface::startSeeking(const QStringList& seekedFilesList)
 
 	setupIdgames();
 
-	// TODO
 	wadseeker.setTargetDirectory(gConfig.wadseeker.targetDirectory);
 	wadseeker.setCustomSite(customSite);
 	wadseeker.setMaximumConcurrentSeeks(gConfig.wadseeker.maxConcurrentSiteDownloads);
 	wadseeker.setMaximumConcurrentDownloads(gConfig.wadseeker.maxConcurrentWadDownloads);
 	wadseeker.startSeek(seekedFilesListFormatted);
+}
+
+void WadseekerInterface::updateProgressBar()
+{
+	double totalPercentage = twWads->totalDonePercentage();
+	unsigned progressBarValue = (unsigned)(totalPercentage * 100.0);
+	
+	pbOverallProgress->setValue(progressBarValue);
 }
 
 void WadseekerInterface::updateTitle()

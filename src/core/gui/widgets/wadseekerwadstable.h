@@ -85,6 +85,10 @@ class WadseekerWadsTable : public TableWidgetMouseAware
 		void setFileFailed(const QString& filename);
 		void setFileProgress(const QString& filename, qint64 current, qint64 total);
 		void setFileSuccessful(const QString& filename);
+		
+		/**
+		 * @brief Fired when new URL starts for specified file.
+		 */
 		void setFileUrl(const QString& filename, const QUrl& url);
 
 	protected:
