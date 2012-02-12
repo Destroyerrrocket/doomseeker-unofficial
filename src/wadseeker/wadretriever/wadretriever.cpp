@@ -333,7 +333,10 @@ void WadRetriever::networkQueryDownloadProgress(QNetworkReply* pReply, qint64 cu
 
 void WadRetriever::networkQueryError(QNetworkReply* pReply, QNetworkReply::NetworkError code)
 {
-	if (code != QNetworkReply::NoError) 
+	// We shall ignore OperationCanceledError because this error is caused
+	// by a call to QNetworkReply::abort() and it may confuse users.
+	// "Why am I getting this error? Is it a bug? Yeah, it is a bug!"
+	if (code != QNetworkReply::NoError && code != QNetworkReply::OperationCanceledError) 
 	{
 		WadRetrieverInfo* pInfo = findRetrieverInfo(pReply);
 		QString errorString = FixedNetworkAccessManager::networkErrorToString(code);

@@ -242,7 +242,10 @@ void WWWSeeker::networkQueryDownloadProgress(QNetworkReply* pReply, qint64 curre
 
 void WWWSeeker::networkQueryError(QNetworkReply* pReply, QNetworkReply::NetworkError code)
 {
-	if (code != QNetworkReply::NoError) 
+	// We shall ignore OperationCanceledError because this error is caused
+	// by a call to QNetworkReply::abort() and it may confuse users.
+	// "Why am I getting this error? Is it a bug? Yeah, it is a bug!"
+	if (code != QNetworkReply::NoError && code != QNetworkReply::OperationCanceledError) 
 	{
 		QString errorString = FixedNetworkAccessManager::networkErrorToString(code);
 		
