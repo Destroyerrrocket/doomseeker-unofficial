@@ -57,6 +57,7 @@ class ConnectionHandler : public QObject
 		static bool obtainJoinCommandLine(QWidget *parent, const Server* server, CommandLineInfo& cli, const QString& errorCaption, bool *hadMissing=NULL);
 
 	protected:
+		void	finish(int response);
 		void	refreshToJoin();
 
 	protected slots:

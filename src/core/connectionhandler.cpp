@@ -62,7 +62,7 @@ void ConnectionHandler::checkResponse(Server *server, int response)
 			}
 		}
 
-		emit finished(response);
+		finish(response);
 		return;
 	}
 
@@ -122,6 +122,12 @@ ConnectionHandler *ConnectionHandler::connectByUrl(const QUrl &url)
 	server->refresh();
 
 	return connectionHandler;
+}
+
+void ConnectionHandler::finish(int response)
+{
+	disconnect(this->server, SIGNAL(updated(Server *, int)), this, SLOT(checkResponse(Server *, int)));
+	emit finished(response);
 }
 
 bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, const Server* server, CommandLineInfo& cli, const QString& errorCaption, bool *hadMissing)
@@ -294,5 +300,5 @@ void ConnectionHandler::run()
 		delete gameRunner;
 	}
 
-	emit finished(Server::RESPONSE_GOOD);
+	finish(Server::RESPONSE_GOOD);
 }
