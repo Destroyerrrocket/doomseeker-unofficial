@@ -111,12 +111,26 @@ bool WadRetriever::areAllWadsPendingUrls() const
 
 QUrl WadRetriever::extractNextValidUrl(WadRetrieverInfo& wadRetrieverInfo)
 {
-	while (!wadRetrieverInfo.downloadUrls->isEmpty())
+	// We need to copy the list because we will modify the original.
+	QList<QUrl> availableUrls = wadRetrieverInfo.downloadUrls->allAvailableUrls();
+
+	while (!availableUrls.isEmpty())
 	{
-		QUrl url = wadRetrieverInfo.downloadUrls->takeFirst();
+		QUrl url = availableUrls.takeFirst();
 		if (url.isValid() && !wasUrlUsed(url))
 		{
-			return url;
+			// This URL is valid but it might not be allowed
+			// to use it at the current moment.
+			if (isUrlAllowedToDownloadATM(url))
+			{
+				wadRetrieverInfo.downloadUrls->removeUrl(url);
+				return url;
+			}
+		}
+		else
+		{
+			// This URL cannot be used. Get rid of it.
+			wadRetrieverInfo.downloadUrls->removeUrl(url);
 		}
 	}
 
@@ -219,19 +233,33 @@ const WadRetriever::WadRetrieverInfo* WadRetriever::findRetrieverInfo(const QNet
 	return NULL;
 }
 
-WadRetriever::WadRetrieverInfo* WadRetriever::getNextWaitingRetrieverInfo()
+QList< WadRetriever::WadRetrieverInfo* > WadRetriever::getAllCurrentlyRunningDownloadsInfos() const
 {
-	QList<WadRetrieverInfo* >::iterator it;
+	QList< WadRetrieverInfo* > list;
+
+	QList< WadRetrieverInfo* >::const_iterator it;
 	for (it = d.wads.begin(); it != d.wads.end(); ++it)
 	{
-		WadRetrieverInfo& wadInfo = **it;
-		if (wadInfo.pNetworkReply == NULL && !wadInfo.downloadUrls->isEmpty())
+		if ((*it)->pNetworkReply != NULL)
 		{
-			return &wadInfo;
+			list << (*it);
 		}
 	}
 
-	return NULL;
+	return list;
+}
+
+QList< WadDownloadInfo* > WadRetriever::getWadDownloadInfoList()
+{
+	QList< WadDownloadInfo* > list;
+
+	QList<WadRetrieverInfo* >::iterator it;
+	for (it = d.wads.begin(); it != d.wads.end(); ++it)
+	{
+		list << (*it)->wad;
+	}
+
+	return list;
 }
 
 bool WadRetriever::hasUrl(const WadRetrieverInfo& wadRetrieverInfo, const QUrl& url) const
@@ -257,19 +285,6 @@ bool WadRetriever::hasWad(const WadDownloadInfo& wad) const
 	return false;
 }
 
-QList< WadDownloadInfo* > WadRetriever::getWadDownloadInfoList()
-{
-	QList< WadDownloadInfo* > list;
-
-	QList<WadRetrieverInfo* >::iterator it;
-	for (it = d.wads.begin(); it != d.wads.end(); ++it)
-	{
-		list << (*it)->wad;
-	}
-
-	return list;
-}
-
 bool WadRetriever::isAnyDownloadWorking() const
 {
 	if (numTotalWadsDownloads() <= 0)
@@ -290,6 +305,21 @@ bool WadRetriever::isDownloadingWad(const WadDownloadInfo& wad) const
 	const WadRetrieverInfo* pInfo = findRetrieverInfo(wad);
 
 	return pInfo != NULL && pInfo->pNetworkReply != NULL;
+}
+
+bool WadRetriever::isUrlAllowedToDownloadATM(const QUrl& url) const
+{
+	QList< WadRetrieverInfo* > currentDownloads = getAllCurrentlyRunningDownloadsInfos();
+	foreach (const WadRetrieverInfo* pInfo, currentDownloads)
+	{
+		const QUrl& downloadedUrl = pInfo->pNetworkReply->pReply->request().url();
+		if (UrlParser::hasSameHost(downloadedUrl, url))
+		{
+			return false;
+		}
+	}
+	
+	return true;
 }
 
 void WadRetriever::networkQueryDownloadProgress(QNetworkReply* pReply, qint64 current, qint64 total)
@@ -385,18 +415,7 @@ void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 
 int WadRetriever::numCurrentRunningDownloads() const
 {
-	int num = 0;
-
-	// Count each retriever info.
-	foreach (const WadRetrieverInfo* info, d.wads)
-	{
-		if (info->pNetworkReply != NULL)
-		{
-			++num;
-		}
-	}
-
-	return num;
+	return getAllCurrentlyRunningDownloadsInfos().size();
 }
 
 int WadRetriever::numDownloadsPendingUrls() const
@@ -580,19 +599,23 @@ void WadRetriever::startNextDownloads()
 	{
 		return;
 	}
-
-	while (numCurrentRunningDownloads() < d.maxConcurrentWadDownloads)
+	
+	foreach (WadRetrieverInfo* pRetrieverInfo, d.wads)
 	{
-		WadRetrieverInfo* pRetrieverInfo = getNextWaitingRetrieverInfo();
-		if (pRetrieverInfo == NULL)
+		if (numCurrentRunningDownloads() >= d.maxConcurrentWadDownloads)
 		{
-			// Nothing we can do now. Leave.
 			break;
 		}
-
-		// Take first valid URL to use.
-		QUrl url = extractNextValidUrl(*pRetrieverInfo);
-		startNetworkQuery(*pRetrieverInfo, url);
+	
+		if (pRetrieverInfo->isAvailableForDownload())
+		{
+			// Take first valid URL to use.
+			QUrl url = extractNextValidUrl(*pRetrieverInfo);
+			if (url.isValid())
+			{
+				startNetworkQuery(*pRetrieverInfo, url);
+			}
+		}
 	}
 }
 
@@ -704,6 +727,11 @@ WadRetriever::WadRetrieverInfo::~WadRetrieverInfo()
 	}
 
 	delete wad;
+}
+
+bool WadRetriever::WadRetrieverInfo::isAvailableForDownload() const
+{
+	return pNetworkReply == NULL && !this->downloadUrls->isEmpty();
 }
 
 bool WadRetriever::WadRetrieverInfo::operator==(const WadDownloadInfo& wad) const

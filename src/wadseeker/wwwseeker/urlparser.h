@@ -48,6 +48,8 @@ class UrlParser
 		 *         files specified on the wantedFilenames list.
 		 */
 		static bool isDirectLinkToFile(const QStringList& wantedFilenames, const QUrl& url);
+		
+		static bool hasSameHost(const QUrl& url1, const QUrl& url2);
 
 		/**
 		 * @brief Checks if URLs are the same. Ignores character case.

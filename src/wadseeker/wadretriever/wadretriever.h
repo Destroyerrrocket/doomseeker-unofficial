@@ -274,6 +274,8 @@ class WadRetriever : public QObject
 
 				WadRetrieverInfo(const WadDownloadInfo& wad);
 				~WadRetrieverInfo();
+				
+				bool isAvailableForDownload() const;
 
 				bool operator==(const WadDownloadInfo& wad) const;
 				bool operator!=(const WadDownloadInfo& wad) const;
@@ -331,16 +333,22 @@ class WadRetriever : public QObject
 		const WadRetrieverInfo* findRetrieverInfo(const QString& wadName) const;
 		const WadRetrieverInfo* findRetrieverInfo(const QNetworkReply* pNetworkReply) const;
 
-		/**
-		 * @brief Next WAD that is not being downloaded but has download URLs.
-		 */
-		WadRetrieverInfo* getNextWaitingRetrieverInfo();
+		QList< WadRetrieverInfo* > getAllCurrentlyRunningDownloadsInfos() const;
 		QList< WadDownloadInfo* > getWadDownloadInfoList();
 
 		/**
 		 * @brief True if URL is either on the queue or already used.
 		 */
 		bool hasUrl(const WadRetrieverInfo& wadRetrieverInfo, const QUrl& url) const;
+		
+		/**
+		 * @brief Checks if URL can be download at the curren time.
+		 *
+		 * @return True if it is Ok to download the resource denoted by URL.
+		 *         False if a resource from the same hostname is already 
+		 *         being downloaded.
+		 */
+		bool isUrlAllowedToDownloadATM(const QUrl& url) const;
 
 		/**
 		 * @brief Performs operations basing on the result contents.

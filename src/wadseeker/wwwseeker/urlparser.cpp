@@ -68,6 +68,11 @@ bool UrlParser::hasFileReferenceSomewhere(const QStringList& wantedFilenames, co
 	return false;
 }
 
+bool UrlParser::hasSameHost(const QUrl& url1, const QUrl& url2)
+{
+	return url1.host().compare(url2.host(), Qt::CaseInsensitive) == 0;
+}
+
 bool UrlParser::isDirectLinkToFile(const QStringList& wantedFilenames, const QUrl& url)
 {
 	QFileInfo fi(url.encodedPath());

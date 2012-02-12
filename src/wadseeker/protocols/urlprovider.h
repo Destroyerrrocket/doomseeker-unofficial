@@ -68,6 +68,17 @@ class URLProvider
 		void addUrl(const QUrl& url);
 		
 		/**
+		 * @brief All URLs for which hasUrl() will return true.
+		 *
+		 * These URLs can be removed from available list by removeUrl()
+		 * or removeUrlAndMirrors() methods.
+		 */
+		const QList<QUrl>& allAvailableUrls() const
+		{
+			return allUrls;
+		}
+		
+		/**
 		 * @brief First URL on the list. Same as operator[0].
 		 */
 		const QUrl& first() const;
