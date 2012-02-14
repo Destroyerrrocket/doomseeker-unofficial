@@ -37,6 +37,7 @@ class OdamexGameRunner : public GameRunner
 	protected:
 		QString argForDemoPlayback() const { return "-netplay"; }
 		QString argForDemoRecord() const { return "-netrecord"; }
+		void hostProperties(QStringList& args) const;
 
 		const OdamexServer*			odamexServer;
 

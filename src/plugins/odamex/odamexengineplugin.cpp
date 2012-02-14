@@ -52,8 +52,8 @@ OdamexEnginePlugin::OdamexEnginePlugin()
 
 		EP_AllowsURL,
 		EP_AllowsEmail,
-		EP_AllowsConnectPassword,
 		EP_AllowsJoinPassword,
+		EP_AllowsRConPassword,
 		EP_AllowsMOTD,
 		EP_DefaultMaster, master,
 		EP_DefaultServerPort, 10666,

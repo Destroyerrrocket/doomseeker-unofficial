@@ -78,3 +78,47 @@ bool OdamexGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool
 	}
 	return true;
 }
+
+void OdamexGameRunner::hostProperties(QStringList& args) const
+{
+	args << "-skill" << QString::number(server->gameSkill() + 1); // from 1 to 5
+
+	const QStringList& mapsList = server->mapsList();
+	if (!mapsList.isEmpty())
+	{
+		foreach (QString map, mapsList)
+		{
+			args << "+addmap" << map;
+		}
+	}
+	args << "+shufflemaplist" << QString::number( static_cast<int>(server->randomMapRotation()) );
+
+	unsigned int modeNum;
+	switch(server->gameMode().modeIndex())
+	{
+		default:
+		case GameMode::SGMICooperative: modeNum = 0; break;
+		case GameMode::SGMIDeathmatch: modeNum = 1; break;
+		case GameMode::SGMITeamDeathmatch: modeNum = 2; break;
+		case GameMode::SGMICTF: modeNum = 3; break;
+	}
+	args << "+sv_gametype" << QString::number(modeNum);
+
+	if (!server->map().isEmpty())
+	{
+		args << "+map" << server->map();
+	}
+
+	args << "+join_password" << "\"" + server->joinPassword() + "\"";
+	args << "+rcon_password" << "\"" + server->rconPassword() + "\"";
+	args << "+sv_email" << "\"" + server->eMail() + "\"";
+	args << "+sv_hostname" << "\"" + server->name() + "\"";
+	args << "+sv_maxclients" << QString::number(server->maximumClients());
+	args << "+sv_maxplayers" << QString::number(server->maximumPlayers());
+	args << "+sv_website" << "\"" + server->website() + "\"";
+
+	QString motd = server->messageOfTheDay();
+	args << "+sv_motd" << "\"" + motd.replace("\n", "\\n") + "\"";
+
+	args << "+sv_usemasters" << QString::number(static_cast<int>( server->isBroadcastingToMaster() ));
+}
