@@ -25,7 +25,6 @@
 
 #include "irc/entities/ircnetworkentity.h"
 #include "plugins/engineplugin.h"
-#include "random.h"
 
 #include "odamexgameinfo.h"
 #include "odamexmasterclient.h"
@@ -36,15 +35,8 @@ INSTALL_PLUGIN(OdamexEnginePlugin)
 
 OdamexEnginePlugin::OdamexEnginePlugin()
 {
-	static const unsigned int NUM_MASTERS = 2;
-	static const char* masters[NUM_MASTERS] = {
-		"master1.odamex.net:15000", "master2.odamex.net:15000"
-	};
-
 	const // clear warnings
 	#include "odamex.xpm"
-
-	const char* master = masters[Random::nextUShort(NUM_MASTERS)];
 
 	init("Odamex", odamex_xpm,
 		EP_Author, "The Doomseeker Team",
@@ -55,7 +47,7 @@ OdamexEnginePlugin::OdamexEnginePlugin()
 		EP_AllowsJoinPassword,
 		EP_AllowsRConPassword,
 		EP_AllowsMOTD,
-		EP_DefaultMaster, master,
+		EP_DefaultMaster, "master1.odamex.net:15000",
 		EP_DefaultServerPort, 10666,
 		EP_GameModes, OdamexGameInfo::gameModes(),
 		EP_HasMasterServer,
