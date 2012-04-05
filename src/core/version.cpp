@@ -23,6 +23,11 @@
 #include "version.h"
 #include "svnrevision.h"
 
+QString Version::changeset()
+{
+	return HG_REVISION_HASH_STRING;
+}
+
 QString Version::name()
 {
 	return "Doomseeker";

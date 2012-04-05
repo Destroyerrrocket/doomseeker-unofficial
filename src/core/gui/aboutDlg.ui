@@ -82,6 +82,16 @@
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="versionChangeset">
+         <property name="text">
+          <string>&lt;Changeset&gt;</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QLabel" name="label_3">
          <property name="text">
           <string>&lt;a href=&quot;http://doomseeker.drdteam.org/&quot;&gt;http://doomseeker.drdteam.org/&lt;/a&gt;</string>
