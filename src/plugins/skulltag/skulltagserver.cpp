@@ -55,7 +55,8 @@ SkulltagVersion::SkulltagVersion(QString version) : version(version)
 	revision = parts[3][0].toAscii();
 	build = parts[4].toUShort();
 	tag = parts[5];
-	svnRevision = parts[6].toUShort();
+	hgRevisionDate = parts[6].toUInt();
+	hgRevisionTime = parts[7].toUShort();
 }
 
 bool SkulltagVersion::operator> (const SkulltagVersion &other) const
@@ -64,12 +65,14 @@ bool SkulltagVersion::operator> (const SkulltagVersion &other) const
 		return true;
 	if((tag.isEmpty() && !other.tag.isEmpty()) || (tag > other.tag))
 		return true;
-	if(svnRevision > other.svnRevision)
+	if(hgRevisionDate > other.hgRevisionDate)
+		return true;
+	if(hgRevisionTime > other.hgRevisionTime)
 		return true;
 	return false;
 }
 
-const QRegExp SkulltagVersion::versionExpression("(\\d+).(\\d+)([a-zA-Z])(\\d*)(?:-([a-zA-Z]*)?)(?:-r(\\d+)?)");
+const QRegExp SkulltagVersion::versionExpression("(\\d+).(\\d+)([a-zA-Z])(\\d*)(?:-([a-zA-Z]*)?)(?:-r(\\d+)(?:-(\\d+))?)");
 
 ////////////////////////////////////////////////////////////////////////////////
 

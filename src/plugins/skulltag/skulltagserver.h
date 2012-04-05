@@ -50,7 +50,8 @@ class SkulltagVersion
 		unsigned short int	majorVersion() const { return major; }
 		unsigned short int	minorVersion() const { return minor; }
 		unsigned char		revisionLetter() const { return revision; }
-		unsigned short int	svnVersion() const { return svnRevision; }
+		unsigned int		hgVersionDate() const { return hgRevisionDate; }
+		unsigned short int	hgVersionTime() const { return hgRevisionTime; }
 
 		bool operator> (const SkulltagVersion &other) const;
 
@@ -63,7 +64,8 @@ class SkulltagVersion
 		unsigned char			revision;
 		unsigned short int		build;
 		QString					tag;
-		unsigned short int		svnRevision;
+		unsigned int			hgRevisionDate;
+		unsigned short int		hgRevisionTime;
 };
 
 class TeamInfo

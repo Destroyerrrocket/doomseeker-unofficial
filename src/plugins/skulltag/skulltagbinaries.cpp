@@ -20,6 +20,7 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "log.h"
 #include "skulltagbinaries.h"
 #include "skulltagengineplugin.h"
 #include "skulltagserver.h"
@@ -187,7 +188,16 @@ bool SkulltagBinaries::downloadTestingBinaries(const QDir &destination) const
 #else
 	// Download testing binaries
 	SkulltagVersion version(server->version());
-	QUrl url(QString(TESTING_BINARY_URL).arg(QString("%1%2").arg(version.minorVersion()).arg(QChar(version.revisionLetter()))).arg(version.svnVersion()));
+
+	// Find the hg revision string
+	QString hgVersion;
+	if(version.hgVersionDate() < 4000) // Arbitrary number here to determine between old and new format
+		hgVersion = QString("%1").arg(version.hgVersionDate());
+	else
+		hgVersion = QString("%1-%2").arg(version.hgVersionDate()).arg(version.hgVersionTime(), 4, 10, QChar('0'));
+
+	// Get URL
+	QUrl url(QString(TESTING_BINARY_URL).arg(QString("%1%2").arg(version.minorVersion()).arg(QChar(version.revisionLetter()))).arg(hgVersion));
 
 	TestingProgressDialog dialog(url);
 	if(dialog.exec() == QDialog::Accepted)
@@ -249,7 +259,7 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 
 	if (fi.exists())
 	{
-		printf("File Permissions: %X\n", (unsigned int)file.permissions());
+		gLog << tr("File Permissions: %1").arg((unsigned int)file.permissions(), 0, 16);
 		if ((file.permissions() & QFile::ExeUser) == 0)
 		{
 			QString error = tr("You don't have permissions to execute file: %1\n").arg(fullPathToFile);
