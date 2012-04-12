@@ -98,6 +98,7 @@ ServerListView::ServerListView(QWidget* parent) : QTableView(parent)
 {
 	// Prevent the fat rows problem.
 	verticalHeader()->setDefaultSectionSize(fontMetrics().height() + 6);
+	setShowGrid(false);
 
 	bAllowAllRowsRefresh = true;
 	setItemDelegate(new CustomItemDelegate());
