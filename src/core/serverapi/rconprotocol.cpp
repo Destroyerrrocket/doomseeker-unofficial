@@ -21,9 +21,13 @@
 // Copyright (C) 2010 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 #include "rconprotocol.h"
+#include "serverapi/server.h"
 
-RConProtocol::RConProtocol(Server *server) : server(server)
+RConProtocol::RConProtocol(Server *server)
 {
+	serverAddress = server->address();
+	serverPort = server->port();
+
 	socket.bind();
 }
 

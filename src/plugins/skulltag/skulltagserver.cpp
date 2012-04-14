@@ -682,7 +682,7 @@ RConProtocol *SkulltagRConProtocol::connectToServer(Server *server)
 	protocol->connected = false;
 	for(unsigned int attempts = 0;attempts < 3;attempts++)
 	{
-		protocol->socket.writeDatagram(encodedConnection, encodedSize, server->address(), server->port());
+		protocol->socket.writeDatagram(encodedConnection, encodedSize, protocol->address(), protocol->port());
 		if(protocol->socket.waitForReadyRead(3000))
 		{
 			int size = protocol->socket.pendingDatagramSize();
@@ -720,7 +720,7 @@ void SkulltagRConProtocol::disconnectFromServer()
 	char encodedDisconnect[4];
 	int encodedSize = 4;
 	HUFFMAN_Encode(disconnectPacket, reinterpret_cast<unsigned char*> (encodedDisconnect), 1, &encodedSize);
-	socket.writeDatagram(encodedDisconnect, encodedSize, server->address(), server->port());
+	socket.writeDatagram(encodedDisconnect, encodedSize, address(), port());
 	connected = false;
 	pingTimer.stop();
 	emit disconnected();
@@ -735,7 +735,7 @@ void SkulltagRConProtocol::sendCommand(const QString &cmd)
 	char encodedPacket[4097];
 	int encodedSize = 4097;
 	HUFFMAN_Encode(packet, reinterpret_cast<unsigned char*> (encodedPacket), cmd.length()+2, &encodedSize);
-	socket.writeDatagram(encodedPacket, encodedSize, server->address(), server->port());
+	socket.writeDatagram(encodedPacket, encodedSize, address(), port());
 }
 
 void SkulltagRConProtocol::sendPassword(const QString &password)
@@ -757,7 +757,7 @@ void SkulltagRConProtocol::sendPassword(const QString &password)
 
 	for(unsigned int i = 0;i < 3;i++)
 	{
-		socket.writeDatagram(encodedPassword, encodedLength, server->address(), server->port());
+		socket.writeDatagram(encodedPassword, encodedLength, address(), port());
 
 		if(socket.waitForReadyRead(3000))
 		{
@@ -775,7 +775,7 @@ void SkulltagRConProtocol::sendPong()
 	char encodedPong[4];
 	int encodedSize = 4;
 	HUFFMAN_Encode(pong, reinterpret_cast<unsigned char*> (encodedPong), 1, &encodedSize);
-	socket.writeDatagram(encodedPong, encodedSize, server->address(), server->port());
+	socket.writeDatagram(encodedPong, encodedSize, address(), port());
 }
 
 void SkulltagRConProtocol::packetReady()

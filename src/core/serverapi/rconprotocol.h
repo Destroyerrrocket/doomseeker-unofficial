@@ -57,15 +57,21 @@ class MAIN_EXPORT RConProtocol : public QObject
 	protected:
 		RConProtocol(Server *server);
 
+		const QHostAddress	&address() const { return serverAddress; }
+		quint16				port() const { return serverPort; }
+
 		bool			connected;
 		QList<Player>	players;
-		Server			*server;
 		QUdpSocket		socket;
 
 		friend class Server;
 
 	protected slots:
 		virtual void	packetReady()=0;
+
+	private:
+		QHostAddress	serverAddress;
+		quint16			serverPort;
 };
 
 #endif
