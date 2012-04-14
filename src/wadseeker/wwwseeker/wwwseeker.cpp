@@ -356,11 +356,6 @@ void WWWSeeker::networkQueryMetaDataChanged(QNetworkReply* pReply)
 				attachmentName = http.urlFilename();
 			}
 
-			if (attachmentName == "mage-rav.zip")
-			{
-				bool b = true;
-			}
-
 			// See if we just stumbled upon a download link for a file we seek.
 			FileSeekInfo* attachmentSeekInfo = findFileSeekInfo(attachmentName);
 
