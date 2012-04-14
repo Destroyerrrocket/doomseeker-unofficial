@@ -95,7 +95,7 @@ void WWWSeeker::addFileSiteUrl(const QString& filename, const QUrl& url)
 			// Create a new URL list.
 			QList<QUrl> urls;
 			urls << url;
-			d.fileSiteUrls.insert(filename, urls);
+			d.fileSiteUrls.insert(lowerCaseFilename, urls);
 
 			// Don't forget to update the key list with a new key.
 			d.fileSiteKeyRotationList << lowerCaseFilename;
@@ -568,18 +568,18 @@ QUrl WWWSeeker::takeNextUrl()
 	// one of the seeked files.
 	while (!d.fileSiteKeyRotationList.isEmpty())
 	{
-		QString filename = d.fileSiteKeyRotationList.takeFirst();
+		QString lowerCaseFilename = d.fileSiteKeyRotationList.takeFirst().toLower();
 
-		if (d.fileSiteUrls.contains(filename))
+		if (d.fileSiteUrls.contains(lowerCaseFilename))
 		{
-			QList<QUrl>& urls = d.fileSiteUrls[filename];
+			QList<QUrl>& urls = d.fileSiteUrls[lowerCaseFilename];
 			if (!urls.isEmpty())
 			{
 				QUrl url = urls.takeFirst();
 				if (urls.isEmpty())
 				{
 					// Remove now empty list from the hash map.
-					d.fileSiteUrls.remove(filename);
+					d.fileSiteUrls.remove(lowerCaseFilename);
 				}
 
 				return url;
