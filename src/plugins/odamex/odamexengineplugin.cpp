@@ -40,7 +40,7 @@ OdamexEnginePlugin::OdamexEnginePlugin()
 
 	init("Odamex", odamex_xpm,
 		EP_Author, "The Doomseeker Team",
-		EP_Version, 9,
+		EP_Version, 10,
 
 		EP_AllowsURL,
 		EP_AllowsEmail,
@@ -54,6 +54,7 @@ OdamexEnginePlugin::OdamexEnginePlugin()
 		EP_IRCChannel, "Odamex", "irc.quakenet.org", "#odamex",
 		EP_SupportsRandomMapRotation,
 		EP_InGameFileDownloads,
+		EP_DemoExtension, false, "odd",
 		EP_Done
 	);
 }

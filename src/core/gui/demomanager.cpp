@@ -54,19 +54,30 @@ DemoManagerDlg::DemoManagerDlg() : selectedDemo(NULL)
 
 void DemoManagerDlg::adjustDemoList()
 {
-	// Populate the demos list (*.cld* because some ports add .lmp extension automatically)
+	// Get valid extensions
+	QStringList demoExtensions;
+	for(int i = 0;i < Main::enginePlugins->numPlugins();++i)
+	{
+		QString ext = QString("*.%1").arg((*Main::enginePlugins)[i]->info->data()->demoExtension);
+
+		if(!demoExtensions.contains(ext))
+		{
+			demoExtensions << ext;
+		}
+	}
+
 	// In order to index the demos we'll convert the dates to integers by calculating the days until today.
 	// Also we need to convert double underscores to a single underscore
 	QDate today = QDate::currentDate();
 	QTime referenceTime(23, 59, 59);
 	QDir demosDirectory(Main::dataPaths->demosDirectoryPath());
-	QStringList demos = demosDirectory.entryList(QStringList("*.cld*"), QDir::Files);
+	QStringList demos = demosDirectory.entryList(demoExtensions, QDir::Files);
 	typedef QMap<int, Demo> DemoMap;
 	QMap<int, DemoMap> demoMap;
 	foreach(const QString &demoName, demos)
 	{
 		QStringList demoData;
-		QString metaData = demoName.left(demoName.lastIndexOf(".cld"));
+		QString metaData = demoName.left(demoName.lastIndexOf("."));
 		// We need to split manually to handle escaping.
 		for(unsigned int i = 0;i < metaData.length();++i)
 		{

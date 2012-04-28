@@ -216,10 +216,12 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 
 		// Generate demo name.
 		// port-iwad-date-wad
-		QString demoName = Main::dataPaths->demosDirectoryPath() + QDir::separator() + QString("%1_%2_%3.cld").
+		QString demoName = Main::dataPaths->demosDirectoryPath() + QDir::separator() + QString("%1_%2_%3").
 			arg(server->engineName()).
 			arg(QDateTime::currentDateTime().toString("dd.MM.yyyy_hh.mm.ss")).
 			arg(wadList.join("_"));
+		if(!server->plugin()->data()->demoExtensionAutomatic)
+			demoName += QString(".%1").arg(server->plugin()->data()->demoExtension);
 		args << demoName;
 	}
 

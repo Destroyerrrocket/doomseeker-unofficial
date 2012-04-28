@@ -41,6 +41,8 @@ EnginePlugin::Data::Data()
 	allowsRConPassword = false;
 	allowsURL = false;
 	defaultServerPort = 10666;
+	demoExtensionAutomatic = true;
+	demoExtension = "lmp";
 	gameModes = NULL;
 	gameModifiers = NULL;
 	hasMasterServer = false;
@@ -125,6 +127,10 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 				break;
 			case EP_DefaultServerPort:
 				d->defaultServerPort = va_arg(va, unsigned int);
+				break;
+			case EP_DemoExtension:
+				d->demoExtensionAutomatic = va_arg(va, unsigned int);
+				d->demoExtension = va_arg(va, const char*);
 				break;
 			case EP_GameModes:
 				d->gameModes = va_arg(va, QList<GameMode>*);

@@ -37,7 +37,7 @@ ZDaemonEnginePlugin::ZDaemonEnginePlugin()
 
 	init("ZDaemon", zdaemon_xpm,
 		EP_Author, "The Doomseeker Team",
-		EP_Version, 3,
+		EP_Version, 4,
 
 		EP_AllDMFlags, ZDaemonGameInfo::dmFlags(),
 		EP_AllowsURL,
@@ -49,6 +49,7 @@ ZDaemonEnginePlugin::ZDaemonEnginePlugin()
 		EP_DefaultServerPort, 10666,
 		EP_HasMasterServer,
 		EP_DefaultMaster, "master.zdaemon.org:15300",
+		EP_DemoExtension, false, "zdo",
 		EP_Done
 	);
 }

@@ -46,7 +46,7 @@ SkulltagEnginePlugin::SkulltagEnginePlugin()
 
 	init("Skulltag", skulltag_xpm,
 		EP_Author, "The Doomseeker Team",
-		EP_Version, 10,
+		EP_Version, 11,
 
 		EP_AllowsURL,
 		EP_AllowsEmail,
@@ -63,6 +63,7 @@ SkulltagEnginePlugin::SkulltagEnginePlugin()
 		EP_AllDMFlags, SkulltagGameInfo::dmFlags(),
 		EP_IRCChannel, "Skulltag", "irc.skulltag.net", "#skulltag",
 		EP_RefreshThreshold, 10,
+		EP_DemoExtension, false, "cld",
 		EP_Done
 	);
 }
