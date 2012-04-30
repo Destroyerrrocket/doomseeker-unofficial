@@ -35,7 +35,7 @@
 			return RESPONSE_BAD; \
 		}
 
-#define SERVER_CHALLENGE	0x02,0x10,0x01,0xAD, 0x32,0x00,0x00,0x00, 0x02,0x00,0x00,0x00, 0,0,0,0
+#define SERVER_CHALLENGE	0x02,0x10,0x01,0xAD
 
 #define SPECTATOR_INFO		0x01020304
 #define EXTRA_INFO			0x01020305
@@ -73,7 +73,7 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 
 	unsigned int protocolVersion = READINT32(&in[8]);
 	unsigned int pos = 12;
-	if(protocolVersion >= 2)
+	if(protocolVersion >= 1)
 	{
 		pos += 8;
 	}
@@ -190,7 +190,7 @@ bool OdamexServer::sendRequest(QByteArray &data)
 	// This construction and cast to (char*) removes warnings from MSVC.
 	const unsigned char challenge[] = {SERVER_CHALLENGE};
 	
-	const QByteArray challengeByteArray((char*)challenge, 16);
+	const QByteArray challengeByteArray((char*)challenge, 4);
 	data.append(challengeByteArray);
 	return true;
 }
