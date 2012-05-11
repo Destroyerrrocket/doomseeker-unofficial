@@ -344,8 +344,24 @@ QString Strings::wrapUrlsWithHtmlATags(const QString& str)
 	//QRegExp pattern("((http://\\B+)|(ftp://\\B+)|(www\\.\\B+))", Qt::CaseInsensitive);
 	QString newString = str;
 
-	newString.replace(pattern, "<a href=\"\\1\">\\1</a>");
-
+	int offset = 0;
+	int index = -1;
+	while ((index = pattern.indexIn(newString, offset)) >= 0)
+	{
+		QString cap = pattern.cap(1);
+		int capLength = cap.length();
+		
+		QString replacement = cap;
+		if (cap.startsWith("www.", Qt::CaseInsensitive))
+		{
+			replacement = "http://" + cap;
+		}
+		
+		replacement = QString("<a href=\"%1\">%2</a>").arg(replacement, cap);
+		
+		newString.replace(index, capLength, replacement);
+		offset = index + replacement.length();
+	}
 
 	return newString;
 }

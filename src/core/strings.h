@@ -133,11 +133,15 @@ class MAIN_EXPORT Strings
 		static QString&			triml(QString& str, const QString& charList);
 
 		/**
-		 *	@brief Detects all links within a given string and wraps them in
-		 *	&lt;a href&gt; tags.
+		 * @brief Detects all links within a given string and wraps them in
+		 * &lt;a href&gt; tags.
 		 *
-		 *	Valid URLs are found by seeking continuous no-whitespace substrings
-		 *	starting either with http://, ftp:// or REGEX: www\..*+
+		 * Valid URLs are found by seeking continuous no-whitespace substrings
+		 * starting either with http://, ftp:// or REGEX: www\..*+
+		 *
+		 * Furthermore, all URLs that begin with 'www.' will be forced to use
+		 * the http:// scheme. Leaving them as they are causes problems
+		 * with opening external URLs in QTextBrowser.
 		 */
 		static QString			wrapUrlsWithHtmlATags(const QString& str);
 
