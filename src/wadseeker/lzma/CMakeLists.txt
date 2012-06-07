@@ -1,8 +1,10 @@
 cmake_minimum_required( VERSION 2.4 )
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+if( CMAKE_COMPILER_IS_GNUCC )
+	set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -fomit-frame-pointer -fPIC" )
+endif( CMAKE_COMPILER_IS_GNUCC )
 
-set(LZMA_FILES
+set( LZMA_FILES
 	C/Archive/7z/7zDecode.c
 	C/Archive/7z/7zExtract.c
 	C/Archive/7z/7zHeader.c
@@ -18,7 +20,11 @@ set(LZMA_FILES
 	C/LzFindMt.c
 	C/LzmaDec.c
 	C/LzmaEnc.c
-	C/LzmaLib.c
-)
+	C/LzmaLib.c )
 
-add_library(lzma ${LZMA_FILES})
+if( WIN32 )
+	set( LZMA_FILES ${LZMA_FILES} C/Threads.c )
+endif( WIN32 )
+
+add_library( lzma ${LZMA_FILES} )
+target_link_libraries( lzma )
