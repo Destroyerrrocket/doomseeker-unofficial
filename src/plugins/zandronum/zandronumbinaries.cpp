@@ -36,9 +36,7 @@
 #include <QMessageBox>
 #include <QProgressDialog>
 
-// TODO Set proper URK
-//#define TESTING_BINARY_URL_BASE "http://skulltag.net/download/files/testing/%1/SkullDev%1-%2"
-#define TESTING_BINARY_URL_BASE ""
+#define TESTING_BINARY_URL_BASE "http://zandronum.com/downloads/testing/%1/ZandroDev%1-%2"
 
 #ifdef Q_OS_WIN32
 #define TESTING_BINARY_URL TESTING_BINARY_URL_BASE"windows.zip"
