@@ -1,0 +1,4 @@
+Custom build library for static linking.
+
+Original source:
+http://zlib.net/
