@@ -73,7 +73,7 @@ bool ZandronumVersion::operator> (const ZandronumVersion &other) const
 	return false;
 }
 
-const QRegExp ZandronumVersion::versionExpression("(\\d+).(\\d+)([a-zA-Z])(\\d*)(?:-([a-zA-Z]*)?)(?:-r(\\d+)(?:-(\\d+))?)");
+const QRegExp ZandronumVersion::versionExpression("(\\d+).(\\d+)([a-zA-Z]?)(\\d*)(?:-([a-zA-Z]*)?)?(?:-r(\\d+)(?:-(\\d+))?)?");
 
 ////////////////////////////////////////////////////////////////////////////////
 
