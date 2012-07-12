@@ -24,6 +24,7 @@
 
 #include "configuration/doomseekerconfig.h"
 #include "copytextdlg.h"
+#include "gui/widgets/createserverdialogpage.h"
 #include "main.h"
 #include "commonGUI.h"
 #include "ini/ini.h"
@@ -35,6 +36,7 @@
 #include "strings.h"
 
 #include <QCheckBox>
+#include <QDebug>
 #include <QFileDialog>
 #include <QMenu>
 #include <QMenuBar>
@@ -332,7 +334,10 @@ void CreateServerDialog::cboEngineSelected(int index)
 		unsigned enginePluginIndex = cboEngine->itemData(index).toUInt();
 		if (enginePluginIndex < Main::enginePlugins->numPlugins())
 		{
-			const EnginePlugin* nfo = (*Main::enginePlugins)[enginePluginIndex]->info;
+			// TODO Review if the 'const' modifier for PluginLoader::info
+			// is really necessary. Possibly get rid of it.
+			EnginePlugin* nfo = const_cast<EnginePlugin*>(
+				(*Main::enginePlugins)[enginePluginIndex]->info);
 
 			initEngineSpecific(nfo);
 		}
@@ -438,6 +443,23 @@ bool CreateServerDialog::createHostInfo(HostInfo& hostInfo, Server* server, bool
 			hostInfo.dmFlags << sec;
 		}
 
+		// Custom pages.
+		QStringList customPagesParams;
+		foreach (CreateServerDialogPage* page, currentCustomPages)
+		{
+			if (page->validate())
+			{
+				customPagesParams << page->generateGameRunParameters();
+			}
+			else
+			{
+				// Pages must take care of displaying their own error messages.
+				tabWidget->setCurrentIndex(tabWidget->indexOf(page));
+				return false;
+			}
+		}
+		hostInfo.customParameters << customPagesParams;
+
 		// limits
 		foreach(GameLimitWidget* p, limitWidgets)
 		{
@@ -486,6 +508,11 @@ bool CreateServerDialog::createHostInfo(HostInfo& hostInfo, Server* server, bool
 					break;
 				}
 			}
+		}
+
+		foreach (const QString& s, hostInfo.customParameters)
+		{
+			qDebug() << "Param:" << s;
 		}
 
 		return true;
@@ -571,7 +598,7 @@ void CreateServerDialog::initDMFlagsTabs()
 	}
 }
 
-void CreateServerDialog::initEngineSpecific(const EnginePlugin* engineInfo)
+void CreateServerDialog::initEngineSpecific(EnginePlugin* engineInfo)
 {
 	if (engineInfo == currentEngine || engineInfo == NULL)
 	{
@@ -616,8 +643,27 @@ void CreateServerDialog::initEngineSpecific(const EnginePlugin* engineInfo)
 	}
 
 	initDMFlagsTabs();
+	initEngineSpecificPages(engineInfo);
 	initInfoAndPassword();
 	initRules();
+}
+
+void CreateServerDialog::initEngineSpecificPages(EnginePlugin* engineInfo)
+{
+	// First, get rid of the original pages.
+	foreach (CreateServerDialogPage* page, currentCustomPages)
+	{
+		delete page;
+	}
+	currentCustomPages.clear();
+
+	// Add new custom pages to the dialog.
+	currentCustomPages = engineInfo->createServerDialogPages(this);
+	foreach (CreateServerDialogPage* page, currentCustomPages)
+	{
+		int idxInsertAt = tabWidget->indexOf(tabCustomParameters);
+		tabWidget->insertTab(idxInsertAt, page, page->name);
+	}
 }
 
 void CreateServerDialog::initGamemodeSpecific(const GameMode& gameMode)
@@ -858,6 +904,12 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 		}
 	}
 
+	// Custom pages.
+	foreach (CreateServerDialogPage* page, currentCustomPages)
+	{
+		page->loadConfig(ini);
+	}
+
 	// Custom parameters
 	pteCustomParameters->document()->setPlainText(misc["CustomParams"]);
 	return true;
@@ -1018,6 +1070,12 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 			name2 = name2.remove(re);
 			dmflags[name1 + name2] = p->checkBoxes[i]->isChecked();
 		}
+	}
+
+	// Custom pages.
+	foreach (CreateServerDialogPage* page, currentCustomPages)
+	{
+		page->saveConfig(ini);
 	}
 
 	// Custom parameters

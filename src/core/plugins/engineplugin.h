@@ -45,6 +45,8 @@
 
 class Binaries;
 class ConfigurationBaseBox;
+class CreateServerDialog;
+class CreateServerDialogPage;
 class GameCVar;
 class GameMode;
 class IniSection;
@@ -159,6 +161,29 @@ class MAIN_EXPORT EnginePlugin
 		 *	@brief Engine's configuration widget.
 		 */
 		virtual ConfigurationBaseBox*	configuration(QWidget *parent) const;
+
+		/**
+		 * @brief Creates a list of custom Create Server dialog pages.
+		 *
+		 * These pages need to be instantiated with the passed pointer as
+		 * a parent. Once instantiated, Doomseeker will take care of the
+		 * deletion of their objects. Pages are valid only as long as the
+		 * dialog box itself is valid.
+		 *
+		 * Pages are always inserted before the "Custom parameters" page
+		 * in the Create Server dialog.
+		 *
+		 * Default behavior assumes that the plugin doesn't define any custom
+		 * pages and returns an empty list.
+		 *
+		 * @see CreateServerDialog
+		 * @see CreateServerDialogPage
+		 */
+		virtual QList<CreateServerDialogPage*> createServerDialogPages(
+			CreateServerDialog* pDialog)
+		{
+			return QList<CreateServerDialogPage*>();
+		}
 
 		const Data						*data() const { return d; }
 		const QPixmap					&icon() const { return *d->icon; }

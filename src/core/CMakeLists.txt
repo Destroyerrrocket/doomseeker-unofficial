@@ -111,6 +111,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/irc/ircnetworkselectionbox.h
 	gui/models/serverlistmodel.h
 	gui/widgets/colorbutton.h
+	gui/widgets/createserverdialogpage.h
 	gui/widgets/dndfilesystemlistview.h
 	gui/widgets/dockedwidgets.h
 	gui/widgets/fontbutton.h
@@ -194,6 +195,7 @@ set(SOURCE_FILES
 	gui/models/serverlistproxymodel.cpp
 	gui/models/serverlistrowhandler.cpp
 	gui/widgets/colorbutton.cpp
+	gui/widgets/createserverdialogpage.cpp
 	gui/widgets/dndfilesystemlistview.cpp
 	gui/widgets/fontbutton.cpp
 	gui/widgets/importantmessageswidget.cpp

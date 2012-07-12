@@ -28,6 +28,7 @@
 #include <QCheckBox>
 #include <QDialog>
 
+class CreateServerDialogPage;
 class EnginePlugin;
 class Server;
 
@@ -94,6 +95,7 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 
 		bool							bSuppressMissingExeErrors;
 		bool							bIsServerSetup;
+		QList<CreateServerDialogPage*> currentCustomPages;
 		const EnginePlugin* 			currentEngine;
 		QList<DMFlagsTabWidget*>		dmFlagsTabs;
 		QList<GameLimitWidget*>			limitWidgets;
@@ -122,7 +124,14 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		 *	Resets most of the controls and puts engine specific information
 		 *	and controls where applicable.
 		 */
-		void	initEngineSpecific(const EnginePlugin* engineInfo);
+		void	initEngineSpecific(EnginePlugin* engineInfo);
+
+		/**
+		 * @brief Loads pages specific for the given engine.
+		 *
+		 * @see CreateServerDialogPage
+		 */
+		void	initEngineSpecificPages(EnginePlugin* engineInfo);
 
 		void	initGamemodeSpecific(const GameMode& gameMode);
 
