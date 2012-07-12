@@ -33,7 +33,7 @@ class EnginePlugin;
 class Server;
 
 /**
- *	@brief Dialog window allowing user to host a game.
+ * @brief Dialog window allowing user to host a game.
  */
 class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerDialog
 {
@@ -78,8 +78,8 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 				const DMFlagsSection*	section;
 
 				/**
- 				*	Check boxes in the same order the flags are stored in the plugin.
- 				*/
+ 				 * Check boxes in the same order the flags are stored in the plugin.
+ 				 */
 				QList<QCheckBox*>		checkBoxes;
 		};
 
@@ -102,18 +102,18 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		QList<GameCVar>					gameModifiers;
 
 		/**
-		 *	Adds IWAD path to the IWAD ComboBox.
-		 *	If the path already exists no new items will be added but this path
-		 *	will be selected.
+		 * Adds IWAD path to the IWAD ComboBox.
+		 * If the path already exists no new items will be added but this path
+		 * will be selected.
 		 */
 		void	addIwad(const QString& path);
 		void	addMapToMaplist(const QString& map);
 		void	addWadPath(const QString& path);
 
 		/**
-		 *	Sets host information for both server and hi objects. Both
-		 *	parameters obtain new information after this method is called.
-		 *	@return false if fail.
+		 * Sets host information for both server and hi objects. Both
+		 * parameters obtain new information after this method is called.
+		 * @return false if fail.
 		 */
 		bool	createHostInfo(HostInfo& hi, Server* server, bool offline);
 
@@ -138,9 +138,9 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		void	initInfoAndPassword();
 
 		/**
-		 *	Called once, when the dialog is opened. Handles initialization
-		 *	of very basic stuff that's common no matter what the selected
-		 *	engine is.
+		 * Called once, when the dialog is opened. Handles initialization
+		 * of very basic stuff that's common no matter what the selected
+		 * engine is.
 		 */
 		void	initPrimary();
 		void	initRules();

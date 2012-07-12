@@ -44,8 +44,8 @@ class MAIN_EXPORT CreateServerDialogPage : public QWidget
 		/**
 		 * @brief Generates game run parameters basing on the page's contents.
 		 *
-		 * These parameters are directly passed to the executable file
-		 * as they appear on the string list when the process is started.
+		 * These parameters are passed as arguments to the executable when
+		 * the game's process is started.
 		 */
 		virtual QStringList generateGameRunParameters() = 0;
 
@@ -81,6 +81,8 @@ class MAIN_EXPORT CreateServerDialogPage : public QWidget
 		 *
 		 * Default behavior assumes that no validation is needed and always
 		 * returns true.
+		 *
+		 * @return Return true on validation success or false on failure.
 		 */
 		virtual bool validate()
 		{
