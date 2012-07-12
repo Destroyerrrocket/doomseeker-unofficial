@@ -29,6 +29,7 @@
 #include "commonGUI.h"
 #include "ini/ini.h"
 #include "plugins/engineplugin.h"
+#include "scanner.h"
 #include "serverapi/binaries.h"
 #include "serverapi/gamerunner.h"
 #include "serverapi/message.h"
@@ -477,7 +478,17 @@ bool CreateServerDialog::createHostInfo(HostInfo& hostInfo, Server* server, bool
 		}
 
 		// Custom parameters
-		hostInfo.customParameters = pteCustomParameters->toPlainText().split('\n');
+		{
+			QString cp = pteCustomParameters->toPlainText();
+			Scanner sc(cp.toAscii().constData(), cp.length());
+			while(sc.nextString())
+			{
+				QString param = sc->str;
+				if(param.indexOf(' ') >= 0)
+					param = QString("\"%1\"").arg(param);
+				hostInfo.customParameters << param;
+			}
+		}
 
 		// Other
 		server->setBroadcastToLAN(cbBroadcastToLAN->isChecked());

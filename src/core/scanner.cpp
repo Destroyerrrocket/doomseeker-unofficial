@@ -26,9 +26,44 @@
 
 #include "scanner.h"
 
+void (*Scanner::messageHandler)(MessageLevel, const char*, va_list) = NULL;
+
+static const char* const TokenNames[TK_NumSpecialTokens] =
+{
+	"Identifier",
+	"String Constant",
+	"Integer Constant",
+	"Float Constant",
+	"Boolean Constant",
+	"Logical And",
+	"Logical Or",
+	"Equals",
+	"Not Equals",
+	"Greater Than or Equals"
+	"Less Than or Equals",
+	"Left Shift",
+	"Right Shift",
+	"Increment",
+	"Decrement",
+	"Pointer Member",
+	"Scope Resolution",
+	"Macro Concatenation",
+	"Assign Sum",
+	"Assign Difference",
+	"Assign Product",
+	"Assign Quotient",
+	"Assign Modulus",
+	"Assign Left Shift",
+	"Assign Right Shift",
+	"Assign Bitwise And",
+	"Assign Bitwise Or",
+	"Assign Exclusive Or",
+	"Ellipsis"
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 
-Scanner::Scanner(const char* data, int length) : line(1), lineStart(0), tokenLine(1), tokenLinePosition(0), scanPos(0), needNext(true)
+Scanner::Scanner(const char* data, int length) : line(1), lineStart(0), logicalPosition(0), scanPos(0), needNext(true)
 {
 	if(length == -1)
 		length = strlen(data);
@@ -37,11 +72,54 @@ Scanner::Scanner(const char* data, int length) : line(1), lineStart(0), tokenLin
 	memcpy(this->data, data, length);
 
 	checkForWhitespace();
+
+	state.scanPos = scanPos;
 }
 
 Scanner::~Scanner()
 {
 	delete[] data;
+}
+
+// Here's my answer to the preprocessor screwing up line numbers. What we do is
+// after a new line in CheckForWhitespace, look for a comment in the form of
+// "/*meta:filename:line*/"
+void Scanner::checkForMeta()
+{
+	if(scanPos+10 < length)
+	{
+		char metaCheck[8];
+		memcpy(metaCheck, data+scanPos, 7);
+		metaCheck[7] = 0;
+		if(strcmp(metaCheck, "/*meta:") == 0)
+		{
+			scanPos += 7;
+			int metaStart = scanPos;
+			int fileLength = 0;
+			int lineLength = 0;
+			while(scanPos < length)
+			{
+				char thisChar = data[scanPos];
+				char nextChar = scanPos+1 < length ? data[scanPos+1] : 0;
+				if(thisChar == '*' && nextChar == '/')
+				{
+					lineLength = scanPos-metaStart-1-fileLength;
+					scanPos += 2;
+					break;
+				}
+				if(thisChar == ':' && fileLength == 0)
+					fileLength = scanPos-metaStart;
+				scanPos++;
+			}
+			if(fileLength > 0 && lineLength > 0)
+			{
+				setScriptIdentifier(QString::fromAscii(data+metaStart, fileLength));
+				QString lineNumber = QString::fromAscii(data+metaStart+fileLength+1, lineLength);
+				line = atoi(lineNumber.toAscii().constData());
+				lineStart = scanPos;
+			}
+		}
+	}
 }
 
 void Scanner::checkForWhitespace()
@@ -54,7 +132,21 @@ void Scanner::checkForWhitespace()
 		if(comment == 2)
 		{
 			if(cur != '*' || next != '/')
-				scanPos++;
+			{
+				if(cur == '\n' || cur == '\r')
+				{
+					scanPos++;
+					if(comment == 1)
+						comment = 0;
+
+					// Do a quick check for Windows style new line
+					if(cur == '\r' && next == '\n')
+						scanPos++;
+					incrementLine();
+				}
+				else
+					scanPos++;
+			}
 			else
 			{
 				comment = 0;
@@ -75,8 +167,9 @@ void Scanner::checkForWhitespace()
 			if(cur == '\r' && next == '\n')
 				scanPos++;
 			incrementLine();
+			checkForMeta();
 		}
-		else if(cur == '/')
+		else if(cur == '/' && comment == 0)
 		{
 			switch(next)
 			{
@@ -122,13 +215,12 @@ bool Scanner::checkToken(char token)
 
 void Scanner::expandState()
 {
-	str = nextState.str;
-	number = nextState.number;
-	decimal = nextState.decimal;
-	boolean = nextState.boolean;
-	token = nextState.token;
-	tokenLine = nextState.tokenLine;
-	tokenLinePosition = nextState.tokenLinePosition;
+	scanPos = nextState.scanPos;
+	logicalPosition = scanPos;
+	checkForWhitespace();
+
+	prevState = state;
+	state = nextState;
 }
 
 void Scanner::incrementLine()
@@ -137,23 +229,100 @@ void Scanner::incrementLine()
 	lineStart = scanPos;
 }
 
+bool Scanner::nextString()
+{
+	nextState.tokenLine = line;
+	nextState.tokenLinePosition = scanPos - lineStart;
+	nextState.token = TK_NoToken;
+	if(!needNext)
+		scanPos = state.scanPos;
+	checkForWhitespace();
+	if(scanPos >= length)
+		return false;
+
+	int start = scanPos;
+	int end = scanPos;
+	bool quoted = data[scanPos] == '"';
+	if(quoted) // String Constant
+	{
+		end = ++start; // Remove starting quote
+		scanPos++;
+		while(scanPos < length)
+		{
+			char cur = data[scanPos];
+			if(cur == '"')
+				end = scanPos;
+			else if(cur == '\\')
+			{
+				scanPos += 2;
+				continue;
+			}
+			scanPos++;
+			if(start != end)
+				break;
+		}
+	}
+	else // Unquoted string
+	{
+		while(scanPos < length)
+		{
+			char cur = data[scanPos];
+			switch(cur)
+			{
+				default:
+					break;
+				case ' ':
+				case '\t':
+				case '\n':
+				case '\r':
+					end = scanPos;
+					break;
+			}
+			if(start != end)
+				break;
+			scanPos++;
+		}
+		if(scanPos == length)
+			end = scanPos;
+	}
+	if(end-start > 0)
+	{
+		nextState.scanPos = scanPos;
+		QString thisString = QString::fromAscii(data+start, end-start);
+		if(quoted)
+			unescape(thisString);
+		nextState.str = thisString;
+		nextState.token = TK_StringConst;
+		expandState();
+		needNext = true;
+		return true;
+	}
+	checkForWhitespace();
+	return false;
+}
+
 bool Scanner::nextToken(bool autoExpandState)
 {
 	if(!needNext)
 	{
 		needNext = true;
-		expandState();
+		if(autoExpandState)
+			expandState();
 		return true;
 	}
 
 	nextState.tokenLine = line;
 	nextState.tokenLinePosition = scanPos - lineStart;
+	nextState.token = TK_NoToken;
 	if(scanPos >= length)
+	{
+		if(autoExpandState)
+			expandState();
 		return false;
+	}
 
 	unsigned int start = scanPos;
 	unsigned int end = scanPos;
-	nextState.token = TK_NoToken;
 	int integerBase = 10;
 	bool floatHasDecimal = false;
 	bool floatHasExponent = false;
@@ -169,7 +338,7 @@ bool Scanner::nextToken(bool autoExpandState)
 			integerBase = 8;
 		nextState.token = TK_IntConst;
 	}
-	else if(cur == '.')
+	else if(cur == '.' && scanPos < length && data[scanPos] != '.')
 	{
 		floatHasDecimal = true;
 		nextState.token = TK_FloatConst;
@@ -192,10 +361,40 @@ bool Scanner::nextToken(bool autoExpandState)
 				nextState.token = TK_AndAnd;
 			else if(cur == '|' && next == '|')
 				nextState.token = TK_OrOr;
-			else if(cur == '<' && next == '<')
-				nextState.token = TK_ShiftLeft;
-			else if(cur == '>' && next == '>')
-				nextState.token = TK_ShiftRight;
+			else if(
+				(cur == '<' && next == '<') ||
+				(cur == '>' && next == '>')
+			)
+			{
+				// Next for 3 character tokens
+				if(scanPos+1 > length && data[scanPos+1] == '=')
+				{
+					scanPos++;
+					nextState.token = cur == '<' ? TK_ShiftLeftEq : TK_ShiftRightEq;
+					
+				}
+				else
+					nextState.token = cur == '<' ? TK_ShiftLeft : TK_ShiftRight;
+			}
+			else if(cur == '#' && next == '#')
+				nextState.token = TK_MacroConcat;
+			else if(cur == ':' && next == ':')
+				nextState.token = TK_ScopeResolution;
+			else if(cur == '+' && next == '+')
+				nextState.token = TK_Increment;
+			else if(cur == '-')
+			{
+				if(next == '-')
+					nextState.token = TK_Decrement;
+				else if(next == '>')
+					nextState.token = TK_PointerMember;
+			}
+			else if(cur == '.' && next == '.' &&
+				scanPos+1 < length && data[scanPos+1] == '.')
+			{
+				nextState.token = TK_Ellipsis;
+				++scanPos;
+			}
 			else if(next == '=')
 			{
 				switch(cur)
@@ -211,6 +410,30 @@ bool Scanner::nextToken(bool autoExpandState)
 						break;
 					case '<':
 						nextState.token = TK_LessEq;
+						break;
+					case '+':
+						nextState.token = TK_AddEq;
+						break;
+					case '-':
+						nextState.token = TK_SubEq;
+						break;
+					case '*':
+						nextState.token = TK_MulEq;
+						break;
+					case '/':
+						nextState.token = TK_DivEq;
+						break;
+					case '%':
+						nextState.token = TK_ModEq;
+						break;
+					case '&':
+						nextState.token = TK_AndEq;
+						break;
+					case '|':
+						nextState.token = TK_OrEq;
+						break;
+					case '^':
+						nextState.token = TK_XorEq;
 						break;
 					default:
 						break;
@@ -306,20 +529,32 @@ bool Scanner::nextToken(bool autoExpandState)
 			else
 				break;
 		}
+		// Handle small tokens at the end of a file.
+		if(scanPos == length && !stringFinished)
+			end = scanPos;
 	}
 
+	nextState.scanPos = scanPos;
 	if(end-start > 0 || stringFinished)
 	{
 		nextState.str = QByteArray(data+start, end-start);
 		if(nextState.token == TK_FloatConst)
 		{
-			nextState.decimal = nextState.str.toDouble();
-			nextState.number = static_cast<int> (nextState.decimal);
-			nextState.boolean = (nextState.number != 0);
+			if(floatHasDecimal && nextState.str.length() == 1)
+			{
+				// Don't treat a lone '.' as a decimal.
+				nextState.token = '.';
+			}
+			else
+			{
+				nextState.decimal = nextState.str.toDouble(NULL);
+				nextState.number = static_cast<int> (nextState.decimal);
+				nextState.boolean = (nextState.number != 0);
+			}
 		}
 		else if(nextState.token == TK_IntConst)
 		{
-			nextState.number = nextState.str.toUInt();
+			nextState.number = nextState.str.toUInt(NULL, integerBase);
 			nextState.decimal = nextState.number;
 			nextState.boolean = (nextState.number != 0);
 		}
@@ -343,11 +578,98 @@ bool Scanner::nextToken(bool autoExpandState)
 		}
 		if(autoExpandState)
 			expandState();
-		checkForWhitespace();
 		return true;
 	}
-	checkForWhitespace();
+	nextState.token = TK_NoToken;
+	if(autoExpandState)
+		expandState();
 	return false;
+}
+
+void Scanner::mustGetToken(char token)
+{
+	if(!checkToken(token))
+	{
+		expandState();
+		if(token < TK_NumSpecialTokens && state.token < TK_NumSpecialTokens)
+			scriptMessage(Scanner::ERROR, "Expected '%s' but got '%s' instead.", TokenNames[token], TokenNames[state.token]);
+		else if(token < TK_NumSpecialTokens && state.token >= TK_NumSpecialTokens)
+			scriptMessage(Scanner::ERROR, "Expected '%s' but got '%c' instead.", TokenNames[token], state.token);
+		else if(token >= TK_NumSpecialTokens && state.token < TK_NumSpecialTokens)
+			scriptMessage(Scanner::ERROR, "Expected '%c' but got '%s' instead.", token, TokenNames[state.token]);
+		else
+			scriptMessage(Scanner::ERROR, "Expected '%c' but got '%c' instead.", token, state.token);
+	}
+}
+
+void Scanner::rewind()
+{
+	needNext = false;
+	nextState = state;
+	state = prevState;
+	scanPos = state.scanPos;
+
+	line = prevState.tokenLine;
+	logicalPosition = prevState.tokenLinePosition;
+}
+
+void Scanner::scriptMessage(MessageLevel level, const char* error, ...) const
+{
+	const char* messageLevel;
+	switch(level)
+	{
+		default:
+			messageLevel = "Notice";
+			break;
+		case WARNING:
+			messageLevel = "Warning";
+			break;
+		case ERROR:
+			messageLevel = "Error";
+			break;
+	}
+
+	char* newMessage = new char[strlen(error) + scriptIdentifier.length() + 25];
+	sprintf(newMessage, "%s:%d:%d:%s: %s\n", scriptIdentifier.toAscii().constData(), currentLine(), currentLinePos(), messageLevel, error);
+	va_list list;
+	va_start(list, error);
+	if(messageHandler)
+		messageHandler(level, newMessage, list);
+	else
+		vfprintf(stderr, newMessage, list);
+	va_end(list);
+	delete[] newMessage;
+
+	if(!messageHandler && level == ERROR)
+		exit(0);
+}
+
+int Scanner::skipLine()
+{
+	int ret = currentPos();
+	while(logicalPosition < length)
+	{
+		char thisChar = data[logicalPosition];
+		char nextChar = logicalPosition+1 < length ? data[logicalPosition+1] : 0;
+		if(thisChar == '\n' || thisChar == '\r')
+		{
+			ret = logicalPosition++; // Return the first newline character we see.
+			if(nextChar == '\r')
+				logicalPosition++;
+			incrementLine();
+			checkForWhitespace();
+			break;
+		}
+		logicalPosition++;
+	}
+	if(logicalPosition > scanPos)
+	{
+		scanPos = logicalPosition;
+		checkForWhitespace();
+		needNext = true;
+		logicalPosition = scanPos;
+	}
+	return ret;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
