@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// createserver.cpp
+// createserverdialog.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,9 +18,10 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2009-2012 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "createserver.h"
+#include "createserverdialog.h"
+
 #include "configuration/doomseekerconfig.h"
 #include "copytextdlg.h"
 #include "main.h"
@@ -42,9 +43,9 @@
 #include <QStandardItemModel>
 #include <QTimer>
 
-const QString CreateServerDlg::TEMP_SERVER_CONFIG_FILENAME = "/tmpserver.ini";
+const QString CreateServerDialog::TEMP_SERVER_CONFIG_FILENAME = "/tmpserver.ini";
 
-CreateServerDlg::CreateServerDlg(QWidget* parent) : QDialog(parent)
+CreateServerDialog::CreateServerDialog(QWidget* parent) : QDialog(parent)
 {
 	bSuppressMissingExeErrors = true;
 	bIsServerSetup = false;
@@ -68,7 +69,7 @@ CreateServerDlg::CreateServerDlg(QWidget* parent) : QDialog(parent)
 
 	connect(cboEngine, SIGNAL( currentIndexChanged(int) ), this, SLOT( cboEngineSelected(int) ) );
 	connect(cboGamemode, SIGNAL( currentIndexChanged(int) ), this, SLOT( cboGamemodeSelected(int) ) );
-	
+
 	connect(lstAdditionalFiles, SIGNAL( fileSystemPathDropped(const QString& ) ),
 		this, SLOT( lstAdditionalFilesPathDnd(const QString&) ) );
 
@@ -88,12 +89,12 @@ CreateServerDlg::CreateServerDlg(QWidget* parent) : QDialog(parent)
 	QTimer::singleShot(1, this, SLOT(firstLoadConfigTimer()) );
 }
 
-CreateServerDlg::~CreateServerDlg()
+CreateServerDialog::~CreateServerDialog()
 {
 
 }
 
-void CreateServerDlg::addIwad(const QString& path)
+void CreateServerDialog::addIwad(const QString& path)
 {
 	if (path.isEmpty())
 	{
@@ -115,7 +116,7 @@ void CreateServerDlg::addIwad(const QString& path)
 	cboIwad->setCurrentIndex(cboIwad->count() - 1);
 }
 
-void CreateServerDlg::addMapToMaplist(const QString& map)
+void CreateServerDialog::addMapToMaplist(const QString& map)
 {
 	if (map.isEmpty())
 	{
@@ -132,7 +133,7 @@ void CreateServerDlg::addMapToMaplist(const QString& map)
 	model->appendRow(it);
 }
 
-void CreateServerDlg::addWadPath(const QString& strPath)
+void CreateServerDialog::addWadPath(const QString& strPath)
 {
 	if (strPath.isEmpty())
 	{
@@ -169,23 +170,23 @@ void CreateServerDlg::addWadPath(const QString& strPath)
 	model->appendRow(it);
 }
 
-void CreateServerDlg::btnAddMapToMaplistClicked()
+void CreateServerDialog::btnAddMapToMaplistClicked()
 {
 	addMapToMaplist(leMapname->text());
 }
 
-void CreateServerDlg::btnAddPwadClicked()
+void CreateServerDialog::btnAddPwadClicked()
 {
 	QString dialogDir = gConfig.doomseeker.previousCreateServerWadDir;
 	QStringList filesNames = QFileDialog::getOpenFileNames(this, tr("Doomseeker - Add file(s)"), dialogDir);
-	
+
 	if (!filesNames.isEmpty())
 	{
 		// Remember the directory of the first file. This directory will be
 		// restored the next time this dialog is opened.
 		QFileInfo fi(filesNames[0]);
-		gConfig.doomseeker.previousCreateServerWadDir = fi.absolutePath();	
-		
+		gConfig.doomseeker.previousCreateServerWadDir = fi.absolutePath();
+
 		foreach (const QString& strFile, filesNames)
 		{
 			addWadPath(strFile);
@@ -193,7 +194,7 @@ void CreateServerDlg::btnAddPwadClicked()
 	}
 }
 
-void CreateServerDlg::btnBrowseExecutableClicked()
+void CreateServerDialog::btnBrowseExecutableClicked()
 {
 	QString dialogDir = gConfig.doomseeker.previousCreateServerExecDir;
 	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - Add file"), dialogDir);
@@ -207,13 +208,13 @@ void CreateServerDlg::btnBrowseExecutableClicked()
 	}
 }
 
-void CreateServerDlg::btnClearPwadListClicked()
+void CreateServerDialog::btnClearPwadListClicked()
 {
 	QStandardItemModel* pModel = (QStandardItemModel*)lstAdditionalFiles->model();
 	pModel->clear();
 }
 
-void CreateServerDlg::btnCommandLineClicked()
+void CreateServerDialog::btnCommandLineClicked()
 {
 	QString executable;
 	QStringList args;
@@ -224,7 +225,7 @@ void CreateServerDlg::btnCommandLineClicked()
 	}
 }
 
-void CreateServerDlg::btnDefaultExecutableClicked()
+void CreateServerDialog::btnDefaultExecutableClicked()
 {
 	QString error;
 
@@ -249,7 +250,7 @@ void CreateServerDlg::btnDefaultExecutableClicked()
 	delete server;
 }
 
-void CreateServerDlg::btnIwadBrowseClicked()
+void CreateServerDialog::btnIwadBrowseClicked()
 {
 	QString dialogDir = gConfig.doomseeker.previousCreateServerWadDir;
 	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - select IWAD"), dialogDir);
@@ -263,7 +264,7 @@ void CreateServerDlg::btnIwadBrowseClicked()
 	}
 }
 
-void CreateServerDlg::btnLoadClicked()
+void CreateServerDialog::btnLoadClicked()
 {
 	QString dialogDir = gConfig.doomseeker.previousCreateServerConfigDir;
 	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - load server config"), dialogDir, tr("Config files (*.ini)"));
@@ -277,24 +278,24 @@ void CreateServerDlg::btnLoadClicked()
 	}
 }
 
-void CreateServerDlg::btnPlayOfflineClicked()
+void CreateServerDialog::btnPlayOfflineClicked()
 {
 	runGame(true);
 }
 
-void CreateServerDlg::btnRemoveMapFromMaplistClicked()
+void CreateServerDialog::btnRemoveMapFromMaplistClicked()
 {
 	const bool bSelectNextLowest = true;
 	CommonGUI::removeSelectedRowsFromStandardItemView(lstMaplist, bSelectNextLowest);
 }
 
-void CreateServerDlg::btnRemovePwadClicked()
+void CreateServerDialog::btnRemovePwadClicked()
 {
 	const bool bSelectNextLowest = true;
 	CommonGUI::removeSelectedRowsFromStandardItemView(lstAdditionalFiles, bSelectNextLowest);
 }
 
-void CreateServerDlg::btnSaveClicked()
+void CreateServerDialog::btnSaveClicked()
 {
 	QString dialogDir = gConfig.doomseeker.previousCreateServerConfigDir;
 	QString strFile = QFileDialog::getSaveFileName(this, tr("Doomseeker - save server config"), dialogDir, tr("Config files (*.ini)"));
@@ -316,7 +317,7 @@ void CreateServerDlg::btnSaveClicked()
 
 }
 
-void CreateServerDlg::btnStartServerClicked()
+void CreateServerDialog::btnStartServerClicked()
 {
 	if(!bIsServerSetup)
 		runGame(false);
@@ -324,7 +325,7 @@ void CreateServerDlg::btnStartServerClicked()
 		accept();
 }
 
-void CreateServerDlg::cboEngineSelected(int index)
+void CreateServerDialog::cboEngineSelected(int index)
 {
 	if (index >= 0)
 	{
@@ -338,7 +339,7 @@ void CreateServerDlg::cboEngineSelected(int index)
 	}
 }
 
-void CreateServerDlg::cboGamemodeSelected(int index)
+void CreateServerDialog::cboGamemodeSelected(int index)
 {
 	if (index >= 0)
 	{
@@ -350,7 +351,7 @@ void CreateServerDlg::cboGamemodeSelected(int index)
 	}
 }
 
-bool CreateServerDlg::commandLineArguments(QString &executable, QStringList &args)
+bool CreateServerDialog::commandLineArguments(QString &executable, QStringList &args)
 {
 	const QString errorCapt = tr("Doomseeker - create server");
 	if (currentEngine == NULL)
@@ -393,7 +394,7 @@ bool CreateServerDlg::commandLineArguments(QString &executable, QStringList &arg
 	return false;
 }
 
-bool CreateServerDlg::createHostInfo(HostInfo& hostInfo, Server* server, bool offline)
+bool CreateServerDialog::createHostInfo(HostInfo& hostInfo, Server* server, bool offline)
 {
 	if (server != NULL)
 	{
@@ -493,7 +494,7 @@ bool CreateServerDlg::createHostInfo(HostInfo& hostInfo, Server* server, bool of
 	return false;
 }
 
-void CreateServerDlg::firstLoadConfigTimer()
+void CreateServerDialog::firstLoadConfigTimer()
 {
 	QString tmpServerCfgPath = Main::dataPaths->programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
 
@@ -505,7 +506,7 @@ void CreateServerDlg::firstLoadConfigTimer()
 }
 
 
-void CreateServerDlg::focusChanged(QWidget* oldW, QWidget* newW)
+void CreateServerDialog::focusChanged(QWidget* oldW, QWidget* newW)
 {
 	if (newW == leMapname)
 	{
@@ -517,7 +518,7 @@ void CreateServerDlg::focusChanged(QWidget* oldW, QWidget* newW)
 	}
 }
 
-void CreateServerDlg::initDMFlagsTabs()
+void CreateServerDialog::initDMFlagsTabs()
 {
 	removeDMFlagsTabs();
 
@@ -570,7 +571,7 @@ void CreateServerDlg::initDMFlagsTabs()
 	}
 }
 
-void CreateServerDlg::initEngineSpecific(const EnginePlugin* engineInfo)
+void CreateServerDialog::initEngineSpecific(const EnginePlugin* engineInfo)
 {
 	if (engineInfo == currentEngine || engineInfo == NULL)
 	{
@@ -619,7 +620,7 @@ void CreateServerDlg::initEngineSpecific(const EnginePlugin* engineInfo)
 	initRules();
 }
 
-void CreateServerDlg::initGamemodeSpecific(const GameMode& gameMode)
+void CreateServerDialog::initGamemodeSpecific(const GameMode& gameMode)
 {
 	// Rules tab
 	removeLimitWidgets();
@@ -644,7 +645,7 @@ void CreateServerDlg::initGamemodeSpecific(const GameMode& gameMode)
 	}
 }
 
-void CreateServerDlg::initInfoAndPassword()
+void CreateServerDialog::initInfoAndPassword()
 {
 	const static int MISC_TAB_INDEX = 2;
 
@@ -684,7 +685,7 @@ void CreateServerDlg::initInfoAndPassword()
 	tabWidget->setTabEnabled(MISC_TAB_INDEX, bAtLeastOneVisible);
 }
 
-void CreateServerDlg::initPrimary()
+void CreateServerDialog::initPrimary()
 {
 	cboEngine->clear();
 
@@ -722,7 +723,7 @@ void CreateServerDlg::initPrimary()
 	}
 }
 
-void CreateServerDlg::initRules()
+void CreateServerDialog::initRules()
 {
 	cbRandomMapRotation->setVisible(currentEngine->data()->supportsRandomMapRotation);
 
@@ -753,7 +754,7 @@ void CreateServerDlg::initRules()
 	}
 }
 
-bool CreateServerDlg::loadConfig(const QString& filename)
+bool CreateServerDialog::loadConfig(const QString& filename)
 {
 	QAbstractItemModel* model;
 	QStringList stringList;
@@ -862,7 +863,7 @@ bool CreateServerDlg::loadConfig(const QString& filename)
 	return true;
 }
 
-void CreateServerDlg::lstAdditionalFilesPathDnd(const QString& path)
+void CreateServerDialog::lstAdditionalFilesPathDnd(const QString& path)
 {
 	QFileInfo fileInfo(path);
 	if (fileInfo.isFile())
@@ -871,7 +872,7 @@ void CreateServerDlg::lstAdditionalFilesPathDnd(const QString& path)
 	}
 }
 
-void CreateServerDlg::makeSetupServerDialog(const EnginePlugin *plugin)
+void CreateServerDialog::makeSetupServerDialog(const EnginePlugin *plugin)
 {
 	bSuppressMissingExeErrors = true;
 	bIsServerSetup = true;
@@ -890,7 +891,7 @@ void CreateServerDlg::makeSetupServerDialog(const EnginePlugin *plugin)
 		disableControls[i]->setDisabled(true);
 }
 
-void CreateServerDlg::removeDMFlagsTabs()
+void CreateServerDialog::removeDMFlagsTabs()
 {
 	QList<DMFlagsTabWidget*>::iterator it;
 	for (it = dmFlagsTabs.begin(); it != dmFlagsTabs.end(); ++it)
@@ -904,7 +905,7 @@ void CreateServerDlg::removeDMFlagsTabs()
 	dmFlagsTabs.clear();
 }
 
-void CreateServerDlg::removeLimitWidgets()
+void CreateServerDialog::removeLimitWidgets()
 {
 	QList<GameLimitWidget*>::iterator it;
 
@@ -918,7 +919,7 @@ void CreateServerDlg::removeLimitWidgets()
 	limitWidgets.clear();
 }
 
-void CreateServerDlg::runGame(bool offline)
+void CreateServerDialog::runGame(bool offline)
 {
 	const QString errorCapt = tr("Doomseeker - create server");
 	if (currentEngine == NULL)
@@ -957,7 +958,7 @@ void CreateServerDlg::runGame(bool offline)
 	}
 }
 
-bool CreateServerDlg::saveConfig(const QString& filename)
+bool CreateServerDialog::saveConfig(const QString& filename)
 {
 	QStringList stringList;
 	Ini ini(filename);
@@ -1025,7 +1026,7 @@ bool CreateServerDlg::saveConfig(const QString& filename)
 	return ini.save();
 }
 
-bool CreateServerDlg::setEngine(const QString &engineName)
+bool CreateServerDialog::setEngine(const QString &engineName)
 {
 	int engIndex = Main::enginePlugins->pluginIndexFromName(engineName);
 	if (engIndex < 0)

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// createserver.h
+// createserverdialog.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,12 +18,12 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2009-2012 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __CREATESERVER_H_
-#define __CREATESERVER_H_
+#ifndef DOOMSEEKER_GUI_CREATESERVERDIALOG_H
+#define DOOMSEEKER_GUI_CREATESERVERDIALOG_H
 
-#include "ui_createserver.h"
+#include "ui_createserverdialog.h"
 #include "serverapi/gamerunnerstructs.h"
 #include <QCheckBox>
 #include <QDialog>
@@ -34,17 +34,17 @@ class Server;
 /**
  *	@brief Dialog window allowing user to host a game.
  */
-class MAIN_EXPORT CreateServerDlg : public QDialog, private Ui::CreateServerDlg
+class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerDialog
 {
 	Q_OBJECT
 
 	public:
-		CreateServerDlg(QWidget* parent = NULL);
-		~CreateServerDlg();
+		CreateServerDialog(QWidget* parent = NULL);
+		~CreateServerDialog();
 
 		bool	commandLineArguments(QString &executable, QStringList &args);
 		void	makeSetupServerDialog(const EnginePlugin *plugin);
-	
+
 	private slots:
 		void	btnAddMapToMaplistClicked();
 		void	btnAddPwadClicked();
@@ -63,7 +63,7 @@ class MAIN_EXPORT CreateServerDlg : public QDialog, private Ui::CreateServerDlg
 		void	cboGamemodeSelected(int index);
 		void	firstLoadConfigTimer();
 		void	focusChanged(QWidget* oldW, QWidget* newW);
-		
+
 		/**
 		 * @brief Files drag'n'drop on WADs list view.
 		 */

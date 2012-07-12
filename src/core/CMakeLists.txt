@@ -77,7 +77,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/aboutDlg.ui
 	gui/addBuddyDlg.ui
 	gui/copytextdlg.ui
-	gui/createserver.ui
+	gui/createserverdialog.ui
 	gui/demomanager.ui
 	gui/dockBuddiesList.ui
 	gui/ip2cupdatebox.ui
@@ -124,7 +124,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/widgets/wadseekerwadstable.h
 	gui/aboutDlg.h
 	gui/copytextdlg.h
-	gui/createserver.h
+	gui/createserverdialog.h
 	gui/demomanager.h
 	gui/dockBuddiesList.h
 	gui/logdock.h
@@ -208,7 +208,7 @@ set(SOURCE_FILES
 	gui/aboutDlg.cpp
 	gui/commonGUI.cpp
 	gui/copytextdlg.cpp
-	gui/createserver.cpp
+	gui/createserverdialog.cpp
 	gui/demomanager.cpp
 	gui/dockBuddiesList.cpp
 	gui/ip2cupdatebox.cpp

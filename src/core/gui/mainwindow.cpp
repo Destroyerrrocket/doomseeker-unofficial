@@ -28,7 +28,7 @@
 #include "gui/widgets/serversstatuswidget.h"
 #include "gui/aboutDlg.h"
 #include "gui/copytextdlg.h"
-#include "gui/createserver.h"
+#include "gui/createserverdialog.h"
 #include "gui/demomanager.h"
 #include "gui/dockBuddiesList.h"
 #include "gui/ip2cupdatebox.h"
@@ -814,9 +814,9 @@ void MainWindow::menuBuddies()
 
 void MainWindow::menuCreateServer()
 {
-	CreateServerDlg dlg(this);
+	CreateServerDialog dialog(this);
 	autoRefreshTimer.stop();
-	dlg.exec();
+	dialog.exec();
 	initAutoRefreshTimer();
 }
 

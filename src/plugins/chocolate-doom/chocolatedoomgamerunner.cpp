@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------
 #include "chocolatedoomgamerunner.h"
 #include "chocolatedoomserver.h"
-#include "gui/createserver.h"
+#include "gui/createserverdialog.h"
 #include "serverapi/playerslist.h"
 #include "main.h"
 
@@ -38,7 +38,7 @@ bool ChocolateDoomGameRunner::connectParameters(QStringList &args, PathFinder &p
 	else
 	{
 		QString tmp;
-		CreateServerDlg *csd = new CreateServerDlg();
+		CreateServerDialog *csd = new CreateServerDialog();
 		csd->makeSetupServerDialog(plugin());
 		if(csd->exec() == QDialog::Accepted)
 		{
