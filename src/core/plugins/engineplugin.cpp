@@ -40,6 +40,7 @@ EnginePlugin::Data::Data()
 	allowsMOTD = false;
 	allowsRConPassword = false;
 	allowsURL = false;
+	createDMFlagsPagesAutomatic = true;
 	defaultServerPort = 10666;
 	demoExtensionAutomatic = true;
 	demoExtension = "lmp";
@@ -131,6 +132,9 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 			case EP_DemoExtension:
 				d->demoExtensionAutomatic = va_arg(va, unsigned int);
 				d->demoExtension = va_arg(va, const char*);
+				break;
+			case EP_DontCreateDMFlagsPagesAutomatic:
+				d->createDMFlagsPagesAutomatic = false;
 				break;
 			case EP_GameModes:
 				d->gameModes = va_arg(va, QList<GameMode>*);

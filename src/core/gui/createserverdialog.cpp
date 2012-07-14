@@ -560,52 +560,55 @@ void CreateServerDialog::initDMFlagsTabs()
 {
 	removeDMFlagsTabs();
 
-	int paramsIndex = tabWidget->indexOf(tabCustomParameters);
-	const DMFlags* dmFlagsSec = currentEngine->data()->allDMFlags;
-	if(dmFlagsSec == NULL || dmFlagsSec->empty())
+	if (currentEngine->data()->createDMFlagsPagesAutomatic)
 	{
-		return; // Nothing to do
-	}
-
-	const QList<DMFlagsSection*>& dmFlagsSections = *dmFlagsSec;
-
-	for (int i = 0; i < dmFlagsSections.count(); ++i)
-	{
-		DMFlagsTabWidget* dmftw = new DMFlagsTabWidget();
-
-		QWidget* flagsTab = new QWidget(this);
-		dmftw->widget = flagsTab;
-		dmftw->section = dmFlagsSections[i];
-
-		QHBoxLayout* hLayout = new QHBoxLayout(flagsTab);
-
-		QVBoxLayout* layout = NULL;
-		for (int j = 0; j < dmFlagsSections[i]->flags.count(); ++j)
+		int paramsIndex = tabWidget->indexOf(tabCustomParameters);
+		const DMFlags* dmFlagsSec = currentEngine->data()->allDMFlags;
+		if(dmFlagsSec == NULL || dmFlagsSec->empty())
 		{
-			if ((j % 16) == 0)
+			return; // Nothing to do
+		}
+
+		const QList<DMFlagsSection*>& dmFlagsSections = *dmFlagsSec;
+
+		for (int i = 0; i < dmFlagsSections.count(); ++i)
+		{
+			DMFlagsTabWidget* dmftw = new DMFlagsTabWidget();
+
+			QWidget* flagsTab = new QWidget(this);
+			dmftw->widget = flagsTab;
+			dmftw->section = dmFlagsSections[i];
+
+			QHBoxLayout* hLayout = new QHBoxLayout(flagsTab);
+
+			QVBoxLayout* layout = NULL;
+			for (int j = 0; j < dmFlagsSections[i]->flags.count(); ++j)
 			{
-				if (layout != NULL)
+				if ((j % 16) == 0)
 				{
-					layout->addStretch();
+					if (layout != NULL)
+					{
+						layout->addStretch();
+					}
+
+					layout = new QVBoxLayout();
+					hLayout->addLayout(layout);
 				}
 
-				layout = new QVBoxLayout();
-				hLayout->addLayout(layout);
+				QCheckBox* checkBox = new QCheckBox();
+				checkBox->setText(dmFlagsSections[i]->flags[j].name);
+				dmftw->checkBoxes << checkBox;
+				layout->addWidget(checkBox);
 			}
 
-			QCheckBox* checkBox = new QCheckBox();
-			checkBox->setText(dmFlagsSections[i]->flags[j].name);
-			dmftw->checkBoxes << checkBox;
-			layout->addWidget(checkBox);
-		}
+			if (layout != NULL)
+			{
+				layout->addStretch();
+			}
 
-		if (layout != NULL)
-		{
-			layout->addStretch();
+			dmFlagsTabs << dmftw;
+			tabWidget->insertTab(paramsIndex++, flagsTab, dmFlagsSections[i]->name);
 		}
-
-		dmFlagsTabs << dmftw;
-		tabWidget->insertTab(paramsIndex++, flagsTab, dmFlagsSections[i]->name);
 	}
 }
 

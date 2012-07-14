@@ -89,7 +89,17 @@ class MAIN_EXPORT EnginePlugin
 			EP_SupportsRandomMapRotation, ///< Signifies that a server can be created with a random map rotation.
 			EP_RefreshThreshold, ///< (quint8) The amount of time (in seconds) that must pass before a server can be requeried.
 			EP_URLScheme, ///< (const char*) Overrides the URL scheme which Doomseeker sets for this plugin. By default it is the port's name without spaces.
-			EP_DemoExtension ///< (bool)auto, (const char*)extension Sets the extension taht will be used for demos (default is true and lmp).
+			EP_DemoExtension, ///< (bool)auto, (const char*)extension Sets the extension taht will be used for demos (default is true and lmp).
+
+			/**
+			 * (bool)
+			 * If specified then "Create Server" dialog won't build
+			 * flags pages out of the EnginePlugin::Data::allDMFlags list.
+			 * Plugin either doesn't want to have the flags pages created
+			 * or will provide the pages on its own through
+			 * EnginePlugin::createServerDialogPages().
+			 */
+			EP_DontCreateDMFlagsPagesAutomatic
 		};
 
 		/// Reimplement if you want to perform some ini initialization manually.
@@ -139,6 +149,17 @@ class MAIN_EXPORT EnginePlugin
 				unsigned int			version;
 				bool					demoExtensionAutomatic;
 				QString					demoExtension;
+				/**
+				 * @brief Controls behavior of "Create Server" dialog.
+				 *
+				 * If true then "Create Server" dialog will build
+				 * flags pages out of the allDMFlags list. If false then plugin
+				 * either doesn't want to have the flags pages created or will
+				 * provide the pages on its own.
+				 *
+				 * Default: true.
+				 */
+				bool					createDMFlagsPagesAutomatic;
 
 				Data();
 		};
