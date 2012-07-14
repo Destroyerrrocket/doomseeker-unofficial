@@ -29,6 +29,7 @@
 #include "strings.h"
 
 #include "huffman/huffman.h"
+#include "createserverdialogpages/flagspage.h"
 #include "zandronumbinaries.h"
 #include "zandronumgameinfo.h"
 #include "zandronumengineplugin.h"
@@ -55,6 +56,7 @@ ZandronumEnginePlugin::ZandronumEnginePlugin()
 		EP_AllowsJoinPassword,
 		EP_AllowsRConPassword,
 		EP_AllowsMOTD,
+		EP_DontCreateDMFlagsPagesAutomatic,
 		EP_DefaultServerPort, 10666,
 		EP_HasMasterServer,
 		EP_DefaultMaster, "master.zandronum.com:15300",
@@ -94,6 +96,16 @@ void ZandronumEnginePlugin::setupConfig(IniSection &config) const
 ConfigurationBaseBox *ZandronumEnginePlugin::configuration(QWidget *parent) const
 {
 	return new EngineZandronumConfigBox(staticInstance(), *data()->pConfig, parent);
+}
+
+QList<CreateServerDialogPage*> ZandronumEnginePlugin::createServerDialogPages(
+	CreateServerDialog* pDialog)
+{
+	QList<CreateServerDialogPage*> pages;
+
+	pages << new FlagsPage(pDialog);
+
+	return pages;
 }
 
 QList<GameCVar>	ZandronumEnginePlugin::limits(const GameMode& gm) const

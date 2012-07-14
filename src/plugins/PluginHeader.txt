@@ -16,7 +16,16 @@ endif(WIN32)
 find_package(Qt4 REQUIRED)
 include(${QT_USE_FILE})
 
+message(STATUS "Setting up plugin ${PLUGIN_NAME}. Source dir:\n"
+	"    ${CMAKE_CURRENT_SOURCE_DIR}")
+
 set(PLUGIN_LIBS ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} doomseeker)
 set(LIBS_OUTPUT_DIR ${OUTPUT_DIR}/engines)
 
-include_directories(${DOOMSEEKER_SOURCE_DIR}/src/core ${DOOMSEEKER_BINARY_DIR}/src/core ${CMAKE_CURRENT_BINARY_DIR} ${QT_INCLUDES})
+include_directories(
+	${DOOMSEEKER_SOURCE_DIR}/src/core 
+	${DOOMSEEKER_BINARY_DIR}/src/core 
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_BINARY_DIR} 
+	${QT_INCLUDES}
+)

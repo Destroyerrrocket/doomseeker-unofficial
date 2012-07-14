@@ -31,6 +31,9 @@ class ZandronumEnginePlugin : public EnginePlugin
 	public:
 		ZandronumEnginePlugin();
 
+		QList<CreateServerDialogPage*> createServerDialogPages(
+			CreateServerDialog* pDialog);
+
 		void setupConfig(IniSection &config) const;
 
 		ConfigurationBaseBox *configuration(QWidget *parent) const;

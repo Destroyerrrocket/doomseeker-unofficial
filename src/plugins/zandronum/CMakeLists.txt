@@ -3,7 +3,12 @@ cmake_minimum_required(VERSION 2.4)
 set(PLUGIN_NAME zandronum)
 include(../PluginHeader.txt)
 
+qt4_wrap_ui(ZANDRONUM_UI_FILES
+	createserverdialogpages/flagspage.ui
+)
+
 set(ZANDRONUM_QT_FILES
+	createserverdialogpages/flagspage.h
 	enginezandronumconfigbox.h
 	zandronumbinaries.h
 	zandronummasterclient.h
@@ -11,6 +16,8 @@ set(ZANDRONUM_QT_FILES
 )
 
 set(ZANDRONUM_FILES
+	createserverdialogpages/flagspagevaluecontroller.cpp
+	createserverdialogpages/flagspage.cpp
 	huffman/bitreader.cpp
 	huffman/bitwriter.cpp
 	huffman/huffcodec.cpp
@@ -26,6 +33,7 @@ set(ZANDRONUM_FILES
 
 set(HEADER_FILES
 	${ZANDRONUM_QT_FILES}
+	createserverdialogpages/flagspagevaluecontroller.h
 	huffman/bitreader.h
 	huffman/bitwriter.h
 	huffman/codec.h
@@ -38,7 +46,13 @@ set(HEADER_FILES
 
 qt_wrap_cpp(zandronum ZANDRONUM_FILES ${ZANDRONUM_QT_FILES})
 
-add_library(${PLUGIN_NAME} MODULE ${ZANDRONUM_FILES} ${HEADER_FILES})
+add_library(${PLUGIN_NAME} 
+	MODULE 
+	${ZANDRONUM_FILES} 
+	${HEADER_FILES}
+	${ZANDRONUM_UI_FILES}
+)
+
 target_link_libraries(${PLUGIN_NAME} ${PLUGIN_LIBS} wadseeker)
 
 include(../PluginFooter.txt)
