@@ -412,12 +412,15 @@ void FlagsPageValueController::convertToNumericalGeneral()
 	FlagsPage* f = flagsPage;
 
 	// Environment
+	
+	// Reset the value.
+	dmflags &= ~(ZandronumGameInfo::DF_FORCE_FALLINGZD
+				| ZandronumGameInfo::DF_FORCE_FALLINGHX
+				| ZandronumGameInfo::DF_FORCE_FALLINGST);
 	switch (f->cboFallingDamage->currentIndex())
 	{
 		case FlagsPage::FDT_None:
-			dmflags &= ~(ZandronumGameInfo::DF_FORCE_FALLINGZD
-				| ZandronumGameInfo::DF_FORCE_FALLINGHX
-				| ZandronumGameInfo::DF_FORCE_FALLINGST);
+			// pass
 			break;
 
 		case FlagsPage::FDT_Old:
@@ -439,11 +442,14 @@ void FlagsPageValueController::convertToNumericalPlayers()
 	FlagsPage* f = flagsPage;
 
 	// Abilities
+
+	// Reset the value.
+	dmflags &= ~(ZandronumGameInfo::DF_YES_JUMP
+				| ZandronumGameInfo::DF_NO_JUMP);
 	switch (f->cboJumping->currentIndex())
 	{
 		case FlagsPage::JCA_Default:
-			dmflags &= ~(ZandronumGameInfo::DF_YES_JUMP
-				| ZandronumGameInfo::DF_NO_JUMP);
+			// pass
 			break;
 		case FlagsPage::JCA_Yes:
 			dmflags |= ZandronumGameInfo::DF_YES_JUMP;
@@ -453,11 +459,13 @@ void FlagsPageValueController::convertToNumericalPlayers()
 			break;
 	}
 
+	// Reset the value.
+	dmflags &= ~(ZandronumGameInfo::DF_YES_CROUCH
+				| ZandronumGameInfo::DF_NO_CROUCH);
 	switch (f->cboCrouching->currentIndex())
 	{
 		case FlagsPage::JCA_Default:
-			dmflags &= ~(ZandronumGameInfo::DF_YES_CROUCH
-				| ZandronumGameInfo::DF_NO_CROUCH);
+			// pass
 			break;
 		case FlagsPage::JCA_Yes:
 			dmflags |= ZandronumGameInfo::DF_YES_CROUCH;
@@ -480,6 +488,9 @@ void FlagsPageValueController::convertToNumericalDeathmatch()
 {
 	FlagsPage* f = flagsPage;
 
+	// Reset the value.
+	dmflags &= ~(ZandronumGameInfo::DF_NO_EXIT
+			| ZandronumGameInfo::DF_SAME_LEVEL);
 	if (f->rbKillThePlayer->isChecked())
 	{
 		dmflags |= ZandronumGameInfo::DF_NO_EXIT;
@@ -487,11 +498,6 @@ void FlagsPageValueController::convertToNumericalDeathmatch()
 	else if (f->rbRestartTheCurrentLevel->isChecked())
 	{
 		dmflags |= ZandronumGameInfo::DF_SAME_LEVEL;
-	}
-	else
-	{
-		dmflags &= ~(ZandronumGameInfo::DF_NO_EXIT
-			| ZandronumGameInfo::DF_SAME_LEVEL);
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////
