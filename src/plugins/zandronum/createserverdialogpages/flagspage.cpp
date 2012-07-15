@@ -8,6 +8,9 @@
 #include "createserverdialogpages/flagspagevaluecontroller.h"
 #include "zandronumgameinfo.h"
 
+const unsigned DEFAULT_LMSALLOWEDWEAPONS = 1023;
+const unsigned DEFAULT_LMSSPECTATORSETTINGS = 3;
+
 class DmflagsValidator : public QValidator
 {
 	public:
@@ -112,12 +115,16 @@ void FlagsPage::initJumpCrouchComboBoxes(QComboBox* pComboBox)
 	pComboBox->insertItem(JCA_Yes, tr("Yes"));
 }
 
-void FlagsPage::insertFlagsIfValid(QLineEdit* dst, QString flags)
+void FlagsPage::insertFlagsIfValid(QLineEdit* dst, QString flags, unsigned valIfInvalid)
 {
 	int dummy;
 	if (d->validator.validate(flags, dummy) == QValidator::Acceptable)
 	{
 		dst->setText(flags);
+	}
+	else
+	{
+		dst->setText(QString::number(valIfInvalid));
 	}
 }
 
@@ -130,8 +137,8 @@ bool FlagsPage::loadConfig(Ini& ini)
 	insertFlagsIfValid(leDmflags3, section["dmflags3"]);
 	insertFlagsIfValid(leCompatflags, section["compatflags"]);
 	insertFlagsIfValid(leCompatflags2, section["compatflags2"]);
-	insertFlagsIfValid(leLMSAllowedWeapons, section["lmsallowedweapons"]);
-	insertFlagsIfValid(leLMSSpectatorSettings, section["lmsspectatorsettings"]);
+	insertFlagsIfValid(leLMSAllowedWeapons, section["lmsallowedweapons"], DEFAULT_LMSALLOWEDWEAPONS);
+	insertFlagsIfValid(leLMSSpectatorSettings, section["lmsspectatorsettings"], DEFAULT_LMSSPECTATORSETTINGS);
 
 	IniVariable varKillMonstersPercentage = section["killmonsters_percentage"];
 	if (!varKillMonstersPercentage.value().isNull())
