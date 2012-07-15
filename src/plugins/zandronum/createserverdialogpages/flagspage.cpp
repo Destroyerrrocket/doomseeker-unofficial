@@ -55,6 +55,8 @@ FlagsPage::FlagsPage(CreateServerDialog* pParentDialog)
 	leDmflags3->setValidator(&d->validator);
 	leCompatflags->setValidator(&d->validator);
 	leCompatflags2->setValidator(&d->validator);
+	leLMSAllowedWeapons->setValidator(&d->validator);
+	leLMSSpectatorSettings->setValidator(&d->validator);
 
 	// Init values for widgets.
 	cboFallingDamage->insertItem(FDT_None, tr("None"));
@@ -90,6 +92,8 @@ QStringList FlagsPage::generateGameRunParameters()
 	params << "+dmflags3" << leDmflags3->text();
 	params << "+compatflags" << leCompatflags->text();
 	params << "+compatflags2" << leCompatflags2->text();
+	params << "+lmsallowedweapons" << leLMSAllowedWeapons->text();
+	params << "+lmsspectatorsettings" << leLMSSpectatorSettings->text();
 
 	unsigned dmflags2 = leDmflags2->text().toUInt();
 	if (dmflags2 & ZandronumGameInfo::DF2_KILL_MONSTERS)
@@ -126,6 +130,8 @@ bool FlagsPage::loadConfig(Ini& ini)
 	insertFlagsIfValid(leDmflags3, section["dmflags3"]);
 	insertFlagsIfValid(leCompatflags, section["compatflags"]);
 	insertFlagsIfValid(leCompatflags2, section["compatflags2"]);
+	insertFlagsIfValid(leLMSAllowedWeapons, section["lmsallowedweapons"]);
+	insertFlagsIfValid(leLMSSpectatorSettings, section["lmsspectatorsettings"]);
 
 	IniVariable varKillMonstersPercentage = section["killmonsters_percentage"];
 	if (!varKillMonstersPercentage.value().isNull())
@@ -153,6 +159,8 @@ bool FlagsPage::saveConfig(Ini& ini)
 	section["dmflags3"] = leDmflags3->text();
 	section["compatflags"] = leCompatflags->text();
 	section["compatflags2"] = leCompatflags2->text();
+	section["lmsallowedweapons"] = leLMSAllowedWeapons->text();
+	section["lmsspectatorsettings"] = leLMSSpectatorSettings->text();
 
 	unsigned dmflags2 = leDmflags2->text().toUInt();
 	if (dmflags2 & ZandronumGameInfo::DF2_KILL_MONSTERS)

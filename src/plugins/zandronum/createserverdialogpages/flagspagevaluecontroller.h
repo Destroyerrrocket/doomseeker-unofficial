@@ -48,17 +48,23 @@ class FlagsPageValueController
 		unsigned dmflags2;
 		unsigned dmflags3;
 
+		unsigned lmsAllowedWeapons;
+		unsigned lmsSpectatorSettings;
+
 		QMap<unsigned, QCheckBox*> compatflagsCheckboxes;
 		QMap<unsigned, QCheckBox*> compatflags2Checkboxes;
 		QMap<unsigned, QCheckBox*> dmflagsCheckboxes;
 		QMap<unsigned, QCheckBox*> dmflags2Checkboxes;
 		QMap<unsigned, QCheckBox*> dmflags3Checkboxes;
+		QMap<unsigned, QCheckBox*> lmsAllowedWeaponsCheckboxes;
+		QMap<unsigned, QCheckBox*> lmsSpectatorSettingsCheckboxes;
 
 		FlagsPage* flagsPage;
 
 		void convertToNumericalGeneral();
 		void convertToNumericalPlayers();
 		void convertToNumericalCooperative();
+		void convertToNumericalDeathmatch();
 
 		void convertCheckboxesToNumerical(const QMap<unsigned, QCheckBox*>& checkboxMap,
 			unsigned& flagsValue);
@@ -68,6 +74,9 @@ class FlagsPageValueController
 		void convertToWidgetGeneral();
 		void convertToWidgetPlayers();
 		void convertToWidgetCooperative();
+		void convertToWidgetDeathmatch();
+
+		void readFlagsFromTextInputs();
 };
 
 #endif

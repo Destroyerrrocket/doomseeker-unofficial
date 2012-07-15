@@ -35,18 +35,98 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 	{
 		QMap<unsigned, QCheckBox*>& m = compatflagsCheckboxes;
 
-		// Players.
+		// Players
 		m.insert(ZandronumGameInfo::COMPATF_DISABLETAUNTS,
 			f->cbTaunt);
 		m.insert(ZandronumGameInfo::COMPATF_NO_CROSSHAIR,
 			f->cbUseCrosshairs);
+
+		// Compatibility
+		// - Oldschool
+		m.insert(ZandronumGameInfo::COMPATF_PLASMA_BUMP_BUG,
+			f->cbCompatPlasmaBumpBug);
+		m.insert(ZandronumGameInfo::COMPATF_MAGICSILENCE,
+			f->cbCompatAllowSilentBFGTrick);
+		m.insert(ZandronumGameInfo::COMPATF_WALLRUN,
+			f->cbCompatEnableWallRunning);
+		m.insert(ZandronumGameInfo::COMPATF_OLD_WEAPON_SWITCH,
+			f->cbCompatOriginalWeaponSwitch);
+		m.insert(ZandronumGameInfo::COMPATF_SILENTPICKUP,
+			f->cbCompatDontLetOthersHearPickups);
+		m.insert(ZandronumGameInfo::COMPATF_LIMITED_AIRMOVEMENT,
+			f->cbCompatLimitedMovementInTheAir);
+		m.insert(ZandronumGameInfo::COMPATF_INSTANTRESPAWN,
+			f->cbCompatAllowInstantRespawn);
+		m.insert(ZandronumGameInfo::COMPATF_OLDINTERMISSION,
+			f->cbCompatUseOldIntermissionScreensMusic);
+		m.insert(ZandronumGameInfo::COMPATF_DISABLESTEALTHMONSTERS,
+			f->cbCompatDisableStealthMonsters);
+		m.insert(ZandronumGameInfo::COMPATF_INVISIBILITY,
+			f->cbCompatMonstersSeeSemiInvisiblePlayers);
+		// - General, left panel
+		m.insert(ZandronumGameInfo::COMPATF_DROPOFF,
+			f->cbCompatNoMonstersDropoffMove);
+		m.insert(ZandronumGameInfo::COMPATF_BOOMSCROLL,
+			f->cbCompatScrollingSectorsAreAdditive);
+		m.insert(ZandronumGameInfo::COMPATF_SILENT_INSTANT_FLOORS,
+			f->cbCompatInstantlyMovingFloorsArentSilent);
+		m.insert(ZandronumGameInfo::COMPATF_SECTORSOUNDS,
+			f->cbCompatSectorSoundsUseOriginalMethod);
+
+		// - General, right panel
+		m.insert(ZandronumGameInfo::COMPATF_SHORTTEX,
+			f->cbCompatFindShortestTexturesLikeDoom);
+		m.insert(ZandronumGameInfo::COMPATF_STAIRINDEX,
+			f->cbCompatUseBuggierStairBuilding);
+		m.insert(ZandronumGameInfo::COMPATF_LIMITPAIN,
+			f->cbCompatLimitPainElementals);
+		m.insert(ZandronumGameInfo::COMPATF_NO_PASSMOBJ,
+			f->cbCompatActorsAreInfinitelyTall);
+		m.insert(ZandronumGameInfo::COMPATF_NOTOSSDROPS,
+			f->cbCompatSpawnItemDropsOnTheFloor);
+		m.insert(ZandronumGameInfo::COMPATF_USEBLOCKING,
+			f->cbCompatAllSpecialLinesCanDropUseLines);
+		m.insert(ZandronumGameInfo::COMPATF_NODOORLIGHT,
+			f->cbCompatDisableBoomDoorLightEffect);
+		m.insert(ZandronumGameInfo::COMPATF_ORIGINALSOUNDCURVE,
+			f->cbCompatOriginalSoundCurve);
+		m.insert(ZandronumGameInfo::COMPATF_RAVENSCROLL,
+			f->cbCompatRavensScrollersUseOriginalSpeed);
+		m.insert(ZandronumGameInfo::COMPATF_SOUNDTARGET,
+			f->cbCompatUseSectorBasedSoundTargetCode);
+		m.insert(ZandronumGameInfo::COMPATF_DEHHEALTH,
+			f->cbCompatLimitDehMaxHealthToHealthBonus);
+		m.insert(ZandronumGameInfo::COMPATF_TRACE,
+			f->cbCompatTraceIgnoreLinesWithoutSameSectorOnBothSides);
+		m.insert(ZandronumGameInfo::COMPATF_CROSSDROPOFF,
+			f->cbCompatMonstersCantBePushedOffCliffs);
+		m.insert(ZandronumGameInfo::COMPATF_OLDRADIUSDMG,
+			f->cbCompatOldDamageRadiusInfiniteHeight);
+		m.insert(ZandronumGameInfo::COMPATF_MISSILECLIP,
+			f->cbCompatUseOriginalMissileClippingHeight);
 	}
 
 	// Compat flags 2
 	{
 		QMap<unsigned, QCheckBox*>& m = compatflags2Checkboxes;
 
-
+		// Players
+		// - Disallow
+		m.insert(ZandronumGameInfo::COMPATF2_NO_LAND,
+			f->cbUseLandConsoleCommand);
+		// Compatibility
+		// - General, left panel
+		m.insert(ZandronumGameInfo::COMPATF2_CLIENTS_SEND_FULL_BUTTON_INFO,
+			f->cbCompatClientsSendFullButtonInfo);
+		m.insert(ZandronumGameInfo::COMPATF2_OLD_RANDOM_GENERATOR,
+			f->cbCompatOldRandomNumberGenerator);
+		// - General, right panel
+		m.insert(ZandronumGameInfo::COMPATF2_NETSCRIPTS_ARE_CLIENTSIDE,
+			f->cbCompatNETScriptsAreClientside);
+		m.insert(ZandronumGameInfo::COMPATF2_NOGRAVITY_SPHERES,
+			f->cbCompatAddNOGRAVITYFlagToSpheres);
+		m.insert(ZandronumGameInfo::COMPATF2_DONT_STOP_PLAYER_SCRIPTS_ON_DISCONNECT,
+			f->cbDontStopPlayerScriptsOnDisconnect);
 	}
 
 	// DMFlags
@@ -93,6 +173,21 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbLoseAllAmmo);
 		m.insert(ZandronumGameInfo::DF_COOP_HALVE_AMMO,
 			f->cbLoseHalfAmmo);
+
+		// Deathmatch
+		// - When players die
+		m.insert(ZandronumGameInfo::DF_FORCE_RESPAWN,
+			f->cbRespawnAutomatically);
+		m.insert(ZandronumGameInfo::DF_SPAWN_FARTHEST,
+			f->cbRespawnFarthestAwayFromOthers);
+		// - Weapons&ammo
+		m.insert(ZandronumGameInfo::DF_WEAPONS_STAY,
+			f->cbWeaponsStayAfterPickup);
+		// - Don't spawn
+		m.insert(ZandronumGameInfo::DF_NO_HEALTH,
+			f->cbDontSpawnHealth);
+		m.insert(ZandronumGameInfo::DF_NO_ARMOR,
+			f->cbDontSpawnArmor);
 	}
 
 	// DMFlags 2
@@ -151,6 +246,26 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 		// - Player death
 		m.insert(ZandronumGameInfo::DF2_SAME_SPAWN_SPOT,
 			f->cbRespawnWhereDied);
+
+		// Deathmatch
+		// - When players die
+		m.insert(ZandronumGameInfo::DF2_COOP_SHOTGUNSTART,
+			f->cbRespawnWithAShotgun);
+		m.insert(ZandronumGameInfo::DF2_YES_WEAPONDROP,
+			f->cbDropWeaponOnDeath);
+		m.insert(ZandronumGameInfo::DF2_YES_LOSEFRAG,
+			f->cbLoseAFragOnDeath);
+		m.insert(ZandronumGameInfo::DF2_NO_RESPAWN_INVUL,
+			f->cbNoRespawnProtection);
+		// - When someone exits
+		m.insert(ZandronumGameInfo::DF2_YES_KEEPFRAGS,
+			f->cbKeepFragsAfterMapChange);
+		// - Weapons&ammo
+		m.insert(ZandronumGameInfo::DF2_YES_DOUBLEAMMO,
+			f->cbDoubleAmmo);
+		// - Don't spawn
+		m.insert(ZandronumGameInfo::DF2_NO_RUNES,
+			f->cbDontSpawnRunes);
 	}
 
 	// DMFlags 3
@@ -173,46 +288,80 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 		m.insert(ZandronumGameInfo::DF3_UNBLOCK_PLAYERS,
 			f->cbPlayersCanWalkThroughEachOther);
 	}
+
+	// LMSAllowedWeapons
+	{
+		QMap<unsigned, QCheckBox*>& m = lmsAllowedWeaponsCheckboxes;
+
+		m.insert(ZandronumGameInfo::LMSAW_Chainsaw,
+			f->cbLMSChainsaw);
+		m.insert(ZandronumGameInfo::LMSAW_Pistol,
+			f->cbLMSPistol);
+		m.insert(ZandronumGameInfo::LMSAW_Shotgun,
+			f->cbLMSShotgun);
+		m.insert(ZandronumGameInfo::LMSAW_SuperShotgun,
+			f->cbLMSSuperShotgun);
+		m.insert(ZandronumGameInfo::LMSAW_Chaingun,
+			f->cbLMSChaingun);
+		m.insert(ZandronumGameInfo::LMSAW_Minigun,
+			f->cbLMSMinigun);
+		m.insert(ZandronumGameInfo::LMSAW_RocketLauncher,
+			f->cbLMSRocketLauncher);
+		m.insert(ZandronumGameInfo::LMSAW_GrenadeLauncher,
+			f->cbLMSGrenadeLauncher);
+		m.insert(ZandronumGameInfo::LMSAW_PlasmaRifle,
+			f->cbLMSPlasmaRifle);
+		m.insert(ZandronumGameInfo::LMSAW_Railgun,
+			f->cbLMSRailgun);
+	}
+
+	// LMSSpectatorSettings
+	{
+		QMap<unsigned, QCheckBox*>& m = lmsSpectatorSettingsCheckboxes;
+
+		m.insert(ZandronumGameInfo::LMSSS_TalkToActivePlayers,
+			f->cbLMSSpectatorsCanTalkToActivePlayers);
+		m.insert(ZandronumGameInfo::LMSSS_ViewTheGame,
+			f->cbLMSSpectatorsCanViewTheGame);
+	}
 }
 
 void FlagsPageValueController::convertNumericalToWidgets()
 {
 	// Get values from widgets.
-	dmflags = flagsPage->leDmflags->text().toUInt();
-	dmflags2 = flagsPage->leDmflags2->text().toUInt();
-	dmflags3 = flagsPage->leDmflags3->text().toUInt();
-	compatflags = flagsPage->leCompatflags->text().toUInt();
-	compatflags2 = flagsPage->leCompatflags2->text().toUInt();
+	readFlagsFromTextInputs();
 
 	convertNumericalToCheckboxes(compatflagsCheckboxes, compatflags);
 	convertNumericalToCheckboxes(compatflags2Checkboxes, compatflags2);
 	convertNumericalToCheckboxes(dmflagsCheckboxes, dmflags);
 	convertNumericalToCheckboxes(dmflags2Checkboxes, dmflags2);
 	convertNumericalToCheckboxes(dmflags3Checkboxes, dmflags3);
+	convertNumericalToCheckboxes(lmsAllowedWeaponsCheckboxes, lmsAllowedWeapons);
+	convertNumericalToCheckboxes(lmsSpectatorSettingsCheckboxes, lmsSpectatorSettings);
 
 	convertToWidgetGeneral();
 	convertToWidgetPlayers();
 	convertToWidgetCooperative();
+	convertToWidgetDeathmatch();
 }
 
 void FlagsPageValueController::convertWidgetsToNumerical()
 {
 	// Reset internal values.
-	dmflags = 0;
-	dmflags2 = 0;
-	dmflags3 = 0;
-	compatflags = 0;
-	compatflags2 = 0;
+	readFlagsFromTextInputs();
 
 	convertCheckboxesToNumerical(compatflagsCheckboxes, compatflags);
 	convertCheckboxesToNumerical(compatflags2Checkboxes, compatflags2);
 	convertCheckboxesToNumerical(dmflagsCheckboxes, dmflags);
 	convertCheckboxesToNumerical(dmflags2Checkboxes, dmflags2);
 	convertCheckboxesToNumerical(dmflags3Checkboxes, dmflags3);
+	convertCheckboxesToNumerical(lmsAllowedWeaponsCheckboxes, lmsAllowedWeapons);
+	convertCheckboxesToNumerical(lmsSpectatorSettingsCheckboxes, lmsSpectatorSettings);
 
 	convertToNumericalGeneral();
 	convertToNumericalPlayers();
 	convertToNumericalCooperative();
+	convertToNumericalDeathmatch();
 
 	// Apply values to widgets.
 	flagsPage->leDmflags->setText(QString::number(dmflags));
@@ -220,6 +369,8 @@ void FlagsPageValueController::convertWidgetsToNumerical()
 	flagsPage->leDmflags3->setText(QString::number(dmflags3));
 	flagsPage->leCompatflags->setText(QString::number(compatflags));
 	flagsPage->leCompatflags2->setText(QString::number(compatflags2));
+	flagsPage->leLMSAllowedWeapons->setText(QString::number(lmsAllowedWeapons));
+	flagsPage->leLMSSpectatorSettings->setText(QString::number(lmsSpectatorSettings));
 }
 
 void FlagsPageValueController::convertCheckboxesToNumerical(
@@ -228,7 +379,19 @@ void FlagsPageValueController::convertCheckboxesToNumerical(
 {
 	foreach (unsigned flag, checkboxMap.keys())
 	{
-		flagsValue |= checkboxMap[flag]->isChecked() ? flag : 0;
+
+		if (checkboxMap[flag]->isChecked())
+		{
+			flagsValue |= flag;
+		}
+		else
+		{
+			// We are subtracting the disabled flags from the current value,
+			// because the flagsValue variable preserves user input flags which
+			// cannot are not supported by the GUI.
+			flagsValue &= ~flag;
+		}
+
 	}
 }
 
@@ -252,7 +415,9 @@ void FlagsPageValueController::convertToNumericalGeneral()
 	switch (f->cboFallingDamage->currentIndex())
 	{
 		case FlagsPage::FDT_None:
-			// pass
+			dmflags &= ~(ZandronumGameInfo::DF_FORCE_FALLINGZD
+				| ZandronumGameInfo::DF_FORCE_FALLINGHX
+				| ZandronumGameInfo::DF_FORCE_FALLINGST);
 			break;
 
 		case FlagsPage::FDT_Old:
@@ -277,7 +442,8 @@ void FlagsPageValueController::convertToNumericalPlayers()
 	switch (f->cboJumping->currentIndex())
 	{
 		case FlagsPage::JCA_Default:
-			// Do nothing
+			dmflags &= ~(ZandronumGameInfo::DF_YES_JUMP
+				| ZandronumGameInfo::DF_NO_JUMP);
 			break;
 		case FlagsPage::JCA_Yes:
 			dmflags |= ZandronumGameInfo::DF_YES_JUMP;
@@ -290,7 +456,8 @@ void FlagsPageValueController::convertToNumericalPlayers()
 	switch (f->cboCrouching->currentIndex())
 	{
 		case FlagsPage::JCA_Default:
-			// Do nothing
+			dmflags &= ~(ZandronumGameInfo::DF_YES_CROUCH
+				| ZandronumGameInfo::DF_NO_CROUCH);
 			break;
 		case FlagsPage::JCA_Yes:
 			dmflags |= ZandronumGameInfo::DF_YES_CROUCH;
@@ -306,6 +473,26 @@ void FlagsPageValueController::convertToNumericalCooperative()
 	FlagsPage* f = flagsPage;
 
 	// Placeholder method for future use.
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void FlagsPageValueController::convertToNumericalDeathmatch()
+{
+	FlagsPage* f = flagsPage;
+
+	if (f->rbKillThePlayer->isChecked())
+	{
+		dmflags |= ZandronumGameInfo::DF_NO_EXIT;
+	}
+	else if (f->rbRestartTheCurrentLevel->isChecked())
+	{
+		dmflags |= ZandronumGameInfo::DF_SAME_LEVEL;
+	}
+	else
+	{
+		dmflags &= ~(ZandronumGameInfo::DF_NO_EXIT
+			| ZandronumGameInfo::DF_SAME_LEVEL);
+	}
 }
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -376,4 +563,35 @@ void FlagsPageValueController::convertToWidgetCooperative()
 	FlagsPage* f = flagsPage;
 
 	// Placeholder method for future use.
+}
+////////////////////////////////////////////////////////////////////////////////
+void FlagsPageValueController::convertToWidgetDeathmatch()
+{
+	FlagsPage* f = flagsPage;
+
+	if (dmflags & ZandronumGameInfo::DF_NO_EXIT)
+	{
+		f->rbKillThePlayer->setChecked(true);
+	}
+	else if (dmflags & ZandronumGameInfo::DF_SAME_LEVEL)
+	{
+		f->rbRestartTheCurrentLevel->setChecked(true);
+	}
+	else
+	{
+		f->rbContinueToTheNextMap->setChecked(true);
+	}
+}
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void FlagsPageValueController::readFlagsFromTextInputs()
+{
+	dmflags = flagsPage->leDmflags->text().toUInt();
+	dmflags2 = flagsPage->leDmflags2->text().toUInt();
+	dmflags3 = flagsPage->leDmflags3->text().toUInt();
+	compatflags = flagsPage->leCompatflags->text().toUInt();
+	compatflags2 = flagsPage->leCompatflags2->text().toUInt();
+	lmsAllowedWeapons = flagsPage->leLMSAllowedWeapons->text().toUInt();
+	lmsSpectatorSettings = flagsPage->leLMSSpectatorSettings->text().toUInt();
 }

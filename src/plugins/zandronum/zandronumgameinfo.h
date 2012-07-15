@@ -218,7 +218,7 @@ class ZandronumGameInfo : public QObject
 			// script to check for buttons bigger than BT_ZOOM. Otherwise this information is completely
 			// useless for the server and the additional net traffic to send it should be avoided.
 			COMPATF2_CLIENTS_SEND_FULL_BUTTON_INFO		= 1 << 1,
-			// [BB] Players are not allowed to use the land CCMD. Because of Skulltag's default amount
+			// [BB] Players are not allowed to use the land CCMD. Because of Zandronum's default amount
 			// of air control, flying players can get a huge speed boast with the land CCMD. Disallowing
 			// players to land, allows to keep the default air control most people are used to while not
 			// giving flying players too much of an advantage.
@@ -230,6 +230,26 @@ class ZandronumGameInfo : public QObject
 			COMPATF2_NOGRAVITY_SPHERES		= 1 << 4,
 			// [BB] When a player leaves the game, don't stop any scripts of that player that are still running.
 			COMPATF2_DONT_STOP_PLAYER_SCRIPTS_ON_DISCONNECT		= 1 << 5,
+		};
+
+		enum LMSAllowedWeapons
+		{
+			LMSAW_Pistol = 1 << 0,
+			LMSAW_Shotgun = 1 << 1,
+			LMSAW_SuperShotgun = 1 << 2,
+			LMSAW_Chaingun = 1 << 3,
+			LMSAW_Minigun = 1 << 4,
+			LMSAW_RocketLauncher = 1 << 5,
+			LMSAW_GrenadeLauncher = 1 << 6,
+			LMSAW_PlasmaRifle = 1 << 7,
+			LMSAW_Railgun = 1 << 8,
+			LMSAW_Chainsaw = 1 << 9
+		};
+
+		enum LMSSpectatorSettings
+		{
+			LMSSS_TalkToActivePlayers = 1 << 0,
+			LMSSS_ViewTheGame = 1 << 1
 		};
 
 		enum ZandronumGameMode
