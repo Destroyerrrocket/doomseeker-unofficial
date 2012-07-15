@@ -521,11 +521,6 @@ bool CreateServerDialog::createHostInfo(HostInfo& hostInfo, Server* server, bool
 			}
 		}
 
-		foreach (const QString& s, hostInfo.customParameters)
-		{
-			qDebug() << "Param:" << s;
-		}
-
 		return true;
 	}
 
