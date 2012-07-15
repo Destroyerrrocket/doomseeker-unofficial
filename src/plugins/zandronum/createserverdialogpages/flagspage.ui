@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>717</width>
-    <height>638</height>
+    <width>587</width>
+    <height>539</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -242,272 +242,137 @@
       <attribute name="title">
        <string>Players</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QVBoxLayout" name="verticalLayout_25">
        <item>
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="title">
-          <string>Disallow</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_5">
-          <item>
-           <widget class="QCheckBox" name="cbSuicide">
-            <property name="text">
-             <string>Sucide</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbRespawn">
-            <property name="text">
-             <string>Respawn</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbRocketJump">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;P_RadiusAttack doesn't give players any z-momentum if the attack was made by a player. This essentially disables rocket jumping.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Rocket jump</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbTaunt">
-            <property name="text">
-             <string>Taunt</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QWidget" name="widget_5" native="true">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>8</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>8</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbUseAutomap">
-            <property name="text">
-             <string>Use automap</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbUseCrosshairs">
-            <property name="text">
-             <string>Use crosshairs</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbUseCustomGLLightingSettings">
-            <property name="text">
-             <string>Use custom GL lighting settings</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbTurnOffTranslucency">
-            <property name="text">
-             <string>Turn off translucency</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QWidget" name="widget_6" native="true">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>8</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>8</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbUseAutoaim">
-            <property name="text">
-             <string>Use autoaim</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbUseFOV">
-            <property name="toolTip">
-             <string>Only let the arbitrator set FOV (for all players)</string>
-            </property>
-            <property name="text">
-             <string>Use FOV</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbUseFreelook">
-            <property name="text">
-             <string>Use freelook</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbUseLandConsoleCommand">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Players are not allowed to use the land CCMD. Because of Zandronum's default amount of air control, flying players can get a huge speed boast with the land CCMD. Disallowing players to land, allows to keep the default air control most people are used to while not giving flying players too much of an advantage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Use 'land' console command</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_4">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QGroupBox" name="groupBox_4">
-           <property name="title">
-            <string>Abilities</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_7">
-            <item>
-             <layout class="QFormLayout" name="formLayout_2">
-              <property name="labelAlignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_7">
-                <property name="text">
-                 <string>Jumping:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QComboBox" name="cboJumping"/>
-              </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_8">
-                <property name="text">
-                 <string>Crouching:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QComboBox" name="cboCrouching"/>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbInfiniteInventory">
-              <property name="text">
-               <string>Infinite inventory</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbInfiniteAmmo">
-              <property name="text">
-               <string>Infinite ammo</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbSlowlyLoseHealthWhenOver100">
-              <property name="toolTip">
-               <string>Like Quake 3</string>
-              </property>
-              <property name="text">
-               <string>Slowly lose health when over 100%</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbCanUseChasecam">
-              <property name="text">
-               <string>Can use chasecam</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbAllowBFGFreeaiming">
-              <property name="toolTip">
-               <string>Disallow BFG freeaiming in multiplayer games.</string>
-              </property>
-              <property name="text">
-               <string>Allow BFG freeaiming</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_5">
-           <property name="title">
-            <string>Behavior</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_8">
-            <item>
-             <widget class="QCheckBox" name="cbPlayersCanWalkThroughEachOther">
-              <property name="text">
-               <string>Players can walk through each other</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_6">
+          <widget class="QGroupBox" name="groupBox_3">
            <property name="title">
             <string>Disallow</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_9">
+           <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
-             <widget class="QCheckBox" name="cbTargetIdentify">
-              <property name="toolTip">
-               <string>Enforces clients not to identify players, i.e. behave as if cl_identifytarget == 0.</string>
-              </property>
+             <widget class="QCheckBox" name="cbSuicide">
               <property name="text">
-               <string>Target identify</string>
+               <string>Sucide</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbDisplayCoopInfo">
+             <widget class="QCheckBox" name="cbRespawn">
+              <property name="text">
+               <string>Respawn</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbRocketJump">
               <property name="toolTip">
-               <string>Enforces clients not to draw coop info, i.e. behave as if cl_drawcoopinfo == 0.</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;P_RadiusAttack doesn't give players any z-momentum if the attack was made by a player. This essentially disables rocket jumping.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
-               <string>Display coop info</string>
+               <string>Rocket jump</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbTaunt">
+              <property name="text">
+               <string>Taunt</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QWidget" name="widget_5" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>8</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>8</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbUseAutomap">
+              <property name="text">
+               <string>Use automap</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbUseCrosshairs">
+              <property name="text">
+               <string>Use crosshairs</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbUseCustomGLLightingSettings">
+              <property name="text">
+               <string>Use custom GL lighting settings</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbTurnOffTranslucency">
+              <property name="text">
+               <string>Turn off translucency</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QWidget" name="widget_6" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>8</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>8</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbUseAutoaim">
+              <property name="text">
+               <string>Use autoaim</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbUseFOV">
+              <property name="toolTip">
+               <string>Only let the arbitrator set FOV (for all players)</string>
+              </property>
+              <property name="text">
+               <string>Use FOV</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbUseFreelook">
+              <property name="text">
+               <string>Use freelook</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbUseLandConsoleCommand">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Players are not allowed to use the land CCMD. Because of Zandronum's default amount of air control, flying players can get a huge speed boast with the land CCMD. Disallowing players to land, allows to keep the default air control most people are used to while not giving flying players too much of an advantage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Use 'land' console command</string>
               </property>
              </widget>
             </item>
@@ -515,19 +380,145 @@
           </widget>
          </item>
          <item>
-          <spacer name="verticalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <widget class="QGroupBox" name="groupBox_4">
+             <property name="title">
+              <string>Abilities</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_7">
+              <item>
+               <layout class="QFormLayout" name="formLayout_2">
+                <property name="labelAlignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_7">
+                  <property name="text">
+                   <string>Jumping:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QComboBox" name="cboJumping"/>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_8">
+                  <property name="text">
+                   <string>Crouching:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QComboBox" name="cboCrouching"/>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbInfiniteInventory">
+                <property name="text">
+                 <string>Infinite inventory</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbInfiniteAmmo">
+                <property name="text">
+                 <string>Infinite ammo</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbSlowlyLoseHealthWhenOver100">
+                <property name="toolTip">
+                 <string>Like Quake 3</string>
+                </property>
+                <property name="text">
+                 <string>Slowly lose health when over 100%</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbCanUseChasecam">
+                <property name="text">
+                 <string>Can use chasecam</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbAllowBFGFreeaiming">
+                <property name="toolTip">
+                 <string>Disallow BFG freeaiming in multiplayer games.</string>
+                </property>
+                <property name="text">
+                 <string>Allow BFG freeaiming</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_5">
+             <property name="title">
+              <string>Behavior</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_8">
+              <item>
+               <widget class="QCheckBox" name="cbPlayersCanWalkThroughEachOther">
+                <property name="text">
+                 <string>Players can walk through each other</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_6">
+             <property name="title">
+              <string>Disallow</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_9">
+              <item>
+               <widget class="QCheckBox" name="cbTargetIdentify">
+                <property name="toolTip">
+                 <string>Enforces clients not to identify players, i.e. behave as if cl_identifytarget == 0.</string>
+                </property>
+                <property name="text">
+                 <string>Target identify</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbDisplayCoopInfo">
+                <property name="toolTip">
+                 <string>Enforces clients not to draw coop info, i.e. behave as if cl_drawcoopinfo == 0.</string>
+                </property>
+                <property name="text">
+                 <string>Display coop info</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -535,181 +526,175 @@
       <attribute name="title">
        <string>Cooperative</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <layout class="QVBoxLayout" name="verticalLayout_26">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_10">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
          <item>
-          <widget class="QCheckBox" name="cbScoreDamageNotKills">
-           <property name="text">
-            <string>Score damage, not kills</string>
-           </property>
-          </widget>
+          <layout class="QVBoxLayout" name="verticalLayout_10">
+           <item>
+            <widget class="QCheckBox" name="cbScoreDamageNotKills">
+             <property name="text">
+              <string>Score damage, not kills</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_7">
+             <property name="title">
+              <string>Environment</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_11">
+              <item>
+               <widget class="QCheckBox" name="cbDontSpawnDeathmatchWeapons">
+                <property name="text">
+                 <string>Don't spawn Deathmatch weapons</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="groupBox_9">
+                <property name="title">
+                 <string>Monsters...</string>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_12">
+                 <item>
+                  <widget class="QCheckBox" name="cbMonstersAreFast">
+                   <property name="text">
+                    <string>are fast (like Nightmare)</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="cbMonstersRespawn">
+                   <property name="text">
+                    <string>respawn (like Nightmare)</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="cbMonstersMustBeKilledToExit">
+                   <property name="text">
+                    <string>must be killed to enable exit</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <layout class="QFormLayout" name="formLayout_3">
+                   <property name="labelAlignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_9">
+                     <property name="text">
+                      <string>Kill percentage:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QSpinBox" name="spinMonsterKillPercentage">
+                     <property name="alignment">
+                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                     </property>
+                     <property name="maximum">
+                      <number>100</number>
+                     </property>
+                     <property name="value">
+                      <number>100</number>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
-          <widget class="QGroupBox" name="groupBox_7">
+          <widget class="QGroupBox" name="groupBox_8">
            <property name="title">
-            <string>Environment</string>
+            <string>On player death...</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_11">
+           <layout class="QVBoxLayout" name="verticalLayout_13">
             <item>
-             <widget class="QCheckBox" name="cbDontSpawnDeathmatchWeapons">
+             <widget class="QCheckBox" name="cbRespawnWhereDied">
               <property name="text">
-               <string>Don't spawn Deathmatch weapons</string>
+               <string>Respawn where died</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_9">
-              <property name="title">
-               <string>Monsters...</string>
+             <widget class="QCheckBox" name="cbLoseAllInventory">
+              <property name="text">
+               <string>Lose all inventory</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_12">
-               <item>
-                <widget class="QCheckBox" name="cbMonstersAreFast">
-                 <property name="text">
-                  <string>are fast (like Nightmare)</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="cbMonstersRespawn">
-                 <property name="text">
-                  <string>respawn (like Nightmare)</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="cbMonstersMustBeKilledToExit">
-                 <property name="text">
-                  <string>must be killed to enable exit</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <layout class="QFormLayout" name="formLayout_3">
-                 <property name="labelAlignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label_9">
-                   <property name="text">
-                    <string>Kill percentage:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QSpinBox" name="spinMonsterKillPercentage">
-                   <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                   </property>
-                   <property name="maximum">
-                    <number>100</number>
-                   </property>
-                   <property name="value">
-                    <number>100</number>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbLoseArmor">
+              <property name="text">
+               <string>Lose armor</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbLoseKeys">
+              <property name="text">
+               <string>Lose keys</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbLosePowerups">
+              <property name="text">
+               <string>Lose powerups</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbLoseWeapons">
+              <property name="text">
+               <string>Lose weapons</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbLoseAllAmmo">
+              <property name="text">
+               <string>Lose all ammo</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbLoseHalfAmmo">
+              <property name="text">
+               <string>Lose half ammo</string>
+              </property>
              </widget>
             </item>
            </layout>
           </widget>
          </item>
-         <item>
-          <spacer name="verticalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
         </layout>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_8">
-         <property name="title">
-          <string>On player death...</string>
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_13">
-          <item>
-           <widget class="QCheckBox" name="cbRespawnWhereDied">
-            <property name="text">
-             <string>Respawn where died</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbLoseAllInventory">
-            <property name="text">
-             <string>Lose all inventory</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbLoseArmor">
-            <property name="text">
-             <string>Lose armor</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbLoseKeys">
-            <property name="text">
-             <string>Lose keys</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbLosePowerups">
-            <property name="text">
-             <string>Lose powerups</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbLoseWeapons">
-            <property name="text">
-             <string>Lose weapons</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbLoseAllAmmo">
-            <property name="text">
-             <string>Lose all ammo</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbLoseHalfAmmo">
-            <property name="text">
-             <string>Lose half ammo</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_5">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -905,174 +890,82 @@
       <attribute name="title">
        <string>LMS</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <layout class="QVBoxLayout" name="verticalLayout_27">
        <item>
-        <widget class="QGroupBox" name="groupBox_14">
-         <property name="title">
-          <string>Weapons</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_19">
-          <item>
-           <widget class="QCheckBox" name="cbLMSChainsaw">
-            <property name="text">
-             <string>Chainsaw</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbLMSPistol">
-            <property name="text">
-             <string>Pistol</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbLMSShotgun">
-            <property name="text">
-             <string>Shotgun</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbLMSSuperShotgun">
-            <property name="text">
-             <string>Super shotgun</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbLMSChaingun">
-            <property name="text">
-             <string>Chaingun</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbLMSMinigun">
-            <property name="text">
-             <string>Minigun</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbLMSRocketLauncher">
-            <property name="text">
-             <string>Rocket launcher</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbLMSGrenadeLauncher">
-            <property name="text">
-             <string>Grenade launcher</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbLMSPlasmaRifle">
-            <property name="text">
-             <string>Plasma rifle</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbLMSRailgun">
-            <property name="text">
-             <string>Railgun</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_8">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_20">
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
-          <layout class="QFormLayout" name="formLayout_4">
-           <property name="labelAlignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="formAlignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-           </property>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_10">
-             <property name="text">
-              <string>lmsallowedweapons:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="leLMSAllowedWeapons">
-             <property name="maximumSize">
-              <size>
-               <width>100</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>0</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_11">
-             <property name="text">
-              <string>lmsspectatorsettings:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="leLMSSpectatorSettings">
-             <property name="maximumSize">
-              <size>
-               <width>100</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>0</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_15">
+          <widget class="QGroupBox" name="groupBox_14">
            <property name="title">
-            <string>Spectators can...</string>
+            <string>Weapons</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_21">
+           <layout class="QVBoxLayout" name="verticalLayout_19">
             <item>
-             <widget class="QCheckBox" name="cbLMSSpectatorsCanTalkToActivePlayers">
+             <widget class="QCheckBox" name="cbLMSChainsaw">
               <property name="text">
-               <string>Talk to active players</string>
+               <string>Chainsaw</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbLMSSpectatorsCanViewTheGame">
+             <widget class="QCheckBox" name="cbLMSPistol">
               <property name="text">
-               <string>View the game</string>
+               <string>Pistol</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbLMSShotgun">
+              <property name="text">
+               <string>Shotgun</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbLMSSuperShotgun">
+              <property name="text">
+               <string>Super shotgun</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbLMSChaingun">
+              <property name="text">
+               <string>Chaingun</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbLMSMinigun">
+              <property name="text">
+               <string>Minigun</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbLMSRocketLauncher">
+              <property name="text">
+               <string>Rocket launcher</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbLMSGrenadeLauncher">
+              <property name="text">
+               <string>Grenade launcher</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbLMSPlasmaRifle">
+              <property name="text">
+               <string>Plasma rifle</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbLMSRailgun">
+              <property name="text">
+               <string>Railgun</string>
               </property>
              </widget>
             </item>
@@ -1080,19 +973,115 @@
           </widget>
          </item>
          <item>
-          <spacer name="verticalSpacer_7">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
+          <layout class="QVBoxLayout" name="verticalLayout_20">
+           <item>
+            <layout class="QFormLayout" name="formLayout_4">
+             <property name="labelAlignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="formAlignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+             </property>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_10">
+               <property name="text">
+                <string>lmsallowedweapons:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="leLMSAllowedWeapons">
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>0</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_11">
+               <property name="text">
+                <string>lmsspectatorsettings:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="leLMSSpectatorSettings">
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>0</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_15">
+             <property name="title">
+              <string>Spectators can...</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_21">
+              <item>
+               <widget class="QCheckBox" name="cbLMSSpectatorsCanTalkToActivePlayers">
+                <property name="text">
+                 <string>Talk to active players</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbLMSSpectatorsCanViewTheGame">
+                <property name="text">
+                 <string>View the game</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_5">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
         </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -1100,324 +1089,341 @@
       <attribute name="title">
        <string>Compatibility</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_6">
+      <layout class="QVBoxLayout" name="verticalLayout_28">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_22">
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
-          <widget class="QGroupBox" name="groupBox_16">
-           <property name="title">
-            <string>Oldschool</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_23">
-            <item>
-             <widget class="QCheckBox" name="cbCompatPlasmaBumpBug">
-              <property name="toolTip">
-               <string>Allow the map01 &quot;plasma bump&quot; bug.</string>
-              </property>
-              <property name="text">
-               <string>Plasma bump bug</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbCompatAllowSilentBFGTrick">
-              <property name="toolTip">
-               <string>Limit actors to one sound at a time.</string>
-              </property>
-              <property name="text">
-               <string>Allow silent BFG trick</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbCompatEnableWallRunning">
-              <property name="toolTip">
-               <string>Enable buggier wall clipping so players can wallrun.</string>
-              </property>
-              <property name="text">
-               <string>Enable wall running</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbCompatOriginalWeaponSwitch">
-              <property name="toolTip">
-               <string>Clients use the vanilla Doom weapon on pickup behavior.</string>
-              </property>
-              <property name="text">
-               <string>Original weapon switch</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbCompatDontLetOthersHearPickups">
-              <property name="toolTip">
-               <string>Pickups are only heard locally.</string>
-              </property>
-              <property name="text">
-               <string>Don't let others hear pickups</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbCompatLimitedMovementInTheAir">
-              <property name="text">
-               <string>Limited movement in the air</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbCompatAllowInstantRespawn">
-              <property name="text">
-               <string>Allow instant respawn</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbCompatUseOldIntermissionScreensMusic">
-              <property name="toolTip">
-               <string>Use doom2.exe's original intermission screens/music.</string>
-              </property>
-              <property name="text">
-               <string>Use old intermission screens/music</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbCompatDisableStealthMonsters">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disable stealth monsters, since doom2.exe didn't have them.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Note: this handles ZDoom's invisible monsters.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;THIS DOESN'T AFFECT THE PARTIAL INVISIBILITY SPHERE IN ANY WAY. See &amp;quot;Monsters see semi-invisible players&amp;quot; for that.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="text">
-               <string>Disable stealth monsters</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbCompatMonstersSeeSemiInvisiblePlayers">
-              <property name="toolTip">
-               <string>This affects the partial invisibility sphere.</string>
-              </property>
-              <property name="text">
-               <string>Monsters see semi-invisible players</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
+          <layout class="QVBoxLayout" name="verticalLayout_22">
+           <item>
+            <widget class="QGroupBox" name="groupBox_16">
+             <property name="title">
+              <string>Oldschool</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_23">
+              <item>
+               <widget class="QCheckBox" name="cbCompatPlasmaBumpBug">
+                <property name="toolTip">
+                 <string>Allow the map01 &quot;plasma bump&quot; bug.</string>
+                </property>
+                <property name="text">
+                 <string>Plasma bump bug</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbCompatAllowSilentBFGTrick">
+                <property name="toolTip">
+                 <string>Limit actors to one sound at a time.</string>
+                </property>
+                <property name="text">
+                 <string>Allow silent BFG trick</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbCompatEnableWallRunning">
+                <property name="toolTip">
+                 <string>Enable buggier wall clipping so players can wallrun.</string>
+                </property>
+                <property name="text">
+                 <string>Enable wall running</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbCompatOriginalWeaponSwitch">
+                <property name="toolTip">
+                 <string>Clients use the vanilla Doom weapon on pickup behavior.</string>
+                </property>
+                <property name="text">
+                 <string>Original weapon switch</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbCompatDontLetOthersHearPickups">
+                <property name="toolTip">
+                 <string>Pickups are only heard locally.</string>
+                </property>
+                <property name="text">
+                 <string>Don't let others hear pickups</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbCompatLimitedMovementInTheAir">
+                <property name="text">
+                 <string>Limited movement in the air</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbCompatAllowInstantRespawn">
+                <property name="text">
+                 <string>Allow instant respawn</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbCompatUseOldIntermissionScreensMusic">
+                <property name="toolTip">
+                 <string>Use doom2.exe's original intermission screens/music.</string>
+                </property>
+                <property name="text">
+                 <string>Use old intermission screens/music</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbCompatDisableStealthMonsters">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disable stealth monsters, since doom2.exe didn't have them.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Note: this handles ZDoom's invisible monsters.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;THIS DOESN'T AFFECT THE PARTIAL INVISIBILITY SPHERE IN ANY WAY. See &amp;quot;Monsters see semi-invisible players&amp;quot; for that.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>Disable stealth monsters</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbCompatMonstersSeeSemiInvisiblePlayers">
+                <property name="toolTip">
+                 <string>This affects the partial invisibility sphere.</string>
+                </property>
+                <property name="text">
+                 <string>Monsters see semi-invisible players</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatNoMonstersDropoffMove">
+             <property name="toolTip">
+              <string>Monsters cannot move when hanging over a dropoff.</string>
+             </property>
+             <property name="text">
+              <string>No monsters dropoff move</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatScrollingSectorsAreAdditive">
+             <property name="toolTip">
+              <string>Scrolling sectors are additive like in Boom.</string>
+             </property>
+             <property name="text">
+              <string>Scrolling sectors are additive</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatInstantlyMovingFloorsArentSilent">
+             <property name="toolTip">
+              <string>Instantly moving floors are not silent.</string>
+             </property>
+             <property name="text">
+              <string>Instantly moving floors aren't silent</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatSectorSoundsUseOriginalMethod">
+             <property name="toolTip">
+              <string>Sector sounds use original method for sound origin.</string>
+             </property>
+             <property name="text">
+              <string>Sector sounds use original method</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatClientsSendFullButtonInfo">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clients send ucmd.buttons as &amp;quot;long&amp;quot; instead of as &amp;quot;byte&amp;quot; in CLIENTCOMMANDS_ClientMove. So far this is only necessary if the ACS function GetPlayerInput is used in a server side script to check for buttons bigger than BT_ZOOM. Otherwise this information is completely useless for the server and the additional net traffic to send it should be avoided.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Clients send full button info</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatOldRandomNumberGenerator">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use Doom's random table instead of ZDoom's random number generator. Affects weapon damage among other things.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Old random number generator</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
-          <widget class="QCheckBox" name="cbCompatNoMonstersDropoffMove">
-           <property name="toolTip">
-            <string>Monsters cannot move when hanging over a dropoff.</string>
-           </property>
-           <property name="text">
-            <string>No monsters dropoff move</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatScrollingSectorsAreAdditive">
-           <property name="toolTip">
-            <string>Scrolling sectors are additive like in Boom.</string>
-           </property>
-           <property name="text">
-            <string>Scrolling sectors are additive</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatInstantlyMovingFloorsArentSilent">
-           <property name="toolTip">
-            <string>Instantly moving floors are not silent.</string>
-           </property>
-           <property name="text">
-            <string>Instantly moving floors aren't silent</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatSectorSoundsUseOriginalMethod">
-           <property name="toolTip">
-            <string>Sector sounds use original method for sound origin.</string>
-           </property>
-           <property name="text">
-            <string>Sector sounds use original method</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatClientsSendFullButtonInfo">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clients send ucmd.buttons as &amp;quot;long&amp;quot; instead of as &amp;quot;byte&amp;quot; in CLIENTCOMMANDS_ClientMove. So far this is only necessary if the ACS function GetPlayerInput is used in a server side script to check for buttons bigger than BT_ZOOM. Otherwise this information is completely useless for the server and the additional net traffic to send it should be avoided.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Clients send full button info</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatOldRandomNumberGenerator">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use Doom's random table instead of ZDoom's random number generator. Affects weapon damage among other things.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Old random number generator</string>
-           </property>
-          </widget>
+          <layout class="QVBoxLayout" name="verticalLayout_24">
+           <item>
+            <widget class="QCheckBox" name="cbCompatNETScriptsAreClientside">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Treat ACS scripts with the SCRIPTF_Net flag to be client side, i.e. executed on the clients, but not on the server.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>NET scripts are clientside</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatFindShortestTexturesLikeDoom">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use Doom's shortest texture find behavior. This is requied by some WADs in MAP07.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Find shortest textures like Doom</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatUseBuggierStairBuilding">
+             <property name="toolTip">
+              <string>Don't fix loop index for stair building.</string>
+             </property>
+             <property name="text">
+              <string>Use buggier stair building</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatLimitPainElementals">
+             <property name="text">
+              <string>Limit pain elementals to 20 lost souls</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatActorsAreInfinitelyTall">
+             <property name="text">
+              <string>Actors are infinitely tall</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatSpawnItemDropsOnTheFloor">
+             <property name="text">
+              <string>Spawned item drops on the floor</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatAllSpecialLinesCanDropUseLines">
+             <property name="text">
+              <string>All special lines can drop use lines</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatDisableBoomDoorLightEffect">
+             <property name="text">
+              <string>Disable Boom door light effect</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatOriginalSoundCurve">
+             <property name="text">
+              <string>Original sound curve</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatRavensScrollersUseOriginalSpeed">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The scrolling floor specials in Heretic and Hexen move the player much faster than the actual texture scrolling speed. Enable this option to restore this effect. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Raven's scrollers use original speed</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatUseSectorBasedSoundTargetCode">
+             <property name="text">
+              <string>Use sector based sound target code</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatLimitDehMaxHealthToHealthBonus">
+             <property name="text">
+              <string>Limit deh.MaxHealth to health bonus</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatTraceIgnoreLinesWithoutSameSectorOnBothSides">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Doom's hitscan tracing code ignores all lines with both sides in the same sector. ZDoom's does not. This option reverts to the original but less precise behavior. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Trace ignore lines w/ same sector on both sides</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatMonstersCantBePushedOffCliffs">
+             <property name="text">
+              <string>Monsters can't be pushed off cliffs</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatOldDamageRadiusInfiniteHeight">
+             <property name="text">
+              <string>Old damage radius (infinite height)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatUseOriginalMissileClippingHeight">
+             <property name="text">
+              <string>Use original missile clipping height</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatAddNOGRAVITYFlagToSpheres">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add NOGRAVITY to actors named InvulnerabilitySphere, Soulsphere, Megasphere and BlurSphere when spawned by the map.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Add NOGRAVITY flag to spheres</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbDontStopPlayerScriptsOnDisconnect">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When a player leaves the game, don't stop any scripts of that player that are still running.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Don't stop player scripts on disconnect</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_24">
-         <item>
-          <widget class="QCheckBox" name="cbCompatNETScriptsAreClientside">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Treat ACS scripts with the SCRIPTF_Net flag to be client side, i.e. executed on the clients, but not on the server.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>NET scripts are clientside</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatFindShortestTexturesLikeDoom">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use Doom's shortest texture find behavior. This is requied by some WADs in MAP07.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Find shortest textures like Doom</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatUseBuggierStairBuilding">
-           <property name="toolTip">
-            <string>Don't fix loop index for stair building.</string>
-           </property>
-           <property name="text">
-            <string>Use buggier stair building</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatLimitPainElementals">
-           <property name="text">
-            <string>Limit pain elementals to 20 lost souls</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatActorsAreInfinitelyTall">
-           <property name="text">
-            <string>Actors are infinitely tall</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatSpawnItemDropsOnTheFloor">
-           <property name="text">
-            <string>Spawned item drops on the floor</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatAllSpecialLinesCanDropUseLines">
-           <property name="text">
-            <string>All special lines can drop use lines</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatDisableBoomDoorLightEffect">
-           <property name="text">
-            <string>Disable Boom door light effect</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatOriginalSoundCurve">
-           <property name="text">
-            <string>Original sound curve</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatRavensScrollersUseOriginalSpeed">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The scrolling floor specials in Heretic and Hexen move the player much faster than the actual texture scrolling speed. Enable this option to restore this effect. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Raven's scrollers use original speed</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatUseSectorBasedSoundTargetCode">
-           <property name="text">
-            <string>Use sector based sound target code</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatLimitDehMaxHealthToHealthBonus">
-           <property name="text">
-            <string>Limit deh.MaxHealth to health bonus</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatTraceIgnoreLinesWithoutSameSectorOnBothSides">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Doom's hitscan tracing code ignores all lines with both sides in the same sector. ZDoom's does not. This option reverts to the original but less precise behavior. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Trace ignore lines w/ same sector on both sides</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatMonstersCantBePushedOffCliffs">
-           <property name="text">
-            <string>Monsters can't be pushed off cliffs</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatOldDamageRadiusInfiniteHeight">
-           <property name="text">
-            <string>Old damage radius (infinite height)</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatUseOriginalMissileClippingHeight">
-           <property name="text">
-            <string>Use original missile clipping height</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbCompatAddNOGRAVITYFlagToSpheres">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add NOGRAVITY to actors named InvulnerabilitySphere, Soulsphere, Megasphere and BlurSphere when spawned by the map.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Add NOGRAVITY flag to spheres</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbDontStopPlayerScriptsOnDisconnect">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When a player leaves the game, don't stop any scripts of that player that are still running.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Don't stop player scripts on disconnect</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <spacer name="verticalSpacer_7">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
