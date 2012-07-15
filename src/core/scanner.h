@@ -87,9 +87,9 @@ class MAIN_EXPORT Scanner
 
 		enum MessageLevel
 		{
-			ERROR,
-			WARNING,
-			NOTICE
+			ML_ERROR,
+			ML_WARNING,
+			ML_NOTICE
 		};
 
 		Scanner(const char* data, int length=-1);

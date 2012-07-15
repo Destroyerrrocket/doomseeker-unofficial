@@ -592,13 +592,13 @@ void Scanner::mustGetToken(char token)
 	{
 		expandState();
 		if(token < TK_NumSpecialTokens && state.token < TK_NumSpecialTokens)
-			scriptMessage(Scanner::ERROR, "Expected '%s' but got '%s' instead.", TokenNames[token], TokenNames[state.token]);
+			scriptMessage(Scanner::ML_ERROR, "Expected '%s' but got '%s' instead.", TokenNames[token], TokenNames[state.token]);
 		else if(token < TK_NumSpecialTokens && state.token >= TK_NumSpecialTokens)
-			scriptMessage(Scanner::ERROR, "Expected '%s' but got '%c' instead.", TokenNames[token], state.token);
+			scriptMessage(Scanner::ML_ERROR, "Expected '%s' but got '%c' instead.", TokenNames[token], state.token);
 		else if(token >= TK_NumSpecialTokens && state.token < TK_NumSpecialTokens)
-			scriptMessage(Scanner::ERROR, "Expected '%c' but got '%s' instead.", token, TokenNames[state.token]);
+			scriptMessage(Scanner::ML_ERROR, "Expected '%c' but got '%s' instead.", token, TokenNames[state.token]);
 		else
-			scriptMessage(Scanner::ERROR, "Expected '%c' but got '%c' instead.", token, state.token);
+			scriptMessage(Scanner::ML_ERROR, "Expected '%c' but got '%c' instead.", token, state.token);
 	}
 }
 
@@ -621,10 +621,10 @@ void Scanner::scriptMessage(MessageLevel level, const char* error, ...) const
 		default:
 			messageLevel = "Notice";
 			break;
-		case WARNING:
+		case ML_WARNING:
 			messageLevel = "Warning";
 			break;
-		case ERROR:
+		case ML_ERROR:
 			messageLevel = "Error";
 			break;
 	}
@@ -640,7 +640,7 @@ void Scanner::scriptMessage(MessageLevel level, const char* error, ...) const
 	va_end(list);
 	delete[] newMessage;
 
-	if(!messageHandler && level == ERROR)
+	if(!messageHandler && level == ML_ERROR)
 		exit(0);
 }
 
