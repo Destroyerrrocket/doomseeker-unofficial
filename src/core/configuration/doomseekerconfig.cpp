@@ -190,7 +190,7 @@ const QString DoomseekerConfig::DoomseekerCfg::SECTION_NAME = "Doomseeker";
 
 DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 {
-	this->bBotsAreNotPlayers = false;
+	this->bBotsAreNotPlayers = true;
 	this->bCloseToTrayIcon = false;
 	this->bHidePasswords = false;
 	this->bIP2CountryAutoUpdate = true;
