@@ -62,6 +62,7 @@ class FlagsPage : public CreateServerDialogPage, private Ui::FlagsPage
 
 		void initJumpCrouchComboBoxes(QComboBox* pComboBox);
 		void insertFlagsIfValid(QLineEdit* dst, QString flags, unsigned valIfInvalid = 0);
+		void loadOldDmflags(class IniSection &, quint32 &, quint32 &, quint32 &) const;
 
 	private slots:
 		/**

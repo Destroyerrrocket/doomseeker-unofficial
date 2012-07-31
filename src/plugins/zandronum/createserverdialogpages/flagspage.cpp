@@ -132,10 +132,13 @@ bool FlagsPage::loadConfig(Ini& ini)
 {
 	IniSection section = ini.section("dmflags");
 
-	insertFlagsIfValid(leDmflags, section["dmflags"]);
-	insertFlagsIfValid(leDmflags2, section["dmflags2"]);
+	quint32 oldDmflags = 0, oldDmflags2 = 0, oldCompatflags = 0;
+	loadOldDmflags(section, oldDmflags, oldDmflags2, oldCompatflags);
+
+	insertFlagsIfValid(leDmflags, section["dmflags"], oldDmflags);
+	insertFlagsIfValid(leDmflags2, section["dmflags2"], oldDmflags2);
 	insertFlagsIfValid(leDmflags3, section["dmflags3"]);
-	insertFlagsIfValid(leCompatflags, section["compatflags"]);
+	insertFlagsIfValid(leCompatflags, section["compatflags"], oldCompatflags);
 	insertFlagsIfValid(leCompatflags2, section["compatflags2"]);
 	insertFlagsIfValid(leLMSAllowedWeapons, section["lmsallowedweapons"], DEFAULT_LMSALLOWEDWEAPONS);
 	insertFlagsIfValid(leLMSSpectatorSettings, section["lmsspectatorsettings"], DEFAULT_LMSSPECTATORSETTINGS);
@@ -149,6 +152,43 @@ bool FlagsPage::loadConfig(Ini& ini)
 	propagateFlagsInputsChanges();
 
 	return true;
+}
+
+void FlagsPage::loadOldDmflags(IniSection &section, quint32 &dmflags, quint32 &dmflags2, quint32 &compatFlags) const
+{
+	// For a smooth transition read in old dmflag values.
+
+	const DMFlags* dmflagsList = ZandronumGameInfo::dmFlags();
+
+	foreach(const DMFlagsSection *flags, *dmflagsList)
+	{
+		quint32 *flagsSet;
+		if(flags->name == "DMFlags")
+			flagsSet = &dmflags;
+		else if(flags->name == "DMFlags2")
+			flagsSet = &dmflags2;
+		else if(flags->name == "Compat. flags")
+			flagsSet = &compatFlags;
+		else
+			continue;
+
+		foreach(const DMFlag &flag, flags->flags)
+		{
+			QRegExp re("[^a-zA-Z]");
+			QString settingName = flags->name + flag.name;
+			settingName.remove(re);
+
+			IniVariable var = section.retrieveSetting(settingName);
+			if(!var.isNull())
+			{
+				if((bool)var)
+					*flagsSet |= 1<<flag.value;
+
+				// We no longer need to keep the setting around
+				section.deleteSetting(settingName);
+			}
+		}
+	}
 }
 
 void FlagsPage::propagateFlagsInputsChanges()
