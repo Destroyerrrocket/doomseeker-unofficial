@@ -89,8 +89,11 @@ void ZandronumGameRunner::hostProperties(QStringList& args) const
 			args << "+addmap" << map;
 		}
 	}
-
-	args << "+sv_maprotation" << QString::number( static_cast<int>(server->randomMapRotation()) );
+	
+	args << "+sv_maprotation" << QString::number(
+		static_cast<int>(!mapsList.isEmpty()));
+	args << "+sv_randommaprotation" << QString::number(
+		static_cast<int>(server->randomMapRotation()) );
 
 	QString motd = server->messageOfTheDay();
 	args << "+sv_motd" << "\"" + motd.replace("\n", "\\n") + "\"";
