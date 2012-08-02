@@ -61,7 +61,7 @@
 #include <QToolBar>
 #include <QSizePolicy>
 
-const QString MainWindow::HELP_SITE_URL = "http://skulltag.net/wiki/Doomseeker";
+const QString MainWindow::HELP_SITE_URL = "http://doomseeker.drdteam.org/help";
 
 MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 : bTotalRefreshInProcess(false), buddiesList(NULL), bWasMaximized(false),
