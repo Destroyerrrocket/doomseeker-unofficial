@@ -105,7 +105,8 @@
 	<file alias="flags/TWN">flags/TWN.png</file> <!-- Taiwan -->
 	<file alias="flags/TZA">flags/TZA.png</file> <!-- United republic of Tanzania -->	
 	<file alias="flags/UKR">flags/UKR.png</file> <!-- Ukraine -->
-	<file alias="flags/USA">flags/USA.png</file> <!-- U, S and A -->
+	<file alias="flags/URY">flags/URY.png</file> <!-- Uruguay -->	
+	<file alias="flags/USA">flags/USA.png</file> <!-- USA -->
 	<file alias="flags/VEN">flags/VEN.png</file> <!-- Venezuela -->	
 	<file alias="flags/ZAF">flags/ZAF.png</file> <!-- South Africa -->		
 	<file alias="flags/lan-small">flags/lan-small.png</file>
