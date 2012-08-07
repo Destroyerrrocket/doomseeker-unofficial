@@ -197,8 +197,19 @@ bool ZandronumBinaries::downloadTestingBinaries(const QDir &destination) const
 		hgVersion = QString("%1-%2").arg(version.hgVersionDate()).arg(version.hgVersionTime(), 4, 10, QChar('0'));
 
 	// Get URL
-	QUrl url(QString(TESTING_BINARY_URL).arg(QString("%1%2").arg(version.minorVersion()).arg(QChar(version.revisionLetter()))).arg(hgVersion));
+	QString versionPrefix;
+	if (version.revisionLetter() != 0)
+	{
+		versionPrefix = QString("%1.%2%3").arg(version.majorVersion())
+			.arg(version.minorVersion()).arg(QChar(version.revisionLetter()));
+	}
+	else
+	{
+		versionPrefix = QString("%1.%2").arg(version.majorVersion())
+			.arg(version.minorVersion());
+	}
 
+	QUrl url(QString(TESTING_BINARY_URL).arg(versionPrefix).arg(hgVersion));
 	TestingProgressDialog dialog(url);
 	if(dialog.exec() == QDialog::Accepted)
 	{
