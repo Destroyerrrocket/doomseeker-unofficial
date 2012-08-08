@@ -50,3 +50,8 @@ void ServerConsole::forwardMessage()
 	emit messageSent(msg);
 	consoleInput->setText("");
 }
+
+void ServerConsole::setFocus()
+{
+	consoleInput->setFocus();
+}

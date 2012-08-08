@@ -13,6 +13,11 @@ class ServerConsole : public QWidget, private Ui::ServerConsole
 
 	public:
 		ServerConsole(QWidget *parent=NULL, Qt::WindowFlags f=0);
+		
+		/**
+		 * @brief Sets keyboard focus to the underlying line edit widget.
+		 */
+		void setFocus();
 
 	public slots:
 		void	appendMessage(const QString &message);
