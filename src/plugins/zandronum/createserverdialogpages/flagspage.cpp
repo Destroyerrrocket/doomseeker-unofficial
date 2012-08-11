@@ -105,6 +105,8 @@ QStringList FlagsPage::generateGameRunParameters()
 			<< QString::number(spinMonsterKillPercentage->value());
 	}
 
+	params << "+sv_defaultdmflags" << (cbDefaultDmflags->isChecked() ? "1" : "0");
+
 	return params;
 }
 
@@ -148,6 +150,8 @@ bool FlagsPage::loadConfig(Ini& ini)
 	{
 		spinMonsterKillPercentage->setValue(varKillMonstersPercentage);
 	}
+
+	cbDefaultDmflags->setChecked((bool)section["defaultdmflags"]);
 
 	propagateFlagsInputsChanges();
 
@@ -208,6 +212,7 @@ bool FlagsPage::saveConfig(Ini& ini)
 	section["compatflags2"] = leCompatflags2->text();
 	section["lmsallowedweapons"] = leLMSAllowedWeapons->text();
 	section["lmsspectatorsettings"] = leLMSSpectatorSettings->text();
+	section["defaultdmflags"] = cbDefaultDmflags->isChecked();
 
 	unsigned dmflags2 = leDmflags2->text().toUInt();
 	if (dmflags2 & ZandronumGameInfo::DF2_KILL_MONSTERS)
