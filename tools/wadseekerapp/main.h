@@ -52,8 +52,8 @@ class WadseekerInterface : public QObject
 
 	private slots:
 		void	done();
-		void	downloadProgress(int done, int total);
-		void	recieveMessage(const QString &msg, Wadseeker::MessageType type);
+		void	downloadProgress(const QString &filename, qint64 done, qint64 total);
+		void	recieveMessage(const QString &msg, WadseekerLib::MessageType type);
 };
 
 #endif /* __MAIN_H__ */

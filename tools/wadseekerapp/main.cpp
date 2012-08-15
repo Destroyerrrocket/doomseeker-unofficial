@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
 	instance = app.instance();
 
 	// Print version information.
-	cout << "Wadseeker (" << Wadseeker::version().toAscii().constData() << ")\n";
+	cout << "Wadseeker (" << WadseekerVersionInfo::version().toAscii().constData() << ")\n";
 	if(argc < 2) // Not enough parameters display usage.
 		cout << "Usage: wadseeker [-o output_dir] filename ...\n";
 	else
@@ -92,31 +92,32 @@ WadseekerInterface::WadseekerInterface(const QString &output) : lastProgressRepo
 	wadseeker.setTargetDirectory(output);
 
 	// Connect our slots.
-	connect(&wadseeker, SIGNAL(allDone()), this, SLOT(done()));
-	connect(&wadseeker, SIGNAL(downloadProgress(int, int)), this, SLOT(downloadProgress(int, int)));
-	connect(&wadseeker, SIGNAL(message(const QString &, Wadseeker::MessageType)), this, SLOT(recieveMessage(const QString &, Wadseeker::MessageType)));
+	connect(&wadseeker, SIGNAL(allDone(bool)), this, SLOT(done()));
+	connect(&wadseeker, SIGNAL(fileDownloadProgress(const QString &, qint64, qint64)), this, SLOT(downloadProgress(const QString &, qint64, qint64)));
+	connect(&wadseeker, SIGNAL(message(const QString &, WadseekerLib::MessageType)), this, SLOT(recieveMessage(const QString &, WadseekerLib::MessageType)));
 }
 
 void WadseekerInterface::seek(const QStringList &files)
 {
 	// Pass the wad list into wadseeker.
-	wadseeker.seekWads(files);
+	wadseeker.startSeek(files);
 }
 
 void WadseekerInterface::done()
 {
 	// We're done close the app.
+	cout << '\n';
 	instance->exit(0);
 }
 
-void WadseekerInterface::downloadProgress(int done, int total)
+void WadseekerInterface::downloadProgress(const QString &filename, qint64 done, qint64 total)
 {
 	// Prevent a divide by zero error.
 	if(total == 0)
 		return;
 
 	// Update the download progress indicator.
-	QString progress = QString("Download Progress: %1/%2 (%3%)").arg(done).arg(total).arg(done*100/total);
+	QString progress = QString("Download Progress %1: %2/%3 (%4%)").arg(filename).arg(done).arg(total).arg(done*100/total);
 
 	cout << QString(lastProgressReportLength, '\b').toAscii().constData();
 	cout << progress.toAscii().constData();
@@ -129,7 +130,7 @@ void WadseekerInterface::downloadProgress(int done, int total)
 	lastProgressReportLength = progress.length();
 }
 
-void WadseekerInterface::recieveMessage(const QString &msg, Wadseeker::MessageType type)
+void WadseekerInterface::recieveMessage(const QString &msg, WadseekerLib::MessageType type)
 {
 	// This is a check to see if we need to newline the progress indicator.
 	if(lastProgressReportLength != 0)
@@ -142,13 +143,13 @@ void WadseekerInterface::recieveMessage(const QString &msg, Wadseeker::MessageTy
 	switch(type)
 	{
 		default:
-		case Wadseeker::Notice:
+		case WadseekerLib::Notice:
 			cout << "NOTICE: ";
 			break;
-		case Wadseeker::Error:
+		case WadseekerLib::Error:
 			cout << "ERROR: ";
 			break;
-		case Wadseeker::CriticalError:
+		case WadseekerLib::CriticalError:
 			cout << "CRITICAL ERROR: ";
 			break;
 	}
