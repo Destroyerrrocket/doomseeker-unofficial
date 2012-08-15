@@ -34,6 +34,7 @@
 #include "serverapi/gamerunner.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
+#include "commandline.h"
 #include "strings.h"
 
 #include <QCheckBox>
@@ -223,6 +224,10 @@ void CreateServerDialog::btnCommandLineClicked()
 	QStringList args;
 	if(commandLineArguments(executable, args))
 	{
+		// Lines below directly modify the passed values.
+		CommandLine::escapeArg(executable);
+		CommandLine::escapeArgs(args);
+	
 		CopyTextDlg ctd(executable + " " + args.join(" "), "Host server command line:", this);
 		ctd.exec();
 	}
@@ -484,8 +489,6 @@ bool CreateServerDialog::createHostInfo(HostInfo& hostInfo, Server* server, bool
 			while(sc.nextString())
 			{
 				QString param = sc->str;
-				if(param.indexOf(' ') >= 0)
-					param = QString("\"%1\"").arg(param);
 				hostInfo.customParameters << param;
 			}
 		}

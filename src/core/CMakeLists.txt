@@ -271,6 +271,7 @@ set(SOURCE_FILES
 	tests/testruns.cpp
 	tests/teststrings.cpp
 	apprunner.cpp
+	commandline.cpp
 	customservers.cpp
 	datapaths.cpp
 	doomseekerfilepaths.cpp
@@ -336,6 +337,7 @@ set(HEADER_FILES
 	tests/testruns.h
 	tests/teststrings.h
 	apprunner.h
+	commandline.h
 	datapaths.h
 	doomseekerfilepaths.h
 	global.h

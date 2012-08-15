@@ -41,6 +41,7 @@
 #include "serverapi/gamerunner.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
+#include "commandline.h"
 #include "connectionhandler.h"
 #include "customservers.h"
 #include "doomseekerfilepaths.h"
@@ -1156,7 +1157,13 @@ void MainWindow::showServerJoinCommandLine(const Server* server)
 	CommandLineInfo cli;
 	if (ConnectionHandler::obtainJoinCommandLine(this, server, cli, tr("Doomseeker - join command line")))
 	{
-		CopyTextDlg ctd(cli.executable.absoluteFilePath() + " " + cli.args.join(" "), server->name(), this);
+		QString execPath = cli.executable.absoluteFilePath();
+		QStringList args = cli.args;
+		
+		CommandLine::escapeArg(execPath);
+		CommandLine::escapeArgs(args);
+	
+		CopyTextDlg ctd(execPath + " " + args.join(" "), server->name(), this);
 		ctd.exec();
 	}
 }
