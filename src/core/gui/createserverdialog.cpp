@@ -49,8 +49,12 @@
 
 const QString CreateServerDialog::TEMP_SERVER_CONFIG_FILENAME = "/tmpserver.ini";
 
-CreateServerDialog::CreateServerDialog(QWidget* parent) : QDialog(parent)
+CreateServerDialog::CreateServerDialog(QWidget* parent)
+: QDialog(parent)
 {
+	// Have the console delete itself
+	setAttribute(Qt::WA_DeleteOnClose);
+
 	bSuppressMissingExeErrors = true;
 	bIsServerSetup = false;
 	currentEngine = NULL;
@@ -227,7 +231,7 @@ void CreateServerDialog::btnCommandLineClicked()
 		// Lines below directly modify the passed values.
 		CommandLine::escapeArg(executable);
 		CommandLine::escapeArgs(args);
-	
+
 		CopyTextDlg ctd(executable + " " + args.join(" "), "Host server command line:", this);
 		ctd.exec();
 	}

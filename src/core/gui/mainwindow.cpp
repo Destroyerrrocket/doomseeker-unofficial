@@ -815,10 +815,9 @@ void MainWindow::menuBuddies()
 
 void MainWindow::menuCreateServer()
 {
-	CreateServerDialog dialog(this);
-	autoRefreshTimer.stop();
-	dialog.exec();
-	initAutoRefreshTimer();
+	// This object will auto-delete on close.
+	CreateServerDialog* dialog = new CreateServerDialog(this);
+	dialog->show();
 }
 
 void MainWindow::menuHelpAbout()
@@ -1159,10 +1158,10 @@ void MainWindow::showServerJoinCommandLine(const Server* server)
 	{
 		QString execPath = cli.executable.absoluteFilePath();
 		QStringList args = cli.args;
-		
+
 		CommandLine::escapeArg(execPath);
 		CommandLine::escapeArgs(args);
-	
+
 		CopyTextDlg ctd(execPath + " " + args.join(" "), server->name(), this);
 		ctd.exec();
 	}
