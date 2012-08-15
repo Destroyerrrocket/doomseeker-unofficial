@@ -68,7 +68,7 @@ void StandardServerConsole::errorDataReady()
 
 void StandardServerConsole::finish(int exitCode, QProcess::ExitStatus exitStatus)
 {
-	if(exitStatus == QProcess::CrashExit)
+	if(exitStatus == QProcess::CrashExit && exitCode != 0)
 		QMessageBox::critical(this, "Server crash", QString("The server terminated unexpectedly with exit code: %1").arg(exitCode));
 
 	close();
