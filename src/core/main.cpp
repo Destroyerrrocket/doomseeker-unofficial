@@ -460,9 +460,6 @@ void Main::setupRefreshingThread()
 #include <windows.h>
 void getCommandLineArgs(QStringList& outList)
 {
-	// Conversion to "ushort*" seems to work for LPWSTR.
-	QString commandLine = QString::fromUtf16((const ushort*)GetCommandLineW());
-	
 	int numArgs = 0;
 	LPWSTR* winapiCmdLine = CommandLineToArgvW(GetCommandLineW(), &numArgs);
 	
@@ -473,6 +470,7 @@ void getCommandLineArgs(QStringList& outList)
 
 	for (int i = 0; i < numArgs; ++i)
 	{
+		// Conversion to "ushort*" seems to work for LPWSTR.
 		outList << QString::fromUtf16((const ushort*)winapiCmdLine[i]);
 	}
 	LocalFree(winapiCmdLine);
