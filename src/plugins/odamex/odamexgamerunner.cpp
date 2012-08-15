@@ -109,16 +109,16 @@ void OdamexGameRunner::hostProperties(QStringList& args) const
 		args << "+map" << server->map();
 	}
 
-	args << "+join_password" << server->joinPassword();
-	args << "+rcon_password" << server->rconPassword();
-	args << "+sv_email" << server->eMail();
-	args << "+sv_hostname" << server->name();
+	args << "+join_password" << "\"" + server->joinPassword() + "\"";
+	args << "+rcon_password" << "\"" + server->rconPassword() + "\"";
+	args << "+sv_email" << "\"" + server->eMail() + "\"";
+	args << "+sv_hostname" << "\"" + server->name() + "\"";
 	args << "+sv_maxclients" << QString::number(server->maximumClients());
 	args << "+sv_maxplayers" << QString::number(server->maximumPlayers());
-	args << "+sv_website" << server->website();
+	args << "+sv_website" << "\"" + server->website() + "\"";
 
 	QString motd = server->messageOfTheDay();
-	args << "+sv_motd" << motd.replace("\n", "\\n");
+	args << "+sv_motd" << "\"" + motd.replace("\n", "\\n") + "\"";
 
 	args << "+sv_usemasters" << QString::number(static_cast<int>( server->isBroadcastingToMaster() ));
 }

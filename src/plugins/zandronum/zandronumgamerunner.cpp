@@ -74,7 +74,7 @@ void ZandronumGameRunner::hostProperties(QStringList& args) const
 	}
 	args << gameModeStr << "1";
 
-	args << "+sv_hostemail" << server->eMail();
+	args << "+sv_hostemail" << "\"" + server->eMail() + "\"";
 
 	if (!server->map().isEmpty())
 	{
@@ -96,22 +96,22 @@ void ZandronumGameRunner::hostProperties(QStringList& args) const
 		static_cast<int>(server->randomMapRotation()) );
 
 	QString motd = server->messageOfTheDay();
-	args << "+sv_motd" << motd.replace("\n", "\\n");
+	args << "+sv_motd" << "\"" + motd.replace("\n", "\\n") + "\"";
 
-	args << "+sv_hostname" << server->name();
+	args << "+sv_hostname" << "\"" + server->name() + "\"";
 
-	args << "+sv_website" << server->website();
+	args << "+sv_website" << "\"" + server->website() + "\"";
 
 	QString password = server->connectPassword();
-	args << "+sv_password" << password;
+	args << "+sv_password" << "\"" + password + "\"";
 	args << "+sv_forcepassword" << QString::number(static_cast<int>(!password.isEmpty()));
 
 	password = server->joinPassword();
-	args << "+sv_joinpassword" << password;
+	args << "+sv_joinpassword" << "\"" + password + "\"";
 	args << "+sv_forcejoinpassword" << QString::number(static_cast<int>(!password.isEmpty()));
 
 	password = server->rconPassword();
-	args << "+sv_rconpassword" << password;
+	args << "+sv_rconpassword" << "\"" + password + "\"";
 
 	args << "+sv_broadcast" << QString::number(static_cast<int>( server->isBroadcastingToLAN() ));
 	args << "+sv_updatemaster" << QString::number(static_cast<int>( server->isBroadcastingToMaster() ));
