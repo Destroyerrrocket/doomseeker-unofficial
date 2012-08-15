@@ -8,8 +8,6 @@ if (MSVC)
 	set(CMAKE_SHARED_LIBRARY_PREFIX "lib")
 endif (MSVC)
 
-add_subdirectory(lzma)
-
 # If we are compiling wadseeker outside of doomseeker prepare its own project.
 if(DEFINED DOOMSEEKER_SOURCE_DIR)
 	include_directories(${DOOMSEEKER_SOURCE_DIR}/src ${DOOMSEEKER_SOURCE_DIR}/src/wadseeker/lzma/C)
@@ -17,6 +15,8 @@ else(DEFINED DOOMSEEKER_SOURCE_DIR)
 	project(WADSEEKER)
 	include_directories(${WADSEEKER_SOURCE_DIR}/lzma/C)
 endif(DEFINED DOOMSEEKER_SOURCE_DIR)
+
+add_subdirectory(lzma)
 
 if(WIN32)
 	add_definitions(-DWADSEEKER_API_EXPORT)
