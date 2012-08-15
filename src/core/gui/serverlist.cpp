@@ -366,6 +366,10 @@ void ServerListHandler::mouseEntered(const QModelIndex& index)
 	// in case if it should be not.
 	switch(index.column())
 	{
+		case IDAddress:
+			tooltip = server->hostName(true);
+			break;
+
 		case IDPlayers:
 			tooltip = createPlayersToolTip(server);
 			break;

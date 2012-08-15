@@ -81,6 +81,9 @@ Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
 	// private
 	bIsRefreshing(false), serverAddress(address), serverPort(port)
 {
+	if(gConfig.doomseeker.bLookupHosts)
+		QHostInfo::lookupHost(address.toString(), this, SLOT( setHostName(QHostInfo) ));
+
 	broadcastToLAN = false;
 	broadcastToMaster = false;
 	mapRandomRotation = false;
@@ -140,6 +143,16 @@ QString Server::engineName() const
 GameRunner *Server::gameRunner() const
 {
 	return new GameRunner(this);
+}
+
+QString Server::hostName(bool forceAddress) const
+{
+	if(!forceAddress && gConfig.doomseeker.bLookupHosts &&
+		serverHost.error() == QHostInfo::NoError && serverHost.lookupId() != -1)
+	{
+		return QString("%1:%2").arg(serverHost.hostName()).arg(port());
+	}
+	return QString("%1:%2").arg(address().toString()).arg(port());
 }
 
 const QPixmap &Server::icon() const
@@ -242,6 +255,13 @@ bool Server::sendRefreshQuery(QUdpSocket* socket)
 	socket->writeDatagram(request, address(), port());
 
 	return true;
+}
+
+void Server::setHostName(QHostInfo host)
+{
+	serverHost = host;
+	if(!bIsRefreshing)
+		emit updated(this, lastResponse());
 }
 
 void Server::setResponse(Server* server, int res)

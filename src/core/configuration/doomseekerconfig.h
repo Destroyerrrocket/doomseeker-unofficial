@@ -56,6 +56,7 @@ class DoomseekerConfig
 			bool						bCloseToTrayIcon;
 			bool						bHidePasswords;
 			bool						bIP2CountryAutoUpdate;
+			bool						bLookupHosts;
 			bool						bMainWindowMaximized;
 			bool						bQueryAutoRefreshDontIfActive;
 			bool						bQueryAutoRefreshEnabled;

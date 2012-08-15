@@ -67,7 +67,7 @@ void ServerListRowHandler::emptyItem(QStandardItem* item)
 void ServerListRowHandler::fillAddressColumn()
 {
 	QStandardItem* pItem = item(IDAddress);
-	fillItem(pItem, server->address(), QString(server->address().toString() + ":" + QString::number(server->port())) );
+	fillItem(pItem, server->address(), server->hostName() );
 }
 
 void ServerListRowHandler::fillItem(QStandardItem* item, const QString& str)

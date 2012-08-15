@@ -31,6 +31,7 @@
 #include <QProcess>
 #include <QObject>
 #include <QHostAddress>
+#include <QHostInfo>
 #include <QString>
 #include <QMetaType>
 #include <QThread>
@@ -107,6 +108,12 @@ class MAIN_EXPORT Server : public QObject
 		const GameMode		&gameMode() const { return currentGameMode; }
 		unsigned char		gameSkill() const { return skill; }
 		virtual bool		hasRcon() const { return false; }
+		/**
+		 * Returns a string of either the ipaddress:port or hostname:port
+		 * depending on if the hostname information has been retrieved, if
+		 * reverse lookups is enabled, and the forceAddress parameter.
+		 */
+		QString				hostName(bool forceAddress=false) const;
 		const QPixmap		&icon() const;
 		bool				isBroadcastingToLAN() const { return broadcastToLAN; }
 		bool				isBroadcastingToMaster() const { return broadcastToMaster; }
@@ -305,6 +312,7 @@ class MAIN_EXPORT Server : public QObject
 		 * signal
 		 */
 		void				setResponse(Server* server, int response);
+		void				setHostName(QHostInfo host);
 
 	private:
 		/**
@@ -331,6 +339,7 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		bool				bIsRefreshing;
 		QHostAddress		serverAddress;
+		QHostInfo			serverHost;
 		unsigned short		serverPort;
 
 		int					triesLeft; /// Track how many resends we should try.

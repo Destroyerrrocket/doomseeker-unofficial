@@ -194,6 +194,7 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->bCloseToTrayIcon = false;
 	this->bHidePasswords = false;
 	this->bIP2CountryAutoUpdate = true;
+	this->bLookupHosts = true;
 	this->bQueryAutoRefreshDontIfActive = true;
 	this->bQueryAutoRefreshEnabled = false;
 	this->bQueryBeforeLaunch = true;
@@ -268,6 +269,7 @@ void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 	section.createSetting("CloseToTrayIcon", this->bCloseToTrayIcon);
 	section.createSetting("HidePasswords", this->bHidePasswords);
 	section.createSetting("IP2CAutoUpdate", this->bIP2CountryAutoUpdate);
+	section.createSetting("LookupHosts", this->bLookupHosts);
 	section.createSetting("QueryAutoRefreshDontIfActive", this->bQueryAutoRefreshDontIfActive);
 	section.createSetting("QueryAutoRefreshEnabled", this->bQueryAutoRefreshEnabled);
 	section.createSetting("QueryOnStartup", this->bQueryOnStartup);
@@ -294,6 +296,7 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->bCloseToTrayIcon = section["CloseToTrayIcon"];
 	this->bHidePasswords = section["HidePasswords"];
 	this->bIP2CountryAutoUpdate = section["IP2CAutoUpdate"];
+	this->bLookupHosts = section["LookupHosts"];
 	this->bQueryAutoRefreshDontIfActive = section["QueryAutoRefreshDontIfActive"];
 	this->bQueryAutoRefreshEnabled = section["QueryAutoRefreshEnabled"];
 	this->bQueryBeforeLaunch = section["QueryBeforeLaunch"];
@@ -345,6 +348,7 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["CloseToTrayIcon"] = this->bCloseToTrayIcon;
 	section["HidePasswords"] = this->bHidePasswords;
 	section["IP2CAutoUpdate"] = this->bIP2CountryAutoUpdate;
+	section["LookupHosts"] = this->bLookupHosts;
 	section["QueryAutoRefreshDontIfActive"] = this->bQueryAutoRefreshDontIfActive;
 	section["QueryAutoRefreshEnabled"] = this->bQueryAutoRefreshEnabled;
 	section["QueryBeforeLaunch"] = this->bQueryBeforeLaunch;
