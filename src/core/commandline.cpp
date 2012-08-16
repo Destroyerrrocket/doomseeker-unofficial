@@ -31,19 +31,20 @@ void CommandLine::escapeArgs(QStringList& args)
 	{
 		QString& str = *it;
 		escapeArg(str);
-	} 
+	}
 }
-		
+
 #ifdef Q_OS_LINUX
 void CommandLine::escapeArg(QString& arg)
 {
-	arg.replace('\'', "\\'");
+	arg.replace('\'', "'\\''"); // This does: ' -> '\''
 	arg.prepend('\'');
 	arg += '\'';
 }
 #elif defined Q_OS_WIN
 void CommandLine::escapeArg(QString& arg)
 {
+	// Note: this may be game specific (oh, dear...)
 	arg.replace('"', "\\\"");
 	arg.prepend('"');
 	arg += '"';
