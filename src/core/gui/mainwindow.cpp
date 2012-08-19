@@ -1159,7 +1159,7 @@ void MainWindow::showServerJoinCommandLine(const Server* server)
 		QString execPath = cli.executable.absoluteFilePath();
 		QStringList args = cli.args;
 
-		CommandLine::escapeArg(execPath);
+		CommandLine::escapeExecutable(execPath);
 		CommandLine::escapeArgs(args);
 
 		CopyTextDlg ctd(execPath + " " + args.join(" "), server->name(), this);

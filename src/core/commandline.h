@@ -57,6 +57,11 @@ class CommandLine
 		 * was compiled for.
 		 */
 		static void escapeArg(QString& arg);
+
+		/**
+		 * @brief Escapes the executable path and handles OS X bundles.
+		 */
+		static void escapeExecutable(QString& arg);
 };
 
 #endif

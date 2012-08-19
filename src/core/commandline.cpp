@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "commandline.h"
 
+#include "apprunner.h"
 #include "strings.h"
 
 void CommandLine::escapeArgs(QStringList& args)
@@ -34,14 +35,7 @@ void CommandLine::escapeArgs(QStringList& args)
 	}
 }
 
-#ifdef Q_OS_LINUX
-void CommandLine::escapeArg(QString& arg)
-{
-	arg.replace('\'', "'\\''"); // This does: ' -> '\''
-	arg.prepend('\'');
-	arg += '\'';
-}
-#elif defined Q_OS_WIN
+#if defined Q_OS_WIN
 void CommandLine::escapeArg(QString& arg)
 {
 	// Note: this may be game specific (oh, dear...)
@@ -50,6 +44,21 @@ void CommandLine::escapeArg(QString& arg)
 	arg += '"';
 }
 #else
-#error No implementaton for CommandLine::escapeArg()
+// Since most other operating systems are Unix like we might as well make this a default.
+void CommandLine::escapeArg(QString& arg)
+{
+	arg.replace('\'', "'\\''"); // This does: ' -> '\''
+	arg.prepend('\'');
+	arg += '\'';
+}
 #endif
 
+void CommandLine::escapeExecutable(QString& arg)
+{
+#ifdef Q_OS_MAC
+	QFileInfo binary = arg;
+	if(binary.isBundle())
+		arg += AppRunner::findBundleBinary(binary);
+#endif
+	return escapeArg(arg);
+}

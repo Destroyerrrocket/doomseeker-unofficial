@@ -229,7 +229,7 @@ void CreateServerDialog::btnCommandLineClicked()
 	if(commandLineArguments(executable, args))
 	{
 		// Lines below directly modify the passed values.
-		CommandLine::escapeArg(executable);
+		CommandLine::escapeExecutable(executable);
 		CommandLine::escapeArgs(args);
 
 		CopyTextDlg ctd(executable + " " + args.join(" "), "Host server command line:", this);
