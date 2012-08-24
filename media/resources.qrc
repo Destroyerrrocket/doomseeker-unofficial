@@ -40,6 +40,7 @@
 	<file alias="flags/AUT">flags/AUT.png</file> <!-- Austria -->
 	<file alias="flags/BEL">flags/BEL.png</file> <!-- Belgium -->
 	<file alias="flags/BGR">flags/BGR.png</file> <!-- Bulgaria -->
+	<file alias="flags/BOL">flags/BOL.png</file> <!-- Bolivia -->
 	<file alias="flags/BRA">flags/BRA.png</file> <!-- Brazil -->
 	<file alias="flags/BLR">flags/BLR.png</file> <!-- Belarus (Bialorus) -->
 	<file alias="flags/CAN">flags/CAN.png</file> <!-- Canada -->
