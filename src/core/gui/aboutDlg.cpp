@@ -52,6 +52,8 @@ AboutDlg::AboutDlg(QWidget* parent) : QDialog(parent)
 	}
 	connect(pluginBox, SIGNAL( currentIndexChanged(int) ), this, SLOT( changePlugin(int) ));
 	changePlugin(0);
+
+	adjustSize();
 }
 
 AboutDlg::~AboutDlg()
