@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
+#include <cstdlib>
 #include <cstdio>
 #include <cmath>
 
