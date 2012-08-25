@@ -816,7 +816,8 @@ void MainWindow::menuBuddies()
 void MainWindow::menuCreateServer()
 {
 	// This object will auto-delete on close.
-	CreateServerDialog* dialog = new CreateServerDialog(this);
+	CreateServerDialog* dialog = new CreateServerDialog(NULL);
+	dialog->setWindowIcon(this->windowIcon());
 	dialog->show();
 }
 
