@@ -20,17 +20,25 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
+#include <QBuffer>
+#include <QDataStream>
 
 #include "odamexgameinfo.h"
 #include "odamexgamerunner.h"
 #include "odamexengineplugin.h"
 #include "odamexserver.h"
+#include "datastreamoperatorwrapper.h"
 #include "main.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/playerslist.h"
 
 /// Macro that checks the readRequest() validity.
-#define CHECK_POS if (pos >= dataLength) \
+#define CHECK_POS if (!in.hasRemaining()) \
+		{ \
+			return RESPONSE_BAD; \
+		}
+		
+#define CHECK_POS_OFFSET(offset) if (in.remaining() < (offset)) \
 		{ \
 			return RESPONSE_BAD; \
 		}
@@ -57,43 +65,42 @@ const EnginePlugin* OdamexServer::plugin() const
 
 Server::Response OdamexServer::readRequest(QByteArray &data)
 {
-	const char* in = data.data();
-	unsigned int dataLength = (unsigned)data.length();
+	QBuffer ioBuffer(&data);
+	ioBuffer.open(QIODevice::ReadOnly);
+	QDataStream inStream(&ioBuffer);
+	inStream.setByteOrder(QDataStream::LittleEndian);
+	DataStreamOperatorWrapper in(&inStream);
 
 	// Check the response code
-	int response = READINT32(&in[0]);
+	int response = in.readQInt32();
 	if((response&0xFFF00000) != 0xAD000000)
 		return RESPONSE_BAD;
 
-	unsigned int version = READINT32(&in[4]);
+	unsigned int version = in.readQUInt32();
 	short version_major = version/256;
 	short version_minor = (version % 256)/10;
 	short version_patch = (version % 256)%10;
 	serverVersion = QString("%1.%2.%3").arg(version_major).arg(version_minor).arg(version_patch);
 
-	unsigned int protocolVersion = READINT32(&in[8]);
-	unsigned int pos = 12;
+	unsigned int protocolVersion = in.readQUInt32();
 	if(protocolVersion >= 1)
 	{
-		pos += 8;
+		in.skipRawData(8);
 	}
 	
 	CHECK_POS;
 	
-	serverVersion += QString(" r%1").arg(READINT32(&in[pos]));
-	pos += 4;
+	serverVersion += QString(" r%1").arg(in.readQUInt32());
 	
 	CHECK_POS;
 
-	short cvarCount = READINT8(&in[pos++]);
+	short cvarCount = in.readQUInt8();
 	while(cvarCount-- > 0)
 	{
-		QString cvarName(&in[pos]);
-		pos += cvarName.length()+1;
+		QString cvarName = in.readRawUntilByte('\0');
 		CHECK_POS;
 		
-		QString cvarValue(&in[pos]);
-		pos += cvarValue.length()+1;
+		QString cvarValue = in.readRawUntilByte('\0');
 		CHECK_POS;
 
 		if(cvarName == "sv_email")
@@ -116,69 +123,68 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 			webSite = cvarValue;
 	}
 
-	QString passwordHash(&in[pos]);
-	pos += passwordHash.length()+1;
+	QString passwordHash = in.readRawUntilByte('\0');
 	locked = !passwordHash.isEmpty();
 	CHECK_POS;
 
-	mapName = QString(&in[pos]);
-	pos += mapName.length()+1;
+	mapName = in.readRawUntilByte('\0');
 	CHECK_POS;
 
-	serverTimeLeft = READINT16(&in[pos]);
-	pos += 2;
+	serverTimeLeft = in.readQUInt16();
 
-	short teamCount = READINT8(&in[pos++]);
+	short teamCount = in.readQUInt8();
 	while(teamCount-- > 0)
 	{
 		CHECK_POS;
 	
-		QString teamName(&in[pos]);
-		pos += teamName.length()+1;
-		pos += 6;
+		QString teamName = in.readRawUntilByte('\0');
+		in.skipRawData(6);
 	}
 
 	dehPatches.clear();
-	short patchCount = READINT8(&in[pos++]);
+	short patchCount = in.readQUInt8();
 	while(patchCount-- > 0)
 	{
 		CHECK_POS;
 		
-		QString patch(&in[pos]);
-		pos += patch.length()+1;
+		QString patch = in.readRawUntilByte('\0');
 		dehPatches << patch;
 	}
 
 	wads.clear();
-	short wadCount = READINT8(&in[pos++]);
+	short wadCount = in.readQUInt8();
 	for(short i = 0;i < wadCount;i++)
 	{
 		CHECK_POS;
 	
-		QString wad(&in[pos]);
+		QString wad = in.readRawUntilByte('\0');
 		if(i >= 2)
 			wads << wad;
 		else if(i == 1)
 			iwad = wad;
-		pos += wad.length()+1;
 		
 		CHECK_POS;
-
-		QString hash(&in[pos]);
-		pos += hash.length()+1;
+		QString hash = in.readRawUntilByte('\0');
 	}
 
 	players->clear();
-	short playerCount = READINT8(&in[pos++]);
+	short playerCount = in.readQUInt8();
 	while(playerCount-- > 0)
 	{
 		CHECK_POS;
 	
-		QString playerName(&in[pos]);
-		pos += playerName.length()+1;
-		Player::PlayerTeam team = currentGameMode.isTeamGame() ? static_cast<Player::PlayerTeam> (READINT8(&in[pos])) : Player::TEAM_NONE;
-		Player player(playerName, READINT16(&in[pos+6]), READINT16(&in[pos+1]), team, READINT8(&in[pos+5]));
-		pos += 12;
+		QString playerName = in.readRawUntilByte('\0');
+
+		CHECK_POS_OFFSET(12);
+		unsigned short teamIndex = in.readQUInt8();
+		unsigned short ping = in.readQUInt16();
+		in.skipRawData(2);
+		bool spectator = in.readQUInt8();
+		unsigned short score = in.readQUInt16();
+		in.skipRawData(4);
+		
+		Player::PlayerTeam team = currentGameMode.isTeamGame() ? static_cast<Player::PlayerTeam> (teamIndex) : Player::TEAM_NONE;
+		Player player(playerName, score, ping, team, spectator);
 		players->append(player);
 	}
 

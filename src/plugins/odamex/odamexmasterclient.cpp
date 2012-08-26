@@ -20,7 +20,10 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
+#include <QBuffer>
+#include <QDataStream>
 
+#include "datastreamoperatorwrapper.h"
 #include "global.h"
 #include "odamexmasterclient.h"
 #include "odamexengineplugin.h"
@@ -51,10 +54,14 @@ const EnginePlugin* OdamexMasterClient::plugin() const
 bool OdamexMasterClient::readMasterResponse(QByteArray &data)
 {
 	// Decompress the response.
-	const char* in = data.data();
+	QBuffer ioBuffer(&data);
+	ioBuffer.open(QIODevice::ReadOnly);
+	QDataStream inStream(&ioBuffer);
+	inStream.setByteOrder(QDataStream::LittleEndian);
+	DataStreamOperatorWrapper in(&inStream);
 
 	// Check the response code
-	int response = READINT32(&in[0]);
+	int response = in.readQUInt32();
 
 
 	if (response != MASTER_CHALLENGE)
@@ -65,16 +72,24 @@ bool OdamexMasterClient::readMasterResponse(QByteArray &data)
 	// Make sure we have an empty list.
 	emptyServerList();
 
-	int numServers = READINT16(&in[4]);
-	int pos = 6;
+	int numServers = in.readQUInt16();
 	for(;numServers > 0;numServers--)
 	{
 		// This might be able to be simplified a little bit...
+		quint8 ip1 = in.readQUInt8();
+		quint8 ip2 = in.readQUInt8();
+		quint8 ip3 = in.readQUInt8();
+		quint8 ip4 = in.readQUInt8();
+		
 		QString ip = QString("%1.%2.%3.%4").
-			arg(static_cast<quint8> (in[pos]), 1, 10, QChar('0')).arg(static_cast<quint8> (in[pos+1]), 1, 10, QChar('0')).arg(static_cast<quint8> (in[pos+2]), 1, 10, QChar('0')).arg(static_cast<quint8> (in[pos+3]), 1, 10, QChar('0'));
-		OdamexServer *server = new OdamexServer(QHostAddress(ip), READINT16(&in[pos+4]));
+			arg(ip1, 1, 10, QChar('0')).
+			arg(ip2, 1, 10, QChar('0')).
+			arg(ip3, 1, 10, QChar('0')).
+			arg(ip4, 1, 10, QChar('0'));
+			
+		quint16 port = in.readQUInt16();
+		OdamexServer *server = new OdamexServer(QHostAddress(ip), port);
 		servers.push_back(server);
-		pos += 6;
 	}
 	
 	emit listUpdated();
