@@ -351,6 +351,7 @@ set(HEADER_FILES
 	speedcalculator.h
 	strings.h
 	version.h
+	versiondefs.h
 )
 
 

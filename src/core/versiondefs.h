@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// version.cpp
+// versiondefs.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,50 +18,34 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "version.h"
-#include "versiondefs.h"
+#ifndef DOOMSEEKER_VERSIONDEFS_H
+#define DOOMSEEKER_VERSIONDEFS_H
 
-QString Version::changeset()
-{
-	return HG_REVISION_HASH_STRING;
-}
+// This is a centralized location to store all version information. Make sure
+// to update this file before making a new tag or a new release.
+//
+// NOTE:
+// This file defines the version data but it SHOULD NOT be used to access this 
+// data. To prevent unnecessary recompilations of huge amount of files
+// everytime the version changes, all information should be accessed
+// using the class defined in 'version.h' file.
+//
+// This file should only by included by following files:
+// - version.cpp
+// - windows.rc
 
-QString Version::name()
-{
-	return "Doomseeker";
-}
+#include "svnrevision.h"
 
-QString Version::revision()
-{
-	return SVN_REVISION_STRING;
-}
+// Info used by version.cpp
+#define VERSION_STRING "0.9 Beta"
 
-int Version::revisionNumber()
-{
-	return SVN_REVISION_NUMBER;
-}
+// Info used by windows.rc
+#define FILEVERSION_DEF 0,9,0,SVN_REVISION_NUMBER
+#define PRODUCTVERSION_DEF 0,9,0,SVN_REVISION_NUMBER
+#define FILEVERSION_STR_DEF "0.9.0.0"
+#define PRODUCTVERSION_STR_DEF "0.9.0.0"
+#define LEGALCOPYRIGHT_DEF "The Doomseeker Team 2009 - 2012"
 
-QString Version::userAgent()
-{
-	return "Doomseeker/" + versionRevision();
-}
-
-QString Version::version()
-{
-	return VERSION_STRING;
-}
-
-QString Version::versionRevision()
-{
-	if (revision().isEmpty())
-	{
-		return version();
-	}
-	else
-	{
-		return version() + "-" + revision();
-	}
-}
-
+#endif
