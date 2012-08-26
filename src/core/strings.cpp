@@ -262,6 +262,26 @@ QString Strings::normalizePath(QString path)
 	return path;
 }
 
+QByteArray Strings::readUntilByte(QDataStream& stream, unsigned char stopByte)
+{
+	QByteArray result;
+	bool bStopByteEncountered = false;
+	
+	while (!stream.atEnd() && !bStopByteEncountered)
+	{
+		quint8 rByte;
+		stream >> rByte;
+		result += rByte;
+		
+		if (rByte == stopByte)
+		{
+			bStopByteEncountered = true;
+		}
+	}
+	
+	return result;
+}
+
 float Strings::scaleDataUnit(float bytes, DataUnit& outUnit)
 {
 	const static float UPPER_BOUNDARY = 900.0f;

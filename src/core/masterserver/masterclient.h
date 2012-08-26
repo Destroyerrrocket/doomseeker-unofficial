@@ -219,6 +219,12 @@ class MAIN_EXPORT MasterClient : public QObject
 		 * their query becuase they tried to refresh too quickly.
 		 */
 		void					notifyDelay();
+		
+		/**
+		 * @brief Tells the user that the master server returned a bad 
+		 * response.
+		 */
+		void notifyError();
 
 		/**
 		 * @brief Tells the user they need to update since the protocol is too

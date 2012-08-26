@@ -30,9 +30,13 @@
 #include "zandronumengineplugin.h"
 #include "global.h"
 #include "main.h"
+#include "log.h"
+#include "datastreamoperatorwrapper.h"
 #include "serverapi/playerslist.h"
 
+#include <QBuffer>
 #include <QCryptographicHash>
+#include <QDataStream>
 #include <QDateTime>
 #include <QMessageBox>
 #include <QRegExp>
@@ -43,6 +47,15 @@
 #define SERVER_WAIT			5660024
 
 #define RCON_PROTOCOL_VERSION	3
+
+#define RETURN_BAD_IF_NOT_ENOUGH_DATA(min_amout_of_data_required) \
+{ \
+	/* qDebug() << "pos/size" << in.device()->pos() << "/" << in.device()->size(); */\
+	if (in.remaining() < (min_amout_of_data_required)) \
+	{ \
+		return RESPONSE_BAD; \
+	} \
+} 
 
 /**
  * Compares versions of Zandronum.
@@ -130,43 +143,62 @@ const EnginePlugin* ZandronumServer::plugin() const
 
 Server::Response ZandronumServer::readRequest(QByteArray &data)
 {
-	const int OUT_SIZE = 6000;
+	const int BUFFER_SIZE = 6000;
+	QByteArray rawReadBuffer;
+	
 	// Decompress the response.
-	const char* in = data.data();
-	char packetOut[OUT_SIZE];
-	int out = OUT_SIZE;
+	const char* huffmanPacket = data.data();
+	
+	int decodedSize = BUFFER_SIZE + data.size();
+	char* packetDecodedBuffer = new char[decodedSize];
 
-	HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (in), reinterpret_cast<unsigned char*> (packetOut), data.size(), &out);
-
-	lastReadRequest.clear();
-	lastReadRequest = QByteArray(packetOut, qMin(out, OUT_SIZE));
-
-	if (out == OUT_SIZE)
+	HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (huffmanPacket), 
+		reinterpret_cast<unsigned char*> (packetDecodedBuffer), data.size(), 
+		&decodedSize);
+	
+	if (decodedSize <= 0)
 	{
-		fprintf(stderr, "Warning (probably an error): data size error when reading server %s:%u. Data size is IN: %u, OUT: %u\n", address().toString().toAscii().constData(), port(), data.size(), out);
+		delete [] packetDecodedBuffer;
+		return RESPONSE_BAD;
 	}
-
-	if (out < 4 || out > OUT_SIZE)
+	
+	// Prepare reading interface.
+	QByteArray packetDecoded(packetDecodedBuffer, decodedSize);
+	lastReadRequest = packetDecoded;
+	
+	delete [] packetDecodedBuffer;
+	
+	QBuffer packetDecodedIo(&packetDecoded);
+	
+	packetDecodedIo.open(QIODevice::ReadOnly);
+	packetDecodedIo.seek(0);
+	
+	QDataStream inStream(&packetDecodedIo);
+	inStream.setByteOrder(QDataStream::LittleEndian);
+	
+	DataStreamOperatorWrapper in(&inStream);
+	
+	// Read and parse.
+	
+	// Do the initial sanity check. All packets must be at least 8 bytes big.
+	if (decodedSize < 8)
 	{
-		fprintf(stderr, "Data size error when reading server %s:%u. Data size is IN: %u, OUT: %u\n", address().toString().toAscii().constData(), port(), data.size(), out);
+		fprintf(stderr, "Data size error when reading server %s:%u."
+			" Data size encoded: %u, decoded %u\n", 
+			address().toString().toAscii().constData(), port(), 
+			data.size(), decodedSize);
 		return RESPONSE_BAD;
 	}
 
 	// Check the response code
-	int response = READINT32(&packetOut[0]);
+	qint32 response = in.readQInt32();
 
 	// Determine ping. Time is sent no matter what the response is, still we
 	// should check if there's enough data to read from.
-	if (out >= 8)
-	{
-		currentPing = millisecondTime() - READINT32(&packetOut[4]);
-		bPingIsSet = true;
-	}
-	else
-	{
-		return RESPONSE_BAD;
-	}
-
+	qint32 responseTimestamp = in.readQInt32();
+	currentPing = millisecondTime() - responseTimestamp;
+	bPingIsSet = true;
+	
 	// Act according to the response
 	switch(response)
 	{
@@ -185,67 +217,47 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 	}
 
 	// If response was equal to SERVER_GOOD, proceed to read data.
-	serverVersion = QString(&packetOut[8]);
-	int pos = 8 + serverVersion.length() + 1;
+	RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+	serverVersion = in.readRawUntilByte('\0');
 
-	// now read the data.
 	ZandronumGameInfo::ZandronumGameMode mode = ZandronumGameInfo::GAMEMODE_COOPERATIVE;
 
 	// Flags - set of flags returned by the server. This is compared
 	// with known set of flags and the data is read from the packet
 	// accordingly. Every flag is removed from this variable after such check.
 	// See "if SQF_NAME" for an example.
-	unsigned flags = READINT32(&packetOut[pos]);
-	pos += 4;
+	RETURN_BAD_IF_NOT_ENOUGH_DATA(4);
+	quint32 flags = in.readQUInt32();
 	if((flags & SQF_NAME) == SQF_NAME) // Check if SQF_NAME is inside flags var.
 	{
-		serverName = QString(&packetOut[pos]); // Read the data.
-		pos += serverName.length() + 1; // Move on to next data.
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		serverName = in.readRawUntilByte('\0');
 		flags ^= SQF_NAME; // Remove SQF_NAME flag from the variable.
-
-		if (pos >= out && flags != 0)
-		{
-			return RESPONSE_BAD;
-		}
 	}
 
 	if((flags & SQF_URL) == SQF_URL)
 	{
-		webSite = QString(&packetOut[pos]);
-		pos += webSite.length() + 1;
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		webSite = in.readRawUntilByte('\0');
 		flags ^= SQF_URL;
-
-		if (pos >= out && flags != 0)
-		{
-			return RESPONSE_BAD;
-		}
 	}
 	if((flags & SQF_EMAIL) == SQF_EMAIL)
 	{
-		email = QString(&packetOut[pos]);
-		pos += email.length() + 1;
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		email = in.readRawUntilByte('\0');
 		flags ^= SQF_EMAIL;
-
-		if (pos >= out && flags != 0)
-		{
-			return RESPONSE_BAD;
-		}
 	}
 	if((flags & SQF_MAPNAME) == SQF_MAPNAME)
 	{
-		mapName = QString(&packetOut[pos]);
-		pos += mapName.length() + 1;
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		mapName = in.readRawUntilByte('\0');
 		flags ^= SQF_MAPNAME;
-
-		if (pos >= out && flags != 0)
-		{
-			return RESPONSE_BAD;
-		}
 	}
 
 	if((flags & SQF_MAXCLIENTS) == SQF_MAXCLIENTS)
 	{
-		maxClients = READINT8(&packetOut[pos++]);
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		maxClients = in.readQUInt8();
 		flags ^= SQF_MAXCLIENTS;
 	}
 	else
@@ -255,7 +267,8 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 
 	if((flags & SQF_MAXPLAYERS) == SQF_MAXPLAYERS)
 	{
-		maxPlayers = READINT8(&packetOut[pos++]);
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		maxPlayers = in.readQUInt8();
 		flags ^= SQF_MAXPLAYERS;
 	}
 	else
@@ -265,39 +278,34 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 
 	if((flags & SQF_PWADS) == SQF_PWADS)
 	{
-		int numPwads = READINT8(&packetOut[pos++]);
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		qint8 numPwads = in.readQInt8();
 		wads.clear(); // clear any previous list we may have had.
 		flags ^= SQF_PWADS;
-		for(int i = 0;i < numPwads;i++)
+		for(int i = 0; i < numPwads; i++)
 		{
-			QString wad(&packetOut[pos]);
-			pos += wad.length() + 1;
+			RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+			QString wad = in.readRawUntilByte('\0');
 			wads << wad;
-
-			// Check everytime if pos has reached the end of array.
-			// Emit response RESPONSE_BAD if it did and there are flags
-			// remaining in the variable. Following code is used repeatedly
-			// in this method.
-			if (pos >= out && flags != 0)
-			{
-				return RESPONSE_BAD;
-			}
 		}
 	}
 
 	if((flags & SQF_GAMETYPE) == SQF_GAMETYPE)
 	{
-		unsigned char byMode = READINT8(&packetOut[pos++]);
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		qint8 modeCode = in.readQInt8();
 
-		if (byMode > NUM_ZANDRONUM_GAME_MODES)
+		if (modeCode > NUM_ZANDRONUM_GAME_MODES)
 		{
-			byMode = NUM_ZANDRONUM_GAME_MODES; // this will set game mode to unknown
+			modeCode = NUM_ZANDRONUM_GAME_MODES; // this will set game mode to unknown
 		}
 
-		mode = static_cast<ZandronumGameInfo::ZandronumGameMode> (byMode);
+		mode = static_cast<ZandronumGameInfo::ZandronumGameMode> (modeCode);
 		currentGameMode = (*ZandronumGameInfo::gameModes())[mode];
-		instagib = READINT8(&packetOut[pos++]) != 0;
-		buckshot = READINT8(&packetOut[pos++]) != 0;
+		
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(2);
+		instagib = in.readQInt8() != 0;
+		buckshot = in.readQInt8() != 0;
 
 		flags ^= SQF_GAMETYPE;
 	}
@@ -305,30 +313,21 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 	if((flags & SQF_GAMENAME) == SQF_GAMENAME)
 	{
 		//Useless String
-		pos += strlen(&packetOut[pos]) + 1;
-		flags ^= SQF_GAMETYPE;
-
-		if (pos >= out && flags != 0)
-		{
-			return RESPONSE_BAD;
-		}
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		in.readRawUntilByte('\0');
 	}
 
 	if((flags & SQF_IWAD) == SQF_IWAD)
 	{
-		iwad = QString(&packetOut[pos]);
-		pos += iwad.length() + 1;
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		iwad = in.readRawUntilByte('\0');
 		flags ^= SQF_IWAD;
-
-		if (pos >= out && flags != 0)
-		{
-			return RESPONSE_BAD;
-		}
 	}
 
 	if((flags & SQF_FORCEPASSWORD) == SQF_FORCEPASSWORD)
 	{
-		locked = (READINT8(&packetOut[pos++]) != 0);
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		locked = in.readQInt8() != 0;
 		flags ^= SQF_FORCEPASSWORD;
 	}
 	else
@@ -338,73 +337,85 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 
 	if((flags & SQF_FORCEJOINPASSWORD) == SQF_FORCEJOINPASSWORD)
 	{
-		pos++;
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		in.skipRawData(1);
 		flags ^= SQF_FORCEJOINPASSWORD;
 	}
 
 	if((flags & SQF_GAMESKILL) == SQF_GAMESKILL)
 	{
-		skill = READINT8(&packetOut[pos++]);
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		skill = in.readQInt8();
 		flags ^= SQF_GAMESKILL;
 	}
 
 	if((flags & SQF_BOTSKILL) == SQF_BOTSKILL)
 	{
-		botSkill = READINT8(&packetOut[pos++]);
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		botSkill = in.readQInt8();
 		flags ^= SQF_BOTSKILL;
 	}
 
 	if((flags & SQF_DMFLAGS) == SQF_DMFLAGS)
 	{
-		flags ^= SQF_DMFLAGS;
+		// Not supported because the amount of returned DMFlags
+		// may vary depending on the server version. For example: old
+		// servers may return only dmflags, dmflags2 and compatflags.
+		// New servers may add dmflags3 and compatflags2.
+		gLog << tr("Zandronum plugin: asking for DMFLAGS is not "
+			"supported. This message should never appear.");
+		//flags ^= SQF_DMFLAGS;
 
-		clearDMFlags();
+		//clearDMFlags();
 
-		const DMFlags& zandronumFlags = *ZandronumGameInfo::dmFlags();
+		//const DMFlags& zandronumFlags = *ZandronumGameInfo::dmFlags();
 
-		// Read each dmflags section separately.
-		for (int i = 0; i < NUM_DMFLAG_SECTIONS; ++i)
-		{
-			unsigned int dmflags = READINT32(&packetOut[pos]);
-			pos += 4;
+		//// Read each dmflags section separately.
+		//for (int i = 0; i < NUM_DMFLAG_SECTIONS; ++i)
+		//{
+		//	unsigned int dmflags = READINT32(&packetOut[pos]);
+		//	pos += 4;
 
-			const DMFlagsSection& zandronumFlagsSection = *zandronumFlags[i];
-			DMFlagsSection* dmFlagsSection = new DMFlagsSection();
-			dmFlagsSection->name = zandronumFlagsSection.name;
+		//	const DMFlagsSection& zandronumFlagsSection = *zandronumFlags[i];
+		//	DMFlagsSection* dmFlagsSection = new DMFlagsSection();
+		//	dmFlagsSection->name = zandronumFlagsSection.name;
 
-			// Iterate through every known flag to check whether it should be
-			// inserted into the structure of this server.
-			for (int j = 0; j < zandronumFlagsSection.flags.count(); ++j)
-			{
-				if ( (dmflags & (1 << zandronumFlagsSection.flags[j].value)) != 0)
-				{
-					dmFlagsSection->flags << zandronumFlagsSection.flags[j];
-				}
-			}
+		//	// Iterate through every known flag to check whether it should be
+		//	// inserted into the structure of this server.
+		//	for (int j = 0; j < zandronumFlagsSection.flags.count(); ++j)
+		//	{
+		//		if ( (dmflags & (1 << zandronumFlagsSection.flags[j].value)) != 0)
+		//		{
+		//			dmFlagsSection->flags << zandronumFlagsSection.flags[j];
+		//		}
+		//	}
 
-			dmFlags << dmFlagsSection;
-		}
+		//	dmFlags << dmFlagsSection;
+		//}
 	}
 
 	if((flags & SQF_LIMITS) == SQF_LIMITS)
 	{
 		flags ^= SQF_LIMITS;
-		fragLimit = READINT16(&packetOut[pos]);
+		
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(2);
+		fragLimit = in.readQUInt16();
 
 		// Read timelimit and timeleft,
 		// note that if timelimit == 0 then no info
 		// about timeleft is sent
-		serverTimeLimit = READINT16(&packetOut[pos+2]);
-		pos += 4;
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(2);
+		serverTimeLimit = in.readQUInt16();
 		if (serverTimeLimit != 0)
 		{
-			serverTimeLeft = READINT16(&packetOut[pos]);
-			pos += 2;
+			RETURN_BAD_IF_NOT_ENOUGH_DATA(2);
+			serverTimeLeft = in.readQUInt16();
 		}
 
-		duelLimit = READINT16(&packetOut[pos]);
-		pointLimit = READINT16(&packetOut[pos+2]);
-		winLimit = READINT16(&packetOut[pos+4]);
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(2 + 2 + 2);
+		duelLimit = in.readQUInt16();
+		pointLimit = in.readQUInt16();
+		winLimit = in.readQUInt16();
 		switch(mode)
 		{
 			default:
@@ -424,7 +435,6 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 				serverScoreLimit = pointLimit;
 				break;
 		}
-		pos += 6;
 	}
 	else
 	{
@@ -439,8 +449,8 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 
 	if((flags & SQF_TEAMDAMAGE) == SQF_TEAMDAMAGE)
 	{
-		teamDamage = QByteArray(&packetOut[pos], 4).toFloat();
-		pos += 4;
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(4);
+		teamDamage = in.readFloat();
 		flags ^= SQF_TEAMDAMAGE;
 	}
 	if((flags & SQF_TEAMSCORES) == SQF_TEAMSCORES)
@@ -448,22 +458,16 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 		// DEPRECATED flag
 		for(int i = 0;i < 2;i++)
 		{
-			scores[i] = READINT16(&packetOut[pos]);
-			pos += 2;
+			RETURN_BAD_IF_NOT_ENOUGH_DATA(2);
+			scores[i] = in.readQInt16();
 		}
 		flags ^= SQF_TEAMSCORES;
 	}
 	if((flags & SQF_NUMPLAYERS) == SQF_NUMPLAYERS)
 	{
-		int numPlayers = READINT8(&packetOut[pos++]);
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		int numPlayers = in.readQUInt8();
 		flags ^= SQF_NUMPLAYERS;
-
-		// If number of players is bigger than number of maximum clients
-		// we assume something went horribly wrong and emit an error signal.
-		if (numPlayers > maxClients)
-		{
-			return RESPONSE_BAD;
-		}
 
 		if((flags & SQF_PLAYERDATA) == SQF_PLAYERDATA)
 		{
@@ -474,22 +478,29 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 				// team isn't sent in non team modes.
 				bool teammode = currentGameMode.isTeamGame();
 
-				QString name(&packetOut[pos]);
-				pos += name.length() + 1;
+				RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+				QString name = in.readRawUntilByte('\0');
 
-				if (pos >= out)
+				RETURN_BAD_IF_NOT_ENOUGH_DATA(2 + 2 + 1 + 1);
+				int score = in.readQUInt16();
+				int ping = in.readQUInt16();
+				bool spectating = in.readQUInt8() != 0;
+				bool bot = in.readQUInt8() != 0;
+				
+				int team;
+				if (teammode)
 				{
-					return RESPONSE_BAD;
+					RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+					team = in.readQUInt8();
 				}
-
-				int score = READINT16(&packetOut[pos]);
-				int ping = READINT16(&packetOut[pos+2]);
-				bool spectating = READINT8(&packetOut[pos+4]) != 0;
-				bool bot = READINT8(&packetOut[pos+5]) != 0;
-				int team = teammode ? READINT8(&packetOut[pos+6]) : Player::TEAM_NONE;
-				// Unused:
-				// int time = READINT8(&packetOut[pos+(teammode ? 7 : 6)]);
-				pos += teammode ? 8 : 7;
+				else
+				{
+					team = Player::TEAM_NONE;
+				}
+				// Now there is info on time that the player is 
+				// on the server. We'll skip it.
+				RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+				in.skipRawData(1);
 
 				Player player(name, score, ping, static_cast<Player::PlayerTeam> (team), spectating, bot);
 				*players << player;
@@ -499,7 +510,8 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 
 	if((flags & SQF_TEAMINFO_NUMBER) == SQF_TEAMINFO_NUMBER)
 	{
-		numTeams = READINT8(&packetOut[pos++]);
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		numTeams = in.readQUInt8();
 		flags ^= SQF_TEAMINFO_NUMBER;
 	}
 
@@ -508,12 +520,9 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 		flags ^= SQF_TEAMINFO_NAME;
 		for(unsigned i = 0; i < numTeams && i < ST_MAX_TEAMS; ++i)
 		{
-			teamInfo[i].setName(tr(&packetOut[pos]));
-			pos += teamInfo[i].name().length() + 1;
-			if (pos >= out && (i != numTeams - 1 || flags != 0) )
-			{
-				return RESPONSE_BAD;
-			}
+			RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+			QString name = in.readRawUntilByte('\0');
+			teamInfo[i].setName(tr(name.toAscii().constData()));
 		}
 	}
 	if((flags & SQF_TEAMINFO_COLOR) == SQF_TEAMINFO_COLOR)
@@ -524,13 +533,9 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 
 		for(unsigned i = 0; i < forLimit; i++)
 		{
-			teamInfo[i].setColor(QColor(READINT32(&packetOut[pos])));
-			pos += 4;
-
-			if (pos >= out && (i != forLimit - 1 || flags != 0))
-			{
-				return RESPONSE_BAD;
-			}
+			RETURN_BAD_IF_NOT_ENOUGH_DATA(4);
+			quint32 colorRgb = in.readQUInt32();
+			teamInfo[i].setColor(QColor(colorRgb));
 		}
 	}
 	if((flags & SQF_TEAMINFO_SCORE) == SQF_TEAMINFO_SCORE)
@@ -540,15 +545,11 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 
 		for(unsigned i = 0; i < forLimit; i++)
 		{
-			teamInfo[i].setScore(READINT16(&packetOut[pos]));
+			RETURN_BAD_IF_NOT_ENOUGH_DATA(2);
+			qint16 score = in.readQInt16();
+			teamInfo[i].setScore(score);
 			if(i < MAX_TEAMS) // Transfer to super class score array if possible.
 				scores[i] = teamInfo[i].score();
-			pos += 2;
-
-			if (pos >= out && (i != forLimit - 1 || flags != 0))
-			{
-				return RESPONSE_BAD;
-			}
 		}
 	}
 
@@ -556,15 +557,16 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 	// Due to a bug in 0.97d3 we need to add additional checks here.
 	// 0.97d3 servers also respond with SQF_TESTING_SERVER flag set
 	// if it was previously sent to them
-	if (pos < out && ZandronumVersion(version()) > ZandronumVersion("0.97d3") && (flags & SQF_TESTING_SERVER) == SQF_TESTING_SERVER)
+	if (in.remaining() != 0 && ZandronumVersion(version()) > ZandronumVersion("0.97d3") && (flags & SQF_TESTING_SERVER) == SQF_TESTING_SERVER)
 	{
 		flags ^= SQF_TESTING_SERVER;
-		testingServer = static_cast<bool>(READINT8(&packetOut[pos]));
-		++pos;
+		
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		testingServer = in.readQInt8() != 0;
 
 		// '\0' is read if testingServer == false
-		testingArchive = &packetOut[pos];
-		pos += testingArchive.length() + 1;
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		testingArchive = in.readRawUntilByte('\0');
 	}
 	else
 	{
@@ -789,36 +791,40 @@ void ZandronumRConProtocol::packetReady()
 		int size = socket.pendingDatagramSize();
 		char* data = new char[size];
 		socket.readDatagram(data, size);
-		char packet[4096];
-		int decodedSize = 4096;
+		int decodedSize = 4096 + size;
+		char* packet = new char[decodedSize];
 		HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (data), reinterpret_cast<unsigned char*> (packet), size, &decodedSize);
 		delete[] data;
 
-		processPacket(packet, size);
+		QByteArray packetByteArray(packet, decodedSize);
+		delete[] packet;
+		
+		QBuffer stream(&packetByteArray);		
+		stream.open(QIODevice::ReadOnly);
+		processPacket(&stream);
 	}
 }
 
-void ZandronumRConProtocol::processPacket(const char *data, int length, bool initial, int maxUpdates, int *pos)
+void ZandronumRConProtocol::processPacket(QIODevice* ioDevice, bool initial, int maxUpdates)
 {
-	if(length <= 0)
-		return;
+	// QIODevice is assumed to be already opened at this point.
+	QDataStream dataStream(ioDevice);
+	dataStream.setByteOrder(QDataStream::LittleEndian);
+	DataStreamOperatorWrapper in(&dataStream);
 
-	int position = 0;
-	while(position < length && maxUpdates-- != 0)
+	while(in.hasRemaining() && maxUpdates-- != 0)
 	{
 		// Determine how we get to the update.
 		int update = 0;
 		if(initial)
 			update = SVRC_UPDATE;
 		else
-			update = data[position++];
+			update = in.readQUInt8();
 
 		switch(update)
 		{
 			default:
-				qDebug() << "Unknown update (" << static_cast<int> (data[position-1]) << ")";
-				if(pos != NULL)
-					*pos = position;
+				qDebug() << "Unknown update (" << update << ")";
 				return;
 			case SVRC_INVALIDPASSWORD:
 				emit invalidPassword();
@@ -826,60 +832,56 @@ void ZandronumRConProtocol::processPacket(const char *data, int length, bool ini
 			case SVRC_LOGGEDIN:
 			{
 				connect(&socket, SIGNAL( readyRead() ), this, SLOT( packetReady() ));
-				serverProtocolVersion = data[1];
-				hostName = QString(&data[2]);
+				serverProtocolVersion = in.readQUInt8();
+				hostName = in.readRawUntilByte('\0');
 				emit serverNameChanged(hostName);
-				int numUpdates = data[hostName.length() + 3];
-				int position = 0;
-				processPacket(data + hostName.length() + 4, length - hostName.length() - 4, true, numUpdates, &position);
-				position += hostName.length() + 4;
-				int numStrings = data[position++];
+				
+				int numUpdates = in.readQUInt8();
+				
+				processPacket(ioDevice, true, numUpdates);
+				
+				int numStrings = in.readQUInt8();
 				while(numStrings-- > 0)
 				{
-					QString message(&data[position]);
-					position += message.length() + 1;
+					QString message = in.readRawUntilByte('\0');
 					emit messageReceived(message.trimmed());
 				}
 				break;
 			}
 			case SVRC_MESSAGE:
 			{
-				QString message = QDateTime::currentDateTime().toString("[hh:mm:ss ap] ") + QString(&data[position]);
-				position += message.length() + 1;
+				QString message = QDateTime::currentDateTime().toString("[hh:mm:ss ap] ") + in.readRawUntilByte('\0');
 				emit messageReceived(message);
 				break;
 			}
 			case SVRC_UPDATE:
-				switch(data[position++])
+				int updateType = in.readQUInt8();
+				switch(updateType)
 				{
 					default:
-						qDebug() << "Uknown streamlined update (" << static_cast<int> (data[position-1]) << ")";
-						if(pos != NULL)
-							*pos = position;
+						qDebug() << "Uknown streamlined update (" << update << ")";
 						return;
 					case SVRCU_MAP:
 					{
-						QString map = QString(&data[position]);
-						position += map.length() + 1;
+						QString map = in.readRawUntilByte('\0');
 						break;
 					}
 					case SVRCU_ADMINCOUNT:
 					{
 						// Unused:
-						// int admins = data[position++];
+						// int admins = in.readQUint8();
 						// !!! MAKE SURE to remove the line below if line above
 						// is uncommented!
-						position++;
+						in.skipRawData(1);
 						break;
 					}
 					case SVRCU_PLAYERDATA:
 					{
-						int players = data[position++];
+						int players = in.readQUInt8();
 						this->players.clear();
 						while(players-- > 0)
 						{
-							QString player(&data[position]);
-							position += player.length() + 1;
+							QString player = in.readRawUntilByte('\0');
 							this->players.append(Player(player, 0, 0));
 						}
 						emit playerListUpdated();
@@ -889,8 +891,6 @@ void ZandronumRConProtocol::processPacket(const char *data, int length, bool ini
 				break;
 		}
 	}
-	if(pos != NULL)
-		*pos = position;
 }
 
 RConProtocol *ZandronumServer::rcon()

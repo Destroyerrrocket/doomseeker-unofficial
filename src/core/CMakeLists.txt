@@ -274,6 +274,7 @@ set(SOURCE_FILES
 	commandline.cpp
 	customservers.cpp
 	datapaths.cpp
+	datastreamoperatorwrapper.cpp
 	doomseekerfilepaths.cpp
 	log.cpp
 	main.cpp
@@ -339,6 +340,7 @@ set(HEADER_FILES
 	apprunner.h
 	commandline.h
 	datapaths.h
+	datastreamoperatorwrapper.h
 	doomseekerfilepaths.h
 	global.h
 	main.h

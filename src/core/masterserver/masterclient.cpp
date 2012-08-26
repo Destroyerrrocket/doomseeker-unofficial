@@ -92,6 +92,11 @@ void MasterClient::notifyDelay()
 	emit message(engineName(), tr("Could not fetch a new server list from the master because not enough time has past."), true);
 }
 
+void MasterClient::notifyError()
+{
+	emit message(engineName(), tr("Bad response from master server."), true);
+}
+
 void MasterClient::notifyUpdate()
 {
 	emit message(engineName(), tr("Could not fetch a new server list.  The protocol you are using is too old.  An update may be available."), true);

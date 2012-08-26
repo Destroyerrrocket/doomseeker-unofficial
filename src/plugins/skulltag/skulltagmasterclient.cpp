@@ -20,10 +20,13 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
-
+#include <QBuffer>
+#include <QByteArray>
+#include <QDataStream>
 #include <QUdpSocket>
 
 #include "global.h"
+#include "datastreamoperatorwrapper.h"
 #include "huffman/huffman.h"
 #include "skulltagengineplugin.h"
 #include "skulltagmasterclient.h"
@@ -40,6 +43,15 @@
 #define MASTER_RESPONSE_BEGINPART		6
 #define MASTER_RESPONSE_ENDPART			7
 #define MASTER_RESPONSE_SERVERBLOCK		8
+
+#define RETURN_BAD_IF_NOT_ENOUGH_DATA(min_amout_of_data_required) \
+{ \
+	if (in.remaining() < (min_amout_of_data_required)) \
+	{ \
+		notifyError(); \
+		return false; \
+	} \
+} 
 
 SkulltagMasterClient::SkulltagMasterClient() : MasterClient()
 {
@@ -65,13 +77,33 @@ bool SkulltagMasterClient::readMasterResponse(QByteArray &data)
 {
 	bool expectingMorePackets = false;
 
-	const char* in = data.data();
-	char packetOut[2000];
-	int out = 2000;
-	HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (in), reinterpret_cast<unsigned char*>(packetOut), data.size(), &out);
-
+	const char* packetEncoded = data.data();
+	int packetDecodedSize = 2000 + data.size();
+	char* packetDecoded = new char[packetDecodedSize];
+	
+	HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (packetEncoded), 
+		reinterpret_cast<unsigned char*>(packetDecoded), 
+		data.size(), &packetDecodedSize);
+	
+	if (packetDecodedSize <= 0)
+	{
+		delete[] packetDecoded;
+		notifyError();
+		return false;
+	}	
+	
+	QByteArray packetDecodedByteArray(packetDecoded, packetDecodedSize);
+	delete[] packetDecoded;
+	
+	QBuffer ioBuffer(&packetDecodedByteArray);
+	ioBuffer.open(QIODevice::ReadOnly);
+	QDataStream inStream(&ioBuffer);
+	inStream.setByteOrder(QDataStream::LittleEndian);
+	DataStreamOperatorWrapper in(&inStream);
+	
 	// Check the response code
-	int response = READINT32(&packetOut[0]);
+	RETURN_BAD_IF_NOT_ENOUGH_DATA(4);
+	int response = in.readQInt32();
 	if(response == MASTER_RESPONSE_BANNED)
 	{
 		notifyBanned();
@@ -96,28 +128,47 @@ bool SkulltagMasterClient::readMasterResponse(QByteArray &data)
 	{
 
 	}
-	int packetNum = READINT8(&packetOut[4]);
+	RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+	int packetNum = in.readQUInt8();
 	if(packetNum+1 > numPackets) // Packet numbers start at 0
 		numPackets = packetNum+1;
 
-	quint8 firstByte = READINT8(&packetOut[5]);
-	int pos = 6;
+	RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+	quint8 firstByte = in.readQUInt8();
 	if(firstByte != MASTER_RESPONSE_ENDPART && firstByte != MASTER_RESPONSE_END)
 	{
-		unsigned int numServersInBlock = 0;
-		while((numServersInBlock = READINT8(&packetOut[pos++])) != 0)
+		unsigned int numServersInBlock = in.readQUInt8();
+		while(numServersInBlock != 0)
 		{
+			RETURN_BAD_IF_NOT_ENOUGH_DATA(4 + 2); // ip + port
+			
+			// [Zalewa] Remember: it's a very bad idea to pass reads
+			// directly to funtion calls because function calls are
+			// resolved in reverse order (in MSVC at least).
+			quint8 ip1 = in.readQUInt8();
+			quint8 ip2 = in.readQUInt8();
+			quint8 ip3 = in.readQUInt8();
+			quint8 ip4 = in.readQUInt8();
+			
 			QString ip = QString("%1.%2.%3.%4").
-					arg(static_cast<quint8> (packetOut[pos]), 1, 10, QChar('0')).arg(static_cast<quint8> (packetOut[pos+1]), 1, 10, QChar('0')).arg(static_cast<quint8> (packetOut[pos+2]), 1, 10, QChar('0')).arg(static_cast<quint8> (packetOut[pos+3]), 1, 10, QChar('0'));
-			pos += 4;
+					arg(ip1, 1, 10, QChar('0')).
+					arg(ip2, 1, 10, QChar('0')).
+					arg(ip3, 1, 10, QChar('0')).
+					arg(ip4, 1, 10, QChar('0'));
+
 			for(unsigned int i = 0;i < numServersInBlock;i++)
 			{
-				SkulltagServer *server = new SkulltagServer(QHostAddress(ip), READINT16(&packetOut[pos]));
+				quint16 port = in.readQUInt16();
+				SkulltagServer *server = new SkulltagServer(QHostAddress(ip), 
+					port);
 				servers.push_back(server);
-				pos += 2;
 			}
+			
+			RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+			numServersInBlock = in.readQUInt8();
 		}
-		firstByte = READINT8(&packetOut[pos++]);
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		firstByte = in.readQUInt8();
 	}
 
 	if(firstByte == MASTER_RESPONSE_END)
