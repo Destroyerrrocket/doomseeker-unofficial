@@ -76,6 +76,24 @@ class MAIN_EXPORT DataStreamOperatorWrapper
 		double readDouble();
 		
 		/**
+		 * @brief Reads specified amount of raw bytes.
+		 *
+		 * @param length
+		 *     Amount of bytes to read.
+		 * @return QByteArray of read bytes.
+		 */
+		QByteArray readRaw(qint64 length);
+		
+		/**
+		 * @brief Reads all remaining raw bytes.
+		 *
+		 * This calls QIODevice::readAll() directly.
+		 *
+		 * @return QByteArray of read bytes.
+		 */
+		QByteArray readRawAll();
+		
+		/**
 		 * @brief This method calls Strings::readUntilByte() .
 		 */
 		QByteArray readRawUntilByte(char stopByte);

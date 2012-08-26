@@ -20,13 +20,15 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
-
+#include <QBuffer>
+#include <QDataStream>
 #include <QHostInfo>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QMutex>
 #include <QWaitCondition>
 
+#include "datastreamoperatorwrapper.h"
 #include "global.h"
 #include "version.h"
 #include "zdaemonengineplugin.h"
@@ -115,13 +117,21 @@ const EnginePlugin* ZDaemonMasterClient::plugin() const
 
 bool ZDaemonMasterClient::readMasterResponse(QByteArray &data)
 {
-	const char* in = data.data();
-	if(READINT32(in) == RESPONSE_KEY)
+	QBuffer ioBuffer(&data);
+	ioBuffer.open(QIODevice::ReadOnly);
+	QDataStream inStream(&ioBuffer);
+	inStream.setByteOrder(QDataStream::LittleEndian);
+	DataStreamOperatorWrapper in(&inStream);
+
+	quint32 responseType = in.readQUInt32();
+	if(responseType == RESPONSE_KEY)
 	{
+		in.skipRawData(4);
 		static char requestHeader[12] = { 0x36, 0xdb, 0x0b, 0x00, 0x6c, 0x00, 0x00, 0x00, 0x33,0x66,0xaa,0x6c };
-		key = &in[8];
+		key = in.readRawUntilByte('\0');
 		QByteArray request(requestHeader, 8);
-		request.push_back(QByteArray(key.toAscii().constData(), key.length()+1));
+		request.push_back(QByteArray(key.toAscii().constData(), key.toAscii().length()));
+		request.push_back('\0');
 		request.push_back(QByteArray(requestHeader+8, 4));
 		pGlobalUdpSocket->writeDatagram(request, address, port);
 
@@ -129,56 +139,80 @@ bool ZDaemonMasterClient::readMasterResponse(QByteArray &data)
 		packetMask = 0; // Keep track of what packet #s we recieved.
 		return false;
 	}
-	else if(READINT32(in) == RESPONSE_LIST)
+	else if(responseType == RESPONSE_LIST)
 	{
-		quint8 numPackets = in[8]; // Not to sure about this actually.
-		quint32 expectedSize = READINT32(&in[9]);
-		quint8 packetNumber = in[25];
+		in.skipRawData(4);
+		quint8 numPackets = in.readQUInt8(); // Not to sure about this actually.
+		quint32 expectedSize = in.readQUInt32();
+		in.skipRawData(12);
+		quint8 packetNumber = in.readQUInt8();
 		packetMask |= 1<<packetNumber;
-		quint32 packetPosition = READINT32(&in[26]);
+		quint32 packetPosition = in.readQUInt32();
 		if(packetBuffer.size() == 0)
 		{
-			char compressionHeader[4] = { in[33], in[32], in[31], in[30] }; // To big endian for Qt
+			char compressionHeader[4]; 
+			
+			// To big endian for Qt
+			for (int i = 3; i >= 0; --i)
+			{
+				compressionHeader[i] = in.readQInt8();
+			}
+			
 			QByteArray compressedData(compressionHeader, 4);
 			packetBuffer.push_back(compressionHeader);
 		}
-		packetBuffer.insert(packetPosition+4, QByteArray(&in[34], data.size()-34));
+		QByteArray compressedRawData = in.readRawAll();
+		packetBuffer.insert(packetPosition+4, compressedRawData);
+		
 		if(packetBuffer.size() != expectedSize+4 || packetMask != ((1<<numPackets)-1))
 			return false;
 
+		// Perform zlib uncompression.
 		QByteArray uncompressedData = qUncompress(packetBuffer);
-		const char* serverList = uncompressedData.data();
-		int pos = 0;
+		QBuffer ioBufferUncompressed(&uncompressedData);
+		ioBufferUncompressed.open(QIODevice::ReadOnly);
+		QDataStream inStreamUncompressed(&ioBufferUncompressed);
+		inStreamUncompressed.setByteOrder(QDataStream::LittleEndian);
+		DataStreamOperatorWrapper inUncompressed(&inStreamUncompressed);
+
 		quint8 next = 0;
 		quint8 lastIP = 0;
 		bool secondRound = false; // I have no idea why this needs to be done...
 		do
 		{
-			quint8 nextIP = serverList[pos];
+			quint8 nextIP = inUncompressed.readQUInt8();
 			if(nextIP < lastIP)
 				secondRound = true;
 			lastIP = nextIP;
+			
+			quint8 ip2 = inUncompressed.readQUInt8();
+			quint8 ip3 = inUncompressed.readQUInt8();
+			quint8 ip4 = inUncompressed.readQUInt8();
+			
 			QString ip = QString("%1.%2.%3.%4").
-				arg(nextIP, 1, 10, QChar('0')).arg(static_cast<quint8> (serverList[pos+1]), 1, 10, QChar('0')).arg(static_cast<quint8> (serverList[pos+2]), 1, 10, QChar('0')).arg(static_cast<quint8> (serverList[pos+3]), 1, 10, QChar('0'));
-			pos += 4;
+				arg(nextIP, 1, 10, QChar('0')).
+				arg(ip2, 1, 10, QChar('0')).
+				arg(ip3, 1, 10, QChar('0')).
+				arg(ip4, 1, 10, QChar('0'));
 			do
 			{
 				if(secondRound)
-					pos += 2;
+					inUncompressed.skipRawData(2);
 
-				ZDaemonServer *server = new ZDaemonServer(QHostAddress(ip), READINT16(&serverList[pos]));
+				quint16 port = inUncompressed.readQUInt16();
+				ZDaemonServer *server = new ZDaemonServer(QHostAddress(ip), port);
 				servers.push_back(server);
 				//qDebug() << QString("%1:%2").arg(ip).arg(READINT16(&serverList[pos]));
 
-				pos += 2;
-				next = serverList[pos++];
+				next = inUncompressed.readQUInt8();
 			} // 3 and 4 mean exp server.
-			while((next&1) != 1 && pos < uncompressedData.size());
+			while((next&1) != 1 && inUncompressed.hasRemaining());
 		}
-		while(pos < uncompressedData.size());
+		while(inUncompressed.hasRemaining());
 	}
 	else
 	{
+		qDebug() << "Notify banned";
 		notifyBanned(); // Uhh not sure?
 		return false;
 	}

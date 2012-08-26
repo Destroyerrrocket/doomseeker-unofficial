@@ -20,13 +20,15 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
-
+#include <QBuffer>
+#include <QDataStream>
 #include <QTime>
 
 #include "zdaemongameinfo.h"
 #include "zdaemongamerunner.h"
 #include "zdaemonengineplugin.h"
 #include "zdaemonserver.h"
+#include "datastreamoperatorwrapper.h"
 #include "main.h"
 #include "serverapi/playerslist.h"
 
@@ -66,44 +68,46 @@ const EnginePlugin* ZDaemonServer::plugin() const
 
 Server::Response ZDaemonServer::readRequest(QByteArray &data)
 {
-	const char* in = data.data();
-
-	if(READINT32(&in[0]) != SERVER_RESPONSE)
+	QBuffer ioBuffer(&data);
+	ioBuffer.open(QIODevice::ReadOnly);
+	QDataStream inStream(&ioBuffer);
+	inStream.setByteOrder(QDataStream::LittleEndian);
+	DataStreamOperatorWrapper in(&inStream);
+	
+	quint32 magicNumber = in.readQUInt32();
+	if(magicNumber != SERVER_RESPONSE)
 		return RESPONSE_BAD;
 
-	int protoVersion = READINT32(&in[4]);
-	int time = READINT32(&in[8]);
+	int protoVersion = in.readQUInt32();
+	int time = in.readQUInt32();
+	
+	in.skipRawData(3);
 
-	int pos = 15;
-	serverName = QString(&in[pos]);
-	pos += serverName.length() + 1;
+	serverName = in.readRawUntilByte('\0');
 
 	players->clear();
-	int numClients = in[pos++];
-	maxClients = in[pos++];
+	int numClients = in.readQUInt8();
+	maxClients = in.readQUInt8();
 
-	mapName = QString(&in[pos]);
-	pos += mapName.length() + 1;
+	mapName = in.readRawUntilByte('\0');
 
 	wads.clear();
-	int numwads = in[pos++];
+	int numwads = in.readQUInt8();
 	for(int i = 0;i < numwads;i++)
 	{
-		QString wadFile(&in[pos]);
-		pos += wadFile.length()+1;
-		char optional = in[pos++];
+		QString wadFile = in.readRawUntilByte('\0');
+		char optional = in.readQUInt8();
 		if(protoVersion == 1)
 		{
-			QString tmp(&in[pos]);
-			pos += tmp.length()+1;
+			in.readRawUntilByte('\0');
 		}
 		else
 		{
 			QString tmp;
 			do
 			{
-				tmp = QString(&in[pos+16]);
-				pos += tmp.length()+17;
+				in.skipRawData(16);
+				tmp = in.readRawUntilByte('\0');
 			}
 			while(tmp[0] != '\0');
 		}
@@ -111,36 +115,30 @@ Server::Response ZDaemonServer::readRequest(QByteArray &data)
 		wads << PWad(wadFile, optional != 0);
 	}
 
-	int gameMode = in[pos++];
+	int gameMode = in.readQUInt8();
 	if(gameMode >= 0 && gameMode < ZDaemonGameInfo::gameModes()->size())
 		currentGameMode = (*ZDaemonGameInfo::gameModes())[gameMode];
-	QString gameName(&in[pos]);
-	pos += gameName.length()+1;
-	iwad = QString(&in[pos]);
-	pos += iwad.length()+1;
+	QString gameName = in.readRawUntilByte('\0');
+	iwad = in.readRawUntilByte('\0');
 	if(protoVersion == 1)
 	{
-		QString tmp(&in[pos]);
-		pos += tmp.length()+1;
+		in.readRawUntilByte('\0');
 	}
 	else
 	{
 		QString tmp;
 		do
 		{
-			tmp = QString(&in[pos+16]);
-			pos += tmp.length()+17;
+			in.skipRawData(16);
+			tmp = in.readRawUntilByte('\0');
 		}
 		while(tmp[0] != '\0');
 	}
 
-	skill = in[pos++];
+	skill = in.readQUInt8();
 
-	webSite = QString(&in[pos]);
-	pos += webSite.length()+1;
-
-	email = QString(&in[pos]);
-	pos += email.length()+1;
+	webSite = in.readRawUntilByte('\0');
+	email = in.readRawUntilByte('\0');
 
 	// [BL] OK we might need to do something about how much can be copy and
 	//      pasted between plugins...
@@ -150,8 +148,7 @@ Server::Response ZDaemonServer::readRequest(QByteArray &data)
 	// Read each dmflags section separately.
 	for (int i = 0; i < 2; ++i)
 	{
-		unsigned int dmflags = READINT32(&in[pos]);
-		pos += 4;
+		unsigned int dmflags = in.readQUInt32();
 
 		const DMFlagsSection& zdaemonFlagsSection = *zdaemonFlags[i];
 		DMFlagsSection* dmFlagsSection = new DMFlagsSection();
@@ -170,52 +167,54 @@ Server::Response ZDaemonServer::readRequest(QByteArray &data)
 		dmFlags << dmFlagsSection;
 	}
 
-	locked = in[pos++];
-	int acl = in[pos++];
-	//int numPlayers = in[pos++];
-	pos++;
-	maxPlayers = in[pos++];
-	serverTimeLimit = READINT16(&in[pos]);
-	serverTimeLeft = READINT16(&in[pos+2]);
-	serverScoreLimit = READINT16(&in[pos+4]);
+	locked = in.readQUInt8();
+	int acl = in.readQUInt8();
+	//int numPlayers = in.readQUInt8();
+	in.skipRawData(1);
+	maxPlayers = in.readQUInt8();
+	serverTimeLimit = in.readQInt16();
+	serverTimeLeft = in.readQInt16();
+	serverScoreLimit = in.readQInt16();
 	if(protoVersion == 1)
-		pos += 17;
+		in.skipRawData(11);
 	else
-		pos += 20;
+		in.skipRawData(14);
 
-	serverVersion = QString(&in[pos]);
-	pos += serverVersion.length()+5;
+	serverVersion = in.readRawUntilByte('\0');
+	in.skipRawData(4);
 
 	for(int i = 0;i < numClients;i++)
 	{
-		QString name(&in[pos]);
-		pos += name.length()+1;
+		QString name = in.readRawUntilByte('\0');
 
-		int score = READINT16(&in[pos]);
-		int ping = READINT16(&in[pos+4]);
-		int time = READINT16(&in[pos+6]);
-		bool isBot = in[pos+8] != 0;
-		bool isSpectator = in[pos+9] != 0;
-		int team = in[pos+10];
+		int score = in.readQUInt16();
+		in.skipRawData(2);
+		int ping = in.readQUInt16();
+		int time = in.readQUInt16();
+		bool isBot = in.readQUInt8() != 0;
+		bool isSpectator = in.readQUInt8() != 0;
+		int team = in.readQUInt8();
 		if(team >= 4 || !currentGameMode.isTeamGame())
 			team = Player::TEAM_NONE;
 		Player player(name, score, ping, static_cast<Player::PlayerTeam> (team), isSpectator, isBot);
 		*players << player;
-		pos += 13;
+		in.skipRawData(3);
 	}
 
-	int numTeams = READINT8(&in[pos++]);
+	int numTeams = in.readQUInt8();
 	if(numTeams >= 2)
 	{
-		serverScoreLimit = READINT16(&in[pos+1]);
-		pos += 6;
+		// The skipRawData(1) below may need to be above the if statement, 
+		// actually.
+		in.skipRawData(1);
+		serverScoreLimit = in.readQInt16();
+		in.skipRawData(3);
 		for(int i = 0;i < ZD_MAX_TEAMS;i++)
 		{
-			teamInfo[i].setName(tr(&in[pos]));
-			pos += teamInfo[i].name().length() + 1;
-			teamInfo[i].setColor(READINT32(&in[pos]));
-			teamInfo[i].setScore(READINT16(&in[pos+4]));
-			pos += 6;
+			QByteArray tmp = in.readRawUntilByte('\0');
+			teamInfo[i].setName(tr(tmp.constData()));
+			teamInfo[i].setColor(in.readQUInt32());
+			teamInfo[i].setScore(in.readQUInt16());
 		}
 	}
 

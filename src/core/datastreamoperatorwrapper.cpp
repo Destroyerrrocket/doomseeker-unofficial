@@ -91,6 +91,16 @@ double DataStreamOperatorWrapper::readDouble()
 	RETTYPE(double);
 }
 
+QByteArray DataStreamOperatorWrapper::readRaw(qint64 length)
+{
+	return s->device()->read(length);
+}
+
+QByteArray DataStreamOperatorWrapper::readRawAll()
+{
+	return s->device()->readAll();
+}
+
 QByteArray DataStreamOperatorWrapper::readRawUntilByte(char stopByte)
 {
 	return Strings::readUntilByte(*s, stopByte);
