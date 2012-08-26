@@ -48,7 +48,7 @@ class ZandronumMasterClient : public MasterClient
 		/// This is used as a marker to determine if we have an accurate reading for numPackets.
 		bool					readLastPacket;
 		int						numPackets;
-		int						numPacketsRead;
+		unsigned int			packetsRead;
 };
 
 #endif
