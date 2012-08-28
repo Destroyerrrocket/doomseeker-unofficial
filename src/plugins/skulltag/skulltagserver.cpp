@@ -806,6 +806,8 @@ void SkulltagRConProtocol::packetReady()
 
 void SkulltagRConProtocol::processPacket(QIODevice* ioDevice, bool initial, int maxUpdates)
 {
+	static const QRegExp colorCode("(\\\\c|\034)(\\[[a-zA-Z0-9]*\\]|[a-v+\\-!*])");
+
 	// QIODevice is assumed to be already opened at this point.
 	QDataStream dataStream(ioDevice);
 	dataStream.setByteOrder(QDataStream::LittleEndian);
@@ -843,6 +845,7 @@ void SkulltagRConProtocol::processPacket(QIODevice* ioDevice, bool initial, int 
 				while(numStrings-- > 0)
 				{
 					QString message = in.readRawUntilByte('\0');
+					message.remove(colorCode);
 					emit messageReceived(message.trimmed());
 				}
 				break;
@@ -850,6 +853,7 @@ void SkulltagRConProtocol::processPacket(QIODevice* ioDevice, bool initial, int 
 			case SVRC_MESSAGE:
 			{
 				QString message = QDateTime::currentDateTime().toString("[hh:mm:ss ap] ") + in.readRawUntilByte('\0');
+				message.remove(colorCode);
 				emit messageReceived(message);
 				break;
 			}
