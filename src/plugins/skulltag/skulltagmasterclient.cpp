@@ -75,8 +75,6 @@ const EnginePlugin* SkulltagMasterClient::plugin() const
 
 bool SkulltagMasterClient::readMasterResponse(QByteArray &data)
 {
-	bool expectingMorePackets = false;
-
 	const char* packetEncoded = data.data();
 	int packetDecodedSize = 2000 + data.size();
 	char* packetDecoded = new char[packetDecodedSize];
@@ -122,14 +120,12 @@ bool SkulltagMasterClient::readMasterResponse(QByteArray &data)
 	else if(response != MASTER_RESPONSE_BEGINPART)
 		return false;
 
-	// if we are not waiting for packets then this is probably the first time
-	// the function was executed.  So store the number of packets.
-	if(!expectingMorePackets)
-	{
-
-	}
 	RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
 	int packetNum = in.readQUInt8();
+	if(!(packetsRead & (1<<packetNum))) // Set flag if we haven't read this packet
+		packetsRead |= 1<<packetNum;
+	else // Already read packet so ignore it.
+		return true;
 	if(packetNum+1 > numPackets) // Packet numbers start at 0
 		numPackets = packetNum+1;
 
@@ -173,17 +169,12 @@ bool SkulltagMasterClient::readMasterResponse(QByteArray &data)
 
 	if(firstByte == MASTER_RESPONSE_END)
 		readLastPacket = true;
-	if(readLastPacket)
-		expectingMorePackets = (++numPacketsRead < numPackets);
-	else
+	if(readLastPacket) // See if we read every packet.
 	{
-		expectingMorePackets = true;
-		numPacketsRead++;
-	}
-
-	if (!expectingMorePackets)
-	{
-		emit listUpdated();
+		if(packetsRead == (1<<numPackets)-1);
+		{
+			emit listUpdated();
+		}
 	}
 
 	return true;
@@ -195,7 +186,7 @@ void SkulltagMasterClient::refresh()
 	emptyServerList();
 	readLastPacket = false;
 	numPackets = 0;
-	numPacketsRead = 0;
+	packetsRead = 0;
 
 	MasterClient::refresh();
 }
