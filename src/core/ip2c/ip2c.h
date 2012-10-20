@@ -73,6 +73,10 @@ class MAIN_EXPORT IP2C : public QObject
 				}
 		};
 
+		const QPixmap				flagLan;
+		const QPixmap				flagLocalhost;
+		const QPixmap				flagUnknown;
+
 		IP2C();
 		~IP2C();
 
@@ -83,6 +87,8 @@ class MAIN_EXPORT IP2C : public QObject
 		 *	Makes sure the database is sorted in ascending order.
 		 */
 		void			appendEntryToDatabase(const IP2CData& entry);
+
+		const QPixmap&	flag(const QString& countryShortName);
 
 		bool			isDataAccessLocked() const
 		{
@@ -118,8 +124,6 @@ class MAIN_EXPORT IP2C : public QObject
 		}
 
 	protected:
-		const QPixmap&	flag(unsigned int ipaddress, const QString& countryShortName);
-
 		inline bool		isLANAddress(unsigned ipv4Address)
 		{
 			const static unsigned LAN_1_BEGIN = QHostAddress("10.0.0.0").toIPv4Address();
@@ -155,9 +159,6 @@ class MAIN_EXPORT IP2C : public QObject
 		bool						bDataAccessLocked;
 		QMutex						dataAccessMutex;
 		QList<IP2CData>				database;
-		const QPixmap				flagLan;
-		const QPixmap				flagLocalhost;
-		const QPixmap				flagUnknown;
 		QHash<QString, QPixmap>		flags;
 		const IP2CData				invalidData;
 };

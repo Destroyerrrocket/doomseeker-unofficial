@@ -68,7 +68,7 @@ void IP2C::appendEntryToDatabase(const IP2CData& entry)
 	}
 }
 
-const QPixmap &IP2C::flag(unsigned int ipaddress, const QString& countryShortName)
+const QPixmap &IP2C::flag(const QString& countryShortName)
 {
 	if (flags.contains(countryShortName))
 	{
@@ -153,6 +153,6 @@ IP2CCountryInfo IP2C::obtainCountryInfo(unsigned int ipaddress)
 		return IP2CCountryInfo();
 	}
 
-	const QPixmap* pFlag = &flag(ipaddress, data.country);
+	const QPixmap* pFlag = &flag(data.country);
 	return IP2CCountryInfo(pFlag, data.countryFullName);
 }

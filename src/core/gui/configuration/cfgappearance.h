@@ -42,6 +42,9 @@ class CFGAppearance : public ConfigurationBaseBox, private Ui::CFGAppearance
 
 	protected:
 		void							saveSettings();
+
+	private:
+		void initLanguagesList();
 };
 
 #endif /* __CFG_APPEARANCE_H__ */

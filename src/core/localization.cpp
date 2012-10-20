@@ -23,13 +23,13 @@ class Localization::LocalizationLoader
 		LocalizationLoader() {};
 		
 		QList<LocalizationInfo> loadLocalizationsList(const QStringList& definitionsFileSearchDirs);
-	
+
 	private:
 		QList<LocalizationInfo> localizations;
-		
+
 		void loadLocalizationsListFile(const QString& definitionsFilePath);
 		void loadLocalizationsListFile(QIODevice& io);
-		
+
 		/**
 		 * @brief Reads version information from definition file.
 		 *
@@ -37,7 +37,14 @@ class Localization::LocalizationLoader
 		 * Proper version number is greater than zero.
 		 */
 		int obtainVersion(QIODevice& io);
+
+		void sort();
 };
+
+bool localizationInfoLessThan(const LocalizationInfo &o1, const LocalizationInfo &o2)
+{
+	return o1.localeName.toLower() < o2.localeName.toLower();
+}
 
 QList<LocalizationInfo> Localization::loadLocalizationsList(const QStringList& definitionsFileSearchDirs)
 {
@@ -81,6 +88,7 @@ QList<LocalizationInfo> Localization::LocalizationLoader::loadLocalizationsList(
 	{
 		loadLocalizationsListFile(dirPath);
 	}
+	sort();
 	return localizations;
 }
 
@@ -164,4 +172,9 @@ int Localization::LocalizationLoader::obtainVersion(QIODevice& io)
 		}
 	}
 	return version;
+}
+
+void Localization::LocalizationLoader::sort()
+{
+	qSort(localizations.begin(), localizations.end(), localizationInfoLessThan);
 }

@@ -24,6 +24,9 @@
 #include "cfgappearance.h"
 #include <QColorDialog>
 #include <QSystemTrayIcon>
+#include "localization.h"
+#include "log.h"
+#include "main.h"
 
 CFGAppearance::CFGAppearance(QWidget *parent) 
 : ConfigurationBaseBox(parent)
@@ -31,8 +34,26 @@ CFGAppearance::CFGAppearance(QWidget *parent)
 	setupUi(this);
 }
 
+void CFGAppearance::initLanguagesList()
+{
+	const QList<LocalizationInfo>& localizations = Main::localizations;
+	foreach (const LocalizationInfo& obj, localizations)
+	{
+		const QString& flagName = obj.countryCodeName;
+		const QString& translationName = obj.localeName;
+		const QString& displayName = obj.niceName;
+		
+		QPixmap flag = Main::ip2c->flag(flagName);
+		cboLanguage->addItem(flag, displayName, translationName);
+	}
+}
+
 void CFGAppearance::readSettings()
 {
+	if (cboLanguage->count() == 0)
+	{
+		initLanguagesList();
+	}
 	slotStyle->setCurrentIndex(gConfig.doomseeker.slotStyle);
 
 	btnCustomServersColor->setColorHtml(gConfig.doomseeker.customServersColor);
@@ -60,6 +81,22 @@ void CFGAppearance::readSettings()
 	// list to refresh.  It also doesn't fit into any of the other existing
 	// categories at this time.
 	cbBotsNotPlayers->setChecked(gConfig.doomseeker.bBotsAreNotPlayers);
+	
+	// Set language.
+	int idxLanguage = cboLanguage->findData(gConfig.doomseeker.localization);
+	if (idxLanguage >= 0)
+	{
+		cboLanguage->setCurrentIndex(idxLanguage);
+	}
+	else
+	{
+		// Display that there is something wrong.
+		QString name = gConfig.doomseeker.localization;
+		const QPixmap& icon = Main::ip2c->flagUnknown;
+		QString str = tr("Unknown language definition \"%1\"").arg(name);
+		cboLanguage->addItem(icon, str, name);
+		cboLanguage->setCurrentIndex(cboLanguage->count() - 1);
+	}
 }
 
 void CFGAppearance::saveSettings()
@@ -71,6 +108,15 @@ void CFGAppearance::saveSettings()
 	gConfig.doomseeker.bBotsAreNotPlayers = cbBotsNotPlayers->isChecked();
 	gConfig.doomseeker.bHidePasswords = cbHidePasswords->isChecked();
 	gConfig.doomseeker.bLookupHosts = cbLookupHosts->isChecked();
+	QString localization = cboLanguage->itemData(cboLanguage->currentIndex()).toString();
+	if (localization != gConfig.doomseeker.localization)
+	{
+		// Translation may be strenuous so do it only if the selected
+		// value actually changed.
+		gConfig.doomseeker.localization = localization;
+		gLog << tr("Loading translation \"%1\"").arg(localization);
+		Localization::loadTranslation(localization);
+	}
 
 	emit appearanceChanged();
 }
