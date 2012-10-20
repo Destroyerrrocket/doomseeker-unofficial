@@ -39,6 +39,7 @@
 #include "irc/configuration/ircconfig.h"
 #include "serverapi/server.h"
 #include "doomseekerfilepaths.h"
+#include "localization.h"
 #include "log.h"
 #include "main.h"
 #include "plugins/engineplugin.h"
@@ -52,16 +53,18 @@ const QString		Main::DOOMSEEKER_INI_FILENAME = "doomseeker.ini";
 const QString		Main::DOOMSEEKER_IRC_INI_FILENAME = "doomseeker-irc.ini";
 const QString		Main::IP2C_FILENAME = "IpToCountry.csv";
 
+QApplication*		Main::application = NULL;
 DataPaths*			Main::dataPaths;
 PluginLoader* 		Main::enginePlugins = NULL;
 IP2C*				Main::ip2c = NULL;
+QList<LocalizationInfo> Main::localizations;
 QWidget*			Main::mainWindow = NULL;
 RefreshingThread*	Main::refreshingThread = RefreshingThread::createRefreshingThread();
 bool				Main::running = true;
 QString				Main::workingDirectory = "./";
 
 Main::Main(int argc, char* argv[])
-: application(NULL), arguments(argv), argumentsCount(argc),
+: arguments(argv), argumentsCount(argc),
   startRcon(false)
 {
 	bIsFirstRun = false;
@@ -102,6 +105,7 @@ Main::~Main()
 	if (application != NULL)
 	{
 		delete application;
+		application = NULL;
 	}
 
 	if (dataPaths != NULL)
@@ -162,12 +166,13 @@ int Main::run()
 		return runTestMode();
 	}
 
+	initMainConfig();
+	initLocalizationsDefinitions();
 	int ip2cReturn = initIP2C();
 
-	initMainConfig();
 	initPluginConfig();
 	initIRCConfig();
-
+	
 	if (startRcon)
 	{
 		if (!createRemoteConsole())
@@ -333,6 +338,25 @@ void Main::initIRCConfig()
 	if (gIRCConfig.setIniFile(filePath))
 	{
 		gIRCConfig.readFromFile();
+	}
+}
+
+void Main::initLocalizationsDefinitions()
+{
+	gLog << tr("Loading translations definitions");
+	localizations = Localization::loadLocalizationsList(
+		DataPaths::staticDataSearchDirs(DataPaths::TRANSLATIONS_DIR_NAME));
+		
+	QString localization = gConfig.doomseeker.localization;
+	gLog << tr("Loading translation \"%1\".").arg(localization);
+	bool bSuccess = Localization::loadTranslation(localization);
+	if (bSuccess)
+	{
+		gLog << tr("Translation loaded.");
+	}
+	else
+	{
+		gLog << tr("Failed to load translation.");
 	}
 }
 

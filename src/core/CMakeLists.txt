@@ -276,6 +276,8 @@ set(SOURCE_FILES
 	datapaths.cpp
 	datastreamoperatorwrapper.cpp
 	doomseekerfilepaths.cpp
+	localization.cpp
+	localizationinfo.cpp
 	log.cpp
 	main.cpp
 	pathfinder.cpp
@@ -343,6 +345,8 @@ set(HEADER_FILES
 	datastreamoperatorwrapper.h
 	doomseekerfilepaths.h
 	global.h
+	localization.h
+	localizationinfo.h
 	main.h
 	random.h
 	pathfinder.h
@@ -354,7 +358,31 @@ set(HEADER_FILES
 	versiondefs.h
 )
 
+# Translations
+set (TRANSLATIONS_FILES 
+	translations/pl_PL.ts
+)
 
+option (UPDATE_TRANSLATIONS  "Update source translation translations/*.ts files (WARNING: make clean will delete the source .ts files! Danger!)")
+if (UPDATE_TRANSLATIONS)
+	set(FILES_TO_TRANSLATE
+		${doomseekerUI}
+		${SOURCE_FILES}
+		${HEADER_FILES}
+	)
+	qt4_create_translation(TS_FILES 
+		${FILES_TO_TRANSLATE}
+		${TRANSLATIONS_FILES}
+	)
+	add_custom_target (translations_target DEPENDS ${TS_FILES})
+	message(WARNING 
+		"Update source translation translations/*.ts files (WARNING: make clean will delete the source .ts files! Danger!)"
+	)
+	message(STATUS "make translations_target\n\n")
+endif (UPDATE_TRANSLATIONS) 
+qt4_add_translation(QM_FILES ${TRANSLATIONS_FILES})
+
+# windows.rc
 if(WIN32)
 	# compile the Windows resource file.  How we do this depends on the compiler.
 	if(CMAKE_COMPILER_IS_GNUCXX)
@@ -375,6 +403,7 @@ add_executable(doomseeker
 	${doomseekerUI}
 	${doomseekerResources}
 	${QT_FILES}
+	${QM_FILES}
 	${SOURCE_FILES}
 	${HEADER_FILES}
 )
@@ -384,6 +413,44 @@ add_executable(doomseeker
 add_dependencies(doomseeker revision_check)
 
 target_link_libraries(doomseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} wadseeker ${CMAKE_DL_LIBS})
+
+# Copy translations
+if(MSVC)
+	# [Zalewa] I know that this is stupid but I don't know how to tell CMake 
+	# to put the files into proper build directories. MSVC creates subdir
+	# for each build type. ${CMAKE_BINARY_DIR} points to a directory that is
+	# the parent of that subdir. For GCC this problem doesn't exist because
+	# CMake allows to configure only one build type per "solution", while
+	# for MSVC all build types are defined within a single solution.
+	# This workaround will create subdirectories for build types that we don't
+	# need and don't want but I think this is acceptable.
+	# Naturally, ${CMAKE_CURRENT_BINARY_DIR} is even more useless.
+	set(COPY_TARGET_SUBDIRS
+		Debug Release MinSizeRel RelWithDebInfo
+	)
+else(MSVC)
+	set(COPY_TARGET_SUBDIRS "")
+endif(MSVC)
+
+foreach(TARGET_SUBDIR ${COPY_TARGET_SUBDIRS})
+	add_custom_command(TARGET doomseeker PRE_BUILD
+		COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${TARGET_SUBDIR}/translations
+	)
+endforeach(TARGET_SUBDIR)
+foreach(QM_FILE ${QM_FILES})
+	foreach (TARGET_SUBDIR ${COPY_TARGET_SUBDIRS})
+		add_custom_command(TARGET doomseeker POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QM_FILE} ${CMAKE_BINARY_DIR}/${TARGET_SUBDIR}/translations
+		)
+	endforeach(TARGET_SUBDIR)
+endforeach(QM_FILE)
+foreach (TARGET_SUBDIR ${COPY_TARGET_SUBDIRS})
+	add_custom_command(TARGET doomseeker POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+			${CMAKE_CURRENT_SOURCE_DIR}/translations/translations.def 
+			${CMAKE_BINARY_DIR}/${TARGET_SUBDIR}/translations
+	)
+endforeach(TARGET_SUBDIR)
 
 # Allow plugins to link with doomseeker
 set_target_properties(doomseeker PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR} ENABLE_EXPORTS 1)

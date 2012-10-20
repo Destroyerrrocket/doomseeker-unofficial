@@ -49,6 +49,7 @@ class MAIN_EXPORT DataPaths
 		static const QString	PROGRAMS_APPDATA_DIR_NAME;
 		static const QString    PROGRAMS_APPDATASUPPORT_DIR_NAME;
 		static const QString	DEMOS_DIR_NAME;
+		static const QString	TRANSLATIONS_DIR_NAME;
 		
 		/**
 		 *	@b Retrieves correct path to "Program Files" directory. 
@@ -60,7 +61,20 @@ class MAIN_EXPORT DataPaths
 		 *	Windows (XP and above). Since on *nix systems there is no equivalent
 		 *	it will return an empty string.
 		 */
-		static QString			programFilesDirectory(MachineType machineType);		
+		static QString			programFilesDirectory(MachineType machineType);
+		
+		/**
+		 * @brief Paths to directories where program should search for its 
+		 *        static data.
+		 *
+		 * By static data we understand read only files which come preinstalled
+		 * with the program. These files should reside in known locations.
+		 *
+		 * @param subdir
+		 *     If this sub-path is specified then then it's appended to all 
+		 *     returned paths.
+		 */
+		static QStringList DataPaths::staticDataSearchDirs(const QString& subdir = QString());
 	
 		DataPaths(bool bPortableModeOn = false);
 

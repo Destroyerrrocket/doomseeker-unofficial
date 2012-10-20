@@ -70,6 +70,7 @@ class DoomseekerConfig
 			QString						connectPassword;
 			QVector<CustomServerInfo>	customServers;
 			QString						customServersColor;
+			QString						localization;
 			unsigned					ip2CountryDatabaseMaximumAge;
 			QString						ip2CountryUrl;
 			QString						mainWindowState;

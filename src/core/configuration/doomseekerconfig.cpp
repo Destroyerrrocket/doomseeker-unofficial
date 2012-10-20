@@ -31,6 +31,8 @@
 #include "strings.h"
 #include "version.h"
 
+#include <QLocale>
+
 DoomseekerConfig* DoomseekerConfig::instance = NULL;
 
 DoomseekerConfig::DoomseekerConfig()
@@ -208,6 +210,7 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->customServersColor = "#ffaa00";
 	this->ip2CountryDatabaseMaximumAge = 60;
 	this->ip2CountryUrl = "http://software77.net/geo-ip?DL=1";
+	this->localization = QLocale::system().name();
 	this->mainWindowState = "";
 	this->mainWindowHeight = 0xffff;
 	this->mainWindowWidth = 0xffff;
@@ -265,6 +268,7 @@ bool DoomseekerConfig::DoomseekerCfg::areMainWindowSizeSettingsValid(int maxVali
 
 void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 {
+	section.createSetting("Localization", this->localization);
 	section.createSetting("BotsAreNotPlayers", this->bBotsAreNotPlayers);
 	section.createSetting("CloseToTrayIcon", this->bCloseToTrayIcon);
 	section.createSetting("HidePasswords", this->bHidePasswords);
@@ -292,6 +296,7 @@ void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 
 void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 {
+	this->localization = section["Localization"];
 	this->bBotsAreNotPlayers = section["BotsAreNotPlayers"];
 	this->bCloseToTrayIcon = section["CloseToTrayIcon"];
 	this->bHidePasswords = section["HidePasswords"];
@@ -344,6 +349,7 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 
 void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 {
+	section["Localization"] = this->localization;
 	section["BotsAreNotPlayers"] = this->bBotsAreNotPlayers;
 	section["CloseToTrayIcon"] = this->bCloseToTrayIcon;
 	section["HidePasswords"] = this->bHidePasswords;

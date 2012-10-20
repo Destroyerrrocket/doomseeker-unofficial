@@ -28,6 +28,7 @@
 #include "ip2c/ip2c.h"
 #include "plugins/pluginloader.h"
 #include "datapaths.h"
+#include "localizationinfo.h"
 #include "refresher.h"
 #include <QApplication>
 #include <QObject>
@@ -42,10 +43,12 @@ class MAIN_EXPORT Main : public QObject
 	public:
 		static const QString		IP2C_FILENAME;
 
+		static QApplication*		application;
 		static IP2C					*ip2c;
 		static DataPaths*			dataPaths;
 		static QWidget*				mainWindow;
 		static PluginLoader*		enginePlugins;
+		static QList<LocalizationInfo> localizations;
 		static bool					running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
 		static RefreshingThread*	refreshingThread;
 		static QString				workingDirectory;
@@ -92,6 +95,7 @@ class MAIN_EXPORT Main : public QObject
 		 */
 		int							initIP2C();
 		void						initIRCConfig();
+		void initLocalizationsDefinitions();
 		void						initMainConfig();
 		void						initPluginConfig();
 
@@ -103,7 +107,6 @@ class MAIN_EXPORT Main : public QObject
 		void						preserveOldConfigBackwardsCompatibility();
 		void						setupRefreshingThread();
 
-		QApplication*				application;
 		char**						arguments;
 		int							argumentsCount;
 		bool                        bIsFirstRun;

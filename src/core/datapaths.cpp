@@ -33,6 +33,7 @@ const QString DataPaths::PROGRAMS_APPDATA_DIR_NAME = ".doomseeker";
 const QString DataPaths::PROGRAMS_APPDATASUPPORT_DIR_NAME = "";
 #endif
 const QString DataPaths::DEMOS_DIR_NAME = "demos";
+const QString DataPaths::TRANSLATIONS_DIR_NAME = "translations";
 
 DataPaths::DataPaths(bool bPortableModeOn)
 {
@@ -161,6 +162,24 @@ QString DataPaths::programsDataSupportDirectoryPath() const
 
 	QString appSupportDataDir = systemAppDataDirectory(programsSupportDirectoryName);
 	return appSupportDataDir;
+}
+
+QStringList DataPaths::staticDataSearchDirs(const QString& subdir)
+{
+	QStringList paths;
+	paths.append(QDir::currentPath()); // current working dir
+	paths.append(QCoreApplication::applicationDirPath()); // where exe is located
+	paths.append("/usr/share/doomseeker"); // standard linux path
+	paths.append("/usr/local/share/doomseeker"); // standard linux path 2
+	QString subdirFiltered = subdir.trimmed();
+	if (!subdirFiltered.isEmpty())
+	{
+		for (int i = 0; i < paths.size(); ++i)
+		{
+			paths[i] = Strings::combinePaths(paths[i], subdirFiltered);
+		}
+	}
+	return paths;
 }
 
 QString DataPaths::systemAppDataDirectory(QString append) const
