@@ -32,7 +32,7 @@
  *	@brief Represents directories used by Doomseeker to store data.
  *
  *	Since Doomseeker doesn't need to store much all data is stored in a single
- *	directory. For portable model this is the same directory as in which 
+ *	directory. For portable model this is the same directory as in which
  *	Doomseeker.exe resides. Otherwise .doomseeker/ directory can be created
  *	in a path depending on the operating system.
  */
@@ -45,46 +45,46 @@ class MAIN_EXPORT DataPaths
 			x64,
 			Preferred
 		};
-	
+
 		static const QString	PROGRAMS_APPDATA_DIR_NAME;
 		static const QString    PROGRAMS_APPDATASUPPORT_DIR_NAME;
 		static const QString	DEMOS_DIR_NAME;
 		static const QString	TRANSLATIONS_DIR_NAME;
-		
+
 		/**
-		 *	@b Retrieves correct path to "Program Files" directory. 
+		 *	@b Retrieves correct path to "Program Files" directory.
 		 *	Windows only.
 		 *
 		 *	This exploits environmental variables such as %PROGRAMFILES%,
-		 *	%PROGRAMFILES(X86)% and ProgramW6432. This method is used to 
-		 *	determine the correct path to the "Program Files" directory on 
+		 *	%PROGRAMFILES(X86)% and ProgramW6432. This method is used to
+		 *	determine the correct path to the "Program Files" directory on
 		 *	Windows (XP and above). Since on *nix systems there is no equivalent
 		 *	it will return an empty string.
 		 */
 		static QString			programFilesDirectory(MachineType machineType);
-		
+
 		/**
-		 * @brief Paths to directories where program should search for its 
+		 * @brief Paths to directories where program should search for its
 		 *        static data.
 		 *
 		 * By static data we understand read only files which come preinstalled
 		 * with the program. These files should reside in known locations.
 		 *
 		 * @param subdir
-		 *     If this sub-path is specified then then it's appended to all 
+		 *     If this sub-path is specified then then it's appended to all
 		 *     returned paths.
 		 */
-		static QStringList DataPaths::staticDataSearchDirs(const QString& subdir = QString());
-	
+		static QStringList staticDataSearchDirs(const QString& subdir = QString());
+
 		DataPaths(bool bPortableModeOn = false);
 
 		/**
 		 *	@brief Checks if all directories can be written to.
 		 *
 		 *	@return List of directories for which the test FAILED.
-		 */		
+		 */
 		QStringList				canWrite() const;
-		
+
 		/**
 		 *	@brief Creates necessary directories for application run.
 		 *
@@ -106,9 +106,9 @@ class MAIN_EXPORT DataPaths
 		 *	@return List of directories that DO NOT exist.
 		 */
 		QStringList				directoriesExist() const;
-		
+
 		const QString&			directoryNameForProgram() const { return programsDirectoryName; }
-		
+
 		/**
 		 *	@brief Path to directory where this concrete application should
 		 *	store it's data.
@@ -126,19 +126,19 @@ class MAIN_EXPORT DataPaths
 		 *  Same as programsDataDirectoryPath() on other systems or in portable mode.
 		 */
 		QString					programsDataSupportDirectoryPath() const;
-		
+
 		bool					isPortableModeOn() const { return bIsPortableModeOn; }
-		
+
 		void					setPortableModeOn(bool b) { bIsPortableModeOn = b; }
 		void					setDirectoryNameForProgram(const QString& name) { programsDirectoryName = name; }
-		
+
 		/**
 		 *	@brief Gets path to the root directory for data storage.
 		 *
 		 *	If portable mode is ON this points to the appliation's directory.
 		 *	Otherwise:
 		 *
-		 *	For Windows this is determined based on %APPDATA% environment 
+		 *	For Windows this is determined based on %APPDATA% environment
 		 *	variable. If this cannot be found then QDir::home() is used.
 		 *
 		 *	On other systems QDir::home() is used directly.
@@ -148,30 +148,30 @@ class MAIN_EXPORT DataPaths
 		 *	@return Empty string if directory doesn't pass validateDir() check.
 		 *	Otherwise the path returned is always absolute.
 		 */
-		QString					systemAppDataDirectory(QString append = QString()) const;		
+		QString					systemAppDataDirectory(QString append = QString()) const;
 
 		/**
 		 *	@brief Checks if the root directory for Doomseeker data storage
 		 *	is accessible.
 		 */
 		bool					validateAppDataDirectory();
-				
+
 	protected:
 		/**
-		 *	@return True if path is a directory that exists and can be written 
+		 *	@return True if path is a directory that exists and can be written
 		 *	to.
 		 */
-		static bool				validateDir(const QString& path);	
-	
+		static bool				validateDir(const QString& path);
+
 		bool					bIsPortableModeOn;
-		
+
 		/**
 		 *	@brief Defaults to PROGRAMS_APPDATA_DIR_NAME.
 		 */
 		QString					programsDirectoryName;
 		QString					programsSupportDirectoryName;
 		QString					demosDirectoryName;
-		
+
 		/**
 		 *	@brief If directory already exists true is returned.
 		 */

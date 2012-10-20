@@ -429,7 +429,7 @@ if(MSVC)
 		Debug Release MinSizeRel RelWithDebInfo
 	)
 else(MSVC)
-	set(COPY_TARGET_SUBDIRS "")
+	set(COPY_TARGET_SUBDIRS ".")
 endif(MSVC)
 
 foreach(TARGET_SUBDIR ${COPY_TARGET_SUBDIRS})

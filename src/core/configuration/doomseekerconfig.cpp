@@ -296,7 +296,7 @@ void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 
 void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 {
-	this->localization = section["Localization"];
+	this->localization = (const QString&)section["Localization"];
 	this->bBotsAreNotPlayers = section["BotsAreNotPlayers"];
 	this->bCloseToTrayIcon = section["CloseToTrayIcon"];
 	this->bHidePasswords = section["HidePasswords"];
