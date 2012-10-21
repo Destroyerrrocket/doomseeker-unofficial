@@ -171,11 +171,11 @@ void IRCNetworkAdapter::doSendMessage(const QString& message, IRCAdapterBase* pO
 			break;
 
 		case IRCRequestParser::ErrorMessageEmpty:
-			pOrigin->emitError(tr("Attempted to send empty message"));
+			pOrigin->emitError(tr("Attempted to send empty message."));
 			break;
 
 		case IRCRequestParser::ErrorMessageTooLong:
-			pOrigin->emitError(tr("Command is too long"));
+			pOrigin->emitError(tr("Command is too long."));
 			break;
 
 		case IRCRequestParser::Ok:
@@ -507,7 +507,7 @@ void IRCNetworkAdapter::openNewAdapter(const QString& recipientName)
 
 void IRCNetworkAdapter::parseError(const QString& error)
 {
-	emit this->error(tr("IRC Parse error: %1").arg(error));
+	emit this->error(tr("IRC parse error: %1").arg(error));
 }
 
 void IRCNetworkAdapter::printResponse(const QString& printWhat, const QString& printWhere)
@@ -576,11 +576,11 @@ QString IRCNetworkAdapter::title() const
 
 void IRCNetworkAdapter::userChangesNickname(const QString& oldNickname, const QString& newNickname)
 {
-	emit messageWithClass(QString("User changes nickname: %1 to %2").arg(oldNickname, newNickname), IRCMessageClass::NetworkAction);
+	emit messageWithClass(QString("User changed nickname: %1 to %2.").arg(oldNickname, newNickname), IRCMessageClass::NetworkAction);
 
 	if (isMyNickname(oldNickname))
 	{
-		emit messageWithClass(tr("Updating own nickname"), IRCMessageClass::NetworkAction);
+		emit messageWithClass(tr("Updated own nickname."), IRCMessageClass::NetworkAction);
 		connectionInfo.nick = newNickname;
 
 		emit titleChange();
@@ -639,7 +639,7 @@ void IRCNetworkAdapter::userPartsChannel(const QString& channel, const QString& 
 
 		if (isMyNickname(nickname))
 		{
-			emit messageWithClass(tr("You left channel %1").arg(channel), IRCMessageClass::ChannelAction);
+			emit messageWithClass(tr("You left channel %1.").arg(channel), IRCMessageClass::ChannelAction);
 			killChatWindow(channel);
 		}
 		else

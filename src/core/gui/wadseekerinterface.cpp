@@ -420,7 +420,7 @@ void WadseekerInterface::wadsTableRightClicked(const QModelIndex& index, const Q
 	}
 	else if (pResult != NULL)
 	{
-		QMessageBox::warning(this, tr("Context Menu error"), tr("Unknown action selected"));
+		QMessageBox::warning(this, tr("Context menu error"), tr("Unknown action selected."));
 	}
 	
 	delete menu;

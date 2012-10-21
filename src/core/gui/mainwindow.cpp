@@ -833,7 +833,7 @@ void MainWindow::menuHelpHelp()
 {
 	if (HELP_SITE_URL.isEmpty() || !Strings::isUrlSafe(HELP_SITE_URL))
 	{
-		QMessageBox::critical(this, tr("Help error"), tr("No help found"), QMessageBox::Ok, QMessageBox::Ok);
+		QMessageBox::critical(this, tr("Help error"), tr("No help found."), QMessageBox::Ok, QMessageBox::Ok);
 		return;
 	}
 

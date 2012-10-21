@@ -48,7 +48,7 @@ RemoteConsole::RemoteConsole(QWidget *parent) : QMainWindow(parent), protocol(NU
 			server = dlg->selectedEngine()->server(QHostAddress(address), port);
 			if(!server->hasRcon())
 			{
-				QMessageBox::critical(this, tr("No RCon Support"), tr("The source port selected has no RCon support."));
+				QMessageBox::critical(this, tr("No RCon support"), tr("The source port selected has no RCon support."));
 				close();
 				return;
 			}

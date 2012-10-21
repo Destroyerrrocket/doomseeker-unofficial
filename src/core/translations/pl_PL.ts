@@ -219,12 +219,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgcustomservers.h" line="109"/>
         <source>Changes engine on selected servers.</source>
-        <translation>Zmień silnik na wybranych serwerach.</translation>
+        <translation>Zmień grę na zaznaczonych serwerach.</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgcustomservers.h" line="111"/>
         <source>Set Engine</source>
-        <translation>Ustaw silnik</translation>
+        <translation>Ustaw grę</translation>
     </message>
 </context>
 <context>
@@ -1053,7 +1053,7 @@ Alternatywnie użyj &quot;Ignoruj&quot; aby połączyć się mimo wszystko.</tra
     <message>
         <location filename="../gui/createserverdialog.cpp" line="258"/>
         <source>Obtaining default server binary path.</source>
-        <translation>Pobieranie domyślnej ścieżki pliku wykonywalnego</translation>
+        <translation>Pobieranie domyślnej ścieżki pliku wykonywalnego.</translation>
     </message>
     <message>
         <location filename="../gui/createserverdialog.cpp" line="268"/>
@@ -2083,107 +2083,111 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="156"/>
         <source>You are not connected to the network.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie jesteś podłączony do sieci.</translation>
     </message>
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="166"/>
         <source>Insufficient parameters.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zbyt mało parametrów.</translation>
     </message>
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="170"/>
         <source>This is a server window. All commands must be prepended with a &apos;/&apos; character.</source>
-        <translation type="unfinished"></translation>
+        <translation>To jest okno serwera. Wszystkie komendy muszą być poprzedzone znakiem &apos;/&apos;.</translation>
     </message>
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="174"/>
-        <source>Attempted to send empty message</source>
-        <translation type="unfinished"></translation>
+        <source>Attempted to send empty message.</source>
+        <translation>Próba wysłania pustej wiadomości.</translation>
     </message>
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="178"/>
-        <source>Command is too long</source>
-        <translation type="unfinished"></translation>
+        <source>Command is too long.</source>
+        <translation>Komenda jest zbyt długa.</translation>
     </message>
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="187"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyjście</translation>
     </message>
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="291"/>
         <source>IRC: Successfuly registered on network %1 [%2:%3]</source>
-        <translation type="unfinished"></translation>
+        <translation>IRC: Poprawnie zarejestrowano w sieci %1 [%2:%3]</translation>
     </message>
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="326"/>
         <source>Invalid parse result for mesage: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieprawidłowy rezultat parsowania wiadomości: %1</translation>
     </message>
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="378"/>
         <source>You have been kicked from channel %1 by %2 (Reason: %3)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zostałeś wykopany z kanału %1 przez użytkownika %2 (Powód: %3)</translation>
     </message>
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="383"/>
         <source>%1 was kicked by %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 zotał wykopany przez %2 (%3)</translation>
     </message>
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="435"/>
         <source>%1 sets mode: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ustawił tryb: %2</translation>
     </message>
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="458"/>
         <source>Nickname %1 is already taken.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nick %1 jest już zajęty.</translation>
     </message>
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="465"/>
         <source>Both nickname and alternate nickname are taken on this network.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zarówno nick jak i alternatywny nick są już zajęte w tej sieci.</translation>
     </message>
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="469"/>
         <source>No alternate nickname specified.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie podano alternatywnego nicka.</translation>
     </message>
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="475"/>
         <source>Using alternate nickname %1 to join.</source>
-        <translation type="unfinished"></translation>
+        <translation>Użycie alternatywnego nicka %1 w celu podłączenia.</translation>
     </message>
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="484"/>
         <source>User %1 is not logged in.</source>
-        <translation type="unfinished"></translation>
+        <translation>Użytkownik %1 nie jest zalogowany.</translation>
     </message>
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="510"/>
+        <source>IRC parse error: %1</source>
+        <translation>Błąd parsowania: %1</translation>
+    </message>
+    <message>
+        <location filename="../irc/ircnetworkadapter.cpp" line="583"/>
+        <source>Updated own nickname.</source>
+        <translation>Uaktualniono własny nick.</translation>
+    </message>
+    <message>
+        <location filename="../irc/ircnetworkadapter.cpp" line="642"/>
+        <source>You left channel %1.</source>
+        <translation>Opuściłeś kanał %1.</translation>
+    </message>
+    <message>
         <source>IRC Parse error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Błąd parsowania: %1</translation>
     </message>
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="526"/>
         <source>FROM %1: %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="583"/>
-        <source>Updating own nickname</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="642"/>
-        <source>You left channel %1</source>
-        <translation type="unfinished"></translation>
+        <translation>OD %1: %2</translation>
     </message>
     <message>
         <location filename="../irc/ircnetworkadapter.h" line="76"/>
         <source>Doomseeker End Of Line</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2191,82 +2195,82 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/irc/ircnetworkselectionbox.cpp" line="54"/>
         <source>&lt;Last Used Configuration&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;Ostatnio użyta konfiguracja&gt;</translation>
     </message>
     <message>
         <location filename="../gui/irc/ircnetworkselectionbox.cpp" line="158"/>
         <source>IRC connection error</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd połączenia z IRCem</translation>
     </message>
     <message>
         <location filename="../gui/irc/ircnetworkselectionbox.cpp" line="163"/>
         <source>You must specify a nick.</source>
-        <translation type="unfinished"></translation>
+        <translation>Musisz podać nick.</translation>
     </message>
     <message>
         <location filename="../gui/irc/ircnetworkselectionbox.cpp" line="169"/>
         <source>You must specify a network address.</source>
-        <translation type="unfinished"></translation>
+        <translation>Musisz podać adres sieci.</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_ircnetworkselectionbox.h" line="194"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_ircnetworkselectionbox.h" line="195"/>
         <source>Nick:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nick:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_ircnetworkselectionbox.h" line="196"/>
         <source>DSTest</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_ircnetworkselectionbox.h" line="197"/>
         <source>Alternate nick:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nick alternatywny:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_ircnetworkselectionbox.h" line="198"/>
         <source>DSTestA</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_ircnetworkselectionbox.h" line="199"/>
         <source>Real name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Prawdziwe imię:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_ircnetworkselectionbox.h" line="200"/>
         <source>Doomseeker Tester</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_ircnetworkselectionbox.h" line="201"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Nowy</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_ircnetworkselectionbox.h" line="202"/>
         <source>Server address:</source>
-        <translation type="unfinished"></translation>
+        <translation>Adres serwera:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_ircnetworkselectionbox.h" line="203"/>
         <source>74.207.247.18</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_ircnetworkselectionbox.h" line="204"/>
         <source>Port:</source>
-        <translation type="unfinished">Port:</translation>
+        <translation>Port:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_ircnetworkselectionbox.h" line="205"/>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Hasło:</translation>
     </message>
 </context>
 <context>
@@ -2274,17 +2278,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../irc/ircprivadapter.cpp" line="57"/>
         <source>This user connection has been killed. (KILL: %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ten użytkownik został skillowany. (KILL %1)</translation>
     </message>
     <message>
         <location filename="../irc/ircprivadapter.cpp" line="61"/>
         <source>This user has left the network. (QUIT: %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ten użytkownik opuścił sieć. (QUIT: %1)</translation>
     </message>
     <message>
         <location filename="../irc/ircprivadapter.cpp" line="65"/>
         <source>Unhandled IRCQuitType in IRCPrivAdapter::userLeaves()</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2292,27 +2296,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../irc/ircresponseparser.cpp" line="138"/>
         <source>RPLNamReply: Received names list but no channel name.</source>
-        <translation type="unfinished"></translation>
+        <translation>RPLNamReply: otrzymano listę nazw ale brakuje nazwy kanału.</translation>
     </message>
     <message>
         <location filename="../irc/ircresponseparser.cpp" line="351"/>
         <source>Type &apos;%1&apos; was incorrectly parsed in PrivMsg block.</source>
-        <translation type="unfinished"></translation>
+        <translation>Typ &apos;%1&apos; został nieprawidłowo sparsowany w bloku PrivMsg.</translation>
     </message>
     <message>
         <location filename="../irc/ircresponseparser.cpp" line="383"/>
         <source>IRCResponseParser: Type &apos;%1&apos; was recognized but there has been no parse code implemented for it.(yep, it&apos;s a bug in the application!)</source>
-        <translation type="unfinished"></translation>
+        <translation>IRCResponseParser: Typ &apos;%1&apos; został rozpoznany, ale nie ma dla niego żadnego kodu parsującego. (To jest błąd w aplikacji!)</translation>
     </message>
     <message>
         <location filename="../irc/ircresponseparser.cpp" line="406"/>
         <source>MODE flags string from IRC server are incorrect: &quot;%1&quot;. Information for channel &quot;%2&quot; might not be correct anymore.</source>
-        <translation type="unfinished"></translation>
+        <translation>Flagi MODE z serwera IRCa są nieprawidłowe: &quot;%1&quot;. Informacje o kanale &quot;%2&quot; mogą być teraz nieprawidłowe.</translation>
     </message>
     <message>
         <location filename="../irc/ircresponseparser.cpp" line="441"/>
         <source>IRCResponseParser::parseUserModeMessage(): wrong FlagMode. Information for channel &quot;%2&quot; might not be correct anymore.</source>
-        <translation type="unfinished"></translation>
+        <translation>IRCResponseParser::parseUserModeMessage(): zły FlagMode.Informacje o kanale &quot;%2&quot; mogą być teraz nieprawidłowe.</translation>
     </message>
 </context>
 <context>
@@ -2359,112 +2363,112 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../main.cpp" line="155"/>
         <source>Doomseeker will not run because following directories cannot be created:</source>
-        <translation type="unfinished"></translation>
+        <translation>Doomseeker nie zostanie uruchomiony ponieważ następujące katalogi nie mogły zostać utworzone:</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="158"/>
         <source>Doomseeker startup error</source>
-        <translation type="unfinished"></translation>
+        <translation>Doomseeker - błąd uruchomienia</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="193"/>
         <source>Init finished.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inicjalizacja zakończona.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="229"/>
         <source>Preparing GUI.</source>
-        <translation type="unfinished"></translation>
+        <translation>Przygotowuję GUI.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="251"/>
         <source>Starting RCon client.</source>
-        <translation type="unfinished"></translation>
+        <translation>Startuję klienta RCon.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="264"/>
         <source>Couldn&apos;t find specified plugin: </source>
-        <translation type="unfinished"></translation>
+        <translation>Nie znaleziono podanej wtyczki: </translation>
     </message>
     <message>
         <location filename="../main.cpp" line="274"/>
         <source>Plugin does not support RCon.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wtyczka nie wspiera konsoli zdalnej.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="317"/>
         <source>Initializing IP2C database.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inicjalizuję bazę IP2C.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="325"/>
         <source>Initializing IRC configuration file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inicjalizuję plik konfiguracyjny IRCa.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="346"/>
         <source>Loading translations definitions</source>
-        <translation type="unfinished"></translation>
+        <translation>Wczytuję  definicje tłumaczeń</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="351"/>
         <source>Loading translation &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wczytuję tłumaczenie: &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="355"/>
         <source>Translation loaded.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wczytano  tłumaczenie.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="359"/>
         <source>Failed to load translation.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wczytywanie tłumaczenia zakończone niepowodzeniem.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="365"/>
         <source>Initializing configuration file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inicjalizuję plik konfiguracyjny.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="374"/>
         <source>Could not get an access to the settings directory. Configuration will not be saved.</source>
-        <translation type="unfinished"></translation>
+        <translation>Brak dostępu do katalogu z ustawieniami. Konfiguracja nie zostanie zapisana.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="393"/>
         <source>Initializing configuration for plugins.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inicjalizuję konfigurację dla wtyczek.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="426"/>
         <source>Available command line parameters:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dostępne parametry linii komend:</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="427"/>
         <source>	--connect protocol://ip[:port] : Attempts to connect to the specified server.</source>
-        <translation type="unfinished"></translation>
+        <translation>--connect protokół://ip[:port] : Próbuje połączyć się z podanym serwerem.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="428"/>
         <source>	--datadir : Sets an explicit search location for IP2C data along with plugins.</source>
-        <translation type="unfinished"></translation>
+        <translation>--datadir : Ustawia katalog z którego będą łądowane dane IP2C oraz wtyczki.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="429"/>
         <source>	--rcon [plugin] [ip] : Launch the rcon client for the specified ip.</source>
-        <translation type="unfinished"></translation>
+        <translation>--rcon [wtyczka] [ip] : Startuje klienta zdalnej konsoli dla podanego IP.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="430"/>
         <source>	--portable : Starts application in portable mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>--portable : Uruchamia program w trybie przenośnym.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="470"/>
         <source>Starting refreshing thread.</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozpoczynam wątek odświeżający.</translation>
     </message>
 </context>
 <context>
@@ -2476,187 +2480,194 @@ Doomseeker failed to detect any plugins.
 While the core application will still work its functionality is going to be limited.
 One of the proper locations for plugin modules is the &quot;engines/&quot; directory.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Ostrzeżenie:
+Doomseeker nie wykrył żadnych wtyczek.
+Podczas gdy rdzeń aplikacji będzie dalej działał, jego funkcje będą ograniczone.
+Jedno z prawidłowych miejsc dla wtyczek to katalog &quot;engines/&quot;.
+</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="89"/>
         <source>Doomseeker - plugin load failure</source>
-        <translation type="unfinished"></translation>
+        <translation>Doomseeker - błąd wczytywania wtyczek</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="99"/>
         <source>&amp;Buddies</source>
-        <translation type="unfinished">&amp;Kumple</translation>
+        <translation>&amp;Kumple</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="100"/>
         <source>CTRL+B</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="411"/>
         <source>Senseless refresh operation attempted.</source>
-        <translation type="unfinished"></translation>
+        <translation>Próba bezsensownego odświeżenia.</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="413"/>
         <source>Doomseeker is unable to proceed with the refresh operation because the following problem has occured:
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Doomseeker nie jest w stanie wykonać odświeżenia ponieważ wystąpił jeden z następujących problemów:
+
+</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="418"/>
         <source>Plugins are missing from the &quot;engines/&quot; directory.</source>
-        <translation type="unfinished"></translation>
+        <translation>W katalogu &quot;engines/&quot; nie ma wtyczek.</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="422"/>
         <source>No master servers are enabled in the &quot;Query&quot; menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Żaden master serwer nie został włączony w menu &quot;Odpytywanie&quot;.</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="426"/>
         <source>Unknown error occured.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastąpił nieznany błąd.</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="430"/>
         <source>Doomseeker - senseless operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Doomseeker - bezsensowna operacja</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="436"/>
         <source>Total refresh process initialized!</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozpoczęto proces totalnego odświeżenia!</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="444"/>
         <source>Warning: No master servers were enabled for this refresh. Check your Query menu or &quot;engines/&quot; directory. Custom servers will still refresh.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ostrzeżenie: żaden master serwer nie został włączony dla tego odświeżenia. Sprawdź menu &quot;Odpytywanie&quot; lub katalog &quot;engines/&quot;. Serwery własne zostaną odświeżone mimo to.</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="505"/>
         <source>IP2C Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualizacja IP2C</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="517"/>
         <source>&amp;IRC</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;IRC</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="518"/>
         <source>CTRL+I</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="533"/>
         <source>&amp;Log</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Log</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="534"/>
         <source>CTRL+L</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="550"/>
         <source>Servers</source>
-        <translation type="unfinished"></translation>
+        <translation>Serwery</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="614"/>
         <source>IP2C download has failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pobieranie IP2C zakończone porażką.</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="622"/>
         <source>IP2C database finished downloading.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukończono pobieranie bazy IP2C.</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="630"/>
         <source>Unable to save IP2C database at path: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można zapisać bazy IP2C w ścieżce: %1</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="646"/>
         <source>Failed to read IP2C database. Reverting...</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd odczytywania bazy IP2C. Przywracam starą kopię...</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="674"/>
         <source>IP2C database updated successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Baza IP2C uaktualniona prawidłowo.</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="699"/>
         <source>IP2C parsing finished.</source>
-        <translation type="unfinished"></translation>
+        <translation>Parsowanie IP2C ukończone.</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="710"/>
         <source>IP2C update finished.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualizacja IP2C ukończona.</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="723"/>
         <source>Please wait. IP2C Database is being read and converted if necessary. This may take some time.</source>
-        <translation type="unfinished"></translation>
+        <translation>Proszę czekać. Baza IP2C jest odczytywana i konwertowana w razie potrzeby. To może potrwać chwilę.</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="740"/>
         <source>Starting IP2C update.</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozpoczynanie aktualizacji IP2C.</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="778"/>
         <location filename="../gui/mainwindow.cpp" line="801"/>
         <source>Master server for %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Master serwer dla %1: %2</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="782"/>
         <source>Error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd: %1</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="836"/>
         <location filename="../gui/mainwindow.cpp" line="844"/>
         <source>Help error</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd pomocy</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="836"/>
-        <source>No help found</source>
-        <translation type="unfinished"></translation>
+        <source>No help found.</source>
+        <translation>Nie znaleziono pomocy.</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="844"/>
         <source>Failed to open URL:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można otworzyć adresu:
+%1</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="950"/>
         <source>Welcome to Doomseeker</source>
-        <translation type="unfinished"></translation>
+        <translation>Witamy w programie Doomseeker</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="950"/>
         <source>Before you start browsing for servers, please ensure that Doomseeker is properly configured.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zanim zaczniesz przeglądać serwery, proszę poświęc chwilę aby skonfigurować Doomseekera poprawnie.</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="978"/>
         <source>Query on startup warning: No master servers are enabled in the Query menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ostrzeżenie odpytywania na starcie: żaden master serwer nie jest włączony w menu &quot;Odpytywanie&quot;.</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="996"/>
         <source>Doomseeker critical error</source>
-        <translation type="unfinished"></translation>
+        <translation>Doomseeker - krytyczny błąd</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="996"/>
@@ -2665,42 +2676,46 @@ Although the application will still work it will not be possible to fetch any se
 
 Please check if there are any files in &quot;engines/&quot; directory.
 To fix this problem you may try downloading Doomseeker again from the site specified in the Help|About box and reinstalling Doomseeker.</source>
-        <translation type="unfinished"></translation>
+        <translation>Doomseeker nie mógł odnaleźć żadnych wtyczek.
+Pomimo tego, że program będzie działać, nie będzie możliwe pobieranie żadnych serwerów ani wystartowanie gry.
+
+Proszę sprawdź, czy w katalogu &quot;engines/&quot; znajdują się jakiekolwiek pliki.
+Aby naprawić ten błąd można spróbować pobrać Doomseekera jeszcze raz ze strony podanej w menu Pomoc|O programie i przeinstalować Doomseekera.</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="1041"/>
         <source>Querying...</source>
-        <translation type="unfinished"></translation>
+        <translation>Odpytywanie...</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="1051"/>
         <source>Done</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukończono</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="1112"/>
         <source>Get Servers</source>
-        <translation type="unfinished"></translation>
+        <translation>Pobierz serwery</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="1113"/>
         <source>Refresh All</source>
-        <translation type="unfinished"></translation>
+        <translation>Odśwież wszystko</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="1147"/>
         <source>Search:</source>
-        <translation type="unfinished"></translation>
+        <translation>Szukaj:</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="1158"/>
         <source>Doomseeker - join command line</source>
-        <translation type="unfinished"></translation>
+        <translation>Doomseeker - komenda dołączenia</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="1252"/>
         <source>Finished refreshing. Servers on the list: %1 (+ %2 custom). Players: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukończono odświeżanie. Serwery na liście: %1 (+ %2 własne). Graczy: %3.</translation>
     </message>
 </context>
 <context>
@@ -2863,7 +2878,7 @@ To fix this problem you may try downloading Doomseeker again from the site speci
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="237"/>
         <source>&amp;Query</source>
-        <translation>&amp;Zapytania</translation>
+        <translation>&amp;Odpytywanie</translation>
     </message>
 </context>
 <context>
@@ -2871,37 +2886,37 @@ To fix this problem you may try downloading Doomseeker again from the site speci
     <message>
         <location filename="../masterserver/masterclient.cpp" line="83"/>
         <source>You have been banned from the master server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zostałeś zbanowany z master serwera.</translation>
     </message>
     <message>
         <location filename="../masterserver/masterclient.cpp" line="92"/>
         <source>Could not fetch a new server list from the master because not enough time has past.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można było pobrać nowej listy serwerów z mastera, ponieważ upłynęło zbyt mało czasu.</translation>
     </message>
     <message>
         <location filename="../masterserver/masterclient.cpp" line="97"/>
         <source>Bad response from master server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zła odpowiedź z master serwera.</translation>
     </message>
     <message>
         <location filename="../masterserver/masterclient.cpp" line="102"/>
         <source>Could not fetch a new server list.  The protocol you are using is too old.  An update may be available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można było pobrać nowej listy serwerów. Wersja protokołu jest zbyt stara. Aktualizacja może być dostępna.</translation>
     </message>
     <message>
         <location filename="../masterserver/masterclient.cpp" line="171"/>
         <source>Reloading master server results from cache for %1!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ładuję listę serwerów z pamięci lokalnej dla gry %1!</translation>
     </message>
     <message>
         <location filename="../masterserver/masterclient.cpp" line="220"/>
         <source>Master server timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>Przekroczono limit czasu dla master serwera</translation>
     </message>
     <message>
         <location filename="../masterserver/masterclient.cpp" line="220"/>
         <source>Connection timeout (%1:%2).</source>
-        <translation type="unfinished"></translation>
+        <translation>Przekroczono limit czasu połączenia (%1:%2).</translation>
     </message>
 </context>
 <context>
@@ -2955,165 +2970,165 @@ To fix this problem you may try downloading Doomseeker again from the site speci
     <message>
         <location filename="../configuration/doomseekerconfig.cpp" line="77"/>
         <source>DoomseekerConfig.iniSectionForPlugin(): empty plugin name has been specified, returning dummy IniSection.</source>
-        <translation type="unfinished"></translation>
+        <translation>DoomseekerConfig.iniSectionForPlugin(): podano pustą nazwę wtyczki, zwracam atrapę IniSection.</translation>
     </message>
     <message>
         <location filename="../configuration/doomseekerconfig.cpp" line="83"/>
         <source>DoomseekerConfig.iniSectionForPlugin(): plugin name is invalid: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>DoomseekerConfig.iniSectionForPlugin(): błędna nazwa wtyczki: %1</translation>
     </message>
     <message>
         <location filename="../configuration/doomseekerconfig.cpp" line="173"/>
         <source>Setting INI file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustawienie pliku INI: %1</translation>
     </message>
     <message>
         <location filename="../irc/configuration/ircconfig.cpp" line="143"/>
         <source>Setting IRC INI file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustawienie pliku INI dla IRC: %1</translation>
     </message>
     <message>
         <location filename="../irc/configuration/ircconfig.cpp" line="301"/>
         <source>Add plugin&apos;s IRC channel?</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodać kanały IRCa z wtyczki?</translation>
     </message>
     <message>
         <location filename="../irc/configuration/ircconfig.cpp" line="302"/>
         <source>Would you like the %1 plugin to add its channel to %2&apos;s auto join?</source>
-        <translation type="unfinished"></translation>
+        <translation>Czy chcesz, aby wtyczka %1 dodała swoje kanały IRCa do automatycznej listy dołączenia dla %2?</translation>
     </message>
     <message>
         <location filename="../plugins/pluginloader.cpp" line="65"/>
         <source>Loaded plugin: &quot;%1&quot;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Załadowano wtyczkę: &quot;%1&quot;!</translation>
     </message>
     <message>
         <location filename="../plugins/pluginloader.cpp" line="69"/>
         <source>Failed to open plugin: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Otwarcie wtyczki nie udane: %1</translation>
     </message>
     <message>
         <location filename="../plugins/pluginloader.cpp" line="115"/>
         <source>Failed to locate plugins.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie udało się zlokalizować wtyczek.</translation>
     </message>
     <message>
         <location filename="../serverapi/message.cpp" line="31"/>
         <source>You have been banned from master server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zostałeś zbanowany z master serwera.</translation>
     </message>
     <message>
         <location filename="../serverapi/server.cpp" line="45"/>
         <source>Cooperative</source>
-        <translation type="unfinished"></translation>
+        <translation>Kooperacja</translation>
     </message>
     <message>
         <location filename="../serverapi/server.cpp" line="46"/>
         <source>Deathmatch</source>
-        <translation type="unfinished"></translation>
+        <translation>Deathmatch</translation>
     </message>
     <message>
         <location filename="../serverapi/server.cpp" line="47"/>
         <source>Team DM</source>
-        <translation type="unfinished"></translation>
+        <translation>Drużynowy DM</translation>
     </message>
     <message>
         <location filename="../serverapi/server.cpp" line="48"/>
         <source>CTF</source>
-        <translation type="unfinished"></translation>
+        <translation>CTF</translation>
     </message>
     <message>
         <location filename="../serverapi/server.cpp" line="49"/>
         <source>Unknown</source>
-        <translation type="unfinished">Nieznany</translation>
+        <translation>Nieznany</translation>
     </message>
     <message>
         <location filename="../serverapi/server.cpp" line="60"/>
         <source>1 - I&apos;m too young to die.</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../serverapi/server.cpp" line="61"/>
         <source>2 - Hey, not too rough.</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../serverapi/server.cpp" line="62"/>
         <source>3 - Hurt me plenty.</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../serverapi/server.cpp" line="63"/>
         <source>4 - Ultra-Violence.</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../serverapi/server.cpp" line="64"/>
         <source>5 - NIGHTMARE!</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../serverapi/tooltips/gameinfotip.cpp" line="27"/>
         <source>Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieograniczony</translation>
     </message>
 </context>
 <context>
     <name>RemoteConsole</name>
     <message>
         <location filename="../gui/remoteconsole.cpp" line="51"/>
-        <source>No RCon Support</source>
-        <translation type="unfinished"></translation>
+        <source>The source port selected has no RCon support.</source>
+        <translation>Wybrana gra nie ma wsparcia dla konsoli zdalnej.</translation>
     </message>
     <message>
         <location filename="../gui/remoteconsole.cpp" line="51"/>
-        <source>The source port selected has no RCon support.</source>
-        <translation type="unfinished"></translation>
+        <source>No RCon support</source>
+        <translation>Brak wsparcia konsoli zdalnej</translation>
     </message>
     <message>
         <location filename="../gui/remoteconsole.cpp" line="89"/>
         <source> - Remote Console</source>
-        <translation type="unfinished"></translation>
+        <translation>- konsola zdalna</translation>
     </message>
     <message>
         <location filename="../gui/remoteconsole.cpp" line="101"/>
         <source>Invalid Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieprawidłowe hasło</translation>
     </message>
     <message>
         <location filename="../gui/remoteconsole.cpp" line="101"/>
         <source>The password you entered appears to be invalid.</source>
-        <translation type="unfinished"></translation>
+        <translation>Podane hasło zdaje się być nieprawidłowe.</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_remoteconsole.h" line="107"/>
         <source>Remote Console</source>
-        <translation type="unfinished"></translation>
+        <translation>Zdalna konsola</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_remoteconsole.h" line="108"/>
         <source>Disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozłącz</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_remoteconsole.h" line="109"/>
         <source>Scoreboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Lista wyników</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_remoteconsole.h" line="111"/>
         <source>Player Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nazwa gracza</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_remoteconsole.h" line="112"/>
         <source>Console</source>
-        <translation type="unfinished"></translation>
+        <translation>Konsola</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_remoteconsole.h" line="113"/>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>Plik</translation>
     </message>
 </context>
 <context>
@@ -3385,96 +3400,96 @@ To fix this problem you may try downloading Doomseeker again from the site speci
     <message>
         <location filename="../gui/wadseekerinterface.cpp" line="120"/>
         <source>All done. Success.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wszystkie zakończone. Sukces.</translation>
     </message>
     <message>
         <location filename="../gui/wadseekerinterface.cpp" line="137"/>
         <source>All done. Fail.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wszystkie zakończone. Porażka.</translation>
     </message>
     <message>
         <location filename="../gui/wadseekerinterface.cpp" line="158"/>
         <source>CRITICAL ERROR: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>BŁĄD KRYTYCZNY: %1</translation>
     </message>
     <message>
         <location filename="../gui/wadseekerinterface.cpp" line="173"/>
         <source>Error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd: %1</translation>
     </message>
     <message>
         <location filename="../gui/wadseekerinterface.cpp" line="247"/>
         <location filename="../../../../visual2008/src/core/ui_wadseekerinterface.h" line="154"/>
         <source>Wadseeker</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/wadseekerinterface.cpp" line="270"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>Przerwij</translation>
     </message>
     <message>
         <location filename="../gui/wadseekerinterface.cpp" line="277"/>
         <location filename="../../../../visual2008/src/core/ui_wadseekerinterface.h" line="173"/>
         <source>Close</source>
-        <translation type="unfinished">Zamknij</translation>
+        <translation>Zamknij</translation>
     </message>
     <message>
         <location filename="../gui/wadseekerinterface.cpp" line="378"/>
         <source>[%1%] Wadseeker</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/wadseekerinterface.cpp" line="423"/>
-        <source>Context Menu error</source>
-        <translation type="unfinished"></translation>
+        <source>Context menu error</source>
+        <translation>Błąd menu kontekstowego</translation>
     </message>
     <message>
         <location filename="../gui/wadseekerinterface.cpp" line="423"/>
-        <source>Unknown action selected</source>
-        <translation type="unfinished"></translation>
+        <source>Unknown action selected.</source>
+        <translation>Wybrano nieznaną akcję.</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_wadseekerinterface.h" line="155"/>
-        <source>Seek wad (or multiple wads, comma separated):</source>
-        <translation type="unfinished"></translation>
+        <source>Seek WAD (or multiple WADs, comma separated):</source>
+        <translation>Szukaj WADa (lub wielu WADów, rozdzielonych przecinkiem):</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_wadseekerinterface.h" line="157"/>
         <location filename="../../../../visual2008/src/core/ui_wadseekerinterface.h" line="163"/>
         <source>URL</source>
-        <translation type="unfinished">URL</translation>
+        <translation>URL</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_wadseekerinterface.h" line="159"/>
         <location filename="../../../../visual2008/src/core/ui_wadseekerinterface.h" line="165"/>
         <source>Progress</source>
-        <translation type="unfinished"></translation>
+        <translation>Postęp</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_wadseekerinterface.h" line="161"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nazwa</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_wadseekerinterface.h" line="167"/>
         <source>Speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Prędkość</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_wadseekerinterface.h" line="169"/>
         <source>ETA</source>
-        <translation type="unfinished"></translation>
+        <translation>Czas</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_wadseekerinterface.h" line="171"/>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozmiar</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_wadseekerinterface.h" line="172"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Pobierz</translation>
     </message>
 </context>
 <context>
@@ -3545,7 +3560,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Copyright © 2009 - 2012 The Doomseeker Team&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This program is distributed under the terms of the GPL v2.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_aboutDlg.h" line="335"/>
