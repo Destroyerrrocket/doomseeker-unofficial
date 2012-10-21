@@ -6,37 +6,37 @@
     <message>
         <location filename="../gui/dockBuddiesList.cpp" line="251"/>
         <source>Invalid Pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieprawidłowy wzór</translation>
     </message>
     <message>
         <location filename="../gui/dockBuddiesList.cpp" line="251"/>
         <source>The pattern you have specified is not a valid regular expression.</source>
-        <translation type="unfinished"></translation>
+        <translation>Podany wzór nie jest prawidłowym wyrażeniem regularnym.</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_addBuddyDlg.h" line="104"/>
         <source>Add Buddy</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj kumpla</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_addBuddyDlg.h" line="105"/>
         <source>Type the name of your buddy here.  If the pattern type is set to basic you may use an asterisk (*) as a wild card,</source>
-        <translation type="unfinished"></translation>
+        <translation>W tym miejscu podaj nicka swojego kumpla. Jeżeli typ wzoru ustawiony jest na podstawowy, możesz użyć gwiazdki (*) jako dowolnego ciągu znaków,</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_addBuddyDlg.h" line="106"/>
         <source>Pattern Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Typ wzorca</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_addBuddyDlg.h" line="107"/>
         <source>Basic</source>
-        <translation type="unfinished"></translation>
+        <translation>Podstawowy</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_addBuddyDlg.h" line="108"/>
         <source>Advanced</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaawansowany</translation>
     </message>
 </context>
 <context>
@@ -44,18 +44,19 @@
     <message>
         <location filename="../apprunner.cpp" line="50"/>
         <source>Could not read bundle plist. (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można odczytać plist z pakietu. (%1)</translation>
     </message>
     <message>
         <location filename="../apprunner.cpp" line="79"/>
         <source>Starting (working dir %1): %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Startuję (katalog roboczy %1): %2</translation>
     </message>
     <message>
         <location filename="../apprunner.cpp" line="100"/>
         <source>File: %1
 cannot be run</source>
-        <translation type="unfinished"></translation>
+        <translation>Plik %1
+nie może zostać uruchomiony</translation>
     </message>
 </context>
 <context>
@@ -63,77 +64,94 @@ cannot be run</source>
     <message>
         <location filename="../serverapi/binaries.cpp" line="62"/>
         <source>No %1 executable specified for %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie podano pliku wykonywalnego typu %1 dla wtyczki %2</translation>
     </message>
     <message>
         <location filename="../serverapi/binaries.cpp" line="73"/>
         <source>Executable for %1 %2:
 %3
 is a directory or doesn&apos;t exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plik wykonywalny dla wtyczki %1 typu %2
+%3
+jest katalogiem lub nie istnieje.</translation>
     </message>
 </context>
 <context>
     <name>CFGAppearance</name>
     <message>
         <location filename="../gui/configuration/cfgappearance.h" line="39"/>
-        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="144"/>
+        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="159"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="143"/>
-        <source>GroupBox</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="145"/>
-        <source>Player slots style:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="148"/>
-        <source>Marines</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="149"/>
-        <source>Blocks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="150"/>
-        <source>Numeric</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="152"/>
-        <source>Custom servers color:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="154"/>
-        <source>Bots are not Players</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="156"/>
-        <source>Hide Passwords</source>
-        <translation type="unfinished"></translation>
+        <translation>Wygląd</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="158"/>
-        <source>Lookup server hosts</source>
-        <translation type="unfinished"></translation>
+        <source>GroupBox</source>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="160"/>
-        <source>Use tray icon</source>
+        <source>Player slots style:</source>
+        <translation>Styl slotów graczy:</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="163"/>
+        <source>Marines</source>
+        <translation>Marines</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="164"/>
+        <source>Blocks</source>
+        <translation>Bloczki</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="165"/>
+        <source>Numeric</source>
+        <translation>Liczbowy</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="167"/>
+        <source>Custom servers color:</source>
+        <translation>Kolor serwerów własnych:</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="169"/>
+        <source>Bots are not Players</source>
+        <translation>Boty nie są graczami</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="171"/>
+        <source>Hide Passwords</source>
+        <translation>Ukryj hasła</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="173"/>
+        <source>Lookup server hosts</source>
+        <translation>Pobieraj nazwy hostów serwerów</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="175"/>
+        <source>Language:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="161"/>
+        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="176"/>
+        <source>Use tray icon</source>
+        <translation>Ikona na tacce systemowej</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgappearance.h" line="177"/>
         <source>When close button is pressed, minimize to tray icon.</source>
+        <translation>Gdy wciśnięto przycisk zamykania, zminimalizuj do tacki.</translation>
+    </message>
+    <message>
+        <location filename="../gui/configuration/cfgappearance.cpp" line="96"/>
+        <source>Unknown language definition &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/configuration/cfgappearance.cpp" line="117"/>
+        <source>Loading translation &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -142,38 +160,38 @@ is a directory or doesn&apos;t exist.</source>
     <message>
         <location filename="../gui/configuration/cfgcustomservers.cpp" line="92"/>
         <source>Doomseeker - custom servers</source>
-        <translation type="unfinished"></translation>
+        <translation>Doomseeker - serwery własne</translation>
     </message>
     <message>
         <location filename="../gui/configuration/cfgcustomservers.cpp" line="106"/>
         <source>Port must be within range 1 - 65535</source>
-        <translation type="unfinished"></translation>
+        <translation>Port musi być w zasięgu 1 - 65535</translation>
     </message>
     <message>
         <location filename="../gui/configuration/cfgcustomservers.cpp" line="110"/>
         <source>Unimplemented behavior!</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/configuration/cfgcustomservers.cpp" line="164"/>
         <source>Host</source>
-        <translation type="unfinished"></translation>
+        <translation>Host</translation>
     </message>
     <message>
         <location filename="../gui/configuration/cfgcustomservers.cpp" line="164"/>
         <source>Port</source>
-        <translation type="unfinished"></translation>
+        <translation>Port</translation>
     </message>
     <message>
         <location filename="../gui/configuration/cfgcustomservers.h" line="41"/>
         <location filename="../../../../visual2008/src/core/ui_cfgcustomservers.h" line="98"/>
         <source>Custom Servers</source>
-        <translation type="unfinished"></translation>
+        <translation>Serwery własne</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgcustomservers.h" line="97"/>
         <source>GroupBox</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgcustomservers.h" line="100"/>
@@ -182,27 +200,31 @@ is a directory or doesn&apos;t exist.</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Adds a new entry to the list. To specify the address and port of the custom server double-click on the cells in the table. Domain names are supported.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Dodaje nowy wpis do lity. Aby podać adres i port serwera własnego, kliknij podwójnie na komórki w tabelce. Nazwy domen są wspierane.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgcustomservers.h" line="106"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgcustomservers.h" line="107"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgcustomservers.h" line="109"/>
         <source>Changes engine on selected servers.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień silnik na wybranych serwerach.</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgcustomservers.h" line="111"/>
         <source>Set Engine</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw silnik</translation>
     </message>
 </context>
 <context>
@@ -210,33 +232,33 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/configuration/cfgfilepaths.cpp" line="57"/>
         <source>Doomseeker - Add wad path</source>
-        <translation type="unfinished"></translation>
+        <translation>Doomseeker - dodaj ścieżkę do WADów</translation>
     </message>
     <message>
         <location filename="../gui/configuration/cfgfilepaths.h" line="43"/>
         <location filename="../../../../visual2008/src/core/ui_cfgfilepaths.h" line="96"/>
         <source>File paths</source>
-        <translation type="unfinished"></translation>
+        <translation>Ścieżki plików</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgfilepaths.h" line="95"/>
         <source>GroupBox</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgfilepaths.h" line="97"/>
         <source>IWAD and PWAD paths:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ścieżki do IWADów i PWADów:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgfilepaths.h" line="98"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgfilepaths.h" line="99"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgfilepaths.h" line="101"/>
@@ -246,12 +268,17 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;If selected Doomseeker will attempt to find files used on a particular server if mouse cursor is hovered over the WADS column. This requires hard drive access and search in all directories specified above each time a new tooltip is generated. If it takes too long to create such tooltip you may try disabling this option.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This also applies to IWAD column.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jeżeli zaznaczone, Doomseeker będzie próbował odszukać pliki użyte na serwerze, jeżeli kursor zostanie przesunięty nad kolumnę &quot;WADy.&quot; Wymaga to dostępu do dysku twardego i przeszukiwania we wszystkich katalogach podanych u góry za każdym razem, gdy pojawia się nowa podpowiedź. Jeżeli pojawianie się podpowiedzi trwa zbyt długo możesz spróbować wyłączyć tą opcję.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Powyższe także dotyczy kolumny IWAD.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgfilepaths.h" line="109"/>
         <source>Tell me where are my WADs located</source>
-        <translation type="unfinished"></translation>
+        <translation>Mów mi, gdzie znajdują się  moje WADy.</translation>
     </message>
 </context>
 <context>
@@ -259,37 +286,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/configuration/cfgip2country.h" line="38"/>
         <source>IP2C</source>
-        <translation type="unfinished"></translation>
+        <translation>IP2C</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgip2country.h" line="115"/>
         <source>GroupBox</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgip2country.h" line="116"/>
         <source>IP2C Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustawienia IP2C</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgip2country.h" line="117"/>
         <source>IP2C download URL (changing this is NOT recommended):</source>
-        <translation type="unfinished"></translation>
+        <translation>Adres bazy IP2C (zmienianie tego jest nie zalecane):</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgip2country.h" line="118"/>
         <source>IP2C auto update</source>
-        <translation type="unfinished"></translation>
+        <translation>Auto aktualizacja bazy IP2C</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgip2country.h" line="119"/>
         <source>Update every:</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualizuj co:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgip2country.h" line="120"/>
         <source>days</source>
-        <translation type="unfinished"></translation>
+        <translation>dni</translation>
     </message>
 </context>
 <context>
@@ -298,62 +325,62 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/configuration/irc/cfgircappearance.h" line="35"/>
         <location filename="../../../../visual2008/src/core/ui_cfgircappearance.h" line="165"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Wygląd</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircappearance.h" line="164"/>
         <source>GroupBox</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircappearance.h" line="166"/>
         <source>Default text color:</source>
-        <translation type="unfinished"></translation>
+        <translation>Domyślny kolor tekstu:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircappearance.h" line="168"/>
         <source>Channel action color:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolor akcji kanału:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircappearance.h" line="170"/>
         <source>Network action color:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolor akcji sieci:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircappearance.h" line="172"/>
         <source>Error color:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolor błędu:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircappearance.h" line="174"/>
         <source>Background color:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolor tła:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircappearance.h" line="177"/>
         <source>Main font:</source>
-        <translation type="unfinished"></translation>
+        <translation>Czcionka główna:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircappearance.h" line="178"/>
         <source>User list font:</source>
-        <translation type="unfinished"></translation>
+        <translation>Czcionka listy użytkowników:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircappearance.h" line="179"/>
         <source>URL color:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolor linków:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircappearance.h" line="181"/>
         <source>Prepends all entries with [hh:mm:ss] timestamps.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodawaj znaki czasowe [hh:mm:ss] do tekstu.</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircappearance.h" line="183"/>
         <source>Enable Timestamps</source>
-        <translation type="unfinished"></translation>
+        <translation>Włącz znaki czasowe</translation>
     </message>
 </context>
 <context>
@@ -361,47 +388,47 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="223"/>
         <source>Define IRC Network</source>
-        <translation type="unfinished"></translation>
+        <translation>Zdefiniuj sieć IRC</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="224"/>
         <source>Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>Opis:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="225"/>
         <source>Address:</source>
-        <translation type="unfinished"></translation>
+        <translation>Adres:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="226"/>
         <source>Port:</source>
-        <translation type="unfinished"></translation>
+        <translation>Port:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="227"/>
         <source>Server password (usually this should remain empty):</source>
-        <translation type="unfinished"></translation>
+        <translation>Hasło serwera (zazwyczaj powinno pozotać puste):</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="228"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Ogólne</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="229"/>
         <source>Nickserv password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Hasło nickserv:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="230"/>
         <source>Nickserv command:</source>
-        <translation type="unfinished"></translation>
+        <translation>Komenda nickserv:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="231"/>
         <source>/privmsg nickserv identify %1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="232"/>
@@ -411,27 +438,32 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;%1 is substituted with nickserv password.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Usually nickserv command shouldn&apos;t be changed.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Pod %1 podstawiane jest hasło nickserv.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;W większości przypadków komenda nickserv nie powinna być zmieniana.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="238"/>
         <source>Nickserv</source>
-        <translation type="unfinished"></translation>
+        <translation>Nickserv</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="239"/>
         <source>Specify channels that you wish to join by default when connecting to this network:</source>
-        <translation type="unfinished"></translation>
+        <translation>Podaj kanały do których chcesz dołączyć zawsze po podłączeniu do sieci:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="240"/>
         <source>SPACEBAR or ENTER separated</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozdzielaj ENTEREM lub SPACJĄ</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="241"/>
         <source>Channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanały</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="242"/>
@@ -440,7 +472,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Warning:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; passwords are stored as plain text in configuration file.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Uwaga:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; hasła są przechowywane w pliku konfiguracyjnym jako zwykły tekst.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -448,38 +484,38 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/configuration/irc/cfgircnetworks.cpp" line="170"/>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Opis</translation>
     </message>
     <message>
         <location filename="../gui/configuration/irc/cfgircnetworks.cpp" line="170"/>
         <source>Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Adres</translation>
     </message>
     <message>
         <location filename="../gui/configuration/irc/cfgircnetworks.h" line="43"/>
         <location filename="../../../../visual2008/src/core/ui_cfgircnetworks.h" line="93"/>
         <source>Networks</source>
-        <translation type="unfinished"></translation>
+        <translation>Sieci</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircnetworks.h" line="92"/>
         <source>GroupBox</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircnetworks.h" line="94"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircnetworks.h" line="95"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Edytuj</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircnetworks.h" line="96"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń</translation>
     </message>
 </context>
 <context>
@@ -487,56 +523,56 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/configuration/irc/cfgircsounds.cpp" line="36"/>
         <source>Pick Sound File</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz plik dźwiękowy</translation>
     </message>
     <message>
         <location filename="../gui/configuration/irc/cfgircsounds.cpp" line="38"/>
         <source>WAVE (*.wav)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/configuration/irc/cfgircsounds.h" line="38"/>
         <location filename="../../../../visual2008/src/core/ui_cfgircsounds.h" line="135"/>
         <source>Sounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Dźwięki</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircsounds.h" line="134"/>
         <source>GroupBox</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircsounds.h" line="136"/>
         <source>Nickname used:</source>
-        <translation type="unfinished"></translation>
+        <translation>Użyto nicka:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircsounds.h" line="137"/>
         <source>Private message:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiadomość prywatna:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircsounds.h" line="140"/>
         <location filename="../../../../visual2008/src/core/ui_cfgircsounds.h" line="143"/>
         <source>Sound played when your nickname is used in a channel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dźwięk odtwarzany, gdy twój nick zostanie wypowiedziany na kanale.</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircsounds.h" line="145"/>
         <location filename="../../../../visual2008/src/core/ui_cfgircsounds.h" line="153"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircsounds.h" line="148"/>
         <location filename="../../../../visual2008/src/core/ui_cfgircsounds.h" line="151"/>
         <source>Sound played when private message is received.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dźwięk odtwarzany, gdy otrzymano prywatną wiadomość.</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgircsounds.h" line="154"/>
         <source>&lt;b&gt;Note:&lt;/b&gt; Use sounds in .WAV format.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Uwaga:&lt;/b&gt; Używaj dźwięków tylko w formacie .WAV.</translation>
     </message>
 </context>
 <context>
@@ -544,106 +580,106 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/configuration/cfgquery.h" line="38"/>
         <source>Query</source>
-        <translation type="unfinished"></translation>
+        <translation>Odpytywanie</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="205"/>
         <source>GroupBox</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="206"/>
         <source>Query Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustawienia odpytywania</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="207"/>
         <source>Query servers on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Odpytaj serwery przy starcie</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="210"/>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="214"/>
         <source>How many times Doomseeker will attempt to query each server before deeming it to be not responding.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ile razy Doomseeker powinien odpytać serwer, zanim stwierdzi, że ten nie odpowiada.</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="212"/>
         <source>Number of tries:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ilość prób:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="217"/>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="221"/>
         <source>Delay in miliseconds between each query attempt.</source>
-        <translation type="unfinished"></translation>
+        <translation>Opóźnienie w milisekundach pomiędzy każdą próbą odpytania.</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="219"/>
         <source>Delay between tries (ms):</source>
-        <translation type="unfinished"></translation>
+        <translation>Opóźnienie pomiędzy próbami (ms):</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="223"/>
         <source>Query before launch</source>
-        <translation type="unfinished"></translation>
+        <translation>Odpytaj zanim wystartujesz grę</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="225"/>
         <source>Servers autorefresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Auto-odświeżanie serwerów</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="227"/>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="231"/>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="234"/>
         <source>Minimum value: 30 seconds.</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimum 30 sekund.</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="229"/>
         <source>Obtain new server list every:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pobierz nową listę serwerów co:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="236"/>
         <source>seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>sekund</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="238"/>
         <source>Enabling this will prevent server list from disappearing when you are browsing through it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Włączenie tego zapobiegnie znikaniu listy serwerów w momencie, gdy ją przeglądasz.</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="240"/>
         <source>Don&apos;t refresh if Doomseeker window is active.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie odświeżaj, gdy okno Doomseekera jest aktywne.</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="241"/>
         <source>Query Speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Prędkość odpytywania</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="242"/>
         <source>Batch size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozmiar partii:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="243"/>
         <source>Batch delay (ms):</source>
-        <translation type="unfinished"></translation>
+        <translation>Opóźnienie partii (ms):</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="245"/>
         <source>Number of servers to query in a single batch (30 recommended)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ilośc serwerów, które można odpytać w każdej partii (zalecane: 30)</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgquery.h" line="248"/>
         <source>Delay to wait before sending next batch (0ms recommended)</source>
-        <translation type="unfinished"></translation>
+        <translation>Opóźnienie przed wysłaniem kolejnej partii (zalecane: 0ms)</translation>
     </message>
 </context>
 <context>
@@ -651,77 +687,78 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/configuration/cfgwadseekerappearance.h" line="37"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Wygląd</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekerappearance.h" line="107"/>
         <source>Wadseeker - Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Wadseeker - wygląd</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekerappearance.h" line="108"/>
         <source>Message colors:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolory wiadomości:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekerappearance.h" line="109"/>
         <source>Notice:</source>
-        <translation type="unfinished"></translation>
+        <translation>Powiadomienie:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekerappearance.h" line="111"/>
         <source>Error:</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekerappearance.h" line="113"/>
         <source>Critical Error:</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd krytyczny:</translation>
     </message>
 </context>
 <context>
     <name>CFGWadseekerGeneral</name>
     <message>
         <location filename="../gui/configuration/cfgwadseekergeneral.cpp" line="66"/>
-        <source>Unwritable Target</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/configuration/cfgwadseekergeneral.cpp" line="66"/>
-        <source>The target directory you selected for Wadseeker can not be written to.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/configuration/cfgwadseekergeneral.cpp" line="90"/>
-        <source>Target not on List</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../gui/configuration/cfgwadseekergeneral.cpp" line="91"/>
-        <source>The specified target directory for Wadseeker could not be found on the file paths list.
-
-</source>
-        <translation type="unfinished"></translation>
+        <source>Wadseeker - error</source>
+        <translation>Wadseeker - błąd</translation>
+    </message>
+    <message>
+        <location filename="../gui/configuration/cfgwadseekergeneral.cpp" line="67"/>
+        <source>The target directory you selected for Wadseeker can not be written to.</source>
+        <translation>W tym katalogu wybranym dla Wadseekera nie można tworzyć plików do zapisu.</translation>
     </message>
     <message>
         <location filename="../gui/configuration/cfgwadseekergeneral.cpp" line="92"/>
-        <source>Doomseeker will automatically add this path to the file search paths.</source>
-        <translation type="unfinished"></translation>
+        <source>The specified target directory for Wadseeker could not be found on the file (WAD) paths list.
+
+Doomseeker will automatically add this path to the file search paths.</source>
+        <translation>Podany katalog docelowy dla Wadseekera nie został odnaleziony na liście ścieżek.
+
+Doomseeker doda tą ścieżkę automatycznie do ścieżek wyszukiwania plików (WADów).</translation>
+    </message>
+    <message>
+        <source>The specified target directory for Wadseeker could not be found on the file paths list.
+
+Doomseeker will automatically add this path to the file search paths.</source>
+        <translation type="obsolete">Podany katalog docelowy dla Wadseekera nie został odnaleziony na liście ścieżek.
+
+Doomseeker doda tą ścieżkę automatycznie do ścieżek wyszukiwania plików.</translation>
     </message>
     <message>
         <location filename="../gui/configuration/cfgwadseekergeneral.h" line="37"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Ogólne</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekergeneral.h" line="217"/>
         <source>Wadseeker - General</source>
-        <translation type="unfinished"></translation>
+        <translation>Wadseeker - ogólne</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekergeneral.h" line="218"/>
         <source>Directory where Wadseeker will put wads into:</source>
-        <translation type="unfinished"></translation>
+        <translation>Katalog do którego Wadseeker będzie zapisywał WADy:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekergeneral.h" line="220"/>
@@ -734,12 +771,17 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Time after which Wadseeker stops connecting if no response is received.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;(min: 20 seconds, max: 360 seconds)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Czas po którym Wadseeker przestanie się lączyć, jeżeli nie otrzyma żadnej odpowiedzi.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;(min: 20 sekund, max: 360 sekund)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekergeneral.h" line="227"/>
         <source>Connect timeout (seconds):</source>
-        <translation type="unfinished"></translation>
+        <translation>Timeout połączenia (sekundy):</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekergeneral.h" line="237"/>
@@ -752,22 +794,27 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Time after which Wadseeker stops downloading if data stops coming.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;(min: 60 seconds, max: 360 seconds)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Czas po którym Wadseeker przestanie pobierać, jeżeli dane przestaną nadchodzić.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;(min: 60 sekund, max: 360 sekund)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekergeneral.h" line="244"/>
         <source>Download timeout (seconds):</source>
-        <translation type="unfinished"></translation>
+        <translation>Timeout pobierania (sekundy):</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekergeneral.h" line="261"/>
         <source>Max concurrent site seeks:</source>
-        <translation type="unfinished"></translation>
+        <translation>Max. liczna jednoczesnych poszukiwań:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekergeneral.h" line="278"/>
         <source>Max concurrent WAD downloads:</source>
-        <translation type="unfinished"></translation>
+        <translation>Max. liczba jednoczesnych pobierań WADów:</translation>
     </message>
 </context>
 <context>
@@ -775,32 +822,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/configuration/cfgwadseekeridgames.h" line="38"/>
         <source>Idgames</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekeridgames.h" line="97"/>
         <source>GroupBox</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekeridgames.h" line="98"/>
         <source>Wadseeker - Idgames</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekeridgames.h" line="99"/>
         <source>Use Idgames archive</source>
-        <translation type="unfinished"></translation>
+        <translation>Używaj archiwum Idgames</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekeridgames.h" line="100"/>
         <source>Idgames archive URL (changing this is NOT recommended):</source>
-        <translation type="unfinished"></translation>
+        <translation>Adres archiwum Idgames (zmienianie tego jest NIE zalecane):</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekeridgames.h" line="101"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Domyślnie</translation>
     </message>
 </context>
 <context>
@@ -808,37 +855,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/configuration/cfgwadseekersites.h" line="38"/>
         <source>Sites</source>
-        <translation type="unfinished"></translation>
+        <translation>Strony</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekersites.h" line="94"/>
         <source>GroupBox</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekersites.h" line="95"/>
         <source>Wadseeker - Search URLs</source>
-        <translation type="unfinished"></translation>
+        <translation>Wadseeker - adresy przeszukiwań</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekersites.h" line="97"/>
         <source>Adds default URLs to the list. No URL that is currently on the list will be removed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj domyślne adresy do listy. Żaden z obecnych adresów nie zostanie usunięty.</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekersites.h" line="99"/>
         <source>Add defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj domyślne</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekersites.h" line="100"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgwadseekersites.h" line="101"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń</translation>
     </message>
 </context>
 <context>
@@ -846,7 +893,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../../../visual2008/src/core/ui_configurationdialog.h" line="86"/>
         <source>Doomseeker - Configuration</source>
-        <translation type="unfinished"></translation>
+        <translation>Doomseeker - konfiguracja</translation>
     </message>
 </context>
 <context>
@@ -856,72 +903,77 @@ p, li { white-space: pre-wrap; }
         <location filename="../connectionhandler.cpp" line="60"/>
         <location filename="../connectionhandler.cpp" line="281"/>
         <source>Doomseeker - join server</source>
-        <translation type="unfinished"></translation>
+        <translation>Doomseeker- dołączanie do serwera</translation>
     </message>
     <message>
         <location filename="../connectionhandler.cpp" line="57"/>
         <source>Connection to server timed out.</source>
-        <translation type="unfinished"></translation>
+        <translation>Przekroczono limit czasu połączenia z serwerem.</translation>
     </message>
     <message>
         <location filename="../connectionhandler.cpp" line="60"/>
         <source>An error occured while trying to connect to server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wystąpił błąd w trakcie łączenia z serwerem.</translation>
     </message>
     <message>
         <location filename="../connectionhandler.cpp" line="80"/>
         <source>Wadseeker will not work correctly: 
 Target directory is either not set, is invalid or cannot be written to.
 Please review your Configuration and/or refer to online help available from the Help menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wadseeker nie zadziała poprawnie:
+Katalog docelowy nie jest ustawiony, jest nieprawidłowy, lub nie można w nim zapisywać.
+Proszę sprawdzić konfigurację i/lub odnieść się do pomocy online dostępnej z menu Pomoc.</translation>
     </message>
     <message>
         <location filename="../connectionhandler.cpp" line="85"/>
         <source>Doomseeker - Wadseeker error</source>
-        <translation type="unfinished"></translation>
+        <translation>Doomseeker - błąd Wadseekera</translation>
     </message>
     <message>
         <location filename="../connectionhandler.cpp" line="144"/>
         <source>This server is still refreshing.
 Please wait until it is finished.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ten serwer jest wciąż odświeżany.
+Proszę poczekać, aż zostanie to zakończone.</translation>
     </message>
     <message>
         <location filename="../connectionhandler.cpp" line="145"/>
         <source>Attempted to obtain a join command line for a &quot;%1&quot; server that is under refresh.</source>
-        <translation type="unfinished"></translation>
+        <translation>Próba otrzymania komendy dołączenia dla serwera &quot;%1&quot;, który wciąż jest odświeżany.</translation>
     </message>
     <message>
         <location filename="../connectionhandler.cpp" line="151"/>
         <source>Data for this server is not available.
 Operation failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dane tego serwera są niedostępne.
+Operacja nieudana.</translation>
     </message>
     <message>
         <location filename="../connectionhandler.cpp" line="152"/>
         <source>Attempted to obtain a join command line for an unknown server &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Próba otrzymania komendy dołączenia dla nieznanego serwera &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../connectionhandler.cpp" line="157"/>
         <source>Doomseeker - files are missing</source>
-        <translation type="unfinished"></translation>
+        <translation>Doomseeker - brakuje plików</translation>
     </message>
     <message>
         <location filename="../connectionhandler.cpp" line="158"/>
         <source>Following files are missing:
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Brakuje tych plików:
+</translation>
     </message>
     <message>
         <location filename="../connectionhandler.cpp" line="176"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieznany błąd.</translation>
     </message>
     <message>
         <location filename="../connectionhandler.cpp" line="194"/>
         <source>Error when obtaining join parameters for server &quot;%1&quot;, game &quot;%2&quot;: %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd otrzymywania parametrów dołączenia do serwera &quot;%1&quot;, gra &quot;%2&quot;: %3</translation>
     </message>
     <message>
         <location filename="../connectionhandler.cpp" line="201"/>
@@ -931,34 +983,41 @@ If you don&apos;t have this file you need to purchase the game associated with t
 Wadseeker will not download IWADs.
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>
+Upewnij się, że ten plik znajduje się w ścieżce podanej w Opcjach -&gt; Ścieżki plików.
+Jeżeli nie posiadasz tego pliku to musisz zakupić grę, która jest z nim powiązana.
+Wadseeker nie będzie pobierał IWADów.
+
+</translation>
     </message>
     <message>
         <location filename="../connectionhandler.cpp" line="206"/>
         <source>IWAD: </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../connectionhandler.cpp" line="211"/>
         <source>PWADS: %1
 Do you want Wadseeker to find missing PWADs?</source>
-        <translation type="unfinished"></translation>
+        <translation>PWADy: %1
+Czy chcesz aby Wadseeker odszukał brakujące PWADy?</translation>
     </message>
     <message>
         <location filename="../connectionhandler.cpp" line="224"/>
         <source>
 Alternatively use ignore to connect anyways.</source>
-        <translation type="unfinished"></translation>
+        <translation>
+Alternatywnie użyj &quot;Ignoruj&quot; aby połączyć się mimo wszystko.</translation>
     </message>
     <message>
         <location filename="../connectionhandler.cpp" line="296"/>
         <source>Error while launching executable for server &quot;%1&quot;, game &quot;%2&quot;: %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd uruchamiania programu dla serwera &quot;%1&quot;, gra &quot;%2&quot;: %3</translation>
     </message>
     <message>
         <location filename="../connectionhandler.cpp" line="297"/>
         <source>Doomseeker - launch executable</source>
-        <translation type="unfinished"></translation>
+        <translation>Doomseeker - uruchamianie programu</translation>
     </message>
 </context>
 <context>
@@ -1094,7 +1153,7 @@ Default executable will be used.</source>
     <message>
         <location filename="../../../../visual2008/src/core/ui_createserverdialog.h" line="605"/>
         <source>Port:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Port:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_createserverdialog.h" line="606"/>
@@ -1125,7 +1184,7 @@ Default executable will be used.</source>
     <message>
         <location filename="../../../../visual2008/src/core/ui_createserverdialog.h" line="612"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Domyślnie</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_createserverdialog.h" line="614"/>
@@ -1151,13 +1210,13 @@ Default executable will be used.</source>
         <location filename="../../../../visual2008/src/core/ui_createserverdialog.h" line="619"/>
         <location filename="../../../../visual2008/src/core/ui_createserverdialog.h" line="626"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dodaj</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_createserverdialog.h" line="620"/>
         <location filename="../../../../visual2008/src/core/ui_createserverdialog.h" line="627"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Usuń</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_createserverdialog.h" line="621"/>
@@ -1172,7 +1231,7 @@ Default executable will be used.</source>
     <message>
         <location filename="../../../../visual2008/src/core/ui_createserverdialog.h" line="623"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ogólne</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_createserverdialog.h" line="624"/>
@@ -1375,7 +1434,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/demomanager.cpp" line="237"/>
         <source>Port</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Port</translation>
     </message>
     <message>
         <location filename="../gui/demomanager.cpp" line="238"/>
@@ -1419,7 +1478,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/dockBuddiesList.cpp" line="157"/>
         <location filename="../../../../visual2008/src/core/ui_dockBuddiesList.h" line="131"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dodaj</translation>
     </message>
     <message>
         <location filename="../gui/dockBuddiesList.cpp" line="163"/>
@@ -1647,7 +1706,7 @@ Make sure the configuration for the executable file is set properly.</source>
     <message>
         <location filename="../serverapi/gamerunner.cpp" line="444"/>
         <source>Starting (working dir %1): %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Startuję (katalog roboczy %1): %2</translation>
     </message>
 </context>
 <context>
@@ -2182,7 +2241,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../../../visual2008/src/core/ui_ircnetworkselectionbox.h" line="204"/>
         <source>Port:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Port:</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_ircnetworkselectionbox.h" line="205"/>
@@ -2278,92 +2337,112 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Main</name>
     <message>
-        <location filename="../main.cpp" line="151"/>
+        <location filename="../main.cpp" line="155"/>
         <source>Doomseeker will not run because following directories cannot be created:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="154"/>
+        <location filename="../main.cpp" line="158"/>
         <source>Doomseeker startup error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="188"/>
+        <location filename="../main.cpp" line="193"/>
         <source>Init finished.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="224"/>
+        <location filename="../main.cpp" line="229"/>
         <source>Preparing GUI.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="246"/>
+        <location filename="../main.cpp" line="251"/>
         <source>Starting RCon client.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="259"/>
+        <location filename="../main.cpp" line="264"/>
         <source>Couldn&apos;t find specified plugin: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="269"/>
+        <location filename="../main.cpp" line="274"/>
         <source>Plugin does not support RCon.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="312"/>
+        <location filename="../main.cpp" line="317"/>
         <source>Initializing IP2C database.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="320"/>
+        <location filename="../main.cpp" line="325"/>
         <source>Initializing IRC configuration file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="341"/>
+        <location filename="../main.cpp" line="346"/>
+        <source>Loading translations definitions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="351"/>
+        <source>Loading translation &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="355"/>
+        <source>Translation loaded.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="359"/>
+        <source>Failed to load translation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="365"/>
         <source>Initializing configuration file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="350"/>
+        <location filename="../main.cpp" line="374"/>
         <source>Could not get an access to the settings directory. Configuration will not be saved.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="369"/>
+        <location filename="../main.cpp" line="393"/>
         <source>Initializing configuration for plugins.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="402"/>
+        <location filename="../main.cpp" line="426"/>
         <source>Available command line parameters:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="403"/>
+        <location filename="../main.cpp" line="427"/>
         <source>	--connect protocol://ip[:port] : Attempts to connect to the specified server.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="404"/>
+        <location filename="../main.cpp" line="428"/>
         <source>	--datadir : Sets an explicit search location for IP2C data along with plugins.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="405"/>
+        <location filename="../main.cpp" line="429"/>
         <source>	--rcon [plugin] [ip] : Launch the rcon client for the specified ip.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="406"/>
+        <location filename="../main.cpp" line="430"/>
         <source>	--portable : Starts application in portable mode.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="446"/>
+        <location filename="../main.cpp" line="470"/>
         <source>Starting refreshing thread.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2387,7 +2466,7 @@ One of the proper locations for plugin modules is the &quot;engines/&quot; direc
     <message>
         <location filename="../gui/mainwindow.cpp" line="99"/>
         <source>&amp;Buddies</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Kumple</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="100"/>
@@ -2609,162 +2688,162 @@ To fix this problem you may try downloading Doomseeker again from the site speci
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="206"/>
         <source>Doomseeker</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="207"/>
         <source>&amp;Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Konfiguracja</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="208"/>
         <source>F5</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="209"/>
         <source>&amp;About</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;O programie</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="210"/>
         <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Wyjście</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="211"/>
         <source>Ctrl+Q</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="212"/>
         <source>Server Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Info o serwerach</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="213"/>
         <source>I</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="214"/>
         <source>&amp;Wadseeker</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="215"/>
         <source>Ctrl+W</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="216"/>
         <source>&amp;Buddies</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kumple</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="217"/>
         <source>Ctrl+B</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="218"/>
         <source>&amp;Create server</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Stwórz serwer</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="219"/>
         <source>Ctrl+S</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="220"/>
         <source>&amp;Log</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="221"/>
         <source>Ctrl+L</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="222"/>
         <source>&amp;Help (Online)</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pomoc (online)</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="223"/>
         <source>F1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="224"/>
         <source>&amp;Update IP2C</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Uaktualnij IP2C</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="225"/>
         <source>&amp;IRC</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="226"/>
         <source>Ctrl+I</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="227"/>
         <source>&amp;IRC Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opcje &amp;IRC</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="228"/>
         <source>F6</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="229"/>
         <source>About &amp;Qt</source>
-        <translation type="unfinished"></translation>
+        <translation>O &amp;Qt</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="230"/>
         <source>&amp;Record Demo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nagraj demo</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="231"/>
         <source>&amp;Demo Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Menadżer &amp;dem</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="232"/>
         <source>Server filter is applied</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtr serwerów jest nałożony</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="233"/>
         <source>&amp;Options</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Opcje</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="234"/>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pomoc</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="235"/>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Plik</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="236"/>
         <source>&amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Widok</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="237"/>
         <source>&amp;Query</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zapytania</translation>
     </message>
 </context>
 <context>
@@ -2854,17 +2933,17 @@ To fix this problem you may try downloading Doomseeker again from the site speci
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../configuration/doomseekerconfig.cpp" line="75"/>
+        <location filename="../configuration/doomseekerconfig.cpp" line="77"/>
         <source>DoomseekerConfig.iniSectionForPlugin(): empty plugin name has been specified, returning dummy IniSection.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../configuration/doomseekerconfig.cpp" line="81"/>
+        <location filename="../configuration/doomseekerconfig.cpp" line="83"/>
         <source>DoomseekerConfig.iniSectionForPlugin(): plugin name is invalid: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../configuration/doomseekerconfig.cpp" line="171"/>
+        <location filename="../configuration/doomseekerconfig.cpp" line="173"/>
         <source>Setting INI file: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3116,7 +3195,7 @@ To fix this problem you may try downloading Doomseeker again from the site speci
     <message>
         <location filename="../gui/models/serverlistcolumn.cpp" line="32"/>
         <source>Port</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Port</translation>
     </message>
     <message>
         <location filename="../gui/models/serverlistcolumn.cpp" line="33"/>
@@ -3136,7 +3215,7 @@ To fix this problem you may try downloading Doomseeker again from the site speci
     <message>
         <location filename="../gui/models/serverlistcolumn.cpp" line="36"/>
         <source>Address</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Adres</translation>
     </message>
     <message>
         <location filename="../gui/models/serverlistcolumn.cpp" line="37"/>

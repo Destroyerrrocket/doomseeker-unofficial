@@ -63,7 +63,8 @@ void CFGWadseekerGeneral::saveSettings()
 	QFileInfo targetDirectoryInfo(cbTargetDirectory->currentText());
 	if(!targetDirectoryInfo.isWritable())
 	{
-		QMessageBox::warning(this, tr("Unwritable Target"), tr("The target directory you selected for Wadseeker can not be written to."));
+		QMessageBox::warning(this, tr("Wadseeker - error"),
+			tr("The target directory you selected for Wadseeker can not be written to."));
 	}
 	else
 	{
@@ -87,9 +88,9 @@ void CFGWadseekerGeneral::saveSettings()
 
 		if (!pathPossible)
 		{
-			QMessageBox::warning(this, tr("Target not on List"),
-				tr("The specified target directory for Wadseeker could not be found on the file paths list.\n\n")
-					+ tr("Doomseeker will automatically add this path to the file search paths."));
+			QMessageBox::warning(this, tr("Wadseeker - error"),
+				tr("The specified target directory for Wadseeker could not be found on the file (WAD) paths list.\n\n"
+					"Doomseeker will automatically add this path to the file search paths."));
 		}
 	}
 
