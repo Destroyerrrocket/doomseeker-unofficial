@@ -1,9 +1,11 @@
 #include "localization.h"
 
 #include <QApplication>
+#include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QLibraryInfo>
+#include <QMessageBox>
 #include <QTranslator>
 #include <QSet>
 #include <QStringList>
@@ -61,25 +63,48 @@ bool Localization::loadTranslation(const QString& localeName)
 	QStringList searchPaths = DataPaths::staticDataSearchDirs(
 		TRANSLATIONS_LOCATION_SUBDIR);
 	// Qt library translator.
-	QTranslator* qtTranslator = new QTranslator();
+	// First let's try to load translation that is bundled with program.
+	// This behavior is valid for Windows.
+	QTranslator* qtTranslator = loadTranslationFile("qt_" + localeName, searchPaths);
+	if (qtTranslator == NULL)
+	{
+		// If Qt translation is not bundled with program then try to load
+		// it from system location. This behavior is valid for Linux.
+		qtTranslator = new QTranslator();
+		qtTranslator->load("qt_" + localeName,
+			QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+		QCoreApplication::installTranslator(qtTranslator);
+	}
 	currentlyLoadedTranslations.append(qtTranslator);
-	qtTranslator->load("qt_" + localeName,
-		 QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-	QCoreApplication::installTranslator(qtTranslator);
+
 	// Doomseeker translator.
-	QTranslator* myappTranslator = new QTranslator();
-	currentlyLoadedTranslations.append(myappTranslator);
+	QTranslator* myappTranslator = loadTranslationFile(localeName, searchPaths);
+	if (myappTranslator != NULL)
+	{
+		currentlyLoadedTranslations.append(myappTranslator);
+	}
+	return myappTranslator != NULL;
+}
+
+QTranslator* Localization::loadTranslationFile(const QString& localeName, const QStringList& searchPaths)
+{
+	QTranslator* pTranslator = new QTranslator();
 	bool bLoaded = false;
 	foreach (const QString& dir, searchPaths)
 	{
-		if (myappTranslator->load(localeName, dir))
+		if (pTranslator->load(localeName, dir))
 		{
-			QCoreApplication::installTranslator(myappTranslator);
+			QCoreApplication::installTranslator(pTranslator);
 			bLoaded = true;
 			break;
 		}
 	}
-	return bLoaded;
+	if (!bLoaded)
+	{
+		delete pTranslator;
+		pTranslator = NULL;
+	}
+	return pTranslator;
 }
 //////////////////////////////////////////////////////////////////////////////
 QList<LocalizationInfo> Localization::LocalizationLoader::loadLocalizationsList(const QStringList& definitionsFileSearchDirs)
