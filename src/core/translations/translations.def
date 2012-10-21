@@ -1,4 +1,18 @@
 PROTOCOL_VERSION=1
+# The data columns are following:
+# - country ip2c name
+#     Used to search for country flag. This must be one of the flags names
+#     from resources.qrc.
+# - language_counry
+#     Effective name of the translation file (.ts, .qm). This is also used
+#     to load Qt translation file which has "qt_" prefix in its name.
+#     For example Polish translation is located in "pl_PL" and "qt_pl" files.
+#     Qt handles name resolving in a way that progressively strips away parts 
+#     after underscores until the file is found.
+# - nice name
+#     Displayed to user in language selection menu. This should be written in
+#     the language it translates to.
+
 # country ip2c name;language_country;nice name
 GBR;en_EN;English
 POL;pl_PL;Polski
