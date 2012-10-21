@@ -278,7 +278,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../../../visual2008/src/core/ui_cfgfilepaths.h" line="109"/>
         <source>Tell me where are my WADs located</source>
-        <translation>Mów mi, gdzie znajdują się  moje WADy.</translation>
+        <translation type="unfinished">Mów mi, gdzie znajdują się moje WADy.</translation>
     </message>
 </context>
 <context>
@@ -1826,8 +1826,8 @@ nie istnieje lub jest katalogiem.</translation>
     <message numerus="yes">
         <location filename="../gui/ip2cupdatebox.cpp" line="54"/>
         <source>This database is %n days old.</source>
-        <translation>
-            <numerusform>Ta baza ma %n dzień.</numerusform>
+        <translation type="unfinished">
+            <numerusform>Ta baza ma 1 dzień.</numerusform>
             <numerusform>Ta baza ma %n dni.</numerusform>
             <numerusform>Ta baza ma %n dni.</numerusform>
         </translation>
@@ -2878,7 +2878,7 @@ Aby naprawić ten błąd można spróbować pobrać Doomseekera jeszcze raz ze s
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="237"/>
         <source>&amp;Query</source>
-        <translation>&amp;Odpytywanie</translation>
+        <translation>O&amp;dpytywanie</translation>
     </message>
 </context>
 <context>
