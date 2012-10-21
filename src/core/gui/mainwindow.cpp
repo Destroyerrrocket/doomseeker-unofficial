@@ -283,10 +283,7 @@ void MainWindow::changeEvent(QEvent* event)
 		serverTableHandler->cleanUp();
 		event->accept();
 	}
-	else
-	{
-		event->ignore();
-	}
+	QMainWindow::changeEvent(event);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
