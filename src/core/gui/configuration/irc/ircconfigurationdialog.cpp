@@ -81,7 +81,7 @@ bool IRCConfigurationDialog::validate()
 	{
 		if (gIRCConfig.personal.nickname.isEmpty())
 		{
-			QString nick = CommonGUI::askString(tr("Config validation"), tr("You have chosen one or more networks for autojoin startup but you have not defined any nickname. Please define it now"));
+			QString nick = CommonGUI::askString(tr("Config validation"), tr("You have chosen one or more networks for autojoin startup but you have not defined any nickname. Please define it now."));
 			if (nick.isEmpty())
 			{
 				return false;

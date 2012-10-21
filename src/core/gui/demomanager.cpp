@@ -188,7 +188,7 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 		}
 		if(plugin == NULL)
 		{
-			QMessageBox::critical(this, tr("No plugin"), tr("The \"") + selectedDemo->port + tr("\" plugin does not appear to be loaded."));
+			QMessageBox::critical(this, tr("No plugin"), tr("The \"%1\" plugin does not appear to be loaded.").arg(selectedDemo->port));
 			return;
 		}
 
@@ -235,7 +235,7 @@ void DemoManagerDlg::updatePreview(const QModelIndex &index)
 	selectedDemo = &demoTree[dateRow][timeRow];
 
 	QString text = "<b>" + tr("Port") + ":</b><p style=\"margin: 0px 0px 0px 10px\">" + selectedDemo->port + "</p>" +
-		"<b>" + tr("Wads") + ":</b><p style=\"margin: 0px 0px 0px 10px\">";
+		"<b>" + tr("WADs") + ":</b><p style=\"margin: 0px 0px 0px 10px\">";
 	foreach(const QString &wad, selectedDemo->wads)
 	{
 		text += wad + "<br />";

@@ -51,16 +51,7 @@ void IP2CUpdateBox::updateInfo()
 		
 		int days = lastModified.daysTo(current);
 		
-		QString ageString = "";
-		if (days == 1)
-		{
-			ageString = tr("This database is 1 day old.");
-		}
-		else
-		{
-			ageString = tr("This database is %1 days old.").arg(days);
-		}
-	
+		QString ageString = tr("This database is %n days old.", "", days);
 		lblDatabaseAge->setText(ageString);
 	}
 	else
