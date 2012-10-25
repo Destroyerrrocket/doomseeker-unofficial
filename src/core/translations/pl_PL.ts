@@ -16,12 +16,12 @@
     <message>
         <location filename="../../../../visual2008/src/core/ui_addBuddyDlg.h" line="104"/>
         <source>Add Buddy</source>
-        <translation>Dodaj kumpla</translation>
+        <translation>Dodaj znajomego</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_addBuddyDlg.h" line="105"/>
         <source>Type the name of your buddy here.  If the pattern type is set to basic you may use an asterisk (*) as a wild card,</source>
-        <translation>W tym miejscu podaj nicka swojego kumpla. Jeżeli typ wzoru ustawiony jest na podstawowy, możesz użyć gwiazdki (*) jako dowolnego ciągu znaków,</translation>
+        <translation>W tym miejscu podaj nicka swojego znajomego. Jeżeli typ wzoru ustawiony jest na podstawowy, możesz użyć gwiazdki (*) jako dowolnego ciągu znaków,</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_addBuddyDlg.h" line="106"/>
@@ -1469,7 +1469,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/dockBuddiesList.cpp" line="46"/>
         <source>Buddy</source>
-        <translation>Kumpel</translation>
+        <translation>Znajomy</translation>
     </message>
     <message>
         <location filename="../gui/dockBuddiesList.cpp" line="47"/>
@@ -1479,7 +1479,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/dockBuddiesList.cpp" line="115"/>
         <source>Delete Buddy</source>
-        <translation>Usuń kumpla</translation>
+        <translation>Usuń znajomego</translation>
     </message>
     <message>
         <location filename="../gui/dockBuddiesList.cpp" line="115"/>
@@ -1501,7 +1501,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../../../visual2008/src/core/ui_dockBuddiesList.h" line="129"/>
         <source>Buddies</source>
-        <translation>Kumple</translation>
+        <translation>Znajomi</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_dockBuddiesList.h" line="130"/>
@@ -2499,7 +2499,7 @@ Jedno z prawidłowych miejsc dla wtyczek to katalog &quot;engines/&quot;.
     <message>
         <location filename="../gui/mainwindow.cpp" line="99"/>
         <source>&amp;Buddies</source>
-        <translation>&amp;Kumple</translation>
+        <translation>&amp;Znajomi</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="100"/>
@@ -2778,7 +2778,7 @@ Aby naprawić ten błąd można spróbować pobrać Doomseekera jeszcze raz ze s
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="216"/>
         <source>&amp;Buddies</source>
-        <translation>&amp;Kumple</translation>
+        <translation>&amp;Znajomi</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_mainwindow.h" line="217"/>
