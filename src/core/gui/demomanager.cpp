@@ -42,7 +42,7 @@ DemoManagerDlg::DemoManagerDlg() : selectedDemo(NULL)
 	setupUi(this);
 
 	// Add a play button
-	QPushButton *playButton = buttonBox->addButton("Play", QDialogButtonBox::ActionRole);
+	QPushButton *playButton = buttonBox->addButton(tr("Play"), QDialogButtonBox::ActionRole);
 	playButton->setIcon(QIcon(":/icons/media-playback-start.png"));
 
 	demoModel = new QStandardItemModel();
