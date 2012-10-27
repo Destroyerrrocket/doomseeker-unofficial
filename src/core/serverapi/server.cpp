@@ -82,7 +82,7 @@ Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
 	bIsRefreshing(false), serverAddress(address), serverPort(port)
 {
 	if(gConfig.doomseeker.bLookupHosts)
-		QHostInfo::lookupHost(address.toString(), this, SLOT( setHostName(QHostInfo) ));
+		lookupHost();
 
 	broadcastToLAN = false;
 	broadcastToMaster = false;
@@ -173,6 +173,11 @@ bool Server::isFull() const
 bool Server::isRefreshable() const
 {
 	return time.secsTo(QTime::currentTime()) >= plugin()->data()->refreshThreshold;
+}
+
+void Server::lookupHost()
+{
+	QHostInfo::lookupHost(serverAddress.toString(), this, SLOT( setHostName(QHostInfo) ));
 }
 
 int Server::numFreeClientSlots() const

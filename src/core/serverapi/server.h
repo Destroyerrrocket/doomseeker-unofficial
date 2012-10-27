@@ -99,6 +99,15 @@ class MAIN_EXPORT Server : public QObject
 		 *	or "Undefined" string if there is no parent plugin.
 		 */
 		virtual QString		engineName() const;
+		
+		/**
+		 * @brief Prompts the server to reverse resolve its address to
+		 *        a hostname.
+		 *
+		 * The lookup will be performed asynchronously. When lookup is
+		 * finished then updated() signal will be emitted.
+		 */
+		void lookupHost();
 
 		const QHostAddress	&address() const { return serverAddress; }
 		QString				addressWithPort() const { return QString("%1:%2").arg(address().toString()).arg(port()); }

@@ -348,6 +348,15 @@ void ServerListHandler::itemSelected(const QModelIndex& index)
 	emit serversSelected(servers);
 }
 
+void ServerListHandler::lookupHosts()
+{
+	for (int i = 0; i < model->rowCount(); ++i)
+	{
+		Server* server = model->serverFromList(i);
+		server->lookupHost();
+	}
+}
+
 void ServerListHandler::modelCleared()
 {
 	QList<Server*> servers;

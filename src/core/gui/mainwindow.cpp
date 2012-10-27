@@ -885,6 +885,7 @@ void MainWindow::menuOptionsConfigure()
 		configDialog.addEngineConfiguration(pConfigurationBox);
 	}
 
+	bool bLookupHostsSettingBefore = gConfig.doomseeker.bLookupHosts;
 	// Stop the auto refresh timer during configuration.
 	autoRefreshTimer.stop();
 	configDialog.exec();
@@ -900,6 +901,12 @@ void MainWindow::menuOptionsConfigure()
 	{
 		serverTableHandler->redraw();
 		initTrayIcon();
+	}
+	
+	// Do the following only if setting changed from false to true.
+	if (!bLookupHostsSettingBefore && gConfig.doomseeker.bLookupHosts)
+	{
+		serverTableHandler->lookupHosts();
 	}
 
 	// Refresh custom servers list:

@@ -64,6 +64,10 @@ class ServerListHandler : public QObject
 	public slots:
 		void				applyFilter(const ServerListFilterInfo& filterInfo);
 		void 				cleanUp();
+		/**
+		 * @brief Looks up hosts for all available servers.
+		 */
+		void				lookupHosts();
 		void 				redraw();
 		void 				refreshAll();
 		void				refreshSelected();
