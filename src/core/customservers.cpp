@@ -25,6 +25,7 @@
 #include "plugins/engineplugin.h"
 #include "serverapi/server.h"
 #include "main.h"
+#include "log.h"
 #include <QHostInfo>
 
 void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerInfo>& outCustomServerInfoList)
@@ -84,7 +85,6 @@ void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerIn
 void CustomServers::readConfig(QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing)
 {
 	QList<CustomServerInfo> customServerInfoList = gConfig.doomseeker.customServers.toList();
-
 	setServers(customServerInfoList, receiver, slotUpdated, slotBegunRefreshing);
 }
 
@@ -92,20 +92,39 @@ void CustomServers::setServers(const QList<CustomServerInfo>& csiList, QObject* 
 {
 	emptyServerList();
 
-	QList<CustomServerInfo>::const_iterator cit;
-	for (cit = csiList.begin(); cit != csiList.end(); ++cit)
+	foreach (const CustomServerInfo& customServerInfo, csiList)
 	{
-		if (cit->engineIndex < 0)
+		if (customServerInfo.engineIndex < 0)
+		{
+			// Unknown engine.
+			gLog << tr("Unknown game for custom server %1:%2")
+				.arg(customServerInfo.host).arg(customServerInfo.port);
 			continue;
+		}
+		
+		QHostAddress address;
+		if (!address.setAddress(customServerInfo.host))
+		{
+			QHostInfo hostInfo(QHostInfo::fromName(customServerInfo.host));
+			if (hostInfo.addresses().size() == 0)
+			{
+				// Can't decipher address.
+				gLog << tr("Failed to resolve address for custom server %1:%2")
+					.arg(customServerInfo.host).arg(customServerInfo.port);
+				continue;
+			}
+			address = hostInfo.addresses().first();
+		}
 
-		QHostInfo hi(QHostInfo::fromName(cit->host));
-		if (hi.addresses().size() == 0)
-			continue;
-
-		const EnginePlugin* pInterface = (*Main::enginePlugins)[cit->engineIndex]->info;
-		Server* p = pInterface->server(hi.addresses().first(), cit->port);
+		const EnginePlugin* pInterface = (*Main::enginePlugins)[customServerInfo.engineIndex]->info;
+		Server* p = pInterface->server(address, customServerInfo.port);
 		if(p == NULL)
+		{
+			gLog << tr("Plugin returned NULL \"Server*\" for custom server %1:%2. "
+				"This is a problem with the plugin.")
+					.arg(customServerInfo.host).arg(customServerInfo.port);
 			continue;
+		}
 		p->setCustom(true);
 
 		connect(p, SIGNAL( updated(Server*, int) ), receiver, slotUpdated);
