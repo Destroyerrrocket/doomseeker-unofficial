@@ -380,6 +380,17 @@ if (UPDATE_TRANSLATIONS)
 	)
 	message(STATUS "make translations_target\n\n")
 endif (UPDATE_TRANSLATIONS) 
+
+if (WIN32)
+	# Compile&copy Qt translations that need to be redistributed with the .exe.
+	# .qm files from these need to be redistributed with the application.
+	# This is Windows only.
+	set(TRANSLATIONS_FILES
+		${TRANSLATIONS_FILES}
+		${QT_TRANSLATIONS_DIR}/qt_pl.ts
+	)
+endif (WIN32)
+
 qt4_add_translation(QM_FILES ${TRANSLATIONS_FILES})
 
 # windows.rc
@@ -451,21 +462,6 @@ foreach (TARGET_SUBDIR ${COPY_TARGET_SUBDIRS})
 			${CMAKE_BINARY_DIR}/${TARGET_SUBDIR}/translations
 	)
 endforeach(TARGET_SUBDIR)
-
-# Compile&copy Qt translations that need to be redistributed with the .exe.
-# This is Windows only
-if(WIN32)
-	set(QT_TRANSLATION_TS_FILES
-		qt_pl
-	)
-	foreach(TS_FILE ${QT_TRANSLATION_TS_FILES})
-		foreach (TARGET_SUBDIR ${COPY_TARGET_SUBDIRS})
-			add_custom_command(TARGET doomseeker POST_BUILD
-				COMMAND ${QT_LRELEASE_EXECUTABLE} "${QT_TRANSLATIONS_DIR}/${TS_FILE}.ts"
-					-qm ${CMAKE_BINARY_DIR}/${TARGET_SUBDIR}/translations/${TS_FILE}.qm)
-		endforeach(TARGET_SUBDIR)
-	endforeach(TS_FILE)
-endif(WIN32)
 
 # Allow plugins to link with doomseeker
 set_target_properties(doomseeker PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR} ENABLE_EXPORTS 1)
