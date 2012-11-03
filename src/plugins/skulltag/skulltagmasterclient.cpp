@@ -171,7 +171,7 @@ bool SkulltagMasterClient::readMasterResponse(QByteArray &data)
 		readLastPacket = true;
 	if(readLastPacket) // See if we read every packet.
 	{
-		if(packetsRead == (1<<numPackets)-1);
+		if(packetsRead == (1<<numPackets)-1)
 		{
 			emit listUpdated();
 		}
