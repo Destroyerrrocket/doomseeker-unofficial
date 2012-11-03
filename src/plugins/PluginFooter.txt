@@ -1,20 +1,15 @@
 # See PluginHeader.txt
 
 add_dependencies(${PLUGIN_NAME} doomseeker)
-set_target_properties(${PLUGIN_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${LIBS_OUTPUT_DIR} RUNTIME_OUTPUT_DIRECTORY ${LIBS_OUTPUT_DIR})
 
-if(NOT WIN32 AND NOT XCODE_VERSION)
-	install(FILES ${OUTPUT_DIR}/engines/lib${PLUGIN_NAME}.so DESTINATION share/doomseeker/engines)
-elseif(MSVC_IDE)
-	# This should fix the problem where built files are incorrectly placed into
-	# <build_root>/engines/<build_type>/ . The correct path is
-	# <build_root>/<build_type>/engines/
-	set(Z_BUILD_TYPE \${CMAKE_INSTALL_CONFIG_NAME})
-	install(TARGETS ${PLUGIN_NAME}
-		DESTINATION ${OUTPUT_DIR}/${Z_BUILD_TYPE}/engines/
-		OPTIONAL)
-elseif(XCODE_VERSION)
-	set(DLL_NAME lib${PLUGIN_NAME}.so)
-	set(Z_BUILD_TYPE \${CMAKE_INSTALL_CONFIG_NAME})
-	install(FILES ${OUTPUT_DIR}/engines/${Z_BUILD_TYPE}/${DLL_NAME} DESTINATION ${OUTPUT_DIR}/${Z_BUILD_TYPE}/engines/ OPTIONAL)
-endif(NOT WIN32 AND NOT XCODE_VERSION)
+get_property(PLUGIN_LOCATION TARGET ${PLUGIN_NAME} PROPERTY LOCATION) 
+if(UNIX AND NOT APPLE)
+	install(FILES ${PLUGIN_LOCATION} DESTINATION share/doomseeker/engines)
+endif(UNIX AND NOT APPLE)
+
+add_custom_command(TARGET ${PLUGIN_NAME} PRE_BUILD
+	COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/engines
+)
+add_custom_command(TARGET ${PLUGIN_NAME} POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PLUGIN_LOCATION} ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/engines
+)
