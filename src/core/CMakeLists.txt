@@ -374,11 +374,13 @@ if (UPDATE_TRANSLATIONS)
 		${FILES_TO_TRANSLATE}
 		${TRANSLATIONS_FILES}
 	)
-	add_custom_target (translations_target DEPENDS ${TS_FILES})
+	add_custom_target(translations_target DEPENDS ${TS_FILES})
 	message(WARNING 
 		"Update source translation translations/*.ts files (WARNING: make clean will delete the source .ts files! Danger!)"
 	)
 	message(STATUS "make translations_target\n\n")
+else (UPDATE_TRANSLATIONS)
+	add_custom_target(translations_target)
 endif (UPDATE_TRANSLATIONS) 
 
 if (WIN32)
