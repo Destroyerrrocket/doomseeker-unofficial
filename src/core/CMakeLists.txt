@@ -429,42 +429,20 @@ add_dependencies(doomseeker revision_check)
 target_link_libraries(doomseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} wadseeker ${CMAKE_DL_LIBS})
 
 # Copy translations
-if(MSVC)
-	# [Zalewa] I know that this is stupid but I don't know how to tell CMake 
-	# to put the files into proper build directories. MSVC creates subdir
-	# for each build type. ${CMAKE_BINARY_DIR} points to a directory that is
-	# the parent of that subdir. For GCC this problem doesn't exist because
-	# CMake allows to configure only one build type per "solution", while
-	# for MSVC all build types are defined within a single solution.
-	# This workaround will create subdirectories for build types that we don't
-	# need and don't want but I think this is acceptable.
-	# Naturally, ${CMAKE_CURRENT_BINARY_DIR} is even more useless.
-	set(COPY_TARGET_SUBDIRS
-		Debug Release MinSizeRel RelWithDebInfo
-	)
-else(MSVC)
-	set(COPY_TARGET_SUBDIRS ".")
-endif(MSVC)
+set(TRANSLATION_FILES_TO_COPY
+	${QM_FILES}
+	${CMAKE_CURRENT_SOURCE_DIR}/translations/translations.def
+)
 
-foreach(TARGET_SUBDIR ${COPY_TARGET_SUBDIRS})
-	add_custom_command(TARGET doomseeker PRE_BUILD
-		COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${TARGET_SUBDIR}/translations
-	)
-endforeach(TARGET_SUBDIR)
-foreach(QM_FILE ${QM_FILES})
-	foreach (TARGET_SUBDIR ${COPY_TARGET_SUBDIRS})
-		add_custom_command(TARGET doomseeker POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QM_FILE} ${CMAKE_BINARY_DIR}/${TARGET_SUBDIR}/translations
-		)
-	endforeach(TARGET_SUBDIR)
-endforeach(QM_FILE)
-foreach (TARGET_SUBDIR ${COPY_TARGET_SUBDIRS})
+add_custom_command(TARGET doomseeker PRE_BUILD
+	COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/translations
+)
+
+foreach(FILE_TO_COPY ${TRANSLATION_FILES_TO_COPY})
 	add_custom_command(TARGET doomseeker POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-			${CMAKE_CURRENT_SOURCE_DIR}/translations/translations.def 
-			${CMAKE_BINARY_DIR}/${TARGET_SUBDIR}/translations
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${FILE_TO_COPY} ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/translations
 	)
-endforeach(TARGET_SUBDIR)
+endforeach(FILE_TO_COPY)
 
 # Allow plugins to link with doomseeker
 set_target_properties(doomseeker PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR} ENABLE_EXPORTS 1)
@@ -477,7 +455,6 @@ if(WIN32)
 		set_target_properties(doomseeker PROPERTIES LINK_FLAGS_RELEASE "-Wl,-subsystem,windows")
 		set_target_properties(doomseeker PROPERTIES LINK_FLAGS_MINSIZEREL "-Wl,-subsystem,windows")
 	endif(MSVC)
-
 endif(WIN32)
 
 if(NOT WIN32 AND NOT XCODE_VERSION)
@@ -486,5 +463,6 @@ endif(NOT WIN32 AND NOT XCODE_VERSION)
 
 if(UNIX AND NOT APPLE)
 	install(FILES ${CMAKE_SOURCE_DIR}/media/icon.png DESTINATION share/doomseeker)
+	install(FILES ${TRANSLATION_FILES_TO_COPY} DESTINATION share/doomseeker/translations)
 	install(FILES ${CMAKE_SOURCE_DIR}/media/Doomseeker.desktop DESTINATION /usr/share/applications)
 endif(UNIX AND NOT APPLE)
