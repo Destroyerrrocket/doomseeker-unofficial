@@ -387,6 +387,7 @@ if (WIN32)
 	# Compile&copy Qt translations that need to be redistributed with the .exe.
 	# .qm files from these need to be redistributed with the application.
 	# This is Windows only.
+	# WARNING: This should always be defined after UPDATE_TRANSLATIONS "if".
 	set(TRANSLATIONS_FILES
 		${TRANSLATIONS_FILES}
 		${QT_TRANSLATIONS_DIR}/qt_pl.ts
