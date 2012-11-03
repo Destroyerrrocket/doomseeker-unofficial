@@ -1,7 +1,7 @@
 ================================================================================
 Compiling Doomseeker in Microsoft Visual Studio 2008 Express with Qt 4.x
 Written by Zalewa, June 2012
-Last update: 20th October 2012
+Last update: 4th November 2012
 ================================================================================
 1. Quick introduction.
 
@@ -112,26 +112,6 @@ red options should turn to normal background color and then press "Generate"
 button. This should create the ".sln" file in the target directory. You may
 now open this file with Visual Studio 2008 and then try to compile the program.
 ================================================================================
-5. Visual Studio 2008.
-
-There is one minor drawback when CMake creates a project for Visual Studio.
-The "INSTALL" project is disabled by default and this project is vital for
-Doomseeker's plugins. This "project" takes care of putting the compiled plugins
-into a proper directory where Doomseeker can find and use them. Doomseeker is 
-basically useless without at least one of these plugins.
-
-To enable the "INSTALL" project open the solution. Then right-click on the 
-root entry in the "Solution Explorer" tree (it should say 
-"Solution 'DOOMSEEKER'") and select "properties". Now in the new dialog box 
-select "Configuration properties". Here check the "INSTALL" project. Remember 
-to do this both for "Release" and "Debug" configurations.
-
-IMPORTANT NOTE:
-The state of "INSTALL" project will be reset to unchecked every time CMake needs
-to rebuild the solution. Remember that when modifying the contents of any of the
-"CMakeLists.txt" files.
-
-
 Now you may build the program and while it compiles you may open one 
 of the source code files that I created back in 2009 and cry :)
 ================================================================================
