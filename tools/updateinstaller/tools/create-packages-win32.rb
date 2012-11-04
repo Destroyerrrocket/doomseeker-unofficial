@@ -406,7 +406,7 @@ end
 
 # xmllint generates more readable formatted XML than REXML, so write unformatted
 # XML first and then format it with xmllint.
-system("xmllint --format #{output_xml_file} > #{output_dir}/file_list.xml")
+system("xmllint #{output_xml_file} > #{output_dir}/file_list.xml")
 File.delete(output_xml_file)
 
 
