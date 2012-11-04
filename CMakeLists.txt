@@ -66,6 +66,9 @@ else( BZIP2_FOUND AND NOT FORCE_INTERNAL_BZIP2 )
 	set( BZIP2_LIBRARY bz2 )
 endif( BZIP2_FOUND AND NOT FORCE_INTERNAL_BZIP2 )
 
+if(WIN32)
+	add_subdirectory(tools/updateinstaller)
+endif(WIN32)
 add_subdirectory(tools/updaterevision)
 
 add_subdirectory(src/core)
