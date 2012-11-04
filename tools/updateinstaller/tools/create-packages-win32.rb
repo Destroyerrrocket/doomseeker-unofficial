@@ -303,6 +303,12 @@ input_dir = ARGV[0]
 package_map_file = ARGV[1]
 output_dir = ARGV[2]
 
+if (!/[\/\\]$/.match(input_dir))
+	# The rest of the script won't work properly if this path doesn't end with
+	# a slash.
+	input_dir += "/"
+end
+
 FileUtils.mkpath(output_dir)
 
 # get the details of each input file
