@@ -103,7 +103,6 @@ class UpdateScriptGenerator
 	               package_config,
 	               file_list,
 	               package_file_map)
-
 		@target_version = target_version
 		@platform = platform
 		@config = package_config
@@ -114,25 +113,19 @@ class UpdateScriptGenerator
 			file = UpdateScriptFile.new
 			file.path = strip_prefix(path,input_dir)
 
-			if (File.basename(path) == @config.updater_binary)
-				# for the updater binary, use the possibly substituted
-				# version in the output directory
-				path = "#{output_dir}/#{@config.updater_binary}"	
-			end
-
 			file.is_main_binary = (file.path == package_config.main_binary)
 			
 			if (File.symlink?(path))
 				file.target = File.readlink(path)
 			else
+				file.package = @config.package_for_file(file.path)
+				if (!file.package)
+					# This file shouldn't be in the package so omit it.
+					next
+				end
 				file.hash = file_sha1(path)
 				file.permissions = File.stat(path).mode
 				file.size = File.size(path)
-				file.package = @config.package_for_file(file.path)
-
-				if (!file.package)
-					raise "Could not find package for file #{file.path}"
-				end
 			end
 
 			@files_to_install << file
@@ -331,11 +324,10 @@ input_file_list.each do |file|
 
 	relative_file = strip_prefix(file,input_dir)
 	package = package_config.package_for_file(relative_file)
-	if (!package)
-		raise "Unable to find package for file #{file}"
+	if (package)
+		package_file_map[package] = [] if !package_file_map[package]
+		package_file_map[package] << file
 	end
-	package_file_map[package] = [] if !package_file_map[package]
-	package_file_map[package] << file
 end
 
 # generate each package
@@ -386,15 +378,6 @@ package_file_map.each do |package,files|
 		end
 	end
 end
-
-# copy the updater to the output directory
-puts "Using updater binary: #{updater_binary_input_path}"
-if !updater_binary_input_path
-	puts "Updater binary not found in input directory: #{input_dir}"
-	exit(1)
-end
-
-FileUtils.cp(updater_binary_input_path,"#{output_dir}/#{File.basename(updater_binary_input_path)}")
 
 # output the file_list.xml file
 update_script = UpdateScriptGenerator.new(target_version,target_platform,input_dir,
