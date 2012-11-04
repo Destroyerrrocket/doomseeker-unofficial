@@ -14,7 +14,7 @@ FILETYPE VFT_APP
 		 {
 			 VALUE "CompanyName", "The Doomseeker Team"
 			 VALUE "FileVersion", FILEVERSION_STR_DEF
-			 VALUE "FileDescription", "Doom server browser"
+			 VALUE "FileDescription", "Doomseeker"
 			 VALUE "InternalName", "doomseeker"
 			 VALUE "LegalCopyright", LEGALCOPYRIGHT_DEF
 			 VALUE "LegalTrademarks", ""
