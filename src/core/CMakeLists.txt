@@ -445,7 +445,7 @@ foreach(FILE_TO_COPY ${TRANSLATION_FILES_TO_COPY})
 endforeach(FILE_TO_COPY)
 
 # Allow plugins to link with doomseeker
-set_target_properties(doomseeker PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR} ENABLE_EXPORTS 1)
+set_target_properties(doomseeker PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR} ENABLE_EXPORTS 1)
 if(WIN32)
 	if(MSVC)
 		set_target_properties(doomseeker PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")

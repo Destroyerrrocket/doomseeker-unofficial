@@ -20,7 +20,6 @@ message(STATUS "Setting up plugin ${PLUGIN_NAME}. Source dir:\n"
 	"    ${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(PLUGIN_LIBS ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} doomseeker)
-set(LIBS_OUTPUT_DIR ${OUTPUT_DIR}/engines)
 
 include_directories(
 	${DOOMSEEKER_SOURCE_DIR}/src/core 
