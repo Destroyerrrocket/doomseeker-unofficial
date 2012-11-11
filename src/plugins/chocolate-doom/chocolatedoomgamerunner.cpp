@@ -39,14 +39,19 @@ bool ChocolateDoomGameRunner::connectParameters(QStringList &args, PathFinder &p
 	{
 		QString tmp;
 		CreateServerDialog *csd = new CreateServerDialog();
+		csd->setAttribute(Qt::WA_DeleteOnClose, false);
 		csd->makeSetupServerDialog(plugin());
 		if(csd->exec() == QDialog::Accepted)
 		{
 			csd->commandLineArguments(tmp, args);
+			delete csd;
 			return GameRunner::connectParameters(args, pf, iwadFound, connectPassword, wadTargetDirectory);
 		}
 		else
+		{
+			delete csd;
 			return false;
+		}
 	}
 	return true;
 }
