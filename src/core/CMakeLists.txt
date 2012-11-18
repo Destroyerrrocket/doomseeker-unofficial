@@ -455,6 +455,46 @@ if(WIN32)
 		set_target_properties(doomseeker PROPERTIES LINK_FLAGS_RELEASE "-Wl,-subsystem,windows")
 		set_target_properties(doomseeker PROPERTIES LINK_FLAGS_MINSIZEREL "-Wl,-subsystem,windows")
 	endif(MSVC)
+	
+	# Install program DIRECTLY to directory specified by
+	# ${CMAKE_INSTALL_PREFIX}. If ${CMAKE_INSTALL_PREFIX} is set to something
+	# stupid like "C:\Program Files\" (this is the CMake's default, BTW)
+	# then program.exe will be dumped to "C:\Program Files\program.exe"
+	install(TARGETS doomseeker RUNTIME DESTINATION .)
+	# Install Qt libraries.
+	# TODO: This could be rewritten to install the debug libraries
+	# when Debug build type is used. On the other hand intalling debug builds
+	# is rather senseless.
+	get_filename_component(QT_DLL_DIR ${QT_QMAKE_EXECUTABLE} PATH)
+	set(QT_LIBS_RELEASE
+		${QT_DLL_DIR}/QtCore4.dll
+		${QT_DLL_DIR}/QtGui4.dll
+		${QT_DLL_DIR}/QtNetwork4.dll
+	)
+	install(FILES ${QT_LIBS_RELEASE} DESTINATION .)
+	# Install .ico file. No idea what purpose would this server but some
+	# programs come with their icons in the .ico file so why not.
+	install(FILES ${CMAKE_SOURCE_DIR}/media/icon_windows.ico DESTINATION .
+		RENAME doomseeker.ico
+	)
+	# Install MSVC runtime. Only Visual 2008 is supported at the moment.
+	if (MSVC90)
+		# Install redist and manifest for the program.
+		include("${CMAKE_SOURCE_DIR}/cmake/Modules/FindRequiredSystemLibraries.cmake")
+		install_programs(. ${REQUIRED_SYSTEM_LIBRARIES})
+		# Install manifest for plugins.
+		install(FILES ${CMAKE_SOURCE_DIR}/media/manifest_for_engines_directory/Microsoft.VC90.CRT.manifest
+			DESTINATION engines
+		)
+	endif()
+	# Install other files that need to get distributed with binary.
+	set(LICENSE_FILES
+		${CMAKE_SOURCE_DIR}/LICENSE
+		${CMAKE_SOURCE_DIR}/LICENSE.json
+		${CMAKE_SOURCE_DIR}/LICENSE.wadseeker
+	)
+	install(FILES ${TRANSLATION_FILES_TO_COPY} DESTINATION translations)
+	install(FILES ${LICENSE_FILES} DESTINATION .)
 endif(WIN32)
 
 if(UNIX AND NOT APPLE)

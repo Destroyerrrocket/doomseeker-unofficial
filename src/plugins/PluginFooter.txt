@@ -5,6 +5,12 @@ add_dependencies(${PLUGIN_NAME} doomseeker)
 get_property(PLUGIN_LOCATION TARGET ${PLUGIN_NAME} PROPERTY LOCATION) 
 if(UNIX AND NOT APPLE)
 	install(FILES ${PLUGIN_LOCATION} DESTINATION share/doomseeker/engines)
+elseif(WIN32)
+	install(TARGETS ${PLUGIN_NAME} 
+		RUNTIME DESTINATION engines
+		LIBRARY DESTINATION engines
+		OPTIONAL
+	)
 endif(UNIX AND NOT APPLE)
 
 add_custom_command(TARGET ${PLUGIN_NAME} PRE_BUILD

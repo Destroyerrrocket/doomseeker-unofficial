@@ -64,6 +64,16 @@ else( BZIP2_FOUND AND NOT FORCE_INTERNAL_BZIP2 )
 	set( BZIP2_LIBRARY bz2 )
 endif( BZIP2_FOUND AND NOT FORCE_INTERNAL_BZIP2 )
 
+if(MSVC AND NOT MSVC90)
+	message(WARNING 
+		"Full automatic packaging is only supported for Microsoft Visual C++ 2008. "
+		"Remember that redist needs to be accessible both by the main program "
+		"and by the engines/ directory. Copy over Manifest and redist DLLs to "
+		"engines/ directory if you do not plan on installing redist on target "
+		"machines."
+	)
+endif()
+
 if(WIN32)
 	add_subdirectory(tools/updateinstaller)
 endif(WIN32)
@@ -72,3 +82,5 @@ add_subdirectory(tools/updaterevision)
 add_subdirectory(src/core)
 add_subdirectory(src/plugins)
 add_subdirectory(src/wadseeker)
+
+message(STATUS "'INSTALL' will dump files to \"${CMAKE_INSTALL_PREFIX}\"")

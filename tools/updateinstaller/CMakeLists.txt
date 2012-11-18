@@ -20,6 +20,7 @@ if (WIN32)
 
 	# [Zalewa] Removing "/NODEFAULTLIB:libcmt.lib" will cause the .exe projects
 	# to fail to compile in MSVC. Why, one might ask? Because C++, that's why.
+	# (and because of /MT)
 	set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:libcmt.lib")
 	# Link the updater binary statically with the Visual C++ runtime
 	# so that the executable can function standalone
