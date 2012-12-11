@@ -152,6 +152,7 @@ set(DOOMSEEKER_QT_FILES
 	serverapi/message.h
 	serverapi/rconprotocol.h
 	serverapi/server.h
+	updater/autoupdater.h
 	customservers.h
 	log.h
 	refresher.h
@@ -270,6 +271,7 @@ set(SOURCE_FILES
 	tests/testini.cpp
 	tests/testruns.cpp
 	tests/teststrings.cpp
+	updater/autoupdater.cpp
 	apprunner.cpp
 	commandline.cpp
 	customservers.cpp
@@ -306,7 +308,7 @@ set(HEADER_FILES
 	gui/widgets/qtabwidgetext.h
 	gui/ip2cupdatebox.h
 	ini/inisection.h
-	ini/inivariable.h	
+	ini/inivariable.h
 	ini/ini.h
 	ip2c/entities/ip2ccountryinfo.h
 	irc/configuration/ircconfig.h
