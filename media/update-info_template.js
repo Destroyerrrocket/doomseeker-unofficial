@@ -18,7 +18,7 @@
 "doomseeker" : {
     "stable" : {
         "revision" : 900,
-        "version" : "1.0",
+        "display-version" : "1.0",
         "URL" : "http://127.0.0.1/path/to/update/archive.zip"
     },
     "beta" : {
