@@ -657,6 +657,11 @@ void CreateServerDialog::initEngineSpecific(EnginePlugin* engineInfo)
 			cboGamemode->addItem((*gameModes)[i].name(), i);
 		}
 	}
+	else
+	{
+		// No game modes defined for plugin so lets clear the rules page.
+		removeLimitWidgets();
+	}
 
 	initDMFlagsTabs();
 	initEngineSpecificPages(engineInfo);
