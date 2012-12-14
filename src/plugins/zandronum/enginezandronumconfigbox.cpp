@@ -30,7 +30,8 @@
 EngineZandronumConfigBox::EngineZandronumConfigBox(const EnginePlugin* plugin, IniSection& cfg, QWidget* parent) 
 : EngineConfigurationBaseBox(plugin, cfg, parent)
 {
-	#ifdef Q_OS_WIN32
+	// Mac and Windows do not have special server binaries.
+	#if defined(Q_OS_WIN32) || defined(Q_OS_MAC)
 		makeClientOnly();
 	#endif
 
