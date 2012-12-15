@@ -43,6 +43,7 @@
 #include <QStandardItem>
 #include <QSystemTrayIcon>
 
+class AutoUpdater;
 class ConnectionHandler;
 class ServerFilterDock;
 class ServersStatusWidget;
@@ -111,6 +112,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 		QApplication*		application;
 		QTimer				autoRefreshTimer;
+		AutoUpdater* autoUpdater;
 
 		/**
 		 *	Set to true by btnGetServers_click() process and to false
@@ -213,6 +215,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 	protected slots:
 		void	autoRefreshTimer_timeout();
 		void	blockRefreshButtons();
+		void checkForUpdates();
 		void 	finishedQueryingMaster(MasterClient* master);
 		void 	getServers();
 		void	ip2cDownloadProgress(qint64 current, qint64 max);

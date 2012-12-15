@@ -110,6 +110,11 @@ class MAIN_EXPORT PluginLoader
 		 */
 		int pluginIndexFromName(const QString& name) const;
 
+		const QList< Plugin* >& plugins() const
+		{
+			return pluginsList;
+		}
+
 		/**
 		 * Resets the plugins directory, clearing the loaded plugins and getting new loaded plugins in the process.
 		 */

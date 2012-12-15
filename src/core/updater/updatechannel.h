@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// version.h
+// updatechannel.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,48 +18,59 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __VERSION_H__
-#define __VERSION_H__
+#ifndef DOOMSEEKER_UPDATER_UPDATECHANNEL_H
+#define DOOMSEEKER_UPDATER_UPDATECHANNEL_H
 
+#include <QObject>
 #include <QString>
-#include "global.h"
 
 /**
- *	@brief Provides interface for plugins and for Doomseeker itself
- *	to obtain version information on the program.
+ * This class is for translation purposes so the
+ * strings won't appear as assigned to QObject in the
+ * Qt Linguist.
+ *
+ * UpdateChannel is designed to be copied and copying
+ * a QObject leads to a disaster.
  */
-class MAIN_EXPORT Version
+class UpdateChannelTr : public QObject
+{
+	private:
+		UpdateChannelTr() {}
+};
+
+class UpdateChannel
 {
 	public:
-		/**
-		 *	Returns Mercurial changeset or an empty string if not available.
-		 */
-		static QString			changeset();
+		static QList<UpdateChannel> allChannels();
+		static UpdateChannel mkBeta();
+		static UpdateChannel mkStable();
 
 		/**
-		 *	@brief Combines program's name and versionRevision().
+		 * @brief Creates a null object.
 		 */
-		static QString			fullVersionInfo() { return name() + " " + versionRevision(); }
-		static QString			name();
-		static QString			revision();
-		static unsigned long long revisionNumber();
+		UpdateChannel() {};
+		UpdateChannel(const UpdateChannel& other);
 
-		/**
-		 * @brief WWW User Agent used for HTTP communications.
-		 */
-		static QString			userAgent();
+		bool operator==(const UpdateChannel& other) const;
+		bool operator!=(const UpdateChannel& other) const
+		{
+			return !(*this == other);
+		}
 
-		static QString			version();
+		bool isNull() const;
 
-		/**
-		 *	@brief Combines version and revision strings.
-		 *	If revision is not available only version is returned.
-		 */
-		static QString			versionRevision();
+		QString name() const;
+		QString translatedDescription() const;
+		QString translatedName() const;
 
+	private:
+		UpdateChannel(const QString& name);
 
+		QString channelName;
 };
 
 #endif
+
+

@@ -272,6 +272,8 @@ set(SOURCE_FILES
 	tests/testruns.cpp
 	tests/teststrings.cpp
 	updater/autoupdater.cpp
+	updater/updatechannel.cpp
+	updater/updatepackagefilter.cpp
 	updater/updaterinfoparser.cpp
 	apprunner.cpp
 	commandline.cpp
@@ -343,7 +345,9 @@ set(HEADER_FILES
 	tests/testini.h
 	tests/testruns.h
 	tests/teststrings.h
+	updater/updatechannel.h
 	updater/updatepackage.h
+	updater/updatepackagefilter.h
 	updater/updaterinfoparser.h
 	apprunner.h
 	commandline.h

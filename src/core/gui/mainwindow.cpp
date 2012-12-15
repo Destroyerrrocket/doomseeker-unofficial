@@ -41,6 +41,7 @@
 #include "serverapi/gamerunner.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
+#include "updater/autoupdater.h"
 #include "commandline.h"
 #include "connectionhandler.h"
 #include "customservers.h"
@@ -69,6 +70,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
   bWantToQuit(false), logDock(NULL), masterManager(NULL),
   trayIcon(NULL), trayIconMenu(NULL)
 {
+	autoUpdater = NULL;
 	connectionHandler = NULL;
 
 	this->application = application;
@@ -284,6 +286,26 @@ void MainWindow::changeEvent(QEvent* event)
 		event->accept();
 	}
 	QMainWindow::changeEvent(event);
+}
+
+void MainWindow::checkForUpdates()
+{
+	if (autoUpdater != NULL)
+	{
+		if (autoUpdater->isRunning())
+		{
+			QMessageBox::warning(this, tr("Doomseeker - Auto Update"),
+				tr("Update is already in progress."));
+			return;
+		}
+		else
+		{
+			delete autoUpdater;
+			autoUpdater = NULL;
+		}
+	}
+	autoUpdater = new AutoUpdater();
+	autoUpdater->start();
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

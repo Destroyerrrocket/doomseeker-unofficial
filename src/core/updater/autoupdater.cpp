@@ -33,6 +33,7 @@ class AutoUpdater::PrivData
 {
 	public:
 		bool bDownloadAndInstallRequireConfirmation;
+		bool bIsRunning;
 		bool bStarted;
 		UpdateChannel channel;
 		ErrorCode errorCode;
@@ -41,6 +42,8 @@ class AutoUpdater::PrivData
 };
 //////////////////////////////////////////////////////////////////////////////
 
+const QString AutoUpdater::PLUGIN_PREFIX = "p-";
+const QString AutoUpdater::MAIN_PROGRAM_PACKAGE_NAME = "doomseeker";
 // This can be set to different values depending on target platform.
 const QString AutoUpdater::UPDATER_INFO_URL = "http://doomseeker.drdteam.org/updates/update-info_win32.js";
 
@@ -49,6 +52,7 @@ AutoUpdater::AutoUpdater(QObject* pParent)
 {
 	d = new PrivData();
 	d->bDownloadAndInstallRequireConfirmation = false;
+	d->bIsRunning = false;
 	d->bStarted = false;
 	d->errorCode = EC_Ok;
 	d->pNam = new FixedNetworkAccessManager();
@@ -110,8 +114,14 @@ QString AutoUpdater::errorString() const
 
 void AutoUpdater::finishWithError(ErrorCode code)
 {
+	d->bIsRunning = false;
 	d->errorCode = code;
 	emit finished();
+}
+
+bool AutoUpdater::isRunning() const
+{
+	return d->bIsRunning;
 }
 
 QNetworkReply::NetworkError AutoUpdater::lastNetworkError() const
@@ -163,6 +173,7 @@ void AutoUpdater::start()
 		assert(false && "Cannot start AutoUpdater more than once.");
 		return;
 	}
+	d->bIsRunning = true;
 	d->bStarted = true;
 	QNetworkRequest request;
 	request.setRawHeader("User-Agent", Version::userAgent().toAscii());

@@ -33,8 +33,6 @@ class UpdaterInfoParser::PrivData
 		QList<UpdatePackage> packages;
 };
 //////////////////////////////////////////////////////////////////////////////
-const QString MAIN_PROGRAM_NODE = "doomseeker";
-
 UpdaterInfoParser::UpdaterInfoParser()
 {
 	d = new PrivData();
@@ -57,7 +55,7 @@ int UpdaterInfoParser::parse(const QByteArray& json)
 	if (var.isValid())
 	{
 		QVariantMap metaData = var.toMap();
-		if (metaData.contains(MAIN_PROGRAM_NODE))
+		if (metaData.contains(AutoUpdater::MAIN_PROGRAM_PACKAGE_NAME))
 		{
 			foreach (const QString& package, metaData.keys())
 			{
@@ -94,7 +92,7 @@ int UpdaterInfoParser::parsePackageNode(const QString& packageName, const QVaria
 		}
 		else
 		{
-			gLog << tr("Missing update revision info for package {0}, channel {1}.")
+			gLog << tr("Missing update revision info for package %1, channel %2.")
 				.arg(packageName, channel);
 			return AutoUpdater::EC_MissingRevisionInfo;
 		}
@@ -108,12 +106,12 @@ int UpdaterInfoParser::parsePackageNode(const QString& packageName, const QVaria
 		}
 		if (channelInfo.contains("URL"))
 		{
-			gLog << tr("Missing update download URL for package {0}, channel {1}.")
-				.arg(packageName, channel);
 			package.downloadUrl = channelInfo["URL"].toString();
 		}
 		else
 		{
+			gLog << tr("Missing update download URL for package %1, channel %2.")
+				.arg(packageName, channel);
 			return AutoUpdater::EC_MissingDownloadUrl;
 		}
 		d->packages << package;

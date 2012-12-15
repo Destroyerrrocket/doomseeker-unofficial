@@ -89,6 +89,16 @@ class AutoUpdater : public QObject
 		};
 
 		/**
+		 * @brief Prefix for all plugins packages names.
+		 */
+		static const QString PLUGIN_PREFIX;
+		/**
+		 * @brief Package name for the main program.
+		 *
+		 * Other packages are plugins.
+		 */
+		static const QString MAIN_PROGRAM_PACKAGE_NAME;
+		/**
 		 * @brief URL to the JSON file which contains information on released
 		 *        builds.
 		 */
@@ -107,6 +117,9 @@ class AutoUpdater : public QObject
 		UpdateChannel channel() const;
 		ErrorCode errorCode() const;
 		QString errorString() const;
+
+		bool isRunning() const;
+
 		/**
 		 * @brief The network error that caused the updater to fail.
 		 *

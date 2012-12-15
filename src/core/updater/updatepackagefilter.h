@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// version.cpp
+// updatepackagefilter.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,50 +18,42 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "version.h"
-#include "versiondefs.h"
+#ifndef DOOMSEEKER_UPDATER_UPDATERPACKAGEFILTER_H
+#define DOOMSEEKER_UPDATER_UPDATERPACKAGEFILTER_H
 
-QString Version::changeset()
+#include "updater/updatechannel.h"
+#include "updater/updatepackage.h"
+#include <QList>
+#include <QMap>
+#include <QString>
+
+/**
+ * @brief Filters UpdatePackage information basing on what is requested
+ *        by the program.
+ *
+ * These operations are performed:
+ * - Packages are filtered by specified channel name: setChannel().
+ * - Packages which have the same revision number as the ones already
+ *   installed are discarded. This is hardcoded into the class.
+ */
+class UpdatePackageFilter
 {
-	return HG_REVISION_HASH_STRING;
-}
+	public:
+		UpdatePackageFilter();
+		~UpdatePackageFilter();
 
-QString Version::name()
-{
-	return "Doomseeker";
-}
+		QList<UpdatePackage> filter(const QList<UpdatePackage>& packages);
+		void setChannel(const UpdateChannel& channel);
 
-QString Version::revision()
-{
-	return SVN_REVISION_STRING;
-}
+	private:
+		class PluginInfo;
+		class PrivData;
 
-unsigned long long Version::revisionNumber()
-{
-	return SVN_REVISION_NUMBER;
-}
+		PrivData* d;
 
-QString Version::userAgent()
-{
-	return "Doomseeker/" + versionRevision();
-}
+		QMap<QString, PluginInfo> collectPluginInfo();
+};
 
-QString Version::version()
-{
-	return VERSION_STRING;
-}
-
-QString Version::versionRevision()
-{
-	if (revision().isEmpty())
-	{
-		return version();
-	}
-	else
-	{
-		return version() + "-" + revision();
-	}
-}
-
+#endif
