@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------
 #include "autoupdater.h"
 
-#include "json.h"
+#include "updater/updaterinfoparser.h"
 #include "version.h"
 #include <wadseeker/protocols/fixednetworkaccessmanager.h>
 #include <QDebug>
@@ -32,6 +32,7 @@
 class AutoUpdater::PrivData
 {
 	public:
+		bool bDownloadAndInstallRequireConfirmation;
 		bool bStarted;
 		UpdateChannel channel;
 		ErrorCode errorCode;
@@ -43,12 +44,11 @@ class AutoUpdater::PrivData
 // This can be set to different values depending on target platform.
 const QString AutoUpdater::UPDATER_INFO_URL = "http://doomseeker.drdteam.org/updates/update-info_win32.js";
 
-const QString MAIN_PROGRAM_NODE = "doomseeker";
-
 AutoUpdater::AutoUpdater(QObject* pParent)
 : QObject(pParent)
 {
 	d = new PrivData();
+	d->bDownloadAndInstallRequireConfirmation = false;
 	d->bStarted = false;
 	d->errorCode = EC_Ok;
 	d->pNam = new FixedNetworkAccessManager();
@@ -77,7 +77,7 @@ AutoUpdater::UpdateChannel AutoUpdater::channel() const
 	return d->channel;
 }
 
-void AutoUpdater::confirmDownload()
+void AutoUpdater::confirmDownloadAndInstall()
 {
 }
 
@@ -120,6 +120,7 @@ QNetworkReply::NetworkError AutoUpdater::lastNetworkError() const
 	{
 		return d->pNetworkReply->error();
 	}
+	return QNetworkReply::NoError;
 }
 
 void AutoUpdater::onUpdaterInfoDownloadFinish()
@@ -130,22 +131,15 @@ void AutoUpdater::onUpdaterInfoDownloadFinish()
 		return;
 	}
 	QByteArray json = d->pNetworkReply->readAll();
-	QVariant var = QtJson::Json::parse(json);
-	if (var.isValid())
+	UpdaterInfoParser parser;
+	ErrorCode parseResult = (ErrorCode)parser.parse(json);
+	if (parseResult == EC_Ok)
 	{
-		QVariantMap metaData = var.toMap();
-		if (metaData.contains(MAIN_PROGRAM_NODE))
-		{
-			
-		}
-		else
-		{
-			finishWithError(EC_UpdaterInfoMissingMainProgramNode);
-		}
+		// TODO Stuff
 	}
 	else
 	{
-		finishWithError(EC_UpdaterInfoCannotParse);
+		finishWithError(parseResult);
 	}
 }
 
@@ -154,12 +148,19 @@ void AutoUpdater::setChannel(UpdateChannel updateChannel)
 	d->channel = updateChannel;
 }
 
+void AutoUpdater::setRequireDownloadAndInstallConfirmation(bool b)
+{
+	d->bDownloadAndInstallRequireConfirmation = b;
+}
+
 void AutoUpdater::start()
 {
 	if (d->bStarted)
 	{
 		qDebug() << "Cannot start AutoUpdater more than once.";
-		assert(d->bStarted);
+		// Always cause assertion failure. Program shouldn't
+		// go into this state.
+		assert(false && "Cannot start AutoUpdater more than once.");
 		return;
 	}
 	d->bStarted = true;

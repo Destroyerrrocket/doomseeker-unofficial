@@ -77,7 +77,15 @@ class AutoUpdater : public QObject
 			 * @brief File was parseable but there was no main program 
 			 *        information inside.
 			 */
-			EC_UpdaterInfoMissingMainProgramNode
+			EC_UpdaterInfoMissingMainProgramNode,
+			/**
+			 * @brief One of packages has no revision info.
+			 */
+			EC_MissingRevisionInfo,
+			/**
+			 * @brief One of packages has no download URL.
+			 */
+			EC_MissingDownloadUrl
 		};
 
 		/**
@@ -111,13 +119,25 @@ class AutoUpdater : public QObject
 		 * @brief Update channel name.
 		 */
 		void setChannel(UpdateChannel updateChannel);
+		/**
+		 * @brief Controls if the download&installation process is automated.
+		 *
+		 * If set to true then downloadAndInstallConfirmationRequested()
+		 * signal will be emitted and the updater will suspend until
+		 * confirmDownloadAndInstall() slot is called. If false then
+		 * download&installation will proceed automatically as soon
+		 * as new packages are detected.
+		 *
+		 * Default: false.
+		 */
+		void setRequireDownloadAndInstallConfirmation(bool b);
 		void start();
 		
 	public slots:
-		void confirmDownload();
+		void confirmDownloadAndInstall();
 
 	signals:
-		void downloadConfirmationRequested();
+		void downloadAndInstallConfirmationRequested();
 		void finished();
 
 	private:

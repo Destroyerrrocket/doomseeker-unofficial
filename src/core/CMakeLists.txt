@@ -272,6 +272,7 @@ set(SOURCE_FILES
 	tests/testruns.cpp
 	tests/teststrings.cpp
 	updater/autoupdater.cpp
+	updater/updaterinfoparser.cpp
 	apprunner.cpp
 	commandline.cpp
 	customservers.cpp
@@ -342,6 +343,8 @@ set(HEADER_FILES
 	tests/testini.h
 	tests/testruns.h
 	tests/teststrings.h
+	updater/updatepackage.h
+	updater/updaterinfoparser.h
 	apprunner.h
 	commandline.h
 	datapaths.h
