@@ -45,6 +45,19 @@ QList<UpdateChannel> UpdateChannel::allChannels()
 	return list;
 }
 
+UpdateChannel UpdateChannel::fromName(const QString& name)
+{
+	QList<UpdateChannel> channels = allChannels();
+	foreach (const UpdateChannel& channel, channels)
+	{
+		if (channel.name() == name)
+		{
+			return channel;
+		}
+	}
+	return UpdateChannel();
+}
+
 UpdateChannel UpdateChannel::mkBeta()
 {
 	return UpdateChannel(CHANNEL_BETA);

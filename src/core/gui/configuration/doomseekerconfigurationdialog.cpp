@@ -23,6 +23,7 @@
 #include "doomseekerconfigurationdialog.h"
 #include "configuration/doomseekerconfig.h"
 #include "gui/configuration/cfgappearance.h"
+#include "gui/configuration/cfgautoupdates.h"
 #include "gui/configuration/cfgcustomservers.h"
 #include "gui/configuration/cfgfilepaths.h"
 #include "gui/configuration/cfgip2country.h"
@@ -110,6 +111,9 @@ void DoomseekerConfigurationDialog::initOptionsList()
 	ConfigurationBaseBox* pConfigBox = NULL;
 
 	pConfigBox = new CFGAppearance(this);
+	addConfigurationBox(NULL, pConfigBox);
+
+	pConfigBox = new CFGAutoUpdates(this);
 	addConfigurationBox(NULL, pConfigBox);
 
 	pConfigBox = new CFGCustomServers(this);

@@ -25,6 +25,7 @@
 #include "ini/inisection.h"
 #include "ini/inivariable.h"
 #include "plugins/engineplugin.h"
+#include "updater/updatechannel.h"
 #include "wadseeker/wadseeker.h"
 #include "log.h"
 #include "main.h"
@@ -130,6 +131,9 @@ bool DoomseekerConfig::readFromFile()
 	IniSection sectionWadseeker = pIni->section(wadseeker.SECTION_NAME);
 	wadseeker.load(sectionWadseeker);
 
+	IniSection sectionAutoUpdates = pIni->section(autoUpdates.SECTION_NAME);
+	autoUpdates.load(sectionAutoUpdates);
+
 	// Plugins should read their sections manually.
 
 	return true;
@@ -158,6 +162,9 @@ bool DoomseekerConfig::saveToFile()
 	IniSection sectionWadseeker = pIni->section(wadseeker.SECTION_NAME);
 	wadseeker.save(sectionWadseeker);
 
+	IniSection sectionAutoUpdates = pIni->section(autoUpdates.SECTION_NAME);
+	autoUpdates.save(sectionAutoUpdates);
+
 	// Plugins should save their sections manually.
 
 	return pIni->save();
@@ -183,6 +190,9 @@ bool DoomseekerConfig::setIniFile(const QString& filePath)
 
 	section = this->pIni->section(wadseeker.SECTION_NAME);
 	wadseeker.init(section);
+	
+	section = this->pIni->section(autoUpdates.SECTION_NAME);
+	autoUpdates.init(section);
 
 	return true;
 }
@@ -408,6 +418,40 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	// Buddies lists
 	QString buddiesList = BuddyInfo::createConfigEntry(this->buddiesList);
 	section["BuddiesList"] = buddiesList;
+}
+//////////////////////////////////////////////////////////////////////////////
+const QString DoomseekerConfig::AutoUpdates::SECTION_NAME = "Doomseeker_AutoUpdates";
+
+void DoomseekerConfig::AutoUpdates::init(IniSection& section)
+{
+	section.createSetting("UpdateChannelName", UpdateChannel::mkStable().name());
+	section.createSetting("UpdateMode", (int) UM_NotifyOnly);
+	section.createSetting("LastKnownUpdateRevisions", QVariant());
+}
+
+void DoomseekerConfig::AutoUpdates::load(IniSection& section)
+{
+	updateChannelName = section["UpdateChannelName"];
+	updateMode = (UpdateMode)section["UpdateMode"].value().toInt();
+	QVariantMap lastKnownUpdateRevisionsVariant = section["LastKnownUpdateRevisions"].value().toMap();
+	lastKnownUpdateRevisions.clear();
+	foreach (const QString& package, lastKnownUpdateRevisionsVariant.keys())
+	{
+		QVariant revisionVariant = lastKnownUpdateRevisionsVariant[package];
+		lastKnownUpdateRevisions.insert(package, revisionVariant.toLongLong());
+	}
+}
+
+void DoomseekerConfig::AutoUpdates::save(IniSection& section)
+{
+	section["UpdateChannelName"] = updateChannelName;
+	section["UpdateMode"] = updateMode;
+	QVariantMap revisionsVariantMap;
+	foreach (const QString& package, lastKnownUpdateRevisions.keys())
+	{
+		revisionsVariantMap.insert(package, lastKnownUpdateRevisions[package]);
+	}
+	section["LastKnownUpdateRevisions"].setValue(revisionsVariantMap);
 }
 //////////////////////////////////////////////////////////////////////////////
 const QString DoomseekerConfig::ServerFilter::SECTION_NAME = "ServerFilter";

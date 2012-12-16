@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "autoupdater.h"
 
+#include "updater/updatechannel.h"
 #include "updater/updaterinfoparser.h"
 #include "version.h"
 #include <wadseeker/protocols/fixednetworkaccessmanager.h>
@@ -76,7 +77,7 @@ void AutoUpdater::abort()
 {
 }
 
-AutoUpdater::UpdateChannel AutoUpdater::channel() const
+const UpdateChannel& AutoUpdater::channel() const
 {
 	return d->channel;
 }
@@ -96,12 +97,20 @@ QString AutoUpdater::errorCodeToString(ErrorCode code)
 	{
 		case EC_Ok:
 			return QString();
+		case EC_NullUpdateChannel:
+			return tr("No valid update channel was specified.");
 		case EC_UpdaterInfoDownloadProblem:
 			return tr("Failed to download updater info file.");
 		case EC_UpdaterInfoCannotParse:
 			return tr("Cannot parse updater info file.");
 		case EC_UpdaterInfoMissingMainProgramNode:
 			return tr("Main program node is missing from updater info file.");
+		case EC_MissingRevisionInfo:
+			return tr("Revision info on one of the packages is missing from the "
+				"updater info file. Check the log for details.");
+		case EC_MissingDownloadUrl:
+			return tr("Download URL for one of the packages is missing from the "
+				"updater info file. Check the log for details.");
 		default:
 			return tr("Unknown error.");
 	}
@@ -142,7 +151,7 @@ void AutoUpdater::onUpdaterInfoDownloadFinish()
 	}
 	QByteArray json = d->pNetworkReply->readAll();
 	UpdaterInfoParser parser;
-	ErrorCode parseResult = (ErrorCode)parser.parse(json);
+	ErrorCode parseResult = (ErrorCode) parser.parse(json);
 	if (parseResult == EC_Ok)
 	{
 		// TODO Stuff
@@ -153,7 +162,7 @@ void AutoUpdater::onUpdaterInfoDownloadFinish()
 	}
 }
 
-void AutoUpdater::setChannel(UpdateChannel updateChannel)
+void AutoUpdater::setChannel(const UpdateChannel& updateChannel)
 {
 	d->channel = updateChannel;
 }
@@ -173,8 +182,13 @@ void AutoUpdater::start()
 		assert(false && "Cannot start AutoUpdater more than once.");
 		return;
 	}
-	d->bIsRunning = true;
 	d->bStarted = true;
+	if (d->channel.isNull())
+	{
+		finishWithError(EC_NullUpdateChannel);
+		return;
+	}
+	d->bIsRunning = true;
 	QNetworkRequest request;
 	request.setRawHeader("User-Agent", Version::userAgent().toAscii());
 	request.setUrl(UPDATER_INFO_URL);
@@ -185,17 +199,4 @@ void AutoUpdater::start()
 		SIGNAL(finished()),
 		SLOT(onUpdaterInfoDownloadFinish()));
 	d->pNetworkReply = pReply;
-}
-
-QString AutoUpdater::updateChannelName(UpdateChannel updateChannel)
-{
-	switch (updateChannel)
-	{
-		case UC_Stable:
-			return "stable";
-		case UC_Beta:
-			return "beta";
-		default:
-			return QString();
-	}
 }

@@ -109,7 +109,47 @@ class DoomseekerConfig
 			void						init(IniSection& section);
 			void						load(IniSection& section);
 			void						save(IniSection& section);
+		};
 
+		class AutoUpdates
+		{
+			public:
+			enum UpdateMode
+			{
+				/**
+				 * @brief No auto updates.
+				 */
+				UM_Disabled = 0,
+				/**
+				 * @brief User is only notified of the update and decides if
+				 *        it should be installed.
+				 */
+				UM_NotifyOnly = 1,
+				/**
+				 * @brief Update is fully automatic.
+				 */
+				UM_FullAuto = 2
+			};
+
+			static const QString SECTION_NAME;
+
+			/**
+			 * @brief Used to check if there are new updates since
+			 *        last reject.
+			 *
+			 * - Key - package name.
+			 * - Value - package revision.
+			 */
+			QMap<QString, unsigned long long> lastKnownUpdateRevisions;
+			UpdateMode updateMode;
+			/**
+			 * @brief Pass this to UpdateChannel::fromName() .
+			 */
+			QString updateChannelName;
+
+			void init(IniSection& section);
+			void load(IniSection& section);
+			void save(IniSection& section);
 		};
 
 		class ServerFilter
@@ -169,6 +209,7 @@ class DoomseekerConfig
 		static void					dispose();
 
 		DoomseekerCfg				doomseeker;
+		AutoUpdates autoUpdates;
 		ServerFilter				serverFilter;
 		WadseekerCfg				wadseeker;
 
@@ -233,3 +274,4 @@ class DoomseekerConfig
 };
 
 #endif
+

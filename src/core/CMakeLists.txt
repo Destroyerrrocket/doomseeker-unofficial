@@ -60,6 +60,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/configuration/irc/cfgircnetworks.ui
 	gui/configuration/irc/cfgircsounds.ui
 	gui/configuration/cfgappearance.ui
+	gui/configuration/cfgautoupdates.ui
 	gui/configuration/cfgcustomservers.ui
 	gui/configuration/cfgfilepaths.ui
 	gui/configuration/cfgip2country.ui
@@ -94,6 +95,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/configuration/irc/cfgircnetworks.h
 	gui/configuration/irc/cfgircsounds.h
 	gui/configuration/cfgappearance.h
+	gui/configuration/cfgautoupdates.h
 	gui/configuration/cfgcustomservers.h
 	gui/configuration/cfgfilepaths.h
 	gui/configuration/cfgip2country.h
@@ -174,6 +176,7 @@ set(SOURCE_FILES
 	gui/configuration/irc/cfgircsounds.cpp
 	gui/configuration/irc/ircconfigurationdialog.cpp
 	gui/configuration/cfgappearance.cpp
+	gui/configuration/cfgautoupdates.cpp
 	gui/configuration/cfgcustomservers.cpp
 	gui/configuration/cfgfilepaths.cpp
 	gui/configuration/cfgip2country.cpp

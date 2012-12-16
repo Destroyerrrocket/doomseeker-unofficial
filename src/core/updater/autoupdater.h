@@ -27,6 +27,8 @@
 #include <QObject>
 #include <QString>
 
+class UpdateChannel;
+
 /**
  * @brief Deals with program updates/upgrades.
  *
@@ -56,15 +58,13 @@ class AutoUpdater : public QObject
 	Q_OBJECT
 
 	public:
-		enum UpdateChannel
-		{
-			UC_Stable,
-			UC_Beta
-		};
-
 		enum ErrorCode
 		{
 			EC_Ok = 0,
+			/**
+			 * @brief No valid UpdateChannel was specified.
+			 */
+			EC_NullUpdateChannel,
 			/**
 			 * @brief Network error when downloading updater info file.
 			 */
@@ -105,7 +105,6 @@ class AutoUpdater : public QObject
 		static const QString UPDATER_INFO_URL;
 
 		static QString errorCodeToString(ErrorCode code);
-		static QString updateChannelName(UpdateChannel updateChannel);
 
 		AutoUpdater(QObject* pParent = NULL);
 		~AutoUpdater();
@@ -114,7 +113,7 @@ class AutoUpdater : public QObject
 		/**
 		 * @brief setChannel() .
 		 */
-		UpdateChannel channel() const;
+		const UpdateChannel& channel() const;
 		ErrorCode errorCode() const;
 		QString errorString() const;
 
@@ -131,7 +130,7 @@ class AutoUpdater : public QObject
 		/**
 		 * @brief Update channel name.
 		 */
-		void setChannel(UpdateChannel updateChannel);
+		void setChannel(const UpdateChannel& updateChannel);
 		/**
 		 * @brief Controls if the download&installation process is automated.
 		 *
