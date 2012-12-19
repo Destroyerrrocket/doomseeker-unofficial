@@ -113,8 +113,11 @@ void DoomseekerConfigurationDialog::initOptionsList()
 	pConfigBox = new CFGAppearance(this);
 	addConfigurationBox(NULL, pConfigBox);
 
-	pConfigBox = new CFGAutoUpdates(this);
-	addConfigurationBox(NULL, pConfigBox);
+	// Add only if supported on target platform.
+	#ifdef Q_OS_WIN32
+		pConfigBox = new CFGAutoUpdates(this);
+		addConfigurationBox(NULL, pConfigBox);
+	#endif
 
 	pConfigBox = new CFGCustomServers(this);
 	addConfigurationBox(NULL, pConfigBox);

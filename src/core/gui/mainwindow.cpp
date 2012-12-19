@@ -79,6 +79,11 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	setupUi(this);
 	setupIcons();
 
+	// Hide menu options which aren't supported on target platform.
+	#ifndef Q_OS_WIN32
+		menuActionCheckForUpdates->setVisible(false);
+	#endif
+
 	if (Main::enginePlugins->numPlugins() == 0)
 	{
 		QString message = tr("\
@@ -304,6 +309,7 @@ void MainWindow::checkForUpdates()
 			autoUpdater = NULL;
 		}
 	}
+	gLog << tr("Checking for updates...");
 	autoUpdater = new AutoUpdater();
 	autoUpdater->start();
 }

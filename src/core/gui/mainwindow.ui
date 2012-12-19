@@ -95,7 +95,6 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="menuActionHelp"/>
-    <addaction name="separator"/>
     <addaction name="menuActionCheckForUpdates"/>
     <addaction name="separator"/>
     <addaction name="menuActionAbout"/>
