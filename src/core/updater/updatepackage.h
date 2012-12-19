@@ -34,9 +34,19 @@ class UpdatePackage
 		 */
 		QString channel;
 		/**
+		 * @brief Currently installed version, displayed to the user.
+		 *
+		 * This is set after the package information has been filtered.
+		 */
+		QString currentlyInstalledDisplayVersion;
+		/**
 		 * @brief Version displayed to the user.
 		 */
 		QString displayVersion;
+		/**
+		 * @brief Name displayed to the user.
+		 */
+		QString displayName;
 		/**
 		 * @brief Package download URL.
 		 *

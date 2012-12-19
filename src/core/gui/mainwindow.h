@@ -237,6 +237,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	menuUpdateIP2C();
 		void	menuViewIRC();
 		void	menuWadSeeker();
+		void onAutoUpdaterDownloadAndInstallConfirmationRequest();
+		void onAutoUpdaterFinish();
 		void	quitProgram();
 		void    postInitAppStartup();
 		void 	refreshThreadBeginsWork();

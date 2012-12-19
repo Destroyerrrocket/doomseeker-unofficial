@@ -86,6 +86,7 @@ int UpdaterInfoParser::parsePackageNode(const QString& packageName, const QVaria
 		UpdatePackage package;
 		package.name = packageName;
 		package.channel = channel;
+
 		if (channelInfo.contains("revision"))
 		{
 			package.revision = channelInfo["revision"].toLongLong();
@@ -96,6 +97,7 @@ int UpdaterInfoParser::parsePackageNode(const QString& packageName, const QVaria
 				.arg(packageName, channel);
 			return AutoUpdater::EC_MissingRevisionInfo;
 		}
+
 		if (channelInfo.contains("display-version"))
 		{
 			package.displayVersion = channelInfo["display-version"].toString();
@@ -104,6 +106,16 @@ int UpdaterInfoParser::parsePackageNode(const QString& packageName, const QVaria
 		{
 			package.displayVersion = QString::number(package.revision);
 		}
+
+		if (channelInfo.contains("display-name"))
+		{
+			package.displayName = channelInfo["display-name"].toString();
+		}
+		else
+		{
+			package.displayName = packageName;
+		}
+
 		if (channelInfo.contains("URL"))
 		{
 			package.downloadUrl = channelInfo["URL"].toString();
@@ -114,6 +126,7 @@ int UpdaterInfoParser::parsePackageNode(const QString& packageName, const QVaria
 				.arg(packageName, channel);
 			return AutoUpdater::EC_MissingDownloadUrl;
 		}
+
 		d->packages << package;
 	}
 	return AutoUpdater::EC_Ok;

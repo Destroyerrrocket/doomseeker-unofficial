@@ -18,17 +18,20 @@
 "doomseeker" : {
     "stable" : {
         "revision" : 900,
+        "display-name" : "Doomseeker",
         "display-version" : "1.0",
         "URL" : "http://127.0.0.1/path/to/update/archive.zip"
     },
     "beta" : {
         "revision" : 902,
+        "display-name" : "Doomseeker",
         "URL" : "http://127.0.0.1/path/to/update/archive-beta.zip"
     }
 },
 "p-zandronum" : {
     "stable" : {
         "revision" : 9,
+        "display-name" : "Zandronum",
         "URL" : "http://127.0.0.1/path/to/update/plugin-archive.zip"
     },
     "beta" : {

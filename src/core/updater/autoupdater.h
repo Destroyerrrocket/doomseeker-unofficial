@@ -28,6 +28,7 @@
 #include <QString>
 
 class UpdateChannel;
+class UpdatePackage;
 
 /**
  * @brief Deals with program updates/upgrades.
@@ -61,6 +62,10 @@ class AutoUpdater : public QObject
 		enum ErrorCode
 		{
 			EC_Ok = 0,
+			/**
+			 * @brief Update was aborted by the user or by the program.
+			 */
+			EC_Aborted,
 			/**
 			 * @brief No valid UpdateChannel was specified.
 			 */
@@ -128,9 +133,25 @@ class AutoUpdater : public QObject
 		 */
 		QNetworkReply::NetworkError lastNetworkError() const;
 		/**
+		 * @brief List of new update packages to install.
+		 *
+		 * When downloadAndInstallConfirmationRequested() signal is emitted
+		 * this accessor can be used to obtain the list of updates
+		 * that will be installed if user confirms the install.
+		 */
+		const QList<UpdatePackage>& newUpdatePackages() const;
+		/**
 		 * @brief Update channel name.
 		 */
 		void setChannel(const UpdateChannel& updateChannel);
+		/**
+		 * @brief Revisions set in this map will not be treated as updates
+		 *        even if they differ from the currently installed one.
+		 *
+		 * @param packagesRevisions
+		 *     Key - package name. Value - list of revision numbers.
+		 */
+		void setIgnoreRevisions(const QMap<QString, QList<unsigned long long> >& packagesRevisions);
 		/**
 		 * @brief Controls if the download&installation process is automated.
 		 *

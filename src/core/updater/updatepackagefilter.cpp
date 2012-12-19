@@ -40,6 +40,8 @@ class UpdatePackageFilter::PrivData
 {
 	public:
 		UpdateChannel channel;
+		QMap<QString, QList<unsigned long long> > ignoredPackagesRevisions;
+		QMap<QString, PluginInfo> plugins;
 };
 //////////////////////////////////////////////////////////////////////////////
 UpdatePackageFilter::UpdatePackageFilter()
@@ -71,39 +73,75 @@ QList<UpdatePackage> UpdatePackageFilter::filter(const QList<UpdatePackage>& pac
 {
 	assert(!d->channel.isNull() && "No update channel specified");
 	QList<UpdatePackage> filtered;
-	QMap<QString, PluginInfo> plugins = collectPluginInfo();
-	foreach (const UpdatePackage& pkg, packages)
+	d->plugins = collectPluginInfo();
+	QList<UpdatePackage> packagesOnIgnoredList;
+	foreach (UpdatePackage pkg, packages)
 	{
 		if (pkg.channel == d->channel.name())
 		{
-			if (pkg.name == AutoUpdater::MAIN_PROGRAM_PACKAGE_NAME)
+			bool bAcceptPackage = isDifferentThanInstalled(pkg);
+			if (bAcceptPackage)
 			{
-				// Main program node.
-				unsigned long long localRevision = Version::revisionNumber();
-				if (localRevision != pkg.revision)
+				if (!isOnIgnoredList(pkg.name, pkg.revision))
 				{
 					filtered << pkg;
 				}
-			}
-			else
-			{
-				// Plugin node.
-				if (plugins.contains(pkg.name))
+				else
 				{
-					PluginInfo pluginInfo = plugins[pkg.name];
-					if (pluginInfo.revision != pkg.revision)
-					{
-						filtered << pkg;
-					}
+					packagesOnIgnoredList << pkg;
 				}
 			}
-			filtered << pkg;
 		}
 	}
+	if (!filtered.isEmpty())
+	{
+		filtered.append(packagesOnIgnoredList);
+	}
 	return filtered;
+}
+
+bool UpdatePackageFilter::isDifferentThanInstalled(UpdatePackage& pkg) const
+{
+	if (pkg.name == AutoUpdater::MAIN_PROGRAM_PACKAGE_NAME)
+	{
+		// Main program node.
+		unsigned long long localRevision = Version::revisionNumber();
+		if (localRevision != pkg.revision)
+		{
+			pkg.currentlyInstalledDisplayVersion = Version::versionRevision();
+			return true;
+		}
+	}
+	else
+	{
+		// Plugin node.
+		if (d->plugins.contains(pkg.name))
+		{
+			PluginInfo pluginInfo = d->plugins[pkg.name];
+			if (pluginInfo.revision != pkg.revision)
+			{
+				pkg.currentlyInstalledDisplayVersion = QString::number(pluginInfo.revision);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool UpdatePackageFilter::isOnIgnoredList(const QString& package,
+	unsigned long long revision) const
+{
+	const QList<unsigned long long>& list = d->ignoredPackagesRevisions[package];
+	return list.contains(revision);
 }
 
 void UpdatePackageFilter::setChannel(const UpdateChannel& channel)
 {
 	d->channel = channel;
+}
+
+void UpdatePackageFilter::setIgnoreRevisions(
+	const QMap<QString, QList<unsigned long long> >& packagesRevisions)
+{
+	d->ignoredPackagesRevisions = packagesRevisions;
 }

@@ -42,6 +42,8 @@
 #include "serverapi/message.h"
 #include "serverapi/server.h"
 #include "updater/autoupdater.h"
+#include "updater/updatechannel.h"
+#include "updater/updatepackage.h"
 #include "commandline.h"
 #include "connectionhandler.h"
 #include "customservers.h"
@@ -205,6 +207,11 @@ One of the proper locations for plugin modules is the \"engines/\" directory.\n\
 
 MainWindow::~MainWindow()
 {
+	if (autoUpdater != NULL)
+	{
+		autoUpdater->disconnect();
+		delete autoUpdater;
+	}
 	if(connectionHandler)
 		delete connectionHandler;
 
@@ -311,6 +318,23 @@ void MainWindow::checkForUpdates()
 	}
 	gLog << tr("Checking for updates...");
 	autoUpdater = new AutoUpdater();
+	this->connect(autoUpdater, SIGNAL(finished()),
+		SLOT(onAutoUpdaterFinish()));
+	this->connect(autoUpdater, SIGNAL(downloadAndInstallConfirmationRequested()),
+		SLOT(onAutoUpdaterDownloadAndInstallConfirmationRequest()));
+	QMap<QString, QList<unsigned long long> > ignoredPackagesRevisions;
+	foreach (const QString& package, gConfig.autoUpdates.lastKnownUpdateRevisions.keys())
+	{
+		unsigned long long revision = gConfig.autoUpdates.lastKnownUpdateRevisions[package];
+		QList<unsigned long long> list;
+		list << revision;
+		ignoredPackagesRevisions.insert(package, list);
+	}
+	autoUpdater->setIgnoreRevisions(ignoredPackagesRevisions);
+	autoUpdater->setChannel(UpdateChannel::fromName(gConfig.autoUpdates.updateChannelName));
+	// TODO Selecting auto update from menu should always require confirmation.
+	bool bRequireConfirmation = (gConfig.autoUpdates.updateMode != DoomseekerConfig::AutoUpdates::UM_FullAuto);
+	autoUpdater->setRequireDownloadAndInstallConfirmation(bRequireConfirmation);
 	autoUpdater->start();
 }
 
@@ -981,6 +1005,44 @@ void MainWindow::notifyFirstRun()
 	// On first run prompt configuration box.
 	QMessageBox::information(NULL, tr("Welcome to Doomseeker"), tr("Before you start browsing for servers, please ensure that Doomseeker is properly configured."));
 	menuActionConfigure->trigger();
+}
+
+void MainWindow::onAutoUpdaterDownloadAndInstallConfirmationRequest()
+{
+	// TODO This should be done in a way that doesn't open an irritating,
+	// blocking message dialog in unexpected moments. Preferably a tray pop-up
+	// should appear and a button in the main window should become visible.
+	// Pressing this button should display the message box.
+
+	// Prepare question.
+	const QList<UpdatePackage>& pkgList = autoUpdater->newUpdatePackages();
+	QString msg = tr("Following updates are available:\n\n%1\n\n"
+		"Do you wish to download and install them?");
+	QStringList pkgsInfos;
+	foreach (const UpdatePackage& pkg, pkgList)
+	{
+		QString name = pkg.name;
+		QString pkgInfo = tr("- \"%1\" %2 -> %3")
+			.arg(pkg.displayName, pkg.currentlyInstalledDisplayVersion,
+				pkg.displayVersion);
+		pkgsInfos << pkgInfo;
+	}
+	msg = msg.arg(pkgsInfos.join("\n"));
+	// Display message box.
+	if (QMessageBox::question(NULL, tr("Doomseeker - Auto Update"), msg,
+			QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+	{
+		autoUpdater->confirmDownloadAndInstall();
+	}
+	else
+	{
+		autoUpdater->abort();
+	}
+}
+
+void MainWindow::onAutoUpdaterFinish()
+{
+	qDebug() << "onAutoUpdaterFinish(): " << autoUpdater->errorCode() << autoUpdater->errorString();
 }
 
 void MainWindow::postInitAppStartup()

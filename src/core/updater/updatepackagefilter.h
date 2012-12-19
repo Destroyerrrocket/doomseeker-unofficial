@@ -33,8 +33,19 @@
  * @brief Filters UpdatePackage information basing on what is requested
  *        by the program.
  *
- * These operations are performed:
- * - Packages are filtered by specified channel name: setChannel().
+ * Firstly packages are filtered by specified channel name: setChannel().
+ * All packages which do not fit this criteria are discarded.
+ *
+ * Next these filters are applied:
+ * - Packages which are told to be ignored through setIgnoreRevisions()
+ *   method. @b However if at least one package goes through the filters
+ *   then this list is itself ignored. The ignore list by itself is designed
+ *   to prevent nagging users for updates which they already discarded.
+ *   But if an update for one of the package appears it's probable
+ *   that it may require update for other packages as well due to incompatible
+ *   interfaces between the main program and the plugins.<br>
+ *   @b TL;DR: If we update one of them, then we'll be only safe if we update
+ *   all of them.
  * - Packages which have the same revision number as the ones already
  *   installed are discarded. This is hardcoded into the class.
  */
@@ -46,6 +57,7 @@ class UpdatePackageFilter
 
 		QList<UpdatePackage> filter(const QList<UpdatePackage>& packages);
 		void setChannel(const UpdateChannel& channel);
+		void setIgnoreRevisions(const QMap<QString, QList<unsigned long long> >& packagesRevisions);
 
 	private:
 		class PluginInfo;
@@ -54,6 +66,8 @@ class UpdatePackageFilter
 		PrivData* d;
 
 		QMap<QString, PluginInfo> collectPluginInfo();
+		bool isDifferentThanInstalled(UpdatePackage& pkg) const;
+		bool isOnIgnoredList(const QString& package, unsigned long long revision) const;
 };
 
 #endif

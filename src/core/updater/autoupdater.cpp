@@ -23,6 +23,7 @@
 #include "autoupdater.h"
 
 #include "updater/updatechannel.h"
+#include "updater/updatepackagefilter.h"
 #include "updater/updaterinfoparser.h"
 #include "version.h"
 #include <wadseeker/protocols/fixednetworkaccessmanager.h>
@@ -38,6 +39,8 @@ class AutoUpdater::PrivData
 		bool bStarted;
 		UpdateChannel channel;
 		ErrorCode errorCode;
+		QMap<QString, QList<unsigned long long> > ignoredPackagesRevisions;
+		QList<UpdatePackage> newUpdatePackages;
 		FixedNetworkAccessManager* pNam;
 		QNetworkReply* pNetworkReply;
 };
@@ -75,6 +78,14 @@ AutoUpdater::~AutoUpdater()
 
 void AutoUpdater::abort()
 {
+	if (d->pNetworkReply != NULL)
+	{
+		d->pNetworkReply->disconnect();
+		d->pNetworkReply->abort();
+		d->pNetworkReply->deleteLater();
+		d->pNetworkReply = NULL;
+	}
+	emit finishWithError(EC_Aborted);
 }
 
 const UpdateChannel& AutoUpdater::channel() const
@@ -97,8 +108,10 @@ QString AutoUpdater::errorCodeToString(ErrorCode code)
 	{
 		case EC_Ok:
 			return QString();
+		case EC_Aborted:
+			return tr("Update was aborted.");
 		case EC_NullUpdateChannel:
-			return tr("No valid update channel was specified.");
+			return tr("No valid update channel was specified. Please check your configuration.");
 		case EC_UpdaterInfoDownloadProblem:
 			return tr("Failed to download updater info file.");
 		case EC_UpdaterInfoCannotParse:
@@ -142,6 +155,11 @@ QNetworkReply::NetworkError AutoUpdater::lastNetworkError() const
 	return QNetworkReply::NoError;
 }
 
+const QList<UpdatePackage>& AutoUpdater::newUpdatePackages() const
+{
+	return d->newUpdatePackages;
+}
+
 void AutoUpdater::onUpdaterInfoDownloadFinish()
 {
 	if (d->pNetworkReply->error() != QNetworkReply::NoError)
@@ -154,7 +172,27 @@ void AutoUpdater::onUpdaterInfoDownloadFinish()
 	ErrorCode parseResult = (ErrorCode) parser.parse(json);
 	if (parseResult == EC_Ok)
 	{
-		// TODO Stuff
+		UpdatePackageFilter filter;
+		filter.setChannel(d->channel);
+		filter.setIgnoreRevisions(d->ignoredPackagesRevisions);
+		QList<UpdatePackage> packagesList = filter.filter(parser.packages());
+		if (!packagesList.isEmpty())
+		{
+			d->newUpdatePackages = packagesList;
+			if (d->bDownloadAndInstallRequireConfirmation)
+			{
+				emit downloadAndInstallConfirmationRequested();
+			}
+			else
+			{
+				confirmDownloadAndInstall();
+			}
+		}
+		else
+		{
+			// Nothing to update.
+			finishWithError(EC_Ok);
+		}
 	}
 	else
 	{
@@ -165,6 +203,11 @@ void AutoUpdater::onUpdaterInfoDownloadFinish()
 void AutoUpdater::setChannel(const UpdateChannel& updateChannel)
 {
 	d->channel = updateChannel;
+}
+
+void AutoUpdater::setIgnoreRevisions(const QMap<QString, QList<unsigned long long> >& packagesRevisions)
+{
+	d->ignoredPackagesRevisions = packagesRevisions;
 }
 
 void AutoUpdater::setRequireDownloadAndInstallConfirmation(bool b)
