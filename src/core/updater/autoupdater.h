@@ -90,7 +90,20 @@ class AutoUpdater : public QObject
 			/**
 			 * @brief One of packages has no download URL.
 			 */
-			EC_MissingDownloadUrl
+			EC_MissingDownloadUrl,
+			/**
+			 * @brief QUrl.isValid() for package download URL returned false
+			 *        or QUrl.isRelative() returned true..
+			 */
+			EC_InvalidDownloadUrl,
+			/**
+			 * @brief Failed to download update package.
+			 */
+			EC_PackageDownloadProblem,
+			/**
+			 * @brief Failed to create directory for updates storage.
+			 */
+			EC_StorageDirCreateFailure
 		};
 
 		/**
@@ -110,6 +123,7 @@ class AutoUpdater : public QObject
 		static const QString UPDATER_INFO_URL;
 
 		static QString errorCodeToString(ErrorCode code);
+		static QString updateStorageDirPath();
 
 		AutoUpdater(QObject* pParent = NULL);
 		~AutoUpdater();
@@ -170,7 +184,17 @@ class AutoUpdater : public QObject
 		void confirmDownloadAndInstall();
 
 	signals:
+		/**
+		 * @brief Information on update packages has been received
+		 *        and install confirmation is requested.
+		 */
 		void downloadAndInstallConfirmationRequested();
+		/**
+		 * @brief AutoUpdater has finished its job.
+		 *
+		 * This signal is emitted if either job completed normally
+		 * or ended due to an error.
+		 */
 		void finished();
 
 	private:
@@ -178,9 +202,29 @@ class AutoUpdater : public QObject
 
 		PrivData* d;
 
+		/**
+		 * @brief Writes a log message for every entry on the list.
+		 *
+		 * The log is always dumped, but the main purpose is to
+		 * notify user that update was detected in case
+		 * if user enabled automatic updates.
+		 */
+		void dumpUpdatePackagesToLog(const QList<UpdatePackage>& packages);
 		void finishWithError(ErrorCode code);
+		/**
+		 * @brief Makes sure the directory where the update packages
+		 *        will be stored is going to be ready.
+		 *
+		 * @return true if all went ok, false if directory was not prepared
+		 *         successfully.
+		 */
+		bool preparePackagesTempDirectory();
+		void startPackageDownload(const UpdatePackage& pkg);
+		void startNextPackageDownload();
 
 	private slots:
+		void onPackageDownloadFinish();
+		void onPackageDownloadReadyRead();
 		void onUpdaterInfoDownloadFinish();
 };
 

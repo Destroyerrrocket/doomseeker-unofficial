@@ -118,7 +118,14 @@ int UpdaterInfoParser::parsePackageNode(const QString& packageName, const QVaria
 
 		if (channelInfo.contains("URL"))
 		{
-			package.downloadUrl = channelInfo["URL"].toString();
+			QString strUrl = channelInfo["URL"].toString();
+			package.downloadUrl = strUrl;
+			if (!package.downloadUrl.isValid() || package.downloadUrl.isRelative())
+			{
+				gLog << tr("Invalid update download URL for package %1, channel %2: %3")
+					.arg(packageName, channel, strUrl);
+				return  AutoUpdater::EC_InvalidDownloadUrl;
+			}
 		}
 		else
 		{

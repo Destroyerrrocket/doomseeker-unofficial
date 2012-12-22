@@ -50,6 +50,7 @@ class MAIN_EXPORT DataPaths
 		static const QString    PROGRAMS_APPDATASUPPORT_DIR_NAME;
 		static const QString	DEMOS_DIR_NAME;
 		static const QString	TRANSLATIONS_DIR_NAME;
+		static const QString UPDATE_PACKAGES_DIR_NAME;
 
 		/**
 		 *	@b Retrieves correct path to "Program Files" directory.
@@ -110,6 +111,21 @@ class MAIN_EXPORT DataPaths
 		const QString&			directoryNameForProgram() const { return programsDirectoryName; }
 
 		/**
+		 * @brief Path to the directory where large data should be
+		 *        saved.
+		 *
+		 * This path is supposed to hold data which should be stored only
+		 * the local file system. If portable mode is on this returns path
+		 * to program directory with "/.static" appended. If portable mode
+		 * is off this returns path to QDesktopServices::DataLocation with
+		 * "/.PROGRAMS_APPDATA_DIR_NAME" appended.
+		 *
+		 * @param subpath
+		 *     If specified then this path is appended to the returned path.
+		 */
+		QString localDataLocationPath(const QString& subpath = QString()) const;
+
+		/**
 		 *	@brief Path to directory where this concrete application should
 		 *	store it's data.
 		 *
@@ -135,7 +151,7 @@ class MAIN_EXPORT DataPaths
 		/**
 		 *	@brief Gets path to the root directory for data storage.
 		 *
-		 *	If portable mode is ON this points to the appliation's directory.
+		 *	If portable mode is ON this points to the application's directory.
 		 *	Otherwise:
 		 *
 		 *	For Windows this is determined based on %APPDATA% environment

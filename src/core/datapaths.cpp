@@ -23,6 +23,7 @@
 #include "datapaths.h"
 #include "main.h"
 #include "strings.h"
+#include <QDesktopServices>
 #include <cstdlib>
 
 #ifdef Q_OS_MAC
@@ -34,6 +35,7 @@ const QString DataPaths::PROGRAMS_APPDATASUPPORT_DIR_NAME = "";
 #endif
 const QString DataPaths::DEMOS_DIR_NAME = "demos";
 const QString DataPaths::TRANSLATIONS_DIR_NAME = "translations";
+const QString DataPaths::UPDATE_PACKAGES_DIR_NAME = "updates";
 
 DataPaths::DataPaths(bool bPortableModeOn)
 {
@@ -106,6 +108,28 @@ QStringList DataPaths::directoriesExist() const
 	}
 
 	return failedList;
+}
+
+QString DataPaths::localDataLocationPath(const QString& subpath) const
+{
+	// TODO This won't work correctly on Mac because we didn't use
+	// the QDesktopServices from the beginning. Using this class
+	// would save a lot of trouble and simplify code in this file a lot.
+	// Unfortunatelly right now using it would cause compatibility errors for
+	// Linux users who already have Doomseeker installed as the locations
+	// returned by QDesktopServices are different in certain cases. However,
+	// with some work some compromise could be achieved.
+	QString rootPath;
+	if (!bIsPortableModeOn)
+	{
+		rootPath = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+		Strings::combinePaths(rootPath, ".doomseeker");
+	}
+	else
+	{
+		rootPath = systemAppDataDirectory(".static");
+	}
+	return Strings::combinePaths(rootPath, subpath);
 }
 
 QString DataPaths::programFilesDirectory(MachineType machineType)

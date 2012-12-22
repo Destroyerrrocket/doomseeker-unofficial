@@ -22,11 +22,15 @@
 //------------------------------------------------------------------------------
 #include "autoupdater.h"
 
+#include "configuration/doomseekerconfig.h"
 #include "updater/updatechannel.h"
 #include "updater/updatepackagefilter.h"
 #include "updater/updaterinfoparser.h"
+#include "datapaths.h"
+#include "log.h"
 #include "version.h"
 #include <wadseeker/protocols/fixednetworkaccessmanager.h>
+#include <QByteArray>
 #include <QDebug>
 #include <QNetworkRequest>
 #include <cassert>
@@ -38,9 +42,11 @@ class AutoUpdater::PrivData
 		bool bIsRunning;
 		bool bStarted;
 		UpdateChannel channel;
+		UpdatePackage currentlyDownloadedPackage;
 		ErrorCode errorCode;
 		QMap<QString, QList<unsigned long long> > ignoredPackagesRevisions;
 		QList<UpdatePackage> newUpdatePackages;
+		QList<UpdatePackage> packagesInDownloadQueue;
 		FixedNetworkAccessManager* pNam;
 		QNetworkReply* pNetworkReply;
 };
@@ -95,6 +101,17 @@ const UpdateChannel& AutoUpdater::channel() const
 
 void AutoUpdater::confirmDownloadAndInstall()
 {
+	d->packagesInDownloadQueue = d->newUpdatePackages;
+	startNextPackageDownload();
+}
+
+void AutoUpdater::dumpUpdatePackagesToLog(const QList<UpdatePackage>& packages)
+{
+	foreach (const UpdatePackage& pkg, packages)
+	{
+		gLog << tr("Detected update for package \"%1\" from version \"%2\" to version \"%3\".")
+			.arg(pkg.displayName, pkg.currentlyInstalledDisplayVersion, pkg.displayVersion);
+	}
 }
 
 AutoUpdater::ErrorCode AutoUpdater::errorCode() const
@@ -107,7 +124,7 @@ QString AutoUpdater::errorCodeToString(ErrorCode code)
 	switch (code)
 	{
 		case EC_Ok:
-			return QString();
+			return tr("Ok");
 		case EC_Aborted:
 			return tr("Update was aborted.");
 		case EC_NullUpdateChannel:
@@ -124,6 +141,13 @@ QString AutoUpdater::errorCodeToString(ErrorCode code)
 		case EC_MissingDownloadUrl:
 			return tr("Download URL for one of the packages is missing from the "
 				"updater info file. Check the log for details.");
+		case EC_InvalidDownloadUrl:
+			return tr("Download URL for one of the packages is invalid. "
+				"Check the log for details.");
+		case EC_PackageDownloadProblem:
+			return tr("Update package download failed. Check the log for details.");
+		case EC_StorageDirCreateFailure:
+			return tr("Failed to create directory for updates packages storage.");
 		default:
 			return tr("Unknown error.");
 	}
@@ -160,6 +184,44 @@ const QList<UpdatePackage>& AutoUpdater::newUpdatePackages() const
 	return d->newUpdatePackages;
 }
 
+void AutoUpdater::onPackageDownloadFinish()
+{
+	if (d->pNetworkReply->error() == QNetworkReply::NoError)
+	{
+		gLog << tr("Finished downloading package \"%1\".")
+			.arg(d->currentlyDownloadedPackage.displayName);
+		if (!d->packagesInDownloadQueue.isEmpty())
+		{
+			startNextPackageDownload();
+		}
+		else
+		{
+			gLog << tr("All packages downloaded.");
+			finishWithError(EC_Ok);
+		}
+	}
+	else
+	{
+		gLog << tr("Network error when downloading package \"%1\": [%2] %3")
+			.arg(d->currentlyDownloadedPackage.displayName)
+			.arg(d->pNetworkReply->error())
+			.arg(d->pNetworkReply->errorString());
+		finishWithError(EC_PackageDownloadProblem);
+	}
+}
+
+void AutoUpdater::onPackageDownloadReadyRead()
+{
+	const int MAX_CHUNK_SIZE = 2 * 1024 * 1024; // 2MB
+	QByteArray data = d->pNetworkReply->read(MAX_CHUNK_SIZE);
+	while (!data.isEmpty())
+	{
+		// TODO dump
+		
+		data = d->pNetworkReply->read(MAX_CHUNK_SIZE);
+	}
+}
+
 void AutoUpdater::onUpdaterInfoDownloadFinish()
 {
 	if (d->pNetworkReply->error() != QNetworkReply::NoError)
@@ -178,6 +240,7 @@ void AutoUpdater::onUpdaterInfoDownloadFinish()
 		QList<UpdatePackage> packagesList = filter.filter(parser.packages());
 		if (!packagesList.isEmpty())
 		{
+			dumpUpdatePackagesToLog(packagesList);
 			d->newUpdatePackages = packagesList;
 			if (d->bDownloadAndInstallRequireConfirmation)
 			{
@@ -198,6 +261,11 @@ void AutoUpdater::onUpdaterInfoDownloadFinish()
 	{
 		finishWithError(parseResult);
 	}
+}
+
+bool AutoUpdater::preparePackagesTempDirectory()
+{
+	return true;
 }
 
 void AutoUpdater::setChannel(const UpdateChannel& updateChannel)
@@ -231,6 +299,13 @@ void AutoUpdater::start()
 		finishWithError(EC_NullUpdateChannel);
 		return;
 	}
+	QDir storageDir(updateStorageDirPath());
+	if (!storageDir.mkpath("."))
+	{
+		gLog << tr("Failed to create directory for updates storage: %1")
+			.arg(storageDir.path());
+		finishWithError(EC_StorageDirCreateFailure);
+	}
 	d->bIsRunning = true;
 	QNetworkRequest request;
 	request.setRawHeader("User-Agent", Version::userAgent().toAscii());
@@ -242,4 +317,43 @@ void AutoUpdater::start()
 		SIGNAL(finished()),
 		SLOT(onUpdaterInfoDownloadFinish()));
 	d->pNetworkReply = pReply;
+}
+
+void AutoUpdater::startNextPackageDownload()
+{
+	assert(!d->packagesInDownloadQueue.isEmpty() && "AutoUpdater::startNextPackageDownload()");
+	UpdatePackage pkg = d->packagesInDownloadQueue.takeFirst();
+	startPackageDownload(pkg);
+}
+
+void AutoUpdater::startPackageDownload(const UpdatePackage& pkg)
+{
+	QUrl url = pkg.downloadUrl;
+	if (!url.isValid() || url.isRelative())
+	{
+		// Parser already performs a check for this but let's do this
+		// again to make sure nothing got lost on the way.
+		gLog << tr("Invalid download URL for package \"%1\": %2")
+			.arg(pkg.displayName, pkg.downloadUrl.toString());
+		finishWithError(EC_InvalidDownloadUrl);
+		return;
+	}
+	gLog << tr("Downloading package \"%1\" from URL: %2.").arg(pkg.displayName,
+		pkg.downloadUrl.toString());
+		
+	QNetworkRequest request;
+	request.setRawHeader("User-Agent", Version::userAgent().toAscii());
+	request.setUrl(url);
+	QNetworkReply* pReply = d->pNam->get(request);
+	d->currentlyDownloadedPackage = pkg;
+	d->pNetworkReply = pReply;
+	this->connect(pReply, SIGNAL(readyRead()),
+		SLOT(onPackageDownloadReadyRead()));
+	this->connect(pReply, SIGNAL(finished()),
+		SLOT(onPackageDownloadFinish()));
+}
+
+QString AutoUpdater::updateStorageDirPath() const
+{
+	return Main::dataPaths.localDataLocationPath(DataPaths::UPDATE_PACKAGES_DIR_NAME);
 }

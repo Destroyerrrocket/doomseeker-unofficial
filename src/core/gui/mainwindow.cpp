@@ -322,13 +322,15 @@ void MainWindow::checkForUpdates()
 		SLOT(onAutoUpdaterFinish()));
 	this->connect(autoUpdater, SIGNAL(downloadAndInstallConfirmationRequested()),
 		SLOT(onAutoUpdaterDownloadAndInstallConfirmationRequest()));
+	// TODO: Calling the updater manually should leave this map empty.
 	QMap<QString, QList<unsigned long long> > ignoredPackagesRevisions;
 	foreach (const QString& package, gConfig.autoUpdates.lastKnownUpdateRevisions.keys())
 	{
 		unsigned long long revision = gConfig.autoUpdates.lastKnownUpdateRevisions[package];
 		QList<unsigned long long> list;
 		list << revision;
-		ignoredPackagesRevisions.insert(package, list);
+		// TODO Uncomment
+		//ignoredPackagesRevisions.insert(package, list); 
 	}
 	autoUpdater->setIgnoreRevisions(ignoredPackagesRevisions);
 	autoUpdater->setChannel(UpdateChannel::fromName(gConfig.autoUpdates.updateChannelName));
@@ -1018,16 +1020,16 @@ void MainWindow::onAutoUpdaterDownloadAndInstallConfirmationRequest()
 	const QList<UpdatePackage>& pkgList = autoUpdater->newUpdatePackages();
 	QString msg = tr("Following updates are available:\n\n%1\n\n"
 		"Do you wish to download and install them?");
-	QStringList pkgsInfos;
+	QStringList pkgsInfosMessages;
 	foreach (const UpdatePackage& pkg, pkgList)
 	{
 		QString name = pkg.name;
-		QString pkgInfo = tr("- \"%1\" %2 -> %3")
+		QString pkgInfoMsg = tr("- \"%1\" %2 -> %3")
 			.arg(pkg.displayName, pkg.currentlyInstalledDisplayVersion,
 				pkg.displayVersion);
-		pkgsInfos << pkgInfo;
+		pkgsInfosMessages << pkgInfoMsg;
 	}
-	msg = msg.arg(pkgsInfos.join("\n"));
+	msg = msg.arg(pkgsInfosMessages.join("\n"));
 	// Display message box.
 	if (QMessageBox::question(NULL, tr("Doomseeker - Auto Update"), msg,
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
@@ -1036,13 +1038,22 @@ void MainWindow::onAutoUpdaterDownloadAndInstallConfirmationRequest()
 	}
 	else
 	{
+		// User rejected this update so let's add the packages
+		// to the ignore list so they won't be nagged again.
+		foreach (const UpdatePackage& pkg, pkgList)
+		{
+			gConfig.autoUpdates.lastKnownUpdateRevisions.insert(pkg.name, pkg.revision);
+		}
 		autoUpdater->abort();
 	}
 }
 
 void MainWindow::onAutoUpdaterFinish()
 {
-	qDebug() << "onAutoUpdaterFinish(): " << autoUpdater->errorCode() << autoUpdater->errorString();
+	gLog << tr("Program update finished with status: [%1] %2")
+		.arg((int)autoUpdater->errorCode()).arg(autoUpdater->errorString());
+	autoUpdater->deleteLater();
+	autoUpdater = NULL;
 }
 
 void MainWindow::postInitAppStartup()
