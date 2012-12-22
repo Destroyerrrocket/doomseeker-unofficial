@@ -103,7 +103,11 @@ class AutoUpdater : public QObject
 			/**
 			 * @brief Failed to create directory for updates storage.
 			 */
-			EC_StorageDirCreateFailure
+			EC_StorageDirCreateFailure,
+			/**
+			 * @brief Package file can't be stored on the local filesystem.
+			 */
+			EC_PackageCantBeSaved
 		};
 
 		/**

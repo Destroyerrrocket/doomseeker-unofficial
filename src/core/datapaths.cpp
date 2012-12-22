@@ -123,7 +123,7 @@ QString DataPaths::localDataLocationPath(const QString& subpath) const
 	if (!bIsPortableModeOn)
 	{
 		rootPath = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-		Strings::combinePaths(rootPath, ".doomseeker");
+		rootPath = Strings::combinePaths(rootPath, ".doomseeker");
 	}
 	else
 	{

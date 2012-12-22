@@ -28,11 +28,14 @@
 #include "updater/updaterinfoparser.h"
 #include "datapaths.h"
 #include "log.h"
+#include "main.h"
+#include "strings.h"
 #include "version.h"
 #include <wadseeker/protocols/fixednetworkaccessmanager.h>
 #include <QByteArray>
 #include <QDebug>
 #include <QNetworkRequest>
+#include <QTemporaryFile>
 #include <cassert>
 
 class AutoUpdater::PrivData
@@ -47,6 +50,7 @@ class AutoUpdater::PrivData
 		QMap<QString, QList<unsigned long long> > ignoredPackagesRevisions;
 		QList<UpdatePackage> newUpdatePackages;
 		QList<UpdatePackage> packagesInDownloadQueue;
+		QTemporaryFile* pCurrentPackageFile;
 		FixedNetworkAccessManager* pNam;
 		QNetworkReply* pNetworkReply;
 };
@@ -65,12 +69,17 @@ AutoUpdater::AutoUpdater(QObject* pParent)
 	d->bIsRunning = false;
 	d->bStarted = false;
 	d->errorCode = EC_Ok;
+	d->pCurrentPackageFile = NULL;
 	d->pNam = new FixedNetworkAccessManager();
 	d->pNetworkReply = NULL;
 }
 
 AutoUpdater::~AutoUpdater()
 {
+	if (d->pCurrentPackageFile != NULL)
+	{
+		delete d->pCurrentPackageFile;
+	}
 	if (d->pNetworkReply != NULL)
 	{
 		d->pNetworkReply->disconnect();
@@ -148,6 +157,8 @@ QString AutoUpdater::errorCodeToString(ErrorCode code)
 			return tr("Update package download failed. Check the log for details.");
 		case EC_StorageDirCreateFailure:
 			return tr("Failed to create directory for updates packages storage.");
+		case EC_PackageCantBeSaved:
+			return tr("Failed to create package file for saving.");
 		default:
 			return tr("Unknown error.");
 	}
@@ -216,8 +227,7 @@ void AutoUpdater::onPackageDownloadReadyRead()
 	QByteArray data = d->pNetworkReply->read(MAX_CHUNK_SIZE);
 	while (!data.isEmpty())
 	{
-		// TODO dump
-		
+		d->pCurrentPackageFile->write(data);
 		data = d->pNetworkReply->read(MAX_CHUNK_SIZE);
 	}
 }
@@ -340,7 +350,25 @@ void AutoUpdater::startPackageDownload(const UpdatePackage& pkg)
 	}
 	gLog << tr("Downloading package \"%1\" from URL: %2.").arg(pkg.displayName,
 		pkg.downloadUrl.toString());
-		
+
+	QString fileNameTemplate = QString("%1XXXXXX.zip").arg(pkg.name);
+	QString filePathTemplate = Strings::combinePaths(updateStorageDirPath(), fileNameTemplate);
+	qDebug() << "filePathTemplate: " << filePathTemplate;
+	if (d->pCurrentPackageFile != NULL)
+	{
+		delete d->pCurrentPackageFile;
+	}
+	d->pCurrentPackageFile = new QTemporaryFile(filePathTemplate);
+	d->pCurrentPackageFile->setAutoRemove(false);
+	if (!d->pCurrentPackageFile->open())
+	{
+		gLog << tr("Couldn't save file in path: %1").arg(updateStorageDirPath());
+		delete d->pCurrentPackageFile;
+		d->pCurrentPackageFile = NULL;
+		finishWithError(EC_PackageCantBeSaved);
+		return;
+	}
+
 	QNetworkRequest request;
 	request.setRawHeader("User-Agent", Version::userAgent().toAscii());
 	request.setUrl(url);
@@ -353,7 +381,7 @@ void AutoUpdater::startPackageDownload(const UpdatePackage& pkg)
 		SLOT(onPackageDownloadFinish()));
 }
 
-QString AutoUpdater::updateStorageDirPath() const
+QString AutoUpdater::updateStorageDirPath()
 {
-	return Main::dataPaths.localDataLocationPath(DataPaths::UPDATE_PACKAGES_DIR_NAME);
+	return Main::dataPaths->localDataLocationPath(DataPaths::UPDATE_PACKAGES_DIR_NAME);
 }
