@@ -461,8 +461,8 @@ void MainWindow::getServers()
 	{
 		gLog << tr("Senseless refresh operation attempted.");
 
-		QString message = tr("Doomseeker is unable to proceed with the refresh \
-operation because the following problem has occured:\n\n");
+		QString message = tr("Doomseeker is unable to proceed with the refresh"
+			" operation because the following problem has occured:\n\n");
 
 		if (Main::enginePlugins->numPlugins() == 0)
 		{
@@ -492,7 +492,8 @@ operation because the following problem has occured:\n\n");
 
 	if (!isAnyMasterEnabled())
 	{
-		gLog << tr("Warning: No master servers were enabled for this refresh. Check your Query menu or \"engines/\" directory. Custom servers will still refresh.");
+		gLog << tr("Warning: No master servers were enabled for this refresh. "
+			"Check your Query menu or \"engines/\" directory. Custom servers will still refresh.");
 	}
 
 	masterManager->clearServersList();
@@ -1005,7 +1006,8 @@ void MainWindow::menuWadSeeker()
 void MainWindow::notifyFirstRun()
 {
 	// On first run prompt configuration box.
-	QMessageBox::information(NULL, tr("Welcome to Doomseeker"), tr("Before you start browsing for servers, please ensure that Doomseeker is properly configured."));
+	QMessageBox::information(NULL, tr("Welcome to Doomseeker"), 
+		tr("Before you start browsing for servers, please ensure that Doomseeker is properly configured."));
 	menuActionConfigure->trigger();
 }
 
@@ -1098,11 +1100,14 @@ void MainWindow::postInitAppStartup()
 	{
 		// There are no plugins so something is really bad.
 		// Display error message.
-		QMessageBox::critical(NULL, tr("Doomseeker critical error"), tr("Doomseeker was unable to find any plugin libraries. \
-\nAlthough the application will still work it will not be possible to fetch any server info or launch any game.\n\
-\n\
-Please check if there are any files in \"engines/\" directory.\n\
-To fix this problem you may try downloading Doomseeker again from the site specified in the Help|About box and reinstalling Doomseeker."));
+		QMessageBox::critical(NULL, tr("Doomseeker critical error"), 
+			tr("Doomseeker was unable to find any plugin libraries.\n"
+				"Although the application will still work it will not be possible "
+				"to fetch any server info or launch any game.\n\n"
+				"Please check if there are any files in \"engines/\" directory.\n"
+				"To fix this problem you may try downloading Doomseeker "
+				"again from the site specified in the Help|About box and reinstalling "
+				"Doomseeker."));
 	}
 }
 
@@ -1354,6 +1359,7 @@ void MainWindow::updateTrayIconTooltipAndLogTotalRefresh()
 
 	if (bTotalRefreshInProcess)
 	{
-		gLog << tr("Finished refreshing. Servers on the list: %1 (+ %2 custom). Players: %3.").arg(numServers).arg(numCustoms).arg(numPlayers);
+		gLog << tr("Finished refreshing. Servers on the list: %1 (+ %2 custom). Players: %3.")
+			.arg(numServers).arg(numCustoms).arg(numPlayers);
 	}
 }
