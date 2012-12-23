@@ -1054,6 +1054,7 @@ void MainWindow::onAutoUpdaterFinish()
 {
 	gLog << tr("Program update finished with status: [%1] %2")
 		.arg((int)autoUpdater->errorCode()).arg(autoUpdater->errorString());
+	qDebug() << "Files: " << autoUpdater->downloadedPackagesFilenames();
 	autoUpdater->deleteLater();
 	autoUpdater = NULL;
 }

@@ -134,6 +134,22 @@ int UpdaterInfoParser::parsePackageNode(const QString& packageName, const QVaria
 			return AutoUpdater::EC_MissingDownloadUrl;
 		}
 
+		if (channelInfo.contains("URL-script"))
+		{
+			QString strUrl = channelInfo["URL-script"].toString();
+			package.downloadScriptUrl = strUrl;
+			if (!package.downloadScriptUrl.isValid() || package.downloadScriptUrl.isRelative())
+			{
+				gLog << tr("Invalid update script download URL for package %1, channel %2: %3")
+					.arg(packageName, channel, strUrl);
+				return  AutoUpdater::EC_InvalidDownloadUrl;
+			}
+		}
+		else
+		{
+			package.downloadScriptUrl = package.downloadUrl.toString() + ".xml";
+		}
+
 		d->packages << package;
 	}
 	return AutoUpdater::EC_Ok;

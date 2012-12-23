@@ -54,6 +54,14 @@ class UpdatePackage
 		 */
 		QUrl downloadUrl;
 		/**
+		 * @brief Updater script download URL.
+		 *
+		 * This URL must be absolute and contain the protocol.
+		 * If not present in the updater info file then downloadUrl is
+		 * used with ".xml" appended.
+		 */
+		QUrl downloadScriptUrl;
+		/**
 		 * @brief Name of the package (program name or plugin name).
 		 */
 		QString name;

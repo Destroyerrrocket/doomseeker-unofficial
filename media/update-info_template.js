@@ -14,13 +14,17 @@
 //    is omitted, "revision" will be displayed.
 // 4. If "stable" version gets released that is newer than "beta" then "beta"
 //    must be updated to contain the same information as "stable".
+// 5. "URL-script" is for the Mendeley updater executable script.
+//    If not present then it's assumed that it's the same as "URL" but with
+//    ".xml" appended.
 {
 "doomseeker" : {
     "stable" : {
         "revision" : 900,
         "display-name" : "Doomseeker",
         "display-version" : "1.0",
-        "URL" : "http://127.0.0.1/path/to/update/archive.zip"
+        "URL" : "http://127.0.0.1/path/to/update/archive.zip",
+        "URL-script" : "http://127.0.0.1/path/to/update/archive-script.xml"
     },
     "beta" : {
         "revision" : 902,

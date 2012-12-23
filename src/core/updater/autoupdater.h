@@ -137,6 +137,23 @@ class AutoUpdater : public QObject
 		 * @brief setChannel() .
 		 */
 		const UpdateChannel& channel() const;
+		/**
+		 * @brief Filenames for packages which are ready to install.
+		 *
+		 * These are names only. These files should reside in a known location,
+		 * pointed to by DataPaths::localDataLocationPath() in the
+		 * DataPaths::UPDATE_PACKAGES_DIR_NAME subdir.
+		 * This ensures that if portable mode is copied to a different
+		 * directory, it will still know where to get downloaded packages.
+		 *
+		 * Script files are not listed here because their names are the same
+		 * as for packages but with ".xml" appended.
+		 *
+		 * Contents of the list are only valid if updater finishes with
+		 * EC_Ok status. Before that, or if updater finishes with error status,
+		 * the contents of the list are undefined.
+		 */
+		const QStringList& downloadedPackagesFilenames() const;
 		ErrorCode errorCode() const;
 		QString errorString() const;
 
@@ -165,6 +182,9 @@ class AutoUpdater : public QObject
 		/**
 		 * @brief Revisions set in this map will not be treated as updates
 		 *        even if they differ from the currently installed one.
+		 *
+		 * However, if update for at least one unignored package is detected,
+		 * then the entire list is treated as if it wasn't set.
 		 *
 		 * @param packagesRevisions
 		 *     Key - package name. Value - list of revision numbers.
@@ -224,11 +244,13 @@ class AutoUpdater : public QObject
 		 */
 		bool preparePackagesTempDirectory();
 		void startPackageDownload(const UpdatePackage& pkg);
+		void startPackageScriptDownload(const UpdatePackage& pkg);
 		void startNextPackageDownload();
 
 	private slots:
 		void onPackageDownloadFinish();
 		void onPackageDownloadReadyRead();
+		void onPackageScriptDownloadFinish();
 		void onUpdaterInfoDownloadFinish();
 };
 

@@ -46,6 +46,7 @@ class AutoUpdater::PrivData
 		bool bStarted;
 		UpdateChannel channel;
 		UpdatePackage currentlyDownloadedPackage;
+		QStringList downloadedPackagesFilenames;
 		ErrorCode errorCode;
 		QMap<QString, QList<unsigned long long> > ignoredPackagesRevisions;
 		QList<UpdatePackage> newUpdatePackages;
@@ -112,6 +113,11 @@ void AutoUpdater::confirmDownloadAndInstall()
 {
 	d->packagesInDownloadQueue = d->newUpdatePackages;
 	startNextPackageDownload();
+}
+
+const QStringList& AutoUpdater::downloadedPackagesFilenames() const
+{
+	return d->downloadedPackagesFilenames;
 }
 
 void AutoUpdater::dumpUpdatePackagesToLog(const QList<UpdatePackage>& packages)
@@ -201,15 +207,7 @@ void AutoUpdater::onPackageDownloadFinish()
 	{
 		gLog << tr("Finished downloading package \"%1\".")
 			.arg(d->currentlyDownloadedPackage.displayName);
-		if (!d->packagesInDownloadQueue.isEmpty())
-		{
-			startNextPackageDownload();
-		}
-		else
-		{
-			gLog << tr("All packages downloaded.");
-			finishWithError(EC_Ok);
-		}
+		startPackageScriptDownload(d->currentlyDownloadedPackage);
 	}
 	else
 	{
@@ -229,6 +227,43 @@ void AutoUpdater::onPackageDownloadReadyRead()
 	{
 		d->pCurrentPackageFile->write(data);
 		data = d->pNetworkReply->read(MAX_CHUNK_SIZE);
+	}
+}
+
+void AutoUpdater::onPackageScriptDownloadFinish()
+{
+	if (d->pNetworkReply->error() == QNetworkReply::NoError)
+	{
+		gLog << tr("Finished downloading package script \"%1\".")
+			.arg(d->currentlyDownloadedPackage.displayName);
+		QString savePath = d->pCurrentPackageFile->fileName() + ".xml";
+		QFile file(savePath);
+		if (!file.open(QIODevice::WriteOnly))
+		{
+			gLog << tr("Failed to save package script to file: %1").arg(savePath);
+			finishWithError(EC_PackageCantBeSaved);
+			return;
+		}
+		file.write(d->pNetworkReply->readAll());
+		file.close();
+
+		if (!d->packagesInDownloadQueue.isEmpty())
+		{
+			startNextPackageDownload();
+		}
+		else
+		{
+			gLog << tr("All packages downloaded.");
+			finishWithError(EC_Ok);
+		}
+	}
+	else
+	{
+		gLog << tr("Network error when downloading package script \"%1\": [%2] %3")
+			.arg(d->currentlyDownloadedPackage.displayName)
+			.arg(d->pNetworkReply->error())
+			.arg(d->pNetworkReply->errorString());
+		finishWithError(EC_PackageDownloadProblem);
 	}
 }
 
@@ -368,6 +403,8 @@ void AutoUpdater::startPackageDownload(const UpdatePackage& pkg)
 		finishWithError(EC_PackageCantBeSaved);
 		return;
 	}
+	QFileInfo fileInfo(d->pCurrentPackageFile->fileName());
+	d->downloadedPackagesFilenames << fileInfo.fileName();
 
 	QNetworkRequest request;
 	request.setRawHeader("User-Agent", Version::userAgent().toAscii());
@@ -379,6 +416,33 @@ void AutoUpdater::startPackageDownload(const UpdatePackage& pkg)
 		SLOT(onPackageDownloadReadyRead()));
 	this->connect(pReply, SIGNAL(finished()),
 		SLOT(onPackageDownloadFinish()));
+}
+
+void AutoUpdater::startPackageScriptDownload(const UpdatePackage& pkg)
+{
+	QUrl url = pkg.downloadScriptUrl;
+	if (!url.isValid() || url.isRelative())
+	{
+		// Parser already performs a check for this but let's do this
+		// again to make sure nothing got lost on the way.
+		gLog << tr("Invalid download URL for package script \"%1\": %2")
+			.arg(pkg.displayName, pkg.downloadScriptUrl.toString());
+		finishWithError(EC_InvalidDownloadUrl);
+		return;
+	}
+	gLog << tr("Downloading package script \"%1\" from URL: %2.").arg(pkg.displayName,
+		pkg.downloadScriptUrl.toString());
+
+	QNetworkRequest request;
+	request.setRawHeader("User-Agent", Version::userAgent().toAscii());
+	request.setUrl(url);
+	QNetworkReply* pReply = d->pNam->get(request);
+	d->currentlyDownloadedPackage = pkg;
+	d->pNetworkReply = pReply;
+	// Scripts are small enough that they can be downloaded "in one take",
+	// without saving them continuously to a file.
+	this->connect(pReply, SIGNAL(finished()),
+		SLOT(onPackageScriptDownloadFinish()));
 }
 
 QString AutoUpdater::updateStorageDirPath()
