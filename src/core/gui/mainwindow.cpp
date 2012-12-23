@@ -74,6 +74,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 {
 	autoUpdater = NULL;
 	connectionHandler = NULL;
+	updateChannelOnUpdateStart = new UpdateChannel();
 
 	this->application = application;
 
@@ -207,6 +208,10 @@ One of the proper locations for plugin modules is the \"engines/\" directory.\n\
 
 MainWindow::~MainWindow()
 {
+	if (updateChannelOnUpdateStart != NULL)
+	{
+		delete updateChannelOnUpdateStart;
+	}
 	if (autoUpdater != NULL)
 	{
 		autoUpdater->disconnect();
@@ -333,7 +338,9 @@ void MainWindow::checkForUpdates()
 		//ignoredPackagesRevisions.insert(package, list); 
 	}
 	autoUpdater->setIgnoreRevisions(ignoredPackagesRevisions);
-	autoUpdater->setChannel(UpdateChannel::fromName(gConfig.autoUpdates.updateChannelName));
+	UpdateChannel channel = UpdateChannel::fromName(gConfig.autoUpdates.updateChannelName);
+	autoUpdater->setChannel(channel);
+	*updateChannelOnUpdateStart = channel;
 	// TODO Selecting auto update from menu should always require confirmation.
 	bool bRequireConfirmation = (gConfig.autoUpdates.updateMode != DoomseekerConfig::AutoUpdates::UM_FullAuto);
 	autoUpdater->setRequireDownloadAndInstallConfirmation(bRequireConfirmation);
@@ -941,6 +948,8 @@ void MainWindow::menuOptionsConfigure()
 	}
 
 	bool bLookupHostsSettingBefore = gConfig.doomseeker.bLookupHosts;
+	DoomseekerConfig::AutoUpdates::UpdateMode updateModeBefore = gConfig.autoUpdates.updateMode;
+	UpdateChannel updateChannelBefore = UpdateChannel::fromName(gConfig.autoUpdates.updateChannelName);
 	// Stop the auto refresh timer during configuration.
 	autoRefreshTimer.stop();
 	configDialog.exec();
@@ -957,11 +966,25 @@ void MainWindow::menuOptionsConfigure()
 		serverTableHandler->redraw();
 		initTrayIcon();
 	}
-	
+
 	// Do the following only if setting changed from false to true.
 	if (!bLookupHostsSettingBefore && gConfig.doomseeker.bLookupHosts)
 	{
 		serverTableHandler->lookupHosts();
+	}
+
+	// If update channel or update mode changed then we should discard the
+	// current updates.
+	UpdateChannel updateChannelAfter = UpdateChannel::fromName(gConfig.autoUpdates.updateChannelName);
+	if (updateChannelBefore != updateChannelAfter
+		|| updateModeBefore != gConfig.autoUpdates.updateMode)
+	{
+		if (autoUpdater != NULL)
+		{
+			autoUpdater->abort();
+		}
+		gConfig.autoUpdates.updatePackagesFilenamesForInstallation = QStringList();
+		gConfig.saveToFile();
 	}
 
 	// Refresh custom servers list:
@@ -1055,6 +1078,17 @@ void MainWindow::onAutoUpdaterFinish()
 	gLog << tr("Program update finished with status: [%1] %2")
 		.arg((int)autoUpdater->errorCode()).arg(autoUpdater->errorString());
 	qDebug() << "Files: " << autoUpdater->downloadedPackagesFilenames();
+	UpdateChannel channel = UpdateChannel::fromName(gConfig.autoUpdates.updateChannelName);
+	if (channel == *updateChannelOnUpdateStart)
+	{
+		gConfig.autoUpdates.updatePackagesFilenamesForInstallation
+			= autoUpdater->downloadedPackagesFilenames();
+		gConfig.saveToFile();
+	}
+	else
+	{
+		gLog << tr("Update channel was changed during update process. Discarding update.");
+	}
 	autoUpdater->deleteLater();
 	autoUpdater = NULL;
 }

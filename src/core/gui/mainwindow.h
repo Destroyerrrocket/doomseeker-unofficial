@@ -47,6 +47,7 @@ class AutoUpdater;
 class ConnectionHandler;
 class ServerFilterDock;
 class ServersStatusWidget;
+class UpdateChannel;
 
 /**
  *	@brief Menu action for Query Menu
@@ -149,6 +150,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		QAction*			toolBarRefreshAll;
 		QSystemTrayIcon*	trayIcon;
 		QMenu*				trayIconMenu;
+		/// Update should be discarded if this changes.
+		UpdateChannel*		updateChannelOnUpdateStart;
 
 		ConnectionHandler	*connectionHandler;
 

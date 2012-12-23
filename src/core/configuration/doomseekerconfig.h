@@ -146,6 +146,11 @@ class DoomseekerConfig
 			 * @brief Pass this to UpdateChannel::fromName() .
 			 */
 			QString updateChannelName;
+			/**
+			 * @brief Packages that are about to be installed during next
+			 *        program start.
+			 */
+			QStringList updatePackagesFilenamesForInstallation;
 
 			void init(IniSection& section);
 			void load(IniSection& section);
