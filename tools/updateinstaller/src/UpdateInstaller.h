@@ -25,6 +25,10 @@ class UpdateInstaller
 		};
 
 		UpdateInstaller();
+		void setArgsForRunAfterInstall(const std::list<std::string>& args)
+		{
+			m_runAfterInstallArgs = args;
+		}
 		void setInstallDir(const std::string& path);
 		void setPackageDir(const std::string& path);
 		void setBackupDir(const std::string& path);
@@ -56,6 +60,7 @@ class UpdateInstaller
 		std::string friendlyErrorForError(const FileUtils::IOException& ex) const;
 
 		Mode m_mode;
+		std::list<std::string> m_runAfterInstallArgs;
 		std::string m_installDir;
 		std::string m_packageDir;
 		std::string m_backupDir;

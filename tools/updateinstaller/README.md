@@ -59,14 +59,22 @@ Once the updater has been started, it:
 
  Once the application has downloaded an update, it needs to invoke it.  The syntax is:
 
-    updater --install-dir <install-dir> --package-dir <package-dir> --script <script file>
+    updater --install-dir <install-dir> --package-dir <package-dir> --script <script file> 
+            [--args <list_of_args>]
 
  Where `<install-dir>` is the directory which the application is installed into,
  `<package-dir>` is the directory containing the packages required for the update
  and `<script>` is the `file_list.xml` file describing the update.
+ 
+ An optional "--args" argument is accepted. The value of this argument is passed
+ to the target program after the update is completed and the updated program
+ is started. This is a single value where multiple arguments are separated
+ using spacebar characters. The value must be percentage encoded in order to be
+ parsed properly.
 
  Once the updater has run, it will launch the file specified in the `file_list.xml` file
- as being the main application binary.
+ as the "run-after-install" binary. In package generator configuration this
+ file is specified using the "main-binary" option.
 
  See the updater test in `src/tests/test-update.rb` for an example
  of how to invoke the updater.

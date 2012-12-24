@@ -407,15 +407,8 @@ void UpdateInstaller::restartMainApp()
 		std::string command;
 		std::list<std::string> args;
 
-		for (std::vector<UpdateScriptFile>::const_iterator iter = m_script->filesToInstall().begin();
-			iter != m_script->filesToInstall().end();
-			iter++)
-		{
-			if (iter->isMainBinary)
-			{
-				command = m_installDir + '/' + iter->path;
-			}
-		}
+		command = m_script->runAfterInstall();
+		args = m_runAfterInstallArgs;
 
 		if (!command.empty())
 		{

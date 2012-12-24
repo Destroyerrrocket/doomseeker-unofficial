@@ -16,10 +16,13 @@ class UpdaterOptions
 		std::string scriptPath;
 		PLATFORM_PID waitPid;
 		std::string logFile;
+		/// Arguments passed to the program when installation is done.
+		std::list<std::string> runAfterInstallCmdArgs;
 		bool showVersion;
 		bool forceElevated;
 
 	private:
+		std::list<std::string> parseArgs(const std::string& args);
 		void parseOldFormatArgs(int argc, char** argv);
 		static void parseOldFormatArg(const std::string& arg, std::string* key, std::string* value);
 };

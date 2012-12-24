@@ -113,8 +113,6 @@ class UpdateScriptGenerator
 			file = UpdateScriptFile.new
 			file.path = strip_prefix(path,input_dir)
 
-			file.is_main_binary = (file.path == package_config.main_binary)
-			
 			if (File.symlink?(path))
 				file.target = File.readlink(path)
 			else
@@ -165,6 +163,7 @@ class UpdateScriptGenerator
 		update_elem.add_element deps_to_xml()
 		update_elem.add_element packages_to_xml()
 		update_elem.add_element install_to_xml()
+		update_elem.add_element run_after_install_to_xml()
 
 		output = ""
 		doc.write output
@@ -217,6 +216,13 @@ class UpdateScriptGenerator
 			hash_to_xml(file_elem,attributes)
 		end
 		return install_elem
+	end
+
+	def run_after_install_to_xml()
+		run_elem = REXML::Element.new("run-after-install")
+		main_binary = @config.main_binary
+		run_elem.text = main_binary
+		return run_elem
 	end
 
 	def file_mode_string(mode)

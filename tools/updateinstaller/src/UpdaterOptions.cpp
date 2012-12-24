@@ -9,6 +9,75 @@
 #include <cstdlib>
 #include <iostream>
 
+const char HEX2DEC[256] =
+{
+	/*       0  1  2  3   4  5  6  7   8  9  A  B   C  D  E  F */
+	/* 0 */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+	/* 1 */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+	/* 2 */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+	/* 3 */  0, 1, 2, 3,  4, 5, 6, 7,  8, 9,-1,-1, -1,-1,-1,-1,
+
+	/* 4 */ -1,10,11,12, 13,14,15,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+	/* 5 */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+	/* 6 */ -1,10,11,12, 13,14,15,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+	/* 7 */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+
+	/* 8 */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+	/* 9 */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+	/* A */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+	/* B */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+
+	/* C */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+	/* D */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+	/* E */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+	/* F */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1
+};
+
+std::string uriDecode(const std::string& sSrc)
+{
+	// (c) Jin Qing - 2nd November 2006.
+	// http://www.codeguru.com/cpp/cpp/algorithms/strings/article.php/c12759/URI-Encoding-and-Decoding.htm
+
+	// Note from RFC1630: "Sequences which start with a percent
+	// sign but are not followed by two hexadecimal characters
+	// (0-9, A-F) are reserved for future extension"
+
+	const unsigned char * pSrc = (const unsigned char *)sSrc.c_str();
+	const int SRC_LEN = sSrc.length();
+	const unsigned char * const SRC_END = pSrc + SRC_LEN;
+	// last decodable '%' 
+	const unsigned char * const SRC_LAST_DEC = SRC_END - 2;
+
+	char * const pStart = new char[SRC_LEN];
+	char * pEnd = pStart;
+
+	while (pSrc < SRC_LAST_DEC)
+	{
+		if (*pSrc == '%')
+		{
+			char dec1, dec2;
+			if (-1 != (dec1 = HEX2DEC[*(pSrc + 1)])
+				&& -1 != (dec2 = HEX2DEC[*(pSrc + 2)]))
+			{
+				*pEnd++ = (dec1 << 4) + dec2;
+				pSrc += 3;
+				continue;
+			}
+		}
+		*pEnd++ = *pSrc++;
+	}
+
+	// the last 2- chars
+	while (pSrc < SRC_END)
+	{
+		*pEnd++ = *pSrc++;
+	}
+
+	std::string sResult(pStart, pEnd);
+	delete [] pStart;
+	return sResult;
+}
+
 #ifdef PLATFORM_WINDOWS
 long long atoll(const char* string)
 {
@@ -38,6 +107,31 @@ UpdateInstaller::Mode stringToMode(const std::string& modeStr)
 		}
 		return UpdateInstaller::Setup;
 	}
+}
+
+std::list<std::string> UpdaterOptions::parseArgs(const std::string& args)
+{
+	// Spaces in this string separate arguments.
+	// Arguments themselves are URL encoded.
+	std::list<std::string> argsList;
+	int idx = 0;
+	while (idx < args.length())
+	{
+		int posSpace = args.find(" ", idx);
+		std::string subString = args.substr(idx, posSpace);
+		argsList.push_back(uriDecode(subString));
+		idx = posSpace;
+		if (idx != string::npos)
+		{
+			++idx;
+		}
+	}
+	for (std::list<std::string>::iterator it = argsList.begin();
+		it != argsList.end(); ++it)
+	{
+		std::cout << *it << std::endl;
+	}
+	return argsList;
 }
 
 void UpdaterOptions::parseOldFormatArg(const std::string& arg, std::string* key, std::string* value)
@@ -108,11 +202,13 @@ void UpdaterOptions::parseOldFormatArgs(int argc, char** argv)
 void UpdaterOptions::parse(int argc, char** argv)
 {
 	AnyOption parser;
+	parser.setVerbose();
 	parser.setOption("install-dir");
 	parser.setOption("package-dir");
 	parser.setOption("script");
 	parser.setOption("wait");
 	parser.setOption("mode");
+	parser.setOption("args");
 	parser.setFlag("version");
 	parser.setFlag("force-elevated");
 
@@ -133,6 +229,10 @@ void UpdaterOptions::parse(int argc, char** argv)
 	if (parser.getValue("script"))
 	{
 		scriptPath = parser.getValue("script");
+	}
+	if (parser.getValue("args"))
+	{
+		runAfterInstallCmdArgs = parseArgs(parser.getValue("args"));
 	}
 	if (parser.getValue("wait"))
 	{

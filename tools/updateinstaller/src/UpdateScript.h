@@ -78,16 +78,22 @@ class UpdateScript
 		const std::vector<UpdateScriptPackage>& packages() const;
 		const std::vector<UpdateScriptFile>& filesToInstall() const;
 		const std::vector<std::string>& filesToUninstall() const;
+		const std::string& runAfterInstall() const
+		{
+			return m_runAfterInstall;
+		}
 
 	private:
 		void parseUpdate(const TiXmlElement* element);
 		UpdateScriptFile parseFile(const TiXmlElement* element);
 		UpdateScriptPackage parsePackage(const TiXmlElement* element);
+		std::string parseRunAfterInstall(const TiXmlElement* element);
 
 		std::string m_path;
 		std::vector<std::string> m_dependencies;
 		std::vector<UpdateScriptPackage> m_packages;
 		std::vector<UpdateScriptFile> m_filesToInstall;
 		std::vector<std::string> m_filesToUninstall;
+		std::string m_runAfterInstall;
 };
 

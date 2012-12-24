@@ -102,6 +102,9 @@ void UpdateScript::parseUpdate(const TiXmlElement* updateNode)
 			packageNode = packageNode->NextSiblingElement("package");
 		}
 	}
+	
+	m_runAfterInstall = parseRunAfterInstall(
+		updateNode->FirstChildElement("run-after-install"));
 }
 
 UpdateScriptFile UpdateScript::parseFile(const TiXmlElement* element)
@@ -126,6 +129,11 @@ UpdateScriptPackage UpdateScript::parsePackage(const TiXmlElement* element)
 	package.source = elementText(element->FirstChildElement("source"));
 	package.size = atoi(elementText(element->FirstChildElement("size")).c_str());
 	return package;
+}
+
+std::string UpdateScript::parseRunAfterInstall(const TiXmlElement* element)
+{
+	return elementText(element);
 }
 
 const std::vector<std::string>& UpdateScript::dependencies() const

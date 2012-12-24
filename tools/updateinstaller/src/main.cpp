@@ -25,7 +25,7 @@
 
 #include <iostream>
 
-#define UPDATER_VERSION "0.13"
+#define UPDATER_VERSION "0.13-doomseeker-1"
 
 void runWithUi(int argc, char** argv, UpdateInstaller* installer);
 
@@ -100,6 +100,9 @@ void setupConsole()
 
 int main(int argc, char** argv)
 {
+#ifndef NDEBUG
+	setupConsole();
+#endif
 #ifdef PLATFORM_MAC
 	void* pool = UpdateDialogCocoa::createAutoreleasePool();
 #endif
@@ -120,7 +123,9 @@ int main(int argc, char** argv)
 	options.parse(argc,argv);
 	if (options.showVersion)
 	{
+#ifdef NDEBUG
 		setupConsole();
+#endif
 		std::cout << "Update installer version " << UPDATER_VERSION << std::endl;
 		return 0;
 	}
@@ -139,6 +144,7 @@ int main(int argc, char** argv)
 	         + ", script-path: " + options.scriptPath
 	         + ", mode: " + intToStr(options.mode));
 
+	installer.setArgsForRunAfterInstall(options.runAfterInstallCmdArgs);
 	installer.setMode(options.mode);
 	installer.setInstallDir(options.installDir);
 	installer.setPackageDir(options.packageDir);
