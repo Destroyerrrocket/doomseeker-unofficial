@@ -114,7 +114,7 @@ std::list<std::string> UpdaterOptions::parseArgs(const std::string& args)
 	// Spaces in this string separate arguments.
 	// Arguments themselves are URL encoded.
 	std::list<std::string> argsList;
-	int idx = 0;
+	unsigned idx = 0;
 	while (idx < args.length())
 	{
 		int posSpace = args.find(" ", idx);
