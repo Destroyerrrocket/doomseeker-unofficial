@@ -73,6 +73,7 @@ Main::Main(int argc, char* argv[])
 	bIsFirstRun = false;
 	bTestMode = false;
 	bPortableMode = false;
+	updateFailedCode = 0;
 }
 
 Main::~Main()
@@ -189,18 +190,28 @@ int Main::run()
 	else
 	{
 		#ifdef Q_OS_WIN32
-		UpdateInstaller updateInstaller;
-		UpdateInstaller::ErrorCode updateInstallerResult = updateInstaller.startInstallation();
-		if (updateInstallerResult == UpdateInstaller::EC_Ok)
+		UpdateInstaller::ErrorCode updateInstallerResult = UpdateInstaller::EC_NothingToUpdate;
+		// Update should only be attempted if program was not called
+		// with "--update-failed" arg (previous update didn't fail).
+		if (updateFailedCode == 0)
 		{
-			return 0;
+			UpdateInstaller updateInstaller;
+			updateInstallerResult = updateInstaller.startInstallation();
+			if (updateInstallerResult == UpdateInstaller::EC_Ok)
+			{
+				return 0;
+			}
 		}
 		#endif
 
 		setupRefreshingThread();
 		createMainWindow();
 		#ifdef Q_OS_WIN32
-		if (updateInstallerResult != UpdateInstaller::EC_NothingToUpdate)
+		if (updateFailedCode != 0)
+		{
+			((MainWindow*)mainWindow)->setDisplayUpdaterProcessFailure(updateFailedCode);
+		}
+		else if (updateInstallerResult != UpdateInstaller::EC_NothingToUpdate)
 		{
 			((MainWindow*)mainWindow)->setDisplayUpdateInstallerError(updateInstallerResult);
 		}

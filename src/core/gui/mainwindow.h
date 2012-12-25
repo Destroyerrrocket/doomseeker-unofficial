@@ -99,11 +99,25 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	notifyFirstRun();
 
 		/**
+		 * @brief This should be set if program was started with
+		 *        "--update-failed" argument.
+		 *
+		 * Display is done in a way that allows the full initialization process
+		 * to complete first before displaying the actual window.
+		 *
+		 * @b NOTE: This is different than setDisplayUpdateInstallerError()
+		 * and mutually exclusive.
+		 */
+		void setDisplayUpdaterProcessFailure(int errorCode);
+		/**
 		 * @brief If set then MainWindow will display the reason for
 		 *        updater failure.
 		 *
-		 * This is done in a way that allows the full initialization process
+		 * Display is done in a way that allows the full initialization process
 		 * to complete first before displaying the actual window.
+		 *
+		 * @b NOTE: This is different than setDisplayUpdaterProcessFailure()
+		 * and mutually exclusive.
 		 */
 		void setDisplayUpdateInstallerError(int errorCode);
 		/**
@@ -258,6 +272,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void 	runGame(Server*);
 		void	serverAddedToList(Server*);
 		void	showServerJoinCommandLine(const Server*);
+		void	showUpdaterProcessErrorDialog();
 		void	showUpdateInstallErrorDialog();
 
 		/**

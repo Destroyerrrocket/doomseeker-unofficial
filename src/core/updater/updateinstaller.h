@@ -31,6 +31,18 @@ class UpdateInstaller : public QObject
 	Q_OBJECT
 
 	public:
+		/**
+		 * @brief "--update-failed" values.
+		 */
+		enum ProcessErrorCode
+		{
+			PEC_Ok,
+			PEC_UnableToReadUpdateScript = 1,
+			PEC_NoInstallationDirectorySpecified = 2,
+			PEC_UnableToDeterminePathOfUpdater = 3,
+			PEC_GeneralFailure = 10000
+		};
+
 		enum ErrorCode
 		{
 			/// Update started properly.
@@ -42,7 +54,8 @@ class UpdateInstaller : public QObject
 		};
 
 		static QString errorCodeToStr(ErrorCode code);
-	
+		static QString processErrorCodeToStr(ProcessErrorCode code);
+
 		UpdateInstaller(QObject* pParent = NULL);
 		~UpdateInstaller();
 

@@ -79,6 +79,25 @@ bool UpdateInstaller::isAnythingToInstall() const
 	return !gConfig.autoUpdates.updatePackagesFilenamesForInstallation.isEmpty();
 }
 
+QString UpdateInstaller::processErrorCodeToStr(ProcessErrorCode code)
+{
+	switch (code)
+	{
+		case PEC_Ok:
+			return tr("Ok");
+		case PEC_UnableToReadUpdateScript:
+			return tr("Unable to read update script.");
+		case PEC_NoInstallationDirectorySpecified:
+			return tr("No installation directory specified.");
+		case PEC_UnableToDeterminePathOfUpdater:
+			return tr("Unable to determine path of updater.");
+		case PEC_GeneralFailure:
+			return tr("General failure.");
+		default:
+			return tr("Unknown process error code: %1.").arg(code);
+	}
+}
+
 UpdateInstaller::ErrorCode UpdateInstaller::startInstallation()
 {
 	QStringList& packages = gConfig.autoUpdates.updatePackagesFilenamesForInstallation;

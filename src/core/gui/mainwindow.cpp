@@ -76,7 +76,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	autoUpdater = NULL;
 	connectionHandler = NULL;
 	updateChannelOnUpdateStart = new UpdateChannel();
-	updaterInstallerErrorCode = UpdateInstaller::EC_NothingToUpdate;
+	updaterInstallerErrorCode = 0;
 
 	this->application = application;
 
@@ -1241,8 +1241,18 @@ void MainWindow::serverAddedToList(Server* pServer)
 	}
 }
 
+void MainWindow::setDisplayUpdaterProcessFailure(int errorCode)
+{
+	assert(this->updaterInstallerErrorCode == 0 &&
+		"MainWindow::setDisplayUpdaterProcessFailure()");
+	this->updaterInstallerErrorCode = errorCode;
+	QTimer::singleShot(0, this, SLOT(showUpdaterProcessErrorDialog()));
+}
+
 void MainWindow::setDisplayUpdateInstallerError(int errorCode)
 {
+	assert(this->updaterInstallerErrorCode == 0 &&
+		"MainWindow::setDisplayUpdateInstallerError()");
 	this->updaterInstallerErrorCode = errorCode;
 	QTimer::singleShot(0, this, SLOT(showUpdateInstallErrorDialog()));
 }
@@ -1323,6 +1333,13 @@ void MainWindow::showServerJoinCommandLine(const Server* server)
 		CopyTextDlg ctd(execPath + " " + args.join(" "), server->name(), this);
 		ctd.exec();
 	}
+}
+
+void MainWindow::showUpdaterProcessErrorDialog()
+{
+	QString msg = UpdateInstaller::processErrorCodeToStr(
+		(UpdateInstaller::ProcessErrorCode)this->updaterInstallerErrorCode);
+	QMessageBox::critical(this, tr("Doomseeker - Auto Update problem"), msg);
 }
 
 void MainWindow::showUpdateInstallErrorDialog()
