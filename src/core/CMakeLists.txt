@@ -230,14 +230,14 @@ set(SOURCE_FILES
 	ini/inisection.cpp
 	ini/inivariable.cpp
 	ini/ini.cpp
-	ip2c/entities/ip2ccountryinfo.cpp	
+	ip2c/entities/ip2ccountryinfo.cpp
 	ip2c/ip2c.cpp
 	ip2c/ip2cparser.cpp
 	ip2c/ip2cupdater.cpp
 	irc/configuration/ircconfig.cpp
 	irc/constants/ircresponsetype.cpp
-    irc/entities/ircnetworkentity.cpp
-    irc/entities/ircresponseparseresult.cpp    
+	irc/entities/ircnetworkentity.cpp
+	irc/entities/ircresponseparseresult.cpp
 	irc/ircchanneladapter.cpp
 	irc/ircchatadapter.cpp
 	irc/ircclient.cpp
@@ -253,8 +253,8 @@ set(SOURCE_FILES
 	irc/ircuserinfo.cpp
 	irc/ircuserlist.cpp
 	masterserver/masterclient.cpp
-	masterserver/masterclientsignalproxy.cpp	
-	masterserver/mastermanager.cpp	
+	masterserver/masterclientsignalproxy.cpp
+	masterserver/mastermanager.cpp
 	plugins/engineplugin.cpp
 	plugins/pluginloader.cpp
 	serverapi/tooltips/gameinfotip.cpp
@@ -321,8 +321,8 @@ set(HEADER_FILES
 	ip2c/entities/ip2ccountryinfo.h
 	irc/configuration/ircconfig.h
 	irc/constants/ircresponsetype.h
-    irc/entities/ircnetworkentity.h
-    irc/entities/ircresponseparseresult.h
+	irc/entities/ircnetworkentity.h
+	irc/entities/ircresponseparseresult.h
 	irc/ircchatadapter.h
 	irc/ircdelayedoperation.h
 	irc/ircdelayedoperationlist.h
@@ -375,11 +375,11 @@ set(HEADER_FILES
 )
 
 # Translations
-set (TRANSLATIONS_FILES 
+set (TRANSLATIONS_FILES
 	translations/pl_PL.ts
 )
 
-option (UPDATE_TRANSLATIONS  "Update source translation translations/*.ts files (WARNING: make clean will delete the source .ts files! Danger!)")
+option (UPDATE_TRANSLATIONS "Update source translation translations/*.ts files (WARNING: make clean will delete the source .ts files! Danger!)")
 if (UPDATE_TRANSLATIONS)
 	set(FILES_TO_TRANSLATE
 		${doomseekerUI}
