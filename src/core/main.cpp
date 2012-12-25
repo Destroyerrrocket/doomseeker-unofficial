@@ -55,6 +55,8 @@ const QString		Main::DOOMSEEKER_IRC_INI_FILENAME = "doomseeker-irc.ini";
 const QString		Main::IP2C_FILENAME = "IpToCountry.csv";
 
 QApplication*		Main::application = NULL;
+QString Main::argDataDir;
+bool Main::bPortableMode = false;
 DataPaths*			Main::dataPaths;
 PluginLoader* 		Main::enginePlugins = NULL;
 IP2C*				Main::ip2c = NULL;
@@ -423,6 +425,7 @@ bool Main::interpretCommandLineParameters()
 		{
 			++i;
 			dataDirectories.prepend(arguments[i]);
+			argDataDir = arguments[i];
 		}
 		else if(strcmp(arg, "--rcon") == 0)
 		{
@@ -444,6 +447,11 @@ bool Main::interpretCommandLineParameters()
 			gLog << tr("	--rcon [plugin] [ip] : Launch the rcon client for the specified ip.");
 			gLog << tr("	--portable : Starts application in portable mode.");
 			return false;
+		}
+		else if (strcmp(arg, "--update-failed") == 0)
+		{
+			++i;
+			updateFailedCode = QString(arguments[i]).toInt();
 		}
 		else if (strcmp(arg, "--portable") == 0)
 		{

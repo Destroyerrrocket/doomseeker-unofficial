@@ -61,15 +61,15 @@ QString UpdateInstaller::errorCodeToStr(ErrorCode code)
 
 QString UpdateInstaller::getPercentEncodedCurrentProcessArgs()
 {
-	QStringList args = Main::application->arguments();
 	QStringList argsEncoded;
-	if (!args.isEmpty())
+	if (Main::bPortableMode)
 	{
-		args.takeFirst(); // Drop the first arg (program path).
-		foreach (const QString& arg, args)
-		{
-			argsEncoded << QUrl::toPercentEncoding(arg);
-		}
+		argsEncoded << QUrl::toPercentEncoding("--portable");
+	}
+	if (!Main::argDataDir.isEmpty())
+	{
+		argsEncoded << QUrl::toPercentEncoding("--datadir");
+		argsEncoded << QUrl::toPercentEncoding(Main::argDataDir);
 	}
 	return argsEncoded.join(" ");
 }

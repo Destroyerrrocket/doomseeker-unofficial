@@ -52,6 +52,8 @@ class MAIN_EXPORT Main : public QObject
 		static bool					running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
 		static RefreshingThread*	refreshingThread;
 		static QString				workingDirectory;
+		static QString argDataDir;
+		static bool bPortableMode;
 
 		Main(int argc, char* argv[]);
 		~Main();
@@ -110,13 +112,13 @@ class MAIN_EXPORT Main : public QObject
 		char**						arguments;
 		int							argumentsCount;
 		bool                        bIsFirstRun;
-		bool						bPortableMode;
 		bool						bTestMode;
 		QStringList 				dataDirectories;
 		QString						rconPluginName; /// If not empty assume we want to launch an rcon client.
 		QString						rconAddress;
 		unsigned short				rconPort;
 		bool						startRcon;
+		int updateFailedCode;
 		QUrl						connectUrl;
 };
 
