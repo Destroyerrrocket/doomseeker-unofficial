@@ -47,6 +47,7 @@
 #include "strings.h"
 #include "tests/testruns.h"
 #include "wadseeker/wadseeker.h"
+#include "updater/updateinstaller.h"
 
 const QString		Main::DOOMSEEKER_CONFIG_FILENAME = "doomseeker.cfg";
 const QString		Main::DOOMSEEKER_INI_FILENAME = "doomseeker.ini";
@@ -172,7 +173,7 @@ int Main::run()
 
 	initPluginConfig();
 	initIRCConfig();
-	
+
 	if (startRcon)
 	{
 		if (!createRemoteConsole())
@@ -185,9 +186,23 @@ int Main::run()
 	}
 	else
 	{
-		setupRefreshingThread();
+		#ifdef Q_OS_WIN32
+		UpdateInstaller updateInstaller;
+		UpdateInstaller::ErrorCode updateInstallerResult = updateInstaller.startInstallation();
+		if (updateInstallerResult == UpdateInstaller::EC_Ok)
+		{
+			return 0;
+		}
+		#endif
 
+		setupRefreshingThread();
 		createMainWindow();
+		#ifdef Q_OS_WIN32
+		if (updateInstallerResult != UpdateInstaller::EC_NothingToUpdate)
+		{
+			((MainWindow*)mainWindow)->setDisplayUpdateInstallerError(updateInstallerResult);
+		}
+		#endif
 	}
 
 	gLog << tr("Init finished.");

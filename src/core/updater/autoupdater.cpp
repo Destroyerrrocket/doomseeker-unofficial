@@ -386,7 +386,7 @@ void AutoUpdater::startPackageDownload(const UpdatePackage& pkg)
 	gLog << tr("Downloading package \"%1\" from URL: %2.").arg(pkg.displayName,
 		pkg.downloadUrl.toString());
 
-	QString fileNameTemplate = QString("%1XXXXXX.zip").arg(pkg.name);
+	QString fileNameTemplate = QString("%1-XXXXXX.zip").arg(pkg.name);
 	QString filePathTemplate = Strings::combinePaths(updateStorageDirPath(), fileNameTemplate);
 	qDebug() << "filePathTemplate: " << filePathTemplate;
 	if (d->pCurrentPackageFile != NULL)

@@ -99,6 +99,14 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	notifyFirstRun();
 
 		/**
+		 * @brief If set then MainWindow will display the reason for
+		 *        updater failure.
+		 *
+		 * This is done in a way that allows the full initialization process
+		 * to complete first before displaying the actual window.
+		 */
+		void setDisplayUpdateInstallerError(int errorCode);
+		/**
 		 * @brief Sets query for selected MasterClient object to enabled
 		 * or disabled.
 		 */
@@ -152,6 +160,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		QMenu*				trayIconMenu;
 		/// Update should be discarded if this changes.
 		UpdateChannel*		updateChannelOnUpdateStart;
+		int updaterInstallerErrorCode;
 
 		ConnectionHandler	*connectionHandler;
 
@@ -249,6 +258,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void 	runGame(Server*);
 		void	serverAddedToList(Server*);
 		void	showServerJoinCommandLine(const Server*);
+		void	showUpdateInstallErrorDialog();
 
 		/**
 		 * @brief Toggles specified MasterClient object enabled or disabled.

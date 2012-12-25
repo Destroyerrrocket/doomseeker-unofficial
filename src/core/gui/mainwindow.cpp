@@ -43,6 +43,7 @@
 #include "serverapi/server.h"
 #include "updater/autoupdater.h"
 #include "updater/updatechannel.h"
+#include "updater/updateinstaller.h"
 #include "updater/updatepackage.h"
 #include "commandline.h"
 #include "connectionhandler.h"
@@ -75,6 +76,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	autoUpdater = NULL;
 	connectionHandler = NULL;
 	updateChannelOnUpdateStart = new UpdateChannel();
+	updaterInstallerErrorCode = UpdateInstaller::EC_NothingToUpdate;
 
 	this->application = application;
 
@@ -1078,6 +1080,10 @@ void MainWindow::onAutoUpdaterFinish()
 	gLog << tr("Program update finished with status: [%1] %2")
 		.arg((int)autoUpdater->errorCode()).arg(autoUpdater->errorString());
 	qDebug() << "Files: " << autoUpdater->downloadedPackagesFilenames();
+	if (autoUpdater->errorCode() == AutoUpdater::EC_Ok)
+	{
+		gLog << tr("Updates will be installed on next program start.");
+	}
 	UpdateChannel channel = UpdateChannel::fromName(gConfig.autoUpdates.updateChannelName);
 	if (channel == *updateChannelOnUpdateStart)
 	{
@@ -1235,6 +1241,12 @@ void MainWindow::serverAddedToList(Server* pServer)
 	}
 }
 
+void MainWindow::setDisplayUpdateInstallerError(int errorCode)
+{
+	this->updaterInstallerErrorCode = errorCode;
+	QTimer::singleShot(0, this, SLOT(showUpdateInstallErrorDialog()));
+}
+
 void MainWindow::setupIcons()
 {
 	QStyle& style = *QApplication::style();
@@ -1311,6 +1323,13 @@ void MainWindow::showServerJoinCommandLine(const Server* server)
 		CopyTextDlg ctd(execPath + " " + args.join(" "), server->name(), this);
 		ctd.exec();
 	}
+}
+
+void MainWindow::showUpdateInstallErrorDialog()
+{
+	QString msg = UpdateInstaller::errorCodeToStr(
+		(UpdateInstaller::ErrorCode)this->updaterInstallerErrorCode);
+	QMessageBox::critical(this, tr("Doomseeker - Auto Update problem"), msg);
 }
 
 void MainWindow::toggleMasterClientEnabled(MasterClient* pClient)

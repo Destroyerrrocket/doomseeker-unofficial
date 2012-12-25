@@ -155,6 +155,7 @@ set(DOOMSEEKER_QT_FILES
 	serverapi/rconprotocol.h
 	serverapi/server.h
 	updater/autoupdater.h
+	updater/updateinstaller.h
 	customservers.h
 	log.h
 	refresher.h
@@ -276,6 +277,7 @@ set(SOURCE_FILES
 	tests/teststrings.cpp
 	updater/autoupdater.cpp
 	updater/updatechannel.cpp
+	updater/updateinstaller.cpp
 	updater/updatepackagefilter.cpp
 	updater/updaterinfoparser.cpp
 	apprunner.cpp
