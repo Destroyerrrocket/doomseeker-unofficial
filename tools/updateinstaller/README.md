@@ -60,7 +60,7 @@ Once the updater has been started, it:
  Once the application has downloaded an update, it needs to invoke it.  The syntax is:
 
     updater --install-dir <install-dir> --package-dir <package-dir> --script <script file> 
-            [--args <list_of_args>]
+            [--exec <path_to_executable>] [--args <list_of_args>]
 
  Where `<install-dir>` is the directory which the application is installed into,
  `<package-dir>` is the directory containing the packages required for the update
@@ -72,9 +72,17 @@ Once the updater has been started, it:
  using spacebar characters. The value must be percentage encoded in order to be
  parsed properly.
 
- Once the updater has run, it will launch the file specified in the `file_list.xml` file
- as the "run-after-install" binary. In package generator configuration this
- file is specified using the "main-binary" option.
+ Once the updater has run, it will launch the file specified in
+ the `file_list.xml` file as the "run-after-install" binary. In package
+ generator configuration this file is specified using the "main-binary" option.
+
+ "--exec" is an optional argument that may be used to define executable that
+ should be launched once update finishes. This argument will override
+ "run-after-install" binary specified in installation script.
+
+ If update fails, then additional "--update-failed <error-code>" argument pair
+ will be passed to the program. <error-code> values are defined in
+ "src/UpdateInstaller.h" file as UpdateInstaller::UpdateErrorCode enum.
 
  See the updater test in `src/tests/test-update.rb` for an example
  of how to invoke the updater.

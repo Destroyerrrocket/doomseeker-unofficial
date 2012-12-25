@@ -26,7 +26,9 @@
 #include "log.h"
 #include "main.h"
 #include "strings.h"
+#include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QProcess>
 
 const QString UPDATER_EXECUTABLE_FILENAME = "updater.exe";
@@ -132,10 +134,12 @@ bool UpdateInstaller::startUpdaterProcess(const QString& packagesDir,
 		QCoreApplication::applicationDirPath(),
 		UPDATER_EXECUTABLE_FILENAME);
 	QFile updaterProgramFile(updaterProgramPath);
+	QFileInfo programFileInfo(QCoreApplication::applicationFilePath());
 	QStringList args;
 	args << "--install-dir" << QCoreApplication::applicationDirPath();
 	args << "--package-dir" << packagesDir;
 	args << "--script" << scriptFilePath;
+	args << "--exec" << QDir::toNativeSeparators(programFileInfo.absoluteFilePath());
 	QString currentProcessArgs = getPercentEncodedCurrentProcessArgs();
 	if (!currentProcessArgs.isEmpty())
 	{

@@ -145,6 +145,7 @@ int main(int argc, char** argv)
 	         + ", mode: " + intToStr(options.mode));
 
 	installer.setArgsForRunAfterInstall(options.runAfterInstallCmdArgs);
+	installer.setExecForRunAfterInstall(options.executable);
 	installer.setMode(options.mode);
 	installer.setInstallDir(options.installDir);
 	installer.setPackageDir(options.packageDir);

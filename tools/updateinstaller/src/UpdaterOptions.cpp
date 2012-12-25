@@ -209,6 +209,7 @@ void UpdaterOptions::parse(int argc, char** argv)
 	parser.setOption("wait");
 	parser.setOption("mode");
 	parser.setOption("args");
+	parser.setOption("exec");
 	parser.setFlag("version");
 	parser.setFlag("force-elevated");
 
@@ -229,6 +230,10 @@ void UpdaterOptions::parse(int argc, char** argv)
 	if (parser.getValue("script"))
 	{
 		scriptPath = parser.getValue("script");
+	}
+	if (parser.getValue("exec"))
+	{
+		executable = parser.getValue("exec");
 	}
 	if (parser.getValue("args"))
 	{

@@ -5,6 +5,7 @@
 #include "Log.h"
 #include "ProcessUtils.h"
 #include "UpdateObserver.h"
+#include <sstream>
 
 UpdateInstaller::UpdateInstaller()
 : m_mode(Setup)
@@ -102,11 +103,13 @@ void UpdateInstaller::run() throw ()
 	if (!m_script || !m_script->isValid())
 	{
 		reportError("Unable to read update script");
+		restartMainApp(UEC_UnableToReadUpdateScript);
 		return;
 	}
 	if (m_installDir.empty())
 	{
 		reportError("No installation directory specified");
+		restartMainApp(UEC_NoInstallationDirectorySpecified);
 		return;
 	}
 
@@ -119,6 +122,7 @@ void UpdateInstaller::run() throw ()
 	{
 		LOG(Error,"error reading process path with mode " + intToStr(m_mode));
 		reportError("Unable to determine path of updater");
+		restartMainApp(UEC_NoInstallationDirectorySpecified);
 		return;
 	}
 
@@ -153,15 +157,14 @@ void UpdateInstaller::run() throw ()
 		if (installStatus == 0)
 		{
 			LOG(Info,"Update install completed");
+			restartMainApp(UEC_Ok);
 		}
 		else
 		{
 			LOG(Error,"Update install failed with status " + intToStr(installStatus));
+			// TODO: Specify exactly what failed.
+			restartMainApp(UEC_GeneralFailure);
 		}
-
-		// restart the main application - this is currently done
-		// regardless of whether the installation succeeds or not
-		restartMainApp();
 
 		// clean up files created by the updater
 		cleanup();
@@ -400,15 +403,28 @@ void UpdateInstaller::setObserver(UpdateObserver* observer)
 	m_observer = observer;
 }
 
-void UpdateInstaller::restartMainApp()
+void UpdateInstaller::restartMainApp(UpdateErrorCode errorCode)
 {
 	try
 	{
-		std::string command;
+		std::string command = m_runAfterInstallExec;
 		std::list<std::string> args;
 
-		command = m_script->runAfterInstall();
+		if (m_runAfterInstallExec.empty())
+		{
+			if (m_script != NULL)
+			{
+				command = m_script->runAfterInstall();
+			}
+		}
 		args = m_runAfterInstallArgs;
+		if (errorCode != 0)
+		{
+			std::stringstream ss;
+			ss << errorCode;
+			args.push_back("--update-failed");
+			args.push_back(ss.str());
+		}
 
 		if (!command.empty())
 		{
@@ -417,7 +433,7 @@ void UpdateInstaller::restartMainApp()
 		}
 		else
 		{
-			LOG(Error,"No main binary specified in update script");
+			LOG(Error,"No main binary specified.");
 		}
 	}
 	catch (const std::exception& ex)
