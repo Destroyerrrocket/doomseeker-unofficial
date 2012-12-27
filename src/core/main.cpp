@@ -29,6 +29,7 @@
 #include <QMessageBox>
 #include <QObject>
 #include <QThreadPool>
+#include <QTimer>
 
 #include "configuration/doomseekerconfig.h"
 #include "connectionhandler.h"
@@ -190,6 +191,7 @@ int Main::run()
 	else
 	{
 		#ifdef Q_OS_WIN32
+		// Handle pending update installations.
 		UpdateInstaller::ErrorCode updateInstallerResult = UpdateInstaller::EC_NothingToUpdate;
 		// Update should only be attempted if program was not called
 		// with "--update-failed" arg (previous update didn't fail).
@@ -207,6 +209,8 @@ int Main::run()
 		setupRefreshingThread();
 		createMainWindow();
 		#ifdef Q_OS_WIN32
+		// Handle auto update: display update failure or start auto update
+		// check/download.
 		if (updateFailedCode != 0)
 		{
 			((MainWindow*)mainWindow)->setDisplayUpdaterProcessFailure(updateFailedCode);
@@ -214,6 +218,13 @@ int Main::run()
 		else if (updateInstallerResult != UpdateInstaller::EC_NothingToUpdate)
 		{
 			((MainWindow*)mainWindow)->setDisplayUpdateInstallerError(updateInstallerResult);
+		}
+		else
+		{
+			if (gConfig.autoUpdates.updateMode != DoomseekerConfig::AutoUpdates::UM_Disabled)
+			{
+				QTimer::singleShot(0, mainWindow, SLOT(checkForUpdatesAuto()));
+			}
 		}
 		#endif
 	}

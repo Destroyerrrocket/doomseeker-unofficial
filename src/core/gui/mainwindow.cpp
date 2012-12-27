@@ -84,6 +84,8 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	setupUi(this);
 	setupIcons();
 
+	updatesWidget->hide();
+
 	// Hide menu options which aren't supported on target platform.
 	#ifndef Q_OS_WIN32
 		menuActionCheckForUpdates->setVisible(false);
@@ -307,7 +309,7 @@ void MainWindow::changeEvent(QEvent* event)
 	QMainWindow::changeEvent(event);
 }
 
-void MainWindow::checkForUpdates()
+void MainWindow::checkForUpdates(bool bUserTriggered)
 {
 	if (autoUpdater != NULL)
 	{
@@ -329,24 +331,45 @@ void MainWindow::checkForUpdates()
 		SLOT(onAutoUpdaterFinish()));
 	this->connect(autoUpdater, SIGNAL(downloadAndInstallConfirmationRequested()),
 		SLOT(onAutoUpdaterDownloadAndInstallConfirmationRequest()));
-	// TODO: Calling the updater manually should leave this map empty.
+
 	QMap<QString, QList<unsigned long long> > ignoredPackagesRevisions;
-	foreach (const QString& package, gConfig.autoUpdates.lastKnownUpdateRevisions.keys())
+	if (!bUserTriggered)
 	{
-		unsigned long long revision = gConfig.autoUpdates.lastKnownUpdateRevisions[package];
-		QList<unsigned long long> list;
-		list << revision;
-		// TODO Uncomment
-		//ignoredPackagesRevisions.insert(package, list); 
+		foreach (const QString& package, gConfig.autoUpdates.lastKnownUpdateRevisions.keys())
+		{
+			unsigned long long revision = gConfig.autoUpdates.lastKnownUpdateRevisions[package];
+			QList<unsigned long long> list;
+			list << revision;
+			ignoredPackagesRevisions.insert(package, list); 
+		}
 	}
 	autoUpdater->setIgnoreRevisions(ignoredPackagesRevisions);
+
 	UpdateChannel channel = UpdateChannel::fromName(gConfig.autoUpdates.updateChannelName);
 	autoUpdater->setChannel(channel);
 	*updateChannelOnUpdateStart = channel;
-	// TODO Selecting auto update from menu should always require confirmation.
-	bool bRequireConfirmation = (gConfig.autoUpdates.updateMode != DoomseekerConfig::AutoUpdates::UM_FullAuto);
+
+	bool bRequireConfirmation = true;
+	if (!bUserTriggered)
+	{
+		bRequireConfirmation = (gConfig.autoUpdates.updateMode
+			!= DoomseekerConfig::AutoUpdates::UM_FullAuto);
+	}
 	autoUpdater->setRequireDownloadAndInstallConfirmation(bRequireConfirmation);
 	autoUpdater->start();
+}
+
+
+void MainWindow::checkForUpdatesAuto()
+{
+	const bool bUserTriggered = true;
+	checkForUpdates(!bUserTriggered);
+}
+
+void MainWindow::checkForUpdatesUserTriggered()
+{
+	const bool bUserTriggered = true;
+	checkForUpdates(bUserTriggered);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -364,6 +387,27 @@ void MainWindow::closeEvent(QCloseEvent* event)
 	{
 		event->accept();
 	}
+}
+
+void MainWindow::confirmUpdateInstallation()
+{
+	assert(autoUpdater != NULL && "MainWindow::confirmUpdateInstallation()");
+	updatesWidget->hide();
+	autoUpdater->confirmDownloadAndInstall();
+}
+
+void MainWindow::discardUpdates()
+{
+	assert(autoUpdater != NULL && "MainWindow::confirmUpdateInstallation()");
+	updatesWidget->hide();
+	// User rejected this update so let's add the packages
+	// to the ignore list so user won't be nagged again.
+	const QList<UpdatePackage>& pkgList = autoUpdater->newUpdatePackages();
+	foreach (const UpdatePackage& pkg, pkgList)
+	{
+		gConfig.autoUpdates.lastKnownUpdateRevisions.insert(pkg.name, pkg.revision);
+	}
+	autoUpdater->abort();
 }
 
 void MainWindow::connectEntities()
@@ -1038,41 +1082,7 @@ void MainWindow::notifyFirstRun()
 
 void MainWindow::onAutoUpdaterDownloadAndInstallConfirmationRequest()
 {
-	// TODO This should be done in a way that doesn't open an irritating,
-	// blocking message dialog in unexpected moments. Preferably a tray pop-up
-	// should appear and a button in the main window should become visible.
-	// Pressing this button should display the message box.
-
-	// Prepare question.
-	const QList<UpdatePackage>& pkgList = autoUpdater->newUpdatePackages();
-	QString msg = tr("Following updates are available:\n\n%1\n\n"
-		"Do you wish to download and install them?");
-	QStringList pkgsInfosMessages;
-	foreach (const UpdatePackage& pkg, pkgList)
-	{
-		QString name = pkg.name;
-		QString pkgInfoMsg = tr("- \"%1\" %2 -> %3")
-			.arg(pkg.displayName, pkg.currentlyInstalledDisplayVersion,
-				pkg.displayVersion);
-		pkgsInfosMessages << pkgInfoMsg;
-	}
-	msg = msg.arg(pkgsInfosMessages.join("\n"));
-	// Display message box.
-	if (QMessageBox::question(NULL, tr("Doomseeker - Auto Update"), msg,
-			QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-	{
-		autoUpdater->confirmDownloadAndInstall();
-	}
-	else
-	{
-		// User rejected this update so let's add the packages
-		// to the ignore list so they won't be nagged again.
-		foreach (const UpdatePackage& pkg, pkgList)
-		{
-			gConfig.autoUpdates.lastKnownUpdateRevisions.insert(pkg.name, pkg.revision);
-		}
-		autoUpdater->abort();
-	}
+	updatesWidget->show();
 }
 
 void MainWindow::onAutoUpdaterFinish()

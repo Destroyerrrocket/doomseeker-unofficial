@@ -179,6 +179,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		ConnectionHandler	*connectionHandler;
 
 		void	changeEvent(QEvent* event);
+		void checkForUpdates(bool bUserTriggered);
 
 		/**
 		 *	Connects signals from objects and controls of the main window
@@ -241,7 +242,18 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 	protected slots:
 		void	autoRefreshTimer_timeout();
 		void	blockRefreshButtons();
-		void checkForUpdates();
+		/**
+		 * @brief Auto triggered updates will display
+		 *        install confirmation only if configured to.
+		 */
+		void checkForUpdatesAuto();
+		/**
+		 * @brief User triggered updates will always display
+		 *        install confirmation.
+		 */
+		void checkForUpdatesUserTriggered();
+		void confirmUpdateInstallation();
+		void discardUpdates();
 		void 	finishedQueryingMaster(MasterClient* master);
 		void 	getServers();
 		void	ip2cDownloadProgress(qint64 current, qint64 max);
