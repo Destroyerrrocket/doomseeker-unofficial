@@ -289,6 +289,7 @@ void AutoUpdater::onUpdaterInfoDownloadFinish()
 			d->newUpdatePackages = packagesList;
 			if (d->bDownloadAndInstallRequireConfirmation)
 			{
+				gLog << tr("Requesting update confirmation.");
 				emit downloadAndInstallConfirmationRequested();
 			}
 			else
@@ -299,6 +300,12 @@ void AutoUpdater::onUpdaterInfoDownloadFinish()
 		else
 		{
 			// Nothing to update.
+			gLog << tr("No new program updates detected.");
+			if (filter.wasAnyUpdatePackageIgnored())
+			{
+				gLog << tr("Some update packages were ignored. To install them "
+					"select \"Check for updates\" option from \"Help\" menu.");
+			}
 			finishWithError(EC_Ok);
 		}
 	}

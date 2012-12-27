@@ -58,6 +58,22 @@ class UpdatePackageFilter
 		QList<UpdatePackage> filter(const QList<UpdatePackage>& packages);
 		void setChannel(const UpdateChannel& channel);
 		void setIgnoreRevisions(const QMap<QString, QList<unsigned long long> >& packagesRevisions);
+		/**
+		 * @brief After filter() flag which says if any package was ignored.
+		 *
+		 * This flag is set to correct value after a call to filter().
+		 * If true then at least one package was ignored due to being on
+		 * setIgnoreRevisions() list.
+		 *
+		 * Note that if package was on ignore list but the list itself was
+		 * ignored because of other valid update packages which weren't on
+		 * it then this will return false. This is consistent with
+		 * the description of this class.
+		 *
+		 * @return true if at least one package was discarded.
+		 *         false if no package was discarded.
+		 */
+		bool wasAnyUpdatePackageIgnored() const;
 
 	private:
 		class PluginInfo;

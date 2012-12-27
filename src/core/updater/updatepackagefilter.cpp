@@ -39,6 +39,7 @@ class UpdatePackageFilter::PluginInfo
 class UpdatePackageFilter::PrivData
 {
 	public:
+		bool bWasAnyUpdatePackageIgnored;
 		UpdateChannel channel;
 		QMap<QString, QList<unsigned long long> > ignoredPackagesRevisions;
 		QMap<QString, PluginInfo> plugins;
@@ -47,6 +48,7 @@ class UpdatePackageFilter::PrivData
 UpdatePackageFilter::UpdatePackageFilter()
 {
 	d = new PrivData();
+	d->bWasAnyUpdatePackageIgnored = false;
 }
 
 UpdatePackageFilter::~UpdatePackageFilter()
@@ -96,7 +98,9 @@ QList<UpdatePackage> UpdatePackageFilter::filter(const QList<UpdatePackage>& pac
 	if (!filtered.isEmpty())
 	{
 		filtered.append(packagesOnIgnoredList);
+		packagesOnIgnoredList.clear();
 	}
+	d->bWasAnyUpdatePackageIgnored = !packagesOnIgnoredList.isEmpty();
 	return filtered;
 }
 
@@ -144,4 +148,9 @@ void UpdatePackageFilter::setIgnoreRevisions(
 	const QMap<QString, QList<unsigned long long> >& packagesRevisions)
 {
 	d->ignoredPackagesRevisions = packagesRevisions;
+}
+
+bool UpdatePackageFilter::wasAnyUpdatePackageIgnored() const
+{
+	return d->bWasAnyUpdatePackageIgnored;
 }
