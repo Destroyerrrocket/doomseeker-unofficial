@@ -221,10 +221,12 @@ int Main::run()
 		// check/download.
 		if (updateFailedCode != 0)
 		{
+			// This is when updater program failed to install the update.
 			((MainWindow*)mainWindow)->setDisplayUpdaterProcessFailure(updateFailedCode);
 		}
 		else if (updateInstallerResult != UpdateInstaller::EC_NothingToUpdate)
 		{
+			// This is when Doomseeker failed to start the updater program.
 			((MainWindow*)mainWindow)->setDisplayUpdateInstallerError(updateInstallerResult);
 		}
 		else
