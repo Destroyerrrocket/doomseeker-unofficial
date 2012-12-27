@@ -204,6 +204,14 @@ int Main::run()
 				return 0;
 			}
 		}
+		
+		if (updateFailedCode != 0 || updateInstallerResult != UpdateInstaller::EC_NothingToUpdate)
+		{
+			// Updater failure. Discard all updates.
+			gLog << tr("Discarding all update packages due to failure.");
+			gConfig.autoUpdates.updatePackagesFilenamesForInstallation.clear();
+			gConfig.saveToFile();
+		}
 		#endif
 
 		setupRefreshingThread();
