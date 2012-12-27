@@ -27,7 +27,7 @@
 
 #define UPDATER_VERSION "0.13-doomseeker-1"
 
-void runWithUi(int argc, char** argv, UpdateInstaller* installer);
+int runWithUi(int argc, char** argv, UpdateInstaller* installer);
 
 void runUpdaterThread(void* arg)
 {
@@ -153,9 +153,10 @@ int main(int argc, char** argv)
 	installer.setWaitPid(options.waitPid);
 	installer.setForceElevated(options.forceElevated);
 
+	int returnCode = 0;
 	if (options.mode == UpdateInstaller::Main)
 	{
-		runWithUi(argc,argv,&installer);
+		returnCode = runWithUi(argc,argv,&installer);
 	}
 	else
 	{
@@ -166,11 +167,11 @@ int main(int argc, char** argv)
 	UpdateDialogCocoa::releaseAutoreleasePool(pool);
 #endif
 
-	return 0;
+	return returnCode;
 }
 
 #ifdef PLATFORM_LINUX
-void runWithUi(int argc, char** argv, UpdateInstaller* installer)
+int runWithUi(int argc, char** argv, UpdateInstaller* installer)
 {
 	UpdateDialogAscii asciiDialog;
 	UpdateDialogGtkWrapper dialog;
@@ -190,11 +191,13 @@ void runWithUi(int argc, char** argv, UpdateInstaller* installer)
 		dialog.exec();
 	}
 	updaterThread.join();
+	// TODO: Return valid error value.
+	return 0;
 }
 #endif
 
 #ifdef PLATFORM_MAC
-void runWithUi(int argc, char** argv, UpdateInstaller* installer)
+int runWithUi(int argc, char** argv, UpdateInstaller* installer)
 {
 	UpdateDialogCocoa dialog;
 	installer->setObserver(&dialog);
@@ -202,6 +205,8 @@ void runWithUi(int argc, char** argv, UpdateInstaller* installer)
 	tthread::thread updaterThread(runUpdaterThread,installer);
 	dialog.exec();
 	updaterThread.join();
+	// TODO: Return valid error value.
+	return 0;
 }
 #endif
 
@@ -218,13 +223,14 @@ int CALLBACK WinMain(HINSTANCE hInstance,
 	return main(argc,argv);
 }
 
-void runWithUi(int argc, char** argv, UpdateInstaller* installer)
+int runWithUi(int argc, char** argv, UpdateInstaller* installer)
 {
 	UpdateDialogWin32 dialog;
 	installer->setObserver(&dialog);
 	dialog.init();
 	tthread::thread updaterThread(runUpdaterThread,installer);
-	dialog.exec();
+	int result = dialog.exec();
 	updaterThread.join();
+	return result;
 }
 #endif

@@ -402,6 +402,50 @@ PLATFORM_PID ProcessUtils::runAsyncUnix(const std::string& executable,
 #endif
 
 #ifdef PLATFORM_WINDOWS
+int GetExitCodeProcessSmart(HANDLE hProcess, DWORD* pdwOutExitCode)
+{
+    //Get exit code for the process
+    //'hProcess' = process handle
+    //'pdwOutExitCode' = if not NULL, receives the exit code (valid only if returned 1)
+    //RETURN:
+    //= 1 if success, exit code is returned in 'pdwOutExitCode'
+    //= 0 if process has not exited yet
+    //= -1 if error, check GetLastError() for more info
+    int nRes = -1;
+
+    DWORD dwExitCode = 0;
+    if(::GetExitCodeProcess(hProcess, &dwExitCode))
+    {
+        if(dwExitCode != STILL_ACTIVE)
+        {
+            nRes = 1;
+        }
+        else
+        {
+            //Check if process is still alive
+            DWORD dwR = ::WaitForSingleObject(hProcess, 0);
+            if(dwR == WAIT_OBJECT_0)
+            {
+                nRes = 1;
+            }
+            else if(dwR == WAIT_TIMEOUT)
+            {
+                nRes = 0;
+            }
+            else
+            {
+                //Error
+                nRes = -1;
+            }
+        }
+    }
+
+    if(pdwOutExitCode)
+        *pdwOutExitCode = dwExitCode;
+
+    return nRes;
+}
+
 int ProcessUtils::runWindows(const std::string& _executable,
                              const std::list<std::string>& _args,
                              RunMode runMode)
@@ -450,18 +494,22 @@ int ProcessUtils::runWindows(const std::string& _executable,
 	{
 		if (runMode == RunSync)
 		{
-			if (WaitForSingleObject(processInfo.hProcess,INFINITE) == WAIT_OBJECT_0)
+			DWORD status = WaitFailed;
+			int exitCodeGetResult = GetExitCodeProcessSmart(processInfo.hProcess, &status);
+			while (exitCodeGetResult == 0)
 			{
-				DWORD status = WaitFailed;
-				if (GetExitCodeProcess(processInfo.hProcess,&status) != 0)
-				{
-					LOG(Error,"Failed to get exit code for process");
-				}
+				exitCodeGetResult = GetExitCodeProcessSmart(processInfo.hProcess, &status);
+				Sleep(10);
+			}
+			if (exitCodeGetResult > 0)
+			{
 				return status;
 			}
 			else
 			{
-				LOG(Error,"Failed to wait for process to finish");
+				std::stringstream ss;
+				ss << GetLastError();
+				LOG(Error,"Failed to wait for process to finish: " + ss.str());
 				return WaitFailed;
 			}
 		}

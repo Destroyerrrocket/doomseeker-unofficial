@@ -15,7 +15,7 @@ class UpdateDialogWin32 : public UpdateObserver
 		~UpdateDialogWin32();
 
 		void init();
-		void exec();
+		int exec();
 
 		// implements UpdateObserver
 		virtual void updateError(const std::string& errorMessage);

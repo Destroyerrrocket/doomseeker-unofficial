@@ -118,9 +118,9 @@ void UpdateDialogWin32::init()
 	m_window.ShowWindow();
 }
 
-void UpdateDialogWin32::exec()
+int UpdateDialogWin32::exec()
 {
-	m_app.Run();
+	return m_app.Run();
 }
 
 void UpdateDialogWin32::updateError(const std::string& errorMessage)
@@ -150,14 +150,14 @@ LRESULT WINAPI UpdateDialogWin32::windowProc(HWND window, UINT message, WPARAM w
 	case WM_CLOSE:
 		if (window == m_window.GetHwnd())
 		{
-			return 0;
+			return !m_hadError ? 0 : -1;
 		}
 		break;
 	case WM_COMMAND:
 		{
 			if (reinterpret_cast<HWND>(lParam) == m_finishButton.GetHwnd())
 			{
-				PostQuitMessage(0);
+				PostQuitMessage(!m_hadError ? 0 : -1);
 			}
 		}
 		break;
