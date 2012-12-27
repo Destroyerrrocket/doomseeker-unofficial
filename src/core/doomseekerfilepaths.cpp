@@ -26,3 +26,8 @@ QString DoomseekerFilePaths::tempServerConfig()
 {
 	return pDataPaths->programsDataDirectoryPath() + "/" + TEMP_SERVER_CONFIG_FILENAME;
 }
+
+QString DoomseekerFilePaths::updatePackagesStorageDir()
+{
+	return pDataPaths->localDataLocationPath(DataPaths::UPDATE_PACKAGES_DIR_NAME);
+}

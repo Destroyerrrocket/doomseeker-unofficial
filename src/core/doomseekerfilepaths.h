@@ -30,6 +30,7 @@ class MAIN_EXPORT DoomseekerFilePaths
 		static QString			config();
 		static QString			ip2cDatabase();
 		static QString			tempServerConfig();
+		static QString updatePackagesStorageDir();
 };
 
 #endif

@@ -51,6 +51,7 @@ class MAIN_EXPORT DataPaths
 		static const QString	DEMOS_DIR_NAME;
 		static const QString	TRANSLATIONS_DIR_NAME;
 		static const QString UPDATE_PACKAGES_DIR_NAME;
+		static const QString UPDATE_PACKAGE_FILENAME_PREFIX;
 
 		/**
 		 *	@b Retrieves correct path to "Program Files" directory.

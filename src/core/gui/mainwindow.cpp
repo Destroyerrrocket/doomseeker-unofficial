@@ -49,6 +49,7 @@
 #include "connectionhandler.h"
 #include "customservers.h"
 #include "doomseekerfilepaths.h"
+#include "fileutils.h"
 #include "log.h"
 #include "pathfinder.h"
 #include "main.h"
@@ -325,6 +326,11 @@ void MainWindow::checkForUpdates(bool bUserTriggered)
 			autoUpdater = NULL;
 		}
 	}
+	gLog << tr("Removing old update packages from local temporary space.");
+	QStringList removeFilter(QString("%1*").arg(DataPaths::UPDATE_PACKAGE_FILENAME_PREFIX));
+	FileUtils::rmAllFiles(DoomseekerFilePaths::updatePackagesStorageDir(),
+		removeFilter);
+
 	gLog << tr("Checking for updates...");
 	autoUpdater = new AutoUpdater();
 	this->connect(autoUpdater, SIGNAL(finished()),

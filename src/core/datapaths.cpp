@@ -36,6 +36,7 @@ const QString DataPaths::PROGRAMS_APPDATASUPPORT_DIR_NAME = "";
 const QString DataPaths::DEMOS_DIR_NAME = "demos";
 const QString DataPaths::TRANSLATIONS_DIR_NAME = "translations";
 const QString DataPaths::UPDATE_PACKAGES_DIR_NAME = "updates";
+const QString DataPaths::UPDATE_PACKAGE_FILENAME_PREFIX = "doomseeker-update-pkg-";
 
 DataPaths::DataPaths(bool bPortableModeOn)
 {

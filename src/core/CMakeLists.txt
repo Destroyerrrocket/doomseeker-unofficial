@@ -286,6 +286,7 @@ set(SOURCE_FILES
 	datapaths.cpp
 	datastreamoperatorwrapper.cpp
 	doomseekerfilepaths.cpp
+	fileutils.cpp
 	json.cpp
 	localization.cpp
 	localizationinfo.cpp
@@ -359,6 +360,7 @@ set(HEADER_FILES
 	datapaths.h
 	datastreamoperatorwrapper.h
 	doomseekerfilepaths.h
+	fileutils.h
 	global.h
 	json.h
 	localization.h
