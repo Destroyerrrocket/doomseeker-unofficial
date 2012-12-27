@@ -1353,15 +1353,17 @@ void MainWindow::showServerJoinCommandLine(const Server* server)
 
 void MainWindow::showUpdaterProcessErrorDialog()
 {
-	QString msg = UpdateInstaller::processErrorCodeToStr(
-		(UpdateInstaller::ProcessErrorCode)this->updaterInstallerErrorCode);
+	QString msg = tr("Update install problem:\n%1\n\nRemaining updates have been discarded.")
+		.arg(UpdateInstaller::processErrorCodeToStr(
+			(UpdateInstaller::ProcessErrorCode)this->updaterInstallerErrorCode));
 	QMessageBox::critical(this, tr("Doomseeker - Auto Update problem"), msg);
 }
 
 void MainWindow::showUpdateInstallErrorDialog()
 {
-	QString msg = UpdateInstaller::errorCodeToStr(
-		(UpdateInstaller::ErrorCode)this->updaterInstallerErrorCode);
+	QString msg = tr("Update install problem:\n%1\n\nRemaining updates have been discarded.")
+		.arg(UpdateInstaller::errorCodeToStr(
+			(UpdateInstaller::ErrorCode)this->updaterInstallerErrorCode));
 	QMessageBox::critical(this, tr("Doomseeker - Auto Update problem"), msg);
 }
 
