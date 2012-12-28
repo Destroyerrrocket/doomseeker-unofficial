@@ -227,6 +227,10 @@ class AutoUpdater : public QObject
 		PrivData* d;
 
 		/**
+		 * @brief Updates package name to fit the current package filename.
+		 */
+		QByteArray adjustUpdaterScriptXml(const QByteArray& xmlSource);
+		/**
 		 * @brief Writes a log message for every entry on the list.
 		 *
 		 * The log is always dumped, but the main purpose is to

@@ -280,6 +280,7 @@ set(SOURCE_FILES
 	updater/updateinstaller.cpp
 	updater/updatepackagefilter.cpp
 	updater/updaterinfoparser.cpp
+	updater/updaterscriptparser.cpp
 	apprunner.cpp
 	commandline.cpp
 	customservers.cpp
@@ -355,6 +356,7 @@ set(HEADER_FILES
 	updater/updatepackage.h
 	updater/updatepackagefilter.h
 	updater/updaterinfoparser.h
+	updater/updaterscriptparser.h
 	apprunner.h
 	commandline.h
 	datapaths.h
@@ -444,7 +446,7 @@ add_executable(doomseeker
 # Doomseeker.
 add_dependencies(doomseeker revision_check)
 
-target_link_libraries(doomseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} wadseeker ${CMAKE_DL_LIBS})
+target_link_libraries(doomseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} ${QT_QTXML_LIBRARIES} wadseeker ${CMAKE_DL_LIBS})
 
 # Copy translations
 set(TRANSLATION_FILES_TO_COPY
@@ -481,13 +483,14 @@ if(WIN32)
 	install(TARGETS doomseeker RUNTIME DESTINATION .)
 	# Install Qt libraries.
 	# TODO: This could be rewritten to install the debug libraries
-	# when Debug build type is used. On the other hand intalling debug builds
+	# when Debug build type is used. On the other hand installing debug builds
 	# is rather senseless.
 	get_filename_component(QT_DLL_DIR ${QT_QMAKE_EXECUTABLE} PATH)
 	set(QT_LIBS_RELEASE
 		${QT_DLL_DIR}/QtCore4.dll
 		${QT_DLL_DIR}/QtGui4.dll
 		${QT_DLL_DIR}/QtNetwork4.dll
+		${QT_DLL_DIR}/QtXml4.dll
 	)
 	install(FILES ${QT_LIBS_RELEASE} DESTINATION .)
 	# Install .ico file. No idea what purpose would this server but some

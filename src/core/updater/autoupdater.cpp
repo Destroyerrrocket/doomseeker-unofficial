@@ -26,6 +26,7 @@
 #include "updater/updatechannel.h"
 #include "updater/updatepackagefilter.h"
 #include "updater/updaterinfoparser.h"
+#include "updater/updaterscriptparser.h"
 #include "datapaths.h"
 #include "log.h"
 #include "main.h"
@@ -102,6 +103,31 @@ void AutoUpdater::abort()
 		d->pNetworkReply = NULL;
 	}
 	emit finishWithError(EC_Aborted);
+}
+
+QByteArray AutoUpdater::adjustUpdaterScriptXml(const QByteArray& xmlSource)
+{
+	QDomDocument xmlDoc;
+	QString xmlError;
+	int xmlErrLine = -1;
+	int xmlErrCol = -1;
+	if (!xmlDoc.setContent(xmlSource, &xmlError, &xmlErrLine, &xmlErrCol))
+	{
+		gLog << tr("Failed to parse updater XML script: %1, l: %2, c: %3")
+			.arg(xmlError).arg(xmlErrLine).arg(xmlErrCol);
+		return QByteArray();
+	}
+	UpdaterScriptParser scriptParser(xmlDoc);
+	QFileInfo currentPackageFileInfo(d->pCurrentPackageFile->fileName());
+	QString scriptParserErrMsg = scriptParser.setPackageName(
+		currentPackageFileInfo.completeBaseName());
+	if (!scriptParserErrMsg.isNull())
+	{
+		gLog << tr("Failed to modify package name in updater script: %1")
+			.arg(scriptParserErrMsg);
+		return QByteArray();
+	}
+	return xmlDoc.toByteArray();
 }
 
 const UpdateChannel& AutoUpdater::channel() const
@@ -236,6 +262,14 @@ void AutoUpdater::onPackageScriptDownloadFinish()
 	{
 		gLog << tr("Finished downloading package script \"%1\".")
 			.arg(d->currentlyDownloadedPackage.displayName);
+		QByteArray xmlData = d->pNetworkReply->readAll();
+		xmlData = adjustUpdaterScriptXml(xmlData);
+		if (xmlData.isNull())
+		{
+			finishWithError(EC_PackageDownloadProblem);
+			return;
+		}
+
 		QString savePath = d->pCurrentPackageFile->fileName() + ".xml";
 		QFile file(savePath);
 		if (!file.open(QIODevice::WriteOnly))
@@ -244,7 +278,7 @@ void AutoUpdater::onPackageScriptDownloadFinish()
 			finishWithError(EC_PackageCantBeSaved);
 			return;
 		}
-		file.write(d->pNetworkReply->readAll());
+		file.write(xmlData);
 		file.close();
 
 		if (!d->packagesInDownloadQueue.isEmpty())
