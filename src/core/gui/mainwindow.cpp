@@ -1095,21 +1095,20 @@ void MainWindow::onAutoUpdaterFinish()
 {
 	gLog << tr("Program update finished with status: [%1] %2")
 		.arg((int)autoUpdater->errorCode()).arg(autoUpdater->errorString());
-	qDebug() << "Files: " << autoUpdater->downloadedPackagesFilenames();
 	if (autoUpdater->errorCode() == AutoUpdater::EC_Ok)
 	{
-		gLog << tr("Updates will be installed on next program start.");
-	}
-	UpdateChannel channel = UpdateChannel::fromName(gConfig.autoUpdates.updateChannelName);
-	if (channel == *updateChannelOnUpdateStart)
-	{
-		gConfig.autoUpdates.updatePackagesFilenamesForInstallation
-			= autoUpdater->downloadedPackagesFilenames();
-		gConfig.saveToFile();
-	}
-	else
-	{
-		gLog << tr("Update channel was changed during update process. Discarding update.");
+		UpdateChannel channel = UpdateChannel::fromName(gConfig.autoUpdates.updateChannelName);
+		if (channel == *updateChannelOnUpdateStart)
+		{
+			gLog << tr("Updates will be installed on next program start.");
+			gConfig.autoUpdates.updatePackagesFilenamesForInstallation
+				= autoUpdater->downloadedPackagesFilenames();
+			gConfig.saveToFile();
+		}
+		else
+		{
+			gLog << tr("Update channel was changed during update process. Discarding update.");
+		}
 	}
 	autoUpdater->deleteLater();
 	autoUpdater = NULL;
