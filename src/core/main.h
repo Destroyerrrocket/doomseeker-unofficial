@@ -100,6 +100,7 @@ class MAIN_EXPORT Main : public QObject
 		void initLocalizationsDefinitions();
 		void						initMainConfig();
 		void						initPluginConfig();
+		int installPendingUpdates();
 
 		/**
 		 *	@return If false - terminate the application after this method

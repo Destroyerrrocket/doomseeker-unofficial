@@ -172,6 +172,16 @@ int Main::run()
 	}
 
 	initMainConfig();
+	#ifdef Q_OS_WIN32
+	// Handle pending update installations.
+	UpdateInstaller::ErrorCode updateInstallerResult
+		= (UpdateInstaller::ErrorCode)installPendingUpdates();
+	if (updateInstallerResult == UpdateInstaller::EC_Ok)
+	{
+		return 0;
+	}
+	#endif
+
 	initLocalizationsDefinitions();
 	int ip2cReturn = initIP2C();
 
@@ -190,30 +200,6 @@ int Main::run()
 	}
 	else
 	{
-		#ifdef Q_OS_WIN32
-		// Handle pending update installations.
-		UpdateInstaller::ErrorCode updateInstallerResult = UpdateInstaller::EC_NothingToUpdate;
-		// Update should only be attempted if program was not called
-		// with "--update-failed" arg (previous update didn't fail).
-		if (updateFailedCode == 0)
-		{
-			UpdateInstaller updateInstaller;
-			updateInstallerResult = updateInstaller.startInstallation();
-			if (updateInstallerResult == UpdateInstaller::EC_Ok)
-			{
-				return 0;
-			}
-		}
-		
-		if (updateFailedCode != 0 || updateInstallerResult != UpdateInstaller::EC_NothingToUpdate)
-		{
-			// Updater failure. Discard all updates.
-			gLog << tr("Discarding all update packages due to failure.");
-			gConfig.autoUpdates.updatePackagesFilenamesForInstallation.clear();
-			gConfig.saveToFile();
-		}
-		#endif
-
 		setupRefreshingThread();
 		createMainWindow();
 		#ifdef Q_OS_WIN32
@@ -441,6 +427,30 @@ void Main::initPluginConfig()
 {
 	gLog << tr("Initializing configuration for plugins.");
 	enginePlugins->initConfig();
+}
+
+int Main::installPendingUpdates()
+{
+	UpdateInstaller::ErrorCode updateInstallerResult = UpdateInstaller::EC_NothingToUpdate;
+	// Update should only be attempted if program was not called
+	// with "--update-failed" arg (previous update didn't fail).
+	if (updateFailedCode == 0)
+	{
+		UpdateInstaller updateInstaller;
+		updateInstallerResult = updateInstaller.startInstallation();
+		if (updateInstallerResult == UpdateInstaller::EC_Ok)
+		{
+			return updateInstallerResult;
+		}
+	}
+	if (updateFailedCode != 0 || updateInstallerResult != UpdateInstaller::EC_NothingToUpdate)
+	{
+		// Updater failure. Discard all updates.
+		gLog << tr("Discarding all update packages due to failure.");
+		gConfig.autoUpdates.updatePackagesFilenamesForInstallation.clear();
+		gConfig.saveToFile();
+	}
+	return updateInstallerResult;
 }
 
 bool Main::interpretCommandLineParameters()
