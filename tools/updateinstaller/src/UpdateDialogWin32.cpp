@@ -189,6 +189,8 @@ LRESULT WINAPI UpdateDialogWin32::windowProc(HWND window, UINT message, WPARAM w
 						else
 						{
 							message = "Updates installed.";
+							// Success. Close automatically.
+							PostQuitMessage(0);
 						}
 						message += "  Click 'Finish' to restart the application.";
 						m_progressLabel.SetWindowText(message.c_str());
