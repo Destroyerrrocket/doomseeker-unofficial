@@ -1100,7 +1100,10 @@ void MainWindow::onAutoUpdaterFinish()
 		UpdateChannel channel = UpdateChannel::fromName(gConfig.autoUpdates.updateChannelName);
 		if (channel == *updateChannelOnUpdateStart)
 		{
-			gLog << tr("Updates will be installed on next program start.");
+			if (!autoUpdater->downloadedPackagesFilenames().isEmpty())
+			{
+				gLog << tr("Updates will be installed on next program start.");
+			}
 			gConfig.autoUpdates.updatePackagesFilenamesForInstallation
 				= autoUpdater->downloadedPackagesFilenames();
 			gConfig.saveToFile();
