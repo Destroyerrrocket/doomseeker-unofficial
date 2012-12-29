@@ -42,6 +42,8 @@
 class AutoUpdater::PrivData
 {
 	public:
+		/// All scripts are merged to create one big script for all packages.
+		QList<QDomDocument> allScripts;
 		bool bDownloadAndInstallRequireConfirmation;
 		bool bIsRunning;
 		bool bStarted;
@@ -105,7 +107,7 @@ void AutoUpdater::abort()
 	emit finishWithError(EC_Aborted);
 }
 
-QByteArray AutoUpdater::adjustUpdaterScriptXml(const QByteArray& xmlSource)
+QDomDocument AutoUpdater::adjustUpdaterScriptXml(const QByteArray& xmlSource)
 {
 	QDomDocument xmlDoc;
 	QString xmlError;
@@ -115,7 +117,7 @@ QByteArray AutoUpdater::adjustUpdaterScriptXml(const QByteArray& xmlSource)
 	{
 		gLog << tr("Failed to parse updater XML script: %1, l: %2, c: %3")
 			.arg(xmlError).arg(xmlErrLine).arg(xmlErrCol);
-		return QByteArray();
+		return QDomDocument();
 	}
 	UpdaterScriptParser scriptParser(xmlDoc);
 	QFileInfo currentPackageFileInfo(d->pCurrentPackageFile->fileName());
@@ -125,9 +127,9 @@ QByteArray AutoUpdater::adjustUpdaterScriptXml(const QByteArray& xmlSource)
 	{
 		gLog << tr("Failed to modify package name in updater script: %1")
 			.arg(scriptParserErrMsg);
-		return QByteArray();
+		return QDomDocument();
 	}
-	return xmlDoc.toByteArray();
+	return xmlDoc;
 }
 
 const UpdateChannel& AutoUpdater::channel() const
@@ -191,6 +193,8 @@ QString AutoUpdater::errorCodeToString(ErrorCode code)
 			return tr("Failed to create directory for updates packages storage.");
 		case EC_PackageCantBeSaved:
 			return tr("Failed to create package file for saving.");
+		case EC_ScriptCantBeSaved:
+			return tr("Failed to create updater script file for saving.");
 		default:
 			return tr("Unknown error.");
 	}
@@ -263,23 +267,13 @@ void AutoUpdater::onPackageScriptDownloadFinish()
 		gLog << tr("Finished downloading package script \"%1\".")
 			.arg(d->currentlyDownloadedPackage.displayName);
 		QByteArray xmlData = d->pNetworkReply->readAll();
-		xmlData = adjustUpdaterScriptXml(xmlData);
-		if (xmlData.isNull())
+		QDomDocument xmlDoc = adjustUpdaterScriptXml(xmlData);
+		if (xmlDoc.isNull())
 		{
 			finishWithError(EC_PackageDownloadProblem);
 			return;
 		}
-
-		QString savePath = d->pCurrentPackageFile->fileName() + ".xml";
-		QFile file(savePath);
-		if (!file.open(QIODevice::WriteOnly))
-		{
-			gLog << tr("Failed to save package script to file: %1").arg(savePath);
-			finishWithError(EC_PackageCantBeSaved);
-			return;
-		}
-		file.write(xmlData);
-		file.close();
+		d->allScripts.append(xmlDoc);
 
 		if (!d->packagesInDownloadQueue.isEmpty())
 		{
@@ -287,8 +281,9 @@ void AutoUpdater::onPackageScriptDownloadFinish()
 		}
 		else
 		{
-			gLog << tr("All packages downloaded.");
-			finishWithError(EC_Ok);
+			gLog << tr("All packages downloaded. Building updater script.");
+			ErrorCode result = saveUpdaterScript();
+			finishWithError(result);
 		}
 	}
 	else
@@ -352,6 +347,24 @@ void AutoUpdater::onUpdaterInfoDownloadFinish()
 bool AutoUpdater::preparePackagesTempDirectory()
 {
 	return true;
+}
+
+AutoUpdater::ErrorCode AutoUpdater::saveUpdaterScript()
+{
+	QDomDocument xmlDocAllScripts;
+	UpdaterScriptParser scriptParser(xmlDocAllScripts);
+	foreach (const QDomDocument& doc, d->allScripts)
+	{
+		scriptParser.merge(doc);
+	}
+	QFile f(updaterScriptPath());
+	if (!f.open(QIODevice::WriteOnly))
+	{
+		return EC_ScriptCantBeSaved;
+	}
+	f.write(xmlDocAllScripts.toByteArray());
+	f.close();
+	return EC_Ok;
 }
 
 void AutoUpdater::setChannel(const UpdateChannel& updateChannel)
@@ -485,6 +498,13 @@ void AutoUpdater::startPackageScriptDownload(const UpdatePackage& pkg)
 	// without saving them continuously to a file.
 	this->connect(pReply, SIGNAL(finished()),
 		SLOT(onPackageScriptDownloadFinish()));
+}
+
+QString AutoUpdater::updaterScriptPath()
+{
+	QString dirPath = Main::dataPaths->localDataLocationPath(DataPaths::UPDATE_PACKAGES_DIR_NAME);
+	QString name = DataPaths::UPDATE_PACKAGE_FILENAME_PREFIX + "-updater-script.xml";
+	return Strings::combinePaths(dirPath, name);
 }
 
 QString AutoUpdater::updateStorageDirPath()

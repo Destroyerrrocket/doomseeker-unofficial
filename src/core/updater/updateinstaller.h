@@ -59,16 +59,15 @@ class UpdateInstaller : public QObject
 		UpdateInstaller(QObject* pParent = NULL);
 		~UpdateInstaller();
 
-		bool isAnythingToInstall() const;
 		/**
 		 * @brief Starts update process.
 		 *
-		 * Reads config to determine which update is next in queue.
-		 * Performs checks to see if update can be performed and launches
-		 * the updater process.
+		 * Checks if UPDATER_SCRIPT_FILENAME exists and launches updater
+		 * program.
 		 *
-		 * - If EC_Ok is returned then program should shutdown itself.
-		 * - If EC_NothingToUpdate was returned then program should continue
+		 * - If EC_Ok is returned then current program should shut down
+		 *   itself.
+		 * - If EC_NothingToUpdate is returned then program should continue
 		 *   normally.
 		 * - If anything else is returned then program should notify
 		 *   user of error.

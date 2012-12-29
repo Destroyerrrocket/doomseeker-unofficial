@@ -43,10 +43,47 @@ UpdaterScriptParser::~UpdaterScriptParser()
 	delete d;
 }
 
+QDomNode UpdaterScriptParser::installNode(const QDomDocument& doc)
+{
+	return doc.elementsByTagName("update").at(0).toElement()
+		.elementsByTagName("install").at(0);
+}
+
 QDomElement UpdaterScriptParser::mainElement()
 {
 	QDomNodeList nodes = d->pDoc->elementsByTagName("update");
 	return nodes.at(0).toElement();
+}
+
+void UpdaterScriptParser::merge(const QDomDocument& otherDoc)
+{
+	assert(d->pDoc != NULL && "UpdaterScriptParser::merge()");
+	if (!d->pDoc->isNull())
+	{
+		QDomNodeList listNodes;
+		// We'll copy only the "packages" and "install" files.
+		// We'll assume the rest is already set correctly in the
+		// source doc.
+		QDomNode nodePackagesDst = packagesNode(*d->pDoc);
+		QDomNode nodePackagesSrc = packagesNode(otherDoc);
+		listNodes = nodePackagesSrc.toElement().elementsByTagName("package");
+		for (int i = 0; i < listNodes.count(); ++i)
+		{
+			nodePackagesDst.appendChild(listNodes.at(i));
+		}
+
+		QDomNode nodeInstallDst = installNode(*d->pDoc);
+		QDomNode nodeInstallSrc = installNode(otherDoc);
+		listNodes = nodeInstallSrc.toElement().elementsByTagName("file");
+		for (int i = 0; i < listNodes.count(); ++i)
+		{
+			nodeInstallDst.appendChild(listNodes.at(i));
+		}
+	}
+	else
+	{
+		*d->pDoc = otherDoc.cloneNode().toDocument();
+	}
 }
 
 QString UpdaterScriptParser::msgMainElementMissingError()
@@ -54,8 +91,15 @@ QString UpdaterScriptParser::msgMainElementMissingError()
 	return AutoUpdater::tr("Missing main \"update\" node.");
 }
 
+QDomNode UpdaterScriptParser::packagesNode(const QDomDocument& doc)
+{
+	return doc.elementsByTagName("update").at(0).toElement()
+		.elementsByTagName("packages").at(0);
+}
+
 QString UpdaterScriptParser::setPackageName(const QString& name)
 {
+	assert(d->pDoc != NULL && "UpdaterScriptParser::setPackageName()");
 	QString errorMsg;
 	errorMsg = setPackageNameInPackages(name);
 	if (errorMsg.isNull())
@@ -127,12 +171,13 @@ QString UpdaterScriptParser::setPackageNameInPackages(const QString& name)
 		{
 			return AutoUpdater::tr("More than one \"package\" element found.");
 		}
-		return false;
+		return AutoUpdater::tr("Missing \"package\" element.");
 	}
 	// Since we now know that there is only one "package" node
 	// we can finally set its name.
 	QDomNode nameTextNode = nodes.at(0).toElement()
 		.elementsByTagName("name").at(0).toElement().firstChild();
+	nameTextNode.setNodeValue(name);
 	if (nameTextNode.isNull())
 	{
 		return AutoUpdater::tr("Failed to find \"name\" text node.");

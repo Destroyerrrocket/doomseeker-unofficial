@@ -23,6 +23,7 @@
 #include "updateinstaller.h"
 
 #include "configuration/doomseekerconfig.h"
+#include "updater/autoupdater.h"
 #include "log.h"
 #include "main.h"
 #include "strings.h"
@@ -74,11 +75,6 @@ QString UpdateInstaller::getPercentEncodedCurrentProcessArgs()
 	return argsEncoded.join(" ");
 }
 
-bool UpdateInstaller::isAnythingToInstall() const
-{
-	return !gConfig.autoUpdates.updatePackagesFilenamesForInstallation.isEmpty();
-}
-
 QString UpdateInstaller::processErrorCodeToStr(ProcessErrorCode code)
 {
 	switch (code)
@@ -100,48 +96,34 @@ QString UpdateInstaller::processErrorCodeToStr(ProcessErrorCode code)
 
 UpdateInstaller::ErrorCode UpdateInstaller::startInstallation()
 {
-	QStringList& packages = gConfig.autoUpdates.updatePackagesFilenamesForInstallation;
-	if (!packages.isEmpty())
+	QString scriptPath = AutoUpdater::updaterScriptPath();
+	QFile fileScript(scriptPath);
+	if (fileScript.exists())
 	{
-		QString packageName = packages.first();
-		gLog << tr("Installing update package \"%1\".").arg(packageName);
-		QString packagesDir = Main::dataPaths->localDataLocationPath(DataPaths::UPDATE_PACKAGES_DIR_NAME);
-		QString packagePath = Strings::combinePaths(packagesDir, packageName);
-		QString scriptPath = packagePath + ".xml";
-		QFile filePackage(packagePath);
-		QFile fileScript(scriptPath);
+		gLog << tr("Installing update.");
+		QString packagesDirPath = AutoUpdater::updateStorageDirPath();
+		QDir packagesDir(packagesDirPath);
 		// Do some "does file exist" validation. This isn't 100% reliable but
 		// should work correctly in most cases.
-		bool isPackageOk = filePackage.exists();
-		bool isScriptOk = fileScript.exists();
-		if (isPackageOk && isScriptOk)
+		bool isPackageOk = packagesDir.exists();
+		if (isPackageOk)
 		{
-			if (startUpdaterProcess(packagesDir, scriptPath))
-			{
-				// Everything was successful.
-				// Remove the package from the update list.
-				packages.takeFirst();
-				gConfig.saveToFile();
-			}
-			else
+			if (!startUpdaterProcess(packagesDirPath, scriptPath))
 			{
 				return EC_ProcessStartFailure;
 			}
 		}
-		else if (!isPackageOk)
-		{
-			gLog << tr("Cannot read update package \"%1\".").arg(packagePath);
-			return EC_UpdatePackageMissing;
-		}
 		else
 		{
-			gLog << tr("Cannot read update script \"%1\".").arg(packagePath + ".xml");
+			gLog << tr("Package directory \"%1\" doesn't exist.").arg(packagesDirPath);
 			return EC_UpdatePackageMissing;
 		}
 	}
 	else
 	{
-		return EC_NothingToUpdate;
+		gLog << tr("Update was about to be installed but "
+			"update script \"%1\" is missing.").arg(scriptPath);
+		return EC_UpdatePackageMissing;
 	}
 	return EC_Ok;
 }

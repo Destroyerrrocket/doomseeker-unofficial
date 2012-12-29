@@ -1035,7 +1035,7 @@ void MainWindow::menuOptionsConfigure()
 		{
 			autoUpdater->abort();
 		}
-		gConfig.autoUpdates.updatePackagesFilenamesForInstallation = QStringList();
+		gConfig.autoUpdates.bPerformUpdateOnNextRun = false;
 		gConfig.saveToFile();
 	}
 
@@ -1095,6 +1095,7 @@ void MainWindow::onAutoUpdaterFinish()
 {
 	gLog << tr("Program update finished with status: [%1] %2")
 		.arg((int)autoUpdater->errorCode()).arg(autoUpdater->errorString());
+	gConfig.autoUpdates.bPerformUpdateOnNextRun = false;
 	if (autoUpdater->errorCode() == AutoUpdater::EC_Ok)
 	{
 		UpdateChannel channel = UpdateChannel::fromName(gConfig.autoUpdates.updateChannelName);
@@ -1103,16 +1104,15 @@ void MainWindow::onAutoUpdaterFinish()
 			if (!autoUpdater->downloadedPackagesFilenames().isEmpty())
 			{
 				gLog << tr("Updates will be installed on next program start.");
+				gConfig.autoUpdates.bPerformUpdateOnNextRun = true;
 			}
-			gConfig.autoUpdates.updatePackagesFilenamesForInstallation
-				= autoUpdater->downloadedPackagesFilenames();
-			gConfig.saveToFile();
 		}
 		else
 		{
 			gLog << tr("Update channel was changed during update process. Discarding update.");
 		}
 	}
+	gConfig.saveToFile();
 	autoUpdater->deleteLater();
 	autoUpdater = NULL;
 }

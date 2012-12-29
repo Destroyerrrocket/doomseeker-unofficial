@@ -432,23 +432,21 @@ void Main::initPluginConfig()
 int Main::installPendingUpdates()
 {
 	UpdateInstaller::ErrorCode updateInstallerResult = UpdateInstaller::EC_NothingToUpdate;
-	// Update should only be attempted if program was not called
-	// with "--update-failed" arg (previous update didn't fail).
-	if (updateFailedCode == 0)
+	if (gConfig.autoUpdates.bPerformUpdateOnNextRun)
 	{
-		UpdateInstaller updateInstaller;
-		updateInstallerResult = updateInstaller.startInstallation();
-		if (updateInstallerResult == UpdateInstaller::EC_Ok)
-		{
-			return updateInstallerResult;
-		}
-	}
-	if (updateFailedCode != 0 || updateInstallerResult != UpdateInstaller::EC_NothingToUpdate)
-	{
-		// Updater failure. Discard all updates.
-		gLog << tr("Discarding all update packages due to failure.");
-		gConfig.autoUpdates.updatePackagesFilenamesForInstallation.clear();
+		gConfig.autoUpdates.bPerformUpdateOnNextRun = false;
 		gConfig.saveToFile();
+		// Update should only be attempted if program was not called
+		// with "--update-failed" arg (previous update didn't fail).
+		if (updateFailedCode == 0)
+		{
+			UpdateInstaller updateInstaller;
+			updateInstallerResult = updateInstaller.startInstallation();
+			if (updateInstallerResult == UpdateInstaller::EC_Ok)
+			{
+				return updateInstallerResult;
+			}
+		}
 	}
 	return updateInstallerResult;
 }

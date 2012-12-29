@@ -23,6 +23,7 @@
 #ifndef DOOMSEEKER_UPDATER_AUTOUPDATER_H
 #define DOOMSEEKER_UPDATER_AUTOUPDATER_H
 
+#include <QDomDocument>
 #include <QNetworkReply>
 #include <QObject>
 #include <QString>
@@ -107,7 +108,12 @@ class AutoUpdater : public QObject
 			/**
 			 * @brief Package file can't be stored on the local filesystem.
 			 */
-			EC_PackageCantBeSaved
+			EC_PackageCantBeSaved,
+			/**
+			 * @brief Update script can't be merged and stored on the local
+			 *        filesystem.
+			 */
+			EC_ScriptCantBeSaved
 		};
 
 		/**
@@ -127,7 +133,15 @@ class AutoUpdater : public QObject
 		static const QString UPDATER_INFO_URL;
 
 		static QString errorCodeToString(ErrorCode code);
+		/**
+		 * @brief Path to updater script XML file.
+		 *
+		 * This consists of a constant filename which the updater XML script
+		 * is always saved under.
+		 */
+		static QString updaterScriptPath();
 		static QString updateStorageDirPath();
+		
 
 		AutoUpdater(QObject* pParent = NULL);
 		~AutoUpdater();
@@ -229,7 +243,7 @@ class AutoUpdater : public QObject
 		/**
 		 * @brief Updates package name to fit the current package filename.
 		 */
-		QByteArray adjustUpdaterScriptXml(const QByteArray& xmlSource);
+		QDomDocument adjustUpdaterScriptXml(const QByteArray& xmlSource);
 		/**
 		 * @brief Writes a log message for every entry on the list.
 		 *
@@ -247,6 +261,7 @@ class AutoUpdater : public QObject
 		 *         successfully.
 		 */
 		bool preparePackagesTempDirectory();
+		ErrorCode saveUpdaterScript();
 		void startPackageDownload(const UpdatePackage& pkg);
 		void startPackageScriptDownload(const UpdatePackage& pkg);
 		void startNextPackageDownload();

@@ -427,7 +427,7 @@ void DoomseekerConfig::AutoUpdates::init(IniSection& section)
 	section.createSetting("UpdateChannelName", UpdateChannel::mkStable().name());
 	section.createSetting("UpdateMode", (int) UM_NotifyOnly);
 	section.createSetting("LastKnownUpdateRevisions", QVariant());
-	section.createSetting("UpdatePackagesFilenamesForInstallation", QStringList());
+	section.createSetting("bPerformUpdateOnNextRun", false);
 }
 
 void DoomseekerConfig::AutoUpdates::load(IniSection& section)
@@ -441,8 +441,7 @@ void DoomseekerConfig::AutoUpdates::load(IniSection& section)
 		QVariant revisionVariant = lastKnownUpdateRevisionsVariant[package];
 		lastKnownUpdateRevisions.insert(package, revisionVariant.toLongLong());
 	}
-	updatePackagesFilenamesForInstallation =
-		section["UpdatePackagesFilenamesForInstallation"].value().toStringList();
+	bPerformUpdateOnNextRun = section["bPerformUpdateOnNextRun"].value().toBool();
 }
 
 void DoomseekerConfig::AutoUpdates::save(IniSection& section)
@@ -455,7 +454,7 @@ void DoomseekerConfig::AutoUpdates::save(IniSection& section)
 		revisionsVariantMap.insert(package, lastKnownUpdateRevisions[package]);
 	}
 	section["LastKnownUpdateRevisions"].setValue(revisionsVariantMap);
-	section["UpdatePackagesFilenamesForInstallation"].setValue(updatePackagesFilenamesForInstallation);
+	section["bPerformUpdateOnNextRun"].setValue(bPerformUpdateOnNextRun);
 }
 //////////////////////////////////////////////////////////////////////////////
 const QString DoomseekerConfig::ServerFilter::SECTION_NAME = "ServerFilter";
