@@ -37,6 +37,7 @@ AboutDlg::AboutDlg(QWidget* parent) : QDialog(parent)
 	// Doomseeker
 	versionChangeset->setText(Version::changeset());
 	versionNumber->setText(Version::versionRevision());
+	lblRevision->setText(QString::number(Version::revisionNumber()));
 	logo->setPixmap(QPixmap(":/logo.png"));
 
 	// Wadseeker
