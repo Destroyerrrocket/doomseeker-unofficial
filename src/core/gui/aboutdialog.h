@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// aboutDlg.h
+// aboutdialog.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -21,21 +21,21 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#ifndef __ABOUTDIALOG_H__
-#define __ABOUTDIALOG_H__
+#ifndef DOOMSEEKER_GUI_ABOUTDIALOG_H
+#define DOOMSEEKER_GUI_ABOUTDIALOG_H
 
-#include "ui_aboutDlg.h"
+#include "ui_aboutdialog.h"
 
-class AboutDlg : public QDialog, private Ui::aboutDlg
+class AboutDialog : public QDialog, private Ui::AboutDialog
 {
 	Q_OBJECT
 
 	public:
-		AboutDlg(QWidget* parent = NULL);
-		~AboutDlg();
+		AboutDialog(QWidget* parent = NULL);
+		~AboutDialog();
 
 	public slots:
-		void	changePlugin(int pluginIndex);
+		void changePlugin(int pluginIndex);
 };
 
-#endif /* __ABOUTDIALOG_H__ */
+#endif /* DOOMSEEKER_GUI_ABOUTDIALOG_H */

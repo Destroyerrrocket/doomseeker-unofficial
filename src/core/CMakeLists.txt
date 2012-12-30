@@ -75,7 +75,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/irc/ircdocktabcontents.ui
 	gui/irc/ircnetworkselectionbox.ui
 	gui/widgets/serverconsole.ui
-	gui/aboutDlg.ui
+	gui/aboutdialog.ui
 	gui/addBuddyDlg.ui
 	gui/copytextdlg.ui
 	gui/createserverdialog.ui
@@ -125,7 +125,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/widgets/tablewidgetmouseaware.h
 	gui/widgets/wadseekersitestable.h
 	gui/widgets/wadseekerwadstable.h
-	gui/aboutDlg.h
+	gui/aboutdialog.h
 	gui/copytextdlg.h
 	gui/createserverdialog.h
 	gui/demomanager.h
@@ -212,7 +212,7 @@ set(SOURCE_FILES
 	gui/widgets/serversstatuswidget.cpp
 	gui/widgets/wadseekersitestable.cpp
 	gui/widgets/wadseekerwadstable.cpp
-	gui/aboutDlg.cpp
+	gui/aboutdialog.cpp
 	gui/commonGUI.cpp
 	gui/copytextdlg.cpp
 	gui/createserverdialog.cpp

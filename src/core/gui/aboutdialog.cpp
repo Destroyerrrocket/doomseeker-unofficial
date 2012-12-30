@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// aboutDlg.cpp
+// aboutdialog.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -21,14 +21,14 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include "aboutDlg.h"
+#include "aboutdialog.h"
 #include "main.h"
 #include "plugins/engineplugin.h"
 #include "wadseeker/wadseekerversioninfo.h"
 #include "version.h"
 #include <QPixmap>
 
-AboutDlg::AboutDlg(QWidget* parent) : QDialog(parent)
+AboutDialog::AboutDialog(QWidget* parent) : QDialog(parent)
 {
 	setupUi(this);
 
@@ -57,11 +57,11 @@ AboutDlg::AboutDlg(QWidget* parent) : QDialog(parent)
 	adjustSize();
 }
 
-AboutDlg::~AboutDlg()
+AboutDialog::~AboutDialog()
 {
 }
 
-void AboutDlg::changePlugin(int pluginIndex)
+void AboutDialog::changePlugin(int pluginIndex)
 {
 	if(static_cast<unsigned> (pluginIndex) >= Main::enginePlugins->numPlugins())
 		return; // Invalid plugin.

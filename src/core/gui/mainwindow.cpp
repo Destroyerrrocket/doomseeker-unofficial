@@ -26,7 +26,7 @@
 #include "gui/helpers/playersdiagram.h"
 #include "gui/irc/ircsounds.h"
 #include "gui/widgets/serversstatuswidget.h"
-#include "gui/aboutDlg.h"
+#include "gui/aboutdialog.h"
 #include "gui/copytextdlg.h"
 #include "gui/createserverdialog.h"
 #include "gui/demomanager.h"
@@ -934,7 +934,7 @@ void MainWindow::menuCreateServer()
 
 void MainWindow::menuHelpAbout()
 {
-	AboutDlg dlg(this);
+	AboutDialog dlg(this);
 	autoRefreshTimer.stop();
 	dlg.exec();
 	initAutoRefreshTimer();
