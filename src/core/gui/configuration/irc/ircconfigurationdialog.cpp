@@ -24,7 +24,7 @@
 #include "gui/configuration/irc/cfgircappearance.h"
 #include "gui/configuration/irc/cfgircnetworks.h"
 #include "gui/configuration/irc/cfgircsounds.h"
-#include "gui/commonGUI.h"
+#include "gui/commongui.h"
 #include "irc/configuration/ircconfig.h"
 #include "log.h"
 

@@ -26,7 +26,7 @@
 #include "copytextdlg.h"
 #include "gui/widgets/createserverdialogpage.h"
 #include "main.h"
-#include "commonGUI.h"
+#include "commongui.h"
 #include "ini/ini.h"
 #include "plugins/engineplugin.h"
 #include "scanner.h"

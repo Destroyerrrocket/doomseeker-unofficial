@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// commonGUI.cpp
+// commongui.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,19 +20,22 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "commonGUI.h"
+#include "commongui.h"
 #include <QInputDialog>
 #include <QStandardItemModel>
 
-QString CommonGUI::askString(const QString& title, const QString& label, bool* ok, const QString& defaultString)
+QString CommonGUI::askString(const QString& title, const QString& label,
+	bool* ok, const QString& defaultString)
 {
-	return QInputDialog::getText(NULL, title,label, QLineEdit::Normal, defaultString, ok);
+	return QInputDialog::getText(NULL, title,label, QLineEdit::Normal,
+		defaultString, ok);
 }
 
 QStringList CommonGUI::listViewStandardItemsToStringList(QListView* listview)
 {
 	QStringList list;
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(listview->model());
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(
+		listview->model());
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
 		list << model->item(i)->text();
@@ -41,7 +44,8 @@ QStringList CommonGUI::listViewStandardItemsToStringList(QListView* listview)
 	return list;
 }
 
-void CommonGUI::removeSelectedRowsFromStandardItemView(QAbstractItemView* view, bool bSelectNextItem)
+void CommonGUI::removeSelectedRowsFromStandardItemView(QAbstractItemView* view,
+	bool bSelectNextItem)
 {
 	QItemSelectionModel* selModel = view->selectionModel();
 	QModelIndexList indexList = selModel->selectedIndexes();
@@ -57,7 +61,7 @@ void CommonGUI::removeSelectedRowsFromStandardItemView(QAbstractItemView* view, 
 		if (index.row() > lowestRemovedRow)
 		{
 			lowestRemovedRow = index.row();
-		}		
+		}
 	}
 
 	for (int i = 0; i < itemList.count(); ++i)
@@ -84,9 +88,11 @@ void CommonGUI::removeSelectedRowsFromStandardItemView(QAbstractItemView* view, 
 	}
 }
 
-void CommonGUI::stringListToStandardItemsListView(QListView* targetListview, const QStringList& stringList)
+void CommonGUI::stringListToStandardItemsListView(QListView* targetListview,
+	const QStringList& stringList)
 {
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(targetListview->model());
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(
+		targetListview->model());
 	model->removeRows(0, model->rowCount());
 
 	foreach (const QString& str, stringList)

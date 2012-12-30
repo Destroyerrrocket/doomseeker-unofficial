@@ -213,7 +213,7 @@ set(SOURCE_FILES
 	gui/widgets/wadseekersitestable.cpp
 	gui/widgets/wadseekerwadstable.cpp
 	gui/aboutdialog.cpp
-	gui/commonGUI.cpp
+	gui/commongui.cpp
 	gui/copytextdlg.cpp
 	gui/createserverdialog.cpp
 	gui/demomanager.cpp
@@ -316,6 +316,7 @@ set(HEADER_FILES
 	gui/models/serverlistproxymodel.h
 	gui/models/serverlistrowhandler.h
 	gui/widgets/qtabwidgetext.h
+	gui/commongui.h
 	gui/ip2cupdatebox.h
 	ini/inisection.h
 	ini/inivariable.h

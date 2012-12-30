@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------
 #include "ircdocktabcontents.h"
 #include "gui/irc/ircsounds.h"
-#include "gui/commonGUI.h"
+#include "gui/commongui.h"
 #include "irc/configuration/ircconfig.h"
 #include "irc/ircchanneladapter.h"
 #include "irc/ircdock.h"
