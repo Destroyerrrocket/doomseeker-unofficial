@@ -432,7 +432,7 @@ void DoomseekerConfig::AutoUpdates::init(IniSection& section)
 
 void DoomseekerConfig::AutoUpdates::load(IniSection& section)
 {
-	updateChannelName = section["UpdateChannelName"];
+	updateChannelName = (const QString &)section["UpdateChannelName"];
 	updateMode = (UpdateMode)section["UpdateMode"].value().toInt();
 	QVariantMap lastKnownUpdateRevisionsVariant = section["LastKnownUpdateRevisions"].value().toMap();
 	lastKnownUpdateRevisions.clear();
