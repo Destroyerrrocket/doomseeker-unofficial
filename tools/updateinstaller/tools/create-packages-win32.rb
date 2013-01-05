@@ -6,28 +6,24 @@ require 'find'
 require 'json'
 require 'rexml/document'
 require 'optparse'
+require 'set'
 
 # syntax:
 #
 # create-packages.rb <input directory> <config file> <output directory>
 #
-#  Takes the set of files that make up a release and splits them up into
-#  a set of .zip packages along with a file_list.xml file listing all
-#  the files in the release and mapping them to their respective
-#  packages.
+#  Takes the set of files that make up a release and puts them into a
+#  .zip package along with an .xml file listing all
+#  the files in the release and mapping them to the package.
 #
 #  Outputs:
 #
 #   <output-dir>/$PACKAGE_NAME.zip
-#     These are packages containing the files in this version of the software.
+#     This is a package containing the files in this version of the software.
 #
-#   <output-dir>/file_list.xml
-#     This file lists all the files contained in this version of the software and
-#     the packages which they are contained in.
-#
-#   <output-dir>/$UPDATER_BINARY
-#     The standalone auto-update installer binary.  This is not compressed so that
-#     it can be downloaded and executed directly.
+#   <output-dir>/$PACKAGE_NAME.zip.xml
+#     This file lists all the files contained in this version of the software
+#     and the package which they are contained in.
 #
 
 # Represents a group of updates in a release
@@ -82,7 +78,7 @@ def strip_prefix(string,prefix)
 end
 
 def file_sha1(path)
-		return `sha1sum "#{path}"`.split(' ')[0]
+	return `sha1sum "#{path}"`.split(' ')[0]
 end
 
 class UpdateScriptGenerator
@@ -93,30 +89,31 @@ class UpdateScriptGenerator
 	# output_dir - The directory containing the generated packages
 	# package_config - The PackageConfig specifying the file -> package map
 	#                  for the application and other config options
-	# file_list - A list of all files in 'input_dir' which make up the install
-	# package_file_map - A map of (package name -> [paths of files in this package])
+	# package_file_list - A list of all files in 'input_dir' which make up the install
 
 	def initialize(target_version,
+	               package_suffix,
 	               platform,
 	               input_dir,
 	               output_dir,
 	               package_config,
-	               file_list,
-	               package_file_map)
+	               package_file_list)
 		@target_version = target_version
 		@platform = platform
 		@config = package_config
+		@package_suffix = package_suffix
+		@package_suffix = "" if @package_suffix == nil
 
 		# List of files to install in this version
 		@files_to_install = []
-		file_list.each do |path|
+		package_file_list.each do |path|
 			file = UpdateScriptFile.new
 			file.path = strip_prefix(path,input_dir)
 
 			if (File.symlink?(path))
 				file.target = File.readlink(path)
 			else
-				file.package = @config.package_for_file(file.path)
+				file.package = @config.name
 				if (!file.package)
 					# This file shouldn't be in the package so omit it.
 					next
@@ -131,19 +128,14 @@ class UpdateScriptGenerator
 
 		# List of packages containing files for this version
 		@packages = []
-		package_file_map.each do |package_name,files|
-			if (package_name == @config.updater_binary)
-				path = "#{output_dir}/#{package_name}"
-			else
-				path = "#{output_dir}/#{package_name}.zip"
-			end
+		package_name = @config.name
+		path = "#{output_dir}/#{package_name}#{package_suffix}.zip"
 
-			package = UpdateScriptPackage.new
-			package.name = package_name
-			package.size = File.size(path)
-			package.hash = file_sha1(path)
-			@packages << package
-		end
+		package = UpdateScriptPackage.new
+		package.name = package_name
+		package.size = File.size(path)
+		package.hash = file_sha1(path)
+		@packages << package
 	end
 
 	def to_xml()
@@ -232,18 +224,17 @@ class UpdateScriptGenerator
 end
 
 class PackageConfig
-	attr_reader :main_binary, :updater_binary
+	attr_reader :main_binary, :updater_binary, :name
 
 	def initialize(map_file)
-		@rule_map = {}
+		@rule_map = Set.new
 		config_json = JSON.parse(File.read(map_file))
-		config_json["packages"].each do |package,rules|
-			rules.each do |rule|
-				rule_regex = Regexp.new("^#{rule}")
-				@rule_map[rule_regex] = package
-			end
+		config_json["files"].each do |rule|
+			rule_regex = Regexp.new("^#{rule}")
+			@rule_map << rule_regex
 		end
 
+		@name = config_json["name"]
 		@main_binary = config_json["main-binary"]
 		@updater_binary = config_json["updater-binary"]
 	end
@@ -252,27 +243,26 @@ class PackageConfig
 		return File.basename(file) == @updater_binary
 	end
 
-	def package_for_file(file)
-		match = nil
-		@rule_map.each do |rule,package|
+	def file_match?(file)
+		@rule_map.each do |rule|
 			if (file =~ rule)
-				if match && match != package
-					raise "Multiple packages match file #{file} - found '#{match}' and '#{package}'"
-				end
-				match = package
+				return true
 			end
 		end
-		return match
+		return false
 	end
 end
 
 # Add the directory in which the script is located to PATH env variable
 # so that tools that come with it can be found by the system() command.
-ENV["PATH"] = ENV["PATH"] + ";#{File.dirname(__FILE__)}"
+current_script_path = File.expand_path(File.dirname(__FILE__))
+ENV["PATH"] = ENV["PATH"] + ";#{current_script_path}"
 
 updater_binary_input_path = nil
 target_version = nil
 target_platform = nil
+# "" is a neutral value meaning that no suffix will be appended.
+package_suffix = "" 
 zip_flags = nil
 
 OptionParser.new do |parser|
@@ -282,6 +272,9 @@ OptionParser.new do |parser|
 	end
 	parser.on("-v","--version [version]","Specifies the target version string for this update") do |version|
 		target_version = version
+	end
+	parser.on("-s","--suffix [suffix]","suffix added to the package and script filename. Suffix is added between the package name and the extension.") do |val|
+		package_suffix = val
 	end
 	parser.on("-p","--platform [platform]","Specifies the target platform for this update") do |platform|
 		target_platform = platform
@@ -322,80 +315,77 @@ end
 # read the package map
 package_config = PackageConfig.new(package_map_file)
 
-# map of package name -> array of files
-package_file_map = {}
-
+# detect which files go into the package.
+package_file_list = []
 input_file_list.each do |file|
 	next if File.symlink?(file)
-
 	relative_file = strip_prefix(file,input_dir)
-	package = package_config.package_for_file(relative_file)
-	if (package)
-		package_file_map[package] = [] if !package_file_map[package]
-		package_file_map[package] << file
+	if (package_config.file_match?(relative_file))
+		package_file_list << file
 	end
 end
 
-# generate each package
-package_file_map.each do |package,files|
-	puts "Generating package #{package}"
+# generate package
+package = package_config.name
+puts "Generating package #{package}"
 
-	quoted_files = []
-	files.each do |file|
-		# do not package the updater binary into a zip file -
-		# it must be downloaded uncompressed
-		if package_config.is_updater(file)
-			if (!updater_binary_input_path)
-				updater_binary_input_path = file
-			end
-		end
-		quoted_files << "\"#{strip_prefix(file,input_dir)}\""
-	end
-
-	if (quoted_files.empty?)
-		puts "Skipping generation of empty package #{package}"
-		next
-	end
-
-	# sort the files in alphabetical order to ensure
-	# that if the input files for a package have the same
-	# name and content, the resulting package will have the
-	# same SHA-1
-	#
-	# This means that repeated runs of the package creation tool
-	# on the same set of files should generated packages with the
-	# same SHA-1
-	quoted_files.sort! do |a,b|
-		a <=> b
-	end
-	
-	quoted_file_list = quoted_files.join(" ")
-
-	output_path = File.expand_path(output_dir)
-	output_file = "#{output_path}/#{package}.zip"
-
-	File.unlink(output_file) if File.exist?(output_file)
-
-	Dir.chdir(input_dir) do
-		if (!system("zip #{zip_flags} #{output_file} #{quoted_file_list}"))
-			raise "Failed to generate package #{package}"
-		else
-			puts "Generated package #{package} : #{file_sha1(output_file)}"
-		end
-	end
+quoted_files = []
+package_file_list.each do |file|
+    # do not package the updater binary into a zip file -
+    # it must be downloaded uncompressed
+    if package_config.is_updater(file)
+        if (!updater_binary_input_path)
+            updater_binary_input_path = file
+        end
+    end
+    quoted_files << "\"#{strip_prefix(file,input_dir)}\""
 end
 
-# output the file_list.xml file
-update_script = UpdateScriptGenerator.new(target_version,target_platform,input_dir,
-                  output_dir,package_config,input_file_list,package_file_map)
-output_xml_file = "#{output_dir}/file_list.unformatted.xml"
+if (quoted_files.empty?)
+    puts "Skipping generation of empty package #{package}"
+end
+
+# sort the files in alphabetical order to ensure
+# that if the input files for a package have the same
+# name and content, the resulting package will have the
+# same SHA-1
+#
+# This means that repeated runs of the package creation tool
+# on the same set of files should generated packages with the
+# same SHA-1
+quoted_files.sort! do |a,b|
+    a <=> b
+end
+
+quoted_file_list = quoted_files.join(" ")
+
+output_path = File.expand_path(output_dir)
+output_file = "#{output_path}/#{package}#{package_suffix}.zip"
+
+File.unlink(output_file) if File.exist?(output_file)
+
+Dir.chdir(input_dir) do
+    if (!system("zip #{zip_flags} #{output_file}" \
+            " #{quoted_file_list}"))
+        raise "Failed to generate package #{package}"
+    else
+        puts "Generated package #{package} : #{file_sha1(output_file)}"
+    end
+end
+
+# output the .xml file
+update_script = UpdateScriptGenerator.new(target_version, package_suffix,
+                    target_platform, input_dir, output_dir, package_config,
+                    package_file_list)
+output_xml_file = "#{output_dir}/#{package_config.name}.unformatted.xml"
 File.open(output_xml_file,'w') do |file|
 	file.write update_script.to_xml()
 end
 
 # xmllint generates more readable formatted XML than REXML, so write unformatted
 # XML first and then format it with xmllint.
-system("xmllint #{output_xml_file} > #{output_dir}/file_list.xml")
+system("xmllint #{output_xml_file} > " \
+    "#{output_dir}/#{package_config.name}#{package_suffix}.zip.xml")
 File.delete(output_xml_file)
 
 

@@ -1,11 +1,12 @@
 {
-	"packages" : {
-		// a single package which contains all files for the application
-		"app" : [
-			".*"
-		],
-	},
-	
+	// Name of the package.
+	"name" : "app",
+
+	// Files that should be included in the package.
+	"files" : [
+		".*"
+	],
+
 	// the name of the updater binary - this will be listed as
 	// a dependency of the update process
 	"updater-binary" : "updater",
