@@ -34,7 +34,7 @@ class CFGAutoUpdates : public ConfigurationBaseBox, private Ui::CFGAutoUpdates
 		CFGAutoUpdates(QWidget* parent=NULL);
 
 		QIcon icon() const { return QIcon(":/icons/doomseeker_plus.png"); }
-		QString name() const { return tr("Auto updates"); }
+		QString name() const { return tr("Auto Updates"); }
 
 		void readSettings();
 

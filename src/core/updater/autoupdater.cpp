@@ -171,7 +171,7 @@ QString AutoUpdater::errorCodeToString(ErrorCode code)
 		case EC_Aborted:
 			return tr("Update was aborted.");
 		case EC_NullUpdateChannel:
-			return tr("No valid update channel was specified. Please check your configuration.");
+			return tr("Update channel is not configured. Please check your configuration.");
 		case EC_UpdaterInfoDownloadProblem:
 			return tr("Failed to download updater info file.");
 		case EC_UpdaterInfoCannotParse:
@@ -192,9 +192,9 @@ QString AutoUpdater::errorCodeToString(ErrorCode code)
 		case EC_StorageDirCreateFailure:
 			return tr("Failed to create directory for updates packages storage.");
 		case EC_PackageCantBeSaved:
-			return tr("Failed to create package file for saving.");
+			return tr("Failed to save update package.");
 		case EC_ScriptCantBeSaved:
-			return tr("Failed to create updater script file for saving.");
+			return tr("Failed to save update script.");
 		default:
 			return tr("Unknown error.");
 	}
