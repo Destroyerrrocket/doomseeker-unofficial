@@ -7,19 +7,42 @@
 #------------------------------------------------------------------------------
 
 # Instructions of use:
-# 
+#
 # This script is a part of Doomseeker update packages auto-build system.
+#
+# What this does:
+# 1. For every package that is defined in CHANNELS[<channel>] hash there is
+#    a call to CREATE_PACKAGE_SCRIPT_NAME script. Platform, display version and
+#    suffix information is passed to this script as arguments.
+# 2. An output directory is determined basing on current timestamp and randomly
+#    generated string of 8 characters. This directory is created in current
+#    working directory.
+# 3. CREATE_PACKAGE_SCRIPT_NAME script creates two files in the output
+#    directory. One file is a package .zip archive, the other is a Mendeley
+#    updater's XML script. Files are named basing on internal package name,
+#    revision, channel and platform.
+# 4. If at least one package was created successfully, this script will
+#    create an "update-info.js" file. This file contains information on
+#    all packages for all channels. Doomseeker downloads this file each time
+#    when it wants to check if there are any new updates. OVERWRITE THIS FILE
+#    ON THE SERVER WITH ABSOLUTE CARE!!! The file is formatted in
+#    a human-readable fashion for purpose. Always double-check if revisions for
+#    all channels are correct, otherwise you may screw up people's setups.
+#
+# Requirements:
 # Following requirements must be met for this script to work correctly:
-# - CreatePackagesScriptName must exist in current working directory and its
+# - "ruby" executable must be in ENV["PATH"].
+# - CREATE_PACKAGE_SCRIPT_NAME must exist in current working directory and its
 #   requirements must be met.
-# - PackageConfigsDir must exist and contain at least one .js file that is
-#   compliant with config-template.js
+# - PACKAGE_CONFIGS_DIR must exist and contain .js files, one for each package.
+#   .js files must be compliant with config-template.js. Files must be named
+#   after internal package names (doomseeker.js, p-chocolatedoom.js, etc.).
 # - Doomseeker binary packages need to be compiled beforehand and placed in
 #   a directory in a structure that is the same as after deployment on end-user
 #   system. All Doomseeker requirements and peripheral files must also be
 #   located in this directory (translations, plugins, runtime DLLs, etc.).
-# - Optionally, a "update-info_<Platform>.js" may also be located in current
-#   working directory. The script will update this file.
+#   `make install`, or INSTALL target in Visual Studio, should take care of
+#   creating appropriate structure.
 #
 # Usage:
 # 1. Adjust package revisions and version names. Add new packages if necessary.
@@ -28,9 +51,6 @@
 #      b) Plugins must be prefixed with "p-".
 #      c) Plugin names musn't contain spaces; Doomseeker plugin loader removes
 #         any spaces for internal usage.
-#      d) Single .js configuration - single package. Mendeley updater allows
-#         to define more than one package in a single configuration file but
-#         Doomseeker doesn't.
 # 2. Call pattern & arguments:
 #      script.rb -c <channel> -i <binary-dir>
 #
@@ -39,6 +59,7 @@
 #        either "stable" or "beta". This is case-sensitive.
 #    -i <binary-dir>
 #        Directory where doomseeker.exe resides.
+# 3. Commit this file when revision information changes.
 
 require 'fileutils'
 require 'optparse'
@@ -51,12 +72,26 @@ require 'date'
 ###############################################################################
 # TODO: Move these configuration settings out to a separate file
 # so that the script can be reused on different platforms.
-Platform = "win32"
-PackageConfigsDir = "win32-configs"
-CreatePackagesScriptName = "create-packages-win32.rb"
-UrlBase = "http://doomseeker.drdteam.org/updates/"
+# TODO: The version information could be read from the source-code, provided
+# that this file is not moved from the repo, and provided that the version
+# information in the code actually matches the version information in
+# the binary that is about to be packaged.
+PLATFORM = "win32"
+PACKAGE_CONFIGS_DIR = "win32-configs"
+CREATE_PACKAGE_SCRIPT_NAME = "create-packages-win32.rb"
+URL_BASE = "http://doomseeker.drdteam.org/updates/"
 
-ChannelStable = {
+DISPLAY_NAMES = {
+    "doomseeker" => "Doomseeker",
+    "p-chocolatedoom" => "Chocolate Doom",
+    "p-odamex" => "Odamex",
+    "p-skulltag" => "Skulltag",
+    "p-vavoom" => "Vavoom",
+    "p-zandronum" => "Zandronum",
+    "p-zdaemon" => "ZDaemon"
+}
+
+CHANNEL_STABLE = {
     "doomseeker" => {
         "revision" => 1,
         "display-version" => "1.0.1",
@@ -81,7 +116,7 @@ ChannelStable = {
     },
 }
 
-ChannelBeta = {
+CHANNEL_BETA = {
     "doomseeker" => {
         "revision" => 2,
         "display-version" => "1.0.1",
@@ -106,30 +141,14 @@ ChannelBeta = {
     },
 }
 
-Channels = {
-    "stable" => ChannelStable,
-    "beta" => ChannelBeta
+CHANNELS = {
+    "stable" => CHANNEL_STABLE,
+    "beta" => CHANNEL_BETA
 }
 
 ###############################################################################
 # Functions
 ###############################################################################
-def read_and_parse_cfg_file(cfg_file_path)
-    contents = File.read(cfg_file_path)
-    return JSON.parse(contents)
-end
-
-def get_package_name_from_config(cfg)
-    packages = cfg["packages"]
-    if packages == nil || packages.empty?
-        raise Exception("Invalid config file (no packages).")
-    elsif packages.length > 1
-        raise Exception("More than one package is defined.")
-    end
-    name = packages.first[0]
-    return name
-end
-
 def spawn_unique_dir(prefix)
     # There's a slight possibility that the directory will already exist,
     # however with UUID and time stamp the risk should be minimal.
@@ -140,18 +159,61 @@ def spawn_unique_dir(prefix)
     return name
 end
 
-def process_config(pkg_name, channel, binary_dir, output_dir)
-    cfg_file_path = File.join(PackageConfigsDir, "#{pkg_name}.js")
-    channel_data = Channels[channel]
+def package_suffix(revision, channel, platform)
+    return "_#{revision}-#{channel}_#{platform}"
+end
+
+def package_filename(pkg_name, revision, channel, platform)
+    return "#{pkg_name}#{package_suffix(revision, channel, platform)}.zip"
+end
+
+def extract_display_version(pkg_data)
+    return pkg_data.include?("display-version") ?
+        pkg_data["display-version"] : pkg_data["revision"]
+end
+
+def process_package(pkg_name, channel, binary_dir, output_dir)
+    # Create the package archive and .xml script by calling
+    # the "create-packages" script.
+    
+    # Extract necessary information on the package.
+    channel_data = CHANNELS[channel]
     pkg_data = channel_data[pkg_name]
     revision = pkg_data["revision"]
-    display_version = pkg_data.include?("display-version") ? 
-        pkg_data["display-version"] : revision
-    suffix = "_#{revision}-#{channel}_#{Platform}"
-    result = system("ruby #{CreatePackagesScriptName} -p #{Platform} " \
+    display_version = extract_display_version(pkg_data)
+    suffix = package_suffix(revision, channel, PLATFORM)
+    # Get path to the .js config file required by the script.
+    cfg_file_path = File.join(PACKAGE_CONFIGS_DIR, "#{pkg_name}.js")
+    # Run script.
+    result = system("ruby #{CREATE_PACKAGE_SCRIPT_NAME} -p #{PLATFORM} " \
         "-v #{display_version} --suffix='#{suffix}' " \
         "#{binary_dir} #{cfg_file_path} #{output_dir}")
     raise "Package generation failed." if !result
+end
+
+def dump_update_info(output_path)
+    # Convert internal channel information to data understood by Doomseeker's
+    # update-info parser.
+    update_info = {}
+    CHANNELS.each do |channel_name, channel_data|
+        channel_data.each do |pkg, pkg_info|
+            update_info[pkg] = {} if !update_info.include?(pkg)
+            revision = pkg_info["revision"]
+            filename = package_filename(pkg, revision, channel_name, PLATFORM)
+            url = File.join(URL_BASE, filename)
+            update_info[pkg][channel_name] = {
+                "revision" => revision,
+                "display-version" => extract_display_version(pkg_info),
+                "display-name" => DISPLAY_NAMES[pkg],
+                "URL" => url
+            }
+        end
+    end
+    json_data = JSON.pretty_generate(update_info)
+    File.open(output_path, "w") do |f|
+        f.write(json_data)
+        f.write("\n")
+    end
 end
 ###############################################################################
 # Script Contents
@@ -184,8 +246,8 @@ begin
         if !Dir.exists?(binary_dir)
     target_channel.downcase!
     raise "Invalid channel name \"#{target_channel}\".\n" \
-        "  Allowed names: #{Channels.keys}" \
-            if !Channels.keys.include?(target_channel)
+        "  Allowed names: #{CHANNELS.keys}" \
+            if !CHANNELS.keys.include?(target_channel)
 rescue
     $stderr.puts "ERROR: #{$!}"
     $stderr.puts "Use -h for help"
@@ -194,13 +256,13 @@ end
 
 output_dir = spawn_unique_dir("upkgs-#{target_channel}")
 
-# Process configs.
+# Process packages.
 successes = []
 failures = []
-Channels[target_channel].keys.each do |pkg_name|
+CHANNELS[target_channel].keys.each do |pkg_name|
     begin
         $stderr.puts "==== Now processing: #{pkg_name}"
-        process_config(pkg_name, target_channel, binary_dir, output_dir)
+        process_package(pkg_name, target_channel, binary_dir, output_dir)
         successes << pkg_name
     rescue
         puts $@, $!
@@ -211,6 +273,7 @@ Channels[target_channel].keys.each do |pkg_name|
     end
 end
 
+# Print success/failure states.
 successes.each do |el|
     $stderr.puts "Success: #{el}"
 end
@@ -220,9 +283,18 @@ failures.each do |el|
 end
 
 if !successes.empty?
-    puts "Created packages are in directory: #{output_dir}"
+    $stderr.puts "Created packages are in directory: #{output_dir}"
+    # If at least one package was successful create the update-info.js file.
+    update_info_path = File.join(output_dir, "update-info_#{PLATFORM}.js")
+    $stderr.puts "Creating update info file: #{update_info_path}"
+    dump_update_info(update_info_path)
 else
-    Dir.rmdir(output_dir)
+    # Delete the output directory if all packages failed.
+    begin
+        Dir.rmdir(output_dir)
+    rescue
+        puts $@, $!
+    end
 end
 
 $stderr.puts failures.empty? ? "ALL SUCCESS!" : "ERRORS ENCOUNTERED!"
