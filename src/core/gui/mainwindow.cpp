@@ -1093,7 +1093,7 @@ void MainWindow::onAutoUpdaterDownloadAndInstallConfirmationRequest()
 
 void MainWindow::onAutoUpdaterFinish()
 {
-	gLog << tr("Program update finished with status: [%1] %2")
+	gLog << tr("Program update detection & download finished with status: [%1] %2")
 		.arg((int)autoUpdater->errorCode()).arg(autoUpdater->errorString());
 	gConfig.autoUpdates.bPerformUpdateOnNextRun = false;
 	if (autoUpdater->errorCode() == AutoUpdater::EC_Ok)

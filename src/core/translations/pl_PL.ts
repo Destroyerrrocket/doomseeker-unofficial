@@ -3108,8 +3108,12 @@ Jedno z prawidłowych miejsc dla wtyczek to katalog &quot;engines/&quot;.
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="1096"/>
+        <source>Program update detection &amp; download finished with status: [%1] %2</source>
+        <translation>Wykrywanie i pobieranie aktualizacji programu ukończone ze statusem: [%1] %2</translation>
+    </message>
+    <message>
         <source>Program update finished with status: [%1] %2</source>
-        <translation>Aktualizacja programu ukończona ze statusem [%1]: %2</translation>
+        <translation type="obsolete">Aktualizacja programu ukończona ze statusem [%1]: %2</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="1106"/>
