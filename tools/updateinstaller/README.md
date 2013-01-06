@@ -44,13 +44,13 @@ Once the updater has been started, it:
     laid out in the same way and with the same permissions as they would be when installed.
  2. Create a config file specifying how the application's files should be
     partitioned into packages - see tools/config-template.json
- 3. Use the tools/create-packages.rb script to create a file_list.xml file
-    and a set of package files required for updates.
- 4. Upload the file_list.xml file and packages to a server
+ 3. Use the tools/create-packages-win32.rb script to create a .xml script file
+    and a package of files required for updates.
+ 4. Upload the .xml file and the package to a server
 
  After step 4 is done, you need to notify existing installs that an update
  is available.  The installed application then needs to download the
- relevant packages, file_list.xml file and updater binary to a temporary
+ relevant packages, .xml file and updater binary to a temporary
  directory and invoke the updater.
 
  See doc/update-hosting for more details on hosting and delivering the updates.
@@ -64,7 +64,7 @@ Once the updater has been started, it:
 
  Where `<install-dir>` is the directory which the application is installed into,
  `<package-dir>` is the directory containing the packages required for the update
- and `<script>` is the `file_list.xml` file describing the update.
+ and `<script>` is the `.xml` file describing the update.
  
  An optional "--args" argument is accepted. The value of this argument is passed
  to the target program after the update is completed and the updated program
@@ -73,7 +73,7 @@ Once the updater has been started, it:
  parsed properly.
 
  Once the updater has run, it will launch the file specified in
- the `file_list.xml` file as the "run-after-install" binary. In package
+ the `.xml` file as the "run-after-install" binary. In package
  generator configuration this file is specified using the "main-binary" option.
 
  "--exec" is an optional argument that may be used to define executable that
@@ -125,7 +125,7 @@ Once the updater has been started, it:
  To reduce the download size, delta updates can be created which only include
  the necessary files or components to update from the old to the new version.
 
- The file_list.xml file format can be used to represent either a complete
+ The .xml script file format can be used to represent either a complete
  install - in which every file that makes up the application is included,
  or a delta update - in which case only new or updated files and packages
  are included.
@@ -141,12 +141,12 @@ Once the updater has been started, it:
   The server receives a request for an update from client version X and in response,
   computes an update from version X to the current version Y, possibly
   caching that information for future use.  The client then receives the
-  delta file_list.xml file and downloads only the listed packages.
+  delta .xml script file and downloads only the listed packages.
 
   Applications such as Chrome and Firefox use a mixture of the above methods.
 
  * Client-computed Delta Updates
-  The client downloads the file_list.xml file for the latest version and
+  The client downloads the .xml script file for the latest version and
   computes a delta update file locally.  It then downloads only the required
   packages and invokes the updater, which installs only the changed or updated
   files from those packages.
