@@ -169,7 +169,7 @@ end
 
 def extract_display_version(pkg_data)
     return pkg_data.include?("display-version") ?
-        pkg_data["display-version"] : pkg_data["revision"]
+        pkg_data["display-version"] : pkg_data["revision"].to_s
 end
 
 def process_package(pkg_name, channel, binary_dir, output_dir)
@@ -185,9 +185,9 @@ def process_package(pkg_name, channel, binary_dir, output_dir)
     # Get path to the .js config file required by the script.
     cfg_file_path = File.join(PACKAGE_CONFIGS_DIR, "#{pkg_name}.js")
     # Run script.
-    result = system("ruby #{CREATE_PACKAGE_SCRIPT_NAME} -p #{PLATFORM} " \
-        "-v #{display_version} --suffix='#{suffix}' " \
-        "#{binary_dir} #{cfg_file_path} #{output_dir}")
+    result = system("ruby", CREATE_PACKAGE_SCRIPT_NAME, "-p", PLATFORM,
+        "-v", display_version, "--suffix", suffix,
+        binary_dir, cfg_file_path, output_dir)
     raise "Package generation failed." if !result
 end
 
