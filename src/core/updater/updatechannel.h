@@ -36,6 +36,8 @@
  */
 class UpdateChannelTr : public QObject
 {
+	Q_OBJECT
+
 	private:
 		UpdateChannelTr() {}
 };
