@@ -343,7 +343,7 @@ nie może zostać uruchomiony</translation>
     <message>
         <location filename="../updater/autoupdater.cpp" line="284"/>
         <source>All packages downloaded. Building updater script.</source>
-        <translation>Wszystkie pakiety pobrane. Tworzenie skrytpu aktualizacyjnego.</translation>
+        <translation>Wszystkie pakiety pobrane. Tworzenie skryptu aktualizacyjnego.</translation>
     </message>
     <message>
         <location filename="../updater/autoupdater.cpp" line="291"/>
