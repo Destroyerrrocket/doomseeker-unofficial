@@ -31,6 +31,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QProcess>
+#include <QTemporaryFile>
 
 const QString UPDATER_EXECUTABLE_FILENAME = "updater.exe";
 
@@ -41,6 +42,39 @@ UpdateInstaller::UpdateInstaller(QObject* pParent)
 
 UpdateInstaller::~UpdateInstaller()
 {
+}
+
+QString UpdateInstaller::copyUpdaterExecutableToTemporarySpace()
+{
+	// Windows will complain if we try to overwrite an executable
+	// of a running process. To be able to update the updater itself,
+	// we need to copy it out to somewhere else and then launch this clone.
+	QString updaterProgramPath = Strings::combinePaths(
+		QCoreApplication::applicationDirPath(),
+		UPDATER_EXECUTABLE_FILENAME);
+
+	// Copying the file to the same directory as the packages, and prefixing
+	// its filename with the same prefix as packages, will ensure
+	// that the main program will remove the cloned updater once
+	// update is finished.
+	QString updaterCloneFilename = QString("%1-updater.exe").arg(
+		DataPaths::UPDATE_PACKAGE_FILENAME_PREFIX);
+	QString clonePath = Strings::combinePaths(
+		AutoUpdater::updateStorageDirPath(), updaterCloneFilename);
+
+	if (QFile::copy(updaterProgramPath, clonePath))
+	{
+		bool bPermissionsSet = QFile::setPermissions(clonePath,
+			QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner
+				| QFile::ExeGroup | QFile::ReadGroup | QFile::ReadOther);
+		if (bPermissionsSet)
+		{
+			return clonePath;
+		}
+	}
+	gLog << tr("Failed to copy the updater executable to a temporary"
+		" space: \"%1\" -> \"%2\".").arg(updaterProgramPath, clonePath);
+	return QString();
 }
 
 QString UpdateInstaller::errorCodeToStr(ErrorCode code)
@@ -131,9 +165,12 @@ UpdateInstaller::ErrorCode UpdateInstaller::startInstallation()
 bool UpdateInstaller::startUpdaterProcess(const QString& packagesDir,
 	const QString& scriptFilePath)
 {
-	QString updaterProgramPath = Strings::combinePaths(
-		QCoreApplication::applicationDirPath(),
-		UPDATER_EXECUTABLE_FILENAME);
+	QString updaterProgramPath = copyUpdaterExecutableToTemporarySpace();
+	if (updaterProgramPath.isEmpty())
+	{
+		return false;
+	}
+	qDebug() << "Updater program is located at path: " << updaterProgramPath;
 	QFile updaterProgramFile(updaterProgramPath);
 	QFileInfo programFileInfo(QCoreApplication::applicationFilePath());
 	QStringList args;

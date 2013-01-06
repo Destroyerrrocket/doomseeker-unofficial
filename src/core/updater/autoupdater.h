@@ -253,14 +253,7 @@ class AutoUpdater : public QObject
 		 */
 		void dumpUpdatePackagesToLog(const QList<UpdatePackage>& packages);
 		void finishWithError(ErrorCode code);
-		/**
-		 * @brief Makes sure the directory where the update packages
-		 *        will be stored is going to be ready.
-		 *
-		 * @return true if all went ok, false if directory was not prepared
-		 *         successfully.
-		 */
-		bool preparePackagesTempDirectory();
+
 		ErrorCode saveUpdaterScript();
 		void startPackageDownload(const UpdatePackage& pkg);
 		void startPackageScriptDownload(const UpdatePackage& pkg);

@@ -311,12 +311,12 @@ nie może zostać uruchomiony</translation>
         <translation>Błąd zapisu skryptu aktualizacyjnego.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="483"/>
+        <location filename="../updater/autoupdater.cpp" line="478"/>
         <source>Invalid download URL for package script &quot;%1&quot;: %2</source>
         <translation>Nieprawidłowy URL do pobrania skryptu dla pakietu &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="488"/>
+        <location filename="../updater/autoupdater.cpp" line="483"/>
         <source>Downloading package script &quot;%1&quot; from URL: %2.</source>
         <translation>Pobieranie skryptu dla pakietu &quot;%1&quot; z URL: %2.</translation>
     </message>
@@ -366,22 +366,22 @@ nie może zostać uruchomiony</translation>
         <translation>Niektóre pakiety aktualizacyjne zotały zignorowane. Aby je zainstalować, wybierz &quot;Sprawdź aktualizacje&quot; z menu &quot;Pomoc&quot;.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="404"/>
+        <location filename="../updater/autoupdater.cpp" line="399"/>
         <source>Failed to create directory for updates storage: %1</source>
         <translation>Nie udało się stworzyć katalogu dla zapisu aktualizacji: %1</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="435"/>
+        <location filename="../updater/autoupdater.cpp" line="430"/>
         <source>Invalid download URL for package &quot;%1&quot;: %2</source>
         <translation>Nieprawidłowy URL dla pobrania pakietu &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="440"/>
+        <location filename="../updater/autoupdater.cpp" line="435"/>
         <source>Downloading package &quot;%1&quot; from URL: %2.</source>
         <translation>Pobieranie pakietu &quot;%1&quot; z URL: %2.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="455"/>
+        <location filename="../updater/autoupdater.cpp" line="450"/>
         <source>Couldn&apos;t save file in path: %1</source>
         <translation>Nie można zapisać pliku w ścieżce: %1</translation>
     </message>
@@ -3933,73 +3933,78 @@ Pozostałe aktualizacje zostały porzucone.</translation>
 <context>
     <name>UpdateInstaller</name>
     <message>
-        <location filename="../updater/updateinstaller.cpp" line="51"/>
-        <location filename="../updater/updateinstaller.cpp" line="83"/>
+        <location filename="../updater/updateinstaller.cpp" line="75"/>
+        <source>Failed to copy the updater executable to a temporary space: &quot;%1&quot; -&gt; &quot;%2&quot;.</source>
+        <translation>Nie można skopiować pliku wykonywalnego aktualizatora do przestrzeni tymczasowej: &quot;%1&quot; -&gt; &quot;%2&quot;.</translation>
+    </message>
+    <message>
+        <location filename="../updater/updateinstaller.cpp" line="85"/>
+        <location filename="../updater/updateinstaller.cpp" line="117"/>
         <source>Ok</source>
         <translation>Ok</translation>
     </message>
     <message>
-        <location filename="../updater/updateinstaller.cpp" line="53"/>
+        <location filename="../updater/updateinstaller.cpp" line="87"/>
         <source>Nothing to update.</source>
         <translation>Brak aktualizacji.</translation>
     </message>
     <message>
-        <location filename="../updater/updateinstaller.cpp" line="55"/>
+        <location filename="../updater/updateinstaller.cpp" line="89"/>
         <source>Update package or script are not found. Check log for details.</source>
         <translation>Nie odnaleziono pakietu lub skryptu aktualizacji. Szczegóły w logu.</translation>
     </message>
     <message>
-        <location filename="../updater/updateinstaller.cpp" line="57"/>
+        <location filename="../updater/updateinstaller.cpp" line="91"/>
         <source>Failed to start updater process.</source>
         <translation>Nie udało się wystartować procesu aktualizatora.</translation>
     </message>
     <message>
-        <location filename="../updater/updateinstaller.cpp" line="59"/>
+        <location filename="../updater/updateinstaller.cpp" line="93"/>
         <source>Unknown error: %1.</source>
         <translation>Nieznany błąd: %1.</translation>
     </message>
     <message>
-        <location filename="../updater/updateinstaller.cpp" line="85"/>
+        <location filename="../updater/updateinstaller.cpp" line="119"/>
         <source>Unable to read update script.</source>
         <translation>Nie można przeczytać skryptu aktualizacyjnego.</translation>
     </message>
     <message>
-        <location filename="../updater/updateinstaller.cpp" line="87"/>
+        <location filename="../updater/updateinstaller.cpp" line="121"/>
         <source>No installation directory specified.</source>
         <translation>Nie podano katalogu aktualizacji.</translation>
     </message>
     <message>
-        <location filename="../updater/updateinstaller.cpp" line="89"/>
+        <location filename="../updater/updateinstaller.cpp" line="123"/>
         <source>Unable to determine path of updater.</source>
         <translation>Nie można wykryć ścieżki do aktualizatora.</translation>
     </message>
     <message>
-        <location filename="../updater/updateinstaller.cpp" line="91"/>
+        <location filename="../updater/updateinstaller.cpp" line="125"/>
         <source>General failure.</source>
         <translation>Ogółny błąd.</translation>
     </message>
     <message>
-        <location filename="../updater/updateinstaller.cpp" line="93"/>
+        <location filename="../updater/updateinstaller.cpp" line="127"/>
         <source>Unknown process error code: %1.</source>
         <translation>Nieznany kod błędu procesu: %1.</translation>
     </message>
     <message>
-        <location filename="../updater/updateinstaller.cpp" line="103"/>
+        <location filename="../updater/updateinstaller.cpp" line="137"/>
         <source>Installing update.</source>
         <translation>Instalacja aktualizacji.</translation>
     </message>
     <message>
-        <location filename="../updater/updateinstaller.cpp" line="118"/>
+        <location filename="../updater/updateinstaller.cpp" line="152"/>
         <source>Package directory &quot;%1&quot; doesn&apos;t exist.</source>
         <translation>Katalog pakietów &quot;%1&quot; nie istnieje.</translation>
     </message>
     <message>
-        <location filename="../updater/updateinstaller.cpp" line="124"/>
+        <location filename="../updater/updateinstaller.cpp" line="158"/>
         <source>Update was about to be installed but update script &quot;%1&quot; is missing.</source>
         <translation>Aktualizacja miała zostać zainstalowana, ale brakuje skryptu aktualizacji dla &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="../updater/updateinstaller.cpp" line="152"/>
+        <location filename="../updater/updateinstaller.cpp" line="189"/>
         <source>Failed to start updater process: %1 %2</source>
         <translation>Startowanie procesu aktualizatora nie powiodło się: %1 %2</translation>
     </message>

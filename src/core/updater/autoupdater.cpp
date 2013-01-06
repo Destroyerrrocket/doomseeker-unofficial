@@ -344,11 +344,6 @@ void AutoUpdater::onUpdaterInfoDownloadFinish()
 	}
 }
 
-bool AutoUpdater::preparePackagesTempDirectory()
-{
-	return true;
-}
-
 AutoUpdater::ErrorCode AutoUpdater::saveUpdaterScript()
 {
 	QDomDocument xmlDocAllScripts;

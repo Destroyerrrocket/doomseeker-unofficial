@@ -79,6 +79,10 @@ class UpdateInstaller : public QObject
 		ErrorCode startInstallation();
 
 	private:
+		/**
+		 * @brief @return Path to the new executable.
+		 */
+		QString copyUpdaterExecutableToTemporarySpace();
 		QString getPercentEncodedCurrentProcessArgs();
 		bool startUpdaterProcess(const QString& packagesDir, const QString& scriptFilePath);
 };
