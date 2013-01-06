@@ -137,3 +137,7 @@ get_property(EXE_LOCATION TARGET updater PROPERTY LOCATION)
 add_custom_command(TARGET updater POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${EXE_LOCATION} ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/
 )
+
+if (WIN32)
+    install(TARGETS updater RUNTIME DESTINATION .)
+endif()
