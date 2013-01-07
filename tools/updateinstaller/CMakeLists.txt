@@ -32,22 +32,23 @@ else()
 	set(CMAKE_C_FLAGS_RELEASE "-Os")
 endif()
 
-if (APPLE)
+#[BL] This stuff isn't needed sicne we take of this in the root CMakeLists.
+#if (APPLE)
 	# Build the updater as a dual 32/64bit binary.  If only one architecture
 	# is required, removing the other architecture will reduce the size
 	# of the updater binary
-	set(CMAKE_OSX_ARCHITECTURES i386;x86_64)
+#	set(CMAKE_OSX_ARCHITECTURES i386;x86_64)
 
 	# Build the updater so that it works on OS X 10.5 and above.
-	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.5)
+#	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.5)
 
 	# Set the SDK which the updater is built against.
 	# The available SDK versions are those which exist in /Developer/SDKs/
-	set(CMAKE_OSX_SDK 10.7)
+#	set(CMAKE_OSX_SDK 10.7)
 
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
-	set(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX${CMAKE_OSX_SDK}.sdk")
-endif()
+#	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
+#	set(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX${CMAKE_OSX_SDK}.sdk")
+#endif()
 
 add_subdirectory(src)
 add_subdirectory(external/AnyOption)

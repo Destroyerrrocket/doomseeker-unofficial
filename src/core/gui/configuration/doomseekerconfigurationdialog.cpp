@@ -114,7 +114,7 @@ void DoomseekerConfigurationDialog::initOptionsList()
 	addConfigurationBox(NULL, pConfigBox);
 
 	// Add only if supported on target platform.
-	#ifdef Q_OS_WIN32
+	#ifdef WITH_AUTOUPDATES
 		pConfigBox = new CFGAutoUpdates(this);
 		addConfigurationBox(NULL, pConfigBox);
 	#endif

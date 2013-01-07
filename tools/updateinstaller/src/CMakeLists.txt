@@ -49,7 +49,8 @@ if (APPLE)
 	set(SOURCES ${SOURCES}
 	  MacBundle.cpp
 	  StandardDirs.mm
-	  StlSymbolsLeopard.cpp
+	  #[BL] We'll probably need to reenable this, but I'm using the 10.4 SDK to compile so maybe not?
+	  #StlSymbolsLeopard.cpp
 	  UpdateDialogCocoa.mm
 	  mac_dock_icon.cpp
 	  mac_info_plist.cpp)

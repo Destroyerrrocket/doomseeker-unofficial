@@ -88,7 +88,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	updatesWidget->hide();
 
 	// Hide menu options which aren't supported on target platform.
-	#ifndef Q_OS_WIN32
+	#ifndef WITH_AUTOUPDATES
 		menuActionCheckForUpdates->setVisible(false);
 	#endif
 

@@ -60,10 +60,18 @@ class AutoUpdater::PrivData
 };
 //////////////////////////////////////////////////////////////////////////////
 
+#if defined(Q_OS_WIN32)
+#define UPDATE_PLATFORM "win32"
+#elif defined(Q_OS_MAC)
+#define UPDATE_PLATFORM "macosx"
+#else
+#error "No platform for updater!"
+#endif
+
 const QString AutoUpdater::PLUGIN_PREFIX = "p-";
 const QString AutoUpdater::MAIN_PROGRAM_PACKAGE_NAME = "doomseeker";
 // This can be set to different values depending on target platform.
-const QString AutoUpdater::UPDATER_INFO_URL = "http://doomseeker.drdteam.org/updates/update-info_win32.js";
+const QString AutoUpdater::UPDATER_INFO_URL = "http://doomseeker.drdteam.org/updates/update-info_" UPDATE_PLATFORM ".js";
 
 AutoUpdater::AutoUpdater(QObject* pParent)
 : QObject(pParent)

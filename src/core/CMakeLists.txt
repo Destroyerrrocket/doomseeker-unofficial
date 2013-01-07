@@ -48,6 +48,10 @@ if(WIN32)
 	add_definitions(-DMODE_MAIN)
 endif(WIN32)
 
+if(WITH_AUTOUPDATES)
+	add_definitions(-DWITH_AUTOUPDATES)
+endif(WITH_AUTOUPDATES)
+
 if (MSVC)
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif (MSVC)

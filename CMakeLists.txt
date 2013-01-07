@@ -74,9 +74,11 @@ if(MSVC AND NOT MSVC90)
 	)
 endif()
 
-if(WIN32)
+if(WIN32 OR APPLE)
+	set(WITH_AUTOUPDATES 1)
 	add_subdirectory(tools/updateinstaller)
-endif(WIN32)
+endif(WIN32 OR APPLE)
+
 add_subdirectory(tools/updaterevision)
 
 add_subdirectory(src/core)

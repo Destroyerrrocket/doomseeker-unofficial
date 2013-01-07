@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Get the version number
-version_info=`grep --only-matching -E '[0-9.]{3,}|Beta|Alpha' ../src/core/version.cpp`
-version="0.0"
+version_info=`grep --only-matching -E '([0-9]+\.[0-9]+)|Beta|Alpha' ../src/core/versiondefs.h`
+version=""
 tag=""
 for i in $version_info
 do
@@ -13,12 +13,22 @@ do
 	then
 		tag="a"
 	else
-		version=$i
+		if [ "$version" == "" ]
+		then
+			version=$i
+		fi
 	fi
 done
+if [ "$version" == "" ]
+then
+	version="0.0"
+fi
+
+NUM_CPU_CORES=`system_profiler SPHardwareDataType | awk '/Total Number Of Cores/ {print $5};'`
 
 echo "Version: $version"
 echo "Tag: $tag"
+echo "Building with $NUM_CPU_CORES jobs!"
 echo
 
 mkdir -p Doomseeker/Doomseeker.app/Contents/MacOS
@@ -29,7 +39,9 @@ mkdir Doomseeker/Doomseeker.app/Contents/Resources
 mkdir Doomseeker/build
 cd Doomseeker/build
 cmake ../../.. -DMAC_ARCH_UNIVERSAL=ON -DMAC_SDK_10.4=ON -DCMAKE_BUILD_TYPE=Release $@
-make -j 2
+# Run CMake twice since it will try to reconfigure itself... grr...
+cmake ../../.. -DCMAKE_BUILD_TYPE=Release $@
+make -j $NUM_CPU_CORES
 cd ..
 
 # Detect Qt installation
@@ -47,17 +59,21 @@ echo "Qt Plugins: $QTPLPATH"
 echo
 
 cp {build/,Doomseeker.app/Contents/MacOS/}doomseeker
+cp {build/,Doomseeker.app/Contents/MacOS/}updater
 cp {build/,Doomseeker.app/Contents/Frameworks/}libwadseeker.dylib
 cp -R {${QTPATH},Doomseeker.app/Contents/Frameworks/}QtCore.framework
 cp -R {${QTPATH},Doomseeker.app/Contents/Frameworks/}QtGui.framework
 cp -R {${QTPATH},Doomseeker.app/Contents/Frameworks/}QtNetwork.framework
+cp -R {${QTPATH},Doomseeker.app/Contents/Frameworks/}QtXml.framework
 cp -R {${QTPLPATH},Doomseeker.app/Contents/}plugins
 cp -R {build/,Doomseeker.app/Contents/MacOS/}engines
+cp -R {build/,Doomseeker.app/Contents/MacOS/}translations
+cp {${QTPLPATH},Doomseeker.app/Contents/MacOS/}translations/qt_pl.qm
 cp {../../media/,Doomseeker.app/Contents/}Info.plist
 cp {../../media/,Doomseeker.app/Contents/Resources/}icon-osx.icns
 cp {../../media/,Doomseeker.app/Contents/Resources/}qt.conf
-rm -rf Doomseeker.app/Contents/Frameworks/{QtCore,QtGui,QtNetwork}.framework/{*_debug.dSYM,Versions/4/Headers}
-rm -f Doomseeker.app/Contents/Frameworks/{QtCore,QtGui,QtNetwork}.framework/{Versions/4/,}*_debug*
+rm -rf Doomseeker.app/Contents/Frameworks/{QtCore,QtGui,QtNetwork,QtXml}.framework/{*_debug.dSYM,Versions/4/Headers}
+rm -f Doomseeker.app/Contents/Frameworks/{QtCore,QtGui,QtNetwork,QtXml}.framework/{Versions/4/,}*_debug*
 
 QTPLUGINS_LIST=''
 for i in `ls Doomseeker.app/Contents/plugins`
@@ -106,4 +122,5 @@ hdiutil convert $IMAGENAME -format UDBZ -o tmp$IMAGENAME
 mv {tmp,}$IMAGENAME
 hdiutil internet-enable -yes $IMAGENAME
 
+mv Doomseeker/Doomseeker.app Doomseeker.app
 rm -r Doomseeker image
