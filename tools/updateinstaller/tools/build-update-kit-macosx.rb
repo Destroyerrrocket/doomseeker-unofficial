@@ -154,8 +154,8 @@ def spawn_unique_dir(prefix)
     # There's a slight possibility that the directory will already exist,
     # however with UUID and time stamp the risk should be minimal.
     stamp = DateTime.now.strftime("%Y%m%d-%H%M%S")
-    name = "#{prefix}-#{stamp}-#{SecureRandom.uuid.slice(0,8)}"
-    raise "Directory #{name} already exists." if Dir.exists?(name)
+    name = "#{prefix}-#{stamp}-#{SecureRandom.base64(8)}"
+    raise "Directory #{name} already exists." if File.directory?(name)
     Dir.mkdir(name)
     return name
 end
@@ -244,7 +244,7 @@ begin
     raise "Channel not specified (use -c option)" if !target_channel
     raise "Binary directory not specified (use -i option)" if !binary_dir
     raise "Binary directory \"#{binary_dir}\" doesn't exist." \
-        if !Dir.exists?(binary_dir)
+        if !File.directory?(binary_dir)
     target_channel.downcase!
     raise "Invalid channel name \"#{target_channel}\".\n" \
         "  Allowed names: #{CHANNELS.keys}" \
@@ -286,7 +286,7 @@ end
 if !successes.empty?
     $stderr.puts "Created packages are in directory: #{output_dir}"
     # If at least one package was successful create the update-info.js file.
-    update_info_path = File.join(output_dir, "update-info_#{PLATFORM}.js")
+    update_info_path = File.join(output_dir, "update-info_#{PACKAGE_PLATFORM}.js")
     $stderr.puts "Creating update info file: #{update_info_path}"
     dump_update_info(update_info_path)
 else
