@@ -33,7 +33,11 @@
 #include <QProcess>
 #include <QTemporaryFile>
 
+#ifdef Q_OS_WIN32
 const QString UPDATER_EXECUTABLE_FILENAME = "updater.exe";
+#else
+const QString UPDATER_EXECUTABLE_FILENAME = "updater";
+#endif
 
 UpdateInstaller::UpdateInstaller(QObject* pParent)
 : QObject(pParent)
@@ -57,8 +61,9 @@ QString UpdateInstaller::copyUpdaterExecutableToTemporarySpace()
 	// its filename with the same prefix as packages, will ensure
 	// that the main program will remove the cloned updater once
 	// update is finished.
-	QString updaterCloneFilename = QString("%1-updater.exe").arg(
-		DataPaths::UPDATE_PACKAGE_FILENAME_PREFIX);
+	QString updaterCloneFilename = QString("%1-%2").arg(
+		DataPaths::UPDATE_PACKAGE_FILENAME_PREFIX).arg(
+		UPDATER_EXECUTABLE_FILENAME);
 	QString clonePath = Strings::combinePaths(
 		AutoUpdater::updateStorageDirPath(), updaterCloneFilename);
 
@@ -174,7 +179,12 @@ bool UpdateInstaller::startUpdaterProcess(const QString& packagesDir,
 	QFile updaterProgramFile(updaterProgramPath);
 	QFileInfo programFileInfo(QCoreApplication::applicationFilePath());
 	QStringList args;
+#ifdef Q_OS_MAC
+	// On Mac we're updating the bundle, but we get the location of the binary (<stuff>/Contents/MacOS/)
+	args << "--install-dir" << (QCoreApplication::applicationDirPath() + "/../..");
+#else
 	args << "--install-dir" << QCoreApplication::applicationDirPath();
+#endif
 	args << "--package-dir" << packagesDir;
 	args << "--script" << scriptFilePath;
 	args << "--exec" << QDir::toNativeSeparators(programFileInfo.absoluteFilePath());

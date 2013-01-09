@@ -172,7 +172,7 @@ int Main::run()
 	}
 
 	initMainConfig();
-	#ifdef Q_OS_WIN32
+	#ifdef WITH_AUTOUPDATES
 	// Handle pending update installations.
 	UpdateInstaller::ErrorCode updateInstallerResult
 		= (UpdateInstaller::ErrorCode)installPendingUpdates();
@@ -202,7 +202,7 @@ int Main::run()
 	{
 		setupRefreshingThread();
 		createMainWindow();
-		#ifdef Q_OS_WIN32
+		#ifdef WITH_AUTOUPDATES
 		// Handle auto update: display update failure or start auto update
 		// check/download.
 		if (updateFailedCode != 0)
