@@ -30,8 +30,6 @@ ServerConsole::ServerConsole(QWidget *parent, Qt::WindowFlags f) : QWidget(paren
 {
 	setupUi(this);
 
-	consoleOutput->setHtml("");
-
 	consoleInput = new MemoryLineEdit();
 	layout()->addWidget(consoleInput);
 
@@ -43,6 +41,7 @@ void ServerConsole::appendMessage(const QString &message)
 	QString appendMessage = Qt::escape(message);
 	if(appendMessage.endsWith('\n')) // Remove the trailing new line since appendPlainText seems to add one automatically.
 		appendMessage.chop(1);
+	appendMessage.replace('\n', "<br>");
 
 	// Process colors
 	if(gConfig.doomseeker.bColorizeServerConsole)
