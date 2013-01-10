@@ -65,7 +65,11 @@ class AutoUpdater::PrivData
 #elif defined(Q_OS_MAC)
 #define UPDATE_PLATFORM "macosx"
 #else
+#ifdef WITH_AUTOUPDATES
 #error "No platform for updater!"
+#else
+#define UPDATE_PLATFORM "none"
+#endif
 #endif
 
 const QString AutoUpdater::PLUGIN_PREFIX = "p-";
