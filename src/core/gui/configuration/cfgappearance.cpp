@@ -72,6 +72,8 @@ void CFGAppearance::readSettings()
 
 	cbCloseToTrayIcon->setChecked(gConfig.doomseeker.bCloseToTrayIcon);
 
+	cbColorizeConsole->setChecked(gConfig.doomseeker.bColorizeServerConsole);
+
 	cbHidePasswords->setChecked(gConfig.doomseeker.bHidePasswords);
 
 	cbLookupHosts->setChecked(gConfig.doomseeker.bLookupHosts);
@@ -105,6 +107,7 @@ void CFGAppearance::saveSettings()
 	gConfig.doomseeker.customServersColor = btnCustomServersColor->colorHtml();
 	gConfig.doomseeker.bUseTrayIcon = gboUseTrayIcon->isChecked();
 	gConfig.doomseeker.bCloseToTrayIcon = cbCloseToTrayIcon->isChecked();
+	gConfig.doomseeker.bColorizeServerConsole = cbColorizeConsole->isChecked();
 	gConfig.doomseeker.bBotsAreNotPlayers = cbBotsNotPlayers->isChecked();
 	gConfig.doomseeker.bHidePasswords = cbHidePasswords->isChecked();
 	gConfig.doomseeker.bLookupHosts = cbLookupHosts->isChecked();

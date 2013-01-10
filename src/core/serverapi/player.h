@@ -70,14 +70,7 @@ class MAIN_EXPORT Player
 		 */
 		QString			nameColorTagsStripped() const;
 
-		/**
-		 * Colorizes the given string.  Most useful for displaying colored
-		 * names.
-		 */
-		static QString	colorizeString(const QString &str, int def=4);
-
 	protected:
-		static const char	colorChart[22][7];
 
 		QString			playerName;
 		short			currentScore;

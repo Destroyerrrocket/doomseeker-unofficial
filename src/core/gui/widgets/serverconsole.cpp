@@ -20,11 +20,17 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
+#include "configuration/doomseekerconfig.h"
 #include "serverconsole.h"
+#include "strings.h"
+
+#include <QRegExp>
 
 ServerConsole::ServerConsole(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f)
 {
 	setupUi(this);
+
+	consoleOutput->setHtml("");
 
 	consoleInput = new MemoryLineEdit();
 	layout()->addWidget(consoleInput);
@@ -34,11 +40,23 @@ ServerConsole::ServerConsole(QWidget *parent, Qt::WindowFlags f) : QWidget(paren
 
 void ServerConsole::appendMessage(const QString &message)
 {
-	QString appendMessage = message;
+	QString appendMessage = Qt::escape(message);
 	if(appendMessage.endsWith('\n')) // Remove the trailing new line since appendPlainText seems to add one automatically.
 		appendMessage.chop(1);
 
-	consoleOutput->appendPlainText(appendMessage);
+	// Process colors
+	if(gConfig.doomseeker.bColorizeServerConsole)
+		appendMessage = Strings::colorizeString(appendMessage);
+	else
+	{
+		static const QRegExp colorCode("\034(\\[[a-zA-Z0-9]*\\]|[a-v+\\-!*])");
+		appendMessage.remove(colorCode);
+	}
+
+	// Emulate append since we need to force HTML on (append auto detects which fails if &lt; or < is not found).
+	consoleOutput->moveCursor(QTextCursor::End);
+	consoleOutput->insertHtml("<br>" + appendMessage);
+	consoleOutput->moveCursor(QTextCursor::End);
 }
 
 void ServerConsole::forwardMessage()

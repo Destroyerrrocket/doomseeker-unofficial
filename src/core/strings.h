@@ -27,9 +27,18 @@
 
 class QString;
 
+// \c = '\034'
+#define	ESCAPE_COLOR_CHAR	'\034'
+
 class MAIN_EXPORT Strings
 {
 	public:
+		/**
+		 * Colorizes the given string.  Most useful for displaying colored
+		 * names.
+		 */
+		static QString	colorizeString(const QString &str, int def=4);
+
 		/**
 		 *	Combines two strings into single path making sure there are no
 		 *	redundant slahes/backslashes present. Paths will be combined

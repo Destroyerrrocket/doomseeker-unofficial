@@ -204,6 +204,7 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 {
 	this->bBotsAreNotPlayers = true;
 	this->bCloseToTrayIcon = false;
+	this->bColorizeServerConsole = true;
 	this->bHidePasswords = false;
 	this->bIP2CountryAutoUpdate = true;
 	this->bLookupHosts = true;
@@ -281,6 +282,7 @@ void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 	section.createSetting("Localization", this->localization);
 	section.createSetting("BotsAreNotPlayers", this->bBotsAreNotPlayers);
 	section.createSetting("CloseToTrayIcon", this->bCloseToTrayIcon);
+	section.createSetting("ColorizeServerConsole", this->bColorizeServerConsole);
 	section.createSetting("HidePasswords", this->bHidePasswords);
 	section.createSetting("IP2CAutoUpdate", this->bIP2CountryAutoUpdate);
 	section.createSetting("LookupHosts", this->bLookupHosts);
@@ -309,6 +311,7 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->localization = (const QString&)section["Localization"];
 	this->bBotsAreNotPlayers = section["BotsAreNotPlayers"];
 	this->bCloseToTrayIcon = section["CloseToTrayIcon"];
+	this->bColorizeServerConsole = section["ColorizeServerConsole"];
 	this->bHidePasswords = section["HidePasswords"];
 	this->bIP2CountryAutoUpdate = section["IP2CAutoUpdate"];
 	this->bLookupHosts = section["LookupHosts"];
@@ -362,6 +365,7 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["Localization"] = this->localization;
 	section["BotsAreNotPlayers"] = this->bBotsAreNotPlayers;
 	section["CloseToTrayIcon"] = this->bCloseToTrayIcon;
+	section["ColorizeServerConsole"] = this->bColorizeServerConsole;
 	section["HidePasswords"] = this->bHidePasswords;
 	section["IP2CAutoUpdate"] = this->bIP2CountryAutoUpdate;
 	section["LookupHosts"] = this->bLookupHosts;
