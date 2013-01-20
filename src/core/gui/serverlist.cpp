@@ -208,6 +208,23 @@ QString ServerListHandler::createPlayersToolTip(const Server* server)
 	return ret;
 }
 
+QString ServerListHandler::createPortToolTip(const Server* server)
+{
+	if (server == NULL || !server->isKnown())
+		return QString();
+
+	QString ret;
+	if (server->isLocked())
+		ret = "Password protected";
+	if (server->isSecured())
+	{
+		if(!ret.isEmpty())
+			ret += '\n';
+		ret += "Enforces master bans";
+	}
+	return ret;
+}
+
 QString ServerListHandler::createPwadsToolTip(const Server* server)
 {
 	if (server == NULL || !server->isKnown() || server->numWads() == 0)
@@ -375,6 +392,10 @@ void ServerListHandler::mouseEntered(const QModelIndex& index)
 	// in case if it should be not.
 	switch(index.column())
 	{
+		case IDPort:
+			tooltip = createPortToolTip(server);
+			break;
+
 		case IDAddress:
 			tooltip = server->hostName(true);
 			break;

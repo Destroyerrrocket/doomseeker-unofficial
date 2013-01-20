@@ -132,6 +132,7 @@ class MAIN_EXPORT Server : public QObject
 		bool				isKnown() const { return bKnown; }
 		bool				isLocked() const { return locked; }
 		bool				isRefreshable() const;
+		bool				isSecured() const { return bSecureServer; }
 		bool				isSetToDelete() const { return bDelete; }
 		const QString		&iwadName() const { return iwad; }
 		const QString&		joinPassword() const { return passwordJoin; }
@@ -281,6 +282,7 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		bool				bPingIsSet;
 
+		bool				bSecureServer;
 		bool				broadcastToLAN;
 		bool				broadcastToMaster;
 		GameMode			currentGameMode;

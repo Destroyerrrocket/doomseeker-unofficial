@@ -553,6 +553,12 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 		}
 	}
 
+	if((flags & SQF_SECURITY_SETTINGS) == SQF_SECURITY_SETTINGS)
+	{
+		flags ^= SQF_SECURITY_SETTINGS;
+
+		bSecureServer = in.readQUInt8() != 0;
+	}
 
 	// Due to a bug in 0.97d3 we need to add additional checks here.
 	// 0.97d3 servers also respond with SQF_TESTING_SERVER flag set

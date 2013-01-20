@@ -69,5 +69,5 @@ void AboutDialog::changePlugin(int pluginIndex)
 	const EnginePlugin* plug = (*Main::enginePlugins)[pluginIndex]->info;
 
 	pluginAuthor->setText(plug->data()->author);
-	pluginVersion->setText(QString("Version: %1").arg(plug->data()->version));
+	pluginVersion->setText(QString("Version: %1.%2").arg(plug->data()->abiVersion).arg(plug->data()->version));
 }

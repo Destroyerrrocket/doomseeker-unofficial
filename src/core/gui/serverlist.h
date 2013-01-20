@@ -126,6 +126,7 @@ class ServerListHandler : public QObject
 
 		QString					createIwadToolTip(const Server* server);
 		QString 				createPlayersToolTip(const Server* server);
+		QString					createPortToolTip(const Server* server);
 		QString 				createPwadsToolTip(const Server* server);
 		QString					createPwadToolTipInfo(const PWad& pwad);
 		QString 				createServerNameToolTip(const Server* server);

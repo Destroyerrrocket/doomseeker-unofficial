@@ -157,11 +157,20 @@ void ServerListRowHandler::fillPortIconColumn()
 {
 	QStandardItem* pItem = item(IDPort);
 	QPixmap icon = server->icon();
-	if(server->isLocked() && server->isKnown()) // Draw a key if it is locked.
+	if(server->isKnown())
 	{
-		QPainter iconPainter(&icon);
-		iconPainter.drawPixmap(0, 0, QPixmap(":/locked.png"));
-		iconPainter.end();
+		if(server->isLocked()) // Draw a key if it is locked.
+		{
+			QPainter iconPainter(&icon);
+			iconPainter.drawPixmap(0, 0, QPixmap(":/locked.png"));
+			iconPainter.end();
+		}
+		else if(server->isSecured())
+		{
+			QPainter iconPainter(&icon);
+			iconPainter.drawPixmap(0, 0, QPixmap(":/shield.png"));
+			iconPainter.end();
+		}
 	}
 	fillItem(pItem, server->metaObject()->className(), icon);
 }

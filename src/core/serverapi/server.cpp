@@ -84,6 +84,7 @@ Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
 	if(gConfig.doomseeker.bLookupHosts)
 		lookupHost();
 
+	bSecureServer = false;
 	broadcastToLAN = false;
 	broadcastToMaster = false;
 	mapRandomRotation = false;

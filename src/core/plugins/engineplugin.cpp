@@ -61,6 +61,10 @@ EnginePlugin::Data::Data()
 EnginePlugin::EnginePlugin()
 {
 	d = new Data;
+
+	// At the moment I can't think of how we would support any ABI other than
+	// the current, but I suppose we might as well keep track of it?
+	d->abiVersion = DOOMSEEKER_ABI_VERSION;
 }
 
 EnginePlugin::~EnginePlugin()

@@ -30,6 +30,9 @@
 #include "global.h"
 #include "serverapi/serverstructs.h"
 
+// Bump whenever the ABI changes in order to reject old plugins
+#define DOOMSEEKER_ABI_VERSION 1
+
 #define DECLARE_PLUGIN(XEnginePlugin) \
 	public: \
 		static EnginePlugin *staticInstance() { return &__Static_Instance; } \
@@ -38,6 +41,7 @@
 
 #define INSTALL_PLUGIN(XEnginePlugin) \
 	XEnginePlugin XEnginePlugin::__Static_Instance; \
+	extern "C" PLUGIN_EXPORT unsigned int doomSeekerABI() { return DOOMSEEKER_ABI_VERSION; } \
 	extern "C" PLUGIN_EXPORT EnginePlugin *doomSeekerInit() \
 	{ \
 		return XEnginePlugin::staticInstance(); \
@@ -113,6 +117,7 @@ class MAIN_EXPORT EnginePlugin
 		class Data
 		{
 			public:
+				unsigned int			abiVersion;
 				/// List of all engine's DMFlags or NULL if none.
 				const DMFlags*			allDMFlags;
 				bool					allowsConnectPassword;

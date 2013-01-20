@@ -48,6 +48,14 @@ PluginLoader::Plugin::Plugin(unsigned int type, QString f) : file(f), library(NU
 
 	if(library != NULL)
 	{
+		unsigned int (*doomSeekerABI)() = (unsigned int(*)()) (dlsym(library, "doomSeekerABI"));
+		if(!doomSeekerABI || doomSeekerABI() != DOOMSEEKER_ABI_VERSION)
+		{
+			// Unsupported version
+			unload();
+			return;
+		}
+
 		EnginePlugin *(*doomSeekerInit)() = (EnginePlugin *(*)()) (dlsym(library, "doomSeekerInit"));
 		if(doomSeekerInit == NULL)
 		{ // This is not a valid plugin.
