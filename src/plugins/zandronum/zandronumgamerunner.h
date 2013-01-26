@@ -33,6 +33,9 @@ class ZandronumGameRunner : public GameRunner
 	public:
 		ZandronumGameRunner(const ZandronumServer* server);
 
+		bool connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound,
+			const QString &connectPassword, const QString &wadTargetDirectory);
+
 		const EnginePlugin*			plugin() const { return ZandronumEnginePlugin::staticInstance(); }
 		
 	protected:

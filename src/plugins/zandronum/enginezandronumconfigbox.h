@@ -24,6 +24,7 @@
 #define DOOMSEEKER_PLUGIN_ZANDRONUM_ENGINE_ZANDRONUM_CONFIG_H
 
 #include "gui/configuration/engineconfigurationbasebox.h"
+#include <QCheckBox>
 
 class EngineZandronumConfigBox : public EngineConfigurationBaseBox
 {
@@ -45,6 +46,7 @@ class EngineZandronumConfigBox : public EngineConfigurationBaseBox
 		QGroupBox	*groupTesting;
 		QLineEdit	*leTestingPath;
 		QPushButton	*btnBrowseTestingPath;
+		QCheckBox* cbAllowDisplayCountry;
 };
 
 #endif

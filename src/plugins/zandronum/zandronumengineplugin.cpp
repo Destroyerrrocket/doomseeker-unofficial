@@ -92,6 +92,7 @@ void ZandronumEnginePlugin::setupConfig(IniSection &config) const
 
 	config.createSetting("Masterserver", data()->defaultMaster);
 	config.createSetting("EnableTesting", true);
+	config.createSetting("AllowServersToDisplayMyCountry", false);
 }
 
 ConfigurationBaseBox *ZandronumEnginePlugin::configuration(QWidget *parent) const

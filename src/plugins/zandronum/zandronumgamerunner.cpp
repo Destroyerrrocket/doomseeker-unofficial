@@ -21,6 +21,7 @@
 // Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "main.h"
+#include "zandronumengineplugin.h"
 #include "zandronumgamerunner.h"
 #include "zandronumgameinfo.h"
 #include "zandronumserver.h"
@@ -28,6 +29,15 @@
 ZandronumGameRunner::ZandronumGameRunner(const ZandronumServer* server)
 : GameRunner(server)
 {
+}
+
+bool ZandronumGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound,
+	const QString &connectPassword, const QString &wadTargetDirectory)
+{
+	IniSection& config = *ZandronumEnginePlugin::staticInstance()->data()->pConfig;
+	bool bAllowCountryDisplay = config["AllowServersToDisplayMyCountry"];
+	args << "+cl_hidecountry" << QString::number(!bAllowCountryDisplay ? 1 : 0);
+	return GameRunner::connectParameters(args, pf, iwadFound, connectPassword, wadTargetDirectory);
 }
 
 void ZandronumGameRunner::hostDMFlags(QStringList& args, const DMFlags& dmFlags) const
