@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>587</width>
-    <height>539</height>
+    <height>581</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -391,6 +391,47 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="Line" name="line">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QGridLayout" name="gridLayout_3">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_12">
+                <property name="text">
+                 <string>Force inactive players to spectate after:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QSpinBox" name="spinForceInactivePlayersSpectatingMins">
+                <property name="minimumSize">
+                 <size>
+                  <width>60</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="maximum">
+                 <number>9999</number>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QLabel" name="label_13">
+                <property name="text">
+                 <string>min.</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
            </layout>
           </widget>
          </item>
@@ -618,6 +659,35 @@ p, li { white-space: pre-wrap; }
                      </property>
                      <property name="value">
                       <number>100</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_14">
+                     <property name="toolTip">
+                      <string>Multiplier of damage dealt by monsters.</string>
+                     </property>
+                     <property name="text">
+                      <string>Damage factor:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QDoubleSpinBox" name="spinMonstersDamageFactor">
+                     <property name="toolTip">
+                      <string>&lt;html&gt;&lt;body&gt;&lt;p&gt;Multiplier of damage dealt by monsters.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                     </property>
+                     <property name="maximum">
+                      <double>999999.000000000000000</double>
+                     </property>
+                     <property name="singleStep">
+                      <double>0.100000000000000</double>
+                     </property>
+                     <property name="value">
+                      <double>1.000000000000000</double>
                      </property>
                     </widget>
                    </item>
@@ -1423,6 +1493,27 @@ p, li { white-space: pre-wrap; }
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QCheckBox" name="cbOldZDoomHorizontalThrust">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If this is enabled, explosions cause a strong horizontal thrust like in old ZDoom versions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Old ZDoom horizontal thrust</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbOldZDoomBridgeDrops">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If this is enabled, non-SOLID things like flags fall through bridges (as they used to do in old ZDoom versions).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
+</string>
+             </property>
+             <property name="text">
+              <string>Old ZDoom bridge drops</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>
@@ -1664,8 +1755,8 @@ p, li { white-space: pre-wrap; }
    <slot>propagateFlagsInputsChanges()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>214</x>
-     <y>579</y>
+     <x>187</x>
+     <y>544</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -1680,8 +1771,8 @@ p, li { white-space: pre-wrap; }
    <slot>propagateFlagsInputsChanges()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>363</x>
-     <y>581</y>
+     <x>371</x>
+     <y>544</y>
     </hint>
     <hint type="destinationlabel">
      <x>349</x>
@@ -1696,8 +1787,8 @@ p, li { white-space: pre-wrap; }
    <slot>propagateFlagsInputsChanges()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>180</x>
-     <y>602</y>
+     <x>187</x>
+     <y>570</y>
     </hint>
     <hint type="destinationlabel">
      <x>124</x>
@@ -1712,8 +1803,8 @@ p, li { white-space: pre-wrap; }
    <slot>propagateFlagsInputsChanges()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>583</x>
-     <y>576</y>
+     <x>576</x>
+     <y>544</y>
     </hint>
     <hint type="destinationlabel">
      <x>572</x>
@@ -1728,8 +1819,8 @@ p, li { white-space: pre-wrap; }
    <slot>propagateFlagsInputsChanges()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>561</x>
-     <y>604</y>
+     <x>576</x>
+     <y>570</y>
     </hint>
     <hint type="destinationlabel">
      <x>567</x>
@@ -1776,8 +1867,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>132</x>
-     <y>230</y>
+     <x>154</x>
+     <y>227</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -1792,8 +1883,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>141</x>
-     <y>255</y>
+     <x>163</x>
+     <y>250</y>
     </hint>
     <hint type="destinationlabel">
      <x>1</x>
@@ -1808,8 +1899,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>456</x>
-     <y>83</y>
+     <x>553</x>
+     <y>103</y>
     </hint>
     <hint type="destinationlabel">
      <x>570</x>
@@ -1888,8 +1979,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>474</x>
-     <y>256</y>
+     <x>553</x>
+     <y>250</y>
     </hint>
     <hint type="destinationlabel">
      <x>575</x>
@@ -1904,8 +1995,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>246</x>
-     <y>84</y>
+     <x>278</x>
+     <y>107</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -1920,8 +2011,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>128</x>
-     <y>87</y>
+     <x>150</x>
+     <y>80</y>
     </hint>
     <hint type="destinationlabel">
      <x>1</x>
@@ -1936,8 +2027,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>138</x>
-     <y>109</y>
+     <x>160</x>
+     <y>103</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -1952,8 +2043,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>140</x>
-     <y>142</y>
+     <x>162</x>
+     <y>126</y>
     </hint>
     <hint type="destinationlabel">
      <x>5</x>
@@ -1968,8 +2059,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>135</x>
-     <y>161</y>
+     <x>157</x>
+     <y>149</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -1984,8 +2075,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>154</x>
-     <y>209</y>
+     <x>176</x>
+     <y>188</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -2000,8 +2091,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>131</x>
-     <y>239</y>
+     <x>153</x>
+     <y>211</y>
     </hint>
     <hint type="destinationlabel">
      <x>4</x>
@@ -2016,8 +2107,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>118</x>
-     <y>262</y>
+     <x>140</x>
+     <y>234</y>
     </hint>
     <hint type="destinationlabel">
      <x>4</x>
@@ -2032,8 +2123,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>148</x>
-     <y>296</y>
+     <x>170</x>
+     <y>257</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -2048,8 +2139,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>119</x>
-     <y>336</y>
+     <x>141</x>
+     <y>296</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -2064,8 +2155,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>148</x>
-     <y>370</y>
+     <x>170</x>
+     <y>319</y>
     </hint>
     <hint type="destinationlabel">
      <x>1</x>
@@ -2080,11 +2171,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>456</x>
-     <y>148</y>
+     <x>552</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel">
-     <x>603</x>
+     <x>586</x>
      <y>151</y>
     </hint>
    </hints>
@@ -2096,11 +2187,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>480</x>
-     <y>185</y>
+     <x>552</x>
+     <y>158</y>
     </hint>
     <hint type="destinationlabel">
-     <x>606</x>
+     <x>586</x>
      <y>181</y>
     </hint>
    </hints>
@@ -2112,11 +2203,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>516</x>
-     <y>214</y>
+     <x>552</x>
+     <y>181</y>
     </hint>
     <hint type="destinationlabel">
-     <x>606</x>
+     <x>586</x>
      <y>211</y>
     </hint>
    </hints>
@@ -2128,11 +2219,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>458</x>
-     <y>237</y>
+     <x>552</x>
+     <y>204</y>
     </hint>
     <hint type="destinationlabel">
-     <x>604</x>
+     <x>586</x>
      <y>234</y>
     </hint>
    </hints>
@@ -2144,11 +2235,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>509</x>
-     <y>270</y>
+     <x>552</x>
+     <y>227</y>
     </hint>
     <hint type="destinationlabel">
-     <x>604</x>
+     <x>586</x>
      <y>260</y>
     </hint>
    </hints>
@@ -2160,11 +2251,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>509</x>
-     <y>330</y>
+     <x>552</x>
+     <y>284</y>
     </hint>
     <hint type="destinationlabel">
-     <x>605</x>
+     <x>586</x>
      <y>327</y>
     </hint>
    </hints>
@@ -2176,11 +2267,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>491</x>
-     <y>390</y>
+     <x>552</x>
+     <y>341</y>
     </hint>
     <hint type="destinationlabel">
-     <x>605</x>
+     <x>586</x>
      <y>368</y>
     </hint>
    </hints>
@@ -2192,11 +2283,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>462</x>
-     <y>421</y>
+     <x>552</x>
+     <y>364</y>
     </hint>
     <hint type="destinationlabel">
-     <x>608</x>
+     <x>586</x>
      <y>456</y>
     </hint>
    </hints>
@@ -2208,11 +2299,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>540</x>
-     <y>92</y>
+     <x>551</x>
+     <y>85</y>
     </hint>
     <hint type="destinationlabel">
-     <x>607</x>
+     <x>586</x>
      <y>75</y>
     </hint>
    </hints>
@@ -2224,11 +2315,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>560</x>
-     <y>121</y>
+     <x>551</x>
+     <y>111</y>
     </hint>
     <hint type="destinationlabel">
-     <x>604</x>
+     <x>586</x>
      <y>128</y>
     </hint>
    </hints>
@@ -2240,8 +2331,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>130</x>
-     <y>397</y>
+     <x>152</x>
+     <y>342</y>
     </hint>
     <hint type="destinationlabel">
      <x>5</x>
@@ -2256,8 +2347,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>115</x>
-     <y>297</y>
+     <x>126</x>
+     <y>284</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -2272,8 +2363,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>105</x>
-     <y>324</y>
+     <x>116</x>
+     <y>307</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -2288,8 +2379,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>109</x>
-     <y>60</y>
+     <x>122</x>
+     <y>58</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -2304,8 +2395,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>130</x>
-     <y>111</y>
+     <x>153</x>
+     <y>104</y>
     </hint>
     <hint type="destinationlabel">
      <x>1</x>
@@ -2320,8 +2411,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>145</x>
-     <y>162</y>
+     <x>178</x>
+     <y>150</y>
     </hint>
     <hint type="destinationlabel">
      <x>1</x>
@@ -2336,8 +2427,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>149</x>
-     <y>196</y>
+     <x>182</x>
+     <y>173</y>
     </hint>
     <hint type="destinationlabel">
      <x>6</x>
@@ -2352,8 +2443,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>142</x>
-     <y>227</y>
+     <x>175</x>
+     <y>196</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -2368,12 +2459,12 @@ p, li { white-space: pre-wrap; }
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>277</x>
-     <y>224</y>
+     <x>268</x>
+     <y>196</y>
     </hint>
     <hint type="destinationlabel">
-     <x>277</x>
-     <y>251</y>
+     <x>267</x>
+     <y>223</y>
     </hint>
    </hints>
   </connection>
@@ -2384,11 +2475,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>473</x>
-     <y>82</y>
+     <x>553</x>
+     <y>80</y>
     </hint>
     <hint type="destinationlabel">
-     <x>603</x>
+     <x>586</x>
      <y>65</y>
     </hint>
    </hints>
@@ -2400,11 +2491,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>484</x>
-     <y>115</y>
+     <x>553</x>
+     <y>103</y>
     </hint>
     <hint type="destinationlabel">
-     <x>607</x>
+     <x>586</x>
      <y>100</y>
     </hint>
    </hints>
@@ -2416,11 +2507,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>539</x>
-     <y>139</y>
+     <x>553</x>
+     <y>126</y>
     </hint>
     <hint type="destinationlabel">
-     <x>606</x>
+     <x>586</x>
      <y>137</y>
     </hint>
    </hints>
@@ -2432,11 +2523,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>476</x>
-     <y>170</y>
+     <x>553</x>
+     <y>149</y>
     </hint>
     <hint type="destinationlabel">
-     <x>606</x>
+     <x>586</x>
      <y>163</y>
     </hint>
    </hints>
@@ -2448,11 +2539,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>499</x>
-     <y>200</y>
+     <x>553</x>
+     <y>172</y>
     </hint>
     <hint type="destinationlabel">
-     <x>604</x>
+     <x>586</x>
      <y>195</y>
     </hint>
    </hints>
@@ -2464,11 +2555,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>470</x>
-     <y>224</y>
+     <x>553</x>
+     <y>195</y>
     </hint>
     <hint type="destinationlabel">
-     <x>604</x>
+     <x>586</x>
      <y>222</y>
     </hint>
    </hints>
@@ -2480,11 +2571,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>538</x>
-     <y>250</y>
+     <x>553</x>
+     <y>218</y>
     </hint>
     <hint type="destinationlabel">
-     <x>604</x>
+     <x>586</x>
      <y>250</y>
     </hint>
    </hints>
@@ -2496,11 +2587,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>502</x>
-     <y>273</y>
+     <x>553</x>
+     <y>241</y>
     </hint>
     <hint type="destinationlabel">
-     <x>603</x>
+     <x>586</x>
      <y>275</y>
     </hint>
    </hints>
@@ -2512,8 +2603,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>133</x>
-     <y>85</y>
+     <x>154</x>
+     <y>79</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -2528,8 +2619,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>125</x>
-     <y>115</y>
+     <x>146</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -2544,8 +2635,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>131</x>
-     <y>137</y>
+     <x>152</x>
+     <y>125</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -2560,11 +2651,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>461</x>
-     <y>87</y>
+     <x>554</x>
+     <y>79</y>
     </hint>
     <hint type="destinationlabel">
-     <x>641</x>
+     <x>586</x>
      <y>85</y>
     </hint>
    </hints>
@@ -2576,11 +2667,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>520</x>
-     <y>116</y>
+     <x>554</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel">
-     <x>643</x>
+     <x>586</x>
      <y>110</y>
     </hint>
    </hints>
@@ -2592,11 +2683,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>556</x>
-     <y>137</y>
+     <x>554</x>
+     <y>125</y>
     </hint>
     <hint type="destinationlabel">
-     <x>644</x>
+     <x>586</x>
      <y>139</y>
     </hint>
    </hints>
@@ -2608,11 +2699,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>504</x>
-     <y>213</y>
+     <x>552</x>
+     <y>183</y>
     </hint>
     <hint type="destinationlabel">
-     <x>644</x>
+     <x>586</x>
      <y>202</y>
     </hint>
    </hints>
@@ -2624,11 +2715,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>554</x>
-     <y>233</y>
+     <x>552</x>
+     <y>206</y>
     </hint>
     <hint type="destinationlabel">
-     <x>644</x>
+     <x>586</x>
      <y>232</y>
     </hint>
    </hints>
@@ -2640,11 +2731,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>525</x>
-     <y>291</y>
+     <x>552</x>
+     <y>262</y>
     </hint>
     <hint type="destinationlabel">
-     <x>641</x>
+     <x>586</x>
      <y>295</y>
     </hint>
    </hints>
@@ -2656,11 +2747,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>576</x>
-     <y>327</y>
+     <x>552</x>
+     <y>285</y>
     </hint>
     <hint type="destinationlabel">
-     <x>642</x>
+     <x>586</x>
      <y>337</y>
     </hint>
    </hints>
@@ -2672,11 +2763,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>591</x>
-     <y>355</y>
+     <x>552</x>
+     <y>308</y>
     </hint>
     <hint type="destinationlabel">
-     <x>644</x>
+     <x>586</x>
      <y>359</y>
     </hint>
    </hints>
@@ -2688,8 +2779,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>178</x>
-     <y>217</y>
+     <x>200</x>
+     <y>189</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -2704,8 +2795,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>137</x>
-     <y>252</y>
+     <x>159</x>
+     <y>219</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -2720,8 +2811,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>158</x>
-     <y>296</y>
+     <x>180</x>
+     <y>249</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -2736,8 +2827,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>137</x>
-     <y>347</y>
+     <x>159</x>
+     <y>302</y>
     </hint>
     <hint type="destinationlabel">
      <x>7</x>
@@ -2752,8 +2843,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>134</x>
-     <y>93</y>
+     <x>138</x>
+     <y>80</y>
     </hint>
     <hint type="destinationlabel">
      <x>6</x>
@@ -2768,8 +2859,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>134</x>
-     <y>142</y>
+     <x>138</x>
+     <y>103</y>
     </hint>
     <hint type="destinationlabel">
      <x>1</x>
@@ -2784,8 +2875,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>128</x>
-     <y>192</y>
+     <x>138</x>
+     <y>126</y>
     </hint>
     <hint type="destinationlabel">
      <x>4</x>
@@ -2800,8 +2891,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>121</x>
-     <y>232</y>
+     <x>138</x>
+     <y>149</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -2816,8 +2907,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>124</x>
-     <y>279</y>
+     <x>138</x>
+     <y>172</y>
     </hint>
     <hint type="destinationlabel">
      <x>6</x>
@@ -2832,8 +2923,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>135</x>
-     <y>326</y>
+     <x>138</x>
+     <y>195</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -2848,8 +2939,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>134</x>
-     <y>375</y>
+     <x>138</x>
+     <y>218</y>
     </hint>
     <hint type="destinationlabel">
      <x>6</x>
@@ -2864,8 +2955,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>131</x>
-     <y>417</y>
+     <x>138</x>
+     <y>241</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -2880,8 +2971,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>127</x>
-     <y>452</y>
+     <x>138</x>
+     <y>264</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -2896,8 +2987,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>119</x>
-     <y>500</y>
+     <x>138</x>
+     <y>287</y>
     </hint>
     <hint type="destinationlabel">
      <x>6</x>
@@ -2912,11 +3003,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>597</x>
-     <y>148</y>
+     <x>552</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel">
-     <x>644</x>
+     <x>586</x>
      <y>136</y>
     </hint>
    </hints>
@@ -2928,11 +3019,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>578</x>
-     <y>171</y>
+     <x>552</x>
+     <y>158</y>
     </hint>
     <hint type="destinationlabel">
-     <x>646</x>
+     <x>586</x>
      <y>172</y>
     </hint>
    </hints>
@@ -2944,11 +3035,11 @@ p, li { white-space: pre-wrap; }
    <slot>propagateFlagsInputsChanges()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>667</x>
-     <y>54</y>
+     <x>365</x>
+     <y>62</y>
     </hint>
     <hint type="destinationlabel">
-     <x>647</x>
+     <x>586</x>
      <y>58</y>
     </hint>
    </hints>
@@ -2960,11 +3051,11 @@ p, li { white-space: pre-wrap; }
    <slot>propagateFlagsInputsChanges()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>680</x>
-     <y>93</y>
+     <x>365</x>
+     <y>88</y>
     </hint>
     <hint type="destinationlabel">
-     <x>645</x>
+     <x>586</x>
      <y>86</y>
     </hint>
    </hints>
@@ -2976,8 +3067,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>136</x>
-     <y>421</y>
+     <x>158</x>
+     <y>365</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -3040,8 +3131,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>109</x>
-     <y>177</y>
+     <x>132</x>
+     <y>170</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -3056,8 +3147,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>71</x>
-     <y>206</y>
+     <x>94</x>
+     <y>198</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -3072,8 +3163,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>65</x>
-     <y>239</y>
+     <x>88</x>
+     <y>226</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -3088,8 +3179,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>76</x>
-     <y>267</y>
+     <x>99</x>
+     <y>254</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -3104,8 +3195,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>70</x>
-     <y>288</y>
+     <x>93</x>
+     <y>282</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -3120,8 +3211,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>72</x>
-     <y>318</y>
+     <x>95</x>
+     <y>310</y>
     </hint>
     <hint type="destinationlabel">
      <x>4</x>
@@ -3136,8 +3227,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>94</x>
-     <y>343</y>
+     <x>117</x>
+     <y>338</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -3152,8 +3243,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>40</x>
-     <y>396</y>
+     <x>53</x>
+     <y>380</y>
     </hint>
     <hint type="destinationlabel">
      <x>6</x>
@@ -3168,8 +3259,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>39</x>
-     <y>422</y>
+     <x>52</x>
+     <y>403</y>
     </hint>
     <hint type="destinationlabel">
      <x>1</x>
@@ -3184,8 +3275,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>43</x>
-     <y>456</y>
+     <x>56</x>
+     <y>426</y>
     </hint>
     <hint type="destinationlabel">
      <x>5</x>
@@ -3200,8 +3291,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>35</x>
-     <y>481</y>
+     <x>48</x>
+     <y>449</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -3216,8 +3307,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>44</x>
-     <y>511</y>
+     <x>57</x>
+     <y>472</y>
     </hint>
     <hint type="destinationlabel">
      <x>1</x>
@@ -3232,8 +3323,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>34</x>
-     <y>536</y>
+     <x>47</x>
+     <y>495</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -3248,11 +3339,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>678</x>
-     <y>54</y>
+     <x>562</x>
+     <y>58</y>
     </hint>
     <hint type="destinationlabel">
-     <x>710</x>
+     <x>586</x>
      <y>57</y>
     </hint>
    </hints>
@@ -3264,11 +3355,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>681</x>
-     <y>83</y>
+     <x>562</x>
+     <y>81</y>
     </hint>
     <hint type="destinationlabel">
-     <x>710</x>
+     <x>586</x>
      <y>83</y>
     </hint>
    </hints>
@@ -3280,11 +3371,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>622</x>
-     <y>110</y>
+     <x>562</x>
+     <y>104</y>
     </hint>
     <hint type="destinationlabel">
-     <x>710</x>
+     <x>586</x>
      <y>112</y>
     </hint>
    </hints>
@@ -3296,11 +3387,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>631</x>
-     <y>142</y>
+     <x>562</x>
+     <y>127</y>
     </hint>
     <hint type="destinationlabel">
-     <x>710</x>
+     <x>586</x>
      <y>143</y>
     </hint>
    </hints>
@@ -3312,11 +3403,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>669</x>
-     <y>168</y>
+     <x>562</x>
+     <y>150</y>
     </hint>
     <hint type="destinationlabel">
-     <x>708</x>
+     <x>586</x>
      <y>171</y>
     </hint>
    </hints>
@@ -3328,11 +3419,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>641</x>
-     <y>200</y>
+     <x>562</x>
+     <y>173</y>
     </hint>
     <hint type="destinationlabel">
-     <x>704</x>
+     <x>586</x>
      <y>202</y>
     </hint>
    </hints>
@@ -3344,11 +3435,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>642</x>
-     <y>230</y>
+     <x>562</x>
+     <y>196</y>
     </hint>
     <hint type="destinationlabel">
-     <x>702</x>
+     <x>586</x>
      <y>223</y>
     </hint>
    </hints>
@@ -3360,11 +3451,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>640</x>
-     <y>253</y>
+     <x>562</x>
+     <y>219</y>
     </hint>
     <hint type="destinationlabel">
-     <x>710</x>
+     <x>586</x>
      <y>255</y>
     </hint>
    </hints>
@@ -3376,11 +3467,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>618</x>
-     <y>286</y>
+     <x>562</x>
+     <y>242</y>
     </hint>
     <hint type="destinationlabel">
-     <x>710</x>
+     <x>586</x>
      <y>283</y>
     </hint>
    </hints>
@@ -3392,11 +3483,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>676</x>
-     <y>304</y>
+     <x>562</x>
+     <y>265</y>
     </hint>
     <hint type="destinationlabel">
-     <x>704</x>
+     <x>586</x>
      <y>308</y>
     </hint>
    </hints>
@@ -3408,11 +3499,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>633</x>
-     <y>334</y>
+     <x>562</x>
+     <y>288</y>
     </hint>
     <hint type="destinationlabel">
-     <x>703</x>
+     <x>586</x>
      <y>336</y>
     </hint>
    </hints>
@@ -3424,11 +3515,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>645</x>
-     <y>363</y>
+     <x>562</x>
+     <y>311</y>
     </hint>
     <hint type="destinationlabel">
-     <x>710</x>
+     <x>586</x>
      <y>366</y>
     </hint>
    </hints>
@@ -3440,11 +3531,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>680</x>
-     <y>394</y>
+     <x>562</x>
+     <y>334</y>
     </hint>
     <hint type="destinationlabel">
-     <x>706</x>
+     <x>586</x>
      <y>391</y>
     </hint>
    </hints>
@@ -3456,11 +3547,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>667</x>
-     <y>416</y>
+     <x>562</x>
+     <y>357</y>
     </hint>
     <hint type="destinationlabel">
-     <x>705</x>
+     <x>586</x>
      <y>421</y>
     </hint>
    </hints>
@@ -3472,11 +3563,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>650</x>
-     <y>446</y>
+     <x>562</x>
+     <y>380</y>
     </hint>
     <hint type="destinationlabel">
-     <x>708</x>
+     <x>586</x>
      <y>448</y>
     </hint>
    </hints>
@@ -3488,11 +3579,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>642</x>
-     <y>472</y>
+     <x>562</x>
+     <y>403</y>
     </hint>
     <hint type="destinationlabel">
-     <x>705</x>
+     <x>586</x>
      <y>477</y>
     </hint>
    </hints>
@@ -3504,11 +3595,11 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>549</x>
-     <y>501</y>
+     <x>562</x>
+     <y>426</y>
     </hint>
     <hint type="destinationlabel">
-     <x>706</x>
+     <x>586</x>
      <y>503</y>
     </hint>
    </hints>
@@ -3520,12 +3611,44 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>603</x>
-     <y>534</y>
+     <x>562</x>
+     <y>449</y>
     </hint>
     <hint type="destinationlabel">
-     <x>707</x>
+     <x>586</x>
      <y>533</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbOldZDoomHorizontalThrust</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>465</x>
+     <y>464</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>579</x>
+     <y>458</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbOldZDoomBridgeDrops</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>313</x>
+     <y>484</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>583</x>
+     <y>483</y>
     </hint>
    </hints>
   </connection>

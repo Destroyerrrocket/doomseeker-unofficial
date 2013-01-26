@@ -230,6 +230,11 @@ class ZandronumGameInfo : public QObject
 			COMPATF2_NOGRAVITY_SPHERES		= 1 << 4,
 			// [BB] When a player leaves the game, don't stop any scripts of that player that are still running.
 			COMPATF2_DONT_STOP_PLAYER_SCRIPTS_ON_DISCONNECT		= 1 << 5,
+			// If this is enabled, explosions cause a strong horizontal thrust like in old ZDoom versions.
+			COMPATF2_EXPLOSION_THRUST = 1 << 6,
+			// If this is enabled, non-SOLID things like flags fall through bridges 
+			// (as they used to do in old ZDoom versions).
+			COMPATF2_BRIDGE_DROPS = 1 << 7,
 		};
 
 		enum LMSAllowedWeapons

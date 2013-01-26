@@ -104,6 +104,10 @@ QStringList FlagsPage::generateGameRunParameters()
 		params << "+sv_killallmonsters_percentage"
 			<< QString::number(spinMonsterKillPercentage->value());
 	}
+	params << "+sv_afk2spec" <<
+		QString::number(spinForceInactivePlayersSpectatingMins->value());
+	params << "+sv_coop_damagefactor" <<
+		QString::number(spinMonstersDamageFactor->value());
 
 	params << "+sv_defaultdmflags" << (cbDefaultDmflags->isChecked() ? "1" : "0");
 
@@ -149,6 +153,16 @@ bool FlagsPage::loadConfig(Ini& ini)
 	if (!varKillMonstersPercentage.value().isNull())
 	{
 		spinMonsterKillPercentage->setValue(varKillMonstersPercentage);
+	}
+	IniVariable varForceInactivePlayersSpectatingMins = section["force_inactive_players_spectating_mins"];
+	if (!varForceInactivePlayersSpectatingMins.value().isNull())
+	{
+		spinForceInactivePlayersSpectatingMins->setValue(varForceInactivePlayersSpectatingMins);
+	}
+	IniVariable varMonstersDamageFactor = section["monsters_damage_factor"];
+	if (!varMonstersDamageFactor.value().isNull())
+	{
+		spinMonstersDamageFactor->setValue(varMonstersDamageFactor);
 	}
 
 	cbDefaultDmflags->setChecked((bool)section["defaultdmflags"]);
@@ -219,6 +233,10 @@ bool FlagsPage::saveConfig(Ini& ini)
 	{
 		section["killmonsters_percentage"] = spinMonsterKillPercentage->value();
 	}
+	section["force_inactive_players_spectating_mins"] =
+		spinForceInactivePlayersSpectatingMins->value();
+	section["monsters_damage_factor"] =
+		(float)spinMonstersDamageFactor->value();
 
 	return true;
 }

@@ -127,6 +127,10 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbCompatAddNOGRAVITYFlagToSpheres);
 		m.insert(ZandronumGameInfo::COMPATF2_DONT_STOP_PLAYER_SCRIPTS_ON_DISCONNECT,
 			f->cbDontStopPlayerScriptsOnDisconnect);
+		m.insert(ZandronumGameInfo::COMPATF2_EXPLOSION_THRUST,
+			f->cbOldZDoomHorizontalThrust);
+		m.insert(ZandronumGameInfo::COMPATF2_BRIDGE_DROPS,
+			f->cbOldZDoomBridgeDrops);
 	}
 
 	// DMFlags
