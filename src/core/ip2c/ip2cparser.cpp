@@ -104,7 +104,7 @@ bool IP2CParser::doReadDatabase(const QString& filePath)
 	ConstructorDestructorParserStateSetter stateSetter(this);
 	
 	QFile dataBase(filePath);
-	gLog << tr("Parsing IP2C database: %1").arg(dataBase.fileName());		
+	gLog << tr("Parsing IP2C database: %1").arg(dataBase.fileName());
 	
 	if (!dataBase.exists() 
 	||  !dataBase.open(QIODevice::ReadOnly) 
@@ -371,7 +371,5 @@ IP2CParser::ConstructorDestructorParserStateSetter::~ConstructorDestructorParser
 
 void IP2CParser::ParsingThread::run()
 {
-	gLog << tr("Starting IP2C parser thread.");
-
-	bSuccessState = pParser->doReadDatabase(filePath);	
+	bSuccessState = pParser->doReadDatabase(filePath);
 }
