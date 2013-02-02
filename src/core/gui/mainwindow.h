@@ -279,9 +279,10 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void onAutoUpdaterFinish();
 		void	quitProgram();
 		void    postInitAppStartup();
-		void 	refreshThreadBeginsWork();
+		void	refreshThreadBeginsWork();
 		void	refreshThreadEndsWork();
-		void 	runGame(Server*);
+		void restartAndInstallUpdatesNow();
+		void	runGame(Server*);
 		void	serverAddedToList(Server*);
 		void	showServerJoinCommandLine(const Server*);
 		void	showUpdaterProcessErrorDialog();

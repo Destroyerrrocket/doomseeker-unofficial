@@ -57,6 +57,7 @@ const QString		Main::IP2C_FILENAME = "IpToCountry.csv";
 
 QApplication*		Main::application = NULL;
 QString Main::argDataDir;
+bool Main::bInstallUpdatesAndRestart = false;
 bool Main::bPortableMode = false;
 DataPaths*			Main::dataPaths;
 PluginLoader* 		Main::enginePlugins = NULL;
@@ -228,7 +229,25 @@ int Main::run()
 	gLog << tr("Init finished.");
 	gLog.addUnformattedEntry("================================\n");
 
-	return application->exec();
+	int returnCode = application->exec();
+
+	#ifdef WITH_AUTOUPDATES
+	if (bInstallUpdatesAndRestart)
+	{
+		// Code must be reset because the install method
+		// doesn't do the actual installation if it's not equal to zero.
+		updateFailedCode = 0;
+		int installResult = installPendingUpdates();
+		if (installResult != UpdateInstaller::EC_Ok 
+			&& installResult != UpdateInstaller::EC_NothingToUpdate)
+		{
+			QMessageBox::critical(NULL, tr("Doomseeker - Updates Install Failure"),
+				UpdateInstaller::errorCodeToStr((UpdateInstaller::ErrorCode)installResult));
+		}
+	}
+	#endif
+
+	return returnCode;
 }
 
 int Main::runTestMode()
@@ -442,10 +461,6 @@ int Main::installPendingUpdates()
 		{
 			UpdateInstaller updateInstaller;
 			updateInstallerResult = updateInstaller.startInstallation();
-			if (updateInstallerResult == UpdateInstaller::EC_Ok)
-			{
-				return updateInstallerResult;
-			}
 		}
 	}
 	return updateInstallerResult;

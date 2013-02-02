@@ -86,6 +86,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	setupIcons();
 
 	updatesWidget->hide();
+	updatesDownloadedWidget->hide();
 
 	// Hide menu options which aren't supported on target platform.
 	#ifndef WITH_AUTOUPDATES
@@ -1104,6 +1105,7 @@ void MainWindow::onAutoUpdaterFinish()
 			if (!autoUpdater->downloadedPackagesFilenames().isEmpty())
 			{
 				gLog << tr("Updates will be installed on next program start.");
+				updatesDownloadedWidget->show();
 				gConfig.autoUpdates.bPerformUpdateOnNextRun = true;
 			}
 		}
@@ -1226,6 +1228,12 @@ void MainWindow::refreshThreadEndsWork()
 	}
 
 	bTotalRefreshInProcess = false;
+}
+
+void MainWindow::restartAndInstallUpdatesNow()
+{
+	Main::bInstallUpdatesAndRestart = true;
+	quitProgram();
 }
 
 void MainWindow::runGame(Server *server)

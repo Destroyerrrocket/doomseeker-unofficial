@@ -44,6 +44,16 @@ class MAIN_EXPORT Main : public QObject
 		static const QString		IP2C_FILENAME;
 
 		static QApplication*		application;
+		/**
+		 * @brief If true then program will install updates and restart
+		 *        instead of quitting if quit is requested.
+		 *
+		 * This flag is ignored if the program configuration states that
+		 * there are no updates to install.
+		 *
+		 * Default: false.
+		 */
+		static bool bInstallUpdatesAndRestart;
 		static IP2C					*ip2c;
 		static DataPaths*			dataPaths;
 		static QWidget*				mainWindow;

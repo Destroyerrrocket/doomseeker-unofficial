@@ -134,6 +134,105 @@
      </widget>
     </item>
     <item>
+     <widget class="QWidget" name="updatesDownloadedWidget" native="true">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="margin">
+        <number>0</number>
+       </property>
+       <item>
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="maximumSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="../../../media/resources.qrc">:/icons/exclamation.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Updates have been downloaded:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnUpdatesRestartAndInstallNow">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Restart &amp;&amp; Install Now</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnUpdatesRestartAndInstallLater">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Restart &amp;&amp; Install Later</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
      <widget class="QLabel" name="lblServerFilterApplied">
       <property name="font">
        <font>
@@ -398,6 +497,7 @@
  </customwidgets>
  <resources>
   <include location="../../../media/resources.qrc"/>
+  <include location="../../../media/resources.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -448,10 +548,43 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnUpdatesRestartAndInstallLater</sender>
+   <signal>clicked()</signal>
+   <receiver>updatesDownloadedWidget</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>539</x>
+     <y>85</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>622</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnUpdatesRestartAndInstallNow</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindowWnd</receiver>
+   <slot>restartAndInstallUpdatesNow()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>439</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>792</x>
+     <y>105</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>checkForUpdatesUserTriggered()</slot>
   <slot>confirmUpdateInstallation()</slot>
   <slot>discardUpdates()</slot>
+  <slot>restartAndInstallUpdatesNow()</slot>
  </slots>
 </ui>
