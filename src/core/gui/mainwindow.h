@@ -135,7 +135,13 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 		QApplication*		application;
 		QTimer				autoRefreshTimer;
+
 		AutoUpdater* autoUpdater;
+		QWidget* autoUpdaterStatusBarWidget;
+		QPushButton* autoUpdaterAbortButton;
+		QLabel* autoUpdaterLabel;
+		QProgressBar* autoUpdaterFileProgressBar;
+		QProgressBar* autoUpdaterOverallProgressBar;
 
 		/**
 		 *	Set to true by btnGetServers_click() process and to false
@@ -203,6 +209,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 		bool	hasCustomServers() const;
 
+		QProgressBar* mkStdProgressBarForStatusBar();
+
+		void initAutoUpdaterWidgets();
 		void	initIP2CUpdater();
 		void	initIRCDock();
 		void	initLogDock();
@@ -240,6 +249,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	updateTrayIconTooltipAndLogTotalRefresh();
 
 	protected slots:
+		void abortAutoUpdater();
 		void	autoRefreshTimer_timeout();
 		void	blockRefreshButtons();
 		/**
@@ -275,8 +285,12 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	menuUpdateIP2C();
 		void	menuViewIRC();
 		void	menuWadSeeker();
+
 		void onAutoUpdaterDownloadAndInstallConfirmationRequest();
+		void onAutoUpdaterFileProgress(qint64 bytesReceived, qint64 bytesTotal);
 		void onAutoUpdaterFinish();
+		void onAutoUpdaterOverallProgress(int current, int total, const QString& msg);
+
 		void	quitProgram();
 		void    postInitAppStartup();
 		void	refreshThreadBeginsWork();

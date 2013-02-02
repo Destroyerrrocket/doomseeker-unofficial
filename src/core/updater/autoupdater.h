@@ -235,6 +235,9 @@ class AutoUpdater : public QObject
 		 */
 		void finished();
 
+		void overallProgress(int current, int total, const QString& msg);
+		void packageDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
+
 	private:
 		class PrivData;
 
@@ -252,6 +255,7 @@ class AutoUpdater : public QObject
 		 * if user enabled automatic updates.
 		 */
 		void dumpUpdatePackagesToLog(const QList<UpdatePackage>& packages);
+		void emitOverallProgress(const QString& message);
 		void finishWithError(ErrorCode code);
 
 		ErrorCode saveUpdaterScript();

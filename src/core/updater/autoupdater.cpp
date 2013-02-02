@@ -46,6 +46,8 @@ class AutoUpdater::PrivData
 		QList<QDomDocument> allScripts;
 		bool bDownloadAndInstallRequireConfirmation;
 		bool bIsRunning;
+		/// Used for overall progress.
+		bool bPackageDownloadStarted;
 		bool bStarted;
 		UpdateChannel channel;
 		UpdatePackage currentlyDownloadedPackage;
@@ -82,6 +84,7 @@ AutoUpdater::AutoUpdater(QObject* pParent)
 {
 	d = new PrivData();
 	d->bDownloadAndInstallRequireConfirmation = false;
+	d->bPackageDownloadStarted = false;
 	d->bIsRunning = false;
 	d->bStarted = false;
 	d->errorCode = EC_Ok;
@@ -152,6 +155,7 @@ const UpdateChannel& AutoUpdater::channel() const
 void AutoUpdater::confirmDownloadAndInstall()
 {
 	d->packagesInDownloadQueue = d->newUpdatePackages;
+	d->bPackageDownloadStarted = true;
 	startNextPackageDownload();
 }
 
@@ -167,6 +171,21 @@ void AutoUpdater::dumpUpdatePackagesToLog(const QList<UpdatePackage>& packages)
 		gLog << tr("Detected update for package \"%1\" from version \"%2\" to version \"%3\".")
 			.arg(pkg.displayName, pkg.currentlyInstalledDisplayVersion, pkg.displayVersion);
 	}
+}
+
+void AutoUpdater::emitOverallProgress(const QString& message)
+{
+	int total = 1;
+	int current = 0;
+	if (!d->newUpdatePackages.isEmpty() && d->bPackageDownloadStarted)
+	{
+		total = d->newUpdatePackages.size();
+		// Add 1 because currently downloaded package has already been
+		// removed from the queue.
+		current = total - (d->packagesInDownloadQueue.size() + 1);
+		assert(current >= 0 && "AutoUpdater::emitOverallProgress()");
+	}
+	emit overallProgress(current, total, message);
 }
 
 AutoUpdater::ErrorCode AutoUpdater::errorCode() const
@@ -331,6 +350,7 @@ void AutoUpdater::onUpdaterInfoDownloadFinish()
 			if (d->bDownloadAndInstallRequireConfirmation)
 			{
 				gLog << tr("Requesting update confirmation.");
+				emitOverallProgress(tr("Confirm"));
 				emit downloadAndInstallConfirmationRequested();
 			}
 			else
@@ -400,6 +420,7 @@ void AutoUpdater::start()
 		return;
 	}
 	d->bStarted = true;
+	d->bPackageDownloadStarted = false;
 	if (d->channel.isNull())
 	{
 		finishWithError(EC_NullUpdateChannel);
@@ -422,7 +443,11 @@ void AutoUpdater::start()
 	this->connect(pReply,
 		SIGNAL(finished()),
 		SLOT(onUpdaterInfoDownloadFinish()));
+	this->connect(pReply,
+		SIGNAL(downloadProgress(qint64, qint64)),
+		SIGNAL(packageDownloadProgress(qint64, qint64)));
 	d->pNetworkReply = pReply;
+	emitOverallProgress(tr("Update info"));
 }
 
 void AutoUpdater::startNextPackageDownload()
@@ -444,6 +469,7 @@ void AutoUpdater::startPackageDownload(const UpdatePackage& pkg)
 		finishWithError(EC_InvalidDownloadUrl);
 		return;
 	}
+	emitOverallProgress(tr("Package: %1").arg(pkg.displayName));
 	gLog << tr("Downloading package \"%1\" from URL: %2.").arg(pkg.displayName,
 		pkg.downloadUrl.toString());
 
@@ -478,6 +504,8 @@ void AutoUpdater::startPackageDownload(const UpdatePackage& pkg)
 		SLOT(onPackageDownloadReadyRead()));
 	this->connect(pReply, SIGNAL(finished()),
 		SLOT(onPackageDownloadFinish()));
+	this->connect(pReply, SIGNAL(downloadProgress(qint64, qint64)),
+		SIGNAL(packageDownloadProgress(qint64, qint64)));
 }
 
 void AutoUpdater::startPackageScriptDownload(const UpdatePackage& pkg)
@@ -505,6 +533,9 @@ void AutoUpdater::startPackageScriptDownload(const UpdatePackage& pkg)
 	// without saving them continuously to a file.
 	this->connect(pReply, SIGNAL(finished()),
 		SLOT(onPackageScriptDownloadFinish()));
+	this->connect(pReply,
+		SIGNAL(downloadProgress(qint64, qint64)),
+		SIGNAL(packageDownloadProgress(qint64, qint64)));
 }
 
 QString AutoUpdater::updaterScriptPath()

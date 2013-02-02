@@ -35,7 +35,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QWidget" name="updatesWidget" native="true">
+     <widget class="QWidget" name="updatesConfirmationWidget" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <property name="margin">
         <number>0</number>

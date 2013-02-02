@@ -85,7 +85,9 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	setupUi(this);
 	setupIcons();
 
-	updatesWidget->hide();
+	initAutoUpdaterWidgets();
+
+	updatesConfirmationWidget->hide();
 	updatesDownloadedWidget->hide();
 
 	// Hide menu options which aren't supported on target platform.
@@ -278,8 +280,14 @@ MainWindow::~MainWindow()
 
 		delete ip2cParser;
 	}
+}
 
-	delete ip2cUpdateProgressBar;
+void MainWindow::abortAutoUpdater()
+{
+	if (autoUpdater != NULL)
+	{
+		autoUpdater->abort();
+	}
 }
 
 void MainWindow::autoRefreshTimer_timeout()
@@ -338,6 +346,10 @@ void MainWindow::checkForUpdates(bool bUserTriggered)
 		SLOT(onAutoUpdaterFinish()));
 	this->connect(autoUpdater, SIGNAL(downloadAndInstallConfirmationRequested()),
 		SLOT(onAutoUpdaterDownloadAndInstallConfirmationRequest()));
+	this->connect(autoUpdater, SIGNAL(overallProgress(int, int, const QString&)),
+		SLOT(onAutoUpdaterOverallProgress(int, int, const QString&)));
+	this->connect(autoUpdater, SIGNAL(packageDownloadProgress(qint64, qint64)),
+		SLOT(onAutoUpdaterFileProgress(qint64, qint64)));
 
 	QMap<QString, QList<unsigned long long> > ignoredPackagesRevisions;
 	if (!bUserTriggered)
@@ -363,6 +375,7 @@ void MainWindow::checkForUpdates(bool bUserTriggered)
 			!= DoomseekerConfig::AutoUpdates::UM_FullAuto);
 	}
 	autoUpdater->setRequireDownloadAndInstallConfirmation(bRequireConfirmation);
+	autoUpdaterStatusBarWidget->show();
 	autoUpdater->start();
 }
 
@@ -399,14 +412,14 @@ void MainWindow::closeEvent(QCloseEvent* event)
 void MainWindow::confirmUpdateInstallation()
 {
 	assert(autoUpdater != NULL && "MainWindow::confirmUpdateInstallation()");
-	updatesWidget->hide();
+	updatesConfirmationWidget->hide();
 	autoUpdater->confirmDownloadAndInstall();
 }
 
 void MainWindow::discardUpdates()
 {
 	assert(autoUpdater != NULL && "MainWindow::confirmUpdateInstallation()");
-	updatesWidget->hide();
+	updatesConfirmationWidget->hide();
 	// User rejected this update so let's add the packages
 	// to the ignore list so user won't be nagged again.
 	const QList<UpdatePackage>& pkgList = autoUpdater->newUpdatePackages();
@@ -608,18 +621,51 @@ void MainWindow::initAutoRefreshTimer()
 	}
 }
 
+void MainWindow::initAutoUpdaterWidgets()
+{
+	static const int FILE_BAR_WIDTH = 50;
+	static const int OVERALL_BAR_WIDTH = 180;
+
+	autoUpdaterStatusBarWidget = new QWidget(statusBar());
+	autoUpdaterStatusBarWidget->setLayout(new QHBoxLayout(autoUpdaterStatusBarWidget));
+	autoUpdaterStatusBarWidget->layout()->setContentsMargins(QMargins(0, 0, 0, 0));
+	statusBar()->addPermanentWidget(autoUpdaterStatusBarWidget);
+	autoUpdaterStatusBarWidget->hide();
+
+	autoUpdaterLabel = new QLabel(autoUpdaterStatusBarWidget);
+	autoUpdaterLabel->setText(tr("Auto Updater:"));
+	autoUpdaterStatusBarWidget->layout()->addWidget(autoUpdaterLabel);
+
+	autoUpdaterFileProgressBar = mkStdProgressBarForStatusBar();
+	autoUpdaterFileProgressBar->setFormat("%p%");
+	autoUpdaterFileProgressBar->setMaximumWidth(FILE_BAR_WIDTH);
+	autoUpdaterFileProgressBar->setMinimumWidth(FILE_BAR_WIDTH);
+	autoUpdaterStatusBarWidget->layout()->addWidget(autoUpdaterFileProgressBar);
+
+	autoUpdaterOverallProgressBar = mkStdProgressBarForStatusBar();
+	autoUpdaterOverallProgressBar->setMaximumWidth(OVERALL_BAR_WIDTH);
+	autoUpdaterOverallProgressBar->setMinimumWidth(OVERALL_BAR_WIDTH);
+	autoUpdaterStatusBarWidget->layout()->addWidget(autoUpdaterOverallProgressBar);
+
+	autoUpdaterAbortButton = new QPushButton(statusBar());
+	autoUpdaterAbortButton->setToolTip(tr("Abort update."));
+	autoUpdaterAbortButton->setIcon(QIcon(":/icons/x.png"));
+	this->connect(autoUpdaterAbortButton, SIGNAL(clicked()),
+		SLOT(abortAutoUpdater()));
+	autoUpdaterStatusBarWidget->layout()->addWidget(autoUpdaterAbortButton);
+}
+
 void MainWindow::initIP2CUpdater()
 {
-	static const int PROGRESSBAR_WIDTH = 250;
+	static const int PROGRESSBAR_WIDTH = 220;
 
 	ip2cUpdater = NULL;
-	ip2cUpdateProgressBar = new QProgressBar();
+	ip2cUpdateProgressBar = mkStdProgressBarForStatusBar();
 	ip2cUpdateProgressBar->setFormat(tr("IP2C Update"));
-	ip2cUpdateProgressBar->setTextVisible(true);
-	ip2cUpdateProgressBar->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-
+	ip2cUpdateProgressBar->hide();
 	ip2cUpdateProgressBar->setMaximumWidth(PROGRESSBAR_WIDTH);
 	ip2cUpdateProgressBar->setMinimumWidth(PROGRESSBAR_WIDTH);
+	statusBar()->addPermanentWidget(ip2cUpdateProgressBar);
 }
 
 void MainWindow::initIRCDock()
@@ -798,10 +844,7 @@ void MainWindow::ip2cJobsFinished()
 	Main::ip2c->setDataAccessLockEnabled(false);
 	serverTableHandler->updateCountryFlags();
 
-	if (statusBar()->isAncestorOf(ip2cUpdateProgressBar))
-	{
-		statusBar()->removeWidget(ip2cUpdateProgressBar);
-	}
+	ip2cUpdateProgressBar->hide();
 
 	if (ip2cParser != NULL)
 	{
@@ -862,7 +905,7 @@ void MainWindow::ip2cStartUpdate()
 	QString downloadUrl = gConfig.doomseeker.ip2CountryUrl;
 
 	ip2cUpdater->downloadDatabase(downloadUrl);
-	statusBar()->addPermanentWidget(ip2cUpdateProgressBar);
+	ip2cUpdateProgressBar->show();
 }
 
 bool MainWindow::isAnythingToRefresh() const
@@ -1079,6 +1122,15 @@ void MainWindow::menuWadSeeker()
 	wadseekerInterface.exec();
 }
 
+QProgressBar* MainWindow::mkStdProgressBarForStatusBar()
+{
+	QProgressBar* pBar = new QProgressBar(statusBar());
+	pBar->setAlignment(Qt::AlignCenter);
+	pBar->setTextVisible(true);
+	pBar->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+	return pBar;
+}
+
 void MainWindow::notifyFirstRun()
 {
 	// On first run prompt configuration box.
@@ -1089,7 +1141,13 @@ void MainWindow::notifyFirstRun()
 
 void MainWindow::onAutoUpdaterDownloadAndInstallConfirmationRequest()
 {
-	updatesWidget->show();
+	updatesConfirmationWidget->show();
+}
+
+void MainWindow::onAutoUpdaterFileProgress(qint64 bytesReceived, qint64 bytesTotal)
+{
+	autoUpdaterFileProgressBar->setValue(bytesReceived);
+	autoUpdaterFileProgressBar->setMaximum(bytesTotal);
 }
 
 void MainWindow::onAutoUpdaterFinish()
@@ -1115,8 +1173,18 @@ void MainWindow::onAutoUpdaterFinish()
 		}
 	}
 	gConfig.saveToFile();
+	autoUpdaterStatusBarWidget->hide();
+	updatesConfirmationWidget->hide();
 	autoUpdater->deleteLater();
 	autoUpdater = NULL;
+}
+
+void MainWindow::onAutoUpdaterOverallProgress(int current, int total,
+	const QString& msg)
+{
+	autoUpdaterOverallProgressBar->setValue(current);
+	autoUpdaterOverallProgressBar->setMaximum(total);
+	autoUpdaterOverallProgressBar->setFormat(msg);
 }
 
 void MainWindow::postInitAppStartup()
