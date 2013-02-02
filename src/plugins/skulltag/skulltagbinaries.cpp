@@ -259,7 +259,6 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 
 	if (fi.exists())
 	{
-		gLog << tr("File Permissions: %1").arg((unsigned int)file.permissions(), 0, 16);
 		if ((file.permissions() & QFile::ExeUser) == 0)
 		{
 			QString error = tr("You don't have permissions to execute file: %1\n").arg(fullPathToFile);
