@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
@@ -607,6 +607,16 @@ p, li { white-space: pre-wrap; }
                <widget class="QCheckBox" name="cbDontSpawnDeathmatchWeapons">
                 <property name="text">
                  <string>Don't spawn Deathmatch weapons</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbDontSpawnAnyMultiplayerItem">
+                <property name="toolTip">
+                 <string>Spawn map actors in coop as if the game was single player.</string>
+                </property>
+                <property name="text">
+                 <string>Don't spawn any multiplayer item in coop</string>
                 </property>
                </widget>
               </item>
@@ -2268,7 +2278,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>552</x>
-     <y>341</y>
+     <y>372</y>
     </hint>
     <hint type="destinationlabel">
      <x>586</x>
@@ -2284,7 +2294,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>552</x>
-     <y>364</y>
+     <y>397</y>
     </hint>
     <hint type="destinationlabel">
      <x>586</x>
@@ -2411,8 +2421,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>178</x>
-     <y>150</y>
+     <x>211</x>
+     <y>173</y>
     </hint>
     <hint type="destinationlabel">
      <x>1</x>
@@ -2427,8 +2437,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>182</x>
-     <y>173</y>
+     <x>215</x>
+     <y>196</y>
     </hint>
     <hint type="destinationlabel">
      <x>6</x>
@@ -2443,8 +2453,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>175</x>
-     <y>196</y>
+     <x>208</x>
+     <y>219</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -2460,11 +2470,11 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>268</x>
-     <y>196</y>
+     <y>219</y>
     </hint>
     <hint type="destinationlabel">
      <x>267</x>
-     <y>223</y>
+     <y>246</y>
     </hint>
    </hints>
   </connection>
@@ -2540,7 +2550,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>553</x>
-     <y>172</y>
+     <y>192</y>
     </hint>
     <hint type="destinationlabel">
      <x>586</x>
@@ -2556,7 +2566,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>553</x>
-     <y>195</y>
+     <y>219</y>
     </hint>
     <hint type="destinationlabel">
      <x>586</x>
@@ -2572,7 +2582,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>553</x>
-     <y>218</y>
+     <y>246</y>
     </hint>
     <hint type="destinationlabel">
      <x>586</x>
@@ -2588,7 +2598,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>553</x>
-     <y>241</y>
+     <y>273</y>
     </hint>
     <hint type="destinationlabel">
      <x>586</x>
@@ -3649,6 +3659,22 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>583</x>
      <y>483</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbDontSpawnAnyMultiplayerItem</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>155</x>
+     <y>119</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>293</x>
+     <y>290</y>
     </hint>
    </hints>
   </connection>

@@ -244,6 +244,9 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 		// - General
 		m.insert(ZandronumGameInfo::DF2_AWARD_DAMAGE_INSTEAD_KILLS,
 			f->cbScoreDamageNotKills);
+		// - Environment
+		m.insert(ZandronumGameInfo::DF2_COOP_SP_ACTOR_SPAWN,
+			f->cbDontSpawnAnyMultiplayerItem);
 		// - Monsters
 		m.insert(ZandronumGameInfo::DF2_KILL_MONSTERS,
 			f->cbMonstersMustBeKilledToExit);
