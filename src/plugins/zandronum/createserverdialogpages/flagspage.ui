@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
@@ -616,7 +616,7 @@ p, li { white-space: pre-wrap; }
                  <string>Spawn map actors in coop as if the game was single player.</string>
                 </property>
                 <property name="text">
-                 <string>Don't spawn any multiplayer item in coop</string>
+                 <string>Don't spawn any multiplayer actor in coop</string>
                 </property>
                </widget>
               </item>
