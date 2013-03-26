@@ -95,7 +95,7 @@ class MAIN_EXPORT Binaries : public QObject
 		 *	@param [out] message - information message, if any.
 		 *	@return Empty if error is not empty.
 		 */
-		virtual QString					serverBinary(Message& message) const { return obtainBinary(configKeyServerBinary(), TServer, message); }
+		virtual QString					serverBinary(Message& message) const;
 
 		/**
 		 * @brief Working directory for server.

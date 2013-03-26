@@ -171,15 +171,6 @@ QString ZandronumBinaries::clientWorkingDirectory(Message& message) const
 	return fi.absolutePath();
 }
 
-QString ZandronumBinaries::configKeyServerBinary() const
-{
-	#ifdef Q_OS_WIN32
-		return configKeyClientBinary();
-	#else
-		return "ServerBinaryPath";
-	#endif
-}
-
 bool ZandronumBinaries::downloadTestingBinaries(const QDir &destination) const
 {
 #ifdef Q_OS_MAC

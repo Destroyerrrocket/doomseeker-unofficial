@@ -30,11 +30,6 @@
 EngineZandronumConfigBox::EngineZandronumConfigBox(const EnginePlugin* plugin, IniSection& cfg, QWidget* parent) 
 : EngineConfigurationBaseBox(plugin, cfg, parent)
 {
-	// Mac and Windows do not have special server binaries.
-	#if defined(Q_OS_WIN32) || defined(Q_OS_MAC)
-		makeClientOnly();
-	#endif
-
 	// Create the testing box, we might as well do this in code.
 	groupTesting = new QGroupBox();
 	groupTesting->setTitle(tr("Testing Releases"));

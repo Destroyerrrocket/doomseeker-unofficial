@@ -87,6 +87,14 @@ QString Binaries::offlineGameWorkingDirectory(Message& message) const
 	return QString();
 }
 
+QString Binaries::serverBinary(Message& message) const
+{
+	// Try to return something useful even if mis-configured.
+	if(!plugin()->data()->clientOnly)
+		return obtainBinary(configKeyServerBinary(), TServer, message);
+	return clientBinary(message);
+}
+
 QString Binaries::serverWorkingDirectory(Message& message) const
 {
 	// Generated when game is launched. See doxy.

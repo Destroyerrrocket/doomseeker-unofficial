@@ -103,7 +103,8 @@ class MAIN_EXPORT EnginePlugin
 			 * or will provide the pages on its own through
 			 * EnginePlugin::createServerDialogPages().
 			 */
-			EP_DontCreateDMFlagsPagesAutomatic
+			EP_DontCreateDMFlagsPagesAutomatic,
+			EP_ClientOnly ///< Indicates that client binary serves the purpose of the client and server.
 		};
 
 		/// Reimplement if you want to perform some ini initialization manually.
@@ -165,6 +166,7 @@ class MAIN_EXPORT EnginePlugin
 				 * Default: true.
 				 */
 				bool					createDMFlagsPagesAutomatic;
+				bool					clientOnly;
 
 				Data();
 		};

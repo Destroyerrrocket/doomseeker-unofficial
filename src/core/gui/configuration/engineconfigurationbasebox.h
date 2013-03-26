@@ -53,6 +53,7 @@ class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox, priv
 	private:
 		IniSection&			config;
 		const EnginePlugin*	plugin;
+		bool				clientOnly;
 };
 
 #endif /* __ENGINECONFIGBASE_H__ */

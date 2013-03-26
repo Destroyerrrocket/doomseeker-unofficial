@@ -40,6 +40,7 @@ EnginePlugin::Data::Data()
 	allowsMOTD = false;
 	allowsRConPassword = false;
 	allowsURL = false;
+	clientOnly = false;
 	createDMFlagsPagesAutomatic = true;
 	defaultServerPort = 10666;
 	demoExtensionAutomatic = true;
@@ -126,6 +127,9 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 				break;
 			case EP_AllowsMOTD:
 				d->allowsMOTD = true;
+				break;
+			case EP_ClientOnly:
+				d->clientOnly = true;
 				break;
 			case EP_DefaultMaster:
 				d->defaultMaster = va_arg(va, const char*);

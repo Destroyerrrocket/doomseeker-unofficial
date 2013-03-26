@@ -27,9 +27,12 @@
 #include <QFileDialog>
 
 EngineConfigurationBaseBox::EngineConfigurationBaseBox(const EnginePlugin *plugin, IniSection &cfg, QWidget *parent) 
-: ConfigurationBaseBox(parent), config(cfg), plugin(plugin)
+: ConfigurationBaseBox(parent), config(cfg), plugin(plugin), clientOnly(false)
 {
 	setupUi(this);
+
+	if(plugin->data()->clientOnly)
+		makeClientOnly();
 
 	setTitle(plugin->data()->name + tr(" Configuration"));
 	if(!plugin->data()->hasMasterServer)
@@ -78,6 +81,8 @@ QIcon EngineConfigurationBaseBox::icon() const
 
 void EngineConfigurationBaseBox::makeClientOnly()
 {
+	clientOnly = true;
+
 	lblClientBinary->setText(tr("Path to executable:"));
 	serverBinaryBox->hide();
 }
@@ -104,6 +109,9 @@ void EngineConfigurationBaseBox::saveSettings()
 
 	strVal = leClientBinaryPath->text();
 	config["BinaryPath"] = strVal;
+	if(!clientOnly)
+		strVal = leServerBinaryPath->text();
+	config["ServerBinaryPath"] = strVal;
 
 	strVal = leCustomParameters->text();
 	config["CustomParameters"] = strVal;
@@ -113,7 +121,4 @@ void EngineConfigurationBaseBox::saveSettings()
 		strVal = leMasterserverAddress->text();
 		config["Masterserver"] = strVal;
 	}
-
-	strVal = leServerBinaryPath->text();
-	config["ServerBinaryPath"] = strVal;
 }

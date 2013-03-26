@@ -37,8 +37,6 @@ class ZandronumBinaries : public Binaries
 	public:
 		ZandronumBinaries(const ZandronumServer* server);
 
-		QString					configKeyServerBinary() const;
-
 		/**
 		 *	If the parent Server is a normal server simple path to executable
 		 *	file is returned. If this is a testing server, a shell script is

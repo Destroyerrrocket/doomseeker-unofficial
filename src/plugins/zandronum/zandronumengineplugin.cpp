@@ -56,6 +56,9 @@ ZandronumEnginePlugin::ZandronumEnginePlugin()
 		EP_AllowsJoinPassword,
 		EP_AllowsRConPassword,
 		EP_AllowsMOTD,
+#if defined(Q_OS_WIN32) || defined(Q_OS_MAC)
+		EP_ClientOnly,
+#endif
 		EP_DontCreateDMFlagsPagesAutomatic,
 		EP_DefaultServerPort, 10666,
 		EP_HasMasterServer,
