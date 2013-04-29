@@ -464,7 +464,7 @@ void RefreshingThread::sendServerQueries()
 {
 	const unsigned SERVER_BATCH_SIZE = gConfig.doomseeker.queryBatchSize;
 
-	while (d->unbatchedServers.size() != 0 || d->registeredBatches.size() != 0)
+	while (d->bKeepRunning && (d->unbatchedServers.size() != 0 || d->registeredBatches.size() != 0))
 	{
 		//qDebug() << d->unbatchedServers.size() << " unbatched servers.";
 		unsigned int querySlotsInUse = 0;
