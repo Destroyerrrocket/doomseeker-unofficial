@@ -1365,7 +1365,7 @@ void MainWindow::setupIcons()
 
 void MainWindow::setupToolBar()
 {
-	QToolBar* pToolBar = new QToolBar(this);
+	QToolBar* pToolBar = new QToolBar(tr("Main Toolbar"), this);
 	pToolBar->setMovable(false);
 	pToolBar->setObjectName("Toolbar");
 
