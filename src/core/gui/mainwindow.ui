@@ -339,10 +339,16 @@
    <property name="shortcut">
     <string>F5</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::PreferencesRole</enum>
+   </property>
   </action>
   <action name="menuActionAbout">
    <property name="text">
     <string>&amp;About</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutRole</enum>
    </property>
   </action>
   <action name="menuActionQuit">
@@ -351,6 +357,9 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::QuitRole</enum>
    </property>
   </action>
   <action name="menuActionServerInfo">
@@ -449,6 +458,9 @@
   <action name="menuActionAboutQt">
    <property name="text">
     <string>About &amp;Qt</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutQtRole</enum>
    </property>
   </action>
   <action name="menuActionRecordDemo">
