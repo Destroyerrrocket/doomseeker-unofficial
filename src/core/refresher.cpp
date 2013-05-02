@@ -394,38 +394,35 @@ void RefreshingThread::readPendingDatagrams()
 		}
 	}
 
-	if (d->registeredBatches.size() != 0)
+	for(int i = 0; i < d->registeredBatches.size(); ++i)
 	{
-		for(int i = 0; i < d->registeredBatches.size(); ++i)
+		Server *server = obtainServerFromBatch(d->registeredBatches[i], address, port);
+		if (!d->bKeepRunning)
 		{
-			Server *server = obtainServerFromBatch(d->registeredBatches[i], address, port);
-			if (!d->bKeepRunning)
+			return;
+		}
+
+		if (server != NULL)
+		{
+			d->registeredBatches[i].servers.removeOne(server);
+			d->registeredServers.remove(server);
+
+			server->bPingIsSet = false;
+
+			// Store the state of request read.
+			int response = server->readRequest(dataArray);
+
+			// Set the current ping, if plugin didn't do so already.
+			if (!server->bPingIsSet)
 			{
-				return;
+				server->currentPing = server->time.elapsed();
 			}
 
-			if (server != NULL)
-			{
-				d->registeredBatches[i].servers.removeOne(server);
-				d->registeredServers.remove(server);
+			server->refreshStops();
 
-				server->bPingIsSet = false;
-
-				// Store the state of request read.
-				int response = server->readRequest(dataArray);
-
-				// Set the current ping, if plugin didn't do so already.
-				if (!server->bPingIsSet)
-				{
-					server->currentPing = server->time.elapsed();
-				}
-
-				server->refreshStops();
-
-				// Emit the response returned by readRequest.
-				server->emitUpdated(response);
-				break; // exit for loop
-			}
+			// Emit the response returned by readRequest.
+			server->emitUpdated(response);
+			break; // exit for loop
 		}
 	}
 }
