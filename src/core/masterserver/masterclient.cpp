@@ -166,7 +166,11 @@ bool MasterClient::readMasterResponse(QHostAddress& address, unsigned short port
 void MasterClient::readPacketCache()
 {
 	if(!preparePacketCache(false))
+	{
+		// Cache didn't open? Guess we just emit the signal.
+		emit listUpdated();
 		return;
+	}
 
 	gLog << tr("Reloading master server results from cache for %1!").arg(plugin()->data()->name);
 	QDataStream strm(cache);
@@ -221,7 +225,6 @@ void MasterClient::timeoutRefresh()
 		readPacketCache();
 
 		timeoutRefreshEx();
-		listUpdated();
 	}
 }
 
