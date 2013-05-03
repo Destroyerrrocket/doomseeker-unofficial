@@ -53,6 +53,7 @@
 #include "log.h"
 #include "pathfinder.h"
 #include "main.h"
+#include "refresher.h"
 #include "strings.h"
 #include <cassert>
 #include <QAction>

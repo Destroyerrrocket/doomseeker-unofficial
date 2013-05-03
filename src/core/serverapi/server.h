@@ -41,7 +41,6 @@
 #include "serverapi/rconprotocol.h"
 #include "serverapi/player.h"
 #include "serverapi/serverstructs.h"
-#include "refresher.h"
 #include "global.h"
 
 class Binaries;
@@ -66,8 +65,6 @@ class MAIN_EXPORT Server : public QObject
 	Q_OBJECT
 
 	friend class RefreshingThread;
-	friend class RefreshingThread::ServerBatch;
-	friend class ServerBatch;
 
 	public:
 		enum Response

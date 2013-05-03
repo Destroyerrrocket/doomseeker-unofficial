@@ -29,11 +29,12 @@
 #include "plugins/pluginloader.h"
 #include "datapaths.h"
 #include "localizationinfo.h"
-#include "refresher.h"
 #include <QApplication>
 #include <QObject>
 #include <QStringList>
 #include <QUrl>
+
+class RefreshingThread;
 
 /**
  * This class holds some global information.

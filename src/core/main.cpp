@@ -44,6 +44,7 @@
 #include "log.h"
 #include "main.h"
 #include "plugins/engineplugin.h"
+#include "refresher.h"
 #include "serverapi/server.h"
 #include "strings.h"
 #include "tests/testruns.h"

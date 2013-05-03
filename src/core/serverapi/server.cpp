@@ -29,6 +29,7 @@
 #include "strings.h"
 #include "gui/standardserverconsole.h"
 #include "gui/wadseekerinterface.h"
+#include "refresher.h"
 #include "serverapi/binaries.h"
 #include "serverapi/gamerunner.h"
 #include "serverapi/playerslist.h"
