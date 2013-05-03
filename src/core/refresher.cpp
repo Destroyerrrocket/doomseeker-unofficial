@@ -362,12 +362,12 @@ void RefreshingThread::readAllPendingDatagrams()
 	while(d->socket->hasPendingDatagrams() && d->bKeepRunning)
 	{
 		d->thisMutex.lock();
-		readPendingDatagrams();
+		readPendingDatagram();
 		d->thisMutex.unlock();
 	}
 }
 
-void RefreshingThread::readPendingDatagrams()
+void RefreshingThread::readPendingDatagram()
 {
 	QHostAddress address;
 	quint16 port;
@@ -378,53 +378,11 @@ void RefreshingThread::readPendingDatagrams()
 	QByteArray dataArray(data, size);
 	delete[] data;
 
-	Data::MasterHashtableIt it;
-	for (it = d->registeredMasters.begin(); it != d->registeredMasters.end(); ++it)
+	if (tryReadDatagramByMasterClient(address, port, dataArray))
 	{
-		if (!d->bKeepRunning)
-		{
-			return;
-		}
-
-		MasterClient* pMaster = it.key();
-
-		if (pMaster->readMasterResponse(address, port, dataArray))
-		{
-			return;
-		}
+		return;
 	}
-
-	for(int i = 0; i < d->registeredBatches.size(); ++i)
-	{
-		Server *server = obtainServerFromBatch(d->registeredBatches[i], address, port);
-		if (!d->bKeepRunning)
-		{
-			return;
-		}
-
-		if (server != NULL)
-		{
-			d->registeredBatches[i].servers.removeOne(server);
-			d->registeredServers.remove(server);
-
-			server->bPingIsSet = false;
-
-			// Store the state of request read.
-			int response = server->readRequest(dataArray);
-
-			// Set the current ping, if plugin didn't do so already.
-			if (!server->bPingIsSet)
-			{
-				server->currentPing = server->time.elapsed();
-			}
-
-			server->refreshStops();
-
-			// Emit the response returned by readRequest.
-			server->emitUpdated(response);
-			break; // exit for loop
-		}
-	}
+	tryReadDatagramByServerBatch(address, port, dataArray);
 }
 
 void RefreshingThread::sendMasterQueries()
@@ -532,6 +490,61 @@ bool RefreshingThread::shouldBlockRefreshingProcess() const
 void RefreshingThread::start() const
 {
 	d->controller->start();
+}
+
+bool RefreshingThread::tryReadDatagramByMasterClient(QHostAddress& address,
+	unsigned short port, QByteArray& packet)
+{
+	foreach (MasterClient* pMaster, d->registeredMasters.keys())
+	{
+		if (!d->bKeepRunning)
+		{
+			return true;
+		}
+		if (pMaster->readMasterResponse(address, port, packet))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool RefreshingThread::tryReadDatagramByServerBatch(const QHostAddress& address,
+	unsigned short port, QByteArray& packet)
+{
+	for (int i = 0; i < d->registeredBatches.size(); ++i)
+	{
+		ServerBatch& serverBatch = d->registeredBatches[i];
+		Server *server = obtainServerFromBatch(serverBatch, address, port);
+		if (!d->bKeepRunning)
+		{
+			return true;
+		}
+
+		if (server != NULL)
+		{
+			serverBatch.servers.removeOne(server);
+			d->registeredServers.remove(server);
+
+			server->bPingIsSet = false;
+
+			// Store the state of request read.
+			int response = server->readRequest(packet);
+
+			// Set the current ping, if plugin didn't do so already.
+			if (!server->bPingIsSet)
+			{
+				server->currentPing = server->time.elapsed();
+			}
+
+			server->refreshStops();
+
+			// Emit the response returned by readRequest.
+			server->emitUpdated(response);
+			return true;
+		}
+	}
+	return false;
 }
 
 void RefreshingThread::unregisterMaster(MasterClient* pMaster)

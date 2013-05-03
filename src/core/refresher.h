@@ -105,7 +105,7 @@ class RefreshingThread : public QObject
 		 */
 		Server*					obtainServerFromBatch(ServerBatch& batch, const QHostAddress& address, quint16 port);
 
-		void					readPendingDatagrams();
+		void					readPendingDatagram();
 
 		/**
 		 *	@return Query slots used by this batch.
@@ -135,6 +135,20 @@ class RefreshingThread : public QObject
 		static const int	MASTER_SERVER_TIMEOUT_DELAY = 10000;
 
 		Data *d;
+
+		// TODO: Constify 'address' and 'packet' args.
+		/**
+		 * @return true if any further attempts to parse the packet
+		 *         should be stopped.
+		 */
+		bool tryReadDatagramByMasterClient(QHostAddress& address,
+			unsigned short port, QByteArray& packet);
+		/**
+		 * @return true if any further attempts to parse the packet
+		 *         should be stopped.
+		 */
+		bool tryReadDatagramByServerBatch(const QHostAddress& address,
+			unsigned short port, QByteArray& packet);
 };
 
 #endif
