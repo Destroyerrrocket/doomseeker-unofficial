@@ -353,19 +353,19 @@ QByteArray Strings::readUntilByte(QDataStream& stream, unsigned char stopByte)
 {
 	QByteArray result;
 	bool bStopByteEncountered = false;
-	
+
 	while (!stream.atEnd() && !bStopByteEncountered)
 	{
 		quint8 rByte;
 		stream >> rByte;
 		result += rByte;
-		
+
 		if (rByte == stopByte)
 		{
 			bStopByteEncountered = true;
 		}
 	}
-	
+
 	return result;
 }
 
@@ -393,13 +393,8 @@ void Strings::translateServerAddress(const QString& addressString, QString& host
 	port = 0;
 	QStringList addressAndPort = addressString.split(":");
 	QStringList defaultAddressAndPort = defaultAddress.split(":");
-	assert(defaultAddressAndPort.size() == 2);
 
-	if (addressAndPort.size() == 0 || addressAndPort.size() > 2)
-	{ // if something is not right set default settings
-		hostname = defaultAddressAndPort[0];
-	}
-	else
+	if (addressAndPort.size() >= 1 && addressAndPort.size() <= 2)
 	{
 		hostname = addressAndPort[0];
 		if (addressAndPort.size() == 2)
@@ -407,8 +402,16 @@ void Strings::translateServerAddress(const QString& addressString, QString& host
 			port = addressAndPort[1].toUShort();
 		}
 	}
+	else
+	{
+		// if something is not right set default settings
+		if (defaultAddressAndPort.size() >= 1)
+		{
+			hostname = defaultAddressAndPort[0];
+		}
+	}
 
-	if (port == 0)
+	if (port == 0 && defaultAddressAndPort.size() >= 2)
 	{
 		port = defaultAddressAndPort[1].toUShort();
 	}
