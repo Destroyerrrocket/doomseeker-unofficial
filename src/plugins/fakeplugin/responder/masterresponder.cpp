@@ -116,13 +116,14 @@ void MasterResponder::readPendingDatagram()
 	QByteArray packet = QByteArray(buffer, MAGIC_SIZE);
 	delete buffer;
 
-	qDebug() << "FakePlugin, received master datagram. Magic =" << packet
-		<< ", Client: '" << address << ":" << port << "'";
+	gLog << QString("FakePlugin, received master datagram. Magic = %1"
+		", Client: '%2:%3'").arg(QString(packet))
+		.arg(address.toString()).arg(port);
 	if (packet == "FAKE")
 	{
 		d->awaitingClients.append(AwaitingClient(address, port));
 		int msec = 10 + qrand() % 300;
-		qDebug() << "FakePlugin, sending master response in:" << msec << "ms.";
+		gLog << QString("FakePlugin, sending master response in: %1ms.").arg(msec);
 		QTimer::singleShot(msec, this, SLOT(respond()));
 	}
 }
@@ -136,12 +137,12 @@ void MasterResponder::respond()
 
 	AwaitingClient client = d->awaitingClients.takeFirst();
 	QList<QByteArray> packets = buildResponsePackets();
-	qDebug() << "FakePlugin, sending master response now. Packets count ="
-		<< packets.size() << ", Target client: '" << client.address << ":"
-		<< client.port << "'";
+	gLog << QString("FakePlugin, sending master response now. "
+		"Packets count = %1, Target client: '%2:%3'").arg(packets.size())
+		.arg(client.address.toString()).arg(client.port);
 	foreach (const QByteArray& packet, packets)
 	{
-		qDebug() << "FakePlugin, Sending master packet, size:" << packet.size();
+		gLog << QString("FakePlugin, Sending master packet, size: %1").arg(packet.size());
 		d->socket->writeDatagram(packet, client.address, client.port);
 	}
 }
