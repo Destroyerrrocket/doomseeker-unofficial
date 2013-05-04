@@ -32,6 +32,23 @@ class ServerResponder : public QObject
 	public:
 		ServerResponder(QObject* parent = NULL);
 		~ServerResponder();
+
+		bool bind(unsigned short port);
+		/**
+		 * @brief Port this responder is bound to, or zero if
+		 *       not bound.
+		 */
+		unsigned short port() const;
+
+	private:
+		class PrivData;
+
+		PrivData* d;
+
+	private slots:
+		void readPendingDatagrams();
+		void readPendingDatagram();
+		void respond();
 };
 
 #endif

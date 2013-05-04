@@ -22,27 +22,18 @@
 //------------------------------------------------------------------------------
 #include "masterresponder.h"
 
+#include "responder/awaitingclient.h"
 #include "responder/respondercfg.h"
+#include "responder/serverresponder.h"
+#include <log.h>
 #include <QTimer>
 #include <QUdpSocket>
-
-class AwaitingClient
-{
-	public:
-		QHostAddress address;
-		quint16 port;
-
-		AwaitingClient(const QHostAddress& address, quint16 port)
-		{
-			this->address = address;
-			this->port = port;
-		}
-};
 
 class MasterResponder::PrivData
 {
 	public:
 		QList<AwaitingClient> awaitingClients;
+		QList<ServerResponder*> serverResponders;
 		QUdpSocket* socket;
 };
 ///////////////////////////////////////////////////////////////////////////////
@@ -52,27 +43,43 @@ MasterResponder::MasterResponder(QObject* parent)
 	d = new PrivData();
 	d->socket = new QUdpSocket();
 	this->connect(d->socket, SIGNAL(readyRead()),
-		SLOT(readPendingDatagram()));
+		SLOT(readPendingDatagrams()));
 }
 
 MasterResponder::~MasterResponder()
 {
+	qDeleteAll(d->serverResponders);
 	delete d->socket;
 	delete d;
 }
 
+bool MasterResponder::areServerRespondersRunning()
+{
+	return !d->serverResponders.isEmpty();
+}
+
 bool MasterResponder::bind(unsigned short port)
 {
-	return d->socket->bind(port);
+	bool result = d->socket->bind(port);
+	if (!result)
+	{
+		gLog << QString("FakePlugin, failed to bind master server on port %1."
+			" Plugin will not be functional.").arg(port);
+	}
+	return result;
 }
 
 QList<QByteArray> MasterResponder::buildResponsePackets()
 {
 	QList<QByteArray> result;
 	QString packet = "";
-	for (int i = 0; i < ResponderCfg::numServers(); ++i)
+	foreach (const ServerResponder* server, d->serverResponders)
 	{
-		QString currentPort = QString::number(ResponderCfg::serverPortBase() + i);
+		if (server->port() == 0)
+		{
+			continue;
+		}
+		QString currentPort = QString::number(server->port());
 		QString tmp = packet + ";" + currentPort;
 		if (tmp.toAscii().length() > ResponderCfg::maxPacketSize())
 		{
@@ -86,6 +93,14 @@ QList<QByteArray> MasterResponder::buildResponsePackets()
 	}
 	result.append(packet.toAscii());
 	return result;
+}
+
+void MasterResponder::readPendingDatagrams()
+{
+	while (d->socket->hasPendingDatagrams())
+	{
+		readPendingDatagram();
+	}
 }
 
 void MasterResponder::readPendingDatagram()
@@ -114,6 +129,11 @@ void MasterResponder::readPendingDatagram()
 
 void MasterResponder::respond()
 {
+	if (!areServerRespondersRunning())
+	{
+		startServerResponders();
+	}
+
 	AwaitingClient client = d->awaitingClients.takeFirst();
 	QList<QByteArray> packets = buildResponsePackets();
 	qDebug() << "FakePlugin, sending master response now. Packets count ="
@@ -121,6 +141,26 @@ void MasterResponder::respond()
 		<< client.port << "'";
 	foreach (const QByteArray& packet, packets)
 	{
+		qDebug() << "FakePlugin, Sending master packet, size:" << packet.size();
 		d->socket->writeDatagram(packet, client.address, client.port);
+	}
+}
+
+void MasterResponder::startServerResponders()
+{
+	gLog << "FakePlugin, starting server responders.";
+	for (int i = 0; i < ResponderCfg::numServers(); ++i)
+	{
+		unsigned short port = ResponderCfg::serverPortBase() + i;
+		ServerResponder* server = new ServerResponder();
+		if (server->bind(port))
+		{
+			d->serverResponders.append(server);
+		}
+		else
+		{
+			gLog << QString("FakePlugin, failed to bind server on port: %1").arg(port);
+			delete server;
+		}
 	}
 }

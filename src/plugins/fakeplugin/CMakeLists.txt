@@ -21,6 +21,7 @@ set(FAKEPLUGIN_FILES
 
 set(HEADER_FILES
 	${FAKEPLUGIN_QT_FILES}
+	responder/awaitingclient.h
 	responder/respondercfg.h
 	pluginengineplugin.h
 )

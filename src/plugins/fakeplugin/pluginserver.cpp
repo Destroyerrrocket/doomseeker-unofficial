@@ -39,10 +39,17 @@ const EnginePlugin* PluginServer::plugin() const
 
 Server::Response PluginServer::readRequest(QByteArray &data)
 {
+	if (data.left(4) != "FAKF")
+	{
+		return RESPONSE_BAD;
+	}
+
+	this->serverName = QString("Fake Server %1").arg(this->port());
 	return RESPONSE_GOOD;
 }
 
 bool PluginServer::sendRequest(QByteArray &data)
 {
+	data = QByteArray("FAKF", 4);
 	return true;
 }

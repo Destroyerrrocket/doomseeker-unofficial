@@ -22,13 +22,69 @@
 //------------------------------------------------------------------------------
 #include "serverresponder.h"
 
+#include "responder/awaitingclient.h"
+#include <QTimer>
+#include <QUdpSocket>
+
+class ServerResponder::PrivData
+{
+	public:
+		QList<AwaitingClient> awaitingClients;
+		QUdpSocket* socket;
+};
+///////////////////////////////////////////////////////////////////////////////
 ServerResponder::ServerResponder(QObject* parent)
 : QObject(parent)
 {
-
+	d = new PrivData();
+	d->socket = new QUdpSocket();
+	this->connect(d->socket, SIGNAL(readyRead()),
+		SLOT(readPendingDatagrams()));
 }
 
 ServerResponder::~ServerResponder()
 {
+	delete d;
+}
 
+bool ServerResponder::bind(unsigned short port)
+{
+	return d->socket->bind(port);
+}
+
+unsigned short ServerResponder::port() const
+{
+	return d->socket->localPort();
+}
+
+void ServerResponder::readPendingDatagrams()
+{
+	while (d->socket->hasPendingDatagrams())
+	{
+		readPendingDatagram();
+	}
+}
+
+void ServerResponder::readPendingDatagram()
+{
+	QHostAddress address;
+	unsigned short port = 0;
+	const int MAGIC_SIZE = 4;
+	char buffer[MAGIC_SIZE];
+	d->socket->readDatagram(buffer, MAGIC_SIZE, &address, &port);
+	QByteArray packet = QByteArray(buffer, MAGIC_SIZE);
+	if (packet == "FAKF")
+	{
+		d->awaitingClients.append(AwaitingClient(address, port));
+		int msec = 10 + qrand() % 300;
+		QTimer::singleShot(msec, this, SLOT(respond()));
+	}
+}
+
+void ServerResponder::respond()
+{
+	AwaitingClient client = d->awaitingClients.takeFirst();
+	QByteArray response = QByteArray("FAKF");
+	response += QString::number(port()).toAscii();
+	d->socket->writeDatagram(response, client.address, client.port);
 }

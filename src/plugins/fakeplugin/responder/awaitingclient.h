@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// masterresponder.h
+// awaitingclient.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,36 +20,22 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2013 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef PLUGIN_RESPONDER_MASTERRESPONDER_H
-#define PLUGIN_RESPONDER_MASTERRESPONDER_H
+#ifndef PLUGIN_RESPONDER_AWAITINGCLIENT_H
+#define PLUGIN_RESPONDER_AWAITINGCLIENT_H
 
-#include <QByteArray>
-#include <QList>
-#include <QObject>
+#include <QHostAddress>
 
-class MasterResponder : public QObject
+class AwaitingClient
 {
-	Q_OBJECT
-
 	public:
-		MasterResponder(QObject* parent = NULL);
-		~MasterResponder();
+		QHostAddress address;
+		quint16 port;
 
-		bool bind(unsigned short port);
-
-	private:
-		class PrivData;
-
-		PrivData* d;
-
-		bool areServerRespondersRunning();
-		QList<QByteArray> buildResponsePackets();
-		void startServerResponders();
-
-	private slots:
-		void readPendingDatagrams();
-		void readPendingDatagram();
-		void respond();
+		AwaitingClient(const QHostAddress& address, quint16 port)
+		{
+			this->address = address;
+			this->port = port;
+		}
 };
 
 #endif
