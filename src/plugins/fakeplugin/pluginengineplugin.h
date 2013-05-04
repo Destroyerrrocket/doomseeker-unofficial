@@ -35,6 +35,9 @@ class PluginEnginePlugin : public EnginePlugin
 		MasterClient* masterClient() const;
 		Server* server(const QHostAddress &address, unsigned short port) const;
 
+		bool isMasterResponderInstantiated() const;
+		void startMasterResponder();
+
 	private:
 		class PrivData;
 

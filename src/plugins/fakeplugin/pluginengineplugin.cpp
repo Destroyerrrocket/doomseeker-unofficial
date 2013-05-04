@@ -28,11 +28,12 @@
 #include "pluginengineplugin.h"
 #include "pluginmasterclient.h"
 #include "pluginserver.h"
+#include <cassert>
 
 class PluginEnginePlugin::PrivData
 {
 	public:
-		MasterResponder masterResponder;
+		MasterResponder* masterResponder;
 };
 ///////////////////////////////////////////////////////////////////////////////
 INSTALL_PLUGIN(PluginEnginePlugin)
@@ -44,8 +45,6 @@ QString masterAddress()
 
 PluginEnginePlugin::PluginEnginePlugin()
 {
-	d = new PrivData();
-
 	init("Fake Plugin", NULL,
 		EP_Author, "The Doomseeker Team",
 		EP_Version, 1,
@@ -55,11 +54,13 @@ PluginEnginePlugin::PluginEnginePlugin()
 		EP_Done
 	);
 
-	d->masterResponder.bind(ResponderCfg::masterServerPort());
+	d = new PrivData();
+	d->masterResponder = NULL;
 }
 
 PluginEnginePlugin::~PluginEnginePlugin()
 {
+	delete d->masterResponder;
 	delete d;
 }
 
@@ -71,4 +72,16 @@ MasterClient *PluginEnginePlugin::masterClient() const
 Server* PluginEnginePlugin::server(const QHostAddress &address, unsigned short port) const
 {
 	return new PluginServer(address, port);
+}
+
+bool PluginEnginePlugin::isMasterResponderInstantiated() const
+{
+	return d->masterResponder != NULL;
+}
+
+void PluginEnginePlugin::startMasterResponder()
+{
+	assert(!isMasterResponderInstantiated());
+	d->masterResponder = new MasterResponder();
+	d->masterResponder->bind(ResponderCfg::masterServerPort());
 }

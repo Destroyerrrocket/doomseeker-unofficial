@@ -30,6 +30,17 @@
 PluginMasterClient::PluginMasterClient()
 : MasterClient()
 {
+	// Master responder cannot be started in Plugin's init procedure
+	// or the plugin will fail to load in VC++ debug mode with
+	// "Access Violation" error. Fortunately, this constructor is executed
+	// somewhere later, and is a safe place to start the responder.
+	// Remember that responder must be started in a thread that can handle
+	// Qt events.
+	PluginEnginePlugin* plugin = (PluginEnginePlugin*) PluginEnginePlugin::staticInstance();
+	if (!plugin->isMasterResponderInstantiated())
+	{
+		plugin->startMasterResponder();
+	}
 }
 
 PluginMasterClient::~PluginMasterClient()
