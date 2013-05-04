@@ -61,7 +61,7 @@ MasterResponder::~MasterResponder()
 	delete d;
 }
 
-void MasterResponder::bind(unsigned short port)
+bool MasterResponder::bind(unsigned short port)
 {
 	return d->socket->bind(port);
 }
