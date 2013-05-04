@@ -26,9 +26,41 @@
 class ResponderCfg
 {
 	public:
+		/**
+		 * @brief UDP port on which the master server will be hosted.
+		 *
+		 * If you change this, it's probable that you will also have
+		 * to change master server port in Doomseeker configuration.
+		 */
 		static unsigned short masterServerPort();
+		/**
+		 * @brief Max packet size of response packets.
+		 *
+		 * This is used by master server. This value can be lowered
+		 * to test if Doomseeker receives segmented responses properly.
+		 */
 		static unsigned short maxPacketSize();
+		/**
+		 * @brief Base UDP port at which fake game servers will be
+		 *       created.
+		 *
+		 * Each fake server opens a new port. Ports start at this
+		 * value and are gradually incremented until all servers
+		 * are started. If plugin fails to bind a port, the game server
+		 * will be missing from the master server list, and a proper
+		 * log message will be printed.
+		 *
+		 * @see numServers()
+		 */
 		static unsigned short serverPortBase();
+		/**
+		 * @brief Number of fake game servers.
+		 *
+		 * This number is limited by how many UDP sockets can be bound
+		 * on underlying Operating System.
+		 *
+		 * @see maxPacketSize()
+		 */
 		static unsigned short numServers();
 };
 
