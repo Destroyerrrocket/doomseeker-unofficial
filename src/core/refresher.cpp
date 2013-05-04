@@ -73,7 +73,7 @@ class RefreshingThread::Data
  * The actual thread in the refreshing thread.  This must be separate in order
  * to keep the signal/slot system wroking properly.
  */
-class RefreshingThread::Controller : public QThread, public QRunnable
+class RefreshingThread::Controller : public QThread
 {
 	public:
 		Controller()
@@ -92,7 +92,6 @@ class RefreshingThread::Controller : public QThread, public QRunnable
 			worker->d->socket = new QUdpSocket();
 			worker->d->socket->bind();
 			MasterClient::pGlobalUdpSocket = worker->d->socket;
-			bool bFirstQuery = true;
 
 			connect(worker->d->socket, SIGNAL(readyRead()), worker, SLOT(readAllPendingDatagrams()));
 
@@ -201,6 +200,18 @@ class RefreshingThread::ServerBatch
 				}
 			}
 		}
+		
+		Server* obtainServer(const QHostAddress& address, quint16 port)
+		{
+			foreach (Server* server, servers)
+			{
+				if (server->port() == port && server->address() == address)
+				{
+					return server;
+				}
+			}
+			return NULL;
+		}
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -278,20 +289,6 @@ void RefreshingThread::masterFinishedRefreshing(MasterClient* pMaster)
 	d->thisMutex.unlock();
 
 	emit finishedQueryingMaster(pMaster);
-}
-
-Server*	RefreshingThread::obtainServerFromBatch(ServerBatch& batch, const QHostAddress& address, quint16 port)
-{
-	for(int j = 0; j < batch.servers.size(); ++j)
-	{
-		Server *server = batch.servers[j];
-		if(server->port() == port && server->address() == address)
-		{
-			return server;
-		}
-	}
-
-	return NULL;
 }
 
 void RefreshingThread::quit()
@@ -515,7 +512,7 @@ bool RefreshingThread::tryReadDatagramByServerBatch(const QHostAddress& address,
 	for (int i = 0; i < d->registeredBatches.size(); ++i)
 	{
 		ServerBatch& serverBatch = d->registeredBatches[i];
-		Server *server = obtainServerFromBatch(serverBatch, address, port);
+		Server *server = serverBatch.obtainServer(address, port);
 		if (!d->bKeepRunning)
 		{
 			return true;

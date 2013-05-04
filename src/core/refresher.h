@@ -100,11 +100,6 @@ class RefreshingThread : public QObject
 
 		bool					isAnythingToRefresh() const;
 
-		/**
-		 *	@return NULL if server of given address:port is not in the batch.
-		 */
-		Server*					obtainServerFromBatch(ServerBatch& batch, const QHostAddress& address, quint16 port);
-
 		void					readPendingDatagram();
 
 		/**
