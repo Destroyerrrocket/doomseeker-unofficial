@@ -85,7 +85,6 @@ Main::~Main()
 	if (refreshingThread != NULL)
 	{
 		refreshingThread->quit();
-		while (refreshingThread->isRunning());
 		delete refreshingThread;
 	}
 

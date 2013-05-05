@@ -62,8 +62,6 @@ class RefreshingThread::Data
 		typedef QHash<MasterClient*, MasterClientInfo*> MasterHashtable;
 		typedef QHash<MasterClient*, MasterClientInfo*>::iterator MasterHashtableIt;
 
-		Controller *controller;
-
 		QTime batchTime;
 		bool bSleeping;
 		bool bKeepRunning;
@@ -78,49 +76,6 @@ class RefreshingThread::Data
 		QList<ServerRefreshTime> refreshingServers;
 		QUdpSocket*	 socket;
 		QSet<MasterClient*> unchallengedMasters;
-
-		/**
-		 * Mutex used by methods of this class.
-		 */
-		QMutex thisMutex;
-};
-
-////////////////////////////////////////////////////////////////////////////////
-
-/**
- * The actual thread in the refreshing thread.  This must be separate in order
- * to keep the signal/slot system wroking properly.
- */
-class RefreshingThread::Controller : public QThread
-{
-	public:
-		Controller()
-		{
-			worker = new RefreshingThread(this);
-		}
-
-		RefreshingThread *refreshingThread() const
-		{
-			return worker;
-		}
-
-		void run()
-		{
-			// Allocate the new socket when the thread is executed.
-			worker->d->socket = new QUdpSocket();
-			worker->d->socket->bind();
-			MasterClient::pGlobalUdpSocket = worker->d->socket;
-
-			connect(worker->d->socket, SIGNAL(readyRead()), worker, SLOT(readAllPendingDatagrams()));
-
-			exec();
-
-			// Remember to delete the socket when thread finishes.
-			delete worker->d->socket;
-		}
-
-	private:
-		RefreshingThread *worker;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -185,12 +140,9 @@ class RefreshingThread::MasterClientInfo
 
 ////////////////////////////////////////////////////////////////////////////////
 
-RefreshingThread::RefreshingThread(Controller *controller)
+RefreshingThread::RefreshingThread()
 {
 	d = new Data;
-	d->controller = controller;
-	moveToThread(controller);
-
 	d->bSleeping = true;
 	d->bKeepRunning = true;
 	d->delayBetweenResends = 1000;
@@ -199,32 +151,26 @@ RefreshingThread::RefreshingThread(Controller *controller)
 
 RefreshingThread::~RefreshingThread()
 {
-	// If quit() wasn't called yet, call it now.
-	if (d->bKeepRunning)
-	{
-		d->controller->exit();
-	}
-	delete d->controller;
+	delete d->socket;
+	delete d;
 }
 
 void RefreshingThread::attemptTimeoutMasters()
 {
-	Data::MasterHashtableIt it;
-	for (it = d->registeredMasters.begin(); it != d->registeredMasters.end(); ++it)
+	QList<MasterClient*> masters = d->registeredMasters.keys();
+	foreach (MasterClient* master, masters)
 	{
-		MasterClientInfo* pMasterInfo = it.value();
-
+		MasterClientInfo* pMasterInfo = d->registeredMasters[master];
 		if (!pMasterInfo->isLastChallengeTimerActive())
 		{
-			MasterClient* pMaster = it.key();
-			pMaster->timeoutRefresh();
+			master->timeoutRefresh();
 		}
 	}
 }
 
 RefreshingThread *RefreshingThread::createRefreshingThread()
 {
-	return (new Controller())->refreshingThread();
+	return new RefreshingThread();
 }
 
 Server* RefreshingThread::findRefreshingServer(const QHostAddress& address,
@@ -246,11 +192,6 @@ bool RefreshingThread::isAnythingToRefresh() const
 		|| !d->registeredMasters.isEmpty() || !d->unchallengedMasters.isEmpty();
 }
 
-bool RefreshingThread::isRunning() const
-{
-	return d->controller->isRunning();
-}
-
 bool RefreshingThread::hasFreeServerRefreshSlots() const
 {
 	return d->refreshingServers.size() < gConfig.doomseeker.queryBatchSize;
@@ -264,7 +205,6 @@ void RefreshingThread::masterFinishedRefreshing(MasterClient* pMaster)
 		registerServer(pServer);
 	}
 
-	d->thisMutex.lock();
 	unregisterMaster(pMaster);
 
 	if (servers.size() == 0 && !isAnythingToRefresh())
@@ -272,7 +212,6 @@ void RefreshingThread::masterFinishedRefreshing(MasterClient* pMaster)
 		d->bSleeping = true;
 		emit sleepingModeEnter();
 	}
-	d->thisMutex.unlock();
 
 	emit finishedQueryingMaster(pMaster);
 }
@@ -280,14 +219,10 @@ void RefreshingThread::masterFinishedRefreshing(MasterClient* pMaster)
 void RefreshingThread::quit()
 {
 	d->bKeepRunning = false;
-
-	d->controller->exit();
 }
 
 void RefreshingThread::registerMaster(MasterClient* pMaster)
 {
-	d->thisMutex.lock();
-
 	if (!d->registeredMasters.contains(pMaster))
 	{
 		MasterClientInfo* pMasterInfo = new MasterClientInfo(pMaster, this);
@@ -306,14 +241,10 @@ void RefreshingThread::registerMaster(MasterClient* pMaster)
 			QTimer::singleShot(20, this, SLOT(sendMasterQueries()));
 		}
 	}
-
-	d->thisMutex.unlock();
 }
 
 void RefreshingThread::registerServer(Server* server)
 {
-	d->thisMutex.lock();
-
 	if (!d->registeredServers.contains(server))
 	{
 		d->registeredServers.insert(server);
@@ -330,20 +261,17 @@ void RefreshingThread::registerServer(Server* server)
 				d->bSleeping = false;
 				emit sleepingModeExit();
 			}
+			qDebug() << "registerServer(): " << QThread::currentThreadId();
 			QTimer::singleShot(20, this, SLOT(sendServerQueries()));
 		}
 	}
-
-	d->thisMutex.unlock();
 }
 
 void RefreshingThread::readAllPendingDatagrams()
 {
 	while(d->socket->hasPendingDatagrams() && d->bKeepRunning)
 	{
-		d->thisMutex.lock();
 		readPendingDatagram();
-		d->thisMutex.unlock();
 	}
 }
 
@@ -391,14 +319,13 @@ void RefreshingThread::sendServerQueries()
 
 	if (!d->registeredServers.isEmpty())
 	{
-		d->thisMutex.lock();
 		startNewServerRefreshesIfFreeSlots();
 		resendCurrentServerRefreshesIfTimeout();
-		d->thisMutex.unlock();
 		// Call self. This will continue until there's nothing more
-		// to refresh.
-		QTimer::singleShot(gConfig.doomseeker.queryBatchDelay, this,
-			SLOT(sendServerQueries()));
+		// to refresh. Also make sure that there is at least some
+		// delay between calls or Doomseeker will hog CPU.
+		QTimer::singleShot(qMax(1U, gConfig.doomseeker.queryBatchDelay),
+			this, SLOT(sendServerQueries()));
 	}
 	else
 	{
@@ -433,9 +360,22 @@ bool RefreshingThread::shouldBlockRefreshingProcess() const
 	return false;
 }
 
-void RefreshingThread::start() const
+bool RefreshingThread::start()
 {
-	d->controller->start();
+	QUdpSocket* socket = new QUdpSocket();
+	this->connect(socket, SIGNAL(readyRead()),
+		SLOT(readAllPendingDatagrams()));
+	if (socket->bind())
+	{
+		d->socket = socket;
+		MasterClient::pGlobalUdpSocket = socket;
+		return true;
+	}
+	else
+	{
+		delete socket;
+	}
+	return false;
 }
 
 void RefreshingThread::startNewServerRefreshesIfFreeSlots()
@@ -497,6 +437,7 @@ bool RefreshingThread::tryReadDatagramByMasterClient(QHostAddress& address,
 		}
 		if (pMaster->readMasterResponse(address, port, packet))
 		{
+			qDebug() << "YAH!";
 			return true;
 		}
 	}

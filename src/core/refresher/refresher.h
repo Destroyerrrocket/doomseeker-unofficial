@@ -36,8 +36,6 @@ class RefreshingThread : public QObject
 	public:
 		~RefreshingThread();
 
-		bool isRunning() const;
-
 		/**
 		 * This will set bKeepRunning to false which will tell the refreshing
 		 * thread to exit gracefully.
@@ -64,7 +62,7 @@ class RefreshingThread : public QObject
 		 */
 		void setDelayBetweenResends(int delay);
 
-		void start() const;
+		bool start();
 
 		static RefreshingThread *createRefreshingThread();
 
@@ -89,7 +87,6 @@ class RefreshingThread : public QObject
 		void sleepingModeExit();
 
 	private:
-		class Controller;
 		class Data;
 		class MasterClientInfo;
 
@@ -97,7 +94,7 @@ class RefreshingThread : public QObject
 
 		Data *d;
 
-		RefreshingThread(Controller *controller);
+		RefreshingThread();
 
 		bool isAnythingToRefresh() const;
 		Server* findRefreshingServer(const QHostAddress& address, unsigned short port);
