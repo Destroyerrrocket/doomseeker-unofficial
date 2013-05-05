@@ -27,9 +27,26 @@
 #include "pluginserver.h"
 #include <QTimer>
 
+class PluginMasterClient::PrivData
+{
+	public:
+		int expectedPackets;
+		int gotPackets;
+		QTimer timeoutTimer;
+};
+//////////////////////////////////////////////////////////////////////////////
+const unsigned RESPONSE_TIMEOUT_MS = 1000;
+
 PluginMasterClient::PluginMasterClient()
 : MasterClient()
 {
+	d = new PrivData();
+	d->expectedPackets = 0;
+	d->gotPackets = 0;
+
+	this->connect(&d->timeoutTimer, SIGNAL(timeout()),
+		SIGNAL(listUpdated()));
+
 	// Master responder cannot be started in Plugin's init procedure
 	// or the plugin will fail to load in VC++ debug mode with
 	// "Access Violation" error. Fortunately, this constructor is executed
@@ -45,10 +62,13 @@ PluginMasterClient::PluginMasterClient()
 
 PluginMasterClient::~PluginMasterClient()
 {
+	delete d;
 }
 
 bool PluginMasterClient::getServerListRequest(QByteArray &data)
 {
+	d->expectedPackets = 0;
+	d->gotPackets = 0;
 	data = "FAKE";
 	data.resize(4);
 	return true;
@@ -62,6 +82,8 @@ const EnginePlugin* PluginMasterClient::plugin() const
 bool PluginMasterClient::readMasterResponse(QByteArray &data)
 {
 	QStringList ports = QString(data).split(";");
+	// First element is amount of expected packets:
+	d->expectedPackets = ports.takeFirst().toUInt();
 	foreach (const QString& portEncoded, ports)
 	{
 		quint16 port = portEncoded.toUShort();
@@ -71,6 +93,16 @@ bool PluginMasterClient::readMasterResponse(QByteArray &data)
 			servers.append(server);
 		}
 	}
-	emit listUpdated();
+	++d->gotPackets;
+	if (d->gotPackets >= d->expectedPackets)
+	{
+		d->timeoutTimer.stop();
+		emit listUpdated();
+	}
+	else
+	{
+		// Timeout will fire if some of the packets become lost.
+		d->timeoutTimer.start(RESPONSE_TIMEOUT_MS);
+	}
 	return true;
 }

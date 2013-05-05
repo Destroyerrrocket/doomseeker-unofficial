@@ -38,6 +38,8 @@ class ResponderCfg
 		 *
 		 * This is used by master server. This value can be lowered
 		 * to test if Doomseeker receives segmented responses properly.
+		 *
+		 * This number must be at least 20; values below 20 will be clipped.
 		 */
 		static unsigned short maxPacketSize();
 		/**

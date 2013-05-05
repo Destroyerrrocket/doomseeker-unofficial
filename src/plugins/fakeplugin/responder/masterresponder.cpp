@@ -84,7 +84,9 @@ void MasterResponder::bindServer(ServerResponder* server, unsigned short port)
 
 QList<QByteArray> MasterResponder::buildResponsePackets()
 {
-	QList<QByteArray> result;
+	const unsigned short maxPortsListsLength = qMax((unsigned short)20,
+		ResponderCfg::maxPacketSize());
+	QList<QByteArray> portsLists;
 	QString packet = "";
 	foreach (const ServerResponder* server, d->serverResponders)
 	{
@@ -94,9 +96,9 @@ QList<QByteArray> MasterResponder::buildResponsePackets()
 		}
 		QString currentPort = QString::number(server->port());
 		QString tmp = packet + ";" + currentPort;
-		if (tmp.toAscii().length() > ResponderCfg::maxPacketSize())
+		if (tmp.toAscii().length() > maxPortsListsLength)
 		{
-			result.append(packet.toAscii());
+			portsLists.append(packet.toAscii());
 			packet = currentPort;
 		}
 		else
@@ -104,7 +106,15 @@ QList<QByteArray> MasterResponder::buildResponsePackets()
 			packet = tmp;
 		}
 	}
-	result.append(packet.toAscii());
+	portsLists.append(packet.toAscii());
+	// Now that we have the number of packets, we can prepend
+	// that number to each packet.
+	QList<QByteArray> result;
+	foreach (const QByteArray& portsList, portsLists)
+	{
+		QString number = QString::number(portsLists.size()) + ";";
+		result.append(number.toAscii() + portsList);
+	}
 	return result;
 }
 
@@ -177,4 +187,5 @@ void MasterResponder::startServerResponders()
 		bindServer(server, port);
 		++port;
 	}
+	gLog << QString("FakePlugin, started %1 servers").arg(d->serverResponders.size());
 }
