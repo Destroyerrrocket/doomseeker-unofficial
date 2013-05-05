@@ -21,6 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "refresher.h"
+
 #include "masterserver/masterclient.h"
 #include "masterserver/masterclientsignalproxy.h"
 #include "masterserver/mastermanager.h"
@@ -40,31 +41,31 @@
 class RefreshingThread::Data
 {
 	public:
-		typedef QHash<MasterClient*, MasterClientInfo*>				MasterHashtable;
+		typedef QHash<MasterClient*, MasterClientInfo*> MasterHashtable;
 		typedef QHash<MasterClient*, MasterClientInfo*>::iterator	MasterHashtableIt;
 
-		Controller				*controller;
+		Controller *controller;
 
-		QTime					batchTime;
-		bool					bSleeping;
-		bool					bKeepRunning;
-		int						delayBetweenResends;
-		QList<ServerBatch>		registeredBatches;
-		MasterHashtable			registeredMasters;
-
-		/**
-		 *	This will keep list of ALL servers to make sure that no server is
-		 *	registered twice.
-		 */
-		QSet<Server*>			registeredServers;
-		QUdpSocket*				socket;
-		QList<Server*>			unbatchedServers;
-		QSet<MasterClient*>		unchallengedMasters;
+		QTime batchTime;
+		bool bSleeping;
+		bool bKeepRunning;
+		int delayBetweenResends;
+		QList<ServerBatch> registeredBatches;
+		MasterHashtable registeredMasters;
 
 		/**
-		 *	Mutex used by methods of this class.
+		 * This will keep list of ALL servers to make sure that no server is
+		 * registered twice.
 		 */
-		QMutex					thisMutex;
+		QSet<Server*> registeredServers;
+		QUdpSocket*	 socket;
+		QList<Server*> unbatchedServers;
+		QSet<MasterClient*> unchallengedMasters;
+
+		/**
+		 * Mutex used by methods of this class.
+		 */
+		QMutex thisMutex;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -127,8 +128,8 @@ class RefreshingThread::MasterClientInfo
 				delete pLastChallengeTimer;
 			}
 		}
-		
-		void						fireLastChallengeSentTimer()
+
+		void fireLastChallengeSentTimer()
 		{
 			// This was previously done with an object of QTimer
 			// instead of a pointer.
@@ -138,31 +139,31 @@ class RefreshingThread::MasterClientInfo
 			if (pLastChallengeTimer == NULL)
 			{
 				pLastChallengeTimer = new QTimer();
-				connect(pLastChallengeTimer, SIGNAL(timeout()), 
-					pParentThread, SLOT(attemptTimeoutMasters()));				
+				connect(pLastChallengeTimer, SIGNAL(timeout()),
+					pParentThread, SLOT(attemptTimeoutMasters()));
 				pLastChallengeTimer->setSingleShot(true);
-				pLastChallengeTimer->setInterval(MASTER_SERVER_TIMEOUT_DELAY);					
+				pLastChallengeTimer->setInterval(MASTER_SERVER_TIMEOUT_DELAY);
 			}
-									
+
 			pLastChallengeTimer->start();
 		}
-		
-		bool						isLastChallengeTimerActive() const
+
+		bool isLastChallengeTimerActive() const
 		{
 			if (pLastChallengeTimer == NULL)
 			{
 				return false;
 			}
-		
+
 			return pLastChallengeTimer->isActive();
 		}
 
-		int							numOfChallengesSent;
+		int numOfChallengesSent;
 
 	protected:
-		MasterClientSignalProxy*	pReceiver;
-		RefreshingThread*			pParentThread;
-		QTimer*						pLastChallengeTimer;
+		MasterClientSignalProxy* pReceiver;
+		RefreshingThread* pParentThread;
+		QTimer* pLastChallengeTimer;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -170,13 +171,13 @@ class RefreshingThread::MasterClientInfo
 class RefreshingThread::ServerBatch
 {
 	public:
-		QList<Server*>	servers;
-		QTime			time;
+		QList<Server*> servers;
+		QTime time;
 
 		/**
 		 * @param rejectedServers - servers that were removed from this
-		 *		batch due to timeout. These should be removed from registered
-		 *		servers list in the RefreshingThread.
+		 *       batch due to timeout. These should be removed from
+		 *       registered servers list in the RefreshingThread.
 		 */
 		void sendQueries(QUdpSocket *socket, QList<Server*>& rejectedServers, int resendDelay=1000, bool firstQuery=false)
 		{
@@ -186,7 +187,6 @@ class RefreshingThread::ServerBatch
 			{
 				//printf("SENT!\n");
 				time.start();
-
 				// sendRefreshQuery will clean up after a fail
 				// There's no need to call methods like
 				// Server::refreshStops() explicitly.
@@ -260,7 +260,8 @@ RefreshingThread *RefreshingThread::createRefreshingThread()
 
 bool RefreshingThread::isAnythingToRefresh() const
 {
-	int value = d->unbatchedServers.count() | d->registeredBatches.count() | d->registeredMasters.count() | d->unchallengedMasters.count();
+	int value = d->unbatchedServers.count() | d->registeredBatches.count()
+		| d->registeredMasters.count() | d->unchallengedMasters.count();
 
 	return value != 0;
 }
@@ -294,7 +295,7 @@ void RefreshingThread::masterFinishedRefreshing(MasterClient* pMaster)
 void RefreshingThread::quit()
 {
 	d->bKeepRunning = false;
-	
+
 	d->controller->exit();
 }
 
@@ -457,7 +458,12 @@ void RefreshingThread::sendServerQueries()
 			d->thisMutex.unlock();
 		}
 		else
-			d->socket->waitForReadyRead(100); // This could probably be more properly determined by searching for the nearest timeout in the batches, but this seems to work fairly well.
+		{
+			// This could probably be more properly determined
+			// by searching for the nearest timeout in the batches,
+			// but this seems to work fairly well.
+			d->socket->waitForReadyRead(100);
+		}
 	}
 }
 
@@ -551,7 +557,6 @@ void RefreshingThread::unregisterMaster(MasterClient* pMaster)
 	{
 		MasterClientInfo* pMasterInfo = it.value();
 		delete pMasterInfo;
-
 		d->registeredMasters.erase(it);
 	}
 }

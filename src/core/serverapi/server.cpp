@@ -29,7 +29,7 @@
 #include "strings.h"
 #include "gui/standardserverconsole.h"
 #include "gui/wadseekerinterface.h"
-#include "refresher.h"
+#include "refresher/refresher.h"
 #include "serverapi/binaries.h"
 #include "serverapi/gamerunner.h"
 #include "serverapi/playerslist.h"
@@ -166,7 +166,7 @@ bool Server::isEmpty() const
 {
 	return players->numClients() == 0;
 }
-		
+
 bool Server::isFull() const
 {
 	return players->numClients() == maximumClients();

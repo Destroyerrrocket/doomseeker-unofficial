@@ -44,7 +44,7 @@
 #include "log.h"
 #include "main.h"
 #include "plugins/engineplugin.h"
-#include "refresher.h"
+#include "refresher/refresher.h"
 #include "serverapi/server.h"
 #include "strings.h"
 #include "tests/testruns.h"
@@ -239,7 +239,7 @@ int Main::run()
 		// doesn't do the actual installation if it's not equal to zero.
 		updateFailedCode = 0;
 		int installResult = installPendingUpdates();
-		if (installResult != UpdateInstaller::EC_Ok 
+		if (installResult != UpdateInstaller::EC_Ok
 			&& installResult != UpdateInstaller::EC_NothingToUpdate)
 		{
 			QMessageBox::critical(NULL, tr("Doomseeker - Updates Install Failure"),
@@ -401,7 +401,7 @@ void Main::initLocalizationsDefinitions()
 	gLog << tr("Loading translations definitions");
 	localizations = Localization::loadLocalizationsList(
 		DataPaths::staticDataSearchDirs(DataPaths::TRANSLATIONS_DIR_NAME));
-		
+
 	QString localization = gConfig.doomseeker.localization;
 	gLog << tr("Loading translation \"%1\".").arg(localization);
 	bool bSuccess = Localization::loadTranslation(localization);
@@ -565,7 +565,7 @@ void getCommandLineArgs(QStringList& outList)
 {
 	int numArgs = 0;
 	LPWSTR* winapiCmdLine = CommandLineToArgvW(GetCommandLineW(), &numArgs);
-	
+
 	if (winapiCmdLine == NULL)
 	{
 		return;

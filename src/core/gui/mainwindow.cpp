@@ -38,6 +38,7 @@
 #include "gui/wadseekerinterface.h"
 #include "irc/configuration/ircconfig.h"
 #include "plugins/engineplugin.h"
+#include "refresher/refresher.h"
 #include "serverapi/gamerunner.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
@@ -53,7 +54,6 @@
 #include "log.h"
 #include "pathfinder.h"
 #include "main.h"
-#include "refresher.h"
 #include "strings.h"
 #include <cassert>
 #include <QAction>
@@ -360,7 +360,7 @@ void MainWindow::checkForUpdates(bool bUserTriggered)
 			unsigned long long revision = gConfig.autoUpdates.lastKnownUpdateRevisions[package];
 			QList<unsigned long long> list;
 			list << revision;
-			ignoredPackagesRevisions.insert(package, list); 
+			ignoredPackagesRevisions.insert(package, list);
 		}
 	}
 	autoUpdater->setIgnoreRevisions(ignoredPackagesRevisions);
@@ -1135,7 +1135,7 @@ QProgressBar* MainWindow::mkStdProgressBarForStatusBar()
 void MainWindow::notifyFirstRun()
 {
 	// On first run prompt configuration box.
-	QMessageBox::information(NULL, tr("Welcome to Doomseeker"), 
+	QMessageBox::information(NULL, tr("Welcome to Doomseeker"),
 		tr("Before you start browsing for servers, please ensure that Doomseeker is properly configured."));
 	menuActionConfigure->trigger();
 }
@@ -1230,7 +1230,7 @@ void MainWindow::postInitAppStartup()
 	{
 		// There are no plugins so something is really bad.
 		// Display error message.
-		QMessageBox::critical(NULL, tr("Doomseeker critical error"), 
+		QMessageBox::critical(NULL, tr("Doomseeker critical error"),
 			tr("Doomseeker was unable to find any plugin libraries.\n"
 				"Although the application will still work it will not be possible "
 				"to fetch any server info or launch any game.\n\n"
