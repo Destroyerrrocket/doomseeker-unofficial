@@ -261,7 +261,6 @@ void RefreshingThread::registerServer(Server* server)
 				d->bSleeping = false;
 				emit sleepingModeExit();
 			}
-			qDebug() << "registerServer(): " << QThread::currentThreadId();
 			QTimer::singleShot(20, this, SLOT(sendServerQueries()));
 		}
 	}
@@ -437,7 +436,6 @@ bool RefreshingThread::tryReadDatagramByMasterClient(QHostAddress& address,
 		}
 		if (pMaster->readMasterResponse(address, port, packet))
 		{
-			qDebug() << "YAH!";
 			return true;
 		}
 	}
