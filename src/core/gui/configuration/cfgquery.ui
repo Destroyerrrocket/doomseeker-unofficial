@@ -216,6 +216,9 @@
         <property name="minimum">
          <number>1</number>
         </property>
+        <property name="maximum">
+         <number>250</number>
+        </property>
         <property name="value">
          <number>30</number>
         </property>
@@ -227,7 +230,7 @@
          <string>Delay to wait before sending next batch (0ms recommended)</string>
         </property>
         <property name="minimum">
-         <number>0</number>
+         <number>1</number>
         </property>
         <property name="maximum">
          <number>1000</number>
@@ -236,7 +239,7 @@
          <number>10</number>
         </property>
         <property name="value">
-         <number>0</number>
+         <number>1</number>
         </property>
        </widget>
       </item>
