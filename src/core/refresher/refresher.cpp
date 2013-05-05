@@ -38,11 +38,29 @@
 #include <QSet>
 #include <QUdpSocket>
 
+class ServerRefreshTime
+{
+	public:
+		Server* server;
+		QTime time;
+
+		ServerRefreshTime(Server* server)
+		{
+			this->server = server;
+			time.start();
+		}
+
+		bool operator==(const ServerRefreshTime& other)
+		{
+			return server == other.server;
+		}
+};
+
 class RefreshingThread::Data
 {
 	public:
 		typedef QHash<MasterClient*, MasterClientInfo*> MasterHashtable;
-		typedef QHash<MasterClient*, MasterClientInfo*>::iterator	MasterHashtableIt;
+		typedef QHash<MasterClient*, MasterClientInfo*>::iterator MasterHashtableIt;
 
 		Controller *controller;
 
@@ -50,7 +68,6 @@ class RefreshingThread::Data
 		bool bSleeping;
 		bool bKeepRunning;
 		int delayBetweenResends;
-		QList<ServerBatch> registeredBatches;
 		MasterHashtable registeredMasters;
 
 		/**
@@ -58,8 +75,8 @@ class RefreshingThread::Data
 		 * registered twice.
 		 */
 		QSet<Server*> registeredServers;
+		QList<ServerRefreshTime> refreshingServers;
 		QUdpSocket*	 socket;
-		QList<Server*> unbatchedServers;
 		QSet<MasterClient*> unchallengedMasters;
 
 		/**
@@ -168,54 +185,6 @@ class RefreshingThread::MasterClientInfo
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class RefreshingThread::ServerBatch
-{
-	public:
-		QList<Server*> servers;
-		QTime time;
-
-		/**
-		 * @param rejectedServers - servers that were removed from this
-		 *       batch due to timeout. These should be removed from
-		 *       registered servers list in the RefreshingThread.
-		 */
-		void sendQueries(QUdpSocket *socket, QList<Server*>& rejectedServers, int resendDelay=1000, bool firstQuery=false)
-		{
-			rejectedServers.clear();
-			//printf("Batch size: %u, Delay: %d\n", servers.size(), resendDelay);
-			if(firstQuery || resendDelay - time.elapsed() <= 0)
-			{
-				//printf("SENT!\n");
-				time.start();
-				// sendRefreshQuery will clean up after a fail
-				// There's no need to call methods like
-				// Server::refreshStops() explicitly.
-				foreach(Server *server, servers)
-				{
-					if(!server->sendRefreshQuery(socket))
-					{
-						servers.removeOne(server);
-						rejectedServers.append(server);
-					}
-				}
-			}
-		}
-		
-		Server* obtainServer(const QHostAddress& address, quint16 port)
-		{
-			foreach (Server* server, servers)
-			{
-				if (server->port() == port && server->address() == address)
-				{
-					return server;
-				}
-			}
-			return NULL;
-		}
-};
-
-////////////////////////////////////////////////////////////////////////////////
-
 RefreshingThread::RefreshingThread(Controller *controller)
 {
 	d = new Data;
@@ -258,12 +227,23 @@ RefreshingThread *RefreshingThread::createRefreshingThread()
 	return (new Controller())->refreshingThread();
 }
 
+Server* RefreshingThread::findRefreshingServer(const QHostAddress& address,
+	unsigned short port)
+{
+	foreach (const ServerRefreshTime& refreshOp, d->refreshingServers)
+	{
+		if (refreshOp.server->address() == address && refreshOp.server->port() == port)
+		{
+			return refreshOp.server;
+		}
+	}
+	return NULL;
+}
+
 bool RefreshingThread::isAnythingToRefresh() const
 {
-	int value = d->unbatchedServers.count() | d->registeredBatches.count()
-		| d->registeredMasters.count() | d->unchallengedMasters.count();
-
-	return value != 0;
+	return !d->refreshingServers.isEmpty() || !d->registeredServers.isEmpty()
+		|| !d->registeredMasters.isEmpty() || !d->unchallengedMasters.isEmpty();
 }
 
 bool RefreshingThread::isRunning() const
@@ -271,10 +251,15 @@ bool RefreshingThread::isRunning() const
 	return d->controller->isRunning();
 }
 
+bool RefreshingThread::hasFreeServerRefreshSlots() const
+{
+	return d->refreshingServers.size() < gConfig.doomseeker.queryBatchSize;
+}
+
 void RefreshingThread::masterFinishedRefreshing(MasterClient* pMaster)
 {
 	const QList<Server*>& servers = pMaster->serverList();
-	foreach(Server* pServer, servers)
+	foreach (Server* pServer, servers)
 	{
 		registerServer(pServer);
 	}
@@ -282,7 +267,7 @@ void RefreshingThread::masterFinishedRefreshing(MasterClient* pMaster)
 	d->thisMutex.lock();
 	unregisterMaster(pMaster);
 
-	if(servers.size() == 0 && !isAnythingToRefresh())
+	if (servers.size() == 0 && !isAnythingToRefresh())
 	{
 		d->bSleeping = true;
 		emit sleepingModeEnter();
@@ -311,9 +296,9 @@ void RefreshingThread::registerMaster(MasterClient* pMaster)
 		d->unchallengedMasters.insert(pMaster);
 		emit block();
 
-		if(d->registeredMasters.size() == 1)
+		if (d->registeredMasters.size() == 1)
 		{
-			if(!d->bSleeping)
+			if (d->bSleeping)
 			{
 				d->bSleeping = false;
 				emit sleepingModeExit();
@@ -332,18 +317,15 @@ void RefreshingThread::registerServer(Server* server)
 	if (!d->registeredServers.contains(server))
 	{
 		d->registeredServers.insert(server);
-		d->unbatchedServers.append(server);
-
 		if (!server->isCustom())
 		{
 			emit block();
 		}
 
 		server->refreshStarts();
-
-		if(d->registeredServers.size() == 1)
+		if (d->registeredServers.size() == 1)
 		{
-			if(!d->bSleeping)
+			if (d->bSleeping)
 			{
 				d->bSleeping = false;
 				emit sleepingModeExit();
@@ -380,7 +362,7 @@ void RefreshingThread::readPendingDatagram()
 	{
 		return;
 	}
-	tryReadDatagramByServerBatch(address, port, dataArray);
+	tryReadDatagramByServer(address, port, dataArray);
 }
 
 void RefreshingThread::sendMasterQueries()
@@ -398,71 +380,32 @@ void RefreshingThread::sendMasterQueries()
 	}
 }
 
-unsigned RefreshingThread::sendQueriesForBatch(ServerBatch& batch, int resetDelay, bool firstQuery)
-{
-	QList<Server*> rejectedServers;
-	batch.sendQueries(d->socket, rejectedServers, d->delayBetweenResends, false);
-
-	// Now erase all rejected servers from the list of registered
-	// servers.
-	foreach(Server* server, rejectedServers)
-	{
-		d->registeredServers.remove(server);
-	}
-
-	return batch.servers.size();
-}
-
 void RefreshingThread::sendServerQueries()
 {
 	const unsigned SERVER_BATCH_SIZE = gConfig.doomseeker.queryBatchSize;
 
-	while (d->bKeepRunning && (d->unbatchedServers.size() != 0 || d->registeredBatches.size() != 0))
+	if (!d->bKeepRunning)
 	{
-		//qDebug() << d->unbatchedServers.size() << " unbatched servers.";
-		unsigned int querySlotsInUse = 0;
-		for(int i = 0; i < d->registeredBatches.size(); ++i)
-		{
-			//printf("Sending queries from batch: %u\n", i);
-			if(d->registeredBatches[i].servers.size() == 0)
-			{
-				d->registeredBatches.removeAt(i--);
-				//printf("Empty batch %u removed, now batches size is: %u\n", i + 1, d->registeredBatches.size());
-				if(!isAnythingToRefresh())
-				{
-					d->bSleeping = true;
-					emit sleepingModeEnter();
-				}
-				continue;
-			}
-			querySlotsInUse += sendQueriesForBatch(d->registeredBatches[i], d->delayBetweenResends, false);
-		}
+		return;
+	}
 
-		//qDebug() << querySlotsInUse << " Servers queried.";
-		if(d->unbatchedServers.size() != 0 && querySlotsInUse < SERVER_BATCH_SIZE &&
-			d->batchTime.elapsed() >= gConfig.doomseeker.queryBatchDelay)
+	if (!d->registeredServers.isEmpty())
+	{
+		d->thisMutex.lock();
+		startNewServerRefreshesIfFreeSlots();
+		resendCurrentServerRefreshesIfTimeout();
+		d->thisMutex.unlock();
+		// Call self. This will continue until there's nothing more
+		// to refresh.
+		QTimer::singleShot(gConfig.doomseeker.queryBatchDelay, this,
+			SLOT(sendServerQueries()));
+	}
+	else
+	{
+		if (!isAnythingToRefresh())
 		{
-			d->batchTime.start();
-			d->thisMutex.lock();
-			ServerBatch batch;
-			// Select a batch of servers to query.
-			batch.servers = d->unbatchedServers.mid(0, SERVER_BATCH_SIZE-querySlotsInUse);
-			//qDebug() << "Batching " << batch.servers.size() << " servers.";
-			sendQueriesForBatch(batch, d->delayBetweenResends, true);
-
-			d->registeredBatches.append(batch);
-			foreach(Server *server, batch.servers)
-			{
-				d->unbatchedServers.removeOne(server);
-			}
-			d->thisMutex.unlock();
-		}
-		else
-		{
-			// This could probably be more properly determined
-			// by searching for the nearest timeout in the batches,
-			// but this seems to work fairly well.
-			d->socket->waitForReadyRead(100);
+			d->bSleeping = true;
+			emit sleepingModeEnter();
 		}
 	}
 }
@@ -495,6 +438,54 @@ void RefreshingThread::start() const
 	d->controller->start();
 }
 
+void RefreshingThread::startNewServerRefreshesIfFreeSlots()
+{
+	// Copy the list as the original will be modified.
+	// We don't want to confuse the foreach.
+	QSet<Server*> servers = d->registeredServers;
+	foreach (Server* server, servers)
+	{
+		if (!hasFreeServerRefreshSlots())
+		{
+			break;
+		}
+		if (!d->refreshingServers.contains(server))
+		{
+			if(server->sendRefreshQuery(d->socket))
+			{
+				d->refreshingServers.append(server);
+			}
+			else
+			{
+				d->registeredServers.remove(server);
+			}
+		}
+	}
+}
+
+void RefreshingThread::resendCurrentServerRefreshesIfTimeout()
+{
+	for (int i = 0; i < d->refreshingServers.size(); ++i)
+	{
+		ServerRefreshTime& refreshOp = d->refreshingServers[i];
+		if (refreshOp.time.elapsed() > d->delayBetweenResends)
+		{
+			if (refreshOp.server->sendRefreshQuery(d->socket))
+			{
+				refreshOp.time.start();
+			}
+			else
+			{
+				d->refreshingServers.removeOne(refreshOp);
+				d->registeredServers.remove(refreshOp.server);
+				// The collection on which we iterate just got shortened
+				// so let's back up by one step.
+				--i;
+			}
+		}
+	}
+}
+
 bool RefreshingThread::tryReadDatagramByMasterClient(QHostAddress& address,
 	unsigned short port, QByteArray& packet)
 {
@@ -512,40 +503,35 @@ bool RefreshingThread::tryReadDatagramByMasterClient(QHostAddress& address,
 	return false;
 }
 
-bool RefreshingThread::tryReadDatagramByServerBatch(const QHostAddress& address,
+bool RefreshingThread::tryReadDatagramByServer(const QHostAddress& address,
 	unsigned short port, QByteArray& packet)
 {
-	for (int i = 0; i < d->registeredBatches.size(); ++i)
+	if (!d->bKeepRunning)
 	{
-		ServerBatch& serverBatch = d->registeredBatches[i];
-		Server *server = serverBatch.obtainServer(address, port);
-		if (!d->bKeepRunning)
+		return true;
+	}
+	Server* server = findRefreshingServer(address, port);
+	if (server != NULL)
+	{
+		d->refreshingServers.removeOne(server);
+		d->registeredServers.remove(server);
+
+		server->bPingIsSet = false;
+
+		// Store the state of request read.
+		int response = server->readRequest(packet);
+
+		// Set the current ping, if plugin didn't do so already.
+		if (!server->bPingIsSet)
 		{
-			return true;
+			server->currentPing = server->time.elapsed();
 		}
 
-		if (server != NULL)
-		{
-			serverBatch.servers.removeOne(server);
-			d->registeredServers.remove(server);
+		server->refreshStops();
 
-			server->bPingIsSet = false;
-
-			// Store the state of request read.
-			int response = server->readRequest(packet);
-
-			// Set the current ping, if plugin didn't do so already.
-			if (!server->bPingIsSet)
-			{
-				server->currentPing = server->time.elapsed();
-			}
-
-			server->refreshStops();
-
-			// Emit the response returned by readRequest.
-			server->emitUpdated(response);
-			return true;
-		}
+		// Emit the response returned by readRequest.
+		server->emitUpdated(response);
+		return true;
 	}
 	return false;
 }

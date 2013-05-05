@@ -69,6 +69,7 @@ class RefreshingThread : public QObject
 		void start() const;
 
 		static RefreshingThread *createRefreshingThread();
+
 	signals:
 		/**
 		 * Emitted when a master client of non-custom server is registered.
@@ -89,22 +90,22 @@ class RefreshingThread : public QObject
 		 */
 		void sleepingModeExit();
 
-	protected:
+	private:
 		class Controller;
 		class Data;
 		class MasterClientInfo;
-		class ServerBatch;
+
+		static const int MASTER_SERVER_TIMEOUT_DELAY = 10000;
+
+		Data *d;
 
 		RefreshingThread(Controller *controller);
 
 		bool isAnythingToRefresh() const;
+		Server* findRefreshingServer(const QHostAddress& address, unsigned short port);
+		bool hasFreeServerRefreshSlots() const;
 
 		void readPendingDatagram();
-
-		/**
-		 * @return Query slots used by this batch.
-		 */
-		unsigned sendQueriesForBatch(ServerBatch& batch, int resetDelay, bool firstQuery);
 
 		/**
 		 * @brief Returns true if there are any master clients or non-custom
@@ -112,19 +113,8 @@ class RefreshingThread : public QObject
 		 */
 		bool shouldBlockRefreshingProcess() const;
 
-		void unregisterMaster(MasterClient* pMaster);
-
-	protected slots:
-		void attemptTimeoutMasters();
-		void masterFinishedRefreshing(MasterClient* pMaster);
-		void readAllPendingDatagrams();
-		void sendMasterQueries();
-		void sendServerQueries();
-
-	private:
-		static const int MASTER_SERVER_TIMEOUT_DELAY = 10000;
-
-		Data *d;
+		void startNewServerRefreshesIfFreeSlots();
+		void resendCurrentServerRefreshesIfTimeout();
 
 		// TODO: Constify 'address' and 'packet' args.
 		/**
@@ -137,8 +127,17 @@ class RefreshingThread : public QObject
 		 * @return true if any further attempts to parse the packet
 		 *         should be stopped.
 		 */
-		bool tryReadDatagramByServerBatch(const QHostAddress& address,
+		bool tryReadDatagramByServer(const QHostAddress& address,
 			unsigned short port, QByteArray& packet);
+
+		void unregisterMaster(MasterClient* pMaster);
+
+	private slots:
+		void attemptTimeoutMasters();
+		void masterFinishedRefreshing(MasterClient* pMaster);
+		void readAllPendingDatagrams();
+		void sendMasterQueries();
+		void sendServerQueries();
 };
 
 #endif

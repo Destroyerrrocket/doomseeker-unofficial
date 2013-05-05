@@ -96,7 +96,7 @@ class MAIN_EXPORT Server : public QObject
 		 *	or "Undefined" string if there is no parent plugin.
 		 */
 		virtual QString		engineName() const;
-		
+
 		/**
 		 * @brief Prompts the server to reverse resolve its address to
 		 *        a hostname.
@@ -193,6 +193,13 @@ class MAIN_EXPORT Server : public QObject
 		 *	manually by the programmer.
 		 */
 		virtual GameRunner*	gameRunner() const;
+
+		/**
+		 *	Method called by the refreshing thread. Sends the query
+		 *	through refreshing thread socket.
+		 *	@return false if it's impossible to send the query (fail)
+		 */
+		bool				sendRefreshQuery(QUdpSocket* socket);
 
 		bool				isRefreshing() const { return bIsRefreshing; }
 
@@ -332,13 +339,6 @@ class MAIN_EXPORT Server : public QObject
 		 *	Called when server finishes refreshing routine.
 		 */
 		void				refreshStops();
-
-		/**
-		 *	Method called by the refreshing thread. Sends the query
-		 *	through refreshing thread socket.
-		 *	@return false if it's impossible to send the query (fail)
-		 */
-		bool				sendRefreshQuery(QUdpSocket* socket);
 
 		/**
 		 * This is used to make
