@@ -21,6 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "refresher.h"
+
 #include "masterserver/masterclient.h"
 #include "masterserver/masterclientsignalproxy.h"
 #include "masterserver/mastermanager.h"
@@ -128,7 +129,7 @@ class RefreshingThread::MasterClientInfo
 				delete pLastChallengeTimer;
 			}
 		}
-		
+
 		void						fireLastChallengeSentTimer()
 		{
 			// This was previously done with an object of QTimer
@@ -139,22 +140,22 @@ class RefreshingThread::MasterClientInfo
 			if (pLastChallengeTimer == NULL)
 			{
 				pLastChallengeTimer = new QTimer();
-				connect(pLastChallengeTimer, SIGNAL(timeout()), 
-					pParentThread, SLOT(attemptTimeoutMasters()));				
+				connect(pLastChallengeTimer, SIGNAL(timeout()),
+					pParentThread, SLOT(attemptTimeoutMasters()));
 				pLastChallengeTimer->setSingleShot(true);
-				pLastChallengeTimer->setInterval(MASTER_SERVER_TIMEOUT_DELAY);					
+				pLastChallengeTimer->setInterval(MASTER_SERVER_TIMEOUT_DELAY);
 			}
-									
+
 			pLastChallengeTimer->start();
 		}
-		
+
 		bool						isLastChallengeTimerActive() const
 		{
 			if (pLastChallengeTimer == NULL)
 			{
 				return false;
 			}
-		
+
 			return pLastChallengeTimer->isActive();
 		}
 
@@ -297,7 +298,7 @@ Server*	RefreshingThread::obtainServerFromBatch(ServerBatch& batch, const QHostA
 void RefreshingThread::quit()
 {
 	d->bKeepRunning = false;
-	
+
 	d->controller->exit();
 }
 

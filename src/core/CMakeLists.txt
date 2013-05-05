@@ -155,6 +155,7 @@ set(DOOMSEEKER_QT_FILES
 	masterserver/masterclient.h
 	masterserver/masterclientsignalproxy.h
 	masterserver/mastermanager.h
+	refresher/refresher.h
 	serverapi/message.h
 	serverapi/rconprotocol.h
 	serverapi/server.h
@@ -163,7 +164,6 @@ set(DOOMSEEKER_QT_FILES
 	updater/updateinstaller.h
 	customservers.h
 	log.h
-	refresher.h
 	socketsignalsadapter.h
 	connectionhandler.h
 )
@@ -262,6 +262,7 @@ set(SOURCE_FILES
 	masterserver/mastermanager.cpp
 	plugins/engineplugin.cpp
 	plugins/pluginloader.cpp
+	refresher/refresher.cpp
 	serverapi/tooltips/gameinfotip.cpp
 	serverapi/tooltips/generalinfotip.cpp
 	serverapi/tooltips/playertable.cpp
@@ -300,7 +301,6 @@ set(SOURCE_FILES
 	main.cpp
 	pathfinder.cpp
 	random.cpp
-	refresher.cpp
 	scanner.cpp
 	speedcalculator.cpp
 	strings.cpp
