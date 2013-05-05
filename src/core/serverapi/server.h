@@ -78,7 +78,6 @@ class MAIN_EXPORT Server : public QObject
 		};
 
 		Server(const QHostAddress &address, unsigned short port);
-		Server(const Server &other);
 		virtual ~Server();
 
 		/**
@@ -181,7 +180,6 @@ class MAIN_EXPORT Server : public QObject
 		void				setSkill(unsigned char newSkill) { skill = newSkill; }
 		void				setWebsite(const QString& site) { webSite = site; }
 
-		void				operator= (const Server &other);
 		void				setCustom(bool b) { custom = b; }
 		void				setToDelete(bool b);
 
@@ -330,6 +328,7 @@ class MAIN_EXPORT Server : public QObject
 		void				setHostName(QHostInfo host);
 
 	private:
+		Q_DISABLE_COPY(Server)
 		/**
 		 *	Called when server begins refreshing routine.
 		 */

@@ -103,12 +103,6 @@ Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
 	connect(this, SIGNAL( updated(Server*, int) ), this, SLOT( setResponse(Server*, int) ));
 }
 
-Server::Server(const Server &other) : QObject(), currentGameMode(GameMode::COOPERATIVE)
-{
-	(*this) = other;
-	connect(this, SIGNAL( updated(Server*, int) ), this, SLOT( setResponse(Server*, int) ));
-}
-
 Server::~Server()
 {
 	delete players;
@@ -311,19 +305,3 @@ TooltipGenerator* Server::tooltipGenerator() const
 	return new TooltipGenerator(this);
 }
 
-void Server::operator= (const Server &other)
-{
-	serverAddress = other.address();
-	serverPort = other.port();
-
-	bDelete = other.bDelete;
-	bKnown = other.isKnown();
-	currentGameMode = other.gameMode();
-	currentPing = other.ping();
-	custom = other.isCustom();
-	locked = other.isLocked();
-	maxClients = other.maximumClients();
-	maxPlayers = other.maximumPlayers();
-	serverName = other.name();
-	serverScoreLimit = other.scoreLimit();
-}
