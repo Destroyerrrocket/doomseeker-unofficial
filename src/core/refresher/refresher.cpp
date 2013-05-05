@@ -309,8 +309,6 @@ void RefreshingThread::sendMasterQueries()
 
 void RefreshingThread::sendServerQueries()
 {
-	const unsigned SERVER_BATCH_SIZE = gConfig.doomseeker.queryBatchSize;
-
 	if (!d->bKeepRunning)
 	{
 		return;
