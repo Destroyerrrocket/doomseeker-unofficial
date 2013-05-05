@@ -211,7 +211,7 @@
       <item row="0" column="1">
        <widget class="QSpinBox" name="batchSizeBox">
         <property name="toolTip">
-         <string>Number of servers to query in a single batch (30 recommended)</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of servers to query in a single batch (30 recommended). Increasing this value will improve the speed of server list refresh, but may also increase CPU and bandwidth usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="minimum">
          <number>1</number>
@@ -227,7 +227,7 @@
       <item row="1" column="1">
        <widget class="QSpinBox" name="batchDelayBox">
         <property name="toolTip">
-         <string>Delay to wait before sending next batch (0ms recommended)</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Delay to wait before Doomseeker will check if any free slots open up for server queries (1ms recommended). Number of slots is determined by the &amp;quot;Batch size&amp;quot; setting. Increasing this value may negatively affect the speed of server list refresh, but will free up CPU and decrease bandwidth usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="minimum">
          <number>1</number>
