@@ -96,6 +96,10 @@ void PlayersDiagram::deleteImages()
 
 void PlayersDiagram::draw()
 {
+	// Don't bother trying to draw an empty image.
+	if(server->maximumClients() == 0)
+		return;
+
 	diagram = QPixmap(server->maximumClients() * playerImage->width(), playerImage->height());
 	diagram.fill(Qt::transparent);
 
