@@ -20,9 +20,8 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-
-#ifndef __REFRESHER_H_
-#define __REFRESHER_H_
+#ifndef DOOMSEEKER_REFRESHER_REFRESHER_H
+#define DOOMSEEKER_REFRESHER_REFRESHER_H
 
 #include <QObject>
 
@@ -39,56 +38,56 @@ class RefreshingThread : public QObject
 	public:
 		~RefreshingThread();
 
-		bool	isRunning() const;
+		bool isRunning() const;
 
 		/**
-		 *	This will set bKeepRunning to false which will tell the refreshing
-		 *	thread to exit gracefully.
+		 * This will set bKeepRunning to false which will tell the refreshing
+		 * thread to exit gracefully.
 		 */
-		void	quit();
+		void quit();
 
 		/**
-		 *	Registers a new master server to be queried. All masters are stored
-		 *	in a hash table, therefore it's impossible to register the same
-		 *	object twice.
+		 * Registers a new master server to be queried. All masters are stored
+		 * in a hash table, therefore it's impossible to register the same
+		 * object twice.
 		 */
-		void 	registerMaster(MasterClient* pMaster);
+		void registerMaster(MasterClient* pMaster);
 
 		/**
-		 *	Registers a new server to be queried. All servers are stored
-		 *	in a hash table, therefore it's impossible to register the same
-		 *	object twice.
+		 * Registers a new server to be queried. All servers are stored
+		 * in a hash table, therefore it's impossible to register the same
+		 * object twice.
 		 */
-		void 	registerServer(Server* server);
+		void registerServer(Server* server);
 
 		/**
-		 *	Sets delay between subsequent queries send to the servers.
-		 *	Default value is 1000. Minimum value is 100.
+		 * Sets delay between subsequent queries send to the servers.
+		 * default value is 1000. Minimum value is 100.
 		 */
-		void	setDelayBetweenResends(int delay);
+		void setDelayBetweenResends(int delay);
 
-		void	start() const;
+		void start() const;
 
 		static RefreshingThread *createRefreshingThread();
 	signals:
 		/**
-		 *	Emitted when a master client of non-custom server is registered.
+		 * Emitted when a master client of non-custom server is registered.
 		 */
-		void	block();
+		void block();
 
-		void	finishedQueryingMaster(MasterClient* master);
-
-		/**
-		 *	Emitted when refreshing thread doesn't have anything more to do and
-		 *	goes into sleeping mode.
-		 */
-		void 	sleepingModeEnter();
+		void finishedQueryingMaster(MasterClient* master);
 
 		/**
-		 *	Emitted when refreshing thread wakes up from sleeping mode and
-		 *	begins refreshing work.
+		 * Emitted when refreshing thread doesn't have anything more to do and
+		 * goes into sleeping mode.
 		 */
-		void	sleepingModeExit();
+		void sleepingModeEnter();
+
+		/**
+		 * Emitted when refreshing thread wakes up from sleeping mode and
+		 * begins refreshing work.
+		 */
+		void sleepingModeExit();
 
 	protected:
 		class Controller;
@@ -98,41 +97,37 @@ class RefreshingThread : public QObject
 
 		RefreshingThread(Controller *controller);
 
-		bool					isAnythingToRefresh() const;
+		bool isAnythingToRefresh() const;
 
 		/**
-		 *	@return NULL if server of given address:port is not in the batch.
+		 * @return NULL if server of given address:port is not in the batch.
 		 */
-		Server*					obtainServerFromBatch(ServerBatch& batch, const QHostAddress& address, quint16 port);
+		Server* obtainServerFromBatch(ServerBatch& batch, const QHostAddress& address, quint16 port);
 
-		void					readPendingDatagram();
+		void readPendingDatagram();
 
 		/**
-		 *	@return Query slots used by this batch.
+		 * @return Query slots used by this batch.
 		 */
-		unsigned				sendQueriesForBatch(ServerBatch& batch, int resetDelay, bool firstQuery);
+		unsigned sendQueriesForBatch(ServerBatch& batch, int resetDelay, bool firstQuery);
 
 		/**
-		 *	@brief Returns true if there are any master clients or non-custom
-		 *	servers registered.
+		 * @brief Returns true if there are any master clients or non-custom
+		 * servers registered.
 		 */
-		bool					shouldBlockRefreshingProcess() const;
+		bool shouldBlockRefreshingProcess() const;
 
-		void					unregisterMaster(MasterClient* pMaster);
+		void unregisterMaster(MasterClient* pMaster);
 
 	protected slots:
-		void					attemptTimeoutMasters();
-
-		void					masterFinishedRefreshing(MasterClient* pMaster);
-
-		void					readAllPendingDatagrams();
-
-		void					sendMasterQueries();
-
-		void					sendServerQueries();
+		void attemptTimeoutMasters();
+		void masterFinishedRefreshing(MasterClient* pMaster);
+		void readAllPendingDatagrams();
+		void sendMasterQueries();
+		void sendServerQueries();
 
 	private:
-		static const int	MASTER_SERVER_TIMEOUT_DELAY = 10000;
+		static const int MASTER_SERVER_TIMEOUT_DELAY = 10000;
 
 		Data *d;
 
