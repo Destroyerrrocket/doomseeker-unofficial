@@ -242,12 +242,13 @@ void Server::refreshStops()
 
 bool Server::sendRefreshQuery(QUdpSocket* socket)
 {
-	if(triesLeft-- == 0)
+	if(triesLeft <= 0)
 	{
 		emitUpdated(Server::RESPONSE_TIMEOUT);
 		refreshStops();
 		return false;
 	}
+	--triesLeft;
 
 	QByteArray request;
 	if (!sendRequest(request))
