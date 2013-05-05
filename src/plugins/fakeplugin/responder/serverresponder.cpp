@@ -30,6 +30,7 @@ class ServerResponder::PrivData
 {
 	public:
 		QList<AwaitingClient> awaitingClients;
+		int responseFailChance;
 		QUdpSocket* socket;
 };
 ///////////////////////////////////////////////////////////////////////////////
@@ -38,6 +39,7 @@ ServerResponder::ServerResponder(QObject* parent)
 {
 	d = new PrivData();
 	d->socket = new QUdpSocket();
+	d->responseFailChance = 0;
 	this->connect(d->socket, SIGNAL(readyRead()),
 		SLOT(readPendingDatagrams()));
 }
@@ -75,9 +77,12 @@ void ServerResponder::readPendingDatagram()
 	QByteArray packet = QByteArray(buffer, MAGIC_SIZE);
 	if (packet == "FAKF")
 	{
-		d->awaitingClients.append(AwaitingClient(address, port));
-		int msec = 10 + qrand() % 300;
-		QTimer::singleShot(msec, this, SLOT(respond()));
+		if (shouldRespond())
+		{
+			d->awaitingClients.append(AwaitingClient(address, port));
+			int msec = 10 + qrand() % 300;
+			QTimer::singleShot(msec, this, SLOT(respond()));
+		}
 	}
 }
 
@@ -88,3 +93,19 @@ void ServerResponder::respond()
 	response += QString::number(port()).toAscii();
 	d->socket->writeDatagram(response, client.address, client.port);
 }
+
+void ServerResponder::setResponseFailChance(unsigned chance)
+{
+	d->responseFailChance = chance;
+}
+
+bool ServerResponder::shouldRespond() const
+{
+	if (d->responseFailChance == 0)
+	{
+		return true;
+	}
+	int roll = qrand() % MAX_CHANCE + 1;
+	return roll > d->responseFailChance;
+}
+

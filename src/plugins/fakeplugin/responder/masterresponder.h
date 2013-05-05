@@ -27,6 +27,8 @@
 #include <QList>
 #include <QObject>
 
+class ServerResponder;
+
 class MasterResponder : public QObject
 {
 	Q_OBJECT
@@ -43,6 +45,7 @@ class MasterResponder : public QObject
 		PrivData* d;
 
 		bool areServerRespondersRunning();
+		void bindServer(ServerResponder* server, unsigned short port);
 		QList<QByteArray> buildResponsePackets();
 		void startServerResponders();
 

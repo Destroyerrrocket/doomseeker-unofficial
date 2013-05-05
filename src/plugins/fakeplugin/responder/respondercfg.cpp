@@ -37,7 +37,12 @@ unsigned short ResponderCfg::serverPortBase()
 	return 32112;
 }
 
-unsigned short ResponderCfg::numServers()
+unsigned short ResponderCfg::numNotRespondingServers()
+{
+	return 5;
+}
+
+unsigned short ResponderCfg::numValidServers()
 {
 	return 100;
 }

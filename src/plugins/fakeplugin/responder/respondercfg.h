@@ -54,14 +54,20 @@ class ResponderCfg
 		 */
 		static unsigned short serverPortBase();
 		/**
+		 * @brief Number of servers that will never respond.
+		 *
+		 * Same rules apply as with numValidServers().
+		 */
+		static unsigned short numNotRespondingServers();
+		/**
 		 * @brief Number of fake game servers.
 		 *
 		 * This number is limited by how many UDP sockets can be bound
 		 * on underlying Operating System.
 		 *
-		 * @see maxPacketSize()
+		 * @see serverPortBase()
 		 */
-		static unsigned short numServers();
+		static unsigned short numValidServers();
 };
 
 #endif

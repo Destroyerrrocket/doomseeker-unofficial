@@ -69,6 +69,19 @@ bool MasterResponder::bind(unsigned short port)
 	return result;
 }
 
+void MasterResponder::bindServer(ServerResponder* server, unsigned short port)
+{
+	if (server->bind(port))
+	{
+		d->serverResponders.append(server);
+	}
+	else
+	{
+		gLog << QString("FakePlugin, failed to bind server on port: %1").arg(port);
+		delete server;
+	}
+}
+
 QList<QByteArray> MasterResponder::buildResponsePackets()
 {
 	QList<QByteArray> result;
@@ -150,18 +163,18 @@ void MasterResponder::respond()
 void MasterResponder::startServerResponders()
 {
 	gLog << "FakePlugin, starting server responders.";
-	for (int i = 0; i < ResponderCfg::numServers(); ++i)
+	unsigned short port = ResponderCfg::serverPortBase();
+	for (int i = 0; i < ResponderCfg::numValidServers(); ++i)
 	{
-		unsigned short port = ResponderCfg::serverPortBase() + i;
 		ServerResponder* server = new ServerResponder();
-		if (server->bind(port))
-		{
-			d->serverResponders.append(server);
-		}
-		else
-		{
-			gLog << QString("FakePlugin, failed to bind server on port: %1").arg(port);
-			delete server;
-		}
+		bindServer(server, port);
+		++port;
+	}
+	for (int i = 0; i < ResponderCfg::numNotRespondingServers(); ++i)
+	{
+		ServerResponder* server = new ServerResponder();
+		server->setResponseFailChance(ServerResponder::MAX_CHANCE);
+		bindServer(server, port);
+		++port;
 	}
 }

@@ -30,6 +30,8 @@ class ServerResponder : public QObject
 	Q_OBJECT
 
 	public:
+		static const int MAX_CHANCE = 65535;
+
 		ServerResponder(QObject* parent = NULL);
 		~ServerResponder();
 
@@ -40,10 +42,22 @@ class ServerResponder : public QObject
 		 */
 		unsigned short port() const;
 
+		/**
+		 * @brief Set chance for this server to not respond to a query.
+		 *
+		 * @param chance
+		 *     A value between 0 and MAX_CHANCE, inclusive.
+		 *     A value of zero means that no fails will occur,
+		 *     max value means that fails will always occur.
+		 */
+		void setResponseFailChance(unsigned chance);
+
 	private:
 		class PrivData;
 
 		PrivData* d;
+
+		bool shouldRespond() const;
 
 	private slots:
 		void readPendingDatagrams();
