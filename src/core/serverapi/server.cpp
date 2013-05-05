@@ -99,8 +99,6 @@ Server::Server(const QHostAddress &address, unsigned short port) : QObject(),
 	}
 
 	players = new PlayersList();
-
-	connect(this, SIGNAL( updated(Server*, int) ), this, SLOT( setResponse(Server*, int) ));
 }
 
 Server::~Server()
@@ -199,11 +197,16 @@ const Player& Server::player(int index) const
 	return (*players)[index];
 }
 
+Server::Response Server::readRefreshQueryResponse(QByteArray& data)
+{
+	return readRequest(data);
+}
+
 bool Server::refresh()
 {
 	if (Main::refreshingThread == NULL)
 	{
-		emitUpdated(RESPONSE_BAD);
+		refreshStops(RESPONSE_BAD);
 		gLog << tr("CRITIAL ERROR: REFRESHING THREAD IS NULL");
 		return false;
 	}
@@ -228,18 +231,25 @@ void Server::refreshStarts()
 	}
 }
 
-void Server::refreshStops()
+void Server::refreshStops(Response response)
 {
+	setResponse(response);
+	if (!bPingIsSet)
+	{
+		// Set the current ping, if plugin didn't do so already.
+		currentPing = time.elapsed();
+		bPingIsSet = true;
+	}
 	bIsRefreshing = false;
 	iwad = iwad.toLower();
+	emit updated(this, response);
 }
 
 bool Server::sendRefreshQuery(QUdpSocket* socket)
 {
 	if(triesLeft <= 0)
 	{
-		emitUpdated(Server::RESPONSE_TIMEOUT);
-		refreshStops();
+		refreshStops(Server::RESPONSE_TIMEOUT);
 		return false;
 	}
 	--triesLeft;
@@ -247,11 +257,11 @@ bool Server::sendRefreshQuery(QUdpSocket* socket)
 	QByteArray request;
 	if (!sendRequest(request))
 	{
-		emitUpdated(Server::RESPONSE_BAD);
-		refreshStops();
+		refreshStops(Server::RESPONSE_BAD);
 		return false;
 	}
 
+	bPingIsSet = false;
 	time.start();
 
 	socket->writeDatagram(request, address(), port());
@@ -266,9 +276,9 @@ void Server::setHostName(QHostInfo host)
 		emit updated(this, lastResponse());
 }
 
-void Server::setResponse(Server* server, int res)
+void Server::setResponse(Response response)
 {
-	response = static_cast<Response>(res);
+	this->response = response;
 	if (response == RESPONSE_GOOD)
 	{
 		bKnown = true;

@@ -516,21 +516,9 @@ bool RefreshingThread::tryReadDatagramByServer(const QHostAddress& address,
 		d->refreshingServers.removeOne(server);
 		d->registeredServers.remove(server);
 
-		server->bPingIsSet = false;
-
 		// Store the state of request read.
-		int response = server->readRequest(packet);
-
-		// Set the current ping, if plugin didn't do so already.
-		if (!server->bPingIsSet)
-		{
-			server->currentPing = server->time.elapsed();
-		}
-
-		server->refreshStops();
-
-		// Emit the response returned by readRequest.
-		server->emitUpdated(response);
+		int response = server->readRefreshQueryResponse(packet);
+		server->refreshStops(static_cast<Server::Response>(response));
 		return true;
 	}
 	return false;

@@ -64,8 +64,6 @@ class MAIN_EXPORT Server : public QObject
 {
 	Q_OBJECT
 
-	friend class RefreshingThread;
-
 	public:
 		enum Response
 		{
@@ -191,6 +189,18 @@ class MAIN_EXPORT Server : public QObject
 		 *	manually by the programmer.
 		 */
 		virtual GameRunner*	gameRunner() const;
+
+		/**
+		 *	Called when server begins refreshing routine.
+		 */
+		void				refreshStarts();
+
+		/**
+		 *	Called when server finishes refreshing routine.
+		 */
+		void				refreshStops(Response response);
+
+		Response readRefreshQueryResponse(QByteArray& data);
 
 		/**
 		 *	Method called by the refreshing thread. Sends the query
@@ -320,24 +330,10 @@ class MAIN_EXPORT Server : public QObject
 		QTime				time;
 
 	protected slots:
-		/**
-		 * server argument here is only provided for compatibility with updated
-		 * signal
-		 */
-		void				setResponse(Server* server, int response);
 		void				setHostName(QHostInfo host);
 
 	private:
 		Q_DISABLE_COPY(Server)
-		/**
-		 *	Called when server begins refreshing routine.
-		 */
-		void				refreshStarts();
-
-		/**
-		 *	Called when server finishes refreshing routine.
-		 */
-		void				refreshStops();
 
 		/**
 		 * This is used to make
@@ -350,6 +346,8 @@ class MAIN_EXPORT Server : public QObject
 		unsigned short		serverPort;
 
 		int					triesLeft; /// Track how many resends we should try.
+
+		void				setResponse(Response response);
 };
 
 class MAIN_EXPORT ServerPointer
