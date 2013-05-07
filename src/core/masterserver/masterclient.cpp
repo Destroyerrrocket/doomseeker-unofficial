@@ -183,7 +183,13 @@ void MasterClient::readPacketCache()
 		strm >> data;
 
 		if(!readMasterResponse(data))
+		{
+			// Cache was not read properly. We need to emit the signal
+			// to notify the program that this master client finished
+			// updating.
+			emit listUpdated();
 			break;
+		}
 	}
 }
 
