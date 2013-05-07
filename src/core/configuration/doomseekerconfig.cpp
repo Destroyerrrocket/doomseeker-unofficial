@@ -229,7 +229,7 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->mainWindowY = 0xffff;
 	this->queryAutoRefreshEverySeconds = 180;
 	this->queryBatchSize = 30;
-	this->queryBatchDelay = 0;
+	this->queryBatchDelay = 50;
 	this->queryTimeout = 1000;
 	this->queryTries = 3;
 	this->previousCreateServerConfigDir = "";
