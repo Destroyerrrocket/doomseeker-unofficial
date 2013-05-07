@@ -63,9 +63,11 @@ class MAIN_EXPORT GameRunner : public QObject
 		/**
 		 *	@param [out] cli - after successful call this will contain
 		 *		required command line information.
+		 *	@param managedDemo - Set to true if we should record to the demo
+		 * 		directory and store meta data.
 		 *	@return	JoinError::type == NoError if all ok.
 		 */
-		JoinError					createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword);
+		JoinError					createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword, bool managedDemo);
 
 		/**
 		 *	@see createHostCommandLine()

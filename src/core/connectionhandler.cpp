@@ -130,7 +130,7 @@ void ConnectionHandler::finish(int response)
 	emit finished(response);
 }
 
-bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, const Server* server, CommandLineInfo& cli, const QString& errorCaption, bool *hadMissing)
+bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, const Server* server, CommandLineInfo& cli, const QString& errorCaption, bool managedDemo, bool *hadMissing)
 {
 	cli.applicationDir = "";
 	cli.args.clear();
@@ -170,7 +170,7 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, const Server* ser
 		}
 
 		GameRunner* gameRunner = server->gameRunner();
-		JoinError joinError = gameRunner->createJoinCommandLine(cli, connectPassword);
+		JoinError joinError = gameRunner->createJoinCommandLine(cli, connectPassword, managedDemo);
 		delete gameRunner;
 
 		const QString unknownError = tr("Unknown error.");
@@ -278,7 +278,7 @@ void ConnectionHandler::run()
 {
 	bool hadMissing = false;
 	CommandLineInfo cli;
-	if (obtainJoinCommandLine(parent, server, cli, tr("Doomseeker - join server"), &hadMissing))
+	if (obtainJoinCommandLine(parent, server, cli, tr("Doomseeker - join server"), true, &hadMissing))
 	{
 		if(hadMissing)
 		{

@@ -98,7 +98,7 @@ void DemoManagerDlg::adjustDemoList()
 		}
 		// Whatever is left is a part of our data.
 		demoData << metaData.replace("__", "_");
-		if(demoData.size() < 4) // Should have at least 4 elements port, date, time, iwad[, pwads]
+		if(demoData.size() < 3) // Should have at least 3 elements port, date, time[, iwad[, pwads]]
 			continue;
 
 		QDate date = QDate::fromString(demoData[1], "dd.MM.yyyy");
@@ -107,7 +107,17 @@ void DemoManagerDlg::adjustDemoList()
 		demo.filename = demoName;
 		demo.port = demoData[0];
 		demo.time = QDateTime(date, time);
-		demo.wads = demoData.mid(3);
+		if(demoData.size() >= 4)
+			demo.wads = demoData.mid(3);
+		else
+		{
+			// New format, read meta data from file!
+			Ini metaData(Main::dataPaths->demosDirectoryPath() + QDir::separator() + demoName + ".ini");
+			demo.wads << metaData.retrieveSetting("meta", "iwad");
+			QString pwads = metaData.retrieveSetting("meta", "pwads");
+			if(pwads.length() > 0)
+				demo.wads << pwads.split(";");
+		}
 
 		demoMap[date.daysTo(today)][time.secsTo(referenceTime)] = demo;
 	}

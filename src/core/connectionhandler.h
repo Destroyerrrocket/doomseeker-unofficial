@@ -54,7 +54,7 @@ class ConnectionHandler : public QObject
 		 *		set to true if Wadseeker downloaded files.
 		 *	@return true on success, false otherwise.
 		 */
-		static bool obtainJoinCommandLine(QWidget *parent, const Server* server, CommandLineInfo& cli, const QString& errorCaption, bool *hadMissing=NULL);
+		static bool obtainJoinCommandLine(QWidget *parent, const Server* server, CommandLineInfo& cli, const QString& errorCaption, bool managedDemo, bool *hadMissing=NULL);
 
 	protected:
 		void	finish(int response);

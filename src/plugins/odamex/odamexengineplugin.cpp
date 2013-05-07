@@ -54,7 +54,7 @@ OdamexEnginePlugin::OdamexEnginePlugin()
 		EP_IRCChannel, "Odamex", "irc.quakenet.org", "#odamex",
 		EP_SupportsRandomMapRotation,
 		EP_InGameFileDownloads,
-		EP_DemoExtension, false, "odd",
+		EP_DemoExtension, true, "odd",
 		EP_Done
 	);
 }

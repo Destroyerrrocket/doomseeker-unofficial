@@ -140,7 +140,7 @@ Message GameRunner::createHostCommandLine(const HostInfo& hostInfo, CommandLineI
 	return message;
 }
 
-JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword)
+JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword, bool managedDemo)
 {
 	const QString &PLUGIN_NAME = server->plugin()->data()->name;
 	JoinError joinError;
@@ -201,25 +201,18 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 	}
 
 	// Record
+	QString demoName;
 	if(gConfig.doomseeker.bRecordDemo)
 	{
 		args << argForDemoRecord();
 
-		// Get a list of wads for demo name:
-		QStringList wadList;
-		wadList << server->iwadName().toLower();
-		for (int i = 0; i < server->numWads(); ++i)
-		{
-			// Also be sure to escape any underscores.
-			wadList << server->wad(i).name.toLower().replace("_", "__");
-		}
-
 		// Generate demo name.
 		// port-iwad-date-wad
-		QString demoName = Main::dataPaths->demosDirectoryPath() + QDir::separator() + QString("%1_%2_%3").
+		if(managedDemo)
+			demoName = Main::dataPaths->demosDirectoryPath() + QDir::separator();
+		demoName += QString("%1_%2").
 			arg(server->engineName()).
-			arg(QDateTime::currentDateTime().toString("dd.MM.yyyy_hh.mm.ss")).
-			arg(wadList.join("_"));
+			arg(QDateTime::currentDateTime().toString("dd.MM.yyyy_hh.mm.ss"));
 		if(!server->plugin()->data()->demoExtensionAutomatic)
 			demoName += QString(".%1").arg(server->plugin()->data()->demoExtension);
 		args << demoName;
@@ -251,6 +244,34 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 	}
 
 	joinError.type = JoinError::NoError;
+
+	// No errors?
+	// Nothing should be stopping us from joining so dump the meta information
+	// if we are doing a managed demo
+	if(!demoName.isEmpty() && managedDemo)
+	{
+		QString metaFileName;
+		// If the extension is automatic we need to add it here
+		if(server->plugin()->data()->demoExtensionAutomatic)
+			metaFileName = QString("%1.%2.ini").arg(demoName).arg(server->plugin()->data()->demoExtension);
+		else
+			metaFileName = demoName + ".ini";
+
+		Ini metaFile(metaFileName);
+		IniSection metaSection = metaFile.createSection("meta");
+
+		// Get a list of wads for demo name:
+		QStringList wadList;
+		for (int i = 0; i < server->numWads(); ++i)
+		{
+			// Also be sure to escape any underscores.
+			wadList << server->wad(i).name.toLower();
+		}
+
+		metaSection.createSetting("iwad", server->iwadName().toLower());
+		metaSection.createSetting("pwads", wadList.join(";"));
+	}
+
 	return joinError;
 }
 
