@@ -93,51 +93,51 @@ DISPLAY_NAMES = {
 
 CHANNEL_STABLE = {
     "doomseeker" => {
-        "revision" => 1,
-        "display-version" => "1.0.1",
+        "revision" => <insert-revision-here>,
+        "display-version" => "0.10 Beta",
     },
     "p-chocolatedoom" => {
-        "revision" => 1
+        "revision" => 6
     },
     "p-odamex" => {
-        "revision" => 1
+        "revision" => 11
     },
     "p-skulltag" => {
-        "revision" => 1
+        "revision" => 12
     },
     "p-vavoom" => {
-        "revision" => 1
+        "revision" => 5
     },
     "p-zandronum" => {
-        "revision" => 1
+        "revision" => 2
     },
     "p-zdaemon" => {
-        "revision" => 1
+        "revision" => 5
     },
 }
 
 CHANNEL_BETA = {
     "doomseeker" => {
-        "revision" => 2,
-        "display-version" => "1.0.1",
+        "revision" => <insert-revision-here>,
+        "display-version" => "0.10 Beta",
     },
     "p-chocolatedoom" => {
-        "revision" => 1
+        "revision" => 6
     },
     "p-odamex" => {
-        "revision" => 1
+        "revision" => 11
     },
     "p-skulltag" => {
-        "revision" => 1
+        "revision" => 12
     },
     "p-vavoom" => {
-        "revision" => 1
+        "revision" => 5
     },
     "p-zandronum" => {
-        "revision" => 1
+        "revision" => 2
     },
     "p-zdaemon" => {
-        "revision" => 1
+        "revision" => 5
     },
 }
 
