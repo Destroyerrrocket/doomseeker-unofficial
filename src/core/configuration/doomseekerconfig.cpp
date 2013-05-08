@@ -236,6 +236,8 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->previousCreateServerExecDir = "";
 	this->previousCreateServerWadDir = "";
 	this->slotStyle = 1;
+	this->serverListSortIndex = -1;
+	this->serverListSortDirection = Qt::DescendingOrder;
 	this->wadPaths << Main::dataPaths->programsDataDirectoryPath();
 	this->wadPaths << Main::workingDirectory;
 }
@@ -303,6 +305,8 @@ void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 	section.createSetting("QueryTimeout", this->queryTimeout);
 	section.createSetting("QueryTries", this->queryTries);
 	section.createSetting("SlotStyle", this->slotStyle);
+	section.createSetting("ServerListSortIndex", this->serverListSortIndex);
+	section.createSetting("ServerListSortDirection", this->serverListSortDirection);
 	section.createSetting("WadPaths", this->wadPaths.join(";"));
 }
 
@@ -342,6 +346,8 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->previousCreateServerExecDir = (const QString &)section["PreviousCreateServerExecDir"];
 	this->previousCreateServerWadDir = (const QString &)section["PreviousCreateServerWadDir"];
 	this->serverListColumnState = (const QString &)section["ServerListColumnState"];
+	this->serverListSortIndex = section["ServerListSortIndex"];
+	this->serverListSortDirection = section["ServerListSortDirection"];
 	this->slotStyle = section["SlotStyle"];
 
 	// Complex data variables.
@@ -396,6 +402,8 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["PreviousCreateServerExecDir"] = this->previousCreateServerExecDir;
 	section["PreviousCreateServerWadDir"] = this->previousCreateServerWadDir;
 	section["ServerListColumnState"] = this->serverListColumnState;
+	section["ServerListSortIndex"] = this->serverListSortIndex;
+	section["ServerListSortDirection"] = this->serverListSortDirection;
 	section["SlotStyle"] = this->slotStyle;
 
 	// Complex data variables.

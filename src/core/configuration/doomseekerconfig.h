@@ -88,6 +88,8 @@ class DoomseekerConfig
 			QString						previousCreateServerExecDir;
 			QString						previousCreateServerWadDir;
 			QString						serverListColumnState;
+			int							serverListSortIndex;
+			int							serverListSortDirection;
 			int							slotStyle;
 			QStringList					wadPaths;
 

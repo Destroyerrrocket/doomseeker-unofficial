@@ -167,6 +167,9 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 				QMessageBox::critical(this, tr("Unable to delete"), tr("Could not delete the selected demo."));
 			else
 			{
+				// Remove ini file as well, but don't bother warning if it can't be deleted for whatever reason
+				QFile::remove(Main::dataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename + ".ini");
+
 				selectedDemo = NULL;
 
 				// Adjust the tree

@@ -131,8 +131,6 @@ void ServerListHandler::columnHeaderClicked(int index)
 
 	QHeaderView* header = table->horizontalHeader();
 	header->setSortIndicator(sortIndex, sortOrder);
-
-	//table->fixRowSize();
 }
 
 void ServerListHandler::connectTableModelProxySlots()
@@ -428,11 +426,11 @@ void ServerListHandler::prepareServerTable()
 {
 	model = createModel();
 	sortingProxy = createSortingProxy(model);
+
+	columnHeaderClicked(IDPlayers);
 	setupTableProperties(sortingProxy);
 
 	connectTableModelProxySlots();
-
-	columnHeaderClicked(IDPlayers);
 }
 
 void ServerListHandler::redraw()
@@ -465,6 +463,8 @@ void ServerListHandler::refreshSelected()
 void ServerListHandler::saveColumnsWidthsSettings()
 {
 	gConfig.doomseeker.serverListColumnState = table->horizontalHeader()->saveState().toBase64();
+	gConfig.doomseeker.serverListSortIndex = sortIndex;
+	gConfig.doomseeker.serverListSortDirection = sortOrder;
 }
 
 QList<Server*> ServerListHandler::selectedServers()
@@ -537,6 +537,12 @@ void ServerListHandler::setupTableColumnWidths()
 		table->horizontalHeader()->restoreState(QByteArray::fromBase64(headerState.toAscii()));
 
 	table->horizontalHeader()->setMovable(true);
+
+	if(gConfig.doomseeker.serverListSortIndex >= 0)
+	{
+		sortIndex = gConfig.doomseeker.serverListSortIndex;
+		sortOrder = static_cast<Qt::SortOrder> (gConfig.doomseeker.serverListSortDirection);
+	}
 }
 
 void ServerListHandler::setupTableProperties(QSortFilterProxyModel* tableModel)
