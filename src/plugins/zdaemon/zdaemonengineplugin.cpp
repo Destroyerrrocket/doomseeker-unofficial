@@ -37,7 +37,7 @@ ZDaemonEnginePlugin::ZDaemonEnginePlugin()
 
 	init("ZDaemon", zdaemon_xpm,
 		EP_Author, "The Doomseeker Team",
-		EP_Version, 4,
+		EP_Version, 5,
 
 		EP_AllDMFlags, ZDaemonGameInfo::dmFlags(),
 		EP_AllowsURL,
