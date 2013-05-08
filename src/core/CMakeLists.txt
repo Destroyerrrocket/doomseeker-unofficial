@@ -521,6 +521,7 @@ if(WIN32)
 	)
 	install(FILES ${TRANSLATION_FILES_TO_COPY} DESTINATION translations)
 	install(FILES ${LICENSE_FILES} DESTINATION .)
+	install(FILES ${CMAKE_SOURCE_DIR}/tools/doomseeker-portable.bat DESTINATION .)
 endif(WIN32)
 
 if(UNIX AND NOT APPLE)

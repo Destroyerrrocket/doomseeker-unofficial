@@ -6,6 +6,7 @@
         "translations/pl_PL.qm",
         "translations/qt_pl.qm",
         "LICENSE",
+        "doomseeker-portable.bat",
         "libwadseeker.dll",
         "msvcm90.dll",
         "msvcp90.dll",
