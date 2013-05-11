@@ -204,7 +204,7 @@ Server::Response Server::readRefreshQueryResponse(QByteArray& data)
 
 bool Server::refresh()
 {
-	if (Main::refreshingThread == NULL)
+	if (Main::refresher == NULL)
 	{
 		refreshStops(RESPONSE_BAD);
 		gLog << tr("CRITIAL ERROR: REFRESHING THREAD IS NULL");
@@ -213,7 +213,7 @@ bool Server::refresh()
 
 	if(isRefreshable())
 	{
-		Main::refreshingThread->registerServer(this);
+		Main::refresher->registerServer(this);
 		return true;
 	}
 	return false;

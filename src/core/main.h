@@ -34,7 +34,7 @@
 #include <QStringList>
 #include <QUrl>
 
-class RefreshingThread;
+class Refresher;
 
 /**
  * This class holds some global information.
@@ -61,7 +61,7 @@ class MAIN_EXPORT Main : public QObject
 		static PluginLoader*		enginePlugins;
 		static QList<LocalizationInfo> localizations;
 		static bool					running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
-		static RefreshingThread*	refreshingThread;
+		static Refresher*			refresher;
 		static QString				workingDirectory;
 		static QString argDataDir;
 		static bool bPortableMode;

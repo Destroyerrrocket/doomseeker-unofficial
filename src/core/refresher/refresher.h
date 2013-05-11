@@ -29,12 +29,12 @@ class MasterClient;
 class Server;
 class QHostAddress;
 
-class RefreshingThread : public QObject
+class Refresher : public QObject
 {
 	Q_OBJECT
 
 	public:
-		~RefreshingThread();
+		~Refresher();
 
 		/**
 		 * This will set bKeepRunning to false which will tell the refreshing
@@ -64,7 +64,7 @@ class RefreshingThread : public QObject
 
 		bool start();
 
-		static RefreshingThread *createRefreshingThread();
+		static Refresher *createRefresher();
 
 	signals:
 		/**
@@ -94,7 +94,7 @@ class RefreshingThread : public QObject
 
 		Data *d;
 
-		RefreshingThread();
+		Refresher();
 
 		bool isAnythingToRefresh() const;
 		Server* findRefreshingServer(const QHostAddress& address, unsigned short port);

@@ -56,7 +56,7 @@ class ServerRefreshTime
 		}
 };
 
-class RefreshingThread::Data
+class Refresher::Data
 {
 	public:
 		typedef QHash<MasterClient*, MasterClientInfo*> MasterHashtable;
@@ -80,10 +80,10 @@ class RefreshingThread::Data
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class RefreshingThread::MasterClientInfo
+class Refresher::MasterClientInfo
 {
 	public:
-		MasterClientInfo(MasterClient* pMaster, RefreshingThread* pParent)
+		MasterClientInfo(MasterClient* pMaster, Refresher* pParent)
 		{
 			pParentThread = pParent;
 			pLastChallengeTimer = NULL;
@@ -134,13 +134,13 @@ class RefreshingThread::MasterClientInfo
 
 	protected:
 		MasterClientSignalProxy* pReceiver;
-		RefreshingThread* pParentThread;
+		Refresher* pParentThread;
 		QTimer* pLastChallengeTimer;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 
-RefreshingThread::RefreshingThread()
+Refresher::Refresher()
 {
 	d = new Data;
 	d->bSleeping = true;
@@ -149,13 +149,13 @@ RefreshingThread::RefreshingThread()
 	d->socket = NULL;
 }
 
-RefreshingThread::~RefreshingThread()
+Refresher::~Refresher()
 {
 	delete d->socket;
 	delete d;
 }
 
-void RefreshingThread::attemptTimeoutMasters()
+void Refresher::attemptTimeoutMasters()
 {
 	QList<MasterClient*> masters = d->registeredMasters.keys();
 	foreach (MasterClient* master, masters)
@@ -168,12 +168,12 @@ void RefreshingThread::attemptTimeoutMasters()
 	}
 }
 
-RefreshingThread *RefreshingThread::createRefreshingThread()
+Refresher *Refresher::createRefresher()
 {
-	return new RefreshingThread();
+	return new Refresher();
 }
 
-Server* RefreshingThread::findRefreshingServer(const QHostAddress& address,
+Server* Refresher::findRefreshingServer(const QHostAddress& address,
 	unsigned short port)
 {
 	foreach (const ServerRefreshTime& refreshOp, d->refreshingServers)
@@ -186,18 +186,18 @@ Server* RefreshingThread::findRefreshingServer(const QHostAddress& address,
 	return NULL;
 }
 
-bool RefreshingThread::isAnythingToRefresh() const
+bool Refresher::isAnythingToRefresh() const
 {
 	return !d->refreshingServers.isEmpty() || !d->registeredServers.isEmpty()
 		|| !d->registeredMasters.isEmpty() || !d->unchallengedMasters.isEmpty();
 }
 
-bool RefreshingThread::hasFreeServerRefreshSlots() const
+bool Refresher::hasFreeServerRefreshSlots() const
 {
 	return d->refreshingServers.size() < gConfig.doomseeker.queryBatchSize;
 }
 
-void RefreshingThread::masterFinishedRefreshing(MasterClient* pMaster)
+void Refresher::masterFinishedRefreshing(MasterClient* pMaster)
 {
 	const QList<Server*>& servers = pMaster->serverList();
 	foreach (Server* pServer, servers)
@@ -216,12 +216,12 @@ void RefreshingThread::masterFinishedRefreshing(MasterClient* pMaster)
 	emit finishedQueryingMaster(pMaster);
 }
 
-void RefreshingThread::quit()
+void Refresher::quit()
 {
 	d->bKeepRunning = false;
 }
 
-void RefreshingThread::registerMaster(MasterClient* pMaster)
+void Refresher::registerMaster(MasterClient* pMaster)
 {
 	if (!d->registeredMasters.contains(pMaster))
 	{
@@ -243,7 +243,7 @@ void RefreshingThread::registerMaster(MasterClient* pMaster)
 	}
 }
 
-void RefreshingThread::registerServer(Server* server)
+void Refresher::registerServer(Server* server)
 {
 	if (!d->registeredServers.contains(server))
 	{
@@ -266,7 +266,7 @@ void RefreshingThread::registerServer(Server* server)
 	}
 }
 
-void RefreshingThread::readAllPendingDatagrams()
+void Refresher::readAllPendingDatagrams()
 {
 	while(d->socket->hasPendingDatagrams() && d->bKeepRunning)
 	{
@@ -274,7 +274,7 @@ void RefreshingThread::readAllPendingDatagrams()
 	}
 }
 
-void RefreshingThread::readPendingDatagram()
+void Refresher::readPendingDatagram()
 {
 	QHostAddress address;
 	quint16 port;
@@ -292,7 +292,7 @@ void RefreshingThread::readPendingDatagram()
 	tryReadDatagramByServer(address, port, dataArray);
 }
 
-void RefreshingThread::sendMasterQueries()
+void Refresher::sendMasterQueries()
 {
 	while(!d->unchallengedMasters.isEmpty())
 	{
@@ -307,7 +307,7 @@ void RefreshingThread::sendMasterQueries()
 	}
 }
 
-void RefreshingThread::sendServerQueries()
+void Refresher::sendServerQueries()
 {
 	if (!d->bKeepRunning)
 	{
@@ -334,12 +334,12 @@ void RefreshingThread::sendServerQueries()
 	}
 }
 
-void RefreshingThread::setDelayBetweenResends(int delay)
+void Refresher::setDelayBetweenResends(int delay)
 {
 	d->delayBetweenResends = qMax(delay, 100);
 }
 
-bool RefreshingThread::shouldBlockRefreshingProcess() const
+bool Refresher::shouldBlockRefreshingProcess() const
 {
 	if (!d->registeredMasters.isEmpty())
 	{
@@ -357,7 +357,7 @@ bool RefreshingThread::shouldBlockRefreshingProcess() const
 	return false;
 }
 
-bool RefreshingThread::start()
+bool Refresher::start()
 {
 	QUdpSocket* socket = new QUdpSocket();
 	this->connect(socket, SIGNAL(readyRead()),
@@ -375,7 +375,7 @@ bool RefreshingThread::start()
 	return false;
 }
 
-void RefreshingThread::startNewServerRefreshesIfFreeSlots()
+void Refresher::startNewServerRefreshesIfFreeSlots()
 {
 	// Copy the list as the original will be modified.
 	// We don't want to confuse the foreach.
@@ -400,7 +400,7 @@ void RefreshingThread::startNewServerRefreshesIfFreeSlots()
 	}
 }
 
-void RefreshingThread::resendCurrentServerRefreshesIfTimeout()
+void Refresher::resendCurrentServerRefreshesIfTimeout()
 {
 	for (int i = 0; i < d->refreshingServers.size(); ++i)
 	{
@@ -423,7 +423,7 @@ void RefreshingThread::resendCurrentServerRefreshesIfTimeout()
 	}
 }
 
-bool RefreshingThread::tryReadDatagramByMasterClient(QHostAddress& address,
+bool Refresher::tryReadDatagramByMasterClient(QHostAddress& address,
 	unsigned short port, QByteArray& packet)
 {
 	foreach (MasterClient* pMaster, d->registeredMasters.keys())
@@ -440,7 +440,7 @@ bool RefreshingThread::tryReadDatagramByMasterClient(QHostAddress& address,
 	return false;
 }
 
-bool RefreshingThread::tryReadDatagramByServer(const QHostAddress& address,
+bool Refresher::tryReadDatagramByServer(const QHostAddress& address,
 	unsigned short port, QByteArray& packet)
 {
 	if (!d->bKeepRunning)
@@ -461,7 +461,7 @@ bool RefreshingThread::tryReadDatagramByServer(const QHostAddress& address,
 	return false;
 }
 
-void RefreshingThread::unregisterMaster(MasterClient* pMaster)
+void Refresher::unregisterMaster(MasterClient* pMaster)
 {
 	Data::MasterHashtableIt it = d->registeredMasters.find(pMaster);
 	if (it != d->registeredMasters.end())

@@ -434,10 +434,10 @@ void MainWindow::discardUpdates()
 void MainWindow::connectEntities()
 {
 	// Connect refreshing thread.
-	connect(Main::refreshingThread, SIGNAL( block() ), this, SLOT( blockRefreshButtons() ) );
-	connect(Main::refreshingThread, SIGNAL( finishedQueryingMaster(MasterClient*) ), this, SLOT( finishedQueryingMaster(MasterClient*) ) );
-	connect(Main::refreshingThread, SIGNAL( sleepingModeEnter() ), this, SLOT( refreshThreadEndsWork() ) );
-	connect(Main::refreshingThread, SIGNAL( sleepingModeExit() ), this, SLOT( refreshThreadBeginsWork() ) );
+	connect(Main::refresher, SIGNAL( block() ), this, SLOT( blockRefreshButtons() ) );
+	connect(Main::refresher, SIGNAL( finishedQueryingMaster(MasterClient*) ), this, SLOT( finishedQueryingMaster(MasterClient*) ) );
+	connect(Main::refresher, SIGNAL( sleepingModeEnter() ), this, SLOT( refreshThreadEndsWork() ) );
+	connect(Main::refresher, SIGNAL( sleepingModeExit() ), this, SLOT( refreshThreadBeginsWork() ) );
 
 	// Controls
 	connect(menuActionAbout, SIGNAL( triggered() ), this, SLOT( menuHelpAbout() ));
@@ -577,7 +577,7 @@ void MainWindow::getServers()
 
 		if (pMaster->isEnabled())
 		{
-			Main::refreshingThread->registerMaster(pMaster);
+			Main::refresher->registerMaster(pMaster);
 		}
 	}
 }
