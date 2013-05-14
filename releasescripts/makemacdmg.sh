@@ -92,7 +92,7 @@ do
 		install_name_tool -change `otool -L $i | grep -m 1 --only-matching '[/@].*libwadseeker.dylib'` @executable_path/../Frameworks/libwadseeker.dylib $i
 	fi
 done
-for i in QtCore QtGui QtNetwork
+for i in QtCore QtGui QtNetwork QtXml
 do
 	install_name_tool -id {@executable_path/../,Doomseeker.app/Contents/}Frameworks/${i}.framework/Versions/4/$i
 	install_name_tool -change {${QTNTPATH},@executable_path/../Frameworks/}QtCore.framework/Versions/4/QtCore Doomseeker.app/Contents/Frameworks/${i}.framework/Versions/4/$i
