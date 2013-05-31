@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chocolatedoomengineplugin.cpp
+// chocolatedoomgameinfo.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,42 +18,34 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2013 Braden "Blzut3" Obrzut <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include "plugins/engineplugin.h"
+#ifndef __CHOCOLATEDOOM_GAME_INFO_H__
+#define __CHOCOLATEDOOM_GAME_INFO_H__
 
-#include "chocolatedoomengineplugin.h"
-#include "chocolatedoomgameinfo.h"
-#include "chocolatedoommasterclient.h"
-#include "chocolatedoomserver.h"
+#include "serverapi/serverstructs.h"
 
-INSTALL_PLUGIN(ChocolateDoomEnginePlugin)
-
-ChocolateDoomEnginePlugin::ChocolateDoomEnginePlugin()
+class ChocolateDoomGameInfo
 {
-	const // clear warnings
-	#include "chocolatedoom.xpm"
+	public:
+		enum ChocolateDoomGameModes
+		{
+			MODE_COOPERATIVE,
+			MODE_DEATHMATCH,
+			MODE_ALTDEATH
+		};
+		static const QList<GameMode>* gameModes() { return &gameModesList; }
 
-	init("Chocolate Doom", chocolatedoom_xpm,
-		EP_Author, "The Doomseeker Team",
-		EP_Version, 6,
+	protected:
+		static QList<GameMode> gameModesList;
 
-		EP_DefaultMaster, "master.chocolate-doom.org:2342",
-		EP_DefaultServerPort, 2342,
-		EP_GameModes, ChocolateDoomGameInfo::gameModes(),
-		EP_HasMasterServer,
-		EP_IRCChannel, "Chocolate Doom", "irc.oftc.net", "#chocolate-doom",
-		EP_Done
-	);
-}
+	private:
+		ChocolateDoomGameInfo();
 
-MasterClient *ChocolateDoomEnginePlugin::masterClient() const
-{
-	return new ChocolateDoomMasterClient();
-}
+		void initGameModes();
 
-Server* ChocolateDoomEnginePlugin::server(const QHostAddress &address, unsigned short port) const
-{
-	return new ChocolateDoomServer(address, port);
-}
+		static ChocolateDoomGameInfo* static_constructor;
+};
+
+#endif

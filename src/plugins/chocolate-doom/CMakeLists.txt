@@ -9,6 +9,7 @@ set(CHOCOLATEDOOM_QT_FILES
 )
 set(CHOCOLATEDOOM_FILES
 	chocolatedoomengineplugin.cpp
+	chocolatedoomgameinfo.cpp
 	chocolatedoomgamerunner.cpp
 	chocolatedoommasterclient.cpp
 	chocolatedoomserver.cpp

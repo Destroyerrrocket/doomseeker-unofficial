@@ -35,6 +35,9 @@ class ChocolateDoomGameRunner : public GameRunner
 
 		bool						connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory);
 		const EnginePlugin*			plugin() const { return ChocolateDoomEnginePlugin::staticInstance(); }
+
+	protected:
+		void hostProperties(QStringList& args) const;
 };
 
 #endif
