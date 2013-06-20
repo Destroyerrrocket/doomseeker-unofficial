@@ -56,9 +56,9 @@ QSound* IRCSounds::loadIfExists(const QString& path)
 
 void IRCSounds::playIfAvailable(SoundType sound)
 {
-	if (sounds.contains(sound))
+	QSound* pSound = sounds[sound];
+	if (pSound != NULL)
 	{
-		QSound* pSound = sounds[sound];
 		pSound->play();
 	}
 }
