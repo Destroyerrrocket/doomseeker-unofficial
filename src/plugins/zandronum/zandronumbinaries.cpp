@@ -50,7 +50,12 @@
 #define TESTING_BINARY_URL TESTING_BINARY_URL_BASE"linux-x86_64.tar.bz2"
 #endif
 
+#ifndef Q_OS_MAC
 #define ZANDRONUM_BINARY_NAME "zandronum"
+#else
+#define ZANDRONUM_BINARY_NAME "Zandronum.app"
+#define ZANDRONUM_APP_BUNDLE_BIN "/Contents/MacOS/zandronum"
+#endif
 #define SCRIPT_FILE_EXTENSION ".sh"
 #endif
 
@@ -93,8 +98,8 @@ QString ZandronumBinaries::clientBinary(Message& message) const
 		if (!fi.exists())
 		{
 			error = tr("%1\ndoesn't exist.\nYou need to install new testing binaries.").arg(path);
-			QString messageBoxContent = tr("%1\n\n\
-Do you want Doomseeker to create %2 directory and copy all your .ini files from your base directory?"
+			QString messageBoxContent = tr("%1\n\n"
+										   "Do you want Doomseeker to create %2 directory and copy all your .ini files from your base directory?"
 										   ).arg(error, server->version());
 
 			if (QMessageBox::question(Main::mainWindow, tr("Doomseeker - missing testing binaries"), messageBoxContent, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
@@ -144,6 +149,7 @@ Do you want Doomseeker to create %2 directory and copy all your .ini files from 
 
 		QString binPath = path + '/' + ZANDRONUM_BINARY_NAME;
 		fi = QFileInfo(binPath);
+		printf("Checking %s\n", binPath.toAscii().constData());
 		if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
 		{
 			error = tr("%1\ndoesn't contain Zandronum executable").arg(path);
@@ -301,8 +307,12 @@ bool ZandronumBinaries::spawnTestingBatchFile(const QString& versionDir, QString
 	// Create Unix script file
 	content  = "#!/bin/bash\n";
 	content += "cd \"" + cdDir + "\" \n";
-	content += "export LANG=C\n"; 
+	content += "export LANG=C\n";
+	#ifdef Q_OS_MAC
+	content += "\"" + binaryPath + ZANDRONUM_APP_BUNDLE_BIN "\" $*";
+	#else
 	content += "\"" + binaryPath + "\" $*"; // $* deals with all the parameters
+	#endif
 	#endif
 	delete binaries;
 
