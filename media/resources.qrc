@@ -64,6 +64,7 @@
 	<file alias="flags/FIN">flags/FIN.png</file> <!-- Finland -->
 	<file alias="flags/FRA">flags/FRA.png</file> <!-- France -->
 	<file alias="flags/GBR">flags/GBR.png</file> <!-- United Kingdom -->
+	<file alias="flags/GEO">flags/GEO.png</file> <!-- Georgia -->
 	<file alias="flags/GRC">flags/GRC.png</file> <!-- Greece -->
 	<file alias="flags/GTM">flags/GTM.png</file> <!-- Guatemala -->
 	<file alias="flags/HKG">flags/HKG.png</file> <!-- Hong Kong -->
@@ -80,6 +81,7 @@
 	<file alias="flags/KAZ">flags/KAZ.png</file> <!-- Kazakhstan -->
 	<file alias="flags/KGZ">flags/KGZ.png</file> <!-- Kyrgyzstan -->
 	<file alias="flags/KOR">flags/KOR.png</file> <!-- Republic of Korea -->
+	<file alias="flags/KWT">flags/KWT.png</file> <!-- Kuwait -->
 	<file alias="flags/LTU">flags/LTU.png</file> <!-- Lithuania -->
 	<file alias="flags/LUX">flags/LUX.png</file> <!-- Luxembourg -->
 	<file alias="flags/LVA">flags/LVA.png</file> <!-- Latvia -->
