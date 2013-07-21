@@ -141,6 +141,20 @@ void DemoManagerDlg::adjustDemoList()
 	demoList->setModel(demoModel);
 }
 
+bool DemoManagerDlg::doRemoveDemo(const QString &file)
+{
+	if(!QFile::remove(file))
+		QMessageBox::critical(this, tr("Unable to delete"), tr("Could not delete the selected demo."));
+	else
+	{
+		// Remove ini file as well, but don't bother warning if it can't be deleted for whatever reason
+		QFile::remove(file + ".ini");
+		selectedDemo = NULL;
+		return true;
+	}
+	return false;
+}
+
 void DemoManagerDlg::performAction(QAbstractButton *button)
 {
 	if(button == buttonBox->button(QDialogButtonBox::Close))
@@ -164,26 +178,43 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 	{
 		if(QMessageBox::question(this, tr("Delete demo?"), tr("Are you sure you want to delete the selected demo?"), QMessageBox::Yes|QMessageBox::Cancel) == QMessageBox::Yes)
 		{
-			if(!QFile::remove(Main::dataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename))
-				QMessageBox::critical(this, tr("Unable to delete"), tr("Could not delete the selected demo."));
+			QModelIndex index = demoList->selectionModel()->currentIndex();
+			if(selectedDemo == NULL)
+			{
+				int dateRow = index.row();
+				for(int timeRow = 0;index.child(timeRow, 0).isValid();++timeRow)
+				{
+					if(doRemoveDemo(Main::dataPaths->demosDirectoryPath() + QDir::separator() + demoTree[dateRow][timeRow].filename))
+					{
+						demoModel->removeRow(timeRow, index);
+						demoTree[dateRow].removeAt(timeRow);
+						if(demoTree[dateRow].size() == 0)
+						{
+							demoModel->removeRow(dateRow);
+							demoTree.removeAt(dateRow);
+							break;
+						}
+
+						// We deleted the top row, so decrement our pointer
+						--timeRow;
+					}
+				}
+			}
 			else
 			{
-				// Remove ini file as well, but don't bother warning if it can't be deleted for whatever reason
-				QFile::remove(Main::dataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename + ".ini");
-
-				selectedDemo = NULL;
-
-				// Adjust the tree
-				QModelIndex index = demoList->selectionModel()->currentIndex();
-				int dateRow = index.parent().row();
-				int timeRow = index.row();
-
-				demoModel->removeRow(timeRow, index.parent());
-				demoTree[dateRow].removeAt(timeRow);
-				if(demoTree[dateRow].size() == 0)
+				if(doRemoveDemo(Main::dataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename))
 				{
-					demoModel->removeRow(dateRow);
-					demoTree.removeAt(dateRow);
+					// Adjust the tree
+					int dateRow = index.parent().row();
+					int timeRow = index.row();
+
+					demoModel->removeRow(timeRow, index.parent());
+					demoTree[dateRow].removeAt(timeRow);
+					if(demoTree[dateRow].size() == 0)
+					{
+						demoModel->removeRow(dateRow);
+						demoTree.removeAt(dateRow);
+					}
 				}
 			}
 		}

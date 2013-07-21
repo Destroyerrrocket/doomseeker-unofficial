@@ -54,6 +54,7 @@ class MAIN_EXPORT DemoManagerDlg : public QDialog, private Ui::DemoManagerDlg
 		};
 
 		void	adjustDemoList();
+		bool	doRemoveDemo(const QString &file);
 
 		Demo					*selectedDemo;
 		QStandardItemModel		*demoModel;
