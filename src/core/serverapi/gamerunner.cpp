@@ -191,6 +191,8 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 	}
 
 	PathFinder pathFinder;
+	pathFinder.addPrioritySearchDir(clientBin);
+
 	QStringList missingPwads;
 	bool iwadFound = false;
 

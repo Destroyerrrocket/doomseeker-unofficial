@@ -43,6 +43,13 @@ class MAIN_EXPORT PathFinder
 		PathFinder();
 		PathFinder(const QString&);
 
+		/**
+		 * Provides a directory where we should search first before going to
+		 * user specified locations.  This function can take either a directory
+		 * or a file as its input.  If a file is given the directory part will
+		 * be extracted.
+		 */
+		void				addPrioritySearchDir(const QString& dir);
 		QString 			findFile(const QString& fileName) const;
 		PathFinderResult	findFiles(const QStringList& files) const;
 

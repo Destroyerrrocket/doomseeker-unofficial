@@ -27,6 +27,8 @@
 #include "gui/models/serverlistproxymodel.h"
 #include "gui/models/serverlistrowhandler.h"
 #include "gui/widgets/serverlistcontextmenu.h"
+#include "serverapi/binaries.h"
+#include "serverapi/message.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
 #include "serverapi/tooltipgenerator.h"
@@ -242,10 +244,15 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 	// Engage!
 	if (bFindWads)
 	{
+		Message binMessage;
+		Binaries *bin = server->binaries();
+		QString binPath = bin->clientBinary(binMessage);
+		delete bin;
+
 		QStringList pwadsFormatted;
 		foreach (const PWad &wad, pwads)
 		{
-			pwadsFormatted << createPwadToolTipInfo(wad);
+			pwadsFormatted << createPwadToolTipInfo(wad, binPath);
 		}
 
 		content = "<table cellspacing=1>";
@@ -264,13 +271,14 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 	return toolTip.arg(content);
 }
 
-QString ServerListHandler::createPwadToolTipInfo(const PWad& pwad)
+QString ServerListHandler::createPwadToolTipInfo(const PWad& pwad, const QString &binPath)
 {
 	QString formattedStringBegin = "<tr style=\"color: %1;\">";
 	QString formattedStringEnd = "</tr>";
 	QString formattedStringMiddle;
 
 	PathFinder pathFinder;
+	pathFinder.addPrioritySearchDir(binPath);
 	QString pathToFile = pathFinder.findFile(pwad.name);
 
 	if (pathToFile.isEmpty())

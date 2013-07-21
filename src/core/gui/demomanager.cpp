@@ -25,6 +25,7 @@
 #include "main.h"
 #include "pathfinder.h"
 #include "plugins/engineplugin.h"
+#include "serverapi/binaries.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
 #include "serverapi/gamerunner.h"
@@ -205,17 +206,25 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 			return;
 		}
 
+		// Create dummy server and get binary for pathfinder
+		Server *server = plugin->server(QHostAddress(), 5029); // No specific port needed since we're basically "playing offline"
+		Message binMessage;
+		Binaries *bin = server->binaries();
+		QString binPath = bin->clientBinary(binMessage);
+		delete bin;
+
 		// Locate all the files needed to play the demo
 		PathFinder pf;
+		pf.addPrioritySearchDir(binPath);
 		PathFinderResult result = pf.findFiles(selectedDemo->wads);
 		if(!result.missingFiles.isEmpty())
 		{
 			QMessageBox::critical(this, tr("Files not found"), tr("The following files could not be located: ") + result.missingFiles.join(", "));
+			delete server;
 			return;
 		}
 
 		// Play the demo
-		Server *server = plugin->server(QHostAddress(), 5029); // No specific port needed since we're basically "playing offline"
 		HostInfo hostInfo;
 		hostInfo.demoPath = Main::dataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename;
 		hostInfo.iwadPath = result.foundFiles[0];

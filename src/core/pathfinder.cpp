@@ -40,6 +40,24 @@ PathFinder::PathFinder(const QString& paths)
 {
 }
 
+void PathFinder::addPrioritySearchDir(const QString& dir)
+{
+	QFileInfo fileInfo(dir);
+	if(fileInfo.isSymLink())
+		fileInfo = QFileInfo(fileInfo.symLinkTarget());
+
+#ifdef Q_OS_MAC
+	if(fileInfo.isBundle())
+		pathList.prepend(fileInfo.absolutePath() + "/Contents/MacOS");
+	else
+#endif
+	if(fileInfo.isFile())
+		pathList.prepend(fileInfo.absoluteDir().absolutePath());
+	else
+		pathList.prepend(fileInfo.absolutePath());
+	
+}
+
 QString PathFinder::findFile(const QString& fileName) const
 {
 	if (pathList.count() == 0)
