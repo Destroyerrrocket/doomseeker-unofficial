@@ -413,7 +413,7 @@ void WWWSeeker::parseAsHtml(QNetworkReply* pReply)
 	printf("Links: %d\n", links.size());
 #endif
 
-	// Extrat URLs of interest from <A HREFs>
+	// Extract URLs of interest from <A HREFs>
 	UrlParser urlParser(links);
 
 	foreach (const FileSeekInfo& fileSeekInfo, d.seekedFiles)
