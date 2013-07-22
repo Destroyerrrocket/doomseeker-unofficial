@@ -24,6 +24,7 @@
 #define __URLPROVIDER_H__
 
 #include <QList>
+#include <QMultiMap>
 #include <QUrl>
 
 class MirrorStorage;
@@ -38,7 +39,7 @@ class MirrorStorage;
  *
  * Mirror URLs are supported in a way that allows URLs to be associated with
  * each other as URLs pointing to the same file. These URLs will be returned
- * normally by first() method and operator[]. However, user may decide to 
+ * normally by first() method. However, user may decide to
  * remove the URL and all its mirrors at once, for example when user decides
  * that the mirrors do not contain the requested file.
  */
@@ -73,22 +74,25 @@ class URLProvider
 		 * These URLs can be removed from available list by removeUrl()
 		 * or removeUrlAndMirrors() methods.
 		 */
-		const QList<QUrl>& allAvailableUrls() const
+		QList<QUrl> allAvailableUrls() const
 		{
-			return allUrls;
+			return allUrlsPrioritized.values();
 		}
 		
 		/**
-		 * @brief First URL on the list. Same as operator[0].
+		 * @brief First URL on the prioritized list.
+		 *
+		 * URLs of the same priority appear on the list in the order in
+		 * which they were added.
 		 */
-		const QUrl& first() const;
+		QUrl first() const;
 		
 		/**
 		 * @brief Checks if URL was known to the object during its entire 
 		 *        lifetime.
 		 *
-		 * This URL might not appear anymore on the available URLs 
-		 . list. Such URLs will return false on hasUrl().
+		 * This URL might not appear anymore on the available URLs
+		 * list. Such URLs will return false on hasUrl().
 		 */
 		bool hasOrHadUrl(const QUrl& url) const;
 		
@@ -106,16 +110,6 @@ class URLProvider
 		 * @brief Number of currently available URLs.
 		 */
 		unsigned numUrls() const;
-		
-		/**
-		 * @brief Accesses URL at specified index.
-		 *
-		 * The URLs appear on the list in the order they were added in.
-		 * 
-		 * @param index
-		 *      URL index. This should be less than numUrls()
-		 */
-		const QUrl& operator[](int index) const;
 		
 		/**
 		 * @brief Same as addUrl()
@@ -147,11 +141,15 @@ class URLProvider
 		QUrl takeFirst();
 	
 	private:
-		QList<QUrl> allUrls;
+		static const int PRIORITY_ARCHIVES = 100;
+		static const int PRIORITY_OTHER = 200;
+
+		QMultiMap<int, QUrl> allUrlsPrioritized;
 		QList<MirrorStorage*> mirrors;
 		
 		QList<MirrorStorage*> mirrorsWithUrl(const QUrl& url);
-		
+
+		void insertUrlPrioritized(const QUrl& url);
 		void removeAllUrls(const MirrorStorage* pMirror);
 };
 

@@ -372,7 +372,6 @@ class WadRetriever : public QObject
 		void resolveDownloadFinish(QNetworkReply* pReply, WadRetrieverInfo* pWadRetrieverInfo);
 
 		void setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, QNetworkReply* pReply);
-		void startNextDownloads();
 		void startNetworkQuery(WadRetrieverInfo& wadRetrieverInfo, const QUrl& url);
 
 		bool wasUrlUsed(const QUrl& url) const;
@@ -381,6 +380,7 @@ class WadRetriever : public QObject
 		void networkQueryDownloadProgress(QNetworkReply* pReply, qint64 current, qint64 total);
 		void networkQueryError(QNetworkReply* pReply, QNetworkReply::NetworkError code);
 		void networkQueryFinished(QNetworkReply* pReply);
+		void startNextDownloads();
 };
 
 #endif

@@ -36,6 +36,7 @@
 #include <QDebug>
 #include <QFileInfo>
 #include <QTemporaryFile>
+#include <QTimer>
 
 WadRetriever::WadRetriever()
 {
@@ -92,8 +93,11 @@ void WadRetriever::addUrl(const WadDownloadInfo& wad, const QUrl& url)
 		if (!hasUrl(*pRetrieverInfo, url))
 		{
 			(*pRetrieverInfo->downloadUrls) << url;
-
-			startNextDownloads();
+			// Delay the download a bit in anticipation for more possible
+			// links to the file. This allows to actually prioritize
+			// urls. Calling this slot multiple times won't starts
+			// downloads when not supposed to.
+			QTimer::singleShot(10, this, SLOT(startNextDownloads()));
 		}
 	}
 }
