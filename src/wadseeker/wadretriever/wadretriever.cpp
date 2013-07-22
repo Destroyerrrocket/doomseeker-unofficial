@@ -95,7 +95,7 @@ void WadRetriever::addUrl(const WadDownloadInfo& wad, const QUrl& url)
 			(*pRetrieverInfo->downloadUrls) << url;
 			// Delay the download a bit in anticipation for more possible
 			// links to the file. This allows to actually prioritize
-			// urls. Calling this slot multiple times won't starts
+			// urls. Calling this slot multiple times won't start
 			// downloads when not supposed to.
 			QTimer::singleShot(10, this, SLOT(startNextDownloads()));
 		}
