@@ -119,6 +119,9 @@ QString IRCResponseType::toRfcString(MsgType type)
 		case ERRNicknameInUse:
 			return "433";
 
+		case ERRChanOpPrivIsNeeded:
+			return "482";
+
 		case Join:
 			return "JOIN";
 

@@ -99,6 +99,9 @@ class IRCResponseType
 			/// 433
 			ERRNicknameInUse,
 
+			/// 482
+			ERRChanOpPrivIsNeeded,
+
 			// === Here are types which convert to their string counterparts
 			// === letter-by-letter
 

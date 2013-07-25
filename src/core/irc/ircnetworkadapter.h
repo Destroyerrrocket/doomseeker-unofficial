@@ -236,7 +236,8 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		/**
 		 * @see IRCResponseParser::print()
 		 */
-		void                                printResponse(const QString& printWhat, const QString& printWhere);
+		void								printResponse(const QString& printWhat, const QString& printWhere);
+		void								printResponseWithClass(const QString& printWhat, const QString& printWhere, const IRCMessageClass& msgClass);
 
 		void								privMsgReceived(const QString& recipient, const QString& sender, const QString& content);
 		void								sendPong(const QString& toWhom);

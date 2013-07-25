@@ -26,6 +26,7 @@
 #include <QStringList>
 #include "irc/constants/ircresponsetype.h"
 #include "irc/ircglobal.h"
+#include "irc/ircmessageclass.h"
 #include "irc/ircuserinfo.h"
 #include "log.h"
 #include "strings.h"
@@ -230,6 +231,15 @@ IRCResponseParseResult IRCResponseParser::parseMessage(const QString& prefix, co
 			QString nickname = params.takeFirst();
 
 			emit nicknameInUse(nickname);
+			break;
+		}
+
+		case IRCResponseType::ERRChanOpPrivIsNeeded:
+		{
+			params.takeFirst(); // User
+			QString channel = params.takeFirst();
+			QString reason = joinAndTrimColonIfNecessary(params);
+			emit printWithClass(reason, channel, IRCMessageClass(IRCMessageClass::ChannelAction));
 			break;
 		}
 

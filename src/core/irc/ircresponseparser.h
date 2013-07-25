@@ -28,6 +28,8 @@
 #include <QObject>
 #include <QString>
 
+class IRCMessageClass;
+
 class IRCResponseParser : public QObject
 {
 	Q_OBJECT
@@ -77,7 +79,11 @@ class IRCResponseParser : public QObject
 		 *      empty, message is printed directly through the
 		 *      IRCNetworkAdapter itself.
 		 */
-		void            print(const QString& printWhat, const QString& printWhere);
+		void			print(const QString& printWhat, const QString& printWhere);
+		/**
+		 * @brief Same as print(), but allows to specify message class.
+		 */
+		void			printWithClass(const QString& printWhat, const QString& printWhere, const IRCMessageClass& msgClass);
 
 		void			privMsgReceived(const QString& recipient, const QString& sender, const QString& content);
 		void			sendPongMessage(const QString& sendWhere);

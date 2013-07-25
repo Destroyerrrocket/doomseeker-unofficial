@@ -79,8 +79,12 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 
 	// This connect must be direct as it might interfere with other operations
 	// of printing done in the window.
-	QObject::connect(&ircResponseParser, SIGNAL ( print(const QString&, const QString&) ),
-		this, SLOT( printResponse(const QString&, const QString&) ), Qt::DirectConnection );
+	QObject::connect(&ircResponseParser, SIGNAL( print(const QString&, const QString&)),
+		this, SLOT(printResponse(const QString&, const QString&) ), Qt::DirectConnection);
+	QObject::connect(&ircResponseParser,
+		SIGNAL(printWithClass(const QString&, const QString&, const IRCMessageClass&)),
+		this, SLOT(printResponseWithClass(const QString&, const QString&, const IRCMessageClass&)),
+		Qt::DirectConnection);
 
 	QObject::connect(&ircResponseParser, SIGNAL ( privMsgReceived(const QString&, const QString&, const QString&) ),
 		this, SLOT( privMsgReceived(const QString&, const QString&, const QString&) ) );
@@ -511,6 +515,12 @@ void IRCNetworkAdapter::parseError(const QString& error)
 
 void IRCNetworkAdapter::printResponse(const QString& printWhat, const QString& printWhere)
 {
+	printResponseWithClass(printWhat, printWhere, IRCMessageClass(IRCMessageClass::Normal));
+}
+
+void IRCNetworkAdapter::printResponseWithClass(const QString& printWhat,
+	const QString& printWhere, const IRCMessageClass& msgClass)
+{
 	IRCAdapterBase* pAdapter = this;
 
 	if (!printWhere.isEmpty())
@@ -526,7 +536,7 @@ void IRCNetworkAdapter::printResponse(const QString& printWhat, const QString& p
 	// printed to this adapter.
 	if (pAdapter == NULL)
 	{
-		this->emitMessage(tr("FROM %1: %2").arg(printWhere, printWhat));
+		this->emitMessageWithClass(tr("FROM %1: %2").arg(printWhere, printWhat), msgClass);
 	}
 	else
 	{
@@ -538,7 +548,7 @@ void IRCNetworkAdapter::printResponse(const QString& printWhat, const QString& p
 			return;
 		}
 
-		pAdapter->emitMessage(printWhat);
+		pAdapter->emitMessageWithClass(printWhat, msgClass);
 	}
 }
 
