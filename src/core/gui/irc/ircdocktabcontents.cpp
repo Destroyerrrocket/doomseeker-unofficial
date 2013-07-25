@@ -623,8 +623,8 @@ IRCDockTabContents::UserListMenu::UserListMenu()
 	this->addSeparator();
 	this->op = this->addAction(tr("Op"));
 	this->deop = this->addAction(tr("Deop"));
-	this->halfOp = this->addAction(tr("Half Op"));
-	this->dehalfOp = this->addAction(tr("De Half Op"));
+	this->halfOp = this->addAction(tr("Half op"));
+	this->dehalfOp = this->addAction(tr("De half op"));
 	this->voice = this->addAction(tr("Voice"));
 	this->devoice = this->addAction(tr("Devoice"));
 	this->addSeparator();
