@@ -466,7 +466,9 @@ Message GameRunner::runExecutable(const CommandLineInfo& cli, bool bWrapInStanda
 	{
 		gLog << tr("Starting (working dir %1): %2").arg(cli.applicationDir.absolutePath()).arg(cli.executable.absoluteFilePath());
 		QStringList args = cli.args;
-		AppRunner::cleanArguments(args);
+		// Is this needed for something? Zandronum needs the quotes for console
+		// variables.
+		//AppRunner::cleanArguments(args);
 		new StandardServerConsole(server, cli.executable.absoluteFilePath(), args);
 	}
 
