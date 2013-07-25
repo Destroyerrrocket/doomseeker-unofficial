@@ -276,7 +276,6 @@ IRCChatAdapter* IRCNetworkAdapter::getOrCreateNewChatAdapter(const QString& reci
 bool IRCNetworkAdapter::hasRecipient(const QString& recipient) const
 {
 	QString recipientLowercase = recipient.toLower();
-
 	return (chatWindows.find(recipientLowercase) != chatWindows.end());
 }
 
@@ -516,7 +515,11 @@ void IRCNetworkAdapter::printResponse(const QString& printWhat, const QString& p
 
 	if (!printWhere.isEmpty())
 	{
-		IRCAdapterBase* pAdapter = getChatAdapter(printWhere);
+		IRCAdapterBase* pAdapterCandidate = getChatAdapter(printWhere);
+		if (pAdapterCandidate != NULL)
+		{
+			pAdapter = pAdapterCandidate;
+		}
 	}
 
 	// In case if the target adapter is unknown, the message will still get
