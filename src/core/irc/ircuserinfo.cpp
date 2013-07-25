@@ -41,10 +41,14 @@ unsigned IRCUserInfo::convertModeCharToFlag(char c)
 {
 	switch (c)
 	{
+		case 'a':
+			return FLAG_PROTECTED;
 		case 'h':
 			return FLAG_HALFOP;
 		case 'o':
 			return FLAG_OP;
+		case 'q':
+			return FLAG_FOUNDER;
 		case 'v':
 			return FLAG_VOICE;
 		default:
@@ -56,10 +60,14 @@ unsigned IRCUserInfo::convertNickCharToFlag(char c)
 {
 	switch (c)
 	{
+		case '&':
+			return FLAG_PROTECTED;
 		case '%':
 			return FLAG_HALFOP;
 		case '@':
 			return FLAG_OP;
+		case '~':
+			return FLAG_FOUNDER;
 		case '+':
 			return FLAG_VOICE;
 		default:
@@ -128,11 +136,20 @@ bool IRCUserInfo::operator==(const IRCUserInfo& otherUser) const
 
 bool IRCUserInfo::operator<=(const IRCUserInfo& otherUser) const
 {
-	if (this->isOp() ^ otherUser.isOp())
+	// Only one flag per user can be displayed. They take
+	// precedence in order of appearance:
+	if (this->isFounder() ^ otherUser.isFounder())
+	{
+		return this->isFounder();
+	}
+	else if (this->isProtected() ^ otherUser.isProtected())
+	{
+		return this->isProtected();
+	}
+	else if (this->isOp() ^ otherUser.isOp())
 	{
 		return this->isOp();
 	}
-	// Op overrides half op.
 	else if (this->isHalfOp() ^ otherUser.isHalfOp())
 	{
 		return this->isHalfOp();
@@ -154,6 +171,18 @@ bool IRCUserInfo::operator<=(const IRCUserInfo& otherUser) const
 QString IRCUserInfo::prefixedName() const 
 {
 	QString userName = this->userName;
+
+	if (this->isFounder())
+	{
+		userName.prepend('~');
+		return userName;
+	}
+
+	if (this->isProtected())
+	{
+		userName.prepend('&');
+		return userName;
+	}
 
 	if (this->isOp())
 	{

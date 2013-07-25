@@ -34,6 +34,8 @@ class IRCUserInfo
 		static const unsigned FLAG_OP			= 0x1;
 		static const unsigned FLAG_VOICE		= 0x2;
 		static const unsigned FLAG_HALFOP		= 0x4;
+		static const unsigned FLAG_FOUNDER		= 0x8;
+		static const unsigned FLAG_PROTECTED	= 0x10;
 		
 		/**
 		 *	@brief Converts a character from MODE list to a flag.
@@ -79,6 +81,7 @@ class IRCUserInfo
 		unsigned			flags() const { return this->userFlags; }
 
 		bool				isFlag(unsigned flag) const;
+		bool				isFounder() const { return isFlag(FLAG_FOUNDER); }
 		bool				isHalfOp() const { return isFlag(FLAG_HALFOP); }
 
 		/**
@@ -90,6 +93,7 @@ class IRCUserInfo
 		bool				isSameNickname(const IRCUserInfo& otherUser) const; 
 
 		bool				isOp() const { return isFlag(FLAG_OP); }
+		bool				isProtected() const { return isFlag(FLAG_PROTECTED); }
 		bool				isVoiced() const { return isFlag(FLAG_VOICE); }
 
 		bool				operator==(const IRCUserInfo& otherUser) const;
