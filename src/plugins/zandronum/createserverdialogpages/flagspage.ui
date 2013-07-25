@@ -3399,7 +3399,7 @@ p, li { white-space: pre-wrap; }
    <sender>cbCompatOldDamageRadiusInfiniteHeight</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
-   <slot>propagateFlagsInputsChanges()</slot>
+   <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>492</x>
@@ -3415,7 +3415,7 @@ p, li { white-space: pre-wrap; }
    <sender>cbCompatUseOriginalMissileClippingHeight</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
-   <slot>propagateFlagsInputsChanges()</slot>
+   <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>70</x>
@@ -3431,7 +3431,7 @@ p, li { white-space: pre-wrap; }
    <sender>cbCompatUseSectorBasedSoundTargetCode</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
-   <slot>propagateFlagsInputsChanges()</slot>
+   <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>174</x>
@@ -3447,7 +3447,7 @@ p, li { white-space: pre-wrap; }
    <sender>cbCompatTraceIgnoreLinesWithoutSameSectorOnBothSides</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
-   <slot>propagateFlagsInputsChanges()</slot>
+   <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>120</x>
@@ -3463,7 +3463,7 @@ p, li { white-space: pre-wrap; }
    <sender>cbCompatLimitDehMaxHealthToHealthBonus</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
-   <slot>propagateFlagsInputsChanges()</slot>
+   <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>252</x>
@@ -3479,7 +3479,7 @@ p, li { white-space: pre-wrap; }
    <sender>cbCompatRavensScrollersUseOriginalSpeed</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
-   <slot>propagateFlagsInputsChanges()</slot>
+   <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>228</x>
@@ -3495,7 +3495,7 @@ p, li { white-space: pre-wrap; }
    <sender>cbCompatAddNOGRAVITYFlagToSpheres</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
-   <slot>propagateFlagsInputsChanges()</slot>
+   <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>276</x>
@@ -3511,7 +3511,7 @@ p, li { white-space: pre-wrap; }
    <sender>cbDontStopPlayerScriptsOnDisconnect</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
-   <slot>propagateFlagsInputsChanges()</slot>
+   <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>271</x>
@@ -3527,7 +3527,7 @@ p, li { white-space: pre-wrap; }
    <sender>cbOldZDoomHorizontalThrust</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
-   <slot>propagateFlagsInputsChanges()</slot>
+   <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>231</x>
@@ -3543,7 +3543,7 @@ p, li { white-space: pre-wrap; }
    <sender>cbOldZDoomBridgeDrops</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
-   <slot>propagateFlagsInputsChanges()</slot>
+   <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>226</x>
@@ -3559,7 +3559,7 @@ p, li { white-space: pre-wrap; }
    <sender>cbCompatFindShortestTexturesLikeDoom</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
-   <slot>propagateFlagsInputsChanges()</slot>
+   <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>400</x>
@@ -3575,7 +3575,7 @@ p, li { white-space: pre-wrap; }
    <sender>cbCompatLimitPainElementals</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
-   <slot>propagateFlagsInputsChanges()</slot>
+   <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>502</x>
@@ -3591,7 +3591,7 @@ p, li { white-space: pre-wrap; }
    <sender>cbCompatSpawnItemDropsOnTheFloor</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
-   <slot>propagateFlagsInputsChanges()</slot>
+   <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>416</x>
@@ -3607,7 +3607,7 @@ p, li { white-space: pre-wrap; }
    <sender>cbCompatNETScriptsAreClientside</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
-   <slot>propagateFlagsInputsChanges()</slot>
+   <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>441</x>
@@ -3623,7 +3623,7 @@ p, li { white-space: pre-wrap; }
    <sender>cbCompatActorsAreInfinitelyTall</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
-   <slot>propagateFlagsInputsChanges()</slot>
+   <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>497</x>
@@ -3639,7 +3639,7 @@ p, li { white-space: pre-wrap; }
    <sender>cbCompatUseBuggierStairBuilding</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
-   <slot>propagateFlagsInputsChanges()</slot>
+   <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>462</x>
@@ -3655,7 +3655,7 @@ p, li { white-space: pre-wrap; }
    <sender>cbCompatDisableBoomDoorLightEffect</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
-   <slot>propagateFlagsInputsChanges()</slot>
+   <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>417</x>
@@ -3671,7 +3671,7 @@ p, li { white-space: pre-wrap; }
    <sender>cbCompatAllSpecialLinesCanDropUseLines</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
-   <slot>propagateFlagsInputsChanges()</slot>
+   <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>417</x>
@@ -3687,7 +3687,7 @@ p, li { white-space: pre-wrap; }
    <sender>cbCompatOriginalSoundCurve</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
-   <slot>propagateFlagsInputsChanges()</slot>
+   <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>409</x>
