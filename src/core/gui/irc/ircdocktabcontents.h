@@ -147,21 +147,6 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 				QAction*		openChatWindow;
 				QAction*		voice;
 				
-				/**
-				 *	@brief Disables or enables certain actions basing on the passed
-				 *	user info flags (op, voice).
-				 *
-				 *	@b WARNING: This must @b ALWAYS be called after 
-				 *	setIsOperator() and @b NEVER before.
-				 */
-				void			applyTargetUserFlags(const IRCUserInfo& userInfo);
-				
-				/**
-				 *	@brief Disables or enables certain actions basing on the passed
-				 *	flag.
-				 */
-				void			setIsOperator(bool bOperator);
-				
 			private:
 				bool			bIsOperator;
 			

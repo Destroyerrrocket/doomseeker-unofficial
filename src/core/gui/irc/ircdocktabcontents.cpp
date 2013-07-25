@@ -538,8 +538,6 @@ void IRCDockTabContents::userListCustomContextMenuRequested(const QPoint& pos)
 	const QString& channel = pAdapter->recipient();
 
 	UserListMenu& menu = this->getUserListContextMenu();
-	menu.setIsOperator(pAdapter->amIOperator());
-	menu.applyTargetUserFlags(nickname);
 	QPoint posGlobal = this->lvUserList->mapToGlobal(pos);
 
 	QAction* pAction = menu.exec(posGlobal);
@@ -626,34 +624,3 @@ IRCDockTabContents::UserListMenu::UserListMenu()
 	this->bIsOperator = false;
 }
 
-void IRCDockTabContents::UserListMenu::applyTargetUserFlags(const IRCUserInfo& userInfo)
-{
-	if (this->bIsOperator)
-	{
-		if (userInfo.isOp())
-		{
-			this->devoice->setEnabled(false);
-			this->op->setEnabled(false);
-			this->voice->setEnabled(false);
-		}
-		else
-		{
-			this->devoice->setEnabled(userInfo.isVoiced());
-			this->deop->setEnabled(false);
-			this->voice->setEnabled(!userInfo.isVoiced());
-
-		}
-	}
-}
-
-void IRCDockTabContents::UserListMenu::setIsOperator(bool bOperator)
-{
-	this->bIsOperator = bOperator;
-
-	this->op->setEnabled(bOperator);
-	this->deop->setEnabled(bOperator);
-	this->voice->setEnabled(bOperator);
-	this->devoice->setEnabled(bOperator);
-	this->kick->setEnabled(bOperator);
-	this->ban->setEnabled(bOperator);
-}
