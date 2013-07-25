@@ -561,9 +561,17 @@ void IRCDockTabContents::userListCustomContextMenuRequested(const QPoint& pos)
 	{
 		pAdapter->setOp(cleanNickname, false);
 	}
+	else if (pAction == menu.dehalfOp)
+	{
+		pAdapter->setHalfOp(cleanNickname, false);
+	}
 	else if (pAction == menu.devoice)
 	{
 		pAdapter->setVoiced(cleanNickname, false);
+	}
+	else if (pAction == menu.halfOp)
+	{
+		pAdapter->setHalfOp(cleanNickname, true);
 	}
 	else if (pAction == menu.kick)
 	{
@@ -615,6 +623,8 @@ IRCDockTabContents::UserListMenu::UserListMenu()
 	this->addSeparator();
 	this->op = this->addAction(tr("Op"));
 	this->deop = this->addAction(tr("Deop"));
+	this->halfOp = this->addAction(tr("Half Op"));
+	this->dehalfOp = this->addAction(tr("De Half Op"));
 	this->voice = this->addAction(tr("Voice"));
 	this->devoice = this->addAction(tr("Devoice"));
 	this->addSeparator();

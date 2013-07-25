@@ -106,6 +106,11 @@ class IRCChannelAdapter : public IRCChatAdapter
 		void					removeNameFromCachedList(const QString& name);
 		
 		/**
+		 * @brief Sets half op mode for given user.
+		 */
+		void					setHalfOp(const QString& nickname, bool bSet);
+		
+		/**
 		 *	@brief Sets op mode for given user.
 		 *
 		 *	Op privileges required.

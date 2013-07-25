@@ -140,8 +140,10 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 				UserListMenu();
 			
 				QAction*		ban;
+				QAction*		dehalfOp;
 				QAction*		deop;
 				QAction*		devoice;
+				QAction*		halfOp;
 				QAction*		kick;
 				QAction*		op;
 				QAction*		openChatWindow;

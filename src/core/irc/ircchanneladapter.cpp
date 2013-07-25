@@ -135,6 +135,11 @@ void IRCChannelAdapter::removeNameFromCachedList(const QString& name)
 	}
 }
 
+void IRCChannelAdapter::setHalfOp(const QString& nickname, bool bSet)
+{
+	pNetwork->setChannelMode(this->recipientName, nickname, "h", bSet);
+}
+
 void IRCChannelAdapter::setOp(const QString& nickname, bool bSet)
 {
 	pNetwork->setChannelMode(this->recipientName, nickname, "o", bSet);

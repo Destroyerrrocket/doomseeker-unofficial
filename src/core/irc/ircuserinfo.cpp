@@ -41,12 +41,12 @@ unsigned IRCUserInfo::convertModeCharToFlag(char c)
 {
 	switch (c)
 	{
+		case 'h':
+			return FLAG_HALFOP;
 		case 'o':
 			return FLAG_OP;
-			
 		case 'v':
 			return FLAG_VOICE;
-			
 		default:
 			return 0;
 	}
@@ -56,12 +56,12 @@ unsigned IRCUserInfo::convertNickCharToFlag(char c)
 {
 	switch (c)
 	{
+		case '%':
+			return FLAG_HALFOP;
 		case '@':
 			return FLAG_OP;
-			
 		case '+':
 			return FLAG_VOICE;
-			
 		default:
 			return 0;
 	}
@@ -132,7 +132,12 @@ bool IRCUserInfo::operator<=(const IRCUserInfo& otherUser) const
 	{
 		return this->isOp();
 	}
-	// Op overrides voice.
+	// Op overrides half op.
+	else if (this->isHalfOp() ^ otherUser.isHalfOp())
+	{
+		return this->isHalfOp();
+	}
+	// Half-op overrides voice.
 	else if (this->isVoiced() ^ otherUser.isVoiced())
 	{
 		return this->isVoiced();
@@ -155,7 +160,13 @@ QString IRCUserInfo::prefixedName() const
 		userName.prepend('@');
 		return userName;
 	}
-	
+
+	if (this->isHalfOp())
+	{
+		userName.prepend('%');
+		return userName;
+	}
+
 	if (this->isVoiced())
 	{
 		userName.prepend('+');

@@ -33,6 +33,7 @@ class IRCUserInfo
 	public:
 		static const unsigned FLAG_OP			= 0x1;
 		static const unsigned FLAG_VOICE		= 0x2;
+		static const unsigned FLAG_HALFOP		= 0x4;
 		
 		/**
 		 *	@brief Converts a character from MODE list to a flag.
@@ -78,6 +79,7 @@ class IRCUserInfo
 		unsigned			flags() const { return this->userFlags; }
 
 		bool				isFlag(unsigned flag) const;
+		bool				isHalfOp() const { return isFlag(FLAG_HALFOP); }
 
 		/**
 		 *	@brief Check if this user and user specified as parameter
