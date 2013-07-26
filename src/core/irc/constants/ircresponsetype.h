@@ -76,6 +76,9 @@ class IRCResponseType
 			/// 311
 			RPLWhoIsUser,
 
+			/// 332
+			RPLTopic,
+
 			/// 353 - names list for a channel
 			RPLNamReply,
 
@@ -115,6 +118,7 @@ class IRCResponseType
 			Ping,
 			PrivMsg,
 			Quit,
+			Topic,
 
 			/// Not a real type, denotes number of all types.
 			NUM_TYPES

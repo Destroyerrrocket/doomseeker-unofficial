@@ -119,6 +119,16 @@ IRCResponseParseResult IRCResponseParser::parseMessage(const QString& prefix, co
 			break;
 		}
 
+		case IRCResponseType::RPLTopic:
+		{
+			params.takeFirst(); // Own nickname.
+			QString channel = params.takeFirst();
+			QString topic = joinAndTrimColonIfNecessary(params);
+			QString msg = tr("Topic: %1").arg(topic);
+			emit printWithClass(msg, channel, IRCMessageClass(IRCMessageClass::ChannelAction));
+			break;
+		}
+
 		case IRCResponseType::RPLNamReply:
 		{
 			// Namelists.
@@ -373,6 +383,15 @@ IRCResponseParseResult IRCResponseParser::parseMessage(const QString& prefix, co
 			farewellMessage = joinAndTrimColonIfNecessary(params);
 
 			emit userQuitsNetwork(sender, farewellMessage);
+			break;
+		}
+
+		case IRCResponseType::Topic:
+		{
+			QString channel = params.takeFirst();
+			QString topic = joinAndTrimColonIfNecessary(params);
+			QString msg = tr("New topic set by user %1:\n%2").arg(sender, topic);
+			emit printWithClass(msg, channel, IRCMessageClass(IRCMessageClass::ChannelAction));
 			break;
 		}
 

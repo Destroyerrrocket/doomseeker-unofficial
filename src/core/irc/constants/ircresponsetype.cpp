@@ -98,6 +98,9 @@ QString IRCResponseType::toRfcString(MsgType type)
 		case RPLWhoIsUser:
 			return "311";
 
+		case RPLTopic:
+			return "332";
+
 		case RPLNamReply:
 			return "353";
 
@@ -151,6 +154,9 @@ QString IRCResponseType::toRfcString(MsgType type)
 
 		case Quit:
 			return "QUIT";
+
+		case Topic:
+			return "TOPIC";
 
 		case Invalid:
 		default:
