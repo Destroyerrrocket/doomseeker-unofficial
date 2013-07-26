@@ -48,13 +48,13 @@ void PathFinder::addPrioritySearchDir(const QString& dir)
 
 #ifdef Q_OS_MAC
 	if(fileInfo.isBundle())
-		pathList.prepend(fileInfo.absolutePath() + "/Contents/MacOS");
+		pathList.prepend(fileInfo.absoluteFilePath() + "/Contents/MacOS");
 	else
 #endif
 	if(fileInfo.isFile())
 		pathList.prepend(fileInfo.absoluteDir().absolutePath());
 	else
-		pathList.prepend(fileInfo.absolutePath());
+		pathList.prepend(fileInfo.absoluteFilePath());
 	
 }
 

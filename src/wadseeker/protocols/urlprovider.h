@@ -141,8 +141,11 @@ class URLProvider
 		QUrl takeFirst();
 	
 	private:
-		static const int PRIORITY_ARCHIVES = 100;
-		static const int PRIORITY_OTHER = 200;
+		enum
+		{
+			PRIORITY_ARCHIVES = 100,
+			PRIORITY_OTHER = 200
+		};
 
 		QMultiMap<int, QUrl> allUrlsPrioritized;
 		QList<MirrorStorage*> mirrors;
