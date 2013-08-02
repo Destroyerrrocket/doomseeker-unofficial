@@ -30,6 +30,7 @@
 #include "configuration/doomseekerconfig.h"
 #include "gui/passwordDlg.h"
 #include "gui/wadseekerinterface.h"
+#include "gui/configuration/doomseekerconfigurationdialog.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/gamerunner.h"
 #include "serverapi/message.h"
@@ -77,10 +78,10 @@ bool ConnectionHandler::checkWadseekerValidity(QWidget *parent)
 
 	if (targetDirPath.isEmpty() || !targetDir.exists() || !targetDirFileInfo.isWritable())
 	{
-		QString message = tr("Wadseeker will not work correctly: \n\
-Target directory is either not set, is invalid or cannot be written to.\n\
-Please review your Configuration and/or refer to online help available from \
-the Help menu.");
+		QString message = tr("Wadseeker will not work correctly: \n"
+			"Target directory is either not set, is invalid or cannot be written to.\n"
+			"Please review your Configuration and/or refer to online help available from "
+			"the Help menu.");
 
 		QMessageBox::warning(parent, tr("Doomseeker - Wadseeker error"), message);
 		return false;
@@ -180,6 +181,7 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, const Server* ser
 		{
 			case JoinError::Terminate:
 				return false;
+			case JoinError::ConfigurationError:
 			case JoinError::Critical:
 				if (!joinError.error.isEmpty())
 				{
@@ -192,16 +194,21 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, const Server* ser
 
 				QMessageBox::critical(parent, errorCaption, *error);
 				gLog << tr("Error when obtaining join parameters for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(*error);
+
+				if(joinError.type == JoinError::ConfigurationError)
+				{
+					DoomseekerConfigurationDialog::openConfiguration(server->plugin());
+				}
 				return false;
 
 			case JoinError::MissingWads:
 				// Execute Wadseeker
 				if (!joinError.missingIwad.isEmpty())
 				{
-					QString additionalInfo = tr("\n\
-Make sure that this file is in one of the paths specified in Options -> File Paths.\n\
-If you don't have this file you need to purchase the game associated with this IWAD.\n\
-Wadseeker will not download IWADs.\n\n");
+					QString additionalInfo = tr("\n"
+						"Make sure that this file is in one of the paths specified in Options -> File Paths.\n"
+						"If you don't have this file you need to purchase the game associated with this IWAD.\n"
+						"Wadseeker will not download IWADs.\n\n");
 
 					filesMissingMessage += tr("IWAD: ") + joinError.missingIwad.toLower() + additionalInfo;
 				}

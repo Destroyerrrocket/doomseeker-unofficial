@@ -24,7 +24,9 @@
 #define __DOOMSEEKERCONFIGURATIONDIALOG_H__
 
 #include "gui/configuration/configurationdialog.h"
-		
+
+class EnginePlugin;
+
 class DoomseekerConfigurationDialog : public ConfigurationDialog
 {
 	Q_OBJECT
@@ -36,8 +38,11 @@ class DoomseekerConfigurationDialog : public ConfigurationDialog
 		bool 							addEngineConfiguration(ConfigurationBaseBox* pConfigurationBox);
 		bool							appearanceChanged() const { return bAppearanceChanged; }
 		bool 							customServersChanged() const { return bCustomServersChanged; }
-		void 							initOptionsList();	
-	
+		void 							initOptionsList();
+		void							showPluginConfiguration(const EnginePlugin *plugin);
+
+		static void						openConfiguration(const EnginePlugin *showPlugin=NULL);
+
 	private:
 		bool							bAppearanceChanged;
 		bool							bCustomServersChanged;

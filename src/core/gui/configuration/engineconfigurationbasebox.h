@@ -39,6 +39,7 @@ class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox, priv
 		QIcon				icon() const;
 		QString				name() const;
 		void				readSettings();
+		const EnginePlugin	*plugin() const { return enginePlugin; }
 
 	protected:
 		void				addWidget(QWidget *widget);
@@ -52,7 +53,7 @@ class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox, priv
 
 	private:
 		IniSection&			config;
-		const EnginePlugin*	plugin;
+		const EnginePlugin*	enginePlugin;
 		bool				clientOnly;
 };
 

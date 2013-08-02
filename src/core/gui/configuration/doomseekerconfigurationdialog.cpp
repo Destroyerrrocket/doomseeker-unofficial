@@ -32,9 +32,13 @@
 #include "gui/configuration/cfgwadseekergeneral.h"
 #include "gui/configuration/cfgwadseekeridgames.h"
 #include "gui/configuration/cfgwadseekersites.h"
+#include "gui/configuration/engineconfigurationbasebox.h"
 #include "gui/mainwindow.h"
+#include "plugins/engineplugin.h"
+#include "updater/updatechannel.h"
 #include "log.h"
 #include "main.h"
+#include "qtmetapointer.h"
 
 DoomseekerConfigurationDialog::DoomseekerConfigurationDialog(QWidget* parent)
 : ConfigurationDialog(parent)
@@ -135,4 +139,63 @@ void DoomseekerConfigurationDialog::initOptionsList()
 	appendWadseekerConfigurationBoxes();
 	
 	optionsTree()->expandAll();
+}
+
+void DoomseekerConfigurationDialog::openConfiguration(const EnginePlugin *openPlugin)
+{
+	MainWindow *mw = static_cast<MainWindow *>(Main::mainWindow);
+
+	DoomseekerConfigurationDialog configDialog(mw);
+	configDialog.initOptionsList();
+
+	for(unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
+	{
+		const EnginePlugin* pPluginInfo = (*Main::enginePlugins)[i]->info;
+
+		// Create the config box.
+		ConfigurationBaseBox* pConfigurationBox = pPluginInfo->configuration(&configDialog);
+		configDialog.addEngineConfiguration(pConfigurationBox);
+	}
+
+	bool bLookupHostsSettingBefore = gConfig.doomseeker.bLookupHosts;
+	DoomseekerConfig::AutoUpdates::UpdateMode updateModeBefore = gConfig.autoUpdates.updateMode;
+	UpdateChannel updateChannelBefore = UpdateChannel::fromName(gConfig.autoUpdates.updateChannelName);
+	// Stop the auto refresh timer during configuration.
+	mw->autoRefreshTimer.stop();
+
+	if(openPlugin)
+		configDialog.showPluginConfiguration(openPlugin);
+
+	configDialog.exec();
+
+	// Do some cleanups after config box finishes.
+	mw->initAutoRefreshTimer();
+
+	// If update channel or update mode changed then we should discard the
+	// current updates.
+	UpdateChannel updateChannelAfter = UpdateChannel::fromName(gConfig.autoUpdates.updateChannelName);
+	if (updateChannelBefore != updateChannelAfter
+		|| updateModeBefore != gConfig.autoUpdates.updateMode)
+	{
+		mw->abortAutoUpdater();
+		gConfig.autoUpdates.bPerformUpdateOnNextRun = false;
+		gConfig.saveToFile();
+	}
+
+	mw->finishConfiguration(configDialog, !bLookupHostsSettingBefore && gConfig.doomseeker.bLookupHosts);
+}
+
+void DoomseekerConfigurationDialog::showPluginConfiguration(const EnginePlugin *plugin)
+{
+	// Find plugin page and make it the active page
+	for(unsigned int i = 0;i < enginesRoot->rowCount();++i)
+	{
+		QStandardItem *page = enginesRoot->child(i);
+		QtMetaPointer metaPointer = qVariantValue<QtMetaPointer>(page->data());
+		void* pointer = metaPointer;
+		EngineConfigurationBaseBox *engineConfig = (EngineConfigurationBaseBox*)pointer;
+
+		if(engineConfig->plugin() == plugin)
+			optionListClicked(page->index());
+	}
 }

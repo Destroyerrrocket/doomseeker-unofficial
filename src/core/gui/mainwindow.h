@@ -45,6 +45,7 @@
 
 class AutoUpdater;
 class ConnectionHandler;
+class DoomseekerConfigurationDialog;
 class ServerFilterDock;
 class ServersStatusWidget;
 class UpdateChannel;
@@ -131,6 +132,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	updateMasterAddresses();
 
 	protected:
+		friend class DoomseekerConfigurationDialog;
+
 		static const QString	HELP_SITE_URL;
 
 		QApplication*		application;
@@ -206,6 +209,11 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 *		crashes.
 		 */
 		void	fillQueryMenu(MasterManager* masterManager);
+
+		/**
+		 * Called by the configuration dialog to sync config changes.
+		 */
+		void	finishConfiguration(DoomseekerConfigurationDialog &, bool);
 
 		bool	hasCustomServers() const;
 

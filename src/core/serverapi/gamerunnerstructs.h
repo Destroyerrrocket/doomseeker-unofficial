@@ -71,11 +71,12 @@ struct JoinError
 {
 	enum JoinErrorType
 	{
-		NoError = 0,
-		MissingWads = 1,
-		Critical = 2,
+		NoError,
+		MissingWads,
+		ConfigurationError,
+		Critical,
 
-		Terminate = 3, // Special use to terminate the connection process.
+		Terminate, // Special use to terminate the connection process.
 	};
 
 	JoinErrorType		type;

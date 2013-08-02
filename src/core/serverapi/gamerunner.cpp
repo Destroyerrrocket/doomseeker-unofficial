@@ -162,10 +162,11 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 	QString clientBin = binaries->clientBinary(message);
 	if (clientBin.isEmpty())
 	{
-		joinError.error = tr("Client binary cannot be obtained for game: %1").arg(PLUGIN_NAME);
+		joinError.type = JoinError::ConfigurationError;
+		joinError.error = tr("Client binary cannot be obtained for %1, please check the location given in the configuration.").arg(PLUGIN_NAME);
 		if (!message.isIgnore())
 		{
-			joinError.error += "\n" + message.contents();
+			joinError.error += "\n\n" + message.contents();
 		}
 
 		delete binaries;
@@ -181,11 +182,13 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 
 	if (clientWorkingDirPath.isEmpty())
 	{
+		joinError.type = JoinError::ConfigurationError;
 		joinError.error = tr("Path to working directory for \"%1\" is empty.\nMake sure the configuration for the main binary is set properly.").arg(PLUGIN_NAME);
 		return joinError;
 	}
 	else if (!applicationDir.exists())
 	{
+		joinError.type = JoinError::ConfigurationError;
 		joinError.error = tr("%1\n cannot be used as working directory for game:\n%2\nExecutable: %3").arg(clientWorkingDirPath, PLUGIN_NAME, clientBin);
 		return joinError;
 	}

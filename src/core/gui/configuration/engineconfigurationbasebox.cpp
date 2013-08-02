@@ -27,15 +27,15 @@
 #include <QFileDialog>
 
 EngineConfigurationBaseBox::EngineConfigurationBaseBox(const EnginePlugin *plugin, IniSection &cfg, QWidget *parent) 
-: ConfigurationBaseBox(parent), config(cfg), plugin(plugin), clientOnly(false)
+: ConfigurationBaseBox(parent), config(cfg), enginePlugin(plugin), clientOnly(false)
 {
 	setupUi(this);
 
-	if(plugin->data()->clientOnly)
+	if(enginePlugin->data()->clientOnly)
 		makeClientOnly();
 
-	setTitle(plugin->data()->name + tr(" Configuration"));
-	if(!plugin->data()->hasMasterServer)
+	setTitle(enginePlugin->data()->name + tr(" Configuration"));
+	if(!enginePlugin->data()->hasMasterServer)
 		masterAddressBox->hide();
 
 	connect(btnBrowseClientBinary, SIGNAL( clicked() ), this, SLOT ( btnBrowseClientBinaryClicked() ));
@@ -58,7 +58,7 @@ void EngineConfigurationBaseBox::browseForBinary(QLineEdit *input, const QString
 	// Other platforms do not have an extension for their binary files.
 	filter = tr("Any files(*)");
 #endif
-	QString strFilepath = QFileDialog::getOpenFileName(this, tr("Doomseeker - choose ") + plugin->data()->name + " " + type, QString(), filter);
+	QString strFilepath = QFileDialog::getOpenFileName(this, tr("Doomseeker - choose ") + enginePlugin->data()->name + " " + type, QString(), filter);
 	if(!strFilepath.isEmpty()) // don't update if nothing was selected.
 		input->setText(strFilepath);
 }
@@ -76,7 +76,7 @@ void EngineConfigurationBaseBox::btnBrowseServerBinaryClicked()
 
 QIcon EngineConfigurationBaseBox::icon() const
 {
-	return plugin->icon();
+	return enginePlugin->icon();
 }
 
 void EngineConfigurationBaseBox::makeClientOnly()
@@ -89,7 +89,7 @@ void EngineConfigurationBaseBox::makeClientOnly()
 
 QString EngineConfigurationBaseBox::name() const
 {
-	return plugin->data()->name;
+	return enginePlugin->data()->name;
 }
 
 void EngineConfigurationBaseBox::readSettings()
@@ -97,7 +97,7 @@ void EngineConfigurationBaseBox::readSettings()
 	leClientBinaryPath->setText(config["BinaryPath"]);
 	leCustomParameters->setText(config["CustomParameters"]);
 
-	if(plugin->data()->hasMasterServer)
+	if(enginePlugin->data()->hasMasterServer)
 		leMasterserverAddress->setText(config["Masterserver"]);
 
 	leServerBinaryPath->setText(config["ServerBinaryPath"]);
@@ -116,7 +116,7 @@ void EngineConfigurationBaseBox::saveSettings()
 	strVal = leCustomParameters->text();
 	config["CustomParameters"] = strVal;
 
-	if(plugin->data()->hasMasterServer)
+	if(enginePlugin->data()->hasMasterServer)
 	{
 		strVal = leMasterserverAddress->text();
 		config["Masterserver"] = strVal;

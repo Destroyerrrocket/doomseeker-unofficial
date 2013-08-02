@@ -511,6 +511,33 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 	}
 }
 
+void MainWindow::finishConfiguration(DoomseekerConfigurationDialog &configDialog, bool lookupHostsChanged)
+{
+	// In case the master server addresses changed, notify the master clients.
+	updateMasterAddresses();
+
+	// If appearance changed - update the widgets.
+	if (configDialog.appearanceChanged())
+	{
+		serverTableHandler->redraw();
+		initTrayIcon();
+	}
+
+	// Do the following only if setting changed from false to true.
+	if (lookupHostsChanged)
+	{
+		serverTableHandler->lookupHosts();
+	}
+
+	// Refresh custom servers list:
+	if (configDialog.customServersChanged())
+	{
+		serverTableHandler->serverModel()->removeCustomServers();
+		masterManager->customServs()->readConfig(serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
+		refreshCustomServers();
+	}
+}
+
 void MainWindow::finishedQueryingMaster(MasterClient* master)
 {
 	if (master == NULL)
@@ -1032,65 +1059,7 @@ void MainWindow::menuManageDemos()
 
 void MainWindow::menuOptionsConfigure()
 {
-	DoomseekerConfigurationDialog configDialog(this);
-	configDialog.initOptionsList();
-
-	for(unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
-	{
-		const EnginePlugin* pPluginInfo = (*Main::enginePlugins)[i]->info;
-
-		// Create the config box.
-		ConfigurationBaseBox* pConfigurationBox = pPluginInfo->configuration(&configDialog);
-		configDialog.addEngineConfiguration(pConfigurationBox);
-	}
-
-	bool bLookupHostsSettingBefore = gConfig.doomseeker.bLookupHosts;
-	DoomseekerConfig::AutoUpdates::UpdateMode updateModeBefore = gConfig.autoUpdates.updateMode;
-	UpdateChannel updateChannelBefore = UpdateChannel::fromName(gConfig.autoUpdates.updateChannelName);
-	// Stop the auto refresh timer during configuration.
-	autoRefreshTimer.stop();
-	configDialog.exec();
-
-	// Do some cleanups after config box finishes.
-	initAutoRefreshTimer();
-
-	// In case the master server addresses changed, notify the master clients.
-	updateMasterAddresses();
-
-	// If appearance changed - update the widgets.
-	if (configDialog.appearanceChanged())
-	{
-		serverTableHandler->redraw();
-		initTrayIcon();
-	}
-
-	// Do the following only if setting changed from false to true.
-	if (!bLookupHostsSettingBefore && gConfig.doomseeker.bLookupHosts)
-	{
-		serverTableHandler->lookupHosts();
-	}
-
-	// If update channel or update mode changed then we should discard the
-	// current updates.
-	UpdateChannel updateChannelAfter = UpdateChannel::fromName(gConfig.autoUpdates.updateChannelName);
-	if (updateChannelBefore != updateChannelAfter
-		|| updateModeBefore != gConfig.autoUpdates.updateMode)
-	{
-		if (autoUpdater != NULL)
-		{
-			autoUpdater->abort();
-		}
-		gConfig.autoUpdates.bPerformUpdateOnNextRun = false;
-		gConfig.saveToFile();
-	}
-
-	// Refresh custom servers list:
-	if (configDialog.customServersChanged())
-	{
-		serverTableHandler->serverModel()->removeCustomServers();
-		masterManager->customServs()->readConfig(serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
-		refreshCustomServers();
-	}
+	DoomseekerConfigurationDialog::openConfiguration();
 }
 
 void MainWindow::menuRecordDemo()
