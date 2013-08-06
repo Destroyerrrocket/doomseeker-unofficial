@@ -52,6 +52,8 @@ class MirrorStorage
 ///////////////////////////////////////////////////////////////////////////////
 URLProvider::URLProvider()
 {
+	allUrlsPrioritized.insert(PRIORITY_ARCHIVES, QList<QUrl>());
+	allUrlsPrioritized.insert(PRIORITY_OTHER, QList<QUrl>());
 }
 
 URLProvider::~URLProvider()
@@ -122,9 +124,19 @@ void URLProvider::addUrl(const QUrl& url)
 	}
 }
 
+QList<QUrl> URLProvider::allAvailableUrls() const
+{
+	QList<QUrl> urls;
+	foreach (const QList<QUrl>& partial, allUrlsPrioritized.values())
+	{
+		urls += partial;
+	}
+	return urls;
+}
+
 QUrl URLProvider::first() const
 {
-	return allUrlsPrioritized.values().first();
+	return allAvailableUrls().first();
 }
 
 void URLProvider::insertUrlPrioritized(const QUrl& url)
@@ -132,17 +144,24 @@ void URLProvider::insertUrlPrioritized(const QUrl& url)
 	QFileInfo fileInfo(url.path());
 	if (WadseekerVersionInfo::supportedArchiveExtensions().contains(fileInfo.suffix()))
 	{
-		allUrlsPrioritized.insert(PRIORITY_ARCHIVES, url);
+		allUrlsPrioritized[PRIORITY_ARCHIVES].append(url);
 	}
 	else
 	{
-		allUrlsPrioritized.insert(PRIORITY_OTHER, url);
+		allUrlsPrioritized[PRIORITY_OTHER].append(url);
 	}
 }
 
 bool URLProvider::isEmpty() const
 {
-	return allUrlsPrioritized.isEmpty();
+	foreach (const QList<QUrl>& chunk, allUrlsPrioritized.values())
+	{
+		if (!chunk.isEmpty())
+		{
+			return false;
+		}
+	}
+	return true;
 }
 
 bool URLProvider::hasOrHadUrl(const QUrl& url) const
@@ -186,7 +205,7 @@ QList<MirrorStorage*> URLProvider::mirrorsWithUrl(const QUrl& url)
 
 unsigned URLProvider::numUrls() const
 {
-	return allUrlsPrioritized.size();
+	return allAvailableUrls().size();
 }
 
 URLProvider& URLProvider::operator<<(const QUrl& url)
@@ -207,7 +226,7 @@ void URLProvider::removeUrl(const QUrl& url)
 {
 	foreach (int key, allUrlsPrioritized.uniqueKeys())
 	{
-		allUrlsPrioritized.remove(key, url);
+		allUrlsPrioritized[key].removeAll(url);
 	}
 }
 

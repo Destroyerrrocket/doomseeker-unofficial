@@ -24,7 +24,7 @@
 #define __URLPROVIDER_H__
 
 #include <QList>
-#include <QMultiMap>
+#include <QMap>
 #include <QUrl>
 
 class MirrorStorage;
@@ -74,10 +74,7 @@ class URLProvider
 		 * These URLs can be removed from available list by removeUrl()
 		 * or removeUrlAndMirrors() methods.
 		 */
-		QList<QUrl> allAvailableUrls() const
-		{
-			return allUrlsPrioritized.values();
-		}
+		QList<QUrl> allAvailableUrls() const;
 		
 		/**
 		 * @brief First URL on the prioritized list.
@@ -147,7 +144,11 @@ class URLProvider
 			PRIORITY_OTHER = 200
 		};
 
-		QMultiMap<int, QUrl> allUrlsPrioritized;
+		// allUrlsPrioritized can't be a QMultiMap because QMultiMap provides
+		// its elements in a LIFO stack instead of a FIFO queue. This
+		// results in idgames providing last (worst) mirrors first,
+		// for example.
+		QMap<int, QList<QUrl> > allUrlsPrioritized;
 		QList<MirrorStorage*> mirrors;
 		
 		QList<MirrorStorage*> mirrorsWithUrl(const QUrl& url);
