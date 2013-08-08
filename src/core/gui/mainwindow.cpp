@@ -36,6 +36,7 @@
 #include "gui/passwordDlg.h"
 #include "gui/serverfilterdock.h"
 #include "gui/wadseekerinterface.h"
+#include "ip2c/ip2cloader.h"
 #include "irc/configuration/ircconfig.h"
 #include "plugins/engineplugin.h"
 #include "refresher/refresher.h"
@@ -107,8 +108,6 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 		gLog << message;
 		QMessageBox::critical(NULL, tr("Doomseeker - plugin load failure"), message);
 	}
-
-	ip2cParser = NULL;
 
 	initIP2CUpdater();
 
@@ -190,25 +189,9 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	PlayersDiagram::loadImages(slotStyle);
 
 	// IP2C
-	bool bParseIP2CDatabase = true;
-	bool bPerformAutomaticIP2CUpdates = gConfig.doomseeker.bIP2CountryAutoUpdate;
-
-	if (bPerformAutomaticIP2CUpdates)
-	{
-		int maxAge = gConfig.doomseeker.ip2CountryDatabaseMaximumAge;
-
-		QString databasePath = DoomseekerFilePaths::ip2cDatabase();
-		if (IP2CUpdater::needsUpdate(databasePath, maxAge))
-		{
-			ip2cStartUpdate();
-			bParseIP2CDatabase = false;
-		}
-	}
-
-	if (bParseIP2CDatabase)
-	{
-		ip2cParseDatabase();
-	}
+	ip2cLoader = new IP2CLoader();
+	connectIP2CLoader(ip2cLoader);
+	ip2cLoader->load();
 
 	// Start first refresh from a timer. We want the main window fully
 	// set up before refresh.
@@ -275,11 +258,9 @@ MainWindow::~MainWindow()
 		delete masterManager;
 	}
 
-	if (ip2cParser != NULL)
+	if (ip2cLoader != NULL)
 	{
-		while (ip2cParser->isParsing());
-
-		delete ip2cParser;
+		delete ip2cLoader;
 	}
 }
 
@@ -415,6 +396,13 @@ void MainWindow::confirmUpdateInstallation()
 	assert(autoUpdater != NULL && "MainWindow::confirmUpdateInstallation()");
 	updatesConfirmationWidget->hide();
 	autoUpdater->confirmDownloadAndInstall();
+}
+
+void MainWindow::connectIP2CLoader(IP2CLoader* loader)
+{
+	this->connect(ip2cLoader, SIGNAL( finished() ), SLOT( ip2cJobsFinished()));
+	this->connect(ip2cLoader, SIGNAL( downloadProgress(qint64, qint64) ),
+		SLOT( ip2cDownloadProgress(qint64, qint64) ) );
 }
 
 void MainWindow::discardUpdates()
@@ -687,7 +675,6 @@ void MainWindow::initIP2CUpdater()
 {
 	static const int PROGRESSBAR_WIDTH = 220;
 
-	ip2cUpdater = NULL;
 	ip2cUpdateProgressBar = mkStdProgressBarForStatusBar();
 	ip2cUpdateProgressBar->setFormat(tr("IP2C Update"));
 	ip2cUpdateProgressBar->hide();
@@ -793,147 +780,33 @@ void MainWindow::ip2cDownloadProgress(qint64 current, qint64 max)
 	ip2cUpdateProgressBar->setValue(current);
 }
 
-void MainWindow::ip2cFinishUpdate(const QByteArray& downloadedData)
-{
-	if (downloadedData.isEmpty())
-	{
-		QString message = tr("IP2C download has failed.");
-		gLog << message;
-		statusBar()->showMessage(message);
-
-		ip2cJobsFinished();
-	}
-	else
-	{
-		gLog << tr("IP2C database finished downloading.");
-
-		QString filePath = DoomseekerFilePaths::ip2cDatabase();
-
-		ip2cUpdater->getRollbackData();
-
-		if (!ip2cUpdater->saveDownloadedData())
-		{
-			gLog << tr("Unable to save IP2C database at path: %1").arg(filePath);
-
-			ip2cJobsFinished();
-			return;
-		}
-
-		ip2cParseDatabase();
-	}
-}
-
-void MainWindow::ip2cFinishedParsing(bool bSuccess)
-{
-	QString filePath = DoomseekerFilePaths::ip2cDatabase();
-
-	if (!bSuccess)
-	{
-		QString message = tr("Failed to read IP2C database. Reverting...");
-		gLog << message;
-		statusBar()->showMessage(message);
-
-		if (ip2cUpdater == NULL || !ip2cUpdater->hasRollbackData())
-		{
-			gLog << "IP2C revert attempt failed. Nothing to go back to.";
-
-			// Delete file in this case.
-			QFile file(filePath);
-			file.remove();
-
-			gLog << "Using precompiled IP2C database.";
-			ip2cParser->readDatabaseThreaded(DoomseekerFilePaths::IP2C_QT_SEARCH_PATH);
-		}
-		else
-		{
-			// Revert to old content.
-			ip2cUpdater->rollback();
-
-			// Must succeed now.
-			ip2cParser->readDatabaseThreaded(filePath);
-		}
-	}
-	else
-	{
-		if (ip2cUpdater != NULL)
-		{
-			QString message = tr("IP2C database updated successfully.");
-			gLog << message;
-			statusBar()->showMessage(message);
-		}
-
-		ip2cJobsFinished();
-	}
-}
-
 void MainWindow::ip2cJobsFinished()
 {
 	menuActionUpdateIP2C->setEnabled(true);
-	Main::ip2c->setDataAccessLockEnabled(false);
 	serverTableHandler->updateCountryFlags();
-
 	ip2cUpdateProgressBar->hide();
 
-	if (ip2cParser != NULL)
+	if (ip2cLoader != NULL)
 	{
-		delete ip2cParser;
-		ip2cParser = NULL;
-
-		QString message = tr("IP2C parsing finished.");
-
-		gLog << message;
-		statusBar()->showMessage(message);
+		delete ip2cLoader;
+		ip2cLoader = NULL;
 	}
-
-	if (ip2cUpdater != NULL)
-	{
-		delete ip2cUpdater;
-		ip2cUpdater = NULL;
-
-		QString message = tr("IP2C update finished.");
-
-		gLog << message;
-		statusBar()->showMessage(message);
-	}
-}
-
-void MainWindow::ip2cParseDatabase()
-{
-	QString filePath = DoomseekerFilePaths::IP2C_QT_SEARCH_PATH;
-
-	menuActionUpdateIP2C->setEnabled(false);
-
-	statusBar()->showMessage(tr("Please wait. IP2C Database is being read and converted if necessary. This may take some time."));
-	// Attempt to read IP2C database.
-	ip2cParser = new IP2CParser(Main::ip2c);
-	connect (ip2cParser, SIGNAL( parsingFinished(bool) ), this, SLOT( ip2cFinishedParsing(bool) ) );
-
-	Main::ip2c->setDataAccessLockEnabled(true);
-	ip2cParser->readDatabaseThreaded(filePath);
 }
 
 void MainWindow::ip2cStartUpdate()
 {
-	if (ip2cUpdater != NULL)
+	if (ip2cLoader != NULL)
 	{
 		// If update is currently in progress then prevent re-starting.
 		return;
 	}
 
-	gLog << tr("Starting IP2C update.");
 	menuActionUpdateIP2C->setEnabled(false);
-	Main::ip2c->setDataAccessLockEnabled(true);
-
-	ip2cUpdater = new IP2CUpdater();
-	ip2cUpdater->setFilePath(DoomseekerFilePaths::ip2cDatabase());
-
-	connect (ip2cUpdater, SIGNAL( databaseDownloadFinished(const QByteArray&) ), this, SLOT( ip2cFinishUpdate(const QByteArray&) ) );
-	connect (ip2cUpdater, SIGNAL( downloadProgress(qint64, qint64) ), this, SLOT( ip2cDownloadProgress(qint64, qint64) ) );
-
-	QString downloadUrl = gConfig.doomseeker.ip2CountryUrl;
-
-	ip2cUpdater->downloadDatabase(downloadUrl);
 	ip2cUpdateProgressBar->show();
+
+	ip2cLoader = new IP2CLoader();
+	connectIP2CLoader(ip2cLoader);
+	ip2cLoader->update();
 }
 
 bool MainWindow::isAnythingToRefresh() const

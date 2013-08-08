@@ -143,6 +143,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/standardserverconsole.h
 	gui/wadseekerinterface.h
 	ip2c/ip2c.h
+	ip2c/ip2cloader.h
 	ip2c/ip2cparser.h
 	ip2c/ip2cupdater.h
 	irc/ircadapterbase.h
@@ -237,6 +238,7 @@ set(SOURCE_FILES
 	ini/ini.cpp
 	ip2c/entities/ip2ccountryinfo.cpp
 	ip2c/ip2c.cpp
+	ip2c/ip2cloader.cpp
 	ip2c/ip2cparser.cpp
 	ip2c/ip2cupdater.cpp
 	irc/configuration/ircconfig.cpp

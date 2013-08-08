@@ -31,8 +31,6 @@
 #include "gui/logdock.h"
 #include "gui/serverlist.h"
 #include "gui/widgets/serversstatuswidget.h"
-#include "ip2c/ip2cparser.h"
-#include "ip2c/ip2cupdater.h"
 #include "masterserver/mastermanager.h"
 #include "plugins/pluginloader.h"
 #include "apprunner.h"
@@ -46,6 +44,7 @@
 class AutoUpdater;
 class ConnectionHandler;
 class DoomseekerConfigurationDialog;
+class IP2CLoader;
 class ServerFilterDock;
 class ServersStatusWidget;
 class UpdateChannel;
@@ -166,9 +165,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 */
 		bool				bWantToQuit;
 
-		IP2CParser*			ip2cParser;
+		IP2CLoader*			ip2cLoader;
 		QProgressBar*		ip2cUpdateProgressBar;
-		IP2CUpdater*		ip2cUpdater;
 		IRCDock*			ircDock;
 		LogDock*			logDock;
 		ServerFilterDock*	serverFilterDock;
@@ -232,8 +230,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 */
 		void	initTrayIcon();
 
-		void	ip2cJobsFinished();
-
 		/**
 		 *	@brief Will check if refresh operation has any sense.
 		 *
@@ -274,11 +270,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void discardUpdates();
 		void 	finishedQueryingMaster(MasterClient* master);
 		void 	getServers();
-		void	ip2cDownloadProgress(qint64 current, qint64 max);
-		void	ip2cFinishUpdate(const QByteArray& downloadedData);
-		void	ip2cFinishedParsing(bool bSuccess);
-		void	ip2cParseDatabase();
-		void	ip2cStartUpdate();
 		void	masterManagerMessages(MasterClient* pSender, const QString& title, const QString& content, bool isError);
 		void    masterManagerMessagesImportant(MasterClient* pSender, const Message& objMessage);
 		void	menuBuddies();
@@ -320,6 +311,14 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	toolBarAction(QAction* pAction);
 		void	trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
 		void    updateServerFilter(const ServerListFilterInfo& filterInfo);
+
+	private:
+		void connectIP2CLoader(IP2CLoader* loader);
+
+	private slots:
+		void ip2cDownloadProgress(qint64 current, qint64 max);
+		void ip2cJobsFinished();
+		void ip2cStartUpdate();
 };
 
 #endif
