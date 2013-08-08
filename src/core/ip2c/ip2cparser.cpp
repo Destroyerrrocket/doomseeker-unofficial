@@ -187,7 +187,7 @@ bool IP2CParser::doReadDatabase(const QString& filePath)
 //		printf("%s %s: %u %X / %u %X\n", data.countryFullName.toAscii().constData(), data.country.toAscii().constData(), data.ipStart, data.ipStart, data.ipEnd, data.ipEnd);
 //	}
 
-	gLog << tr("IP2C Database read in %1 ms. Entries read: %2").arg(time.elapsed()).arg(pTargetDatabase->numKnownEntries());
+	gLog << tr("IP2C database read in %1 ms. Entries read: %2").arg(time.elapsed()).arg(pTargetDatabase->numKnownEntries());
 	
 	return true;
 }
@@ -195,7 +195,7 @@ bool IP2CParser::doReadDatabase(const QString& filePath)
 void IP2CParser::parsingThreadFinished()
 {
 	bool bSuccessState = currentParsingThread->bSuccessState;
-	gLog << tr("IP2C Parsing thread has finished.");
+	gLog << tr("IP2C parsing thread has finished.");
 	
 	delete currentParsingThread;
 	currentParsingThread = NULL;
