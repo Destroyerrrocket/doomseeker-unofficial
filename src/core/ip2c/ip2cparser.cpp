@@ -182,13 +182,7 @@ bool IP2CParser::doReadDatabase(const QString& filePath)
 		return false;
 	}
 
-//	foreach(IP2CData data, database)
-//	{
-//		printf("%s %s: %u %X / %u %X\n", data.countryFullName.toAscii().constData(), data.country.toAscii().constData(), data.ipStart, data.ipStart, data.ipEnd, data.ipEnd);
-//	}
-
 	gLog << tr("IP2C database read in %1 ms. Entries read: %2").arg(time.elapsed()).arg(pTargetDatabase->numKnownEntries());
-	
 	return true;
 }
 
