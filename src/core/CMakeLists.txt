@@ -262,6 +262,10 @@ set(SOURCE_FILES
 	masterserver/masterclient.cpp
 	masterserver/masterclientsignalproxy.cpp
 	masterserver/mastermanager.cpp
+	pathfinder/basefileseeker.cpp
+	pathfinder/casesensitivefileseeker.cpp
+	pathfinder/caseinsensitivefileseeker.cpp
+	pathfinder/filesearchpath.cpp
 	plugins/engineplugin.cpp
 	plugins/pluginloader.cpp
 	refresher/refresher.cpp
@@ -342,6 +346,10 @@ set(HEADER_FILES
 	irc/ircprivadapter.h
 	irc/ircuserinfo.h
 	irc/ircuserlist.h
+	pathfinder/basefileseeker.h
+	pathfinder/casesensitivefileseeker.h
+	pathfinder/caseinsensitivefileseeker.h
+	pathfinder/filesearchpath.h
 	plugins/engineplugin.h
 	plugins/pluginloader.h
 	serverapi/tooltips/gameinfotip.h

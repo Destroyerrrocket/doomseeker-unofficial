@@ -21,6 +21,9 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "configuration/doomseekerconfig.h"
+#include "pathfinder/caseinsensitivefileseeker.h"
+#include "pathfinder/casesensitivefileseeker.h"
+#include "pathfinder/filesearchpath.h"
 #include "pathfinder.h"
 #include "main.h"
 #include "log.h"
@@ -35,9 +38,12 @@ PathFinder::PathFinder()
 	pathList << gConfig.wadseeker.targetDirectory;
 }
 
-PathFinder::PathFinder(const QString& paths)
-: pathList(paths.split(";", QString::SkipEmptyParts))
+PathFinder::PathFinder(const QStringList& paths)
 {
+	foreach (const QString& path, paths)
+	{
+		pathList << path;
+	}
 }
 
 void PathFinder::addPrioritySearchDir(const QString& dir)
@@ -65,35 +71,15 @@ QString PathFinder::findFile(const QString& fileName) const
 		return QString();
 	}
 
+	BaseFileSeeker* seeker = NULL;
 	#ifdef Q_OS_WIN32
-	for (int i = 0; i < pathList.count(); ++i)
-	{
-		QFileInfo file(Strings::combinePaths(pathList[i], fileName));
-		if (file.exists() && file.isFile())
-		{
-			return file.absoluteFilePath();
-		}
-	}
+	seeker = new CaseInsensitiveFileSeeker();
 	#else
-	QStringList filterList;
-	filterList << fileName;
-	for (int i = 0; i < pathList.count(); ++i)
-	{
-		QDir dir(pathList[i]);
-
-		QFileInfoList fiList = dir.entryInfoList(filterList, QDir::Files);
-		for (int j = 0; j < fiList.count(); ++j)
-		{
-			QString tmpName = fiList[j].fileName();
-			if (tmpName.compare(fileName, Qt::CaseInsensitive) == 0)
-			{
-				return fiList[j].absoluteFilePath();
-			}
-		}
-	}
+	seeker = new CaseSensitiveFileSeeker();
 	#endif
-
-	return QString();
+	QString result = seeker->findFile(fileName, pathList);
+	delete seeker;
+	return result;
 }
 
 PathFinderResult PathFinder::findFiles(const QStringList& files) const

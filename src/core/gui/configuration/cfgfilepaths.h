@@ -27,6 +27,8 @@
 #include "gui/configuration/configurationbasebox.h"
 #include "ui_cfgfilepaths.h"
 
+class FileSearchPath;
+
 class CFGFilePaths : public ConfigurationBaseBox, private Ui::CFGFilePaths
 {
 	Q_OBJECT
@@ -37,10 +39,20 @@ class CFGFilePaths : public ConfigurationBaseBox, private Ui::CFGFilePaths
 		void 							readSettings();	
 
 	protected:
-		void 							addPath(const QString& strPath);
-		QIcon							icon() const { return QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon); }
+		void 							addPath(const FileSearchPath& fileSearchPath);
+
+		QIcon							icon() const
+		{
+			return QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon);
+		}
+
 		bool							isPathAlreadyDefined(const QString& path);
-		QString							name() const { return tr("File paths"); }		
+
+		QString							name() const
+		{
+			return tr("File paths");
+		}
+
 		void 							saveSettings();
 
 	protected slots:

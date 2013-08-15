@@ -24,6 +24,7 @@
 #include "ini/ini.h"
 #include "ini/inisection.h"
 #include "ini/inivariable.h"
+#include "pathfinder/filesearchpath.h"
 #include "plugins/engineplugin.h"
 #include "updater/updatechannel.h"
 #include "wadseeker/wadseeker.h"
@@ -307,7 +308,7 @@ void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 	section.createSetting("SlotStyle", this->slotStyle);
 	section.createSetting("ServerListSortIndex", this->serverListSortIndex);
 	section.createSetting("ServerListSortDirection", this->serverListSortDirection);
-	section.createSetting("WadPaths", this->wadPaths.join(";"));
+	section.createSetting("WadPaths", FileSearchPath::toVariantList(this->wadPaths));
 }
 
 void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
@@ -357,9 +358,25 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	CustomServers::decodeConfigEntries(section["CustomServers"], customServersList);
 	this->customServers = customServersList.toVector();
 
-	// Wad paths
-	QString wadPathsString = section["WadPaths"];
-	wadPaths = wadPathsString.split(";", QString::SkipEmptyParts);
+	// WAD paths
+	// Backward compatibility, XXX once new stable is released:
+	QVariant variantWadPaths = section["WadPaths"].value();
+	if (variantWadPaths.isValid() && variantWadPaths.toList().isEmpty())
+	{
+		// Backward compatibility continued:
+		wadPaths.clear();
+		QStringList paths = variantWadPaths.toString().split(";");
+		foreach (const QString& path, paths)
+		{
+			wadPaths << FileSearchPath(path);
+		}
+	}
+	else
+	{
+		// This is not a part of XXX, this is proper, current behavior:
+		wadPaths = FileSearchPath::fromVariantList(section["WadPaths"].value().toList());
+	}
+	// End of backward compatibility for WAD paths.
 
 	// Buddies list
 	QString buddiesConfigEntry = section["BuddiesList"];
@@ -424,12 +441,21 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["CustomServers"] = allCustomServers.join(";");
 
 	// Wad paths
-	QString wadPathsString = this->wadPaths.join(";");
-	section["WadPaths"] = wadPathsString;
+	section["WadPaths"].setValue(FileSearchPath::toVariantList(this->wadPaths));
 
 	// Buddies lists
 	QString buddiesList = BuddyInfo::createConfigEntry(this->buddiesList);
 	section["BuddiesList"] = buddiesList;
+}
+
+QStringList DoomseekerConfig::DoomseekerCfg::wadPathsOnly() const
+{
+	QStringList result;
+	foreach (const FileSearchPath& path, wadPaths)
+	{
+		result << path.path();
+	}
+	return result;
 }
 //////////////////////////////////////////////////////////////////////////////
 const QString DoomseekerConfig::AutoUpdates::SECTION_NAME = "Doomseeker_AutoUpdates";

@@ -74,14 +74,16 @@ void SkulltagEnginePlugin::setupConfig(IniSection &config) const
 #ifdef Q_OS_WIN32
 	QString programFilesDirectory = DataPaths::programFilesDirectory(DataPaths::x86);
 	QString trimPattern = QString("\\/");
-	QString paths = Strings::trimr(programFilesDirectory, trimPattern);
-
-	paths += "\\Skulltag;" + Main::workingDirectory + ";.";
+	QStringList paths;
+	paths << Strings::trimr(programFilesDirectory, trimPattern) + "\\Skulltag";
+	paths << Main::workingDirectory;
+	paths << ".";
 
 	PathFinder pf(paths);
 	config.createSetting("BinaryPath", pf.findFile("skulltag.exe"));
 #else
-	PathFinder pf(QString("/usr/games/skulltag;/usr/local/games/skulltag;/usr/share/games/skulltag;") + Main::workingDirectory + ";.");
+	QString paths = QString("/usr/games/skulltag;/usr/local/games/skulltag;/usr/share/games/skulltag;") + Main::workingDirectory + ";.";
+	PathFinder pf(paths.split(";"));
 	config.createSetting("BinaryPath", pf.findFile("skulltag"));
 	config.createSetting("ServerBinaryPath", pf.findFile("skulltag-server"));
 #endif

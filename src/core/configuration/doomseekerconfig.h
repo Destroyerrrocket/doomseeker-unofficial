@@ -34,6 +34,7 @@
 
 class Ini;
 class EnginePlugin;
+class FileSearchPath;
 
 /**
  *	@brief This Singleton holds entire Doomseeker configuration in memory.
@@ -91,7 +92,7 @@ class DoomseekerConfig
 			int							serverListSortIndex;
 			int							serverListSortDirection;
 			int							slotStyle;
-			QStringList					wadPaths;
+			QList<FileSearchPath>		wadPaths;
 
 			DoomseekerCfg();
 
@@ -102,6 +103,8 @@ class DoomseekerConfig
 			 *	This will ensure that window remains accessible.
 			 */
 			bool						areMainWindowSizeSettingsValid(int maxValidX, int maxValidY) const;
+
+			QStringList wadPathsOnly() const;
 
 			/**
 			 *	@brief Initializes values that are not present in the section

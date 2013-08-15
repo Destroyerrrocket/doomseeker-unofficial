@@ -22,33 +22,55 @@
 //------------------------------------------------------------------------------
 #include "cfgfilepaths.h"
 #include "configuration/doomseekerconfig.h"
+#include "pathfinder/filesearchpath.h"
 #include <QFileDialog>
 #include <QStandardItem>
+
+const int COL_PATH = 0;
+const int COL_RECURSE = 1;
 
 CFGFilePaths::CFGFilePaths(QWidget* parent) 
 : ConfigurationBaseBox(parent)
 {
 	setupUi(this);
 
-	QAbstractItemModel* model = new QStandardItemModel();
+	QStandardItemModel* model = new QStandardItemModel(this);
 	lstIwadAndPwadPaths->setModel(model);
+
+	QStringList labels;
+	labels << tr("Path") << tr("Recurse");
+	model->setHorizontalHeaderLabels(labels);
+
+	QHeaderView* header = lstIwadAndPwadPaths->horizontalHeader();
+	header->setResizeMode(COL_PATH, QHeaderView::Stretch);
+	header->setResizeMode(COL_RECURSE, QHeaderView::ResizeToContents);
 
 	connect(btnAddWadPath, SIGNAL( clicked() ), this, SLOT( btnAddWadPath_Click()) );
 	connect(btnRemoveWadPath, SIGNAL( clicked() ), this, SLOT( btnRemoveWadPath_Click()) );
 }
 
-void CFGFilePaths::addPath(const QString& strPath)
+void CFGFilePaths::addPath(const FileSearchPath& fileSearchPath)
 {
-	if (strPath.isEmpty())
+	if (fileSearchPath.isValid())
 	{
 		return;
 	}
 
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstIwadAndPwadPaths->model());
 
-	if (!isPathAlreadyDefined(strPath))
+	if (!isPathAlreadyDefined(fileSearchPath.path()))
 	{
-		model->appendRow(new QStandardItem(strPath));
+		QStandardItem* path = new QStandardItem(fileSearchPath.path());
+		path->setData(fileSearchPath.path(), Qt::ToolTipRole);
+		QStandardItem* recurse = new QStandardItem();
+		recurse->setCheckable(true);
+		recurse->setCheckState(fileSearchPath.isRecursive() ? Qt::Checked : Qt::Unchecked);
+		recurse->setData(Qt::AlignCenter, Qt::TextAlignmentRole);
+		QList<QStandardItem*> items;
+		items << path;
+		items << recurse;
+		model->appendRow(items);
+		lstIwadAndPwadPaths->resizeRowsToContents();
 	}
 }
 
@@ -61,7 +83,7 @@ void CFGFilePaths::btnAddWadPath_Click()
 void CFGFilePaths::btnRemoveWadPath_Click()
 {
 	QItemSelectionModel* selModel = lstIwadAndPwadPaths->selectionModel();
-	QModelIndexList indexList = selModel->selectedIndexes();
+	QModelIndexList indexList = selModel->selectedRows();
 	selModel->clear();
 
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstIwadAndPwadPaths->model());
@@ -106,7 +128,7 @@ bool CFGFilePaths::isPathAlreadyDefined(const QString& path)
 
 void CFGFilePaths::readSettings()
 {
-	const QStringList& wadPaths = gConfig.doomseeker.wadPaths;
+	const QList<FileSearchPath>& wadPaths = gConfig.doomseeker.wadPaths;
 	for (int i = 0; i < wadPaths.count(); ++i)
 	{
 		addPath(wadPaths[i]);
@@ -117,14 +139,17 @@ void CFGFilePaths::readSettings()
 
 void CFGFilePaths::saveSettings()
 {
-	QStringList wadPaths;
+	QList<FileSearchPath> wadPaths;
 
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstIwadAndPwadPaths->model());
 	{
 		for(int i = 0; i < model->rowCount(); ++i)
 		{
-			QStandardItem* item = model->item(i);
-			wadPaths << item->text();
+			QStandardItem* itemPath = model->item(i, COL_PATH);
+			QStandardItem* itemRecurse = model->item(i, COL_RECURSE);
+			FileSearchPath fileSearchPath(itemPath->text());
+			fileSearchPath.setRecursive(itemRecurse->checkState() == Qt::Checked);
+			wadPaths << fileSearchPath;
 		}
 	}
 

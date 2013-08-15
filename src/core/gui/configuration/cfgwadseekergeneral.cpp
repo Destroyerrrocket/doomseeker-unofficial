@@ -23,6 +23,7 @@
 #include "main.h"
 #include "cfgwadseekergeneral.h"
 #include "configuration/doomseekerconfig.h"
+#include "pathfinder/filesearchpath.h"
 #include <QCompleter>
 #include <QDebug>
 #include <QDirModel>
@@ -42,7 +43,7 @@ CFGWadseekerGeneral::CFGWadseekerGeneral(QWidget* parent)
 void CFGWadseekerGeneral::fillTargetDirectoryComboBox()
 {
 	cbTargetDirectory->clear();
-	cbTargetDirectory->addItems(gConfig.doomseeker.wadPaths);
+	cbTargetDirectory->addItems(gConfig.doomseeker.wadPathsOnly());
 }
 
 void CFGWadseekerGeneral::readSettings()
@@ -73,11 +74,12 @@ void CFGWadseekerGeneral::saveSettings()
 		bool pathPossible = false;
 
 		QFileInfo wadseekerTargetDirectoryFileInfo(cbTargetDirectory->currentText());
-		foreach(QString possiblePath, gConfig.doomseeker.wadPaths)
+		foreach (FileSearchPath possiblePath, gConfig.doomseeker.wadPaths)
 		{
 			// Bring paths to QFileInfo before string comparison. Two same paths
 			// may have different string representations.
-			QFileInfo possiblePathFileInfo(possiblePath);
+			// TODO: Consider recursive paths.
+			QFileInfo possiblePathFileInfo(possiblePath.path());
 
 			if (possiblePathFileInfo == wadseekerTargetDirectoryFileInfo)
 			{

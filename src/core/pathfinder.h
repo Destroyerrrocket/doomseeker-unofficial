@@ -24,6 +24,7 @@
 #ifndef __PATHFINDER_H_
 #define __PATHFINDER_H_
 
+#include "pathfinder/filesearchpath.h"
 #include "global.h"
 #include <QStringList>
 
@@ -41,7 +42,7 @@ class MAIN_EXPORT PathFinder
 {
 	public:
 		PathFinder();
-		PathFinder(const QString&);
+		PathFinder(const QStringList& paths);
 
 		/**
 		 * Provides a directory where we should search first before going to
@@ -53,8 +54,8 @@ class MAIN_EXPORT PathFinder
 		QString 			findFile(const QString& fileName) const;
 		PathFinderResult	findFiles(const QStringList& files) const;
 
-	protected:
-		QStringList			pathList;
+	private:
+		QList<FileSearchPath> pathList;
 };
 
 #endif

@@ -85,10 +85,11 @@ void ZandronumEnginePlugin::setupConfig(IniSection &config) const
 
 	paths += "\\Zandronum;" + Main::workingDirectory + ";.";
 
-	PathFinder pf(paths);
+	PathFinder pf(paths.split(";"));
 	config.createSetting("BinaryPath", pf.findFile("zandronum.exe"));
 #else
-	PathFinder pf(QString("/usr/bin;/usr/local/bin;/usr/share/bin;/usr/games/zandronum;/usr/local/games/zandronum;/usr/share/games/zandronum;") + Main::workingDirectory + ";.");
+	QString paths = QString("/usr/bin;/usr/local/bin;/usr/share/bin;/usr/games/zandronum;/usr/local/games/zandronum;/usr/share/games/zandronum;") + Main::workingDirectory + ";.";
+	PathFinder pf(paths.split(";"));
 	config.createSetting("BinaryPath", pf.findFile("zandronum"));
 	config.createSetting("ServerBinaryPath", pf.findFile("zandronum-server"));
 #endif
