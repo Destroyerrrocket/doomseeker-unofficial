@@ -47,7 +47,7 @@
         <string>Adds default URLs to the list. No URL that is currently on the list will be removed.</string>
        </property>
        <property name="text">
-        <string>Add defaults</string>
+        <string>Add Defaults</string>
        </property>
       </widget>
      </item>

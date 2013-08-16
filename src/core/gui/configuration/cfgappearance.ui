@@ -74,7 +74,7 @@
      <item row="3" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Bots are not Players</string>
+        <string>Bots are not players</string>
        </property>
       </widget>
      </item>
@@ -88,7 +88,7 @@
      <item row="4" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Hide Passwords</string>
+        <string>Hide passwords</string>
        </property>
       </widget>
      </item>

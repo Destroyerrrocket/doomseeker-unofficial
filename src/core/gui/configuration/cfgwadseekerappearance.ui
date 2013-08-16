@@ -61,7 +61,7 @@
      <item row="2" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Critical Error:</string>
+        <string>Critical error:</string>
        </property>
       </widget>
      </item>
@@ -93,7 +93,7 @@
   <customwidget>
    <class>ColorButton</class>
    <extends>QPushButton</extends>
-   <header>widgets/colorbutton.h</header>
+   <header>gui/widgets/colorbutton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

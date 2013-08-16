@@ -32,11 +32,11 @@ class FileSearchPath;
 class CFGFilePaths : public ConfigurationBaseBox, private Ui::CFGFilePaths
 {
 	Q_OBJECT
-	
+
 	public:
 		CFGFilePaths(QWidget* parent = 0);
 
-		void 							readSettings();	
+		void 							readSettings();
 
 	protected:
 		void 							addPath(const FileSearchPath& fileSearchPath);
@@ -50,7 +50,7 @@ class CFGFilePaths : public ConfigurationBaseBox, private Ui::CFGFilePaths
 
 		QString							name() const
 		{
-			return tr("File paths");
+			return tr("File Paths");
 		}
 
 		void 							saveSettings();

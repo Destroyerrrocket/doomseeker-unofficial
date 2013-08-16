@@ -22,7 +22,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Directory where Wadseeker will put wads into:</string>
+        <string>Directory where Wadseeker will put WADs into:</string>
        </property>
       </widget>
      </item>
