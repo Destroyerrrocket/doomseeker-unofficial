@@ -101,6 +101,9 @@ QString IRCResponseType::toRfcString(MsgType type)
 		case RPLTopic:
 			return "332";
 
+		case RPLTopicWhoTime:
+			return "333";
+
 		case RPLNamReply:
 			return "353";
 

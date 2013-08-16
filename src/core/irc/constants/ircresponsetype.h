@@ -79,6 +79,9 @@ class IRCResponseType
 			/// 332
 			RPLTopic,
 
+			/// 333
+			RPLTopicWhoTime,
+
 			/// 353 - names list for a channel
 			RPLNamReply,
 

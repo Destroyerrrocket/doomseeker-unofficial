@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "ircresponseparser.h"
 
+#include <QDateTime>
 #include <QRegExp>
 #include <QStringList>
 #include "irc/constants/ircresponsetype.h"
@@ -125,6 +126,18 @@ IRCResponseParseResult IRCResponseParser::parseMessage(const QString& prefix, co
 			QString channel = params.takeFirst();
 			QString topic = joinAndTrimColonIfNecessary(params);
 			QString msg = tr("Topic: %1").arg(topic);
+			emit printWithClass(msg, channel, IRCMessageClass(IRCMessageClass::ChannelAction));
+			break;
+		}
+
+		case IRCResponseType::RPLTopicWhoTime:
+		{
+			params.takeFirst(); // Own nickname.
+			QString channel = params.takeFirst();
+			QString who = params.takeFirst();
+			qint64 timestampSeconds = params.takeFirst().toLongLong();
+			QDateTime date = QDateTime::fromMSecsSinceEpoch(timestampSeconds * 1000);
+			QString msg = tr("Topic set by %1 on %2.").arg(who, date.toString("yyyy-MM-dd hh:mm:ss"));
 			emit printWithClass(msg, channel, IRCMessageClass(IRCMessageClass::ChannelAction));
 			break;
 		}
