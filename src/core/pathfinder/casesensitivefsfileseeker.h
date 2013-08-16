@@ -6,7 +6,7 @@
 /**
  * @brief For case-sensitive file systems (like ext).
  */
-class CaseSensitiveFileSeeker : public BaseFileSeeker
+class CaseSensitiveFSFileSeeker : public BaseFileSeeker
 {
 	public:
 		QString findFileInSpecifiedDirectory(const QString& fileName, const QString& dirPath);

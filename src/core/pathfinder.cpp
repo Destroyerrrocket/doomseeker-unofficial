@@ -21,8 +21,8 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "configuration/doomseekerconfig.h"
-#include "pathfinder/caseinsensitivefileseeker.h"
-#include "pathfinder/casesensitivefileseeker.h"
+#include "pathfinder/caseinsensitivefsfileseeker.h"
+#include "pathfinder/casesensitivefsfileseeker.h"
 #include "pathfinder/filesearchpath.h"
 #include "pathfinder.h"
 #include "main.h"
@@ -73,9 +73,9 @@ QString PathFinder::findFile(const QString& fileName) const
 
 	BaseFileSeeker* seeker = NULL;
 	#ifdef Q_OS_WIN32
-	seeker = new CaseInsensitiveFileSeeker();
+	seeker = new CaseInsensitiveFSFileSeeker();
 	#else
-	seeker = new CaseSensitiveFileSeeker();
+	seeker = new CaseSensitiveFSFileSeeker();
 	#endif
 	QString result = seeker->findFile(fileName, pathList);
 	delete seeker;

@@ -1,10 +1,10 @@
-#include "caseinsensitivefileseeker.h"
+#include "caseinsensitivefsfileseeker.h"
 
 #include "pathfinder/filesearchpath.h"
 #include "strings.h"
 #include <QFileInfo>
 
-QString CaseInsensitiveFileSeeker::findFileInSpecifiedDirectory(const QString& fileName,
+QString CaseInsensitiveFSFileSeeker::findFileInSpecifiedDirectory(const QString& fileName,
 	const QString& dirPath)
 {
 	QFileInfo file(Strings::combinePaths(dirPath, fileName));
