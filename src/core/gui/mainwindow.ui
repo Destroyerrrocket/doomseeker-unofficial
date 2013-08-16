@@ -272,7 +272,7 @@
      <x>0</x>
      <y>0</y>
      <width>796</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <property name="locale">
@@ -402,7 +402,7 @@
      <normaloff>:/flags/localhost-small</normaloff>:/flags/localhost-small</iconset>
    </property>
    <property name="text">
-    <string>&amp;Create server</string>
+    <string>&amp;Create Server</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -490,7 +490,7 @@
      <normaloff>:/icons/doomseeker_plus.png</normaloff>:/icons/doomseeker_plus.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Check for updates</string>
+    <string>&amp;Check for Updates</string>
    </property>
   </action>
  </widget>
