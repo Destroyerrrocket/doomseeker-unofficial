@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>320</height>
+    <height>330</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -137,7 +137,7 @@
       <string>Prepends all entries with [hh:mm:ss] timestamps.</string>
      </property>
      <property name="text">
-      <string>Enable Timestamps</string>
+      <string>Enable timestamps</string>
      </property>
     </widget>
    </item>
