@@ -434,7 +434,7 @@ qt4_add_translation(QM_FILES ${TRANSLATIONS_FILES})
 # windows.rc
 if(WIN32)
 	# compile the Windows resource file.  How we do this depends on the compiler.
-	if(CMAKE_COMPILER_IS_GNUCXX)
+	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 		add_custom_command(
 			OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/windows.o
 			COMMAND windres -o ${CMAKE_CURRENT_BINARY_DIR}/windows.o -i ${DOOMSEEKER_SOURCE_DIR}/media/windows.rc
@@ -443,9 +443,9 @@ if(WIN32)
 		)
 
 		set(SOURCE_FILES ${SOURCE_FILES} windows.o)
-	else(CMAKE_COMPILER_IS_GNUCXX)
+	else("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 		set(SOURCE_FILES ${SOURCE_FILES} ${DOOMSEEKER_SOURCE_DIR}/media/windows.rc)
-	endif(CMAKE_COMPILER_IS_GNUCXX)
+	endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 endif(WIN32)
 
 add_executable(doomseeker
