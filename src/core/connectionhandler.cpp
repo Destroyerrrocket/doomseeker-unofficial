@@ -252,7 +252,7 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, const Server* ser
 						{
 							if(hadMissing)
 								*hadMissing = true;
-							return obtainJoinCommandLine(parent, server, cli, errorCaption, NULL);
+							return obtainJoinCommandLine(parent, server, cli, errorCaption, managedDemo, NULL);
 						}
 					}
 					if (ret != QMessageBox::Ignore)

@@ -289,7 +289,7 @@ class WadRetriever : public QObject
 
 			private:
 				WadRetrieverInfo(const WadRetrieverInfo& other) {}
-				WadRetrieverInfo& operator=(const WadRetrieverInfo& other) {}
+				WadRetrieverInfo& operator=(const WadRetrieverInfo& other) { return *this; }
 
 		};
 

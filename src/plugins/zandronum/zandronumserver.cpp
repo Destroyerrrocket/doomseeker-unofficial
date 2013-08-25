@@ -598,7 +598,7 @@ bool ZandronumServer::sendRequest(QByteArray &data)
 
 QRgb ZandronumServer::teamColor(unsigned team) const
 {
-	if(team >= ST_MAX_TEAMS || team < 0)
+	if(team >= ST_MAX_TEAMS)
 		return Server::teamColor(team);
 
 	return teamInfo[team].color().rgb();
@@ -609,7 +609,7 @@ QString	ZandronumServer::teamName(unsigned team) const
 	if (team == 255)
 		return "NO TEAM";
 
-	return team >= 0 && team < ST_MAX_TEAMS ? teamInfo[team].name() : "";
+	return team < ST_MAX_TEAMS ? teamInfo[team].name() : "";
 }
 
 void ZandronumServer::updatedSlot(Server* server, int response)

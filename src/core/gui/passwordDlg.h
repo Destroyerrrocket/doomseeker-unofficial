@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------
 
 #ifndef __PASSWORDDIALOG_H__
-#define __PASSWRODDIALOG_H__
+#define __PASSWORDDIALOG_H__
 
 #include "ui_passwordDlg.h"
 

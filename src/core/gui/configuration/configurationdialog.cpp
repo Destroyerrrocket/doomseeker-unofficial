@@ -179,7 +179,7 @@ bool ConfigurationDialog::hasItemOnList(QStandardItem* pItem) const
 {
 	if (pItem == NULL)
 	{
-		return NULL;
+		return false;
 	}
 	
 	QStandardItemModel* pModel = (QStandardItemModel*)tvOptionsList->model();
