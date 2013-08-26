@@ -20,9 +20,9 @@ static inline quint8 READINT8(const char *pointer)
 	return quint8(*pointer);
 }
 
-#define WRITEINT32_DIRECT(integer) (quint8)(integer&0xFF),(quint8)((integer>>8)&0xFF),(quint8)((integer>>16)&0xFF),(quint8)((integer>>24)&0xFF)
-#define WRITEINT16_DIRECT(integer) (quint8)(integer&0xFF),(quint8)((integer>>8)&0xFF)
-#define WRITEINT8_DIRECT(integer) (quint8)(integer&0xFF)
+#define WRITEINT8_DIRECT(type,integer) (type)(quint8)((integer)&0xFF)
+#define WRITEINT16_DIRECT(type,integer) WRITEINT8_DIRECT(type,integer),WRITEINT8_DIRECT(type,integer>>8)
+#define WRITEINT32_DIRECT(type,integer) WRITEINT8_DIRECT(type,integer),WRITEINT8_DIRECT(type,integer>>8),WRITEINT8_DIRECT(type,integer>>16),WRITEINT8_DIRECT(type,integer>>24)
 
 static inline void WRITEINT32(char *pointer, const quint32 integer)
 {

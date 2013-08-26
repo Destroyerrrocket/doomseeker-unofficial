@@ -87,8 +87,8 @@ void IP2CParser::convertCountriesIntoBinaryData(const Countries& countries, QByt
 
 		foreach(IP2C::IP2CData val, it.value())
 		{
-			const char ipStart[4] = { WRITEINT32_DIRECT(val.ipStart) };
-			const char ipEnd[4] = { WRITEINT32_DIRECT(val.ipEnd) };
+			const char ipStart[4] = { WRITEINT32_DIRECT(char,val.ipStart) };
+			const char ipEnd[4] = { WRITEINT32_DIRECT(char,val.ipEnd) };
 
 			output += QByteArray(ipStart, 4);
 			output += QByteArray(ipEnd, 4);

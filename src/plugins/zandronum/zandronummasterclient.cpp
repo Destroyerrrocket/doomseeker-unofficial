@@ -60,7 +60,7 @@ ZandronumMasterClient::ZandronumMasterClient() : MasterClient()
 
 bool ZandronumMasterClient::getServerListRequest(QByteArray &data)
 {
-	const unsigned char challenge[6] = {WRITEINT32_DIRECT(MASTER_CHALLENGE), WRITEINT16_DIRECT(MASTER_PROTOCOL_VERSION)};
+	const unsigned char challenge[6] = {WRITEINT32_DIRECT(unsigned char,MASTER_CHALLENGE), WRITEINT16_DIRECT(unsigned char,MASTER_PROTOCOL_VERSION)};
 	unsigned char challengeOut[12];
 	int out = 12;
 	HUFFMAN_Encode(challenge, challengeOut, 6, &out);

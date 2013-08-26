@@ -587,7 +587,7 @@ bool ZandronumServer::sendRequest(QByteArray &data)
 {
 	// Send launcher challenge.
 	int query = SQF_STANDARDQUERY;
-	const unsigned char challenge[12] = {SERVER_CHALLENGE, WRITEINT32_DIRECT(query), WRITEINT32_DIRECT(millisecondTime()) };
+	const unsigned char challenge[12] = {SERVER_CHALLENGE, WRITEINT32_DIRECT(unsigned char,query), WRITEINT32_DIRECT(unsigned char,millisecondTime()) };
 	char challengeOut[16];
 	int out = 16;
 	HUFFMAN_Encode(challenge, reinterpret_cast<unsigned char*> (challengeOut), 12, &out);
