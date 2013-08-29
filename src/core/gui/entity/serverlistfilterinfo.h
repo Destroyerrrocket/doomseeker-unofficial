@@ -35,7 +35,7 @@ public:
 	bool				bShowEmpty;
 	bool				bShowFull;
 	bool				bShowOnlyValid;
-	QString				gameMode;
+	QStringList			gameModes;
 
 	/**
 	 *	@brief Maximum allowed ping.

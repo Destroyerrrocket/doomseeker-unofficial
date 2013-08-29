@@ -513,7 +513,7 @@ void DoomseekerConfig::ServerFilter::load(IniSection& section)
 	info.bShowEmpty = section["bShowEmpty"];
 	info.bShowFull = section["bShowFull"];
 	info.bShowOnlyValid = section["bShowOnlyValid"];
-	info.gameMode = (const QString &)section["GameMode"];
+	info.gameModes = section["GameModes"].value().toStringList();
 	info.maxPing = section["MaxPing"];
 	info.serverName = (const QString &)section["ServerName"];
 	info.wads = ((const QString&)section["WADs"]).split(",", QString::SkipEmptyParts);
@@ -524,7 +524,7 @@ void DoomseekerConfig::ServerFilter::save(IniSection& section)
 	section["bShowEmpty"] = info.bShowEmpty;
 	section["bShowFull"] = info.bShowFull;
 	section["bShowOnlyValid"] = info.bShowOnlyValid;
-	section["GameMode"] = info.gameMode;
+	section["GameModes"].setValue(info.gameModes);
 	section["MaxPing"] = info.maxPing;
 	section["ServerName"] = info.serverName;
 	section["WADs"] = info.wads.join(",");

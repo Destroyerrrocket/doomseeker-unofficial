@@ -34,9 +34,6 @@ ServerFilterDock::ServerFilterDock(QWidget* pParent)
 
 	this->toggleViewAction()->setIcon(QIcon(":/icons/filter.png"));
 
-	// Empty item means no filter.
-	cboGameMode->addItem("");
-
 	toggleViewAction()->setText(tr("Server &Filter"));
 	toggleViewAction()->setShortcut(tr("CTRL+F"));
 }
@@ -72,8 +69,6 @@ void ServerFilterDock::btnClearClicked()
 void ServerFilterDock::clearGameModes()
 {
 	cboGameMode->clear();
-	cboGameMode->addItem("");
-
 	emit filterUpdated(filterInfo());
 }
 
@@ -110,8 +105,8 @@ void ServerFilterDock::doConnections()
 	this->connect(cbShowOnlyValid, SIGNAL( clicked() ),
 		SLOT( emitUpdated() ) );
 
-	this->connect(cboGameMode, SIGNAL( currentIndexChanged(const QString &) ),
-		SLOT( emitUpdated(const QString&) ) );
+	this->connect(cboGameMode, SIGNAL( valueChanged() ),
+		SLOT( emitUpdated() ) );
 
 	this->connect(leServerName, SIGNAL( textChanged(const QString &) ),
 		SLOT( emitUpdated(const QString&) ) );
@@ -140,7 +135,7 @@ ServerListFilterInfo ServerFilterDock::filterInfo() const
 	filterInfo.bShowEmpty = cbShowEmpty->isChecked();
 	filterInfo.bShowFull = cbShowFull->isChecked();
 	filterInfo.bShowOnlyValid = cbShowOnlyValid->isChecked();
-	filterInfo.gameMode = cboGameMode->currentText();
+	filterInfo.gameModes = cboGameMode->selectedItemTexts();
 	filterInfo.maxPing = spinMaxPing->value();
 	filterInfo.serverName = leServerName->text();
 	filterInfo.wads = leWads->text().trimmed().split(",", QString::SkipEmptyParts);
@@ -154,10 +149,11 @@ void ServerFilterDock::setFilterInfo(const ServerListFilterInfo& filterInfo)
 	cbShowFull->setChecked(filterInfo.bShowFull);
 	cbShowOnlyValid->setChecked(filterInfo.bShowOnlyValid);
 
-	QString gameMode = filterInfo.gameMode.trimmed();
-
-	addGameModeToComboBox(gameMode);
-	cboGameMode->setCurrentIndex(cboGameMode->findText(gameMode));
+	foreach (const QString& gameMode, filterInfo.gameModes)
+	{
+		addGameModeToComboBox(gameMode);
+	}
+	cboGameMode->setSelectedTexts(filterInfo.gameModes);
 
 	spinMaxPing->setValue(filterInfo.maxPing);
 	if (leQuickSearch != NULL)

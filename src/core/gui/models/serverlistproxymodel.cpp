@@ -116,9 +116,9 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 			}
 		}
 
-		if (!pFilterInfo->gameMode.isEmpty())
+		if (!pFilterInfo->gameModes.isEmpty())
 		{
-			if (s->gameMode().name().compare(pFilterInfo->gameMode, Qt::CaseInsensitive) != 0)
+			if (!pFilterInfo->gameModes.contains(s->gameMode().name(), Qt::CaseInsensitive))
 			{
 				return false;
 			}

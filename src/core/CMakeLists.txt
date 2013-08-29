@@ -123,6 +123,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/widgets/fontbutton.h
 	gui/widgets/importantmessageswidget.h
 	gui/widgets/memorylineedit.h
+	gui/widgets/multicombobox.h
 	gui/widgets/serverconsole.h
 	gui/widgets/serverlistview.h
 	gui/widgets/serversstatuswidget.h
@@ -211,6 +212,7 @@ set(SOURCE_FILES
 	gui/widgets/fontbutton.cpp
 	gui/widgets/importantmessageswidget.cpp
 	gui/widgets/memorylineedit.cpp
+	gui/widgets/multicombobox.cpp
 	gui/widgets/tablewidgetmouseaware.cpp
 	gui/widgets/serverconsole.cpp
 	gui/widgets/serverlistcontextmenu.cpp

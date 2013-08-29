@@ -85,7 +85,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="cboGameMode"/>
+       <widget class="MultiComboBox" name="cboGameMode"/>
       </item>
       <item>
        <widget class="QCheckBox" name="cbShowFull">
@@ -152,6 +152,13 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MultiComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/widgets/multicombobox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
