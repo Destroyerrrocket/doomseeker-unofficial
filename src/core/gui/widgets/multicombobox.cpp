@@ -1,6 +1,27 @@
 #include "multicombobox.h"
 #include <QtGui>
 
+// internal private editor
+class MultiComboBoxEditor : public QCheckBox
+{
+public:
+	MultiComboBoxEditor(QWidget* parent)
+	: QCheckBox(parent)
+	{
+	}
+
+protected:
+	bool hitButton(const QPoint& pos) const
+	{
+		// Omit QCheckBox::hitButton() check as it returns true only if
+		// user actually clicked on the checkbox or on its title. In this
+		// case, we want to detect hits on entire widget, which spans
+		// as a whitespace area covering entire row in combobox' list.
+		return QAbstractButton::hitButton(pos);
+	}
+};
+
+
 // internal private delegate
 class MultiComboBoxDelegate : public QItemDelegate
 {
@@ -34,8 +55,7 @@ public:
 		const QStyleOptionViewItem & option ,
 		const QModelIndex & index ) const
 	{
-		QCheckBox *editor = new QCheckBox(parent);
-		return editor;
+		return new MultiComboBoxEditor(parent);
 	}
 
 	void setEditorData(QWidget *editor, const QModelIndex &index) const
