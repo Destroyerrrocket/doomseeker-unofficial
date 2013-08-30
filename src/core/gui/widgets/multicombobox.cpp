@@ -91,18 +91,43 @@ QString MultiComboBox::displayText() const
 
 bool MultiComboBox::eventFilter(QObject *object, QEvent *event)
 {
-	if (event->type() == QEvent::Hide)
+	if (object == view()->viewport())
 	{
-		// TODO: Have this react only if value actually changed.
-		emit valueChanged();
-	}
-	// don't close items view after we release the mouse button
-	// by simple eating MouseButtonRelease in viewport of items view
-	if (event->type() == QEvent::MouseButtonRelease && object==view()->viewport())
-	{
-		return true;
+		if (handleViewViewportEvent(event))
+		{
+			return true;
+		}
 	}
 	return QComboBox::eventFilter(object,event);
+}
+
+bool MultiComboBox::handleViewViewportEvent(QEvent* event)
+{
+	switch (event->type())
+	{
+		case QEvent::Hide:
+			// TODO: Have this react only if value actually changed.
+			emit valueChanged();
+			break;
+
+		case QEvent::Show:
+			if (count() >= 1)
+			{
+				// Without this, the first object on the list will be
+				// impossible to edit unless other object is hovered
+				// over first, or in case if there's only one object
+				// on the list, the list won't be editable at all.
+				view()->edit(model()->index(0, 0));
+			}
+			break;
+
+		case QEvent::MouseButtonRelease:
+			// Don't close items view after we release the mouse button
+			// by simple eating MouseButtonRelease in viewport of items
+			// view.
+			return true;
+	}
+	return false;
 }
 
 void MultiComboBox::paintEvent(QPaintEvent *)

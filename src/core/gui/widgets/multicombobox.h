@@ -51,6 +51,9 @@ class MultiComboBox: public QComboBox
 
 	signals:
 		void valueChanged();
+
+	private:
+		bool handleViewViewportEvent(QEvent* event);
 };
 
 #endif
