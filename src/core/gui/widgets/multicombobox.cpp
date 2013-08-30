@@ -183,7 +183,7 @@ void MultiComboBox::setSelectedTexts(const QStringList& texts)
 {
 	for (int i = 0; i < count(); ++i)
 	{
-		setItemData(i, (bool)texts.contains(itemText(i)));
+		setItemData(i, static_cast<bool>(texts.contains(itemText(i))));
 	}
 	// Prompt widget repaint or the display text may not change.
 	update();
