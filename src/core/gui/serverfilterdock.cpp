@@ -30,8 +30,6 @@ ServerFilterDock::ServerFilterDock(QWidget* pParent)
 	setupUi(this);
 	leQuickSearch = NULL;
 
-	doConnections();
-
 	this->toggleViewAction()->setIcon(QIcon(":/icons/filter.png"));
 
 	toggleViewAction()->setText(tr("Server &Filter"));
@@ -61,7 +59,7 @@ void ServerFilterDock::addGameModeToComboBox(const QString& gameMode)
 	}
 }
 
-void ServerFilterDock::btnClearClicked()
+void ServerFilterDock::clear()
 {
 	this->setFilterInfo(ServerListFilterInfo());
 }
@@ -88,42 +86,7 @@ QLineEdit *ServerFilterDock::createQuickSearch()
 	return leQuickSearch;
 }
 
-void ServerFilterDock::doConnections()
-{
-	this->connect(this, SIGNAL( visibilityChanged(bool) ),
-		SLOT( thisVisibilityChanged(bool) ) );
-
-	this->connect(btnClear, SIGNAL( clicked() ),
-		SLOT( btnClearClicked() ) );
-
-	this->connect(cbShowEmpty, SIGNAL( clicked() ),
-		SLOT( emitUpdated() ) );
-
-	this->connect(cbShowFull, SIGNAL( clicked() ),
-		SLOT( emitUpdated() ) );
-
-	this->connect(cbShowOnlyValid, SIGNAL( clicked() ),
-		SLOT( emitUpdated() ) );
-
-	this->connect(cboGameMode, SIGNAL( valueChanged() ),
-		SLOT( emitUpdated() ) );
-
-	this->connect(leServerName, SIGNAL( textChanged(const QString &) ),
-		SLOT( emitUpdated(const QString&) ) );
-
-	this->connect(leWads, SIGNAL( textEdited(const QString &) ),
-		SLOT( emitUpdated(const QString&) ) );
-
-	this->connect(spinMaxPing, SIGNAL( editingFinished() ),
-		SLOT( emitUpdated() ) );
-}
-
 void ServerFilterDock::emitUpdated()
-{
-	emit filterUpdated(filterInfo());
-}
-
-void ServerFilterDock::emitUpdated(const QString& dummy)
 {
 	emit filterUpdated(filterInfo());
 }
@@ -165,9 +128,4 @@ void ServerFilterDock::setFilterInfo(const ServerListFilterInfo& filterInfo)
 	leWads->setText(filterInfo.wads.join(",").trimmed());
 
 	emitUpdated();
-}
-
-void ServerFilterDock::thisVisibilityChanged(bool bVisible)
-{
-	leServerName->setFocus();
 }

@@ -75,13 +75,9 @@ class ServerFilterDock : public QDockWidget, private Ui::ServerFilterDock
  		*/
 		QLineEdit*              leQuickSearch;
 
-		void					doConnections();
-
 	private slots:
-		void					btnClearClicked();
+		void					clear();
 		void					emitUpdated();
-		void					emitUpdated(const QString& dummy);
-		void					thisVisibilityChanged(bool bVisible);
 };
 
 #endif

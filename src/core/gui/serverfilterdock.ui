@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>204</width>
-    <height>416</height>
+    <height>421</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -157,8 +157,161 @@
    <class>MultiComboBox</class>
    <extends>QComboBox</extends>
    <header>gui/widgets/multicombobox.h</header>
+   <slots>
+    <signal>valueChanged()</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>btnClear</sender>
+   <signal>clicked()</signal>
+   <receiver>ServerFilterDock</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>101</x>
+     <y>363</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>101</x>
+     <y>210</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>leServerName</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>ServerFilterDock</receiver>
+   <slot>emitUpdated()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>47</x>
+     <y>57</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>38</x>
+     <y>392</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinMaxPing</sender>
+   <signal>editingFinished()</signal>
+   <receiver>ServerFilterDock</receiver>
+   <slot>emitUpdated()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>99</x>
+     <y>107</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>61</x>
+     <y>404</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>leWads</sender>
+   <signal>textEdited(QString)</signal>
+   <receiver>ServerFilterDock</receiver>
+   <slot>emitUpdated()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>123</x>
+     <y>155</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>72</x>
+     <y>393</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbShowFull</sender>
+   <signal>clicked()</signal>
+   <receiver>ServerFilterDock</receiver>
+   <slot>emitUpdated()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>72</x>
+     <y>267</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>159</x>
+     <y>400</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbShowEmpty</sender>
+   <signal>clicked()</signal>
+   <receiver>ServerFilterDock</receiver>
+   <slot>emitUpdated()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>46</x>
+     <y>290</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>133</x>
+     <y>411</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbShowOnlyValid</sender>
+   <signal>clicked()</signal>
+   <receiver>ServerFilterDock</receiver>
+   <slot>emitUpdated()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>51</x>
+     <y>309</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>138</x>
+     <y>384</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cboGameMode</sender>
+   <signal>valueChanged()</signal>
+   <receiver>ServerFilterDock</receiver>
+   <slot>emitUpdated()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>58</x>
+     <y>239</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>99</x>
+     <y>417</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ServerFilterDock</sender>
+   <signal>visibilityChanged(bool)</signal>
+   <receiver>leServerName</receiver>
+   <slot>setFocus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>101</x>
+     <y>210</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>101</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>emitUpdated()</slot>
+  <slot>clear()</slot>
+  <slot>emitUpdated(QString)</slot>
+ </slots>
 </ui>
