@@ -75,7 +75,16 @@ RemoteConsole::RemoteConsole(Server *server, QWidget *parent) : QMainWindow(pare
 	setWindowIcon(server->icon());
 	changeServerName(server->name());
 
-	showPasswordDialog();
+	if (protocol != NULL)
+	{
+		showPasswordDialog();
+	}
+	else
+	{
+		QMessageBox::critical(parent, tr("RCon Failure"),
+			tr("Failed to connect RCon to server %1:%2").arg(
+			server->address().toString()).arg(server->port()));
+	}
 }
 
 RemoteConsole::~RemoteConsole()
