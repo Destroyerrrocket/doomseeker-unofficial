@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>204</width>
-    <height>421</height>
+    <height>437</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -74,6 +74,20 @@
        <widget class="QLineEdit" name="leWads">
         <property name="toolTip">
          <string>Use ',' (a comma) to separate multiple wads.</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Exclude WADs:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="leExcludeWads">
+        <property name="toolTip">
+         <string>Servers with WADs on this list won't be displayed. Use ',' (a comma) to separate multiple wads.</string>
         </property>
        </widget>
       </item>
@@ -305,6 +319,22 @@
     <hint type="destinationlabel">
      <x>101</x>
      <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>leExcludeWads</sender>
+   <signal>textEdited(QString)</signal>
+   <receiver>ServerFilterDock</receiver>
+   <slot>emitUpdated()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>101</x>
+     <y>195</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>101</x>
+     <y>218</y>
     </hint>
    </hints>
   </connection>

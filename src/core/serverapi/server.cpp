@@ -107,6 +107,24 @@ Server::~Server()
 	clearDMFlags();
 }
 
+bool Server::anyWadnameContains(const QString& text, Qt::CaseSensitivity cs) const
+{
+	if (iwadName().contains(text, cs))
+	{
+		return true;
+	}
+
+	for (int j = 0; j < numWads(); ++j)
+	{
+		const PWad& pwad = wad(j);
+		if (pwad.name.contains(text, cs))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 Binaries *Server::binaries() const
 {
 	return new Binaries(plugin());

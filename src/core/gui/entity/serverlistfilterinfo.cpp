@@ -39,20 +39,22 @@ void ServerListFilterInfo::copy(const ServerListFilterInfo& other)
 	maxPing = other.maxPing;
 	serverName = other.serverName.trimmed();
 
-	this->wads.clear();
-	for (int i = 0; i < other.wads.count(); ++i)
-	{
-		QString wad = other.wads[i];
-		wad = wad.trimmed();
+	copyTrimmed(this->wads, other.wads);
+	copyTrimmed(this->wadsExcluded, other.wadsExcluded);
+}
 
-		if (!wad.isEmpty())
+void ServerListFilterInfo::copyTrimmed(QStringList& target, const QStringList& source) const
+{
+	target.clear();
+	foreach (QString element, source)
+	{
+		element = element.trimmed();
+		if (!element.isEmpty())
 		{
-			this->wads << wad;
+			target << element;
 		}
 	}
 }
-
-#include "log.h"
 
 bool ServerListFilterInfo::isFilteringAnything() const
 {
@@ -68,7 +70,8 @@ bool ServerListFilterInfo::isFilteringAnything() const
 
 	if (!gameModes.isEmpty()
 	||  !serverName.isEmpty()
-	||  !wads.isEmpty())
+	||  !wads.isEmpty()
+	||  !wadsExcluded.isEmpty())
 	{
 		return true;
 	}
@@ -87,6 +90,7 @@ QString ServerListFilterInfo::toString() const
 	ret += QString("MaxPing: ") + QString::number(maxPing) + "\n";
 	ret += QString("ServerName: ") + serverName + "\n";
 	ret += QString("WADs: ") + wads.join(",") + "\n";
+	ret += QString("WADs Excluded: ") + wads.join(",") + "\n";
 
 	return ret;
 }

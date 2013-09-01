@@ -130,29 +130,11 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 
 			// TODO
 			// This may cause performance drops. Testing is required
-			for (int i = 0; i < pFilterInfo->wads.count(); ++i)
+			foreach (const QString& filteredWad, pFilterInfo->wads)
 			{
-				const QString& wad = pFilterInfo->wads[i];
-
-				if (s->iwadName().contains(wad, Qt::CaseInsensitive))
+				if (s->anyWadnameContains(filteredWad))
 				{
 					bWadFound = true;
-					break;
-				}
-
-				for (int j = 0; j < s->numWads(); ++j)
-				{
-					const PWad& pwad = s->wad(j);
-					if (pwad.name.contains(wad, Qt::CaseInsensitive))
-					{
-						bWadFound = true;
-						break;
-					}
-				}
-
-				if (bWadFound)
-				{
-					// Exit loop, wad was found.
 					break;
 				}
 			}
@@ -160,6 +142,18 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 			if (!bWadFound)
 			{
 				return false;
+			}
+		}
+
+		if (!pFilterInfo->wadsExcluded.isEmpty())
+		{
+			bool bWadFound = false;
+			foreach (const QString& filteredWad, pFilterInfo->wadsExcluded)
+			{
+				if (s->anyWadnameContains(filteredWad))
+				{
+					return false;
+				}
 			}
 		}
 	}

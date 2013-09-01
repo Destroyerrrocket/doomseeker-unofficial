@@ -79,6 +79,12 @@ class MAIN_EXPORT Server : public QObject
 		virtual ~Server();
 
 		/**
+		* @brief True if name of any WAD of this server contains given text.
+		*/
+		bool anyWadnameContains(const QString& text,
+			Qt::CaseSensitivity cs = Qt::CaseInsensitive) const;
+
+		/**
 		 *	@brief Creates an instance of Binaries's descendant class.
 		 *
 		 *	Created instance should be deleted manually by the programmer.

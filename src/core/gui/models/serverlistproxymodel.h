@@ -71,7 +71,7 @@ class ServerListProxyModel : public QSortFilterProxyModel
 		ServerListFilterInfo*	pFilterInfo;
 
 		Qt::SortOrder 			sortOrder;
-		
+
 		bool					compareColumnSortData(QVariant& var1, QVariant& var2, int column) const;
 		bool					lessThan(const QModelIndex& left, const QModelIndex& right) const;
 

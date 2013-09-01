@@ -102,6 +102,7 @@ ServerListFilterInfo ServerFilterDock::filterInfo() const
 	filterInfo.maxPing = spinMaxPing->value();
 	filterInfo.serverName = leServerName->text();
 	filterInfo.wads = leWads->text().trimmed().split(",", QString::SkipEmptyParts);
+	filterInfo.wadsExcluded = leExcludeWads->text().trimmed().split(",", QString::SkipEmptyParts);
 
 	return filterInfo;
 }
@@ -126,6 +127,7 @@ void ServerFilterDock::setFilterInfo(const ServerListFilterInfo& filterInfo)
 
 	leServerName->setText(filterInfo.serverName.trimmed());
 	leWads->setText(filterInfo.wads.join(",").trimmed());
+	leExcludeWads->setText(filterInfo.wadsExcluded.join(",").trimmed());
 
 	emitUpdated();
 }

@@ -46,6 +46,7 @@ public:
 	unsigned			maxPing;
 	QString				serverName;
 	QStringList			wads;
+	QStringList			wadsExcluded;
 
 	ServerListFilterInfo();
 	ServerListFilterInfo(const ServerListFilterInfo& other)
@@ -76,6 +77,7 @@ public:
 
 private:
 	void					copy(const ServerListFilterInfo& other);
+	void					copyTrimmed(QStringList& target, const QStringList& source) const;
 };
 
 #endif

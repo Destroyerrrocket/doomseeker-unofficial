@@ -506,6 +506,7 @@ void DoomseekerConfig::ServerFilter::init(IniSection& section)
 	section.createSetting("MaxPing", 0);
 	section.createSetting("ServerName", "");
 	section.createSetting("WADs", "");
+	section.createSetting("WADsExcluded", "");
 }
 
 void DoomseekerConfig::ServerFilter::load(IniSection& section)
@@ -517,6 +518,7 @@ void DoomseekerConfig::ServerFilter::load(IniSection& section)
 	info.maxPing = section["MaxPing"];
 	info.serverName = (const QString &)section["ServerName"];
 	info.wads = ((const QString&)section["WADs"]).split(",", QString::SkipEmptyParts);
+	info.wadsExcluded = ((const QString&)section["WADsExcluded"]).split(",", QString::SkipEmptyParts);
 }
 
 void DoomseekerConfig::ServerFilter::save(IniSection& section)
@@ -528,6 +530,7 @@ void DoomseekerConfig::ServerFilter::save(IniSection& section)
 	section["MaxPing"] = info.maxPing;
 	section["ServerName"] = info.serverName;
 	section["WADs"] = info.wads.join(",");
+	section["WADsExcluded"] = info.wadsExcluded.join(",");
 }
 //////////////////////////////////////////////////////////////////////////////
 const QString DoomseekerConfig::WadseekerCfg::SECTION_NAME = "Wadseeker";
