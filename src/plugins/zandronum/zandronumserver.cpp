@@ -695,6 +695,14 @@ RConProtocol *ZandronumRConProtocol::connectToServer(Server *server)
 		if(protocol->socket.waitForReadyRead(3000))
 		{
 			int size = protocol->socket.pendingDatagramSize();
+			if (size <= 0)
+			{
+				// [Zalewa]
+				// This situation always occurs when trying to connect to
+				// a non-existent localhost server on Windows. I don't know
+				// if it happens in any other situation.
+				continue;
+			}
 			char* data = new char[size];
 			protocol->socket.readDatagram(data, size);
 			char packet[64];
