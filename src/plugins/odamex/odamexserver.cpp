@@ -175,6 +175,13 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 	
 		QString playerName = in.readRawUntilByte('\0');
 
+		if(protocolVersion >= 2)
+		{
+			CHECK_POS_OFFSET(4);
+			// Player color
+			in.skipRawData(4);
+		}
+
 		CHECK_POS_OFFSET(12);
 		unsigned short teamIndex = in.readQUInt8();
 		unsigned short ping = in.readQUInt16();
