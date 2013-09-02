@@ -138,6 +138,9 @@ class ZandronumGameInfo : public QObject
 
 			// [BB] Handle player bodies as if they had MF6_THRUSPECIES.
 			DF3_UNBLOCK_PLAYERS			= 1 << 4,
+
+			// [BB] Enforces clients not to show medals, i.e. behave as if cl_medals == 0.
+			DF3_NO_MEDALS			= 1 << 5,
 		};
 
 		// [RH] Compatibility flags.
@@ -235,6 +238,10 @@ class ZandronumGameInfo : public QObject
 			// If this is enabled, non-SOLID things like flags fall through bridges 
 			// (as they used to do in old ZDoom versions).
 			COMPATF2_BRIDGE_DROPS = 1 << 7,
+			// [CK] Uses old ZDoom jump physics, it's a minor bug in the gravity code that causes gravity application in the wrong place
+			COMPATF2_ZDOOM_123B33_JUMP_PHYSICS = 1 << 8,
+			// [CK] You can't change weapons mid raise/lower in vanilla
+			COMPATF2_FULL_WEAPON_LOWER = 1 << 9,
 		};
 
 		enum LMSAllowedWeapons

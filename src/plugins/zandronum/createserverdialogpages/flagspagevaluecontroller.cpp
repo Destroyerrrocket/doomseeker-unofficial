@@ -131,6 +131,10 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbOldZDoomHorizontalThrust);
 		m.insert(ZandronumGameInfo::COMPATF2_BRIDGE_DROPS,
 			f->cbOldZDoomBridgeDrops);
+		m.insert(ZandronumGameInfo::COMPATF2_ZDOOM_123B33_JUMP_PHYSICS,
+			f->cbOldZDoomJumpPhysics);
+		m.insert(ZandronumGameInfo::COMPATF2_FULL_WEAPON_LOWER,
+			f->cbCompatFullWeaponLower);
 	}
 
 	// DMFlags
@@ -284,6 +288,8 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbNoUnlagged);
 		m.insert(ZandronumGameInfo::DF3_ALWAYS_APPLY_LMS_SPECTATORSETTINGS,
 			f->cbAlwaysApplyLMSSpectatorSettings);
+		m.insert(ZandronumGameInfo::DF3_NO_MEDALS,
+			f->cbNoMedals);
 
 		// Players
 		// - Disallow 2
