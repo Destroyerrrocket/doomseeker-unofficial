@@ -36,27 +36,14 @@ class ServerListProxyModel : public QSortFilterProxyModel
 		ServerListProxyModel(ServerListHandler* serverListHandler);
 		~ServerListProxyModel();
 		
-		/**
-		 *	@brief Filter info for edit.
-		 *
-		 *	@b Note: Do not forget to call invalidate() after edit is 
-		 *	finished.
-		 */
-		const ServerListFilterInfo& filterInfo()
-		{
-			return *pFilterInfo;
-		}
+		const ServerListFilterInfo& filterInfo() const;
 		
 		/**
 		 *	@brief Sets new filter info and immediately calls invalidate()
 		 */
 		void					setFilterInfo(const ServerListFilterInfo& filterInfo);
 		
-		void					sortServers(int column, Qt::SortOrder order = Qt::AscendingOrder)
-		{
-			sortOrder = order;
-			sort(column, order);
-		}		
+		void					sortServers(int column, Qt::SortOrder order = Qt::AscendingOrder);
 
 	protected:
 		/**
@@ -65,12 +52,9 @@ class ServerListProxyModel : public QSortFilterProxyModel
 		bool					filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const;
 		
 	private:
-		ServerListHandler*		parentHandler;
-		
-		/// Never NULL
-		ServerListFilterInfo*	pFilterInfo;
+		class PrivData;
 
-		Qt::SortOrder 			sortOrder;
+		PrivData* d;
 
 		bool					compareColumnSortData(QVariant& var1, QVariant& var2, int column) const;
 		bool					lessThan(const QModelIndex& left, const QModelIndex& right) const;
