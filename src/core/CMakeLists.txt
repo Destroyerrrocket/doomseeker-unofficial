@@ -125,6 +125,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/widgets/memorylineedit.h
 	gui/widgets/multicombobox.h
 	gui/widgets/serverconsole.h
+	gui/widgets/serverfilterbuildermenu.h
 	gui/widgets/serverlistview.h
 	gui/widgets/serversstatuswidget.h
 	gui/widgets/tablewidgetmouseaware.h
@@ -215,6 +216,7 @@ set(SOURCE_FILES
 	gui/widgets/multicombobox.cpp
 	gui/widgets/tablewidgetmouseaware.cpp
 	gui/widgets/serverconsole.cpp
+	gui/widgets/serverfilterbuildermenu.cpp
 	gui/widgets/serverlistcontextmenu.cpp
 	gui/widgets/serverlistview.cpp
 	gui/widgets/serversstatuswidget.cpp

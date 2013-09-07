@@ -55,6 +55,7 @@ class ServerFilterDock : public QDockWidget, private Ui::ServerFilterDock
 
 		ServerListFilterInfo filterInfo() const;
 
+	public slots:
 		/**
 		 * @brief Sets widgets to new filter info.
 		 *

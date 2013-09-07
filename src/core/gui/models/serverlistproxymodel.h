@@ -42,9 +42,9 @@ class ServerListProxyModel : public QSortFilterProxyModel
 		 *	@b Note: Do not forget to call invalidate() after edit is 
 		 *	finished.
 		 */
-		ServerListFilterInfo*	filterInfo()
+		const ServerListFilterInfo& filterInfo()
 		{
-			return pFilterInfo;
+			return *pFilterInfo;
 		}
 		
 		/**
