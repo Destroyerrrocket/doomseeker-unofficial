@@ -107,6 +107,20 @@ Server::~Server()
 	clearDMFlags();
 }
 
+QStringList Server::allWadNames() const
+{
+	QStringList result;
+	if (!iwad.trimmed().isEmpty())
+	{
+		result << iwad;
+	}
+	foreach (const PWad& wad, wads)
+	{
+		result << wad.name;
+	}
+	return result;
+}
+
 bool Server::anyWadnameContains(const QString& text, Qt::CaseSensitivity cs) const
 {
 	if (iwadName().contains(text, cs))

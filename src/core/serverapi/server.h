@@ -79,6 +79,11 @@ class MAIN_EXPORT Server : public QObject
 		virtual ~Server();
 
 		/**
+		 * @brief IWAD + PWADs.
+		 */
+		QStringList allWadNames() const;
+
+		/**
 		* @brief True if name of any WAD of this server contains given text.
 		*/
 		bool anyWadnameContains(const QString& text,

@@ -49,15 +49,7 @@ ServerFilterBuilderMenu::ServerFilterBuilderMenu(const Server& server,
 	QMenu* includeWads = new QMenu(tr("Include WAD ..."), this);
 	QMenu* excludeWads = new QMenu(tr("Exclude WAD ..."), this);
 
-	QStringList wads;
-	if (!server.iwadName().trimmed().isEmpty())
-	{
-		wads << server.iwadName();
-	}
-	foreach (const PWad& wad, server.pwads())
-	{
-		wads << wad.name;
-	}
+	QStringList wads = server.allWadNames();
 	foreach (const QString& wad, wads)
 	{
 		if (!d->filter.wadsExcluded.contains(wad, Qt::CaseInsensitive))
