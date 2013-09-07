@@ -31,7 +31,7 @@ class ServerListProxyModel::PrivData
 {
 	public:
 		ServerListHandler* parentHandler;
-		ServerListFilterInfo* pFilterInfo;
+		ServerListFilterInfo filterInfo;
 		Qt::SortOrder sortOrder;
 };
 
@@ -39,7 +39,6 @@ ServerListProxyModel::ServerListProxyModel(ServerListHandler* serverListHandler)
 : QSortFilterProxyModel(serverListHandler)
 {
 	d = new PrivData();
-	d->pFilterInfo = new ServerListFilterInfo();
 	d->parentHandler = serverListHandler;
 }
 
@@ -87,7 +86,7 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 
 	if (!s->isKnown())
 	{
-		if (d->pFilterInfo->bShowOnlyValid)
+		if (d->filterInfo.bShowOnlyValid)
 		{
 			return false;
 		}
@@ -100,22 +99,22 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 		//
 		// The ServerListFilterInfo copy constructor and operator= make
 		// sure that all strings are trimmed.
-		if (!d->pFilterInfo->bShowEmpty && s->isEmpty())
+		if (!d->filterInfo.bShowEmpty && s->isEmpty())
 		{
 			return false;
 		}
 
-		if (!d->pFilterInfo->bShowFull && s->isFull())
+		if (!d->filterInfo.bShowFull && s->isFull())
 		{
 			return false;
 		}
 
-		if (d->pFilterInfo->maxPing > 0 && d->pFilterInfo->maxPing < s->ping())
+		if (d->filterInfo.maxPing > 0 && d->filterInfo.maxPing < s->ping())
 		{
 			return false;
 		}
 
-		const QString& nameFilter = d->pFilterInfo->serverName;
+		const QString& nameFilter = d->filterInfo.serverName;
 		if (!nameFilter.isEmpty())
 		{
 			if (!s->name().contains(nameFilter, Qt::CaseInsensitive))
@@ -124,21 +123,21 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 			}
 		}
 
-		if (!d->pFilterInfo->gameModes.isEmpty())
+		if (!d->filterInfo.gameModes.isEmpty())
 		{
-			if (!d->pFilterInfo->gameModes.contains(s->gameMode().name(), Qt::CaseInsensitive))
+			if (!d->filterInfo.gameModes.contains(s->gameMode().name(), Qt::CaseInsensitive))
 			{
 				return false;
 			}
 		}
 
-		if (!d->pFilterInfo->wads.isEmpty())
+		if (!d->filterInfo.wads.isEmpty())
 		{
 			bool bWadFound = false;
 
 			// TODO
 			// This may cause performance drops. Testing is required
-			foreach (const QString& filteredWad, d->pFilterInfo->wads)
+			foreach (const QString& filteredWad, d->filterInfo.wads)
 			{
 				if (s->anyWadnameContains(filteredWad))
 				{
@@ -153,10 +152,10 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 			}
 		}
 
-		if (!d->pFilterInfo->wadsExcluded.isEmpty())
+		if (!d->filterInfo.wadsExcluded.isEmpty())
 		{
 			bool bWadFound = false;
-			foreach (const QString& filteredWad, d->pFilterInfo->wadsExcluded)
+			foreach (const QString& filteredWad, d->filterInfo.wadsExcluded)
 			{
 				if (s->anyWadnameContains(filteredWad))
 				{
@@ -171,7 +170,7 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 
 const ServerListFilterInfo& ServerListProxyModel::filterInfo() const
 {
-	return *d->pFilterInfo;
+	return d->filterInfo;
 }
 
 bool ServerListProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
@@ -221,7 +220,7 @@ bool ServerListProxyModel::lessThan(const QModelIndex& left, const QModelIndex& 
 
 void ServerListProxyModel::setFilterInfo(const ServerListFilterInfo& filterInfo)
 {
-	*d->pFilterInfo = filterInfo;
+	d->filterInfo = filterInfo;
 	invalidate();
 }
 
