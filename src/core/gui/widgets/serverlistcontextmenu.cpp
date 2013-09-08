@@ -21,15 +21,34 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "serverlistcontextmenu.h"
+
+#include "gui/entity/serverlistfilterinfo.h"
+#include "gui/widgets/serverfilterbuildermenu.h"
 #include "serverapi/server.h"
 #include "strings.h"
 #include <QApplication>
 #include <QClipboard>
+#include <cassert>
 
-ServerListContextMenu::ServerListContextMenu(Server* server)
+class ServerListContextMenu::PrivData
+{
+	public:
+		ServerListFilterInfo serverFilter;
+};
+
+ServerListContextMenu::ServerListContextMenu(Server* server, const ServerListFilterInfo& filter)
 : pServer(server)
 {
+	d = new PrivData();
+	d->serverFilter = filter;
 	initializeMembers();
+	createMembers();
+}
+
+ServerListContextMenu::~ServerListContextMenu()
+{
+	delete menu;
+	delete d;
 }
 
 QMenu* ServerListContextMenu::createCopyMenu(QWidget* parent)
@@ -73,6 +92,13 @@ void ServerListContextMenu::createMembers()
 	QMenu* copyMenu = createCopyMenu(menu);
 	menu->addMenu(copyMenu);
 
+	// Filter builder.
+	filterBuilder = new ServerFilterBuilderMenu(*pServer, d->serverFilter, menu);
+	if (pServer->isKnown() && !filterBuilder->isEmpty())
+	{
+		menu->addMenu(filterBuilder);
+	}
+
 	rcon = NULL;
 	if(pServer->hasRcon())
 	{
@@ -83,15 +109,8 @@ void ServerListContextMenu::createMembers()
 
 ServerListContextMenu::Result ServerListContextMenu::exec(const QPoint& point)
 {
-	initializeMembers();
-	createMembers();
-
 	QAction* resultAction = menu->exec(point);
 	Result result = translateQMenuResult(resultAction);
-
-	// This should take care of deleting all other members.
-	delete menu;
-
 	return result;
 }
 
@@ -101,12 +120,19 @@ void ServerListContextMenu::initializeMembers()
 	copyEmail = NULL;
 	copyName = NULL;
 	copyUrl = NULL;
+	filterBuilder = NULL;
 	join = NULL;
 	menu = NULL;
 	openUrlInDefaultBrowser = NULL;
 	rcon = NULL;
 	refresh = NULL;
 	showJoinCommandLine = NULL;
+}
+
+const ServerListFilterInfo& ServerListContextMenu::serverFilter() const
+{
+	assert(filterBuilder);
+	return filterBuilder->filter();
 }
 
 ServerListContextMenu::Result ServerListContextMenu::translateQMenuResult(QAction* resultAction)

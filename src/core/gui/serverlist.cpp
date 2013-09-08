@@ -589,10 +589,18 @@ void ServerListHandler::tableRightClicked(const QModelIndex& index, const QPoint
 {
 	Server* server = serverFromIndex(index);
 
-	ServerListContextMenu contextMenu(server);
+	ServerListProxyModel* pModel = static_cast<ServerListProxyModel*>(table->model());
+	ServerListContextMenu contextMenu(server, pModel->filterInfo());
 
 	QPoint displayPoint = table->viewport()->mapToGlobal(cursorPosition);
 	ServerListContextMenu::Result contextMenuResult = contextMenu.exec(displayPoint);
+
+	ServerListFilterInfo filter = contextMenu.serverFilter();
+	// 1. This is a bit convoluted, but emitting the serverFilterModified
+	//    signal leads to a call to applyFilter() in this class.
+	// 2. Since the menu modifies existing server filter, the worst that can
+	//    happen is that we set the same filter again.
+	emit serverFilterModified(contextMenu.serverFilter());
 
 	switch (contextMenuResult)
 	{

@@ -38,36 +38,33 @@ ServerFilterDock::ServerFilterDock(QWidget* pParent)
 
 void ServerFilterDock::addGameModeToComboBox(const QString& gameMode)
 {
-	QString name = gameMode.trimmed();
+	addSortedNonDuplicate(cboGameMode, gameMode.trimmed());
+	addSortedNonDuplicate(cboExcludeGameMode, gameMode.trimmed());
+}
 
-	// No duplicates allowed.
-	if (cboGameMode->findText(name, Qt::MatchFixedString) < 0)
+void ServerFilterDock::addSortedNonDuplicate(QComboBox* comboBox, const QString& text)
+{
+	if (comboBox->findText(text, Qt::MatchFixedString) < 0)
 	{
 		// Make sure combobox contents are sorted.
-		for (int i = 0; i < cboGameMode->count(); ++i)
+		for (int i = 0; i < comboBox->count(); ++i)
 		{
-			if (name < cboGameMode->itemText(i))
+			if (text < comboBox->itemText(i))
 			{
-				cboGameMode->insertItem(i, name);
+				comboBox->insertItem(i, text);
 				return;
 			}
 		}
 
 		// The above routine didn't return.
 		// This item belongs to the end of the list.
-		cboGameMode->addItem(name);
+		comboBox->addItem(text);
 	}
 }
 
 void ServerFilterDock::clear()
 {
 	this->setFilterInfo(ServerListFilterInfo());
-}
-
-void ServerFilterDock::clearGameModes()
-{
-	cboGameMode->clear();
-	emit filterUpdated(filterInfo());
 }
 
 QLineEdit *ServerFilterDock::createQuickSearch()
@@ -99,6 +96,7 @@ ServerListFilterInfo ServerFilterDock::filterInfo() const
 	filterInfo.bShowFull = cbShowFull->isChecked();
 	filterInfo.bShowOnlyValid = cbShowOnlyValid->isChecked();
 	filterInfo.gameModes = cboGameMode->selectedItemTexts();
+	filterInfo.gameModesExcluded = cboExcludeGameMode->selectedItemTexts();
 	filterInfo.maxPing = spinMaxPing->value();
 	filterInfo.serverName = leServerName->text();
 	filterInfo.wads = leWads->text().trimmed().split(",", QString::SkipEmptyParts);
@@ -118,6 +116,12 @@ void ServerFilterDock::setFilterInfo(const ServerListFilterInfo& filterInfo)
 		addGameModeToComboBox(gameMode);
 	}
 	cboGameMode->setSelectedTexts(filterInfo.gameModes);
+
+	foreach (const QString& gameMode, filterInfo.gameModesExcluded)
+	{
+		addGameModeToComboBox(gameMode);
+	}
+	cboExcludeGameMode->setSelectedTexts(filterInfo.gameModesExcluded);
 
 	spinMaxPing->setValue(filterInfo.maxPing);
 	if (leQuickSearch != NULL)

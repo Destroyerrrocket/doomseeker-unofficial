@@ -27,6 +27,8 @@
 #include <QObject>
 
 class Server;
+class ServerFilterBuilderMenu;
+class ServerListFilterInfo;
 
 class ServerListContextMenu : public QObject
 {
@@ -45,11 +47,17 @@ class ServerListContextMenu : public QObject
 			NothingHappened
 		};
 
-		ServerListContextMenu(Server* server);
+		ServerListContextMenu(Server* server, const ServerListFilterInfo& filter);
+		~ServerListContextMenu();
 
 		Result					exec(const QPoint& point);
+		const ServerListFilterInfo& serverFilter() const;
 
-	protected:
+	private:
+		class PrivData;
+
+		PrivData* d;
+
 		QMenu*					createCopyMenu(QWidget* parent);
 		void					createMembers();
 		Result					translateQMenuResult(QAction* resultAction);
@@ -59,6 +67,7 @@ class ServerListContextMenu : public QObject
 		QAction* 				copyEmail;
 		QAction*				copyName;
 		QAction* 				copyUrl;
+		ServerFilterBuilderMenu* filterBuilder;
 		QAction* 				join;
 
 		QMenu*					menu;

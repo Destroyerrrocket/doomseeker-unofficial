@@ -35,48 +35,32 @@ class ServerListProxyModel : public QSortFilterProxyModel
 	public:
 		ServerListProxyModel(ServerListHandler* serverListHandler);
 		~ServerListProxyModel();
-		
+
+		const ServerListFilterInfo& filterInfo() const;
+
 		/**
-		 *	@brief Filter info for edit.
-		 *
-		 *	@b Note: Do not forget to call invalidate() after edit is 
-		 *	finished.
+		 * @brief Sets new filter info and immediately calls invalidate()
 		 */
-		ServerListFilterInfo*	filterInfo()
-		{
-			return pFilterInfo;
-		}
-		
-		/**
-		 *	@brief Sets new filter info and immediately calls invalidate()
-		 */
-		void					setFilterInfo(const ServerListFilterInfo& filterInfo);
-		
-		void					sortServers(int column, Qt::SortOrder order = Qt::AscendingOrder)
-		{
-			sortOrder = order;
-			sort(column, order);
-		}		
+		void setFilterInfo(const ServerListFilterInfo& filterInfo);
+
+		void sortServers(int column, Qt::SortOrder order = Qt::AscendingOrder);
 
 	protected:
 		/**
-		 *	Overloaded method that will filter out rows basing on pFilterInfo.
+		 * Overloaded method that will filter out rows basing on pFilterInfo.
 		 */
-		bool					filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const;
-		
+		bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const;
+
 	private:
-		ServerListHandler*		parentHandler;
-		
-		/// Never NULL
-		ServerListFilterInfo*	pFilterInfo;
+		class PrivData;
 
-		Qt::SortOrder 			sortOrder;
+		PrivData* d;
 
-		bool					compareColumnSortData(QVariant& var1, QVariant& var2, int column) const;
-		bool					lessThan(const QModelIndex& left, const QModelIndex& right) const;
+		bool compareColumnSortData(QVariant& var1, QVariant& var2, int column) const;
+		bool lessThan(const QModelIndex& left, const QModelIndex& right) const;
 
-		Server* 				serverFromList(const QModelIndex& index) const;
-		Server*					serverFromList(int row) const;
+		Server* serverFromList(const QModelIndex& index) const;
+		Server* serverFromList(int row) const;
 };
 
 #endif

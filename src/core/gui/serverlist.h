@@ -99,6 +99,7 @@ class ServerListHandler : public QObject
 		 */
 		void 					displayServerJoinCommandLine(const Server*);
 
+		void serverFilterModified(const ServerListFilterInfo& filter);
 		/**
 		 *	@brief Emitted every time when a server info is updated through
 		 *	serverUpdated()

@@ -27,17 +27,24 @@
 #include "gui/serverlist.h"
 #include "serverapi/server.h"
 
+class ServerListProxyModel::PrivData
+{
+	public:
+		ServerListHandler* parentHandler;
+		ServerListFilterInfo filterInfo;
+		Qt::SortOrder sortOrder;
+};
+
 ServerListProxyModel::ServerListProxyModel(ServerListHandler* serverListHandler)
 : QSortFilterProxyModel(serverListHandler)
 {
-	parentHandler = serverListHandler;
-
-	pFilterInfo = new ServerListFilterInfo();
+	d = new PrivData();
+	d->parentHandler = serverListHandler;
 }
 
 ServerListProxyModel::~ServerListProxyModel()
 {
-	delete pFilterInfo;
+	delete d;
 }
 
 bool ServerListProxyModel::compareColumnSortData(QVariant& var1, QVariant& var2, int column) const
@@ -79,7 +86,7 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 
 	if (!s->isKnown())
 	{
-		if (pFilterInfo->bShowOnlyValid)
+		if (d->filterInfo.bShowOnlyValid)
 		{
 			return false;
 		}
@@ -92,22 +99,22 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 		//
 		// The ServerListFilterInfo copy constructor and operator= make
 		// sure that all strings are trimmed.
-		if (!pFilterInfo->bShowEmpty && s->isEmpty())
+		if (!d->filterInfo.bShowEmpty && s->isEmpty())
 		{
 			return false;
 		}
 
-		if (!pFilterInfo->bShowFull && s->isFull())
+		if (!d->filterInfo.bShowFull && s->isFull())
 		{
 			return false;
 		}
 
-		if (pFilterInfo->maxPing > 0 && pFilterInfo->maxPing < s->ping())
+		if (d->filterInfo.maxPing > 0 && d->filterInfo.maxPing < s->ping())
 		{
 			return false;
 		}
 
-		const QString& nameFilter = pFilterInfo->serverName;
+		const QString& nameFilter = d->filterInfo.serverName;
 		if (!nameFilter.isEmpty())
 		{
 			if (!s->name().contains(nameFilter, Qt::CaseInsensitive))
@@ -116,21 +123,26 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 			}
 		}
 
-		if (!pFilterInfo->gameModes.isEmpty())
+		if (!d->filterInfo.gameModes.isEmpty())
 		{
-			if (!pFilterInfo->gameModes.contains(s->gameMode().name(), Qt::CaseInsensitive))
+			if (!d->filterInfo.gameModes.contains(s->gameMode().name(), Qt::CaseInsensitive))
 			{
 				return false;
 			}
 		}
 
-		if (!pFilterInfo->wads.isEmpty())
+		if (d->filterInfo.gameModesExcluded.contains(s->gameMode().name(), Qt::CaseInsensitive))
+		{
+			return false;
+		}
+
+		if (!d->filterInfo.wads.isEmpty())
 		{
 			bool bWadFound = false;
 
 			// TODO
 			// This may cause performance drops. Testing is required
-			foreach (const QString& filteredWad, pFilterInfo->wads)
+			foreach (const QString& filteredWad, d->filterInfo.wads)
 			{
 				if (s->anyWadnameContains(filteredWad))
 				{
@@ -145,10 +157,10 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 			}
 		}
 
-		if (!pFilterInfo->wadsExcluded.isEmpty())
+		if (!d->filterInfo.wadsExcluded.isEmpty())
 		{
 			bool bWadFound = false;
-			foreach (const QString& filteredWad, pFilterInfo->wadsExcluded)
+			foreach (const QString& filteredWad, d->filterInfo.wadsExcluded)
 			{
 				if (s->anyWadnameContains(filteredWad))
 				{
@@ -161,10 +173,14 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 	return true;
 }
 
+const ServerListFilterInfo& ServerListProxyModel::filterInfo() const
+{
+	return d->filterInfo;
+}
 
 bool ServerListProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
 {
-	if (!parentHandler->getMainWindow()->isActiveWindow())
+	if (!d->parentHandler->getMainWindow()->isActiveWindow())
 	{
 		return false;
 	}
@@ -178,11 +194,11 @@ bool ServerListProxyModel::lessThan(const QModelIndex& left, const QModelIndex& 
 	{
 		if (s1->isCustom() && !s2->isCustom())
 		{
-			return sortOrder == Qt::AscendingOrder;
+			return d->sortOrder == Qt::AscendingOrder;
 		}
 		else if (!s1->isCustom() && s2->isCustom())
 		{
-			return sortOrder == Qt::DescendingOrder;
+			return d->sortOrder == Qt::DescendingOrder;
 		}
 	}
 
@@ -193,11 +209,11 @@ bool ServerListProxyModel::lessThan(const QModelIndex& left, const QModelIndex& 
 	{
 		if (sg1 > sg2)
 		{
-			return sortOrder == Qt::AscendingOrder;
+			return d->sortOrder == Qt::AscendingOrder;
 		}
 		else
 		{
-			return sortOrder == Qt::DescendingOrder;
+			return d->sortOrder == Qt::DescendingOrder;
 		}
 	}
 
@@ -209,8 +225,7 @@ bool ServerListProxyModel::lessThan(const QModelIndex& left, const QModelIndex& 
 
 void ServerListProxyModel::setFilterInfo(const ServerListFilterInfo& filterInfo)
 {
-	*pFilterInfo = filterInfo;
-
+	d->filterInfo = filterInfo;
 	invalidate();
 }
 
@@ -222,7 +237,12 @@ Server* ServerListProxyModel::serverFromList(const QModelIndex& index) const
 Server* ServerListProxyModel::serverFromList(int row) const
 {
 	ServerListModel* model = static_cast<ServerListModel*>(sourceModel());
-
 	return model->serverFromList(row);
+}
+
+void ServerListProxyModel::sortServers(int column, Qt::SortOrder order)
+{
+	d->sortOrder = order;
+	sort(column, order);
 }
 

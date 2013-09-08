@@ -36,6 +36,7 @@ void ServerListFilterInfo::copy(const ServerListFilterInfo& other)
 	bShowFull = other.bShowFull;
 	bShowOnlyValid = other.bShowOnlyValid;
 	gameModes = other.gameModes;
+	gameModesExcluded = other.gameModesExcluded;
 	maxPing = other.maxPing;
 	serverName = other.serverName.trimmed();
 
@@ -69,6 +70,7 @@ bool ServerListFilterInfo::isFilteringAnything() const
 	}
 
 	if (!gameModes.isEmpty()
+	||  !gameModesExcluded.isEmpty()
 	||  !serverName.isEmpty()
 	||  !wads.isEmpty()
 	||  !wadsExcluded.isEmpty())
@@ -86,7 +88,8 @@ QString ServerListFilterInfo::toString() const
 	ret += QString("bShowEmpty: ") + (bShowEmpty ? "Yes" : "No") + "\n";
 	ret += QString("bShowFull: ") + (bShowFull ? "Yes" : "No") + "\n";
 	ret += QString("bShowOnlyValid: ") + (bShowOnlyValid ? "Yes" : "No") + "\n";
-	ret += QString("GameMode: ") + gameModes.join(",") + "\n";
+	ret += QString("GameModes: ") + gameModes.join(",") + "\n";
+	ret += QString("GameModes Excluded: ") + gameModesExcluded.join(",") + "\n";
 	ret += QString("MaxPing: ") + QString::number(maxPing) + "\n";
 	ret += QString("ServerName: ") + serverName + "\n";
 	ret += QString("WADs: ") + wads.join(",") + "\n";
