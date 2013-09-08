@@ -94,7 +94,7 @@
       <item>
        <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>Game mode:</string>
+         <string>Game modes:</string>
         </property>
        </widget>
       </item>
