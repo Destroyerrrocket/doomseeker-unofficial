@@ -29,6 +29,7 @@ class ServerFilterBuilderMenu::PrivData
 {
 	public:
 		ServerListFilterInfo filter;
+		QString gameMode;
 		unsigned maxPing;
 
 		static void addIfNotContains(QStringList& target, const QString& candidate)
@@ -46,10 +47,16 @@ ServerFilterBuilderMenu::ServerFilterBuilderMenu(const Server& server,
 {
 	d = new PrivData();
 	d->filter = filter;
+	d->gameMode = server.gameMode().name();
 	d->maxPing = server.ping();
 
 	addAction(this, tr("Show only servers with ping lower than %1").arg(d->maxPing),
 		SLOT(applyPingFilter()));
+	if (!d->filter.gameModes.contains(d->gameMode, Qt::CaseInsensitive))
+	{
+		addAction(this, tr("Filter by game mode \"%1\"").arg(d->gameMode),
+			SLOT(applyGameModeFilter()));
+	}
 
 	QMenu* includeWads = new QMenu(tr("Include WAD ..."), this);
 	QMenu* excludeWads = new QMenu(tr("Exclude WAD ..."), this);
@@ -89,6 +96,14 @@ QAction* ServerFilterBuilderMenu::addAction(QMenu* menu, const QString& text, co
 	this->connect(action, SIGNAL(triggered()), slot);
 	menu->addAction(action);
 	return action;
+}
+
+void ServerFilterBuilderMenu::applyGameModeFilter()
+{
+	if (!d->filter.gameModes.contains(d->gameMode, Qt::CaseInsensitive))
+	{
+		d->filter.gameModes << d->gameMode;
+	}
 }
 
 void ServerFilterBuilderMenu::applyPingFilter()
