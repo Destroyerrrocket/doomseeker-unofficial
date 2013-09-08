@@ -49,6 +49,7 @@ class ServerFilterBuilderMenu : public QMenu
 		QAction* mkIncludeWadAction(QMenu* menu, const QString& wadName);
 
 	private slots:
+		void applyGameModeExcludedFilter();
 		void applyGameModeFilter();
 		void applyPingFilter();
 		void excludeWadFromAction();

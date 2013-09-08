@@ -57,6 +57,11 @@ ServerFilterBuilderMenu::ServerFilterBuilderMenu(const Server& server,
 		addAction(this, tr("Filter by game mode \"%1\"").arg(d->gameMode),
 			SLOT(applyGameModeFilter()));
 	}
+	if (!d->filter.gameModesExcluded.contains(d->gameMode, Qt::CaseInsensitive))
+	{
+		addAction(this, tr("Hide game mode \"%1\"").arg(d->gameMode),
+			SLOT(applyGameModeExcludedFilter()));
+	}
 
 	QMenu* includeWads = new QMenu(tr("Include WAD ..."), this);
 	QMenu* excludeWads = new QMenu(tr("Exclude WAD ..."), this);
@@ -96,6 +101,14 @@ QAction* ServerFilterBuilderMenu::addAction(QMenu* menu, const QString& text, co
 	this->connect(action, SIGNAL(triggered()), slot);
 	menu->addAction(action);
 	return action;
+}
+
+void ServerFilterBuilderMenu::applyGameModeExcludedFilter()
+{
+	if (!d->filter.gameModesExcluded.contains(d->gameMode, Qt::CaseInsensitive))
+	{
+		d->filter.gameModesExcluded << d->gameMode;
+	}
 }
 
 void ServerFilterBuilderMenu::applyGameModeFilter()
