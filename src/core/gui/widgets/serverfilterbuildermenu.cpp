@@ -77,6 +77,15 @@ ServerFilterBuilderMenu::~ServerFilterBuilderMenu()
 	delete d;
 }
 
+QAction* ServerFilterBuilderMenu::addAction(QMenu* menu, const QString& text, const char* slot)
+{
+	QAction* action = new QAction(menu);
+	action->setText(text);
+	this->connect(action, SIGNAL(triggered()), slot);
+	menu->addAction(action);
+	return action;
+}
+
 void ServerFilterBuilderMenu::excludeWadFromAction()
 {
 	QAction* action = static_cast<QAction*>(sender());
@@ -94,20 +103,12 @@ void ServerFilterBuilderMenu::includeWadFromAction()
 	PrivData::addIfNotContains(d->filter.wads, action->text());
 }
 
-QAction* ServerFilterBuilderMenu::mkExcludeWadAction(QMenu* parent, const QString& wadName)
+QAction* ServerFilterBuilderMenu::mkExcludeWadAction(QMenu* menu, const QString& wadName)
 {
-	QAction* action = new QAction(parent);
-	action->setText(wadName);
-	this->connect(action, SIGNAL(triggered()), SLOT(excludeWadFromAction()));
-	parent->addAction(action);
-	return action;
+	return addAction(menu, wadName, SLOT(excludeWadFromAction()));
 }
 
-QAction* ServerFilterBuilderMenu::mkIncludeWadAction(QMenu* parent, const QString& wadName)
+QAction* ServerFilterBuilderMenu::mkIncludeWadAction(QMenu* menu, const QString& wadName)
 {
-	QAction* action = new QAction(parent);
-	action->setText(wadName);
-	this->connect(action, SIGNAL(triggered()), SLOT(includeWadFromAction()));
-	parent->addAction(action);
-	return action;
+	return addAction(menu, wadName, SLOT(includeWadFromAction()));
 }

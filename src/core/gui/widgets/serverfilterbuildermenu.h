@@ -44,8 +44,9 @@ class ServerFilterBuilderMenu : public QMenu
 
 		PrivData* d;
 
-		QAction* mkExcludeWadAction(QMenu* parent, const QString& wadName);
-		QAction* mkIncludeWadAction(QMenu* parent, const QString& wadName);
+		QAction* addAction(QMenu* menu, const QString& text, const char* slot);
+		QAction* mkExcludeWadAction(QMenu* menu, const QString& wadName);
+		QAction* mkIncludeWadAction(QMenu* menu, const QString& wadName);
 
 	private slots:
 		void excludeWadFromAction();
