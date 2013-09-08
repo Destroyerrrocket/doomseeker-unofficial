@@ -32,6 +32,8 @@ class ServerListFilterInfo;
 
 class ServerListContextMenu : public QObject
 {
+	Q_OBJECT
+
 	public:
 		enum Result
 		{
