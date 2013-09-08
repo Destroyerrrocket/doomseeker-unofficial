@@ -3812,12 +3812,12 @@ Pozostałe aktualizacje zostały porzucone.</translation>
     <message>
         <location filename="../gui/remoteconsole.cpp" line="84"/>
         <source>RCon Failure</source>
-        <translation>Błąd RCon</translation>
+        <translation>Błąd konsoli zdalnej</translation>
     </message>
     <message>
         <location filename="../gui/remoteconsole.cpp" line="85"/>
         <source>Failed to connect RCon to server %1:%2</source>
-        <translation>Nie można połączyć RCon do serwera %1:%2</translation>
+        <translation>Nie można podłączyć konsoli zdalnej  do serwera %1:%2</translation>
     </message>
     <message>
         <location filename="../gui/remoteconsole.cpp" line="98"/>
