@@ -29,6 +29,7 @@ class ServerFilterBuilderMenu::PrivData
 {
 	public:
 		ServerListFilterInfo filter;
+		unsigned maxPing;
 
 		static void addIfNotContains(QStringList& target, const QString& candidate)
 		{
@@ -45,6 +46,10 @@ ServerFilterBuilderMenu::ServerFilterBuilderMenu(const Server& server,
 {
 	d = new PrivData();
 	d->filter = filter;
+	d->maxPing = server.ping();
+
+	addAction(this, tr("Show only servers with ping lower than %1").arg(d->maxPing),
+		SLOT(applyPingFilter()));
 
 	QMenu* includeWads = new QMenu(tr("Include WAD ..."), this);
 	QMenu* excludeWads = new QMenu(tr("Exclude WAD ..."), this);
@@ -84,6 +89,11 @@ QAction* ServerFilterBuilderMenu::addAction(QMenu* menu, const QString& text, co
 	this->connect(action, SIGNAL(triggered()), slot);
 	menu->addAction(action);
 	return action;
+}
+
+void ServerFilterBuilderMenu::applyPingFilter()
+{
+	d->filter.maxPing = d->maxPing;
 }
 
 void ServerFilterBuilderMenu::excludeWadFromAction()
