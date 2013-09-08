@@ -102,6 +102,20 @@
        <widget class="MultiComboBox" name="cboGameMode"/>
       </item>
       <item>
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Exclude game modes:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="MultiComboBox" name="cboExcludeGameMode">
+        <property name="toolTip">
+         <string>Selected game modes won't appear on the server list.</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QCheckBox" name="cbShowFull">
         <property name="text">
          <string>Show full servers</string>
@@ -176,6 +190,18 @@
    </slots>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>leServerName</tabstop>
+  <tabstop>spinMaxPing</tabstop>
+  <tabstop>leWads</tabstop>
+  <tabstop>leExcludeWads</tabstop>
+  <tabstop>cboGameMode</tabstop>
+  <tabstop>cboExcludeGameMode</tabstop>
+  <tabstop>cbShowFull</tabstop>
+  <tabstop>cbShowEmpty</tabstop>
+  <tabstop>cbShowOnlyValid</tabstop>
+  <tabstop>btnClear</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -185,8 +211,8 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>101</x>
-     <y>363</y>
+     <x>102</x>
+     <y>419</y>
     </hint>
     <hint type="destinationlabel">
      <x>101</x>
@@ -249,8 +275,8 @@
    <slot>emitUpdated()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>72</x>
-     <y>267</y>
+     <x>73</x>
+     <y>318</y>
     </hint>
     <hint type="destinationlabel">
      <x>159</x>
@@ -265,8 +291,8 @@
    <slot>emitUpdated()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>46</x>
-     <y>290</y>
+     <x>47</x>
+     <y>341</y>
     </hint>
     <hint type="destinationlabel">
      <x>133</x>
@@ -281,8 +307,8 @@
    <slot>emitUpdated()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>51</x>
-     <y>309</y>
+     <x>52</x>
+     <y>364</y>
     </hint>
     <hint type="destinationlabel">
      <x>138</x>
@@ -331,6 +357,22 @@
     <hint type="sourcelabel">
      <x>101</x>
      <y>195</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>101</x>
+     <y>218</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cboExcludeGameMode</sender>
+   <signal>valueChanged()</signal>
+   <receiver>ServerFilterDock</receiver>
+   <slot>emitUpdated()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>101</x>
+     <y>285</y>
     </hint>
     <hint type="destinationlabel">
      <x>101</x>

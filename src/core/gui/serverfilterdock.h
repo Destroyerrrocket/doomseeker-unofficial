@@ -76,6 +76,8 @@ class ServerFilterDock : public QDockWidget, private Ui::ServerFilterDock
  		*/
 		QLineEdit* leQuickSearch;
 
+		void addSortedNonDuplicate(QComboBox* comboBox, const QString& text);
+
 	private slots:
 		void clear();
 		void emitUpdated();

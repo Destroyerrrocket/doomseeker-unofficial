@@ -131,6 +131,11 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 			}
 		}
 
+		if (d->filterInfo.gameModesExcluded.contains(s->gameMode().name(), Qt::CaseInsensitive))
+		{
+			return false;
+		}
+
 		if (!d->filterInfo.wads.isEmpty())
 		{
 			bool bWadFound = false;
