@@ -44,15 +44,6 @@ class ServerFilterDock : public QDockWidget, private Ui::ServerFilterDock
  		*/
 		QLineEdit *createQuickSearch();
 
-		/**
-		 * @brief Removes all cached items from Game Modes combo box.
-		 *
-		 * A new empty item will be added by default.
-		 *
-		 * Emits filterUpdated() signal.
-		 */
-		void clearGameModes();
-
 		ServerListFilterInfo filterInfo() const;
 
 	public slots:

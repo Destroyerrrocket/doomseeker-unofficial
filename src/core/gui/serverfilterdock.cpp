@@ -67,13 +67,6 @@ void ServerFilterDock::clear()
 	this->setFilterInfo(ServerListFilterInfo());
 }
 
-void ServerFilterDock::clearGameModes()
-{
-	cboGameMode->clear();
-	cboExcludeGameMode->clear();
-	emit filterUpdated(filterInfo());
-}
-
 QLineEdit *ServerFilterDock::createQuickSearch()
 {
 	if (leQuickSearch == NULL)
