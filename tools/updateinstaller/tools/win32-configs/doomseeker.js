@@ -14,6 +14,7 @@
         "QtCore4.dll",
         "QtGui4.dll",
         "QtNetwork4.dll",
+        "QtXml4.dll",
         "doomseeker.exe",
         "updater.exe",
         "doomseeker.ico",
