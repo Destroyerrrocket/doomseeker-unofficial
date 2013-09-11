@@ -765,7 +765,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CFGIRCAppearance</name>
     <message>
-        <location filename="../gui/configuration/irc/cfgircappearance.h" line="35"/>
+        <location filename="../gui/configuration/irc/cfgircappearance.h" line="37"/>
         <location filename="../../../../visual2008/src/core/ui_cfgircappearance.h" line="164"/>
         <source>Appearance</source>
         <translation>Wygląd</translation>
@@ -4019,47 +4019,51 @@ Pozostałe aktualizacje zostały porzucone.</translation>
 <context>
     <name>ServerListColumns</name>
     <message>
-        <location filename="../gui/models/serverlistcolumn.cpp" line="32"/>
+        <location filename="../gui/models/serverlistcolumn.cpp" line="50"/>
         <source>Port</source>
         <translation>Gra</translation>
     </message>
     <message>
-        <location filename="../gui/models/serverlistcolumn.cpp" line="33"/>
+        <location filename="../gui/models/serverlistcolumn.cpp" line="52"/>
         <source>Players</source>
         <translation>Gracze</translation>
     </message>
     <message>
-        <location filename="../gui/models/serverlistcolumn.cpp" line="34"/>
+        <location filename="../gui/models/serverlistcolumn.cpp" line="54"/>
         <source>Ping</source>
         <translation>Ping</translation>
     </message>
     <message>
-        <location filename="../gui/models/serverlistcolumn.cpp" line="35"/>
+        <location filename="../gui/models/serverlistcolumn.cpp" line="56"/>
         <source>Servername</source>
         <translation>Nazwa serwera</translation>
     </message>
     <message>
-        <location filename="../gui/models/serverlistcolumn.cpp" line="36"/>
+        <location filename="../gui/models/serverlistcolumn.cpp" line="58"/>
         <source>Address</source>
         <translation>Adres</translation>
     </message>
     <message>
-        <location filename="../gui/models/serverlistcolumn.cpp" line="37"/>
+        <location filename="../gui/models/serverlistcolumn.cpp" line="60"/>
         <source>IWAD</source>
         <translation>IWAD</translation>
     </message>
     <message>
-        <location filename="../gui/models/serverlistcolumn.cpp" line="38"/>
-        <source>MAP</source>
-        <translation>MAPA</translation>
+        <location filename="../gui/models/serverlistcolumn.cpp" line="62"/>
+        <source>Map</source>
+        <translation>Mapa</translation>
     </message>
     <message>
-        <location filename="../gui/models/serverlistcolumn.cpp" line="39"/>
+        <source>MAP</source>
+        <translation type="obsolete">MAPA</translation>
+    </message>
+    <message>
+        <location filename="../gui/models/serverlistcolumn.cpp" line="64"/>
         <source>Wads</source>
         <translation>WADy</translation>
     </message>
     <message>
-        <location filename="../gui/models/serverlistcolumn.cpp" line="40"/>
+        <location filename="../gui/models/serverlistcolumn.cpp" line="66"/>
         <source>Gametype</source>
         <translation>Tryb gry</translation>
     </message>
