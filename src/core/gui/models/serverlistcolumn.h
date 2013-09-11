@@ -32,7 +32,6 @@ class ServerListColumn
 {
 	public:
 		int				columnId;
-		QString			name;
 		int				width;
 		bool			bHidden;
 		bool			bResizable;
@@ -61,13 +60,18 @@ namespace ServerListColumnId
 
 class ServerListColumns : public QObject
 {
+	Q_OBJECT
+
 	public:
 		static ServerListColumn 		columns[];
 
+		static QString columnLabel(int columnId);
 		static void						generateColumnHeaderLabels(QStringList& outputLabels);
 		static void						generateListOfCells(QList<QStandardItem*>& outputList);
 
 		static bool						isColumnVital(int columnId);
+
+		ServerListColumns() {}
 };
 
 #endif

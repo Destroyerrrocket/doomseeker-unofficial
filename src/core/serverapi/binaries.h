@@ -34,6 +34,8 @@ class Message;
 
 class MAIN_EXPORT Binaries : public QObject
 {
+	Q_OBJECT
+
 	public:
 		Binaries(const EnginePlugin *plugin);
 

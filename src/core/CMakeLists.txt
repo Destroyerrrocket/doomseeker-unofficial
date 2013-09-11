@@ -95,9 +95,11 @@ qt4_wrap_ui(doomseekerUI
 )
 
 set(DOOMSEEKER_QT_FILES
+	gui/configuration/irc/cfgircappearance.h
 	gui/configuration/irc/cfgircdefinenetworkdialog.h
 	gui/configuration/irc/cfgircnetworks.h
 	gui/configuration/irc/cfgircsounds.h
+	gui/configuration/irc/ircconfigurationdialog.h
 	gui/configuration/cfgappearance.h
 	gui/configuration/cfgautoupdates.h
 	gui/configuration/cfgcustomservers.h
@@ -115,7 +117,9 @@ set(DOOMSEEKER_QT_FILES
 	gui/irc/ircdock.h
 	gui/irc/ircdocktabcontents.h
 	gui/irc/ircnetworkselectionbox.h
+	gui/models/serverlistcolumn.h
 	gui/models/serverlistmodel.h
+	gui/models/serverlistrowhandler.h
 	gui/widgets/colorbutton.h
 	gui/widgets/createserverdialogpage.h
 	gui/widgets/dndfilesystemlistview.h
@@ -137,6 +141,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/createserverdialog.h
 	gui/demomanager.h
 	gui/dockBuddiesList.h
+	gui/ip2cupdatebox.h
 	gui/logdock.h
 	gui/mainwindow.h
 	gui/passwordDlg.h
@@ -145,6 +150,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/serverlist.h
 	gui/standardserverconsole.h
 	gui/wadseekerinterface.h
+	ini/ini.h
 	ip2c/ip2c.h
 	ip2c/ip2cloader.h
 	ip2c/ip2cparser.h
@@ -154,20 +160,28 @@ set(DOOMSEEKER_QT_FILES
 	irc/ircclient.h
 	irc/ircglobalmessages.h
 	irc/ircnetworkadapter.h
+	irc/ircprivadapter.h
 	irc/ircrequestparser.h
 	irc/ircresponseparser.h
 	masterserver/masterclient.h
 	masterserver/masterclientsignalproxy.h
 	masterserver/mastermanager.h
+	serverapi/tooltips/gameinfotip.h
+	serverapi/tooltips/generalinfotip.h
+	serverapi/tooltips/playertable.h
 	refresher/refresher.h
+	serverapi/binaries.h
 	serverapi/message.h
 	serverapi/rconprotocol.h
 	serverapi/server.h
 	updater/autoupdater.h
 	updater/updatechannel.h
+	updater/updaterinfoparser.h
 	updater/updateinstaller.h
+	apprunner.h
 	customservers.h
 	log.h
+	main.h
 	socketsignalsadapter.h
 	connectionhandler.h
 )
@@ -323,20 +337,14 @@ set(SOURCE_FILES
 set(HEADER_FILES
 	${DOOMSEEKER_QT_FILES}
 	configuration/doomseekerconfig.h
-	gui/configuration/irc/cfgircappearance.h
-	gui/configuration/irc/ircconfigurationdialog.h
 	gui/entity/serverlistfilterinfo.h
 	gui/helpers/playersdiagram.h
 	gui/irc/ircsounds.h
-	gui/models/serverlistcolumn.h
 	gui/models/serverlistproxymodel.h
-	gui/models/serverlistrowhandler.h
 	gui/widgets/qtabwidgetext.h
 	gui/commongui.h
-	gui/ip2cupdatebox.h
 	ini/inisection.h
 	ini/inivariable.h
-	ini/ini.h
 	ip2c/entities/ip2ccountryinfo.h
 	irc/configuration/ircconfig.h
 	irc/constants/ircresponsetype.h
@@ -348,7 +356,6 @@ set(HEADER_FILES
 	irc/ircglobal.h
 	irc/ircmessageclass.h
 	irc/ircnetworkconnectioninfo.h
-	irc/ircprivadapter.h
 	irc/ircuserinfo.h
 	irc/ircuserlist.h
 	pathfinder/basefileseeker.h
@@ -357,10 +364,6 @@ set(HEADER_FILES
 	pathfinder/filesearchpath.h
 	plugins/engineplugin.h
 	plugins/pluginloader.h
-	serverapi/tooltips/gameinfotip.h
-	serverapi/tooltips/generalinfotip.h
-	serverapi/tooltips/playertable.h
-	serverapi/binaries.h
 	serverapi/buddyinfo.h
 	serverapi/gamerunner.h
 	serverapi/player.h
@@ -375,9 +378,7 @@ set(HEADER_FILES
 	tests/teststrings.h
 	updater/updatepackage.h
 	updater/updatepackagefilter.h
-	updater/updaterinfoparser.h
 	updater/updaterscriptparser.h
-	apprunner.h
 	commandline.h
 	datapaths.h
 	datastreamoperatorwrapper.h
@@ -387,7 +388,6 @@ set(HEADER_FILES
 	json.h
 	localization.h
 	localizationinfo.h
-	main.h
 	random.h
 	pathfinder.h
 	qtmetapointer.h

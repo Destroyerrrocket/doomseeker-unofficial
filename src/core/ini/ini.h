@@ -66,6 +66,8 @@
  */
 class MAIN_EXPORT Ini : public QObject
 {
+	Q_OBJECT
+
 	public:
 		/**
 		 *	Constructor that will load the file from a drive.

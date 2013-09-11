@@ -28,6 +28,8 @@
 
 class CFGIRCAppearance : public ConfigurationBaseBox, private Ui::CFGIRCAppearance 
 {
+	Q_OBJECT
+
 	public:
 		CFGIRCAppearance(QWidget* parent = NULL);
 		

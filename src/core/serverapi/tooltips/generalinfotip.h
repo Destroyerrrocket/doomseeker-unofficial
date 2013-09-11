@@ -31,6 +31,8 @@ class Server;
 
 class GeneralInfoTip : public QObject
 {
+	Q_OBJECT
+
 	public:
 		GeneralInfoTip(const Server* server);
 

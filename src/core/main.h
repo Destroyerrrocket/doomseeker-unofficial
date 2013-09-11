@@ -41,6 +41,8 @@ class Refresher;
  */
 class MAIN_EXPORT Main : public QObject
 {
+	Q_OBJECT
+
 	public:
 		static const QString		IP2C_FILENAME;
 

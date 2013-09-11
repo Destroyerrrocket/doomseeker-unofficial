@@ -43,6 +43,8 @@ class CommandLineInfo
 
 class MAIN_EXPORT AppRunner : public QObject
 {
+	Q_OBJECT
+
 	public:
 		/**
 		 *	On Windows this removes any wrapping " chars.

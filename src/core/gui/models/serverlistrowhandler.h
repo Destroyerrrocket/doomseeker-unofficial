@@ -33,6 +33,8 @@ class ServerListModel;
 
 class ServerListRowHandler : public QObject
 {
+	Q_OBJECT
+
 	public:
 		/**
 		 *	Servers from the same group will be always kept together

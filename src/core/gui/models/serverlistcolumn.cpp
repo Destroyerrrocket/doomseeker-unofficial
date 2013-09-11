@@ -29,25 +29,59 @@ using namespace ServerListColumnId;
 
 ServerListColumn ServerListColumns::columns[] =
 {
-	{ IDPort, 					tr("Port"),			24,		!HIDDEN, !RESIZEABLE, Qt::AscendingOrder },
-	{ IDPlayers, 				tr("Players"),		60,		!HIDDEN,  RESIZEABLE, Qt::DescendingOrder },
-	{ IDPing, 					tr("Ping"),			50,		!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
-	{ IDServerName, 			tr("Servername"),	200,	!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
-	{ IDAddress, 				tr("Address"),		120,	!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
-	{ IDIwad, 					tr("IWAD"),			90,		!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
-	{ IDMap, 					tr("MAP"),			70,		!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
-	{ IDWads, 					tr("Wads"),			120,	!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
-	{ IDGametype, 				tr("Gametype"),		150,	!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
-	{ IDHiddenGroup, 			"SORT_GROUP",		0,		 HIDDEN, !RESIZEABLE, Qt::DescendingOrder },
-	{ IDHiddenServerPointer, 	"SERVER_POINTER",	0,		 HIDDEN, !RESIZEABLE, Qt::AscendingOrder }
+	{ IDPort, 					24,		!HIDDEN, !RESIZEABLE, Qt::AscendingOrder },
+	{ IDPlayers, 				60,		!HIDDEN,  RESIZEABLE, Qt::DescendingOrder },
+	{ IDPing, 					50,		!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
+	{ IDServerName, 			200,	!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
+	{ IDAddress, 				120,	!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
+	{ IDIwad, 					90,		!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
+	{ IDMap, 					70,		!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
+	{ IDWads, 					120,	!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
+	{ IDGametype, 				150,	!HIDDEN,  RESIZEABLE, Qt::AscendingOrder },
+	{ IDHiddenGroup, 			0,		 HIDDEN, !RESIZEABLE, Qt::DescendingOrder },
+	{ IDHiddenServerPointer, 	0,		 HIDDEN, !RESIZEABLE, Qt::AscendingOrder }
 };
+
+QString ServerListColumns::columnLabel(int columnId)
+{
+	// Column labels need to initialized after the translation is loaded
+	// or they won't get traslated. This piece of code was initialized
+	// statically before.
+	switch (columnId)
+	{
+		case IDPort:
+			return tr("Port");
+		case IDPlayers:
+			return tr("Players");
+		case IDPing:
+			return tr("Ping");
+		case IDServerName:
+			return tr("Servername");
+		case IDAddress:
+			return tr("Address");
+		case IDIwad:
+			return tr("IWAD");
+		case IDMap:
+			return tr("Map");
+		case IDWads:
+			return tr("Wads");
+		case IDGametype:
+			return tr("Gametype");
+		case IDHiddenGroup:
+			return "SORT_GROUP";
+		case IDHiddenServerPointer:
+			return "SERVER_POINTER";
+		default:
+			return "UNKNOWN_COLUMN";
+	}
+}
 
 void ServerListColumns::generateColumnHeaderLabels(QStringList& outputLabels)
 {
 	outputLabels.clear();
 	for (int i = 0; i < NUM_SERVERLIST_COLUMNS; ++i)
 	{
-		outputLabels << columns[i].name;
+		outputLabels << columnLabel(i);
 	}
 }
 

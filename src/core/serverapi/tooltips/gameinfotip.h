@@ -30,6 +30,8 @@ class Server;
 
 class GameInfoTip : public QObject
 {
+	Q_OBJECT
+
 	public:
 		GameInfoTip(const Server* server);
 

@@ -31,6 +31,8 @@ class UpdatePackage;
 
 class UpdaterInfoParser : public QObject
 {
+	Q_OBJECT
+
 	public:
 		UpdaterInfoParser();
 		~UpdaterInfoParser();

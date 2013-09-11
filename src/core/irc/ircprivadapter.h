@@ -31,6 +31,8 @@
  */
 class IRCPrivAdapter : public IRCChatAdapter
 {
+	Q_OBJECT
+
 	public:
 		IRCPrivAdapter(IRCNetworkAdapter* pNetwork, const QString& recipient);
 

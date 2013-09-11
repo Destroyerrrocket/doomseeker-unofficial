@@ -33,6 +33,8 @@ class Server;
 
 class PlayerTable : public QObject
 {
+	Q_OBJECT
+
 	public:
 		PlayerTable(const Server* server);
 

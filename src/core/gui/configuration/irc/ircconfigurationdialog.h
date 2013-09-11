@@ -29,6 +29,8 @@ class CFGIRCNetworks;
 
 class IRCConfigurationDialog : public ConfigurationDialog
 {
+	Q_OBJECT
+
 	public:
 		IRCConfigurationDialog(QWidget* parent = NULL);
 	

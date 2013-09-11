@@ -28,6 +28,8 @@
 
 class IP2CUpdateBox : public QDialog, private Ui::IP2CUpdateBox
 {
+	Q_OBJECT
+
 	public:
 		IP2CUpdateBox(QWidget* parent = NULL);
 		
