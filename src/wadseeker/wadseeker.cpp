@@ -37,8 +37,6 @@ const QString Wadseeker::defaultSites[] =
 {
 	QString("http://doom.dogsoft.net/getwad.php?search=%WADNAME%"),
 	QString("http://wadhost.fathax.com/e107_files/downloads/wadseeker.php?search=%WADNAME%"),
-	QString("http://www.rarefiles.com/download/"),
-	QString("http://wads.coffeenet.org/zips/"),
 	QString("http://static.totaltrash.org/wads/"),
 	QString("http://sickedwick.net/wads/"),
 	QString("http://wads.crisisresponseunit.com/"),
