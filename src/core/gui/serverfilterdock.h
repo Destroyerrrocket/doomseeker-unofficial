@@ -66,6 +66,11 @@ class ServerFilterDock : public QDockWidget, private Ui::ServerFilterDock
  		* update the changing value appropriately.
  		*/
 		QLineEdit* leQuickSearch;
+		/**
+		 * Guard used to prevent multiple signals being generated while loading
+		 * a filter with setFilterInfo.
+		 */
+		bool bDisableUpdate;
 
 		void addSortedNonDuplicate(QComboBox* comboBox, const QString& text);
 

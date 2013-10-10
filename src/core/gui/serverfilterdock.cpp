@@ -29,6 +29,7 @@ ServerFilterDock::ServerFilterDock(QWidget* pParent)
 {
 	setupUi(this);
 	leQuickSearch = NULL;
+	bDisableUpdate = false;
 
 	this->toggleViewAction()->setIcon(QIcon(":/icons/filter.png"));
 
@@ -85,6 +86,9 @@ QLineEdit *ServerFilterDock::createQuickSearch()
 
 void ServerFilterDock::emitUpdated()
 {
+	if(bDisableUpdate)
+		return;
+
 	emit filterUpdated(filterInfo());
 }
 
@@ -107,6 +111,8 @@ ServerListFilterInfo ServerFilterDock::filterInfo() const
 
 void ServerFilterDock::setFilterInfo(const ServerListFilterInfo& filterInfo)
 {
+	bDisableUpdate = true;
+
 	cbShowEmpty->setChecked(filterInfo.bShowEmpty);
 	cbShowFull->setChecked(filterInfo.bShowFull);
 	cbShowOnlyValid->setChecked(filterInfo.bShowOnlyValid);
@@ -133,5 +139,6 @@ void ServerFilterDock::setFilterInfo(const ServerListFilterInfo& filterInfo)
 	leWads->setText(filterInfo.wads.join(",").trimmed());
 	leExcludeWads->setText(filterInfo.wadsExcluded.join(",").trimmed());
 
+	bDisableUpdate = false;
 	emitUpdated();
 }

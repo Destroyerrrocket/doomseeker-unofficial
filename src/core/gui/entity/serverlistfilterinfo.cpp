@@ -93,7 +93,7 @@ QString ServerListFilterInfo::toString() const
 	ret += QString("MaxPing: ") + QString::number(maxPing) + "\n";
 	ret += QString("ServerName: ") + serverName + "\n";
 	ret += QString("WADs: ") + wads.join(",") + "\n";
-	ret += QString("WADs Excluded: ") + wads.join(",") + "\n";
+	ret += QString("WADs Excluded: ") + wadsExcluded.join(",") + "\n";
 
 	return ret;
 }

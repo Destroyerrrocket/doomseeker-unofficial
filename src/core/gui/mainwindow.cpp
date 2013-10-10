@@ -129,9 +129,6 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	serverTableHandler = new ServerListHandler(tableServers, this);
 	connectEntities();
 
-	// Apply server filter which is stored in config.
-	updateServerFilter(gConfig.serverFilter.info);
-
 	// Calculate screen center.
 	int screenWidth = QApplication::desktop()->width();
 	int screenHeight = QApplication::desktop()->height();
