@@ -3954,7 +3954,7 @@ Pozostałe aktualizacje zostały porzucone.</translation>
     <message>
         <location filename="../../../../visual2008/src/core/ui_serverfilterdock.h" line="214"/>
         <source>Set &apos;0&apos; to disable.</source>
-        <translation>Ustaw &apos;0&apos; abywyłączyć.</translation>
+        <translation>Ustaw &apos;0&apos; aby wyłączyć.</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_serverfilterdock.h" line="216"/>
