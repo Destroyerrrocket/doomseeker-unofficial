@@ -422,6 +422,7 @@ void MainWindow::connectEntities()
 	connect(Main::refresher, SIGNAL( block() ), this, SLOT( blockRefreshButtons() ) );
 	connect(Main::refresher, SIGNAL( finishedQueryingMaster(MasterClient*) ), this, SLOT( finishedQueryingMaster(MasterClient*) ) );
 	connect(Main::refresher, SIGNAL( sleepingModeEnter() ), this, SLOT( refreshThreadEndsWork() ) );
+	connect(Main::refresher, SIGNAL( sleepingModeEnter() ), buddiesList, SLOT( scan() ) );
 	connect(Main::refresher, SIGNAL( sleepingModeExit() ), this, SLOT( refreshThreadBeginsWork() ) );
 
 	// Controls
