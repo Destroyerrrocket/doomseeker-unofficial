@@ -3081,22 +3081,25 @@ p, li { white-space: pre-wrap; }
 	    Doomseeker and all plugins in JSON format
 	    to specified file, then closes the program.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>	--version-json [plik] : Zapisuje informacje o wersji
+	    Doomseekera i pluginów w formacie JSON
+	    do podanego pliku, a następnie zamyka program.
+</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="531"/>
         <source>Failed to open file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd otwarcia pliku.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="538"/>
         <source>Dumping version info to file in JSON format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisuję informacje o wersji do pliku w formacie JSON.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="544"/>
         <source>No file specified!</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie podano pliku!</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="577"/>
