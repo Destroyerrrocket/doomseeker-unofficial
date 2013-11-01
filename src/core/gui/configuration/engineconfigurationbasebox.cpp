@@ -34,7 +34,7 @@ EngineConfigurationBaseBox::EngineConfigurationBaseBox(const EnginePlugin *plugi
 	if(enginePlugin->data()->clientOnly)
 		makeClientOnly();
 
-	setTitle(enginePlugin->data()->name + tr(" Configuration"));
+	setTitle(tr("%1 - Configuration").arg(enginePlugin->data()->name));
 	if(!enginePlugin->data()->hasMasterServer)
 		masterAddressBox->hide();
 
