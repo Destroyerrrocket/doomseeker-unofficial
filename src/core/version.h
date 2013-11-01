@@ -34,12 +34,12 @@ class MAIN_EXPORT Version
 {
 	public:
 		/**
-		 *	Returns Mercurial changeset or an empty string if not available.
+		 * Returns Mercurial changeset or an empty string if not available.
 		 */
 		static QString			changeset();
 
 		/**
-		 *	@brief Combines program's name and versionRevision().
+		 * @brief Combines program's name and versionRevision().
 		 */
 		static QString			fullVersionInfo() { return name() + " " + versionRevision(); }
 		static QString			name();
@@ -54,8 +54,9 @@ class MAIN_EXPORT Version
 		static QString			version();
 
 		/**
-		 *	@brief Combines version and revision strings.
-		 *	If revision is not available only version is returned.
+		 * @brief Combines version and revision strings.
+		 *
+		 * If revision is not available only version is returned.
 		 */
 		static QString			versionRevision();
 
