@@ -3,3 +3,4 @@ build/*
 *.orig
 *~
 *.rej
+src/core/svnrevision.h
