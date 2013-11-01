@@ -331,6 +331,7 @@ set(SOURCE_FILES
 	strings.cpp
 	connectionhandler.cpp
 	version.cpp
+	versiondump.cpp
 )
 
 # For the purpose of generation of proper project files.
@@ -396,6 +397,7 @@ set(HEADER_FILES
 	strings.h
 	version.h
 	versiondefs.h
+	versiondump.h
 )
 
 # Translations

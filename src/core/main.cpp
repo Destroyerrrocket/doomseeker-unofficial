@@ -50,6 +50,7 @@
 #include "tests/testruns.h"
 #include "wadseeker/wadseeker.h"
 #include "updater/updateinstaller.h"
+#include "versiondump.h"
 
 const QString		Main::DOOMSEEKER_CONFIG_FILENAME = "doomseeker.cfg";
 const QString		Main::DOOMSEEKER_INI_FILENAME = "doomseeker.ini";
@@ -501,6 +502,9 @@ bool Main::interpretCommandLineParameters()
 			gLog << tr("	--datadir : Sets an explicit search location for IP2C data along with plugins.");
 			gLog << tr("	--rcon [plugin] [ip] : Launch the rcon client for the specified ip.");
 			gLog << tr("	--portable : Starts application in portable mode.");
+			gLog << tr("	--version-json [file] : Prints version info on\n"
+			           "	    Doomseeker and all plugins in JSON format\n"
+			           "	    to specified file, then closes the program.\n");
 			return false;
 		}
 		else if (strcmp(arg, "--update-failed") == 0)
@@ -515,6 +519,31 @@ bool Main::interpretCommandLineParameters()
 		else if (strcmp(arg, "--tests") == 0)
 		{
 			bTestMode = true;
+		}
+		else if (strcmp(arg, "--version-json") == 0)
+		{
+			if (i + 1 < argumentsCount)
+			{
+				QString filename = arguments[i + 1];
+				QFile f(filename);
+				if (!f.open(QIODevice::WriteOnly))
+				{
+					gLog << tr("Failed to open file.");
+					return false;
+				}
+				initDataDirectories();
+				// Plugins generate QPixmaps which need a QApplication active
+				QApplication app(argumentsCount, arguments);
+				enginePlugins = new PluginLoader(MAKEID('E','N','G','N'), dataDirectories, "engines/");
+				gLog << tr("Dumping version info to file in JSON format.");
+				VersionDump::dumpJsonToIO(f);
+				return false;
+			}
+			else
+			{
+				gLog << tr("No file specified!");
+			}
+			return false;
 		}
 	}
 
