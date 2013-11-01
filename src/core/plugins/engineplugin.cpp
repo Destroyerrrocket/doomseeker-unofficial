@@ -84,7 +84,7 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 {
 	d->name = name;
 	d->icon = new QPixmap(icon);
-	d->scheme = d->name.replace(' ', "");
+	d->scheme = QString(d->name).replace(' ', "");
 
 	va_list va;
 	va_start(va, icon);

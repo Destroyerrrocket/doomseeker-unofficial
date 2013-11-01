@@ -65,7 +65,7 @@ QMap<QString, UpdatePackageFilter::PluginInfo> UpdatePackageFilter::collectPlugi
 		PluginInfo pluginInfo;
 		pluginInfo.name = plugin->info->data()->name;
 		pluginInfo.revision = plugin->info->data()->version;
-		QString prefixedName = AutoUpdater::PLUGIN_PREFIX + pluginInfo.name.toLower();
+		QString prefixedName = AutoUpdater::PLUGIN_PREFIX + pluginInfo.name.toLower().replace(" ", "");
 		infos.insert(prefixedName, pluginInfo);
 	}
 	return infos;

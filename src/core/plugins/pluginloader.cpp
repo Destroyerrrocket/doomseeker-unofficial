@@ -219,10 +219,22 @@ const unsigned int PluginLoader::numPlugins() const
 
 int PluginLoader::pluginIndexFromName(const QString& name) const
 {
+	// Why the mangling?
+	// Ever since version 0.8.1b there was a bug that removed all spacebars
+	// from plugin names. This bug is fixed in a commit made on 2013-11-01,
+	// but the fix breaks at least some parts of configuration for plugins
+	// that have spacebars in their names. For example, all server
+	// configurations for Chocolate Doom won't load anymore. To prevent that,
+	// we need to treat spacebars as non-existent here. Simply put:
+	// "Chocolate Doom" == "ChocolateDoom"
+	QString mangledName = QString(name).replace(" ", "");
 	for (int i = 0; i < pluginsList.size(); ++i)
 	{
-		if (name.compare(pluginsList[i]->info->data()->name) == 0)
+		QString mangledCandidate = QString(pluginsList[i]->info->data()->name).replace(" ", "");
+		if (mangledName.compare(mangledCandidate) == 0)
+		{
 			return i;
+		}
 	}
 
 	return -1;
