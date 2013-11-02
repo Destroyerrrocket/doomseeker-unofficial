@@ -469,6 +469,14 @@ int Main::installPendingUpdates()
 
 bool Main::interpretCommandLineParameters()
 {
+	QString firstArg = arguments[0];
+	int lastSlash = qMax<int>(firstArg.lastIndexOf('\\'), firstArg.lastIndexOf('/'));
+	if(lastSlash != -1)
+	{
+		QString workingDir = firstArg.mid(0, lastSlash+1);
+		Main::workingDirectory = Strings::trim(workingDir, "\"");
+	}
+
 	for(int i = 0; i < argumentsCount; ++i)
 	{
 		const char* arg = arguments[i];
@@ -545,14 +553,6 @@ bool Main::interpretCommandLineParameters()
 			}
 			return false;
 		}
-	}
-
-	QString firstArg = arguments[0];
-	int lastSlash = qMax<int>(firstArg.lastIndexOf('\\'), firstArg.lastIndexOf('/'));
-	if(lastSlash != -1)
-	{
-		QString workingDir = firstArg.mid(0, lastSlash+1);
-		Main::workingDirectory = Strings::trim(workingDir, "\"");
 	}
 
 	return true;
