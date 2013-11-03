@@ -1274,10 +1274,19 @@ void MainWindow::showServerJoinCommandLine(const Server* server)
 
 void MainWindow::showUpdaterProcessErrorDialog()
 {
-	QString msg = tr("Update install problem:\n%1\n\nRemaining updates have been discarded.")
-		.arg(UpdateInstaller::processErrorCodeToStr(
-			(UpdateInstaller::ProcessErrorCode)this->updaterInstallerErrorCode));
-	QMessageBox::critical(this, tr("Doomseeker - Auto Update problem"), msg);
+	QString explanation;
+	if (this->updaterInstallerErrorCode != UpdateInstaller::PEC_GeneralFailure)
+	{
+		QString errorCodeExplanation = UpdateInstaller::processErrorCodeToStr(
+			(UpdateInstaller::ProcessErrorCode) this->updaterInstallerErrorCode);
+		explanation = tr("Update installation problem:\n%1").arg(errorCodeExplanation);
+	}
+	else
+	{
+		explanation = tr("Update installation failed.");
+	}
+	QMessageBox::critical(this, tr("Doomseeker - Auto Update problem"),
+		tr("%1\n\nRemaining updates have been discarded.").arg(explanation));
 }
 
 void MainWindow::showUpdateInstallErrorDialog()
