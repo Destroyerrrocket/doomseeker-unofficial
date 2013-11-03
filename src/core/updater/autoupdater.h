@@ -27,6 +27,7 @@
 #include <QNetworkReply>
 #include <QObject>
 #include <QString>
+#include <QUrl>
 
 class UpdateChannel;
 class UpdatePackage;
@@ -127,10 +128,10 @@ class AutoUpdater : public QObject
 		 */
 		static const QString MAIN_PROGRAM_PACKAGE_NAME;
 		/**
-		 * @brief URL to the JSON file which contains information on released
-		 *        builds.
+		 * @brief Base URL to the directory where "update-info*"
+		 *        JSON files are contained.
 		 */
-		static const QString UPDATER_INFO_URL;
+		static const QString UPDATER_INFO_URL_BASE;
 
 		static QString errorCodeToString(ErrorCode code);
 		/**
@@ -257,6 +258,7 @@ class AutoUpdater : public QObject
 		void dumpUpdatePackagesToLog(const QList<UpdatePackage>& packages);
 		void emitOverallProgress(const QString& message);
 		void finishWithError(ErrorCode code);
+		QUrl mkVersionDataFileUrl();
 
 		ErrorCode saveUpdaterScript();
 		void startPackageDownload(const UpdatePackage& pkg);

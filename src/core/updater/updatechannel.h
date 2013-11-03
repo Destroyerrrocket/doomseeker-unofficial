@@ -88,6 +88,11 @@ class UpdateChannel
 		QString name() const;
 		QString translatedDescription() const;
 		QString translatedName() const;
+		/**
+		 * @brief Full name of "update-info*.js" file for given channel
+		 * and platform.
+		 */
+		QString versionDataFileName() const;
 
 	private:
 		UpdateChannel(const QString& name);

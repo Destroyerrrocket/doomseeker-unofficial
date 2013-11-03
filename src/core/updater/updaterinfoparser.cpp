@@ -80,77 +80,70 @@ int UpdaterInfoParser::parse(const QByteArray& json)
 
 int UpdaterInfoParser::parsePackageNode(const QString& packageName, const QVariantMap& map)
 {
-	foreach (const QString& channel, map.keys())
+	UpdatePackage package;
+	package.name = packageName;
+
+	if (map.contains("revision"))
 	{
-		QVariantMap channelInfo = map[channel].toMap();
-		UpdatePackage package;
-		package.name = packageName;
-		package.channel = channel;
-
-		if (channelInfo.contains("revision"))
-		{
-			package.revision = channelInfo["revision"].toLongLong();
-		}
-		else
-		{
-			gLog << tr("Missing update revision info for package %1, channel %2.")
-				.arg(packageName, channel);
-			return AutoUpdater::EC_MissingRevisionInfo;
-		}
-
-		if (channelInfo.contains("display-version"))
-		{
-			package.displayVersion = channelInfo["display-version"].toString();
-		}
-		else
-		{
-			package.displayVersion = QString::number(package.revision);
-		}
-
-		if (channelInfo.contains("display-name"))
-		{
-			package.displayName = channelInfo["display-name"].toString();
-		}
-		else
-		{
-			package.displayName = packageName;
-		}
-
-		if (channelInfo.contains("URL"))
-		{
-			QString strUrl = channelInfo["URL"].toString();
-			package.downloadUrl = strUrl;
-			if (!package.downloadUrl.isValid() || package.downloadUrl.isRelative())
-			{
-				gLog << tr("Invalid update download URL for package %1, channel %2: %3")
-					.arg(packageName, channel, strUrl);
-				return  AutoUpdater::EC_InvalidDownloadUrl;
-			}
-		}
-		else
-		{
-			gLog << tr("Missing update download URL for package %1, channel %2.")
-				.arg(packageName, channel);
-			return AutoUpdater::EC_MissingDownloadUrl;
-		}
-
-		if (channelInfo.contains("URL-script"))
-		{
-			QString strUrl = channelInfo["URL-script"].toString();
-			package.downloadScriptUrl = strUrl;
-			if (!package.downloadScriptUrl.isValid() || package.downloadScriptUrl.isRelative())
-			{
-				gLog << tr("Invalid update script download URL for package %1, channel %2: %3")
-					.arg(packageName, channel, strUrl);
-				return  AutoUpdater::EC_InvalidDownloadUrl;
-			}
-		}
-		else
-		{
-			package.downloadScriptUrl = package.downloadUrl.toString() + ".xml";
-		}
-
-		d->packages << package;
+		package.revision = map["revision"].toLongLong();
 	}
+	else
+	{
+		gLog << tr("Missing update revision info for package %1.").arg(packageName);
+		return AutoUpdater::EC_MissingRevisionInfo;
+	}
+
+	if (map.contains("display-version"))
+	{
+		package.displayVersion = map["display-version"].toString();
+	}
+	else
+	{
+		package.displayVersion = QString::number(package.revision);
+	}
+
+	if (map.contains("display-name"))
+	{
+		package.displayName = map["display-name"].toString();
+	}
+	else
+	{
+		package.displayName = packageName;
+	}
+
+	if (map.contains("URL"))
+	{
+		QString strUrl = map["URL"].toString();
+		package.downloadUrl = strUrl;
+		if (!package.downloadUrl.isValid() || package.downloadUrl.isRelative())
+		{
+			gLog << tr("Invalid update download URL for package %1: %2")
+				.arg(packageName, strUrl);
+			return  AutoUpdater::EC_InvalidDownloadUrl;
+		}
+	}
+	else
+	{
+		gLog << tr("Missing update download URL for package %1.").arg(packageName);
+		return AutoUpdater::EC_MissingDownloadUrl;
+	}
+
+	if (map.contains("URL-script"))
+	{
+		QString strUrl = map["URL-script"].toString();
+		package.downloadScriptUrl = strUrl;
+		if (!package.downloadScriptUrl.isValid() || package.downloadScriptUrl.isRelative())
+		{
+			gLog << tr("Invalid update script download URL for package %1, %2")
+				.arg(packageName, strUrl);
+			return  AutoUpdater::EC_InvalidDownloadUrl;
+		}
+	}
+	else
+	{
+		package.downloadScriptUrl = package.downloadUrl.toString() + ".xml";
+	}
+
+	d->packages << package;
 	return AutoUpdater::EC_Ok;
 }

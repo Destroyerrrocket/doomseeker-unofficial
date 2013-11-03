@@ -62,22 +62,10 @@ class AutoUpdater::PrivData
 };
 //////////////////////////////////////////////////////////////////////////////
 
-#if defined(Q_OS_WIN32)
-#define UPDATE_PLATFORM "win32"
-#elif defined(Q_OS_MAC)
-#define UPDATE_PLATFORM "macosx"
-#else
-#ifdef WITH_AUTOUPDATES
-#error "No platform for updater!"
-#else
-#define UPDATE_PLATFORM "none"
-#endif
-#endif
-
 const QString AutoUpdater::PLUGIN_PREFIX = "p-";
 const QString AutoUpdater::MAIN_PROGRAM_PACKAGE_NAME = "doomseeker";
 // This can be set to different values depending on target platform.
-const QString AutoUpdater::UPDATER_INFO_URL = "http://doomseeker.drdteam.org/updates/update-info_" UPDATE_PLATFORM ".js";
+const QString AutoUpdater::UPDATER_INFO_URL_BASE = "http://doomseeker.drdteam.org/updates/";
 
 AutoUpdater::AutoUpdater(QObject* pParent)
 : QObject(pParent)
@@ -257,6 +245,11 @@ QNetworkReply::NetworkError AutoUpdater::lastNetworkError() const
 	return QNetworkReply::NoError;
 }
 
+QUrl AutoUpdater::mkVersionDataFileUrl()
+{
+	return QUrl(UPDATER_INFO_URL_BASE + d->channel.versionDataFileName());
+}
+
 const QList<UpdatePackage>& AutoUpdater::newUpdatePackages() const
 {
 	return d->newUpdatePackages;
@@ -340,7 +333,6 @@ void AutoUpdater::onUpdaterInfoDownloadFinish()
 	if (parseResult == EC_Ok)
 	{
 		UpdatePackageFilter filter;
-		filter.setChannel(d->channel);
 		filter.setIgnoreRevisions(d->ignoredPackagesRevisions);
 		QList<UpdatePackage> packagesList = filter.filter(parser.packages());
 		if (!packagesList.isEmpty())
@@ -436,7 +428,7 @@ void AutoUpdater::start()
 	d->bIsRunning = true;
 	QNetworkRequest request;
 	request.setRawHeader("User-Agent", Version::userAgent().toAscii());
-	request.setUrl(UPDATER_INFO_URL);
+	request.setUrl(mkVersionDataFileUrl());
 	QNetworkReply* pReply = d->pNam->get(request);
 	// The updater info file should always be very small and
 	// we can safely store it all in memory.

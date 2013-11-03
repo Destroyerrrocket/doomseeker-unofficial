@@ -56,7 +56,6 @@ class UpdatePackageFilter
 		~UpdatePackageFilter();
 
 		QList<UpdatePackage> filter(const QList<UpdatePackage>& packages);
-		void setChannel(const UpdateChannel& channel);
 		void setIgnoreRevisions(const QMap<QString, QList<unsigned long long> >& packagesRevisions);
 		/**
 		 * @brief After filter() flag which says if any package was ignored.

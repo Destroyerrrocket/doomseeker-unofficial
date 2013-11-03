@@ -139,11 +139,10 @@ def dump_update_info(output_path, channel, version_data)
     # update-info parser.
     update_info = {}
     version_data.each do |pkg, pkg_info|
-        update_info[pkg] = {} if !update_info.include?(pkg)
         revision = pkg_info["revision"]
         filename = package_filename(pkg, revision, channel, PLATFORM)
         url = File.join(URL_BASE, filename)
-        update_info[pkg][channel] = {
+        update_info[pkg] = {
             "revision" => revision,
             "display-version" => extract_display_version(pkg_info),
             "display-name" => pkg_info["display-name"],

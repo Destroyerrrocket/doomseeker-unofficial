@@ -24,6 +24,18 @@
 
 #include <cassert>
 
+#if defined(Q_OS_WIN32)
+#define UPDATE_PLATFORM "win32"
+#elif defined(Q_OS_MAC)
+#define UPDATE_PLATFORM "macosx"
+#else
+#ifdef WITH_AUTOUPDATES
+#error "No platform for updater!"
+#else
+#define UPDATE_PLATFORM "none"
+#endif
+#endif
+
 const QString CHANNEL_BETA = "beta";
 const QString CHANNEL_STABLE = "stable";
 
@@ -129,3 +141,7 @@ QString UpdateChannel::translatedName() const
 	}
 }
 
+QString UpdateChannel::versionDataFileName() const
+{
+	return QString("update-info_%1_%2.js").arg(UPDATE_PLATFORM).arg(channelName);
+}

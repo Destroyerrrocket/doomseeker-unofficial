@@ -30,10 +30,6 @@ class UpdatePackage
 {
 	public:
 		/**
-		 * @brief stable, beta, etc.
-		 */
-		QString channel;
-		/**
 		 * @brief Currently installed version, displayed to the user.
 		 *
 		 * This is set after the package information has been filtered.

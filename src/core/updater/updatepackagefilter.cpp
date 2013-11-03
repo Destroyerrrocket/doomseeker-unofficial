@@ -40,7 +40,6 @@ class UpdatePackageFilter::PrivData
 {
 	public:
 		bool bWasAnyUpdatePackageIgnored;
-		UpdateChannel channel;
 		QMap<QString, QList<unsigned long long> > ignoredPackagesRevisions;
 		QMap<QString, PluginInfo> plugins;
 };
@@ -73,30 +72,27 @@ QMap<QString, UpdatePackageFilter::PluginInfo> UpdatePackageFilter::collectPlugi
 
 QList<UpdatePackage> UpdatePackageFilter::filter(const QList<UpdatePackage>& packages)
 {
-	assert(!d->channel.isNull() && "No update channel specified");
 	QList<UpdatePackage> filtered;
 	d->plugins = collectPluginInfo();
 	QList<UpdatePackage> packagesOnIgnoredList;
 	foreach (UpdatePackage pkg, packages)
 	{
-		if (pkg.channel == d->channel.name())
+		if (isDifferentThanInstalled(pkg))
 		{
-			bool bAcceptPackage = isDifferentThanInstalled(pkg);
-			if (bAcceptPackage)
+			if (!isOnIgnoredList(pkg.name, pkg.revision))
 			{
-				if (!isOnIgnoredList(pkg.name, pkg.revision))
-				{
-					filtered << pkg;
-				}
-				else
-				{
-					packagesOnIgnoredList << pkg;
-				}
+				filtered << pkg;
+			}
+			else
+			{
+				packagesOnIgnoredList << pkg;
 			}
 		}
 	}
 	if (!filtered.isEmpty())
 	{
+		// If we do an update of at least one package, we also need to update
+		// all packages that were previously ignored.
 		filtered.append(packagesOnIgnoredList);
 		packagesOnIgnoredList.clear();
 	}
@@ -137,11 +133,6 @@ bool UpdatePackageFilter::isOnIgnoredList(const QString& package,
 {
 	const QList<unsigned long long>& list = d->ignoredPackagesRevisions[package];
 	return list.contains(revision);
-}
-
-void UpdatePackageFilter::setChannel(const UpdateChannel& channel)
-{
-	d->channel = channel;
 }
 
 void UpdatePackageFilter::setIgnoreRevisions(
