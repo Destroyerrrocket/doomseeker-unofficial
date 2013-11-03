@@ -231,172 +231,172 @@ nie może zostać uruchomiony</translation>
 <context>
     <name>AutoUpdater</name>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="171"/>
+        <location filename="../updater/autoupdater.cpp" line="159"/>
         <source>Detected update for package &quot;%1&quot; from version &quot;%2&quot; to version &quot;%3&quot;.</source>
         <translation>Wykryto aktualizację pakietu &quot;%1&quot; z wersji &quot;%2&quot; do wersji &quot;%3&quot;.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="201"/>
+        <location filename="../updater/autoupdater.cpp" line="189"/>
         <source>Ok</source>
         <translation>Ok</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="203"/>
+        <location filename="../updater/autoupdater.cpp" line="191"/>
         <source>Update was aborted.</source>
         <translation>Aktualizacja przerwana.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="133"/>
+        <location filename="../updater/autoupdater.cpp" line="121"/>
         <source>Failed to parse updater XML script: %1, l: %2, c: %3</source>
         <translation>Błąd parsowania skryptu XML aktualizatora: %1, l: %2, k: %3</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="143"/>
+        <location filename="../updater/autoupdater.cpp" line="131"/>
         <source>Failed to modify package name in updater script: %1</source>
         <translation>Błąd podmiany nazwy pakietu w skrypcie aktualizatora: %1</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="205"/>
+        <location filename="../updater/autoupdater.cpp" line="193"/>
         <source>Update channel is not configured. Please check your configuration.</source>
         <translation>Kanał aktualizacji nie jest skonfigurowany. Sprawdź swoją konfigurację.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="207"/>
+        <location filename="../updater/autoupdater.cpp" line="195"/>
         <source>Failed to download updater info file.</source>
         <translation>Pobranie informacji o aktualizacjach nie powiodło się.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="209"/>
+        <location filename="../updater/autoupdater.cpp" line="197"/>
         <source>Cannot parse updater info file.</source>
         <translation>Nie można przetworzyć pliku z danymi o aktualizacjach.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="211"/>
+        <location filename="../updater/autoupdater.cpp" line="199"/>
         <source>Main program node is missing from updater info file.</source>
         <translation>W pliku z danymi o aktualizacjach brakuje węzła programu głównego.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="213"/>
+        <location filename="../updater/autoupdater.cpp" line="201"/>
         <source>Revision info on one of the packages is missing from the updater info file. Check the log for details.</source>
         <translation>Dane o rewizji jednego z pakietów nie istnieją w pliku z danymi o aktualizacjach. Szczegóły w logu.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="216"/>
+        <location filename="../updater/autoupdater.cpp" line="204"/>
         <source>Download URL for one of the packages is missing from the updater info file. Check the log for details.</source>
         <translation>Brak URLa do pobrania jednego z pakietów w pliku z danymi o aktualizacjac. Szczegóły w logu.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="219"/>
+        <location filename="../updater/autoupdater.cpp" line="207"/>
         <source>Download URL for one of the packages is invalid. Check the log for details.</source>
         <translation>URL do pobrania jednego z pakietów jest nieprawidłowy. Szczegóły w logu.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="222"/>
+        <location filename="../updater/autoupdater.cpp" line="210"/>
         <source>Update package download failed. Check the log for details.</source>
         <translation>Nie powiodło się pobranie pakietu aktualizacji. Szczegóły w logu.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="224"/>
+        <location filename="../updater/autoupdater.cpp" line="212"/>
         <source>Failed to create directory for updates packages storage.</source>
         <translation>Nie można stworzyć katalogu do zapisu pakietów aktualizacyjnych.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="226"/>
+        <location filename="../updater/autoupdater.cpp" line="214"/>
         <source>Failed to save update package.</source>
         <translation>Błąd zapisu pakietu aktualizacyjnego.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="228"/>
+        <location filename="../updater/autoupdater.cpp" line="216"/>
         <source>Failed to save update script.</source>
         <translation>Błąd zapisu skryptu aktualizacyjnego.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="353"/>
+        <location filename="../updater/autoupdater.cpp" line="345"/>
         <source>Confirm</source>
         <translation>Zatwierdź</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="450"/>
+        <location filename="../updater/autoupdater.cpp" line="442"/>
         <source>Update info</source>
         <translation>Informacje o aktualizacji</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="472"/>
+        <location filename="../updater/autoupdater.cpp" line="464"/>
         <source>Package: %1</source>
         <translation>Paczka: %1</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="518"/>
+        <location filename="../updater/autoupdater.cpp" line="510"/>
         <source>Invalid download URL for package script &quot;%1&quot;: %2</source>
         <translation>Nieprawidłowy URL do pobrania skryptu dla pakietu &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="523"/>
+        <location filename="../updater/autoupdater.cpp" line="515"/>
         <source>Downloading package script &quot;%1&quot; from URL: %2.</source>
         <translation>Pobieranie skryptu dla pakietu &quot;%1&quot; z URL: %2.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="230"/>
+        <location filename="../updater/autoupdater.cpp" line="218"/>
         <source>Unknown error.</source>
         <translation>Nieznany błąd.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="269"/>
+        <location filename="../updater/autoupdater.cpp" line="262"/>
         <source>Finished downloading package &quot;%1&quot;.</source>
         <translation>Zakończono pobieranie pakietu: &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="275"/>
+        <location filename="../updater/autoupdater.cpp" line="268"/>
         <source>Network error when downloading package &quot;%1&quot;: [%2] %3</source>
         <translation>Błąd sieciowy podczas pobierania pakietu &quot;%1&quot;: [%2] %3</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="298"/>
+        <location filename="../updater/autoupdater.cpp" line="291"/>
         <source>Finished downloading package script &quot;%1&quot;.</source>
         <translation>Zakończono pobieranie skryptu dla pakietu &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="315"/>
+        <location filename="../updater/autoupdater.cpp" line="308"/>
         <source>All packages downloaded. Building updater script.</source>
         <translation>Wszystkie pakiety pobrane. Tworzenie skryptu aktualizacyjnego.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="322"/>
+        <location filename="../updater/autoupdater.cpp" line="315"/>
         <source>Network error when downloading package script &quot;%1&quot;: [%2] %3</source>
         <translation>Błąd sieciowy podczas pobierania skryptu dla pakietu &quot;%1&quot;: [%2] %3</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="352"/>
+        <location filename="../updater/autoupdater.cpp" line="344"/>
         <source>Requesting update confirmation.</source>
         <translation>Żądanie potwierdzenia aktualizacji.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="364"/>
+        <location filename="../updater/autoupdater.cpp" line="356"/>
         <source>No new program updates detected.</source>
         <translation>Nie wykryto nowych aktualizacji dla programu.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="367"/>
+        <location filename="../updater/autoupdater.cpp" line="359"/>
         <source>Some update packages were ignored. To install them select &quot;Check for updates&quot; option from &quot;Help&quot; menu.</source>
         <translation>Niektóre pakiety aktualizacyjne zotały zignorowane. Aby je zainstalować, wybierz &quot;Sprawdź aktualizacje&quot; z menu &quot;Pomoc&quot;.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="432"/>
+        <location filename="../updater/autoupdater.cpp" line="424"/>
         <source>Failed to create directory for updates storage: %1</source>
         <translation>Nie udało się stworzyć katalogu dla zapisu aktualizacji: %1</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="467"/>
+        <location filename="../updater/autoupdater.cpp" line="459"/>
         <source>Invalid download URL for package &quot;%1&quot;: %2</source>
         <translation>Nieprawidłowy URL dla pobrania pakietu &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="473"/>
+        <location filename="../updater/autoupdater.cpp" line="465"/>
         <source>Downloading package &quot;%1&quot; from URL: %2.</source>
         <translation>Pobieranie pakietu &quot;%1&quot; z URL: %2.</translation>
     </message>
     <message>
-        <location filename="../updater/autoupdater.cpp" line="488"/>
+        <location filename="../updater/autoupdater.cpp" line="480"/>
         <source>Couldn&apos;t save file in path: %1</source>
         <translation>Nie można zapisać pliku w ścieżce: %1</translation>
     </message>
@@ -3051,32 +3051,32 @@ p, li { white-space: pre-wrap; }
         <translation>Inicjalizuję konfigurację dla wtyczek.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="500"/>
+        <location filename="../main.cpp" line="508"/>
         <source>Available command line parameters:</source>
         <translation>Dostępne parametry linii komend:</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="501"/>
+        <location filename="../main.cpp" line="509"/>
         <source>	--connect protocol://ip[:port] : Attempts to connect to the specified server.</source>
         <translation>--connect protokół://ip[:port] : Próbuje połączyć się z podanym serwerem.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="502"/>
+        <location filename="../main.cpp" line="510"/>
         <source>	--datadir : Sets an explicit search location for IP2C data along with plugins.</source>
         <translation>--datadir : Ustawia katalog z którego będą łądowane dane IP2C oraz wtyczki.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="503"/>
+        <location filename="../main.cpp" line="511"/>
         <source>	--rcon [plugin] [ip] : Launch the rcon client for the specified ip.</source>
         <translation>--rcon [wtyczka] [ip] : Startuje klienta zdalnej konsoli dla podanego IP.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="504"/>
+        <location filename="../main.cpp" line="512"/>
         <source>	--portable : Starts application in portable mode.</source>
         <translation>--portable : Uruchamia program w trybie przenośnym.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="505"/>
+        <location filename="../main.cpp" line="513"/>
         <source>	--version-json [file] : Prints version info on
 	    Doomseeker and all plugins in JSON format
 	    to specified file, then closes the program.
@@ -3087,17 +3087,17 @@ p, li { white-space: pre-wrap; }
 </translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="531"/>
+        <location filename="../main.cpp" line="539"/>
         <source>Failed to open file.</source>
         <translation>Błąd otwarcia pliku.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="538"/>
+        <location filename="../main.cpp" line="546"/>
         <source>Dumping version info to file in JSON format.</source>
         <translation>Zapisuję informacje o wersji do pliku w formacie JSON.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="544"/>
+        <location filename="../main.cpp" line="552"/>
         <source>No file specified!</source>
         <translation>Nie podano pliku!</translation>
     </message>
@@ -3406,8 +3406,28 @@ Aby naprawić ten błąd można spróbować pobrać Doomseekera jeszcze raz ze s
         <translation>Doomseeker - komenda dołączenia</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1277"/>
-        <location filename="../gui/mainwindow.cpp" line="1285"/>
+        <location filename="../gui/mainwindow.cpp" line="1282"/>
+        <source>Update installation problem:
+%1</source>
+        <translation>Problem podczas instalowania aktualizacji:
+%1</translation>
+    </message>
+    <message>
+        <location filename="../gui/mainwindow.cpp" line="1286"/>
+        <source>Update installation failed.</source>
+        <translation>Instalacja aktualizacji zakończona niepowodzeniem.</translation>
+    </message>
+    <message>
+        <location filename="../gui/mainwindow.cpp" line="1289"/>
+        <source>%1
+
+Remaining updates have been discarded.</source>
+        <translation>%1
+
+Pozostałe aktualizacje zostały porzucone.</translation>
+    </message>
+    <message>
+        <location filename="../gui/mainwindow.cpp" line="1294"/>
         <source>Update install problem:
 %1
 
@@ -3418,13 +3438,13 @@ Remaining updates have been discarded.</source>
 Pozostałe aktualizacje zostały porzucone.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1280"/>
         <location filename="../gui/mainwindow.cpp" line="1288"/>
+        <location filename="../gui/mainwindow.cpp" line="1297"/>
         <source>Doomseeker - Auto Update problem</source>
         <translation>Doomseeker - Problem automatycznej aktualizacji</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1372"/>
+        <location filename="../gui/mainwindow.cpp" line="1381"/>
         <source>Finished refreshing. Servers on the list: %1 (+ %2 custom). Players: %3.</source>
         <translation>Ukończono odświeżanie. Serwery na liście: %1 (+ %2 własne). Graczy: %3.</translation>
     </message>
@@ -4223,22 +4243,22 @@ Pozostałe aktualizacje zostały porzucone.</translation>
 <context>
     <name>UpdateChannelTr</name>
     <message>
-        <location filename="../updater/updatechannel.cpp" line="92"/>
+        <location filename="../updater/updatechannel.cpp" line="104"/>
         <source>Beta versions have newer features but they are untested. Releases on this update channel are more often and are suggested for users who want newest functionalities and minor bug fixes as soon as they become implemented and available.</source>
         <translation>Wersje Beta mają nowsze funkcje, ale nie zostały przetestowane. Nowe wersje na tym kanale pojawiają się częściej i są polecane użytkownikom, którzy chcą nowych funkcji, oraz mniejszych poprawek, tak szybko, jak tylko zostaną one zaimplementowane i udostępnione.</translation>
     </message>
     <message>
-        <location filename="../updater/updatechannel.cpp" line="102"/>
+        <location filename="../updater/updatechannel.cpp" line="114"/>
         <source>Stable versions are released rarely. They cover many changes at once and these changes are more certain to work correctly. Critical bug fixes are also provided through this channel.</source>
         <translation>Wersje stabilne pojawiają się rzadko. Pokrywają one wiele zmian naraz i dają większą pewność, że zmiany te będą funkcjonować prawidłowo. Krytyczne poprawki także są udostępniane na tym kanale.</translation>
     </message>
     <message>
-        <location filename="../updater/updatechannel.cpp" line="120"/>
+        <location filename="../updater/updatechannel.cpp" line="132"/>
         <source>Beta</source>
         <translation>Beta</translation>
     </message>
     <message>
-        <location filename="../updater/updatechannel.cpp" line="124"/>
+        <location filename="../updater/updatechannel.cpp" line="136"/>
         <source>Stable</source>
         <translation>Stabilny</translation>
     </message>
@@ -4325,24 +4345,40 @@ Pozostałe aktualizacje zostały porzucone.</translation>
 <context>
     <name>UpdaterInfoParser</name>
     <message>
-        <location filename="../updater/updaterinfoparser.cpp" line="96"/>
         <source>Missing update revision info for package %1, channel %2.</source>
-        <translation>Brakuje informacji o rewizji dla pakietu %1, kanał %2.</translation>
+        <translation type="obsolete">Brakuje informacji o rewizji dla pakietu %1, kanał %2.</translation>
     </message>
     <message>
-        <location filename="../updater/updaterinfoparser.cpp" line="125"/>
         <source>Invalid update download URL for package %1, channel %2: %3</source>
-        <translation>Nieprawidłowy URL do pobrania pakietu %1, kanał %2: %3</translation>
+        <translation type="obsolete">Nieprawidłowy URL do pobrania pakietu %1, kanał %2: %3</translation>
     </message>
     <message>
-        <location filename="../updater/updaterinfoparser.cpp" line="132"/>
         <source>Missing update download URL for package %1, channel %2.</source>
-        <translation>Brakuje URL do pobrania pakietu %1, kanał %2.</translation>
+        <translation type="obsolete">Brakuje URL do pobrania pakietu %1, kanał %2.</translation>
     </message>
     <message>
-        <location filename="../updater/updaterinfoparser.cpp" line="143"/>
         <source>Invalid update script download URL for package %1, channel %2: %3</source>
-        <translation>Nieprawidłowy URL do pobrania skryptu aktualizacyjnego dla pakietu %1, kanał %2: %3</translation>
+        <translation type="obsolete">Nieprawidłowy URL do pobrania skryptu aktualizacyjnego dla pakietu %1, kanał %2: %3</translation>
+    </message>
+    <message>
+        <location filename="../updater/updaterinfoparser.cpp" line="92"/>
+        <source>Missing update revision info for package %1.</source>
+        <translation>Brakuje informacji o rewizji dla pakietu %1.</translation>
+    </message>
+    <message>
+        <location filename="../updater/updaterinfoparser.cpp" line="120"/>
+        <source>Invalid update download URL for package %1: %2</source>
+        <translation>Nieprawidłowy URL do pobrania pakietu %1: %2</translation>
+    </message>
+    <message>
+        <location filename="../updater/updaterinfoparser.cpp" line="127"/>
+        <source>Missing update download URL for package %1.</source>
+        <translation>Brakuje URL do pobrania pakietu %1.</translation>
+    </message>
+    <message>
+        <location filename="../updater/updaterinfoparser.cpp" line="137"/>
+        <source>Invalid update script download URL for package %1, %2</source>
+        <translation>Nieprawidłowy URL do pobrania skryptu aktualizacyjnego dla pakietu %1: %2</translation>
     </message>
 </context>
 <context>
