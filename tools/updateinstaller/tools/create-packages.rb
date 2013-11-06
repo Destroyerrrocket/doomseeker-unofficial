@@ -384,8 +384,8 @@ end
 
 # xmllint generates more readable formatted XML than REXML, so write unformatted
 # XML first and then format it with xmllint.
-system("xmllint #{output_xml_file} > " \
-    "#{output_dir}/#{package_config.name}#{package_suffix}.zip.xml")
+system("xmllint #{output_xml_file} > \"" \
+    "#{output_dir}/#{package_config.name}#{package_suffix}.zip.xml\"")
 File.delete(output_xml_file)
 
 
