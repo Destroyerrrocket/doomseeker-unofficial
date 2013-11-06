@@ -79,7 +79,7 @@ require 'date'
 # the binary that is about to be packaged.
 PACKAGE_PLATFORM = "macosx"
 PACKAGE_CONFIGS_DIR = "macosx-configs"
-CREATE_PACKAGE_SCRIPT_NAME = "create-packages-macosx.rb"
+CREATE_PACKAGE_SCRIPT_NAME = "create-packages.rb"
 URL_BASE = "http://doomseeker.drdteam.org/updates/"
 
 DISPLAY_NAMES = {

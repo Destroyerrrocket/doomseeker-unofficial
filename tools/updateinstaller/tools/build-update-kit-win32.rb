@@ -70,7 +70,7 @@ require 'tempfile'
 # so that the script can be reused on different platforms.
 PLATFORM = "win32"
 PACKAGE_CONFIGS_DIR = "win32-configs"
-CREATE_PACKAGE_SCRIPT_NAME = "create-packages-win32.rb"
+CREATE_PACKAGE_SCRIPT_NAME = "create-packages.rb"
 URL_BASE = "http://doomseeker.drdteam.org/updates/"
 MAIN_EXECUTABLE_FILENAME = "doomseeker.exe"
 
