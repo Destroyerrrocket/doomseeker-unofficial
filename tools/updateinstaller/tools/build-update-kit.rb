@@ -77,7 +77,7 @@ if OS.windows?
 elsif OS.mac?
     PACKAGE_PLATFORM = "macosx"
     PACKAGE_CONFIGS_DIR = "macosx-configs"
-    MAIN_EXECUTABLE_FILENAME = "doomseeker"
+    MAIN_EXECUTABLE_FILENAME = "Contents/MacOS/doomseeker"
 end
 CREATE_PACKAGE_SCRIPT_NAME = "create-packages.rb"
 URL_BASE = "http://doomseeker.drdteam.org/updates/"
