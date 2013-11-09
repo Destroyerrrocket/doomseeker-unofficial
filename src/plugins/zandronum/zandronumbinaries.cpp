@@ -92,7 +92,11 @@ QString ZandronumBinaries::clientBinary(Message& message) const
 			path += '/';
 		}
 
-		path += server->version();
+		// Strip out extraneous data in the version number.
+		QString testingVersion = server->version();
+		testingVersion = testingVersion.left(testingVersion.indexOf(' '));
+
+		path += testingVersion;
 
 		QFileInfo fi(path);
 		if (!fi.exists())
@@ -100,14 +104,14 @@ QString ZandronumBinaries::clientBinary(Message& message) const
 			error = tr("%1\ndoesn't exist.\nYou need to install new testing binaries.").arg(path);
 			QString messageBoxContent = tr("%1\n\n"
 										   "Do you want Doomseeker to create %2 directory and copy all your .ini files from your base directory?"
-										   ).arg(error, server->version());
+										   ).arg(error, testingVersion);
 
 			if (QMessageBox::question(Main::mainWindow, tr("Doomseeker - missing testing binaries"), messageBoxContent, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 			{
 				// setting->string() should still contain base dir
 				// for testing binaries
 				QDir dir(setting);
-				if (!dir.mkdir(server->version()))
+				if (!dir.mkdir(testingVersion))
 				{
 					error = tr("Unable to create directory:\n%1").arg(path);
 					message = Message::customError(error);
@@ -131,7 +135,7 @@ QString ZandronumBinaries::clientBinary(Message& message) const
 				if(!downloadTestingBinaries(path))
 				{
 					// Show user the prompt to install the binaries.
-					QMessageBox::information(Main::mainWindow, tr("Doomseeker"), tr("Please install now version \"%1\" into:\n%2").arg(server->version(), path));
+					QMessageBox::information(Main::mainWindow, tr("Doomseeker"), tr("Please install now version \"%1\" into:\n%2").arg(testingVersion, path));
 				}
 
 				// Try this method again.
