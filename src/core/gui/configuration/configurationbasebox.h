@@ -102,13 +102,6 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 		 */
 		void			appearanceChanged();
 
-		/**
-		 *	This will change default button (the one that is
-		 *	activated when user hits ENTER) to 'btn'. If NULL is
-		 *	passed as 'btn' argument it will revert to OK button.
-		 */
-		void 			wantChangeDefaultButton(QPushButton* btn);
-
 	protected:
 		bool			bAllowSave;
 		bool			bSettingsAlreadyRead;

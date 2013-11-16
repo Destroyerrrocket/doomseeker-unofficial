@@ -24,6 +24,7 @@
 #include "qtmetapointer.h"
 #include <Qt>
 #include <QDebug>
+#include <QKeyEvent>
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QTreeView>
@@ -86,8 +87,6 @@ QStandardItem* ConfigurationDialog::addConfigurationBox(QStandardItem* rootItem,
 	}
 
 	configBoxesList.push_back(pConfigurationBox);
-	connect(pConfigurationBox, SIGNAL( wantChangeDefaultButton(QPushButton*) ), 
-		SLOT( wantChangeDefaultButton(QPushButton*) ) );
 
 	return pNewItem;
 }
@@ -175,6 +174,22 @@ bool ConfigurationDialog::isConfigurationBoxOnTheList(ConfigurationBaseBox* pCon
 	return false;
 }
 
+void ConfigurationDialog::keyPressEvent(QKeyEvent* e)
+{
+	switch (e->key())
+	{
+		case Qt::Key_Enter:
+		case Qt::Key_Return:
+			// Suppress the dialog being accepted on pressing ENTER key.
+			// Dialog would close even in line edits that had "returnPressed()"
+			// signals connected. That wasn't good.
+			e->ignore();
+			break;
+		default:
+			QDialog::keyPressEvent(e);
+	}
+}
+
 bool ConfigurationDialog::hasItemOnList(QStandardItem* pItem) const
 {
 	if (pItem == NULL)
@@ -251,17 +266,5 @@ void ConfigurationDialog::showConfigurationBox(QWidget* widget)
 	{
 		mainPanel->layout()->addWidget(widget);
 		widget->show();
-	}
-}
-
-void ConfigurationDialog::wantChangeDefaultButton(QPushButton* button)
-{
-	if (button == NULL)
-	{
-		buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
-	}
-	else
-	{
-		button->setDefault(true);
 	}
 }
