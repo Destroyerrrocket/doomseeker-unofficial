@@ -28,6 +28,7 @@
 #include "gui/configuration/cfgfilepaths.h"
 #include "gui/configuration/cfgip2country.h"
 #include "gui/configuration/cfgquery.h"
+#include "gui/configuration/cfgserverpasswords.h"
 #include "gui/configuration/cfgwadseekerappearance.h"
 #include "gui/configuration/cfgwadseekergeneral.h"
 #include "gui/configuration/cfgwadseekeridgames.h"
@@ -126,7 +127,10 @@ void DoomseekerConfigurationDialog::initOptionsList()
 	pConfigBox = new CFGCustomServers(this);
 	addConfigurationBox(NULL, pConfigBox);
 	customServersCfgBox = pConfigBox;
-	
+
+	pConfigBox = new CFGServerPasswords(this);
+	addConfigurationBox(NULL, pConfigBox);
+
 	pConfigBox = new CFGIP2Country(this);
 	addConfigurationBox(NULL, pConfigBox);
 

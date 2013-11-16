@@ -69,6 +69,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/configuration/cfgfilepaths.ui
 	gui/configuration/cfgip2country.ui
 	gui/configuration/cfgquery.ui
+	gui/configuration/cfgserverpasswords.ui
 	gui/configuration/configurationdialog.ui
 	gui/configuration/cfgwadseekerappearance.ui
 	gui/configuration/cfgwadseekergeneral.ui
@@ -107,6 +108,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/configuration/cfgfilepaths.h
 	gui/configuration/cfgip2country.h
 	gui/configuration/cfgquery.h
+	gui/configuration/cfgserverpasswords.h
 	gui/configuration/cfgwadseekerappearance.h
 	gui/configuration/cfgwadseekergeneral.h
 	gui/configuration/cfgwadseekeridgames.h
@@ -209,6 +211,7 @@ set(SOURCE_FILES
 	gui/configuration/cfgfilepaths.cpp
 	gui/configuration/cfgip2country.cpp
 	gui/configuration/cfgquery.cpp
+	gui/configuration/cfgserverpasswords.cpp
 	gui/configuration/cfgwadseekerappearance.cpp
 	gui/configuration/cfgwadseekergeneral.cpp
 	gui/configuration/cfgwadseekeridgames.cpp

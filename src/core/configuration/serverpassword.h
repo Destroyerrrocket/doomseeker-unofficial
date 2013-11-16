@@ -32,6 +32,16 @@ class ServerPassword
 	public:
 		static ServerPassword deserializeQVariant(const QVariant& map);
 
+		/**
+		 * @brief Password is valid if its phrase is not an empty string.
+		 *
+		 * Technically passwords full of whitespace are also valid.
+		 */
+		bool isValid() const
+		{
+			return !d.phrase.isEmpty();
+		}
+
 		const QString& lastGame() const
 		{
 			return d.lastGame;
