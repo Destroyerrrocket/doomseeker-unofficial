@@ -40,7 +40,7 @@ CFGWadseekerSites::CFGWadseekerSites(QWidget* parent)
 	connect(btnUrlAdd, SIGNAL( clicked() ), this, SLOT( btnUrlAddClicked() ) );
 	connect(btnUrlDefault, SIGNAL( clicked() ), this, SLOT( btnUrlDefaultClicked() ) );
 	connect(btnUrlRemove, SIGNAL( clicked() ), this, SLOT( btnUrlRemoveClicked() ) );
-	connect(QApplication::instance(), SIGNAL( focusChanged(QWidget*, QWidget*) ), this, SLOT( focusChanged(QWidget*, QWidget*) ));
+	connect(leUrl, SIGNAL(returnPressed()), this, SLOT(btnUrlAddClicked()));
 }
 
 void CFGWadseekerSites::btnUrlAddClicked()
@@ -73,18 +73,6 @@ void CFGWadseekerSites::btnUrlRemoveClicked()
 	{
 		QModelIndex index = model->indexFromItem(itemList[i]);
 		model->removeRow(index.row());
-	}
-}
-
-void CFGWadseekerSites::focusChanged(QWidget* old, QWidget* now)
-{
-	if (now == leUrl)
-	{
-		emit wantChangeDefaultButton(btnUrlAdd);
-	}
-	else
-	{
-		emit wantChangeDefaultButton(NULL);
 	}
 }
 

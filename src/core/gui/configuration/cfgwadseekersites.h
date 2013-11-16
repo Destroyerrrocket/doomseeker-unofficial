@@ -43,8 +43,6 @@ class CFGWadseekerSites : public ConfigurationBaseBox, private Ui::CFGWadseekerS
 		void			btnUrlDefaultClicked();
 		void			btnUrlRemoveClicked();
 
-		void			focusChanged(QWidget* old, QWidget* now);
-
 	protected:
 		void 			saveSettings();
 		void 			insertUrl(const QUrl& url);

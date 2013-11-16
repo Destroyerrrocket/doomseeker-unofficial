@@ -77,6 +77,7 @@ class ConfigurationDialog : public QDialog, private Ui::ConfigurationDialog
 		bool							canConfigurationBoxBeAddedToList(ConfigurationBaseBox* pConfigurationBox);
 
 		virtual void					doSaveSettings() {};
+		virtual void keyPressEvent(QKeyEvent* e);
 
 		bool							isConfigurationBoxInfoValid(ConfigurationBaseBox* pConfigurationBox);
 		
@@ -97,7 +98,6 @@ class ConfigurationDialog : public QDialog, private Ui::ConfigurationDialog
 	protected slots:
 		void 							btnClicked(QAbstractButton *button);
 		void 							optionListClicked(const QModelIndex&);
-		void 							wantChangeDefaultButton(QPushButton*);
 
 	private:
 		QList<ConfigurationBaseBox*>	configBoxesList;
