@@ -24,47 +24,24 @@
 #include "configuration/passwordscfg.h"
 #include "configuration/serverpassword.h"
 #include "passwordDlg.h"
-#include "plugins/engineplugin.h"
-#include "main.h"
+
+#include <QLineEdit>
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
 {
 	return s1.toLower() < s2.toLower();
 }
 
-PasswordDlg::PasswordDlg(QWidget *parent, bool rcon, bool connection) : QDialog(parent), rcon(rcon)
+PasswordDlg::PasswordDlg(QWidget *parent)
+: QDialog(parent)
 {
 	setupUi(this);
 
-	if(rcon)
-	{
-		btnDelMemorizedConnectPassword->hide();
-		remember->hide();
-		label->setText(tr("Please enter your remote console password."));
-	}
-	else
-	{
-		bool bRememberConnectPassword = gConfig.doomseeker.bRememberConnectPassword;
-		remember->setChecked(bRememberConnectPassword);
-	}
-
-	if(!connection)
-	{
-		connectionBox->hide();
-	}
-	else
-	{
-		// Populate engines box.
-		engines->clear();
-		for(unsigned int i = 0;i < Main::enginePlugins->numPlugins();i++)
-		{
-			const EnginePlugin* info = (*Main::enginePlugins)[i]->info;
-			engines->addItem(info->icon(), info->data()->name, i);
-		}
-	}
-
+	remember->setChecked(gConfig.doomseeker.bRememberConnectPassword);
 	if(gConfig.doomseeker.bHidePasswords)
+	{
 		cboPassword->lineEdit()->setEchoMode(QLineEdit::Password);
+	}
 
 	// Adjust the size and prevent resizing.
 	adjustSize();
@@ -74,13 +51,10 @@ PasswordDlg::PasswordDlg(QWidget *parent, bool rcon, bool connection) : QDialog(
 
 void PasswordDlg::accept()
 {
-	if (!rcon)
+	gConfig.doomseeker.bRememberConnectPassword = remember->isChecked();
+	if (remember->isChecked())
 	{
-		gConfig.doomseeker.bRememberConnectPassword = remember->isChecked();
-		if (remember->isChecked())
-		{
-			gConfig.doomseeker.connectPassword = cboPassword->currentText();
-		}
+		gConfig.doomseeker.connectPassword = cboPassword->currentText();
 	}
 	QDialog::accept();
 }
@@ -119,15 +93,6 @@ void PasswordDlg::removeCurrentConnectPassword()
 		// password wasn't present in the persistence.
 		cboPassword->setFocus();
 	}
-}
-
-const EnginePlugin *PasswordDlg::selectedEngine() const
-{
-	const PluginLoader::Plugin *plugin = (*Main::enginePlugins)[engines->currentIndex()];
-	if(plugin == NULL)
-		return NULL;
-
-	return plugin->info;
 }
 
 void PasswordDlg::setCurrentConnectPassword(const QString& password)

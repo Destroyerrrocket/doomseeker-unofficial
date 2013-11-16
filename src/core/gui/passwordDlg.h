@@ -34,23 +34,16 @@ class PasswordDlg : public QDialog, private Ui::passwordDlg
 	Q_OBJECT
 
 	public:
-		PasswordDlg(QWidget *parent=NULL, bool rcon=false, bool connection=false);
+		PasswordDlg(QWidget *parent=NULL);
 
 		QStringList allConnectPasswords() const;
 		QString connectPassword() const;
-		const EnginePlugin *selectedEngine() const;
-		QString serverAddress() const { return leServerAddress->text(); }
 		void setCurrentConnectPassword(const QString& password);
 		void setPasswords(const QStringList& passwords);
 
 	public slots:
 		void accept();
 		void removeCurrentConnectPassword();
-
-	private:
-		bool rcon;
-
-		void loadPasswords();
 };
 
 #endif /* __PASSWORDDIALOG_H__ */
