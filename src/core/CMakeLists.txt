@@ -194,6 +194,8 @@ qt4_add_resources(doomseekerResources
 
 set(SOURCE_FILES
 	configuration/doomseekerconfig.cpp
+	configuration/passwordscfg.cpp
+	configuration/serverpassword.cpp
 	gui/configuration/irc/cfgircappearance.cpp
 	gui/configuration/irc/cfgircdefinenetworkdialog.cpp
 	gui/configuration/irc/cfgircnetworks.cpp
@@ -338,6 +340,8 @@ set(SOURCE_FILES
 set(HEADER_FILES
 	${DOOMSEEKER_QT_FILES}
 	configuration/doomseekerconfig.h
+	configuration/passwordscfg.h
+	configuration/serverpassword.h
 	gui/entity/serverlistfilterinfo.h
 	gui/helpers/playersdiagram.h
 	gui/irc/ircsounds.h

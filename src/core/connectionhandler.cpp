@@ -28,6 +28,7 @@
 #include "strings.h"
 #include "connectionhandler.h"
 #include "configuration/doomseekerconfig.h"
+#include "configuration/passwordscfg.h"
 #include "gui/passwordDlg.h"
 #include "gui/wadseekerinterface.h"
 #include "gui/configuration/doomseekerconfigurationdialog.h"
@@ -161,13 +162,25 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, const Server* ser
 		QString connectPassword;
 		if(server->isLocked())
 		{
-			PasswordDlg password;//(this);
+			PasswordDlg password;
+			PasswordsCfg cfg;
+			if (gConfig.doomseeker.bRememberConnectPassword)
+			{
+				password.setCurrentConnectPassword(gConfig.doomseeker.connectPassword);
+			}
+			password.setPasswords(cfg.serverPhrases());
 			int ret = password.exec();
-
-			if(ret == QDialog::Accepted)
-				connectPassword = password.connectPassword();
-			else
+			if(ret != QDialog::Accepted)
+			{
 				return false;
+			}
+			connectPassword = password.connectPassword();
+			if (gConfig.doomseeker.bRememberConnectPassword)
+			{
+				cfg.saveServerPhrase(connectPassword, server->name(),
+					server->engineName());
+				gConfig.doomseeker.connectPassword = connectPassword;
+			}
 		}
 
 		GameRunner* gameRunner = server->gameRunner();

@@ -21,9 +21,16 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 #include "configuration/doomseekerconfig.h"
+#include "configuration/passwordscfg.h"
+#include "configuration/serverpassword.h"
 #include "passwordDlg.h"
 #include "plugins/engineplugin.h"
 #include "main.h"
+
+bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
+{
+	return s1.toLower() < s2.toLower();
+}
 
 PasswordDlg::PasswordDlg(QWidget *parent, bool rcon, bool connection) : QDialog(parent), rcon(rcon)
 {
@@ -31,6 +38,7 @@ PasswordDlg::PasswordDlg(QWidget *parent, bool rcon, bool connection) : QDialog(
 
 	if(rcon)
 	{
+		btnDelMemorizedConnectPassword->hide();
 		remember->hide();
 		label->setText(tr("Please enter your remote console password."));
 	}
@@ -38,10 +46,6 @@ PasswordDlg::PasswordDlg(QWidget *parent, bool rcon, bool connection) : QDialog(
 	{
 		bool bRememberConnectPassword = gConfig.doomseeker.bRememberConnectPassword;
 		remember->setChecked(bRememberConnectPassword);
-		if(bRememberConnectPassword)
-		{
-			password->setText(gConfig.doomseeker.connectPassword);
-		}
 	}
 
 	if(!connection)
@@ -60,26 +64,60 @@ PasswordDlg::PasswordDlg(QWidget *parent, bool rcon, bool connection) : QDialog(
 	}
 
 	if(gConfig.doomseeker.bHidePasswords)
-		password->setEchoMode(QLineEdit::Password);
+		cboPassword->lineEdit()->setEchoMode(QLineEdit::Password);
 
 	// Adjust the size and prevent resizing.
 	adjustSize();
 	setMinimumHeight(height());
 	setMaximumHeight(height());
-
-	connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
-PasswordDlg::~PasswordDlg()
+void PasswordDlg::accept()
 {
-	if(rcon)
-		return;
-
-	gConfig.doomseeker.bRememberConnectPassword = remember->isChecked();
-	if(remember->isChecked())
+	if (!rcon)
 	{
-		gConfig.doomseeker.connectPassword = password->text();
+		gConfig.doomseeker.bRememberConnectPassword = remember->isChecked();
+		if (remember->isChecked())
+		{
+			gConfig.doomseeker.connectPassword = cboPassword->currentText();
+		}
+	}
+	QDialog::accept();
+}
+
+QStringList PasswordDlg::allConnectPasswords() const
+{
+	QStringList items;
+	for (int i = 0; i < cboPassword->count(); ++i)
+	{
+		items << cboPassword->itemText(i);
+	}
+	return items;
+}
+
+QString PasswordDlg::connectPassword() const
+{
+	return cboPassword->currentText();
+}
+
+void PasswordDlg::removeCurrentConnectPassword()
+{
+	PasswordsCfg cfg;
+	cfg.removeServerPhrase(cboPassword->currentText());
+
+	int idx = cboPassword->findText(cboPassword->currentText());
+	if (idx >= 0)
+	{
+		// Simply removing current index won't give proper results
+		// if user edits the contents of the combo box.
+		cboPassword->removeItem(idx);
+	}
+	else
+	{
+		cboPassword->clearEditText();
+		// It's intended to have focus change only in case if
+		// password wasn't present in the persistence.
+		cboPassword->setFocus();
 	}
 }
 
@@ -90,4 +128,31 @@ const EnginePlugin *PasswordDlg::selectedEngine() const
 		return NULL;
 
 	return plugin->info;
+}
+
+void PasswordDlg::setCurrentConnectPassword(const QString& password)
+{
+	int idx = cboPassword->findText(password);
+	if (idx >= 0)
+	{
+		cboPassword->setCurrentIndex(idx);
+	}
+	else
+	{
+		cboPassword->insertItem(0, gConfig.doomseeker.connectPassword);
+		cboPassword->setCurrentIndex(0);
+	}
+}
+
+void PasswordDlg::setPasswords(const QStringList& passwords)
+{
+	QStringList passwordsSorted = passwords;
+	qSort(passwordsSorted.begin(), passwordsSorted.end(), caseInsensitiveLessThan);
+	foreach (const QString& pass, passwordsSorted)
+	{
+		if (cboPassword->findText(pass) < 0)
+		{
+			cboPassword->addItem(pass);
+		}
+	}
 }

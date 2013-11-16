@@ -25,6 +25,7 @@
 #define __PASSWORDDIALOG_H__
 
 #include "ui_passwordDlg.h"
+#include <QStringList>
 
 class EnginePlugin;
 
@@ -34,17 +35,22 @@ class PasswordDlg : public QDialog, private Ui::passwordDlg
 
 	public:
 		PasswordDlg(QWidget *parent=NULL, bool rcon=false, bool connection=false);
-		~PasswordDlg();
 
-		QString				connectPassword() const { return password->text(); }
-		const EnginePlugin	*selectedEngine() const;
-		QString				serverAddress() const { return leServerAddress->text(); }
+		QStringList allConnectPasswords() const;
+		QString connectPassword() const;
+		const EnginePlugin *selectedEngine() const;
+		QString serverAddress() const { return leServerAddress->text(); }
+		void setCurrentConnectPassword(const QString& password);
+		void setPasswords(const QStringList& passwords);
 
-	protected:
-		bool	rcon;
+	public slots:
+		void accept();
+		void removeCurrentConnectPassword();
 
-//	protected slots:
-//		void	buttonBoxClicked(QAbstractButton *button);
+	private:
+		bool rcon;
+
+		void loadPasswords();
 };
 
 #endif /* __PASSWORDDIALOG_H__ */
