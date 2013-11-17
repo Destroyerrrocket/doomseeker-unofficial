@@ -28,7 +28,6 @@
 #include "strings.h"
 #include "connectionhandler.h"
 #include "configuration/doomseekerconfig.h"
-#include "configuration/passwordscfg.h"
 #include "gui/passwordDlg.h"
 #include "gui/wadseekerinterface.h"
 #include "gui/configuration/doomseekerconfigurationdialog.h"
