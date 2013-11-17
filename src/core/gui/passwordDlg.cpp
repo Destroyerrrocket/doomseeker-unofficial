@@ -20,7 +20,6 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
-#include "configuration/doomseekerconfig.h"
 #include "configuration/passwordscfg.h"
 #include "configuration/serverpassword.h"
 #include "serverapi/server.h"
@@ -45,12 +44,6 @@ PasswordDlg::PasswordDlg(const Server* server, QWidget *parent)
 	setupUi(this);
 	d = new PrivData();
 	d->server = server;
-
-	remember->setChecked(gConfig.doomseeker.bRememberConnectPassword);
-	if(gConfig.doomseeker.bHidePasswords)
-	{
-		cboPassword->lineEdit()->setEchoMode(QLineEdit::Password);
-	}
 
 	// Adjust the size and prevent resizing.
 	adjustSize();
@@ -83,11 +76,16 @@ QString PasswordDlg::connectPassword() const
 
 void PasswordDlg::loadConfiguration()
 {
-	if (gConfig.doomseeker.bRememberConnectPassword)
-	{
-		setCurrentConnectPassword(gConfig.doomseeker.connectPassword);
-	}
 	PasswordsCfg cfg;
+	if(cfg.isHidingPasswords())
+	{
+		cboPassword->lineEdit()->setEchoMode(QLineEdit::Password);
+	}
+	remember->setChecked(cfg.isRememberingConnectPhrase());
+	if (cfg.isRememberingConnectPhrase())
+	{
+		setCurrentConnectPassword(cfg.lastUsedConnectPhrase());
+	}
 	setPasswords(cfg.serverPhrases());
 }
 
@@ -114,13 +112,13 @@ void PasswordDlg::removeCurrentConnectPassword()
 
 void PasswordDlg::saveConfiguration()
 {
-	gConfig.doomseeker.bRememberConnectPassword = remember->isChecked();
+	PasswordsCfg cfg;
+	cfg.setRememberConnectPhrase(remember->isChecked());
 	if (remember->isChecked())
 	{
-		PasswordsCfg cfg;
 		cfg.saveServerPhrase(connectPassword(), d->server->name(),
 			d->server->engineName());
-		gConfig.doomseeker.connectPassword = connectPassword();
+		cfg.setLastUsedConnectPhrase(connectPassword());
 	}
 }
 
@@ -133,7 +131,7 @@ void PasswordDlg::setCurrentConnectPassword(const QString& password)
 	}
 	else
 	{
-		cboPassword->insertItem(0, gConfig.doomseeker.connectPassword);
+		cboPassword->insertItem(0, password);
 		cboPassword->setCurrentIndex(0);
 	}
 }

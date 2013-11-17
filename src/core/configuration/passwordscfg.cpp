@@ -49,6 +49,21 @@ PasswordsCfg::~PasswordsCfg()
 	delete d;
 }
 
+bool PasswordsCfg::isHidingPasswords() const
+{
+	return gConfig.doomseeker.bHidePasswords;
+}
+
+bool PasswordsCfg::isRememberingConnectPhrase() const
+{
+	return gConfig.doomseeker.bRememberConnectPassword;
+}
+
+QString PasswordsCfg::lastUsedConnectPhrase() const
+{
+	return gConfig.doomseeker.connectPassword;
+}
+
 void PasswordsCfg::removeServerPhrase(const QString& phrase)
 {
 	QList<ServerPassword> allPasswords = serverPasswords();
@@ -78,6 +93,11 @@ void PasswordsCfg::saveServerPhrase(const QString& phrase, const QString& server
 	setServerPasswords(allPasswords);
 }
 
+void PasswordsCfg::setHidePasswords(bool val)
+{
+	gConfig.doomseeker.bHidePasswords = val;
+}
+
 QList<ServerPassword> PasswordsCfg::serverPasswords() const
 {
 	QList<ServerPassword> result;
@@ -97,6 +117,16 @@ QStringList PasswordsCfg::serverPhrases() const
 		result << pass.phrase();
 	}
 	return result;
+}
+
+void PasswordsCfg::setLastUsedConnectPhrase(const QString& val)
+{
+	gConfig.doomseeker.connectPassword = val;
+}
+
+void PasswordsCfg::setRememberConnectPhrase(bool val)
+{
+	gConfig.doomseeker.bRememberConnectPassword = val;
 }
 
 void PasswordsCfg::setServerPasswords(const QList<ServerPassword>& val)
