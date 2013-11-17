@@ -162,25 +162,13 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, const Server* ser
 		QString connectPassword;
 		if(server->isLocked())
 		{
-			PasswordDlg password;
-			PasswordsCfg cfg;
-			if (gConfig.doomseeker.bRememberConnectPassword)
-			{
-				password.setCurrentConnectPassword(gConfig.doomseeker.connectPassword);
-			}
-			password.setPasswords(cfg.serverPhrases());
+			PasswordDlg password(server);
 			int ret = password.exec();
 			if(ret != QDialog::Accepted)
 			{
 				return false;
 			}
 			connectPassword = password.connectPassword();
-			if (gConfig.doomseeker.bRememberConnectPassword)
-			{
-				cfg.saveServerPhrase(connectPassword, server->name(),
-					server->engineName());
-				gConfig.doomseeker.connectPassword = connectPassword;
-			}
 		}
 
 		GameRunner* gameRunner = server->gameRunner();

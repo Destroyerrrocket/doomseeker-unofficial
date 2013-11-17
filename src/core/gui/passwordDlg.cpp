@@ -23,6 +23,7 @@
 #include "configuration/doomseekerconfig.h"
 #include "configuration/passwordscfg.h"
 #include "configuration/serverpassword.h"
+#include "serverapi/server.h"
 #include "passwordDlg.h"
 
 #include <QLineEdit>
@@ -32,10 +33,18 @@ bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
 	return s1.toLower() < s2.toLower();
 }
 
-PasswordDlg::PasswordDlg(QWidget *parent)
+class PasswordDlg::PrivData
+{
+	public:
+		const Server* server;
+};
+
+PasswordDlg::PasswordDlg(const Server* server, QWidget *parent)
 : QDialog(parent)
 {
 	setupUi(this);
+	d = new PrivData();
+	d->server = server;
 
 	remember->setChecked(gConfig.doomseeker.bRememberConnectPassword);
 	if(gConfig.doomseeker.bHidePasswords)
@@ -47,15 +56,13 @@ PasswordDlg::PasswordDlg(QWidget *parent)
 	adjustSize();
 	setMinimumHeight(height());
 	setMaximumHeight(height());
+
+	loadConfiguration();
 }
 
 void PasswordDlg::accept()
 {
-	gConfig.doomseeker.bRememberConnectPassword = remember->isChecked();
-	if (remember->isChecked())
-	{
-		gConfig.doomseeker.connectPassword = cboPassword->currentText();
-	}
+	saveConfiguration();
 	QDialog::accept();
 }
 
@@ -72,6 +79,16 @@ QStringList PasswordDlg::allConnectPasswords() const
 QString PasswordDlg::connectPassword() const
 {
 	return cboPassword->currentText();
+}
+
+void PasswordDlg::loadConfiguration()
+{
+	if (gConfig.doomseeker.bRememberConnectPassword)
+	{
+		setCurrentConnectPassword(gConfig.doomseeker.connectPassword);
+	}
+	PasswordsCfg cfg;
+	setPasswords(cfg.serverPhrases());
 }
 
 void PasswordDlg::removeCurrentConnectPassword()
@@ -92,6 +109,18 @@ void PasswordDlg::removeCurrentConnectPassword()
 		// It's intended to have focus change only in case if
 		// password wasn't present in the persistence.
 		cboPassword->setFocus();
+	}
+}
+
+void PasswordDlg::saveConfiguration()
+{
+	gConfig.doomseeker.bRememberConnectPassword = remember->isChecked();
+	if (remember->isChecked())
+	{
+		PasswordsCfg cfg;
+		cfg.saveServerPhrase(connectPassword(), d->server->name(),
+			d->server->engineName());
+		gConfig.doomseeker.connectPassword = connectPassword();
 	}
 }
 

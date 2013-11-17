@@ -20,7 +20,6 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
-
 #ifndef __PASSWORDDIALOG_H__
 #define __PASSWORDDIALOG_H__
 
@@ -28,21 +27,31 @@
 #include <QStringList>
 
 class EnginePlugin;
+class Server;
 
 class PasswordDlg : public QDialog, private Ui::passwordDlg
 {
 	Q_OBJECT
 
 	public:
-		PasswordDlg(QWidget *parent=NULL);
+		PasswordDlg(const Server* server, QWidget *parent=NULL);
 
-		QStringList allConnectPasswords() const;
 		QString connectPassword() const;
-		void setCurrentConnectPassword(const QString& password);
-		void setPasswords(const QStringList& passwords);
 
 	public slots:
 		void accept();
+
+	private:
+		class PrivData;
+		PrivData* d;
+
+		QStringList allConnectPasswords() const;
+		void loadConfiguration();
+		void saveConfiguration();
+		void setCurrentConnectPassword(const QString& password);
+		void setPasswords(const QStringList& passwords);
+
+	private slots:
 		void removeCurrentConnectPassword();
 };
 
