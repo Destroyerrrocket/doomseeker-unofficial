@@ -316,6 +316,7 @@ void IRCConfig::NetworksDataCfg::loadNetwork(const IniSection& iniSection, IRCNe
 	network.address = (const QString &)iniSection["Address"];
 	network.bAutojoinNetwork = iniSection["bAutojoinNetwork"];
 	network.autojoinChannels = ((const QString &)iniSection["AutojoinChannels"]).split(" ", QString::SkipEmptyParts);
+	network.autojoinCommands = iniSection.value("AutojoinCommands").toStringList();
 	network.description = (const QString &)iniSection["Description"];
 	network.nickservCommand = (const QString &)iniSection["NickservCommand"];
 	network.nickservPassword = (const QString &)iniSection["NickservPassword"];
@@ -348,6 +349,7 @@ void IRCConfig::NetworksDataCfg::saveNetwork(IniSection& iniSection, const IRCNe
 	iniSection["Address"] = network.address;
 	iniSection["bAutojoinNetwork"] = network.bAutojoinNetwork;
 	iniSection["AutojoinChannels"] = network.autojoinChannels.join(" ");
+	iniSection["AutojoinCommands"].setValue(network.autojoinCommands);
 	iniSection["Description"] = network.description;
 	iniSection["NickservCommand"] = network.nickservCommand;
 	iniSection["NickservPassword"] = network.nickservPassword;

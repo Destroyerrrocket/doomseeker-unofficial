@@ -34,14 +34,24 @@ class CFGIRCDefineNetworkDialog : public QDialog, private Ui::CFGIRCDefineNetwor
 		CFGIRCDefineNetworkDialog(const IRCNetworkEntity& initValuesEntity, QWidget* parent = NULL);
 		CFGIRCDefineNetworkDialog(QWidget* parent = NULL);
 
-		IRCNetworkEntity				getNetworkEntity() const;
+		IRCNetworkEntity getNetworkEntity() const;
+
+	public slots:
+		void accept();
 
 	private:
-		void							construct();
-		void							initFrom(const IRCNetworkEntity& networkEntity);
+		bool askToAcceptAnywayWhenCommandsBad(const QStringList& offenders);
+		QStringList autojoinCommands() const;
+		void construct();
+		QStringList formatOffenders(const QStringList& offenders) const;
+		void initFrom(const IRCNetworkEntity& networkEntity);
+		/**
+		 * @brief If validation fails, the offending lines are returned.
+		 */
+		QStringList validateAutojoinCommands() const;
 
 	private slots:
-		void							buttonClicked(QAbstractButton* button);
+		void buttonClicked(QAbstractButton* button);
 
 };
 

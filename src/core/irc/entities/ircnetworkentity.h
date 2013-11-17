@@ -46,6 +46,10 @@ class MAIN_EXPORT IRCNetworkEntity
 		 *	automatically when a connection with this network is established.
 		 */
 		QStringList			autojoinChannels;
+		/**
+		 * @brief List of commands executed on network join.
+		 */
+		QStringList			autojoinCommands;
 
 		/**
 		 *	@brief Join this network when Doomseeker starts up.

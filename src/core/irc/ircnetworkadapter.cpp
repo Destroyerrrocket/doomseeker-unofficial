@@ -302,6 +302,10 @@ void IRCNetworkAdapter::helloClient(const QString& nickname)
 
 		this->sendMessage(messageNickserv);
 	}
+	foreach (const QString& command, network.autojoinCommands)
+	{
+		this->sendMessage(command);
+	}
 
 	foreach (const QString& channel, network.autojoinChannels)
 	{
