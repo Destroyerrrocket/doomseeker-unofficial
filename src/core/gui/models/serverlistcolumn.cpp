@@ -56,7 +56,7 @@ QString ServerListColumns::columnLabel(int columnId)
 		case IDPing:
 			return tr("Ping");
 		case IDServerName:
-			return tr("Servername");
+			return tr("Server Name");
 		case IDAddress:
 			return tr("Address");
 		case IDIwad:
@@ -64,9 +64,9 @@ QString ServerListColumns::columnLabel(int columnId)
 		case IDMap:
 			return tr("Map");
 		case IDWads:
-			return tr("Wads");
+			return tr("WADs");
 		case IDGametype:
-			return tr("Gametype");
+			return tr("Game Type");
 		case IDHiddenGroup:
 			return "SORT_GROUP";
 		case IDHiddenServerPointer:
