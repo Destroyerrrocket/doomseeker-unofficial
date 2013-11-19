@@ -27,10 +27,18 @@
 #include "ini/ini.h"
 #include "ini/inisection.h"
 #include "ini/inivariable.h"
+#include <cassert>
+#include <QDebug>
 
 const QString SECTION_NAME = "Passwords";
 
 const QString SERVER_PASSWORDS_KEY = "ServerPasswords";
+
+// TODO: [Zalewa] We have 3 different ini files, all instantiated
+// in Main and kept in different places. Perhaps we should move them
+// out to a separate singleton? If not, then perhaps we could at least
+// move the instantiation out of Main.
+Ini* PasswordsCfg::ini = NULL;
 
 class PasswordsCfg::PrivData
 {
@@ -40,13 +48,25 @@ class PasswordsCfg::PrivData
 
 PasswordsCfg::PasswordsCfg()
 {
+	assert(ini != NULL && "instantiated PasswordsCfg() without initing ini");
 	d = new PrivData();
-	d->section = gConfig.ini()->section(SECTION_NAME);
+	d->section = ini->section(SECTION_NAME);
 }
 
 PasswordsCfg::~PasswordsCfg()
 {
 	delete d;
+}
+
+void PasswordsCfg::initIni(const QString& path)
+{
+	assert(ini == NULL && "tried to re-init password ini");
+	if (ini != NULL)
+	{
+		qDebug() << "Error: tried to re-init password ini";
+		return;
+	}
+	ini = new Ini(path);
 }
 
 bool PasswordsCfg::isHidingPasswords() const

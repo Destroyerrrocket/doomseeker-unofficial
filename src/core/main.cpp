@@ -32,6 +32,7 @@
 #include <QTimer>
 
 #include "configuration/doomseekerconfig.h"
+#include "configuration/passwordscfg.h"
 #include "connectionhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/remoteconsole.h"
@@ -55,6 +56,7 @@
 const QString		Main::DOOMSEEKER_CONFIG_FILENAME = "doomseeker.cfg";
 const QString		Main::DOOMSEEKER_INI_FILENAME = "doomseeker.ini";
 const QString		Main::DOOMSEEKER_IRC_INI_FILENAME = "doomseeker-irc.ini";
+const QString		Main::DOOMSEEKER_PASSWORD_INI_FILENAME = "doomseeker-password.ini";
 const QString		Main::IP2C_FILENAME = "IpToCountry.csv";
 
 QApplication*		Main::application = NULL;
@@ -187,6 +189,7 @@ int Main::run()
 	initLocalizationsDefinitions();
 	int ip2cReturn = initIP2C();
 
+	initPasswordsConfig();
 	initPluginConfig();
 	initIRCConfig();
 
@@ -441,6 +444,19 @@ void Main::initMainConfig()
 	{
 		gConfig.readFromFile();
 	}
+}
+
+void Main::initPasswordsConfig()
+{
+	gLog << tr("Initializing passwords configuration file.");
+	// Now try to access the configuration stored on drive.
+	QString configDirPath = dataPaths->programsDataDirectoryPath();
+	if (configDirPath.isEmpty())
+	{
+		return;
+	}
+	QString filePath = configDirPath + "/" + DOOMSEEKER_PASSWORD_INI_FILENAME;
+	PasswordsCfg::initIni(filePath);
 }
 
 void Main::initPluginConfig()

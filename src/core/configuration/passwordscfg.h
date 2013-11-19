@@ -27,11 +27,14 @@
 #include <QString>
 #include <QStringList>
 
+class Ini;
 class ServerPassword;
 
 class PasswordsCfg
 {
 	public:
+		static void initIni(const QString& path);
+
 		PasswordsCfg();
 		~PasswordsCfg();
 
@@ -49,6 +52,8 @@ class PasswordsCfg
 		void setServerPasswords(const QList<ServerPassword>& val);
 
 	private:
+		static Ini* ini;
+
 		class PrivData;
 		PrivData* d;
 };
