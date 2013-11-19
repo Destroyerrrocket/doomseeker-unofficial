@@ -162,7 +162,14 @@ QString ServerListHandler::createIwadToolTip(const Server* server)
 	{
 		static const QString FORMAT_TEMPLATE = "<font color=\"%1\">%2</font>";
 
+		Message binMessage;
+		Binaries *bin = server->binaries();
+		// Use offline binary so that testing builds are not triggered.
+		QString binPath = bin->offlineGameBinary(binMessage);
+		delete bin;
+
 		PathFinder pathFinder;
+		pathFinder.addPrioritySearchDir(binPath);
 		QString path = pathFinder.findFile(server->iwadName());
 
 		if (path.isEmpty())
@@ -246,7 +253,8 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 	{
 		Message binMessage;
 		Binaries *bin = server->binaries();
-		QString binPath = bin->clientBinary(binMessage);
+		// Use offline binary so that testing builds are not triggered.
+		QString binPath = bin->offlineGameBinary(binMessage);
 		delete bin;
 
 		QStringList pwadsFormatted;

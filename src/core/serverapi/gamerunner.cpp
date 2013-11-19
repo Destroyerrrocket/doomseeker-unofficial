@@ -175,6 +175,7 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 
 	executablePath = clientBin;
 
+	QString offlineGameBinary = binaries->offlineGameBinary(message);
 	QString clientWorkingDirPath = binaries->clientWorkingDirectory(message);
 	applicationDir = clientWorkingDirPath;
 
@@ -194,6 +195,10 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 	}
 
 	PathFinder pathFinder;
+	// Add the offline game directory so results are more consistent
+	// addPrioritySearchDir prepends to the list so we'll want to add the real
+	// priority directory second.
+	pathFinder.addPrioritySearchDir(offlineGameBinary);
 	pathFinder.addPrioritySearchDir(clientBin);
 
 	QStringList missingPwads;
