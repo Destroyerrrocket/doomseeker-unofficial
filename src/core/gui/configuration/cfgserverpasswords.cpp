@@ -89,7 +89,7 @@ void CFGServerPasswords::addServerPasswordToTable(const ServerPassword& password
 	tablePasswords->setItem(rowIndex, COL_PASSWORD, phraseItem);
 
 	tablePasswords->setItem(rowIndex, COL_LAST_GAME, new QTableWidgetItem(password.lastGame()));
-	tablePasswords->setItem(rowIndex, COL_LAST_SERVER, new QTableWidgetItem(password.lastServer()));
+	tablePasswords->setItem(rowIndex, COL_LAST_SERVER, new QTableWidgetItem(password.lastServerName()));
 
 	QTableWidgetItem* timeItem = new QTableWidgetItem(
 		password.lastTime().toString("yyyy-MM-dd hh:mm:ss"));

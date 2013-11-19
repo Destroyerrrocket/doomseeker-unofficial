@@ -27,6 +27,7 @@
 #include "ini/ini.h"
 #include "ini/inisection.h"
 #include "ini/inivariable.h"
+#include "serverapi/server.h"
 #include <cassert>
 #include <QDebug>
 
@@ -99,16 +100,37 @@ void PasswordsCfg::removeServerPhrase(const QString& phrase)
 	setServerPasswords(allPasswords);
 }
 
-void PasswordsCfg::saveServerPhrase(const QString& phrase, const QString& serverName,
-	const QString& engineName)
+void PasswordsCfg::saveServerPhrase(const QString& phrase, const Server* server)
 {
+	ServerPassword::Server serverInfo;
+	if (server != NULL)
+	{
+		serverInfo.setGame(server->engineName());
+		serverInfo.setAddress(server->address().toString());
+		serverInfo.setPort(server->port());
+		serverInfo.setName(server->name());
+		serverInfo.setTime(QDateTime::currentDateTime());
+	}
+	QList<ServerPassword> allPasswords = serverPasswords();
+	QMutableListIterator<ServerPassword> it(allPasswords);
+	while (it.hasNext())
+	{
+		// Try to add server to existing password.
+		ServerPassword& existingPass = it.next();
+		if (existingPass.phrase() == phrase)
+		{
+			if (serverInfo.isValid())
+			{
+				existingPass.addServer(serverInfo);
+			}
+			setServerPasswords(allPasswords);
+			return;
+		}
+	}
+	// Add new.
 	ServerPassword pass;
 	pass.setPhrase(phrase);
-	pass.setLastGame(engineName);
-	pass.setLastServer(serverName);
-	pass.setLastTime(QDateTime::currentDateTime());
-	removeServerPhrase(phrase);
-	QList<ServerPassword> allPasswords = serverPasswords();
+	pass.addServer(serverInfo);
 	allPasswords << pass;
 	setServerPasswords(allPasswords);
 }

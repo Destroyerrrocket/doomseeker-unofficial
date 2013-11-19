@@ -116,8 +116,7 @@ void PasswordDlg::saveConfiguration()
 	cfg.setRememberConnectPhrase(remember->isChecked());
 	if (remember->isChecked())
 	{
-		cfg.saveServerPhrase(connectPassword(), d->server->name(),
-			d->server->engineName());
+		cfg.saveServerPhrase(connectPassword(), d->server);
 		cfg.setLastUsedConnectPhrase(connectPassword());
 	}
 }

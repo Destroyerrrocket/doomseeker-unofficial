@@ -28,6 +28,7 @@
 #include <QStringList>
 
 class Ini;
+class Server;
 class ServerPassword;
 
 class PasswordsCfg
@@ -42,8 +43,7 @@ class PasswordsCfg
 		bool isRememberingConnectPhrase() const;
 		QString lastUsedConnectPhrase() const;
 		void removeServerPhrase(const QString& phrase);
-		void saveServerPhrase(const QString& phrase, const QString& serverName,
-			const QString& engineName);
+		void saveServerPhrase(const QString& phrase, const Server* server);
 		QList<ServerPassword> serverPasswords() const;
 		QStringList serverPhrases() const;
 		void setHidePasswords(bool val);
