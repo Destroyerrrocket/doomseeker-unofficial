@@ -52,12 +52,19 @@ class CFGServerPasswords : public ConfigurationBaseBox, private Ui::CFGServerPas
 		int findPassphraseInTable(const QString& phrase);
 		void hidePasswords();
 		bool isPassphraseInTable(const QString& phrase);
+		void removeSelected(QTableWidget* table);
 		void revealPasswords();
 		ServerPassword serverPasswordFromRow(int row);
+		void setPasswordInRow(int row, const ServerPassword& password);
+		void setServersInTable(const ServerPassword& password);
+		void updatePassword(const ServerPassword& password);
 
 	private slots:
 		void addPasswordFromLineEdit();
+		void onPasswordTableCellChange(int currentRow, int currentColumn,
+			int previousRow, int previousColumn);
 		void removeSelectedPasswords();
+		void removeSelectedServers();
 		void toggleRevealHide();
 };
 

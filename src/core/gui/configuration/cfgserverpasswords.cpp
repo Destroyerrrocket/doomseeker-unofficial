@@ -26,10 +26,15 @@
 #include "configuration/serverpassword.h"
 #include <QMap>
 
-const int COL_PASSWORD = 0;
-const int COL_LAST_GAME = 1;
-const int COL_LAST_SERVER = 2;
-const int COL_LAST_TIME = 3;
+const int COL_PASS_PASSWORD = 0;
+const int COL_PASS_LAST_GAME = 1;
+const int COL_PASS_LAST_SERVER = 2;
+const int COL_PASS_LAST_TIME = 3;
+
+const int COL_SERV_GAME = 0;
+const int COL_SERV_NAME = 1;
+const int COL_SERV_ADDRESS = 2;
+const int COL_SERV_LAST_TIME = 3;
 
 const QString HIDDEN_PASS = "***";
 
@@ -47,7 +52,8 @@ CFGServerPasswords::CFGServerPasswords(QWidget* parent)
 	d = new PrivData();
 	d->bHidingPasswordsMode = true;
 	hidePasswords();
-	tablePasswords->sortItems(COL_LAST_TIME, Qt::DescendingOrder);
+	tablePasswords->sortItems(COL_PASS_LAST_TIME, Qt::DescendingOrder);
+	tableServers->sortItems(COL_SERV_GAME, Qt::AscendingOrder);
 }
 
 CFGServerPasswords::~CFGServerPasswords()
@@ -71,34 +77,7 @@ void CFGServerPasswords::addServerPasswordToTable(const ServerPassword& password
 {
 	int rowIndex = tablePasswords->rowCount();
 	tablePasswords->insertRow(rowIndex);
-
-	QString phrase;
-	if (d->bHidingPasswordsMode)
-	{
-		phrase = HIDDEN_PASS;
-	}
-	else
-	{
-		phrase = password.phrase();
-	}
-	// Disable sorting or bad things may happen.
-	tablePasswords->setSortingEnabled(false);
-
-	QTableWidgetItem* phraseItem = new QTableWidgetItem(phrase);
-	phraseItem->setData(Qt::UserRole, password.serializeQVariant());
-	tablePasswords->setItem(rowIndex, COL_PASSWORD, phraseItem);
-
-	tablePasswords->setItem(rowIndex, COL_LAST_GAME, new QTableWidgetItem(password.lastGame()));
-	tablePasswords->setItem(rowIndex, COL_LAST_SERVER, new QTableWidgetItem(password.lastServerName()));
-
-	QTableWidgetItem* timeItem = new QTableWidgetItem(
-		password.lastTime().toString("yyyy-MM-dd hh:mm:ss"));
-	// Maintain proper date sorting.
-	timeItem->setData(Qt::EditRole, password.lastTime());
-	tablePasswords->setItem(rowIndex, COL_LAST_TIME, timeItem);
-
-	// Re-enable sorting.
-	tablePasswords->setSortingEnabled(true);
+	setPasswordInRow(rowIndex, password);
 }
 
 int CFGServerPasswords::findPassphraseInTable(const QString& phrase)
@@ -121,7 +100,7 @@ void CFGServerPasswords::hidePasswords()
 	lePassword->setEchoMode(QLineEdit::Password);
 	for (int i = 0; i < tablePasswords->rowCount(); ++i)
 	{
-		QTableWidgetItem* item = tablePasswords->item(i, COL_PASSWORD);
+		QTableWidgetItem* item = tablePasswords->item(i, COL_PASS_PASSWORD);
 		item->setText(HIDDEN_PASS);
 	}
 }
@@ -129,6 +108,17 @@ void CFGServerPasswords::hidePasswords()
 bool CFGServerPasswords::isPassphraseInTable(const QString& phrase)
 {
 	return findPassphraseInTable(phrase) >= 0;
+}
+
+void CFGServerPasswords::onPasswordTableCellChange(int currentRow, int currentColumn,
+	int previousRow, int previousColumn)
+{
+	if (currentRow != previousRow)
+	{
+		// Setting an invalid password will clear the table which is
+		// what we want.
+		setServersInTable(serverPasswordFromRow(currentRow));
+	}
 }
 
 void CFGServerPasswords::saveSettings()
@@ -149,7 +139,71 @@ ServerPassword CFGServerPasswords::serverPasswordFromRow(int row)
 		return ServerPassword();
 	}
 	return ServerPassword::deserializeQVariant(
-		tablePasswords->item(row, COL_PASSWORD)->data(Qt::UserRole));
+		tablePasswords->item(row, COL_PASS_PASSWORD)->data(Qt::UserRole));
+}
+
+void CFGServerPasswords::setPasswordInRow(int row, const ServerPassword& password)
+{
+	// Disable sorting or bad things may happen.
+	bool wasSortingEnabled = tablePasswords->isSortingEnabled();
+	tablePasswords->setSortingEnabled(false);
+
+	QString phrase;
+	if (d->bHidingPasswordsMode)
+	{
+		phrase = HIDDEN_PASS;
+	}
+	else
+	{
+		phrase = password.phrase();
+	}
+
+	QTableWidgetItem* phraseItem = new QTableWidgetItem(phrase);
+	phraseItem->setData(Qt::UserRole, password.serializeQVariant());
+	tablePasswords->setItem(row, COL_PASS_PASSWORD, phraseItem);
+
+	tablePasswords->setItem(row, COL_PASS_LAST_GAME, new QTableWidgetItem(password.lastGame()));
+	tablePasswords->setItem(row, COL_PASS_LAST_SERVER, new QTableWidgetItem(password.lastServerName()));
+
+	QTableWidgetItem* timeItem = new QTableWidgetItem(
+		password.lastTime().toString("yyyy-MM-dd hh:mm:ss"));
+	// Maintain proper date sorting.
+	timeItem->setData(Qt::EditRole, password.lastTime());
+	tablePasswords->setItem(row, COL_PASS_LAST_TIME, timeItem);
+
+	// Re-enable sorting if was enabled before.
+	tablePasswords->setSortingEnabled(wasSortingEnabled);
+}
+
+void CFGServerPasswords::setServersInTable(const ServerPassword& password)
+{
+	while (tableServers->rowCount() > 0)
+	{
+		tableServers->removeRow(0);
+	}
+	// Disable sorting or bad things may happen.
+	tableServers->setSortingEnabled(false);
+	foreach (const ServerPassword::Server& server, password.servers())
+	{
+		int rowIndex = tableServers->rowCount();
+		tableServers->insertRow(rowIndex);
+
+		QTableWidgetItem* gameItem = new QTableWidgetItem(server.game());
+		gameItem->setData(Qt::UserRole, server.serializeQVariant());
+		tableServers->setItem(rowIndex, COL_SERV_GAME, gameItem);
+
+		tableServers->setItem(rowIndex, COL_SERV_NAME, new QTableWidgetItem(server.name()));
+		QString address = QString("%1:%2").arg(server.address()).arg(server.port());
+		tableServers->setItem(rowIndex, COL_SERV_ADDRESS, new QTableWidgetItem(address));
+
+		QTableWidgetItem* timeItem = new QTableWidgetItem(
+			server.time().toString("yyyy-MM-dd hh:mm:ss"));
+		// Maintain proper date sorting.
+		timeItem->setData(Qt::EditRole, server.time());
+		tableServers->setItem(rowIndex, COL_SERV_LAST_TIME, timeItem);
+	}
+	// Re-enable sorting.
+	tableServers->setSortingEnabled(true);
 }
 
 void CFGServerPasswords::readSettings()
@@ -161,24 +215,48 @@ void CFGServerPasswords::readSettings()
 	}
 }
 
-void CFGServerPasswords::removeSelectedPasswords()
+void CFGServerPasswords::removeSelected(QTableWidget* table)
 {
 	// Rows can't be just deleted with items from selectedItems()
 	// because the program will crash. This solution is so stupid
 	// that there must be another one, but nobody knows...
 	QMap<int, QTableWidgetItem*> uniqueRowsItems;
-	foreach (QTableWidgetItem* item, tablePasswords->selectedItems())
+	foreach (QTableWidgetItem* item, table->selectedItems())
 	{
 		uniqueRowsItems.insert(item->row(), item);
 	}
 	foreach (QTableWidgetItem* item, uniqueRowsItems.values())
 	{
-		int row = tablePasswords->row(item);
+		int row = table->row(item);
 		if (row >= 0)
 		{
-			tablePasswords->removeRow(row);
+			table->removeRow(row);
 		}
 	}
+}
+
+void CFGServerPasswords::removeSelectedPasswords()
+{
+	removeSelected(tablePasswords);
+}
+
+void CFGServerPasswords::removeSelectedServers()
+{
+	QList<ServerPassword::Server> servers;
+	foreach (QTableWidgetItem* item, tableServers->selectedItems())
+	{
+		if (item->column() == COL_SERV_GAME)
+		{
+			servers << ServerPassword::Server::deserializeQVariant(item->data(Qt::UserRole));
+		}
+	}
+	ServerPassword currentPassword = serverPasswordFromRow(tablePasswords->currentRow());
+	foreach (const ServerPassword::Server& server, servers)
+	{
+		currentPassword.removeServer(server.game(), server.address(), server.port());
+	}
+	updatePassword(currentPassword);
+	removeSelected(tableServers);
 }
 
 void CFGServerPasswords::revealPasswords()
@@ -188,7 +266,7 @@ void CFGServerPasswords::revealPasswords()
 	d->bHidingPasswordsMode = false;
 	for (int i = 0; i < tablePasswords->rowCount(); ++i)
 	{
-		QTableWidgetItem* item = tablePasswords->item(i, COL_PASSWORD);
+		QTableWidgetItem* item = tablePasswords->item(i, COL_PASS_PASSWORD);
 		item->setText(serverPasswordFromRow(i).phrase());
 	}
 }
@@ -202,5 +280,18 @@ void CFGServerPasswords::toggleRevealHide()
 	else
 	{
 		hidePasswords();
+	}
+}
+
+void CFGServerPasswords::updatePassword(const ServerPassword& password)
+{
+	int row = findPassphraseInTable(password.phrase());
+	if (row >= 0)
+	{
+		setPasswordInRow(row, password);
+	}
+	else
+	{
+		addServerPasswordToTable(password);
 	}
 }
