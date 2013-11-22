@@ -102,6 +102,7 @@ void CFGServerPasswords::hidePasswords()
 	{
 		QTableWidgetItem* item = tablePasswords->item(i, COL_PASS_PASSWORD);
 		item->setText(HIDDEN_PASS);
+		item->setToolTip(HIDDEN_PASS);
 	}
 }
 
@@ -158,14 +159,14 @@ void CFGServerPasswords::setPasswordInRow(int row, const ServerPassword& passwor
 		phrase = password.phrase();
 	}
 
-	QTableWidgetItem* phraseItem = new QTableWidgetItem(phrase);
+	QTableWidgetItem* phraseItem = toolTipItem(phrase);
 	phraseItem->setData(Qt::UserRole, password.serializeQVariant());
 	tablePasswords->setItem(row, COL_PASS_PASSWORD, phraseItem);
 
-	tablePasswords->setItem(row, COL_PASS_LAST_GAME, new QTableWidgetItem(password.lastGame()));
-	tablePasswords->setItem(row, COL_PASS_LAST_SERVER, new QTableWidgetItem(password.lastServerName()));
+	tablePasswords->setItem(row, COL_PASS_LAST_GAME, toolTipItem(password.lastGame()));
+	tablePasswords->setItem(row, COL_PASS_LAST_SERVER, toolTipItem(password.lastServerName()));
 
-	QTableWidgetItem* timeItem = new QTableWidgetItem(
+	QTableWidgetItem* timeItem = toolTipItem(
 		password.lastTime().toString("yyyy-MM-dd hh:mm:ss"));
 	// Maintain proper date sorting.
 	timeItem->setData(Qt::EditRole, password.lastTime());
@@ -188,15 +189,15 @@ void CFGServerPasswords::setServersInTable(const ServerPassword& password)
 		int rowIndex = tableServers->rowCount();
 		tableServers->insertRow(rowIndex);
 
-		QTableWidgetItem* gameItem = new QTableWidgetItem(server.game());
+		QTableWidgetItem* gameItem = toolTipItem(server.game());
 		gameItem->setData(Qt::UserRole, server.serializeQVariant());
 		tableServers->setItem(rowIndex, COL_SERV_GAME, gameItem);
 
-		tableServers->setItem(rowIndex, COL_SERV_NAME, new QTableWidgetItem(server.name()));
+		tableServers->setItem(rowIndex, COL_SERV_NAME, toolTipItem(server.name()));
 		QString address = QString("%1:%2").arg(server.address()).arg(server.port());
-		tableServers->setItem(rowIndex, COL_SERV_ADDRESS, new QTableWidgetItem(address));
+		tableServers->setItem(rowIndex, COL_SERV_ADDRESS, toolTipItem(address));
 
-		QTableWidgetItem* timeItem = new QTableWidgetItem(
+		QTableWidgetItem* timeItem = toolTipItem(
 			server.time().toString("yyyy-MM-dd hh:mm:ss"));
 		// Maintain proper date sorting.
 		timeItem->setData(Qt::EditRole, server.time());
@@ -267,7 +268,9 @@ void CFGServerPasswords::revealPasswords()
 	for (int i = 0; i < tablePasswords->rowCount(); ++i)
 	{
 		QTableWidgetItem* item = tablePasswords->item(i, COL_PASS_PASSWORD);
-		item->setText(serverPasswordFromRow(i).phrase());
+		ServerPassword password = serverPasswordFromRow(i);
+		item->setText(password.phrase());
+		item->setToolTip(password.phrase());
 	}
 }
 
@@ -281,6 +284,13 @@ void CFGServerPasswords::toggleRevealHide()
 	{
 		hidePasswords();
 	}
+}
+
+QTableWidgetItem* CFGServerPasswords::toolTipItem(const QString& contents)
+{
+	QTableWidgetItem* item = new QTableWidgetItem(contents);
+	item->setToolTip(contents);
+	return item;
 }
 
 void CFGServerPasswords::updatePassword(const ServerPassword& password)

@@ -57,6 +57,7 @@ class CFGServerPasswords : public ConfigurationBaseBox, private Ui::CFGServerPas
 		ServerPassword serverPasswordFromRow(int row);
 		void setPasswordInRow(int row, const ServerPassword& password);
 		void setServersInTable(const ServerPassword& password);
+		QTableWidgetItem* toolTipItem(const QString& contents);
 		void updatePassword(const ServerPassword& password);
 
 	private slots:
