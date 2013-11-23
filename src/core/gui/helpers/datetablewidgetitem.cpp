@@ -30,6 +30,11 @@ DateTableWidgetItem::DateTableWidgetItem(const QDateTime& date,
 	updateInternalData();
 }
 
+QString DateTableWidgetItem::displayedText() const
+{
+	return date.toString(displayFormat);
+}
+
 bool DateTableWidgetItem::operator<(const QTableWidgetItem& other) const
 {
 	return data(Qt::EditRole).toDateTime() < other.data(Qt::EditRole).toDateTime();

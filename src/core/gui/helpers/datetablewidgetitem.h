@@ -34,6 +34,7 @@ class DateTableWidgetItem : public QTableWidgetItem
 
 		bool operator<(const QTableWidgetItem& other) const;
 
+		QString displayedText() const;
 		void setDateTime(const QDateTime& date);
 		void setDisplayFormat(const QString& format);
 

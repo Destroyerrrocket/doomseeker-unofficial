@@ -166,8 +166,10 @@ void CFGServerPasswords::setPasswordInRow(int row, const ServerPassword& passwor
 
 	tablePasswords->setItem(row, COL_PASS_LAST_GAME, toolTipItem(password.lastGame()));
 	tablePasswords->setItem(row, COL_PASS_LAST_SERVER, toolTipItem(password.lastServerName()));
-	tablePasswords->setItem(row, COL_PASS_LAST_TIME,
-		new DateTableWidgetItem(password.lastTime()));
+
+	DateTableWidgetItem* dateItem = new DateTableWidgetItem(password.lastTime());
+	dateItem->setToolTip(dateItem->displayedText());
+	tablePasswords->setItem(row, COL_PASS_LAST_TIME, dateItem);
 
 	// Re-enable sorting if was enabled before.
 	tablePasswords->setSortingEnabled(wasSortingEnabled);
@@ -193,8 +195,10 @@ void CFGServerPasswords::setServersInTable(const ServerPassword& password)
 		tableServers->setItem(rowIndex, COL_SERV_NAME, toolTipItem(server.name()));
 		QString address = QString("%1:%2").arg(server.address()).arg(server.port());
 		tableServers->setItem(rowIndex, COL_SERV_ADDRESS, toolTipItem(address));
-		tableServers->setItem(rowIndex, COL_SERV_LAST_TIME,
-			new DateTableWidgetItem(server.time()));
+
+		DateTableWidgetItem* dateItem = new DateTableWidgetItem(server.time());
+		dateItem->setToolTip(dateItem->displayedText());
+		tableServers->setItem(rowIndex, COL_SERV_LAST_TIME, dateItem);
 	}
 	// Re-enable sorting.
 	tableServers->setSortingEnabled(true);
