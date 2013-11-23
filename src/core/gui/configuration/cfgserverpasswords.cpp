@@ -24,6 +24,7 @@
 
 #include "configuration/passwordscfg.h"
 #include "configuration/serverpassword.h"
+#include "gui/helpers/datetablewidgetitem.h"
 #include <QMap>
 
 const int COL_PASS_PASSWORD = 0;
@@ -165,12 +166,8 @@ void CFGServerPasswords::setPasswordInRow(int row, const ServerPassword& passwor
 
 	tablePasswords->setItem(row, COL_PASS_LAST_GAME, toolTipItem(password.lastGame()));
 	tablePasswords->setItem(row, COL_PASS_LAST_SERVER, toolTipItem(password.lastServerName()));
-
-	QTableWidgetItem* timeItem = toolTipItem(
-		password.lastTime().toString("yyyy-MM-dd hh:mm:ss"));
-	// Maintain proper date sorting.
-	timeItem->setData(Qt::EditRole, password.lastTime());
-	tablePasswords->setItem(row, COL_PASS_LAST_TIME, timeItem);
+	tablePasswords->setItem(row, COL_PASS_LAST_TIME,
+		new DateTableWidgetItem(password.lastTime()));
 
 	// Re-enable sorting if was enabled before.
 	tablePasswords->setSortingEnabled(wasSortingEnabled);
@@ -196,12 +193,8 @@ void CFGServerPasswords::setServersInTable(const ServerPassword& password)
 		tableServers->setItem(rowIndex, COL_SERV_NAME, toolTipItem(server.name()));
 		QString address = QString("%1:%2").arg(server.address()).arg(server.port());
 		tableServers->setItem(rowIndex, COL_SERV_ADDRESS, toolTipItem(address));
-
-		QTableWidgetItem* timeItem = toolTipItem(
-			server.time().toString("yyyy-MM-dd hh:mm:ss"));
-		// Maintain proper date sorting.
-		timeItem->setData(Qt::EditRole, server.time());
-		tableServers->setItem(rowIndex, COL_SERV_LAST_TIME, timeItem);
+		tableServers->setItem(rowIndex, COL_SERV_LAST_TIME,
+			new DateTableWidgetItem(server.time()));
 	}
 	// Re-enable sorting.
 	tableServers->setSortingEnabled(true);
