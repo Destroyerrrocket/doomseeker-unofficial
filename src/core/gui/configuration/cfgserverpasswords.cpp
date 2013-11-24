@@ -54,7 +54,9 @@ CFGServerPasswords::CFGServerPasswords(QWidget* parent)
 	d->bHidingPasswordsMode = true;
 	hidePasswords();
 	tablePasswords->sortItems(COL_PASS_LAST_TIME, Qt::DescendingOrder);
+	tablePasswords->setColumnWidth(COL_PASS_PASSWORD, 90);
 	tableServers->sortItems(COL_SERV_GAME, Qt::AscendingOrder);
+	tableServers->setColumnWidth(COL_SERV_GAME, 90);
 	lblServerLossWarning->setVisible(false);
 }
 
