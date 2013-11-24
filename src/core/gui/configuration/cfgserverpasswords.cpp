@@ -55,6 +55,7 @@ CFGServerPasswords::CFGServerPasswords(QWidget* parent)
 	hidePasswords();
 	tablePasswords->sortItems(COL_PASS_LAST_TIME, Qt::DescendingOrder);
 	tableServers->sortItems(COL_SERV_GAME, Qt::AscendingOrder);
+	lblServerLossWarning->setVisible(false);
 }
 
 CFGServerPasswords::~CFGServerPasswords()
@@ -79,6 +80,14 @@ void CFGServerPasswords::addServerPasswordToTable(const ServerPassword& password
 	int rowIndex = tablePasswords->rowCount();
 	tablePasswords->insertRow(rowIndex);
 	setPasswordInRow(rowIndex, password);
+}
+
+void CFGServerPasswords::clearTable(QTableWidget* table)
+{
+	while (table->rowCount() > 0)
+	{
+		table->removeRow(0);
+	}
 }
 
 int CFGServerPasswords::findPassphraseInTable(const QString& phrase)
@@ -132,6 +141,7 @@ void CFGServerPasswords::saveSettings()
 		passwords << serverPasswordFromRow(i);
 	}
 	cfg.setServerPasswords(passwords);
+	cfg.setMaxNumberOfServersPerPassword(spinMaxPasswords->value());
 }
 
 ServerPassword CFGServerPasswords::serverPasswordFromRow(int row)
@@ -177,10 +187,7 @@ void CFGServerPasswords::setPasswordInRow(int row, const ServerPassword& passwor
 
 void CFGServerPasswords::setServersInTable(const ServerPassword& password)
 {
-	while (tableServers->rowCount() > 0)
-	{
-		tableServers->removeRow(0);
-	}
+	clearTable(tableServers);
 	// Disable sorting or bad things may happen.
 	tableServers->setSortingEnabled(false);
 	foreach (const ServerPassword::Server& server, password.servers())
@@ -204,13 +211,24 @@ void CFGServerPasswords::setServersInTable(const ServerPassword& password)
 	tableServers->setSortingEnabled(true);
 }
 
+void CFGServerPasswords::showServerLossWarningIfNecessary()
+{
+	PasswordsCfg cfg;
+	lblServerLossWarning->setVisible(spinMaxPasswords->value() <
+		cfg.maxNumberOfServersPerPassword());
+}
+
 void CFGServerPasswords::readSettings()
 {
+	clearTable(tablePasswords);
+	clearTable(tableServers);
+
 	PasswordsCfg cfg;
 	foreach (const ServerPassword& pass, cfg.serverPasswords())
 	{
 		addServerPasswordToTable(pass);
 	}
+	spinMaxPasswords->setValue(cfg.maxNumberOfServersPerPassword());
 }
 
 void CFGServerPasswords::removeSelected(QTableWidget* table)

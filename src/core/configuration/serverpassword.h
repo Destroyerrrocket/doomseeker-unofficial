@@ -160,6 +160,11 @@ class ServerPassword
 			d.phrase = v;
 		}
 
+		void setServers(const QList<Server>& v)
+		{
+			d.servers = v;
+		}
+
 	private:
 		class PrivData
 		{

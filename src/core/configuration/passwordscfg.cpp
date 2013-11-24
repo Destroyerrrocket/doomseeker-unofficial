@@ -33,6 +33,7 @@
 
 const QString SECTION_NAME = "Passwords";
 
+const QString MAX_NUMBER_OF_SERVERS_PER_PASSWORD_KEY = "MaxNumberOfServersPerPassword";
 const QString SERVER_PASSWORDS_KEY = "ServerPasswords";
 
 // TODO: [Zalewa] We have 3 different ini files, all instantiated
@@ -40,6 +41,13 @@ const QString SERVER_PASSWORDS_KEY = "ServerPasswords";
 // out to a separate singleton? If not, then perhaps we could at least
 // move the instantiation out of Main.
 Ini* PasswordsCfg::ini = NULL;
+
+
+bool serverDateDescending(ServerPassword::Server& s1, ServerPassword::Server& s2)
+{
+	return s1.time() > s2.time();
+}
+
 
 class PasswordsCfg::PrivData
 {
@@ -57,6 +65,25 @@ PasswordsCfg::PasswordsCfg()
 PasswordsCfg::~PasswordsCfg()
 {
 	delete d;
+}
+
+void PasswordsCfg::cutServers(QList<ServerPassword>& passwords) const
+{
+	QMutableListIterator<ServerPassword> it(passwords);
+	while (it.hasNext())
+	{
+		ServerPassword& password = it.next();
+		QList<ServerPassword::Server> sortedServers = password.servers();
+		qSort(sortedServers.begin(), sortedServers.end(), serverDateDescending);
+		password.setServers(sortedServers.mid(0, maxNumberOfServersPerPassword()));
+	}
+}
+
+void PasswordsCfg::cutStoredServers()
+{
+	QList<ServerPassword> passwords = serverPasswords();
+	cutServers(passwords);
+	storeServerPasswords(passwords);
 }
 
 void PasswordsCfg::initIni(const QString& path)
@@ -85,6 +112,11 @@ QString PasswordsCfg::lastUsedConnectPhrase() const
 	return gConfig.doomseeker.connectPassword;
 }
 
+int PasswordsCfg::maxNumberOfServersPerPassword() const
+{
+	return d->section.value(MAX_NUMBER_OF_SERVERS_PER_PASSWORD_KEY, 5).toInt();
+}
+
 void PasswordsCfg::removeServerPhrase(const QString& phrase)
 {
 	QList<ServerPassword> allPasswords = serverPasswords();
@@ -97,7 +129,7 @@ void PasswordsCfg::removeServerPhrase(const QString& phrase)
 			it.remove();
 		}
 	}
-	setServerPasswords(allPasswords);
+	storeServerPasswords(allPasswords);
 }
 
 void PasswordsCfg::saveServerPhrase(const QString& phrase, const Server* server)
@@ -132,7 +164,7 @@ void PasswordsCfg::saveServerPhrase(const QString& phrase, const Server* server)
 	pass.setPhrase(phrase);
 	pass.addServer(serverInfo);
 	allPasswords << pass;
-	setServerPasswords(allPasswords);
+	storeServerPasswords(allPasswords);
 }
 
 void PasswordsCfg::setHidePasswords(bool val)
@@ -166,12 +198,29 @@ void PasswordsCfg::setLastUsedConnectPhrase(const QString& val)
 	gConfig.doomseeker.connectPassword = val;
 }
 
+void PasswordsCfg::setMaxNumberOfServersPerPassword(int val)
+{
+	bool shallCut = val < maxNumberOfServersPerPassword();
+	d->section.setValue(MAX_NUMBER_OF_SERVERS_PER_PASSWORD_KEY, val);
+	if (shallCut)
+	{
+		cutStoredServers();
+	}
+}
+
 void PasswordsCfg::setRememberConnectPhrase(bool val)
 {
 	gConfig.doomseeker.bRememberConnectPassword = val;
 }
 
 void PasswordsCfg::setServerPasswords(const QList<ServerPassword>& val)
+{
+	QList<ServerPassword> passwords = val;
+	cutServers(passwords);
+	storeServerPasswords(passwords);
+}
+
+void PasswordsCfg::storeServerPasswords(const QList<ServerPassword>& val)
 {
 	QVariantList vars;
 	foreach (const ServerPassword obj, val)
@@ -180,3 +229,4 @@ void PasswordsCfg::setServerPasswords(const QList<ServerPassword>& val)
 	}
 	d->section.setValue(SERVER_PASSWORDS_KEY, vars);
 }
+

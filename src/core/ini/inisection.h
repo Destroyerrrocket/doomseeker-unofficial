@@ -149,12 +149,22 @@ class MAIN_EXPORT IniSection
 		const IniVariable		operator[](const QString& name) const;
 
 		/**
-		 * @brief Retrieves a variable directly. Omits the IniVariable system.
+		 * @brief Retrieves a variable directly; omits the IniVariable system.
 		 *
 		 * @return QVariant object that denotes the variable. May be invalid
 		 *         if variable is not defined.
 		 */
 		QVariant 				value(const QString& key) const;
+
+		/**
+		 * @brief Retrieves a variable directly; omits the IniVariable system.
+		 *
+		 * Overload that returns defaultValue if requested value is invalid.
+		 *
+		 * @return QVariant object that denotes the variable. If variable is
+		 *         not valid, the defaultValue is returned.
+		 */
+		QVariant 				value(const QString& key, QVariant defaultValue) const;
 
 	private:
 		class PrivData

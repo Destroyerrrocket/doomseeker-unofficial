@@ -42,12 +42,14 @@ class PasswordsCfg
 		bool isHidingPasswords() const;
 		bool isRememberingConnectPhrase() const;
 		QString lastUsedConnectPhrase() const;
+		int maxNumberOfServersPerPassword() const;
 		void removeServerPhrase(const QString& phrase);
 		void saveServerPhrase(const QString& phrase, const Server* server);
 		QList<ServerPassword> serverPasswords() const;
 		QStringList serverPhrases() const;
 		void setHidePasswords(bool val);
 		void setLastUsedConnectPhrase(const QString& val);
+		void setMaxNumberOfServersPerPassword(int val);
 		void setRememberConnectPhrase(bool val);
 		void setServerPasswords(const QList<ServerPassword>& val);
 
@@ -56,6 +58,10 @@ class PasswordsCfg
 
 		class PrivData;
 		PrivData* d;
+
+		void cutServers(QList<ServerPassword>& passwords) const;
+		void cutStoredServers();
+		void storeServerPasswords(const QList<ServerPassword>& val);
 };
 
 #endif

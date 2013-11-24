@@ -137,3 +137,13 @@ QVariant IniSection::value(const QString& key) const
 
 	return QVariant();
 }
+
+QVariant IniSection::value(const QString& key, QVariant defaultValue) const
+{
+	QVariant val = value(key);
+	if (!val.isValid())
+	{
+		return defaultValue;
+	}
+	return val;
+}
