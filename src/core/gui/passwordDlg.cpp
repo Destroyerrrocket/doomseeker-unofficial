@@ -83,10 +83,7 @@ void PasswordDlg::loadConfiguration()
 	}
 	remember->setChecked(cfg.isRememberingConnectPhrase());
 	setPasswords(cfg.serverPhrases());
-	if (cfg.isRememberingConnectPhrase())
-	{
-		setCurrentConnectPassword(cfg.suggestPassword(d->server).phrase());
-	}
+	setCurrentConnectPassword(cfg.suggestPassword(d->server).phrase());
 }
 
 void PasswordDlg::removeCurrentConnectPassword()
