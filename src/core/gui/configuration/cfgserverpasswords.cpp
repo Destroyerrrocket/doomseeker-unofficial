@@ -185,6 +185,7 @@ void CFGServerPasswords::setPasswordInRow(int row, const ServerPassword& passwor
 
 	// Re-enable sorting if was enabled before.
 	tablePasswords->setSortingEnabled(wasSortingEnabled);
+	tablePasswords->resizeRowsToContents();
 }
 
 void CFGServerPasswords::setServersInTable(const ServerPassword& password)
@@ -211,6 +212,7 @@ void CFGServerPasswords::setServersInTable(const ServerPassword& password)
 	}
 	// Re-enable sorting.
 	tableServers->setSortingEnabled(true);
+	tableServers->resizeRowsToContents();
 }
 
 void CFGServerPasswords::showServerLossWarningIfNecessary()
