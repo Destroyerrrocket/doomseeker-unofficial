@@ -52,6 +52,7 @@ class PasswordsCfg
 		void setMaxNumberOfServersPerPassword(int val);
 		void setRememberConnectPhrase(bool val);
 		void setServerPasswords(const QList<ServerPassword>& val);
+		ServerPassword suggestPassword(const Server* server);
 
 	private:
 		static Ini* ini;

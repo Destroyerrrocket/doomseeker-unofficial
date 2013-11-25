@@ -230,3 +230,38 @@ void PasswordsCfg::storeServerPasswords(const QList<ServerPassword>& val)
 	d->section.setValue(SERVER_PASSWORDS_KEY, vars);
 }
 
+ServerPassword PasswordsCfg::suggestPassword(const Server* server)
+{
+	// This method would probably work better as a separate class.
+	// If there's ever any need to expand it, extract it
+	// to a PasswordSuggester or something like that first.
+	ServerPassword::Server serverSummary;
+	serverSummary.setAddress(server->address().toString());
+	serverSummary.setPort(server->port());
+	serverSummary.setGame(server->engineName());
+	serverSummary.setName(server->name());
+
+	ServerPassword password;
+	ServerPassword::Server bestFit;
+	foreach (const ServerPassword& potentialPassword, serverPasswords())
+	{
+		float newSimilarity;
+		ServerPassword::Server candidate = potentialPassword.mostSimilarServer(serverSummary, &newSimilarity);
+		if (candidate.isValid())
+		{
+			if (newSimilarity > bestFit.similarity(serverSummary))
+			{
+				bestFit = candidate;
+				password = potentialPassword;
+			}
+			else if (qFuzzyCompare(newSimilarity, bestFit.similarity(serverSummary))
+				&& candidate.time() > bestFit.time())
+			{
+				bestFit = candidate;
+				password = potentialPassword;
+			}
+		}
+	}
+	return password;
+}
+

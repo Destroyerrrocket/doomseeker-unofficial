@@ -22,6 +22,24 @@
 //------------------------------------------------------------------------------
 #include "serverpassword.h"
 
+class ServerSimilarity
+{
+	public:
+		ServerPassword::Server server;
+		float similarity;
+
+		ServerSimilarity(const ServerPassword::Server& server, float similarity)
+		{
+			this->server = server;
+			this->similarity = similarity;
+		}
+
+		bool operator<(const ServerSimilarity& other) const
+		{
+			return similarity < other.similarity;
+		}
+};
+
 void ServerPassword::addServer(const Server& v)
 {
 	if (v.isValid())
@@ -78,6 +96,35 @@ QDateTime ServerPassword::lastTime() const
 	return lastServer().time();
 }
 
+ServerPassword::Server ServerPassword::mostSimilarServer(const Server& other, float* outSimilarity) const
+{
+	QList<ServerSimilarity> similarities;
+	foreach (const Server& candidate, d.servers)
+	{
+		if (candidate.similarity(other) > 0.0f)
+		{
+			similarities << ServerSimilarity(candidate, candidate.similarity(other));
+		}
+	}
+	if (!similarities.empty())
+	{
+		qSort(similarities);
+		if (outSimilarity != NULL)
+		{
+			*outSimilarity = similarities.last().similarity;
+		}
+		return similarities.last().server;
+	}
+	else
+	{
+		if (outSimilarity != NULL)
+		{
+			*outSimilarity = 0.0f;
+		}
+		return Server(); // Invalid value.
+	}
+}
+
 void ServerPassword::removeServer(const QString& game, const QString& address, unsigned short port)
 {
 	QMutableListIterator<Server> it(d.servers);
@@ -129,7 +176,7 @@ QVariant ServerPassword::Server::serializeQVariant() const
 
 float ServerPassword::Server::similarity(const Server& other) const
 {
-	if (!isValid() || other.isValid())
+	if (!isValid() || !other.isValid())
 	{
 		return 0.0f;
 	}
