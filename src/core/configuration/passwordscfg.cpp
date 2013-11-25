@@ -130,6 +130,11 @@ void PasswordsCfg::removeServerPhrase(const QString& phrase)
 
 void PasswordsCfg::saveServerPhrase(const QString& phrase, const Server* server)
 {
+	if (phrase.isEmpty())
+	{
+		return;
+	}
+
 	ServerPassword::Server serverInfo;
 	if (server != NULL)
 	{
