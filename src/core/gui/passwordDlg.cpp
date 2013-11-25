@@ -82,11 +82,11 @@ void PasswordDlg::loadConfiguration()
 		cboPassword->lineEdit()->setEchoMode(QLineEdit::Password);
 	}
 	remember->setChecked(cfg.isRememberingConnectPhrase());
+	setPasswords(cfg.serverPhrases());
 	if (cfg.isRememberingConnectPhrase())
 	{
 		setCurrentConnectPassword(cfg.suggestPassword(d->server).phrase());
 	}
-	setPasswords(cfg.serverPhrases());
 }
 
 void PasswordDlg::removeCurrentConnectPassword()
@@ -132,6 +132,7 @@ void PasswordDlg::setCurrentConnectPassword(const QString& password)
 		cboPassword->insertItem(0, password);
 		cboPassword->setCurrentIndex(0);
 	}
+	cboPassword->lineEdit()->selectAll();
 }
 
 void PasswordDlg::setPasswords(const QStringList& passwords)
