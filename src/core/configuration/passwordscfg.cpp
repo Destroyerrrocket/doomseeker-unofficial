@@ -34,6 +34,7 @@
 const QString SECTION_NAME = "Passwords";
 
 const QString MAX_NUMBER_OF_SERVERS_PER_PASSWORD_KEY = "MaxNumberOfServersPerPassword";
+const QString REMEMBER_CONNECT_PASSWORD = "RememberConnectPassword";
 const QString SERVER_PASSWORDS_KEY = "ServerPasswords";
 
 // TODO: [Zalewa] We have 3 different ini files, all instantiated
@@ -104,12 +105,7 @@ bool PasswordsCfg::isHidingPasswords() const
 
 bool PasswordsCfg::isRememberingConnectPhrase() const
 {
-	return gConfig.doomseeker.bRememberConnectPassword;
-}
-
-QString PasswordsCfg::lastUsedConnectPhrase() const
-{
-	return gConfig.doomseeker.connectPassword;
+	return d->section.value(REMEMBER_CONNECT_PASSWORD, false).toBool();
 }
 
 int PasswordsCfg::maxNumberOfServersPerPassword() const
@@ -193,11 +189,6 @@ QStringList PasswordsCfg::serverPhrases() const
 	return result;
 }
 
-void PasswordsCfg::setLastUsedConnectPhrase(const QString& val)
-{
-	gConfig.doomseeker.connectPassword = val;
-}
-
 void PasswordsCfg::setMaxNumberOfServersPerPassword(int val)
 {
 	bool shallCut = val < maxNumberOfServersPerPassword();
@@ -210,7 +201,7 @@ void PasswordsCfg::setMaxNumberOfServersPerPassword(int val)
 
 void PasswordsCfg::setRememberConnectPhrase(bool val)
 {
-	gConfig.doomseeker.bRememberConnectPassword = val;
+	return d->section.setValue(REMEMBER_CONNECT_PASSWORD, val);
 }
 
 void PasswordsCfg::setServerPasswords(const QList<ServerPassword>& val)

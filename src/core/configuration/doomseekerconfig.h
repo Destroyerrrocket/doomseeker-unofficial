@@ -65,11 +65,9 @@ class DoomseekerConfig
 			bool						bQueryBeforeLaunch;
 			bool						bQueryOnStartup;
 			bool						bRecordDemo;
-			bool						bRememberConnectPassword;
 			bool						bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn;
 			QVector<BuddyInfo>			buddiesList;
 			bool						bUseTrayIcon;
-			QString						connectPassword;
 			QVector<CustomServerInfo>	customServers;
 			QString						customServersColor;
 			QString						localization;

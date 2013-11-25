@@ -215,10 +215,8 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->bQueryOnStartup = true;
 	this->bMainWindowMaximized = false;
 	this->bRecordDemo = false;
-	this->bRememberConnectPassword = true;
 	this->bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn = true;
 	this->bUseTrayIcon = false;
-	this->connectPassword = "";
 	this->customServersColor = "#ffaa00";
 	this->ip2CountryDatabaseMaximumAge = 60;
 	this->ip2CountryUrl = "http://doomseeker.drdteam.org/ip2c/get";
@@ -294,7 +292,6 @@ void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 	section.createSetting("QueryOnStartup", this->bQueryOnStartup);
 	section.createSetting("MainWindowMaximized", this->bMainWindowMaximized);
 	section.createSetting("RecordDemo", this->bRecordDemo);
-	section.createSetting("RememberConnectPassword", this->bRememberConnectPassword);
 	section.createSetting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn", this->bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn);
 	section.createSetting("UseTrayIcon", this->bUseTrayIcon);
 	section.createSetting("CustomServersColor", this->customServersColor);
@@ -326,10 +323,8 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->bQueryOnStartup = section["QueryOnStartup"];
 	this->bMainWindowMaximized = section["MainWindowMaximized"];
 	this->bRecordDemo = section["RecordDemo"];
-	this->bRememberConnectPassword = section["RememberConnectPassword"];
 	this->bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn = section["TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn"];
 	this->bUseTrayIcon = section["UseTrayIcon"];
-	this->connectPassword = (const QString &)section["ConnectPassword"];
 	this->customServersColor = (const QString &)section["CustomServersColor"];
 	this->ip2CountryDatabaseMaximumAge = section["IP2CMaximumAge"];
 	this->ip2CountryUrl = (const QString &)section["IP2CUrl"];
@@ -398,10 +393,8 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["QueryOnStartup"] = this->bQueryOnStartup;
 	section["MainWindowMaximized"] = this->bMainWindowMaximized;
 	section["RecordDemo"] = this->bRecordDemo;
-	section["RememberConnectPassword"] = this->bRememberConnectPassword;
 	section["TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn"] = this->bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn;
 	section["UseTrayIcon"] = this->bUseTrayIcon;
-	section["ConnectPassword"] = this->connectPassword;
 	section["CustomServersColor"] = this->customServersColor;
 	section["IP2CMaximumAge"] = this->ip2CountryDatabaseMaximumAge;
 	section["IP2CUrl"] = this->ip2CountryUrl;
