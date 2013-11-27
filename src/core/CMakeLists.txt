@@ -308,6 +308,7 @@ set(SOURCE_FILES
 	serverapi/playerslist.cpp
 	serverapi/rconprotocol.cpp
 	serverapi/server.cpp
+	serverapi/serversummary.cpp
 	serverapi/tooltipgenerator.cpp
 	tests/testbase.cpp
 	tests/testcore.cpp
@@ -382,6 +383,7 @@ set(HEADER_FILES
 	serverapi/player.h
 	serverapi/playerslist.h
 	serverapi/serverstructs.h
+	serverapi/serversummary.h
 	serverapi/tooltipgenerator.h
 	tests/testbase.h
 	tests/testcore.h

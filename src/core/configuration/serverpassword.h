@@ -27,102 +27,11 @@
 #include <QString>
 #include <QVariant>
 
+#include "serverapi/serversummary.h"
+
 class ServerPassword
 {
 	public:
-		class Server
-		{
-			// [Zalewa] This class might be useful somewhere else.
-			// Perhaps it should be renamed and moved out to its own file.
-			public:
-				static Server deserializeQVariant(const QVariant& var);
-
-				Server()
-				{
-					d.port = 0;
-				}
-
-				const QString& address() const
-				{
-					return d.address;
-				}
-
-				const QString& game() const
-				{
-					return d.game;
-				}
-
-				bool isValid() const
-				{
-					return !d.address.isEmpty() && d.port != 0;
-				}
-
-				const QString& name() const
-				{
-					return d.name;
-				}
-
-				unsigned short port() const
-				{
-					return d.port;
-				}
-
-				void setAddress(const QString& v)
-				{
-					d.address = v;
-				}
-
-				void setGame(const QString& v)
-				{
-					d.game = v;
-				}
-
-				void setName(const QString& v)
-				{
-					d.name = v;
-				}
-
-				void setPort(unsigned short v)
-				{
-					d.port = v;
-				}
-
-				void setTime(const QDateTime& v)
-				{
-					d.time = v;
-				}
-
-				QVariant serializeQVariant() const;
-				/**
-				 * @brief Similarity to the 'other' server; between 0.0 and 1.0.
-				 *
-				 * Similarity is calculated basing on address, game, name
-				 * and port. Some of these values have more importance than
-				 * others, and some require other values to be equal.
-				 *
-				 * Both servers must be valid.
-				 */
-				float similarity(const Server& other) const;
-
-				QDateTime time() const
-				{
-					return d.time;
-				}
-
-			private:
-				class PrivData
-				{
-				public:
-					QString address;
-					QString game;
-					QString name;
-					unsigned short port;
-					QDateTime time;
-				};
-
-				PrivData d;
-		};
-
 		static ServerPassword deserializeQVariant(const QVariant& map);
 
 		/**
@@ -136,13 +45,13 @@ class ServerPassword
 		}
 
 		QString lastGame() const;
-		Server lastServer() const;
+		ServerSummary lastServer() const;
 		QString lastServerName() const;
 		QDateTime lastTime() const;
 
-		Server mostSimilarServer(const Server& other, float* outSimilarity = NULL) const;
+		ServerSummary mostSimilarServer(const ServerSummary& other, float* outSimilarity = NULL) const;
 
-		const QList<Server>& servers() const
+		const QList<ServerSummary>& servers() const
 		{
 			return d.servers;
 		}
@@ -154,7 +63,7 @@ class ServerPassword
 
 		QVariant serializeQVariant() const;
 
-		void addServer(const Server& v);
+		void addServer(const ServerSummary& v);
 		void removeServer(const QString& game, const QString& address, unsigned short port);
 
 		void setPhrase(const QString& v)
@@ -162,7 +71,7 @@ class ServerPassword
 			d.phrase = v;
 		}
 
-		void setServers(const QList<Server>& v)
+		void setServers(const QList<ServerSummary>& v)
 		{
 			d.servers = v;
 		}
@@ -171,7 +80,7 @@ class ServerPassword
 		class PrivData
 		{
 		public:
-			QList<Server> servers;
+			QList<ServerSummary> servers;
 			QString phrase;
 		};
 		PrivData d;

@@ -193,7 +193,7 @@ void CFGServerPasswords::setServersInTable(const ServerPassword& password)
 	clearTable(tableServers);
 	// Disable sorting or bad things may happen.
 	tableServers->setSortingEnabled(false);
-	foreach (const ServerPassword::Server& server, password.servers())
+	foreach (const ServerSummary& server, password.servers())
 	{
 		int rowIndex = tableServers->rowCount();
 		tableServers->insertRow(rowIndex);
@@ -262,16 +262,16 @@ void CFGServerPasswords::removeSelectedPasswords()
 
 void CFGServerPasswords::removeSelectedServers()
 {
-	QList<ServerPassword::Server> servers;
+	QList<ServerSummary> servers;
 	foreach (QTableWidgetItem* item, tableServers->selectedItems())
 	{
 		if (item->column() == COL_SERV_GAME)
 		{
-			servers << ServerPassword::Server::deserializeQVariant(item->data(Qt::UserRole));
+			servers << ServerSummary::deserializeQVariant(item->data(Qt::UserRole));
 		}
 	}
 	ServerPassword currentPassword = serverPasswordFromRow(tablePasswords->currentRow());
-	foreach (const ServerPassword::Server& server, servers)
+	foreach (const ServerSummary& server, servers)
 	{
 		currentPassword.removeServer(server.game(), server.address(), server.port());
 	}
