@@ -1,0 +1,152 @@
+//------------------------------------------------------------------------------
+// serverpassword.cpp
+//------------------------------------------------------------------------------
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+// 02110-1301, USA.
+//
+//------------------------------------------------------------------------------
+// Copyright (C) 2013 "Zalewa" <zalewapl@gmail.com>
+//------------------------------------------------------------------------------
+#include "serverpassword.h"
+
+class ServerSimilarity
+{
+	public:
+		ServerSummary server;
+		float similarity;
+
+		ServerSimilarity(const ServerSummary& server, float similarity)
+		{
+			this->server = server;
+			this->similarity = similarity;
+		}
+
+		bool operator<(const ServerSimilarity& other) const
+		{
+			return similarity < other.similarity;
+		}
+};
+
+void ServerPassword::addServer(const ServerSummary& v)
+{
+	if (v.isValid())
+	{
+		removeServer(v.game(), v.address(), v.port());
+		d.servers.append(v);
+	}
+}
+
+ServerPassword ServerPassword::deserializeQVariant(const QVariant& v)
+{
+	QVariantMap m = v.toMap();
+	ServerPassword o;
+	o.setPhrase(m["phrase"].toString());
+	QVariantList variantServers = m["servers"].toList();
+	foreach (QVariant server, variantServers)
+	{
+		o.addServer(ServerSummary::deserializeQVariant(server));
+	}
+	return o;
+}
+
+QString ServerPassword::lastGame() const
+{
+	return lastServer().game();
+}
+
+ServerSummary ServerPassword::lastServer() const
+{
+	ServerSummary lastServer;
+	foreach (const ServerSummary& s, d.servers)
+	{
+		if (!lastServer.isValid())
+		{
+			lastServer = s;
+			continue;
+		}
+
+		if (s.isValid() && s.time() > lastServer.time())
+		{
+			lastServer = s;
+		}
+	}
+	return lastServer;
+}
+
+QString ServerPassword::lastServerName() const
+{
+	return lastServer().name();
+}
+
+QDateTime ServerPassword::lastTime() const
+{
+	return lastServer().time();
+}
+
+ServerSummary ServerPassword::mostSimilarServer(const ServerSummary& other, float* outSimilarity) const
+{
+	QList<ServerSimilarity> similarities;
+	foreach (const ServerSummary& candidate, d.servers)
+	{
+		if (candidate.similarity(other) > 0.0f)
+		{
+			similarities << ServerSimilarity(candidate, candidate.similarity(other));
+		}
+	}
+	if (!similarities.empty())
+	{
+		qSort(similarities);
+		if (outSimilarity != NULL)
+		{
+			*outSimilarity = similarities.last().similarity;
+		}
+		return similarities.last().server;
+	}
+	else
+	{
+		if (outSimilarity != NULL)
+		{
+			*outSimilarity = 0.0f;
+		}
+		return ServerSummary(); // Invalid value.
+	}
+}
+
+void ServerPassword::removeServer(const QString& game, const QString& address, unsigned short port)
+{
+	QMutableListIterator<ServerSummary> it(d.servers);
+	while (it.hasNext())
+	{
+		ServerSummary server = it.next();
+		if (server.game() == game && server.address() == address && server.port() == port)
+		{
+			it.remove();
+		}
+	}
+}
+
+QVariant ServerPassword::serializeQVariant() const
+{
+	QVariantMap m;
+	m.insert("phrase", d.phrase);
+	QVariantList variantServers;
+	foreach (const ServerSummary& s, d.servers)
+	{
+		variantServers << s.serializeQVariant();
+	}
+	m.insert("servers", variantServers);
+	return m;
+}

@@ -161,13 +161,13 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, const Server* ser
 		QString connectPassword;
 		if(server->isLocked())
 		{
-			PasswordDlg password;//(this);
+			PasswordDlg password(server);
 			int ret = password.exec();
-
-			if(ret == QDialog::Accepted)
-				connectPassword = password.connectPassword();
-			else
+			if(ret != QDialog::Accepted)
+			{
 				return false;
+			}
+			connectPassword = password.connectPassword();
 		}
 
 		GameRunner* gameRunner = server->gameRunner();

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// passwordDlg.h
+// passwordscfg.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,41 +18,49 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2013 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __PASSWORDDIALOG_H__
-#define __PASSWORDDIALOG_H__
+#ifndef id1E18D75F_28FA_48A1_9CACE55638B41394
+#define id1E18D75F_28FA_48A1_9CACE55638B41394
 
-#include "ui_passwordDlg.h"
+#include <QList>
+#include <QString>
 #include <QStringList>
 
-class EnginePlugin;
+class Ini;
 class Server;
+class ServerPassword;
 
-class PasswordDlg : public QDialog, private Ui::passwordDlg
+class PasswordsCfg
 {
-	Q_OBJECT
-
 	public:
-		PasswordDlg(const Server* server, QWidget *parent=NULL);
+		static void initIni(const QString& path);
 
-		QString connectPassword() const;
+		PasswordsCfg();
+		~PasswordsCfg();
 
-	public slots:
-		void accept();
+		bool isHidingPasswords() const;
+		bool isRememberingConnectPhrase() const;
+		int maxNumberOfServersPerPassword() const;
+		void removeServerPhrase(const QString& phrase);
+		void saveServerPhrase(const QString& phrase, const Server* server);
+		QList<ServerPassword> serverPasswords() const;
+		QStringList serverPhrases() const;
+		void setHidePasswords(bool val);
+		void setMaxNumberOfServersPerPassword(int val);
+		void setRememberConnectPhrase(bool val);
+		void setServerPasswords(const QList<ServerPassword>& val);
+		ServerPassword suggestPassword(const Server* server);
 
 	private:
+		static Ini* ini;
+
 		class PrivData;
 		PrivData* d;
 
-		QStringList allConnectPasswords() const;
-		void loadConfiguration();
-		void saveConfiguration();
-		void setCurrentConnectPassword(const QString& password);
-		void setPasswords(const QStringList& passwords);
-
-	private slots:
-		void removeCurrentConnectPassword();
+		void cutServers(QList<ServerPassword>& passwords) const;
+		void cutStoredServers();
+		void storeServerPasswords(const QList<ServerPassword>& val);
 };
 
-#endif /* __PASSWORDDIALOG_H__ */
+#endif

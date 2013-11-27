@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// passwordDlg.h
+// datetablewidgetitem.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,41 +18,31 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2013 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __PASSWORDDIALOG_H__
-#define __PASSWORDDIALOG_H__
+#ifndef id7D370D9A_DF04_4500_AB6AFF4589B86AF5
+#define id7D370D9A_DF04_4500_AB6AFF4589B86AF5
 
-#include "ui_passwordDlg.h"
-#include <QStringList>
+#include <QTableWidgetItem>
+#include <QDateTime>
 
-class EnginePlugin;
-class Server;
-
-class PasswordDlg : public QDialog, private Ui::passwordDlg
+class DateTableWidgetItem : public QTableWidgetItem
 {
-	Q_OBJECT
-
 	public:
-		PasswordDlg(const Server* server, QWidget *parent=NULL);
+		DateTableWidgetItem(const QDateTime& date,
+			const QString& displayFormat = "yyyy-MM-dd hh:mm:ss");
 
-		QString connectPassword() const;
+		bool operator<(const QTableWidgetItem& other) const;
 
-	public slots:
-		void accept();
+		QString displayedText() const;
+		void setDateTime(const QDateTime& date);
+		void setDisplayFormat(const QString& format);
 
 	private:
-		class PrivData;
-		PrivData* d;
+		QDateTime date;
+		QString displayFormat;
 
-		QStringList allConnectPasswords() const;
-		void loadConfiguration();
-		void saveConfiguration();
-		void setCurrentConnectPassword(const QString& password);
-		void setPasswords(const QStringList& passwords);
-
-	private slots:
-		void removeCurrentConnectPassword();
+		void updateInternalData();
 };
 
-#endif /* __PASSWORDDIALOG_H__ */
+#endif

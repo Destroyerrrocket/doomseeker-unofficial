@@ -69,6 +69,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/configuration/cfgfilepaths.ui
 	gui/configuration/cfgip2country.ui
 	gui/configuration/cfgquery.ui
+	gui/configuration/cfgserverpasswords.ui
 	gui/configuration/configurationdialog.ui
 	gui/configuration/cfgwadseekerappearance.ui
 	gui/configuration/cfgwadseekergeneral.ui
@@ -89,6 +90,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/logdock.ui
 	gui/mainwindow.ui
 	gui/passwordDlg.ui
+	gui/rconpassworddialog.ui
 	gui/remoteconsole.ui
 	gui/serverfilterdock.ui
 	gui/wadseekerinterface.ui
@@ -106,6 +108,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/configuration/cfgfilepaths.h
 	gui/configuration/cfgip2country.h
 	gui/configuration/cfgquery.h
+	gui/configuration/cfgserverpasswords.h
 	gui/configuration/cfgwadseekerappearance.h
 	gui/configuration/cfgwadseekergeneral.h
 	gui/configuration/cfgwadseekeridgames.h
@@ -145,6 +148,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/logdock.h
 	gui/mainwindow.h
 	gui/passwordDlg.h
+	gui/rconpassworddialog.h
 	gui/remoteconsole.h
 	gui/serverfilterdock.h
 	gui/serverlist.h
@@ -194,6 +198,8 @@ qt4_add_resources(doomseekerResources
 
 set(SOURCE_FILES
 	configuration/doomseekerconfig.cpp
+	configuration/passwordscfg.cpp
+	configuration/serverpassword.cpp
 	gui/configuration/irc/cfgircappearance.cpp
 	gui/configuration/irc/cfgircdefinenetworkdialog.cpp
 	gui/configuration/irc/cfgircnetworks.cpp
@@ -205,6 +211,7 @@ set(SOURCE_FILES
 	gui/configuration/cfgfilepaths.cpp
 	gui/configuration/cfgip2country.cpp
 	gui/configuration/cfgquery.cpp
+	gui/configuration/cfgserverpasswords.cpp
 	gui/configuration/cfgwadseekerappearance.cpp
 	gui/configuration/cfgwadseekergeneral.cpp
 	gui/configuration/cfgwadseekeridgames.cpp
@@ -213,6 +220,7 @@ set(SOURCE_FILES
 	gui/configuration/doomseekerconfigurationdialog.cpp
 	gui/configuration/engineconfigurationbasebox.cpp
 	gui/entity/serverlistfilterinfo.cpp
+	gui/helpers/datetablewidgetitem.cpp
 	gui/helpers/playersdiagram.cpp
 	gui/irc/ircdock.cpp
 	gui/irc/ircdocktabcontents.cpp
@@ -247,6 +255,7 @@ set(SOURCE_FILES
 	gui/logdock.cpp
 	gui/mainwindow.cpp
 	gui/passwordDlg.cpp
+	gui/rconpassworddialog.cpp
 	gui/remoteconsole.cpp
 	gui/serverfilterdock.cpp
 	gui/serverlist.cpp
@@ -299,6 +308,7 @@ set(SOURCE_FILES
 	serverapi/playerslist.cpp
 	serverapi/rconprotocol.cpp
 	serverapi/server.cpp
+	serverapi/serversummary.cpp
 	serverapi/tooltipgenerator.cpp
 	tests/testbase.cpp
 	tests/testcore.cpp
@@ -338,7 +348,10 @@ set(SOURCE_FILES
 set(HEADER_FILES
 	${DOOMSEEKER_QT_FILES}
 	configuration/doomseekerconfig.h
+	configuration/passwordscfg.h
+	configuration/serverpassword.h
 	gui/entity/serverlistfilterinfo.h
+	gui/helpers/datetablewidgetitem.h
 	gui/helpers/playersdiagram.h
 	gui/irc/ircsounds.h
 	gui/models/serverlistproxymodel.h
@@ -370,6 +383,7 @@ set(HEADER_FILES
 	serverapi/player.h
 	serverapi/playerslist.h
 	serverapi/serverstructs.h
+	serverapi/serversummary.h
 	serverapi/tooltipgenerator.h
 	tests/testbase.h
 	tests/testcore.h

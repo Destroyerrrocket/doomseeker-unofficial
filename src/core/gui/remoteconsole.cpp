@@ -28,13 +28,13 @@
 #include "serverapi/server.h"
 #include "widgets/serverconsole.h"
 #include "remoteconsole.h"
-#include "passwordDlg.h"
+#include "rconpassworddialog.h"
 #include "strings.h"
 
 RemoteConsole::RemoteConsole(QWidget *parent) : QMainWindow(parent), protocol(NULL), server(NULL)
 {
 	// Prompt for connection info & password.
-	PasswordDlg *dlg = new PasswordDlg(this, true, true);
+	RconPasswordDialog *dlg = new RconPasswordDialog(this, true);
 	connect(dlg, SIGNAL(rejected()), this, SLOT(close()));
 	while(protocol == NULL)
 	{
@@ -120,7 +120,7 @@ void RemoteConsole::disconnectFromServer()
 void RemoteConsole::showPasswordDialog()
 {
 	// Prompt for password.
-	PasswordDlg *dlg = new PasswordDlg(this, true);
+	RconPasswordDialog *dlg = new RconPasswordDialog(this);
 	connect(dlg, SIGNAL(rejected()), this, SLOT(close()));
 	int ret = dlg->exec();
 	if(ret == QDialog::Accepted)

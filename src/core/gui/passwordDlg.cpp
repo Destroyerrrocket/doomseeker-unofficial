@@ -20,74 +20,127 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
-#include "configuration/doomseekerconfig.h"
+#include "configuration/passwordscfg.h"
+#include "configuration/serverpassword.h"
+#include "serverapi/server.h"
 #include "passwordDlg.h"
-#include "plugins/engineplugin.h"
-#include "main.h"
 
-PasswordDlg::PasswordDlg(QWidget *parent, bool rcon, bool connection) : QDialog(parent), rcon(rcon)
+#include <QLineEdit>
+
+bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
+{
+	return s1.toLower() < s2.toLower();
+}
+
+class PasswordDlg::PrivData
+{
+	public:
+		const Server* server;
+};
+
+PasswordDlg::PasswordDlg(const Server* server, QWidget *parent)
+: QDialog(parent)
 {
 	setupUi(this);
-
-	if(rcon)
-	{
-		remember->hide();
-		label->setText(tr("Please enter your remote console password."));
-	}
-	else
-	{
-		bool bRememberConnectPassword = gConfig.doomseeker.bRememberConnectPassword;
-		remember->setChecked(bRememberConnectPassword);
-		if(bRememberConnectPassword)
-		{
-			password->setText(gConfig.doomseeker.connectPassword);
-		}
-	}
-
-	if(!connection)
-	{
-		connectionBox->hide();
-	}
-	else
-	{
-		// Populate engines box.
-		engines->clear();
-		for(unsigned int i = 0;i < Main::enginePlugins->numPlugins();i++)
-		{
-			const EnginePlugin* info = (*Main::enginePlugins)[i]->info;
-			engines->addItem(info->icon(), info->data()->name, i);
-		}
-	}
-
-	if(gConfig.doomseeker.bHidePasswords)
-		password->setEchoMode(QLineEdit::Password);
+	d = new PrivData();
+	d->server = server;
 
 	// Adjust the size and prevent resizing.
 	adjustSize();
 	setMinimumHeight(height());
 	setMaximumHeight(height());
 
-	connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	loadConfiguration();
 }
 
-PasswordDlg::~PasswordDlg()
+void PasswordDlg::accept()
 {
-	if(rcon)
-		return;
+	saveConfiguration();
+	QDialog::accept();
+}
 
-	gConfig.doomseeker.bRememberConnectPassword = remember->isChecked();
-	if(remember->isChecked())
+QStringList PasswordDlg::allConnectPasswords() const
+{
+	QStringList items;
+	for (int i = 0; i < cboPassword->count(); ++i)
 	{
-		gConfig.doomseeker.connectPassword = password->text();
+		items << cboPassword->itemText(i);
+	}
+	return items;
+}
+
+QString PasswordDlg::connectPassword() const
+{
+	return cboPassword->currentText();
+}
+
+void PasswordDlg::loadConfiguration()
+{
+	PasswordsCfg cfg;
+	if(cfg.isHidingPasswords())
+	{
+		cboPassword->lineEdit()->setEchoMode(QLineEdit::Password);
+	}
+	remember->setChecked(cfg.isRememberingConnectPhrase());
+	setPasswords(cfg.serverPhrases());
+	setCurrentConnectPassword(cfg.suggestPassword(d->server).phrase());
+}
+
+void PasswordDlg::removeCurrentConnectPassword()
+{
+	PasswordsCfg cfg;
+	cfg.removeServerPhrase(cboPassword->currentText());
+
+	int idx = cboPassword->findText(cboPassword->currentText());
+	if (idx >= 0)
+	{
+		// Simply removing current index won't give proper results
+		// if user edits the contents of the combo box.
+		cboPassword->removeItem(idx);
+	}
+	else
+	{
+		cboPassword->clearEditText();
+		// It's intended to have focus change only in case if
+		// password wasn't present in the persistence.
+		cboPassword->setFocus();
 	}
 }
 
-const EnginePlugin *PasswordDlg::selectedEngine() const
+void PasswordDlg::saveConfiguration()
 {
-	const PluginLoader::Plugin *plugin = (*Main::enginePlugins)[engines->currentIndex()];
-	if(plugin == NULL)
-		return NULL;
+	PasswordsCfg cfg;
+	cfg.setRememberConnectPhrase(remember->isChecked());
+	if (remember->isChecked())
+	{
+		cfg.saveServerPhrase(connectPassword(), d->server);
+	}
+}
 
-	return plugin->info;
+void PasswordDlg::setCurrentConnectPassword(const QString& password)
+{
+	int idx = cboPassword->findText(password);
+	if (idx >= 0)
+	{
+		cboPassword->setCurrentIndex(idx);
+	}
+	else
+	{
+		cboPassword->insertItem(0, password);
+		cboPassword->setCurrentIndex(0);
+	}
+	cboPassword->lineEdit()->selectAll();
+}
+
+void PasswordDlg::setPasswords(const QStringList& passwords)
+{
+	QStringList passwordsSorted = passwords;
+	qSort(passwordsSorted.begin(), passwordsSorted.end(), caseInsensitiveLessThan);
+	foreach (const QString& pass, passwordsSorted)
+	{
+		if (cboPassword->findText(pass) < 0)
+		{
+			cboPassword->addItem(pass);
+		}
+	}
 }

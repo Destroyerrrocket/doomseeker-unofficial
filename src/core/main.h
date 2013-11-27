@@ -87,6 +87,7 @@ class MAIN_EXPORT Main : public QObject
 		static const QString		DOOMSEEKER_CONFIG_FILENAME;
 		static const QString		DOOMSEEKER_INI_FILENAME;
 		static const QString		DOOMSEEKER_IRC_INI_FILENAME;
+		static const QString		DOOMSEEKER_PASSWORD_INI_FILENAME;
 
 		int							connectToServerByURL();
 		void						convertOldIniToQSettingsIni();
@@ -112,6 +113,7 @@ class MAIN_EXPORT Main : public QObject
 		void						initIRCConfig();
 		void initLocalizationsDefinitions();
 		void						initMainConfig();
+		void						initPasswordsConfig();
 		void						initPluginConfig();
 		int installPendingUpdates();
 
