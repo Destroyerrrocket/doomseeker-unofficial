@@ -833,52 +833,52 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CFGIRCDefineNetworkDialog</name>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="222"/>
+        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="264"/>
         <source>Define IRC Network</source>
         <translation>Zdefiniuj sieć IRC</translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="223"/>
+        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="265"/>
         <source>Description:</source>
         <translation>Opis:</translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="224"/>
+        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="266"/>
         <source>Address:</source>
         <translation>Adres:</translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="225"/>
+        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="267"/>
         <source>Port:</source>
         <translation>Port:</translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="226"/>
+        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="268"/>
         <source>Server password (usually this should remain empty):</source>
         <translation>Hasło serwera (zazwyczaj powinno pozotać puste):</translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="227"/>
+        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="269"/>
         <source>General</source>
         <translation>Ogólne</translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="228"/>
+        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="270"/>
         <source>Nickserv password:</source>
         <translation>Hasło nickserv:</translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="229"/>
+        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="271"/>
         <source>Nickserv command:</source>
         <translation>Komenda nickserv:</translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="230"/>
+        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="272"/>
         <source>/privmsg nickserv identify %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="231"/>
+        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="273"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -893,27 +893,47 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;W większości przypadków komenda nickserv nie powinna być zmieniana.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="237"/>
+        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="279"/>
         <source>Nickserv</source>
         <translation>Nickserv</translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="238"/>
+        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="280"/>
         <source>Specify channels that you wish to join by default when connecting to this network:</source>
         <translation>Podaj kanały do których chcesz dołączyć zawsze po podłączeniu do sieci:</translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="239"/>
+        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="281"/>
         <source>SPACEBAR or ENTER separated</source>
         <translation>Rozdzielaj ENTEREM lub SPACJĄ</translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="240"/>
+        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="282"/>
         <source>Channels</source>
         <translation>Kanały</translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="241"/>
+        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="283"/>
+        <source>Execute following commands on network join:</source>
+        <translation>Wykonaj następujące komendy po podłączeniu do sieci:</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="284"/>
+        <source>Put each command on a separate line.</source>
+        <translation>Wprowadź każdą komendę na osobnej linii.</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="285"/>
+        <source>Max. 512 characters per command.</source>
+        <translation>Maks. 512 znaków na komendę.</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="286"/>
+        <source>Join Script</source>
+        <translation>Skrypt dołączeniowy</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgircdefinenetworkdialog.h" line="287"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -924,6 +944,55 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Uwaga:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; hasła są przechowywane w pliku konfiguracyjnym jako zwykły tekst.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../gui/configuration/irc/cfgircdefinenetworkdialog.cpp" line="60"/>
+        <source>Following commands have violated the IRC maximum byte number limit (%1):
+
+</source>
+        <translation>Następujące komendy przekroczyły maksymalny limit IRCa na ilość bajtów (%1):
+
+</translation>
+    </message>
+    <message>
+        <location filename="../gui/configuration/irc/cfgircdefinenetworkdialog.cpp" line="62"/>
+        <source>
+
+If saved, the script may not run properly.
+
+Do you wish to save the script anyway?</source>
+        <translation>
+
+Jeżeli zotanie zapisany, ten skrypt może nie działać poprawnie.
+
+Czy chcesz zapisać skrypt mimo wszystko?</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../gui/configuration/irc/cfgircdefinenetworkdialog.cpp" line="68"/>
+        <source>
+
+... and %n more ...</source>
+        <translation>
+            <numerusform>
+
+... i %n więcej ...</numerusform>
+            <numerusform>
+
+... i %n więcej ...</numerusform>
+            <numerusform>
+
+... i%n więcej ...</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../gui/configuration/irc/cfgircdefinenetworkdialog.cpp" line="72"/>
+        <source>Doomseeker - IRC Commands Problem</source>
+        <translation>Doomseeker - problem komend IRC</translation>
+    </message>
+    <message>
+        <location filename="../gui/configuration/irc/cfgircdefinenetworkdialog.cpp" line="107"/>
+        <source>	%1 (...)</source>
+        <translation>	%1 (...)</translation>
     </message>
 </context>
 <context>
@@ -1135,6 +1204,99 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Delay to wait before sending next batch (0ms recommended)</source>
         <translation type="obsolete">Opóźnienie przed wysłaniem kolejnej partii (zalecane: 0ms)</translation>
+    </message>
+</context>
+<context>
+    <name>CFGServerPasswords</name>
+    <message>
+        <location filename="../gui/configuration/cfgserverpasswords.cpp" line="110"/>
+        <source>Reveal</source>
+        <translation>Odkryj</translation>
+    </message>
+    <message>
+        <location filename="../gui/configuration/cfgserverpasswords.cpp" line="284"/>
+        <source>Hide</source>
+        <translation>Zakryj</translation>
+    </message>
+    <message>
+        <location filename="../gui/configuration/cfgserverpasswords.h" line="40"/>
+        <location filename="../../../../visual2008/src/core/ui_cfgserverpasswords.h" line="183"/>
+        <source>Server Passwords</source>
+        <translation>Hasła serwerów</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgserverpasswords.h" line="182"/>
+        <source>GroupBox</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgserverpasswords.h" line="185"/>
+        <source>Password</source>
+        <translation>Hasło</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgserverpasswords.h" line="187"/>
+        <source>Last Game</source>
+        <translation>Ostatnia gra</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgserverpasswords.h" line="189"/>
+        <source>Last Server</source>
+        <translation>Ostatni serwer</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgserverpasswords.h" line="191"/>
+        <location filename="../../../../visual2008/src/core/ui_cfgserverpasswords.h" line="200"/>
+        <source>Last Time</source>
+        <translation>Ostatni czas</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgserverpasswords.h" line="192"/>
+        <source>Remove Selected Passwords</source>
+        <translation>Usuń zaznaczone hasła</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgserverpasswords.h" line="194"/>
+        <source>Game</source>
+        <translation>Gra</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgserverpasswords.h" line="196"/>
+        <source>Name</source>
+        <translation>Nazwa</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgserverpasswords.h" line="198"/>
+        <source>Address</source>
+        <translation>Adres</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgserverpasswords.h" line="201"/>
+        <source>Remove Selected Servers</source>
+        <translation>Usuń zaznaczone serwery</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgserverpasswords.h" line="202"/>
+        <source>Add</source>
+        <translation>Dodaj</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgserverpasswords.h" line="203"/>
+        <source>Max number of servers to remember per password:</source>
+        <translation>Maks. liczba serwerów do zapamiętania na hasło:</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgserverpasswords.h" line="204"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Warning:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Some servers may be lost.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Uwaga:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Niektóre serwery mogą zostać utracone.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -2000,22 +2162,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DoomseekerConfigurationDialog</name>
     <message>
-        <location filename="../gui/configuration/doomseekerconfigurationdialog.cpp" line="79"/>
+        <location filename="../gui/configuration/doomseekerconfigurationdialog.cpp" line="80"/>
         <source>Wadseeker</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/configuration/doomseekerconfigurationdialog.cpp" line="102"/>
+        <location filename="../gui/configuration/doomseekerconfigurationdialog.cpp" line="103"/>
         <source>Settings saved!</source>
         <translation>Zapisano ustawienia!</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/doomseekerconfigurationdialog.cpp" line="106"/>
+        <location filename="../gui/configuration/doomseekerconfigurationdialog.cpp" line="107"/>
         <source>Settings save failed!</source>
         <translation>Zapis ustawień nie powiódł się!</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/doomseekerconfigurationdialog.cpp" line="112"/>
+        <location filename="../gui/configuration/doomseekerconfigurationdialog.cpp" line="113"/>
         <source>Engines</source>
         <translation>Gry</translation>
     </message>
@@ -2142,14 +2304,14 @@ p, li { white-space: pre-wrap; }
         <translation>Nie można odnaleźć pliku wykonywalnego gry %1, proszę sprawdzić lokację podaną w konfiguracji.</translation>
     </message>
     <message>
-        <location filename="../serverapi/gamerunner.cpp" line="186"/>
+        <location filename="../serverapi/gamerunner.cpp" line="187"/>
         <source>Path to working directory for &quot;%1&quot; is empty.
 Make sure the configuration for the main binary is set properly.</source>
         <translation>Ścieżka do katalogu roboczego dla gry &quot;%1&quot; jest pusta.
 Upewnij się, że konfiguracja dla głównego pliku wykonywalnego jest ustawiona poprawnie.</translation>
     </message>
     <message>
-        <location filename="../serverapi/gamerunner.cpp" line="192"/>
+        <location filename="../serverapi/gamerunner.cpp" line="193"/>
         <source>%1
  cannot be used as working directory for game:
 %2
@@ -2160,67 +2322,67 @@ nie może zostać użyty jako katalog roboczy dla gry:
 Plik wykonywalny: %3</translation>
     </message>
     <message>
-        <location filename="../serverapi/gamerunner.cpp" line="304"/>
+        <location filename="../serverapi/gamerunner.cpp" line="309"/>
         <source>Doomseeker - host - appending IWAD</source>
         <translation>Doomseeker - tworzenie serwera- dodawanie IWADu</translation>
     </message>
     <message>
-        <location filename="../serverapi/gamerunner.cpp" line="311"/>
+        <location filename="../serverapi/gamerunner.cpp" line="316"/>
         <source>Iwad is not set</source>
         <translation>IWAD nie jest ustawiony</translation>
     </message>
     <message>
-        <location filename="../serverapi/gamerunner.cpp" line="319"/>
+        <location filename="../serverapi/gamerunner.cpp" line="324"/>
         <source>Iwad Path error:
 &quot;%1&quot; doesn&apos;t exist or is a directory!</source>
         <translation>Błąd ściezki IWADa:
 &quot;%1&quot; nie istnieje lub jest katalogiem!</translation>
     </message>
     <message>
-        <location filename="../serverapi/gamerunner.cpp" line="330"/>
+        <location filename="../serverapi/gamerunner.cpp" line="335"/>
         <source>Doomseeker - host - appending PWADs</source>
         <translation>Doomseeker - tworzenie serwera - dodawanie PWADów</translation>
     </message>
     <message>
-        <location filename="../serverapi/gamerunner.cpp" line="345"/>
+        <location filename="../serverapi/gamerunner.cpp" line="350"/>
         <source>Pwad path error:
 &quot;%1&quot; doesn&apos;t exist or is a directory!</source>
         <translation>Błąd ścieżki PWADa:
 &quot;%1&quot; nie istnieje lub jest katalogiem!</translation>
     </message>
     <message>
-        <location filename="../serverapi/gamerunner.cpp" line="358"/>
+        <location filename="../serverapi/gamerunner.cpp" line="363"/>
         <source>Doomseeker - host - getting executable</source>
         <translation>Doomseeker - tworzenie serwera - pobieranie pliku wykonywalnego</translation>
     </message>
     <message>
-        <location filename="../serverapi/gamerunner.cpp" line="390"/>
+        <location filename="../serverapi/gamerunner.cpp" line="395"/>
         <source>%1
  doesn&apos;t exist or is not a file.</source>
         <translation>%1
 nie istnieje lub nie jest plikiem.</translation>
     </message>
     <message>
-        <location filename="../serverapi/gamerunner.cpp" line="401"/>
+        <location filename="../serverapi/gamerunner.cpp" line="406"/>
         <source>Doomseeker - host - getting working directory</source>
         <translation>Doomseeker - tworzenie serwera - pobieranie katalogu roboczego</translation>
     </message>
     <message>
-        <location filename="../serverapi/gamerunner.cpp" line="447"/>
+        <location filename="../serverapi/gamerunner.cpp" line="452"/>
         <source>Path to working directory is empty.
 Make sure the configuration for the executable file is set properly.</source>
         <translation>Ścieżka do katalogu roboczego jest pusta.
 Upewnij się, że konfiguracja dla pliku wykonywalnego jest ustawiona poprawnie.</translation>
     </message>
     <message>
-        <location filename="../serverapi/gamerunner.cpp" line="453"/>
+        <location filename="../serverapi/gamerunner.cpp" line="458"/>
         <source>%1
  doesn&apos;t exist or is not a directory.</source>
         <translation>%1
 nie istnieje lub jest katalogiem.</translation>
     </message>
     <message>
-        <location filename="../serverapi/gamerunner.cpp" line="470"/>
+        <location filename="../serverapi/gamerunner.cpp" line="475"/>
         <source>Starting (working dir %1): %2</source>
         <translation>Startuję (katalog roboczy %1): %2</translation>
     </message>
@@ -2696,62 +2858,62 @@ p, li { white-space: pre-wrap; }
         <translation>IRC: Poprawnie zarejestrowano w sieci %1 [%2:%3]</translation>
     </message>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="329"/>
+        <location filename="../irc/ircnetworkadapter.cpp" line="333"/>
         <source>Invalid parse result for mesage: %1</source>
         <translation>Nieprawidłowy rezultat parsowania wiadomości: %1</translation>
     </message>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="381"/>
+        <location filename="../irc/ircnetworkadapter.cpp" line="385"/>
         <source>You have been kicked from channel %1 by %2 (Reason: %3)</source>
         <translation>Zostałeś wykopany z kanału %1 przez użytkownika %2 (Powód: %3)</translation>
     </message>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="386"/>
+        <location filename="../irc/ircnetworkadapter.cpp" line="390"/>
         <source>%1 was kicked by %2 (%3)</source>
         <translation>%1 zotał wykopany przez %2 (%3)</translation>
     </message>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="438"/>
+        <location filename="../irc/ircnetworkadapter.cpp" line="442"/>
         <source>%1 sets mode: %2</source>
         <translation>%1 ustawił tryb: %2</translation>
     </message>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="461"/>
+        <location filename="../irc/ircnetworkadapter.cpp" line="465"/>
         <source>Nickname %1 is already taken.</source>
         <translation>Nick %1 jest już zajęty.</translation>
     </message>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="468"/>
+        <location filename="../irc/ircnetworkadapter.cpp" line="472"/>
         <source>Both nickname and alternate nickname are taken on this network.</source>
         <translation>Zarówno nick jak i alternatywny nick są już zajęte w tej sieci.</translation>
     </message>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="472"/>
+        <location filename="../irc/ircnetworkadapter.cpp" line="476"/>
         <source>No alternate nickname specified.</source>
         <translation>Nie podano alternatywnego nicka.</translation>
     </message>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="478"/>
+        <location filename="../irc/ircnetworkadapter.cpp" line="482"/>
         <source>Using alternate nickname %1 to join.</source>
         <translation>Użycie alternatywnego nicka %1 w celu podłączenia.</translation>
     </message>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="487"/>
+        <location filename="../irc/ircnetworkadapter.cpp" line="491"/>
         <source>User %1 is not logged in.</source>
         <translation>Użytkownik %1 nie jest zalogowany.</translation>
     </message>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="513"/>
+        <location filename="../irc/ircnetworkadapter.cpp" line="517"/>
         <source>IRC parse error: %1</source>
         <translation>Błąd parsowania: %1</translation>
     </message>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="596"/>
+        <location filename="../irc/ircnetworkadapter.cpp" line="600"/>
         <source>Updated own nickname.</source>
         <translation>Uaktualniono własny nick.</translation>
     </message>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="655"/>
+        <location filename="../irc/ircnetworkadapter.cpp" line="659"/>
         <source>You left channel %1.</source>
         <translation>Opuściłeś kanał %1.</translation>
     </message>
@@ -2760,7 +2922,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Błąd parsowania: %1</translation>
     </message>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="539"/>
+        <location filename="../irc/ircnetworkadapter.cpp" line="543"/>
         <source>FROM %1: %2</source>
         <translation>OD %1: %2</translation>
     </message>
@@ -2919,12 +3081,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>IRCSocketSignalsAdapter</name>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="707"/>
+        <location filename="../irc/ircnetworkadapter.cpp" line="711"/>
         <source>Connected. Sending registration messages.</source>
         <translation>Połączono. Wysyłam komunikaty rejestrujące.</translation>
     </message>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="729"/>
+        <location filename="../irc/ircnetworkadapter.cpp" line="733"/>
         <source>IRC: Disconnected from network %1</source>
         <translation>IRC: rozłączono z sieci %1</translation>
     </message>
@@ -2966,117 +3128,122 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Main</name>
     <message>
-        <location filename="../main.cpp" line="162"/>
+        <location filename="../main.cpp" line="164"/>
         <source>Doomseeker will not run because following directories cannot be created:</source>
         <translation>Doomseeker nie zostanie uruchomiony ponieważ następujące katalogi nie mogły zostać utworzone:</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="165"/>
+        <location filename="../main.cpp" line="167"/>
         <source>Doomseeker startup error</source>
         <translation>Doomseeker - błąd uruchomienia</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="230"/>
+        <location filename="../main.cpp" line="233"/>
         <source>Init finished.</source>
         <translation>Inicjalizacja zakończona.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="245"/>
+        <location filename="../main.cpp" line="248"/>
         <source>Doomseeker - Updates Install Failure</source>
         <translation>Doomseeker - Błąd instalacji aktualizacji</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="284"/>
+        <location filename="../main.cpp" line="287"/>
         <source>Preparing GUI.</source>
         <translation>Przygotowuję GUI.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="306"/>
+        <location filename="../main.cpp" line="309"/>
         <source>Starting RCon client.</source>
         <translation>Startuję klienta RCon.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="319"/>
+        <location filename="../main.cpp" line="322"/>
         <source>Couldn&apos;t find specified plugin: </source>
         <translation>Nie znaleziono podanej wtyczki: </translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="329"/>
+        <location filename="../main.cpp" line="332"/>
         <source>Plugin does not support RCon.</source>
         <translation>Wtyczka nie wspiera konsoli zdalnej.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="372"/>
+        <location filename="../main.cpp" line="375"/>
         <source>Initializing IP2C database.</source>
         <translation>Inicjalizuję bazę IP2C.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="380"/>
+        <location filename="../main.cpp" line="383"/>
         <source>Initializing IRC configuration file.</source>
         <translation>Inicjalizuję plik konfiguracyjny IRCa.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="401"/>
+        <location filename="../main.cpp" line="404"/>
         <source>Loading translations definitions</source>
         <translation>Wczytuję  definicje tłumaczeń</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="406"/>
+        <location filename="../main.cpp" line="409"/>
         <source>Loading translation &quot;%1&quot;.</source>
         <translation>Wczytuję tłumaczenie: &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="410"/>
+        <location filename="../main.cpp" line="413"/>
         <source>Translation loaded.</source>
         <translation>Wczytano  tłumaczenie.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="414"/>
+        <location filename="../main.cpp" line="417"/>
         <source>Failed to load translation.</source>
         <translation>Wczytywanie tłumaczenia zakończone niepowodzeniem.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="420"/>
+        <location filename="../main.cpp" line="423"/>
         <source>Initializing configuration file.</source>
         <translation>Inicjalizuję plik konfiguracyjny.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="429"/>
+        <location filename="../main.cpp" line="432"/>
         <source>Could not get an access to the settings directory. Configuration will not be saved.</source>
         <translation>Brak dostępu do katalogu z ustawieniami. Konfiguracja nie zostanie zapisana.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="448"/>
+        <location filename="../main.cpp" line="451"/>
+        <source>Initializing passwords configuration file.</source>
+        <translation>Inicjalizuję plik konfiguracyjny dla haseł.</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="464"/>
         <source>Initializing configuration for plugins.</source>
         <translation>Inicjalizuję konfigurację dla wtyczek.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="508"/>
+        <location filename="../main.cpp" line="524"/>
         <source>Available command line parameters:</source>
         <translation>Dostępne parametry linii komend:</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="509"/>
+        <location filename="../main.cpp" line="525"/>
         <source>	--connect protocol://ip[:port] : Attempts to connect to the specified server.</source>
         <translation>--connect protokół://ip[:port] : Próbuje połączyć się z podanym serwerem.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="510"/>
+        <location filename="../main.cpp" line="526"/>
         <source>	--datadir : Sets an explicit search location for IP2C data along with plugins.</source>
         <translation>--datadir : Ustawia katalog z którego będą łądowane dane IP2C oraz wtyczki.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="511"/>
+        <location filename="../main.cpp" line="527"/>
         <source>	--rcon [plugin] [ip] : Launch the rcon client for the specified ip.</source>
         <translation>--rcon [wtyczka] [ip] : Startuje klienta zdalnej konsoli dla podanego IP.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="512"/>
+        <location filename="../main.cpp" line="528"/>
         <source>	--portable : Starts application in portable mode.</source>
         <translation>--portable : Uruchamia program w trybie przenośnym.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="513"/>
+        <location filename="../main.cpp" line="529"/>
         <source>	--version-json [file] : Prints version info on
 	    Doomseeker and all plugins in JSON format
 	    to specified file, then closes the program.
@@ -3087,22 +3254,22 @@ p, li { white-space: pre-wrap; }
 </translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="539"/>
+        <location filename="../main.cpp" line="555"/>
         <source>Failed to open file.</source>
         <translation>Błąd otwarcia pliku.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="546"/>
+        <location filename="../main.cpp" line="562"/>
         <source>Dumping version info to file in JSON format.</source>
         <translation>Zapisuję informacje o wersji do pliku w formacie JSON.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="552"/>
+        <location filename="../main.cpp" line="568"/>
         <source>No file specified!</source>
         <translation>Nie podano pliku!</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="577"/>
+        <location filename="../main.cpp" line="593"/>
         <source>Starting refreshing thread.</source>
         <translation>Rozpoczynam wątek odświeżający.</translation>
     </message>
@@ -3696,9 +3863,8 @@ Pozostałe aktualizacje zostały porzucone.</translation>
 <context>
     <name>PasswordDlg</name>
     <message>
-        <location filename="../gui/passwordDlg.cpp" line="35"/>
         <source>Please enter your remote console password.</source>
-        <translation>Proszę podaj hasło do konsoli zdalnej.</translation>
+        <translation type="obsolete">Proszę podaj hasło do konsoli zdalnej.</translation>
     </message>
 </context>
 <context>
@@ -3845,6 +4011,34 @@ Pozostałe aktualizacje zostały porzucone.</translation>
         <location filename="../serverapi/tooltips/gameinfotip.cpp" line="27"/>
         <source>Unlimited</source>
         <translation>Nieograniczony</translation>
+    </message>
+</context>
+<context>
+    <name>RconPasswordDialog</name>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_rconpassworddialog.h" line="103"/>
+        <source>Dialog</source>
+        <translation>Dialog</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_rconpassworddialog.h" line="104"/>
+        <source>Connection</source>
+        <translation>Połączenie</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_rconpassworddialog.h" line="105"/>
+        <source>Source Port:</source>
+        <translation>Gra:</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_rconpassworddialog.h" line="106"/>
+        <source>Server Address:</source>
+        <translation>Adres serwera:</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_rconpassworddialog.h" line="107"/>
+        <source>Please enter your remote console password.</source>
+        <translation>Proszę podaj hasło do konsoli zdalnej.</translation>
     </message>
 </context>
 <context>
@@ -4085,8 +4279,22 @@ Pozostałe aktualizacje zostały porzucone.</translation>
     </message>
     <message>
         <location filename="../gui/models/serverlistcolumn.cpp" line="59"/>
-        <source>Servername</source>
+        <source>Server Name</source>
         <translation>Nazwa serwera</translation>
+    </message>
+    <message>
+        <location filename="../gui/models/serverlistcolumn.cpp" line="67"/>
+        <source>WADs</source>
+        <translation>WADy</translation>
+    </message>
+    <message>
+        <location filename="../gui/models/serverlistcolumn.cpp" line="69"/>
+        <source>Game Type</source>
+        <translation>Tryb gry</translation>
+    </message>
+    <message>
+        <source>Servername</source>
+        <translation type="obsolete">Nazwa serwera</translation>
     </message>
     <message>
         <location filename="../gui/models/serverlistcolumn.cpp" line="61"/>
@@ -4108,14 +4316,12 @@ Pozostałe aktualizacje zostały porzucone.</translation>
         <translation type="obsolete">MAPA</translation>
     </message>
     <message>
-        <location filename="../gui/models/serverlistcolumn.cpp" line="67"/>
         <source>Wads</source>
-        <translation>WADy</translation>
+        <translation type="obsolete">WADy</translation>
     </message>
     <message>
-        <location filename="../gui/models/serverlistcolumn.cpp" line="69"/>
         <source>Gametype</source>
-        <translation>Tryb gry</translation>
+        <translation type="obsolete">Tryb gry</translation>
     </message>
 </context>
 <context>
@@ -4174,27 +4380,27 @@ Pozostałe aktualizacje zostały porzucone.</translation>
 <context>
     <name>ServerListHandler</name>
     <message>
-        <location filename="../gui/serverlist.cpp" line="170"/>
+        <location filename="../gui/serverlist.cpp" line="177"/>
         <source>MISSING</source>
         <translation>BRAKUJE</translation>
     </message>
     <message>
-        <location filename="../gui/serverlist.cpp" line="289"/>
+        <location filename="../gui/serverlist.cpp" line="297"/>
         <source>&lt;td&gt;%1&lt;/td&gt;&lt;td&gt; OPTIONAL&lt;/td&gt;</source>
         <translation>&lt;td&gt;%1&lt;/td&gt;&lt;td&gt; OPCJONALNY&lt;/td&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/serverlist.cpp" line="294"/>
+        <location filename="../gui/serverlist.cpp" line="302"/>
         <source>&lt;td&gt;%1&lt;/td&gt;&lt;td&gt; MISSING&lt;/td&gt;</source>
         <translation>&lt;td&gt;%1&lt;/td&gt;&lt;td&gt; BRAKUJE&lt;/td&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/serverlist.cpp" line="636"/>
+        <location filename="../gui/serverlist.cpp" line="644"/>
         <source>Doomseeker - context menu warning</source>
         <translation>Doomseeker - ostrzeżenie o menu kontekstowym</translation>
     </message>
     <message>
-        <location filename="../gui/serverlist.cpp" line="636"/>
+        <location filename="../gui/serverlist.cpp" line="644"/>
         <source>Unhandled behavior int ServerListHandler::tableRightClicked()</source>
         <translation></translation>
     </message>
@@ -4529,32 +4735,29 @@ Pozostałe aktualizacje zostały porzucone.</translation>
 <context>
     <name>passwordDlg</name>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_passwordDlg.h" line="116"/>
+        <location filename="../../../../visual2008/src/core/ui_passwordDlg.h" line="107"/>
         <source>Connection Password</source>
         <translation>Hasło połączenia</translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_passwordDlg.h" line="117"/>
         <source>Connection</source>
-        <translation>Połączenie</translation>
+        <translation type="obsolete">Połączenie</translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_passwordDlg.h" line="118"/>
         <source>Source Port:</source>
-        <translation>Gra:</translation>
+        <translation type="obsolete">Gra:</translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_passwordDlg.h" line="119"/>
         <source>Server Address:</source>
-        <translation>Adres serwera:</translation>
+        <translation type="obsolete">Adres serwera:</translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_passwordDlg.h" line="120"/>
+        <location filename="../../../../visual2008/src/core/ui_passwordDlg.h" line="108"/>
         <source>This server requires a password in order to connect, please enter this password below.</source>
         <translation>Ten serwerj wymaga hasła do połączenia, proszę wpisz to hasło poniżej.</translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_passwordDlg.h" line="121"/>
+        <location filename="../../../../visual2008/src/core/ui_passwordDlg.h" line="109"/>
         <source>Remember password</source>
         <translation>Zapamiętaj hasło</translation>
     </message>
