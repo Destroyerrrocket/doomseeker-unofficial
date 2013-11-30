@@ -785,6 +785,11 @@ QRgb Server::teamColor(int team) const
 	return qRgb(0, 255, 0);
 }
 
+QString Server::teamName(int team) const
+{
+	return team < MAX_TEAMS && team >= 0 ? teamNames[team] : "";
+}
+
 unsigned short Server::timeLeft() const
 {
 	return d->timeLeft;

@@ -29,6 +29,7 @@
 #include <QTime>
 #include <QTimer>
 
+#include "serverapi/rconprotocol.h"
 #include "serverapi/server.h"
 
 #define NUM_ZANDRONUM_GAME_MODES	16

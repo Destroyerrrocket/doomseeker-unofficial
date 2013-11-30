@@ -25,6 +25,7 @@
 #include <QString>
 
 #include "plugins/engineplugin.h"
+#include "serverapi/rconprotocol.h"
 #include "serverapi/server.h"
 #include "widgets/serverconsole.h"
 #include "remoteconsole.h"

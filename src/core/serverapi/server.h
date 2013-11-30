@@ -25,30 +25,25 @@
 #define __SERVER_H__
 
 #include <QColor>
-#include <QDir>
-#include <QFileInfo>
 #include <QList>
-#include <QProcess>
 #include <QObject>
 #include <QHostAddress>
 #include <QHostInfo>
 #include <QString>
 #include <QMetaType>
-#include <QThread>
+#include <QPixmap>
 #include <QTime>
 #include <QUdpSocket>
 
-#include "serverapi/rconprotocol.h"
-#include "serverapi/player.h"
 #include "serverapi/serverstructs.h"
-#include "global.h"
 
 class Binaries;
 class GameRunner;
+class Player;
 class PlayersList;
 class EnginePlugin;
 class TooltipGenerator;
-class QPixmap;
+class RConProtocol;
 
 // Some ports support optional wads.
 class MAIN_EXPORT PWad
@@ -108,7 +103,7 @@ class MAIN_EXPORT Server : public QObject
 		virtual const GameCVar *modifier() const { return NULL; }
 		virtual RConProtocol *rcon() { return NULL; }
 		virtual QRgb teamColor(int team) const;
-		virtual QString teamName(int team) const { return team < MAX_TEAMS && team >= 0 ? teamNames[team] : ""; }
+		virtual QString teamName(int team) const;
 		/**
 		 * This is supposed to return the plugin this Server belongs to.
 		 * New instances of EnginePlugin shouldn't be created here. Instead
