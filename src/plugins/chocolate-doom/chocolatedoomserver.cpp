@@ -65,43 +65,45 @@ Server::Response ChocolateDoomServer::readRequest(QByteArray &data)
 		return RESPONSE_BAD;
 	}
 
-	serverVersion = QString(&in[2]);
-	int pos = 2 + serverVersion.length()+1;
+	setGameVersion(QString(&in[2]));
+	int pos = 2 + gameVersion().length()+1;
 
 	serverState = READINT8(&in[pos++]);
 	unsigned int numPlayers = READINT8(&in[pos++]);
-	players->clear();
+	clearPlayersList();
 	for(unsigned int i = 0;i < numPlayers;i++)
 	{
-		*players << Player(playerNames[i < 4 ? i : 4], 0, 0, static_cast<Player::PlayerTeam> (Player::TEAM_NONE), false, false);
+		addPlayer(Player(playerNames[i < 4 ? i : 4], 0, 0, static_cast<Player::PlayerTeam> (Player::TEAM_NONE), false, false));
 	}
-	maxClients = maxPlayers = READINT8(&in[pos++]);
+	int clients = READINT8(&in[pos++]);
+	setMaxClients(clients);
+	setMaxPlayers(clients);
 	game = READINT8(&in[pos++]);
 	gameMission = READINT8(&in[pos++]);
-	serverName = QString(&in[pos]);
+	setName(QString(&in[pos]));
 
 	switch(game)
 	{
 		default:
 		case 0: //shareware
-			iwad = "doom1.wad";
+			setIwad("doom1.wad");
 			break;
 		case 1: //registered
 		case 3: //retail
-			iwad = "doom.wad";
+			setIwad("doom.wad");
 			break;
 		case 2: //commercial
 			switch(gameMission)
 			{
 				default:
 				case 1:
-					iwad = "doom2.wad";
+					setIwad("doom2.wad");
 					break;
 				case 2:
-					iwad = "tnt.wad";
+					setIwad("tnt.wad");
 					break;
 				case 3:
-					iwad = "plutonia.wad";
+					setIwad("plutonia.wad");
 					break;
 			}
 			break;

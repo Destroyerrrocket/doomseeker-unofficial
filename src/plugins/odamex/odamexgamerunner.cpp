@@ -61,7 +61,7 @@ bool OdamexGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool
 		// Also, we want to pass the wadseeker target directory here so in the
 		// case where the server changes wads Odamex can download to it as well.
 		args << "-waddir";
-		QString iwad = server->iwadName();
+		QString iwad = server->iwad();
 		if(!wadTargetDirectory.isEmpty())
 			waddir = wadTargetDirectory + PATH_SEPARATOR;
 		waddir += pf.findFile(iwad.toLower());
@@ -81,9 +81,9 @@ bool OdamexGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool
 
 void OdamexGameRunner::hostProperties(QStringList& args) const
 {
-	args << "-skill" << QString::number(server->gameSkill() + 1); // from 1 to 5
+	args << "-skill" << QString::number(server->skill() + 1); // from 1 to 5
 
-	const QStringList& mapsList = server->mapsList();
+	const QStringList& mapsList = server->mapList();
 	if (!mapsList.isEmpty())
 	{
 		foreach (QString map, mapsList)
@@ -91,7 +91,7 @@ void OdamexGameRunner::hostProperties(QStringList& args) const
 			args << "+addmap" << map;
 		}
 	}
-	args << "+shufflemaplist" << QString::number( static_cast<int>(server->randomMapRotation()) );
+	args << "+shufflemaplist" << QString::number( static_cast<int>(server->isRandomMapRotation()) );
 
 	unsigned int modeNum;
 	switch(server->gameMode().modeIndex())
@@ -111,14 +111,14 @@ void OdamexGameRunner::hostProperties(QStringList& args) const
 
 	args << "+join_password" << "\"" + server->joinPassword() + "\"";
 	args << "+rcon_password" << "\"" + server->rconPassword() + "\"";
-	args << "+sv_email" << "\"" + server->eMail() + "\"";
+	args << "+sv_email" << "\"" + server->email() + "\"";
 	args << "+sv_hostname" << "\"" + server->name() + "\"";
-	args << "+sv_maxclients" << QString::number(server->maximumClients());
-	args << "+sv_maxplayers" << QString::number(server->maximumPlayers());
-	args << "+sv_website" << "\"" + server->website() + "\"";
+	args << "+sv_maxclients" << QString::number(server->numTotalSlots());
+	args << "+sv_maxplayers" << QString::number(server->maxPlayers());
+	args << "+sv_website" << "\"" + server->webSite() + "\"";
 
-	QString motd = server->messageOfTheDay();
+	QString motd = server->motd();
 	args << "+sv_motd" << "\"" + motd.replace("\n", "\\n") + "\"";
 
-	args << "+sv_usemasters" << QString::number(static_cast<int>( server->isBroadcastingToMaster() ));
+	args << "+sv_usemasters" << QString::number(static_cast<int>( server->isBroadcastToMaster() ));
 }

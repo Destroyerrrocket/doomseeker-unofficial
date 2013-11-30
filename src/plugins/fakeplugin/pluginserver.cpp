@@ -44,7 +44,7 @@ Server::Response PluginServer::readRequest(QByteArray &data)
 		return RESPONSE_BAD;
 	}
 
-	this->serverName = QString("Fake Server %1").arg(this->port());
+	this->setName(QString("Fake Server %1").arg(this->port()));
 	return RESPONSE_GOOD;
 }
 

@@ -80,7 +80,7 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 	short version_major = version/256;
 	short version_minor = (version % 256)/10;
 	short version_patch = (version % 256)%10;
-	serverVersion = QString("%1.%2.%3").arg(version_major).arg(version_minor).arg(version_patch);
+	QString strVersion = QString("%1.%2.%3").arg(version_major).arg(version_minor).arg(version_patch);
 
 	unsigned int protocolVersion = in.readQUInt32();
 	if(protocolVersion >= 1)
@@ -90,7 +90,8 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 	
 	CHECK_POS;
 	
-	serverVersion += QString(" r%1").arg(in.readQUInt32());
+	strVersion += QString(" r%1").arg(in.readQUInt32());
+	setGameVersion(strVersion);
 	
 	CHECK_POS;
 
@@ -104,33 +105,35 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 		CHECK_POS;
 
 		if(cvarName == "sv_email")
-			email = cvarValue;
+			setEmail(cvarValue);
 		else if(cvarName == "sv_hostname")
-			serverName = cvarValue;
+			setName(cvarValue);
 		else if(cvarName == "sv_maxplayers")
-			maxPlayers = cvarValue.toUInt();
+			setMaxPlayers(cvarValue.toUInt());
 		else if(cvarName == "sv_maxclients")
-			maxClients = cvarValue.toUInt();
+			setMaxClients(cvarValue.toUInt());
 		else if(cvarName == "sv_scorelimit")
-			serverScoreLimit = cvarValue.toUInt();
+			setScoreLimit(cvarValue.toUInt());
 		else if(cvarName == "sv_gametype")
 		{
 			unsigned int mode = cvarValue.toUInt();
 			if(mode < (unsigned)plugin()->data()->gameModes->size())
-				currentGameMode = (*plugin()->data()->gameModes)[cvarValue.toUInt()];
+			{
+				setGameMode((*plugin()->data()->gameModes)[cvarValue.toUInt()]);
+			}
 		}
 		else if(cvarName == "sv_website")
-			webSite = cvarValue;
+			setWebSite(cvarValue);
 	}
 
 	QString passwordHash = in.readRawUntilByte('\0');
-	locked = !passwordHash.isEmpty();
+	setLocked(!passwordHash.isEmpty());
 	CHECK_POS;
 
-	mapName = in.readRawUntilByte('\0');
+	setMap(in.readRawUntilByte('\0'));
 	CHECK_POS;
 
-	serverTimeLeft = in.readQUInt16();
+	setTimeLeft(in.readQUInt16());
 
 	short teamCount = in.readQUInt8();
 	while(teamCount-- > 0)
@@ -151,7 +154,7 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 		dehPatches << patch;
 	}
 
-	wads.clear();
+	clearWads();
 	short wadCount = in.readQUInt8();
 	for(short i = 0;i < wadCount;i++)
 	{
@@ -159,15 +162,15 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 	
 		QString wad = in.readRawUntilByte('\0');
 		if(i >= 2)
-			wads << wad;
+			addWad(wad);
 		else if(i == 1)
-			iwad = wad;
+			setIwad(wad);
 		
 		CHECK_POS;
 		QString hash = in.readRawUntilByte('\0');
 	}
 
-	players->clear();
+	clearPlayersList();
 	short playerCount = in.readQUInt8();
 	while(playerCount-- > 0)
 	{
@@ -190,9 +193,9 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 		unsigned short score = in.readQUInt16();
 		in.skipRawData(4);
 		
-		Player::PlayerTeam team = currentGameMode.isTeamGame() ? static_cast<Player::PlayerTeam> (teamIndex) : Player::TEAM_NONE;
+		Player::PlayerTeam team = gameMode().isTeamGame() ? static_cast<Player::PlayerTeam> (teamIndex) : Player::TEAM_NONE;
 		Player player(playerName, score, ping, team, spectator);
-		players->append(player);
+		addPlayer(player);
 	}
 
 	return RESPONSE_GOOD;

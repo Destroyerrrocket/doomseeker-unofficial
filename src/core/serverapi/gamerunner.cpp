@@ -52,7 +52,7 @@ bool GameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwad
 	}
 
 	// Iwad
-	QString iwad = pf.findFile(server->iwadName().toLower());
+	QString iwad = pf.findFile(server->iwad().toLower());
 	args << argForIwadLoading() << iwad;
 	iwadFound = !iwad.isEmpty();
 
@@ -246,7 +246,7 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 	{
 		if (!iwadFound)
 		{
-			joinError.missingIwad = server->iwadName();
+			joinError.missingIwad = server->iwad();
 		}
 		joinError.missingWads = missingPwads;
 		joinError.type = JoinError::MissingWads;
@@ -278,7 +278,7 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 			wadList << server->wad(i).name.toLower();
 		}
 
-		metaSection.createSetting("iwad", server->iwadName().toLower());
+		metaSection.createSetting("iwad", server->iwad().toLower());
 		metaSection.createSetting("pwads", wadList.join(";"));
 	}
 

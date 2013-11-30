@@ -196,8 +196,8 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 	// Determine ping. Time is sent no matter what the response is, still we
 	// should check if there's enough data to read from.
 	qint32 responseTimestamp = in.readQInt32();
-	currentPing = millisecondTime() - responseTimestamp;
-	bPingIsSet = true;
+	setPing(millisecondTime() - responseTimestamp);
+	setPingIsSet(true);
 	
 	// Act according to the response
 	switch(response)
@@ -218,7 +218,7 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 
 	// If response was equal to SERVER_GOOD, proceed to read data.
 	RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
-	serverVersion = in.readRawUntilByte('\0');
+	setGameVersion(in.readRawUntilByte('\0'));
 
 	ZandronumGameInfo::ZandronumGameMode mode = ZandronumGameInfo::GAMEMODE_COOPERATIVE;
 
@@ -231,62 +231,62 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 	if((flags & SQF_NAME) == SQF_NAME) // Check if SQF_NAME is inside flags var.
 	{
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
-		serverName = in.readRawUntilByte('\0');
+		setName(in.readRawUntilByte('\0'));
 		flags ^= SQF_NAME; // Remove SQF_NAME flag from the variable.
 	}
 
 	if((flags & SQF_URL) == SQF_URL)
 	{
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
-		webSite = in.readRawUntilByte('\0');
+		setWebSite(in.readRawUntilByte('\0'));
 		flags ^= SQF_URL;
 	}
 	if((flags & SQF_EMAIL) == SQF_EMAIL)
 	{
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
-		email = in.readRawUntilByte('\0');
+		setEmail(in.readRawUntilByte('\0'));
 		flags ^= SQF_EMAIL;
 	}
 	if((flags & SQF_MAPNAME) == SQF_MAPNAME)
 	{
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
-		mapName = in.readRawUntilByte('\0');
+		setMap(in.readRawUntilByte('\0'));
 		flags ^= SQF_MAPNAME;
 	}
 
 	if((flags & SQF_MAXCLIENTS) == SQF_MAXCLIENTS)
 	{
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
-		maxClients = in.readQUInt8();
+		setMaxClients(in.readQUInt8());
 		flags ^= SQF_MAXCLIENTS;
 	}
 	else
 	{
-		maxClients = 0;
+		setMaxClients(0);
 	}
 
 	if((flags & SQF_MAXPLAYERS) == SQF_MAXPLAYERS)
 	{
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
-		maxPlayers = in.readQUInt8();
+		setMaxPlayers(in.readQUInt8());
 		flags ^= SQF_MAXPLAYERS;
 	}
 	else
 	{
-		maxPlayers = 0;
+		setMaxPlayers(0);
 	}
 
 	if((flags & SQF_PWADS) == SQF_PWADS)
 	{
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
 		qint8 numPwads = in.readQInt8();
-		wads.clear(); // clear any previous list we may have had.
+		clearWads();
 		flags ^= SQF_PWADS;
 		for(int i = 0; i < numPwads; i++)
 		{
 			RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
 			QString wad = in.readRawUntilByte('\0');
-			wads << wad;
+			addWad(wad);
 		}
 	}
 
@@ -301,7 +301,7 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 		}
 
 		mode = static_cast<ZandronumGameInfo::ZandronumGameMode> (modeCode);
-		currentGameMode = (*ZandronumGameInfo::gameModes())[mode];
+		setGameMode((*ZandronumGameInfo::gameModes())[mode]);
 		
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(2);
 		instagib = in.readQInt8() != 0;
@@ -320,19 +320,19 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 	if((flags & SQF_IWAD) == SQF_IWAD)
 	{
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
-		iwad = in.readRawUntilByte('\0');
+		setIwad(in.readRawUntilByte('\0'));
 		flags ^= SQF_IWAD;
 	}
 
 	if((flags & SQF_FORCEPASSWORD) == SQF_FORCEPASSWORD)
 	{
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
-		locked = in.readQInt8() != 0;
+		setLocked(in.readQInt8() != 0);
 		flags ^= SQF_FORCEPASSWORD;
 	}
 	else
 	{
-		locked = false;
+		setLocked(false);
 	}
 
 	if((flags & SQF_FORCEJOINPASSWORD) == SQF_FORCEJOINPASSWORD)
@@ -345,7 +345,7 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 	if((flags & SQF_GAMESKILL) == SQF_GAMESKILL)
 	{
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
-		skill = in.readQInt8();
+		setSkill(in.readQInt8());
 		flags ^= SQF_GAMESKILL;
 	}
 
@@ -405,11 +405,11 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 		// note that if timelimit == 0 then no info
 		// about timeleft is sent
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(2);
-		serverTimeLimit = in.readQUInt16();
-		if (serverTimeLimit != 0)
+		setTimeLimit(in.readQUInt16());
+		if (timeLimit() != 0)
 		{
 			RETURN_BAD_IF_NOT_ENOUGH_DATA(2);
-			serverTimeLeft = in.readQUInt16();
+			setTimeLeft(in.readQUInt16());
 		}
 
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(2 + 2 + 2);
@@ -419,11 +419,11 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 		switch(mode)
 		{
 			default:
-				serverScoreLimit = fragLimit;
+				setScoreLimit(fragLimit);
 				break;
 			case ZandronumGameInfo::GAMEMODE_LASTMANSTANDING:
 			case ZandronumGameInfo::GAMEMODE_TEAMLMS:
-				serverScoreLimit = winLimit;
+				setScoreLimit(winLimit);
 				break;
 			case ZandronumGameInfo::GAMEMODE_POSSESSION:
 			case ZandronumGameInfo::GAMEMODE_TEAMPOSSESSION:
@@ -432,7 +432,7 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 			case ZandronumGameInfo::GAMEMODE_ONEFLAGCTF:
 			case ZandronumGameInfo::GAMEMODE_SKULLTAG:
 			case ZandronumGameInfo::GAMEMODE_DOMINATION:
-				serverScoreLimit = pointLimit;
+				setScoreLimit(pointLimit);
 				break;
 		}
 	}
@@ -440,11 +440,11 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 	{
 		// Nullify vars if there is no info
 		fragLimit = 0;
-		serverTimeLimit = 0;
+		setTimeLimit(0);
 		duelLimit = 0;
 		pointLimit = 0;
 		winLimit = 0;
-		serverScoreLimit = 0;
+		setScoreLimit(0);
 	}
 
 	if((flags & SQF_TEAMDAMAGE) == SQF_TEAMDAMAGE)
@@ -459,7 +459,7 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 		for(int i = 0;i < 2;i++)
 		{
 			RETURN_BAD_IF_NOT_ENOUGH_DATA(2);
-			scores[i] = in.readQInt16();
+			scoresMutable()[i] = in.readQInt16();
 		}
 		flags ^= SQF_TEAMSCORES;
 	}
@@ -472,11 +472,11 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 		if((flags & SQF_PLAYERDATA) == SQF_PLAYERDATA)
 		{
 			flags ^= SQF_PLAYERDATA;
-			players->clear(); // Erase previous players (if any)
+			clearPlayersList(); // Erase previous players (if any)
 			for(int i = 0;i < numPlayers;i++)
 			{
 				// team isn't sent in non team modes.
-				bool teammode = currentGameMode.isTeamGame();
+				bool teammode = gameMode().isTeamGame();
 
 				RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
 				QString name = in.readRawUntilByte('\0');
@@ -503,7 +503,7 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 				in.skipRawData(1);
 
 				Player player(name, score, ping, static_cast<Player::PlayerTeam> (team), spectating, bot);
-				*players << player;
+				addPlayer(player);
 			}
 		}
 	}
@@ -549,7 +549,9 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 			qint16 score = in.readQInt16();
 			teamInfo[i].setScore(score);
 			if(i < MAX_TEAMS) // Transfer to super class score array if possible.
-				scores[i] = teamInfo[i].score();
+			{
+				scoresMutable()[i] = teamInfo[i].score();
+			}
 		}
 	}
 
@@ -557,13 +559,13 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 	{
 		flags ^= SQF_SECURITY_SETTINGS;
 
-		bSecureServer = in.readQUInt8() != 0;
+		setSecure(in.readQUInt8() != 0);
 	}
 
 	// Due to a bug in 0.97d3 we need to add additional checks here.
 	// 0.97d3 servers also respond with SQF_TESTING_SERVER flag set
 	// if it was previously sent to them
-	if (in.remaining() != 0 && ZandronumVersion(version()) > ZandronumVersion("0.97d3") && (flags & SQF_TESTING_SERVER) == SQF_TESTING_SERVER)
+	if (in.remaining() != 0 && ZandronumVersion(gameVersion()) > ZandronumVersion("0.97d3") && (flags & SQF_TESTING_SERVER) == SQF_TESTING_SERVER)
 	{
 		flags ^= SQF_TESTING_SERVER;
 		

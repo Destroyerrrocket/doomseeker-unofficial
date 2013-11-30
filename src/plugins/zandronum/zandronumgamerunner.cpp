@@ -60,7 +60,7 @@ void ZandronumGameRunner::hostDMFlags(QStringList& args, const DMFlags& dmFlags)
 void ZandronumGameRunner::hostProperties(QStringList& args) const
 {
 	args << "+alwaysapplydmflags" << QString::number(1);
-	args << "-skill" << QString::number(server->gameSkill() + 1); // from 1 to 5
+	args << "-skill" << QString::number(server->skill() + 1); // from 1 to 5
 
 	QString gameModeStr;
 	switch(server->gameMode().modeIndex())
@@ -84,14 +84,14 @@ void ZandronumGameRunner::hostProperties(QStringList& args) const
 	}
 	args << gameModeStr << "1";
 
-	args << "+sv_hostemail" << "\"" + server->eMail() + "\"";
+	args << "+sv_hostemail" << "\"" + server->email() + "\"";
 
 	if (!server->map().isEmpty())
 	{
 		args << "+map" << server->map();
 	}
 
-	const QStringList& mapsList = server->mapsList();
+	const QStringList& mapsList = server->mapList();
 	if (!mapsList.isEmpty())
 	{
 		foreach (QString map, mapsList)
@@ -103,14 +103,14 @@ void ZandronumGameRunner::hostProperties(QStringList& args) const
 	args << "+sv_maprotation" << QString::number(
 		static_cast<int>(!mapsList.isEmpty()));
 	args << "+sv_randommaprotation" << QString::number(
-		static_cast<int>(server->randomMapRotation()) );
+		static_cast<int>(server->isRandomMapRotation()) );
 
-	QString motd = server->messageOfTheDay();
+	QString motd = server->motd();
 	args << "+sv_motd" << "\"" + motd.replace("\n", "\\n") + "\"";
 
 	args << "+sv_hostname" << "\"" + server->name() + "\"";
 
-	args << "+sv_website" << "\"" + server->website() + "\"";
+	args << "+sv_website" << "\"" + server->webSite() + "\"";
 
 	QString password = server->connectPassword();
 	args << "+sv_password" << "\"" + password + "\"";
@@ -123,8 +123,8 @@ void ZandronumGameRunner::hostProperties(QStringList& args) const
 	password = server->rconPassword();
 	args << "+sv_rconpassword" << "\"" + password + "\"";
 
-	args << "+sv_broadcast" << QString::number(static_cast<int>( server->isBroadcastingToLAN() ));
-	args << "+sv_updatemaster" << QString::number(static_cast<int>( server->isBroadcastingToMaster() ));
-	args << "+sv_maxclients" << QString::number(server->maximumClients());
-	args << "+sv_maxplayers" << QString::number(server->maximumPlayers());
+	args << "+sv_broadcast" << QString::number(static_cast<int>( server->isBroadcastToLAN() ));
+	args << "+sv_updatemaster" << QString::number(static_cast<int>( server->isBroadcastToMaster() ));
+	args << "+sv_maxclients" << QString::number(server->numTotalSlots());
+	args << "+sv_maxplayers" << QString::number(server->maxPlayers());
 }

@@ -64,6 +64,8 @@ class MAIN_EXPORT Server : public QObject
 {
 	Q_OBJECT
 
+	friend class ServerPointer;
+
 	public:
 		enum Response
 		{
@@ -78,6 +80,58 @@ class MAIN_EXPORT Server : public QObject
 		Server(const QHostAddress &address, unsigned short port);
 		virtual ~Server();
 
+		// VIRTUALS
+		/**
+		 * @brief Creates an instance of Binaries's descendant class.
+		 *
+		 * Created instance should be deleted manually by the programmer.
+		 * @return A pointer to a new instance of Binaries's descendant
+		 *        (defined by a plugin)
+		 */
+		virtual Binaries*						binaries() const;
+
+		/**
+		 * Returns name of the engine for this server, for example: "Skulltag".
+		 * By default this returns name defined by the parent plugin itself,
+		 * or "Undefined" string if there is no parent plugin.
+		 */
+		virtual QString		engineName() const;
+		/**
+		 * @brief Creates an instance of GameRunner's derivative class.
+		 *
+		 * Gets a pointer to a new instance of GameRunner's
+		 * descendant (defined by a plugin). Created instance should be deleted
+		 * manually by the programmer.
+		 */
+		virtual GameRunner*	gameRunner() const;
+		virtual bool		hasRcon() const { return false; }
+		virtual const GameCVar	*modifier() const { return NULL; }
+		virtual RConProtocol	*rcon() { return NULL; }
+		virtual QRgb		teamColor(int team) const;
+		virtual QString		teamName(int team) const { return team < MAX_TEAMS && team >= 0 ? teamNames[team] : ""; }
+		/**
+		 * This is supposed to return the plugin this Server belongs to.
+		 * New instances of EnginePlugin shouldn't be created here. Instead
+		 * each plugin should keep a global instance of EnginePlugin (singleton?)
+		 * and a pointer to this instance should be returned.
+		 */
+		virtual const EnginePlugin*		plugin() const = 0;
+
+		/**
+		 * @brief Creates an instance of TooltipGenerator.
+		 *
+		 * This can be replaced by a plugin to use a custom tooltip generator.
+		 *
+		 * @return Default behaviour returns default implementation of
+		 *         TooltipGenerator.
+		 */
+		virtual TooltipGenerator*	tooltipGenerator() const;
+		// END OF VIRTUALS
+
+		void addPlayer(const Player& player);
+		const QHostAddress	&address() const;
+		QString				addressWithPort() const;
+
 		/**
 		 * @brief IWAD + PWADs.
 		 */
@@ -89,22 +143,52 @@ class MAIN_EXPORT Server : public QObject
 		bool anyWadnameContains(const QString& text,
 			Qt::CaseSensitivity cs = Qt::CaseInsensitive) const;
 
+		void clearPlayersList();
+		const QString&		connectPassword() const;
+		const DMFlags& dmFlags() const;
+		const QString&		email() const;
+
+		const GameMode& gameMode() const;
+		const QString& gameVersion() const;
+
 		/**
-		 *	@brief Creates an instance of Binaries's descendant class.
+		 * Returns a string of either the ipaddress:port or hostname:port
+		 * depending on if the hostname information has been retrieved, if
+		 * reverse lookups is enabled, and the forceAddress parameter.
+		 */
+		QString				hostName(bool forceAddress=false) const;
+		const QPixmap		&icon() const;
+
+		bool isBroadcastToLAN() const;
+		bool isBroadcastToMaster() const;
+		bool isCustom() const;
+		bool isEmpty() const;
+		bool isFull() const;
+		bool isKnown() const;
+
+		/**
+		 * @brief Passworded or not.
+		 */
+		bool isLocked() const;
+
+		bool isRandomMapRotation() const;
+		bool isRefreshable() const;
+		bool isRefreshing() const;
+
+		/**
+		 * @brief Secure as in 'secure for players', not 'passworded'.
 		 *
-		 *	Created instance should be deleted manually by the programmer.
-		 *	@return A pointer to a new instance of Binaries's descendant
-		 *		(defined by a plugin)
+		 * When this flag is enabled Doomseeker will draw a shield next to the
+		 * engine icon on server list.
 		 */
-		virtual Binaries*						binaries() const;
+		bool isSecure() const;
 
-		/**
-		 *	Returns name of the engine for this server, for example: "Skulltag".
-		 *	By default this returns name defined by the parent plugin itself,
-		 *	or "Undefined" string if there is no parent plugin.
-		 */
-		virtual QString		engineName() const;
+		bool isSetToDelete() const;
 
+		const QString& iwad() const;
+		const QString& joinPassword() const;
+
+		Response			lastResponse() const;
 		/**
 		 * @brief Prompts the server to reverse resolve its address to
 		 *        a hostname.
@@ -114,133 +198,72 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		void lookupHost();
 
-		const QHostAddress	&address() const { return serverAddress; }
-		QString				addressWithPort() const { return QString("%1:%2").arg(address().toString()).arg(port()); }
-		const QString&		connectPassword() const { return passwordConnect; }
-		const QString&		eMail() const { return email; }
-		const DMFlags		&gameFlags() const { return dmFlags; }
-		const GameMode		&gameMode() const { return currentGameMode; }
-		unsigned char		gameSkill() const { return skill; }
-		virtual bool		hasRcon() const { return false; }
-		/**
-		 * Returns a string of either the ipaddress:port or hostname:port
-		 * depending on if the hostname information has been retrieved, if
-		 * reverse lookups is enabled, and the forceAddress parameter.
-		 */
-		QString				hostName(bool forceAddress=false) const;
-		const QPixmap		&icon() const;
-		bool				isBroadcastingToLAN() const { return broadcastToLAN; }
-		bool				isBroadcastingToMaster() const { return broadcastToMaster; }
-		bool				isCustom() const { return custom; }
-		bool				isEmpty() const;
-		bool				isFull() const;
-		bool				isKnown() const { return bKnown; }
-		bool				isLocked() const { return locked; }
-		bool				isRefreshable() const;
-		bool				isSecured() const { return bSecureServer; }
-		bool				isSetToDelete() const { return bDelete; }
-		const QString		&iwadName() const { return iwad; }
-		const QString&		joinPassword() const { return passwordJoin; }
-		int					lastResponse() const { return response; }
-		const QString		&map() const { return mapName; }
-		const QStringList&	mapsList() const { return mapList; }
-		unsigned short		maximumClients() const { return maxPlayers > maxClients ? maxPlayers : maxClients; }
-		unsigned short		maximumPlayers() const { return maxPlayers; }
-		const QString&		messageOfTheDay() const { return motd; }
-		virtual const GameCVar	*modifier() const { return NULL; }
-		const QString		&name() const { return serverName; }
+		const QString& map() const;
+		const QStringList&	mapList() const;
+		unsigned short maxClients() const;
+		unsigned short maxPlayers() const;
+		const QString& motd() const;
+		const QString& name() const;
 		int					numFreeClientSlots() const;
 		int					numFreeJoinSlots() const;
 		int					numFreeSpectatorSlots() const;
-		int					numWads() const { return wads.size(); }
-		unsigned int		ping() const { return currentPing; }
+		int numTotalSlots() const { return maxPlayers() > maxClients() ? maxPlayers() : maxClients(); }
+		int					numWads() const { return wads().size(); }
+		unsigned int ping() const;
 		const Player&		player(int index) const;
-		const PlayersList*	playersList() const { return players; }
-		unsigned short		port() const { return serverPort; }
-		const QList<PWad>&	pwads() const { return wads; }
-		bool				randomMapRotation() const { return mapRandomRotation; }
-		virtual RConProtocol	*rcon() { return NULL; }
-		const QString&		rconPassword() const { return passwordRCon; }
-		unsigned int		score(int team=0) const { return scores[team]; }
-		unsigned int		scoreLimit() const { return serverScoreLimit; }
-		virtual QRgb		teamColor(int team) const;
-		virtual QString		teamName(int team) const { return team < MAX_TEAMS && team >= 0 ? teamNames[team] : ""; }
-		unsigned short		timeLeft() const { return serverTimeLeft; }
-		unsigned short		timeLimit() const { return serverTimeLimit; }
-		const QString		version() const { return serverVersion; }
-		const PWad			&wad(int index) const { return wads[index]; }
-		const QString		&website() const { return webSite; }
-
-		void				setBroadcastToLAN(bool b) { broadcastToLAN = b; }
-		void				setBroadcastToMaster(bool b) { broadcastToMaster = b; }
-		void				setHostEmail(const QString& mail) { email = mail; }
-		void				setGameMode(const GameMode& gameMode) { currentGameMode = gameMode; }
-		void				setMap(const QString& name) { mapName = name; }
-		void				setMapList(const QStringList& maplist) { mapList = maplist; }
-		void				setMaximumClients(unsigned short i) { maxClients = i; }
-		void				setMaximumPlayers(unsigned short i) { maxPlayers = i; }
-		void				setMOTD(const QString& message) { motd = message; }
-		void				setName(const QString& name) { serverName = name; }
-		void				setPasswordConnect(const QString& str) { passwordConnect = str; }
-		void				setPasswordJoin(const QString& str) { passwordJoin = str; }
-		void				setPasswordRCon(const QString& str) { passwordRCon = str; }
-		void				setPort(unsigned short i) { serverPort = i; }
-		void				setRandomMapRotation(bool b) { mapRandomRotation = b; }
-		void				setSkill(unsigned char newSkill) { skill = newSkill; }
-		void				setWebsite(const QString& site) { webSite = site; }
-
-		void				setCustom(bool b) { custom = b; }
-		void				setToDelete(bool b);
-
-		/**
-		 *	@brief Creates an instance of GameRunner's derivative class.
-		 *
-		 *	Gets a pointer to a new instance of GameRunner's
-		 *	descendant (defined by a plugin). Created instance should be deleted
-		 *	manually by the programmer.
-		 */
-		virtual GameRunner*	gameRunner() const;
-
-		/**
-		 *	Called when server begins refreshing routine.
-		 */
-		void				refreshStarts();
-
-		/**
-		 *	Called when server finishes refreshing routine.
-		 */
-		void				refreshStops(Response response);
+		const PlayersList* players() const;
+		unsigned short		port() const;
+		const QString&		rconPassword() const;
 
 		Response readRefreshQueryResponse(QByteArray& data);
 
 		/**
-		 *	Method called by the refreshing thread. Sends the query
-		 *	through refreshing thread socket.
-		 *	@return false if it's impossible to send the query (fail)
+		 * Called when server begins refreshing routine.
+		 */
+		void				refreshStarts();
+
+		/**
+		 * Called when server finishes refreshing routine.
+		 */
+		void				refreshStops(Response response);
+
+		unsigned int		score(int team=0) const;
+		const QList<int>& scores() const;
+		unsigned int scoreLimit() const;
+
+		/**
+		 * Method called by the refreshing thread. Sends the query
+		 * through refreshing thread socket.
+		 * @return false if it's impossible to send the query (fail)
 		 */
 		bool				sendRefreshQuery(QUdpSocket* socket);
 
-		bool				isRefreshing() const { return bIsRefreshing; }
+		void				setBroadcastToLAN(bool b);
+		void				setBroadcastToMaster(bool b);
+		void				setCustom(bool custom);
+		void				setConnectPassword(const QString& str);
+		void				setEmail(const QString& mail);
+		void				setGameMode(const GameMode& gameMode);
+		void				setJoinPassword(const QString& str);
+		void				setMap(const QString& name);
+		void				setMapList(const QStringList& mapList);
+		void				setMaxClients(unsigned short i);
+		void				setMaxPlayers(unsigned short i);
+		void				setMotd(const QString& message);
+		void				setName(const QString& name);
+		void				setPort(unsigned short i);
+		void				setRandomMapRotation(bool b);
+		void				setRconPassword(const QString& str);
+		void				setSkill(unsigned char newSkill);
+		void				setToDelete(bool b);
+		void				setWebSite(const QString& site);
 
-		/**
-		 *	This is supposed to return the plugin this Server belongs to.
-		 *	New instances of EnginePlugin shouldn't be created here. Instead
-		 *	each plugin should keep a global instance of EnginePlugin (singleton?)
-		 *	and a pointer to this instance should be returned.
-		 */
-		virtual const EnginePlugin*		plugin() const = 0;
-
-		/**
-		 *	@brief Creates an instance of TooltipGenerator.
-		 *
-		 *	This can be replaced by a plugin to use a custom tooltip generator.
-		 *
-		 *	@return Default behaviour returns default implementation of
-		 *	TooltipGenerator.
-		 */
-		virtual TooltipGenerator*	tooltipGenerator() const;
-
-		friend class ServerPointer;
+		unsigned short timeLeft() const;
+		unsigned short timeLimit() const;
+		unsigned char skill() const;
+		const PWad			&wad(int index) const { return wads()[index]; }
+		const QList<PWad>& wads() const;
+		const QString& webSite() const;
 
 	public slots:
 		/**
@@ -258,6 +281,51 @@ class MAIN_EXPORT Server : public QObject
 		void				updated(Server *server, int response);
 
 	protected:
+		/**
+		 * Reads response data.
+		 * @return The resposne that should be emitted. Do NOT perform any
+		 *         signal emissions from within this functions. This is not
+		 *         thread safe and may lead to a crash.
+		 */
+		virtual Response		readRequest(QByteArray &data)=0;
+
+		/**
+		 * Prepares challenge data.
+		 * @return true on success and RESPONSE_GOOD signal should be emitted,
+		 *         false otherwise.
+		 */
+		virtual bool		sendRequest(QByteArray &data)=0;
+
+		void addWad(const QString& wad);
+		void clearWads();
+		QList<int>& scoresMutable();
+		void setGameVersion(const QString& version);
+		void setIwad(const QString& iwad);
+		void setLocked(bool locked);
+		void setPing(unsigned int currentPing);
+
+		/**
+		 * @brief Plugins should set this to true to prevent default ping
+		 *        calculation.
+		 *
+		 * This is useful if plugin has its own way of determining ping.
+		 */
+		void setPingIsSet(bool b);
+
+		void setTimeLeft(unsigned short timeLeft);
+		void setTimeLimit(unsigned short timeLimit);
+		void setScoreLimit(unsigned int scoreLimit);
+		void setSecure(bool bSecureServer);
+
+	private:
+		Q_DISABLE_COPY(Server)
+
+		class PrivData;
+
+		static QString		teamNames[];
+
+		PrivData* d;
+
 		void				clearDMFlags();
 
 		/**
@@ -265,100 +333,13 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		void				emitUpdated(int response) { emit updated(this, response); }
 
-		/**
-		 *	Reads response data.
-		 *	@return the resposne that should be emitted. Do NOT perform any
-		 *		signal emissions from within this functions. This is not thread
-		 *		safe and may lead to a crash.
-		 */
-		virtual Response		readRequest(QByteArray &data)=0;
+		void setDmFlags(const DMFlags& dmFlags);
+		void setResponse(Response response);
+		void setScores(const QList<int>& scores);
+		void setWads(const QList<PWad>& wads);
 
-		/**
-		 *	Prepares challenge data.
-		 *	@return true on success and RESPONSE_GOOD signal should be emitted,
-		 *		false otherwise.
-		 */
-		virtual bool		sendRequest(QByteArray &data)=0;
-
-		/**
-		 *	If this is true server will be deleted as soon as
-		 *	it finished working (refreshing). This should be safer
-		 *	than blatant `delete server` while server's thread is still
-		 *	running.
-		 */
-		bool				bDelete;
-		/**
-		 * This should be set to true upon successful return from doRefresh(),
-		 * and to false upon failure. setServers() protected slot handles this.
-		 * Example usage: Skulltag servers can use this to update ping
-		 * if the server responds with "wait before refreshing".
-		 */
-		bool				bKnown;
-
-		/**
-		 *	Refresher sets this to false before calling the virtual
-		 *	readRequest() method. If this method sets this to true, Refresher
-		 *	will not modify the currentPing field assuming that readRequest()
-		 *	set currentPing to a correct value. If it remains false after the
-		 *	readRequest() call Doomseeker will use a global method to determine
-		 *	ping, which may be less accurate.
-		 */
-		bool				bPingIsSet;
-
-		bool				bSecureServer;
-		bool				broadcastToLAN;
-		bool				broadcastToMaster;
-		GameMode			currentGameMode;
-		unsigned int		currentPing;
-		bool				custom;
-		DMFlags				dmFlags;
-		QString				email;
-		QString				iwad;
-		bool				locked;
-		QStringList			mapList;
-		QString				mapName;
-		bool				mapRandomRotation;
-		unsigned short		maxClients;
-		unsigned short		maxPlayers;
-		QString				motd;
-		QString				passwordConnect;
-		QString				passwordJoin;
-		QString				passwordRCon;
-		PlayersList*		players;
-		Response			response;
-		unsigned int		scores[MAX_TEAMS];
-		QString				serverName;
-		unsigned int		serverScoreLimit;
-		unsigned short		serverTimeLeft;
-		unsigned short		serverTimeLimit;
-		QString				serverVersion;
-		unsigned char		skill;
-		QList<PWad>			wads;
-		QString				webSite;
-
-		static QString		teamNames[];
-
-		QTime				time;
-
-	protected slots:
+	private slots:
 		void				setHostName(QHostInfo host);
-
-	private:
-		Q_DISABLE_COPY(Server)
-
-		/**
-		 * This is used to make
-		 * sure that refresh() method isn't run on
-		 * server that is already refreshing.
-		 */
-		bool				bIsRefreshing;
-		QHostAddress		serverAddress;
-		QHostInfo			serverHost;
-		unsigned short		serverPort;
-
-		int					triesLeft; /// Track how many resends we should try.
-
-		void				setResponse(Response response);
 };
 
 class MAIN_EXPORT ServerPointer

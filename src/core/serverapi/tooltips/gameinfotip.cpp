@@ -47,15 +47,15 @@ QString	GameInfoTip::playersHTML()
 {
 	const QString PLAYERS = tr("Players");
 
-	const PlayersList* playersList = pServer->playersList();
-	int canJoin = pServer->maximumPlayers() - playersList->numClients();
+	const PlayersList* playersList = pServer->players();
+	int canJoin = pServer->maxPlayers() - playersList->numClients();
 	if(canJoin < 0)
 	{
 		canJoin = 0;
 	}
 
 	QString players = "<tr><td>" + PLAYERS + ":&nbsp;</td><td>%1 / %2 (%3 can join)</td></tr>";
-	players = players.arg(playersList->numClients()).arg(pServer->maximumClients()).arg(canJoin);
+	players = players.arg(playersList->numClients()).arg(pServer->numTotalSlots()).arg(canJoin);
 
 	return players;
 }
@@ -94,7 +94,7 @@ QString GameInfoTip::teamScoresHTML()
 		bool bPrependBar = false;
 		for (int i = 0; i < MAX_TEAMS; ++i)
 		{
-			if (pServer->playersList()->numPlayersOnTeam(i) != 0)
+			if (pServer->players()->numPlayersOnTeam(i) != 0)
 			{
 				if (bPrependBar)
 				{

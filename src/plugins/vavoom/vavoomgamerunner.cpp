@@ -42,7 +42,7 @@ bool VavoomGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool
 	args.removeAt(iwadArg);
 
 	// What an odd thing to have to do "-iwaddir /path/to/iwads/ -doom2"
-	QString iwad = server->iwadName();
+	QString iwad = server->iwad();
 	QString iwadLocation = pf.findFile(iwad.toLower());
 	QString iwadDir = iwadLocation.left(iwadLocation.length() - iwad.length());
 	QString iwadParam = iwadLocation.mid(iwadDir.length());

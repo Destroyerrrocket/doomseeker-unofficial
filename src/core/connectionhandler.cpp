@@ -247,7 +247,7 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, const Server* ser
 
 						WadseekerInterface wsi(parent);
 						wsi.setAutomatic(true, joinError.missingWads);
-						wsi.setCustomSite(server->website());
+						wsi.setCustomSite(server->webSite());
 						if (wsi.exec() == QDialog::Accepted)
 						{
 							if(hadMissing)

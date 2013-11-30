@@ -36,7 +36,8 @@
 VavoomServer::VavoomServer(const QHostAddress &address, unsigned short port)
 : Server(address, port)
 {
-	currentGameMode = (*VavoomGameInfo::gameModes())[VavoomGameInfo::MODE_UNKNOWN];
+	GameMode unknownMode = (*VavoomGameInfo::gameModes())[VavoomGameInfo::MODE_UNKNOWN];
+	setGameMode(unknownMode);
 }
 
 GameRunner* VavoomServer::gameRunner() const
@@ -66,28 +67,30 @@ Server::Response VavoomServer::readRequest(QByteArray &data)
 	int pos = 2;
 
 	// Server name
-	serverName = QString(&in[pos+1]);//, in[pos]);
-	pos += serverName.length() + 2;
+	setName(QString(&in[pos+1]));//, in[pos]);
+	pos += name().length() + 2;
 
 	// Map
-	mapName = QString(&in[pos+1]);//, in[pos]);
-	pos += mapName.length() + 2;
+	setMap(QString(&in[pos+1]));//, in[pos]);
+	pos += map().length() + 2;
 
 	// Players
-	players->clear();
+	clearPlayersList();
 	int numPlayers = READINT8(&in[pos++]);
-	maxClients = maxPlayers = READINT8(&in[pos++]);
+	int maxPlayers = READINT8(&in[pos++]);
+	setMaxClients(maxPlayers);
+	setMaxPlayers(maxPlayers);
 	for(int i = 0;i < numPlayers;i++)
 	{
 		Player player(tr("Unknown"), 0, 0, Player::TEAM_NONE);
-		(*players) << player;
+		addPlayer(player);
 	}
 
 	if(READINT8(&in[pos++]) != NET_PROTOCOL_VERSION)
 		return RESPONSE_BAD;
 
 	// Wads
-	wads.clear();
+	clearWads();
 	QString wadFile;
 	bool iwadSet = false;
 	while((wadFile = QString(&in[pos+1])) != "")
@@ -100,11 +103,11 @@ Server::Response VavoomServer::readRequest(QByteArray &data)
 
 		if(!iwadSet)
 		{
-			iwad = wadFile;
+			setIwad(wadFile);
 			iwadSet = true;
 		}
 		else
-			wads << wadFile;
+			addWad(wadFile);
 	}
 	pos += 2;
 

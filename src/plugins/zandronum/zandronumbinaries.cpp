@@ -93,7 +93,7 @@ QString ZandronumBinaries::clientBinary(Message& message) const
 		}
 
 		// Strip out extraneous data in the version number.
-		QString testingVersion = server->version();
+		QString testingVersion = server->gameVersion();
 		testingVersion = testingVersion.left(testingVersion.indexOf(' '));
 
 		path += testingVersion;
@@ -188,7 +188,7 @@ bool ZandronumBinaries::downloadTestingBinaries(const QDir &destination) const
 	return false;
 #else
 	// Download testing binaries
-	ZandronumVersion version(server->version());
+	ZandronumVersion version(server->gameVersion());
 
 	// Find the hg revision string
 	QString hgVersion;

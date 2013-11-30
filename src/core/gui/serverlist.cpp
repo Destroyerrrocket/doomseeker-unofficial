@@ -170,7 +170,7 @@ QString ServerListHandler::createIwadToolTip(const Server* server)
 
 		PathFinder pathFinder;
 		pathFinder.addPrioritySearchDir(binPath);
-		QString path = pathFinder.findFile(server->iwadName());
+		QString path = pathFinder.findFile(server->iwad());
 
 		if (path.isEmpty())
 		{
@@ -205,7 +205,7 @@ QString ServerListHandler::createPlayersToolTip(const Server* server)
 	QString ret;
 	ret = "<div style='white-space: pre'>";
 	ret += tooltipGenerator->gameInfoTableHTML();
-	if(server->playersList()->numClients() != 0)
+	if(server->players()->numClients() != 0)
 	{
 		ret += tooltipGenerator->playerTableHTML();
 	}
@@ -223,7 +223,7 @@ QString ServerListHandler::createPortToolTip(const Server* server)
 	QString ret;
 	if (server->isLocked())
 		ret = "Password protected";
-	if (server->isSecured())
+	if (server->isSecure())
 	{
 		if(!ret.isEmpty())
 			ret += '\n';
@@ -243,7 +243,7 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 	static const QString toolTip = "<div style='white-space: pre'>%1</div>";
 	QString content;
 
-	const QList<PWad>& pwads = server->pwads();
+	const QList<PWad>& pwads = server->wads();
 
 	// Check if we should seek and colorize.
 	bool bFindWads = gConfig.doomseeker.bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn;
@@ -625,7 +625,7 @@ void ServerListHandler::tableRightClicked(const QModelIndex& index, const QPoint
 			break;
 
 		case ServerListContextMenu::OpenURL:
-			QDesktopServices::openUrl(server->website());
+			QDesktopServices::openUrl(server->webSite());
 			break;
 
 		case ServerListContextMenu::NothingHappened:

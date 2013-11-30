@@ -37,9 +37,9 @@ QString GeneralInfoTip::generateHTML()
 	if (pServer->isKnown())
 	{
 		ret += QString(pServer->name()).replace('>', "&gt;").replace('<', "&lt;") + "\n";
-		ret += labelString(tr("Version"), pServer->version());
-		ret += labelString(tr("E-mail"), pServer->eMail());
-		ret += labelString(tr("URL"), pServer->website());
+		ret += labelString(tr("Version"), pServer->gameVersion());
+		ret += labelString(tr("E-mail"), pServer->email());
+		ret += labelString(tr("URL"), pServer->webSite());
 	}
 
 	IP2CCountryInfo countryInfo = Main::ip2c->obtainCountryInfo(pServer->address());

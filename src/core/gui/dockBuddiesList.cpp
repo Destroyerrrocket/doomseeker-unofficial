@@ -180,7 +180,7 @@ void DockBuddiesList::scan(const MasterClient *master)
 	buddies.clear(); //empty list
 	foreach(Server *server, masterClient->serverList())
 	{
-		for(int i = 0; i < server->playersList()->numClients(); ++i)
+		for(int i = 0; i < server->players()->numClients(); ++i)
 		{
 			const Player player = server->player(i);
 			foreach(QRegExp pattern, pBuddies)

@@ -500,20 +500,20 @@ bool CreateServerDialog::createHostInfo(HostInfo& hostInfo, Server* server, bool
 		// Other
 		server->setBroadcastToLAN(cbBroadcastToLAN->isChecked());
 		server->setBroadcastToMaster(cbBroadcastToMaster->isChecked());
-		server->setHostEmail(leEmail->text());
+		server->setEmail(leEmail->text());
 		server->setMap(leMap->text());
 		server->setMapList(CommonGUI::listViewStandardItemsToStringList(lstMaplist));
 		server->setRandomMapRotation(cbRandomMapRotation->isChecked());
-		server->setMaximumClients(spinMaxClients->value());
-		server->setMaximumPlayers(spinMaxPlayers->value());
-		server->setMOTD(pteMOTD->toPlainText());
+		server->setMaxClients(spinMaxClients->value());
+		server->setMaxPlayers(spinMaxPlayers->value());
+		server->setMotd(pteMOTD->toPlainText());
 		server->setName(leServername->text());
-		server->setPasswordConnect(leConnectPassword->text());
-		server->setPasswordJoin(leJoinPassword->text());
-		server->setPasswordRCon(leRConPassword->text());
+		server->setConnectPassword(leConnectPassword->text());
+		server->setJoinPassword(leJoinPassword->text());
+		server->setRconPassword(leRConPassword->text());
 		server->setPort(spinPort->value());
 		server->setSkill(cboDifficulty->currentIndex());
-		server->setWebsite(leURL->text());
+		server->setWebSite(leURL->text());
 
 		const QList<GameMode>* gameModes = currentEngine->data()->gameModes;
 		if (gameModes != NULL)

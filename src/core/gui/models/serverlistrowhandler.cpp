@@ -127,7 +127,7 @@ void ServerListRowHandler::fillPlayerColumn()
 	int style = gConfig.doomseeker.slotStyle;
 	bool botsAreNotPlayers = gConfig.doomseeker.bBotsAreNotPlayers;
 
-	const PlayersList* playersList = server->playersList();
+	const PlayersList* playersList = server->players();
 	int sortValue = 0;
 
 	if (botsAreNotPlayers)
@@ -145,7 +145,7 @@ void ServerListRowHandler::fillPlayerColumn()
 	}
 	else
 	{
-		fillItem(pItem, sortValue, QString("%1/%2").arg(playersList->numClients()).arg(server->maximumClients()));
+		fillItem(pItem, sortValue, QString("%1/%2").arg(playersList->numClients()).arg(server->numTotalSlots()));
 	}
 
 	// Unset some data if it has been set before.
@@ -165,7 +165,7 @@ void ServerListRowHandler::fillPortIconColumn()
 			iconPainter.drawPixmap(0, 0, QPixmap(":/locked.png"));
 			iconPainter.end();
 		}
-		else if(server->isSecured())
+		else if(server->isSecure())
 		{
 			QPainter iconPainter(&icon);
 			iconPainter.drawPixmap(0, 0, QPixmap(":/shield.png"));
@@ -272,18 +272,22 @@ void ServerListRowHandler::setGood()
 	fillItem(qstdItem, server->name());
 
 	qstdItem = item(IDIwad);
-	fillItem(qstdItem, server->iwadName());
+	fillItem(qstdItem, server->iwad());
 
 	qstdItem = item(IDMap);
 	fillItem(qstdItem, server->map());
 
 	strTmp.clear();
-	foreach(const PWad &wad, server->pwads())
+	foreach(const PWad &wad, server->wads())
 	{
 		if(wad.optional)
+		{
 			strTmp += QString("[%1] ").arg(wad.name);
+		}
 		else
+		{
 			strTmp += wad.name + " ";
+		}
 	}
 	strTmp.chop(1);
 	qstdItem = item(IDWads);

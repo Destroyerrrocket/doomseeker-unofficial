@@ -34,7 +34,7 @@ ChocolateDoomGameRunner::ChocolateDoomGameRunner(const ChocolateDoomServer* serv
 
 bool ChocolateDoomGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory)
 {
-	if(server->playersList()->size() > 0)
+	if(server->players()->size() > 0)
 		return GameRunner::connectParameters(args, pf, iwadFound, connectPassword, wadTargetDirectory);
 	else
 	{
@@ -59,7 +59,7 @@ bool ChocolateDoomGameRunner::connectParameters(QStringList &args, PathFinder &p
 
 void ChocolateDoomGameRunner::hostProperties(QStringList& args) const
 {
-	args << "-skill" << QString::number(server->gameSkill() + 1); // from 1 to 5
+	args << "-skill" << QString::number(server->skill() + 1); // from 1 to 5
 
 	switch(server->gameMode().modeIndex())
 	{

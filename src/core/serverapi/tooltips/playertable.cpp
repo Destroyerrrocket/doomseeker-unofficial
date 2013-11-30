@@ -114,7 +114,7 @@ QString	PlayerTable::tableContent()
 	PlayersByTeams playersByTeams;
 	PlayersList bots, spectators;
 
-	const PlayersList* playersList = pServer->playersList();
+	const PlayersList* playersList = pServer->players();
 
 	playersList->inGamePlayersByTeams(playersByTeams);
 	playersList->botsWithoutTeam(bots);

@@ -116,6 +116,7 @@ class MAIN_EXPORT GameMode
 		static const GameMode	CAPTURE_THE_FLAG;
 		static const GameMode	UNKNOWN;
 
+		GameMode();
 		/**
 		 * @param name Name to display for game mode, this should be fairly short about no longer than "cooperative".
 		 */
@@ -124,10 +125,13 @@ class MAIN_EXPORT GameMode
 		int				modeIndex() const { return gameModeIndex; }
 		const QString	&name() const { return modeName;}
 		bool			isTeamGame() const { return teamgame; }
+		bool			isValid() const { return bIsValid; }
 	protected:
 		int		gameModeIndex;
 		QString	modeName;
 		bool	teamgame;
+	private:
+		bool	bIsValid;
 };
 
 class MAIN_EXPORT SkillLevel
