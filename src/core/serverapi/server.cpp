@@ -90,14 +90,14 @@ class Server::PrivData
 		 * than blatant `delete server` while server's thread is still
 		 * running.
 		 */
-		bool				bDelete;
+		bool bDelete;
 		/**
 		 * This should be set to true upon successful return from doRefresh(),
 		 * and to false upon failure. setServers() protected slot handles this.
 		 * Example usage: Skulltag servers can use this to update ping
 		 * if the server responds with "wait before refreshing".
 		 */
-		bool				bKnown;
+		bool bKnown;
 
 		/**
 		 * Refresher sets this to false before calling the virtual
@@ -107,53 +107,53 @@ class Server::PrivData
 		 * readRequest() call Doomseeker will use a global method to determine
 		 * ping, which may be less accurate.
 		 */
-		bool				bPingIsSet;
+		bool bPingIsSet;
 
-		bool				bSecure;
-		bool				broadcastToLAN;
-		bool				broadcastToMaster;
-		GameMode			gameMode;
-		unsigned int		ping;
-		bool				custom;
-		DMFlags				dmFlags;
-		QString				email;
-		QString				iwad;
-		bool				locked;
-		QStringList			mapList;
-		QString				mapName;
-		unsigned short		maxClients;
-		unsigned short		maxPlayers;
-		QString				motd;
-		QString				name;
-		QTime				pingClock;
-		QString				connectPassword;
-		QString				joinPassword;
-		QString				rconPassword;
-		PlayersList*		players;
-		bool				randomMapRotation;
-		Response			response;
-		QList<int>			scores;
-		unsigned int		scoreLimit;
-		unsigned short		timeLeft;
-		unsigned short		timeLimit;
-		unsigned char		skill;
-		QString				version;
-		QList<PWad>			wads;
-		QString				webSite;
+		bool bSecure;
+		bool broadcastToLAN;
+		bool broadcastToMaster;
+		GameMode gameMode;
+		unsigned int ping;
+		bool custom;
+		DMFlags dmFlags;
+		QString email;
+		QString iwad;
+		bool locked;
+		QStringList mapList;
+		QString mapName;
+		unsigned short maxClients;
+		unsigned short maxPlayers;
+		QString motd;
+		QString name;
+		QTime pingClock;
+		QString connectPassword;
+		QString joinPassword;
+		QString rconPassword;
+		PlayersList* players;
+		bool randomMapRotation;
+		Response response;
+		QList<int> scores;
+		unsigned int scoreLimit;
+		unsigned short timeLeft;
+		unsigned short timeLimit;
+		unsigned char skill;
+		QString version;
+		QList<PWad> wads;
+		QString webSite;
 
 		/**
 		 * This is used to make
 		 * sure that refresh() method isn't run on
 		 * server that is already refreshing.
 		 */
-		bool				bIsRefreshing;
-		QHostAddress		address;
-		QHostInfo			host;
-		unsigned short		port;
+		bool bIsRefreshing;
+		QHostAddress address;
+		QHostInfo host;
+		unsigned short port;
 		/**
  		 * @brief Track how many resends we should try.
 		 */
-		int					triesLeft;
+		int triesLeft;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

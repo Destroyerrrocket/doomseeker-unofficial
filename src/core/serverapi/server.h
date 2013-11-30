@@ -56,8 +56,8 @@ class MAIN_EXPORT PWad
 	public:
 		PWad(const QString &name, bool optional=false) : name(name), optional(optional) {}
 
-		QString	name;
-		bool	optional;
+		QString name;
+		bool optional;
 };
 
 class MAIN_EXPORT Server : public QObject
@@ -69,12 +69,12 @@ class MAIN_EXPORT Server : public QObject
 	public:
 		enum Response
 		{
-			RESPONSE_GOOD,		// Data is available
-			RESPONSE_TIMEOUT,	// Server didn't respond at all
-			RESPONSE_WAIT,	 	// Server responded with "wait"
-			RESPONSE_BAD,		// Probably refreshing too quickly
-			RESPONSE_BANNED,	// Won't recieve data from this server ever.
-			RESPONSE_NO_RESPONSE_YET	// "Dummy" response for servers that weren't refreshed yet
+			RESPONSE_GOOD, // Data is available
+			RESPONSE_TIMEOUT, // Server didn't respond at all
+			RESPONSE_WAIT, // Server responded with "wait"
+			RESPONSE_BAD, // Probably refreshing too quickly
+			RESPONSE_BANNED, // Won't recieve data from this server ever.
+			RESPONSE_NO_RESPONSE_YET // "Dummy" response for servers that weren't refreshed yet
 		};
 
 		Server(const QHostAddress &address, unsigned short port);
@@ -88,14 +88,14 @@ class MAIN_EXPORT Server : public QObject
 		 * @return A pointer to a new instance of Binaries's descendant
 		 *        (defined by a plugin)
 		 */
-		virtual Binaries*						binaries() const;
+		virtual Binaries* binaries() const;
 
 		/**
 		 * Returns name of the engine for this server, for example: "Skulltag".
 		 * By default this returns name defined by the parent plugin itself,
 		 * or "Undefined" string if there is no parent plugin.
 		 */
-		virtual QString		engineName() const;
+		virtual QString engineName() const;
 		/**
 		 * @brief Creates an instance of GameRunner's derivative class.
 		 *
@@ -103,19 +103,19 @@ class MAIN_EXPORT Server : public QObject
 		 * descendant (defined by a plugin). Created instance should be deleted
 		 * manually by the programmer.
 		 */
-		virtual GameRunner*	gameRunner() const;
-		virtual bool		hasRcon() const { return false; }
-		virtual const GameCVar	*modifier() const { return NULL; }
-		virtual RConProtocol	*rcon() { return NULL; }
-		virtual QRgb		teamColor(int team) const;
-		virtual QString		teamName(int team) const { return team < MAX_TEAMS && team >= 0 ? teamNames[team] : ""; }
+		virtual GameRunner* gameRunner() const;
+		virtual bool hasRcon() const { return false; }
+		virtual const GameCVar *modifier() const { return NULL; }
+		virtual RConProtocol *rcon() { return NULL; }
+		virtual QRgb teamColor(int team) const;
+		virtual QString teamName(int team) const { return team < MAX_TEAMS && team >= 0 ? teamNames[team] : ""; }
 		/**
 		 * This is supposed to return the plugin this Server belongs to.
 		 * New instances of EnginePlugin shouldn't be created here. Instead
 		 * each plugin should keep a global instance of EnginePlugin (singleton?)
 		 * and a pointer to this instance should be returned.
 		 */
-		virtual const EnginePlugin*		plugin() const = 0;
+		virtual const EnginePlugin* plugin() const = 0;
 
 		/**
 		 * @brief Creates an instance of TooltipGenerator.
@@ -125,12 +125,12 @@ class MAIN_EXPORT Server : public QObject
 		 * @return Default behaviour returns default implementation of
 		 *         TooltipGenerator.
 		 */
-		virtual TooltipGenerator*	tooltipGenerator() const;
+		virtual TooltipGenerator* tooltipGenerator() const;
 		// END OF VIRTUALS
 
 		void addPlayer(const Player& player);
-		const QHostAddress	&address() const;
-		QString				addressWithPort() const;
+		const QHostAddress &address() const;
+		QString addressWithPort() const;
 
 		/**
 		 * @brief IWAD + PWADs.
@@ -144,9 +144,9 @@ class MAIN_EXPORT Server : public QObject
 			Qt::CaseSensitivity cs = Qt::CaseInsensitive) const;
 
 		void clearPlayersList();
-		const QString&		connectPassword() const;
+		const QString& connectPassword() const;
 		const DMFlags& dmFlags() const;
-		const QString&		email() const;
+		const QString& email() const;
 
 		const GameMode& gameMode() const;
 		const QString& gameVersion() const;
@@ -156,8 +156,8 @@ class MAIN_EXPORT Server : public QObject
 		 * depending on if the hostname information has been retrieved, if
 		 * reverse lookups is enabled, and the forceAddress parameter.
 		 */
-		QString				hostName(bool forceAddress=false) const;
-		const QPixmap		&icon() const;
+		QString hostName(bool forceAddress=false) const;
+		const QPixmap &icon() const;
 
 		bool isBroadcastToLAN() const;
 		bool isBroadcastToMaster() const;
@@ -188,7 +188,7 @@ class MAIN_EXPORT Server : public QObject
 		const QString& iwad() const;
 		const QString& joinPassword() const;
 
-		Response			lastResponse() const;
+		Response lastResponse() const;
 		/**
 		 * @brief Prompts the server to reverse resolve its address to
 		 *        a hostname.
@@ -199,35 +199,35 @@ class MAIN_EXPORT Server : public QObject
 		void lookupHost();
 
 		const QString& map() const;
-		const QStringList&	mapList() const;
+		const QStringList& mapList() const;
 		unsigned short maxClients() const;
 		unsigned short maxPlayers() const;
 		const QString& motd() const;
 		const QString& name() const;
-		int					numFreeClientSlots() const;
-		int					numFreeJoinSlots() const;
-		int					numFreeSpectatorSlots() const;
+		int numFreeClientSlots() const;
+		int numFreeJoinSlots() const;
+		int numFreeSpectatorSlots() const;
 		int numTotalSlots() const { return maxPlayers() > maxClients() ? maxPlayers() : maxClients(); }
-		int					numWads() const { return wads().size(); }
+		int numWads() const { return wads().size(); }
 		unsigned int ping() const;
-		const Player&		player(int index) const;
+		const Player& player(int index) const;
 		const PlayersList* players() const;
-		unsigned short		port() const;
-		const QString&		rconPassword() const;
+		unsigned short port() const;
+		const QString& rconPassword() const;
 
 		Response readRefreshQueryResponse(QByteArray& data);
 
 		/**
 		 * Called when server begins refreshing routine.
 		 */
-		void				refreshStarts();
+		void refreshStarts();
 
 		/**
 		 * Called when server finishes refreshing routine.
 		 */
-		void				refreshStops(Response response);
+		void refreshStops(Response response);
 
-		unsigned int		score(int team=0) const;
+		unsigned int score(int team=0) const;
 		const QList<int>& scores() const;
 		unsigned int scoreLimit() const;
 
@@ -236,32 +236,32 @@ class MAIN_EXPORT Server : public QObject
 		 * through refreshing thread socket.
 		 * @return false if it's impossible to send the query (fail)
 		 */
-		bool				sendRefreshQuery(QUdpSocket* socket);
+		bool sendRefreshQuery(QUdpSocket* socket);
 
-		void				setBroadcastToLAN(bool b);
-		void				setBroadcastToMaster(bool b);
-		void				setCustom(bool custom);
-		void				setConnectPassword(const QString& str);
-		void				setEmail(const QString& mail);
-		void				setGameMode(const GameMode& gameMode);
-		void				setJoinPassword(const QString& str);
-		void				setMap(const QString& name);
-		void				setMapList(const QStringList& mapList);
-		void				setMaxClients(unsigned short i);
-		void				setMaxPlayers(unsigned short i);
-		void				setMotd(const QString& message);
-		void				setName(const QString& name);
-		void				setPort(unsigned short i);
-		void				setRandomMapRotation(bool b);
-		void				setRconPassword(const QString& str);
-		void				setSkill(unsigned char newSkill);
-		void				setToDelete(bool b);
-		void				setWebSite(const QString& site);
+		void setBroadcastToLAN(bool b);
+		void setBroadcastToMaster(bool b);
+		void setCustom(bool custom);
+		void setConnectPassword(const QString& str);
+		void setEmail(const QString& mail);
+		void setGameMode(const GameMode& gameMode);
+		void setJoinPassword(const QString& str);
+		void setMap(const QString& name);
+		void setMapList(const QStringList& mapList);
+		void setMaxClients(unsigned short i);
+		void setMaxPlayers(unsigned short i);
+		void setMotd(const QString& message);
+		void setName(const QString& name);
+		void setPort(unsigned short i);
+		void setRandomMapRotation(bool b);
+		void setRconPassword(const QString& str);
+		void setSkill(unsigned char newSkill);
+		void setToDelete(bool b);
+		void setWebSite(const QString& site);
 
 		unsigned short timeLeft() const;
 		unsigned short timeLimit() const;
 		unsigned char skill() const;
-		const PWad			&wad(int index) const { return wads()[index]; }
+		const PWad &wad(int index) const { return wads()[index]; }
 		const QList<PWad>& wads() const;
 		const QString& webSite() const;
 
@@ -269,16 +269,16 @@ class MAIN_EXPORT Server : public QObject
 		/**
 		 * Updates the server data.
 		 */
-		bool			refresh();
+		bool refresh();
 
 	signals:
-		void				begunRefreshing(Server* server);
+		void begunRefreshing(Server* server);
 		/**
 		 * Emitted when a refresh has been completed.  Be sure to check the
 		 * response to see if anything has actually changed.
 		 * @see Response
 		 */
-		void				updated(Server *server, int response);
+		void updated(Server *server, int response);
 
 	protected:
 		/**
@@ -287,14 +287,14 @@ class MAIN_EXPORT Server : public QObject
 		 *         signal emissions from within this functions. This is not
 		 *         thread safe and may lead to a crash.
 		 */
-		virtual Response		readRequest(QByteArray &data)=0;
+		virtual Response readRequest(QByteArray &data)=0;
 
 		/**
 		 * Prepares challenge data.
 		 * @return true on success and RESPONSE_GOOD signal should be emitted,
 		 *         false otherwise.
 		 */
-		virtual bool		sendRequest(QByteArray &data)=0;
+		virtual bool sendRequest(QByteArray &data)=0;
 
 		void addWad(const QString& wad);
 		void clearWads();
@@ -322,16 +322,16 @@ class MAIN_EXPORT Server : public QObject
 
 		class PrivData;
 
-		static QString		teamNames[];
+		static QString teamNames[];
 
 		PrivData* d;
 
-		void				clearDMFlags();
+		void clearDMFlags();
 
 		/**
 		 * Wrapper function to allow refresher to emit the updated signal.
 		 */
-		void				emitUpdated(int response) { emit updated(this, response); }
+		void emitUpdated(int response) { emit updated(this, response); }
 
 		void setDmFlags(const DMFlags& dmFlags);
 		void setResponse(Response response);
@@ -339,7 +339,7 @@ class MAIN_EXPORT Server : public QObject
 		void setWads(const QList<PWad>& wads);
 
 	private slots:
-		void				setHostName(QHostInfo host);
+		void setHostName(QHostInfo host);
 };
 
 class MAIN_EXPORT ServerPointer
