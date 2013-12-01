@@ -40,32 +40,33 @@ class MAIN_EXPORT Binaries : public QObject
 		Binaries(const EnginePlugin *plugin);
 
 		/**
-		 *	@brief Returns the path to the client binary.
+		 * @brief Returns the path to the client binary.
 		 *
-		 *	@param [out] message - information message, if any.
-		 *	@return Empty if error is not empty.
+		 * @param [out] message - information message, if any.
+		 * @return Empty if error is not empty.
 		 */
-		virtual QString					clientBinary(Message& message) const { return obtainBinary(configKeyClientBinary(), Client, message); }
+		virtual QString clientBinary(Message& message) const { return obtainBinary(configKeyClientBinary(), Client, message); }
 
 		/**
-		 *	Default behavior returns directory of clientBinary(), but
-		 *	you can override this to provide different working directory for
-		 *	Skulltag's testing binaries.
-		 *	@param [out] error - type of error
+		 * Default behavior returns directory of clientBinary(), but
+		 * you can override this to provide different working directory for
+		 * Skulltag's testing binaries.
+		 *
+		 * @param [out] error - type of error
 		 */
-		virtual QString					clientWorkingDirectory(Message& message) const;
+		virtual QString clientWorkingDirectory(Message& message) const;
 
-		virtual QString					configKeyClientBinary() const { return "BinaryPath"; }
-		virtual QString					configKeyOfflineBinary() const { return configKeyClientBinary(); }
-		virtual QString					configKeyServerBinary() const { return "ServerBinaryPath"; }
+		virtual QString configKeyClientBinary() const { return "BinaryPath"; }
+		virtual QString configKeyOfflineBinary() const { return configKeyClientBinary(); }
+		virtual QString configKeyServerBinary() const { return "ServerBinaryPath"; }
 
 		/**
-		 *	@brief Returns the path to the binary for offline play.
+		 * @brief Returns the path to the binary for offline play.
 		 *
-		 *	@param [out] message - information message, if any.
-		 *	@return Empty string if error is not empty.
+		 * @param [out] message - information message, if any.
+		 * @return Empty string if error is not empty.
 		 */
-		virtual QString					offlineGameBinary(Message& message) const { return obtainBinary(configKeyOfflineBinary(), Offline, message); }
+		virtual QString offlineGameBinary(Message& message) const { return obtainBinary(configKeyOfflineBinary(), Offline, message); }
 
 		/**
 		 * @brief Working directory for offline play.
@@ -81,23 +82,23 @@ class MAIN_EXPORT Binaries : public QObject
 		 * @return Path to the working directory for the server binary.
 		 *         Default behavior returns an empty string.
 		 */
-		virtual QString					offlineGameWorkingDirectory(Message& message) const;
+		virtual QString offlineGameWorkingDirectory(Message& message) const;
 
 		/**
-		 *	This is supposed to return the plugin this Binaries belongs to.
-		 *	New instances of EnginePlugin shouldn't be created here. Instead
-		 *	each plugin should keep a global instance of EnginePlugin (singleton?)
-		 *	and a pointer to this instance should be returned.
+		 * This is supposed to return the plugin this Binaries belongs to.
+		 * New instances of EnginePlugin shouldn't be created here. Instead
+		 * each plugin should keep a global instance of EnginePlugin (singleton?)
+		 * and a pointer to this instance should be returned.
 		 */
-		const EnginePlugin*		plugin() const { return enginePlugin; }
+		const EnginePlugin* plugin() const { return enginePlugin; }
 
 		/**
-		 *	@brief Returns the path to the server binary.
+		 * @brief Returns the path to the server binary.
 		 *
-		 *	@param [out] message - information message, if any.
-		 *	@return Empty if error is not empty.
+		 * @param [out] message - information message, if any.
+		 * @return Empty if error is not empty.
 		 */
-		virtual QString					serverBinary(Message& message) const;
+		virtual QString serverBinary(Message& message) const;
 
 		/**
 		 * @brief Working directory for server.
@@ -113,7 +114,7 @@ class MAIN_EXPORT Binaries : public QObject
 		 * @return Path to the working directory for the server binary.
 		 *         Default behavior returns an empty string.
 		 */
-		virtual QString					serverWorkingDirectory(Message& message) const;
+		virtual QString serverWorkingDirectory(Message& message) const;
 
 	protected:
 		enum BinaryType
@@ -124,19 +125,20 @@ class MAIN_EXPORT Binaries : public QObject
 		};
 
 		/**
-		 *	@brief A dictionary containing enum to string translations of words
-		 *	that would fit into "No <dictionary_word> executable specified
-		 *	[...]" sentence.
+		 * @brief A dictionary containing enum to names translations.
 		 *
-		 *	Initialized when Binaries is first constructed.
+		 * Names should fit into "No <dictionary_word> executable specified
+		 * [...]" sentence.
+		 *
+		 * Initialized when Binaries is first constructed.
 		 */
-		typedef	QHash<BinaryType, QString>	BinaryNamesDictionary;
+		typedef QHash<BinaryType, QString> BinaryNamesDictionary;
 
-		static BinaryNamesDictionary 		binaryNames;
+		static BinaryNamesDictionary binaryNames;
 
-		QString								obtainBinary(const QString& configKey, BinaryType binaryType, Message& message) const;
+		QString obtainBinary(const QString& configKey, BinaryType binaryType, Message& message) const;
 
-		const EnginePlugin					*enginePlugin;
+		const EnginePlugin *enginePlugin;
 };
 
 #endif
