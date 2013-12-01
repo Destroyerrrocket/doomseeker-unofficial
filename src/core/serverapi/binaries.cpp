@@ -30,17 +30,36 @@
 #include <QString>
 #include <QFileInfo>
 
+class Binaries::PrivData
+{
+	public:
+		QString configKeyClientBinary;
+		QString configKeyOfflineBinary;
+		QString configKeyServerBinary;
+		const EnginePlugin* plugin;
+};
+
 Binaries::BinaryNamesDictionary Binaries::binaryNames;
 
 Binaries::Binaries(const EnginePlugin *plugin)
 {
-	enginePlugin = plugin;
+	d = new PrivData();
+	d->plugin = plugin;
+	d->configKeyClientBinary = "BinaryPath";
+	d->configKeyOfflineBinary = "BinaryPath";
+	d->configKeyServerBinary = "ServerBinaryPath";
 	if (binaryNames.empty()) // Is not init yet.
 	{
+		//: Should fit into "No [word] executable specified * [...]" sentence
 		binaryNames.insert(Client, tr("client"));
 		binaryNames.insert(Offline, tr("offline play"));
 		binaryNames.insert(TServer, tr("server"));
 	}
+}
+
+Binaries::~Binaries()
+{
+	delete d;
 }
 
 QString Binaries::clientWorkingDirectory(Message& message) const
@@ -49,7 +68,22 @@ QString Binaries::clientWorkingDirectory(Message& message) const
 	return fi.absolutePath();
 }
 
-QString	Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, Message& message) const
+QString Binaries::configKeyClientBinary() const
+{
+	return d->configKeyClientBinary;
+}
+
+QString Binaries::configKeyOfflineBinary() const
+{
+	return d->configKeyOfflineBinary;
+}
+
+QString Binaries::configKeyServerBinary() const
+{
+	return d->configKeyServerBinary;
+}
+
+QString Binaries::obtainBinary(const QString& configKey, BinaryType binaryType, Message& message) const
 {
 	IniSection config = gConfig.iniSectionForPlugin(plugin());
 	IniVariable setting = config[configKey];
@@ -87,6 +121,11 @@ QString Binaries::offlineGameWorkingDirectory(Message& message) const
 	return QString();
 }
 
+const EnginePlugin* Binaries::plugin() const
+{
+	return d->plugin;
+}
+
 QString Binaries::serverBinary(Message& message) const
 {
 	// Try to return something useful even if mis-configured.
@@ -99,4 +138,19 @@ QString Binaries::serverWorkingDirectory(Message& message) const
 {
 	// Generated when game is launched. See doxy.
 	return QString();
+}
+
+void Binaries::setConfigKeyClientBinary(const QString& arg)
+{
+	d->configKeyClientBinary = arg;
+}
+
+void Binaries::setConfigKeyOfflineBinary(const QString& arg)
+{
+	d->configKeyOfflineBinary = arg;
+}
+
+void Binaries::setConfigKeyServerBinary(const QString& arg)
+{
+	d->configKeyServerBinary = arg;
 }

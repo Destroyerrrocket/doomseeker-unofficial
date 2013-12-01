@@ -37,6 +37,7 @@ class MAIN_EXPORT Binaries : public QObject
 
 	public:
 		Binaries(const EnginePlugin *plugin);
+		virtual ~Binaries();
 
 		/**
 		 * @brief Returns the path to the client binary.
@@ -55,9 +56,24 @@ class MAIN_EXPORT Binaries : public QObject
 		 */
 		virtual QString clientWorkingDirectory(Message& message) const;
 
-		virtual QString configKeyClientBinary() const { return "BinaryPath"; }
-		virtual QString configKeyOfflineBinary() const { return configKeyClientBinary(); }
-		virtual QString configKeyServerBinary() const { return "ServerBinaryPath"; }
+		/**
+		 * @brief INI config key for client binary path.
+		 *
+		 * Default: BinaryPath.
+		 */
+		QString configKeyClientBinary() const;
+		/**
+		 * @brief INI config key for offline game binary path.
+		 *
+		 * Default: BinaryPath.
+		 */
+		QString configKeyOfflineBinary() const;
+		/**
+		 * @brief INI config key for server hosting binary path.
+		 *
+		 * Default: BinaryPath.
+		 */
+		QString configKeyServerBinary() const;
 
 		/**
 		 * @brief Returns the path to the binary for offline play.
@@ -89,7 +105,7 @@ class MAIN_EXPORT Binaries : public QObject
 		 * each plugin should keep a global instance of EnginePlugin (singleton?)
 		 * and a pointer to this instance should be returned.
 		 */
-		const EnginePlugin* plugin() const { return enginePlugin; }
+		const EnginePlugin* plugin() const;
 
 		/**
 		 * @brief Returns the path to the server binary.
@@ -137,7 +153,13 @@ class MAIN_EXPORT Binaries : public QObject
 
 		QString obtainBinary(const QString& configKey, BinaryType binaryType, Message& message) const;
 
-		const EnginePlugin *enginePlugin;
+		void setConfigKeyClientBinary(const QString& arg);
+		void setConfigKeyOfflineBinary(const QString& arg);
+		void setConfigKeyServerBinary(const QString& arg);
+
+	private:
+		class PrivData;
+		PrivData* d;
 };
 
 #endif
