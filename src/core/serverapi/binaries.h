@@ -139,6 +139,8 @@ class MAIN_EXPORT Binaries : public QObject
 			TServer
 		};
 
+		typedef QHash<BinaryType, QString> BinaryNamesDictionary;
+
 		/**
 		 * @brief A dictionary containing enum to names translations.
 		 *
@@ -147,8 +149,6 @@ class MAIN_EXPORT Binaries : public QObject
 		 *
 		 * Initialized when Binaries is first constructed.
 		 */
-		typedef QHash<BinaryType, QString> BinaryNamesDictionary;
-
 		static BinaryNamesDictionary binaryNames;
 
 		QString obtainBinary(const QString& configKey, BinaryType binaryType, Message& message) const;
