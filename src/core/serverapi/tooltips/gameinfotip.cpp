@@ -23,6 +23,7 @@
 #include "gameinfotip.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
+#include "serverapi/serverstructs.h"
 
 const QString GameInfoTip::UNLIMITED = QObject::tr("Unlimited");
 

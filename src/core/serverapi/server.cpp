@@ -274,11 +274,7 @@ const QString& Server::connectPassword() const
 
 void Server::clearDMFlags()
 {
-	DMFlagsIt it;
-	for (it = d->dmFlags.begin(); it != d->dmFlags.end(); ++it)
-	{
-		delete (*it);
-	}
+	qDeleteAll(d->dmFlags);
 	d->dmFlags.clear();
 }
 
@@ -808,6 +804,11 @@ TooltipGenerator* Server::tooltipGenerator() const
 unsigned char Server::skill() const
 {
 	return d->skill;
+}
+
+const PWad& Server::wad(int index) const
+{
+	return wads()[index];
 }
 
 const QList<PWad>& Server::wads() const

@@ -31,6 +31,7 @@
 #include "serverapi/message.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
+#include "serverapi/serverstructs.h"
 #include "serverapi/tooltipgenerator.h"
 #include "main.h"
 #include "pathfinder.h"

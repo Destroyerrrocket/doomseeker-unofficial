@@ -26,6 +26,7 @@
 #include "gui/models/serverlistcolumn.h"
 #include "gui/serverlist.h"
 #include "serverapi/server.h"
+#include "serverapi/serverstructs.h"
 
 class ServerListProxyModel::PrivData
 {

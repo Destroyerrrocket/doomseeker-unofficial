@@ -29,6 +29,7 @@
 #include "ip2c/ip2c.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
+#include "serverapi/serverstructs.h"
 #include "main.h"
 #include "log.h"
 #include <QPainter>

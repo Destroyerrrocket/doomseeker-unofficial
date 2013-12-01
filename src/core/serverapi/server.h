@@ -35,25 +35,19 @@
 #include <QTime>
 #include <QUdpSocket>
 
-#include "serverapi/serverstructs.h"
+#include "global.h"
 
 class Binaries;
+class DMFlags;
+class EnginePlugin;
+class GameCVar;
+class GameMode;
 class GameRunner;
 class Player;
 class PlayersList;
-class EnginePlugin;
-class TooltipGenerator;
+class PWad;
 class RConProtocol;
-
-// Some ports support optional wads.
-class MAIN_EXPORT PWad
-{
-	public:
-		PWad(const QString &name, bool optional=false) : name(name), optional(optional) {}
-
-		QString name;
-		bool optional;
-};
+class TooltipGenerator;
 
 class MAIN_EXPORT Server : public QObject
 {
@@ -256,7 +250,7 @@ class MAIN_EXPORT Server : public QObject
 		unsigned short timeLeft() const;
 		unsigned short timeLimit() const;
 		unsigned char skill() const;
-		const PWad &wad(int index) const { return wads()[index]; }
+		const PWad &wad(int index) const;
 		const QList<PWad>& wads() const;
 		const QString& webSite() const;
 

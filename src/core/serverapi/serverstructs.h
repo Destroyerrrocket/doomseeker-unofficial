@@ -52,15 +52,13 @@ class MAIN_EXPORT DMFlagsSection
 		QList<DMFlag>	flags;
 };
 
-/*! /typedef QList<DMFlagsSection*> DMFlags
- *	List used by Server class' virtual method to return all flags sections.
+/**
+ * @brief List used by Server class' virtual method to return all flags
+ * sections.
  */
-typedef QList<DMFlagsSection*> 							DMFlags;
-typedef QList<DMFlagsSection*>::iterator				DMFlagsIt;
-typedef QList<DMFlagsSection*>::const_iterator 			DMFlagsItConst;
-typedef QList<const DMFlagsSection*> 					DMFlagsConst;
-typedef QList<const DMFlagsSection*>::iterator			DMFlagsConstIt;
-typedef QList<const DMFlagsSection*>::const_iterator 	DMFlagsConstItConst;
+class MAIN_EXPORT DMFlags : public QList<DMFlagsSection*>
+{
+};
 
 /**
  *	@brief Struct containing info about a game console variable (like fraglimit)
@@ -140,6 +138,16 @@ class MAIN_EXPORT SkillLevel
 
 	static const int	 numSkillLevels;
 	static const QString names[];
+};
+
+// Some ports support optional wads.
+class MAIN_EXPORT PWad
+{
+	public:
+		PWad(const QString &name, bool optional=false) : name(name), optional(optional){}
+
+		QString name;
+		bool optional;
 };
 
 #endif

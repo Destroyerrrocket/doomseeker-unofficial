@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "playertable.h"
 #include "serverapi/server.h"
+#include "serverapi/serverstructs.h"
 
 PlayerTable::PlayerTable(const Server* server)
 : numOfColumns(0), pServer(server)

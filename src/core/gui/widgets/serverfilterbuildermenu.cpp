@@ -24,6 +24,7 @@
 
 #include "gui/entity/serverlistfilterinfo.h"
 #include "serverapi/server.h"
+#include "serverapi/serverstructs.h"
 
 class ServerFilterBuilderMenu::PrivData
 {
