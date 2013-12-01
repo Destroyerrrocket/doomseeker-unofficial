@@ -37,9 +37,9 @@ Binaries::Binaries(const EnginePlugin *plugin)
 	enginePlugin = plugin;
 	if (binaryNames.empty()) // Is not init yet.
 	{
-		binaryNames.insert(Client, "client");
-		binaryNames.insert(Offline, "offline play");
-		binaryNames.insert(TServer, "server");
+		binaryNames.insert(Client, tr("client"));
+		binaryNames.insert(Offline, tr("offline play"));
+		binaryNames.insert(TServer, tr("server"));
 	}
 }
 
