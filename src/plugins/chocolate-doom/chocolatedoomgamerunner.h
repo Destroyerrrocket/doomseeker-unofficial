@@ -38,6 +38,9 @@ class ChocolateDoomGameRunner : public GameRunner
 
 	protected:
 		void hostProperties(QStringList& args) const;
+
+	private:
+		const ChocolateDoomServer* server;
 };
 
 #endif

@@ -30,6 +30,7 @@
 ChocolateDoomGameRunner::ChocolateDoomGameRunner(const ChocolateDoomServer* server)
 : GameRunner(server)
 {
+	this->server = server;
 }
 
 bool ChocolateDoomGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory)

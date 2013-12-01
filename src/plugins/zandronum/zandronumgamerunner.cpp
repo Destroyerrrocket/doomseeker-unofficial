@@ -29,6 +29,9 @@
 ZandronumGameRunner::ZandronumGameRunner(const ZandronumServer* server)
 : GameRunner(server)
 {
+	this->server = server;
+	setArgForConnectPassword("+cl_password");
+	setArgForServerLaunch("-host");
 }
 
 bool ZandronumGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound,

@@ -37,15 +37,13 @@ class ZandronumGameRunner : public GameRunner
 			const QString &connectPassword, const QString &wadTargetDirectory);
 
 		const EnginePlugin*			plugin() const { return ZandronumEnginePlugin::staticInstance(); }
-		
+
 	protected:
-		QString						argForConnectPassword() const { return "+cl_password"; }	
-		QString						argForServerLaunch() const { return "-host"; }
-		
 		void						hostDMFlags(QStringList& args, const DMFlags& dmFlags) const;
 		void						hostProperties(QStringList& args) const;
-		
-		
+
+	private:
+		const ZandronumServer* server;
 };
 
 #endif

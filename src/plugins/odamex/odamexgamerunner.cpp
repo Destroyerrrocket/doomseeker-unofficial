@@ -27,9 +27,11 @@
 #include "odamexserver.h"
 
 OdamexGameRunner::OdamexGameRunner(const OdamexServer* server)
-: GameRunner(server),
-  odamexServer(server)
+: GameRunner(server)
 {
+	this->server = server;
+	setArgForDemoPlayback("-netplay");
+	setArgForDemoRecord("-netrecord");
 }
 
 bool OdamexGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory)
@@ -37,7 +39,7 @@ bool OdamexGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool
 	if(!GameRunner::connectParameters(args, pf, iwadFound, connectPassword, wadTargetDirectory))
 		return false;
 
-	const QStringList& dehPatches = odamexServer->dehs();
+	const QStringList& dehPatches = server->dehs();
 	if(dehPatches.count() > 0)
 	{
 		args << "-deh";

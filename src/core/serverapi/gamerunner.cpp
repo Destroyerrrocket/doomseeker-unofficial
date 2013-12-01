@@ -35,34 +35,105 @@
 #include <QDateTime>
 #include <QStringList>
 
-GameRunner::GameRunner(const Server* server)
-: currentCmdLine(NULL), currentHostInfo(NULL), server(server)
+class GameRunner::PrivData
 {
+	public:
+		QString argConnect;
+		QString argConnectPassword;
+		QString argIwadLoading;
+		QString argPort;
+		QString argPwadLoading;
+		QString argDemoPlayback;
+		QString argDemoRecord;
+		QString argServerLaunch;
+
+		CommandLineInfo* currentCmdLine;
+		const HostInfo* currentHostInfo;
+		const Server* server;
+};
+
+GameRunner::GameRunner(const Server* server)
+{
+	d = new PrivData();
+	d->argConnect = "-connect";
+	d->argIwadLoading = "-iwad";
+	d->argPort = "-port";
+	d->argPwadLoading = "-file";
+	d->argDemoPlayback = "-playdemo";
+	d->argDemoRecord = "-record";
+	d->currentCmdLine = NULL;
+	d->currentHostInfo = NULL;
+	d->server = server;
+}
+
+GameRunner::~GameRunner()
+{
+	delete d;
+}
+
+const QString& GameRunner::argForConnect() const
+{
+	return d->argConnect;
+}
+
+const QString& GameRunner::argForConnectPassword() const
+{
+	return d->argConnectPassword;
+}
+
+const QString& GameRunner::argForIwadLoading() const
+{
+	return d->argIwadLoading;
+}
+
+const QString& GameRunner::argForPort() const
+{
+	return d->argPort;
+}
+
+const QString& GameRunner::argForPwadLoading() const
+{
+	return d->argPwadLoading;
+}
+
+const QString& GameRunner::argForDemoPlayback() const
+{
+	return d->argDemoPlayback;
+}
+
+const QString& GameRunner::argForDemoRecord() const
+{
+	return d->argDemoRecord;
+}
+
+const QString& GameRunner::argForServerLaunch() const
+{
+	return d->argServerLaunch;
 }
 
 bool GameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory)
 {
-	QString address = QString("%1:%2").arg(server->address().toString()).arg(server->port());
+	QString address = QString("%1:%2").arg(d->server->address().toString()).arg(d->server->port());
 
 	// Connect
 	args << argForConnect() << address;
-	if(server->isLocked())
+	if(d->server->isLocked())
 	{
 		args << connectPassword;
 	}
 
 	// Iwad
-	QString iwad = pf.findFile(server->iwad().toLower());
+	QString iwad = pf.findFile(d->server->iwad().toLower());
 	args << argForIwadLoading() << iwad;
 	iwadFound = !iwad.isEmpty();
 
 	// Custom parameters
-	IniSection config = gConfig.iniSectionForPlugin(server->plugin());
+	IniSection config = gConfig.iniSectionForPlugin(d->server->plugin());
 	QString customParameters = config["CustomParameters"];
 	args << customParameters.split(" ", QString::SkipEmptyParts);
 
 	// Password
-	if (server->isLocked())
+	if (d->server->isLocked())
 	{
 		if (argForConnectPassword().isNull())
 		{
@@ -81,8 +152,8 @@ Message GameRunner::createHostCommandLine(const HostInfo& hostInfo, CommandLineI
 	const QString RUN_RESULT_CAPTION = tr("createHostCommandLine");
 	Message message;
 
-	currentCmdLine = &cmdLine;
-	currentHostInfo = &hostInfo;
+	d->currentCmdLine = &cmdLine;
+	d->currentHostInfo = &hostInfo;
 
 	cmdLine.args.clear();
 
@@ -100,7 +171,7 @@ Message GameRunner::createHostCommandLine(const HostInfo& hostInfo, CommandLineI
 
 	// Port
 	if(mode == GameRunner::HOST)
-		cmdLine.args << argForPort() << QString::number(server->port());
+		cmdLine.args << argForPort() << QString::number(d->server->port());
 
 	// CVars
 	const QList<GameCVar>& cvars = hostInfo.cvars;
@@ -142,7 +213,7 @@ Message GameRunner::createHostCommandLine(const HostInfo& hostInfo, CommandLineI
 
 JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword, bool managedDemo)
 {
-	const QString &PLUGIN_NAME = server->plugin()->data()->name;
+	const QString &PLUGIN_NAME = d->server->plugin()->data()->name;
 	JoinError joinError;
 
 	// Init the JoinError type with critical error. We will change this upon
@@ -156,7 +227,7 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 	//const QString errorCaption = tr("Doomseeker - error for plugin");
 	args.clear();
 
-	Binaries* binaries = server->binaries();
+	Binaries* binaries = d->server->binaries();
 
 	Message message;
 	QString clientBin = binaries->clientBinary(message);
@@ -221,19 +292,19 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 		if(managedDemo)
 			demoName = Main::dataPaths->demosDirectoryPath() + QDir::separator();
 		demoName += QString("%1_%2").
-			arg(server->engineName()).
+			arg(d->server->engineName()).
 			arg(QDateTime::currentDateTime().toString("dd.MM.yyyy_hh.mm.ss"));
-		if(!server->plugin()->data()->demoExtensionAutomatic)
-			demoName += QString(".%1").arg(server->plugin()->data()->demoExtension);
+		if(!d->server->plugin()->data()->demoExtensionAutomatic)
+			demoName += QString(".%1").arg(d->server->plugin()->data()->demoExtension);
 		args << demoName;
 	}
 
-	for (int i = 0; i < server->numWads(); ++i)
+	for (int i = 0; i < d->server->numWads(); ++i)
 	{
-		QString pwad = pathFinder.findFile(server->wad(i).name);
-		if (pwad.isEmpty() && !server->wad(i).optional)
+		QString pwad = pathFinder.findFile(d->server->wad(i).name);
+		if (pwad.isEmpty() && !d->server->wad(i).optional)
 		{
-			missingPwads << server->wad(i).name;
+			missingPwads << d->server->wad(i).name;
 		}
 		else
 		{
@@ -246,7 +317,7 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 	{
 		if (!iwadFound)
 		{
-			joinError.missingIwad = server->iwad();
+			joinError.missingIwad = d->server->iwad();
 		}
 		joinError.missingWads = missingPwads;
 		joinError.type = JoinError::MissingWads;
@@ -262,8 +333,8 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 	{
 		QString metaFileName;
 		// If the extension is automatic we need to add it here
-		if(server->plugin()->data()->demoExtensionAutomatic)
-			metaFileName = QString("%1.%2.ini").arg(demoName).arg(server->plugin()->data()->demoExtension);
+		if(d->server->plugin()->data()->demoExtensionAutomatic)
+			metaFileName = QString("%1.%2.ini").arg(demoName).arg(d->server->plugin()->data()->demoExtension);
 		else
 			metaFileName = demoName + ".ini";
 
@@ -272,13 +343,13 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 
 		// Get a list of wads for demo name:
 		QStringList wadList;
-		for (int i = 0; i < server->numWads(); ++i)
+		for (int i = 0; i < d->server->numWads(); ++i)
 		{
 			// Also be sure to escape any underscores.
-			wadList << server->wad(i).name.toLower();
+			wadList << d->server->wad(i).name.toLower();
 		}
 
-		metaSection.createSetting("iwad", server->iwad().toLower());
+		metaSection.createSetting("iwad", d->server->iwad().toLower());
 		metaSection.createSetting("pwads", wadList.join(";"));
 	}
 
@@ -307,7 +378,7 @@ Message GameRunner::host(const HostInfo& hostInfo, HostMode mode)
 Message GameRunner::hostAppendIwad()
 {
 	const QString RESULT_CAPTION = tr("Doomseeker - host - appending IWAD");
-	const QString& iwadPath = currentHostInfo->iwadPath;
+	const QString& iwadPath = d->currentHostInfo->iwadPath;
 
 	Message message;
 
@@ -326,20 +397,20 @@ Message GameRunner::hostAppendIwad()
 		return message;
 	}
 
-	currentCmdLine->args << argForIwadLoading() << iwadPath;
+	d->currentCmdLine->args << argForIwadLoading() << iwadPath;
 	return message;
 }
 
 Message GameRunner::hostAppendPwads()
 {
 	const QString RESULT_CAPTION = tr("Doomseeker - host - appending PWADs");
-	const QStringList& pwadsPaths = currentHostInfo->pwadsPaths;
+	const QStringList& pwadsPaths = d->currentHostInfo->pwadsPaths;
 
 	Message message;
 
 	if (!pwadsPaths.isEmpty())
 	{
-		QStringList& args = currentCmdLine->args;
+		QStringList& args = d->currentCmdLine->args;
 		foreach(const QString pwad, pwadsPaths)
 		{
 			args << argForPwadLoading();
@@ -361,11 +432,11 @@ Message GameRunner::hostAppendPwads()
 Message GameRunner::hostGetBinary(bool bOfflinePlay)
 {
 	const QString RESULT_CAPTION = tr("Doomseeker - host - getting executable");
-	QString executablePath = currentHostInfo->executablePath;
+	QString executablePath = d->currentHostInfo->executablePath;
 
 	if (executablePath.isEmpty())
 	{
-		Binaries* binaries = server->binaries();
+		Binaries* binaries = d->server->binaries();
 
 		Message message;
 
@@ -397,7 +468,7 @@ Message GameRunner::hostGetBinary(bool bOfflinePlay)
 		return message;
 	}
 
-	currentCmdLine->executable = executablePath;
+	d->currentCmdLine->executable = executablePath;
 	return Message();
 }
 
@@ -414,7 +485,7 @@ Message GameRunner::hostGetWorkingDirectory(bool bOfflinePlay)
 	// A plugin may insist on doing that for a reason that is currently
 	// unknown to me. Let's try to predict every possible situation.
 	QString workingDirFromPlugin;
-	Binaries* binaries = server->binaries();
+	Binaries* binaries = d->server->binaries();
 	if (bOfflinePlay)
 	{
 		workingDirFromPlugin = binaries->offlineGameWorkingDirectory(message);
@@ -435,7 +506,7 @@ Message GameRunner::hostGetWorkingDirectory(bool bOfflinePlay)
 	{
 		// Assume that working directory is the same as executable's directory.
 		// Path to executable should be known at this point.
-		QFileInfo fileInfo(currentCmdLine->executable);
+		QFileInfo fileInfo(d->currentCmdLine->executable);
 
 		serverWorkingDirPath = fileInfo.absolutePath();
 	}
@@ -460,7 +531,7 @@ Message GameRunner::hostGetWorkingDirectory(bool bOfflinePlay)
 		return message;
 	}
 
-	currentCmdLine->applicationDir = serverWorkingDir;
+	d->currentCmdLine->applicationDir = serverWorkingDir;
 	return message;
 }
 
@@ -477,8 +548,48 @@ Message GameRunner::runExecutable(const CommandLineInfo& cli, bool bWrapInStanda
 		// Is this needed for something? Zandronum needs the quotes for console
 		// variables.
 		//AppRunner::cleanArguments(args);
-		new StandardServerConsole(server, cli.executable.absoluteFilePath(), args);
+		new StandardServerConsole(d->server, cli.executable.absoluteFilePath(), args);
 	}
 
 	return Message();
+}
+
+void GameRunner::setArgForConnect(const QString& arg)
+{
+	d->argConnect = arg;
+}
+
+void GameRunner::setArgForConnectPassword(const QString& arg)
+{
+	d->argConnectPassword = arg;
+}
+
+void GameRunner::setArgForIwadLoading(const QString& arg)
+{
+	d->argIwadLoading = arg;
+}
+
+void GameRunner::setArgForPort(const QString& arg)
+{
+	d->argPort = arg;
+}
+
+void GameRunner::setArgForPwadLoading(const QString& arg)
+{
+	d->argPwadLoading = arg;
+}
+
+void GameRunner::setArgForDemoPlayback(const QString& arg)
+{
+	d->argDemoPlayback = arg;
+}
+
+void GameRunner::setArgForDemoRecord(const QString& arg)
+{
+	d->argDemoRecord = arg;
+}
+
+void GameRunner::setArgForServerLaunch(const QString& arg)
+{
+	d->argServerLaunch = arg;
 }

@@ -36,9 +36,8 @@ class VavoomGameRunner : public GameRunner
 		bool						connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory);
 
 		const EnginePlugin*			plugin() const;
-
-	protected:
-		virtual QString				argForConnect() const { return "+connect"; }
+	private:
+		const VavoomServer* server;
 };
 
 #endif

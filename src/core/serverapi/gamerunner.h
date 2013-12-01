@@ -43,118 +43,147 @@ class MAIN_EXPORT GameRunner : public QObject
 		};
 
 		GameRunner(const Server* server);
+		virtual ~GameRunner();
 
 		/**
 		 * @return false to terminate the join process.
 		 */
-		virtual bool				connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory);
+		virtual bool connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory);
 
 		/**
-		 *	@param [out] cli - after successful call this will contain
-		 *		required command line information.
-		 *	@param [out] error - if return == false, error text will be put here
-		 *  @param bOfflinePlay - if not HOST a command line for single player game
-		 *		will be launched
-		 *	@return	MessageResult::isError == false if command line was
-		 *		successfully created.
+		 * @param [out] cli - after successful call this will contain
+		 *     required command line information.
+		 * @param [out] error - if return == false, error text will be put here
+		 * @param bOfflinePlay - if not HOST a command line for single player game
+		 *     will be launched
+		 *
+		 * @return MessageResult::isError == false if command line was
+		 *         successfully created.
 		 */
-		Message						createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cmdLine, HostMode mode);
+		Message createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cmdLine, HostMode mode);
 
 		/**
-		 *	@param [out] cli - after successful call this will contain
-		 *		required command line information.
-		 *	@param managedDemo - Set to true if we should record to the demo
-		 * 		directory and store meta data.
-		 *	@return	JoinError::type == NoError if all ok.
+		 * @param [out] cli - after successful call this will contain
+		 *     required command line information.
+		 * @param managedDemo - Set to true if we should record to the demo
+		 *     directory and store meta data.
+		 * @return JoinError::type == NoError if all ok.
 		 */
-		JoinError					createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword, bool managedDemo);
+		JoinError createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword, bool managedDemo);
 
 		/**
-		 *	@see createHostCommandLine()
+		 * @see createHostCommandLine()
 		 */
-		Message						host(const HostInfo& hostInfo, HostMode mode);
+		Message host(const HostInfo& hostInfo, HostMode mode);
 
 		/**
-		 *	Executes predefined command line.
-		 *	@param cli - command line that will be executed
-		 *	@param bWrapWithStandardServerConsole - if true Doomseeker will
-		 *		attempt to wrap the input/output of the program with it's own
-		 *		console
+		 * @brief Executes predefined command line.
+		 *
+		 * @param cli - command line that will be executed
+		 * @param bWrapWithStandardServerConsole - if true Doomseeker will
+		 *     attempt to wrap the input/output of the program with it's own
+		 *     console
 		 */
-		Message						runExecutable(const CommandLineInfo& cli, bool bWrapWithStandardServerConsole);
+		Message runExecutable(const CommandLineInfo& cli, bool bWrapWithStandardServerConsole);
 
 
 	protected:
 		/**
-		 *	@brief Command line parameter that specifies the target server's IP
-		 *		and port.
-		 */
-		virtual QString				argForConnect() const { return "-connect"; }
-
-		/**
-		 *	@brief Command line parameter that is used to specify connection
-		 *	password.
+		 * @brief Command line parameter that specifies the target server's IP
+		 * and port.
 		 *
-		 *	There is no common value here so the default behavior returns a
-		 *  "null" string.
+		 * Default: "-connect".
 		 */
-		virtual QString				argForConnectPassword() const { return QString(); }
+		const QString& argForConnect() const;
 
 		/**
-		 *	@brief Command line parameter that is used to set IWAD.
-		 */
-		virtual QString				argForIwadLoading() const { return "-iwad"; }
-
-		/**
-		 *	@brief Command line parameter that is used to set internet port for
-		 *	the	game.
-		 */
-		virtual QString				argForPort() const { return "-port"; }
-
-		/**
-		 *	@brief Command line parameter that is used to load a PWAD.
-		 */
-		virtual QString				argForPwadLoading() const { return "-file"; }
-
-		/**
-		 *	@brief Command line parameter for playing back a demo.
-		 */
-		virtual QString				argForDemoPlayback() const { return "-playdemo"; }
-		/**
-		 *	@brief Command line parameter for recording a demo.
-		 */
-		virtual QString				argForDemoRecord() const { return "-record"; }
-
-		/**
-		 *	@brief Command line parameter used to launch a server.
-		 */
-		virtual QString				argForServerLaunch() const { return ""; }
-
-		virtual Message				hostAppendIwad();
-		virtual Message				hostAppendPwads();
-		virtual Message				hostGetBinary(bool bOfflinePlay);
-		virtual Message				hostGetWorkingDirectory(bool bOfflinePlay);
-
-		/**
-		 *	Creates engine specific command line parameters out of passed
-		 *	dmFlags list.
-		 *	Default behavior does nothing.
-		 */
-		virtual void				hostDMFlags(QStringList& args, const DMFlags& dmFlags) const {};
-
-		/**
-		 *	Creates engine specific command line parameters out of Server class
-		 *	fields.
+		 * @brief Command line parameter that is used to specify connection
+		 * password.
 		 *
-		 *	Please note that port, and some other stuff, is already set by
-		 *	createHostCommandLine().
-		 *	@see createHostCommandLine() - cvars parameter.
+		 * There is no common value here so the default behavior returns a
+		 * "null" string.
 		 */
-		virtual void				hostProperties(QStringList& args) const {};
+		const QString& argForConnectPassword() const;
 
-		CommandLineInfo*			currentCmdLine;
-		const HostInfo*				currentHostInfo;
-		const Server*				server;
+		/**
+		 * @brief Command line parameter that is used to set IWAD.
+		 *
+		 * Default: "-iwad".
+		 */
+		const QString& argForIwadLoading() const;
+
+		/**
+		 * @brief Command line parameter that is used to set internet port for
+		 * the game.
+		 *
+		 * Default: "-port".
+		 */
+		const QString& argForPort() const;
+
+		/**
+		 * @brief Command line parameter that is used to load a PWAD.
+		 *
+		 * Default: "-file".
+		 */
+		const QString& argForPwadLoading() const;
+
+		/**
+		 * @brief Command line parameter for playing back a demo.
+		 *
+		 * Default: "-playdemo".
+		 */
+		const QString& argForDemoPlayback() const;
+		/**
+		 * @brief Command line parameter for recording a demo.
+		 *
+		 * Default: "-record";
+		 */
+		const QString& argForDemoRecord() const;
+
+		/**
+		 * @brief Command line parameter used to launch a server.
+		 *
+		 * No default.
+		 */
+		const QString& argForServerLaunch() const;
+
+		void setArgForConnect(const QString& arg);
+		void setArgForConnectPassword(const QString& arg);
+		void setArgForIwadLoading(const QString& arg);
+		void setArgForPort(const QString& arg);
+		void setArgForPwadLoading(const QString& arg);
+		void setArgForDemoPlayback(const QString& arg);
+		void setArgForDemoRecord(const QString& arg);
+		void setArgForServerLaunch(const QString& arg);
+
+
+		virtual Message hostAppendIwad();
+		virtual Message hostAppendPwads();
+		virtual Message hostGetBinary(bool bOfflinePlay);
+		virtual Message hostGetWorkingDirectory(bool bOfflinePlay);
+
+		/**
+		 * @brief Creates engine specific command line parameters out of passed
+		 * dmFlags list.
+		 *
+		 * Default behavior does nothing.
+		 */
+		virtual void hostDMFlags(QStringList& args, const DMFlags& dmFlags) const {};
+
+		/**
+		 * @brief Creates engine specific command line parameters out of
+		 * Server class fields.
+		 *
+		 * Please note that port, and some other stuff, is already set by
+		 * createHostCommandLine().
+		 * @see createHostCommandLine() - cvars parameter.
+		 */
+		virtual void hostProperties(QStringList& args) const {};
+
+	private:
+		class PrivData;
+
+		PrivData* d;
 };
 
 #endif

@@ -29,6 +29,8 @@
 VavoomGameRunner::VavoomGameRunner(const VavoomServer* server)
 : GameRunner(server)
 {
+	this->server = server;
+	setArgForConnect("+connect");
 }
 
 bool VavoomGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory)
