@@ -23,7 +23,6 @@
 #ifndef __BINARIES_H_
 #define __BINARIES_H_
 
-#include "ini/ini.h"
 #include "global.h"
 #include <QHash>
 #include <QObject>
