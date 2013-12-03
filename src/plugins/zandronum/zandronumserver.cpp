@@ -553,13 +553,6 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 		}
 	}
 
-	if((flags & SQF_SECURITY_SETTINGS) == SQF_SECURITY_SETTINGS)
-	{
-		flags ^= SQF_SECURITY_SETTINGS;
-
-		bSecureServer = in.readQUInt8() != 0;
-	}
-
 	// Due to a bug in 0.97d3 we need to add additional checks here.
 	// 0.97d3 servers also respond with SQF_TESTING_SERVER flag set
 	// if it was previously sent to them
@@ -578,6 +571,13 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 	{
 		testingServer = false;
 		testingArchive = QString();
+	}
+
+	if((flags & SQF_SECURITY_SETTINGS) == SQF_SECURITY_SETTINGS)
+	{
+		flags ^= SQF_SECURITY_SETTINGS;
+
+		bSecureServer = in.readQUInt8() != 0;
 	}
 
 	return RESPONSE_GOOD;
