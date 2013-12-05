@@ -23,50 +23,107 @@
 #include "player.h"
 #include "strings.h"
 
+class Player::PrivData
+{
+	public:
+		QString name;
+		short score;
+		unsigned short ping;
+		bool spectator;
+		bool bot;
+		PlayerTeam team;
+};
+
 Player::Player()
 {
-	currentScore = 0;
-	currentPing = 0;
-	spectator = false;
-	bot = false;
-	team = TEAM_NONE;
+	d = new PrivData();
+	d->score = 0;
+	d->ping = 0;
+	d->spectator = false;
+	d->bot = false;
+	d->team = TEAM_NONE;
 }
 
 Player::Player(const QString &name, unsigned short score, unsigned short ping, PlayerTeam team, bool spectator, bool bot)
-: playerName(name), currentScore(score), currentPing(ping),
-  spectator(spectator), bot(bot), team(team)
 {
+	d = new PrivData();
+	d->name = name;
+	d->score = score;
+	d->ping = ping;
+	d->spectator = spectator;
+	d->bot = bot;
+	d->team = team;
+}
+
+Player::Player(const Player& other)
+{
+	d = new PrivData();
+	*d = *other.d;
+}
+
+Player& Player::operator=(const Player& other)
+{
+	if (this != &other)
+	{
+		*d = *other.d;
+	}
+	return *this;
+}
+
+Player::~Player()
+{
+	delete d;
+}
+
+bool Player::isBot() const
+{
+	return d->bot;
+}
+
+bool Player::isSpectating() const
+{
+	return d->spectator;
+}
+
+bool Player::isTeamlessBot() const
+{
+	return d->bot && d->team == TEAM_NONE;
+}
+
+const QString& Player::name() const
+{
+	return d->name;
 }
 
 QString Player::nameColorTagsStripped() const
 {
 	QString ret;
-	for (int i = 0; i < playerName.length(); ++i)
+	for (int i = 0; i < d->name.length(); ++i)
 	{
-		if (playerName[i] < 32 || playerName[i] > 126)
+		if (d->name[i] < 32 || d->name[i] > 126)
 		{
 			// Lets only remove the following character on \c.
 			// Removing the control characters is still a good idea though.
-			if(playerName[i] == ESCAPE_COLOR_CHAR)
+			if(d->name[i] == ESCAPE_COLOR_CHAR)
 				++i;
 			continue;
 		}
 
-		ret += playerName[i];
+		ret += d->name[i];
 	}
 	return ret;
 }
 
-QString	Player::nameFormatted() const
+QString Player::nameFormatted() const
 {
 	QString ret;
-	for (int i = 0; i < playerName.length(); ++i)
+	for (int i = 0; i < d->name.length(); ++i)
 	{
 		// cut out bad characters
-		if ((playerName[i] < 32 || playerName[i] > 126) && playerName[i] != ESCAPE_COLOR_CHAR)
+		if ((d->name[i] < 32 || d->name[i] > 126) && d->name[i] != ESCAPE_COLOR_CHAR)
 			continue;
 
-		switch (playerName[i].toAscii())
+		switch (d->name[i].toAscii())
 		{
 			case '<':
 				ret += "&lt;";
@@ -77,12 +134,27 @@ QString	Player::nameFormatted() const
 				break;
 
 			default:
-				ret += playerName[i];
+				ret += d->name[i];
 				break;
 		}
 	}
 
 	return Strings::colorizeString(ret);
+}
+
+unsigned short Player::ping() const
+{
+	return d->ping;
+}
+
+short Player::score() const
+{
+	return d->score;
+}
+
+Player::PlayerTeam Player::teamNum() const
+{
+	return d->team;
 }
 
 bool Player::operator==(const Player& other) const
