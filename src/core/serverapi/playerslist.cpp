@@ -22,6 +22,38 @@
 //------------------------------------------------------------------------------
 #include "playerslist.h"
 
+class PlayersList::PrivData
+{
+};
+
+PlayersList::PlayersList()
+{
+	// Nothing to store yet. Future backward compatibility with plugins.
+	d = new PrivData();
+}
+
+PlayersList::PlayersList(const PlayersList& other)
+: QList<Player>(other)
+{
+	d = new PrivData();
+	*d = *other.d;
+}
+
+PlayersList& PlayersList::operator=(const PlayersList& other)
+{
+	QList<Player>::operator=(other);
+	if (this != &other)
+	{
+		*d = *other.d;
+	}
+	return *this;
+}
+
+PlayersList::~PlayersList()
+{
+	delete d;
+}
+
 void PlayersList::bots(PlayersList& botsList) const
 {
 	botsList.clear();

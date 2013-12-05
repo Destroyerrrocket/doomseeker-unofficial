@@ -41,6 +41,10 @@ typedef QMap<PairPlayersByTeams>	PlayersByTeams;
 class MAIN_EXPORT PlayersList : public QList<Player>
 {
 	public:
+		PlayersList();
+		PlayersList(const PlayersList& other);
+		PlayersList& operator=(const PlayersList& other);
+		virtual ~PlayersList();
 		/**
 		 *	@brief Lists all bots regardless if they are on a team or not.
 		 */
@@ -79,7 +83,9 @@ class MAIN_EXPORT PlayersList : public QList<Player>
 		void				inGamePlayersByTeams(QMap<PairPlayersByTeams>& playersListMap) const;
 
 		void				spectators(PlayersList& spectatorsList) const;
-
+	private:
+		class PrivData;
+		PrivData* d;
 };
 
 #endif
