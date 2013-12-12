@@ -31,6 +31,7 @@
 #include "gui/wadseekerinterface.h"
 #include "refresher/refresher.h"
 #include "serverapi/binaries.h"
+#include "serverapi/gamehost.h"
 #include "serverapi/gamerunner.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/tooltipgenerator.h"
@@ -308,6 +309,11 @@ QString Server::engineName() const
 	{
 		return tr("Undefined");
 	}
+}
+
+GameHost* Server::gameHost() const
+{
+	return new GameHost(this);
 }
 
 const GameMode& Server::gameMode() const

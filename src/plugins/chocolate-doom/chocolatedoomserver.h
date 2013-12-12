@@ -35,6 +35,7 @@ class ChocolateDoomServer : public Server
 	public:
 		ChocolateDoomServer(const QHostAddress &address, unsigned short port);
 
+		GameHost* gameHost();
 		GameRunner*		gameRunner() const;
 
 		const EnginePlugin*		plugin() const;

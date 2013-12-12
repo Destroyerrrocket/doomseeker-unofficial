@@ -23,6 +23,7 @@
 #include <QBuffer>
 #include <QDataStream>
 
+#include "odamexgamehost.h"
 #include "odamexgameinfo.h"
 #include "odamexgamerunner.h"
 #include "odamexengineplugin.h"
@@ -51,6 +52,11 @@
 OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port) : Server(address, port),
 	protocol(0)
 {
+}
+
+GameHost* OdamexServer::gameHost() const
+{
+	return new OdamexGameHost(this);
 }
 
 GameRunner* OdamexServer::gameRunner() const

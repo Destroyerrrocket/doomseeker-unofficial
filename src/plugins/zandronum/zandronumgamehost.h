@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// zandronumgamerunner.cpp
+// zandronumgamehost.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,26 +18,30 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2013 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "main.h"
-#include "zandronumengineplugin.h"
-#include "zandronumgamerunner.h"
-#include "zandronumgameinfo.h"
-#include "zandronumserver.h"
+#ifndef id7CCF5C41_0664_487D_926B2383C451D847
+#define id7CCF5C41_0664_487D_926B2383C451D847
 
-ZandronumGameRunner::ZandronumGameRunner(const ZandronumServer* server)
-: GameRunner(server)
-{
-	this->server = server;
-	setArgForConnectPassword("+cl_password");
-}
+#include <serverapi/gamehost.h>
 
-bool ZandronumGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound,
-	const QString &connectPassword, const QString &wadTargetDirectory)
+class ZandronumServer;
+
+class ZandronumGameHost : public GameHost
 {
-	IniSection& config = *ZandronumEnginePlugin::staticInstance()->data()->pConfig;
-	bool bAllowCountryDisplay = config["AllowServersToDisplayMyCountry"];
-	args << "+cl_hidecountry" << QString::number(!bAllowCountryDisplay ? 1 : 0);
-	return GameRunner::connectParameters(args, pf, iwadFound, connectPassword, wadTargetDirectory);
-}
+	Q_OBJECT
+
+	public:
+		ZandronumGameHost(const ZandronumServer* server);
+
+	protected:
+		void hostDMFlags(QStringList& args, const DMFlags& dmFlags) const;
+		void hostProperties(QStringList& args) const;
+
+	private:
+		Q_DISABLE_COPY(ZandronumGameHost)
+
+		const ZandronumServer* server;
+};
+
+#endif // header

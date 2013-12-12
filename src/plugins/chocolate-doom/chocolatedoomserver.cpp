@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "chocolatedoomserver.h"
+#include "chocolatedoomgamehost.h"
 #include "chocolatedoomgamerunner.h"
 #include "chocolatedoomengineplugin.h"
 #include "global.h"
@@ -36,7 +37,12 @@ ChocolateDoomServer::ChocolateDoomServer(const QHostAddress &address, unsigned s
 {
 }
 
-GameRunner*	ChocolateDoomServer::gameRunner() const
+GameHost* ChocolateDoomServer::gameHost()
+{
+	return new ChocolateDoomGameHost(this);
+}
+
+GameRunner* ChocolateDoomServer::gameRunner() const
 {
 	return new ChocolateDoomGameRunner(this);
 }

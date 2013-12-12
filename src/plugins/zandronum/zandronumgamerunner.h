@@ -38,10 +38,6 @@ class ZandronumGameRunner : public GameRunner
 
 		const EnginePlugin*			plugin() const { return ZandronumEnginePlugin::staticInstance(); }
 
-	protected:
-		void						hostDMFlags(QStringList& args, const DMFlags& dmFlags) const;
-		void						hostProperties(QStringList& args) const;
-
 	private:
 		const ZandronumServer* server;
 };

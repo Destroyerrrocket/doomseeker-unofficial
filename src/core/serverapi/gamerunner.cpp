@@ -20,8 +20,8 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "plugins/engineplugin.h"
 #include "serverapi/gamerunner.h"
+#include "plugins/engineplugin.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
 #include "serverapi/binaries.h"
@@ -43,9 +43,7 @@ class GameRunner::PrivData
 		QString argIwadLoading;
 		QString argPort;
 		QString argPwadLoading;
-		QString argDemoPlayback;
 		QString argDemoRecord;
-		QString argServerLaunch;
 
 		CommandLineInfo* currentCmdLine;
 		const HostInfo* currentHostInfo;
@@ -59,7 +57,6 @@ GameRunner::GameRunner(const Server* server)
 	d->argIwadLoading = "-iwad";
 	d->argPort = "-port";
 	d->argPwadLoading = "-file";
-	d->argDemoPlayback = "-playdemo";
 	d->argDemoRecord = "-record";
 	d->currentCmdLine = NULL;
 	d->currentHostInfo = NULL;
@@ -96,20 +93,11 @@ const QString& GameRunner::argForPwadLoading() const
 	return d->argPwadLoading;
 }
 
-const QString& GameRunner::argForDemoPlayback() const
-{
-	return d->argDemoPlayback;
-}
-
 const QString& GameRunner::argForDemoRecord() const
 {
 	return d->argDemoRecord;
 }
 
-const QString& GameRunner::argForServerLaunch() const
-{
-	return d->argServerLaunch;
-}
 
 bool GameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory)
 {
@@ -145,70 +133,6 @@ bool GameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwad
 		}
 	}
 	return true;
-}
-
-Message GameRunner::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cmdLine, HostMode mode)
-{
-	const QString RUN_RESULT_CAPTION = tr("createHostCommandLine");
-	Message message;
-
-	d->currentCmdLine = &cmdLine;
-	d->currentHostInfo = &hostInfo;
-
-	cmdLine.args.clear();
-
-	message = hostAppendIwad();
-	if (!message.isIgnore())
-	{
-		return message;
-	}
-
-	message = hostAppendPwads();
-	if (!message.isIgnore())
-	{
-		return message;
-	}
-
-	// Port
-	if(mode == GameRunner::HOST)
-		cmdLine.args << argForPort() << QString::number(d->server->port());
-
-	// CVars
-	const QList<GameCVar>& cvars = hostInfo.cvars;
-	foreach(const GameCVar c, cvars)
-	{
-		cmdLine.args << QString("+" + c.consoleCommand) << c.value();
-	}
-
-	message = hostGetBinary(mode != GameRunner::HOST);
-	if (!message.isIgnore())
-	{
-		return message;
-	}
-
-	message = hostGetWorkingDirectory(mode != GameRunner::HOST);
-	if (!message.isIgnore())
-	{
-		return message;
-	}
-
-	// Add the server launch parameter only if we don't want offline game
-	if (mode == GameRunner::HOST)
-	{
-		cmdLine.args << argForServerLaunch();
-	}
-	// Demo play back
-	else if (mode == GameRunner::DEMO)
-	{
-		cmdLine.args << argForDemoPlayback();
-		cmdLine.args << hostInfo.demoPath;
-	}
-
-	hostDMFlags(cmdLine.args, hostInfo.dmFlags);
-	hostProperties(cmdLine.args);
-	cmdLine.args.append(hostInfo.customParameters);
-
-	return message;
 }
 
 JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword, bool managedDemo)
@@ -356,185 +280,6 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 	return joinError;
 }
 
-Message GameRunner::host(const HostInfo& hostInfo, HostMode mode)
-{
-	CommandLineInfo cmdLine;
-
-	Message message = createHostCommandLine(hostInfo, cmdLine, mode);
-	if (!message.isIgnore())
-	{
-		return message;
-	}
-
-#ifdef Q_OS_WIN32
-	const bool WRAP_IN_SSS_CONSOLE = false;
-#else
-	const bool WRAP_IN_SSS_CONSOLE = mode == HOST;
-#endif
-
-	return runExecutable(cmdLine, WRAP_IN_SSS_CONSOLE);
-}
-
-Message GameRunner::hostAppendIwad()
-{
-	const QString RESULT_CAPTION = tr("Doomseeker - host - appending IWAD");
-	const QString& iwadPath = d->currentHostInfo->iwadPath;
-
-	Message message;
-
-	if (iwadPath.isEmpty())
-	{
-		message = Message::customError(tr("Iwad is not set"));
-		return message;
-	}
-
-	QFileInfo fi(iwadPath);
-
-	if (!fi.isFile())
-	{
-		QString error = tr("Iwad Path error:\n\"%1\" doesn't exist or is a directory!").arg(iwadPath);
-		message = Message::customError(error);
-		return message;
-	}
-
-	d->currentCmdLine->args << argForIwadLoading() << iwadPath;
-	return message;
-}
-
-Message GameRunner::hostAppendPwads()
-{
-	const QString RESULT_CAPTION = tr("Doomseeker - host - appending PWADs");
-	const QStringList& pwadsPaths = d->currentHostInfo->pwadsPaths;
-
-	Message message;
-
-	if (!pwadsPaths.isEmpty())
-	{
-		QStringList& args = d->currentCmdLine->args;
-		foreach(const QString pwad, pwadsPaths)
-		{
-			args << argForPwadLoading();
-
-			QFileInfo fi(pwad);
-			if (!fi.isFile())
-			{
-				QString error = tr("Pwad path error:\n\"%1\" doesn't exist or is a directory!").arg(pwad);
-				message = Message::customError(error);
-				return message;
-			}
-			args << pwad;
-		}
-	}
-
-	return message;
-}
-
-Message GameRunner::hostGetBinary(bool bOfflinePlay)
-{
-	const QString RESULT_CAPTION = tr("Doomseeker - host - getting executable");
-	QString executablePath = d->currentHostInfo->executablePath;
-
-	if (executablePath.isEmpty())
-	{
-		Binaries* binaries = d->server->binaries();
-
-		Message message;
-
-		// Select binary depending on bOfflinePlay flag:
-		if (bOfflinePlay)
-		{
-			executablePath = binaries->offlineGameBinary(message);
-		}
-		else
-		{
-			executablePath = binaries->serverBinary(message);
-		}
-
-		delete binaries;
-
-		if (executablePath.isEmpty())
-		{
-			return message;
-		}
-	}
-
-	QFileInfo fi(executablePath);
-
-	if (!fi.isFile() && !fi.isBundle())
-	{
-		Message message;
-		QString error = tr("%1\n doesn't exist or is not a file.").arg(fi.filePath());
-		message = Message::customError(error);
-		return message;
-	}
-
-	d->currentCmdLine->executable = executablePath;
-	return Message();
-}
-
-Message GameRunner::hostGetWorkingDirectory(bool bOfflinePlay)
-{
-	const QString RESULT_CAPTION = tr("Doomseeker - host - getting working directory");
-	QString error;
-	QString serverWorkingDirPath;
-
-	Message message;
-	
-	// First, we should try to extract the working dir from plugin.
-	// [Zalewa]:
-	// A plugin may insist on doing that for a reason that is currently
-	// unknown to me. Let's try to predict every possible situation.
-	QString workingDirFromPlugin;
-	Binaries* binaries = d->server->binaries();
-	if (bOfflinePlay)
-	{
-		workingDirFromPlugin = binaries->offlineGameWorkingDirectory(message);
-	}
-	else
-	{
-		workingDirFromPlugin = binaries->serverWorkingDirectory(message);
-	}
-	
-	// Check if all went well on the plugin side.
-	if (!message.isIgnore())
-	{
-		// Something's gone wrong. Report the error.
-		return message;
-	}
-	
-	if (workingDirFromPlugin.isEmpty())
-	{
-		// Assume that working directory is the same as executable's directory.
-		// Path to executable should be known at this point.
-		QFileInfo fileInfo(d->currentCmdLine->executable);
-
-		serverWorkingDirPath = fileInfo.absolutePath();
-	}
-	else
-	{
-		// Plugin returned the directory. Use that.
-		serverWorkingDirPath = workingDirFromPlugin;
-	}
-	
-	QDir serverWorkingDir(serverWorkingDirPath);
-
-	if (serverWorkingDirPath.isEmpty())
-	{
-		QString error = tr("Path to working directory is empty.\nMake sure the configuration for the executable file is set properly.");
-		message = Message::customError(error);
-		return message;
-	}
-	else if (!serverWorkingDir.exists())
-	{
-		QString error = tr("%1\n doesn't exist or is not a directory.").arg(serverWorkingDirPath);
-		message = Message::customError(error);
-		return message;
-	}
-
-	d->currentCmdLine->applicationDir = serverWorkingDir;
-	return message;
-}
-
 Message GameRunner::runExecutable(const CommandLineInfo& cli, bool bWrapInStandardServerConsole)
 {
 	if (!bWrapInStandardServerConsole)
@@ -579,17 +324,7 @@ void GameRunner::setArgForPwadLoading(const QString& arg)
 	d->argPwadLoading = arg;
 }
 
-void GameRunner::setArgForDemoPlayback(const QString& arg)
-{
-	d->argDemoPlayback = arg;
-}
-
 void GameRunner::setArgForDemoRecord(const QString& arg)
 {
 	d->argDemoRecord = arg;
-}
-
-void GameRunner::setArgForServerLaunch(const QString& arg)
-{
-	d->argServerLaunch = arg;
 }

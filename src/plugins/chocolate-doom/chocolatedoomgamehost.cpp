@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// zandronumgamerunner.cpp
+// chocolatedoomgamehost.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,26 +18,39 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2013 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "main.h"
-#include "zandronumengineplugin.h"
-#include "zandronumgamerunner.h"
-#include "zandronumgameinfo.h"
-#include "zandronumserver.h"
+#include "chocolatedoomgamehost.h"
 
-ZandronumGameRunner::ZandronumGameRunner(const ZandronumServer* server)
-: GameRunner(server)
+#include "chocolatedoomgameinfo.h"
+#include "chocolatedoomserver.h"
+#include <QString>
+
+ChocolateDoomGameHost::ChocolateDoomGameHost(const ChocolateDoomServer* server)
+: GameHost(server)
 {
 	this->server = server;
-	setArgForConnectPassword("+cl_password");
 }
 
-bool ZandronumGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound,
-	const QString &connectPassword, const QString &wadTargetDirectory)
+void ChocolateDoomGameHost::hostProperties(QStringList& args) const
 {
-	IniSection& config = *ZandronumEnginePlugin::staticInstance()->data()->pConfig;
-	bool bAllowCountryDisplay = config["AllowServersToDisplayMyCountry"];
-	args << "+cl_hidecountry" << QString::number(!bAllowCountryDisplay ? 1 : 0);
-	return GameRunner::connectParameters(args, pf, iwadFound, connectPassword, wadTargetDirectory);
+	args << "-skill" << QString::number(server->skill() + 1); // from 1 to 5
+
+	switch(server->gameMode().modeIndex())
+	{
+		default: break;
+		case GameMode::SGMIDeathmatch:
+			args << "-deathmatch";
+			break;
+		case ChocolateDoomGameInfo::MODE_ALTDEATH:
+			args << "-altdeath";
+			break;
+	}
+
+	// Convert map name to proper number for -warp
+	QString mapname = server->map().toUpper();
+	if(mapname.length() == 5 && mapname.startsWith("MAP"))
+		args << "-warp" << mapname.right(2);
+	else if(mapname.length() == 4 && mapname[0] == 'E' && mapname[2] == 'M')
+		args << "-warp" << QString("%1%2").arg(mapname[1]).arg(mapname[3]);
 }

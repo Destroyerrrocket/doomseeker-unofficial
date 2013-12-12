@@ -28,7 +28,7 @@
 #include "serverapi/binaries.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
-#include "serverapi/gamerunner.h"
+#include "serverapi/gamehost.h"
 #include "serverapi/gamerunnerstructs.h"
 
 #include <QDir>
@@ -261,8 +261,8 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 		hostInfo.iwadPath = result.foundFiles[0];
 		hostInfo.pwadsPaths = result.foundFiles.mid(1);
 
-		GameRunner* gameRunner = server->gameRunner();
-		Message message = gameRunner->host(hostInfo, GameRunner::DEMO);
+		GameHost* gameRunner = server->gameHost();
+		Message message = gameRunner->host(hostInfo, GameHost::DEMO);
 
 		if (message.isError())
 		{

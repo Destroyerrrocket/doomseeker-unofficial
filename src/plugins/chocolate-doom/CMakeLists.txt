@@ -4,11 +4,13 @@ set(PLUGIN_NAME chocolatedoom)
 include(../PluginHeader.txt)
 
 set(CHOCOLATEDOOM_QT_FILES
+	chocolatedoomgamehost.h
 	chocolatedoomserver.h
 	chocolatedoommasterclient.h
 )
 set(CHOCOLATEDOOM_FILES
 	chocolatedoomengineplugin.cpp
+	chocolatedoomgamehost.cpp
 	chocolatedoomgameinfo.cpp
 	chocolatedoomgamerunner.cpp
 	chocolatedoommasterclient.cpp

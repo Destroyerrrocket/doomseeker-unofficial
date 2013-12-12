@@ -31,10 +31,12 @@
 #include "plugins/engineplugin.h"
 #include "scanner.h"
 #include "serverapi/binaries.h"
-#include "serverapi/gamerunner.h"
+#include "serverapi/gamehost.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
+#include "apprunner.h"
 #include "commandline.h"
+#include "pathfinder.h"
 #include "strings.h"
 
 #include <QCheckBox>
@@ -377,14 +379,14 @@ bool CreateServerDialog::commandLineArguments(QString &executable, QStringList &
 
 	Server* server = currentEngine->server(QHostAddress(), spinPort->value());
 	HostInfo hi;
-	GameRunner::HostMode mode = bIsServerSetup ? GameRunner::OFFLINE : GameRunner::HOST;
+	GameHost::HostMode mode = bIsServerSetup ? GameHost::OFFLINE : GameHost::HOST;
 
 	if (createHostInfo(hi, server, mode))
 	{
 		CommandLineInfo cli;
 		QString error;
 
-		GameRunner* gameRunner = server->gameRunner();
+		GameHost* gameRunner = server->gameHost();
 		Message message = gameRunner->createHostCommandLine(hi, cli, mode);
 
 		delete server;
@@ -1008,9 +1010,9 @@ void CreateServerDialog::runGame(bool offline)
 	{
 		QString error;
 
-		GameRunner* gameRunner = server->gameRunner();
+		GameHost* gameRunner = server->gameHost();
 
-		Message message = gameRunner->host(hi, offline ? GameRunner::OFFLINE : GameRunner::HOST);
+		Message message = gameRunner->host(hi, offline ? GameHost::OFFLINE : GameHost::HOST);
 
 		delete gameRunner;
 		delete server;

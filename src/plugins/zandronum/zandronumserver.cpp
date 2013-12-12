@@ -24,6 +24,7 @@
 
 #include "huffman/huffman.h"
 #include "zandronumbinaries.h"
+#include "zandronumgamehost.h"
 #include "zandronumgameinfo.h"
 #include "zandronumgamerunner.h"
 #include "zandronumserver.h"
@@ -114,6 +115,11 @@ ZandronumServer::ZandronumServer(const QHostAddress &address, unsigned short por
 Binaries* ZandronumServer::binaries() const
 {
 	return new ZandronumBinaries(this);
+}
+
+GameHost* ZandronumServer::gameHost() const
+{
+	return new ZandronumGameHost(this);
 }
 
 GameRunner* ZandronumServer::gameRunner() const

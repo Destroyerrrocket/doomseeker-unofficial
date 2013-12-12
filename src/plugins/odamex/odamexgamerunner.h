@@ -35,8 +35,6 @@ class OdamexGameRunner : public GameRunner
 		bool						connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory);
 
 	protected:
-		void hostProperties(QStringList& args) const;
-
 		const OdamexServer*			server;
 
 };

@@ -57,26 +57,3 @@ bool ChocolateDoomGameRunner::connectParameters(QStringList &args, PathFinder &p
 	}
 	return true;
 }
-
-void ChocolateDoomGameRunner::hostProperties(QStringList& args) const
-{
-	args << "-skill" << QString::number(server->skill() + 1); // from 1 to 5
-
-	switch(server->gameMode().modeIndex())
-	{
-		default: break;
-		case GameMode::SGMIDeathmatch:
-			args << "-deathmatch";
-			break;
-		case ChocolateDoomGameInfo::MODE_ALTDEATH:
-			args << "-altdeath";
-			break;
-	}
-
-	// Convert map name to proper number for -warp
-	QString mapname = server->map().toUpper();
-	if(mapname.length() == 5 && mapname.startsWith("MAP"))
-		args << "-warp" << mapname.right(2);
-	else if(mapname.length() == 4 && mapname[0] == 'E' && mapname[2] == 'M')
-		args << "-warp" << QString("%1%2").arg(mapname[1]).arg(mapname[3]);
-}

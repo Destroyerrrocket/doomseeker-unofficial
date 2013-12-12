@@ -41,6 +41,7 @@ class Binaries;
 class DMFlags;
 class EnginePlugin;
 class GameCVar;
+class GameHost;
 class GameMode;
 class GameRunner;
 class Player;
@@ -85,6 +86,14 @@ class MAIN_EXPORT Server : public QObject
 		 * or "Undefined" string if there is no parent plugin.
 		 */
 		virtual QString engineName() const;
+		/**
+		 * @brief Creates an instance of GameHost derivative class.
+		 *
+		 * Gets a pointer to a new instance of GameRunner's
+		 * descendant (defined by a plugin). Created instance should be deleted
+		 * manually by the programmer.
+		 */
+		virtual GameHost* gameHost() const;
 		/**
 		 * @brief Creates an instance of GameRunner's derivative class.
 		 *

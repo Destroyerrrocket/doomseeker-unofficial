@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// zandronumgamerunner.cpp
+// odamexgamehost.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,26 +18,29 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2013 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "main.h"
-#include "zandronumengineplugin.h"
-#include "zandronumgamerunner.h"
-#include "zandronumgameinfo.h"
-#include "zandronumserver.h"
+#ifndef id0C2CBB3A_3E88_4063_9F380FB52C71E32A
+#define id0C2CBB3A_3E88_4063_9F380FB52C71E32A
 
-ZandronumGameRunner::ZandronumGameRunner(const ZandronumServer* server)
-: GameRunner(server)
-{
-	this->server = server;
-	setArgForConnectPassword("+cl_password");
-}
+#include <serverapi/gamehost.h>
 
-bool ZandronumGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound,
-	const QString &connectPassword, const QString &wadTargetDirectory)
+class OdamexServer;
+
+class OdamexGameHost : public GameHost
 {
-	IniSection& config = *ZandronumEnginePlugin::staticInstance()->data()->pConfig;
-	bool bAllowCountryDisplay = config["AllowServersToDisplayMyCountry"];
-	args << "+cl_hidecountry" << QString::number(!bAllowCountryDisplay ? 1 : 0);
-	return GameRunner::connectParameters(args, pf, iwadFound, connectPassword, wadTargetDirectory);
-}
+	Q_OBJECT
+
+	public:
+		OdamexGameHost(const OdamexServer* server);
+
+	protected:
+		void hostProperties(QStringList& args) const;
+
+	private:
+		Q_DISABLE_COPY(OdamexGameHost)
+
+		const OdamexServer* server;
+};
+
+#endif

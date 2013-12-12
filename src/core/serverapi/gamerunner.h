@@ -35,13 +35,6 @@ class Server;
 class MAIN_EXPORT GameRunner : public QObject
 {
 	public:
-		enum HostMode
-		{
-			HOST,
-			OFFLINE,
-			DEMO
-		};
-
 		GameRunner(const Server* server);
 		virtual ~GameRunner();
 
@@ -53,28 +46,11 @@ class MAIN_EXPORT GameRunner : public QObject
 		/**
 		 * @param [out] cli - after successful call this will contain
 		 *     required command line information.
-		 * @param [out] error - if return == false, error text will be put here
-		 * @param bOfflinePlay - if not HOST a command line for single player game
-		 *     will be launched
-		 *
-		 * @return MessageResult::isError == false if command line was
-		 *         successfully created.
-		 */
-		Message createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cmdLine, HostMode mode);
-
-		/**
-		 * @param [out] cli - after successful call this will contain
-		 *     required command line information.
 		 * @param managedDemo - Set to true if we should record to the demo
 		 *     directory and store meta data.
 		 * @return JoinError::type == NoError if all ok.
 		 */
 		JoinError createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword, bool managedDemo);
-
-		/**
-		 * @see createHostCommandLine()
-		 */
-		Message host(const HostInfo& hostInfo, HostMode mode);
 
 		/**
 		 * @brief Executes predefined command line.
@@ -128,57 +104,18 @@ class MAIN_EXPORT GameRunner : public QObject
 		const QString& argForPwadLoading() const;
 
 		/**
-		 * @brief Command line parameter for playing back a demo.
-		 *
-		 * Default: "-playdemo".
-		 */
-		const QString& argForDemoPlayback() const;
-		/**
 		 * @brief Command line parameter for recording a demo.
 		 *
 		 * Default: "-record";
 		 */
 		const QString& argForDemoRecord() const;
 
-		/**
-		 * @brief Command line parameter used to launch a server.
-		 *
-		 * No default.
-		 */
-		const QString& argForServerLaunch() const;
-
 		void setArgForConnect(const QString& arg);
 		void setArgForConnectPassword(const QString& arg);
 		void setArgForIwadLoading(const QString& arg);
 		void setArgForPort(const QString& arg);
 		void setArgForPwadLoading(const QString& arg);
-		void setArgForDemoPlayback(const QString& arg);
 		void setArgForDemoRecord(const QString& arg);
-		void setArgForServerLaunch(const QString& arg);
-
-
-		virtual Message hostAppendIwad();
-		virtual Message hostAppendPwads();
-		virtual Message hostGetBinary(bool bOfflinePlay);
-		virtual Message hostGetWorkingDirectory(bool bOfflinePlay);
-
-		/**
-		 * @brief Creates engine specific command line parameters out of passed
-		 * dmFlags list.
-		 *
-		 * Default behavior does nothing.
-		 */
-		virtual void hostDMFlags(QStringList& args, const DMFlags& dmFlags) const {};
-
-		/**
-		 * @brief Creates engine specific command line parameters out of
-		 * Server class fields.
-		 *
-		 * Please note that port, and some other stuff, is already set by
-		 * createHostCommandLine().
-		 * @see createHostCommandLine() - cvars parameter.
-		 */
-		virtual void hostProperties(QStringList& args) const {};
 
 	private:
 		class PrivData;
