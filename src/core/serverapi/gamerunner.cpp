@@ -45,8 +45,6 @@ class GameRunner::PrivData
 		QString argPwadLoading;
 		QString argDemoRecord;
 
-		CommandLineInfo* currentCmdLine;
-		const HostInfo* currentHostInfo;
 		const Server* server;
 };
 
@@ -58,8 +56,6 @@ GameRunner::GameRunner(const Server* server)
 	d->argPort = "-port";
 	d->argPwadLoading = "-file";
 	d->argDemoRecord = "-record";
-	d->currentCmdLine = NULL;
-	d->currentHostInfo = NULL;
 	d->server = server;
 }
 
