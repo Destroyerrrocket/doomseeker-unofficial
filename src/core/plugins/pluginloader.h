@@ -66,7 +66,7 @@ class MAIN_EXPORT PluginLoader
 
 				bool	isValid() const { return library != NULL; }
 
-				const EnginePlugin	*info;
+				EnginePlugin	*info;
 
 			private:
 				void	unload();
