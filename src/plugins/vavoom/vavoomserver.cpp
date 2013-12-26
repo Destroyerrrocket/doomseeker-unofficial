@@ -40,7 +40,7 @@ VavoomServer::VavoomServer(const QHostAddress &address, unsigned short port)
 	setGameMode(unknownMode);
 }
 
-GameRunner* VavoomServer::gameRunner() const
+GameRunner* VavoomServer::gameRunner()
 {
 	return new VavoomGameRunner(this);
 }

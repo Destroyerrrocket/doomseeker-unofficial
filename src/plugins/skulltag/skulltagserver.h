@@ -134,7 +134,7 @@ class SkulltagServer : public Server
 
 		bool			isTestingServer() const { return testingServer; }
 
-		GameRunner*		gameRunner() const;
+		GameRunner*		gameRunner();
 
 		bool			hasRcon() const { return true; }
 

@@ -26,7 +26,7 @@
 #include "vavoomengineplugin.h"
 #include "vavoomserver.h"
 
-VavoomGameRunner::VavoomGameRunner(const VavoomServer* server)
+VavoomGameRunner::VavoomGameRunner(VavoomServer* server)
 : GameRunner(server)
 {
 	this->server = server;

@@ -37,9 +37,9 @@
 
 #include "global.h"
 
-class Binaries;
 class DMFlags;
 class EnginePlugin;
+class ExeFile;
 class GameCVar;
 class GameHost;
 class GameMode;
@@ -72,14 +72,9 @@ class MAIN_EXPORT Server : public QObject
 
 		// VIRTUALS
 		/**
-		 * @brief Creates an instance of Binaries's descendant class.
-		 *
-		 * Created instance should be deleted manually by the programmer.
-		 * @return A pointer to a new instance of Binaries's descendant
-		 *        (defined by a plugin)
+		 * @brief Client executable retriever.
 		 */
-		virtual Binaries* binaries() const;
-
+		virtual ExeFile* clientExe();
 		/**
 		 * Returns name of the engine for this server, for example: "Skulltag".
 		 * By default this returns name defined by the parent plugin itself,
@@ -101,7 +96,7 @@ class MAIN_EXPORT Server : public QObject
 		 * descendant (defined by a plugin). Created instance should be deleted
 		 * manually by the programmer.
 		 */
-		virtual GameRunner* gameRunner() const;
+		virtual GameRunner* gameRunner();
 		virtual bool hasRcon() const { return false; }
 		virtual const GameCVar *modifier() const { return NULL; }
 		virtual RConProtocol *rcon() { return NULL; }

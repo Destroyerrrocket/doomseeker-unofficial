@@ -35,7 +35,7 @@ class Server;
 class MAIN_EXPORT GameRunner : public QObject
 {
 	public:
-		GameRunner(const Server* server);
+		GameRunner(Server* server);
 		virtual ~GameRunner();
 
 		/**

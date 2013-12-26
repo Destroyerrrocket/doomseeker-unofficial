@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// zandronumgamerunner.cpp
+// gameexeretriever.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,26 +18,46 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2013 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "main.h"
-#include "zandronumengineplugin.h"
-#include "zandronumgamerunner.h"
-#include "zandronumgameinfo.h"
-#include "zandronumserver.h"
+#include "gameexeretriever.h"
 
-ZandronumGameRunner::ZandronumGameRunner(ZandronumServer* server)
-: GameRunner(server)
+#include "serverapi/exefile.h"
+#include "serverapi/gameexefactory.h"
+
+GameExeRetriever::GameExeRetriever(GameExeFactory& factory)
+: factory(factory)
 {
-	this->server = server;
-	setArgForConnectPassword("+cl_password");
 }
 
-bool ZandronumGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound,
-	const QString &connectPassword, const QString &wadTargetDirectory)
+QString GameExeRetriever::pathToOfflineExe(Message& message)
 {
-	IniSection& config = *ZandronumEnginePlugin::staticInstance()->data()->pConfig;
-	bool bAllowCountryDisplay = config["AllowServersToDisplayMyCountry"];
-	args << "+cl_hidecountry" << QString::number(!bAllowCountryDisplay ? 1 : 0);
-	return GameRunner::connectParameters(args, pf, iwadFound, connectPassword, wadTargetDirectory);
+	ExeFile* f = factory.offline();
+	QString path = f->pathToExe(message);
+	delete f;
+	return path;
+}
+
+QString GameExeRetriever::pathToServerExe(Message& message)
+{
+	ExeFile* f = factory.server();
+	QString path = f->pathToExe(message);
+	delete f;
+	return path;
+}
+
+QString GameExeRetriever::offlineWorkingDir(Message& message)
+{
+	ExeFile* f = factory.offline();
+	QString path = f->workingDirectory(message);
+	delete f;
+	return path;
+}
+
+QString GameExeRetriever::serverWorkingDir(Message& message)
+{
+	ExeFile* f = factory.server();
+	QString path = f->workingDirectory(message);
+	delete f;
+	return path;
 }

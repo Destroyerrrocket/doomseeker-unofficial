@@ -97,7 +97,7 @@ class ServerListHandler : public QObject
 		/**
 		 * Emitted when a request for join command line show is called.
 		 */
-		void 					displayServerJoinCommandLine(const Server*);
+		void 					displayServerJoinCommandLine(Server*);
 
 		void serverFilterModified(const ServerListFilterInfo& filter);
 		/**

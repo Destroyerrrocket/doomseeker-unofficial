@@ -140,12 +140,12 @@ class ZandronumServer : public Server
 
 		ZandronumServer(const QHostAddress &address, unsigned short port);
 
-		Binaries*		binaries() const;
+		ExeFile *clientExe();
 
 		bool			isTestingServer() const { return testingServer; }
 
 		GameHost* gameHost() const;
-		GameRunner*		gameRunner() const;
+		GameRunner*		gameRunner();
 
 		bool			hasRcon() const { return true; }
 

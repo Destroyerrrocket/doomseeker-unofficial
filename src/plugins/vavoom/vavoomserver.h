@@ -38,7 +38,7 @@ class VavoomServer : public Server
 	public:
 		VavoomServer(const QHostAddress &address, unsigned short port);
 
-		GameRunner*			gameRunner() const;
+		GameRunner*			gameRunner();
 
 		EnginePlugin*	plugin() const;
 

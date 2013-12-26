@@ -444,7 +444,7 @@ void MainWindow::connectEntities()
 	connect(serverTableHandler, SIGNAL(serverFilterModified(ServerListFilterInfo)),
 		serverFilterDock, SLOT(setFilterInfo(ServerListFilterInfo)));
 	connect(serverTableHandler, SIGNAL( serverDoubleClicked(Server*) ), this, SLOT( runGame(Server*) ) );
-	connect(serverTableHandler, SIGNAL( displayServerJoinCommandLine(const Server*) ), this, SLOT( showServerJoinCommandLine(const Server*) ) );
+	connect(serverTableHandler, SIGNAL( displayServerJoinCommandLine(Server*) ), this, SLOT( showServerJoinCommandLine(Server*) ) );
 	connect(serverTableHandler, SIGNAL( serverInfoUpdated(Server*) ), this, SLOT( serverAddedToList(Server*) ) );
 }
 
@@ -1256,7 +1256,7 @@ void MainWindow::setupToolBar()
 	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( toolBarAction(QAction*) ) );
 }
 
-void MainWindow::showServerJoinCommandLine(const Server* server)
+void MainWindow::showServerJoinCommandLine(Server* server)
 {
 	CommandLineInfo cli;
 	if (ConnectionHandler::obtainJoinCommandLine(this, server, cli, tr("Doomseeker - join command line"), false))

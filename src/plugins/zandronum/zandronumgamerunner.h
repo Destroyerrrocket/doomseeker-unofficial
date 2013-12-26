@@ -31,7 +31,7 @@ class ZandronumServer;
 class ZandronumGameRunner : public GameRunner
 {
 	public:
-		ZandronumGameRunner(const ZandronumServer* server);
+		ZandronumGameRunner(ZandronumServer* server);
 
 		bool connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound,
 			const QString &connectPassword, const QString &wadTargetDirectory);

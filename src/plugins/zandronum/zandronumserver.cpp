@@ -112,9 +112,9 @@ ZandronumServer::ZandronumServer(const QHostAddress &address, unsigned short por
 	connect(this, SIGNAL( updated(Server*, int) ), this, SLOT( updatedSlot(Server*, int) ));
 }
 
-Binaries* ZandronumServer::binaries() const
+ExeFile* ZandronumServer::clientExe()
 {
-	return new ZandronumBinaries(this);
+	return new ZandronumClientExeFile(this);
 }
 
 GameHost* ZandronumServer::gameHost() const
@@ -122,7 +122,7 @@ GameHost* ZandronumServer::gameHost() const
 	return new ZandronumGameHost(this);
 }
 
-GameRunner* ZandronumServer::gameRunner() const
+GameRunner* ZandronumServer::gameRunner()
 {
 	return new ZandronumGameRunner(this);
 }

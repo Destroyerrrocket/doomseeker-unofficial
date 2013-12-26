@@ -59,7 +59,7 @@ GameHost* OdamexServer::gameHost() const
 	return new OdamexGameHost(this);
 }
 
-GameRunner* OdamexServer::gameRunner() const
+GameRunner* OdamexServer::gameRunner()
 {
 	return new OdamexGameRunner(this);
 }

@@ -30,7 +30,8 @@
 #include "ini/ini.h"
 #include "plugins/engineplugin.h"
 #include "scanner.h"
-#include "serverapi/binaries.h"
+#include "serverapi/exefile.h"
+#include "serverapi/gameexeretriever.h"
 #include "serverapi/gamehost.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
@@ -46,6 +47,7 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QObject>
+#include <QScopedPointer>
 #include <QStandardItemModel>
 #include <QTimer>
 
@@ -241,27 +243,14 @@ void CreateServerDialog::btnCommandLineClicked()
 
 void CreateServerDialog::btnDefaultExecutableClicked()
 {
-	QString error;
-
-	// The info here doesn't really matter. We need to create a Server instance
-	// because this is the only way to get Binaries instance.
-	//
-	// Explanation: such horrendous heresy wouldn't be necessary if not for
-	// the Skulltag testing system which requires passing a SkulltagServer*
-	// to SkulltagBinaries constructor. This renders getting Binaries through
-	// plugin's interface a not recommended feature.
-	Server* server = currentEngine->server(QHostAddress("127.0.0.1"), 0);
-	Binaries* binaries = server->binaries();
 	Message message;
-	leExecutable->setText(binaries->serverBinary(message));
+	leExecutable->setText(pathToServerExe(message));
 
 	if (!message.isIgnore())
 	{
-		QMessageBox::critical(NULL, tr("Obtaining default server binary path."), message.contents(), QMessageBox::Ok, QMessageBox::Ok);
+		QMessageBox::critical(NULL, tr("Obtaining default server binary path."),
+			message.contents(),QMessageBox::Ok, QMessageBox::Ok);
 	}
-
-	delete binaries;
-	delete server;
 }
 
 void CreateServerDialog::btnIwadBrowseClicked()
@@ -415,20 +404,19 @@ bool CreateServerDialog::createHostInfo(HostInfo& hostInfo, Server* server, bool
 {
 	if (server != NULL)
 	{
-		// Since some operating systems have different client and server binaries
+		// Since some operating systems have different offline and server binaries
 		// We will see if they are playing offline and switch to the client
 		// binary if the specified executable is the same as what is provided
 		// as the server.
-		Binaries *binaries = server->binaries();
 		Message message;
-		QString client = binaries->clientBinary(message);
-
-		bool bIsLineEditPotiningToServerBinary = (leExecutable->text() == binaries->serverBinary(message));
+		QString offlineExePath = pathToOfflineExe(message);
+		QString serverExePath = pathToServerExe(message);
+		bool bIsLineEditPotiningToServerBinary = (leExecutable->text() == serverExePath);
 		bool bShouldUseClientBinary = (offline || bIsServerSetup) && message.isIgnore() && bIsLineEditPotiningToServerBinary;
 
-		if(bShouldUseClientBinary)
+		if (bShouldUseClientBinary)
 		{
-			hostInfo.executablePath = client;
+			hostInfo.executablePath = offlineExePath;
 		}
 		else
 		{
@@ -628,13 +616,16 @@ void CreateServerDialog::initEngineSpecific(EnginePlugin* engineInfo)
 	// Executable path
 	Message message;
 
-	// See: btnDefaultExecutableClicked()
-	Server* server = currentEngine->server(QHostAddress("127.0.0.1"), 1);
-	Binaries* binaries = server->binaries();
 	if(bIsServerSetup)
-		leExecutable->setText(binaries->clientBinary(message));
+	{
+		Server* server = currentEngine->server(QHostAddress("127.0.0.1"), 1);
+		leExecutable->setText(pathToClientExe(server, message));
+		delete server;
+	}
 	else
-		leExecutable->setText(binaries->serverBinary(message));
+	{
+		leExecutable->setText(pathToServerExe(message));
+	}
 
 	if (message.isError() && !bSuppressMissingExeErrors)
 	{
@@ -643,9 +634,6 @@ void CreateServerDialog::initEngineSpecific(EnginePlugin* engineInfo)
 
 		QMessageBox::warning(NULL, caption, error);
 	}
-
-	delete binaries;
-	delete server;
 
 	spinPort->setValue(currentEngine->data()->defaultServerPort);
 
@@ -964,6 +952,22 @@ void CreateServerDialog::makeSetupServerDialog(const EnginePlugin *plugin)
 	};
 	for(int i = 0;disableControls[i] != NULL;++i)
 		disableControls[i]->setDisabled(true);
+}
+
+QString CreateServerDialog::pathToClientExe(Server* server, Message& message)
+{
+	QScopedPointer<ExeFile> f(server->clientExe());
+	return f->pathToExe(message);
+}
+
+QString CreateServerDialog::pathToOfflineExe(Message& message)
+{
+	return GameExeRetriever(*currentEngine->gameExe()).pathToOfflineExe(message);
+}
+
+QString CreateServerDialog::pathToServerExe(Message& message)
+{
+	return GameExeRetriever(*currentEngine->gameExe()).pathToServerExe(message);
 }
 
 void CreateServerDialog::removeDMFlagsTabs()

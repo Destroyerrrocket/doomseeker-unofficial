@@ -24,6 +24,7 @@
 #include "gui/configuration/engineconfigurationbasebox.h"
 #include "irc/entities/ircnetworkentity.h"
 #include "plugins/engineplugin.h"
+#include "serverapi/gameexefactory.h"
 #include "log.h"
 #include "strings.h"
 
@@ -63,6 +64,8 @@ EnginePlugin::EnginePlugin()
 {
 	d = new Data;
 
+	d->gameExeFactory = new GameExeFactory(this);
+
 	// At the moment I can't think of how we would support any ABI other than
 	// the current, but I suppose we might as well keep track of it?
 	d->abiVersion = DOOMSEEKER_ABI_VERSION;
@@ -72,6 +75,7 @@ EnginePlugin::~EnginePlugin()
 {
 	delete d->icon;
 	delete d->pConfig;
+	delete d->gameExeFactory;
 	delete d;
 }
 

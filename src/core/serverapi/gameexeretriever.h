@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// odamexserver.h
+// gameexeretriever.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,39 +18,34 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2013 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#ifndef id64069D4A_A1E8_40DD_A64C81196FC70D9B
+#define id64069D4A_A1E8_40DD_A64C81196FC70D9B
 
-#ifndef __ODAMEXSERVER_H__
-#define __ODAMEXSERVER_H__
+#include <QString>
 
-#include "serverapi/server.h"
+class GameExeFactory;
+class Message;
+class Server;
 
-#define NUM_ODAMEX_GAME_MODES 5
-
-class GameHost;
-class GameRunner;
-class EnginePlugin;
-
-class OdamexServer : public Server
+/**
+ * @brief A convenience wrapper class for GameExeFactory.
+ */
+class GameExeRetriever
 {
-	Q_OBJECT
-
 	public:
-		OdamexServer(const QHostAddress &address, unsigned short port);
+		GameExeRetriever(GameExeFactory& factory);
 
-		const QStringList&		dehs() const { return dehPatches; }
-		GameHost* gameHost() const;
-		GameRunner*				gameRunner();
+		QString pathToOfflineExe(Message& message);
+		QString pathToServerExe(Message& message);
 
-		EnginePlugin*		plugin() const;
+		QString offlineWorkingDir(Message& message);
+		QString serverWorkingDir(Message& message);
 
-	protected:
-		Response	readRequest(QByteArray &data);
-		bool		sendRequest(QByteArray &data);
-
-		short			protocol;
-		QStringList		dehPatches;
+	private:
+		GameExeFactory &factory;
 };
 
-#endif /* __ODAMEXSERVER_H__ */
+
+#endif

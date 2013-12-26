@@ -131,7 +131,7 @@ void ConnectionHandler::finish(int response)
 	emit finished(response);
 }
 
-bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, const Server* server, CommandLineInfo& cli, const QString& errorCaption, bool managedDemo, bool *hadMissing)
+bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, Server* server, CommandLineInfo& cli, const QString& errorCaption, bool managedDemo, bool *hadMissing)
 {
 	cli.applicationDir = "";
 	cli.args.clear();

@@ -31,7 +31,7 @@ class VavoomServer;
 class VavoomGameRunner : public GameRunner
 {
 	public:
-		VavoomGameRunner(const VavoomServer* server);
+		VavoomGameRunner(VavoomServer* server);
 
 		bool						connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory);
 

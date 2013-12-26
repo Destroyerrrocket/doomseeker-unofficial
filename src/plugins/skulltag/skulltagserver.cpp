@@ -115,7 +115,7 @@ Binaries* SkulltagServer::binaries() const
 	return new SkulltagBinaries(this);
 }
 
-GameRunner* SkulltagServer::gameRunner() const
+GameRunner* SkulltagServer::gameRunner()
 {
 	return new SkulltagGameRunner(this);
 }

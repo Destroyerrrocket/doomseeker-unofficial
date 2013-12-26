@@ -30,6 +30,7 @@
 
 class CreateServerDialogPage;
 class EnginePlugin;
+class Message;
 class Server;
 
 /**
@@ -96,7 +97,7 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		bool							bSuppressMissingExeErrors;
 		bool							bIsServerSetup;
 		QList<CreateServerDialogPage*> currentCustomPages;
-		const EnginePlugin* 			currentEngine;
+		EnginePlugin *currentEngine;
 		QList<DMFlagsTabWidget*>		dmFlagsTabs;
 		QList<GameLimitWidget*>			limitWidgets;
 		QList<GameCVar>					gameModifiers;
@@ -146,6 +147,9 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		void	initRules();
 
 		bool	loadConfig(const QString& filename);
+		QString pathToClientExe(Server* server, Message& message);
+		QString pathToOfflineExe(Message& message);
+		QString pathToServerExe(Message& message);
 		void	removeDMFlagsTabs();
 		void	removeLimitWidgets();
 		void	runGame(bool offline);

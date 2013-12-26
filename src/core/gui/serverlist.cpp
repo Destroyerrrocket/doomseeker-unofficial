@@ -27,7 +27,8 @@
 #include "gui/models/serverlistproxymodel.h"
 #include "gui/models/serverlistrowhandler.h"
 #include "gui/widgets/serverlistcontextmenu.h"
-#include "serverapi/binaries.h"
+#include "plugins/engineplugin.h"
+#include "serverapi/gameexeretriever.h"
 #include "serverapi/message.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
@@ -164,10 +165,8 @@ QString ServerListHandler::createIwadToolTip(const Server* server)
 		static const QString FORMAT_TEMPLATE = "<font color=\"%1\">%2</font>";
 
 		Message binMessage;
-		Binaries *bin = server->binaries();
 		// Use offline binary so that testing builds are not triggered.
-		QString binPath = bin->offlineGameBinary(binMessage);
-		delete bin;
+		QString binPath = GameExeRetriever(*server->plugin()->gameExe()).pathToOfflineExe(binMessage);
 
 		PathFinder pathFinder;
 		pathFinder.addPrioritySearchDir(binPath);
@@ -253,10 +252,8 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 	if (bFindWads)
 	{
 		Message binMessage;
-		Binaries *bin = server->binaries();
 		// Use offline binary so that testing builds are not triggered.
-		QString binPath = bin->offlineGameBinary(binMessage);
-		delete bin;
+		QString binPath = GameExeRetriever(*server->plugin()->gameExe()).pathToOfflineExe(binMessage);
 
 		QStringList pwadsFormatted;
 		foreach (const PWad &wad, pwads)

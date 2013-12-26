@@ -30,7 +30,7 @@ class OdamexServer;
 class OdamexGameRunner : public GameRunner
 {
 	public:
-		OdamexGameRunner(const OdamexServer* server);
+		OdamexGameRunner(OdamexServer* server);
 
 		bool						connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory);
 

@@ -47,11 +47,11 @@
 		return XEnginePlugin::staticInstance(); \
 	}
 
-class Binaries;
 class ConfigurationBaseBox;
 class CreateServerDialog;
 class CreateServerDialogPage;
 class GameCVar;
+class GameExeFactory;
 class GameMode;
 class IniSection;
 class IRCNetworkEntity;
@@ -167,6 +167,16 @@ class MAIN_EXPORT EnginePlugin
 				 */
 				bool					createDMFlagsPagesAutomatic;
 				bool					clientOnly;
+				/**
+				 * @brief Factory of executable retrievers objects.
+				 *
+				 * By default this is a simple instance of GameExeFactory.
+				 * If custom behavior is needed, plugins shouldn't overwrite
+				 * the class or the contents of the pointer, but instead
+				 * public setter methods should be used to set appropriate
+				 * strategies. Refer to GameExeFactory doc for more details.
+				 */
+				GameExeFactory *gameExeFactory;
 
 				Data();
 		};
@@ -216,6 +226,11 @@ class MAIN_EXPORT EnginePlugin
 		const Data						*data() const { return d; }
 		const QPixmap					&icon() const { return *d->icon; }
 		void							setConfig(IniSection &cfg) const;
+
+		GameExeFactory *gameExe()
+		{
+			return data()->gameExeFactory;
+		}
 
 		/**
 		 *	@brief Returns a list of limits (like fraglimit) supported by passed

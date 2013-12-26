@@ -23,9 +23,9 @@
 #include "gamehost.h"
 
 #include "plugins/engineplugin.h"
+#include "serverapi/gameexeretriever.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
-#include "serverapi/binaries.h"
 #include "serverapi/gamerunnerstructs.h"
 #include "configuration/doomseekerconfig.h"
 #include "gui/standardserverconsole.h"
@@ -281,21 +281,17 @@ Message GameHost::hostGetBinary(bool bOfflinePlay)
 
 	if (executablePath.isEmpty())
 	{
-		Binaries* binaries = d->server->binaries();
-
+		GameExeRetriever exeRetriever = GameExeRetriever(*d->server->plugin()->gameExe());
 		Message message;
-
 		// Select binary depending on bOfflinePlay flag:
 		if (bOfflinePlay)
 		{
-			executablePath = binaries->offlineGameBinary(message);
+			executablePath = exeRetriever.pathToOfflineExe(message);
 		}
 		else
 		{
-			executablePath = binaries->serverBinary(message);
+			executablePath = exeRetriever.pathToServerExe(message);
 		}
-
-		delete binaries;
 
 		if (executablePath.isEmpty())
 		{
@@ -329,15 +325,15 @@ Message GameHost::hostGetWorkingDirectory(bool bOfflinePlay)
 	// [Zalewa]:
 	// A plugin may insist on doing that for a reason that is currently
 	// unknown to me. Let's try to predict every possible situation.
+	GameExeRetriever exeRetriever = GameExeRetriever(*d->server->plugin()->gameExe());
 	QString workingDirFromPlugin;
-	Binaries* binaries = d->server->binaries();
 	if (bOfflinePlay)
 	{
-		workingDirFromPlugin = binaries->offlineGameWorkingDirectory(message);
+		workingDirFromPlugin = exeRetriever.offlineWorkingDir(message);
 	}
 	else
 	{
-		workingDirFromPlugin = binaries->serverWorkingDirectory(message);
+		workingDirFromPlugin = exeRetriever.serverWorkingDir(message);
 	}
 	
 	// Check if all went well on the plugin side.

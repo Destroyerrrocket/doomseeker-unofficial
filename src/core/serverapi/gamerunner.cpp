@@ -22,9 +22,10 @@
 //------------------------------------------------------------------------------
 #include "serverapi/gamerunner.h"
 #include "plugins/engineplugin.h"
+#include "serverapi/exefile.h"
+#include "serverapi/gameexeretriever.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
-#include "serverapi/binaries.h"
 #include "configuration/doomseekerconfig.h"
 #include "gui/standardserverconsole.h"
 #include "apprunner.h"
@@ -33,6 +34,7 @@
 #include "pathfinder.h"
 #include "strings.h"
 #include <QDateTime>
+#include <QScopedPointer>
 #include <QStringList>
 
 class GameRunner::PrivData
@@ -45,10 +47,10 @@ class GameRunner::PrivData
 		QString argPwadLoading;
 		QString argDemoRecord;
 
-		const Server* server;
+		Server* server;
 };
 
-GameRunner::GameRunner(const Server* server)
+GameRunner::GameRunner(Server* server)
 {
 	d = new PrivData();
 	d->argConnect = "-connect";
@@ -147,10 +149,10 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 	//const QString errorCaption = tr("Doomseeker - error for plugin");
 	args.clear();
 
-	Binaries* binaries = d->server->binaries();
-
 	Message message;
-	QString clientBin = binaries->clientBinary(message);
+	GameExeRetriever exeRetriever = GameExeRetriever(*d->server->plugin()->gameExe());
+	QScopedPointer<ExeFile> exeFile(d->server->clientExe());
+	QString clientBin = exeFile->pathToExe(message);
 	if (clientBin.isEmpty())
 	{
 		joinError.type = JoinError::ConfigurationError;
@@ -160,17 +162,14 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 			joinError.error += "\n\n" + message.contents();
 		}
 
-		delete binaries;
 		return joinError;
 	}
 
 	executablePath = clientBin;
 
-	QString offlineGameBinary = binaries->offlineGameBinary(message);
-	QString clientWorkingDirPath = binaries->clientWorkingDirectory(message);
+	QString offlineGameBinary = exeRetriever.pathToOfflineExe(message);
+	QString clientWorkingDirPath = exeFile->workingDirectory(message);
 	applicationDir = clientWorkingDirPath;
-
-	delete binaries;
 
 	if (clientWorkingDirPath.isEmpty())
 	{

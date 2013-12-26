@@ -174,7 +174,8 @@ set(DOOMSEEKER_QT_FILES
 	serverapi/tooltips/generalinfotip.h
 	serverapi/tooltips/playertable.h
 	refresher/refresher.h
-	serverapi/binaries.h
+	serverapi/exefile.h
+	serverapi/gameexefactory.h
 	serverapi/gamehost.h
 	serverapi/message.h
 	serverapi/rconprotocol.h
@@ -301,8 +302,10 @@ set(SOURCE_FILES
 	serverapi/tooltips/gameinfotip.cpp
 	serverapi/tooltips/generalinfotip.cpp
 	serverapi/tooltips/playertable.cpp
-	serverapi/binaries.cpp
 	serverapi/buddyinfo.cpp
+	serverapi/exefile.cpp
+	serverapi/gameexefactory.cpp
+	serverapi/gameexeretriever.cpp
 	serverapi/gamehost.cpp
 	serverapi/gamerunner.cpp
 	serverapi/message.cpp
@@ -381,6 +384,7 @@ set(HEADER_FILES
 	plugins/engineplugin.h
 	plugins/pluginloader.h
 	serverapi/buddyinfo.h
+	serverapi/gameexeretriever.h
 	serverapi/gamerunner.h
 	serverapi/player.h
 	serverapi/playerslist.h

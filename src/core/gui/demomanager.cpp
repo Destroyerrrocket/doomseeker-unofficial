@@ -25,7 +25,7 @@
 #include "main.h"
 #include "pathfinder.h"
 #include "plugins/engineplugin.h"
-#include "serverapi/binaries.h"
+#include "serverapi/gameexeretriever.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
 #include "serverapi/gamehost.h"
@@ -225,7 +225,7 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 			return;
 
 		// Look for the plugin used to record.
-		const EnginePlugin *plugin = NULL;
+		EnginePlugin *plugin = NULL;
 		for(int i = 0;i < Main::enginePlugins->numPlugins();i++)
 		{
 			if(selectedDemo->port == (*Main::enginePlugins)[i]->info->data()->name)
@@ -237,12 +237,9 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 			return;
 		}
 
-		// Create dummy server and get binary for pathfinder
-		Server *server = plugin->server(QHostAddress(), 5029); // No specific port needed since we're basically "playing offline"
+		// Get executable path for pathfinder.
 		Message binMessage;
-		Binaries *bin = server->binaries();
-		QString binPath = bin->clientBinary(binMessage);
-		delete bin;
+		QString binPath = GameExeRetriever(*plugin->gameExe()).pathToOfflineExe(binMessage);
 
 		// Locate all the files needed to play the demo
 		PathFinder pf;
@@ -251,7 +248,6 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 		if(!result.missingFiles.isEmpty())
 		{
 			QMessageBox::critical(this, tr("Files not found"), tr("The following files could not be located: ") + result.missingFiles.join(", "));
-			delete server;
 			return;
 		}
 
@@ -261,6 +257,9 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 		hostInfo.iwadPath = result.foundFiles[0];
 		hostInfo.pwadsPaths = result.foundFiles.mid(1);
 
+		// Spawn dummy server.
+		// TODO: Refactor so that it isn't necessary.
+		Server* server = plugin->server(QHostAddress("127.0.0.1"), 5029);
 		GameHost* gameRunner = server->gameHost();
 		Message message = gameRunner->host(hostInfo, GameHost::DEMO);
 

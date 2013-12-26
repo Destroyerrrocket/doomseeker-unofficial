@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chocolatedoombinaries.cpp
+// chocolatedoomgamerunner.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@
 #include "serverapi/playerslist.h"
 #include "main.h"
 
-ChocolateDoomGameRunner::ChocolateDoomGameRunner(const ChocolateDoomServer* server)
+ChocolateDoomGameRunner::ChocolateDoomGameRunner(ChocolateDoomServer* server)
 : GameRunner(server)
 {
 	this->server = server;

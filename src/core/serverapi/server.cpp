@@ -30,7 +30,7 @@
 #include "gui/standardserverconsole.h"
 #include "gui/wadseekerinterface.h"
 #include "refresher/refresher.h"
-#include "serverapi/binaries.h"
+#include "serverapi/exefile.h"
 #include "serverapi/gamehost.h"
 #include "serverapi/gamerunner.h"
 #include "serverapi/playerslist.h"
@@ -263,11 +263,6 @@ bool Server::anyWadnameContains(const QString& text, Qt::CaseSensitivity cs) con
 	return false;
 }
 
-Binaries *Server::binaries() const
-{
-	return new Binaries(plugin());
-}
-
 const QString& Server::connectPassword() const
 {
 	return d->connectPassword;
@@ -287,6 +282,17 @@ void Server::clearPlayersList()
 void Server::clearWads()
 {
 	d->wads.clear();
+}
+
+ExeFile* Server::clientExe()
+{
+	ExeFile* f = new ExeFile();
+	// TODO: Figure out a way so that plugins don't have to reset following
+	// values if they don't change:
+	f->setProgramName(plugin()->data()->name);
+	f->setExeTypeName(tr("client"));
+	f->setConfigKey("BinaryPath");
+	return f;
 }
 
 const DMFlags& Server::dmFlags() const
@@ -321,7 +327,7 @@ const GameMode& Server::gameMode() const
 	return d->gameMode;
 }
 
-GameRunner *Server::gameRunner() const
+GameRunner *Server::gameRunner()
 {
 	return new GameRunner(this);
 }

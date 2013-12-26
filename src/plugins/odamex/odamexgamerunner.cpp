@@ -26,7 +26,7 @@
 #include "odamexgameinfo.h"
 #include "odamexserver.h"
 
-OdamexGameRunner::OdamexGameRunner(const OdamexServer* server)
+OdamexGameRunner::OdamexGameRunner(OdamexServer* server)
 : GameRunner(server)
 {
 	this->server = server;
