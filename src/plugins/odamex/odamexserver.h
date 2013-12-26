@@ -43,7 +43,7 @@ class OdamexServer : public Server
 		GameHost* gameHost() const;
 		GameRunner*				gameRunner() const;
 
-		const EnginePlugin*		plugin() const;
+		EnginePlugin*		plugin() const;
 
 	protected:
 		Response	readRequest(QByteArray &data);

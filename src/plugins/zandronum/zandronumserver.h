@@ -151,7 +151,7 @@ class ZandronumServer : public Server
 
 		const GameCVar	*modifier() const;
 
-		const EnginePlugin*	plugin() const;
+		EnginePlugin*	plugin() const;
 
 		RConProtocol	*rcon();
 

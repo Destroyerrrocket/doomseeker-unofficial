@@ -47,7 +47,7 @@ GameRunner* ChocolateDoomServer::gameRunner() const
 	return new ChocolateDoomGameRunner(this);
 }
 
-const EnginePlugin* ChocolateDoomServer::plugin() const
+EnginePlugin* ChocolateDoomServer::plugin() const
 {
 	return ChocolateDoomEnginePlugin::staticInstance();
 }

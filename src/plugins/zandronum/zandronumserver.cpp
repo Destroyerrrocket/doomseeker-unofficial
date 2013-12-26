@@ -142,7 +142,7 @@ const GameCVar *ZandronumServer::modifier() const
 	return NULL;
 }
 
-const EnginePlugin* ZandronumServer::plugin() const
+EnginePlugin* ZandronumServer::plugin() const
 {
 	return ZandronumEnginePlugin::staticInstance();
 }

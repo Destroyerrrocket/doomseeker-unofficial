@@ -32,7 +32,7 @@ PluginServer::PluginServer(const QHostAddress& address, quint16 port)
 {
 }
 
-const EnginePlugin* PluginServer::plugin() const
+EnginePlugin* PluginServer::plugin() const
 {
 	return PluginEnginePlugin::staticInstance();
 }

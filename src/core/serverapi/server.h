@@ -113,7 +113,7 @@ class MAIN_EXPORT Server : public QObject
 		 * each plugin should keep a global instance of EnginePlugin (singleton?)
 		 * and a pointer to this instance should be returned.
 		 */
-		virtual const EnginePlugin* plugin() const = 0;
+		virtual EnginePlugin* plugin() const = 0;
 
 		/**
 		 * @brief Creates an instance of TooltipGenerator.

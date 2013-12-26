@@ -35,7 +35,7 @@ class PluginServer : public Server
 	public:
 		PluginServer(const QHostAddress& address, quint16 port);
 
-		const EnginePlugin* plugin() const;
+		EnginePlugin* plugin() const;
 
 	protected:
 		Response readRequest(QByteArray &data);

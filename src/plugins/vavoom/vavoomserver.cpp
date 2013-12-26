@@ -45,7 +45,7 @@ GameRunner* VavoomServer::gameRunner() const
 	return new VavoomGameRunner(this);
 }
 
-const EnginePlugin* VavoomServer::plugin() const
+EnginePlugin* VavoomServer::plugin() const
 {
 	return VavoomEnginePlugin::staticInstance();
 }

@@ -38,7 +38,7 @@ class ChocolateDoomServer : public Server
 		GameHost* gameHost();
 		GameRunner*		gameRunner() const;
 
-		const EnginePlugin*		plugin() const;
+		EnginePlugin*		plugin() const;
 
 	protected:
 		QString			version;

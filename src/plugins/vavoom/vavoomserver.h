@@ -40,7 +40,7 @@ class VavoomServer : public Server
 
 		GameRunner*			gameRunner() const;
 
-		const EnginePlugin*	plugin() const;
+		EnginePlugin*	plugin() const;
 
 	protected:
 		Response	readRequest(QByteArray &data);

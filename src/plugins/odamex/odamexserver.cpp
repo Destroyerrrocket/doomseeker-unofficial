@@ -64,7 +64,7 @@ GameRunner* OdamexServer::gameRunner() const
 	return new OdamexGameRunner(this);
 }
 
-const EnginePlugin* OdamexServer::plugin() const
+EnginePlugin* OdamexServer::plugin() const
 {
 	return OdamexEnginePlugin::staticInstance();
 }
