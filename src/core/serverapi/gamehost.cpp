@@ -100,44 +100,6 @@ const QString& GameHost::argForServerLaunch() const
 	return d->argServerLaunch;
 }
 
-#if 0
-bool GameHost::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory)
-{
-	QString address = QString("%1:%2").arg(d->server->address().toString()).arg(d->server->port());
-
-	// Connect
-	args << argForConnect() << address;
-	if(d->server->isLocked())
-	{
-		args << connectPassword;
-	}
-
-	// Iwad
-	QString iwad = pf.findFile(d->server->iwad().toLower());
-	args << argForIwadLoading() << iwad;
-	iwadFound = !iwad.isEmpty();
-
-	// Custom parameters
-	IniSection config = gConfig.iniSectionForPlugin(d->server->plugin());
-	QString customParameters = config["CustomParameters"];
-	args << customParameters.split(" ", QString::SkipEmptyParts);
-
-	// Password
-	if (d->server->isLocked())
-	{
-		if (argForConnectPassword().isNull())
-		{
-			// TODO: Log a warning message here.
-		}
-		else
-		{
-			args << argForConnectPassword() << connectPassword;
-		}
-	}
-	return true;
-}
-#endif
-
 Message GameHost::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cmdLine, HostMode mode)
 {
 	Message message;
