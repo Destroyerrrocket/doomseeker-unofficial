@@ -37,6 +37,69 @@
 #include <QScopedPointer>
 #include <QStringList>
 
+class ServerConnectParams::PrivData
+{
+	public:
+		QString connectPassword;
+		QString iwadPath;
+		QString wadTargetDirectory;
+};
+
+ServerConnectParams::ServerConnectParams()
+{
+	d = new PrivData();
+}
+
+ServerConnectParams::ServerConnectParams(const ServerConnectParams& other)
+{
+	d = new PrivData();
+	*d = *other.d;
+}
+
+ServerConnectParams& ServerConnectParams::operator=(const ServerConnectParams& other)
+{
+	if (this != &other)
+	{
+		*d = *other.d;
+	}
+	return *this;
+}
+
+ServerConnectParams::~ServerConnectParams()
+{
+	delete d;
+}
+
+const QString& ServerConnectParams::connectPassword() const
+{
+	return d->connectPassword;
+}
+
+const QString& ServerConnectParams::iwadPath() const
+{
+	return d->iwadPath;
+}
+
+void ServerConnectParams::setConnectPassword(const QString& val)
+{
+	d->connectPassword = val;
+}
+
+void ServerConnectParams::setIwadPath(const QString& val)
+{
+	d->iwadPath = val;
+}
+
+void ServerConnectParams::setWadTargetDirectory(const QString& val)
+{
+	d->wadTargetDirectory = val;
+}
+
+const QString& ServerConnectParams::wadTargetDirectory() const
+{
+	return d->wadTargetDirectory;
+}
+///////////////////////////////////////////////////////////////////////////////
 class GameRunner::PrivData
 {
 	public:
@@ -47,6 +110,9 @@ class GameRunner::PrivData
 		QString argPwadLoading;
 		QString argDemoRecord;
 
+		QStringList args;
+		CommandLineInfo* cli;
+		PathFinder pathFinder;
 		Server* server;
 };
 
@@ -58,12 +124,35 @@ GameRunner::GameRunner(Server* server)
 	d->argPort = "-port";
 	d->argPwadLoading = "-file";
 	d->argDemoRecord = "-record";
+	d->cli = NULL;
 	d->server = server;
 }
 
 GameRunner::~GameRunner()
 {
 	delete d;
+}
+
+void GameRunner::addPwads(CommandLineInfo& cli, QStringList& missingPwads)
+{
+	for (int i = 0; i < d->server->numWads(); ++i)
+	{
+		QString pwad = d->pathFinder.findFile(d->server->wad(i).name);
+		if (pwad.isEmpty() && !d->server->wad(i).optional)
+		{
+			missingPwads << d->server->wad(i).name;
+		}
+		else
+		{
+			cli.args << argForPwadLoading();
+			cli.args << pwad;
+		}
+	}
+}
+
+QStringList& GameRunner::args()
+{
+	return d->cli->args;
 }
 
 const QString& GameRunner::argForConnect() const
@@ -96,105 +185,100 @@ const QString& GameRunner::argForDemoRecord() const
 	return d->argDemoRecord;
 }
 
-
-bool GameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory)
+bool GameRunner::connectParameters(ServerConnectParams& params)
 {
-	QString address = QString("%1:%2").arg(d->server->address().toString()).arg(d->server->port());
-
 	// Connect
-	args << argForConnect() << address;
+	QString address = QString("%1:%2").arg(d->server->address().toString()).arg(d->server->port());
+	args() << argForConnect() << address;
 	if(d->server->isLocked())
 	{
-		args << connectPassword;
+		// TODO:
+		// What is that for? Does any game work like that?
+		// Perhaps such special cases should be resolved in plugins.
+		args() << params.connectPassword();
 	}
 
 	// Iwad
-	QString iwad = pf.findFile(d->server->iwad().toLower());
-	args << argForIwadLoading() << iwad;
-	iwadFound = !iwad.isEmpty();
+	args() << argForIwadLoading() << params.iwadPath();
 
 	// Custom parameters
 	IniSection config = gConfig.iniSectionForPlugin(d->server->plugin());
 	QString customParameters = config["CustomParameters"];
-	args << customParameters.split(" ", QString::SkipEmptyParts);
+	args() << customParameters.split(" ", QString::SkipEmptyParts);
 
 	// Password
 	if (d->server->isLocked())
 	{
 		if (argForConnectPassword().isNull())
 		{
-			// TODO: Log a warning message here.
+			gLog << tr("BUG: Plugin doesn't specify argument for connect "
+				"password, but the server is passworded.");
 		}
 		else
 		{
-			args << argForConnectPassword() << connectPassword;
+			args() << argForConnectPassword() << params.connectPassword();
 		}
 	}
 	return true;
 }
 
-JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword, bool managedDemo)
+JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli,
+	const QString &connectPassword, bool managedDemo)
 {
 	const QString &PLUGIN_NAME = d->server->plugin()->data()->name;
-	JoinError joinError;
+	d->cli = &cli;
 
+	setupPathFinder();
+
+	JoinError joinError;
 	// Init the JoinError type with critical error. We will change this upon
 	// successful return or if wads are missing.
 	joinError.type = JoinError::Critical;
 
-	QDir& applicationDir = cli.applicationDir;
-	QFileInfo& executablePath = cli.executable;
-	QStringList& args = cli.args;
-
-	//const QString errorCaption = tr("Doomseeker - error for plugin");
-	args.clear();
+	cli.args.clear();
 
 	Message message;
-	GameExeRetriever exeRetriever = GameExeRetriever(*d->server->plugin()->gameExe());
-	QScopedPointer<ExeFile> exeFile(d->server->clientExe());
-	QString clientBin = exeFile->pathToExe(message);
-	if (clientBin.isEmpty())
+	GamePaths paths = gamePaths(message);
+	if (!paths.isValid())
 	{
 		joinError.type = JoinError::ConfigurationError;
-		joinError.error = tr("Client binary cannot be obtained for %1, please check the location given in the configuration.").arg(PLUGIN_NAME);
+		joinError.error = tr("Client binary cannot be obtained for %1, please "
+			"check the location given in the configuration.").arg(PLUGIN_NAME);
 		if (!message.isIgnore())
 		{
 			joinError.error += "\n\n" + message.contents();
 		}
-
 		return joinError;
 	}
 
-	executablePath = clientBin;
+	cli.executable = paths.clientExe;
+	cli.applicationDir = paths.workingDir;
 
-	QString offlineGameBinary = exeRetriever.pathToOfflineExe(message);
-	QString clientWorkingDirPath = exeFile->workingDirectory(message);
-	applicationDir = clientWorkingDirPath;
-
-	if (clientWorkingDirPath.isEmpty())
+	if (paths.workingDir.isEmpty())
 	{
 		joinError.type = JoinError::ConfigurationError;
-		joinError.error = tr("Path to working directory for \"%1\" is empty.\nMake sure the configuration for the main binary is set properly.").arg(PLUGIN_NAME);
+		joinError.error = tr("Path to working directory for \"%1\" is empty.\n"
+			"Make sure the configuration for the main binary is set properly.")
+			.arg(PLUGIN_NAME);
 		return joinError;
 	}
-	else if (!applicationDir.exists())
+	else if (!cli.applicationDir.exists())
 	{
 		joinError.type = JoinError::ConfigurationError;
-		joinError.error = tr("%1\n cannot be used as working directory for game:\n%2\nExecutable: %3").arg(clientWorkingDirPath, PLUGIN_NAME, clientBin);
+		joinError.error = tr("%1\n cannot be used as working "
+			"directory for game:\n%2\nExecutable: %3")
+			.arg(paths.workingDir, PLUGIN_NAME, paths.clientExe);
 		return joinError;
 	}
-
-	PathFinder pathFinder;
-	// Add the offline game directory so results are more consistent
-	// addPrioritySearchDir prepends to the list so we'll want to add the real
-	// priority directory second.
-	pathFinder.addPrioritySearchDir(offlineGameBinary);
-	pathFinder.addPrioritySearchDir(clientBin);
 
 	QStringList missingPwads;
-	bool iwadFound = false;
+	QString iwad = findIwad();
 
-	if(!connectParameters(cli.args, pathFinder, iwadFound, connectPassword, DoomseekerConfig::config().wadseeker.targetDirectory))
+	ServerConnectParams params;
+	params.setIwadPath(iwad);
+	params.setConnectPassword(connectPassword);
+	params.setWadTargetDirectory(DoomseekerConfig::config().wadseeker.targetDirectory);
+	if(!connectParameters(params))
 	{
 		joinError.type = JoinError::Terminate;
 		return joinError;
@@ -204,37 +288,15 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 	QString demoName;
 	if(gConfig.doomseeker.bRecordDemo)
 	{
-		args << argForDemoRecord();
-
-		// Generate demo name.
-		// port-iwad-date-wad
-		if(managedDemo)
-			demoName = Main::dataPaths->demosDirectoryPath() + QDir::separator();
-		demoName += QString("%1_%2").
-			arg(d->server->engineName()).
-			arg(QDateTime::currentDateTime().toString("dd.MM.yyyy_hh.mm.ss"));
-		if(!d->server->plugin()->data()->demoExtensionAutomatic)
-			demoName += QString(".%1").arg(d->server->plugin()->data()->demoExtension);
-		args << demoName;
+		cli.args << argForDemoRecord();
+		cli.args << mkDemoName(managedDemo);
 	}
 
-	for (int i = 0; i < d->server->numWads(); ++i)
-	{
-		QString pwad = pathFinder.findFile(d->server->wad(i).name);
-		if (pwad.isEmpty() && !d->server->wad(i).optional)
-		{
-			missingPwads << d->server->wad(i).name;
-		}
-		else
-		{
-			cli.args << argForPwadLoading();
-			cli.args << pwad;
-		}
-	}
+	addPwads(cli, missingPwads);
 
-	if (!iwadFound || !missingPwads.isEmpty())
+	if (iwad.isEmpty() || !missingPwads.isEmpty())
 	{
-		if (!iwadFound)
+		if (iwad.isEmpty())
 		{
 			joinError.missingIwad = d->server->iwad();
 		}
@@ -243,36 +305,55 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli, const QString 
 		return joinError;
 	}
 
-	joinError.type = JoinError::NoError;
-
 	// No errors?
 	// Nothing should be stopping us from joining so dump the meta information
 	// if we are doing a managed demo
 	if(!demoName.isEmpty() && managedDemo)
 	{
-		QString metaFileName;
-		// If the extension is automatic we need to add it here
-		if(d->server->plugin()->data()->demoExtensionAutomatic)
-			metaFileName = QString("%1.%2.ini").arg(demoName).arg(d->server->plugin()->data()->demoExtension);
-		else
-			metaFileName = demoName + ".ini";
-
-		Ini metaFile(metaFileName);
-		IniSection metaSection = metaFile.createSection("meta");
-
-		// Get a list of wads for demo name:
-		QStringList wadList;
-		for (int i = 0; i < d->server->numWads(); ++i)
-		{
-			// Also be sure to escape any underscores.
-			wadList << d->server->wad(i).name.toLower();
-		}
-
-		metaSection.createSetting("iwad", d->server->iwad().toLower());
-		metaSection.createSetting("pwads", wadList.join(";"));
+		saveDemoMetaData(demoName);
 	}
 
+	joinError.type = JoinError::NoError;
 	return joinError;
+}
+
+QString GameRunner::findIwad()
+{
+	return d->pathFinder.findFile(d->server->iwad().toLower());
+}
+
+GameRunner::GamePaths GameRunner::gamePaths(Message& msg)
+{
+	GamePaths result;
+	GameExeRetriever exeRetriever = GameExeRetriever(*d->server->plugin()->gameExe());
+	QScopedPointer<ExeFile> exeFile(d->server->clientExe());
+	result.clientExe = exeFile->pathToExe(msg);
+	result.offlineExe = exeRetriever.pathToOfflineExe(msg);
+	result.workingDir = exeFile->workingDirectory(msg);
+	return result;
+}
+
+QString GameRunner::mkDemoName(bool managedDemo) const
+{
+	// port-iwad-date-wad
+	QString demoName;
+	if(managedDemo)
+	{
+		demoName = Main::dataPaths->demosDirectoryPath() + QDir::separator();
+	}
+	demoName += QString("%1_%2").
+		arg(d->server->engineName()).
+		arg(QDateTime::currentDateTime().toString("dd.MM.yyyy_hh.mm.ss"));
+	if(!d->server->plugin()->data()->demoExtensionAutomatic)
+	{
+		demoName += QString(".%1").arg(d->server->plugin()->data()->demoExtension);
+	}
+	return demoName;
+}
+
+PathFinder& GameRunner::pathFinder()
+{
+	return d->pathFinder;
 }
 
 Message GameRunner::runExecutable(const CommandLineInfo& cli, bool bWrapInStandardServerConsole)
@@ -283,7 +364,9 @@ Message GameRunner::runExecutable(const CommandLineInfo& cli, bool bWrapInStanda
 	}
 	else
 	{
-		gLog << tr("Starting (working dir %1): %2").arg(cli.applicationDir.absolutePath()).arg(cli.executable.absoluteFilePath());
+		gLog << tr("Starting (working dir %1): %2")
+			.arg(cli.applicationDir.absolutePath())
+			.arg(cli.executable.absoluteFilePath());
 		QStringList args = cli.args;
 		// Is this needed for something? Zandronum needs the quotes for console
 		// variables.
@@ -292,6 +375,35 @@ Message GameRunner::runExecutable(const CommandLineInfo& cli, bool bWrapInStanda
 	}
 
 	return Message();
+}
+
+void GameRunner::saveDemoMetaData(const QString& demoName)
+{
+	QString metaFileName;
+	// If the extension is automatic we need to add it here
+	if(d->server->plugin()->data()->demoExtensionAutomatic)
+	{
+		metaFileName = QString("%1.%2.ini").arg(demoName)
+			.arg(d->server->plugin()->data()->demoExtension);
+	}
+	else
+	{
+		metaFileName = demoName + ".ini";
+	}
+
+	Ini metaFile(metaFileName);
+	IniSection metaSection = metaFile.createSection("meta");
+
+	// Get a list of wads for demo name:
+	QStringList wadList;
+	for (int i = 0; i < d->server->numWads(); ++i)
+	{
+		// Also be sure to escape any underscores.
+		wadList << d->server->wad(i).name.toLower();
+	}
+
+	metaSection.createSetting("iwad", d->server->iwad().toLower());
+	metaSection.createSetting("pwads", wadList.join(";"));
 }
 
 void GameRunner::setArgForConnect(const QString& arg)
@@ -322,4 +434,15 @@ void GameRunner::setArgForPwadLoading(const QString& arg)
 void GameRunner::setArgForDemoRecord(const QString& arg)
 {
 	d->argDemoRecord = arg;
+}
+
+void GameRunner::setupPathFinder()
+{
+	Message msg;
+	GamePaths paths = gamePaths(msg);
+	// Add the offline game directory so results are more consistent
+	// addPrioritySearchDir prepends to the list so we'll want to add the real
+	// priority directory second.
+	d->pathFinder.addPrioritySearchDir(paths.offlineExe);
+	d->pathFinder.addPrioritySearchDir(paths.clientExe);
 }

@@ -33,25 +33,25 @@ VavoomGameRunner::VavoomGameRunner(VavoomServer* server)
 	setArgForConnect("+connect");
 }
 
-bool VavoomGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory)
+bool VavoomGameRunner::connectParameters(ServerConnectParams& params)
 {
-	if(!GameRunner::connectParameters(args, pf, iwadFound, connectPassword, wadTargetDirectory))
+	if(!GameRunner::connectParameters(params))
 		return false;
 
 	// Remove original -iwad command
-	int iwadArg = args.indexOf("-iwad");
-	args.removeAt(iwadArg);
-	args.removeAt(iwadArg);
+	int iwadArg = args().indexOf("-iwad");
+	args().removeAt(iwadArg);
+	args().removeAt(iwadArg);
 
 	// What an odd thing to have to do "-iwaddir /path/to/iwads/ -doom2"
 	QString iwad = server->iwad();
-	QString iwadLocation = pf.findFile(iwad.toLower());
+	QString iwadLocation = pathFinder().findFile(iwad.toLower());
 	QString iwadDir = iwadLocation.left(iwadLocation.length() - iwad.length());
 	QString iwadParam = iwadLocation.mid(iwadDir.length());
 	iwadParam.truncate(iwadParam.indexOf(QChar('.')));
-	args << "-iwaddir";
-	args << iwadDir;
-	args << ("-" + iwadParam);
+	args() << "-iwaddir";
+	args() << iwadDir;
+	args() << ("-" + iwadParam);
 	return true;
 }
 

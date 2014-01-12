@@ -33,23 +33,23 @@ OdamexGameRunner::OdamexGameRunner(OdamexServer* server)
 	setArgForDemoRecord("-netrecord");
 }
 
-bool OdamexGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory)
+bool OdamexGameRunner::connectParameters(ServerConnectParams& params)
 {
-	if(!GameRunner::connectParameters(args, pf, iwadFound, connectPassword, wadTargetDirectory))
+	if(!GameRunner::connectParameters(params))
 		return false;
 
 	const QStringList& dehPatches = server->dehs();
 	if(dehPatches.count() > 0)
 	{
-		args << "-deh";
+		args() << "-deh";
 		foreach(QString patch, dehPatches)
 		{
-			QString file = pf.findFile(patch.toLower());
-			args << file;
+			QString file = pathFinder().findFile(patch.toLower());
+			args() << file;
 		}
 	}
 
-	if(iwadFound)
+	if (!params.iwadPath().isEmpty())
 	{
 #ifdef Q_OS_WIN32
 		const char* const PATH_SEPARATOR = ";";
@@ -61,21 +61,23 @@ bool OdamexGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool
 		// Waddir - Work around for an Odamex bug.
 		// Also, we want to pass the wadseeker target directory here so in the
 		// case where the server changes wads Odamex can download to it as well.
-		args << "-waddir";
+		args() << "-waddir";
 		QString iwad = server->iwad();
-		if(!wadTargetDirectory.isEmpty())
-			waddir = wadTargetDirectory + PATH_SEPARATOR;
-		waddir += pf.findFile(iwad.toLower());
+		if(!params.wadTargetDirectory().isEmpty())
+		{
+			waddir = params.wadTargetDirectory() + PATH_SEPARATOR;
+		}
+		waddir += pathFinder().findFile(iwad.toLower());
 		waddir.truncate(waddir.length() - iwad.length());
 		for(int i = 0;i < server->numWads();i++)
 		{
 			QString wad = server->wad(i).name;
-			QString pwaddir = pf.findFile(wad.toLower());
+			QString pwaddir = pathFinder().findFile(wad.toLower());
 			pwaddir.truncate(pwaddir.length() - wad.length());
 			if(!pwaddir.isEmpty())
 				waddir += PATH_SEPARATOR + pwaddir;
 		}
-		args << waddir;
+		args() << waddir;
 	}
 	return true;
 }

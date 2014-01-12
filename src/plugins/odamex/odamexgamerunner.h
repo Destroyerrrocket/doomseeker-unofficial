@@ -32,10 +32,10 @@ class OdamexGameRunner : public GameRunner
 	public:
 		OdamexGameRunner(OdamexServer* server);
 
-		bool						connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory);
+		bool connectParameters(ServerConnectParams& params);
 
 	protected:
-		const OdamexServer*			server;
+		const OdamexServer* server;
 
 };
 

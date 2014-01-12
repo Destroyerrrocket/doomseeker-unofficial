@@ -33,11 +33,10 @@ ZandronumGameRunner::ZandronumGameRunner(ZandronumServer* server)
 	setArgForConnectPassword("+cl_password");
 }
 
-bool ZandronumGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound,
-	const QString &connectPassword, const QString &wadTargetDirectory)
+bool ZandronumGameRunner::connectParameters(ServerConnectParams& params)
 {
 	IniSection& config = *ZandronumEnginePlugin::staticInstance()->data()->pConfig;
 	bool bAllowCountryDisplay = config["AllowServersToDisplayMyCountry"];
-	args << "+cl_hidecountry" << QString::number(!bAllowCountryDisplay ? 1 : 0);
-	return GameRunner::connectParameters(args, pf, iwadFound, connectPassword, wadTargetDirectory);
+	args() << "+cl_hidecountry" << QString::number(!bAllowCountryDisplay ? 1 : 0);
+	return GameRunner::connectParameters(params);
 }

@@ -32,6 +32,47 @@
 
 class Server;
 
+/**
+ * @brief A DTO for GameRunner; exchanges information between main program
+ *        and plugins, and allows future extensions.
+ *
+ * This object may be copied freely.
+ */
+class MAIN_EXPORT ServerConnectParams
+{
+	public:
+		ServerConnectParams();
+		ServerConnectParams(const ServerConnectParams& other);
+		ServerConnectParams& operator=(const ServerConnectParams& other);
+		virtual ~ServerConnectParams();
+
+		/**
+		 * @brief Password for server connection.
+		 */
+		const QString& connectPassword() const;
+
+		/**
+		 * @brief Path to IWAD file.
+		 */
+		const QString& iwadPath() const;
+
+		/**
+		 * @brief Directory where Doomseeker stores downloaded WADs.
+		 *
+		 * This can be useful for games that support in-game downloads.
+		 */
+		const QString& wadTargetDirectory() const;
+
+		void setConnectPassword(const QString& val);
+		void setIwadPath(const QString& val);
+		void setWadTargetDirectory(const QString& val);
+
+	private:
+		class PrivData;
+		PrivData* d;
+};
+
+// TODO: Rename to GameClientRunner?
 class MAIN_EXPORT GameRunner : public QObject
 {
 	public:
@@ -41,7 +82,7 @@ class MAIN_EXPORT GameRunner : public QObject
 		/**
 		 * @return false to terminate the join process.
 		 */
-		virtual bool connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory);
+		virtual bool connectParameters(ServerConnectParams& params);
 
 		/**
 		 * @param [out] cli - after successful call this will contain
@@ -50,8 +91,10 @@ class MAIN_EXPORT GameRunner : public QObject
 		 *     directory and store meta data.
 		 * @return JoinError::type == NoError if all ok.
 		 */
-		JoinError createJoinCommandLine(CommandLineInfo& cli, const QString &connectPassword, bool managedDemo);
+		JoinError createJoinCommandLine(CommandLineInfo& cli,
+			const QString &connectPassword, bool managedDemo);
 
+		// TODO: This should probably be moved to a separate class.
 		/**
 		 * @brief Executes predefined command line.
 		 *
@@ -60,10 +103,19 @@ class MAIN_EXPORT GameRunner : public QObject
 		 *     attempt to wrap the input/output of the program with it's own
 		 *     console
 		 */
-		Message runExecutable(const CommandLineInfo& cli, bool bWrapWithStandardServerConsole);
+		Message runExecutable(const CommandLineInfo& cli,
+			bool bWrapWithStandardServerConsole);
 
 
 	protected:
+		/**
+		 * @brief Output command line arguments.
+		 *
+		 * This is where plugins should write all CMD line arguments they
+		 * create for the executable run.
+		 */
+		QStringList& args();
+
 		/**
 		 * @brief Command line parameter that specifies the target server's IP
 		 * and port.
@@ -110,6 +162,20 @@ class MAIN_EXPORT GameRunner : public QObject
 		 */
 		const QString& argForDemoRecord() const;
 
+		virtual QString findIwad();
+
+		/**
+		 * @brief Reference to a PathFinder belonging to this GameRunner.
+		 *
+		 * Useful if plugins want to access the PathFinder.
+		 *
+		 * This PathFinder is set up by a call to setupPathFinder(), which can
+		 * be overwritten by plugis.
+		 */
+		PathFinder& pathFinder();
+
+		virtual void setupPathFinder();
+
 		void setArgForConnect(const QString& arg);
 		void setArgForConnectPassword(const QString& arg);
 		void setArgForIwadLoading(const QString& arg);
@@ -118,9 +184,27 @@ class MAIN_EXPORT GameRunner : public QObject
 		void setArgForDemoRecord(const QString& arg);
 
 	private:
+		class GamePaths
+		{
+			public:
+				QString clientExe;
+				QString offlineExe;
+				QString workingDir;
+
+				bool isValid() const
+				{
+					return !clientExe.isEmpty();
+				}
+		};
+
 		class PrivData;
 
 		PrivData* d;
+
+		void addPwads(CommandLineInfo& cli, QStringList& missingPwads);
+		GamePaths gamePaths(Message& msg);
+		QString mkDemoName(bool managedDemo) const;
+		void saveDemoMetaData(const QString& demoName);
 };
 
 #endif
