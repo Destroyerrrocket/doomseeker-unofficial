@@ -190,13 +190,6 @@ bool GameRunner::connectParameters(ServerConnectParams& params)
 	// Connect
 	QString address = QString("%1:%2").arg(d->server->address().toString()).arg(d->server->port());
 	args() << argForConnect() << address;
-	if(d->server->isLocked())
-	{
-		// TODO:
-		// What is that for? Does any game work like that?
-		// Perhaps such special cases should be resolved in plugins.
-		args() << params.connectPassword();
-	}
 
 	// Iwad
 	args() << argForIwadLoading() << params.iwadPath();
