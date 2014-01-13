@@ -93,19 +93,6 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		JoinError createJoinCommandLine(CommandLineInfo& cli,
 			const QString &connectPassword, bool managedDemo);
 
-		// TODO: This should probably be moved to a separate class.
-		/**
-		 * @brief Executes predefined command line.
-		 *
-		 * @param cli - command line that will be executed
-		 * @param bWrapWithStandardServerConsole - if true Doomseeker will
-		 *     attempt to wrap the input/output of the program with it's own
-		 *     console
-		 */
-		Message runExecutable(const CommandLineInfo& cli,
-			bool bWrapWithStandardServerConsole);
-
-
 	protected:
 		/**
 		 * @brief Output command line arguments.

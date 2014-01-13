@@ -295,16 +295,12 @@ void ConnectionHandler::run()
 			return;
 		}
 
-		GameClientRunner* gameRunner = server->gameRunner();
-
-		Message message = gameRunner->runExecutable(cli, false);
+		Message message = AppRunner::runExecutable(cli);
 		if (message.isError())
 		{
 			gLog << tr("Error while launching executable for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(message.contents());
 			QMessageBox::critical(parent, tr("Doomseeker - launch executable"), message.contents());
 		}
-
-		delete gameRunner;
 	}
 
 	finish(Server::RESPONSE_GOOD);

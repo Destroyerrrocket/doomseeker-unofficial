@@ -349,27 +349,6 @@ PathFinder& GameClientRunner::pathFinder()
 	return d->pathFinder;
 }
 
-Message GameClientRunner::runExecutable(const CommandLineInfo& cli, bool bWrapInStandardServerConsole)
-{
-	if (!bWrapInStandardServerConsole)
-	{
-		return AppRunner::runExecutable(cli);
-	}
-	else
-	{
-		gLog << tr("Starting (working dir %1): %2")
-			.arg(cli.applicationDir.absolutePath())
-			.arg(cli.executable.absoluteFilePath());
-		QStringList args = cli.args;
-		// Is this needed for something? Zandronum needs the quotes for console
-		// variables.
-		//AppRunner::cleanArguments(args);
-		new StandardServerConsole(d->server, cli.executable.absoluteFilePath(), args);
-	}
-
-	return Message();
-}
-
 void GameClientRunner::saveDemoMetaData(const QString& demoName)
 {
 	QString metaFileName;
