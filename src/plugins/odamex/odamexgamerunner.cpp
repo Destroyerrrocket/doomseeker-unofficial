@@ -26,16 +26,16 @@
 #include "odamexgameinfo.h"
 #include "odamexserver.h"
 
-OdamexGameRunner::OdamexGameRunner(OdamexServer* server)
-: GameRunner(server)
+OdamexGameClientRunner::OdamexGameClientRunner(OdamexServer* server)
+: GameClientRunner(server)
 {
 	this->server = server;
 	setArgForDemoRecord("-netrecord");
 }
 
-bool OdamexGameRunner::connectParameters(ServerConnectParams& params)
+bool OdamexGameClientRunner::connectParameters(ServerConnectParams& params)
 {
-	if(!GameRunner::connectParameters(params))
+	if(!GameClientRunner::connectParameters(params))
 		return false;
 
 	const QStringList& dehPatches = server->dehs();

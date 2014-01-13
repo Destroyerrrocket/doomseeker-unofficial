@@ -42,9 +42,9 @@ GameHost* ChocolateDoomServer::gameHost()
 	return new ChocolateDoomGameHost(this);
 }
 
-GameRunner* ChocolateDoomServer::gameRunner()
+GameClientRunner* ChocolateDoomServer::gameRunner()
 {
-	return new ChocolateDoomGameRunner(this);
+	return new ChocolateDoomGameClientRunner(this);
 }
 
 EnginePlugin* ChocolateDoomServer::plugin() const

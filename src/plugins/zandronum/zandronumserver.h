@@ -37,7 +37,7 @@
 #define NUM_DMFLAG_SECTIONS		3
 #define ST_MAX_TEAMS			4U
 
-class GameRunner;
+class GameClientRunner;
 class ZandronumServer;
 
 /**
@@ -145,7 +145,7 @@ class ZandronumServer : public Server
 		bool			isTestingServer() const { return testingServer; }
 
 		GameHost* gameHost() const;
-		GameRunner*		gameRunner();
+		GameClientRunner*		gameRunner();
 
 		bool			hasRcon() const { return true; }
 

@@ -43,7 +43,7 @@ class ExeFile;
 class GameCVar;
 class GameHost;
 class GameMode;
-class GameRunner;
+class GameClientRunner;
 class Player;
 class PlayersList;
 class PWad;
@@ -84,19 +84,19 @@ class MAIN_EXPORT Server : public QObject
 		/**
 		 * @brief Creates an instance of GameHost derivative class.
 		 *
-		 * Gets a pointer to a new instance of GameRunner's
+		 * Gets a pointer to a new instance of GameClientRunner's
 		 * descendant (defined by a plugin). Created instance should be deleted
 		 * manually by the programmer.
 		 */
 		virtual GameHost* gameHost() const;
 		/**
-		 * @brief Creates an instance of GameRunner's derivative class.
+		 * @brief Creates an instance of GameClientRunner's derivative class.
 		 *
-		 * Gets a pointer to a new instance of GameRunner's
+		 * Gets a pointer to a new instance of GameClientRunner's
 		 * descendant (defined by a plugin). Created instance should be deleted
 		 * manually by the programmer.
 		 */
-		virtual GameRunner* gameRunner();
+		virtual GameClientRunner* gameRunner();
 		virtual bool hasRcon() const { return false; }
 		virtual const GameCVar *modifier() const { return NULL; }
 		virtual RConProtocol *rcon() { return NULL; }

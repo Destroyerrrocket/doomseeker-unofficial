@@ -307,7 +307,7 @@ set(SOURCE_FILES
 	serverapi/gameexefactory.cpp
 	serverapi/gameexeretriever.cpp
 	serverapi/gamehost.cpp
-	serverapi/gamerunner.cpp
+	serverapi/gameclientrunner.cpp
 	serverapi/message.cpp
 	serverapi/player.cpp
 	serverapi/playerslist.cpp
@@ -385,7 +385,7 @@ set(HEADER_FILES
 	plugins/pluginloader.h
 	serverapi/buddyinfo.h
 	serverapi/gameexeretriever.h
-	serverapi/gamerunner.h
+	serverapi/gameclientrunner.h
 	serverapi/player.h
 	serverapi/playerslist.h
 	serverapi/serverstructs.h

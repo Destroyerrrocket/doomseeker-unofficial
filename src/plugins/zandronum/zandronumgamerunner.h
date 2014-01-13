@@ -23,15 +23,15 @@
 #ifndef DOOMSEEKER_PLUGIN_ZANDRONUMGAMERUNNER_H
 #define DOOMSEEKER_PLUGIN_ZANDRONUMGAMERUNNER_H
 
-#include "serverapi/gamerunner.h"
+#include "serverapi/gameclientrunner.h"
 #include "zandronumengineplugin.h"
 
 class ZandronumServer;
 
-class ZandronumGameRunner : public GameRunner
+class ZandronumGameClientRunner : public GameClientRunner
 {
 	public:
-		ZandronumGameRunner(ZandronumServer* server);
+		ZandronumGameClientRunner(ZandronumServer* server);
 
 		bool connectParameters(ServerConnectParams& params);
 

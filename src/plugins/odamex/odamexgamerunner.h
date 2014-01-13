@@ -23,14 +23,14 @@
 #ifndef __ODAMEX_GAME_RUNNER_H_
 #define __ODAMEX_GAME_RUNNER_H_
 
-#include "serverapi/gamerunner.h"
+#include "serverapi/gameclientrunner.h"
 
 class OdamexServer;
 
-class OdamexGameRunner : public GameRunner
+class OdamexGameClientRunner : public GameClientRunner
 {
 	public:
-		OdamexGameRunner(OdamexServer* server);
+		OdamexGameClientRunner(OdamexServer* server);
 
 		bool connectParameters(ServerConnectParams& params);
 

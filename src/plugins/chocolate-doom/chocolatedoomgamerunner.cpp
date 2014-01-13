@@ -27,16 +27,16 @@
 #include "serverapi/playerslist.h"
 #include "main.h"
 
-ChocolateDoomGameRunner::ChocolateDoomGameRunner(ChocolateDoomServer* server)
-: GameRunner(server)
+ChocolateDoomGameClientRunner::ChocolateDoomGameClientRunner(ChocolateDoomServer* server)
+: GameClientRunner(server)
 {
 	this->server = server;
 }
 
-bool ChocolateDoomGameRunner::connectParameters(ServerConnectParams& params)
+bool ChocolateDoomGameClientRunner::connectParameters(ServerConnectParams& params)
 {
 	if(server->players()->size() > 0)
-		return GameRunner::connectParameters(params);
+		return GameClientRunner::connectParameters(params);
 	else
 	{
 		QString tmp;
@@ -47,7 +47,7 @@ bool ChocolateDoomGameRunner::connectParameters(ServerConnectParams& params)
 		{
 			csd->commandLineArguments(tmp, args());
 			delete csd;
-			return GameRunner::connectParameters(params);
+			return GameClientRunner::connectParameters(params);
 		}
 		else
 		{

@@ -40,7 +40,7 @@
 #include "irc/configuration/ircconfig.h"
 #include "plugins/engineplugin.h"
 #include "refresher/refresher.h"
-#include "serverapi/gamerunner.h"
+#include "serverapi/gameclientrunner.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
 #include "updater/autoupdater.h"

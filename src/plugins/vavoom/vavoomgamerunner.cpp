@@ -26,16 +26,16 @@
 #include "vavoomengineplugin.h"
 #include "vavoomserver.h"
 
-VavoomGameRunner::VavoomGameRunner(VavoomServer* server)
-: GameRunner(server)
+VavoomGameClientRunner::VavoomGameClientRunner(VavoomServer* server)
+: GameClientRunner(server)
 {
 	this->server = server;
 	setArgForConnect("+connect");
 }
 
-bool VavoomGameRunner::connectParameters(ServerConnectParams& params)
+bool VavoomGameClientRunner::connectParameters(ServerConnectParams& params)
 {
-	if(!GameRunner::connectParameters(params))
+	if(!GameClientRunner::connectParameters(params))
 		return false;
 
 	// Remove original -iwad command
@@ -55,7 +55,7 @@ bool VavoomGameRunner::connectParameters(ServerConnectParams& params)
 	return true;
 }
 
-const EnginePlugin* VavoomGameRunner::plugin() const
+const EnginePlugin* VavoomGameClientRunner::plugin() const
 {
 	return VavoomEnginePlugin::staticInstance();
 }

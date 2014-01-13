@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gamerunner.h
+// gameclientrunner.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,8 +20,8 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __GAME_RUNNER_H_
-#define __GAME_RUNNER_H_
+#ifndef id50da6ce1_f633_485e_9e5f_e808731b1e2e
+#define id50da6ce1_f633_485e_9e5f_e808731b1e2e
 
 #include "serverapi/gamerunnerstructs.h"
 #include "apprunner.h"
@@ -33,7 +33,7 @@
 class Server;
 
 /**
- * @brief A DTO for GameRunner; exchanges information between main program
+ * @brief A DTO for GameClientRunner; exchanges information between main program
  *        and plugins, and allows future extensions.
  *
  * This object may be copied freely.
@@ -72,12 +72,11 @@ class MAIN_EXPORT ServerConnectParams
 		PrivData* d;
 };
 
-// TODO: Rename to GameClientRunner?
-class MAIN_EXPORT GameRunner : public QObject
+class MAIN_EXPORT GameClientRunner : public QObject
 {
 	public:
-		GameRunner(Server* server);
-		virtual ~GameRunner();
+		GameClientRunner(Server* server);
+		virtual ~GameClientRunner();
 
 		/**
 		 * @return false to terminate the join process.
@@ -165,7 +164,7 @@ class MAIN_EXPORT GameRunner : public QObject
 		virtual QString findIwad();
 
 		/**
-		 * @brief Reference to a PathFinder belonging to this GameRunner.
+		 * @brief Reference to a PathFinder belonging to this GameClientRunner.
 		 *
 		 * Useful if plugins want to access the PathFinder.
 		 *

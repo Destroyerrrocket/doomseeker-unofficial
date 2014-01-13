@@ -20,7 +20,7 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2012 Braden Obrzut <admin@maniacsvault.net>
 //                    "Zalewa" <zalewapl@gmail.com>
-//------------------------------------------------------------------------------  
+//------------------------------------------------------------------------------
 
 #include "apprunner.h"
 #include "log.h"
@@ -32,7 +32,7 @@
 #include "gui/wadseekerinterface.h"
 #include "gui/configuration/doomseekerconfigurationdialog.h"
 #include "plugins/engineplugin.h"
-#include "serverapi/gamerunner.h"
+#include "serverapi/gameclientrunner.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
 
@@ -170,7 +170,7 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, Server* server, C
 			connectPassword = password.connectPassword();
 		}
 
-		GameRunner* gameRunner = server->gameRunner();
+		GameClientRunner* gameRunner = server->gameRunner();
 		JoinError joinError = gameRunner->createJoinCommandLine(cli, connectPassword, managedDemo);
 		delete gameRunner;
 
@@ -295,7 +295,7 @@ void ConnectionHandler::run()
 			return;
 		}
 
-		GameRunner* gameRunner = server->gameRunner();
+		GameClientRunner* gameRunner = server->gameRunner();
 
 		Message message = gameRunner->runExecutable(cli, false);
 		if (message.isError())

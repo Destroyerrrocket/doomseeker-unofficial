@@ -32,7 +32,7 @@
 #include "refresher/refresher.h"
 #include "serverapi/exefile.h"
 #include "serverapi/gamehost.h"
-#include "serverapi/gamerunner.h"
+#include "serverapi/gameclientrunner.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/tooltipgenerator.h"
 #include <QProcess>
@@ -327,9 +327,9 @@ const GameMode& Server::gameMode() const
 	return d->gameMode;
 }
 
-GameRunner *Server::gameRunner()
+GameClientRunner *Server::gameRunner()
 {
-	return new GameRunner(this);
+	return new GameClientRunner(this);
 }
 
 const QString& Server::gameVersion() const

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gamerunner.cpp
+// gameclientrunner.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,7 +20,7 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "serverapi/gamerunner.h"
+#include "serverapi/gameclientrunner.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/exefile.h"
 #include "serverapi/gameexeretriever.h"
@@ -100,7 +100,7 @@ const QString& ServerConnectParams::wadTargetDirectory() const
 	return d->wadTargetDirectory;
 }
 ///////////////////////////////////////////////////////////////////////////////
-class GameRunner::PrivData
+class GameClientRunner::PrivData
 {
 	public:
 		QString argConnect;
@@ -116,7 +116,7 @@ class GameRunner::PrivData
 		Server* server;
 };
 
-GameRunner::GameRunner(Server* server)
+GameClientRunner::GameClientRunner(Server* server)
 {
 	d = new PrivData();
 	d->argConnect = "-connect";
@@ -128,12 +128,12 @@ GameRunner::GameRunner(Server* server)
 	d->server = server;
 }
 
-GameRunner::~GameRunner()
+GameClientRunner::~GameClientRunner()
 {
 	delete d;
 }
 
-void GameRunner::addPwads(CommandLineInfo& cli, QStringList& missingPwads)
+void GameClientRunner::addPwads(CommandLineInfo& cli, QStringList& missingPwads)
 {
 	for (int i = 0; i < d->server->numWads(); ++i)
 	{
@@ -150,42 +150,42 @@ void GameRunner::addPwads(CommandLineInfo& cli, QStringList& missingPwads)
 	}
 }
 
-QStringList& GameRunner::args()
+QStringList& GameClientRunner::args()
 {
 	return d->cli->args;
 }
 
-const QString& GameRunner::argForConnect() const
+const QString& GameClientRunner::argForConnect() const
 {
 	return d->argConnect;
 }
 
-const QString& GameRunner::argForConnectPassword() const
+const QString& GameClientRunner::argForConnectPassword() const
 {
 	return d->argConnectPassword;
 }
 
-const QString& GameRunner::argForIwadLoading() const
+const QString& GameClientRunner::argForIwadLoading() const
 {
 	return d->argIwadLoading;
 }
 
-const QString& GameRunner::argForPort() const
+const QString& GameClientRunner::argForPort() const
 {
 	return d->argPort;
 }
 
-const QString& GameRunner::argForPwadLoading() const
+const QString& GameClientRunner::argForPwadLoading() const
 {
 	return d->argPwadLoading;
 }
 
-const QString& GameRunner::argForDemoRecord() const
+const QString& GameClientRunner::argForDemoRecord() const
 {
 	return d->argDemoRecord;
 }
 
-bool GameRunner::connectParameters(ServerConnectParams& params)
+bool GameClientRunner::connectParameters(ServerConnectParams& params)
 {
 	// Connect
 	QString address = QString("%1:%2").arg(d->server->address().toString()).arg(d->server->port());
@@ -215,7 +215,7 @@ bool GameRunner::connectParameters(ServerConnectParams& params)
 	return true;
 }
 
-JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli,
+JoinError GameClientRunner::createJoinCommandLine(CommandLineInfo& cli,
 	const QString &connectPassword, bool managedDemo)
 {
 	const QString &PLUGIN_NAME = d->server->plugin()->data()->name;
@@ -310,12 +310,12 @@ JoinError GameRunner::createJoinCommandLine(CommandLineInfo& cli,
 	return joinError;
 }
 
-QString GameRunner::findIwad()
+QString GameClientRunner::findIwad()
 {
 	return d->pathFinder.findFile(d->server->iwad().toLower());
 }
 
-GameRunner::GamePaths GameRunner::gamePaths(Message& msg)
+GameClientRunner::GamePaths GameClientRunner::gamePaths(Message& msg)
 {
 	GamePaths result;
 	GameExeRetriever exeRetriever = GameExeRetriever(*d->server->plugin()->gameExe());
@@ -326,7 +326,7 @@ GameRunner::GamePaths GameRunner::gamePaths(Message& msg)
 	return result;
 }
 
-QString GameRunner::mkDemoName(bool managedDemo) const
+QString GameClientRunner::mkDemoName(bool managedDemo) const
 {
 	// port-iwad-date-wad
 	QString demoName;
@@ -344,12 +344,12 @@ QString GameRunner::mkDemoName(bool managedDemo) const
 	return demoName;
 }
 
-PathFinder& GameRunner::pathFinder()
+PathFinder& GameClientRunner::pathFinder()
 {
 	return d->pathFinder;
 }
 
-Message GameRunner::runExecutable(const CommandLineInfo& cli, bool bWrapInStandardServerConsole)
+Message GameClientRunner::runExecutable(const CommandLineInfo& cli, bool bWrapInStandardServerConsole)
 {
 	if (!bWrapInStandardServerConsole)
 	{
@@ -370,7 +370,7 @@ Message GameRunner::runExecutable(const CommandLineInfo& cli, bool bWrapInStanda
 	return Message();
 }
 
-void GameRunner::saveDemoMetaData(const QString& demoName)
+void GameClientRunner::saveDemoMetaData(const QString& demoName)
 {
 	QString metaFileName;
 	// If the extension is automatic we need to add it here
@@ -399,37 +399,37 @@ void GameRunner::saveDemoMetaData(const QString& demoName)
 	metaSection.createSetting("pwads", wadList.join(";"));
 }
 
-void GameRunner::setArgForConnect(const QString& arg)
+void GameClientRunner::setArgForConnect(const QString& arg)
 {
 	d->argConnect = arg;
 }
 
-void GameRunner::setArgForConnectPassword(const QString& arg)
+void GameClientRunner::setArgForConnectPassword(const QString& arg)
 {
 	d->argConnectPassword = arg;
 }
 
-void GameRunner::setArgForIwadLoading(const QString& arg)
+void GameClientRunner::setArgForIwadLoading(const QString& arg)
 {
 	d->argIwadLoading = arg;
 }
 
-void GameRunner::setArgForPort(const QString& arg)
+void GameClientRunner::setArgForPort(const QString& arg)
 {
 	d->argPort = arg;
 }
 
-void GameRunner::setArgForPwadLoading(const QString& arg)
+void GameClientRunner::setArgForPwadLoading(const QString& arg)
 {
 	d->argPwadLoading = arg;
 }
 
-void GameRunner::setArgForDemoRecord(const QString& arg)
+void GameClientRunner::setArgForDemoRecord(const QString& arg)
 {
 	d->argDemoRecord = arg;
 }
 
-void GameRunner::setupPathFinder()
+void GameClientRunner::setupPathFinder()
 {
 	Message msg;
 	GamePaths paths = gamePaths(msg);

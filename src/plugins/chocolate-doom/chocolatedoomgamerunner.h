@@ -23,15 +23,15 @@
 #ifndef __CHOCOLATE_DOOM_GAME_RUNNER_H_
 #define __CHOCOLATE_DOOM_GAME_RUNNER_H_
 
-#include "serverapi/gamerunner.h"
+#include "serverapi/gameclientrunner.h"
 #include "chocolatedoomengineplugin.h"
 
 class ChocolateDoomServer;
 
-class ChocolateDoomGameRunner : public GameRunner
+class ChocolateDoomGameClientRunner : public GameClientRunner
 {
 	public:
-		ChocolateDoomGameRunner(ChocolateDoomServer* server);
+		ChocolateDoomGameClientRunner(ChocolateDoomServer* server);
 
 		bool connectParameters(ServerConnectParams& params);
 		const EnginePlugin* plugin() const { return ChocolateDoomEnginePlugin::staticInstance(); }

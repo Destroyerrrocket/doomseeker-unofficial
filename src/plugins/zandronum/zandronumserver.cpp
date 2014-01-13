@@ -56,7 +56,7 @@
 	{ \
 		return RESPONSE_BAD; \
 	} \
-} 
+}
 
 /**
  * Compares versions of Zandronum.
@@ -122,9 +122,9 @@ GameHost* ZandronumServer::gameHost() const
 	return new ZandronumGameHost(this);
 }
 
-GameRunner* ZandronumServer::gameRunner()
+GameClientRunner* ZandronumServer::gameRunner()
 {
-	return new ZandronumGameRunner(this);
+	return new ZandronumGameClientRunner(this);
 }
 
 unsigned int ZandronumServer::millisecondTime()
@@ -151,47 +151,47 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 {
 	const int BUFFER_SIZE = 6000;
 	QByteArray rawReadBuffer;
-	
+
 	// Decompress the response.
 	const char* huffmanPacket = data.data();
-	
+
 	int decodedSize = BUFFER_SIZE + data.size();
 	char* packetDecodedBuffer = new char[decodedSize];
 
-	HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (huffmanPacket), 
-		reinterpret_cast<unsigned char*> (packetDecodedBuffer), data.size(), 
+	HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (huffmanPacket),
+		reinterpret_cast<unsigned char*> (packetDecodedBuffer), data.size(),
 		&decodedSize);
-	
+
 	if (decodedSize <= 0)
 	{
 		delete [] packetDecodedBuffer;
 		return RESPONSE_BAD;
 	}
-	
+
 	// Prepare reading interface.
 	QByteArray packetDecoded(packetDecodedBuffer, decodedSize);
 	lastReadRequest = packetDecoded;
-	
+
 	delete [] packetDecodedBuffer;
-	
+
 	QBuffer packetDecodedIo(&packetDecoded);
-	
+
 	packetDecodedIo.open(QIODevice::ReadOnly);
 	packetDecodedIo.seek(0);
-	
+
 	QDataStream inStream(&packetDecodedIo);
 	inStream.setByteOrder(QDataStream::LittleEndian);
-	
+
 	DataStreamOperatorWrapper in(&inStream);
-	
+
 	// Read and parse.
-	
+
 	// Do the initial sanity check. All packets must be at least 8 bytes big.
 	if (decodedSize < 8)
 	{
 		fprintf(stderr, "Data size error when reading server %s:%u."
-			" Data size encoded: %u, decoded %u\n", 
-			address().toString().toAscii().constData(), port(), 
+			" Data size encoded: %u, decoded %u\n",
+			address().toString().toAscii().constData(), port(),
 			data.size(), decodedSize);
 		return RESPONSE_BAD;
 	}
@@ -204,7 +204,7 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 	qint32 responseTimestamp = in.readQInt32();
 	setPing(millisecondTime() - responseTimestamp);
 	setPingIsSet(true);
-	
+
 	// Act according to the response
 	switch(response)
 	{
@@ -308,7 +308,7 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 
 		mode = static_cast<ZandronumGameInfo::ZandronumGameMode> (modeCode);
 		setGameMode((*ZandronumGameInfo::gameModes())[mode]);
-		
+
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(2);
 		instagib = in.readQInt8() != 0;
 		buckshot = in.readQInt8() != 0;
@@ -403,7 +403,7 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 	if((flags & SQF_LIMITS) == SQF_LIMITS)
 	{
 		flags ^= SQF_LIMITS;
-		
+
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(2);
 		fragLimit = in.readQUInt16();
 
@@ -492,7 +492,7 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 				int ping = in.readQUInt16();
 				bool spectating = in.readQUInt8() != 0;
 				bool bot = in.readQUInt8() != 0;
-				
+
 				int team;
 				if (teammode)
 				{
@@ -503,7 +503,7 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 				{
 					team = Player::TEAM_NONE;
 				}
-				// Now there is info on time that the player is 
+				// Now there is info on time that the player is
 				// on the server. We'll skip it.
 				RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
 				in.skipRawData(1);
@@ -574,7 +574,7 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 	if (in.remaining() != 0 && ZandronumVersion(gameVersion()) > ZandronumVersion("0.97d3") && (flags & SQF_TESTING_SERVER) == SQF_TESTING_SERVER)
 	{
 		flags ^= SQF_TESTING_SERVER;
-		
+
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
 		testingServer = in.readQInt8() != 0;
 
@@ -820,8 +820,8 @@ void ZandronumRConProtocol::packetReady()
 
 		QByteArray packetByteArray(packet, decodedSize);
 		delete[] packet;
-		
-		QBuffer stream(&packetByteArray);		
+
+		QBuffer stream(&packetByteArray);
 		stream.open(QIODevice::ReadOnly);
 		processPacket(&stream);
 	}
@@ -859,11 +859,11 @@ void ZandronumRConProtocol::processPacket(QIODevice* ioDevice, bool initial, int
 				serverProtocolVersion = in.readQUInt8();
 				hostName = in.readRawUntilByte('\0');
 				emit serverNameChanged(hostName);
-				
+
 				int numUpdates = in.readQUInt8();
-				
+
 				processPacket(ioDevice, true, numUpdates);
-				
+
 				int numStrings = in.readQUInt8();
 				while(numStrings-- > 0)
 				{

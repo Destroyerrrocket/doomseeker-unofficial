@@ -23,15 +23,15 @@
 #ifndef __VAVOOM_GAME_RUNNER_H_
 #define __VAVOOM_GAME_RUNNER_H_
 
-#include "serverapi/gamerunner.h"
+#include "serverapi/gameclientrunner.h"
 
 class EnginePlugin;
 class VavoomServer;
 
-class VavoomGameRunner : public GameRunner
+class VavoomGameClientRunner : public GameClientRunner
 {
 	public:
-		VavoomGameRunner(VavoomServer* server);
+		VavoomGameClientRunner(VavoomServer* server);
 
 		bool connectParameters(ServerConnectParams& params);
 

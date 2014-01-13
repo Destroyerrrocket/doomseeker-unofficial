@@ -26,17 +26,17 @@
 #include "zandronumgameinfo.h"
 #include "zandronumserver.h"
 
-ZandronumGameRunner::ZandronumGameRunner(ZandronumServer* server)
-: GameRunner(server)
+ZandronumGameClientRunner::ZandronumGameClientRunner(ZandronumServer* server)
+: GameClientRunner(server)
 {
 	this->server = server;
 	setArgForConnectPassword("+cl_password");
 }
 
-bool ZandronumGameRunner::connectParameters(ServerConnectParams& params)
+bool ZandronumGameClientRunner::connectParameters(ServerConnectParams& params)
 {
 	IniSection& config = *ZandronumEnginePlugin::staticInstance()->data()->pConfig;
 	bool bAllowCountryDisplay = config["AllowServersToDisplayMyCountry"];
 	args() << "+cl_hidecountry" << QString::number(!bAllowCountryDisplay ? 1 : 0);
-	return GameRunner::connectParameters(params);
+	return GameClientRunner::connectParameters(params);
 }
