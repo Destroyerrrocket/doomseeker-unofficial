@@ -33,26 +33,17 @@ VavoomGameClientRunner::VavoomGameClientRunner(VavoomServer* server)
 	setArgForConnect("+connect");
 }
 
-bool VavoomGameClientRunner::connectParameters(ServerConnectParams& params)
+void VavoomGameClientRunner::addIwad()
 {
-	if(!GameClientRunner::connectParameters(params))
-		return false;
-
-	// Remove original -iwad command
-	int iwadArg = args().indexOf("-iwad");
-	args().removeAt(iwadArg);
-	args().removeAt(iwadArg);
-
 	// What an odd thing to have to do "-iwaddir /path/to/iwads/ -doom2"
 	QString iwad = server->iwad();
-	QString iwadLocation = pathFinder().findFile(iwad.toLower());
+	QString iwadLocation = iwadPath();
 	QString iwadDir = iwadLocation.left(iwadLocation.length() - iwad.length());
 	QString iwadParam = iwadLocation.mid(iwadDir.length());
 	iwadParam.truncate(iwadParam.indexOf(QChar('.')));
 	args() << "-iwaddir";
 	args() << iwadDir;
 	args() << ("-" + iwadParam);
-	return true;
 }
 
 const EnginePlugin* VavoomGameClientRunner::plugin() const

@@ -20,6 +20,9 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+
+// TODO: Unvirtualize everything here! Use method pointers!
+
 #ifndef id50da6ce1_f633_485e_9e5f_e808731b1e2e
 #define id50da6ce1_f633_485e_9e5f_e808731b1e2e
 
@@ -50,22 +53,10 @@ class MAIN_EXPORT ServerConnectParams
 		 * @brief Password for server connection.
 		 */
 		const QString& connectPassword() const;
-
-		/**
-		 * @brief Path to IWAD file.
-		 */
-		const QString& iwadPath() const;
-
-		/**
-		 * @brief Directory where Doomseeker stores downloaded WADs.
-		 *
-		 * This can be useful for games that support in-game downloads.
-		 */
-		const QString& wadTargetDirectory() const;
+		const QString& demoName() const;
 
 		void setConnectPassword(const QString& val);
-		void setIwadPath(const QString& val);
-		void setWadTargetDirectory(const QString& val);
+		void setDemoName(const QString& val);
 
 	private:
 		class PrivData;
@@ -79,21 +70,34 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		virtual ~GameClientRunner();
 
 		/**
-		 * @return false to terminate the join process.
-		 */
-		virtual bool connectParameters(ServerConnectParams& params);
-
-		/**
-		 * @param [out] cli - after successful call this will contain
+		 * @param [out] cli
+		 *     After successful call this will contain
 		 *     required command line information.
-		 * @param managedDemo - Set to true if we should record to the demo
-		 *     directory and store meta data.
+		 * @param params
+		 *     Connection parameters specified through Doomseeker.
 		 * @return JoinError::type == NoError if all ok.
 		 */
-		JoinError createJoinCommandLine(CommandLineInfo& cli,
-			const QString &connectPassword, bool managedDemo);
+		JoinError createJoinCommandLine(CommandLineInfo &cli,
+			const ServerConnectParams &params);
 
 	protected:
+		void addConnectCommand();
+		void addCustomParameters();
+		void addDemoRecordCommand();
+
+		/**
+		 * @brief Plugins can easily add plugin-specific arguments here.
+		 *
+		 * This method is called at the end of "add stuff" chain.
+		 */
+		virtual void addExtra() {};
+
+		void addGamePaths();
+		virtual void addIwad();
+		void addWads();
+		void addPwads();
+		void addPassword();
+
 		/**
 		 * @brief Output command line arguments.
 		 *
@@ -148,7 +152,22 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 */
 		const QString& argForDemoRecord() const;
 
-		virtual QString findIwad();
+		/**
+		 * @return false to terminate the join process.
+		 */
+		virtual bool connectParameters();
+		virtual void createCommandLineArguments();
+
+		/**
+		 * @brief Password for server connection.
+		 */
+		const QString& connectPassword() const;
+		const QString& demoName() const;
+
+		bool isIwadFound() const;
+		const QString& iwadPath() const;
+
+		void markPwadAsMissing(const QString& pwadName);
 
 		/**
 		 * @brief Reference to a PathFinder belonging to this GameClientRunner.
@@ -160,6 +179,7 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 */
 		PathFinder& pathFinder();
 
+		ServerConnectParams& serverConnectParams();
 		virtual void setupPathFinder();
 
 		void setArgForConnect(const QString& arg);
@@ -168,6 +188,15 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		void setArgForPort(const QString& arg);
 		void setArgForPwadLoading(const QString& arg);
 		void setArgForDemoRecord(const QString& arg);
+
+		void setJoinError(const JoinError& e);
+
+		/**
+		 * @brief Directory where Doomseeker stores downloaded WADs.
+		 *
+		 * This can be useful for games that support in-game downloads.
+		 */
+		QString wadTargetDirectory() const;
 
 	private:
 		class GamePaths
@@ -187,10 +216,10 @@ class MAIN_EXPORT GameClientRunner : public QObject
 
 		PrivData* d;
 
-		void addPwads(CommandLineInfo& cli, QStringList& missingPwads);
-		GamePaths gamePaths(Message& msg);
-		QString mkDemoName(bool managedDemo) const;
-		void saveDemoMetaData(const QString& demoName);
+		QString findIwad() const;
+		GamePaths gamePaths();
+		const QString& pluginName() const;
+		void saveDemoMetaData();
 };
 
 #endif

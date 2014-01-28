@@ -33,12 +33,12 @@ class ZandronumGameClientRunner : public GameClientRunner
 	public:
 		ZandronumGameClientRunner(ZandronumServer* server);
 
-		bool connectParameters(ServerConnectParams& params);
-
 		const EnginePlugin* plugin() const { return ZandronumEnginePlugin::staticInstance(); }
 
 	private:
 		const ZandronumServer* server;
+
+		void addExtra();
 };
 
 #endif

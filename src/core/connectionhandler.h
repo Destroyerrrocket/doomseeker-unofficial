@@ -70,6 +70,9 @@ class ConnectionHandler : public QObject
 		bool	handleResponse;
 		Server	*server;
 		QWidget	*parent;
+
+		static QString mkDemoName(Server* server, bool managedDemo);
+		static void saveDemoMetaData(Server* server, const QString& demoName);
 };
 
 #endif

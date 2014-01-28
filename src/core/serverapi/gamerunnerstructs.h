@@ -67,7 +67,7 @@ struct MAIN_EXPORT HostInfo
  * if it did - what type of error it is. Based on this GUI can make a
  * decision on how to handle the error and whether to try again.
  */
-struct JoinError
+struct MAIN_EXPORT JoinError
 {
 	enum JoinErrorType
 	{
@@ -91,6 +91,21 @@ struct JoinError
 	 * This is valid only if type == MissingWads.
 	 */
 	QStringList missingWads;
+
+	JoinError()
+	{
+		type = NoError;
+	}
+
+	JoinError(JoinErrorType errorType)
+	{
+		type = errorType;
+	}
+
+	bool isError() const
+	{
+		return type != NoError;
+	}
 
 	bool isMissingIwadOnly() const
 	{

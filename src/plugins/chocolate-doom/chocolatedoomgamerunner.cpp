@@ -33,10 +33,12 @@ ChocolateDoomGameClientRunner::ChocolateDoomGameClientRunner(ChocolateDoomServer
 	this->server = server;
 }
 
-bool ChocolateDoomGameClientRunner::connectParameters(ServerConnectParams& params)
+void ChocolateDoomGameClientRunner::createCommandLineArguments()
 {
 	if(server->players()->size() > 0)
-		return GameClientRunner::connectParameters(params);
+	{
+		GameClientRunner::createCommandLineArguments();
+	}
 	else
 	{
 		QString tmp;
@@ -47,13 +49,12 @@ bool ChocolateDoomGameClientRunner::connectParameters(ServerConnectParams& param
 		{
 			csd->commandLineArguments(tmp, args());
 			delete csd;
-			return GameClientRunner::connectParameters(params);
+			GameClientRunner::createCommandLineArguments();
 		}
 		else
 		{
 			delete csd;
-			return false;
+			setJoinError(JoinError(JoinError::Terminate));
 		}
 	}
-	return true;
 }

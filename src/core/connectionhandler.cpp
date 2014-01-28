@@ -131,8 +131,28 @@ void ConnectionHandler::finish(int response)
 	emit finished(response);
 }
 
+QString ConnectionHandler::mkDemoName(Server* server, bool managedDemo)
+{
+	// port-iwad-date-wad
+	QString demoName;
+	if (managedDemo)
+	{
+		demoName = Main::dataPaths->demosDirectoryPath() + QDir::separator();
+	}
+	demoName += QString("%1_%2").
+		arg(server->engineName()).
+		arg(QDateTime::currentDateTime().toString("dd.MM.yyyy_hh.mm.ss"));
+	if (!server->plugin()->data()->demoExtensionAutomatic)
+	{
+		demoName += QString(".%1").arg(server->plugin()->data()->demoExtension);
+	}
+	return demoName;
+}
+
 bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, Server* server, CommandLineInfo& cli, const QString& errorCaption, bool managedDemo, bool *hadMissing)
 {
+	// TODO: This method is a monster and it needs refactoring!
+
 	cli.applicationDir = "";
 	cli.args.clear();
 	cli.executable = QFileInfo("");
@@ -171,7 +191,17 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, Server* server, C
 		}
 
 		GameClientRunner* gameRunner = server->gameRunner();
-		JoinError joinError = gameRunner->createJoinCommandLine(cli, connectPassword, managedDemo);
+		ServerConnectParams params;
+		params.setConnectPassword(connectPassword);
+		if (gConfig.doomseeker.bRecordDemo)
+		{
+			params.setDemoName(mkDemoName(server, managedDemo));
+		}
+		JoinError joinError = gameRunner->createJoinCommandLine(cli, params);
+		if (managedDemo && gConfig.doomseeker.bRecordDemo)
+		{
+			saveDemoMetaData(server, mkDemoName(server, managedDemo));
+		}
 		delete gameRunner;
 
 		const QString unknownError = tr("Unknown error.");
@@ -304,4 +334,33 @@ void ConnectionHandler::run()
 	}
 
 	finish(Server::RESPONSE_GOOD);
+}
+
+void ConnectionHandler::saveDemoMetaData(Server* server, const QString& demoName)
+{
+	QString metaFileName;
+	// If the extension is automatic we need to add it here
+	if(server->plugin()->data()->demoExtensionAutomatic)
+	{
+		metaFileName = QString("%1.%2.ini").arg(demoName)
+			.arg(server->plugin()->data()->demoExtension);
+	}
+	else
+	{
+		metaFileName = demoName + ".ini";
+	}
+
+	Ini metaFile(metaFileName);
+	IniSection metaSection = metaFile.createSection("meta");
+
+	// Get a list of wads for demo name:
+	QStringList wadList;
+	for (int i = 0; i < server->numWads(); ++i)
+	{
+		// Also be sure to escape any underscores.
+		wadList << server->wad(i).name.toLower();
+	}
+
+	metaSection.createSetting("iwad", server->iwad().toLower());
+	metaSection.createSetting("pwads", wadList.join(";"));
 }

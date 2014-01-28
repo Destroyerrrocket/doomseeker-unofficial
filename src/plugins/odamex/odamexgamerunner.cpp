@@ -33,11 +33,8 @@ OdamexGameClientRunner::OdamexGameClientRunner(OdamexServer* server)
 	setArgForDemoRecord("-netrecord");
 }
 
-bool OdamexGameClientRunner::connectParameters(ServerConnectParams& params)
+void OdamexGameClientRunner::addExtra()
 {
-	if(!GameClientRunner::connectParameters(params))
-		return false;
-
 	const QStringList& dehPatches = server->dehs();
 	if(dehPatches.count() > 0)
 	{
@@ -49,7 +46,7 @@ bool OdamexGameClientRunner::connectParameters(ServerConnectParams& params)
 		}
 	}
 
-	if (!params.iwadPath().isEmpty())
+	if (isIwadFound())
 	{
 #ifdef Q_OS_WIN32
 		const char* const PATH_SEPARATOR = ";";
@@ -63,13 +60,13 @@ bool OdamexGameClientRunner::connectParameters(ServerConnectParams& params)
 		// case where the server changes wads Odamex can download to it as well.
 		args() << "-waddir";
 		QString iwad = server->iwad();
-		if(!params.wadTargetDirectory().isEmpty())
+		if (!wadTargetDirectory().isEmpty())
 		{
-			waddir = params.wadTargetDirectory() + PATH_SEPARATOR;
+			waddir = wadTargetDirectory() + PATH_SEPARATOR;
 		}
 		waddir += pathFinder().findFile(iwad.toLower());
 		waddir.truncate(waddir.length() - iwad.length());
-		for(int i = 0;i < server->numWads();i++)
+		for (int i = 0;i < server->numWads();i++)
 		{
 			QString wad = server->wad(i).name;
 			QString pwaddir = pathFinder().findFile(wad.toLower());
@@ -79,5 +76,4 @@ bool OdamexGameClientRunner::connectParameters(ServerConnectParams& params)
 		}
 		args() << waddir;
 	}
-	return true;
 }

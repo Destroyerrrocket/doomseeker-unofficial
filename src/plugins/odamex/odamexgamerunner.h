@@ -32,11 +32,10 @@ class OdamexGameClientRunner : public GameClientRunner
 	public:
 		OdamexGameClientRunner(OdamexServer* server);
 
-		bool connectParameters(ServerConnectParams& params);
-
 	protected:
 		const OdamexServer* server;
 
+		void addExtra();
 };
 
 #endif

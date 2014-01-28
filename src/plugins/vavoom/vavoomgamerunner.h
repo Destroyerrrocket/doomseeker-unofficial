@@ -38,6 +38,8 @@ class VavoomGameClientRunner : public GameClientRunner
 		const EnginePlugin* plugin() const;
 	private:
 		const VavoomServer* server;
+
+		void addIwad();
 };
 
 #endif

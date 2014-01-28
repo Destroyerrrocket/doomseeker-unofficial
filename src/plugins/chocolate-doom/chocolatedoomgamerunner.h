@@ -33,11 +33,12 @@ class ChocolateDoomGameClientRunner : public GameClientRunner
 	public:
 		ChocolateDoomGameClientRunner(ChocolateDoomServer* server);
 
-		bool connectParameters(ServerConnectParams& params);
 		const EnginePlugin* plugin() const { return ChocolateDoomEnginePlugin::staticInstance(); }
 
 	private:
 		const ChocolateDoomServer* server;
+
+		void createCommandLineArguments();
 };
 
 #endif
