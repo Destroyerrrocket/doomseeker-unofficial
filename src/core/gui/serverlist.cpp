@@ -27,6 +27,7 @@
 #include "gui/models/serverlistproxymodel.h"
 #include "gui/models/serverlistrowhandler.h"
 #include "gui/widgets/serverlistcontextmenu.h"
+#include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/gameexeretriever.h"
 #include "serverapi/message.h"
@@ -35,7 +36,6 @@
 #include "serverapi/serverstructs.h"
 #include "serverapi/tooltipgenerator.h"
 #include "main.h"
-#include "pathfinder.h"
 #include <QApplication>
 #include <QClipboard>
 #include <QDesktopServices>

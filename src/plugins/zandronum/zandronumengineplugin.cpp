@@ -24,7 +24,7 @@
 
 #include "datapaths.h"
 #include "main.h"
-#include "pathfinder.h"
+#include <pathfinder/pathfinder.h>
 #include "plugins/engineplugin.h"
 #include "strings.h"
 

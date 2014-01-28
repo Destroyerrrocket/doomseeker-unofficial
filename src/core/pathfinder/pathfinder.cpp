@@ -20,11 +20,12 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "pathfinder.h"
+
 #include "configuration/doomseekerconfig.h"
 #include "pathfinder/caseinsensitivefsfileseeker.h"
 #include "pathfinder/casesensitivefsfileseeker.h"
 #include "pathfinder/filesearchpath.h"
-#include "pathfinder.h"
 #include "main.h"
 #include "log.h"
 #include "strings.h"

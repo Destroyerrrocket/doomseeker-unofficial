@@ -23,7 +23,7 @@
 
 #include "demomanager.h"
 #include "main.h"
-#include "pathfinder.h"
+#include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/gameexeretriever.h"
 #include "serverapi/message.h"

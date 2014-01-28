@@ -296,6 +296,7 @@ set(SOURCE_FILES
 	pathfinder/casesensitivefsfileseeker.cpp
 	pathfinder/caseinsensitivefsfileseeker.cpp
 	pathfinder/filesearchpath.cpp
+	pathfinder/pathfinder.cpp
 	plugins/engineplugin.cpp
 	plugins/pluginloader.cpp
 	refresher/refresher.cpp
@@ -339,7 +340,6 @@ set(SOURCE_FILES
 	localizationinfo.cpp
 	log.cpp
 	main.cpp
-	pathfinder.cpp
 	random.cpp
 	scanner.cpp
 	speedcalculator.cpp
@@ -381,6 +381,7 @@ set(HEADER_FILES
 	pathfinder/casesensitivefsfileseeker.h
 	pathfinder/caseinsensitivefsfileseeker.h
 	pathfinder/filesearchpath.h
+	pathfinder/pathfinder.h
 	plugins/engineplugin.h
 	plugins/pluginloader.h
 	serverapi/buddyinfo.h
@@ -410,7 +411,6 @@ set(HEADER_FILES
 	localization.h
 	localizationinfo.h
 	random.h
-	pathfinder.h
 	qtmetapointer.h
 	scanner.h
 	speedcalculator.h

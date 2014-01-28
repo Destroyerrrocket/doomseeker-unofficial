@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "gamehost.h"
 
+#include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/gameexeretriever.h"
 #include "serverapi/message.h"
@@ -32,7 +33,6 @@
 #include "apprunner.h"
 #include "log.h"
 #include "main.h"
-#include "pathfinder.h"
 #include "strings.h"
 #include <QDateTime>
 #include <QStringList>

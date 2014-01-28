@@ -28,6 +28,7 @@
 #include "main.h"
 #include "commongui.h"
 #include "ini/ini.h"
+#include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
 #include "scanner.h"
 #include "serverapi/exefile.h"
@@ -37,7 +38,6 @@
 #include "serverapi/server.h"
 #include "apprunner.h"
 #include "commandline.h"
-#include "pathfinder.h"
 #include "strings.h"
 
 #include <QCheckBox>

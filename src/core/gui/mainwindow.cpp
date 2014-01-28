@@ -38,6 +38,7 @@
 #include "gui/wadseekerinterface.h"
 #include "ip2c/ip2cloader.h"
 #include "irc/configuration/ircconfig.h"
+#include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
 #include "refresher/refresher.h"
 #include "serverapi/gameclientrunner.h"
@@ -53,7 +54,6 @@
 #include "doomseekerfilepaths.h"
 #include "fileutils.h"
 #include "log.h"
-#include "pathfinder.h"
 #include "main.h"
 #include "strings.h"
 #include <cassert>

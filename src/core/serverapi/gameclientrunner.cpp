@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "serverapi/gameclientrunner.h"
+#include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/exefile.h"
 #include "serverapi/gameexeretriever.h"
@@ -31,7 +32,6 @@
 #include "apprunner.h"
 #include "log.h"
 #include "main.h"
-#include "pathfinder.h"
 #include "strings.h"
 #include <QDateTime>
 #include <QScopedPointer>

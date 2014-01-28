@@ -23,10 +23,10 @@
 #ifndef id50da6ce1_f633_485e_9e5f_e808731b1e2e
 #define id50da6ce1_f633_485e_9e5f_e808731b1e2e
 
+#include "pathfinder/pathfinder.h"
 #include "serverapi/gamerunnerstructs.h"
 #include "apprunner.h"
 #include "global.h"
-#include "pathfinder.h"
 #include <QObject>
 #include <QString>
 
