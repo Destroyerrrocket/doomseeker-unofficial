@@ -198,10 +198,6 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, Server* server, C
 			params.setDemoName(mkDemoName(server, managedDemo));
 		}
 		JoinError joinError = gameRunner->createJoinCommandLine(cli, params);
-		if (managedDemo && gConfig.doomseeker.bRecordDemo)
-		{
-			saveDemoMetaData(server, mkDemoName(server, managedDemo));
-		}
 		delete gameRunner;
 
 		const QString unknownError = tr("Unknown error.");
@@ -291,6 +287,10 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, Server* server, C
 				// Intentional fall through
 
 			case JoinError::NoError:
+				if (managedDemo && gConfig.doomseeker.bRecordDemo)
+				{
+					saveDemoMetaData(server, mkDemoName(server, managedDemo));
+				}
 				break;
 
 			default:
