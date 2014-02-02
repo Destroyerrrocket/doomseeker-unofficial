@@ -40,7 +40,7 @@
 	} \
 	ret self::name args \
 	{ \
-		(this->*d->name)callargs; \
+		return (this->*d->name)callargs; \
 	}
 
 
