@@ -98,8 +98,8 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		/**
 		 * @fn addIwad
 		 * @memberof GameClientRunner
-		 * @brief @b [Virtual] Plugins can replace IWAD discovery and executable
-		 *        parameters generatioon here.
+		 * @brief @b [Virtual] Plugins can replace IWAD discovery mechanism
+		 *        and generation of relevant executable parameters here.
 		 */
 		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, addIwad, ());
 		POLYMORPHIC_METHOD_DECLARE(void, addIwad, ());

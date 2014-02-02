@@ -120,8 +120,8 @@ class GameClientRunner::PrivData
 
 		void (GameClientRunner::*addExtra)();
 		void (GameClientRunner::*addIwad)();
-		void (GameClientRunner::*createCommandLineArguments) ();
-		void (GameClientRunner::*setupPathFinder) ();
+		void (GameClientRunner::*createCommandLineArguments)();
+		void (GameClientRunner::*setupPathFinder)();
 };
 
 POLYMORPHIC_DEFINE(void, GameClientRunner, addExtra, (), ());
