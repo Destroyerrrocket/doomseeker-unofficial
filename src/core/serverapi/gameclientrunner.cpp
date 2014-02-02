@@ -117,11 +117,25 @@ class GameClientRunner::PrivData
 		QStringList missingPwads;
 		PathFinder pathFinder;
 		Server* server;
+
+		void (GameClientRunner::*addExtra)();
+		void (GameClientRunner::*addIwad)();
+		void (GameClientRunner::*createCommandLineArguments) ();
+		void (GameClientRunner::*setupPathFinder) ();
 };
+
+POLYMORPHIC_DEFINE(void, GameClientRunner, addExtra, (), ());
+POLYMORPHIC_DEFINE(void, GameClientRunner, addIwad, (), ());
+POLYMORPHIC_DEFINE(void, GameClientRunner, createCommandLineArguments, (), ());
+POLYMORPHIC_DEFINE(void, GameClientRunner, setupPathFinder, (), ());
 
 GameClientRunner::GameClientRunner(Server* server)
 {
 	d = new PrivData();
+	set_addExtra(&GameClientRunner::addExtra_default);
+	set_addIwad(&GameClientRunner::addIwad_default);
+	set_createCommandLineArguments(&GameClientRunner::createCommandLineArguments_default);
+	set_setupPathFinder(&GameClientRunner::setupPathFinder_default);
 	d->argConnect = "-connect";
 	d->argIwadLoading = "-iwad";
 	d->argPort = "-port";
@@ -185,7 +199,7 @@ void GameClientRunner::addGamePaths()
 	d->cli->applicationDir = applicationDir;
 }
 
-void GameClientRunner::addIwad()
+void GameClientRunner::addIwad_default()
 {
 	args() << argForIwadLoading() << iwadPath();
 }
@@ -270,17 +284,12 @@ const QString& GameClientRunner::argForDemoRecord() const
 	return d->argDemoRecord;
 }
 
-bool GameClientRunner::connectParameters()
-{
-	return true;
-}
-
 const QString& GameClientRunner::connectPassword() const
 {
 	return d->connectParams.connectPassword();
 }
 
-void GameClientRunner::createCommandLineArguments()
+void GameClientRunner::createCommandLineArguments_default()
 {
 	BAIL_ON_ERROR(addGamePaths());
 	BAIL_ON_ERROR(addConnectCommand());
@@ -418,7 +427,7 @@ void GameClientRunner::setJoinError(const JoinError& e)
 	d->joinError = e;
 }
 
-void GameClientRunner::setupPathFinder()
+void GameClientRunner::setupPathFinder_default()
 {
 	GamePaths paths = gamePaths();
 	// Add the offline game directory so results are more consistent

@@ -31,6 +31,7 @@ OdamexGameClientRunner::OdamexGameClientRunner(OdamexServer* server)
 {
 	this->server = server;
 	setArgForDemoRecord("-netrecord");
+	set_addExtra(&OdamexGameClientRunner::addExtra);
 }
 
 void OdamexGameClientRunner::addExtra()

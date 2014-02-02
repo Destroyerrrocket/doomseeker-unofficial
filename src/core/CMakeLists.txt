@@ -389,6 +389,7 @@ set(HEADER_FILES
 	serverapi/gameclientrunner.h
 	serverapi/player.h
 	serverapi/playerslist.h
+	serverapi/polymorphism.h
 	serverapi/serverstructs.h
 	serverapi/serversummary.h
 	serverapi/tooltipgenerator.h

@@ -20,14 +20,12 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-
-// TODO: Unvirtualize everything here! Use method pointers!
-
 #ifndef id50da6ce1_f633_485e_9e5f_e808731b1e2e
 #define id50da6ce1_f633_485e_9e5f_e808731b1e2e
 
 #include "pathfinder/pathfinder.h"
 #include "serverapi/gamerunnerstructs.h"
+#include "serverapi/polymorphism.h"
 #include "apprunner.h"
 #include "global.h"
 #include <QObject>
@@ -86,14 +84,25 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		void addDemoRecordCommand();
 
 		/**
-		 * @brief Plugins can easily add plugin-specific arguments here.
+		 * @fn addExtra
+		 * @memberof GameClientRunner
+		 * @brief @b [Virtual] Plugins can easily add plugin-specific arguments
+		 *        here.
 		 *
 		 * This method is called at the end of "add stuff" chain.
 		 */
-		virtual void addExtra() {};
+		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, addExtra, ());
+		POLYMORPHIC_METHOD_DECLARE(void, addExtra, ());
 
 		void addGamePaths();
-		virtual void addIwad();
+		/**
+		 * @fn addIwad
+		 * @memberof GameClientRunner
+		 * @brief @b [Virtual] Plugins can replace IWAD discovery and executable
+		 *        parameters generatioon here.
+		 */
+		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, addIwad, ());
+		POLYMORPHIC_METHOD_DECLARE(void, addIwad, ());
 		void addWads();
 		void addPwads();
 		void addPassword();
@@ -153,10 +162,19 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		const QString& argForDemoRecord() const;
 
 		/**
-		 * @return false to terminate the join process.
+		 * @fn createCommandLineArguments
+		 * @memberof GameClientRunner
+		 * @brief @b [Virtual] Spawns entire command line for client executable
+		 *        launch.
+		 *
+		 * Default behavior splits the call between various "add*" methods.
+		 * Plugins can customize behavior by either overwriting these "add*"
+		 * methods that are virtual, or by overwriting this method and either
+		 * writing the generation process from scratch or reusing the
+		 * "add*" methods where applicable.
 		 */
-		virtual bool connectParameters();
-		virtual void createCommandLineArguments();
+		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, createCommandLineArguments, ());
+		POLYMORPHIC_METHOD_DECLARE(void, createCommandLineArguments, ());
 
 		/**
 		 * @brief Password for server connection.
@@ -180,7 +198,15 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		PathFinder& pathFinder();
 
 		ServerConnectParams& serverConnectParams();
-		virtual void setupPathFinder();
+		/**
+		 * @fn setupPathFinder
+		 * @memberof GameClientRunner
+		 * @brief @b [Virtual] Sets up PathFinder that is used to search for
+		 *        WADs, or other files if necessary.
+		 */
+		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, setupPathFinder, ());
+		POLYMORPHIC_METHOD_DECLARE(void, setupPathFinder, ());
+
 
 		void setArgForConnect(const QString& arg);
 		void setArgForConnectPassword(const QString& arg);
@@ -216,6 +242,10 @@ class MAIN_EXPORT GameClientRunner : public QObject
 
 		PrivData* d;
 
+		void addExtra_default() {};
+		void addIwad_default();
+		void createCommandLineArguments_default();
+		void setupPathFinder_default();
 		QString findIwad() const;
 		GamePaths gamePaths();
 		const QString& pluginName() const;

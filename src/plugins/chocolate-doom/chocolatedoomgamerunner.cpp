@@ -31,6 +31,7 @@ ChocolateDoomGameClientRunner::ChocolateDoomGameClientRunner(ChocolateDoomServer
 : GameClientRunner(server)
 {
 	this->server = server;
+	set_createCommandLineArguments(&ChocolateDoomGameClientRunner::createCommandLineArguments);
 }
 
 void ChocolateDoomGameClientRunner::createCommandLineArguments()

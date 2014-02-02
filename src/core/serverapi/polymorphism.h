@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// vavoomgamerunner.h
+// polymorphism.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,26 +18,31 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __VAVOOM_GAME_RUNNER_H_
-#define __VAVOOM_GAME_RUNNER_H_
+#ifndef idDB7BACD7_96AF_4A8E_9530F074031E6A19
+#define idDB7BACD7_96AF_4A8E_9530F074031E6A19
 
-#include "serverapi/gameclientrunner.h"
+#define POLYMORPHIC_SETTER_DECLARE(ret, self, name, args) \
+	template<typename X> void set_##name(ret (X::*x)args) \
+	{ \
+		set_##name(static_cast<ret (self::*)args>(x)); \
+	} \
+	void set_##name(ret (self::*f)args); \
 
-class EnginePlugin;
-class VavoomServer;
+#define POLYMORPHIC_METHOD_DECLARE(ret, name, args) \
+	ret name args; \
 
-class VavoomGameClientRunner : public GameClientRunner
-{
-	public:
-		VavoomGameClientRunner(VavoomServer* server);
+#define POLYMORPHIC_DEFINE(ret, self, name, args, callargs) \
+	void self::set_##name(ret (self::*f)args) \
+	{ \
+		d->name = f; \
+	} \
+	ret self::name args \
+	{ \
+		(this->*d->name)callargs; \
+	}
 
-		const EnginePlugin* plugin() const;
-	private:
-		const VavoomServer* server;
 
-		void addIwad();
-};
 
 #endif

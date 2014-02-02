@@ -31,6 +31,7 @@ VavoomGameClientRunner::VavoomGameClientRunner(VavoomServer* server)
 {
 	this->server = server;
 	setArgForConnect("+connect");
+	set_addIwad(&VavoomGameClientRunner::addIwad);
 }
 
 void VavoomGameClientRunner::addIwad()

@@ -32,7 +32,7 @@ class OdamexGameClientRunner : public GameClientRunner
 	public:
 		OdamexGameClientRunner(OdamexServer* server);
 
-	protected:
+	private:
 		const OdamexServer* server;
 
 		void addExtra();
