@@ -23,6 +23,7 @@
 #ifndef __RCON_PROTOCOL_H_
 #define __RCON_PROTOCOL_H_
 
+#include "serverapi/polymorphism.h"
 #include "player.h"
 #include <QThread>
 #include <QUdpSocket>
@@ -30,7 +31,7 @@
 class Server;
 
 /**
- *	@brief An abstract interface for a remote console protocol.
+ * @brief An abstract interface for a remote console protocol.
  */
 class MAIN_EXPORT RConProtocol : public QObject
 {
@@ -39,39 +40,60 @@ class MAIN_EXPORT RConProtocol : public QObject
 	public:
 		virtual ~RConProtocol();
 
-		bool				isConnected() const { return connected; }
-		const QList<Player>	&playerList() const { return players; }
+		bool isConnected() const;
+		const QList<Player> &players() const;
 
 	public slots:
-		virtual void	disconnectFromServer()=0;
-		virtual void	sendCommand(const QString &cmd)=0;
-		virtual void	sendPassword(const QString &password)=0;
+		/**
+		 * @brief <b>[Pure Virtual]</b>
+		 */
+		void disconnectFromServer();
+		/**
+		 * @brief <b>[Pure Virtual]</b>
+		 */
+		void sendCommand(const QString &cmd);
+		/**
+		 * @brief <b>[Pure Virtual]</b>
+		 */
+		void sendPassword(const QString &password);
 
 	signals:
-		void			disconnected();
-		void			invalidPassword();
-		void			messageReceived(const QString &cmd);
-		void			playerListUpdated();
-		void			serverNameChanged(const QString &name);
+		void disconnected();
+		void invalidPassword();
+		void messageReceived(const QString &cmd);
+		void playerListUpdated();
+		void serverNameChanged(const QString &name);
 
 	protected:
 		RConProtocol(Server *server);
 
-		const QHostAddress	&address() const { return serverAddress; }
-		quint16				port() const { return serverPort; }
+		POLYMORPHIC_SETTER_DECLARE(void, RConProtocol, disconnectFromServer, ());
+		POLYMORPHIC_SETTER_DECLARE(void, RConProtocol, sendCommand, (const QString &cmd));
+		POLYMORPHIC_SETTER_DECLARE(void, RConProtocol, sendPassword, (const QString &password));
+		POLYMORPHIC_SETTER_DECLARE(void, RConProtocol, packetReady, ());
 
-		bool			connected;
-		QList<Player>	players;
-		QUdpSocket		socket;
+		const QHostAddress &address() const;
+		quint16 port() const;
+		QList<Player> &playersMutable();
+		QUdpSocket &socket();
+		void setConnected(bool b);
 
 		friend class Server;
 
 	protected slots:
-		virtual void	packetReady()=0;
+		/**
+		 * @brief <b>[Pure Virtual]</b>
+		 */
+		void packetReady();
 
 	private:
-		QHostAddress	serverAddress;
-		quint16			serverPort;
+		class PrivData;
+		PrivData* d;
+
+		void disconnectFromServer_default();
+		void sendCommand_default(const QString &cmd);
+		void sendPassword_default(const QString &password);
+		void packetReady_default();
 };
 
 #endif

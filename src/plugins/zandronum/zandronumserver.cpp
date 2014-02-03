@@ -678,8 +678,14 @@ void ZandronumServer::updatedSlot(Server* server, int response)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ZandronumRConProtocol::ZandronumRConProtocol(Server *server) : RConProtocol(server)
+ZandronumRConProtocol::ZandronumRConProtocol(Server *server)
+: RConProtocol(server)
 {
+	set_disconnectFromServer(&ZandronumRConProtocol::disconnectFromServer);
+	set_sendCommand(&ZandronumRConProtocol::sendCommand);
+	set_sendPassword(&ZandronumRConProtocol::sendPassword);
+	set_packetReady(&ZandronumRConProtocol::packetReady);
+
 	// Note: the original rcon utility did TIMEOUT/4.
 	// Try to get at least 4 packets in before timing out,
 	pingTimer.setInterval(2500);
@@ -696,13 +702,13 @@ RConProtocol *ZandronumRConProtocol::connectToServer(Server *server)
 	HUFFMAN_Encode(beginConnection, reinterpret_cast<unsigned char*> (encodedConnection), 2, &encodedSize);
 
 	// Try to connect, up to 3 times
-	protocol->connected = false;
+	protocol->setConnected(false);
 	for(unsigned int attempts = 0;attempts < 3;attempts++)
 	{
-		protocol->socket.writeDatagram(encodedConnection, encodedSize, protocol->address(), protocol->port());
-		if(protocol->socket.waitForReadyRead(3000))
+		protocol->socket().writeDatagram(encodedConnection, encodedSize, protocol->address(), protocol->port());
+		if(protocol->socket().waitForReadyRead(3000))
 		{
-			int size = protocol->socket.pendingDatagramSize();
+			int size = protocol->socket().pendingDatagramSize();
 			if (size <= 0)
 			{
 				// [Zalewa]
@@ -712,7 +718,7 @@ RConProtocol *ZandronumRConProtocol::connectToServer(Server *server)
 				continue;
 			}
 			char* data = new char[size];
-			protocol->socket.readDatagram(data, size);
+			protocol->socket().readDatagram(data, size);
 			char packet[64];
 			int decodedSize = 64;
 			HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (data), reinterpret_cast<unsigned char*> (packet), size, &decodedSize);
@@ -727,7 +733,7 @@ RConProtocol *ZandronumRConProtocol::connectToServer(Server *server)
 					QMessageBox::critical(NULL, tr("Incompatible Protocol"), tr("The protocol appears to be outdated."));
 					break;
 				case SVRC_SALT:
-					protocol->connected = true;
+					protocol->setConnected(true);
 					protocol->salt = QString(&packet[1]);
 					protocol->pingTimer.start();
 					return protocol;
@@ -745,8 +751,8 @@ void ZandronumRConProtocol::disconnectFromServer()
 	char encodedDisconnect[4];
 	int encodedSize = 4;
 	HUFFMAN_Encode(disconnectPacket, reinterpret_cast<unsigned char*> (encodedDisconnect), 1, &encodedSize);
-	socket.writeDatagram(encodedDisconnect, encodedSize, address(), port());
-	connected = false;
+	socket().writeDatagram(encodedDisconnect, encodedSize, address(), port());
+	setConnected(false);
 	pingTimer.stop();
 	emit disconnected();
 }
@@ -760,7 +766,7 @@ void ZandronumRConProtocol::sendCommand(const QString &cmd)
 	char encodedPacket[4097];
 	int encodedSize = 4097;
 	HUFFMAN_Encode(packet, reinterpret_cast<unsigned char*> (encodedPacket), cmd.length()+2, &encodedSize);
-	socket.writeDatagram(encodedPacket, encodedSize, address(), port());
+	socket().writeDatagram(encodedPacket, encodedSize, address(), port());
 }
 
 void ZandronumRConProtocol::sendPassword(const QString &password)
@@ -782,12 +788,12 @@ void ZandronumRConProtocol::sendPassword(const QString &password)
 
 	for(unsigned int i = 0;i < 3;i++)
 	{
-		socket.writeDatagram(encodedPassword, encodedLength, address(), port());
+		socket().writeDatagram(encodedPassword, encodedLength, address(), port());
 
-		if(socket.waitForReadyRead(3000))
+		if(socket().waitForReadyRead(3000))
 		{
 			packetReady();
-			connect(&socket, SIGNAL( readyRead() ), this, SLOT( packetReady() ));
+			connect(&socket(), SIGNAL( readyRead() ), this, SLOT( packetReady() ));
 			break;
 		}
 	}
@@ -800,19 +806,19 @@ void ZandronumRConProtocol::sendPong()
 	char encodedPong[4];
 	int encodedSize = 4;
 	HUFFMAN_Encode(pong, reinterpret_cast<unsigned char*> (encodedPong), 1, &encodedSize);
-	socket.writeDatagram(encodedPong, encodedSize, address(), port());
+	socket().writeDatagram(encodedPong, encodedSize, address(), port());
 }
 
 void ZandronumRConProtocol::packetReady()
 {
-	if(!connected)
+	if(!isConnected())
 		return;
 
-	while(socket.hasPendingDatagrams())
+	while(socket().hasPendingDatagrams())
 	{
-		int size = socket.pendingDatagramSize();
+		int size = socket().pendingDatagramSize();
 		char* data = new char[size];
-		socket.readDatagram(data, size);
+		socket().readDatagram(data, size);
 		int decodedSize = 4096 + size;
 		char* packet = new char[decodedSize];
 		HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (data), reinterpret_cast<unsigned char*> (packet), size, &decodedSize);
@@ -855,7 +861,7 @@ void ZandronumRConProtocol::processPacket(QIODevice* ioDevice, bool initial, int
 				break;
 			case SVRC_LOGGEDIN:
 			{
-				connect(&socket, SIGNAL( readyRead() ), this, SLOT( packetReady() ));
+				connect(&socket(), SIGNAL( readyRead() ), this, SLOT( packetReady() ));
 				serverProtocolVersion = in.readQUInt8();
 				hostName = in.readRawUntilByte('\0');
 				emit serverNameChanged(hostName);
@@ -904,11 +910,11 @@ void ZandronumRConProtocol::processPacket(QIODevice* ioDevice, bool initial, int
 					case SVRCU_PLAYERDATA:
 					{
 						int players = in.readQUInt8();
-						this->players.clear();
+						this->playersMutable().clear();
 						while(players-- > 0)
 						{
 							QString player = in.readRawUntilByte('\0');
-							this->players.append(Player(player, 0, 0));
+							this->playersMutable().append(Player(player, 0, 0));
 						}
 						emit playerListUpdated();
 						break;

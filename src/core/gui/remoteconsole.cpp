@@ -160,7 +160,7 @@ void RemoteConsole::standardInit()
 
 void RemoteConsole::updatePlayerList()
 {
-	const QList<Player> &list = protocol->playerList();
+	const QList<Player> &list = protocol->players();
 
 	playerTable->setRowCount(list.size());
 	for(int i = 0; i < list.size(); ++i)

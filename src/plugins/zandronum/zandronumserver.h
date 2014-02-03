@@ -215,26 +215,26 @@ class ZandronumRConProtocol : public RConProtocol
 		};
 
 	public:
-		static RConProtocol	*connectToServer(Server *server);
+		static RConProtocol *connectToServer(Server *server);
 
 	public slots:
-		void	disconnectFromServer();
-		void	sendCommand(const QString &cmd);
-		void	sendPassword(const QString &password);
-		void	sendPong();
+		void disconnectFromServer();
+		void sendCommand(const QString &cmd);
+		void sendPassword(const QString &password);
+		void sendPong();
 
 	protected:
 		ZandronumRConProtocol(Server *server);
 
-		void	processPacket(QIODevice* ioDevice, bool initial=false, int maxUpdates=1);
+		void processPacket(QIODevice* ioDevice, bool initial=false, int maxUpdates=1);
 
-		QTimer	pingTimer;
-		QString	hostName;
-		QString	salt;
-		int		serverProtocolVersion;
+		QTimer pingTimer;
+		QString hostName;
+		QString salt;
+		int serverProtocolVersion;
 
 	protected slots:
-		void	packetReady();
+		void packetReady();
 };
 
 #endif
