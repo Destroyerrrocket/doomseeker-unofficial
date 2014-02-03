@@ -77,12 +77,6 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		virtual ExeFile* clientExe();
 		/**
-		 * Returns name of the engine for this server, for example: "Skulltag".
-		 * By default this returns name defined by the parent plugin itself,
-		 * or "Undefined" string if there is no parent plugin.
-		 */
-		virtual QString engineName() const;
-		/**
 		 * @brief Creates an instance of GameHost derivative class.
 		 *
 		 * Gets a pointer to a new instance of GameClientRunner's
@@ -141,6 +135,13 @@ class MAIN_EXPORT Server : public QObject
 		const QString& connectPassword() const;
 		const DMFlags& dmFlags() const;
 		const QString& email() const;
+
+		/**
+		 * Returns name of the engine for this server, for example: "Skulltag".
+		 * This returns name defined by the parent plugin itself,
+		 * or "Undefined" string if there is no parent plugin.
+		 */
+		QString engineName() const;
 
 		const GameMode& gameMode() const;
 		const QString& gameVersion() const;
