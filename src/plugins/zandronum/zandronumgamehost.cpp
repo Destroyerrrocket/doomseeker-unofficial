@@ -25,6 +25,7 @@
 #include "zandronumgamerunner.h"
 #include "zandronumgameinfo.h"
 #include "zandronumserver.h"
+#include <serverapi/gamerunnerstructs.h>
 
 ZandronumGameHost::ZandronumGameHost(const ZandronumServer* server)
 : GameHost(server)

@@ -200,48 +200,48 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, Server* server, C
 		JoinError joinError = gameRunner->createJoinCommandLine(cli, params);
 		delete gameRunner;
 
-		const QString unknownError = tr("Unknown error.");
-		const QString* error = NULL;
-
-		switch (joinError.type)
+		switch (joinError.type())
 		{
 			case JoinError::Terminate:
 				return false;
 			case JoinError::ConfigurationError:
 			case JoinError::Critical:
-				if (!joinError.error.isEmpty())
+			{
+				QString error;
+				if (!joinError.error().isEmpty())
 				{
-					error = &joinError.error;
+					error = joinError.error();
 				}
 				else
 				{
-					error = &unknownError;
+					error = tr("Unknown error.");
 				}
 
-				QMessageBox::critical(parent, errorCaption, *error);
-				gLog << tr("Error when obtaining join parameters for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(*error);
+				QMessageBox::critical(parent, errorCaption, error);
+				gLog << tr("Error when obtaining join parameters for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(error);
 
-				if(joinError.type == JoinError::ConfigurationError)
+				if (joinError.type() == JoinError::ConfigurationError)
 				{
 					DoomseekerConfigurationDialog::openConfiguration(server->plugin());
 				}
 				return false;
+			}
 
 			case JoinError::MissingWads:
 				// Execute Wadseeker
-				if (!joinError.missingIwad.isEmpty())
+				if (!joinError.missingIwad().isEmpty())
 				{
 					QString additionalInfo = tr("\n"
 						"Make sure that this file is in one of the paths specified in Options -> File Paths.\n"
 						"If you don't have this file you need to purchase the game associated with this IWAD.\n"
 						"Wadseeker will not download IWADs.\n\n");
 
-					filesMissingMessage += tr("IWAD: ") + joinError.missingIwad.toLower() + additionalInfo;
+					filesMissingMessage += tr("IWAD: ") + joinError.missingIwad().toLower() + additionalInfo;
 				}
 
-				if (!joinError.missingWads.isEmpty())
+				if (!joinError.missingWads().isEmpty())
 				{
-					filesMissingMessage += tr("PWADS: %1\nDo you want Wadseeker to find missing PWADs?").arg(joinError.missingWads.join(" "));
+					filesMissingMessage += tr("PWADS: %1\nDo you want Wadseeker to find missing PWADs?").arg(joinError.missingWads().join(" "));
 				}
 
 				if (joinError.isMissingIwadOnly())
@@ -266,13 +266,13 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, Server* server, C
 							return false;
 						}
 
-						if (!joinError.missingIwad.isEmpty())
+						if (!joinError.missingIwad().isEmpty())
 						{
-							joinError.missingWads.append(joinError.missingIwad);
+							joinError.addMissingWad(joinError.missingIwad());
 						}
 
 						WadseekerInterface wsi(parent);
-						wsi.setAutomatic(true, joinError.missingWads);
+						wsi.setAutomatic(true, joinError.missingWads());
 						wsi.setCustomSite(server->webSite());
 						if (wsi.exec() == QDialog::Accepted)
 						{

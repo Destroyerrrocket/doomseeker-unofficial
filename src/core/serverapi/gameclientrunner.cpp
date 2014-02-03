@@ -180,18 +180,18 @@ void GameClientRunner::addGamePaths()
 	QDir applicationDir = paths.workingDir;
 	if (paths.workingDir.isEmpty())
 	{
-		d->joinError.type = JoinError::ConfigurationError;
-		d->joinError.error = tr("Path to working directory for game \"%1\" is empty.\n\n"
+		d->joinError.setType(JoinError::ConfigurationError);
+		d->joinError.setError(tr("Path to working directory for game \"%1\" is empty.\n\n"
 			"Make sure the configuration for the client executable is set properly.")
-			.arg(pluginName());
+			.arg(pluginName()));
 		return;
 	}
 	else if (!applicationDir.exists())
 	{
-		d->joinError.type = JoinError::ConfigurationError;
-		d->joinError.error = tr("%1\n\nThis directory cannot be used as working "
+		d->joinError.setType(JoinError::ConfigurationError);
+		d->joinError.setError(tr("%1\n\nThis directory cannot be used as working "
 			"directory for game: %2\n\nExecutable: %3")
-			.arg(paths.workingDir, pluginName(), paths.clientExe);
+			.arg(paths.workingDir, pluginName(), paths.clientExe));
 		return;
 	}
 
@@ -213,10 +213,10 @@ void GameClientRunner::addWads()
 	{
 		if (!isIwadFound())
 		{
-			d->joinError.missingIwad = d->server->iwad();
+			d->joinError.setMissingIwad(d->server->iwad());
 		}
-		d->joinError.missingWads = d->missingPwads;
-		d->joinError.type = JoinError::MissingWads;
+		d->joinError.setMissingWads(d->missingPwads);
+		d->joinError.setType(JoinError::MissingWads);
 	}
 }
 
@@ -346,13 +346,14 @@ GameClientRunner::GamePaths GameClientRunner::gamePaths()
 
 	if (!result.isValid())
 	{
-		d->joinError.type = JoinError::ConfigurationError;
-		d->joinError.error = tr("Client binary cannot be obtained for %1, please "
+		QString error = tr("Client binary cannot be obtained for %1, please "
 			"check the location given in the configuration.").arg(pluginName());
+		d->joinError.setType(JoinError::ConfigurationError);
 		if (!msg.isIgnore())
 		{
-			d->joinError.error += "\n\n" + msg.contents();
+			error += "\n\n" + msg.contents();
 		}
+		d->joinError.setError(error);
 	}
 
 	return result;

@@ -309,6 +309,7 @@ set(SOURCE_FILES
 	serverapi/gameexeretriever.cpp
 	serverapi/gamehost.cpp
 	serverapi/gameclientrunner.cpp
+	serverapi/joinerror.cpp
 	serverapi/message.cpp
 	serverapi/player.cpp
 	serverapi/playerslist.cpp
@@ -387,6 +388,7 @@ set(HEADER_FILES
 	serverapi/buddyinfo.h
 	serverapi/gameexeretriever.h
 	serverapi/gameclientrunner.h
+	serverapi/joinerror.h
 	serverapi/player.h
 	serverapi/playerslist.h
 	serverapi/polymorphism.h
