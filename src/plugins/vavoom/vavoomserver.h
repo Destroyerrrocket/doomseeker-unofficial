@@ -43,8 +43,8 @@ class VavoomServer : public Server
 		EnginePlugin*	plugin() const;
 
 	protected:
-		Response	readRequest(QByteArray &data);
-		bool		sendRequest(QByteArray &data);
+		QByteArray createSendRequest();
+		Response readRequest(QByteArray &data);
 };
 
 #endif /* __VAVOOMSERVER_H__ */

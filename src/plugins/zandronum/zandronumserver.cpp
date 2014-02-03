@@ -109,6 +109,9 @@ ZandronumServer::ZandronumServer(const QHostAddress &address, unsigned short por
 	teamInfo[2] = TeamInfo(tr("Green"), QColor(0, 255, 0), 0);
 	teamInfo[3] = TeamInfo(tr("Gold"), QColor(255, 255, 0), 0);
 
+	set_createSendRequest(&ZandronumServer::createSendRequest);
+	set_readRequest(&ZandronumServer::readRequest);
+
 	connect(this, SIGNAL( updated(Server*, int) ), this, SLOT( updatedSlot(Server*, int) ));
 }
 
@@ -591,17 +594,20 @@ Server::Response ZandronumServer::readRequest(QByteArray &data)
 	return RESPONSE_GOOD;
 }
 
-bool ZandronumServer::sendRequest(QByteArray &data)
+QByteArray ZandronumServer::createSendRequest()
 {
-	// Send launcher challenge.
+	// Prepare launcher challenge.
 	int query = SQF_STANDARDQUERY;
-	const unsigned char challenge[12] = {SERVER_CHALLENGE, WRITEINT32_DIRECT(unsigned char,query), WRITEINT32_DIRECT(unsigned char,millisecondTime()) };
+	const unsigned char challenge[12] = {
+		SERVER_CHALLENGE,
+		WRITEINT32_DIRECT(unsigned char, query),
+		WRITEINT32_DIRECT(unsigned char, millisecondTime())
+	};
 	char challengeOut[16];
 	int out = 16;
 	HUFFMAN_Encode(challenge, reinterpret_cast<unsigned char*> (challengeOut), 12, &out);
-	const QByteArray chall(challengeOut, out);
-	data.append(chall);
-	return true;
+	QByteArray data(challengeOut, out);
+	return data;
 }
 
 QRgb ZandronumServer::teamColor(unsigned team) const

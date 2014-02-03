@@ -46,8 +46,8 @@ class OdamexServer : public Server
 		EnginePlugin*		plugin() const;
 
 	protected:
-		Response	readRequest(QByteArray &data);
-		bool		sendRequest(QByteArray &data);
+		Response readRequest(QByteArray &data);
+		QByteArray createSendRequest();
 
 		short			protocol;
 		QStringList		dehPatches;

@@ -39,6 +39,7 @@
 #include <QSet>
 #include <QTime>
 #include <QUdpSocket>
+#include <cassert>
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -155,6 +156,9 @@ class Server::PrivData
  		 * @brief Track how many resends we should try.
 		 */
 		int triesLeft;
+
+		QByteArray (Server::*createSendRequest)();
+		Response (Server::*readRequest)(QByteArray&);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -198,6 +202,9 @@ Server::Server(const QHostAddress &address, unsigned short port)
 
 	d->players = new PlayersList();
 
+	set_createSendRequest(&Server::createSendRequest_default);
+	set_readRequest(&Server::readRequest_default);
+
 	if(gConfig.doomseeker.bLookupHosts)
 	{
 		lookupHost();
@@ -210,6 +217,9 @@ Server::~Server()
 	clearDMFlags();
 	delete d;
 }
+
+POLYMORPHIC_DEFINE(QByteArray, Server, createSendRequest, (), ());
+POLYMORPHIC_DEFINE(Server::Response, Server, readRequest, (QByteArray &data), (data));
 
 void Server::addPlayer(const Player& player)
 {
@@ -272,6 +282,12 @@ void Server::clearDMFlags()
 {
 	qDeleteAll(d->dmFlags);
 	d->dmFlags.clear();
+}
+
+QByteArray Server::createSendRequest_default()
+{
+	assert(0 && "Server::createSendRequest() is not implemented");
+	return QByteArray();
 }
 
 void Server::clearPlayersList()
@@ -510,6 +526,12 @@ Server::Response Server::readRefreshQueryResponse(QByteArray& data)
 	return readRequest(data);
 }
 
+Server::Response Server::readRequest_default(QByteArray &data)
+{
+	assert(0 && "Server::readRequest(QByteArray&) is not implemented.");
+	return RESPONSE_BAD;
+}
+
 bool Server::refresh()
 {
 	if (Main::refresher == NULL)
@@ -582,8 +604,8 @@ bool Server::sendRefreshQuery(QUdpSocket* socket)
 	}
 	--d->triesLeft;
 
-	QByteArray request;
-	if (!sendRequest(request))
+	QByteArray request = createSendRequest();
+	if (request.isEmpty())
 	{
 		refreshStops(Server::RESPONSE_BAD);
 		return false;

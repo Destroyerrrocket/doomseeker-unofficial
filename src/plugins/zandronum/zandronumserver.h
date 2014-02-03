@@ -182,10 +182,9 @@ class ZandronumServer : public Server
 
 		QString			testingArchive;
 
-		static unsigned int	millisecondTime();
-
-		Response		readRequest(QByteArray &data);
-		bool			sendRequest(QByteArray &data);
+		QByteArray createSendRequest();
+		static unsigned int millisecondTime();
+		Response readRequest(QByteArray &data);
 };
 
 class ZandronumRConProtocol : public RConProtocol

@@ -24,6 +24,9 @@
 #ifndef __SERVER_H__
 #define __SERVER_H__
 
+#include "serverapi/polymorphism.h"
+#include "global.h"
+
 #include <QColor>
 #include <QList>
 #include <QObject>
@@ -34,8 +37,6 @@
 #include <QPixmap>
 #include <QTime>
 #include <QUdpSocket>
-
-#include "global.h"
 
 class DMFlags;
 class EnginePlugin;
@@ -275,19 +276,22 @@ class MAIN_EXPORT Server : public QObject
 
 	protected:
 		/**
-		 * Reads response data.
+		 * @brief <b>[Pure Virtual]</b> Reads response data.
+		 *
 		 * @return The resposne that should be emitted. Do NOT perform any
 		 *         signal emissions from within this functions. This is not
 		 *         thread safe and may lead to a crash.
 		 */
-		virtual Response readRequest(QByteArray &data)=0;
+		Response readRequest(QByteArray &data);
+		POLYMORPHIC_SETTER_DECLARE(Response, Server, readRequest, (QByteArray &data));
 
 		/**
-		 * Prepares challenge data.
-		 * @return true on success and RESPONSE_GOOD signal should be emitted,
-		 *         false otherwise.
+		 * @brief <b>[Pure Virtual]</b> Prepares challenge data.
+		 *
+		 * @return A prepared packet. Return empty buffer to signal error.
 		 */
-		virtual bool sendRequest(QByteArray &data)=0;
+		QByteArray createSendRequest();
+		POLYMORPHIC_SETTER_DECLARE(QByteArray, Server, createSendRequest, ());
 
 		void addWad(const QString& wad);
 		void clearWads();
@@ -325,6 +329,9 @@ class MAIN_EXPORT Server : public QObject
 		 * Wrapper function to allow refresher to emit the updated signal.
 		 */
 		void emitUpdated(int response) { emit updated(this, response); }
+
+		QByteArray createSendRequest_default();
+		Response readRequest_default(QByteArray &data);
 
 		void setDmFlags(const DMFlags& dmFlags);
 		void setResponse(Response response);

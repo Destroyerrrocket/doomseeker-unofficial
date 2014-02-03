@@ -47,8 +47,8 @@ class ChocolateDoomServer : public Server
 		unsigned int	gameMission;
 		QString			description;
 
-		Response		readRequest(QByteArray &data);
-		bool			sendRequest(QByteArray &data);
+		QByteArray createSendRequest();
+		Response readRequest(QByteArray &data);
 };
 
 #endif /* __CHOCOLATEDOOMSERVER_H__ */

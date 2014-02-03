@@ -32,9 +32,11 @@
 #define NET_PACKET_TYPE_QUERY			0,13
 #define NET_PACKET_TYPE_QUERY_RESPONSE	14
 
-ChocolateDoomServer::ChocolateDoomServer(const QHostAddress &address, unsigned short port) : Server(address, port),
-	serverState(0), game(0), gameMission(0)
+ChocolateDoomServer::ChocolateDoomServer(const QHostAddress &address, unsigned short port)
+: Server(address, port), serverState(0), game(0), gameMission(0)
 {
+	set_createSendRequest(&ChocolateDoomServer::createSendRequest);
+	set_readRequest(&ChocolateDoomServer::readRequest);
 }
 
 GameHost* ChocolateDoomServer::gameHost()
@@ -117,10 +119,9 @@ Server::Response ChocolateDoomServer::readRequest(QByteArray &data)
 	return RESPONSE_GOOD;
 }
 
-bool ChocolateDoomServer::sendRequest(QByteArray &data)
+QByteArray ChocolateDoomServer::createSendRequest()
 {
 	char challenge[2] = { NET_PACKET_TYPE_QUERY };
-	const QByteArray packet(challenge, 2);
-	data.append(packet);
-	return true;
+	QByteArray packet(challenge, 2);
+	return packet;
 }

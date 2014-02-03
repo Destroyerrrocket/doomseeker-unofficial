@@ -36,6 +36,9 @@
 VavoomServer::VavoomServer(const QHostAddress &address, unsigned short port)
 : Server(address, port)
 {
+	set_readRequest(&VavoomServer::readRequest);
+	set_createSendRequest(&VavoomServer::createSendRequest);
+
 	GameMode unknownMode = (*VavoomGameInfo::gameModes())[VavoomGameInfo::MODE_UNKNOWN];
 	setGameMode(unknownMode);
 }
@@ -114,12 +117,11 @@ Server::Response VavoomServer::readRequest(QByteArray &data)
 	return RESPONSE_GOOD;
 }
 
-bool VavoomServer::sendRequest(QByteArray &data)
+QByteArray VavoomServer::createSendRequest()
 {
 	// This construction and cast to (char*) removes warnings from MSVC.
 	const unsigned char challenge[11] = { NETPACKET_CTL, CCREQ_SERVER_INFO, 6, 'V','A','V','O','O','M', 0, NET_PROTOCOL_VERSION };
 
-	const QByteArray challengeByteArray((char*)challenge, 11);
-	data.append(challengeByteArray);
-	return true;
+	QByteArray challengeByteArray((char*)challenge, 11);
+	return challengeByteArray;
 }

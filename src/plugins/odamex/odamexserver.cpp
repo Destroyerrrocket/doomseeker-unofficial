@@ -49,9 +49,11 @@
 #define SPECTATOR_INFO		0x01020304
 #define EXTRA_INFO			0x01020305
 
-OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port) : Server(address, port),
-	protocol(0)
+OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port)
+: Server(address, port), protocol(0)
 {
+	set_readRequest(&OdamexServer::readRequest);
+	set_createSendRequest(&OdamexServer::createSendRequest);
 }
 
 GameHost* OdamexServer::gameHost() const
@@ -207,12 +209,11 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 	return RESPONSE_GOOD;
 }
 
-bool OdamexServer::sendRequest(QByteArray &data)
+QByteArray OdamexServer::createSendRequest()
 {
 	// This construction and cast to (char*) removes warnings from MSVC.
 	const unsigned char challenge[] = {SERVER_CHALLENGE};
 
-	const QByteArray challengeByteArray((char*)challenge, 4);
-	data.append(challengeByteArray);
-	return true;
+	QByteArray challengeByteArray((char*)challenge, 4);
+	return challengeByteArray;
 }
