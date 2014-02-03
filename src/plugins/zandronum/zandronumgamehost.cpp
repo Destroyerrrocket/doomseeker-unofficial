@@ -31,10 +31,14 @@ ZandronumGameHost::ZandronumGameHost(const ZandronumServer* server)
 {
 	this->server = server;
 	setArgForServerLaunch("-host");
+
+	set_hostDMFlags(&ZandronumGameHost::hostDMFlags);
 }
 
-void ZandronumGameHost::hostDMFlags(QStringList& args, const DMFlags& dmFlags) const
+void ZandronumGameHost::hostDMFlags()
 {
+	QStringList& args = cmdLine()->args;
+	DMFlags dmFlags = hostInfo().dmFlags;
 	const QString argNames[] = { "+dmflags", "+dmflags2", "+compatflags" };
 	for (int i = 0; i < qMin(dmFlags.size(), 3); ++i)
 	{
@@ -92,7 +96,7 @@ void ZandronumGameHost::hostProperties(QStringList& args) const
 			args << "+addmap" << map;
 		}
 	}
-	
+
 	args << "+sv_maprotation" << QString::number(
 		static_cast<int>(!mapsList.isEmpty()));
 	args << "+sv_randommaprotation" << QString::number(

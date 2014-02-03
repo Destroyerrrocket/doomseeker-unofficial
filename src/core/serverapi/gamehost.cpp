@@ -34,6 +34,7 @@
 #include "log.h"
 #include "main.h"
 #include "strings.h"
+#include <cassert>
 #include <QDateTime>
 #include <QStringList>
 
@@ -50,6 +51,12 @@ class GameHost::PrivData
 		CommandLineInfo* currentCmdLine;
 		const HostInfo* currentHostInfo;
 		const Server* server;
+
+		Message (GameHost::*hostAppendIwad)();
+		Message (GameHost::*hostAppendPwads)();
+		Message (GameHost::*hostGetBinary)(bool bOfflinePlay);
+		Message (GameHost::*hostGetWorkingDirectory)(bool bOfflinePlay);
+		void (GameHost::*hostDMFlags)();
 };
 
 GameHost::GameHost(const Server* server)
@@ -63,12 +70,24 @@ GameHost::GameHost(const Server* server)
 	d->server = server;
 	d->currentCmdLine = NULL;
 	d->currentHostInfo = NULL;
+
+	set_hostAppendIwad(&GameHost::hostAppendIwad_default);
+	set_hostAppendPwads(&GameHost::hostAppendPwads_default);
+	set_hostGetBinary(&GameHost::hostGetBinary_default);
+	set_hostGetWorkingDirectory(&GameHost::hostGetWorkingDirectory_default);
+	set_hostDMFlags(&GameHost::hostDMFlags_default);
 }
 
 GameHost::~GameHost()
 {
 	delete d;
 }
+
+POLYMORPHIC_DEFINE(Message, GameHost, hostAppendIwad, (), ());
+POLYMORPHIC_DEFINE(Message, GameHost, hostAppendPwads, (), ());
+POLYMORPHIC_DEFINE(Message, GameHost, hostGetBinary, (bool bOfflinePlay), (bOfflinePlay));
+POLYMORPHIC_DEFINE(Message, GameHost, hostGetWorkingDirectory, (bool bOfflinePlay), (bOfflinePlay));
+POLYMORPHIC_DEFINE(void, GameHost, hostDMFlags, (), ());
 
 const QString& GameHost::argForIwadLoading() const
 {
@@ -98,6 +117,11 @@ const QString& GameHost::argForDemoRecord() const
 const QString& GameHost::argForServerLaunch() const
 {
 	return d->argServerLaunch;
+}
+
+CommandLineInfo* GameHost::cmdLine()
+{
+	return d->currentCmdLine;
 }
 
 Message GameHost::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cmdLine, HostMode mode)
@@ -156,7 +180,7 @@ Message GameHost::createHostCommandLine(const HostInfo& hostInfo, CommandLineInf
 		cmdLine.args << hostInfo.demoPath;
 	}
 
-	hostDMFlags(cmdLine.args, hostInfo.dmFlags);
+	hostDMFlags();
 	hostProperties(cmdLine.args);
 	cmdLine.args.append(hostInfo.customParameters);
 
@@ -182,7 +206,7 @@ Message GameHost::host(const HostInfo& hostInfo, HostMode mode)
 	return runExecutable(cmdLine, WRAP_IN_SSS_CONSOLE);
 }
 
-Message GameHost::hostAppendIwad()
+Message GameHost::hostAppendIwad_default()
 {
 	const QString RESULT_CAPTION = tr("Doomseeker - host - appending IWAD");
 	const QString& iwadPath = d->currentHostInfo->iwadPath;
@@ -208,7 +232,7 @@ Message GameHost::hostAppendIwad()
 	return message;
 }
 
-Message GameHost::hostAppendPwads()
+Message GameHost::hostAppendPwads_default()
 {
 	const QString RESULT_CAPTION = tr("Doomseeker - host - appending PWADs");
 	const QStringList& pwadsPaths = d->currentHostInfo->pwadsPaths;
@@ -236,7 +260,7 @@ Message GameHost::hostAppendPwads()
 	return message;
 }
 
-Message GameHost::hostGetBinary(bool bOfflinePlay)
+Message GameHost::hostGetBinary_default(bool bOfflinePlay)
 {
 	const QString RESULT_CAPTION = tr("Doomseeker - host - getting executable");
 	QString executablePath = d->currentHostInfo->executablePath;
@@ -275,14 +299,14 @@ Message GameHost::hostGetBinary(bool bOfflinePlay)
 	return Message();
 }
 
-Message GameHost::hostGetWorkingDirectory(bool bOfflinePlay)
+Message GameHost::hostGetWorkingDirectory_default(bool bOfflinePlay)
 {
 	const QString RESULT_CAPTION = tr("Doomseeker - host - getting working directory");
 	QString error;
 	QString serverWorkingDirPath;
 
 	Message message;
-	
+
 	// First, we should try to extract the working dir from plugin.
 	// [Zalewa]:
 	// A plugin may insist on doing that for a reason that is currently
@@ -297,14 +321,14 @@ Message GameHost::hostGetWorkingDirectory(bool bOfflinePlay)
 	{
 		workingDirFromPlugin = exeRetriever.serverWorkingDir(message);
 	}
-	
+
 	// Check if all went well on the plugin side.
 	if (!message.isIgnore())
 	{
 		// Something's gone wrong. Report the error.
 		return message;
 	}
-	
+
 	if (workingDirFromPlugin.isEmpty())
 	{
 		// Assume that working directory is the same as executable's directory.
@@ -318,7 +342,7 @@ Message GameHost::hostGetWorkingDirectory(bool bOfflinePlay)
 		// Plugin returned the directory. Use that.
 		serverWorkingDirPath = workingDirFromPlugin;
 	}
-	
+
 	QDir serverWorkingDir(serverWorkingDirPath);
 
 	if (serverWorkingDirPath.isEmpty())
@@ -336,6 +360,12 @@ Message GameHost::hostGetWorkingDirectory(bool bOfflinePlay)
 
 	d->currentCmdLine->applicationDir = serverWorkingDir;
 	return message;
+}
+
+const HostInfo& GameHost::hostInfo()
+{
+	assert(d->currentHostInfo != NULL);
+	return *d->currentHostInfo;
 }
 
 Message GameHost::runExecutable(const CommandLineInfo& cli, bool bWrapInStandardServerConsole)

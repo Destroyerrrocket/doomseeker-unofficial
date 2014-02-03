@@ -24,6 +24,7 @@
 #define idABA35264_C99B_49FA_BEDEDB4F5978C7EC
 
 #include "global.h"
+#include "serverapi/polymorphism.h"
 #include <QObject>
 #include <QStringList>
 
@@ -39,6 +40,7 @@ class MAIN_EXPORT GameHost : public QObject
 
 	public:
 		enum HostMode
+
 		{
 			HOST,
 			OFFLINE,
@@ -118,18 +120,30 @@ class MAIN_EXPORT GameHost : public QObject
 		 */
 		const QString& argForServerLaunch() const;
 
-		virtual Message hostAppendIwad();
-		virtual Message hostAppendPwads();
-		virtual Message hostGetBinary(bool bOfflinePlay);
-		virtual Message hostGetWorkingDirectory(bool bOfflinePlay);
+		CommandLineInfo* cmdLine();
+
+		POLYMORPHIC_SETTER_DECLARE(Message, GameHost, hostAppendIwad, ());
+		POLYMORPHIC_METHOD_DECLARE(Message, hostAppendIwad, ());
+
+		POLYMORPHIC_SETTER_DECLARE(Message, GameHost, hostAppendPwads, ());
+		POLYMORPHIC_METHOD_DECLARE(Message, hostAppendPwads, ());
+
+		POLYMORPHIC_SETTER_DECLARE(Message, GameHost, hostGetBinary, (bool bOfflinePlay));
+		POLYMORPHIC_METHOD_DECLARE(Message, hostGetBinary, (bool bOfflinePlay));
+
+		POLYMORPHIC_SETTER_DECLARE(Message, GameHost, hostGetWorkingDirectory, (bool bOfflinePlay));
+		POLYMORPHIC_METHOD_DECLARE(Message, hostGetWorkingDirectory, (bool bOfflinePlay));
 
 		/**
+		 * @fn hostDMFlags
+		 * @memberof GameHost
 		 * @brief Creates engine specific command line parameters out of passed
-		 * dmFlags list.
+		 *        DM flags list.
 		 *
 		 * Default behavior does nothing.
 		 */
-		virtual void hostDMFlags(QStringList& args, const DMFlags& dmFlags) const {};
+		POLYMORPHIC_SETTER_DECLARE(void, GameHost, hostDMFlags, ());
+		POLYMORPHIC_METHOD_DECLARE(void, hostDMFlags, ());
 
 		/**
 		 * @brief Creates engine specific command line parameters out of
@@ -140,6 +154,8 @@ class MAIN_EXPORT GameHost : public QObject
 		 * @see createHostCommandLine() - cvars parameter.
 		 */
 		virtual void hostProperties(QStringList& args) const {};
+
+		const HostInfo& hostInfo();
 
 		void setArgForIwadLoading(const QString& arg);
 		void setArgForPort(const QString& arg);
@@ -153,6 +169,12 @@ class MAIN_EXPORT GameHost : public QObject
 		PrivData* d;
 
 		Q_DISABLE_COPY(GameHost);
+
+		Message hostAppendIwad_default();
+		Message hostAppendPwads_default();
+		Message hostGetBinary_default(bool bOfflinePlay);
+		Message hostGetWorkingDirectory_default(bool bOfflinePlay);
+		void hostDMFlags_default() {};
 };
 
 #endif
