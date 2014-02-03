@@ -99,8 +99,39 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 	{
 		QString cvarName = in.readRawUntilByte('\0');
 		CHECK_POS;
-		
-		QString cvarValue = in.readRawUntilByte('\0');
+
+		enum CVarType
+		{
+			CVAR_BOOL = 1,
+			CVAR_INT8,
+			CVAR_INT16,
+			CVAR_INT32,
+			CVAR_FLOAT,
+			CVAR_STRING
+		};
+		CVarType type = CVAR_STRING;
+		if(protocolVersion >= 5)
+			type = static_cast<CVarType>(in.readQUInt8());
+
+		QString cvarValue;
+		switch(type)
+		{
+			case CVAR_BOOL:
+				cvarValue = "1";
+				break;
+			case CVAR_INT8:
+				cvarValue = QString("%1").arg(in.readQInt8());
+				break;
+			case CVAR_INT16:
+				cvarValue = QString("%1").arg(in.readQInt16());
+				break;
+			case CVAR_INT32:
+				cvarValue = QString("%1").arg(in.readQInt32());
+				break;
+			default:
+				cvarValue = in.readRawUntilByte('\0');
+				break;
+		}
 		CHECK_POS;
 
 		if(cvarName == "sv_email")
@@ -123,8 +154,17 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 			webSite = cvarValue;
 	}
 
-	QString passwordHash = in.readRawUntilByte('\0');
-	locked = !passwordHash.isEmpty();
+	if(protocolVersion >= 4)
+	{
+		short hashLength = in.readQUInt8();
+		in.skipRawData(hashLength);
+		locked = hashLength > 0;
+	}
+	else
+	{
+		QString passwordHash = in.readRawUntilByte('\0');
+		locked = !passwordHash.isEmpty();
+	}
 	CHECK_POS;
 
 	mapName = in.readRawUntilByte('\0');
@@ -132,13 +172,16 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 
 	serverTimeLeft = in.readQUInt16();
 
-	short teamCount = in.readQUInt8();
-	while(teamCount-- > 0)
+	if(protocolVersion < 5 || currentGameMode.isTeamGame())
 	{
-		CHECK_POS;
-	
-		QString teamName = in.readRawUntilByte('\0');
-		in.skipRawData(6);
+		short teamCount = in.readQUInt8();
+		while(teamCount-- > 0)
+		{
+			CHECK_POS;
+		
+			QString teamName = in.readRawUntilByte('\0');
+			in.skipRawData(6);
+		}
 	}
 
 	dehPatches.clear();
@@ -164,7 +207,13 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 			iwad = wad;
 		
 		CHECK_POS;
-		QString hash = in.readRawUntilByte('\0');
+		if(protocolVersion >= 4)
+		{
+			short hashLength = in.readQUInt8();
+			in.skipRawData(hashLength);
+		}
+		else
+			in.readRawUntilByte('\0');
 	}
 
 	players->clear();
@@ -183,7 +232,9 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 		}
 
 		CHECK_POS_OFFSET(12);
-		unsigned short teamIndex = in.readQUInt8();
+		unsigned short teamIndex = Player::TEAM_NONE;
+		if(protocolVersion < 5 || currentGameMode.isTeamGame())
+			teamIndex = in.readQUInt8();
 		unsigned short ping = in.readQUInt16();
 		in.skipRawData(2);
 		bool spectator = in.readQUInt8();
@@ -203,7 +254,7 @@ bool OdamexServer::sendRequest(QByteArray &data)
 	// This construction and cast to (char*) removes warnings from MSVC.
 	const unsigned char challenge[] = {SERVER_CHALLENGE};
 	
-	const QByteArray challengeByteArray((char*)challenge, 4);
+	const QByteArray challengeByteArray((char*)challenge, 8);
 	data.append(challengeByteArray);
 	return true;
 }
