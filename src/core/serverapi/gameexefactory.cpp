@@ -28,17 +28,19 @@
 class GameExeFactory::PrivData
 {
 public:
-	ExeRetriever* offline;
 	EnginePlugin* plugin;
-	ExeRetriever* server;
+
+	ExeFile* (GameExeFactory::*offline)();
+	ExeFile* (GameExeFactory::*server)();
 };
 
 GameExeFactory::GameExeFactory(EnginePlugin* plugin)
 {
 	d = new PrivData();
 	d->plugin = plugin;
-	d->offline = NULL;
-	d->server = NULL;
+
+	set_offline(&GameExeFactory::offline_default);
+	set_server(&GameExeFactory::server_default);
 }
 
 GameExeFactory::~GameExeFactory()
@@ -46,58 +48,35 @@ GameExeFactory::~GameExeFactory()
 	delete d;
 }
 
+POLYMORPHIC_DEFINE(ExeFile*, GameExeFactory, offline, (), ());
+POLYMORPHIC_DEFINE(ExeFile*, GameExeFactory, server, (), ());
+
 EnginePlugin* GameExeFactory::plugin()
 {
 	return d->plugin;
 }
 
-ExeFile* GameExeFactory::offline()
+ExeFile* GameExeFactory::offline_default()
 {
-	ExeFile* f = NULL;
-	if (d->offline != NULL)
+	ExeFile *f = new ExeFile();
+	f->setProgramName(d->plugin->data()->name);
+	f->setExeTypeName(tr("offline"));
+	f->setConfigKey("BinaryPath");
+	return f;
+}
+
+ExeFile* GameExeFactory::server_default()
+{
+	ExeFile *f = new ExeFile();
+	f->setProgramName(d->plugin->data()->name);
+	f->setExeTypeName(tr("server"));
+	if (d->plugin->data()->clientOnly)
 	{
-		f = d->offline->get();
-	}
-	else
-	{
-		f = new ExeFile();
-		f->setProgramName(d->plugin->data()->name);
-		f->setExeTypeName(tr("offline"));
 		f->setConfigKey("BinaryPath");
 	}
-	return f;
-}
-
-ExeFile* GameExeFactory::server()
-{
-	ExeFile* f = NULL;
-	if (d->server != NULL)
-	{
-		f = d->server->get();
-	}
 	else
 	{
-		f = new ExeFile();
-		f->setProgramName(d->plugin->data()->name);
-		f->setExeTypeName(tr("server"));
-		if (d->plugin->data()->clientOnly)
-		{
-			f->setConfigKey("BinaryPath");
-		}
-		else
-		{
-			f->setConfigKey("ServerBinaryPath");
-		}
+		f->setConfigKey("ServerBinaryPath");
 	}
 	return f;
-}
-
-void GameExeFactory::setOfflineExeRetriever(ExeRetriever* retriever)
-{
-	d->offline = retriever;
-}
-
-void GameExeFactory::setServerExeRetriever(ExeRetriever* retriever)
-{
-	d->server = retriever;
 }
