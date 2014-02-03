@@ -27,7 +27,6 @@
 #include <QNetworkReply>
 
 #include <serverapi/exefile.h>
-#include <serverapi/gameexefactory.h>
 
 class EnginePlugin;
 class ZandronumServer;
