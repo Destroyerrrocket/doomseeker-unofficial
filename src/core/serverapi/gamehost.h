@@ -123,27 +123,25 @@ class MAIN_EXPORT GameHost : public QObject
 		CommandLineInfo* cmdLine();
 
 		POLYMORPHIC_SETTER_DECLARE(Message, GameHost, hostAppendIwad, ());
-		POLYMORPHIC_METHOD_DECLARE(Message, hostAppendIwad, ());
+		Message hostAppendIwad();
 
 		POLYMORPHIC_SETTER_DECLARE(Message, GameHost, hostAppendPwads, ());
-		POLYMORPHIC_METHOD_DECLARE(Message, hostAppendPwads, ());
+		Message hostAppendPwads();
 
 		POLYMORPHIC_SETTER_DECLARE(Message, GameHost, hostGetBinary, (bool bOfflinePlay));
-		POLYMORPHIC_METHOD_DECLARE(Message, hostGetBinary, (bool bOfflinePlay));
+		Message hostGetBinary(bool bOfflinePlay);
 
 		POLYMORPHIC_SETTER_DECLARE(Message, GameHost, hostGetWorkingDirectory, (bool bOfflinePlay));
-		POLYMORPHIC_METHOD_DECLARE(Message, hostGetWorkingDirectory, (bool bOfflinePlay));
+		Message hostGetWorkingDirectory(bool bOfflinePlay);
 
 		/**
-		 * @fn hostDMFlags
-		 * @memberof GameHost
-		 * @brief Creates engine specific command line parameters out of passed
-		 *        DM flags list.
+		 * @brief @b [Virtual] Creates engine specific command line parameters
+		 *        out of passed DM flags list.
 		 *
 		 * Default behavior does nothing.
 		 */
+		void hostDMFlags();
 		POLYMORPHIC_SETTER_DECLARE(void, GameHost, hostDMFlags, ());
-		POLYMORPHIC_METHOD_DECLARE(void, hostDMFlags, ());
 
 		/**
 		 * @brief Creates engine specific command line parameters out of

@@ -58,31 +58,28 @@ class MAIN_EXPORT GameExeFactory : public QObject
 		virtual ~GameExeFactory();
 
 		/**
-		 * @fn offline
-		 * @memberof GameExeFactory
-		 * @brief Instantiates retriever for offline game executable.
+		 * @brief @b [Virtual] Instantiates retriever for offline game
+		 *        executable.
 		 *
 		 * Default behavior extracts path stored in "BinaryPath" setting
 		 * of plugin's config.
 		 */
+		ExeFile* offline();
 		POLYMORPHIC_SETTER_DECLARE(ExeFile*, GameExeFactory, offline, ());
-		POLYMORPHIC_METHOD_DECLARE(ExeFile*, offline, ());
 		/**
 		 * @brief Gets EnginePlugin associated with this object.
 		 */
 		EnginePlugin* plugin();
 		/**
-		 * @fn server
-		 * @memberof GameExeFactory
-		 * @brief Instantiates retriever for server executable.
+		 * @brief @b [Virtual] Instantiates retriever for server executable.
 		 *
 		 * Default behavior extracts path stored either in "BinaryPath"
 		 * or "ServerBinaryPath" setting of plugin's config. This behavior
 		 * depends on whether plugin declares that a separate executable
 		 * should be used for hosting servers.
 		 */
+		ExeFile* server();
 		POLYMORPHIC_SETTER_DECLARE(ExeFile*, GameExeFactory, server, ());
-		POLYMORPHIC_METHOD_DECLARE(ExeFile*, server, ());
 
 	private:
 		class PrivData;

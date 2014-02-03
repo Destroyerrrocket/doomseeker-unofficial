@@ -30,9 +30,6 @@
 	} \
 	void set_##name(ret (self::*f)args); \
 
-#define POLYMORPHIC_METHOD_DECLARE(ret, name, args) \
-	ret name args; \
-
 #define POLYMORPHIC_DEFINE(ret, self, name, args, callargs) \
 	void self::set_##name(ret (self::*f)args) \
 	{ \

@@ -84,25 +84,22 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		void addDemoRecordCommand();
 
 		/**
-		 * @fn addExtra
-		 * @memberof GameClientRunner
 		 * @brief @b [Virtual] Plugins can easily add plugin-specific arguments
 		 *        here.
 		 *
 		 * This method is called at the end of "add stuff" chain.
 		 */
+		void addExtra();
 		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, addExtra, ());
-		POLYMORPHIC_METHOD_DECLARE(void, addExtra, ());
 
 		void addGamePaths();
 		/**
-		 * @fn addIwad
-		 * @memberof GameClientRunner
 		 * @brief @b [Virtual] Plugins can replace IWAD discovery mechanism
 		 *        and generation of relevant executable parameters here.
 		 */
+		void addIwad();
 		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, addIwad, ());
-		POLYMORPHIC_METHOD_DECLARE(void, addIwad, ());
+
 		void addWads();
 		void addPwads();
 		void addPassword();
@@ -162,8 +159,6 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		const QString& argForDemoRecord() const;
 
 		/**
-		 * @fn createCommandLineArguments
-		 * @memberof GameClientRunner
 		 * @brief @b [Virtual] Spawns entire command line for client executable
 		 *        launch.
 		 *
@@ -173,8 +168,8 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 * writing the generation process from scratch or reusing the
 		 * "add*" methods where applicable.
 		 */
+		void createCommandLineArguments();
 		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, createCommandLineArguments, ());
-		POLYMORPHIC_METHOD_DECLARE(void, createCommandLineArguments, ());
 
 		/**
 		 * @brief Password for server connection.
@@ -199,13 +194,11 @@ class MAIN_EXPORT GameClientRunner : public QObject
 
 		ServerConnectParams& serverConnectParams();
 		/**
-		 * @fn setupPathFinder
-		 * @memberof GameClientRunner
 		 * @brief @b [Virtual] Sets up PathFinder that is used to search for
 		 *        WADs, or other files if necessary.
 		 */
+		void setupPathFinder();
 		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, setupPathFinder, ());
-		POLYMORPHIC_METHOD_DECLARE(void, setupPathFinder, ());
 
 
 		void setArgForConnect(const QString& arg);
