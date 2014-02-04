@@ -158,7 +158,7 @@ bool ZandronumMasterClient::readMasterResponse(QByteArray &data)
 				quint16 port = in.readQUInt16();
 				ZandronumServer *server = new ZandronumServer(QHostAddress(ip), 
 					port);
-				servers.push_back(server);
+				servers() << server;
 			}
 			
 			RETURN_BAD_IF_NOT_ENOUGH_DATA(1);

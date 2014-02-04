@@ -20,9 +20,9 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
+#include "masterclient.h"
 
 #include "log.h"
-#include "masterserver/masterclient.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
@@ -37,24 +37,52 @@
 
 QUdpSocket* MasterClient::pGlobalUdpSocket = NULL;
 
-MasterClient::MasterClient() : QObject(), cache(NULL)
+class MasterClient::PrivData
 {
+	public:
+		QHostAddress address;
+
+		bool timeouted;
+		bool enabled;
+		unsigned short port;
+		QList<Server*> servers;
+
+		QFile *cache;
+};
+
+MasterClient::MasterClient()
+{
+	d = new PrivData();
+	d->cache = NULL;
+	d->timeouted = false;
+	d->enabled = true;
+	d->port = 0;
 }
 
 MasterClient::~MasterClient()
 {
 	emptyServerList();
 	resetPacketCaching();
+	if (d->cache != NULL)
+	{
+		delete d->cache;
+	}
+	delete d;
+}
+
+bool MasterClient::isAddressSame(const QHostAddress &address, unsigned short port) const
+{
+	return (d->address == address && d->port == port);
 }
 
 void MasterClient::emptyServerList()
 {
-	for(int i = 0;i < servers.size();i++)
+	foreach (Server* server, d->servers)
 	{
-		servers[i]->disconnect();
-		servers[i]->setToDelete(true);
+		server->disconnect();
+		server->setToDelete(true);
 	}
-	servers.clear();
+	d->servers.clear();
 }
 
 QString MasterClient::engineName() const
@@ -63,19 +91,29 @@ QString MasterClient::engineName() const
 	{
 		return "";
 	}
-
 	return plugin()->data()->name;
 }
 
-bool MasterClient::hasServer(const Server* server)
+bool MasterClient::hasServer(const Server *server) const
 {
-	for (int i = 0; i < servers.count(); ++i)
+	foreach (const Server* candidate, d->servers)
 	{
-		if (server == servers[i])
+		if (candidate == server)
+		{
 			return true;
+		}
 	}
-
 	return false;
+}
+
+bool MasterClient::isEnabled() const
+{
+	return d->enabled;
+}
+
+bool MasterClient::isTimeouted() const
+{
+	return d->timeouted;
 }
 
 void MasterClient::notifyBanned()
@@ -87,7 +125,8 @@ void MasterClient::notifyBanned()
 
 void MasterClient::notifyDelay()
 {
-	emit message(engineName(), tr("Could not fetch a new server list from the master because not enough time has past."), true);
+	emit message(engineName(), tr("Could not fetch a new server list from the "
+		"master because not enough time has past."), true);
 }
 
 void MasterClient::notifyError()
@@ -97,67 +136,83 @@ void MasterClient::notifyError()
 
 void MasterClient::notifyUpdate()
 {
-	emit message(engineName(), tr("Could not fetch a new server list.  The protocol you are using is too old.  An update may be available."), true);
+	emit message(engineName(),
+		tr("Could not fetch a new server list. The protocol you are using is too old. "
+		"An update may be available."), true);
 }
 
 int MasterClient::numPlayers() const
 {
 	int players = 0;
-	foreach(Server* server, servers)
+	foreach(Server* server, d->servers)
 	{
 		if (server != NULL)
 		{
 			players += server->players()->numClients();
 		}
 	}
-
 	return players;
+}
+
+int MasterClient::numServers() const
+{
+	return d->servers.size();
+}
+
+Server* MasterClient::operator[](int index) const
+{
+	return d->servers[index];
 }
 
 bool MasterClient::preparePacketCache(bool write)
 {
-	if(cache == NULL || cache->isWritable() != write)
+	if(d->cache == NULL || d->cache->isWritable() != write)
 	{
 		if(plugin() == NULL)
-			return false;
-
-		if(cache == NULL)
 		{
-			QString cacheFile(Main::dataPaths->programsDataDirectoryPath() + "/" + QString(plugin()->data()->name).replace(' ', ""));
-			cache = new QFile(cacheFile);
+			return false;
+		}
+
+		if(d->cache == NULL)
+		{
+			QString cacheFile = Main::dataPaths->programsDataDirectoryPath() + "/"
+				+ QString(plugin()->data()->name).replace(' ', "");
+			d->cache = new QFile(cacheFile);
 		}
 		else
-			cache->close();
+		{
+			d->cache->close();
+		}
 
-		if(!cache->open(write ? QIODevice::WriteOnly|QIODevice::Truncate : QIODevice::ReadOnly))
+		if(!d->cache->open(write ? QIODevice::WriteOnly|QIODevice::Truncate : QIODevice::ReadOnly))
 		{
 			resetPacketCaching();
 			return false;
 		}
 	}
-	return cache != NULL;
+	return d->cache != NULL;
 }
 
 void MasterClient::pushPacketToCache(QByteArray &data)
 {
 	if(!preparePacketCache(true))
+	{
 		return;
+	}
 
-	QDataStream strm(cache);
+	QDataStream strm(d->cache);
 	strm << static_cast<quint16>(data.size());
 	strm << data;
 }
 
 bool MasterClient::readMasterResponse(QHostAddress& address, unsigned short port, QByteArray &data)
 {
-	if (isAddressDataCorrect(address, port))
+	if (isAddressSame(address, port))
 	{
 		pushPacketToCache(data);
 		if(readMasterResponse(data))
 			return true;
-		return false;
 	}
-
 	return false;
 }
 
@@ -171,7 +226,7 @@ void MasterClient::readPacketCache()
 	}
 
 	gLog << tr("Reloading master server results from cache for %1!").arg(plugin()->data()->name);
-	QDataStream strm(cache);
+	QDataStream strm(d->cache);
 	while(!strm.atEnd())
 	{
 		quint16 size;
@@ -193,20 +248,20 @@ void MasterClient::readPacketCache()
 
 void MasterClient::resetPacketCaching()
 {
-	if(cache != NULL)
+	if(d->cache != NULL)
 	{
-		delete cache;
-		cache = NULL;
+		delete d->cache;
+		d->cache = NULL;
 	}
 }
 
 void MasterClient::refresh()
 {
-	bTimeouted = false;
+	setTimeouted(false);
 	emptyServerList();
 	resetPacketCaching();
 
-	if(address.isNull())
+	if(d->address.isNull())
 		return;
 
 	// Make request
@@ -215,21 +270,46 @@ void MasterClient::refresh()
 	{
 		return;
 	}
-	pGlobalUdpSocket->writeDatagram(request, address, port);
+	pGlobalUdpSocket->writeDatagram(request, d->address, d->port);
+}
+
+QList<Server*> &MasterClient::servers()
+{
+	return d->servers;
+}
+
+const QList<Server*> &MasterClient::servers() const
+{
+	return d->servers;
+}
+
+void MasterClient::setEnabled(bool b)
+{
+	d->enabled = b;
+}
+
+void MasterClient::setTimeouted(bool b)
+{
+	d->timeouted = b;
 }
 
 void MasterClient::timeoutRefresh()
 {
 	// Avoid timeouting more than once. This would cause errors.
-	if (!bTimeouted)
+	if (!isTimeouted())
 	{
-		bTimeouted = true;
+		setTimeouted(true);
 
-		emit message(tr("Master server timeout"), tr("Connection timeout (%1:%2).").arg(address.toString()).arg(port), true);
+		emit message(tr("Master server timeout"), tr("Connection timeout (%1:%2).")
+			.arg(d->address.toString()).arg(d->port), true);
 		readPacketCache();
 
 		timeoutRefreshEx();
 	}
+}
+
+void MasterClient::timeoutRefreshEx()
+{
 }
 
 void MasterClient::updateAddress()
@@ -242,14 +322,14 @@ void MasterClient::updateAddress()
 	if(info.addresses().size() == 0)
 		return;
 
-	this->address = info.addresses().first();
-	if(this->address.protocol() != QAbstractSocket::IPv4Protocol)
+	d->address = info.addresses().first();
+	if (d->address.protocol() != QAbstractSocket::IPv4Protocol)
 	{
 		foreach(const QHostAddress &addr, info.addresses())
 		{
 			if(addr.protocol() == QAbstractSocket::IPv4Protocol)
-				this->address = addr;
+				d->address = addr;
 		}
 	}
-	this->port = port;
+	d->port = port;
 }

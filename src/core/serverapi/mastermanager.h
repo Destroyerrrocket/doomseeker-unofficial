@@ -44,7 +44,7 @@ class MasterManager : public MasterClient
 		~MasterManager();
 
 		void								addMaster(MasterClient *master);
-		void								clearServersList() { servers.clear(); }
+		void								clearServersList() { servers().clear(); }
 		CustomServers*						customServs() { return customServers; }
 
 		int									numMasters() const { return masters.size(); }

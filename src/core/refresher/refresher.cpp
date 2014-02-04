@@ -199,7 +199,7 @@ bool Refresher::hasFreeServerRefreshSlots() const
 
 void Refresher::masterFinishedRefreshing(MasterClient* pMaster)
 {
-	const QList<Server*>& servers = pMaster->serverList();
+	const QList<Server*>& servers = pMaster->servers();
 	foreach (Server* pServer, servers)
 	{
 		registerServer(pServer);

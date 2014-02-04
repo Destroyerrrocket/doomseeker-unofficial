@@ -178,7 +178,7 @@ void DockBuddiesList::scan(const MasterClient *master)
 	}
 
 	buddies.clear(); //empty list
-	foreach(Server *server, masterClient->serverList())
+	foreach(Server *server, masterClient->servers())
 	{
 		for(int i = 0; i < server->players()->numClients(); ++i)
 		{

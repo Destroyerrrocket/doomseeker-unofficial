@@ -129,6 +129,6 @@ void CustomServers::setServers(const QList<CustomServerInfo>& csiList, QObject* 
 
 		connect(p, SIGNAL( updated(Server*, int) ), receiver, slotUpdated);
 		connect(p, SIGNAL( begunRefreshing(Server*) ), receiver, slotBegunRefreshing);
-		servers.append(p);
+		servers() << p;
 	}
 }

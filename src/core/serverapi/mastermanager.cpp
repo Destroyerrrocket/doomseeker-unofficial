@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------
 #include "mastermanager.h"
 
-#include "masterserver/masterclientsignalproxy.h"
+#include "serverapi/masterclientsignalproxy.h"
 #include "serverapi/message.h"
 #include "customservers.h"
 
@@ -36,7 +36,7 @@ MasterManager::MasterManager() : MasterClient()
 
 MasterManager::~MasterManager()
 {
-	servers.clear();
+	servers().clear();
 
 	for (int i = 0; i < mastersReceivers.size(); ++i)
 	{
@@ -73,10 +73,9 @@ void MasterManager::addMaster(MasterClient *master)
 
 void MasterManager::masterListUpdated(MasterClient* pSender)
 {
-	const QList<Server*>& serversFromMaster = pSender->serverList();
-	foreach(Server* pServer, serversFromMaster)
+	foreach(Server* pServer, pSender->servers())
 	{
-		servers.append(pServer);
+		servers().append(pServer);
 	}
 
 	emit listUpdatedForMaster(pSender);
@@ -92,7 +91,7 @@ bool MasterManager::readMasterResponse(QHostAddress& address, unsigned short por
 {
 	for (int i = 0; i < masters.size(); ++i)
 	{
-		if (masters[i]->isAddressDataCorrect(address, port))
+		if (masters[i]->isAddressSame(address, port))
 		{
 			masters[i]->pushPacketToCache(data);
 			if(masters[i]->readMasterResponse(data))
@@ -109,10 +108,10 @@ bool MasterManager::readMasterResponse(QHostAddress& address, unsigned short por
 
 void MasterManager::refresh()
 {
-	bTimeouted = false;
+	setTimeouted(false);
 
 	// Don't delete the servers yet!
-	servers.clear();
+	servers().clear();
 
 	for(int i = 0;i < masters.size();i++)
 	{

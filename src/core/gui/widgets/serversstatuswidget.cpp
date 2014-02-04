@@ -105,9 +105,9 @@ void ServersStatusWidget::registerServers()
 	numPlayers = 0;
 	numBots = 0;
 
-	if(serverList != NULL)
+	if (serverList != NULL)
 	{
-		foreach(Server *server, serverList->serverList())
+		foreach(Server *server, serverList->servers())
 		{
 			connect(server, SIGNAL(begunRefreshing(Server *)), this, SLOT(removeServer(Server *)), Qt::DirectConnection);
 			connect(server, SIGNAL(updated(Server *, int)), this, SLOT(addServer(Server *)), Qt::DirectConnection);

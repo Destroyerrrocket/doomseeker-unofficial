@@ -65,27 +65,38 @@ class MAIN_EXPORT MasterClient : public QObject
 		MasterClient();
 		virtual ~MasterClient();
 
-		bool hasServer(const Server*);
+		/**
+		 * @brief Extracts engine name from pluginInfo() if available.
+		 *
+		 * @return If pluginInfo() is NULL then this returns an empty string.
+		 */
+		QString engineName() const;
+
+		bool hasServer(const Server *server) const;
 
 		/**
 		 * @brief Returns true if the passed address:port is the same as this
 		 * master server's.
 		 */
-		bool isAddressDataCorrect(const QHostAddress &address, unsigned short port)
-		{
-			return (this->address == address && this->port == port);
-		}
+		bool isAddressSame(const QHostAddress &address, unsigned short port) const;
 
 		/**
 		 * Serves as an informative role for MasterManager.
 		 * If the master client is disabled, master manager will omit
 		 * it during the refresh.
 		 */
-		bool isEnabled() const { return enabled; }
-		bool isTimeouted() const { return bTimeouted; }
+		bool isEnabled() const;
+		/**
+		 * @brief Indicates that the server has timeouted recently.
+		 *
+		 * This is reset to false by refresh() and set to true by
+		 * timeoutRefresh(). If you reimplement refresh() please remember
+		 * to set this to false.
+		 */
+		bool isTimeouted() const;
 		int numPlayers() const;
-		int numServers() const { return servers.size(); }
-		Server *operator[] (int index) const { return servers[index]; }
+		int numServers() const;
+		Server *operator[] (int index) const;
 
 		/**
 		 * This is supposed to return the plugin this MasterClient belongs to.
@@ -116,8 +127,8 @@ class MAIN_EXPORT MasterClient : public QObject
 		 */
 		virtual bool readMasterResponse(QHostAddress& address, unsigned short port, QByteArray &data);
 
-		QList<Server*> &serverList() { return servers; }
-		const QList<Server*> &serverList() const { return servers; }
+		QList<Server*> &servers();
+		const QList<Server*> &servers() const;
 
 		void updateAddress();
 
@@ -132,7 +143,7 @@ class MAIN_EXPORT MasterClient : public QObject
 		/**
 		 * @see isEnabled()
 		 */
-		void setEnabled(bool b) { enabled = b; }
+		void setEnabled(bool b);
 
 		/**
 		 * @brief Times the refreshing process out.
@@ -174,33 +185,10 @@ class MAIN_EXPORT MasterClient : public QObject
 		void newServerBatchReceived(const QList<Server *> &servers);
 
 	protected:
-		QHostAddress address;
-
-		/**
-		 * @brief Indicates that the server has timeouted recently.
-		 *
-		 * This is reset to false by refresh() and set to true by
-		 * timeoutRefresh(). If you reimplement refresh() please remember
-		 * to set this to false.
-		 */
-		bool bTimeouted;
-		bool enabled;
-		unsigned short port;
-		QList<Server*> servers;
-
-		QFile *cache;
-
 		/**
 		 * Clears the server list.
 		 */
 		void emptyServerList();
-
-		/**
-		 * @brief Extracts engine name from pluginInfo() if available.
-		 *
-		 * @return If pluginInfo() is NULL then this returns an empty string.
-		 */
-		QString engineName() const;
 
 		/**
 		 * @brief Method that is supposed to produce the contents of server
@@ -237,10 +225,16 @@ class MAIN_EXPORT MasterClient : public QObject
 		bool preparePacketCache(bool write);
 		void readPacketCache();
 
+		void setTimeouted(bool b);
+
 		/**
 		 * @brief Reimplement this for clean up purposes.
 		 */
-		virtual void timeoutRefreshEx() {}
+		virtual void timeoutRefreshEx();
+
+	private:
+		class PrivData;
+		PrivData* d;
 };
 
 #endif /* __MASTERSERVER_H__ */
