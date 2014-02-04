@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------
 #include "odamexgameinfo.h"
 
-DMFlags			OdamexGameInfo::dmFlagsList;
+QList<DMFlagsSection> OdamexGameInfo::dmFlagsList;
 QList<GameMode> OdamexGameInfo::gameModesList;
 
 OdamexGameInfo* OdamexGameInfo::static_constructor = new OdamexGameInfo();
@@ -37,25 +37,23 @@ OdamexGameInfo::OdamexGameInfo()
 
 void OdamexGameInfo::initDMFlags()
 {
-	DMFlagsSection* pSection = new DMFlagsSection;
-	dmFlagsList << pSection;
+	DMFlagsSection section("DMFlags");
+	section << DMFlag( tr("Items respawn"),								0 );
+	section << DMFlag( tr("Weapons stay"),								1 );
+	section << DMFlag( tr("Friendly fire"),								2 );
+	section << DMFlag( tr("Allow exit"),								3 );
+	section << DMFlag( tr("Infinite ammo"),								4 );
+	section << DMFlag( tr("No monsters"),								5 );
+	section << DMFlag( tr("Monsters respawn"),							6 );
+	section << DMFlag( tr("Fast monsters"),								7 );
+	section << DMFlag( tr("Jumping allowed"),							8 );
+	section << DMFlag( tr("Freelook allowed"),							9 );
+	section << DMFlag( tr("Wad can be downloaded"),						10 );
+	section << DMFlag( tr("Server resets on empty"),					11 );
+	section << DMFlag( tr("Clean Maps"),								12 );
+	section << DMFlag( tr("Kill anyone who tries to leave the level"),	13 );
 
-	DMFlagsSection& section = *pSection;
-	section.name = tr("DMFlags");
-	section.flags << DMFlag( tr("Items respawn"),								0 );
-	section.flags << DMFlag( tr("Weapons stay"),								1 );
-	section.flags << DMFlag( tr("Friendly fire"),								2 );
-	section.flags << DMFlag( tr("Allow exit"),									3 );
-	section.flags << DMFlag( tr("Infinite ammo"),								4 );
-	section.flags << DMFlag( tr("No monsters"),									5 );
-	section.flags << DMFlag( tr("Monsters respawn"),							6 );
-	section.flags << DMFlag( tr("Fast monsters"),								7 );
-	section.flags << DMFlag( tr("Jumping allowed"),								8 );
-	section.flags << DMFlag( tr("Freelook allowed"),							9 );
-	section.flags << DMFlag( tr("Wad can be downloaded"),						10 );
-	section.flags << DMFlag( tr("Server resets on empty"),						11 );
-	section.flags << DMFlag( tr("Clean Maps"),									12 );
-	section.flags << DMFlag( tr("Kill anyone who tries to leave the level"),	13 );
+	dmFlagsList << section;
 }
 
 void OdamexGameInfo::initGameModes()

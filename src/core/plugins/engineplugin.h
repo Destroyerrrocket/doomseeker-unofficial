@@ -119,8 +119,8 @@ class MAIN_EXPORT EnginePlugin
 		{
 			public:
 				unsigned int			abiVersion;
-				/// List of all engine's DMFlags or NULL if none.
-				const DMFlags*			allDMFlags;
+				/// List of all engine's DM flags or NULL if none.
+				const QList<DMFlagsSection>* allDMFlags;
 				bool					allowsConnectPassword;
 				bool					allowsEmail;
 				bool					allowsJoinPassword;

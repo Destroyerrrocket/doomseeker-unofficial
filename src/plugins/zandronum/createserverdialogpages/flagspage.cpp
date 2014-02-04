@@ -176,24 +176,25 @@ void FlagsPage::loadOldDmflags(IniSection &section, quint32 &dmflags, quint32 &d
 {
 	// For a smooth transition read in old dmflag values.
 
-	const DMFlags* dmflagsList = ZandronumGameInfo::dmFlags();
+	const QList<DMFlagsSection>* dmflagsList = ZandronumGameInfo::dmFlags();
 
-	foreach(const DMFlagsSection *flags, *dmflagsList)
+	foreach(const DMFlagsSection &flags, *dmflagsList)
 	{
 		quint32 *flagsSet;
-		if(flags->name == "DMFlags")
+		if(flags.name() == "DMFlags")
 			flagsSet = &dmflags;
-		else if(flags->name == "DMFlags2")
+		else if(flags.name() == "DMFlags2")
 			flagsSet = &dmflags2;
-		else if(flags->name == "Compat. flags")
+		else if(flags.name() == "Compat. flags")
 			flagsSet = &compatFlags;
 		else
 			continue;
 
-		foreach(const DMFlag &flag, flags->flags)
+		for (int i = 0; i < flags.count(); ++i)
 		{
+			const DMFlag& flag = flags[i];
 			QRegExp re("[^a-zA-Z]");
-			QString settingName = flags->name + flag.name();
+			QString settingName = flags.name() + flag.name();
 			settingName.remove(re);
 
 			IniVariable var = section.retrieveSetting(settingName);

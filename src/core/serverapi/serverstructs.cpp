@@ -22,12 +22,20 @@
 //------------------------------------------------------------------------------
 #include "serverstructs.h"
 
+#include <QVector>
+
 class DMFlag::PrivData
 {
 	public:
 		QString name;
 		unsigned value;
 };
+
+DMFlag::DMFlag()
+{
+	d = new PrivData();
+	d->value = 0;
+}
 
 DMFlag::DMFlag(QString name, unsigned value)
 {
@@ -43,6 +51,11 @@ DMFlag::~DMFlag()
 	delete d;
 }
 
+bool DMFlag::isValid() const
+{
+	return value() > 0;
+}
+
 const QString& DMFlag::name() const
 {
 	return d->name;
@@ -51,6 +64,68 @@ const QString& DMFlag::name() const
 unsigned DMFlag::value() const
 {
 	return d->value;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+class DMFlagsSection::PrivData
+{
+	public:
+		QString name;
+		QVector<DMFlag> flags;
+};
+
+COPYABLE_D_POINTERED_DEFINE(DMFlagsSection);
+
+DMFlagsSection::DMFlagsSection()
+{
+	d = new PrivData();
+}
+
+DMFlagsSection::DMFlagsSection(const QString& name)
+{
+	d = new PrivData();
+	d->name = name;
+}
+
+DMFlagsSection::~DMFlagsSection()
+{
+	delete d;
+}
+
+void DMFlagsSection::add(const DMFlag& flag)
+{
+	d->flags << flag;
+}
+
+unsigned DMFlagsSection::combineValues() const
+{
+	unsigned result = 0;
+	foreach (const DMFlag& flag, d->flags)
+	{
+		result |= flag.value();
+	}
+	return result;
+}
+
+int DMFlagsSection::count() const
+{
+	return d->flags.count();
+}
+
+const QString& DMFlagsSection::name() const
+{
+	return d->name;
+}
+
+const DMFlag& DMFlagsSection::operator[](int index) const
+{
+	return d->flags[index];
+}
+
+DMFlag& DMFlagsSection::operator[](int index)
+{
+	return d->flags[index];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

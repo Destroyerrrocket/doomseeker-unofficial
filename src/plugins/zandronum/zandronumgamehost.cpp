@@ -39,16 +39,16 @@ ZandronumGameHost::ZandronumGameHost(const ZandronumServer* server)
 void ZandronumGameHost::hostDMFlags()
 {
 	QStringList& args = cmdLine()->args;
-	DMFlags dmFlags = hostInfo().dmFlags;
+	QList<DMFlagsSection> dmFlags = hostInfo().dmFlags;
 	const QString argNames[] = { "+dmflags", "+dmflags2", "+compatflags" };
 	for (int i = 0; i < qMin(dmFlags.size(), 3); ++i)
 	{
 		unsigned flagsValue = 0;
-		const DMFlagsSection* section = dmFlags[i];
+		const DMFlagsSection& section = dmFlags[i];
 
-		for (int j = 0; j < section->flags.count(); ++j)
+		for (int j = 0; j < section.count(); ++j)
 		{
-			flagsValue |= 1 << section->flags[j].value();
+			flagsValue |= 1 << section[i].value();
 		}
 
 		args << argNames[i] << QString::number(flagsValue);

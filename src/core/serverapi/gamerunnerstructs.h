@@ -45,7 +45,7 @@ struct MAIN_EXPORT HostInfo
 	QString iwadPath;
 	QStringList pwadsPaths;
 	QStringList customParameters;
-	DMFlags dmFlags;
+	QList<DMFlagsSection> dmFlags;
 
 	/**
 	 * @brief Contents of this list will be passed as "+consoleCommand value"
@@ -55,8 +55,6 @@ struct MAIN_EXPORT HostInfo
 
 	~HostInfo()
 	{
-		foreach(DMFlagsSection* sec, dmFlags)
-			delete sec;
 	}
 };
 

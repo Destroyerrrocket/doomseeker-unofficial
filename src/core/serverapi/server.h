@@ -38,7 +38,7 @@
 #include <QTime>
 #include <QUdpSocket>
 
-class DMFlags;
+class DMFlagsSection;
 class EnginePlugin;
 class ExeFile;
 class GameCVar;
@@ -133,7 +133,7 @@ class MAIN_EXPORT Server : public QObject
 
 		void clearPlayersList();
 		const QString& connectPassword() const;
-		const DMFlags& dmFlags() const;
+		const QList<DMFlagsSection>& dmFlags() const;
 		const QString& email() const;
 
 		/**
@@ -334,7 +334,7 @@ class MAIN_EXPORT Server : public QObject
 		QByteArray createSendRequest_default();
 		Response readRequest_default(QByteArray &data);
 
-		void setDmFlags(const DMFlags& dmFlags);
+		void setDmFlags(const QList<DMFlagsSection>& dmFlags);
 		void setResponse(Response response);
 		void setScores(const QList<int>& scores);
 		void setWads(const QList<PWad>& wads);

@@ -105,7 +105,7 @@ class Server::PrivData
 		GameMode gameMode;
 		unsigned int ping;
 		bool custom;
-		DMFlags dmFlags;
+		QList<DMFlagsSection> dmFlags;
 		QString email;
 		QString iwad;
 		bool locked;
@@ -268,7 +268,6 @@ const QString& Server::connectPassword() const
 
 void Server::clearDMFlags()
 {
-	qDeleteAll(d->dmFlags);
 	d->dmFlags.clear();
 }
 
@@ -299,7 +298,7 @@ ExeFile* Server::clientExe()
 	return f;
 }
 
-const DMFlags& Server::dmFlags() const
+const QList<DMFlagsSection>& Server::dmFlags() const
 {
 	return d->dmFlags;
 }
@@ -627,7 +626,7 @@ void Server::setConnectPassword(const QString& connectPassword)
 	d->connectPassword = connectPassword;
 }
 
-void Server::setDmFlags(const DMFlags& dmFlags)
+void Server::setDmFlags(const QList<DMFlagsSection>& dmFlags)
 {
 	d->dmFlags = dmFlags;
 }

@@ -34,9 +34,12 @@
 class MAIN_EXPORT DMFlag
 {
 	public:
+		DMFlag();
 		DMFlag(QString name, unsigned value);
 		COPYABLE_D_POINTERED_DECLARE(DMFlag);
 		virtual ~DMFlag();
+
+		bool isValid() const;
 
 		const QString& name() const;
 		unsigned value() const;
@@ -47,21 +50,32 @@ class MAIN_EXPORT DMFlag
 };
 
 /**
- *	@brief Generic representation of DMFlags section.
+ * @brief Generic representation of DMFlags section.
  */
 class MAIN_EXPORT DMFlagsSection
 {
 	public:
-		QString         name;
-		QList<DMFlag>	flags;
-};
+		DMFlagsSection();
+		DMFlagsSection(const QString& name);
+		COPYABLE_D_POINTERED_DECLARE(DMFlagsSection);
+		virtual ~DMFlagsSection();
 
-/**
- * @brief List used by Server class' virtual method to return all flags
- * sections.
- */
-class MAIN_EXPORT DMFlags : public QList<DMFlagsSection*>
-{
+		void add(const DMFlag& flag);
+		unsigned combineValues() const;
+		int count() const;
+		const QString &name() const;
+		const DMFlag &operator[](int index) const;
+		DMFlag &operator[](int index);
+
+		DMFlagsSection& operator<<(const DMFlag& flag)
+		{
+			add(flag);
+			return *this;
+		}
+
+	private:
+		class PrivData;
+		PrivData* d;
 };
 
 /**

@@ -429,17 +429,14 @@ bool CreateServerDialog::createHostInfo(HostInfo& hostInfo, Server* server, bool
 		// DMFlags
 		foreach(const DMFlagsTabWidget* p, dmFlagsTabs)
 		{
-			DMFlagsSection* sec = new DMFlagsSection();
-			sec->name = p->section->name;
-
-			for (int i = 0; i < p->section->flags.count(); ++i)
+			DMFlagsSection sec(p->section.name());
+			for (int i = 0; i < p->section.count(); ++i)
 			{
 				if (p->checkBoxes[i]->isChecked())
 				{
-					sec->flags << p->section->flags[i];
+					sec.add(p->section[i]);
 				}
 			}
-
 			hostInfo.dmFlags << sec;
 		}
 
@@ -555,13 +552,13 @@ void CreateServerDialog::initDMFlagsTabs()
 	if (currentEngine->data()->createDMFlagsPagesAutomatic)
 	{
 		int paramsIndex = tabWidget->indexOf(tabCustomParameters);
-		const DMFlags* dmFlagsSec = currentEngine->data()->allDMFlags;
+		const QList<DMFlagsSection>* dmFlagsSec = currentEngine->data()->allDMFlags;
 		if(dmFlagsSec == NULL || dmFlagsSec->empty())
 		{
 			return; // Nothing to do
 		}
 
-		const QList<DMFlagsSection*>& dmFlagsSections = *dmFlagsSec;
+		const QList<DMFlagsSection>& dmFlagsSections = *dmFlagsSec;
 
 		for (int i = 0; i < dmFlagsSections.count(); ++i)
 		{
@@ -574,7 +571,7 @@ void CreateServerDialog::initDMFlagsTabs()
 			QHBoxLayout* hLayout = new QHBoxLayout(flagsTab);
 
 			QVBoxLayout* layout = NULL;
-			for (int j = 0; j < dmFlagsSections[i]->flags.count(); ++j)
+			for (int j = 0; j < dmFlagsSections[i].count(); ++j)
 			{
 				if ((j % 16) == 0)
 				{
@@ -588,7 +585,7 @@ void CreateServerDialog::initDMFlagsTabs()
 				}
 
 				QCheckBox* checkBox = new QCheckBox();
-				checkBox->setText(dmFlagsSections[i]->flags[j].name());
+				checkBox->setText(dmFlagsSections[i].name());
 				dmftw->checkBoxes << checkBox;
 				layout->addWidget(checkBox);
 			}
@@ -599,7 +596,7 @@ void CreateServerDialog::initDMFlagsTabs()
 			}
 
 			dmFlagsTabs << dmftw;
-			tabWidget->insertTab(paramsIndex++, flagsTab, dmFlagsSections[i]->name);
+			tabWidget->insertTab(paramsIndex++, flagsTab, dmFlagsSections[i].name());
 		}
 	}
 }
@@ -904,11 +901,11 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 	// DMFlags
 	foreach(DMFlagsTabWidget* p, dmFlagsTabs)
 	{
-		for (int i = 0; i < p->section->flags.count(); ++i)
+		for (int i = 0; i < p->section.count(); ++i)
 		{
 			QRegExp re("[^a-zA-Z]");
-			QString name1 = p->section->name;
-			QString name2 = p->section->flags[i].name();
+			QString name1 = p->section.name();
+			QString name2 = p->section[i].name();
 			name1 = name1.remove(re);
 			name2 = name2.remove(re);
 			p->checkBoxes[i]->setChecked(dmflags[name1 + name2]);
@@ -1088,11 +1085,11 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 	// DMFlags
 	foreach(DMFlagsTabWidget* p, dmFlagsTabs)
 	{
-		for (int i = 0; i < p->section->flags.count(); ++i)
+		for (int i = 0; i < p->section.count(); ++i)
 		{
 			QRegExp re("[^a-zA-Z]");
-			QString name1 = p->section->name;
-			QString name2 = p->section->flags[i].name();
+			QString name1 = p->section.name();
+			QString name2 = p->section[i].name();
 			name1 = name1.remove(re);
 			name2 = name2.remove(re);
 			dmflags[name1 + name2] = p->checkBoxes[i]->isChecked();

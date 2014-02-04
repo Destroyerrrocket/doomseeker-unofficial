@@ -29,7 +29,6 @@
 #include <QStringList>
 
 class CommandLineInfo;
-class DMFlags;
 struct HostInfo;
 class Message;
 class Server;

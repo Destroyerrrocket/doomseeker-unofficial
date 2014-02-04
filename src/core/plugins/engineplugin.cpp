@@ -112,7 +112,7 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 				break;
 
 			case EP_AllDMFlags:
-				d->allDMFlags = va_arg(va, const DMFlags*);
+				d->allDMFlags = va_arg(va, const QList<DMFlagsSection>*);
 				break;
 			case EP_AllowsConnectPassword:
 				d->allowsConnectPassword = true;
