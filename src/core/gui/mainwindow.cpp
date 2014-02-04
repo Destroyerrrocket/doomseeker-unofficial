@@ -844,17 +844,9 @@ void MainWindow::masterManagerMessages(MasterClient* pSender, const QString& tit
 
 void MainWindow::masterManagerMessagesImportant(MasterClient* pSender, const Message& objMessage)
 {
-	QString msgContent;
-	if (objMessage.isCustom())
-	{
-		msgContent = objMessage.contents();
-	}
-	else
-	{
-		msgContent = objMessage.getStringBasingOnType();
-	}
-
-	QString strFullMessage = tr("Master server for %1: %2").arg(pSender->plugin()->data()->name).arg(msgContent);
+	QString strFullMessage = tr("Master server for %1: %2")
+		.arg(pSender->plugin()->data()->name)
+		.arg(objMessage.contents());
 
 	if (objMessage.isError())
 	{

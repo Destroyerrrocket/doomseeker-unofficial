@@ -80,10 +80,8 @@ bool MasterClient::hasServer(const Server* server)
 
 void MasterClient::notifyBanned()
 {
-	emit message(engineName(), tr("You have been banned from the master server."), true);
-
-	Message msg = Message(Message::Types::BANNED_FROM_MASTERSERVER);
-
+	Message msg = Message(Message::Type::BANNED_FROM_MASTERSERVER);
+	emit message(engineName(), msg.contents(), true);
 	emit messageImportant(msg);
 }
 
