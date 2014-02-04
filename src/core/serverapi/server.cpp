@@ -65,18 +65,6 @@ GameMode::GameMode(int index, const QString &name, bool teamgame)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-const int SkillLevel::numSkillLevels = 5;
-
-const QString SkillLevel::names[] =
-{
-	QObject::tr("1 - I'm too young to die."),
-	QObject::tr("2 - Hey, not too rough."),
-	QObject::tr("3 - Hurt me plenty."),
-	QObject::tr("4 - Ultra-Violence."),
-	QObject::tr("5 - NIGHTMARE!")
-};
-
-////////////////////////////////////////////////////////////////////////////////
 
 class Server::PrivData
 {
@@ -250,7 +238,7 @@ QStringList Server::allWadNames() const
 	}
 	foreach (const PWad& wad, d->wads)
 	{
-		result << wad.name;
+		result << wad.name();
 	}
 	return result;
 }
@@ -265,7 +253,7 @@ bool Server::anyWadnameContains(const QString& text, Qt::CaseSensitivity cs) con
 	for (int j = 0; j < numWads(); ++j)
 	{
 		const PWad& pwad = wad(j);
-		if (pwad.name.contains(text, cs))
+		if (pwad.name().contains(text, cs))
 		{
 			return true;
 		}

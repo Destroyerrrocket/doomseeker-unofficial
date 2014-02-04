@@ -237,10 +237,10 @@ void GameClientRunner::addPwads()
 {
 	for (int i = 0; i < d->server->numWads(); ++i)
 	{
-		QString pwad = d->pathFinder.findFile(d->server->wad(i).name);
-		if (pwad.isEmpty() && !d->server->wad(i).optional)
+		QString pwad = d->pathFinder.findFile(d->server->wad(i).name());
+		if (pwad.isEmpty() && !d->server->wad(i).isOptional())
 		{
-			markPwadAsMissing(d->server->wad(i).name);
+			markPwadAsMissing(d->server->wad(i).name());
 		}
 		else
 		{

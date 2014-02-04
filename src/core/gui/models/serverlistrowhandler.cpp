@@ -281,13 +281,13 @@ void ServerListRowHandler::setGood()
 	strTmp.clear();
 	foreach(const PWad &wad, server->wads())
 	{
-		if(wad.optional)
+		if(wad.isOptional())
 		{
-			strTmp += QString("[%1] ").arg(wad.name);
+			strTmp += QString("[%1] ").arg(wad.name());
 		}
 		else
 		{
-			strTmp += wad.name + " ";
+			strTmp += wad.name() + " ";
 		}
 	}
 	strTmp.chop(1);

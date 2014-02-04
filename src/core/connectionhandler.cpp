@@ -358,7 +358,7 @@ void ConnectionHandler::saveDemoMetaData(Server* server, const QString& demoName
 	for (int i = 0; i < server->numWads(); ++i)
 	{
 		// Also be sure to escape any underscores.
-		wadList << server->wad(i).name.toLower();
+		wadList << server->wad(i).name().toLower();
 	}
 
 	metaSection.createSetting("iwad", server->iwad().toLower());

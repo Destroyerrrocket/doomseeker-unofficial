@@ -315,6 +315,7 @@ set(SOURCE_FILES
 	serverapi/playerslist.cpp
 	serverapi/rconprotocol.cpp
 	serverapi/server.cpp
+	serverapi/serverstructs.cpp
 	serverapi/serversummary.cpp
 	serverapi/tooltipgenerator.cpp
 	tests/testbase.cpp

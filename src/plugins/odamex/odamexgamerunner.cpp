@@ -69,7 +69,7 @@ void OdamexGameClientRunner::addExtra()
 		waddir.truncate(waddir.length() - iwad.length());
 		for (int i = 0;i < server->numWads();i++)
 		{
-			QString wad = server->wad(i).name;
+			QString wad = server->wad(i).name();
 			QString pwaddir = pathFinder().findFile(wad.toLower());
 			pwaddir.truncate(pwaddir.length() - wad.length());
 			if(!pwaddir.isEmpty())

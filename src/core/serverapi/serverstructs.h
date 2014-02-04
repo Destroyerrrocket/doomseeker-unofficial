@@ -25,6 +25,7 @@
 
 #include <QString>
 #include <QList>
+#include <QObject>
 
 #include "global.h"
 
@@ -132,22 +133,20 @@ class MAIN_EXPORT GameMode
 		bool	bIsValid;
 };
 
-class MAIN_EXPORT SkillLevel
-{
-	//const QString strName;
-
-	static const int	 numSkillLevels;
-	static const QString names[];
-};
-
 // Some ports support optional wads.
 class MAIN_EXPORT PWad
 {
 	public:
-		PWad(const QString &name, bool optional=false) : name(name), optional(optional){}
+		PWad(const QString &name, bool optional=false);
+		COPYABLE_D_POINTERED_DECLARE(PWad);
+		virtual ~PWad();
 
-		QString name;
-		bool optional;
+		bool isOptional() const;
+		const QString& name() const;
+
+	private:
+		class PrivData;
+		PrivData* d;
 };
 
 #endif

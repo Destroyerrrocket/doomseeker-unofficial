@@ -269,7 +269,7 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 	{
 		foreach (const PWad &wad, pwads)
 		{
-			content += wad.name + "\n";
+			content += wad.name() + "\n";
 		}
 		content.chop(1); // Get rid of extra \n.
 	}
@@ -285,25 +285,25 @@ QString ServerListHandler::createPwadToolTipInfo(const PWad& pwad, const QString
 
 	PathFinder pathFinder;
 	pathFinder.addPrioritySearchDir(binPath);
-	QString pathToFile = pathFinder.findFile(pwad.name);
+	QString pathToFile = pathFinder.findFile(pwad.name());
 
 	if (pathToFile.isEmpty())
 	{
-		if(pwad.optional)
+		if(pwad.isOptional())
 		{
 			formattedStringBegin = formattedStringBegin.arg(FONT_COLOR_OPTIONAL);
-			formattedStringMiddle = tr("<td>%1</td><td> OPTIONAL</td>").arg(pwad.name);
+			formattedStringMiddle = tr("<td>%1</td><td> OPTIONAL</td>").arg(pwad.name());
 		}
 		else
 		{
 			formattedStringBegin = formattedStringBegin.arg(FONT_COLOR_MISSING);
-			formattedStringMiddle = tr("<td>%1</td><td> MISSING</td>").arg(pwad.name);
+			formattedStringMiddle = tr("<td>%1</td><td> MISSING</td>").arg(pwad.name());
 		}
 	}
 	else
 	{
 		formattedStringBegin = formattedStringBegin.arg(FONT_COLOR_FOUND);
-		formattedStringMiddle = QString("<td>%1</td><td> %2</td>").arg(pwad.name, pathToFile);
+		formattedStringMiddle = QString("<td>%1</td><td> %2</td>").arg(pwad.name(), pathToFile);
 	}
 
 	return formattedStringBegin + formattedStringMiddle + formattedStringEnd;

@@ -46,6 +46,26 @@ static inline quint32 MAKEID(quint8 a, quint8 b, quint8 c, quint8 d)
 	return (quint32(a)|(quint32(b)<<8)|(quint32(c)<<16)|(quint32(d)<<24));
 }
 
+#define COPYABLE_D_POINTERED_DECLARE(type) \
+	type(const type &other); \
+	type& operator=(const type &other);
+
+#define COPYABLE_D_POINTERED_DEFINE(type) \
+	type::type(const type &other) \
+	{ \
+		d = new PrivData(); \
+		*d = *other.d; \
+	} \
+	\
+	type& type::operator=(const type &other) \
+	{ \
+		if (this != &other) \
+		{ \
+			*d = *other.d; \
+		} \
+		return *this; \
+	}
+
 // Now we set it up so symbols are properly exported/imported on Windows
 #ifdef Q_OS_WIN32
 #ifdef MODE_MAIN
