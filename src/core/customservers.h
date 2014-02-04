@@ -23,7 +23,7 @@
 #ifndef __CUSTOMSERVERS_H_
 #define __CUSTOMSERVERS_H_
 
-#include "masterserver/masterclient.h"
+#include "serverapi/masterclient.h"
 #include <QtContainerFwd>
 
 class IniSection;

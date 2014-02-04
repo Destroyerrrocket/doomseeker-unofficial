@@ -24,7 +24,7 @@
 #ifndef DOOMSEEKER_PLUGIN_ZANDRONUMMASTERCLIENT_H
 #define DOOMSEEKER_PLUGIN_ZANDRONUMMASTERCLIENT_H
 
-#include "masterserver/masterclient.h"
+#include <serverapi/masterclient.h>
 
 class EnginePlugin;
 

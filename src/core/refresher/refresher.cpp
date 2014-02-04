@@ -22,9 +22,9 @@
 //------------------------------------------------------------------------------
 #include "refresher.h"
 
-#include "masterserver/masterclient.h"
-#include "masterserver/masterclientsignalproxy.h"
-#include "masterserver/mastermanager.h"
+#include "serverapi/masterclient.h"
+#include "serverapi/masterclientsignalproxy.h"
+#include "serverapi/mastermanager.h"
 #include "plugins/pluginloader.h"
 #include "serverapi/server.h"
 #include "configuration/doomseekerconfig.h"

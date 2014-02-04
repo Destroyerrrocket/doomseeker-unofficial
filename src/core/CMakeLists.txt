@@ -167,9 +167,6 @@ set(DOOMSEEKER_QT_FILES
 	irc/ircprivadapter.h
 	irc/ircrequestparser.h
 	irc/ircresponseparser.h
-	masterserver/masterclient.h
-	masterserver/masterclientsignalproxy.h
-	masterserver/mastermanager.h
 	serverapi/tooltips/gameinfotip.h
 	serverapi/tooltips/generalinfotip.h
 	serverapi/tooltips/playertable.h
@@ -177,6 +174,9 @@ set(DOOMSEEKER_QT_FILES
 	serverapi/exefile.h
 	serverapi/gameexefactory.h
 	serverapi/gamehost.h
+	serverapi/masterclient.h
+	serverapi/masterclientsignalproxy.h
+	serverapi/mastermanager.h
 	serverapi/message.h
 	serverapi/rconprotocol.h
 	serverapi/server.h
@@ -289,9 +289,6 @@ set(SOURCE_FILES
 	irc/ircresponseparser.cpp
 	irc/ircuserinfo.cpp
 	irc/ircuserlist.cpp
-	masterserver/masterclient.cpp
-	masterserver/masterclientsignalproxy.cpp
-	masterserver/mastermanager.cpp
 	pathfinder/basefileseeker.cpp
 	pathfinder/casesensitivefsfileseeker.cpp
 	pathfinder/caseinsensitivefsfileseeker.cpp
@@ -310,6 +307,9 @@ set(SOURCE_FILES
 	serverapi/gamehost.cpp
 	serverapi/gameclientrunner.cpp
 	serverapi/joinerror.cpp
+	serverapi/masterclient.cpp
+	serverapi/masterclientsignalproxy.cpp
+	serverapi/mastermanager.cpp
 	serverapi/message.cpp
 	serverapi/player.cpp
 	serverapi/playerslist.cpp

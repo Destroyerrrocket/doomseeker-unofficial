@@ -24,7 +24,7 @@
 #ifndef PLUGIN_MASTERCLIENT_H
 #define PLUGIN_MASTERCLIENT_H
 
-#include "masterserver/masterclient.h"
+#include <serverapi/masterclient.h>
 
 class EnginePlugin;
 

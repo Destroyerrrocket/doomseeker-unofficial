@@ -24,7 +24,7 @@
 #ifndef __ODAMEXMASTERCLIENT_H__
 #define __ODAMEXMASTERCLIENT_H__
 
-#include "masterserver/masterclient.h"
+#include <serverapi/masterclient.h>
 
 class EnginePlugin;
 

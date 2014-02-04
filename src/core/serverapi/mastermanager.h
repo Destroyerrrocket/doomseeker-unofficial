@@ -23,7 +23,7 @@
 #ifndef __MASTERMANAGER_H__
 #define __MASTERMANAGER_H__
 
-#include "masterserver/masterclient.h"
+#include "serverapi/masterclient.h"
 #include "serverapi/message.h"
 
 class CustomServers;

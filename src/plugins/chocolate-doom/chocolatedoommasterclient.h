@@ -24,7 +24,7 @@
 #ifndef __CHOCOLATEDOOMMASTERCLIENT_H__
 #define __CHOCOLATEDOOMMASTERCLIENT_H__
 
-#include "masterserver/masterclient.h"
+#include <serverapi/masterclient.h>
 
 class EnginePlugin;
 

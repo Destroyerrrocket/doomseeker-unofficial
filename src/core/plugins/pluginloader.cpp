@@ -23,9 +23,9 @@
 
 #include "log.h"
 #include "configuration/doomseekerconfig.h"
-#include "masterserver/masterclient.h"
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
+#include "serverapi/masterclient.h"
 #include "main.h"
 #include "strings.h"
 

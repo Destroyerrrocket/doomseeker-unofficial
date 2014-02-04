@@ -31,7 +31,7 @@
 #include "gui/logdock.h"
 #include "gui/serverlist.h"
 #include "gui/widgets/serversstatuswidget.h"
-#include "masterserver/mastermanager.h"
+#include "serverapi/mastermanager.h"
 #include "plugins/pluginloader.h"
 #include "apprunner.h"
 
