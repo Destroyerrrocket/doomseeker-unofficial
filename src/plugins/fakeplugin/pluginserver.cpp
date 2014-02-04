@@ -30,11 +30,18 @@
 PluginServer::PluginServer(const QHostAddress& address, quint16 port)
 : Server(address, port)
 {
+	set_readRequest(&PluginServer::readRequest);
+	set_createSendRequest(&PluginServer::createSendRequest);
 }
 
 EnginePlugin* PluginServer::plugin() const
 {
 	return PluginEnginePlugin::staticInstance();
+}
+
+QByteArray PluginServer::createSendRequest()
+{
+	return QByteArray("FAKF", 4);
 }
 
 Server::Response PluginServer::readRequest(QByteArray &data)
@@ -46,10 +53,4 @@ Server::Response PluginServer::readRequest(QByteArray &data)
 
 	this->setName(QString("Fake Server %1").arg(this->port()));
 	return RESPONSE_GOOD;
-}
-
-bool PluginServer::sendRequest(QByteArray &data)
-{
-	data = QByteArray("FAKF", 4);
-	return true;
 }

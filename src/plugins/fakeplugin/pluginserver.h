@@ -37,9 +37,9 @@ class PluginServer : public Server
 
 		EnginePlugin* plugin() const;
 
-	protected:
+	private:
+		QByteArray createSendRequest();
 		Response readRequest(QByteArray &data);
-		bool sendRequest(QByteArray &data);
 };
 
 #endif
