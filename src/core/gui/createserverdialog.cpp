@@ -588,7 +588,7 @@ void CreateServerDialog::initDMFlagsTabs()
 				}
 
 				QCheckBox* checkBox = new QCheckBox();
-				checkBox->setText(dmFlagsSections[i]->flags[j].name);
+				checkBox->setText(dmFlagsSections[i]->flags[j].name());
 				dmftw->checkBoxes << checkBox;
 				layout->addWidget(checkBox);
 			}
@@ -908,7 +908,7 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 		{
 			QRegExp re("[^a-zA-Z]");
 			QString name1 = p->section->name;
-			QString name2 = p->section->flags[i].name;
+			QString name2 = p->section->flags[i].name();
 			name1 = name1.remove(re);
 			name2 = name2.remove(re);
 			p->checkBoxes[i]->setChecked(dmflags[name1 + name2]);
@@ -1092,7 +1092,7 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 		{
 			QRegExp re("[^a-zA-Z]");
 			QString name1 = p->section->name;
-			QString name2 = p->section->flags[i].name;
+			QString name2 = p->section->flags[i].name();
 			name1 = name1.remove(re);
 			name2 = name2.remove(re);
 			dmflags[name1 + name2] = p->checkBoxes[i]->isChecked();

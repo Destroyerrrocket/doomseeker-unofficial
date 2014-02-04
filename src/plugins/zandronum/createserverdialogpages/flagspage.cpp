@@ -193,14 +193,14 @@ void FlagsPage::loadOldDmflags(IniSection &section, quint32 &dmflags, quint32 &d
 		foreach(const DMFlag &flag, flags->flags)
 		{
 			QRegExp re("[^a-zA-Z]");
-			QString settingName = flags->name + flag.name;
+			QString settingName = flags->name + flag.name();
 			settingName.remove(re);
 
 			IniVariable var = section.retrieveSetting(settingName);
 			if(!var.isNull())
 			{
 				if((bool)var)
-					*flagsSet |= 1<<flag.value;
+					*flagsSet |= 1<<flag.value();
 
 				// We no longer need to keep the setting around
 				section.deleteSetting(settingName);

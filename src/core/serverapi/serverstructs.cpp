@@ -22,6 +22,39 @@
 //------------------------------------------------------------------------------
 #include "serverstructs.h"
 
+class DMFlag::PrivData
+{
+	public:
+		QString name;
+		unsigned value;
+};
+
+DMFlag::DMFlag(QString name, unsigned value)
+{
+	d = new PrivData();
+	d->name = name;
+	d->value = value;
+}
+
+COPYABLE_D_POINTERED_DEFINE(DMFlag);
+
+DMFlag::~DMFlag()
+{
+	delete d;
+}
+
+const QString& DMFlag::name() const
+{
+	return d->name;
+}
+
+unsigned DMFlag::value() const
+{
+	return d->value;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 class PWad::PrivData
 {
 	public:

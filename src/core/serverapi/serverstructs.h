@@ -34,13 +34,16 @@
 class MAIN_EXPORT DMFlag
 {
 	public:
-		DMFlag(QString name, unsigned value)
-		: name(name), value(value)
-		{
-		}
+		DMFlag(QString name, unsigned value);
+		COPYABLE_D_POINTERED_DECLARE(DMFlag);
+		virtual ~DMFlag();
 
-		QString         name;
-		unsigned    	value;
+		const QString& name() const;
+		unsigned value() const;
+
+	private:
+		class PrivData;
+		PrivData* d;
 };
 
 /**
