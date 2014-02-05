@@ -231,10 +231,13 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 			in.skipRawData(4);
 		}
 
-		CHECK_POS_OFFSET(12);
 		unsigned short teamIndex = Player::TEAM_NONE;
 		if(protocolVersion < 5 || currentGameMode.isTeamGame())
+		{
+			CHECK_POS_OFFSET(1);
 			teamIndex = in.readQUInt8();
+		}
+		CHECK_POS_OFFSET(11);
 		unsigned short ping = in.readQUInt16();
 		in.skipRawData(2);
 		bool spectator = in.readQUInt8();
