@@ -151,23 +151,23 @@ DMFlagsSection ZandronumGameInfo::initCompatFlags()
 
 void ZandronumGameInfo::initGameModes()
 {
-	gameModesList << GameMode::COOPERATIVE;
-	gameModesList << GameMode(GAMEMODE_SURVIVAL, tr("Survival"), false);
-	gameModesList << GameMode(GAMEMODE_INVASION, tr("Invasion"), false);
-	gameModesList << GameMode::DEATHMATCH;
-	gameModesList << GameMode::TEAM_DEATHMATCH;
-	gameModesList << GameMode(GAMEMODE_DUEL, tr("Duel"), false);
-	gameModesList << GameMode(GAMEMODE_TERMINATOR, tr("Terminator"), false);
-	gameModesList << GameMode(GAMEMODE_LASTMANSTANDING, tr("LMS"), false);
-	gameModesList << GameMode(GAMEMODE_TEAMLMS, tr("Team LMS"), true);
-	gameModesList << GameMode(GAMEMODE_POSSESSION, tr("Possession"), false);
-	gameModesList << GameMode(GAMEMODE_TEAMPOSSESSION, tr("Team Poss"), true);
-	gameModesList << GameMode(GAMEMODE_TEAMGAME, tr("Team Game"), true);
-	gameModesList << GameMode::CAPTURE_THE_FLAG;
-	gameModesList << GameMode(GAMEMODE_ONEFLAGCTF, tr("One Flag CTF"), true);
-	gameModesList << GameMode(GAMEMODE_SKULLTAG, tr("Skulltag"), true);
-	gameModesList << GameMode(GAMEMODE_DOMINATION, tr("Domination"), true);
-	gameModesList << GameMode::UNKNOWN;
+	gameModesList << GameMode::mkCooperative();;
+	gameModesList << GameMode::ffaGame(GAMEMODE_SURVIVAL, tr("Survival"));
+	gameModesList << GameMode::ffaGame(GAMEMODE_INVASION, tr("Invasion"));
+	gameModesList << GameMode::mkDeathmatch();
+	gameModesList << GameMode::mkTeamDeathmatch();
+	gameModesList << GameMode::ffaGame(GAMEMODE_DUEL, tr("Duel"));
+	gameModesList << GameMode::ffaGame(GAMEMODE_TERMINATOR, tr("Terminator"));
+	gameModesList << GameMode::ffaGame(GAMEMODE_LASTMANSTANDING, tr("LMS"));
+	gameModesList << GameMode::teamGame(GAMEMODE_TEAMLMS, tr("Team LMS"));
+	gameModesList << GameMode::ffaGame(GAMEMODE_POSSESSION, tr("Possession"));
+	gameModesList << GameMode::teamGame(GAMEMODE_TEAMPOSSESSION, tr("Team Poss"));
+	gameModesList << GameMode::teamGame(GAMEMODE_TEAMGAME, tr("Team Game"));
+	gameModesList << GameMode::mkCaptureTheFlag();
+	gameModesList << GameMode::teamGame(GAMEMODE_ONEFLAGCTF, tr("One Flag CTF"));
+	gameModesList << GameMode::teamGame(GAMEMODE_SKULLTAG, tr("Skulltag"));
+	gameModesList << GameMode::teamGame(GAMEMODE_DOMINATION, tr("Domination"));
+	gameModesList << GameMode::mkUnknown();
 }
 
 void ZandronumGameInfo::initGameModifiers()

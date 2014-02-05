@@ -36,10 +36,10 @@ void ChocolateDoomGameHost::hostProperties(QStringList& args) const
 {
 	args << "-skill" << QString::number(server->skill() + 1); // from 1 to 5
 
-	switch(server->gameMode().modeIndex())
+	switch(server->gameMode().index())
 	{
 		default: break;
-		case GameMode::SGMIDeathmatch:
+		case GameMode::SGM_Deathmatch:
 			args << "-deathmatch";
 			break;
 		case ChocolateDoomGameInfo::MODE_ALTDEATH:

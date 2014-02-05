@@ -118,24 +118,24 @@ QList<GameCVar>	ZandronumEnginePlugin::limits(const GameMode& gm) const
 {
 	QList<GameCVar> gl;
 
-	int m = gm.modeIndex();
+	int m = gm.index();
 
-	if (m != GameMode::SGMICooperative
+	if (m != GameMode::SGM_Cooperative
 	&&	m != ZandronumGameInfo::GAMEMODE_INVASION
 	&&	m != ZandronumGameInfo::GAMEMODE_SURVIVAL)
 	{
 		gl << GameCVar(QObject::tr("Time limit:"), "timelimit");
 	}
 
-	if (m == GameMode::SGMIDeathmatch
+	if (m == GameMode::SGM_Deathmatch
 	||	m == ZandronumGameInfo::GAMEMODE_DUEL
-	||	m == GameMode::SGMITeamDeathmatch
+	||	m == GameMode::SGM_TeamDeathmatch
 	||	m == ZandronumGameInfo::GAMEMODE_TERMINATOR)
 	{
 		gl << GameCVar(QObject::tr("Frag limit:"), "fraglimit");
 	}
 
-	if (m == GameMode::SGMICTF
+	if (m == GameMode::SGM_CTF
 	||	m == ZandronumGameInfo::GAMEMODE_DOMINATION
 	||	m == ZandronumGameInfo::GAMEMODE_ONEFLAGCTF
 	||	m == ZandronumGameInfo::GAMEMODE_POSSESSION

@@ -505,11 +505,11 @@ bool CreateServerDialog::createHostInfo(HostInfo& hostInfo, Server* server, bool
 		const QList<GameMode>* gameModes = currentEngine->data()->gameModes;
 		if (gameModes != NULL)
 		{
-			for (int i = 0; i < gameModes->count(); ++i)
+			foreach (const GameMode& mode, (*gameModes))
 			{
-				if ((*gameModes)[i].name().compare(cboGamemode->currentText()) == 0)
+				if (mode.name().compare(cboGamemode->currentText()) == 0)
 				{
-					server->setGameMode((*gameModes)[i]);
+					server->setGameMode(mode);
 					break;
 				}
 			}

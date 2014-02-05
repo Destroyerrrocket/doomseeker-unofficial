@@ -43,35 +43,12 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// I really don't know if the game modes will need to be translated but I
-// wrapped them in tr() just to be safe.
-const GameMode GameMode::COOPERATIVE(SGMICooperative, QObject::tr("Cooperative"), false);
-const GameMode GameMode::DEATHMATCH(SGMIDeathmatch, QObject::tr("Deathmatch"), false);
-const GameMode GameMode::TEAM_DEATHMATCH(SGMITeamDeathmatch, QObject::tr("Team DM"), true);
-const GameMode GameMode::CAPTURE_THE_FLAG(SGMICTF, QObject::tr("CTF"), true);
-const GameMode GameMode::UNKNOWN(SGMIUnknown, QObject::tr("Unknown"), false);
-
-GameMode::GameMode()
-{
-	bIsValid = false;
-}
-
-GameMode::GameMode(int index, const QString &name, bool teamgame)
-{
-	this->bIsValid = true;
-	this->gameModeIndex = index;
-	this->modeName = name;
-	this->teamgame = teamgame;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 class Server::PrivData
 {
 	public:
 		PrivData()
 		{
-			gameMode = GameMode::COOPERATIVE;
+			gameMode = GameMode::mkCooperative();
 		}
 
 		/**

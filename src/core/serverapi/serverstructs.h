@@ -121,42 +121,56 @@ class MAIN_EXPORT GameCVar
 class MAIN_EXPORT GameMode
 {
 	public:
-		enum StandardGameModeIndexes
+		enum StandardGameMode
 		{
-			SGMICooperative = 900,
-			SGMIDeathmatch = 901,
-			SGMITeamDeathmatch = 902,
-			SGMICTF = 903,
-			SGMIUnknown = 904
+			SGM_Cooperative = 900,
+			SGM_Deathmatch = 901,
+			SGM_TeamDeathmatch = 902,
+			SGM_CTF = 903,
+			SGM_Unknown = 904
 		};
 
 		// Standard game mode set
 		// These should be used in order to keep the names uniform.
-		static const GameMode COOPERATIVE;
-		static const GameMode DEATHMATCH;
-		static const GameMode TEAM_DEATHMATCH;
-		static const GameMode CAPTURE_THE_FLAG;
-		static const GameMode UNKNOWN;
-
-		GameMode();
+		// These can't be static members as translations may not work.
+		static GameMode mkCooperative();
+		static GameMode mkDeathmatch();
+		static GameMode mkTeamDeathmatch();
+		static GameMode mkCaptureTheFlag();
+		static GameMode mkUnknown();
 
 		/**
-		 * @param name
-		 *     Name to display for game mode, this should be fairly short about
-		 *     no longer than "cooperative".
+		 * @brief Opposite of team game.
 		 */
-		GameMode(int index, const QString &name, bool teamgame);
+		static GameMode ffaGame(int index, const QString &name);
+		/**
+		 * @brief Game mode based on rivaling teams.
+		 */
+		static GameMode teamGame(int index, const QString &name);
 
-		int modeIndex() const { return gameModeIndex; }
-		const QString &name() const { return modeName;}
-		bool isTeamGame() const { return teamgame; }
-		bool isValid() const { return bIsValid; }
-	protected:
-		int gameModeIndex;
-		QString modeName;
-		bool teamgame;
+		GameMode();
+		COPYABLE_D_POINTERED_DECLARE(GameMode);
+		virtual ~GameMode();
+
+		int index() const;
+
+		/**
+		 * @brief Name to display for game mode.
+		 *
+		 * This should be fairly short about no longer than "cooperative".
+		 */
+		const QString &name() const;
+
+		bool isTeamGame() const;
+		bool isValid() const;
+
 	private:
-		bool bIsValid;
+		class PrivData;
+		PrivData *d;
+
+		GameMode(int index, const QString &name);
+
+		void setTeamGame(bool b);
 };
 
 // Some ports support optional wads.

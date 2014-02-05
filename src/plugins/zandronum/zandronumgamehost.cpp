@@ -61,12 +61,12 @@ void ZandronumGameHost::hostProperties(QStringList& args) const
 	args << "-skill" << QString::number(server->skill() + 1); // from 1 to 5
 
 	QString gameModeStr;
-	switch(server->gameMode().modeIndex())
+	switch(server->gameMode().index())
 	{
-		case GameMode::SGMICooperative:						gameModeStr = "+cooperative"; break;
-		case GameMode::SGMICTF:								gameModeStr = "+ctf"; break;
-		case GameMode::SGMIDeathmatch:						gameModeStr = "+deathmatch"; break;
-		case GameMode::SGMITeamDeathmatch:					gameModeStr = "+teamplay"; break;
+		case GameMode::SGM_Cooperative:						gameModeStr = "+cooperative"; break;
+		case GameMode::SGM_CTF:								gameModeStr = "+ctf"; break;
+		case GameMode::SGM_Deathmatch:						gameModeStr = "+deathmatch"; break;
+		case GameMode::SGM_TeamDeathmatch:					gameModeStr = "+teamplay"; break;
 		case ZandronumGameInfo::GAMEMODE_DOMINATION:		gameModeStr = "+domination"; break;
 		case ZandronumGameInfo::GAMEMODE_DUEL:				gameModeStr = "+duel"; break;
 		case ZandronumGameInfo::GAMEMODE_INVASION:			gameModeStr = "+invasion"; break;

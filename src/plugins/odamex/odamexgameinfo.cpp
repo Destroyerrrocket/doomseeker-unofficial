@@ -58,9 +58,9 @@ void OdamexGameInfo::initDMFlags()
 
 void OdamexGameInfo::initGameModes()
 {
-	gameModesList << GameMode::COOPERATIVE;
-	gameModesList << GameMode::DEATHMATCH;
-	gameModesList << GameMode::TEAM_DEATHMATCH;
-	gameModesList << GameMode::CAPTURE_THE_FLAG;
+	gameModesList << GameMode::mkCooperative();
+	gameModesList << GameMode::mkDeathmatch();
+	gameModesList << GameMode::mkTeamDeathmatch();
+	gameModesList << GameMode::mkCaptureTheFlag();
 //	gameModesList << GameMode(MODE_DEATHMATCH2, tr("Deathmatch 2.0"), false);
 }

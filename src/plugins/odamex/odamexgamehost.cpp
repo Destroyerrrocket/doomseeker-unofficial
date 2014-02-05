@@ -48,13 +48,13 @@ void OdamexGameHost::hostProperties(QStringList& args) const
 	args << "+shufflemaplist" << QString::number( static_cast<int>(server->isRandomMapRotation()) );
 
 	unsigned int modeNum;
-	switch(server->gameMode().modeIndex())
+	switch(server->gameMode().index())
 	{
 		default:
-		case GameMode::SGMICooperative: modeNum = 0; break;
-		case GameMode::SGMIDeathmatch: modeNum = 1; break;
-		case GameMode::SGMITeamDeathmatch: modeNum = 2; break;
-		case GameMode::SGMICTF: modeNum = 3; break;
+		case GameMode::SGM_Cooperative: modeNum = 0; break;
+		case GameMode::SGM_Deathmatch: modeNum = 1; break;
+		case GameMode::SGM_TeamDeathmatch: modeNum = 2; break;
+		case GameMode::SGM_CTF: modeNum = 3; break;
 	}
 	args << "+sv_gametype" << QString::number(modeNum);
 

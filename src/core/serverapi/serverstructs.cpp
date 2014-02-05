@@ -189,6 +189,102 @@ const QVariant &GameCVar::value() const
 
 ////////////////////////////////////////////////////////////////////////////////
 
+class GameMode::PrivData
+{
+	public:
+		int index;
+		QString name;
+		bool teamgame;
+};
+
+COPYABLE_D_POINTERED_DEFINE(GameMode);
+
+GameMode::GameMode()
+{
+	d = new PrivData();
+	d->index = -1;
+	d->teamgame = false;
+}
+
+GameMode::GameMode(int index, const QString &name)
+{
+	d = new PrivData();
+	d->index = index;
+	d->name = name;
+	d->teamgame = false;
+}
+
+GameMode::~GameMode()
+{
+	delete d;
+}
+
+GameMode GameMode::ffaGame(int index, const QString &name)
+{
+	GameMode result(index, name);
+	result.setTeamGame(false);
+	return result;
+}
+
+int GameMode::index() const
+{
+	return d->index;
+}
+
+GameMode GameMode::mkCooperative()
+{
+	return ffaGame(SGM_Cooperative, QObject::tr("Cooperative"));
+}
+
+GameMode GameMode::mkDeathmatch()
+{
+	return ffaGame(SGM_Deathmatch, QObject::tr("Deathmatch"));
+}
+
+GameMode GameMode::mkTeamDeathmatch()
+{
+	return teamGame(SGM_TeamDeathmatch, QObject::tr("Team DM"));
+}
+
+GameMode GameMode::mkCaptureTheFlag()
+{
+	return teamGame(SGM_CTF, QObject::tr("CTF"));
+}
+
+GameMode GameMode::mkUnknown()
+{
+	return ffaGame(SGM_Unknown, QObject::tr("Unknown"));
+}
+
+const QString &GameMode::name() const
+{
+	return d->name;
+}
+
+bool GameMode::isTeamGame() const
+{
+	return d->teamgame;
+}
+
+bool GameMode::isValid() const
+{
+	return !d->name.isEmpty();
+}
+
+void GameMode::setTeamGame(bool b)
+{
+	d->teamgame = b;
+}
+
+GameMode GameMode::teamGame(int index, const QString &name)
+{
+	GameMode result(index, name);
+	result.setTeamGame(true);
+	return result;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 class PWad::PrivData
 {
 	public:
