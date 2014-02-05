@@ -116,44 +116,47 @@ class MAIN_EXPORT GameCVar
 };
 
 /**
- * Data structure that holds information about a servers game mode.
+ * @brief Data structure that holds information about game mode.
  */
 class MAIN_EXPORT GameMode
 {
 	public:
 		enum StandardGameModeIndexes
 		{
-			SGMICooperative		= 900,
-			SGMIDeathmatch		= 901,
-			SGMITeamDeathmatch	= 902,
-			SGMICTF				= 903,
-			SGMIUnknown			= 904
+			SGMICooperative = 900,
+			SGMIDeathmatch = 901,
+			SGMITeamDeathmatch = 902,
+			SGMICTF = 903,
+			SGMIUnknown = 904
 		};
 
 		// Standard game mode set
 		// These should be used in order to keep the names uniform.
-		static const GameMode	COOPERATIVE;
-		static const GameMode	DEATHMATCH;
-		static const GameMode	TEAM_DEATHMATCH;
-		static const GameMode	CAPTURE_THE_FLAG;
-		static const GameMode	UNKNOWN;
+		static const GameMode COOPERATIVE;
+		static const GameMode DEATHMATCH;
+		static const GameMode TEAM_DEATHMATCH;
+		static const GameMode CAPTURE_THE_FLAG;
+		static const GameMode UNKNOWN;
 
 		GameMode();
+
 		/**
-		 * @param name Name to display for game mode, this should be fairly short about no longer than "cooperative".
+		 * @param name
+		 *     Name to display for game mode, this should be fairly short about
+		 *     no longer than "cooperative".
 		 */
 		GameMode(int index, const QString &name, bool teamgame);
 
-		int				modeIndex() const { return gameModeIndex; }
-		const QString	&name() const { return modeName;}
-		bool			isTeamGame() const { return teamgame; }
-		bool			isValid() const { return bIsValid; }
+		int modeIndex() const { return gameModeIndex; }
+		const QString &name() const { return modeName;}
+		bool isTeamGame() const { return teamgame; }
+		bool isValid() const { return bIsValid; }
 	protected:
-		int		gameModeIndex;
-		QString	modeName;
-		bool	teamgame;
+		int gameModeIndex;
+		QString modeName;
+		bool teamgame;
 	private:
-		bool	bIsValid;
+		bool bIsValid;
 };
 
 // Some ports support optional wads.
