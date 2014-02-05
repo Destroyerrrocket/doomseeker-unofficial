@@ -295,8 +295,8 @@ void ServerListRowHandler::setGood()
 	fillItem(qstdItem, strTmp);
 
 	qstdItem = item(IDGametype);
-	const GameCVar *modifier = server->modifier();
-	fillItem(qstdItem, server->gameMode().name() + (modifier == NULL ? "" : " (" + modifier->name + ")"));
+	GameCVar modifier = server->modifier();
+	fillItem(qstdItem, server->gameMode().name() + (modifier.isValid() ? " (" + modifier.name() + ")" : ""));
 
 	qstdItem = item(IDHiddenGroup);
 	fillItem(qstdItem, SGNormal);

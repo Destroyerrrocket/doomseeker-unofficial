@@ -130,6 +130,65 @@ DMFlag& DMFlagsSection::operator[](int index)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+class GameCVar::PrivData
+{
+	public:
+		QString command;
+		QString name;
+		QVariant value;
+};
+
+COPYABLE_D_POINTERED_DEFINE(GameCVar);
+
+GameCVar::GameCVar()
+{
+	d = new PrivData();
+}
+
+GameCVar::GameCVar(const QString &name, const QString &command)
+{
+	d = new PrivData();
+	d->name = name;
+	d->command = command;
+}
+
+GameCVar::~GameCVar()
+{
+	delete d;
+}
+
+const QString &GameCVar::command() const
+{
+	return d->command;
+}
+
+bool GameCVar::hasValue() const
+{
+	return value().isValid();
+}
+
+bool GameCVar::isValid() const
+{
+	return !command().isEmpty();
+}
+
+const QString &GameCVar::name() const
+{
+	return d->name;
+}
+
+void GameCVar::setValue(const QVariant& value)
+{
+	d->value = value;
+}
+
+const QVariant &GameCVar::value() const
+{
+	return d->value;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 class PWad::PrivData
 {
 	public:

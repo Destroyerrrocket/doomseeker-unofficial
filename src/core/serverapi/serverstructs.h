@@ -26,6 +26,7 @@
 #include <QString>
 #include <QList>
 #include <QObject>
+#include <QVariant>
 
 #include "global.h"
 
@@ -79,34 +80,39 @@ class MAIN_EXPORT DMFlagsSection
 };
 
 /**
- *	@brief Struct containing info about a game console variable (like fraglimit)
+ * @brief Struct containing info about a game variable (like fraglimit).
  */
 class MAIN_EXPORT GameCVar
 {
 	public:
-		/**
- 		*	Nice name to display in Create Server dialog.
- 		*/
-		QString		name;
+		GameCVar();
+		GameCVar(const QString &name, const QString &command);
+		COPYABLE_D_POINTERED_DECLARE(GameCVar);
+		virtual ~GameCVar();
 
 		/**
- 		*	Console command used to set the given CVar.
- 		*/
-		QString		consoleCommand;
+		 * Command used to set the given CVar.
+		 */
+		const QString &command() const;
 
-		GameCVar() {}
-		GameCVar(QString fname, QString fconsoleCommand):name(fname),consoleCommand(fconsoleCommand) {}
+		bool hasValue() const;
+		bool isValid() const;
 
-		void			setValue(bool b) { b == true ? val = "1" : val = "0"; }
-		void			setValue(int i) { setValue(QString::number(i)); }
-		void			setValue(const QString& str) { val = str; }
+		/**
+		 * Nice name to display in Create Server dialog.
+		 */
+		const QString &name() const;
 
-		const QString&	value() const { return val; }
-		bool			valueBool() const { return (val.toInt() != 0); }
-		bool			valueInt() const { return val.toInt(); }
+		void setValue(const QVariant& value);
 
-	protected:
-		QString		val;
+		const QVariant &value() const;
+		QString valueString() const { return value().toString(); }
+		bool valueBool() const { return value().toBool(); }
+		int valueInt() const { return value().toInt(); }
+
+	private:
+		class PrivData;
+		PrivData* d;
 };
 
 /**

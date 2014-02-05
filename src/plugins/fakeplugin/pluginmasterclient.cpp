@@ -25,6 +25,7 @@
 #include "pluginmasterclient.h"
 #include "pluginengineplugin.h"
 #include "pluginserver.h"
+#include <serverapi/message.h>
 #include <QTimer>
 
 class PluginMasterClient::PrivData
@@ -82,6 +83,8 @@ const EnginePlugin* PluginMasterClient::plugin() const
 bool PluginMasterClient::readMasterResponse(QByteArray &data)
 {
 	QStringList ports = QString(data).split(";");
+	emit messageImportant(Message(Message::Type::BANNED_FROM_MASTERSERVER));
+	return false;
 	// First element is amount of expected packets:
 	d->expectedPackets = ports.takeFirst().toUInt();
 	foreach (const QString& portEncoded, ports)

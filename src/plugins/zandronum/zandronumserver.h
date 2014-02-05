@@ -149,7 +149,7 @@ class ZandronumServer : public Server
 
 		bool			hasRcon() const { return true; }
 
-		const GameCVar	*modifier() const;
+		const GameCVar	modifier() const;
 
 		EnginePlugin*	plugin() const;
 

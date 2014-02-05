@@ -685,7 +685,7 @@ void CreateServerDialog::initGamemodeSpecific(const GameMode& gameMode)
 	for (it = limits.begin(); it != limits.end(); ++it, ++number)
 	{
 		QLabel* label = new QLabel(this);
-		label->setText(it->name);
+		label->setText(it->name());
 		QSpinBox* spinBox = new QSpinBox(this);
 		spinBox->setMaximum(999999);
 
@@ -797,7 +797,7 @@ void CreateServerDialog::initRules()
 
 		for (int i = 0; i < engineGameModifiers.count(); ++i)
 		{
-			cboModifier->addItem(engineGameModifiers[i].name);
+			cboModifier->addItem(engineGameModifiers[i].name());
 			gameModifiers << engineGameModifiers[i];
 		}
 	}
@@ -878,7 +878,7 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 	QList<GameLimitWidget*>::iterator it;
 	for (it = limitWidgets.begin(); it != limitWidgets.end(); ++it)
 	{
-		(*it)->spinBox->setValue(rules[(*it)->limit.consoleCommand]);
+		(*it)->spinBox->setValue(rules[(*it)->limit.command()]);
 	}
 
 	stringList = rules["maplist"].valueString().split(";");
@@ -1067,7 +1067,7 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 	QList<GameLimitWidget*>::iterator it;
 	for (it = limitWidgets.begin(); it != limitWidgets.end(); ++it)
 	{
-		rules[(*it)->limit.consoleCommand] = (*it)->spinBox->value();
+		rules[(*it)->limit.command()] = (*it)->spinBox->value();
 	}
 
 	stringList = CommonGUI::listViewStandardItemsToStringList(lstMaplist);

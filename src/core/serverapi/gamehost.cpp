@@ -153,7 +153,7 @@ Message GameHost::createHostCommandLine(const HostInfo& hostInfo, CommandLineInf
 	const QList<GameCVar>& cvars = hostInfo.cvars;
 	foreach(const GameCVar c, cvars)
 	{
-		cmdLine.args << QString("+" + c.consoleCommand) << c.value();
+		cmdLine.args << QString("+" + c.command()) << c.valueString();
 	}
 
 	message = hostGetBinary(mode != GameHost::HOST);
