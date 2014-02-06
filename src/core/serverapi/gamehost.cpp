@@ -25,9 +25,10 @@
 #include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/gameexeretriever.h"
+#include "serverapi/gamecreateparams.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
-#include "serverapi/gamerunnerstructs.h"
+#include "serverapi/serverstructs.h"
 #include "configuration/doomseekerconfig.h"
 #include "apprunner.h"
 #include "log.h"
@@ -48,7 +49,7 @@ class GameHost::PrivData
 		QString argServerLaunch;
 
 		CommandLineInfo* currentCmdLine;
-		const HostInfo* currentHostInfo;
+		GameCreateParams params;
 		const Server* server;
 
 		Message (GameHost::*hostAppendIwad)();
@@ -68,7 +69,6 @@ GameHost::GameHost(const Server* server)
 	d->argDemoRecord = "-record";
 	d->server = server;
 	d->currentCmdLine = NULL;
-	d->currentHostInfo = NULL;
 
 	set_hostAppendIwad(&GameHost::hostAppendIwad_default);
 	set_hostAppendPwads(&GameHost::hostAppendPwads_default);
@@ -123,14 +123,14 @@ QStringList &GameHost::args()
 	return d->currentCmdLine->args;
 }
 
-Message GameHost::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cmdLine, HostMode mode)
+Message GameHost::createHostCommandLine(const GameCreateParams& params, CommandLineInfo& cmdLine, HostMode mode)
 {
 	Message message;
 
 	d->currentCmdLine = &cmdLine;
-	d->currentHostInfo = &hostInfo;
+	d->params = params;
 
-	cmdLine.args.clear();
+	args().clear();
 
 	message = hostAppendIwad();
 	if (!message.isIgnore())
@@ -151,7 +151,7 @@ Message GameHost::createHostCommandLine(const HostInfo& hostInfo, CommandLineInf
 	}
 
 	// CVars
-	const QList<GameCVar> &cvars = hostInfo.cvars;
+	const QList<GameCVar> &cvars = params.cvars();
 	foreach (const GameCVar &c, cvars)
 	{
 		cmdLine.args << QString("+" + c.command()) << c.valueString();
@@ -177,22 +177,22 @@ Message GameHost::createHostCommandLine(const HostInfo& hostInfo, CommandLineInf
 	// Demo play back
 	else if (mode == GameHost::DEMO)
 	{
-		cmdLine.args << argForDemoPlayback();
-		cmdLine.args << hostInfo.demoPath;
+		args() << argForDemoPlayback();
+		args() << params.demoPath();
 	}
 
 	hostDMFlags();
-	hostProperties(cmdLine.args);
-	cmdLine.args.append(hostInfo.customParameters);
+	hostProperties(args());
+	cmdLine.args.append(params.customParameters());
 
 	return message;
 }
 
-Message GameHost::host(const HostInfo& hostInfo, HostMode mode)
+Message GameHost::host(const GameCreateParams& params, HostMode mode)
 {
 	CommandLineInfo cmdLine;
 
-	Message message = createHostCommandLine(hostInfo, cmdLine, mode);
+	Message message = createHostCommandLine(params, cmdLine, mode);
 	if (!message.isIgnore())
 	{
 		return message;
@@ -219,7 +219,7 @@ Message GameHost::host(const HostInfo& hostInfo, HostMode mode)
 Message GameHost::hostAppendIwad_default()
 {
 	const QString RESULT_CAPTION = tr("Doomseeker - host - appending IWAD");
-	const QString& iwadPath = d->currentHostInfo->iwadPath;
+	const QString& iwadPath = params().iwadPath();
 
 	Message message;
 
@@ -245,7 +245,7 @@ Message GameHost::hostAppendIwad_default()
 Message GameHost::hostAppendPwads_default()
 {
 	const QString RESULT_CAPTION = tr("Doomseeker - host - appending PWADs");
-	const QStringList& pwadsPaths = d->currentHostInfo->pwadsPaths;
+	const QStringList& pwadsPaths = params().pwadsPaths();
 
 	Message message;
 
@@ -273,7 +273,7 @@ Message GameHost::hostAppendPwads_default()
 Message GameHost::hostGetBinary_default(bool bOfflinePlay)
 {
 	const QString RESULT_CAPTION = tr("Doomseeker - host - getting executable");
-	QString executablePath = d->currentHostInfo->executablePath;
+	QString executablePath = params().executablePath();
 
 	if (executablePath.isEmpty())
 	{
@@ -372,10 +372,9 @@ Message GameHost::hostGetWorkingDirectory_default(bool bOfflinePlay)
 	return message;
 }
 
-const HostInfo& GameHost::hostInfo()
+const GameCreateParams& GameHost::params() const
 {
-	assert(d->currentHostInfo != NULL);
-	return *d->currentHostInfo;
+	return d->params;
 }
 
 void GameHost::setArgForIwadLoading(const QString& arg)

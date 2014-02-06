@@ -302,6 +302,7 @@ set(SOURCE_FILES
 	serverapi/tooltips/playertable.cpp
 	serverapi/buddyinfo.cpp
 	serverapi/exefile.cpp
+	serverapi/gamecreateparams.cpp
 	serverapi/gameexefactory.cpp
 	serverapi/gameexeretriever.cpp
 	serverapi/gamehost.cpp
@@ -387,6 +388,7 @@ set(HEADER_FILES
 	plugins/engineplugin.h
 	plugins/pluginloader.h
 	serverapi/buddyinfo.h
+	serverapi/gamecreateparams.h
 	serverapi/gameexeretriever.h
 	serverapi/gameclientrunner.h
 	serverapi/joinerror.h

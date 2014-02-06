@@ -25,7 +25,7 @@
 #include "zandronumgamerunner.h"
 #include "zandronumgameinfo.h"
 #include "zandronumserver.h"
-#include <serverapi/gamerunnerstructs.h>
+#include <serverapi/gamecreateparams.h>
 
 ZandronumGameHost::ZandronumGameHost(const ZandronumServer* server)
 : GameHost(server)
@@ -38,7 +38,7 @@ ZandronumGameHost::ZandronumGameHost(const ZandronumServer* server)
 
 void ZandronumGameHost::hostDMFlags()
 {
-	QList<DMFlagsSection> dmFlags = hostInfo().dmFlags;
+	const QList<DMFlagsSection>& dmFlags = params().dmFlags();
 	const QString argNames[] = { "+dmflags", "+dmflags2", "+compatflags" };
 	for (int i = 0; i < qMin(dmFlags.size(), 3); ++i)
 	{

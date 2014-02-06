@@ -24,12 +24,13 @@
 #define DOOMSEEKER_GUI_CREATESERVERDIALOG_H
 
 #include "ui_createserverdialog.h"
-#include "serverapi/gamerunnerstructs.h"
+#include "serverapi/serverstructs.h"
 #include <QCheckBox>
 #include <QDialog>
 
 class CreateServerDialogPage;
 class EnginePlugin;
+class GameCreateParams;
 class Message;
 class Server;
 
@@ -116,7 +117,7 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		 * parameters obtain new information after this method is called.
 		 * @return false if fail.
 		 */
-		bool	createHostInfo(HostInfo& hi, Server* server, bool offline);
+		bool	createHostInfo(GameCreateParams& params, Server* server, bool offline);
 
 		void	initDMFlagsTabs();
 

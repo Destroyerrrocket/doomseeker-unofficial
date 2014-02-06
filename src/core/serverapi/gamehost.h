@@ -29,7 +29,7 @@
 #include <QStringList>
 
 class CommandLineInfo;
-struct HostInfo;
+class GameCreateParams;
 class Message;
 class Server;
 
@@ -58,12 +58,12 @@ class MAIN_EXPORT GameHost : public QObject
 		 * @return MessageResult::isError == false if command line was
 		 *         successfully created.
 		 */
-		Message createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cmdLine, HostMode mode);
+		Message createHostCommandLine(const GameCreateParams& params, CommandLineInfo& cmdLine, HostMode mode);
 
 		/**
 		 * @see createHostCommandLine()
 		 */
-		Message host(const HostInfo& hostInfo, HostMode mode);
+		Message host(const GameCreateParams& params, HostMode mode);
 
 	protected:
 		/**
@@ -147,7 +147,7 @@ class MAIN_EXPORT GameHost : public QObject
 		 */
 		virtual void hostProperties(QStringList& args) const {};
 
-		const HostInfo& hostInfo();
+		const GameCreateParams& params() const;
 
 		void setArgForIwadLoading(const QString& arg);
 		void setArgForPort(const QString& arg);

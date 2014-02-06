@@ -33,6 +33,7 @@
 #include "scanner.h"
 #include "serverapi/exefile.h"
 #include "serverapi/gameexeretriever.h"
+#include "serverapi/gamecreateparams.h"
 #include "serverapi/gamehost.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
@@ -367,16 +368,16 @@ bool CreateServerDialog::commandLineArguments(QString &executable, QStringList &
 	}
 
 	Server* server = currentEngine->server(QHostAddress(), spinPort->value());
-	HostInfo hi;
+	GameCreateParams gameParams;
 	GameHost::HostMode mode = bIsServerSetup ? GameHost::OFFLINE : GameHost::HOST;
 
-	if (createHostInfo(hi, server, mode))
+	if (createHostInfo(gameParams, server, mode))
 	{
 		CommandLineInfo cli;
 		QString error;
 
 		GameHost* gameRunner = server->gameHost();
-		Message message = gameRunner->createHostCommandLine(hi, cli, mode);
+		Message message = gameRunner->createHostCommandLine(gameParams, cli, mode);
 
 		delete server;
 		delete gameRunner;
@@ -400,7 +401,7 @@ bool CreateServerDialog::commandLineArguments(QString &executable, QStringList &
 	return false;
 }
 
-bool CreateServerDialog::createHostInfo(HostInfo& hostInfo, Server* server, bool offline)
+bool CreateServerDialog::createHostInfo(GameCreateParams& params, Server* server, bool offline)
 {
 	if (server != NULL)
 	{
@@ -416,15 +417,15 @@ bool CreateServerDialog::createHostInfo(HostInfo& hostInfo, Server* server, bool
 
 		if (bShouldUseClientBinary)
 		{
-			hostInfo.executablePath = offlineExePath;
+			params.setExecutablePath(offlineExePath);
 		}
 		else
 		{
-			hostInfo.executablePath = leExecutable->text();
+			params.setExecutablePath(leExecutable->text());
 		}
 
-		hostInfo.iwadPath = cboIwad->currentText();
-		hostInfo.pwadsPaths = CommonGUI::listViewStandardItemsToStringList(lstAdditionalFiles);
+		params.setIwadPath(cboIwad->currentText());
+		params.setPwadsPaths(CommonGUI::listViewStandardItemsToStringList(lstAdditionalFiles));
 
 		// DMFlags
 		foreach(const DMFlagsTabWidget* p, dmFlagsTabs)
@@ -437,7 +438,7 @@ bool CreateServerDialog::createHostInfo(HostInfo& hostInfo, Server* server, bool
 					sec.add(p->section[i]);
 				}
 			}
-			hostInfo.dmFlags << sec;
+			params.dmFlags() << sec;
 		}
 
 		// Custom pages.
@@ -455,13 +456,13 @@ bool CreateServerDialog::createHostInfo(HostInfo& hostInfo, Server* server, bool
 				return false;
 			}
 		}
-		hostInfo.customParameters << customPagesParams;
+		params.setCustomParameters(customPagesParams);
 
 		// limits
 		foreach(GameLimitWidget* p, limitWidgets)
 		{
 			p->limit.setValue(p->spinBox->value());
-			hostInfo.cvars << p->limit;
+			params.cvars() << p->limit;
 		}
 
 		// modifier
@@ -470,17 +471,17 @@ bool CreateServerDialog::createHostInfo(HostInfo& hostInfo, Server* server, bool
 		{
 			--modIndex;
 			gameModifiers[modIndex].setValue(1);
-			hostInfo.cvars << gameModifiers[modIndex];
+			params.cvars() << gameModifiers[modIndex];
 		}
 
 		// Custom parameters
 		{
 			QString cp = pteCustomParameters->toPlainText();
 			Scanner sc(cp.toAscii().constData(), cp.length());
-			while(sc.nextString())
+			while (sc.nextString())
 			{
 				QString param = sc->str;
-				hostInfo.customParameters << param;
+				params.customParameters() << param;
 			}
 		}
 
@@ -1005,15 +1006,15 @@ void CreateServerDialog::runGame(bool offline)
 	}
 
 	Server* server = currentEngine->server(QHostAddress(), spinPort->value());
-	HostInfo hi;
+	GameCreateParams gameParams;
 
-	if (createHostInfo(hi, server, offline))
+	if (createHostInfo(gameParams, server, offline))
 	{
 		QString error;
 
 		GameHost* gameRunner = server->gameHost();
 
-		Message message = gameRunner->host(hi, offline ? GameHost::OFFLINE : GameHost::HOST);
+		Message message = gameRunner->host(gameParams, offline ? GameHost::OFFLINE : GameHost::HOST);
 
 		delete gameRunner;
 		delete server;

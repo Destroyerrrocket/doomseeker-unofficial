@@ -26,10 +26,10 @@
 #include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/gameexeretriever.h"
+#include "serverapi/gamecreateparams.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
 #include "serverapi/gamehost.h"
-#include "serverapi/gamerunnerstructs.h"
 
 #include <QDir>
 #include <QFileDialog>
@@ -252,16 +252,16 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 		}
 
 		// Play the demo
-		HostInfo hostInfo;
-		hostInfo.demoPath = Main::dataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename;
-		hostInfo.iwadPath = result.foundFiles[0];
-		hostInfo.pwadsPaths = result.foundFiles.mid(1);
+		GameCreateParams params;
+		params.setDemoPath(Main::dataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename);
+		params.setIwadPath(result.foundFiles[0]);
+		params.setPwadsPaths(result.foundFiles.mid(1));
 
 		// Spawn dummy server.
 		// TODO: Refactor so that it isn't necessary.
 		Server* server = plugin->server(QHostAddress("127.0.0.1"), 5029);
 		GameHost* gameRunner = server->gameHost();
-		Message message = gameRunner->host(hostInfo, GameHost::DEMO);
+		Message message = gameRunner->host(params, GameHost::DEMO);
 
 		if (message.isError())
 		{
