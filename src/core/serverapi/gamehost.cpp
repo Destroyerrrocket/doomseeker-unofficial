@@ -118,9 +118,9 @@ const QString& GameHost::argForServerLaunch() const
 	return d->argServerLaunch;
 }
 
-CommandLineInfo* GameHost::cmdLine()
+QStringList &GameHost::args()
 {
-	return d->currentCmdLine;
+	return d->currentCmdLine->args;
 }
 
 Message GameHost::createHostCommandLine(const HostInfo& hostInfo, CommandLineInfo& cmdLine, HostMode mode)

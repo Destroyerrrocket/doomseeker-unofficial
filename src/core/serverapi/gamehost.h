@@ -108,7 +108,13 @@ class MAIN_EXPORT GameHost : public QObject
 		 */
 		const QString& argForServerLaunch() const;
 
-		CommandLineInfo* cmdLine();
+		/**
+		 * @brief Output command line arguments.
+		 *
+		 * This is where plugins should write all CMD line arguments they
+		 * create for the executable run.
+		 */
+		QStringList &args();
 
 		POLYMORPHIC_SETTER_DECLARE(Message, GameHost, hostAppendIwad, ());
 		Message hostAppendIwad();

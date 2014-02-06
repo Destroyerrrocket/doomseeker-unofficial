@@ -38,7 +38,6 @@ ZandronumGameHost::ZandronumGameHost(const ZandronumServer* server)
 
 void ZandronumGameHost::hostDMFlags()
 {
-	QStringList& args = cmdLine()->args;
 	QList<DMFlagsSection> dmFlags = hostInfo().dmFlags;
 	const QString argNames[] = { "+dmflags", "+dmflags2", "+compatflags" };
 	for (int i = 0; i < qMin(dmFlags.size(), 3); ++i)
@@ -51,7 +50,7 @@ void ZandronumGameHost::hostDMFlags()
 			flagsValue |= 1 << section[i].value();
 		}
 
-		args << argNames[i] << QString::number(flagsValue);
+		args() << argNames[i] << QString::number(flagsValue);
 	}
 }
 
