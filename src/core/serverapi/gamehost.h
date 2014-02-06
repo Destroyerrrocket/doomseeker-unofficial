@@ -39,7 +39,6 @@ class MAIN_EXPORT GameHost : public QObject
 
 	public:
 		enum HostMode
-
 		{
 			HOST,
 			OFFLINE,
@@ -65,16 +64,6 @@ class MAIN_EXPORT GameHost : public QObject
 		 * @see createHostCommandLine()
 		 */
 		Message host(const HostInfo& hostInfo, HostMode mode);
-
-		/**
-		 * @brief Executes predefined command line.
-		 *
-		 * @param cli - command line that will be executed
-		 * @param bWrapWithStandardServerConsole - if true Doomseeker will
-		 *     attempt to wrap the input/output of the program with it's own
-		 *     console
-		 */
-		Message runExecutable(const CommandLineInfo& cli, bool bWrapWithStandardServerConsole);
 
 	protected:
 		/**

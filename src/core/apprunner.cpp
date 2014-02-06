@@ -21,6 +21,8 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "apprunner.h"
+
+#include "gui/standardserverconsole.h"
 #include "serverapi/message.h"
 #include "log.h"
 #include "strings.h"
@@ -104,4 +106,12 @@ Message AppRunner::runExecutable(const CommandLineInfo& cmdInfo)
 	}
 
 	return message;
+}
+
+void AppRunner::runExecutableWrappedInStandardServerConsole(
+	const QIcon &icon, const CommandLineInfo &cli)
+{
+	gLog << tr("Starting (working dir %1): %2").arg(cli.applicationDir.absolutePath())
+		.arg(cli.executable.absoluteFilePath());
+	new StandardServerConsole(icon, cli.executable.absoluteFilePath(), cli.args);
 }

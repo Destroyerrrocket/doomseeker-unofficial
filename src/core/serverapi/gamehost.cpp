@@ -29,7 +29,6 @@
 #include "serverapi/server.h"
 #include "serverapi/gamerunnerstructs.h"
 #include "configuration/doomseekerconfig.h"
-#include "gui/standardserverconsole.h"
 #include "apprunner.h"
 #include "log.h"
 #include "main.h"
@@ -146,12 +145,14 @@ Message GameHost::createHostCommandLine(const HostInfo& hostInfo, CommandLineInf
 	}
 
 	// Port
-	if(mode == GameHost::HOST)
+	if (mode == GameHost::HOST)
+	{
 		cmdLine.args << argForPort() << QString::number(d->server->port());
+	}
 
 	// CVars
-	const QList<GameCVar>& cvars = hostInfo.cvars;
-	foreach(const GameCVar c, cvars)
+	const QList<GameCVar> &cvars = hostInfo.cvars;
+	foreach (const GameCVar &c, cvars)
 	{
 		cmdLine.args << QString("+" + c.command()) << c.valueString();
 	}
@@ -203,7 +204,16 @@ Message GameHost::host(const HostInfo& hostInfo, HostMode mode)
 	const bool WRAP_IN_SSS_CONSOLE = mode == HOST;
 #endif
 
-	return runExecutable(cmdLine, WRAP_IN_SSS_CONSOLE);
+	if (WRAP_IN_SSS_CONSOLE)
+	{
+		AppRunner::runExecutableWrappedInStandardServerConsole(
+			d->server->icon(), cmdLine);
+		return Message();
+	}
+	else
+	{
+		return AppRunner::runExecutable(cmdLine);
+	}
 }
 
 Message GameHost::hostAppendIwad_default()
@@ -366,25 +376,6 @@ const HostInfo& GameHost::hostInfo()
 {
 	assert(d->currentHostInfo != NULL);
 	return *d->currentHostInfo;
-}
-
-Message GameHost::runExecutable(const CommandLineInfo& cli, bool bWrapInStandardServerConsole)
-{
-	if (!bWrapInStandardServerConsole)
-	{
-		return AppRunner::runExecutable(cli);
-	}
-	else
-	{
-		gLog << tr("Starting (working dir %1): %2").arg(cli.applicationDir.absolutePath()).arg(cli.executable.absoluteFilePath());
-		QStringList args = cli.args;
-		// Is this needed for something? Zandronum needs the quotes for console
-		// variables.
-		//AppRunner::cleanArguments(args);
-		new StandardServerConsole(d->server, cli.executable.absoluteFilePath(), args);
-	}
-
-	return Message();
 }
 
 void GameHost::setArgForIwadLoading(const QString& arg)

@@ -27,6 +27,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QStringList>
+#include <QIcon>
 
 class Message;
 
@@ -63,6 +64,20 @@ class MAIN_EXPORT AppRunner : public QObject
 #endif
 
 		static Message		 	runExecutable(const CommandLineInfo& cmdInfo);
+		
+		/**
+		 * @brief Executes predefined command line.
+		 *
+		 * Doomseeker will attempt to wrap the input/output of the program
+		 * with it's own console
+		 *
+		 * @param icon
+		 *     Optional icon for the console window.
+		 * @param cli
+		 *     Command line that will be executed.
+		 */
+		static void runExecutableWrappedInStandardServerConsole(
+			const QIcon &icon, const CommandLineInfo &cli);
 };
 
 #endif

@@ -21,18 +21,17 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "standardserverconsole.h"
-#include "serverapi/server.h"
 
 #include <QMessageBox>
 
-StandardServerConsole::StandardServerConsole(const Server *server, const QString &program, const QStringList &arguments)
+StandardServerConsole::StandardServerConsole(const QIcon &icon, const QString &program, const QStringList &arguments)
 {
 	// Have the console delete itself
 	setAttribute(Qt::WA_DeleteOnClose);
 
 	// Set up the window.
 	setWindowTitle("Server Console");
-	setWindowIcon(server->icon());
+	setWindowIcon(icon);
 	resize(640, 400);
 
 	// Add our console widget
