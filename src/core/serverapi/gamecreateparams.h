@@ -37,6 +37,13 @@ class GameCVar;
 class MAIN_EXPORT GameCreateParams
 {
 	public:
+		enum HostMode
+		{
+			Host,
+			Offline,
+			Demo
+		};
+
 		GameCreateParams();
 		COPYABLE_D_POINTERED_DECLARE(GameCreateParams);
 		~GameCreateParams();
@@ -60,6 +67,7 @@ class MAIN_EXPORT GameCreateParams
 		 * @brief Path to the game executable.
 		 */
 		const QString& executablePath() const;
+		HostMode hostMode() const;
 		const QString& iwadPath() const;
 
 		QStringList& pwadsPaths();
@@ -69,6 +77,7 @@ class MAIN_EXPORT GameCreateParams
 		void setCvars(const QList<GameCVar>& cvars);
 		void setDemoPath(const QString& demoPath);
 		void setExecutablePath(const QString& executablePath);
+		void setHostMode(HostMode mode);
 		void setIwadPath(const QString& iwadPath);
 		void setPwadsPaths(const QStringList& pwadsPaths);
 

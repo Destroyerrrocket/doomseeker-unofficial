@@ -32,6 +32,7 @@ class GameCreateParams::PrivData
 		QString executablePath;
 		QString demoPath;
 		QList<DMFlagsSection> dmFlags;
+		GameCreateParams::HostMode hostMode;
 		QString iwadPath;
 		QStringList pwadsPaths;
 };
@@ -90,6 +91,11 @@ const QString& GameCreateParams::executablePath() const
 	return d->executablePath;
 }
 
+GameCreateParams::HostMode GameCreateParams::hostMode() const
+{
+	return d->hostMode;
+}
+
 const QString& GameCreateParams::iwadPath() const
 {
 	return d->iwadPath;
@@ -123,6 +129,11 @@ void GameCreateParams::setDemoPath(const QString& demoPath)
 void GameCreateParams::setExecutablePath(const QString& executablePath)
 {
 	d->executablePath = executablePath;
+}
+
+void GameCreateParams::setHostMode(HostMode mode)
+{
+	d->hostMode = mode;
 }
 
 void GameCreateParams::setIwadPath(const QString& iwadPath)

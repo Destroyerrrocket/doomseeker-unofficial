@@ -36,7 +36,17 @@
 #include "strings.h"
 #include <cassert>
 #include <QDateTime>
+#include <QFileInfo>
 #include <QStringList>
+
+#define BAIL_ON_ERROR(method) \
+{ \
+	method; \
+	if (d->message.isError()) \
+	{ \
+		return; \
+	} \
+}
 
 class GameHost::PrivData
 {
@@ -49,13 +59,12 @@ class GameHost::PrivData
 		QString argServerLaunch;
 
 		CommandLineInfo* currentCmdLine;
+		Message message;
 		GameCreateParams params;
 		const Server* server;
 
-		Message (GameHost::*addIwad)();
-		Message (GameHost::*addPwads)();
-		Message (GameHost::*hostGetBinary)(bool bOfflinePlay);
-		Message (GameHost::*hostGetWorkingDirectory)(bool bOfflinePlay);
+		void (GameHost::*addIwad)();
+		void (GameHost::*addPwads)();
 		void (GameHost::*addDMFlags)();
 };
 
@@ -72,8 +81,6 @@ GameHost::GameHost(const Server* server)
 
 	set_addIwad(&GameHost::addIwad_default);
 	set_addPwads(&GameHost::addPwads_default);
-	set_hostGetBinary(&GameHost::hostGetBinary_default);
-	set_hostGetWorkingDirectory(&GameHost::hostGetWorkingDirectory_default);
 	set_addDMFlags(&GameHost::addDMFlags_default);
 }
 
@@ -82,11 +89,56 @@ GameHost::~GameHost()
 	delete d;
 }
 
-POLYMORPHIC_DEFINE(Message, GameHost, addIwad, (), ());
-POLYMORPHIC_DEFINE(Message, GameHost, addPwads, (), ());
-POLYMORPHIC_DEFINE(Message, GameHost, hostGetBinary, (bool bOfflinePlay), (bOfflinePlay));
-POLYMORPHIC_DEFINE(Message, GameHost, hostGetWorkingDirectory, (bool bOfflinePlay), (bOfflinePlay));
+POLYMORPHIC_DEFINE(void, GameHost, addIwad, (), ());
+POLYMORPHIC_DEFINE(void, GameHost, addPwads, (), ());
 POLYMORPHIC_DEFINE(void, GameHost, addDMFlags, (), ());
+
+void GameHost::addCustomParameters()
+{
+	args().append(params().customParameters());
+}
+
+void GameHost::addExtra()
+{
+}
+
+void GameHost::addIwad_default()
+{
+	const QString& iwadPath = params().iwadPath();
+
+	if (iwadPath.isEmpty())
+	{
+		setMessage(Message::customError(tr("Iwad is not set")));
+		return;
+	}
+
+	QFileInfo fi(iwadPath);
+
+	if (!fi.isFile())
+	{
+		QString error = tr("Iwad Path error:\n\"%1\" doesn't exist or is a directory!").arg(iwadPath);
+		setMessage(Message::customError(error));
+	}
+
+	args() << argForIwadLoading() << iwadPath;
+}
+
+void GameHost::addPwads_default()
+{
+	foreach(const QString& pwad, params().pwadsPaths())
+	{
+		args() << argForPwadLoading();
+
+		QFileInfo fi(pwad);
+		if (!fi.isFile())
+		{
+			QString error = tr("Pwad path error:\n\"%1\" doesn't exist or is a directory!").arg(pwad);
+			setMessage(Message::customError(error));
+			return;
+		}
+		args() << pwad;
+	}
+}
 
 const QString& GameHost::argForIwadLoading() const
 {
@@ -123,76 +175,66 @@ QStringList &GameHost::args()
 	return d->currentCmdLine->args;
 }
 
-Message GameHost::createHostCommandLine(const GameCreateParams& params, CommandLineInfo& cmdLine, HostMode mode)
+void GameHost::createCommandLineArguments()
 {
-	Message message;
+	BAIL_ON_ERROR(addIwad());
+	BAIL_ON_ERROR(addPwads());
 
+	// Port
+	if (params().hostMode() == GameCreateParams::Host)
+	{
+		args() << argForPort() << QString::number(d->server->port());
+	}
+
+	// CVars
+	const QList<GameCVar> &cvars = params().cvars();
+	foreach (const GameCVar &c, cvars)
+	{
+		args() << QString("+" + c.command()) << c.valueString();
+	}
+
+	if (params().hostMode() == GameCreateParams::Host)
+	{
+		// Some games may not offer such argument.
+		if (!argForServerLaunch().isEmpty())
+		{
+			args() << argForServerLaunch();
+		}
+	}
+	else if (params().hostMode() == GameCreateParams::Demo)
+	{
+		args() << argForDemoPlayback();
+		args() << params().demoPath();
+	}
+
+	BAIL_ON_ERROR(addDMFlags());
+	BAIL_ON_ERROR(addExtra());
+	BAIL_ON_ERROR(addCustomParameters());
+}
+
+Message GameHost::createHostCommandLine(const GameCreateParams& params, CommandLineInfo& cmdLine)
+{
+	d->message = Message();
 	d->currentCmdLine = &cmdLine;
 	d->params = params;
 
 	args().clear();
 
-	message = addIwad();
-	if (!message.isIgnore())
+	setupGamePaths();
+	if (d->message.isError())
 	{
-		return message;
+		return d->message;
 	}
 
-	message = addPwads();
-	if (!message.isIgnore())
-	{
-		return message;
-	}
-
-	// Port
-	if (mode == GameHost::HOST)
-	{
-		cmdLine.args << argForPort() << QString::number(d->server->port());
-	}
-
-	// CVars
-	const QList<GameCVar> &cvars = params.cvars();
-	foreach (const GameCVar &c, cvars)
-	{
-		cmdLine.args << QString("+" + c.command()) << c.valueString();
-	}
-
-	message = hostGetBinary(mode != GameHost::HOST);
-	if (!message.isIgnore())
-	{
-		return message;
-	}
-
-	message = hostGetWorkingDirectory(mode != GameHost::HOST);
-	if (!message.isIgnore())
-	{
-		return message;
-	}
-
-	// Add the server launch parameter only if we don't want offline game
-	if (mode == GameHost::HOST)
-	{
-		cmdLine.args << argForServerLaunch();
-	}
-	// Demo play back
-	else if (mode == GameHost::DEMO)
-	{
-		args() << argForDemoPlayback();
-		args() << params.demoPath();
-	}
-
-	addDMFlags();
-	addExtra();
-	cmdLine.args.append(params.customParameters());
-
-	return message;
+	createCommandLineArguments();
+	return d->message;
 }
 
-Message GameHost::host(const GameCreateParams& params, HostMode mode)
+Message GameHost::host(const GameCreateParams& params)
 {
 	CommandLineInfo cmdLine;
 
-	Message message = createHostCommandLine(params, cmdLine, mode);
+	Message message = createHostCommandLine(params, cmdLine);
 	if (!message.isIgnore())
 	{
 		return message;
@@ -201,7 +243,7 @@ Message GameHost::host(const GameCreateParams& params, HostMode mode)
 #ifdef Q_OS_WIN32
 	const bool WRAP_IN_SSS_CONSOLE = false;
 #else
-	const bool WRAP_IN_SSS_CONSOLE = mode == HOST;
+	const bool WRAP_IN_SSS_CONSOLE = params.hostMode() == GameCreateParams::Host;
 #endif
 
 	if (WRAP_IN_SSS_CONSOLE)
@@ -214,166 +256,6 @@ Message GameHost::host(const GameCreateParams& params, HostMode mode)
 	{
 		return AppRunner::runExecutable(cmdLine);
 	}
-}
-
-Message GameHost::addIwad_default()
-{
-	const QString RESULT_CAPTION = tr("Doomseeker - host - appending IWAD");
-	const QString& iwadPath = params().iwadPath();
-
-	Message message;
-
-	if (iwadPath.isEmpty())
-	{
-		message = Message::customError(tr("Iwad is not set"));
-		return message;
-	}
-
-	QFileInfo fi(iwadPath);
-
-	if (!fi.isFile())
-	{
-		QString error = tr("Iwad Path error:\n\"%1\" doesn't exist or is a directory!").arg(iwadPath);
-		message = Message::customError(error);
-		return message;
-	}
-
-	d->currentCmdLine->args << argForIwadLoading() << iwadPath;
-	return message;
-}
-
-Message GameHost::addPwads_default()
-{
-	const QString RESULT_CAPTION = tr("Doomseeker - host - appending PWADs");
-	const QStringList& pwadsPaths = params().pwadsPaths();
-
-	Message message;
-
-	if (!pwadsPaths.isEmpty())
-	{
-		QStringList& args = d->currentCmdLine->args;
-		foreach(const QString pwad, pwadsPaths)
-		{
-			args << argForPwadLoading();
-
-			QFileInfo fi(pwad);
-			if (!fi.isFile())
-			{
-				QString error = tr("Pwad path error:\n\"%1\" doesn't exist or is a directory!").arg(pwad);
-				message = Message::customError(error);
-				return message;
-			}
-			args << pwad;
-		}
-	}
-
-	return message;
-}
-
-Message GameHost::hostGetBinary_default(bool bOfflinePlay)
-{
-	const QString RESULT_CAPTION = tr("Doomseeker - host - getting executable");
-	QString executablePath = params().executablePath();
-
-	if (executablePath.isEmpty())
-	{
-		GameExeRetriever exeRetriever = GameExeRetriever(*d->server->plugin()->gameExe());
-		Message message;
-		// Select binary depending on bOfflinePlay flag:
-		if (bOfflinePlay)
-		{
-			executablePath = exeRetriever.pathToOfflineExe(message);
-		}
-		else
-		{
-			executablePath = exeRetriever.pathToServerExe(message);
-		}
-
-		if (executablePath.isEmpty())
-		{
-			return message;
-		}
-	}
-
-	QFileInfo fi(executablePath);
-
-	if (!fi.isFile() && !fi.isBundle())
-	{
-		Message message;
-		QString error = tr("%1\n doesn't exist or is not a file.").arg(fi.filePath());
-		message = Message::customError(error);
-		return message;
-	}
-
-	d->currentCmdLine->executable = executablePath;
-	return Message();
-}
-
-Message GameHost::hostGetWorkingDirectory_default(bool bOfflinePlay)
-{
-	const QString RESULT_CAPTION = tr("Doomseeker - host - getting working directory");
-	QString error;
-	QString serverWorkingDirPath;
-
-	Message message;
-
-	// First, we should try to extract the working dir from plugin.
-	// [Zalewa]:
-	// A plugin may insist on doing that for a reason that is currently
-	// unknown to me. Let's try to predict every possible situation.
-	GameExeRetriever exeRetriever = GameExeRetriever(*d->server->plugin()->gameExe());
-	QString workingDirFromPlugin;
-	if (bOfflinePlay)
-	{
-		workingDirFromPlugin = exeRetriever.offlineWorkingDir(message);
-	}
-	else
-	{
-		workingDirFromPlugin = exeRetriever.serverWorkingDir(message);
-	}
-
-	// Check if all went well on the plugin side.
-	if (!message.isIgnore())
-	{
-		// Something's gone wrong. Report the error.
-		return message;
-	}
-
-	if (workingDirFromPlugin.isEmpty())
-	{
-		// Assume that working directory is the same as executable's directory.
-		// Path to executable should be known at this point.
-		QFileInfo fileInfo(d->currentCmdLine->executable);
-
-		serverWorkingDirPath = fileInfo.absolutePath();
-	}
-	else
-	{
-		// Plugin returned the directory. Use that.
-		serverWorkingDirPath = workingDirFromPlugin;
-	}
-
-	QDir serverWorkingDir(serverWorkingDirPath);
-
-	if (serverWorkingDirPath.isEmpty())
-	{
-		QString error = tr("Path to working directory is empty.\nMake sure the configuration for the executable file is set properly.");
-		message = Message::customError(error);
-		return message;
-	}
-	else if (!serverWorkingDir.exists())
-	{
-		QString error = tr("%1\n doesn't exist or is not a directory.").arg(serverWorkingDirPath);
-		message = Message::customError(error);
-		return message;
-	}
-
-	d->currentCmdLine->applicationDir = serverWorkingDir;
-	return message;
-}
-
-void GameHost::addExtra()
-{
 }
 
 const GameCreateParams& GameHost::params() const
@@ -411,3 +293,20 @@ void GameHost::setArgForServerLaunch(const QString& arg)
 	d->argServerLaunch = arg;
 }
 
+void GameHost::setMessage(const Message& message)
+{
+	d->message = message;
+}
+
+void GameHost::setupGamePaths()
+{
+	QFileInfo fileInfo(params().executablePath());
+	if (!fileInfo.isFile() && !fileInfo.isBundle())
+	{
+		QString error = tr("%1\n doesn't exist or is not a file.").arg(fileInfo.filePath());
+		setMessage(Message::customError(error));
+		return;
+	}
+	d->currentCmdLine->executable = params().executablePath();
+	d->currentCmdLine->applicationDir = fileInfo.dir();
+}

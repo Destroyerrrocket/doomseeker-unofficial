@@ -38,32 +38,19 @@ class MAIN_EXPORT GameHost : public QObject
 	Q_OBJECT
 
 	public:
-		enum HostMode
-		{
-			HOST,
-			OFFLINE,
-			DEMO
-		};
-
 		GameHost(const Server* server);
 		virtual ~GameHost();
 
 		/**
-		 * @param [out] cli - after successful call this will contain
-		 *     required command line information.
-		 * @param [out] error - if return == false, error text will be put here
-		 * @param bOfflinePlay - if not HOST a command line for single player game
-		 *     will be launched
-		 *
-		 * @return MessageResult::isError == false if command line was
+		 * @return Message::isError() == false if command line was
 		 *         successfully created.
 		 */
-		Message createHostCommandLine(const GameCreateParams& params, CommandLineInfo& cmdLine, HostMode mode);
+		Message createHostCommandLine(const GameCreateParams& params, CommandLineInfo& cmdLine);
 
 		/**
 		 * @see createHostCommandLine()
 		 */
-		Message host(const GameCreateParams& params, HostMode mode);
+		Message host(const GameCreateParams& params);
 
 	protected:
 		/**
@@ -116,17 +103,7 @@ class MAIN_EXPORT GameHost : public QObject
 		 */
 		QStringList &args();
 
-		POLYMORPHIC_SETTER_DECLARE(Message, GameHost, addIwad, ());
-		Message addIwad();
-
-		POLYMORPHIC_SETTER_DECLARE(Message, GameHost, addPwads, ());
-		Message addPwads();
-
-		POLYMORPHIC_SETTER_DECLARE(Message, GameHost, hostGetBinary, (bool bOfflinePlay));
-		Message hostGetBinary(bool bOfflinePlay);
-
-		POLYMORPHIC_SETTER_DECLARE(Message, GameHost, hostGetWorkingDirectory, (bool bOfflinePlay));
-		Message hostGetWorkingDirectory(bool bOfflinePlay);
+		virtual void addCustomParameters();
 
 		/**
 		 * @brief @b [Virtual] Creates engine specific command line parameters
@@ -148,6 +125,14 @@ class MAIN_EXPORT GameHost : public QObject
 		 */
 		virtual void addExtra();
 
+		void addIwad();
+		POLYMORPHIC_SETTER_DECLARE(void, GameHost, addIwad, ());
+
+		void addPwads();
+		POLYMORPHIC_SETTER_DECLARE(void, GameHost, addPwads, ());
+
+		virtual void createCommandLineArguments();
+
 		const GameCreateParams& params() const;
 
 		void setArgForIwadLoading(const QString& arg);
@@ -157,17 +142,25 @@ class MAIN_EXPORT GameHost : public QObject
 		void setArgForDemoRecord(const QString& arg);
 		void setArgForServerLaunch(const QString& arg);
 
+		/**
+		 * @brief Call this method to convey errors.
+		 *
+		 * GameHost checks for errors before making certain steps. If
+		 * plugins want to prevent execution of the game, they should
+		 * set a Message instance that will return 'true' on Message::isError().
+		 */
+		void setMessage(const Message& message);
+
 	private:
 		class PrivData;
 		PrivData* d;
 
 		Q_DISABLE_COPY(GameHost);
 
-		Message addIwad_default();
-		Message addPwads_default();
-		Message hostGetBinary_default(bool bOfflinePlay);
-		Message hostGetWorkingDirectory_default(bool bOfflinePlay);
+		void addIwad_default();
+		void addPwads_default();
 		void addDMFlags_default() {};
+		void setupGamePaths();
 };
 
 #endif

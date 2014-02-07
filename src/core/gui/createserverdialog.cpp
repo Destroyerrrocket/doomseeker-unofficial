@@ -369,15 +369,13 @@ bool CreateServerDialog::commandLineArguments(QString &executable, QStringList &
 
 	Server* server = currentEngine->server(QHostAddress(), spinPort->value());
 	GameCreateParams gameParams;
-	GameHost::HostMode mode = bIsServerSetup ? GameHost::OFFLINE : GameHost::HOST;
-
-	if (createHostInfo(gameParams, server, mode))
+	if (createHostInfo(gameParams, server, false))
 	{
 		CommandLineInfo cli;
 		QString error;
 
 		GameHost* gameRunner = server->gameHost();
-		Message message = gameRunner->createHostCommandLine(gameParams, cli, mode);
+		Message message = gameRunner->createHostCommandLine(gameParams, cli);
 
 		delete server;
 		delete gameRunner;
@@ -415,6 +413,7 @@ bool CreateServerDialog::createHostInfo(GameCreateParams& params, Server* server
 		bool bIsLineEditPotiningToServerBinary = (leExecutable->text() == serverExePath);
 		bool bShouldUseClientBinary = (offline || bIsServerSetup) && message.isIgnore() && bIsLineEditPotiningToServerBinary;
 
+		params.setHostMode(offline ? GameCreateParams::Offline : GameCreateParams::Host);
 		if (bShouldUseClientBinary)
 		{
 			params.setExecutablePath(offlineExePath);
@@ -1007,14 +1006,12 @@ void CreateServerDialog::runGame(bool offline)
 
 	Server* server = currentEngine->server(QHostAddress(), spinPort->value());
 	GameCreateParams gameParams;
-
 	if (createHostInfo(gameParams, server, offline))
 	{
 		QString error;
 
 		GameHost* gameRunner = server->gameHost();
-
-		Message message = gameRunner->host(gameParams, offline ? GameHost::OFFLINE : GameHost::HOST);
+		Message message = gameRunner->host(gameParams);
 
 		delete gameRunner;
 		delete server;

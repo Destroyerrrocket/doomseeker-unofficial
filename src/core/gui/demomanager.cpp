@@ -256,12 +256,13 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 		params.setDemoPath(Main::dataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename);
 		params.setIwadPath(result.foundFiles[0]);
 		params.setPwadsPaths(result.foundFiles.mid(1));
+		params.setHostMode(GameCreateParams::Demo);
 
 		// Spawn dummy server.
 		// TODO: Refactor so that it isn't necessary.
 		Server* server = plugin->server(QHostAddress("127.0.0.1"), 5029);
 		GameHost* gameRunner = server->gameHost();
-		Message message = gameRunner->host(params, GameHost::DEMO);
+		Message message = gameRunner->host(params);
 
 		if (message.isError())
 		{
