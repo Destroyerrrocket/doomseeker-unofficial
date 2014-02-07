@@ -35,7 +35,7 @@ class OdamexGameHost : public GameHost
 		OdamexGameHost(const OdamexServer* server);
 
 	protected:
-		void hostProperties(QStringList& args) const;
+		void addExtra();
 
 	private:
 		Q_DISABLE_COPY(OdamexGameHost)

@@ -52,11 +52,11 @@ class GameHost::PrivData
 		GameCreateParams params;
 		const Server* server;
 
-		Message (GameHost::*hostAppendIwad)();
-		Message (GameHost::*hostAppendPwads)();
+		Message (GameHost::*addIwad)();
+		Message (GameHost::*addPwads)();
 		Message (GameHost::*hostGetBinary)(bool bOfflinePlay);
 		Message (GameHost::*hostGetWorkingDirectory)(bool bOfflinePlay);
-		void (GameHost::*hostDMFlags)();
+		void (GameHost::*addDMFlags)();
 };
 
 GameHost::GameHost(const Server* server)
@@ -70,11 +70,11 @@ GameHost::GameHost(const Server* server)
 	d->server = server;
 	d->currentCmdLine = NULL;
 
-	set_hostAppendIwad(&GameHost::hostAppendIwad_default);
-	set_hostAppendPwads(&GameHost::hostAppendPwads_default);
+	set_addIwad(&GameHost::addIwad_default);
+	set_addPwads(&GameHost::addPwads_default);
 	set_hostGetBinary(&GameHost::hostGetBinary_default);
 	set_hostGetWorkingDirectory(&GameHost::hostGetWorkingDirectory_default);
-	set_hostDMFlags(&GameHost::hostDMFlags_default);
+	set_addDMFlags(&GameHost::addDMFlags_default);
 }
 
 GameHost::~GameHost()
@@ -82,11 +82,11 @@ GameHost::~GameHost()
 	delete d;
 }
 
-POLYMORPHIC_DEFINE(Message, GameHost, hostAppendIwad, (), ());
-POLYMORPHIC_DEFINE(Message, GameHost, hostAppendPwads, (), ());
+POLYMORPHIC_DEFINE(Message, GameHost, addIwad, (), ());
+POLYMORPHIC_DEFINE(Message, GameHost, addPwads, (), ());
 POLYMORPHIC_DEFINE(Message, GameHost, hostGetBinary, (bool bOfflinePlay), (bOfflinePlay));
 POLYMORPHIC_DEFINE(Message, GameHost, hostGetWorkingDirectory, (bool bOfflinePlay), (bOfflinePlay));
-POLYMORPHIC_DEFINE(void, GameHost, hostDMFlags, (), ());
+POLYMORPHIC_DEFINE(void, GameHost, addDMFlags, (), ());
 
 const QString& GameHost::argForIwadLoading() const
 {
@@ -132,13 +132,13 @@ Message GameHost::createHostCommandLine(const GameCreateParams& params, CommandL
 
 	args().clear();
 
-	message = hostAppendIwad();
+	message = addIwad();
 	if (!message.isIgnore())
 	{
 		return message;
 	}
 
-	message = hostAppendPwads();
+	message = addPwads();
 	if (!message.isIgnore())
 	{
 		return message;
@@ -181,8 +181,8 @@ Message GameHost::createHostCommandLine(const GameCreateParams& params, CommandL
 		args() << params.demoPath();
 	}
 
-	hostDMFlags();
-	hostProperties(args());
+	addDMFlags();
+	addExtra();
 	cmdLine.args.append(params.customParameters());
 
 	return message;
@@ -216,7 +216,7 @@ Message GameHost::host(const GameCreateParams& params, HostMode mode)
 	}
 }
 
-Message GameHost::hostAppendIwad_default()
+Message GameHost::addIwad_default()
 {
 	const QString RESULT_CAPTION = tr("Doomseeker - host - appending IWAD");
 	const QString& iwadPath = params().iwadPath();
@@ -242,7 +242,7 @@ Message GameHost::hostAppendIwad_default()
 	return message;
 }
 
-Message GameHost::hostAppendPwads_default()
+Message GameHost::addPwads_default()
 {
 	const QString RESULT_CAPTION = tr("Doomseeker - host - appending PWADs");
 	const QStringList& pwadsPaths = params().pwadsPaths();
@@ -370,6 +370,10 @@ Message GameHost::hostGetWorkingDirectory_default(bool bOfflinePlay)
 
 	d->currentCmdLine->applicationDir = serverWorkingDir;
 	return message;
+}
+
+void GameHost::addExtra()
+{
 }
 
 const GameCreateParams& GameHost::params() const

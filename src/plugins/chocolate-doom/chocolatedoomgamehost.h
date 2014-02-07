@@ -35,7 +35,7 @@ class ChocolateDoomGameHost : public GameHost
 		ChocolateDoomGameHost(const ChocolateDoomServer* server);
 
 	protected:
-		void hostProperties(QStringList& args) const;
+		void addExtra();
 
 	private:
 		Q_DISABLE_COPY(ChocolateDoomGameHost)

@@ -33,19 +33,19 @@ OdamexGameHost::OdamexGameHost(const OdamexServer* server)
 	setArgForDemoRecord("-netrecord");
 }
 
-void OdamexGameHost::hostProperties(QStringList& args) const
+void OdamexGameHost::addExtra()
 {
-	args << "-skill" << QString::number(server->skill() + 1); // from 1 to 5
+	args() << "-skill" << QString::number(server->skill() + 1); // from 1 to 5
 
 	const QStringList& mapsList = server->mapList();
 	if (!mapsList.isEmpty())
 	{
 		foreach (QString map, mapsList)
 		{
-			args << "+addmap" << map;
+			args() << "+addmap" << map;
 		}
 	}
-	args << "+shufflemaplist" << QString::number( static_cast<int>(server->isRandomMapRotation()) );
+	args() << "+shufflemaplist" << QString::number( static_cast<int>(server->isRandomMapRotation()) );
 
 	unsigned int modeNum;
 	switch(server->gameMode().index())
@@ -56,23 +56,23 @@ void OdamexGameHost::hostProperties(QStringList& args) const
 		case GameMode::SGM_TeamDeathmatch: modeNum = 2; break;
 		case GameMode::SGM_CTF: modeNum = 3; break;
 	}
-	args << "+sv_gametype" << QString::number(modeNum);
+	args() << "+sv_gametype" << QString::number(modeNum);
 
 	if (!server->map().isEmpty())
 	{
-		args << "+map" << server->map();
+		args() << "+map" << server->map();
 	}
 
-	args << "+join_password" << "\"" + server->joinPassword() + "\"";
-	args << "+rcon_password" << "\"" + server->rconPassword() + "\"";
-	args << "+sv_email" << "\"" + server->email() + "\"";
-	args << "+sv_hostname" << "\"" + server->name() + "\"";
-	args << "+sv_maxclients" << QString::number(server->numTotalSlots());
-	args << "+sv_maxplayers" << QString::number(server->maxPlayers());
-	args << "+sv_website" << "\"" + server->webSite() + "\"";
+	args() << "+join_password" << "\"" + server->joinPassword() + "\"";
+	args() << "+rcon_password" << "\"" + server->rconPassword() + "\"";
+	args() << "+sv_email" << "\"" + server->email() + "\"";
+	args() << "+sv_hostname" << "\"" + server->name() + "\"";
+	args() << "+sv_maxclients" << QString::number(server->numTotalSlots());
+	args() << "+sv_maxplayers" << QString::number(server->maxPlayers());
+	args() << "+sv_website" << "\"" + server->webSite() + "\"";
 
 	QString motd = server->motd();
-	args << "+sv_motd" << "\"" + motd.replace("\n", "\\n") + "\"";
+	args() << "+sv_motd" << "\"" + motd.replace("\n", "\\n") + "\"";
 
-	args << "+sv_usemasters" << QString::number(static_cast<int>( server->isBroadcastToMaster() ));
+	args() << "+sv_usemasters" << QString::number(static_cast<int>( server->isBroadcastToMaster() ));
 }

@@ -116,11 +116,11 @@ class MAIN_EXPORT GameHost : public QObject
 		 */
 		QStringList &args();
 
-		POLYMORPHIC_SETTER_DECLARE(Message, GameHost, hostAppendIwad, ());
-		Message hostAppendIwad();
+		POLYMORPHIC_SETTER_DECLARE(Message, GameHost, addIwad, ());
+		Message addIwad();
 
-		POLYMORPHIC_SETTER_DECLARE(Message, GameHost, hostAppendPwads, ());
-		Message hostAppendPwads();
+		POLYMORPHIC_SETTER_DECLARE(Message, GameHost, addPwads, ());
+		Message addPwads();
 
 		POLYMORPHIC_SETTER_DECLARE(Message, GameHost, hostGetBinary, (bool bOfflinePlay));
 		Message hostGetBinary(bool bOfflinePlay);
@@ -134,18 +134,19 @@ class MAIN_EXPORT GameHost : public QObject
 		 *
 		 * Default behavior does nothing.
 		 */
-		void hostDMFlags();
-		POLYMORPHIC_SETTER_DECLARE(void, GameHost, hostDMFlags, ());
+		void addDMFlags();
+		POLYMORPHIC_SETTER_DECLARE(void, GameHost, addDMFlags, ());
 
 		/**
 		 * @brief Creates engine specific command line parameters out of
-		 * Server class fields.
+		 *        Server class fields.
 		 *
 		 * Please note that port, and some other stuff, is already set by
 		 * createHostCommandLine().
+		 *
 		 * @see createHostCommandLine() - cvars parameter.
 		 */
-		virtual void hostProperties(QStringList& args) const {};
+		virtual void addExtra();
 
 		const GameCreateParams& params() const;
 
@@ -162,11 +163,11 @@ class MAIN_EXPORT GameHost : public QObject
 
 		Q_DISABLE_COPY(GameHost);
 
-		Message hostAppendIwad_default();
-		Message hostAppendPwads_default();
+		Message addIwad_default();
+		Message addPwads_default();
 		Message hostGetBinary_default(bool bOfflinePlay);
 		Message hostGetWorkingDirectory_default(bool bOfflinePlay);
-		void hostDMFlags_default() {};
+		void addDMFlags_default() {};
 };
 
 #endif

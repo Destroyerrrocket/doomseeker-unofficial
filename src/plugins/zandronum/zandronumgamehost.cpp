@@ -33,10 +33,10 @@ ZandronumGameHost::ZandronumGameHost(const ZandronumServer* server)
 	this->server = server;
 	setArgForServerLaunch("-host");
 
-	set_hostDMFlags(&ZandronumGameHost::hostDMFlags);
+	set_addDMFlags(&ZandronumGameHost::addDMFlags);
 }
 
-void ZandronumGameHost::hostDMFlags()
+void ZandronumGameHost::addDMFlags()
 {
 	const QList<DMFlagsSection>& dmFlags = params().dmFlags();
 	const QString argNames[] = { "+dmflags", "+dmflags2", "+compatflags" };
@@ -54,10 +54,10 @@ void ZandronumGameHost::hostDMFlags()
 	}
 }
 
-void ZandronumGameHost::hostProperties(QStringList& args) const
+void ZandronumGameHost::addExtra()
 {
-	args << "+alwaysapplydmflags" << QString::number(1);
-	args << "-skill" << QString::number(server->skill() + 1); // from 1 to 5
+	args() << "+alwaysapplydmflags" << QString::number(1);
+	args() << "-skill" << QString::number(server->skill() + 1); // from 1 to 5
 
 	QString gameModeStr;
 	switch(server->gameMode().index())
@@ -79,13 +79,13 @@ void ZandronumGameHost::hostProperties(QStringList& args) const
 		case ZandronumGameInfo::GAMEMODE_TEAMPOSSESSION:	gameModeStr = "+teampossession"; break;
 		case ZandronumGameInfo::GAMEMODE_TERMINATOR:		gameModeStr = "+terminator"; break;
 	}
-	args << gameModeStr << "1";
+	args() << gameModeStr << "1";
 
-	args << "+sv_hostemail" << "\"" + server->email() + "\"";
+	args() << "+sv_hostemail" << "\"" + server->email() + "\"";
 
 	if (!server->map().isEmpty())
 	{
-		args << "+map" << server->map();
+		args() << "+map" << server->map();
 	}
 
 	const QStringList& mapsList = server->mapList();
@@ -93,35 +93,35 @@ void ZandronumGameHost::hostProperties(QStringList& args) const
 	{
 		foreach (QString map, mapsList)
 		{
-			args << "+addmap" << map;
+			args() << "+addmap" << map;
 		}
 	}
 
-	args << "+sv_maprotation" << QString::number(
+	args() << "+sv_maprotation" << QString::number(
 		static_cast<int>(!mapsList.isEmpty()));
-	args << "+sv_randommaprotation" << QString::number(
+	args() << "+sv_randommaprotation" << QString::number(
 		static_cast<int>(server->isRandomMapRotation()) );
 
 	QString motd = server->motd();
-	args << "+sv_motd" << "\"" + motd.replace("\n", "\\n") + "\"";
+	args() << "+sv_motd" << "\"" + motd.replace("\n", "\\n") + "\"";
 
-	args << "+sv_hostname" << "\"" + server->name() + "\"";
+	args() << "+sv_hostname" << "\"" + server->name() + "\"";
 
-	args << "+sv_website" << "\"" + server->webSite() + "\"";
+	args() << "+sv_website" << "\"" + server->webSite() + "\"";
 
 	QString password = server->connectPassword();
-	args << "+sv_password" << "\"" + password + "\"";
-	args << "+sv_forcepassword" << QString::number(static_cast<int>(!password.isEmpty()));
+	args() << "+sv_password" << "\"" + password + "\"";
+	args() << "+sv_forcepassword" << QString::number(static_cast<int>(!password.isEmpty()));
 
 	password = server->joinPassword();
-	args << "+sv_joinpassword" << "\"" + password + "\"";
-	args << "+sv_forcejoinpassword" << QString::number(static_cast<int>(!password.isEmpty()));
+	args() << "+sv_joinpassword" << "\"" + password + "\"";
+	args() << "+sv_forcejoinpassword" << QString::number(static_cast<int>(!password.isEmpty()));
 
 	password = server->rconPassword();
-	args << "+sv_rconpassword" << "\"" + password + "\"";
+	args() << "+sv_rconpassword" << "\"" + password + "\"";
 
-	args << "+sv_broadcast" << QString::number(static_cast<int>( server->isBroadcastToLAN() ));
-	args << "+sv_updatemaster" << QString::number(static_cast<int>( server->isBroadcastToMaster() ));
-	args << "+sv_maxclients" << QString::number(server->numTotalSlots());
-	args << "+sv_maxplayers" << QString::number(server->maxPlayers());
+	args() << "+sv_broadcast" << QString::number(static_cast<int>( server->isBroadcastToLAN() ));
+	args() << "+sv_updatemaster" << QString::number(static_cast<int>( server->isBroadcastToMaster() ));
+	args() << "+sv_maxclients" << QString::number(server->numTotalSlots());
+	args() << "+sv_maxplayers" << QString::number(server->maxPlayers());
 }

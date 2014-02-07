@@ -35,14 +35,14 @@ class ZandronumGameHost : public GameHost
 		ZandronumGameHost(const ZandronumServer* server);
 
 	protected:
-		void hostProperties(QStringList& args) const;
+		void addExtra();
 
 	private:
 		Q_DISABLE_COPY(ZandronumGameHost)
 
 		const ZandronumServer* server;
 
-		void hostDMFlags();
+		void addDMFlags();
 };
 
 #endif // header
