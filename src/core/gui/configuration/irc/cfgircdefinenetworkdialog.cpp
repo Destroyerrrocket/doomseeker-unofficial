@@ -116,28 +116,28 @@ IRCNetworkEntity CFGIRCDefineNetworkDialog::getNetworkEntity() const
 	QString autojoinChannels = this->teAutojoinChannels->toPlainText();
 	autojoinChannels.remove('\r').replace('\n', ' ');
 	
-	entity.address = this->leAddress->text().trimmed();
-	entity.autojoinChannels = autojoinChannels.split(" ", QString::SkipEmptyParts);
-	entity.autojoinCommands = autojoinCommands();
-	entity.description = this->leDescription->text().trimmed();
-	entity.nickservCommand = this->leNickservCommand->text().trimmed();
-	entity.nickservPassword = this->leNickservPassword->text();
-	entity.password = this->leServerPassword->text();
-	entity.port = this->spinPort->value();
+	entity.setAddress(this->leAddress->text().trimmed());
+	entity.setAutojoinChannels(autojoinChannels.split(" ", QString::SkipEmptyParts));
+	entity.setAutojoinCommands(autojoinCommands());
+	entity.setDescription(this->leDescription->text().trimmed());
+	entity.setNickservCommand(this->leNickservCommand->text().trimmed());
+	entity.setNickservPassword(this->leNickservPassword->text());
+	entity.setPassword(this->leServerPassword->text());
+	entity.setPort(this->spinPort->value());
 	
 	return entity;
 }
 
 void CFGIRCDefineNetworkDialog::initFrom(const IRCNetworkEntity& networkEntity)
 {
-	this->leAddress->setText(networkEntity.address);
-	this->teAutojoinChannels->setPlainText(networkEntity.autojoinChannels.join(" "));
-	this->teAutojoinCommands->setPlainText(networkEntity.autojoinCommands.join("\n"));
-	this->leDescription->setText(networkEntity.description);
-	this->leNickservCommand->setText(networkEntity.nickservCommand);
-	this->leNickservPassword->setText(networkEntity.nickservPassword);
-	this->leServerPassword->setText(networkEntity.password);
-	this->spinPort->setValue(networkEntity.port);
+	this->leAddress->setText(networkEntity.address());
+	this->teAutojoinChannels->setPlainText(networkEntity.autojoinChannels().join(" "));
+	this->teAutojoinCommands->setPlainText(networkEntity.autojoinCommands().join("\n"));
+	this->leDescription->setText(networkEntity.description());
+	this->leNickservCommand->setText(networkEntity.nickservCommand());
+	this->leNickservPassword->setText(networkEntity.nickservPassword());
+	this->leServerPassword->setText(networkEntity.password());
+	this->spinPort->setValue(networkEntity.port());
 }
 
 QStringList CFGIRCDefineNetworkDialog::validateAutojoinCommands() const

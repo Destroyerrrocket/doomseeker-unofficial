@@ -35,67 +35,86 @@ class MAIN_EXPORT IRCNetworkEntity
 {
 	public:
 		IRCNetworkEntity();
+		COPYABLE_D_POINTERED_DECLARE(IRCNetworkEntity);
+		virtual ~IRCNetworkEntity();
 
 		/**
-		 *	@brief Address of the server or network to connect to.
+		 * @brief Address of the server or network to connect to.
 		 */
-		QString				address;
+		const QString &address() const;
 
 		/**
-		 *	@brief List of channels to which a /join command will be issued
-		 *	automatically when a connection with this network is established.
+		 * @brief List of channels to which a /join command will be issued
+		 * automatically when a connection with this network is established.
 		 */
-		QStringList			autojoinChannels;
+		const QStringList &autojoinChannels() const;
+		QStringList &autojoinChannels();
 		/**
 		 * @brief List of commands executed on network join.
 		 */
-		QStringList			autojoinCommands;
+		const QStringList &autojoinCommands() const;
+		QStringList &autojoinCommands();
 
 		/**
-		 *	@brief Join this network when Doomseeker starts up.
+		 * @brief A short, human-readable description for the network.
+		 * (Preferably a single word).
 		 */
-		bool				bAutojoinNetwork;
+		const QString &description() const;
 
 		/**
-		 *	@brief A short, human-readable description for the network.
-		 *	(Preferably a single word).
+		 * @brief Join this network when Doomseeker starts up.
 		 */
-		QString				description;
-		QString				nickservCommand;
-		QString				nickservPassword;
+		bool isAutojoinNetwork() const;
 
-		/**
-		 *	@brief Password for the server or network. Ignored if empty.
-		 */
-		QString				password;
-
-		/**
-		 *	@brief Port of the server or network to connect to.
-		 *
-		 *	Default value: 6667
-		 */
-		unsigned short		port;
-
-		bool				isValid() const
+		bool isValid() const
 		{
-			return !address.isEmpty() && port != 0;
+			return !address().isEmpty() && port() != 0;
 		}
 
+		const QString &nickservCommand() const;
+		const QString &nickservPassword() const;
+
 		/**
-		 *	@brief Sorts by description.
+		 * @brief Sorts by description.
 		 */
-		bool				operator< (const IRCNetworkEntity& other) const
+		bool operator< (const IRCNetworkEntity& other) const
 		{
-			return this->description.toLower().trimmed() < other.description.toLower().trimmed();
+			return description().toLower().trimmed() < other.description().toLower().trimmed();
 		}
 
 		/**
 		 * @brief Checks to see if this is the same server.
 		 */
-		bool				operator== (const IRCNetworkEntity& other) const
+		bool operator== (const IRCNetworkEntity& other) const
 		{
-			return address == other.address && port == other.port;
+			return address() == other.address() && port() == other.port();
 		}
+
+		/**
+		 * @brief Password for the server or network. Ignored if empty.
+		 */
+		const QString &password() const;
+
+		/**
+		 * @brief Port of the server or network to connect to.
+		 *
+		 * Default value: 6667
+		 */
+		unsigned short port() const;
+
+		void setAddress(const QString &v);
+		void setAutojoinChannels(const QStringList &v);
+		void setAutojoinCommands(const QStringList &v);
+		void setAutojoinNetwork(bool v);
+		void setDescription(const QString &v);
+		void setNickservCommand(const QString &v);
+		void setNickservPassword(const QString &v);
+		void setPassword(const QString &v);
+		void setPort(unsigned short v);
+
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 #endif

@@ -170,14 +170,14 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 			{
 				// Either create an entity or put the channel in an existing one.
 				IRCNetworkEntity entity;
-				entity.description = va_arg(va, const char*);
-				entity.address = va_arg(va, const char*);
-				entity.autojoinChannels << va_arg(va, const char*);
+				entity.setDescription(va_arg(va, const char*));
+				entity.setAddress(va_arg(va, const char*));
+				entity.autojoinChannels() << va_arg(va, const char*);
 
 				if(d->ircChannels.contains(entity))
 				{
 					IRCNetworkEntity &existingEntity = d->ircChannels[d->ircChannels.indexOf(entity)];
-					existingEntity.autojoinChannels << entity.autojoinChannels[0];
+					existingEntity.autojoinChannels() << entity.autojoinChannels()[0];
 				}
 				else
 					d->ircChannels << entity;

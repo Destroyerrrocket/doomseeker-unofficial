@@ -66,7 +66,7 @@ bool IRCConfigurationDialog::isNetworkAutojoinEnabled()
 	QVector<IRCNetworkEntity*> networks = cfgNetworks->networks();
 	foreach (IRCNetworkEntity* pNetwork, networks)
 	{
-		if (pNetwork->bAutojoinNetwork)
+		if (pNetwork->isAutojoinNetwork())
 		{
 			return true;
 		}

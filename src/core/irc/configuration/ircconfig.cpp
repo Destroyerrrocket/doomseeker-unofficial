@@ -66,7 +66,7 @@ bool IRCConfig::isAutojoinNetworksEnabled() const
 {
 	foreach (const IRCNetworkEntity& network, networks.networks)
 	{
-		if (network.bAutojoinNetwork)
+		if (network.isAutojoinNetwork())
 		{
 			return true;
 		}
@@ -232,7 +232,7 @@ QVector<IRCNetworkEntity> IRCConfig::NetworksDataCfg::autojoinNetworks() const
 	QVector<IRCNetworkEntity> autoNetworks;
 	foreach (const IRCNetworkEntity& network, this->networks)
 	{
-		if (network.bAutojoinNetwork)
+		if (network.isAutojoinNetwork())
 		{
 			autoNetworks << network;
 		}
@@ -293,18 +293,19 @@ void IRCConfig::NetworksDataCfg::load(Ini& ini)
 				{
 					// otherwise add the channel to the auto join.
 					IRCNetworkEntity &existingEntity = networks[networks.indexOf(entity)];
-					if(existingEntity.autojoinChannels.contains(entity.autojoinChannels[0]))
+					if(existingEntity.autojoinChannels().contains(entity.autojoinChannels()[0]))
 						continue;
-					if(existingEntity.bAutojoinNetwork)
+					if(existingEntity.isAutojoinNetwork())
 					{
 						// If we have this set to auto join ask first.
 						if(QMessageBox::question(NULL, QObject::tr("Add plugin's IRC channel?"),
-							QObject::tr("Would you like the %1 plugin to add its channel to %2's auto join?").arg(entity.description).arg(existingEntity.description),
+							QObject::tr("Would you like the %1 plugin to add its channel to %2's auto join?")
+								.arg(entity.description()).arg(existingEntity.description()),
 							QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes) == QMessageBox::No)
 							continue;
 					}
 
-					existingEntity.autojoinChannels << entity.autojoinChannels[0];
+					existingEntity.autojoinChannels() << entity.autojoinChannels()[0];
 				}
 			}
 		}
@@ -313,15 +314,15 @@ void IRCConfig::NetworksDataCfg::load(Ini& ini)
 
 void IRCConfig::NetworksDataCfg::loadNetwork(const IniSection& iniSection, IRCNetworkEntity& network)
 {
-	network.address = (const QString &)iniSection["Address"];
-	network.bAutojoinNetwork = iniSection["bAutojoinNetwork"];
-	network.autojoinChannels = ((const QString &)iniSection["AutojoinChannels"]).split(" ", QString::SkipEmptyParts);
-	network.autojoinCommands = iniSection.value("AutojoinCommands").toStringList();
-	network.description = (const QString &)iniSection["Description"];
-	network.nickservCommand = (const QString &)iniSection["NickservCommand"];
-	network.nickservPassword = (const QString &)iniSection["NickservPassword"];
-	network.password = (const QString &)iniSection["Password"];
-	network.port = iniSection["Port"];
+	network.setAddress(iniSection["Address"]);
+	network.setAutojoinNetwork(iniSection["bAutojoinNetwork"]);
+	network.setAutojoinChannels(((const QString &)iniSection["AutojoinChannels"]).split(" ", QString::SkipEmptyParts));
+	network.setAutojoinCommands(iniSection.value("AutojoinCommands").toStringList());
+	network.setDescription(iniSection["Description"]);
+	network.setNickservCommand(iniSection["NickservCommand"]);
+	network.setNickservPassword(iniSection["NickservPassword"]);
+	network.setPassword(iniSection["Password"]);
+	network.setPort(iniSection["Port"]);
 }
 
 void IRCConfig::NetworksDataCfg::save(Ini& ini)
@@ -346,15 +347,15 @@ void IRCConfig::NetworksDataCfg::save(Ini& ini)
 
 void IRCConfig::NetworksDataCfg::saveNetwork(IniSection& iniSection, const IRCNetworkEntity& network)
 {
-	iniSection["Address"] = network.address;
-	iniSection["bAutojoinNetwork"] = network.bAutojoinNetwork;
-	iniSection["AutojoinChannels"] = network.autojoinChannels.join(" ");
-	iniSection["AutojoinCommands"].setValue(network.autojoinCommands);
-	iniSection["Description"] = network.description;
-	iniSection["NickservCommand"] = network.nickservCommand;
-	iniSection["NickservPassword"] = network.nickservPassword;
-	iniSection["Password"] = network.password;
-	iniSection["Port"] = network.port;
+	iniSection["Address"] = network.address();
+	iniSection["bAutojoinNetwork"] = network.isAutojoinNetwork();
+	iniSection["AutojoinChannels"] = network.autojoinChannels().join(" ");
+	iniSection["AutojoinCommands"].setValue(network.autojoinCommands());
+	iniSection["Description"] = network.description();
+	iniSection["NickservCommand"] = network.nickservCommand();
+	iniSection["NickservPassword"] = network.nickservPassword();
+	iniSection["Password"] = network.password();
+	iniSection["Port"] = network.port();
 }
 //////////////////////////////////////////////////////////////////////////////
 const QString IRCConfig::PersonalCfg::SECTION_NAME = "Personal";

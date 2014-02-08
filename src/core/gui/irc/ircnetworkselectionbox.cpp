@@ -47,7 +47,7 @@ void IRCNetworkSelectionBox::accept()
 
 void IRCNetworkSelectionBox::addNetworkToComboBox(const IRCNetworkEntity& network, bool bLastUsed)
 {
-	QString title = QString("%1 [%2:%3]").arg(network.description).arg(network.address).arg(network.port);
+	QString title = QString("%1 [%2:%3]").arg(network.description()).arg(network.address()).arg(network.port());
 	
 	if (bLastUsed)
 	{
@@ -101,11 +101,11 @@ IRCNetworkEntity IRCNetworkSelectionBox::network() const
 {
 	IRCNetworkEntity networkEntity = this->networkComboBox();
 	
-	networkEntity.address = leServerAddress->text();
-	networkEntity.password = lePassword->text();
-	networkEntity.port = spinPort->value();
+	networkEntity.setAddress(leServerAddress->text());
+	networkEntity.setPassword(lePassword->text());
+	networkEntity.setPort(spinPort->value());
 
-	return networkEntity;	
+	return networkEntity;
 }
 
 void IRCNetworkSelectionBox::networkChanged(int index)
@@ -148,9 +148,9 @@ void IRCNetworkSelectionBox::updateNetworkInfo()
 {
 	IRCNetworkEntity network = this->networkComboBox();
 		
-	leServerAddress->setText(network.address);
-	spinPort->setValue(network.port);
-	lePassword->setText(network.password);
+	leServerAddress->setText(network.address());
+	spinPort->setValue(network.port());
+	lePassword->setText(network.password());
 }
 
 bool IRCNetworkSelectionBox::validate()
@@ -164,7 +164,7 @@ bool IRCNetworkSelectionBox::validate()
 		return false;
 	}	
 	
-	if (connectionInfo.networkEntity.address.isEmpty())
+	if (connectionInfo.networkEntity.address().isEmpty())
 	{
 		QMessageBox::warning(NULL, ERROR_TITLE, tr("You must specify a network address."));
 		return false;
