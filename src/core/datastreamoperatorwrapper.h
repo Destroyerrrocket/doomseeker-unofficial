@@ -35,23 +35,17 @@ class MAIN_EXPORT DataStreamOperatorWrapper
 {
 	public:
 		DataStreamOperatorWrapper(QDataStream* stream);
-		virtual ~DataStreamOperatorWrapper() {};
+		virtual ~DataStreamOperatorWrapper();
 		
 		/**
 		 * @brief Gets underlying QDataStream.
 		 */
-		QDataStream* dataStream()
-		{
-			return s;
-		}
+		QDataStream* dataStream();
 		
 		/**
 		 * @brief Gets underlying QDataStream.
 		 */
-		const QDataStream* dataStream() const
-		{
-			return s;
-		}
+		const QDataStream* dataStream() const;
 		
 		/**
 		 * @brief Returns true if there is any data remaining in the stream.
@@ -116,9 +110,10 @@ class MAIN_EXPORT DataStreamOperatorWrapper
 		 * @return Number of bytes actually skipped or -1 on error.
 		 */
 		int skipRawData(int len);
-		
+
 	private:
-		QDataStream* s;
+		class PrivData;
+		PrivData *d;
 };
 
 #endif

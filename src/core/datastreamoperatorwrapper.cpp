@@ -27,13 +27,35 @@
 
 #define RETTYPE(type) \
 type tmp; \
-(*s) >> tmp; \
+(*d->s) >> tmp; \
 return tmp;
+
+class DataStreamOperatorWrapper::PrivData
+{
+	public:
+		QDataStream *s;
+};
 
 DataStreamOperatorWrapper::DataStreamOperatorWrapper(QDataStream* stream)
 {
 	assert(stream != NULL);
-	this->s = stream;
+	d = new PrivData();
+	d->s = stream;
+}
+
+DataStreamOperatorWrapper::~DataStreamOperatorWrapper()
+{
+	delete d;
+}
+
+QDataStream* DataStreamOperatorWrapper::dataStream()
+{
+	return d->s;
+}
+
+const QDataStream* DataStreamOperatorWrapper::dataStream() const
+{
+	return d->s;
 }
 
 qint8 DataStreamOperatorWrapper::readQInt8()
@@ -93,25 +115,25 @@ double DataStreamOperatorWrapper::readDouble()
 
 QByteArray DataStreamOperatorWrapper::readRaw(qint64 length)
 {
-	return s->device()->read(length);
+	return d->s->device()->read(length);
 }
 
 QByteArray DataStreamOperatorWrapper::readRawAll()
 {
-	return s->device()->readAll();
+	return d->s->device()->readAll();
 }
 
 QByteArray DataStreamOperatorWrapper::readRawUntilByte(char stopByte)
 {
-	return Strings::readUntilByte(*s, stopByte);
+	return Strings::readUntilByte(*d->s, stopByte);
 }
 
 qint64 DataStreamOperatorWrapper::remaining() const
 {
-	return s->device()->size() - s->device()->pos();
+	return d->s->device()->size() - d->s->device()->pos();
 }
 
 int DataStreamOperatorWrapper::skipRawData(int len)
 {
-	return s->skipRawData(len);
+	return d->s->skipRawData(len);
 }
