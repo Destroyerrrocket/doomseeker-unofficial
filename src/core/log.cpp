@@ -26,50 +26,84 @@
 #include <QMutexLocker>
 #include <cstdio>
 
+class Log::PrivData
+{
+	public:
+		QString logContent;
+		QMutex mutex;
+		bool printToStdout;
+		bool timestamps;
+};
+
 Log gLog;
 
 Log::Log()
 {
-	timestamps = true;
-	printToStdout = true;
+	d = new PrivData();
+	d->timestamps = true;
+	d->printToStdout = true;
+}
+
+Log::~Log()
+{
+	delete d;
 }
 
 void Log::addEntry(const QString& string)
 {
 	QString timestampString;
-	if (timestamps)
+	if (areTimestampsEnabled())
 	{
 		timestampString = Strings::timestamp("[hh:mm:ss] ");
 	}
 
 	QString entry = timestampString + string + "\n";
-
 	addUnformattedEntry(entry);
 }
 
 void Log::addUnformattedEntry(const QString& string)
 {
-	QMutexLocker locker(&thisMutex);
+	QMutexLocker locker(&d->mutex);
 
-	if (printToStdout)
+	if (isPrintingToStdout())
 	{
 		printf("%s", string.toAscii().constData());
 	}
 
-	logContent += string;
+	d->logContent += string;
 	emit newEntry(string);
+}
+
+bool Log::areTimestampsEnabled() const
+{
+	return d->timestamps;
+}
+
+void Log::clearContent()
+{
+	d->logContent.clear();
+}
+
+const QString& Log::content() const
+{
+	return d->logContent;
 }
 
 int Log::doLogPrintf(char* output, unsigned outputSize, const char* str, va_list argList)
 {
-	QMutexLocker locker(&thisMutex);
+	QMutexLocker locker(&d->mutex);
 
-	if(str == NULL)
+	if (str == NULL)
 	{
 		return - 1;
 	}
 
 	return vsnprintf(output, outputSize, str, argList);
+}
+
+bool Log::isPrintingToStdout() const
+{
+	return d->printToStdout;
 }
 
 void Log::logPrintf(const char* str, ...)
@@ -108,4 +142,14 @@ Log& Log::operator<<(const QString& string)
 {
 	addEntry(string);
 	return *this;
+}
+
+void Log::setPrintingToStdout(bool b)
+{
+	d->printToStdout = b;
+}
+
+void Log::setTimestampsEnabled(bool b)
+{
+	d->timestamps = b;
 }
