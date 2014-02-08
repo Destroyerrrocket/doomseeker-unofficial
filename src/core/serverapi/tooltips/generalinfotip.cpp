@@ -24,7 +24,6 @@
 
 #include "ip2c/ip2c.h"
 #include "serverapi/server.h"
-#include "main.h"
 
 GeneralInfoTip::GeneralInfoTip(const Server* server)
 : pServer(server)
@@ -42,7 +41,7 @@ QString GeneralInfoTip::generateHTML()
 		ret += labelString(tr("URL"), pServer->webSite());
 	}
 
-	IP2CCountryInfo countryInfo = Main::ip2c->obtainCountryInfo(pServer->address());
+	IP2CCountryInfo countryInfo = IP2C::instance()->obtainCountryInfo(pServer->address());
 
 	if (countryInfo.isValid())
 	{

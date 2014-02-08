@@ -25,7 +25,6 @@
 #define __MAIN_H__
 
 #include "ini/ini.h"
-#include "ip2c/ip2c.h"
 #include "plugins/pluginloader.h"
 #include "datapaths.h"
 #include "localizationinfo.h"
@@ -55,7 +54,6 @@ class MAIN_EXPORT Main : public QObject
 		 * Default: false.
 		 */
 		static bool bInstallUpdatesAndRestart;
-		static IP2C					*ip2c;
 		static DataPaths*			dataPaths;
 		static QWidget*				mainWindow;
 		static PluginLoader*		enginePlugins;

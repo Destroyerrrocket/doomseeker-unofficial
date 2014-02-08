@@ -36,8 +36,8 @@
 #include "connectionhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/remoteconsole.h"
+#include "ip2c/ip2c.h"
 #include "ini/ini.h"
-#include "ip2c/ip2cparser.h"
 #include "irc/configuration/ircconfig.h"
 #include "serverapi/server.h"
 #include "doomseekerfilepaths.h"
@@ -65,7 +65,6 @@ bool Main::bInstallUpdatesAndRestart = false;
 bool Main::bPortableMode = false;
 DataPaths*			Main::dataPaths;
 PluginLoader* 		Main::enginePlugins = NULL;
-IP2C*				Main::ip2c = NULL;
 QList<LocalizationInfo> Main::localizations;
 QWidget*			Main::mainWindow = NULL;
 bool				Main::running = true;
@@ -100,10 +99,7 @@ Main::~Main()
 		gIRCConfig.dispose();
 	}
 
-	if (ip2c != NULL)
-	{
-		delete ip2c;
-	}
+	IP2C::deinstantiate();
 
 	if (enginePlugins != NULL)
 	{
@@ -186,8 +182,7 @@ int Main::run()
 	#endif
 
 	initLocalizationsDefinitions();
-	int ip2cReturn = initIP2C();
-
+	initIP2C();
 	initPasswordsConfig();
 	initPluginConfig();
 	initIRCConfig();
@@ -372,7 +367,7 @@ bool Main::initDataDirectories()
 int Main::initIP2C()
 {
 	gLog << tr("Initializing IP2C database.");
-	ip2c = new IP2C();
+	IP2C::instance();
 
 	return 0;
 }

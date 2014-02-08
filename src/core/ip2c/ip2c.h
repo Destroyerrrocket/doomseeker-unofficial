@@ -73,13 +73,12 @@ class IP2C : public QObject
 				}
 		};
 
+		static IP2C *instance();
+		static void deinstantiate();
+
 		const QPixmap				flagLan;
 		const QPixmap				flagLocalhost;
 		const QPixmap				flagUnknown;
-
-		IP2C();
-		~IP2C();
-
 
 		/**
 		 *	@brief Adds new country entry to the database.
@@ -149,6 +148,9 @@ class IP2C : public QObject
 		}
 
 	private:
+		static QMutex instanceMutex;
+		static IP2C *staticInstance;
+
 		/**
 		 *	@brief Performs only an informative role for the application.
 		 *
@@ -161,6 +163,9 @@ class IP2C : public QObject
 		QList<IP2CData>				database;
 		QHash<QString, QPixmap>		flags;
 		const IP2CData				invalidData;
+
+		IP2C();
+		~IP2C();
 };
 
 #endif /* __IP2C_H__ */

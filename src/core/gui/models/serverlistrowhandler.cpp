@@ -30,7 +30,6 @@
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
 #include "serverapi/serverstructs.h"
-#include "main.h"
 #include "log.h"
 #include <QPainter>
 
@@ -242,9 +241,9 @@ void ServerListRowHandler::setCountryFlag()
 {
 	QStandardItem* pItem = item(IDServerName);
 
-	if (!Main::ip2c->isDataAccessLocked())
+	if (!IP2C::instance()->isDataAccessLocked())
 	{
-		IP2CCountryInfo countryInfo = Main::ip2c->obtainCountryInfo(server->address());
+		IP2CCountryInfo countryInfo = IP2C::instance()->obtainCountryInfo(server->address());
 		if (countryInfo.isValid())
 		{
 			QPixmap flag = *countryInfo.flag;

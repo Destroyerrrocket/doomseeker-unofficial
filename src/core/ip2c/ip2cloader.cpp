@@ -2,10 +2,10 @@
 
 #include "configuration/doomseekerconfig.h"
 #include "doomseekerfilepaths.h"
+#include "ip2c/ip2c.h"
 #include "ip2c/ip2cparser.h"
 #include "ip2c/ip2cupdater.h"
 #include "log.h"
-#include "main.h"
 #include <QFile>
 
 class IP2CLoader::PrivData
@@ -19,7 +19,7 @@ IP2CLoader::IP2CLoader()
 {
 	d = new PrivData();
 
-	d->ip2cParser = new IP2CParser(Main::ip2c);
+	d->ip2cParser = new IP2CParser(IP2C::instance());
 	this->connect(d->ip2cParser, SIGNAL( parsingFinished(bool) ), 
 		SLOT( ip2cFinishedParsing(bool) ) );
 
@@ -133,7 +133,7 @@ void IP2CLoader::ip2cFinishedParsing(bool bSuccess)
 
 void IP2CLoader::ip2cJobsFinished()
 {
-	Main::ip2c->setDataAccessLockEnabled(false);
+	IP2C::instance()->setDataAccessLockEnabled(false);
 
 	if (d->ip2cParser != NULL)
 	{
@@ -154,14 +154,14 @@ void IP2CLoader::ip2cParseDatabase()
 	gLog << tr("Please wait. IP2C database is being read and converted if necessary. This may take some time.");
 	// Attempt to read IP2C database.
 
-	Main::ip2c->setDataAccessLockEnabled(true);
+	IP2C::instance()->setDataAccessLockEnabled(true);
 	d->ip2cParser->readDatabaseThreaded(filePath);
 }
 
 void IP2CLoader::ip2cStartUpdate()
 {
 	gLog << tr("Starting IP2C update.");
-	Main::ip2c->setDataAccessLockEnabled(true);
+	IP2C::instance()->setDataAccessLockEnabled(true);
 	QString downloadUrl = gConfig.doomseeker.ip2CountryUrl;
 	d->ip2cUpdater->downloadDatabase(downloadUrl);
 }

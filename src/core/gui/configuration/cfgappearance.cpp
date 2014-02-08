@@ -24,6 +24,7 @@
 #include "cfgappearance.h"
 #include <QColorDialog>
 #include <QSystemTrayIcon>
+#include "ip2c/ip2c.h"
 #include "localization.h"
 #include "log.h"
 #include "main.h"
@@ -43,7 +44,7 @@ void CFGAppearance::initLanguagesList()
 		const QString& translationName = obj.localeName;
 		const QString& displayName = obj.niceName;
 		
-		QPixmap flag = Main::ip2c->flag(flagName);
+		QPixmap flag = IP2C::instance()->flag(flagName);
 		cboLanguage->addItem(flag, displayName, translationName);
 	}
 }
@@ -94,7 +95,7 @@ void CFGAppearance::readSettings()
 	{
 		// Display that there is something wrong.
 		QString name = gConfig.doomseeker.localization;
-		const QPixmap& icon = Main::ip2c->flagUnknown;
+		const QPixmap& icon = IP2C::instance()->flagUnknown;
 		QString str = tr("Unknown language definition \"%1\"").arg(name);
 		cboLanguage->addItem(icon, str, name);
 		cboLanguage->setCurrentIndex(cboLanguage->count() - 1);
