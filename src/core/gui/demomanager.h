@@ -36,7 +36,7 @@ class QStandardItemModel;
 /**
  *	@brief Dialog for managing demos recorded through Doomseeker.
  */
-class MAIN_EXPORT DemoManagerDlg : public QDialog, private Ui::DemoManagerDlg
+class DemoManagerDlg : public QDialog, private Ui::DemoManagerDlg
 {
 	Q_OBJECT
 
