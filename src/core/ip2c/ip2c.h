@@ -45,7 +45,7 @@
  *	picture for given IP.
  *	@see IP2CParser
  */
-class MAIN_EXPORT IP2C : public QObject
+class IP2C : public QObject
 {
 	Q_OBJECT
 
