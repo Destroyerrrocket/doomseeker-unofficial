@@ -22,21 +22,21 @@
 //------------------------------------------------------------------------------
 #include "chocolatedoomgamehost.h"
 
+#include "chocolatedoomengineplugin.h"
 #include "chocolatedoomgameinfo.h"
-#include "chocolatedoomserver.h"
 #include <QString>
+#include <serverapi/gamecreateparams.h>
 
-ChocolateDoomGameHost::ChocolateDoomGameHost(const ChocolateDoomServer* server)
-: GameHost(server)
+ChocolateDoomGameHost::ChocolateDoomGameHost()
+: GameHost(ChocolateDoomEnginePlugin::staticInstance())
 {
-	this->server = server;
 }
 
 void ChocolateDoomGameHost::addExtra()
 {
-	args() << "-skill" << QString::number(server->skill() + 1); // from 1 to 5
+	args() << "-skill" << QString::number(params().skill() + 1); // from 1 to 5
 
-	switch(server->gameMode().index())
+	switch(params().gameMode().index())
 	{
 		default: break;
 		case GameMode::SGM_Deathmatch:
@@ -48,7 +48,7 @@ void ChocolateDoomGameHost::addExtra()
 	}
 
 	// Convert map name to proper number for -warp
-	QString mapname = server->map().toUpper();
+	QString mapname = params().map().toUpper();
 	if(mapname.length() == 5 && mapname.startsWith("MAP"))
 		args() << "-warp" << mapname.right(2);
 	else if(mapname.length() == 4 && mapname[0] == 'E' && mapname[2] == 'M')

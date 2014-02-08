@@ -297,11 +297,6 @@ QString Server::engineName() const
 	}
 }
 
-GameHost* Server::gameHost() const
-{
-	return new GameHost(this);
-}
-
 const GameMode& Server::gameMode() const
 {
 	return d->gameMode;

@@ -258,10 +258,7 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 		params.setPwadsPaths(result.foundFiles.mid(1));
 		params.setHostMode(GameCreateParams::Demo);
 
-		// Spawn dummy server.
-		// TODO: Refactor so that it isn't necessary.
-		Server* server = plugin->server(QHostAddress("127.0.0.1"), 5029);
-		GameHost* gameRunner = server->gameHost();
+		GameHost* gameRunner = plugin->gameHost();
 		Message message = gameRunner->host(params);
 
 		if (message.isError())
@@ -270,7 +267,6 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 		}
 
 		delete gameRunner;
-		delete server;
 	}
 }
 

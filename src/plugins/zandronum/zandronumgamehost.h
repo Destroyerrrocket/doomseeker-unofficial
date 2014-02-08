@@ -25,22 +25,18 @@
 
 #include <serverapi/gamehost.h>
 
-class ZandronumServer;
-
 class ZandronumGameHost : public GameHost
 {
 	Q_OBJECT
 
 	public:
-		ZandronumGameHost(const ZandronumServer* server);
+		ZandronumGameHost();
 
 	protected:
 		void addExtra();
 
 	private:
 		Q_DISABLE_COPY(ZandronumGameHost)
-
-		const ZandronumServer* server;
 
 		void addDMFlags();
 };

@@ -52,6 +52,7 @@ class CreateServerDialog;
 class CreateServerDialogPage;
 class GameCVar;
 class GameExeFactory;
+class GameHost;
 class GameMode;
 class IniSection;
 class IRCNetworkEntity;
@@ -231,6 +232,15 @@ class MAIN_EXPORT EnginePlugin
 		{
 			return data()->gameExeFactory;
 		}
+
+		/**
+		 * @brief Creates an instance of GameHost derivative class.
+		 *
+		 * Gets a pointer to a new instance of GameHost's
+		 * descendant (defined by a plugin). Created instance should be deleted
+		 * manually by the programmer.
+		 */
+		virtual GameHost* gameHost();
 
 		/**
 		 *	@brief Returns a list of limits (like fraglimit) supported by passed

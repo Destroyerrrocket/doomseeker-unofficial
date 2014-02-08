@@ -56,11 +56,6 @@ OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port)
 	set_createSendRequest(&OdamexServer::createSendRequest);
 }
 
-GameHost* OdamexServer::gameHost() const
-{
-	return new OdamexGameHost(this);
-}
-
 GameClientRunner* OdamexServer::gameRunner()
 {
 	return new OdamexGameClientRunner(this);

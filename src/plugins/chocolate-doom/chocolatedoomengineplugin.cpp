@@ -24,6 +24,7 @@
 #include "plugins/engineplugin.h"
 
 #include "chocolatedoomengineplugin.h"
+#include "chocolatedoomgamehost.h"
 #include "chocolatedoomgameinfo.h"
 #include "chocolatedoommasterclient.h"
 #include "chocolatedoomserver.h"
@@ -46,6 +47,11 @@ ChocolateDoomEnginePlugin::ChocolateDoomEnginePlugin()
 		EP_IRCChannel, "Chocolate Doom", "irc.oftc.net", "#chocolate-doom",
 		EP_Done
 	);
+}
+
+GameHost* ChocolateDoomEnginePlugin::gameHost()
+{
+	return new ChocolateDoomGameHost();
 }
 
 MasterClient *ChocolateDoomEnginePlugin::masterClient() const

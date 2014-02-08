@@ -22,22 +22,22 @@
 //------------------------------------------------------------------------------
 #include "odamexgamehost.h"
 
+#include <serverapi/gamecreateparams.h>
 #include <serverapi/serverstructs.h>
-#include "odamexserver.h"
+#include "odamexengineplugin.h"
 
-OdamexGameHost::OdamexGameHost(const OdamexServer* server)
-: GameHost(server)
+OdamexGameHost::OdamexGameHost()
+: GameHost(OdamexEnginePlugin::staticInstance())
 {
-	this->server = server;
 	setArgForDemoPlayback("-netplay");
 	setArgForDemoRecord("-netrecord");
 }
 
 void OdamexGameHost::addExtra()
 {
-	args() << "-skill" << QString::number(server->skill() + 1); // from 1 to 5
+	args() << "-skill" << QString::number(params().skill() + 1); // from 1 to 5
 
-	const QStringList& mapsList = server->mapList();
+	const QStringList& mapsList = params().mapList();
 	if (!mapsList.isEmpty())
 	{
 		foreach (QString map, mapsList)
@@ -45,10 +45,10 @@ void OdamexGameHost::addExtra()
 			args() << "+addmap" << map;
 		}
 	}
-	args() << "+shufflemaplist" << QString::number( static_cast<int>(server->isRandomMapRotation()) );
+	args() << "+shufflemaplist" << QString::number( static_cast<int>(params().isRandomMapRotation()) );
 
 	unsigned int modeNum;
-	switch(server->gameMode().index())
+	switch(params().gameMode().index())
 	{
 		default:
 		case GameMode::SGM_Cooperative: modeNum = 0; break;
@@ -58,21 +58,21 @@ void OdamexGameHost::addExtra()
 	}
 	args() << "+sv_gametype" << QString::number(modeNum);
 
-	if (!server->map().isEmpty())
+	if (!params().map().isEmpty())
 	{
-		args() << "+map" << server->map();
+		args() << "+map" << params().map();
 	}
 
-	args() << "+join_password" << "\"" + server->joinPassword() + "\"";
-	args() << "+rcon_password" << "\"" + server->rconPassword() + "\"";
-	args() << "+sv_email" << "\"" + server->email() + "\"";
-	args() << "+sv_hostname" << "\"" + server->name() + "\"";
-	args() << "+sv_maxclients" << QString::number(server->numTotalSlots());
-	args() << "+sv_maxplayers" << QString::number(server->maxPlayers());
-	args() << "+sv_website" << "\"" + server->webSite() + "\"";
+	args() << "+join_password" << "\"" + params().ingamePassword() + "\"";
+	args() << "+rcon_password" << "\"" + params().rconPassword() + "\"";
+	args() << "+sv_email" << "\"" + params().email() + "\"";
+	args() << "+sv_hostname" << "\"" + params().name() + "\"";
+	args() << "+sv_maxclients" << QString::number(params().maxTotalClientSlots());
+	args() << "+sv_maxplayers" << QString::number(params().maxPlayers());
+	args() << "+sv_website" << "\"" + params().url() + "\"";
 
-	QString motd = server->motd();
+	QString motd = params().motd();
 	args() << "+sv_motd" << "\"" + motd.replace("\n", "\\n") + "\"";
 
-	args() << "+sv_usemasters" << QString::number(static_cast<int>( server->isBroadcastToMaster() ));
+	args() << "+sv_usemasters" << QString::number(static_cast<int>( params().isBroadcastToMaster() ));
 }

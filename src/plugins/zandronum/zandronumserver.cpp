@@ -120,11 +120,6 @@ ExeFile* ZandronumServer::clientExe()
 	return new ZandronumClientExeFile(this);
 }
 
-GameHost* ZandronumServer::gameHost() const
-{
-	return new ZandronumGameHost(this);
-}
-
 GameClientRunner* ZandronumServer::gameRunner()
 {
 	return new ZandronumGameClientRunner(this);

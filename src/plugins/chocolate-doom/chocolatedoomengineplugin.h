@@ -31,6 +31,7 @@ class ChocolateDoomEnginePlugin : public EnginePlugin
 	DECLARE_PLUGIN(ChocolateDoomEnginePlugin)
 	public:
 		ChocolateDoomEnginePlugin();
+		GameHost *gameHost();
 		MasterClient *masterClient() const;
 		Server* server(const QHostAddress &address, unsigned short port) const;
 };

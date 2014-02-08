@@ -31,6 +31,7 @@
 #include "huffman/huffman.h"
 #include "createserverdialogpages/flagspage.h"
 #include "zandronumbinaries.h"
+#include "zandronumgamehost.h"
 #include "zandronumgameinfo.h"
 #include "zandronumengineplugin.h"
 #include "zandronummasterclient.h"
@@ -114,7 +115,12 @@ QList<CreateServerDialogPage*> ZandronumEnginePlugin::createServerDialogPages(
 	return pages;
 }
 
-QList<GameCVar>	ZandronumEnginePlugin::limits(const GameMode& gm) const
+GameHost* ZandronumEnginePlugin::gameHost()
+{
+	return new ZandronumGameHost();
+}
+
+QList<GameCVar> ZandronumEnginePlugin::limits(const GameMode& gm) const
 {
 	QList<GameCVar> gl;
 

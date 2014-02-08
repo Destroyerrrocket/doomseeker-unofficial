@@ -25,22 +25,18 @@
 
 #include <serverapi/gamehost.h>
 
-class OdamexServer;
-
 class OdamexGameHost : public GameHost
 {
 	Q_OBJECT
 
 	public:
-		OdamexGameHost(const OdamexServer* server);
+		OdamexGameHost();
 
 	protected:
 		void addExtra();
 
 	private:
 		Q_DISABLE_COPY(OdamexGameHost)
-
-		const OdamexServer* server;
 };
 
 #endif

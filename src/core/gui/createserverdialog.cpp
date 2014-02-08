@@ -367,17 +367,15 @@ bool CreateServerDialog::commandLineArguments(QString &executable, QStringList &
 		return false;
 	}
 
-	Server* server = currentEngine->server(QHostAddress(), spinPort->value());
 	GameCreateParams gameParams;
-	if (createHostInfo(gameParams, server, false))
+	if (createHostInfo(gameParams, false))
 	{
 		CommandLineInfo cli;
 		QString error;
 
-		GameHost* gameRunner = server->gameHost();
+		GameHost* gameRunner = currentEngine->gameHost();
 		Message message = gameRunner->createHostCommandLine(gameParams, cli);
 
-		delete server;
 		delete gameRunner;
 
 		if (message.isError())
@@ -392,133 +390,124 @@ bool CreateServerDialog::commandLineArguments(QString &executable, QStringList &
 			return true;
 		}
 	}
-	else if (server != NULL)
-	{
-		delete server;
-	}
 	return false;
 }
 
-bool CreateServerDialog::createHostInfo(GameCreateParams& params, Server* server, bool offline)
+bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 {
-	if (server != NULL)
-	{
-		// Since some operating systems have different offline and server binaries
-		// We will see if they are playing offline and switch to the client
-		// binary if the specified executable is the same as what is provided
-		// as the server.
-		Message message;
-		QString offlineExePath = pathToOfflineExe(message);
-		QString serverExePath = pathToServerExe(message);
-		bool bIsLineEditPotiningToServerBinary = (leExecutable->text() == serverExePath);
-		bool bShouldUseClientBinary = (offline || bIsServerSetup) && message.isIgnore() && bIsLineEditPotiningToServerBinary;
+	// Since some operating systems have different offline and server binaries
+	// We will see if they are playing offline and switch to the client
+	// binary if the specified executable is the same as what is provided
+	// as the server.
+	Message message;
+	QString offlineExePath = pathToOfflineExe(message);
+	QString serverExePath = pathToServerExe(message);
+	bool bIsLineEditPotiningToServerBinary = (leExecutable->text() == serverExePath);
+	bool bShouldUseClientBinary = (offline || bIsServerSetup) && message.isIgnore() && bIsLineEditPotiningToServerBinary;
 
-		params.setHostMode(offline ? GameCreateParams::Offline : GameCreateParams::Host);
-		if (bShouldUseClientBinary)
+	params.setHostMode(offline ? GameCreateParams::Offline : GameCreateParams::Host);
+	if (bShouldUseClientBinary)
+	{
+		params.setExecutablePath(offlineExePath);
+	}
+	else
+	{
+		params.setExecutablePath(leExecutable->text());
+	}
+
+	params.setIwadPath(cboIwad->currentText());
+	params.setPwadsPaths(CommonGUI::listViewStandardItemsToStringList(lstAdditionalFiles));
+
+	// DMFlags
+	foreach(const DMFlagsTabWidget* p, dmFlagsTabs)
+	{
+		DMFlagsSection sec(p->section.name());
+		for (int i = 0; i < p->section.count(); ++i)
 		{
-			params.setExecutablePath(offlineExePath);
+			if (p->checkBoxes[i]->isChecked())
+			{
+				sec.add(p->section[i]);
+			}
+		}
+		params.dmFlags() << sec;
+	}
+
+	// Custom pages.
+	QStringList customPagesParams;
+	foreach (CreateServerDialogPage* page, currentCustomPages)
+	{
+		if (page->validate())
+		{
+			customPagesParams << page->generateGameRunParameters();
 		}
 		else
 		{
-			params.setExecutablePath(leExecutable->text());
+			// Pages must take care of displaying their own error messages.
+			tabWidget->setCurrentIndex(tabWidget->indexOf(page));
+			return false;
 		}
+	}
+	params.setCustomParameters(customPagesParams);
 
-		params.setIwadPath(cboIwad->currentText());
-		params.setPwadsPaths(CommonGUI::listViewStandardItemsToStringList(lstAdditionalFiles));
-
-		// DMFlags
-		foreach(const DMFlagsTabWidget* p, dmFlagsTabs)
-		{
-			DMFlagsSection sec(p->section.name());
-			for (int i = 0; i < p->section.count(); ++i)
-			{
-				if (p->checkBoxes[i]->isChecked())
-				{
-					sec.add(p->section[i]);
-				}
-			}
-			params.dmFlags() << sec;
-		}
-
-		// Custom pages.
-		QStringList customPagesParams;
-		foreach (CreateServerDialogPage* page, currentCustomPages)
-		{
-			if (page->validate())
-			{
-				customPagesParams << page->generateGameRunParameters();
-			}
-			else
-			{
-				// Pages must take care of displaying their own error messages.
-				tabWidget->setCurrentIndex(tabWidget->indexOf(page));
-				return false;
-			}
-		}
-		params.setCustomParameters(customPagesParams);
-
-		// limits
-		foreach(GameLimitWidget* p, limitWidgets)
-		{
-			p->limit.setValue(p->spinBox->value());
-			params.cvars() << p->limit;
-		}
-
-		// modifier
-		int modIndex = cboModifier->currentIndex();
-		if (modIndex > 0) // Index zero is always "< NONE >"
-		{
-			--modIndex;
-			gameModifiers[modIndex].setValue(1);
-			params.cvars() << gameModifiers[modIndex];
-		}
-
-		// Custom parameters
-		{
-			QString cp = pteCustomParameters->toPlainText();
-			Scanner sc(cp.toAscii().constData(), cp.length());
-			while (sc.nextString())
-			{
-				QString param = sc->str;
-				params.customParameters() << param;
-			}
-		}
-
-		// Other
-		server->setBroadcastToLAN(cbBroadcastToLAN->isChecked());
-		server->setBroadcastToMaster(cbBroadcastToMaster->isChecked());
-		server->setEmail(leEmail->text());
-		server->setMap(leMap->text());
-		server->setMapList(CommonGUI::listViewStandardItemsToStringList(lstMaplist));
-		server->setRandomMapRotation(cbRandomMapRotation->isChecked());
-		server->setMaxClients(spinMaxClients->value());
-		server->setMaxPlayers(spinMaxPlayers->value());
-		server->setMotd(pteMOTD->toPlainText());
-		server->setName(leServername->text());
-		server->setConnectPassword(leConnectPassword->text());
-		server->setJoinPassword(leJoinPassword->text());
-		server->setRconPassword(leRConPassword->text());
-		server->setPort(spinPort->value());
-		server->setSkill(cboDifficulty->currentIndex());
-		server->setWebSite(leURL->text());
-
-		const QList<GameMode>* gameModes = currentEngine->data()->gameModes;
-		if (gameModes != NULL)
-		{
-			foreach (const GameMode& mode, (*gameModes))
-			{
-				if (mode.name().compare(cboGamemode->currentText()) == 0)
-				{
-					server->setGameMode(mode);
-					break;
-				}
-			}
-		}
-
-		return true;
+	// limits
+	foreach(GameLimitWidget* p, limitWidgets)
+	{
+		p->limit.setValue(p->spinBox->value());
+		params.cvars() << p->limit;
 	}
 
-	return false;
+	// modifier
+	int modIndex = cboModifier->currentIndex();
+	if (modIndex > 0) // Index zero is always "< NONE >"
+	{
+		--modIndex;
+		gameModifiers[modIndex].setValue(1);
+		params.cvars() << gameModifiers[modIndex];
+	}
+
+	// Custom parameters
+	{
+		QString cp = pteCustomParameters->toPlainText();
+		Scanner sc(cp.toAscii().constData(), cp.length());
+		while (sc.nextString())
+		{
+			QString param = sc->str;
+			params.customParameters() << param;
+		}
+	}
+
+	// Other
+	params.setBroadcastToLan(cbBroadcastToLAN->isChecked());
+	params.setBroadcastToMaster(cbBroadcastToMaster->isChecked());
+	params.setEmail(leEmail->text());
+	params.setMap(leMap->text());
+	params.setMapList(CommonGUI::listViewStandardItemsToStringList(lstMaplist));
+	params.setRandomMapRotation(cbRandomMapRotation->isChecked());
+	params.setMaxClients(spinMaxClients->value());
+	params.setMaxPlayers(spinMaxPlayers->value());
+	params.setMotd(pteMOTD->toPlainText());
+	params.setName(leServername->text());
+	params.setConnectPassword(leConnectPassword->text());
+	params.setIngamePassword(leJoinPassword->text());
+	params.setRconPassword(leRConPassword->text());
+	params.setPort(spinPort->value());
+	params.setSkill(cboDifficulty->currentIndex());
+	params.setUrl(leURL->text());
+
+	const QList<GameMode>* gameModes = currentEngine->data()->gameModes;
+	if (gameModes != NULL)
+	{
+		foreach (const GameMode& mode, (*gameModes))
+		{
+			if (mode.name().compare(cboGamemode->currentText()) == 0)
+			{
+				params.setGameMode(mode);
+				break;
+			}
+		}
+	}
+
+	return true;
 }
 
 void CreateServerDialog::firstLoadConfigTimer()
@@ -1004,17 +993,15 @@ void CreateServerDialog::runGame(bool offline)
 		return;
 	}
 
-	Server* server = currentEngine->server(QHostAddress(), spinPort->value());
 	GameCreateParams gameParams;
-	if (createHostInfo(gameParams, server, offline))
+	if (createHostInfo(gameParams, offline))
 	{
 		QString error;
 
-		GameHost* gameRunner = server->gameHost();
+		GameHost* gameRunner = currentEngine->gameHost();
 		Message message = gameRunner->host(gameParams);
 
 		delete gameRunner;
-		delete server;
 
 		if (message.isError())
 		{
@@ -1025,10 +1012,6 @@ void CreateServerDialog::runGame(bool offline)
 			QString tmpServerConfigPath = Main::dataPaths->programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
 			saveConfig(tmpServerConfigPath);
 		}
-	}
-	else if (server != NULL)
-	{
-		delete server;
 	}
 }
 

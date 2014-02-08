@@ -29,16 +29,16 @@
 #include <QStringList>
 
 class CommandLineInfo;
+class EnginePlugin;
 class GameCreateParams;
 class Message;
-class Server;
 
 class MAIN_EXPORT GameHost : public QObject
 {
 	Q_OBJECT
 
 	public:
-		GameHost(const Server* server);
+		GameHost(EnginePlugin* plugin);
 		virtual ~GameHost();
 
 		/**
@@ -51,6 +51,8 @@ class MAIN_EXPORT GameHost : public QObject
 		 * @see createHostCommandLine()
 		 */
 		Message host(const GameCreateParams& params);
+
+		EnginePlugin* plugin() const;
 
 	protected:
 		/**

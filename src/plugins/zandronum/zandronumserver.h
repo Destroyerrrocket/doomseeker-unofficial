@@ -144,7 +144,7 @@ class ZandronumServer : public Server
 
 		bool			isTestingServer() const { return testingServer; }
 
-		GameHost* gameHost() const;
+		GameHost* gameHost();
 		GameClientRunner*		gameRunner();
 
 		bool			hasRcon() const { return true; }

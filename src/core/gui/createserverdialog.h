@@ -117,7 +117,7 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		 * parameters obtain new information after this method is called.
 		 * @return false if fail.
 		 */
-		bool	createHostInfo(GameCreateParams& params, Server* server, bool offline);
+		bool	createHostInfo(GameCreateParams& params, bool offline);
 
 		void	initDMFlagsTabs();
 

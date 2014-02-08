@@ -39,11 +39,6 @@ ChocolateDoomServer::ChocolateDoomServer(const QHostAddress &address, unsigned s
 	set_readRequest(&ChocolateDoomServer::readRequest);
 }
 
-GameHost* ChocolateDoomServer::gameHost()
-{
-	return new ChocolateDoomGameHost(this);
-}
-
 GameClientRunner* ChocolateDoomServer::gameRunner()
 {
 	return new ChocolateDoomGameClientRunner(this);

@@ -61,14 +61,14 @@ class GameHost::PrivData
 		CommandLineInfo* currentCmdLine;
 		Message message;
 		GameCreateParams params;
-		const Server* server;
+		EnginePlugin* plugin;
 
 		void (GameHost::*addIwad)();
 		void (GameHost::*addPwads)();
 		void (GameHost::*addDMFlags)();
 };
 
-GameHost::GameHost(const Server* server)
+GameHost::GameHost(EnginePlugin* plugin)
 {
 	d = new PrivData();
 	d->argIwadLoading = "-iwad";
@@ -76,8 +76,8 @@ GameHost::GameHost(const Server* server)
 	d->argPwadLoading = "-file";
 	d->argDemoPlayback = "-playdemo";
 	d->argDemoRecord = "-record";
-	d->server = server;
 	d->currentCmdLine = NULL;
+	d->plugin = plugin;
 
 	set_addIwad(&GameHost::addIwad_default);
 	set_addPwads(&GameHost::addPwads_default);
@@ -183,7 +183,7 @@ void GameHost::createCommandLineArguments()
 	// Port
 	if (params().hostMode() == GameCreateParams::Host)
 	{
-		args() << argForPort() << QString::number(d->server->port());
+		args() << argForPort() << QString::number(params().port());
 	}
 
 	// CVars
@@ -248,8 +248,12 @@ Message GameHost::host(const GameCreateParams& params)
 
 	if (WRAP_IN_SSS_CONSOLE)
 	{
-		AppRunner::runExecutableWrappedInStandardServerConsole(
-			d->server->icon(), cmdLine);
+		QIcon icon;
+		if (plugin() != NULL)
+		{
+			icon = plugin()->icon();
+		}
+		AppRunner::runExecutableWrappedInStandardServerConsole(icon, cmdLine);
 		return Message();
 	}
 	else
@@ -261,6 +265,11 @@ Message GameHost::host(const GameCreateParams& params)
 const GameCreateParams& GameHost::params() const
 {
 	return d->params;
+}
+
+EnginePlugin* GameHost::plugin() const
+{
+	return d->plugin;
 }
 
 void GameHost::setArgForIwadLoading(const QString& arg)

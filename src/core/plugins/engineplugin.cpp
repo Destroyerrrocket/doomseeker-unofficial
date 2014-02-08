@@ -25,6 +25,7 @@
 #include "irc/entities/ircnetworkentity.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/gameexefactory.h"
+#include "serverapi/gamehost.h"
 #include "log.h"
 #include "strings.h"
 
@@ -82,6 +83,11 @@ EnginePlugin::~EnginePlugin()
 ConfigurationBaseBox* EnginePlugin::configuration(QWidget *parent) const
 {
 	return new EngineConfigurationBaseBox(this, *d->pConfig, parent);
+}
+
+GameHost* EnginePlugin::gameHost()
+{
+	return new GameHost(this);
 }
 
 void EnginePlugin::init(const char* name, const char* const icon[], ...)

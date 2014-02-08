@@ -40,7 +40,6 @@ class OdamexServer : public Server
 		OdamexServer(const QHostAddress &address, unsigned short port);
 
 		const QStringList&		dehs() const { return dehPatches; }
-		GameHost* gameHost() const;
 		GameClientRunner*				gameRunner();
 
 		EnginePlugin*		plugin() const;

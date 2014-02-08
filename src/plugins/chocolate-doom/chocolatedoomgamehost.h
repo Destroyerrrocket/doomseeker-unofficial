@@ -25,22 +25,18 @@
 
 #include <serverapi/gamehost.h>
 
-class ChocolateDoomServer;
-
 class ChocolateDoomGameHost : public GameHost
 {
 	Q_OBJECT
 
 	public:
-		ChocolateDoomGameHost(const ChocolateDoomServer* server);
+		ChocolateDoomGameHost();
 
 	protected:
 		void addExtra();
 
 	private:
 		Q_DISABLE_COPY(ChocolateDoomGameHost)
-
-		const ChocolateDoomServer* server;
 };
 
 #endif

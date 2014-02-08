@@ -26,6 +26,7 @@
 #include "irc/entities/ircnetworkentity.h"
 #include "plugins/engineplugin.h"
 
+#include "odamexgamehost.h"
 #include "odamexgameinfo.h"
 #include "odamexmasterclient.h"
 #include "odamexengineplugin.h"
@@ -57,6 +58,11 @@ OdamexEnginePlugin::OdamexEnginePlugin()
 		EP_DemoExtension, true, "odd",
 		EP_Done
 	);
+}
+
+GameHost* OdamexEnginePlugin::gameHost()
+{
+	return new OdamexGameHost();
 }
 
 MasterClient *OdamexEnginePlugin::masterClient() const
