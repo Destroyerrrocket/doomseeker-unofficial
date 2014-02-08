@@ -21,31 +21,49 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "tooltipgenerator.h"
+
 #include "main.h"
 #include "serverapi/server.h"
 #include "tooltips/gameinfotip.h"
 #include "tooltips/generalinfotip.h"
 #include "tooltips/playertable.h"
 
-TooltipGenerator::TooltipGenerator(const Server* server)
-: pServer(server)
+class TooltipGenerator::PrivData
 {
+	public:
+		const Server* server;
+};
+
+TooltipGenerator::TooltipGenerator(const Server* server)
+{
+	d = new PrivData();
+	d->server = server;
+}
+
+TooltipGenerator::~TooltipGenerator()
+{
+	delete d;
 }
 
 QString TooltipGenerator::gameInfoTableHTML()
 {
-	GameInfoTip tip(pServer);
+	GameInfoTip tip(server());
 	return tip.generateHTML();
 }
 
 QString TooltipGenerator::generalInfoHTML()
 {
-	GeneralInfoTip tip(pServer);
+	GeneralInfoTip tip(server());
 	return tip.generateHTML();
 }
 
 QString TooltipGenerator::playerTableHTML()
 {
-	PlayerTable table(pServer);
+	PlayerTable table(server());
 	return table.generateHTML();
+}
+
+const Server *TooltipGenerator::server() const
+{
+	return d->server;
 }

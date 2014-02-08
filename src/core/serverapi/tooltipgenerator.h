@@ -34,27 +34,31 @@ class MAIN_EXPORT TooltipGenerator : public QObject
 {
 	public:
 		TooltipGenerator(const Server* server);
+		virtual ~TooltipGenerator();
 
 		/**
-		 *	Should return general info about current game (fraglimit,
-		 *	team scores, etc.)
+		 * @brief General info about current game (fraglimit, team scores, etc.)
 		 */
-		virtual QString		gameInfoTableHTML();
+		virtual QString gameInfoTableHTML();
 
 		/**
-		 *	Should return general info about server, like server name, version,
-		 *	email, etc.
+		 * @brief General info about server, like server name, version,
+		 *        email, etc.
 		 */
-		virtual QString		generalInfoHTML();
+		virtual QString generalInfoHTML();
 
 		/**
-		 *	Should return player table (the thing that is created when cursor
-		 *	hovers over players column).
+		 * @brief Player table that is created when cursor
+		 *        hovers over players column.
 		 */
-		virtual QString		playerTableHTML();
+		virtual QString playerTableHTML();
 
 	protected:
-		const Server*		pServer;
+		const Server *server() const;
+
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 #endif
