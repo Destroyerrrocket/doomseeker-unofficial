@@ -32,6 +32,7 @@
 #include <QHash>
 #include <QList>
 #include <QMutex>
+#include <QMutexLocker>
 #include <QTimer>
 #include <QThread>
 #include <QRunnable>
@@ -140,6 +141,9 @@ class Refresher::MasterClientInfo
 
 ////////////////////////////////////////////////////////////////////////////////
 
+Refresher* Refresher::staticInstance = NULL;
+QMutex Refresher::instanceMutex;
+
 Refresher::Refresher()
 {
 	d = new Data;
@@ -168,9 +172,32 @@ void Refresher::attemptTimeoutMasters()
 	}
 }
 
-Refresher *Refresher::createRefresher()
+Refresher *Refresher::instance()
 {
-	return new Refresher();
+	if (staticInstance == NULL)
+	{
+		QMutexLocker locker(&instanceMutex);
+		if (staticInstance == NULL)
+		{
+			staticInstance = new Refresher();
+		}
+	}
+	return staticInstance;
+}
+
+bool Refresher::isInstantiated()
+{
+	return staticInstance != NULL;
+}
+
+void Refresher::deinstantiate()
+{
+	QMutexLocker locker(&instanceMutex);
+	if (isInstantiated())
+	{
+		delete staticInstance;
+		staticInstance = NULL;
+	}
 }
 
 Server* Refresher::findRefreshingServer(const QHostAddress& address,

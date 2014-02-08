@@ -25,7 +25,6 @@
 #include "log.h"
 #include "configuration/doomseekerconfig.h"
 #include "plugins/engineplugin.h"
-#include "main.h"
 #include "strings.h"
 #include "refresher/refresher.h"
 #include "serverapi/exefile.h"
@@ -493,16 +492,9 @@ Server::Response Server::readRequest_default(QByteArray &data)
 
 bool Server::refresh()
 {
-	if (Main::refresher == NULL)
+	if (isRefreshable())
 	{
-		refreshStops(RESPONSE_BAD);
-		gLog << tr("CRITIAL ERROR: REFRESHING THREAD IS NULL");
-		return false;
-	}
-
-	if(isRefreshable())
-	{
-		Main::refresher->registerServer(this);
+		gRefresher->registerServer(this);
 		return true;
 	}
 	return false;

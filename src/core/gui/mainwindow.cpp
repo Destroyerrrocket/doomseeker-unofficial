@@ -419,11 +419,11 @@ void MainWindow::discardUpdates()
 void MainWindow::connectEntities()
 {
 	// Connect refreshing thread.
-	connect(Main::refresher, SIGNAL( block() ), this, SLOT( blockRefreshButtons() ) );
-	connect(Main::refresher, SIGNAL( finishedQueryingMaster(MasterClient*) ), this, SLOT( finishedQueryingMaster(MasterClient*) ) );
-	connect(Main::refresher, SIGNAL( sleepingModeEnter() ), this, SLOT( refreshThreadEndsWork() ) );
-	connect(Main::refresher, SIGNAL( sleepingModeEnter() ), buddiesList, SLOT( scan() ) );
-	connect(Main::refresher, SIGNAL( sleepingModeExit() ), this, SLOT( refreshThreadBeginsWork() ) );
+	connect(gRefresher, SIGNAL( block() ), this, SLOT( blockRefreshButtons() ) );
+	connect(gRefresher, SIGNAL( finishedQueryingMaster(MasterClient*) ), this, SLOT( finishedQueryingMaster(MasterClient*) ) );
+	connect(gRefresher, SIGNAL( sleepingModeEnter() ), this, SLOT( refreshThreadEndsWork() ) );
+	connect(gRefresher, SIGNAL( sleepingModeEnter() ), buddiesList, SLOT( scan() ) );
+	connect(gRefresher, SIGNAL( sleepingModeExit() ), this, SLOT( refreshThreadBeginsWork() ) );
 
 	// Controls
 	connect(menuActionAbout, SIGNAL( triggered() ), this, SLOT( menuHelpAbout() ));
@@ -592,7 +592,7 @@ void MainWindow::getServers()
 
 		if (pMaster->isEnabled())
 		{
-			Main::refresher->registerMaster(pMaster);
+			gRefresher->registerMaster(pMaster);
 		}
 	}
 }

@@ -68,7 +68,6 @@ PluginLoader* 		Main::enginePlugins = NULL;
 IP2C*				Main::ip2c = NULL;
 QList<LocalizationInfo> Main::localizations;
 QWidget*			Main::mainWindow = NULL;
-Refresher*			Main::refresher = Refresher::createRefresher();
 bool				Main::running = true;
 QString				Main::workingDirectory = "./";
 
@@ -85,10 +84,10 @@ Main::Main(int argc, char* argv[])
 Main::~Main()
 {
 	running = false;
-	if (refresher != NULL)
+	if (Refresher::isInstantiated())
 	{
-		refresher->quit();
-		delete refresher;
+		Refresher::instance()->quit();
+		Refresher::deinstantiate();
 	}
 
 	// We can't save a config if we haven't initalized the program!
@@ -591,8 +590,8 @@ void Main::preserveOldConfigBackwardsCompatibility()
 void Main::setupRefreshingThread()
 {
 	gLog << tr("Starting refreshing thread.");
-	refresher->setDelayBetweenResends(gConfig.doomseeker.queryTimeout);
-	refresher->start();
+	gRefresher->setDelayBetweenResends(gConfig.doomseeker.queryTimeout);
+	gRefresher->start();
 }
 
 //==============================================================================

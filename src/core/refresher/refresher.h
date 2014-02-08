@@ -24,6 +24,9 @@
 #define DOOMSEEKER_REFRESHER_REFRESHER_H
 
 #include <QObject>
+#include <QMutex>
+
+#define gRefresher (Refresher::instance())
 
 class MasterClient;
 class Server;
@@ -64,7 +67,9 @@ class Refresher : public QObject
 
 		bool start();
 
-		static Refresher *createRefresher();
+		static Refresher *instance();
+		static bool isInstantiated();
+		static void deinstantiate();
 
 	signals:
 		/**
@@ -91,6 +96,8 @@ class Refresher : public QObject
 		class MasterClientInfo;
 
 		static const int MASTER_SERVER_TIMEOUT_DELAY = 10000;
+		static Refresher *staticInstance;
+		static QMutex instanceMutex;
 
 		Data *d;
 
