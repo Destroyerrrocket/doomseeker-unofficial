@@ -22,7 +22,6 @@
 //------------------------------------------------------------------------------
 #include "exefile.h"
 #include "configuration/doomseekerconfig.h"
-#include "server.h"
 #include "main.h"
 #include "message.h"
 #include "plugins/engineplugin.h"

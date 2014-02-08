@@ -22,20 +22,12 @@
 //------------------------------------------------------------------------------
 #include "gamehost.h"
 
-#include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
-#include "serverapi/gameexeretriever.h"
 #include "serverapi/gamecreateparams.h"
 #include "serverapi/message.h"
-#include "serverapi/server.h"
 #include "serverapi/serverstructs.h"
-#include "configuration/doomseekerconfig.h"
 #include "apprunner.h"
-#include "log.h"
-#include "main.h"
-#include "strings.h"
 #include <cassert>
-#include <QDateTime>
 #include <QFileInfo>
 #include <QStringList>
 

@@ -20,23 +20,18 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
+#include "server.h"
 
 #include "log.h"
 #include "configuration/doomseekerconfig.h"
 #include "plugins/engineplugin.h"
-#include "serverapi/server.h"
 #include "main.h"
 #include "strings.h"
-#include "gui/standardserverconsole.h"
-#include "gui/wadseekerinterface.h"
 #include "refresher/refresher.h"
 #include "serverapi/exefile.h"
-#include "serverapi/gamehost.h"
 #include "serverapi/gameclientrunner.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/tooltipgenerator.h"
-#include <QProcess>
-#include <QSet>
 #include <QTime>
 #include <QUdpSocket>
 #include <cassert>

@@ -20,20 +20,18 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "serverapi/gameclientrunner.h"
+#include "gameclientrunner.h"
+
+#include "configuration/doomseekerconfig.h"
+#include "ini/inisection.h"
+#include "ini/inivariable.h"
 #include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/exefile.h"
 #include "serverapi/gameexeretriever.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
-#include "configuration/doomseekerconfig.h"
-#include "gui/standardserverconsole.h"
-#include "apprunner.h"
 #include "log.h"
-#include "main.h"
-#include "strings.h"
-#include <QDateTime>
 #include <QScopedPointer>
 #include <QStringList>
 
