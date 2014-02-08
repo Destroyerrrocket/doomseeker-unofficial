@@ -59,7 +59,7 @@ void DemoManagerDlg::adjustDemoList()
 	QStringList demoExtensions;
 	for(int i = 0;i < Main::enginePlugins->numPlugins();++i)
 	{
-		QString ext = QString("*.%1").arg((*Main::enginePlugins)[i]->info->data()->demoExtension);
+		QString ext = QString("*.%1").arg((*Main::enginePlugins)[i]->info()->data()->demoExtension);
 
 		if(!demoExtensions.contains(ext))
 		{
@@ -228,8 +228,10 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 		EnginePlugin *plugin = NULL;
 		for(int i = 0;i < Main::enginePlugins->numPlugins();i++)
 		{
-			if(selectedDemo->port == (*Main::enginePlugins)[i]->info->data()->name)
-				plugin = (*Main::enginePlugins)[i]->info;
+			if (selectedDemo->port == (*Main::enginePlugins)[i]->info()->data()->name)
+			{
+				plugin = (*Main::enginePlugins)[i]->info();
+			}
 		}
 		if(plugin == NULL)
 		{

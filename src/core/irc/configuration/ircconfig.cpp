@@ -275,16 +275,16 @@ void IRCConfig::NetworksDataCfg::load(Ini& ini)
 	// Go through the plugins and register their IRC servers.
 	for(unsigned int i = 0;i < Main::enginePlugins->numPlugins();i++)
 	{
-		if((*Main::enginePlugins)[i]->info->data()->ircChannels.size() == 0)
+		if((*Main::enginePlugins)[i]->info()->data()->ircChannels.size() == 0)
 			continue;
 
 		// OK so maybe registering only on first run is a good idea after all...
-		IniVariable registered = (*Main::enginePlugins)[i]->info->data()->pConfig->createSetting("IRCRegistered", false);
+		IniVariable registered = (*Main::enginePlugins)[i]->info()->data()->pConfig->createSetting("IRCRegistered", false);
 		if(!registered)
 		{
 			registered = true;
 
-			foreach(const IRCNetworkEntity &entity, (*Main::enginePlugins)[i]->info->data()->ircChannels)
+			foreach(const IRCNetworkEntity &entity, (*Main::enginePlugins)[i]->info()->data()->ircChannels)
 			{
 				// If we have a unique server add it to the list...
 				if(!networks.contains(entity))

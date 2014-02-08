@@ -454,7 +454,7 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 	// queryMenuPorts are ever performed. Not even in the destructor.
 	for(unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
-		const EnginePlugin* plugin = (*Main::enginePlugins)[i]->info;
+		const EnginePlugin* plugin = (*Main::enginePlugins)[i]->info();
 		if(!plugin->data()->hasMasterServer)
 		{
 			continue;
@@ -473,7 +473,7 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 
 		statusBar()->addPermanentWidget(statusWidget);
 
-		QString name = (*Main::enginePlugins)[i]->info->data()->name;
+		QString name = (*Main::enginePlugins)[i]->info()->data()->name;
 		QQueryMenuAction* query = new QQueryMenuAction(pMasterClient, statusWidget, menuQuery);
 		queryMenuPorts.insert(pMasterClient, query);
 

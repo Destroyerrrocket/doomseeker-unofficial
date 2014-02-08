@@ -36,7 +36,7 @@ RconPasswordDialog::RconPasswordDialog(QWidget *parent, bool connection)
 		engines->clear();
 		for(unsigned int i = 0;i < Main::enginePlugins->numPlugins();i++)
 		{
-			const EnginePlugin* info = (*Main::enginePlugins)[i]->info;
+			const EnginePlugin* info = (*Main::enginePlugins)[i]->info();
 			engines->addItem(info->icon(), info->data()->name, i);
 		}
 	}
@@ -65,5 +65,5 @@ const EnginePlugin *RconPasswordDialog::selectedEngine() const
 	if(plugin == NULL)
 		return NULL;
 
-	return plugin->info;
+	return plugin->info();
 }

@@ -70,9 +70,9 @@ void VersionDump::dumpJsonToIO(QIODevice& io)
 	for (unsigned int i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
 		PluginLoader::Plugin* plugin = Main::enginePlugins->plugins()[i];
-		QString name = plugin->info->data()->name;
+		QString name = plugin->info()->data()->name;
 		QString keyword = "p-" + name.toLower().replace(" ", "");
-		root[keyword] = Module(name, plugin->info->data()->version).toVariantMap();
+		root[keyword] = Module(name, plugin->info()->data()->version).toVariantMap();
 	}
 
 	io.write(QtJson::Json::serialize(root));

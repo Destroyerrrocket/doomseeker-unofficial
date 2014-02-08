@@ -98,7 +98,7 @@ ConnectionHandler *ConnectionHandler::connectByUrl(const QUrl &url)
 	const EnginePlugin *handler = NULL;
 	for(unsigned int i = 0;i < Main::enginePlugins->numPlugins();++i)
 	{
-		const EnginePlugin *plugin = (*Main::enginePlugins)[i]->info;
+		const EnginePlugin *plugin = (*Main::enginePlugins)[i]->info();
 		if(plugin->data()->scheme.compare(url.scheme(), Qt::CaseInsensitive) == 0)
 		{
 			handler = plugin;

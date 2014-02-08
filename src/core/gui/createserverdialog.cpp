@@ -339,7 +339,7 @@ void CreateServerDialog::cboEngineSelected(int index)
 			// TODO Review if the 'const' modifier for PluginLoader::info
 			// is really necessary. Possibly get rid of it.
 			EnginePlugin* nfo = const_cast<EnginePlugin*>(
-				(*Main::enginePlugins)[enginePluginIndex]->info);
+				(*Main::enginePlugins)[enginePluginIndex]->info());
 
 			initEngineSpecific(nfo);
 		}
@@ -734,7 +734,7 @@ void CreateServerDialog::initPrimary()
 
 	for (unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
-		const EnginePlugin* nfo = (*Main::enginePlugins)[i]->info;
+		const EnginePlugin* nfo = (*Main::enginePlugins)[i]->info();
 		cboEngine->addItem(nfo->icon(), nfo->data()->name, i);
 	}
 

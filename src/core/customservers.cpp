@@ -69,7 +69,7 @@ void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerIn
 				else if (engineIndex >= 0)
 				{
 					const PluginLoader::Plugin* pPlugin = (*Main::enginePlugins)[engineIndex];
-					customServerInfo.port = pPlugin->info->data()->defaultServerPort;
+					customServerInfo.port = pPlugin->info()->data()->defaultServerPort;
 				}
 				else
 				{
@@ -116,7 +116,7 @@ void CustomServers::setServers(const QList<CustomServerInfo>& csiList, QObject* 
 			address = hostInfo.addresses().first();
 		}
 
-		const EnginePlugin* pInterface = (*Main::enginePlugins)[customServerInfo.engineIndex]->info;
+		const EnginePlugin* pInterface = (*Main::enginePlugins)[customServerInfo.engineIndex]->info();
 		Server* p = pInterface->server(address, customServerInfo.port);
 		if(p == NULL)
 		{

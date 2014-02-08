@@ -324,7 +324,7 @@ bool Main::createRemoteConsole()
 		}
 
 		// Check for RCon Availability.
-		const EnginePlugin *plugin = (*enginePlugins)[pIndex]->info;
+		const EnginePlugin *plugin = (*enginePlugins)[pIndex]->info();
 		Server *server = plugin->server(QHostAddress(rconAddress), rconPort);
 		if(!server->hasRcon())
 		{

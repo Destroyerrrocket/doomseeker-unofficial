@@ -47,7 +47,7 @@ CFGCustomServers::CFGCustomServers(QWidget *parent)
 void CFGCustomServers::add()
 {
 	int pluginIndex = cboEngines->itemData(cboEngines->currentIndex()).toInt();
-	const EnginePlugin* nfo = (*Main::enginePlugins)[pluginIndex]->info;
+	const EnginePlugin* nfo = (*Main::enginePlugins)[pluginIndex]->info();
 
 	QString engineName = cboEngines->itemText(cboEngines->currentIndex());
 
@@ -118,7 +118,7 @@ const EnginePlugin* CFGCustomServers::getPluginInfoForRow(int rowIndex)
 	QStandardItem* itemEngine = model->item(rowIndex, EngineColumnIndex);
 	QString engineName = itemEngine->data().toString();
 	int pluginIndex = Main::enginePlugins->pluginIndexFromName(engineName);
-	return (*Main::enginePlugins)[pluginIndex]->info;
+	return (*Main::enginePlugins)[pluginIndex]->info();
 }
 
 bool CFGCustomServers::isPortColumnWithingRange(int leftmostColumnIndex, int rightmostColumnIndex)
@@ -144,7 +144,7 @@ void CFGCustomServers::prepareEnginesComboBox()
 
 	for (unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
 	{
-		const EnginePlugin* nfo = (*Main::enginePlugins)[i]->info;
+		const EnginePlugin* nfo = (*Main::enginePlugins)[i]->info();
 		cboEngines->addItem(nfo->icon(), nfo->data()->name, i);
 	}
 
@@ -234,7 +234,7 @@ void CFGCustomServers::setEngineOnItem(QStandardItem* item, const QString& engin
 	item->setToolTip(engineName);
 	if (engineId >= 0)
 	{
-		const EnginePlugin* nfo = (*Main::enginePlugins)[engineId]->info;
+		const EnginePlugin* nfo = (*Main::enginePlugins)[engineId]->info();
 		item->setIcon(nfo->icon());
 	}
 	else
