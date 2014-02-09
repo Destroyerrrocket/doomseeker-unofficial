@@ -41,8 +41,6 @@ class MAIN_EXPORT Main : public QObject
 	Q_OBJECT
 
 	public:
-		static const QString		IP2C_FILENAME;
-
 		static QApplication*		application;
 		/**
 		 * @brief If true then program will install updates and restart
@@ -79,11 +77,6 @@ class MAIN_EXPORT Main : public QObject
 		int							run();
 
 	protected:
-		static const QString		DOOMSEEKER_CONFIG_FILENAME;
-		static const QString		DOOMSEEKER_INI_FILENAME;
-		static const QString		DOOMSEEKER_IRC_INI_FILENAME;
-		static const QString		DOOMSEEKER_PASSWORD_INI_FILENAME;
-
 		int							connectToServerByURL();
 		void						convertOldIniToQSettingsIni();
 
@@ -117,7 +110,6 @@ class MAIN_EXPORT Main : public QObject
 		 *		returns.
 		 */
 		bool						interpretCommandLineParameters();
-		void						preserveOldConfigBackwardsCompatibility();
 		void						setupRefreshingThread();
 
 		char**						arguments;

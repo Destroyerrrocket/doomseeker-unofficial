@@ -53,12 +53,6 @@
 #include "updater/updateinstaller.h"
 #include "versiondump.h"
 
-const QString		Main::DOOMSEEKER_CONFIG_FILENAME = "doomseeker.cfg";
-const QString		Main::DOOMSEEKER_INI_FILENAME = "doomseeker.ini";
-const QString		Main::DOOMSEEKER_IRC_INI_FILENAME = "doomseeker-irc.ini";
-const QString		Main::DOOMSEEKER_PASSWORD_INI_FILENAME = "doomseeker-password.ini";
-const QString		Main::IP2C_FILENAME = "IpToCountry.csv";
-
 QApplication*		Main::application = NULL;
 QString Main::argDataDir;
 bool Main::bInstallUpdatesAndRestart = false;
@@ -380,16 +374,13 @@ void Main::initIRCConfig()
 	gIRCConfig;
 
 	// Now try to access the configuration stored on drive.
-	QString configDirPath = dataPaths->programsDataDirectoryPath();
-	if (configDirPath.isEmpty())
+	QString configPath = DoomseekerFilePaths::ircIni();
+	if (!configPath.isEmpty())
 	{
-		return;
-	}
-
-	QString filePath = configDirPath + "/" + DOOMSEEKER_IRC_INI_FILENAME;
-	if (gIRCConfig.setIniFile(filePath))
-	{
-		gIRCConfig.readFromFile();
+		if (gIRCConfig.setIniFile(configPath))
+		{
+			gIRCConfig.readFromFile();
+		}
 	}
 }
 
@@ -427,7 +418,7 @@ void Main::initMainConfig()
 		return;
 	}
 
-	QString filePath = configDirPath + "/" + DOOMSEEKER_INI_FILENAME;
+	QString filePath = DoomseekerFilePaths::ini();
 
 	// Check for first run.
 	QFileInfo iniFileInfo(filePath);
@@ -449,7 +440,7 @@ void Main::initPasswordsConfig()
 	{
 		return;
 	}
-	QString filePath = configDirPath + "/" + DOOMSEEKER_PASSWORD_INI_FILENAME;
+	QString filePath = DoomseekerFilePaths::passwordIni();
 	PasswordsCfg::initIni(filePath);
 }
 
@@ -566,20 +557,6 @@ bool Main::interpretCommandLineParameters()
 	}
 
 	return true;
-}
-
-void Main::preserveOldConfigBackwardsCompatibility()
-{
-	QFileInfo oldConfigLocation(Main::workingDirectory + "/" + DOOMSEEKER_CONFIG_FILENAME);
-	QFileInfo newConfigLocation(dataPaths->programsDataDirectoryPath() + "/" + DOOMSEEKER_CONFIG_FILENAME);
-
-	// QFile::copy() is said not to overwrite existing files but let's check
-	// anyway.
-	if (oldConfigLocation.exists() && oldConfigLocation.isFile() && !newConfigLocation.exists())
-	{
-		// If this fails just forget about it.
-		QFile::copy(oldConfigLocation.absoluteFilePath(), newConfigLocation.absoluteFilePath());
-	}
 }
 
 void Main::setupRefreshingThread()
