@@ -247,17 +247,18 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 		PathFinder pf;
 		pf.addPrioritySearchDir(binPath);
 		PathFinderResult result = pf.findFiles(selectedDemo->wads);
-		if(!result.missingFiles.isEmpty())
+		if(!result.missingFiles().isEmpty())
 		{
-			QMessageBox::critical(this, tr("Files not found"), tr("The following files could not be located: ") + result.missingFiles.join(", "));
+			QMessageBox::critical(this, tr("Files not found"),
+				tr("The following files could not be located: ") + result.missingFiles().join(", "));
 			return;
 		}
 
 		// Play the demo
 		GameCreateParams params;
 		params.setDemoPath(Main::dataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename);
-		params.setIwadPath(result.foundFiles[0]);
-		params.setPwadsPaths(result.foundFiles.mid(1));
+		params.setIwadPath(result.foundFiles()[0]);
+		params.setPwadsPaths(result.foundFiles().mid(1));
 		params.setHostMode(GameCreateParams::Demo);
 
 		GameHost* gameRunner = plugin->gameHost();
