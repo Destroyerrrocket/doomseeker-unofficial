@@ -43,7 +43,7 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 
 	public:
 		CreateServerDialog(QWidget* parent = NULL);
-		~CreateServerDialog();
+		virtual ~CreateServerDialog();
 
 		bool	commandLineArguments(QString &executable, QStringList &args);
 		void	makeSetupServerDialog(const EnginePlugin *plugin);
@@ -95,13 +95,8 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 
 		static const QString			TEMP_SERVER_CONFIG_FILENAME;
 
-		bool							bSuppressMissingExeErrors;
-		bool							bIsServerSetup;
-		QList<CreateServerDialogPage*> currentCustomPages;
-		EnginePlugin *currentEngine;
-		QList<DMFlagsTabWidget*>		dmFlagsTabs;
-		QList<GameLimitWidget*>			limitWidgets;
-		QList<GameCVar>					gameModifiers;
+		class PrivData;
+		PrivData *d;
 
 		/**
 		 * Adds IWAD path to the IWAD ComboBox.
