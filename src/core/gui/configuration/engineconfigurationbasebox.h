@@ -35,11 +35,12 @@ class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox, priv
 
 	public:
 		EngineConfigurationBaseBox(const EnginePlugin *plugin, IniSection &cfg, QWidget *parent=NULL);
+		virtual ~EngineConfigurationBaseBox();
 
 		QIcon				icon() const;
 		QString				name() const;
 		void				readSettings();
-		const EnginePlugin	*plugin() const { return enginePlugin; }
+		const EnginePlugin	*plugin() const;
 
 	protected:
 		void				addWidget(QWidget *widget);
@@ -52,9 +53,8 @@ class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox, priv
 		void				btnBrowseServerBinaryClicked();
 
 	private:
-		IniSection&			config;
-		const EnginePlugin*	enginePlugin;
-		bool				clientOnly;
+		class PrivData;
+		PrivData *d;
 };
 
 #endif /* __ENGINECONFIGBASE_H__ */
