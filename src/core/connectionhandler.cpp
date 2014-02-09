@@ -233,9 +233,9 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, Server* server, C
 				{
 					QString additionalInfo = tr("\n"
 						"Make sure that this file is in one of the paths specified in Options -> File Paths.\n"
-						"If you don't have this file you need to purchase the game associated with this IWAD.\n"
-						"Wadseeker will not download IWADs.\n\n");
-
+						"If you don't have this file, and it belongs to a commercial game, "
+						"you need to purchase the game associated with this IWAD.\n"
+						"Wadseeker will not download commercial IWADs.\n\n");
 					filesMissingMessage += tr("IWAD: ") + joinError.missingIwad().toLower() + additionalInfo;
 				}
 
