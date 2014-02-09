@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "demomanager.h"
+#include "ini/settingsproviderqt.h"
 #include "main.h"
 #include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
@@ -113,7 +114,11 @@ void DemoManagerDlg::adjustDemoList()
 		else
 		{
 			// New format, read meta data from file!
-			Ini metaData(Main::dataPaths->demosDirectoryPath() + QDir::separator() + demoName + ".ini");
+			QSettings settings(
+				Main::dataPaths->demosDirectoryPath() + QDir::separator() + demoName + ".ini",
+				QSettings::IniFormat);
+			SettingsProviderQt settingsProvider(&settings);
+			Ini metaData(&settingsProvider);
 			demo.wads << metaData.retrieveSetting("meta", "iwad");
 			QString pwads = metaData.retrieveSetting("meta", "pwads");
 			if(pwads.length() > 0)

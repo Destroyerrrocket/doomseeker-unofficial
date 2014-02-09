@@ -27,6 +27,7 @@
 #include "ini/ini.h"
 #include "ini/inisection.h"
 #include "ini/inivariable.h"
+#include "ini/settingsproviderqt.h"
 #include "serverapi/server.h"
 #include <cassert>
 #include <QDebug>
@@ -42,6 +43,7 @@ const QString SERVER_PASSWORDS_KEY = "ServerPasswords";
 // out to a separate singleton? If not, then perhaps we could at least
 // move the instantiation out of Main.
 Ini* PasswordsCfg::ini = NULL;
+QSettings *PasswordsCfg::settings = NULL;
 
 
 bool serverDateDescending(ServerSummary& s1, ServerSummary& s2)
@@ -95,7 +97,10 @@ void PasswordsCfg::initIni(const QString& path)
 		qDebug() << "Error: tried to re-init password ini";
 		return;
 	}
-	ini = new Ini(path);
+	settings = new QSettings(path, QSettings::IniFormat);
+	// SettingsProviderQt won't be deleted. Not really a memory leak, as
+	// this is expected to remain memory for whole program runtime.
+	ini = new Ini(new SettingsProviderQt(settings));
 }
 
 bool PasswordsCfg::isHidingPasswords() const

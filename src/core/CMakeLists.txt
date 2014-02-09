@@ -267,6 +267,8 @@ set(SOURCE_FILES
 	ini/inisection.cpp
 	ini/inivariable.cpp
 	ini/ini.cpp
+	ini/settingsprovider.cpp
+	ini/settingsproviderqt.cpp
 	ip2c/entities/ip2ccountryinfo.cpp
 	ip2c/ip2c.cpp
 	ip2c/ip2cloader.cpp
@@ -368,6 +370,8 @@ set(HEADER_FILES
 	gui/commongui.h
 	ini/inisection.h
 	ini/inivariable.h
+	ini/settingsprovider.h
+	ini/settingsproviderqt.h
 	ip2c/entities/ip2ccountryinfo.h
 	irc/configuration/ircconfig.h
 	irc/constants/ircresponsetype.h

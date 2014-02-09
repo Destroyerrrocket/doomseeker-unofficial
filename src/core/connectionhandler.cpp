@@ -31,6 +31,7 @@
 #include "gui/passwordDlg.h"
 #include "gui/wadseekerinterface.h"
 #include "gui/configuration/doomseekerconfigurationdialog.h"
+#include "ini/settingsproviderqt.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/gameclientrunner.h"
 #include "serverapi/message.h"
@@ -350,7 +351,9 @@ void ConnectionHandler::saveDemoMetaData(Server* server, const QString& demoName
 		metaFileName = demoName + ".ini";
 	}
 
-	Ini metaFile(metaFileName);
+	QSettings settings(metaFileName, QSettings::IniFormat);
+	SettingsProviderQt settingsProvider(&settings);
+	Ini metaFile(&settingsProvider);
 	IniSection metaSection = metaFile.createSection("meta");
 
 	// Get a list of wads for demo name:

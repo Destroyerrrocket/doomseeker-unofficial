@@ -24,6 +24,7 @@
 #include "ini/ini.h"
 #include "ini/inisection.h"
 #include "ini/inivariable.h"
+#include "ini/settingsproviderqt.h"
 #include "pathfinder/filesearchpath.h"
 #include "plugins/engineplugin.h"
 #include "updater/updatechannel.h"
@@ -39,17 +40,11 @@ DoomseekerConfig* DoomseekerConfig::instance = NULL;
 
 DoomseekerConfig::DoomseekerConfig()
 {
-	this->pIni = NULL;
 	this->dummySection = new IniSection(NULL, QString());
 }
 
 DoomseekerConfig::~DoomseekerConfig()
 {
-	if (this->pIni != NULL)
-	{
-		delete this->pIni;
-	}
-
 	delete this->dummySection;
 }
 
@@ -167,20 +162,28 @@ bool DoomseekerConfig::saveToFile()
 	autoUpdates.save(sectionAutoUpdates);
 
 	// Plugins should save their sections manually.
-
-	return pIni->save();
+	if (this->settings->isWritable())
+	{
+		this->settings->sync();
+		return true;
+	}
+	return false;
 }
 
 bool DoomseekerConfig::setIniFile(const QString& filePath)
 {
-	if (this->pIni != NULL)
-	{
-		delete this->pIni;
-	}
+	// Delete old instances if necessary.
+	this->pIni.reset();
+	this->settingsProvider.reset();
+	this->settings.reset();
 
 	gLog << QObject::tr("Setting INI file: %1").arg(filePath);
-	this->pIni = new Ini(filePath);
+	// Create new instances.
+	this->settings.reset(new QSettings(filePath, QSettings::IniFormat));
+	this->settingsProvider.reset(new SettingsProviderQt(this->settings.data()));
+	this->pIni.reset(new Ini(this->settingsProvider.data()));
 
+	// Init.
 	IniSection section;
 
 	section = this->pIni->section(doomseeker.SECTION_NAME);

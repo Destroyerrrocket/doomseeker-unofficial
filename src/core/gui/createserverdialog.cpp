@@ -28,6 +28,7 @@
 #include "main.h"
 #include "commongui.h"
 #include "ini/ini.h"
+#include "ini/settingsproviderqt.h"
 #include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
 #include "scanner.h"
@@ -815,7 +816,9 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 {
 	QAbstractItemModel* model;
 	QStringList stringList;
-	Ini ini(filename);
+	QSettings settingsFile(filename, QSettings::IniFormat);
+	SettingsProviderQt settingsProvider(&settingsFile);
+	Ini ini(&settingsProvider);
 	IniSection general = ini.section("General");
 	IniSection rules = ini.section("Rules");
 	IniSection misc = ini.section("Misc");
@@ -1029,7 +1032,9 @@ void CreateServerDialog::runGame(bool offline)
 bool CreateServerDialog::saveConfig(const QString& filename)
 {
 	QStringList stringList;
-	Ini ini(filename);
+	QSettings settingsFile(filename, QSettings::IniFormat);
+	SettingsProviderQt settingsProvider(&settingsFile);
+	Ini ini(&settingsProvider);
 	IniSection general = ini.createSection("General");
 	IniSection rules = ini.createSection("Rules");
 	IniSection misc = ini.createSection("Misc");
@@ -1096,7 +1101,12 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 	// Custom parameters
 	misc["CustomParams"] = pteCustomParameters->toPlainText();
 
-	return ini.save();
+	if (settingsFile.isWritable())
+	{
+		settingsFile.sync();
+		return true;
+	}
+	return false;
 }
 
 bool CreateServerDialog::setEngine(const QString &engineName)

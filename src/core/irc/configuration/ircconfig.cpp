@@ -20,8 +20,10 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "plugins/engineplugin.h"
 #include "ircconfig.h"
+
+#include "ini/settingsproviderqt.h"
+#include "plugins/engineplugin.h"
 #include "log.h"
 #include "main.h"
 #include "version.h"
@@ -32,15 +34,10 @@ IRCConfig* IRCConfig::instance = NULL;
 
 IRCConfig::IRCConfig()
 {
-	this->pIni = NULL;
 }
 
 IRCConfig::~IRCConfig()
 {
-	if (this->pIni != NULL)
-	{
-		delete this->pIni;
-	}
 }
 
 IRCConfig& IRCConfig::config()
@@ -130,18 +127,24 @@ bool IRCConfig::saveToFile()
 
 	networks.save(*pIni);
 
-	return pIni->save();
+	if (settings->isWritable())
+	{
+		settings->sync();
+		return true;
+	}
+	return false;
 }
 
 bool IRCConfig::setIniFile(const QString& filePath)
 {
-	if (this->pIni != NULL)
-	{
-		delete this->pIni;
-	}
+	pIni.reset();
+	settingsProvider.reset();
+	settings.reset();
 
 	gLog << QObject::tr("Setting IRC INI file: %1").arg(filePath);
-	this->pIni = new Ini(filePath);
+	settings.reset(new QSettings(filePath, QSettings::IniFormat));
+	settingsProvider.reset(new SettingsProviderQt(settings.data()));
+	pIni.reset(new Ini(settingsProvider.data()));
 
 	IniSection section;
 
