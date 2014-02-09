@@ -26,24 +26,55 @@
 
 #include <cassert>
 
+class IniVariable::PrivData
+{
+	public:
+		/**
+		 * @brief For non-const operations. Might be NULL even if pConstSection
+		 *        is not NULL.
+		 */
+		IniSection* pSection;
+
+		/**
+ 		* @brief For const operations. If NULL then IniVariable object is
+ 		*        invalid.
+ 		*/
+		const IniSection* pConstSection;
+
+		/**
+		 * @brief The key name of this variable.
+		 */
+		QString key;
+};
+
+COPYABLE_D_POINTERED_DEFINE(IniVariable);
+
 IniVariable::IniVariable()
 {
-	this->pConstSection = NULL;
-	this->pSection = NULL;
+	d = new PrivData();
+	d->pConstSection = NULL;
+	d->pSection = NULL;
 }
 
 IniVariable::IniVariable(IniSection* pSection, const QString& key)
 {
-	this->pConstSection = pSection;
-	this->pSection = pSection;
-	this->key = key;
+	d = new PrivData();
+	d->pConstSection = pSection;
+	d->pSection = pSection;
+	d->key = key;
 }
 
 IniVariable::IniVariable(const IniSection* pSection, const QString& key)
 {
-	this->pConstSection = pSection;
-	this->pSection = NULL;
-	this->key = key;
+	d = new PrivData();
+	d->pConstSection = pSection;
+	d->pSection = NULL;
+	d->key = key;
+}
+
+IniVariable::~IniVariable()
+{
+	delete d;
 }
 
 IniVariable::operator bool() const
@@ -135,32 +166,27 @@ const IniVariable &IniVariable::operator=(float f)
 	return *this;
 }
 
-const IniVariable &IniVariable::operator=(const IniVariable &other)
+bool IniVariable::isNull() const
 {
-	assert(!isNull());
-
-	key = other.key;
-	pConstSection = other.pConstSection;
-	pSection = other.pSection;
-	return *this;
+	return d->pConstSection == NULL;
 }
 
 void IniVariable::setValue(const QVariant& value)
 {
 	assert(!isNull());
-	assert(pSection != NULL);
+	assert(d->pSection != NULL);
 
-	if (pSection != NULL)
+	if (d->pSection != NULL)
 	{
-		pSection->setValue(key, value);
+		d->pSection->setValue(d->key, value);
 	}
 }
 
 QVariant IniVariable::value() const
 {
-	if (pConstSection != NULL)
+	if (d->pConstSection != NULL)
 	{
-		return pConstSection->value(key);
+		return d->pConstSection->value(d->key);
 	}
 
 	return QVariant();

@@ -246,7 +246,7 @@ void IRCConfig::NetworksDataCfg::clearNetworkSections(Ini& ini)
 	QVector<IniSection> sections = ini.sectionsArray("^" + SECTIONS_NAMES_PREFIX);
 	foreach (const IniSection& section, sections)
 	{
-		ini.deleteSection(section.sectionName());
+		ini.deleteSection(section.name());
 	}
 }
 

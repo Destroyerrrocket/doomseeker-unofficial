@@ -27,14 +27,22 @@
 
 #include <cassert>
 
+class Ini::PrivData
+{
+	public:
+		QSettings* pIni;
+};
+
 Ini::Ini(const QString& filename)
 {
-	pIni = new QSettings(filename, QSettings::IniFormat);
+	d = new PrivData();
+	d->pIni = new QSettings(filename, QSettings::IniFormat);
 }
 
 Ini::~Ini()
 {
-	delete pIni;
+	delete d->pIni;
+	delete d;
 }
 
 IniSection Ini::createSection(const QString& name)
@@ -72,18 +80,18 @@ bool Ini::loadIniFile(const QString& filePath)
 {
 	gLog << tr("Ini file is: %1").arg(filePath);
 
-	if (pIni != NULL)
+	if (d->pIni != NULL)
 	{
-		delete pIni;
+		delete d->pIni;
 	}
 
-	pIni = new QSettings(filePath, QSettings::IniFormat);
-	return pIni != NULL;
+	d->pIni = new QSettings(filePath, QSettings::IniFormat);
+	return d->pIni != NULL;
 }
 
 void Ini::removeKey(const QString& key)
 {
-	pIni->remove(key);
+	d->pIni->remove(key);
 }
 
 IniSection Ini::retrieveSection(const QString& name)
@@ -109,12 +117,12 @@ IniVariable Ini::retrieveSetting(const QString& sectionName, const QString& vari
 
 bool Ini::save()
 {
-	if (!pIni->isWritable())
+	if (!d->pIni->isWritable())
 	{
 		return false;
 	}
 
-	pIni->sync();
+	d->pIni->sync();
 	return true;
 }
 
@@ -129,7 +137,7 @@ QVector<IniSection> Ini::sectionsArray(const QString& regexPattern)
 
 	QRegExp regExp(regexPattern, Qt::CaseInsensitive);
 
-	QStringList groups = pIni->childGroups();
+	QStringList groups = d->pIni->childGroups();
 
 	foreach (const QString& key, groups)
 	{
@@ -160,14 +168,14 @@ IniVariable Ini::setting(const QString& sectionName, const QString& variableName
 
 void Ini::setValue(const QString& key, const QVariant& value)
 {
-	assert(pIni != NULL);
+	assert(d->pIni != NULL);
 
-	pIni->setValue(key, value);
+	d->pIni->setValue(key, value);
 }
 
 QVariant Ini::value(const QString& key) const
 {
-	assert(pIni != NULL);
+	assert(d->pIni != NULL);
 
-	return pIni->value(key);
+	return d->pIni->value(key);
 }

@@ -73,7 +73,7 @@ class MAIN_EXPORT Ini : public QObject
 		 *	Constructor that will load the file from a drive.
 		 */
 		Ini(const QString& filename);
-		~Ini();
+		virtual ~Ini();
 
 		/**
 		 *	No change to the data will be made if section already exists.
@@ -167,7 +167,8 @@ class MAIN_EXPORT Ini : public QObject
 		QVariant			value(const QString& key) const;
 
 	private:
-		QSettings*          pIni;
+		class PrivData;
+		PrivData *d;
 };
 
 #endif
