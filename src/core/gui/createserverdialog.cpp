@@ -659,7 +659,7 @@ void CreateServerDialog::initEngineSpecificPages(EnginePlugin* engineInfo)
 	foreach (CreateServerDialogPage* page, currentCustomPages)
 	{
 		int idxInsertAt = tabWidget->indexOf(tabCustomParameters);
-		tabWidget->insertTab(idxInsertAt, page, page->name);
+		tabWidget->insertTab(idxInsertAt, page, page->name());
 	}
 }
 
