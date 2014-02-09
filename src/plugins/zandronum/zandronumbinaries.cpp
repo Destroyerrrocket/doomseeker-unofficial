@@ -21,6 +21,7 @@
 // Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "log.h"
+
 #include "zandronumbinaries.h"
 #include "zandronumengineplugin.h"
 #include "zandronumserver.h"
@@ -35,6 +36,8 @@
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QProgressDialog>
+#include <ini/inisection.h>
+#include <ini/inivariable.h>
 
 #define TESTING_BINARY_URL_BASE "http://zandronum.com/downloads/testing/%1/ZandroDev%1-%2"
 

@@ -20,11 +20,13 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "main.h"
 #include "zandronumengineplugin.h"
 #include "zandronumgamerunner.h"
 #include "zandronumgameinfo.h"
 #include "zandronumserver.h"
+
+#include <ini/inisection.h>
+#include <ini/inivariable.h>
 
 ZandronumGameClientRunner::ZandronumGameClientRunner(ZandronumServer* server)
 : GameClientRunner(server)

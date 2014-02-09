@@ -23,6 +23,8 @@
 
 #include "log.h"
 #include "configuration/doomseekerconfig.h"
+#include "ini/inisection.h"
+#include "ini/inivariable.h"
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
 #include "serverapi/masterclient.h"

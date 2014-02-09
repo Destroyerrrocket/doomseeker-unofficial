@@ -24,7 +24,6 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
-#include "ini/ini.h"
 #include "plugins/pluginloader.h"
 #include "datapaths.h"
 #include "localizationinfo.h"

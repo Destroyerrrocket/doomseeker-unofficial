@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "demomanager.h"
+#include "ini/ini.h"
 #include "ini/settingsproviderqt.h"
 #include "main.h"
 #include "pathfinder/pathfinder.h"
