@@ -43,18 +43,11 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 	Q_OBJECT;
 
 	public:
-		ConfigurationBaseBox(QWidget* parent = NULL)
-		: QGroupBox(parent)
-		{
-			this->bAllowSave = false;
-			this->bSettingsAlreadyRead = false;
-			hide();
-		}
+		ConfigurationBaseBox(QWidget* parent = NULL);
+		virtual ~ConfigurationBaseBox();
 
-		virtual ~ConfigurationBaseBox() {}
-
-		bool			allowSave() { return this->bAllowSave; }
-		bool			areSettingsAlreadyRead() { return this->bSettingsAlreadyRead; }
+		bool			allowSave();
+		bool			areSettingsAlreadyRead();
 
 		/**
 		 *	@brief Reimplement this to return displayable icon for the
@@ -71,29 +64,9 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 		 */
 		virtual QString	name() const = 0;
 
-		void			setAllowSave(bool b)
-		{
-			this->bAllowSave = b;
-		}
-
-		void			read()
-		{
-			this->bSettingsAlreadyRead = true;
-			readSettings();
-		}
-
-		bool			save()
-		{
-			if (this->bAllowSave)
-			{
-				saveSettings();
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
+		void			setAllowSave(bool b);
+		void			read();
+		bool			save();
 
 	signals:
 		/**
@@ -103,9 +76,6 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 		void			appearanceChanged();
 
 	protected:
-		bool			bAllowSave;
-		bool			bSettingsAlreadyRead;
-
 		/**
 		 *	These shouldn't execute Config::readConfig() and
 		 *	Config::saveConfig() methods. They're here to read settings
@@ -120,6 +90,9 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 		 */
 		virtual void	saveSettings()=0;
 
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 #endif

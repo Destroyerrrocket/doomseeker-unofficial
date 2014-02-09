@@ -218,6 +218,7 @@ set(SOURCE_FILES
 	gui/configuration/cfgwadseekergeneral.cpp
 	gui/configuration/cfgwadseekeridgames.cpp
 	gui/configuration/cfgwadseekersites.cpp
+	gui/configuration/configurationbasebox.cpp
 	gui/configuration/configurationdialog.cpp
 	gui/configuration/doomseekerconfigurationdialog.cpp
 	gui/configuration/engineconfigurationbasebox.cpp
