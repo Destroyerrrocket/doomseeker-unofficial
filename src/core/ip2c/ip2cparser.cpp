@@ -317,10 +317,10 @@ void IP2CParser::readTextDatabase(QByteArray& textDatabase, Countries& countries
 		bool ok = true;
 
 		if(!sc.checkToken(TK_StringConst)) break; // ipStart
-		entry.ipStart = sc->str.toUInt(&ok);
+		entry.ipStart = sc->str().toUInt(&ok);
 		if(!ok || !sc.checkToken(',')) break;
 		if(!sc.checkToken(TK_StringConst)) break; // ipEnd
-		entry.ipEnd = sc->str.toUInt(&ok);
+		entry.ipEnd = sc->str().toUInt(&ok);
 		if(!ok || !sc.checkToken(',')) break;
 		if(!sc.checkToken(TK_StringConst)) break; // Register
 		if(!sc.checkToken(',')) break;
@@ -329,10 +329,10 @@ void IP2CParser::readTextDatabase(QByteArray& textDatabase, Countries& countries
 		if(!sc.checkToken(TK_StringConst)) break; // 2 char country
 		if(!sc.checkToken(',')) break;
 		if(!sc.checkToken(TK_StringConst)) break; // 3 char country
-		entry.country = sc->str;
+		entry.country = sc->str();
 		if(!sc.checkToken(',')) break;
 		if(!sc.checkToken(TK_StringConst)) break; // country string
-		entry.countryFullName = sc->str;
+		entry.countryFullName = sc->str();
 
 
 		if (countries.contains(entry.country))

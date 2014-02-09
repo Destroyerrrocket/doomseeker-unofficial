@@ -485,7 +485,7 @@ bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 		Scanner sc(cp.toAscii().constData(), cp.length());
 		while (sc.nextString())
 		{
-			QString param = sc->str;
+			QString param = sc->str();
 			params.customParameters() << param;
 		}
 	}

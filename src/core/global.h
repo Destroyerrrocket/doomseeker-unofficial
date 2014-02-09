@@ -66,6 +66,22 @@ static inline quint32 MAKEID(quint8 a, quint8 b, quint8 c, quint8 d)
 		return *this; \
 	}
 
+#define COPYABLE_D_POINTERED_INNER_DEFINE(type, constructorname) \
+	type::constructorname(const type &other) \
+	{ \
+		d = new PrivData(); \
+		*d = *other.d; \
+	} \
+	\
+	type& type::operator=(const type &other) \
+	{ \
+		if (this != &other) \
+		{ \
+			*d = *other.d; \
+		} \
+		return *this; \
+	}
+
 // Now we set it up so symbols are properly exported/imported on Windows
 #ifdef Q_OS_WIN32
 #ifdef MODE_MAIN

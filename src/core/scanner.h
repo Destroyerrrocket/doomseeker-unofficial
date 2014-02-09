@@ -73,16 +73,40 @@ enum ETokenType
 class MAIN_EXPORT Scanner
 {
 	public:
-		struct ParserState
+		class ParserState
 		{
-			QString			str;
-			unsigned int	number;
-			double			decimal;
-			bool			boolean;
-			char			token;
-			unsigned int	tokenLine;
-			unsigned int	tokenLinePosition;
-			unsigned int	scanPos;
+			public:
+				ParserState();
+				COPYABLE_D_POINTERED_DECLARE(ParserState);
+				virtual ~ParserState();
+
+				const QString& str() const;
+				void setStr(const QString& v);
+
+				unsigned int number() const;
+				void setNumber(unsigned int v);
+
+				double decimal() const;
+				void setDecimal(double v);
+
+				bool boolean() const;
+				void setBoolean(bool v);
+
+				char token() const;
+				void setToken(char v);
+
+				unsigned int tokenLine() const;
+				void setTokenLine(unsigned int v);
+
+				unsigned int tokenLinePosition() const;
+				void setTokenLinePosition(unsigned int v);
+
+				unsigned int scanPos() const;
+				void setScanPos(unsigned int v);
+
+			private:
+				class PrivData;
+				PrivData *d;
 		};
 
 		enum MessageLevel
@@ -93,7 +117,7 @@ class MAIN_EXPORT Scanner
 		};
 
 		Scanner(const char* data, int length=-1);
-		~Scanner();
+		virtual ~Scanner();
 
 		void			checkForMeta();
 		/**
@@ -111,10 +135,10 @@ class MAIN_EXPORT Scanner
 		 * Transfers nextState over for use.
 		 */
 		void			expandState();
-		int				currentLine() const { return state.tokenLine; }
-		int				currentLinePos() const { return state.tokenLinePosition; }
-		int				currentPos() const { return logicalPosition; }
-		unsigned int	currentScanPos() const { return scanPos; }
+		int				currentLine() const;
+		int				currentLinePos() const;
+		int				currentPos() const;
+		unsigned int	currentScanPos() const;
 		bool			nextString();
 		/**
 		 * Gets whatever token is next returning true on success.
@@ -123,25 +147,25 @@ class MAIN_EXPORT Scanner
 		bool			nextToken(bool autoExpandState=true);
 		void			mustGetToken(char token);
 		void			rewind(); /// Only can rewind one step.
-		const char*		scriptData() const { return data; }
+		const char*		scriptData() const;
 		void			scriptMessage(MessageLevel level, const char* error, ...) const;
-		void			setScriptIdentifier(const QString &ident) { scriptIdentifier = ident; }
+		void			setScriptIdentifier(const QString &ident);
 		int				skipLine();
+		ParserState& state();
+		const ParserState& state() const;
 
 		/**
 		 * Returns true if there is still more to read.
 		 */
-		bool			tokensLeft() { return scanPos < length; }
+		bool tokensLeft() const;
 
-		const ParserState &operator*() const { return state; }
-		const ParserState *operator->() const { return &state; }
+		const ParserState &operator*() const { return state(); }
+		const ParserState *operator->() const { return &state(); }
 
 		static const QString& escape(QString &str);
 		static const QString& unescape(QString &str);
 
-		static void		setMessageHandler(void (*handler)(MessageLevel, const char*, va_list)) { messageHandler = handler; }
-
-		ParserState		state;
+		static void setMessageHandler(void (*handler)(MessageLevel, const char*, va_list)) { messageHandler = handler; }
 
 	protected:
 		/**
@@ -151,19 +175,8 @@ class MAIN_EXPORT Scanner
 		void		incrementLine();
 
 	private:
-		ParserState		nextState, prevState;
-
-		char*			data;
-		unsigned int	length;
-
-		unsigned int	line;
-		unsigned int	lineStart;
-		unsigned int	logicalPosition;
-		unsigned int	scanPos;
-
-		bool			needNext; // If checkToken returns false this will be false.
-
-		QString			scriptIdentifier;
+		class PrivData;
+		PrivData *d;
 
 		static void		(*messageHandler)(MessageLevel, const char*, va_list);
 };
