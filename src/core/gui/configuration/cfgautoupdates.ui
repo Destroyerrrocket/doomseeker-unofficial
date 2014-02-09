@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>CFGAutoUpdates</class>
- <widget class="QGroupBox" name="CFGAutoUpdates">
+ <widget class="QWidget" name="CFGAutoUpdates">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,13 +10,10 @@
     <height>355</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Auto Updates</string>
-  </property>
-  <property name="title">
-   <string>Auto Updates</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QRadioButton" name="rbDisabled">
      <property name="text">

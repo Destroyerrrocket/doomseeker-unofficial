@@ -36,9 +36,10 @@ class CFGIRCAppearance : public ConfigurationBaseBox, private Ui::CFGIRCAppearan
 		QIcon							icon() const { return QIcon(":/icons/color-fill.png"); }
 		QString							name() const { return tr("Appearance"); }
 		void							readSettings();
+		QString							title() const { return tr("IRC - Appearance"); }
 		
 	protected:
-		void							saveSettings();		
+		void							saveSettings();
 };
 
 #endif

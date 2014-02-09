@@ -30,7 +30,7 @@ class ConfigurationBaseBox::PrivData
 };
 
 ConfigurationBaseBox::ConfigurationBaseBox(QWidget* parent)
-: QGroupBox(parent)
+: QWidget(parent)
 {
 	d = new PrivData();
 	d->bAllowSave = false;
@@ -75,4 +75,9 @@ bool ConfigurationBaseBox::save()
 void ConfigurationBaseBox::setAllowSave(bool b)
 {
 	d->bAllowSave = b;
+}
+
+QString ConfigurationBaseBox::title() const
+{
+	return name();
 }

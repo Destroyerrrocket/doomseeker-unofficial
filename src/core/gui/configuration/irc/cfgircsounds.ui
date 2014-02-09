@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>CFGIRCSounds</class>
- <widget class="QGroupBox" name="CFGIRCSounds">
+ <widget class="QWidget" name="CFGIRCSounds">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,13 +10,10 @@
     <height>320</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>GroupBox</string>
-  </property>
-  <property name="title">
-   <string>Sounds</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item>
     <layout class="QFormLayout" name="formLayout">
      <item row="0" column="0">

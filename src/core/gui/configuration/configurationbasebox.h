@@ -26,9 +26,9 @@
 
 #include "ini/ini.h"
 #include "global.h"
-#include <QGroupBox>
 #include <QPushButton>
 #include <QStandardItem>
+#include <QWidget>
 
 /**
  *	@brief Base class for configuration group boxes.
@@ -38,7 +38,7 @@
  *	read() and save()'d through virtual methods, however the
  *	implementation of such methods can do basicaly anything.
  */
-class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
+class MAIN_EXPORT ConfigurationBaseBox : public QWidget
 {
 	Q_OBJECT;
 
@@ -59,14 +59,18 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 		virtual QIcon	icon() const = 0;
 
 		/**
-		 *	@brief Reimplement this to return displayable name for the
-		 *	ConfigurationBaseBox.
+		 * @brief Reimplement this to return list-displayable name for the
+		 *        ConfigurationBaseBox.
 		 */
 		virtual QString	name() const = 0;
 
 		void			setAllowSave(bool b);
 		void			read();
 		bool			save();
+		/**
+		 * @brief Groupbox page title, by default returns name().
+		 */
+		virtual QString title() const;
 
 	signals:
 		/**

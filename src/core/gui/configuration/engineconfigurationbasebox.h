@@ -41,6 +41,7 @@ class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox, priv
 		QString				name() const;
 		void				readSettings();
 		const EnginePlugin	*plugin() const;
+		QString title() const;
 
 	protected:
 		void				addWidget(QWidget *widget);

@@ -40,12 +40,8 @@
        </widget>
       </item>
       <item>
-       <widget class="QWidget" name="mainPanel" native="true">
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <property name="margin">
-          <number>0</number>
-         </property>
-        </layout>
+       <widget class="QGroupBox" name="mainPanel">
+        <layout class="QVBoxLayout" name="verticalLayout_2"/>
        </widget>
       </item>
      </layout>

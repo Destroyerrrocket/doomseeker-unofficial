@@ -45,7 +45,6 @@ EngineConfigurationBaseBox::EngineConfigurationBaseBox(const EnginePlugin *plugi
 	if(plugin->data()->clientOnly)
 		makeClientOnly();
 
-	setTitle(tr("%1 - Configuration").arg(plugin->data()->name));
 	if(!plugin->data()->hasMasterServer)
 		masterAddressBox->hide();
 
@@ -138,4 +137,9 @@ void EngineConfigurationBaseBox::saveSettings()
 	{
 		d->config->setValue("Masterserver", leMasterserverAddress->text());
 	}
+}
+
+QString EngineConfigurationBaseBox::title() const
+{
+	return tr("Game - %1").arg(name());
 }

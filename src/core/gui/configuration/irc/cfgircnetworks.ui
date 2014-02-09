@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>CFGIRCNetworks</class>
- <widget class="QGroupBox" name="CFGIRCNetworks">
+ <widget class="QWidget" name="CFGIRCNetworks">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,13 +10,10 @@
     <height>320</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>GroupBox</string>
-  </property>
-  <property name="title">
-   <string>Networks</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>

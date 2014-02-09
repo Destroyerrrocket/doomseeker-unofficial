@@ -37,6 +37,7 @@ class CFGWadseekerSites : public ConfigurationBaseBox, private Ui::CFGWadseekerS
 		QIcon			icon() const { return QIcon(":/icons/emblem-web.png"); }
 		QString			name() const { return tr("Sites"); }
 		void			readSettings();
+		QString title() const { return tr("Wadseeker - Sites"); }
 
 	protected slots:
 		void			btnUrlAddClicked();

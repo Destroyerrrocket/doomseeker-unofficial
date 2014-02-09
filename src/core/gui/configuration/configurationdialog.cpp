@@ -58,7 +58,7 @@ QStandardItem* ConfigurationDialog::addConfigurationBox(QStandardItem* rootItem,
 		return NULL;
 	}
 	
-	QStandardItemModel* pModel = (QStandardItemModel*)tvOptionsList->model();	
+	QStandardItemModel* pModel = (QStandardItemModel*)tvOptionsList->model();
 	if (rootItem == NULL)
 	{
 		rootItem = pModel->invisibleRootItem();
@@ -254,17 +254,19 @@ void ConfigurationDialog::saveSettings()
 }
 
 
-void ConfigurationDialog::showConfigurationBox(QWidget* widget)
+void ConfigurationDialog::showConfigurationBox(ConfigurationBaseBox* widget)
 {
 	if (currentlyDisplayedCfgBox != NULL)
 	{
 		currentlyDisplayedCfgBox->hide();
+		mainPanel->setTitle(QString());
 	}
 	currentlyDisplayedCfgBox = widget;
 
 	if (widget != NULL)
 	{
 		mainPanel->layout()->addWidget(widget);
+		mainPanel->setTitle(widget->title());
 		widget->show();
 	}
 }
