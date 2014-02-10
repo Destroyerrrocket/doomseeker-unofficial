@@ -23,10 +23,11 @@
 #include "customservers.h"
 #include "configuration/doomseekerconfig.h"
 #include "plugins/engineplugin.h"
+#include "plugins/pluginloader.h"
 #include "serverapi/server.h"
-#include "main.h"
 #include "log.h"
 #include <QHostInfo>
+#include <QUrl>
 
 void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerInfo>& outCustomServerInfoList)
 {
@@ -55,7 +56,7 @@ void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerIn
 				CustomServerInfo customServerInfo;
 				customServerInfo.engine = QUrl::fromPercentEncoding(entryList[0].toAscii());
 
-				int engineIndex = Main::enginePlugins->pluginIndexFromName(customServerInfo.engine);
+				int engineIndex = gPlugins->pluginIndexFromName(customServerInfo.engine);
 				customServerInfo.engineIndex = engineIndex;
 
 				customServerInfo.host = QUrl::fromPercentEncoding(entryList[1].toAscii());
@@ -68,7 +69,7 @@ void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerIn
 				}
 				else if (engineIndex >= 0)
 				{
-					const PluginLoader::Plugin* pPlugin = (*Main::enginePlugins)[engineIndex];
+					const PluginLoader::Plugin* pPlugin = gPlugins->plugin(engineIndex);
 					customServerInfo.port = pPlugin->info()->data()->defaultServerPort;
 				}
 				else
@@ -116,7 +117,7 @@ void CustomServers::setServers(const QList<CustomServerInfo>& csiList, QObject* 
 			address = hostInfo.addresses().first();
 		}
 
-		const EnginePlugin* pInterface = (*Main::enginePlugins)[customServerInfo.engineIndex]->info();
+		const EnginePlugin* pInterface = gPlugins->plugin(customServerInfo.engineIndex)->info();
 		Server* p = pInterface->server(address, customServerInfo.port);
 		if(p == NULL)
 		{

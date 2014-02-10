@@ -45,6 +45,7 @@
 #include "log.h"
 #include "main.h"
 #include "plugins/engineplugin.h"
+#include "plugins/pluginloader.h"
 #include "refresher/refresher.h"
 #include "serverapi/server.h"
 #include "strings.h"
@@ -58,7 +59,6 @@ QString Main::argDataDir;
 bool Main::bInstallUpdatesAndRestart = false;
 bool Main::bPortableMode = false;
 DataPaths*			Main::dataPaths;
-PluginLoader* 		Main::enginePlugins = NULL;
 QList<LocalizationInfo> Main::localizations;
 QWidget*			Main::mainWindow = NULL;
 bool				Main::running = true;
@@ -95,10 +95,7 @@ Main::~Main()
 
 	IP2C::deinstantiate();
 
-	if (enginePlugins != NULL)
-	{
-		delete enginePlugins;
-	}
+	PluginLoader::deinit();
 
 	if (application != NULL)
 	{
@@ -157,7 +154,7 @@ int Main::run()
 		return 0;
 	}
 
-	enginePlugins = new PluginLoader(MAKEID('E','N','G','N'), dataDirectories, "engines/");
+	PluginLoader::init(Strings::combineManyPaths(dataDirectories, "engines/"));
 
 	if (bTestMode)
 	{
@@ -304,7 +301,7 @@ bool Main::createRemoteConsole()
 	else
 	{
 		// Find plugin
-		int pIndex = enginePlugins->pluginIndexFromName(rconPluginName);
+		int pIndex = gPlugins->pluginIndexFromName(rconPluginName);
 		if(pIndex == -1)
 		{
 			gLog << tr("Couldn't find specified plugin: ") + rconPluginName;
@@ -312,7 +309,7 @@ bool Main::createRemoteConsole()
 		}
 
 		// Check for RCon Availability.
-		const EnginePlugin *plugin = (*enginePlugins)[pIndex]->info();
+		const EnginePlugin *plugin = gPlugins->plugin(pIndex)->info();
 		Server *server = plugin->server(QHostAddress(rconAddress), rconPort);
 		if(!server->hasRcon())
 		{
@@ -447,7 +444,7 @@ void Main::initPasswordsConfig()
 void Main::initPluginConfig()
 {
 	gLog << tr("Initializing configuration for plugins.");
-	enginePlugins->initConfig();
+	gPlugins->initConfig();
 }
 
 int Main::installPendingUpdates()
@@ -543,7 +540,7 @@ bool Main::interpretCommandLineParameters()
 				initDataDirectories();
 				// Plugins generate QPixmaps which need a QApplication active
 				QApplication app(argumentsCount, arguments);
-				enginePlugins = new PluginLoader(MAKEID('E','N','G','N'), dataDirectories, "engines/");
+				PluginLoader::init(Strings::combineManyPaths(dataDirectories, "engines/"));
 				gLog << tr("Dumping version info to file in JSON format.");
 				VersionDump::dumpJsonToIO(f);
 				return false;

@@ -23,7 +23,7 @@
 #include "configuration/doomseekerconfig.h"
 #include "rconpassworddialog.h"
 #include "plugins/engineplugin.h"
-#include "main.h"
+#include "plugins/pluginloader.h"
 
 RconPasswordDialog::RconPasswordDialog(QWidget *parent, bool connection)
 : QDialog(parent)
@@ -34,9 +34,9 @@ RconPasswordDialog::RconPasswordDialog(QWidget *parent, bool connection)
 	{
 		// Populate engines box.
 		engines->clear();
-		for(unsigned int i = 0;i < Main::enginePlugins->numPlugins();i++)
+		for(unsigned int i = 0;i < gPlugins->numPlugins();i++)
 		{
-			const EnginePlugin* info = (*Main::enginePlugins)[i]->info();
+			const EnginePlugin* info = gPlugins->plugin(i)->info();
 			engines->addItem(info->icon(), info->data()->name, i);
 		}
 	}
@@ -61,7 +61,7 @@ QString RconPasswordDialog::connectPassword() const
 
 const EnginePlugin *RconPasswordDialog::selectedEngine() const
 {
-	const PluginLoader::Plugin *plugin = (*Main::enginePlugins)[engines->currentIndex()];
+	const PluginLoader::Plugin *plugin = gPlugins->plugin(engines->currentIndex());
 	if(plugin == NULL)
 		return NULL;
 

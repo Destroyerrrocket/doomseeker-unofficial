@@ -27,6 +27,7 @@
 #include "main.h"
 #include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
+#include "plugins/pluginloader.h"
 #include "serverapi/gameexeretriever.h"
 #include "serverapi/gamecreateparams.h"
 #include "serverapi/message.h"
@@ -59,9 +60,9 @@ void DemoManagerDlg::adjustDemoList()
 {
 	// Get valid extensions
 	QStringList demoExtensions;
-	for(int i = 0;i < Main::enginePlugins->numPlugins();++i)
+	for(int i = 0;i < gPlugins->numPlugins();++i)
 	{
-		QString ext = QString("*.%1").arg((*Main::enginePlugins)[i]->info()->data()->demoExtension);
+		QString ext = QString("*.%1").arg(gPlugins->info(i)->data()->demoExtension);
 
 		if(!demoExtensions.contains(ext))
 		{
@@ -232,11 +233,11 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 
 		// Look for the plugin used to record.
 		EnginePlugin *plugin = NULL;
-		for(int i = 0;i < Main::enginePlugins->numPlugins();i++)
+		for(int i = 0;i < gPlugins->numPlugins();i++)
 		{
-			if (selectedDemo->port == (*Main::enginePlugins)[i]->info()->data()->name)
+			if (selectedDemo->port == gPlugins->info(i)->data()->name)
 			{
-				plugin = (*Main::enginePlugins)[i]->info();
+				plugin = gPlugins->info(i);
 			}
 		}
 		if(plugin == NULL)

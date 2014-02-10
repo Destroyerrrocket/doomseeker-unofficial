@@ -97,7 +97,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 		menuActionCheckForUpdates->setVisible(false);
 	#endif
 
-	if (Main::enginePlugins->numPlugins() == 0)
+	if (gPlugins->numPlugins() == 0)
 	{
 		QString message = tr(
 			"Warning: \n"
@@ -452,9 +452,9 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 {
 	// This is called only once from the constructor. No clears to
 	// queryMenuPorts are ever performed. Not even in the destructor.
-	for(unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
+	for(unsigned i = 0; i < gPlugins->numPlugins(); ++i)
 	{
-		const EnginePlugin* plugin = (*Main::enginePlugins)[i]->info();
+		const EnginePlugin* plugin = gPlugins->info(i);
 		if(!plugin->data()->hasMasterServer)
 		{
 			continue;
@@ -473,7 +473,7 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 
 		statusBar()->addPermanentWidget(statusWidget);
 
-		QString name = (*Main::enginePlugins)[i]->info()->data()->name;
+		QString name = gPlugins->info(i)->data()->name;
 		QQueryMenuAction* query = new QQueryMenuAction(pMasterClient, statusWidget, menuQuery);
 		queryMenuPorts.insert(pMasterClient, query);
 
@@ -553,7 +553,7 @@ void MainWindow::getServers()
 		QString message = tr("Doomseeker is unable to proceed with the refresh"
 			" operation because the following problem has occured:\n\n");
 
-		if (Main::enginePlugins->numPlugins() == 0)
+		if (gPlugins->numPlugins() == 0)
 		{
 			message += tr("Plugins are missing from the \"engines/\" directory.");
 		}
@@ -1029,7 +1029,7 @@ void MainWindow::postInitAppStartup()
 
 	// Check query on statup
 	// Let's see if we have any plugins first. If not, display error.
-	if (Main::enginePlugins->numPlugins() > 0)
+	if (gPlugins->numPlugins() > 0)
 	{
 		bool bGettingServers = false;
 		bool queryOnStartup = gConfig.doomseeker.bQueryOnStartup;

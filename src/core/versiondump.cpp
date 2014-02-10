@@ -25,7 +25,6 @@
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
 #include "json.h"
-#include "main.h"
 #include "version.h"
 #include <QIODevice>
 #include <QString>
@@ -67,9 +66,9 @@ void VersionDump::dumpJsonToIO(QIODevice& io)
 		Version::versionRevision()).toVariantMap();
 	root["wadseeker"] = Module("Wadseeker", Version::revisionNumber(),
 		WadseekerVersionInfo::version()).toVariantMap();
-	for (unsigned int i = 0; i < Main::enginePlugins->numPlugins(); ++i)
+	for (unsigned int i = 0; i < gPlugins->numPlugins(); ++i)
 	{
-		PluginLoader::Plugin* plugin = Main::enginePlugins->plugins()[i];
+		const PluginLoader::Plugin* plugin = gPlugins->plugin(i);
 		QString name = plugin->info()->data()->name;
 		QString keyword = "p-" + name.toLower().replace(" ", "");
 		root[keyword] = Module(name, plugin->info()->data()->version).toVariantMap();

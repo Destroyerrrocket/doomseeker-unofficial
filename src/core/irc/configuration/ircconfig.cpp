@@ -24,8 +24,8 @@
 
 #include "ini/settingsproviderqt.h"
 #include "plugins/engineplugin.h"
+#include "plugins/pluginloader.h"
 #include "log.h"
-#include "main.h"
 #include "version.h"
 
 #include <QMessageBox>
@@ -276,18 +276,18 @@ void IRCConfig::NetworksDataCfg::load(Ini& ini)
 	this->loadNetwork(lastUsedNetworkSection, this->lastUsedNetwork);
 
 	// Go through the plugins and register their IRC servers.
-	for(unsigned int i = 0;i < Main::enginePlugins->numPlugins();i++)
+	for(unsigned int i = 0;i < gPlugins->numPlugins();i++)
 	{
-		if((*Main::enginePlugins)[i]->info()->data()->ircChannels.size() == 0)
+		if(gPlugins->plugin(i)->info()->data()->ircChannels.size() == 0)
 			continue;
 
 		// OK so maybe registering only on first run is a good idea after all...
-		IniVariable registered = (*Main::enginePlugins)[i]->info()->data()->pConfig->createSetting("IRCRegistered", false);
+		IniVariable registered = gPlugins->plugin(i)->info()->data()->pConfig->createSetting("IRCRegistered", false);
 		if(!registered)
 		{
 			registered = true;
 
-			foreach(const IRCNetworkEntity &entity, (*Main::enginePlugins)[i]->info()->data()->ircChannels)
+			foreach(const IRCNetworkEntity &entity, gPlugins->plugin(i)->info()->data()->ircChannels)
 			{
 				// If we have a unique server add it to the list...
 				if(!networks.contains(entity))

@@ -25,7 +25,6 @@
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
 #include "updater/autoupdater.h"
-#include "main.h"
 #include "version.h"
 #include <cassert>
 
@@ -58,7 +57,7 @@ UpdatePackageFilter::~UpdatePackageFilter()
 QMap<QString, UpdatePackageFilter::PluginInfo> UpdatePackageFilter::collectPluginInfo()
 {
 	QMap<QString, PluginInfo> infos;
-	const QList<PluginLoader::Plugin* > plugins = Main::enginePlugins->plugins();
+	const QList<PluginLoader::Plugin*> plugins = gPlugins->plugins();
 	foreach (const PluginLoader::Plugin* plugin, plugins)
 	{
 		PluginInfo pluginInfo;

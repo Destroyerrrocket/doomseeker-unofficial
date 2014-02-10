@@ -33,6 +33,7 @@
 #include "gui/configuration/doomseekerconfigurationdialog.h"
 #include "ini/settingsproviderqt.h"
 #include "plugins/engineplugin.h"
+#include "plugins/pluginloader.h"
 #include "serverapi/gameclientrunner.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
@@ -97,9 +98,9 @@ ConnectionHandler *ConnectionHandler::connectByUrl(const QUrl &url)
 
 	// Locate plugin by scheme
 	const EnginePlugin *handler = NULL;
-	for(unsigned int i = 0;i < Main::enginePlugins->numPlugins();++i)
+	for(unsigned int i = 0;i < gPlugins->numPlugins();++i)
 	{
-		const EnginePlugin *plugin = (*Main::enginePlugins)[i]->info();
+		const EnginePlugin *plugin = gPlugins->plugin(i)->info();
 		if(plugin->data()->scheme.compare(url.scheme(), Qt::CaseInsensitive) == 0)
 		{
 			handler = plugin;

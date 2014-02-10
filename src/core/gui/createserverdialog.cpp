@@ -31,6 +31,7 @@
 #include "ini/settingsproviderqt.h"
 #include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
+#include "plugins/pluginloader.h"
 #include "scanner.h"
 #include "serverapi/exefile.h"
 #include "serverapi/gameexeretriever.h"
@@ -348,14 +349,9 @@ void CreateServerDialog::cboEngineSelected(int index)
 	if (index >= 0)
 	{
 		unsigned enginePluginIndex = cboEngine->itemData(index).toUInt();
-		if (enginePluginIndex < Main::enginePlugins->numPlugins())
+		if (enginePluginIndex < gPlugins->numPlugins())
 		{
-			// TODO Review if the 'const' modifier for PluginLoader::info
-			// is really necessary. Possibly get rid of it.
-			EnginePlugin* nfo = const_cast<EnginePlugin*>(
-				(*Main::enginePlugins)[enginePluginIndex]->info());
-
-			initEngineSpecific(nfo);
+			initEngineSpecific(gPlugins->info(enginePluginIndex));
 		}
 	}
 }
@@ -747,10 +743,10 @@ void CreateServerDialog::initPrimary()
 {
 	cboEngine->clear();
 
-	for (unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
+	for (unsigned i = 0; i < gPlugins->numPlugins(); ++i)
 	{
-		const EnginePlugin* nfo = (*Main::enginePlugins)[i]->info();
-		cboEngine->addItem(nfo->icon(), nfo->data()->name, i);
+		const EnginePlugin* plugin = gPlugins->info(i);
+		cboEngine->addItem(plugin->icon(), plugin->data()->name, i);
 	}
 
 	if (cboEngine->count() > 0)
@@ -1111,7 +1107,7 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 
 bool CreateServerDialog::setEngine(const QString &engineName)
 {
-	int engIndex = Main::enginePlugins->pluginIndexFromName(engineName);
+	int engIndex = gPlugins->pluginIndexFromName(engineName);
 	if (engIndex < 0)
 	{
 		QMessageBox::critical(NULL, tr("Doomseeker - load server config"), tr("Plugin for engine \"%1\" is not present!").arg(engineName));

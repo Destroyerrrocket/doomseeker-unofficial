@@ -24,7 +24,6 @@
 #include "cfgcustomservers.h"
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
-#include "main.h"
 #include <QHeaderView>
 #include <QMessageBox>
 #include <QUrl>
@@ -47,11 +46,11 @@ CFGCustomServers::CFGCustomServers(QWidget *parent)
 void CFGCustomServers::add()
 {
 	int pluginIndex = cboEngines->itemData(cboEngines->currentIndex()).toInt();
-	const EnginePlugin* nfo = (*Main::enginePlugins)[pluginIndex]->info();
+	const EnginePlugin* plugin = gPlugins->info(pluginIndex);
 
 	QString engineName = cboEngines->itemText(cboEngines->currentIndex());
 
-	add(engineName, "", nfo->data()->defaultServerPort);
+	add(engineName, "", plugin->data()->defaultServerPort);
 }
 
 void CFGCustomServers::add(const QString& engineName, const QString& host, unsigned short port)
@@ -117,8 +116,8 @@ const EnginePlugin* CFGCustomServers::getPluginInfoForRow(int rowIndex)
 {
 	QStandardItem* itemEngine = model->item(rowIndex, EngineColumnIndex);
 	QString engineName = itemEngine->data().toString();
-	int pluginIndex = Main::enginePlugins->pluginIndexFromName(engineName);
-	return (*Main::enginePlugins)[pluginIndex]->info();
+	int pluginIndex = gPlugins->pluginIndexFromName(engineName);
+	return gPlugins->info(pluginIndex);
 }
 
 bool CFGCustomServers::isPortColumnWithingRange(int leftmostColumnIndex, int rightmostColumnIndex)
@@ -142,10 +141,10 @@ void CFGCustomServers::prepareEnginesComboBox()
 {
 	cboEngines->clear();
 
-	for (unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
+	for (unsigned i = 0; i < gPlugins->numPlugins(); ++i)
 	{
-		const EnginePlugin* nfo = (*Main::enginePlugins)[i]->info();
-		cboEngines->addItem(nfo->icon(), nfo->data()->name, i);
+		const EnginePlugin* plugin = gPlugins->info(i);
+		cboEngines->addItem(plugin->icon(), plugin->data()->name, i);
 	}
 
 	if (cboEngines->count() > 0)
@@ -228,14 +227,14 @@ void CFGCustomServers::setEngine()
 
 void CFGCustomServers::setEngineOnItem(QStandardItem* item, const QString& engineName)
 {
-	int engineId = Main::enginePlugins->pluginIndexFromName(engineName);
+	int engineId = gPlugins->pluginIndexFromName(engineName);
 
 	item->setData(engineName);
 	item->setToolTip(engineName);
 	if (engineId >= 0)
 	{
-		const EnginePlugin* nfo = (*Main::enginePlugins)[engineId]->info();
-		item->setIcon(nfo->icon());
+		const EnginePlugin* plugin = gPlugins->info(engineId);
+		item->setIcon(plugin->icon());
 	}
 	else
 	{
@@ -265,7 +264,7 @@ QVector<CustomServerInfo> CFGCustomServers::tableGetServers()
 		QStandardItem* item = model->item(i, EngineColumnIndex);
 		customServer.engine = item->data().toString();
 		
-		customServer.engineIndex = Main::enginePlugins->pluginIndexFromName(customServer.engine);
+		customServer.engineIndex = gPlugins->pluginIndexFromName(customServer.engine);
 
 		item = model->item(i, AddressColumnIndex);
 		customServer.host = item->text();

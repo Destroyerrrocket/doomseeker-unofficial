@@ -20,16 +20,17 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2011 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
+#include "pluginloader.h"
 
 #include "log.h"
 #include "configuration/doomseekerconfig.h"
 #include "ini/inisection.h"
 #include "ini/inivariable.h"
 #include "plugins/engineplugin.h"
-#include "plugins/pluginloader.h"
 #include "serverapi/masterclient.h"
-#include "main.h"
 #include "strings.h"
+#include <cassert>
+#include <QDir>
 
 #ifdef Q_OS_WIN32
 	#include <windows.h>
@@ -146,14 +147,15 @@ class PluginLoader::PrivData
 		QList<Plugin*> plugins;
 };
 
-PluginLoader::PluginLoader(unsigned int type, const QStringList &baseDirectories,
-	const QString &subDirectory)
+PluginLoader *PluginLoader::staticInstance = NULL;
+
+PluginLoader::PluginLoader(unsigned int type, const QStringList &directories)
 {
 	d = new PrivData();
 	d->type = type;
-	foreach (const QString &baseDir, baseDirectories)
+	foreach (const QString &dir, directories)
 	{
-		d->pluginsDirectory = Strings::combinePaths(baseDir, subDirectory);
+		d->pluginsDirectory = dir;
 		if (filesInDir())
 		{
 			break;
@@ -175,6 +177,15 @@ void PluginLoader::clearPlugins()
 {
 	qDeleteAll(d->plugins);
 	d->plugins.clear();
+}
+
+void PluginLoader::deinit()
+{
+	if (staticInstance != NULL)
+	{
+		delete staticInstance;
+		staticInstance = NULL;
+	}
 }
 
 bool PluginLoader::filesInDir()
@@ -202,12 +213,39 @@ bool PluginLoader::filesInDir()
 	return numPlugins() != 0;
 }
 
+EnginePlugin *PluginLoader::info(int pluginIndex) const
+{
+	const Plugin* p = plugin(pluginIndex);
+	if (p != NULL)
+	{
+		return p->info();
+	}
+	return NULL;
+}
+
+void PluginLoader::init(const QStringList &directories)
+{
+	if (staticInstance != NULL)
+	{
+		qDebug() << "Attempting to re-init PluginLoader";
+		assert(false);
+		return;
+	}
+	staticInstance = new PluginLoader(MAKEID('E', 'N', 'G', 'N'), directories);
+}
+
 void PluginLoader::initConfig()
 {
 	foreach (Plugin *plugin, d->plugins)
 	{
 		plugin->initConfig();
 	}
+}
+
+PluginLoader *PluginLoader::instance()
+{
+	assert(staticInstance != NULL);
+	return staticInstance;
 }
 
 const unsigned int PluginLoader::numPlugins() const
@@ -218,6 +256,11 @@ const unsigned int PluginLoader::numPlugins() const
 const QList<PluginLoader::Plugin*> &PluginLoader::plugins() const
 {
 	return d->plugins;
+}
+
+const PluginLoader::Plugin* PluginLoader::plugin(unsigned int index) const
+{
+	return d->plugins[index];
 }
 
 int PluginLoader::pluginIndexFromName(const QString& name) const

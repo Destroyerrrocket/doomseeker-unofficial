@@ -22,8 +22,8 @@
 //------------------------------------------------------------------------------
 
 #include "aboutdialog.h"
-#include "main.h"
 #include "plugins/engineplugin.h"
+#include "plugins/pluginloader.h"
 #include "wadseeker/wadseekerversioninfo.h"
 #include "version.h"
 #include <QPixmap>
@@ -47,9 +47,9 @@ AboutDialog::AboutDialog(QWidget* parent) : QDialog(parent)
 	wadseekerYearSpan->setText(WadseekerVersionInfo::yearSpan());
 
 	// Populate plugins dialog
-	for(unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
+	for(unsigned i = 0; i < gPlugins->numPlugins(); ++i)
 	{
-		pluginBox->addItem( (*Main::enginePlugins)[i]->info()->data()->name);
+		pluginBox->addItem( gPlugins->plugin(i)->info()->data()->name);
 	}
 	connect(pluginBox, SIGNAL( currentIndexChanged(int) ), this, SLOT( changePlugin(int) ));
 	changePlugin(0);
@@ -63,10 +63,10 @@ AboutDialog::~AboutDialog()
 
 void AboutDialog::changePlugin(int pluginIndex)
 {
-	if(static_cast<unsigned> (pluginIndex) >= Main::enginePlugins->numPlugins())
+	if(static_cast<unsigned> (pluginIndex) >= gPlugins->numPlugins())
 		return; // Invalid plugin.
 
-	const EnginePlugin* plug = (*Main::enginePlugins)[pluginIndex]->info();
+	const EnginePlugin* plug = gPlugins->plugin(pluginIndex)->info();
 
 	pluginAuthor->setText(plug->data()->author);
 	pluginVersion->setText(QString("Version: %1.%2").arg(plug->data()->abiVersion).arg(plug->data()->version));

@@ -29,16 +29,18 @@
 
 #include "global.h"
 
+#define gPlugins (PluginLoader::instance())
+
 class EnginePlugin;
 
-class MAIN_EXPORT PluginLoader
+class PluginLoader
 {
 	public:
 		/**
 		* This class handles one specific plugin.  It allows for cross-platform access
 		* to the plugins.
 		*/
-		class MAIN_EXPORT Plugin
+		class Plugin
 		{
 			public:
 				/**
@@ -72,16 +74,43 @@ class MAIN_EXPORT PluginLoader
 		};
 
 		/**
-		 * @brief Gathers information about plugins in a particular directory.
+		 * @brief Destroys the init() instance.
 		 */
-		PluginLoader(unsigned int type, const QStringList &baseDirectories,
-			const QString &subDirectory);
+		static void deinit();
+		/**
+		 * @brief Attempts to load plugins from given set of directories.
+		 *
+		 * PluginLoader will step through directory in listed order. If
+		 * a directory with at least one valid plugin is encountered, the
+		 * loading process stops and skips all further directories.
+		 *
+		 * This behavior may need to be revised and changed in the future.
+		 */
+		static void init(const QStringList &directories);
+		/**
+		 * @brief Accesses instance of the class after init().
+		 *
+		 * This isn't a real singleton. Call init() before calling this.
+		 * gpPluginLoader and gPluginLoader macros can also be used to
+		 * access the instance.
+		 */
+		static PluginLoader *instance();
+
 		virtual ~PluginLoader();
 
 		/**
 		 * @brief Clears the plugins list
 		 */
 		void clearPlugins();
+
+		/**
+		 * @brief Convenience method - calls Plugin::info() for specified
+		 *        plugin.
+		 *
+		 * @return NULL can be returned if plugin with given index is not
+		 * present.
+		 */
+		EnginePlugin *info(int pluginIndex) const;
 
 		/**
 		 * @brief Inits configuration for plugins.
@@ -106,6 +135,10 @@ class MAIN_EXPORT PluginLoader
 		int pluginIndexFromName(const QString& name) const;
 
 		const QList<Plugin*> &plugins() const;
+		/**
+		 * @brief Returns the requested plugin or NULL.
+		 */
+		const Plugin* plugin(unsigned int index) const;
 
 		/**
 		 * @brief Resets the plugins directory, clearing the loaded plugins and
@@ -121,6 +154,13 @@ class MAIN_EXPORT PluginLoader
 	private:
 		class PrivData;
 		PrivData *d;
+
+		static PluginLoader *staticInstance;
+
+		/**
+		 * @brief Gathers information about plugins in a particular directory.
+		 */
+		PluginLoader(unsigned int type, const QStringList &directories);
 
 		bool	filesInDir();
 };

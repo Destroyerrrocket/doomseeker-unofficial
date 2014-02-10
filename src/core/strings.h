@@ -26,6 +26,7 @@
 #include "global.h"
 
 class QString;
+class QStringList;
 
 // \c = '\034'
 #define	ESCAPE_COLOR_CHAR	'\034'
@@ -38,6 +39,14 @@ class MAIN_EXPORT Strings
 		 * names.
 		 */
 		static QString	colorizeString(const QString &str, int def=4);
+
+		/**
+		 * @brief Combines path suffix with all fronts, returns new list.
+		 *
+		 * This is done by calling combinePaths on all elements of 'fronts'
+		 * with 'pathEnd' as the second argument.
+		 */
+		static QStringList combineManyPaths(const QStringList &fronts, const QString &pathEnd);
 
 		/**
 		 *	Combines two strings into single path making sure there are no

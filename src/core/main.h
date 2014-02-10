@@ -24,7 +24,6 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
-#include "plugins/pluginloader.h"
 #include "datapaths.h"
 #include "localizationinfo.h"
 #include <QApplication>
@@ -53,7 +52,6 @@ class MAIN_EXPORT Main : public QObject
 		static bool bInstallUpdatesAndRestart;
 		static DataPaths*			dataPaths;
 		static QWidget*				mainWindow;
-		static PluginLoader*		enginePlugins;
 		static QList<LocalizationInfo> localizations;
 		static bool					running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
 		static QString				workingDirectory;
