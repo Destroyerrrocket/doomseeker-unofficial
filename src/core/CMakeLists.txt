@@ -184,6 +184,7 @@ set(DOOMSEEKER_QT_FILES
 	updater/updatechannel.h
 	updater/updaterinfoparser.h
 	updater/updateinstaller.h
+	application.h
 	apprunner.h
 	customservers.h
 	log.h
@@ -334,6 +335,7 @@ set(SOURCE_FILES
 	updater/updatepackagefilter.cpp
 	updater/updaterinfoparser.cpp
 	updater/updaterscriptparser.cpp
+	application.cpp
 	apprunner.cpp
 	commandline.cpp
 	customservers.cpp

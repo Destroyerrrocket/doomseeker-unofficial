@@ -39,7 +39,6 @@ class MAIN_EXPORT Main : public QObject
 	Q_OBJECT
 
 	public:
-		static QApplication*		application;
 		/**
 		 * @brief If true then program will install updates and restart
 		 *        instead of quitting if quit is requested.

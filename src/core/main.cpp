@@ -40,6 +40,7 @@
 #include "ini/ini.h"
 #include "irc/configuration/ircconfig.h"
 #include "serverapi/server.h"
+#include "application.h"
 #include "doomseekerfilepaths.h"
 #include "localization.h"
 #include "log.h"
@@ -54,7 +55,6 @@
 #include "updater/updateinstaller.h"
 #include "versiondump.h"
 
-QApplication*		Main::application = NULL;
 QString Main::argDataDir;
 bool Main::bInstallUpdatesAndRestart = false;
 bool Main::bPortableMode = false;
@@ -84,7 +84,7 @@ Main::~Main()
 	}
 
 	// We can't save a config if we haven't initalized the program!
-	if(application != NULL)
+	if (gApp != NULL)
 	{
 		gConfig.saveToFile();
 		gConfig.dispose();
@@ -96,12 +96,7 @@ Main::~Main()
 	IP2C::deinstantiate();
 
 	PluginLoader::deinit();
-
-	if (application != NULL)
-	{
-		delete application;
-		application = NULL;
-	}
+	Application::deinit();
 
 	if (dataPaths != NULL)
 	{
@@ -115,8 +110,8 @@ int Main::connectToServerByURL()
 
 	if(handler)
 	{
-		connect(handler, SIGNAL(finished(int)), application, SLOT(quit()));
-		int ret = application->exec();
+		connect(handler, SIGNAL(finished(int)), gApp, SLOT(quit()));
+		int ret = gApp->exec();
 		delete handler;
 		return ret;
 	}
@@ -132,10 +127,10 @@ int Main::run()
 		return 0;
 	}
 
-	application = new QApplication(argumentsCount, arguments);
+	Application::init(argumentsCount, arguments);
 #ifdef Q_OS_MAC
 	// In Mac OS X it is abnormal to have menu icons unless it's a shortcut to a file of some kind.
-	application->setAttribute(Qt::AA_DontShowIconsInMenus);
+	gApp->setAttribute(Qt::AA_DontShowIconsInMenus);
 #endif
 
 	gLog << "Starting Doomseeker. Hello World! :)";
@@ -218,7 +213,7 @@ int Main::run()
 	gLog << tr("Init finished.");
 	gLog.addUnformattedEntry("================================\n");
 
-	int returnCode = application->exec();
+	int returnCode = gApp->exec();
 
 	#ifdef WITH_AUTOUPDATES
 	if (bInstallUpdatesAndRestart)
@@ -271,7 +266,7 @@ void Main::createMainWindow()
 {
 	gLog << tr("Preparing GUI.");
 
-	MainWindow* mainWnd = new MainWindow(application, argumentsCount, arguments);
+	MainWindow* mainWnd = new MainWindow(gApp, argumentsCount, arguments);
 	if (gConfig.doomseeker.bMainWindowMaximized)
 	{
 		mainWnd->showMaximized();
