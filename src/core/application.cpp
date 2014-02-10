@@ -73,6 +73,7 @@ void Application::init(int argc, char **argv)
 
 Application *Application::instance()
 {
+	assert(staticInstance != NULL);
 	return staticInstance;
 }
 
