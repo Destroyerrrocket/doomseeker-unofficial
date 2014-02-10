@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "application.h"
 
+#include "gui/mainwindow.h"
 #include <cassert>
 
 class Application::PrivData
@@ -29,6 +30,7 @@ class Application::PrivData
 	public:
 		int argc;
 		char **argv;
+		MainWindow *mainWindow;
 		bool running;
 };
 
@@ -40,6 +42,7 @@ Application::Application(int argc, char **argv)
 	d = new PrivData();
 	d->argc = argc;
 	d->argv = argv;
+	d->mainWindow = NULL;
 	d->running = true;
 }
 
@@ -76,6 +79,21 @@ Application *Application::instance()
 bool Application::isRunning() const
 {
 	return d->running;
+}
+
+MainWindow *Application::mainWindow() const
+{
+	return d->mainWindow;
+}
+
+QWidget *Application::mainWindowAsQWidget() const
+{
+	return d->mainWindow;
+}
+
+void Application::setMainWindow(MainWindow *mainWindow)
+{
+	d->mainWindow = mainWindow;
 }
 
 void Application::stopRunning()

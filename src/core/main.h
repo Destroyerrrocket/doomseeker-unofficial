@@ -50,7 +50,6 @@ class MAIN_EXPORT Main : public QObject
 		 */
 		static bool bInstallUpdatesAndRestart;
 		static DataPaths*			dataPaths;
-		static QWidget*				mainWindow;
 		static QList<LocalizationInfo> localizations;
 		static QString				workingDirectory;
 		static QString argDataDir;

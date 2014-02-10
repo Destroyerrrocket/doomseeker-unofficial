@@ -37,8 +37,8 @@
 #include "gui/mainwindow.h"
 #include "plugins/engineplugin.h"
 #include "updater/updatechannel.h"
+#include "application.h"
 #include "log.h"
-#include "main.h"
 #include "qtmetapointer.h"
 
 DoomseekerConfigurationDialog::DoomseekerConfigurationDialog(QWidget* parent)
@@ -147,7 +147,7 @@ void DoomseekerConfigurationDialog::initOptionsList()
 
 void DoomseekerConfigurationDialog::openConfiguration(const EnginePlugin *openPlugin)
 {
-	MainWindow *mw = static_cast<MainWindow *>(Main::mainWindow);
+	MainWindow *mw = gApp->mainWindow();
 
 	DoomseekerConfigurationDialog configDialog(mw);
 	configDialog.initOptionsList();

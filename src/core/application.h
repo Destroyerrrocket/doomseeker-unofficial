@@ -29,6 +29,8 @@
 
 #define gApp (Application::instance())
 
+class MainWindow;
+
 /**
  * @brief Program central hub of information.
  */
@@ -56,6 +58,22 @@ class MAIN_EXPORT Application : public QApplication
 		 * Threads should exit their loops and let the program close gracefully.
 		 */
 		bool isRunning() const;
+
+		/**
+		 * @brief MainWindow of the program.
+		 *
+		 * Might be NULL if current run doesn't create MainWindow.
+		 */
+		MainWindow *mainWindow() const;
+		/**
+		 * @brief Returns MainWindow as a QWidget.
+		 *
+		 * Useful for plugins that need to specify parent widget for dialog
+		 * boxes or such.
+		 */
+		QWidget *mainWindowAsQWidget() const;
+
+		void setMainWindow(MainWindow* mainWindow);
 		/**
 		 * @brief Called when program is shutting down.
 		 */

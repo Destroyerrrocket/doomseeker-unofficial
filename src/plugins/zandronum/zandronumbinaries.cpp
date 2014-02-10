@@ -25,7 +25,7 @@
 #include "zandronumbinaries.h"
 #include "zandronumengineplugin.h"
 #include "zandronumserver.h"
-#include "main.h"
+#include "application.h"
 #include "serverapi/message.h"
 #include "../wadseeker/zip/unarchive.h"
 #include "plugins/engineplugin.h"
@@ -112,7 +112,7 @@ QString ZandronumClientExeFile::pathToExe(Message& message)
 				"Do you want Doomseeker to create %2 directory and copy all your .ini files from your base directory?"
 				).arg(error, testingVersion);
 
-			if (QMessageBox::question(Main::mainWindow, tr("Doomseeker - missing testing binaries"), messageBoxContent, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+			if (QMessageBox::question(gApp->mainWindowAsQWidget(), tr("Doomseeker - missing testing binaries"), messageBoxContent, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 			{
 				// setting->string() should still contain base dir
 				// for testing binaries
@@ -141,7 +141,7 @@ QString ZandronumClientExeFile::pathToExe(Message& message)
 				if(!downloadTestingBinaries(path))
 				{
 					// Show user the prompt to install the binaries.
-					QMessageBox::information(Main::mainWindow, tr("Doomseeker"), tr("Please install now version \"%1\" into:\n%2").arg(testingVersion, path));
+					QMessageBox::information(gApp->mainWindowAsQWidget(), tr("Doomseeker"), tr("Please install now version \"%1\" into:\n%2").arg(testingVersion, path));
 				}
 
 				// Try this method again.
@@ -349,7 +349,7 @@ bool ZandronumClientExeFile::spawnTestingBatchFile(const QString& versionDir, QS
 ////////////////////////////////////////////////////////////////////////////////
 
 TestingProgressDialog::TestingProgressDialog(const QUrl& url)
-: QProgressDialog(tr("Downloading testing binaries..."), tr("Cancel"), 0, 0, Main::mainWindow)
+: QProgressDialog(tr("Downloading testing binaries..."), tr("Cancel"), 0, 0, gApp->mainWindowAsQWidget())
 {
 	connect(this, SIGNAL(canceled()), this, SLOT(abort()));
 

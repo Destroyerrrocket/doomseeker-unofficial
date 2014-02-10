@@ -60,7 +60,6 @@ bool Main::bInstallUpdatesAndRestart = false;
 bool Main::bPortableMode = false;
 DataPaths*			Main::dataPaths;
 QList<LocalizationInfo> Main::localizations;
-QWidget*			Main::mainWindow = NULL;
 QString				Main::workingDirectory = "./";
 
 Main::Main(int argc, char* argv[])
@@ -192,18 +191,18 @@ int Main::run()
 		if (updateFailedCode != 0)
 		{
 			// This is when updater program failed to install the update.
-			((MainWindow*)mainWindow)->setDisplayUpdaterProcessFailure(updateFailedCode);
+			gApp->mainWindow()->setDisplayUpdaterProcessFailure(updateFailedCode);
 		}
 		else if (updateInstallerResult != UpdateInstaller::EC_NothingToUpdate)
 		{
 			// This is when Doomseeker failed to start the updater program.
-			((MainWindow*)mainWindow)->setDisplayUpdateInstallerError(updateInstallerResult);
+			gApp->mainWindow()->setDisplayUpdateInstallerError(updateInstallerResult);
 		}
 		else
 		{
 			if (gConfig.autoUpdates.updateMode != DoomseekerConfig::AutoUpdates::UM_Disabled)
 			{
-				QTimer::singleShot(0, mainWindow, SLOT(checkForUpdatesAuto()));
+				QTimer::singleShot(0, gApp->mainWindow(), SLOT(checkForUpdatesAuto()));
 			}
 		}
 		#endif
@@ -265,21 +264,19 @@ void Main::createMainWindow()
 {
 	gLog << tr("Preparing GUI.");
 
-	MainWindow* mainWnd = new MainWindow(gApp, argumentsCount, arguments);
+	gApp->setMainWindow(new MainWindow(gApp, argumentsCount, arguments));
 	if (gConfig.doomseeker.bMainWindowMaximized)
 	{
-		mainWnd->showMaximized();
+		gApp->mainWindow()->showMaximized();
 	}
 	else
 	{
-		mainWnd->show();
+		gApp->mainWindow()->show();
 	}
-
-	mainWindow = mainWnd;
 
 	if (bIsFirstRun)
 	{
-		mainWnd->notifyFirstRun();
+		gApp->mainWindow()->notifyFirstRun();
 	}
 }
 
