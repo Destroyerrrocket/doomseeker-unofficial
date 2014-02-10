@@ -29,6 +29,7 @@ class Application::PrivData
 	public:
 		int argc;
 		char **argv;
+		bool running;
 };
 
 Application *Application::staticInstance = NULL;
@@ -39,6 +40,7 @@ Application::Application(int argc, char **argv)
 	d = new PrivData();
 	d->argc = argc;
 	d->argv = argv;
+	d->running = true;
 }
 
 
@@ -51,9 +53,13 @@ void Application::deinit()
 {
 	if (staticInstance != NULL)
 	{
-		delete staticInstance;
-		staticInstance = NULL;
+		staticInstance->destroy();
 	}
+}
+
+void Application::destroy()
+{
+	d->running = false;
 }
 
 void Application::init(int argc, char **argv)
@@ -65,4 +71,14 @@ void Application::init(int argc, char **argv)
 Application *Application::instance()
 {
 	return staticInstance;
+}
+
+bool Application::isRunning() const
+{
+	return d->running;
+}
+
+void Application::stopRunning()
+{
+	d->running = false;
 }

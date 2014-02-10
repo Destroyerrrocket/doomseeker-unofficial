@@ -52,7 +52,6 @@ class MAIN_EXPORT Main : public QObject
 		static DataPaths*			dataPaths;
 		static QWidget*				mainWindow;
 		static QList<LocalizationInfo> localizations;
-		static bool					running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
 		static QString				workingDirectory;
 		static QString argDataDir;
 		static bool bPortableMode;

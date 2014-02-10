@@ -35,11 +35,31 @@
 class MAIN_EXPORT Application : public QApplication
 {
 	public:
+		/**
+		 * @brief Doesn't delete the actual instance() but calls destroy()
+		 *        method.
+		 *
+		 * That way certain data fields can still be accessed after the
+		 * program is deinitialized. Actual instance is never deleted
+		 * explicitly, and OS will clear the memory anyway.
+		 */
 		static void deinit();
 		static void init(int argc, char **argv);
 		static Application *instance();
 
 		virtual ~Application();
+
+		/**
+		 * @brief Plugins and other threads can use this to figure out
+		 *        that program is closing.
+		 *
+		 * Threads should exit their loops and let the program close gracefully.
+		 */
+		bool isRunning() const;
+		/**
+		 * @brief Called when program is shutting down.
+		 */
+		void stopRunning();
 
 	private:
 		class PrivData;
@@ -48,6 +68,7 @@ class MAIN_EXPORT Application : public QApplication
 		static Application *staticInstance;
 
 		Application(int argc, char **argv);
+		void destroy();
 };
 
 

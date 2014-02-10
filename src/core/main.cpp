@@ -61,7 +61,6 @@ bool Main::bPortableMode = false;
 DataPaths*			Main::dataPaths;
 QList<LocalizationInfo> Main::localizations;
 QWidget*			Main::mainWindow = NULL;
-bool				Main::running = true;
 QString				Main::workingDirectory = "./";
 
 Main::Main(int argc, char* argv[])
@@ -76,7 +75,7 @@ Main::Main(int argc, char* argv[])
 
 Main::~Main()
 {
-	running = false;
+	gApp->stopRunning();
 	if (Refresher::isInstantiated())
 	{
 		Refresher::instance()->quit();
