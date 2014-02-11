@@ -34,8 +34,10 @@ class MainWindow;
 /**
  * @brief Program central hub of information.
  */
-class MAIN_EXPORT Application : public QApplication
+class MAIN_EXPORT Application : public QObject
 {
+	Q_OBJECT
+
 	public:
 		/**
 		 * @brief Doesn't delete the actual instance() but calls destroy()
@@ -46,10 +48,13 @@ class MAIN_EXPORT Application : public QApplication
 		 * explicitly, and OS will clear the memory anyway.
 		 */
 		static void deinit();
-		static void init(int argc, char **argv);
+		static void init(QApplication *application);
 		static Application *instance();
 
 		virtual ~Application();
+
+		QApplication *applicationQt();
+		int exec();
 
 		/**
 		 * @brief Plugins and other threads can use this to figure out
@@ -85,7 +90,7 @@ class MAIN_EXPORT Application : public QApplication
 
 		static Application *staticInstance;
 
-		Application(int argc, char **argv);
+		Application(QApplication *application);
 		void destroy();
 };
 
