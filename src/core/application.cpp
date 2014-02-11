@@ -74,6 +74,11 @@ int Application::exec()
 	return d->application->exec();
 }
 
+bool Application::isInit()
+{
+	return staticInstance != NULL;
+}
+
 void Application::init(QApplication *application)
 {
 	assert(staticInstance == NULL && "Cannot initialize Application twice!");

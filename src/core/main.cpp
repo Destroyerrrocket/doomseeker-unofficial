@@ -72,7 +72,11 @@ Main::Main(int argc, char* argv[])
 
 Main::~Main()
 {
-	gApp->stopRunning();
+	if (Application::isInit())
+	{
+		gApp->stopRunning();
+	}
+
 	if (Refresher::isInstantiated())
 	{
 		Refresher::instance()->quit();
@@ -80,7 +84,7 @@ Main::~Main()
 	}
 
 	// We can't save a config if we haven't initalized the program!
-	if (gApp != NULL)
+	if (Application::isInit())
 	{
 		gConfig.saveToFile();
 		gConfig.dispose();

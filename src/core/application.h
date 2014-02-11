@@ -48,6 +48,7 @@ class MAIN_EXPORT Application : public QObject
 		 * explicitly, and OS will clear the memory anyway.
 		 */
 		static void deinit();
+		static bool isInit();
 		static void init(QApplication *application);
 		static Application *instance();
 
