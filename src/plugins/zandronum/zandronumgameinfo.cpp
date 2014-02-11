@@ -172,6 +172,6 @@ void ZandronumGameInfo::initGameModes()
 
 void ZandronumGameInfo::initGameModifiers()
 {
-	gameModifiersList << GameCVar("Buckshot", "buckshot");
-	gameModifiersList << GameCVar("Instagib", "instagib");
+	gameModifiersList << GameCVar("Buckshot", "+buckshot");
+	gameModifiersList << GameCVar("Instagib", "+instagib");
 }

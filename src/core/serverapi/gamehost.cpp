@@ -182,7 +182,7 @@ void GameHost::createCommandLineArguments()
 	const QList<GameCVar> &cvars = params().cvars();
 	foreach (const GameCVar &c, cvars)
 	{
-		args() << QString("+" + c.command()) << c.valueString();
+		args() << QString(c.command()) << c.valueString();
 	}
 
 	if (params().hostMode() == GameCreateParams::Host)

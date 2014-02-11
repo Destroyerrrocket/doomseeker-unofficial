@@ -130,7 +130,7 @@ QList<GameCVar> ZandronumEnginePlugin::limits(const GameMode& gm) const
 	&&	m != ZandronumGameInfo::GAMEMODE_INVASION
 	&&	m != ZandronumGameInfo::GAMEMODE_SURVIVAL)
 	{
-		gl << GameCVar(QObject::tr("Time limit:"), "timelimit");
+		gl << GameCVar(QObject::tr("Time limit:"), "+timelimit");
 	}
 
 	if (m == GameMode::SGM_Deathmatch
@@ -138,7 +138,7 @@ QList<GameCVar> ZandronumEnginePlugin::limits(const GameMode& gm) const
 	||	m == GameMode::SGM_TeamDeathmatch
 	||	m == ZandronumGameInfo::GAMEMODE_TERMINATOR)
 	{
-		gl << GameCVar(QObject::tr("Frag limit:"), "fraglimit");
+		gl << GameCVar(QObject::tr("Frag limit:"), "+fraglimit");
 	}
 
 	if (m == GameMode::SGM_CTF
@@ -149,22 +149,22 @@ QList<GameCVar> ZandronumEnginePlugin::limits(const GameMode& gm) const
 	||	m == ZandronumGameInfo::GAMEMODE_TEAMGAME
 	||	m == ZandronumGameInfo::GAMEMODE_TEAMPOSSESSION)
 	{
-		gl << GameCVar(QObject::tr("Point limit:"), "pointlimit");
+		gl << GameCVar(QObject::tr("Point limit:"), "+pointlimit");
 	}
 
 	if (m == ZandronumGameInfo::GAMEMODE_DUEL
 	||	m == ZandronumGameInfo::GAMEMODE_LASTMANSTANDING
 	||	m == ZandronumGameInfo::GAMEMODE_TEAMLMS)
 	{
-		gl << GameCVar(QObject::tr("Win limit:"), "winlimit");
+		gl << GameCVar(QObject::tr("Win limit:"), "+winlimit");
 	}
 
 	if (m == ZandronumGameInfo::GAMEMODE_DUEL)
 	{
-		gl << GameCVar(QObject::tr("Duel limit:"), "duellimit");
+		gl << GameCVar(QObject::tr("Duel limit:"), "+duellimit");
 	}
 
-	gl << GameCVar(QObject::tr("Max. lives:"), "sv_maxlives");
+	gl << GameCVar(QObject::tr("Max. lives:"), "+sv_maxlives");
 
 	return gl;
 }
