@@ -147,7 +147,7 @@ const QString& DataPaths::programDirName() const
 
 void DataPaths::initDefault(bool bPortableModeOn)
 {
-	assert(staticDefaultInstance != NULL && "DataPaths can have only one default.");
+	assert(staticDefaultInstance == NULL && "DataPaths can have only one default.");
 	if (staticDefaultInstance == NULL)
 	{
 		staticDefaultInstance = new DataPaths(bPortableModeOn);
