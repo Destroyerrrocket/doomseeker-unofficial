@@ -24,7 +24,7 @@
 #include "demomanager.h"
 #include "ini/ini.h"
 #include "ini/settingsproviderqt.h"
-#include "main.h"
+#include "datapaths.h"
 #include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
@@ -74,7 +74,7 @@ void DemoManagerDlg::adjustDemoList()
 	// Also we need to convert double underscores to a single underscore
 	QDate today = QDate::currentDate();
 	QTime referenceTime(23, 59, 59);
-	QDir demosDirectory(Main::dataPaths->demosDirectoryPath());
+	QDir demosDirectory(gDefaultDataPaths->demosDirectoryPath());
 	QStringList demos = demosDirectory.entryList(demoExtensions, QDir::Files);
 	typedef QMap<int, Demo> DemoMap;
 	QMap<int, DemoMap> demoMap;
@@ -117,7 +117,7 @@ void DemoManagerDlg::adjustDemoList()
 		{
 			// New format, read meta data from file!
 			QSettings settings(
-				Main::dataPaths->demosDirectoryPath() + QDir::separator() + demoName + ".ini",
+				gDefaultDataPaths->demosDirectoryPath() + QDir::separator() + demoName + ".ini",
 				QSettings::IniFormat);
 			SettingsProviderQt settingsProvider(&settings);
 			Ini metaData(&settingsProvider);
@@ -177,7 +177,7 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 		if(saveDialog.exec() == QDialog::Accepted)
 		{
 			// Copy the demo to the new location.
-			if(!QFile::copy(Main::dataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename, saveDialog.selectedFiles().first()))
+			if(!QFile::copy(gDefaultDataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename, saveDialog.selectedFiles().first()))
 				QMessageBox::critical(this, tr("Unable to save"), tr("Could not write to the specified location."));
 		}
 	}
@@ -191,7 +191,7 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 				int dateRow = index.row();
 				for(int timeRow = 0;index.child(timeRow, 0).isValid();++timeRow)
 				{
-					if(doRemoveDemo(Main::dataPaths->demosDirectoryPath() + QDir::separator() + demoTree[dateRow][timeRow].filename))
+					if(doRemoveDemo(gDefaultDataPaths->demosDirectoryPath() + QDir::separator() + demoTree[dateRow][timeRow].filename))
 					{
 						demoModel->removeRow(timeRow, index);
 						demoTree[dateRow].removeAt(timeRow);
@@ -209,7 +209,7 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 			}
 			else
 			{
-				if(doRemoveDemo(Main::dataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename))
+				if(doRemoveDemo(gDefaultDataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename))
 				{
 					// Adjust the tree
 					int dateRow = index.parent().row();
@@ -263,7 +263,7 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 
 		// Play the demo
 		GameCreateParams params;
-		params.setDemoPath(Main::dataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename);
+		params.setDemoPath(gDefaultDataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename);
 		params.setIwadPath(result.foundFiles()[0]);
 		params.setPwadsPaths(result.foundFiles().mid(1));
 		params.setHostMode(GameCreateParams::Demo);

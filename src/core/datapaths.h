@@ -28,6 +28,8 @@
 #include <QString>
 #include <QStringList>
 
+#define gDefaultDataPaths (DataPaths::defaultInstance())
+
 /**
  *	@brief Represents directories used by Doomseeker to store data.
  *
@@ -77,6 +79,15 @@ class MAIN_EXPORT DataPaths
 		 *     returned paths.
 		 */
 		static QStringList staticDataSearchDirs(const QString& subdir = QString());
+
+		static void initDefault(bool bPortableModeOn);
+		/**
+		 * @brief Retrieves default instance that is used throughout
+		 *        the program.
+		 *
+		 * This instance must first be init with initDefault().
+		 */
+		static DataPaths *defaultInstance();
 
 		DataPaths(bool bPortableModeOn = false);
 		virtual ~DataPaths();
@@ -198,6 +209,8 @@ class MAIN_EXPORT DataPaths
 	private:
 		class PrivData;
 		PrivData *d;
+
+		static DataPaths *staticDefaultInstance;
 };
 
 #endif

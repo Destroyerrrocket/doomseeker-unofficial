@@ -24,6 +24,7 @@
 
 #include "configuration/doomseekerconfig.h"
 #include "updater/autoupdater.h"
+#include "datapaths.h"
 #include "log.h"
 #include "main.h"
 #include "strings.h"
@@ -102,7 +103,7 @@ QString UpdateInstaller::errorCodeToStr(ErrorCode code)
 QString UpdateInstaller::getPercentEncodedCurrentProcessArgs()
 {
 	QStringList argsEncoded;
-	if (Main::dataPaths->isPortableModeOn())
+	if (gDefaultDataPaths->isPortableModeOn())
 	{
 		argsEncoded << QUrl::toPercentEncoding("--portable");
 	}

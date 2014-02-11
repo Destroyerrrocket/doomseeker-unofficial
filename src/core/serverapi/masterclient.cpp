@@ -27,10 +27,11 @@
 #include "serverapi/message.h"
 #include "serverapi/server.h"
 #include "serverapi/playerslist.h"
-#include "main.h"
+#include "datapaths.h"
 
 #include <QDataStream>
 #include <QErrorMessage>
+#include <QFile>
 #include <QHostInfo>
 #include <QMessageBox>
 #include <QUdpSocket>
@@ -175,7 +176,7 @@ bool MasterClient::preparePacketCache(bool write)
 
 		if(d->cache == NULL)
 		{
-			QString cacheFile = Main::dataPaths->programsDataDirectoryPath() + "/"
+			QString cacheFile = gDefaultDataPaths->programsDataDirectoryPath() + "/"
 				+ QString(plugin()->data()->name).replace(' ', "");
 			d->cache = new QFile(cacheFile);
 		}

@@ -25,7 +25,7 @@
 #include "configuration/doomseekerconfig.h"
 #include "copytextdlg.h"
 #include "gui/widgets/createserverdialogpage.h"
-#include "main.h"
+#include "datapaths.h"
 #include "commongui.h"
 #include "ini/ini.h"
 #include "ini/settingsproviderqt.h"
@@ -522,7 +522,7 @@ bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 
 void CreateServerDialog::firstLoadConfigTimer()
 {
-	QString tmpServerCfgPath = Main::dataPaths->programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
+	QString tmpServerCfgPath = gDefaultDataPaths->programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
 
 	QFileInfo fi(tmpServerCfgPath);
 	if (fi.exists())
@@ -1019,7 +1019,7 @@ void CreateServerDialog::runGame(bool offline)
 		}
 		else
 		{
-			QString tmpServerConfigPath = Main::dataPaths->programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
+			QString tmpServerConfigPath = gDefaultDataPaths->programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
 			saveConfig(tmpServerConfigPath);
 		}
 	}

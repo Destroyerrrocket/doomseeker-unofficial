@@ -29,7 +29,6 @@
 #include "updater/updaterscriptparser.h"
 #include "datapaths.h"
 #include "log.h"
-#include "main.h"
 #include "strings.h"
 #include "version.h"
 #include <wadseeker/protocols/fixednetworkaccessmanager.h>
@@ -532,12 +531,12 @@ void AutoUpdater::startPackageScriptDownload(const UpdatePackage& pkg)
 
 QString AutoUpdater::updaterScriptPath()
 {
-	QString dirPath = Main::dataPaths->localDataLocationPath(DataPaths::UPDATE_PACKAGES_DIR_NAME);
+	QString dirPath = gDefaultDataPaths->localDataLocationPath(DataPaths::UPDATE_PACKAGES_DIR_NAME);
 	QString name = DataPaths::UPDATE_PACKAGE_FILENAME_PREFIX + "-updater-script.xml";
 	return Strings::combinePaths(dirPath, name);
 }
 
 QString AutoUpdater::updateStorageDirPath()
 {
-	return Main::dataPaths->localDataLocationPath(DataPaths::UPDATE_PACKAGES_DIR_NAME);
+	return gDefaultDataPaths->localDataLocationPath(DataPaths::UPDATE_PACKAGES_DIR_NAME);
 }

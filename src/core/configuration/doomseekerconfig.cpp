@@ -29,8 +29,8 @@
 #include "plugins/engineplugin.h"
 #include "updater/updatechannel.h"
 #include "wadseeker/wadseeker.h"
+#include "datapaths.h"
 #include "log.h"
-#include "main.h"
 #include "strings.h"
 #include "version.h"
 
@@ -240,8 +240,8 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->slotStyle = 1;
 	this->serverListSortIndex = -1;
 	this->serverListSortDirection = Qt::DescendingOrder;
-	this->wadPaths << Main::dataPaths->programsDataDirectoryPath();
-	this->wadPaths << Main::dataPaths->workingDirectory();
+	this->wadPaths << gDefaultDataPaths->programsDataDirectoryPath();
+	this->wadPaths << gDefaultDataPaths->workingDirectory();
 }
 
 bool DoomseekerConfig::DoomseekerCfg::areMainWindowSizeSettingsValid(int maxValidX, int maxValidY) const
@@ -545,7 +545,7 @@ DoomseekerConfig::WadseekerCfg::WadseekerCfg()
 	this->idgamesURL = Wadseeker::defaultIdgamesUrl();
 	this->maxConcurrentSiteDownloads = 3;
 	this->maxConcurrentWadDownloads = 2;
-	this->targetDirectory = Main::dataPaths->programsDataDirectoryPath();
+	this->targetDirectory = gDefaultDataPaths->programsDataDirectoryPath();
 
 	// Search URLs remains unitizalized here. It will be initialized
 	// by init() and then load() since Doomseeker always calls these

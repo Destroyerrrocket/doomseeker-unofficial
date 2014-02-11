@@ -24,7 +24,6 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
-#include "datapaths.h"
 #include "localizationinfo.h"
 #include <QApplication>
 #include <QObject>
@@ -34,7 +33,7 @@
 /**
  * This class holds some global information.
  */
-class MAIN_EXPORT Main : public QObject
+class Main : public QObject
 {
 	Q_OBJECT
 
@@ -49,7 +48,6 @@ class MAIN_EXPORT Main : public QObject
 		 * Default: false.
 		 */
 		static bool bInstallUpdatesAndRestart;
-		static DataPaths*			dataPaths;
 		static QList<LocalizationInfo> localizations;
 		static QString argDataDir;
 

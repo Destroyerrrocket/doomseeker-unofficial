@@ -22,11 +22,10 @@
 // Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 
-#include "datapaths.h"
-#include "main.h"
+#include <datapaths.h>
 #include <pathfinder/pathfinder.h>
-#include "plugins/engineplugin.h"
-#include "strings.h"
+#include <plugins/engineplugin.h>
+#include <strings.h>
 
 #include "huffman/huffman.h"
 #include "createserverdialogpages/flagspage.h"
@@ -84,12 +83,12 @@ void ZandronumEnginePlugin::setupConfig(IniSection &config) const
 	QString trimPattern = QString("\\/");
 	QString paths = Strings::trimr(programFilesDirectory, trimPattern);
 
-	paths += "\\Zandronum;" + Main::dataPaths->workingDirectory() + ";.";
+	paths += "\\Zandronum;" + gDefaultDataPaths->workingDirectory() + ";.";
 
 	PathFinder pf(paths.split(";"));
 	config.createSetting("BinaryPath", pf.findFile("zandronum.exe"));
 #else
-	QString paths = QString("/usr/bin;/usr/local/bin;/usr/share/bin;/usr/games/zandronum;/usr/local/games/zandronum;/usr/share/games/zandronum;") + Main::dataPaths->workingDirectory() + ";.";
+	QString paths = QString("/usr/bin;/usr/local/bin;/usr/share/bin;/usr/games/zandronum;/usr/local/games/zandronum;/usr/share/games/zandronum;") + gDefaultDataPaths->workingDirectory() + ";.";
 	PathFinder pf(paths.split(";"));
 	config.createSetting("BinaryPath", pf.findFile("zandronum"));
 	config.createSetting("ServerBinaryPath", pf.findFile("zandronum-server"));

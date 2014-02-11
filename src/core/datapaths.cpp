@@ -25,6 +25,7 @@
 #include <QCoreApplication>
 #include "strings.h"
 #include <QDesktopServices>
+#include <cassert>
 #include <cstdlib>
 
 class DataPaths::PrivData
@@ -36,6 +37,10 @@ class DataPaths::PrivData
 		QString demosDirectoryName;
 		QString workingDirectory;
 };
+
+
+DataPaths *DataPaths::staticDefaultInstance = NULL;
+
 
 #ifdef Q_OS_MAC
 const QString DataPaths::PROGRAMS_APPDATA_DIR_NAME = "Library/Preferences/Doomseeker";
@@ -104,6 +109,11 @@ bool DataPaths::createDirectories()
 	return bAllSuccessful;
 }
 
+DataPaths *DataPaths::defaultInstance()
+{
+	return staticDefaultInstance;
+}
+
 QString DataPaths::demosDirectoryPath() const
 {
 	QString demosDir = systemAppDataDirectory(d->demosDirectoryName);
@@ -133,6 +143,15 @@ QStringList DataPaths::directoriesExist() const
 const QString& DataPaths::programDirName() const
 {
 	return d->programsDirectoryName;
+}
+
+void DataPaths::initDefault(bool bPortableModeOn)
+{
+	assert(staticDefaultInstance != NULL && "DataPaths can have only one default.");
+	if (staticDefaultInstance == NULL)
+	{
+		staticDefaultInstance = new DataPaths(bPortableModeOn);
+	}
 }
 
 bool DataPaths::isPortableModeOn() const

@@ -57,7 +57,6 @@
 
 QString Main::argDataDir;
 bool Main::bInstallUpdatesAndRestart = false;
-DataPaths*			Main::dataPaths;
 QList<LocalizationInfo> Main::localizations;
 
 
@@ -94,11 +93,6 @@ Main::~Main()
 
 	PluginLoader::deinit();
 	Application::deinit();
-
-	if (dataPaths != NULL)
-	{
-		delete dataPaths;
-	}
 }
 
 int Main::connectToServerByURL()
@@ -136,7 +130,7 @@ int Main::run()
 	if (!initDataDirectories())
 	{
 		// Inform the user which directories cannot be created and QUIT.
-		QStringList failedDirsList = dataPaths->directoriesExist();
+		QStringList failedDirsList = gDefaultDataPaths->directoriesExist();
 		QString failedDirsString = failedDirsList.join("\n");
 
 		QString errorMessage = tr("Doomseeker will not run because following directories cannot be created:");
@@ -317,18 +311,18 @@ bool Main::createRemoteConsole()
 
 bool Main::initDataDirectories()
 {
-	dataPaths = new DataPaths(bPortableMode);
-	DoomseekerFilePaths::pDataPaths = dataPaths;
-	dataPaths->setWorkingDirectory(Strings::trim(this->workingDirectory, "\""));
-	if (!dataPaths->createDirectories())
+	DataPaths::initDefault(bPortableMode);
+	DoomseekerFilePaths::pDataPaths = gDefaultDataPaths;
+	gDefaultDataPaths->setWorkingDirectory(Strings::trim(this->workingDirectory, "\""));
+	if (!gDefaultDataPaths->createDirectories())
 	{
 		return false;
 	}
 
 	// I think this directory should take priority, if user, for example,
 	// wants to update the ip2country file.
-	dataDirectories << dataPaths->programsDataSupportDirectoryPath();
-	dataDirectories << dataPaths->workingDirectory();
+	dataDirectories << gDefaultDataPaths->programsDataSupportDirectoryPath();
+	dataDirectories << gDefaultDataPaths->workingDirectory();
 
 	// Continue with standard dirs:
 	dataDirectories << "./";
@@ -399,7 +393,7 @@ void Main::initMainConfig()
 	gConfig;
 
 	// Now try to access the configuration stored on drive.
-	QString configDirPath = dataPaths->programsDataDirectoryPath();
+	QString configDirPath = gDefaultDataPaths->programsDataDirectoryPath();
 	if (configDirPath.isEmpty())
 	{
 		gLog << tr("Could not get an access to the settings directory. Configuration will not be saved.");
@@ -423,7 +417,7 @@ void Main::initPasswordsConfig()
 {
 	gLog << tr("Initializing passwords configuration file.");
 	// Now try to access the configuration stored on drive.
-	QString configDirPath = dataPaths->programsDataDirectoryPath();
+	QString configDirPath = gDefaultDataPaths->programsDataDirectoryPath();
 	if (configDirPath.isEmpty())
 	{
 		return;

@@ -23,8 +23,8 @@
 //------------------------------------------------------------------------------
 
 #include "apprunner.h"
+#include "datapaths.h"
 #include "log.h"
-#include "main.h"
 #include "strings.h"
 #include "connectionhandler.h"
 #include "configuration/doomseekerconfig.h"
@@ -139,7 +139,7 @@ QString ConnectionHandler::mkDemoName(Server* server, bool managedDemo)
 	QString demoName;
 	if (managedDemo)
 	{
-		demoName = Main::dataPaths->demosDirectoryPath() + QDir::separator();
+		demoName = gDefaultDataPaths->demosDirectoryPath() + QDir::separator();
 	}
 	demoName += QString("%1_%2").
 		arg(server->engineName()).
