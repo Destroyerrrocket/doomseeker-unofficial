@@ -102,7 +102,7 @@ QString UpdateInstaller::errorCodeToStr(ErrorCode code)
 QString UpdateInstaller::getPercentEncodedCurrentProcessArgs()
 {
 	QStringList argsEncoded;
-	if (Main::bPortableMode)
+	if (Main::dataPaths->isPortableModeOn())
 	{
 		argsEncoded << QUrl::toPercentEncoding("--portable");
 	}

@@ -57,7 +57,6 @@
 
 QString Main::argDataDir;
 bool Main::bInstallUpdatesAndRestart = false;
-bool Main::bPortableMode = false;
 DataPaths*			Main::dataPaths;
 QList<LocalizationInfo> Main::localizations;
 

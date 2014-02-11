@@ -52,7 +52,6 @@ class MAIN_EXPORT Main : public QObject
 		static DataPaths*			dataPaths;
 		static QList<LocalizationInfo> localizations;
 		static QString argDataDir;
-		static bool bPortableMode;
 
 		Main(int argc, char* argv[]);
 		~Main();
@@ -118,6 +117,7 @@ class MAIN_EXPORT Main : public QObject
 		QUrl						connectUrl;
 
 	private:
+		bool bPortableMode;
 		QString workingDirectory;
 };
 
