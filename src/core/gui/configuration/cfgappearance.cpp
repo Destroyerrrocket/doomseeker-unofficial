@@ -20,8 +20,9 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "configuration/doomseekerconfig.h"
 #include "cfgappearance.h"
+
+#include "configuration/doomseekerconfig.h"
 #include <QColorDialog>
 #include <QSystemTrayIcon>
 #include "ip2c/ip2c.h"

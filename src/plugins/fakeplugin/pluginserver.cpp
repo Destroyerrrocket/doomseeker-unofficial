@@ -20,11 +20,10 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2013 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-
 #include "pluginserver.h"
+
 #include "pluginengineplugin.h"
 #include "global.h"
-#include "main.h"
 #include "serverapi/playerslist.h"
 
 PluginServer::PluginServer(const QHostAddress& address, quint16 port)

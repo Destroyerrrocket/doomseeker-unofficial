@@ -21,16 +21,15 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 // Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "zandronumserver.h"
 
 #include "huffman/huffman.h"
 #include "zandronumbinaries.h"
 #include "zandronumgamehost.h"
 #include "zandronumgameinfo.h"
 #include "zandronumgamerunner.h"
-#include "zandronumserver.h"
 #include "zandronumengineplugin.h"
 #include "global.h"
-#include "main.h"
 #include "log.h"
 #include "datastreamoperatorwrapper.h"
 #include "serverapi/playerslist.h"

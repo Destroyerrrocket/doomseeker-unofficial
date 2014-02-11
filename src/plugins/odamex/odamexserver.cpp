@@ -20,6 +20,8 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
+#include "odamexserver.h"
+
 #include <QBuffer>
 #include <QDataStream>
 
@@ -27,9 +29,7 @@
 #include "odamexgameinfo.h"
 #include "odamexgamerunner.h"
 #include "odamexengineplugin.h"
-#include "odamexserver.h"
 #include "datastreamoperatorwrapper.h"
-#include "main.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/playerslist.h"
 

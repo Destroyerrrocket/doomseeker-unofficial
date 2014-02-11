@@ -20,9 +20,9 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "datapaths.h"
-#include "main.h"
 #include "odamexgamerunner.h"
+
+#include <datapaths.h>
 #include "odamexgameinfo.h"
 #include "odamexserver.h"
 

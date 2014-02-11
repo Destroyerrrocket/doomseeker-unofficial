@@ -20,12 +20,11 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
+#include "vavoomserver.h"
 
 #include "vavoomgameinfo.h"
 #include "vavoomgamerunner.h"
 #include "vavoomengineplugin.h"
-#include "vavoomserver.h"
-#include "main.h"
 #include "serverapi/playerslist.h"
 
 #define NET_PROTOCOL_VERSION	1

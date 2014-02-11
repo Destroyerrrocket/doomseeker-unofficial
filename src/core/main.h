@@ -24,11 +24,12 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
-#include "localizationinfo.h"
 #include <QApplication>
 #include <QObject>
 #include <QStringList>
 #include <QUrl>
+
+class LocalizationInfo;
 
 /**
  * This class holds some global information.

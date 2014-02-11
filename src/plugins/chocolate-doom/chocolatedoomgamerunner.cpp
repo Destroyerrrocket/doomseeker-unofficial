@@ -20,12 +20,12 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "chocolatedoomgameinfo.h"
 #include "chocolatedoomgamerunner.h"
+
+#include "chocolatedoomgameinfo.h"
 #include "chocolatedoomserver.h"
 #include "gui/createserverdialog.h"
 #include "serverapi/playerslist.h"
-#include "main.h"
 
 ChocolateDoomGameClientRunner::ChocolateDoomGameClientRunner(ChocolateDoomServer* server)
 : GameClientRunner(server)

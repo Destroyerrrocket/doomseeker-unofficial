@@ -25,7 +25,6 @@
 #include "configuration/doomseekerconfig.h"
 #include "ini/inisection.h"
 #include "ini/inivariable.h"
-#include "main.h"
 #include "message.h"
 #include "plugins/engineplugin.h"
 

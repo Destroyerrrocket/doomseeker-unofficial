@@ -20,8 +20,8 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "main.h"
 #include "vavoomgamerunner.h"
+
 #include "vavoomgameinfo.h"
 #include "vavoomengineplugin.h"
 #include "vavoomserver.h"

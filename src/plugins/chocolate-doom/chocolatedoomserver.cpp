@@ -20,13 +20,12 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
-
 #include "chocolatedoomserver.h"
+
 #include "chocolatedoomgamehost.h"
 #include "chocolatedoomgamerunner.h"
 #include "chocolatedoomengineplugin.h"
 #include "global.h"
-#include "main.h"
 #include "serverapi/playerslist.h"
 
 #define NET_PACKET_TYPE_QUERY			0,13

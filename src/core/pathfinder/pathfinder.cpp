@@ -26,7 +26,6 @@
 #include "pathfinder/caseinsensitivefsfileseeker.h"
 #include "pathfinder/casesensitivefsfileseeker.h"
 #include "pathfinder/filesearchpath.h"
-#include "main.h"
 #include "log.h"
 #include "strings.h"
 #include <QDir>

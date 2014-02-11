@@ -29,7 +29,6 @@
 #include "configuration/doomseekerconfig.h"
 #include "serverapi/server.h"
 #include "log.h"
-#include "main.h"
 #include <QItemDelegate>
 #include <QTime>
 

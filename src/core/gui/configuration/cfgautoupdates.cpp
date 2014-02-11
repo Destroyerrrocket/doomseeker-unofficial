@@ -25,7 +25,6 @@
 #include "configuration/doomseekerconfig.h"
 #include "updater/updatechannel.h"
 #include "log.h"
-#include "main.h"
 #include <cassert>
 
 CFGAutoUpdates::CFGAutoUpdates(QWidget *parent) 

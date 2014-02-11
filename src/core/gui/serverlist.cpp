@@ -35,7 +35,6 @@
 #include "serverapi/server.h"
 #include "serverapi/serverstructs.h"
 #include "serverapi/tooltipgenerator.h"
-#include "main.h"
 #include <QApplication>
 #include <QClipboard>
 #include <QDesktopServices>
@@ -44,6 +43,7 @@
 #include <QMessageBox>
 #include <QStandardItem>
 #include <QToolTip>
+#include <QUrl>
 
 const QString ServerListHandler::FONT_COLOR_MISSING = "#ff0000";
 const QString ServerListHandler::FONT_COLOR_OPTIONAL = "#ff9f00";
