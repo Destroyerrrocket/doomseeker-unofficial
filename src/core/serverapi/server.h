@@ -85,7 +85,7 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		virtual GameClientRunner* gameRunner();
 		virtual bool hasRcon() const { return false; }
-		virtual const GameCVar modifier() const;
+		virtual QList<GameCVar> modifiers() const;
 		virtual RConProtocol *rcon() { return NULL; }
 		virtual QRgb teamColor(int team) const;
 		virtual QString teamName(int team) const;

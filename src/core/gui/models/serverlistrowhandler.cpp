@@ -64,6 +64,19 @@ void ServerListRowHandler::emptyItem(QStandardItem* item)
 	item->setData(QVariant(), DTSort);
 }
 
+QStringList ServerListRowHandler::extractValidGameCVarNames(const QList<GameCVar> &cvars)
+{
+	QStringList result;
+	foreach (const GameCVar &cvar, cvars)
+	{
+		if (!cvar.isValid())
+		{
+			result << cvar.name();
+		}
+	}
+	return result;
+}
+
 void ServerListRowHandler::fillAddressColumn()
 {
 	QStandardItem* pItem = item(IDAddress);
@@ -294,8 +307,13 @@ void ServerListRowHandler::setGood()
 	fillItem(qstdItem, strTmp);
 
 	qstdItem = item(IDGametype);
-	GameCVar modifier = server->modifier();
-	fillItem(qstdItem, server->gameMode().name() + (modifier.isValid() ? " (" + modifier.name() + ")" : ""));
+	QString fullGameModeName = server->gameMode().name();
+	QStringList modifierNames = extractValidGameCVarNames(server->modifiers());
+	if (!modifierNames.isEmpty())
+	{
+		fullGameModeName += QString(" (%1)").arg(modifierNames.join(", "));
+	}
+	fillItem(qstdItem, fullGameModeName);
 
 	qstdItem = item(IDHiddenGroup);
 	fillItem(qstdItem, SGNormal);

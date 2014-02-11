@@ -421,9 +421,9 @@ unsigned short Server::maxPlayers() const
 	return d->maxPlayers;
 }
 
-const GameCVar Server::modifier() const
+QList<GameCVar> Server::modifiers() const
 {
-	return GameCVar();
+	return QList<GameCVar>();
 }
 
 const QString& Server::motd() const

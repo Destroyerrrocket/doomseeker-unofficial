@@ -28,6 +28,7 @@
 #include <QStandardItem>
 #include <QString>
 
+class GameCVar;
 class Server;
 class ServerListModel;
 
@@ -120,6 +121,9 @@ class ServerListRowHandler : public QObject
 		ServerListModel*		model;
 		int						row;
 		Server*					server;
+
+	private:
+		QStringList extractValidGameCVarNames(const QList<GameCVar> &cvars);
 };
 
 #endif

@@ -149,8 +149,7 @@ class ZandronumServer : public Server
 
 		bool			hasRcon() const { return true; }
 
-		const GameCVar	modifier() const;
-
+		QList<GameCVar> modifiers() const;
 		EnginePlugin*	plugin() const;
 
 		RConProtocol	*rcon();

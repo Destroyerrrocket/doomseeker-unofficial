@@ -131,13 +131,14 @@ unsigned int ZandronumServer::millisecondTime()
 	return time.hour()*360000 + time.minute()*60000 + time.second()*1000 + time.msec();
 }
 
-const GameCVar ZandronumServer::modifier() const
+QList<GameCVar> ZandronumServer::modifiers() const
 {
+	QList<GameCVar> result;
 	if(instagib)
-		return (*ZandronumGameInfo::gameModifiers())[1];
+		result << (*ZandronumGameInfo::gameModifiers())[1];
 	else if(buckshot)
-		return (*ZandronumGameInfo::gameModifiers())[0];
-	return GameCVar();
+		result << (*ZandronumGameInfo::gameModifiers())[0];
+	return result;
 }
 
 EnginePlugin* ZandronumServer::plugin() const
