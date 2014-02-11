@@ -523,7 +523,7 @@ bool Main::interpretCommandLineParameters()
 				}
 				initDataDirectories();
 				// Plugins generate QPixmaps which need a QApplication active
-				Application::init(new QApplication(argumentsCount, arguments));
+				Application::init(argumentsCount, arguments);
 				PluginLoader::init(Strings::combineManyPaths(dataDirectories, "engines/"));
 				gLog << tr("Dumping version info to file in JSON format.");
 				VersionDump::dumpJsonToIO(f);
