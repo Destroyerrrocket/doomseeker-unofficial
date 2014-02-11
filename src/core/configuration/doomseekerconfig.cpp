@@ -241,7 +241,7 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->serverListSortIndex = -1;
 	this->serverListSortDirection = Qt::DescendingOrder;
 	this->wadPaths << Main::dataPaths->programsDataDirectoryPath();
-	this->wadPaths << Main::workingDirectory;
+	this->wadPaths << Main::dataPaths->workingDirectory();
 }
 
 bool DoomseekerConfig::DoomseekerCfg::areMainWindowSizeSettingsValid(int maxValidX, int maxValidY) const

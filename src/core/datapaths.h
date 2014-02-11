@@ -152,6 +152,7 @@ class MAIN_EXPORT DataPaths
 
 		void setPortableModeOn(bool b);
 		void setProgramDirName(const QString& name);
+		void setWorkingDirectory(const QString &workingDirectory);
 
 		/**
 		 *	@brief Gets path to the root directory for data storage.
@@ -176,6 +177,11 @@ class MAIN_EXPORT DataPaths
 		 *	is accessible.
 		 */
 		bool					validateAppDataDirectory();
+
+		/**
+		 * @brief Program working directory.
+		 */
+		const QString &workingDirectory() const;
 
 	protected:
 		/**

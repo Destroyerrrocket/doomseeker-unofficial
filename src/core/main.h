@@ -51,7 +51,6 @@ class MAIN_EXPORT Main : public QObject
 		static bool bInstallUpdatesAndRestart;
 		static DataPaths*			dataPaths;
 		static QList<LocalizationInfo> localizations;
-		static QString				workingDirectory;
 		static QString argDataDir;
 		static bool bPortableMode;
 
@@ -117,6 +116,9 @@ class MAIN_EXPORT Main : public QObject
 		bool						startRcon;
 		int updateFailedCode;
 		QUrl						connectUrl;
+
+	private:
+		QString workingDirectory;
 };
 
 #endif /* __MAIN_H__ */

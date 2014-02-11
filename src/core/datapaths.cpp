@@ -21,7 +21,8 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "datapaths.h"
-#include "main.h"
+
+#include <QCoreApplication>
 #include "strings.h"
 #include <QDesktopServices>
 #include <cstdlib>
@@ -33,6 +34,7 @@ class DataPaths::PrivData
 		QString programsDirectoryName;
 		QString programsSupportDirectoryName;
 		QString demosDirectoryName;
+		QString workingDirectory;
 };
 
 #ifdef Q_OS_MAC
@@ -55,6 +57,7 @@ DataPaths::DataPaths(bool bPortableModeOn)
 	d->programsDirectoryName = PROGRAMS_APPDATA_DIR_NAME;
 	d->programsSupportDirectoryName = PROGRAMS_APPDATASUPPORT_DIR_NAME;
 	d->demosDirectoryName = PROGRAMS_APPDATA_DIR_NAME + QDir::separator() + DEMOS_DIR_NAME;
+	d->workingDirectory = "./";
 }
 
 DataPaths::~DataPaths()
@@ -225,6 +228,11 @@ QString DataPaths::programsDataSupportDirectoryPath() const
 	return appSupportDataDir;
 }
 
+void DataPaths::setWorkingDirectory(const QString &workingDirectory)
+{
+	d->workingDirectory = workingDirectory;
+}
+
 QStringList DataPaths::staticDataSearchDirs(const QString& subdir)
 {
 	QStringList paths;
@@ -249,9 +257,7 @@ QString DataPaths::systemAppDataDirectory(QString append) const
 
 	if (isPortableModeOn())
 	{
-		// In portable model Main class already stores the "working dir", ie.
-		// the directory where the executable resides.
-		QString path = Main::workingDirectory + "/" + append;
+		QString path = d->workingDirectory + "/" + append;
 		return QDir(path).absolutePath();
 	}
 
@@ -310,3 +316,9 @@ bool DataPaths::validateDir(const QString& path)
 
 	return bCondition1 && bCondition2 && bCondition3;
 }
+
+const QString &DataPaths::workingDirectory() const
+{
+	return d->workingDirectory;
+}
+

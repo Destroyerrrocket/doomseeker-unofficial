@@ -60,7 +60,7 @@ bool Main::bInstallUpdatesAndRestart = false;
 bool Main::bPortableMode = false;
 DataPaths*			Main::dataPaths;
 QList<LocalizationInfo> Main::localizations;
-QString				Main::workingDirectory = "./";
+
 
 Main::Main(int argc, char* argv[])
 : arguments(argv), argumentsCount(argc),
@@ -320,6 +320,7 @@ bool Main::initDataDirectories()
 {
 	dataPaths = new DataPaths(bPortableMode);
 	DoomseekerFilePaths::pDataPaths = dataPaths;
+	dataPaths->setWorkingDirectory(Strings::trim(this->workingDirectory, "\""));
 	if (!dataPaths->createDirectories())
 	{
 		return false;
@@ -328,7 +329,7 @@ bool Main::initDataDirectories()
 	// I think this directory should take priority, if user, for example,
 	// wants to update the ip2country file.
 	dataDirectories << dataPaths->programsDataSupportDirectoryPath();
-	dataDirectories << Main::workingDirectory;
+	dataDirectories << dataPaths->workingDirectory();
 
 	// Continue with standard dirs:
 	dataDirectories << "./";
@@ -462,8 +463,7 @@ bool Main::interpretCommandLineParameters()
 	int lastSlash = qMax<int>(firstArg.lastIndexOf('\\'), firstArg.lastIndexOf('/'));
 	if(lastSlash != -1)
 	{
-		QString workingDir = firstArg.mid(0, lastSlash+1);
-		Main::workingDirectory = Strings::trim(workingDir, "\"");
+		this->workingDirectory = firstArg.mid(0, lastSlash+1);
 	}
 
 	for(int i = 0; i < argumentsCount; ++i)
