@@ -63,6 +63,11 @@ void Application::destroy()
 	d->running = false;
 }
 
+bool Application::isInit()
+{
+	return staticInstance != NULL;
+}
+
 void Application::init(int &argc, char **argv)
 {
 	assert(staticInstance == NULL && "Cannot initialize Application twice!");
