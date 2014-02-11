@@ -28,7 +28,8 @@
 class Application::PrivData
 {
 	public:
-		QApplication *application;
+		int argc;
+		char **argv;
 		MainWindow *mainWindow;
 		bool running;
 		QString workingDirectory;
@@ -36,10 +37,12 @@ class Application::PrivData
 
 Application *Application::staticInstance = NULL;
 
-Application::Application(QApplication *application)
+Application::Application(int argc, char **argv)
+: QApplication(argc, argv)
 {
 	d = new PrivData();
-	d->application = application;
+	d->argc = argc;
+	d->argv = argv;
 	d->mainWindow = NULL;
 	d->running = true;
 	d->workingDirectory = "./";
@@ -49,11 +52,6 @@ Application::Application(QApplication *application)
 Application::~Application()
 {
 	delete d;
-}
-
-QApplication *Application::applicationQt()
-{
-	return d->application;
 }
 
 void Application::deinit()
@@ -69,15 +67,10 @@ void Application::destroy()
 	d->running = false;
 }
 
-int Application::exec()
-{
-	return d->application->exec();
-}
-
-void Application::init(QApplication *application)
+void Application::init(int argc, char **argv)
 {
 	assert(staticInstance == NULL && "Cannot initialize Application twice!");
-	staticInstance = new Application(application);
+	staticInstance = new Application(argc, argv);
 }
 
 Application *Application::instance()

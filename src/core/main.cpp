@@ -118,7 +118,7 @@ int Main::run()
 		return 0;
 	}
 
-	Application::init(new QApplication(argumentsCount, arguments));
+	Application::init(argumentsCount, arguments);
 #ifdef Q_OS_MAC
 	// In Mac OS X it is abnormal to have menu icons unless it's a shortcut to a file of some kind.
 	gApp->setAttribute(Qt::AA_DontShowIconsInMenus);
@@ -257,7 +257,7 @@ void Main::createMainWindow()
 {
 	gLog << tr("Preparing GUI.");
 
-	gApp->setMainWindow(new MainWindow(gApp->applicationQt(), argumentsCount, arguments));
+	gApp->setMainWindow(new MainWindow(gApp, argumentsCount, arguments));
 	if (gConfig.doomseeker.bMainWindowMaximized)
 	{
 		gApp->mainWindow()->showMaximized();
