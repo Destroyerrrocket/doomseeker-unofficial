@@ -31,7 +31,7 @@
 #include "serverapi/serverstructs.h"
 
 // Bump whenever the ABI changes in order to reject old plugins
-#define DOOMSEEKER_ABI_VERSION 1
+#define DOOMSEEKER_ABI_VERSION 2
 
 #define DECLARE_PLUGIN(XEnginePlugin) \
 	public: \
