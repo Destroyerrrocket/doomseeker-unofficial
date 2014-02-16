@@ -41,24 +41,17 @@ class MAIN_EXPORT IniVariable
 {
 	public:
 		/**
- 		* @brief Creates an invalid IniVariable object. Such object should not
- 		*        be used for read/write operations.
- 		*/
+		* @brief Creates an invalid IniVariable object. Such object should not
+		*        be used for read/write operations.
+		*
+		* isNull() will return true.
+		*/
 		IniVariable();
 
 		/**
-		 * @brief Creates a valid IniVariable object. Read/write operations are
-		 *        permitted.
+		 * @brief Creates a valid IniVariable object.
 		 */
-		IniVariable(IniSection* pSection, const QString& key);
-
-		/**
-	 	* @brief Creates a valid IniVariable, read-only object.
-	 	*
-		 * Only read operations are permitted. Performing write operations
-		 * on such object will fail.
-		 */
-		IniVariable(const IniSection* pSection, const QString& key);
+		IniVariable(const IniSection &section, const QString& key);
 
 		COPYABLE_D_POINTERED_DECLARE(IniVariable);
 		virtual ~IniVariable();

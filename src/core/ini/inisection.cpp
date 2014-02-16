@@ -117,7 +117,7 @@ IniVariable IniSection::retrieveSetting(const QString& name)
 		return IniVariable();
 	}
 
-	return IniVariable(this, name);
+	return IniVariable(*this, name);
 }
 
 const IniVariable IniSection::retrieveSetting(const QString& name) const
@@ -128,7 +128,7 @@ const IniVariable IniSection::retrieveSetting(const QString& name) const
 		return IniVariable();
 	}
 
-	return IniVariable(this, name);
+	return IniVariable(*this, name);
 }
 
 IniVariable IniSection::setting(const QString& name)

@@ -33,13 +33,7 @@ class IniVariable::PrivData
 		 * @brief For non-const operations. Might be NULL even if pConstSection
 		 *        is not NULL.
 		 */
-		IniSection* pSection;
-
-		/**
- 		* @brief For const operations. If NULL then IniVariable object is
- 		*        invalid.
- 		*/
-		const IniSection* pConstSection;
+		IniSection section;
 
 		/**
 		 * @brief The key name of this variable.
@@ -52,23 +46,12 @@ COPYABLE_D_POINTERED_DEFINE(IniVariable);
 IniVariable::IniVariable()
 {
 	d = new PrivData();
-	d->pConstSection = NULL;
-	d->pSection = NULL;
 }
 
-IniVariable::IniVariable(IniSection* pSection, const QString& key)
+IniVariable::IniVariable(const IniSection &section, const QString& key)
 {
 	d = new PrivData();
-	d->pConstSection = pSection;
-	d->pSection = pSection;
-	d->key = key;
-}
-
-IniVariable::IniVariable(const IniSection* pSection, const QString& key)
-{
-	d = new PrivData();
-	d->pConstSection = pSection;
-	d->pSection = NULL;
+	d->section = section;
 	d->key = key;
 }
 
@@ -168,26 +151,15 @@ const IniVariable &IniVariable::operator=(float f)
 
 bool IniVariable::isNull() const
 {
-	return d->pConstSection == NULL;
+	return d->section.isNull();
 }
 
 void IniVariable::setValue(const QVariant& value)
 {
-	assert(!isNull());
-	assert(d->pSection != NULL);
-
-	if (d->pSection != NULL)
-	{
-		d->pSection->setValue(d->key, value);
-	}
+	d->section.setValue(d->key, value);
 }
 
 QVariant IniVariable::value() const
 {
-	if (d->pConstSection != NULL)
-	{
-		return d->pConstSection->value(d->key);
-	}
-
-	return QVariant();
+	return d->section.value(d->key);
 }
