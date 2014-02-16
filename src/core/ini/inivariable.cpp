@@ -149,6 +149,11 @@ const IniVariable &IniVariable::operator=(float f)
 	return *this;
 }
 
+const QString& IniVariable::key()
+{
+	return d->key;
+}
+
 bool IniVariable::isNull() const
 {
 	return d->section.isNull();

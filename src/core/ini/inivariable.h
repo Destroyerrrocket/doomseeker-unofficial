@@ -32,10 +32,9 @@
 class IniSection;
 
 /**
- *	@brief INI variable representation.
+ * @brief INI variable representation.
  *
- *	Structure containing variable's value and comments. The name of the
- *	variable is not contained in the structure itself to prevent redundancy.
+ * Structure containing variable's value and comments.
  */
 class MAIN_EXPORT IniVariable
 {
@@ -55,6 +54,11 @@ class MAIN_EXPORT IniVariable
 
 		COPYABLE_D_POINTERED_DECLARE(IniVariable);
 		virtual ~IniVariable();
+
+		/**
+		 * @brief Name of the variable within the section.
+		 */
+		const QString& key();
 
 		/**
 		 * @brief If true, IniSection object is not valid and should not be
