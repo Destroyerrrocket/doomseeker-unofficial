@@ -68,6 +68,9 @@ Main::Main(int argc, char* argv[])
 	bTestMode = false;
 	bPortableMode = false;
 	updateFailedCode = 0;
+
+	qRegisterMetaType<ServerPtr>("ServerPtr");
+	qRegisterMetaType<ServerCPtr>("ServerCPtr");
 }
 
 Main::~Main()

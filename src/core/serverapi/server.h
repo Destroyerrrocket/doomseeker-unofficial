@@ -25,6 +25,7 @@
 #define __SERVER_H__
 
 #include "serverapi/polymorphism.h"
+#include "serverapi/serverptr.h"
 #include "global.h"
 
 #include <QColor>
@@ -376,5 +377,7 @@ class MAIN_EXPORT ServerPointer
 };
 
 Q_DECLARE_METATYPE(ServerPointer)
+Q_DECLARE_METATYPE(ServerPtr);
+Q_DECLARE_METATYPE(ServerCPtr);
 
 #endif /* __SERVER_H__ */

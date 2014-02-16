@@ -180,6 +180,7 @@ set(DOOMSEEKER_QT_FILES
 	serverapi/message.h
 	serverapi/rconprotocol.h
 	serverapi/server.h
+	serverapi/serverptr.h
 	updater/autoupdater.h
 	updater/updatechannel.h
 	updater/updaterinfoparser.h
