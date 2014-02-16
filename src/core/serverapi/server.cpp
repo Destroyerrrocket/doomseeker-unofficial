@@ -46,13 +46,6 @@ class Server::PrivData
 		}
 
 		/**
-		 * If this is true server will be deleted as soon as
-		 * it finished working (refreshing). This should be safer
-		 * than blatant `delete server` while server's thread is still
-		 * running.
-		 */
-		bool bDelete;
-		/**
 		 * This should be set to true upon successful return from doRefresh(),
 		 * and to false upon failure. setServers() protected slot handles this.
 		 * Example usage: Skulltag servers can use this to update ping
@@ -155,7 +148,6 @@ Server::Server(const QHostAddress &address, unsigned short port)
 	d->broadcastToMaster = false;
 	d->randomMapRotation = false;
 	d->skill = 3;
-	d->bDelete = false;
 	d->bKnown = false;
 	d->custom = false;
 
@@ -374,11 +366,6 @@ bool Server::isRefreshing() const
 bool Server::isSecure() const
 {
 	return d->bSecure;
-}
-
-bool Server::isSetToDelete() const
-{
-	return d->bDelete;
 }
 
 const QString& Server::iwad() const
@@ -723,15 +710,6 @@ void Server::setTimeLeft(unsigned short serverTimeLeft)
 void Server::setTimeLimit(unsigned short serverTimeLimit)
 {
 	d->timeLimit = serverTimeLimit;
-}
-
-void Server::setToDelete(bool b)
-{
-	d->bDelete = b;
-	if (!d->bIsRefreshing)
-	{
-		delete this;
-	}
 }
 
 void Server::setSkill(unsigned char skill)

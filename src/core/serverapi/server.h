@@ -170,8 +170,6 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		bool isSecure() const;
 
-		bool isSetToDelete() const;
-
 		const QString& iwad() const;
 		const QString& joinPassword() const;
 
@@ -242,7 +240,6 @@ class MAIN_EXPORT Server : public QObject
 		void setRandomMapRotation(bool b);
 		void setRconPassword(const QString& str);
 		void setSkill(unsigned char newSkill);
-		void setToDelete(bool b);
 		void setWebSite(const QString& site);
 
 		unsigned short timeLeft() const;

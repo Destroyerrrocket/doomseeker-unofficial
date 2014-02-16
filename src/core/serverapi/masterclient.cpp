@@ -81,7 +81,7 @@ void MasterClient::emptyServerList()
 	foreach (Server* server, d->servers)
 	{
 		server->disconnect();
-		server->setToDelete(true);
+		delete server;
 	}
 	d->servers.clear();
 }
