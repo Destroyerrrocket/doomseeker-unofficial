@@ -1104,7 +1104,7 @@ void MainWindow::refreshCustomServers()
 	{
 		Server* server = (*customServers)[i];
 		serverTableHandler->serverUpdated(server, Server::RESPONSE_NO_RESPONSE_YET);
-		server->refresh(); // This will register server with refreshing thread.
+		gRefresher->registerServer(server);
 	}
 }
 

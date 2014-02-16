@@ -34,6 +34,7 @@
 #include "ini/settingsproviderqt.h"
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
+#include "refresher/refresher.h"
 #include "serverapi/gameclientrunner.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
@@ -122,7 +123,7 @@ ConnectionHandler *ConnectionHandler::connectByUrl(const QUrl &url)
 	// Create the server object
 	Server *server = handler->server(QHostAddress(address), port);
 	ConnectionHandler *connectionHandler = new ConnectionHandler(server, NULL, true);
-	server->refresh();
+	gRefresher->registerServer(server);
 
 	return connectionHandler;
 }
@@ -308,7 +309,7 @@ void ConnectionHandler::refreshToJoin()
 	// If the data we have is old we should refresh first to check if we can
 	// still properly join the server.
 	if(server->isRefreshable() && gConfig.doomseeker.bQueryBeforeLaunch)
-		server->refresh();
+		gRefresher->registerServer(server);
 	else
 		checkResponse(server, Server::RESPONSE_GOOD);
 }

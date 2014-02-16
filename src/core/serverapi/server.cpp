@@ -26,7 +26,6 @@
 #include "configuration/doomseekerconfig.h"
 #include "plugins/engineplugin.h"
 #include "strings.h"
-#include "refresher/refresher.h"
 #include "serverapi/exefile.h"
 #include "serverapi/gameclientrunner.h"
 #include "serverapi/playerslist.h"
@@ -97,7 +96,7 @@ class Server::PrivData
 
 		/**
 		 * This is used to make
-		 * sure that refresh() method isn't run on
+		 * sure that refresh isn't run on
 		 * server that is already refreshing.
 		 */
 		bool bIsRefreshing;
@@ -475,16 +474,6 @@ Server::Response Server::readRequest_default(QByteArray &data)
 {
 	assert(0 && "Server::readRequest(QByteArray&) is not implemented.");
 	return RESPONSE_BAD;
-}
-
-bool Server::refresh()
-{
-	if (isRefreshable())
-	{
-		gRefresher->registerServer(this);
-		return true;
-	}
-	return false;
 }
 
 void Server::refreshStarts()

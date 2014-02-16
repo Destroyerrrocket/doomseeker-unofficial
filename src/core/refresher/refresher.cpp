@@ -270,10 +270,14 @@ void Refresher::registerMaster(MasterClient* pMaster)
 	}
 }
 
-void Refresher::registerServer(Server* server)
+bool Refresher::registerServer(Server* server)
 {
 	if (!d->registeredServers.contains(server))
 	{
+		if (!server->isRefreshable())
+		{
+			return false;
+		}
 		d->registeredServers.insert(server);
 		if (!server->isCustom())
 		{
@@ -291,6 +295,7 @@ void Refresher::registerServer(Server* server)
 			QTimer::singleShot(20, this, SLOT(sendServerQueries()));
 		}
 	}
+	return true;
 }
 
 void Refresher::readAllPendingDatagrams()

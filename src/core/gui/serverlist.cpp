@@ -29,6 +29,7 @@
 #include "gui/widgets/serverlistcontextmenu.h"
 #include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
+#include "refresher/refresher.h"
 #include "serverapi/gameexeretriever.h"
 #include "serverapi/message.h"
 #include "serverapi/playerslist.h"
@@ -456,8 +457,7 @@ void ServerListHandler::refreshAll()
 {
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
-		Server* serv = model->serverFromList(i);
-		serv->refresh();
+		gRefresher->registerServer(model->serverFromList(i));
 	}
 }
 
@@ -469,8 +469,7 @@ void ServerListHandler::refreshSelected()
 	for(int i = 0; i < indexList.count(); ++i)
 	{
 		QModelIndex realIndex = sortingProxy->mapToSource(indexList[i]);
-		Server* server = model->serverFromList(realIndex);
-		server->refresh();
+		gRefresher->registerServer(model->serverFromList(realIndex));
 	}
 }
 

@@ -249,12 +249,6 @@ class MAIN_EXPORT Server : public QObject
 		const QList<PWad>& wads() const;
 		const QString& webSite() const;
 
-	public slots:
-		/**
-		 * Updates the server data.
-		 */
-		bool refresh();
-
 	signals:
 		void begunRefreshing(Server* server);
 		/**

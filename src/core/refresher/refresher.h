@@ -56,8 +56,11 @@ class Refresher : public QObject
 		 * Registers a new server to be queried. All servers are stored
 		 * in a hash table, therefore it's impossible to register the same
 		 * object twice.
+		 *
+		 * @return true if server was registered, false if it couldn't
+		 *         be refreshed at the moment.
 		 */
-		void registerServer(Server* server);
+		bool registerServer(Server* server);
 
 		/**
 		 * Sets delay between subsequent queries send to the servers.
