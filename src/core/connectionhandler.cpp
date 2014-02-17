@@ -41,15 +41,27 @@
 
 #include <QMessageBox>
 
+class ConnectionHandler::PrivData
+{
+	public:
+		ServerPtr server;
+};
+
 ConnectionHandler::ConnectionHandler(ServerPtr server, QWidget *parent, bool handleResponse) : QObject(parent)
 {
+	d = new PrivData();
 	this->parent = parent;
 	this->handleResponse = handleResponse;
-	this->server = server;
-	connect(this->server.data(), SIGNAL(updated(ServerPtr, int)), this, SLOT(checkResponse(ServerPtr, int)));
+	d->server = server;
+	connect(d->server.data(), SIGNAL(updated(ServerPtr, int)), this, SLOT(checkResponse(ServerPtr, int)));
 }
 
-void ConnectionHandler::checkResponse(ServerPtr server, int response)
+ConnectionHandler::~ConnectionHandler()
+{
+	delete d;
+}
+
+void ConnectionHandler::checkResponse(const ServerPtr &server, int response)
 {
 	if(response != Server::RESPONSE_GOOD)
 	{
@@ -130,7 +142,7 @@ ConnectionHandler *ConnectionHandler::connectByUrl(const QUrl &url)
 
 void ConnectionHandler::finish(int response)
 {
-	this->server->disconnect(this);
+	d->server->disconnect(this);
 	emit finished(response);
 }
 
@@ -308,13 +320,13 @@ void ConnectionHandler::refreshToJoin()
 {
 	// If the data we have is old we should refresh first to check if we can
 	// still properly join the server.
-	if(server->isRefreshable() && gConfig.doomseeker.bQueryBeforeLaunch)
+	if(d->server->isRefreshable() && gConfig.doomseeker.bQueryBeforeLaunch)
 	{
-		gRefresher->registerServer(server.data());
+		gRefresher->registerServer(d->server.data());
 	}
 	else
 	{
-		checkResponse(server, Server::RESPONSE_GOOD);
+		checkResponse(d->server, Server::RESPONSE_GOOD);
 	}
 }
 
@@ -322,7 +334,7 @@ void ConnectionHandler::run()
 {
 	bool hadMissing = false;
 	CommandLineInfo cli;
-	if (obtainJoinCommandLine(parent, server, cli, tr("Doomseeker - join server"), true, &hadMissing))
+	if (obtainJoinCommandLine(parent, d->server, cli, tr("Doomseeker - join server"), true, &hadMissing))
 	{
 		if(hadMissing)
 		{
@@ -335,7 +347,8 @@ void ConnectionHandler::run()
 		Message message = AppRunner::runExecutable(cli);
 		if (message.isError())
 		{
-			gLog << tr("Error while launching executable for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(message.contents());
+			gLog << tr("Error while launching executable for server \"%1\", game \"%2\": %3")
+				.arg(d->server->name()).arg(d->server->engineName()).arg(message.contents());
 			QMessageBox::critical(parent, tr("Doomseeker - launch executable"), message.contents());
 		}
 	}

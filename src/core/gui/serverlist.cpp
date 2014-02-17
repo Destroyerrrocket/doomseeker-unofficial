@@ -496,7 +496,7 @@ QList<ServerPtr> ServerListHandler::selectedServers()
 	return servers;
 }
 
-void ServerListHandler::serverBegunRefreshing(ServerPtr server)
+void ServerListHandler::serverBegunRefreshing(const ServerPtr &server)
 {
 	model->setRefreshing(server);
 }
@@ -508,7 +508,7 @@ ServerPtr ServerListHandler::serverFromIndex(const QModelIndex &index)
 	return model->serverFromList(indexReal);
 }
 
-void ServerListHandler::serverUpdated(ServerPtr server, int response)
+void ServerListHandler::serverUpdated(const ServerPtr &server, int response)
 {
 	int rowIndex = model->findServerOnTheList(server.data());
 	if (rowIndex >= 0)

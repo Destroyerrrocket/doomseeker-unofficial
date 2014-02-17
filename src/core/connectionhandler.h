@@ -39,6 +39,7 @@ class ConnectionHandler : public QObject
 
 	public:
 		ConnectionHandler(ServerPtr server, QWidget *parent=NULL, bool handleResponse=false);
+		~ConnectionHandler();
 
 		void	run();
 
@@ -64,14 +65,16 @@ class ConnectionHandler : public QObject
 		void	refreshToJoin();
 
 	protected slots:
-		void	checkResponse(ServerPtr server, int response);
+		void	checkResponse(const ServerPtr &server, int response);
 
 	signals:
 		void	finished(int response);
 
 	private:
+		class PrivData;
+		PrivData *d;
+
 		bool	handleResponse;
-		ServerPtr server;
 		QWidget	*parent;
 
 		static QString mkDemoName(ServerPtr server, bool managedDemo);

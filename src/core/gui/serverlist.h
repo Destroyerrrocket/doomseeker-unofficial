@@ -72,8 +72,8 @@ class ServerListHandler : public QObject
 		void 				redraw();
 		void 				refreshAll();
 		void				refreshSelected();
-		void 				serverBegunRefreshing(ServerPtr server);
-		void 				serverUpdated(ServerPtr server, int response);
+		void 				serverBegunRefreshing(const ServerPtr &server);
+		void 				serverUpdated(const ServerPtr &server, int response);
 
 		/**
 		 *	@brief Sets country flags for servers that don't have flags
@@ -98,15 +98,15 @@ class ServerListHandler : public QObject
 		/**
 		 * Emitted when a request for join command line show is called.
 		 */
-		void displayServerJoinCommandLine(ServerPtr);
+		void displayServerJoinCommandLine(const ServerPtr&);
 
 		void serverFilterModified(const ServerListFilterInfo& filter);
 		/**
 		 *	@brief Emitted every time when a server info is updated through
 		 *	serverUpdated()
 		 */
-		void serverInfoUpdated(ServerPtr);
-		void serverDoubleClicked(ServerPtr);
+		void serverInfoUpdated(const ServerPtr&);
+		void serverDoubleClicked(const ServerPtr&);
 		void serversSelected(QList<ServerPtr>&);
 
 	protected:
