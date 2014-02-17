@@ -59,7 +59,7 @@ MasterClient *ChocolateDoomEnginePlugin::masterClient() const
 	return new ChocolateDoomMasterClient();
 }
 
-Server* ChocolateDoomEnginePlugin::server(const QHostAddress &address, unsigned short port) const
+ServerPtr ChocolateDoomEnginePlugin::server(const QHostAddress &address, unsigned short port) const
 {
-	return new ChocolateDoomServer(address, port);
+	return ServerPtr(new ChocolateDoomServer(address, port));
 }

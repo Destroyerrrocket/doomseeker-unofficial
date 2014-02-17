@@ -23,6 +23,7 @@
 #ifndef __SERVERLISTPROXYMODEL_H__
 #define __SERVERLISTPROXYMODEL_H__
 
+#include "serverapi/serverptr.h"
 #include <QModelIndex>
 #include <QSortFilterProxyModel>
 
@@ -59,8 +60,8 @@ class ServerListProxyModel : public QSortFilterProxyModel
 		bool compareColumnSortData(QVariant& var1, QVariant& var2, int column) const;
 		bool lessThan(const QModelIndex& left, const QModelIndex& right) const;
 
-		Server* serverFromList(const QModelIndex& index) const;
-		Server* serverFromList(int row) const;
+		ServerPtr serverFromList(const QModelIndex& index) const;
+		ServerPtr serverFromList(int row) const;
 };
 
 #endif

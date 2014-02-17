@@ -33,7 +33,7 @@ class OdamexEnginePlugin : public EnginePlugin
 
 		GameHost *gameHost();
 		MasterClient *masterClient() const;
-		Server* server(const QHostAddress &address, unsigned short port) const;
+		ServerPtr server(const QHostAddress &address, unsigned short port) const;
 };
 
 #endif

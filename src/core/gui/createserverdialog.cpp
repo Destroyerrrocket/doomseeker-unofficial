@@ -615,9 +615,8 @@ void CreateServerDialog::initEngineSpecific(EnginePlugin* engineInfo)
 	if (d->bIsServerSetup)
 	{
 		// TODO: something weird, perhaps just refer to offline executable here?
-		Server* server = d->currentEngine->server(QHostAddress("127.0.0.1"), 1);
-		leExecutable->setText(pathToClientExe(server, message));
-		delete server;
+		ServerPtr server = d->currentEngine->server(QHostAddress("127.0.0.1"), 1);
+		leExecutable->setText(pathToClientExe(server.data(), message));
 	}
 	else
 	{

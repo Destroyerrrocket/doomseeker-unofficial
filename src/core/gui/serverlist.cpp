@@ -151,7 +151,7 @@ void ServerListHandler::connectTableModelProxySlots()
 	connect(table, SIGNAL( leftMouseDoubleClicked(const QModelIndex&, const QPoint&)), this, SLOT( doubleClicked(const QModelIndex&)) );
 }
 
-QString ServerListHandler::createIwadToolTip(const Server* server)
+QString ServerListHandler::createIwadToolTip(ServerCPtr server)
 {
 	if (!server->isKnown())
 	{
@@ -194,7 +194,7 @@ ServerListModel* ServerListHandler::createModel()
 	return serverListModel;
 }
 
-QString ServerListHandler::createPlayersToolTip(const Server* server)
+QString ServerListHandler::createPlayersToolTip(ServerCPtr server)
 {
 	if (server == NULL || !server->isKnown())
 	{
@@ -216,7 +216,7 @@ QString ServerListHandler::createPlayersToolTip(const Server* server)
 	return ret;
 }
 
-QString ServerListHandler::createPortToolTip(const Server* server)
+QString ServerListHandler::createPortToolTip(ServerCPtr server)
 {
 	if (server == NULL || !server->isKnown())
 		return QString();
@@ -233,7 +233,7 @@ QString ServerListHandler::createPortToolTip(const Server* server)
 	return ret;
 }
 
-QString ServerListHandler::createPwadsToolTip(const Server* server)
+QString ServerListHandler::createPwadsToolTip(ServerCPtr server)
 {
 	if (server == NULL || !server->isKnown() || server->numWads() == 0)
 	{
@@ -310,7 +310,7 @@ QString ServerListHandler::createPwadToolTipInfo(const PWad& pwad, const QString
 	return formattedStringBegin + formattedStringMiddle + formattedStringEnd;
 }
 
-QString ServerListHandler::createServerNameToolTip(const Server* server)
+QString ServerListHandler::createServerNameToolTip(ServerCPtr server)
 {
 	if (server == NULL)
 	{
@@ -374,7 +374,7 @@ bool ServerListHandler::isSortingByColumn(int columnIndex)
 
 void ServerListHandler::itemSelected(const QModelIndex& index)
 {
-	QList<Server*> servers = selectedServers();
+	QList<ServerPtr> servers = selectedServers();
 	emit serversSelected(servers);
 }
 
@@ -382,14 +382,14 @@ void ServerListHandler::lookupHosts()
 {
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
-		Server* server = model->serverFromList(i);
+		ServerPtr server = model->serverFromList(i);
 		server->lookupHost();
 	}
 }
 
 void ServerListHandler::modelCleared()
 {
-	QList<Server*> servers;
+	QList<ServerPtr> servers;
 	emit serversSelected(servers);
 }
 
@@ -397,7 +397,7 @@ void ServerListHandler::mouseEntered(const QModelIndex& index)
 {
 	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
 	QModelIndex realIndex = pModel->mapToSource(index);
-	Server* server = model->serverFromList(realIndex);
+	ServerPtr server = model->serverFromList(realIndex);
 	QString tooltip;
 
 	// Functions inside cases perform checks on the server structure
@@ -457,7 +457,8 @@ void ServerListHandler::refreshAll()
 {
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
-		gRefresher->registerServer(model->serverFromList(i));
+		// [ServerPtr TODO] Use ServerPtr directly.
+		gRefresher->registerServer(model->serverFromList(i).data());
 	}
 }
 
@@ -469,7 +470,8 @@ void ServerListHandler::refreshSelected()
 	for(int i = 0; i < indexList.count(); ++i)
 	{
 		QModelIndex realIndex = sortingProxy->mapToSource(indexList[i]);
-		gRefresher->registerServer(model->serverFromList(realIndex));
+		// [ServerPtr TODO] Use ServerPtr directly.
+		gRefresher->registerServer(model->serverFromList(realIndex).data());
 	}
 }
 
@@ -480,17 +482,17 @@ void ServerListHandler::saveColumnsWidthsSettings()
 	gConfig.doomseeker.serverListSortDirection = sortOrder;
 }
 
-QList<Server*> ServerListHandler::selectedServers()
+QList<ServerPtr> ServerListHandler::selectedServers()
 {
 	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
 	QItemSelectionModel* selModel = table->selectionModel();
 	QModelIndexList indexList = selModel->selectedRows();
 
-	QList<Server*> servers;
+	QList<ServerPtr> servers;
 	for(int i = 0; i < indexList.count(); ++i)
 	{
 		QModelIndex realIndex = pModel->mapToSource(indexList[i]);
-		Server* server = model->serverFromList(realIndex);
+		ServerPtr server = model->serverFromList(realIndex);
 		servers.append(server);
 	}
 	return servers;
@@ -498,18 +500,21 @@ QList<Server*> ServerListHandler::selectedServers()
 
 void ServerListHandler::serverBegunRefreshing(Server* server)
 {
-	model->setRefreshing(server);
+	// [ServerPtr TODO] Do nothing for the time being ...
+	//model->setRefreshing(server);
 }
 
-Server *ServerListHandler::serverFromIndex(const QModelIndex &index)
+ServerPtr ServerListHandler::serverFromIndex(const QModelIndex &index)
 {
 	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
 	QModelIndex indexReal = pModel->mapToSource(index);
 	return model->serverFromList(indexReal);
 }
 
-void ServerListHandler::serverUpdated(Server *server, int response)
+void ServerListHandler::serverUpdated(Server* server, int response)
 {
+	// [ServerPtr TODO] Do nothing for the time being ...
+	#if 0
 	int rowIndex = model->findServerOnTheList(server);
 	if (rowIndex >= 0)
 	{
@@ -522,6 +527,7 @@ void ServerListHandler::serverUpdated(Server *server, int response)
 
 	needsCleaning = true;
 	emit serverInfoUpdated(server);
+	#endif
 }
 
 void ServerListHandler::setCountryFlagsIfNotPresent()
@@ -592,7 +598,7 @@ void ServerListHandler::tableMiddleClicked(const QModelIndex& index, const QPoin
 
 void ServerListHandler::tableRightClicked(const QModelIndex& index, const QPoint& cursorPosition)
 {
-	Server* server = serverFromIndex(index);
+	ServerPtr server = serverFromIndex(index);
 
 	ServerListProxyModel* pModel = static_cast<ServerListProxyModel*>(table->model());
 	ServerListContextMenu contextMenu(server, pModel->filterInfo());

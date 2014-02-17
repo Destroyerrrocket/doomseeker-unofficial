@@ -69,9 +69,9 @@ MasterClient *PluginEnginePlugin::masterClient() const
 	return new PluginMasterClient();
 }
 
-Server* PluginEnginePlugin::server(const QHostAddress &address, unsigned short port) const
+ServerPtr PluginEnginePlugin::server(const QHostAddress &address, unsigned short port) const
 {
-	return new PluginServer(address, port);
+	return ServerPtr(new PluginServer(address, port));
 }
 
 bool PluginEnginePlugin::isMasterResponderInstantiated() const

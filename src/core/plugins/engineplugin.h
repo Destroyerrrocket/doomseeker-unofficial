@@ -29,6 +29,7 @@
 #include <QVector>
 #include "global.h"
 #include "serverapi/serverstructs.h"
+#include "serverapi/serverptr.h"
 
 // Bump whenever the ABI changes in order to reject old plugins
 #define DOOMSEEKER_ABI_VERSION 2
@@ -262,10 +263,10 @@ class MAIN_EXPORT EnginePlugin
 		 *	This might be useful for custom servers.
 		 * 	@return instance of plugin's server object
 		 */
-		virtual Server*					server(const QHostAddress &address, unsigned short port) const = 0;
+		virtual ServerPtr server(const QHostAddress &address, unsigned short port) const = 0;
 
 	private:
-		Data	*d;
+		Data *d;
 };
 
 #endif

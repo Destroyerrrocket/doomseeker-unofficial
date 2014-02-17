@@ -34,7 +34,7 @@ const QImage* PlayersDiagram::botImage = NULL;
 const QImage* PlayersDiagram::playerImage = NULL;
 const QImage* PlayersDiagram::spectatorImage = NULL;
 
-PlayersDiagram::PlayersDiagram(const Server *server)
+PlayersDiagram::PlayersDiagram(ServerCPtr server)
 : server(server), tmp(NULL)
 {
 	if(openImage == NULL)

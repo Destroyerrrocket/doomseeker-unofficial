@@ -23,6 +23,7 @@
 #ifndef __PLAYERS_DIAGRAM_H_
 #define __PLAYERS_DIAGRAM_H_
 
+#include "serverapi/serverptr.h"
 #include "serverapi/player.h"
 #include <QPixmap>
 #include <QImage>
@@ -41,7 +42,7 @@ class PlayersDiagram
 		 */
 		static	void loadImages(int style);
 
-		PlayersDiagram(const Server *server);
+		PlayersDiagram(ServerCPtr server);
 
 		~PlayersDiagram();
 
@@ -85,7 +86,7 @@ class PlayersDiagram
 		int 				numSpectators;
 
 	private:
-		const Server	*server;
+		ServerCPtr  server;
 		QPixmap			diagram;
 		QPainter*		painter;
 		int				position;

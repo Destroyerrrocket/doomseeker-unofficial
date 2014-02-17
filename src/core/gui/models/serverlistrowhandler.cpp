@@ -35,8 +35,8 @@
 
 using namespace ServerListColumnId;
 
-ServerListRowHandler::ServerListRowHandler(ServerListModel* parentModel, int rowIndex, Server* pServer)
-: model(parentModel), row(rowIndex), server(pServer)
+ServerListRowHandler::ServerListRowHandler(ServerListModel* parentModel, int rowIndex, ServerPtr server)
+: model(parentModel), row(rowIndex), server(server)
 {
 }
 
@@ -191,8 +191,7 @@ void ServerListRowHandler::fillPortIconColumn()
 void ServerListRowHandler::fillServerPointerColumn()
 {
 	QStandardItem* pItem = item(IDHiddenServerPointer);
-	ServerPointer ptr(server);
-	QVariant savePointer = qVariantFromValue(ptr);
+	QVariant savePointer = qVariantFromValue(server);
 	pItem->setData(savePointer, DTPointerToServerStructure);
 }
 
@@ -351,16 +350,15 @@ void ServerListRowHandler::setWait()
 	fillItem(qstdItem, SGWait);
 }
 
-Server* ServerListRowHandler::serverFromList(ServerListModel* parentModel, int rowIndex)
+ServerPtr ServerListRowHandler::serverFromList(ServerListModel* parentModel, int rowIndex)
 {
 	QStandardItem* pItem = parentModel->item(rowIndex, IDHiddenServerPointer);
 	QVariant pointer = qVariantFromValue(pItem->data(DTPointerToServerStructure));
 	if (!pointer.isValid())
 	{
-		return NULL;
+		return ServerPtr();
 	}
-	ServerPointer savedServ = qVariantValue<ServerPointer>(pointer);
-	return savedServ.ptr;
+	return qVariantValue<ServerPtr>(pointer);
 }
 
 //ServerListRowHandler::ServerGroup ServerListRowHandler::serverGroup()

@@ -122,9 +122,7 @@ ConnectionHandler *ConnectionHandler::connectByUrl(const QUrl &url)
 	Strings::translateServerAddress(url.host(), address, tmp, QString("localhost:10666"));
 
 	// Create the server object
-	// [ServerPtr TODO] Just fix...
-	Server *server_p = handler->server(QHostAddress(address), port);
-	ServerPtr server(server_p);
+	ServerPtr server = handler->server(QHostAddress(address), port);
 	ConnectionHandler *connectionHandler = new ConnectionHandler(server, NULL, true);
 	gRefresher->registerServer(server.data());
 

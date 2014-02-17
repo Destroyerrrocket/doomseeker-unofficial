@@ -23,6 +23,7 @@
 #ifndef __SERVER_LIST_MODEL_H_
 #define __SERVER_LIST_MODEL_H_
 
+#include "serverapi/serverptr.h"
 #include <QHostAddress>
 #include <QSortFilterProxyModel>
 #include <QStandardItem>
@@ -72,9 +73,9 @@ class ServerListModel : public QStandardItemModel
 		ServerListModel(ServerListHandler* parent);
 
 		/**
-		 *	Returns row index.
+		 * @return New row index.
 		 */
-		int 				addServer(Server* server, int response);
+		int addServer(ServerPtr server, int response);
 
 		void 				destroyRows();
 
@@ -106,12 +107,12 @@ class ServerListModel : public QStandardItemModel
 		/**
 		 *	Returns row index.
 		 */
-		int 				updateServer(int row, Server* server, int response);
+		int updateServer(int row, ServerPtr server, int response);
 
-		Server* 			serverFromList(int rowIndex);
-		Server* 			serverFromList(const QModelIndex&);
+		ServerPtr serverFromList(int rowIndex);
+		ServerPtr serverFromList(const QModelIndex&);
 
-		void				setRefreshing(Server* server);
+		void setRefreshing(ServerPtr server);
 
 	signals:
 		void 				allRowsContentChanged();
