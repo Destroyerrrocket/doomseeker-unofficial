@@ -229,7 +229,6 @@ void Refresher::masterFinishedRefreshing(MasterClient* pMaster)
 	const QList<ServerPtr>& servers = pMaster->servers();
 	foreach (ServerPtr pServer, servers)
 	{
-		// [ServerPtr TODO] User ServerPtr directly, or use QWeakPointer.
 		registerServer(pServer.data());
 	}
 

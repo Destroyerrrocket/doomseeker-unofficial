@@ -310,7 +310,6 @@ void ConnectionHandler::refreshToJoin()
 	// still properly join the server.
 	if(server->isRefreshable() && gConfig.doomseeker.bQueryBeforeLaunch)
 	{
-		// [ServerPtr TODO] Use ServerPtr directly.
 		gRefresher->registerServer(server.data());
 	}
 	else

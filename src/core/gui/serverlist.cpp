@@ -457,7 +457,6 @@ void ServerListHandler::refreshAll()
 {
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
-		// [ServerPtr TODO] Use ServerPtr directly.
 		gRefresher->registerServer(model->serverFromList(i).data());
 	}
 }
@@ -470,7 +469,6 @@ void ServerListHandler::refreshSelected()
 	for(int i = 0; i < indexList.count(); ++i)
 	{
 		QModelIndex realIndex = sortingProxy->mapToSource(indexList[i]);
-		// [ServerPtr TODO] Use ServerPtr directly.
 		gRefresher->registerServer(model->serverFromList(realIndex).data());
 	}
 }
