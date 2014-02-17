@@ -26,7 +26,7 @@
 #include "odamexgameinfo.h"
 #include "odamexserver.h"
 
-OdamexGameClientRunner::OdamexGameClientRunner(OdamexServer* server)
+OdamexGameClientRunner::OdamexGameClientRunner(QSharedPointer<OdamexServer> server)
 : GameClientRunner(server)
 {
 	this->server = server;

@@ -58,7 +58,8 @@ OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port)
 
 GameClientRunner* OdamexServer::gameRunner()
 {
-	return new OdamexGameClientRunner(this);
+	return new OdamexGameClientRunner(
+		self().toStrongRef().staticCast<OdamexServer>());
 }
 
 EnginePlugin* OdamexServer::plugin() const

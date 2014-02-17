@@ -28,10 +28,9 @@
 #include <ini/inisection.h>
 #include <ini/inivariable.h>
 
-ZandronumGameClientRunner::ZandronumGameClientRunner(ZandronumServer* server)
+ZandronumGameClientRunner::ZandronumGameClientRunner(ServerPtr server)
 : GameClientRunner(server)
 {
-	this->server = server;
 	setArgForConnectPassword("+cl_password");
 	set_addExtra(&ZandronumGameClientRunner::addExtra);
 }

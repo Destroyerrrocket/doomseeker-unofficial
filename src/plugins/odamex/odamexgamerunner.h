@@ -30,10 +30,10 @@ class OdamexServer;
 class OdamexGameClientRunner : public GameClientRunner
 {
 	public:
-		OdamexGameClientRunner(OdamexServer* server);
+		OdamexGameClientRunner(QSharedPointer<OdamexServer> server);
 
 	private:
-		const OdamexServer* server;
+		QSharedPointer<OdamexServer> server;
 
 		void addExtra();
 };

@@ -121,7 +121,7 @@ ExeFile* ZandronumServer::clientExe()
 
 GameClientRunner* ZandronumServer::gameRunner()
 {
-	return new ZandronumGameClientRunner(this);
+	return new ZandronumGameClientRunner(self());
 }
 
 unsigned int ZandronumServer::millisecondTime()

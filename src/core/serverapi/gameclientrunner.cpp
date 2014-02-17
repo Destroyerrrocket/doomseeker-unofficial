@@ -114,7 +114,7 @@ class GameClientRunner::PrivData
 		JoinError joinError;
 		QStringList missingPwads;
 		PathFinder pathFinder;
-		Server* server;
+		ServerPtr server;
 
 		void (GameClientRunner::*addExtra)();
 		void (GameClientRunner::*addIwad)();
@@ -127,7 +127,7 @@ POLYMORPHIC_DEFINE(void, GameClientRunner, addIwad, (), ());
 POLYMORPHIC_DEFINE(void, GameClientRunner, createCommandLineArguments, (), ());
 POLYMORPHIC_DEFINE(void, GameClientRunner, setupPathFinder, (), ());
 
-GameClientRunner::GameClientRunner(Server* server)
+GameClientRunner::GameClientRunner(ServerPtr server)
 {
 	d = new PrivData();
 	set_addExtra(&GameClientRunner::addExtra_default);

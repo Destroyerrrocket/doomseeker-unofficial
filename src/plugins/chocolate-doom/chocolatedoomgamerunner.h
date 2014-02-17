@@ -31,12 +31,12 @@ class ChocolateDoomServer;
 class ChocolateDoomGameClientRunner : public GameClientRunner
 {
 	public:
-		ChocolateDoomGameClientRunner(ChocolateDoomServer* server);
+		ChocolateDoomGameClientRunner(QSharedPointer<ChocolateDoomServer> server);
 
 		const EnginePlugin* plugin() const { return ChocolateDoomEnginePlugin::staticInstance(); }
 
 	private:
-		const ChocolateDoomServer* server;
+		QSharedPointer<ChocolateDoomServer> server;
 
 		void createCommandLineArguments();
 };

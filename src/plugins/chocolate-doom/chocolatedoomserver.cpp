@@ -40,7 +40,8 @@ ChocolateDoomServer::ChocolateDoomServer(const QHostAddress &address, unsigned s
 
 GameClientRunner* ChocolateDoomServer::gameRunner()
 {
-	return new ChocolateDoomGameClientRunner(this);
+	return new ChocolateDoomGameClientRunner(
+		self().toStrongRef().staticCast<ChocolateDoomServer>());
 }
 
 EnginePlugin* ChocolateDoomServer::plugin() const

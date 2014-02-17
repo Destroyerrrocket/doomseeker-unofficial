@@ -295,7 +295,7 @@ const GameMode& Server::gameMode() const
 
 GameClientRunner *Server::gameRunner()
 {
-	return new GameClientRunner(this);
+	return new GameClientRunner(self());
 }
 
 const QString& Server::gameVersion() const

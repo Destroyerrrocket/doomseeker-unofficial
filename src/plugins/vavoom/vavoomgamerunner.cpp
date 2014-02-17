@@ -26,7 +26,7 @@
 #include "vavoomengineplugin.h"
 #include "vavoomserver.h"
 
-VavoomGameClientRunner::VavoomGameClientRunner(VavoomServer* server)
+VavoomGameClientRunner::VavoomGameClientRunner(QSharedPointer<VavoomServer> server)
 : GameClientRunner(server)
 {
 	this->server = server;
