@@ -24,6 +24,7 @@
 #define __PASSWORDDIALOG_H__
 
 #include "ui_passwordDlg.h"
+#include "serverapi/serverptr.h"
 #include <QStringList>
 
 class EnginePlugin;
@@ -34,7 +35,7 @@ class PasswordDlg : public QDialog, private Ui::passwordDlg
 	Q_OBJECT
 
 	public:
-		PasswordDlg(const Server* server, QWidget *parent=NULL);
+		PasswordDlg(ServerCPtr server, QWidget *parent=NULL);
 
 		QString connectPassword() const;
 

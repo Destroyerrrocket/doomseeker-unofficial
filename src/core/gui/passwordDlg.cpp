@@ -35,10 +35,10 @@ bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
 class PasswordDlg::PrivData
 {
 	public:
-		const Server* server;
+		ServerCPtr server;
 };
 
-PasswordDlg::PasswordDlg(const Server* server, QWidget *parent)
+PasswordDlg::PasswordDlg(ServerCPtr server, QWidget *parent)
 : QDialog(parent)
 {
 	setupUi(this);
@@ -83,7 +83,7 @@ void PasswordDlg::loadConfiguration()
 	}
 	remember->setChecked(cfg.isRememberingConnectPhrase());
 	setPasswords(cfg.serverPhrases());
-	setCurrentConnectPassword(cfg.suggestPassword(d->server).phrase());
+	setCurrentConnectPassword(cfg.suggestPassword(d->server.data()).phrase());
 }
 
 void PasswordDlg::removeCurrentConnectPassword()
@@ -113,7 +113,7 @@ void PasswordDlg::saveConfiguration()
 	cfg.setRememberConnectPhrase(remember->isChecked());
 	if (remember->isChecked())
 	{
-		cfg.saveServerPhrase(connectPassword(), d->server);
+		cfg.saveServerPhrase(connectPassword(), d->server.data());
 	}
 }
 

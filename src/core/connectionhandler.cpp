@@ -185,8 +185,7 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, ServerPtr server,
 		QString connectPassword;
 		if(server->isLocked())
 		{
-			// [ServerPtr TODO] Use ServerPtr directly.
-			PasswordDlg password(server.data());
+			PasswordDlg password(server);
 			int ret = password.exec();
 			if(ret != QDialog::Accepted)
 			{
