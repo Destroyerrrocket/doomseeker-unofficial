@@ -107,12 +107,11 @@ void ServersStatusWidget::registerServers()
 
 	if (serverList != NULL)
 	{
-		foreach(ServerPtr serverptr, serverList->servers())
+		foreach(ServerPtr server, serverList->servers())
 		{
 			// [ServerPtr TODO] Use ServerPtr directly.
-			Server *server = serverptr.data();
-			connect(server, SIGNAL(begunRefreshing(Server *)), this, SLOT(removeServer(Server *)), Qt::DirectConnection);
-			connect(server, SIGNAL(updated(Server *, int)), this, SLOT(addServer(Server *)), Qt::DirectConnection);
+			connect(server.data(), SIGNAL(begunRefreshing(Server *)), this, SLOT(removeServer(Server *)), Qt::DirectConnection);
+			connect(server.data(), SIGNAL(updated(Server *, int)), this, SLOT(addServer(Server *)), Qt::DirectConnection);
 		}
 	}
 }

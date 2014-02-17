@@ -443,11 +443,9 @@ void MainWindow::connectEntities()
 	connect(serverFilterDock, SIGNAL( filterUpdated(const ServerListFilterInfo&) ), this, SLOT( updateServerFilter(const ServerListFilterInfo&) ) );
 	connect(serverTableHandler, SIGNAL(serverFilterModified(ServerListFilterInfo)),
 		serverFilterDock, SLOT(setFilterInfo(ServerListFilterInfo)));
-	// [ServerPtr TODO] This slot doesn't exist anymore!
-	connect(serverTableHandler, SIGNAL( serverDoubleClicked(Server*) ), this, SLOT( runGame(Server*) ) );
-	// [ServerPtr TODO] This slot doesn't exist anymore!
-	connect(serverTableHandler, SIGNAL( displayServerJoinCommandLine(Server*) ), this, SLOT( showServerJoinCommandLine(Server*) ) );
-	connect(serverTableHandler, SIGNAL( serverInfoUpdated(Server*) ), this, SLOT( serverAddedToList(Server*) ) );
+	connect(serverTableHandler, SIGNAL( serverDoubleClicked(ServerPtr) ), this, SLOT( runGame(ServerPtr) ) );
+	connect(serverTableHandler, SIGNAL( displayServerJoinCommandLine(ServerPtr) ), this, SLOT( showServerJoinCommandLine(ServerPtr) ) );
+	connect(serverTableHandler, SIGNAL( serverInfoUpdated(ServerPtr) ), this, SLOT( serverAddedToList(ServerPtr) ) );
 }
 
 void MainWindow::fillQueryMenu(MasterManager* masterManager)
@@ -1167,7 +1165,7 @@ void MainWindow::setQueryMasterServerEnabled(MasterClient* pClient, bool bEnable
 	}
 }
 
-void MainWindow::serverAddedToList(Server* pServer)
+void MainWindow::serverAddedToList(ServerPtr pServer)
 {
 	if (pServer->isKnown())
 	{
