@@ -73,7 +73,7 @@ void MasterManager::addMaster(MasterClient *master)
 
 void MasterManager::masterListUpdated(MasterClient* pSender)
 {
-	foreach(Server* pServer, pSender->servers())
+	foreach(ServerPtr pServer, pSender->servers())
 	{
 		servers().append(pServer);
 	}

@@ -52,7 +52,7 @@
 		notifyError(); \
 		return false; \
 	} \
-} 
+}
 
 ZandronumMasterClient::ZandronumMasterClient() : MasterClient()
 {
@@ -79,27 +79,27 @@ bool ZandronumMasterClient::readMasterResponse(QByteArray &data)
 	const char* packetEncoded = data.data();
 	int packetDecodedSize = 2000 + data.size();
 	char* packetDecoded = new char[packetDecodedSize];
-	
-	HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (packetEncoded), 
-		reinterpret_cast<unsigned char*>(packetDecoded), 
+
+	HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (packetEncoded),
+		reinterpret_cast<unsigned char*>(packetDecoded),
 		data.size(), &packetDecodedSize);
-	
+
 	if (packetDecodedSize <= 0)
 	{
 		delete[] packetDecoded;
 		notifyError();
 		return false;
-	}	
-	
+	}
+
 	QByteArray packetDecodedByteArray(packetDecoded, packetDecodedSize);
 	delete[] packetDecoded;
-	
+
 	QBuffer ioBuffer(&packetDecodedByteArray);
 	ioBuffer.open(QIODevice::ReadOnly);
 	QDataStream inStream(&ioBuffer);
 	inStream.setByteOrder(QDataStream::LittleEndian);
 	DataStreamOperatorWrapper in(&inStream);
-	
+
 	// Check the response code
 	RETURN_BAD_IF_NOT_ENOUGH_DATA(4);
 	int response = in.readQInt32();
@@ -138,7 +138,7 @@ bool ZandronumMasterClient::readMasterResponse(QByteArray &data)
 		while(numServersInBlock != 0)
 		{
 			RETURN_BAD_IF_NOT_ENOUGH_DATA(4 + 2); // ip + port
-			
+
 			// [Zalewa] Remember: it's a very bad idea to pass reads
 			// directly to funtion calls because function calls are
 			// resolved in reverse order (in MSVC at least).
@@ -146,7 +146,7 @@ bool ZandronumMasterClient::readMasterResponse(QByteArray &data)
 			quint8 ip2 = in.readQUInt8();
 			quint8 ip3 = in.readQUInt8();
 			quint8 ip4 = in.readQUInt8();
-			
+
 			QString ip = QString("%1.%2.%3.%4").
 					arg(ip1, 1, 10, QChar('0')).
 					arg(ip2, 1, 10, QChar('0')).
@@ -156,11 +156,11 @@ bool ZandronumMasterClient::readMasterResponse(QByteArray &data)
 			for(unsigned int i = 0;i < numServersInBlock;i++)
 			{
 				quint16 port = in.readQUInt16();
-				ZandronumServer *server = new ZandronumServer(QHostAddress(ip), 
+				ZandronumServer *server = new ZandronumServer(QHostAddress(ip),
 					port);
-				servers() << server;
+				servers() << ServerPtr(server);
 			}
-			
+
 			RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
 			numServersInBlock = in.readQUInt8();
 		}

@@ -29,6 +29,7 @@
 #include <QList>
 
 #include "global.h"
+#include "serverapi/serverptr.h"
 
 class Message;
 class EnginePlugin;
@@ -37,7 +38,7 @@ class QFile;
 class QUdpSocket;
 
 /**
- * @brief Abstract base for all MasterClients. 
+ * @brief Abstract base for all MasterClients.
  *
  * This is expected to fetch a list of IP addresses which will be turned
  * into Servers.
@@ -127,8 +128,8 @@ class MAIN_EXPORT MasterClient : public QObject
 		 */
 		virtual bool readMasterResponse(QHostAddress& address, unsigned short port, QByteArray &data);
 
-		QList<Server*> &servers();
-		const QList<Server*> &servers() const;
+		QList<ServerPtr> &servers();
+		const QList<ServerPtr> &servers() const;
 
 		void updateAddress();
 
@@ -209,9 +210,9 @@ class MAIN_EXPORT MasterClient : public QObject
 		 * their query becuase they tried to refresh too quickly.
 		 */
 		void notifyDelay();
-		
+
 		/**
-		 * @brief Tells the user that the master server returned a bad 
+		 * @brief Tells the user that the master server returned a bad
 		 * response.
 		 */
 		void notifyError();

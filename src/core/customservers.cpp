@@ -102,7 +102,7 @@ void CustomServers::setServers(const QList<CustomServerInfo>& csiList, QObject* 
 				.arg(customServerInfo.host).arg(customServerInfo.port);
 			continue;
 		}
-		
+
 		QHostAddress address;
 		if (!address.setAddress(customServerInfo.host))
 		{
@@ -130,6 +130,7 @@ void CustomServers::setServers(const QList<CustomServerInfo>& csiList, QObject* 
 
 		connect(p, SIGNAL( updated(Server*, int) ), receiver, slotUpdated);
 		connect(p, SIGNAL( begunRefreshing(Server*) ), receiver, slotBegunRefreshing);
-		servers() << p;
+		// [ServerPtr TODO] Consider if ServerPtr shouldn't be created earlier.
+		servers() << ServerPtr(p);
 	}
 }

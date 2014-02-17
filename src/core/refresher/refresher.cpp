@@ -226,10 +226,11 @@ bool Refresher::hasFreeServerRefreshSlots() const
 
 void Refresher::masterFinishedRefreshing(MasterClient* pMaster)
 {
-	const QList<Server*>& servers = pMaster->servers();
-	foreach (Server* pServer, servers)
+	const QList<ServerPtr>& servers = pMaster->servers();
+	foreach (ServerPtr pServer, servers)
 	{
-		registerServer(pServer);
+		// [ServerPtr TODO] User ServerPtr directly, or use QWeakPointer.
+		registerServer(pServer.data());
 	}
 
 	unregisterMaster(pMaster);

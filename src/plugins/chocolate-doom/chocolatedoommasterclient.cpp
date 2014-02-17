@@ -69,9 +69,9 @@ bool ChocolateDoomMasterClient::readMasterResponse(QByteArray &data)
 		pos += address.length()+1;
 		QStringList ip = address.split(":");
 		ChocolateDoomServer *server = new ChocolateDoomServer(QHostAddress(ip[0]), ip[1].toUShort());
-		servers() << server;
+		servers() << ServerPtr(server);
 	}
-	
+
 	emit listUpdated();
 	return true;
 }

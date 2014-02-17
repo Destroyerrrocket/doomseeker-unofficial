@@ -80,18 +80,18 @@ bool OdamexMasterClient::readMasterResponse(QByteArray &data)
 		quint8 ip2 = in.readQUInt8();
 		quint8 ip3 = in.readQUInt8();
 		quint8 ip4 = in.readQUInt8();
-		
+
 		QString ip = QString("%1.%2.%3.%4").
 			arg(ip1, 1, 10, QChar('0')).
 			arg(ip2, 1, 10, QChar('0')).
 			arg(ip3, 1, 10, QChar('0')).
 			arg(ip4, 1, 10, QChar('0'));
-			
+
 		quint16 port = in.readQUInt16();
 		OdamexServer *server = new OdamexServer(QHostAddress(ip), port);
-		servers() << server;
+		servers() << ServerPtr(server);
 	}
-	
+
 	emit listUpdated();
 	return true;
 }

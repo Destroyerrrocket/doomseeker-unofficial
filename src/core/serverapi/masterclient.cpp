@@ -46,7 +46,7 @@ class MasterClient::PrivData
 		bool timeouted;
 		bool enabled;
 		unsigned short port;
-		QList<Server*> servers;
+		QList<ServerPtr> servers;
 
 		QFile *cache;
 };
@@ -78,10 +78,9 @@ bool MasterClient::isAddressSame(const QHostAddress &address, unsigned short por
 
 void MasterClient::emptyServerList()
 {
-	foreach (Server* server, d->servers)
+	foreach (ServerPtr server, d->servers)
 	{
 		server->disconnect();
-		delete server;
 	}
 	d->servers.clear();
 }
@@ -97,7 +96,7 @@ QString MasterClient::engineName() const
 
 bool MasterClient::hasServer(const Server *server) const
 {
-	foreach (const Server* candidate, d->servers)
+	foreach (const ServerPtr candidate, d->servers)
 	{
 		if (candidate == server)
 		{
@@ -145,7 +144,7 @@ void MasterClient::notifyUpdate()
 int MasterClient::numPlayers() const
 {
 	int players = 0;
-	foreach(Server* server, d->servers)
+	foreach(ServerPtr server, d->servers)
 	{
 		if (server != NULL)
 		{
@@ -162,7 +161,8 @@ int MasterClient::numServers() const
 
 Server* MasterClient::operator[](int index) const
 {
-	return d->servers[index];
+	// [ServerPtr TODO] return ServerPtr
+	return d->servers[index].data();
 }
 
 bool MasterClient::preparePacketCache(bool write)
@@ -274,12 +274,12 @@ void MasterClient::refresh()
 	pGlobalUdpSocket->writeDatagram(request, d->address, d->port);
 }
 
-QList<Server*> &MasterClient::servers()
+QList<ServerPtr> &MasterClient::servers()
 {
 	return d->servers;
 }
 
-const QList<Server*> &MasterClient::servers() const
+const QList<ServerPtr> &MasterClient::servers() const
 {
 	return d->servers;
 }

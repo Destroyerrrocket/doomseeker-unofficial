@@ -177,7 +177,7 @@ void DockBuddiesList::scan(const MasterClient *master)
 	}
 
 	buddies.clear(); //empty list
-	foreach(Server *server, masterClient->servers())
+	foreach(ServerPtr server, masterClient->servers())
 	{
 		for(int i = 0; i < server->players()->numClients(); ++i)
 		{
@@ -186,7 +186,8 @@ void DockBuddiesList::scan(const MasterClient *master)
 			{
 				if(pattern.exactMatch(player.nameColorTagsStripped()))
 				{
-					buddies << BuddyLocationInfo(player, server);
+					// [ServerPtr TODO] Use ServerPtr directly.
+					buddies << BuddyLocationInfo(player, server.data());
 				}
 			}
 		}

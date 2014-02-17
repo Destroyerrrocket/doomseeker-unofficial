@@ -73,10 +73,10 @@ bool VavoomMasterClient::readMasterResponse(QByteArray &data)
 		QString ip = QString("%1.%2.%3.%4").
 			arg(static_cast<quint8> (in[pos]), 1, 10, QChar('0')).arg(static_cast<quint8> (in[pos+1]), 1, 10, QChar('0')).arg(static_cast<quint8> (in[pos+2]), 1, 10, QChar('0')).arg(static_cast<quint8> (in[pos+3]), 1, 10, QChar('0'));
 		VavoomServer *server = new VavoomServer(QHostAddress(ip), READBIGINT16(&in[pos+4]));
-		servers() << server;
+		servers() << ServerPtr(server);
 		pos += 6;
 	}
-	
+
 	emit listUpdated();
 	return true;
 }
