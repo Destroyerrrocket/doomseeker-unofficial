@@ -25,7 +25,7 @@
 #define __DOCKBUDDIESLIST_H__
 
 #include "serverapi/buddyinfo.h"
-#include "serverapi/serverptr.h"
+#include "serverapi/server.h"
 #include "ui_dockBuddiesList.h"
 #include "ui_addBuddyDlg.h"
 
