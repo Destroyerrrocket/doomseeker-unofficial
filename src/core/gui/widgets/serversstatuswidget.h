@@ -63,9 +63,9 @@ class ServersStatusWidget : public QLabel
 		MasterClient        *serverList;
 
 	protected slots:
-		void	addServer(ServerPtr server);
+		void	addServer(const ServerPtr &server);
 		void	registerServers();
-		void	removeServer(ServerPtr server);
+		void	removeServer(const ServerPtr &server);
 };
 
 #endif /* __SERVERSSTATUSWIDGET_H__ */

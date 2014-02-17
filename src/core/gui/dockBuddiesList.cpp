@@ -259,29 +259,33 @@ void AddBuddyDlg::buttonBoxClicked(QAbstractButton *button)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+class DockBuddiesList::BuddyLocationInfo::PrivData
+{
+	public:
+		Player buddy;
+		ServerPtr server;
+};
+
+COPYABLE_D_POINTERED_INNER_DEFINE(DockBuddiesList::BuddyLocationInfo, BuddyLocationInfo);
+
 DockBuddiesList::BuddyLocationInfo::BuddyLocationInfo(const Player &buddy, ServerPtr location)
 {
-	this->player = new Player(buddy);
-	this->server = location;
-}
-
-DockBuddiesList::BuddyLocationInfo::BuddyLocationInfo(const DockBuddiesList::BuddyLocationInfo &other)
-{
-	*this = other;
+	d = new PrivData();
+	d->buddy = buddy;
+	d->server = location;
 }
 
 DockBuddiesList::BuddyLocationInfo::~BuddyLocationInfo()
 {
-	delete player;
+	delete d;
 }
 
-DockBuddiesList::BuddyLocationInfo &DockBuddiesList::BuddyLocationInfo::operator= (const DockBuddiesList::BuddyLocationInfo &other)
+const Player &DockBuddiesList::BuddyLocationInfo::buddy() const
 {
-	if (this != &other)
-	{
-		player = new Player(other.buddy());
-		server = other.location();
-	}
+	return d->buddy;
+}
 
-	return *this;
+ServerPtr DockBuddiesList::BuddyLocationInfo::location() const
+{
+	return d->server;
 }

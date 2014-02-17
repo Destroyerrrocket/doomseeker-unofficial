@@ -24,8 +24,9 @@
 #ifndef __DOCKBUDDIESLIST_H__
 #define __DOCKBUDDIESLIST_H__
 
+#include "global.h"
 #include "serverapi/buddyinfo.h"
-#include "serverapi/server.h"
+#include "serverapi/serverptr.h"
 #include "ui_dockBuddiesList.h"
 #include "ui_addBuddyDlg.h"
 
@@ -59,23 +60,22 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 		void	scan(const MasterClient *master=NULL);
 
 	signals:
-		void	joinServer(ServerPtr server);
+		void	joinServer(const ServerPtr &server);
 
 	protected:
 		class BuddyLocationInfo
 		{
 			public:
 				BuddyLocationInfo(const Player &buddy, ServerPtr location);
-				BuddyLocationInfo(const BuddyLocationInfo &other);
+				COPYABLE_D_POINTERED_DECLARE(BuddyLocationInfo);
 				~BuddyLocationInfo();
 
-				const Player	&buddy() const { return *player; }
-				ServerPtr location() const { return server; }
-				BuddyLocationInfo		&operator= (const BuddyLocationInfo &other);
+				const Player &buddy() const;
+				ServerPtr location() const;
 
 			private:
-				Player	*player;
-				ServerPtr server;
+				class PrivData;
+				PrivData *d;
 		};
 
 		QList<DockBuddiesList::BuddyLocationInfo>	buddies;

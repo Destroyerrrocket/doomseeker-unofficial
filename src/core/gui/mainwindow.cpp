@@ -1144,7 +1144,7 @@ void MainWindow::restartAndInstallUpdatesNow()
 	quitProgram();
 }
 
-void MainWindow::runGame(ServerPtr server)
+void MainWindow::runGame(const ServerPtr &server)
 {
 	if(connectionHandler)
 		delete connectionHandler;
@@ -1166,7 +1166,7 @@ void MainWindow::setQueryMasterServerEnabled(MasterClient* pClient, bool bEnable
 	}
 }
 
-void MainWindow::serverAddedToList(ServerPtr pServer)
+void MainWindow::serverAddedToList(const ServerPtr &pServer)
 {
 	if (pServer->isKnown())
 	{
@@ -1253,7 +1253,7 @@ void MainWindow::setupToolBar()
 	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( toolBarAction(QAction*) ) );
 }
 
-void MainWindow::showServerJoinCommandLine(ServerPtr server)
+void MainWindow::showServerJoinCommandLine(const ServerPtr &server)
 {
 	CommandLineInfo cli;
 	if (ConnectionHandler::obtainJoinCommandLine(this, server, cli, tr("Doomseeker - join command line"), false))
