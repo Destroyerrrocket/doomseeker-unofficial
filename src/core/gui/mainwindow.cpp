@@ -117,7 +117,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	buddiesList->toggleViewAction()->setText(tr("&Buddies"));
 	buddiesList->toggleViewAction()->setShortcut(tr("CTRL+B"));
 
-	connect(buddiesList, SIGNAL( joinServer(Server*) ), this, SLOT( runGame(Server*) ));
+	connect(buddiesList, SIGNAL( joinServer(ServerPtr) ), this, SLOT( runGame(ServerPtr) ));
 	buddiesList->hide();
 	this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
 	initLogDock();
@@ -1150,6 +1150,12 @@ void MainWindow::runGame(Server *server)
 
 	connectionHandler = new ConnectionHandler(server, this);
 	connectionHandler->run();
+}
+
+void MainWindow::runGame(ServerPtr server)
+{
+	// [ServerPtr TODO] Pass ServerPtr directly.
+	runGame(server.data());
 }
 
 void MainWindow::setQueryMasterServerEnabled(MasterClient* pClient, bool bEnabled)

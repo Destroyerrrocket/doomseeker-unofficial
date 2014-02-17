@@ -141,7 +141,7 @@ void DockBuddiesList::followBuddy(const QModelIndex &index)
 	// Folow the buddy into the server.
 	QString error;
 
-	Server* server = buddies[buddiesTableModel->item(index.row(), BLCID_ID)->data().toInt()].location();
+	ServerPtr server = buddies[buddiesTableModel->item(index.row(), BLCID_ID)->data().toInt()].location();
 	emit joinServer(server);
 }
 
@@ -186,8 +186,7 @@ void DockBuddiesList::scan(const MasterClient *master)
 			{
 				if(pattern.exactMatch(player.nameColorTagsStripped()))
 				{
-					// [ServerPtr TODO] Use ServerPtr directly.
-					buddies << BuddyLocationInfo(player, server.data());
+					buddies << BuddyLocationInfo(player, server);
 				}
 			}
 		}
@@ -260,7 +259,7 @@ void AddBuddyDlg::buttonBoxClicked(QAbstractButton *button)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-DockBuddiesList::BuddyLocationInfo::BuddyLocationInfo(const Player &buddy, Server *location)
+DockBuddiesList::BuddyLocationInfo::BuddyLocationInfo(const Player &buddy, ServerPtr location)
 {
 	this->player = new Player(buddy);
 	this->server = location;

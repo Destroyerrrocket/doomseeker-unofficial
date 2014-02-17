@@ -296,6 +296,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	refreshThreadEndsWork();
 		void restartAndInstallUpdatesNow();
 		void	runGame(Server*);
+		void	runGame(ServerPtr);
 		void	serverAddedToList(Server*);
 		void	showServerJoinCommandLine(Server*);
 		void	showUpdaterProcessErrorDialog();
