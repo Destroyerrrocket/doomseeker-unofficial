@@ -159,10 +159,9 @@ int MasterClient::numServers() const
 	return d->servers.size();
 }
 
-Server* MasterClient::operator[](int index) const
+ServerPtr MasterClient::operator[](int index) const
 {
-	// [ServerPtr TODO] return ServerPtr
-	return d->servers[index].data();
+	return d->servers[index];
 }
 
 bool MasterClient::preparePacketCache(bool write)

@@ -97,7 +97,7 @@ class MAIN_EXPORT MasterClient : public QObject
 		bool isTimeouted() const;
 		int numPlayers() const;
 		int numServers() const;
-		Server *operator[] (int index) const;
+		ServerPtr operator[] (int index) const;
 
 		/**
 		 * This is supposed to return the plugin this MasterClient belongs to.

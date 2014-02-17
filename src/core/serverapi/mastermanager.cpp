@@ -24,6 +24,7 @@
 
 #include "serverapi/masterclientsignalproxy.h"
 #include "serverapi/message.h"
+#include "serverapi/server.h"
 #include "customservers.h"
 
 // TODO: I don't think that MasterManager should store a duplicate of each
@@ -68,7 +69,11 @@ void MasterManager::addMaster(MasterClient *master)
 		this, SLOT( newServerBatchReceivedSlot(MasterClient*, const QList<Server* >&) ) );
 
 	mastersReceivers.append(pMasterReceiver);
+}
 
+void MasterManager::clearServersList()
+{
+	servers().clear();
 }
 
 void MasterManager::masterListUpdated(MasterClient* pSender)

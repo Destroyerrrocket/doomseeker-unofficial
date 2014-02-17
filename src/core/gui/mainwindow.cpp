@@ -535,10 +535,10 @@ void MainWindow::finishedQueryingMaster(MasterClient* master)
 
 	for(int i = 0;i < master->numServers();i++)
 	{
-		connect((*master)[i], SIGNAL(updated(Server *, int)),
+		connect((*master)[i].data(), SIGNAL(updated(Server *, int)),
 			serverTableHandler, SLOT(serverUpdated(Server *, int)) );
 
-		connect((*master)[i], SIGNAL(begunRefreshing(Server *)),
+		connect((*master)[i].data(), SIGNAL(begunRefreshing(Server *)),
 			serverTableHandler, SLOT(serverBegunRefreshing(Server *)) );
 	}
 }
@@ -1096,15 +1096,19 @@ void MainWindow::quitProgram()
 	close();
 }
 
+void dupa(ServerPtr a) {
+}
+
 void MainWindow::refreshCustomServers()
 {
 	CustomServers* customServers = masterManager->customServs();
 
 	for(int i = 0;i < customServers->numServers();i++)
 	{
-		Server* server = (*customServers)[i];
-		serverTableHandler->serverUpdated(server, Server::RESPONSE_NO_RESPONSE_YET);
-		gRefresher->registerServer(server);
+		ServerPtr server = (*customServers)[i];
+		// [ServerPtr TODO] Use ServerPtr directly.
+		serverTableHandler->serverUpdated(server.data(), Server::RESPONSE_NO_RESPONSE_YET);
+		gRefresher->registerServer(server.data());
 	}
 }
 
