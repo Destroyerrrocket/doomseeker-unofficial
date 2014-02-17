@@ -25,6 +25,7 @@
 #ifndef __CONNECTIONHANDLER_H__
 #define __CONNECTIONHANDLER_H__
 
+#include "serverapi/serverptr.h"
 #include <QObject>
 
 class CommandLineInfo;
@@ -37,7 +38,7 @@ class ConnectionHandler : public QObject
 	Q_OBJECT
 
 	public:
-		ConnectionHandler(Server *server, QWidget *parent=NULL, bool handleResponse=false);
+		ConnectionHandler(ServerPtr server, QWidget *parent=NULL, bool handleResponse=false);
 
 		void	run();
 
@@ -54,13 +55,16 @@ class ConnectionHandler : public QObject
 		 *		set to true if Wadseeker downloaded files.
 		 *	@return true on success, false otherwise.
 		 */
-		static bool obtainJoinCommandLine(QWidget *parent, Server* server, CommandLineInfo& cli, const QString& errorCaption, bool managedDemo, bool *hadMissing=NULL);
+		static bool obtainJoinCommandLine(QWidget *parent, ServerPtr server,
+			CommandLineInfo& cli, const QString& errorCaption, bool managedDemo,
+			bool *hadMissing=NULL);
 
 	protected:
 		void	finish(int response);
 		void	refreshToJoin();
 
 	protected slots:
+		// [ServerPtr TODO] Slots using Server*
 		void	checkResponse(Server *server, int response);
 
 	signals:
@@ -68,11 +72,11 @@ class ConnectionHandler : public QObject
 
 	private:
 		bool	handleResponse;
-		Server	*server;
+		ServerPtr server;
 		QWidget	*parent;
 
-		static QString mkDemoName(Server* server, bool managedDemo);
-		static void saveDemoMetaData(Server* server, const QString& demoName);
+		static QString mkDemoName(ServerPtr server, bool managedDemo);
+		static void saveDemoMetaData(ServerPtr server, const QString& demoName);
 };
 
 #endif

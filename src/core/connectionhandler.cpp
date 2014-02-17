@@ -41,12 +41,13 @@
 
 #include <QMessageBox>
 
-ConnectionHandler::ConnectionHandler(Server *server, QWidget *parent, bool handleResponse) : QObject(parent)
+ConnectionHandler::ConnectionHandler(ServerPtr server, QWidget *parent, bool handleResponse) : QObject(parent)
 {
 	this->parent = parent;
 	this->handleResponse = handleResponse;
 	this->server = server;
-	connect(this->server, SIGNAL(updated(Server *, int)), this, SLOT(checkResponse(Server *, int)));
+	// [ServerPtr TODO] Slots using Server*
+	connect(this->server.data(), SIGNAL(updated(Server *, int)), this, SLOT(checkResponse(Server *, int)));
 }
 
 void ConnectionHandler::checkResponse(Server *server, int response)
@@ -121,20 +122,22 @@ ConnectionHandler *ConnectionHandler::connectByUrl(const QUrl &url)
 	Strings::translateServerAddress(url.host(), address, tmp, QString("localhost:10666"));
 
 	// Create the server object
-	Server *server = handler->server(QHostAddress(address), port);
+	// [ServerPtr TODO] Just fix...
+	Server *server_p = handler->server(QHostAddress(address), port);
+	ServerPtr server(server_p);
 	ConnectionHandler *connectionHandler = new ConnectionHandler(server, NULL, true);
-	gRefresher->registerServer(server);
+	gRefresher->registerServer(server.data());
 
 	return connectionHandler;
 }
 
 void ConnectionHandler::finish(int response)
 {
-	disconnect(this->server, SIGNAL(updated(Server *, int)), this, SLOT(checkResponse(Server *, int)));
+	this->server->disconnect(this);
 	emit finished(response);
 }
 
-QString ConnectionHandler::mkDemoName(Server* server, bool managedDemo)
+QString ConnectionHandler::mkDemoName(ServerPtr server, bool managedDemo)
 {
 	// port-iwad-date-wad
 	QString demoName;
@@ -152,7 +155,7 @@ QString ConnectionHandler::mkDemoName(Server* server, bool managedDemo)
 	return demoName;
 }
 
-bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, Server* server, CommandLineInfo& cli, const QString& errorCaption, bool managedDemo, bool *hadMissing)
+bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, ServerPtr server, CommandLineInfo& cli, const QString& errorCaption, bool managedDemo, bool *hadMissing)
 {
 	// TODO: This method is a monster and it needs refactoring!
 
@@ -184,7 +187,8 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, Server* server, C
 		QString connectPassword;
 		if(server->isLocked())
 		{
-			PasswordDlg password(server);
+			// [ServerPtr TODO] Use ServerPtr directly.
+			PasswordDlg password(server.data());
 			int ret = password.exec();
 			if(ret != QDialog::Accepted)
 			{
@@ -309,9 +313,15 @@ void ConnectionHandler::refreshToJoin()
 	// If the data we have is old we should refresh first to check if we can
 	// still properly join the server.
 	if(server->isRefreshable() && gConfig.doomseeker.bQueryBeforeLaunch)
-		gRefresher->registerServer(server);
+	{
+		// [ServerPtr TODO] Use ServerPtr directly.
+		gRefresher->registerServer(server.data());
+	}
 	else
-		checkResponse(server, Server::RESPONSE_GOOD);
+	{
+		// [ServerPtr TODO] Use ServerPtr directly.
+		checkResponse(server.data(), Server::RESPONSE_GOOD);
+	}
 }
 
 void ConnectionHandler::run()
@@ -339,7 +349,7 @@ void ConnectionHandler::run()
 	finish(Server::RESPONSE_GOOD);
 }
 
-void ConnectionHandler::saveDemoMetaData(Server* server, const QString& demoName)
+void ConnectionHandler::saveDemoMetaData(ServerPtr server, const QString& demoName)
 {
 	QString metaFileName;
 	// If the extension is automatic we need to add it here

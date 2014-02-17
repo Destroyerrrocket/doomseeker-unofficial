@@ -443,7 +443,9 @@ void MainWindow::connectEntities()
 	connect(serverFilterDock, SIGNAL( filterUpdated(const ServerListFilterInfo&) ), this, SLOT( updateServerFilter(const ServerListFilterInfo&) ) );
 	connect(serverTableHandler, SIGNAL(serverFilterModified(ServerListFilterInfo)),
 		serverFilterDock, SLOT(setFilterInfo(ServerListFilterInfo)));
+	// [ServerPtr TODO] This slot doesn't exist anymore!
 	connect(serverTableHandler, SIGNAL( serverDoubleClicked(Server*) ), this, SLOT( runGame(Server*) ) );
+	// [ServerPtr TODO] This slot doesn't exist anymore!
 	connect(serverTableHandler, SIGNAL( displayServerJoinCommandLine(Server*) ), this, SLOT( showServerJoinCommandLine(Server*) ) );
 	connect(serverTableHandler, SIGNAL( serverInfoUpdated(Server*) ), this, SLOT( serverAddedToList(Server*) ) );
 }
@@ -1143,19 +1145,13 @@ void MainWindow::restartAndInstallUpdatesNow()
 	quitProgram();
 }
 
-void MainWindow::runGame(Server *server)
+void MainWindow::runGame(ServerPtr server)
 {
 	if(connectionHandler)
 		delete connectionHandler;
 
 	connectionHandler = new ConnectionHandler(server, this);
 	connectionHandler->run();
-}
-
-void MainWindow::runGame(ServerPtr server)
-{
-	// [ServerPtr TODO] Pass ServerPtr directly.
-	runGame(server.data());
 }
 
 void MainWindow::setQueryMasterServerEnabled(MasterClient* pClient, bool bEnabled)
@@ -1258,7 +1254,7 @@ void MainWindow::setupToolBar()
 	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( toolBarAction(QAction*) ) );
 }
 
-void MainWindow::showServerJoinCommandLine(Server* server)
+void MainWindow::showServerJoinCommandLine(ServerPtr server)
 {
 	CommandLineInfo cli;
 	if (ConnectionHandler::obtainJoinCommandLine(this, server, cli, tr("Doomseeker - join command line"), false))
