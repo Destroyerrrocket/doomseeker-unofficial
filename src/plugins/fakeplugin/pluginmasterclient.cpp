@@ -93,7 +93,7 @@ bool PluginMasterClient::readMasterResponse(QByteArray &data)
 		if (port != 0)
 		{
 			PluginServer* server = new PluginServer(QHostAddress("127.0.0.1"), port);
-			servers().append(ServerPtr(server));
+			registerNewServer(ServerPtr(server));
 		}
 	}
 	++d->gotPackets;

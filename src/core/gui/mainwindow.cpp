@@ -168,7 +168,9 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	fillQueryMenu(masterManager);
 
 	// Init custom servers
-	masterManager->customServs()->readConfig(serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
+	masterManager->customServs()->readConfig(serverTableHandler,
+		SLOT(serverUpdated(ServerPtr, int)),
+		SLOT(serverBegunRefreshing(ServerPtr)) );
 
 	setWindowIcon(QIcon(":/icon.png"));
 
@@ -535,11 +537,11 @@ void MainWindow::finishedQueryingMaster(MasterClient* master)
 
 	for(int i = 0;i < master->numServers();i++)
 	{
-		connect((*master)[i].data(), SIGNAL(updated(Server *, int)),
-			serverTableHandler, SLOT(serverUpdated(Server *, int)) );
+		connect((*master)[i].data(), SIGNAL(updated(ServerPtr, int)),
+			serverTableHandler, SLOT(serverUpdated(ServerPtr, int)) );
 
-		connect((*master)[i].data(), SIGNAL(begunRefreshing(Server *)),
-			serverTableHandler, SLOT(serverBegunRefreshing(Server *)) );
+		connect((*master)[i].data(), SIGNAL(begunRefreshing(ServerPtr)),
+			serverTableHandler, SLOT(serverBegunRefreshing(ServerPtr)) );
 	}
 }
 
@@ -585,7 +587,7 @@ void MainWindow::getServers()
 			"Check your Query menu or \"engines/\" directory. Custom servers will still refresh.");
 	}
 
-	masterManager->clearServersList();
+	masterManager->clearServers();
 	for (int i = 0; i < masterManager->numMasters(); ++i)
 	{
 		MasterClient* pMaster = (*masterManager)[i];
@@ -1106,8 +1108,7 @@ void MainWindow::refreshCustomServers()
 	for(int i = 0;i < customServers->numServers();i++)
 	{
 		ServerPtr server = (*customServers)[i];
-		// [ServerPtr TODO] Use ServerPtr directly.
-		serverTableHandler->serverUpdated(server.data(), Server::RESPONSE_NO_RESPONSE_YET);
+		serverTableHandler->serverUpdated(server, Server::RESPONSE_NO_RESPONSE_YET);
 		gRefresher->registerServer(server.data());
 	}
 }

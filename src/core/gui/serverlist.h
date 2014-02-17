@@ -72,9 +72,8 @@ class ServerListHandler : public QObject
 		void 				redraw();
 		void 				refreshAll();
 		void				refreshSelected();
-		// [ServerPtr TODO] What to do with these? They're connected to SIGNALs from Server.
-		void 				serverBegunRefreshing(Server* server);
-		void 				serverUpdated(Server *server, int response);
+		void 				serverBegunRefreshing(ServerPtr server);
+		void 				serverUpdated(ServerPtr server, int response);
 
 		/**
 		 *	@brief Sets country flags for servers that don't have flags

@@ -128,8 +128,8 @@ void CustomServers::setServers(const QList<CustomServerInfo>& csiList, QObject* 
 		}
 		p->setCustom(true);
 
-		connect(p.data(), SIGNAL( updated(Server*, int) ), receiver, slotUpdated);
-		connect(p.data(), SIGNAL( begunRefreshing(Server*) ), receiver, slotBegunRefreshing);
-		servers() << p;
+		connect(p.data(), SIGNAL( updated(ServerPtr, int) ), receiver, slotUpdated);
+		connect(p.data(), SIGNAL( begunRefreshing(ServerPtr) ), receiver, slotBegunRefreshing);
+		registerNewServer(p);
 	}
 }

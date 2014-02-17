@@ -64,8 +64,7 @@ class ConnectionHandler : public QObject
 		void	refreshToJoin();
 
 	protected slots:
-		// [ServerPtr TODO] Slots using Server*
-		void	checkResponse(Server *server, int response);
+		void	checkResponse(ServerPtr server, int response);
 
 	signals:
 		void	finished(int response);

@@ -73,7 +73,7 @@ ServersStatusWidget::ServersStatusWidget(const QPixmap &icon, MasterClient *serv
 	connect(serverList, SIGNAL(listUpdated()), this, SLOT(registerServers()));
 }
 
-void ServersStatusWidget::addServer(Server *server)
+void ServersStatusWidget::addServer(ServerPtr server)
 {
 	const PlayersList* playersList = server->players();
 	numPlayers += playersList->numClients();
@@ -110,13 +110,13 @@ void ServersStatusWidget::registerServers()
 		foreach(ServerPtr server, serverList->servers())
 		{
 			// [ServerPtr TODO] Use ServerPtr directly.
-			connect(server.data(), SIGNAL(begunRefreshing(Server *)), this, SLOT(removeServer(Server *)), Qt::DirectConnection);
-			connect(server.data(), SIGNAL(updated(Server *, int)), this, SLOT(addServer(Server *)), Qt::DirectConnection);
+			connect(server.data(), SIGNAL(begunRefreshing(ServerPtr)), this, SLOT(removeServer(ServerPtr)), Qt::DirectConnection);
+			connect(server.data(), SIGNAL(updated(ServerPtr, int)), this, SLOT(addServer(ServerPtr)), Qt::DirectConnection);
 		}
 	}
 }
 
-void ServersStatusWidget::removeServer(Server *server)
+void ServersStatusWidget::removeServer(ServerPtr server)
 {
 	const PlayersList* playersList = server->players();
 	numPlayers -= playersList->numClients();

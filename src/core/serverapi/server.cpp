@@ -107,6 +107,7 @@ class Server::PrivData
  		 * @brief Track how many resends we should try.
 		 */
 		int triesLeft;
+		QWeakPointer<Server> self;
 
 		QByteArray (Server::*createSendRequest)();
 		Response (Server::*readRequest)(QByteArray&);
@@ -268,6 +269,11 @@ const QList<DMFlagsSection>& Server::dmFlags() const
 const QString& Server::email() const
 {
 	return d->email;
+}
+
+void Server::emitUpdated(int response)
+{
+	emit updated(self(), response);
 }
 
 QString Server::engineName() const
@@ -480,7 +486,7 @@ void Server::refreshStarts()
 {
 	d->bIsRefreshing = true;
 
-	emit begunRefreshing(this);
+	emit begunRefreshing(ServerPtr(self()));
 	d->triesLeft = gConfig.doomseeker.queryTries;
 	if (d->triesLeft > 10) // Limit the maximum number of tries
 	{
@@ -499,7 +505,7 @@ void Server::refreshStops(Response response)
 	}
 	d->bIsRefreshing = false;
 	d->iwad = d->iwad.toLower();
-	emit updated(this, response);
+	emit updated(self(), response);
 }
 
 unsigned int Server::score(int team) const
@@ -520,6 +526,11 @@ const QList<int>& Server::scores() const
 QList<int>& Server::scoresMutable()
 {
 	return d->scores;
+}
+
+QWeakPointer<Server> Server::self() const
+{
+	return d->self;
 }
 
 bool Server::sendRefreshQuery(QUdpSocket* socket)
@@ -590,7 +601,7 @@ void Server::setHostName(QHostInfo host)
 {
 	d->host = host;
 	if(!d->bIsRefreshing)
-		emit updated(this, lastResponse());
+		emit updated(self(), lastResponse());
 }
 
 void Server::setIwad(const QString& iwad)
@@ -689,6 +700,11 @@ void Server::setScoreLimit(unsigned int serverScoreLimit)
 void Server::setSecure(bool bSecure)
 {
 	d->bSecure = bSecure;
+}
+
+void Server::setSelf(const QWeakPointer<Server> &self)
+{
+	d->self = self;
 }
 
 void Server::setTimeLeft(unsigned short serverTimeLeft)

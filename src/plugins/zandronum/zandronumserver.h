@@ -158,7 +158,7 @@ class ZandronumServer : public Server
 		QString			teamName(unsigned team) const;
 
 	protected slots:
-		void			updatedSlot(Server* server, int response);
+		void			updatedSlot(ServerPtr server, int response);
 
 	protected:
 		bool			buckshot;

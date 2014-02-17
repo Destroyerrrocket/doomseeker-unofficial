@@ -58,7 +58,7 @@ MasterClient *VavoomEnginePlugin::masterClient() const
 	return new VavoomMasterClient();
 }
 
-ServerPtr VavoomEnginePlugin::server(const QHostAddress &address, unsigned short port) const
+ServerPtr VavoomEnginePlugin::mkServer(const QHostAddress &address, unsigned short port) const
 {
 	return ServerPtr(new VavoomServer(address, port));
 }

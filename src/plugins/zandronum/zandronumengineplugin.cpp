@@ -173,7 +173,7 @@ MasterClient *ZandronumEnginePlugin::masterClient() const
 	return new ZandronumMasterClient();
 }
 
-ServerPtr ZandronumEnginePlugin::server(const QHostAddress &address, unsigned short port) const
+ServerPtr ZandronumEnginePlugin::mkServer(const QHostAddress &address, unsigned short port) const
 {
 	return ServerPtr(new ZandronumServer(address, port));
 }

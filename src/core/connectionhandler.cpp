@@ -46,11 +46,10 @@ ConnectionHandler::ConnectionHandler(ServerPtr server, QWidget *parent, bool han
 	this->parent = parent;
 	this->handleResponse = handleResponse;
 	this->server = server;
-	// [ServerPtr TODO] Slots using Server*
-	connect(this->server.data(), SIGNAL(updated(Server *, int)), this, SLOT(checkResponse(Server *, int)));
+	connect(this->server.data(), SIGNAL(updated(ServerPtr, int)), this, SLOT(checkResponse(ServerPtr, int)));
 }
 
-void ConnectionHandler::checkResponse(Server *server, int response)
+void ConnectionHandler::checkResponse(ServerPtr server, int response)
 {
 	if(response != Server::RESPONSE_GOOD)
 	{
@@ -316,8 +315,7 @@ void ConnectionHandler::refreshToJoin()
 	}
 	else
 	{
-		// [ServerPtr TODO] Use ServerPtr directly.
-		checkResponse(server.data(), Server::RESPONSE_GOOD);
+		checkResponse(server, Server::RESPONSE_GOOD);
 	}
 }
 

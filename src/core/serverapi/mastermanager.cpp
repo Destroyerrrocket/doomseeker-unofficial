@@ -37,7 +37,7 @@ MasterManager::MasterManager() : MasterClient()
 
 MasterManager::~MasterManager()
 {
-	servers().clear();
+	clearServers();
 
 	for (int i = 0; i < mastersReceivers.size(); ++i)
 	{
@@ -71,16 +71,11 @@ void MasterManager::addMaster(MasterClient *master)
 	mastersReceivers.append(pMasterReceiver);
 }
 
-void MasterManager::clearServersList()
-{
-	servers().clear();
-}
-
 void MasterManager::masterListUpdated(MasterClient* pSender)
 {
 	foreach(ServerPtr pServer, pSender->servers())
 	{
-		servers().append(pServer);
+		registerNewServer(pServer);
 	}
 
 	emit listUpdatedForMaster(pSender);
@@ -115,8 +110,7 @@ void MasterManager::refresh()
 {
 	setTimeouted(false);
 
-	// Don't delete the servers yet!
-	servers().clear();
+	clearServers();
 
 	for(int i = 0;i < masters.size();i++)
 	{

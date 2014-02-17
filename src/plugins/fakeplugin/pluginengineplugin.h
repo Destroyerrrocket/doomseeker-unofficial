@@ -33,7 +33,7 @@ class PluginEnginePlugin : public EnginePlugin
 		~PluginEnginePlugin();
 
 		MasterClient* masterClient() const;
-		ServerPtr server(const QHostAddress &address, unsigned short port) const;
+		ServerPtr mkServer(const QHostAddress &address, unsigned short port) const;
 
 		bool isMasterResponderInstantiated() const;
 		void startMasterResponder();

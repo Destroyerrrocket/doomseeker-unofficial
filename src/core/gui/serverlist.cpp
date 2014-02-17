@@ -498,10 +498,9 @@ QList<ServerPtr> ServerListHandler::selectedServers()
 	return servers;
 }
 
-void ServerListHandler::serverBegunRefreshing(Server* server)
+void ServerListHandler::serverBegunRefreshing(ServerPtr server)
 {
-	// [ServerPtr TODO] Do nothing for the time being ...
-	//model->setRefreshing(server);
+	model->setRefreshing(server);
 }
 
 ServerPtr ServerListHandler::serverFromIndex(const QModelIndex &index)
@@ -511,11 +510,9 @@ ServerPtr ServerListHandler::serverFromIndex(const QModelIndex &index)
 	return model->serverFromList(indexReal);
 }
 
-void ServerListHandler::serverUpdated(Server* server, int response)
+void ServerListHandler::serverUpdated(ServerPtr server, int response)
 {
-	// [ServerPtr TODO] Do nothing for the time being ...
-	#if 0
-	int rowIndex = model->findServerOnTheList(server);
+	int rowIndex = model->findServerOnTheList(server.data());
 	if (rowIndex >= 0)
 	{
 		rowIndex = model->updateServer(rowIndex, server, response);
@@ -527,7 +524,6 @@ void ServerListHandler::serverUpdated(Server* server, int response)
 
 	needsCleaning = true;
 	emit serverInfoUpdated(server);
-	#endif
 }
 
 void ServerListHandler::setCountryFlagsIfNotPresent()

@@ -66,6 +66,8 @@ class MAIN_EXPORT MasterClient : public QObject
 		MasterClient();
 		virtual ~MasterClient();
 
+		void clearServers();
+
 		/**
 		 * @brief Extracts engine name from pluginInfo() if available.
 		 *
@@ -128,7 +130,6 @@ class MAIN_EXPORT MasterClient : public QObject
 		 */
 		virtual bool readMasterResponse(QHostAddress& address, unsigned short port, QByteArray &data);
 
-		QList<ServerPtr> &servers();
 		const QList<ServerPtr> &servers() const;
 
 		void updateAddress();
@@ -225,6 +226,10 @@ class MAIN_EXPORT MasterClient : public QObject
 
 		bool preparePacketCache(bool write);
 		void readPacketCache();
+		/**
+		 * @brief Registers new server with this MasterClient.
+		 */
+		void registerNewServer(ServerPtr server);
 
 		void setTimeouted(bool b);
 

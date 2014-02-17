@@ -71,6 +71,11 @@ MasterClient::~MasterClient()
 	delete d;
 }
 
+void MasterClient::clearServers()
+{
+	d->servers.clear();
+}
+
 bool MasterClient::isAddressSame(const QHostAddress &address, unsigned short port) const
 {
 	return (d->address == address && d->port == port);
@@ -246,6 +251,12 @@ void MasterClient::readPacketCache()
 	}
 }
 
+void MasterClient::registerNewServer(ServerPtr server)
+{
+	server->setSelf(server.toWeakRef());
+	d->servers << server;
+}
+
 void MasterClient::resetPacketCaching()
 {
 	if(d->cache != NULL)
@@ -271,11 +282,6 @@ void MasterClient::refresh()
 		return;
 	}
 	pGlobalUdpSocket->writeDatagram(request, d->address, d->port);
-}
-
-QList<ServerPtr> &MasterClient::servers()
-{
-	return d->servers;
 }
 
 const QList<ServerPtr> &MasterClient::servers() const

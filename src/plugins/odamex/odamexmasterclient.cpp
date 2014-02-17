@@ -89,7 +89,7 @@ bool OdamexMasterClient::readMasterResponse(QByteArray &data)
 
 		quint16 port = in.readQUInt16();
 		OdamexServer *server = new OdamexServer(QHostAddress(ip), port);
-		servers() << ServerPtr(server);
+		registerNewServer(ServerPtr(server));
 	}
 
 	emit listUpdated();

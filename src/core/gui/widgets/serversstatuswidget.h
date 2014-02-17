@@ -24,6 +24,7 @@
 #ifndef __SERVERSSTATUSWIDGET_H__
 #define __SERVERSSTATUSWIDGET_H__
 
+#include "serverapi/serverptr.h"
 #include <QLabel>
 
 class MasterClient;
@@ -62,9 +63,9 @@ class ServersStatusWidget : public QLabel
 		MasterClient        *serverList;
 
 	protected slots:
-		void	addServer(Server *server);
+		void	addServer(ServerPtr server);
 		void	registerServers();
-		void	removeServer(Server *server);
+		void	removeServer(ServerPtr server);
 };
 
 #endif /* __SERVERSSTATUSWIDGET_H__ */

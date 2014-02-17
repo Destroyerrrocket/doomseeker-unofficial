@@ -259,11 +259,20 @@ class MAIN_EXPORT EnginePlugin
 		void							masterHost(QString &host, unsigned short &port) const;
 
 		/**
-		 *	@brief Creates an instance of server object from this plugin.
-		 *	This might be useful for custom servers.
-		 * 	@return instance of plugin's server object
+		 * @brief Creates an instance of server object from this plugin.
+		 *
+		 * This might be useful for custom servers.
+		 *
+		 * @return instance of plugin's server object
 		 */
-		virtual ServerPtr server(const QHostAddress &address, unsigned short port) const = 0;
+		virtual ServerPtr server(const QHostAddress &address, unsigned short port) const;
+
+	protected:
+		/**
+		 * @brief Create an instance of local Server subclass and return
+		 *        a ServerPtr.
+		 */
+		virtual ServerPtr mkServer(const QHostAddress &address, unsigned short port) const = 0;
 
 	private:
 		Data *d;
