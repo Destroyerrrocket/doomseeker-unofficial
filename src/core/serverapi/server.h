@@ -330,56 +330,6 @@ class MAIN_EXPORT Server : public QObject
 		void setHostName(QHostInfo host);
 };
 
-class MAIN_EXPORT ServerPointer
-{
-	private:
-		void copy(const ServerPointer& copyin)
-		{
-			ptr = copyin.ptr;
-		}
-
-	public:
-		Server* ptr;
-
-		ServerPointer() {}
-		ServerPointer(Server* s)
-		{
-			ptr = s;
-		}
-
-		ServerPointer(const ServerPointer& copyin)
-		{
-			copy(copyin);
-		}
-
-		ServerPointer& operator=(const ServerPointer& rhs)
-		{
-			if (this != &rhs)
-			{
-				copy(rhs);
-			}
-
-			return *this;
-		}
-		~ServerPointer() {}
-
-		bool operator==(const Server* fPtr) const
-		{
-			return (ptr == fPtr);
-		}
-
-		friend bool operator==(const Server* fPtr, const ServerPointer& ref)
-		{
-			return (fPtr == ref.ptr);
-		}
-
-		Server* operator->()
-		{
-			return ptr;
-		}
-};
-
-Q_DECLARE_METATYPE(ServerPointer)
 Q_DECLARE_METATYPE(ServerPtr);
 Q_DECLARE_METATYPE(ServerCPtr);
 
