@@ -116,7 +116,7 @@ ZandronumServer::ZandronumServer(const QHostAddress &address, unsigned short por
 
 ExeFile* ZandronumServer::clientExe()
 {
-	return new ZandronumClientExeFile(this);
+	return new ZandronumClientExeFile(self().toStrongRef().staticCast<ZandronumServer>());
 }
 
 GameClientRunner* ZandronumServer::gameRunner()
