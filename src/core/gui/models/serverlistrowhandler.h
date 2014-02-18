@@ -65,28 +65,25 @@ class ServerListRowHandler : public QObject
 			DTSort							= Qt::UserRole+2
 		};
 
-		ServerListRowHandler(ServerListModel* parentModel, int rowIndex, ServerPtr server);
+		ServerListRowHandler(ServerListModel* parentModel, int rowIndex, const ServerPtr &server);
 
 		/**
 		 *	In this constructor server will be obtained directly from the
 		 *	parentModel.
 		 */
 		ServerListRowHandler(ServerListModel* parentModel, int rowIndex);
+		~ServerListRowHandler();
 
 		/**
 		 *	Removes content from fields for which isColumnVital() returns false.
 		 */
 		void 					clearNonVitalFields();
 
-		ServerPtr getServer()
-		{
-			return server;
-		}
-
 		QStandardItem*			item(int columnIndex);
 
 		void					redraw();
 
+		ServerPtr server();
 		void                    setCountryFlag();
 		void 					setRefreshing();
 
@@ -94,6 +91,9 @@ class ServerListRowHandler : public QObject
 
 		static ServerPtr serverFromList(ServerListModel* parentModel, int rowIndex);
 	private:
+		class PrivData;
+		PrivData *d;
+
 		void 					emptyItem(QStandardItem*);
 
 		void					fillAddressColumn();
@@ -124,7 +124,6 @@ class ServerListRowHandler : public QObject
 
 		ServerListModel*		model;
 		int						row;
-		ServerPtr server;
 
 		QStringList extractValidGameCVarNames(const QList<GameCVar> &cvars);
 };
