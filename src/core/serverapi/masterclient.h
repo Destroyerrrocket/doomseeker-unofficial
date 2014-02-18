@@ -184,6 +184,7 @@ class MAIN_EXPORT MasterClient : public QObject
 		 * that send their response in multiple packets should be handled
 		 * nicely by this.
 		 */
+		// [ServerPtr TODO] Is this useful?
 		void newServerBatchReceived(const QList<Server *> &servers);
 
 	protected:
