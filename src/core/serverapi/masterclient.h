@@ -175,18 +175,6 @@ class MAIN_EXPORT MasterClient : public QObject
 		 */
 		void messageImportant(const Message &message);
 
-		/**
-		 * @brief Emit this signal each time a new batch of servers is
-		 * received.
-		 *
-		 * This signal should be called by the plugin after the response packet
-		 * delivered to readMasterResponse() is processed. Master servers
-		 * that send their response in multiple packets should be handled
-		 * nicely by this.
-		 */
-		// [ServerPtr TODO] Is this useful?
-		void newServerBatchReceived(const QList<Server *> &servers);
-
 	protected:
 		/**
 		 * Clears the server list.

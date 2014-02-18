@@ -19,8 +19,5 @@ MasterClientSignalProxy::MasterClientSignalProxy(MasterClient* pMaster)
 
 	connect(pMaster, SIGNAL( messageImportant(const Message&) ),
 		this, SLOT( readMasterMessageImportant(const Message&) ) );
-
-	connect(pMaster, SIGNAL( newServerBatchReceived(const QList<Server* >&) ),
-		this, SLOT( newServerBatchReceivedSlot(const QList<Server* >&) ) );
 }
 
