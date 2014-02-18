@@ -30,10 +30,10 @@
 class TooltipGenerator::PrivData
 {
 	public:
-		const Server* server;
+		ServerCPtr server;
 };
 
-TooltipGenerator::TooltipGenerator(const Server* server)
+TooltipGenerator::TooltipGenerator(const ServerCPtr &server)
 {
 	d = new PrivData();
 	d->server = server;
@@ -62,7 +62,7 @@ QString TooltipGenerator::playerTableHTML()
 	return table.generateHTML();
 }
 
-const Server *TooltipGenerator::server() const
+ServerCPtr TooltipGenerator::server() const
 {
 	return d->server;
 }

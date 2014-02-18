@@ -23,23 +23,24 @@
 #ifndef __GENERAL_INFO_TIP_H_
 #define __GENERAL_INFO_TIP_H_
 
+#include "serverapi/serverptr.h"
 #include "global.h"
 #include <QString>
 #include <QObject>
-
-class Server;
 
 class GeneralInfoTip : public QObject
 {
 	Q_OBJECT
 
 	public:
-		GeneralInfoTip(const Server* server);
+		GeneralInfoTip(const ServerCPtr &server);
+		~GeneralInfoTip();
 
 		QString				generateHTML();
 
-	protected:
-		const Server*		pServer;
+	private:
+		class PrivData;
+		PrivData *d;
 
 		/**
 		 *	Generates output in format

@@ -23,21 +23,24 @@
 #ifndef __GAME_INFO_TIP_H_
 #define __GAME_INFO_TIP_H_
 
+#include "serverapi/serverptr.h"
 #include <QString>
 #include <QObject>
-
-class Server;
 
 class GameInfoTip : public QObject
 {
 	Q_OBJECT
 
 	public:
-		GameInfoTip(const Server* server);
+		GameInfoTip(const ServerCPtr &server);
+		~GameInfoTip();
 
 		QString					generateHTML();
 
-	protected:
+	private:
+		class PrivData;
+		PrivData *d;
+
 		static const QString	UNLIMITED;
 
 		/**
@@ -65,8 +68,6 @@ class GameInfoTip : public QObject
 		QString					teamScoresHTML();
 
 		QString					timelimitHTML();
-
-		const Server*			pServer;
 };
 
 #endif

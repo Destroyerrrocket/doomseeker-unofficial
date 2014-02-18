@@ -766,7 +766,7 @@ unsigned short Server::timeLimit() const
 
 TooltipGenerator* Server::tooltipGenerator() const
 {
-	return new TooltipGenerator(this);
+	return new TooltipGenerator(self());
 }
 
 unsigned char Server::skill() const
