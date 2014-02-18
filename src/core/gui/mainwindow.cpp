@@ -523,7 +523,7 @@ void MainWindow::finishConfiguration(DoomseekerConfigurationDialog &configDialog
 	if (configDialog.customServersChanged())
 	{
 		serverTableHandler->serverModel()->removeCustomServers();
-		masterManager->customServs()->readConfig(serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
+		masterManager->customServs()->readConfig(serverTableHandler, SLOT(serverUpdated(ServerPtr, int)), SLOT(serverBegunRefreshing(ServerPtr)) );
 		refreshCustomServers();
 	}
 }
