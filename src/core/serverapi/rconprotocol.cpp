@@ -40,7 +40,7 @@ class RConProtocol::PrivData
 		void (RConProtocol::*packetReady)();
 };
 
-RConProtocol::RConProtocol(Server *server)
+RConProtocol::RConProtocol(ServerPtr server)
 {
 	d = new PrivData();
 	d->connected = false;

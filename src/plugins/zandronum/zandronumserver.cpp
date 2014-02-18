@@ -679,7 +679,7 @@ void ZandronumServer::updatedSlot(ServerPtr server, int response)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ZandronumRConProtocol::ZandronumRConProtocol(Server *server)
+ZandronumRConProtocol::ZandronumRConProtocol(ServerPtr server)
 : RConProtocol(server)
 {
 	set_disconnectFromServer(&ZandronumRConProtocol::disconnectFromServer);
@@ -693,7 +693,7 @@ ZandronumRConProtocol::ZandronumRConProtocol(Server *server)
 	connect(&pingTimer, SIGNAL( timeout() ), this, SLOT( sendPong() ));
 }
 
-RConProtocol *ZandronumRConProtocol::connectToServer(Server *server)
+RConProtocol *ZandronumRConProtocol::connectToServer(ServerPtr server)
 {
 	ZandronumRConProtocol *protocol = new ZandronumRConProtocol(server);
 
@@ -928,5 +928,5 @@ void ZandronumRConProtocol::processPacket(QIODevice* ioDevice, bool initial, int
 
 RConProtocol *ZandronumServer::rcon()
 {
-	return ZandronumRConProtocol::connectToServer(this);
+	return ZandronumRConProtocol::connectToServer(self());
 }
