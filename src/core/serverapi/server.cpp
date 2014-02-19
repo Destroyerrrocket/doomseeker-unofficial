@@ -26,10 +26,10 @@
 #include "configuration/doomseekerconfig.h"
 #include "plugins/engineplugin.h"
 #include "strings.h"
+#include "serverapi/tooltips/tooltipgenerator.h"
 #include "serverapi/exefile.h"
 #include "serverapi/gameclientrunner.h"
 #include "serverapi/playerslist.h"
-#include "serverapi/tooltipgenerator.h"
 #include <QTime>
 #include <QUdpSocket>
 #include <cassert>

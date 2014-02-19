@@ -22,10 +22,10 @@
 //------------------------------------------------------------------------------
 #include "tooltipgenerator.h"
 
+#include "serverapi/tooltips/gameinfotip.h"
+#include "serverapi/tooltips/generalinfotip.h"
+#include "serverapi/tooltips/playertable.h"
 #include "serverapi/server.h"
-#include "tooltips/gameinfotip.h"
-#include "tooltips/generalinfotip.h"
-#include "tooltips/playertable.h"
 
 class TooltipGenerator::PrivData
 {

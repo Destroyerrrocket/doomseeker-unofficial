@@ -30,12 +30,12 @@
 #include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
 #include "refresher/refresher.h"
+#include "serverapi/tooltips/tooltipgenerator.h"
 #include "serverapi/gameexeretriever.h"
 #include "serverapi/message.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
 #include "serverapi/serverstructs.h"
-#include "serverapi/tooltipgenerator.h"
 #include <QApplication>
 #include <QClipboard>
 #include <QDesktopServices>

@@ -25,11 +25,9 @@
 
 #include "serverapi/serverptr.h"
 #include "global.h"
-#include "player.h"
 #include <QString>
 #include <QObject>
 
-// [pluginapi TODO] Move this to tooltips/ directory.
 class MAIN_EXPORT TooltipGenerator : public QObject
 {
 	public:

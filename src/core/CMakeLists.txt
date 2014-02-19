@@ -305,6 +305,7 @@ set(SOURCE_FILES
 	serverapi/tooltips/gameinfotip.cpp
 	serverapi/tooltips/generalinfotip.cpp
 	serverapi/tooltips/playertable.cpp
+	serverapi/tooltips/tooltipgenerator.cpp
 	serverapi/buddyinfo.cpp
 	serverapi/exefile.cpp
 	serverapi/gamecreateparams.cpp
@@ -323,7 +324,6 @@ set(SOURCE_FILES
 	serverapi/server.cpp
 	serverapi/serverstructs.cpp
 	serverapi/serversummary.cpp
-	serverapi/tooltipgenerator.cpp
 	tests/testbase.cpp
 	tests/testcore.cpp
 	tests/testdatapaths.cpp
@@ -395,6 +395,7 @@ set(HEADER_FILES
 	pathfinder/pathfinder.h
 	plugins/engineplugin.h
 	plugins/pluginloader.h
+	serverapi/tooltips/tooltipgenerator.h
 	serverapi/buddyinfo.h
 	serverapi/gamecreateparams.h
 	serverapi/gameexeretriever.h
@@ -405,7 +406,6 @@ set(HEADER_FILES
 	serverapi/polymorphism.h
 	serverapi/serverstructs.h
 	serverapi/serversummary.h
-	serverapi/tooltipgenerator.h
 	tests/testbase.h
 	tests/testcore.h
 	tests/testdatapaths.h
