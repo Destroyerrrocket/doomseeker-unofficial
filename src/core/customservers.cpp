@@ -102,7 +102,7 @@ void CustomServers::setServers(const QList<CustomServerInfo>& csiList, QObject* 
 				.arg(customServerInfo.host).arg(customServerInfo.port);
 			continue;
 		}
-		
+
 		QHostAddress address;
 		if (!address.setAddress(customServerInfo.host))
 		{
@@ -118,7 +118,7 @@ void CustomServers::setServers(const QList<CustomServerInfo>& csiList, QObject* 
 		}
 
 		const EnginePlugin* pInterface = gPlugins->plugin(customServerInfo.engineIndex)->info();
-		Server* p = pInterface->server(address, customServerInfo.port);
+		ServerPtr p = pInterface->server(address, customServerInfo.port);
 		if(p == NULL)
 		{
 			gLog << tr("Plugin returned NULL \"Server*\" for custom server %1:%2. "
@@ -128,8 +128,8 @@ void CustomServers::setServers(const QList<CustomServerInfo>& csiList, QObject* 
 		}
 		p->setCustom(true);
 
-		connect(p, SIGNAL( updated(Server*, int) ), receiver, slotUpdated);
-		connect(p, SIGNAL( begunRefreshing(Server*) ), receiver, slotBegunRefreshing);
-		servers() << p;
+		connect(p.data(), SIGNAL( updated(ServerPtr, int) ), receiver, slotUpdated);
+		connect(p.data(), SIGNAL( begunRefreshing(ServerPtr) ), receiver, slotBegunRefreshing);
+		registerNewServer(p);
 	}
 }

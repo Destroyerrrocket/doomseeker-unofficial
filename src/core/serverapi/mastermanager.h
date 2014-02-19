@@ -44,7 +44,6 @@ class MasterManager : public MasterClient
 		~MasterManager();
 
 		void								addMaster(MasterClient *master);
-		void								clearServersList() { servers().clear(); }
 		CustomServers*						customServs() { return customServers; }
 
 		int									numMasters() const { return masters.size(); }
@@ -72,7 +71,6 @@ class MasterManager : public MasterClient
 		void								listUpdatedForMaster(MasterClient* pSender);
 		void								masterMessage(MasterClient* pSender, const QString& title, const QString& content, bool isError);
 		void								masterMessageImportant(MasterClient* pSender, const Message& objMessage);
-		void								newServerBatchReceivedFromMaster(MasterClient* pSender, const QList<Server* >& servers);
 
 	protected:
 		CustomServers*						customServers;
@@ -89,12 +87,6 @@ class MasterManager : public MasterClient
 		void								readMasterMessage(MasterClient* pSender, const QString& title, const QString& content, bool isError)
 		{
 			emit masterMessage(pSender, title, content, isError);
-		}
-
-		/// Forwards the signal to newServerBatchReceivedFromMaster();
-		void								newServerBatchReceivedSlot(MasterClient* pSender, const QList<Server* >& servers)
-		{
-			emit newServerBatchReceivedFromMaster(pSender, servers);
 		}
 };
 

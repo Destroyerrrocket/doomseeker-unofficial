@@ -68,6 +68,9 @@ Main::Main(int argc, char* argv[])
 	bTestMode = false;
 	bPortableMode = false;
 	updateFailedCode = 0;
+
+	qRegisterMetaType<ServerPtr>("ServerPtr");
+	qRegisterMetaType<ServerCPtr>("ServerCPtr");
 }
 
 Main::~Main()
@@ -298,10 +301,9 @@ bool Main::createRemoteConsole()
 
 		// Check for RCon Availability.
 		const EnginePlugin *plugin = gPlugins->plugin(pIndex)->info();
-		Server *server = plugin->server(QHostAddress(rconAddress), rconPort);
+		ServerPtr server = plugin->server(QHostAddress(rconAddress), rconPort);
 		if(!server->hasRcon())
 		{
-			delete server;
 			gLog << tr("Plugin does not support RCon.");
 			return false;
 		}

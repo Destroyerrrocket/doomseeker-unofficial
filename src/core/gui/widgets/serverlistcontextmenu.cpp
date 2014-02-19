@@ -36,7 +36,7 @@ class ServerListContextMenu::PrivData
 		ServerListFilterInfo serverFilter;
 };
 
-ServerListContextMenu::ServerListContextMenu(Server* server, const ServerListFilterInfo& filter)
+ServerListContextMenu::ServerListContextMenu(ServerPtr server, const ServerListFilterInfo& filter)
 : pServer(server)
 {
 	d = new PrivData();

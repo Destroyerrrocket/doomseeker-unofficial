@@ -33,7 +33,7 @@ class ChocolateDoomEnginePlugin : public EnginePlugin
 		ChocolateDoomEnginePlugin();
 		GameHost *gameHost();
 		MasterClient *masterClient() const;
-		Server* server(const QHostAddress &address, unsigned short port) const;
+		ServerPtr mkServer(const QHostAddress &address, unsigned short port) const;
 };
 
 #endif

@@ -37,7 +37,8 @@ class ZandronumClientExeFile : public ExeFile
 	Q_OBJECT
 
 	public:
-		ZandronumClientExeFile(const ZandronumServer* server);
+		ZandronumClientExeFile(const QSharedPointer<const ZandronumServer> &server);
+		~ZandronumClientExeFile();
 
 		/**
 		 *	If the parent Server is a normal server simple path to executable
@@ -48,8 +49,6 @@ class ZandronumClientExeFile : public ExeFile
 		QString					workingDirectory(Message& message);
 
 	protected:
-		const ZandronumServer*	server;
-
 		bool					downloadTestingBinaries(const QDir &destination);
 		/**
 		 *	Creates Unix .sh file or Windows .bat file to
@@ -63,6 +62,10 @@ class ZandronumClientExeFile : public ExeFile
 		 *	@return false if fail
 		 */
 		bool					spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, Message& message);
+
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 class TestingProgressDialog : public QProgressDialog

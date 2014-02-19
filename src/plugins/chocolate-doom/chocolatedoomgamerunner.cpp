@@ -27,7 +27,8 @@
 #include "gui/createserverdialog.h"
 #include "serverapi/playerslist.h"
 
-ChocolateDoomGameClientRunner::ChocolateDoomGameClientRunner(ChocolateDoomServer* server)
+ChocolateDoomGameClientRunner::ChocolateDoomGameClientRunner(
+	QSharedPointer<ChocolateDoomServer> server)
 : GameClientRunner(server)
 {
 	this->server = server;

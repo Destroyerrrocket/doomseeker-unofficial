@@ -44,7 +44,7 @@ VavoomServer::VavoomServer(const QHostAddress &address, unsigned short port)
 
 GameClientRunner* VavoomServer::gameRunner()
 {
-	return new VavoomGameClientRunner(this);
+	return new VavoomGameClientRunner(self().toStrongRef().staticCast<VavoomServer>());
 }
 
 EnginePlugin* VavoomServer::plugin() const

@@ -25,6 +25,7 @@
 
 #include <QMenu>
 #include <QObject>
+#include "serverapi/serverptr.h"
 
 class Server;
 class ServerFilterBuilderMenu;
@@ -49,7 +50,7 @@ class ServerListContextMenu : public QObject
 			NothingHappened
 		};
 
-		ServerListContextMenu(Server* server, const ServerListFilterInfo& filter);
+		ServerListContextMenu(ServerPtr server, const ServerListFilterInfo& filter);
 		~ServerListContextMenu();
 
 		Result					exec(const QPoint& point);
@@ -76,7 +77,7 @@ class ServerListContextMenu : public QObject
 
 		QAction* 				openUrlInDefaultBrowser;
 
-		Server*					pServer;
+		ServerPtr pServer;
 
 		QAction*				rcon;
 		QAction* 				refresh;

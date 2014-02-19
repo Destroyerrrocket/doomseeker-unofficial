@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// vavoomgamerunner.h
+// serverptr.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,26 +18,28 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __VAVOOM_GAME_RUNNER_H_
-#define __VAVOOM_GAME_RUNNER_H_
+#ifndef id85D9CDF0_8CF4_4753_A2F0F8C00FCCD0B8
+#define id85D9CDF0_8CF4_4753_A2F0F8C00FCCD0B8
 
-#include "serverapi/gameclientrunner.h"
+#include <QSharedPointer>
 
-class EnginePlugin;
-class VavoomServer;
+/**
+ * @file
+ * ServerPtr typedefs declarations.
+ *
+ * This file contains forward declarations of ServerPtr types and is meant
+ * to be included wherever no real access to the underlying Server
+ * class is needed (which means "in other headers files", basically). Including
+ * server.h automatically includes serverptr.h, but should only be done
+ * where access to Server instances is actually needed. This is to reduce
+ * recompilation times whenever server.h changes. This file should always
+ * remain fairly static.
+ */
 
-class VavoomGameClientRunner : public GameClientRunner
-{
-	public:
-		VavoomGameClientRunner(QSharedPointer<VavoomServer> server);
-
-		const EnginePlugin* plugin() const;
-	private:
-		QSharedPointer<VavoomServer> server;
-
-		void addIwad();
-};
+class Server;
+typedef QSharedPointer<Server> ServerPtr;
+typedef QSharedPointer<const Server> ServerCPtr;
 
 #endif

@@ -25,6 +25,7 @@
 #define __SERVER_H__
 
 #include "serverapi/polymorphism.h"
+#include "serverapi/serverptr.h"
 #include "global.h"
 
 #include <QColor>
@@ -216,6 +217,8 @@ class MAIN_EXPORT Server : public QObject
 		const QList<int>& scores() const;
 		unsigned int scoreLimit() const;
 
+		QWeakPointer<Server> self() const;
+
 		/**
 		 * Method called by the refreshing thread. Sends the query
 		 * through refreshing thread socket.
@@ -239,6 +242,7 @@ class MAIN_EXPORT Server : public QObject
 		void setPort(unsigned short i);
 		void setRandomMapRotation(bool b);
 		void setRconPassword(const QString& str);
+		void setSelf(const QWeakPointer<Server> &self);
 		void setSkill(unsigned char newSkill);
 		void setWebSite(const QString& site);
 
@@ -250,13 +254,13 @@ class MAIN_EXPORT Server : public QObject
 		const QString& webSite() const;
 
 	signals:
-		void begunRefreshing(Server* server);
+		void begunRefreshing(ServerPtr server);
 		/**
 		 * Emitted when a refresh has been completed.  Be sure to check the
 		 * response to see if anything has actually changed.
 		 * @see Response
 		 */
-		void updated(Server *server, int response);
+		void updated(ServerPtr server, int response);
 
 	protected:
 		/**
@@ -312,7 +316,7 @@ class MAIN_EXPORT Server : public QObject
 		/**
 		 * Wrapper function to allow refresher to emit the updated signal.
 		 */
-		void emitUpdated(int response) { emit updated(this, response); }
+		void emitUpdated(int response);
 
 		QByteArray createSendRequest_default();
 		Response readRequest_default(QByteArray &data);
@@ -326,55 +330,7 @@ class MAIN_EXPORT Server : public QObject
 		void setHostName(QHostInfo host);
 };
 
-class MAIN_EXPORT ServerPointer
-{
-	private:
-		void copy(const ServerPointer& copyin)
-		{
-			ptr = copyin.ptr;
-		}
-
-	public:
-		Server* ptr;
-
-		ServerPointer() {}
-		ServerPointer(Server* s)
-		{
-			ptr = s;
-		}
-
-		ServerPointer(const ServerPointer& copyin)
-		{
-			copy(copyin);
-		}
-
-		ServerPointer& operator=(const ServerPointer& rhs)
-		{
-			if (this != &rhs)
-			{
-				copy(rhs);
-			}
-
-			return *this;
-		}
-		~ServerPointer() {}
-
-		bool operator==(const Server* fPtr) const
-		{
-			return (ptr == fPtr);
-		}
-
-		friend bool operator==(const Server* fPtr, const ServerPointer& ref)
-		{
-			return (fPtr == ref.ptr);
-		}
-
-		Server* operator->()
-		{
-			return ptr;
-		}
-};
-
-Q_DECLARE_METATYPE(ServerPointer)
+Q_DECLARE_METATYPE(ServerPtr);
+Q_DECLARE_METATYPE(ServerCPtr);
 
 #endif /* __SERVER_H__ */

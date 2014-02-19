@@ -24,11 +24,10 @@
 #define __RCON_PROTOCOL_H_
 
 #include "serverapi/polymorphism.h"
+#include "serverapi/serverptr.h"
 #include "player.h"
 #include <QThread>
 #include <QUdpSocket>
-
-class Server;
 
 /**
  * @brief An abstract interface for a remote console protocol.
@@ -65,7 +64,7 @@ class MAIN_EXPORT RConProtocol : public QObject
 		void serverNameChanged(const QString &name);
 
 	protected:
-		RConProtocol(Server *server);
+		RConProtocol(ServerPtr server);
 
 		POLYMORPHIC_SETTER_DECLARE(void, RConProtocol, disconnectFromServer, ());
 		POLYMORPHIC_SETTER_DECLARE(void, RConProtocol, sendCommand, (const QString &cmd));

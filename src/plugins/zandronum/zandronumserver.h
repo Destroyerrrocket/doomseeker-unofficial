@@ -158,7 +158,7 @@ class ZandronumServer : public Server
 		QString			teamName(unsigned team) const;
 
 	protected slots:
-		void			updatedSlot(Server* server, int response);
+		void			updatedSlot(ServerPtr server, int response);
 
 	protected:
 		bool			buckshot;
@@ -213,7 +213,7 @@ class ZandronumRConProtocol : public RConProtocol
 		};
 
 	public:
-		static RConProtocol *connectToServer(Server *server);
+		static RConProtocol *connectToServer(ServerPtr server);
 
 	public slots:
 		void disconnectFromServer();
@@ -222,7 +222,7 @@ class ZandronumRConProtocol : public RConProtocol
 		void sendPong();
 
 	protected:
-		ZandronumRConProtocol(Server *server);
+		ZandronumRConProtocol(ServerPtr server);
 
 		void processPacket(QIODevice* ioDevice, bool initial=false, int maxUpdates=1);
 

@@ -111,17 +111,17 @@ ZandronumServer::ZandronumServer(const QHostAddress &address, unsigned short por
 	set_createSendRequest(&ZandronumServer::createSendRequest);
 	set_readRequest(&ZandronumServer::readRequest);
 
-	connect(this, SIGNAL( updated(Server*, int) ), this, SLOT( updatedSlot(Server*, int) ));
+	connect(this, SIGNAL( updated(ServerPtr, int) ), this, SLOT( updatedSlot(ServerPtr, int) ));
 }
 
 ExeFile* ZandronumServer::clientExe()
 {
-	return new ZandronumClientExeFile(this);
+	return new ZandronumClientExeFile(self().toStrongRef().staticCast<ZandronumServer>());
 }
 
 GameClientRunner* ZandronumServer::gameRunner()
 {
-	return new ZandronumGameClientRunner(this);
+	return new ZandronumGameClientRunner(self());
 }
 
 unsigned int ZandronumServer::millisecondTime()
@@ -621,13 +621,13 @@ QString	ZandronumServer::teamName(unsigned team) const
 	return team < ST_MAX_TEAMS ? teamInfo[team].name() : "";
 }
 
-void ZandronumServer::updatedSlot(Server* server, int response)
+void ZandronumServer::updatedSlot(ServerPtr server, int response)
 {
 	if (response == RESPONSE_BAD)
 	{
 		// If response is bad we will print the read request to stderr,
 		// for debug purposes of course.
-		ZandronumServer* s = (ZandronumServer*)server;
+		QSharedPointer<ZandronumServer> s = server.staticCast<ZandronumServer>();
 		QByteArray& req = s->lastReadRequest;
 
 		fprintf(stderr, "Bad response from server: %s:%u\n", address().toString().toAscii().constData(), port());
@@ -679,7 +679,7 @@ void ZandronumServer::updatedSlot(Server* server, int response)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ZandronumRConProtocol::ZandronumRConProtocol(Server *server)
+ZandronumRConProtocol::ZandronumRConProtocol(ServerPtr server)
 : RConProtocol(server)
 {
 	set_disconnectFromServer(&ZandronumRConProtocol::disconnectFromServer);
@@ -693,7 +693,7 @@ ZandronumRConProtocol::ZandronumRConProtocol(Server *server)
 	connect(&pingTimer, SIGNAL( timeout() ), this, SLOT( sendPong() ));
 }
 
-RConProtocol *ZandronumRConProtocol::connectToServer(Server *server)
+RConProtocol *ZandronumRConProtocol::connectToServer(ServerPtr server)
 {
 	ZandronumRConProtocol *protocol = new ZandronumRConProtocol(server);
 
@@ -928,5 +928,5 @@ void ZandronumRConProtocol::processPacket(QIODevice* ioDevice, bool initial, int
 
 RConProtocol *ZandronumServer::rcon()
 {
-	return ZandronumRConProtocol::connectToServer(this);
+	return ZandronumRConProtocol::connectToServer(self());
 }

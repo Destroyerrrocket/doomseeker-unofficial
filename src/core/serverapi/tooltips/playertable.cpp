@@ -24,10 +24,24 @@
 #include "serverapi/server.h"
 #include "serverapi/serverstructs.h"
 
-PlayerTable::PlayerTable(const Server* server)
-: numOfColumns(0), pServer(server)
+class PlayerTable::PrivData
 {
+	public:
+		int numOfColumns;
+		ServerCPtr server;
+};
+
+PlayerTable::PlayerTable(const ServerCPtr &server)
+{
+	d = new PrivData();
+	d->numOfColumns = 0;
+	d->server = server;
 	setNumberOfColumns();
+}
+
+PlayerTable::~PlayerTable()
+{
+	delete d;
 }
 
 QString PlayerTable::generateHTML()
@@ -42,13 +56,13 @@ QString PlayerTable::generateHTML()
 
 void PlayerTable::setNumberOfColumns()
 {
-	if (pServer->gameMode().isTeamGame())
+	if (d->server->gameMode().isTeamGame())
 	{
-		numOfColumns = 5;
+		d->numOfColumns = 5;
 	}
 	else
 	{
-		numOfColumns = 4;
+		d->numOfColumns = 4;
 	}
 }
 
@@ -59,7 +73,7 @@ QString PlayerTable::spawnPartOfPlayerTable(PlayersList& list, bool bAppendEmpty
 	{
 		if (bAppendEmptyRowAtBeginning)
 		{
-			ret = QString("<tr><td colspan=\"%1\">&nbsp;</td></tr>").arg(numOfColumns);
+			ret = QString("<tr><td colspan=\"%1\">&nbsp;</td></tr>").arg(d->numOfColumns);
 		}
 
 		for (int i = 0; i < list.count(); ++i)
@@ -77,9 +91,9 @@ QString PlayerTable::spawnPartOfPlayerTable(PlayersList& list, bool bAppendEmpty
 			}
 
 			QString strPlayer = "<tr>";
-			if (pServer->gameMode().isTeamGame())
+			if (d->server->gameMode().isTeamGame())
 			{
-				strPlayer += QString("<td>%1</td>").arg(pServer->teamName(player.teamNum()));
+				strPlayer += QString("<td>%1</td>").arg(d->server->teamName(player.teamNum()));
 			}
 			strPlayer += "<td>%1</td><td align=\"right\">%2</td><td align=\"right\">%3</td><td>%4</td></tr>";
 			strPlayer = strPlayer.arg(player.nameFormatted()).arg(player.score()).arg(player.ping());
@@ -115,7 +129,7 @@ QString	PlayerTable::tableContent()
 	PlayersByTeams playersByTeams;
 	PlayersList bots, spectators;
 
-	const PlayersList* playersList = pServer->players();
+	const PlayersList* playersList = d->server->players();
 
 	playersList->inGamePlayersByTeams(playersByTeams);
 	playersList->botsWithoutTeam(bots);
@@ -146,7 +160,7 @@ QString PlayerTable::tableHeader()
 	QString teamHeader;
 	QString header = "<tr>";
 
-	if (pServer->gameMode().isTeamGame())
+	if (d->server->gameMode().isTeamGame())
 	{
 		teamHeader = "<td>" + TEAM + "</td>";
 	}
@@ -157,7 +171,7 @@ QString PlayerTable::tableHeader()
 	header += "<td align=\"right\">&nbsp;" + PING + "</td>";
 	header += "<td>" + STATUS + "</td>";
 	header += "</tr>";
-	header += QString("<tr><td colspan=\"%1\"><hr width=\"100%\"></td></tr>").arg(numOfColumns);
+	header += QString("<tr><td colspan=\"%1\"><hr width=\"100%\"></td></tr>").arg(d->numOfColumns);
 
 	return header;
 }

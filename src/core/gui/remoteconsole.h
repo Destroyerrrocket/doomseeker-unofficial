@@ -25,6 +25,7 @@
 #define __REMOTECONSOLE_H__
 
 #include "ui_remoteconsole.h"
+#include "serverapi/serverptr.h"
 #include "widgets/serverconsole.h"
 
 class RConProtocol;
@@ -36,7 +37,7 @@ class RemoteConsole : public QMainWindow, private Ui::RemoteConsole
 
 	public:
 		RemoteConsole(QWidget *parent=NULL);
-		RemoteConsole(Server *server, QWidget *parent=NULL);
+		RemoteConsole(ServerPtr server, QWidget *parent=NULL);
 		~RemoteConsole();
 
 		/**
@@ -61,8 +62,7 @@ class RemoteConsole : public QMainWindow, private Ui::RemoteConsole
 	private:
 		RConProtocol		*protocol;
 		ServerConsole		*serverConsole;
-
-		Server				*server; /// Used by the first constructor.  Will be deleted.
+		ServerPtr server;
 };
 
 #endif /* __REMOTECONSOLE_HPP__ */

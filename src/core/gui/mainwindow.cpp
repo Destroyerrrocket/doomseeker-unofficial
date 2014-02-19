@@ -117,7 +117,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	buddiesList->toggleViewAction()->setText(tr("&Buddies"));
 	buddiesList->toggleViewAction()->setShortcut(tr("CTRL+B"));
 
-	connect(buddiesList, SIGNAL( joinServer(Server*) ), this, SLOT( runGame(Server*) ));
+	connect(buddiesList, SIGNAL( joinServer(ServerPtr) ), this, SLOT( runGame(ServerPtr) ));
 	buddiesList->hide();
 	this->addDockWidget(Qt::LeftDockWidgetArea, buddiesList);
 	initLogDock();
@@ -168,7 +168,9 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	fillQueryMenu(masterManager);
 
 	// Init custom servers
-	masterManager->customServs()->readConfig(serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
+	masterManager->customServs()->readConfig(serverTableHandler,
+		SLOT(serverUpdated(ServerPtr, int)),
+		SLOT(serverBegunRefreshing(ServerPtr)) );
 
 	setWindowIcon(QIcon(":/icon.png"));
 
@@ -443,9 +445,9 @@ void MainWindow::connectEntities()
 	connect(serverFilterDock, SIGNAL( filterUpdated(const ServerListFilterInfo&) ), this, SLOT( updateServerFilter(const ServerListFilterInfo&) ) );
 	connect(serverTableHandler, SIGNAL(serverFilterModified(ServerListFilterInfo)),
 		serverFilterDock, SLOT(setFilterInfo(ServerListFilterInfo)));
-	connect(serverTableHandler, SIGNAL( serverDoubleClicked(Server*) ), this, SLOT( runGame(Server*) ) );
-	connect(serverTableHandler, SIGNAL( displayServerJoinCommandLine(Server*) ), this, SLOT( showServerJoinCommandLine(Server*) ) );
-	connect(serverTableHandler, SIGNAL( serverInfoUpdated(Server*) ), this, SLOT( serverAddedToList(Server*) ) );
+	connect(serverTableHandler, SIGNAL( serverDoubleClicked(ServerPtr) ), this, SLOT( runGame(ServerPtr) ) );
+	connect(serverTableHandler, SIGNAL( displayServerJoinCommandLine(ServerPtr) ), this, SLOT( showServerJoinCommandLine(ServerPtr) ) );
+	connect(serverTableHandler, SIGNAL( serverInfoUpdated(ServerPtr) ), this, SLOT( serverAddedToList(ServerPtr) ) );
 }
 
 void MainWindow::fillQueryMenu(MasterManager* masterManager)
@@ -521,7 +523,7 @@ void MainWindow::finishConfiguration(DoomseekerConfigurationDialog &configDialog
 	if (configDialog.customServersChanged())
 	{
 		serverTableHandler->serverModel()->removeCustomServers();
-		masterManager->customServs()->readConfig(serverTableHandler, SLOT(serverUpdated(Server *, int)), SLOT(serverBegunRefreshing(Server *)) );
+		masterManager->customServs()->readConfig(serverTableHandler, SLOT(serverUpdated(ServerPtr, int)), SLOT(serverBegunRefreshing(ServerPtr)) );
 		refreshCustomServers();
 	}
 }
@@ -535,11 +537,11 @@ void MainWindow::finishedQueryingMaster(MasterClient* master)
 
 	for(int i = 0;i < master->numServers();i++)
 	{
-		connect((*master)[i], SIGNAL(updated(Server *, int)),
-			serverTableHandler, SLOT(serverUpdated(Server *, int)) );
+		connect((*master)[i].data(), SIGNAL(updated(ServerPtr, int)),
+			serverTableHandler, SLOT(serverUpdated(ServerPtr, int)) );
 
-		connect((*master)[i], SIGNAL(begunRefreshing(Server *)),
-			serverTableHandler, SLOT(serverBegunRefreshing(Server *)) );
+		connect((*master)[i].data(), SIGNAL(begunRefreshing(ServerPtr)),
+			serverTableHandler, SLOT(serverBegunRefreshing(ServerPtr)) );
 	}
 }
 
@@ -585,7 +587,7 @@ void MainWindow::getServers()
 			"Check your Query menu or \"engines/\" directory. Custom servers will still refresh.");
 	}
 
-	masterManager->clearServersList();
+	masterManager->clearServers();
 	for (int i = 0; i < masterManager->numMasters(); ++i)
 	{
 		MasterClient* pMaster = (*masterManager)[i];
@@ -1096,15 +1098,18 @@ void MainWindow::quitProgram()
 	close();
 }
 
+void dupa(ServerPtr a) {
+}
+
 void MainWindow::refreshCustomServers()
 {
 	CustomServers* customServers = masterManager->customServs();
 
 	for(int i = 0;i < customServers->numServers();i++)
 	{
-		Server* server = (*customServers)[i];
+		ServerPtr server = (*customServers)[i];
 		serverTableHandler->serverUpdated(server, Server::RESPONSE_NO_RESPONSE_YET);
-		gRefresher->registerServer(server);
+		gRefresher->registerServer(server.data());
 	}
 }
 
@@ -1139,7 +1144,7 @@ void MainWindow::restartAndInstallUpdatesNow()
 	quitProgram();
 }
 
-void MainWindow::runGame(Server *server)
+void MainWindow::runGame(const ServerPtr &server)
 {
 	if(connectionHandler)
 		delete connectionHandler;
@@ -1161,7 +1166,7 @@ void MainWindow::setQueryMasterServerEnabled(MasterClient* pClient, bool bEnable
 	}
 }
 
-void MainWindow::serverAddedToList(Server* pServer)
+void MainWindow::serverAddedToList(const ServerPtr &pServer)
 {
 	if (pServer->isKnown())
 	{
@@ -1248,7 +1253,7 @@ void MainWindow::setupToolBar()
 	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( toolBarAction(QAction*) ) );
 }
 
-void MainWindow::showServerJoinCommandLine(Server* server)
+void MainWindow::showServerJoinCommandLine(const ServerPtr &server)
 {
 	CommandLineInfo cli;
 	if (ConnectionHandler::obtainJoinCommandLine(this, server, cli, tr("Doomseeker - join command line"), false))

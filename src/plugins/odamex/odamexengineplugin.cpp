@@ -70,7 +70,7 @@ MasterClient *OdamexEnginePlugin::masterClient() const
 	return new OdamexMasterClient();
 }
 
-Server* OdamexEnginePlugin::server(const QHostAddress &address, unsigned short port) const
+ServerPtr OdamexEnginePlugin::mkServer(const QHostAddress &address, unsigned short port) const
 {
-	return new OdamexServer(address, port);
+	return ServerPtr(new OdamexServer(address, port));
 }

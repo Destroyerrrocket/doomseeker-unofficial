@@ -29,6 +29,7 @@
 #include <QList>
 
 #include "global.h"
+#include "serverapi/serverptr.h"
 
 class Message;
 class EnginePlugin;
@@ -37,7 +38,7 @@ class QFile;
 class QUdpSocket;
 
 /**
- * @brief Abstract base for all MasterClients. 
+ * @brief Abstract base for all MasterClients.
  *
  * This is expected to fetch a list of IP addresses which will be turned
  * into Servers.
@@ -64,6 +65,8 @@ class MAIN_EXPORT MasterClient : public QObject
 
 		MasterClient();
 		virtual ~MasterClient();
+
+		void clearServers();
 
 		/**
 		 * @brief Extracts engine name from pluginInfo() if available.
@@ -96,7 +99,7 @@ class MAIN_EXPORT MasterClient : public QObject
 		bool isTimeouted() const;
 		int numPlayers() const;
 		int numServers() const;
-		Server *operator[] (int index) const;
+		ServerPtr operator[] (int index) const;
 
 		/**
 		 * This is supposed to return the plugin this MasterClient belongs to.
@@ -127,8 +130,7 @@ class MAIN_EXPORT MasterClient : public QObject
 		 */
 		virtual bool readMasterResponse(QHostAddress& address, unsigned short port, QByteArray &data);
 
-		QList<Server*> &servers();
-		const QList<Server*> &servers() const;
+		const QList<ServerPtr> &servers() const;
 
 		void updateAddress();
 
@@ -173,17 +175,6 @@ class MAIN_EXPORT MasterClient : public QObject
 		 */
 		void messageImportant(const Message &message);
 
-		/**
-		 * @brief Emit this signal each time a new batch of servers is
-		 * received.
-		 *
-		 * This signal should be called by the plugin after the response packet
-		 * delivered to readMasterResponse() is processed. Master servers
-		 * that send their response in multiple packets should be handled
-		 * nicely by this.
-		 */
-		void newServerBatchReceived(const QList<Server *> &servers);
-
 	protected:
 		/**
 		 * Clears the server list.
@@ -209,9 +200,9 @@ class MAIN_EXPORT MasterClient : public QObject
 		 * their query becuase they tried to refresh too quickly.
 		 */
 		void notifyDelay();
-		
+
 		/**
-		 * @brief Tells the user that the master server returned a bad 
+		 * @brief Tells the user that the master server returned a bad
 		 * response.
 		 */
 		void notifyError();
@@ -224,6 +215,10 @@ class MAIN_EXPORT MasterClient : public QObject
 
 		bool preparePacketCache(bool write);
 		void readPacketCache();
+		/**
+		 * @brief Registers new server with this MasterClient.
+		 */
+		void registerNewServer(ServerPtr server);
 
 		void setTimeouted(bool b);
 

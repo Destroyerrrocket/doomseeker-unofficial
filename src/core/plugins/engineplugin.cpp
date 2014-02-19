@@ -26,6 +26,7 @@
 #include "plugins/engineplugin.h"
 #include "serverapi/gameexefactory.h"
 #include "serverapi/gamehost.h"
+#include "serverapi/server.h"
 #include "log.h"
 #include "strings.h"
 
@@ -202,6 +203,13 @@ void EnginePlugin::masterHost(QString &host, unsigned short &port) const
 {
 	QString str = d->pConfig->setting("Masterserver");
 	Strings::translateServerAddress(str, host, port, d->defaultMaster);
+}
+
+ServerPtr EnginePlugin::server(const QHostAddress &address, unsigned short port) const
+{
+	ServerPtr server = mkServer(address, port);
+	server->setSelf(server.toWeakRef());
+	return server;
 }
 
 void EnginePlugin::setConfig(IniSection &ini) const

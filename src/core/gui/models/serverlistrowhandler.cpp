@@ -35,15 +35,30 @@
 
 using namespace ServerListColumnId;
 
-ServerListRowHandler::ServerListRowHandler(ServerListModel* parentModel, int rowIndex, Server* pServer)
-: model(parentModel), row(rowIndex), server(pServer)
+class ServerListRowHandler::PrivData
 {
+	public:
+		ServerPtr server;
+};
+
+ServerListRowHandler::ServerListRowHandler(ServerListModel* parentModel,
+    int rowIndex, const ServerPtr &server)
+: model(parentModel), row(rowIndex)
+{
+	d = new PrivData();
+	d->server = server;
 }
 
 ServerListRowHandler::ServerListRowHandler(ServerListModel* parentModel, int rowIndex)
 : model(parentModel), row(rowIndex)
 {
-	server = serverFromList(parentModel, rowIndex);
+	d = new PrivData();
+	d->server = serverFromList(parentModel, rowIndex);
+}
+
+ServerListRowHandler::~ServerListRowHandler()
+{
+	delete d;
 }
 
 void ServerListRowHandler::clearNonVitalFields()
@@ -80,7 +95,7 @@ QStringList ServerListRowHandler::extractValidGameCVarNames(const QList<GameCVar
 void ServerListRowHandler::fillAddressColumn()
 {
 	QStandardItem* pItem = item(IDAddress);
-	fillItem(pItem, server->address(), server->hostName() );
+	fillItem(pItem, d->server->address(), d->server->hostName() );
 }
 
 void ServerListRowHandler::fillItem(QStandardItem* item, const QString& str)
@@ -140,7 +155,7 @@ void ServerListRowHandler::fillPlayerColumn()
 	int style = gConfig.doomseeker.slotStyle;
 	bool botsAreNotPlayers = gConfig.doomseeker.bBotsAreNotPlayers;
 
-	const PlayersList* playersList = server->players();
+	const PlayersList* playersList = d->server->players();
 	int sortValue = 0;
 
 	if (botsAreNotPlayers)
@@ -154,11 +169,12 @@ void ServerListRowHandler::fillPlayerColumn()
 
 	if(style != NUM_SLOTSTYLES)
 	{
-		fillItem(pItem, sortValue, PlayersDiagram(server).pixmap());
+		fillItem(pItem, sortValue, PlayersDiagram(d->server).pixmap());
 	}
 	else
 	{
-		fillItem(pItem, sortValue, QString("%1/%2").arg(playersList->numClients()).arg(server->numTotalSlots()));
+		fillItem(pItem, sortValue, QString("%1/%2").arg(playersList->numClients())
+			.arg(d->server->numTotalSlots()));
 	}
 
 	// Unset some data if it has been set before.
@@ -169,30 +185,29 @@ void ServerListRowHandler::fillPlayerColumn()
 void ServerListRowHandler::fillPortIconColumn()
 {
 	QStandardItem* pItem = item(IDPort);
-	QPixmap icon = server->icon();
-	if(server->isKnown())
+	QPixmap icon = d->server->icon();
+	if(d->server->isKnown())
 	{
-		if(server->isLocked()) // Draw a key if it is locked.
+		if(d->server->isLocked()) // Draw a key if it is locked.
 		{
 			QPainter iconPainter(&icon);
 			iconPainter.drawPixmap(0, 0, QPixmap(":/locked.png"));
 			iconPainter.end();
 		}
-		else if(server->isSecure())
+		else if(d->server->isSecure())
 		{
 			QPainter iconPainter(&icon);
 			iconPainter.drawPixmap(0, 0, QPixmap(":/shield.png"));
 			iconPainter.end();
 		}
 	}
-	fillItem(pItem, server->metaObject()->className(), icon);
+	fillItem(pItem, d->server->metaObject()->className(), icon);
 }
 
 void ServerListRowHandler::fillServerPointerColumn()
 {
 	QStandardItem* pItem = item(IDHiddenServerPointer);
-	ServerPointer ptr(server);
-	QVariant savePointer = qVariantFromValue(ptr);
+	QVariant savePointer = qVariantFromValue(d->server);
 	pItem->setData(savePointer, DTPointerToServerStructure);
 }
 
@@ -203,16 +218,21 @@ QStandardItem* ServerListRowHandler::item(int columnIndex)
 
 void ServerListRowHandler::redraw()
 {
-	updateServer(server->lastResponse());
+	updateServer(d->server->lastResponse());
 
 	// Since updateServer doesn't do anything with the flags we need to
 	// explicitly redraw it here.
 	setCountryFlag();
 }
 
+ServerPtr ServerListRowHandler::server()
+{
+	return d->server;
+}
+
 void ServerListRowHandler::setBackgroundColor()
 {
-	if (server->isCustom())
+	if (d->server->isCustom())
 	{
 		QString color = gConfig.doomseeker.customServersColor;
 
@@ -256,7 +276,7 @@ void ServerListRowHandler::setCountryFlag()
 
 	if (!IP2C::instance()->isDataAccessLocked())
 	{
-		IP2CCountryInfo countryInfo = IP2C::instance()->obtainCountryInfo(server->address());
+		IP2CCountryInfo countryInfo = IP2C::instance()->obtainCountryInfo(d->server->address());
 		if (countryInfo.isValid())
 		{
 			QPixmap flag = *countryInfo.flag;
@@ -279,19 +299,19 @@ void ServerListRowHandler::setGood()
 	fillPlayerColumn();
 
 	qstdItem = item(IDPing);
-	fillItem(qstdItem, server->ping());
+	fillItem(qstdItem, d->server->ping());
 
 	qstdItem = item(IDServerName);
-	fillItem(qstdItem, server->name());
+	fillItem(qstdItem, d->server->name());
 
 	qstdItem = item(IDIwad);
-	fillItem(qstdItem, server->iwad());
+	fillItem(qstdItem, d->server->iwad());
 
 	qstdItem = item(IDMap);
-	fillItem(qstdItem, server->map());
+	fillItem(qstdItem, d->server->map());
 
 	strTmp.clear();
-	foreach(const PWad &wad, server->wads())
+	foreach(const PWad &wad, d->server->wads())
 	{
 		if(wad.isOptional())
 		{
@@ -307,8 +327,8 @@ void ServerListRowHandler::setGood()
 	fillItem(qstdItem, strTmp);
 
 	qstdItem = item(IDGametype);
-	QString fullGameModeName = server->gameMode().name();
-	QStringList modifierNames = extractValidGameCVarNames(server->modifiers());
+	QString fullGameModeName = d->server->gameMode().name();
+	QStringList modifierNames = extractValidGameCVarNames(d->server->modifiers());
 	if (!modifierNames.isEmpty())
 	{
 		fullGameModeName += QString(" (%1)").arg(modifierNames.join(", "));
@@ -351,16 +371,15 @@ void ServerListRowHandler::setWait()
 	fillItem(qstdItem, SGWait);
 }
 
-Server* ServerListRowHandler::serverFromList(ServerListModel* parentModel, int rowIndex)
+ServerPtr ServerListRowHandler::serverFromList(ServerListModel* parentModel, int rowIndex)
 {
 	QStandardItem* pItem = parentModel->item(rowIndex, IDHiddenServerPointer);
 	QVariant pointer = qVariantFromValue(pItem->data(DTPointerToServerStructure));
 	if (!pointer.isValid())
 	{
-		return NULL;
+		return ServerPtr();
 	}
-	ServerPointer savedServ = qVariantValue<ServerPointer>(pointer);
-	return savedServ.ptr;
+	return qVariantValue<ServerPtr>(pointer);
 }
 
 //ServerListRowHandler::ServerGroup ServerListRowHandler::serverGroup()
@@ -390,7 +409,7 @@ int ServerListRowHandler::updateServer(int response)
 			break;
 
 		case Server::RESPONSE_WAIT:
-			if (server->isKnown())
+			if (d->server->isKnown())
 			{
 				setGood();
 			}
@@ -409,7 +428,8 @@ int ServerListRowHandler::updateServer(int response)
 			break;
 
 		default:
-			gLog << tr("Unkown server response (%1): %2:%3").arg(response).arg(server->address().toString()).arg(server->port());
+			gLog << tr("Unkown server response (%1): %2:%3").arg(response)
+				.arg(d->server->address().toString()).arg(d->server->port());
 			break;
 	}
 

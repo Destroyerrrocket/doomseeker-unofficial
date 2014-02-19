@@ -23,17 +23,17 @@
 #ifndef __TOOLTIP_GENERATOR_H_
 #define __TOOLTIP_GENERATOR_H_
 
+#include "serverapi/serverptr.h"
 #include "global.h"
 #include "player.h"
 #include <QString>
 #include <QObject>
 
-class Server;
-
+// [pluginapi TODO] Move this to tooltips/ directory.
 class MAIN_EXPORT TooltipGenerator : public QObject
 {
 	public:
-		TooltipGenerator(const Server* server);
+		TooltipGenerator(const ServerCPtr &server);
 		virtual ~TooltipGenerator();
 
 		/**
@@ -54,7 +54,7 @@ class MAIN_EXPORT TooltipGenerator : public QObject
 		virtual QString playerTableHTML();
 
 	protected:
-		const Server *server() const;
+		ServerCPtr server() const;
 
 	private:
 		class PrivData;

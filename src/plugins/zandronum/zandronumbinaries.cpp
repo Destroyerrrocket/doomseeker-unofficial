@@ -62,19 +62,31 @@
 #define SCRIPT_FILE_EXTENSION ".sh"
 #endif
 
-ZandronumClientExeFile::ZandronumClientExeFile(const ZandronumServer* server)
-: server(server)
+class ZandronumClientExeFile::PrivData
 {
+	public:
+		QSharedPointer<const ZandronumServer> server;
+};
+
+ZandronumClientExeFile::ZandronumClientExeFile(const QSharedPointer<const ZandronumServer> &server)
+{
+	d = new PrivData();
+	d->server = server;
 	setProgramName(server->plugin()->data()->name);
 	setExeTypeName(tr("client"));
 	setConfigKey("BinaryPath");
+}
+
+ZandronumClientExeFile::~ZandronumClientExeFile()
+{
+	delete d;
 }
 
 QString ZandronumClientExeFile::pathToExe(Message& message)
 {
 	IniSection& config = *ZandronumEnginePlugin::staticInstance()->data()->pConfig;
 
-	if (!server->isTestingServer() || !config["EnableTesting"])
+	if (!d->server->isTestingServer() || !config["EnableTesting"])
 	{
 		return ExeFile::pathToExe(message);
 	}
@@ -99,7 +111,7 @@ QString ZandronumClientExeFile::pathToExe(Message& message)
 		}
 
 		// Strip out extraneous data in the version number.
-		QString testingVersion = server->gameVersion();
+		QString testingVersion = d->server->gameVersion();
 		testingVersion = testingVersion.left(testingVersion.indexOf(' '));
 
 		path += testingVersion;
@@ -194,7 +206,7 @@ bool ZandronumClientExeFile::downloadTestingBinaries(const QDir &destination)
 	return false;
 #else
 	// Download testing binaries
-	ZandronumVersion version(server->gameVersion());
+	ZandronumVersion version(d->server->gameVersion());
 
 	// Find the hg revision string
 	QString hgVersion;

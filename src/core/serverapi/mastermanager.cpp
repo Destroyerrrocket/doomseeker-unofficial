@@ -24,6 +24,7 @@
 
 #include "serverapi/masterclientsignalproxy.h"
 #include "serverapi/message.h"
+#include "serverapi/server.h"
 #include "customservers.h"
 
 // TODO: I don't think that MasterManager should store a duplicate of each
@@ -36,7 +37,7 @@ MasterManager::MasterManager() : MasterClient()
 
 MasterManager::~MasterManager()
 {
-	servers().clear();
+	clearServers();
 
 	for (int i = 0; i < mastersReceivers.size(); ++i)
 	{
@@ -64,18 +65,15 @@ void MasterManager::addMaster(MasterClient *master)
 		this, SIGNAL( masterMessage(MasterClient*, const QString&, const QString&, bool) ) );
 	connect(pMasterReceiver, SIGNAL( messageImportant(MasterClient*, const Message&) ),
 		this, SIGNAL( masterMessageImportant(MasterClient*, const Message&) ));
-	connect(pMasterReceiver, SIGNAL( newServerBatchReceived(MasterClient*, const QList<Server* >&) ),
-		this, SLOT( newServerBatchReceivedSlot(MasterClient*, const QList<Server* >&) ) );
 
 	mastersReceivers.append(pMasterReceiver);
-
 }
 
 void MasterManager::masterListUpdated(MasterClient* pSender)
 {
-	foreach(Server* pServer, pSender->servers())
+	foreach(ServerPtr pServer, pSender->servers())
 	{
-		servers().append(pServer);
+		registerNewServer(pServer);
 	}
 
 	emit listUpdatedForMaster(pSender);
@@ -110,8 +108,7 @@ void MasterManager::refresh()
 {
 	setTimeouted(false);
 
-	// Don't delete the servers yet!
-	servers().clear();
+	clearServers();
 
 	for(int i = 0;i < masters.size();i++)
 	{

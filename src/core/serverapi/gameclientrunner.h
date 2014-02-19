@@ -26,6 +26,7 @@
 #include "pathfinder/pathfinder.h"
 #include "serverapi/joinerror.h"
 #include "serverapi/polymorphism.h"
+#include "serverapi/serverptr.h"
 #include "apprunner.h"
 #include "global.h"
 #include <QObject>
@@ -64,7 +65,7 @@ class MAIN_EXPORT ServerConnectParams
 class MAIN_EXPORT GameClientRunner : public QObject
 {
 	public:
-		GameClientRunner(Server* server);
+		GameClientRunner(ServerPtr server);
 		virtual ~GameClientRunner();
 
 		/**

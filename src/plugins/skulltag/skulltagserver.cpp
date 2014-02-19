@@ -663,7 +663,7 @@ void SkulltagServer::updatedSlot(Server* server, int response)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SkulltagRConProtocol::SkulltagRConProtocol(Server *server) : RConProtocol(server)
+SkulltagRConProtocol::SkulltagRConProtocol(ServerPtr server) : RConProtocol(server)
 {
 	// Note: the original rcon utility did TIMEOUT/4.
 	// Try to get at least 4 packets in before timing out,
@@ -671,7 +671,7 @@ SkulltagRConProtocol::SkulltagRConProtocol(Server *server) : RConProtocol(server
 	connect(&pingTimer, SIGNAL( timeout() ), this, SLOT( sendPong() ));
 }
 
-RConProtocol *SkulltagRConProtocol::connectToServer(Server *server)
+RConProtocol *SkulltagRConProtocol::connectToServer(ServerPtr server)
 {
 	SkulltagRConProtocol *protocol = new SkulltagRConProtocol(server);
 
@@ -898,5 +898,5 @@ void SkulltagRConProtocol::processPacket(QIODevice* ioDevice, bool initial, int 
 
 RConProtocol *SkulltagServer::rcon()
 {
-	return SkulltagRConProtocol::connectToServer(this);
+	return SkulltagRConProtocol::connectToServer(self());
 }
