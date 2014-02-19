@@ -110,6 +110,8 @@ class Refresher : public QObject
 		Server* findRefreshingServer(const QHostAddress& address, unsigned short port);
 		bool hasFreeServerRefreshSlots() const;
 
+		void purgeNullServers();
+
 		void readPendingDatagram();
 
 		/**
