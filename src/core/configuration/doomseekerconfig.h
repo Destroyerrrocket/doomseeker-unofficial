@@ -56,6 +56,7 @@ class DoomseekerConfig
 			bool						bBotsAreNotPlayers;
 			bool						bCloseToTrayIcon;
 			bool						bColorizeServerConsole;
+			bool bDrawGridInServerTable;
 			bool						bHidePasswords;
 			bool						bIP2CountryAutoUpdate;
 			bool						bLookupHosts;

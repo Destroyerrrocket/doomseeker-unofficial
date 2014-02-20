@@ -28,7 +28,7 @@
 #include "log.h"
 #include "main.h"
 
-CFGAppearance::CFGAppearance(QWidget *parent) 
+CFGAppearance::CFGAppearance(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
 	setupUi(this);
@@ -42,7 +42,7 @@ void CFGAppearance::initLanguagesList()
 		const QString& flagName = obj.countryCodeName;
 		const QString& translationName = obj.localeName;
 		const QString& displayName = obj.niceName;
-		
+
 		QPixmap flag = Main::ip2c->flag(flagName);
 		cboLanguage->addItem(flag, displayName, translationName);
 	}
@@ -73,17 +73,18 @@ void CFGAppearance::readSettings()
 	cbCloseToTrayIcon->setChecked(gConfig.doomseeker.bCloseToTrayIcon);
 
 	cbColorizeConsole->setChecked(gConfig.doomseeker.bColorizeServerConsole);
+	cbDrawGridInServerTable->setChecked(gConfig.doomseeker.bDrawGridInServerTable);
 
 	cbHidePasswords->setChecked(gConfig.doomseeker.bHidePasswords);
 
 	cbLookupHosts->setChecked(gConfig.doomseeker.bLookupHosts);
 
 	// This is not really an appearance option, but it does change how the list
-	// appears and thus utilized the fact that the appearance options cause the 
+	// appears and thus utilized the fact that the appearance options cause the
 	// list to refresh.  It also doesn't fit into any of the other existing
 	// categories at this time.
 	cbBotsNotPlayers->setChecked(gConfig.doomseeker.bBotsAreNotPlayers);
-	
+
 	// Set language.
 	int idxLanguage = cboLanguage->findData(gConfig.doomseeker.localization);
 	if (idxLanguage >= 0)
@@ -108,6 +109,7 @@ void CFGAppearance::saveSettings()
 	gConfig.doomseeker.bUseTrayIcon = gboUseTrayIcon->isChecked();
 	gConfig.doomseeker.bCloseToTrayIcon = cbCloseToTrayIcon->isChecked();
 	gConfig.doomseeker.bColorizeServerConsole = cbColorizeConsole->isChecked();
+	gConfig.doomseeker.bDrawGridInServerTable = cbDrawGridInServerTable->isChecked();
 	gConfig.doomseeker.bBotsAreNotPlayers = cbBotsNotPlayers->isChecked();
 	gConfig.doomseeker.bHidePasswords = cbHidePasswords->isChecked();
 	gConfig.doomseeker.bLookupHosts = cbLookupHosts->isChecked();

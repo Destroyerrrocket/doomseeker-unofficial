@@ -507,6 +507,7 @@ void MainWindow::finishConfiguration(DoomseekerConfigurationDialog &configDialog
 	// If appearance changed - update the widgets.
 	if (configDialog.appearanceChanged())
 	{
+		tableServers->setShowGrid(gConfig.doomseeker.bDrawGridInServerTable);
 		serverTableHandler->redraw();
 		initTrayIcon();
 	}
