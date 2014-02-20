@@ -153,6 +153,9 @@ class ServerListHandler : public QObject
 		Qt::SortOrder			swapCurrentSortOrder();
 
 		void 					updateCountryFlags(bool force);
+	private slots:
+		void contextMenuAboutToHide();
+		void contextMenuTriggered(QAction* action);
 };
 
 #endif

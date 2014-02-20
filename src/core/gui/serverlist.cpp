@@ -148,6 +148,59 @@ void ServerListHandler::connectTableModelProxySlots()
 	connect(table, SIGNAL( leftMouseDoubleClicked(const QModelIndex&, const QPoint&)), this, SLOT( doubleClicked(const QModelIndex&)) );
 }
 
+void ServerListHandler::contextMenuAboutToHide()
+{
+	sender()->deleteLater();
+}
+
+void ServerListHandler::contextMenuTriggered(QAction* action)
+{
+	ServerListContextMenu *contextMenu = static_cast<ServerListContextMenu*>(sender());
+	// TODO: Needs share-pointering after merge with pluginapi.
+	Server *server = contextMenu->server();
+	// 1. This is a bit convoluted, but emitting the serverFilterModified
+	//    signal leads to a call to applyFilter() in this class.
+	// 2. Since the menu modifies existing server filter, the worst that can
+	//    happen is that we set the same filter again.
+	emit serverFilterModified(contextMenu->serverFilter());
+
+	ServerListContextMenu::Result contextMenuResult = contextMenu->translateQMenuResult(action);
+	switch (contextMenuResult)
+	{
+		case ServerListContextMenu::DataCopied:
+			// Do nothing.
+			break;
+
+		case ServerListContextMenu::Join:
+			emit serverDoubleClicked(server);
+			break;
+
+		case ServerListContextMenu::OpenRemoteConsole:
+			new RemoteConsole(server);
+			break;
+
+		case ServerListContextMenu::OpenURL:
+			QDesktopServices::openUrl(server->website());
+			break;
+
+		case ServerListContextMenu::NothingHappened:
+			// Do nothing; ignore.
+			break;
+
+		case ServerListContextMenu::Refresh:
+			refreshSelected();
+			break;
+
+		case ServerListContextMenu::ShowJoinCommandLine:
+			emit displayServerJoinCommandLine(server);
+			break;
+
+		default:
+			QMessageBox::warning(mainWindow, tr("Doomseeker - context menu warning"), tr("Unhandled behavior int ServerListHandler::tableRightClicked()"));
+			break;
+	}
+}
+
 QString ServerListHandler::createIwadToolTip(const Server* server)
 {
 	if (!server->isKnown())
@@ -598,52 +651,13 @@ void ServerListHandler::tableRightClicked(const QModelIndex& index, const QPoint
 	Server* server = serverFromIndex(index);
 
 	ServerListProxyModel* pModel = static_cast<ServerListProxyModel*>(table->model());
-	ServerListContextMenu contextMenu(server, pModel->filterInfo());
+	ServerListContextMenu *contextMenu = new ServerListContextMenu(server,
+		pModel->filterInfo(), this);
+	this->connect(contextMenu, SIGNAL(aboutToHide()), SLOT(contextMenuAboutToHide()));
+	this->connect(contextMenu, SIGNAL(triggered(QAction*)), SLOT(contextMenuTriggered(QAction*)));
 
 	QPoint displayPoint = table->viewport()->mapToGlobal(cursorPosition);
-	ServerListContextMenu::Result contextMenuResult = contextMenu.exec(displayPoint);
-
-	ServerListFilterInfo filter = contextMenu.serverFilter();
-	// 1. This is a bit convoluted, but emitting the serverFilterModified
-	//    signal leads to a call to applyFilter() in this class.
-	// 2. Since the menu modifies existing server filter, the worst that can
-	//    happen is that we set the same filter again.
-	emit serverFilterModified(contextMenu.serverFilter());
-
-	switch (contextMenuResult)
-	{
-		case ServerListContextMenu::DataCopied:
-			// Do nothing.
-			break;
-
-		case ServerListContextMenu::Join:
-			emit serverDoubleClicked(server);
-			break;
-
-		case ServerListContextMenu::OpenRemoteConsole:
-			new RemoteConsole(server);
-			break;
-
-		case ServerListContextMenu::OpenURL:
-			QDesktopServices::openUrl(server->website());
-			break;
-
-		case ServerListContextMenu::NothingHappened:
-			// Do nothing; ignore.
-			break;
-
-		case ServerListContextMenu::Refresh:
-			refreshSelected();
-			break;
-
-		case ServerListContextMenu::ShowJoinCommandLine:
-			emit displayServerJoinCommandLine(server);
-			break;
-
-		default:
-			QMessageBox::warning(mainWindow, tr("Doomseeker - context menu warning"), tr("Unhandled behavior int ServerListHandler::tableRightClicked()"));
-			break;
-	}
+	contextMenu->popup(displayPoint);
 }
 
 void ServerListHandler::updateCountryFlags()
