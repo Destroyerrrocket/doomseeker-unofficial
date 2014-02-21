@@ -496,6 +496,7 @@ const QString DoomseekerConfig::ServerFilter::SECTION_NAME = "ServerFilter";
 
 void DoomseekerConfig::ServerFilter::init(IniSection& section)
 {
+	section.createSetting("bEnabled", true);
 	section.createSetting("bShowEmpty", true);
 	section.createSetting("bShowFull", true);
 	section.createSetting("bShowOnlyValid", false);
@@ -509,6 +510,7 @@ void DoomseekerConfig::ServerFilter::init(IniSection& section)
 
 void DoomseekerConfig::ServerFilter::load(IniSection& section)
 {
+	info.bEnabled = section["bEnabled"];
 	info.bShowEmpty = section["bShowEmpty"];
 	info.bShowFull = section["bShowFull"];
 	info.bShowOnlyValid = section["bShowOnlyValid"];
@@ -522,6 +524,7 @@ void DoomseekerConfig::ServerFilter::load(IniSection& section)
 
 void DoomseekerConfig::ServerFilter::save(IniSection& section)
 {
+	section["bEnabled"] = info.bEnabled;
 	section["bShowEmpty"] = info.bShowEmpty;
 	section["bShowFull"] = info.bShowFull;
 	section["bShowOnlyValid"] = info.bShowOnlyValid;

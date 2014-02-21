@@ -83,6 +83,10 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 	{
 		return false;
 	}
+	if (!d->filterInfo.bEnabled)
+	{
+		return true;
+	}
 
 	if (!s->isKnown())
 	{

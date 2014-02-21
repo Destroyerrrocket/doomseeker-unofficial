@@ -24,6 +24,7 @@
 
 ServerListFilterInfo::ServerListFilterInfo()
 {
+	bEnabled = true;
 	bShowEmpty = true;
 	bShowFull = true;
 	bShowOnlyValid = false;
@@ -32,6 +33,7 @@ ServerListFilterInfo::ServerListFilterInfo()
 
 void ServerListFilterInfo::copy(const ServerListFilterInfo& other)
 {
+	bEnabled = other.bEnabled;
 	bShowEmpty = other.bShowEmpty;
 	bShowFull = other.bShowFull;
 	bShowOnlyValid = other.bShowOnlyValid;
@@ -59,6 +61,11 @@ void ServerListFilterInfo::copyTrimmed(QStringList& target, const QStringList& s
 
 bool ServerListFilterInfo::isFilteringAnything() const
 {
+	if (!bEnabled)
+	{
+		return false;
+	}
+
 	if (!bShowEmpty || !bShowFull)
 	{
 		return true;
@@ -85,6 +92,7 @@ QString ServerListFilterInfo::toString() const
 {
 	QString ret = "";
 
+	ret += QString("bEnabled: ") + (bEnabled ? "Yes" : "No") + "\n";
 	ret += QString("bShowEmpty: ") + (bShowEmpty ? "Yes" : "No") + "\n";
 	ret += QString("bShowFull: ") + (bShowFull ? "Yes" : "No") + "\n";
 	ret += QString("bShowOnlyValid: ") + (bShowOnlyValid ? "Yes" : "No") + "\n";
