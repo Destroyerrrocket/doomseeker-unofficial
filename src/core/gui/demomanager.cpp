@@ -267,6 +267,7 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 		params.setIwadPath(result.foundFiles()[0]);
 		params.setPwadsPaths(result.foundFiles().mid(1));
 		params.setHostMode(GameCreateParams::Demo);
+		params.setExecutablePath(binPath);
 
 		GameHost* gameRunner = plugin->gameHost();
 		Message message = gameRunner->host(params);
