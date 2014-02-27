@@ -17,6 +17,7 @@
 #include <QHash>
 
 class IRCChatAdapter;
+class IRCISupportParser;
 class IRCSocketSignalsAdapter;
 class IRCUserList;
 
@@ -199,6 +200,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		IRCClient							ircClient;
 		IRCRequestParser					ircRequestParser;
 		IRCResponseParser					ircResponseParser;
+		IRCISupportParser* ircISupportParser;
 		IRCSocketSignalsAdapter*			pIrcSocketSignalsAdapter;
 
 		/**
@@ -221,6 +223,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		void								killChatWindow(const QString& recipient);
 
 	private slots:
+		void appendISupportLine(const QString &line);
 		void								echoPrivmsg(const QString& recipient, const QString& content);
 		void								helloClient(const QString& nickname);
 		void								kick(const QString& channel, const QString& byWhom, const QString& whoIsKicked, const QString& reason);
