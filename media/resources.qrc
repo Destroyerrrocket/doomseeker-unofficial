@@ -40,6 +40,7 @@
 	<file alias="slots/marines/spectator">slotstyles/marines/spectator.png</file>
 	<file alias="flags/ARE">flags/ARE.png</file> <!-- United Arab Emirates -->
 	<file alias="flags/ARG">flags/ARG.png</file> <!-- Argentina -->
+	<file alias="flags/ARM">flags/ARM.png</file> <!-- Armenia -->
 	<file alias="flags/AUS">flags/AUS.png</file> <!-- Australia -->
 	<file alias="flags/AUT">flags/AUT.png</file> <!-- Austria -->
 	<file alias="flags/BEL">flags/BEL.png</file> <!-- Belgium -->
@@ -93,6 +94,7 @@
 	<file alias="flags/MOZ">flags/MOZ.png</file> <!-- Mozambique -->
 	<file alias="flags/NCL">flags/NCL.png</file> <!-- New Caledonia -->
 	<file alias="flags/NGA">flags/NGA.png</file> <!-- Nigeria -->
+	<file alias="flags/NIC">flags/NIC.png</file> <!-- Nicaragua -->
 	<file alias="flags/NLD">flags/NLD.png</file> <!-- Netherlands -->
 	<file alias="flags/NOR">flags/NOR.png</file> <!-- Norway -->
 	<file alias="flags/NZL">flags/NZL.png</file> <!-- New Zealand -->

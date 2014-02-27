@@ -44,7 +44,7 @@
 			return RESPONSE_BAD; \
 		}
 
-#define SERVER_CHALLENGE	0x02,0x10,0x01,0xAD
+#define SERVER_CHALLENGE	0x02,0x10,0x01,0xAD,0x40,0,0,0,5,0,0,0,0,0,0,0
 
 #define SPECTATOR_INFO		0x01020304
 #define EXTRA_INFO			0x01020305
@@ -264,6 +264,6 @@ QByteArray OdamexServer::createSendRequest()
 	// This construction and cast to (char*) removes warnings from MSVC.
 	const unsigned char challenge[] = {SERVER_CHALLENGE};
 
-	QByteArray challengeByteArray((char*)challenge, 8);
+	QByteArray challengeByteArray((char*)challenge, 16);
 	return challengeByteArray;
 }

@@ -32,6 +32,7 @@
 class ServerListFilterInfo
 {
 public:
+	bool bEnabled;
 	bool				bShowEmpty;
 	bool				bShowFull;
 	bool				bShowOnlyValid;

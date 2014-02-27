@@ -44,7 +44,6 @@ ChocolateDoomEnginePlugin::ChocolateDoomEnginePlugin()
 		EP_DefaultServerPort, 2342,
 		EP_GameModes, ChocolateDoomGameInfo::gameModes(),
 		EP_HasMasterServer,
-		EP_IRCChannel, "Chocolate Doom", "irc.oftc.net", "#chocolate-doom",
 		EP_Done
 	);
 }

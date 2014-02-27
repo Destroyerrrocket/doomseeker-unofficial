@@ -24,6 +24,7 @@
 #include "irc/ircchanneladapter.h"
 #include "irc/ircglobal.h"
 #include "irc/ircglobalmessages.h"
+#include "irc/ircisupportparser.h"
 #include "irc/ircmessageclass.h"
 #include "irc/ircprivadapter.h"
 #include "irc/ircrequestparser.h"
@@ -37,6 +38,7 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 	this->bEmitAllIRCMessages = false;
 
 	pIrcSocketSignalsAdapter = new IRCSocketSignalsAdapter(this);
+	ircISupportParser = new IRCISupportParser();
 	ircClient.connectSocketSignals(pIrcSocketSignalsAdapter);
 
 	QObject::connect(&ircClient, SIGNAL( ircServerResponse(const QString&) ),
@@ -52,6 +54,9 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 	// Response parser begins here.
 	QObject::connect(&ircResponseParser, SIGNAL( helloClient(const QString&) ),
 		this, SLOT( helloClient(const QString&) ) );
+
+	QObject::connect(&ircResponseParser, SIGNAL(iSupportReceived(QString)),
+		SLOT(appendISupportLine(QString)));
 
 	QObject::connect(&ircResponseParser, SIGNAL( kick(const QString&, const QString&, const QString&, const QString&) ),
 		this, SLOT( kick(const QString&, const QString&, const QString&, const QString&) ) );
@@ -116,7 +121,16 @@ IRCNetworkAdapter::~IRCNetworkAdapter()
 	disconnect();
 
 	killAllChatWindows();
+	delete this->ircISupportParser;
 	delete this->pIrcSocketSignalsAdapter;
+}
+
+void IRCNetworkAdapter::appendISupportLine(const QString &line)
+{
+	printResponse(line, QString());
+	ircISupportParser->appendLine(line);
+	ircISupportParser->parse();
+	// TODO: Extract parsed data and apply!
 }
 
 void IRCNetworkAdapter::banUser(const QString& nickname, const QString& reason, const QString& channel)

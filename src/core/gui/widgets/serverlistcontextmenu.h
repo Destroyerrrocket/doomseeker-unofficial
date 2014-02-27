@@ -50,11 +50,18 @@ class ServerListContextMenu : public QObject
 			NothingHappened
 		};
 
-		ServerListContextMenu(ServerPtr server, const ServerListFilterInfo& filter);
+		ServerListContextMenu(ServerPtr server, const ServerListFilterInfo& filter,
+			QObject *parent);
 		~ServerListContextMenu();
 
-		Result					exec(const QPoint& point);
+		void popup(const QPoint& point);
+		ServerPtr server() const;
 		const ServerListFilterInfo& serverFilter() const;
+		Result translateQMenuResult(QAction* resultAction);
+
+	signals:
+		void aboutToHide();
+		void triggered(QAction* action);
 
 	private:
 		class PrivData;
@@ -63,7 +70,6 @@ class ServerListContextMenu : public QObject
 
 		QMenu*					createCopyMenu(QWidget* parent);
 		void					createMembers();
-		Result					translateQMenuResult(QAction* resultAction);
 		void					initializeMembers();
 
 		QAction*				copyAddress;

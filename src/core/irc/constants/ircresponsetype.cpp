@@ -80,6 +80,9 @@ QString IRCResponseType::toRfcString(MsgType type)
 		case HelloClient:
 			return "001";
 
+		case RPLISupport:
+			return "005";
+
 		case RPLLUserClient:
 			return "251";
 

@@ -280,6 +280,7 @@ set(SOURCE_FILES
 	irc/constants/ircresponsetype.cpp
 	irc/entities/ircnetworkentity.cpp
 	irc/entities/ircresponseparseresult.cpp
+	irc/entities/ircuserprefix.cpp
 	irc/ircchanneladapter.cpp
 	irc/ircchatadapter.cpp
 	irc/ircclient.cpp
@@ -287,6 +288,7 @@ set(SOURCE_FILES
 	irc/ircdelayedoperationlist.cpp
 	irc/ircglobal.cpp
 	irc/ircglobalmessages.cpp
+	irc/ircisupportparser.cpp
 	irc/ircmessageclass.cpp
 	irc/ircnetworkadapter.cpp
 	irc/ircprivadapter.cpp
@@ -328,6 +330,7 @@ set(SOURCE_FILES
 	tests/testcore.cpp
 	tests/testdatapaths.cpp
 	tests/testini.cpp
+	tests/testircisupportparser.cpp
 	tests/testruns.cpp
 	tests/teststrings.cpp
 	updater/autoupdater.cpp
@@ -380,10 +383,12 @@ set(HEADER_FILES
 	irc/constants/ircresponsetype.h
 	irc/entities/ircnetworkentity.h
 	irc/entities/ircresponseparseresult.h
+	irc/entities/ircuserprefix.h
 	irc/ircchatadapter.h
 	irc/ircdelayedoperation.h
 	irc/ircdelayedoperationlist.h
 	irc/ircglobal.h
+	irc/ircisupportparser.h
 	irc/ircmessageclass.h
 	irc/ircnetworkconnectioninfo.h
 	irc/ircuserinfo.h
@@ -410,6 +415,7 @@ set(HEADER_FILES
 	tests/testcore.h
 	tests/testdatapaths.h
 	tests/testini.h
+	tests/testircisupportparser.h
 	tests/testruns.h
 	tests/teststrings.h
 	updater/updatepackage.h

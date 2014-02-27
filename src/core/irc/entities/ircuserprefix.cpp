@@ -1,0 +1,130 @@
+//------------------------------------------------------------------------------
+// ircuserprefix.cpp
+//------------------------------------------------------------------------------
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+// 02110-1301, USA.
+//
+//------------------------------------------------------------------------------
+// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
+//------------------------------------------------------------------------------
+#include "ircuserprefix.h"
+
+#include <QMap>
+
+class IRCModePrefix
+{
+	public:
+		char mode;
+		char prefix;
+
+		IRCModePrefix(char mode, char prefix)
+		{
+			this->mode = mode;
+			this->prefix = prefix;
+		}
+};
+
+
+class IRCUserPrefix::PrivData
+{
+	public:
+		QList<IRCModePrefix> map;
+};
+
+IRCUserPrefix::IRCUserPrefix()
+{
+	d = new PrivData();
+}
+
+IRCUserPrefix::IRCUserPrefix(const IRCUserPrefix &other)
+{
+	d = new PrivData();
+	*d = *other.d;
+}
+
+IRCUserPrefix::~IRCUserPrefix()
+{
+	delete d;
+}
+
+IRCUserPrefix &IRCUserPrefix::operator=(const IRCUserPrefix &other)
+{
+	if (this != &other)
+	{
+		*d = *other.d;
+	}
+	return *this;
+}
+
+void IRCUserPrefix::assignPrefix(char mode, char prefix)
+{
+	d->map << IRCModePrefix(mode, prefix);
+}
+
+bool IRCUserPrefix::hasMode(char mode) const
+{
+	return prefixForMode(mode) != 0;
+}
+
+bool IRCUserPrefix::isLessThan(char mode1, char mode2) const
+{
+	foreach (const IRCModePrefix &candidate, d->map)
+	{
+		if (candidate.mode == mode1)
+		{
+			return true;
+		}
+		else if (candidate.mode == mode2)
+		{
+			return false;
+		}
+	}
+	// Neither was found so we treat them as equal.
+	return false;
+}
+
+IRCUserPrefix IRCUserPrefix::mkDefault()
+{
+	IRCUserPrefix obj;
+	obj.assignPrefix('o', '@');
+	obj.assignPrefix('h', '%');
+	obj.assignPrefix('v', '+');
+	return obj;
+}
+
+char IRCUserPrefix::modeForPrefix(char prefix) const
+{
+	foreach (const IRCModePrefix &candidate, d->map)
+	{
+		if (candidate.prefix == prefix)
+		{
+			return candidate.mode;
+		}
+	}
+	return 0;
+}
+
+char IRCUserPrefix::prefixForMode(char mode) const
+{
+	foreach (const IRCModePrefix &candidate, d->map)
+	{
+		if (candidate.mode == mode)
+		{
+			return candidate.prefix;
+		}
+	}
+	return 0;
+}

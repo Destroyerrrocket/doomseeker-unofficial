@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// versiondefs.h
+// ircuserprefix.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,34 +18,42 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef DOOMSEEKER_VERSIONDEFS_H
-#define DOOMSEEKER_VERSIONDEFS_H
+#ifndef id068647E2_4561_423C_AC0AE4C8499B2EF8
+#define id068647E2_4561_423C_AC0AE4C8499B2EF8
 
-// This is a centralized location to store all version information. Make sure
-// to update this file before making a new tag or a new release.
-//
-// NOTE:
-// This file defines the version data but it SHOULD NOT be used to access this 
-// data. To prevent unnecessary recompilations of huge amount of files
-// everytime the version changes, all information should be accessed
-// using the class defined in 'version.h' file.
-//
-// This file should only by included by following files:
-// - version.cpp
-// - windows.rc
+/**
+ * @brief One-to-one association of visible prefixes to user mode.
+ *
+ * For example: Ops get mode 'o' and prefix '@', voiced users get mode 'v'
+ * and prefix '+'. Various servers define various different user modes.
+ */
+class IRCUserPrefix
+{
+	public:
+		/**
+		 * @brief User modes: op, half-op and voice.
+		 *
+		 * Should be used when server doesn't provide its own PREFIX
+		 * information.
+		 */
+		static IRCUserPrefix mkDefault();
 
-#include "svnrevision.h"
+		IRCUserPrefix();
+		IRCUserPrefix(const IRCUserPrefix &other);
+		~IRCUserPrefix();
+		IRCUserPrefix &operator=(const IRCUserPrefix &other);
 
-// Info used by version.cpp
-#define VERSION_STRING "0.11.1 Beta"
+		void assignPrefix(char mode, char prefix);
+		bool hasMode(char mode) const;
+		bool isLessThan(char mode1, char mode2) const;
+		char modeForPrefix(char prefix) const;
+		char prefixForMode(char mode) const;
 
-// Info used by windows.rc
-#define FILEVERSION_DEF 0,11,1,SVN_REVISION_NUMBER
-#define PRODUCTVERSION_DEF 0,11,1,SVN_REVISION_NUMBER
-#define FILEVERSION_STR_DEF "0.11.1.0"
-#define PRODUCTVERSION_STR_DEF "0.11.1.0"
-#define LEGALCOPYRIGHT_DEF "The Doomseeker Team 2009 - 2014"
+	private:
+		class PrivData;
+		PrivData *d;
+};
 
 #endif

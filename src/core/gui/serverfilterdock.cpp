@@ -96,6 +96,7 @@ ServerListFilterInfo ServerFilterDock::filterInfo() const
 {
 	ServerListFilterInfo filterInfo;
 
+	filterInfo.bEnabled = cbFilteringEnabled->isChecked();
 	filterInfo.bShowEmpty = cbShowEmpty->isChecked();
 	filterInfo.bShowFull = cbShowFull->isChecked();
 	filterInfo.bShowOnlyValid = cbShowOnlyValid->isChecked();
@@ -113,6 +114,7 @@ void ServerFilterDock::setFilterInfo(const ServerListFilterInfo& filterInfo)
 {
 	bDisableUpdate = true;
 
+	cbFilteringEnabled->setChecked(filterInfo.bEnabled);
 	cbShowEmpty->setChecked(filterInfo.bShowEmpty);
 	cbShowFull->setChecked(filterInfo.bShowFull);
 	cbShowOnlyValid->setChecked(filterInfo.bShowOnlyValid);

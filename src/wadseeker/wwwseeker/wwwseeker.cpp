@@ -64,6 +64,7 @@ void WWWSeeker::abort()
 
 	if (d.networkQueries.isEmpty())
 	{
+		d.bIsWorking = false;
 		emit finished();
 	}
 	else
@@ -525,6 +526,7 @@ void WWWSeeker::startNextSites()
 	if (d.networkQueries.isEmpty() && !isMoreToSearch())
 	{
 		// No more sites to check, no more queries to wait for a reply.
+		d.bIsWorking = false;
 		emit finished();
 	}
 }

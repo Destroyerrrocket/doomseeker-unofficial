@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// versiondefs.h
+// ircisupportparser.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,34 +18,31 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef DOOMSEEKER_VERSIONDEFS_H
-#define DOOMSEEKER_VERSIONDEFS_H
+#ifndef idDBEE9861_C853_4D04_81D86245014678B9
+#define idDBEE9861_C853_4D04_81D86245014678B9
 
-// This is a centralized location to store all version information. Make sure
-// to update this file before making a new tag or a new release.
-//
-// NOTE:
-// This file defines the version data but it SHOULD NOT be used to access this 
-// data. To prevent unnecessary recompilations of huge amount of files
-// everytime the version changes, all information should be accessed
-// using the class defined in 'version.h' file.
-//
-// This file should only by included by following files:
-// - version.cpp
-// - windows.rc
+#include <QString>
 
-#include "svnrevision.h"
+class IRCUserPrefix;
 
-// Info used by version.cpp
-#define VERSION_STRING "0.11.1 Beta"
+class IRCISupportParser
+{
+	public:
+		IRCISupportParser();
+		~IRCISupportParser();
 
-// Info used by windows.rc
-#define FILEVERSION_DEF 0,11,1,SVN_REVISION_NUMBER
-#define PRODUCTVERSION_DEF 0,11,1,SVN_REVISION_NUMBER
-#define FILEVERSION_STR_DEF "0.11.1.0"
-#define PRODUCTVERSION_STR_DEF "0.11.1.0"
-#define LEGALCOPYRIGHT_DEF "The Doomseeker Team 2009 - 2014"
+		void appendLine(const QString &line);
+		void parse();
+		const IRCUserPrefix &userPrefixes() const;
+
+	private:
+		class PrivData;
+		PrivData *d;
+
+		QString findValue(const QString &key);
+		void parsePrefix();
+};
 
 #endif

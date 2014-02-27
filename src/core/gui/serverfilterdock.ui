@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>204</width>
-    <height>446</height>
+    <width>330</width>
+    <height>565</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,6 +22,16 @@
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
+     <widget class="QCheckBox" name="cbFilteringEnabled">
+      <property name="text">
+       <string>Filtering enabled</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QScrollArea" name="scrollArea">
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
@@ -34,8 +44,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>186</width>
-         <height>406</height>
+         <width>312</width>
+         <height>494</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -399,6 +409,22 @@
     <hint type="destinationlabel">
      <x>101</x>
      <y>218</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbFilteringEnabled</sender>
+   <signal>clicked()</signal>
+   <receiver>ServerFilterDock</receiver>
+   <slot>emitUpdated()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>164</x>
+     <y>44</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>282</y>
     </hint>
    </hints>
   </connection>

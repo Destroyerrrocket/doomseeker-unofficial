@@ -194,7 +194,7 @@ bool DoomseekerConfig::setIniFile(const QString& filePath)
 
 	section = this->pIni->section(wadseeker.SECTION_NAME);
 	wadseeker.init(section);
-	
+
 	section = this->pIni->section(autoUpdates.SECTION_NAME);
 	autoUpdates.init(section);
 
@@ -209,6 +209,7 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->bBotsAreNotPlayers = true;
 	this->bCloseToTrayIcon = false;
 	this->bColorizeServerConsole = true;
+	this->bDrawGridInServerTable = false;
 	this->bHidePasswords = false;
 	this->bIP2CountryAutoUpdate = true;
 	this->bLookupHosts = true;
@@ -287,6 +288,7 @@ void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 	section.createSetting("BotsAreNotPlayers", this->bBotsAreNotPlayers);
 	section.createSetting("CloseToTrayIcon", this->bCloseToTrayIcon);
 	section.createSetting("ColorizeServerConsole", this->bColorizeServerConsole);
+	section.createSetting("DrawGridInServerTable", this->bDrawGridInServerTable);
 	section.createSetting("HidePasswords", this->bHidePasswords);
 	section.createSetting("IP2CAutoUpdate", this->bIP2CountryAutoUpdate);
 	section.createSetting("LookupHosts", this->bLookupHosts);
@@ -317,6 +319,7 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->bBotsAreNotPlayers = section["BotsAreNotPlayers"];
 	this->bCloseToTrayIcon = section["CloseToTrayIcon"];
 	this->bColorizeServerConsole = section["ColorizeServerConsole"];
+	this->bDrawGridInServerTable = section["DrawGridInServerTable"];
 	this->bHidePasswords = section["HidePasswords"];
 	this->bIP2CountryAutoUpdate = section["IP2CAutoUpdate"];
 	this->bLookupHosts = section["LookupHosts"];
@@ -387,6 +390,7 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["BotsAreNotPlayers"] = this->bBotsAreNotPlayers;
 	section["CloseToTrayIcon"] = this->bCloseToTrayIcon;
 	section["ColorizeServerConsole"] = this->bColorizeServerConsole;
+	section["DrawGridInServerTable"] = this->bDrawGridInServerTable;
 	section["HidePasswords"] = this->bHidePasswords;
 	section["IP2CAutoUpdate"] = this->bIP2CountryAutoUpdate;
 	section["LookupHosts"] = this->bLookupHosts;
@@ -495,6 +499,7 @@ const QString DoomseekerConfig::ServerFilter::SECTION_NAME = "ServerFilter";
 
 void DoomseekerConfig::ServerFilter::init(IniSection& section)
 {
+	section.createSetting("bEnabled", true);
 	section.createSetting("bShowEmpty", true);
 	section.createSetting("bShowFull", true);
 	section.createSetting("bShowOnlyValid", false);
@@ -508,6 +513,7 @@ void DoomseekerConfig::ServerFilter::init(IniSection& section)
 
 void DoomseekerConfig::ServerFilter::load(IniSection& section)
 {
+	info.bEnabled = section["bEnabled"];
 	info.bShowEmpty = section["bShowEmpty"];
 	info.bShowFull = section["bShowFull"];
 	info.bShowOnlyValid = section["bShowOnlyValid"];
@@ -521,6 +527,7 @@ void DoomseekerConfig::ServerFilter::load(IniSection& section)
 
 void DoomseekerConfig::ServerFilter::save(IniSection& section)
 {
+	section["bEnabled"] = info.bEnabled;
 	section["bShowEmpty"] = info.bShowEmpty;
 	section["bShowFull"] = info.bShowFull;
 	section["bShowOnlyValid"] = info.bShowOnlyValid;

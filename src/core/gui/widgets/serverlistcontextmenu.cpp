@@ -36,8 +36,9 @@ class ServerListContextMenu::PrivData
 		ServerListFilterInfo serverFilter;
 };
 
-ServerListContextMenu::ServerListContextMenu(ServerPtr server, const ServerListFilterInfo& filter)
-: pServer(server)
+ServerListContextMenu::ServerListContextMenu(ServerPtr server, const ServerListFilterInfo& filter,
+	QObject *parent)
+: QObject(parent), pServer(server)
 {
 	d = new PrivData();
 	d->serverFilter = filter;
@@ -74,6 +75,8 @@ QMenu* ServerListContextMenu::createCopyMenu(QWidget* parent)
 void ServerListContextMenu::createMembers()
 {
 	menu = new QMenu();
+	this->connect(menu, SIGNAL(aboutToHide()), SIGNAL(aboutToHide()));
+	this->connect(menu, SIGNAL(triggered(QAction*)), SIGNAL(triggered(QAction*)));
 
 	refresh = menu->addAction(tr("Refresh"));
 	join = menu->addAction(tr("Join"));
@@ -107,13 +110,6 @@ void ServerListContextMenu::createMembers()
 	}
 }
 
-ServerListContextMenu::Result ServerListContextMenu::exec(const QPoint& point)
-{
-	QAction* resultAction = menu->exec(point);
-	Result result = translateQMenuResult(resultAction);
-	return result;
-}
-
 void ServerListContextMenu::initializeMembers()
 {
 	copyAddress = NULL;
@@ -127,6 +123,16 @@ void ServerListContextMenu::initializeMembers()
 	rcon = NULL;
 	refresh = NULL;
 	showJoinCommandLine = NULL;
+}
+
+void ServerListContextMenu::popup(const QPoint& point)
+{
+	menu->popup(point);
+}
+
+ServerPtr ServerListContextMenu::server() const
+{
+	return pServer;
 }
 
 const ServerListFilterInfo& ServerListContextMenu::serverFilter() const
