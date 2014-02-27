@@ -66,7 +66,9 @@ class MAIN_EXPORT Server : public QObject
 			RESPONSE_WAIT, // Server responded with "wait"
 			RESPONSE_BAD, // Probably refreshing too quickly
 			RESPONSE_BANNED, // Won't recieve data from this server ever.
-			RESPONSE_NO_RESPONSE_YET // "Dummy" response for servers that weren't refreshed yet
+			RESPONSE_NO_RESPONSE_YET, // "Dummy" response for servers that weren't refreshed yet
+			RESPONSE_PENDING, // Waiting for additional packets
+			RESPONSE_REPLY, // Ask the refresher to call createSendRequest again
 		};
 
 		Server(const QHostAddress &address, unsigned short port);

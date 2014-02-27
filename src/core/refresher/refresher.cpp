@@ -500,13 +500,36 @@ bool Refresher::tryReadDatagramByServer(const QHostAddress& address,
 	Server* server = findRefreshingServer(address, port);
 	if (server != NULL)
 	{
-		d->refreshingServers.removeAll(ServerRefreshTime(server));
-		d->registeredServers.removeAll(server);
-
 		// Store the state of request read.
 		int response = server->readRefreshQueryResponse(packet);
-		server->refreshStops(static_cast<Server::Response>(response));
-		return true;
+		switch(response)
+		{
+			case Server::RESPONSE_REPLY:
+				if(server->sendRefreshQuery(d->socket))
+				{
+					// Reset timer
+					ServerRefreshTime refreshOp(server);
+					d->refreshingServers.removeAll(refreshOp);
+					d->refreshingServers.append(refreshOp);
+					break;
+				}
+				response = Server::RESPONSE_BAD;
+				// Intentional fall through
+			default:
+				d->refreshingServers.removeAll(ServerRefreshTime(server));
+				d->registeredServers.removeAll(server);
+				server->refreshStops(static_cast<Server::Response>(response));
+				return true;
+
+			case Server::RESPONSE_PENDING:
+			{
+				// Reset timer
+				ServerRefreshTime refreshOp(server);
+				d->refreshingServers.removeAll(refreshOp);
+				d->refreshingServers.append(refreshOp);
+				break;
+			}
+		}
 	}
 	return false;
 }
