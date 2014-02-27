@@ -46,6 +46,8 @@ class IRCUserPrefix
 		IRCUserPrefix &operator=(const IRCUserPrefix &other);
 
 		void assignPrefix(char mode, char prefix);
+		bool hasMode(char mode) const;
+		bool isLessThan(char mode1, char mode2) const;
 		char modeForPrefix(char prefix) const;
 		char prefixForMode(char mode) const;
 

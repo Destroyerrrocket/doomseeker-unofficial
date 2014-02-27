@@ -24,10 +24,24 @@
 
 #include <QMap>
 
+class IRCModePrefix
+{
+	public:
+		char mode;
+		char prefix;
+
+		IRCModePrefix(char mode, char prefix)
+		{
+			this->mode = mode;
+			this->prefix = prefix;
+		}
+};
+
+
 class IRCUserPrefix::PrivData
 {
 	public:
-		QMap<char, char> map;
+		QList<IRCModePrefix> map;
 };
 
 IRCUserPrefix::IRCUserPrefix()
@@ -57,7 +71,29 @@ IRCUserPrefix &IRCUserPrefix::operator=(const IRCUserPrefix &other)
 
 void IRCUserPrefix::assignPrefix(char mode, char prefix)
 {
-	d->map[mode] = prefix;
+	d->map << IRCModePrefix(mode, prefix);
+}
+
+bool IRCUserPrefix::hasMode(char mode) const
+{
+	return prefixForMode(mode) != 0;
+}
+
+bool IRCUserPrefix::isLessThan(char mode1, char mode2) const
+{
+	foreach (const IRCModePrefix &candidate, d->map)
+	{
+		if (candidate.mode == mode1)
+		{
+			return true;
+		}
+		else if (candidate.mode == mode2)
+		{
+			return false;
+		}
+	}
+	// Neither was found so we treat them as equal.
+	return false;
 }
 
 IRCUserPrefix IRCUserPrefix::mkDefault()
@@ -71,11 +107,11 @@ IRCUserPrefix IRCUserPrefix::mkDefault()
 
 char IRCUserPrefix::modeForPrefix(char prefix) const
 {
-	foreach (char mode, d->map.keys())
+	foreach (const IRCModePrefix &candidate, d->map)
 	{
-		if (d->map[mode] == prefix)
+		if (candidate.prefix == prefix)
 		{
-			return mode;
+			return candidate.mode;
 		}
 	}
 	return 0;
@@ -83,5 +119,12 @@ char IRCUserPrefix::modeForPrefix(char prefix) const
 
 char IRCUserPrefix::prefixForMode(char mode) const
 {
-	return d->map[mode];
+	foreach (const IRCModePrefix &candidate, d->map)
+	{
+		if (candidate.mode == mode)
+		{
+			return candidate.prefix;
+		}
+	}
+	return 0;
 }
