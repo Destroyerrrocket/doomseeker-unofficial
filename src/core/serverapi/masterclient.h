@@ -75,8 +75,6 @@ class MAIN_EXPORT MasterClient : public QObject
 		 */
 		QString engineName() const;
 
-		bool hasServer(const Server *server) const;
-
 		/**
 		 * @brief Returns true if the passed address:port is the same as this
 		 * master server's.

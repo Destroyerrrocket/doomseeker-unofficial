@@ -99,18 +99,6 @@ QString MasterClient::engineName() const
 	return plugin()->data()->name;
 }
 
-bool MasterClient::hasServer(const Server *server) const
-{
-	foreach (const ServerPtr candidate, d->servers)
-	{
-		if (candidate == server)
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
 bool MasterClient::isEnabled() const
 {
 	return d->enabled;
