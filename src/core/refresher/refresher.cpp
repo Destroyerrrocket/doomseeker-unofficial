@@ -347,7 +347,8 @@ void Refresher::sendMasterQueries()
 		++pMasterInfo->numOfChallengesSent;
 		pMasterInfo->fireLastChallengeSentTimer();
 
-		pMaster->refresh();
+		pMaster->refreshStarts();
+		pMaster->sendRequest(d->socket);
 		d->unchallengedMasters.remove(pMaster);
 	}
 }
@@ -411,7 +412,6 @@ bool Refresher::start()
 	if (socket->bind())
 	{
 		d->socket = socket;
-		MasterClient::pGlobalUdpSocket = socket;
 		return true;
 	}
 	else
@@ -482,9 +482,23 @@ bool Refresher::tryReadDatagramByMasterClient(QHostAddress& address,
 		{
 			return true;
 		}
-		if (pMaster->readMasterResponse(address, port, packet))
+		if (pMaster->isAddressSame(address, port))
 		{
-			return true;
+			MasterClient::Response response = pMaster->readResponse(packet);
+			switch(response)
+			{
+				case MasterClient::RESPONSE_BANNED:
+				case MasterClient::RESPONSE_WAIT:
+				case MasterClient::RESPONSE_BAD:
+				case MasterClient::RESPONSE_OLD:
+					pMaster->notifyResponse(response);
+					return true;
+				case MasterClient::RESPONSE_REPLY:
+					pMaster->sendRequest(d->socket);
+					return true;
+				default:
+					return true;
+			}
 		}
 	}
 	return false;

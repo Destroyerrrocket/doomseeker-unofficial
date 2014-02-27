@@ -51,7 +51,7 @@ const EnginePlugin* OdamexMasterClient::plugin() const
 	return OdamexEnginePlugin::staticInstance();
 }
 
-bool OdamexMasterClient::readMasterResponse(QByteArray &data)
+MasterClient::Response OdamexMasterClient::readMasterResponse(QByteArray &data)
 {
 	// Decompress the response.
 	QBuffer ioBuffer(&data);
@@ -66,7 +66,7 @@ bool OdamexMasterClient::readMasterResponse(QByteArray &data)
 
 	if (response != MASTER_CHALLENGE)
 	{
-		return false;
+		return RESPONSE_BAD;
 	}
 
 	// Make sure we have an empty list.
@@ -93,5 +93,5 @@ bool OdamexMasterClient::readMasterResponse(QByteArray &data)
 	}
 
 	emit listUpdated();
-	return true;
+	return RESPONSE_GOOD;
 }

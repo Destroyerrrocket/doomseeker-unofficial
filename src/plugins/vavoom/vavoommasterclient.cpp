@@ -49,7 +49,7 @@ bool VavoomMasterClient::getServerListRequest(QByteArray &data)
 	return true;
 }
 
-bool VavoomMasterClient::readMasterResponse(QByteArray &data)
+MasterClient::Response VavoomMasterClient::readMasterResponse(QByteArray &data)
 {
 	// Decompress the response.
 	const char* in = data.data();
@@ -59,7 +59,7 @@ bool VavoomMasterClient::readMasterResponse(QByteArray &data)
 
 	if (response != MCREP_LIST)
 	{
-		return false;
+		return RESPONSE_BAD;
 	}
 
 	// Make sure we have an empty list.
@@ -78,5 +78,5 @@ bool VavoomMasterClient::readMasterResponse(QByteArray &data)
 	}
 
 	emit listUpdated();
-	return true;
+	return RESPONSE_GOOD;
 }

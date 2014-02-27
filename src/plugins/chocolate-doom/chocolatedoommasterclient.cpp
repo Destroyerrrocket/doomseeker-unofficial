@@ -48,7 +48,7 @@ const EnginePlugin* ChocolateDoomMasterClient::plugin() const
 	return ChocolateDoomEnginePlugin::staticInstance();
 }
 
-bool ChocolateDoomMasterClient::readMasterResponse(QByteArray &data)
+MasterClient::Response ChocolateDoomMasterClient::readMasterResponse(QByteArray &data)
 {
 	// Decompress the response.
 	const char* in = data.data();
@@ -56,7 +56,7 @@ bool ChocolateDoomMasterClient::readMasterResponse(QByteArray &data)
 	// Check the response code
 	if (in[1] != NET_MASTER_PACKET_TYPE_QUERY_RESPONSE)
 	{
-		return false;
+		return RESPONSE_BAD;
 	}
 
 	// Make sure we have an empty list.
@@ -73,5 +73,5 @@ bool ChocolateDoomMasterClient::readMasterResponse(QByteArray &data)
 	}
 
 	emit listUpdated();
-	return true;
+	return RESPONSE_GOOD;
 }

@@ -35,13 +35,13 @@ class VavoomMasterClient : public MasterClient
 	public:
 		VavoomMasterClient();
 
-		const EnginePlugin*		plugin() const;
+		const EnginePlugin *plugin() const;
 
-		bool					readMasterResponse(QByteArray &data);
+		Response readMasterResponse(QByteArray &data);
 
 	protected:
 
-		bool					getServerListRequest(QByteArray &data);
+		bool getServerListRequest(QByteArray &data);
 };
 
 #endif /* __VAVOOMMASTERCLIENT_H__ */

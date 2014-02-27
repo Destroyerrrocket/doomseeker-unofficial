@@ -36,8 +36,6 @@
 #include <QMessageBox>
 #include <QUdpSocket>
 
-QUdpSocket* MasterClient::pGlobalUdpSocket = NULL;
-
 class MasterClient::PrivData
 {
 	public:
@@ -109,29 +107,32 @@ bool MasterClient::isTimeouted() const
 	return d->timeouted;
 }
 
-void MasterClient::notifyBanned()
+void MasterClient::notifyResponse(Response response)
 {
-	Message msg = Message(Message::Type::BANNED_FROM_MASTERSERVER);
-	emit message(engineName(), msg.contents(), true);
-	emit messageImportant(msg);
-}
-
-void MasterClient::notifyDelay()
-{
-	emit message(engineName(), tr("Could not fetch a new server list from the "
-		"master because not enough time has past."), true);
-}
-
-void MasterClient::notifyError()
-{
-	emit message(engineName(), tr("Bad response from master server."), true);
-}
-
-void MasterClient::notifyUpdate()
-{
-	emit message(engineName(),
-		tr("Could not fetch a new server list. The protocol you are using is too old. "
-		"An update may be available."), true);
+	switch(response)
+	{
+		default:
+			break;
+		case RESPONSE_BANNED:
+		{
+			Message msg = Message(Message::Type::BANNED_FROM_MASTERSERVER);
+			emit message(engineName(), msg.contents(), true);
+			emit messageImportant(msg);
+			break;
+		}
+		case RESPONSE_WAIT:
+			emit message(engineName(), tr("Could not fetch a new server list from the "
+				"master because not enough time has past."), true);
+			break;
+		case RESPONSE_BAD:
+			emit message(engineName(), tr("Bad response from master server."), true);
+			break;
+		case RESPONSE_OLD:
+			emit message(engineName(),
+				tr("Could not fetch a new server list. The protocol you are using is too old. "
+				"An update may be available."), true);
+			break;
+	}
 }
 
 int MasterClient::numPlayers() const
@@ -198,15 +199,10 @@ void MasterClient::pushPacketToCache(QByteArray &data)
 	strm << data;
 }
 
-bool MasterClient::readMasterResponse(QHostAddress& address, unsigned short port, QByteArray &data)
+MasterClient::Response MasterClient::readResponse(QByteArray &data)
 {
-	if (isAddressSame(address, port))
-	{
-		pushPacketToCache(data);
-		if(readMasterResponse(data))
-			return true;
-	}
-	return false;
+	pushPacketToCache(data);
+	return readMasterResponse(data);
 }
 
 void MasterClient::readPacketCache()
@@ -254,22 +250,24 @@ void MasterClient::resetPacketCaching()
 	}
 }
 
-void MasterClient::refresh()
+void MasterClient::refreshStarts()
 {
 	setTimeouted(false);
 	emptyServerList();
 	resetPacketCaching();
+}
 
+bool MasterClient::sendRequest(QUdpSocket *socket)
+{
 	if(d->address.isNull())
-		return;
+		return false;
 
 	// Make request
 	QByteArray request;
 	if(!getServerListRequest(request))
-	{
-		return;
-	}
-	pGlobalUdpSocket->writeDatagram(request, d->address, d->port);
+		return false;
+	socket->writeDatagram(request, d->address, d->port);
+	return true;
 }
 
 const QList<ServerPtr> &MasterClient::servers() const

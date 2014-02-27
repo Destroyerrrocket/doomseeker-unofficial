@@ -20,6 +20,8 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
+#include <cassert>
+
 #include "mastermanager.h"
 
 #include "serverapi/masterclientsignalproxy.h"
@@ -84,27 +86,13 @@ void MasterManager::masterListUpdated(MasterClient* pSender)
 	}
 }
 
-// [BL] is this actually called anymore?
-bool MasterManager::readMasterResponse(QHostAddress& address, unsigned short port, QByteArray &data)
+MasterManager::Response MasterManager::readMasterResponse(QByteArray &data)
 {
-	for (int i = 0; i < masters.size(); ++i)
-	{
-		if (masters[i]->isAddressSame(address, port))
-		{
-			masters[i]->pushPacketToCache(data);
-			if(masters[i]->readMasterResponse(data))
-			{
-				masters[i]->resetPacketCaching();
-				return true;
-			}
-			return false;
-		}
-	}
-
-	return false;
+	assert(0 && "MasterManager::readMasterResponse should not get called.");
+	return RESPONSE_BAD;
 }
 
-void MasterManager::refresh()
+void MasterManager::refreshStarts()
 {
 	setTimeouted(false);
 
@@ -118,7 +106,7 @@ void MasterManager::refresh()
 		}
 
 		mastersBeingRefreshed.insert(masters[i]);
-		masters[i]->refresh();
+		masters[i]->refreshStarts();
 	}
 }
 

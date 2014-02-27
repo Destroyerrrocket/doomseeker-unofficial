@@ -35,14 +35,14 @@ class ChocolateDoomMasterClient : public MasterClient
 	public:
 		ChocolateDoomMasterClient();
 
-		const EnginePlugin*		plugin() const;
+		const EnginePlugin *plugin() const;
 
-		bool					readMasterResponse(QByteArray &data);
-		void					updateAddress();
+		void updateAddress();
 
 	protected:
 
-		bool					getServerListRequest(QByteArray &data);
+		bool getServerListRequest(QByteArray &data);
+		Response readMasterResponse(QByteArray &data);
 };
 
 #endif /* __CHOCOLATEDOOMMASTERCLIENT_H__ */

@@ -43,48 +43,41 @@ class MasterManager : public MasterClient
 		MasterManager();
 		~MasterManager();
 
-		void								addMaster(MasterClient *master);
-		CustomServers*						customServs() { return customServers; }
+		void addMaster(MasterClient *master);
+		CustomServers *customServs() { return customServers; }
 
-		int									numMasters() const { return masters.size(); }
+		int numMasters() const { return masters.size(); }
 
-		const EnginePlugin*					plugin() const { return NULL; }
+		const EnginePlugin *plugin() const { return NULL; }
 
-		MasterClient*						operator[](int index) { return masters[index]; }
-
-		bool								readMasterResponse(QByteArray &data) { return false; }
-
-		/**
-		 *	@brief Redirects the response to appropriate MasterClient.
-		 */
-		bool								readMasterResponse(QHostAddress& address, unsigned short port, QByteArray &data);
-
+		MasterClient *operator[](int index) { return masters[index]; }
 
 	public slots:
-		void								refresh();
+		void refreshStarts();
 
 	signals:
 		/**
 		 *	@brief Emitted for every MasterClient that emits listUpdated()
 		 *	signal.
 		 */
-		void								listUpdatedForMaster(MasterClient* pSender);
-		void								masterMessage(MasterClient* pSender, const QString& title, const QString& content, bool isError);
-		void								masterMessageImportant(MasterClient* pSender, const Message& objMessage);
+		void listUpdatedForMaster(MasterClient* pSender);
+		void masterMessage(MasterClient* pSender, const QString& title, const QString& content, bool isError);
+		void masterMessageImportant(MasterClient* pSender, const Message& objMessage);
 
 	protected:
-		CustomServers*						customServers;
-		QList<MasterClient *>				masters;
-		QSet<MasterClient *>				mastersBeingRefreshed;
-		QList<MasterClientSignalProxy*>		mastersReceivers;
+		CustomServers *customServers;
+		QList<MasterClient *> masters;
+		QSet<MasterClient *> mastersBeingRefreshed;
+		QList<MasterClientSignalProxy*> mastersReceivers;
 
-		bool								getServerListRequest(QByteArray &data) { return false; }
-		void								timeoutRefreshEx();
+		bool getServerListRequest(QByteArray &data) { return false; }
+		Response readMasterResponse(QByteArray &data);
+		void timeoutRefreshEx();
 
 	protected slots:
-		void								masterListUpdated(MasterClient* pSender);
+		void masterListUpdated(MasterClient* pSender);
 
-		void								readMasterMessage(MasterClient* pSender, const QString& title, const QString& content, bool isError)
+		void readMasterMessage(MasterClient* pSender, const QString& title, const QString& content, bool isError)
 		{
 			emit masterMessage(pSender, title, content, isError);
 		}

@@ -48,10 +48,7 @@
 #define RETURN_BAD_IF_NOT_ENOUGH_DATA(min_amout_of_data_required) \
 { \
 	if (in.remaining() < (min_amout_of_data_required)) \
-	{ \
-		notifyError(); \
-		return false; \
-	} \
+		return RESPONSE_BAD; \
 }
 
 ZandronumMasterClient::ZandronumMasterClient() : MasterClient()
@@ -74,7 +71,7 @@ const EnginePlugin* ZandronumMasterClient::plugin() const
 	return ZandronumEnginePlugin::staticInstance();
 }
 
-bool ZandronumMasterClient::readMasterResponse(QByteArray &data)
+MasterClient::Response ZandronumMasterClient::readMasterResponse(QByteArray &data)
 {
 	const char* packetEncoded = data.data();
 	int packetDecodedSize = 2000 + data.size();
@@ -87,8 +84,7 @@ bool ZandronumMasterClient::readMasterResponse(QByteArray &data)
 	if (packetDecodedSize <= 0)
 	{
 		delete[] packetDecoded;
-		notifyError();
-		return false;
+		return RESPONSE_BAD;
 	}
 
 	QByteArray packetDecodedByteArray(packetDecoded, packetDecodedSize);
@@ -104,29 +100,20 @@ bool ZandronumMasterClient::readMasterResponse(QByteArray &data)
 	RETURN_BAD_IF_NOT_ENOUGH_DATA(4);
 	int response = in.readQInt32();
 	if(response == MASTER_RESPONSE_BANNED)
-	{
-		notifyBanned();
-		return false;
-	}
+		return RESPONSE_BANNED;
 	else if(response == MASTER_RESPONSE_BAD)
-	{
-		notifyDelay();
-		return false;
-	}
+		return RESPONSE_WAIT;
 	else if(response == MASTER_RESPONSE_WRONGVERSION)
-	{
-		notifyUpdate();
-		return false;
-	}
+		return RESPONSE_OLD;
 	else if(response != MASTER_RESPONSE_BEGINPART)
-		return false;
+		return RESPONSE_PENDING;
 
 	RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
 	int packetNum = in.readQUInt8();
 	if(!(packetsRead & (1<<packetNum))) // Set flag if we haven't read this packet
 		packetsRead |= 1<<packetNum;
 	else // Already read packet so ignore it.
-		return true;
+		return RESPONSE_PENDING;
 	if(packetNum+1 > numPackets) // Packet numbers start at 0
 		numPackets = packetNum+1;
 
@@ -175,13 +162,14 @@ bool ZandronumMasterClient::readMasterResponse(QByteArray &data)
 		if(packetsRead == (1<<numPackets)-1)
 		{
 			emit listUpdated();
+			return RESPONSE_GOOD;
 		}
 	}
 
-	return true;
+	return RESPONSE_PENDING;
 }
 
-void ZandronumMasterClient::refresh()
+void ZandronumMasterClient::refreshStarts()
 {
 	// Make sure we have an empty list.
 	emptyServerList();
@@ -189,5 +177,5 @@ void ZandronumMasterClient::refresh()
 	numPackets = 0;
 	packetsRead = 0;
 
-	MasterClient::refresh();
+	MasterClient::refreshStarts();
 }
