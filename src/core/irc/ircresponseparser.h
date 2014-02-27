@@ -59,6 +59,8 @@ class IRCResponseParser : public QObject
 		void			kick(const QString& channel, const QString& byWhom, const QString& whoIsKicked, const QString& reason);
 		void			kill(const QString& victim, const QString& comment);
 
+		void iSupportReceived(const QString &line);
+
 		/**
 		 *	@brief Carries info about MODE for display.
 		 */

@@ -25,8 +25,7 @@ class IRCResponseType
 		enum MsgType
 		{
 			// === IMPORTANT!!! ===
-			// Remember to fix typeFromRfcString() and toRfcString()
-			// if values here change!
+			// Remember to fix toRfcString() if values here change!
 			// Also IRCResponseParser::parseMessage() must be
 			// fixed.
 
@@ -48,6 +47,11 @@ class IRCResponseType
 			HelloClient,
 
 			// === Here are types with no text representation ===
+
+			/**
+			 * @brief 005 - all sorts of server flags.
+			 */
+			RPLISupport,
 
 			/**
  			* @brief 251 - how many users on how many servers

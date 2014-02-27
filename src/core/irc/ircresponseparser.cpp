@@ -90,7 +90,8 @@ IRCResponseParseResult IRCResponseParser::parse(const QString& message)
 	return IRCResponseParseResult();
 }
 
-IRCResponseParseResult IRCResponseParser::parseMessage(const QString& prefix, const QString& sender, const QString& type, QStringList params)
+IRCResponseParseResult IRCResponseParser::parseMessage(const QString& prefix,
+	const QString& sender, const QString& type, QStringList params)
 {
 	IRCResponseType responseType(type);
 	IRCResponseType::MsgType enumType = responseType.type();
@@ -117,6 +118,13 @@ IRCResponseParseResult IRCResponseParser::parseMessage(const QString& prefix, co
 			QString realName = joinAndTrimColonIfNecessary(params);
 
 			emit whoIsUser(nickname, user, hostName, realName);
+			break;
+		}
+
+		case IRCResponseType::RPLISupport:
+		{
+			params.takeFirst(); // Own nickname.
+			emit iSupportReceived(params.join(" "));
 			break;
 		}
 
