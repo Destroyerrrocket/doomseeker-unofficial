@@ -70,7 +70,7 @@ class MasterManager : public MasterClient
 		QSet<MasterClient *> mastersBeingRefreshed;
 		QList<MasterClientSignalProxy*> mastersReceivers;
 
-		bool getServerListRequest(QByteArray &data) { return false; }
+		QByteArray createServerListRequest() { return QByteArray(); }
 		Response readMasterResponse(QByteArray &data);
 		void timeoutRefreshEx();
 

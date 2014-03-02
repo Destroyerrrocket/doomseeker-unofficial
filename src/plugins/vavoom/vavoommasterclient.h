@@ -40,8 +40,7 @@ class VavoomMasterClient : public MasterClient
 		Response readMasterResponse(QByteArray &data);
 
 	protected:
-
-		bool getServerListRequest(QByteArray &data);
+		QByteArray createServerListRequest();
 };
 
 #endif /* __VAVOOMMASTERCLIENT_H__ */

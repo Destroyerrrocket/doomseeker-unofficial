@@ -40,8 +40,7 @@ class ChocolateDoomMasterClient : public MasterClient
 		void updateAddress();
 
 	protected:
-
-		bool getServerListRequest(QByteArray &data);
+		QByteArray createServerListRequest();
 		Response readMasterResponse(QByteArray &data);
 };
 

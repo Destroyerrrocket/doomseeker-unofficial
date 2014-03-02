@@ -55,15 +55,13 @@ ZandronumMasterClient::ZandronumMasterClient() : MasterClient()
 {
 }
 
-bool ZandronumMasterClient::getServerListRequest(QByteArray &data)
+QByteArray ZandronumMasterClient::createServerListRequest()
 {
 	const unsigned char challenge[6] = {WRITEINT32_DIRECT(unsigned char,MASTER_CHALLENGE), WRITEINT16_DIRECT(unsigned char,MASTER_PROTOCOL_VERSION)};
 	unsigned char challengeOut[12];
 	int out = 12;
 	HUFFMAN_Encode(challenge, challengeOut, 6, &out);
-	const QByteArray chall(reinterpret_cast<char*> (challengeOut), out);
-	data.append(chall);
-	return true;
+	return QByteArray(reinterpret_cast<char*> (challengeOut), out);
 }
 
 const EnginePlugin* ZandronumMasterClient::plugin() const

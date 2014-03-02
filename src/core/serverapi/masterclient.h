@@ -167,18 +167,18 @@ class MAIN_EXPORT MasterClient : public QObject
 
 	protected:
 		/**
+		 * @brief Produce contents of server list request packet that is sent
+		 *        to the master server.
+		 *
+		 * @return If empty array is returned refreshing of this master server
+		 *         is immediatelly aborted.
+		 */
+		virtual QByteArray createServerListRequest()=0;
+
+		/**
 		 * Clears the server list.
 		 */
 		void emptyServerList();
-
-		/**
-		 * @brief Method that is supposed to produce the contents of server
-		 * list request packet that is sent to the master server.
-		 *
-		 * @return If false is returned refreshing of this master server is
-		 * immediatelly aborted.
-		 */
-		virtual bool getServerListRequest(QByteArray &data)=0;
 
 		bool preparePacketCache(bool write);
 

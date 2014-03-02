@@ -35,15 +35,11 @@ OdamexMasterClient::OdamexMasterClient() : MasterClient()
 {
 }
 
-bool OdamexMasterClient::getServerListRequest(QByteArray &data)
+QByteArray OdamexMasterClient::createServerListRequest()
 {
 	char challenge[4];
 	WRITEINT32(challenge, MASTER_CHALLENGE);
-
-	const QByteArray chall(challenge, 4);
-	data.append(chall);
-
-	return true;
+	return QByteArray (challenge, 4);
 }
 
 const EnginePlugin* OdamexMasterClient::plugin() const

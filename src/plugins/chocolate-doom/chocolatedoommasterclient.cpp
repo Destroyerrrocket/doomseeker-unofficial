@@ -33,14 +33,10 @@ ChocolateDoomMasterClient::ChocolateDoomMasterClient() : MasterClient()
 {
 }
 
-bool ChocolateDoomMasterClient::getServerListRequest(QByteArray &data)
+QByteArray ChocolateDoomMasterClient::createServerListRequest()
 {
 	char challenge[2] = {0, NET_MASTER_PACKET_TYPE_QUERY};
-
-	const QByteArray chall(challenge, 2);
-	data.append(chall);
-
-	return true;
+	return QByteArray(challenge, 2);
 }
 
 const EnginePlugin* ChocolateDoomMasterClient::plugin() const

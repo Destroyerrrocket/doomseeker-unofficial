@@ -66,13 +66,11 @@ PluginMasterClient::~PluginMasterClient()
 	delete d;
 }
 
-bool PluginMasterClient::getServerListRequest(QByteArray &data)
+QByteArray PluginMasterClient::createServerListRequest()
 {
 	d->expectedPackets = 0;
 	d->gotPackets = 0;
-	data = "FAKE";
-	data.resize(4);
-	return true;
+	return QByteArray("FAKE", 4);
 }
 
 const EnginePlugin* PluginMasterClient::plugin() const

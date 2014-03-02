@@ -41,7 +41,7 @@ class OdamexMasterClient : public MasterClient
 
 	protected:
 
-		bool getServerListRequest(QByteArray &data);
+		QByteArray createServerListRequest();
 		Response readMasterResponse(QByteArray &data);
 };
 

@@ -41,7 +41,7 @@ class ZandronumMasterClient : public MasterClient
 		void refreshStarts();
 
 	protected:
-		bool getServerListRequest(QByteArray &data);
+		QByteArray createServerListRequest();
 		Response readMasterResponse(QByteArray &data);
 
 		/// This is used as a marker to determine if we have an accurate reading for numPackets.

@@ -43,7 +43,7 @@ class PluginMasterClient : public MasterClient
 
 	protected:
 		// Override
-		bool getServerListRequest(QByteArray &data);
+		QByteArray createServerListRequest();
 
 	private:
 		class PrivData;

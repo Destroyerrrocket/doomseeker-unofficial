@@ -38,15 +38,11 @@ const EnginePlugin* VavoomMasterClient::plugin() const
 	return VavoomEnginePlugin::staticInstance();
 }
 
-bool VavoomMasterClient::getServerListRequest(QByteArray &data)
+QByteArray VavoomMasterClient::createServerListRequest()
 {
 	char challenge[1];
 	WRITEINT8(challenge, MCREQ_LIST);
-
-	const QByteArray chall(challenge, 1);
-	data.append(chall);
-
-	return true;
+	return QByteArray(challenge, 1);
 }
 
 MasterClient::Response VavoomMasterClient::readMasterResponse(QByteArray &data)

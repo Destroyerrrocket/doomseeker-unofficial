@@ -263,8 +263,8 @@ bool MasterClient::sendRequest(QUdpSocket *socket)
 		return false;
 
 	// Make request
-	QByteArray request;
-	if(!getServerListRequest(request))
+	QByteArray request = createServerListRequest();
+	if(request.isEmpty())
 		return false;
 	socket->writeDatagram(request, d->address, d->port);
 	return true;
