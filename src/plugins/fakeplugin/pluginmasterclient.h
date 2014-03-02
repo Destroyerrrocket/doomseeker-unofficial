@@ -39,7 +39,7 @@ class PluginMasterClient : public MasterClient
 		const EnginePlugin* plugin() const;
 
 		// Override
-		bool readMasterResponse(QByteArray &data);
+		Response readMasterResponse(QByteArray &data);
 
 	protected:
 		// Override

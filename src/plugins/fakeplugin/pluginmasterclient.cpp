@@ -78,11 +78,9 @@ const EnginePlugin* PluginMasterClient::plugin() const
 	return PluginEnginePlugin::staticInstance();
 }
 
-bool PluginMasterClient::readMasterResponse(QByteArray &data)
+MasterClient::Response PluginMasterClient::readMasterResponse(QByteArray &data)
 {
 	QStringList ports = QString(data).split(";");
-	emit messageImportant(Message(Message::Type::BANNED_FROM_MASTERSERVER));
-	return false;
 	// First element is amount of expected packets:
 	d->expectedPackets = ports.takeFirst().toUInt();
 	foreach (const QString& portEncoded, ports)
@@ -105,5 +103,5 @@ bool PluginMasterClient::readMasterResponse(QByteArray &data)
 		// Timeout will fire if some of the packets become lost.
 		d->timeoutTimer.start(RESPONSE_TIMEOUT_MS);
 	}
-	return true;
+	return RESPONSE_GOOD;
 }
