@@ -43,7 +43,7 @@ QByteArray PluginServer::createSendRequest()
 	return QByteArray("FAKF", 4);
 }
 
-Server::Response PluginServer::readRequest(QByteArray &data)
+Server::Response PluginServer::readRequest(const QByteArray &data)
 {
 	if (data.left(4) != "FAKF")
 	{

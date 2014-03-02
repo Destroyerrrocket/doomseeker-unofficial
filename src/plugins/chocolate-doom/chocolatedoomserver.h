@@ -47,7 +47,7 @@ class ChocolateDoomServer : public Server
 		QString			description;
 
 		QByteArray createSendRequest();
-		Response readRequest(QByteArray &data);
+		Response readRequest(const QByteArray &data);
 };
 
 #endif /* __CHOCOLATEDOOMSERVER_H__ */

@@ -44,7 +44,7 @@ class VavoomServer : public Server
 
 	protected:
 		QByteArray createSendRequest();
-		Response readRequest(QByteArray &data);
+		Response readRequest(const QByteArray &data);
 };
 
 #endif /* __VAVOOMSERVER_H__ */

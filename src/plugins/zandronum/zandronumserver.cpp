@@ -145,7 +145,7 @@ EnginePlugin* ZandronumServer::plugin() const
 	return ZandronumEnginePlugin::staticInstance();
 }
 
-Server::Response ZandronumServer::readRequest(QByteArray &data)
+Server::Response ZandronumServer::readRequest(const QByteArray &data)
 {
 	const int BUFFER_SIZE = 6000;
 	QByteArray rawReadBuffer;

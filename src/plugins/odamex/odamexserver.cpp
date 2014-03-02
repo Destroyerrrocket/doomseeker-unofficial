@@ -67,9 +67,10 @@ EnginePlugin* OdamexServer::plugin() const
 	return OdamexEnginePlugin::staticInstance();
 }
 
-Server::Response OdamexServer::readRequest(QByteArray &data)
+Server::Response OdamexServer::readRequest(const QByteArray &data)
 {
-	QBuffer ioBuffer(&data);
+	QBuffer ioBuffer;
+	ioBuffer.setData(data);
 	ioBuffer.open(QIODevice::ReadOnly);
 	QDataStream inStream(&ioBuffer);
 	inStream.setByteOrder(QDataStream::LittleEndian);

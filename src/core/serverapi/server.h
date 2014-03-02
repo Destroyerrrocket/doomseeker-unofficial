@@ -203,7 +203,7 @@ class MAIN_EXPORT Server : public QObject
 		unsigned short port() const;
 		const QString& rconPassword() const;
 
-		Response readRefreshQueryResponse(QByteArray& data);
+		Response readRefreshQueryResponse(const QByteArray& data);
 
 		/**
 		 * Called when server begins refreshing routine.
@@ -272,8 +272,8 @@ class MAIN_EXPORT Server : public QObject
 		 *         signal emissions from within this functions. This is not
 		 *         thread safe and may lead to a crash.
 		 */
-		Response readRequest(QByteArray &data);
-		POLYMORPHIC_SETTER_DECLARE(Response, Server, readRequest, (QByteArray &data));
+		Response readRequest(const QByteArray &data);
+		POLYMORPHIC_SETTER_DECLARE(Response, Server, readRequest, (const QByteArray &data));
 
 		/**
 		 * @brief <b>[Pure Virtual]</b> Prepares challenge data.
@@ -321,7 +321,7 @@ class MAIN_EXPORT Server : public QObject
 		void emitUpdated(int response);
 
 		QByteArray createSendRequest_default();
-		Response readRequest_default(QByteArray &data);
+		Response readRequest_default(const QByteArray &data);
 
 		void setDmFlags(const QList<DMFlagsSection>& dmFlags);
 		void setResponse(Response response);

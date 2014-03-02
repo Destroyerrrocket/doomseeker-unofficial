@@ -39,7 +39,7 @@ class PluginServer : public Server
 
 	private:
 		QByteArray createSendRequest();
-		Response readRequest(QByteArray &data);
+		Response readRequest(const QByteArray &data);
 };
 
 #endif

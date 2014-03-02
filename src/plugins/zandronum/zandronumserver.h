@@ -183,7 +183,7 @@ class ZandronumServer : public Server
 
 		QByteArray createSendRequest();
 		static unsigned int millisecondTime();
-		Response readRequest(QByteArray &data);
+		Response readRequest(const QByteArray &data);
 };
 
 class ZandronumRConProtocol : public RConProtocol

@@ -52,7 +52,7 @@ EnginePlugin* VavoomServer::plugin() const
 	return VavoomEnginePlugin::staticInstance();
 }
 
-Server::Response VavoomServer::readRequest(QByteArray &data)
+Server::Response VavoomServer::readRequest(const QByteArray &data)
 {
 	fflush(stderr);
 	fflush(stdout);

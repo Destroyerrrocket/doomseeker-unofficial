@@ -110,7 +110,7 @@ class Server::PrivData
 		QWeakPointer<Server> self;
 
 		QByteArray (Server::*createSendRequest)();
-		Response (Server::*readRequest)(QByteArray&);
+		Response (Server::*readRequest)(const QByteArray&);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -170,7 +170,7 @@ Server::~Server()
 }
 
 POLYMORPHIC_DEFINE(QByteArray, Server, createSendRequest, (), ());
-POLYMORPHIC_DEFINE(Server::Response, Server, readRequest, (QByteArray &data), (data));
+POLYMORPHIC_DEFINE(Server::Response, Server, readRequest, (const QByteArray& data), (data));
 
 void Server::addPlayer(const Player& player)
 {
@@ -471,14 +471,14 @@ const QString& Server::rconPassword() const
 	return d->rconPassword;
 }
 
-Server::Response Server::readRefreshQueryResponse(QByteArray& data)
+Server::Response Server::readRefreshQueryResponse(const QByteArray& data)
 {
 	return readRequest(data);
 }
 
-Server::Response Server::readRequest_default(QByteArray &data)
+Server::Response Server::readRequest_default(const QByteArray &data)
 {
-	assert(0 && "Server::readRequest(QByteArray&) is not implemented.");
+	assert(0 && "Server::readRequest(const QByteArray&) is not implemented.");
 	return RESPONSE_BAD;
 }
 

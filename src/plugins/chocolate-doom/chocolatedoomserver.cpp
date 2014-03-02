@@ -49,7 +49,7 @@ EnginePlugin* ChocolateDoomServer::plugin() const
 	return ChocolateDoomEnginePlugin::staticInstance();
 }
 
-Server::Response ChocolateDoomServer::readRequest(QByteArray &data)
+Server::Response ChocolateDoomServer::readRequest(const QByteArray &data)
 {
 	static const char* playerNames[4] =
 	{
