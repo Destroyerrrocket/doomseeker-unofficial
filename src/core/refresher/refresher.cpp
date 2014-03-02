@@ -454,7 +454,7 @@ void Refresher::resendCurrentServerRefreshesIfTimeout()
 {
 	for (int i = 0; i < d->refreshingServers.size(); ++i)
 	{
-		ServerRefreshTime& refreshOp = d->refreshingServers[i];
+		ServerRefreshTime refreshOp = d->refreshingServers[i];
 		if (refreshOp.time.elapsed() > d->delayBetweenResends)
 		{
 			if (refreshOp.server->sendRefreshQuery(d->socket))
