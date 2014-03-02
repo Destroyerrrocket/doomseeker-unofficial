@@ -86,7 +86,7 @@ void MasterManager::masterListUpdated(MasterClient* pSender)
 	}
 }
 
-MasterManager::Response MasterManager::readMasterResponse(QByteArray &data)
+MasterManager::Response MasterManager::readMasterResponse(const QByteArray &data)
 {
 	assert(0 && "MasterManager::readMasterResponse should not get called.");
 	return RESPONSE_BAD;

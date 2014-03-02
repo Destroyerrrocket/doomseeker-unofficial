@@ -41,7 +41,7 @@ class ChocolateDoomMasterClient : public MasterClient
 
 	protected:
 		QByteArray createServerListRequest();
-		Response readMasterResponse(QByteArray &data);
+		Response readMasterResponse(const QByteArray &data);
 };
 
 #endif /* __CHOCOLATEDOOMMASTERCLIENT_H__ */

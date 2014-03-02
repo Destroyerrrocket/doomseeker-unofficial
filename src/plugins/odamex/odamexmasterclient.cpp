@@ -47,10 +47,11 @@ const EnginePlugin* OdamexMasterClient::plugin() const
 	return OdamexEnginePlugin::staticInstance();
 }
 
-MasterClient::Response OdamexMasterClient::readMasterResponse(QByteArray &data)
+MasterClient::Response OdamexMasterClient::readMasterResponse(const QByteArray &data)
 {
 	// Decompress the response.
-	QBuffer ioBuffer(&data);
+	QBuffer ioBuffer;
+	ioBuffer.setData(data);
 	ioBuffer.open(QIODevice::ReadOnly);
 	QDataStream inStream(&ioBuffer);
 	inStream.setByteOrder(QDataStream::LittleEndian);

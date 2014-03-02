@@ -45,7 +45,7 @@ QByteArray VavoomMasterClient::createServerListRequest()
 	return QByteArray(challenge, 1);
 }
 
-MasterClient::Response VavoomMasterClient::readMasterResponse(QByteArray &data)
+MasterClient::Response VavoomMasterClient::readMasterResponse(const QByteArray &data)
 {
 	// Decompress the response.
 	const char* in = data.data();

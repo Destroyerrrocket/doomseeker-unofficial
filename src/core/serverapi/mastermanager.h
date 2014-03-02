@@ -71,7 +71,7 @@ class MasterManager : public MasterClient
 		QList<MasterClientSignalProxy*> mastersReceivers;
 
 		QByteArray createServerListRequest() { return QByteArray(); }
-		Response readMasterResponse(QByteArray &data);
+		Response readMasterResponse(const QByteArray &data);
 		void timeoutRefreshEx();
 
 	protected slots:

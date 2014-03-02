@@ -107,13 +107,13 @@ class MAIN_EXPORT MasterClient : public QObject
 		 */
 		virtual const EnginePlugin* plugin() const = 0;
 
-		void pushPacketToCache(QByteArray &data);
+		void pushPacketToCache(const QByteArray &data);
 		void resetPacketCaching();
 
 		/**
 		 * @brief Calls readMasterResponse and handles packet caching.
 		 */
-		Response readResponse(QByteArray &data);
+		Response readResponse(const QByteArray &data);
 
 		/**
 		 * @brief Sends request packet through socket.
@@ -189,7 +189,7 @@ class MAIN_EXPORT MasterClient : public QObject
 		 * @return If false is returned refreshing of this master server is
 		 * immediatelly aborted.
 		 */
-		virtual Response readMasterResponse(QByteArray &data)=0;
+		virtual Response readMasterResponse(const QByteArray &data)=0;
 
 		void readPacketCache();
 		/**

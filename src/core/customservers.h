@@ -94,7 +94,7 @@ class CustomServers : public MasterClient
 
 	protected:
 		QByteArray createServerListRequest() { return QByteArray(); }
-		Response readMasterResponse(QByteArray &data) { return RESPONSE_BAD; }
+		Response readMasterResponse(const QByteArray &data) { return RESPONSE_BAD; }
 };
 
 #endif

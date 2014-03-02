@@ -78,7 +78,7 @@ const EnginePlugin* PluginMasterClient::plugin() const
 	return PluginEnginePlugin::staticInstance();
 }
 
-MasterClient::Response PluginMasterClient::readMasterResponse(QByteArray &data)
+MasterClient::Response PluginMasterClient::readMasterResponse(const QByteArray &data)
 {
 	QStringList ports = QString(data).split(";");
 	// First element is amount of expected packets:

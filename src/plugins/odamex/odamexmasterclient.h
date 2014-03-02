@@ -42,7 +42,7 @@ class OdamexMasterClient : public MasterClient
 	protected:
 
 		QByteArray createServerListRequest();
-		Response readMasterResponse(QByteArray &data);
+		Response readMasterResponse(const QByteArray &data);
 };
 
 #endif /* __ODAMEXMASTERCLIENT_H__ */

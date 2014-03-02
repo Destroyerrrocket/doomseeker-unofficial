@@ -69,7 +69,7 @@ const EnginePlugin* ZandronumMasterClient::plugin() const
 	return ZandronumEnginePlugin::staticInstance();
 }
 
-MasterClient::Response ZandronumMasterClient::readMasterResponse(QByteArray &data)
+MasterClient::Response ZandronumMasterClient::readMasterResponse(const QByteArray &data)
 {
 	const char* packetEncoded = data.data();
 	int packetDecodedSize = 2000 + data.size();

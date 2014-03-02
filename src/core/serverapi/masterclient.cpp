@@ -187,7 +187,7 @@ bool MasterClient::preparePacketCache(bool write)
 	return d->cache != NULL;
 }
 
-void MasterClient::pushPacketToCache(QByteArray &data)
+void MasterClient::pushPacketToCache(const QByteArray &data)
 {
 	if(!preparePacketCache(true))
 	{
@@ -199,7 +199,7 @@ void MasterClient::pushPacketToCache(QByteArray &data)
 	strm << data;
 }
 
-MasterClient::Response MasterClient::readResponse(QByteArray &data)
+MasterClient::Response MasterClient::readResponse(const QByteArray &data)
 {
 	pushPacketToCache(data);
 	return readMasterResponse(data);

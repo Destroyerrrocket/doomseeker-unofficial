@@ -44,7 +44,7 @@ const EnginePlugin* ChocolateDoomMasterClient::plugin() const
 	return ChocolateDoomEnginePlugin::staticInstance();
 }
 
-MasterClient::Response ChocolateDoomMasterClient::readMasterResponse(QByteArray &data)
+MasterClient::Response ChocolateDoomMasterClient::readMasterResponse(const QByteArray &data)
 {
 	// Decompress the response.
 	const char* in = data.data();

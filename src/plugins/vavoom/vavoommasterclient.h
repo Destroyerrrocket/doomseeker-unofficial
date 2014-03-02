@@ -37,7 +37,7 @@ class VavoomMasterClient : public MasterClient
 
 		const EnginePlugin *plugin() const;
 
-		Response readMasterResponse(QByteArray &data);
+		Response readMasterResponse(const QByteArray &data);
 
 	protected:
 		QByteArray createServerListRequest();
