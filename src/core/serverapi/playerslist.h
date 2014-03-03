@@ -38,7 +38,7 @@ class PlayersList;
  */
 typedef QMap<PairPlayersByTeams>	PlayersByTeams;
 
-class MAIN_EXPORT PlayersList : public QList<Player>
+class MAIN_EXPORT PlayersList
 {
 	public:
 		PlayersList();
@@ -54,6 +54,11 @@ class MAIN_EXPORT PlayersList : public QList<Player>
 		 *	@brief Lists only those bots that are not on a team.
 		 */
 		void				botsWithoutTeam(PlayersList& botsList) const;
+		void clear();
+		int count() const
+		{
+			return size();
+		}
 
 		int					numBots() const;
 		int					numBotsOnTeam(int team) const;
@@ -71,6 +76,11 @@ class MAIN_EXPORT PlayersList : public QList<Player>
 		int					numPlayersOnTeam(int team) const;
 		int					numSpectators() const;
 
+		PlayersList &operator<<(const Player &player);
+		Player &operator[](int index);
+		const Player &operator[](int index) const;
+		const QList<Player> &players() const;
+
 		/**
 		 *	@brief Divides players and bots to lists ordered by teams.
 		 *
@@ -82,6 +92,7 @@ class MAIN_EXPORT PlayersList : public QList<Player>
 		 */
 		void				inGamePlayersByTeams(QMap<PairPlayersByTeams>& playersListMap) const;
 
+		int size() const;
 		void				spectators(PlayersList& spectatorsList) const;
 	private:
 		class PrivData;
