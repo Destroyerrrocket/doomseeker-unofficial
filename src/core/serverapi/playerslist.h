@@ -30,15 +30,13 @@
 
 class PlayersList;
 
-#define PairPlayersByTeams int, PlayersList
-
 /**
- *	Key - Team number.
- *	Value - List of players.
+ * Key - Team number.
+ * Value - List of players.
  */
-typedef QMap<PairPlayersByTeams>	PlayersByTeams;
+typedef QMap<int, PlayersList> PlayersByTeams;
 
-class MAIN_EXPORT PlayersList : public QList<Player>
+class MAIN_EXPORT PlayersList
 {
 	public:
 		PlayersList();
@@ -54,6 +52,11 @@ class MAIN_EXPORT PlayersList : public QList<Player>
 		 *	@brief Lists only those bots that are not on a team.
 		 */
 		void				botsWithoutTeam(PlayersList& botsList) const;
+		void clear();
+		int count() const
+		{
+			return size();
+		}
 
 		int					numBots() const;
 		int					numBotsOnTeam(int team) const;
@@ -71,6 +74,11 @@ class MAIN_EXPORT PlayersList : public QList<Player>
 		int					numPlayersOnTeam(int team) const;
 		int					numSpectators() const;
 
+		PlayersList &operator<<(const Player &player);
+		Player &operator[](int index);
+		const Player &operator[](int index) const;
+		const QList<Player> &players() const;
+
 		/**
 		 *	@brief Divides players and bots to lists ordered by teams.
 		 *
@@ -80,8 +88,9 @@ class MAIN_EXPORT PlayersList : public QList<Player>
 		 *	@param playersListMap [out] - New PlayersList objects will be stored
 		 *		in this map.
 		 */
-		void				inGamePlayersByTeams(QMap<PairPlayersByTeams>& playersListMap) const;
+		void inGamePlayersByTeams(PlayersByTeams& playersListMap) const;
 
+		int size() const;
 		void				spectators(PlayersList& spectatorsList) const;
 	private:
 		class PrivData;

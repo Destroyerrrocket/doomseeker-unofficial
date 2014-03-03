@@ -53,8 +53,8 @@ class PlayerTable : public QObject
 		 *	This will return absolutely nothing if the list in the first
 		 *	argument is empty.
 		 */
-		QString						spawnPartOfPlayerTable(PlayersList& list, bool bAppendEmptyRowAtBeginning);
-		QString						spawnPlayersRows(PlayersByTeams& playersByTeams);
+		QString						spawnPartOfPlayerTable(const PlayersList& list, bool bAppendEmptyRowAtBeginning);
+		QString						spawnPlayersRows(const PlayersByTeams& playersByTeams);
 
 		QString						tableContent();
 		QString						tableHeader();
