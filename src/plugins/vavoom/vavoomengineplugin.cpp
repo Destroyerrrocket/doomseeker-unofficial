@@ -37,7 +37,7 @@ VavoomEnginePlugin::VavoomEnginePlugin()
 
 	init("Vavoom", vavoom_xpm,
 		EP_Author, "The Doomseeker Team",
-		EP_Version, 5,
+		EP_Version, 6,
 
 		EP_AllowsURL,
 		EP_AllowsEmail,
