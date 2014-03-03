@@ -35,6 +35,11 @@ OdamexGameInfo::OdamexGameInfo()
 	delete static_constructor;
 }
 
+GameMode OdamexGameInfo::gameModeDuel()
+{
+	return GameMode::ffaGame(MODE_DUEL, tr("Duel"));
+}
+
 void OdamexGameInfo::initDMFlags()
 {
 	DMFlagsSection section("DMFlags");

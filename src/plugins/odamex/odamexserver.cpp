@@ -257,6 +257,11 @@ Server::Response OdamexServer::readRequest(const QByteArray &data)
 		addPlayer(player);
 	}
 
+	if (numFreeJoinSlots() == 2 && gameMode().index() == GameMode::SGM_Deathmatch)
+	{
+		setGameMode(OdamexGameInfo::gameModeDuel());
+	}
+
 	return RESPONSE_GOOD;
 }
 

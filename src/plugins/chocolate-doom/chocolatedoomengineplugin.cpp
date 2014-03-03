@@ -38,7 +38,7 @@ ChocolateDoomEnginePlugin::ChocolateDoomEnginePlugin()
 
 	init("Chocolate Doom", chocolatedoom_xpm,
 		EP_Author, "The Doomseeker Team",
-		EP_Version, 6,
+		EP_Version, 7,
 
 		EP_DefaultMaster, "master.chocolate-doom.org:2342",
 		EP_DefaultServerPort, 2342,
