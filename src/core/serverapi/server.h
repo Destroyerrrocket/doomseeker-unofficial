@@ -199,7 +199,7 @@ class MAIN_EXPORT Server : public QObject
 		int numWads() const { return wads().size(); }
 		unsigned int ping() const;
 		const Player& player(int index) const;
-		const PlayersList* players() const;
+		const PlayersList &players() const;
 		unsigned short port() const;
 		const QString& rconPassword() const;
 

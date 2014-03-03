@@ -198,17 +198,17 @@ void PlayersDiagram::obtainPlayerNumbers()
 	memset(numBotsOnTeam, 0, sizeof(int) * MAX_TEAMS);
 	memset(numHumansOnTeam, 0, sizeof(int) * MAX_TEAMS);
 
-	const PlayersList* playersList = server->players();
+	const PlayersList &players = server->players();
 
-	numBotsWithoutTeam = playersList->numBotsWithoutTeam();
+	numBotsWithoutTeam = players.numBotsWithoutTeam();
 	numFreeJoinSlots = server->numFreeJoinSlots();
 	numFreeSpectatorSlots = server->numFreeSpectatorSlots();
-	numHumansWithoutTeam = playersList->numHumansWithoutTeam();
-	numSpectators = playersList->numSpectators();
+	numHumansWithoutTeam = players.numHumansWithoutTeam();
+	numSpectators = players.numSpectators();
 
 	for(int i = 0; i < MAX_TEAMS; ++i)
 	{
-		numBotsOnTeam[i] = playersList->numBotsOnTeam(i);
-		numHumansOnTeam[i] = playersList->numHumansOnTeam(i);
+		numBotsOnTeam[i] = players.numBotsOnTeam(i);
+		numHumansOnTeam[i] = players.numHumansOnTeam(i);
 	}
 }

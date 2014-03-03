@@ -142,7 +142,7 @@ int MasterClient::numPlayers() const
 	{
 		if (server != NULL)
 		{
-			players += server->players()->numClients();
+			players += server->players().numClients();
 		}
 	}
 	return players;

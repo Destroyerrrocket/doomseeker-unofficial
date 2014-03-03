@@ -82,7 +82,7 @@ class Server::PrivData
 		QString connectPassword;
 		QString joinPassword;
 		QString rconPassword;
-		PlayersList* players;
+		PlayersList players;
 		bool randomMapRotation;
 		Response response;
 		QList<int> scores;
@@ -151,8 +151,6 @@ Server::Server(const QHostAddress &address, unsigned short port)
 	d->bKnown = false;
 	d->custom = false;
 
-	d->players = new PlayersList();
-
 	set_createSendRequest(&Server::createSendRequest_default);
 	set_readRequest(&Server::readRequest_default);
 
@@ -164,7 +162,6 @@ Server::Server(const QHostAddress &address, unsigned short port)
 
 Server::~Server()
 {
-	delete d->players;
 	clearDMFlags();
 	delete d;
 }
@@ -174,7 +171,7 @@ POLYMORPHIC_DEFINE(Server::Response, Server, readRequest, (const QByteArray& dat
 
 void Server::addPlayer(const Player& player)
 {
-	*d->players << player;
+	d->players << player;
 }
 
 void Server::addWad(const QString& wad)
@@ -242,7 +239,7 @@ QByteArray Server::createSendRequest_default()
 
 void Server::clearPlayersList()
 {
-	d->players->clear();
+	d->players.clear();
 }
 
 void Server::clearWads()
@@ -335,12 +332,12 @@ bool Server::isCustom() const
 
 bool Server::isEmpty() const
 {
-	return d->players->numClients() == 0;
+	return d->players.numClients() == 0;
 }
 
 bool Server::isFull() const
 {
-	return d->players->numClients() == maxClients();
+	return d->players.numClients() == maxClients();
 }
 
 bool Server::isKnown() const
@@ -430,13 +427,13 @@ const QString& Server::name() const
 
 int Server::numFreeClientSlots() const
 {
-	int returnValue = numTotalSlots() - d->players->numClients();
+	int returnValue = numTotalSlots() - d->players.numClients();
 	return (returnValue < 0) ? 0 : returnValue;
 }
 
 int Server::numFreeJoinSlots() const
 {
-	int returnValue = d->maxPlayers - d->players->numClients();
+	int returnValue = d->maxPlayers - d->players.numClients();
 	return (returnValue < 0) ? 0 : returnValue;
 }
 
@@ -453,10 +450,10 @@ unsigned int Server::ping() const
 
 const Player& Server::player(int index) const
 {
-	return (*d->players)[index];
+	return d->players[index];
 }
 
-const PlayersList* Server::players() const
+const PlayersList &Server::players() const
 {
 	return d->players;
 }

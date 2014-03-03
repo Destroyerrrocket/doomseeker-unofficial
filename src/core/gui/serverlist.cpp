@@ -258,7 +258,7 @@ QString ServerListHandler::createPlayersToolTip(ServerCPtr server)
 	QString ret;
 	ret = "<div style='white-space: pre'>";
 	ret += tooltipGenerator->gameInfoTableHTML();
-	if(server->players()->numClients() != 0)
+	if(server->players().numClients() != 0)
 	{
 		ret += tooltipGenerator->playerTableHTML();
 	}

@@ -128,11 +128,11 @@ QString	PlayerTable::tableContent()
 	PlayersByTeams playersByTeams;
 	PlayersList bots, spectators;
 
-	const PlayersList* playersList = d->server->players();
+	const PlayersList &players = d->server->players();
 
-	playersList->inGamePlayersByTeams(playersByTeams);
-	playersList->botsWithoutTeam(bots);
-	playersList->spectators(spectators);
+	players.inGamePlayersByTeams(playersByTeams);
+	players.botsWithoutTeam(bots);
+	players.spectators(spectators);
 
 	bool bAppendEmptyRowAtBeginning = false;
 	QString playersRows = spawnPlayersRows(playersByTeams);
