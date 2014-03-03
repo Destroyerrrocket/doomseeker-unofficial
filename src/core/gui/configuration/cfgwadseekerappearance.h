@@ -36,6 +36,7 @@ class CFGWadseekerAppearance : public ConfigurationBaseBox, private Ui::CFGWadse
 		QIcon			icon() const { return QIcon(":/icons/color-fill.png"); }
 		QString			name() const { return tr("Appearance"); }
 		void 			readSettings();
+		QString title() const { return tr("Wadseeker - Appearance"); }
 
 	protected:
 		void 			saveSettings();

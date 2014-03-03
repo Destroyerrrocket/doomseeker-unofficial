@@ -21,20 +21,29 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ini.h"
+
+#include "ini/settingsprovider.h"
+#include "ini/settingsproviderqt.h"
 #include "log.h"
-#include "main.h"
 #include "strings.h"
 
 #include <cassert>
 
-Ini::Ini(const QString& filename)
+class Ini::PrivData
 {
-	pIni = new QSettings(filename, QSettings::IniFormat);
+	public:
+		SettingsProvider* provider;
+};
+
+Ini::Ini(SettingsProvider* provider)
+{
+	d = new PrivData();
+	d->provider = provider;
 }
 
 Ini::~Ini()
 {
-	delete pIni;
+	delete d;
 }
 
 IniSection Ini::createSection(const QString& name)
@@ -68,22 +77,9 @@ void Ini::deleteSetting(const QString& sectionName, const QString& settingName)
 	removeKey(sectionName + "/" + settingName);
 }
 
-bool Ini::loadIniFile(const QString& filePath)
-{
-	gLog << tr("Ini file is: %1").arg(filePath);
-
-	if (pIni != NULL)
-	{
-		delete pIni;
-	}
-
-	pIni = new QSettings(filePath, QSettings::IniFormat);
-	return pIni != NULL;
-}
-
 void Ini::removeKey(const QString& key)
 {
-	pIni->remove(key);
+	d->provider->remove(key);
 }
 
 IniSection Ini::retrieveSection(const QString& name)
@@ -107,17 +103,6 @@ IniVariable Ini::retrieveSetting(const QString& sectionName, const QString& vari
 	return section.retrieveSetting(variableName);
 }
 
-bool Ini::save()
-{
-	if (!pIni->isWritable())
-	{
-		return false;
-	}
-
-	pIni->sync();
-	return true;
-}
-
 IniSection Ini::section(const QString& name)
 {
 	return createSection(name);
@@ -129,7 +114,7 @@ QVector<IniSection> Ini::sectionsArray(const QString& regexPattern)
 
 	QRegExp regExp(regexPattern, Qt::CaseInsensitive);
 
-	QStringList groups = pIni->childGroups();
+	QStringList groups = d->provider->allSections();
 
 	foreach (const QString& key, groups)
 	{
@@ -160,14 +145,14 @@ IniVariable Ini::setting(const QString& sectionName, const QString& variableName
 
 void Ini::setValue(const QString& key, const QVariant& value)
 {
-	assert(pIni != NULL);
+	assert(d->provider != NULL);
 
-	pIni->setValue(key, value);
+	d->provider->setValue(key, value);
 }
 
 QVariant Ini::value(const QString& key) const
 {
-	assert(pIni != NULL);
+	assert(d->provider != NULL);
 
-	return pIni->value(key);
+	return d->provider->value(key);
 }

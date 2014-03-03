@@ -32,6 +32,31 @@
 
 #include "log.h"
 
+QMutex IP2C::instanceMutex;
+IP2C *IP2C::staticInstance = NULL;
+
+IP2C *IP2C::instance()
+{
+	if (staticInstance == NULL)
+	{
+		QMutexLocker locker(&instanceMutex);
+		if (staticInstance == NULL)
+		{
+			staticInstance = new IP2C();
+		}
+	}
+	return staticInstance;
+}
+
+void IP2C::deinstantiate()
+{
+	if (staticInstance != NULL)
+	{
+		delete staticInstance;
+		staticInstance = NULL;
+	}
+}
+
 IP2C::IP2C()
 : flagLan(":flags/lan-small"), flagLocalhost(":flags/localhost-small"),
   flagUnknown(":flags/unknown-small")

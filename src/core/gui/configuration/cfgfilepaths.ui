@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>CFGFilePaths</class>
- <widget class="QGroupBox" name="CFGFilePaths">
+ <widget class="QWidget" name="CFGFilePaths">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,16 +10,10 @@
     <height>315</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>GroupBox</string>
-  </property>
-  <property name="locale">
-   <locale language="English" country="UnitedStates"/>
-  </property>
-  <property name="title">
-   <string>File Paths</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QLabel" name="label">
      <property name="text">

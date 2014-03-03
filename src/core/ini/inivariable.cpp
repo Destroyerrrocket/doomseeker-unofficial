@@ -26,24 +26,38 @@
 
 #include <cassert>
 
+class IniVariable::PrivData
+{
+	public:
+		/**
+		 * @brief For non-const operations. Might be NULL even if pConstSection
+		 *        is not NULL.
+		 */
+		IniSection section;
+
+		/**
+		 * @brief The key name of this variable.
+		 */
+		QString key;
+};
+
+COPYABLE_D_POINTERED_DEFINE(IniVariable);
+
 IniVariable::IniVariable()
 {
-	this->pConstSection = NULL;
-	this->pSection = NULL;
+	d = new PrivData();
 }
 
-IniVariable::IniVariable(IniSection* pSection, const QString& key)
+IniVariable::IniVariable(const IniSection &section, const QString& key)
 {
-	this->pConstSection = pSection;
-	this->pSection = pSection;
-	this->key = key;
+	d = new PrivData();
+	d->section = section;
+	d->key = key;
 }
 
-IniVariable::IniVariable(const IniSection* pSection, const QString& key)
+IniVariable::~IniVariable()
 {
-	this->pConstSection = pSection;
-	this->pSection = NULL;
-	this->key = key;
+	delete d;
 }
 
 IniVariable::operator bool() const
@@ -135,33 +149,22 @@ const IniVariable &IniVariable::operator=(float f)
 	return *this;
 }
 
-const IniVariable &IniVariable::operator=(const IniVariable &other)
+const QString& IniVariable::key()
 {
-	assert(!isNull());
+	return d->key;
+}
 
-	key = other.key;
-	pConstSection = other.pConstSection;
-	pSection = other.pSection;
-	return *this;
+bool IniVariable::isNull() const
+{
+	return d->section.isNull();
 }
 
 void IniVariable::setValue(const QVariant& value)
 {
-	assert(!isNull());
-	assert(pSection != NULL);
-
-	if (pSection != NULL)
-	{
-		pSection->setValue(key, value);
-	}
+	d->section.setValue(d->key, value);
 }
 
 QVariant IniVariable::value() const
 {
-	if (pConstSection != NULL)
-	{
-		return pConstSection->value(key);
-	}
-
-	return QVariant();
+	return d->section.value(d->key);
 }

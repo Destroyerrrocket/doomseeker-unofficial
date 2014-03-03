@@ -21,10 +21,26 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "datapaths.h"
-#include "main.h"
+
+#include <QCoreApplication>
 #include "strings.h"
 #include <QDesktopServices>
+#include <cassert>
 #include <cstdlib>
+
+class DataPaths::PrivData
+{
+	public:
+		bool bIsPortableModeOn;
+		QString programsDirectoryName;
+		QString programsSupportDirectoryName;
+		QString demosDirectoryName;
+		QString workingDirectory;
+};
+
+
+DataPaths *DataPaths::staticDefaultInstance = NULL;
+
 
 #ifdef Q_OS_MAC
 const QString DataPaths::PROGRAMS_APPDATA_DIR_NAME = "Library/Preferences/Doomseeker";
@@ -40,11 +56,18 @@ const QString DataPaths::UPDATE_PACKAGE_FILENAME_PREFIX = "doomseeker-update-pkg
 
 DataPaths::DataPaths(bool bPortableModeOn)
 {
-	bIsPortableModeOn = bPortableModeOn;
+	d = new PrivData();
+	d->bIsPortableModeOn = bPortableModeOn;
 
-	programsDirectoryName = PROGRAMS_APPDATA_DIR_NAME;
-	programsSupportDirectoryName = PROGRAMS_APPDATASUPPORT_DIR_NAME;
-	demosDirectoryName = PROGRAMS_APPDATA_DIR_NAME + QDir::separator() + DEMOS_DIR_NAME;
+	d->programsDirectoryName = PROGRAMS_APPDATA_DIR_NAME;
+	d->programsSupportDirectoryName = PROGRAMS_APPDATASUPPORT_DIR_NAME;
+	d->demosDirectoryName = PROGRAMS_APPDATA_DIR_NAME + QDir::separator() + DEMOS_DIR_NAME;
+	d->workingDirectory = "./";
+}
+
+DataPaths::~DataPaths()
+{
+	delete d;
 }
 
 QStringList DataPaths::canWrite() const
@@ -67,11 +90,12 @@ bool DataPaths::createDirectories()
 	bool bAllSuccessful = true;
 
 	QDir appDataDir(systemAppDataDirectory());
-	if (!tryCreateDirectory(appDataDir, programsDirectoryName))
+	if (!tryCreateDirectory(appDataDir, programDirName()))
 	{
 		bAllSuccessful = false;
 	}
-	if (!programsSupportDirectoryName.isEmpty() && !tryCreateDirectory(appDataDir, programsSupportDirectoryName))
+	if (!programsDataSupportDirectoryPath().isEmpty()
+		&& !tryCreateDirectory(appDataDir, programsDataSupportDirectoryPath()))
 	{
 		bAllSuccessful = false;
 	}
@@ -85,9 +109,14 @@ bool DataPaths::createDirectories()
 	return bAllSuccessful;
 }
 
+DataPaths *DataPaths::defaultInstance()
+{
+	return staticDefaultInstance;
+}
+
 QString DataPaths::demosDirectoryPath() const
 {
-	QString demosDir = systemAppDataDirectory(demosDirectoryName);
+	QString demosDir = systemAppDataDirectory(d->demosDirectoryName);
 	return demosDir;
 }
 
@@ -97,7 +126,7 @@ QStringList DataPaths::directoriesExist() const
 	QList<QDir> checkList;
 
 	checkList << programsDataDirectoryPath();
-	if (!programsSupportDirectoryName.isEmpty())
+	if (!d->programsSupportDirectoryName.isEmpty())
 		checkList << programsDataSupportDirectoryPath();
 
 	foreach(const QDir &dataDirectory, checkList)
@@ -111,6 +140,35 @@ QStringList DataPaths::directoriesExist() const
 	return failedList;
 }
 
+const QString& DataPaths::programDirName() const
+{
+	return d->programsDirectoryName;
+}
+
+void DataPaths::initDefault(bool bPortableModeOn)
+{
+	assert(staticDefaultInstance == NULL && "DataPaths can have only one default.");
+	if (staticDefaultInstance == NULL)
+	{
+		staticDefaultInstance = new DataPaths(bPortableModeOn);
+	}
+}
+
+bool DataPaths::isPortableModeOn() const
+{
+	return d->bIsPortableModeOn;
+}
+
+void DataPaths::setPortableModeOn(bool b)
+{
+	d->bIsPortableModeOn = b;
+}
+
+void DataPaths::setProgramDirName(const QString& name)
+{
+	d->programsDirectoryName = name;
+}
+
 QString DataPaths::localDataLocationPath(const QString& subpath) const
 {
 	// TODO This won't work correctly on Mac because we didn't use
@@ -121,7 +179,7 @@ QString DataPaths::localDataLocationPath(const QString& subpath) const
 	// returned by QDesktopServices are different in certain cases. However,
 	// with some work some compromise could be achieved.
 	QString rootPath;
-	if (!bIsPortableModeOn)
+	if (!isPortableModeOn())
 	{
 		rootPath = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
 		rootPath = Strings::combinePaths(rootPath, ".doomseeker");
@@ -176,17 +234,22 @@ QString DataPaths::programFilesDirectory(MachineType machineType)
 
 QString DataPaths::programsDataDirectoryPath() const
 {
-	QString appDataDir = systemAppDataDirectory(programsDirectoryName);
+	QString appDataDir = systemAppDataDirectory(programDirName());
 	return appDataDir;
 }
 
 QString DataPaths::programsDataSupportDirectoryPath() const
 {
-	if (bIsPortableModeOn || programsSupportDirectoryName.isEmpty())
+	if (isPortableModeOn() || d->programsSupportDirectoryName.isEmpty())
 		return programsDataDirectoryPath();
 
-	QString appSupportDataDir = systemAppDataDirectory(programsSupportDirectoryName);
+	QString appSupportDataDir = systemAppDataDirectory(d->programsSupportDirectoryName);
 	return appSupportDataDir;
+}
+
+void DataPaths::setWorkingDirectory(const QString &workingDirectory)
+{
+	d->workingDirectory = workingDirectory;
 }
 
 QStringList DataPaths::staticDataSearchDirs(const QString& subdir)
@@ -211,11 +274,9 @@ QString DataPaths::systemAppDataDirectory(QString append) const
 {
 	Strings::triml(append, "/\\");
 
-	if (bIsPortableModeOn)
+	if (isPortableModeOn())
 	{
-		// In portable model Main class already stores the "working dir", ie.
-		// the directory where the executable resides.
-		QString path = Main::workingDirectory + "/" + append;
+		QString path = d->workingDirectory + "/" + append;
 		return QDir(path).absolutePath();
 	}
 
@@ -274,3 +335,9 @@ bool DataPaths::validateDir(const QString& path)
 
 	return bCondition1 && bCondition2 && bCondition3;
 }
+
+const QString &DataPaths::workingDirectory() const
+{
+	return d->workingDirectory;
+}
+

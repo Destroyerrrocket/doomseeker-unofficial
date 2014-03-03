@@ -90,7 +90,7 @@ class ConfigurationDialog : public QDialog, private Ui::ConfigurationDialog
 		/**
 		 * 	@param widget - hide currently displayed box if NULL.
 		 */
-		void 							showConfigurationBox(QWidget* widget);
+		void 							showConfigurationBox(ConfigurationBaseBox* widget);
 		void							saveSettings();
 
 		virtual bool					validate() { return true; }

@@ -36,15 +36,17 @@
 #include "connectionhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/remoteconsole.h"
+#include "ip2c/ip2c.h"
 #include "ini/ini.h"
-#include "ip2c/ip2cparser.h"
 #include "irc/configuration/ircconfig.h"
 #include "serverapi/server.h"
+#include "application.h"
 #include "doomseekerfilepaths.h"
 #include "localization.h"
 #include "log.h"
 #include "main.h"
 #include "plugins/engineplugin.h"
+#include "plugins/pluginloader.h"
 #include "refresher/refresher.h"
 #include "serverapi/server.h"
 #include "strings.h"
@@ -53,24 +55,10 @@
 #include "updater/updateinstaller.h"
 #include "versiondump.h"
 
-const QString		Main::DOOMSEEKER_CONFIG_FILENAME = "doomseeker.cfg";
-const QString		Main::DOOMSEEKER_INI_FILENAME = "doomseeker.ini";
-const QString		Main::DOOMSEEKER_IRC_INI_FILENAME = "doomseeker-irc.ini";
-const QString		Main::DOOMSEEKER_PASSWORD_INI_FILENAME = "doomseeker-password.ini";
-const QString		Main::IP2C_FILENAME = "IpToCountry.csv";
-
-QApplication*		Main::application = NULL;
 QString Main::argDataDir;
 bool Main::bInstallUpdatesAndRestart = false;
-bool Main::bPortableMode = false;
-DataPaths*			Main::dataPaths;
-PluginLoader* 		Main::enginePlugins = NULL;
-IP2C*				Main::ip2c = NULL;
 QList<LocalizationInfo> Main::localizations;
-QWidget*			Main::mainWindow = NULL;
-Refresher*			Main::refresher = Refresher::createRefresher();
-bool				Main::running = true;
-QString				Main::workingDirectory = "./";
+
 
 Main::Main(int argc, char* argv[])
 : arguments(argv), argumentsCount(argc),
@@ -80,19 +68,26 @@ Main::Main(int argc, char* argv[])
 	bTestMode = false;
 	bPortableMode = false;
 	updateFailedCode = 0;
+
+	qRegisterMetaType<ServerPtr>("ServerPtr");
+	qRegisterMetaType<ServerCPtr>("ServerCPtr");
 }
 
 Main::~Main()
 {
-	running = false;
-	if (refresher != NULL)
+	if (Application::isInit())
 	{
-		refresher->quit();
-		delete refresher;
+		gApp->stopRunning();
+	}
+
+	if (Refresher::isInstantiated())
+	{
+		Refresher::instance()->quit();
+		Refresher::deinstantiate();
 	}
 
 	// We can't save a config if we haven't initalized the program!
-	if(application != NULL)
+	if (Application::isInit())
 	{
 		gConfig.saveToFile();
 		gConfig.dispose();
@@ -101,26 +96,10 @@ Main::~Main()
 		gIRCConfig.dispose();
 	}
 
-	if (ip2c != NULL)
-	{
-		delete ip2c;
-	}
+	IP2C::deinstantiate();
 
-	if (enginePlugins != NULL)
-	{
-		delete enginePlugins;
-	}
-
-	if (application != NULL)
-	{
-		delete application;
-		application = NULL;
-	}
-
-	if (dataPaths != NULL)
-	{
-		delete dataPaths;
-	}
+	PluginLoader::deinit();
+	Application::deinit();
 }
 
 int Main::connectToServerByURL()
@@ -129,8 +108,8 @@ int Main::connectToServerByURL()
 
 	if(handler)
 	{
-		connect(handler, SIGNAL(finished(int)), application, SLOT(quit()));
-		int ret = application->exec();
+		connect(handler, SIGNAL(finished(int)), gApp, SLOT(quit()));
+		int ret = gApp->exec();
 		delete handler;
 		return ret;
 	}
@@ -146,10 +125,10 @@ int Main::run()
 		return 0;
 	}
 
-	application = new QApplication(argumentsCount, arguments);
+	Application::init(argumentsCount, arguments);
 #ifdef Q_OS_MAC
 	// In Mac OS X it is abnormal to have menu icons unless it's a shortcut to a file of some kind.
-	application->setAttribute(Qt::AA_DontShowIconsInMenus);
+	gApp->setAttribute(Qt::AA_DontShowIconsInMenus);
 #endif
 
 	gLog << "Starting Doomseeker. Hello World! :)";
@@ -158,7 +137,7 @@ int Main::run()
 	if (!initDataDirectories())
 	{
 		// Inform the user which directories cannot be created and QUIT.
-		QStringList failedDirsList = dataPaths->directoriesExist();
+		QStringList failedDirsList = gDefaultDataPaths->directoriesExist();
 		QString failedDirsString = failedDirsList.join("\n");
 
 		QString errorMessage = tr("Doomseeker will not run because following directories cannot be created:");
@@ -168,7 +147,7 @@ int Main::run()
 		return 0;
 	}
 
-	enginePlugins = new PluginLoader(MAKEID('E','N','G','N'), dataDirectories, "engines/");
+	PluginLoader::init(Strings::combineManyPaths(dataDirectories, "engines/"));
 
 	if (bTestMode)
 	{
@@ -187,8 +166,7 @@ int Main::run()
 	#endif
 
 	initLocalizationsDefinitions();
-	int ip2cReturn = initIP2C();
-
+	initIP2C();
 	initPasswordsConfig();
 	initPluginConfig();
 	initIRCConfig();
@@ -213,18 +191,18 @@ int Main::run()
 		if (updateFailedCode != 0)
 		{
 			// This is when updater program failed to install the update.
-			((MainWindow*)mainWindow)->setDisplayUpdaterProcessFailure(updateFailedCode);
+			gApp->mainWindow()->setDisplayUpdaterProcessFailure(updateFailedCode);
 		}
 		else if (updateInstallerResult != UpdateInstaller::EC_NothingToUpdate)
 		{
 			// This is when Doomseeker failed to start the updater program.
-			((MainWindow*)mainWindow)->setDisplayUpdateInstallerError(updateInstallerResult);
+			gApp->mainWindow()->setDisplayUpdateInstallerError(updateInstallerResult);
 		}
 		else
 		{
 			if (gConfig.autoUpdates.updateMode != DoomseekerConfig::AutoUpdates::UM_Disabled)
 			{
-				QTimer::singleShot(0, mainWindow, SLOT(checkForUpdatesAuto()));
+				QTimer::singleShot(0, gApp->mainWindow(), SLOT(checkForUpdatesAuto()));
 			}
 		}
 		#endif
@@ -233,7 +211,7 @@ int Main::run()
 	gLog << tr("Init finished.");
 	gLog.addUnformattedEntry("================================\n");
 
-	int returnCode = application->exec();
+	int returnCode = gApp->exec();
 
 	#ifdef WITH_AUTOUPDATES
 	if (bInstallUpdatesAndRestart)
@@ -286,21 +264,19 @@ void Main::createMainWindow()
 {
 	gLog << tr("Preparing GUI.");
 
-	MainWindow* mainWnd = new MainWindow(application, argumentsCount, arguments);
+	gApp->setMainWindow(new MainWindow(gApp, argumentsCount, arguments));
 	if (gConfig.doomseeker.bMainWindowMaximized)
 	{
-		mainWnd->showMaximized();
+		gApp->mainWindow()->showMaximized();
 	}
 	else
 	{
-		mainWnd->show();
+		gApp->mainWindow()->show();
 	}
-
-	mainWindow = mainWnd;
 
 	if (bIsFirstRun)
 	{
-		mainWnd->notifyFirstRun();
+		gApp->mainWindow()->notifyFirstRun();
 	}
 }
 
@@ -316,7 +292,7 @@ bool Main::createRemoteConsole()
 	else
 	{
 		// Find plugin
-		int pIndex = enginePlugins->pluginIndexFromName(rconPluginName);
+		int pIndex = gPlugins->pluginIndexFromName(rconPluginName);
 		if(pIndex == -1)
 		{
 			gLog << tr("Couldn't find specified plugin: ") + rconPluginName;
@@ -324,11 +300,10 @@ bool Main::createRemoteConsole()
 		}
 
 		// Check for RCon Availability.
-		const EnginePlugin *plugin = (*enginePlugins)[pIndex]->info;
-		Server *server = plugin->server(QHostAddress(rconAddress), rconPort);
+		const EnginePlugin *plugin = gPlugins->plugin(pIndex)->info();
+		ServerPtr server = plugin->server(QHostAddress(rconAddress), rconPort);
 		if(!server->hasRcon())
 		{
-			delete server;
 			gLog << tr("Plugin does not support RCon.");
 			return false;
 		}
@@ -342,17 +317,18 @@ bool Main::createRemoteConsole()
 
 bool Main::initDataDirectories()
 {
-	dataPaths = new DataPaths(bPortableMode);
-	DoomseekerFilePaths::pDataPaths = dataPaths;
-	if (!dataPaths->createDirectories())
+	DataPaths::initDefault(bPortableMode);
+	DoomseekerFilePaths::pDataPaths = gDefaultDataPaths;
+	gDefaultDataPaths->setWorkingDirectory(Strings::trim(this->workingDirectory, "\""));
+	if (!gDefaultDataPaths->createDirectories())
 	{
 		return false;
 	}
 
 	// I think this directory should take priority, if user, for example,
 	// wants to update the ip2country file.
-	dataDirectories << dataPaths->programsDataSupportDirectoryPath();
-	dataDirectories << Main::workingDirectory;
+	dataDirectories << gDefaultDataPaths->programsDataSupportDirectoryPath();
+	dataDirectories << gDefaultDataPaths->workingDirectory();
 
 	// Continue with standard dirs:
 	dataDirectories << "./";
@@ -373,7 +349,7 @@ bool Main::initDataDirectories()
 int Main::initIP2C()
 {
 	gLog << tr("Initializing IP2C database.");
-	ip2c = new IP2C();
+	IP2C::instance();
 
 	return 0;
 }
@@ -386,16 +362,13 @@ void Main::initIRCConfig()
 	gIRCConfig;
 
 	// Now try to access the configuration stored on drive.
-	QString configDirPath = dataPaths->programsDataDirectoryPath();
-	if (configDirPath.isEmpty())
+	QString configPath = DoomseekerFilePaths::ircIni();
+	if (!configPath.isEmpty())
 	{
-		return;
-	}
-
-	QString filePath = configDirPath + "/" + DOOMSEEKER_IRC_INI_FILENAME;
-	if (gIRCConfig.setIniFile(filePath))
-	{
-		gIRCConfig.readFromFile();
+		if (gIRCConfig.setIniFile(configPath))
+		{
+			gIRCConfig.readFromFile();
+		}
 	}
 }
 
@@ -426,14 +399,14 @@ void Main::initMainConfig()
 	gConfig;
 
 	// Now try to access the configuration stored on drive.
-	QString configDirPath = dataPaths->programsDataDirectoryPath();
+	QString configDirPath = gDefaultDataPaths->programsDataDirectoryPath();
 	if (configDirPath.isEmpty())
 	{
 		gLog << tr("Could not get an access to the settings directory. Configuration will not be saved.");
 		return;
 	}
 
-	QString filePath = configDirPath + "/" + DOOMSEEKER_INI_FILENAME;
+	QString filePath = DoomseekerFilePaths::ini();
 
 	// Check for first run.
 	QFileInfo iniFileInfo(filePath);
@@ -450,19 +423,19 @@ void Main::initPasswordsConfig()
 {
 	gLog << tr("Initializing passwords configuration file.");
 	// Now try to access the configuration stored on drive.
-	QString configDirPath = dataPaths->programsDataDirectoryPath();
+	QString configDirPath = gDefaultDataPaths->programsDataDirectoryPath();
 	if (configDirPath.isEmpty())
 	{
 		return;
 	}
-	QString filePath = configDirPath + "/" + DOOMSEEKER_PASSWORD_INI_FILENAME;
+	QString filePath = DoomseekerFilePaths::passwordIni();
 	PasswordsCfg::initIni(filePath);
 }
 
 void Main::initPluginConfig()
 {
 	gLog << tr("Initializing configuration for plugins.");
-	enginePlugins->initConfig();
+	gPlugins->initConfig();
 }
 
 int Main::installPendingUpdates()
@@ -489,8 +462,7 @@ bool Main::interpretCommandLineParameters()
 	int lastSlash = qMax<int>(firstArg.lastIndexOf('\\'), firstArg.lastIndexOf('/'));
 	if(lastSlash != -1)
 	{
-		QString workingDir = firstArg.mid(0, lastSlash+1);
-		Main::workingDirectory = Strings::trim(workingDir, "\"");
+		this->workingDirectory = firstArg.mid(0, lastSlash+1);
 	}
 
 	for(int i = 0; i < argumentsCount; ++i)
@@ -557,8 +529,8 @@ bool Main::interpretCommandLineParameters()
 				}
 				initDataDirectories();
 				// Plugins generate QPixmaps which need a QApplication active
-				QApplication app(argumentsCount, arguments);
-				enginePlugins = new PluginLoader(MAKEID('E','N','G','N'), dataDirectories, "engines/");
+				Application::init(argumentsCount, arguments);
+				PluginLoader::init(Strings::combineManyPaths(dataDirectories, "engines/"));
 				gLog << tr("Dumping version info to file in JSON format.");
 				VersionDump::dumpJsonToIO(f);
 				return false;
@@ -574,25 +546,11 @@ bool Main::interpretCommandLineParameters()
 	return true;
 }
 
-void Main::preserveOldConfigBackwardsCompatibility()
-{
-	QFileInfo oldConfigLocation(Main::workingDirectory + "/" + DOOMSEEKER_CONFIG_FILENAME);
-	QFileInfo newConfigLocation(dataPaths->programsDataDirectoryPath() + "/" + DOOMSEEKER_CONFIG_FILENAME);
-
-	// QFile::copy() is said not to overwrite existing files but let's check
-	// anyway.
-	if (oldConfigLocation.exists() && oldConfigLocation.isFile() && !newConfigLocation.exists())
-	{
-		// If this fails just forget about it.
-		QFile::copy(oldConfigLocation.absoluteFilePath(), newConfigLocation.absoluteFilePath());
-	}
-}
-
 void Main::setupRefreshingThread()
 {
 	gLog << tr("Starting refreshing thread.");
-	refresher->setDelayBetweenResends(gConfig.doomseeker.queryTimeout);
-	refresher->start();
+	gRefresher->setDelayBetweenResends(gConfig.doomseeker.queryTimeout);
+	gRefresher->start();
 }
 
 //==============================================================================

@@ -38,18 +38,14 @@ const EnginePlugin* VavoomMasterClient::plugin() const
 	return VavoomEnginePlugin::staticInstance();
 }
 
-bool VavoomMasterClient::getServerListRequest(QByteArray &data)
+QByteArray VavoomMasterClient::createServerListRequest()
 {
 	char challenge[1];
 	WRITEINT8(challenge, MCREQ_LIST);
-
-	const QByteArray chall(challenge, 1);
-	data.append(chall);
-
-	return true;
+	return QByteArray(challenge, 1);
 }
 
-bool VavoomMasterClient::readMasterResponse(QByteArray &data)
+MasterClient::Response VavoomMasterClient::readMasterResponse(const QByteArray &data)
 {
 	// Decompress the response.
 	const char* in = data.data();
@@ -59,7 +55,7 @@ bool VavoomMasterClient::readMasterResponse(QByteArray &data)
 
 	if (response != MCREP_LIST)
 	{
-		return false;
+		return RESPONSE_BAD;
 	}
 
 	// Make sure we have an empty list.
@@ -73,10 +69,10 @@ bool VavoomMasterClient::readMasterResponse(QByteArray &data)
 		QString ip = QString("%1.%2.%3.%4").
 			arg(static_cast<quint8> (in[pos]), 1, 10, QChar('0')).arg(static_cast<quint8> (in[pos+1]), 1, 10, QChar('0')).arg(static_cast<quint8> (in[pos+2]), 1, 10, QChar('0')).arg(static_cast<quint8> (in[pos+3]), 1, 10, QChar('0'));
 		VavoomServer *server = new VavoomServer(QHostAddress(ip), READBIGINT16(&in[pos+4]));
-		servers.push_back(server);
+		registerNewServer(ServerPtr(server));
 		pos += 6;
 	}
-	
+
 	emit listUpdated();
-	return true;
+	return RESPONSE_GOOD;
 }

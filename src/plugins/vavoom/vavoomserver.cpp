@@ -20,12 +20,11 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
+#include "vavoomserver.h"
 
 #include "vavoomgameinfo.h"
 #include "vavoomgamerunner.h"
 #include "vavoomengineplugin.h"
-#include "vavoomserver.h"
-#include "main.h"
 #include "serverapi/playerslist.h"
 
 #define NET_PROTOCOL_VERSION	1
@@ -36,20 +35,24 @@
 VavoomServer::VavoomServer(const QHostAddress &address, unsigned short port)
 : Server(address, port)
 {
-	currentGameMode = (*VavoomGameInfo::gameModes())[VavoomGameInfo::MODE_UNKNOWN];
+	set_readRequest(&VavoomServer::readRequest);
+	set_createSendRequest(&VavoomServer::createSendRequest);
+
+	GameMode unknownMode = (*VavoomGameInfo::gameModes())[VavoomGameInfo::MODE_UNKNOWN];
+	setGameMode(unknownMode);
 }
 
-GameRunner* VavoomServer::gameRunner() const
+GameClientRunner* VavoomServer::gameRunner()
 {
-	return new VavoomGameRunner(this);
+	return new VavoomGameClientRunner(self().toStrongRef().staticCast<VavoomServer>());
 }
 
-const EnginePlugin* VavoomServer::plugin() const
+EnginePlugin* VavoomServer::plugin() const
 {
 	return VavoomEnginePlugin::staticInstance();
 }
 
-Server::Response VavoomServer::readRequest(QByteArray &data)
+Server::Response VavoomServer::readRequest(const QByteArray &data)
 {
 	fflush(stderr);
 	fflush(stdout);
@@ -66,28 +69,30 @@ Server::Response VavoomServer::readRequest(QByteArray &data)
 	int pos = 2;
 
 	// Server name
-	serverName = QString(&in[pos+1]);//, in[pos]);
-	pos += serverName.length() + 2;
+	setName(QString(&in[pos+1]));//, in[pos]);
+	pos += name().length() + 2;
 
 	// Map
-	mapName = QString(&in[pos+1]);//, in[pos]);
-	pos += mapName.length() + 2;
+	setMap(QString(&in[pos+1]));//, in[pos]);
+	pos += map().length() + 2;
 
 	// Players
-	players->clear();
+	clearPlayersList();
 	int numPlayers = READINT8(&in[pos++]);
-	maxClients = maxPlayers = READINT8(&in[pos++]);
+	int maxPlayers = READINT8(&in[pos++]);
+	setMaxClients(maxPlayers);
+	setMaxPlayers(maxPlayers);
 	for(int i = 0;i < numPlayers;i++)
 	{
 		Player player(tr("Unknown"), 0, 0, Player::TEAM_NONE);
-		(*players) << player;
+		addPlayer(player);
 	}
 
 	if(READINT8(&in[pos++]) != NET_PROTOCOL_VERSION)
 		return RESPONSE_BAD;
 
 	// Wads
-	wads.clear();
+	clearWads();
 	QString wadFile;
 	bool iwadSet = false;
 	while((wadFile = QString(&in[pos+1])) != "")
@@ -100,23 +105,22 @@ Server::Response VavoomServer::readRequest(QByteArray &data)
 
 		if(!iwadSet)
 		{
-			iwad = wadFile;
+			setIwad(wadFile);
 			iwadSet = true;
 		}
 		else
-			wads << wadFile;
+			addWad(wadFile);
 	}
 	pos += 2;
 
 	return RESPONSE_GOOD;
 }
 
-bool VavoomServer::sendRequest(QByteArray &data)
+QByteArray VavoomServer::createSendRequest()
 {
 	// This construction and cast to (char*) removes warnings from MSVC.
 	const unsigned char challenge[11] = { NETPACKET_CTL, CCREQ_SERVER_INFO, 6, 'V','A','V','O','O','M', 0, NET_PROTOCOL_VERSION };
-	
-	const QByteArray challengeByteArray((char*)challenge, 11);
-	data.append(challengeByteArray);
-	return true;
+
+	QByteArray challengeByteArray((char*)challenge, 11);
+	return challengeByteArray;
 }

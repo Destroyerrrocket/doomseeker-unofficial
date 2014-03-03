@@ -24,6 +24,9 @@
 #include "gui/configuration/engineconfigurationbasebox.h"
 #include "irc/entities/ircnetworkentity.h"
 #include "plugins/engineplugin.h"
+#include "serverapi/gameexefactory.h"
+#include "serverapi/gamehost.h"
+#include "serverapi/server.h"
 #include "log.h"
 #include "strings.h"
 
@@ -63,6 +66,8 @@ EnginePlugin::EnginePlugin()
 {
 	d = new Data;
 
+	d->gameExeFactory = new GameExeFactory(this);
+
 	// At the moment I can't think of how we would support any ABI other than
 	// the current, but I suppose we might as well keep track of it?
 	d->abiVersion = DOOMSEEKER_ABI_VERSION;
@@ -72,12 +77,18 @@ EnginePlugin::~EnginePlugin()
 {
 	delete d->icon;
 	delete d->pConfig;
+	delete d->gameExeFactory;
 	delete d;
 }
 
 ConfigurationBaseBox* EnginePlugin::configuration(QWidget *parent) const
 {
 	return new EngineConfigurationBaseBox(this, *d->pConfig, parent);
+}
+
+GameHost* EnginePlugin::gameHost()
+{
+	return new GameHost(this);
 }
 
 void EnginePlugin::init(const char* name, const char* const icon[], ...)
@@ -108,7 +119,7 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 				break;
 
 			case EP_AllDMFlags:
-				d->allDMFlags = va_arg(va, const DMFlags*);
+				d->allDMFlags = va_arg(va, const QList<DMFlagsSection>*);
 				break;
 			case EP_AllowsConnectPassword:
 				d->allowsConnectPassword = true;
@@ -160,14 +171,14 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 			{
 				// Either create an entity or put the channel in an existing one.
 				IRCNetworkEntity entity;
-				entity.description = va_arg(va, const char*);
-				entity.address = va_arg(va, const char*);
-				entity.autojoinChannels << va_arg(va, const char*);
+				entity.setDescription(va_arg(va, const char*));
+				entity.setAddress(va_arg(va, const char*));
+				entity.autojoinChannels() << va_arg(va, const char*);
 
 				if(d->ircChannels.contains(entity))
 				{
 					IRCNetworkEntity &existingEntity = d->ircChannels[d->ircChannels.indexOf(entity)];
-					existingEntity.autojoinChannels << entity.autojoinChannels[0];
+					existingEntity.autojoinChannels() << entity.autojoinChannels()[0];
 				}
 				else
 					d->ircChannels << entity;
@@ -192,6 +203,13 @@ void EnginePlugin::masterHost(QString &host, unsigned short &port) const
 {
 	QString str = d->pConfig->setting("Masterserver");
 	Strings::translateServerAddress(str, host, port, d->defaultMaster);
+}
+
+ServerPtr EnginePlugin::server(const QHostAddress &address, unsigned short port) const
+{
+	ServerPtr server = mkServer(address, port);
+	server->setSelf(server.toWeakRef());
+	return server;
 }
 
 void EnginePlugin::setConfig(IniSection &ini) const

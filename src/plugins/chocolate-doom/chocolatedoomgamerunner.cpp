@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chocolatedoombinaries.cpp
+// chocolatedoomgamerunner.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,22 +20,27 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "chocolatedoomgameinfo.h"
 #include "chocolatedoomgamerunner.h"
+
+#include "chocolatedoomgameinfo.h"
 #include "chocolatedoomserver.h"
 #include "gui/createserverdialog.h"
 #include "serverapi/playerslist.h"
-#include "main.h"
 
-ChocolateDoomGameRunner::ChocolateDoomGameRunner(const ChocolateDoomServer* server)
-: GameRunner(server)
+ChocolateDoomGameClientRunner::ChocolateDoomGameClientRunner(
+	QSharedPointer<ChocolateDoomServer> server)
+: GameClientRunner(server)
 {
+	this->server = server;
+	set_createCommandLineArguments(&ChocolateDoomGameClientRunner::createCommandLineArguments);
 }
 
-bool ChocolateDoomGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory)
+void ChocolateDoomGameClientRunner::createCommandLineArguments()
 {
-	if(server->playersList()->size() > 0)
-		return GameRunner::connectParameters(args, pf, iwadFound, connectPassword, wadTargetDirectory);
+	if(server->players()->size() > 0)
+	{
+		GameClientRunner::createCommandLineArguments();
+	}
 	else
 	{
 		QString tmp;
@@ -44,38 +49,14 @@ bool ChocolateDoomGameRunner::connectParameters(QStringList &args, PathFinder &p
 		csd->makeSetupServerDialog(plugin());
 		if(csd->exec() == QDialog::Accepted)
 		{
-			csd->commandLineArguments(tmp, args);
+			csd->commandLineArguments(tmp, args());
 			delete csd;
-			return GameRunner::connectParameters(args, pf, iwadFound, connectPassword, wadTargetDirectory);
+			GameClientRunner::createCommandLineArguments();
 		}
 		else
 		{
 			delete csd;
-			return false;
+			setJoinError(JoinError(JoinError::Terminate));
 		}
 	}
-	return true;
-}
-
-void ChocolateDoomGameRunner::hostProperties(QStringList& args) const
-{
-	args << "-skill" << QString::number(server->gameSkill() + 1); // from 1 to 5
-
-	switch(server->gameMode().modeIndex())
-	{
-		default: break;
-		case GameMode::SGMIDeathmatch:
-			args << "-deathmatch";
-			break;
-		case ChocolateDoomGameInfo::MODE_ALTDEATH:
-			args << "-altdeath";
-			break;
-	}
-
-	// Convert map name to proper number for -warp
-	QString mapname = server->map().toUpper();
-	if(mapname.length() == 5 && mapname.startsWith("MAP"))
-		args << "-warp" << mapname.right(2);
-	else if(mapname.length() == 4 && mapname[0] == 'E' && mapname[2] == 'M')
-		args << "-warp" << QString("%1%2").arg(mapname[1]).arg(mapname[3]);
 }

@@ -22,8 +22,8 @@
 //------------------------------------------------------------------------------
 #include "gui/wadseekerinterface.h"
 #include "configuration/doomseekerconfig.h"
+#include "application.h"
 #include "mainwindow.h"
-#include "main.h"
 #include "strings.h"
 
 #include <QMessageBox>
@@ -33,8 +33,10 @@ const int WadseekerInterface::UPDATE_INTERVAL_MS = 500;
 WadseekerInterface::WadseekerInterface(QWidget* parent)
 : QDialog(parent)
 {
-	if(Main::mainWindow)
-		((MainWindow*)(Main::mainWindow))->stopAutoRefreshTimer();
+	if (gApp->mainWindow())
+	{
+		gApp->mainWindow()->stopAutoRefreshTimer();
+	}
 	setupUi(this);
 	setStateWaiting();
 
@@ -99,8 +101,10 @@ WadseekerInterface::WadseekerInterface(QWidget* parent)
 
 WadseekerInterface::~WadseekerInterface()
 {
-	if(Main::mainWindow)
-		((MainWindow*)(Main::mainWindow))->initAutoRefreshTimer();
+	if (gApp->mainWindow())
+	{
+		gApp->mainWindow()->initAutoRefreshTimer();
+	}
 }
 
 void WadseekerInterface::accept()

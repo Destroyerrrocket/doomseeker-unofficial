@@ -167,21 +167,25 @@ set(DOOMSEEKER_QT_FILES
 	irc/ircprivadapter.h
 	irc/ircrequestparser.h
 	irc/ircresponseparser.h
-	masterserver/masterclient.h
-	masterserver/masterclientsignalproxy.h
-	masterserver/mastermanager.h
 	serverapi/tooltips/gameinfotip.h
 	serverapi/tooltips/generalinfotip.h
 	serverapi/tooltips/playertable.h
 	refresher/refresher.h
-	serverapi/binaries.h
+	serverapi/exefile.h
+	serverapi/gameexefactory.h
+	serverapi/gamehost.h
+	serverapi/masterclient.h
+	serverapi/masterclientsignalproxy.h
+	serverapi/mastermanager.h
 	serverapi/message.h
 	serverapi/rconprotocol.h
 	serverapi/server.h
+	serverapi/serverptr.h
 	updater/autoupdater.h
 	updater/updatechannel.h
 	updater/updaterinfoparser.h
 	updater/updateinstaller.h
+	application.h
 	apprunner.h
 	customservers.h
 	log.h
@@ -216,6 +220,7 @@ set(SOURCE_FILES
 	gui/configuration/cfgwadseekergeneral.cpp
 	gui/configuration/cfgwadseekeridgames.cpp
 	gui/configuration/cfgwadseekersites.cpp
+	gui/configuration/configurationbasebox.cpp
 	gui/configuration/configurationdialog.cpp
 	gui/configuration/doomseekerconfigurationdialog.cpp
 	gui/configuration/engineconfigurationbasebox.cpp
@@ -264,6 +269,8 @@ set(SOURCE_FILES
 	ini/inisection.cpp
 	ini/inivariable.cpp
 	ini/ini.cpp
+	ini/settingsprovider.cpp
+	ini/settingsproviderqt.cpp
 	ip2c/entities/ip2ccountryinfo.cpp
 	ip2c/ip2c.cpp
 	ip2c/ip2cloader.cpp
@@ -289,29 +296,36 @@ set(SOURCE_FILES
 	irc/ircresponseparser.cpp
 	irc/ircuserinfo.cpp
 	irc/ircuserlist.cpp
-	masterserver/masterclient.cpp
-	masterserver/masterclientsignalproxy.cpp
-	masterserver/mastermanager.cpp
 	pathfinder/basefileseeker.cpp
 	pathfinder/casesensitivefsfileseeker.cpp
 	pathfinder/caseinsensitivefsfileseeker.cpp
 	pathfinder/filesearchpath.cpp
+	pathfinder/pathfinder.cpp
 	plugins/engineplugin.cpp
 	plugins/pluginloader.cpp
 	refresher/refresher.cpp
 	serverapi/tooltips/gameinfotip.cpp
 	serverapi/tooltips/generalinfotip.cpp
 	serverapi/tooltips/playertable.cpp
-	serverapi/binaries.cpp
+	serverapi/tooltips/tooltipgenerator.cpp
 	serverapi/buddyinfo.cpp
-	serverapi/gamerunner.cpp
+	serverapi/exefile.cpp
+	serverapi/gamecreateparams.cpp
+	serverapi/gameexefactory.cpp
+	serverapi/gameexeretriever.cpp
+	serverapi/gamehost.cpp
+	serverapi/gameclientrunner.cpp
+	serverapi/joinerror.cpp
+	serverapi/masterclient.cpp
+	serverapi/masterclientsignalproxy.cpp
+	serverapi/mastermanager.cpp
 	serverapi/message.cpp
 	serverapi/player.cpp
 	serverapi/playerslist.cpp
 	serverapi/rconprotocol.cpp
 	serverapi/server.cpp
+	serverapi/serverstructs.cpp
 	serverapi/serversummary.cpp
-	serverapi/tooltipgenerator.cpp
 	tests/testbase.cpp
 	tests/testcore.cpp
 	tests/testdatapaths.cpp
@@ -325,6 +339,7 @@ set(SOURCE_FILES
 	updater/updatepackagefilter.cpp
 	updater/updaterinfoparser.cpp
 	updater/updaterscriptparser.cpp
+	application.cpp
 	apprunner.cpp
 	commandline.cpp
 	customservers.cpp
@@ -337,7 +352,6 @@ set(SOURCE_FILES
 	localizationinfo.cpp
 	log.cpp
 	main.cpp
-	pathfinder.cpp
 	random.cpp
 	scanner.cpp
 	speedcalculator.cpp
@@ -362,6 +376,8 @@ set(HEADER_FILES
 	gui/commongui.h
 	ini/inisection.h
 	ini/inivariable.h
+	ini/settingsprovider.h
+	ini/settingsproviderqt.h
 	ip2c/entities/ip2ccountryinfo.h
 	irc/configuration/ircconfig.h
 	irc/constants/ircresponsetype.h
@@ -381,15 +397,20 @@ set(HEADER_FILES
 	pathfinder/casesensitivefsfileseeker.h
 	pathfinder/caseinsensitivefsfileseeker.h
 	pathfinder/filesearchpath.h
+	pathfinder/pathfinder.h
 	plugins/engineplugin.h
 	plugins/pluginloader.h
+	serverapi/tooltips/tooltipgenerator.h
 	serverapi/buddyinfo.h
-	serverapi/gamerunner.h
+	serverapi/gamecreateparams.h
+	serverapi/gameexeretriever.h
+	serverapi/gameclientrunner.h
+	serverapi/joinerror.h
 	serverapi/player.h
 	serverapi/playerslist.h
+	serverapi/polymorphism.h
 	serverapi/serverstructs.h
 	serverapi/serversummary.h
-	serverapi/tooltipgenerator.h
 	tests/testbase.h
 	tests/testcore.h
 	tests/testdatapaths.h
@@ -410,7 +431,6 @@ set(HEADER_FILES
 	localization.h
 	localizationinfo.h
 	random.h
-	pathfinder.h
 	qtmetapointer.h
 	scanner.h
 	speedcalculator.h

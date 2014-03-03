@@ -20,15 +20,16 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
+#include "odamexserver.h"
+
 #include <QBuffer>
 #include <QDataStream>
 
+#include "odamexgamehost.h"
 #include "odamexgameinfo.h"
 #include "odamexgamerunner.h"
 #include "odamexengineplugin.h"
-#include "odamexserver.h"
 #include "datastreamoperatorwrapper.h"
-#include "main.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/playerslist.h"
 
@@ -37,7 +38,7 @@
 		{ \
 			return RESPONSE_BAD; \
 		}
-		
+
 #define CHECK_POS_OFFSET(offset) if (in.remaining() < (offset)) \
 		{ \
 			return RESPONSE_BAD; \
@@ -48,24 +49,28 @@
 #define SPECTATOR_INFO		0x01020304
 #define EXTRA_INFO			0x01020305
 
-OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port) : Server(address, port),
-	protocol(0)
+OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port)
+: Server(address, port), protocol(0)
 {
+	set_readRequest(&OdamexServer::readRequest);
+	set_createSendRequest(&OdamexServer::createSendRequest);
 }
 
-GameRunner* OdamexServer::gameRunner() const
+GameClientRunner* OdamexServer::gameRunner()
 {
-	return new OdamexGameRunner(this);
+	return new OdamexGameClientRunner(
+		self().toStrongRef().staticCast<OdamexServer>());
 }
 
-const EnginePlugin* OdamexServer::plugin() const
+EnginePlugin* OdamexServer::plugin() const
 {
 	return OdamexEnginePlugin::staticInstance();
 }
 
-Server::Response OdamexServer::readRequest(QByteArray &data)
+Server::Response OdamexServer::readRequest(const QByteArray &data)
 {
-	QBuffer ioBuffer(&data);
+	QBuffer ioBuffer;
+	ioBuffer.setData(data);
 	ioBuffer.open(QIODevice::ReadOnly);
 	QDataStream inStream(&ioBuffer);
 	inStream.setByteOrder(QDataStream::LittleEndian);
@@ -80,18 +85,19 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 	short version_major = version/256;
 	short version_minor = (version % 256)/10;
 	short version_patch = (version % 256)%10;
-	serverVersion = QString("%1.%2.%3").arg(version_major).arg(version_minor).arg(version_patch);
+	QString strVersion = QString("%1.%2.%3").arg(version_major).arg(version_minor).arg(version_patch);
 
 	unsigned int protocolVersion = in.readQUInt32();
 	if(protocolVersion >= 1)
 	{
 		in.skipRawData(8);
 	}
-	
+
 	CHECK_POS;
-	
-	serverVersion += QString(" r%1").arg(in.readQUInt32());
-	
+
+	strVersion += QString(" r%1").arg(in.readQUInt32());
+	setGameVersion(strVersion);
+
 	CHECK_POS;
 
 	short cvarCount = in.readQUInt8();
@@ -135,50 +141,52 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 		CHECK_POS;
 
 		if(cvarName == "sv_email")
-			email = cvarValue;
+			setEmail(cvarValue);
 		else if(cvarName == "sv_hostname")
-			serverName = cvarValue;
+			setName(cvarValue);
 		else if(cvarName == "sv_maxplayers")
-			maxPlayers = cvarValue.toUInt();
+			setMaxPlayers(cvarValue.toUInt());
 		else if(cvarName == "sv_maxclients")
-			maxClients = cvarValue.toUInt();
+			setMaxClients(cvarValue.toUInt());
 		else if(cvarName == "sv_scorelimit")
-			serverScoreLimit = cvarValue.toUInt();
+			setScoreLimit(cvarValue.toUInt());
 		else if(cvarName == "sv_gametype")
 		{
 			unsigned int mode = cvarValue.toUInt();
 			if(mode < (unsigned)plugin()->data()->gameModes->size())
-				currentGameMode = (*plugin()->data()->gameModes)[cvarValue.toUInt()];
+			{
+				setGameMode((*plugin()->data()->gameModes)[cvarValue.toUInt()]);
+			}
 		}
 		else if(cvarName == "sv_website")
-			webSite = cvarValue;
+			setWebSite(cvarValue);
 	}
 
 	if(protocolVersion >= 4)
 	{
 		short hashLength = in.readQUInt8();
 		in.skipRawData(hashLength);
-		locked = hashLength > 0;
+		setLocked(hashLength > 0);
 	}
 	else
 	{
 		QString passwordHash = in.readRawUntilByte('\0');
-		locked = !passwordHash.isEmpty();
+		setLocked(!passwordHash.isEmpty());
 	}
 	CHECK_POS;
 
-	mapName = in.readRawUntilByte('\0');
+	setMap(in.readRawUntilByte('\0'));
 	CHECK_POS;
 
-	serverTimeLeft = in.readQUInt16();
+	setTimeLeft(in.readQUInt16());
 
-	if(protocolVersion < 5 || currentGameMode.isTeamGame())
+	if(protocolVersion < 5 || gameMode().isTeamGame())
 	{
 		short teamCount = in.readQUInt8();
 		while(teamCount-- > 0)
 		{
 			CHECK_POS;
-		
+
 			QString teamName = in.readRawUntilByte('\0');
 			in.skipRawData(6);
 		}
@@ -189,23 +197,23 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 	while(patchCount-- > 0)
 	{
 		CHECK_POS;
-		
+
 		QString patch = in.readRawUntilByte('\0');
 		dehPatches << patch;
 	}
 
-	wads.clear();
+	clearWads();
 	short wadCount = in.readQUInt8();
 	for(short i = 0;i < wadCount;i++)
 	{
 		CHECK_POS;
-	
+
 		QString wad = in.readRawUntilByte('\0');
 		if(i >= 2)
-			wads << wad;
+			addWad(wad);
 		else if(i == 1)
-			iwad = wad;
-		
+			setIwad(wad);
+
 		CHECK_POS;
 		if(protocolVersion >= 4)
 		{
@@ -216,12 +224,12 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 			in.readRawUntilByte('\0');
 	}
 
-	players->clear();
+	clearPlayersList();
 	short playerCount = in.readQUInt8();
 	while(playerCount-- > 0)
 	{
 		CHECK_POS;
-	
+
 		QString playerName = in.readRawUntilByte('\0');
 
 		if(protocolVersion >= 2)
@@ -232,7 +240,7 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 		}
 
 		unsigned short teamIndex = Player::TEAM_NONE;
-		if(protocolVersion < 5 || currentGameMode.isTeamGame())
+		if(protocolVersion < 5 || gameMode().isTeamGame())
 		{
 			CHECK_POS_OFFSET(1);
 			teamIndex = in.readQUInt8();
@@ -243,21 +251,20 @@ Server::Response OdamexServer::readRequest(QByteArray &data)
 		bool spectator = in.readQUInt8();
 		unsigned short score = in.readQUInt16();
 		in.skipRawData(4);
-		
-		Player::PlayerTeam team = currentGameMode.isTeamGame() ? static_cast<Player::PlayerTeam> (teamIndex) : Player::TEAM_NONE;
+
+		Player::PlayerTeam team = gameMode().isTeamGame() ? static_cast<Player::PlayerTeam> (teamIndex) : Player::TEAM_NONE;
 		Player player(playerName, score, ping, team, spectator);
-		players->append(player);
+		addPlayer(player);
 	}
 
 	return RESPONSE_GOOD;
 }
 
-bool OdamexServer::sendRequest(QByteArray &data)
+QByteArray OdamexServer::createSendRequest()
 {
 	// This construction and cast to (char*) removes warnings from MSVC.
 	const unsigned char challenge[] = {SERVER_CHALLENGE};
-	
-	const QByteArray challengeByteArray((char*)challenge, 16);
-	data.append(challengeByteArray);
-	return true;
+
+	QByteArray challengeByteArray((char*)challenge, 16);
+	return challengeByteArray;
 }

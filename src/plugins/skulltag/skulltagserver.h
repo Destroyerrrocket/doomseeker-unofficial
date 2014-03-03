@@ -134,7 +134,7 @@ class SkulltagServer : public Server
 
 		bool			isTestingServer() const { return testingServer; }
 
-		GameRunner*		gameRunner() const;
+		GameRunner*		gameRunner();
 
 		bool			hasRcon() const { return true; }
 
@@ -204,7 +204,7 @@ class SkulltagRConProtocol : public RConProtocol
 		};
 
 	public:
-		static RConProtocol	*connectToServer(Server *server);
+		static RConProtocol	*connectToServer(ServerPtr server);
 
 	public slots:
 		void	disconnectFromServer();
@@ -213,7 +213,7 @@ class SkulltagRConProtocol : public RConProtocol
 		void	sendPong();
 
 	protected:
-		SkulltagRConProtocol(Server *server);
+		SkulltagRConProtocol(ServerPtr server);
 
 		void	processPacket(QIODevice* ioDevice, bool initial=false, int maxUpdates=1);
 

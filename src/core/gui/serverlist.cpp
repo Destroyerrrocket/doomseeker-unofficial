@@ -27,13 +27,15 @@
 #include "gui/models/serverlistproxymodel.h"
 #include "gui/models/serverlistrowhandler.h"
 #include "gui/widgets/serverlistcontextmenu.h"
-#include "serverapi/binaries.h"
+#include "pathfinder/pathfinder.h"
+#include "plugins/engineplugin.h"
+#include "refresher/refresher.h"
+#include "serverapi/tooltips/tooltipgenerator.h"
+#include "serverapi/gameexeretriever.h"
 #include "serverapi/message.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
-#include "serverapi/tooltipgenerator.h"
-#include "main.h"
-#include "pathfinder.h"
+#include "serverapi/serverstructs.h"
 #include <QApplication>
 #include <QClipboard>
 #include <QDesktopServices>
@@ -42,6 +44,7 @@
 #include <QMessageBox>
 #include <QStandardItem>
 #include <QToolTip>
+#include <QUrl>
 
 const QString ServerListHandler::FONT_COLOR_MISSING = "#ff0000";
 const QString ServerListHandler::FONT_COLOR_OPTIONAL = "#ff9f00";
@@ -156,8 +159,7 @@ void ServerListHandler::contextMenuAboutToHide()
 void ServerListHandler::contextMenuTriggered(QAction* action)
 {
 	ServerListContextMenu *contextMenu = static_cast<ServerListContextMenu*>(sender());
-	// TODO: Needs share-pointering after merge with pluginapi.
-	Server *server = contextMenu->server();
+	ServerPtr server = contextMenu->server();
 	// 1. This is a bit convoluted, but emitting the serverFilterModified
 	//    signal leads to a call to applyFilter() in this class.
 	// 2. Since the menu modifies existing server filter, the worst that can
@@ -180,7 +182,7 @@ void ServerListHandler::contextMenuTriggered(QAction* action)
 			break;
 
 		case ServerListContextMenu::OpenURL:
-			QDesktopServices::openUrl(server->website());
+			QDesktopServices::openUrl(server->webSite());
 			break;
 
 		case ServerListContextMenu::NothingHappened:
@@ -201,7 +203,7 @@ void ServerListHandler::contextMenuTriggered(QAction* action)
 	}
 }
 
-QString ServerListHandler::createIwadToolTip(const Server* server)
+QString ServerListHandler::createIwadToolTip(ServerCPtr server)
 {
 	if (!server->isKnown())
 	{
@@ -216,14 +218,12 @@ QString ServerListHandler::createIwadToolTip(const Server* server)
 		static const QString FORMAT_TEMPLATE = "<font color=\"%1\">%2</font>";
 
 		Message binMessage;
-		Binaries *bin = server->binaries();
 		// Use offline binary so that testing builds are not triggered.
-		QString binPath = bin->offlineGameBinary(binMessage);
-		delete bin;
+		QString binPath = GameExeRetriever(*server->plugin()->gameExe()).pathToOfflineExe(binMessage);
 
 		PathFinder pathFinder;
 		pathFinder.addPrioritySearchDir(binPath);
-		QString path = pathFinder.findFile(server->iwadName());
+		QString path = pathFinder.findFile(server->iwad());
 
 		if (path.isEmpty())
 		{
@@ -246,7 +246,7 @@ ServerListModel* ServerListHandler::createModel()
 	return serverListModel;
 }
 
-QString ServerListHandler::createPlayersToolTip(const Server* server)
+QString ServerListHandler::createPlayersToolTip(ServerCPtr server)
 {
 	if (server == NULL || !server->isKnown())
 	{
@@ -258,7 +258,7 @@ QString ServerListHandler::createPlayersToolTip(const Server* server)
 	QString ret;
 	ret = "<div style='white-space: pre'>";
 	ret += tooltipGenerator->gameInfoTableHTML();
-	if(server->playersList()->numClients() != 0)
+	if(server->players()->numClients() != 0)
 	{
 		ret += tooltipGenerator->playerTableHTML();
 	}
@@ -268,7 +268,7 @@ QString ServerListHandler::createPlayersToolTip(const Server* server)
 	return ret;
 }
 
-QString ServerListHandler::createPortToolTip(const Server* server)
+QString ServerListHandler::createPortToolTip(ServerCPtr server)
 {
 	if (server == NULL || !server->isKnown())
 		return QString();
@@ -276,7 +276,7 @@ QString ServerListHandler::createPortToolTip(const Server* server)
 	QString ret;
 	if (server->isLocked())
 		ret = "Password protected";
-	if (server->isSecured())
+	if (server->isSecure())
 	{
 		if(!ret.isEmpty())
 			ret += '\n';
@@ -285,7 +285,7 @@ QString ServerListHandler::createPortToolTip(const Server* server)
 	return ret;
 }
 
-QString ServerListHandler::createPwadsToolTip(const Server* server)
+QString ServerListHandler::createPwadsToolTip(ServerCPtr server)
 {
 	if (server == NULL || !server->isKnown() || server->numWads() == 0)
 	{
@@ -296,7 +296,7 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 	static const QString toolTip = "<div style='white-space: pre'>%1</div>";
 	QString content;
 
-	const QList<PWad>& pwads = server->pwads();
+	const QList<PWad>& pwads = server->wads();
 
 	// Check if we should seek and colorize.
 	bool bFindWads = gConfig.doomseeker.bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn;
@@ -305,10 +305,8 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 	if (bFindWads)
 	{
 		Message binMessage;
-		Binaries *bin = server->binaries();
 		// Use offline binary so that testing builds are not triggered.
-		QString binPath = bin->offlineGameBinary(binMessage);
-		delete bin;
+		QString binPath = GameExeRetriever(*server->plugin()->gameExe()).pathToOfflineExe(binMessage);
 
 		QStringList pwadsFormatted;
 		foreach (const PWad &wad, pwads)
@@ -324,7 +322,7 @@ QString ServerListHandler::createPwadsToolTip(const Server* server)
 	{
 		foreach (const PWad &wad, pwads)
 		{
-			content += wad.name + "\n";
+			content += wad.name() + "\n";
 		}
 		content.chop(1); // Get rid of extra \n.
 	}
@@ -340,31 +338,31 @@ QString ServerListHandler::createPwadToolTipInfo(const PWad& pwad, const QString
 
 	PathFinder pathFinder;
 	pathFinder.addPrioritySearchDir(binPath);
-	QString pathToFile = pathFinder.findFile(pwad.name);
+	QString pathToFile = pathFinder.findFile(pwad.name());
 
 	if (pathToFile.isEmpty())
 	{
-		if(pwad.optional)
+		if(pwad.isOptional())
 		{
 			formattedStringBegin = formattedStringBegin.arg(FONT_COLOR_OPTIONAL);
-			formattedStringMiddle = tr("<td>%1</td><td> OPTIONAL</td>").arg(pwad.name);
+			formattedStringMiddle = tr("<td>%1</td><td> OPTIONAL</td>").arg(pwad.name());
 		}
 		else
 		{
 			formattedStringBegin = formattedStringBegin.arg(FONT_COLOR_MISSING);
-			formattedStringMiddle = tr("<td>%1</td><td> MISSING</td>").arg(pwad.name);
+			formattedStringMiddle = tr("<td>%1</td><td> MISSING</td>").arg(pwad.name());
 		}
 	}
 	else
 	{
 		formattedStringBegin = formattedStringBegin.arg(FONT_COLOR_FOUND);
-		formattedStringMiddle = QString("<td>%1</td><td> %2</td>").arg(pwad.name, pathToFile);
+		formattedStringMiddle = QString("<td>%1</td><td> %2</td>").arg(pwad.name(), pathToFile);
 	}
 
 	return formattedStringBegin + formattedStringMiddle + formattedStringEnd;
 }
 
-QString ServerListHandler::createServerNameToolTip(const Server* server)
+QString ServerListHandler::createServerNameToolTip(ServerCPtr server)
 {
 	if (server == NULL)
 	{
@@ -428,7 +426,7 @@ bool ServerListHandler::isSortingByColumn(int columnIndex)
 
 void ServerListHandler::itemSelected(const QModelIndex& index)
 {
-	QList<Server*> servers = selectedServers();
+	QList<ServerPtr> servers = selectedServers();
 	emit serversSelected(servers);
 }
 
@@ -436,14 +434,14 @@ void ServerListHandler::lookupHosts()
 {
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
-		Server* server = model->serverFromList(i);
+		ServerPtr server = model->serverFromList(i);
 		server->lookupHost();
 	}
 }
 
 void ServerListHandler::modelCleared()
 {
-	QList<Server*> servers;
+	QList<ServerPtr> servers;
 	emit serversSelected(servers);
 }
 
@@ -451,7 +449,7 @@ void ServerListHandler::mouseEntered(const QModelIndex& index)
 {
 	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
 	QModelIndex realIndex = pModel->mapToSource(index);
-	Server* server = model->serverFromList(realIndex);
+	ServerPtr server = model->serverFromList(realIndex);
 	QString tooltip;
 
 	// Functions inside cases perform checks on the server structure
@@ -511,8 +509,7 @@ void ServerListHandler::refreshAll()
 {
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
-		Server* serv = model->serverFromList(i);
-		serv->refresh();
+		gRefresher->registerServer(model->serverFromList(i).data());
 	}
 }
 
@@ -524,8 +521,7 @@ void ServerListHandler::refreshSelected()
 	for(int i = 0; i < indexList.count(); ++i)
 	{
 		QModelIndex realIndex = sortingProxy->mapToSource(indexList[i]);
-		Server* server = model->serverFromList(realIndex);
-		server->refresh();
+		gRefresher->registerServer(model->serverFromList(realIndex).data());
 	}
 }
 
@@ -536,37 +532,37 @@ void ServerListHandler::saveColumnsWidthsSettings()
 	gConfig.doomseeker.serverListSortDirection = sortOrder;
 }
 
-QList<Server*> ServerListHandler::selectedServers()
+QList<ServerPtr> ServerListHandler::selectedServers()
 {
 	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
 	QItemSelectionModel* selModel = table->selectionModel();
 	QModelIndexList indexList = selModel->selectedRows();
 
-	QList<Server*> servers;
+	QList<ServerPtr> servers;
 	for(int i = 0; i < indexList.count(); ++i)
 	{
 		QModelIndex realIndex = pModel->mapToSource(indexList[i]);
-		Server* server = model->serverFromList(realIndex);
+		ServerPtr server = model->serverFromList(realIndex);
 		servers.append(server);
 	}
 	return servers;
 }
 
-void ServerListHandler::serverBegunRefreshing(Server* server)
+void ServerListHandler::serverBegunRefreshing(const ServerPtr &server)
 {
 	model->setRefreshing(server);
 }
 
-Server *ServerListHandler::serverFromIndex(const QModelIndex &index)
+ServerPtr ServerListHandler::serverFromIndex(const QModelIndex &index)
 {
 	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
 	QModelIndex indexReal = pModel->mapToSource(index);
 	return model->serverFromList(indexReal);
 }
 
-void ServerListHandler::serverUpdated(Server *server, int response)
+void ServerListHandler::serverUpdated(const ServerPtr &server, int response)
 {
-	int rowIndex = model->findServerOnTheList(server);
+	int rowIndex = model->findServerOnTheList(server.data());
 	if (rowIndex >= 0)
 	{
 		rowIndex = model->updateServer(rowIndex, server, response);
@@ -648,7 +644,7 @@ void ServerListHandler::tableMiddleClicked(const QModelIndex& index, const QPoin
 
 void ServerListHandler::tableRightClicked(const QModelIndex& index, const QPoint& cursorPosition)
 {
-	Server* server = serverFromIndex(index);
+	ServerPtr server = serverFromIndex(index);
 
 	ServerListProxyModel* pModel = static_cast<ServerListProxyModel*>(table->model());
 	ServerListContextMenu *contextMenu = new ServerListContextMenu(server,

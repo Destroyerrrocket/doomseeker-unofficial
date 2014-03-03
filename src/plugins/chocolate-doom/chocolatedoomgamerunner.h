@@ -23,21 +23,22 @@
 #ifndef __CHOCOLATE_DOOM_GAME_RUNNER_H_
 #define __CHOCOLATE_DOOM_GAME_RUNNER_H_
 
-#include "serverapi/gamerunner.h"
+#include "serverapi/gameclientrunner.h"
 #include "chocolatedoomengineplugin.h"
 
 class ChocolateDoomServer;
 
-class ChocolateDoomGameRunner : public GameRunner
+class ChocolateDoomGameClientRunner : public GameClientRunner
 {
 	public:
-		ChocolateDoomGameRunner(const ChocolateDoomServer* server);
+		ChocolateDoomGameClientRunner(QSharedPointer<ChocolateDoomServer> server);
 
-		bool						connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory);
-		const EnginePlugin*			plugin() const { return ChocolateDoomEnginePlugin::staticInstance(); }
+		const EnginePlugin* plugin() const { return ChocolateDoomEnginePlugin::staticInstance(); }
 
-	protected:
-		void hostProperties(QStringList& args) const;
+	private:
+		QSharedPointer<ChocolateDoomServer> server;
+
+		void createCommandLineArguments();
 };
 
 #endif

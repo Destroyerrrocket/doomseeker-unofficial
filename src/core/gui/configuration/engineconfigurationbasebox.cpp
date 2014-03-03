@@ -26,20 +26,35 @@
 
 #include <QFileDialog>
 
-EngineConfigurationBaseBox::EngineConfigurationBaseBox(const EnginePlugin *plugin, IniSection &cfg, QWidget *parent) 
-: ConfigurationBaseBox(parent), config(cfg), enginePlugin(plugin), clientOnly(false)
+class EngineConfigurationBaseBox::PrivData
 {
+	public:
+		IniSection *config;
+		const EnginePlugin *plugin;
+		bool clientOnly;
+};
+
+EngineConfigurationBaseBox::EngineConfigurationBaseBox(const EnginePlugin *plugin, IniSection &cfg, QWidget *parent) 
+: ConfigurationBaseBox(parent)
+{
+	d = new PrivData();
+	d->plugin = plugin;
+	d->config = &cfg;
 	setupUi(this);
 
-	if(enginePlugin->data()->clientOnly)
+	if(plugin->data()->clientOnly)
 		makeClientOnly();
 
-	setTitle(tr("%1 - Configuration").arg(enginePlugin->data()->name));
-	if(!enginePlugin->data()->hasMasterServer)
+	if(!plugin->data()->hasMasterServer)
 		masterAddressBox->hide();
 
 	connect(btnBrowseClientBinary, SIGNAL( clicked() ), this, SLOT ( btnBrowseClientBinaryClicked() ));
 	connect(btnBrowseServerBinary, SIGNAL( clicked() ), this, SLOT ( btnBrowseServerBinaryClicked() ));
+}
+
+EngineConfigurationBaseBox::~EngineConfigurationBaseBox()
+{
+	delete d;
 }
 
 void EngineConfigurationBaseBox::addWidget(QWidget *widget)
@@ -58,7 +73,7 @@ void EngineConfigurationBaseBox::browseForBinary(QLineEdit *input, const QString
 	// Other platforms do not have an extension for their binary files.
 	filter = tr("Any files(*)");
 #endif
-	QString strFilepath = QFileDialog::getOpenFileName(this, tr("Doomseeker - choose ") + enginePlugin->data()->name + " " + type, QString(), filter);
+	QString strFilepath = QFileDialog::getOpenFileName(this, tr("Doomseeker - choose ") + d->plugin->data()->name + " " + type, QString(), filter);
 	if(!strFilepath.isEmpty()) // don't update if nothing was selected.
 		input->setText(strFilepath);
 }
@@ -76,12 +91,12 @@ void EngineConfigurationBaseBox::btnBrowseServerBinaryClicked()
 
 QIcon EngineConfigurationBaseBox::icon() const
 {
-	return enginePlugin->icon();
+	return d->plugin->icon();
 }
 
 void EngineConfigurationBaseBox::makeClientOnly()
 {
-	clientOnly = true;
+	d->clientOnly = true;
 
 	lblClientBinary->setText(tr("Path to executable:"));
 	serverBinaryBox->hide();
@@ -89,36 +104,42 @@ void EngineConfigurationBaseBox::makeClientOnly()
 
 QString EngineConfigurationBaseBox::name() const
 {
-	return enginePlugin->data()->name;
+	return d->plugin->data()->name;
+}
+
+const EnginePlugin *EngineConfigurationBaseBox::plugin() const
+{
+	return d->plugin;
 }
 
 void EngineConfigurationBaseBox::readSettings()
 {
-	leClientBinaryPath->setText(config["BinaryPath"]);
-	leCustomParameters->setText(config["CustomParameters"]);
-
-	if(enginePlugin->data()->hasMasterServer)
-		leMasterserverAddress->setText(config["Masterserver"]);
-
-	leServerBinaryPath->setText(config["ServerBinaryPath"]);
+	leClientBinaryPath->setText(d->config->value("BinaryPath").toString());
+	leCustomParameters->setText(d->config->value("CustomParameters").toString());
+	if(d->plugin->data()->hasMasterServer)
+		leMasterserverAddress->setText(d->config->value("Masterserver").toString());
+	leServerBinaryPath->setText(d->config->value("ServerBinaryPath").toString());
 }
 
 void EngineConfigurationBaseBox::saveSettings()
 {
-	QString strVal;
+	QString executable;
 
-	strVal = leClientBinaryPath->text();
-	config["BinaryPath"] = strVal;
-	if(!clientOnly)
-		strVal = leServerBinaryPath->text();
-	config["ServerBinaryPath"] = strVal;
-
-	strVal = leCustomParameters->text();
-	config["CustomParameters"] = strVal;
-
-	if(enginePlugin->data()->hasMasterServer)
+	executable = leClientBinaryPath->text();
+	d->config->setValue("BinaryPath", executable);
+	if (!d->clientOnly)
 	{
-		strVal = leMasterserverAddress->text();
-		config["Masterserver"] = strVal;
+		executable = leServerBinaryPath->text();
 	}
+	d->config->setValue("ServerBinaryPath", executable);
+	d->config->setValue("CustomParameters", leCustomParameters->text());
+	if (d->plugin->data()->hasMasterServer)
+	{
+		d->config->setValue("Masterserver", leMasterserverAddress->text());
+	}
+}
+
+QString EngineConfigurationBaseBox::title() const
+{
+	return tr("Game - %1").arg(name());
 }

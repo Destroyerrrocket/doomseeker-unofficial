@@ -28,7 +28,8 @@
 
 #define NUM_ODAMEX_GAME_MODES 5
 
-class GameRunner;
+class GameHost;
+class GameClientRunner;
 class EnginePlugin;
 
 class OdamexServer : public Server
@@ -39,13 +40,13 @@ class OdamexServer : public Server
 		OdamexServer(const QHostAddress &address, unsigned short port);
 
 		const QStringList&		dehs() const { return dehPatches; }
-		GameRunner*				gameRunner() const;
+		GameClientRunner*				gameRunner();
 
-		const EnginePlugin*		plugin() const;
+		EnginePlugin*		plugin() const;
 
 	protected:
-		Response	readRequest(QByteArray &data);
-		bool		sendRequest(QByteArray &data);
+		Response readRequest(const QByteArray &data);
+		QByteArray createSendRequest();
 
 		short			protocol;
 		QStringList		dehPatches;

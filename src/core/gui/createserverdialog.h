@@ -24,12 +24,14 @@
 #define DOOMSEEKER_GUI_CREATESERVERDIALOG_H
 
 #include "ui_createserverdialog.h"
-#include "serverapi/gamerunnerstructs.h"
+#include "serverapi/serverstructs.h"
 #include <QCheckBox>
 #include <QDialog>
 
 class CreateServerDialogPage;
 class EnginePlugin;
+class GameCreateParams;
+class Message;
 class Server;
 
 /**
@@ -41,7 +43,7 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 
 	public:
 		CreateServerDialog(QWidget* parent = NULL);
-		~CreateServerDialog();
+		virtual ~CreateServerDialog();
 
 		bool	commandLineArguments(QString &executable, QStringList &args);
 		void	makeSetupServerDialog(const EnginePlugin *plugin);
@@ -75,7 +77,7 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		{
 			public:
 				QWidget*				widget;
-				const DMFlagsSection*	section;
+				DMFlagsSection			section;
 
 				/**
  				 * Check boxes in the same order the flags are stored in the plugin.
@@ -93,13 +95,8 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 
 		static const QString			TEMP_SERVER_CONFIG_FILENAME;
 
-		bool							bSuppressMissingExeErrors;
-		bool							bIsServerSetup;
-		QList<CreateServerDialogPage*> currentCustomPages;
-		const EnginePlugin* 			currentEngine;
-		QList<DMFlagsTabWidget*>		dmFlagsTabs;
-		QList<GameLimitWidget*>			limitWidgets;
-		QList<GameCVar>					gameModifiers;
+		class PrivData;
+		PrivData *d;
 
 		/**
 		 * Adds IWAD path to the IWAD ComboBox.
@@ -115,7 +112,7 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		 * parameters obtain new information after this method is called.
 		 * @return false if fail.
 		 */
-		bool	createHostInfo(HostInfo& hi, Server* server, bool offline);
+		bool	createHostInfo(GameCreateParams& params, bool offline);
 
 		void	initDMFlagsTabs();
 
@@ -146,6 +143,9 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		void	initRules();
 
 		bool	loadConfig(const QString& filename);
+		QString pathToClientExe(Server* server, Message& message);
+		QString pathToOfflineExe(Message& message);
+		QString pathToServerExe(Message& message);
 		void	removeDMFlagsTabs();
 		void	removeLimitWidgets();
 		void	runGame(bool offline);

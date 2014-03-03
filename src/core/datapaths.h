@@ -28,6 +28,8 @@
 #include <QString>
 #include <QStringList>
 
+#define gDefaultDataPaths (DataPaths::defaultInstance())
+
 /**
  *	@brief Represents directories used by Doomseeker to store data.
  *
@@ -78,7 +80,17 @@ class MAIN_EXPORT DataPaths
 		 */
 		static QStringList staticDataSearchDirs(const QString& subdir = QString());
 
+		static void initDefault(bool bPortableModeOn);
+		/**
+		 * @brief Retrieves default instance that is used throughout
+		 *        the program.
+		 *
+		 * This instance must first be init with initDefault().
+		 */
+		static DataPaths *defaultInstance();
+
 		DataPaths(bool bPortableModeOn = false);
+		virtual ~DataPaths();
 
 		/**
 		 *	@brief Checks if all directories can be written to.
@@ -109,8 +121,6 @@ class MAIN_EXPORT DataPaths
 		 */
 		QStringList				directoriesExist() const;
 
-		const QString&			directoryNameForProgram() const { return programsDirectoryName; }
-
 		/**
 		 * @brief Path to the directory where large data should be
 		 *        saved.
@@ -133,9 +143,14 @@ class MAIN_EXPORT DataPaths
 		 *	Depending on model (portable or not) and operating system this might
 		 *	point to a number of different directories. However the root dir
 		 *	is determined by calling the systemAppDataDirectory() method and
-		 *	appending string contained in programsDirectoryName member.
+		 *	appending string returned by programDirName() getter.
 		 */
 		QString					programsDataDirectoryPath() const;
+
+		/**
+		 * @brief Defaults to PROGRAMS_APPDATA_DIR_NAME.
+		 */
+		const QString &programDirName() const;
 
 		/**
 		 *  @brief Allows switching from Preferences to Application Support on OS X.
@@ -144,10 +159,11 @@ class MAIN_EXPORT DataPaths
 		 */
 		QString					programsDataSupportDirectoryPath() const;
 
-		bool					isPortableModeOn() const { return bIsPortableModeOn; }
+		bool isPortableModeOn() const;
 
-		void					setPortableModeOn(bool b) { bIsPortableModeOn = b; }
-		void					setDirectoryNameForProgram(const QString& name) { programsDirectoryName = name; }
+		void setPortableModeOn(bool b);
+		void setProgramDirName(const QString& name);
+		void setWorkingDirectory(const QString &workingDirectory);
 
 		/**
 		 *	@brief Gets path to the root directory for data storage.
@@ -173,6 +189,11 @@ class MAIN_EXPORT DataPaths
 		 */
 		bool					validateAppDataDirectory();
 
+		/**
+		 * @brief Program working directory.
+		 */
+		const QString &workingDirectory() const;
+
 	protected:
 		/**
 		 *	@return True if path is a directory that exists and can be written
@@ -180,19 +201,16 @@ class MAIN_EXPORT DataPaths
 		 */
 		static bool				validateDir(const QString& path);
 
-		bool					bIsPortableModeOn;
-
-		/**
-		 *	@brief Defaults to PROGRAMS_APPDATA_DIR_NAME.
-		 */
-		QString					programsDirectoryName;
-		QString					programsSupportDirectoryName;
-		QString					demosDirectoryName;
-
 		/**
 		 *	@brief If directory already exists true is returned.
 		 */
 		bool					tryCreateDirectory(const QDir& rootDir, const QString& dirToCreate) const;
+
+	private:
+		class PrivData;
+		PrivData *d;
+
+		static DataPaths *staticDefaultInstance;
 };
 
 #endif

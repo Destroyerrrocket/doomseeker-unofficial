@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>CFGWadseekerGeneral</class>
- <widget class="QGroupBox" name="CFGWadseekerGeneral">
+ <widget class="QWidget" name="CFGWadseekerGeneral">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,10 +10,10 @@
     <height>300</height>
    </rect>
   </property>
-  <property name="title">
-   <string>Wadseeker - General</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="sizeConstraint">

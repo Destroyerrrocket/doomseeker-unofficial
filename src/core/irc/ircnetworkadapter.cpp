@@ -148,7 +148,7 @@ void IRCNetworkAdapter::connect(const IRCNetworkConnectionInfo& connectionInfo)
 {
 	this->connectionInfo = connectionInfo;
 	emit titleChange();
-	ircClient.connect(connectionInfo.networkEntity.address, connectionInfo.networkEntity.port);
+	ircClient.connect(connectionInfo.networkEntity.address(), connectionInfo.networkEntity.port());
 }
 
 void IRCNetworkAdapter::detachChatWindow(const IRCChatAdapter* pAdapter)
@@ -305,23 +305,23 @@ void IRCNetworkAdapter::helloClient(const QString& nickname)
 	connectionInfo.nick = nickname;
 	IRCNetworkEntity& network = connectionInfo.networkEntity;
 
-	gLog << tr("IRC: Successfuly registered on network %1 [%2:%3]").arg(network.description, network.address).arg(network.port);
+	gLog << tr("IRC: Successfuly registered on network %1 [%2:%3]").arg(network.description(), network.address()).arg(network.port());
 
 	this->bIsJoining = false;
 
-	if (!network.nickservPassword.isEmpty())
+	if (!network.nickservPassword().isEmpty())
 	{
-		QString messageNickserv = network.nickservCommand;
-		messageNickserv = messageNickserv.arg(network.nickservPassword);
+		QString messageNickserv = network.nickservCommand();
+		messageNickserv = messageNickserv.arg(network.nickservPassword());
 
 		this->sendMessage(messageNickserv);
 	}
-	foreach (const QString& command, network.autojoinCommands)
+	foreach (const QString& command, network.autojoinCommands())
 	{
 		this->sendMessage(command);
 	}
 
-	foreach (const QString& channel, network.autojoinChannels)
+	foreach (const QString& channel, network.autojoinChannels())
 	{
 		if (IRCGlobal::isChannelName(channel))
 		{
@@ -602,7 +602,7 @@ void IRCNetworkAdapter::setChannelMode(const QString& channel, const QString& ni
 
 QString IRCNetworkAdapter::title() const
 {
-	return connectionInfo.networkEntity.description + " ( " + myNickname() + " )";
+	return connectionInfo.networkEntity.description() + " ( " + myNickname() + " )";
 }
 
 void IRCNetworkAdapter::userChangesNickname(const QString& oldNickname, const QString& newNickname)
@@ -732,9 +732,9 @@ void IRCSocketSignalsAdapter::connected()
 
 	IRCNetworkEntity& network = connectionInfo.networkEntity;
 
-	if (!network.password.isEmpty())
+	if (!network.password().isEmpty())
 	{
-		pParent->sendMessage(messagePass.arg(network.password));
+		pParent->sendMessage(messagePass.arg(network.password()));
 	}
 
 	pParent->sendMessage(messageNick.arg(connectionInfo.nick));
@@ -744,7 +744,7 @@ void IRCSocketSignalsAdapter::connected()
 void IRCSocketSignalsAdapter::disconnected()
 {
 	pParent->killAllChatWindows();
-	gLog << tr("IRC: Disconnected from network %1").arg(pParent->connectionInfo.networkEntity.description);
+	gLog << tr("IRC: Disconnected from network %1").arg(pParent->connectionInfo.networkEntity.description());
 	emit pParent->message("Disconnected");
 }
 

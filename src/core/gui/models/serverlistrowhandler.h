@@ -23,11 +23,13 @@
 #ifndef __SERVER_LIST_ROW_HANDLER_H_
 #define __SERVER_LIST_ROW_HANDLER_H_
 
+#include "serverapi/serverptr.h"
 #include <QHostAddress>
 #include <QObject>
 #include <QStandardItem>
 #include <QString>
 
+class GameCVar;
 class Server;
 class ServerListModel;
 
@@ -63,32 +65,35 @@ class ServerListRowHandler : public QObject
 			DTSort							= Qt::UserRole+2
 		};
 
-		ServerListRowHandler(ServerListModel* parentModel, int rowIndex, Server* pServer);
+		ServerListRowHandler(ServerListModel* parentModel, int rowIndex, const ServerPtr &server);
 
 		/**
 		 *	In this constructor server will be obtained directly from the
 		 *	parentModel.
 		 */
 		ServerListRowHandler(ServerListModel* parentModel, int rowIndex);
+		~ServerListRowHandler();
 
 		/**
 		 *	Removes content from fields for which isColumnVital() returns false.
 		 */
 		void 					clearNonVitalFields();
 
-		Server*					getServer() { return server; }
-
 		QStandardItem*			item(int columnIndex);
 
 		void					redraw();
 
+		ServerPtr server();
 		void                    setCountryFlag();
 		void 					setRefreshing();
 
 		int 					updateServer(int response);
 
-		static Server* 			serverFromList(ServerListModel* parentModel, int rowIndex);
-	protected:
+		static ServerPtr serverFromList(ServerListModel* parentModel, int rowIndex);
+	private:
+		class PrivData;
+		PrivData *d;
+
 		void 					emptyItem(QStandardItem*);
 
 		void					fillAddressColumn();
@@ -119,7 +124,8 @@ class ServerListRowHandler : public QObject
 
 		ServerListModel*		model;
 		int						row;
-		Server*					server;
+
+		QStringList extractValidGameCVarNames(const QList<GameCVar> &cvars);
 };
 
 #endif

@@ -30,7 +30,6 @@ class MasterClientSignalProxy : public QObject
 		void			listUpdated(MasterClient* pSender);
 		void			message(MasterClient* pSender, const QString& title, const QString& content, bool isError);
 		void			messageImportant(MasterClient* pSender, const Message& objMessage);
-		void			newServerBatchReceived(MasterClient* pSender, const QList<Server* >& servers);
 
 	protected slots:
 		void			listUpdatedSlot()
@@ -46,11 +45,6 @@ class MasterClientSignalProxy : public QObject
 		void			readMasterMessageImportant(const Message& objMessage)
 		{
 			emit messageImportant(pMaster, objMessage);
-		}
-
-		void			newServerBatchReceivedSlot(const QList<Server* >& servers)
-		{
-			emit newServerBatchReceived(pMaster, servers);
 		}
 };
 

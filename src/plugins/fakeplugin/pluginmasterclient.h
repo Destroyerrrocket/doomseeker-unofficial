@@ -24,7 +24,7 @@
 #ifndef PLUGIN_MASTERCLIENT_H
 #define PLUGIN_MASTERCLIENT_H
 
-#include "masterserver/masterclient.h"
+#include <serverapi/masterclient.h>
 
 class EnginePlugin;
 
@@ -39,11 +39,11 @@ class PluginMasterClient : public MasterClient
 		const EnginePlugin* plugin() const;
 
 		// Override
-		bool readMasterResponse(QByteArray &data);
+		Response readMasterResponse(const QByteArray &data);
 
 	protected:
 		// Override
-		bool getServerListRequest(QByteArray &data);
+		QByteArray createServerListRequest();
 
 	private:
 		class PrivData;

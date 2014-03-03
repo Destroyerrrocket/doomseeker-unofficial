@@ -36,7 +36,7 @@ ChocolateDoomGameInfo::ChocolateDoomGameInfo()
 
 void ChocolateDoomGameInfo::initGameModes()
 {
-	gameModesList << GameMode::COOPERATIVE;
-	gameModesList << GameMode::DEATHMATCH;
-	gameModesList << GameMode(MODE_ALTDEATH, QObject::tr("Altdeath (Deathmatch 2.0)"), false);
+	gameModesList << GameMode::mkCooperative();
+	gameModesList << GameMode::mkDeathmatch();
+	gameModesList << GameMode::ffaGame(MODE_ALTDEATH, QObject::tr("Altdeath (Deathmatch 2.0)"));
 }

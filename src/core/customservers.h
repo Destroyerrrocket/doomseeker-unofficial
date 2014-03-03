@@ -23,7 +23,7 @@
 #ifndef __CUSTOMSERVERS_H_
 #define __CUSTOMSERVERS_H_
 
-#include "masterserver/masterclient.h"
+#include "serverapi/masterclient.h"
 #include <QtContainerFwd>
 
 class IniSection;
@@ -61,9 +61,9 @@ class CustomServers : public MasterClient
 		 *	@param str - concatenated string in required format
 		 *	@return list of custom servers
 		 */
-		static void						decodeConfigEntries(const QString& str, QList<CustomServerInfo>& outCustomServerInfoList);
+		static void decodeConfigEntries(const QString& str, QList<CustomServerInfo>& outCustomServerInfoList);
 
-		const EnginePlugin*				plugin() const { return NULL; }
+		const EnginePlugin *plugin() const { return NULL; }
 
 		/**
 		 *	Convenience method - tries to read config seeking for
@@ -72,15 +72,13 @@ class CustomServers : public MasterClient
 		 *	@param slotUpdated - slot to receive Server::updated signals
 		 *	@param slotBegunRefreshing - slot to receive Server::begunRefreshing signals
 		 */
-		void							readConfig(QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing);
-
-		bool							readMasterResponse(QByteArray &data) { return false; }
+		void readConfig(QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing);
 
 		/**
 		 *	Since this is not required here (there's no real
 		 *	master to refresh) this does nothing.
 		 */
-		void 							refresh() {}
+		void refreshStarts() {}
 
 		/**
 		 *	Sets a list of custom servers.
@@ -92,10 +90,11 @@ class CustomServers : public MasterClient
 		 *	@param slotUpdated - slot to receive Server::updated signals
 		 *	@param slotBegunRefreshing - slot to receive Server::begunRefreshing signals
 		 */
-		void 							setServers(const QList<CustomServerInfo>& csiList, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing);
+		void setServers(const QList<CustomServerInfo>& csiList, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing);
 
 	protected:
-		bool							getServerListRequest(QByteArray &data) { return false; }
+		QByteArray createServerListRequest() { return QByteArray(); }
+		Response readMasterResponse(const QByteArray &data) { return RESPONSE_BAD; }
 };
 
 #endif

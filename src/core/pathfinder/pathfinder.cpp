@@ -20,30 +20,90 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "pathfinder.h"
+
 #include "configuration/doomseekerconfig.h"
 #include "pathfinder/caseinsensitivefsfileseeker.h"
 #include "pathfinder/casesensitivefsfileseeker.h"
 #include "pathfinder/filesearchpath.h"
-#include "pathfinder.h"
-#include "main.h"
 #include "log.h"
 #include "strings.h"
 #include <QDir>
 #include <QFileInfo>
 #include <cstdlib>
 
+class PathFinderResult::PrivData
+{
+	public:
+		QStringList foundFiles;
+		QStringList missingFiles;
+};
+
+
+COPYABLE_D_POINTERED_DEFINE(PathFinderResult);
+
+
+PathFinderResult::PathFinderResult()
+{
+	d = new PrivData();
+}
+
+PathFinderResult::~PathFinderResult()
+{
+	delete d;
+}
+
+QStringList& PathFinderResult::foundFiles()
+{
+	return d->foundFiles;
+}
+
+const QStringList& PathFinderResult::foundFiles() const
+{
+	return d->foundFiles;
+}
+
+QStringList& PathFinderResult::missingFiles()
+{
+	return d->missingFiles;
+}
+
+const QStringList& PathFinderResult::missingFiles() const
+{
+	return d->missingFiles;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+class PathFinder::PrivData
+{
+	public:
+		QList<FileSearchPath> searchPaths;
+};
+
+
+COPYABLE_D_POINTERED_DEFINE(PathFinder);
+
+
 PathFinder::PathFinder()
 {
-	pathList = gConfig.doomseeker.wadPaths;
-	pathList << gConfig.wadseeker.targetDirectory;
+	d = new PrivData();
+	d->searchPaths = gConfig.doomseeker.wadPaths;
+	d->searchPaths << gConfig.wadseeker.targetDirectory;
 }
 
 PathFinder::PathFinder(const QStringList& paths)
 {
+	d = new PrivData();
 	foreach (const QString& path, paths)
 	{
-		pathList << path;
+		d->searchPaths << path;
 	}
+}
+
+PathFinder::~PathFinder()
+{
+	delete d;
 }
 
 void PathFinder::addPrioritySearchDir(const QString& dir)
@@ -54,19 +114,19 @@ void PathFinder::addPrioritySearchDir(const QString& dir)
 
 #ifdef Q_OS_MAC
 	if(fileInfo.isBundle())
-		pathList.prepend(fileInfo.absoluteFilePath() + "/Contents/MacOS");
+		d->searchPaths.prepend(fileInfo.absoluteFilePath() + "/Contents/MacOS");
 	else
 #endif
 	if(fileInfo.isFile())
-		pathList.prepend(fileInfo.absoluteDir().absolutePath());
+		d->searchPaths.prepend(fileInfo.absoluteDir().absolutePath());
 	else
-		pathList.prepend(fileInfo.absoluteFilePath());
+		d->searchPaths.prepend(fileInfo.absoluteFilePath());
 	
 }
 
 QString PathFinder::findFile(const QString& fileName) const
 {
-	if (pathList.count() == 0)
+	if (d->searchPaths.count() == 0)
 	{
 		return QString();
 	}
@@ -77,7 +137,7 @@ QString PathFinder::findFile(const QString& fileName) const
 	#else
 	seeker = new CaseSensitiveFSFileSeeker();
 	#endif
-	QString result = seeker->findFile(fileName, pathList);
+	QString result = seeker->findFile(fileName, d->searchPaths);
 	delete seeker;
 	return result;
 }
@@ -90,11 +150,11 @@ PathFinderResult PathFinder::findFiles(const QStringList& files) const
 		QString filePath = findFile(file);
 		if (filePath.isNull())
 		{
-			result.missingFiles << file;
+			result.missingFiles() << file;
 		}
 		else
 		{
-			result.foundFiles << filePath;
+			result.foundFiles() << filePath;
 		}
 	}
 

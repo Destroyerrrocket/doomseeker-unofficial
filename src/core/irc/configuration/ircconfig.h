@@ -28,7 +28,10 @@
 #include "ini/ini.h"
 #include "irc/entities/ircnetworkentity.h"
 #include <QFont>
+#include <QScopedPointer>
+#include <QSettings>
 
+class SettingsProviderQt;
 
 /**
  *	@brief This Singleton holds entire Doomseeker configuration in memory.
@@ -156,7 +159,7 @@ class IRCConfig
 		PersonalCfg					personal;
 		SoundsCfg					sounds;
 
-		Ini*						ini() { return this->pIni; }
+		Ini*						ini() { return this->pIni.data(); }
 
 		/**
 		 *	@brief Returns true if at least one network has autojoin
@@ -192,7 +195,9 @@ class IRCConfig
 	private:
 		static IRCConfig*			instance;
 
-		Ini*						pIni;
+		QScopedPointer<QSettings> settings;
+		QScopedPointer<SettingsProviderQt> settingsProvider;
+		QScopedPointer<Ini> pIni;
 
 		IRCConfig();
 		~IRCConfig();

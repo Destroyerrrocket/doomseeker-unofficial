@@ -25,6 +25,7 @@
 
 #include "gui/configuration/engineconfigurationbasebox.h"
 #include <QCheckBox>
+#include <QGroupBox>
 
 class EngineZandronumConfigBox : public EngineConfigurationBaseBox
 {

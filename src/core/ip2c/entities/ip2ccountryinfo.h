@@ -14,7 +14,7 @@
 /**
  *	@brief Flag and name of the country.
  */
-class MAIN_EXPORT IP2CCountryInfo
+class IP2CCountryInfo
 {
 	public:
 		const QPixmap*	flag;

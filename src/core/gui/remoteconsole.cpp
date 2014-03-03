@@ -22,16 +22,18 @@
 //------------------------------------------------------------------------------
 
 #include <QMessageBox>
+#include <QScopedPointer>
 #include <QString>
 
 #include "plugins/engineplugin.h"
+#include "serverapi/rconprotocol.h"
 #include "serverapi/server.h"
 #include "widgets/serverconsole.h"
 #include "remoteconsole.h"
 #include "rconpassworddialog.h"
 #include "strings.h"
 
-RemoteConsole::RemoteConsole(QWidget *parent) : QMainWindow(parent), protocol(NULL), server(NULL)
+RemoteConsole::RemoteConsole(QWidget *parent) : QMainWindow(parent), protocol(NULL)
 {
 	// Prompt for connection info & password.
 	RconPasswordDialog *dlg = new RconPasswordDialog(this, true);
@@ -68,7 +70,8 @@ RemoteConsole::RemoteConsole(QWidget *parent) : QMainWindow(parent), protocol(NU
 	delete dlg;
 }
 
-RemoteConsole::RemoteConsole(Server *server, QWidget *parent) : QMainWindow(parent), protocol(server->rcon()), server(NULL)
+RemoteConsole::RemoteConsole(ServerPtr server, QWidget *parent)
+: QMainWindow(parent), protocol(server->rcon()), server(server)
 {
 	standardInit();
 
@@ -89,8 +92,6 @@ RemoteConsole::RemoteConsole(Server *server, QWidget *parent) : QMainWindow(pare
 
 RemoteConsole::~RemoteConsole()
 {
-	if(server != NULL)
-		delete server;
 }
 
 void RemoteConsole::changeServerName(const QString &name)
@@ -159,7 +160,7 @@ void RemoteConsole::standardInit()
 
 void RemoteConsole::updatePlayerList()
 {
-	const QList<Player> &list = protocol->playerList();
+	const QList<Player> &list = protocol->players();
 
 	playerTable->setRowCount(list.size());
 	for(int i = 0; i < list.size(); ++i)

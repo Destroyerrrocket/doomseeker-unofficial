@@ -22,9 +22,9 @@
 //------------------------------------------------------------------------------
 #include "refresher.h"
 
-#include "masterserver/masterclient.h"
-#include "masterserver/masterclientsignalproxy.h"
-#include "masterserver/mastermanager.h"
+#include "serverapi/masterclient.h"
+#include "serverapi/masterclientsignalproxy.h"
+#include "serverapi/mastermanager.h"
 #include "plugins/pluginloader.h"
 #include "serverapi/server.h"
 #include "configuration/doomseekerconfig.h"
@@ -32,6 +32,8 @@
 #include <QHash>
 #include <QList>
 #include <QMutex>
+#include <QMutexLocker>
+#include <QPointer>
 #include <QTimer>
 #include <QThread>
 #include <QRunnable>
@@ -41,10 +43,10 @@
 class ServerRefreshTime
 {
 	public:
-		Server* server;
+		QPointer<Server> server;
 		QTime time;
 
-		ServerRefreshTime(Server* server)
+		ServerRefreshTime(QPointer<Server> server)
 		{
 			this->server = server;
 			time.start();
@@ -70,11 +72,12 @@ class Refresher::Data
 
 		/**
 		 * This will keep list of ALL servers to make sure that no server is
-		 * registered twice.
+		 * registered twice. Furthermore, all Server pointers can be tested
+		 * if the objects they point to have been deleted.
 		 */
-		QSet<Server*> registeredServers;
+		QList<QPointer<Server> > registeredServers;
 		QList<ServerRefreshTime> refreshingServers;
-		QUdpSocket*	 socket;
+		QUdpSocket* socket;
 		QSet<MasterClient*> unchallengedMasters;
 };
 
@@ -140,6 +143,9 @@ class Refresher::MasterClientInfo
 
 ////////////////////////////////////////////////////////////////////////////////
 
+Refresher* Refresher::staticInstance = NULL;
+QMutex Refresher::instanceMutex;
+
 Refresher::Refresher()
 {
 	d = new Data;
@@ -168,9 +174,32 @@ void Refresher::attemptTimeoutMasters()
 	}
 }
 
-Refresher *Refresher::createRefresher()
+Refresher *Refresher::instance()
 {
-	return new Refresher();
+	if (staticInstance == NULL)
+	{
+		QMutexLocker locker(&instanceMutex);
+		if (staticInstance == NULL)
+		{
+			staticInstance = new Refresher();
+		}
+	}
+	return staticInstance;
+}
+
+bool Refresher::isInstantiated()
+{
+	return staticInstance != NULL;
+}
+
+void Refresher::deinstantiate()
+{
+	QMutexLocker locker(&instanceMutex);
+	if (isInstantiated())
+	{
+		delete staticInstance;
+		staticInstance = NULL;
+	}
 }
 
 Server* Refresher::findRefreshingServer(const QHostAddress& address,
@@ -178,6 +207,10 @@ Server* Refresher::findRefreshingServer(const QHostAddress& address,
 {
 	foreach (const ServerRefreshTime& refreshOp, d->refreshingServers)
 	{
+		if (refreshOp.server.isNull())
+		{
+			continue;
+		}
 		if (refreshOp.server->address() == address && refreshOp.server->port() == port)
 		{
 			return refreshOp.server;
@@ -199,10 +232,10 @@ bool Refresher::hasFreeServerRefreshSlots() const
 
 void Refresher::masterFinishedRefreshing(MasterClient* pMaster)
 {
-	const QList<Server*>& servers = pMaster->serverList();
-	foreach (Server* pServer, servers)
+	const QList<ServerPtr>& servers = pMaster->servers();
+	foreach (ServerPtr pServer, servers)
 	{
-		registerServer(pServer);
+		registerServer(pServer.data());
 	}
 
 	unregisterMaster(pMaster);
@@ -214,6 +247,12 @@ void Refresher::masterFinishedRefreshing(MasterClient* pMaster)
 	}
 
 	emit finishedQueryingMaster(pMaster);
+}
+
+void Refresher::purgeNullServers()
+{
+	d->registeredServers.removeAll(NULL);
+	d->refreshingServers.removeAll(ServerRefreshTime(NULL));
 }
 
 void Refresher::quit()
@@ -243,11 +282,16 @@ void Refresher::registerMaster(MasterClient* pMaster)
 	}
 }
 
-void Refresher::registerServer(Server* server)
+bool Refresher::registerServer(Server* server)
 {
+	purgeNullServers();
 	if (!d->registeredServers.contains(server))
 	{
-		d->registeredServers.insert(server);
+		if (!server->isRefreshable())
+		{
+			return false;
+		}
+		d->registeredServers.append(server);
 		if (!server->isCustom())
 		{
 			emit block();
@@ -264,6 +308,7 @@ void Refresher::registerServer(Server* server)
 			QTimer::singleShot(20, this, SLOT(sendServerQueries()));
 		}
 	}
+	return true;
 }
 
 void Refresher::readAllPendingDatagrams()
@@ -302,7 +347,8 @@ void Refresher::sendMasterQueries()
 		++pMasterInfo->numOfChallengesSent;
 		pMasterInfo->fireLastChallengeSentTimer();
 
-		pMaster->refresh();
+		pMaster->refreshStarts();
+		pMaster->sendRequest(d->socket);
 		d->unchallengedMasters.remove(pMaster);
 	}
 }
@@ -314,6 +360,7 @@ void Refresher::sendServerQueries()
 		return;
 	}
 
+	purgeNullServers();
 	if (!d->registeredServers.isEmpty())
 	{
 		startNewServerRefreshesIfFreeSlots();
@@ -365,7 +412,6 @@ bool Refresher::start()
 	if (socket->bind())
 	{
 		d->socket = socket;
-		MasterClient::pGlobalUdpSocket = socket;
 		return true;
 	}
 	else
@@ -379,9 +425,13 @@ void Refresher::startNewServerRefreshesIfFreeSlots()
 {
 	// Copy the list as the original will be modified.
 	// We don't want to confuse the foreach.
-	QSet<Server*> servers = d->registeredServers;
-	foreach (Server* server, servers)
+	QList<QPointer<Server> > servers = d->registeredServers;
+	foreach (QPointer<Server> server, servers)
 	{
+		if (server.isNull())
+		{
+			continue;
+		}
 		if (!hasFreeServerRefreshSlots())
 		{
 			break;
@@ -394,7 +444,7 @@ void Refresher::startNewServerRefreshesIfFreeSlots()
 			}
 			else
 			{
-				d->registeredServers.remove(server);
+				d->registeredServers.removeAll(server);
 			}
 		}
 	}
@@ -404,7 +454,7 @@ void Refresher::resendCurrentServerRefreshesIfTimeout()
 {
 	for (int i = 0; i < d->refreshingServers.size(); ++i)
 	{
-		ServerRefreshTime& refreshOp = d->refreshingServers[i];
+		ServerRefreshTime refreshOp = d->refreshingServers[i];
 		if (refreshOp.time.elapsed() > d->delayBetweenResends)
 		{
 			if (refreshOp.server->sendRefreshQuery(d->socket))
@@ -414,7 +464,7 @@ void Refresher::resendCurrentServerRefreshesIfTimeout()
 			else
 			{
 				d->refreshingServers.removeOne(refreshOp);
-				d->registeredServers.remove(refreshOp.server);
+				d->registeredServers.removeAll(refreshOp.server);
 				// The collection on which we iterate just got shortened
 				// so let's back up by one step.
 				--i;
@@ -432,9 +482,23 @@ bool Refresher::tryReadDatagramByMasterClient(QHostAddress& address,
 		{
 			return true;
 		}
-		if (pMaster->readMasterResponse(address, port, packet))
+		if (pMaster->isAddressSame(address, port))
 		{
-			return true;
+			MasterClient::Response response = pMaster->readResponse(packet);
+			switch(response)
+			{
+				case MasterClient::RESPONSE_BANNED:
+				case MasterClient::RESPONSE_WAIT:
+				case MasterClient::RESPONSE_BAD:
+				case MasterClient::RESPONSE_OLD:
+					pMaster->notifyResponse(response);
+					return true;
+				case MasterClient::RESPONSE_REPLY:
+					pMaster->sendRequest(d->socket);
+					return true;
+				default:
+					return true;
+			}
 		}
 	}
 	return false;
@@ -450,13 +514,36 @@ bool Refresher::tryReadDatagramByServer(const QHostAddress& address,
 	Server* server = findRefreshingServer(address, port);
 	if (server != NULL)
 	{
-		d->refreshingServers.removeOne(server);
-		d->registeredServers.remove(server);
-
 		// Store the state of request read.
 		int response = server->readRefreshQueryResponse(packet);
-		server->refreshStops(static_cast<Server::Response>(response));
-		return true;
+		switch(response)
+		{
+			case Server::RESPONSE_REPLY:
+				if(server->sendRefreshQuery(d->socket))
+				{
+					// Reset timer
+					ServerRefreshTime refreshOp(server);
+					d->refreshingServers.removeAll(refreshOp);
+					d->refreshingServers.append(refreshOp);
+					break;
+				}
+				response = Server::RESPONSE_BAD;
+				// Intentional fall through
+			default:
+				d->refreshingServers.removeAll(ServerRefreshTime(server));
+				d->registeredServers.removeAll(server);
+				server->refreshStops(static_cast<Server::Response>(response));
+				return true;
+
+			case Server::RESPONSE_PENDING:
+			{
+				// Reset timer
+				ServerRefreshTime refreshOp(server);
+				d->refreshingServers.removeAll(refreshOp);
+				d->refreshingServers.append(refreshOp);
+				break;
+			}
+		}
 	}
 	return false;
 }

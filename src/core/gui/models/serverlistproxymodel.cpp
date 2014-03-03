@@ -26,6 +26,7 @@
 #include "gui/models/serverlistcolumn.h"
 #include "gui/serverlist.h"
 #include "serverapi/server.h"
+#include "serverapi/serverstructs.h"
 
 class ServerListProxyModel::PrivData
 {
@@ -78,7 +79,7 @@ bool ServerListProxyModel::compareColumnSortData(QVariant& var1, QVariant& var2,
 
 bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
-	Server* s = serverFromList(sourceRow);
+	ServerPtr s = serverFromList(sourceRow);
 	if (s == NULL)
 	{
 		return false;
@@ -191,8 +192,8 @@ bool ServerListProxyModel::lessThan(const QModelIndex& left, const QModelIndex& 
 
 	ServerListModel* model = static_cast<ServerListModel*>(sourceModel());
 
-	Server* s1 = serverFromList(left);
-	Server* s2 = serverFromList(right);
+	ServerPtr s1 = serverFromList(left);
+	ServerPtr s2 = serverFromList(right);
 
 	if (s1 != NULL && s2 != NULL)
 	{
@@ -233,12 +234,12 @@ void ServerListProxyModel::setFilterInfo(const ServerListFilterInfo& filterInfo)
 	invalidate();
 }
 
-Server* ServerListProxyModel::serverFromList(const QModelIndex& index) const
+ServerPtr ServerListProxyModel::serverFromList(const QModelIndex& index) const
 {
 	return serverFromList(index.row());
 }
 
-Server* ServerListProxyModel::serverFromList(int row) const
+ServerPtr ServerListProxyModel::serverFromList(int row) const
 {
 	ServerListModel* model = static_cast<ServerListModel*>(sourceModel());
 	return model->serverFromList(row);

@@ -22,9 +22,133 @@
 //------------------------------------------------------------------------------
 #include "ircnetworkentity.h"
 
+class IRCNetworkEntity::PrivData
+{
+	public:
+		QString address;
+		QStringList autojoinChannels;
+		QStringList autojoinCommands;
+		bool bAutojoinNetwork;
+		QString description;
+		QString nickservCommand;
+		QString nickservPassword;
+		QString password;
+		unsigned short port;
+};
+
+COPYABLE_D_POINTERED_DEFINE(IRCNetworkEntity);
+
 IRCNetworkEntity::IRCNetworkEntity()
 {
-	this->bAutojoinNetwork = false;
-	this->port = 6667;
-	this->nickservCommand = "/msg nickserv identify %1";
+	d = new PrivData();
+	d->bAutojoinNetwork = false;
+	d->port = 6667;
+	d->nickservCommand = "/msg nickserv identify %1";
 }
+
+IRCNetworkEntity::~IRCNetworkEntity()
+{
+	delete d;
+}
+
+const QString &IRCNetworkEntity::address() const
+{
+	return d->address;
+}
+
+const QStringList &IRCNetworkEntity::autojoinChannels() const
+{
+	return d->autojoinChannels;
+}
+
+QStringList &IRCNetworkEntity::autojoinChannels()
+{
+	return d->autojoinChannels;
+}
+
+const QStringList &IRCNetworkEntity::autojoinCommands() const
+{
+	return d->autojoinCommands;
+}
+
+QStringList &IRCNetworkEntity::autojoinCommands()
+{
+	return d->autojoinCommands;
+}
+
+bool IRCNetworkEntity::isAutojoinNetwork() const
+{
+	return d->bAutojoinNetwork;;
+}
+
+const QString &IRCNetworkEntity::description() const
+{
+	return d->description;
+}
+
+const QString &IRCNetworkEntity::nickservCommand() const
+{
+	return d->nickservCommand;
+}
+
+const QString &IRCNetworkEntity::nickservPassword() const
+{
+	return d->nickservPassword;
+}
+
+const QString &IRCNetworkEntity::password() const
+{
+	return d->password;
+}
+
+unsigned short IRCNetworkEntity::port() const
+{
+	return d->port;
+}
+
+
+void IRCNetworkEntity::setAddress(const QString &v)
+{
+	d->address = v;
+}
+
+void IRCNetworkEntity::setAutojoinChannels(const QStringList &v)
+{
+	d->autojoinChannels = v;
+}
+
+void IRCNetworkEntity::setAutojoinCommands(const QStringList &v)
+{
+	d->autojoinCommands = v;
+}
+
+void IRCNetworkEntity::setAutojoinNetwork(bool v)
+{
+	d->bAutojoinNetwork = v;
+}
+
+void IRCNetworkEntity::setDescription(const QString &v)
+{
+	d->description = v;
+}
+
+void IRCNetworkEntity::setNickservCommand(const QString &v)
+{
+	d->nickservCommand = v;
+}
+
+void IRCNetworkEntity::setNickservPassword(const QString &v)
+{
+	d->nickservPassword = v;
+}
+
+void IRCNetworkEntity::setPassword(const QString &v)
+{
+	d->password = v;
+}
+
+void IRCNetworkEntity::setPort(unsigned short v)
+{
+	d->port = v;
+}
+

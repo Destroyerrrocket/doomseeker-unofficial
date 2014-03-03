@@ -24,7 +24,7 @@
 #ifndef DOOMSEEKER_PLUGIN_ZANDRONUMMASTERCLIENT_H
 #define DOOMSEEKER_PLUGIN_ZANDRONUMMASTERCLIENT_H
 
-#include "masterserver/masterclient.h"
+#include <serverapi/masterclient.h>
 
 class EnginePlugin;
 
@@ -35,20 +35,19 @@ class ZandronumMasterClient : public MasterClient
 	public:
 		ZandronumMasterClient();
 
-		const EnginePlugin*		plugin() const;
-
-		bool					readMasterResponse(QByteArray &data);
+		const EnginePlugin *plugin() const;
 
 	public slots:
-		void					refresh();
+		void refreshStarts();
 
 	protected:
-		bool					getServerListRequest(QByteArray &data);
+		QByteArray createServerListRequest();
+		Response readMasterResponse(const QByteArray &data);
 
 		/// This is used as a marker to determine if we have an accurate reading for numPackets.
-		bool					readLastPacket;
-		int						numPackets;
-		unsigned int			packetsRead;
+		bool readLastPacket;
+		int numPackets;
+		unsigned int packetsRead;
 };
 
 #endif

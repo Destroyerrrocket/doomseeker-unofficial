@@ -61,7 +61,7 @@ class ZDaemonServer : public Server
 	public:
 		ZDaemonServer(const QHostAddress &address, unsigned short port);
 
-		GameRunner*			gameRunner() const;
+		GameRunner*			gameRunner();
 
 		const EnginePlugin*	plugin() const;
 

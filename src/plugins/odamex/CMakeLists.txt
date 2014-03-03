@@ -4,11 +4,13 @@ set(PLUGIN_NAME odamex)
 include(../PluginHeader.txt)
 
 set(ODAMEX_QT_FILES
+	odamexgamehost.h
 	odamexmasterclient.h
 	odamexserver.h
 )
 set(ODAMEX_FILES
 	odamexengineplugin.cpp
+	odamexgamehost.cpp
 	odamexgameinfo.cpp
 	odamexgamerunner.cpp
 	odamexmasterclient.cpp

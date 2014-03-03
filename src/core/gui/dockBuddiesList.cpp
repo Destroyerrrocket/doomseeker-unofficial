@@ -22,10 +22,9 @@
 //------------------------------------------------------------------------------
 #include "dockBuddiesList.h"
 #include "configuration/doomseekerconfig.h"
-#include "masterserver/masterclient.h"
+#include "serverapi/masterclient.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
-#include "main.h"
 #include "strings.h"
 #include <QMenu>
 #include <QMessageBox>
@@ -142,7 +141,7 @@ void DockBuddiesList::followBuddy(const QModelIndex &index)
 	// Folow the buddy into the server.
 	QString error;
 
-	Server* server = buddies[buddiesTableModel->item(index.row(), BLCID_ID)->data().toInt()].location();
+	ServerPtr server = buddies[buddiesTableModel->item(index.row(), BLCID_ID)->data().toInt()].location();
 	emit joinServer(server);
 }
 
@@ -178,9 +177,9 @@ void DockBuddiesList::scan(const MasterClient *master)
 	}
 
 	buddies.clear(); //empty list
-	foreach(Server *server, masterClient->serverList())
+	foreach(ServerPtr server, masterClient->servers())
 	{
-		for(int i = 0; i < server->playersList()->numClients(); ++i)
+		for(int i = 0; i < server->players()->numClients(); ++i)
 		{
 			const Player player = server->player(i);
 			foreach(QRegExp pattern, pBuddies)
@@ -260,29 +259,33 @@ void AddBuddyDlg::buttonBoxClicked(QAbstractButton *button)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-DockBuddiesList::BuddyLocationInfo::BuddyLocationInfo(const Player &buddy, Server *location)
+class DockBuddiesList::BuddyLocationInfo::PrivData
 {
-	this->player = new Player(buddy);
-	this->server = location;
-}
+	public:
+		Player buddy;
+		ServerPtr server;
+};
 
-DockBuddiesList::BuddyLocationInfo::BuddyLocationInfo(const DockBuddiesList::BuddyLocationInfo &other)
+COPYABLE_D_POINTERED_INNER_DEFINE(DockBuddiesList::BuddyLocationInfo, BuddyLocationInfo);
+
+DockBuddiesList::BuddyLocationInfo::BuddyLocationInfo(const Player &buddy, ServerPtr location)
 {
-	*this = other;
+	d = new PrivData();
+	d->buddy = buddy;
+	d->server = location;
 }
 
 DockBuddiesList::BuddyLocationInfo::~BuddyLocationInfo()
 {
-	delete player;
+	delete d;
 }
 
-DockBuddiesList::BuddyLocationInfo &DockBuddiesList::BuddyLocationInfo::operator= (const DockBuddiesList::BuddyLocationInfo &other)
+const Player &DockBuddiesList::BuddyLocationInfo::buddy() const
 {
-	if (this != &other)
-	{
-		player = new Player(other.buddy());
-		server = other.location();
-	}
+	return d->buddy;
+}
 
-	return *this;
+ServerPtr DockBuddiesList::BuddyLocationInfo::location() const
+{
+	return d->server;
 }

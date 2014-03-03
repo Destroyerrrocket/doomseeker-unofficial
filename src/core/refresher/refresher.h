@@ -24,6 +24,9 @@
 #define DOOMSEEKER_REFRESHER_REFRESHER_H
 
 #include <QObject>
+#include <QMutex>
+
+#define gRefresher (Refresher::instance())
 
 class MasterClient;
 class Server;
@@ -53,8 +56,11 @@ class Refresher : public QObject
 		 * Registers a new server to be queried. All servers are stored
 		 * in a hash table, therefore it's impossible to register the same
 		 * object twice.
+		 *
+		 * @return true if server was registered, false if it couldn't
+		 *         be refreshed at the moment.
 		 */
-		void registerServer(Server* server);
+		bool registerServer(Server* server);
 
 		/**
 		 * Sets delay between subsequent queries send to the servers.
@@ -64,7 +70,9 @@ class Refresher : public QObject
 
 		bool start();
 
-		static Refresher *createRefresher();
+		static Refresher *instance();
+		static bool isInstantiated();
+		static void deinstantiate();
 
 	signals:
 		/**
@@ -91,6 +99,8 @@ class Refresher : public QObject
 		class MasterClientInfo;
 
 		static const int MASTER_SERVER_TIMEOUT_DELAY = 10000;
+		static Refresher *staticInstance;
+		static QMutex instanceMutex;
 
 		Data *d;
 
@@ -99,6 +109,8 @@ class Refresher : public QObject
 		bool isAnythingToRefresh() const;
 		Server* findRefreshingServer(const QHostAddress& address, unsigned short port);
 		bool hasFreeServerRefreshSlots() const;
+
+		void purgeNullServers();
 
 		void readPendingDatagram();
 

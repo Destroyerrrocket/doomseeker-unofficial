@@ -28,7 +28,7 @@
 
 #define NUM_VAVOOM_GAME_MODES 1
 
-class GameRunner;
+class GameClientRunner;
 class EnginePlugin;
 
 class VavoomServer : public Server
@@ -38,13 +38,13 @@ class VavoomServer : public Server
 	public:
 		VavoomServer(const QHostAddress &address, unsigned short port);
 
-		GameRunner*			gameRunner() const;
+		GameClientRunner*			gameRunner();
 
-		const EnginePlugin*	plugin() const;
+		EnginePlugin*	plugin() const;
 
 	protected:
-		Response	readRequest(QByteArray &data);
-		bool		sendRequest(QByteArray &data);
+		QByteArray createSendRequest();
+		Response readRequest(const QByteArray &data);
 };
 
 #endif /* __VAVOOMSERVER_H__ */

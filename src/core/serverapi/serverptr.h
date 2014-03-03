@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// tooltipgenerator.cpp
+// serverptr.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,34 +18,28 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "tooltipgenerator.h"
-#include "main.h"
-#include "serverapi/server.h"
-#include "tooltips/gameinfotip.h"
-#include "tooltips/generalinfotip.h"
-#include "tooltips/playertable.h"
+#ifndef id85D9CDF0_8CF4_4753_A2F0F8C00FCCD0B8
+#define id85D9CDF0_8CF4_4753_A2F0F8C00FCCD0B8
 
-TooltipGenerator::TooltipGenerator(const Server* server)
-: pServer(server)
-{
-}
+#include <QSharedPointer>
 
-QString TooltipGenerator::gameInfoTableHTML()
-{
-	GameInfoTip tip(pServer);
-	return tip.generateHTML();
-}
+/**
+ * @file
+ * ServerPtr typedefs declarations.
+ *
+ * This file contains forward declarations of ServerPtr types and is meant
+ * to be included wherever no real access to the underlying Server
+ * class is needed (which means "in other headers files", basically). Including
+ * server.h automatically includes serverptr.h, but should only be done
+ * where access to Server instances is actually needed. This is to reduce
+ * recompilation times whenever server.h changes. This file should always
+ * remain fairly static.
+ */
 
-QString TooltipGenerator::generalInfoHTML()
-{
-	GeneralInfoTip tip(pServer);
-	return tip.generateHTML();
-}
+class Server;
+typedef QSharedPointer<Server> ServerPtr;
+typedef QSharedPointer<const Server> ServerCPtr;
 
-QString TooltipGenerator::playerTableHTML()
-{
-	PlayerTable table(pServer);
-	return table.generateHTML();
-}
+#endif

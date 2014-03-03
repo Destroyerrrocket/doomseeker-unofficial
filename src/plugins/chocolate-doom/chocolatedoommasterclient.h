@@ -24,7 +24,7 @@
 #ifndef __CHOCOLATEDOOMMASTERCLIENT_H__
 #define __CHOCOLATEDOOMMASTERCLIENT_H__
 
-#include "masterserver/masterclient.h"
+#include <serverapi/masterclient.h>
 
 class EnginePlugin;
 
@@ -35,14 +35,13 @@ class ChocolateDoomMasterClient : public MasterClient
 	public:
 		ChocolateDoomMasterClient();
 
-		const EnginePlugin*		plugin() const;
+		const EnginePlugin *plugin() const;
 
-		bool					readMasterResponse(QByteArray &data);
-		void					updateAddress();
+		void updateAddress();
 
 	protected:
-
-		bool					getServerListRequest(QByteArray &data);
+		QByteArray createServerListRequest();
+		Response readMasterResponse(const QByteArray &data);
 };
 
 #endif /* __CHOCOLATEDOOMMASTERCLIENT_H__ */

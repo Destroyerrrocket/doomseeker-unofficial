@@ -29,6 +29,7 @@
 #include <QTime>
 #include <QTimer>
 
+#include "serverapi/rconprotocol.h"
 #include "serverapi/server.h"
 
 #define NUM_ZANDRONUM_GAME_MODES	16
@@ -36,7 +37,7 @@
 #define NUM_DMFLAG_SECTIONS		3
 #define ST_MAX_TEAMS			4U
 
-class GameRunner;
+class GameClientRunner;
 class ZandronumServer;
 
 /**
@@ -139,17 +140,17 @@ class ZandronumServer : public Server
 
 		ZandronumServer(const QHostAddress &address, unsigned short port);
 
-		Binaries*		binaries() const;
+		ExeFile *clientExe();
 
 		bool			isTestingServer() const { return testingServer; }
 
-		GameRunner*		gameRunner() const;
+		GameHost* gameHost();
+		GameClientRunner*		gameRunner();
 
 		bool			hasRcon() const { return true; }
 
-		const GameCVar	*modifier() const;
-
-		const EnginePlugin*	plugin() const;
+		QList<GameCVar> modifiers() const;
+		EnginePlugin*	plugin() const;
 
 		RConProtocol	*rcon();
 
@@ -157,7 +158,7 @@ class ZandronumServer : public Server
 		QString			teamName(unsigned team) const;
 
 	protected slots:
-		void			updatedSlot(Server* server, int response);
+		void			updatedSlot(ServerPtr server, int response);
 
 	protected:
 		bool			buckshot;
@@ -180,10 +181,9 @@ class ZandronumServer : public Server
 
 		QString			testingArchive;
 
-		static unsigned int	millisecondTime();
-
-		Response		readRequest(QByteArray &data);
-		bool			sendRequest(QByteArray &data);
+		QByteArray createSendRequest();
+		static unsigned int millisecondTime();
+		Response readRequest(const QByteArray &data);
 };
 
 class ZandronumRConProtocol : public RConProtocol
@@ -213,26 +213,26 @@ class ZandronumRConProtocol : public RConProtocol
 		};
 
 	public:
-		static RConProtocol	*connectToServer(Server *server);
+		static RConProtocol *connectToServer(ServerPtr server);
 
 	public slots:
-		void	disconnectFromServer();
-		void	sendCommand(const QString &cmd);
-		void	sendPassword(const QString &password);
-		void	sendPong();
+		void disconnectFromServer();
+		void sendCommand(const QString &cmd);
+		void sendPassword(const QString &password);
+		void sendPong();
 
 	protected:
-		ZandronumRConProtocol(Server *server);
+		ZandronumRConProtocol(ServerPtr server);
 
-		void	processPacket(QIODevice* ioDevice, bool initial=false, int maxUpdates=1);
+		void processPacket(QIODevice* ioDevice, bool initial=false, int maxUpdates=1);
 
-		QTimer	pingTimer;
-		QString	hostName;
-		QString	salt;
-		int		serverProtocolVersion;
+		QTimer pingTimer;
+		QString hostName;
+		QString salt;
+		int serverProtocolVersion;
 
 	protected slots:
-		void	packetReady();
+		void packetReady();
 };
 
 #endif

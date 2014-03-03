@@ -20,33 +20,36 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
-
 #include "chocolatedoomserver.h"
+
+#include "chocolatedoomgamehost.h"
 #include "chocolatedoomgamerunner.h"
 #include "chocolatedoomengineplugin.h"
 #include "global.h"
-#include "main.h"
 #include "serverapi/playerslist.h"
 
 #define NET_PACKET_TYPE_QUERY			0,13
 #define NET_PACKET_TYPE_QUERY_RESPONSE	14
 
-ChocolateDoomServer::ChocolateDoomServer(const QHostAddress &address, unsigned short port) : Server(address, port),
-	serverState(0), game(0), gameMission(0)
+ChocolateDoomServer::ChocolateDoomServer(const QHostAddress &address, unsigned short port)
+: Server(address, port), serverState(0), game(0), gameMission(0)
 {
+	set_createSendRequest(&ChocolateDoomServer::createSendRequest);
+	set_readRequest(&ChocolateDoomServer::readRequest);
 }
 
-GameRunner*	ChocolateDoomServer::gameRunner() const
+GameClientRunner* ChocolateDoomServer::gameRunner()
 {
-	return new ChocolateDoomGameRunner(this);
+	return new ChocolateDoomGameClientRunner(
+		self().toStrongRef().staticCast<ChocolateDoomServer>());
 }
 
-const EnginePlugin* ChocolateDoomServer::plugin() const
+EnginePlugin* ChocolateDoomServer::plugin() const
 {
 	return ChocolateDoomEnginePlugin::staticInstance();
 }
 
-Server::Response ChocolateDoomServer::readRequest(QByteArray &data)
+Server::Response ChocolateDoomServer::readRequest(const QByteArray &data)
 {
 	static const char* playerNames[4] =
 	{
@@ -65,43 +68,45 @@ Server::Response ChocolateDoomServer::readRequest(QByteArray &data)
 		return RESPONSE_BAD;
 	}
 
-	serverVersion = QString(&in[2]);
-	int pos = 2 + serverVersion.length()+1;
+	setGameVersion(QString(&in[2]));
+	int pos = 2 + gameVersion().length()+1;
 
 	serverState = READINT8(&in[pos++]);
 	unsigned int numPlayers = READINT8(&in[pos++]);
-	players->clear();
+	clearPlayersList();
 	for(unsigned int i = 0;i < numPlayers;i++)
 	{
-		*players << Player(playerNames[i < 4 ? i : 4], 0, 0, static_cast<Player::PlayerTeam> (Player::TEAM_NONE), false, false);
+		addPlayer(Player(playerNames[i < 4 ? i : 4], 0, 0, static_cast<Player::PlayerTeam> (Player::TEAM_NONE), false, false));
 	}
-	maxClients = maxPlayers = READINT8(&in[pos++]);
+	int clients = READINT8(&in[pos++]);
+	setMaxClients(clients);
+	setMaxPlayers(clients);
 	game = READINT8(&in[pos++]);
 	gameMission = READINT8(&in[pos++]);
-	serverName = QString(&in[pos]);
+	setName(QString(&in[pos]));
 
 	switch(game)
 	{
 		default:
 		case 0: //shareware
-			iwad = "doom1.wad";
+			setIwad("doom1.wad");
 			break;
 		case 1: //registered
 		case 3: //retail
-			iwad = "doom.wad";
+			setIwad("doom.wad");
 			break;
 		case 2: //commercial
 			switch(gameMission)
 			{
 				default:
 				case 1:
-					iwad = "doom2.wad";
+					setIwad("doom2.wad");
 					break;
 				case 2:
-					iwad = "tnt.wad";
+					setIwad("tnt.wad");
 					break;
 				case 3:
-					iwad = "plutonia.wad";
+					setIwad("plutonia.wad");
 					break;
 			}
 			break;
@@ -109,10 +114,9 @@ Server::Response ChocolateDoomServer::readRequest(QByteArray &data)
 	return RESPONSE_GOOD;
 }
 
-bool ChocolateDoomServer::sendRequest(QByteArray &data)
+QByteArray ChocolateDoomServer::createSendRequest()
 {
 	char challenge[2] = { NET_PACKET_TYPE_QUERY };
-	const QByteArray packet(challenge, 2);
-	data.append(packet);
-	return true;
+	QByteArray packet(challenge, 2);
+	return packet;
 }

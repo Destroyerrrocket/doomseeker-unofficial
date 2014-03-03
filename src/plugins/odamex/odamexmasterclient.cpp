@@ -35,15 +35,11 @@ OdamexMasterClient::OdamexMasterClient() : MasterClient()
 {
 }
 
-bool OdamexMasterClient::getServerListRequest(QByteArray &data)
+QByteArray OdamexMasterClient::createServerListRequest()
 {
 	char challenge[4];
 	WRITEINT32(challenge, MASTER_CHALLENGE);
-
-	const QByteArray chall(challenge, 4);
-	data.append(chall);
-
-	return true;
+	return QByteArray (challenge, 4);
 }
 
 const EnginePlugin* OdamexMasterClient::plugin() const
@@ -51,10 +47,11 @@ const EnginePlugin* OdamexMasterClient::plugin() const
 	return OdamexEnginePlugin::staticInstance();
 }
 
-bool OdamexMasterClient::readMasterResponse(QByteArray &data)
+MasterClient::Response OdamexMasterClient::readMasterResponse(const QByteArray &data)
 {
 	// Decompress the response.
-	QBuffer ioBuffer(&data);
+	QBuffer ioBuffer;
+	ioBuffer.setData(data);
 	ioBuffer.open(QIODevice::ReadOnly);
 	QDataStream inStream(&ioBuffer);
 	inStream.setByteOrder(QDataStream::LittleEndian);
@@ -66,7 +63,7 @@ bool OdamexMasterClient::readMasterResponse(QByteArray &data)
 
 	if (response != MASTER_CHALLENGE)
 	{
-		return false;
+		return RESPONSE_BAD;
 	}
 
 	// Make sure we have an empty list.
@@ -80,18 +77,18 @@ bool OdamexMasterClient::readMasterResponse(QByteArray &data)
 		quint8 ip2 = in.readQUInt8();
 		quint8 ip3 = in.readQUInt8();
 		quint8 ip4 = in.readQUInt8();
-		
+
 		QString ip = QString("%1.%2.%3.%4").
 			arg(ip1, 1, 10, QChar('0')).
 			arg(ip2, 1, 10, QChar('0')).
 			arg(ip3, 1, 10, QChar('0')).
 			arg(ip4, 1, 10, QChar('0'));
-			
+
 		quint16 port = in.readQUInt16();
 		OdamexServer *server = new OdamexServer(QHostAddress(ip), port);
-		servers.push_back(server);
+		registerNewServer(ServerPtr(server));
 	}
-	
+
 	emit listUpdated();
-	return true;
+	return RESPONSE_GOOD;
 }

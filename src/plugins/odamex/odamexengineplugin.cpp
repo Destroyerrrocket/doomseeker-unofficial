@@ -26,6 +26,7 @@
 #include "irc/entities/ircnetworkentity.h"
 #include "plugins/engineplugin.h"
 
+#include "odamexgamehost.h"
 #include "odamexgameinfo.h"
 #include "odamexmasterclient.h"
 #include "odamexengineplugin.h"
@@ -59,12 +60,17 @@ OdamexEnginePlugin::OdamexEnginePlugin()
 	);
 }
 
+GameHost* OdamexEnginePlugin::gameHost()
+{
+	return new OdamexGameHost();
+}
+
 MasterClient *OdamexEnginePlugin::masterClient() const
 {
 	return new OdamexMasterClient();
 }
 
-Server* OdamexEnginePlugin::server(const QHostAddress &address, unsigned short port) const
+ServerPtr OdamexEnginePlugin::mkServer(const QHostAddress &address, unsigned short port) const
 {
-	return new OdamexServer(address, port);
+	return ServerPtr(new OdamexServer(address, port));
 }

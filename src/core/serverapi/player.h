@@ -30,7 +30,7 @@
 #include <QString>
 
 /**
- *	@brief Data structure that holds information about players in a server.
+ * @brief Data structure that holds information about players in a server.
  */
 class MAIN_EXPORT Player
 {
@@ -46,38 +46,37 @@ class MAIN_EXPORT Player
 		};
 
 		Player();
-		Player(const QString &name, unsigned short score, unsigned short ping, PlayerTeam team=TEAM_NONE, bool spectator=false, bool bot=false);
+		Player(const QString &name, unsigned short score, unsigned short ping,
+			PlayerTeam team=TEAM_NONE, bool spectator=false, bool bot=false);
+		Player(const Player& other);
+		Player& operator=(const Player& other);
+		virtual ~Player();
 
-		const QString	&name() const { return playerName; }
-		short			score() const { return currentScore; }
-		unsigned short	ping() const { return currentPing; }
-		bool			isSpectating() const { return spectator; }
-		bool			isBot() const { return bot; }
-		bool			isTeamlessBot() const { return bot && team == TEAM_NONE; }
-		PlayerTeam		teamNum() const { return team; }
+		const QString &name() const;
+		short score() const;
+		unsigned short ping() const;
+		bool isSpectating() const;
+		bool isBot() const;
+		bool isTeamlessBot() const;
+		PlayerTeam teamNum() const;
 
-		bool			operator==(const Player& other) const;
+		bool operator==(const Player& other) const;
 
 		/**
 		 * Formats string into HTML format.
 		 */
-		QString			nameFormatted() const;
+		QString nameFormatted() const;
 
 		/**
 		 * Seeks for characters that are not from the <32; 126> range,
 		 * removes them and the characters that appear after them,
 		 * then returns new string.
 		 */
-		QString			nameColorTagsStripped() const;
+		QString nameColorTagsStripped() const;
 
-	protected:
-
-		QString			playerName;
-		short			currentScore;
-		unsigned short	currentPing;
-		bool			spectator;
-		bool			bot;
-		PlayerTeam		team;
+	private:
+		class PrivData;
+		PrivData* d;
 };
 
 uint qHash(const Player& player);

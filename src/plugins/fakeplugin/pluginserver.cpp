@@ -20,36 +20,36 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2013 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-
 #include "pluginserver.h"
+
 #include "pluginengineplugin.h"
 #include "global.h"
-#include "main.h"
 #include "serverapi/playerslist.h"
 
 PluginServer::PluginServer(const QHostAddress& address, quint16 port)
 : Server(address, port)
 {
+	set_readRequest(&PluginServer::readRequest);
+	set_createSendRequest(&PluginServer::createSendRequest);
 }
 
-const EnginePlugin* PluginServer::plugin() const
+EnginePlugin* PluginServer::plugin() const
 {
 	return PluginEnginePlugin::staticInstance();
 }
 
-Server::Response PluginServer::readRequest(QByteArray &data)
+QByteArray PluginServer::createSendRequest()
+{
+	return QByteArray("FAKF", 4);
+}
+
+Server::Response PluginServer::readRequest(const QByteArray &data)
 {
 	if (data.left(4) != "FAKF")
 	{
 		return RESPONSE_BAD;
 	}
 
-	this->serverName = QString("Fake Server %1").arg(this->port());
+	this->setName(QString("Fake Server %1").arg(this->port()));
 	return RESPONSE_GOOD;
-}
-
-bool PluginServer::sendRequest(QByteArray &data)
-{
-	data = QByteArray("FAKF", 4);
-	return true;
 }

@@ -20,8 +20,8 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "main.h"
 #include "cfgwadseekergeneral.h"
+
 #include "configuration/doomseekerconfig.h"
 #include "pathfinder/filesearchpath.h"
 #include <QCompleter>

@@ -26,19 +26,19 @@
 #include "ini/inisection.h"
 #include "ini/inivariable.h"
 #include "global.h"
-#include <QHash>
-#include <QSettings>
 #include <QString>
 #include <QStringList>
 #include <QVector>
 
+class SettingsProvider;
+
 /**
- * @brief INI configuration files handler.
+ * @brief Configuration handler.
  *
- * This class can read INI files from a disk.
+ * This class is an extension to simple interface provided by SettingsProvider.
  *
- * This is a wrapper for QSettings class that provides a hierarchical access
- * to the INI file. The hierarchy is resolved through the use of IniSection
+ * This is wrapper provides a hierarchical access
+ * to the configuration. The hierarchy is resolved through the use of IniSection
  * and IniVariable classes. The Ini class provides methods necessary to obtain
  * valid instances of these objects.
  *
@@ -69,11 +69,8 @@ class MAIN_EXPORT Ini : public QObject
 	Q_OBJECT
 
 	public:
-		/**
-		 *	Constructor that will load the file from a drive.
-		 */
-		Ini(const QString& filename);
-		~Ini();
+		Ini(SettingsProvider* provider);
+		virtual ~Ini();
 
 		/**
 		 *	No change to the data will be made if section already exists.
@@ -99,16 +96,6 @@ class MAIN_EXPORT Ini : public QObject
 		 */
 		void				deleteSetting(const QString& sectionname, const QString& settingname);
 
-		/**
-		 *	@brief Loads .ini file from drive.
-		 *
-		 *	@param filePath
-		 *		Full path to the INI file.
-		 *
-		 *	@return True if load was successful.
-		 */
-		bool				loadIniFile(const QString &filePath);
-
 		void				removeKey(const QString& key);
 
 		/**
@@ -125,13 +112,6 @@ class MAIN_EXPORT Ini : public QObject
 		 *	does. Be sure to check if it isNull.
 		 */
 		IniVariable 		retrieveSetting(const QString& sectionname, const QString& variablename);
-
-		/**
-		 *	This will only work if dataSource() == Drive. If the data source
-		 *	is from memory there's really nowhere to save to and this will
-		 *	return false.
-		 */
-		bool				save();
 
 		/**
 		 *	This method will attempt to retrieve an existing section.
@@ -167,7 +147,8 @@ class MAIN_EXPORT Ini : public QObject
 		QVariant			value(const QString& key) const;
 
 	private:
-		QSettings*          pIni;
+		class PrivData;
+		PrivData *d;
 };
 
 #endif

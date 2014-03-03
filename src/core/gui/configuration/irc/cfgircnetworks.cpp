@@ -107,7 +107,7 @@ QList<QStandardItem*> CFGIRCNetworks::generateTableRecord(IRCNetworkEntity* pNet
 	// Boolean item.
 	pItem = new QStandardItem();
 	pItem->setCheckable(true);
-	pItem->setCheckState(pNetworkEntity->bAutojoinNetwork ? Qt::Checked : Qt::Unchecked);
+	pItem->setCheckState(pNetworkEntity->isAutojoinNetwork() ? Qt::Checked : Qt::Unchecked);
 	pItem->setToolTip("Autojoin?");
 	itemArray << pItem;
 	
@@ -116,11 +116,11 @@ QList<QStandardItem*> CFGIRCNetworks::generateTableRecord(IRCNetworkEntity* pNet
 	QVariant variantPointer = qVariantFromValue(metaPointer);
 	pItem->setData(variantPointer);
 	
-	pItem = new QStandardItem(pNetworkEntity->description);
+	pItem = new QStandardItem(pNetworkEntity->description());
 	itemArray << pItem;
 	
-	pItem = new QStandardItem(QString("%1:%2").arg(pNetworkEntity->address)
-		.arg(pNetworkEntity->port));
+	pItem = new QStandardItem(QString("%1:%2").arg(pNetworkEntity->address())
+		.arg(pNetworkEntity->port()));
 		
 	itemArray << pItem;
 	
@@ -131,7 +131,7 @@ IRCNetworkEntity* CFGIRCNetworks::network(int row)
 {
 	QStandardItemModel* pModel = (QStandardItemModel*)gridNetworks->model();
 	IRCNetworkEntity* pNetwork = obtainNetworkEntity(pModel->item(row));
-	pNetwork->bAutojoinNetwork = (pModel->item(row, 0)->checkState() == Qt::Checked);
+	pNetwork->setAutojoinNetwork((pModel->item(row, 0)->checkState() == Qt::Checked));
 	
 	return pNetwork;
 }
@@ -259,10 +259,10 @@ void CFGIRCNetworks::updateRecord(int row)
 	
 	IRCNetworkEntity* pNetwork = this->network(row);
 	
-	pItemDescription->setText(pNetwork->description);
+	pItemDescription->setText(pNetwork->description());
 	
 	QStandardItem* pItemAddress = pModel->item(row, 2);
-	pItemAddress->setText(QString("%1:%2").arg(pNetwork->address).arg(pNetwork->port));
+	pItemAddress->setText(QString("%1:%2").arg(pNetwork->address()).arg(pNetwork->port()));
 	
 	this->gridNetworks->resizeRowsToContents();
 }

@@ -24,7 +24,7 @@
 #ifndef __VAVOOMMASTERCLIENT_H__
 #define __VAVOOMMASTERCLIENT_H__
 
-#include "masterserver/masterclient.h"
+#include <serverapi/masterclient.h>
 
 class EnginePlugin;
 
@@ -35,13 +35,12 @@ class VavoomMasterClient : public MasterClient
 	public:
 		VavoomMasterClient();
 
-		const EnginePlugin*		plugin() const;
+		const EnginePlugin *plugin() const;
 
-		bool					readMasterResponse(QByteArray &data);
+		Response readMasterResponse(const QByteArray &data);
 
 	protected:
-
-		bool					getServerListRequest(QByteArray &data);
+		QByteArray createServerListRequest();
 };
 
 #endif /* __VAVOOMMASTERCLIENT_H__ */

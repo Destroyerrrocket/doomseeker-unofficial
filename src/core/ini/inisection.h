@@ -58,6 +58,9 @@ class MAIN_EXPORT IniSection
  		*/
 		IniSection(Ini* pIni, const QString& sectionName);
 
+		COPYABLE_D_POINTERED_DECLARE(IniSection)
+		virtual ~IniSection();
+
 		/**
 		 * @brief Inits specified variable with specified data.
 		 *
@@ -93,7 +96,12 @@ class MAIN_EXPORT IniSection
 		 * @brief If true, IniSection object is not valid and should not be
 		 *        used to perform any actions on the Ini file.
 		 */
-		bool					isNull() const { return d.pIni == NULL; }
+		bool isNull() const;
+
+		/**
+		 * @brief A name (or path) of this section with lettercase preserved.
+		 */
+		const QString &name() const;
 
 		/**
 		 * @brief Gets a variable but only if it already exists
@@ -110,11 +118,6 @@ class MAIN_EXPORT IniSection
 		* @brief const version of retrieveSetting()
 		*/
 		const IniVariable		retrieveSetting(const QString& name) const;
-
-		/**
-		 * @brief Name (or path) of the current section
-		 */
-		const QString&			sectionName() const { return d.name; }
 
 		/**
 		 * @brief Gets a variable. Creates it first if it doesn't exist yet.
@@ -167,30 +170,13 @@ class MAIN_EXPORT IniSection
 		QVariant 				value(const QString& key, QVariant defaultValue) const;
 
 	private:
-		class PrivData
-		{
-			public:
-				/**
- 				* @brief A name of this section with lettercase preserved.
- 				*/
-				QString					name;
-
-				/**
- 				* @brief Ini file to which this section belongs to.
- 				*/
-				Ini*                    pIni;
-		};
-
-		PrivData d;
+		class PrivData;
+		PrivData *d;
 
 		/**
 		 * @brief Removes specified key in this section.
 		 */
 		void remove(const QString& key);
 };
-
-typedef QHash<QString, IniSection> 					IniSections;	/// the first QString is the name
-typedef QHash<QString, IniSection>::iterator 		IniSectionsIt;
-typedef QHash<QString, IniSection>::const_iterator 	IniSectionsConstIt;
 
 #endif

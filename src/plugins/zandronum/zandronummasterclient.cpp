@@ -48,25 +48,20 @@
 #define RETURN_BAD_IF_NOT_ENOUGH_DATA(min_amout_of_data_required) \
 { \
 	if (in.remaining() < (min_amout_of_data_required)) \
-	{ \
-		notifyError(); \
-		return false; \
-	} \
-} 
+		return RESPONSE_BAD; \
+}
 
 ZandronumMasterClient::ZandronumMasterClient() : MasterClient()
 {
 }
 
-bool ZandronumMasterClient::getServerListRequest(QByteArray &data)
+QByteArray ZandronumMasterClient::createServerListRequest()
 {
 	const unsigned char challenge[6] = {WRITEINT32_DIRECT(unsigned char,MASTER_CHALLENGE), WRITEINT16_DIRECT(unsigned char,MASTER_PROTOCOL_VERSION)};
 	unsigned char challengeOut[12];
 	int out = 12;
 	HUFFMAN_Encode(challenge, challengeOut, 6, &out);
-	const QByteArray chall(reinterpret_cast<char*> (challengeOut), out);
-	data.append(chall);
-	return true;
+	return QByteArray(reinterpret_cast<char*> (challengeOut), out);
 }
 
 const EnginePlugin* ZandronumMasterClient::plugin() const
@@ -74,59 +69,49 @@ const EnginePlugin* ZandronumMasterClient::plugin() const
 	return ZandronumEnginePlugin::staticInstance();
 }
 
-bool ZandronumMasterClient::readMasterResponse(QByteArray &data)
+MasterClient::Response ZandronumMasterClient::readMasterResponse(const QByteArray &data)
 {
 	const char* packetEncoded = data.data();
 	int packetDecodedSize = 2000 + data.size();
 	char* packetDecoded = new char[packetDecodedSize];
-	
-	HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (packetEncoded), 
-		reinterpret_cast<unsigned char*>(packetDecoded), 
+
+	HUFFMAN_Decode(reinterpret_cast<const unsigned char*> (packetEncoded),
+		reinterpret_cast<unsigned char*>(packetDecoded),
 		data.size(), &packetDecodedSize);
-	
+
 	if (packetDecodedSize <= 0)
 	{
 		delete[] packetDecoded;
-		notifyError();
-		return false;
-	}	
-	
+		return RESPONSE_BAD;
+	}
+
 	QByteArray packetDecodedByteArray(packetDecoded, packetDecodedSize);
 	delete[] packetDecoded;
-	
+
 	QBuffer ioBuffer(&packetDecodedByteArray);
 	ioBuffer.open(QIODevice::ReadOnly);
 	QDataStream inStream(&ioBuffer);
 	inStream.setByteOrder(QDataStream::LittleEndian);
 	DataStreamOperatorWrapper in(&inStream);
-	
+
 	// Check the response code
 	RETURN_BAD_IF_NOT_ENOUGH_DATA(4);
 	int response = in.readQInt32();
 	if(response == MASTER_RESPONSE_BANNED)
-	{
-		notifyBanned();
-		return false;
-	}
+		return RESPONSE_BANNED;
 	else if(response == MASTER_RESPONSE_BAD)
-	{
-		notifyDelay();
-		return false;
-	}
+		return RESPONSE_WAIT;
 	else if(response == MASTER_RESPONSE_WRONGVERSION)
-	{
-		notifyUpdate();
-		return false;
-	}
+		return RESPONSE_OLD;
 	else if(response != MASTER_RESPONSE_BEGINPART)
-		return false;
+		return RESPONSE_PENDING;
 
 	RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
 	int packetNum = in.readQUInt8();
 	if(!(packetsRead & (1<<packetNum))) // Set flag if we haven't read this packet
 		packetsRead |= 1<<packetNum;
 	else // Already read packet so ignore it.
-		return true;
+		return RESPONSE_PENDING;
 	if(packetNum+1 > numPackets) // Packet numbers start at 0
 		numPackets = packetNum+1;
 
@@ -138,7 +123,7 @@ bool ZandronumMasterClient::readMasterResponse(QByteArray &data)
 		while(numServersInBlock != 0)
 		{
 			RETURN_BAD_IF_NOT_ENOUGH_DATA(4 + 2); // ip + port
-			
+
 			// [Zalewa] Remember: it's a very bad idea to pass reads
 			// directly to funtion calls because function calls are
 			// resolved in reverse order (in MSVC at least).
@@ -146,7 +131,7 @@ bool ZandronumMasterClient::readMasterResponse(QByteArray &data)
 			quint8 ip2 = in.readQUInt8();
 			quint8 ip3 = in.readQUInt8();
 			quint8 ip4 = in.readQUInt8();
-			
+
 			QString ip = QString("%1.%2.%3.%4").
 					arg(ip1, 1, 10, QChar('0')).
 					arg(ip2, 1, 10, QChar('0')).
@@ -156,11 +141,11 @@ bool ZandronumMasterClient::readMasterResponse(QByteArray &data)
 			for(unsigned int i = 0;i < numServersInBlock;i++)
 			{
 				quint16 port = in.readQUInt16();
-				ZandronumServer *server = new ZandronumServer(QHostAddress(ip), 
+				ZandronumServer *server = new ZandronumServer(QHostAddress(ip),
 					port);
-				servers.push_back(server);
+				registerNewServer(ServerPtr(server));
 			}
-			
+
 			RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
 			numServersInBlock = in.readQUInt8();
 		}
@@ -175,13 +160,14 @@ bool ZandronumMasterClient::readMasterResponse(QByteArray &data)
 		if(packetsRead == (1<<numPackets)-1)
 		{
 			emit listUpdated();
+			return RESPONSE_GOOD;
 		}
 	}
 
-	return true;
+	return RESPONSE_PENDING;
 }
 
-void ZandronumMasterClient::refresh()
+void ZandronumMasterClient::refreshStarts()
 {
 	// Make sure we have an empty list.
 	emptyServerList();
@@ -189,5 +175,5 @@ void ZandronumMasterClient::refresh()
 	numPackets = 0;
 	packetsRead = 0;
 
-	MasterClient::refresh();
+	MasterClient::refreshStarts();
 }

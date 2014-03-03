@@ -26,6 +26,8 @@
 #include "customservers.h"
 #include "gui/entity/serverlistfilterinfo.h"
 #include "serverapi/buddyinfo.h"
+#include <QScopedPointer>
+#include <QSettings>
 #include <QString>
 #include <QStringList>
 #include <QVector>
@@ -35,6 +37,7 @@
 class Ini;
 class EnginePlugin;
 class FileSearchPath;
+class SettingsProviderQt;
 
 /**
  *	@brief This Singleton holds entire Doomseeker configuration in memory.
@@ -219,7 +222,7 @@ class DoomseekerConfig
 		ServerFilter				serverFilter;
 		WadseekerCfg				wadseeker;
 
-		Ini*						ini() { return this->pIni; }
+		Ini*						ini() { return this->pIni.data(); }
 
 		/**
 		 *	@brief This will assume that the .ini file is initialized.
@@ -273,7 +276,9 @@ class DoomseekerConfig
 		 */
 		IniSection*					dummySection;
 
-		Ini*						pIni;
+		QScopedPointer<QSettings> settings;
+		QScopedPointer<SettingsProviderQt> settingsProvider;
+		QScopedPointer<Ini> pIni;
 
 		DoomseekerConfig();
 		~DoomseekerConfig();

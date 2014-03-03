@@ -25,6 +25,7 @@
 #include "pluginmasterclient.h"
 #include "pluginengineplugin.h"
 #include "pluginserver.h"
+#include <serverapi/message.h>
 #include <QTimer>
 
 class PluginMasterClient::PrivData
@@ -65,13 +66,11 @@ PluginMasterClient::~PluginMasterClient()
 	delete d;
 }
 
-bool PluginMasterClient::getServerListRequest(QByteArray &data)
+QByteArray PluginMasterClient::createServerListRequest()
 {
 	d->expectedPackets = 0;
 	d->gotPackets = 0;
-	data = "FAKE";
-	data.resize(4);
-	return true;
+	return QByteArray("FAKE", 4);
 }
 
 const EnginePlugin* PluginMasterClient::plugin() const
@@ -79,7 +78,7 @@ const EnginePlugin* PluginMasterClient::plugin() const
 	return PluginEnginePlugin::staticInstance();
 }
 
-bool PluginMasterClient::readMasterResponse(QByteArray &data)
+MasterClient::Response PluginMasterClient::readMasterResponse(const QByteArray &data)
 {
 	QStringList ports = QString(data).split(";");
 	// First element is amount of expected packets:
@@ -90,7 +89,7 @@ bool PluginMasterClient::readMasterResponse(QByteArray &data)
 		if (port != 0)
 		{
 			PluginServer* server = new PluginServer(QHostAddress("127.0.0.1"), port);
-			servers.append(server);
+			registerNewServer(ServerPtr(server));
 		}
 	}
 	++d->gotPackets;
@@ -104,5 +103,5 @@ bool PluginMasterClient::readMasterResponse(QByteArray &data)
 		// Timeout will fire if some of the packets become lost.
 		d->timeoutTimer.start(RESPONSE_TIMEOUT_MS);
 	}
-	return true;
+	return RESPONSE_GOOD;
 }

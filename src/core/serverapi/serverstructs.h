@@ -25,6 +25,8 @@
 
 #include <QString>
 #include <QList>
+#include <QObject>
+#include <QVariant>
 
 #include "global.h"
 
@@ -33,109 +35,158 @@
 class MAIN_EXPORT DMFlag
 {
 	public:
-		DMFlag(QString name, unsigned value)
-		: name(name), value(value)
-		{
-		}
+		DMFlag();
+		DMFlag(QString name, unsigned value);
+		COPYABLE_D_POINTERED_DECLARE(DMFlag);
+		virtual ~DMFlag();
 
-		QString         name;
-		unsigned    	value;
+		bool isValid() const;
+
+		const QString& name() const;
+		unsigned value() const;
+
+	private:
+		class PrivData;
+		PrivData* d;
 };
 
 /**
- *	@brief Generic representation of DMFlags section.
+ * @brief Generic representation of DMFlags section.
  */
 class MAIN_EXPORT DMFlagsSection
 {
 	public:
-		QString         name;
-		QList<DMFlag>	flags;
+		DMFlagsSection();
+		DMFlagsSection(const QString& name);
+		COPYABLE_D_POINTERED_DECLARE(DMFlagsSection);
+		virtual ~DMFlagsSection();
+
+		void add(const DMFlag& flag);
+		unsigned combineValues() const;
+		int count() const;
+		const QString &name() const;
+		const DMFlag &operator[](int index) const;
+		DMFlag &operator[](int index);
+
+		DMFlagsSection& operator<<(const DMFlag& flag)
+		{
+			add(flag);
+			return *this;
+		}
+
+	private:
+		class PrivData;
+		PrivData* d;
 };
 
-/*! /typedef QList<DMFlagsSection*> DMFlags
- *	List used by Server class' virtual method to return all flags sections.
- */
-typedef QList<DMFlagsSection*> 							DMFlags;
-typedef QList<DMFlagsSection*>::iterator				DMFlagsIt;
-typedef QList<DMFlagsSection*>::const_iterator 			DMFlagsItConst;
-typedef QList<const DMFlagsSection*> 					DMFlagsConst;
-typedef QList<const DMFlagsSection*>::iterator			DMFlagsConstIt;
-typedef QList<const DMFlagsSection*>::const_iterator 	DMFlagsConstItConst;
-
 /**
- *	@brief Struct containing info about a game console variable (like fraglimit)
+ * @brief Struct containing info about a game variable (like fraglimit).
  */
 class MAIN_EXPORT GameCVar
 {
 	public:
-		/**
- 		*	Nice name to display in Create Server dialog.
- 		*/
-		QString		name;
+		GameCVar();
+		GameCVar(const QString &name, const QString &command);
+		COPYABLE_D_POINTERED_DECLARE(GameCVar);
+		virtual ~GameCVar();
 
 		/**
- 		*	Console command used to set the given CVar.
- 		*/
-		QString		consoleCommand;
+		 * Command used to set the given CVar.
+		 */
+		const QString &command() const;
 
-		GameCVar() {}
-		GameCVar(QString fname, QString fconsoleCommand):name(fname),consoleCommand(fconsoleCommand) {}
+		bool hasValue() const;
+		bool isValid() const;
 
-		void			setValue(bool b) { b == true ? val = "1" : val = "0"; }
-		void			setValue(int i) { setValue(QString::number(i)); }
-		void			setValue(const QString& str) { val = str; }
+		/**
+		 * Nice name to display in Create Server dialog.
+		 */
+		const QString &name() const;
 
-		const QString&	value() const { return val; }
-		bool			valueBool() const { return (val.toInt() != 0); }
-		bool			valueInt() const { return val.toInt(); }
+		void setValue(const QVariant& value);
 
-	protected:
-		QString		val;
+		const QVariant &value() const;
+		QString valueString() const { return value().toString(); }
+		bool valueBool() const { return value().toBool(); }
+		int valueInt() const { return value().toInt(); }
+
+	private:
+		class PrivData;
+		PrivData* d;
 };
 
 /**
- * Data structure that holds information about a servers game mode.
+ * @brief Data structure that holds information about game mode.
  */
 class MAIN_EXPORT GameMode
 {
 	public:
-		enum StandardGameModeIndexes
+		enum StandardGameMode
 		{
-			SGMICooperative		= 900,
-			SGMIDeathmatch		= 901,
-			SGMITeamDeathmatch	= 902,
-			SGMICTF				= 903,
-			SGMIUnknown			= 904
+			SGM_Cooperative = 900,
+			SGM_Deathmatch = 901,
+			SGM_TeamDeathmatch = 902,
+			SGM_CTF = 903,
+			SGM_Unknown = 904
 		};
 
 		// Standard game mode set
 		// These should be used in order to keep the names uniform.
-		static const GameMode	COOPERATIVE;
-		static const GameMode	DEATHMATCH;
-		static const GameMode	TEAM_DEATHMATCH;
-		static const GameMode	CAPTURE_THE_FLAG;
-		static const GameMode	UNKNOWN;
+		// These can't be static members as translations may not work.
+		static GameMode mkCooperative();
+		static GameMode mkDeathmatch();
+		static GameMode mkTeamDeathmatch();
+		static GameMode mkCaptureTheFlag();
+		static GameMode mkUnknown();
 
 		/**
-		 * @param name Name to display for game mode, this should be fairly short about no longer than "cooperative".
+		 * @brief Opposite of team game.
 		 */
-		GameMode(int index, const QString &name, bool teamgame);
+		static GameMode ffaGame(int index, const QString &name);
+		/**
+		 * @brief Game mode based on rivaling teams.
+		 */
+		static GameMode teamGame(int index, const QString &name);
 
-		int				modeIndex() const { return gameModeIndex; }
-		const QString	&name() const { return modeName;}
-		bool			isTeamGame() const { return teamgame; }
-	protected:
-		int		gameModeIndex;
-		QString	modeName;
-		bool	teamgame;
+		GameMode();
+		COPYABLE_D_POINTERED_DECLARE(GameMode);
+		virtual ~GameMode();
+
+		int index() const;
+
+		/**
+		 * @brief Name to display for game mode.
+		 *
+		 * This should be fairly short about no longer than "cooperative".
+		 */
+		const QString &name() const;
+
+		bool isTeamGame() const;
+		bool isValid() const;
+
+	private:
+		class PrivData;
+		PrivData *d;
+
+		GameMode(int index, const QString &name);
+
+		void setTeamGame(bool b);
 };
 
-class MAIN_EXPORT SkillLevel
+// Some ports support optional wads.
+class MAIN_EXPORT PWad
 {
-	//const QString strName;
+	public:
+		PWad(const QString &name, bool optional=false);
+		COPYABLE_D_POINTERED_DECLARE(PWad);
+		virtual ~PWad();
 
-	static const int	 numSkillLevels;
-	static const QString names[];
+		bool isOptional() const;
+		const QString& name() const;
+
+	private:
+		class PrivData;
+		PrivData* d;
 };
 
 #endif

@@ -36,18 +36,18 @@ class Ini;
 class MAIN_EXPORT CreateServerDialogPage : public QWidget
 {
 	public:
-		QString name;
-
 		CreateServerDialogPage(CreateServerDialog* pParentDialog, const QString& name);
-		virtual ~CreateServerDialogPage() {}
+		virtual ~CreateServerDialogPage();
 
 		/**
 		 * @brief Generates game run parameters basing on the page's contents.
 		 *
 		 * These parameters are passed as arguments to the executable when
-		 * the game's process is started.
+		 * the game process is started.
 		 */
 		virtual QStringList generateGameRunParameters() = 0;
+
+		const QString& name() const;
 
 		/**
 		 * @brief Loads variables that are stored in the config into the GUI.
@@ -90,8 +90,11 @@ class MAIN_EXPORT CreateServerDialogPage : public QWidget
 		}
 
 	protected:
-		CreateServerDialog* pParentDialog;
+		CreateServerDialog* parentDialog();
 
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 #endif

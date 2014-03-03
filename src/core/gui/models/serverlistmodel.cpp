@@ -29,7 +29,6 @@
 #include "configuration/doomseekerconfig.h"
 #include "serverapi/server.h"
 #include "log.h"
-#include "main.h"
 #include <QItemDelegate>
 #include <QTime>
 
@@ -44,7 +43,7 @@ ServerListModel::ServerListModel(ServerListHandler* parent)
 	setSortRole(SLDT_SORT);
 }
 
-int ServerListModel::addServer(Server* server, int response)
+int ServerListModel::addServer(ServerPtr server, int response)
 {
 	QList<QStandardItem*> columns;
 	ServerListColumns::generateListOfCells(columns);
@@ -77,7 +76,7 @@ int ServerListModel::findServerOnTheList(const Server* server)
 	{
 		for (int i = 0; i < rowCount(); ++i)
 		{
-			const Server* savedServ = serverFromList(i);
+			ServerCPtr savedServ = serverFromList(i);
 			if (server == savedServ)
 			{
 				return i;
@@ -89,7 +88,7 @@ int ServerListModel::findServerOnTheList(const Server* server)
 
 void ServerListModel::redraw(int row)
 {
-	Server* server = serverFromList(row);
+	ServerPtr server = serverFromList(row);
 	ServerListRowHandler rowHandler(this, row, server);
 	rowHandler.redraw();
 }
@@ -107,20 +106,19 @@ void ServerListModel::redrawAll()
 
 void ServerListModel::removeCustomServers()
 {
-	QList<Server*> serversToRemove;
+	QList<ServerPtr> serversToRemove;
 	for (int i = 0; i < rowCount(); ++i)
 	{
-		Server* server = serverFromList(i);
+		ServerPtr server = serverFromList(i);
 		if (server->isCustom())
 		{
 			serversToRemove.append(server);
 		}
 	}
 
-	QList<Server*>::iterator it;
-	for (it = serversToRemove.begin(); it != serversToRemove.end(); ++it)
+	foreach (ServerPtr server, serversToRemove)
 	{
-		int index = findServerOnTheList(*it);
+		int index = findServerOnTheList(server.data());
 		if (index >= 0)
 		{
 			removeRow(index);
@@ -128,12 +126,12 @@ void ServerListModel::removeCustomServers()
 	}
 }
 
-Server* ServerListModel::serverFromList(int rowIndex)
+ServerPtr ServerListModel::serverFromList(int rowIndex)
 {
 	return ServerListRowHandler::serverFromList(this, rowIndex);
 }
 
-Server* ServerListModel::serverFromList(const QModelIndex& index)
+ServerPtr ServerListModel::serverFromList(const QModelIndex& index)
 {
 	return ServerListRowHandler::serverFromList(this, index.row());
 }
@@ -144,9 +142,9 @@ ServerListModel::ServerGroup ServerListModel::serverGroup(int row)
 	return static_cast<ServerListModel::ServerGroup>(qstdItem->data(SLDT_SORT).toInt());
 }
 
-void ServerListModel::setRefreshing(Server* server)
+void ServerListModel::setRefreshing(ServerPtr server)
 {
-	int rowIndex = findServerOnTheList(server);
+	int rowIndex = findServerOnTheList(server.data());
 	if (rowIndex >= 0)
 	{
 		ServerListRowHandler rowHandler(this, rowIndex, server);
@@ -161,7 +159,7 @@ void ServerListModel::prepareHeaders()
 	setHorizontalHeaderLabels(labels);
 }
 
-int ServerListModel::updateServer(int row, Server* server, int response)
+int ServerListModel::updateServer(int row, ServerPtr server, int response)
 {
 	ServerListRowHandler rowHandler(this, row, server);
 	rowHandler.updateServer(response);
@@ -177,7 +175,7 @@ QVariant ServerListModel::columnSortData(int row, int column)
 
 void ServerListModel::updateFlag(int row, bool force)
 {
-	Server* server = serverFromList(row);
+	ServerPtr server = serverFromList(row);
 	ServerListRowHandler rowHandler(this, row, server);
 	QStandardItem* itm = item(row, IDServerName);
 

@@ -38,11 +38,11 @@ class OdamexGameInfo : public QObject
 			MODE_CAPTURE_THE_FLAG
 		};
 
-		static const DMFlags*			dmFlags() { return &dmFlagsList; }
+		static const QList<DMFlagsSection>*	dmFlags() { return &dmFlagsList; }
 		static const QList<GameMode>*	gameModes() { return &gameModesList; }
 
 	protected:
-		static DMFlags					dmFlagsList;
+		static QList<DMFlagsSection>	dmFlagsList;
 		static QList<GameMode>			gameModesList;
 
 	private:

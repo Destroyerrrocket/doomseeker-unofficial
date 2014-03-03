@@ -32,6 +32,7 @@
 
 #include "gui/widgets/serverlistview.h"
 #include "gui/models/serverlistmodel.h"
+#include "serverapi/serverptr.h"
 
 class PWad;
 class IniSection;
@@ -54,9 +55,9 @@ class ServerListHandler : public QObject
 
 		bool				isSortingByColumn(int columnIndex);
 
-		QList<Server*>		selectedServers();
+		QList<ServerPtr> selectedServers();
 
-		Server*				serverFromIndex(const QModelIndex&);
+		ServerPtr serverFromIndex(const QModelIndex&);
 
 		ServerListModel*	serverModel() { return model; }
 		ServerListView*		serverTable() { return table; }
@@ -71,8 +72,8 @@ class ServerListHandler : public QObject
 		void 				redraw();
 		void 				refreshAll();
 		void				refreshSelected();
-		void 				serverBegunRefreshing(Server* server);
-		void 				serverUpdated(Server *server, int response);
+		void 				serverBegunRefreshing(const ServerPtr &server);
+		void 				serverUpdated(const ServerPtr &server, int response);
 
 		/**
 		 *	@brief Sets country flags for servers that don't have flags
@@ -97,16 +98,16 @@ class ServerListHandler : public QObject
 		/**
 		 * Emitted when a request for join command line show is called.
 		 */
-		void 					displayServerJoinCommandLine(const Server*);
+		void displayServerJoinCommandLine(const ServerPtr&);
 
 		void serverFilterModified(const ServerListFilterInfo& filter);
 		/**
 		 *	@brief Emitted every time when a server info is updated through
 		 *	serverUpdated()
 		 */
-		void					serverInfoUpdated(Server*);
-		void 					serverDoubleClicked(Server*);
-		void 					serversSelected(QList<Server*>&);
+		void serverInfoUpdated(const ServerPtr&);
+		void serverDoubleClicked(const ServerPtr&);
+		void serversSelected(QList<ServerPtr>&);
 
 	protected:
 		// TODO: These need to be set by appearance configuration.
@@ -125,12 +126,12 @@ class ServerListHandler : public QObject
 		int						sortIndex;
 		ServerListView*			table;
 
-		QString					createIwadToolTip(const Server* server);
-		QString 				createPlayersToolTip(const Server* server);
-		QString					createPortToolTip(const Server* server);
-		QString 				createPwadsToolTip(const Server* server);
+		QString					createIwadToolTip(ServerCPtr server);
+		QString 				createPlayersToolTip(ServerCPtr server);
+		QString					createPortToolTip(ServerCPtr server);
+		QString 				createPwadsToolTip(ServerCPtr server);
 		QString					createPwadToolTipInfo(const PWad& pwad, const QString& binPath);
-		QString 				createServerNameToolTip(const Server* server);
+		QString 				createServerNameToolTip(ServerCPtr server);
 
 		bool					areColumnsWidthsSettingsChanged();
 

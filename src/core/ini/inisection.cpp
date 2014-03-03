@@ -26,15 +26,35 @@
 #include <cassert>
 #include <QDebug>
 
+class IniSection::PrivData
+{
+	public:
+		QString name;
+
+		/**
+		* @brief Ini file to which this section belongs to.
+		*/
+		Ini* pIni;
+};
+
+COPYABLE_D_POINTERED_DEFINE(IniSection);
+
 IniSection::IniSection()
 {
-	d.pIni = NULL;
+	d = new PrivData();
+	d->pIni = NULL;
 }
 
 IniSection::IniSection(Ini* pIni, const QString& sectionName)
 {
-	d.pIni = pIni;
-	d.name = sectionName;
+	d = new PrivData();
+	d->pIni = pIni;
+	d->name = sectionName;
+}
+
+IniSection::~IniSection()
+{
+	delete d;
 }
 
 IniVariable IniSection::createSetting(const QString& name, const QVariant& data)
@@ -64,6 +84,16 @@ void IniSection::deleteSetting(const QString& name)
 	remove(name);
 }
 
+bool IniSection::isNull() const
+{
+	return d->pIni == NULL;
+}
+
+const QString &IniSection::name() const
+{
+	return d->name;
+}
+
 IniVariable IniSection::operator[](const QString& name)
 {
 	return setting(name);
@@ -76,7 +106,7 @@ const IniVariable IniSection::operator[](const QString& name) const
 
 void IniSection::remove(const QString& key)
 {
-	d.pIni->removeKey(d.name + "/" + key);
+	d->pIni->removeKey(name() + "/" + key);
 }
 
 IniVariable IniSection::retrieveSetting(const QString& name)
@@ -87,7 +117,7 @@ IniVariable IniSection::retrieveSetting(const QString& name)
 		return IniVariable();
 	}
 
-	return IniVariable(this, name);
+	return IniVariable(*this, name);
 }
 
 const IniVariable IniSection::retrieveSetting(const QString& name) const
@@ -98,7 +128,7 @@ const IniVariable IniSection::retrieveSetting(const QString& name) const
 		return IniVariable();
 	}
 
-	return IniVariable(this, name);
+	return IniVariable(*this, name);
 }
 
 IniVariable IniSection::setting(const QString& name)
@@ -124,7 +154,7 @@ void IniSection::setValue(const QString& key, const QVariant& value)
 
 	if (!isNull())
 	{
-		d.pIni->setValue(d.name + "/" + key, value);
+		d->pIni->setValue(name() + "/" + key, value);
 	}
 }
 
@@ -132,7 +162,7 @@ QVariant IniSection::value(const QString& key) const
 {
 	if (!isNull())
 	{
-		return d.pIni->value(d.name + "/" + key);
+		return d->pIni->value(name() + "/" + key);
 	}
 
 	return QVariant();

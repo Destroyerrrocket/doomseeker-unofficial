@@ -24,29 +24,21 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
-#include "ini/ini.h"
-#include "ip2c/ip2c.h"
-#include "plugins/pluginloader.h"
-#include "datapaths.h"
-#include "localizationinfo.h"
 #include <QApplication>
 #include <QObject>
 #include <QStringList>
 #include <QUrl>
 
-class Refresher;
+class LocalizationInfo;
 
 /**
  * This class holds some global information.
  */
-class MAIN_EXPORT Main : public QObject
+class Main : public QObject
 {
 	Q_OBJECT
 
 	public:
-		static const QString		IP2C_FILENAME;
-
-		static QApplication*		application;
 		/**
 		 * @brief If true then program will install updates and restart
 		 *        instead of quitting if quit is requested.
@@ -57,16 +49,8 @@ class MAIN_EXPORT Main : public QObject
 		 * Default: false.
 		 */
 		static bool bInstallUpdatesAndRestart;
-		static IP2C					*ip2c;
-		static DataPaths*			dataPaths;
-		static QWidget*				mainWindow;
-		static PluginLoader*		enginePlugins;
 		static QList<LocalizationInfo> localizations;
-		static bool					running; /// Used to notify the Server objects that it should not refresh in order to end the program faster.
-		static Refresher*			refresher;
-		static QString				workingDirectory;
 		static QString argDataDir;
-		static bool bPortableMode;
 
 		Main(int argc, char* argv[]);
 		~Main();
@@ -84,11 +68,6 @@ class MAIN_EXPORT Main : public QObject
 		int							run();
 
 	protected:
-		static const QString		DOOMSEEKER_CONFIG_FILENAME;
-		static const QString		DOOMSEEKER_INI_FILENAME;
-		static const QString		DOOMSEEKER_IRC_INI_FILENAME;
-		static const QString		DOOMSEEKER_PASSWORD_INI_FILENAME;
-
 		int							connectToServerByURL();
 		void						convertOldIniToQSettingsIni();
 
@@ -122,7 +101,6 @@ class MAIN_EXPORT Main : public QObject
 		 *		returns.
 		 */
 		bool						interpretCommandLineParameters();
-		void						preserveOldConfigBackwardsCompatibility();
 		void						setupRefreshingThread();
 
 		char**						arguments;
@@ -136,6 +114,10 @@ class MAIN_EXPORT Main : public QObject
 		bool						startRcon;
 		int updateFailedCode;
 		QUrl						connectUrl;
+
+	private:
+		bool bPortableMode;
+		QString workingDirectory;
 };
 
 #endif /* __MAIN_H__ */

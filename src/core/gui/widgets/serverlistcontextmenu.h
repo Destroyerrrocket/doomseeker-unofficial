@@ -25,6 +25,7 @@
 
 #include <QMenu>
 #include <QObject>
+#include "serverapi/serverptr.h"
 
 class Server;
 class ServerFilterBuilderMenu;
@@ -49,13 +50,12 @@ class ServerListContextMenu : public QObject
 			NothingHappened
 		};
 
-		ServerListContextMenu(Server* server, const ServerListFilterInfo& filter,
+		ServerListContextMenu(ServerPtr server, const ServerListFilterInfo& filter,
 			QObject *parent);
 		~ServerListContextMenu();
 
 		void popup(const QPoint& point);
-		// TODO Needs share-pointering after merge with pluginapi.
-		Server* server() const;
+		ServerPtr server() const;
 		const ServerListFilterInfo& serverFilter() const;
 		Result translateQMenuResult(QAction* resultAction);
 
@@ -83,7 +83,7 @@ class ServerListContextMenu : public QObject
 
 		QAction* 				openUrlInDefaultBrowser;
 
-		Server*					pServer;
+		ServerPtr pServer;
 
 		QAction*				rcon;
 		QAction* 				refresh;

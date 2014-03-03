@@ -22,14 +22,17 @@
 //------------------------------------------------------------------------------
 
 #include "demomanager.h"
-#include "main.h"
-#include "pathfinder.h"
+#include "ini/ini.h"
+#include "ini/settingsproviderqt.h"
+#include "datapaths.h"
+#include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
-#include "serverapi/binaries.h"
+#include "plugins/pluginloader.h"
+#include "serverapi/gameexeretriever.h"
+#include "serverapi/gamecreateparams.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
-#include "serverapi/gamerunner.h"
-#include "serverapi/gamerunnerstructs.h"
+#include "serverapi/gamehost.h"
 
 #include <QDir>
 #include <QFileDialog>
@@ -57,9 +60,9 @@ void DemoManagerDlg::adjustDemoList()
 {
 	// Get valid extensions
 	QStringList demoExtensions;
-	for(int i = 0;i < Main::enginePlugins->numPlugins();++i)
+	for(int i = 0;i < gPlugins->numPlugins();++i)
 	{
-		QString ext = QString("*.%1").arg((*Main::enginePlugins)[i]->info->data()->demoExtension);
+		QString ext = QString("*.%1").arg(gPlugins->info(i)->data()->demoExtension);
 
 		if(!demoExtensions.contains(ext))
 		{
@@ -71,7 +74,7 @@ void DemoManagerDlg::adjustDemoList()
 	// Also we need to convert double underscores to a single underscore
 	QDate today = QDate::currentDate();
 	QTime referenceTime(23, 59, 59);
-	QDir demosDirectory(Main::dataPaths->demosDirectoryPath());
+	QDir demosDirectory(gDefaultDataPaths->demosDirectoryPath());
 	QStringList demos = demosDirectory.entryList(demoExtensions, QDir::Files);
 	typedef QMap<int, Demo> DemoMap;
 	QMap<int, DemoMap> demoMap;
@@ -113,7 +116,11 @@ void DemoManagerDlg::adjustDemoList()
 		else
 		{
 			// New format, read meta data from file!
-			Ini metaData(Main::dataPaths->demosDirectoryPath() + QDir::separator() + demoName + ".ini");
+			QSettings settings(
+				gDefaultDataPaths->demosDirectoryPath() + QDir::separator() + demoName + ".ini",
+				QSettings::IniFormat);
+			SettingsProviderQt settingsProvider(&settings);
+			Ini metaData(&settingsProvider);
 			demo.wads << metaData.retrieveSetting("meta", "iwad");
 			QString pwads = metaData.retrieveSetting("meta", "pwads");
 			if(pwads.length() > 0)
@@ -170,7 +177,7 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 		if(saveDialog.exec() == QDialog::Accepted)
 		{
 			// Copy the demo to the new location.
-			if(!QFile::copy(Main::dataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename, saveDialog.selectedFiles().first()))
+			if(!QFile::copy(gDefaultDataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename, saveDialog.selectedFiles().first()))
 				QMessageBox::critical(this, tr("Unable to save"), tr("Could not write to the specified location."));
 		}
 	}
@@ -184,7 +191,7 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 				int dateRow = index.row();
 				for(int timeRow = 0;index.child(timeRow, 0).isValid();++timeRow)
 				{
-					if(doRemoveDemo(Main::dataPaths->demosDirectoryPath() + QDir::separator() + demoTree[dateRow][timeRow].filename))
+					if(doRemoveDemo(gDefaultDataPaths->demosDirectoryPath() + QDir::separator() + demoTree[dateRow][timeRow].filename))
 					{
 						demoModel->removeRow(timeRow, index);
 						demoTree[dateRow].removeAt(timeRow);
@@ -202,7 +209,7 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 			}
 			else
 			{
-				if(doRemoveDemo(Main::dataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename))
+				if(doRemoveDemo(gDefaultDataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename))
 				{
 					// Adjust the tree
 					int dateRow = index.parent().row();
@@ -225,11 +232,13 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 			return;
 
 		// Look for the plugin used to record.
-		const EnginePlugin *plugin = NULL;
-		for(int i = 0;i < Main::enginePlugins->numPlugins();i++)
+		EnginePlugin *plugin = NULL;
+		for(int i = 0;i < gPlugins->numPlugins();i++)
 		{
-			if(selectedDemo->port == (*Main::enginePlugins)[i]->info->data()->name)
-				plugin = (*Main::enginePlugins)[i]->info;
+			if (selectedDemo->port == gPlugins->info(i)->data()->name)
+			{
+				plugin = gPlugins->info(i);
+			}
 		}
 		if(plugin == NULL)
 		{
@@ -237,32 +246,31 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 			return;
 		}
 
-		// Create dummy server and get binary for pathfinder
-		Server *server = plugin->server(QHostAddress(), 5029); // No specific port needed since we're basically "playing offline"
+		// Get executable path for pathfinder.
 		Message binMessage;
-		Binaries *bin = server->binaries();
-		QString binPath = bin->clientBinary(binMessage);
-		delete bin;
+		QString binPath = GameExeRetriever(*plugin->gameExe()).pathToOfflineExe(binMessage);
 
 		// Locate all the files needed to play the demo
 		PathFinder pf;
 		pf.addPrioritySearchDir(binPath);
 		PathFinderResult result = pf.findFiles(selectedDemo->wads);
-		if(!result.missingFiles.isEmpty())
+		if(!result.missingFiles().isEmpty())
 		{
-			QMessageBox::critical(this, tr("Files not found"), tr("The following files could not be located: ") + result.missingFiles.join(", "));
-			delete server;
+			QMessageBox::critical(this, tr("Files not found"),
+				tr("The following files could not be located: ") + result.missingFiles().join(", "));
 			return;
 		}
 
 		// Play the demo
-		HostInfo hostInfo;
-		hostInfo.demoPath = Main::dataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename;
-		hostInfo.iwadPath = result.foundFiles[0];
-		hostInfo.pwadsPaths = result.foundFiles.mid(1);
+		GameCreateParams params;
+		params.setDemoPath(gDefaultDataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename);
+		params.setIwadPath(result.foundFiles()[0]);
+		params.setPwadsPaths(result.foundFiles().mid(1));
+		params.setHostMode(GameCreateParams::Demo);
+		params.setExecutablePath(binPath);
 
-		GameRunner* gameRunner = server->gameRunner();
-		Message message = gameRunner->host(hostInfo, GameRunner::DEMO);
+		GameHost* gameRunner = plugin->gameHost();
+		Message message = gameRunner->host(params);
 
 		if (message.isError())
 		{
@@ -270,7 +278,6 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 		}
 
 		delete gameRunner;
-		delete server;
 	}
 }
 

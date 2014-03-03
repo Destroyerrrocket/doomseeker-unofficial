@@ -31,7 +31,7 @@
 #include "gui/logdock.h"
 #include "gui/serverlist.h"
 #include "gui/widgets/serversstatuswidget.h"
-#include "masterserver/mastermanager.h"
+#include "serverapi/mastermanager.h"
 #include "plugins/pluginloader.h"
 #include "apprunner.h"
 
@@ -295,9 +295,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void	refreshThreadBeginsWork();
 		void	refreshThreadEndsWork();
 		void restartAndInstallUpdatesNow();
-		void	runGame(Server*);
-		void	serverAddedToList(Server*);
-		void	showServerJoinCommandLine(const Server*);
+		void	runGame(const ServerPtr&);
+		void	serverAddedToList(const ServerPtr&);
+		void	showServerJoinCommandLine(const ServerPtr&);
 		void	showUpdaterProcessErrorDialog();
 		void	showUpdateInstallErrorDialog();
 

@@ -27,6 +27,24 @@
 
 #include "scanner.h"
 
+class Scanner::PrivData
+{
+	public:
+		ParserState		nextState, prevState, state;
+
+		char*			data;
+		unsigned int	length;
+
+		unsigned int	line;
+		unsigned int	lineStart;
+		unsigned int	logicalPosition;
+		unsigned int	scanPos;
+
+		bool			needNext; // If checkToken returns false this will be false.
+
+		QString			scriptIdentifier;
+};
+
 void (*Scanner::messageHandler)(MessageLevel, const char*, va_list) = NULL;
 
 static const char* const TokenNames[TK_NumSpecialTokens] =
@@ -64,22 +82,29 @@ static const char* const TokenNames[TK_NumSpecialTokens] =
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Scanner::Scanner(const char* data, int length) : line(1), lineStart(0), logicalPosition(0), scanPos(0), needNext(true)
+Scanner::Scanner(const char* data, int length)
 {
+	d = new PrivData();
+	d->line = 1;
+	d->lineStart = 0;
+	d->logicalPosition = 0;
+	d->scanPos = 0;
+	d->needNext = true;
 	if(length == -1)
 		length = strlen(data);
-	this->length = length;
-	this->data = new char[length];
-	memcpy(this->data, data, length);
+	d->length = length;
+	d->data = new char[length];
+	memcpy(d->data, data, length);
 
 	checkForWhitespace();
 
-	state.scanPos = scanPos;
+	d->state.setScanPos(d->scanPos);
 }
 
 Scanner::~Scanner()
 {
-	delete[] data;
+	delete[] d->data;
+	delete d;
 }
 
 // Here's my answer to the preprocessor screwing up line numbers. What we do is
@@ -87,37 +112,37 @@ Scanner::~Scanner()
 // "/*meta:filename:line*/"
 void Scanner::checkForMeta()
 {
-	if(scanPos+10 < length)
+	if(d->scanPos+10 < d->length)
 	{
 		char metaCheck[8];
-		memcpy(metaCheck, data+scanPos, 7);
+		memcpy(metaCheck, d->data+d->scanPos, 7);
 		metaCheck[7] = 0;
 		if(strcmp(metaCheck, "/*meta:") == 0)
 		{
-			scanPos += 7;
-			int metaStart = scanPos;
+			d->scanPos += 7;
+			int metaStart = d->scanPos;
 			int fileLength = 0;
 			int lineLength = 0;
-			while(scanPos < length)
+			while(d->scanPos < d->length)
 			{
-				char thisChar = data[scanPos];
-				char nextChar = scanPos+1 < length ? data[scanPos+1] : 0;
+				char thisChar = d->data[d->scanPos];
+				char nextChar = d->scanPos+1 < d->length ? d->data[d->scanPos+1] : 0;
 				if(thisChar == '*' && nextChar == '/')
 				{
-					lineLength = scanPos-metaStart-1-fileLength;
-					scanPos += 2;
+					lineLength = d->scanPos-metaStart-1-fileLength;
+					d->scanPos += 2;
 					break;
 				}
 				if(thisChar == ':' && fileLength == 0)
-					fileLength = scanPos-metaStart;
-				scanPos++;
+					fileLength = d->scanPos-metaStart;
+				d->scanPos++;
 			}
 			if(fileLength > 0 && lineLength > 0)
 			{
-				setScriptIdentifier(QString::fromAscii(data+metaStart, fileLength));
-				QString lineNumber = QString::fromAscii(data+metaStart+fileLength+1, lineLength);
-				line = atoi(lineNumber.toAscii().constData());
-				lineStart = scanPos;
+				setScriptIdentifier(QString::fromAscii(d->data+metaStart, fileLength));
+				QString lineNumber = QString::fromAscii(d->data+metaStart+fileLength+1, lineLength);
+				d->line = atoi(lineNumber.toAscii().constData());
+				d->lineStart = d->scanPos;
 			}
 		}
 	}
@@ -126,47 +151,47 @@ void Scanner::checkForMeta()
 void Scanner::checkForWhitespace()
 {
 	int comment = 0; // 1 = till next new line, 2 = till end block
-	while(scanPos < length)
+	while(d->scanPos < d->length)
 	{
-		char cur = data[scanPos];
-		char next = scanPos+1 < length ? data[scanPos+1] : 0;
+		char cur = d->data[d->scanPos];
+		char next = d->scanPos+1 < d->length ? d->data[d->scanPos+1] : 0;
 		if(comment == 2)
 		{
 			if(cur != '*' || next != '/')
 			{
 				if(cur == '\n' || cur == '\r')
 				{
-					scanPos++;
+					d->scanPos++;
 					if(comment == 1)
 						comment = 0;
 
 					// Do a quick check for Windows style new line
 					if(cur == '\r' && next == '\n')
-						scanPos++;
+						d->scanPos++;
 					incrementLine();
 				}
 				else
-					scanPos++;
+					d->scanPos++;
 			}
 			else
 			{
 				comment = 0;
-				scanPos += 2;
+				d->scanPos += 2;
 			}
 			continue;
 		}
 
 		if(cur == ' ' || cur == '\t' || cur == 0)
-			scanPos++;
+			d->scanPos++;
 		else if(cur == '\n' || cur == '\r')
 		{
-			scanPos++;
+			d->scanPos++;
 			if(comment == 1)
 				comment = 0;
 
 			// Do a quick check for Windows style new line
 			if(cur == '\r' && next == '\n')
-				scanPos++;
+				d->scanPos++;
 			incrementLine();
 			checkForMeta();
 		}
@@ -183,91 +208,111 @@ void Scanner::checkForWhitespace()
 				default:
 					return;
 			}
-			scanPos += 2;
+			d->scanPos += 2;
 		}
 		else
 		{
 			if(comment == 0)
 				return;
 			else
-				scanPos++;
+				d->scanPos++;
 		}
 	}
 }
 
 bool Scanner::checkToken(char token)
 {
-	if(needNext)
+	if(d->needNext)
 	{
 		if(!nextToken(false))
 			return false;
 	}
 
 	// An int can also be a float.
-	if(nextState.token == token || (nextState.token == TK_IntConst && token == TK_FloatConst))
+	if(d->nextState.token() == token || (d->nextState.token() == TK_IntConst && token == TK_FloatConst))
 	{
-		needNext = true;
+		d->needNext = true;
 		expandState();
 		return true;
 	}
-	needNext = false;
+	d->needNext = false;
 	return false;
+}
+
+int Scanner::currentLine() const
+{
+	return d->state.tokenLine();
+}
+
+int Scanner::currentLinePos() const
+{
+	return d->state.tokenLinePosition();
+}
+
+int Scanner::currentPos() const
+{
+	return d->logicalPosition;
+}
+
+unsigned int Scanner::currentScanPos() const
+{
+	return d->scanPos;
 }
 
 void Scanner::expandState()
 {
-	scanPos = nextState.scanPos;
-	logicalPosition = scanPos;
+	d->scanPos = d->nextState.scanPos();
+	d->logicalPosition = d->scanPos;
 	checkForWhitespace();
 
-	prevState = state;
-	state = nextState;
+	d->prevState = d->state;
+	d->state = d->nextState;
 }
 
 void Scanner::incrementLine()
 {
-	line++;
-	lineStart = scanPos;
+	d->line++;
+	d->lineStart = d->scanPos;
 }
 
 bool Scanner::nextString()
 {
-	nextState.tokenLine = line;
-	nextState.tokenLinePosition = scanPos - lineStart;
-	nextState.token = TK_NoToken;
-	if(!needNext)
-		scanPos = state.scanPos;
+	d->nextState.setTokenLine(d->line);
+	d->nextState.setTokenLinePosition(d->scanPos - d->lineStart);
+	d->nextState.setToken(TK_NoToken);
+	if(!d->needNext)
+		d->scanPos = d->state.scanPos();
 	checkForWhitespace();
-	if(scanPos >= length)
+	if(d->scanPos >= d->length)
 		return false;
 
-	int start = scanPos;
-	int end = scanPos;
-	bool quoted = data[scanPos] == '"';
+	int start = d->scanPos;
+	int end = d->scanPos;
+	bool quoted = d->data[d->scanPos] == '"';
 	if(quoted) // String Constant
 	{
 		end = ++start; // Remove starting quote
-		scanPos++;
-		while(scanPos < length)
+		d->scanPos++;
+		while(d->scanPos < d->length)
 		{
-			char cur = data[scanPos];
+			char cur = d->data[d->scanPos];
 			if(cur == '"')
-				end = scanPos;
+				end = d->scanPos;
 			else if(cur == '\\')
 			{
-				scanPos += 2;
+				d->scanPos += 2;
 				continue;
 			}
-			scanPos++;
+			d->scanPos++;
 			if(start != end)
 				break;
 		}
 	}
 	else // Unquoted string
 	{
-		while(scanPos < length)
+		while(d->scanPos < d->length)
 		{
-			char cur = data[scanPos];
+			char cur = d->data[d->scanPos];
 			switch(cur)
 			{
 				default:
@@ -276,26 +321,26 @@ bool Scanner::nextString()
 				case '\t':
 				case '\n':
 				case '\r':
-					end = scanPos;
+					end = d->scanPos;
 					break;
 			}
 			if(start != end)
 				break;
-			scanPos++;
+			d->scanPos++;
 		}
-		if(scanPos == length)
-			end = scanPos;
+		if(d->scanPos == d->length)
+			end = d->scanPos;
 	}
 	if(end-start > 0)
 	{
-		nextState.scanPos = scanPos;
-		QString thisString = QString::fromAscii(data+start, end-start);
+		d->nextState.setScanPos(d->scanPos);
+		QString thisString = QString::fromAscii(d->data+start, end-start);
 		if(quoted)
 			unescape(thisString);
-		nextState.str = thisString;
-		nextState.token = TK_StringConst;
+		d->nextState.setStr(thisString);
+		d->nextState.setToken(TK_StringConst);
 		expandState();
-		needNext = true;
+		d->needNext = true;
 		return true;
 	}
 	checkForWhitespace();
@@ -304,168 +349,168 @@ bool Scanner::nextString()
 
 bool Scanner::nextToken(bool autoExpandState)
 {
-	if(!needNext)
+	if(!d->needNext)
 	{
-		needNext = true;
+		d->needNext = true;
 		if(autoExpandState)
 			expandState();
 		return true;
 	}
 
-	nextState.tokenLine = line;
-	nextState.tokenLinePosition = scanPos - lineStart;
-	nextState.token = TK_NoToken;
-	if(scanPos >= length)
+	d->nextState.setTokenLine(d->line);
+	d->nextState.setTokenLinePosition(d->scanPos - d->lineStart);
+	d->nextState.setToken(TK_NoToken);
+	if(d->scanPos >= d->length)
 	{
 		if(autoExpandState)
 			expandState();
 		return false;
 	}
 
-	unsigned int start = scanPos;
-	unsigned int end = scanPos;
+	unsigned int start = d->scanPos;
+	unsigned int end = d->scanPos;
 	int integerBase = 10;
 	bool floatHasDecimal = false;
 	bool floatHasExponent = false;
 	bool stringFinished = false; // Strings are the only things that can have 0 length tokens.
 
-	char cur = data[scanPos++];
+	char cur = d->data[d->scanPos++];
 	// Determine by first character
 	if(cur == '_' || (cur >= 'A' && cur <= 'Z') || (cur >= 'a' && cur <= 'z'))
-		nextState.token = TK_Identifier;
+		d->nextState.setToken(TK_Identifier);
 	else if(cur >= '0' && cur <= '9')
 	{
 		if(cur == '0')
 			integerBase = 8;
-		nextState.token = TK_IntConst;
+		d->nextState.setToken(TK_IntConst);
 	}
-	else if(cur == '.' && scanPos < length && data[scanPos] != '.')
+	else if(cur == '.' && d->scanPos < d->length && d->data[d->scanPos] != '.')
 	{
 		floatHasDecimal = true;
-		nextState.token = TK_FloatConst;
+		d->nextState.setToken(TK_FloatConst);
 	}
 	else if(cur == '"')
 	{
 		end = ++start; // Move the start up one character so we don't have to trim it later.
-		nextState.token = TK_StringConst;
+		d->nextState.setToken(TK_StringConst);
 	}
 	else
 	{
-		end = scanPos;
-		nextState.token = cur;
+		end = d->scanPos;
+		d->nextState.setToken(cur);
 
 		// Now check for operator tokens
-		if(scanPos < length)
+		if(d->scanPos < d->length)
 		{
-			char next = data[scanPos];
+			char next = d->data[d->scanPos];
 			if(cur == '&' && next == '&')
-				nextState.token = TK_AndAnd;
+				d->nextState.setToken(TK_AndAnd);
 			else if(cur == '|' && next == '|')
-				nextState.token = TK_OrOr;
+				d->nextState.setToken(TK_OrOr);
 			else if(
 				(cur == '<' && next == '<') ||
 				(cur == '>' && next == '>')
 			)
 			{
 				// Next for 3 character tokens
-				if(scanPos+1 > length && data[scanPos+1] == '=')
+				if(d->scanPos+1 > d->length && d->data[d->scanPos+1] == '=')
 				{
-					scanPos++;
-					nextState.token = cur == '<' ? TK_ShiftLeftEq : TK_ShiftRightEq;
+					d->scanPos++;
+					d->nextState.setToken(cur == '<' ? TK_ShiftLeftEq : TK_ShiftRightEq);
 					
 				}
 				else
-					nextState.token = cur == '<' ? TK_ShiftLeft : TK_ShiftRight;
+					d->nextState.setToken(cur == '<' ? TK_ShiftLeft : TK_ShiftRight);
 			}
 			else if(cur == '#' && next == '#')
-				nextState.token = TK_MacroConcat;
+				d->nextState.setToken(TK_MacroConcat);
 			else if(cur == ':' && next == ':')
-				nextState.token = TK_ScopeResolution;
+				d->nextState.setToken(TK_ScopeResolution);
 			else if(cur == '+' && next == '+')
-				nextState.token = TK_Increment;
+				d->nextState.setToken(TK_Increment);
 			else if(cur == '-')
 			{
 				if(next == '-')
-					nextState.token = TK_Decrement;
+					d->nextState.setToken(TK_Decrement);
 				else if(next == '>')
-					nextState.token = TK_PointerMember;
+					d->nextState.setToken(TK_PointerMember);
 			}
 			else if(cur == '.' && next == '.' &&
-				scanPos+1 < length && data[scanPos+1] == '.')
+				d->scanPos+1 < d->length && d->data[d->scanPos+1] == '.')
 			{
-				nextState.token = TK_Ellipsis;
-				++scanPos;
+				d->nextState.setToken(TK_Ellipsis);
+				++d->scanPos;
 			}
 			else if(next == '=')
 			{
 				switch(cur)
 				{
 					case '=':
-						nextState.token = TK_EqEq;
+						d->nextState.setToken(TK_EqEq);
 						break;
 					case '!':
-						nextState.token = TK_NotEq;
+						d->nextState.setToken(TK_NotEq);
 						break;
 					case '>':
-						nextState.token = TK_GtrEq;
+						d->nextState.setToken(TK_GtrEq);
 						break;
 					case '<':
-						nextState.token = TK_LessEq;
+						d->nextState.setToken(TK_LessEq);
 						break;
 					case '+':
-						nextState.token = TK_AddEq;
+						d->nextState.setToken(TK_AddEq);
 						break;
 					case '-':
-						nextState.token = TK_SubEq;
+						d->nextState.setToken(TK_SubEq);
 						break;
 					case '*':
-						nextState.token = TK_MulEq;
+						d->nextState.setToken(TK_MulEq);
 						break;
 					case '/':
-						nextState.token = TK_DivEq;
+						d->nextState.setToken(TK_DivEq);
 						break;
 					case '%':
-						nextState.token = TK_ModEq;
+						d->nextState.setToken(TK_ModEq);
 						break;
 					case '&':
-						nextState.token = TK_AndEq;
+						d->nextState.setToken(TK_AndEq);
 						break;
 					case '|':
-						nextState.token = TK_OrEq;
+						d->nextState.setToken(TK_OrEq);
 						break;
 					case '^':
-						nextState.token = TK_XorEq;
+						d->nextState.setToken(TK_XorEq);
 						break;
 					default:
 						break;
 				}
 			}
 
-			if(nextState.token != cur)
+			if(d->nextState.token() != cur)
 			{
-				scanPos++;
-				end = scanPos;
+				d->scanPos++;
+				end = d->scanPos;
 			}
 		}
 	}
 
 	if(start == end)
 	{
-		while(scanPos < length)
+		while(d->scanPos < d->length)
 		{
-			cur = data[scanPos];
-			switch(nextState.token)
+			cur = d->data[d->scanPos];
+			switch(d->nextState.token())
 			{
 				default:
 					break;
 				case TK_Identifier:
 					if(cur != '_' && (cur < 'A' || cur > 'Z') && (cur < 'a' || cur > 'z') && (cur < '0' || cur > '9'))
-						end = scanPos;
+						end = d->scanPos;
 					break;
 				case TK_IntConst:
-					if(cur == '.' || (scanPos-1 != start && cur == 'e'))
-						nextState.token = TK_FloatConst;
-					else if((cur == 'x' || cur == 'X') && scanPos-1 == start)
+					if(cur == '.' || (d->scanPos-1 != start && cur == 'e'))
+						d->nextState.setToken(TK_FloatConst);
+					else if((cur == 'x' || cur == 'X') && d->scanPos-1 == start)
 					{
 						integerBase = 16;
 						break;
@@ -476,15 +521,15 @@ bool Scanner::nextToken(bool autoExpandState)
 						{
 							default:
 								if(cur < '0' || cur > '9')
-									end = scanPos;
+									end = d->scanPos;
 								break;
 							case 8:
 								if(cur < '0' || cur > '7')
-									end = scanPos;
+									end = d->scanPos;
 								break;
 							case 16:
 								if((cur < '0' || cur > '9') && (cur < 'A' || cur > 'F') && (cur < 'a' || cur > 'f'))
-									end = scanPos;
+									end = d->scanPos;
 								break;
 						}
 						break;
@@ -501,87 +546,88 @@ bool Scanner::nextToken(bool autoExpandState)
 						{
 							floatHasDecimal = true;
 							floatHasExponent = true;
-							if(scanPos+1 < length)
+							if(d->scanPos+1 < d->length)
 							{
-								char next = data[scanPos+1];
+								char next = d->data[d->scanPos+1];
 								if((next < '0' || next > '9') && next != '+' && next != '-')
-									end = scanPos;
+									end = d->scanPos;
 								else
-									scanPos++;
+									d->scanPos++;
 							}
 							break;
 						}
-						end = scanPos;
+						end = d->scanPos;
 					}
 					break;
 				case TK_StringConst:
 					if(cur == '"')
 					{
 						stringFinished = true;
-						end = scanPos;
-						scanPos++;
+						end = d->scanPos;
+						d->scanPos++;
 					}
 					else if(cur == '\\')
-						scanPos++; // Will add two since the loop automatically adds one
+						d->scanPos++; // Will add two since the loop automatically adds one
 					break;
 			}
 			if(start == end && !stringFinished)
-				scanPos++;
+				d->scanPos++;
 			else
 				break;
 		}
 		// Handle small tokens at the end of a file.
-		if(scanPos == length && !stringFinished)
-			end = scanPos;
+		if(d->scanPos == d->length && !stringFinished)
+			end = d->scanPos;
 	}
 
-	nextState.scanPos = scanPos;
+	d->nextState.setScanPos(d->scanPos);
 	if(end-start > 0 || stringFinished)
 	{
-		nextState.str = QByteArray(data+start, end-start);
-		if(nextState.token == TK_FloatConst)
+		d->nextState.setStr(QByteArray(d->data+start, end-start));
+		if(d->nextState.token() == TK_FloatConst)
 		{
-			if(floatHasDecimal && nextState.str.length() == 1)
+			if(floatHasDecimal && d->nextState.str().length() == 1)
 			{
 				// Don't treat a lone '.' as a decimal.
-				nextState.token = '.';
+				d->nextState.setToken('.');
 			}
 			else
 			{
-				nextState.decimal = nextState.str.toDouble(NULL);
-				nextState.number = static_cast<int> (nextState.decimal);
-				nextState.boolean = (nextState.number != 0);
+				d->nextState.setDecimal(d->nextState.str().toDouble(NULL));
+				d->nextState.setNumber(static_cast<int> (d->nextState.decimal()));
+				d->nextState.setBoolean(d->nextState.number() != 0);
 			}
 		}
-		else if(nextState.token == TK_IntConst)
+		else if(d->nextState.token() == TK_IntConst)
 		{
-			nextState.number = nextState.str.toUInt(NULL, integerBase);
-			nextState.decimal = nextState.number;
-			nextState.boolean = (nextState.number != 0);
+			d->nextState.setNumber(d->nextState.str().toUInt(NULL, integerBase));
+			d->nextState.setDecimal(d->nextState.number());
+			d->nextState.setBoolean(d->nextState.number() != 0);
 		}
-		else if(nextState.token == TK_Identifier)
+		else if(d->nextState.token() == TK_Identifier)
 		{
 			// Check for a boolean constant.
-			if(nextState.str.compare("true") == 0)
+			if(d->nextState.str().compare("true") == 0)
 			{
-				nextState.token = TK_BoolConst;
-				nextState.boolean = true;
+				d->nextState.setToken(TK_BoolConst);
+				d->nextState.setBoolean(true);
 			}
-			else if(nextState.str.compare("false") == 0)
+			else if(d->nextState.str().compare("false") == 0)
 			{
-				nextState.token = TK_BoolConst;
-				nextState.boolean = false;
+				d->nextState.setToken(TK_BoolConst);
+				d->nextState.setBoolean(false);
 			}
 		}
-		else if(nextState.token == TK_StringConst)
+		else if(d->nextState.token() == TK_StringConst)
 		{
-			nextState.str = unescape(nextState.str);
+			QString str = d->nextState.str();
+			d->nextState.setStr(unescape(str));
 		}
 		if(autoExpandState)
 			expandState();
 		return true;
 	}
-	nextState.token = TK_NoToken;
+	d->nextState.setToken(TK_NoToken);
 	if(autoExpandState)
 		expandState();
 	return false;
@@ -592,26 +638,31 @@ void Scanner::mustGetToken(char token)
 	if(!checkToken(token))
 	{
 		expandState();
-		if(token < TK_NumSpecialTokens && state.token < TK_NumSpecialTokens)
-			scriptMessage(Scanner::ML_ERROR, "Expected '%s' but got '%s' instead.", TokenNames[token], TokenNames[state.token]);
-		else if(token < TK_NumSpecialTokens && state.token >= TK_NumSpecialTokens)
-			scriptMessage(Scanner::ML_ERROR, "Expected '%s' but got '%c' instead.", TokenNames[token], state.token);
-		else if(token >= TK_NumSpecialTokens && state.token < TK_NumSpecialTokens)
-			scriptMessage(Scanner::ML_ERROR, "Expected '%c' but got '%s' instead.", token, TokenNames[state.token]);
+		if(token < TK_NumSpecialTokens && d->state.token() < TK_NumSpecialTokens)
+			scriptMessage(Scanner::ML_ERROR, "Expected '%s' but got '%s' instead.", TokenNames[token], TokenNames[d->state.token()]);
+		else if(token < TK_NumSpecialTokens && d->state.token() >= TK_NumSpecialTokens)
+			scriptMessage(Scanner::ML_ERROR, "Expected '%s' but got '%c' instead.", TokenNames[token], d->state.token());
+		else if(token >= TK_NumSpecialTokens && d->state.token() < TK_NumSpecialTokens)
+			scriptMessage(Scanner::ML_ERROR, "Expected '%c' but got '%s' instead.", token, TokenNames[d->state.token()]);
 		else
-			scriptMessage(Scanner::ML_ERROR, "Expected '%c' but got '%c' instead.", token, state.token);
+			scriptMessage(Scanner::ML_ERROR, "Expected '%c' but got '%c' instead.", token, d->state.token());
 	}
 }
 
 void Scanner::rewind()
 {
-	needNext = false;
-	nextState = state;
-	state = prevState;
-	scanPos = state.scanPos;
+	d->needNext = false;
+	d->nextState = d->state;
+	d->state = d->prevState;
+	d->scanPos = d->state.scanPos();
 
-	line = prevState.tokenLine;
-	logicalPosition = prevState.tokenLinePosition;
+	d->line = d->prevState.tokenLine();
+	d->logicalPosition = d->prevState.tokenLinePosition();
+}
+
+const char* Scanner::scriptData() const
+{
+	return d->data;
 }
 
 void Scanner::scriptMessage(MessageLevel level, const char* error, ...) const
@@ -630,8 +681,8 @@ void Scanner::scriptMessage(MessageLevel level, const char* error, ...) const
 			break;
 	}
 
-	char* newMessage = new char[strlen(error) + scriptIdentifier.length() + 25];
-	sprintf(newMessage, "%s:%d:%d:%s: %s\n", scriptIdentifier.toAscii().constData(), currentLine(), currentLinePos(), messageLevel, error);
+	char* newMessage = new char[strlen(error) + d->scriptIdentifier.length() + 25];
+	sprintf(newMessage, "%s:%d:%d:%s: %s\n", d->scriptIdentifier.toAscii().constData(), currentLine(), currentLinePos(), messageLevel, error);
 	va_list list;
 	va_start(list, error);
 	if(messageHandler)
@@ -643,34 +694,55 @@ void Scanner::scriptMessage(MessageLevel level, const char* error, ...) const
 
 	if(!messageHandler && level == ML_ERROR)
 		exit(0);
+
+}
+
+void Scanner::setScriptIdentifier(const QString &ident)
+{
+	d->scriptIdentifier = ident;
 }
 
 int Scanner::skipLine()
 {
 	int ret = currentPos();
-	while(logicalPosition < length)
+	while(d->logicalPosition < d->length)
 	{
-		char thisChar = data[logicalPosition];
-		char nextChar = logicalPosition+1 < length ? data[logicalPosition+1] : 0;
+		char thisChar = d->data[d->logicalPosition];
+		char nextChar = d->logicalPosition+1 < d->length ? d->data[d->logicalPosition+1] : 0;
 		if(thisChar == '\n' || thisChar == '\r')
 		{
-			ret = logicalPosition++; // Return the first newline character we see.
+			ret = d->logicalPosition++; // Return the first newline character we see.
 			if(nextChar == '\r')
-				logicalPosition++;
+				d->logicalPosition++;
 			incrementLine();
 			checkForWhitespace();
 			break;
 		}
-		logicalPosition++;
+		d->logicalPosition++;
 	}
-	if(logicalPosition > scanPos)
+	if(d->logicalPosition > d->scanPos)
 	{
-		scanPos = logicalPosition;
+		d->scanPos = d->logicalPosition;
 		checkForWhitespace();
-		needNext = true;
-		logicalPosition = scanPos;
+		d->needNext = true;
+		d->logicalPosition = d->scanPos;
 	}
 	return ret;
+}
+
+Scanner::ParserState &Scanner::state()
+{
+	return d->state;
+}
+
+const Scanner::ParserState &Scanner::state() const
+{
+	return d->state;
+}
+
+bool Scanner::tokensLeft() const
+{
+	return d->scanPos < d->length;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -697,4 +769,109 @@ const QString& Scanner::unescape(QString &str)
 			str.replace(str.indexOf(sequence, p), 2, escapeCharacters[i]);
 	}
 	return str;
+}
+////////////////////////////////////////////////////////////////////////////////
+class Scanner::ParserState::PrivData
+{
+	public:
+		QString str;
+		unsigned int number;
+		double decimal;
+		bool boolean;
+		char token;
+		unsigned int tokenLine;
+		unsigned int tokenLinePosition;
+		unsigned int scanPos;
+};
+
+COPYABLE_D_POINTERED_INNER_DEFINE(Scanner::ParserState, ParserState);
+
+Scanner::ParserState::ParserState()
+{
+	d = new PrivData();
+}
+
+Scanner::ParserState::~ParserState()
+{
+	delete d;
+}
+
+const QString &Scanner::ParserState::str() const
+{
+	return d->str;
+}
+
+void Scanner::ParserState::setStr(const QString &v)
+{
+	d->str = v;
+}
+
+unsigned int Scanner::ParserState::number() const
+{
+	return d->number;
+}
+
+void Scanner::ParserState::setNumber(unsigned int v)
+{
+	d->number = v;
+}
+
+double Scanner::ParserState::decimal() const
+{
+	return d->decimal;
+}
+
+void Scanner::ParserState::setDecimal(double v)
+{
+	d->decimal = v;
+}
+
+bool Scanner::ParserState::boolean() const
+{
+	return d->boolean;
+}
+
+void Scanner::ParserState::setBoolean(bool v)
+{
+	d->boolean = v;
+}
+
+char Scanner::ParserState::token() const
+{
+	return d->token;
+}
+
+void Scanner::ParserState::setToken(char v)
+{
+	d->token = v;
+}
+
+unsigned int Scanner::ParserState::tokenLine() const
+{
+	return d->tokenLine;
+}
+
+void Scanner::ParserState::setTokenLine(unsigned int v)
+{
+	d->tokenLine = v;
+}
+
+unsigned int Scanner::ParserState::tokenLinePosition() const
+{
+	return d->tokenLinePosition;
+}
+
+void Scanner::ParserState::setTokenLinePosition(unsigned int v)
+{
+	d->tokenLinePosition = v;
+}
+
+unsigned int Scanner::ParserState::scanPos() const
+{
+	return d->scanPos;
+}
+
+void Scanner::ParserState::setScanPos(unsigned int v)
+{
+	d->scanPos = v;
 }

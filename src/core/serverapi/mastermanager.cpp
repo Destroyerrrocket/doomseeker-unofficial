@@ -20,10 +20,13 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
+#include <cassert>
+
 #include "mastermanager.h"
 
-#include "masterserver/masterclientsignalproxy.h"
+#include "serverapi/masterclientsignalproxy.h"
 #include "serverapi/message.h"
+#include "serverapi/server.h"
 #include "customservers.h"
 
 // TODO: I don't think that MasterManager should store a duplicate of each
@@ -36,7 +39,7 @@ MasterManager::MasterManager() : MasterClient()
 
 MasterManager::~MasterManager()
 {
-	servers.clear();
+	clearServers();
 
 	for (int i = 0; i < mastersReceivers.size(); ++i)
 	{
@@ -64,19 +67,15 @@ void MasterManager::addMaster(MasterClient *master)
 		this, SIGNAL( masterMessage(MasterClient*, const QString&, const QString&, bool) ) );
 	connect(pMasterReceiver, SIGNAL( messageImportant(MasterClient*, const Message&) ),
 		this, SIGNAL( masterMessageImportant(MasterClient*, const Message&) ));
-	connect(pMasterReceiver, SIGNAL( newServerBatchReceived(MasterClient*, const QList<Server* >&) ),
-		this, SLOT( newServerBatchReceivedSlot(MasterClient*, const QList<Server* >&) ) );
 
 	mastersReceivers.append(pMasterReceiver);
-
 }
 
 void MasterManager::masterListUpdated(MasterClient* pSender)
 {
-	const QList<Server*>& serversFromMaster = pSender->serverList();
-	foreach(Server* pServer, serversFromMaster)
+	foreach(ServerPtr pServer, pSender->servers())
 	{
-		servers.append(pServer);
+		registerNewServer(pServer);
 	}
 
 	emit listUpdatedForMaster(pSender);
@@ -87,32 +86,17 @@ void MasterManager::masterListUpdated(MasterClient* pSender)
 	}
 }
 
-// [BL] is this actually called anymore?
-bool MasterManager::readMasterResponse(QHostAddress& address, unsigned short port, QByteArray &data)
+MasterManager::Response MasterManager::readMasterResponse(const QByteArray &data)
 {
-	for (int i = 0; i < masters.size(); ++i)
-	{
-		if (masters[i]->isAddressDataCorrect(address, port))
-		{
-			masters[i]->pushPacketToCache(data);
-			if(masters[i]->readMasterResponse(data))
-			{
-				masters[i]->resetPacketCaching();
-				return true;
-			}
-			return false;
-		}
-	}
-
-	return false;
+	assert(0 && "MasterManager::readMasterResponse should not get called.");
+	return RESPONSE_BAD;
 }
 
-void MasterManager::refresh()
+void MasterManager::refreshStarts()
 {
-	bTimeouted = false;
+	setTimeouted(false);
 
-	// Don't delete the servers yet!
-	servers.clear();
+	clearServers();
 
 	for(int i = 0;i < masters.size();i++)
 	{
@@ -122,7 +106,7 @@ void MasterManager::refresh()
 		}
 
 		mastersBeingRefreshed.insert(masters[i]);
-		masters[i]->refresh();
+		masters[i]->refreshStarts();
 	}
 }
 

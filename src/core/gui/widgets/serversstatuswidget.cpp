@@ -26,8 +26,8 @@
 #include <QMouseEvent>
 #include <QPainter>
 
-#include "masterserver/masterclient.h"
 #include "serversstatuswidget.h"
+#include "serverapi/masterclient.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
 
@@ -73,9 +73,9 @@ ServersStatusWidget::ServersStatusWidget(const QPixmap &icon, MasterClient *serv
 	connect(serverList, SIGNAL(listUpdated()), this, SLOT(registerServers()));
 }
 
-void ServersStatusWidget::addServer(Server *server)
+void ServersStatusWidget::addServer(const ServerPtr &server)
 {
-	const PlayersList* playersList = server->playersList();
+	const PlayersList* playersList = server->players();
 	numPlayers += playersList->numClients();
 	numBots += playersList->numBots();
 	updateDisplay();
@@ -105,19 +105,19 @@ void ServersStatusWidget::registerServers()
 	numPlayers = 0;
 	numBots = 0;
 
-	if(serverList != NULL)
+	if (serverList != NULL)
 	{
-		foreach(Server *server, serverList->serverList())
+		foreach(ServerPtr server, serverList->servers())
 		{
-			connect(server, SIGNAL(begunRefreshing(Server *)), this, SLOT(removeServer(Server *)), Qt::DirectConnection);
-			connect(server, SIGNAL(updated(Server *, int)), this, SLOT(addServer(Server *)), Qt::DirectConnection);
+			connect(server.data(), SIGNAL(begunRefreshing(ServerPtr)), this, SLOT(removeServer(ServerPtr)), Qt::DirectConnection);
+			connect(server.data(), SIGNAL(updated(ServerPtr, int)), this, SLOT(addServer(ServerPtr)), Qt::DirectConnection);
 		}
 	}
 }
 
-void ServersStatusWidget::removeServer(Server *server)
+void ServersStatusWidget::removeServer(const ServerPtr &server)
 {
-	const PlayersList* playersList = server->playersList();
+	const PlayersList* playersList = server->players();
 	numPlayers -= playersList->numClients();
 	numBots -= playersList->numBots();
 	updateDisplay();

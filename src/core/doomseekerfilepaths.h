@@ -24,13 +24,22 @@ class MAIN_EXPORT DoomseekerFilePaths
 		static const QString	IP2C_DATABASE_FILENAME;
 		static const QString	IP2C_QT_SEARCH_PATH;
 		static const QString	TEMP_SERVER_CONFIG_FILENAME;
-	
+		static const QString INI_FILENAME;
+		static const QString IRC_INI_FILENAME;
+		static const QString PASSWORD_INI_FILENAME;
+
 		static DataPaths*		pDataPaths;
-		
+
 		static QString			config();
+		static QString ini();
+		static QString ircIni();
 		static QString			ip2cDatabase();
+		static QString passwordIni();
 		static QString			tempServerConfig();
 		static QString updatePackagesStorageDir();
+
+	private:
+		static QString joinIfNeitherEmpty(const QString &left, const QString &right);
 };
 
 #endif

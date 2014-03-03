@@ -24,6 +24,7 @@
 #include "plugins/engineplugin.h"
 
 #include "chocolatedoomengineplugin.h"
+#include "chocolatedoomgamehost.h"
 #include "chocolatedoomgameinfo.h"
 #include "chocolatedoommasterclient.h"
 #include "chocolatedoomserver.h"
@@ -47,12 +48,17 @@ ChocolateDoomEnginePlugin::ChocolateDoomEnginePlugin()
 	);
 }
 
+GameHost* ChocolateDoomEnginePlugin::gameHost()
+{
+	return new ChocolateDoomGameHost();
+}
+
 MasterClient *ChocolateDoomEnginePlugin::masterClient() const
 {
 	return new ChocolateDoomMasterClient();
 }
 
-Server* ChocolateDoomEnginePlugin::server(const QHostAddress &address, unsigned short port) const
+ServerPtr ChocolateDoomEnginePlugin::mkServer(const QHostAddress &address, unsigned short port) const
 {
-	return new ChocolateDoomServer(address, port);
+	return ServerPtr(new ChocolateDoomServer(address, port));
 }

@@ -24,25 +24,36 @@
 
 #include "ip2c/ip2c.h"
 #include "serverapi/server.h"
-#include "main.h"
 
-GeneralInfoTip::GeneralInfoTip(const Server* server)
-: pServer(server)
+class GeneralInfoTip::PrivData
 {
+	public:
+		ServerCPtr server;
+};
+
+GeneralInfoTip::GeneralInfoTip(const ServerCPtr &server)
+{
+	d = new PrivData();
+	d->server = server;
+}
+
+GeneralInfoTip::~GeneralInfoTip()
+{
+	delete d;
 }
 
 QString GeneralInfoTip::generateHTML()
 {
 	QString ret;
-	if (pServer->isKnown())
+	if (d->server->isKnown())
 	{
-		ret += QString(pServer->name()).replace('>', "&gt;").replace('<', "&lt;") + "\n";
-		ret += labelString(tr("Version"), pServer->version());
-		ret += labelString(tr("E-mail"), pServer->eMail());
-		ret += labelString(tr("URL"), pServer->website());
+		ret += QString(d->server->name()).replace('>', "&gt;").replace('<', "&lt;") + "\n";
+		ret += labelString(tr("Version"), d->server->gameVersion());
+		ret += labelString(tr("E-mail"), d->server->email());
+		ret += labelString(tr("URL"), d->server->webSite());
 	}
 
-	IP2CCountryInfo countryInfo = Main::ip2c->obtainCountryInfo(pServer->address());
+	IP2CCountryInfo countryInfo = IP2C::instance()->obtainCountryInfo(d->server->address());
 
 	if (countryInfo.isValid())
 	{

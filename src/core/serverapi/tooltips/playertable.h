@@ -24,23 +24,26 @@
 #define __PLAYER_TABLE_H_
 
 #include "serverapi/playerslist.h"
+#include "serverapi/serverptr.h"
 #include <QHash>
 #include <QList>
 #include <QObject>
 #include <QString>
-
-class Server;
 
 class PlayerTable : public QObject
 {
 	Q_OBJECT
 
 	public:
-		PlayerTable(const Server* server);
+		PlayerTable(const ServerCPtr &server);
+		~PlayerTable();
 
 		QString						generateHTML();
 
-	protected:
+	private:
+		class PrivData;
+		PrivData *d;
+
 		/**
 		 *	@brief Sets numOfColumns based on pServer states.
 		 */
@@ -55,9 +58,6 @@ class PlayerTable : public QObject
 
 		QString						tableContent();
 		QString						tableHeader();
-
-		int							numOfColumns;
-		const Server*				pServer;
 };
 
 #endif

@@ -37,9 +37,10 @@ class CFGIRCSounds : public ConfigurationBaseBox, private Ui::CFGIRCSounds
 		QIcon							icon() const { return QIcon(":/icons/audio-speaker.png"); }
 		QString							name() const { return tr("Sounds"); }
 		void							readSettings();
+		QString							title() const { return tr("IRC - Sounds"); }
 		
 	protected:
-		void							saveSettings();		
+		void							saveSettings();
 		
 	private:
 		QString							getPathToWav();

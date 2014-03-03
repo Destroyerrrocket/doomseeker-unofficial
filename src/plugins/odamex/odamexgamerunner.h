@@ -23,24 +23,19 @@
 #ifndef __ODAMEX_GAME_RUNNER_H_
 #define __ODAMEX_GAME_RUNNER_H_
 
-#include "serverapi/gamerunner.h"
+#include "serverapi/gameclientrunner.h"
 
 class OdamexServer;
 
-class OdamexGameRunner : public GameRunner
+class OdamexGameClientRunner : public GameClientRunner
 {
 	public:
-		OdamexGameRunner(const OdamexServer* server);
+		OdamexGameClientRunner(QSharedPointer<OdamexServer> server);
 
-		bool						connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory);
+	private:
+		QSharedPointer<OdamexServer> server;
 
-	protected:
-		QString argForDemoPlayback() const { return "-netplay"; }
-		QString argForDemoRecord() const { return "-netrecord"; }
-		void hostProperties(QStringList& args) const;
-
-		const OdamexServer*			odamexServer;
-
+		void addExtra();
 };
 
 #endif

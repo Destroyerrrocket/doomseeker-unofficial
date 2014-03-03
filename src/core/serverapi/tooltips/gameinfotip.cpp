@@ -23,12 +23,25 @@
 #include "gameinfotip.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
+#include "serverapi/serverstructs.h"
+
+class GameInfoTip::PrivData
+{
+	public:
+		ServerCPtr server;
+};
 
 const QString GameInfoTip::UNLIMITED = QObject::tr("Unlimited");
 
-GameInfoTip::GameInfoTip(const Server* server)
-: pServer(server)
+GameInfoTip::GameInfoTip(const ServerCPtr &server)
 {
+	d = new PrivData();
+	d->server = server;
+}
+
+GameInfoTip::~GameInfoTip()
+{
+	delete d;
 }
 
 QString GameInfoTip::generateHTML()
@@ -47,15 +60,15 @@ QString	GameInfoTip::playersHTML()
 {
 	const QString PLAYERS = tr("Players");
 
-	const PlayersList* playersList = pServer->playersList();
-	int canJoin = pServer->maximumPlayers() - playersList->numClients();
+	const PlayersList* playersList = d->server->players();
+	int canJoin = d->server->maxPlayers() - playersList->numClients();
 	if(canJoin < 0)
 	{
 		canJoin = 0;
 	}
 
 	QString players = "<tr><td>" + PLAYERS + ":&nbsp;</td><td>%1 / %2 (%3 can join)</td></tr>";
-	players = players.arg(playersList->numClients()).arg(pServer->maximumClients()).arg(canJoin);
+	players = players.arg(playersList->numClients()).arg(d->server->numTotalSlots()).arg(canJoin);
 
 	return players;
 }
@@ -79,7 +92,7 @@ QString	GameInfoTip::limitHTML(QString limitName, QString valueArgsTemplate, int
 QString	GameInfoTip::scorelimitHTML()
 {
 	const QString SCORELIMIT = tr("Scorelimit");
-	QString row = limitHTML(SCORELIMIT, "%1", pServer->scoreLimit());
+	QString row = limitHTML(SCORELIMIT, "%1", d->server->scoreLimit());
 
 	return row;
 }
@@ -87,20 +100,20 @@ QString	GameInfoTip::scorelimitHTML()
 QString GameInfoTip::teamScoresHTML()
 {
 	QString teamScores;
-	if (pServer->gameMode().isTeamGame())
+	if (d->server->gameMode().isTeamGame())
 	{
 		teamScores = "<tr><td colspan=\"2\">%1</td></tr>";
 		QString teams;
 		bool bPrependBar = false;
 		for (int i = 0; i < MAX_TEAMS; ++i)
 		{
-			if (pServer->playersList()->numPlayersOnTeam(i) != 0)
+			if (d->server->players()->numPlayersOnTeam(i) != 0)
 			{
 				if (bPrependBar)
 				{
 					teams += " | ";
 				}
-				teams += pServer->teamName(i) + ": " + QString::number(pServer->score(i));
+				teams += d->server->teamName(i) + ": " + QString::number(d->server->score(i));
 				bPrependBar = true;
 			}
 		}
@@ -113,13 +126,13 @@ QString GameInfoTip::teamScoresHTML()
 QString	GameInfoTip::timelimitHTML()
 {
 	const QString TIMELIMIT = tr("Timelimit");
-	int timeLimit = pServer->timeLimit();
+	int timeLimit = d->server->timeLimit();
 	QString row = limitHTML(TIMELIMIT, "%1 %2", timeLimit);
 
 	QString timeLeft = "";
 	if (timeLimit != 0)
 	{
-		timeLeft = tr("(%1 left)").arg(pServer->timeLeft());
+		timeLeft = tr("(%1 left)").arg(d->server->timeLeft());
 
 	}
 	row = row.arg(timeLeft);

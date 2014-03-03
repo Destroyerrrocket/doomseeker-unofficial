@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>CFGCustomServers</class>
- <widget class="QGroupBox" name="CFGCustomServers">
+ <widget class="QWidget" name="CFGCustomServers">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,13 +10,10 @@
     <height>300</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>GroupBox</string>
-  </property>
-  <property name="title">
-   <string>Custom Servers</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QComboBox" name="cboEngines"/>
    </item>

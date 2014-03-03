@@ -24,6 +24,7 @@
 #define id1E18D75F_28FA_48A1_9CACE55638B41394
 
 #include <QList>
+#include <QSettings>
 #include <QString>
 #include <QStringList>
 
@@ -54,6 +55,7 @@ class PasswordsCfg
 
 	private:
 		static Ini* ini;
+		static QSettings* settings;
 
 		class PrivData;
 		PrivData* d;

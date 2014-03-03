@@ -29,108 +29,140 @@
 
 #include "global.h"
 
-#ifdef Q_OS_WIN32
-#include <windows.h>
-
-#ifdef _MSC_VER
-#pragma warning(disable: 4251)
-#endif
-
-#endif
+#define gPlugins (PluginLoader::instance())
 
 class EnginePlugin;
 
-class MAIN_EXPORT PluginLoader
+class PluginLoader
 {
 	public:
 		/**
 		* This class handles one specific plugin.  It allows for cross-platform access
 		* to the plugins.
 		*/
-		class MAIN_EXPORT Plugin
+		class Plugin
 		{
 			public:
 				/**
-				* Inits a plugin.  Type is an id which it compares with any possible
-				* plugins to confirm it is the right type.
-				*/
+				 * @brief Inits a plugin.
+				 *
+				 * @param type
+				 *     Magic number which is compared with any possible
+				 *     plugins to confirm it is the right type.
+				 * @param file
+				 *     Path to plugin file.
+				 */
 				Plugin(unsigned int type, QString file);
-				~Plugin();
+				virtual ~Plugin();
 
 				/**
-				* Returns a pointer to the requested function or NULL.
-				*/
+				 * @brief Returns a pointer to the requested function or NULL.
+				 */
 				void	*function(const char* func) const;
-
 				void	initConfig();
-
-				bool	isValid() const { return library != NULL; }
-
-				const EnginePlugin	*info;
+				bool	isValid() const;
+				/**
+				 * @brief Main plugin interface.
+				 */
+				EnginePlugin *info() const;
 
 			private:
+				class PrivData;
+				PrivData *d;
+
 				void	unload();
-
-				QString	file;
-
-		#ifdef Q_OS_WIN32
-				HMODULE		library;
-		#else
-				void		*library;
-		#endif
 		};
 
 		/**
-		 * Gathers information about plugins in a particular directory.
-		 * @param directoryLength length of the directory argument.  You do not need to supply if directory is NULL terminated.
+		 * @brief Destroys the init() instance.
 		 */
-		PluginLoader(unsigned int type, const QStringList &baseDirectories, const char* directory, int directoryLength=-1);
-		~PluginLoader();
+		static void deinit();
+		/**
+		 * @brief Attempts to load plugins from given set of directories.
+		 *
+		 * PluginLoader will step through directory in listed order. If
+		 * a directory with at least one valid plugin is encountered, the
+		 * loading process stops and skips all further directories.
+		 *
+		 * This behavior may need to be revised and changed in the future.
+		 */
+		static void init(const QStringList &directories);
+		/**
+		 * @brief Accesses instance of the class after init().
+		 *
+		 * This isn't a real singleton. Call init() before calling this.
+		 * gpPluginLoader and gPluginLoader macros can also be used to
+		 * access the instance.
+		 */
+		static PluginLoader *instance();
+
+		virtual ~PluginLoader();
 
 		/**
-		 * Clears the plugins list
+		 * @brief Clears the plugins list
 		 */
 		void clearPlugins();
 
 		/**
-		 * Inits configuration for plugins.
+		 * @brief Convenience method - calls Plugin::info() for specified
+		 *        plugin.
+		 *
+		 * @return NULL can be returned if plugin with given index is not
+		 * present.
+		 */
+		EnginePlugin *info(int pluginIndex) const;
+
+		/**
+		 * @brief Inits configuration for plugins.
 		 */
 		void initConfig();
 
 		/**
-		 * Gets the number of loaded plugins.  It will return 0 in safe mode.
+		 * @brief Gets the number of loaded plugins.
+		 *
+		 * It will return 0 in safe mode.
 		 */
 		const unsigned int numPlugins() const;
 
 		/**
-		 *	Looks for a plugin which info::name equals to parameter.
-		 * 	@param name - name to look for.
-		 *	@return index of found plugin in the plugin array, or -1
-		 *		if not found.
+		 * @brief Looks for a plugin which name equals to parameter.
+		 *
+		 * @param name
+		 *     Name to look for.
+		 * @return index of found plugin in the plugin array, or -1
+		 *         if not found.
 		 */
 		int pluginIndexFromName(const QString& name) const;
 
-		const QList< Plugin* >& plugins() const
-		{
-			return pluginsList;
-		}
+		const QList<Plugin*> &plugins() const;
+		/**
+		 * @brief Returns the requested plugin or NULL.
+		 */
+		const Plugin* plugin(unsigned int index) const;
 
 		/**
-		 * Resets the plugins directory, clearing the loaded plugins and getting new loaded plugins in the process.
+		 * @brief Resets the plugins directory, clearing the loaded plugins and
+		 *        getting new loaded plugins in the process.
 		 */
 		void resetPluginsDirectory(const QString& pluginsDirectory);
 
 		/**
-		 * Returns the requested plugin or NULL.
+		 * @brief Returns the requested plugin or NULL.
 		 */
 		const Plugin* operator[] (unsigned int index) const;
 
 	private:
-		bool	filesInDir();
+		class PrivData;
+		PrivData *d;
 
-		unsigned int		type;
-		QString				pluginsDirectory;
-		QList<Plugin *>		pluginsList;
+		static PluginLoader *staticInstance;
+
+		/**
+		 * @brief Gathers information about plugins in a particular directory.
+		 */
+		PluginLoader(unsigned int type, const QStringList &directories);
+
+		bool	filesInDir();
 };
 
 #endif /* __PLUGINLOADER_HPP__ */

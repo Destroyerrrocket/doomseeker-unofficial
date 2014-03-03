@@ -23,29 +23,21 @@
 #ifndef DOOMSEEKER_PLUGIN_ZANDRONUMGAMERUNNER_H
 #define DOOMSEEKER_PLUGIN_ZANDRONUMGAMERUNNER_H
 
-#include "serverapi/gamerunner.h"
+#include <serverapi/gameclientrunner.h>
+#include <serverapi/serverptr.h>
 #include "zandronumengineplugin.h"
 
 class ZandronumServer;
 
-class ZandronumGameRunner : public GameRunner
+class ZandronumGameClientRunner : public GameClientRunner
 {
 	public:
-		ZandronumGameRunner(const ZandronumServer* server);
+		ZandronumGameClientRunner(ServerPtr server);
 
-		bool connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound,
-			const QString &connectPassword, const QString &wadTargetDirectory);
+		const EnginePlugin* plugin() const { return ZandronumEnginePlugin::staticInstance(); }
 
-		const EnginePlugin*			plugin() const { return ZandronumEnginePlugin::staticInstance(); }
-		
-	protected:
-		QString						argForConnectPassword() const { return "+cl_password"; }	
-		QString						argForServerLaunch() const { return "-host"; }
-		
-		void						hostDMFlags(QStringList& args, const DMFlags& dmFlags) const;
-		void						hostProperties(QStringList& args) const;
-		
-		
+	private:
+		void addExtra();
 };
 
 #endif

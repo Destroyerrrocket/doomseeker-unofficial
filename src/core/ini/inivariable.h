@@ -32,39 +32,39 @@
 class IniSection;
 
 /**
- *	@brief INI variable representation.
+ * @brief INI variable representation.
  *
- *	Structure containing variable's value and comments. The name of the
- *	variable is not contained in the structure itself to prevent redundancy.
+ * Structure containing variable's value and comments.
  */
 class MAIN_EXPORT IniVariable
 {
 	public:
 		/**
- 		* @brief Creates an invalid IniVariable object. Such object should not
- 		*        be used for read/write operations.
- 		*/
+		* @brief Creates an invalid IniVariable object. Such object should not
+		*        be used for read/write operations.
+		*
+		* isNull() will return true.
+		*/
 		IniVariable();
 
 		/**
-		 * @brief Creates a valid IniVariable object. Read/write operations are
-		 *        permitted.
+		 * @brief Creates a valid IniVariable object.
 		 */
-		IniVariable(IniSection* pSection, const QString& key);
+		IniVariable(const IniSection &section, const QString& key);
+
+		COPYABLE_D_POINTERED_DECLARE(IniVariable);
+		virtual ~IniVariable();
 
 		/**
-	 	* @brief Creates a valid IniVariable, read-only object.
-	 	*
-		 * Only read operations are permitted. Performing write operations
-		 * on such object will fail.
+		 * @brief Name of the variable within the section.
 		 */
-		IniVariable(const IniSection* pSection, const QString& key);
+		const QString& key();
 
 		/**
 		 * @brief If true, IniSection object is not valid and should not be
 		 *        used to perform any actions on the Ini file.
 		 */
-		bool			isNull() const { return pConstSection == NULL; }
+		bool isNull() const;
 
 		/**
 		 * @brief Returns the underlying value as a QString.
@@ -88,7 +88,6 @@ class MAIN_EXPORT IniVariable
 		 */
 		const IniVariable &operator=(bool b);
 		const IniVariable &operator=(float f);
-		const IniVariable &operator=(const IniVariable &other);
 
 		/**
 		 * @brief Attempts to convert the value to QString.
@@ -133,28 +132,8 @@ class MAIN_EXPORT IniVariable
 		friend class TestReadINIVariable;
 		friend class TestReadINIList;
 
-		/**
-		 * @brief For non-const operations. Might be NULL even if pConstSection
-		 *        is not NULL.
-		 */
-		IniSection*			pSection;
-
-		/**
- 		* @brief For const operations. If NULL then IniVariable object is
- 		*        invalid.
- 		*/
-		const IniSection*	pConstSection;
-
-		/**
-		 * @brief The key name of this variable.
-		 */
-		QString				key;
-
-
+		class PrivData;
+		PrivData *d;
 };
-
-typedef QHash<QString, IniVariable>					IniVariables;	// the first QString is the name
-typedef QHash<QString, IniVariable>::iterator		IniVariablesIt;
-typedef QHash<QString, IniVariable>::const_iterator	IniVariablesConstIt;
 
 #endif

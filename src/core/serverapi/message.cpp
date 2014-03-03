@@ -22,25 +22,113 @@
 //------------------------------------------------------------------------------
 #include "message.h"
 
-QString Message::getStringBasingOnType(unsigned type)
+QString StaticMessages::getMessage(unsigned messageType)
 {
-	// Currently nothing to return.
-	switch (type)
+	switch (messageType)
 	{
-		case Types::BANNED_FROM_MASTERSERVER:
-			return QObject::tr("You have been banned from master server.");
-
+		case Message::Type::BANNED_FROM_MASTERSERVER:
+			return tr("You have been banned from master server.");
 		default:
-			return QString("%1 IS NOT A VALID ERROR MESSAGE! FIX THIS!").arg(type);
+			return QString("%1 IS NOT A VALID ERROR MESSAGE! FIX THIS!").arg(messageType);
 	}
+}
+
+class Message::PrivData
+{
+	public:
+		QString content;
+		unsigned timestamp;
+		unsigned type;
+};
+
+Message::Message()
+{
+	d = new PrivData();
+	construct();
+	d->type = Type::IGNORE_TYPE;
+}
+
+Message::Message(unsigned type)
+{
+	d = new PrivData();
+	construct();
+	d->type = type;
+}
+
+Message::Message(unsigned type, const QString &content)
+{
+	d = new PrivData();
+	construct();
+	d->content = content;
+	d->type = type;
+}
+
+Message::Message(const Message &other)
+{
+	d = new PrivData();
+	*d = *other.d;
+}
+
+Message &Message::operator=(const Message &other)
+{
+	if (this != &other)
+	{
+		*d = *other.d;
+	}
+	return *this;
+}
+
+Message::~Message()
+{
+	delete d;
 }
 
 void Message::construct()
 {
 	qRegisterMetaType<Message>("Message");
-
-	this->_type = Types::IGNORE_TYPE;
-
-	// Seconds since the epoch.
-	this->_timestamp = QDateTime::currentDateTime().toTime_t();
+	d->type = Type::IGNORE_TYPE;
+	d->timestamp = QDateTime::currentDateTime().toTime_t();
 }
+
+QString Message::contents() const
+{
+	if (isCustom())
+	{
+		return d->content;
+	}
+	else
+	{
+		return StaticMessages::getMessage(type());
+	}
+}
+
+bool Message::isCustom() const
+{
+	return type() == Type::CUSTOM_ERROR || type() == Type::CUSTOM_INFORMATION;
+}
+
+bool Message::isError() const
+{
+	return type() >= Type::CUSTOM_ERROR;
+}
+
+bool Message::isIgnore() const
+{
+	return type() == Type::IGNORE_TYPE;
+}
+
+bool Message::isInformation() const
+{
+	return (type() >= Type::CUSTOM_INFORMATION) && (type() < Type::CUSTOM_ERROR);
+}
+
+unsigned Message::timestamp() const
+{
+	return d->timestamp;
+}
+
+unsigned Message::type() const
+{
+	return d->type;
+}
+

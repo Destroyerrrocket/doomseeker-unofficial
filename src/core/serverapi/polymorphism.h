@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// tooltipgenerator.h
+// polymorphism.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,43 +18,28 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __TOOLTIP_GENERATOR_H_
-#define __TOOLTIP_GENERATOR_H_
+#ifndef idDB7BACD7_96AF_4A8E_9530F074031E6A19
+#define idDB7BACD7_96AF_4A8E_9530F074031E6A19
 
-#include "global.h"
-#include "player.h"
-#include <QString>
-#include <QObject>
+#define POLYMORPHIC_SETTER_DECLARE(ret, self, name, args) \
+	template<typename X> void set_##name(ret (X::*x)args) \
+	{ \
+		set_##name(static_cast<ret (self::*)args>(x)); \
+	} \
+	void set_##name(ret (self::*f)args); \
 
-class Server;
+#define POLYMORPHIC_DEFINE(ret, self, name, args, callargs) \
+	void self::set_##name(ret (self::*f)args) \
+	{ \
+		d->name = f; \
+	} \
+	ret self::name args \
+	{ \
+		return (this->*d->name)callargs; \
+	}
 
-class MAIN_EXPORT TooltipGenerator : public QObject
-{
-	public:
-		TooltipGenerator(const Server* server);
 
-		/**
-		 *	Should return general info about current game (fraglimit,
-		 *	team scores, etc.)
-		 */
-		virtual QString		gameInfoTableHTML();
-
-		/**
-		 *	Should return general info about server, like server name, version,
-		 *	email, etc.
-		 */
-		virtual QString		generalInfoHTML();
-
-		/**
-		 *	Should return player table (the thing that is created when cursor
-		 *	hovers over players column).
-		 */
-		virtual QString		playerTableHTML();
-
-	protected:
-		const Server*		pServer;
-};
 
 #endif

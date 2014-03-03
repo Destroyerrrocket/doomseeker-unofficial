@@ -29,9 +29,10 @@
 #include <QVector>
 #include "global.h"
 #include "serverapi/serverstructs.h"
+#include "serverapi/serverptr.h"
 
 // Bump whenever the ABI changes in order to reject old plugins
-#define DOOMSEEKER_ABI_VERSION 1
+#define DOOMSEEKER_ABI_VERSION 2
 
 #define DECLARE_PLUGIN(XEnginePlugin) \
 	public: \
@@ -47,11 +48,12 @@
 		return XEnginePlugin::staticInstance(); \
 	}
 
-class Binaries;
 class ConfigurationBaseBox;
 class CreateServerDialog;
 class CreateServerDialogPage;
 class GameCVar;
+class GameExeFactory;
+class GameHost;
 class GameMode;
 class IniSection;
 class IRCNetworkEntity;
@@ -119,8 +121,8 @@ class MAIN_EXPORT EnginePlugin
 		{
 			public:
 				unsigned int			abiVersion;
-				/// List of all engine's DMFlags or NULL if none.
-				const DMFlags*			allDMFlags;
+				/// List of all engine's DM flags or NULL if none.
+				const QList<DMFlagsSection>* allDMFlags;
 				bool					allowsConnectPassword;
 				bool					allowsEmail;
 				bool					allowsJoinPassword;
@@ -167,6 +169,16 @@ class MAIN_EXPORT EnginePlugin
 				 */
 				bool					createDMFlagsPagesAutomatic;
 				bool					clientOnly;
+				/**
+				 * @brief Factory of executable retrievers objects.
+				 *
+				 * By default this is a simple instance of GameExeFactory.
+				 * If custom behavior is needed, plugins shouldn't overwrite
+				 * the class or the contents of the pointer, but instead
+				 * public setter methods should be used to set appropriate
+				 * strategies. Refer to GameExeFactory doc for more details.
+				 */
+				GameExeFactory *gameExeFactory;
 
 				Data();
 		};
@@ -217,6 +229,20 @@ class MAIN_EXPORT EnginePlugin
 		const QPixmap					&icon() const { return *d->icon; }
 		void							setConfig(IniSection &cfg) const;
 
+		GameExeFactory *gameExe()
+		{
+			return data()->gameExeFactory;
+		}
+
+		/**
+		 * @brief Creates an instance of GameHost derivative class.
+		 *
+		 * Gets a pointer to a new instance of GameHost's
+		 * descendant (defined by a plugin). Created instance should be deleted
+		 * manually by the programmer.
+		 */
+		virtual GameHost* gameHost();
+
 		/**
 		 *	@brief Returns a list of limits (like fraglimit) supported by passed
 		 *	gamemode.
@@ -233,14 +259,23 @@ class MAIN_EXPORT EnginePlugin
 		void							masterHost(QString &host, unsigned short &port) const;
 
 		/**
-		 *	@brief Creates an instance of server object from this plugin.
-		 *	This might be useful for custom servers.
-		 * 	@return instance of plugin's server object
+		 * @brief Creates an instance of server object from this plugin.
+		 *
+		 * This might be useful for custom servers.
+		 *
+		 * @return instance of plugin's server object
 		 */
-		virtual Server*					server(const QHostAddress &address, unsigned short port) const = 0;
+		virtual ServerPtr server(const QHostAddress &address, unsigned short port) const;
+
+	protected:
+		/**
+		 * @brief Create an instance of local Server subclass and return
+		 *        a ServerPtr.
+		 */
+		virtual ServerPtr mkServer(const QHostAddress &address, unsigned short port) const = 0;
 
 	private:
-		Data	*d;
+		Data *d;
 };
 
 #endif

@@ -25,15 +25,21 @@
 #include "configuration/doomseekerconfig.h"
 #include "copytextdlg.h"
 #include "gui/widgets/createserverdialogpage.h"
-#include "main.h"
+#include "datapaths.h"
 #include "commongui.h"
 #include "ini/ini.h"
+#include "ini/settingsproviderqt.h"
+#include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
+#include "plugins/pluginloader.h"
 #include "scanner.h"
-#include "serverapi/binaries.h"
-#include "serverapi/gamerunner.h"
+#include "serverapi/exefile.h"
+#include "serverapi/gameexeretriever.h"
+#include "serverapi/gamecreateparams.h"
+#include "serverapi/gamehost.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
+#include "apprunner.h"
 #include "commandline.h"
 #include "strings.h"
 
@@ -44,20 +50,34 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QObject>
+#include <QScopedPointer>
 #include <QStandardItemModel>
 #include <QTimer>
+
+class CreateServerDialog::PrivData
+{
+	public:
+		bool bSuppressMissingExeErrors;
+		bool bIsServerSetup;
+		QList<CreateServerDialogPage*> currentCustomPages;
+		EnginePlugin *currentEngine;
+		QList<DMFlagsTabWidget*> dmFlagsTabs;
+		QList<GameLimitWidget*> limitWidgets;
+		QList<GameCVar> gameModifiers;
+};
 
 const QString CreateServerDialog::TEMP_SERVER_CONFIG_FILENAME = "/tmpserver.ini";
 
 CreateServerDialog::CreateServerDialog(QWidget* parent)
 : QDialog(parent)
 {
+	d = new PrivData();
 	// Have the console delete itself
 	setAttribute(Qt::WA_DeleteOnClose);
 
-	bSuppressMissingExeErrors = true;
-	bIsServerSetup = false;
-	currentEngine = NULL;
+	d->bSuppressMissingExeErrors = true;
+	d->bIsServerSetup = false;
+	d->currentEngine = NULL;
 
 	setupUi(this);
 	connect(btnAddMapToMaplist, SIGNAL( clicked() ), this, SLOT ( btnAddMapToMaplistClicked() ) );
@@ -88,7 +108,7 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 	lstMaplist->setModel(new QStandardItemModel(this));
 
 	initPrimary();
-	bSuppressMissingExeErrors = false;
+	d->bSuppressMissingExeErrors = false;
 
 	// This is a crude solution to the problem where message boxes appear
 	// before the actual Create Server dialog. We need to give some time
@@ -99,7 +119,7 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 
 CreateServerDialog::~CreateServerDialog()
 {
-
+	delete d;
 }
 
 void CreateServerDialog::addIwad(const QString& path)
@@ -239,27 +259,14 @@ void CreateServerDialog::btnCommandLineClicked()
 
 void CreateServerDialog::btnDefaultExecutableClicked()
 {
-	QString error;
-
-	// The info here doesn't really matter. We need to create a Server instance
-	// because this is the only way to get Binaries instance.
-	//
-	// Explanation: such horrendous heresy wouldn't be necessary if not for
-	// the Skulltag testing system which requires passing a SkulltagServer*
-	// to SkulltagBinaries constructor. This renders getting Binaries through
-	// plugin's interface a not recommended feature.
-	Server* server = currentEngine->server(QHostAddress("127.0.0.1"), 0);
-	Binaries* binaries = server->binaries();
 	Message message;
-	leExecutable->setText(binaries->serverBinary(message));
+	leExecutable->setText(pathToServerExe(message));
 
 	if (!message.isIgnore())
 	{
-		QMessageBox::critical(NULL, tr("Obtaining default server binary path."), message.contents(), QMessageBox::Ok, QMessageBox::Ok);
+		QMessageBox::critical(NULL, tr("Obtaining default server binary path."),
+			message.contents(),QMessageBox::Ok, QMessageBox::Ok);
 	}
-
-	delete binaries;
-	delete server;
 }
 
 void CreateServerDialog::btnIwadBrowseClicked()
@@ -331,7 +338,7 @@ void CreateServerDialog::btnSaveClicked()
 
 void CreateServerDialog::btnStartServerClicked()
 {
-	if(!bIsServerSetup)
+	if(!d->bIsServerSetup)
 		runGame(false);
 	else
 		accept();
@@ -342,14 +349,9 @@ void CreateServerDialog::cboEngineSelected(int index)
 	if (index >= 0)
 	{
 		unsigned enginePluginIndex = cboEngine->itemData(index).toUInt();
-		if (enginePluginIndex < Main::enginePlugins->numPlugins())
+		if (enginePluginIndex < gPlugins->numPlugins())
 		{
-			// TODO Review if the 'const' modifier for PluginLoader::info
-			// is really necessary. Possibly get rid of it.
-			EnginePlugin* nfo = const_cast<EnginePlugin*>(
-				(*Main::enginePlugins)[enginePluginIndex]->info);
-
-			initEngineSpecific(nfo);
+			initEngineSpecific(gPlugins->info(enginePluginIndex));
 		}
 	}
 }
@@ -358,7 +360,7 @@ void CreateServerDialog::cboGamemodeSelected(int index)
 {
 	if (index >= 0)
 	{
-		const QList<GameMode>* gameModes = currentEngine->data()->gameModes;
+		const QList<GameMode>* gameModes = d->currentEngine->data()->gameModes;
 		if (gameModes != NULL)
 		{
 			initGamemodeSpecific((*gameModes)[index]);
@@ -369,25 +371,21 @@ void CreateServerDialog::cboGamemodeSelected(int index)
 bool CreateServerDialog::commandLineArguments(QString &executable, QStringList &args)
 {
 	const QString errorCapt = tr("Doomseeker - create server");
-	if (currentEngine == NULL)
+	if (d->currentEngine == NULL)
 	{
 		QMessageBox::critical(NULL, errorCapt, tr("No engine selected"));
 		return false;
 	}
 
-	Server* server = currentEngine->server(QHostAddress(), spinPort->value());
-	HostInfo hi;
-	GameRunner::HostMode mode = bIsServerSetup ? GameRunner::OFFLINE : GameRunner::HOST;
-
-	if (createHostInfo(hi, server, mode))
+	GameCreateParams gameParams;
+	if (createHostInfo(gameParams, false))
 	{
 		CommandLineInfo cli;
 		QString error;
 
-		GameRunner* gameRunner = server->gameRunner();
-		Message message = gameRunner->createHostCommandLine(hi, cli, mode);
+		GameHost* gameRunner = d->currentEngine->gameHost();
+		Message message = gameRunner->createHostCommandLine(gameParams, cli);
 
-		delete server;
 		delete gameRunner;
 
 		if (message.isError())
@@ -402,141 +400,129 @@ bool CreateServerDialog::commandLineArguments(QString &executable, QStringList &
 			return true;
 		}
 	}
-	else if (server != NULL)
-	{
-		delete server;
-	}
 	return false;
 }
 
-bool CreateServerDialog::createHostInfo(HostInfo& hostInfo, Server* server, bool offline)
+bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 {
-	if (server != NULL)
+	// Since some operating systems have different offline and server binaries
+	// We will see if they are playing offline and switch to the client
+	// binary if the specified executable is the same as what is provided
+	// as the server.
+	Message message;
+	QString offlineExePath = pathToOfflineExe(message);
+	QString serverExePath = pathToServerExe(message);
+	bool bIsLineEditPotiningToServerBinary = (leExecutable->text() == serverExePath);
+	bool bShouldUseClientBinary = (offline || d->bIsServerSetup) && message.isIgnore() && bIsLineEditPotiningToServerBinary;
+
+	params.setHostMode(offline ? GameCreateParams::Offline : GameCreateParams::Host);
+	if (bShouldUseClientBinary)
 	{
-		// Since some operating systems have different client and server binaries
-		// We will see if they are playing offline and switch to the client
-		// binary if the specified executable is the same as what is provided
-		// as the server.
-		Binaries *binaries = server->binaries();
-		Message message;
-		QString client = binaries->clientBinary(message);
+		params.setExecutablePath(offlineExePath);
+	}
+	else
+	{
+		params.setExecutablePath(leExecutable->text());
+	}
 
-		bool bIsLineEditPotiningToServerBinary = (leExecutable->text() == binaries->serverBinary(message));
-		bool bShouldUseClientBinary = (offline || bIsServerSetup) && message.isIgnore() && bIsLineEditPotiningToServerBinary;
+	params.setIwadPath(cboIwad->currentText());
+	params.setPwadsPaths(CommonGUI::listViewStandardItemsToStringList(lstAdditionalFiles));
 
-		if(bShouldUseClientBinary)
+	// DMFlags
+	foreach(const DMFlagsTabWidget* p, d->dmFlagsTabs)
+	{
+		DMFlagsSection sec(p->section.name());
+		for (int i = 0; i < p->section.count(); ++i)
 		{
-			hostInfo.executablePath = client;
+			if (p->checkBoxes[i]->isChecked())
+			{
+				sec.add(p->section[i]);
+			}
+		}
+		params.dmFlags() << sec;
+	}
+
+	// Custom pages.
+	QStringList customPagesParams;
+	foreach (CreateServerDialogPage* page, d->currentCustomPages)
+	{
+		if (page->validate())
+		{
+			customPagesParams << page->generateGameRunParameters();
 		}
 		else
 		{
-			hostInfo.executablePath = leExecutable->text();
+			// Pages must take care of displaying their own error messages.
+			tabWidget->setCurrentIndex(tabWidget->indexOf(page));
+			return false;
 		}
+	}
+	params.setCustomParameters(customPagesParams);
 
-		hostInfo.iwadPath = cboIwad->currentText();
-		hostInfo.pwadsPaths = CommonGUI::listViewStandardItemsToStringList(lstAdditionalFiles);
-
-		// DMFlags
-		foreach(const DMFlagsTabWidget* p, dmFlagsTabs)
-		{
-			DMFlagsSection* sec = new DMFlagsSection();
-			sec->name = p->section->name;
-
-			for (int i = 0; i < p->section->flags.count(); ++i)
-			{
-				if (p->checkBoxes[i]->isChecked())
-				{
-					sec->flags << p->section->flags[i];
-				}
-			}
-
-			hostInfo.dmFlags << sec;
-		}
-
-		// Custom pages.
-		QStringList customPagesParams;
-		foreach (CreateServerDialogPage* page, currentCustomPages)
-		{
-			if (page->validate())
-			{
-				customPagesParams << page->generateGameRunParameters();
-			}
-			else
-			{
-				// Pages must take care of displaying their own error messages.
-				tabWidget->setCurrentIndex(tabWidget->indexOf(page));
-				return false;
-			}
-		}
-		hostInfo.customParameters << customPagesParams;
-
-		// limits
-		foreach(GameLimitWidget* p, limitWidgets)
-		{
-			p->limit.setValue(p->spinBox->value());
-			hostInfo.cvars << p->limit;
-		}
-
-		// modifier
-		int modIndex = cboModifier->currentIndex();
-		if (modIndex > 0) // Index zero is always "< NONE >"
-		{
-			--modIndex;
-			gameModifiers[modIndex].setValue(1);
-			hostInfo.cvars << gameModifiers[modIndex];
-		}
-
-		// Custom parameters
-		{
-			QString cp = pteCustomParameters->toPlainText();
-			Scanner sc(cp.toAscii().constData(), cp.length());
-			while(sc.nextString())
-			{
-				QString param = sc->str;
-				hostInfo.customParameters << param;
-			}
-		}
-
-		// Other
-		server->setBroadcastToLAN(cbBroadcastToLAN->isChecked());
-		server->setBroadcastToMaster(cbBroadcastToMaster->isChecked());
-		server->setHostEmail(leEmail->text());
-		server->setMap(leMap->text());
-		server->setMapList(CommonGUI::listViewStandardItemsToStringList(lstMaplist));
-		server->setRandomMapRotation(cbRandomMapRotation->isChecked());
-		server->setMaximumClients(spinMaxClients->value());
-		server->setMaximumPlayers(spinMaxPlayers->value());
-		server->setMOTD(pteMOTD->toPlainText());
-		server->setName(leServername->text());
-		server->setPasswordConnect(leConnectPassword->text());
-		server->setPasswordJoin(leJoinPassword->text());
-		server->setPasswordRCon(leRConPassword->text());
-		server->setPort(spinPort->value());
-		server->setSkill(cboDifficulty->currentIndex());
-		server->setWebsite(leURL->text());
-
-		const QList<GameMode>* gameModes = currentEngine->data()->gameModes;
-		if (gameModes != NULL)
-		{
-			for (int i = 0; i < gameModes->count(); ++i)
-			{
-				if ((*gameModes)[i].name().compare(cboGamemode->currentText()) == 0)
-				{
-					server->setGameMode((*gameModes)[i]);
-					break;
-				}
-			}
-		}
-
-		return true;
+	// limits
+	foreach(GameLimitWidget* p, d->limitWidgets)
+	{
+		p->limit.setValue(p->spinBox->value());
+		params.cvars() << p->limit;
 	}
 
-	return false;
+	// modifier
+	int modIndex = cboModifier->currentIndex();
+	if (modIndex > 0) // Index zero is always "< NONE >"
+	{
+		--modIndex;
+		d->gameModifiers[modIndex].setValue(1);
+		params.cvars() << d->gameModifiers[modIndex];
+	}
+
+	// Custom parameters
+	{
+		QString cp = pteCustomParameters->toPlainText();
+		Scanner sc(cp.toAscii().constData(), cp.length());
+		while (sc.nextString())
+		{
+			QString param = sc->str();
+			params.customParameters() << param;
+		}
+	}
+
+	// Other
+	params.setBroadcastToLan(cbBroadcastToLAN->isChecked());
+	params.setBroadcastToMaster(cbBroadcastToMaster->isChecked());
+	params.setEmail(leEmail->text());
+	params.setMap(leMap->text());
+	params.setMapList(CommonGUI::listViewStandardItemsToStringList(lstMaplist));
+	params.setRandomMapRotation(cbRandomMapRotation->isChecked());
+	params.setMaxClients(spinMaxClients->value());
+	params.setMaxPlayers(spinMaxPlayers->value());
+	params.setMotd(pteMOTD->toPlainText());
+	params.setName(leServername->text());
+	params.setConnectPassword(leConnectPassword->text());
+	params.setIngamePassword(leJoinPassword->text());
+	params.setRconPassword(leRConPassword->text());
+	params.setPort(spinPort->value());
+	params.setSkill(cboDifficulty->currentIndex());
+	params.setUrl(leURL->text());
+
+	const QList<GameMode>* gameModes = d->currentEngine->data()->gameModes;
+	if (gameModes != NULL)
+	{
+		foreach (const GameMode& mode, (*gameModes))
+		{
+			if (mode.name().compare(cboGamemode->currentText()) == 0)
+			{
+				params.setGameMode(mode);
+				break;
+			}
+		}
+	}
+
+	return true;
 }
 
 void CreateServerDialog::firstLoadConfigTimer()
 {
-	QString tmpServerCfgPath = Main::dataPaths->programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
+	QString tmpServerCfgPath = gDefaultDataPaths->programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
 
 	QFileInfo fi(tmpServerCfgPath);
 	if (fi.exists())
@@ -562,16 +548,16 @@ void CreateServerDialog::initDMFlagsTabs()
 {
 	removeDMFlagsTabs();
 
-	if (currentEngine->data()->createDMFlagsPagesAutomatic)
+	if (d->currentEngine->data()->createDMFlagsPagesAutomatic)
 	{
 		int paramsIndex = tabWidget->indexOf(tabCustomParameters);
-		const DMFlags* dmFlagsSec = currentEngine->data()->allDMFlags;
+		const QList<DMFlagsSection>* dmFlagsSec = d->currentEngine->data()->allDMFlags;
 		if(dmFlagsSec == NULL || dmFlagsSec->empty())
 		{
 			return; // Nothing to do
 		}
 
-		const QList<DMFlagsSection*>& dmFlagsSections = *dmFlagsSec;
+		const QList<DMFlagsSection>& dmFlagsSections = *dmFlagsSec;
 
 		for (int i = 0; i < dmFlagsSections.count(); ++i)
 		{
@@ -584,7 +570,7 @@ void CreateServerDialog::initDMFlagsTabs()
 			QHBoxLayout* hLayout = new QHBoxLayout(flagsTab);
 
 			QVBoxLayout* layout = NULL;
-			for (int j = 0; j < dmFlagsSections[i]->flags.count(); ++j)
+			for (int j = 0; j < dmFlagsSections[i].count(); ++j)
 			{
 				if ((j % 16) == 0)
 				{
@@ -598,7 +584,7 @@ void CreateServerDialog::initDMFlagsTabs()
 				}
 
 				QCheckBox* checkBox = new QCheckBox();
-				checkBox->setText(dmFlagsSections[i]->flags[j].name);
+				checkBox->setText(dmFlagsSections[i].name());
 				dmftw->checkBoxes << checkBox;
 				layout->addWidget(checkBox);
 			}
@@ -608,33 +594,36 @@ void CreateServerDialog::initDMFlagsTabs()
 				layout->addStretch();
 			}
 
-			dmFlagsTabs << dmftw;
-			tabWidget->insertTab(paramsIndex++, flagsTab, dmFlagsSections[i]->name);
+			d->dmFlagsTabs << dmftw;
+			tabWidget->insertTab(paramsIndex++, flagsTab, dmFlagsSections[i].name());
 		}
 	}
 }
 
 void CreateServerDialog::initEngineSpecific(EnginePlugin* engineInfo)
 {
-	if (engineInfo == currentEngine || engineInfo == NULL)
+	if (engineInfo == d->currentEngine || engineInfo == NULL)
 	{
 		return;
 	}
 
-	currentEngine = engineInfo;
+	d->currentEngine = engineInfo;
 
 	// Executable path
 	Message message;
 
-	// See: btnDefaultExecutableClicked()
-	Server* server = currentEngine->server(QHostAddress("127.0.0.1"), 1);
-	Binaries* binaries = server->binaries();
-	if(bIsServerSetup)
-		leExecutable->setText(binaries->clientBinary(message));
+	if (d->bIsServerSetup)
+	{
+		// TODO: something weird, perhaps just refer to offline executable here?
+		ServerPtr server = d->currentEngine->server(QHostAddress("127.0.0.1"), 1);
+		leExecutable->setText(pathToClientExe(server.data(), message));
+	}
 	else
-		leExecutable->setText(binaries->serverBinary(message));
+	{
+		leExecutable->setText(pathToServerExe(message));
+	}
 
-	if (message.isError() && !bSuppressMissingExeErrors)
+	if (message.isError() && !d->bSuppressMissingExeErrors)
 	{
 		QString caption = tr("Doomseeker - error obtaining server binary");
 		QString error = tr("Server binary for engine \"%1\" cannot be obtained.\nFollowing error has occured:\n%2").arg(engineInfo->data()->name, message.contents());
@@ -642,14 +631,11 @@ void CreateServerDialog::initEngineSpecific(EnginePlugin* engineInfo)
 		QMessageBox::warning(NULL, caption, error);
 	}
 
-	delete binaries;
-	delete server;
-
-	spinPort->setValue(currentEngine->data()->defaultServerPort);
+	spinPort->setValue(d->currentEngine->data()->defaultServerPort);
 
 	cboGamemode->clear();
 
-	const QList<GameMode>* gameModes = currentEngine->data()->gameModes;
+	const QList<GameMode>* gameModes = d->currentEngine->data()->gameModes;
 	if (gameModes != NULL)
 	{
 		for (int i = 0; i < gameModes->count(); ++i)
@@ -672,18 +658,18 @@ void CreateServerDialog::initEngineSpecific(EnginePlugin* engineInfo)
 void CreateServerDialog::initEngineSpecificPages(EnginePlugin* engineInfo)
 {
 	// First, get rid of the original pages.
-	foreach (CreateServerDialogPage* page, currentCustomPages)
+	foreach (CreateServerDialogPage* page, d->currentCustomPages)
 	{
 		delete page;
 	}
-	currentCustomPages.clear();
+	d->currentCustomPages.clear();
 
 	// Add new custom pages to the dialog.
-	currentCustomPages = engineInfo->createServerDialogPages(this);
-	foreach (CreateServerDialogPage* page, currentCustomPages)
+	d->currentCustomPages = engineInfo->createServerDialogPages(this);
+	foreach (CreateServerDialogPage* page, d->currentCustomPages)
 	{
 		int idxInsertAt = tabWidget->indexOf(tabCustomParameters);
-		tabWidget->insertTab(idxInsertAt, page, page->name);
+		tabWidget->insertTab(idxInsertAt, page, page->name());
 	}
 }
 
@@ -691,14 +677,14 @@ void CreateServerDialog::initGamemodeSpecific(const GameMode& gameMode)
 {
 	// Rules tab
 	removeLimitWidgets();
-	QList<GameCVar> limits = currentEngine->limits(gameMode);
+	QList<GameCVar> limits = d->currentEngine->limits(gameMode);
 	QList<GameCVar>::iterator it;
 
 	int number = 0;
 	for (it = limits.begin(); it != limits.end(); ++it, ++number)
 	{
 		QLabel* label = new QLabel(this);
-		label->setText(it->name);
+		label->setText(it->name());
 		QSpinBox* spinBox = new QSpinBox(this);
 		spinBox->setMaximum(999999);
 
@@ -708,7 +694,7 @@ void CreateServerDialog::initGamemodeSpecific(const GameMode& gameMode)
 		glw->label = label;
 		glw->spinBox = spinBox;
 		glw->limit = (*it);
-		limitWidgets << glw;
+		d->limitWidgets << glw;
 	}
 }
 
@@ -719,32 +705,32 @@ void CreateServerDialog::initInfoAndPassword()
 	bool bAtLeastOneVisible = false;
 	bool bIsVisible = false;
 
-	bIsVisible = currentEngine->data()->allowsConnectPassword;
+	bIsVisible = d->currentEngine->data()->allowsConnectPassword;
 	labelConnectPassword->setVisible(bIsVisible);
 	leConnectPassword->setVisible(bIsVisible);
 	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
 
-	bIsVisible = currentEngine->data()->allowsEmail;
+	bIsVisible = d->currentEngine->data()->allowsEmail;
 	labelEmail->setVisible(bIsVisible);
 	leEmail->setVisible(bIsVisible);
 	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
 
-	bIsVisible = currentEngine->data()->allowsJoinPassword;
+	bIsVisible = d->currentEngine->data()->allowsJoinPassword;
 	labelJoinPassword->setVisible(bIsVisible);
 	leJoinPassword->setVisible(bIsVisible);
 	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
 
-	bIsVisible = currentEngine->data()->allowsMOTD;
+	bIsVisible = d->currentEngine->data()->allowsMOTD;
 	labelMOTD->setVisible(bIsVisible);
 	pteMOTD->setVisible(bIsVisible);
 	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
 
-	bIsVisible = currentEngine->data()->allowsRConPassword;
+	bIsVisible = d->currentEngine->data()->allowsRConPassword;
 	labelRConPassword->setVisible(bIsVisible);
 	leRConPassword->setVisible(bIsVisible);
 	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
 
-	bIsVisible = currentEngine->data()->allowsURL;
+	bIsVisible = d->currentEngine->data()->allowsURL;
 	labelURL->setVisible(bIsVisible);
 	leURL->setVisible(bIsVisible);
 	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
@@ -756,10 +742,10 @@ void CreateServerDialog::initPrimary()
 {
 	cboEngine->clear();
 
-	for (unsigned i = 0; i < Main::enginePlugins->numPlugins(); ++i)
+	for (unsigned i = 0; i < gPlugins->numPlugins(); ++i)
 	{
-		const EnginePlugin* nfo = (*Main::enginePlugins)[i]->info;
-		cboEngine->addItem(nfo->icon(), nfo->data()->name, i);
+		const EnginePlugin* plugin = gPlugins->info(i);
+		cboEngine->addItem(plugin->icon(), plugin->data()->name, i);
 	}
 
 	if (cboEngine->count() > 0)
@@ -792,12 +778,12 @@ void CreateServerDialog::initPrimary()
 
 void CreateServerDialog::initRules()
 {
-	cbRandomMapRotation->setVisible(currentEngine->data()->supportsRandomMapRotation);
+	cbRandomMapRotation->setVisible(d->currentEngine->data()->supportsRandomMapRotation);
 
 	cboModifier->clear();
-	gameModifiers.clear();
+	d->gameModifiers.clear();
 
-	const QList<GameCVar>* pEngineGameModifiers = currentEngine->data()->gameModifiers;
+	const QList<GameCVar>* pEngineGameModifiers = d->currentEngine->data()->gameModifiers;
 
 	if (pEngineGameModifiers != NULL && !pEngineGameModifiers->isEmpty())
 	{
@@ -810,8 +796,8 @@ void CreateServerDialog::initRules()
 
 		for (int i = 0; i < engineGameModifiers.count(); ++i)
 		{
-			cboModifier->addItem(engineGameModifiers[i].name);
-			gameModifiers << engineGameModifiers[i];
+			cboModifier->addItem(engineGameModifiers[i].name());
+			d->gameModifiers << engineGameModifiers[i];
 		}
 	}
 	else
@@ -825,21 +811,23 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 {
 	QAbstractItemModel* model;
 	QStringList stringList;
-	Ini ini(filename);
+	QSettings settingsFile(filename, QSettings::IniFormat);
+	SettingsProviderQt settingsProvider(&settingsFile);
+	Ini ini(&settingsProvider);
 	IniSection general = ini.section("General");
 	IniSection rules = ini.section("Rules");
 	IniSection misc = ini.section("Misc");
 	IniSection dmflags = ini.section("DMFlags");
 
 	// General
-	if(!bIsServerSetup)
+	if (!d->bIsServerSetup)
 	{
 		QString engineName = general["engine"];
-		const EnginePlugin* prevEngine = currentEngine;
+		const EnginePlugin* prevEngine = d->currentEngine;
 		if(!setEngine(engineName))
 			return false;
 
-		bool bChangeExecutable = (prevEngine != currentEngine || !cbLockExecutable->isChecked());
+		bool bChangeExecutable = (prevEngine != d->currentEngine || !cbLockExecutable->isChecked());
 
 		// First let's check if we can use executable stored in the server's config.
 		// We will save the path to this executable in a local variable.
@@ -888,10 +876,9 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 	spinMaxClients->setValue(rules["maxClients"]);
 	spinMaxPlayers->setValue(rules["maxPlayers"]);
 
-	QList<GameLimitWidget*>::iterator it;
-	for (it = limitWidgets.begin(); it != limitWidgets.end(); ++it)
+	foreach (GameLimitWidget* widget, d->limitWidgets)
 	{
-		(*it)->spinBox->setValue(rules[(*it)->limit.consoleCommand]);
+		widget->spinBox->setValue(rules[widget->limit.command()]);
 	}
 
 	stringList = rules["maplist"].valueString().split(";");
@@ -912,13 +899,13 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 	pteMOTD->document()->setPlainText(misc["MOTD"]);
 
 	// DMFlags
-	foreach(DMFlagsTabWidget* p, dmFlagsTabs)
+	foreach(DMFlagsTabWidget* p, d->dmFlagsTabs)
 	{
-		for (int i = 0; i < p->section->flags.count(); ++i)
+		for (int i = 0; i < p->section.count(); ++i)
 		{
 			QRegExp re("[^a-zA-Z]");
-			QString name1 = p->section->name;
-			QString name2 = p->section->flags[i].name;
+			QString name1 = p->section.name();
+			QString name2 = p->section[i].name();
 			name1 = name1.remove(re);
 			name2 = name2.remove(re);
 			p->checkBoxes[i]->setChecked(dmflags[name1 + name2]);
@@ -926,7 +913,7 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 	}
 
 	// Custom pages.
-	foreach (CreateServerDialogPage* page, currentCustomPages)
+	foreach (CreateServerDialogPage* page, d->currentCustomPages)
 	{
 		page->loadConfig(ini);
 	}
@@ -947,8 +934,8 @@ void CreateServerDialog::lstAdditionalFilesPathDnd(const QString& path)
 
 void CreateServerDialog::makeSetupServerDialog(const EnginePlugin *plugin)
 {
-	bSuppressMissingExeErrors = true;
-	bIsServerSetup = true;
+	d->bSuppressMissingExeErrors = true;
+	d->bIsServerSetup = true;
 	setEngine(plugin->data()->name);
 
 	// Disable some stuff
@@ -964,56 +951,66 @@ void CreateServerDialog::makeSetupServerDialog(const EnginePlugin *plugin)
 		disableControls[i]->setDisabled(true);
 }
 
+QString CreateServerDialog::pathToClientExe(Server* server, Message& message)
+{
+	QScopedPointer<ExeFile> f(server->clientExe());
+	return f->pathToExe(message);
+}
+
+QString CreateServerDialog::pathToOfflineExe(Message& message)
+{
+	return GameExeRetriever(*d->currentEngine->gameExe()).pathToOfflineExe(message);
+}
+
+QString CreateServerDialog::pathToServerExe(Message& message)
+{
+	return GameExeRetriever(*d->currentEngine->gameExe()).pathToServerExe(message);
+}
+
 void CreateServerDialog::removeDMFlagsTabs()
 {
-	QList<DMFlagsTabWidget*>::iterator it;
-	for (it = dmFlagsTabs.begin(); it != dmFlagsTabs.end(); ++it)
+	foreach (DMFlagsTabWidget* flags, d->dmFlagsTabs)
 	{
-		int index = tabWidget->indexOf((*it)->widget);
+		int index = tabWidget->indexOf(flags->widget);
 		tabWidget->removeTab(index);
-		delete (*it)->widget;
-		delete *it;
+		delete flags->widget;
+		delete flags;
 	}
 
-	dmFlagsTabs.clear();
+	d->dmFlagsTabs.clear();
 }
 
 void CreateServerDialog::removeLimitWidgets()
 {
 	QList<GameLimitWidget*>::iterator it;
-
-	for (it = limitWidgets.begin(); it != limitWidgets.end(); ++it)
+	foreach (GameLimitWidget *widget, d->limitWidgets)
 	{
-		delete (*it)->label;
-		delete (*it)->spinBox;
-		delete *it;
+		delete widget->label;
+		delete widget->spinBox;
+		delete widget;
 	}
 
-	limitWidgets.clear();
+	d->limitWidgets.clear();
 }
 
 void CreateServerDialog::runGame(bool offline)
 {
 	const QString errorCapt = tr("Doomseeker - create server");
-	if (currentEngine == NULL)
+	if (d->currentEngine == NULL)
 	{
 		QMessageBox::critical(NULL, errorCapt, tr("No engine selected"));
 		return;
 	}
 
-	Server* server = currentEngine->server(QHostAddress(), spinPort->value());
-	HostInfo hi;
-
-	if (createHostInfo(hi, server, offline))
+	GameCreateParams gameParams;
+	if (createHostInfo(gameParams, offline))
 	{
 		QString error;
 
-		GameRunner* gameRunner = server->gameRunner();
-
-		Message message = gameRunner->host(hi, offline ? GameRunner::OFFLINE : GameRunner::HOST);
+		GameHost* gameRunner = d->currentEngine->gameHost();
+		Message message = gameRunner->host(gameParams);
 
 		delete gameRunner;
-		delete server;
 
 		if (message.isError())
 		{
@@ -1021,20 +1018,18 @@ void CreateServerDialog::runGame(bool offline)
 		}
 		else
 		{
-			QString tmpServerConfigPath = Main::dataPaths->programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
+			QString tmpServerConfigPath = gDefaultDataPaths->programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
 			saveConfig(tmpServerConfigPath);
 		}
-	}
-	else if (server != NULL)
-	{
-		delete server;
 	}
 }
 
 bool CreateServerDialog::saveConfig(const QString& filename)
 {
 	QStringList stringList;
-	Ini ini(filename);
+	QSettings settingsFile(filename, QSettings::IniFormat);
+	SettingsProviderQt settingsProvider(&settingsFile);
+	Ini ini(&settingsProvider);
 	IniSection general = ini.createSection("General");
 	IniSection rules = ini.createSection("Rules");
 	IniSection misc = ini.createSection("Misc");
@@ -1061,10 +1056,9 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 	rules["maxClients"] = spinMaxClients->value();
 	rules["maxPlayers"] = spinMaxPlayers->value();
 
-	QList<GameLimitWidget*>::iterator it;
-	for (it = limitWidgets.begin(); it != limitWidgets.end(); ++it)
+	foreach (GameLimitWidget *widget, d->limitWidgets)
 	{
-		rules[(*it)->limit.consoleCommand] = (*it)->spinBox->value();
+		rules[widget->limit.command()] = widget->spinBox->value();
 	}
 
 	stringList = CommonGUI::listViewStandardItemsToStringList(lstMaplist);
@@ -1080,13 +1074,13 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 	misc["MOTD"] = pteMOTD->toPlainText();
 
 	// DMFlags
-	foreach(DMFlagsTabWidget* p, dmFlagsTabs)
+	foreach(DMFlagsTabWidget* p, d->dmFlagsTabs)
 	{
-		for (int i = 0; i < p->section->flags.count(); ++i)
+		for (int i = 0; i < p->section.count(); ++i)
 		{
 			QRegExp re("[^a-zA-Z]");
-			QString name1 = p->section->name;
-			QString name2 = p->section->flags[i].name;
+			QString name1 = p->section.name();
+			QString name2 = p->section[i].name();
 			name1 = name1.remove(re);
 			name2 = name2.remove(re);
 			dmflags[name1 + name2] = p->checkBoxes[i]->isChecked();
@@ -1094,7 +1088,7 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 	}
 
 	// Custom pages.
-	foreach (CreateServerDialogPage* page, currentCustomPages)
+	foreach (CreateServerDialogPage* page, d->currentCustomPages)
 	{
 		page->saveConfig(ini);
 	}
@@ -1102,12 +1096,17 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 	// Custom parameters
 	misc["CustomParams"] = pteCustomParameters->toPlainText();
 
-	return ini.save();
+	if (settingsFile.isWritable())
+	{
+		settingsFile.sync();
+		return true;
+	}
+	return false;
 }
 
 bool CreateServerDialog::setEngine(const QString &engineName)
 {
-	int engIndex = Main::enginePlugins->pluginIndexFromName(engineName);
+	int engIndex = gPlugins->pluginIndexFromName(engineName);
 	if (engIndex < 0)
 	{
 		QMessageBox::critical(NULL, tr("Doomseeker - load server config"), tr("Plugin for engine \"%1\" is not present!").arg(engineName));

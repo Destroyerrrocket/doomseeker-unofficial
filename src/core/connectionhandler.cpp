@@ -20,33 +20,48 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2012 Braden Obrzut <admin@maniacsvault.net>
 //                    "Zalewa" <zalewapl@gmail.com>
-//------------------------------------------------------------------------------  
+//------------------------------------------------------------------------------
 
 #include "apprunner.h"
+#include "datapaths.h"
 #include "log.h"
-#include "main.h"
 #include "strings.h"
 #include "connectionhandler.h"
 #include "configuration/doomseekerconfig.h"
 #include "gui/passwordDlg.h"
 #include "gui/wadseekerinterface.h"
 #include "gui/configuration/doomseekerconfigurationdialog.h"
+#include "ini/settingsproviderqt.h"
 #include "plugins/engineplugin.h"
-#include "serverapi/gamerunner.h"
+#include "plugins/pluginloader.h"
+#include "refresher/refresher.h"
+#include "serverapi/gameclientrunner.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
 
 #include <QMessageBox>
 
-ConnectionHandler::ConnectionHandler(Server *server, QWidget *parent, bool handleResponse) : QObject(parent)
+class ConnectionHandler::PrivData
 {
+	public:
+		ServerPtr server;
+};
+
+ConnectionHandler::ConnectionHandler(ServerPtr server, QWidget *parent, bool handleResponse) : QObject(parent)
+{
+	d = new PrivData();
 	this->parent = parent;
 	this->handleResponse = handleResponse;
-	this->server = server;
-	connect(this->server, SIGNAL(updated(Server *, int)), this, SLOT(checkResponse(Server *, int)));
+	d->server = server;
+	connect(d->server.data(), SIGNAL(updated(ServerPtr, int)), this, SLOT(checkResponse(ServerPtr, int)));
 }
 
-void ConnectionHandler::checkResponse(Server *server, int response)
+ConnectionHandler::~ConnectionHandler()
+{
+	delete d;
+}
+
+void ConnectionHandler::checkResponse(const ServerPtr &server, int response)
 {
 	if(response != Server::RESPONSE_GOOD)
 	{
@@ -96,9 +111,9 @@ ConnectionHandler *ConnectionHandler::connectByUrl(const QUrl &url)
 
 	// Locate plugin by scheme
 	const EnginePlugin *handler = NULL;
-	for(unsigned int i = 0;i < Main::enginePlugins->numPlugins();++i)
+	for(unsigned int i = 0;i < gPlugins->numPlugins();++i)
 	{
-		const EnginePlugin *plugin = (*Main::enginePlugins)[i]->info;
+		const EnginePlugin *plugin = gPlugins->plugin(i)->info();
 		if(plugin->data()->scheme.compare(url.scheme(), Qt::CaseInsensitive) == 0)
 		{
 			handler = plugin;
@@ -118,21 +133,41 @@ ConnectionHandler *ConnectionHandler::connectByUrl(const QUrl &url)
 	Strings::translateServerAddress(url.host(), address, tmp, QString("localhost:10666"));
 
 	// Create the server object
-	Server *server = handler->server(QHostAddress(address), port);
+	ServerPtr server = handler->server(QHostAddress(address), port);
 	ConnectionHandler *connectionHandler = new ConnectionHandler(server, NULL, true);
-	server->refresh();
+	gRefresher->registerServer(server.data());
 
 	return connectionHandler;
 }
 
 void ConnectionHandler::finish(int response)
 {
-	disconnect(this->server, SIGNAL(updated(Server *, int)), this, SLOT(checkResponse(Server *, int)));
+	d->server->disconnect(this);
 	emit finished(response);
 }
 
-bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, const Server* server, CommandLineInfo& cli, const QString& errorCaption, bool managedDemo, bool *hadMissing)
+QString ConnectionHandler::mkDemoName(ServerPtr server, bool managedDemo)
 {
+	// port-iwad-date-wad
+	QString demoName;
+	if (managedDemo)
+	{
+		demoName = gDefaultDataPaths->demosDirectoryPath() + QDir::separator();
+	}
+	demoName += QString("%1_%2").
+		arg(server->engineName()).
+		arg(QDateTime::currentDateTime().toString("dd.MM.yyyy_hh.mm.ss"));
+	if (!server->plugin()->data()->demoExtensionAutomatic)
+	{
+		demoName += QString(".%1").arg(server->plugin()->data()->demoExtension);
+	}
+	return demoName;
+}
+
+bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, ServerPtr server, CommandLineInfo& cli, const QString& errorCaption, bool managedDemo, bool *hadMissing)
+{
+	// TODO: This method is a monster and it needs refactoring!
+
 	cli.applicationDir = "";
 	cli.args.clear();
 	cli.executable = QFileInfo("");
@@ -170,52 +205,58 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, const Server* ser
 			connectPassword = password.connectPassword();
 		}
 
-		GameRunner* gameRunner = server->gameRunner();
-		JoinError joinError = gameRunner->createJoinCommandLine(cli, connectPassword, managedDemo);
+		GameClientRunner* gameRunner = server->gameRunner();
+		ServerConnectParams params;
+		params.setConnectPassword(connectPassword);
+		if (gConfig.doomseeker.bRecordDemo)
+		{
+			params.setDemoName(mkDemoName(server, managedDemo));
+		}
+		JoinError joinError = gameRunner->createJoinCommandLine(cli, params);
 		delete gameRunner;
 
-		const QString unknownError = tr("Unknown error.");
-		const QString* error = NULL;
-
-		switch (joinError.type)
+		switch (joinError.type())
 		{
 			case JoinError::Terminate:
 				return false;
 			case JoinError::ConfigurationError:
 			case JoinError::Critical:
-				if (!joinError.error.isEmpty())
+			{
+				QString error;
+				if (!joinError.error().isEmpty())
 				{
-					error = &joinError.error;
+					error = joinError.error();
 				}
 				else
 				{
-					error = &unknownError;
+					error = tr("Unknown error.");
 				}
 
-				QMessageBox::critical(parent, errorCaption, *error);
-				gLog << tr("Error when obtaining join parameters for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(*error);
+				QMessageBox::critical(parent, errorCaption, error);
+				gLog << tr("Error when obtaining join parameters for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(error);
 
-				if(joinError.type == JoinError::ConfigurationError)
+				if (joinError.type() == JoinError::ConfigurationError)
 				{
 					DoomseekerConfigurationDialog::openConfiguration(server->plugin());
 				}
 				return false;
+			}
 
 			case JoinError::MissingWads:
 				// Execute Wadseeker
-				if (!joinError.missingIwad.isEmpty())
+				if (!joinError.missingIwad().isEmpty())
 				{
 					QString additionalInfo = tr("\n"
 						"Make sure that this file is in one of the paths specified in Options -> File Paths.\n"
 						"If you don't have this file, and it belongs to a commercial game, "
 						"you need to purchase the game associated with this IWAD.\n"
 						"Wadseeker will not download commercial IWADs.\n\n");
-					filesMissingMessage += tr("IWAD: ") + joinError.missingIwad.toLower() + additionalInfo;
+					filesMissingMessage += tr("IWAD: ") + joinError.missingIwad().toLower() + additionalInfo;
 				}
 
-				if (!joinError.missingWads.isEmpty())
+				if (!joinError.missingWads().isEmpty())
 				{
-					filesMissingMessage += tr("PWADS: %1\nDo you want Wadseeker to find missing PWADs?").arg(joinError.missingWads.join(" "));
+					filesMissingMessage += tr("PWADS: %1\nDo you want Wadseeker to find missing PWADs?").arg(joinError.missingWads().join(" "));
 				}
 
 				if (joinError.isMissingIwadOnly())
@@ -240,14 +281,14 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, const Server* ser
 							return false;
 						}
 
-						if (!joinError.missingIwad.isEmpty())
+						if (!joinError.missingIwad().isEmpty())
 						{
-							joinError.missingWads.append(joinError.missingIwad);
+							joinError.addMissingWad(joinError.missingIwad());
 						}
 
 						WadseekerInterface wsi(parent);
-						wsi.setAutomatic(true, joinError.missingWads);
-						wsi.setCustomSite(server->website());
+						wsi.setAutomatic(true, joinError.missingWads());
+						wsi.setCustomSite(server->webSite());
 						if (wsi.exec() == QDialog::Accepted)
 						{
 							if(hadMissing)
@@ -261,6 +302,10 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, const Server* ser
 				// Intentional fall through
 
 			case JoinError::NoError:
+				if (managedDemo && gConfig.doomseeker.bRecordDemo)
+				{
+					saveDemoMetaData(server, mkDemoName(server, managedDemo));
+				}
 				break;
 
 			default:
@@ -275,17 +320,21 @@ void ConnectionHandler::refreshToJoin()
 {
 	// If the data we have is old we should refresh first to check if we can
 	// still properly join the server.
-	if(server->isRefreshable() && gConfig.doomseeker.bQueryBeforeLaunch)
-		server->refresh();
+	if(d->server->isRefreshable() && gConfig.doomseeker.bQueryBeforeLaunch)
+	{
+		gRefresher->registerServer(d->server.data());
+	}
 	else
-		checkResponse(server, Server::RESPONSE_GOOD);
+	{
+		checkResponse(d->server, Server::RESPONSE_GOOD);
+	}
 }
 
 void ConnectionHandler::run()
 {
 	bool hadMissing = false;
 	CommandLineInfo cli;
-	if (obtainJoinCommandLine(parent, server, cli, tr("Doomseeker - join server"), true, &hadMissing))
+	if (obtainJoinCommandLine(parent, d->server, cli, tr("Doomseeker - join server"), true, &hadMissing))
 	{
 		if(hadMissing)
 		{
@@ -295,17 +344,45 @@ void ConnectionHandler::run()
 			return;
 		}
 
-		GameRunner* gameRunner = server->gameRunner();
-
-		Message message = gameRunner->runExecutable(cli, false);
+		Message message = AppRunner::runExecutable(cli);
 		if (message.isError())
 		{
-			gLog << tr("Error while launching executable for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(message.contents());
+			gLog << tr("Error while launching executable for server \"%1\", game \"%2\": %3")
+				.arg(d->server->name()).arg(d->server->engineName()).arg(message.contents());
 			QMessageBox::critical(parent, tr("Doomseeker - launch executable"), message.contents());
 		}
-
-		delete gameRunner;
 	}
 
 	finish(Server::RESPONSE_GOOD);
+}
+
+void ConnectionHandler::saveDemoMetaData(ServerPtr server, const QString& demoName)
+{
+	QString metaFileName;
+	// If the extension is automatic we need to add it here
+	if(server->plugin()->data()->demoExtensionAutomatic)
+	{
+		metaFileName = QString("%1.%2.ini").arg(demoName)
+			.arg(server->plugin()->data()->demoExtension);
+	}
+	else
+	{
+		metaFileName = demoName + ".ini";
+	}
+
+	QSettings settings(metaFileName, QSettings::IniFormat);
+	SettingsProviderQt settingsProvider(&settings);
+	Ini metaFile(&settingsProvider);
+	IniSection metaSection = metaFile.createSection("meta");
+
+	// Get a list of wads for demo name:
+	QStringList wadList;
+	for (int i = 0; i < server->numWads(); ++i)
+	{
+		// Also be sure to escape any underscores.
+		wadList << server->wad(i).name().toLower();
+	}
+
+	metaSection.createSetting("iwad", server->iwad().toLower());
+	metaSection.createSetting("pwads", wadList.join(";"));
 }

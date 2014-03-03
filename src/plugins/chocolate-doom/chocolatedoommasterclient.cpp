@@ -33,14 +33,10 @@ ChocolateDoomMasterClient::ChocolateDoomMasterClient() : MasterClient()
 {
 }
 
-bool ChocolateDoomMasterClient::getServerListRequest(QByteArray &data)
+QByteArray ChocolateDoomMasterClient::createServerListRequest()
 {
 	char challenge[2] = {0, NET_MASTER_PACKET_TYPE_QUERY};
-
-	const QByteArray chall(challenge, 2);
-	data.append(chall);
-
-	return true;
+	return QByteArray(challenge, 2);
 }
 
 const EnginePlugin* ChocolateDoomMasterClient::plugin() const
@@ -48,7 +44,7 @@ const EnginePlugin* ChocolateDoomMasterClient::plugin() const
 	return ChocolateDoomEnginePlugin::staticInstance();
 }
 
-bool ChocolateDoomMasterClient::readMasterResponse(QByteArray &data)
+MasterClient::Response ChocolateDoomMasterClient::readMasterResponse(const QByteArray &data)
 {
 	// Decompress the response.
 	const char* in = data.data();
@@ -56,7 +52,7 @@ bool ChocolateDoomMasterClient::readMasterResponse(QByteArray &data)
 	// Check the response code
 	if (in[1] != NET_MASTER_PACKET_TYPE_QUERY_RESPONSE)
 	{
-		return false;
+		return RESPONSE_BAD;
 	}
 
 	// Make sure we have an empty list.
@@ -69,9 +65,9 @@ bool ChocolateDoomMasterClient::readMasterResponse(QByteArray &data)
 		pos += address.length()+1;
 		QStringList ip = address.split(":");
 		ChocolateDoomServer *server = new ChocolateDoomServer(QHostAddress(ip[0]), ip[1].toUShort());
-		servers.push_back(server);
+		registerNewServer(ServerPtr(server));
 	}
-	
+
 	emit listUpdated();
-	return true;
+	return RESPONSE_GOOD;
 }

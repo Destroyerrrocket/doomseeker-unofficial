@@ -50,7 +50,7 @@ ZDaemonServer::ZDaemonServer(const QHostAddress &address, unsigned short port)
 	currentGameMode = (*ZDaemonGameInfo::gameModes())[ZDaemonGameInfo::MODE_DEATHMATCH];
 }
 
-GameRunner* ZDaemonServer::gameRunner() const
+GameRunner* ZDaemonServer::gameRunner()
 {
 	return new ZDaemonGameRunner(this);
 }

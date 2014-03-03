@@ -37,12 +37,12 @@ class ZandronumEnginePlugin : public EnginePlugin
 		void setupConfig(IniSection &config) const;
 
 		ConfigurationBaseBox *configuration(QWidget *parent) const;
-
+		GameHost* gameHost();
 		QList<GameCVar>	limits(const GameMode& gm) const;
 
 		MasterClient				*masterClient() const;
 
-		Server*						server(const QHostAddress &address, unsigned short port) const;
+		ServerPtr mkServer(const QHostAddress &address, unsigned short port) const;
 };
 
 #endif

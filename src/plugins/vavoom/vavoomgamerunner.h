@@ -23,22 +23,21 @@
 #ifndef __VAVOOM_GAME_RUNNER_H_
 #define __VAVOOM_GAME_RUNNER_H_
 
-#include "serverapi/gamerunner.h"
+#include "serverapi/gameclientrunner.h"
 
 class EnginePlugin;
 class VavoomServer;
 
-class VavoomGameRunner : public GameRunner
+class VavoomGameClientRunner : public GameClientRunner
 {
 	public:
-		VavoomGameRunner(const VavoomServer* server);
+		VavoomGameClientRunner(QSharedPointer<VavoomServer> server);
 
-		bool						connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory);
+		const EnginePlugin* plugin() const;
+	private:
+		QSharedPointer<VavoomServer> server;
 
-		const EnginePlugin*			plugin() const;
-
-	protected:
-		virtual QString				argForConnect() const { return "+connect"; }
+		void addIwad();
 };
 
 #endif

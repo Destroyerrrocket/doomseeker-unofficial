@@ -36,7 +36,7 @@ class ServerListContextMenu::PrivData
 		ServerListFilterInfo serverFilter;
 };
 
-ServerListContextMenu::ServerListContextMenu(Server* server, const ServerListFilterInfo& filter,
+ServerListContextMenu::ServerListContextMenu(ServerPtr server, const ServerListFilterInfo& filter,
 	QObject *parent)
 : QObject(parent), pServer(server)
 {
@@ -57,12 +57,12 @@ QMenu* ServerListContextMenu::createCopyMenu(QWidget* parent)
 	QMenu *copyMenu = new QMenu(tr("Copy"), parent);
 	copyAddress = copyMenu->addAction(tr("Copy Address"));
 
-	if (!pServer->eMail().isEmpty())
+	if (!pServer->email().isEmpty())
 	{
 		copyEmail = copyMenu->addAction(tr("Copy E-Mail"));
 	}
 
-	if (!pServer->website().isEmpty())
+	if (!pServer->webSite().isEmpty())
 	{
 		copyUrl = copyMenu->addAction(tr("Copy URL"));
 	}
@@ -83,7 +83,7 @@ void ServerListContextMenu::createMembers()
 	showJoinCommandLine = menu->addAction(tr("Show join command line"));
 
 	// Website.
-	const QString& webSite = pServer->website();
+	const QString& webSite = pServer->webSite();
 	bool bShouldAllowOpenUrl = !webSite.isEmpty() && Strings::isUrlSafe(webSite);
 
 	if (bShouldAllowOpenUrl)
@@ -130,7 +130,7 @@ void ServerListContextMenu::popup(const QPoint& point)
 	menu->popup(point);
 }
 
-Server* ServerListContextMenu::server() const
+ServerPtr ServerListContextMenu::server() const
 {
 	return pServer;
 }
@@ -173,7 +173,7 @@ ServerListContextMenu::Result ServerListContextMenu::translateQMenuResult(QActio
 	}
 	else if (resultAction == copyEmail)
 	{
-		QApplication::clipboard()->setText(pServer->eMail());
+		QApplication::clipboard()->setText(pServer->email());
 		return DataCopied;
 	}
 	else if(resultAction == copyName)
@@ -183,7 +183,7 @@ ServerListContextMenu::Result ServerListContextMenu::translateQMenuResult(QActio
 	}
 	else if (resultAction == copyUrl)
 	{
-		QApplication::clipboard()->setText(pServer->website());
+		QApplication::clipboard()->setText(pServer->webSite());
 		return DataCopied;
 	}
 	else if(resultAction == rcon)

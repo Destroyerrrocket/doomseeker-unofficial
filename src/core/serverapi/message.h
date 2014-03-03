@@ -28,22 +28,33 @@
 #include <QMetaType>
 #include <QString>
 
-/**
- *	@brief Message object used to pass messages throughout the Doomseeker's
- *	system. This should be directly connected to the types provided by the
- *	Messages class.
- *
- *	Message type and content is carried over through this object. If type
- *	member is set to Messages::Types::IGNORE_TYPE then content member should
- *	be ignored and the entire Message object should be treated as carrying
- *	no message at all.
- */
-class MAIN_EXPORT Message : public QObject
+class StaticMessages : public QObject
 {
 	Q_OBJECT
 
 	public:
-		class Types
+		/**
+		 * @brief Gets static string for a Message::Type.
+		 *
+		 * @param messageType
+		 *     One of constant values defined in Message::Type.
+		 */
+		static QString getMessage(unsigned messageType);
+};
+
+/**
+ * @brief Message object used to pass messages throughout the Doomseeker's
+ *        system.
+ *
+ * Message type and content is carried over through this object. If type
+ * member is set to Messages::Types::IGNORE_TYPE then content member should
+ * be ignored and the entire Message object should be treated as carrying
+ * no message at all.
+ */
+class MAIN_EXPORT Message
+{
+	public:
+		class Type
 		{
 			public:
 				static const unsigned IGNORE_TYPE = 0;
@@ -55,134 +66,44 @@ class MAIN_EXPORT Message : public QObject
 		};
 
 		/**
-		 *	@brief Convenience method. Sets type
-		 *	to Types::CUSTOM_ERROR.
+		 * @brief Convenience method. Sets type to Type::CUSTOM_ERROR.
 		 */
-		static Message	    customError(const QString& content)
+		static Message customError(const QString& content)
 		{
-			return Message(Types::CUSTOM_ERROR, content);
+			return Message(Type::CUSTOM_ERROR, content);
 		}
 
 		/**
-		 *	@brief Convenience method. Sets type
-		 *	to Types::CUSTOM_INFORMATION.
+		 * @brief Convenience method. Sets type to Type::CUSTOM_INFORMATION.
 		 */
-		static Message      customInformation(const QString& content)
+		static Message customInformation(const QString& content)
 		{
-			return Message(Types::CUSTOM_INFORMATION, content);
+			return Message(Type::CUSTOM_INFORMATION, content);
 		}
 
-		static QString	    getStringBasingOnType(unsigned type);
+		Message();
+		Message(unsigned type);
+		Message(const Message &other);
+		Message &operator=(const Message &other);
+		virtual ~Message();
 
-		static bool         isCustom(unsigned type)
-		{
-			return type == Types::CUSTOM_ERROR || type == Types::CUSTOM_INFORMATION;
-		}
+		QString contents() const;
 
-		static bool			isError(unsigned type)
-		{
-			return type >= Types::CUSTOM_ERROR;
-		}
+		bool isCustom() const;
+		bool isError() const;
+		bool isIgnore() const;
+		bool isInformation() const;
 
-		static bool			isIgnore(unsigned type)
-		{
-			return type == Types::IGNORE_TYPE;
-		}
-
-		static bool			isInformation(unsigned type)
-		{
-			return (type >= Types::CUSTOM_INFORMATION) && (type < Types::CUSTOM_ERROR);
-		}
-
-		Message()
-		{
-			construct();
-			this->_type = Types::IGNORE_TYPE;
-		}
-
-		~Message() {}
-
-		Message(const Message& other)
-		{
-			copy(other);
-		}
-
-		Message(unsigned type)
-		{
-			construct();
-			this->_type = type;
-		}
-
-		Message(unsigned type, const QString& content)
-		{
-			construct();
-			this->content = content;
-			this->_type = type;
-		}
-
-		Message& operator=(const Message& other)
-		{
-			if (this != &other)
-			{
-				copy(other);
-			}
-
-			return *this;
-		}
-
-		const QString&  contents() const
-		{
-			return content;
-		}
-
-		QString		    getStringBasingOnType() const
-		{
-			return getStringBasingOnType(_type);
-		}
-
-		bool            isCustom() const
-		{
-			return isCustom(_type);
-		}
-
-		bool			isError() const
-		{
-			return isError(_type);
-		}
-
-		bool			isIgnore() const
-		{
-			return isIgnore(_type);
-		}
-
-		bool			isInformation() const
-		{
-			return isInformation(_type);
-		}
-
-		unsigned        timestamp() const
-		{
-			return _timestamp;
-		}
-
-		unsigned        type() const
-		{
-			return _type;
-		}
+		unsigned timestamp() const;
+		unsigned type() const;
 
 	private:
-		QString			content;
-		unsigned        _timestamp;
-		unsigned		_type;
+		class PrivData;
+		PrivData *d;
 
-		void            copy(const Message& other)
-		{
-			this->content = other.content;
-			this->_timestamp = other._timestamp;
-			this->_type = other._type;
-		}
+		Message(unsigned type, const QString &content);
 
-		void            construct();
+		void construct();
 };
 
 Q_DECLARE_METATYPE(Message)

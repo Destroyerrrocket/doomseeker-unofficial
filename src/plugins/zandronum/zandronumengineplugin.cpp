@@ -22,15 +22,15 @@
 // Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 
-#include "datapaths.h"
-#include "main.h"
-#include "pathfinder.h"
-#include "plugins/engineplugin.h"
-#include "strings.h"
+#include <datapaths.h>
+#include <pathfinder/pathfinder.h>
+#include <plugins/engineplugin.h>
+#include <strings.h>
 
 #include "huffman/huffman.h"
 #include "createserverdialogpages/flagspage.h"
 #include "zandronumbinaries.h"
+#include "zandronumgamehost.h"
 #include "zandronumgameinfo.h"
 #include "zandronumengineplugin.h"
 #include "zandronummasterclient.h"
@@ -83,12 +83,12 @@ void ZandronumEnginePlugin::setupConfig(IniSection &config) const
 	QString trimPattern = QString("\\/");
 	QString paths = Strings::trimr(programFilesDirectory, trimPattern);
 
-	paths += "\\Zandronum;" + Main::workingDirectory + ";.";
+	paths += "\\Zandronum;" + gDefaultDataPaths->workingDirectory() + ";.";
 
 	PathFinder pf(paths.split(";"));
 	config.createSetting("BinaryPath", pf.findFile("zandronum.exe"));
 #else
-	QString paths = QString("/usr/bin;/usr/local/bin;/usr/share/bin;/usr/games/zandronum;/usr/local/games/zandronum;/usr/share/games/zandronum;") + Main::workingDirectory + ";.";
+	QString paths = QString("/usr/bin;/usr/local/bin;/usr/share/bin;/usr/games/zandronum;/usr/local/games/zandronum;/usr/share/games/zandronum;") + gDefaultDataPaths->workingDirectory() + ";.";
 	PathFinder pf(paths.split(";"));
 	config.createSetting("BinaryPath", pf.findFile("zandronum"));
 	config.createSetting("ServerBinaryPath", pf.findFile("zandronum-server"));
@@ -114,28 +114,33 @@ QList<CreateServerDialogPage*> ZandronumEnginePlugin::createServerDialogPages(
 	return pages;
 }
 
-QList<GameCVar>	ZandronumEnginePlugin::limits(const GameMode& gm) const
+GameHost* ZandronumEnginePlugin::gameHost()
+{
+	return new ZandronumGameHost();
+}
+
+QList<GameCVar> ZandronumEnginePlugin::limits(const GameMode& gm) const
 {
 	QList<GameCVar> gl;
 
-	int m = gm.modeIndex();
+	int m = gm.index();
 
-	if (m != GameMode::SGMICooperative
+	if (m != GameMode::SGM_Cooperative
 	&&	m != ZandronumGameInfo::GAMEMODE_INVASION
 	&&	m != ZandronumGameInfo::GAMEMODE_SURVIVAL)
 	{
-		gl << GameCVar(QObject::tr("Time limit:"), "timelimit");
+		gl << GameCVar(QObject::tr("Time limit:"), "+timelimit");
 	}
 
-	if (m == GameMode::SGMIDeathmatch
+	if (m == GameMode::SGM_Deathmatch
 	||	m == ZandronumGameInfo::GAMEMODE_DUEL
-	||	m == GameMode::SGMITeamDeathmatch
+	||	m == GameMode::SGM_TeamDeathmatch
 	||	m == ZandronumGameInfo::GAMEMODE_TERMINATOR)
 	{
-		gl << GameCVar(QObject::tr("Frag limit:"), "fraglimit");
+		gl << GameCVar(QObject::tr("Frag limit:"), "+fraglimit");
 	}
 
-	if (m == GameMode::SGMICTF
+	if (m == GameMode::SGM_CTF
 	||	m == ZandronumGameInfo::GAMEMODE_DOMINATION
 	||	m == ZandronumGameInfo::GAMEMODE_ONEFLAGCTF
 	||	m == ZandronumGameInfo::GAMEMODE_POSSESSION
@@ -143,22 +148,22 @@ QList<GameCVar>	ZandronumEnginePlugin::limits(const GameMode& gm) const
 	||	m == ZandronumGameInfo::GAMEMODE_TEAMGAME
 	||	m == ZandronumGameInfo::GAMEMODE_TEAMPOSSESSION)
 	{
-		gl << GameCVar(QObject::tr("Point limit:"), "pointlimit");
+		gl << GameCVar(QObject::tr("Point limit:"), "+pointlimit");
 	}
 
 	if (m == ZandronumGameInfo::GAMEMODE_DUEL
 	||	m == ZandronumGameInfo::GAMEMODE_LASTMANSTANDING
 	||	m == ZandronumGameInfo::GAMEMODE_TEAMLMS)
 	{
-		gl << GameCVar(QObject::tr("Win limit:"), "winlimit");
+		gl << GameCVar(QObject::tr("Win limit:"), "+winlimit");
 	}
 
 	if (m == ZandronumGameInfo::GAMEMODE_DUEL)
 	{
-		gl << GameCVar(QObject::tr("Duel limit:"), "duellimit");
+		gl << GameCVar(QObject::tr("Duel limit:"), "+duellimit");
 	}
 
-	gl << GameCVar(QObject::tr("Max. lives:"), "sv_maxlives");
+	gl << GameCVar(QObject::tr("Max. lives:"), "+sv_maxlives");
 
 	return gl;
 }
@@ -168,7 +173,7 @@ MasterClient *ZandronumEnginePlugin::masterClient() const
 	return new ZandronumMasterClient();
 }
 
-Server* ZandronumEnginePlugin::server(const QHostAddress &address, unsigned short port) const
+ServerPtr ZandronumEnginePlugin::mkServer(const QHostAddress &address, unsigned short port) const
 {
-	return new ZandronumServer(address, port);
+	return ServerPtr(new ZandronumServer(address, port));
 }

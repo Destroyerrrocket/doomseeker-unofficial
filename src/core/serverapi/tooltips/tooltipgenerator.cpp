@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// pathfinder.h
+// tooltipgenerator.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,44 +18,51 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "tooltipgenerator.h"
 
-#ifndef __PATHFINDER_H_
-#define __PATHFINDER_H_
+#include "serverapi/tooltips/gameinfotip.h"
+#include "serverapi/tooltips/generalinfotip.h"
+#include "serverapi/tooltips/playertable.h"
+#include "serverapi/server.h"
 
-#include "pathfinder/filesearchpath.h"
-#include "global.h"
-#include <QStringList>
-
-class IniSection;
-class IniVariable;
-
-class MAIN_EXPORT PathFinderResult
+class TooltipGenerator::PrivData
 {
 	public:
-		QStringList		foundFiles;
-		QStringList		missingFiles;
+		ServerCPtr server;
 };
 
-class MAIN_EXPORT PathFinder
+TooltipGenerator::TooltipGenerator(const ServerCPtr &server)
 {
-	public:
-		PathFinder();
-		PathFinder(const QStringList& paths);
+	d = new PrivData();
+	d->server = server;
+}
 
-		/**
-		 * Provides a directory where we should search first before going to
-		 * user specified locations.  This function can take either a directory
-		 * or a file as its input.  If a file is given the directory part will
-		 * be extracted.
-		 */
-		void				addPrioritySearchDir(const QString& dir);
-		QString 			findFile(const QString& fileName) const;
-		PathFinderResult	findFiles(const QStringList& files) const;
+TooltipGenerator::~TooltipGenerator()
+{
+	delete d;
+}
 
-	private:
-		QList<FileSearchPath> pathList;
-};
+QString TooltipGenerator::gameInfoTableHTML()
+{
+	GameInfoTip tip(server());
+	return tip.generateHTML();
+}
 
-#endif
+QString TooltipGenerator::generalInfoHTML()
+{
+	GeneralInfoTip tip(server());
+	return tip.generateHTML();
+}
+
+QString TooltipGenerator::playerTableHTML()
+{
+	PlayerTable table(server());
+	return table.generateHTML();
+}
+
+ServerCPtr TooltipGenerator::server() const
+{
+	return d->server;
+}

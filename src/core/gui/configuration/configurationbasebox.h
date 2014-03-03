@@ -26,9 +26,9 @@
 
 #include "ini/ini.h"
 #include "global.h"
-#include <QGroupBox>
 #include <QPushButton>
 #include <QStandardItem>
+#include <QWidget>
 
 /**
  *	@brief Base class for configuration group boxes.
@@ -38,23 +38,16 @@
  *	read() and save()'d through virtual methods, however the
  *	implementation of such methods can do basicaly anything.
  */
-class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
+class MAIN_EXPORT ConfigurationBaseBox : public QWidget
 {
 	Q_OBJECT;
 
 	public:
-		ConfigurationBaseBox(QWidget* parent = NULL)
-		: QGroupBox(parent)
-		{
-			this->bAllowSave = false;
-			this->bSettingsAlreadyRead = false;
-			hide();
-		}
+		ConfigurationBaseBox(QWidget* parent = NULL);
+		virtual ~ConfigurationBaseBox();
 
-		virtual ~ConfigurationBaseBox() {}
-
-		bool			allowSave() { return this->bAllowSave; }
-		bool			areSettingsAlreadyRead() { return this->bSettingsAlreadyRead; }
+		bool			allowSave();
+		bool			areSettingsAlreadyRead();
 
 		/**
 		 *	@brief Reimplement this to return displayable icon for the
@@ -66,34 +59,18 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 		virtual QIcon	icon() const = 0;
 
 		/**
-		 *	@brief Reimplement this to return displayable name for the
-		 *	ConfigurationBaseBox.
+		 * @brief Reimplement this to return list-displayable name for the
+		 *        ConfigurationBaseBox.
 		 */
 		virtual QString	name() const = 0;
 
-		void			setAllowSave(bool b)
-		{
-			this->bAllowSave = b;
-		}
-
-		void			read()
-		{
-			this->bSettingsAlreadyRead = true;
-			readSettings();
-		}
-
-		bool			save()
-		{
-			if (this->bAllowSave)
-			{
-				saveSettings();
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
+		void			setAllowSave(bool b);
+		void			read();
+		bool			save();
+		/**
+		 * @brief Groupbox page title, by default returns name().
+		 */
+		virtual QString title() const;
 
 	signals:
 		/**
@@ -103,9 +80,6 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 		void			appearanceChanged();
 
 	protected:
-		bool			bAllowSave;
-		bool			bSettingsAlreadyRead;
-
 		/**
 		 *	These shouldn't execute Config::readConfig() and
 		 *	Config::saveConfig() methods. They're here to read settings
@@ -120,6 +94,9 @@ class MAIN_EXPORT ConfigurationBaseBox : public QGroupBox
 		 */
 		virtual void	saveSettings()=0;
 
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 #endif

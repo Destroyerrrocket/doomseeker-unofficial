@@ -20,40 +20,34 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "main.h"
 #include "vavoomgamerunner.h"
+
 #include "vavoomgameinfo.h"
 #include "vavoomengineplugin.h"
 #include "vavoomserver.h"
 
-VavoomGameRunner::VavoomGameRunner(const VavoomServer* server)
-: GameRunner(server)
+VavoomGameClientRunner::VavoomGameClientRunner(QSharedPointer<VavoomServer> server)
+: GameClientRunner(server)
 {
+	this->server = server;
+	setArgForConnect("+connect");
+	set_addIwad(&VavoomGameClientRunner::addIwad);
 }
 
-bool VavoomGameRunner::connectParameters(QStringList &args, PathFinder &pf, bool &iwadFound, const QString &connectPassword, const QString &wadTargetDirectory)
+void VavoomGameClientRunner::addIwad()
 {
-	if(!GameRunner::connectParameters(args, pf, iwadFound, connectPassword, wadTargetDirectory))
-		return false;
-
-	// Remove original -iwad command
-	int iwadArg = args.indexOf("-iwad");
-	args.removeAt(iwadArg);
-	args.removeAt(iwadArg);
-
 	// What an odd thing to have to do "-iwaddir /path/to/iwads/ -doom2"
-	QString iwad = server->iwadName();
-	QString iwadLocation = pf.findFile(iwad.toLower());
+	QString iwad = server->iwad();
+	QString iwadLocation = iwadPath();
 	QString iwadDir = iwadLocation.left(iwadLocation.length() - iwad.length());
 	QString iwadParam = iwadLocation.mid(iwadDir.length());
 	iwadParam.truncate(iwadParam.indexOf(QChar('.')));
-	args << "-iwaddir";
-	args << iwadDir;
-	args << ("-" + iwadParam);
-	return true;
+	args() << "-iwaddir";
+	args() << iwadDir;
+	args() << ("-" + iwadParam);
 }
 
-const EnginePlugin* VavoomGameRunner::plugin() const
+const EnginePlugin* VavoomGameClientRunner::plugin() const
 {
 	return VavoomEnginePlugin::staticInstance();
 }

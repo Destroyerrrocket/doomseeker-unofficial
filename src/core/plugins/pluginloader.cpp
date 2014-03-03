@@ -20,35 +20,55 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2011 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
+#include "pluginloader.h"
 
 #include "log.h"
 #include "configuration/doomseekerconfig.h"
-#include "masterserver/masterclient.h"
+#include "ini/inisection.h"
+#include "ini/inivariable.h"
 #include "plugins/engineplugin.h"
-#include "plugins/pluginloader.h"
-#include "main.h"
+#include "serverapi/masterclient.h"
 #include "strings.h"
+#include <cassert>
+#include <QDir>
 
 #ifdef Q_OS_WIN32
-#include <windows.h>
-#define dlopen(a,b)	LoadLibrary(a)
-#define dlsym(a,b)	GetProcAddress(a, b)
-#define dlclose(a)	FreeLibrary(a)
-#define dlerror()	GetLastError()
+	#include <windows.h>
+	#define dlopen(a,b)	LoadLibrary(a)
+	#define dlsym(a,b)	GetProcAddress(a, b)
+	#define dlclose(a)	FreeLibrary(a)
+	#define dlerror()	GetLastError()
+	#ifdef _MSC_VER
+		#pragma warning(disable: 4251)
+	#endif
 #else
-#include <dlfcn.h>
-#include <dirent.h>
+	#include <dlfcn.h>
+	#include <dirent.h>
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
-PluginLoader::Plugin::Plugin(unsigned int type, QString f) : file(f), library(NULL)
+class PluginLoader::Plugin::PrivData
 {
-	// Load the library
-	library = dlopen(file.toAscii().constData(), RTLD_NOW);
+	public:
+		EnginePlugin *info;
+		QString file;
+		#ifdef Q_OS_WIN32
+			HMODULE library;
+		#else
+			void *library;
+		#endif
+};
 
-	if(library != NULL)
+PluginLoader::Plugin::Plugin(unsigned int type, QString file)
+{
+	d = new PrivData();
+	d->file = file;
+	// Load the library
+	d->library = dlopen(d->file.toAscii().constData(), RTLD_NOW);
+
+	if(d->library != NULL)
 	{
-		unsigned int (*doomSeekerABI)() = (unsigned int(*)()) (dlsym(library, "doomSeekerABI"));
+		unsigned int (*doomSeekerABI)() = (unsigned int(*)()) (dlsym(d->library, "doomSeekerABI"));
 		if(!doomSeekerABI || doomSeekerABI() != DOOMSEEKER_ABI_VERSION)
 		{
 			// Unsupported version
@@ -56,26 +76,25 @@ PluginLoader::Plugin::Plugin(unsigned int type, QString f) : file(f), library(NU
 			return;
 		}
 
-		EnginePlugin *(*doomSeekerInit)() = (EnginePlugin *(*)()) (dlsym(library, "doomSeekerInit"));
+		EnginePlugin *(*doomSeekerInit)() = (EnginePlugin *(*)()) (dlsym(d->library, "doomSeekerInit"));
 		if(doomSeekerInit == NULL)
 		{ // This is not a valid plugin.
 			unload();
 			return;
 		}
 
-		info = doomSeekerInit();
-		if(!info->data()->valid)
+		d->info = doomSeekerInit();
+		if(!info()->data()->valid)
 		{
 			unload();
 			return;
 		}
 
-		gLog << QObject::tr("Loaded plugin: \"%1\"!").arg(info->data()->name);
+		gLog << QObject::tr("Loaded plugin: \"%1\"!").arg(info()->data()->name);
 	}
 	else
 	{
 		gLog << QObject::tr("Failed to open plugin: %1").arg(file);
-
 		gLog << QString("Last error was: %1").arg(dlerror());
 	}
 }
@@ -83,138 +102,165 @@ PluginLoader::Plugin::Plugin(unsigned int type, QString f) : file(f), library(NU
 PluginLoader::Plugin::~Plugin()
 {
 	unload();
-}
-
-void PluginLoader::Plugin::unload()
-{
-	if(library != NULL)
-	{
-		dlclose(library);
-		library = NULL;
-	}
-}
-
-void PluginLoader::Plugin::initConfig()
-{
-	if(library != NULL)
-	{
-		IniSection cfgSection = gConfig.iniSectionForPlugin(info->data()->name);
-		info->setConfig(cfgSection);
-	}
+	delete d;
 }
 
 void *PluginLoader::Plugin::function(const char* func) const
 {
-	return (void *) dlsym(library, func);
+	return (void *) dlsym(d->library, func);
+}
+
+EnginePlugin *PluginLoader::Plugin::info() const
+{
+	return d->info;
+}
+
+void PluginLoader::Plugin::initConfig()
+{
+	if (isValid())
+	{
+		IniSection cfgSection = gConfig.iniSectionForPlugin(info()->data()->name);
+		info()->setConfig(cfgSection);
+	}
+}
+
+bool PluginLoader::Plugin::isValid() const
+{
+	return d->library != NULL;
+}
+
+void PluginLoader::Plugin::unload()
+{
+	if (d->library != NULL)
+	{
+		dlclose(d->library);
+		d->library = NULL;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-PluginLoader::PluginLoader(unsigned int type, const QStringList &baseDirectories, const char* directory, int directoryLength) : type(type)
+class PluginLoader::PrivData
 {
-	foreach(QString baseDir, baseDirectories)
+	public:
+		unsigned int type;
+		QString pluginsDirectory;
+		QList<Plugin*> plugins;
+};
+
+PluginLoader *PluginLoader::staticInstance = NULL;
+
+PluginLoader::PluginLoader(unsigned int type, const QStringList &directories)
+{
+	d = new PrivData();
+	d->type = type;
+	foreach (const QString &dir, directories)
 	{
-		QString subDir = QString::fromAscii(directory, directoryLength != -1 ? directoryLength : static_cast<unsigned int>(-1));
-		pluginsDirectory = Strings::combinePaths(baseDir, subDir);
-		if(filesInDir())
+		d->pluginsDirectory = dir;
+		if (filesInDir())
+		{
 			break;
+		}
 	}
-	if(numPlugins() == 0) // No plugins?!
+	if (numPlugins() == 0) // No plugins?!
+	{
 		gLog << QObject::tr("Failed to locate plugins.");
+	}
 }
 
 PluginLoader::~PluginLoader()
 {
-	for(int i = 0; i < pluginsList.size(); ++i)
-	{
-		delete pluginsList[i];
-	}
+	qDeleteAll(d->plugins);
+	delete d;
 }
 
 void PluginLoader::clearPlugins()
 {
-	for(QList<Plugin *>::iterator iter = pluginsList.begin(); iter != pluginsList.end(); )
+	qDeleteAll(d->plugins);
+	d->plugins.clear();
+}
+
+void PluginLoader::deinit()
+{
+	if (staticInstance != NULL)
 	{
-		Plugin * plug = (*iter);
-		iter = pluginsList.erase(iter);
-		delete plug;
-		plug = NULL;
+		delete staticInstance;
+		staticInstance = NULL;
 	}
 }
 
 bool PluginLoader::filesInDir()
 {
-	gLog << QString("Attempting to load plugins from directory: %1").arg(pluginsDirectory);
-#ifdef Q_OS_WIN32
-	WIN32_FIND_DATA file;
-
-	// Remember that paths here are also handled by WinAPI functions.
-	// It is advisable to convert directory separators to the native '\'
-	// separators.
-	QString searchPath = Strings::combinePaths(pluginsDirectory, "*.dll");
-	searchPath = QDir::toNativeSeparators(searchPath);
-
-	HANDLE directory = FindFirstFile(searchPath.toAscii().constData(), &file);
-	if(directory != INVALID_HANDLE_VALUE)
+	gLog << QString("Attempting to load plugins from directory: %1").arg(d->pluginsDirectory);
+	QDir dir(d->pluginsDirectory);
+	if (!dir.exists())
 	{
-		do {
-			if(!(file.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-			{
-				QString pluginFilePath = Strings::combinePaths(pluginsDirectory, file.cFileName);
-				pluginFilePath = QDir::toNativeSeparators(pluginFilePath);
-
-				Plugin *plugin = new Plugin(type, pluginFilePath);
-				if(plugin->isValid())
-					pluginsList.push_back(plugin);
-				else
-					delete plugin;
-			}
-		} while(FindNextFile(directory, &file));
-		FindClose(directory);
-	} // WARNING else statement after this
-#else
-	DIR *directory = opendir(pluginsDirectory.toAscii().constData());
-	if(directory != NULL)
-	{
-		dirent *file = NULL;
-		while((file = readdir(directory)) != NULL)
-		{
-			QString pluginFilePath = Strings::combinePaths(pluginsDirectory, QString(file->d_name));
-			pluginFilePath = QDir::toNativeSeparators(pluginFilePath);
-
-			DIR *temp = opendir(pluginFilePath.toAscii().constData());
-			if(temp == NULL) // this is a file
-			{
-				Plugin *plugin = new Plugin(type, pluginFilePath);
-				if(plugin->isValid())
-					pluginsList.push_back(plugin);
-				else
-					delete plugin;
-			}
-			else
-				closedir(temp);
-		}
-		closedir(directory);
-	} // WARNING else statement after this
-#endif
-	else
 		return false;
+	}
+#ifdef Q_OS_WIN32
+	QStringList windowsNamesFilter;
+	windowsNamesFilter << "*.dll";
+	dir.setNameFilters(windowsNamesFilter);
+#endif
+	foreach (const QString& entry, dir.entryList(QDir::Files))
+	{
+		QString pluginFilePath = Strings::combinePaths(d->pluginsDirectory, entry);
+		Plugin *plugin = new Plugin(d->type, pluginFilePath);
+		if (plugin->isValid())
+			d->plugins << plugin;
+		else
+			delete plugin;
+	}
 	return numPlugins() != 0;
+}
+
+EnginePlugin *PluginLoader::info(int pluginIndex) const
+{
+	const Plugin* p = plugin(pluginIndex);
+	if (p != NULL)
+	{
+		return p->info();
+	}
+	return NULL;
+}
+
+void PluginLoader::init(const QStringList &directories)
+{
+	if (staticInstance != NULL)
+	{
+		qDebug() << "Attempting to re-init PluginLoader";
+		assert(false);
+		return;
+	}
+	staticInstance = new PluginLoader(MAKEID('E', 'N', 'G', 'N'), directories);
 }
 
 void PluginLoader::initConfig()
 {
-	QList<Plugin*>::iterator it;
-	for (it = pluginsList.begin(); it != pluginsList.end(); ++it)
+	foreach (Plugin *plugin, d->plugins)
 	{
-		Plugin* plugin = (*it);
 		plugin->initConfig();
 	}
 }
 
+PluginLoader *PluginLoader::instance()
+{
+	assert(staticInstance != NULL);
+	return staticInstance;
+}
+
 const unsigned int PluginLoader::numPlugins() const
 {
-	return pluginsList.size();
+	return d->plugins.size();
+}
+
+const QList<PluginLoader::Plugin*> &PluginLoader::plugins() const
+{
+	return d->plugins;
+}
+
+const PluginLoader::Plugin* PluginLoader::plugin(unsigned int index) const
+{
+	return d->plugins[index];
 }
 
 int PluginLoader::pluginIndexFromName(const QString& name) const
@@ -228,9 +274,9 @@ int PluginLoader::pluginIndexFromName(const QString& name) const
 	// we need to treat spacebars as non-existent here. Simply put:
 	// "Chocolate Doom" == "ChocolateDoom"
 	QString mangledName = QString(name).replace(" ", "");
-	for (int i = 0; i < pluginsList.size(); ++i)
+	for (int i = 0; i < d->plugins.size(); ++i)
 	{
-		QString mangledCandidate = QString(pluginsList[i]->info->data()->name).replace(" ", "");
+		QString mangledCandidate = QString(d->plugins[i]->info()->data()->name).replace(" ", "");
 		if (mangledName.compare(mangledCandidate) == 0)
 		{
 			return i;
@@ -242,13 +288,12 @@ int PluginLoader::pluginIndexFromName(const QString& name) const
 
 void PluginLoader::resetPluginsDirectory(const QString& pluginsDirectory)
 {
-	this->pluginsDirectory = pluginsDirectory;
-	if(!pluginsList.isEmpty())
-		clearPlugins();
+	d->pluginsDirectory = pluginsDirectory;
+	clearPlugins();
 	filesInDir();
 }
 
 const PluginLoader::Plugin* PluginLoader::operator[] (unsigned int index) const
 {
-	return pluginsList[index];
+	return d->plugins[index];
 }

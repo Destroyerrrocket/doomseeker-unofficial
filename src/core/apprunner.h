@@ -27,18 +27,19 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QStringList>
+#include <QIcon>
 
 class Message;
 
 /**
- *	@brief Structure holding parameters for application launch.
+ * @brief Structure holding parameters for application launch.
  */
 class CommandLineInfo
 {
 	public:
-		QDir 			applicationDir; /// working directory
-		QStringList 	args; /// launch parameters
-		QFileInfo 		executable; /// path to the executable
+		QDir applicationDir; /// working directory
+		QStringList args; /// launch parameters
+		QFileInfo executable; /// path to the executable
 };
 
 class MAIN_EXPORT AppRunner : public QObject
@@ -47,22 +48,36 @@ class MAIN_EXPORT AppRunner : public QObject
 
 	public:
 		/**
-		 *	On Windows this removes any wrapping " chars.
+		 * @brief On Windows this removes any wrapping " chars.
 		 *
-		 *	Explanation:
-		 *	Draft from Qt documentation on QProcess::startDetached:
-		 *	"On Windows, arguments that contain spaces are wrapped in quotes."
-		 *	Thus, on Windows we must unwrap the arguments that are wrapped in
-		 *	quotes because thing like +sv_hostname "Started from Doomseeker"
-		 *	won't work properly and a server with empty name will be started.
+		 * Explanation:
+		 * Draft from Qt documentation on QProcess::startDetached:
+		 * "On Windows, arguments that contain spaces are wrapped in quotes."
+		 * Thus, on Windows we must unwrap the arguments that are wrapped in
+		 * quotes because thing like +sv_hostname "Started from Doomseeker"
+		 * won't work properly and a server with empty name will be started.
 		 */
-		static void				cleanArguments(QStringList& args);
+		static void cleanArguments(QStringList& args);
 
 #ifdef Q_WS_MAC
-		static QString			findBundleBinary(const QFileInfo &file);
+		static QString findBundleBinary(const QFileInfo &file);
 #endif
 
-		static Message		 	runExecutable(const CommandLineInfo& cmdInfo);
+		static Message runExecutable(const CommandLineInfo& cmdInfo);
+		
+		/**
+		 * @brief Executes predefined command line.
+		 *
+		 * Doomseeker will attempt to wrap the input/output of the program
+		 * with it's own console
+		 *
+		 * @param icon
+		 *     Optional icon for the console window.
+		 * @param cli
+		 *     Command line that will be executed.
+		 */
+		static void runExecutableWrappedInStandardServerConsole(
+			const QIcon &icon, const CommandLineInfo &cli);
 };
 
 #endif

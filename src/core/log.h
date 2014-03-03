@@ -43,10 +43,17 @@ class MAIN_EXPORT Log : public QObject
 		static Log			instance;
 
 		Log();
+		virtual ~Log();
 
-		bool				areTimestampsEnabled() const { return timestamps; }
+		/**
+		 * @brief Timestamps are in format [hh:mm:ss]. Enabled by default.
+		 */
+		bool				areTimestampsEnabled() const;
 
-		const QString&		content() const { return logContent; }
+		/**
+		 *	@brief Entire content of the log.
+		 */
+		const QString&		content() const;
 
 		/**
 		 *	Works like printf() from stdio. After the output string is
@@ -62,10 +69,16 @@ class MAIN_EXPORT Log : public QObject
 		 */
 		void				logUnformattedPrintf(const char* str, ...);
 
-		bool				isPrintingToStdout() const { return printToStdout; }
+		/**
+		 * @brief If true all new entries will also be printed to stdout.
+		 *
+		 * Otherwise entries are stored only in the logContent member.
+		 * Default is true.
+		 */
+		bool				isPrintingToStdout() const;
 
-		void				setPrintingToStdout(bool b) { printToStdout = b; }
-		void 				setTimestampsEnabled(bool b) { timestamps = b; }
+		void				setPrintingToStdout(bool b);
+		void 				setTimestampsEnabled(bool b);
 
 		/**
 		 *	@brief Executes addEntry(const QString&).
@@ -91,7 +104,7 @@ class MAIN_EXPORT Log : public QObject
 		/**
 		 *	@brief Clears log content stored in the memory.
 		 */
-		void	clearContent() { logContent.clear(); }
+		void	clearContent();
 
 	signals:
 		/**
@@ -101,28 +114,11 @@ class MAIN_EXPORT Log : public QObject
 		 */
 		void	newEntry(const QString& entry);
 
-	protected:
-		/**
-		 *	@brief Entire content of the log.
-		 */
-		QString		logContent;
-		QMutex		thisMutex;
+	private:
+		class PrivData;
+		PrivData *d;
 
-		int			doLogPrintf(char* output, unsigned outputSize, const char* str, va_list argList);
-
-		/**
-		 *	If true all new entries will also be printed to stdout. Otherwise
-		 *	entries are stored only in the logContent member.
-		 *	Default is true.
-		 */
-		bool		printToStdout;
-
-		/**
-		 *	@brief Timestamps are in format [hh:mm:ss]. Enabled by default.
-		 */
-		bool		timestamps;
-
-
+		int doLogPrintf(char* output, unsigned outputSize, const char* str, va_list argList);
 };
 
 #endif

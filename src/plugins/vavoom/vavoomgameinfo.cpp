@@ -35,5 +35,5 @@ VavoomGameInfo::VavoomGameInfo()
 
 void VavoomGameInfo::initGameModes()
 {
-	gameModesList << GameMode(MODE_UNKNOWN, tr("Unknown"), false);
+	gameModesList << GameMode::mkUnknown();
 }

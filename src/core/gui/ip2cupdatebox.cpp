@@ -21,8 +21,8 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ip2cupdatebox.h"
+
 #include "doomseekerfilepaths.h"
-#include "main.h"
 
 #include <QDateTime>
 

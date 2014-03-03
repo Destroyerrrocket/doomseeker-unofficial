@@ -26,31 +26,30 @@
 #include <QProgressDialog>
 #include <QNetworkReply>
 
-#include "serverapi/binaries.h"
+#include <serverapi/exefile.h>
 
 class EnginePlugin;
 class ZandronumServer;
 class QDir;
 
-class ZandronumBinaries : public Binaries
+class ZandronumClientExeFile : public ExeFile
 {
+	Q_OBJECT
+
 	public:
-		ZandronumBinaries(const ZandronumServer* server);
+		ZandronumClientExeFile(const QSharedPointer<const ZandronumServer> &server);
+		~ZandronumClientExeFile();
 
 		/**
 		 *	If the parent Server is a normal server simple path to executable
 		 *	file is returned. If this is a testing server, a shell script is
 		 *	created	if necessary and a path to this shell script s returned.
 		 */
-		QString					clientBinary(Message& message) const;
-		QString					clientWorkingDirectory(Message& message) const;
-
-		const EnginePlugin*		plugin() const;
+		QString					pathToExe(Message& message);
+		QString					workingDirectory(Message& message);
 
 	protected:
-		const ZandronumServer*	server;
-
-		bool					downloadTestingBinaries(const QDir &destination) const;
+		bool					downloadTestingBinaries(const QDir &destination);
 		/**
 		 *	Creates Unix .sh file or Windows .bat file to
 		 *	launch client for parent server. Returns true if the file
@@ -62,7 +61,11 @@ class ZandronumBinaries : public Binaries
 		 *	@param [out] error - error if return == false
 		 *	@return false if fail
 		 */
-		bool					spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, Message& message) const;
+		bool					spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, Message& message);
+
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 class TestingProgressDialog : public QProgressDialog

@@ -34,7 +34,7 @@ const QImage* PlayersDiagram::botImage = NULL;
 const QImage* PlayersDiagram::playerImage = NULL;
 const QImage* PlayersDiagram::spectatorImage = NULL;
 
-PlayersDiagram::PlayersDiagram(const Server *server)
+PlayersDiagram::PlayersDiagram(ServerCPtr server)
 : server(server), tmp(NULL)
 {
 	if(openImage == NULL)
@@ -97,10 +97,10 @@ void PlayersDiagram::deleteImages()
 void PlayersDiagram::draw()
 {
 	// Don't bother trying to draw an empty image.
-	if(server->maximumClients() == 0)
+	if(server->numTotalSlots() == 0)
 		return;
 
-	diagram = QPixmap(server->maximumClients() * playerImage->width(), playerImage->height());
+	diagram = QPixmap(server->numTotalSlots() * playerImage->width(), playerImage->height());
 	diagram.fill(Qt::transparent);
 
 	slotSize = playerImage->width();
@@ -198,7 +198,7 @@ void PlayersDiagram::obtainPlayerNumbers()
 	memset(numBotsOnTeam, 0, sizeof(int) * MAX_TEAMS);
 	memset(numHumansOnTeam, 0, sizeof(int) * MAX_TEAMS);
 
-	const PlayersList* playersList = server->playersList();
+	const PlayersList* playersList = server->players();
 
 	numBotsWithoutTeam = playersList->numBotsWithoutTeam();
 	numFreeJoinSlots = server->numFreeJoinSlots();
