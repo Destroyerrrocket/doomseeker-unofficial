@@ -35,11 +35,13 @@ class OdamexGameInfo : public QObject
 			MODE_DEATHMATCH,
 			MODE_DEATHMATCH2,
 			MODE_TEAM_DEATHMATCH,
-			MODE_CAPTURE_THE_FLAG
+			MODE_CAPTURE_THE_FLAG,
+			MODE_DUEL
 		};
 
 		static const QList<DMFlagsSection>*	dmFlags() { return &dmFlagsList; }
 		static const QList<GameMode>*	gameModes() { return &gameModesList; }
+		static GameMode gameModeDuel();
 
 	protected:
 		static QList<DMFlagsSection>	dmFlagsList;
