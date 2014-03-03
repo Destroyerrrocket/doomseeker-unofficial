@@ -7,7 +7,6 @@
 
 DataPaths* DoomseekerFilePaths::pDataPaths = NULL;
 
-const QString DoomseekerFilePaths::CONFIG_FILENAME = "doomseeker.cfg";
 const QString DoomseekerFilePaths::IP2C_DATABASE_FILENAME = "IpToCountry.csv";
 const QString DoomseekerFilePaths::IP2C_QT_SEARCH_PATH = "data:" + IP2C_DATABASE_FILENAME;
 const QString DoomseekerFilePaths::TEMP_SERVER_CONFIG_FILENAME = "tmpserver.cfg";
@@ -15,11 +14,6 @@ const QString DoomseekerFilePaths::INI_FILENAME = "doomseeker.ini";
 const QString DoomseekerFilePaths::IRC_INI_FILENAME = "doomseeker-irc.ini";
 const QString DoomseekerFilePaths::PASSWORD_INI_FILENAME = "doomseeker-password.ini";
 
-
-QString DoomseekerFilePaths::config()
-{
-	return pDataPaths->programsDataDirectoryPath() + "/" + CONFIG_FILENAME;
-}
 
 QString DoomseekerFilePaths::ini()
 {
