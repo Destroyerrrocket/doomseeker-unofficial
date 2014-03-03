@@ -234,7 +234,7 @@ const QList<Player> &PlayersList::players() const
 	return d->players;
 }
 
-void PlayersList::inGamePlayersByTeams(QMap<PairPlayersByTeams>& playersListMap) const
+void PlayersList::inGamePlayersByTeams(PlayersByTeams& playersListMap) const
 {
 	playersListMap.clear();
 

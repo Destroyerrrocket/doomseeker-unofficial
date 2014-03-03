@@ -66,7 +66,7 @@ void PlayerTable::setNumberOfColumns()
 	}
 }
 
-QString PlayerTable::spawnPartOfPlayerTable(PlayersList& list, bool bAppendEmptyRowAtBeginning)
+QString PlayerTable::spawnPartOfPlayerTable(const PlayersList& list, bool bAppendEmptyRowAtBeginning)
 {
 	QString ret;
 	if (list.count() != 0)
@@ -106,15 +106,14 @@ QString PlayerTable::spawnPartOfPlayerTable(PlayersList& list, bool bAppendEmpty
 	return ret;
 }
 
-QString	PlayerTable::spawnPlayersRows(PlayersByTeams& playersByTeams)
+QString	PlayerTable::spawnPlayersRows(const PlayersByTeams& playersByTeams)
 {
 	QString playersRows;
 
 	bool bAppendEmptyRowAtBeginning = false;
-	QMap<PairPlayersByTeams>::iterator it;
-	for (it = playersByTeams.begin(); it != playersByTeams.end(); ++it)
+	foreach (const PlayersList &playersList, playersByTeams.values())
 	{
-		playersRows += spawnPartOfPlayerTable(it.value(), bAppendEmptyRowAtBeginning);
+		playersRows += spawnPartOfPlayerTable(playersList, bAppendEmptyRowAtBeginning);
 		if (!bAppendEmptyRowAtBeginning)
 		{
 			bAppendEmptyRowAtBeginning = true;

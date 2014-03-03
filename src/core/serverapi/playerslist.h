@@ -30,13 +30,11 @@
 
 class PlayersList;
 
-#define PairPlayersByTeams int, PlayersList
-
 /**
- *	Key - Team number.
- *	Value - List of players.
+ * Key - Team number.
+ * Value - List of players.
  */
-typedef QMap<PairPlayersByTeams>	PlayersByTeams;
+typedef QMap<int, PlayersList> PlayersByTeams;
 
 class MAIN_EXPORT PlayersList
 {
@@ -90,7 +88,7 @@ class MAIN_EXPORT PlayersList
 		 *	@param playersListMap [out] - New PlayersList objects will be stored
 		 *		in this map.
 		 */
-		void				inGamePlayersByTeams(QMap<PairPlayersByTeams>& playersListMap) const;
+		void inGamePlayersByTeams(PlayersByTeams& playersListMap) const;
 
 		int size() const;
 		void				spectators(PlayersList& spectatorsList) const;
