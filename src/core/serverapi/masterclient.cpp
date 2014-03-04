@@ -214,8 +214,17 @@ void MasterClient::readPacketCache()
 		return;
 	}
 
-	gLog << tr("Reloading master server results from cache for %1!").arg(plugin()->data()->name);
 	QDataStream strm(d->cache);
+	if (strm.atEnd())
+	{
+		// Can't read anything from cache. Either cache is empty
+		// or for some reason the file cursor is set to the
+		// end of the file.
+		emit listUpdated();
+		return;
+	}
+
+	gLog << tr("Reloading master server results from cache for %1!").arg(plugin()->data()->name);
 	while(!strm.atEnd())
 	{
 		quint16 size;
