@@ -39,7 +39,7 @@ class PasswordDlg : public QDialog, private Ui::passwordDlg
 		~PasswordDlg();
 
 		QString connectPassword() const;
-		QString ingamePassword() const;
+		QString inGamePassword() const;
 
 	public slots:
 		void accept();

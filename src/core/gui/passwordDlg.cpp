@@ -71,7 +71,7 @@ void PasswordDlg::accept()
 void PasswordDlg::applyInputsVisibility()
 {
 	connectPasswordWidget->setVisible(d->server->isLocked());
-	ingamePasswordWidget->setVisible(false);
+	ingamePasswordWidget->setVisible(d->server->isLockedInGame());
 }
 
 QString PasswordDlg::connectPassword() const
@@ -79,7 +79,7 @@ QString PasswordDlg::connectPassword() const
 	return cboConnectPassword->currentText();
 }
 
-QString PasswordDlg::ingamePassword() const
+QString PasswordDlg::inGamePassword() const
 {
 	return cboIngamePassword->currentText();
 }
@@ -133,7 +133,7 @@ void PasswordDlg::saveConfiguration()
 	if (remember->isChecked())
 	{
 		cfg.saveServerPhrase(connectPassword(), d->server.data());
-		cfg.saveServerPhrase(ingamePassword(), d->server.data());
+		cfg.saveServerPhrase(inGamePassword(), d->server.data());
 	}
 }
 

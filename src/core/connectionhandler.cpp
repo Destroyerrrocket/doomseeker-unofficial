@@ -193,8 +193,8 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, ServerPtr server,
 		const QString filesMissingCaption = tr("Doomseeker - files are missing");
 		QString filesMissingMessage = tr("Following files are missing:\n");
 
-		QString connectPassword;
-		if(server->isLocked())
+		ServerConnectParams params;
+		if(server->isLockedAnywhere())
 		{
 			PasswordDlg password(server);
 			int ret = password.exec();
@@ -202,12 +202,11 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, ServerPtr server,
 			{
 				return false;
 			}
-			connectPassword = password.connectPassword();
+			params.setConnectPassword(password.connectPassword());
+			params.setInGamePassword(password.inGamePassword());
 		}
 
 		GameClientRunner* gameRunner = server->gameRunner();
-		ServerConnectParams params;
-		params.setConnectPassword(connectPassword);
 		if (gConfig.doomseeker.bRecordDemo)
 		{
 			params.setDemoName(mkDemoName(server, managedDemo));
