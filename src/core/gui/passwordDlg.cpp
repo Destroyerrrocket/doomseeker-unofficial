@@ -53,6 +53,11 @@ PasswordDlg::PasswordDlg(ServerCPtr server, QWidget *parent)
 	loadConfiguration();
 }
 
+PasswordDlg::~PasswordDlg()
+{
+	delete d;
+}
+
 void PasswordDlg::accept()
 {
 	saveConfiguration();
