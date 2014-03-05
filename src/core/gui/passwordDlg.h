@@ -39,6 +39,7 @@ class PasswordDlg : public QDialog, private Ui::passwordDlg
 		~PasswordDlg();
 
 		QString connectPassword() const;
+		QString ingamePassword() const;
 
 	public slots:
 		void accept();
@@ -47,14 +48,16 @@ class PasswordDlg : public QDialog, private Ui::passwordDlg
 		class PrivData;
 		PrivData* d;
 
-		QStringList allConnectPasswords() const;
+		void applyInputsVisibility();
 		void loadConfiguration();
 		void saveConfiguration();
 		void setCurrentConnectPassword(const QString& password);
+		void setCurrentIngamePassword(const QString& password);
 		void setPasswords(const QStringList& passwords);
 
 	private slots:
 		void removeCurrentConnectPassword();
+		void removeCurrentIngamePassword();
 };
 
 #endif /* __PASSWORDDIALOG_H__ */

@@ -225,6 +225,7 @@ set(SOURCE_FILES
 	gui/configuration/doomseekerconfigurationdialog.cpp
 	gui/configuration/engineconfigurationbasebox.cpp
 	gui/entity/serverlistfilterinfo.cpp
+	gui/helpers/comboboxex.cpp
 	gui/helpers/datetablewidgetitem.cpp
 	gui/helpers/playersdiagram.cpp
 	gui/irc/ircdock.cpp
@@ -368,6 +369,7 @@ set(HEADER_FILES
 	configuration/passwordscfg.h
 	configuration/serverpassword.h
 	gui/entity/serverlistfilterinfo.h
+	gui/helpers/comboboxex.h
 	gui/helpers/datetablewidgetitem.h
 	gui/helpers/playersdiagram.h
 	gui/irc/ircsounds.h
