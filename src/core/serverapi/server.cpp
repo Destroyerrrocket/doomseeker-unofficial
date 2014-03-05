@@ -63,8 +63,6 @@ class Server::PrivData
 		bool bPingIsSet;
 
 		bool bSecure;
-		bool broadcastToLAN;
-		bool broadcastToMaster;
 		GameMode gameMode;
 		unsigned int ping;
 		bool custom;
@@ -79,9 +77,6 @@ class Server::PrivData
 		QString motd;
 		QString name;
 		QTime pingClock;
-		QString connectPassword;
-		QString joinPassword;
-		QString rconPassword;
 		PlayersList players;
 		bool randomMapRotation;
 		Response response;
@@ -144,8 +139,6 @@ Server::Server(const QHostAddress &address, unsigned short port)
 		d->scores << 0;
 	}
 	d->bSecure = false;
-	d->broadcastToLAN = false;
-	d->broadcastToMaster = false;
 	d->randomMapRotation = false;
 	d->skill = 3;
 	d->bKnown = false;
@@ -219,11 +212,6 @@ bool Server::anyWadnameContains(const QString& text, Qt::CaseSensitivity cs) con
 		}
 	}
 	return false;
-}
-
-const QString& Server::connectPassword() const
-{
-	return d->connectPassword;
 }
 
 void Server::clearDMFlags()
@@ -315,16 +303,6 @@ const QPixmap &Server::icon() const
 	return plugin()->icon();
 }
 
-bool Server::isBroadcastToLAN() const
-{
-	return d->broadcastToLAN;
-}
-
-bool Server::isBroadcastToMaster() const
-{
-	return d->broadcastToMaster;
-}
-
 bool Server::isCustom() const
 {
 	return d->custom;
@@ -373,11 +351,6 @@ bool Server::isSecure() const
 const QString& Server::iwad() const
 {
 	return d->iwad;
-}
-
-const QString& Server::joinPassword() const
-{
-	return d->joinPassword;
 }
 
 Server::Response Server::lastResponse() const
@@ -461,11 +434,6 @@ const PlayersList &Server::players() const
 unsigned short Server::port() const
 {
 	return d->port;
-}
-
-const QString& Server::rconPassword() const
-{
-	return d->rconPassword;
 }
 
 Server::Response Server::readRefreshQueryResponse(const QByteArray& data)
@@ -554,24 +522,9 @@ bool Server::sendRefreshQuery(QUdpSocket* socket)
 	return true;
 }
 
-void Server::setBroadcastToLAN(bool broadcastToLAN)
-{
-	d->broadcastToLAN = broadcastToLAN;
-}
-
-void Server::setBroadcastToMaster(bool broadcastToMaster)
-{
-	d->broadcastToMaster = broadcastToMaster;
-}
-
 void Server::setCustom(bool custom)
 {
 	d->custom = custom;
-}
-
-void Server::setConnectPassword(const QString& connectPassword)
-{
-	d->connectPassword = connectPassword;
 }
 
 void Server::setDmFlags(const QList<DMFlagsSection>& dmFlags)
@@ -604,11 +557,6 @@ void Server::setHostName(QHostInfo host)
 void Server::setIwad(const QString& iwad)
 {
 	d->iwad = iwad;
-}
-
-void Server::setJoinPassword(const QString& joinPassword)
-{
-	d->joinPassword = joinPassword;
 }
 
 void Server::setLocked(bool locked)
@@ -664,11 +612,6 @@ void Server::setPort(unsigned short i)
 void Server::setRandomMapRotation(bool randomMapRotation)
 {
 	d->randomMapRotation = randomMapRotation;
-}
-
-void Server::setRconPassword(const QString& rconPassword)
-{
-	d->rconPassword = rconPassword;
 }
 
 void Server::setResponse(Response response)

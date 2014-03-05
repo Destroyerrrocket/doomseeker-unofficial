@@ -127,7 +127,6 @@ class MAIN_EXPORT Server : public QObject
 			Qt::CaseSensitivity cs = Qt::CaseInsensitive) const;
 
 		void clearPlayersList();
-		const QString& connectPassword() const;
 		const QList<DMFlagsSection>& dmFlags() const;
 		const QString& email() const;
 
@@ -149,8 +148,6 @@ class MAIN_EXPORT Server : public QObject
 		QString hostName(bool forceAddress=false) const;
 		const QPixmap &icon() const;
 
-		bool isBroadcastToLAN() const;
-		bool isBroadcastToMaster() const;
 		bool isCustom() const;
 		bool isEmpty() const;
 		bool isFull() const;
@@ -174,7 +171,6 @@ class MAIN_EXPORT Server : public QObject
 		bool isSecure() const;
 
 		const QString& iwad() const;
-		const QString& joinPassword() const;
 
 		Response lastResponse() const;
 		/**
@@ -201,7 +197,6 @@ class MAIN_EXPORT Server : public QObject
 		const Player& player(int index) const;
 		const PlayersList &players() const;
 		unsigned short port() const;
-		const QString& rconPassword() const;
 
 		Response readRefreshQueryResponse(const QByteArray& data);
 
@@ -228,13 +223,9 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		bool sendRefreshQuery(QUdpSocket* socket);
 
-		void setBroadcastToLAN(bool b);
-		void setBroadcastToMaster(bool b);
 		void setCustom(bool custom);
-		void setConnectPassword(const QString& str);
 		void setEmail(const QString& mail);
 		void setGameMode(const GameMode& gameMode);
-		void setJoinPassword(const QString& str);
 		void setMap(const QString& name);
 		void setMapList(const QStringList& mapList);
 		void setMaxClients(unsigned short i);
@@ -243,7 +234,6 @@ class MAIN_EXPORT Server : public QObject
 		void setName(const QString& name);
 		void setPort(unsigned short i);
 		void setRandomMapRotation(bool b);
-		void setRconPassword(const QString& str);
 		void setSelf(const QWeakPointer<Server> &self);
 		void setSkill(unsigned char newSkill);
 		void setWebSite(const QString& site);
