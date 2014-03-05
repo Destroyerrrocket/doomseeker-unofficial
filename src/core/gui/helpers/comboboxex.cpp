@@ -24,12 +24,6 @@
 
 #include <QLineEdit>
 
-bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
-{
-	return s1.toLower() < s2.toLower();
-}
-
-
 ComboBoxEx::ComboBoxEx(QComboBox &comboBox)
 : box(comboBox)
 {
@@ -43,6 +37,11 @@ QStringList ComboBoxEx::allItems() const
 		items << box.itemText(i);
 	}
 	return items;
+}
+
+bool ComboBoxEx::caseInsensitiveLessThan(const QString &s1, const QString &s2)
+{
+	return s1.toLower() < s2.toLower();
 }
 
 bool ComboBoxEx::removeCurrentItem()
