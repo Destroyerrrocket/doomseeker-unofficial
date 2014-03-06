@@ -94,8 +94,10 @@ void PasswordDlg::loadConfiguration()
 	}
 	remember->setChecked(cfg.isRememberingConnectPhrase());
 	setPasswords(cfg.serverPhrases());
-	setCurrentConnectPassword(cfg.suggestPassword(d->server.data()).phrase());
-	setCurrentIngamePassword(cfg.suggestPassword(d->server.data()).phrase());
+	setCurrentConnectPassword(cfg.suggestPassword(
+		d->server.data(), ServerPasswordType::CONNECT).phrase());
+	setCurrentIngamePassword(cfg.suggestPassword(
+		d->server.data(), ServerPasswordType::INGAME).phrase());
 }
 
 void PasswordDlg::removeCurrentConnectPassword()
@@ -132,8 +134,8 @@ void PasswordDlg::saveConfiguration()
 	cfg.setRememberConnectPhrase(remember->isChecked());
 	if (remember->isChecked())
 	{
-		cfg.saveServerPhrase(connectPassword(), d->server.data());
-		cfg.saveServerPhrase(inGamePassword(), d->server.data());
+		cfg.saveServerPhrase(connectPassword(), d->server.data(), ServerPasswordType::CONNECT);
+		cfg.saveServerPhrase(inGamePassword(), d->server.data(), ServerPasswordType::INGAME);
 	}
 }
 
