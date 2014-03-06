@@ -53,9 +53,14 @@ class MAIN_EXPORT ServerConnectParams
 		 */
 		const QString& connectPassword() const;
 		const QString& demoName() const;
+		/**
+		 * @brief In-game "join" password.
+		 */
+		const QString& inGamePassword() const;
 
 		void setConnectPassword(const QString& val);
 		void setDemoName(const QString& val);
+		void setInGamePassword(const QString& val);
 
 	private:
 		class PrivData;
@@ -94,6 +99,7 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, addExtra, ());
 
 		void addGamePaths();
+		void addInGamePassword();
 		/**
 		 * @brief @b [Virtual] Plugins can replace IWAD discovery mechanism
 		 *        and generation of relevant executable parameters here.
@@ -129,6 +135,15 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 * "null" string.
 		 */
 		const QString& argForConnectPassword() const;
+
+		/**
+		 * @brief Command line parameter that is used to specify in-game
+		 *        ("join") password.
+		 *
+		 * There is no common value here so the default behavior returns a
+		 * "null" string.
+		 */
+		const QString& argForInGamePassword() const;
 
 		/**
 		 * @brief Command line parameter that is used to set IWAD.
@@ -178,6 +193,11 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		const QString& connectPassword() const;
 		const QString& demoName() const;
 
+		/**
+		 * @brief "Join" password required in game.
+		 */
+		const QString& inGamePassword() const;
+
 		bool isIwadFound() const;
 		const QString& iwadPath() const;
 
@@ -204,6 +224,7 @@ class MAIN_EXPORT GameClientRunner : public QObject
 
 		void setArgForConnect(const QString& arg);
 		void setArgForConnectPassword(const QString& arg);
+		void setArgForInGamePassword(const QString& arg);
 		void setArgForIwadLoading(const QString& arg);
 		void setArgForPort(const QString& arg);
 		void setArgForPwadLoading(const QString& arg);

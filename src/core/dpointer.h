@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// zandronumgamerunner.cpp
+// dpointer.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,27 +18,45 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "zandronumengineplugin.h"
-#include "zandronumgamerunner.h"
-#include "zandronumgameinfo.h"
-#include "zandronumserver.h"
+#ifndef id91044119_93C0_4719_829DE83410DDE660
+#define id91044119_93C0_4719_829DE83410DDE660
 
-#include <ini/inisection.h>
-#include <ini/inivariable.h>
+#define COPYABLE_D_POINTERED_DECLARE(type) \
+	type(const type &other); \
+	type& operator=(const type &other);
 
-ZandronumGameClientRunner::ZandronumGameClientRunner(ServerPtr server)
-: GameClientRunner(server)
-{
-	setArgForConnectPassword("+cl_password");
-	setArgForInGamePassword("+cl_joinpassword");
-	set_addExtra(&ZandronumGameClientRunner::addExtra);
-}
+#define COPYABLE_D_POINTERED_DEFINE(type) \
+	type::type(const type &other) \
+	{ \
+		d = new PrivData(); \
+		*d = *other.d; \
+	} \
+	\
+	type& type::operator=(const type &other) \
+	{ \
+		if (this != &other) \
+		{ \
+			*d = *other.d; \
+		} \
+		return *this; \
+	}
 
-void ZandronumGameClientRunner::addExtra()
-{
-	IniSection& config = *ZandronumEnginePlugin::staticInstance()->data()->pConfig;
-	bool bAllowCountryDisplay = config["AllowServersToDisplayMyCountry"];
-	args() << "+cl_hidecountry" << QString::number(!bAllowCountryDisplay ? 1 : 0);
-}
+#define COPYABLE_D_POINTERED_INNER_DEFINE(type, constructorname) \
+	type::constructorname(const type &other) \
+	{ \
+		d = new PrivData(); \
+		*d = *other.d; \
+	} \
+	\
+	type& type::operator=(const type &other) \
+	{ \
+		if (this != &other) \
+		{ \
+			*d = *other.d; \
+		} \
+		return *this; \
+	}
+
+#endif

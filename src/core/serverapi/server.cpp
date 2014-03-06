@@ -72,6 +72,7 @@ class Server::PrivData
 		QString email;
 		QString iwad;
 		bool locked;
+		bool lockedInGame;
 		QStringList mapList;
 		QString mapName;
 		unsigned short maxClients;
@@ -131,6 +132,7 @@ Server::Server(const QHostAddress &address, unsigned short port)
 	d->port = port;
 	d->bIsRefreshing = false;
 	d->locked = false;
+	d->lockedInGame = false;
 	d->triesLeft = 0;
 	d->maxClients = 0;
 	d->maxPlayers = 0;
@@ -348,9 +350,19 @@ bool Server::isKnown() const
 	return d->bKnown;
 }
 
+bool Server::isLockedAnywhere() const
+{
+	return isLocked() || isLockedInGame();
+}
+
 bool Server::isLocked() const
 {
 	return d->locked;
+}
+
+bool Server::isLockedInGame() const
+{
+	return d->lockedInGame;
 }
 
 bool Server::isRandomMapRotation() const
@@ -617,6 +629,11 @@ void Server::setJoinPassword(const QString& joinPassword)
 void Server::setLocked(bool locked)
 {
 	d->locked = locked;
+}
+
+void Server::setLockedInGame(bool locked)
+{
+	d->lockedInGame = locked;
 }
 
 void Server::setMapList(const QStringList& mapList)

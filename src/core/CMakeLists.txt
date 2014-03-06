@@ -204,6 +204,7 @@ set(SOURCE_FILES
 	configuration/doomseekerconfig.cpp
 	configuration/passwordscfg.cpp
 	configuration/serverpassword.cpp
+	configuration/serverpasswordsummary.cpp
 	gui/configuration/irc/cfgircappearance.cpp
 	gui/configuration/irc/cfgircdefinenetworkdialog.cpp
 	gui/configuration/irc/cfgircnetworks.cpp
@@ -225,6 +226,7 @@ set(SOURCE_FILES
 	gui/configuration/doomseekerconfigurationdialog.cpp
 	gui/configuration/engineconfigurationbasebox.cpp
 	gui/entity/serverlistfilterinfo.cpp
+	gui/helpers/comboboxex.cpp
 	gui/helpers/datetablewidgetitem.cpp
 	gui/helpers/playersdiagram.cpp
 	gui/irc/ircdock.cpp
@@ -367,7 +369,9 @@ set(HEADER_FILES
 	configuration/doomseekerconfig.h
 	configuration/passwordscfg.h
 	configuration/serverpassword.h
+	configuration/serverpasswordsummary.h
 	gui/entity/serverlistfilterinfo.h
+	gui/helpers/comboboxex.h
 	gui/helpers/datetablewidgetitem.h
 	gui/helpers/playersdiagram.h
 	gui/irc/ircsounds.h
@@ -425,6 +429,7 @@ set(HEADER_FILES
 	datapaths.h
 	datastreamoperatorwrapper.h
 	doomseekerfilepaths.h
+	dpointer.h
 	fileutils.h
 	global.h
 	json.h

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// zandronumgamerunner.cpp
+// comboboxex.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,27 +18,42 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "zandronumengineplugin.h"
-#include "zandronumgamerunner.h"
-#include "zandronumgameinfo.h"
-#include "zandronumserver.h"
+#ifndef id3185FE61_75A1_4755_AF403E1F7D09E14B
+#define id3185FE61_75A1_4755_AF403E1F7D09E14B
 
-#include <ini/inisection.h>
-#include <ini/inivariable.h>
+#include <QComboBox>
+#include <QStringList>
 
-ZandronumGameClientRunner::ZandronumGameClientRunner(ServerPtr server)
-: GameClientRunner(server)
+/**
+ * @brief Convenience methods for combo box.
+ */
+class ComboBoxEx
 {
-	setArgForConnectPassword("+cl_password");
-	setArgForInGamePassword("+cl_joinpassword");
-	set_addExtra(&ZandronumGameClientRunner::addExtra);
-}
+	public:
+		ComboBoxEx(QComboBox &comboBox);
 
-void ZandronumGameClientRunner::addExtra()
-{
-	IniSection& config = *ZandronumEnginePlugin::staticInstance()->data()->pConfig;
-	bool bAllowCountryDisplay = config["AllowServersToDisplayMyCountry"];
-	args() << "+cl_hidecountry" << QString::number(!bAllowCountryDisplay ? 1 : 0);
-}
+		QStringList allItems() const;
+		/**
+		 * @brief Removes currently selected item.
+		 *
+		 * @return true if item was in combobox data source.
+		 */
+		bool removeCurrentItem();
+		/**
+		 * @brief Removes item that matches specified one.
+		 *
+		 * @return true if item was in combobox data source.
+		 */
+		bool removeItem(const QString &item);
+		void setCurrentOrAddNewAndSelect(const QString &item);
+		void setItemsSorted(QStringList items);
+
+	private:
+		QComboBox &box;
+
+		static bool caseInsensitiveLessThan(const QString &s1, const QString &s2);
+};
+
+#endif

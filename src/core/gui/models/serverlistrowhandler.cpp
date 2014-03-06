@@ -188,7 +188,7 @@ void ServerListRowHandler::fillPortIconColumn()
 	QPixmap icon = d->server->icon();
 	if(d->server->isKnown())
 	{
-		if(d->server->isLocked()) // Draw a key if it is locked.
+		if(d->server->isLockedAnywhere()) // Draw a key if it is locked.
 		{
 			QPainter iconPainter(&icon);
 			iconPainter.drawPixmap(0, 0, QPixmap(":/locked.png"));

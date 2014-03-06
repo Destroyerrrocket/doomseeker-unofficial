@@ -20,22 +20,21 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
-#include "configuration/passwordscfg.h"
-#include "configuration/serverpassword.h"
-#include "serverapi/server.h"
 #include "passwordDlg.h"
 
-#include <QLineEdit>
+#include "configuration/passwordscfg.h"
+#include "configuration/serverpassword.h"
+#include "gui/helpers/comboboxex.h"
+#include "serverapi/server.h"
 
-bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
-{
-	return s1.toLower() < s2.toLower();
-}
+#include <QLineEdit>
 
 class PasswordDlg::PrivData
 {
 	public:
 		ServerCPtr server;
+		ComboBoxEx *cboConnectPassEx;
+		ComboBoxEx *cboIngamePassEx;
 };
 
 PasswordDlg::PasswordDlg(ServerCPtr server, QWidget *parent)
@@ -43,7 +42,11 @@ PasswordDlg::PasswordDlg(ServerCPtr server, QWidget *parent)
 {
 	setupUi(this);
 	d = new PrivData();
+	d->cboConnectPassEx = new ComboBoxEx(*cboConnectPassword);
+	d->cboIngamePassEx = new ComboBoxEx(*cboIngamePassword);
 	d->server = server;
+
+	applyInputsVisibility();
 
 	// Adjust the size and prevent resizing.
 	adjustSize();
@@ -55,6 +58,7 @@ PasswordDlg::PasswordDlg(ServerCPtr server, QWidget *parent)
 
 PasswordDlg::~PasswordDlg()
 {
+	delete d->cboConnectPassEx;
 	delete d;
 }
 
@@ -64,19 +68,20 @@ void PasswordDlg::accept()
 	QDialog::accept();
 }
 
-QStringList PasswordDlg::allConnectPasswords() const
+void PasswordDlg::applyInputsVisibility()
 {
-	QStringList items;
-	for (int i = 0; i < cboPassword->count(); ++i)
-	{
-		items << cboPassword->itemText(i);
-	}
-	return items;
+	connectPasswordWidget->setVisible(d->server->isLocked());
+	ingamePasswordWidget->setVisible(d->server->isLockedInGame());
 }
 
 QString PasswordDlg::connectPassword() const
 {
-	return cboPassword->currentText();
+	return cboConnectPassword->currentText();
+}
+
+QString PasswordDlg::inGamePassword() const
+{
+	return cboIngamePassword->currentText();
 }
 
 void PasswordDlg::loadConfiguration()
@@ -84,31 +89,42 @@ void PasswordDlg::loadConfiguration()
 	PasswordsCfg cfg;
 	if(cfg.isHidingPasswords())
 	{
-		cboPassword->lineEdit()->setEchoMode(QLineEdit::Password);
+		cboConnectPassword->lineEdit()->setEchoMode(QLineEdit::Password);
+		cboIngamePassword->lineEdit()->setEchoMode(QLineEdit::Password);
 	}
 	remember->setChecked(cfg.isRememberingConnectPhrase());
 	setPasswords(cfg.serverPhrases());
-	setCurrentConnectPassword(cfg.suggestPassword(d->server.data()).phrase());
+	setCurrentConnectPassword(cfg.suggestPassword(
+		d->server.data(), ServerPasswordType::CONNECT).phrase());
+	setCurrentIngamePassword(cfg.suggestPassword(
+		d->server.data(), ServerPasswordType::INGAME).phrase());
 }
 
 void PasswordDlg::removeCurrentConnectPassword()
 {
 	PasswordsCfg cfg;
-	cfg.removeServerPhrase(cboPassword->currentText());
+	QString phrase = cboConnectPassword->currentText();
+	cfg.removeServerPhrase(cboConnectPassword->currentText());
 
-	int idx = cboPassword->findText(cboPassword->currentText());
-	if (idx >= 0)
+	d->cboIngamePassEx->removeItem(phrase);
+	if (!d->cboConnectPassEx->removeCurrentItem())
 	{
-		// Simply removing current index won't give proper results
-		// if user edits the contents of the combo box.
-		cboPassword->removeItem(idx);
+		cboConnectPassword->clearEditText();
+		cboConnectPassword->setFocus();
 	}
-	else
+}
+
+void PasswordDlg::removeCurrentIngamePassword()
+{
+	PasswordsCfg cfg;
+	QString phrase = cboIngamePassword->currentText();
+	cfg.removeServerPhrase(cboIngamePassword->currentText());
+
+	d->cboConnectPassEx->removeItem(phrase);
+	if (!d->cboIngamePassEx->removeCurrentItem())
 	{
-		cboPassword->clearEditText();
-		// It's intended to have focus change only in case if
-		// password wasn't present in the persistence.
-		cboPassword->setFocus();
+		cboIngamePassword->clearEditText();
+		cboIngamePassword->setFocus();
 	}
 }
 
@@ -118,34 +134,23 @@ void PasswordDlg::saveConfiguration()
 	cfg.setRememberConnectPhrase(remember->isChecked());
 	if (remember->isChecked())
 	{
-		cfg.saveServerPhrase(connectPassword(), d->server.data());
+		cfg.saveServerPhrase(connectPassword(), d->server.data(), ServerPasswordType::CONNECT);
+		cfg.saveServerPhrase(inGamePassword(), d->server.data(), ServerPasswordType::INGAME);
 	}
 }
 
 void PasswordDlg::setCurrentConnectPassword(const QString& password)
 {
-	int idx = cboPassword->findText(password);
-	if (idx >= 0)
-	{
-		cboPassword->setCurrentIndex(idx);
-	}
-	else
-	{
-		cboPassword->insertItem(0, password);
-		cboPassword->setCurrentIndex(0);
-	}
-	cboPassword->lineEdit()->selectAll();
+	d->cboConnectPassEx->setCurrentOrAddNewAndSelect(password);
+}
+
+void PasswordDlg::setCurrentIngamePassword(const QString& password)
+{
+	d->cboIngamePassEx->setCurrentOrAddNewAndSelect(password);
 }
 
 void PasswordDlg::setPasswords(const QStringList& passwords)
 {
-	QStringList passwordsSorted = passwords;
-	qSort(passwordsSorted.begin(), passwordsSorted.end(), caseInsensitiveLessThan);
-	foreach (const QString& pass, passwordsSorted)
-	{
-		if (cboPassword->findText(pass) < 0)
-		{
-			cboPassword->addItem(pass);
-		}
-	}
+	d->cboConnectPassEx->setItemsSorted(passwords);
+	d->cboIngamePassEx->setItemsSorted(passwords);
 }

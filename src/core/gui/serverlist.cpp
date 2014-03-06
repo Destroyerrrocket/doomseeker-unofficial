@@ -275,14 +275,12 @@ QString ServerListHandler::createPortToolTip(ServerCPtr server)
 
 	QString ret;
 	if (server->isLocked())
-		ret = "Password protected";
+		ret += "Password protected\n";
+	if (server->isLockedInGame())
+		ret += "Password protected in-game\n";
 	if (server->isSecure())
-	{
-		if(!ret.isEmpty())
-			ret += '\n';
-		ret += "Enforces master bans";
-	}
-	return ret;
+		ret += "Enforces master bans\n";
+	return ret.trimmed();
 }
 
 QString ServerListHandler::createPwadsToolTip(ServerCPtr server)

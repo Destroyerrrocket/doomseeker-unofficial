@@ -22,6 +22,16 @@
 //------------------------------------------------------------------------------
 #include "serversummary.h"
 
+#include "serverapi/server.h"
+
+ServerSummary::ServerSummary(const Server *server)
+{
+	setAddress(server->address().toString());
+	setPort(server->port());
+	setGame(server->engineName());
+	setName(server->name());
+}
+
 ServerSummary ServerSummary::deserializeQVariant(const QVariant& v)
 {
 	QVariantMap m = v.toMap();

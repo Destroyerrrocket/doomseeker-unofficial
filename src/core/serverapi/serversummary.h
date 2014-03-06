@@ -27,6 +27,8 @@
 #include <QString>
 #include <QVariant>
 
+class Server;
+
 class ServerSummary
 {
 	public:
@@ -36,6 +38,8 @@ class ServerSummary
 		{
 			d.port = 0;
 		}
+
+		ServerSummary(const Server *server);
 
 		const QString& address() const
 		{

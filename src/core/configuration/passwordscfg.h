@@ -31,6 +31,7 @@
 class Ini;
 class Server;
 class ServerPassword;
+class ServerPasswordSummary;
 
 class PasswordsCfg
 {
@@ -44,16 +45,37 @@ class PasswordsCfg
 		bool isRememberingConnectPhrase() const;
 		int maxNumberOfServersPerPassword() const;
 		void removeServerPhrase(const QString& phrase);
-		void saveServerPhrase(const QString& phrase, const Server* server);
+		/**
+		 * @brief Stores server phrase in persistence along its use case.
+		 *
+		 * @param phrase
+		 *     Phrase to store
+		 * @param server
+		 *     Server on which the password is being used.
+		 * @param type
+		 *     Password type, one of ServerPasswordType consts or custom.
+		 */
+		void saveServerPhrase(const QString& phrase, const Server* server,
+			const QString &type);
 		QList<ServerPassword> serverPasswords() const;
 		QStringList serverPhrases() const;
 		void setHidePasswords(bool val);
 		void setMaxNumberOfServersPerPassword(int val);
 		void setRememberConnectPhrase(bool val);
 		void setServerPasswords(const QList<ServerPassword>& val);
-		ServerPassword suggestPassword(const Server* server);
+		/**
+		 * @brief Suggests best password basing on several criteria.
+		 *
+		 * @param server
+		 *     Server for which a password shall be suggested.
+		 * @param type
+		 *     Password type, one of ServerPasswordType consts or custom.
+		 */
+		ServerPassword suggestPassword(const Server* server, const QString &type);
 
 	private:
+		static bool serverDateDescending(ServerPasswordSummary& s1, ServerPasswordSummary& s2);
+
 		static Ini* ini;
 		static QSettings* settings;
 
