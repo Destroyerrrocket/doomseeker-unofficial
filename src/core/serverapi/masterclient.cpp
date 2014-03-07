@@ -233,7 +233,8 @@ void MasterClient::readPacketCache()
 		QByteArray data(size, '\0');
 		strm >> data;
 
-		if(!readMasterResponse(data))
+		Response response = readMasterResponse(data);
+		if(response != RESPONSE_GOOD && response != RESPONSE_PENDING)
 		{
 			// Cache was not read properly. We need to emit the signal
 			// to notify the program that this master client finished

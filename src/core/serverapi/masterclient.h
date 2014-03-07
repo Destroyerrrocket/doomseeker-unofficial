@@ -185,9 +185,6 @@ class MAIN_EXPORT MasterClient : public QObject
 		/**
 		 * @brief Called to read and analyze the response from the
 		 * MasterServer.
-		 *
-		 * @return If false is returned refreshing of this master server is
-		 * immediatelly aborted.
 		 */
 		virtual Response readMasterResponse(const QByteArray &data)=0;
 
