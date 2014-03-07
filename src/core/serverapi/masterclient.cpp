@@ -245,6 +245,7 @@ void MasterClient::readPacketCache()
 	}
 
 	gLog << tr("Reloading master server results from cache for %1!").arg(plugin()->data()->name);
+	bool hasGood = false;
 	while(!strm.atEnd())
 	{
 		quint16 size;
@@ -254,14 +255,26 @@ void MasterClient::readPacketCache()
 		strm >> data;
 
 		Response response = readMasterResponse(data);
+		if (response == RESPONSE_GOOD)
+		{
+			hasGood = true;
+		}
 		if(response != RESPONSE_GOOD && response != RESPONSE_PENDING)
 		{
 			// Cache was not read properly. We need to emit the signal
 			// to notify the program that this master client finished
 			// updating.
 			emit listUpdated();
-			break;
+			return;
 		}
+	}
+	if (!hasGood)
+	{
+		// Plugins are ought to emit listUpdated() only when RESPONSE_GOOD
+		// is achieved. If that's not the case, we shall emit it here
+		// to notify refreshing process that the server has completed
+		// updating.
+		emit listUpdated();
 	}
 }
 
