@@ -47,6 +47,16 @@ class MasterClient::PrivData
 		QList<ServerPtr> servers;
 
 		QFile *cache;
+
+		bool isCacheOpenForReading() const
+		{
+			return cache != NULL && cache->isReadable();
+		}
+
+		bool isCacheOpenForWriting() const
+		{
+			return cache != NULL && cache->isWritable();
+		}
 };
 
 MasterClient::MasterClient()
@@ -160,7 +170,7 @@ ServerPtr MasterClient::operator[](int index) const
 
 bool MasterClient::preparePacketCache(bool write)
 {
-	if(d->cache == NULL || d->cache->isWritable() != write)
+	if (write ? !d->isCacheOpenForWriting() : !d->isCacheOpenForReading())
 	{
 		if(plugin() == NULL)
 		{
@@ -184,6 +194,12 @@ bool MasterClient::preparePacketCache(bool write)
 			return false;
 		}
 	}
+	else if (!write && d->isCacheOpenForReading())
+	{
+		// If we prepare cache for reading we want to start
+		// reading from the beginning.
+		d->cache->seek(0);
+	}
 	return d->cache != NULL;
 }
 
@@ -201,8 +217,12 @@ void MasterClient::pushPacketToCache(const QByteArray &data)
 
 MasterClient::Response MasterClient::readResponse(const QByteArray &data)
 {
-	pushPacketToCache(data);
-	return readMasterResponse(data);
+	Response response = readMasterResponse(data);
+	if (response == RESPONSE_GOOD || response == RESPONSE_PENDING)
+	{
+		pushPacketToCache(data);
+	}
+	return response;
 }
 
 void MasterClient::readPacketCache()
