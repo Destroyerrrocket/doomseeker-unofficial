@@ -91,7 +91,8 @@ class IRCResponseParser : public QObject
 		void			sendPongMessage(const QString& sendWhere);
 		void			userChangesNickname(const QString& oldNickname, const QString& newNickname);
 		void			userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature);
-		void			userModeChanged(const QString& channel, const QString& nickname, unsigned flagsAdded, unsigned flagsRemoved);
+		void userModeChanged(const QString& channel, const QString& nickname,
+			const QList<char> &flagsAdded, const QList<char> &flagsRemoved);
 		void			userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage);
 		void			userQuitsNetwork(const QString& nickname, const QString& farewellMessage);
 

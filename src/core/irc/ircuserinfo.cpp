@@ -21,84 +21,40 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircuserinfo.h"
+
+#include "irc/entities/ircuserprefix.h"
 #include "irc/ircglobal.h"
+#include "irc/ircnetworkadapter.h"
+#include <cassert>
 
-IRCUserInfo::IRCUserInfo(const QString& nickname, const QString& fullSignature)
+IRCUserInfo::IRCUserInfo()
 {
-	this->userFlags = 0;
-	this->fullSignature = fullSignature;
+	this->parentNetwork = NULL;
+}
 
-	if (nickname.isEmpty())
+IRCUserInfo::IRCUserInfo(const QString& nickname, const IRCNetworkAdapter *parentNetwork,
+	const QString& fullSignature)
+{
+	this->fullSignature = fullSignature;
+	this->parentNetwork = parentNetwork;
+
+	if (nickname.isEmpty() || parentNetwork == NULL)
 	{
 		return;
 	}
 
-	this->userName = nickname;
-	this->userFlags = this->extractFlags(this->userName);
+	this->userName = parentNetwork->userPrefixes().cleanNickname(nickname);
+	this->userModes << parentNetwork->userPrefixes().modeFromNickname(nickname);
 }
 
-unsigned IRCUserInfo::convertModeCharToFlag(char c)
+QString IRCUserInfo::cleanNickname() const
 {
-	switch (c)
-	{
-		case 'a':
-			return FLAG_PROTECTED;
-		case 'h':
-			return FLAG_HALFOP;
-		case 'o':
-			return FLAG_OP;
-		case 'q':
-			return FLAG_FOUNDER;
-		case 'v':
-			return FLAG_VOICE;
-		default:
-			return 0;
-	}
-}
-
-unsigned IRCUserInfo::convertNickCharToFlag(char c)
-{
-	switch (c)
-	{
-		case '&':
-			return FLAG_PROTECTED;
-		case '%':
-			return FLAG_HALFOP;
-		case '@':
-			return FLAG_OP;
-		case '~':
-			return FLAG_FOUNDER;
-		case '+':
-			return FLAG_VOICE;
-		default:
-			return 0;
-	}
+	return prefixes().cleanNickname(userName);
 }
 
 QString IRCUserInfo::cleanNicknameLowerCase() const
 {
 	return IRCGlobal::toIrcLower(this->cleanNickname());
-}
-
-unsigned IRCUserInfo::extractFlags(QString& name)
-{
-	// This is a recurrent method.
-	// Recurrency continues until zero is returned.
-
-	if (name.isEmpty())
-	{
-		return 0;
-	}
-
-	unsigned flag = convertNickCharToFlag(name[0].toAscii());
-	if (flag != 0)
-	{
-		name.remove(0, 1);
-		// Call the function again to seek more flags.
-		return flag | extractFlags(name);
-	}
-	
-	return flag;
 }
 
 QString IRCUserInfo::extractHostnameFromFullSignature() const
@@ -115,15 +71,44 @@ QString IRCUserInfo::extractHostnameFromFullSignature() const
 	return "";
 }
 
-bool IRCUserInfo::isFlag(unsigned flag) const
+bool IRCUserInfo::isOp() const
 {
-	unsigned combined = flag & userFlags;
-	return combined != 0;
+	return modes().contains('o');
 }
 
 bool IRCUserInfo::isSameNickname(const IRCUserInfo& otherUser) const
 {
 	return ((*this) == otherUser);
+}
+
+bool IRCUserInfo::isSameNickname(const QString& otherNickname) const
+{
+	IRCUserInfo otherUser(otherNickname, network());
+	return isSameNickname(otherUser);
+}
+
+bool IRCUserInfo::isValid() const
+{
+	return !userName.isEmpty() && parentNetwork != NULL;
+}
+
+const QList<char> &IRCUserInfo::modes() const
+{
+	return userModes;
+}
+
+const IRCNetworkAdapter *IRCUserInfo::network() const
+{
+	return parentNetwork;
+}
+
+void IRCUserInfo::setPrefixedNickname(const QString &nickname)
+{
+	this->userName = prefixes().cleanNickname(nickname);
+	if (prefixes().modeFromNickname(nickname) != 0)
+	{
+		setMode(prefixes().modeFromNickname(nickname));
+	}
 }
 
 bool IRCUserInfo::operator==(const IRCUserInfo& otherUser) const
@@ -136,73 +121,34 @@ bool IRCUserInfo::operator==(const IRCUserInfo& otherUser) const
 
 bool IRCUserInfo::operator<=(const IRCUserInfo& otherUser) const
 {
-	// Only one flag per user can be displayed. They take
-	// precedence in order of appearance:
-	if (this->isFounder() ^ otherUser.isFounder())
+	assert(parentNetwork != NULL);
+	char mode1 = prefixes().topMostMode(modes());
+	char mode2 = prefixes().topMostMode(otherUser.modes());
+	if (prefixes().compare(mode1, mode2) != 0)
 	{
-		return this->isFounder();
+		return prefixes().compare(mode1, mode2) < 0;
 	}
-	else if (this->isProtected() ^ otherUser.isProtected())
-	{
-		return this->isProtected();
-	}
-	else if (this->isOp() ^ otherUser.isOp())
-	{
-		return this->isOp();
-	}
-	else if (this->isHalfOp() ^ otherUser.isHalfOp())
-	{
-		return this->isHalfOp();
-	}
-	// Half-op overrides voice.
-	else if (this->isVoiced() ^ otherUser.isVoiced())
-	{
-		return this->isVoiced();
-	}
-	
+
 	QString thisNickname = this->cleanNicknameLowerCase();
 	QString otherNickname = otherUser.cleanNicknameLowerCase();
-	
+
 	bool bIsThisAlphabeticallySmaller = (thisNickname.compare(otherNickname) <= 0);
-	
 	return bIsThisAlphabeticallySmaller;
 }
 
-QString IRCUserInfo::prefixedName() const 
+QString IRCUserInfo::prefixedName() const
 {
-	QString userName = this->userName;
-
-	if (this->isFounder())
+	assert(parentNetwork != NULL);
+	char mode = prefixes().topMostMode(modes());
+	if (mode != 0)
 	{
-		userName.prepend('~');
-		return userName;
+		return QString("%1%2").arg(prefixes().prefixForMode(mode))
+			.arg(cleanNickname());
 	}
-
-	if (this->isProtected())
+	else
 	{
-		userName.prepend('&');
-		return userName;
+		return cleanNickname();
 	}
-
-	if (this->isOp())
-	{
-		userName.prepend('@');
-		return userName;
-	}
-
-	if (this->isHalfOp())
-	{
-		userName.prepend('%');
-		return userName;
-	}
-
-	if (this->isVoiced())
-	{
-		userName.prepend('+');
-		return userName;
-	}	
-
-	return userName;
 }
 
 QString IRCUserInfo::prefixedNameLowerCase() const
@@ -210,14 +156,25 @@ QString IRCUserInfo::prefixedNameLowerCase() const
 	return IRCGlobal::toIrcLower(this->prefixedName());
 }
 
-void IRCUserInfo::setFlag(unsigned flag, bool bSet)
+const IRCUserPrefix &IRCUserInfo::prefixes() const
 {
-	if (bSet)
+	return parentNetwork->userPrefixes();
+}
+
+void IRCUserInfo::setModes(const QList<char> &modes)
+{
+	this->userModes = modes;
+}
+
+void IRCUserInfo::setMode(char mode)
+{
+	if (!userModes.contains(mode))
 	{
-		this->userFlags |= flag;
+		userModes << mode;
 	}
-	else
-	{
-		this->userFlags &= ~flag;
-	}
+}
+
+void IRCUserInfo::unsetMode(char mode)
+{
+	userModes.removeAll(mode);
 }

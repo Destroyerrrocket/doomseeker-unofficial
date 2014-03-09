@@ -22,6 +22,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircrequestparser.h"
+#include "irc/ircadapterbase.h"
 #include "irc/ircclient.h"
 #include "irc/ircglobal.h"
 #include "irc/ircuserinfo.h"
@@ -117,7 +118,7 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::parse(IRCAdapterBase* 
 			QString recipient = inputSplit.takeFirst();
 			if (!IRCGlobal::isChannelName(recipient))
 			{
-				IRCUserInfo userInfo(recipient);
+				IRCUserInfo userInfo(recipient, pAdapter->network());
 				emit query(userInfo.cleanNickname());
 			}
 		}

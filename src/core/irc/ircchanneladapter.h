@@ -133,10 +133,10 @@ class IRCChannelAdapter : public IRCChatAdapter
 		void					userLeaves(const QString& nickname, const QString& farewellMessage, IRCQuitType quitType);
 		
 		/**
-		 *	this will first emit nameRemoved() for the nickname and then
-		 *	nameAdded() for the same nickname.
+		 * this will first emit nameRemoved() for the nickname and then
+		 * nameAdded() for the same nickname.
 		 */
-		void					userModeChanges(const QString& nickname, unsigned flagsAdded, unsigned flagsRemoved);		
+		void userModeChanges(const QString& nickname, const QList<char> &addedFlags, const QList<char> &removedFlags);
 
 	signals:
 		/**

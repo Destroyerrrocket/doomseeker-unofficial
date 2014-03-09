@@ -51,7 +51,7 @@ bool IRCChannelAdapter::amIOperator() const
 
 void IRCChannelAdapter::appendNameToCachedList(const QString& name)
 {
-	if (users->appendNameToCachedList(name))
+	if (users->appendNameToCachedList(IRCUserInfo(name, network())))
 	{
 		IRCUserInfo user = users->userCopy(name);
 		emit nameAdded(user);
@@ -60,7 +60,10 @@ void IRCChannelAdapter::appendNameToCachedList(const QString& name)
 
 void IRCChannelAdapter::appendNamesToCachedList(const QStringList& names)
 {
-	users->appendNamesToCachedList(names);
+	foreach (const QString &name, names)
+	{
+		appendNameToCachedList(name);
+	}
 }
 
 void IRCChannelAdapter::banUser(const QString& nickname, const QString& reason)
@@ -116,7 +119,7 @@ void IRCChannelAdapter::kickUser(const QString& nickname, const QString& reason)
 {
 	if (hasUser(nickname))
 	{
-		QString cleanNickname = IRCUserInfo(nickname).cleanNickname();
+		QString cleanNickname = IRCUserInfo(nickname, pNetwork).cleanNickname();
 		this->sendMessage(QString("/kick %1 %2 %3").arg(this->recipientName, cleanNickname, reason));
 	}
 }
@@ -206,17 +209,23 @@ void IRCChannelAdapter::userLeaves(const QString& nickname, const QString& farew
 	}
 }
 
-void IRCChannelAdapter::userModeChanges(const QString& nickname, unsigned flagsAdded, unsigned flagsRemoved)
+void IRCChannelAdapter::userModeChanges(const QString& nickname,
+	const QList<char> &addedFlags, const QList<char> &removedFlags)
 {
 	const IRCUserInfo* pUserInfo = this->users->user(nickname);
 	if (pUserInfo != NULL)
 	{
-		unsigned flags = pUserInfo->flags();
-		flags |= flagsAdded;
-		flags &= ~flagsRemoved;
-	
-		this->users->setUserFlags(nickname, flags);
-		
-		emit nameUpdated(*pUserInfo);
+		IRCUserInfo newUserInfo = *pUserInfo;
+		foreach (char mode, addedFlags)
+		{
+			newUserInfo.setMode(mode);
+		}
+		foreach (char mode, removedFlags)
+		{
+			newUserInfo.unsetMode(mode);
+		}
+
+		this->users->setUserModes(nickname, newUserInfo.modes());
+		emit nameUpdated(newUserInfo);
 	}
 }

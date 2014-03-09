@@ -453,7 +453,9 @@ void IRCResponseParser::parseUserModeMessage(const QString& channel, QString fla
 
 	if (flagMode == FlagModeError)
 	{
-		emit parseError(tr("MODE flags string from IRC server are incorrect: \"%1\". Information for channel \"%2\" might not be correct anymore.").arg(flagsString, channel));
+		emit parseError(tr("MODE flags string from IRC server are incorrect: \"%1\". "
+			"Information for channel \"%2\" might not be correct anymore.")
+			.arg(flagsString, channel));
 		return;
 	}
 
@@ -469,32 +471,28 @@ void IRCResponseParser::parseUserModeMessage(const QString& channel, QString fla
 				return;
 			}
 
-			unsigned flag = IRCUserInfo::convertModeCharToFlag(flagChar);
-			if (flag != 0)
+			QList<char> addedFlags;
+			QList<char> removedFlags;
+
+			QString name = nicknames[0];
+
+			switch (flagMode)
 			{
-				unsigned flagsAdded = 0;
-				unsigned flagsRemoved = 0;
+				case FlagModeAdd:
+					addedFlags << flagChar;
+					break;
 
-				QString name = nicknames[0];
+				case FlagModeRemove:
+					removedFlags << flagChar;
+					break;
 
-				switch (flagMode)
-				{
-					case FlagModeAdd:
-						flagsAdded = flag;
-						break;
-
-					case FlagModeRemove:
-						flagsRemoved = flag;
-						break;
-
-					default:
-						emit parseError(tr("IRCResponseParser::parseUserModeMessage(): wrong FlagMode. Information for channel \"%2\" might not be correct anymore."));
-						return;
-				}
-
-				emit userModeChanged(channel, name, flagsAdded, flagsRemoved);
+				default:
+					emit parseError(tr("IRCResponseParser::parseUserModeMessage(): "
+						"wrong FlagMode. Information for channel \"%2\" might not be correct anymore."));
+					return;
 			}
 
+			emit userModeChanged(channel, name, addedFlags, removedFlags);
 			// Drop a name from the list and continue.
 			nicknames.pop_front();
 		}

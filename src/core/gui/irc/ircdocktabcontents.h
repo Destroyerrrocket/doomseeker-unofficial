@@ -178,6 +178,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 	
 		QStandardItem*		findUserListItem(const QString& nickname);
 		UserListMenu&		getUserListContextMenu();
+		IRCNetworkAdapter* network();
 		void				insertMessage(const IRCMessageClass& messageClass, const QString& htmlString);
 		QString				selectedNickname();
 		

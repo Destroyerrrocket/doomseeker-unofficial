@@ -46,8 +46,8 @@ void IRCPrivAdapter::userJoins(const QString& nickname, const QString& fullSigna
 void IRCPrivAdapter::userLeaves(const QString& nickname, const QString& farewellMessage, IRCQuitType quitType)
 {
 	// Make sure that this user is the recipient of this adapter.
-	IRCUserInfo recipientUserInfo(recipientName);	
-	if (recipientUserInfo == nickname)
+	IRCUserInfo recipientUserInfo(recipientName, network());
+	if (recipientUserInfo.isSameNickname(nickname))
 	{
 		QString message = "";
 	

@@ -44,8 +44,6 @@ class IRCUserList
 	public:
 		~IRCUserList();
 
-		bool					appendNameToCachedList(const QString& nickname);
-		
 		/**
 		 *	@brief Appends a single name to the users array.
 		 *
@@ -57,12 +55,6 @@ class IRCUserList
 		 */
 		bool					appendNameToCachedList(const IRCUserInfo& userInfo);
 
-		/**
-		 *	@brief Appends a list of names to cachedNames list. This ensures that no
-		 *	duplicate names are found on the list.
-		 */
-		void					appendNamesToCachedList(const QStringList& names);
-		
 		/**
 		 *	@brief Changes a nickname while preserving user flags.
 		 *
@@ -82,9 +74,9 @@ class IRCUserList
 		 *	@return True if the name was actually removed, false otherwise.
 		 */
 		bool					removeNameFromCachedList(const QString& nickname);
-		
-		void					setUserFlags(const QString& nickname, unsigned flags);
-		
+
+		void setUserModes(const QString& nickname, const QList<char> &modes);
+
 		unsigned				size() const { return this->usersArray.size(); }
 
 		/**

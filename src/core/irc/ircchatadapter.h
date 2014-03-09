@@ -109,7 +109,8 @@ class IRCChatAdapter : public IRCAdapterBase
 		/**
 		 *	@brief Use this to register the fact that user MODE flags have changed.
 		 */
-		virtual void			userModeChanges(const QString& nickname, unsigned flagsAdded, unsigned flagsRemoved) = 0;		
+		virtual void userModeChanges(const QString& nickname,
+			const QList<char> &addedFlags, const QList<char> &removedFlags) = 0;
 		
 	protected:
 		IRCNetworkAdapter*		pNetwork;

@@ -23,6 +23,9 @@
 #ifndef id068647E2_4561_423C_AC0AE4C8499B2EF8
 #define id068647E2_4561_423C_AC0AE4C8499B2EF8
 
+#include <QList>
+#include <QString>
+
 /**
  * @brief One-to-one association of visible prefixes to user mode.
  *
@@ -46,10 +49,18 @@ class IRCUserPrefix
 		IRCUserPrefix &operator=(const IRCUserPrefix &other);
 
 		void assignPrefix(char mode, char prefix);
+		QString cleanNickname(const QString &nickname) const;
+		int compare(char mode1, char mode2) const;
 		bool hasMode(char mode) const;
-		bool isLessThan(char mode1, char mode2) const;
+		bool hasPrefix(char prefix) const;
+		char modeFromNickname(const QString &nickname) const;
 		char modeForPrefix(char prefix) const;
 		char prefixForMode(char mode) const;
+		/**
+		 * @brief Out of list of possible modes picks mode with highest
+		 *        priority.
+		 */
+		char topMostMode(const QList<char> &candidates) const;
 
 	private:
 		class PrivData;

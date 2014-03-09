@@ -160,12 +160,12 @@ void IRCDockTabContents::blinkTimerSlot()
 QStandardItem* IRCDockTabContents::findUserListItem(const QString& nickname)
 {
 	QStandardItemModel* pModel = (QStandardItemModel*)this->lvUserList->model();
-	IRCUserInfo userInfo(nickname);
+	IRCUserInfo userInfo(nickname, network());
 
 	for (int i = 0; i < pModel->rowCount(); ++i)
 	{
 		QStandardItem* pItem = pModel->item(i);
-		if (userInfo == pItem->text())
+		if (userInfo == IRCUserInfo(pItem->text(), network()))
 		{
 			return pItem;
 		}
@@ -272,7 +272,7 @@ void IRCDockTabContents::nameAdded(const IRCUserInfo& userInfo)
 		QStandardItem* pExistingItem = pModel->item(i);
 		QString existingNickname = pExistingItem->text();
 
-		if (userInfo <= existingNickname)
+		if (userInfo <= IRCUserInfo(existingNickname, network()))
 		{
 			pModel->insertRow(i, pItem);
 			return;
@@ -300,7 +300,7 @@ void IRCDockTabContents::nameRemoved(const IRCUserInfo& userInfo)
 	for (int i = 0; i < pModel->rowCount(); ++i)
 	{
 		QStandardItem* pItem = pModel->item(i);
-		if (userInfo == pItem->text())
+		if (userInfo.isSameNickname(pItem->text()))
 		{
 			pModel->removeRow(i);
 			break;
@@ -312,6 +312,11 @@ void IRCDockTabContents::nameUpdated(const IRCUserInfo& userInfo)
 {
 	nameRemoved(userInfo);
 	nameAdded(userInfo);
+}
+
+IRCNetworkAdapter* IRCDockTabContents::network()
+{
+	return ircAdapter()->network();
 }
 
 void IRCDockTabContents::newChatWindowIsOpened(IRCChatAdapter* pAdapter)
@@ -532,7 +537,7 @@ void IRCDockTabContents::userListCustomContextMenuRequested(const QPoint& pos)
 		// Prevent calls if there is no one selected.
 		return;
 	}
-	QString cleanNickname = IRCUserInfo(nickname).cleanNickname();
+	QString cleanNickname = IRCUserInfo(nickname, network()).cleanNickname();
 
 	IRCChannelAdapter* pAdapter = (IRCChannelAdapter*) this->pIrcAdapter;
 	const QString& channel = pAdapter->recipient();
@@ -611,7 +616,7 @@ void IRCDockTabContents::userListDoubleClicked(const QModelIndex& index)
 		// Prevent calls if there is no one selected.
 		return;
 	}
-	QString cleanNickname = IRCUserInfo(nickname).cleanNickname();
+	QString cleanNickname = IRCUserInfo(nickname, network()).cleanNickname();
 
 	this->pIrcAdapter->network()->openNewAdapter(cleanNickname);
 }

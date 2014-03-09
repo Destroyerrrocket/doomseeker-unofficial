@@ -26,17 +26,14 @@
 IRCDelayedOperation::IRCDelayedOperation(OperationType operationType, const QString& nickname, const QString& channel)
 {
 	this->channelName = channel;
-	this->nick = IRCUserInfo(nickname).cleanNickname();
+	this->nick = nickname;
 	this->operType = operationType;
 }
 
 bool IRCDelayedOperation::operator==(const IRCDelayedOperation& other) const
 {
-	IRCUserInfo userInfo(this->nick);
-
 	return this->operType == other.operType
 		&& (this->channelName.compare(other.channelName, Qt::CaseInsensitive) == 0)
-		&& userInfo == other.nick;
-		
+		&& nick == other.nick;
 }
 

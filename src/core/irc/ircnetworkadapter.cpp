@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircnetworkadapter.h"
+#include "irc/entities/ircuserprefix.h"
 #include "irc/ircchanneladapter.h"
 #include "irc/ircglobal.h"
 #include "irc/ircglobalmessages.h"
@@ -103,8 +104,10 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 	QObject::connect(&ircResponseParser, SIGNAL ( userJoinsChannel(const QString&, const QString&, const QString&) ),
 		this, SLOT( userJoinsChannel(const QString&, const QString&, const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL ( userModeChanged(const QString&, const QString&, unsigned, unsigned) ),
-		this, SLOT( userModeChanged(const QString&, const QString&, unsigned, unsigned) ) );
+	QObject::connect(&ircResponseParser,
+		SIGNAL(userModeChanged(const QString&, const QString&, const QList<char>&, const QList<char>&)),
+		this,
+		SLOT(userModeChanged(const QString&, const QString&, const QList<char>&, const QList<char>&)));
 
 	QObject::connect(&ircResponseParser, SIGNAL ( userPartsChannel(const QString&, const QString&, const QString&) ),
 		this, SLOT( userPartsChannel(const QString&, const QString&, const QString&) ) );
@@ -135,13 +138,13 @@ void IRCNetworkAdapter::appendISupportLine(const QString &line)
 
 void IRCNetworkAdapter::banUser(const QString& nickname, const QString& reason, const QString& channel)
 {
-	QString cleanNickname = IRCUserInfo(nickname).cleanNickname();
-
-	IRCDelayedOperation operation(IRCDelayedOperation::Ban, cleanNickname, channel);
+	IRCDelayedOperation operation(IRCDelayedOperation::Ban,
+		userPrefixes().cleanNickname(nickname), channel);
 	operation.setAttribute("reason", reason);
 	delayedOperations << operation;
 
-	this->sendMessage(QString("/whois %1").arg(cleanNickname));
+	this->sendMessage(QString("/whois %1").arg(
+		userPrefixes().cleanNickname(nickname)));
 }
 
 void IRCNetworkAdapter::connect(const IRCNetworkConnectionInfo& connectionInfo)
@@ -369,9 +372,8 @@ bool IRCNetworkAdapter::isAdapterRelated(const IRCAdapterBase* pAdapter) const
 
 bool IRCNetworkAdapter::isMyNickname(const QString& nickname) const
 {
-	IRCUserInfo myUserInfo(this->connectionInfo.nick);
-
-	return (myUserInfo == nickname);
+	IRCUserInfo myUserInfo(this->connectionInfo.nick, this);
+	return (myUserInfo.isSameNickname(nickname));
 }
 
 bool IRCNetworkAdapter::isOperator(const QString& nickname, const QString& channel) const
@@ -584,7 +586,7 @@ void IRCNetworkAdapter::sendPong(const QString& toWhom)
 
 void IRCNetworkAdapter::setChannelMode(const QString& channel, const QString& nickname, const QString& flag, bool bSet)
 {
-	QString cleanNickname = IRCUserInfo(nickname).cleanNickname();
+	QString cleanNickname = userPrefixes().cleanNickname(nickname);
 
 	QString flagPrefixed;
 	if (bSet)
@@ -653,12 +655,13 @@ void IRCNetworkAdapter::userJoinsChannel(const QString& channel, const QString& 
 	}
 }
 
-void IRCNetworkAdapter::userModeChanged(const QString& channel, const QString& nickname, unsigned flagsAdded, unsigned flagsRemoved)
+void IRCNetworkAdapter::userModeChanged(const QString& channel, const QString& nickname,
+	const QList<char> &addedFlags, const QList<char> &removedFlags)
 {
 	if (hasRecipient(channel))
 	{
 		IRCChatAdapter* pAdapter = this->getOrCreateNewChatAdapter(channel);
-		pAdapter->userModeChanges(nickname, flagsAdded, flagsRemoved);
+		pAdapter->userModeChanges(nickname, addedFlags, removedFlags);
 	}
 }
 
@@ -678,8 +681,11 @@ void IRCNetworkAdapter::userPartsChannel(const QString& channel, const QString& 
 			pChannel->userLeaves(nickname, farewellMessage, IRCChatAdapter::ChannelPart);
 		}
 	}
+}
 
-
+const IRCUserPrefix &IRCNetworkAdapter::userPrefixes() const
+{
+	return ircISupportParser->userPrefixes();
 }
 
 void IRCNetworkAdapter::userQuitsNetwork(const QString& nickname, const QString& farewellMessage)
@@ -702,7 +708,9 @@ void IRCNetworkAdapter::whoIsUser(const QString& nickname, const QString& user, 
 	// Deliver pending bans.
 	while(true)
 	{
-		const IRCDelayedOperation* pBanOperation = delayedOperations.operationForNickname(IRCDelayedOperation::Ban, nickname);
+		const IRCDelayedOperation* pBanOperation = 
+			delayedOperations.operationForNickname(IRCDelayedOperation::Ban,
+			userPrefixes().cleanNickname(nickname));
 		if (pBanOperation == NULL)
 		{
 			break;

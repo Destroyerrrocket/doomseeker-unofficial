@@ -20,6 +20,7 @@ class IRCChatAdapter;
 class IRCISupportParser;
 class IRCSocketSignalsAdapter;
 class IRCUserList;
+class IRCUserPrefix;
 
 /**
  *	@brief Interprets communication between the client and the IRC server.
@@ -145,6 +146,12 @@ class IRCNetworkAdapter : public IRCAdapterBase
 
 		QString								title() const;
 
+		/**
+		 * @brief All allowed modes with their nickname prefixes for this
+		 *        network.
+		 */
+		const IRCUserPrefix &userPrefixes() const;
+
 	public slots:
 		/**
 		 *	@brief Opens a new chat adapter for specified recipient.
@@ -246,7 +253,8 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		void								sendPong(const QString& toWhom);
 		void								userChangesNickname(const QString& oldNickname, const QString& newNickname);
 		void								userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature);
-		void								userModeChanged(const QString& channel, const QString& nickname, unsigned flagsAdded, unsigned flagsRemoved);
+		void userModeChanged(const QString& channel, const QString& nickname,
+			const QList<char> &addedFlags, const QList<char> &removedFlags);
 		void								userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage);
 		void								userQuitsNetwork(const QString& nickname, const QString& farewellMessage);
 		void								whoIsUser(const QString& nickname, const QString& user, const QString& hostName, const QString& realName);
