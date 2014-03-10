@@ -29,6 +29,7 @@
 #include <QObject>
 
 class CommandLineInfo;
+class JoinError;
 class Server;
 class QUrl;
 class QWidget;
@@ -77,6 +78,7 @@ class ConnectionHandler : public QObject
 		bool	handleResponse;
 		QWidget	*parent;
 
+		static QStringList allDownloadableWads(const JoinError &joinError);
 		static QString mkDemoName(ServerPtr server, bool managedDemo);
 		static void saveDemoMetaData(ServerPtr server, const QString& demoName);
 };

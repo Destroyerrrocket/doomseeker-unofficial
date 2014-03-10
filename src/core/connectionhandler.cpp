@@ -39,6 +39,7 @@
 #include "serverapi/message.h"
 #include "serverapi/server.h"
 
+#include <wadseeker/wadseeker.h>
 #include <QMessageBox>
 
 class ConnectionHandler::PrivData
@@ -59,6 +60,17 @@ ConnectionHandler::ConnectionHandler(ServerPtr server, QWidget *parent, bool han
 ConnectionHandler::~ConnectionHandler()
 {
 	delete d;
+}
+
+QStringList ConnectionHandler::allDownloadableWads(const JoinError &joinError)
+{
+	QStringList wads;
+	if (!joinError.missingIwad().isEmpty())
+	{
+		wads << joinError.missingIwad();
+	}
+	wads.append(joinError.missingWads());
+	return Wadseeker::filterAllowedOnlyWads(wads);
 }
 
 void ConnectionHandler::checkResponse(const ServerPtr &server, int response)
@@ -245,26 +257,35 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, ServerPtr server,
 				// Execute Wadseeker
 				if (!joinError.missingIwad().isEmpty())
 				{
-					QString additionalInfo = tr("\n"
-						"Make sure that this file is in one of the paths specified in Options -> File Paths.\n"
-						"If you don't have this file, and it belongs to a commercial game, "
-						"you need to purchase the game associated with this IWAD.\n"
-						"Wadseeker will not download commercial IWADs.\n\n");
-					filesMissingMessage += tr("IWAD: ") + joinError.missingIwad().toLower() + additionalInfo;
+					filesMissingMessage += tr("IWAD: ") + joinError.missingIwad().toLower() + "\n";
+					if (Wadseeker::isForbiddenWad(joinError.missingIwad()))
+					{
+						filesMissingMessage += tr("\n"
+							"Make sure that this file is in one of the paths "
+							"specified in Options -> File Paths.\n"
+							"This file belongs to a commercial game or is otherwise "
+							"blocked from download. If you don't have this file, "
+							"and it belongs to a commercial game, "
+							"you need to purchase the game associated with this IWAD.\n"
+							"Wadseeker will not download commercial IWADs.\n\n");
+					}
 				}
 
 				if (!joinError.missingWads().isEmpty())
 				{
-					filesMissingMessage += tr("PWADS: %1\nDo you want Wadseeker to find missing PWADs?").arg(joinError.missingWads().join(" "));
+					filesMissingMessage += tr("PWADS: %1").arg(joinError.missingWads().join(", "));
 				}
 
-				if (joinError.isMissingIwadOnly())
 				{
-					QMessageBox::critical(parent, filesMissingCaption, filesMissingMessage, QMessageBox::Ok);
-					return false;
-				}
-				else
-				{
+					QStringList downloadableWads = allDownloadableWads(joinError);
+					if (downloadableWads.isEmpty())
+					{
+						QMessageBox::critical(parent, filesMissingCaption, filesMissingMessage, QMessageBox::Ok);
+						return false;
+					}
+					
+					filesMissingMessage += tr("\n\nFollowing files can be downloaded: %1\n\n"
+						"Do you want Wadseeker to find the missing WADs?").arg(downloadableWads.join(", "));
 					QMessageBox::StandardButtons buttons = QMessageBox::Yes|QMessageBox::No;
 					if (server->plugin()->data()->inGameFileDownloads)
 					{
@@ -280,13 +301,8 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, ServerPtr server,
 							return false;
 						}
 
-						if (!joinError.missingIwad().isEmpty())
-						{
-							joinError.addMissingWad(joinError.missingIwad());
-						}
-
 						WadseekerInterface wsi(parent);
-						wsi.setAutomatic(true, joinError.missingWads());
+						wsi.setAutomatic(true, downloadableWads);
 						wsi.setCustomSite(server->webSite());
 						if (wsi.exec() == QDialog::Accepted)
 						{

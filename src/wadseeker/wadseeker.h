@@ -113,6 +113,15 @@ class WADSEEKER_API Wadseeker : public QObject
 		static QStringList 		defaultSitesListEncoded();
 
 		/**
+		 * @brief Lists only wads for which isForbiddenWad() returns false.
+		 */
+		static QStringList filterAllowedOnlyWads(const QStringList &wads);
+		/**
+		 * @brief Lists only wads for which isForbiddenWad() returns true.
+		 */
+		static QStringList filterForbiddenOnlyWads(const QStringList &wads);
+
+		/**
 		 *	@brief Attempts to detect if the input is on
 		 *	       a list of forbidden wads.
 		 *
