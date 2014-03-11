@@ -53,6 +53,7 @@
 #include "customservers.h"
 #include "doomseekerfilepaths.h"
 #include "fileutils.h"
+#include "joincommandlinebuilder.h"
 #include "log.h"
 #include "main.h"
 #include "strings.h"
@@ -951,7 +952,7 @@ void MainWindow::menuViewIRC()
 
 void MainWindow::menuWadSeeker()
 {
-	if (!ConnectionHandler::checkWadseekerValidity(this))
+	if (!JoinCommandLineBuilder::checkWadseekerValidity(this))
 	{
 		return;
 	}

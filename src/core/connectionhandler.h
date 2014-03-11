@@ -44,7 +44,6 @@ class ConnectionHandler : public QObject
 
 		void	run();
 
-		static bool checkWadseekerValidity(QWidget *parent=NULL);
 		static ConnectionHandler *connectByUrl(const QUrl &url);
 		/**
 		 *	Generates command line info for specified server.
@@ -73,10 +72,6 @@ class ConnectionHandler : public QObject
 	private:
 		class PrivData;
 		PrivData *d;
-
-		QStringList allDownloadableWads(const JoinError &joinError);
-		QString mkDemoName(bool managedDemo);
-		void saveDemoMetaData(const QString& demoName);
 };
 
 #endif

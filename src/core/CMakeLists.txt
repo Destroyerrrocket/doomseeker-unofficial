@@ -188,6 +188,7 @@ set(DOOMSEEKER_QT_FILES
 	application.h
 	apprunner.h
 	customservers.h
+	joincommandlinebuilder.h
 	log.h
 	main.h
 	socketsignalsadapter.h
@@ -349,6 +350,7 @@ set(SOURCE_FILES
 	datastreamoperatorwrapper.cpp
 	doomseekerfilepaths.cpp
 	fileutils.cpp
+	joincommandlinebuilder.cpp
 	json.cpp
 	localization.cpp
 	localizationinfo.cpp
