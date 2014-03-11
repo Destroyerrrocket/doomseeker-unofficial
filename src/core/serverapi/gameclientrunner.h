@@ -259,7 +259,9 @@ class MAIN_EXPORT GameClientRunner : public QObject
 
 		void addExtra_default() {};
 		void addIwad_default();
+		bool canDownloadWadsInGame() const;
 		void createCommandLineArguments_default();
+		bool isFatalError() const;
 		void setupPathFinder_default();
 		QString findIwad() const;
 		GamePaths gamePaths();

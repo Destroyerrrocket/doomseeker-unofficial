@@ -101,7 +101,7 @@ void ServerConnectParams::setInGamePassword(const QString& val)
 #define BAIL_ON_ERROR(method) \
 { \
 	method; \
-	if (d->joinError.isError()) \
+	if (isFatalError()) \
 	{ \
 		return; \
 	} \
@@ -312,6 +312,11 @@ const QString& GameClientRunner::argForDemoRecord() const
 	return d->argDemoRecord;
 }
 
+bool GameClientRunner::canDownloadWadsInGame() const
+{
+	return d->server->plugin()->data()->inGameFileDownloads;
+}
+
 const QString& GameClientRunner::connectPassword() const
 {
 	return d->connectParams.connectPassword();
@@ -394,6 +399,19 @@ GameClientRunner::GamePaths GameClientRunner::gamePaths()
 const QString& GameClientRunner::inGamePassword() const
 {
 	return d->connectParams.inGamePassword();
+}
+
+bool GameClientRunner::isFatalError() const
+{
+	if (d->joinError.isError())
+	{
+		if (d->joinError.isMissingWadsError() && canDownloadWadsInGame())
+		{
+			return false;
+		}
+		return true;
+	}
+	return false;
 }
 
 bool GameClientRunner::isIwadFound() const
