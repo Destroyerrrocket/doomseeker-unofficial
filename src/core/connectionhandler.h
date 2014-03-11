@@ -39,7 +39,7 @@ class ConnectionHandler : public QObject
 	Q_OBJECT
 
 	public:
-		ConnectionHandler(ServerPtr server, QWidget *parent=NULL, bool handleResponse=false);
+		ConnectionHandler(ServerPtr server, QWidget *parentWidget=NULL, bool handleResponse=false);
 		~ConnectionHandler();
 
 		void	run();
@@ -49,7 +49,6 @@ class ConnectionHandler : public QObject
 		/**
 		 *	Generates command line info for specified server.
 		 *
-		 *	@param server - command line will be generated for this server
 		 *	@param [out] cli - generated command line
 		 *	@param errorCaption - caption used for QMessageBox in case of an
 		 *		error
@@ -57,8 +56,8 @@ class ConnectionHandler : public QObject
 		 *		set to true if Wadseeker downloaded files.
 		 *	@return true on success, false otherwise.
 		 */
-		static bool obtainJoinCommandLine(QWidget *parent, ServerPtr server,
-			CommandLineInfo& cli, const QString& errorCaption, bool managedDemo,
+		bool obtainJoinCommandLine(CommandLineInfo& cli,
+			const QString& errorCaption, bool managedDemo,
 			bool *hadMissing=NULL);
 
 	protected:
@@ -75,12 +74,9 @@ class ConnectionHandler : public QObject
 		class PrivData;
 		PrivData *d;
 
-		bool	handleResponse;
-		QWidget	*parent;
-
-		static QStringList allDownloadableWads(const JoinError &joinError);
-		static QString mkDemoName(ServerPtr server, bool managedDemo);
-		static void saveDemoMetaData(ServerPtr server, const QString& demoName);
+		QStringList allDownloadableWads(const JoinError &joinError);
+		QString mkDemoName(bool managedDemo);
+		void saveDemoMetaData(const QString& demoName);
 };
 
 #endif

@@ -1257,7 +1257,8 @@ void MainWindow::setupToolBar()
 void MainWindow::showServerJoinCommandLine(const ServerPtr &server)
 {
 	CommandLineInfo cli;
-	if (ConnectionHandler::obtainJoinCommandLine(this, server, cli, tr("Doomseeker - join command line"), false))
+	ConnectionHandler connectionHandler(server, this);
+	if (connectionHandler.obtainJoinCommandLine(cli, tr("Doomseeker - join command line"), false))
 	{
 		QString execPath = cli.executable.absoluteFilePath();
 		QStringList args = cli.args;

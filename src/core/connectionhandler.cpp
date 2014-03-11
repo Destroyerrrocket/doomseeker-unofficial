@@ -45,16 +45,21 @@
 class ConnectionHandler::PrivData
 {
 	public:
+		bool handleResponse;
 		ServerPtr server;
+		QWidget *parentWidget;
 };
 
-ConnectionHandler::ConnectionHandler(ServerPtr server, QWidget *parent, bool handleResponse) : QObject(parent)
+ConnectionHandler::ConnectionHandler(ServerPtr server, QWidget *parentWidget,
+	bool handleResponse)
+: QObject(parentWidget)
 {
 	d = new PrivData();
-	this->parent = parent;
-	this->handleResponse = handleResponse;
+	d->handleResponse = handleResponse;
 	d->server = server;
-	connect(d->server.data(), SIGNAL(updated(ServerPtr, int)), this, SLOT(checkResponse(ServerPtr, int)));
+	d->parentWidget = parentWidget;
+	connect(d->server.data(), SIGNAL(updated(ServerPtr, int)),
+		this, SLOT(checkResponse(ServerPtr, int)));
 }
 
 ConnectionHandler::~ConnectionHandler()
@@ -77,15 +82,15 @@ void ConnectionHandler::checkResponse(const ServerPtr &server, int response)
 {
 	if(response != Server::RESPONSE_GOOD)
 	{
-		if(handleResponse)
+		if(d->handleResponse)
 		{
 			switch(response)
 			{
 				case Server::RESPONSE_TIMEOUT:
-					QMessageBox::critical(parent, tr("Doomseeker - join server"), tr("Connection to server timed out."));
+					QMessageBox::critical(d->parentWidget, tr("Doomseeker - join server"), tr("Connection to server timed out."));
 					break;
 				default:
-					QMessageBox::critical(parent, tr("Doomseeker - join server"), tr("An error occured while trying to connect to server."));
+					QMessageBox::critical(d->parentWidget, tr("Doomseeker - join server"), tr("An error occured while trying to connect to server."));
 					break;
 			}
 		}
@@ -158,7 +163,7 @@ void ConnectionHandler::finish(int response)
 	emit finished(response);
 }
 
-QString ConnectionHandler::mkDemoName(ServerPtr server, bool managedDemo)
+QString ConnectionHandler::mkDemoName(bool managedDemo)
 {
 	// port-iwad-date-wad
 	QString demoName;
@@ -167,16 +172,17 @@ QString ConnectionHandler::mkDemoName(ServerPtr server, bool managedDemo)
 		demoName = gDefaultDataPaths->demosDirectoryPath() + QDir::separator();
 	}
 	demoName += QString("%1_%2").
-		arg(server->engineName()).
+		arg(d->server->engineName()).
 		arg(QDateTime::currentDateTime().toString("dd.MM.yyyy_hh.mm.ss"));
-	if (!server->plugin()->data()->demoExtensionAutomatic)
+	if (!d->server->plugin()->data()->demoExtensionAutomatic)
 	{
-		demoName += QString(".%1").arg(server->plugin()->data()->demoExtension);
+		demoName += QString(".%1").arg(d->server->plugin()->data()->demoExtension);
 	}
 	return demoName;
 }
 
-bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, ServerPtr server, CommandLineInfo& cli, const QString& errorCaption, bool managedDemo, bool *hadMissing)
+bool ConnectionHandler::obtainJoinCommandLine(CommandLineInfo& cli,
+	const QString& errorCaption, bool managedDemo, bool *hadMissing)
 {
 	// TODO: This method is a monster and it needs refactoring!
 
@@ -184,20 +190,20 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, ServerPtr server,
 	cli.args.clear();
 	cli.executable = QFileInfo("");
 
-	if (server != NULL)
+	if (d->server != NULL)
 	{
 		// Remember to check REFRESHING status first!
-		if (server->isRefreshing())
+		if (d->server->isRefreshing())
 		{
-			QMessageBox::warning(parent, errorCaption, tr("This server is still refreshing.\nPlease wait until it is finished."));
-			gLog << tr("Attempted to obtain a join command line for a \"%1\" server that is under refresh.").arg(server->addressWithPort());
+			QMessageBox::warning(d->parentWidget, errorCaption, tr("This server is still refreshing.\nPlease wait until it is finished."));
+			gLog << tr("Attempted to obtain a join command line for a \"%1\" server that is under refresh.").arg(d->server->addressWithPort());
 			return false;
 		}
 		// Fail if Doomseeker couldn't get data on this server.
-		else if (!server->isKnown())
+		else if (!d->server->isKnown())
 		{
-			QMessageBox::critical(parent, errorCaption, tr("Data for this server is not available.\nOperation failed."));
-			gLog << tr("Attempted to obtain a join command line for an unknown server \"%1\"").arg(server->addressWithPort());
+			QMessageBox::critical(d->parentWidget, errorCaption, tr("Data for this server is not available.\nOperation failed."));
+			gLog << tr("Attempted to obtain a join command line for an unknown server \"%1\"").arg(d->server->addressWithPort());
 			return false;
 		}
 
@@ -206,9 +212,9 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, ServerPtr server,
 		QString filesMissingMessage = tr("Following files are missing:\n");
 
 		ServerConnectParams params;
-		if(server->isLockedAnywhere())
+		if(d->server->isLockedAnywhere())
 		{
-			PasswordDlg password(server);
+			PasswordDlg password(d->server);
 			int ret = password.exec();
 			if(ret != QDialog::Accepted)
 			{
@@ -218,10 +224,10 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, ServerPtr server,
 			params.setInGamePassword(password.inGamePassword());
 		}
 
-		GameClientRunner* gameRunner = server->gameRunner();
+		GameClientRunner* gameRunner = d->server->gameRunner();
 		if (gConfig.doomseeker.bRecordDemo)
 		{
-			params.setDemoName(mkDemoName(server, managedDemo));
+			params.setDemoName(mkDemoName(managedDemo));
 		}
 		JoinError joinError = gameRunner->createJoinCommandLine(cli, params);
 		delete gameRunner;
@@ -243,12 +249,12 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, ServerPtr server,
 					error = tr("Unknown error.");
 				}
 
-				QMessageBox::critical(parent, errorCaption, error);
-				gLog << tr("Error when obtaining join parameters for server \"%1\", game \"%2\": %3").arg(server->name()).arg(server->engineName()).arg(error);
+				QMessageBox::critical(d->parentWidget, errorCaption, error);
+				gLog << tr("Error when obtaining join parameters for server \"%1\", game \"%2\": %3").arg(d->server->name()).arg(d->server->engineName()).arg(error);
 
 				if (joinError.type() == JoinError::ConfigurationError)
 				{
-					DoomseekerConfigurationDialog::openConfiguration(server->plugin());
+					DoomseekerConfigurationDialog::openConfiguration(d->server->plugin());
 				}
 				return false;
 			}
@@ -280,35 +286,35 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, ServerPtr server,
 					QStringList downloadableWads = allDownloadableWads(joinError);
 					if (downloadableWads.isEmpty())
 					{
-						QMessageBox::critical(parent, filesMissingCaption, filesMissingMessage, QMessageBox::Ok);
+						QMessageBox::critical(d->parentWidget, filesMissingCaption, filesMissingMessage, QMessageBox::Ok);
 						return false;
 					}
 					
 					filesMissingMessage += tr("\n\nFollowing files can be downloaded: %1\n\n"
 						"Do you want Wadseeker to find the missing WADs?").arg(downloadableWads.join(", "));
 					QMessageBox::StandardButtons buttons = QMessageBox::Yes|QMessageBox::No;
-					if (server->plugin()->data()->inGameFileDownloads)
+					if (d->server->plugin()->data()->inGameFileDownloads)
 					{
 						filesMissingMessage += tr("\nAlternatively use ignore to connect anyways.");
 						buttons |= QMessageBox::Ignore;
 					}
 
-					QMessageBox::StandardButtons ret = QMessageBox::question(parent, filesMissingCaption, filesMissingMessage, buttons);
+					QMessageBox::StandardButtons ret = QMessageBox::question(d->parentWidget, filesMissingCaption, filesMissingMessage, buttons);
 					if (ret == QMessageBox::Yes)
 					{
-						if (!checkWadseekerValidity(parent))
+						if (!checkWadseekerValidity(d->parentWidget))
 						{
 							return false;
 						}
 
-						WadseekerInterface wsi(parent);
+						WadseekerInterface wsi(d->parentWidget);
 						wsi.setAutomatic(true, downloadableWads);
-						wsi.setCustomSite(server->webSite());
+						wsi.setCustomSite(d->server->webSite());
 						if (wsi.exec() == QDialog::Accepted)
 						{
 							if(hadMissing)
 								*hadMissing = true;
-							return obtainJoinCommandLine(parent, server, cli, errorCaption, managedDemo, NULL);
+							return obtainJoinCommandLine(cli, errorCaption, managedDemo, NULL);
 						}
 					}
 					if (ret != QMessageBox::Ignore)
@@ -319,7 +325,7 @@ bool ConnectionHandler::obtainJoinCommandLine(QWidget *parent, ServerPtr server,
 			case JoinError::NoError:
 				if (managedDemo && gConfig.doomseeker.bRecordDemo)
 				{
-					saveDemoMetaData(server, mkDemoName(server, managedDemo));
+					saveDemoMetaData(mkDemoName(managedDemo));
 				}
 				break;
 
@@ -349,7 +355,7 @@ void ConnectionHandler::run()
 {
 	bool hadMissing = false;
 	CommandLineInfo cli;
-	if (obtainJoinCommandLine(parent, d->server, cli, tr("Doomseeker - join server"), true, &hadMissing))
+	if (obtainJoinCommandLine(cli, tr("Doomseeker - join server"), true, &hadMissing))
 	{
 		if(hadMissing)
 		{
@@ -364,21 +370,21 @@ void ConnectionHandler::run()
 		{
 			gLog << tr("Error while launching executable for server \"%1\", game \"%2\": %3")
 				.arg(d->server->name()).arg(d->server->engineName()).arg(message.contents());
-			QMessageBox::critical(parent, tr("Doomseeker - launch executable"), message.contents());
+			QMessageBox::critical(d->parentWidget, tr("Doomseeker - launch executable"), message.contents());
 		}
 	}
 
 	finish(Server::RESPONSE_GOOD);
 }
 
-void ConnectionHandler::saveDemoMetaData(ServerPtr server, const QString& demoName)
+void ConnectionHandler::saveDemoMetaData(const QString& demoName)
 {
 	QString metaFileName;
 	// If the extension is automatic we need to add it here
-	if(server->plugin()->data()->demoExtensionAutomatic)
+	if(d->server->plugin()->data()->demoExtensionAutomatic)
 	{
 		metaFileName = QString("%1.%2.ini").arg(demoName)
-			.arg(server->plugin()->data()->demoExtension);
+			.arg(d->server->plugin()->data()->demoExtension);
 	}
 	else
 	{
@@ -392,12 +398,12 @@ void ConnectionHandler::saveDemoMetaData(ServerPtr server, const QString& demoNa
 
 	// Get a list of wads for demo name:
 	QStringList wadList;
-	for (int i = 0; i < server->numWads(); ++i)
+	for (int i = 0; i < d->server->numWads(); ++i)
 	{
 		// Also be sure to escape any underscores.
-		wadList << server->wad(i).name().toLower();
+		wadList << d->server->wad(i).name().toLower();
 	}
 
-	metaSection.createSetting("iwad", server->iwad().toLower());
+	metaSection.createSetting("iwad", d->server->iwad().toLower());
 	metaSection.createSetting("pwads", wadList.join(";"));
 }
