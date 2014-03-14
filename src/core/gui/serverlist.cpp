@@ -443,6 +443,16 @@ void ServerListHandler::initCleanerTimer()
 	connect(&cleanerTimer, SIGNAL( timeout() ), this, SLOT ( cleanUp() ) );
 }
 
+bool ServerListHandler::isAnyColumnSortedAdditionally() const
+{
+	return sortingProxy->isAnyColumnSortedAdditionally();
+}
+
+bool ServerListHandler::isSortingAdditionallyByColumn(int column) const
+{
+	return sortingProxy->isSortingAdditionallyByColumn(column);
+}
+
 bool ServerListHandler::isSortingByColumn(int columnIndex)
 {
 	return sortIndex == columnIndex;

@@ -24,6 +24,7 @@
 
 #include "gui/entity/serverlistfilterinfo.h"
 #include "gui/widgets/serverfilterbuildermenu.h"
+#include "gui/serverlist.h"
 #include "serverapi/server.h"
 #include "strings.h"
 #include <QApplication>
@@ -39,13 +40,15 @@ class ServerListContextMenu::PrivData
 		QAction *sortAdditionallyDescending;
 		QModelIndex modelIndex;
 		ServerListFilterInfo serverFilter;
+		ServerListHandler *parent;
 };
 
 ServerListContextMenu::ServerListContextMenu(ServerPtr server, const ServerListFilterInfo& filter,
-	const QModelIndex &modelIndex, QObject *parent)
+	const QModelIndex &modelIndex, ServerListHandler *parent)
 : QObject(parent), pServer(server)
 {
 	d = new PrivData();
+	d->parent = parent;
 	d->serverFilter = filter;
 	d->modelIndex = modelIndex;
 	initializeMembers();
@@ -117,11 +120,20 @@ void ServerListContextMenu::createMembers()
 
 	// Sorts.
 	menu->addSeparator();
-	d->sortAdditionallyAscending = menu->addAction(tr("Sort additionally ascending"));
-	d->sortAdditionallyDescending = menu->addAction(tr("Sort additionally descending"));
-	d->removeAdditionalSortingForColumn = menu->addAction(
-		tr("Remove additional sorting for column"));
-	d->clearAdditionalSorting = menu->addAction(tr("Clear additional sorting"));
+	if (!d->parent->isSortingByColumn(d->modelIndex.column()))
+	{
+		d->sortAdditionallyAscending = menu->addAction(tr("Sort additionally ascending"));
+		d->sortAdditionallyDescending = menu->addAction(tr("Sort additionally descending"));
+	}
+	if (d->parent->isSortingAdditionallyByColumn(d->modelIndex.column()))
+	{
+		d->removeAdditionalSortingForColumn = menu->addAction(
+			tr("Remove additional sorting for column"));
+	}
+	if (d->parent->isAnyColumnSortedAdditionally())
+	{
+		d->clearAdditionalSorting = menu->addAction(tr("Clear additional sorting"));
+	}
 }
 
 void ServerListContextMenu::initializeMembers()

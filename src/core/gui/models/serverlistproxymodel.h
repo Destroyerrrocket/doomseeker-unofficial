@@ -67,6 +67,9 @@ class ServerListProxyModel : public QSortFilterProxyModel
 		void clearAdditionalSorting();
 		const ServerListFilterInfo& filterInfo() const;
 
+		bool isAnyColumnSortedAdditionally() const;
+		bool isSortingAdditionallyByColumn(int column) const;
+
 		void removeAdditionalColumnSorting(int column);
 		void setAdditionalSortColumns(const QList<ColumnSort> &columns);
 		/**

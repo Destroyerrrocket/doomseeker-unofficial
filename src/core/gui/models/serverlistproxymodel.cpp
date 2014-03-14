@@ -264,6 +264,16 @@ const ServerListFilterInfo& ServerListProxyModel::filterInfo() const
 	return d->filterInfo;
 }
 
+bool ServerListProxyModel::isAnyColumnSortedAdditionally() const
+{
+	return !d->additionalSortColumns.isEmpty();
+}
+
+bool ServerListProxyModel::isSortingAdditionallyByColumn(int column) const
+{
+	return d->additionalSortForColumn(column).isValid();
+}
+
 bool ServerListProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
 {
 	if (!d->parentHandler->getMainWindow()->isActiveWindow())

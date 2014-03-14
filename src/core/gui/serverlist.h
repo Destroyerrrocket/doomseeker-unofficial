@@ -54,6 +54,8 @@ class ServerListHandler : public QObject
 		QWidget*			getMainWindow() { return mainWindow; }
 		bool				hasAtLeastOneServer() const;
 
+		bool isAnyColumnSortedAdditionally() const;
+		bool isSortingAdditionallyByColumn(int column) const;
 		bool				isSortingByColumn(int columnIndex);
 
 		QList<ServerPtr> selectedServers();

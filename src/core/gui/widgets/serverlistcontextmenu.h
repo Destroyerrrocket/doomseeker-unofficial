@@ -31,6 +31,7 @@
 class Server;
 class ServerFilterBuilderMenu;
 class ServerListFilterInfo;
+class ServerListHandler;
 
 class ServerListContextMenu : public QObject
 {
@@ -56,7 +57,7 @@ class ServerListContextMenu : public QObject
 		};
 
 		ServerListContextMenu(ServerPtr server, const ServerListFilterInfo& filter,
-			const QModelIndex &modelIndex, QObject *parent);
+			const QModelIndex &modelIndex, ServerListHandler *parent);
 		~ServerListContextMenu();
 
 		const QModelIndex &modelIndex() const;
