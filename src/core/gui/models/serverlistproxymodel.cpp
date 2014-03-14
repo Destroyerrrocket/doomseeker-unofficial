@@ -76,6 +76,11 @@ ServerListProxyModel::~ServerListProxyModel()
 
 void ServerListProxyModel::addAdditionalColumnSorting(int column, Qt::SortOrder order)
 {
+	if (d->mainSortColumn == column)
+	{
+		// No-op.
+		return;
+	}
 	if (d->mainSortColumn >= 0)
 	{
 		d->removeAdditionalColumnSorting(column);
@@ -357,6 +362,10 @@ void ServerListProxyModel::sortServers(int column, Qt::SortOrder order)
 {
 	d->mainSortColumn = column;
 	d->sortOrder = order;
+	if (d->removeAdditionalColumnSorting(column))
+	{
+		emit additionalSortColumnsChanged();
+	}
 	sort(column, order);
 }
 ///////////////////////////////////////////////////////////////////////////////
