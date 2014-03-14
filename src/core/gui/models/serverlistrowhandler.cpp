@@ -437,20 +437,3 @@ int ServerListRowHandler::updateServer(int response)
 
 	return row;
 }
-
-//QVariant ServerListRowHandler::columnSortData(int row, int column)
-//{
-//	QStandardItem* it = item(row, column);
-//	return it->data(DTSort);
-//}
-
-//void ServerListRowHandler::updateFlag(int row, bool force)
-//{
-//    Server* serv = serverFromList(row);
-//    QStandardItem* itm = item(row, SLCID_SERVERNAME);
-//
-//    if (force || itm->icon().isNull())
-//    {
-//		setCountryFlag(itm, serv->address());
-//    }
-//}
