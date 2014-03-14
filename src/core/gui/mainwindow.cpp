@@ -78,6 +78,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
   trayIcon(NULL), trayIconMenu(NULL)
 {
 	autoUpdater = NULL;
+	mainDock = NULL;
 	connectionHandler = NULL;
 	updateChannelOnUpdateStart = new UpdateChannel();
 	updaterInstallerErrorCode = 0;
@@ -125,6 +126,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	initIRCDock();
 	initServerFilterDock();
 	initMainDock();
+	splitDockWidget(mainDock, serverFilterDock, Qt::Horizontal);
 
 	// Spawn Server Table Handler.
 	serverTableHandler = new ServerListHandler(tableServers, this);
@@ -724,7 +726,7 @@ void MainWindow::initMainDock()
 
 	// Make a dock out of the central MainWindow widget and drop that widget
 	// from the MainWindow itself.
-	QDockWidget *mainDock = new QDockWidget(tr("Servers"));
+	mainDock = new QDockWidget(tr("Servers"));
 	mainDock->setTitleBarWidget(new QWidget(this));
 	mainDock->setObjectName("ServerList");
 	mainDock->setFeatures(QDockWidget::NoDockWidgetFeatures);
