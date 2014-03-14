@@ -38,6 +38,7 @@ class PWad;
 class IniSection;
 class Server;
 class ServerListFilterInfo;
+class ServerListProxyModel;
 
 class ServerListHandler : public QObject
 {
@@ -120,7 +121,7 @@ class ServerListHandler : public QObject
 		QWidget*				mainWindow;
 		ServerListModel* 		model;
 		bool					needsCleaning;
-		QSortFilterProxyModel*	sortingProxy;
+		ServerListProxyModel *sortingProxy;
 
 		Qt::SortOrder 			sortOrder;
 		int						sortIndex;
@@ -138,7 +139,7 @@ class ServerListHandler : public QObject
 		void					connectTableModelProxySlots();
 
 		ServerListModel*		createModel();
-		QSortFilterProxyModel*	createSortingProxy(ServerListModel* serverListModel);
+		ServerListProxyModel *createSortingProxy(ServerListModel* serverListModel);
 
 		Qt::SortOrder			getColumnDefaultSortOrder(int columnId);
 
@@ -154,9 +155,16 @@ class ServerListHandler : public QObject
 		Qt::SortOrder			swapCurrentSortOrder();
 
 		void 					updateCountryFlags(bool force);
+
+	private:
+		void clearAdditionalSorting();
+		void removeAdditionalSortingForColumn(const QModelIndex &modelIndex);
+		void sortAdditionally(const QModelIndex &modelIndex, Qt::SortOrder order);
+
 	private slots:
 		void contextMenuAboutToHide();
 		void contextMenuTriggered(QAction* action);
+		void updateHeaderTitles();
 };
 
 #endif

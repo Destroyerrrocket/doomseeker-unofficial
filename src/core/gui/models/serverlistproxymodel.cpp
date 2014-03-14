@@ -31,21 +31,77 @@
 class ServerListProxyModel::PrivData
 {
 	public:
+		QList<ColumnSort> additionalSortColumns;
+		int mainSortColumn;
 		ServerListHandler* parentHandler;
 		ServerListFilterInfo filterInfo;
 		Qt::SortOrder sortOrder;
+
+		ColumnSort additionalSortForColumn(int column) const
+		{
+			foreach (const ColumnSort &sort, additionalSortColumns)
+			{
+				if (sort.columnId() == column)
+				{
+					return sort;
+				}
+			}
+			return ColumnSort();
+		}
+
+		bool removeAdditionalColumnSorting(int column)
+		{
+			ColumnSort sort = additionalSortForColumn(column);
+			if (sort.isValid())
+			{
+				additionalSortColumns.removeAll(sort);
+				return true;
+			}
+			return false;
+		}
 };
 
 ServerListProxyModel::ServerListProxyModel(ServerListHandler* serverListHandler)
 : QSortFilterProxyModel(serverListHandler)
 {
 	d = new PrivData();
+	d->mainSortColumn = -1;
 	d->parentHandler = serverListHandler;
 }
 
 ServerListProxyModel::~ServerListProxyModel()
 {
 	delete d;
+}
+
+void ServerListProxyModel::addAdditionalColumnSorting(int column, Qt::SortOrder order)
+{
+	if (d->mainSortColumn >= 0)
+	{
+		d->removeAdditionalColumnSorting(column);
+		d->additionalSortColumns << ColumnSort(column, order);
+		emit additionalSortColumnsChanged();
+	}
+	else
+	{
+		d->mainSortColumn = column;
+		d->sortOrder = order;
+	}
+	sort(d->mainSortColumn, d->sortOrder);
+}
+
+const QList<ColumnSort> &ServerListProxyModel::additionalSortColumns() const
+{
+	return d->additionalSortColumns;
+}
+
+void ServerListProxyModel::clearAdditionalSorting()
+{
+	if (!d->additionalSortColumns.isEmpty())
+	{
+		d->additionalSortColumns.clear();
+		emit additionalSortColumnsChanged();
+	}
 }
 
 bool ServerListProxyModel::compareColumnSortData(QVariant& var1, QVariant& var2, int column) const
@@ -228,6 +284,19 @@ bool ServerListProxyModel::lessThan(const QModelIndex& left, const QModelIndex& 
 	return compareColumnSortData(leftVar, rightVar, left.column());
 }
 
+void ServerListProxyModel::removeAdditionalColumnSorting(int column)
+{
+	bool anythingRemoved = d->removeAdditionalColumnSorting(column);
+	if (d->mainSortColumn > 0)
+	{
+		sort(d->mainSortColumn, d->sortOrder);
+	}
+	if (anythingRemoved)
+	{
+		emit additionalSortColumnsChanged();
+	}
+}
+
 void ServerListProxyModel::setFilterInfo(const ServerListFilterInfo& filterInfo)
 {
 	d->filterInfo = filterInfo;
@@ -247,7 +316,39 @@ ServerPtr ServerListProxyModel::serverFromList(int row) const
 
 void ServerListProxyModel::sortServers(int column, Qt::SortOrder order)
 {
+	d->mainSortColumn = column;
 	d->sortOrder = order;
 	sort(column, order);
 }
+///////////////////////////////////////////////////////////////////////////////
+ColumnSort::ColumnSort()
+{
+	columnId_ = -1;
+	order_ = Qt::AscendingOrder;
+}
 
+ColumnSort::ColumnSort(int columnId, Qt::SortOrder order)
+{
+	columnId_ = columnId;
+	order_ = order;
+}
+
+int ColumnSort::columnId() const
+{
+	return columnId_;
+}
+
+bool ColumnSort::isValid() const
+{
+	return columnId() >= 0;
+}
+
+Qt::SortOrder ColumnSort::order() const
+{
+	return order_;
+}
+
+bool ColumnSort::operator==(const ColumnSort &other) const
+{
+	return order() == other.order() && columnId() == other.columnId();
+}

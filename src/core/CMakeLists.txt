@@ -122,6 +122,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/irc/ircnetworkselectionbox.h
 	gui/models/serverlistcolumn.h
 	gui/models/serverlistmodel.h
+	gui/models/serverlistproxymodel.h
 	gui/models/serverlistrowhandler.h
 	gui/widgets/colorbutton.h
 	gui/widgets/createserverdialogpage.h
@@ -377,7 +378,6 @@ set(HEADER_FILES
 	gui/helpers/datetablewidgetitem.h
 	gui/helpers/playersdiagram.h
 	gui/irc/ircsounds.h
-	gui/models/serverlistproxymodel.h
 	gui/widgets/qtabwidgetext.h
 	gui/commongui.h
 	ini/inisection.h

@@ -24,6 +24,7 @@
 #define __SERVER_LIST_CONTEXT_MENU_H_
 
 #include <QMenu>
+#include <QModelIndex>
 #include <QObject>
 #include "serverapi/serverptr.h"
 
@@ -45,15 +46,20 @@ class ServerListContextMenu : public QObject
 			OpenURL,
 			Refresh,
 			ShowJoinCommandLine,
+			SortAdditionallyAscending,
+			SortAdditionallyDescending,
+			ClearAdditionalSorting,
+			RemoveAdditionalSortingForColumn,
 
 			/// This is returned upon cancel.
 			NothingHappened
 		};
 
 		ServerListContextMenu(ServerPtr server, const ServerListFilterInfo& filter,
-			QObject *parent);
+			const QModelIndex &modelIndex, QObject *parent);
 		~ServerListContextMenu();
 
+		const QModelIndex &modelIndex() const;
 		void popup(const QPoint& point);
 		ServerPtr server() const;
 		const ServerListFilterInfo& serverFilter() const;

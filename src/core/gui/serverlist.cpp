@@ -120,6 +120,11 @@ void ServerListHandler::cleanUpForce()
 	cleanUp();
 }
 
+void ServerListHandler::clearAdditionalSorting()
+{
+	sortingProxy->clearAdditionalSorting();
+}
+
 void ServerListHandler::columnHeaderClicked(int index)
 {
 	if (isSortingByColumn(index))
@@ -197,8 +202,25 @@ void ServerListHandler::contextMenuTriggered(QAction* action)
 			emit displayServerJoinCommandLine(server);
 			break;
 
+		case ServerListContextMenu::SortAdditionallyAscending:
+			sortAdditionally(contextMenu->modelIndex(), Qt::AscendingOrder);
+			break;
+
+		case ServerListContextMenu::SortAdditionallyDescending:
+			sortAdditionally(contextMenu->modelIndex(), Qt::DescendingOrder);
+			break;
+
+		case ServerListContextMenu::RemoveAdditionalSortingForColumn:
+			removeAdditionalSortingForColumn(contextMenu->modelIndex());
+			break;
+
+		case ServerListContextMenu::ClearAdditionalSorting:
+			clearAdditionalSorting();
+			break;
+
 		default:
-			QMessageBox::warning(mainWindow, tr("Doomseeker - context menu warning"), tr("Unhandled behavior int ServerListHandler::tableRightClicked()"));
+			QMessageBox::warning(mainWindow, tr("Doomseeker - context menu warning"),
+				tr("Unhandled behavior in ServerListHandler::contextMenuTriggered()"));
 			break;
 	}
 }
@@ -383,9 +405,11 @@ QString ServerListHandler::createServerNameToolTip(ServerCPtr server)
 	return ret;
 }
 
-QSortFilterProxyModel* ServerListHandler::createSortingProxy(ServerListModel* serverListModel)
+ServerListProxyModel *ServerListHandler::createSortingProxy(ServerListModel* serverListModel)
 {
 	ServerListProxyModel* proxy = new ServerListProxyModel(this);
+	this->connect(proxy, SIGNAL(additionalSortColumnsChanged()),
+		SLOT(updateHeaderTitles()));
 	proxy->setSourceModel(serverListModel);
 	proxy->setSortRole(ServerListModel::SLDT_SORT);
 	proxy->setSortCaseSensitivity( Qt::CaseInsensitive );
@@ -523,6 +547,11 @@ void ServerListHandler::refreshSelected()
 	}
 }
 
+void ServerListHandler::removeAdditionalSortingForColumn(const QModelIndex &modelIndex)
+{
+	sortingProxy->removeAdditionalColumnSorting(modelIndex.column());
+}
+
 void ServerListHandler::saveColumnsWidthsSettings()
 {
 	gConfig.doomseeker.serverListColumnState = table->horizontalHeader()->saveState().toBase64();
@@ -623,6 +652,12 @@ void ServerListHandler::setupTableProperties(QSortFilterProxyModel* tableModel)
 	setupTableColumnWidths();
 }
 
+void ServerListHandler::sortAdditionally(const QModelIndex &modelIndex, Qt::SortOrder order)
+{
+	ServerListProxyModel* model = static_cast<ServerListProxyModel*>(table->model());
+	model->addAdditionalColumnSorting(modelIndex.column(), order);
+}
+
 Qt::SortOrder ServerListHandler::swapCurrentSortOrder()
 {
 	if (sortOrder == Qt::AscendingOrder)
@@ -646,7 +681,7 @@ void ServerListHandler::tableRightClicked(const QModelIndex& index, const QPoint
 
 	ServerListProxyModel* pModel = static_cast<ServerListProxyModel*>(table->model());
 	ServerListContextMenu *contextMenu = new ServerListContextMenu(server,
-		pModel->filterInfo(), this);
+		pModel->filterInfo(), index, this);
 	this->connect(contextMenu, SIGNAL(aboutToHide()), SLOT(contextMenuAboutToHide()));
 	this->connect(contextMenu, SIGNAL(triggered(QAction*)), SLOT(contextMenuTriggered(QAction*)));
 
@@ -666,6 +701,23 @@ void ServerListHandler::updateCountryFlags(bool force)
 	{
 		model->updateFlag(i, force);
 	}
+}
+
+void ServerListHandler::updateHeaderTitles()
+{
+	static const QChar UP_ARROW = QChar(0x25B2);
+	static const QChar DOWN_ARROW = QChar(0x25BC);
+	ServerListProxyModel* model = static_cast<ServerListProxyModel*>(table->model());
+	const QList<ColumnSort> &sortings = model->additionalSortColumns();
+	QStringList labels;
+	ServerListColumns::generateColumnHeaderLabels(labels);
+	for (int i = 0; i < sortings.size(); ++i)
+	{
+		const ColumnSort &sort = sortings[i];
+		labels[sort.columnId()] += QString(" [%1%2]").arg(i + 1)
+			.arg(sort.order() == Qt::AscendingOrder ? UP_ARROW : DOWN_ARROW);
+	}
+	static_cast<ServerListModel*>(model->sourceModel())->setHorizontalHeaderLabels(labels);
 }
 
 void ServerListHandler::updateSearch(const QString& search)
