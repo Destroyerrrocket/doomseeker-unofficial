@@ -410,6 +410,8 @@ ServerListProxyModel *ServerListHandler::createSortingProxy(ServerListModel* ser
 	ServerListProxyModel* proxy = new ServerListProxyModel(this);
 	this->connect(proxy, SIGNAL(additionalSortColumnsChanged()),
 		SLOT(updateHeaderTitles()));
+	this->connect(proxy, SIGNAL(additionalSortColumnsChanged()),
+		SLOT(saveAdditionalSortingConfig()));
 	proxy->setSourceModel(serverListModel);
 	proxy->setSortRole(ServerListModel::SLDT_SORT);
 	proxy->setSortCaseSensitivity( Qt::CaseInsensitive );
@@ -520,6 +522,7 @@ void ServerListHandler::prepareServerTable()
 	setupTableProperties(sortingProxy);
 
 	connectTableModelProxySlots();
+	sortingProxy->setAdditionalSortColumns(gConfig.doomseeker.additionalSortColumns());
 }
 
 void ServerListHandler::redraw()
@@ -550,6 +553,11 @@ void ServerListHandler::refreshSelected()
 void ServerListHandler::removeAdditionalSortingForColumn(const QModelIndex &modelIndex)
 {
 	sortingProxy->removeAdditionalColumnSorting(modelIndex.column());
+}
+
+void ServerListHandler::saveAdditionalSortingConfig()
+{
+	gConfig.doomseeker.setAdditionalSortColumns(sortingProxy->additionalSortColumns());
 }
 
 void ServerListHandler::saveColumnsWidthsSettings()

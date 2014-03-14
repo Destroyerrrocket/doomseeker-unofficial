@@ -358,6 +358,12 @@ ServerPtr ServerListProxyModel::serverFromList(int row) const
 	return model->serverFromList(row);
 }
 
+void ServerListProxyModel::setAdditionalSortColumns(const QList<ColumnSort> &columns)
+{
+	d->additionalSortColumns = columns;
+	emit additionalSortColumnsChanged();
+}
+
 void ServerListProxyModel::sortServers(int column, Qt::SortOrder order)
 {
 	d->mainSortColumn = column;
@@ -386,6 +392,14 @@ int ColumnSort::columnId() const
 	return columnId_;
 }
 
+ColumnSort ColumnSort::deserializeQVariant(const QVariant &v)
+{
+	QVariantMap map = v.toMap();
+	return ColumnSort(map["columnId"].toInt(),
+		static_cast<Qt::SortOrder>(map["order"].toInt())
+	);
+}
+
 bool ColumnSort::isValid() const
 {
 	return columnId() >= 0;
@@ -399,4 +413,12 @@ Qt::SortOrder ColumnSort::order() const
 bool ColumnSort::operator==(const ColumnSort &other) const
 {
 	return order() == other.order() && columnId() == other.columnId();
+}
+
+QVariant ColumnSort::serializeQVariant() const
+{
+	QVariantMap map;
+	map["columnId"] = columnId();
+	map["order"] = order();
+	return map;
 }

@@ -35,6 +35,8 @@ class Server;
 class ColumnSort
 {
 	public:
+		static ColumnSort deserializeQVariant(const QVariant &v);
+
 		ColumnSort();
 		ColumnSort(int columnId, Qt::SortOrder order);
 
@@ -43,6 +45,8 @@ class ColumnSort
 		Qt::SortOrder order() const;
 
 		bool operator==(const ColumnSort &other) const;
+
+		QVariant serializeQVariant() const;
 
 	private:
 		int columnId_;
@@ -64,6 +68,7 @@ class ServerListProxyModel : public QSortFilterProxyModel
 		const ServerListFilterInfo& filterInfo() const;
 
 		void removeAdditionalColumnSorting(int column);
+		void setAdditionalSortColumns(const QList<ColumnSort> &columns);
 		/**
 		 * @brief Sets new filter info and immediately calls invalidate()
 		 */

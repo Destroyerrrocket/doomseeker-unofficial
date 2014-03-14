@@ -164,6 +164,7 @@ class ServerListHandler : public QObject
 	private slots:
 		void contextMenuAboutToHide();
 		void contextMenuTriggered(QAction* action);
+		void saveAdditionalSortingConfig();
 		void updateHeaderTitles();
 };
 
