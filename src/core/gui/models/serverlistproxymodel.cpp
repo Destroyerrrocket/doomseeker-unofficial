@@ -104,21 +104,41 @@ void ServerListProxyModel::clearAdditionalSorting()
 	}
 }
 
-bool ServerListProxyModel::compareColumnSortData(QVariant& var1, QVariant& var2, int column) const
+#define RET_COMPARE(a, b) \
+{ \
+	if ((a) < (b)) \
+		return -1; \
+	if ((a) == (b)) \
+		return 0; \
+	else \
+		return 1; \
+}
+
+int ServerListProxyModel::compareColumnSortData(QVariant& var1, QVariant& var2, int column) const
 {
 	using namespace ServerListColumnId;
 
-	if ( !(var1.isValid() && var2.isValid()) )
-		return false;
+	if ( !(var1.isValid() || !var2.isValid()) )
+	{
+		if (var1.isValid())
+		{
+			return -1;
+		}
+		if (var2.isValid())
+		{
+			return 1;
+		}
+		return 0;
+	}
 
 	switch(column)
 	{
 		case IDAddress:
-			return var1.toUInt() < var2.toUInt();
+			RET_COMPARE(var1.toUInt(), var2.toUInt());
 
 		case IDPing:
 		case IDPlayers:
-			return var1.toInt() < var2.toInt();
+			RET_COMPARE(var1.toInt(), var2.toInt());
 
 		case IDPort:
 		case IDGametype:
@@ -126,10 +146,10 @@ bool ServerListProxyModel::compareColumnSortData(QVariant& var1, QVariant& var2,
 		case IDMap:
 		case IDServerName:
 		case IDWads:
-			return var1.toString() < var2.toString();
+			RET_COMPARE(var1.toString(), var2.toString());
 
 		default:
-			return false;
+			return 0;
 	}
 }
 
@@ -280,8 +300,27 @@ bool ServerListProxyModel::lessThan(const QModelIndex& left, const QModelIndex& 
 
 	QVariant leftVar = sourceModel()->data(left, sortRole());
 	QVariant rightVar = sourceModel()->data(right, sortRole());
-
-	return compareColumnSortData(leftVar, rightVar, left.column());
+	int comparison = compareColumnSortData(leftVar, rightVar, left.column());
+	if (comparison == 0)
+	{
+		foreach (const ColumnSort &additionalSort, d->additionalSortColumns)
+		{
+			QModelIndex additionalLeft = left.sibling(left.row(), additionalSort.columnId());
+			QModelIndex additionalRight = right.sibling(right.row(), additionalSort.columnId());
+			leftVar = sourceModel()->data(additionalLeft, sortRole());
+			rightVar = sourceModel()->data(additionalRight, sortRole());
+			comparison = compareColumnSortData(leftVar, rightVar, additionalSort.columnId());
+			if (comparison != 0)
+			{
+				if (additionalSort.order() == Qt::DescendingOrder)
+				{
+					comparison *= -1;
+				}
+				break;
+			}
+		}
+	}
+	return comparison < 0;
 }
 
 void ServerListProxyModel::removeAdditionalColumnSorting(int column)

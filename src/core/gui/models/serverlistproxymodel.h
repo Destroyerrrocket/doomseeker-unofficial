@@ -85,7 +85,7 @@ class ServerListProxyModel : public QSortFilterProxyModel
 
 		PrivData* d;
 
-		bool compareColumnSortData(QVariant& var1, QVariant& var2, int column) const;
+		int compareColumnSortData(QVariant& var1, QVariant& var2, int column) const;
 		bool lessThan(const QModelIndex& left, const QModelIndex& right) const;
 
 		ServerPtr serverFromList(const QModelIndex& index) const;
