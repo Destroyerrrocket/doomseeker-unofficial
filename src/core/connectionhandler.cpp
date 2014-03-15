@@ -34,6 +34,7 @@
 #include "serverapi/message.h"
 #include "serverapi/server.h"
 
+#include <QDesktopServices>
 #include <QMessageBox>
 #include <QUrl>
 
@@ -92,10 +93,13 @@ ConnectionHandler *ConnectionHandler::connectByUrl(const QUrl &url)
 
 	// Locate plugin by scheme
 	const EnginePlugin *handler = NULL;
+	// For compatibility with IDE's zds://.../<two character> scheme
+	bool zdsScheme = url.scheme().compare("zds", Qt::CaseInsensitive) == 0;
 	for(unsigned int i = 0;i < gPlugins->numPlugins();++i)
 	{
 		const EnginePlugin *plugin = gPlugins->plugin(i)->info();
-		if(plugin->data()->scheme.compare(url.scheme(), Qt::CaseInsensitive) == 0)
+		if(plugin->data()->scheme.compare(url.scheme(), Qt::CaseInsensitive) == 0 ||
+			(zdsScheme && plugin->data()->scheme.left(2).compare(url.path().mid(1), Qt::CaseInsensitive) == 0))
 		{
 			handler = plugin;
 			break;
@@ -183,4 +187,35 @@ void ConnectionHandler::run()
 	}
 
 	finish(Server::RESPONSE_GOOD);
+}
+
+// -------------------------- URL Handler -------------------------------------
+
+PluginUrlHandler *PluginUrlHandler::instance = NULL;
+
+void PluginUrlHandler::registerAll()
+{
+	for(unsigned int i = 0;i < gPlugins->numPlugins();++i)
+		registerScheme(gPlugins->plugin(i)->info()->data()->scheme);
+
+	// IDE compatibility
+	registerScheme("zds");
+}
+
+void PluginUrlHandler::registerScheme(const QString &scheme)
+{
+	if(!instance)
+		instance = new PluginUrlHandler();
+
+	QDesktopServices::setUrlHandler(scheme, instance, "handleUrl");
+}
+
+void PluginUrlHandler::handleUrl(const QUrl &url)
+{
+	if(QMessageBox::question(NULL, tr("Connect to server"),
+		tr("Do you want to connect to the server at %1?").arg(url.toString()),
+		QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
+	{
+		ConnectionHandler::connectByUrl(url);
+	}
 }

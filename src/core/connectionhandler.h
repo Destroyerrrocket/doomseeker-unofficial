@@ -34,6 +34,25 @@ class Server;
 class QUrl;
 class QWidget;
 
+/**
+ * This is needed so we can register the ConnectionHandler with
+ * QDesktopServices.
+ */
+class PluginUrlHandler : public QObject
+{
+	Q_OBJECT
+
+	public:
+		static void registerAll();
+		static void registerScheme(const QString &scheme);
+
+	public slots:
+		void handleUrl(const QUrl &url);
+
+	private:
+		static PluginUrlHandler *instance;
+};
+
 class ConnectionHandler : public QObject
 {
 	Q_OBJECT
