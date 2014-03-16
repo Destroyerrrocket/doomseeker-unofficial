@@ -83,6 +83,7 @@ class ServerListHandler : public QObject
 		 *		present yet.
 		 */
 		void				setCountryFlagsIfNotPresent();
+		void setGroupServersWithPlayersAtTop(bool b);
 
 		void				tableMiddleClicked(const QModelIndex& index, const QPoint& cursorPosition);
 		void 				tableRightClicked(const QModelIndex& index, const QPoint& cursorPosition);

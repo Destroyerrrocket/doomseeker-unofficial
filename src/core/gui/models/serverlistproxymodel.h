@@ -76,6 +76,7 @@ class ServerListProxyModel : public QSortFilterProxyModel
 		 * @brief Sets new filter info and immediately calls invalidate()
 		 */
 		void setFilterInfo(const ServerListFilterInfo& filterInfo);
+		void setGroupServersWithPlayersAtTop(bool b);
 
 		void sortServers(int column, Qt::SortOrder order = Qt::AscendingOrder);
 

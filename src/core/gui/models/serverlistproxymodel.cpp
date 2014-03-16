@@ -25,6 +25,7 @@
 #include "gui/entity/serverlistfilterinfo.h"
 #include "gui/models/serverlistcolumn.h"
 #include "gui/serverlist.h"
+#include "serverapi/playerslist.h"
 #include "serverapi/server.h"
 #include "serverapi/serverstructs.h"
 
@@ -32,6 +33,7 @@ class ServerListProxyModel::PrivData
 {
 	public:
 		QList<ColumnSort> additionalSortColumns;
+		bool groupServersWithPlayersAtTop;
 		int mainSortColumn;
 		ServerListHandler* parentHandler;
 		ServerListFilterInfo filterInfo;
@@ -65,6 +67,7 @@ ServerListProxyModel::ServerListProxyModel(ServerListHandler* serverListHandler)
 : QSortFilterProxyModel(serverListHandler)
 {
 	d = new PrivData();
+	d->groupServersWithPlayersAtTop = true;
 	d->mainSortColumn = -1;
 	d->parentHandler = serverListHandler;
 }
@@ -313,6 +316,24 @@ bool ServerListProxyModel::lessThan(const QModelIndex& left, const QModelIndex& 
 		}
 	}
 
+	if (d->groupServersWithPlayersAtTop)
+	{
+		// Using data stored in column will honor user settings declaring
+		// whether bots should be treated as players or not.
+		int numPlayers1 = sourceModel()->data(left.sibling(left.row(),
+			ServerListColumnId::IDPlayers), sortRole()).toInt();
+		int numPlayers2 = sourceModel()->data(right.sibling(right.row(),
+			ServerListColumnId::IDPlayers), sortRole()).toInt();
+		if (numPlayers1 > 0 && numPlayers2 == 0)
+		{
+			return d->sortOrder == Qt::AscendingOrder;
+		}
+		else if (numPlayers1 == 0 && numPlayers2 > 0)
+		{
+			return d->sortOrder == Qt::DescendingOrder;
+		}
+	}
+
 	QVariant leftVar = sourceModel()->data(left, sortRole());
 	QVariant rightVar = sourceModel()->data(right, sortRole());
 	int comparison = compareColumnSortData(leftVar, rightVar, left.column());
@@ -354,6 +375,12 @@ void ServerListProxyModel::removeAdditionalColumnSorting(int column)
 void ServerListProxyModel::setFilterInfo(const ServerListFilterInfo& filterInfo)
 {
 	d->filterInfo = filterInfo;
+	invalidate();
+}
+
+void ServerListProxyModel::setGroupServersWithPlayersAtTop(bool b)
+{
+	d->groupServersWithPlayersAtTop = b;
 	invalidate();
 }
 

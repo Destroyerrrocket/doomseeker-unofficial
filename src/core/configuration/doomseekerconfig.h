@@ -62,6 +62,7 @@ class DoomseekerConfig
 			bool						bColorizeServerConsole;
 			bool bDrawGridInServerTable;
 			bool						bHidePasswords;
+			bool bGroupServersWithPlayersAtTheTopOfTheList;
 			bool						bIP2CountryAutoUpdate;
 			bool						bLookupHosts;
 			bool						bMainWindowMaximized;

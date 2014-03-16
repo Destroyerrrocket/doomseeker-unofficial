@@ -220,6 +220,7 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->bColorizeServerConsole = true;
 	this->bDrawGridInServerTable = false;
 	this->bHidePasswords = false;
+	this->bGroupServersWithPlayersAtTheTopOfTheList = true;
 	this->bIP2CountryAutoUpdate = true;
 	this->bLookupHosts = true;
 	this->bQueryAutoRefreshDontIfActive = true;
@@ -327,6 +328,7 @@ void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 	section.createSetting("ColorizeServerConsole", this->bColorizeServerConsole);
 	section.createSetting("DrawGridInServerTable", this->bDrawGridInServerTable);
 	section.createSetting("HidePasswords", this->bHidePasswords);
+	section.createSetting("GroupServersWithPlayersAtTheTopOfTheList", this->bGroupServersWithPlayersAtTheTopOfTheList);
 	section.createSetting("IP2CAutoUpdate", this->bIP2CountryAutoUpdate);
 	section.createSetting("LookupHosts", this->bLookupHosts);
 	section.createSetting("QueryAutoRefreshDontIfActive", this->bQueryAutoRefreshDontIfActive);
@@ -358,6 +360,7 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->bColorizeServerConsole = section["ColorizeServerConsole"];
 	this->bDrawGridInServerTable = section["DrawGridInServerTable"];
 	this->bHidePasswords = section["HidePasswords"];
+	this->bGroupServersWithPlayersAtTheTopOfTheList = section["GroupServersWithPlayersAtTheTopOfTheList"];
 	this->bIP2CountryAutoUpdate = section["IP2CAutoUpdate"];
 	this->bLookupHosts = section["LookupHosts"];
 	this->bQueryAutoRefreshDontIfActive = section["QueryAutoRefreshDontIfActive"];
@@ -429,6 +432,7 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["ColorizeServerConsole"] = this->bColorizeServerConsole;
 	section["DrawGridInServerTable"] = this->bDrawGridInServerTable;
 	section["HidePasswords"] = this->bHidePasswords;
+	section["GroupServersWithPlayersAtTheTopOfTheList"] = this->bGroupServersWithPlayersAtTheTopOfTheList;
 	section["IP2CAutoUpdate"] = this->bIP2CountryAutoUpdate;
 	section["LookupHosts"] = this->bLookupHosts;
 	section["QueryAutoRefreshDontIfActive"] = this->bQueryAutoRefreshDontIfActive;

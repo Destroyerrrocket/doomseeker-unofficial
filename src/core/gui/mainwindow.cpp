@@ -443,7 +443,10 @@ void MainWindow::connectEntities()
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( quitProgram() ));
 	connect(menuActionViewIRC, SIGNAL( triggered() ) , this, SLOT( menuViewIRC() ));
 	connect(menuActionWadseeker, SIGNAL( triggered() ), this, SLOT( menuWadSeeker() ));
-	connect(serverFilterDock, SIGNAL( filterUpdated(const ServerListFilterInfo&) ), this, SLOT( updateServerFilter(const ServerListFilterInfo&) ) );
+	connect(serverFilterDock, SIGNAL(filterUpdated(const ServerListFilterInfo&)),
+		this, SLOT(updateServerFilter(const ServerListFilterInfo&)) );
+	connect(serverFilterDock, SIGNAL(nonEmptyServerGroupingAtTopToggled(bool)),
+		serverTableHandler, SLOT(setGroupServersWithPlayersAtTop(bool)) );
 	connect(serverTableHandler, SIGNAL(serverFilterModified(ServerListFilterInfo)),
 		serverFilterDock, SLOT(setFilterInfo(ServerListFilterInfo)));
 	connect(serverTableHandler, SIGNAL( serverDoubleClicked(ServerPtr) ), this, SLOT( runGame(ServerPtr) ) );

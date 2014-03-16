@@ -627,6 +627,11 @@ void ServerListHandler::setCountryFlagsIfNotPresent()
 	updateCountryFlags(!FORCE);
 }
 
+void ServerListHandler::setGroupServersWithPlayersAtTop(bool b)
+{
+	sortingProxy->setGroupServersWithPlayersAtTop(b);
+}
+
 void ServerListHandler::setupTableColumnWidths()
 {
 	QString &headerState = gConfig.doomseeker.serverListColumnState;
