@@ -730,8 +730,7 @@ void ServerListHandler::updateHeaderTitles()
 {
 	static const QChar UP_ARROW = QChar(0x25B2);
 	static const QChar DOWN_ARROW = QChar(0x25BC);
-	ServerListProxyModel* model = static_cast<ServerListProxyModel*>(table->model());
-	const QList<ColumnSort> &sortings = model->additionalSortColumns();
+	const QList<ColumnSort> &sortings = sortingProxy->additionalSortColumns();
 	QStringList labels;
 	ServerListColumns::generateColumnHeaderLabels(labels);
 	for (int i = 0; i < sortings.size(); ++i)
@@ -740,7 +739,7 @@ void ServerListHandler::updateHeaderTitles()
 		labels[sort.columnId()] += QString(" [%1%2]").arg(i + 1)
 			.arg(sort.order() == Qt::AscendingOrder ? UP_ARROW : DOWN_ARROW);
 	}
-	static_cast<ServerListModel*>(model->sourceModel())->setHorizontalHeaderLabels(labels);
+	model->setHorizontalHeaderLabels(labels);
 }
 
 void ServerListHandler::updateSearch(const QString& search)
