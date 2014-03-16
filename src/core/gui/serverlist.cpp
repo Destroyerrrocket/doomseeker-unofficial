@@ -728,16 +728,22 @@ void ServerListHandler::updateCountryFlags(bool force)
 
 void ServerListHandler::updateHeaderTitles()
 {
-	static const QChar UP_ARROW = QChar(0x25B2);
-	static const QChar DOWN_ARROW = QChar(0x25BC);
 	const QList<ColumnSort> &sortings = sortingProxy->additionalSortColumns();
 	QStringList labels;
 	ServerListColumns::generateColumnHeaderLabels(labels);
+	for (int i = 0; i < ServerListColumnId::NUM_SERVERLIST_COLUMNS; ++i)
+	{
+		// Clear header icons.
+		model->setHeaderData(i, Qt::Horizontal, QIcon(), Qt::DecorationRole);
+	}
 	for (int i = 0; i < sortings.size(); ++i)
 	{
 		const ColumnSort &sort = sortings[i];
-		labels[sort.columnId()] += QString(" [%1%2]").arg(i + 1)
-			.arg(sort.order() == Qt::AscendingOrder ? UP_ARROW : DOWN_ARROW);
+		labels[sort.columnId()] = QString("[%1] %2").arg(i + 1).arg(labels[sort.columnId()]);
+		QIcon icon = sort.order() == Qt::AscendingOrder ?
+			QIcon(":/icons/ascending.png") :
+			QIcon(":/icons/descending.png");
+		model->setHeaderData(sort.columnId(), Qt::Horizontal, icon, Qt::DecorationRole);
 	}
 	model->setHorizontalHeaderLabels(labels);
 }
