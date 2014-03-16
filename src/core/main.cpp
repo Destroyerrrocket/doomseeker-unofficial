@@ -148,6 +148,7 @@ int Main::run()
 	}
 
 	PluginLoader::init(Strings::combineManyPaths(dataDirectories, "engines/"));
+	PluginUrlHandler::registerAll();
 
 	if (bTestMode)
 	{

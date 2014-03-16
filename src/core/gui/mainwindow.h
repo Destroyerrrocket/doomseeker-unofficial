@@ -313,6 +313,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void    updateServerFilter(const ServerListFilterInfo& filterInfo);
 
 	private:
+		QDockWidget *mainDock;
+
 		void connectIP2CLoader(IP2CLoader* loader);
 
 	private slots:

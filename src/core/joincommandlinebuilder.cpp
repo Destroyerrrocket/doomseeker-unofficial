@@ -213,8 +213,8 @@ JoinCommandLineBuilder::MissingWadsProceed JoinCommandLineBuilder::handleMissing
 	}
 
 	QStringList downloadableWads = allDownloadableWads(error);
-	QMessageBox::StandardButtons ret = displayMissingWadsMessage(
-		downloadableWads, filesMissingMessage);
+	QMessageBox::StandardButtons ret = (QMessageBox::StandardButtons)
+		displayMissingWadsMessage(downloadableWads, filesMissingMessage);
 	if (ret == QMessageBox::Yes)
 	{
 		if (!checkWadseekerValidity(d->parentWidget))
