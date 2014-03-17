@@ -8,6 +8,7 @@
 #include "tests/testini.h"
 #include "tests/testircisupportparser.h"
 #include "tests/teststrings.h"
+#include "tests/testutf8splitter.h"
 
 TestCore* TestRuns::pTestCore = NULL;
 		
@@ -30,4 +31,6 @@ void TestRuns::callTests()
 
 	pTestCore->executeTest(new TestIRCISupportPrefix());
 	pTestCore->executeTest(new TestIRCISupportNoPrefix());
+
+	pTestCore->executeTest(new TestUtf8Splitter());
 }

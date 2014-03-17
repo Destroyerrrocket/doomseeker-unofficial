@@ -336,6 +336,7 @@ set(SOURCE_FILES
 	tests/testircisupportparser.cpp
 	tests/testruns.cpp
 	tests/teststrings.cpp
+	tests/testutf8splitter.cpp
 	updater/autoupdater.cpp
 	updater/updatechannel.cpp
 	updater/updateinstaller.cpp
@@ -360,6 +361,7 @@ set(SOURCE_FILES
 	scanner.cpp
 	speedcalculator.cpp
 	strings.cpp
+	utf8splitter.cpp
 	connectionhandler.cpp
 	version.cpp
 	versiondump.cpp
@@ -424,6 +426,7 @@ set(HEADER_FILES
 	tests/testircisupportparser.h
 	tests/testruns.h
 	tests/teststrings.h
+	tests/testutf8splitter.h
 	updater/updatepackage.h
 	updater/updatepackagefilter.h
 	updater/updaterscriptparser.h
@@ -442,6 +445,7 @@ set(HEADER_FILES
 	scanner.h
 	speedcalculator.h
 	strings.h
+	utf8splitter.h
 	version.h
 	versiondefs.h
 	versiondump.h
