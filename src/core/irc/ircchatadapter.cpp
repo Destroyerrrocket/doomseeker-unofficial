@@ -23,6 +23,7 @@
 #include "ircchatadapter.h"
 
 #include "irc/ircnetworkadapter.h"
+#include "utf8splitter.h"
 
 IRCChatAdapter::IRCChatAdapter(IRCNetworkAdapter* pNetwork, const QString& recipient)
 {
@@ -75,12 +76,11 @@ void IRCChatAdapter::emitChatMessage(const QString& sender, const QString& conte
 
 QString IRCChatAdapter::extractMessageLine(QStringList& words, int maxLength)
 {
-	QString sentence = "";
-
+	QByteArray sentence = "";
 	while(!words.isEmpty())
 	{
-		QString word = words.first();
-	
+		QByteArray word = words.takeFirst().toUtf8();
+
 		// Remember to add the spacebar into the equation.
 		if (sentence.length() + word.length() + 1 > maxLength)
 		{
@@ -90,23 +90,31 @@ QString IRCChatAdapter::extractMessageLine(QStringList& words, int maxLength)
 			if (sentence.isEmpty())
 			{
 				// We need to split the word.
-				QString splitWord = word.left(maxLength);
-				splitWord[maxLength - 1] = '-';
-				
-				QString wordRemainder = word.right(word.size() - maxLength);
+				QList<QByteArray> splitWordTokens = Utf8Splitter().split(word, maxLength);
+
+				sentence = splitWordTokens.takeFirst();
+				sentence += '-';
+
+				QString wordRemainder = "";
+				foreach (const QByteArray &wordToken, splitWordTokens)
+				{
+					wordRemainder += QString::fromUtf8(wordToken.constData(), wordToken.size());
+				}
 				words.prepend(wordRemainder);
-				
-				sentence = splitWord;
+			}
+			else
+			{
+				// Put the word back on the list, we'll come back to it
+				// in the next line of the message.
+				words.prepend(QString::fromUtf8(word.constData(), word.size()));
 			}
 
 			break;
 		}
-		
+
 		sentence += word + " ";
-		words.pop_front();
 	}
-	
-	return sentence.trimmed();
+	return QString::fromUtf8(sentence.constData(), sentence.size()).trimmed();
 }
 
 void IRCChatAdapter::sendChatMessage(const QString& message)
@@ -117,7 +125,7 @@ void IRCChatAdapter::sendChatMessage(const QString& message)
 	// NOTE: Messages are echoed back through IRCRequestParser
 	
 	QString ircCall = QString("/PRIVMSG %1 ").arg(recipientName);
-	int maxLength = IRCClient::MAX_MESSAGE_LENGTH - ircCall.length();
+	int maxLength = IRCClient::SAFE_MESSAGE_LENGTH - ircCall.toUtf8().length();
 	QStringList wordLines = message.split("\n");
 	
 	foreach(QString line, wordLines)

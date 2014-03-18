@@ -178,8 +178,8 @@ void IRCNetworkAdapter::doSendMessage(const QString& message, IRCAdapterBase* pO
 		return;
 	}
 
-	QString parsedMessage;
-	IRCRequestParser::IRCRequestParseResult result = ircRequestParser.parse(pOrigin, message, parsedMessage);
+	IRCRequestParser::IRCRequestParseResult result = ircRequestParser.parse(pOrigin, message);
+	QString parsedMessage = ircRequestParser.output();
 
 	switch (result)
 	{

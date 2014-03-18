@@ -60,35 +60,39 @@ class IRCRequestParser : public QObject
 			ErrorInputNotPrependedWithSlash,
 			ErrorInputInsufficientParameters,
 			QuitCommand
-		};	
-		
+		};
+
+		IRCRequestParser();
+		~IRCRequestParser();
+
+		const QString &output() const;
+
 		/**
-		 *	@brief Parses input string and returns it through output string.
-		 *	Additional information is passed through return value.
+		 * @brief Parses input string and returns it through output string.
+		 * Additional information is passed through return value.
 		 *
-		 *	@param pAdapter
-		 *		Adapter that sends the message.
-		 *	@param input
-		 *		Input message in common format. See IRCRequestParser 
-		 *		description.
-		 *	@param output [out]
-		 *		Message in RFC 1459 format.
+		 * @param pAdapter
+		 *     Adapter that sends the message.
+		 * @param input
+		 *     Input message in common format. See IRCRequestParser 
+		 *     description.
 		 *
-		 *	@return
-		 *	This method will:
-		 *	- Check if message fits in the RFC 1459 max message length. If not
-		 *	  ErrorMessageTooLong is returned.
-		 *	- Return ErrorMessageEmpty if input is empty or consists only of
-		 *	  whitespace.
-		 *	- Check if input starts with '/' character.
-		 *	  If not ErrorInputNotPrependedWithSlash is returned.
-		 *	- Return ErrorInputInsufficientParameters if parsed command expects
-		 *	  more parameters to work correctly.
-		 *	- QuitCommand is returned if "/quit" command is used.
-		 *	- Ok is returned if it is ok to send the output message.
+		 * @return
+		 * This method will:
+		 * - Check if message fits in the RFC 1459 max message length. If not
+		 *   ErrorMessageTooLong is returned.
+		 * - Return ErrorMessageEmpty if input is empty or consists only of
+		 *   whitespace.
+		 * - Check if input starts with '/' character.
+		 *   If not ErrorInputNotPrependedWithSlash is returned.
+		 * - Return ErrorInputInsufficientParameters if parsed command expects
+		 *   more parameters to work correctly.
+		 * - QuitCommand is returned if "/quit" command is used.
+		 * - Ok is returned if it is ok to send the output message. Parsed
+		 *   message can be extracted through output() accessor.
 		 */
-		IRCRequestParseResult		parse(IRCAdapterBase* pAdapter, QString input, QString& output);
-	
+		IRCRequestParseResult parse(IRCAdapterBase* pAdapter, QString input);
+
 	signals:
 		/**
 		 *	@brief Echoes back all PRIVMSG commands.
@@ -111,6 +115,12 @@ class IRCRequestParser : public QObject
 		 *		A clean nickname.
 		 */
 		void						query(const QString& who);
+
+	private:
+		class PrivData;
+		PrivData *d;
+
+		IRCRequestParseResult buildOutput();
 };
 
 #endif
