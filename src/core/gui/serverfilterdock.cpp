@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "serverfilterdock.h"
 
+#include "configuration/doomseekerconfig.h"
 #include "gui/entity/serverlistfilterinfo.h"
 
 ServerFilterDock::ServerFilterDock(QWidget* pParent)
@@ -30,6 +31,7 @@ ServerFilterDock::ServerFilterDock(QWidget* pParent)
 	setupUi(this);
 	leQuickSearch = NULL;
 	bDisableUpdate = false;
+	cbGroupServersWithPlayersAtTop->setChecked(gConfig.doomseeker.bGroupServersWithPlayersAtTheTopOfTheList);
 
 	this->toggleViewAction()->setIcon(QIcon(":/icons/filter.png"));
 
@@ -108,6 +110,12 @@ ServerListFilterInfo ServerFilterDock::filterInfo() const
 	filterInfo.wadsExcluded = leExcludeWads->text().trimmed().split(",", QString::SkipEmptyParts);
 
 	return filterInfo;
+}
+
+void ServerFilterDock::onServerGroupingChange()
+{
+	gConfig.doomseeker.bGroupServersWithPlayersAtTheTopOfTheList = cbGroupServersWithPlayersAtTop->isChecked();
+	emit nonEmptyServerGroupingAtTopToggled(cbGroupServersWithPlayersAtTop->isChecked());
 }
 
 void ServerFilterDock::setFilterInfo(const ServerListFilterInfo& filterInfo)

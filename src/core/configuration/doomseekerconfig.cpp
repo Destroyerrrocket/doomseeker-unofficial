@@ -21,6 +21,8 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "doomseekerconfig.h"
+
+#include "gui/models/serverlistproxymodel.h"
 #include "ini/ini.h"
 #include "ini/inisection.h"
 #include "ini/inivariable.h"
@@ -202,15 +204,23 @@ bool DoomseekerConfig::setIniFile(const QString& filePath)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+class DoomseekerConfig::DoomseekerCfg::PrivData
+{
+	public:
+		IniSection section;
+};
+
 const QString DoomseekerConfig::DoomseekerCfg::SECTION_NAME = "Doomseeker";
 
 DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 {
+	d = new PrivData();
 	this->bBotsAreNotPlayers = true;
 	this->bCloseToTrayIcon = false;
 	this->bColorizeServerConsole = true;
 	this->bDrawGridInServerTable = false;
 	this->bHidePasswords = false;
+	this->bGroupServersWithPlayersAtTheTopOfTheList = true;
 	this->bIP2CountryAutoUpdate = true;
 	this->bLookupHosts = true;
 	this->bQueryAutoRefreshDontIfActive = true;
@@ -243,6 +253,32 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->serverListSortDirection = Qt::DescendingOrder;
 	this->wadPaths << gDefaultDataPaths->programsDataDirectoryPath();
 	this->wadPaths << gDefaultDataPaths->workingDirectory();
+}
+
+DoomseekerConfig::DoomseekerCfg::~DoomseekerCfg()
+{
+	delete d;
+}
+
+QList<ColumnSort> DoomseekerConfig::DoomseekerCfg::additionalSortColumns() const
+{
+	QList<ColumnSort> list;
+	QVariantList varList = d->section.value("AdditionalSortColumns").toList();
+	foreach (const QVariant &var, varList)
+	{
+		list << ColumnSort::deserializeQVariant(var);
+	}
+	return list;
+}
+
+void DoomseekerConfig::DoomseekerCfg::setAdditionalSortColumns(const QList<ColumnSort> &val)
+{
+	QVariantList varList;
+	foreach (const ColumnSort &elem, val)
+	{
+		varList << elem.serializeQVariant();
+	}
+	d->section.setValue("AdditionalSortColumns", varList);
 }
 
 bool DoomseekerConfig::DoomseekerCfg::areMainWindowSizeSettingsValid(int maxValidX, int maxValidY) const
@@ -284,12 +320,15 @@ bool DoomseekerConfig::DoomseekerCfg::areMainWindowSizeSettingsValid(int maxVali
 
 void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 {
+	// TODO: Make all methods use d->section
+	d->section = section;
 	section.createSetting("Localization", this->localization);
 	section.createSetting("BotsAreNotPlayers", this->bBotsAreNotPlayers);
 	section.createSetting("CloseToTrayIcon", this->bCloseToTrayIcon);
 	section.createSetting("ColorizeServerConsole", this->bColorizeServerConsole);
 	section.createSetting("DrawGridInServerTable", this->bDrawGridInServerTable);
 	section.createSetting("HidePasswords", this->bHidePasswords);
+	section.createSetting("GroupServersWithPlayersAtTheTopOfTheList", this->bGroupServersWithPlayersAtTheTopOfTheList);
 	section.createSetting("IP2CAutoUpdate", this->bIP2CountryAutoUpdate);
 	section.createSetting("LookupHosts", this->bLookupHosts);
 	section.createSetting("QueryAutoRefreshDontIfActive", this->bQueryAutoRefreshDontIfActive);
@@ -321,6 +360,7 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->bColorizeServerConsole = section["ColorizeServerConsole"];
 	this->bDrawGridInServerTable = section["DrawGridInServerTable"];
 	this->bHidePasswords = section["HidePasswords"];
+	this->bGroupServersWithPlayersAtTheTopOfTheList = section["GroupServersWithPlayersAtTheTopOfTheList"];
 	this->bIP2CountryAutoUpdate = section["IP2CAutoUpdate"];
 	this->bLookupHosts = section["LookupHosts"];
 	this->bQueryAutoRefreshDontIfActive = section["QueryAutoRefreshDontIfActive"];
@@ -392,6 +432,7 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["ColorizeServerConsole"] = this->bColorizeServerConsole;
 	section["DrawGridInServerTable"] = this->bDrawGridInServerTable;
 	section["HidePasswords"] = this->bHidePasswords;
+	section["GroupServersWithPlayersAtTheTopOfTheList"] = this->bGroupServersWithPlayersAtTheTopOfTheList;
 	section["IP2CAutoUpdate"] = this->bIP2CountryAutoUpdate;
 	section["LookupHosts"] = this->bLookupHosts;
 	section["QueryAutoRefreshDontIfActive"] = this->bQueryAutoRefreshDontIfActive;

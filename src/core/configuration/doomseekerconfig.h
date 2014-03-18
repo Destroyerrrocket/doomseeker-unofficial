@@ -34,6 +34,7 @@
 
 #define gConfig DoomseekerConfig::config()
 
+class ColumnSort;
 class Ini;
 class EnginePlugin;
 class FileSearchPath;
@@ -61,6 +62,7 @@ class DoomseekerConfig
 			bool						bColorizeServerConsole;
 			bool bDrawGridInServerTable;
 			bool						bHidePasswords;
+			bool bGroupServersWithPlayersAtTheTopOfTheList;
 			bool						bIP2CountryAutoUpdate;
 			bool						bLookupHosts;
 			bool						bMainWindowMaximized;
@@ -97,6 +99,7 @@ class DoomseekerConfig
 			QList<FileSearchPath>		wadPaths;
 
 			DoomseekerCfg();
+			~DoomseekerCfg();
 
 			/**
 			 *	@brief Will return false if at least one of them is out of
@@ -106,6 +109,8 @@ class DoomseekerConfig
 			 */
 			bool						areMainWindowSizeSettingsValid(int maxValidX, int maxValidY) const;
 
+			QList<ColumnSort> additionalSortColumns() const;
+			void setAdditionalSortColumns(const QList<ColumnSort> &val);
 			QStringList wadPathsOnly() const;
 
 			/**
@@ -117,6 +122,10 @@ class DoomseekerConfig
 			void						init(IniSection& section);
 			void						load(IniSection& section);
 			void						save(IniSection& section);
+
+			private:
+				class PrivData;
+				PrivData *d;
 		};
 
 		class AutoUpdates

@@ -56,6 +56,7 @@ class ServerFilterDock : public QDockWidget, private Ui::ServerFilterDock
 
 	signals:
 		void filterUpdated(const ServerListFilterInfo& filterInfo);
+		void nonEmptyServerGroupingAtTopToggled(bool b);
 
 	private:
 		/**
@@ -77,6 +78,7 @@ class ServerFilterDock : public QDockWidget, private Ui::ServerFilterDock
 	private slots:
 		void clear();
 		void emitUpdated();
+		void onServerGroupingChange();
 };
 
 #endif

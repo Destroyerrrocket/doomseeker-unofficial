@@ -38,6 +38,7 @@ class PWad;
 class IniSection;
 class Server;
 class ServerListFilterInfo;
+class ServerListProxyModel;
 
 class ServerListHandler : public QObject
 {
@@ -53,6 +54,8 @@ class ServerListHandler : public QObject
 		QWidget*			getMainWindow() { return mainWindow; }
 		bool				hasAtLeastOneServer() const;
 
+		bool isAnyColumnSortedAdditionally() const;
+		bool isSortingAdditionallyByColumn(int column) const;
 		bool				isSortingByColumn(int columnIndex);
 
 		QList<ServerPtr> selectedServers();
@@ -80,6 +83,7 @@ class ServerListHandler : public QObject
 		 *		present yet.
 		 */
 		void				setCountryFlagsIfNotPresent();
+		void setGroupServersWithPlayersAtTop(bool b);
 
 		void				tableMiddleClicked(const QModelIndex& index, const QPoint& cursorPosition);
 		void 				tableRightClicked(const QModelIndex& index, const QPoint& cursorPosition);
@@ -120,7 +124,7 @@ class ServerListHandler : public QObject
 		QWidget*				mainWindow;
 		ServerListModel* 		model;
 		bool					needsCleaning;
-		QSortFilterProxyModel*	sortingProxy;
+		ServerListProxyModel *sortingProxy;
 
 		Qt::SortOrder 			sortOrder;
 		int						sortIndex;
@@ -138,7 +142,7 @@ class ServerListHandler : public QObject
 		void					connectTableModelProxySlots();
 
 		ServerListModel*		createModel();
-		QSortFilterProxyModel*	createSortingProxy(ServerListModel* serverListModel);
+		ServerListProxyModel *createSortingProxy(ServerListModel* serverListModel);
 
 		Qt::SortOrder			getColumnDefaultSortOrder(int columnId);
 
@@ -154,9 +158,17 @@ class ServerListHandler : public QObject
 		Qt::SortOrder			swapCurrentSortOrder();
 
 		void 					updateCountryFlags(bool force);
+
+	private:
+		void clearAdditionalSorting();
+		void removeAdditionalSortingForColumn(const QModelIndex &modelIndex);
+		void sortAdditionally(const QModelIndex &modelIndex, Qt::SortOrder order);
+
 	private slots:
 		void contextMenuAboutToHide();
 		void contextMenuTriggered(QAction* action);
+		void saveAdditionalSortingConfig();
+		void updateHeaderTitles();
 };
 
 #endif
