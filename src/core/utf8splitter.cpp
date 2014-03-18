@@ -32,26 +32,25 @@ QList<QByteArray> Utf8Splitter::split(const QByteArray &in, int maxChunkLength)
 	while (!stream.atEnd())
 	{
 		QByteArray chunk;
-		quint8 i;
-		stream >> i;
-		if ((i & 0x1000000) == 0)
+		quint8 curByte;
+		stream >> curByte;
+		chunk.append(curByte);
+		if ((curByte & 0x80) != 0)
 		{
-			chunk.append(i);
-		}
-		else
-		{
-			quint8 leading = i & 0x11111100;
-			int countZeros = 0;
-			while ((leading & 1) == 0)
+			quint8 leading = curByte & 0xfc;
+			int numBytes = 0;
+			while ((leading & 0x80) != 0)
 			{
-				leading = leading >> 1;
-				++countZeros;
+				leading = leading << 1;
+				++numBytes;
 			}
-			int numBytes = (8 - countZeros) - 1;
-			chunk.append(i);
-			for (; numBytes > 0; --numBytes) {
-				stream >> i;
-				chunk.append(i);
+			// When sub-bytes are appended to the chunk
+			// we already have 1 byte: the leading byte.
+			for (; numBytes > 1; --numBytes)
+			{
+				quint8 subByte;
+				stream >> subByte;
+				chunk.append(subByte);
 			}
 		}
 		if (largerChunk.size() + chunk.size() > maxChunkLength)

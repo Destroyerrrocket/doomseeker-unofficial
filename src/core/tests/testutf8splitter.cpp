@@ -36,45 +36,18 @@ bool TestUtf8Splitter::executeTest()
 {
 	{
 		QString in;
-		for (int i = 0; i < 500; ++i)
-		{
-			in.append(QChar(0x2194));
-		}
-		QList<QByteArray> result = Utf8Splitter().split(in.toUtf8(), 50);
-		T_ASSERT_EQUAL(result.size(), 30);
-	}
-	{
-		QString in;
-		for (int i = 0; i < 500; ++i)
-		{
-			in.append(QChar(0x2194));
-		}
-		QList<QByteArray> result = Utf8Splitter().split(in.toUtf8(), 48);
-		T_ASSERT_EQUAL(result.size(), 32);
-		T_ASSERT_EQUAL(result[0].size(), 48);
-		T_ASSERT_EQUAL(result[1].size(), 48);
-		T_ASSERT_EQUAL(result.last().size(), 12);
-	}
-	{
-		QString in;
-		for (int i = 0; i < 500; ++i)
-		{
-			in.append(QChar(0x00F8));
-		}
-		QList<QByteArray> result = Utf8Splitter().split(in.toUtf8(), 11);
-		T_ASSERT_EQUAL(result.size(), 91);
-		T_ASSERT_EQUAL(result.last().size(), 10);
-	}
-	{
-		QString in;
 		for (int i = 0; i < 250; ++i)
 		{
-			in.append(QChar('a'));
-			in.append(QChar(0x00F8));
+			in.append(QChar(0x0105)); // a with 'ogonek'
 		}
-		QList<QByteArray> result = Utf8Splitter().split(in.toUtf8(), 11);
-		T_ASSERT_EQUAL(result.size(), 69);
-		T_ASSERT_EQUAL(result.last().size(), 2);
+		QList<QByteArray> result = Utf8Splitter().split(in.toUtf8(), 385);
+		T_ASSERT_EQUAL(result.size(), 2);
+		T_ASSERT_EQUAL(result[0].size(), 384);
+		T_ASSERT_EQUAL(result[1].size(), 116);
+		T_ASSERT_EQUAL(static_cast<unsigned char>(result[0][382]), 0xc4);
+		T_ASSERT_EQUAL(static_cast<unsigned char>(result[0][383]), 0x85);
+		T_ASSERT_EQUAL(static_cast<unsigned char>(result[1][0]), 0xc4);
+		T_ASSERT_EQUAL(static_cast<unsigned char>(result[1][1]), 0x85);
 	}
 	return true;
 }
