@@ -35,6 +35,9 @@ class IRCResponseParser : public QObject
 	Q_OBJECT
 
 	public:
+		IRCResponseParser();
+		~IRCResponseParser();
+
 		/**
  		* @brief Parses the message received from the network.
  		*
@@ -109,6 +112,9 @@ class IRCResponseParser : public QObject
 			FlagModeError
 		};
 
+		class PrivData;
+		PrivData *d;
+
 		QString			joinAndTrimColonIfNecessary(const QStringList& strList) const;
 
 		/**
@@ -117,8 +123,9 @@ class IRCResponseParser : public QObject
 		 */
 		FlagModes		getFlagMode(char c);
 
-		IRCResponseParseResult		parseMessage(const QString& prefix, const QString& sender, const QString& type, QStringList params);
+		IRCResponseParseResult parseMessage();
 
+		void parsePrivMsgOrNotice();
 		/**
 		 *	@brief Will emit userModeChanged() for each character in flagsString.
 		 *
