@@ -25,7 +25,9 @@
 #include <QDateTime>
 #include <QRegExp>
 #include <QStringList>
+#include <cassert>
 #include "irc/constants/ircresponsetype.h"
+#include "irc/ircctcpparser.h"
 #include "irc/ircglobal.h"
 #include "irc/ircmessageclass.h"
 #include "irc/ircuserinfo.h"
@@ -424,10 +426,6 @@ IRCResponseParseResult IRCResponseParser::parseMessage()
 void IRCResponseParser::parsePrivMsgOrNotice()
 {
 	QString recipient = d->params.takeFirst();
-
-	// Join the list to form message contents.
-	QString content = joinAndTrimColonIfNecessary(d->params);
-
 	if (!IRCGlobal::isChannelName(recipient))
 	{
 		// If recipient name is not the channel the
@@ -437,18 +435,42 @@ void IRCResponseParser::parsePrivMsgOrNotice()
 		recipient = d->sender;
 	}
 
+	// Join the list to form message contents.
+	QString content = joinAndTrimColonIfNecessary(d->params);
+	IRCCtcpParser ctcp(d->sender, recipient, content);
 	IRCResponseType responseType(d->type);
-	if (responseType == IRCResponseType::PrivMsg)
+	if (ctcp.parse())
 	{
-		emit privMsgReceived(recipient, d->sender, content);
-	}
-	else if (responseType == IRCResponseType::Notice)
-	{
-		emit print(QString("[%1]: %2").arg(d->sender, content), QString());
+		switch (ctcp.echo())
+		{
+			case IRCCtcpParser::PrintAsNormalMessage:
+				emit privMsgLiteralReceived(recipient, ctcp.printable(), IRCMessageClass::Ctcp);
+				break;
+			case IRCCtcpParser::DisplayInServerTab:
+				emit printWithClass(ctcp.printable(), QString(), IRCMessageClass::Ctcp);
+				break;
+			case IRCCtcpParser::DontShow:
+				break;
+			default:
+				gLog << QString("Unhandled CTCP echo type: %1").arg(ctcp.echo());
+				assert(false && "Unhandled CTCP echo type");
+				break;
+		}
 	}
 	else
 	{
-		emit parseError(tr("Type '%1' was incorrectly parsed in PrivMsg block.").arg(d->type));
+		if (responseType == IRCResponseType::PrivMsg)
+		{
+			emit privMsgReceived(recipient, d->sender, content);
+		}
+		else if (responseType == IRCResponseType::Notice)
+		{
+			emit print(QString("[%1]: %2").arg(d->sender, content), QString());
+		}
+		else
+		{
+			emit parseError(tr("Type '%1' was incorrectly parsed in PrivMsg block.").arg(d->type));
+		}
 	}
 }
 

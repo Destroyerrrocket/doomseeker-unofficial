@@ -32,6 +32,7 @@ class IRCMessageClass
 	enum ClassName
 	{
 		ChannelAction,
+		Ctcp,
 		Error,
 		/**
 		 *	@brief Normal has no representation in string, ie.

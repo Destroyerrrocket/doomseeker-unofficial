@@ -34,6 +34,7 @@ void CFGIRCAppearance::readSettings()
 	// Colors
 	this->btnBackgroundColor->setColorHtml(gIRCConfig.appearance.backgroundColor);
 	this->btnChannelActionColor->setColorHtml(gIRCConfig.appearance.channelActionColor);
+	this->btnCtcpColor->setColorHtml(gIRCConfig.appearance.ctcpColor);
 	this->btnDefaultTextColor->setColorHtml(gIRCConfig.appearance.defaultTextColor);
 	this->btnErrorColor->setColorHtml(gIRCConfig.appearance.errorColor);
 	this->btnNetworkActionColor->setColorHtml(gIRCConfig.appearance.networkActionColor);
@@ -52,6 +53,7 @@ void CFGIRCAppearance::saveSettings()
 	// Colors
 	gIRCConfig.appearance.backgroundColor = this->btnBackgroundColor->colorHtml();
 	gIRCConfig.appearance.channelActionColor = this->btnChannelActionColor->colorHtml();
+	gIRCConfig.appearance.ctcpColor = this->btnCtcpColor->colorHtml();
 	gIRCConfig.appearance.defaultTextColor = this->btnDefaultTextColor->colorHtml();
 	gIRCConfig.appearance.errorColor = this->btnErrorColor->colorHtml();
 	gIRCConfig.appearance.networkActionColor = this->btnNetworkActionColor->colorHtml();

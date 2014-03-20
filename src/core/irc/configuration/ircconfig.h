@@ -51,6 +51,7 @@ class IRCConfig
 
 			QString						backgroundColor;
 			QString						channelActionColor;
+			QString ctcpColor;
 			QString						defaultTextColor;
 			QString						errorColor;
 			QFont						mainFont;

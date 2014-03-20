@@ -161,6 +161,7 @@ IRCConfig::AppearanceCfg::AppearanceCfg()
 {
 	this->backgroundColor = "#000000";
 	this->channelActionColor = "#008000";
+	this->ctcpColor = "#de5aff";
 	this->defaultTextColor = "#b9b9b9";
 	this->errorColor = "#ff0000";
 	this->mainFont = QFont("Courier");
@@ -174,6 +175,7 @@ void IRCConfig::AppearanceCfg::init(IniSection& section)
 {
 	section.createSetting("BackgroundColor", this->backgroundColor);
 	section.createSetting("ChannelActionColor", this->channelActionColor);
+	section.createSetting("CtcpColor", this->ctcpColor);
 	section.createSetting("DefaultTextColor", this->defaultTextColor);
 	section.createSetting("ErrorColor", this->errorColor);
 	section.createSetting("MainFont", this->mainFont.toString());
@@ -187,6 +189,7 @@ void IRCConfig::AppearanceCfg::load(IniSection& section)
 {
 	this->backgroundColor = (const QString &)section["BackgroundColor"];
 	this->channelActionColor = (const QString &)section["ChannelActionColor"];
+	this->ctcpColor = (const QString &)section["CtcpColor"];
 	this->defaultTextColor = (const QString &)section["DefaultTextColor"];
 	this->errorColor = (const QString &)section["ErrorColor"];
 	this->mainFont.fromString(section["MainFont"]);
@@ -200,6 +203,7 @@ void IRCConfig::AppearanceCfg::save(IniSection& section)
 {
 	section["BackgroundColor"] = this->backgroundColor;
 	section["ChannelActionColor"] = this->channelActionColor;
+	section["CtcpColor"] = this->ctcpColor;
 	section["DefaultTextColor"] = this->defaultTextColor;
 	section["ErrorColor"] = this->errorColor;
 	section["MainFont"] = this->mainFont.toString();

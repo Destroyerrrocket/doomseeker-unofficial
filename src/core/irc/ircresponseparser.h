@@ -91,6 +91,11 @@ class IRCResponseParser : public QObject
 		void			printWithClass(const QString& printWhat, const QString& printWhere, const IRCMessageClass& msgClass);
 
 		void			privMsgReceived(const QString& recipient, const QString& sender, const QString& content);
+		/**
+		 * @brief Create chat window if necessary and display message
+		 *        'as is' without further string gluing.
+		 */
+		void privMsgLiteralReceived(const QString& recipient, const QString& content, const IRCMessageClass& msgClass);
 		void			sendPongMessage(const QString& sendWhere);
 		void			userChangesNickname(const QString& oldNickname, const QString& newNickname);
 		void			userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature);

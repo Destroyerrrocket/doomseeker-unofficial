@@ -127,6 +127,7 @@ void IRCDockTabContents::applyAppearanceSettings()
 	qtStyleSheet += QString("QListView::item:hover  { color: %1; background: %2; } ").arg(colorHoverText.name(), colorHoverBackground.name());
 
 	QString channelActionClassName = IRCMessageClass::toStyleSheetClassName(IRCMessageClass::ChannelAction);
+	QString ctcpClassName = IRCMessageClass::toStyleSheetClassName(IRCMessageClass::Ctcp);
 	QString errorClassName = IRCMessageClass::toStyleSheetClassName(IRCMessageClass::Error);
 	QString networkActionClassName = IRCMessageClass::toStyleSheetClassName(IRCMessageClass::NetworkAction);
 
@@ -134,6 +135,7 @@ void IRCDockTabContents::applyAppearanceSettings()
 	htmlStyleSheetMessageArea += "span { white-space: pre; }";
 	htmlStyleSheetMessageArea += QString("a { color: %1; white-space: pre; } ").arg(appearance.urlColor);
 	htmlStyleSheetMessageArea += QString("." + channelActionClassName + " { color: %1; } ").arg(appearance.channelActionColor);
+	htmlStyleSheetMessageArea += QString("." + ctcpClassName + " { color: %1; } ").arg(appearance.ctcpColor);
 	htmlStyleSheetMessageArea += QString("." + errorClassName + " { color: %1; } ").arg(appearance.errorColor);
 	htmlStyleSheetMessageArea += QString("." + networkActionClassName + " { color: %1; } ").arg(appearance.networkActionColor);
 

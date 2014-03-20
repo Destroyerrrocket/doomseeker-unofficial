@@ -94,6 +94,8 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 
 	QObject::connect(&ircResponseParser, SIGNAL ( privMsgReceived(const QString&, const QString&, const QString&) ),
 		this, SLOT( privMsgReceived(const QString&, const QString&, const QString&) ) );
+	QObject::connect(&ircResponseParser, SIGNAL ( privMsgLiteralReceived(QString, QString, IRCMessageClass) ),
+		this, SLOT( privMsgLiteralReceived(QString, QString, IRCMessageClass) ) );
 
 	QObject::connect(&ircResponseParser, SIGNAL ( sendPongMessage(const QString&) ),
 		this, SLOT( sendPong(const QString&) ) );
@@ -576,6 +578,13 @@ void IRCNetworkAdapter::privMsgReceived(const QString& recipient, const QString&
 {
 	IRCChatAdapter* pAdapter = this->getOrCreateNewChatAdapter(recipient);
 	pAdapter->emitChatMessage(sender, content);
+}
+
+void IRCNetworkAdapter::privMsgLiteralReceived(const QString& recipient, const QString& content,
+	const IRCMessageClass& msgClass)
+{
+	this->getOrCreateNewChatAdapter(recipient);
+	printResponseWithClass(content, recipient, msgClass);
 }
 
 void IRCNetworkAdapter::sendPong(const QString& toWhom)
