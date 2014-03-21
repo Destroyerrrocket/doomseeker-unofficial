@@ -37,15 +37,17 @@
 class IRCResponseParser::PrivData
 {
 	public:
+		IRCNetworkAdapter *network;
 		QString prefix;
 		QString sender;
 		QString type;
 		QStringList params;
 };
 
-IRCResponseParser::IRCResponseParser()
+IRCResponseParser::IRCResponseParser(IRCNetworkAdapter *network)
 {
 	d = new PrivData();
+	d->network = network;
 }
 
 IRCResponseParser::~IRCResponseParser()
@@ -437,7 +439,7 @@ void IRCResponseParser::parsePrivMsgOrNotice()
 
 	// Join the list to form message contents.
 	QString content = joinAndTrimColonIfNecessary(d->params);
-	IRCCtcpParser ctcp(d->sender, recipient, content);
+	IRCCtcpParser ctcp(d->network, d->sender, recipient, content);
 	IRCResponseType responseType(d->type);
 	if (ctcp.parse())
 	{

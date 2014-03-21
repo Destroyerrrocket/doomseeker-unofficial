@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QString>
 
+class IRCNetworkAdapter;
+
 class IRCCtcpParser : public QObject
 {
 	Q_OBJECT
@@ -16,7 +18,8 @@ class IRCCtcpParser : public QObject
 			DontShow
 		};
 
-		IRCCtcpParser(const QString &sender, const QString &recipient, const QString &msg);
+		IRCCtcpParser(IRCNetworkAdapter *network, const QString &sender,
+			const QString &recipient, const QString &msg);
 		~IRCCtcpParser();
 
 		CtcpEcho echo() const;
@@ -29,6 +32,7 @@ class IRCCtcpParser : public QObject
 
 		bool isCommand(const QString &candidate);
 		bool isCtcp() const;
+		void reply(const QString &what);
 		/**
 		 * @brief Fill d->command and d->params.
 		 */

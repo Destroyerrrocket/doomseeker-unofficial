@@ -41,7 +41,7 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 
 	pIrcSocketSignalsAdapter = new IRCSocketSignalsAdapter(this);
 	ircISupportParser = new IRCISupportParser();
-	ircResponseParser = new IRCResponseParser();
+	ircResponseParser = new IRCResponseParser(this);
 	ircClient.connectSocketSignals(pIrcSocketSignalsAdapter);
 
 	QObject::connect(&ircClient, SIGNAL( ircServerResponse(const QString&) ),

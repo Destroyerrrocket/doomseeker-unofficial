@@ -29,13 +29,14 @@
 #include <QString>
 
 class IRCMessageClass;
+class IRCNetworkAdapter;
 
 class IRCResponseParser : public QObject
 {
 	Q_OBJECT
 
 	public:
-		IRCResponseParser();
+		IRCResponseParser(IRCNetworkAdapter *network);
 		~IRCResponseParser();
 
 		/**

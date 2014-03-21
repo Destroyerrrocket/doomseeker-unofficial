@@ -1,7 +1,10 @@
 #include "ircctcpparser.h"
 
+#include <QDateTime>
 #include <QDebug>
 #include <QStringList>
+#include "irc/ircnetworkadapter.h"
+#include "version.h"
 
 class IRCCtcpParser::PrivData
 {
@@ -9,17 +12,20 @@ class IRCCtcpParser::PrivData
 		QString command;
 		IRCCtcpParser::CtcpEcho echo;
 		QString msg;
+		IRCNetworkAdapter *network;
 		QStringList params;
 		QString printable;
 		QString recipient;
 		QString sender;
 };
 
-IRCCtcpParser::IRCCtcpParser(const QString &sender, const QString &recipient, const QString &msg)
+IRCCtcpParser::IRCCtcpParser(IRCNetworkAdapter *network, const QString &sender,
+	const QString &recipient, const QString &msg)
 {
 	d = new PrivData();
 	d->echo = DontShow;
 	d->msg = msg;
+	d->network = network;
 	d->recipient = recipient;
 	d->sender = sender;
 }
@@ -55,15 +61,28 @@ bool IRCCtcpParser::parse()
 		return false;
 	}
 	tokenizeMsg();
+	d->echo = DisplayInServerTab;
 	d->printable = tr("CTCP: [%1] %2 %3").arg(d->sender, d->command, d->params.join(" "));
-	if (isCommand("action"))
+	if (isCommand("clientinfo"))
+	{
+		reply(QString("CLIENTINFO ACTION VERSION TIME PING"));
+	}
+	else if (isCommand("action"))
 	{
 		d->echo = PrintAsNormalMessage;
 		d->printable = tr("%1 %2").arg(d->sender, d->params.join(" "));
 	}
-	else
+	else if (isCommand("version"))
 	{
-		d->echo = DisplayInServerTab;
+		reply(QString("VERSION %1").arg(Version::fullVersionInfo()));
+	}
+	else if (isCommand("time"))
+	{
+		reply(QString("TIME %1").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
+	}
+	else if (isCommand("ping"))
+	{
+		reply(QString("PING %1").arg(d->params[0]));
 	}
 	return true;
 }
@@ -71,6 +90,11 @@ bool IRCCtcpParser::parse()
 QString IRCCtcpParser::printable() const
 {
 	return d->printable;
+}
+
+void IRCCtcpParser::reply(const QString &content)
+{
+	d->network->sendMessage(QString("/NOTICE %1 %2").arg(d->sender, content));
 }
 
 void IRCCtcpParser::tokenizeMsg()
