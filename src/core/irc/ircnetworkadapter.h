@@ -11,13 +11,13 @@
 #include "irc/ircdelayedoperationlist.h"
 #include "irc/ircnetworkconnectioninfo.h"
 #include "irc/ircrequestparser.h"
-#include "irc/ircresponseparser.h"
 #include "socketsignalsadapter.h"
 
 #include <QHash>
 
 class IRCChatAdapter;
 class IRCISupportParser;
+class IRCResponseParser;
 class IRCSocketSignalsAdapter;
 class IRCUserList;
 class IRCUserPrefix;
@@ -206,7 +206,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		IRCDelayedOperationList delayedOperations;
 		IRCClient ircClient;
 		IRCRequestParser ircRequestParser;
-		IRCResponseParser ircResponseParser;
+		IRCResponseParser* ircResponseParser;
 		IRCISupportParser* ircISupportParser;
 		IRCSocketSignalsAdapter* pIrcSocketSignalsAdapter;
 

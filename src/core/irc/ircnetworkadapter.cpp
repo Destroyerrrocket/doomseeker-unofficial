@@ -29,6 +29,7 @@
 #include "irc/ircmessageclass.h"
 #include "irc/ircprivadapter.h"
 #include "irc/ircrequestparser.h"
+#include "irc/ircresponseparser.h"
 #include "irc/ircuserinfo.h"
 #include "irc/ircuserlist.h"
 #include "log.h"
@@ -40,6 +41,7 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 
 	pIrcSocketSignalsAdapter = new IRCSocketSignalsAdapter(this);
 	ircISupportParser = new IRCISupportParser();
+	ircResponseParser = new IRCResponseParser();
 	ircClient.connectSocketSignals(pIrcSocketSignalsAdapter);
 
 	QObject::connect(&ircClient, SIGNAL( ircServerResponse(const QString&) ),
@@ -53,71 +55,71 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 		this, SLOT( openNewAdapter(const QString&) ) );
 
 	// Response parser begins here.
-	QObject::connect(&ircResponseParser, SIGNAL( helloClient(const QString&) ),
+	QObject::connect(ircResponseParser, SIGNAL( helloClient(const QString&) ),
 		this, SLOT( helloClient(const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL(iSupportReceived(QString)),
+	QObject::connect(ircResponseParser, SIGNAL(iSupportReceived(QString)),
 		SLOT(appendISupportLine(QString)));
 
-	QObject::connect(&ircResponseParser, SIGNAL( kick(const QString&, const QString&, const QString&, const QString&) ),
+	QObject::connect(ircResponseParser, SIGNAL( kick(const QString&, const QString&, const QString&, const QString&) ),
 		this, SLOT( kick(const QString&, const QString&, const QString&, const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL( kill(const QString&, const QString&) ),
+	QObject::connect(ircResponseParser, SIGNAL( kill(const QString&, const QString&) ),
 		this, SLOT( kill(const QString&, const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL( modeInfo(const QString&, const QString&, const QString&) ),
+	QObject::connect(ircResponseParser, SIGNAL( modeInfo(const QString&, const QString&, const QString&) ),
 		this, SLOT( modeInfo(const QString&, const QString&, const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL( namesListReceived(const QString&, const QStringList&) ),
+	QObject::connect(ircResponseParser, SIGNAL( namesListReceived(const QString&, const QStringList&) ),
 		this, SLOT( namesListReceived(const QString&, const QStringList&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL( namesListEndReceived(const QString&) ),
+	QObject::connect(ircResponseParser, SIGNAL( namesListEndReceived(const QString&) ),
 		this, SLOT( namesListEndReceived(const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL( nicknameInUse(const QString&) ),
+	QObject::connect(ircResponseParser, SIGNAL( nicknameInUse(const QString&) ),
 		this, SLOT( nicknameInUse(const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL( noSuchNickname(const QString&) ),
+	QObject::connect(ircResponseParser, SIGNAL( noSuchNickname(const QString&) ),
 		this, SLOT( noSuchNickname(const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL ( parseError(const QString&) ),
+	QObject::connect(ircResponseParser, SIGNAL ( parseError(const QString&) ),
 		this, SLOT( parseError(const QString&) ) );
 
 	// This connect must be direct as it might interfere with other operations
 	// of printing done in the window.
-	QObject::connect(&ircResponseParser, SIGNAL( print(const QString&, const QString&)),
+	QObject::connect(ircResponseParser, SIGNAL( print(const QString&, const QString&)),
 		this, SLOT(printResponse(const QString&, const QString&) ), Qt::DirectConnection);
-	QObject::connect(&ircResponseParser,
+	QObject::connect(ircResponseParser,
 		SIGNAL(printWithClass(const QString&, const QString&, const IRCMessageClass&)),
 		this, SLOT(printResponseWithClass(const QString&, const QString&, const IRCMessageClass&)),
 		Qt::DirectConnection);
 
-	QObject::connect(&ircResponseParser, SIGNAL ( privMsgReceived(const QString&, const QString&, const QString&) ),
+	QObject::connect(ircResponseParser, SIGNAL ( privMsgReceived(const QString&, const QString&, const QString&) ),
 		this, SLOT( privMsgReceived(const QString&, const QString&, const QString&) ) );
-	QObject::connect(&ircResponseParser, SIGNAL ( privMsgLiteralReceived(QString, QString, IRCMessageClass) ),
+	QObject::connect(ircResponseParser, SIGNAL ( privMsgLiteralReceived(QString, QString, IRCMessageClass) ),
 		this, SLOT( privMsgLiteralReceived(QString, QString, IRCMessageClass) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL ( sendPongMessage(const QString&) ),
+	QObject::connect(ircResponseParser, SIGNAL ( sendPongMessage(const QString&) ),
 		this, SLOT( sendPong(const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL ( userChangesNickname(const QString&, const QString&) ),
+	QObject::connect(ircResponseParser, SIGNAL ( userChangesNickname(const QString&, const QString&) ),
 		this, SLOT( userChangesNickname(const QString&, const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL ( userJoinsChannel(const QString&, const QString&, const QString&) ),
+	QObject::connect(ircResponseParser, SIGNAL ( userJoinsChannel(const QString&, const QString&, const QString&) ),
 		this, SLOT( userJoinsChannel(const QString&, const QString&, const QString&) ) );
 
-	QObject::connect(&ircResponseParser,
+	QObject::connect(ircResponseParser,
 		SIGNAL(userModeChanged(const QString&, const QString&, const QList<char>&, const QList<char>&)),
 		this,
 		SLOT(userModeChanged(const QString&, const QString&, const QList<char>&, const QList<char>&)));
 
-	QObject::connect(&ircResponseParser, SIGNAL ( userPartsChannel(const QString&, const QString&, const QString&) ),
+	QObject::connect(ircResponseParser, SIGNAL ( userPartsChannel(const QString&, const QString&, const QString&) ),
 		this, SLOT( userPartsChannel(const QString&, const QString&, const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL ( userQuitsNetwork(const QString&, const QString&) ),
+	QObject::connect(ircResponseParser, SIGNAL ( userQuitsNetwork(const QString&, const QString&) ),
 		this, SLOT( userQuitsNetwork(const QString&, const QString&) ) );
 
-	QObject::connect(&ircResponseParser, SIGNAL ( whoIsUser(const QString&, const QString&, const QString&, const QString&) ),
+	QObject::connect(ircResponseParser, SIGNAL ( whoIsUser(const QString&, const QString&, const QString&, const QString&) ),
 		this, SLOT( whoIsUser(const QString&, const QString&, const QString&, const QString&) ) );
 }
 
@@ -126,6 +128,7 @@ IRCNetworkAdapter::~IRCNetworkAdapter()
 	disconnect();
 
 	killAllChatWindows();
+	delete this->ircResponseParser;
 	delete this->ircISupportParser;
 	delete this->pIrcSocketSignalsAdapter;
 }
@@ -340,7 +343,7 @@ void IRCNetworkAdapter::helloClient(const QString& nickname)
 
 void IRCNetworkAdapter::ircServerResponse(const QString& message)
 {
-	IRCResponseParseResult result = ircResponseParser.parse(message);
+	IRCResponseParseResult result = ircResponseParser->parse(message);
 
 	if (this->bEmitAllIRCMessages || !result.wasParsed())
 	{
