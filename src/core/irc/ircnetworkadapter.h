@@ -23,7 +23,7 @@ class IRCUserList;
 class IRCUserPrefix;
 
 /**
- *	@brief Interprets communication between the client and the IRC server.
+ * @brief Interprets communication between the client and the IRC server.
  */
 class IRCNetworkAdapter : public IRCAdapterBase
 {
@@ -38,7 +38,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		AdapterType adapterType() const { return NetworkAdapter; }
 
 		/**
-		 *	@brief Checks if client is an operator on a specified channel.
+		 * @brief Checks if client is an operator on a specified channel.
 		 */
 		bool amIOperator(const QString& channel) const
 		{
@@ -46,74 +46,74 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		}
 
 		/**
-		 *	@brief Bans specified user from a channel.
+		 * @brief Bans specified user from a channel.
 		 *
-		 *  The data that is required to deliver a ban is contained inside the
-		 *  string returned by /whois query.
+		 * The data that is required to deliver a ban is contained inside the
+		 * string returned by /whois query.
 		 *
-		 *	This will create a IRCDelayedOperation object and first send
-		 *	/whois <nickname> query. When the /whois returns the delayed
-		 *	operations are searched for pending bans. This is when
-		 *	bans are delivered.
+		 * This will create a IRCDelayedOperation object and first send
+		 * /whois <nickname> query. When the /whois returns the delayed
+		 * operations are searched for pending bans. This is when
+		 * bans are delivered.
 		 *
-		 *	For end-user this effect should be almost completely invisible.
+		 * For end-user this effect should be almost completely invisible.
 		 *
-		  *	@param nickName
-		 *		Victim's nick.
-		 *	@param reason
-		 *		Reason for ban (this will be delivered to /kick message).
-		 *	@param channel
-		 *		Channel from which the user will be banned.
+		 * @param nickName
+		 *     Victim's nick.
+		 * @param reason
+		 *     Reason for ban (this will be delivered to /kick message).
+		 * @param channel
+		 *     Channel from which the user will be banned.
 		 */
 		void banUser(const QString& nickname, const QString& reason, const QString& channel);
 
 		void connect(const IRCNetworkConnectionInfo& connectionInfo);
 
 		/**
-		 *	@brief Detaches the specified IRCChatAdapter instance from this
-		 *  network @b without deleting it.
+		 * @brief Detaches the specified IRCChatAdapter instance from this
+		 *        network @b without deleting it.
 		 */
 		void detachChatWindow(const IRCChatAdapter* pAdapter);
 
 		void disconnect(const QString& farewellMessage = tr("Doomseeker End Of Line"));
 
 		/**
-		 *	@brief Implemented to support direct communication between client
-		 *	and server.
+		 * @brief Implemented to support direct communication between client
+		 *        and server.
 		 *
-		 *	All messages that do not begin with '/' character will be ignored
-		 *	here. In fact if the '/' character is missing an error() signal
-		 *	will be emitted to notify the user of this fact.
+		 * All messages that do not begin with '/' character will be ignored
+		 * here. In fact if the '/' character is missing an error() signal
+		 * will be emitted to notify the user of this fact.
 		 *
-		 *	Programmers must remember that although IRC protocol itself
-		 *	doesn't require clients to prepend the messages with a slash this
-		 *	class always does - the slash character is stripped, then the
-		 *	remainder of the message is sent 'as is'.
+		 * Programmers must remember that although IRC protocol itself
+		 * doesn't require clients to prepend the messages with a slash this
+		 * class always does - the slash character is stripped, then the
+		 * remainder of the message is sent 'as is'.
 		 *
-		 *	@param pOrigin
-		 *		If this is not null the IRCNetworkAdapter will attempt to pass
-		 *		some message and error signals through this pOrigin. Otherwise
-		 *		these signals will be sent directly.
+		 * @param pOrigin
+		 *     If this is not null the IRCNetworkAdapter will attempt to pass
+		 *     some message and error signals through this pOrigin. Otherwise
+		 *     these signals will be sent directly.
 		 */
 		void doSendMessage(const QString& message, IRCAdapterBase* pOrigin);
 
 		bool hasRecipient(const QString& recipient) const;
 
 		/**
-		 *	@brief Checks if pAdapter equals this or is one of
-		 *	chat windows of this network.
+		 * @brief Checks if pAdapter equals this or is one of
+		 *        chat windows of this network.
 		 */
 		bool isAdapterRelated(const IRCAdapterBase* pAdapter) const;
 		bool isConnected() const { return ircClient.isConnected(); }
 		bool isMyNickname(const QString& nickname) const;
 
 		/**
-		 *	@brief Checks if user is an operator on a given channel.
+		 * @brief Checks if user is an operator on a given channel.
 		 *
-		 *	This will work only for known channels (ie. the ones the client
-		 *	is registered on).
+		 * This will work only for known channels (ie. the ones the client
+		 * is registered on).
 		 *
-		 *	@return True if given nickname has op privileges on given channel.
+		 * @return True if given nickname has op privileges on given channel.
 		 */
 		bool isOperator(const QString& nickname, const QString& channel) const;
 
@@ -127,12 +127,12 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		}
 
 		/**
-		 *	@brief Sets channel flags.
+		 * @brief Sets channel flags.
 		 *
-		 *	Flags are set using following command:
-		 *	@code
+		 * Flags are set using following command:
+		 * @code
 		 * /mode <channel> [-|+]<flag> <nickname> command
-		 *	@endcode
+		 * @endcode
 		 */
 		void setChannelMode(const QString& channel, const QString& nickname, const QString& flag, bool bSet);
 
@@ -154,37 +154,37 @@ class IRCNetworkAdapter : public IRCAdapterBase
 
 	public slots:
 		/**
-		 *	@brief Opens a new chat adapter for specified recipient.
+		 * @brief Opens a new chat adapter for specified recipient.
 		 *
-		 *	If specified recipient is a channel a /join command will be sent
-		 *	to that channel. If recipient is a user a chat window will simply
-		 *	be opened.
+		 * If specified recipient is a channel a /join command will be sent
+		 * to that channel. If recipient is a user a chat window will simply
+		 * be opened.
 		 *
-		 *	If adapter is not connected to a network or empty name is specified
-		 *	this becomes a no-op. Also if such recipient
-		 *	is already present the window will emit focus signal request.
+		 * If adapter is not connected to a network or empty name is specified
+		 * this becomes a no-op. Also if such recipient
+		 * is already present the window will emit focus signal request.
 		 */
 		void openNewAdapter(const QString& recipientName);
 
 	signals:
 		/**
-		 *	@brief Signal emitted when a new chat (priv or channel) is opened
-		 *	from this network.
+		 * @brief Signal emitted when a new chat (priv or channel) is opened
+		 *        from this network.
 		 */
 		void newChatWindowIsOpened(IRCChatAdapter* pWindow);
 
 	private:
 		/**
-		 *	@brief If set to true this network adapter is in a state
-		 *	of joining to a network.
+		 * @brief If set to true this network adapter is in a state
+		 *        of joining to a network.
 		 *
-		 *  Default: false.
+		 * Default: false.
 		 */
 		bool bIsJoining;
 
 		/**
 		 * @brief If true, will make the adapter emit message() signal for
-		 * every message it received.
+		 *        every message it received.
 		 *
 		 * Such messages are emitted in an unformatted state - in a form they
 		 * were received from the server.
@@ -194,12 +194,12 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		bool bEmitAllIRCMessages;
 
 		/**
-		 *	@brief Stores all chat adapters associated with this network.
+		 * @brief Stores all chat adapters associated with this network.
 		 *
-		 *	Key values are recipient names. To avoid confusion and errors
-		 *	all key values are @b lower-case.
-		 *	Values stored here can be any form of IRCChatAdapter -  be it
-		 *	a private conversation or a channel.
+		 * Key values are recipient names. To avoid confusion and errors
+		 * all key values are @b lower-case.
+		 * Values stored here can be any form of IRCChatAdapter - be it
+		 * a private conversation or a channel.
 		 */
 		QHash<QString, IRCChatAdapter*> chatWindows;
 		IRCNetworkConnectionInfo connectionInfo;
@@ -211,19 +211,19 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		IRCSocketSignalsAdapter* pIrcSocketSignalsAdapter;
 
 		/**
-		 *	@brief Retrieves IRCChatAdapter for specified recipient.
+		 * @brief Retrieves IRCChatAdapter for specified recipient.
 		 */
 		IRCChatAdapter* getChatAdapter(const QString& recipient);
 		const IRCChatAdapter* getChatAdapter(const QString& recipient) const;
 
 		/**
-		 *	@brief Creates the new IRCChatAdapter object and immedaitelly
-		 *	adds it to the chatWindows hashmap.
+		 * @brief Creates the new IRCChatAdapter object and immediatelly
+		 *        adds it to the chatWindows hashmap.
 		 *
-		 *	@b Note: If such recipient is already registered no new object
-		 *	is created.
+		 * @b Note: If such recipient is already registered no new object
+		 * is created.
 		 *
-		 *	@return Pointer to the adapter object.
+		 * @return Pointer to the adapter object.
 		 */
 		IRCChatAdapter* getOrCreateNewChatAdapter(const QString& recipient);
 
