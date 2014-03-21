@@ -54,49 +54,49 @@ class DoomseekerConfig
 		class DoomseekerCfg
 		{
 			public:
-			static const QString		SECTION_NAME;
+			static const QString SECTION_NAME;
 
 
-			bool						bBotsAreNotPlayers;
-			bool						bCloseToTrayIcon;
-			bool						bColorizeServerConsole;
+			bool bBotsAreNotPlayers;
+			bool bCloseToTrayIcon;
+			bool bColorizeServerConsole;
 			bool bDrawGridInServerTable;
-			bool						bHidePasswords;
+			bool bHidePasswords;
 			bool bGroupServersWithPlayersAtTheTopOfTheList;
-			bool						bIP2CountryAutoUpdate;
-			bool						bLookupHosts;
-			bool						bMainWindowMaximized;
-			bool						bQueryAutoRefreshDontIfActive;
-			bool						bQueryAutoRefreshEnabled;
-			bool						bQueryBeforeLaunch;
-			bool						bQueryOnStartup;
-			bool						bRecordDemo;
-			bool						bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn;
-			QVector<BuddyInfo>			buddiesList;
-			bool						bUseTrayIcon;
-			QVector<CustomServerInfo>	customServers;
-			QString						customServersColor;
-			QString						localization;
-			unsigned					ip2CountryDatabaseMaximumAge;
-			QString						ip2CountryUrl;
-			QString						mainWindowState;
-			unsigned					mainWindowWidth;
-			unsigned					mainWindowHeight;
-			int							mainWindowX;
-			int							mainWindowY;
-			unsigned					queryAutoRefreshEverySeconds;
-			unsigned					queryBatchSize;
-			unsigned					queryBatchDelay;
-			unsigned					queryTimeout;
-			unsigned					queryTries;
-			QString						previousCreateServerConfigDir;
-			QString						previousCreateServerExecDir;
-			QString						previousCreateServerWadDir;
-			QString						serverListColumnState;
-			int							serverListSortIndex;
-			int							serverListSortDirection;
-			int							slotStyle;
-			QList<FileSearchPath>		wadPaths;
+			bool bIP2CountryAutoUpdate;
+			bool bLookupHosts;
+			bool bMainWindowMaximized;
+			bool bQueryAutoRefreshDontIfActive;
+			bool bQueryAutoRefreshEnabled;
+			bool bQueryBeforeLaunch;
+			bool bQueryOnStartup;
+			bool bRecordDemo;
+			bool bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn;
+			QVector<BuddyInfo> buddiesList;
+			bool bUseTrayIcon;
+			QVector<CustomServerInfo> customServers;
+			QString customServersColor;
+			QString localization;
+			unsigned ip2CountryDatabaseMaximumAge;
+			QString ip2CountryUrl;
+			QString mainWindowState;
+			unsigned mainWindowWidth;
+			unsigned mainWindowHeight;
+			int mainWindowX;
+			int mainWindowY;
+			unsigned queryAutoRefreshEverySeconds;
+			unsigned queryBatchSize;
+			unsigned queryBatchDelay;
+			unsigned queryTimeout;
+			unsigned queryTries;
+			QString previousCreateServerConfigDir;
+			QString previousCreateServerExecDir;
+			QString previousCreateServerWadDir;
+			QString serverListColumnState;
+			int serverListSortIndex;
+			int serverListSortDirection;
+			int slotStyle;
+			QList<FileSearchPath> wadPaths;
 
 			DoomseekerCfg();
 			~DoomseekerCfg();
@@ -107,7 +107,7 @@ class DoomseekerConfig
 			 *
 			 *	This will ensure that window remains accessible.
 			 */
-			bool						areMainWindowSizeSettingsValid(int maxValidX, int maxValidY) const;
+			bool areMainWindowSizeSettingsValid(int maxValidX, int maxValidY) const;
 
 			QList<ColumnSort> additionalSortColumns() const;
 			void setAdditionalSortColumns(const QList<ColumnSort> &val);
@@ -119,9 +119,9 @@ class DoomseekerConfig
 			 *
 			 *	All values already present are left alone.
 			 */
-			void						init(IniSection& section);
-			void						load(IniSection& section);
-			void						save(IniSection& section);
+			void init(IniSection& section);
+			void load(IniSection& section);
+			void save(IniSection& section);
 
 			private:
 				class PrivData;
@@ -173,31 +173,31 @@ class DoomseekerConfig
 		class ServerFilter
 		{
 			public:
-			static const QString		SECTION_NAME;
+			static const QString SECTION_NAME;
 
-			ServerListFilterInfo		info;
+			ServerListFilterInfo info;
 
-			void						init(IniSection& section);
-			void						load(IniSection& section);
-			void						save(IniSection& section);
+			void init(IniSection& section);
+			void load(IniSection& section);
+			void save(IniSection& section);
 		};
 
 		class WadseekerCfg
 		{
 			public:
-			static const QString		SECTION_NAME;
+			static const QString SECTION_NAME;
 
-			bool						bSearchInIdgames;
-			QString						colorMessageCriticalError;
-			QString						colorMessageError;
-			QString						colorMessageNotice;
-			int							connectTimeoutSeconds;
-			int							downloadTimeoutSeconds;
-			int							maxConcurrentSiteDownloads;
-			int							maxConcurrentWadDownloads;
-			QString						idgamesURL;
-			QStringList					searchURLs;
-			QString						targetDirectory;
+			bool bSearchInIdgames;
+			QString colorMessageCriticalError;
+			QString colorMessageError;
+			QString colorMessageNotice;
+			int connectTimeoutSeconds;
+			int downloadTimeoutSeconds;
+			int maxConcurrentSiteDownloads;
+			int maxConcurrentWadDownloads;
+			QString idgamesURL;
+			QStringList searchURLs;
+			QString targetDirectory;
 
 			WadseekerCfg();
 
@@ -207,15 +207,15 @@ class DoomseekerConfig
 			 *
 			 *	All values already present are left alone.
 			 */
-			void						init(IniSection& section);
-			void						load(IniSection& section);
-			void						save(IniSection& section);
+			void init(IniSection& section);
+			void load(IniSection& section);
+			void save(IniSection& section);
 		};
 
 		/**
 		 *	@brief Returns the Singleton.
 		 */
-		static DoomseekerConfig&	config();
+		static DoomseekerConfig& config();
 
 		/**
 		 *	@brief Disposes of the Singleton.
@@ -224,14 +224,14 @@ class DoomseekerConfig
 		 *	It is safe to call even if the config was not initialized
 		 *	first.
 		 */
-		static void					dispose();
+		static void dispose();
 
-		DoomseekerCfg				doomseeker;
+		DoomseekerCfg doomseeker;
 		AutoUpdates autoUpdates;
-		ServerFilter				serverFilter;
-		WadseekerCfg				wadseeker;
+		ServerFilter serverFilter;
+		WadseekerCfg wadseeker;
 
-		Ini*						ini() { return this->pIni.data(); }
+		Ini* ini() { return this->pIni.data(); }
 
 		/**
 		 *	@brief This will assume that the .ini file is initialized.
@@ -248,20 +248,20 @@ class DoomseekerConfig
 		 *
 		 *	@see dummySection
 		 */
-		IniSection					iniSectionForPlugin(const QString& pluginName);
-		IniSection					iniSectionForPlugin(const EnginePlugin* plugin);
+		IniSection iniSectionForPlugin(const QString& pluginName);
+		IniSection iniSectionForPlugin(const EnginePlugin* plugin);
 
 		/**
 		 *	@brief Reads settings from ini file. This file must be
 		 *	previously set by setIniFile() method.
 		 */
-		bool						readFromFile();
+		bool readFromFile();
 
 		/**
 		 *	@brief Saves current settings to ini file. This file must
 		 *	be previously set by setIniFile() method.
 		 */
-		bool						saveToFile();
+		bool saveToFile();
 
 		/**
 		 *	@brief Initializes the Ini class instance to point
@@ -271,19 +271,19 @@ class DoomseekerConfig
 		 *	ini file. However it will neither save the old ini file
 		 *	or read the new one.
 		 */
-		bool						setIniFile(const QString& filePath);
+		bool setIniFile(const QString& filePath);
 
 
 	private:
-		static DoomseekerConfig*	instance;
+		static DoomseekerConfig* instance;
 
-		bool						isValidPluginName(const QString& pluginName) const;
+		bool isValidPluginName(const QString& pluginName) const;
 
 		/**
 		 *	@brief Exists to allow iniSectionForPlugin() to return
 		 *	a trash can if meaningless plugin name is specified.
 		 */
-		IniSection*					dummySection;
+		IniSection* dummySection;
 
 		QScopedPointer<QSettings> settings;
 		QScopedPointer<SettingsProviderQt> settingsProvider;

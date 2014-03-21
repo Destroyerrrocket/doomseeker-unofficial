@@ -61,7 +61,7 @@ class ConnectionHandler : public QObject
 		ConnectionHandler(ServerPtr server, QWidget *parentWidget=NULL, bool handleResponse=false);
 		~ConnectionHandler();
 
-		void	run();
+		void run();
 
 		static ConnectionHandler *connectByUrl(const QUrl &url);
 		/**
@@ -79,14 +79,14 @@ class ConnectionHandler : public QObject
 			bool *hadMissing=NULL);
 
 	protected:
-		void	finish(int response);
-		void	refreshToJoin();
+		void finish(int response);
+		void refreshToJoin();
 
 	protected slots:
-		void	checkResponse(const ServerPtr &server, int response);
+		void checkResponse(const ServerPtr &server, int response);
 
 	signals:
-		void	finished(int response);
+		void finished(int response);
 
 	private:
 		class PrivData;

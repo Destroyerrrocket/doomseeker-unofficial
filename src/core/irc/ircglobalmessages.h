@@ -38,7 +38,7 @@ class IRCGlobalMessages : public QObject
 	Q_OBJECT
 
 	public:
-		static IRCGlobalMessages&	instance()
+		static IRCGlobalMessages& instance()
 		{
 			if (pInstance == NULL)
 			{
@@ -48,23 +48,23 @@ class IRCGlobalMessages : public QObject
 			return *pInstance;
 		}
 		
-		void					emitError(const QString& message, IRCAdapterBase* pMessageSender = NULL);		
-		void					emitMessage(const QString& message, IRCAdapterBase* pMessageSender = NULL)
+		void emitError(const QString& message, IRCAdapterBase* pMessageSender = NULL);		
+		void emitMessage(const QString& message, IRCAdapterBase* pMessageSender = NULL)
 		{
 			emit this->message(message, pMessageSender);
 		}
 		
-		void					emitMessageWithClass(const QString& message, const IRCMessageClass& messageClass, IRCAdapterBase* pMessageSender = NULL)
+		void emitMessageWithClass(const QString& message, const IRCMessageClass& messageClass, IRCAdapterBase* pMessageSender = NULL)
 		{
 			emit this->messageWithClass(message, messageClass, pMessageSender);
 		}
 		
 	signals:
-		void						message(const QString& message, IRCAdapterBase* pMessageSender);
-		void						messageWithClass(const QString& message, const IRCMessageClass& messageClass, IRCAdapterBase* pMessageSender);	
+		void message(const QString& message, IRCAdapterBase* pMessageSender);
+		void messageWithClass(const QString& message, const IRCMessageClass& messageClass, IRCAdapterBase* pMessageSender);	
 	
 	private:
-		static IRCGlobalMessages*	pInstance;
+		static IRCGlobalMessages* pInstance;
 
 		IRCGlobalMessages()
 		{

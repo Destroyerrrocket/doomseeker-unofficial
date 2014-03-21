@@ -40,14 +40,14 @@ class MemoryLineEdit : public QLineEdit
 		MemoryLineEdit(QWidget *parent=0);
 
 	protected:
-		void	keyPressEvent(QKeyEvent *event);
+		void keyPressEvent(QKeyEvent *event);
 
 	protected slots:
-		void	storeCommand();
+		void storeCommand();
 
 	private:
-		QList<QString>				history;
-		QList<QString>::iterator	position;
+		QList<QString> history;
+		QList<QString>::iterator position;
 };
 
 #endif

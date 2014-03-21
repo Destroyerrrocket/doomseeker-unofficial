@@ -53,7 +53,7 @@ class TestCore : public TestBase
 		/**
 		 *	@brief Clears success/fail counters.
 		 */
-		void		clearCounters();
+		void clearCounters();
 		
 		/**
 		 *	Provides a standard encapsulation for test execution.
@@ -62,16 +62,16 @@ class TestCore : public TestBase
 		 *				  @b Important: this object will be deleted by this 
 		 *				  method
 		 */
-		void		executeTest(TestUnitBase* pTest);		
+		void executeTest(TestUnitBase* pTest);		
 		
-		int			numTests() const { return testsFailed + testsSucceeded; }
-		int			numTestsFailed() const { return testsFailed; }
-		int			numTestsSucceeded() const { return testsSucceeded; }
+		int numTests() const { return testsFailed + testsSucceeded; }
+		int numTestsFailed() const { return testsFailed; }
+		int numTestsSucceeded() const { return testsSucceeded; }
 		
 		
 	protected:
-		int			testsFailed;
-		int			testsSucceeded;
+		int testsFailed;
+		int testsSucceeded;
 		
 };
 

@@ -20,16 +20,16 @@ class ServerConsole : public QWidget, private Ui::ServerConsole
 		void setFocus();
 
 	public slots:
-		void	appendMessage(const QString &message);
+		void appendMessage(const QString &message);
 
 	signals:
-		void	messageSent(const QString &message);
+		void messageSent(const QString &message);
 
 	protected slots:
-		void	forwardMessage();
+		void forwardMessage();
 
 	private:
-		MemoryLineEdit	*consoleInput;
+		MemoryLineEdit *consoleInput;
 };
 
 #endif // SERVERCONSOLE_H

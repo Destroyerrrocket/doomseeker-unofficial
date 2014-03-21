@@ -34,12 +34,12 @@ class CFGIP2Country : public ConfigurationBaseBox, private Ui::CFGIP2Country
 	public:
 		CFGIP2Country(QWidget *parent=NULL);
 		
-		QIcon							icon() const { return QIcon(":/icons/emblem-web.png"); }
-		QString							name() const { return tr("IP2C"); }
-		void							readSettings();
+		QIcon icon() const { return QIcon(":/icons/emblem-web.png"); }
+		QString name() const { return tr("IP2C"); }
+		void readSettings();
 
 	protected:
-		void							saveSettings();
+		void saveSettings();
 };
 
 #endif

@@ -33,17 +33,17 @@ class WADSEEKER_API WadseekerVersionInfo
 		/**
 		 * @brief Author of the library.
 		 */
-		static QString			author();
+		static QString author();
 
 		/**
 		 * @brief Description of the library.
 		 */
-		static QString			description();
+		static QString description();
 
 		/**
 		 * @brief List of known extensions for "WAD" files (pk3, wad).
 		 */
-		static QStringList      knownWadExtensions();
+		static QStringList knownWadExtensions();
 
 		/**
 		 * @brief Checks if passed argument is on
@@ -53,27 +53,27 @@ class WADSEEKER_API WadseekerVersionInfo
 		 *
 		 * @return True if suffix is on the list.
 		 */
-		static bool				isSupportedArchiveExtension(const QString& suffix);
+		static bool isSupportedArchiveExtension(const QString& suffix);
 
 		/**
 		 * @brief List of extractable archive extensions.
 		 */
-		static QStringList 		supportedArchiveExtensions();
+		static QStringList supportedArchiveExtensions();
 
 		/**
 		 * @brief WWW User Agent used for HTTP communications.
 		 */
-		static QString			userAgent();
+		static QString userAgent();
 
 		/**
 		 * @brief Version string of the library.
 		 */
-		static QString			version();
+		static QString version();
 
 		/**
 		 * @brief Development dates.
 		 */
-		static QString			yearSpan();
+		static QString yearSpan();
 };
 
 #endif

@@ -47,22 +47,22 @@ class DemoManagerDlg : public QDialog, private Ui::DemoManagerDlg
 		class Demo
 		{
 			public:
-				QString		filename;
-				QString		port;
-				QDateTime	time;
-				QStringList	wads;
+				QString filename;
+				QString port;
+				QDateTime time;
+				QStringList wads;
 		};
 
-		void	adjustDemoList();
-		bool	doRemoveDemo(const QString &file);
+		void adjustDemoList();
+		bool doRemoveDemo(const QString &file);
 
-		Demo					*selectedDemo;
-		QStandardItemModel		*demoModel;
-		QList<QList<Demo> >		demoTree;
+		Demo *selectedDemo;
+		QStandardItemModel *demoModel;
+		QList<QList<Demo> > demoTree;
 
 	protected slots:
-		void	performAction(QAbstractButton *button);
-		void	updatePreview(const QModelIndex &index);
+		void performAction(QAbstractButton *button);
+		void updatePreview(const QModelIndex &index);
 };
 
 #endif

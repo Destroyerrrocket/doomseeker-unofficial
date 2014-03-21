@@ -34,19 +34,19 @@ class CFGWadseekerSites : public ConfigurationBaseBox, private Ui::CFGWadseekerS
 	public:
 		CFGWadseekerSites(QWidget* parent = NULL);
 
-		QIcon			icon() const { return QIcon(":/icons/emblem-web.png"); }
-		QString			name() const { return tr("Sites"); }
-		void			readSettings();
+		QIcon icon() const { return QIcon(":/icons/emblem-web.png"); }
+		QString name() const { return tr("Sites"); }
+		void readSettings();
 		QString title() const { return tr("Wadseeker - Sites"); }
 
 	protected slots:
-		void			btnUrlAddClicked();
-		void			btnUrlDefaultClicked();
-		void			btnUrlRemoveClicked();
+		void btnUrlAddClicked();
+		void btnUrlDefaultClicked();
+		void btnUrlRemoveClicked();
 
 	protected:
-		void 			saveSettings();
-		void 			insertUrl(const QUrl& url);
+		void saveSettings();
+		void insertUrl(const QUrl& url);
 };
 
 #endif

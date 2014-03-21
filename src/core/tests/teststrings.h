@@ -16,7 +16,7 @@ class TestStringsWrapUrls : public TestUnitBase
 		{
 		}
 	
-		bool				executeTest();
+		bool executeTest();
 };
 
 #endif

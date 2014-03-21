@@ -53,10 +53,10 @@ class IP2C : public QObject
 		class IP2CData
 		{
 			public:
-				unsigned int	ipStart;
-				unsigned int	ipEnd;
-				QString			country;
-				QString			countryFullName;
+				unsigned int ipStart;
+				unsigned int ipEnd;
+				QString country;
+				QString countryFullName;
 
 				IP2CData()
 				{
@@ -67,7 +67,7 @@ class IP2C : public QObject
 				 *	IP2CData class is valid when ipStart is different from
 				 *	ipEnd.
 				 */
-				bool	isValid() const
+				bool isValid() const
 				{
 					return ipStart != ipEnd;
 				}
@@ -76,20 +76,20 @@ class IP2C : public QObject
 		static IP2C *instance();
 		static void deinstantiate();
 
-		const QPixmap				flagLan;
-		const QPixmap				flagLocalhost;
-		const QPixmap				flagUnknown;
+		const QPixmap flagLan;
+		const QPixmap flagLocalhost;
+		const QPixmap flagUnknown;
 
 		/**
 		 *	@brief Adds new country entry to the database.
 		 *
 		 *	Makes sure the database is sorted in ascending order.
 		 */
-		void			appendEntryToDatabase(const IP2CData& entry);
+		void appendEntryToDatabase(const IP2CData& entry);
 
-		const QPixmap&	flag(const QString& countryShortName);
+		const QPixmap& flag(const QString& countryShortName);
 
-		bool			isDataAccessLocked() const
+		bool isDataAccessLocked() const
 		{
 			return bDataAccessLocked;
 		}
@@ -97,18 +97,18 @@ class IP2C : public QObject
 		/**
 		 *	Returns a reference to the structure describing the country.
 		 */
-		const IP2CData&	lookupIP(unsigned int ipaddress);
-		const IP2CData&	lookupIP(const QHostAddress &ipaddress) { return lookupIP(ipaddress.toIPv4Address()); }
+		const IP2CData& lookupIP(unsigned int ipaddress);
+		const IP2CData& lookupIP(const QHostAddress &ipaddress) { return lookupIP(ipaddress.toIPv4Address()); }
 
-		int				numKnownEntries() const { return database.size(); }
+		int numKnownEntries() const { return database.size(); }
 
 		/**
 		 *	Returns country information based on given IP.
 		 */
-		IP2CCountryInfo	obtainCountryInfo(unsigned int ipaddress);
-		IP2CCountryInfo	obtainCountryInfo(const QHostAddress& ipaddress) { return obtainCountryInfo(ipaddress.toIPv4Address()); }
+		IP2CCountryInfo obtainCountryInfo(unsigned int ipaddress);
+		IP2CCountryInfo obtainCountryInfo(const QHostAddress& ipaddress) { return obtainCountryInfo(ipaddress.toIPv4Address()); }
 
-		void			setDataAccessLockEnabled(bool b) { bDataAccessLocked = b; }
+		void setDataAccessLockEnabled(bool b) { bDataAccessLocked = b; }
 
 		/**
 		 *	@brief Sets database contents to the list specified.
@@ -116,14 +116,14 @@ class IP2C : public QObject
 		 *	To avoid performance issues it is already assumed that the specified
 		 *	list is sorted.
 		 */
-		void			setDatabase(const QList<IP2CData>& sortedCountryData)
+		void setDatabase(const QList<IP2CData>& sortedCountryData)
 		{
 			QMutexLocker dataAccessMutexLocker(&dataAccessMutex);
 			database = sortedCountryData;
 		}
 
 	protected:
-		inline bool		isLANAddress(unsigned ipv4Address)
+		inline bool isLANAddress(unsigned ipv4Address)
 		{
 			const static unsigned LAN_1_BEGIN = QHostAddress("10.0.0.0").toIPv4Address();
 			const static unsigned LAN_1_END = QHostAddress("10.255.255.255").toIPv4Address();
@@ -134,12 +134,12 @@ class IP2C : public QObject
 
 			return (
 					(ipv4Address >= LAN_1_BEGIN && ipv4Address <= LAN_1_END)
-				||	(ipv4Address >= LAN_2_BEGIN && ipv4Address <= LAN_2_END)
-				||	(ipv4Address >= LAN_3_BEGIN && ipv4Address <= LAN_3_END)
+				|| (ipv4Address >= LAN_2_BEGIN && ipv4Address <= LAN_2_END)
+				|| (ipv4Address >= LAN_3_BEGIN && ipv4Address <= LAN_3_END)
 					);
 		}
 
-		inline bool		isLocalhostAddress(unsigned ipv4Address)
+		inline bool isLocalhostAddress(unsigned ipv4Address)
 		{
 			const static unsigned LOCALHOST_BEGIN = QHostAddress("127.0.0.0").toIPv4Address();
 			const static unsigned LOCALHOST_END = QHostAddress("127.255.255.255").toIPv4Address();
@@ -158,11 +158,11 @@ class IP2C : public QObject
 		 *	should not read from the database when this is true because
 		 *	data inside might still be invalid.
 		 */
-		bool						bDataAccessLocked;
-		QMutex						dataAccessMutex;
-		QList<IP2CData>				database;
-		QHash<QString, QPixmap>		flags;
-		const IP2CData				invalidData;
+		bool bDataAccessLocked;
+		QMutex dataAccessMutex;
+		QList<IP2CData> database;
+		QHash<QString, QPixmap> flags;
+		const IP2CData invalidData;
 
 		IP2C();
 		~IP2C();

@@ -35,11 +35,11 @@ class SkulltagEnginePlugin : public EnginePlugin
 
 		ConfigurationBaseBox *configuration(QWidget *parent) const;
 
-		QList<GameCVar>	limits(const GameMode& gm) const;
+		QList<GameCVar> limits(const GameMode& gm) const;
 
-		MasterClient				*masterClient() const;
+		MasterClient *masterClient() const;
 
-		Server*						server(const QHostAddress &address, unsigned short port) const;
+		Server* server(const QHostAddress &address, unsigned short port) const;
 };
 
 #endif

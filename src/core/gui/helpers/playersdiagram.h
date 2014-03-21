@@ -40,7 +40,7 @@ class PlayersDiagram
 		 *	will be freed. This is be used to change the diagram appearance
 		 *	when Configuration box indicates that such action is required.
 		 */
-		static	void loadImages(int style);
+		static void loadImages(int style);
 
 		PlayersDiagram(ServerCPtr server);
 
@@ -55,10 +55,10 @@ class PlayersDiagram
 			Human
 		};
 
-		static void			deleteImages();
-		static bool			isStyleNumberValid(int style);
+		static void deleteImages();
+		static bool isStyleNumberValid(int style);
 
-		static const char* 	slotStyles[NUM_SLOTSTYLES];
+		static const char* slotStyles[NUM_SLOTSTYLES];
 		static const QImage *openImage, *openSpecImage, *botImage, *playerImage, *spectatorImage;
 
 		/**
@@ -69,29 +69,29 @@ class PlayersDiagram
 		 * Colorization is done by keeping the hue and saturation if the passed
 		 * in color and applying the value of the color in the image.
 		 */
-		const QImage*		colorizePlayer(const QImage *image, const QColor &color);
+		const QImage* colorizePlayer(const QImage *image, const QColor &color);
 
-		void				draw();
-		void				drawTeam(PlayerType playerType, int team, int howMany);
-		void				drawPictures(const QImage* image, int howMany);
+		void draw();
+		void drawTeam(PlayerType playerType, int team, int howMany);
+		void drawPictures(const QImage* image, int howMany);
 
-		void				obtainPlayerNumbers();
+		void obtainPlayerNumbers();
 
-		int 				numBotsOnTeam[MAX_TEAMS];
-		int 				numBotsWithoutTeam;
-		int					numFreeJoinSlots;
-		int					numFreeSpectatorSlots;
-		int 				numHumansWithoutTeam;
-		int 				numHumansOnTeam[MAX_TEAMS];
-		int 				numSpectators;
+		int numBotsOnTeam[MAX_TEAMS];
+		int numBotsWithoutTeam;
+		int numFreeJoinSlots;
+		int numFreeSpectatorSlots;
+		int numHumansWithoutTeam;
+		int numHumansOnTeam[MAX_TEAMS];
+		int numSpectators;
 
 	private:
-		ServerCPtr  server;
-		QPixmap			diagram;
-		QPainter*		painter;
-		int				position;
-		int 			slotSize;
-		QImage			*tmp;
+		ServerCPtr server;
+		QPixmap diagram;
+		QPainter* painter;
+		int position;
+		int slotSize;
+		QImage *tmp;
 };
 
 #endif

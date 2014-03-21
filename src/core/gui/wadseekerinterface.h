@@ -43,7 +43,7 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 		WadseekerInterface(QWidget* parent = NULL);
 		~WadseekerInterface();
 
-		bool 		isAutomatic() { return bAutomatic; }
+		bool isAutomatic() { return bAutomatic; }
 
 		/**
 		 * Sets the window to start seeking immediatelly after being shown and
@@ -51,75 +51,75 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 		 * @param b - is automatic or is it not
 		 * @param seekedWads - wads to seek if 'b' parameter is set to true.
 		 */
-		void 		setAutomatic(bool b, const QStringList& seekedWads)
+		void setAutomatic(bool b, const QStringList& seekedWads)
 		{
 			bAutomatic = b;
 			this->seekedWads = seekedWads;
 		}
 
-		void		setCustomSite(const QString& site)
+		void setCustomSite(const QString& site)
 		{
 			this->customSite = site;
 		}
 
-		Wadseeker&	wadseekerRef() { return wadseeker; }
+		Wadseeker& wadseekerRef() { return wadseeker; }
 
 	private:
 		enum States
 		{
-			Downloading 	= 0,
-			Waiting			= 1
+			Downloading = 0,
+			Waiting = 1
 		};
 
-		static const int	UPDATE_INTERVAL_MS;
+		static const int UPDATE_INTERVAL_MS;
 
-		bool			bAutomatic;
-		bool			bFirstShown;
+		bool bAutomatic;
+		bool bFirstShown;
 
 		// Setup for customization in the future.
-		QString			colorHtmlMessageFatalError;
-		QString			colorHtmlMessageError;
-		QString			colorHtmlMessageNotice;
+		QString colorHtmlMessageFatalError;
+		QString colorHtmlMessageError;
+		QString colorHtmlMessageNotice;
 
-		QString			customSite;
+		QString customSite;
 
 		/**
 		 * Interface uses this instead of line edit if bAutomatic is true.
 		 */
-		QStringList 	seekedWads;
+		QStringList seekedWads;
 
-		States			state;
+		States state;
 
 		/**
 		 * @brief A subset of seekedWads list. Contains all WADs that were
 		 *        successfully installed.
 		 */
-		QStringList		successfulWads;
+		QStringList successfulWads;
 
-		QTimer			updateTimer;
-		Wadseeker		wadseeker;
+		QTimer updateTimer;
+		Wadseeker wadseeker;
 
-		void			displayMessage(const QString& message, WadseekerLib::MessageType type, bool bPrependErrorsWithMessageType);
-		void			initMessageColors();
+		void displayMessage(const QString& message, WadseekerLib::MessageType type, bool bPrependErrorsWithMessageType);
+		void initMessageColors();
 
 		/**
 		 * @brief Sets default window title to default.
 		 */
-		void            resetTitleToDefault();
+		void resetTitleToDefault();
 
-		void			setStateDownloading();
-		void			setStateWaiting();
-		void			setupIdgames();
-		void 			showEvent(QShowEvent* event);
-		void			startSeeking(const QStringList& seekedFilesList);
-		void			updateProgressBar();
-		void            updateTitle();
+		void setStateDownloading();
+		void setStateWaiting();
+		void setupIdgames();
+		void showEvent(QShowEvent* event);
+		void startSeeking(const QStringList& seekedFilesList);
+		void updateProgressBar();
+		void updateTitle();
 
 		/**
 		 * @brief Subtracts successulWads list from seekedWads and returns the
 		 *        difference.
 		 */
-		QStringList		unsuccessfulWads() const;
+		QStringList unsuccessfulWads() const;
 
 	private slots:
 		void accept();

@@ -75,26 +75,26 @@ class ServerListContextMenu : public QObject
 
 		PrivData* d;
 
-		QMenu*					createCopyMenu(QWidget* parent);
-		void					createMembers();
-		void					initializeMembers();
+		QMenu* createCopyMenu(QWidget* parent);
+		void createMembers();
+		void initializeMembers();
 
-		QAction*				copyAddress;
-		QAction* 				copyEmail;
-		QAction*				copyName;
-		QAction* 				copyUrl;
+		QAction* copyAddress;
+		QAction* copyEmail;
+		QAction* copyName;
+		QAction* copyUrl;
 		ServerFilterBuilderMenu* filterBuilder;
-		QAction* 				join;
+		QAction* join;
 
-		QMenu*					menu;
+		QMenu* menu;
 
-		QAction* 				openUrlInDefaultBrowser;
+		QAction* openUrlInDefaultBrowser;
 
 		ServerPtr pServer;
 
-		QAction*				rcon;
-		QAction* 				refresh;
-		QAction* 				showJoinCommandLine;
+		QAction* rcon;
+		QAction* refresh;
+		QAction* showJoinCommandLine;
 };
 
 #endif

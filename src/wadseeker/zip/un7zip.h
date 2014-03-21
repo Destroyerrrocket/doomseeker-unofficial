@@ -43,9 +43,9 @@ class SZByteStream
 	public:
 		// [BL] Ugh, I really don't see a way around copying this ZDoom hack.
 		//      This must be the first variable.
-		ISeekInStream	stream;
+		ISeekInStream stream;
 
-		QIODevice		*buffer;
+		QIODevice *buffer;
 
 		SZByteStream(QIODevice *buffer);
 		~SZByteStream();
@@ -62,26 +62,26 @@ class Un7Zip : public UnArchive
 		Un7Zip(QIODevice *device);
 		~Un7Zip();
 
-		bool	extract(int file, const QString &where);
-		QString	fileNameFromIndex(int file);
-		int		findFileEntry(const QString &entryName);
-		bool	isValid() { return valid; }
+		bool extract(int file, const QString &where);
+		QString fileNameFromIndex(int file);
+		int findFileEntry(const QString &entryName);
+		bool isValid() { return valid; }
 
 	protected:
-		static void	*SzAlloc(void *p, size_t size);
-		static void	SzFree(void *p, void *address);
+		static void *SzAlloc(void *p, size_t size);
+		static void SzFree(void *p, void *address);
 
-		void	Init();
+		void Init();
 
-		SZByteStream	*byteStream;
-		CLookToRead		lookStream;
+		SZByteStream *byteStream;
+		CLookToRead lookStream;
 
-		CSzArEx			db;
-		static ISzAlloc	alloc;
-		Byte*			out;
-		size_t			outSize;
+		CSzArEx db;
+		static ISzAlloc alloc;
+		Byte* out;
+		size_t outSize;
 
-		bool			valid;
+		bool valid;
 };
 
 #endif

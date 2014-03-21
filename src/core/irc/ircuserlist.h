@@ -53,40 +53,40 @@ class IRCUserList
 		 *	@return True if name was actually added to the list. False
 		 *	if duplicate names were detected.
 		 */
-		bool					appendNameToCachedList(const IRCUserInfo& userInfo);
+		bool appendNameToCachedList(const IRCUserInfo& userInfo);
 
 		/**
 		 *	@brief Changes a nickname while preserving user flags.
 		 *
 		 *	@return True if oldNickname was found on this list.
 		 */
-		bool					changeNick(const QString& oldNickname, const QString& newNickname);
+		bool changeNick(const QString& oldNickname, const QString& newNickname);
 
-		void					clear();
+		void clear();
 
-		bool					hasUser(const QString& nickname) const;
+		bool hasUser(const QString& nickname) const;
 		
-		const IRCUserInfo*		operator[](int index) const { return usersArray[index]; }
+		const IRCUserInfo* operator[](int index) const { return usersArray[index]; }
 		
 		/**
 		 *	@brief Removes a name from the sortecd cachedNames list.
 		 *
 		 *	@return True if the name was actually removed, false otherwise.
 		 */
-		bool					removeNameFromCachedList(const QString& nickname);
+		bool removeNameFromCachedList(const QString& nickname);
 
 		void setUserModes(const QString& nickname, const QList<char> &modes);
 
-		unsigned				size() const { return this->usersArray.size(); }
+		unsigned size() const { return this->usersArray.size(); }
 
 		/**
 		 *	@brief Returns all prefixed nicknames in a string list.
 		 *
 		 *	Please note that this list is not ordered in any way.
 		 */
-		QStringList				toStringList() const;
+		QStringList toStringList() const;
 		
-		const IRCUserInfo*		user(const QString& nickname) const;
+		const IRCUserInfo* user(const QString& nickname) const;
 		
 		/**
 		 *	@brief Gets a copy of the IRCUserInfo for user with given
@@ -95,12 +95,12 @@ class IRCUserList
 		 *	If user cannot be found it will return IRCUserInfo with
 		 *	no nickname.
 		 */
-		IRCUserInfo				userCopy(const QString& nickname) const;
+		IRCUserInfo userCopy(const QString& nickname) const;
 	
 	private:
-		QVector<IRCUserInfo*>	usersArray;
+		QVector<IRCUserInfo*> usersArray;
 
-		int						indexOfName(const QString& nickname) const;
+		int indexOfName(const QString& nickname) const;
 };
 
 #endif

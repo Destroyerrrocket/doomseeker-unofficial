@@ -45,55 +45,55 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		CreateServerDialog(QWidget* parent = NULL);
 		virtual ~CreateServerDialog();
 
-		bool	commandLineArguments(QString &executable, QStringList &args);
-		void	makeSetupServerDialog(const EnginePlugin *plugin);
+		bool commandLineArguments(QString &executable, QStringList &args);
+		void makeSetupServerDialog(const EnginePlugin *plugin);
 
 	private slots:
-		void	btnAddMapToMaplistClicked();
-		void	btnAddPwadClicked();
-		void	btnBrowseExecutableClicked();
-		void	btnCommandLineClicked();
-		void	btnClearPwadListClicked();
-		void	btnDefaultExecutableClicked();
-		void	btnIwadBrowseClicked();
-		void	btnLoadClicked();
-		void	btnPlayOfflineClicked();
-		void	btnRemoveMapFromMaplistClicked();
-		void	btnRemovePwadClicked();
-		void	btnSaveClicked();
-		void	btnStartServerClicked();
-		void	cboEngineSelected(int index);
-		void	cboGamemodeSelected(int index);
-		void	firstLoadConfigTimer();
-		void	focusChanged(QWidget* oldW, QWidget* newW);
+		void btnAddMapToMaplistClicked();
+		void btnAddPwadClicked();
+		void btnBrowseExecutableClicked();
+		void btnCommandLineClicked();
+		void btnClearPwadListClicked();
+		void btnDefaultExecutableClicked();
+		void btnIwadBrowseClicked();
+		void btnLoadClicked();
+		void btnPlayOfflineClicked();
+		void btnRemoveMapFromMaplistClicked();
+		void btnRemovePwadClicked();
+		void btnSaveClicked();
+		void btnStartServerClicked();
+		void cboEngineSelected(int index);
+		void cboGamemodeSelected(int index);
+		void firstLoadConfigTimer();
+		void focusChanged(QWidget* oldW, QWidget* newW);
 
 		/**
 		 * @brief Files drag'n'drop on WADs list view.
 		 */
-		void	lstAdditionalFilesPathDnd(const QString& path);
+		void lstAdditionalFilesPathDnd(const QString& path);
 
 	private:
 		class DMFlagsTabWidget
 		{
 			public:
-				QWidget*				widget;
-				DMFlagsSection			section;
+				QWidget* widget;
+				DMFlagsSection section;
 
 				/**
  				 * Check boxes in the same order the flags are stored in the plugin.
  				 */
-				QList<QCheckBox*>		checkBoxes;
+				QList<QCheckBox*> checkBoxes;
 		};
 
 		class GameLimitWidget
 		{
 			public:
-				QWidget*	label;
-				QSpinBox*	spinBox;
-				GameCVar	limit;
+				QWidget* label;
+				QSpinBox* spinBox;
+				GameCVar limit;
 		};
 
-		static const QString			TEMP_SERVER_CONFIG_FILENAME;
+		static const QString TEMP_SERVER_CONFIG_FILENAME;
 
 		class PrivData;
 		PrivData *d;
@@ -103,54 +103,54 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		 * If the path already exists no new items will be added but this path
 		 * will be selected.
 		 */
-		void	addIwad(const QString& path);
-		void	addMapToMaplist(const QString& map);
-		void	addWadPath(const QString& path);
+		void addIwad(const QString& path);
+		void addMapToMaplist(const QString& map);
+		void addWadPath(const QString& path);
 
 		/**
 		 * Sets host information for both server and hi objects. Both
 		 * parameters obtain new information after this method is called.
 		 * @return false if fail.
 		 */
-		bool	createHostInfo(GameCreateParams& params, bool offline);
+		bool createHostInfo(GameCreateParams& params, bool offline);
 
-		void	initDMFlagsTabs();
+		void initDMFlagsTabs();
 
 		/**
 		 *	Called each time when a new engine in engine combo box is selected.
 		 *	Resets most of the controls and puts engine specific information
 		 *	and controls where applicable.
 		 */
-		void	initEngineSpecific(EnginePlugin* engineInfo);
+		void initEngineSpecific(EnginePlugin* engineInfo);
 
 		/**
 		 * @brief Loads pages specific for the given engine.
 		 *
 		 * @see CreateServerDialogPage
 		 */
-		void	initEngineSpecificPages(EnginePlugin* engineInfo);
+		void initEngineSpecificPages(EnginePlugin* engineInfo);
 
-		void	initGamemodeSpecific(const GameMode& gameMode);
+		void initGamemodeSpecific(const GameMode& gameMode);
 
-		void	initInfoAndPassword();
+		void initInfoAndPassword();
 
 		/**
 		 * Called once, when the dialog is opened. Handles initialization
 		 * of very basic stuff that's common no matter what the selected
 		 * engine is.
 		 */
-		void	initPrimary();
-		void	initRules();
+		void initPrimary();
+		void initRules();
 
-		bool	loadConfig(const QString& filename);
+		bool loadConfig(const QString& filename);
 		QString pathToClientExe(Server* server, Message& message);
 		QString pathToOfflineExe(Message& message);
 		QString pathToServerExe(Message& message);
-		void	removeDMFlagsTabs();
-		void	removeLimitWidgets();
-		void	runGame(bool offline);
-		bool	saveConfig(const QString& filename);
-		bool	setEngine(const QString &engineName);
+		void removeDMFlagsTabs();
+		void removeLimitWidgets();
+		void runGame(bool offline);
+		bool saveConfig(const QString& filename);
+		bool setEngine(const QString &engineName);
 };
 
 #endif

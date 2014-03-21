@@ -36,7 +36,7 @@ class IRCDelayedOperation
 		
 		IRCDelayedOperation(OperationType operationType, const QString& nickname = "", const QString& channel = "");
 		
-		QString					attribute(const QString& name) const
+		QString attribute(const QString& name) const
 		{
 			if (attributes.contains(name))
 			{
@@ -46,12 +46,12 @@ class IRCDelayedOperation
 			return QString();
 		}
 		
-		const QString&			channel() const { return channelName; }
-		const QString&			nickname() const { return nick; }
-		OperationType			operationType() const { return operType; }
+		const QString& channel() const { return channelName; }
+		const QString& nickname() const { return nick; }
+		OperationType operationType() const { return operType; }
 		
-		bool					operator==(const IRCDelayedOperation& other) const;
-		void					setAttribute(const QString& name, const QString& value)
+		bool operator==(const IRCDelayedOperation& other) const;
+		void setAttribute(const QString& name, const QString& value)
 		{
 			if (attributes.contains(name))
 			{
@@ -65,10 +65,10 @@ class IRCDelayedOperation
 		
 	
 	private:
-		QHash<QString, QString>	attributes;
-		QString					channelName;
-		QString					nick;
-		OperationType 			operType;
+		QHash<QString, QString> attributes;
+		QString channelName;
+		QString nick;
+		OperationType operType;
 };
 
 #endif

@@ -50,8 +50,8 @@ class WADSEEKER_API UnArchive : public QObject
 		 *
 		 * @return true if extract was successful.
 		 */
-		virtual bool	extract(int file, const QString &where)=0;
-		virtual QString	fileNameFromIndex(int file)=0;
+		virtual bool extract(int file, const QString &where)=0;
+		virtual QString fileNameFromIndex(int file)=0;
 
 		/**
 		 * @brief Finds index of file entry basing on specified entry name.
@@ -61,8 +61,8 @@ class WADSEEKER_API UnArchive : public QObject
 		 *
 		 * @return The index is negative if entry was not found.
 		 */
-		virtual int		findFileEntry(const QString &entryName)=0;
-		virtual bool	isValid()=0;
+		virtual int findFileEntry(const QString &entryName)=0;
+		virtual bool isValid()=0;
 
 		/**
 		 * @brief Opens an archive stored in undefined QIODevice.
@@ -80,7 +80,7 @@ class WADSEEKER_API UnArchive : public QObject
 		static UnArchive *openArchive(const QString &filename);
 
 	signals:
-		void			message(const QString&, int type);
+		void message(const QString&, int type);
 
 	protected:
 		QIODevice* stream;

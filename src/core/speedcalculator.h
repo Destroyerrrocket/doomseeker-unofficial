@@ -37,9 +37,9 @@ class SpeedCalculator
 		 * @return A negative value is returned if time cannot be calculated
 		 * properly.
 		 */
-		long double					estimatedTimeUntilArrival() const;
+		long double estimatedTimeUntilArrival() const;
 
-		qint64  					expectedDataSize() const { return dataSizeExpected; }
+		qint64 expectedDataSize() const { return dataSizeExpected; }
 
 		/**
 		 * @brief In bytes per second.
@@ -47,7 +47,7 @@ class SpeedCalculator
 		 * @return Non-negative value if speed was calculated properly.
 		 *         A negative value if it was impossible to calculate speed.
 		 */
-		long double					getSpeed() const;
+		long double getSpeed() const;
 
 		/**
 		 * @brief Last amount of data registered through registerDataAmount()
@@ -56,7 +56,7 @@ class SpeedCalculator
 		 * If SpeedCalculator is used properly this will equal to
 		 * total amount of downloaded data.
 		 */
-		qint64                      lastRegisteredDataAmount() const;
+		qint64 lastRegisteredDataAmount() const;
 
 		/**
 		 * @brief Last amount of data that was passed to registerDataAmount()
@@ -64,7 +64,7 @@ class SpeedCalculator
 		 * It doesn't matter whether the data was actually registered for the
 		 * speed calculation or not.
 		 */
-		qint64                      lastRegisterAttemptedDataAmount() const
+		qint64 lastRegisterAttemptedDataAmount() const
 		{
 			return lastRegisterAttemptDataSize;
 		}
@@ -77,14 +77,14 @@ class SpeedCalculator
 		 * this method more often as in such case it will change no data
 		 * inside the object of this class.
 		 */
-		void						registerDataAmount(qint64 totalAmountOfArrivedData);
+		void registerDataAmount(qint64 totalAmountOfArrivedData);
 
 		/**
 		 * @brief Maximum expected size of the data.
 		 *
 		 * This value is used to calculate ETA.
 		 */
-		void						setExpectedDataSize(qint64 size);
+		void setExpectedDataSize(qint64 size);
 
 		/**
 		 * @brief Clears all values. Prepares SpeedCalculator for new speed
@@ -93,7 +93,7 @@ class SpeedCalculator
 		 * This will clear arrivalData and dataSizeExpected variables and
 		 * restart the clock.
 		 */
-		void						start();
+		void start();
 
 	private:
 		class DataArrivalInfo
@@ -102,12 +102,12 @@ class SpeedCalculator
 				/**
  				* @brief In bytes.
  				*/
-				qint64				totalAmountOfArrivedData;
+				qint64 totalAmountOfArrivedData;
 
 				/**
  				* @brief In miliseconds.
  				*/
-				qint64				timeOfArrival;
+				qint64 timeOfArrival;
 
 				DataArrivalInfo()
 				{
@@ -122,20 +122,20 @@ class SpeedCalculator
 				}
 		};
 
-		static const int 			NUM_ARRIVAL_DATA = 2;
+		static const int NUM_ARRIVAL_DATA = 2;
 
-		QVector<DataArrivalInfo>	arrivalData;
+		QVector<DataArrivalInfo> arrivalData;
 
 //		QVector<long double>		averageSpeeds;
 
-		QTime						clock;
-		qint64  					dataSizeExpected;
+		QTime clock;
+		qint64 dataSizeExpected;
 
 		/**
 		 * @brief Holds last amount of data that was passed to
 		 *        registerDataAmount() method.
 		 */
-		qint64						lastRegisterAttemptDataSize;
+		qint64 lastRegisterAttemptDataSize;
 };
 
 #endif

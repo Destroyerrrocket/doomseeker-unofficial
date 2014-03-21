@@ -35,16 +35,16 @@ class ChocolateDoomServer : public Server
 	public:
 		ChocolateDoomServer(const QHostAddress &address, unsigned short port);
 
-		GameClientRunner*		gameRunner();
+		GameClientRunner* gameRunner();
 
-		EnginePlugin*		plugin() const;
+		EnginePlugin* plugin() const;
 
 	protected:
-		QString			version;
-		unsigned int	serverState;
-		unsigned int	game;
-		unsigned int	gameMission;
-		QString			description;
+		QString version;
+		unsigned int serverState;
+		unsigned int game;
+		unsigned int gameMission;
+		QString description;
 
 		QByteArray createSendRequest();
 		Response readRequest(const QByteArray &data);

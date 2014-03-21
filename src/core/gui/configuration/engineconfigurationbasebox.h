@@ -37,21 +37,21 @@ class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox, priv
 		EngineConfigurationBaseBox(const EnginePlugin *plugin, IniSection &cfg, QWidget *parent=NULL);
 		virtual ~EngineConfigurationBaseBox();
 
-		QIcon				icon() const;
-		QString				name() const;
-		void				readSettings();
-		const EnginePlugin	*plugin() const;
+		QIcon icon() const;
+		QString name() const;
+		void readSettings();
+		const EnginePlugin *plugin() const;
 		QString title() const;
 
 	protected:
-		void				addWidget(QWidget *widget);
-		void				browseForBinary(QLineEdit *input, const QString &type);
-		void				makeClientOnly();
-		void				saveSettings();
+		void addWidget(QWidget *widget);
+		void browseForBinary(QLineEdit *input, const QString &type);
+		void makeClientOnly();
+		void saveSettings();
 
 	protected slots:
-		void				btnBrowseClientBinaryClicked();
-		void				btnBrowseServerBinaryClicked();
+		void btnBrowseClientBinaryClicked();
+		void btnBrowseServerBinaryClicked();
 
 	private:
 		class PrivData;

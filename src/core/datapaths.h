@@ -48,10 +48,10 @@ class MAIN_EXPORT DataPaths
 			Preferred
 		};
 
-		static const QString	PROGRAMS_APPDATA_DIR_NAME;
-		static const QString    PROGRAMS_APPDATASUPPORT_DIR_NAME;
-		static const QString	DEMOS_DIR_NAME;
-		static const QString	TRANSLATIONS_DIR_NAME;
+		static const QString PROGRAMS_APPDATA_DIR_NAME;
+		static const QString PROGRAMS_APPDATASUPPORT_DIR_NAME;
+		static const QString DEMOS_DIR_NAME;
+		static const QString TRANSLATIONS_DIR_NAME;
 		static const QString UPDATE_PACKAGES_DIR_NAME;
 		static const QString UPDATE_PACKAGE_FILENAME_PREFIX;
 
@@ -65,7 +65,7 @@ class MAIN_EXPORT DataPaths
 		 *	Windows (XP and above). Since on *nix systems there is no equivalent
 		 *	it will return an empty string.
 		 */
-		static QString			programFilesDirectory(MachineType machineType);
+		static QString programFilesDirectory(MachineType machineType);
 
 		/**
 		 * @brief Paths to directories where program should search for its
@@ -97,7 +97,7 @@ class MAIN_EXPORT DataPaths
 		 *
 		 *	@return List of directories for which the test FAILED.
 		 */
-		QStringList				canWrite() const;
+		QStringList canWrite() const;
 
 		/**
 		 *	@brief Creates necessary directories for application run.
@@ -110,16 +110,16 @@ class MAIN_EXPORT DataPaths
 		 *
 		 *	@see directoriesExist()
 		 */
-		bool					createDirectories();
+		bool createDirectories();
 
-		QString					demosDirectoryPath() const;
+		QString demosDirectoryPath() const;
 
 		/**
 		 *	@brief Checks if all necessary directories exist.
 		 *
 		 *	@return List of directories that DO NOT exist.
 		 */
-		QStringList				directoriesExist() const;
+		QStringList directoriesExist() const;
 
 		/**
 		 * @brief Path to the directory where large data should be
@@ -145,7 +145,7 @@ class MAIN_EXPORT DataPaths
 		 *	is determined by calling the systemAppDataDirectory() method and
 		 *	appending string returned by programDirName() getter.
 		 */
-		QString					programsDataDirectoryPath() const;
+		QString programsDataDirectoryPath() const;
 
 		/**
 		 * @brief Defaults to PROGRAMS_APPDATA_DIR_NAME.
@@ -157,7 +157,7 @@ class MAIN_EXPORT DataPaths
 		 *
 		 *  Same as programsDataDirectoryPath() on other systems or in portable mode.
 		 */
-		QString					programsDataSupportDirectoryPath() const;
+		QString programsDataSupportDirectoryPath() const;
 
 		bool isPortableModeOn() const;
 
@@ -181,13 +181,13 @@ class MAIN_EXPORT DataPaths
 		 *	@return Empty string if directory doesn't pass validateDir() check.
 		 *	Otherwise the path returned is always absolute.
 		 */
-		QString					systemAppDataDirectory(QString append = QString()) const;
+		QString systemAppDataDirectory(QString append = QString()) const;
 
 		/**
 		 *	@brief Checks if the root directory for Doomseeker data storage
 		 *	is accessible.
 		 */
-		bool					validateAppDataDirectory();
+		bool validateAppDataDirectory();
 
 		/**
 		 * @brief Program working directory.
@@ -199,12 +199,12 @@ class MAIN_EXPORT DataPaths
 		 *	@return True if path is a directory that exists and can be written
 		 *	to.
 		 */
-		static bool				validateDir(const QString& path);
+		static bool validateDir(const QString& path);
 
 		/**
 		 *	@brief If directory already exists true is returned.
 		 */
-		bool					tryCreateDirectory(const QDir& rootDir, const QString& dirToCreate) const;
+		bool tryCreateDirectory(const QDir& rootDir, const QString& dirToCreate) const;
 
 	private:
 		class PrivData;

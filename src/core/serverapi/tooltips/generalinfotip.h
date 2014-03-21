@@ -36,7 +36,7 @@ class GeneralInfoTip : public QObject
 		GeneralInfoTip(const ServerCPtr &server);
 		~GeneralInfoTip();
 
-		QString				generateHTML();
+		QString generateHTML();
 
 	private:
 		class PrivData;
@@ -51,7 +51,7 @@ class GeneralInfoTip : public QObject
 		 *	@return Empty string if valueString is also empty. Otherwise
 		 *	output in format mentioned above is generated.
 		 */
-		QString				labelString(QString label, QString valueString);
+		QString labelString(QString label, QString valueString);
 };
 
 #endif

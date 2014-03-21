@@ -33,11 +33,11 @@ class ServerListFilterInfo
 {
 public:
 	bool bEnabled;
-	bool				bShowEmpty;
-	bool				bShowFull;
-	bool				bShowOnlyValid;
-	QStringList			gameModes;
-	QStringList			gameModesExcluded;
+	bool bShowEmpty;
+	bool bShowFull;
+	bool bShowOnlyValid;
+	QStringList gameModes;
+	QStringList gameModesExcluded;
 
 	/**
 	 *	@brief Maximum allowed ping.
@@ -45,10 +45,10 @@ public:
 	 *	The default value is 0 and it means that ping filter
 	 *	is disabled.
 	 */
-	unsigned			maxPing;
-	QString				serverName;
-	QStringList			wads;
-	QStringList			wadsExcluded;
+	unsigned maxPing;
+	QString serverName;
+	QStringList wads;
+	QStringList wadsExcluded;
 
 	ServerListFilterInfo();
 	ServerListFilterInfo(const ServerListFilterInfo& other)
@@ -56,7 +56,7 @@ public:
 		copy(other);
 	}
 
-	ServerListFilterInfo&	operator=(const ServerListFilterInfo& other)
+	ServerListFilterInfo& operator=(const ServerListFilterInfo& other)
 	{
 		if (this != &other)
 		{
@@ -73,13 +73,13 @@ public:
 	 * hidden from the server table, false if filter will never apply to any
 	 * server.
 	 */
-	bool                    isFilteringAnything() const;
+	bool isFilteringAnything() const;
 
-	QString					toString() const;
+	QString toString() const;
 
 private:
-	void					copy(const ServerListFilterInfo& other);
-	void					copyTrimmed(QStringList& target, const QStringList& source) const;
+	void copy(const ServerListFilterInfo& other);
+	void copyTrimmed(QStringList& target, const QStringList& source) const;
 };
 
 #endif

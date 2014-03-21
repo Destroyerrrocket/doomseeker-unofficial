@@ -52,18 +52,18 @@ class IRCSounds
 		 *
 		 *	All previously loaded sounds are unloaded.
 		 */
-		void						loadFromConfig();
+		void loadFromConfig();
 		
 		/**
 		 *	@brief Plays given sound.
 		 */
-		void						playIfAvailable(SoundType sound);
+		void playIfAvailable(SoundType sound);
 		
 	private:	
-		QMap<SoundType, QSound*>	sounds;
+		QMap<SoundType, QSound*> sounds;
 	
-		QSound*						loadIfExists(const QString& path);
-		void						unload();
+		QSound* loadIfExists(const QString& path);
+		void unload();
 		
 };
 

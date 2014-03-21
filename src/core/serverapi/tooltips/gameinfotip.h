@@ -35,13 +35,13 @@ class GameInfoTip : public QObject
 		GameInfoTip(const ServerCPtr &server);
 		~GameInfoTip();
 
-		QString					generateHTML();
+		QString generateHTML();
 
 	private:
 		class PrivData;
 		PrivData *d;
 
-		static const QString	UNLIMITED;
+		static const QString UNLIMITED;
 
 		/**
 		 *	@brief Generic method for spawning HTML row describing a game limit.
@@ -59,15 +59,15 @@ class GameInfoTip : public QObject
 		 *		to zero, UNLIMITED string will be replaced instead.
 		 *	@return HTML row ready to be put inside a table.
 		 */
-		QString					limitHTML(QString limitName, QString valueArgsTemplate, int value);
+		QString limitHTML(QString limitName, QString valueArgsTemplate, int value);
 
-		QString					playersHTML();
+		QString playersHTML();
 
-		QString					scorelimitHTML();
+		QString scorelimitHTML();
 
-		QString					teamScoresHTML();
+		QString teamScoresHTML();
 
-		QString					timelimitHTML();
+		QString timelimitHTML();
 };
 
 #endif

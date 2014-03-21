@@ -41,11 +41,11 @@ class LogDock : public QDockWidget, private Ui::LogDock
 		 *	New entry will be appended to the end of the current textedit
 		 *	content as it is, without any special formatting.
 		 */
-		void		appendLogEntry(const QString& entry);
-		void		clearContent();
+		void appendLogEntry(const QString& entry);
+		void clearContent();
 
 	protected slots:
-		void		btnCopyClicked();
+		void btnCopyClicked();
 
 
 };

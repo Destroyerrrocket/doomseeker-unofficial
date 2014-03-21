@@ -35,12 +35,12 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		IRCNetworkAdapter();
 		~IRCNetworkAdapter();
 
-		AdapterType							adapterType() const { return NetworkAdapter; }
+		AdapterType adapterType() const { return NetworkAdapter; }
 
 		/**
 		 *	@brief Checks if client is an operator on a specified channel.
 		 */
-		bool								amIOperator(const QString& channel) const
+		bool amIOperator(const QString& channel) const
 		{
 			return this->isOperator(this->myNickname(), channel);
 		}
@@ -65,17 +65,17 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 *	@param channel
 		 *		Channel from which the user will be banned.
 		 */
-		void								banUser(const QString& nickname, const QString& reason, const QString& channel);
+		void banUser(const QString& nickname, const QString& reason, const QString& channel);
 
-		void								connect(const IRCNetworkConnectionInfo& connectionInfo);
+		void connect(const IRCNetworkConnectionInfo& connectionInfo);
 
 		/**
 		 *	@brief Detaches the specified IRCChatAdapter instance from this
 		 *  network @b without deleting it.
 		 */
-		void								detachChatWindow(const IRCChatAdapter* pAdapter);
+		void detachChatWindow(const IRCChatAdapter* pAdapter);
 
-		void								disconnect(const QString& farewellMessage = tr("Doomseeker End Of Line"));
+		void disconnect(const QString& farewellMessage = tr("Doomseeker End Of Line"));
 
 		/**
 		 *	@brief Implemented to support direct communication between client
@@ -95,17 +95,17 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 *		some message and error signals through this pOrigin. Otherwise
 		 *		these signals will be sent directly.
 		 */
-		void								doSendMessage(const QString& message, IRCAdapterBase* pOrigin);
+		void doSendMessage(const QString& message, IRCAdapterBase* pOrigin);
 
-		bool								hasRecipient(const QString& recipient) const;
+		bool hasRecipient(const QString& recipient) const;
 
 		/**
 		 *	@brief Checks if pAdapter equals this or is one of
 		 *	chat windows of this network.
 		 */
-		bool								isAdapterRelated(const IRCAdapterBase* pAdapter) const;
-		bool								isConnected() const { return ircClient.isConnected(); }
-		bool								isMyNickname(const QString& nickname) const;
+		bool isAdapterRelated(const IRCAdapterBase* pAdapter) const;
+		bool isConnected() const { return ircClient.isConnected(); }
+		bool isMyNickname(const QString& nickname) const;
 
 		/**
 		 *	@brief Checks if user is an operator on a given channel.
@@ -115,13 +115,13 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 *
 		 *	@return True if given nickname has op privileges on given channel.
 		 */
-		bool								isOperator(const QString& nickname, const QString& channel) const;
+		bool isOperator(const QString& nickname, const QString& channel) const;
 
-		void								killAllChatWindows();
+		void killAllChatWindows();
 
-		const QString&						myNickname() const { return connectionInfo.nick; }
+		const QString& myNickname() const { return connectionInfo.nick; }
 
-		IRCNetworkAdapter*					network()
+		IRCNetworkAdapter* network()
 		{
 			return this;
 		}
@@ -134,17 +134,17 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 * /mode <channel> [-|+]<flag> <nickname> command
 		 *	@endcode
 		 */
-		void								setChannelMode(const QString& channel, const QString& nickname, const QString& flag, bool bSet);
+		void setChannelMode(const QString& channel, const QString& nickname, const QString& flag, bool bSet);
 
 		/**
  		* @see bEmitAllIRCMessages
  		*/
-		void                                setEmitAllIRCMessagesEnabled(bool b)
+		void setEmitAllIRCMessagesEnabled(bool b)
 		{
 			this->bEmitAllIRCMessages = b;
 		}
 
-		QString								title() const;
+		QString title() const;
 
 		/**
 		 * @brief All allowed modes with their nickname prefixes for this
@@ -164,14 +164,14 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 *	this becomes a no-op. Also if such recipient
 		 *	is already present the window will emit focus signal request.
 		 */
-		void								openNewAdapter(const QString& recipientName);
+		void openNewAdapter(const QString& recipientName);
 
 	signals:
 		/**
 		 *	@brief Signal emitted when a new chat (priv or channel) is opened
 		 *	from this network.
 		 */
-		void								newChatWindowIsOpened(IRCChatAdapter* pWindow);
+		void newChatWindowIsOpened(IRCChatAdapter* pWindow);
 
 	private:
 		/**
@@ -180,7 +180,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 *
 		 *  Default: false.
 		 */
-		bool								bIsJoining;
+		bool bIsJoining;
 
 		/**
 		 * @brief If true, will make the adapter emit message() signal for
@@ -191,7 +191,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 *
 		 * Default: false.
 		 */
-		bool                                bEmitAllIRCMessages;
+		bool bEmitAllIRCMessages;
 
 		/**
 		 *	@brief Stores all chat adapters associated with this network.
@@ -201,20 +201,20 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 *	Values stored here can be any form of IRCChatAdapter -  be it
 		 *	a private conversation or a channel.
 		 */
-		QHash<QString, IRCChatAdapter*>		chatWindows;
-		IRCNetworkConnectionInfo			connectionInfo;
-		IRCDelayedOperationList				delayedOperations;
-		IRCClient							ircClient;
-		IRCRequestParser					ircRequestParser;
-		IRCResponseParser					ircResponseParser;
+		QHash<QString, IRCChatAdapter*> chatWindows;
+		IRCNetworkConnectionInfo connectionInfo;
+		IRCDelayedOperationList delayedOperations;
+		IRCClient ircClient;
+		IRCRequestParser ircRequestParser;
+		IRCResponseParser ircResponseParser;
 		IRCISupportParser* ircISupportParser;
-		IRCSocketSignalsAdapter*			pIrcSocketSignalsAdapter;
+		IRCSocketSignalsAdapter* pIrcSocketSignalsAdapter;
 
 		/**
 		 *	@brief Retrieves IRCChatAdapter for specified recipient.
 		 */
-		IRCChatAdapter*						getChatAdapter(const QString& recipient);
-		const IRCChatAdapter*				getChatAdapter(const QString& recipient) const;
+		IRCChatAdapter* getChatAdapter(const QString& recipient);
+		const IRCChatAdapter* getChatAdapter(const QString& recipient) const;
 
 		/**
 		 *	@brief Creates the new IRCChatAdapter object and immedaitelly
@@ -225,41 +225,41 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 *
 		 *	@return Pointer to the adapter object.
 		 */
-		IRCChatAdapter*						getOrCreateNewChatAdapter(const QString& recipient);
+		IRCChatAdapter* getOrCreateNewChatAdapter(const QString& recipient);
 
-		void								killChatWindow(const QString& recipient);
+		void killChatWindow(const QString& recipient);
 
 	private slots:
 		void appendISupportLine(const QString &line);
-		void								echoPrivmsg(const QString& recipient, const QString& content);
-		void								helloClient(const QString& nickname);
-		void								kick(const QString& channel, const QString& byWhom, const QString& whoIsKicked, const QString& reason);
-		void								kill(const QString& victim, const QString& comment);
-		void								ircServerResponse(const QString& message);
-		void								modeInfo(const QString& channel, const QString& whoSetThis, const QString& modeParams);
-		void								namesListReceived(const QString& channel, const QStringList& names);
-		void								namesListEndReceived(const QString& channel);
-		void								nicknameInUse(const QString& nickname);
-		void								noSuchNickname(const QString& nickname);
-		void								parseError(const QString& error);
+		void echoPrivmsg(const QString& recipient, const QString& content);
+		void helloClient(const QString& nickname);
+		void kick(const QString& channel, const QString& byWhom, const QString& whoIsKicked, const QString& reason);
+		void kill(const QString& victim, const QString& comment);
+		void ircServerResponse(const QString& message);
+		void modeInfo(const QString& channel, const QString& whoSetThis, const QString& modeParams);
+		void namesListReceived(const QString& channel, const QStringList& names);
+		void namesListEndReceived(const QString& channel);
+		void nicknameInUse(const QString& nickname);
+		void noSuchNickname(const QString& nickname);
+		void parseError(const QString& error);
 
 		/**
 		 * @see IRCResponseParser::print()
 		 */
-		void								printResponse(const QString& printWhat, const QString& printWhere);
-		void								printResponseWithClass(const QString& printWhat, const QString& printWhere, const IRCMessageClass& msgClass);
+		void printResponse(const QString& printWhat, const QString& printWhere);
+		void printResponseWithClass(const QString& printWhat, const QString& printWhere, const IRCMessageClass& msgClass);
 
-		void								privMsgReceived(const QString& recipient, const QString& sender, const QString& content);
+		void privMsgReceived(const QString& recipient, const QString& sender, const QString& content);
 		void privMsgLiteralReceived(const QString& recipient, const QString& content,
 			const IRCMessageClass& msgClass);
-		void								sendPong(const QString& toWhom);
-		void								userChangesNickname(const QString& oldNickname, const QString& newNickname);
-		void								userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature);
+		void sendPong(const QString& toWhom);
+		void userChangesNickname(const QString& oldNickname, const QString& newNickname);
+		void userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature);
 		void userModeChanged(const QString& channel, const QString& nickname,
 			const QList<char> &addedFlags, const QList<char> &removedFlags);
-		void								userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage);
-		void								userQuitsNetwork(const QString& nickname, const QString& farewellMessage);
-		void								whoIsUser(const QString& nickname, const QString& user, const QString& hostName, const QString& realName);
+		void userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage);
+		void userQuitsNetwork(const QString& nickname, const QString& farewellMessage);
+		void whoIsUser(const QString& nickname, const QString& user, const QString& hostName, const QString& realName);
 
 };
 
@@ -268,7 +268,7 @@ class IRCSocketSignalsAdapter : public SocketSignalsAdapter
 	Q_OBJECT
 
 	public:
-		IRCNetworkAdapter*		pParent;
+		IRCNetworkAdapter* pParent;
 
 		IRCSocketSignalsAdapter(IRCNetworkAdapter* pParent)
 		{
@@ -276,11 +276,11 @@ class IRCSocketSignalsAdapter : public SocketSignalsAdapter
 		}
 
 	public slots:
-		void					connected();
-		void					disconnected();
-		void					errorReceived(QAbstractSocket::SocketError error);
-		void					infoMessage(const QString& message);
-		void					hostLookupError(QHostInfo::HostInfoError errorValue);
+		void connected();
+		void disconnected();
+		void errorReceived(QAbstractSocket::SocketError error);
+		void infoMessage(const QString& message);
+		void hostLookupError(QHostInfo::HostInfoError errorValue);
 };
 
 #endif

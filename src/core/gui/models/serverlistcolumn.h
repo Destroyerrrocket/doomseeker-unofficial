@@ -31,11 +31,11 @@
 class ServerListColumn
 {
 	public:
-		int				columnId;
-		int				width;
-		bool			bHidden;
-		bool			bResizable;
-		Qt::SortOrder	defaultSortOrder;
+		int columnId;
+		int width;
+		bool bHidden;
+		bool bResizable;
+		Qt::SortOrder defaultSortOrder;
 };
 
 namespace ServerListColumnId
@@ -63,13 +63,13 @@ class ServerListColumns : public QObject
 	Q_OBJECT
 
 	public:
-		static ServerListColumn 		columns[];
+		static ServerListColumn columns[];
 
 		static QString columnLabel(int columnId);
-		static void						generateColumnHeaderLabels(QStringList& outputLabels);
-		static void						generateListOfCells(QList<QStandardItem*>& outputList);
+		static void generateColumnHeaderLabels(QStringList& outputLabels);
+		static void generateListOfCells(QList<QStandardItem*>& outputList);
 
-		static bool						isColumnVital(int columnId);
+		static bool isColumnVital(int columnId);
 
 		ServerListColumns() {}
 };

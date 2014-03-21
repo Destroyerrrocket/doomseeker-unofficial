@@ -50,19 +50,19 @@ class ServerListRowHandler : public QObject
 		 */
 		enum ServerGroup
 		{
-			SGNormal 		= 200,
-			SGWait 			= 175,
-			SGBanned		= 150,
-			SGTimeout		= 125,
-			SGBad			= 100,
-			SGFirstQuery	= 50,
+			SGNormal = 200,
+			SGWait = 175,
+			SGBanned = 150,
+			SGTimeout = 125,
+			SGBad = 100,
+			SGFirstQuery = 50,
 		};
 
 		enum ServerListDataTypes
 		{
 			// Pointer to the server structure is always stored in the first column
-			DTPointerToServerStructure		= Qt::UserRole+1,
-			DTSort							= Qt::UserRole+2
+			DTPointerToServerStructure = Qt::UserRole+1,
+			DTSort = Qt::UserRole+2
 		};
 
 		ServerListRowHandler(ServerListModel* parentModel, int rowIndex, const ServerPtr &server);
@@ -77,53 +77,53 @@ class ServerListRowHandler : public QObject
 		/**
 		 *	Removes content from fields for which isColumnVital() returns false.
 		 */
-		void 					clearNonVitalFields();
+		void clearNonVitalFields();
 
-		QStandardItem*			item(int columnIndex);
+		QStandardItem* item(int columnIndex);
 
-		void					redraw();
+		void redraw();
 
 		ServerPtr server();
-		void                    setCountryFlag();
-		void 					setRefreshing();
+		void setCountryFlag();
+		void setRefreshing();
 
-		int 					updateServer(int response);
+		int updateServer(int response);
 
 		static ServerPtr serverFromList(ServerListModel* parentModel, int rowIndex);
 	private:
 		class PrivData;
 		PrivData *d;
 
-		void 					emptyItem(QStandardItem*);
+		void emptyItem(QStandardItem*);
 
-		void					fillAddressColumn();
+		void fillAddressColumn();
 
-		void 					fillItem(QStandardItem*, const QString&);
-		void 					fillItem(QStandardItem*, int, const QString&);
-		void 					fillItem(QStandardItem*, int);
-		void 					fillItem(QStandardItem*, const QHostAddress&, const QString& actualDisplay = QString());
-		void 					fillItem(QStandardItem*, const QString&, const QPixmap&);
-		void 					fillItem(QStandardItem*, int, const QPixmap&);
+		void fillItem(QStandardItem*, const QString&);
+		void fillItem(QStandardItem*, int, const QString&);
+		void fillItem(QStandardItem*, int);
+		void fillItem(QStandardItem*, const QHostAddress&, const QString& actualDisplay = QString());
+		void fillItem(QStandardItem*, const QString&, const QPixmap&);
+		void fillItem(QStandardItem*, int, const QPixmap&);
 
-		void					fillPlayerColumn();
-		void					fillPortIconColumn();
-		void					fillServerPointerColumn();
+		void fillPlayerColumn();
+		void fillPortIconColumn();
+		void fillServerPointerColumn();
 
-		void 					prepareHeaders();
+		void prepareHeaders();
 		//ServerGroup 			serverGroup(int row);
 
 
-		void					setBackgroundColor();
+		void setBackgroundColor();
 
-		void 					setBad();
-		void 					setBanned();
-		void					setFirstQuery();
-		void 					setGood();
-		void					setTimeout();
-		void 					setWait();
+		void setBad();
+		void setBanned();
+		void setFirstQuery();
+		void setGood();
+		void setTimeout();
+		void setWait();
 
-		ServerListModel*		model;
-		int						row;
+		ServerListModel* model;
+		int row;
 
 		QStringList extractValidGameCVarNames(const QList<GameCVar> &cvars);
 };

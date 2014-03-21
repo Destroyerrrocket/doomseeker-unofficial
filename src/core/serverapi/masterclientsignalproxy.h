@@ -22,27 +22,27 @@ class MasterClientSignalProxy : public QObject
 	Q_OBJECT
 
 	public:
-		MasterClient*	pMaster;
+		MasterClient* pMaster;
 
 		MasterClientSignalProxy(MasterClient* pMaster);
 
 	signals:
-		void			listUpdated(MasterClient* pSender);
-		void			message(MasterClient* pSender, const QString& title, const QString& content, bool isError);
-		void			messageImportant(MasterClient* pSender, const Message& objMessage);
+		void listUpdated(MasterClient* pSender);
+		void message(MasterClient* pSender, const QString& title, const QString& content, bool isError);
+		void messageImportant(MasterClient* pSender, const Message& objMessage);
 
 	protected slots:
-		void			listUpdatedSlot()
+		void listUpdatedSlot()
 		{
 			emit listUpdated(pMaster);
 		}
 
-		void			readMasterMessage(const QString& title, const QString& content, bool isError)
+		void readMasterMessage(const QString& title, const QString& content, bool isError)
 		{
 			emit message(pMaster, title, content, isError);
 		}
 
-		void			readMasterMessageImportant(const Message& objMessage)
+		void readMasterMessageImportant(const Message& objMessage)
 		{
 			emit messageImportant(pMaster, objMessage);
 		}

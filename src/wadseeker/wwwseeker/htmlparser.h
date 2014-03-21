@@ -56,7 +56,7 @@ class HtmlParser
 		 * @return
 		 *      Begin index of the found tag
 		 */
-		int			findTag(int beginAt, int* end);
+		int findTag(int beginAt, int* end);
 
 		/**
 		 * You put something like HREF="http://127.0.0.1" and
@@ -69,7 +69,7 @@ class HtmlParser
 		 * @return
 		 *      Trimmed value, without white-spaces and quotes.
 		 */
-		QString		htmlValue(int beginIndex, int endIndex);
+		QString htmlValue(int beginIndex, int endIndex);
 
 		/**
 		 * You put a string of values, for example
@@ -79,7 +79,7 @@ class HtmlParser
 		 * @param key
 		 *      Key that will be searched for (for example: HREF)
 		 */
-		QString		htmlValue(const QString& key);
+		QString htmlValue(const QString& key);
 
 		/**
 		 * @brief Extracts links from HTML file.
@@ -87,7 +87,7 @@ class HtmlParser
 		QList<Link> linksFromHtml();
 
 	private:
-		QByteArray	data;
+		QByteArray data;
 
 		/**
 		 * @brief Captializes HTML tags in HTML data array.

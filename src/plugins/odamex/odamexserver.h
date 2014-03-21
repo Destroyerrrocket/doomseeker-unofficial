@@ -39,17 +39,17 @@ class OdamexServer : public Server
 	public:
 		OdamexServer(const QHostAddress &address, unsigned short port);
 
-		const QStringList&		dehs() const { return dehPatches; }
-		GameClientRunner*				gameRunner();
+		const QStringList& dehs() const { return dehPatches; }
+		GameClientRunner* gameRunner();
 
-		EnginePlugin*		plugin() const;
+		EnginePlugin* plugin() const;
 
 	protected:
 		Response readRequest(const QByteArray &data);
 		QByteArray createSendRequest();
 
-		short			protocol;
-		QStringList		dehPatches;
+		short protocol;
+		QStringList dehPatches;
 };
 
 #endif /* __ODAMEXSERVER_H__ */

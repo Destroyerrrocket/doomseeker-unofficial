@@ -103,7 +103,7 @@ class IRCRequestParser : public QObject
 		 *	@param messageContent
 		 *		Content of the message.
 		 */
-		void						echoPrivmsg(const QString& recipient, const QString& content);
+		void echoPrivmsg(const QString& recipient, const QString& content);
 		
 		/**
 		 *	@brief Emitted when "/query" alias is used.
@@ -114,7 +114,7 @@ class IRCRequestParser : public QObject
 		 *	@param who
 		 *		A clean nickname.
 		 */
-		void						query(const QString& who);
+		void query(const QString& who);
 
 	private:
 		class PrivData;

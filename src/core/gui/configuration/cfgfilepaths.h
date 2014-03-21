@@ -36,28 +36,28 @@ class CFGFilePaths : public ConfigurationBaseBox, private Ui::CFGFilePaths
 	public:
 		CFGFilePaths(QWidget* parent = 0);
 
-		void 							readSettings();
+		void readSettings();
 
 	protected:
-		void 							addPath(const FileSearchPath& fileSearchPath);
+		void addPath(const FileSearchPath& fileSearchPath);
 
-		QIcon							icon() const
+		QIcon icon() const
 		{
 			return QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon);
 		}
 
-		bool							isPathAlreadyDefined(const QString& path);
+		bool isPathAlreadyDefined(const QString& path);
 
-		QString							name() const
+		QString name() const
 		{
 			return tr("File Paths");
 		}
 
-		void 							saveSettings();
+		void saveSettings();
 
 	protected slots:
-		void 							btnAddWadPath_Click();
-		void 							btnRemoveWadPath_Click();
+		void btnAddWadPath_Click();
+		void btnRemoveWadPath_Click();
 
 };
 

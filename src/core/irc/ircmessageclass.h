@@ -42,7 +42,7 @@ class IRCMessageClass
 		NetworkAction
 	};
 	
-	static QString			toStyleSheetClassName(ClassName className);
+	static QString toStyleSheetClassName(ClassName className);
 	
 	IRCMessageClass()
 	{
@@ -59,27 +59,27 @@ class IRCMessageClass
 		this->className = className;
 	}
 	
-	bool			operator==(const IRCMessageClass& other) const
+	bool operator==(const IRCMessageClass& other) const
 	{
 		return this->className == other.className;
 	}
 	
-	bool			operator==(const ClassName& className) const
+	bool operator==(const ClassName& className) const
 	{
 		return this->className == className;
 	}
 	
-	bool			operator!=(const IRCMessageClass& other) const
+	bool operator!=(const IRCMessageClass& other) const
 	{
 		return this->className != other.className;
 	}
 	
-	bool			operator!=(const ClassName& className) const
+	bool operator!=(const ClassName& className) const
 	{
 		return this->className != className;
 	}
 	
-	operator		ClassName() const
+	operator ClassName() const
 	{
 		return this->className;
 	}
@@ -88,9 +88,9 @@ class IRCMessageClass
 	 *	@brief Obtains HTML color from config for this message
 	 *	class.	
 	 */
-	QString			colorFromConfig() const;
+	QString colorFromConfig() const;
 	
-	QString			toStyleSheetClassName() const
+	QString toStyleSheetClassName() const
 	{
 		return toStyleSheetClassName(this->className);
 	}

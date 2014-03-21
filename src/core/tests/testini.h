@@ -36,12 +36,12 @@ class ExampleINIs
 		 *	In other words: attempt to read this INI file should end with no
 		 *	errors.
 		 */
-		static QByteArray	getExampleINI();
+		static QByteArray getExampleINI();
 		
 		/**
 		 *	@brief Ini class should detect errors in this example.
 		 */
-		static QByteArray	getExampleError1();
+		static QByteArray getExampleError1();
 };
 
 class TestReadINI : public TestUnitBase
@@ -49,7 +49,7 @@ class TestReadINI : public TestUnitBase
 	public:
 		TestReadINI();
 	
-		bool				executeTest();
+		bool executeTest();
 };
 
 class TestReadINIVariable : public TestUnitBase
@@ -60,7 +60,7 @@ class TestReadINIVariable : public TestUnitBase
 		{
 		}
 		
-		bool				executeTest();
+		bool executeTest();
 };
 
 class TestReadINIList : public TestUnitBase
@@ -71,10 +71,10 @@ class TestReadINIList : public TestUnitBase
 		{
 		}
 		
-		bool				executeTest();
+		bool executeTest();
 		
 	protected:
-		bool				compareEntry(const QString& actual, const QString& expected);
+		bool compareEntry(const QString& actual, const QString& expected);
 };
 
 class TestDeleteINIVariable : public TestUnitBase
@@ -85,7 +85,7 @@ class TestDeleteINIVariable : public TestUnitBase
 		{
 		}
 		
-		bool				executeTest();
+		bool executeTest();
 };
 
 class TestDeleteINISection : public TestUnitBase
@@ -96,7 +96,7 @@ class TestDeleteINISection : public TestUnitBase
 		{
 		}
 		
-		bool				executeTest();
+		bool executeTest();
 };
 
 class TestReadINIWithErrors : public TestUnitBase
@@ -107,7 +107,7 @@ class TestReadINIWithErrors : public TestUnitBase
 		{
 		}
 		
-		bool				executeTest();
+		bool executeTest();
 };
 
 #endif

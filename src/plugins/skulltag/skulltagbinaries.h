@@ -37,22 +37,22 @@ class SkulltagBinaries : public Binaries
 	public:
 		SkulltagBinaries(const SkulltagServer* server);
 
-		QString					configKeyServerBinary() const;
+		QString configKeyServerBinary() const;
 
 		/**
 		 *	If the parent Server is a normal server simple path to executable
 		 *	file is returned. If this is a testing server, a shell script is
 		 *	created	if necessary and a path to this shell script s returned.
 		 */
-		QString					clientBinary(Message& message) const;
-		QString					clientWorkingDirectory(Message& message) const;
+		QString clientBinary(Message& message) const;
+		QString clientWorkingDirectory(Message& message) const;
 
-		const EnginePlugin*		plugin() const;
+		const EnginePlugin* plugin() const;
 
 	protected:
-		const SkulltagServer*	server;
+		const SkulltagServer* server;
 
-		bool					downloadTestingBinaries(const QDir &destination) const;
+		bool downloadTestingBinaries(const QDir &destination) const;
 		/**
 		 *	Creates Unix .sh file or Windows .bat file to
 		 *	launch client for parent server. Returns true if the file
@@ -64,7 +64,7 @@ class SkulltagBinaries : public Binaries
 		 *	@param [out] error - error if return == false
 		 *	@return false if fail
 		 */
-		bool					spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, Message& message) const;
+		bool spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, Message& message) const;
 };
 
 class TestingProgressDialog : public QProgressDialog
@@ -74,18 +74,18 @@ class TestingProgressDialog : public QProgressDialog
 	public:
 		TestingProgressDialog(const QUrl& url);
 
-		const QByteArray	&data() const { return downloadedFileData; }
-		const QString		&filename() const { return downloadedFilename; }
+		const QByteArray &data() const { return downloadedFileData; }
+		const QString &filename() const { return downloadedFilename; }
 
 	private slots:
-		void	abort();
-		void	downloadFinished();
-		void	downloadProgress(qint64 value, qint64 max);
+		void abort();
+		void downloadFinished();
+		void downloadProgress(qint64 value, qint64 max);
 
 
 	private:
-		QByteArray	downloadedFileData;
-		QString		downloadedFilename;
+		QByteArray downloadedFileData;
+		QString downloadedFilename;
 		QNetworkAccessManager networkAccessManager;
 		QNetworkReply* pNetworkReply;
 

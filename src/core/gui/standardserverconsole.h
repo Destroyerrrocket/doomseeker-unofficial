@@ -45,14 +45,14 @@ class StandardServerConsole : public QMainWindow
 		~StandardServerConsole();
 
 	private slots:
-		void	errorDataReady();
-		void	finish(int exitCode, QProcess::ExitStatus exitStatus);
-		void	outputDataReady();
-		void	writeToStandardInput(const QString &message);
+		void errorDataReady();
+		void finish(int exitCode, QProcess::ExitStatus exitStatus);
+		void outputDataReady();
+		void writeToStandardInput(const QString &message);
 
 	private:
-		ServerConsole	*console;
-		QProcess		*process;
+		ServerConsole *console;
+		QProcess *process;
 };
 
 #endif

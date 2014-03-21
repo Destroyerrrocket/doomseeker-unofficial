@@ -34,9 +34,9 @@ class Http
 	public:
 		enum HttpResponseCodes
 		{
-			OK 					= 200,
-			PermanentlyMoved 	= 301,
-			Redirect 			= 302,
+			OK = 200,
+			PermanentlyMoved = 301,
+			Redirect = 302,
 		};
 
 		Http(const QNetworkReply* pReply);

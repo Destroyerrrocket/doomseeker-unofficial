@@ -60,60 +60,60 @@ class Main : public QObject
 		 *
 		 *	finalize() cleans up after Main object.
 		 */
-		void						finalize();
+		void finalize();
 
 		/**
 		 *	@brief Replaces main().
 		 */
-		int							run();
+		int run();
 
 	protected:
-		int							connectToServerByURL();
-		void						convertOldIniToQSettingsIni();
+		int connectToServerByURL();
+		void convertOldIniToQSettingsIni();
 
-		void						createMainWindow();
-		bool						createRemoteConsole();
+		void createMainWindow();
+		bool createRemoteConsole();
 
-		int							runTestMode();
+		int runTestMode();
 
 		/**
 		 *	@b Creates required directories and sets up the application.
 		 *
 		 *	@return False if it was impossible to setup the directories.
 		 */
-		bool						initDataDirectories();
+		bool initDataDirectories();
 
 		/**
 		 *	If updateip2c == true, application should quit after this returns.
 		 *	@return If updateip2c == true it returns the exit code. Otherwise
 		 *		always returns zero.
 		 */
-		int							initIP2C();
-		void						initIRCConfig();
+		int initIP2C();
+		void initIRCConfig();
 		void initLocalizationsDefinitions();
-		void						initMainConfig();
-		void						initPasswordsConfig();
-		void						initPluginConfig();
+		void initMainConfig();
+		void initPasswordsConfig();
+		void initPluginConfig();
 		int installPendingUpdates();
 
 		/**
 		 *	@return If false - terminate the application after this method
 		 *		returns.
 		 */
-		bool						interpretCommandLineParameters();
-		void						setupRefreshingThread();
+		bool interpretCommandLineParameters();
+		void setupRefreshingThread();
 
-		char**						arguments;
-		int							argumentsCount;
-		bool                        bIsFirstRun;
-		bool						bTestMode;
-		QStringList 				dataDirectories;
-		QString						rconPluginName; /// If not empty assume we want to launch an rcon client.
-		QString						rconAddress;
-		unsigned short				rconPort;
-		bool						startRcon;
+		char** arguments;
+		int argumentsCount;
+		bool bIsFirstRun;
+		bool bTestMode;
+		QStringList dataDirectories;
+		QString rconPluginName; /// If not empty assume we want to launch an rcon client.
+		QString rconAddress;
+		unsigned short rconPort;
+		bool startRcon;
 		int updateFailedCode;
-		QUrl						connectUrl;
+		QUrl connectUrl;
 
 	private:
 		bool bPortableMode;

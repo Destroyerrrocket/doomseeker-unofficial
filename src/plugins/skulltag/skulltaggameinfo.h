@@ -49,26 +49,26 @@ class SkulltagGameInfo : public QObject
 			GAMEMODE_DOMINATION
 		};
 
-		static const DMFlags*			dmFlags() { return &dmFlagsList; }
-		static const QList<GameMode>*	gameModes() { return &gameModesList; }
-		static const QList<GameCVar>*	gameModifiers() { return &gameModifiersList; }
+		static const DMFlags* dmFlags() { return &dmFlagsList; }
+		static const QList<GameMode>* gameModes() { return &gameModesList; }
+		static const QList<GameCVar>* gameModifiers() { return &gameModifiersList; }
 
 	protected:
-		static DMFlags					dmFlagsList;
-		static QList<GameMode>			gameModesList;
-		static QList<GameCVar>			gameModifiersList;
+		static DMFlags dmFlagsList;
+		static QList<GameMode> gameModesList;
+		static QList<GameCVar> gameModifiersList;
 
 	private:
 		SkulltagGameInfo();
 
-		void						initDMFlags();
-		void						initDMFlags1(DMFlagsSection& section);
-		void						initDMFlags2(DMFlagsSection& section);
-		void						initCompatFlags(DMFlagsSection& section);
-		void						initGameModes();
-		void						initGameModifiers();
+		void initDMFlags();
+		void initDMFlags1(DMFlagsSection& section);
+		void initDMFlags2(DMFlagsSection& section);
+		void initCompatFlags(DMFlagsSection& section);
+		void initGameModes();
+		void initGameModifiers();
 
-		static SkulltagGameInfo* 	static_constructor;
+		static SkulltagGameInfo* static_constructor;
 };
 
 #endif

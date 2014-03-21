@@ -42,7 +42,7 @@ class UnZip : public UnArchive
 		/**
 		 * @brief Extracts all data headers found in the zip file
 		 */
-		QList<ZipLocalFileHeader> 	allDataHeaders();
+		QList<ZipLocalFileHeader> allDataHeaders();
 
 		/**
 		 * @brief Extracts file to specified path.
@@ -55,7 +55,7 @@ class UnZip : public UnArchive
 		 * @param where
 		 *      Path in the file system to which the file should be extracted.
 		 */
-		bool						extract(int file, const QString& where);
+		bool extract(int file, const QString& where);
 
 		/**
 		 * @brief File index for given entry name.
@@ -65,7 +65,7 @@ class UnZip : public UnArchive
 		 * @return Value that can be passed to extract() or negative value
 		 *         if entry not found or error occurred.
 		 */
-		int							findFileEntry(const QString& entryName);
+		int findFileEntry(const QString& entryName);
 
 		/**
 		 * @brief File name fron given index.
@@ -75,13 +75,13 @@ class UnZip : public UnArchive
 		 * @see allDataHeaders()
 		 * @see extract()
 		 */
-		QString						fileNameFromIndex(int file);
+		QString fileNameFromIndex(int file);
 
 		/**
 		 * @brief true if the QIODevice specified in the constructor
 		 *        is a valid ZIP file.
 		 */
-		bool	isValid()
+		bool isValid()
 		{
 			return isZip();
 		}
@@ -90,7 +90,7 @@ class UnZip : public UnArchive
 		 * @brief true if the QIODevice specified in the constructor
 		 *        is a valid ZIP file.
 		 */
-		bool	isZip();
+		bool isZip();
 
 	private:
 		/**
@@ -99,7 +99,7 @@ class UnZip : public UnArchive
 		 *
 		 * @return ZipLocalFileHeader::HeaderError value
 		 */
-		int			readHeader(qint64 pos, ZipLocalFileHeader& zip);
+		int readHeader(qint64 pos, ZipLocalFileHeader& zip);
 		
 		/**
 		 * @brief This method expects the iodevice to be already open 
@@ -107,9 +107,9 @@ class UnZip : public UnArchive
 		 *
 		 * @return ZipLocalFileHeader::HeaderError value
 		 */
-		int			readHeaderFromFileIndex(int file, ZipLocalFileHeader& zip);
+		int readHeaderFromFileIndex(int file, ZipLocalFileHeader& zip);
 		
-		int         uncompress(QIODevice& streamIn, QIODevice& streamOut, unsigned long compressedSize);
+		int uncompress(QIODevice& streamIn, QIODevice& streamOut, unsigned long compressedSize);
 };
 
 #endif

@@ -41,7 +41,7 @@ class MAIN_EXPORT Random
 		/**
 		 *	@brief Inits or re-inits the Random class with specified seed.
 		 */
-		static void				init(int seed);
+		static void init(int seed);
 
 		/**
 		 *	@brief Generates a new random unsigned short.
@@ -50,12 +50,12 @@ class MAIN_EXPORT Random
 		 *		Maximum value for the generated number. This is exclusive,
 		 *		ie. generated value is in range 0 <= x < max
 		 */
-		static unsigned short	nextUShort(unsigned short max);
+		static unsigned short nextUShort(unsigned short max);
 
 	private:
-		static bool				bIsInit;
+		static bool bIsInit;
 
-		static void				builtInInit();
+		static void builtInInit();
 };
 
 #endif

@@ -44,7 +44,7 @@ class IRCUserInfo
 		 *	for chat adapters. However network adapters will require
 		 *	this signature info to deliver bans.
 		 */
-		QString				fullSignature;
+		QString fullSignature;
 
 		/**
 		 * @brief Creates invalid IRCUserInfo.
@@ -69,9 +69,9 @@ class IRCUserInfo
 		 *	@brief Returns cleanNickname() with a call to 
 		 *	IRCGlobal::toIrcLower() .
 		 */
-		QString				cleanNicknameLowerCase() const;
+		QString cleanNicknameLowerCase() const;
 		
-		QString				extractHostnameFromFullSignature() const;
+		QString extractHostnameFromFullSignature() const;
 
 		/**
 		 *	@brief Check if this user and user specified as parameter
@@ -88,7 +88,7 @@ class IRCUserInfo
 		const QList<char> &modes() const;
 		const IRCNetworkAdapter *network() const;
 
-		bool				operator==(const IRCUserInfo& otherUser) const;
+		bool operator==(const IRCUserInfo& otherUser) const;
 		
 		/**
 		 *	@brief This operator can be used for sorting.
@@ -97,18 +97,18 @@ class IRCUserInfo
 		 *	than other user's nickname. Also true if this user has one of the
 		 *	following flags over the other user: op, voice (in this order).
 		 */
-		bool				operator<=(const IRCUserInfo& otherUser) const;
+		bool operator<=(const IRCUserInfo& otherUser) const;
 
 		/**
 		 *	@brief Will generate prefix based on the user flags.
 		 */
-		QString				prefixedName() const;
+		QString prefixedName() const;
 
 		/**
 		 *	@brief Returns prefixedName() with a call to 
 		 *	IRCGlobal::toIrcLower() .
 		 */
-		QString				prefixedNameLowerCase() const;
+		QString prefixedNameLowerCase() const;
 
 		void setModes(const QList<char> &modes);
 		void setMode(char mode);
@@ -118,7 +118,7 @@ class IRCUserInfo
 	private:
 		const IRCNetworkAdapter *parentNetwork;
 		QList<char> userModes;
-		QString				userName;
+		QString userName;
 
 		const IRCUserPrefix &prefixes() const;
 };

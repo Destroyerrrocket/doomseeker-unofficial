@@ -35,20 +35,20 @@ class SkulltagMasterClient : public MasterClient
 	public:
 		SkulltagMasterClient();
 
-		const EnginePlugin*		plugin() const;
+		const EnginePlugin* plugin() const;
 
-		bool					readMasterResponse(QByteArray &data);
+		bool readMasterResponse(QByteArray &data);
 
 	public slots:
-		void					refresh();
+		void refresh();
 
 	protected:
-		bool					getServerListRequest(QByteArray &data);
+		bool getServerListRequest(QByteArray &data);
 
 		/// This is used as a marker to determine if we have an accurate reading for numPackets.
-		bool					readLastPacket;
-		int						numPackets;
-		unsigned int			packetsRead;
+		bool readLastPacket;
+		int numPackets;
+		unsigned int packetsRead;
 };
 
 #endif /* __SKULLTAGMASTERCLIENT_H__ */

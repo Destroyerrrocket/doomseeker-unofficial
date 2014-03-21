@@ -52,15 +52,15 @@ class IP2CUpdater : public QObject
 		 *	@param minimumUpdateAge - Maximum age of the file for which this
 		 *		method will return false. Cannot be 0.
 		 */
-		static bool			needsUpdate(const QString& filePath, unsigned minimumUpdateAge);
+		static bool needsUpdate(const QString& filePath, unsigned minimumUpdateAge);
 
 		IP2CUpdater();
 		~IP2CUpdater();
 
-		void				downloadDatabase(const QUrl& netLocation);
-		const QByteArray&	downloadedData();
+		void downloadDatabase(const QUrl& netLocation);
+		const QByteArray& downloadedData();
 
-		const QString&		filePath() const { return pathToFile; }
+		const QString& filePath() const { return pathToFile; }
 
 		/**
 		 *	@brief Obtains rollback data from pathToFile file.
@@ -73,10 +73,10 @@ class IP2CUpdater : public QObject
 		 *
 		 *	@see rollback()
 		 */
-		bool				getRollbackData();
+		bool getRollbackData();
 
-		bool				hasDownloadedData() const { return !retrievedData.isEmpty(); }
-		bool				hasRollbackData() const { return !rollbackData.isEmpty(); }
+		bool hasDownloadedData() const { return !retrievedData.isEmpty(); }
+		bool hasRollbackData() const { return !rollbackData.isEmpty(); }
 
 		/**
 		 *	@brief Saves data to the pathToFile file. This data must be first
@@ -90,7 +90,7 @@ class IP2CUpdater : public QObject
 		 *
 		 *	@see getRollbackData()
 		 */
-		bool				rollback();
+		bool rollback();
 
 		/**
 		 *	@brief Saves recently downloaded data to the pathToFile file.
@@ -100,16 +100,16 @@ class IP2CUpdater : public QObject
 		 *	@return True if save succeeded, false if there was nothing to save
 		 *	or the save failed.
 		 */
-		bool				saveDownloadedData();
+		bool saveDownloadedData();
 
-		void				setFilePath(const QString& filePath) { pathToFile = filePath; }
+		void setFilePath(const QString& filePath) { pathToFile = filePath; }
 
 	signals:
 		/**
 		 *	@brief In case of failure the downloadedData array will be empty.
 		 */
-		void				databaseDownloadFinished(const QByteArray& downloadedData);
-		void				downloadProgress(qint64 value, qint64 max);
+		void databaseDownloadFinished(const QByteArray& downloadedData);
+		void downloadProgress(qint64 value, qint64 max);
 
 	private:
 		FixedNetworkAccessManager* pNetworkAccessManager;
@@ -122,14 +122,14 @@ class IP2CUpdater : public QObject
 		 *	@see saveDownloadedData()
 		 *	@see saveRollbackData()
 		 */
-		QString				pathToFile;
-		QByteArray			retrievedData;
-		QByteArray			rollbackData;
+		QString pathToFile;
+		QByteArray retrievedData;
+		QByteArray rollbackData;
 
-		bool				save(const QByteArray& saveWhat);
+		bool save(const QByteArray& saveWhat);
 
 	private slots:
-		void				downloadFinished();
+		void downloadFinished();
 };
 
 #endif

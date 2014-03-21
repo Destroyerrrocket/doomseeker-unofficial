@@ -39,23 +39,23 @@ class IRCNetworkConnectionInfo
  		*	@brief Alternate nickname in case if ' nick  ' is taken when
  		*	connecting.
  		*/
-		QString				alternateNick;
+		QString alternateNick;
 
 		/**
  		*	@brief Information about the network to which we will connect.
  		*/
-		IRCNetworkEntity	networkEntity;
+		IRCNetworkEntity networkEntity;
 
 		/**
  		*	@brief Original nickname. This variable will always store the current
  		*	nickname of the client.
  		*/
-		QString				nick;
+		QString nick;
 
 		/**
  		*	@brief User's real name. Optional.
  		*/
-		QString				realName;
+		QString realName;
 
 		/**
  		*	@brief Fills missing data with presets.
@@ -65,7 +65,7 @@ class IRCNetworkConnectionInfo
  		*	- If alternateNick is empty it is changed to nick + "`"
  		*	- If realName is empty it is changed to nick.
  		*/
-		void				fillInMissingFields()
+		void fillInMissingFields()
 		{
 			if (nick.isEmpty())
 			{

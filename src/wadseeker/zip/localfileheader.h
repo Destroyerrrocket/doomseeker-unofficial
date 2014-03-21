@@ -30,8 +30,8 @@
 #define READINT16(pointer) ((quint16((quint8)(*pointer))) | (quint16(quint8(*(pointer+1)))<<8))
 
 #define LOCAL_FILE_HEADER_SIGNATURE 0x04034b50
-#define DESCRIPTOR_EXISTS_FLAG		0x0004 // (3rd bit)
-#define ZIP_LOCAL_FILE_HEADER_SIZE	30
+#define DESCRIPTOR_EXISTS_FLAG 0x0004 // (3rd bit)
+#define ZIP_LOCAL_FILE_HEADER_SIZE 30
 
 struct ZipLocalFileHeader
 {
@@ -62,7 +62,7 @@ struct ZipLocalFileHeader
 	/**
 	 * @brief Size of entire file entry. Header size + data size.
 	 */
-	unsigned long	fileEntrySize() const
+	unsigned long fileEntrySize() const
 	{
 		// Calculated depending on variables below.
 		long dataDescriptorSize = 0;
@@ -82,7 +82,7 @@ struct ZipLocalFileHeader
 	 * If given data is not a local file header it will also return false but localFileHeaderSignature
 	 * will be set to other value.
 	 */
-	int				fromByteArray(const QByteArray& array)
+	int fromByteArray(const QByteArray& array)
 	{
 		const char* data = array.constData();
 
@@ -91,7 +91,7 @@ struct ZipLocalFileHeader
 		if (array.size() < 4)
 			return NotLocalFileHeader;
 
-		localFileHeaderSignature 	= READINT32(data);
+		localFileHeaderSignature = READINT32(data);
 
 		if (localFileHeaderSignature != LOCAL_FILE_HEADER_SIGNATURE)
 			return NotLocalFileHeader;
@@ -102,21 +102,21 @@ struct ZipLocalFileHeader
 			return Corrupted;
 		}
 
-		versionNeededToExtract 		= READINT16(&data[4]);
-		generalPurposeBitFlag		= READINT16(&data[6]);
-		compressionMethod			= READINT16(&data[8]);
-		lastModFileTime				= READINT16(&data[10]);
-		lastModFileDate				= READINT16(&data[12]);
-		crc32						= READINT32(&data[14]);
-		compressedSize				= READINT32(&data[18]);
-		uncompressedSize			= READINT32(&data[22]);
-		fileNameLength				= READINT16(&data[26]);
-		extraFieldLength			= READINT16(&data[28]);
+		versionNeededToExtract = READINT16(&data[4]);
+		generalPurposeBitFlag = READINT16(&data[6]);
+		compressionMethod = READINT16(&data[8]);
+		lastModFileTime = READINT16(&data[10]);
+		lastModFileDate = READINT16(&data[12]);
+		crc32 = READINT32(&data[14]);
+		compressedSize = READINT32(&data[18]);
+		uncompressedSize = READINT32(&data[22]);
+		fileNameLength = READINT16(&data[26]);
+		extraFieldLength = READINT16(&data[28]);
 
 		return NoError;
 	}
 
-	unsigned long	howManyBytesTillData() const
+	unsigned long howManyBytesTillData() const
 	{
 		return ZIP_LOCAL_FILE_HEADER_SIZE + fileNameLength + extraFieldLength;
 	}
@@ -132,20 +132,20 @@ struct ZipLocalFileHeader
 	}
 
 	/* FROM ZIP FILE FORMAT DESCRIPTION */
-	unsigned long 	localFileHeaderSignature; // (0x04034b50), if anything fails this will be set to 0
-	unsigned short 	versionNeededToExtract;
-	unsigned short 	generalPurposeBitFlag;
-	unsigned short 	compressionMethod;
-	unsigned short 	lastModFileTime;
-	unsigned short 	lastModFileDate;
-	unsigned long  	crc32;
-	unsigned long  	compressedSize;
-	unsigned long	uncompressedSize;
-	unsigned short	fileNameLength;
-	unsigned short	extraFieldLength;
+	unsigned long localFileHeaderSignature; // (0x04034b50), if anything fails this will be set to 0
+	unsigned short versionNeededToExtract;
+	unsigned short generalPurposeBitFlag;
+	unsigned short compressionMethod;
+	unsigned short lastModFileTime;
+	unsigned short lastModFileDate;
+	unsigned long crc32;
+	unsigned long compressedSize;
+	unsigned long uncompressedSize;
+	unsigned short fileNameLength;
+	unsigned short extraFieldLength;
 
-	QString			fileName;
-	QByteArray		extraField;
+	QString fileName;
+	QByteArray extraField;
 	/* END OF ZIP FILE FORMAT DESCRIPTION */
 
 	/**
@@ -153,7 +153,7 @@ struct ZipLocalFileHeader
  	* Data position can be calculated from this using
  	* howManyBytesTillData() method.
  	*/
-	unsigned long 	headerPosition;
+	unsigned long headerPosition;
 
 	protected:
 		void copy(const ZipLocalFileHeader& o)

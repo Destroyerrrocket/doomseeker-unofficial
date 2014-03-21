@@ -34,7 +34,7 @@ class IP2CUpdateBox : public QDialog, private Ui::IP2CUpdateBox
 		IP2CUpdateBox(QWidget* parent = NULL);
 		
 	protected:
-		void			updateInfo();
+		void updateInfo();
 };
 
 #endif
