@@ -104,7 +104,9 @@ class IRCChannelAdapter : public IRCChatAdapter
 		 *	This will emit nameRemoved() signal.
 		 */
 		void removeNameFromCachedList(const QString& name);
-		
+
+		void sendCtcp(const QString &nickname, const QString &command);
+
 		/**
 		 * @brief Sets half op mode for given user.
 		 */

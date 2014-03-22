@@ -11,20 +11,23 @@ class IRCCtcpParser::PrivData
 	public:
 		QString command;
 		IRCCtcpParser::CtcpEcho echo;
+		IRCCtcpParser::MessageType msgType;
 		QString msg;
 		IRCNetworkAdapter *network;
 		QStringList params;
 		QString printable;
 		QString recipient;
+		QString reply;
 		QString sender;
 };
 
 IRCCtcpParser::IRCCtcpParser(IRCNetworkAdapter *network, const QString &sender,
-	const QString &recipient, const QString &msg)
+	const QString &recipient, const QString &msg, MessageType msgType)
 {
 	d = new PrivData();
 	d->echo = DontShow;
 	d->msg = msg;
+	d->msgType = msgType;
 	d->network = network;
 	d->recipient = recipient;
 	d->sender = sender;
@@ -63,38 +66,53 @@ bool IRCCtcpParser::parse()
 	tokenizeMsg();
 	d->echo = DisplayInServerTab;
 	d->printable = tr("CTCP: [%1] %2 %3").arg(d->sender, d->command, d->params.join(" "));
-	if (isCommand("clientinfo"))
-	{
-		reply(QString("CLIENTINFO ACTION VERSION TIME PING"));
-	}
-	else if (isCommand("action"))
+	if (isCommand("action"))
 	{
 		d->echo = PrintAsNormalMessage;
 		d->printable = tr("%1 %2").arg(d->sender, d->params.join(" "));
 	}
-	else if (isCommand("version"))
+	if (d->msgType == Send)
 	{
-		reply(QString("VERSION %1").arg(Version::fullVersionInfo()));
+		if (isCommand("clientinfo"))
+		{
+			d->reply = "CLIENTINFO ACTION VERSION TIME PING";
+		}
+		else if (isCommand("version"))
+		{
+			d->reply = QString("VERSION %1").arg(Version::fullVersionInfo());
+		}
+		else if (isCommand("time"))
+		{
+			d->reply = QString("TIME %1").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+		}
+		else if (isCommand("ping"))
+		{
+			d->reply = QString("PING %1").arg(d->params[0]);
+		}
 	}
-	else if (isCommand("time"))
+	else if (d->msgType == Reply)
 	{
-		reply(QString("TIME %1").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
+		if (isCommand("ping"))
+		{
+			qint64 timestamp = d->params.takeFirst().toLongLong();
+			d->network->userPing(d->sender, timestamp);
+		}
 	}
-	else if (isCommand("ping"))
+	else
 	{
-		reply(QString("PING %1").arg(d->params[0]));
+		qDebug() << "Unknown d->msgType in IRCCtcpParser";
 	}
 	return true;
 }
 
-QString IRCCtcpParser::printable() const
+const QString &IRCCtcpParser::printable() const
 {
 	return d->printable;
 }
 
-void IRCCtcpParser::reply(const QString &content)
+const QString &IRCCtcpParser::reply() const
 {
-	d->network->sendMessage(QString("/NOTICE %1 %2").arg(d->sender, content));
+	return d->reply;
 }
 
 void IRCCtcpParser::tokenizeMsg()

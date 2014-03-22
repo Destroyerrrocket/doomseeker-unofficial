@@ -138,8 +138,11 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		{
 			public:
 				UserListMenu();
-			
+
 				QAction* ban;
+				QAction *ctcpTime;
+				QAction *ctcpPing;
+				QAction *ctcpVersion;
 				QAction* dehalfOp;
 				QAction* deop;
 				QAction* devoice;
@@ -148,7 +151,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 				QAction* op;
 				QAction* openChatWindow;
 				QAction* voice;
-				
+
 			private:
 				bool bIsOperator;
 			

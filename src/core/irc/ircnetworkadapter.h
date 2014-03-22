@@ -168,6 +168,12 @@ class IRCNetworkAdapter : public IRCAdapterBase
 
 		void printMsgLiteral(const QString& recipient, const QString& content,
 			const IRCMessageClass& msgClass);
+		/**
+		 * @see IRCResponseParser::print()
+		 */
+		void print(const QString& printWhat, const QString& printWhere);
+		void printWithClass(const QString& printWhat, const QString& printWhere, const IRCMessageClass& msgClass);
+		void userPing(const QString &nickname, qint64 ping);
 
 	signals:
 		/**
@@ -245,12 +251,6 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		void nicknameInUse(const QString& nickname);
 		void noSuchNickname(const QString& nickname);
 		void parseError(const QString& error);
-
-		/**
-		 * @see IRCResponseParser::print()
-		 */
-		void printResponse(const QString& printWhat, const QString& printWhere);
-		void printResponseWithClass(const QString& printWhat, const QString& printWhere, const IRCMessageClass& msgClass);
 
 		void privMsgReceived(const QString& recipient, const QString& sender, const QString& content);
 		void sendPong(const QString& toWhom);

@@ -32,6 +32,7 @@
 #include "irc/ircuserinfo.h"
 #include "irc/ircuserlist.h"
 #include "log.h"
+#include <QDateTime>
 #include <QScrollBar>
 #include <QStandardItemModel>
 
@@ -564,6 +565,18 @@ void IRCDockTabContents::userListCustomContextMenuRequested(const QPoint& pos)
 			pAdapter->banUser(cleanNickname, reason);
 		}
 	}
+	else if (pAction == menu.ctcpTime)
+	{
+		pAdapter->sendCtcp(cleanNickname, QString("TIME"));
+	}
+	else if (pAction == menu.ctcpPing)
+	{
+		pAdapter->sendCtcp(cleanNickname, QString("PING %1").arg(QDateTime::currentMSecsSinceEpoch()));
+	}
+	else if (pAction == menu.ctcpVersion)
+	{
+		pAdapter->sendCtcp(cleanNickname, QString("VERSION"));
+	}
 	else if (pAction == menu.deop)
 	{
 		pAdapter->setOp(cleanNickname, false);
@@ -627,6 +640,10 @@ void IRCDockTabContents::userListDoubleClicked(const QModelIndex& index)
 IRCDockTabContents::UserListMenu::UserListMenu()
 {
 	this->openChatWindow = this->addAction(tr("Open chat window"));
+	this->addSeparator();
+	this->ctcpTime = this->addAction(tr("CTCP Time"));
+	this->ctcpPing = this->addAction(tr("CTCP Ping"));
+	this->ctcpVersion = this->addAction(tr("CTCP Version"));
 	this->addSeparator();
 	this->op = this->addAction(tr("Op"));
 	this->deop = this->addAction(tr("Deop"));

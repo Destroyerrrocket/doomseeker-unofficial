@@ -30,6 +30,7 @@
 #include "irc/ircctcpparser.h"
 #include "irc/ircglobal.h"
 #include "irc/ircmessageclass.h"
+#include "irc/ircnetworkadapter.h"
 #include "irc/ircuserinfo.h"
 #include "log.h"
 #include "strings.h"
@@ -439,8 +440,11 @@ void IRCResponseParser::parsePrivMsgOrNotice()
 
 	// Join the list to form message contents.
 	QString content = joinAndTrimColonIfNecessary(d->params);
-	IRCCtcpParser ctcp(d->network, d->sender, recipient, content);
+
 	IRCResponseType responseType(d->type);
+	IRCCtcpParser::MessageType ctcpMsgType = (responseType == IRCResponseType::Notice) ?
+		IRCCtcpParser::Reply : IRCCtcpParser::Send;
+	IRCCtcpParser ctcp(d->network, d->sender, recipient, content, ctcpMsgType);
 	if (ctcp.parse())
 	{
 		switch (ctcp.echo())
@@ -457,6 +461,10 @@ void IRCResponseParser::parsePrivMsgOrNotice()
 				gLog << QString("Unhandled CTCP echo type: %1").arg(ctcp.echo());
 				assert(false && "Unhandled CTCP echo type");
 				break;
+		}
+		if (!ctcp.reply().isEmpty() && responseType.type() != IRCResponseType::Notice)
+		{
+			d->network->sendMessage(QString("/NOTICE %1 %2%3%2").arg(d->sender, QChar(0x1), ctcp.reply()));
 		}
 	}
 	else

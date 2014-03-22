@@ -143,13 +143,23 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::buildOutput()
 		QString recipient = d->tokens.takeFirst();
 		QString content = d->tokens.join(" ");
 		d->output = QString("%1 %2 :%3").arg(d->message, recipient, content);
-
 		if (d->message == "PRIVMSG")
 		{
-			IRCCtcpParser ctcp(network(), network()->myNickname(), recipient, content);
+			IRCCtcpParser ctcp(network(), network()->myNickname(),
+				recipient, content, IRCCtcpParser::Send);
 			if (ctcp.parse())
 			{
-				network()->printMsgLiteral(recipient, ctcp.printable(), IRCMessageClass::Ctcp);
+				switch (ctcp.echo())
+				{
+					case IRCCtcpParser::PrintAsNormalMessage:
+						network()->printMsgLiteral(recipient, ctcp.printable(), IRCMessageClass::Ctcp);
+						break;
+					case IRCCtcpParser::DisplayInServerTab:
+						network()->printWithClass(ctcp.printable(), QString(), IRCMessageClass::Ctcp);
+						break;
+					case IRCCtcpParser::DontShow:
+						break;
+				}
 			}
 			else
 			{

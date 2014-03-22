@@ -18,13 +18,26 @@ class IRCCtcpParser : public QObject
 			DontShow
 		};
 
+		enum MessageType
+		{
+			/**
+			 * @brief A question is being asked through PRIVMSG.
+			 */
+			Send,
+			/**
+			 * @brief An answer is being sent through NOTICE.
+			 */
+			Reply
+		};
+
 		IRCCtcpParser(IRCNetworkAdapter *network, const QString &sender,
-			const QString &recipient, const QString &msg);
+			const QString &recipient, const QString &msg, MessageType msgType);
 		~IRCCtcpParser();
 
 		CtcpEcho echo() const;
 		bool parse();
-		QString printable() const;
+		const QString &printable() const;
+		const QString &reply() const;
 
 	private:
 		class PrivData;
@@ -32,7 +45,6 @@ class IRCCtcpParser : public QObject
 
 		bool isCommand(const QString &candidate);
 		bool isCtcp() const;
-		void reply(const QString &what);
 		/**
 		 * @brief Fill d->command and d->params.
 		 */

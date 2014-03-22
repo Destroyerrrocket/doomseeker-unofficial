@@ -33,6 +33,7 @@
 #include "irc/ircuserinfo.h"
 #include "irc/ircuserlist.h"
 #include "log.h"
+#include <QDateTime>
 
 IRCNetworkAdapter::IRCNetworkAdapter()
 {
@@ -88,10 +89,10 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 	// This connect must be direct as it might interfere with other operations
 	// of printing done in the window.
 	QObject::connect(ircResponseParser, SIGNAL( print(const QString&, const QString&)),
-		this, SLOT(printResponse(const QString&, const QString&) ), Qt::DirectConnection);
+		this, SLOT(print(const QString&, const QString&) ), Qt::DirectConnection);
 	QObject::connect(ircResponseParser,
 		SIGNAL(printWithClass(const QString&, const QString&, const IRCMessageClass&)),
-		this, SLOT(printResponseWithClass(const QString&, const QString&, const IRCMessageClass&)),
+		this, SLOT(printWithClass(const QString&, const QString&, const IRCMessageClass&)),
 		Qt::DirectConnection);
 
 	QObject::connect(ircResponseParser, SIGNAL ( privMsgReceived(const QString&, const QString&, const QString&) ),
@@ -135,10 +136,9 @@ IRCNetworkAdapter::~IRCNetworkAdapter()
 
 void IRCNetworkAdapter::appendISupportLine(const QString &line)
 {
-	printResponse(line, QString());
+	print(line, QString());
 	ircISupportParser->appendLine(line);
 	ircISupportParser->parse();
-	// TODO: Extract parsed data and apply!
 }
 
 void IRCNetworkAdapter::banUser(const QString& nickname, const QString& reason, const QString& channel)
@@ -542,12 +542,12 @@ void IRCNetworkAdapter::parseError(const QString& error)
 	emit this->error(tr("IRC parse error: %1").arg(error));
 }
 
-void IRCNetworkAdapter::printResponse(const QString& printWhat, const QString& printWhere)
+void IRCNetworkAdapter::print(const QString& printWhat, const QString& printWhere)
 {
-	printResponseWithClass(printWhat, printWhere, IRCMessageClass(IRCMessageClass::Normal));
+	printWithClass(printWhat, printWhere, IRCMessageClass(IRCMessageClass::Normal));
 }
 
-void IRCNetworkAdapter::printResponseWithClass(const QString& printWhat,
+void IRCNetworkAdapter::printWithClass(const QString& printWhat,
 	const QString& printWhere, const IRCMessageClass& msgClass)
 {
 	IRCAdapterBase* pAdapter = this;
@@ -591,7 +591,7 @@ void IRCNetworkAdapter::printMsgLiteral(const QString& recipient, const QString&
 	const IRCMessageClass& msgClass)
 {
 	this->getOrCreateNewChatAdapter(recipient);
-	printResponseWithClass(content, recipient, msgClass);
+	printWithClass(content, recipient, msgClass);
 }
 
 void IRCNetworkAdapter::sendPong(const QString& toWhom)
@@ -717,6 +717,13 @@ void IRCNetworkAdapter::userQuitsNetwork(const QString& nickname, const QString&
 	{
 		pAdapter->userLeaves(nickname, farewellMessage, IRCChatAdapter::NetworkQuit);
 	}
+}
+
+void IRCNetworkAdapter::userPing(const QString &nickname, qint64 ping)
+{
+	qint64 delta = QDateTime::currentMSecsSinceEpoch() - ping;
+	printWithClass(tr("Ping to user %1: %2ms").arg(nickname).arg(delta),
+		QString(), IRCMessageClass::Ctcp);
 }
 
 void IRCNetworkAdapter::whoIsUser(const QString& nickname, const QString& user, const QString& hostName, const QString& realName)
