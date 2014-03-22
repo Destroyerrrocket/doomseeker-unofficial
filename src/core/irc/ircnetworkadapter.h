@@ -136,6 +136,8 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 */
 		void setChannelMode(const QString& channel, const QString& nickname, const QString& flag, bool bSet);
 
+		void sendCtcp(const QString &nickname, const QString &command);
+
 		/**
  		* @see bEmitAllIRCMessages
  		*/

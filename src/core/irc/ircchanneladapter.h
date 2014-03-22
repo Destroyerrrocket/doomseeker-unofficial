@@ -105,8 +105,6 @@ class IRCChannelAdapter : public IRCChatAdapter
 		 */
 		void removeNameFromCachedList(const QString& name);
 
-		void sendCtcp(const QString &nickname, const QString &command);
-
 		/**
 		 * @brief Sets half op mode for given user.
 		 */

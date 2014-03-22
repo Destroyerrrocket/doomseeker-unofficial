@@ -594,6 +594,12 @@ void IRCNetworkAdapter::printMsgLiteral(const QString& recipient, const QString&
 	printWithClass(content, recipient, msgClass);
 }
 
+void IRCNetworkAdapter::sendCtcp(const QString &nickname, const QString &command)
+{
+	QString msg = QString("/PRIVMSG %1 %2%3%2").arg(nickname).arg(QChar(0x1)).arg(command);
+	sendMessage(msg);
+}
+
 void IRCNetworkAdapter::sendPong(const QString& toWhom)
 {
 	QString message = QString("/PONG %1").arg(toWhom);

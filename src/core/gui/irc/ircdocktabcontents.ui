@@ -71,12 +71,19 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="btnCommand">
+         <property name="text">
+          <string>Command</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="btnPauseTextArea">
          <property name="toolTip">
           <string>Do not scroll text area</string>
          </property>
          <property name="icon">
-          <iconset resource="../../../media/resources.qrc">
+          <iconset resource="../../../../media/resources.qrc">
            <normaloff>:/icons/pause.png</normaloff>:/icons/pause.png</iconset>
          </property>
          <property name="checkable">
@@ -131,7 +138,27 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../media/resources.qrc"/>
+  <include location="../../../../media/resources.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>btnCommand</sender>
+   <signal>clicked()</signal>
+   <receiver>IRCDockTabContents</receiver>
+   <slot>showChatContextMenu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>417</x>
+     <y>274</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>469</x>
+     <y>296</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>showChatContextMenu()</slot>
+ </slots>
 </ui>

@@ -156,7 +156,9 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 				bool bIsOperator;
 			
 		};
-		
+
+		class PrivChatMenu;
+
 		static const int BLINK_TIMER_DELAY_MS;
 	
 		/**
@@ -184,16 +186,22 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		IRCNetworkAdapter* network();
 		void insertMessage(const IRCMessageClass& messageClass, const QString& htmlString);
 		QString selectedNickname();
-		
+
+		void sendCtcpPing(const QString &nickname);
+		void sendCtcpTime(const QString &nickname);
+		void sendCtcpVersion(const QString &nickname);
+
 		/**
 		 *	Sets bBlinkTitle to specified value and emits
 		 *	titleChange() signal if new value was different than the
 		 *	previous one.
 		 */
 		void setBlinkTitle(bool b);
-		
+		void showPrivChatContextMenu();
+
 	private slots:
 		void blinkTimerSlot();
+		void showChatContextMenu();
 };
 
 #endif

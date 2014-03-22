@@ -36,6 +36,21 @@
 #include <QScrollBar>
 #include <QStandardItemModel>
 
+class IRCDockTabContents::PrivChatMenu : public QMenu
+{
+	public:
+		QAction *ctcpPing;
+		QAction *ctcpTime;
+		QAction *ctcpVersion;
+
+		PrivChatMenu()
+		{
+			ctcpPing = addAction(tr("CTCP Ping"));
+			ctcpTime = addAction(tr("CTCP Time"));
+			ctcpVersion = addAction(tr("CTCP Version"));
+		}
+};
+
 const int IRCDockTabContents::BLINK_TIMER_DELAY_MS = 650;
 
 IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
@@ -53,6 +68,8 @@ IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 	// There is only one case in which we want this to be visible:
 	// if we are in a channel.
 	this->lvUserList->setVisible(false);
+
+	btnCommand->setVisible(false);
 
 	connect(btnSend, SIGNAL( clicked() ), this, SLOT( sendMessage() ));
 	connect(leCommandLine, SIGNAL( returnPressed() ), this, SLOT( sendMessage() ));
@@ -404,6 +421,21 @@ QString IRCDockTabContents::selectedNickname()
 	return "";
 }
 
+void IRCDockTabContents::sendCtcpPing(const QString &nickname)
+{
+	network()->sendCtcp(nickname, QString("PING %1").arg(QDateTime::currentMSecsSinceEpoch()));
+}
+
+void IRCDockTabContents::sendCtcpTime(const QString &nickname)
+{
+	network()->sendCtcp(nickname, QString("TIME"));
+}
+
+void IRCDockTabContents::sendCtcpVersion(const QString &nickname)
+{
+	network()->sendCtcp(nickname, QString("VERSION"));
+}
+
 void IRCDockTabContents::sendMessage()
 {
 	QString message = leCommandLine->text();
@@ -474,6 +506,7 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 
 		case IRCAdapterBase::PrivAdapter:
 		{
+			btnCommand->setVisible(true);
 			break;
 		}
 
@@ -482,6 +515,38 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 			receiveError("Doomseeker error: Unknown IRCAdapterBase*");
 			break;
 		}
+	}
+}
+
+void IRCDockTabContents::showChatContextMenu()
+{
+	showPrivChatContextMenu();
+}
+
+void IRCDockTabContents::showPrivChatContextMenu()
+{
+	QString nickname = ircAdapter()->recipient();
+	QString cleanNickname = IRCUserInfo(nickname, network()).cleanNickname();
+
+	PrivChatMenu menu;
+
+	QPoint pos(0, btnCommand->height());
+	QAction *action = menu.exec(btnCommand->mapToGlobal(pos));
+	if (action == menu.ctcpPing)
+	{
+		sendCtcpPing(cleanNickname);
+	}
+	else if (action == menu.ctcpTime)
+	{
+		sendCtcpTime(cleanNickname);
+	}
+	else if (action == menu.ctcpVersion)
+	{
+		sendCtcpVersion(cleanNickname);
+	}
+	else
+	{
+		qDebug() << "unsupported action" << action->text();
 	}
 }
 
@@ -567,15 +632,15 @@ void IRCDockTabContents::userListCustomContextMenuRequested(const QPoint& pos)
 	}
 	else if (pAction == menu.ctcpTime)
 	{
-		pAdapter->sendCtcp(cleanNickname, QString("TIME"));
+		sendCtcpTime(cleanNickname);
 	}
 	else if (pAction == menu.ctcpPing)
 	{
-		pAdapter->sendCtcp(cleanNickname, QString("PING %1").arg(QDateTime::currentMSecsSinceEpoch()));
+		sendCtcpPing(cleanNickname);
 	}
 	else if (pAction == menu.ctcpVersion)
 	{
-		pAdapter->sendCtcp(cleanNickname, QString("VERSION"));
+		sendCtcpVersion(cleanNickname);
 	}
 	else if (pAction == menu.deop)
 	{
