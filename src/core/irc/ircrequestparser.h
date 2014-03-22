@@ -27,6 +27,7 @@
 #include <QString>
 
 class IRCAdapterBase;
+class IRCNetworkAdapter;
 
 /**
  * @brief Parses request and interprets them in a way that emulates
@@ -59,6 +60,7 @@ class IRCRequestParser : public QObject
 			ErrorMessageEmpty,
 			ErrorInputNotPrependedWithSlash,
 			ErrorInputInsufficientParameters,
+			ErrorChatWindowOnly,
 			QuitCommand
 		};
 
@@ -87,6 +89,8 @@ class IRCRequestParser : public QObject
 		 *   If not ErrorInputNotPrependedWithSlash is returned.
 		 * - Return ErrorInputInsufficientParameters if parsed command expects
 		 *   more parameters to work correctly.
+		 * - ErrorChatWindowOnly is returned if command applies only to
+		 *   chat windows.
 		 * - QuitCommand is returned if "/quit" command is used.
 		 * - Ok is returned if it is ok to send the output message. Parsed
 		 *   message can be extracted through output() accessor.
@@ -121,6 +125,7 @@ class IRCRequestParser : public QObject
 		PrivData *d;
 
 		IRCRequestParseResult buildOutput();
+		IRCNetworkAdapter *network();
 };
 
 #endif

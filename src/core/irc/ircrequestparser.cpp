@@ -24,7 +24,10 @@
 #include "ircrequestparser.h"
 #include "irc/ircadapterbase.h"
 #include "irc/ircclient.h"
+#include "irc/ircctcpparser.h"
 #include "irc/ircglobal.h"
+#include "irc/ircmessageclass.h"
+#include "irc/ircnetworkadapter.h"
 #include "irc/ircuserinfo.h"
 #include <QStringList>
 
@@ -46,6 +49,11 @@ IRCRequestParser::IRCRequestParser()
 IRCRequestParser::~IRCRequestParser()
 {
 	delete d;
+}
+
+IRCNetworkAdapter *IRCRequestParser::network()
+{
+	return d->adapter->network();
 }
 
 const QString &IRCRequestParser::output() const
@@ -138,7 +146,15 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::buildOutput()
 
 		if (d->message == "PRIVMSG")
 		{
-			emit echoPrivmsg(recipient, content);
+			IRCCtcpParser ctcp(network(), network()->myNickname(), recipient, content);
+			if (ctcp.parse())
+			{
+				network()->printMsgLiteral(recipient, ctcp.printable(), IRCMessageClass::Ctcp);
+			}
+			else
+			{
+				emit echoPrivmsg(recipient, content);
+			}
 		}
 	}
 	else if (d->message == "MSG")
@@ -158,6 +174,16 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::buildOutput()
 				emit query(userInfo.cleanNickname());
 			}
 		}
+	}
+	else if (d->message == "ME")
+	{
+		QString recipient = d->adapter->recipient();
+		if (recipient.isEmpty())
+		{
+			return ErrorChatWindowOnly;
+		}
+		QString content = d->tokens.join(" ");
+		parse(d->adapter, QString("/PRIVMSG %1 %2ACTION %3%2").arg(recipient, QChar(0x1), content));
 	}
 	else
 	{

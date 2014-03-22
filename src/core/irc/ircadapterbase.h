@@ -106,6 +106,11 @@ class IRCAdapterBase : public QObject
 		 */
 		virtual IRCNetworkAdapter* network() = 0;
 
+		virtual QString recipient() const
+		{
+			return QString();
+		};
+
 		/**
 		 *	@brief Gets title for this adapter.
 		 */

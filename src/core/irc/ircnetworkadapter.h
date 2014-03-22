@@ -166,6 +166,9 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 */
 		void openNewAdapter(const QString& recipientName);
 
+		void printMsgLiteral(const QString& recipient, const QString& content,
+			const IRCMessageClass& msgClass);
+
 	signals:
 		/**
 		 * @brief Signal emitted when a new chat (priv or channel) is opened
@@ -250,8 +253,6 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		void printResponseWithClass(const QString& printWhat, const QString& printWhere, const IRCMessageClass& msgClass);
 
 		void privMsgReceived(const QString& recipient, const QString& sender, const QString& content);
-		void privMsgLiteralReceived(const QString& recipient, const QString& content,
-			const IRCMessageClass& msgClass);
 		void sendPong(const QString& toWhom);
 		void userChangesNickname(const QString& oldNickname, const QString& newNickname);
 		void userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature);

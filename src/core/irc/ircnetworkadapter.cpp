@@ -97,7 +97,7 @@ IRCNetworkAdapter::IRCNetworkAdapter()
 	QObject::connect(ircResponseParser, SIGNAL ( privMsgReceived(const QString&, const QString&, const QString&) ),
 		this, SLOT( privMsgReceived(const QString&, const QString&, const QString&) ) );
 	QObject::connect(ircResponseParser, SIGNAL ( privMsgLiteralReceived(QString, QString, IRCMessageClass) ),
-		this, SLOT( privMsgLiteralReceived(QString, QString, IRCMessageClass) ) );
+		this, SLOT( printMsgLiteral(QString, QString, IRCMessageClass) ) );
 
 	QObject::connect(ircResponseParser, SIGNAL ( sendPongMessage(const QString&) ),
 		this, SLOT( sendPong(const QString&) ) );
@@ -202,6 +202,10 @@ void IRCNetworkAdapter::doSendMessage(const QString& message, IRCAdapterBase* pO
 
 		case IRCRequestParser::ErrorMessageTooLong:
 			pOrigin->emitError(tr("Command is too long."));
+			break;
+
+		case IRCRequestParser::ErrorChatWindowOnly:
+			pOrigin->emitError(tr("Not a chat window."));
 			break;
 
 		case IRCRequestParser::Ok:
@@ -583,7 +587,7 @@ void IRCNetworkAdapter::privMsgReceived(const QString& recipient, const QString&
 	pAdapter->emitChatMessage(sender, content);
 }
 
-void IRCNetworkAdapter::privMsgLiteralReceived(const QString& recipient, const QString& content,
+void IRCNetworkAdapter::printMsgLiteral(const QString& recipient, const QString& content,
 	const IRCMessageClass& msgClass)
 {
 	this->getOrCreateNewChatAdapter(recipient);

@@ -77,7 +77,7 @@ class IRCChatAdapter : public IRCAdapterBase
 			return this->pNetwork;
 		}
 
-		const QString& recipient() const { return this->recipientName; }
+		QString recipient() const { return this->recipientName; }
 		
 		/**
 		 *	@brief Sets IRCNetworkAdapter for this chat window. This adapter
