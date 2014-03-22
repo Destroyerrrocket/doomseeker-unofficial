@@ -35,66 +35,65 @@ class IRCMessageClass
 		Ctcp,
 		Error,
 		/**
-		 *	@brief Normal has no representation in string, ie.
-		 *	it represents a global style for the widget.
+		 * @brief Normal has no representation in string, ie.
+		 *        it represents a global style for the widget.
 		 */
 		Normal,
 		NetworkAction
 	};
-	
+
 	static QString toStyleSheetClassName(ClassName className);
-	
+
 	IRCMessageClass()
 	{
 		this->className = Normal;
 	}
-	
+
 	IRCMessageClass(const IRCMessageClass& other)
 	{
 		this->className = other.className;
 	}
-	
+
 	IRCMessageClass(const ClassName& className)
 	{
 		this->className = className;
 	}
-	
+
 	bool operator==(const IRCMessageClass& other) const
 	{
 		return this->className == other.className;
 	}
-	
+
 	bool operator==(const ClassName& className) const
 	{
 		return this->className == className;
 	}
-	
+
 	bool operator!=(const IRCMessageClass& other) const
 	{
 		return this->className != other.className;
 	}
-	
+
 	bool operator!=(const ClassName& className) const
 	{
 		return this->className != className;
 	}
-	
+
 	operator ClassName() const
 	{
 		return this->className;
 	}
-	
+
 	/**
-	 *	@brief Obtains HTML color from config for this message
-	 *	class.	
+	 * @brief Obtains HTML color from config for this message class.
 	 */
 	QString colorFromConfig() const;
-	
+
 	QString toStyleSheetClassName() const
 	{
 		return toStyleSheetClassName(this->className);
 	}
-	
+
 	private:
 		ClassName className;
 };
