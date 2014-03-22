@@ -81,7 +81,7 @@ bool IRCCtcpParser::parse()
 			}
 			else if (isCommand("version"))
 			{
-				d->reply = QString("VERSION %1").arg(Version::fullVersionInfo());
+				d->reply = QString("VERSION %1").arg(Version::fullVersionInfoWithOs());
 			}
 			else if (isCommand("time"))
 			{

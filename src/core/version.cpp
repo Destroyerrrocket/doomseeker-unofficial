@@ -33,6 +33,19 @@ QString Version::name()
 	return "Doomseeker";
 }
 
+QString Version::operatingSystem()
+{
+	#ifdef Q_OS_WIN32
+		return QString("Windows");
+	#elif Q_OS_LINUX
+		return QString("Linux");
+	#elif Q_OS_MAC
+		return QString("MAC");
+	#else
+		return QString("Unknown OS for Version::operatingSystem()");
+	#endif
+}
+
 QString Version::revision()
 {
 	return SVN_REVISION_STRING;

@@ -42,7 +42,19 @@ class MAIN_EXPORT Version
 		 * @brief Combines program's name and versionRevision().
 		 */
 		static QString fullVersionInfo() { return name() + " " + versionRevision(); }
+		/**
+		 * @brief Combines program's name, versionRevision()
+		 *        and operatingSystem().
+		 */
+		static QString fullVersionInfoWithOs()
+		{
+			return name() + " " + versionRevision() + " " + operatingSystem();
+		}
 		static QString name();
+		/**
+		 * @brief Name of operating system, content length and detail may vary.
+		 */
+		static QString operatingSystem();
 		static QString revision();
 		static unsigned long long revisionNumber();
 
