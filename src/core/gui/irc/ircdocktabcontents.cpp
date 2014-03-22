@@ -532,6 +532,11 @@ void IRCDockTabContents::showPrivChatContextMenu()
 
 	QPoint pos(0, btnCommand->height());
 	QAction *action = menu.exec(btnCommand->mapToGlobal(pos));
+	if (action == NULL)
+	{
+		return;
+	}
+
 	if (action == menu.ctcpPing)
 	{
 		sendCtcpPing(cleanNickname);
