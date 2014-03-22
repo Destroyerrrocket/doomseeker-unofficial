@@ -24,7 +24,7 @@ class IRCCtcpParser : public QObject
 			/**
 			 * @brief A question is being asked through PRIVMSG.
 			 */
-			Send,
+			Request,
 			/**
 			 * @brief An answer is being sent through NOTICE.
 			 */
@@ -50,6 +50,7 @@ class IRCCtcpParser : public QObject
 		 * @brief Fill d->command and d->params.
 		 */
 		void tokenizeMsg();
+		QString typeToName() const;
 };
 
 

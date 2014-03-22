@@ -147,7 +147,7 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::buildOutput()
 		if (d->message == "PRIVMSG")
 		{
 			IRCCtcpParser ctcp(network(), network()->myNickname(),
-				recipient, content, IRCCtcpParser::Send);
+				recipient, content, IRCCtcpParser::Request);
 			if (ctcp.parse())
 			{
 				switch (ctcp.echo())

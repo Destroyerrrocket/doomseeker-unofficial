@@ -444,7 +444,7 @@ void IRCResponseParser::parsePrivMsgOrNotice()
 
 	IRCResponseType responseType(d->type);
 	IRCCtcpParser::MessageType ctcpMsgType = (responseType == IRCResponseType::Notice) ?
-		IRCCtcpParser::Reply : IRCCtcpParser::Send;
+		IRCCtcpParser::Reply : IRCCtcpParser::Request;
 	IRCCtcpParser ctcp(d->network, d->sender, recipient, content, ctcpMsgType);
 	if (ctcp.parse())
 	{
