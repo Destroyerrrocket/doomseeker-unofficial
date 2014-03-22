@@ -26,6 +26,8 @@
 #include "irc/ircglobal.h"
 #include <QObject>
 
+#define ircGlobalMsg (IRCGlobalMessages::instance())
+
 class IRCAdapterBase;
 class IRCMessageClass;
 

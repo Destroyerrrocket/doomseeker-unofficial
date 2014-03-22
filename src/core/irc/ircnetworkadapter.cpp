@@ -722,8 +722,9 @@ void IRCNetworkAdapter::userQuitsNetwork(const QString& nickname, const QString&
 void IRCNetworkAdapter::userPing(const QString &nickname, qint64 ping)
 {
 	qint64 delta = QDateTime::currentMSecsSinceEpoch() - ping;
-	printWithClass(tr("Ping to user %1: %2ms").arg(nickname).arg(delta),
-		QString(), IRCMessageClass::Ctcp);
+	ircGlobalMsg.emitMessageWithClass(
+		tr("Ping to user %1: %2ms").arg(nickname).arg(delta),
+		IRCMessageClass::Ctcp, this);
 }
 
 void IRCNetworkAdapter::whoIsUser(const QString& nickname, const QString& user, const QString& hostName, const QString& realName)

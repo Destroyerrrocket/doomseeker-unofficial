@@ -29,6 +29,7 @@
 #include "irc/constants/ircresponsetype.h"
 #include "irc/ircctcpparser.h"
 #include "irc/ircglobal.h"
+#include "irc/ircglobalmessages.h"
 #include "irc/ircmessageclass.h"
 #include "irc/ircnetworkadapter.h"
 #include "irc/ircuserinfo.h"
@@ -454,6 +455,9 @@ void IRCResponseParser::parsePrivMsgOrNotice()
 				break;
 			case IRCCtcpParser::DisplayInServerTab:
 				emit printWithClass(ctcp.printable(), QString(), IRCMessageClass::Ctcp);
+				break;
+			case IRCCtcpParser::DisplayThroughGlobalMessage:
+				ircGlobalMsg.emitMessageWithClass(ctcp.printable(), IRCMessageClass::Ctcp, d->network);
 				break;
 			case IRCCtcpParser::DontShow:
 				break;

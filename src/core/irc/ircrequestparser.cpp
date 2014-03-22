@@ -26,6 +26,7 @@
 #include "irc/ircclient.h"
 #include "irc/ircctcpparser.h"
 #include "irc/ircglobal.h"
+#include "irc/ircglobalmessages.h"
 #include "irc/ircmessageclass.h"
 #include "irc/ircnetworkadapter.h"
 #include "irc/ircuserinfo.h"
@@ -156,6 +157,9 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::buildOutput()
 						break;
 					case IRCCtcpParser::DisplayInServerTab:
 						network()->printWithClass(ctcp.printable(), QString(), IRCMessageClass::Ctcp);
+						break;
+					case IRCCtcpParser::DisplayThroughGlobalMessage:
+						ircGlobalMsg.emitMessageWithClass(ctcp.printable(), IRCMessageClass::Ctcp, d->adapter);
 						break;
 					case IRCCtcpParser::DontShow:
 						break;

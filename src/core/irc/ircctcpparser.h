@@ -15,6 +15,7 @@ class IRCCtcpParser : public QObject
 		{
 			PrintAsNormalMessage,
 			DisplayInServerTab,
+			DisplayThroughGlobalMessage,
 			DontShow
 		};
 

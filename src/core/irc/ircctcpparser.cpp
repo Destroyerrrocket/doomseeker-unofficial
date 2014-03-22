@@ -64,7 +64,6 @@ bool IRCCtcpParser::parse()
 		return false;
 	}
 	tokenizeMsg();
-	d->echo = DisplayInServerTab;
 	d->printable = tr("CTCP: [%1] %2 %3").arg(d->sender, d->command, d->params.join(" "));
 	if (isCommand("action"))
 	{
@@ -73,6 +72,7 @@ bool IRCCtcpParser::parse()
 	}
 	if (d->msgType == Send)
 	{
+		d->echo = DisplayInServerTab;
 		if (isCommand("clientinfo"))
 		{
 			d->reply = "CLIENTINFO ACTION VERSION TIME PING";
@@ -92,6 +92,7 @@ bool IRCCtcpParser::parse()
 	}
 	else if (d->msgType == Reply)
 	{
+		d->echo = DisplayThroughGlobalMessage;
 		if (isCommand("ping"))
 		{
 			qint64 timestamp = d->params.takeFirst().toLongLong();
