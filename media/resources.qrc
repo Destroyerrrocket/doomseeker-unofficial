@@ -110,6 +110,7 @@
 	<file alias="flags/ROM">flags/ROM.png</file> <!-- Romania -->
 	<file alias="flags/RUS">flags/RUS.png</file> <!-- Russian Federation -->
 	<file alias="flags/SAU">flags/SAU.png</file> <!-- Saudi Arabia -->
+	<file alias="flags/SGP">flags/SGP.png</file> <!-- Singapore -->
 	<file alias="flags/SRB">flags/SRB.png</file> <!-- Serbia -->
 	<file alias="flags/SVK">flags/SVK.png</file> <!-- Slovakia -->
 	<file alias="flags/SVN">flags/SVN.png</file> <!-- Slovenia -->
