@@ -39,7 +39,9 @@ void CFGIRCAppearance::readSettings()
 	this->btnErrorColor->setColorHtml(gIRCConfig.appearance.errorColor);
 	this->btnNetworkActionColor->setColorHtml(gIRCConfig.appearance.networkActionColor);
 	this->btnUrlColor->setColorHtml(gIRCConfig.appearance.urlColor);
-	
+	this->btnUserListSelectedTextColor->setColorHtml(gIRCConfig.appearance.userListSelectedTextColor);
+	this->btnUserListSelectedBackgroundColor->setColorHtml(gIRCConfig.appearance.userListSelectedBackgroundColor);
+
 	// Fonts
 	this->btnMainFont->setSelectedFont(gIRCConfig.appearance.mainFont);
 	this->btnUserListFont->setSelectedFont(gIRCConfig.appearance.userListFont);
@@ -58,7 +60,9 @@ void CFGIRCAppearance::saveSettings()
 	gIRCConfig.appearance.errorColor = this->btnErrorColor->colorHtml();
 	gIRCConfig.appearance.networkActionColor = this->btnNetworkActionColor->colorHtml();
 	gIRCConfig.appearance.urlColor = this->btnUrlColor->colorHtml();
-	
+	gIRCConfig.appearance.userListSelectedTextColor = this->btnUserListSelectedTextColor->colorHtml();
+	gIRCConfig.appearance.userListSelectedBackgroundColor = this->btnUserListSelectedBackgroundColor->colorHtml();
+
 	// Fonts
 	gIRCConfig.appearance.mainFont = this->btnMainFont->selectedFont();
 	gIRCConfig.appearance.userListFont = this->btnUserListFont->selectedFont();

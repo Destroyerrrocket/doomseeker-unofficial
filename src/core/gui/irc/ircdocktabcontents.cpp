@@ -135,13 +135,12 @@ void IRCDockTabContents::applyAppearanceSettings()
 		.arg(appearance.backgroundColor)
 		.arg(appearance.defaultTextColor);
 
-	QColor colorSelectedText("#cbcb0f");
-	QColor colorSelectedBackground("#B74600");
+	QColor colorSelectedText(appearance.userListSelectedTextColor);
+	QColor colorSelectedBackground(appearance.userListSelectedBackgroundColor);
+	qtStyleSheet += QString("QListView::item:selected { color: %1; background: %2; } ").arg(colorSelectedText.name(), colorSelectedBackground.name());
 
 	QColor colorHoverText = colorSelectedText.lighter();
 	QColor colorHoverBackground = colorSelectedBackground.lighter();
-
-	qtStyleSheet += QString("QListView::item:selected { color: %1; background: %2; } ").arg(colorSelectedText.name(), colorSelectedBackground.name());
 	qtStyleSheet += QString("QListView::item:hover  { color: %1; background: %2; } ").arg(colorHoverText.name(), colorHoverBackground.name());
 
 	QString channelActionClassName = IRCMessageClass::toStyleSheetClassName(IRCMessageClass::ChannelAction);

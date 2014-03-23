@@ -59,6 +59,8 @@ class IRCConfig
 			bool timestamps;
 			QString urlColor;
 			QFont userListFont;
+			QString userListSelectedTextColor;
+			QString userListSelectedBackgroundColor;
 
 			AppearanceCfg();
 

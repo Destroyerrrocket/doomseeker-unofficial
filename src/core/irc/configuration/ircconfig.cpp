@@ -168,6 +168,8 @@ IRCConfig::AppearanceCfg::AppearanceCfg()
 	this->networkActionColor = "#079CFF";
 	this->timestamps = true;
 	this->userListFont = QFont("Courier");
+	this->userListSelectedTextColor = "#cbcb0f";
+	this->userListSelectedBackgroundColor = "#B74600";
 	this->urlColor = "#00F6FF";
 }
 
@@ -182,6 +184,8 @@ void IRCConfig::AppearanceCfg::init(IniSection& section)
 	section.createSetting("NetworkActionColor", this->networkActionColor);
 	section.createSetting("TimeStamps", this->timestamps);
 	section.createSetting("UserListFont", this->userListFont.toString());
+	section.createSetting("UserListSelectedTextColor", this->userListSelectedTextColor);
+	section.createSetting("UserListSelectedBackgroundColor", this->userListSelectedBackgroundColor);
 	section.createSetting("UrlColor", this->urlColor);
 }
 
@@ -197,6 +201,8 @@ void IRCConfig::AppearanceCfg::load(IniSection& section)
 	this->timestamps = section["TimeStamps"];
 	this->userListFont.fromString(section["UserListFont"]);
 	this->urlColor = (const QString &)section["UrlColor"];
+	this->userListSelectedTextColor = (const QString &)section["UserListSelectedTextColor"];
+	this->userListSelectedBackgroundColor = (const QString &)section["UserListSelectedBackgroundColor"];
 }
 
 void IRCConfig::AppearanceCfg::save(IniSection& section)
@@ -210,6 +216,8 @@ void IRCConfig::AppearanceCfg::save(IniSection& section)
 	section["NetworkActionColor"] = this->networkActionColor;
 	section["TimeStamps"] = this->timestamps;
 	section["UserListFont"] = this->userListFont.toString();
+	section["UserListSelectedTextColor"] = this->userListSelectedTextColor;
+	section["UserListSelectedBackgroundColor"] = this->userListSelectedBackgroundColor;
 	section["UrlColor"] = this->urlColor;
 }
 
