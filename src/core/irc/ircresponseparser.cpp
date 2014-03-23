@@ -382,9 +382,6 @@ IRCResponseParseResult IRCResponseParser::parseMessage()
 
 		case IRCResponseType::Quit:
 		{
-			// This is the :Quit: part of the message (??)
-			d->params.pop_front();
-
 			QString farewellMessage = QString();
 			farewellMessage = joinAndTrimColonIfNecessary(d->params);
 
