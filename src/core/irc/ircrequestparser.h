@@ -126,6 +126,10 @@ class IRCRequestParser : public QObject
 
 		IRCRequestParseResult buildOutput();
 		IRCNetworkAdapter *network();
+		/**
+		 * @brief Check if d->output is not longer than max message length.
+		 */
+		bool isOutputTooLong() const;
 };
 
 #endif

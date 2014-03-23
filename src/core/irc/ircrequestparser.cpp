@@ -94,7 +94,7 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::parse(IRCAdapterBase* 
 	IRCRequestParser::IRCRequestParseResult result = buildOutput();
 	if (result == Ok)
 	{
-		if (d->output.toUtf8().length() > IRCClient::MAX_MESSAGE_LENGTH)
+		if (isOutputTooLong())
 		{
 			return ErrorMessageTooLong;
 		}
@@ -144,6 +144,13 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::buildOutput()
 		QString recipient = d->tokens.takeFirst();
 		QString content = d->tokens.join(" ");
 		d->output = QString("%1 %2 :%3").arg(d->message, recipient, content);
+		if (isOutputTooLong())
+		{
+			// If message is too long at this point for some reason,
+			// we should prevent echoing it back to the chat window as that
+			// confuses the user as to whether the message was sent or not.
+			return ErrorMessageTooLong;
+		}
 		if (d->message == "PRIVMSG")
 		{
 			IRCCtcpParser ctcp(network(), network()->myNickname(),
@@ -206,3 +213,9 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::buildOutput()
 
 	return Ok;
 }
+
+bool IRCRequestParser::isOutputTooLong() const
+{
+	return d->output.toUtf8().length() > IRCClient::MAX_MESSAGE_LENGTH;
+}
+
