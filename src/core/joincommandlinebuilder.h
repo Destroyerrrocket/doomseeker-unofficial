@@ -52,6 +52,7 @@ class JoinCommandLineBuilder : public QObject
 
 		static bool checkWadseekerValidity(QWidget *parent=NULL);
 		const QString &error() const;
+		bool isConfigurationError() const;
 		CommandLineInfo obtainJoinCommandLine();
 
 	private:
