@@ -81,7 +81,7 @@ class MAIN_EXPORT IniSection
 		 *         retrieveSetting(). Invalid IniVariable is created if name
 		 *         is empty.
 		 */
-		IniVariable				createSetting(const QString& name, const QVariant& data);
+		IniVariable createSetting(const QString& name, const QVariant& data);
 
 		/**
 		 * @brief Deletes specified variable.
@@ -90,7 +90,7 @@ class MAIN_EXPORT IniSection
 		 *      Name of the variable to init. If '/' character is used,
 		 *      a variable in subsection will be accessed.
 		 */
-		void					deleteSetting(const QString& name);
+		void deleteSetting(const QString& name);
 
 		/**
 		 * @brief If true, IniSection object is not valid and should not be
@@ -112,12 +112,12 @@ class MAIN_EXPORT IniSection
 		 * @return IniVariable object that wraps around the variable. May be
 		 *         invalid if name is empty.
 		 */
-		IniVariable				retrieveSetting(const QString& name);
+		IniVariable retrieveSetting(const QString& name);
 
 		/**
 		* @brief const version of retrieveSetting()
 		*/
-		const IniVariable		retrieveSetting(const QString& name) const;
+		const IniVariable retrieveSetting(const QString& name) const;
 
 		/**
 		 * @brief Gets a variable. Creates it first if it doesn't exist yet.
@@ -128,7 +128,7 @@ class MAIN_EXPORT IniSection
 		 * @return IniVariable object that wraps around the variable. May be
 		 *         invalid if name is empty.
 		 */
-		IniVariable				setting(const QString& name);
+		IniVariable setting(const QString& name);
 
 		/**
 		 * @brief Sets a variable directly. Omits the IniVariable system.
@@ -139,17 +139,17 @@ class MAIN_EXPORT IniSection
 		 * @param value
 		 *      New value for the variable.
 		 */
-		void 					setValue(const QString& key, const QVariant& value);
+		void setValue(const QString& key, const QVariant& value);
 
 		/**
 		 * @brief Calls setting().
 		 */
-		IniVariable				operator[](const QString& name);
+		IniVariable operator[](const QString& name);
 
 		/**
 		 * @brief Calls const retrieveSetting().
 		 */
-		const IniVariable		operator[](const QString& name) const;
+		const IniVariable operator[](const QString& name) const;
 
 		/**
 		 * @brief Retrieves a variable directly; omits the IniVariable system.
@@ -157,7 +157,7 @@ class MAIN_EXPORT IniSection
 		 * @return QVariant object that denotes the variable. May be invalid
 		 *         if variable is not defined.
 		 */
-		QVariant 				value(const QString& key) const;
+		QVariant value(const QString& key) const;
 
 		/**
 		 * @brief Retrieves a variable directly; omits the IniVariable system.
@@ -167,7 +167,7 @@ class MAIN_EXPORT IniSection
 		 * @return QVariant object that denotes the variable. If variable is
 		 *         not valid, the defaultValue is returned.
 		 */
-		QVariant 				value(const QString& key, QVariant defaultValue) const;
+		QVariant value(const QString& key, QVariant defaultValue) const;
 
 	private:
 		class PrivData;

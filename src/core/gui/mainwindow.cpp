@@ -53,6 +53,7 @@
 #include "customservers.h"
 #include "doomseekerfilepaths.h"
 #include "fileutils.h"
+#include "joincommandlinebuilder.h"
 #include "log.h"
 #include "main.h"
 #include "strings.h"
@@ -77,6 +78,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
   trayIcon(NULL), trayIconMenu(NULL)
 {
 	autoUpdater = NULL;
+	mainDock = NULL;
 	connectionHandler = NULL;
 	updateChannelOnUpdateStart = new UpdateChannel();
 	updaterInstallerErrorCode = 0;
@@ -124,6 +126,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	initIRCDock();
 	initServerFilterDock();
 	initMainDock();
+	splitDockWidget(mainDock, serverFilterDock, Qt::Horizontal);
 
 	// Spawn Server Table Handler.
 	serverTableHandler = new ServerListHandler(tableServers, this);
@@ -442,7 +445,10 @@ void MainWindow::connectEntities()
 	connect(menuActionQuit, SIGNAL( triggered() ), this, SLOT( quitProgram() ));
 	connect(menuActionViewIRC, SIGNAL( triggered() ) , this, SLOT( menuViewIRC() ));
 	connect(menuActionWadseeker, SIGNAL( triggered() ), this, SLOT( menuWadSeeker() ));
-	connect(serverFilterDock, SIGNAL( filterUpdated(const ServerListFilterInfo&) ), this, SLOT( updateServerFilter(const ServerListFilterInfo&) ) );
+	connect(serverFilterDock, SIGNAL(filterUpdated(const ServerListFilterInfo&)),
+		this, SLOT(updateServerFilter(const ServerListFilterInfo&)) );
+	connect(serverFilterDock, SIGNAL(nonEmptyServerGroupingAtTopToggled(bool)),
+		serverTableHandler, SLOT(setGroupServersWithPlayersAtTop(bool)) );
 	connect(serverTableHandler, SIGNAL(serverFilterModified(ServerListFilterInfo)),
 		serverFilterDock, SLOT(setFilterInfo(ServerListFilterInfo)));
 	connect(serverTableHandler, SIGNAL( serverDoubleClicked(ServerPtr) ), this, SLOT( runGame(ServerPtr) ) );
@@ -723,7 +729,7 @@ void MainWindow::initMainDock()
 
 	// Make a dock out of the central MainWindow widget and drop that widget
 	// from the MainWindow itself.
-	QDockWidget *mainDock = new QDockWidget(tr("Servers"));
+	mainDock = new QDockWidget(tr("Servers"));
 	mainDock->setTitleBarWidget(new QWidget(this));
 	mainDock->setObjectName("ServerList");
 	mainDock->setFeatures(QDockWidget::NoDockWidgetFeatures);
@@ -951,7 +957,7 @@ void MainWindow::menuViewIRC()
 
 void MainWindow::menuWadSeeker()
 {
-	if (!ConnectionHandler::checkWadseekerValidity(this))
+	if (!JoinCommandLineBuilder::checkWadseekerValidity(this))
 	{
 		return;
 	}
@@ -1257,7 +1263,8 @@ void MainWindow::setupToolBar()
 void MainWindow::showServerJoinCommandLine(const ServerPtr &server)
 {
 	CommandLineInfo cli;
-	if (ConnectionHandler::obtainJoinCommandLine(this, server, cli, tr("Doomseeker - join command line"), false))
+	ConnectionHandler connectionHandler(server, this);
+	if (connectionHandler.obtainJoinCommandLine(cli, tr("Doomseeker - join command line"), false))
 	{
 		QString execPath = cli.executable.absoluteFilePath();
 		QStringList args = cli.args;

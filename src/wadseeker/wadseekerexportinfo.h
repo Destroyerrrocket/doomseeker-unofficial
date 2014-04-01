@@ -27,9 +27,9 @@
 
 #ifdef Q_OS_WIN32
 #ifdef WADSEEKER_API_EXPORT
-#define WADSEEKER_API	__declspec(dllexport)
+#define WADSEEKER_API __declspec(dllexport)
 #else
-#define WADSEEKER_API	__declspec(dllimport)
+#define WADSEEKER_API __declspec(dllimport)
 #endif
 #else
 #define WADSEEKER_API

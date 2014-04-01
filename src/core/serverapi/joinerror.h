@@ -63,6 +63,7 @@ class MAIN_EXPORT JoinError
 		const QString& error() const;
 		bool isError() const;
 		bool isMissingIwadOnly() const;
+		bool isMissingWadsError() const;
 
 		/**
 		 * This is valid only if type == MissingWads.

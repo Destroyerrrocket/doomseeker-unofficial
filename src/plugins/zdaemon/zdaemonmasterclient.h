@@ -40,29 +40,29 @@ class ZDaemonMasterClient : public MasterClient
 	public:
 		ZDaemonMasterClient();
 
-		const EnginePlugin*		plugin() const;
-		bool					readMasterResponse(QByteArray &data);
+		const EnginePlugin* plugin() const;
+		bool readMasterResponse(QByteArray &data);
 		//void					refresh();
 
 	protected:
 
-		bool					getServerListRequest(QByteArray &data);
+		bool getServerListRequest(QByteArray &data);
 
-		QNetworkAccessManager	*netAccessManager;
-		QWaitCondition			listWaitCondition;
+		QNetworkAccessManager *netAccessManager;
+		QWaitCondition listWaitCondition;
 
-		QByteArray				packetBuffer;
-		quint32					packetMask;
+		QByteArray packetBuffer;
+		quint32 packetMask;
 
 		//quint32					defaultIP;
-		QString					key;
+		QString key;
 
 	protected slots:
-		void	createQueryRequest();
-		void	listFetched(QNetworkReply *reply);
+		void createQueryRequest();
+		void listFetched(QNetworkReply *reply);
 
 	signals:
-		void	request();
+		void request();
 };
 
 #endif /* __ZDAEMONMASTERCLIENT_H__ */

@@ -41,12 +41,12 @@ class IRCResponseParseResult
 		IRCResponseParseResult(const IRCResponseParseResult& other);
 		~IRCResponseParseResult();
 
-		bool                            isValid() const
+		bool isValid() const
 		{
 			return d.pResponseType != NULL;
 		}
 
-		IRCResponseParseResult&         operator=(const IRCResponseParseResult& other);
+		IRCResponseParseResult& operator=(const IRCResponseParseResult& other);
 
 		/**
  		* @brief Type of the response as defined by IRCResponseType.
@@ -54,13 +54,13 @@ class IRCResponseParseResult
  		* If isValid() returns <code>false</code> this will also return an
  		* invalid IRCResponseType object.
  		*/
-		const IRCResponseType&          type() const;
+		const IRCResponseType& type() const;
 
 		/**
  		* @brief <code>true</code> if response message was parsed,
  		*        <code>false</code> if IRCResponseParser ignored the response.
  		*/
-		bool                            wasParsed() const
+		bool wasParsed() const
 		{
 			return d.bWasParsed;
 		}
@@ -69,13 +69,13 @@ class IRCResponseParseResult
 		class PrivData
 		{
 			public:
-				bool                    bWasParsed;
-				IRCResponseType*        pResponseType;
+				bool bWasParsed;
+				IRCResponseType* pResponseType;
 		};
 
-		PrivData                        d;
+		PrivData d;
 
-		void                            copyIn(const IRCResponseParseResult& other);
+		void copyIn(const IRCResponseParseResult& other);
 
 };
 

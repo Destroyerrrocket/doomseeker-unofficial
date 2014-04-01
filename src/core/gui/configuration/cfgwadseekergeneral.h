@@ -33,14 +33,14 @@ class CFGWadseekerGeneral : public ConfigurationBaseBox, private Ui::CFGWadseeke
 	public:
 		CFGWadseekerGeneral(QWidget* parent = NULL);
 
-		QIcon			icon() const { return QIcon(":/icons/preferences-system-4.png"); }
-		QString			name() const { return tr("General"); }
-		void 			readSettings();
+		QIcon icon() const { return QIcon(":/icons/preferences-system-4.png"); }
+		QString name() const { return tr("General"); }
+		void readSettings();
 		QString title() const { return tr("Wadseeker - General"); }
 
 	protected:
-		void			fillTargetDirectoryComboBox();
-		void 			saveSettings();
+		void fillTargetDirectoryComboBox();
+		void saveSettings();
 };
 
 #endif

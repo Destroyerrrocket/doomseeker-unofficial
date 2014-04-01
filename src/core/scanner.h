@@ -31,35 +31,35 @@
 
 enum ETokenType
 {
-	TK_Identifier,		// Ex: SomeIdentifier
-	TK_StringConst,		// Ex: "Some String"
-	TK_IntConst,		// Ex: 27
-	TK_FloatConst,		// Ex: 1.5
-	TK_BoolConst,		// Ex: true
-	TK_AndAnd,			// &&
-	TK_OrOr,			// ||
-	TK_EqEq,			// ==
-	TK_NotEq,			// !=
-	TK_GtrEq,			// >=
-	TK_LessEq,			// <=
-	TK_ShiftLeft,		// <<
-	TK_ShiftRight,		// >>
-	TK_Increment,		// ++
-	TK_Decrement,		// --
-	TK_PointerMember,	// ->
-	TK_ScopeResolution,	// ::
-	TK_MacroConcat,		// ##
-	TK_AddEq,			// +=
-	TK_SubEq,			// -=
-	TK_MulEq,			// *=
-	TK_DivEq,			// /=
-	TK_ModEq,			// %=
-	TK_ShiftLeftEq,		// <<=
-	TK_ShiftRightEq,	// >>=
-	TK_AndEq,			// &=
-	TK_OrEq,			// |=
-	TK_XorEq,			// ^=
-	TK_Ellipsis,		// ...
+	TK_Identifier, // Ex: SomeIdentifier
+	TK_StringConst, // Ex: "Some String"
+	TK_IntConst, // Ex: 27
+	TK_FloatConst, // Ex: 1.5
+	TK_BoolConst, // Ex: true
+	TK_AndAnd, // &&
+	TK_OrOr, // ||
+	TK_EqEq, // ==
+	TK_NotEq, // !=
+	TK_GtrEq, // >=
+	TK_LessEq, // <=
+	TK_ShiftLeft, // <<
+	TK_ShiftRight, // >>
+	TK_Increment, // ++
+	TK_Decrement, // --
+	TK_PointerMember, // ->
+	TK_ScopeResolution, // ::
+	TK_MacroConcat, // ##
+	TK_AddEq, // +=
+	TK_SubEq, // -=
+	TK_MulEq, // *=
+	TK_DivEq, // /=
+	TK_ModEq, // %=
+	TK_ShiftLeftEq, // <<=
+	TK_ShiftRightEq, // >>=
+	TK_AndEq, // &=
+	TK_OrEq, // |=
+	TK_XorEq, // ^=
+	TK_Ellipsis, // ...
 
 	TK_NumSpecialTokens,
 
@@ -119,38 +119,38 @@ class MAIN_EXPORT Scanner
 		Scanner(const char* data, int length=-1);
 		virtual ~Scanner();
 
-		void			checkForMeta();
+		void checkForMeta();
 		/**
 		 * Moves the position ahead any whitespace that there might be from the
 		 * current position.
 		 */
-		void			checkForWhitespace();
+		void checkForWhitespace();
 		/**
 		 * This function will scan the next token and return if it is of the
 		 * specified type.  If it returns true, then the position will be moved
 		 * to after the token, otherwise it will be reset.
 		 */
-		bool			checkToken(char token);
+		bool checkToken(char token);
 		/**
 		 * Transfers nextState over for use.
 		 */
-		void			expandState();
-		int				currentLine() const;
-		int				currentLinePos() const;
-		int				currentPos() const;
-		unsigned int	currentScanPos() const;
-		bool			nextString();
+		void expandState();
+		int currentLine() const;
+		int currentLinePos() const;
+		int currentPos() const;
+		unsigned int currentScanPos() const;
+		bool nextString();
 		/**
 		 * Gets whatever token is next returning true on success.
 		 * @param expandState Used by checkToken, leave as true.
 		 */
-		bool			nextToken(bool autoExpandState=true);
-		void			mustGetToken(char token);
-		void			rewind(); /// Only can rewind one step.
-		const char*		scriptData() const;
-		void			scriptMessage(MessageLevel level, const char* error, ...) const;
-		void			setScriptIdentifier(const QString &ident);
-		int				skipLine();
+		bool nextToken(bool autoExpandState=true);
+		void mustGetToken(char token);
+		void rewind(); /// Only can rewind one step.
+		const char* scriptData() const;
+		void scriptMessage(MessageLevel level, const char* error, ...) const;
+		void setScriptIdentifier(const QString &ident);
+		int skipLine();
 		ParserState& state();
 		const ParserState& state() const;
 
@@ -172,13 +172,13 @@ class MAIN_EXPORT Scanner
 		 * Changes the values in line and lineStart, does not change the actual
 		 * scanning position in the file.
 		 */
-		void		incrementLine();
+		void incrementLine();
 
 	private:
 		class PrivData;
 		PrivData *d;
 
-		static void		(*messageHandler)(MessageLevel, const char*, va_list);
+		static void (*messageHandler)(MessageLevel, const char*, va_list);
 };
 
 #endif /* __SCANNER_HPP__ */

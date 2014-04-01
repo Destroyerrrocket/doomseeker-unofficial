@@ -342,8 +342,12 @@ Server::Response ZandronumServer::readRequest(const QByteArray &data)
 	if((flags & SQF_FORCEJOINPASSWORD) == SQF_FORCEJOINPASSWORD)
 	{
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
-		in.skipRawData(1);
+		setLockedInGame(in.readQInt8() != 0);
 		flags ^= SQF_FORCEJOINPASSWORD;
+	}
+	else
+	{
+		setLockedInGame(false);
 	}
 
 	if((flags & SQF_GAMESKILL) == SQF_GAMESKILL)

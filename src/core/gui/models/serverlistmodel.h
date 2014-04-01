@@ -55,19 +55,19 @@ class ServerListModel : public QStandardItemModel
 		 */
 		enum ServerGroup
 		{
-			SG_NORMAL 		= 200,
-			SG_WAIT 		= 175,
-			SG_BANNED		= 150,
-			SG_TIMEOUT		= 125,
-			SG_BAD			= 100,
-			SG_FIRST_QUERY	= 50,
+			SG_NORMAL = 200,
+			SG_WAIT = 175,
+			SG_BANNED = 150,
+			SG_TIMEOUT = 125,
+			SG_BAD = 100,
+			SG_FIRST_QUERY = 50,
 		};
 
 		enum ServerListDataTypes
 		{
 			// Pointer to the server structure is always stored in the first column
 			SLDT_POINTER_TO_SERVER_STRUCTURE = Qt::UserRole+1,
-			SLDT_SORT						 = Qt::UserRole+2
+			SLDT_SORT = Qt::UserRole+2
 		};
 
 		ServerListModel(ServerListHandler* parent);
@@ -77,32 +77,32 @@ class ServerListModel : public QStandardItemModel
 		 */
 		int addServer(ServerPtr server, int response);
 
-		void 				destroyRows();
+		void destroyRows();
 
 		/**
 		 *	@brief Finds index of the row where server is contained.
 		 *
 		 *	@return -1 in case of a failure or index of the row otherwise.
 		 */
-		int 				findServerOnTheList(const Server* server);
+		int findServerOnTheList(const Server* server);
 
-		ServerListHandler*	handler() { return parentHandler; }
+		ServerListHandler* handler() { return parentHandler; }
 
 		/**
 		 *	Enforces update of a given row. No modificiation is done
 		 *	to the server info itself. Can be used to redraw things like
 		 *	background.
 		 */
-		void 				redraw(int row);
-		void 				redrawAll();
+		void redraw(int row);
+		void redrawAll();
 
-		void 				removeCustomServers();
+		void removeCustomServers();
 
 		/**
 		 *  Updates flag on given row.
 		 *  @param row - index of row to update
 		 */
-		void 				updateFlag(int row, bool force = true);
+		void updateFlag(int row, bool force = true);
 
 		/**
 		 *	Returns row index.
@@ -115,17 +115,17 @@ class ServerListModel : public QStandardItemModel
 		void setRefreshing(ServerPtr server);
 
 	signals:
-		void 				allRowsContentChanged();
-		void 				modelCleared();
-		void 				rowContentChanged(int row);
+		void allRowsContentChanged();
+		void modelCleared();
+		void rowContentChanged(int row);
 
 	protected:
-		void 					prepareHeaders();
-		ServerGroup 			serverGroup(int row);
+		void prepareHeaders();
+		ServerGroup serverGroup(int row);
 
-		QVariant				columnSortData(int row, int column);
+		QVariant columnSortData(int row, int column);
 
-		ServerListHandler*		parentHandler;
+		ServerListHandler* parentHandler;
 };
 
 #endif

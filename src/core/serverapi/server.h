@@ -154,9 +154,17 @@ class MAIN_EXPORT Server : public QObject
 		bool isKnown() const;
 
 		/**
-		 * @brief Passworded or not.
+		 * @brief True if any "isLocked()" returns true.
+		 */
+		bool isLockedAnywhere() const;
+		/**
+		 * @brief "Connect" passworded or not.
 		 */
 		bool isLocked() const;
+		/**
+		 * @brief "Join" passworded or not.
+		 */
+		bool isLockedInGame() const;
 
 		bool isRandomMapRotation() const;
 		bool isRefreshable() const;
@@ -279,6 +287,7 @@ class MAIN_EXPORT Server : public QObject
 		void setGameVersion(const QString& version);
 		void setIwad(const QString& iwad);
 		void setLocked(bool locked);
+		void setLockedInGame(bool locked);
 		void setPing(unsigned int currentPing);
 
 		/**

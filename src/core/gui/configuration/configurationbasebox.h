@@ -46,8 +46,8 @@ class MAIN_EXPORT ConfigurationBaseBox : public QWidget
 		ConfigurationBaseBox(QWidget* parent = NULL);
 		virtual ~ConfigurationBaseBox();
 
-		bool			allowSave();
-		bool			areSettingsAlreadyRead();
+		bool allowSave();
+		bool areSettingsAlreadyRead();
 
 		/**
 		 *	@brief Reimplement this to return displayable icon for the
@@ -56,17 +56,17 @@ class MAIN_EXPORT ConfigurationBaseBox : public QWidget
 		 *	If there is no QIcon associated with this box just return
 		 *	QIcon object with argument-less constructor.
 		 */
-		virtual QIcon	icon() const = 0;
+		virtual QIcon icon() const = 0;
 
 		/**
 		 * @brief Reimplement this to return list-displayable name for the
 		 *        ConfigurationBaseBox.
 		 */
-		virtual QString	name() const = 0;
+		virtual QString name() const = 0;
 
-		void			setAllowSave(bool b);
-		void			read();
-		bool			save();
+		void setAllowSave(bool b);
+		void read();
+		bool save();
 		/**
 		 * @brief Groupbox page title, by default returns name().
 		 */
@@ -77,7 +77,7 @@ class MAIN_EXPORT ConfigurationBaseBox : public QWidget
 		 *	This will send a request to the Doomseeker through
 		 *	ConfigurationDialog to redraw some graphics.
 		 */
-		void			appearanceChanged();
+		void appearanceChanged();
 
 	protected:
 		/**
@@ -85,14 +85,14 @@ class MAIN_EXPORT ConfigurationBaseBox : public QWidget
 		 *	Config::saveConfig() methods. They're here to read settings
 		 *	from and write them to controls.
 		 */
-		virtual void	readSettings()=0;
+		virtual void readSettings()=0;
 
 		/**
 		 *	These shouldn't execute Config::readConfig() and
 		 *	Config::saveConfig() methods. They're here to read settings
 		 *	from and write them to controls.
 		 */
-		virtual void	saveSettings()=0;
+		virtual void saveSettings()=0;
 
 	private:
 		class PrivData;

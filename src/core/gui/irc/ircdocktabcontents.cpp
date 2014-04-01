@@ -32,8 +32,24 @@
 #include "irc/ircuserinfo.h"
 #include "irc/ircuserlist.h"
 #include "log.h"
+#include <QDateTime>
 #include <QScrollBar>
 #include <QStandardItemModel>
+
+class IRCDockTabContents::PrivChatMenu : public QMenu
+{
+	public:
+		QAction *ctcpPing;
+		QAction *ctcpTime;
+		QAction *ctcpVersion;
+
+		PrivChatMenu()
+		{
+			ctcpPing = addAction(tr("CTCP Ping"));
+			ctcpTime = addAction(tr("CTCP Time"));
+			ctcpVersion = addAction(tr("CTCP Version"));
+		}
+};
 
 const int IRCDockTabContents::BLINK_TIMER_DELAY_MS = 650;
 
@@ -52,6 +68,8 @@ IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 	// There is only one case in which we want this to be visible:
 	// if we are in a channel.
 	this->lvUserList->setVisible(false);
+
+	btnCommand->setVisible(false);
 
 	connect(btnSend, SIGNAL( clicked() ), this, SLOT( sendMessage() ));
 	connect(leCommandLine, SIGNAL( returnPressed() ), this, SLOT( sendMessage() ));
@@ -117,16 +135,16 @@ void IRCDockTabContents::applyAppearanceSettings()
 		.arg(appearance.backgroundColor)
 		.arg(appearance.defaultTextColor);
 
-	QColor colorSelectedText("#cbcb0f");
-	QColor colorSelectedBackground("#B74600");
+	QColor colorSelectedText(appearance.userListSelectedTextColor);
+	QColor colorSelectedBackground(appearance.userListSelectedBackgroundColor);
+	qtStyleSheet += QString("QListView::item:selected { color: %1; background: %2; } ").arg(colorSelectedText.name(), colorSelectedBackground.name());
 
 	QColor colorHoverText = colorSelectedText.lighter();
 	QColor colorHoverBackground = colorSelectedBackground.lighter();
-
-	qtStyleSheet += QString("QListView::item:selected { color: %1; background: %2; } ").arg(colorSelectedText.name(), colorSelectedBackground.name());
 	qtStyleSheet += QString("QListView::item:hover  { color: %1; background: %2; } ").arg(colorHoverText.name(), colorHoverBackground.name());
 
 	QString channelActionClassName = IRCMessageClass::toStyleSheetClassName(IRCMessageClass::ChannelAction);
+	QString ctcpClassName = IRCMessageClass::toStyleSheetClassName(IRCMessageClass::Ctcp);
 	QString errorClassName = IRCMessageClass::toStyleSheetClassName(IRCMessageClass::Error);
 	QString networkActionClassName = IRCMessageClass::toStyleSheetClassName(IRCMessageClass::NetworkAction);
 
@@ -134,6 +152,7 @@ void IRCDockTabContents::applyAppearanceSettings()
 	htmlStyleSheetMessageArea += "span { white-space: pre; }";
 	htmlStyleSheetMessageArea += QString("a { color: %1; white-space: pre; } ").arg(appearance.urlColor);
 	htmlStyleSheetMessageArea += QString("." + channelActionClassName + " { color: %1; } ").arg(appearance.channelActionColor);
+	htmlStyleSheetMessageArea += QString("." + ctcpClassName + " { color: %1; } ").arg(appearance.ctcpColor);
 	htmlStyleSheetMessageArea += QString("." + errorClassName + " { color: %1; } ").arg(appearance.errorColor);
 	htmlStyleSheetMessageArea += QString("." + networkActionClassName + " { color: %1; } ").arg(appearance.networkActionColor);
 
@@ -160,12 +179,12 @@ void IRCDockTabContents::blinkTimerSlot()
 QStandardItem* IRCDockTabContents::findUserListItem(const QString& nickname)
 {
 	QStandardItemModel* pModel = (QStandardItemModel*)this->lvUserList->model();
-	IRCUserInfo userInfo(nickname);
+	IRCUserInfo userInfo(nickname, network());
 
 	for (int i = 0; i < pModel->rowCount(); ++i)
 	{
 		QStandardItem* pItem = pModel->item(i);
-		if (userInfo == pItem->text())
+		if (userInfo == IRCUserInfo(pItem->text(), network()))
 		{
 			return pItem;
 		}
@@ -272,7 +291,7 @@ void IRCDockTabContents::nameAdded(const IRCUserInfo& userInfo)
 		QStandardItem* pExistingItem = pModel->item(i);
 		QString existingNickname = pExistingItem->text();
 
-		if (userInfo <= existingNickname)
+		if (userInfo <= IRCUserInfo(existingNickname, network()))
 		{
 			pModel->insertRow(i, pItem);
 			return;
@@ -300,7 +319,7 @@ void IRCDockTabContents::nameRemoved(const IRCUserInfo& userInfo)
 	for (int i = 0; i < pModel->rowCount(); ++i)
 	{
 		QStandardItem* pItem = pModel->item(i);
-		if (userInfo == pItem->text())
+		if (userInfo.isSameNickname(pItem->text()))
 		{
 			pModel->removeRow(i);
 			break;
@@ -312,6 +331,11 @@ void IRCDockTabContents::nameUpdated(const IRCUserInfo& userInfo)
 {
 	nameRemoved(userInfo);
 	nameAdded(userInfo);
+}
+
+IRCNetworkAdapter* IRCDockTabContents::network()
+{
+	return ircAdapter()->network();
 }
 
 void IRCDockTabContents::newChatWindowIsOpened(IRCChatAdapter* pAdapter)
@@ -396,6 +420,21 @@ QString IRCDockTabContents::selectedNickname()
 	return "";
 }
 
+void IRCDockTabContents::sendCtcpPing(const QString &nickname)
+{
+	network()->sendCtcp(nickname, QString("PING %1").arg(QDateTime::currentMSecsSinceEpoch()));
+}
+
+void IRCDockTabContents::sendCtcpTime(const QString &nickname)
+{
+	network()->sendCtcp(nickname, QString("TIME"));
+}
+
+void IRCDockTabContents::sendCtcpVersion(const QString &nickname)
+{
+	network()->sendCtcp(nickname, QString("VERSION"));
+}
+
 void IRCDockTabContents::sendMessage()
 {
 	QString message = leCommandLine->text();
@@ -466,6 +505,7 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 
 		case IRCAdapterBase::PrivAdapter:
 		{
+			btnCommand->setVisible(true);
 			break;
 		}
 
@@ -474,6 +514,43 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 			receiveError("Doomseeker error: Unknown IRCAdapterBase*");
 			break;
 		}
+	}
+}
+
+void IRCDockTabContents::showChatContextMenu()
+{
+	showPrivChatContextMenu();
+}
+
+void IRCDockTabContents::showPrivChatContextMenu()
+{
+	QString nickname = ircAdapter()->recipient();
+	QString cleanNickname = IRCUserInfo(nickname, network()).cleanNickname();
+
+	PrivChatMenu menu;
+
+	QPoint pos(0, btnCommand->height());
+	QAction *action = menu.exec(btnCommand->mapToGlobal(pos));
+	if (action == NULL)
+	{
+		return;
+	}
+
+	if (action == menu.ctcpPing)
+	{
+		sendCtcpPing(cleanNickname);
+	}
+	else if (action == menu.ctcpTime)
+	{
+		sendCtcpTime(cleanNickname);
+	}
+	else if (action == menu.ctcpVersion)
+	{
+		sendCtcpVersion(cleanNickname);
+	}
+	else
+	{
+		qDebug() << "unsupported action" << action->text();
 	}
 }
 
@@ -532,7 +609,7 @@ void IRCDockTabContents::userListCustomContextMenuRequested(const QPoint& pos)
 		// Prevent calls if there is no one selected.
 		return;
 	}
-	QString cleanNickname = IRCUserInfo(nickname).cleanNickname();
+	QString cleanNickname = IRCUserInfo(nickname, network()).cleanNickname();
 
 	IRCChannelAdapter* pAdapter = (IRCChannelAdapter*) this->pIrcAdapter;
 	const QString& channel = pAdapter->recipient();
@@ -556,6 +633,18 @@ void IRCDockTabContents::userListCustomContextMenuRequested(const QPoint& pos)
 		{
 			pAdapter->banUser(cleanNickname, reason);
 		}
+	}
+	else if (pAction == menu.ctcpTime)
+	{
+		sendCtcpTime(cleanNickname);
+	}
+	else if (pAction == menu.ctcpPing)
+	{
+		sendCtcpPing(cleanNickname);
+	}
+	else if (pAction == menu.ctcpVersion)
+	{
+		sendCtcpVersion(cleanNickname);
 	}
 	else if (pAction == menu.deop)
 	{
@@ -611,7 +700,7 @@ void IRCDockTabContents::userListDoubleClicked(const QModelIndex& index)
 		// Prevent calls if there is no one selected.
 		return;
 	}
-	QString cleanNickname = IRCUserInfo(nickname).cleanNickname();
+	QString cleanNickname = IRCUserInfo(nickname, network()).cleanNickname();
 
 	this->pIrcAdapter->network()->openNewAdapter(cleanNickname);
 }
@@ -620,6 +709,10 @@ void IRCDockTabContents::userListDoubleClicked(const QModelIndex& index)
 IRCDockTabContents::UserListMenu::UserListMenu()
 {
 	this->openChatWindow = this->addAction(tr("Open chat window"));
+	this->addSeparator();
+	this->ctcpTime = this->addAction(tr("CTCP Time"));
+	this->ctcpPing = this->addAction(tr("CTCP Ping"));
+	this->ctcpVersion = this->addAction(tr("CTCP Version"));
 	this->addSeparator();
 	this->op = this->addAction(tr("Op"));
 	this->deop = this->addAction(tr("Deop"));

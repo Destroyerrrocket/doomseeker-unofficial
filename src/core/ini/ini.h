@@ -76,34 +76,34 @@ class MAIN_EXPORT Ini : public QObject
 		 *	No change to the data will be made if section already exists.
 		 *	@return Newly created or existing section.
 		 */
-		IniSection			createSection(const QString& name);
+		IniSection createSection(const QString& name);
 
 		/**
 		 *	Value of data parameter will be ignored and no changes will be
 		 *	performed if setting already exists.
 		 *	@return Newly created or existing setting.
 		 */
-		IniVariable 		createSetting(const QString& sectionname, const QString& name, const QVariant& data);
+		IniVariable createSetting(const QString& sectionname, const QString& name, const QVariant& data);
 
 		/**
 		 *	Completely removes a given section.
 		 */
-		void				deleteSection(const QString& sectionname);
+		void deleteSection(const QString& sectionname);
 
 		/**
 		 *	Completely removes a given setting. This will not erase the section
 		 *	even if it's completely empty.
 		 */
-		void				deleteSetting(const QString& sectionname, const QString& settingname);
+		void deleteSetting(const QString& sectionname, const QString& settingname);
 
-		void				removeKey(const QString& key);
+		void removeKey(const QString& key);
 
 		/**
 		 *	This method will not create a new section if it doesn't exist yet.
 		 *	@return NULL if section doesn't exist or a pointer to
 		 *	internally stored IniSection object. Do not delete this object.
 		 */
-		IniSection  		retrieveSection(const QString& name);
+		IniSection retrieveSection(const QString& name);
 
 		/**
 		 *	This won't create a variable if it doesn't exist and return NULL
@@ -111,7 +111,7 @@ class MAIN_EXPORT Ini : public QObject
 		 *	@return A reference to the internally stored IniVariable if it
 		 *	does. Be sure to check if it isNull.
 		 */
-		IniVariable 		retrieveSetting(const QString& sectionname, const QString& variablename);
+		IniVariable retrieveSetting(const QString& sectionname, const QString& variablename);
 
 		/**
 		 *	This method will attempt to retrieve an existing section.
@@ -125,7 +125,7 @@ class MAIN_EXPORT Ini : public QObject
 		 *	@return NULL if section doesn't exist or a pointer to
 		 *	internally stored IniSection object. Do not delete this object.
 		 */
-		IniSection			section(const QString& name);
+		IniSection section(const QString& name);
 
 		/**
 		 *	Retrieves references to all sections whose names fit a certain
@@ -133,7 +133,7 @@ class MAIN_EXPORT Ini : public QObject
 		 *	as lower-case strings. The regex pattern will be instructed to
 		 *	ignore the case size.
 		 */
-		QVector<IniSection>	sectionsArray(const QString& regexPattern);
+		QVector<IniSection> sectionsArray(const QString& regexPattern);
 
 		/**
 		 *	This method will create a variable if it doesn't exist. To avoid
@@ -141,10 +141,10 @@ class MAIN_EXPORT Ini : public QObject
 		 *	@return Returns a pointer to a IniVariable object. Do not delete
 		 *	this object.
 		 */
-		IniVariable 		setting(const QString& sectionname, const QString& variablename);
+		IniVariable setting(const QString& sectionname, const QString& variablename);
 
-		void				setValue(const QString& key, const QVariant& value);
-		QVariant			value(const QString& key) const;
+		void setValue(const QString& key, const QVariant& value);
+		QVariant value(const QString& key) const;
 
 	private:
 		class PrivData;

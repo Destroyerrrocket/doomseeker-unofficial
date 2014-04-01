@@ -65,55 +65,56 @@ class IRCChatAdapter : public IRCAdapterBase
 		 *	/PRIVMSG <recipient> :<message>
 		 *	@endcode
 		 */
-		void					doSendMessage(const QString& message, IRCAdapterBase* pOrigin);				
+		void doSendMessage(const QString& message, IRCAdapterBase* pOrigin);				
 
 		/**
 		 *	@brief Emits message() signal formatting it to present sender's message.
 		 */
-		virtual void			emitChatMessage(const QString& sender, const QString& content);
+		virtual void emitChatMessage(const QString& sender, const QString& content);
 
-		IRCNetworkAdapter*		network()
+		IRCNetworkAdapter* network()
 		{
 			return this->pNetwork;
 		}
 
-		const QString&			recipient() const { return this->recipientName; }
+		QString recipient() const { return this->recipientName; }
 		
 		/**
 		 *	@brief Sets IRCNetworkAdapter for this chat window. This adapter
 		 *	is not detached from the old network.
 		 */	
-		void					setNetwork(IRCNetworkAdapter* pNetwork);
+		void setNetwork(IRCNetworkAdapter* pNetwork);
 
 		/**
 		 *	@brief For chat adapters this will return recipientName.
 		 */
-		QString					title() const;
+		QString title() const;
 
 		/**
 		 *	@brief Use this to register the fact that user has changed
 		 *	his/hers nickname.
 		 */
-		virtual void			userChangesNickname(const QString& oldNickname, const QString& newNickname) = 0;
+		virtual void userChangesNickname(const QString& oldNickname, const QString& newNickname) = 0;
 
 		/**
 		 *	@brief Use this to register the fact that user has joined the chat.
 		 */	
-		virtual void			userJoins(const QString& nickname, const QString& fullSignature) = 0;
+		virtual void userJoins(const QString& nickname, const QString& fullSignature) = 0;
 		
 		/**
 		 *	@brief Use this to register the fact that user has left the chat.
 		 */
-		virtual void			userLeaves(const QString& nickname, const QString& farewellMessage, IRCQuitType quitType) = 0;
+		virtual void userLeaves(const QString& nickname, const QString& farewellMessage, IRCQuitType quitType) = 0;
 		
 		/**
 		 *	@brief Use this to register the fact that user MODE flags have changed.
 		 */
-		virtual void			userModeChanges(const QString& nickname, unsigned flagsAdded, unsigned flagsRemoved) = 0;		
+		virtual void userModeChanges(const QString& nickname,
+			const QList<char> &addedFlags, const QList<char> &removedFlags) = 0;
 		
 	protected:
-		IRCNetworkAdapter*		pNetwork;
-		QString					recipientName;
+		IRCNetworkAdapter* pNetwork;
+		QString recipientName;
 		
 		/**
 		 *	Makes sure the sent message will not exceed the IRC character limit.
@@ -123,10 +124,10 @@ class IRCChatAdapter : public IRCAdapterBase
 		 *		list is directly modified and only unused words are left when
 		 *		this method is done processing.
 		 */
-		QString					extractMessageLine(QStringList& words, int maxLength);
+		QString extractMessageLine(QStringList& words, int maxLength);
 		
-		void					sendChatMessage(const QString& message);
-		void					setRecipient(const QString& name);
+		void sendChatMessage(const QString& message);
+		void setRecipient(const QString& name);
 };
 
 

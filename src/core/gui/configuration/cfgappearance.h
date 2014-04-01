@@ -35,13 +35,13 @@ class CFGAppearance : public ConfigurationBaseBox, private Ui::CFGAppearance
 	public:
 		CFGAppearance(QWidget *parent=NULL);
 		
-		QIcon							icon() const { return QIcon(":/icons/color-fill.png"); }
-		QString							name() const { return tr("Appearance"); }
+		QIcon icon() const { return QIcon(":/icons/color-fill.png"); }
+		QString name() const { return tr("Appearance"); }
 
-		void							readSettings();
+		void readSettings();
 
 	protected:
-		void							saveSettings();
+		void saveSettings();
 
 	private:
 		void initLanguagesList();

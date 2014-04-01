@@ -19,11 +19,11 @@ class BuddyInfo
 			PT_ADVANCED
 		};
 		
-		static QString		createConfigEntry(const QVector<BuddyInfo>& buddies);
-		static void			readConfigEntry(const QString& configEntry, QVector<BuddyInfo>& outVector);
+		static QString createConfigEntry(const QVector<BuddyInfo>& buddies);
+		static void readConfigEntry(const QString& configEntry, QVector<BuddyInfo>& outVector);
 		
-		QRegExp				pattern;
-		PatternType			patternType;
+		QRegExp pattern;
+		PatternType patternType;
 		
 };
 

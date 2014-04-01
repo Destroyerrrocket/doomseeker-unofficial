@@ -89,7 +89,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *
 		 *	@see setPrimarySitesToDefault
 		 */
-		static const QString	defaultSites[];
+		static const QString defaultSites[];
 
 		/**
 		 *	List of file names that will be ignored as they are part of a
@@ -98,19 +98,28 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *
 		 *	@see isForbiddenWad
 		 */
-		static const QString	forbiddenWads[];
+		static const QString forbiddenWads[];
 
 		/**
 		 *	@return Default URL of Idgames archive, hardcoded into the library.
 		 */
-		static const QString 	defaultIdgamesUrl();
+		static const QString defaultIdgamesUrl();
 
 		/**
 		 *	Runs content of defaultSites array through
 		 *	QUrl::toPercentEncoding() and returns a list of so
 		 *	encoded strings.
 		 */
-		static QStringList 		defaultSitesListEncoded();
+		static QStringList defaultSitesListEncoded();
+
+		/**
+		 * @brief Lists only wads for which isForbiddenWad() returns false.
+		 */
+		static QStringList filterAllowedOnlyWads(const QStringList &wads);
+		/**
+		 * @brief Lists only wads for which isForbiddenWad() returns true.
+		 */
+		static QStringList filterForbiddenOnlyWads(const QStringList &wads);
 
 		/**
 		 *	@brief Attempts to detect if the input is on
@@ -121,7 +130,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *	@return True if Wadseeker will refuse to download the wad specified.
 		 *	@see iwadNames
 		 */
-		static bool				isForbiddenWad(const QString& wad);
+		static bool isForbiddenWad(const QString& wad);
 
 		/**
 		 * Initializes a new instance of Wadseeker.
@@ -139,7 +148,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 * @param wad
 		 *      Name of the file as specified by seekStarted() signal.
 		 */
-		bool				isDownloadingFile(const QString& file) const;
+		bool isDownloadingFile(const QString& file) const;
 
 		/**
 		 * @brief Check if Wadseeker is still working.
@@ -150,7 +159,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *         returned if there are still WADs pending for URLs but there
 		 *         is no way for these URLs to be provided.
 		 */
-		bool				isWorking() const;
+		bool isWorking() const;
 
 		/**
 		 *	Sets a custom site. This site has priority over all other
@@ -162,7 +171,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *	@param url
 		 *		A valid, absolute URL.
 		 */
-		void				setCustomSite(const QUrl& url);
+		void setCustomSite(const QUrl& url);
 
 		/**
 		 *	@brief Toggles Idgames enabled state.
@@ -170,12 +179,12 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *	If true, Idgames search will be performed.
 		 *	If false, Idgames archive will be skipped.
 		 */
-		void 				setIdgamesEnabled(bool bEnabled);
+		void setIdgamesEnabled(bool bEnabled);
 
 		/**
 		 * @brief Sets URL to Idgames search page.
 		 */
-		void 				setIdgamesUrl(QString archiveURL);
+		void setIdgamesUrl(QString archiveURL);
 
 		/**
 		 * @brief Sets maximum number of concurrent WAD downloads.
@@ -185,7 +194,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 * @param max
 		 *      Number of max. concurrent downloads. Cannot be lesser than one.
 		 */
-		void				setMaximumConcurrentDownloads(unsigned max);
+		void setMaximumConcurrentDownloads(unsigned max);
 
 		/**
 		 * @brief Sets maximum number of concurrent site seeks.
@@ -195,7 +204,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 * @param max
 		 *      Number of max. concurrent seeks. Cannot be lesser than one.
 		 */
-		void				setMaximumConcurrentSeeks(unsigned max);
+		void setMaximumConcurrentSeeks(unsigned max);
 
 		/**
 		 * Sets a list of primary sites. This is where Wadseeker begins
@@ -207,7 +216,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 * @param urlList
 		 *      List of valid, absolute URLs
 		 */
-		void 				setPrimarySites(const QStringList& urlList);
+		void setPrimarySites(const QStringList& urlList);
 
 		/**
 		 *	Convenience method. Sets list of primary sites to sites
@@ -215,7 +224,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *
 		 *	@see defaultSites
 		 */
-		void				setPrimarySitesToDefault();
+		void setPrimarySitesToDefault();
 
 		/**
 		 *	Target directory is a directory where all seeked files will
@@ -226,7 +235,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *	@param dir
 		 *		Path to a writable directory.
 		 */
-		void				setTargetDirectory(const QString& dir);
+		void setTargetDirectory(const QString& dir);
 
 		/**
 		 * @brief Skips current URL for the specified file.
@@ -240,7 +249,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *      file is not in progress then no operation will be
 		 *      performed.
 		 */
-		void				skipFileCurrentUrl(const QString& fileName);
+		void skipFileCurrentUrl(const QString& fileName);
 		
 		/**
 		 * @brief Skips site seeks for specified URL.
@@ -253,7 +262,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *		siteStarted() or siteRedirect() signals. If unknown URL
 		 *      is passed no operation will be performed.
 		 */
-		void				skipSiteSeek(const QUrl& url);
+		void skipSiteSeek(const QUrl& url);
 		
 		/**
 		 *	Library's "entry" method. This is where Wadseeker begins
@@ -264,7 +273,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *		List of files that will be searched for.
 		 *	@return True if seek was started. False otherwise.
 		 */
-		bool				startSeek(const QStringList& wads);
+		bool startSeek(const QStringList& wads);
 
 		/**
 		 *	Target directory is a directory where all seeked files will
@@ -272,14 +281,14 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *
 		 *	@return Path to a directory last set by setTargetDirectory().
 		 */
-		QString				targetDirectory() const;
+		QString targetDirectory() const;
 
 	public slots:
 		/**
 		 * Issues abort commands throughout entire library. aborted() signal
 		 * is emitted when Wadseeker finishes aborting.
 		 */
-		void				abort();
+		void abort();
 
 	signals:
 		/**

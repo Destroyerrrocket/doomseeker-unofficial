@@ -56,11 +56,11 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 		~DockBuddiesList();
 
 	public slots:
-		void	addBuddy();
-		void	scan(const MasterClient *master=NULL);
+		void addBuddy();
+		void scan(const MasterClient *master=NULL);
 
 	signals:
-		void	joinServer(const ServerPtr &server);
+		void joinServer(const ServerPtr &server);
 
 	protected:
 		class BuddyLocationInfo
@@ -78,18 +78,18 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 				PrivData *d;
 		};
 
-		QList<DockBuddiesList::BuddyLocationInfo>	buddies;
-		QStandardItemModel							*buddiesTableModel;
-		QList<QRegExp>								pBuddies;
+		QList<DockBuddiesList::BuddyLocationInfo> buddies;
+		QStandardItemModel *buddiesTableModel;
+		QList<QRegExp> pBuddies;
 
 	protected slots:
-		void	deleteBuddy();
-		void	followBuddy(const QModelIndex &index);
-		void	patternsListContextMenu(const QPoint &pos) const;
+		void deleteBuddy();
+		void followBuddy(const QModelIndex &index);
+		void patternsListContextMenu(const QPoint &pos) const;
 
 	private:
-		const MasterClient							*masterClient;
-		bool										save;
+		const MasterClient *masterClient;
+		bool save;
 };
 
 class AddBuddyDlg : public QDialog, private Ui::AddBuddyDlg
@@ -99,11 +99,11 @@ class AddBuddyDlg : public QDialog, private Ui::AddBuddyDlg
 	public:
 		AddBuddyDlg(QWidget *parent=NULL);
 
-		BuddyInfo::PatternType	patternType() const { return basicPattern->isChecked() ? BuddyInfo::PT_BASIC : BuddyInfo::PT_ADVANCED; }
-		QString					pattern() const { return patternBox->text(); }
+		BuddyInfo::PatternType patternType() const { return basicPattern->isChecked() ? BuddyInfo::PT_BASIC : BuddyInfo::PT_ADVANCED; }
+		QString pattern() const { return patternBox->text(); }
 
 	protected slots:
-		void					buttonBoxClicked(QAbstractButton *button);
+		void buttonBoxClicked(QAbstractButton *button);
 };
 
 #endif /* __DOCKBUDDIESLIST_H__ */

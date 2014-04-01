@@ -34,11 +34,14 @@ void CFGIRCAppearance::readSettings()
 	// Colors
 	this->btnBackgroundColor->setColorHtml(gIRCConfig.appearance.backgroundColor);
 	this->btnChannelActionColor->setColorHtml(gIRCConfig.appearance.channelActionColor);
+	this->btnCtcpColor->setColorHtml(gIRCConfig.appearance.ctcpColor);
 	this->btnDefaultTextColor->setColorHtml(gIRCConfig.appearance.defaultTextColor);
 	this->btnErrorColor->setColorHtml(gIRCConfig.appearance.errorColor);
 	this->btnNetworkActionColor->setColorHtml(gIRCConfig.appearance.networkActionColor);
 	this->btnUrlColor->setColorHtml(gIRCConfig.appearance.urlColor);
-	
+	this->btnUserListSelectedTextColor->setColorHtml(gIRCConfig.appearance.userListSelectedTextColor);
+	this->btnUserListSelectedBackgroundColor->setColorHtml(gIRCConfig.appearance.userListSelectedBackgroundColor);
+
 	// Fonts
 	this->btnMainFont->setSelectedFont(gIRCConfig.appearance.mainFont);
 	this->btnUserListFont->setSelectedFont(gIRCConfig.appearance.userListFont);
@@ -52,11 +55,14 @@ void CFGIRCAppearance::saveSettings()
 	// Colors
 	gIRCConfig.appearance.backgroundColor = this->btnBackgroundColor->colorHtml();
 	gIRCConfig.appearance.channelActionColor = this->btnChannelActionColor->colorHtml();
+	gIRCConfig.appearance.ctcpColor = this->btnCtcpColor->colorHtml();
 	gIRCConfig.appearance.defaultTextColor = this->btnDefaultTextColor->colorHtml();
 	gIRCConfig.appearance.errorColor = this->btnErrorColor->colorHtml();
 	gIRCConfig.appearance.networkActionColor = this->btnNetworkActionColor->colorHtml();
 	gIRCConfig.appearance.urlColor = this->btnUrlColor->colorHtml();
-	
+	gIRCConfig.appearance.userListSelectedTextColor = this->btnUserListSelectedTextColor->colorHtml();
+	gIRCConfig.appearance.userListSelectedBackgroundColor = this->btnUserListSelectedBackgroundColor->colorHtml();
+
 	// Fonts
 	gIRCConfig.appearance.mainFont = this->btnMainFont->selectedFont();
 	gIRCConfig.appearance.userListFont = this->btnUserListFont->selectedFont();

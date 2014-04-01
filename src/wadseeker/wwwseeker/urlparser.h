@@ -99,8 +99,8 @@ class UrlParser
 
 		PrivData d;
 
-		static bool	hasFileReferenceSomewhere(const QStringList& wantedFilenames, const Link& link);
-		static bool	isDirectLinkToFile(const QStringList& wantedFilenames, const Link& link);
+		static bool hasFileReferenceSomewhere(const QStringList& wantedFilenames, const Link& link);
+		static bool isDirectLinkToFile(const QStringList& wantedFilenames, const Link& link);
 };
 
 #endif

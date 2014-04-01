@@ -129,7 +129,8 @@ void IRCClient::receiveSocketData()
 {
 	while (socket.canReadLine())
 	{
-		QString responseLine = socket.readLine();
+		QByteArray socketData = socket.readLine();
+		QString responseLine = QString::fromUtf8(socketData.constData(), socketData.size());
 		emit ircServerResponse(responseLine);
 	}
 }
@@ -141,7 +142,7 @@ bool IRCClient::sendMessage(const QString& message)
 		return false;
 	}
 
-	QByteArray messageContent = message.toAscii();
+	QByteArray messageContent = message.toUtf8();
 	messageContent.append("\r\n");
 
 	qint64 numBytesWritten = socket.write(messageContent);

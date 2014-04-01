@@ -23,7 +23,11 @@
 #ifndef __IRCUSERINFO_H__
 #define __IRCUSERINFO_H__
 
+#include <QList>
 #include <QString>
+
+class IRCUserPrefix;
+class IRCNetworkAdapter;
 
 /**
  *	@brief Holds information flags about given nickname.
@@ -31,22 +35,6 @@
 class IRCUserInfo
 {
 	public:
-		static const unsigned FLAG_OP			= 0x1;
-		static const unsigned FLAG_VOICE		= 0x2;
-		static const unsigned FLAG_HALFOP		= 0x4;
-		static const unsigned FLAG_FOUNDER		= 0x8;
-		static const unsigned FLAG_PROTECTED	= 0x10;
-		
-		/**
-		 *	@brief Converts a character from MODE list to a flag.
-		 */
-		static unsigned		convertModeCharToFlag(char c);
-		
-		/**
-		 *	@brief Converts a character fron nickname to a flag.
-		 */
-		static unsigned		convertNickCharToFlag(char c);
-		
 		/**
 		 *	@brief Full user signature with nickname and hostname.
 		 *
@@ -56,33 +44,34 @@ class IRCUserInfo
 		 *	for chat adapters. However network adapters will require
 		 *	this signature info to deliver bans.
 		 */
-		QString				fullSignature;
+		QString fullSignature;
 
+		/**
+		 * @brief Creates invalid IRCUserInfo.
+		 *
+		 * isValid() returns false.
+		 */
+		IRCUserInfo();
 		/**
 		 *	@brief Constructor will set flags based on nickname's
 		 *	prefix.
 		 */
-		IRCUserInfo(const QString& nickname, const QString& fullSignature = "");
+		IRCUserInfo(const QString& nickname, const IRCNetworkAdapter *parentNetwork,
+			const QString& fullSignature = "");
 
 		/**
-		 *	@brief Returns nickname with no prefixes, contrary to the
-		 *	prefixedName() .
+		 * @brief Returns nickname with no prefixes, contrary to the
+		 *        prefixedName() .
 		 */
-		const QString&		cleanNickname() const { return userName; }
+		QString cleanNickname() const;
 
 		/**
 		 *	@brief Returns cleanNickname() with a call to 
 		 *	IRCGlobal::toIrcLower() .
 		 */
-		QString				cleanNicknameLowerCase() const;
+		QString cleanNicknameLowerCase() const;
 		
-		QString				extractHostnameFromFullSignature() const;
-
-		unsigned			flags() const { return this->userFlags; }
-
-		bool				isFlag(unsigned flag) const;
-		bool				isFounder() const { return isFlag(FLAG_FOUNDER); }
-		bool				isHalfOp() const { return isFlag(FLAG_HALFOP); }
+		QString extractHostnameFromFullSignature() const;
 
 		/**
 		 *	@brief Check if this user and user specified as parameter
@@ -90,13 +79,16 @@ class IRCUserInfo
 		 *
 		 *	Calls the operator==.
 		 */
-		bool				isSameNickname(const IRCUserInfo& otherUser) const; 
+		bool isSameNickname(const IRCUserInfo& otherUser) const; 
+		bool isSameNickname(const QString& otherNickname) const; 
 
-		bool				isOp() const { return isFlag(FLAG_OP); }
-		bool				isProtected() const { return isFlag(FLAG_PROTECTED); }
-		bool				isVoiced() const { return isFlag(FLAG_VOICE); }
+		bool isOp() const;
+		bool isValid() const;
 
-		bool				operator==(const IRCUserInfo& otherUser) const;
+		const QList<char> &modes() const;
+		const IRCNetworkAdapter *network() const;
+
+		bool operator==(const IRCUserInfo& otherUser) const;
 		
 		/**
 		 *	@brief This operator can be used for sorting.
@@ -105,38 +97,30 @@ class IRCUserInfo
 		 *	than other user's nickname. Also true if this user has one of the
 		 *	following flags over the other user: op, voice (in this order).
 		 */
-		bool				operator<=(const IRCUserInfo& otherUser) const;
+		bool operator<=(const IRCUserInfo& otherUser) const;
 
 		/**
 		 *	@brief Will generate prefix based on the user flags.
 		 */
-		QString				prefixedName() const;
+		QString prefixedName() const;
 
 		/**
 		 *	@brief Returns prefixedName() with a call to 
 		 *	IRCGlobal::toIrcLower() .
 		 */
-		QString				prefixedNameLowerCase() const;
+		QString prefixedNameLowerCase() const;
 
-		void				setFlag(unsigned flag, bool bSet);
-		void				setFlags(unsigned flags) { this->userFlags = flags; }
-
-		void				setIsOp(bool b) { setFlag(FLAG_OP, b); }
-		void				setIsVoiced(bool b) { setFlag(FLAG_VOICE, b); }
+		void setModes(const QList<char> &modes);
+		void setMode(char mode);
+		void setPrefixedNickname(const QString &nickname);
+		void unsetMode(char mode);
 
 	private:
-		unsigned			userFlags;
-		QString				userName;
+		const IRCNetworkAdapter *parentNetwork;
+		QList<char> userModes;
+		QString userName;
 
-		/**
-		 *	@param name
-		 *		Name from which the flags will be extracted. Also the name
-		 *		itself will be stripped of any special chars.
-		 *
-		 *	@return userFlags values.
-		 */
-		unsigned			extractFlags(QString& name);
-
+		const IRCUserPrefix &prefixes() const;
 };
 
 #endif

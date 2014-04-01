@@ -88,16 +88,16 @@ class IP2CParser : public QObject
 		/**
 		 *	@brief Retrieves the IP2C database this parser operates on.
 		 */
-		IP2C*					ip2c() const { return pTargetDatabase; }
+		IP2C* ip2c() const { return pTargetDatabase; }
 
 		/**
 		 *	@brief For multi-threading purposes. If this is true it is not
 		 *	recommended to delete this object nor the underlying IP2C database.
 		 */
-		bool					isParsing() const { return bIsParsing; }
+		bool isParsing() const { return bIsParsing; }
 
-		bool					readDatabase(const QString& filePath);
-		void					readDatabaseThreaded(const QString& filePath);
+		bool readDatabase(const QString& filePath);
+		void readDatabaseThreaded(const QString& filePath);
 
 	signals:
 		/**
@@ -106,7 +106,7 @@ class IP2CParser : public QObject
 		 *	It is not safe to delete IP2CParser object after readDatabase()
 		 *	call and before this signal is emitted.
 		 */
-		void					parsingFinished(bool bSuccess);
+		void parsingFinished(bool bSuccess);
 
 	protected:
 		/**
@@ -121,15 +121,15 @@ class IP2CParser : public QObject
 				~ConstructorDestructorParserStateSetter();
 
 			private:
-				IP2CParser*	pParser;
+				IP2CParser* pParser;
 		};
 
 		class ParsingThread : public QThread
 		{
 			public:
-				bool			bSuccessState;
-				QString			filePath;
-				IP2CParser*		pParser;
+				bool bSuccessState;
+				QString filePath;
+				IP2CParser* pParser;
 
 
 				ParsingThread(IP2CParser* pParser, const QString& filePath)
@@ -139,18 +139,18 @@ class IP2CParser : public QObject
 					this->pParser = pParser;
 				}
 
-				void			run();
+				void run();
 		};
 
 		/**
 		 *	Key value is the abbreviation of the country name.
 		 */
-		typedef QHash<QString, QList<IP2C::IP2CData> > 					Countries;
-		typedef QHash<QString, QList<IP2C::IP2CData> >::iterator 		CountriesIt;
-		typedef QHash<QString, QList<IP2C::IP2CData> >::const_iterator 	CountriesConstIt;
+		typedef QHash<QString, QList<IP2C::IP2CData> > Countries;
+		typedef QHash<QString, QList<IP2C::IP2CData> >::iterator CountriesIt;
+		typedef QHash<QString, QList<IP2C::IP2CData> >::const_iterator CountriesConstIt;
 
-		bool					bIsParsing;
-		ParsingThread*			currentParsingThread;
+		bool bIsParsing;
+		ParsingThread* currentParsingThread;
 
 		/**
 		 *	@brief Database to which the IP2C parser will save the data it
@@ -159,27 +159,27 @@ class IP2CParser : public QObject
 		 *	Since IP2CParser is prepared to work in a separate thread it is
 		 *	not advised to delete the IP2C object before parsing is complete.
 		 */
-		IP2C*					pTargetDatabase;
+		IP2C* pTargetDatabase;
 
-		QMutex					thisLock;
+		QMutex thisLock;
 
 
 		/**
 		 *	Converts downloaded text database to a compacted binary file.
 		 *	The name of the new file is IP2C::file.
 		 */
-		bool					convertAndSaveDatabase(QByteArray& downloadedData, const QString& outFilePath);
+		bool convertAndSaveDatabase(QByteArray& downloadedData, const QString& outFilePath);
 
 		/**
 		 *	Converts previously created by readTextDatabase() countries hash
 		 *	table into an output data that can be saved into a file.
 		 */
-		void					convertCountriesIntoBinaryData(const Countries& countries, QByteArray& output);
+		void convertCountriesIntoBinaryData(const Countries& countries, QByteArray& output);
 
-		bool					doReadDatabase(const QString& filePath);
+		bool doReadDatabase(const QString& filePath);
 
-		bool					readDatabaseVersion1(const QByteArray& dataArray);
-		bool					readDatabaseVersion2(const QByteArray& dataArray);
+		bool readDatabaseVersion1(const QByteArray& dataArray);
+		bool readDatabaseVersion2(const QByteArray& dataArray);
 
 		/**
 		 *	Called by convertAndSaveDatabase().
@@ -187,10 +187,10 @@ class IP2CParser : public QObject
 		 *		by this function.
 		 *	@param [out] countries - returned hash table of countries.
 		 */
-		void					readTextDatabase(QByteArray& textDatabase, Countries& countries);
+		void readTextDatabase(QByteArray& textDatabase, Countries& countries);
 
 	protected slots:
-		void					parsingThreadFinished();
+		void parsingThreadFinished();
 };
 
 #endif

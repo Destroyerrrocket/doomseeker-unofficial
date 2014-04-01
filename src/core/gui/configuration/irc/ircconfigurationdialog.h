@@ -34,14 +34,14 @@ class IRCConfigurationDialog : public ConfigurationDialog
 	public:
 		IRCConfigurationDialog(QWidget* parent = NULL);
 	
-		void 							initOptionsList();	
+		void initOptionsList();	
 
 	protected:
-		CFGIRCNetworks*					cfgNetworks;
+		CFGIRCNetworks* cfgNetworks;
 	
-		void							doSaveSettings();
-		bool							isNetworkAutojoinEnabled();
-		bool							validate();
+		void doSaveSettings();
+		bool isNetworkAutojoinEnabled();
+		bool validate();
 };
 
 #endif

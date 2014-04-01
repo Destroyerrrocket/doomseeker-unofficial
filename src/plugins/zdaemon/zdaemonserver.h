@@ -37,21 +37,21 @@ class TeamInfo
 	public:
 		TeamInfo(const QString &name=QObject::tr("<< Unknown >>"), const QColor &color=QColor(0,0,0), unsigned int score=0);
 
-		const QString	&name() const { return teamName; }
-		const QColor	&color() const { return teamColor; }
-		unsigned int	score() const { return teamScore; }
+		const QString &name() const { return teamName; }
+		const QColor &color() const { return teamColor; }
+		unsigned int score() const { return teamScore; }
 
 	protected:
-		void			setName(const QString &name) { teamName = name; }
-		void			setColor(const QColor &color) { teamColor = color; }
-		void			setScore(int score) { teamScore = score; }
+		void setName(const QString &name) { teamName = name; }
+		void setColor(const QColor &color) { teamColor = color; }
+		void setScore(int score) { teamScore = score; }
 
-		friend class	ZDaemonServer;
+		friend class ZDaemonServer;
 
 	private:
-		QString			teamName;
-		QColor			teamColor;
-		unsigned int	teamScore;
+		QString teamName;
+		QColor teamColor;
+		unsigned int teamScore;
 };
 
 class ZDaemonServer : public Server
@@ -61,20 +61,20 @@ class ZDaemonServer : public Server
 	public:
 		ZDaemonServer(const QHostAddress &address, unsigned short port);
 
-		GameRunner*			gameRunner();
+		GameRunner* gameRunner();
 
-		const EnginePlugin*	plugin() const;
+		const EnginePlugin* plugin() const;
 
-		QRgb				teamColor(int team) const;
-		QString				teamName(int team) const;
+		QRgb teamColor(int team) const;
+		QString teamName(int team) const;
 
 	protected:
-		Response	readRequest(QByteArray &data);
-		bool		sendRequest(QByteArray &data);
+		Response readRequest(QByteArray &data);
+		bool sendRequest(QByteArray &data);
 
-		static unsigned int	millisecondTime();
+		static unsigned int millisecondTime();
 
-		TeamInfo			teamInfo[ZD_MAX_TEAMS];
+		TeamInfo teamInfo[ZD_MAX_TEAMS];
 };
 
 #endif /* __ZDAEMONSERVER_H__ */

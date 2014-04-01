@@ -31,12 +31,6 @@ IRCUserList::~IRCUserList()
 	}
 }
 
-bool IRCUserList::appendNameToCachedList(const QString& nickname)
-{
-	IRCUserInfo userInfo(nickname);
-	return appendNameToCachedList(userInfo);
-}
-
 bool IRCUserList::appendNameToCachedList(const IRCUserInfo& userInfo)
 {
 	int index = this->indexOfName(userInfo.cleanNickname());
@@ -53,14 +47,6 @@ bool IRCUserList::appendNameToCachedList(const IRCUserInfo& userInfo)
 	}
 }
 
-void IRCUserList::appendNamesToCachedList(const QStringList& names)
-{
-	foreach (const QString& name, names)
-	{
-		appendNameToCachedList(name);
-	}
-}
-
 bool IRCUserList::changeNick(const QString& oldNickname, const QString& newNickname)
 {
 	const IRCUserInfo* pExistingInfo = user(oldNickname);
@@ -68,15 +54,11 @@ bool IRCUserList::changeNick(const QString& oldNickname, const QString& newNickn
 	{
 		return false;
 	}
-	
-	unsigned flags = pExistingInfo->flags();
 
+	IRCUserInfo user = *pExistingInfo;
+	user.setPrefixedNickname(newNickname);
 	removeNameFromCachedList(oldNickname);
-	
-	IRCUserInfo newUserInfo(newNickname);
-	newUserInfo.setFlags(flags);
-	
-	appendNameToCachedList(newUserInfo.prefixedName());
+	appendNameToCachedList(user);
 	return true;
 }
 
@@ -90,7 +72,7 @@ int	IRCUserList::indexOfName(const QString& nickname) const
 	for (int i = 0; i < usersArray.size(); ++i)
 	{
 		const IRCUserInfo& storedUser = *usersArray[i];
-		if (storedUser == nickname)
+		if (storedUser.isSameNickname(nickname))
 		{
 			return i;
 		}
@@ -112,13 +94,13 @@ bool IRCUserList::removeNameFromCachedList(const QString& nickname)
 	return true;
 }
 
-void IRCUserList::setUserFlags(const QString& nickname, unsigned flags)
+void IRCUserList::setUserModes(const QString& nickname, const QList<char> &modes)
 {
 	int index = this->indexOfName(nickname);
 	if (index >= 0)
 	{
 		IRCUserInfo& userInfo = *usersArray[index];
-		userInfo.setFlags(flags);
+		userInfo.setModes(modes);
 	}
 }
 
@@ -149,8 +131,7 @@ IRCUserInfo IRCUserList::userCopy(const QString& nickname) const
 	const IRCUserInfo* pUserInfo = user(nickname);
 	if (pUserInfo == NULL)
 	{
-		return IRCUserInfo("");
+		return IRCUserInfo();
 	}
-	
 	return *pUserInfo;
 }

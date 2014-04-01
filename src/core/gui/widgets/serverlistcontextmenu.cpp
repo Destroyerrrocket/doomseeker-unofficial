@@ -24,6 +24,7 @@
 
 #include "gui/entity/serverlistfilterinfo.h"
 #include "gui/widgets/serverfilterbuildermenu.h"
+#include "gui/serverlist.h"
 #include "serverapi/server.h"
 #include "strings.h"
 #include <QApplication>
@@ -33,15 +34,23 @@
 class ServerListContextMenu::PrivData
 {
 	public:
+		QAction *clearAdditionalSorting;
+		QAction *removeAdditionalSortingForColumn;
+		QAction *sortAdditionallyAscending;
+		QAction *sortAdditionallyDescending;
+		QModelIndex modelIndex;
 		ServerListFilterInfo serverFilter;
+		ServerListHandler *parent;
 };
 
 ServerListContextMenu::ServerListContextMenu(ServerPtr server, const ServerListFilterInfo& filter,
-	QObject *parent)
+	const QModelIndex &modelIndex, ServerListHandler *parent)
 : QObject(parent), pServer(server)
 {
 	d = new PrivData();
+	d->parent = parent;
 	d->serverFilter = filter;
+	d->modelIndex = modelIndex;
 	initializeMembers();
 	createMembers();
 }
@@ -108,10 +117,31 @@ void ServerListContextMenu::createMembers()
 		menu->addSeparator();
 		rcon = menu->addAction(tr("Remote Console"));
 	}
+
+	// Sorts.
+	menu->addSeparator();
+	if (!d->parent->isSortingByColumn(d->modelIndex.column()))
+	{
+		d->sortAdditionallyAscending = menu->addAction(tr("Sort additionally ascending"));
+		d->sortAdditionallyDescending = menu->addAction(tr("Sort additionally descending"));
+	}
+	if (d->parent->isSortingAdditionallyByColumn(d->modelIndex.column()))
+	{
+		d->removeAdditionalSortingForColumn = menu->addAction(
+			tr("Remove additional sorting for column"));
+	}
+	if (d->parent->isAnyColumnSortedAdditionally())
+	{
+		d->clearAdditionalSorting = menu->addAction(tr("Clear additional sorting"));
+	}
 }
 
 void ServerListContextMenu::initializeMembers()
 {
+	d->clearAdditionalSorting = NULL;
+	d->removeAdditionalSortingForColumn = NULL;
+	d->sortAdditionallyAscending = NULL;
+	d->sortAdditionallyDescending = NULL;
 	copyAddress = NULL;
 	copyEmail = NULL;
 	copyName = NULL;
@@ -123,6 +153,11 @@ void ServerListContextMenu::initializeMembers()
 	rcon = NULL;
 	refresh = NULL;
 	showJoinCommandLine = NULL;
+}
+
+const QModelIndex &ServerListContextMenu::modelIndex() const
+{
+	return d->modelIndex;
 }
 
 void ServerListContextMenu::popup(const QPoint& point)
@@ -189,6 +224,22 @@ ServerListContextMenu::Result ServerListContextMenu::translateQMenuResult(QActio
 	else if(resultAction == rcon)
 	{
 		return OpenRemoteConsole;
+	}
+	else if(resultAction == d->sortAdditionallyAscending)
+	{
+		return SortAdditionallyAscending;
+	}
+	else if(resultAction == d->sortAdditionallyDescending)
+	{
+		return SortAdditionallyDescending;
+	}
+	else if(resultAction == d->clearAdditionalSorting)
+	{
+		return ClearAdditionalSorting;
+	}
+	else if(resultAction == d->removeAdditionalSortingForColumn)
+	{
+		return RemoveAdditionalSortingForColumn;
 	}
 
 	return NothingHappened;

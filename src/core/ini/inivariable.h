@@ -71,7 +71,7 @@ class MAIN_EXPORT IniVariable
 		 *
 		 * Internally the value is always accessed as QVariant.
 		 */
-		QString			valueString() const { return this->value().toString(); }
+		QString valueString() const { return this->value().toString(); }
 
 		const IniVariable &operator=(const QString &str);
 		const IniVariable &operator=(const char* str) { return *this = QString(str); }
@@ -121,12 +121,12 @@ class MAIN_EXPORT IniVariable
 		/**
 		 * @brief Explicitly sets the value from QVariant.
 		 */
-		void				setValue(const QVariant& value);
+		void setValue(const QVariant& value);
 
 		/**
 		 * @brief Extracts the value as QVariant.
 		 */
-		QVariant			value() const;
+		QVariant value() const;
 
 	private:
 		friend class TestReadINIVariable;

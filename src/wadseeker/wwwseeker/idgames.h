@@ -113,10 +113,10 @@ class Idgames : public QObject
 	private:
 		enum PageProcessResults
 		{
-			NotIdgames 		= -2,
-			StringTooShort 	= -1,
-			NoPositions		= 0,
-			Ok				= 1,
+			NotIdgames = -2,
+			StringTooShort = -1,
+			NoPositions = 0,
+			Ok = 1,
 		};
 
 		bool bIsAborting;
@@ -131,7 +131,7 @@ class Idgames : public QObject
 
 		QNetworkReply* pCurrentRequest;
 		QNetworkAccessManager* pNetworkAccessManager;
-		QString	idgamesBaseUrl;
+		QString idgamesBaseUrl;
 		WadDownloadInfo* seekedFile;
 		QString userAgent;
 
@@ -140,14 +140,14 @@ class Idgames : public QObject
 		 *	@param response - return of processPage()
 		 *	@param url - url param of processPage()
 		 */
-		void				afterProcess(PageProcessResults result, const QUrl& url);
+		void afterProcess(PageProcessResults result, const QUrl& url);
 
 		/**
 		 *	Downloads Idgames page and increases currentPage counter.
 		 */
-		void				getNextPage();
+		void getNextPage();
 
-		void				doneEx(bool error);
+		void doneEx(bool error);
 
 		/**
 		 * @brief Extracts WAD download links from specified page.
@@ -161,13 +161,13 @@ class Idgames : public QObject
 		 * @param pageData - HTML code of the page.
 		 * @param pageUrl - URL to the page.
 		 */
-		void				extractAndEmitLinks(QByteArray& pageData, const QUrl& pageUrl);
+		void extractAndEmitLinks(QByteArray& pageData, const QUrl& pageUrl);
 
 		/**
 		 * @param [out] url - Link to the page describing the file, or invalid
 		 *                    QUrl object if link not found.
 		 */
-		PageProcessResults	processPage(QByteArray& pageData, QUrl& url);
+		PageProcessResults processPage(QByteArray& pageData, QUrl& url);
 
 		/**
 		 * @brief Starts network query using specified URL.

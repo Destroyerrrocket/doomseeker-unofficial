@@ -25,10 +25,10 @@
 class ServerSimilarity
 {
 	public:
-		ServerSummary server;
+		ServerPasswordSummary server;
 		float similarity;
 
-		ServerSimilarity(const ServerSummary& server, float similarity)
+		ServerSimilarity(const ServerPasswordSummary& server, float similarity)
 		{
 			this->server = server;
 			this->similarity = similarity;
@@ -40,7 +40,7 @@ class ServerSimilarity
 		}
 };
 
-void ServerPassword::addServer(const ServerSummary& v)
+void ServerPassword::addServer(const ServerPasswordSummary& v)
 {
 	if (v.isValid())
 	{
@@ -57,7 +57,7 @@ ServerPassword ServerPassword::deserializeQVariant(const QVariant& v)
 	QVariantList variantServers = m["servers"].toList();
 	foreach (QVariant server, variantServers)
 	{
-		o.addServer(ServerSummary::deserializeQVariant(server));
+		o.addServer(ServerPasswordSummary::deserializeQVariant(server));
 	}
 	return o;
 }
@@ -67,10 +67,10 @@ QString ServerPassword::lastGame() const
 	return lastServer().game();
 }
 
-ServerSummary ServerPassword::lastServer() const
+ServerPasswordSummary ServerPassword::lastServer() const
 {
-	ServerSummary lastServer;
-	foreach (const ServerSummary& s, d.servers)
+	ServerPasswordSummary lastServer;
+	foreach (const ServerPasswordSummary& s, d.servers)
 	{
 		if (!lastServer.isValid())
 		{
@@ -96,10 +96,10 @@ QDateTime ServerPassword::lastTime() const
 	return lastServer().time();
 }
 
-ServerSummary ServerPassword::mostSimilarServer(const ServerSummary& other, float* outSimilarity) const
+ServerPasswordSummary ServerPassword::mostSimilarServer(const ServerPasswordSummary& other, float* outSimilarity) const
 {
 	QList<ServerSimilarity> similarities;
-	foreach (const ServerSummary& candidate, d.servers)
+	foreach (const ServerPasswordSummary& candidate, d.servers)
 	{
 		if (candidate.similarity(other) > 0.0f)
 		{
@@ -121,16 +121,16 @@ ServerSummary ServerPassword::mostSimilarServer(const ServerSummary& other, floa
 		{
 			*outSimilarity = 0.0f;
 		}
-		return ServerSummary(); // Invalid value.
+		return ServerPasswordSummary(); // Invalid value.
 	}
 }
 
 void ServerPassword::removeServer(const QString& game, const QString& address, unsigned short port)
 {
-	QMutableListIterator<ServerSummary> it(d.servers);
+	QMutableListIterator<ServerPasswordSummary> it(d.servers);
 	while (it.hasNext())
 	{
-		ServerSummary server = it.next();
+		ServerPasswordSummary server = it.next();
 		if (server.game() == game && server.address() == address && server.port() == port)
 		{
 			it.remove();
@@ -143,7 +143,7 @@ QVariant ServerPassword::serializeQVariant() const
 	QVariantMap m;
 	m.insert("phrase", d.phrase);
 	QVariantList variantServers;
-	foreach (const ServerSummary& s, d.servers)
+	foreach (const ServerPasswordSummary& s, d.servers)
 	{
 		variantServers << s.serializeQVariant();
 	}

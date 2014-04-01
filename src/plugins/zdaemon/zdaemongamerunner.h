@@ -33,12 +33,12 @@ class ZDaemonGameRunner : public GameRunner
 	public:
 		ZDaemonGameRunner(const ZDaemonServer* server);
 
-		const EnginePlugin*			plugin() const;
+		const EnginePlugin* plugin() const;
 
 	protected:
-		virtual QString				argForConnect() const { return "+connect"; }
+		virtual QString argForConnect() const { return "+connect"; }
 
-		void						hostDMFlags(QStringList& args, const DMFlags& dmFlags) const;
+		void hostDMFlags(QStringList& args, const DMFlags& dmFlags) const;
 };
 
 #endif

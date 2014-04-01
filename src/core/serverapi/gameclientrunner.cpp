@@ -40,6 +40,7 @@ class ServerConnectParams::PrivData
 	public:
 		QString connectPassword;
 		QString demoName;
+		QString inGamePassword;
 };
 
 ServerConnectParams::ServerConnectParams()
@@ -77,6 +78,11 @@ const QString& ServerConnectParams::demoName() const
 	return d->demoName;
 }
 
+const QString& ServerConnectParams::inGamePassword() const
+{
+	return d->inGamePassword;
+}
+
 void ServerConnectParams::setConnectPassword(const QString& val)
 {
 	d->connectPassword = val;
@@ -86,11 +92,16 @@ void ServerConnectParams::setDemoName(const QString& val)
 {
 	d->demoName = val;
 }
+
+void ServerConnectParams::setInGamePassword(const QString& val)
+{
+	d->inGamePassword = val;
+}
 ///////////////////////////////////////////////////////////////////////////////
 #define BAIL_ON_ERROR(method) \
 { \
 	method; \
-	if (d->joinError.isError()) \
+	if (isFatalError()) \
 	{ \
 		return; \
 	} \
@@ -102,6 +113,7 @@ class GameClientRunner::PrivData
 	public:
 		QString argConnect;
 		QString argConnectPassword;
+		QString argInGamePassword;
 		QString argIwadLoading;
 		QString argPort;
 		QString argPwadLoading;
@@ -197,6 +209,19 @@ void GameClientRunner::addGamePaths()
 	d->cli->applicationDir = applicationDir;
 }
 
+void GameClientRunner::addInGamePassword()
+{
+	if (!argForInGamePassword().isNull())
+	{
+		args() << argForInGamePassword() << inGamePassword();
+	}
+	else
+	{
+		gLog << tr("BUG: Plugin doesn't specify argument for in-game "
+			"password, but the server requires such password.");
+	}
+}
+
 void GameClientRunner::addIwad_default()
 {
 	args() << argForIwadLoading() << iwadPath();
@@ -262,6 +287,11 @@ const QString& GameClientRunner::argForConnectPassword() const
 	return d->argConnectPassword;
 }
 
+const QString& GameClientRunner::argForInGamePassword() const
+{
+	return d->argInGamePassword;
+}
+
 const QString& GameClientRunner::argForIwadLoading() const
 {
 	return d->argIwadLoading;
@@ -282,6 +312,11 @@ const QString& GameClientRunner::argForDemoRecord() const
 	return d->argDemoRecord;
 }
 
+bool GameClientRunner::canDownloadWadsInGame() const
+{
+	return d->server->plugin()->data()->inGameFileDownloads;
+}
+
 const QString& GameClientRunner::connectPassword() const
 {
 	return d->connectParams.connectPassword();
@@ -295,6 +330,10 @@ void GameClientRunner::createCommandLineArguments_default()
 	if (d->server->isLocked())
 	{
 		BAIL_ON_ERROR(addPassword());
+	}
+	if (d->server->isLockedInGame())
+	{
+		BAIL_ON_ERROR(addInGamePassword());
 	}
 	if (!demoName().isEmpty())
 	{
@@ -357,6 +396,24 @@ GameClientRunner::GamePaths GameClientRunner::gamePaths()
 	return result;
 }
 
+const QString& GameClientRunner::inGamePassword() const
+{
+	return d->connectParams.inGamePassword();
+}
+
+bool GameClientRunner::isFatalError() const
+{
+	if (d->joinError.isError())
+	{
+		if (d->joinError.isMissingWadsError() && canDownloadWadsInGame())
+		{
+			return false;
+		}
+		return true;
+	}
+	return false;
+}
+
 bool GameClientRunner::isIwadFound() const
 {
 	return !d->cachedIwadPath.isEmpty();
@@ -399,6 +456,11 @@ void GameClientRunner::setArgForConnect(const QString& arg)
 void GameClientRunner::setArgForConnectPassword(const QString& arg)
 {
 	d->argConnectPassword = arg;
+}
+
+void GameClientRunner::setArgForInGamePassword(const QString& arg)
+{
+	d->argInGamePassword = arg;
 }
 
 void GameClientRunner::setArgForIwadLoading(const QString& arg)

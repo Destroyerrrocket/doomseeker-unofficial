@@ -32,21 +32,22 @@ class IRCClient : public QObject
 	Q_OBJECT
 
 	public:
-		static const int		MAX_MESSAGE_LENGTH = 510;
-	
+		static const int MAX_MESSAGE_LENGTH = 510;
+		static const int SAFE_MESSAGE_LENGTH = 400;
+
 		IRCClient();
 		~IRCClient();
 
-		void					connect(const QString& address, unsigned short port);
-		void					connectSocketSignals(SocketSignalsAdapter* pAdapter);
-		void					disconnect();
+		void connect(const QString& address, unsigned short port);
+		void connectSocketSignals(SocketSignalsAdapter* pAdapter);
+		void disconnect();
 
-		bool					isConnected() const;
+		bool isConnected() const;
 
-		bool					sendMessage(const QString& message);
+		bool sendMessage(const QString& message);
 		
 	signals:
-		void					hostLookupError(QHostInfo::HostInfoError errorValue);
+		void hostLookupError(QHostInfo::HostInfoError errorValue);
 		
 		/**
 		 *	@brief These are the messages that IRCClient class sends to
@@ -54,26 +55,26 @@ class IRCClient : public QObject
 		 *
 		 *	These messages should be used for informational purposes only.
 		 */
-		void					infoMessage(const QString& message);
-		void					ircServerResponse(const QString& message);
+		void infoMessage(const QString& message);
+		void ircServerResponse(const QString& message);
 		
 	private:
-		bool					bIsInHostLookupMode;
-		QString					hostName;
-		int						lookUpId;
-		unsigned short			port;
-		QTcpSocket				socket;
+		bool bIsInHostLookupMode;
+		QString hostName;
+		int lookUpId;
+		unsigned short port;
+		QTcpSocket socket;
 		
 		/**
 		 *	@brief Will prefer IPv4 addresses.
 		 *
 		 *	@return Pointer to a element on the list.
 		 */
-		const QHostAddress*		pickAddress(const QList<QHostAddress>& addressesList);
+		const QHostAddress* pickAddress(const QList<QHostAddress>& addressesList);
 
 	private slots:
-		void					hostLookupFinished(const QHostInfo& hostInfo);
-		void					receiveSocketData();
+		void hostLookupFinished(const QHostInfo& hostInfo);
+		void receiveSocketData();
 		
 };
 

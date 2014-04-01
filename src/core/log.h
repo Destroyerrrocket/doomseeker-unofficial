@@ -40,7 +40,7 @@ class MAIN_EXPORT Log : public QObject
 		/**
 		 *	@brief Global instance of the logger.
 		 */
-		static Log			instance;
+		static Log instance;
 
 		Log();
 		virtual ~Log();
@@ -48,26 +48,26 @@ class MAIN_EXPORT Log : public QObject
 		/**
 		 * @brief Timestamps are in format [hh:mm:ss]. Enabled by default.
 		 */
-		bool				areTimestampsEnabled() const;
+		bool areTimestampsEnabled() const;
 
 		/**
 		 *	@brief Entire content of the log.
 		 */
-		const QString&		content() const;
+		const QString& content() const;
 
 		/**
 		 *	Works like printf() from stdio. After the output string is
 		 *	constructed it is passed to addEntry() where additional formatting
 		 *	is applied.
 		 */
-		void				logPrintf(const char* str, ...);
+		void logPrintf(const char* str, ...);
 
 		/**
 		 *	Works like printf() from stdio. After the output string is
 		 *	constructed it is displayed AS IS, without any additional
 		 *	formatting.
 		 */
-		void				logUnformattedPrintf(const char* str, ...);
+		void logUnformattedPrintf(const char* str, ...);
 
 		/**
 		 * @brief If true all new entries will also be printed to stdout.
@@ -75,15 +75,15 @@ class MAIN_EXPORT Log : public QObject
 		 * Otherwise entries are stored only in the logContent member.
 		 * Default is true.
 		 */
-		bool				isPrintingToStdout() const;
+		bool isPrintingToStdout() const;
 
-		void				setPrintingToStdout(bool b);
-		void 				setTimestampsEnabled(bool b);
+		void setPrintingToStdout(bool b);
+		void setTimestampsEnabled(bool b);
 
 		/**
 		 *	@brief Executes addEntry(const QString&).
 		 */
-		Log& 				operator<<(const QString& string);
+		Log& operator<<(const QString& string);
 
 	public slots:
 		/**
@@ -92,19 +92,19 @@ class MAIN_EXPORT Log : public QObject
 		 *	if certain flags are enabled.
 		 *	@see newEntry()
 		 */
-		void	addEntry(const QString& string);
+		void addEntry(const QString& string);
 
 		/**
 		 *	Prints the string to specified output AS IT IS.
 		 *	@see addEntry()
 		 *	@see newEntry()
 		 */
-		void	addUnformattedEntry(const QString& string);
+		void addUnformattedEntry(const QString& string);
 
 		/**
 		 *	@brief Clears log content stored in the memory.
 		 */
-		void	clearContent();
+		void clearContent();
 
 	signals:
 		/**
@@ -112,7 +112,7 @@ class MAIN_EXPORT Log : public QObject
 		 *	are no additional newline character appended to the entry string.
 		 *	This is emitted by addEntry() and addUnformattedEntry() slots.
 		 */
-		void	newEntry(const QString& entry);
+		void newEntry(const QString& entry);
 
 	private:
 		class PrivData;

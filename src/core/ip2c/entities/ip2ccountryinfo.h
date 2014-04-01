@@ -17,8 +17,8 @@
 class IP2CCountryInfo
 {
 	public:
-		const QPixmap*	flag;
-		QString			name;
+		const QPixmap* flag;
+		QString name;
 
 		IP2CCountryInfo();
 		IP2CCountryInfo(const QPixmap* flag, QString name);

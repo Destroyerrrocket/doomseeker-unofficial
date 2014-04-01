@@ -122,6 +122,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/irc/ircnetworkselectionbox.h
 	gui/models/serverlistcolumn.h
 	gui/models/serverlistmodel.h
+	gui/models/serverlistproxymodel.h
 	gui/models/serverlistrowhandler.h
 	gui/widgets/colorbutton.h
 	gui/widgets/createserverdialogpage.h
@@ -162,6 +163,7 @@ set(DOOMSEEKER_QT_FILES
 	irc/ircadapterbase.h
 	irc/ircchanneladapter.h
 	irc/ircclient.h
+	irc/ircctcpparser.h
 	irc/ircglobalmessages.h
 	irc/ircnetworkadapter.h
 	irc/ircprivadapter.h
@@ -188,6 +190,7 @@ set(DOOMSEEKER_QT_FILES
 	application.h
 	apprunner.h
 	customservers.h
+	joincommandlinebuilder.h
 	log.h
 	main.h
 	socketsignalsadapter.h
@@ -204,6 +207,7 @@ set(SOURCE_FILES
 	configuration/doomseekerconfig.cpp
 	configuration/passwordscfg.cpp
 	configuration/serverpassword.cpp
+	configuration/serverpasswordsummary.cpp
 	gui/configuration/irc/cfgircappearance.cpp
 	gui/configuration/irc/cfgircdefinenetworkdialog.cpp
 	gui/configuration/irc/cfgircnetworks.cpp
@@ -225,6 +229,7 @@ set(SOURCE_FILES
 	gui/configuration/doomseekerconfigurationdialog.cpp
 	gui/configuration/engineconfigurationbasebox.cpp
 	gui/entity/serverlistfilterinfo.cpp
+	gui/helpers/comboboxex.cpp
 	gui/helpers/datetablewidgetitem.cpp
 	gui/helpers/playersdiagram.cpp
 	gui/irc/ircdock.cpp
@@ -284,6 +289,7 @@ set(SOURCE_FILES
 	irc/ircchanneladapter.cpp
 	irc/ircchatadapter.cpp
 	irc/ircclient.cpp
+	irc/ircctcpparser.cpp
 	irc/ircdelayedoperation.cpp
 	irc/ircdelayedoperationlist.cpp
 	irc/ircglobal.cpp
@@ -333,6 +339,7 @@ set(SOURCE_FILES
 	tests/testircisupportparser.cpp
 	tests/testruns.cpp
 	tests/teststrings.cpp
+	tests/testutf8splitter.cpp
 	updater/autoupdater.cpp
 	updater/updatechannel.cpp
 	updater/updateinstaller.cpp
@@ -347,6 +354,7 @@ set(SOURCE_FILES
 	datastreamoperatorwrapper.cpp
 	doomseekerfilepaths.cpp
 	fileutils.cpp
+	joincommandlinebuilder.cpp
 	json.cpp
 	localization.cpp
 	localizationinfo.cpp
@@ -356,6 +364,7 @@ set(SOURCE_FILES
 	scanner.cpp
 	speedcalculator.cpp
 	strings.cpp
+	utf8splitter.cpp
 	connectionhandler.cpp
 	version.cpp
 	versiondump.cpp
@@ -367,11 +376,12 @@ set(HEADER_FILES
 	configuration/doomseekerconfig.h
 	configuration/passwordscfg.h
 	configuration/serverpassword.h
+	configuration/serverpasswordsummary.h
 	gui/entity/serverlistfilterinfo.h
+	gui/helpers/comboboxex.h
 	gui/helpers/datetablewidgetitem.h
 	gui/helpers/playersdiagram.h
 	gui/irc/ircsounds.h
-	gui/models/serverlistproxymodel.h
 	gui/widgets/qtabwidgetext.h
 	gui/commongui.h
 	ini/inisection.h
@@ -418,6 +428,7 @@ set(HEADER_FILES
 	tests/testircisupportparser.h
 	tests/testruns.h
 	tests/teststrings.h
+	tests/testutf8splitter.h
 	updater/updatepackage.h
 	updater/updatepackagefilter.h
 	updater/updaterscriptparser.h
@@ -425,6 +436,7 @@ set(HEADER_FILES
 	datapaths.h
 	datastreamoperatorwrapper.h
 	doomseekerfilepaths.h
+	dpointer.h
 	fileutils.h
 	global.h
 	json.h
@@ -435,6 +447,7 @@ set(HEADER_FILES
 	scanner.h
 	speedcalculator.h
 	strings.h
+	utf8splitter.h
 	version.h
 	versiondefs.h
 	versiondump.h

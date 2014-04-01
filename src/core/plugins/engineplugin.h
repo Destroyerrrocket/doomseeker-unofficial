@@ -110,7 +110,7 @@ class MAIN_EXPORT EnginePlugin
 		};
 
 		/// Reimplement if you want to perform some ini initialization manually.
-		virtual void							setupConfig(IniSection &config) const {}
+		virtual void setupConfig(IniSection &config) const {}
 
 	public:
 		/**
@@ -120,21 +120,21 @@ class MAIN_EXPORT EnginePlugin
 		class Data
 		{
 			public:
-				unsigned int			abiVersion;
+				unsigned int abiVersion;
 				/// List of all engine's DM flags or NULL if none.
 				const QList<DMFlagsSection>* allDMFlags;
-				bool					allowsConnectPassword;
-				bool					allowsEmail;
-				bool					allowsJoinPassword;
-				bool					allowsMOTD;
-				bool					allowsRConPassword;
-				bool					allowsURL;
-				QString					author;
+				bool allowsConnectPassword;
+				bool allowsEmail;
+				bool allowsJoinPassword;
+				bool allowsMOTD;
+				bool allowsRConPassword;
+				bool allowsURL;
+				QString author;
 				/// Default port on which servers for given engine are hosted.
-				QString					defaultMaster;
-				quint16					defaultServerPort;
+				QString defaultMaster;
+				quint16 defaultServerPort;
 				/// All available game modes for the engine or NULL if none.
-				const QList<GameMode>*	gameModes;
+				const QList<GameMode>* gameModes;
 				/**
 				*	@brief Returns a list of modifiers.
 				*
@@ -142,21 +142,21 @@ class MAIN_EXPORT EnginePlugin
 				*	If an empty list (or NULL) is returned, Modifier combo will be
 				*	disabled.
 				*/
-				const QList<GameCVar>*	gameModifiers;
-				bool					hasMasterServer;
+				const QList<GameCVar>* gameModifiers;
+				bool hasMasterServer;
 				/// icon of the engine
-				QPixmap					*icon;
-				bool					inGameFileDownloads;
+				QPixmap *icon;
+				bool inGameFileDownloads;
 				QVector<IRCNetworkEntity> ircChannels;
-				QString					name;
-				IniSection				*pConfig;
-				quint8					refreshThreshold;
-				QString					scheme;
-				bool					supportsRandomMapRotation;
-				bool					valid;
-				unsigned int			version;
-				bool					demoExtensionAutomatic;
-				QString					demoExtension;
+				QString name;
+				IniSection *pConfig;
+				quint8 refreshThreshold;
+				QString scheme;
+				bool supportsRandomMapRotation;
+				bool valid;
+				unsigned int version;
+				bool demoExtensionAutomatic;
+				QString demoExtension;
 				/**
 				 * @brief Controls behavior of "Create Server" dialog.
 				 *
@@ -167,8 +167,8 @@ class MAIN_EXPORT EnginePlugin
 				 *
 				 * Default: true.
 				 */
-				bool					createDMFlagsPagesAutomatic;
-				bool					clientOnly;
+				bool createDMFlagsPagesAutomatic;
+				bool clientOnly;
 				/**
 				 * @brief Factory of executable retrievers objects.
 				 *
@@ -200,7 +200,7 @@ class MAIN_EXPORT EnginePlugin
 		/**
 		 *	@brief Engine's configuration widget.
 		 */
-		virtual ConfigurationBaseBox*	configuration(QWidget *parent) const;
+		virtual ConfigurationBaseBox* configuration(QWidget *parent) const;
 
 		/**
 		 * @brief Creates a list of custom Create Server dialog pages.
@@ -225,9 +225,9 @@ class MAIN_EXPORT EnginePlugin
 			return QList<CreateServerDialogPage*>();
 		}
 
-		const Data						*data() const { return d; }
-		const QPixmap					&icon() const { return *d->icon; }
-		void							setConfig(IniSection &cfg) const;
+		const Data *data() const { return d; }
+		const QPixmap &icon() const { return *d->icon; }
+		void setConfig(IniSection &cfg) const;
 
 		GameExeFactory *gameExe()
 		{
@@ -247,16 +247,16 @@ class MAIN_EXPORT EnginePlugin
 		 *	@brief Returns a list of limits (like fraglimit) supported by passed
 		 *	gamemode.
 		 */
-		virtual QList<GameCVar>			limits(const GameMode& mode) const { return QList<GameCVar>(); }
+		virtual QList<GameCVar> limits(const GameMode& mode) const { return QList<GameCVar>(); }
 
 		/**
 		 * Creates an MasterClient instace for this plugin.
 		 */
-		virtual MasterClient*			masterClient() const { return NULL; }
+		virtual MasterClient* masterClient() const { return NULL; }
 		/**
 		 * Fills the variables with information about the master's address.
 		 */
-		void							masterHost(QString &host, unsigned short &port) const;
+		void masterHost(QString &host, unsigned short &port) const;
 
 		/**
 		 * @brief Creates an instance of server object from this plugin.

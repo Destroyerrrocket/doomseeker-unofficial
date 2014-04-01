@@ -36,29 +36,41 @@ class MAIN_EXPORT Version
 		/**
 		 * Returns Mercurial changeset or an empty string if not available.
 		 */
-		static QString			changeset();
+		static QString changeset();
 
 		/**
 		 * @brief Combines program's name and versionRevision().
 		 */
-		static QString			fullVersionInfo() { return name() + " " + versionRevision(); }
-		static QString			name();
-		static QString			revision();
+		static QString fullVersionInfo() { return name() + " " + versionRevision(); }
+		/**
+		 * @brief Combines program's name, versionRevision()
+		 *        and operatingSystem().
+		 */
+		static QString fullVersionInfoWithOs()
+		{
+			return name() + " " + versionRevision() + " " + operatingSystem();
+		}
+		static QString name();
+		/**
+		 * @brief Name of operating system, content length and detail may vary.
+		 */
+		static QString operatingSystem();
+		static QString revision();
 		static unsigned long long revisionNumber();
 
 		/**
 		 * @brief WWW User Agent used for HTTP communications.
 		 */
-		static QString			userAgent();
+		static QString userAgent();
 
-		static QString			version();
+		static QString version();
 
 		/**
 		 * @brief Combines version and revision strings.
 		 *
 		 * If revision is not available only version is returned.
 		 */
-		static QString			versionRevision();
+		static QString versionRevision();
 
 
 };

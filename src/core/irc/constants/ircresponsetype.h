@@ -139,7 +139,7 @@ class IRCResponseType
  		* point to Invalid value but the numericValue() will be set to whatever
  		* was specified as the parameter of this method.
  		*/
-		static IRCResponseType  fromIntegerResponseValue(int responseType);
+		static IRCResponseType fromIntegerResponseValue(int responseType);
 
 		/**
  		* @brief If type can be represented as an integer, this will convert
@@ -156,7 +156,7 @@ class IRCResponseType
  		* @return Either a valid, non-negative number on success, or negative
  		*         value on failure.
  		*/
-		static int          toRfcNumber(MsgType type);
+		static int toRfcNumber(MsgType type);
 
 		/**
  		* @brief String representation of specified message type.
@@ -166,7 +166,7 @@ class IRCResponseType
  		* @return If type is invalid or unknown, null QString is returned.
  		*         All returned strings are upper-case.
  		*/
-		static QString      toRfcString(MsgType type);
+		static QString toRfcString(MsgType type);
 
 		/**
  		* @brief Returns MsgType basing on typeRepresentation.
@@ -174,7 +174,7 @@ class IRCResponseType
  		* It is either one of the known and implemented types or
  		* <code>Invalid</code> if string cannot be successfuly converted.
  		*/
-		static MsgType      typeFromRfcString(const QString& typeRepresentation);
+		static MsgType typeFromRfcString(const QString& typeRepresentation);
 
 		/**
  		* @brief Initializes an invalid IRCResponseType object.
@@ -197,7 +197,7 @@ class IRCResponseType
  		*
  		* See: RFC 1459.
  		*/
-		bool                isCommandResponse() const
+		bool isCommandResponse() const
 		{
 			return d.numericType >= 200 && d.numericType <= 399;
 		}
@@ -207,7 +207,7 @@ class IRCResponseType
  		*
  		* See: RFC 1459.
  		*/
-		bool                isErrorMessage() const
+		bool isErrorMessage() const
 		{
 			return d.numericType >= 400;
 		}
@@ -215,13 +215,13 @@ class IRCResponseType
 		/**
  		* @brief Response is valid if type is different than Invalid.
  		*/
-		bool                isValid() const
+		bool isValid() const
 		{
 			return d.type != Invalid;
 		}
 
-		bool                operator==(const IRCResponseType& other) const;
-		bool                operator!=(const IRCResponseType& other) const;
+		bool operator==(const IRCResponseType& other) const;
+		bool operator!=(const IRCResponseType& other) const;
 
 		/**
  		* @brief If message type can be represented as number,
@@ -230,7 +230,7 @@ class IRCResponseType
  		* Numeric types values are stored to easilly distinct a message family.
  		* For example all errors start with 400 and above.
  		*/
-		int                 numericType() const
+		int numericType() const
 		{
 			return d.numericType;
 		}
@@ -240,12 +240,12 @@ class IRCResponseType
  		*
  		* This returns the RFC 1459 representation of the message type!
  		*/
-		QString             toRfcString() const
+		QString toRfcString() const
 		{
 			return toRfcString(d.type);
 		}
 
-		MsgType             type() const
+		MsgType type() const
 		{
 			return d.type;
 		}
@@ -258,11 +258,11 @@ class IRCResponseType
  				* @brief If message type can be represented as number,
  				*        this will contain its value.
  				*/
-				int             numericType;
-				MsgType         type;
+				int numericType;
+				MsgType type;
 		};
 
-		PrivData            d;
+		PrivData d;
 };
 
 #endif

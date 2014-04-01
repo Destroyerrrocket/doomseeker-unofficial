@@ -46,33 +46,33 @@ class MAIN_EXPORT PlayersList
 		/**
 		 *	@brief Lists all bots regardless if they are on a team or not.
 		 */
-		void				bots(PlayersList& botsList) const;
+		void bots(PlayersList& botsList) const;
 		
 		/**
 		 *	@brief Lists only those bots that are not on a team.
 		 */
-		void				botsWithoutTeam(PlayersList& botsList) const;
+		void botsWithoutTeam(PlayersList& botsList) const;
 		void clear();
 		int count() const
 		{
 			return size();
 		}
 
-		int					numBots() const;
-		int					numBotsOnTeam(int team) const;
-		int					numBotsWithoutTeam() const;
+		int numBots() const;
+		int numBotsOnTeam(int team) const;
+		int numBotsWithoutTeam() const;
 
 		/**
 		 *	@brief Overall number of people and bots on the server.
 		 */
-		int					numClients() const;
-		int					numClientsWithoutBots() const;
+		int numClients() const;
+		int numClientsWithoutBots() const;
 
-		int					numHumansInGame() const;
-		int					numHumansOnTeam(int team) const;
-		int					numHumansWithoutTeam() const;
-		int					numPlayersOnTeam(int team) const;
-		int					numSpectators() const;
+		int numHumansInGame() const;
+		int numHumansOnTeam(int team) const;
+		int numHumansWithoutTeam() const;
+		int numPlayersOnTeam(int team) const;
+		int numSpectators() const;
 
 		PlayersList &operator<<(const Player &player);
 		Player &operator[](int index);
@@ -91,7 +91,7 @@ class MAIN_EXPORT PlayersList
 		void inGamePlayersByTeams(PlayersByTeams& playersListMap) const;
 
 		int size() const;
-		void				spectators(PlayersList& spectatorsList) const;
+		void spectators(PlayersList& spectatorsList) const;
 	private:
 		class PrivData;
 		PrivData* d;

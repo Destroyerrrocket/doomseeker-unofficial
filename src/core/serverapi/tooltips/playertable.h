@@ -38,7 +38,7 @@ class PlayerTable : public QObject
 		PlayerTable(const ServerCPtr &server);
 		~PlayerTable();
 
-		QString						generateHTML();
+		QString generateHTML();
 
 	private:
 		class PrivData;
@@ -47,17 +47,17 @@ class PlayerTable : public QObject
 		/**
 		 *	@brief Sets numOfColumns based on pServer states.
 		 */
-		void						setNumberOfColumns();
+		void setNumberOfColumns();
 
 		/**
 		 *	This will return absolutely nothing if the list in the first
 		 *	argument is empty.
 		 */
-		QString						spawnPartOfPlayerTable(const PlayersList& list, bool bAppendEmptyRowAtBeginning);
-		QString						spawnPlayersRows(const PlayersByTeams& playersByTeams);
+		QString spawnPartOfPlayerTable(const PlayersList& list, bool bAppendEmptyRowAtBeginning);
+		QString spawnPlayersRows(const PlayersByTeams& playersByTeams);
 
-		QString						tableContent();
-		QString						tableHeader();
+		QString tableContent();
+		QString tableHeader();
 };
 
 #endif

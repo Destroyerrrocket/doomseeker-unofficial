@@ -37,7 +37,7 @@ class ImportantMessagesWidget : public QWidget
 		/**
  		* @see _maxMessages
  		*/
-		unsigned        maxMessages() const
+		unsigned maxMessages() const
 		{
 			return _maxMessages;
 		}
@@ -45,7 +45,7 @@ class ImportantMessagesWidget : public QWidget
 		/**
  		* @see _maxMessages
  		*/
-		void            setMaxMessages(unsigned num)
+		void setMaxMessages(unsigned num)
 		{
 			_maxMessages = num;
 		}
@@ -54,7 +54,7 @@ class ImportantMessagesWidget : public QWidget
 		/**
  		* @brief Adds a new message without a timestamp.
  		*/
-		void            addMessage(const QString& message);
+		void addMessage(const QString& message);
 
 		/**
  		* @brief Adds a message with a timestamp.
@@ -64,7 +64,7 @@ class ImportantMessagesWidget : public QWidget
  		* @param timestamp
  		*      QDateTime object representing time.
  		*/
-		void            addMessage(const QString& message, const QDateTime& dateTime);
+		void addMessage(const QString& message, const QDateTime& dateTime);
 
 		/**
  		* @brief Adds a message with a timestamp.
@@ -74,14 +74,14 @@ class ImportantMessagesWidget : public QWidget
  		* @param timestamp
  		*      Time in seconds since the epoch.
  		*/
-		void            addMessage(const QString& message, unsigned timestamp);
+		void addMessage(const QString& message, unsigned timestamp);
 
 		/**
  		* @brief Clears all messages from the widghet.
  		*
  		* Widget will shrink itself in a way that will make it invisible.
  		*/
-		void            clear();
+		void clear();
 
 		/**
  		* @brief Removes a number of oldest messages from the widget.
@@ -92,12 +92,12 @@ class ImportantMessagesWidget : public QWidget
  		*      Amount of messages to remove. If higher than the actual count
  		*      of messages, will work the same as clear().
  		*/
-		void            removeOldest(int num);
+		void removeOldest(int num);
 
 		/**
  		* @brief Will remove one oldest message.
  		*/
-		void            removeOneOldest();
+		void removeOneOldest();
 
 	private:
 		class MessageLabel
@@ -109,23 +109,23 @@ class ImportantMessagesWidget : public QWidget
 					this->timeCreated = QDateTime::currentDateTime();
 				}
 
-				QLabel*         pLabel;
-				QDateTime       timeCreated;
+				QLabel* pLabel;
+				QDateTime timeCreated;
 		};
 
-		QList<MessageLabel>     labelWidgets;
+		QList<MessageLabel> labelWidgets;
 
 		/**
  		* @brief Amount of messages that can be displayed in the widget at
  		* the same time.
  		*/
-		unsigned                _maxMessages;
+		unsigned _maxMessages;
 
 		/**
  		* @brief Will periodically clean up old label widgets.
  		*/
-		QTimer                  oldLabelCleaner;
-		QVBoxLayout*            pLayout;
+		QTimer oldLabelCleaner;
+		QVBoxLayout* pLayout;
 
 	private slots:
 		/**
@@ -134,7 +134,7 @@ class ImportantMessagesWidget : public QWidget
  		* Removes old label widgets only if they are both beyond maximum amount
  		* of widgets limit AND beyond the MAX_MSG_KEEP_TIME_SEC time limit.
  		*/
-		void                    dropOldWidgetsIfBeyondLimit();
+		void dropOldWidgetsIfBeyondLimit();
 };
 
 #endif

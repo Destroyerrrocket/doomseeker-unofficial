@@ -74,26 +74,47 @@ void IRCUserPrefix::assignPrefix(char mode, char prefix)
 	d->map << IRCModePrefix(mode, prefix);
 }
 
+QString IRCUserPrefix::cleanNickname(const QString &nickname) const
+{
+	if (!nickname.isEmpty())
+	{
+		if (hasPrefix(nickname[0].toAscii()))
+		{
+			return nickname.mid(1);
+		}
+	}
+	return nickname;
+}
+
+int IRCUserPrefix::compare(char mode1, char mode2) const
+{
+	if (mode1 == mode2)
+	{
+		return 0;
+	}
+	foreach (const IRCModePrefix &candidate, d->map)
+	{
+		if (candidate.mode == mode1)
+		{
+			return -1;
+		}
+		else if (candidate.mode == mode2)
+		{
+			return 1;
+		}
+	}
+	// Neither was found so we treat them as equal.
+	return 0;
+}
+
 bool IRCUserPrefix::hasMode(char mode) const
 {
 	return prefixForMode(mode) != 0;
 }
 
-bool IRCUserPrefix::isLessThan(char mode1, char mode2) const
+bool IRCUserPrefix::hasPrefix(char prefix) const
 {
-	foreach (const IRCModePrefix &candidate, d->map)
-	{
-		if (candidate.mode == mode1)
-		{
-			return true;
-		}
-		else if (candidate.mode == mode2)
-		{
-			return false;
-		}
-	}
-	// Neither was found so we treat them as equal.
-	return false;
+	return modeForPrefix(prefix) != 0;
 }
 
 IRCUserPrefix IRCUserPrefix::mkDefault()
@@ -103,6 +124,18 @@ IRCUserPrefix IRCUserPrefix::mkDefault()
 	obj.assignPrefix('h', '%');
 	obj.assignPrefix('v', '+');
 	return obj;
+}
+
+char IRCUserPrefix::modeFromNickname(const QString &nickname) const
+{
+	if (!nickname.isEmpty())
+	{
+		if (hasPrefix(nickname[0].toAscii()))
+		{
+			return modeForPrefix(nickname[0].toAscii());
+		}
+	}
+	return 0;
 }
 
 char IRCUserPrefix::modeForPrefix(char prefix) const
@@ -127,4 +160,17 @@ char IRCUserPrefix::prefixForMode(char mode) const
 		}
 	}
 	return 0;
+}
+
+char IRCUserPrefix::topMostMode(const QList<char> &candidates) const
+{
+	char highest = 0;
+	foreach (char candidate, candidates)
+	{
+		if (compare(highest, candidate) > 0)
+		{
+			highest = candidate;
+		}
+	}
+	return highest;
 }

@@ -99,6 +99,11 @@ bool JoinError::isMissingIwadOnly() const
 		&& d->missingWads.isEmpty();
 }
 
+bool JoinError::isMissingWadsError() const
+{
+	return d->type == MissingWads;
+}
+
 const QString& JoinError::missingIwad() const
 {
 	return d->missingIwad;

@@ -16,29 +16,29 @@ class TableWidgetMouseAware : public QTableWidget
 	public:
 		TableWidgetMouseAware(QWidget* parent = NULL);
 		
-		bool			isEmitSignalsEvenIfIndexIsInvalidEnabled() const { return bEmitSignalsEvenIfIndexIsInvalid; }
+		bool isEmitSignalsEvenIfIndexIsInvalidEnabled() const { return bEmitSignalsEvenIfIndexIsInvalid; }
 		
 		/**
 		 *	@brief Returns indices of currently selected rows.
 		 */
-		QList<int>		selectedRows() const;
-		void			setEmitSignalsEvenIfIndexIsInvalid(bool b) { bEmitSignalsEvenIfIndexIsInvalid = b; }
+		QList<int> selectedRows() const;
+		void setEmitSignalsEvenIfIndexIsInvalid(bool b) { bEmitSignalsEvenIfIndexIsInvalid = b; }
 		
 	private:
 		/**
 		 *	@brief If set to true signals will be emitted without prior check
 		 *	to see if a table item was clicked.
 		 */
-		bool			bEmitSignalsEvenIfIndexIsInvalid;
+		bool bEmitSignalsEvenIfIndexIsInvalid;
 	
 	protected:
-		virtual void 	mouseDoubleClickEvent(QMouseEvent* event);
-		virtual void 	mouseReleaseEvent(QMouseEvent* event);
+		virtual void mouseDoubleClickEvent(QMouseEvent* event);
+		virtual void mouseReleaseEvent(QMouseEvent* event);
 
 	signals:
-		void			leftMouseDoubleClicked(const QModelIndex& index, const QPoint& cursorPosition);
-		void			middleMouseClick(const QModelIndex& index, const QPoint& cursorPosition);
-		void			rightMouseClick(const QModelIndex& index, const QPoint& cursorPosition);
+		void leftMouseDoubleClicked(const QModelIndex& index, const QPoint& cursorPosition);
+		void middleMouseClick(const QModelIndex& index, const QPoint& cursorPosition);
+		void rightMouseClick(const QModelIndex& index, const QPoint& cursorPosition);
 };
 
 #endif

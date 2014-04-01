@@ -71,7 +71,7 @@ class QQueryMenuAction : public QAction
 			}
 		}
 
-		MasterClient*     masterClient()
+		MasterClient* masterClient()
 		{
 			return pClient;
 		}
@@ -94,9 +94,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 *	checks. It will make sure the delay between the refreshes is
 		 *	inside gives boundaries (30 - 3600 seconds).
 		 */
-		void	initAutoRefreshTimer();
+		void initAutoRefreshTimer();
 
-		void	notifyFirstRun();
+		void notifyFirstRun();
 
 		/**
 		 * @brief This should be set if program was started with
@@ -124,19 +124,19 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 * @brief Sets query for selected MasterClient object to enabled
 		 * or disabled.
 		 */
-		void    setQueryMasterServerEnabled(MasterClient* pClient, bool bEnabled);
+		void setQueryMasterServerEnabled(MasterClient* pClient, bool bEnabled);
 
-		void	stopAutoRefreshTimer() { autoRefreshTimer.stop(); }
+		void stopAutoRefreshTimer() { autoRefreshTimer.stop(); }
 
-		void	updateMasterAddresses();
+		void updateMasterAddresses();
 
 	protected:
 		friend class DoomseekerConfigurationDialog;
 
-		static const QString	HELP_SITE_URL;
+		static const QString HELP_SITE_URL;
 
-		QApplication*		application;
-		QTimer				autoRefreshTimer;
+		QApplication* application;
+		QTimer autoRefreshTimer;
 
 		AutoUpdater* autoUpdater;
 		QWidget* autoUpdaterStatusBarWidget;
@@ -149,52 +149,52 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 *	Set to true by btnGetServers_click() process and to false
 		 *	when refreshing thread enters sleep mode.
 		 */
-		bool				bTotalRefreshInProcess;
+		bool bTotalRefreshInProcess;
 
-		DockBuddiesList*	buddiesList;
+		DockBuddiesList* buddiesList;
 
 		/**
 		 *	This is required so tray icon knows how to bring the window back.
 		 */
-		bool				bWasMaximized;
+		bool bWasMaximized;
 
 		/**
 		 *	If set to true the closeEvent() method will ignore tray icon
 		 *	settings and proceed to close the MainWindow. This is set by
 		 *	quitProgram() slot.
 		 */
-		bool				bWantToQuit;
+		bool bWantToQuit;
 
-		IP2CLoader*			ip2cLoader;
-		QProgressBar*		ip2cUpdateProgressBar;
-		IRCDock*			ircDock;
-		LogDock*			logDock;
-		ServerFilterDock*	serverFilterDock;
-		ServerListHandler*	serverTableHandler;
+		IP2CLoader* ip2cLoader;
+		QProgressBar* ip2cUpdateProgressBar;
+		IRCDock* ircDock;
+		LogDock* logDock;
+		ServerFilterDock* serverFilterDock;
+		ServerListHandler* serverTableHandler;
 
-		MasterManager*		masterManager;
-		QHash<MasterClient*, QQueryMenuAction*>	    queryMenuPorts;
-		QHash<MasterClient*, ServersStatusWidget*>	serversStatusesWidgets;
-		QAction*			toolBarGetServers;
-		QAction*			toolBarRefreshAll;
-		QSystemTrayIcon*	trayIcon;
-		QMenu*				trayIconMenu;
+		MasterManager* masterManager;
+		QHash<MasterClient*, QQueryMenuAction*> queryMenuPorts;
+		QHash<MasterClient*, ServersStatusWidget*> serversStatusesWidgets;
+		QAction* toolBarGetServers;
+		QAction* toolBarRefreshAll;
+		QSystemTrayIcon* trayIcon;
+		QMenu* trayIconMenu;
 		/// Update should be discarded if this changes.
-		UpdateChannel*		updateChannelOnUpdateStart;
+		UpdateChannel* updateChannelOnUpdateStart;
 		int updaterInstallerErrorCode;
 
-		ConnectionHandler	*connectionHandler;
+		ConnectionHandler *connectionHandler;
 
-		void	changeEvent(QEvent* event);
+		void changeEvent(QEvent* event);
 		void checkForUpdates(bool bUserTriggered);
 
 		/**
 		 *	Connects signals from objects and controls of the main window
 		 *	to their slots.
 		 */
-		void	connectEntities();
+		void connectEntities();
 
-		void	closeEvent(QCloseEvent* event);
+		void closeEvent(QCloseEvent* event);
 
 		/**
 		 *	Fills query menu with engines that have master server.
@@ -206,29 +206,29 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 *		In other words: this argument exists solely to avoid "random"
 		 *		crashes.
 		 */
-		void	fillQueryMenu(MasterManager* masterManager);
+		void fillQueryMenu(MasterManager* masterManager);
 
 		/**
 		 * Called by the configuration dialog to sync config changes.
 		 */
-		void	finishConfiguration(DoomseekerConfigurationDialog &, bool);
+		void finishConfiguration(DoomseekerConfigurationDialog &, bool);
 
-		bool	hasCustomServers() const;
+		bool hasCustomServers() const;
 
 		QProgressBar* mkStdProgressBarForStatusBar();
 
 		void initAutoUpdaterWidgets();
-		void	initIP2CUpdater();
-		void	initIRCDock();
-		void	initLogDock();
-		void	initMainDock();
-		void	initServerFilterDock();
+		void initIP2CUpdater();
+		void initIRCDock();
+		void initLogDock();
+		void initMainDock();
+		void initServerFilterDock();
 
 		/**
 		 *	Checks whether the program will use the tray icon and
 		 *	deletes or instantiates a QSystemTrayIcon object.
 		 */
-		void	initTrayIcon();
+		void initTrayIcon();
 
 		/**
 		 *	@brief Will check if refresh operation has any sense.
@@ -237,25 +237,25 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 *		even a single custom server). False if pressing "Get Servers"
 		 *		button will produce no results whatsoever.
 		 */
-		bool	isAnythingToRefresh() const;
-		bool	isAnyMasterEnabled() const;
+		bool isAnythingToRefresh() const;
+		bool isAnyMasterEnabled() const;
 
 		QQueryMenuAction* queryMenuActionForMasterClient(MasterClient* pClient);
 
-		void	refreshCustomServers();
-		void	setupIcons();
-		void	setupToolBar();
+		void refreshCustomServers();
+		void setupIcons();
+		void setupToolBar();
 
 		/**
 		 *	Functionality and name of this function might not be perfect but
 		 *	it saves some copy&pasting in the end. The end justifies the means.
 		 */
-		void	updateTrayIconTooltipAndLogTotalRefresh();
+		void updateTrayIconTooltipAndLogTotalRefresh();
 
 	protected slots:
 		void abortAutoUpdater();
-		void	autoRefreshTimer_timeout();
-		void	blockRefreshButtons();
+		void autoRefreshTimer_timeout();
+		void blockRefreshButtons();
 		/**
 		 * @brief Auto triggered updates will display
 		 *        install confirmation only if configured to.
@@ -268,38 +268,38 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void checkForUpdatesUserTriggered();
 		void confirmUpdateInstallation();
 		void discardUpdates();
-		void 	finishedQueryingMaster(MasterClient* master);
-		void 	getServers();
-		void	masterManagerMessages(MasterClient* pSender, const QString& title, const QString& content, bool isError);
-		void    masterManagerMessagesImportant(MasterClient* pSender, const Message& objMessage);
-		void	menuBuddies();
-		void 	menuCreateServer();
-		void	menuHelpAbout();
-		void	menuHelpHelp();
-		void	menuIRCOptions();
-		void	menuLog();
-		void	menuManageDemos();
-		void 	menuOptionsConfigure();
-		void	menuRecordDemo();
-		void	menuUpdateIP2C();
-		void	menuViewIRC();
-		void	menuWadSeeker();
+		void finishedQueryingMaster(MasterClient* master);
+		void getServers();
+		void masterManagerMessages(MasterClient* pSender, const QString& title, const QString& content, bool isError);
+		void masterManagerMessagesImportant(MasterClient* pSender, const Message& objMessage);
+		void menuBuddies();
+		void menuCreateServer();
+		void menuHelpAbout();
+		void menuHelpHelp();
+		void menuIRCOptions();
+		void menuLog();
+		void menuManageDemos();
+		void menuOptionsConfigure();
+		void menuRecordDemo();
+		void menuUpdateIP2C();
+		void menuViewIRC();
+		void menuWadSeeker();
 
 		void onAutoUpdaterDownloadAndInstallConfirmationRequest();
 		void onAutoUpdaterFileProgress(qint64 bytesReceived, qint64 bytesTotal);
 		void onAutoUpdaterFinish();
 		void onAutoUpdaterOverallProgress(int current, int total, const QString& msg);
 
-		void	quitProgram();
-		void    postInitAppStartup();
-		void	refreshThreadBeginsWork();
-		void	refreshThreadEndsWork();
+		void quitProgram();
+		void postInitAppStartup();
+		void refreshThreadBeginsWork();
+		void refreshThreadEndsWork();
 		void restartAndInstallUpdatesNow();
-		void	runGame(const ServerPtr&);
-		void	serverAddedToList(const ServerPtr&);
-		void	showServerJoinCommandLine(const ServerPtr&);
-		void	showUpdaterProcessErrorDialog();
-		void	showUpdateInstallErrorDialog();
+		void runGame(const ServerPtr&);
+		void serverAddedToList(const ServerPtr&);
+		void showServerJoinCommandLine(const ServerPtr&);
+		void showUpdaterProcessErrorDialog();
+		void showUpdateInstallErrorDialog();
 
 		/**
 		 * @brief Toggles specified MasterClient object enabled or disabled.
@@ -307,12 +307,14 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 * This affects the query menu, servers status widgets and the master
 		 * client itself.
 		 */
-		void    toggleMasterClientEnabled(MasterClient* pClient);
-		void	toolBarAction(QAction* pAction);
-		void	trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
-		void    updateServerFilter(const ServerListFilterInfo& filterInfo);
+		void toggleMasterClientEnabled(MasterClient* pClient);
+		void toolBarAction(QAction* pAction);
+		void trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
+		void updateServerFilter(const ServerListFilterInfo& filterInfo);
 
 	private:
+		QDockWidget *mainDock;
+
 		void connectIP2CLoader(IP2CLoader* loader);
 
 	private slots:

@@ -40,6 +40,11 @@ class CommandLineInfo
 		QDir applicationDir; /// working directory
 		QStringList args; /// launch parameters
 		QFileInfo executable; /// path to the executable
+
+		/**
+		 * @brief It's valid when at least executable is set.
+		 */
+		bool isValid() const;
 };
 
 class MAIN_EXPORT AppRunner : public QObject

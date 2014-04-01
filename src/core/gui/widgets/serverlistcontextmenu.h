@@ -24,12 +24,14 @@
 #define __SERVER_LIST_CONTEXT_MENU_H_
 
 #include <QMenu>
+#include <QModelIndex>
 #include <QObject>
 #include "serverapi/serverptr.h"
 
 class Server;
 class ServerFilterBuilderMenu;
 class ServerListFilterInfo;
+class ServerListHandler;
 
 class ServerListContextMenu : public QObject
 {
@@ -45,15 +47,20 @@ class ServerListContextMenu : public QObject
 			OpenURL,
 			Refresh,
 			ShowJoinCommandLine,
+			SortAdditionallyAscending,
+			SortAdditionallyDescending,
+			ClearAdditionalSorting,
+			RemoveAdditionalSortingForColumn,
 
 			/// This is returned upon cancel.
 			NothingHappened
 		};
 
 		ServerListContextMenu(ServerPtr server, const ServerListFilterInfo& filter,
-			QObject *parent);
+			const QModelIndex &modelIndex, ServerListHandler *parent);
 		~ServerListContextMenu();
 
+		const QModelIndex &modelIndex() const;
 		void popup(const QPoint& point);
 		ServerPtr server() const;
 		const ServerListFilterInfo& serverFilter() const;
@@ -68,26 +75,26 @@ class ServerListContextMenu : public QObject
 
 		PrivData* d;
 
-		QMenu*					createCopyMenu(QWidget* parent);
-		void					createMembers();
-		void					initializeMembers();
+		QMenu* createCopyMenu(QWidget* parent);
+		void createMembers();
+		void initializeMembers();
 
-		QAction*				copyAddress;
-		QAction* 				copyEmail;
-		QAction*				copyName;
-		QAction* 				copyUrl;
+		QAction* copyAddress;
+		QAction* copyEmail;
+		QAction* copyName;
+		QAction* copyUrl;
 		ServerFilterBuilderMenu* filterBuilder;
-		QAction* 				join;
+		QAction* join;
 
-		QMenu*					menu;
+		QMenu* menu;
 
-		QAction* 				openUrlInDefaultBrowser;
+		QAction* openUrlInDefaultBrowser;
 
 		ServerPtr pServer;
 
-		QAction*				rcon;
-		QAction* 				refresh;
-		QAction* 				showJoinCommandLine;
+		QAction* rcon;
+		QAction* refresh;
+		QAction* showJoinCommandLine;
 };
 
 #endif

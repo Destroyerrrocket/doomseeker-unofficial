@@ -23,10 +23,10 @@ namespace WadseekerLib
 	 */
 	enum MessageType
 	{
-		Notice 			= 0,
+		Notice = 0,
 		NoticeImportant = 1,
-		Error	 		= 2,
-		CriticalError	= 3
+		Error = 2,
+		CriticalError = 3
 	};
 };
 

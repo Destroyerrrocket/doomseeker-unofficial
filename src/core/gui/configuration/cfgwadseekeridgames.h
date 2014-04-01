@@ -34,19 +34,19 @@ class CFGWadseekerIdgames : public ConfigurationBaseBox, private Ui::CFGWadseeke
 	public:
 		CFGWadseekerIdgames(QWidget* parent = NULL);
 
-		QIcon			icon() const { return QIcon(":/icons/arrow-down-double.png"); }
-		QString			name() const { return tr("Idgames"); }
-		void 			readSettings();
+		QIcon icon() const { return QIcon(":/icons/arrow-down-double.png"); }
+		QString name() const { return tr("Idgames"); }
+		void readSettings();
 		QString title() const { return tr("Wadseeker - Idgames"); }
 
 	protected slots:
-		void 			btnIdgamesURLDefaultClicked();
-		void			cbUseIdgamesToggled(bool checked);
+		void btnIdgamesURLDefaultClicked();
+		void cbUseIdgamesToggled(bool checked);
 
 	protected:
 		
 
-		void 			saveSettings();
+		void saveSettings();
 };
 
 #endif

@@ -46,15 +46,15 @@ class ServerListView : public QTableView
 		void updateAllRows();
 
 	protected:
-		bool			bAllowAllRowsRefresh;
+		bool bAllowAllRowsRefresh;
 
-		virtual void 	mouseReleaseEvent(QMouseEvent* event);
-		virtual void 	mouseDoubleClickEvent(QMouseEvent* event);
+		virtual void mouseReleaseEvent(QMouseEvent* event);
+		virtual void mouseDoubleClickEvent(QMouseEvent* event);
 
 	signals:
-		void			leftMouseDoubleClicked(const QModelIndex& index, const QPoint& cursorPosition);
-		void			middleMouseClick(const QModelIndex& index, const QPoint& cursorPosition);
-		void			rightMouseClick(const QModelIndex& index, const QPoint& cursorPosition);
+		void leftMouseDoubleClicked(const QModelIndex& index, const QPoint& cursorPosition);
+		void middleMouseClick(const QModelIndex& index, const QPoint& cursorPosition);
+		void rightMouseClick(const QModelIndex& index, const QPoint& cursorPosition);
 };
 
 #endif

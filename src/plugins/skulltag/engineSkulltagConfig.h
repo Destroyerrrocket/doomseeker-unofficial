@@ -43,9 +43,9 @@ class EngineSkulltagConfigBox : public EngineConfigurationBaseBox
 		
 		void saveSettings();
 
-		QGroupBox	*groupTesting;
-		QLineEdit	*leTestingPath;
-		QPushButton	*btnBrowseTestingPath;
+		QGroupBox *groupTesting;
+		QLineEdit *leTestingPath;
+		QPushButton *btnBrowseTestingPath;
 };
 
 #endif

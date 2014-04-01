@@ -34,12 +34,12 @@ class CFGQuery : public ConfigurationBaseBox, private Ui::CFGQuery
 	public:
 		CFGQuery(QWidget *parent=NULL);
 
-		QIcon							icon() const { return QIcon(":/icons/view-refresh-2.png"); }
-		QString							name() const { return tr("Query"); }
-		void							readSettings();
+		QIcon icon() const { return QIcon(":/icons/view-refresh-2.png"); }
+		QString name() const { return tr("Query"); }
+		void readSettings();
 
 	protected:
-		void							saveSettings();
+		void saveSettings();
 };
 
 #endif /* __CFG_QUERY_H__ */

@@ -5,9 +5,11 @@
 	<file alias="logo.png">logo_small.png</file>
 	<file>locked.png</file>
 	<file>icons/arrow-down-double.png</file>
+	<file>icons/ascending.png</file>
 	<file>icons/audio-speaker.png</file>
 	<file>icons/buddies.png</file>
 	<file>icons/color-fill.png</file>
+	<file>icons/descending.png</file>
 	<file>icons/doomseeker_plus.png</file>
 	<file>icons/download.png</file>
 	<file>icons/emblem-web.png</file>
@@ -108,6 +110,7 @@
 	<file alias="flags/ROM">flags/ROM.png</file> <!-- Romania -->
 	<file alias="flags/RUS">flags/RUS.png</file> <!-- Russian Federation -->
 	<file alias="flags/SAU">flags/SAU.png</file> <!-- Saudi Arabia -->
+	<file alias="flags/SGP">flags/SGP.png</file> <!-- Singapore -->
 	<file alias="flags/SRB">flags/SRB.png</file> <!-- Serbia -->
 	<file alias="flags/SVK">flags/SVK.png</file> <!-- Slovakia -->
 	<file alias="flags/SVN">flags/SVN.png</file> <!-- Slovenia -->

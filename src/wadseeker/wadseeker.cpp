@@ -165,6 +165,32 @@ void Wadseeker::fileMirrorLinksFound(const QString& filename, const QList<QUrl>&
 	d.wadRetriever->addMirrorUrls(filename, urls);
 }
 
+QStringList Wadseeker::filterAllowedOnlyWads(const QStringList &wads)
+{
+	QStringList result;
+	foreach (const QString &wad, wads)
+	{
+		if (!isForbiddenWad(wad))
+		{
+			result << wad;
+		}
+	}
+	return result;
+}
+
+QStringList Wadseeker::filterForbiddenOnlyWads(const QStringList &wads)
+{
+	QStringList result;
+	foreach (const QString &wad, wads)
+	{
+		if (isForbiddenWad(wad))
+		{
+			result << wad;
+		}
+	}
+	return result;
+}
+
 void Wadseeker::idgamesClientFinished(Idgames* pEmitter)
 {
 	emit message(tr("IDGames client for file \"%1\" has finished.").arg(pEmitter->file().name()),

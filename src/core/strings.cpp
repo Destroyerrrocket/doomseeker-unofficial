@@ -24,6 +24,9 @@
 
 #include "random.h"
 
+#include "plugins/engineplugin.h"
+#include "plugins/pluginloader.h"
+
 #include <cassert>
 #include <cmath>
 
@@ -454,14 +457,22 @@ QString& Strings::triml(QString& str, const QString& charList)
 
 QString Strings::wrapUrlsWithHtmlATags(const QString& str)
 {
-	//QRegExp pattern("(((http|https|ftp)://\\S+)|(www\\.\\S+))", Qt::CaseInsensitive);
-	QRegExp pattern("(\
-(\
-(http|https|ftp)://\
-|(www\\.)\
-)[\\w\\-\\.,@?^=%&amp;:/~\\+#\\(\\)]+\
-)", Qt::CaseInsensitive);
-	//QRegExp pattern("((http://\\B+)|(ftp://\\B+)|(www\\.\\B+))", Qt::CaseInsensitive);
+	static QString pluginSchemes;
+	if(pluginSchemes.isEmpty())
+	{
+		pluginSchemes = "zds";
+
+		for(unsigned int i = 0;i < gPlugins->numPlugins();++i)
+			pluginSchemes = QString("%1|%2").arg(pluginSchemes)
+				.arg(gPlugins->plugin(i)->info()->data()->scheme);
+	}
+
+	QRegExp pattern(QString("("
+		"("
+		"(http|https|ftp|%1)://"
+		"|(www\\.)"
+		")[\\w\\-\\.,@?^=%&amp;:/~\\+#\\(\\)]+"
+		")").arg(pluginSchemes), Qt::CaseInsensitive);
 	QString newString = str;
 
 	int offset = 0;

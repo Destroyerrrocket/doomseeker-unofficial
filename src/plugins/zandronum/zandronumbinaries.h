@@ -45,11 +45,11 @@ class ZandronumClientExeFile : public ExeFile
 		 *	file is returned. If this is a testing server, a shell script is
 		 *	created	if necessary and a path to this shell script s returned.
 		 */
-		QString					pathToExe(Message& message);
-		QString					workingDirectory(Message& message);
+		QString pathToExe(Message& message);
+		QString workingDirectory(Message& message);
 
 	protected:
-		bool					downloadTestingBinaries(const QDir &destination);
+		bool downloadTestingBinaries(const QDir &destination);
 		/**
 		 *	Creates Unix .sh file or Windows .bat file to
 		 *	launch client for parent server. Returns true if the file
@@ -61,7 +61,7 @@ class ZandronumClientExeFile : public ExeFile
 		 *	@param [out] error - error if return == false
 		 *	@return false if fail
 		 */
-		bool					spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, Message& message);
+		bool spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, Message& message);
 
 	private:
 		class PrivData;
@@ -75,18 +75,18 @@ class TestingProgressDialog : public QProgressDialog
 	public:
 		TestingProgressDialog(const QUrl& url);
 
-		const QByteArray	&data() const { return downloadedFileData; }
-		const QString		&filename() const { return downloadedFilename; }
+		const QByteArray &data() const { return downloadedFileData; }
+		const QString &filename() const { return downloadedFilename; }
 
 	private slots:
-		void	abort();
-		void	downloadFinished();
-		void	downloadProgress(qint64 value, qint64 max);
+		void abort();
+		void downloadFinished();
+		void downloadProgress(qint64 value, qint64 max);
 
 
 	private:
-		QByteArray	downloadedFileData;
-		QString		downloadedFilename;
+		QByteArray downloadedFileData;
+		QString downloadedFilename;
 		QNetworkAccessManager networkAccessManager;
 		QNetworkReply* pNetworkReply;
 

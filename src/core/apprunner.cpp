@@ -28,6 +28,11 @@
 #include "strings.h"
 #include <QProcess>
 
+bool CommandLineInfo::isValid() const
+{
+	return !executable.filePath().isEmpty();
+}
+
 void AppRunner::cleanArguments(QStringList& args)
 {
 	QStringList::iterator it;

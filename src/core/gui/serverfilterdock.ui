@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>330</width>
+    <width>181</width>
     <height>565</height>
    </rect>
   </property>
@@ -21,6 +21,16 @@
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QCheckBox" name="cbGroupServersWithPlayersAtTop">
+      <property name="text">
+       <string>Put populated servers on top</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
     <item>
      <widget class="QCheckBox" name="cbFilteringEnabled">
       <property name="text">
@@ -44,8 +54,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>312</width>
-         <height>494</height>
+         <width>163</width>
+         <height>479</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -428,10 +438,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>cbGroupServersWithPlayersAtTop</sender>
+   <signal>clicked()</signal>
+   <receiver>ServerFilterDock</receiver>
+   <slot>onServerGroupingChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>164</x>
+     <y>39</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>282</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>emitUpdated()</slot>
   <slot>clear()</slot>
   <slot>emitUpdated(QString)</slot>
+  <slot>onServerGroupingChange()</slot>
  </slots>
 </ui>

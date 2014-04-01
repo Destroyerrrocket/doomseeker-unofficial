@@ -22,13 +22,53 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircrequestparser.h"
+#include "irc/ircadapterbase.h"
 #include "irc/ircclient.h"
+#include "irc/ircctcpparser.h"
 #include "irc/ircglobal.h"
+#include "irc/ircglobalmessages.h"
+#include "irc/ircmessageclass.h"
+#include "irc/ircnetworkadapter.h"
 #include "irc/ircuserinfo.h"
 #include <QStringList>
 
-IRCRequestParser::IRCRequestParseResult IRCRequestParser::parse(IRCAdapterBase* pAdapter, QString input, QString& output)
+class IRCRequestParser::PrivData
 {
+	public:
+		IRCAdapterBase *adapter;
+		QString output;
+		QString message;
+		QStringList tokens;
+};
+
+IRCRequestParser::IRCRequestParser()
+{
+	d = new PrivData();
+	d->adapter = NULL;
+}
+
+IRCRequestParser::~IRCRequestParser()
+{
+	delete d;
+}
+
+IRCNetworkAdapter *IRCRequestParser::network()
+{
+	return d->adapter->network();
+}
+
+const QString &IRCRequestParser::output() const
+{
+	return d->output;
+}
+
+IRCRequestParser::IRCRequestParseResult IRCRequestParser::parse(IRCAdapterBase* pAdapter, QString input)
+{
+	d->adapter = pAdapter;
+	d->output.clear();
+	d->tokens.clear();
+	d->message.clear();
+
 	input = input.trimmed();
 
 	if (input.isEmpty())
@@ -47,85 +87,135 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::parse(IRCAdapterBase* 
 		return ErrorMessageEmpty;
 	}
 
-	if (input.length() > IRCClient::MAX_MESSAGE_LENGTH)
+	QStringList inputSplit = input.split(" ", QString::SkipEmptyParts);
+	d->message = inputSplit.takeFirst().toUpper();
+	d->tokens = inputSplit;
+
+	IRCRequestParser::IRCRequestParseResult result = buildOutput();
+	if (result == Ok)
 	{
-		return ErrorMessageTooLong;
+		if (isOutputTooLong())
+		{
+			return ErrorMessageTooLong;
+		}
 	}
 
-	QStringList inputSplit = input.split(" ", QString::SkipEmptyParts);
-	QString message = inputSplit.takeFirst();
-	message = message.toUpper();
+	return result;
+}
 
-	// As of this point inputSplit param list doesn't contain the message
-	// type anymore.
-
-	if (message == "QUIT")
+IRCRequestParser::IRCRequestParseResult IRCRequestParser::buildOutput()
+{
+	if (d->message == "QUIT")
 	{
-		output = QString("%1 :%2").arg(message, inputSplit.join(" "));
+		d->output = QString("%1 :%2").arg(d->message, d->tokens.join(" "));
 		return QuitCommand;
 	}
-	else if (message == "PART")
+	else if (d->message == "PART")
 	{
-		if (inputSplit.isEmpty())
+		if (d->tokens.isEmpty())
 		{
 			return ErrorInputInsufficientParameters;
 		}
 
-		QString channel = inputSplit.takeFirst();
-		QString farewellMessage = inputSplit.join(" ");
-		output = QString("%1 %2 :%3").arg(message, channel, farewellMessage);
+		QString channel = d->tokens.takeFirst();
+		QString farewellMessage = d->tokens.join(" ");
+		d->output = QString("%1 %2 :%3").arg(d->message, channel, farewellMessage);
 	}
-	else if (message == "KICK")
+	else if (d->message == "KICK")
 	{
-		if (inputSplit.length() < 2)
+		if (d->tokens.length() < 2)
 		{
 			return ErrorInputInsufficientParameters;
 		}
 
-		QString channel = inputSplit.takeFirst();
-		QString user = inputSplit.takeFirst();
-		QString reason = inputSplit.join(" ");
-		output = QString("%1 %2 %3 :%4").arg(message, channel, user, reason);
+		QString channel = d->tokens.takeFirst();
+		QString user = d->tokens.takeFirst();
+		QString reason = d->tokens.join(" ");
+		d->output = QString("%1 %2 %3 :%4").arg(d->message, channel, user, reason);
 	}
-	else if (message == "PRIVMSG" || message == "NOTICE")
+	else if (d->message == "PRIVMSG" || d->message == "NOTICE")
 	{
 		// Notice and Privmsg are handled the same way.
-		if (inputSplit.length() < 2)
+		if (d->tokens.length() < 2)
 		{
 			return ErrorInputInsufficientParameters;
 		}
 
-		QString recipient = inputSplit.takeFirst();
-		QString content = inputSplit.join(" ");
-		output = QString("%1 %2 :%3").arg(message, recipient, content);
-
-		if (message == "PRIVMSG")
+		QString recipient = d->tokens.takeFirst();
+		QString content = d->tokens.join(" ");
+		d->output = QString("%1 %2 :%3").arg(d->message, recipient, content);
+		if (isOutputTooLong())
 		{
-			emit echoPrivmsg(recipient, content);
+			// If message is too long at this point for some reason,
+			// we should prevent echoing it back to the chat window as that
+			// confuses the user as to whether the message was sent or not.
+			return ErrorMessageTooLong;
+		}
+		if (d->message == "PRIVMSG")
+		{
+			IRCCtcpParser ctcp(network(), network()->myNickname(),
+				recipient, content, IRCCtcpParser::Request);
+			if (ctcp.parse())
+			{
+				switch (ctcp.echo())
+				{
+					case IRCCtcpParser::PrintAsNormalMessage:
+						network()->printMsgLiteral(recipient, ctcp.printable(), IRCMessageClass::Ctcp);
+						break;
+					case IRCCtcpParser::DisplayInServerTab:
+						network()->printWithClass(ctcp.printable(), QString(), IRCMessageClass::Ctcp);
+						break;
+					case IRCCtcpParser::DisplayThroughGlobalMessage:
+						ircGlobalMsg.emitMessageWithClass(ctcp.printable(), IRCMessageClass::Ctcp, d->adapter);
+						break;
+					case IRCCtcpParser::DontShow:
+						break;
+				}
+			}
+			else
+			{
+				emit echoPrivmsg(recipient, content);
+			}
 		}
 	}
-	else if (message == "MSG")
+	else if (d->message == "MSG")
 	{
 		// This is an alias to the PRIVMSG command but it is so popular
 		// that I decided to implement this permanently.
-		parse(pAdapter, QString("/PRIVMSG %2").arg(inputSplit.join(" ")), output);
+		parse(d->adapter, QString("/PRIVMSG %1").arg(d->tokens.join(" ")));
 	}
-	else if (message == "QUERY")
+	else if (d->message == "QUERY")
 	{
-		if (!inputSplit.isEmpty())
+		if (!d->tokens.isEmpty())
 		{
-			QString recipient = inputSplit.takeFirst();
+			QString recipient = d->tokens.takeFirst();
 			if (!IRCGlobal::isChannelName(recipient))
 			{
-				IRCUserInfo userInfo(recipient);
+				IRCUserInfo userInfo(recipient, d->adapter->network());
 				emit query(userInfo.cleanNickname());
 			}
 		}
 	}
+	else if (d->message == "ME")
+	{
+		QString recipient = d->adapter->recipient();
+		if (recipient.isEmpty())
+		{
+			return ErrorChatWindowOnly;
+		}
+		QString content = d->tokens.join(" ");
+		parse(d->adapter, QString("/PRIVMSG %1 %2ACTION %3%2").arg(recipient, QChar(0x1), content));
+	}
 	else
 	{
-		output = QString("%1 %2").arg(message, inputSplit.join(" "));
+		d->output = QString("%1 %2").arg(d->message, d->tokens.join(" "));
 	}
 
 	return Ok;
 }
+
+bool IRCRequestParser::isOutputTooLong() const
+{
+	return d->output.toUtf8().length() > IRCClient::MAX_MESSAGE_LENGTH;
+}
+

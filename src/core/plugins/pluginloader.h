@@ -58,9 +58,9 @@ class PluginLoader
 				/**
 				 * @brief Returns a pointer to the requested function or NULL.
 				 */
-				void	*function(const char* func) const;
-				void	initConfig();
-				bool	isValid() const;
+				void *function(const char* func) const;
+				void initConfig();
+				bool isValid() const;
 				/**
 				 * @brief Main plugin interface.
 				 */
@@ -70,7 +70,7 @@ class PluginLoader
 				class PrivData;
 				PrivData *d;
 
-				void	unload();
+				void unload();
 		};
 
 		/**
@@ -162,7 +162,7 @@ class PluginLoader
 		 */
 		PluginLoader(unsigned int type, const QStringList &directories);
 
-		bool	filesInDir();
+		bool filesInDir();
 };
 
 #endif /* __PLUGINLOADER_HPP__ */

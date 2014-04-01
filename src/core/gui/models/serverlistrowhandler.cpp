@@ -188,7 +188,7 @@ void ServerListRowHandler::fillPortIconColumn()
 	QPixmap icon = d->server->icon();
 	if(d->server->isKnown())
 	{
-		if(d->server->isLocked()) // Draw a key if it is locked.
+		if(d->server->isLockedAnywhere()) // Draw a key if it is locked.
 		{
 			QPainter iconPainter(&icon);
 			iconPainter.drawPixmap(0, 0, QPixmap(":/locked.png"));
@@ -437,20 +437,3 @@ int ServerListRowHandler::updateServer(int response)
 
 	return row;
 }
-
-//QVariant ServerListRowHandler::columnSortData(int row, int column)
-//{
-//	QStandardItem* it = item(row, column);
-//	return it->data(DTSort);
-//}
-
-//void ServerListRowHandler::updateFlag(int row, bool force)
-//{
-//    Server* serv = serverFromList(row);
-//    QStandardItem* itm = item(row, SLCID_SERVERNAME);
-//
-//    if (force || itm->icon().isNull())
-//    {
-//		setCountryFlag(itm, serv->address());
-//    }
-//}

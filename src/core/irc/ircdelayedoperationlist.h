@@ -35,23 +35,23 @@ class IRCDelayedOperationList
 	public:
 		~IRCDelayedOperationList();
 	
-		void								add(const IRCDelayedOperation& operation);
-		void								clear();
-		bool								hasOperation(const IRCDelayedOperation& operationPattern) const 
+		void add(const IRCDelayedOperation& operation);
+		void clear();
+		bool hasOperation(const IRCDelayedOperation& operationPattern) const 
 		{ 
 			return operation(operationPattern) != NULL; 
 		}
 		
-		const IRCDelayedOperation*			operationForChannel(IRCDelayedOperation::OperationType operationType, const QString& channel) const;
+		const IRCDelayedOperation* operationForChannel(IRCDelayedOperation::OperationType operationType, const QString& channel) const;
 		
 		/**
 		 *	@brief Extracts operation that equals the passed object.
 		 */
-		const IRCDelayedOperation*			operation(const IRCDelayedOperation& operation) const;
+		const IRCDelayedOperation* operation(const IRCDelayedOperation& operation) const;
 		
-		const IRCDelayedOperation*			operationForNickname(IRCDelayedOperation::OperationType operationType, const QString& nickname) const;
+		const IRCDelayedOperation* operationForNickname(IRCDelayedOperation::OperationType operationType, const QString& nickname) const;
 		
-		IRCDelayedOperationList&			operator<<(const IRCDelayedOperation& operation)
+		IRCDelayedOperationList& operator<<(const IRCDelayedOperation& operation)
 		{
 			this->add(operation);
 			return *this;
@@ -65,10 +65,10 @@ class IRCDelayedOperationList
 		 *		Such pointer can be obtained through one of the operation()
 		 *		methods.
 		 */
-		void								remove(const IRCDelayedOperation* pointer);
+		void remove(const IRCDelayedOperation* pointer);
 		
 	private:
-		QVector<IRCDelayedOperation*>		operationsArray;
+		QVector<IRCDelayedOperation*> operationsArray;
 };
 
 #endif

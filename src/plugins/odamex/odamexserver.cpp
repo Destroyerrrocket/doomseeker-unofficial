@@ -44,7 +44,7 @@
 			return RESPONSE_BAD; \
 		}
 
-#define SERVER_CHALLENGE	0x02,0x10,0x01,0xAD,0x40,0,0,0,5,0,0,0,0,0,0,0
+#define SERVER_CHALLENGE	0x02,0x10,0x01,0xAD,0,7,0,0,5,0,0,0,0,0,0,0
 
 #define SPECTATOR_INFO		0x01020304
 #define EXTRA_INFO			0x01020305
@@ -257,7 +257,7 @@ Server::Response OdamexServer::readRequest(const QByteArray &data)
 		addPlayer(player);
 	}
 
-	if (numFreeJoinSlots() == 2 && gameMode().index() == GameMode::SGM_Deathmatch)
+	if (maxPlayers() == 2 && gameMode().index() == GameMode::SGM_Deathmatch)
 	{
 		setGameMode(OdamexGameInfo::gameModeDuel());
 	}

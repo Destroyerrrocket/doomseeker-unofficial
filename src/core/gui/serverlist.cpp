@@ -120,6 +120,11 @@ void ServerListHandler::cleanUpForce()
 	cleanUp();
 }
 
+void ServerListHandler::clearAdditionalSorting()
+{
+	sortingProxy->clearAdditionalSorting();
+}
+
 void ServerListHandler::columnHeaderClicked(int index)
 {
 	if (isSortingByColumn(index))
@@ -197,8 +202,25 @@ void ServerListHandler::contextMenuTriggered(QAction* action)
 			emit displayServerJoinCommandLine(server);
 			break;
 
+		case ServerListContextMenu::SortAdditionallyAscending:
+			sortAdditionally(contextMenu->modelIndex(), Qt::AscendingOrder);
+			break;
+
+		case ServerListContextMenu::SortAdditionallyDescending:
+			sortAdditionally(contextMenu->modelIndex(), Qt::DescendingOrder);
+			break;
+
+		case ServerListContextMenu::RemoveAdditionalSortingForColumn:
+			removeAdditionalSortingForColumn(contextMenu->modelIndex());
+			break;
+
+		case ServerListContextMenu::ClearAdditionalSorting:
+			clearAdditionalSorting();
+			break;
+
 		default:
-			QMessageBox::warning(mainWindow, tr("Doomseeker - context menu warning"), tr("Unhandled behavior int ServerListHandler::tableRightClicked()"));
+			QMessageBox::warning(mainWindow, tr("Doomseeker - context menu warning"),
+				tr("Unhandled behavior in ServerListHandler::contextMenuTriggered()"));
 			break;
 	}
 }
@@ -275,14 +297,12 @@ QString ServerListHandler::createPortToolTip(ServerCPtr server)
 
 	QString ret;
 	if (server->isLocked())
-		ret = "Password protected";
+		ret += "Password protected\n";
+	if (server->isLockedInGame())
+		ret += "Password protected in-game\n";
 	if (server->isSecure())
-	{
-		if(!ret.isEmpty())
-			ret += '\n';
-		ret += "Enforces master bans";
-	}
-	return ret;
+		ret += "Enforces master bans\n";
+	return ret.trimmed();
 }
 
 QString ServerListHandler::createPwadsToolTip(ServerCPtr server)
@@ -385,9 +405,13 @@ QString ServerListHandler::createServerNameToolTip(ServerCPtr server)
 	return ret;
 }
 
-QSortFilterProxyModel* ServerListHandler::createSortingProxy(ServerListModel* serverListModel)
+ServerListProxyModel *ServerListHandler::createSortingProxy(ServerListModel* serverListModel)
 {
 	ServerListProxyModel* proxy = new ServerListProxyModel(this);
+	this->connect(proxy, SIGNAL(additionalSortColumnsChanged()),
+		SLOT(updateHeaderTitles()));
+	this->connect(proxy, SIGNAL(additionalSortColumnsChanged()),
+		SLOT(saveAdditionalSortingConfig()));
 	proxy->setSourceModel(serverListModel);
 	proxy->setSortRole(ServerListModel::SLDT_SORT);
 	proxy->setSortCaseSensitivity( Qt::CaseInsensitive );
@@ -417,6 +441,16 @@ void ServerListHandler::initCleanerTimer()
 	cleanerTimer.setInterval(200);
 	cleanerTimer.start();
 	connect(&cleanerTimer, SIGNAL( timeout() ), this, SLOT ( cleanUp() ) );
+}
+
+bool ServerListHandler::isAnyColumnSortedAdditionally() const
+{
+	return sortingProxy->isAnyColumnSortedAdditionally();
+}
+
+bool ServerListHandler::isSortingAdditionallyByColumn(int column) const
+{
+	return sortingProxy->isSortingAdditionallyByColumn(column);
 }
 
 bool ServerListHandler::isSortingByColumn(int columnIndex)
@@ -498,6 +532,7 @@ void ServerListHandler::prepareServerTable()
 	setupTableProperties(sortingProxy);
 
 	connectTableModelProxySlots();
+	sortingProxy->setAdditionalSortColumns(gConfig.doomseeker.additionalSortColumns());
 }
 
 void ServerListHandler::redraw()
@@ -523,6 +558,16 @@ void ServerListHandler::refreshSelected()
 		QModelIndex realIndex = sortingProxy->mapToSource(indexList[i]);
 		gRefresher->registerServer(model->serverFromList(realIndex).data());
 	}
+}
+
+void ServerListHandler::removeAdditionalSortingForColumn(const QModelIndex &modelIndex)
+{
+	sortingProxy->removeAdditionalColumnSorting(modelIndex.column());
+}
+
+void ServerListHandler::saveAdditionalSortingConfig()
+{
+	gConfig.doomseeker.setAdditionalSortColumns(sortingProxy->additionalSortColumns());
 }
 
 void ServerListHandler::saveColumnsWidthsSettings()
@@ -582,6 +627,11 @@ void ServerListHandler::setCountryFlagsIfNotPresent()
 	updateCountryFlags(!FORCE);
 }
 
+void ServerListHandler::setGroupServersWithPlayersAtTop(bool b)
+{
+	sortingProxy->setGroupServersWithPlayersAtTop(b);
+}
+
 void ServerListHandler::setupTableColumnWidths()
 {
 	QString &headerState = gConfig.doomseeker.serverListColumnState;
@@ -625,6 +675,12 @@ void ServerListHandler::setupTableProperties(QSortFilterProxyModel* tableModel)
 	setupTableColumnWidths();
 }
 
+void ServerListHandler::sortAdditionally(const QModelIndex &modelIndex, Qt::SortOrder order)
+{
+	ServerListProxyModel* model = static_cast<ServerListProxyModel*>(table->model());
+	model->addAdditionalColumnSorting(modelIndex.column(), order);
+}
+
 Qt::SortOrder ServerListHandler::swapCurrentSortOrder()
 {
 	if (sortOrder == Qt::AscendingOrder)
@@ -648,7 +704,7 @@ void ServerListHandler::tableRightClicked(const QModelIndex& index, const QPoint
 
 	ServerListProxyModel* pModel = static_cast<ServerListProxyModel*>(table->model());
 	ServerListContextMenu *contextMenu = new ServerListContextMenu(server,
-		pModel->filterInfo(), this);
+		pModel->filterInfo(), index, this);
 	this->connect(contextMenu, SIGNAL(aboutToHide()), SLOT(contextMenuAboutToHide()));
 	this->connect(contextMenu, SIGNAL(triggered(QAction*)), SLOT(contextMenuTriggered(QAction*)));
 
@@ -668,6 +724,28 @@ void ServerListHandler::updateCountryFlags(bool force)
 	{
 		model->updateFlag(i, force);
 	}
+}
+
+void ServerListHandler::updateHeaderTitles()
+{
+	const QList<ColumnSort> &sortings = sortingProxy->additionalSortColumns();
+	QStringList labels;
+	ServerListColumns::generateColumnHeaderLabels(labels);
+	for (int i = 0; i < ServerListColumnId::NUM_SERVERLIST_COLUMNS; ++i)
+	{
+		// Clear header icons.
+		model->setHeaderData(i, Qt::Horizontal, QIcon(), Qt::DecorationRole);
+	}
+	for (int i = 0; i < sortings.size(); ++i)
+	{
+		const ColumnSort &sort = sortings[i];
+		labels[sort.columnId()] = QString("[%1] %2").arg(i + 1).arg(labels[sort.columnId()]);
+		QIcon icon = sort.order() == Qt::AscendingOrder ?
+			QIcon(":/icons/ascending.png") :
+			QIcon(":/icons/descending.png");
+		model->setHeaderData(sort.columnId(), Qt::Horizontal, icon, Qt::DecorationRole);
+	}
+	model->setHorizontalHeaderLabels(labels);
 }
 
 void ServerListHandler::updateSearch(const QString& search)

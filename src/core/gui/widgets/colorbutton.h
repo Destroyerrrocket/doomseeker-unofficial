@@ -42,28 +42,28 @@ class ColorButton : public QPushButton
 	public:
 		ColorButton(QWidget* parent = NULL);
 	
-		QString				colorHtml() const;
-		const QColor&		colorQ() const { return color; }
-		unsigned			colorUnsigned() const;
+		QString colorHtml() const;
+		const QColor& colorQ() const { return color; }
+		unsigned colorUnsigned() const;
 
-		void				setColor(unsigned colorValue);
-		void				setColorHtml(const QString& colorHtml);
+		void setColor(unsigned colorValue);
+		void setColorHtml(const QString& colorHtml);
 		
 	signals:
-		void				colorUpdated(QColor oldColor, const QColor& newColor);
+		void colorUpdated(QColor oldColor, const QColor& newColor);
 
 	protected:
-		QColor				color;
+		QColor color;
 	
-		void				updateAppearance();
+		void updateAppearance();
 		
 		/**
 		 *	@brief Will always emit colorUpdated() signal.
 		 */
-		void				updateColor(const QColor& newColor);
+		void updateColor(const QColor& newColor);
 		
 	protected slots:
-		void				thisClicked();
+		void thisClicked();
 };
 
 #endif

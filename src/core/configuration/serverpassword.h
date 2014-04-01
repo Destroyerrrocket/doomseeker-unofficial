@@ -27,7 +27,7 @@
 #include <QString>
 #include <QVariant>
 
-#include "serverapi/serversummary.h"
+#include "configuration/serverpasswordsummary.h"
 
 class ServerPassword
 {
@@ -45,13 +45,13 @@ class ServerPassword
 		}
 
 		QString lastGame() const;
-		ServerSummary lastServer() const;
+		ServerPasswordSummary lastServer() const;
 		QString lastServerName() const;
 		QDateTime lastTime() const;
 
-		ServerSummary mostSimilarServer(const ServerSummary& other, float* outSimilarity = NULL) const;
+		ServerPasswordSummary mostSimilarServer(const ServerPasswordSummary& other, float* outSimilarity = NULL) const;
 
-		const QList<ServerSummary>& servers() const
+		const QList<ServerPasswordSummary>& servers() const
 		{
 			return d.servers;
 		}
@@ -63,7 +63,7 @@ class ServerPassword
 
 		QVariant serializeQVariant() const;
 
-		void addServer(const ServerSummary& v);
+		void addServer(const ServerPasswordSummary& v);
 		void removeServer(const QString& game, const QString& address, unsigned short port);
 
 		void setPhrase(const QString& v)
@@ -71,7 +71,7 @@ class ServerPassword
 			d.phrase = v;
 		}
 
-		void setServers(const QList<ServerSummary>& v)
+		void setServers(const QList<ServerPasswordSummary>& v)
 		{
 			d.servers = v;
 		}
@@ -80,7 +80,7 @@ class ServerPassword
 		class PrivData
 		{
 		public:
-			QList<ServerSummary> servers;
+			QList<ServerPasswordSummary> servers;
 			QString phrase;
 		};
 		PrivData d;

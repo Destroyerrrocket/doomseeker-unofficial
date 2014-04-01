@@ -102,16 +102,16 @@ class MAIN_EXPORT PathFinder
 		 * or a file as its input.  If a file is given the directory part will
 		 * be extracted.
 		 */
-		void				addPrioritySearchDir(const QString& dir);
+		void addPrioritySearchDir(const QString& dir);
 		/**
 		 * @brief Performs a search for a single file.
 		 */
-		QString 			findFile(const QString& fileName) const;
+		QString findFile(const QString& fileName) const;
 		/**
 		 * @brief Performs a search for multiple files, marking them as found
 		 *        or missing.
 		 */
-		PathFinderResult	findFiles(const QStringList& files) const;
+		PathFinderResult findFiles(const QStringList& files) const;
 
 	private:
 		class PrivData;

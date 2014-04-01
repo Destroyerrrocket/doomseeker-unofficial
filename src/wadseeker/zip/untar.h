@@ -39,24 +39,24 @@ class UnTar : public UnArchive
 		UnTar(QIODevice *device);
 		~UnTar();
 
-		bool	extract(int file, const QString &where);
-		QString	fileNameFromIndex(int file);
-		int		findFileEntry(const QString &entryName);
-		bool	isValid() { return valid; }
+		bool extract(int file, const QString &where);
+		QString fileNameFromIndex(int file);
+		int findFileEntry(const QString &entryName);
+		bool isValid() { return valid; }
 
 	protected:
 		class TarFile
 		{
 			public:
-				QString			filename;
-				unsigned int	size;
-				unsigned int	offset;
+				QString filename;
+				unsigned int size;
+				unsigned int offset;
 		};
 
-		void	scanTarFile();
+		void scanTarFile();
 
-		bool			valid;
-		QList<TarFile>	directory;
+		bool valid;
+		QList<TarFile> directory;
 };
 
 #endif

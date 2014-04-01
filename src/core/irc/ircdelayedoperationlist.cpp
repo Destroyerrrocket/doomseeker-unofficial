@@ -71,15 +71,14 @@ const IRCDelayedOperation* IRCDelayedOperationList::operation(const IRCDelayedOp
 	return NULL;
 }
 		
-const IRCDelayedOperation* IRCDelayedOperationList::operationForNickname(IRCDelayedOperation::OperationType operationType, const QString& nickname) const
+const IRCDelayedOperation* IRCDelayedOperationList::operationForNickname(
+	IRCDelayedOperation::OperationType operationType, const QString& nickname) const
 {
-	IRCUserInfo userInfo(nickname);
-
 	for (int i = 0; i < operationsArray.size(); ++i)
 	{
 		const IRCDelayedOperation& operation = *operationsArray[i];
 		if (operationType == operation.operationType()
-		&&  userInfo == operation.nickname())
+		&&  nickname == operation.nickname())
 		{
 			return &operation;
 		}

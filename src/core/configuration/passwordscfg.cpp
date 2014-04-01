@@ -24,11 +24,13 @@
 
 #include "configuration/doomseekerconfig.h"
 #include "configuration/serverpassword.h"
+#include "configuration/serverpasswordsummary.h"
 #include "ini/ini.h"
 #include "ini/inisection.h"
 #include "ini/inivariable.h"
 #include "ini/settingsproviderqt.h"
 #include "serverapi/server.h"
+#include "serverapi/serversummary.h"
 #include <cassert>
 #include <QDebug>
 
@@ -44,12 +46,6 @@ const QString SERVER_PASSWORDS_KEY = "ServerPasswords";
 // move the instantiation out of Main.
 Ini* PasswordsCfg::ini = NULL;
 QSettings *PasswordsCfg::settings = NULL;
-
-
-bool serverDateDescending(ServerSummary& s1, ServerSummary& s2)
-{
-	return s1.time() > s2.time();
-}
 
 
 class PasswordsCfg::PrivData
@@ -76,7 +72,7 @@ void PasswordsCfg::cutServers(QList<ServerPassword>& passwords) const
 	while (it.hasNext())
 	{
 		ServerPassword& password = it.next();
-		QList<ServerSummary> sortedServers = password.servers();
+		QList<ServerPasswordSummary> sortedServers = password.servers();
 		qSort(sortedServers.begin(), sortedServers.end(), serverDateDescending);
 		password.setServers(sortedServers.mid(0, maxNumberOfServersPerPassword()));
 	}
@@ -133,22 +129,22 @@ void PasswordsCfg::removeServerPhrase(const QString& phrase)
 	storeServerPasswords(allPasswords);
 }
 
-void PasswordsCfg::saveServerPhrase(const QString& phrase, const Server* server)
+void PasswordsCfg::saveServerPhrase(const QString& phrase, const Server* server,
+	const QString &type)
 {
 	if (phrase.isEmpty())
 	{
 		return;
 	}
 
-	ServerSummary serverInfo;
+	ServerPasswordSummary serverInfo;
 	if (server != NULL)
 	{
-		serverInfo.setGame(server->engineName());
-		serverInfo.setAddress(server->address().toString());
-		serverInfo.setPort(server->port());
-		serverInfo.setName(server->name());
-		serverInfo.setTime(QDateTime::currentDateTime());
+		ServerSummary serverSummary(server);
+		serverSummary.setTime(QDateTime::currentDateTime());
+		serverInfo.setServerSummary(serverSummary);
 	}
+	serverInfo.setType(type);
 	QList<ServerPassword> allPasswords = serverPasswords();
 	QMutableListIterator<ServerPassword> it(allPasswords);
 	while (it.hasNext())
@@ -171,6 +167,11 @@ void PasswordsCfg::saveServerPhrase(const QString& phrase, const Server* server)
 	pass.addServer(serverInfo);
 	allPasswords << pass;
 	storeServerPasswords(allPasswords);
+}
+
+bool PasswordsCfg::serverDateDescending(ServerPasswordSummary& s1, ServerPasswordSummary& s2)
+{
+	return s1.time() > s2.time();
 }
 
 void PasswordsCfg::setHidePasswords(bool val)
@@ -231,23 +232,19 @@ void PasswordsCfg::storeServerPasswords(const QList<ServerPassword>& val)
 	d->section.setValue(SERVER_PASSWORDS_KEY, vars);
 }
 
-ServerPassword PasswordsCfg::suggestPassword(const Server* server)
+ServerPassword PasswordsCfg::suggestPassword(const Server* server, const QString &type)
 {
 	// This method would probably work better as a separate class.
 	// If there's ever any need to expand it, extract it
 	// to a PasswordSuggester or something like that first.
-	ServerSummary serverSummary;
-	serverSummary.setAddress(server->address().toString());
-	serverSummary.setPort(server->port());
-	serverSummary.setGame(server->engineName());
-	serverSummary.setName(server->name());
+	ServerPasswordSummary serverSummary(server, type);
 
 	ServerPassword password;
-	ServerSummary bestFit;
+	ServerPasswordSummary bestFit;
 	foreach (const ServerPassword& potentialPassword, serverPasswords())
 	{
 		float newSimilarity;
-		ServerSummary candidate = potentialPassword.mostSimilarServer(serverSummary, &newSimilarity);
+		ServerPasswordSummary candidate = potentialPassword.mostSimilarServer(serverSummary, &newSimilarity);
 		if (candidate.isValid())
 		{
 			if (newSimilarity > bestFit.similarity(serverSummary))

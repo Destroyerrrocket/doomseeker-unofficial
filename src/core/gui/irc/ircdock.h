@@ -44,24 +44,24 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 		IRCDock(QWidget* parent = NULL);
 		~IRCDock();
 
-		IRCDockTabContents*	addIRCAdapter(IRCAdapterBase* pIRCAdapter);
+		IRCDockTabContents* addIRCAdapter(IRCAdapterBase* pIRCAdapter);
 
 		/**
 		 *	@brief Applies IRC appearance settings to all open tabs.
 		 */
-		void				applyAppearanceSettings();
-		bool				hasTabFocus(const IRCDockTabContents* pTab) const;
+		void applyAppearanceSettings();
+		bool hasTabFocus(const IRCDockTabContents* pTab) const;
 
-		void				performNetworkAutojoins();
+		void performNetworkAutojoins();
 
-		IRCSounds&			sounds();
+		IRCSounds& sounds();
 
 	private:
-		IRCSounds*			pSounds;
-		QAction*			toolBarConnect;
-		QAction*			toolBarOpenChatWindow;
+		IRCSounds* pSounds;
+		QAction* toolBarConnect;
+		QAction* toolBarOpenChatWindow;
 
-		IRCNetworkAdapter*	networkWithUiFocus();
+		IRCNetworkAdapter* networkWithUiFocus();
 
 		/**
  		* @brief Connects to new network.
@@ -74,24 +74,24 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
  		* @param bFocusOnNewTab
  		*      If <code>true</code> the new tab will gain focus when opened.
  		*/
-		void                connectToNewNetwork(IRCNetworkConnectionInfo& connectionInfo, bool bFocusOnNewTab);
+		void connectToNewNetwork(IRCNetworkConnectionInfo& connectionInfo, bool bFocusOnNewTab);
 
 		/**
 		 *	@brief This will prefix message with network name if message
 		 *	comes from a different network.
 		 */
-		QString				prefixMessage(IRCAdapterBase* pTargetChatWindow, IRCAdapterBase* pMessageSender, const QString& message);
-		void				setupToolbar();
+		QString prefixMessage(IRCAdapterBase* pTargetChatWindow, IRCAdapterBase* pMessageSender, const QString& message);
+		void setupToolbar();
 
 	private slots:
-		void				chatWindowCloseRequestSlot(IRCDockTabContents* pCaller);
-		void				globalMessage(const QString& message, IRCAdapterBase* pMessageSender);
-		void				globalMessageWithClass(const QString& message, const IRCMessageClass& messageClass, IRCAdapterBase* pMessageSender);
-		void				tabCloseRequestedSlot(int index);
-		void				tabCurrentChanged(int index);
-		void				tabFocusRequest(IRCDockTabContents* pCaller);
-		void				titleChange(IRCDockTabContents* pCaller);
-		void				toolBarAction(QAction* pAction);
+		void chatWindowCloseRequestSlot(IRCDockTabContents* pCaller);
+		void globalMessage(const QString& message, IRCAdapterBase* pMessageSender);
+		void globalMessageWithClass(const QString& message, const IRCMessageClass& messageClass, IRCAdapterBase* pMessageSender);
+		void tabCloseRequestedSlot(int index);
+		void tabCurrentChanged(int index);
+		void tabFocusRequest(IRCDockTabContents* pCaller);
+		void titleChange(IRCDockTabContents* pCaller);
+		void toolBarAction(QAction* pAction);
 
 
 };

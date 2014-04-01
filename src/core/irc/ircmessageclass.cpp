@@ -30,16 +30,14 @@ QString IRCMessageClass::colorFromConfig() const
 	{
 		case ChannelAction:
 			return appearance.channelActionColor;
-			
 		case Error:
 			return appearance.errorColor;
-			
 		case Normal:
 			return appearance.defaultTextColor;
-			
 		case NetworkAction:
 			return appearance.networkActionColor;
-		
+		case Ctcp:
+			return appearance.ctcpColor;
 		default:
 			return "#000000";
 	}
@@ -51,16 +49,14 @@ QString IRCMessageClass::toStyleSheetClassName(ClassName className)
 	{
 		case ChannelAction:
 			return "channelAction";
-			
+		case Ctcp:
+			return "ctcp";
 		case Error:
 			return "error";
-			
 		case Normal:
 			return "";
-			
 		case NetworkAction:
 			return "networkAction";
-		
 		default:
 			return "appErr";
 	}

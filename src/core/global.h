@@ -2,6 +2,7 @@
 #define __GLOBAL_H__
 
 #include <QtGlobal>
+#include "dpointer.h"
 
 static inline quint32 READINT32(const char *pointer)
 {
@@ -46,50 +47,14 @@ static inline quint32 MAKEID(quint8 a, quint8 b, quint8 c, quint8 d)
 	return (quint32(a)|(quint32(b)<<8)|(quint32(c)<<16)|(quint32(d)<<24));
 }
 
-#define COPYABLE_D_POINTERED_DECLARE(type) \
-	type(const type &other); \
-	type& operator=(const type &other);
-
-#define COPYABLE_D_POINTERED_DEFINE(type) \
-	type::type(const type &other) \
-	{ \
-		d = new PrivData(); \
-		*d = *other.d; \
-	} \
-	\
-	type& type::operator=(const type &other) \
-	{ \
-		if (this != &other) \
-		{ \
-			*d = *other.d; \
-		} \
-		return *this; \
-	}
-
-#define COPYABLE_D_POINTERED_INNER_DEFINE(type, constructorname) \
-	type::constructorname(const type &other) \
-	{ \
-		d = new PrivData(); \
-		*d = *other.d; \
-	} \
-	\
-	type& type::operator=(const type &other) \
-	{ \
-		if (this != &other) \
-		{ \
-			*d = *other.d; \
-		} \
-		return *this; \
-	}
-
 // Now we set it up so symbols are properly exported/imported on Windows
 #ifdef Q_OS_WIN32
 #ifdef MODE_MAIN
-#define MAIN_EXPORT		__declspec(dllexport)
-#define PLUGIN_EXPORT	__declspec(dllimport)
+#define MAIN_EXPORT __declspec(dllexport)
+#define PLUGIN_EXPORT __declspec(dllimport)
 #else
-#define MAIN_EXPORT		__declspec(dllimport)
-#define PLUGIN_EXPORT	__declspec(dllexport)
+#define MAIN_EXPORT __declspec(dllimport)
+#define PLUGIN_EXPORT __declspec(dllexport)
 #endif
 #else
 #define MAIN_EXPORT

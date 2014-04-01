@@ -29,12 +29,16 @@
 #include <QString>
 
 class IRCMessageClass;
+class IRCNetworkAdapter;
 
 class IRCResponseParser : public QObject
 {
 	Q_OBJECT
 
 	public:
+		IRCResponseParser(IRCNetworkAdapter *network);
+		~IRCResponseParser();
+
 		/**
  		* @brief Parses the message received from the network.
  		*
@@ -45,7 +49,7 @@ class IRCResponseParser : public QObject
  		* @return Instance of IRCResponseParseResult with defined type of
  		*         the message and info if message was actually parsed or not.
  		*/
-		IRCResponseParseResult  		parse(const QString& message);
+		IRCResponseParseResult parse(const QString& message);
 
 	signals:
 		/**
@@ -54,22 +58,22 @@ class IRCResponseParser : public QObject
 		 *	@param nickname
 		 *		Nickname with which the user has just registered.
 		 */
-		void			helloClient(const QString& nickname);
+		void helloClient(const QString& nickname);
 
-		void			kick(const QString& channel, const QString& byWhom, const QString& whoIsKicked, const QString& reason);
-		void			kill(const QString& victim, const QString& comment);
+		void kick(const QString& channel, const QString& byWhom, const QString& whoIsKicked, const QString& reason);
+		void kill(const QString& victim, const QString& comment);
 
 		void iSupportReceived(const QString &line);
 
 		/**
 		 *	@brief Carries info about MODE for display.
 		 */
-		void			modeInfo(const QString& channel, const QString& whoSetThis, const QString& modeParams);
-		void			namesListReceived(const QString& channel, const QStringList& names);
-		void			namesListEndReceived(const QString& channel);
-		void			nicknameInUse(const QString& nickname);
-		void			noSuchNickname(const QString& nickname);
-		void			parseError(const QString& error);
+		void modeInfo(const QString& channel, const QString& whoSetThis, const QString& modeParams);
+		void namesListReceived(const QString& channel, const QStringList& names);
+		void namesListEndReceived(const QString& channel);
+		void nicknameInUse(const QString& nickname);
+		void noSuchNickname(const QString& nickname);
+		void parseError(const QString& error);
 
 		/**
 		 * @brief Tells the network adapter to print a message.
@@ -81,24 +85,30 @@ class IRCResponseParser : public QObject
 		 *      empty, message is printed directly through the
 		 *      IRCNetworkAdapter itself.
 		 */
-		void			print(const QString& printWhat, const QString& printWhere);
+		void print(const QString& printWhat, const QString& printWhere);
 		/**
 		 * @brief Same as print(), but allows to specify message class.
 		 */
-		void			printWithClass(const QString& printWhat, const QString& printWhere, const IRCMessageClass& msgClass);
+		void printWithClass(const QString& printWhat, const QString& printWhere, const IRCMessageClass& msgClass);
 
-		void			privMsgReceived(const QString& recipient, const QString& sender, const QString& content);
-		void			sendPongMessage(const QString& sendWhere);
-		void			userChangesNickname(const QString& oldNickname, const QString& newNickname);
-		void			userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature);
-		void			userModeChanged(const QString& channel, const QString& nickname, unsigned flagsAdded, unsigned flagsRemoved);
-		void			userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage);
-		void			userQuitsNetwork(const QString& nickname, const QString& farewellMessage);
+		void privMsgReceived(const QString& recipient, const QString& sender, const QString& content);
+		/**
+		 * @brief Create chat window if necessary and display message
+		 *        'as is' without further string gluing.
+		 */
+		void privMsgLiteralReceived(const QString& recipient, const QString& content, const IRCMessageClass& msgClass);
+		void sendPongMessage(const QString& sendWhere);
+		void userChangesNickname(const QString& oldNickname, const QString& newNickname);
+		void userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature);
+		void userModeChanged(const QString& channel, const QString& nickname,
+			const QList<char> &flagsAdded, const QList<char> &flagsRemoved);
+		void userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage);
+		void userQuitsNetwork(const QString& nickname, const QString& farewellMessage);
 
 		/**
 		 *	@brief Emitted with response 311 RPL_WHOISUSER.
 		 */
-		void			whoIsUser(const QString& nickname, const QString& user, const QString& hostName, const QString& realName);
+		void whoIsUser(const QString& nickname, const QString& user, const QString& hostName, const QString& realName);
 
 	private:
 		enum FlagModes
@@ -108,25 +118,29 @@ class IRCResponseParser : public QObject
 			FlagModeError
 		};
 
-		QString			joinAndTrimColonIfNecessary(const QStringList& strList) const;
+		class PrivData;
+		PrivData *d;
+
+		QString joinAndTrimColonIfNecessary(const QStringList& strList) const;
 
 		/**
 		 *	@brief Will return FlagModeError if the given character cannot be
 		 *	translated.
 		 */
-		FlagModes		getFlagMode(char c);
+		FlagModes getFlagMode(char c);
 
-		IRCResponseParseResult		parseMessage(const QString& prefix, const QString& sender, const QString& type, QStringList params);
+		IRCResponseParseResult parseMessage();
 
+		void parsePrivMsgOrNotice();
 		/**
 		 *	@brief Will emit userModeChanged() for each character in flagsString.
 		 *
 		 *	This method will "damage" the passed nicknames parameter.
 		 *	Use with care.
 		 */
-		void			parseUserModeMessage(const QString& channel, QString flagsString, QStringList& nicknames);
+		void parseUserModeMessage(const QString& channel, QString flagsString, QStringList& nicknames);
 
-		QString&		trimColonIfNecessary(QString& str) const;
+		QString& trimColonIfNecessary(QString& str) const;
 };
 
 #endif

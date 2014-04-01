@@ -52,7 +52,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		/**
 		 *	@brief Applies current appearance settings from the IRC config.
 		 */
-		void				applyAppearanceSettings();
+		void applyAppearanceSettings();
 		
 		/** 
 		 *	@brief Called when tab becomes active.
@@ -60,25 +60,25 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 *	Informs the tab that it should grab keyboard focus.
 		 *	Text input widget will be selected.
 		 */
-		void				grabFocus();
-		bool				hasTabFocus() const;
+		void grabFocus();
+		bool hasTabFocus() const;
 		
-		QIcon				icon() const;
+		QIcon icon() const;
 
-		IRCAdapterBase*		ircAdapter() const { return pIrcAdapter; }
+		IRCAdapterBase* ircAdapter() const { return pIrcAdapter; }
 		
 		/**
 		 *	@brief Calling this multiple times on the same object will cause
 		 *	memory leaks.
 		 */
-		void				setIRCAdapter(IRCAdapterBase* pAdapter);
+		void setIRCAdapter(IRCAdapterBase* pAdapter);
 		
-		QString				title() const;
-		QString				titleColor() const;
+		QString title() const;
+		QString titleColor() const;
 		
 	public slots:
-		void				receiveMessage(const QString& message);
-		void				receiveMessageWithClass(const QString& message, const IRCMessageClass& messageClass);
+		void receiveMessage(const QString& message);
+		void receiveMessageWithClass(const QString& message, const IRCMessageClass& messageClass);
 
 	signals:
 		/**
@@ -87,74 +87,79 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 *
 		 *	Capture this to close this widget.
 		 */
-		void				chatWindowCloseRequest(IRCDockTabContents*);
+		void chatWindowCloseRequest(IRCDockTabContents*);
 		
 		/**
 		 *	@brief Emitted when the variable returned by 
 		 *	IRCAdapterBase::title() might have changed and the 
 		 *	application should be notified of this fact.
 		 */
-		void				titleChange(IRCDockTabContents* pCaller);
+		void titleChange(IRCDockTabContents* pCaller);
 		
 		/**
 		 *	@brief Emitted when network adapter for this dock emits
 		 *	its focusRequest() signal.
 		 */
-		void				focusRequest(IRCDockTabContents* pCaller);
+		void focusRequest(IRCDockTabContents* pCaller);
 
 	protected slots:
-		void				adapterFocusRequest();
-		void				adapterTerminating();
+		void adapterFocusRequest();
+		void adapterTerminating();
 	
-		void				adapterTitleChange()
+		void adapterTitleChange()
 		{
 			emit titleChange(this);
 		}
 
-		void				nameAdded(const IRCUserInfo& userInfo);
-		void				nameListUpdated(const IRCUserList& userList);
-		void				nameRemoved(const IRCUserInfo& userInfo);
-		void				nameUpdated(const IRCUserInfo& userInfo);
+		void nameAdded(const IRCUserInfo& userInfo);
+		void nameListUpdated(const IRCUserList& userList);
+		void nameRemoved(const IRCUserInfo& userInfo);
+		void nameUpdated(const IRCUserInfo& userInfo);
 		
 		/**
 		 *	@brief Captures signals from IRC Networks which indicate that a new
 		 *	chat window is being opened.
 		 */
-		void				newChatWindowIsOpened(IRCChatAdapter* pAdapter);
+		void newChatWindowIsOpened(IRCChatAdapter* pAdapter);
 		
-		void				myNicknameUsedSlot();
+		void myNicknameUsedSlot();
 		
-		void				receiveError(const QString& error);
-		void				sendMessage();
-		void				userListCustomContextMenuRequested(const QPoint& pos);
-		void				userListDoubleClicked(const QModelIndex& index);
+		void receiveError(const QString& error);
+		void sendMessage();
+		void userListCustomContextMenuRequested(const QPoint& pos);
+		void userListDoubleClicked(const QModelIndex& index);
 
 	protected:
-		IRCAdapterBase*		pIrcAdapter;
-		IRCDock*			pParentIRCDock;
+		IRCAdapterBase* pIrcAdapter;
+		IRCDock* pParentIRCDock;
 		
 	private:
 		class UserListMenu : public QMenu
 		{
 			public:
 				UserListMenu();
-			
-				QAction*		ban;
-				QAction*		dehalfOp;
-				QAction*		deop;
-				QAction*		devoice;
-				QAction*		halfOp;
-				QAction*		kick;
-				QAction*		op;
-				QAction*		openChatWindow;
-				QAction*		voice;
-				
+
+				QAction* ban;
+				QAction *ctcpTime;
+				QAction *ctcpPing;
+				QAction *ctcpVersion;
+				QAction* dehalfOp;
+				QAction* deop;
+				QAction* devoice;
+				QAction* halfOp;
+				QAction* kick;
+				QAction* op;
+				QAction* openChatWindow;
+				QAction* voice;
+
 			private:
-				bool			bIsOperator;
+				bool bIsOperator;
 			
 		};
-		
-		static const int	BLINK_TIMER_DELAY_MS;
+
+		class PrivChatMenu;
+
+		static const int BLINK_TIMER_DELAY_MS;
 	
 		/**
 		 *	@brief Holds blinkTimer state.
@@ -163,33 +168,40 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 *	Change to this variable should be accompanied by emitting
 		 *	titleChange() signal.
 		 */
-		bool				bBlinkTitle;
-		bool				bIsDestroying;
+		bool bBlinkTitle;
+		bool bIsDestroying;
 		
-		QTimer				blinkTimer;
+		QTimer blinkTimer;
 		
-		IRCMessageClass*	lastMessageClass;
+		IRCMessageClass* lastMessageClass;
 		/**
 		 *	@brief This is required to properly refresh colors when
 		 *	appearance is changed.
 		 */
-		QStringList			textOutputContents;		
-		UserListMenu*		userListContextMenu;
+		QStringList textOutputContents;		
+		UserListMenu* userListContextMenu;
 	
-		QStandardItem*		findUserListItem(const QString& nickname);
-		UserListMenu&		getUserListContextMenu();
-		void				insertMessage(const IRCMessageClass& messageClass, const QString& htmlString);
-		QString				selectedNickname();
-		
+		QStandardItem* findUserListItem(const QString& nickname);
+		UserListMenu& getUserListContextMenu();
+		IRCNetworkAdapter* network();
+		void insertMessage(const IRCMessageClass& messageClass, const QString& htmlString);
+		QString selectedNickname();
+
+		void sendCtcpPing(const QString &nickname);
+		void sendCtcpTime(const QString &nickname);
+		void sendCtcpVersion(const QString &nickname);
+
 		/**
 		 *	Sets bBlinkTitle to specified value and emits
 		 *	titleChange() signal if new value was different than the
 		 *	previous one.
 		 */
-		void				setBlinkTitle(bool b);
-		
+		void setBlinkTitle(bool b);
+		void showPrivChatContextMenu();
+
 	private slots:
-		void				blinkTimerSlot();
+		void blinkTimerSlot();
+		void showChatContextMenu();
 };
 
 #endif

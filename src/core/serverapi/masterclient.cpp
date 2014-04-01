@@ -47,6 +47,16 @@ class MasterClient::PrivData
 		QList<ServerPtr> servers;
 
 		QFile *cache;
+
+		bool isCacheOpenForReading() const
+		{
+			return cache != NULL && cache->isReadable();
+		}
+
+		bool isCacheOpenForWriting() const
+		{
+			return cache != NULL && cache->isWritable();
+		}
 };
 
 MasterClient::MasterClient()
@@ -123,9 +133,11 @@ void MasterClient::notifyResponse(Response response)
 		case RESPONSE_WAIT:
 			emit message(engineName(), tr("Could not fetch a new server list from the "
 				"master because not enough time has past."), true);
+			readPacketCache();
 			break;
 		case RESPONSE_BAD:
 			emit message(engineName(), tr("Bad response from master server."), true);
+			readPacketCache();
 			break;
 		case RESPONSE_OLD:
 			emit message(engineName(),
@@ -160,7 +172,7 @@ ServerPtr MasterClient::operator[](int index) const
 
 bool MasterClient::preparePacketCache(bool write)
 {
-	if(d->cache == NULL || d->cache->isWritable() != write)
+	if (write ? !d->isCacheOpenForWriting() : !d->isCacheOpenForReading())
 	{
 		if(plugin() == NULL)
 		{
@@ -184,6 +196,12 @@ bool MasterClient::preparePacketCache(bool write)
 			return false;
 		}
 	}
+	else if (!write && d->isCacheOpenForReading())
+	{
+		// If we prepare cache for reading we want to start
+		// reading from the beginning.
+		d->cache->seek(0);
+	}
 	return d->cache != NULL;
 }
 
@@ -201,8 +219,12 @@ void MasterClient::pushPacketToCache(const QByteArray &data)
 
 MasterClient::Response MasterClient::readResponse(const QByteArray &data)
 {
-	pushPacketToCache(data);
-	return readMasterResponse(data);
+	Response response = readMasterResponse(data);
+	if (response == RESPONSE_GOOD || response == RESPONSE_PENDING)
+	{
+		pushPacketToCache(data);
+	}
+	return response;
 }
 
 void MasterClient::readPacketCache()
@@ -214,8 +236,18 @@ void MasterClient::readPacketCache()
 		return;
 	}
 
-	gLog << tr("Reloading master server results from cache for %1!").arg(plugin()->data()->name);
 	QDataStream strm(d->cache);
+	if (strm.atEnd())
+	{
+		// Can't read anything from cache. Either cache is empty
+		// or for some reason the file cursor is set to the
+		// end of the file.
+		emit listUpdated();
+		return;
+	}
+
+	gLog << tr("Reloading master server results from cache for %1!").arg(plugin()->data()->name);
+	bool hasGood = false;
 	while(!strm.atEnd())
 	{
 		quint16 size;
@@ -224,14 +256,27 @@ void MasterClient::readPacketCache()
 		QByteArray data(size, '\0');
 		strm >> data;
 
-		if(!readMasterResponse(data))
+		Response response = readMasterResponse(data);
+		if (response == RESPONSE_GOOD)
+		{
+			hasGood = true;
+		}
+		if(response != RESPONSE_GOOD && response != RESPONSE_PENDING)
 		{
 			// Cache was not read properly. We need to emit the signal
 			// to notify the program that this master client finished
 			// updating.
 			emit listUpdated();
-			break;
+			return;
 		}
+	}
+	if (!hasGood)
+	{
+		// Plugins are ought to emit listUpdated() only when RESPONSE_GOOD
+		// is achieved. If that's not the case, we shall emit it here
+		// to notify refreshing process that the server has completed
+		// updating.
+		emit listUpdated();
 	}
 }
 

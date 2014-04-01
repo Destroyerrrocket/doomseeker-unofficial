@@ -492,6 +492,7 @@ bool Refresher::tryReadDatagramByMasterClient(QHostAddress& address,
 				case MasterClient::RESPONSE_BAD:
 				case MasterClient::RESPONSE_OLD:
 					pMaster->notifyResponse(response);
+					unregisterMaster(pMaster);
 					return true;
 				case MasterClient::RESPONSE_REPLY:
 					pMaster->sendRequest(d->socket);

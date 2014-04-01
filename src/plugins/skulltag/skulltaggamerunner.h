@@ -33,14 +33,14 @@ class SkulltagGameRunner : public GameRunner
 	public:
 		SkulltagGameRunner(const SkulltagServer* server);
 
-		const EnginePlugin*			plugin() const { return SkulltagEnginePlugin::staticInstance(); }
+		const EnginePlugin* plugin() const { return SkulltagEnginePlugin::staticInstance(); }
 		
 	protected:
-		QString						argForConnectPassword() const { return "+cl_password"; }	
-		QString						argForServerLaunch() const { return "-host"; }
+		QString argForConnectPassword() const { return "+cl_password"; }	
+		QString argForServerLaunch() const { return "-host"; }
 		
-		void						hostDMFlags(QStringList& args, const DMFlags& dmFlags) const;
-		void						hostProperties(QStringList& args) const;
+		void hostDMFlags(QStringList& args, const DMFlags& dmFlags) const;
+		void hostProperties(QStringList& args) const;
 		
 		
 };

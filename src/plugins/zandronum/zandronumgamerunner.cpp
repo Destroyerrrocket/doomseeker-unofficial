@@ -32,6 +32,7 @@ ZandronumGameClientRunner::ZandronumGameClientRunner(ServerPtr server)
 : GameClientRunner(server)
 {
 	setArgForConnectPassword("+cl_password");
+	setArgForInGamePassword("+cl_joinpassword");
 	set_addExtra(&ZandronumGameClientRunner::addExtra);
 }
 

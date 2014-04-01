@@ -50,7 +50,7 @@ class ConfigurationDialog : public QDialog, private Ui::ConfigurationDialog
 		 *	@return NULL if ConfigurationBox was not added. Pointer to a new
 		 *	tree node if operation was successful.
 		 */
-		virtual QStandardItem*			addConfigurationBox(QStandardItem* rootItem, ConfigurationBaseBox* pConfigurationBox, int position = -1);
+		virtual QStandardItem* addConfigurationBox(QStandardItem* rootItem, ConfigurationBaseBox* pConfigurationBox, int position = -1);
 
 		/**
 		 *	@brief Adds a label node to the options tree view.
@@ -69,41 +69,41 @@ class ConfigurationDialog : public QDialog, private Ui::ConfigurationDialog
 		 *	@return Newly created options tree view node. NULL if rootItem
 		 *	was not a member of the tree view.
 		 */
-		QStandardItem*					addLabel(QStandardItem* rootItem, const QString& label, int position = -1);
-		bool							isConfigurationBoxOnTheList(ConfigurationBaseBox* pConfigurationBox);
+		QStandardItem* addLabel(QStandardItem* rootItem, const QString& label, int position = -1);
+		bool isConfigurationBoxOnTheList(ConfigurationBaseBox* pConfigurationBox);
 
 
 	protected:
-		bool							canConfigurationBoxBeAddedToList(ConfigurationBaseBox* pConfigurationBox);
+		bool canConfigurationBoxBeAddedToList(ConfigurationBaseBox* pConfigurationBox);
 
-		virtual void					doSaveSettings() {};
+		virtual void doSaveSettings() {};
 		virtual void keyPressEvent(QKeyEvent* e);
 
-		bool							isConfigurationBoxInfoValid(ConfigurationBaseBox* pConfigurationBox);
+		bool isConfigurationBoxInfoValid(ConfigurationBaseBox* pConfigurationBox);
 		
 		/**
 		 * @brief Returns pointer to the tree widget that contains
 		 *        configuration sections list.
 		 */
-		QTreeView*						optionsTree();
+		QTreeView* optionsTree();
 
 		/**
 		 * 	@param widget - hide currently displayed box if NULL.
 		 */
-		void 							showConfigurationBox(ConfigurationBaseBox* widget);
-		void							saveSettings();
+		void showConfigurationBox(ConfigurationBaseBox* widget);
+		void saveSettings();
 
-		virtual bool					validate() { return true; }
+		virtual bool validate() { return true; }
 
 	protected slots:
-		void 							btnClicked(QAbstractButton *button);
-		void 							optionListClicked(const QModelIndex&);
+		void btnClicked(QAbstractButton *button);
+		void optionListClicked(const QModelIndex&);
 
 	private:
-		QList<ConfigurationBaseBox*>	configBoxesList;
-		QWidget*						currentlyDisplayedCfgBox;
+		QList<ConfigurationBaseBox*> configBoxesList;
+		QWidget* currentlyDisplayedCfgBox;
 
-		bool							hasItemOnList(QStandardItem* pItem) const;
+		bool hasItemOnList(QStandardItem* pItem) const;
 
 
 };

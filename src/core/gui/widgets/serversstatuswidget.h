@@ -45,27 +45,27 @@ class ServersStatusWidget : public QLabel
  		* If set to true, apperance will be clear. If set to false, appearance
  		* will be "grayed out".
  		*/
-		void    setMasterEnabledStatus(bool bEnabled);
-		void	updateDisplay();
+		void setMasterEnabledStatus(bool bEnabled);
+		void updateDisplay();
 
 	signals:
-		void    clicked(MasterClient* pClient);
+		void clicked(MasterClient* pClient);
 
 	protected:
-		void    mousePressEvent(QMouseEvent* event);
-		void	paintEvent(QPaintEvent *event);
+		void mousePressEvent(QMouseEvent* event);
+		void paintEvent(QPaintEvent *event);
 
-		bool                bMasterIsEnabled;
-		QPixmap				icon;
-		QPixmap				iconDisabled;
-		unsigned int		numBots;
-		unsigned int		numPlayers;
-		MasterClient        *serverList;
+		bool bMasterIsEnabled;
+		QPixmap icon;
+		QPixmap iconDisabled;
+		unsigned int numBots;
+		unsigned int numPlayers;
+		MasterClient *serverList;
 
 	protected slots:
-		void	addServer(const ServerPtr &server);
-		void	registerServers();
-		void	removeServer(const ServerPtr &server);
+		void addServer(const ServerPtr &server);
+		void registerServers();
+		void removeServer(const ServerPtr &server);
 };
 
 #endif /* __SERVERSSTATUSWIDGET_H__ */
