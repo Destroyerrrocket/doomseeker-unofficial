@@ -271,12 +271,13 @@ bool ZandronumClientExeFile::downloadTestingBinaries(const QDir &destination, QW
 					break;
 				}
 
-				archive->extract(i, destination.path() + QDir::separator() + filename);
-				gLog << QString("Eeee? %1").arg(destination.path() + QDir::separator() + filename);
+				QString fileTargetPath = destination.path() + QDir::separator() + filename;
+				archive->extract(i, fileTargetPath);
+				gLog << tr("Unpacking file: %1").arg(fileTargetPath);
 				// Make sure we can execute the binary.
 				if(filename == ZANDRONUM_BINARY_NAME)
 				{
-					QFile binaryFile(destination.path() + QDir::separator() + filename);
+					QFile binaryFile(fileTargetPath);
 					binaryFile.setPermissions(binaryFile.permissions() | QFile::ExeUser);
 				}
 			}
