@@ -47,6 +47,22 @@ class MAIN_EXPORT ExeFile : public QObject
 		 */
 		const QString& exeTypeName() const;
 		/**
+		 * @brief Attempts to install the binary.
+		 *
+		 * Some games may support additional executables (testing binaries,
+		 * for example). If such executables are not available on local
+		 * filesystem, but can be installed automatically, pathToExe()
+		 * should return Message with Message::Type::GAME_NOT_FOUND_BUT_CAN_BE_INSTALLED
+		 * error type and implement install() method.
+		 *
+		 * Default implementation does nothing and returns ignorable message.
+		 *
+		 * @param parent
+		 *     Should be treated as parent widget for all widgets that need
+		 *     to be created during the process.
+		 */
+		virtual Message install(QWidget *parent);
+		/**
 		 * @brief Name of the program this executable belongs to.
 		 */
 		const QString& programName() const;
@@ -54,9 +70,13 @@ class MAIN_EXPORT ExeFile : public QObject
 		/**
 		 * @brief Returns the path to the executable file.
 		 *
-		 * @param [out] message - information message, if any.
+		 * @param [out] message 
+		 *     Information message, if any. The type of the message might be
+		 *     relevant in some cases, please review documentation for
+		 *     install() method.
 		 *
-		 * @return Empty if error is not empty.
+		 * @return Empty if error, path to the file if all fine.
+		 * @see install()
 		 */
 		virtual QString pathToExe(Message& message);
 

@@ -82,6 +82,61 @@ ZandronumClientExeFile::~ZandronumClientExeFile()
 	delete d;
 }
 
+IniSection &ZandronumClientExeFile::config()
+{
+	return *ZandronumEnginePlugin::staticInstance()->data()->pConfig;
+}
+
+Message ZandronumClientExeFile::install(QWidget *parent)
+{
+	QString messageBoxContent = tr("Testing binaries for version %1 can be installed.\n\n"
+		"Do you want Doomseeker to create %1 directory and copy all your .ini files from your base directory?"
+		).arg(testingVersion());
+
+	if (QMessageBox::question(parent,
+		tr("Doomseeker - missing testing binaries"), messageBoxContent,
+		QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+	{
+		QString path = config()["TestingPath"];
+		if (path.isEmpty())
+		{
+			return Message::customError(tr("No testing directory specified for Zandronum"));
+		}
+
+		QDir dir(path);
+		if (!dir.mkdir(testingVersion()))
+		{
+			return Message::customError(tr("Unable to create directory:\n%1").arg(path));
+		}
+
+		QString finalDestinationPath = path + '/' + testingVersion();
+
+		// Now copy all .ini's. On Linux .ini's are kept in ~/.zandronum so this will
+		// do nothing, but on Windows this should work like magic.
+		Message message;
+		QDir baseBinaryDir(workingDirectory(message));
+		QStringList nameFilters;
+		nameFilters << "*.ini";
+		QStringList iniFiles = baseBinaryDir.entryList(nameFilters, QDir::Files);
+		foreach(QString str, iniFiles)
+		{
+			QString sourcePath = baseBinaryDir.absolutePath() + '/' + str;
+			QString targetPath = finalDestinationPath + '/' + str;
+			QFile file(sourcePath);
+			file.copy(targetPath);
+		}
+
+		if(!downloadTestingBinaries(finalDestinationPath, parent))
+		{
+			QMessageBox::information(parent, tr("Doomseeker"),
+				tr("Please install now version \"%1\" into:\n%2").arg(testingVersion(), path));
+		}
+
+		return Message(Message::Type::SUCCESSFUL);
+	}
+	return Message(Message::Type::CANCELLED);
+}
+
 QString ZandronumClientExeFile::pathToExe(Message& message)
 {
 	IniSection& config = *ZandronumEnginePlugin::staticInstance()->data()->pConfig;
@@ -110,55 +165,13 @@ QString ZandronumClientExeFile::pathToExe(Message& message)
 			path += '/';
 		}
 
-		// Strip out extraneous data in the version number.
-		QString testingVersion = d->server->gameVersion();
-		testingVersion = testingVersion.left(testingVersion.indexOf(' '));
-
-		path += testingVersion;
+		path += testingVersion();
 
 		QFileInfo fi(path);
 		if (!fi.exists())
 		{
 			error = tr("%1\ndoesn't exist.\nYou need to install new testing binaries.").arg(path);
-			QString messageBoxContent = tr("%1\n\n"
-				"Do you want Doomseeker to create %2 directory and copy all your .ini files from your base directory?"
-				).arg(error, testingVersion);
-
-			if (QMessageBox::question(gApp->mainWindowAsQWidget(), tr("Doomseeker - missing testing binaries"), messageBoxContent, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-			{
-				// setting->string() should still contain base dir
-				// for testing binaries
-				QDir dir(setting);
-				if (!dir.mkdir(testingVersion))
-				{
-					error = tr("Unable to create directory:\n%1").arg(path);
-					message = Message::customError(error);
-					return QString();
-				}
-
-				// Now copy all .ini's. On Linux .ini's are kept in ~/.zandronum so this will
-				// do nothing, but on Windows this should work like magic.
-				QDir baseBinaryDir(workingDirectory(message));
-				QStringList nameFilters;
-				nameFilters << "*.ini";
-				QStringList iniFiles = baseBinaryDir.entryList(nameFilters, QDir::Files);
-				foreach(QString str, iniFiles)
-				{
-					QString sourcePath = baseBinaryDir.absolutePath() + '/' + str;
-					QString targetPath = path + '/' + str;
-					QFile file(sourcePath);
-					file.copy(targetPath);
-				}
-
-				if(!downloadTestingBinaries(path))
-				{
-					// Show user the prompt to install the binaries.
-					QMessageBox::information(gApp->mainWindowAsQWidget(), tr("Doomseeker"), tr("Please install now version \"%1\" into:\n%2").arg(testingVersion, path));
-				}
-
-				// Try this method again.
-				return pathToExe(message);
-			}
+			message = Message(Message::Type::GAME_NOT_FOUND_BUT_CAN_BE_INSTALLED, error);
 			return QString();
 		}
 
@@ -191,6 +204,13 @@ QString ZandronumClientExeFile::pathToExe(Message& message)
 	}
 }
 
+QString ZandronumClientExeFile::testingVersion() const
+{
+	QString testingVersion = d->server->gameVersion();
+	// Strip out extraneous data in the version number.
+	return testingVersion.left(testingVersion.indexOf(' '));
+}
+
 QString ZandronumClientExeFile::workingDirectory(Message& message)
 {
 	IniSection& config = *ZandronumEnginePlugin::staticInstance()->data()->pConfig;
@@ -199,7 +219,7 @@ QString ZandronumClientExeFile::workingDirectory(Message& message)
 	return fi.absolutePath();
 }
 
-bool ZandronumClientExeFile::downloadTestingBinaries(const QDir &destination)
+bool ZandronumClientExeFile::downloadTestingBinaries(const QDir &destination, QWidget *parent)
 {
 #ifdef Q_OS_MAC
 	// Can't do anything for Mac OS X at this time. :/
@@ -229,7 +249,8 @@ bool ZandronumClientExeFile::downloadTestingBinaries(const QDir &destination)
 	}
 
 	QUrl url(QString(TESTING_BINARY_URL).arg(versionPrefix).arg(hgVersion));
-	TestingProgressDialog dialog(url);
+	gLog << tr("Downloading Zandronum testing binary from URL: %1").arg(url.toString());
+	TestingProgressDialog dialog(url, parent);
 	if(dialog.exec() == QDialog::Accepted)
 	{
 		// Extract the needed files.
@@ -251,6 +272,7 @@ bool ZandronumClientExeFile::downloadTestingBinaries(const QDir &destination)
 				}
 
 				archive->extract(i, destination.path() + QDir::separator() + filename);
+				gLog << QString("Eeee? %1").arg(destination.path() + QDir::separator() + filename);
 				// Make sure we can execute the binary.
 				if(filename == ZANDRONUM_BINARY_NAME)
 				{
@@ -360,8 +382,8 @@ bool ZandronumClientExeFile::spawnTestingBatchFile(const QString& versionDir, QS
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TestingProgressDialog::TestingProgressDialog(const QUrl& url)
-: QProgressDialog(tr("Downloading testing binaries..."), tr("Cancel"), 0, 0, gApp->mainWindowAsQWidget())
+TestingProgressDialog::TestingProgressDialog(const QUrl& url, QWidget *parent)
+: QProgressDialog(tr("Downloading testing binaries..."), tr("Cancel"), 0, 0, parent)
 {
 	connect(this, SIGNAL(canceled()), this, SLOT(abort()));
 

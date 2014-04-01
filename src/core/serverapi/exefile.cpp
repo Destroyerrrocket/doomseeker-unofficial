@@ -59,6 +59,11 @@ const QString& ExeFile::exeTypeName() const
 	return d->exeTypeName;
 }
 
+Message ExeFile::install(QWidget *parent)
+{
+	return Message();
+}
+
 QString ExeFile::pathToExe(Message& message)
 {
 	IniSection config = gConfig.iniSectionForPlugin(programName());

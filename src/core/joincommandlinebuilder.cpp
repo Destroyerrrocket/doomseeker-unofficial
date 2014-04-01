@@ -30,8 +30,11 @@
 #include "gui/wadseekerinterface.h"
 #include "ini/settingsproviderqt.h"
 #include "plugins/engineplugin.h"
+#include "serverapi/exefile.h"
 #include "serverapi/gameclientrunner.h"
+#include "serverapi/message.h"
 #include "serverapi/server.h"
+#include "application.h"
 
 #include <wadseeker/wadseeker.h>
 #include <QMessageBox>
@@ -288,6 +291,15 @@ CommandLineInfo JoinCommandLineBuilder::obtainJoinCommandLine()
 			return CommandLineInfo();
 		}
 
+		case JoinError::CanAutomaticallyInstallGame:
+		{
+			if (tryToInstallGame())
+			{
+				obtainJoinCommandLine();
+			}
+			break;
+		}
+
 		case JoinError::MissingWads:
 		{
 			MissingWadsProceed proceed = handleMissingWads(joinError);
@@ -314,6 +326,7 @@ CommandLineInfo JoinCommandLineBuilder::obtainJoinCommandLine()
 			break;
 
 		default:
+			gLog << "JoinCommandLineBuilder - unhandled JoinError type!";
 			break;
 	}
 
@@ -351,3 +364,13 @@ void JoinCommandLineBuilder::saveDemoMetaData(const QString& demoName)
 	metaSection.createSetting("pwads", wadList.join(";"));
 }
 
+bool JoinCommandLineBuilder::tryToInstallGame()
+{
+	Message message = d->server->clientExe()->install(gApp->mainWindowAsQWidget());
+	if (message.isError())
+	{
+		QMessageBox::critical(gApp->mainWindowAsQWidget(), tr("Game installation failure"),
+			message.contents(), QMessageBox::Ok);
+	}
+	return message.type() == Message::Type::SUCCESSFUL;
+}

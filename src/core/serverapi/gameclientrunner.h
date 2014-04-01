@@ -299,6 +299,11 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		PathFinder& pathFinder();
 
 		/**
+		 * @brief Retrieves path to offline exe from plugin's ExeFile.
+		 */
+		QString pathToOfflineExe(Message &msg);
+
+		/**
 		 * @brief Direct access to ServerConnectParams associated with
 		 *        current command line generation.
 		 */

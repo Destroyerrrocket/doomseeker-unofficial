@@ -375,23 +375,40 @@ GameClientRunner::GamePaths GameClientRunner::gamePaths()
 {
 	Message msg;
 	GamePaths result;
-	GameExeRetriever exeRetriever = GameExeRetriever(*d->server->plugin()->gameExe());
+
 	QScopedPointer<ExeFile> exeFile(d->server->clientExe());
 	result.clientExe = exeFile->pathToExe(msg);
-	result.offlineExe = exeRetriever.pathToOfflineExe(msg);
+	if (result.clientExe.isEmpty())
+	{
+		if (msg.type() == Message::Type::GAME_NOT_FOUND_BUT_CAN_BE_INSTALLED)
+		{
+			d->joinError.setType(JoinError::CanAutomaticallyInstallGame);
+			if (msg.contents().isEmpty())
+			{
+				d->joinError.setError(msg.contents());
+			}
+			else
+			{
+				d->joinError.setError(tr("Game can be installed by Doomseeker"));
+			}
+		}
+		else
+		{
+			d->joinError.setType(JoinError::ConfigurationError);
+			QString error = tr("Client binary cannot be obtained for %1, please "
+				"check the location given in the configuration.").arg(pluginName());
+			if (!msg.isIgnore())
+			{
+				error += "\n\n" + msg.contents();
+			}
+			d->joinError.setError(error);
+		}
+		return GamePaths();
+	}
 	result.workingDir = exeFile->workingDirectory(msg);
 
-	if (!result.isValid())
-	{
-		QString error = tr("Client binary cannot be obtained for %1, please "
-			"check the location given in the configuration.").arg(pluginName());
-		d->joinError.setType(JoinError::ConfigurationError);
-		if (!msg.isIgnore())
-		{
-			error += "\n\n" + msg.contents();
-		}
-		d->joinError.setError(error);
-	}
+	GameExeRetriever exeRetriever = GameExeRetriever(*d->server->plugin()->gameExe());
+	result.offlineExe = pathToOfflineExe(msg);
 
 	return result;
 }
@@ -436,6 +453,12 @@ void GameClientRunner::markPwadAsMissing(const QString& pwadName)
 PathFinder& GameClientRunner::pathFinder()
 {
 	return d->pathFinder;
+}
+
+QString GameClientRunner::pathToOfflineExe(Message &msg)
+{
+	GameExeRetriever exeRetriever = GameExeRetriever(*d->server->plugin()->gameExe());
+	return exeRetriever.pathToOfflineExe(msg);
 }
 
 const QString& GameClientRunner::pluginName() const

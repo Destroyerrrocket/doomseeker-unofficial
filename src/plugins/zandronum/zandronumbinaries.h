@@ -29,6 +29,7 @@
 #include <serverapi/exefile.h>
 
 class EnginePlugin;
+class IniSection;
 class ZandronumServer;
 class QDir;
 
@@ -40,6 +41,8 @@ class ZandronumClientExeFile : public ExeFile
 		ZandronumClientExeFile(const QSharedPointer<const ZandronumServer> &server);
 		~ZandronumClientExeFile();
 
+		Message install(QWidget *parent);
+
 		/**
 		 *	If the parent Server is a normal server simple path to executable
 		 *	file is returned. If this is a testing server, a shell script is
@@ -49,7 +52,7 @@ class ZandronumClientExeFile : public ExeFile
 		QString workingDirectory(Message& message);
 
 	protected:
-		bool downloadTestingBinaries(const QDir &destination);
+		bool downloadTestingBinaries(const QDir &destination, QWidget *parent);
 		/**
 		 *	Creates Unix .sh file or Windows .bat file to
 		 *	launch client for parent server. Returns true if the file
@@ -66,6 +69,9 @@ class ZandronumClientExeFile : public ExeFile
 	private:
 		class PrivData;
 		PrivData *d;
+
+		IniSection &config();
+		QString testingVersion() const;
 };
 
 class TestingProgressDialog : public QProgressDialog
@@ -73,7 +79,7 @@ class TestingProgressDialog : public QProgressDialog
 	Q_OBJECT
 
 	public:
-		TestingProgressDialog(const QUrl& url);
+		TestingProgressDialog(const QUrl& url, QWidget *parent);
 
 		const QByteArray &data() const { return downloadedFileData; }
 		const QString &filename() const { return downloadedFilename; }
