@@ -27,6 +27,7 @@
 #include "log.h"
 #include "strings.h"
 #include "configuration/doomseekerconfig.h"
+#include "gui/configuration/doomseekerconfigurationdialog.h"
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
 #include "refresher/refresher.h"
@@ -142,6 +143,10 @@ bool ConnectionHandler::obtainJoinCommandLine(CommandLineInfo& cli,
 		if (!builder.error().isEmpty())
 		{
 			QMessageBox::critical(d->parentWidget, errorCaption, builder.error());
+			if (builder.isConfigurationError())
+			{
+				DoomseekerConfigurationDialog::openConfiguration(d->server->plugin());
+			}
 		}
 		return false;
 	}

@@ -28,7 +28,6 @@
 #include "configuration/doomseekerconfig.h"
 #include "gui/passwordDlg.h"
 #include "gui/wadseekerinterface.h"
-#include "gui/configuration/doomseekerconfigurationdialog.h"
 #include "ini/settingsproviderqt.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/gameclientrunner.h"
@@ -42,6 +41,7 @@ class JoinCommandLineBuilder::PrivData
 {
 	public:
 		CommandLineInfo cli;
+		bool configurationError;
 		QString error;
 		Demo demo;
 		bool hadMissing;
@@ -53,6 +53,7 @@ JoinCommandLineBuilder::JoinCommandLineBuilder(ServerPtr server,
 	Demo demo, QWidget *parentWidget)
 {
 	d = new PrivData();
+	d->configurationError = false;
 	d->demo = demo;
 	d->hadMissing = false;
 	d->parentWidget = parentWidget;
@@ -175,15 +176,11 @@ void JoinCommandLineBuilder::handleError(const JoinError &error)
 	{
 		d->error = tr("Unknown error.");
 	}
+	d->configurationError = (error.type() == JoinError::ConfigurationError);
 
 	gLog << tr("Error when obtaining join parameters for server "
 		"\"%1\", game \"%2\": %3").arg(d->server->name()).arg(
 			d->server->engineName()).arg(d->error);
-
-	if (error.type() == JoinError::ConfigurationError)
-	{
-		DoomseekerConfigurationDialog::openConfiguration(d->server->plugin());
-	}
 }
 
 JoinCommandLineBuilder::MissingWadsProceed JoinCommandLineBuilder::handleMissingWads(const JoinError &error)
@@ -236,6 +233,11 @@ JoinCommandLineBuilder::MissingWadsProceed JoinCommandLineBuilder::handleMissing
 		}
 	}
 	return ret == QMessageBox::Ignore ? Ignore : Cancel;
+}
+
+bool JoinCommandLineBuilder::isConfigurationError() const
+{
+	return d->configurationError;
 }
 
 QString JoinCommandLineBuilder::mkDemoName()
