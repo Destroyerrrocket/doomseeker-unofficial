@@ -46,6 +46,7 @@ class GameCVar;
 class GameHost;
 class GameMode;
 class GameClientRunner;
+class PathFinder;
 class Player;
 class PlayersList;
 class PWad;
@@ -109,6 +110,25 @@ class MAIN_EXPORT Server : public QObject
 		 *         TooltipGenerator.
 		 */
 		virtual TooltipGenerator* tooltipGenerator() const;
+
+		/**
+		 * @brief Instantiate and return PathFinder configured to search
+		 *        for WADs for this server.
+		 *
+		 * It's expected that this method will return a PathFinder that is
+		 * configured to the best possible extent. If any error is encountered,
+		 * it shouldn't result in returning an invalid PathFinder.
+		 *
+		 * @warning
+		 * Be aware that method may be called from UI elements that expect
+		 * quick, non-blocking response.
+		 *
+		 * Default implementation creates PathFinder with paths configured
+		 * by the user in configuration box, and with priority search
+		 * directories set to wherever client and offline executables
+		 * reside, if such executables are available.
+		 */
+		virtual PathFinder wadPathFinder();
 		// END OF VIRTUALS
 
 		void addPlayer(const Player& player);

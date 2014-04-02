@@ -131,13 +131,11 @@ class GameClientRunner::PrivData
 		void (GameClientRunner::*addExtra)();
 		void (GameClientRunner::*addIwad)();
 		void (GameClientRunner::*createCommandLineArguments)();
-		void (GameClientRunner::*setupPathFinder)();
 };
 
 POLYMORPHIC_DEFINE(void, GameClientRunner, addExtra, (), ());
 POLYMORPHIC_DEFINE(void, GameClientRunner, addIwad, (), ());
 POLYMORPHIC_DEFINE(void, GameClientRunner, createCommandLineArguments, (), ());
-POLYMORPHIC_DEFINE(void, GameClientRunner, setupPathFinder, (), ());
 
 GameClientRunner::GameClientRunner(ServerPtr server)
 {
@@ -145,7 +143,6 @@ GameClientRunner::GameClientRunner(ServerPtr server)
 	set_addExtra(&GameClientRunner::addExtra_default);
 	set_addIwad(&GameClientRunner::addIwad_default);
 	set_createCommandLineArguments(&GameClientRunner::createCommandLineArguments_default);
-	set_setupPathFinder(&GameClientRunner::setupPathFinder_default);
 	d->argConnect = "-connect";
 	d->argIwadLoading = "-iwad";
 	d->argPort = "-port";
@@ -511,14 +508,9 @@ void GameClientRunner::setJoinError(const JoinError& e)
 	d->joinError = e;
 }
 
-void GameClientRunner::setupPathFinder_default()
+void GameClientRunner::setupPathFinder()
 {
-	GamePaths paths = gamePaths();
-	// Add the offline game directory so results are more consistent
-	// addPrioritySearchDir prepends to the list so we'll want to add the real
-	// priority directory second.
-	d->pathFinder.addPrioritySearchDir(paths.offlineExe);
-	d->pathFinder.addPrioritySearchDir(paths.clientExe);
+	d->pathFinder = d->server->wadPathFinder();
 }
 
 QString GameClientRunner::wadTargetDirectory() const

@@ -225,7 +225,7 @@ void ServerListHandler::contextMenuTriggered(QAction* action)
 	}
 }
 
-QString ServerListHandler::createIwadToolTip(ServerCPtr server)
+QString ServerListHandler::createIwadToolTip(ServerPtr server)
 {
 	if (!server->isKnown())
 	{
@@ -243,8 +243,7 @@ QString ServerListHandler::createIwadToolTip(ServerCPtr server)
 		// Use offline binary so that testing builds are not triggered.
 		QString binPath = GameExeRetriever(*server->plugin()->gameExe()).pathToOfflineExe(binMessage);
 
-		PathFinder pathFinder;
-		pathFinder.addPrioritySearchDir(binPath);
+		PathFinder pathFinder = server->wadPathFinder();
 		QString path = pathFinder.findFile(server->iwad());
 
 		if (path.isEmpty())
@@ -305,7 +304,7 @@ QString ServerListHandler::createPortToolTip(ServerCPtr server)
 	return ret.trimmed();
 }
 
-QString ServerListHandler::createPwadsToolTip(ServerCPtr server)
+QString ServerListHandler::createPwadsToolTip(ServerPtr server)
 {
 	if (server == NULL || !server->isKnown() || server->numWads() == 0)
 	{
@@ -324,14 +323,10 @@ QString ServerListHandler::createPwadsToolTip(ServerCPtr server)
 	// Engage!
 	if (bFindWads)
 	{
-		Message binMessage;
-		// Use offline binary so that testing builds are not triggered.
-		QString binPath = GameExeRetriever(*server->plugin()->gameExe()).pathToOfflineExe(binMessage);
-
 		QStringList pwadsFormatted;
 		foreach (const PWad &wad, pwads)
 		{
-			pwadsFormatted << createPwadToolTipInfo(wad, binPath);
+			pwadsFormatted << createPwadToolTipInfo(wad, server);
 		}
 
 		content = "<table cellspacing=1>";
@@ -350,14 +345,13 @@ QString ServerListHandler::createPwadsToolTip(ServerCPtr server)
 	return toolTip.arg(content);
 }
 
-QString ServerListHandler::createPwadToolTipInfo(const PWad& pwad, const QString &binPath)
+QString ServerListHandler::createPwadToolTipInfo(const PWad& pwad, const ServerPtr &server)
 {
 	QString formattedStringBegin = "<tr style=\"color: %1;\">";
 	QString formattedStringEnd = "</tr>";
 	QString formattedStringMiddle;
 
-	PathFinder pathFinder;
-	pathFinder.addPrioritySearchDir(binPath);
+	PathFinder pathFinder = server->wadPathFinder();
 	QString pathToFile = pathFinder.findFile(pwad.name());
 
 	if (pathToFile.isEmpty())

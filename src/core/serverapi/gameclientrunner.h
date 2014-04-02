@@ -292,9 +292,6 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 * @brief Reference to a PathFinder belonging to this GameClientRunner.
 		 *
 		 * Useful if plugins want to access the PathFinder.
-		 *
-		 * This PathFinder is set up by a call to setupPathFinder(), which can
-		 * be overwritten by plugis.
 		 */
 		PathFinder& pathFinder();
 
@@ -308,13 +305,6 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 *        current command line generation.
 		 */
 		ServerConnectParams& serverConnectParams();
-		/**
-		 * @brief @b [Virtual] Sets up PathFinder that is used to search for
-		 *        WADs, or other files if necessary.
-		 */
-		void setupPathFinder();
-		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, setupPathFinder, ());
-
 
 		void setArgForConnect(const QString& arg);
 		void setArgForConnectPassword(const QString& arg);
@@ -360,11 +350,18 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		bool canDownloadWadsInGame() const;
 		void createCommandLineArguments_default();
 		bool isFatalError() const;
-		void setupPathFinder_default();
 		QString findIwad() const;
 		GamePaths gamePaths();
 		const QString& pluginName() const;
 		void saveDemoMetaData();
+
+		/**
+		 * @brief Sets up PathFinder that is used to search for
+		 *        WADs, or other files if necessary.
+		 *
+		 * This is done by calling Server::wadPathFinder().
+		 */
+		void setupPathFinder();
 };
 
 #endif

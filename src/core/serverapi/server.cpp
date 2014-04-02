@@ -24,11 +24,14 @@
 
 #include "log.h"
 #include "configuration/doomseekerconfig.h"
+#include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
 #include "strings.h"
 #include "serverapi/tooltips/tooltipgenerator.h"
 #include "serverapi/exefile.h"
 #include "serverapi/gameclientrunner.h"
+#include "serverapi/gameexeretriever.h"
+#include "serverapi/message.h"
 #include "serverapi/playerslist.h"
 #include <QTime>
 #include <QUdpSocket>
@@ -734,6 +737,22 @@ unsigned char Server::skill() const
 const PWad& Server::wad(int index) const
 {
 	return wads()[index];
+}
+
+PathFinder Server::wadPathFinder()
+{
+	PathFinder pathFinder;
+	{
+		GameExeRetriever exeRetriever = GameExeRetriever(*plugin()->gameExe());
+		Message msg;
+		pathFinder.addPrioritySearchDir(exeRetriever.pathToOfflineExe(msg));
+	}
+	{
+		QScopedPointer<ExeFile> exeFile(clientExe());
+		Message msg;
+		pathFinder.addPrioritySearchDir(exeFile->pathToExe(msg));
+	}
+	return pathFinder;
 }
 
 const QList<PWad>& Server::wads() const
