@@ -26,6 +26,7 @@
 #include "ini/inisection.h"
 #include "ini/inivariable.h"
 #include "pathfinder/pathfinder.h"
+#include "pathfinder/wadpathfinder.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/exefile.h"
 #include "serverapi/gameexeretriever.h"
@@ -257,7 +258,7 @@ void GameClientRunner::addPwads()
 {
 	for (int i = 0; i < d->server->numWads(); ++i)
 	{
-		QString pwad = d->pathFinder.findFile(d->server->wad(i).name());
+		QString pwad = findWad(d->server->wad(i).name());
 		if (pwad.isEmpty() && !d->server->wad(i).isOptional())
 		{
 			markPwadAsMissing(d->server->wad(i).name());
@@ -365,7 +366,12 @@ const QString& GameClientRunner::demoName() const
 
 QString GameClientRunner::findIwad() const
 {
-	return d->pathFinder.findFile(d->server->iwad().toLower());
+	return findWad(d->server->iwad().toLower());
+}
+
+QString GameClientRunner::findWad(const QString &wad) const
+{
+	return WadPathFinder(d->pathFinder).find(wad).path();
 }
 
 GameClientRunner::GamePaths GameClientRunner::gamePaths()

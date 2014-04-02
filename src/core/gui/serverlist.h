@@ -39,6 +39,7 @@ class IniSection;
 class Server;
 class ServerListFilterInfo;
 class ServerListProxyModel;
+class WadFindResult;
 
 class ServerListHandler : public QObject
 {
@@ -161,6 +162,7 @@ class ServerListHandler : public QObject
 
 	private:
 		void clearAdditionalSorting();
+		WadFindResult findWad(ServerPtr server, const QString &name) const;
 		void removeAdditionalSortingForColumn(const QModelIndex &modelIndex);
 		void sortAdditionally(const QModelIndex &modelIndex, Qt::SortOrder order);
 

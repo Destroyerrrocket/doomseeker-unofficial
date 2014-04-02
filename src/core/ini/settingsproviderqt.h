@@ -46,6 +46,7 @@ class MAIN_EXPORT SettingsProviderQt : public SettingsProvider
 
 		QStringList allKeys() const;
 		QStringList allSections() const;
+		bool hasKey(const QString& key) const;
 		void remove(const QString& key);
 		void setValue(const QString& key, const QVariant& value);
 		QVariant value(const QString& key, QVariant defValue = QVariant()) const;

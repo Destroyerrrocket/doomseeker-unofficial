@@ -49,6 +49,7 @@ class MAIN_EXPORT SettingsProvider
 
 		virtual QStringList allKeys() const = 0;
 		virtual QStringList allSections() const = 0;
+		virtual bool hasKey(const QString& key) const = 0;
 		virtual void remove(const QString& key) = 0;
 		virtual void setValue(const QString& key, const QVariant& value) = 0;
 		virtual QVariant value(const QString& key, QVariant defValue = QVariant()) const = 0;

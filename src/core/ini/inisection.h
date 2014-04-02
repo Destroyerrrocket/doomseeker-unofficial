@@ -93,6 +93,14 @@ class MAIN_EXPORT IniSection
 		void deleteSetting(const QString& name);
 
 		/**
+		 * @brief true if setting of given name exists within the section.
+		 *
+		 * Setting contents may be empty and this will still return true.
+		 * false is returned only if setting doesn't exist at all.
+		 */
+		bool hasSetting(const QString &name) const;
+
+		/**
 		 * @brief If true, IniSection object is not valid and should not be
 		 *        used to perform any actions on the Ini file.
 		 */

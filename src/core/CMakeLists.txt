@@ -305,8 +305,10 @@ set(SOURCE_FILES
 	pathfinder/basefileseeker.cpp
 	pathfinder/casesensitivefsfileseeker.cpp
 	pathfinder/caseinsensitivefsfileseeker.cpp
+	pathfinder/filealias.cpp
 	pathfinder/filesearchpath.cpp
 	pathfinder/pathfinder.cpp
+	pathfinder/wadpathfinder.cpp
 	plugins/engineplugin.cpp
 	plugins/pluginloader.cpp
 	refresher/refresher.cpp
@@ -406,8 +408,10 @@ set(HEADER_FILES
 	pathfinder/basefileseeker.h
 	pathfinder/casesensitivefsfileseeker.h
 	pathfinder/caseinsensitivefsfileseeker.h
+	pathfinder/filealias.h
 	pathfinder/filesearchpath.h
 	pathfinder/pathfinder.h
+	pathfinder/wadpathfinder.h
 	plugins/engineplugin.h
 	plugins/pluginloader.h
 	serverapi/tooltips/tooltipgenerator.h

@@ -158,6 +158,8 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		/**
 		 * @brief @b [Virtual] Plugins can replace IWAD discovery mechanism
 		 *        and generation of relevant executable parameters here.
+		 *
+		 * This method supports WAD aliasing configured in Doomseeker.
 		 */
 		void addIwad();
 		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, addIwad, ());
@@ -174,6 +176,8 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 * prepended with argForPwadLoading() argument.
 		 *
 		 * Not found WADs are marked as such with markPwadAsMissing() method.
+		 *
+		 * This method supports WAD aliasing configured in Doomseeker.
 		 */
 		void addPwads();
 		/**
@@ -271,6 +275,11 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 * @brief Name of the demo if demo should be recorded, otherwise empty.
 		 */
 		const QString& demoName() const;
+
+		/**
+		 * @brief Finds WAD in a way that supports user configured aliases.
+		 */
+		QString findWad(const QString &wad) const;
 
 		/**
 		 * @brief "Join" password required in game.

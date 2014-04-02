@@ -96,6 +96,14 @@ class MAIN_EXPORT Ini : public QObject
 		 */
 		void deleteSetting(const QString& sectionname, const QString& settingname);
 
+		/**
+		 * @brief true if setting of given name exists within given section.
+		 *
+		 * Setting contents may be empty and this will still return true.
+		 * false is returned only if setting doesn't exist at all.
+		 */
+		bool hasSetting(const QString& sectionname, const QString& settingname) const;
+
 		void removeKey(const QString& key);
 
 		/**

@@ -37,6 +37,7 @@
 class ColumnSort;
 class Ini;
 class EnginePlugin;
+class FileAlias;
 class FileSearchPath;
 class SettingsProviderQt;
 
@@ -111,6 +112,10 @@ class DoomseekerConfig
 
 			QList<ColumnSort> additionalSortColumns() const;
 			void setAdditionalSortColumns(const QList<ColumnSort> &val);
+
+			QList<FileAlias> wadAliases();
+			void setWadAliases(const QList<FileAlias> &val);
+
 			QStringList wadPathsOnly() const;
 
 			/**
@@ -120,6 +125,7 @@ class DoomseekerConfig
 			 *	All values already present are left alone.
 			 */
 			void init(IniSection& section);
+			void initWadAlias();
 			void load(IniSection& section);
 			void save(IniSection& section);
 

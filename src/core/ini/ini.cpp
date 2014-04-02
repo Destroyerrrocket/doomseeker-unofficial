@@ -77,6 +77,11 @@ void Ini::deleteSetting(const QString& sectionName, const QString& settingName)
 	removeKey(sectionName + "/" + settingName);
 }
 
+bool Ini::hasSetting(const QString& sectionname, const QString& settingname) const
+{
+	return d->provider->hasKey(sectionname + "/" + settingname);
+}
+
 void Ini::removeKey(const QString& key)
 {
 	d->provider->remove(key);

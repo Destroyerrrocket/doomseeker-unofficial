@@ -28,6 +28,7 @@
 #include "gui/models/serverlistrowhandler.h"
 #include "gui/widgets/serverlistcontextmenu.h"
 #include "pathfinder/pathfinder.h"
+#include "pathfinder/wadpathfinder.h"
 #include "plugins/engineplugin.h"
 #include "refresher/refresher.h"
 #include "serverapi/tooltips/tooltipgenerator.h"
@@ -243,16 +244,20 @@ QString ServerListHandler::createIwadToolTip(ServerPtr server)
 		// Use offline binary so that testing builds are not triggered.
 		QString binPath = GameExeRetriever(*server->plugin()->gameExe()).pathToOfflineExe(binMessage);
 
-		PathFinder pathFinder = server->wadPathFinder();
-		QString path = pathFinder.findFile(server->iwad());
+		WadFindResult path = findWad(server, server->iwad());
 
-		if (path.isEmpty())
+		if (path.isValid())
 		{
-			return FORMAT_TEMPLATE.arg(FONT_COLOR_MISSING, tr("MISSING"));
+			QString msg = path.path();
+			if (path.isAlias())
+			{
+				msg += " " + tr("(alias of: %1)").arg(server->iwad());
+			}
+			return FORMAT_TEMPLATE.arg(FONT_COLOR_FOUND, msg);
 		}
 		else
 		{
-			return FORMAT_TEMPLATE.arg(FONT_COLOR_FOUND, path);
+			return FORMAT_TEMPLATE.arg(FONT_COLOR_MISSING, tr("MISSING"));
 		}
 	}
 
@@ -347,33 +352,48 @@ QString ServerListHandler::createPwadsToolTip(ServerPtr server)
 
 QString ServerListHandler::createPwadToolTipInfo(const PWad& pwad, const ServerPtr &server)
 {
-	QString formattedStringBegin = "<tr style=\"color: %1;\">";
-	QString formattedStringEnd = "</tr>";
-	QString formattedStringMiddle;
+	WadFindResult path = findWad(server, pwad.name());
 
-	PathFinder pathFinder = server->wadPathFinder();
-	QString pathToFile = pathFinder.findFile(pwad.name());
+	QString fontColor = "#777777";
+	QStringList cells;
 
-	if (pathToFile.isEmpty())
+	cells << pwad.name();
+	if (path.isValid())
 	{
-		if(pwad.isOptional())
-		{
-			formattedStringBegin = formattedStringBegin.arg(FONT_COLOR_OPTIONAL);
-			formattedStringMiddle = tr("<td>%1</td><td> OPTIONAL</td>").arg(pwad.name());
-		}
-		else
-		{
-			formattedStringBegin = formattedStringBegin.arg(FONT_COLOR_MISSING);
-			formattedStringMiddle = tr("<td>%1</td><td> MISSING</td>").arg(pwad.name());
-		}
+		fontColor = FONT_COLOR_FOUND;
+		cells << path.path();
 	}
 	else
 	{
-		formattedStringBegin = formattedStringBegin.arg(FONT_COLOR_FOUND);
-		formattedStringMiddle = QString("<td>%1</td><td> %2</td>").arg(pwad.name(), pathToFile);
+		if (pwad.isOptional())
+		{
+			fontColor = FONT_COLOR_OPTIONAL;
+			cells << tr("OPTIONAL");
+		}
+		else
+		{
+			fontColor = FONT_COLOR_MISSING;
+			cells << tr("MISSING");
+		}
+	}
+	if (path.isAlias())
+	{
+		cells << tr("ALIAS");
+	}
+	else
+	{
+		cells << "";
 	}
 
-	return formattedStringBegin + formattedStringMiddle + formattedStringEnd;
+	QString formattedStringBegin = QString("<tr style=\"color: %1;\">").arg(fontColor);
+	QString formattedStringMiddle;
+	QString space = "";
+	foreach (const QString &cell, cells)
+	{
+		formattedStringMiddle += QString("<td style=\"padding-right: 5;\">%1</td>").arg(cell);
+		space = " ";
+	}
+	return formattedStringBegin + formattedStringMiddle + "</tr>";
 }
 
 QString ServerListHandler::createServerNameToolTip(ServerCPtr server)
@@ -417,6 +437,13 @@ ServerListProxyModel *ServerListHandler::createSortingProxy(ServerListModel* ser
 void ServerListHandler::doubleClicked(const QModelIndex& index)
 {
 	emit serverDoubleClicked(serverFromIndex(index));
+}
+
+WadFindResult ServerListHandler::findWad(ServerPtr server, const QString &name) const
+{
+	PathFinder pathFinder = server->wadPathFinder();
+	WadPathFinder wadFinder(pathFinder);
+	return wadFinder.find(name);
 }
 
 Qt::SortOrder ServerListHandler::getColumnDefaultSortOrder(int columnId)
