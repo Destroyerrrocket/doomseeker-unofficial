@@ -184,7 +184,6 @@ QString ZandronumClientExeFile::pathToExe(Message& message)
 
 		QString binPath = path + '/' + ZANDRONUM_BINARY_NAME;
 		fi = QFileInfo(binPath);
-		printf("Checking %s\n", binPath.toAscii().constData());
 		if (!fi.exists() || (fi.isDir() && !fi.isBundle()))
 		{
 			error = tr("%1\ndoesn't contain Zandronum executable").arg(path);
