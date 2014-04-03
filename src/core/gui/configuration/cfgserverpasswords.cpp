@@ -25,6 +25,7 @@
 #include "configuration/passwordscfg.h"
 #include "configuration/serverpassword.h"
 #include "gui/helpers/datetablewidgetitem.h"
+#include "gui/commongui.h"
 #include <QMap>
 
 const int COL_PASS_PASSWORD = 0;
@@ -235,29 +236,9 @@ void CFGServerPasswords::readSettings()
 	spinMaxPasswords->setValue(cfg.maxNumberOfServersPerPassword());
 }
 
-void CFGServerPasswords::removeSelected(QTableWidget* table)
-{
-	// Rows can't be just deleted with items from selectedItems()
-	// because the program will crash. This solution is so stupid
-	// that there must be another one, but nobody knows...
-	QMap<int, QTableWidgetItem*> uniqueRowsItems;
-	foreach (QTableWidgetItem* item, table->selectedItems())
-	{
-		uniqueRowsItems.insert(item->row(), item);
-	}
-	foreach (QTableWidgetItem* item, uniqueRowsItems.values())
-	{
-		int row = table->row(item);
-		if (row >= 0)
-		{
-			table->removeRow(row);
-		}
-	}
-}
-
 void CFGServerPasswords::removeSelectedPasswords()
 {
-	removeSelected(tablePasswords);
+	CommonGUI::removeSelectedRowsFromQTableWidget(tablePasswords);
 }
 
 void CFGServerPasswords::removeSelectedServers()
@@ -276,7 +257,7 @@ void CFGServerPasswords::removeSelectedServers()
 		currentPassword.removeServer(server.game(), server.address(), server.port());
 	}
 	updatePassword(currentPassword);
-	removeSelected(tableServers);
+	CommonGUI::removeSelectedRowsFromQTableWidget(tableServers);
 }
 
 void CFGServerPasswords::revealPasswords()

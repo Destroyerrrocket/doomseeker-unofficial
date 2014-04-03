@@ -39,8 +39,9 @@ ConfigurationDialog::ConfigurationDialog(QWidget* parent)
 	tvOptionsList->setModel(new QStandardItemModel(this));
 
 	currentlyDisplayedCfgBox = NULL;
-	connect(tvOptionsList, SIGNAL( clicked(const QModelIndex&) ), this, SLOT( optionListClicked(const QModelIndex&) ) );
 	connect(buttonBox, SIGNAL( clicked(QAbstractButton *) ), this, SLOT ( btnClicked(QAbstractButton *) ));
+	this->connect(tvOptionsList->selectionModel(), SIGNAL(currentChanged(QModelIndex, QModelIndex)),
+		SLOT(onOptionListCurrentChanged(QModelIndex, QModelIndex)));
 }
 
 ConfigurationDialog::~ConfigurationDialog()
@@ -206,7 +207,15 @@ bool ConfigurationDialog::hasItemOnList(QStandardItem* pItem) const
 		|| pModel->indexFromItem(pItem).isValid();
 }
 
-void ConfigurationDialog::optionListClicked(const QModelIndex& index)
+void ConfigurationDialog::onOptionListCurrentChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+	if (current.isValid() && current != previous)
+	{
+		switchToItem(current);
+	}
+}
+
+void ConfigurationDialog::switchToItem(const QModelIndex& index)
 {
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(tvOptionsList->model());
 	QStandardItem* item = model->itemFromIndex(index);

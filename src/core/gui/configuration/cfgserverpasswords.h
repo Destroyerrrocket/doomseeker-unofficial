@@ -53,7 +53,6 @@ class CFGServerPasswords : public ConfigurationBaseBox, private Ui::CFGServerPas
 		int findPassphraseInTable(const QString& phrase);
 		void hidePasswords();
 		bool isPassphraseInTable(const QString& phrase);
-		void removeSelected(QTableWidget* table);
 		void revealPasswords();
 		ServerPassword serverPasswordFromRow(int row);
 		void setPasswordInRow(int row, const ServerPassword& password);

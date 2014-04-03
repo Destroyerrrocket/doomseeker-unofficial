@@ -92,20 +92,19 @@ class ConfigurationDialog : public QDialog, private Ui::ConfigurationDialog
 		 */
 		void showConfigurationBox(ConfigurationBaseBox* widget);
 		void saveSettings();
+		void switchToItem(const QModelIndex&);
 
 		virtual bool validate() { return true; }
 
 	protected slots:
 		void btnClicked(QAbstractButton *button);
-		void optionListClicked(const QModelIndex&);
+		void onOptionListCurrentChanged(const QModelIndex &current, const QModelIndex &previous);
 
 	private:
 		QList<ConfigurationBaseBox*> configBoxesList;
 		QWidget* currentlyDisplayedCfgBox;
 
 		bool hasItemOnList(QStandardItem* pItem) const;
-
-
 };
 
 #endif

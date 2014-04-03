@@ -200,6 +200,8 @@ void DoomseekerConfigurationDialog::showPluginConfiguration(const EnginePlugin *
 		EngineConfigurationBaseBox *engineConfig = (EngineConfigurationBaseBox*)pointer;
 
 		if(engineConfig->plugin() == plugin)
-			optionListClicked(page->index());
+		{
+			switchToItem(page->index());
+		}
 	}
 }
