@@ -508,7 +508,7 @@ QList<FileAlias> DoomseekerConfig::DoomseekerCfg::wadAliases()
 	{
 		list << FileAlias::deserializeQVariant(var);
 	}
-	return list;
+	return FileAliasList::mergeDuplicates(list);
 }
 
 void DoomseekerConfig::DoomseekerCfg::setWadAliases(const QList<FileAlias> &val)

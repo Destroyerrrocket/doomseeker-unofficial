@@ -31,6 +31,22 @@ FileAlias::FileAlias(const QString &name)
 	d.name = name;
 }
 
+void FileAlias::addAlias(const QString &val)
+{
+	if (!d.aliases.contains(val, Qt::CaseInsensitive))
+	{
+		d.aliases << val;
+	}
+}
+
+void FileAlias::addAliases(const QStringList &val)
+{
+	foreach (const QString &element, val)
+	{
+		addAlias(element);
+	}
+}
+
 const QStringList &FileAlias::aliases() const
 {
 	return d.aliases;
@@ -88,6 +104,11 @@ QList<FileAlias> FileAlias::freeDoom2Aliases()
 	return result;
 }
 
+bool FileAlias::isSameName(const QString &otherName) const
+{
+	return d.name.compare(otherName, Qt::CaseInsensitive) == 0;
+}
+
 bool FileAlias::isValid() const
 {
 	return !name().isEmpty() && !aliases().isEmpty();
@@ -110,6 +131,30 @@ QList<FileAlias> FileAlias::standardWadAliases()
 	foreach (const FileAlias &alias, freeDoom2Aliases())
 	{
 		result << alias;
+	}
+	return result;
+}
+///////////////////////////////////////////////////////////////////////////////
+QList<FileAlias> FileAliasList::mergeDuplicates(const QList<FileAlias> &input)
+{
+	QList<FileAlias> result;
+	foreach (const FileAlias &alias, input)
+	{
+		bool merged = false;
+		for (int i = 0; i < result.size(); ++i)
+		{
+			FileAlias &aliasOnList = result[i];
+			if (aliasOnList.isSameName(alias.name()))
+			{
+				aliasOnList.addAliases(alias.aliases());
+				merged = true;
+				break;
+			}
+		}
+		if (!merged)
+		{
+			result << alias;
+		}
 	}
 	return result;
 }

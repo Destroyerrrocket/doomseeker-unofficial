@@ -33,16 +33,34 @@ class FileAlias
 	public:
 		static FileAlias freeDoom1Aliases();
 		static QList<FileAlias> freeDoom2Aliases();
+		/**
+		 * @brief Standard/default aliases for configuration init.
+		 */
 		static QList<FileAlias> standardWadAliases();
 
 		FileAlias();
 		FileAlias(const QString &name);
+
+		/**
+		 * @brief Will ensure unique values.
+		 */
+		void addAlias(const QString &val);
+		/**
+		 * @brief Will ensure unique values.
+		 */
+		void addAliases(const QStringList &val);
 
 		const QStringList &aliases() const;
 		void setAliases(const QStringList &val);
 
 		static FileAlias deserializeQVariant(const QVariant &var);
 		QVariant serializeQVariant() const;
+
+		/**
+		 * @brief Compares passed string to local name and checks if they're
+		 *        same.
+		 */
+		bool isSameName(const QString &otherName) const;
 
 		/**
 		 * @brief Valid FileAlias has a name and at least one alias.
@@ -61,6 +79,12 @@ class FileAlias
 		};
 
 		PrivData d;
+};
+
+class FileAliasList
+{
+	public:
+		static QList<FileAlias> mergeDuplicates(const QList<FileAlias> &input);
 };
 
 #endif // header
