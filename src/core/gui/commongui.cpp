@@ -44,6 +44,26 @@ QStringList CommonGUI::listViewStandardItemsToStringList(QListView* listview)
 	return list;
 }
 
+void CommonGUI::removeSelectedRowsFromQTableWidget(QTableWidget* table)
+{
+	// Rows can't be just deleted with items from selectedItems()
+	// because the program will crash. This solution is so stupid
+	// that there must be another one, but nobody knows...
+	QMap<int, QTableWidgetItem*> uniqueRowsItems;
+	foreach (QTableWidgetItem* item, table->selectedItems())
+	{
+		uniqueRowsItems.insert(item->row(), item);
+	}
+	foreach (QTableWidgetItem* item, uniqueRowsItems.values())
+	{
+		int row = table->row(item);
+		if (row >= 0)
+		{
+			table->removeRow(row);
+		}
+	}
+}
+
 void CommonGUI::removeSelectedRowsFromStandardItemView(QAbstractItemView* view,
 	bool bSelectNextItem)
 {

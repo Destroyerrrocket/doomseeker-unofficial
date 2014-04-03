@@ -26,6 +26,7 @@
 #include <QAbstractItemView>
 #include <QListView>
 #include <QStringList>
+#include <QTableWidgetItem>
 
 class CommonGUI
 {
@@ -42,6 +43,8 @@ class CommonGUI
 		 * @param listview - QListView that uses QStandardItemModel.
 		 */
 		static QStringList listViewStandardItemsToStringList(QListView* listview);
+
+		static void removeSelectedRowsFromQTableWidget(QTableWidget *table);
 
 		/**
 		 * @brief Removes all selected rows from a QAbstractItemView.
