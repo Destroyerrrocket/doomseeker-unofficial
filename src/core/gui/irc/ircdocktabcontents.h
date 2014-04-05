@@ -35,6 +35,7 @@
 
 class IRCChatAdapter;
 class IRCDock;
+class IRCNicknameCompleter;
 class IRCUserInfo;
 class IRCUserList;
 
@@ -132,7 +133,9 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 	protected:
 		IRCAdapterBase* pIrcAdapter;
 		IRCDock* pParentIRCDock;
-		
+
+		bool eventFilter(QObject *watched, QEvent *event);
+
 	private:
 		class UserListMenu : public QMenu
 		{
@@ -174,13 +177,15 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		QTimer blinkTimer;
 		
 		IRCMessageClass* lastMessageClass;
+		IRCNicknameCompleter *nicknameCompleter;
 		/**
 		 *	@brief This is required to properly refresh colors when
 		 *	appearance is changed.
 		 */
 		QStringList textOutputContents;		
 		UserListMenu* userListContextMenu;
-	
+
+		void completeNickname();
 		QStandardItem* findUserListItem(const QString& nickname);
 		UserListMenu& getUserListContextMenu();
 		IRCNetworkAdapter* network();
@@ -201,6 +206,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 
 	private slots:
 		void blinkTimerSlot();
+		void resetNicknameCompletion();
 		void showChatContextMenu();
 };
 

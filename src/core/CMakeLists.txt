@@ -297,6 +297,7 @@ set(SOURCE_FILES
 	irc/ircisupportparser.cpp
 	irc/ircmessageclass.cpp
 	irc/ircnetworkadapter.cpp
+	irc/ircnicknamecompleter.cpp
 	irc/ircprivadapter.cpp
 	irc/ircrequestparser.cpp
 	irc/ircresponseparser.cpp
@@ -382,6 +383,7 @@ set(HEADER_FILES
 	gui/helpers/datetablewidgetitem.h
 	gui/helpers/playersdiagram.h
 	gui/irc/ircsounds.h
+	gui/irc/ircuserlistmodel.h
 	gui/widgets/qtabwidgetext.h
 	gui/commongui.h
 	ini/inisection.h
@@ -401,6 +403,7 @@ set(HEADER_FILES
 	irc/ircisupportparser.h
 	irc/ircmessageclass.h
 	irc/ircnetworkconnectioninfo.h
+	irc/ircnicknamecompleter.h
 	irc/ircuserinfo.h
 	irc/ircuserlist.h
 	pathfinder/basefileseeker.h

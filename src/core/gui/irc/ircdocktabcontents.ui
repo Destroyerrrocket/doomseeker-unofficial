@@ -157,8 +157,41 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>leCommandLine</sender>
+   <signal>cursorPositionChanged(int,int)</signal>
+   <receiver>IRCDockTabContents</receiver>
+   <slot>resetNicknameCompletion()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>81</x>
+     <y>273</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>29</x>
+     <y>293</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>leCommandLine</sender>
+   <signal>textEdited(QString)</signal>
+   <receiver>IRCDockTabContents</receiver>
+   <slot>resetNicknameCompletion()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>141</x>
+     <y>280</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>128</x>
+     <y>297</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showChatContextMenu()</slot>
+  <slot>resetNicknameCompletion()</slot>
  </slots>
 </ui>
