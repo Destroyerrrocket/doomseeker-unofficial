@@ -66,9 +66,9 @@ IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 	this->userListContextMenu = NULL;
 
 	this->pParentIRCDock = pParentIRCDock;
-	this->lvUserList->setModel(new QStandardItemModel(this->lvUserList));
 	nicknameCompleter = new IRCNicknameCompleter();
-	nicknameCompleter->setModel(lvUserList->model());
+
+	setupNewUserListModel();
 
 	// There is only one case in which we want this to be visible:
 	// if we are in a channel.
@@ -345,7 +345,7 @@ void IRCDockTabContents::nameAdded(const IRCUserInfo& userInfo)
 
 void IRCDockTabContents::nameListUpdated(const IRCUserList& userList)
 {
-	this->lvUserList->setModel(new QStandardItemModel(this->lvUserList));
+	setupNewUserListModel();
 
 	for (unsigned i = 0; i < userList.size(); ++i)
 	{
@@ -560,6 +560,12 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 			break;
 		}
 	}
+}
+
+void IRCDockTabContents::setupNewUserListModel()
+{
+	lvUserList->setModel(new QStandardItemModel(lvUserList));
+	nicknameCompleter->setModel(lvUserList->model());
 }
 
 void IRCDockTabContents::showChatContextMenu()

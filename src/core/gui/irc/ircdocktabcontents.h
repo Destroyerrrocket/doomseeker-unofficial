@@ -202,6 +202,10 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 *	previous one.
 		 */
 		void setBlinkTitle(bool b);
+		/**
+		 * @brief Deletes current model, applies a new, empty one.
+		 */
+		void setupNewUserListModel();
 		void showPrivChatContextMenu();
 
 	private slots:
