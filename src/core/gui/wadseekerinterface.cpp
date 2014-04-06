@@ -40,39 +40,11 @@ WadseekerInterface::WadseekerInterface(QWidget* parent)
 
 	this->setWindowIcon(QIcon(":/icon.png"));
 
-	this->connect(btnClose, SIGNAL( clicked() ),
-		SLOT( reject() ) );
-	this->connect(btnDownload, SIGNAL( clicked() ),
-		SLOT( accept() ) );
 	this->connect(&updateTimer, SIGNAL( timeout() ),
 		SLOT( registerUpdateRequest() ) );
 
-	// Connect Wadseeker to the dialog box.
-	this->connect(&wadseeker, SIGNAL( allDone(bool) ),
-		SLOT( allDone(bool) ) );
-	this->connect(&wadseeker, SIGNAL( message(const QString&, WadseekerLib::MessageType) ),
-		SLOT( message(const QString&, WadseekerLib::MessageType) ) );
-	this->connect(&wadseeker, SIGNAL( seekStarted(const QStringList&) ),
-		SLOT( seekStarted(const QStringList&) ) );
-	this->connect(&wadseeker, SIGNAL( fileInstalled(const QString&) ),
-		SLOT( fileDownloadSuccessful(const QString&) ) );
-	this->connect(&wadseeker, SIGNAL( siteFinished(const QUrl&) ),
-		SLOT( siteFinished(const QUrl&) ) );
-	this->connect(&wadseeker, SIGNAL( siteProgress(const QUrl&, qint64, qint64) ),
-		SLOT( siteProgress(const QUrl&, qint64, qint64) ) );
-	this->connect(&wadseeker, SIGNAL( siteRedirect(const QUrl&, const QUrl&) ),
-		SLOT( siteRedirect(const QUrl&, const QUrl&) ) );
-	this->connect(&wadseeker, SIGNAL( siteStarted(const QUrl&) ),
-		SLOT( siteStarted(const QUrl&) ) );
+	connectWadseekerObject();
 
-	// Connect Wadseeker to the WADs table widget.
-	twWads->connect(&wadseeker, SIGNAL( fileDownloadFinished(const QString&) ),
-		SLOT( setFileDownloadFinished(const QString&) ) );
-	twWads->connect(&wadseeker, SIGNAL( fileDownloadProgress(const QString&, qint64, qint64) ),
-		SLOT( setFileProgress(const QString&, qint64, qint64) ) );
-	twWads->connect(&wadseeker, SIGNAL( fileDownloadStarted(const QString&, const QUrl&) ),
-		SLOT( setFileUrl(const QString&, const QUrl&) ) );
-		
 	// Connect tables.
 	this->connect(twWads, SIGNAL( rightMouseClick(const QModelIndex&, const QPoint&) ),
 		SLOT( wadsTableRightClicked(const QModelIndex&, const QPoint&) ) );
@@ -132,6 +104,35 @@ void WadseekerInterface::allDone(bool bSuccess)
 
 		displayMessage(tr("All done. Fail."), WadseekerLib::CriticalError, false);
 	}
+}
+
+void WadseekerInterface::connectWadseekerObject()
+{
+	// Connect Wadseeker to the dialog box.
+	this->connect(&wadseeker, SIGNAL( allDone(bool) ),
+		SLOT( allDone(bool) ) );
+	this->connect(&wadseeker, SIGNAL( message(const QString&, WadseekerLib::MessageType) ),
+		SLOT( message(const QString&, WadseekerLib::MessageType) ) );
+	this->connect(&wadseeker, SIGNAL( seekStarted(const QStringList&) ),
+		SLOT( seekStarted(const QStringList&) ) );
+	this->connect(&wadseeker, SIGNAL( fileInstalled(const QString&) ),
+		SLOT( fileDownloadSuccessful(const QString&) ) );
+	this->connect(&wadseeker, SIGNAL( siteFinished(const QUrl&) ),
+		SLOT( siteFinished(const QUrl&) ) );
+	this->connect(&wadseeker, SIGNAL( siteProgress(const QUrl&, qint64, qint64) ),
+		SLOT( siteProgress(const QUrl&, qint64, qint64) ) );
+	this->connect(&wadseeker, SIGNAL( siteRedirect(const QUrl&, const QUrl&) ),
+		SLOT( siteRedirect(const QUrl&, const QUrl&) ) );
+	this->connect(&wadseeker, SIGNAL( siteStarted(const QUrl&) ),
+		SLOT( siteStarted(const QUrl&) ) );
+
+	// Connect Wadseeker to the WADs table widget.
+	twWads->connect(&wadseeker, SIGNAL( fileDownloadFinished(const QString&) ),
+		SLOT( setFileDownloadFinished(const QString&) ) );
+	twWads->connect(&wadseeker, SIGNAL( fileDownloadProgress(const QString&, qint64, qint64) ),
+		SLOT( setFileProgress(const QString&, qint64, qint64) ) );
+	twWads->connect(&wadseeker, SIGNAL( fileDownloadStarted(const QString&, const QUrl&) ),
+		SLOT( setFileUrl(const QString&, const QUrl&) ) );
 }
 
 void WadseekerInterface::displayMessage(const QString& message, WadseekerLib::MessageType type, bool bPrependErrorsWithMessageType)

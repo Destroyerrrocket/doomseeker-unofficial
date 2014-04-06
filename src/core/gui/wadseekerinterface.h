@@ -99,6 +99,7 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 		QTimer updateTimer;
 		Wadseeker wadseeker;
 
+		void connectWadseekerObject();
 		void displayMessage(const QString& message, WadseekerLib::MessageType type, bool bPrependErrorsWithMessageType);
 		void initMessageColors();
 
