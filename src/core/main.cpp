@@ -41,6 +41,7 @@
 #include "irc/configuration/ircconfig.h"
 #include "serverapi/server.h"
 #include "application.h"
+#include "commandlinetokenizer.h"
 #include "doomseekerfilepaths.h"
 #include "localization.h"
 #include "log.h"
@@ -564,22 +565,10 @@ void Main::setupRefreshingThread()
 
 #ifdef USE_WINMAIN_AS_ENTRY_POINT
 #include <windows.h>
-void getCommandLineArgs(QStringList& outList)
+QStringList getCommandLineArgs()
 {
-	int numArgs = 0;
-	LPWSTR* winapiCmdLine = CommandLineToArgvW(GetCommandLineW(), &numArgs);
-
-	if (winapiCmdLine == NULL)
-	{
-		return;
-	}
-
-	for (int i = 0; i < numArgs; ++i)
-	{
-		// Conversion to "ushort*" seems to work for LPWSTR.
-		outList << QString::fromUtf16((const ushort*)winapiCmdLine[i]);
-	}
-	LocalFree(winapiCmdLine);
+	CommandLineTokenizer tokenizer;
+	return tokenizer.tokenize(QString::fromUtf16((const ushort*)GetCommandLineW()));
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLine, int nCmdShow)
@@ -587,10 +576,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLine
 	int argc = 0;
 	char** argv = NULL;
 
-	// Good job Microsoft. Now I have to work around your decision of removing
-	// useful argc/argv parameters.
-	QStringList commandLine;
-	getCommandLineArgs(commandLine);
+	QStringList commandLine = getCommandLineArgs();
 
 	// At least one is ensured to be here.
 	argc = commandLine.size();

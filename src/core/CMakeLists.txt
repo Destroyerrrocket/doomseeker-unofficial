@@ -352,6 +352,7 @@ set(SOURCE_FILES
 	application.cpp
 	apprunner.cpp
 	commandline.cpp
+	commandlinetokenizer.cpp
 	customservers.cpp
 	datapaths.cpp
 	datastreamoperatorwrapper.cpp
@@ -438,6 +439,7 @@ set(HEADER_FILES
 	updater/updatepackagefilter.h
 	updater/updaterscriptparser.h
 	commandline.h
+	commandlinetokenizer.h
 	datapaths.h
 	datastreamoperatorwrapper.h
 	doomseekerfilepaths.h
