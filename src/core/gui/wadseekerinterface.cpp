@@ -33,10 +33,6 @@ const int WadseekerInterface::UPDATE_INTERVAL_MS = 500;
 WadseekerInterface::WadseekerInterface(QWidget* parent)
 : QDialog(parent)
 {
-	if (gApp->mainWindow())
-	{
-		gApp->mainWindow()->stopAutoRefreshTimer();
-	}
 	setupUi(this);
 	setStateWaiting();
 
@@ -101,10 +97,6 @@ WadseekerInterface::WadseekerInterface(QWidget* parent)
 
 WadseekerInterface::~WadseekerInterface()
 {
-	if (gApp->mainWindow())
-	{
-		gApp->mainWindow()->initAutoRefreshTimer();
-	}
 }
 
 void WadseekerInterface::accept()
