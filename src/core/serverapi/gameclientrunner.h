@@ -117,6 +117,10 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		/**
 		 * @brief Adds custom parameters defined by user in configuration box
 		 *        to the args list.
+		 *
+		 * Custom parameters are specified as a single string by the user,
+		 * but they're split to separate arguments in a manner appropriate
+		 * to given OS.
 		 */
 		void addCustomParameters();
 		/**

@@ -31,6 +31,7 @@
 #include "serverapi/gameexeretriever.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
+#include "commandlinetokenizer.h"
 #include "log.h"
 #include <QScopedPointer>
 #include <QStringList>
@@ -170,7 +171,8 @@ void GameClientRunner::addCustomParameters()
 {
 	IniSection config = gConfig.iniSectionForPlugin(d->server->plugin());
 	QString customParameters = config["CustomParameters"];
-	args() << customParameters.split(" ", QString::SkipEmptyParts);
+	CommandLineTokenizer tokenizer;
+	args() << tokenizer.tokenize(customParameters);
 }
 
 void GameClientRunner::addDemoRecordCommand()
