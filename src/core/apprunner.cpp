@@ -118,5 +118,7 @@ void AppRunner::runExecutableWrappedInStandardServerConsole(
 {
 	gLog << tr("Starting (working dir %1): %2").arg(cli.applicationDir.absolutePath())
 		.arg(cli.executable.absoluteFilePath());
-	new StandardServerConsole(icon, cli.executable.absoluteFilePath(), cli.args);
+	QStringList args = cli.args;
+	cleanArguments(args);
+	new StandardServerConsole(icon, cli.executable.absoluteFilePath(), args);
 }
