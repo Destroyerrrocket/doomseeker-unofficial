@@ -39,6 +39,8 @@ class ZandronumGameHost : public GameHost
 		Q_DISABLE_COPY(ZandronumGameHost)
 
 		void addDMFlags();
+
+		QString strArg(const QString &val);
 };
 
 #endif // header

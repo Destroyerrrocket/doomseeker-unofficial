@@ -80,16 +80,16 @@ void ZandronumGameHost::addExtra()
 	}
 	args() << gameModeStr << "1";
 
-	args() << "+sv_hostemail" << "\"" + params().email() + "\"";
+	args() << "+sv_hostemail" << strArg(params().email());
 
 	if (!params().map().isEmpty())
 	{
-		args() << "+map" << params().map();
+		args() << "+map" << strArg(params().map());
 	}
 
 	foreach (const QString& map, params().mapList())
 	{
-		args() << "+addmap" << map;
+		args() << "+addmap" << strArg(map);
 	}
 
 	args() << "+sv_maprotation" << QString::number(
@@ -98,25 +98,41 @@ void ZandronumGameHost::addExtra()
 		static_cast<int>(params().isRandomMapRotation()) );
 
 	QString motd = params().motd();
-	args() << "+sv_motd" << "\"" + motd.replace("\n", "\\n") + "\"";
+	args() << "+sv_motd" << strArg(motd.replace("\n", "\\n"));
 
-	args() << "+sv_hostname" << "\"" + params().name() + "\"";
+	args() << "+sv_hostname" << strArg(params().name());
 
-	args() << "+sv_website" << "\"" + params().url() + "\"";
+	args() << "+sv_website" << strArg(params().url());
 
-	QString password = params().connectPassword();
-	args() << "+sv_password" << "\"" + password + "\"";
-	args() << "+sv_forcepassword" << QString::number(static_cast<int>(!password.isEmpty()));
+	{
+		QString password = params().connectPassword();
+		args() << "+sv_password" << strArg(password);
+		args() << "+sv_forcepassword" << QString::number(static_cast<int>(!password.isEmpty()));
+	}
 
-	password = params().ingamePassword();
-	args() << "+sv_joinpassword" << "\"" + password + "\"";
-	args() << "+sv_forcejoinpassword" << QString::number(static_cast<int>(!password.isEmpty()));
+	{
+		QString password = params().ingamePassword();
+		args() << "+sv_joinpassword" << strArg(password);
+		args() << "+sv_forcejoinpassword" << QString::number(static_cast<int>(!password.isEmpty()));
+	}
 
-	password = params().rconPassword();
-	args() << "+sv_rconpassword" << "\"" + password + "\"";
+	args() << "+sv_rconpassword" << strArg(params().rconPassword());
 
 	args() << "+sv_broadcast" << QString::number(static_cast<int>( params().isBroadcastToLan() ));
 	args() << "+sv_updatemaster" << QString::number(static_cast<int>( params().isBroadcastToMaster() ));
 	args() << "+sv_maxclients" << QString::number(params().maxTotalClientSlots());
 	args() << "+sv_maxplayers" << QString::number(params().maxPlayers());
+}
+
+QString ZandronumGameHost::strArg(const QString &val)
+{
+	if (val.isEmpty())
+	{
+		// This will reset the value to nothing.
+		return "\"\"";
+	}
+	else
+	{
+		return val;
+	}
 }
