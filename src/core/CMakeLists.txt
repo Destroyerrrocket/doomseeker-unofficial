@@ -155,6 +155,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/serverlist.h
 	gui/standardserverconsole.h
 	gui/wadseekerinterface.h
+	gui/wadseekershow.h
 	ini/ini.h
 	ip2c/ip2c.h
 	ip2c/ip2cloader.h
@@ -271,6 +272,7 @@ set(SOURCE_FILES
 	gui/serverlist.cpp
 	gui/standardserverconsole.cpp
 	gui/wadseekerinterface.cpp
+	gui/wadseekershow.cpp
 	ini/inisection.cpp
 	ini/inivariable.cpp
 	ini/ini.cpp

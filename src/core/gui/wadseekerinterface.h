@@ -26,6 +26,7 @@
 #include "ui_wadseekerinterface.h"
 
 #include "ini/ini.h"
+#include "serverapi/serverptr.h"
 #include "wadseeker/wadseeker.h"
 #include <QStringList>
 #include <QTimer>
@@ -41,26 +42,25 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 
 	public:
 		WadseekerInterface(QWidget* parent = NULL);
+		WadseekerInterface(ServerPtr server, QWidget* parent = NULL);
 		~WadseekerInterface();
 
 		bool isAutomatic() { return bAutomatic; }
-
-		/**
-		 * Sets the window to start seeking immediatelly after being shown and
-		 * automatically close on success.
-		 * @param b - is automatic or is it not
-		 * @param seekedWads - wads to seek if 'b' parameter is set to true.
-		 */
-		void setAutomatic(bool b, const QStringList& seekedWads)
-		{
-			bAutomatic = b;
-			this->seekedWads = seekedWads;
-		}
 
 		void setCustomSite(const QString& site)
 		{
 			this->customSite = site;
 		}
+
+		/**
+		 * @brief Sets WADs to seek.
+		 *
+		 * If window is automatic seek will start immediatelly. Otherwise
+		 * WADs are inserted into the line edit.
+		 *
+		 * @param wads - wads to seek.
+		 */
+		void setWads(const QStringList& wads);
 
 		Wadseeker& wadseekerRef() { return wadseeker; }
 
@@ -70,6 +70,9 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 			Downloading = 0,
 			Waiting = 1
 		};
+
+		class PrivData;
+		PrivData *d;
 
 		static const int UPDATE_INTERVAL_MS;
 
@@ -100,6 +103,7 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 		Wadseeker wadseeker;
 
 		void connectWadseekerObject();
+		void construct();
 		void displayMessage(const QString& message, WadseekerLib::MessageType type, bool bPrependErrorsWithMessageType);
 		void initMessageColors();
 

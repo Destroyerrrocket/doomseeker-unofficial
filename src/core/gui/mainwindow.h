@@ -130,6 +130,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 		void updateMasterAddresses();
 
+	public slots:
+		void runGame(const ServerPtr&);
+
 	protected:
 		friend class DoomseekerConfigurationDialog;
 
@@ -295,7 +298,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void refreshThreadBeginsWork();
 		void refreshThreadEndsWork();
 		void restartAndInstallUpdatesNow();
-		void runGame(const ServerPtr&);
 		void serverAddedToList(const ServerPtr&);
 		void showServerJoinCommandLine(const ServerPtr&);
 		void showUpdaterProcessErrorDialog();

@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "gui/wadseekerinterface.h"
 #include "configuration/doomseekerconfig.h"
+#include "serverapi/server.h"
 #include "application.h"
 #include "mainwindow.h"
 #include "strings.h"
@@ -30,67 +31,76 @@
 
 const int WadseekerInterface::UPDATE_INTERVAL_MS = 500;
 
+class WadseekerInterface::PrivData
+{
+public:
+	bool bCompletedSuccessfully;
+};
+
 WadseekerInterface::WadseekerInterface(QWidget* parent)
 : QDialog(parent)
 {
-	setupUi(this);
-	setStateWaiting();
-
-	initMessageColors();
-
-	this->setWindowIcon(QIcon(":/icon.png"));
-
-	this->connect(&updateTimer, SIGNAL( timeout() ),
-		SLOT( registerUpdateRequest() ) );
-
-	connectWadseekerObject();
-
-	// Connect tables.
-	this->connect(twWads, SIGNAL( rightMouseClick(const QModelIndex&, const QPoint&) ),
-		SLOT( wadsTableRightClicked(const QModelIndex&, const QPoint&) ) );
-
+	d = new PrivData();
+	construct();
 	bAutomatic = false;
-	bFirstShown = false;
+}
 
-	const QStringList& urlList = gConfig.wadseeker.searchURLs;
-
-	if (!urlList.isEmpty())
-	{
-		wadseeker.setPrimarySites(urlList);
-	}
-	else
-	{
-		wadseeker.setPrimarySitesToDefault();
-	}
-
-	updateTimer.setSingleShot(false);
-	updateTimer.start(UPDATE_INTERVAL_MS);
+WadseekerInterface::WadseekerInterface(ServerPtr server, QWidget* parent)
+: QDialog(parent)
+{
+	d = new PrivData();
+	construct();
+	bAutomatic = true;
+	lblTop->setText(tr("Downloading WADs for server \"%1\"").arg(server->name()));
+	btnDownload->hide();
+	leWadName->hide();
+	setCustomSite(server->webSite());
 }
 
 WadseekerInterface::~WadseekerInterface()
 {
+	delete d;
 }
 
 void WadseekerInterface::accept()
 {
-	if (leWadName->text().isEmpty())
-		return;
+	if (isAutomatic())
+	{
+		if (d->bCompletedSuccessfully)
+		{
+			done(QDialog::Accepted);
+		}
+	}
+	else
+	{
+		if (leWadName->text().isEmpty())
+		{
+			return;
+		}
 
-	startSeeking(leWadName->text().split(',', QString::SkipEmptyParts));
+		startSeeking(leWadName->text().split(',', QString::SkipEmptyParts));
+	}
 }
 
 void WadseekerInterface::allDone(bool bSuccess)
 {
 	setStateWaiting();
-
+	d->bCompletedSuccessfully = bSuccess;
+	QApplication::alert(this);
 	if (bSuccess)
 	{
 		displayMessage(tr("All done. Success."), WadseekerLib::NoticeImportant, false);
 
-		if (bAutomatic)
+		if (isAutomatic())
 		{
-			// Close the dialog box.
-			done(QDialog::Accepted);
+			if (isActiveWindow())
+			{
+				done(QDialog::Accepted);
+			}
+			else
+			{
+				btnStartGame->show();
+			}
 		}
 	}
 	else
@@ -133,6 +143,42 @@ void WadseekerInterface::connectWadseekerObject()
 		SLOT( setFileProgress(const QString&, qint64, qint64) ) );
 	twWads->connect(&wadseeker, SIGNAL( fileDownloadStarted(const QString&, const QUrl&) ),
 		SLOT( setFileUrl(const QString&, const QUrl&) ) );
+}
+
+void WadseekerInterface::construct()
+{
+	setupUi(this);
+	d->bCompletedSuccessfully = false;
+	setStateWaiting();
+
+	initMessageColors();
+
+	this->setWindowIcon(QIcon(":/icon.png"));
+	btnStartGame->hide();
+	this->connect(&updateTimer, SIGNAL(timeout()), SLOT(registerUpdateRequest()));
+
+	connectWadseekerObject();
+
+	// Connect tables.
+	this->connect(twWads, SIGNAL( rightMouseClick(const QModelIndex&, const QPoint&) ),
+		SLOT( wadsTableRightClicked(const QModelIndex&, const QPoint&) ) );
+
+	bAutomatic = false;
+	bFirstShown = false;
+
+	const QStringList& urlList = gConfig.wadseeker.searchURLs;
+
+	if (!urlList.isEmpty())
+	{
+		wadseeker.setPrimarySites(urlList);
+	}
+	else
+	{
+		wadseeker.setPrimarySitesToDefault();
+	}
+
+	updateTimer.setSingleShot(false);
+	updateTimer.start(UPDATE_INTERVAL_MS);
 }
 
 void WadseekerInterface::displayMessage(const QString& message, WadseekerLib::MessageType type, bool bPrependErrorsWithMessageType)
@@ -276,6 +322,18 @@ void WadseekerInterface::setStateWaiting()
 	state = Waiting;
 }
 
+void WadseekerInterface::setWads(const QStringList& wads)
+{
+	if (isAutomatic())
+	{
+		seekedWads = wads;
+	}
+	else
+	{
+		leWadName->setText(wads.join(", "));
+	}
+}
+
 void WadseekerInterface::setupIdgames()
 {
 	QString idgamesUrl = Wadseeker::defaultIdgamesUrl();
@@ -295,7 +353,7 @@ void WadseekerInterface::showEvent(QShowEvent* event)
 	{
 		bFirstShown = true;
 
-		if (bAutomatic)
+		if (isAutomatic())
 		{
 			startSeeking(seekedWads);
 		}
@@ -332,6 +390,7 @@ void WadseekerInterface::startSeeking(const QStringList& seekedFilesList)
 	{
 		return;
 	}
+	d->bCompletedSuccessfully = false;
 
 	// Get rid of the whitespace characters from each filename; we don't want
 	// to be searching " awad.wad".
@@ -383,7 +442,7 @@ void WadseekerInterface::updateTitle()
 	}
 }
 
-QStringList	WadseekerInterface::unsuccessfulWads() const
+QStringList WadseekerInterface::unsuccessfulWads() const
 {
 	QStringList allWads = seekedWads;
 

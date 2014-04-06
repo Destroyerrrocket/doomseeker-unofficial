@@ -36,6 +36,7 @@
 #include "gui/passwordDlg.h"
 #include "gui/serverfilterdock.h"
 #include "gui/wadseekerinterface.h"
+#include "gui/wadseekershow.h"
 #include "ip2c/ip2cloader.h"
 #include "irc/configuration/ircconfig.h"
 #include "pathfinder/pathfinder.h"
@@ -957,13 +958,12 @@ void MainWindow::menuViewIRC()
 
 void MainWindow::menuWadSeeker()
 {
-	if (!JoinCommandLineBuilder::checkWadseekerValidity(this))
+	if (gWadseekerShow->checkWadseekerValidity(this))
 	{
-		return;
+		WadseekerInterface *wadseeker = new WadseekerInterface(NULL);
+		wadseeker->setAttribute(Qt::WA_DeleteOnClose);
+		wadseeker->show();
 	}
-
-	WadseekerInterface wadseekerInterface(NULL);
-	wadseekerInterface.exec();
 }
 
 QProgressBar* MainWindow::mkStdProgressBarForStatusBar()
