@@ -32,17 +32,20 @@
 #include <QTimer>
 
 /**
- * This dialog box returns 'Accepted' result ONLY when
- * automaticCloseOnSuccess is set to true and when
- * it succeedes finding all wads.
+ * @brief Wadseeker dialog box, only one instance is allowed.
+ *
+ * This is not a singleton, but create() methods will return NULL if instance
+ * is already running. There's also isInstantiated() static method available.
  */
 class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 {
 	Q_OBJECT
 
 	public:
-		WadseekerInterface(QWidget* parent = NULL);
-		WadseekerInterface(ServerPtr server, QWidget* parent = NULL);
+		static bool isInstantiated();
+
+		static WadseekerInterface *create(QWidget* parent = NULL);
+		static WadseekerInterface *create(ServerPtr server, QWidget* parent = NULL);
 		~WadseekerInterface();
 
 		bool isAutomatic() { return bAutomatic; }
@@ -75,6 +78,7 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 		PrivData *d;
 
 		static const int UPDATE_INTERVAL_MS;
+		static WadseekerInterface *currentInstance;
 
 		bool bAutomatic;
 		bool bFirstShown;
@@ -101,6 +105,9 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 
 		QTimer updateTimer;
 		Wadseeker wadseeker;
+
+		WadseekerInterface(QWidget* parent = NULL);
+		WadseekerInterface(ServerPtr server, QWidget* parent = NULL);
 
 		void connectWadseekerObject();
 		void construct();

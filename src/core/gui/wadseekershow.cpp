@@ -47,6 +47,13 @@ WadseekerShow::WadseekerShow()
 
 bool WadseekerShow::checkWadseekerValidity(QWidget *parent)
 {
+	if (WadseekerInterface::isInstantiated())
+	{
+		QMessageBox::warning(parent, tr("Wadseeker cannot be launched"),
+			tr("Another instance of Wadseeker is already running."), QMessageBox::Ok);
+		return false;
+	}
+
 	QString targetDirPath = gConfig.wadseeker.targetDirectory;
 	QDir targetDir(targetDirPath);
 	QFileInfo targetDirFileInfo(targetDirPath);

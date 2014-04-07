@@ -30,6 +30,7 @@
 #include <QMessageBox>
 
 const int WadseekerInterface::UPDATE_INTERVAL_MS = 500;
+WadseekerInterface *WadseekerInterface::currentInstance = NULL;
 
 class WadseekerInterface::PrivData
 {
@@ -60,6 +61,7 @@ WadseekerInterface::WadseekerInterface(ServerPtr server, QWidget* parent)
 WadseekerInterface::~WadseekerInterface()
 {
 	delete d;
+	currentInstance = NULL;
 }
 
 void WadseekerInterface::accept()
@@ -181,6 +183,26 @@ void WadseekerInterface::construct()
 	updateTimer.start(UPDATE_INTERVAL_MS);
 }
 
+WadseekerInterface *WadseekerInterface::create(QWidget* parent)
+{
+	if (!isInstantiated())
+	{
+		currentInstance = new WadseekerInterface(parent);
+		return currentInstance;
+	}
+	return NULL;
+}
+
+WadseekerInterface *WadseekerInterface::create(ServerPtr server, QWidget* parent)
+{
+	if (!isInstantiated())
+	{
+		currentInstance = new WadseekerInterface(server, parent);
+		return currentInstance;
+	}
+	return NULL;
+}
+
 void WadseekerInterface::displayMessage(const QString& message, WadseekerLib::MessageType type, bool bPrependErrorsWithMessageType)
 {
 	QString strProcessedMessage;
@@ -258,6 +280,11 @@ void WadseekerInterface::initMessageColors()
 	colorHtmlMessageNotice = gConfig.wadseeker.colorMessageNotice;
 	colorHtmlMessageError = gConfig.wadseeker.colorMessageError;
 	colorHtmlMessageFatalError = gConfig.wadseeker.colorMessageCriticalError;
+}
+
+bool WadseekerInterface::isInstantiated()
+{
+	return currentInstance != NULL;
 }
 
 void WadseekerInterface::message(const QString& message, WadseekerLib::MessageType type)

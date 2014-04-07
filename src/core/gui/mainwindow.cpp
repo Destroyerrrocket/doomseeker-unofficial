@@ -960,7 +960,7 @@ void MainWindow::menuWadSeeker()
 {
 	if (gWadseekerShow->checkWadseekerValidity(this))
 	{
-		WadseekerInterface *wadseeker = new WadseekerInterface(NULL);
+		WadseekerInterface *wadseeker = WadseekerInterface::create(NULL);
 		wadseeker->setAttribute(Qt::WA_DeleteOnClose);
 		wadseeker->show();
 	}

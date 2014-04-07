@@ -184,9 +184,19 @@ void JoinCommandLineBuilder::handleError(const JoinError &error)
 
 JoinCommandLineBuilder::MissingWadsProceed JoinCommandLineBuilder::handleMissingWads(const JoinError &error)
 {
+	if (WadseekerInterface::isInstantiated())
+	{
+		QMessageBox::StandardButtons ret = 
+			QMessageBox::warning(d->parentWidget, tr("Doomseeker - files are missing"),
+				tr("You don't have all the files required by this server and an instance "
+					"of Wadseeker is already running.\n\n"
+					"Press 'Ignore' to join anyway."),
+				QMessageBox::Abort | QMessageBox::Ignore);
+		return ret == QMessageBox::Ignore ? Ignore : Cancel;;
+	}
+
 	QString filesMissingMessage = tr("Following files are missing:\n");
 
-	// Execute Wadseeker
 	if (!error.missingIwad().isEmpty())
 	{
 		filesMissingMessage += tr("IWAD: ") + error.missingIwad().toLower() + "\n";
@@ -218,7 +228,7 @@ JoinCommandLineBuilder::MissingWadsProceed JoinCommandLineBuilder::handleMissing
 			return Cancel;
 		}
 
-		WadseekerInterface *wadseeker = new WadseekerInterface(d->server);
+		WadseekerInterface *wadseeker = WadseekerInterface::create(d->server);
 		wadseeker->setWads(downloadableWads);
 		wadseeker->setAttribute(Qt::WA_DeleteOnClose);
 		// As Wadseeker window is asynchronous the control of game joining
