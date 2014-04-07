@@ -89,6 +89,8 @@ class MAIN_EXPORT ServerConnectParams
  */
 class MAIN_EXPORT GameClientRunner : public QObject
 {
+	Q_OBJECT
+
 	public:
 		GameClientRunner(ServerPtr server);
 		virtual ~GameClientRunner();

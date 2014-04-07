@@ -175,6 +175,7 @@ set(DOOMSEEKER_QT_FILES
 	serverapi/tooltips/playertable.h
 	refresher/refresher.h
 	serverapi/exefile.h
+	serverapi/gameclientrunner.h
 	serverapi/gameexefactory.h
 	serverapi/gamehost.h
 	serverapi/masterclient.h
@@ -420,7 +421,6 @@ set(HEADER_FILES
 	serverapi/buddyinfo.h
 	serverapi/gamecreateparams.h
 	serverapi/gameexeretriever.h
-	serverapi/gameclientrunner.h
 	serverapi/joinerror.h
 	serverapi/player.h
 	serverapi/playerslist.h
