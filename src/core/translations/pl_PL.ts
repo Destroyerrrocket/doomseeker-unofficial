@@ -3249,6 +3249,7 @@ Alternatywnie użyj &quot;Ignoruj&quot; aby połączyć się mimo wszystko.</tra
     </message>
     <message>
         <location filename="../joincommandlinebuilder.cpp" line="146"/>
+        <location filename="../joincommandlinebuilder.cpp" line="190"/>
         <source>Doomseeker - files are missing</source>
         <translation>Doomseeker - brakuje plików</translation>
     </message>
@@ -3276,19 +3277,28 @@ Czy chcesz, aby Wadseeker poszukał brakujących WADów?</translation>
         <translation>Błąd otrzymywania parametrów dołączenia do serwera &quot;%1&quot;, gra &quot;%2&quot;: %3</translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="187"/>
+        <location filename="../joincommandlinebuilder.cpp" line="191"/>
+        <source>You don&apos;t have all the files required by this server and an instance of Wadseeker is already running.
+
+Press &apos;Ignore&apos; to join anyway.</source>
+        <translation>Nie masz wszystkich plików, które są potrzebne do gry na tym serwerze, a Wadseeker już jest uruchomiony.
+
+Możesz wcisnąć &quot;Ignoruj&quot;, aby dołączyć się mimo wszystko.</translation>
+    </message>
+    <message>
+        <location filename="../joincommandlinebuilder.cpp" line="198"/>
         <source>Following files are missing:
 </source>
         <translation>Brakuje tych plików:
 </translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="192"/>
+        <location filename="../joincommandlinebuilder.cpp" line="202"/>
         <source>IWAD: </source>
         <translation>IWAD: </translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="195"/>
+        <location filename="../joincommandlinebuilder.cpp" line="205"/>
         <source>
 Make sure that this file is in one of the paths specified in Options -&gt; File Paths.
 This file belongs to a commercial game or is otherwise blocked from download. If you don&apos;t have this file, and it belongs to a commercial game, you need to purchase the game associated with this IWAD.
@@ -3303,7 +3313,7 @@ Wadseeker nie będzie pobierał komercyjnych IWADów.
 </translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="208"/>
+        <location filename="../joincommandlinebuilder.cpp" line="218"/>
         <source>PWADS: %1</source>
         <translation>PWADy: %1</translation>
     </message>
@@ -4841,59 +4851,59 @@ z graczami na górze listy</translation>
 <context>
     <name>WadseekerInterface</name>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="54"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="55"/>
         <source>Downloading WADs for server &quot;%1&quot;</source>
         <translation>Pobieranie WADów dla serwera &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="92"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="94"/>
         <source>All done. Success.</source>
         <translation>Wszystkie zakończone. Sukces.</translation>
     </message>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="115"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="117"/>
         <source>All done. Fail.</source>
         <translation>Wszystkie zakończone. Porażka.</translation>
     </message>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="201"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="223"/>
         <source>CRITICAL ERROR: %1</source>
         <translation>BŁĄD KRYTYCZNY: %1</translation>
     </message>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="216"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="238"/>
         <source>Error: %1</source>
         <translation>Błąd: %1</translation>
     </message>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="290"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="317"/>
         <location filename="../../../../visual2008/src/core/ui_wadseekerinterface.h" line="163"/>
         <source>Wadseeker</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="313"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="340"/>
         <source>Abort</source>
         <translation>Przerwij</translation>
     </message>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="320"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="347"/>
         <location filename="../../../../visual2008/src/core/ui_wadseekerinterface.h" line="183"/>
         <source>Close</source>
         <translation>Zamknij</translation>
     </message>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="434"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="461"/>
         <source>[%1%] Wadseeker</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="479"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="506"/>
         <source>Context menu error</source>
         <translation>Błąd menu kontekstowego</translation>
     </message>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="479"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="506"/>
         <source>Unknown action selected.</source>
         <translation>Wybrano nieznaną akcję.</translation>
     </message>
@@ -4952,7 +4962,12 @@ z graczami na górze listy</translation>
 <context>
     <name>WadseekerShow</name>
     <message>
-        <location filename="../gui/wadseekershow.cpp" line="56"/>
+        <location filename="../gui/wadseekershow.cpp" line="53"/>
+        <source>Another instance of Wadseeker is already running.</source>
+        <translation>Okno Wadseekera jest już uruchomione.</translation>
+    </message>
+    <message>
+        <location filename="../gui/wadseekershow.cpp" line="63"/>
         <source>Wadseeker will not work correctly:
 
 Target directory is either not set, is invalid or cannot be written to.
@@ -4965,7 +4980,8 @@ Docelowy katalog jest nie ustawiony, jest nieprawidłowy, albo nie można w nim 
 Proszę przejrzeć konfigurację, albo odnieść się do pomocy online dostępnej z menu Pomoc.</translation>
     </message>
     <message>
-        <location filename="../gui/wadseekershow.cpp" line="60"/>
+        <location filename="../gui/wadseekershow.cpp" line="52"/>
+        <location filename="../gui/wadseekershow.cpp" line="67"/>
         <source>Wadseeker cannot be launched</source>
         <translation>Wadseeker nie może zostać wystartowany</translation>
     </message>
