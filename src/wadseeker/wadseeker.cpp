@@ -24,6 +24,7 @@
 #include "wadretriever/wadretriever.h"
 #include "wwwseeker/entities/fileseekinfo.h"
 #include "wwwseeker/idgames.h"
+#include "wwwseeker/urlparser.h"
 #include "wwwseeker/wwwseeker.h"
 #include "zip/unzip.h"
 #include "zip/un7zip.h"
@@ -405,25 +406,39 @@ void Wadseeker::setupIdgamesClients(const QList<WadDownloadInfo>& wadDownloadInf
 
 void Wadseeker::setupSitesUrls()
 {
+	const int PRIORITY_CUSTOM = 100;
+	const int PRIORITY_NORMAL = 0;
 	d.wwwSeeker->clearVisitedUrlsList();
 
-	d.wwwSeeker->setCustomSiteUrl(d.seekParametersForCurrentSeek->customSiteUrl);
+	if (UrlParser::isWadnameTemplateUrl(d.seekParametersForCurrentSeek->customSiteUrl))
+	{
+		// If URL containts wadname placeholder we need to create a unique
+		// URL for each searched wad.
+		foreach (const QString& wad, d.seekParametersForCurrentSeek->seekedWads)
+		{
+			QUrl url = UrlParser::resolveWadnameTemplateUrl(
+				d.seekParametersForCurrentSeek->customSiteUrl, wad);
+			if (url.isValid())
+			{
+				d.wwwSeeker->addFileSiteUrlWithPriority(wad, url, PRIORITY_CUSTOM);
+			}
+		}
+	}
+	else
+	{
+		d.wwwSeeker->setCustomSiteUrl(d.seekParametersForCurrentSeek->customSiteUrl);
+	}
 
 	foreach (const QString& strSiteUrl, d.seekParametersForCurrentSeek->sitesUrls)
 	{
-		// If URL containts %WADNAME% placeholder we need to create a unique
-		// URL for each searched wad.
-		if (strSiteUrl.contains("%WADNAME%"))
+		if (UrlParser::isWadnameTemplateUrl(strSiteUrl))
 		{
 			foreach (const QString& wad, d.seekParametersForCurrentSeek->seekedWads)
 			{
-				QString strProperUrl = strSiteUrl;
-				strProperUrl.replace("%WADNAME%", wad);
-
-				QUrl url(strProperUrl);
+				QUrl url = UrlParser::resolveWadnameTemplateUrl(strSiteUrl, wad);
 				if (url.isValid())
 				{
-					d.wwwSeeker->addFileSiteUrl(wad, url);
+					d.wwwSeeker->addFileSiteUrlWithPriority(wad, url, PRIORITY_NORMAL);
 				}
 			}
 		}

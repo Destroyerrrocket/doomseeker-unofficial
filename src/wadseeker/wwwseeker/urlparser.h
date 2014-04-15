@@ -41,6 +41,7 @@ class Link;
 class UrlParser
 {
 	public:
+		static bool hasSameHost(const QUrl& url1, const QUrl& url2);
 		/**
 		 * @brief Checks if URL is a direct link to one of the filenames.
 		 *
@@ -48,9 +49,9 @@ class UrlParser
 		 *         files specified on the wantedFilenames list.
 		 */
 		static bool isDirectLinkToFile(const QStringList& wantedFilenames, const QUrl& url);
-		
-		static bool hasSameHost(const QUrl& url1, const QUrl& url2);
 
+		static bool isWadnameTemplateUrl(const QUrl &url);
+		static QUrl resolveWadnameTemplateUrl(const QUrl &url, const QString &wadname);
 		/**
 		 * @brief Checks if URLs are the same. Ignores character case.
 		 */
