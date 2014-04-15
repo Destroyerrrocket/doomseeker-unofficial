@@ -95,6 +95,7 @@ class IRCNicknameCompleter::PrivData
 IRCNicknameCompleter::IRCNicknameCompleter()
 {
 	d = new PrivData();
+	d->completer.setCaseSensitivity(Qt::CaseInsensitive);
 	d->completer.setCompletionRole(IRCUserListModel::RoleCleanNickname);
 }
 
