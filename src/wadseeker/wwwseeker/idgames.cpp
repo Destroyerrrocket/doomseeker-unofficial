@@ -249,13 +249,6 @@ Idgames::PageProcessResults Idgames::processPage(QByteArray& pageData, QUrl& url
 
 	QByteArray head = pageData.mid(indexOfHead, indexOfHeadEnd - indexOfHead);
 
-	if (!head.contains("<title>Doomworld /idgames database</title>")
-	||	!head.contains("<META http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">")
-	||	!head.contains("<link rel=\"stylesheet\" type=\"text/css\" href=\"idgames.css\">"))
-	{
-		return NotIdgames;
-	}
-
 	// Now see if page contains any positions and whether or not it has "Too short string error":
 	// Get data inbetween <input type="submit" value="mong"> and <div class="timer">
 	int indexOfMong = pageData.indexOf("<input type=\"submit\" value=\"mong\">");
