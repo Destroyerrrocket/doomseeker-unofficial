@@ -590,14 +590,23 @@ if(WIN32)
 			DESTINATION engines
 		)
 	endif()
-	# Install other files that need to get distributed with binary.
+
+	# License files.
+	# Text files in Windows distribution really should have a .txt extension
+	# so rename them all accordingly.
 	set(LICENSE_FILES
-		${CMAKE_SOURCE_DIR}/LICENSE
-		${CMAKE_SOURCE_DIR}/LICENSE.json
-		${CMAKE_SOURCE_DIR}/LICENSE.wadseeker
+		LICENSE
+		LICENSE.json
+		LICENSE.wadseeker
 	)
+	foreach (LICFILE ${LICENSE_FILES})
+		install(FILES "${CMAKE_SOURCE_DIR}/${LICFILE}" DESTINATION .
+			RENAME "${LICFILE}.txt")
+	endforeach(LICFILE)
+
+	# Translatons
 	install(FILES ${TRANSLATION_FILES_TO_COPY} DESTINATION translations)
-	install(FILES ${LICENSE_FILES} DESTINATION .)
+	# Other
 	install(FILES ${CMAKE_SOURCE_DIR}/tools/doomseeker-portable.bat DESTINATION .)
 endif(WIN32)
 

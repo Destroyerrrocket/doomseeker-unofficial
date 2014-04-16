@@ -5,7 +5,7 @@
         "translations/translations.def",
         "translations/pl_PL.qm",
         "translations/qt_pl.qm",
-        "LICENSE",
+        "LICENSE.txt",
         "doomseeker-portable.bat",
         "libwadseeker.dll",
         "msvcm90.dll",
@@ -18,9 +18,9 @@
         "doomseeker.exe",
         "updater.exe",
         "doomseeker.ico",
-        "LICENSE.json",
+        "LICENSE.json.txt",
         "Microsoft.VC90.CRT.manifest",
-        "License.wadseeker"
+        "LICENSE.wadseeker.txt"
     ],
 
     "updater-binary" : "updater.exe",
