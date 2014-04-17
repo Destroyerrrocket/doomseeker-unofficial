@@ -34,9 +34,19 @@ IdgamesFile::IdgamesFile(const QVariant &rawData)
 QList<IdgamesFile> IdgamesFile::parseSearchResult(const QVariant &rawData)
 {
 	QList<IdgamesFile> collection;
-	foreach (const QVariant &rawFile, rawData.toMap()["file"].toList())
+	// Value of 'file' key can be either a list of objects or a single
+	// object. If list is empty we asasume that there's a single object.
+	QVariant varFile = rawData.toMap()["file"];
+	if (!varFile.toList().isEmpty())
 	{
-		collection << IdgamesFile(rawFile);
+		foreach (const QVariant &element, varFile.toList())
+		{
+			collection << IdgamesFile(element);
+		}
+	}
+	else
+	{
+		collection << IdgamesFile(varFile);
 	}
 	return collection;
 }
