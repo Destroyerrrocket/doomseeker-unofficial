@@ -608,7 +608,7 @@ void DoomseekerConfig::WadseekerCfg::init(IniSection& section)
 	section.createSetting("ColorMessageNotice", this->colorMessageNotice);
 	section.createSetting("ConnectTimeoutSeconds", this->connectTimeoutSeconds);
 	section.createSetting("DownloadTimeoutSeconds", this->downloadTimeoutSeconds);
-	section.createSetting("IdgamesURL", this->idgamesURL);
+	section.createSetting("IdgamesApiURL", this->idgamesURL);
 	section.createSetting("MaxConcurrentSiteDownloads", this->maxConcurrentSiteDownloads);
 	section.createSetting("MaxConcurrentWadDownloads", this->maxConcurrentWadDownloads);
 	section.createSetting("SearchURLs", Wadseeker::defaultSitesListEncoded().join(";"));
@@ -623,7 +623,7 @@ void DoomseekerConfig::WadseekerCfg::load(IniSection& section)
 	this->colorMessageNotice = (const QString &)section["ColorMessageNotice"];
 	this->connectTimeoutSeconds = section["ConnectTimeoutSeconds"];
 	this->downloadTimeoutSeconds = section["DownloadTimeoutSeconds"];
-	this->idgamesURL = (const QString &)section["IdgamesURL"];
+	this->idgamesURL = (const QString &)section["IdgamesApiURL"];
 	this->maxConcurrentSiteDownloads = section["MaxConcurrentSiteDownloads"];
 	this->maxConcurrentWadDownloads = section["MaxConcurrentWadDownloads"];
 	this->targetDirectory = (const QString &)section["TargetDirectory"];
@@ -645,7 +645,7 @@ void DoomseekerConfig::WadseekerCfg::save(IniSection& section)
 	section["ColorMessageNotice"] = this->colorMessageNotice;
 	section["ConnectTimeoutSeconds"] = this->connectTimeoutSeconds;
 	section["DownloadTimeoutSeconds"] = this->downloadTimeoutSeconds;
-	section["IdgamesURL"] = this->idgamesURL;
+	section["IdgamesApiURL"] = this->idgamesURL;
 	section["MaxConcurrentSiteDownloads"] = this->maxConcurrentSiteDownloads;
 	section["MaxConcurrentWadDownloads"] = this->maxConcurrentWadDownloads;
 	section["TargetDirectory"] = this->targetDirectory;
