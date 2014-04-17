@@ -24,13 +24,15 @@
 
 #include "entities/waddownloadinfo.h"
 #include "protocols/idgames/idgamesfile.h"
+#include <QDebug>
 
 IdgamesFile IdgamesFileMatcher::match(const WadDownloadInfo &wad,
 		const QList<IdgamesFile> &candidates)
 {
 	foreach (const IdgamesFile &candidate, candidates)
 	{
-		if (wad.archiveName("zip") == candidate.filename())
+		qDebug() << "wad" << wad.archiveName("zip") << "candidate" << candidate.filename();
+		if (wad.archiveName("zip").compare(candidate.filename(), Qt::CaseInsensitive) == 0)
 		{
 			return candidate;
 		}
