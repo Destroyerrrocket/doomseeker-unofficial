@@ -1287,6 +1287,54 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>CFGWadAlias</name>
+    <message>
+        <location filename="../gui/configuration/cfgwadalias.h" line="46"/>
+        <source>WAD Aliases</source>
+        <translation>Zamienniki WADów</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgwadalias.h" line="109"/>
+        <source>Form</source>
+        <translation>Form</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgwadalias.h" line="110"/>
+        <source>Aliases listed here will be used if WADs are not found.</source>
+        <translation>Zamienniki wymienione tutaj będą używane, jeżeli oryginalne WADy nie zostaną odnalezione.</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgwadalias.h" line="112"/>
+        <source>WAD</source>
+        <translation>WAD</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgwadalias.h" line="114"/>
+        <source>Aliases</source>
+        <translation>Zamienniki</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgwadalias.h" line="115"/>
+        <source>Add</source>
+        <translation>Dodaj</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgwadalias.h" line="116"/>
+        <source>Add Defaults</source>
+        <translation>Dodaj domyślne</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgwadalias.h" line="117"/>
+        <source>Remove</source>
+        <translation>Usuń</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_cfgwadalias.h" line="118"/>
+        <source>Multiple aliases can be separated with semicolon &apos;;&apos;</source>
+        <translation>Zamienniki powinny być oddzielone średnikami &apos;;&apos;</translation>
+    </message>
+</context>
+<context>
     <name>CFGWadseekerAppearance</name>
     <message>
         <location filename="../gui/configuration/cfgwadseekerappearance.h" line="37"/>
@@ -2139,22 +2187,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DoomseekerConfigurationDialog</name>
     <message>
-        <location filename="../gui/configuration/doomseekerconfigurationdialog.cpp" line="80"/>
+        <location filename="../gui/configuration/doomseekerconfigurationdialog.cpp" line="87"/>
         <source>Wadseeker</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/configuration/doomseekerconfigurationdialog.cpp" line="103"/>
+        <location filename="../gui/configuration/doomseekerconfigurationdialog.cpp" line="110"/>
         <source>Settings saved!</source>
         <translation>Zapisano ustawienia!</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/doomseekerconfigurationdialog.cpp" line="107"/>
+        <location filename="../gui/configuration/doomseekerconfigurationdialog.cpp" line="114"/>
         <source>Settings save failed!</source>
         <translation>Zapis ustawień nie powiódł się!</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/doomseekerconfigurationdialog.cpp" line="113"/>
+        <location filename="../gui/configuration/doomseekerconfigurationdialog.cpp" line="120"/>
         <source>Engines</source>
         <translation>Gry</translation>
     </message>
@@ -2242,12 +2290,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ExeFile</name>
     <message>
-        <location filename="../serverapi/exefile.cpp" line="72"/>
+        <location filename="../serverapi/exefile.cpp" line="77"/>
         <source>No %1 executable specified for %2</source>
         <translation>Nie podano pliku wykonywalnego typu %1 dla wtyczki %2</translation>
     </message>
     <message>
-        <location filename="../serverapi/exefile.cpp" line="83"/>
+        <location filename="../serverapi/exefile.cpp" line="88"/>
         <source>Executable for %1 %2:
 %3
 is a directory or doesn&apos;t exist.</source>
@@ -2259,7 +2307,7 @@ jest katalogiem lub nie istnieje.</translation>
 <context>
     <name>GameClientRunner</name>
     <message>
-        <location filename="../serverapi/gameclientrunner.cpp" line="196"/>
+        <location filename="../serverapi/gameclientrunner.cpp" line="194"/>
         <source>Path to working directory for game &quot;%1&quot; is empty.
 
 Make sure the configuration for the client executable is set properly.</source>
@@ -2268,7 +2316,7 @@ Make sure the configuration for the client executable is set properly.</source>
 Upewnij się, że konfiguracja klienta gry jest ustawiona poprawnie.</translation>
     </message>
     <message>
-        <location filename="../serverapi/gameclientrunner.cpp" line="204"/>
+        <location filename="../serverapi/gameclientrunner.cpp" line="202"/>
         <source>%1
 
 This directory cannot be used as working directory for game: %2
@@ -2281,17 +2329,22 @@ Ten katalog nie może zostać użyty jako katalog roboczy dla gry: %2
 Plik wykonywalny: %3</translation>
     </message>
     <message>
-        <location filename="../serverapi/gameclientrunner.cpp" line="222"/>
+        <location filename="../serverapi/gameclientrunner.cpp" line="220"/>
         <source>BUG: Plugin doesn&apos;t specify argument for in-game password, but the server requires such password.</source>
         <translation>BUG: Wtyczka nie definiuje argumentu dla hasła w grze, a serwer takiego hasła wymaga.</translation>
     </message>
     <message>
-        <location filename="../serverapi/gameclientrunner.cpp" line="256"/>
+        <location filename="../serverapi/gameclientrunner.cpp" line="254"/>
         <source>BUG: Plugin doesn&apos;t specify argument for connect password, but the server is passworded.</source>
         <translation>BUG: Wtyczka nie definiuje argumentu dla hasła do połączenia, a serwer takie hasło posiada.</translation>
     </message>
     <message>
-        <location filename="../serverapi/gameclientrunner.cpp" line="388"/>
+        <location filename="../serverapi/gameclientrunner.cpp" line="397"/>
+        <source>Game can be installed by Doomseeker</source>
+        <translation>Doomseeker może zainstalować tą grę</translation>
+    </message>
+    <message>
+        <location filename="../serverapi/gameclientrunner.cpp" line="403"/>
         <source>Client binary cannot be obtained for %1, please check the location given in the configuration.</source>
         <translation>Nie można odnaleźć pliku wykonywalnego gry %1, proszę sprawdzić lokację podaną w konfiguracji.</translation>
     </message>
@@ -3217,44 +3270,44 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>JoinCommandLineBuilder</name>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="104"/>
+        <location filename="../joincommandlinebuilder.cpp" line="107"/>
         <source>This server is still refreshing.
 Please wait until it is finished.</source>
         <translation>Ten serwer jest wciąż odświeżany.
 Proszę poczekać, aż zostanie to zakończone.</translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="105"/>
+        <location filename="../joincommandlinebuilder.cpp" line="108"/>
         <source>Attempted to obtain a join command line for a &quot;%1&quot; server that is under refresh.</source>
         <translation>Próba otrzymania komendy dołączenia dla serwera &quot;%1&quot;, który wciąż jest odświeżany.</translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="112"/>
+        <location filename="../joincommandlinebuilder.cpp" line="115"/>
         <source>Data for this server is not available.
 Operation failed.</source>
         <translation>Dane tego serwera są niedostępne.
 Operacja nieudana.</translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="113"/>
+        <location filename="../joincommandlinebuilder.cpp" line="116"/>
         <source>Attempted to obtain a join command line for an unknown server &quot;%1&quot;</source>
         <translation>Próba otrzymania komendy dołączenia dla nieznanego serwera &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="142"/>
+        <location filename="../joincommandlinebuilder.cpp" line="145"/>
         <source>
 Alternatively use ignore to connect anyways.</source>
         <translation>
 Alternatywnie użyj &quot;Ignoruj&quot; aby połączyć się mimo wszystko.</translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="146"/>
-        <location filename="../joincommandlinebuilder.cpp" line="190"/>
+        <location filename="../joincommandlinebuilder.cpp" line="149"/>
+        <location filename="../joincommandlinebuilder.cpp" line="193"/>
         <source>Doomseeker - files are missing</source>
         <translation>Doomseeker - brakuje plików</translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="149"/>
+        <location filename="../joincommandlinebuilder.cpp" line="152"/>
         <source>
 
 Following files can be downloaded: %1
@@ -3267,17 +3320,17 @@ Następujące pliki mogą zostać pobrane: %1
 Czy chcesz, aby Wadseeker poszukał brakujących WADów?</translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="176"/>
+        <location filename="../joincommandlinebuilder.cpp" line="179"/>
         <source>Unknown error.</source>
         <translation>Nieznany błąd.</translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="180"/>
+        <location filename="../joincommandlinebuilder.cpp" line="183"/>
         <source>Error when obtaining join parameters for server &quot;%1&quot;, game &quot;%2&quot;: %3</source>
         <translation>Błąd otrzymywania parametrów dołączenia do serwera &quot;%1&quot;, gra &quot;%2&quot;: %3</translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="191"/>
+        <location filename="../joincommandlinebuilder.cpp" line="194"/>
         <source>You don&apos;t have all the files required by this server and an instance of Wadseeker is already running.
 
 Press &apos;Ignore&apos; to join anyway.</source>
@@ -3286,19 +3339,19 @@ Press &apos;Ignore&apos; to join anyway.</source>
 Możesz wcisnąć &quot;Ignoruj&quot;, aby dołączyć się mimo wszystko.</translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="198"/>
+        <location filename="../joincommandlinebuilder.cpp" line="201"/>
         <source>Following files are missing:
 </source>
         <translation>Brakuje tych plików:
 </translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="202"/>
+        <location filename="../joincommandlinebuilder.cpp" line="205"/>
         <source>IWAD: </source>
         <translation>IWAD: </translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="205"/>
+        <location filename="../joincommandlinebuilder.cpp" line="208"/>
         <source>
 Make sure that this file is in one of the paths specified in Options -&gt; File Paths.
 This file belongs to a commercial game or is otherwise blocked from download. If you don&apos;t have this file, and it belongs to a commercial game, you need to purchase the game associated with this IWAD.
@@ -3313,9 +3366,14 @@ Wadseeker nie będzie pobierał komercyjnych IWADów.
 </translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="218"/>
+        <location filename="../joincommandlinebuilder.cpp" line="221"/>
         <source>PWADS: %1</source>
         <translation>PWADy: %1</translation>
+    </message>
+    <message>
+        <location filename="../joincommandlinebuilder.cpp" line="379"/>
+        <source>Game installation failure</source>
+        <translation>Błąd instalacji gry</translation>
     </message>
     <message>
         <source>Wadseeker will not work correctly: 
@@ -4151,17 +4209,17 @@ Pozostałe aktualizacje zostały porzucone.</translation>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../configuration/doomseekerconfig.cpp" line="76"/>
+        <location filename="../configuration/doomseekerconfig.cpp" line="77"/>
         <source>DoomseekerConfig.iniSectionForPlugin(): empty plugin name has been specified, returning dummy IniSection.</source>
         <translation>DoomseekerConfig.iniSectionForPlugin(): podano pustą nazwę wtyczki, zwracam atrapę IniSection.</translation>
     </message>
     <message>
-        <location filename="../configuration/doomseekerconfig.cpp" line="82"/>
+        <location filename="../configuration/doomseekerconfig.cpp" line="83"/>
         <source>DoomseekerConfig.iniSectionForPlugin(): plugin name is invalid: %1</source>
         <translation>DoomseekerConfig.iniSectionForPlugin(): błędna nazwa wtyczki: %1</translation>
     </message>
     <message>
-        <location filename="../configuration/doomseekerconfig.cpp" line="182"/>
+        <location filename="../configuration/doomseekerconfig.cpp" line="183"/>
         <source>Setting INI file: %1</source>
         <translation>Ustawienie pliku INI: %1</translation>
     </message>
@@ -4329,17 +4387,17 @@ Pozostałe aktualizacje zostały porzucone.</translation>
 <context>
     <name>Server</name>
     <message>
-        <location filename="../serverapi/server.cpp" line="139"/>
+        <location filename="../serverapi/server.cpp" line="137"/>
         <source>&lt;&lt; ERROR &gt;&gt;</source>
         <translation>&lt;&lt; BŁĄD &gt;&gt;</translation>
     </message>
     <message>
-        <location filename="../serverapi/server.cpp" line="261"/>
+        <location filename="../serverapi/server.cpp" line="249"/>
         <source>client</source>
         <translation>klient</translation>
     </message>
     <message>
-        <location filename="../serverapi/server.cpp" line="289"/>
+        <location filename="../serverapi/server.cpp" line="277"/>
         <source>Undefined</source>
         <translation>Niezdefiniowany</translation>
     </message>
@@ -4633,27 +4691,41 @@ z graczami na górze listy</translation>
 <context>
     <name>ServerListHandler</name>
     <message>
-        <location filename="../gui/serverlist.cpp" line="223"/>
+        <location filename="../gui/serverlist.cpp" line="224"/>
         <source>Unhandled behavior in ServerListHandler::contextMenuTriggered()</source>
         <translation>Nieobsłużone zachowanie w ServerListHandler::contextMenuTriggered()</translation>
     </message>
     <message>
-        <location filename="../gui/serverlist.cpp" line="252"/>
+        <location filename="../gui/serverlist.cpp" line="254"/>
+        <source>(alias of: %1)</source>
+        <translation>(zamiennik: %1)</translation>
+    </message>
+    <message>
+        <location filename="../gui/serverlist.cpp" line="260"/>
+        <location filename="../gui/serverlist.cpp" line="376"/>
         <source>MISSING</source>
         <translation>BRAKUJE</translation>
     </message>
     <message>
-        <location filename="../gui/serverlist.cpp" line="368"/>
+        <location filename="../gui/serverlist.cpp" line="371"/>
+        <source>OPTIONAL</source>
+        <translation>OPCJONALNY</translation>
+    </message>
+    <message>
+        <location filename="../gui/serverlist.cpp" line="381"/>
+        <source>ALIAS</source>
+        <translation>ZAMIENNIK</translation>
+    </message>
+    <message>
         <source>&lt;td&gt;%1&lt;/td&gt;&lt;td&gt; OPTIONAL&lt;/td&gt;</source>
-        <translation>&lt;td&gt;%1&lt;/td&gt;&lt;td&gt; OPCJONALNY&lt;/td&gt;</translation>
+        <translation type="obsolete">&lt;td&gt;%1&lt;/td&gt;&lt;td&gt; OPCJONALNY&lt;/td&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/serverlist.cpp" line="373"/>
         <source>&lt;td&gt;%1&lt;/td&gt;&lt;td&gt; MISSING&lt;/td&gt;</source>
-        <translation>&lt;td&gt;%1&lt;/td&gt;&lt;td&gt; BRAKUJE&lt;/td&gt;</translation>
+        <translation type="obsolete">&lt;td&gt;%1&lt;/td&gt;&lt;td&gt; BRAKUJE&lt;/td&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/serverlist.cpp" line="222"/>
+        <location filename="../gui/serverlist.cpp" line="223"/>
         <source>Doomseeker - context menu warning</source>
         <translation>Doomseeker - ostrzeżenie o menu kontekstowym</translation>
     </message>
