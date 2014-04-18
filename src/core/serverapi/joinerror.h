@@ -48,7 +48,12 @@ class MAIN_EXPORT JoinError
 			 *
 			 * Useful if plugin wants to do its own error handling.
 			 */
-			Terminate
+			Terminate,
+			/**
+			 * @brief Game executable was not found but it can be automatically
+			 *        installed by the plugin.
+			 */
+			CanAutomaticallyInstallGame
 		};
 
 		JoinError();

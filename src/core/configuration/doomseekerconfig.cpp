@@ -27,6 +27,7 @@
 #include "ini/inisection.h"
 #include "ini/inivariable.h"
 #include "ini/settingsproviderqt.h"
+#include "pathfinder/filealias.h"
 #include "pathfinder/filesearchpath.h"
 #include "plugins/engineplugin.h"
 #include "updater/updatechannel.h"
@@ -350,6 +351,16 @@ void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 	section.createSetting("ServerListSortIndex", this->serverListSortIndex);
 	section.createSetting("ServerListSortDirection", this->serverListSortDirection);
 	section.createSetting("WadPaths", FileSearchPath::toVariantList(this->wadPaths));
+
+	initWadAlias();
+}
+
+void DoomseekerConfig::DoomseekerCfg::initWadAlias()
+{
+	if (!d->section.hasSetting("WadAliases"))
+	{
+		setWadAliases(FileAlias::standardWadAliases());
+	}
 }
 
 void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
@@ -487,6 +498,27 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	// Buddies lists
 	QString buddiesList = BuddyInfo::createConfigEntry(this->buddiesList);
 	section["BuddiesList"] = buddiesList;
+}
+
+QList<FileAlias> DoomseekerConfig::DoomseekerCfg::wadAliases()
+{
+	QList<FileAlias> list;
+	QVariantList varList = d->section.value("WadAliases").toList();
+	foreach (const QVariant &var, varList)
+	{
+		list << FileAlias::deserializeQVariant(var);
+	}
+	return FileAliasList::mergeDuplicates(list);
+}
+
+void DoomseekerConfig::DoomseekerCfg::setWadAliases(const QList<FileAlias> &val)
+{
+	QVariantList varList;
+	foreach (const FileAlias &elem, val)
+	{
+		varList << elem.serializeQVariant();
+	}
+	d->section.setValue("WadAliases", varList);
 }
 
 QStringList DoomseekerConfig::DoomseekerCfg::wadPathsOnly() const

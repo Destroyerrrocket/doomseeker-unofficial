@@ -24,11 +24,14 @@
 
 #include "log.h"
 #include "configuration/doomseekerconfig.h"
+#include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
 #include "strings.h"
 #include "serverapi/tooltips/tooltipgenerator.h"
 #include "serverapi/exefile.h"
 #include "serverapi/gameclientrunner.h"
+#include "serverapi/gameexeretriever.h"
+#include "serverapi/message.h"
 #include "serverapi/playerslist.h"
 #include <QTime>
 #include <QUdpSocket>
@@ -63,8 +66,6 @@ class Server::PrivData
 		bool bPingIsSet;
 
 		bool bSecure;
-		bool broadcastToLAN;
-		bool broadcastToMaster;
 		GameMode gameMode;
 		unsigned int ping;
 		bool custom;
@@ -80,10 +81,7 @@ class Server::PrivData
 		QString motd;
 		QString name;
 		QTime pingClock;
-		QString connectPassword;
-		QString joinPassword;
-		QString rconPassword;
-		PlayersList* players;
+		PlayersList players;
 		bool randomMapRotation;
 		Response response;
 		QList<int> scores;
@@ -146,14 +144,10 @@ Server::Server(const QHostAddress &address, unsigned short port)
 		d->scores << 0;
 	}
 	d->bSecure = false;
-	d->broadcastToLAN = false;
-	d->broadcastToMaster = false;
 	d->randomMapRotation = false;
 	d->skill = 3;
 	d->bKnown = false;
 	d->custom = false;
-
-	d->players = new PlayersList();
 
 	set_createSendRequest(&Server::createSendRequest_default);
 	set_readRequest(&Server::readRequest_default);
@@ -166,7 +160,6 @@ Server::Server(const QHostAddress &address, unsigned short port)
 
 Server::~Server()
 {
-	delete d->players;
 	clearDMFlags();
 	delete d;
 }
@@ -176,7 +169,7 @@ POLYMORPHIC_DEFINE(Server::Response, Server, readRequest, (const QByteArray& dat
 
 void Server::addPlayer(const Player& player)
 {
-	*d->players << player;
+	d->players << player;
 }
 
 void Server::addWad(const QString& wad)
@@ -226,11 +219,6 @@ bool Server::anyWadnameContains(const QString& text, Qt::CaseSensitivity cs) con
 	return false;
 }
 
-const QString& Server::connectPassword() const
-{
-	return d->connectPassword;
-}
-
 void Server::clearDMFlags()
 {
 	d->dmFlags.clear();
@@ -244,7 +232,7 @@ QByteArray Server::createSendRequest_default()
 
 void Server::clearPlayersList()
 {
-	d->players->clear();
+	d->players.clear();
 }
 
 void Server::clearWads()
@@ -320,16 +308,6 @@ const QPixmap &Server::icon() const
 	return plugin()->icon();
 }
 
-bool Server::isBroadcastToLAN() const
-{
-	return d->broadcastToLAN;
-}
-
-bool Server::isBroadcastToMaster() const
-{
-	return d->broadcastToMaster;
-}
-
 bool Server::isCustom() const
 {
 	return d->custom;
@@ -337,12 +315,12 @@ bool Server::isCustom() const
 
 bool Server::isEmpty() const
 {
-	return d->players->numClients() == 0;
+	return d->players.numClients() == 0;
 }
 
 bool Server::isFull() const
 {
-	return d->players->numClients() == maxClients();
+	return d->players.numClients() == maxClients();
 }
 
 bool Server::isKnown() const
@@ -388,11 +366,6 @@ bool Server::isSecure() const
 const QString& Server::iwad() const
 {
 	return d->iwad;
-}
-
-const QString& Server::joinPassword() const
-{
-	return d->joinPassword;
 }
 
 Server::Response Server::lastResponse() const
@@ -442,13 +415,13 @@ const QString& Server::name() const
 
 int Server::numFreeClientSlots() const
 {
-	int returnValue = numTotalSlots() - d->players->numClients();
+	int returnValue = numTotalSlots() - d->players.numClients();
 	return (returnValue < 0) ? 0 : returnValue;
 }
 
 int Server::numFreeJoinSlots() const
 {
-	int returnValue = d->maxPlayers - d->players->numClients();
+	int returnValue = d->maxPlayers - d->players.numClients();
 	return (returnValue < 0) ? 0 : returnValue;
 }
 
@@ -465,10 +438,10 @@ unsigned int Server::ping() const
 
 const Player& Server::player(int index) const
 {
-	return (*d->players)[index];
+	return d->players[index];
 }
 
-const PlayersList* Server::players() const
+const PlayersList &Server::players() const
 {
 	return d->players;
 }
@@ -476,11 +449,6 @@ const PlayersList* Server::players() const
 unsigned short Server::port() const
 {
 	return d->port;
-}
-
-const QString& Server::rconPassword() const
-{
-	return d->rconPassword;
 }
 
 Server::Response Server::readRefreshQueryResponse(const QByteArray& data)
@@ -569,24 +537,9 @@ bool Server::sendRefreshQuery(QUdpSocket* socket)
 	return true;
 }
 
-void Server::setBroadcastToLAN(bool broadcastToLAN)
-{
-	d->broadcastToLAN = broadcastToLAN;
-}
-
-void Server::setBroadcastToMaster(bool broadcastToMaster)
-{
-	d->broadcastToMaster = broadcastToMaster;
-}
-
 void Server::setCustom(bool custom)
 {
 	d->custom = custom;
-}
-
-void Server::setConnectPassword(const QString& connectPassword)
-{
-	d->connectPassword = connectPassword;
 }
 
 void Server::setDmFlags(const QList<DMFlagsSection>& dmFlags)
@@ -619,11 +572,6 @@ void Server::setHostName(QHostInfo host)
 void Server::setIwad(const QString& iwad)
 {
 	d->iwad = iwad;
-}
-
-void Server::setJoinPassword(const QString& joinPassword)
-{
-	d->joinPassword = joinPassword;
 }
 
 void Server::setLocked(bool locked)
@@ -684,11 +632,6 @@ void Server::setPort(unsigned short i)
 void Server::setRandomMapRotation(bool randomMapRotation)
 {
 	d->randomMapRotation = randomMapRotation;
-}
-
-void Server::setRconPassword(const QString& rconPassword)
-{
-	d->rconPassword = rconPassword;
 }
 
 void Server::setResponse(Response response)
@@ -794,6 +737,22 @@ unsigned char Server::skill() const
 const PWad& Server::wad(int index) const
 {
 	return wads()[index];
+}
+
+PathFinder Server::wadPathFinder()
+{
+	PathFinder pathFinder;
+	{
+		GameExeRetriever exeRetriever = GameExeRetriever(*plugin()->gameExe());
+		Message msg;
+		pathFinder.addPrioritySearchDir(exeRetriever.pathToOfflineExe(msg));
+	}
+	{
+		QScopedPointer<ExeFile> exeFile(clientExe());
+		Message msg;
+		pathFinder.addPrioritySearchDir(exeFile->pathToExe(msg));
+	}
+	return pathFinder;
 }
 
 const QList<PWad>& Server::wads() const

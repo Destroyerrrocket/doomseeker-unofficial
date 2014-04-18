@@ -39,6 +39,7 @@ class IniSection;
 class Server;
 class ServerListFilterInfo;
 class ServerListProxyModel;
+class WadFindResult;
 
 class ServerListHandler : public QObject
 {
@@ -130,11 +131,11 @@ class ServerListHandler : public QObject
 		int sortIndex;
 		ServerListView* table;
 
-		QString createIwadToolTip(ServerCPtr server);
+		QString createIwadToolTip(ServerPtr server);
 		QString createPlayersToolTip(ServerCPtr server);
 		QString createPortToolTip(ServerCPtr server);
-		QString createPwadsToolTip(ServerCPtr server);
-		QString createPwadToolTipInfo(const PWad& pwad, const QString& binPath);
+		QString createPwadsToolTip(ServerPtr server);
+		QString createPwadToolTipInfo(const PWad& pwad, const ServerPtr &server);
 		QString createServerNameToolTip(ServerCPtr server);
 
 		bool areColumnsWidthsSettingsChanged();
@@ -161,6 +162,7 @@ class ServerListHandler : public QObject
 
 	private:
 		void clearAdditionalSorting();
+		WadFindResult findWad(ServerPtr server, const QString &name) const;
 		void removeAdditionalSortingForColumn(const QModelIndex &modelIndex);
 		void sortAdditionally(const QModelIndex &modelIndex, Qt::SortOrder order);
 

@@ -65,6 +65,11 @@ QStringList SettingsProviderQt::allSections() const
 	return d->target->childGroups();
 }
 
+bool SettingsProviderQt::hasKey(const QString& key) const
+{
+	return d->target->contains(key);
+}
+
 void SettingsProviderQt::remove(const QString& key)
 {
 	d->target->remove(key);

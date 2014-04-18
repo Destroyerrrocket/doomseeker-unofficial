@@ -60,9 +60,12 @@ class MAIN_EXPORT Message
 				static const unsigned IGNORE_TYPE = 0;
 
 				static const unsigned CUSTOM_INFORMATION = 1;
+				static const unsigned CANCELLED = 2;
+				static const unsigned SUCCESSFUL = 3;
 
 				static const unsigned CUSTOM_ERROR = 0x7fffffff;
 				static const unsigned BANNED_FROM_MASTERSERVER = CUSTOM_ERROR + 1;
+				static const unsigned GAME_NOT_FOUND_BUT_CAN_BE_INSTALLED = CUSTOM_ERROR + 2;
 		};
 
 		/**
@@ -83,6 +86,7 @@ class MAIN_EXPORT Message
 
 		Message();
 		Message(unsigned type);
+		Message(unsigned type, const QString &content);
 		Message(const Message &other);
 		Message &operator=(const Message &other);
 		virtual ~Message();
@@ -100,8 +104,6 @@ class MAIN_EXPORT Message
 	private:
 		class PrivData;
 		PrivData *d;
-
-		Message(unsigned type, const QString &content);
 
 		void construct();
 };

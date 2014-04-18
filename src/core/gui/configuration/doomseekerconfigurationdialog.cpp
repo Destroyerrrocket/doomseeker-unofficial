@@ -29,6 +29,7 @@
 #include "gui/configuration/cfgip2country.h"
 #include "gui/configuration/cfgquery.h"
 #include "gui/configuration/cfgserverpasswords.h"
+#include "gui/configuration/cfgwadalias.h"
 #include "gui/configuration/cfgwadseekerappearance.h"
 #include "gui/configuration/cfgwadseekergeneral.h"
 #include "gui/configuration/cfgwadseekeridgames.h"
@@ -73,6 +74,12 @@ bool DoomseekerConfigurationDialog::addEngineConfiguration(ConfigurationBaseBox*
 void DoomseekerConfigurationDialog::appearanceChangedSlot()
 {
 	this->bAppearanceChanged = true;
+}
+
+void DoomseekerConfigurationDialog::appendFilePathsConfigurationBoxes()
+{
+	QStandardItem *itemFilePaths = addConfigurationBox(NULL, new CFGFilePaths(this));
+	addConfigurationBox(itemFilePaths, new CFGWadAlias(this));
 }
 
 void DoomseekerConfigurationDialog::appendWadseekerConfigurationBoxes()
@@ -137,9 +144,7 @@ void DoomseekerConfigurationDialog::initOptionsList()
 	pConfigBox = new CFGQuery(this);
 	addConfigurationBox(NULL, pConfigBox);
 
-	pConfigBox = new CFGFilePaths(this);
-	addConfigurationBox(NULL, pConfigBox);
-
+	appendFilePathsConfigurationBoxes();
 	appendWadseekerConfigurationBoxes();
 	
 	optionsTree()->expandAll();

@@ -75,9 +75,9 @@ ServersStatusWidget::ServersStatusWidget(const QPixmap &icon, MasterClient *serv
 
 void ServersStatusWidget::addServer(const ServerPtr &server)
 {
-	const PlayersList* playersList = server->players();
-	numPlayers += playersList->numClients();
-	numBots += playersList->numBots();
+	const PlayersList &players = server->players();
+	numPlayers += players.numClients();
+	numBots += players.numBots();
 	updateDisplay();
 }
 
@@ -117,9 +117,9 @@ void ServersStatusWidget::registerServers()
 
 void ServersStatusWidget::removeServer(const ServerPtr &server)
 {
-	const PlayersList* playersList = server->players();
-	numPlayers -= playersList->numClients();
-	numBots -= playersList->numBots();
+	const PlayersList &players = server->players();
+	numPlayers -= players.numClients();
+	numBots -= players.numBots();
 	updateDisplay();
 }
 

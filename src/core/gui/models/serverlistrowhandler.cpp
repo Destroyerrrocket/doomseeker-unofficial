@@ -155,16 +155,16 @@ void ServerListRowHandler::fillPlayerColumn()
 	int style = gConfig.doomseeker.slotStyle;
 	bool botsAreNotPlayers = gConfig.doomseeker.bBotsAreNotPlayers;
 
-	const PlayersList* playersList = d->server->players();
+	const PlayersList &players = d->server->players();
 	int sortValue = 0;
 
 	if (botsAreNotPlayers)
 	{
-		sortValue = playersList->numClientsWithoutBots();
+		sortValue = players.numClientsWithoutBots();
 	}
 	else
 	{
-		sortValue = playersList->numClients();
+		sortValue = players.numClients();
 	}
 
 	if(style != NUM_SLOTSTYLES)
@@ -173,7 +173,7 @@ void ServerListRowHandler::fillPlayerColumn()
 	}
 	else
 	{
-		fillItem(pItem, sortValue, QString("%1/%2").arg(playersList->numClients())
+		fillItem(pItem, sortValue, QString("%1/%2").arg(players.numClients())
 			.arg(d->server->numTotalSlots()));
 	}
 

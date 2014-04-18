@@ -46,6 +46,7 @@ class GameCVar;
 class GameHost;
 class GameMode;
 class GameClientRunner;
+class PathFinder;
 class Player;
 class PlayersList;
 class PWad;
@@ -109,6 +110,25 @@ class MAIN_EXPORT Server : public QObject
 		 *         TooltipGenerator.
 		 */
 		virtual TooltipGenerator* tooltipGenerator() const;
+
+		/**
+		 * @brief Instantiate and return PathFinder configured to search
+		 *        for WADs for this server.
+		 *
+		 * It's expected that this method will return a PathFinder that is
+		 * configured to the best possible extent. If any error is encountered,
+		 * it shouldn't result in returning an invalid PathFinder.
+		 *
+		 * @warning
+		 * Be aware that method may be called from UI elements that expect
+		 * quick, non-blocking response.
+		 *
+		 * Default implementation creates PathFinder with paths configured
+		 * by the user in configuration box, and with priority search
+		 * directories set to wherever client and offline executables
+		 * reside, if such executables are available.
+		 */
+		virtual PathFinder wadPathFinder();
 		// END OF VIRTUALS
 
 		void addPlayer(const Player& player);
@@ -127,7 +147,6 @@ class MAIN_EXPORT Server : public QObject
 			Qt::CaseSensitivity cs = Qt::CaseInsensitive) const;
 
 		void clearPlayersList();
-		const QString& connectPassword() const;
 		const QList<DMFlagsSection>& dmFlags() const;
 		const QString& email() const;
 
@@ -149,8 +168,6 @@ class MAIN_EXPORT Server : public QObject
 		QString hostName(bool forceAddress=false) const;
 		const QPixmap &icon() const;
 
-		bool isBroadcastToLAN() const;
-		bool isBroadcastToMaster() const;
 		bool isCustom() const;
 		bool isEmpty() const;
 		bool isFull() const;
@@ -182,7 +199,6 @@ class MAIN_EXPORT Server : public QObject
 		bool isSecure() const;
 
 		const QString& iwad() const;
-		const QString& joinPassword() const;
 
 		Response lastResponse() const;
 		/**
@@ -207,9 +223,8 @@ class MAIN_EXPORT Server : public QObject
 		int numWads() const { return wads().size(); }
 		unsigned int ping() const;
 		const Player& player(int index) const;
-		const PlayersList* players() const;
+		const PlayersList &players() const;
 		unsigned short port() const;
-		const QString& rconPassword() const;
 
 		Response readRefreshQueryResponse(const QByteArray& data);
 
@@ -236,13 +251,9 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		bool sendRefreshQuery(QUdpSocket* socket);
 
-		void setBroadcastToLAN(bool b);
-		void setBroadcastToMaster(bool b);
 		void setCustom(bool custom);
-		void setConnectPassword(const QString& str);
 		void setEmail(const QString& mail);
 		void setGameMode(const GameMode& gameMode);
-		void setJoinPassword(const QString& str);
 		void setMap(const QString& name);
 		void setMapList(const QStringList& mapList);
 		void setMaxClients(unsigned short i);
@@ -251,7 +262,6 @@ class MAIN_EXPORT Server : public QObject
 		void setName(const QString& name);
 		void setPort(unsigned short i);
 		void setRandomMapRotation(bool b);
-		void setRconPassword(const QString& str);
 		void setSelf(const QWeakPointer<Server> &self);
 		void setSkill(unsigned char newSkill);
 		void setWebSite(const QString& site);

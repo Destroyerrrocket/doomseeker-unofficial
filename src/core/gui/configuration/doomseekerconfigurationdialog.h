@@ -49,6 +49,7 @@ class DoomseekerConfigurationDialog : public ConfigurationDialog
 		ConfigurationBaseBox* customServersCfgBox;		
 		QStandardItem* enginesRoot;			
 	
+		void appendFilePathsConfigurationBoxes();
 		void appendWadseekerConfigurationBoxes();
 		void doSaveSettings();
 		

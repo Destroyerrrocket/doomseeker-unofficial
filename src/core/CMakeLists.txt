@@ -71,6 +71,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/configuration/cfgquery.ui
 	gui/configuration/cfgserverpasswords.ui
 	gui/configuration/configurationdialog.ui
+	gui/configuration/cfgwadalias.ui
 	gui/configuration/cfgwadseekerappearance.ui
 	gui/configuration/cfgwadseekergeneral.ui
 	gui/configuration/cfgwadseekeridgames.ui
@@ -109,6 +110,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/configuration/cfgip2country.h
 	gui/configuration/cfgquery.h
 	gui/configuration/cfgserverpasswords.h
+	gui/configuration/cfgwadalias.h
 	gui/configuration/cfgwadseekerappearance.h
 	gui/configuration/cfgwadseekergeneral.h
 	gui/configuration/cfgwadseekeridgames.h
@@ -222,6 +224,7 @@ set(SOURCE_FILES
 	gui/configuration/cfgip2country.cpp
 	gui/configuration/cfgquery.cpp
 	gui/configuration/cfgserverpasswords.cpp
+	gui/configuration/cfgwadalias.cpp
 	gui/configuration/cfgwadseekerappearance.cpp
 	gui/configuration/cfgwadseekergeneral.cpp
 	gui/configuration/cfgwadseekeridgames.cpp
@@ -309,8 +312,10 @@ set(SOURCE_FILES
 	pathfinder/basefileseeker.cpp
 	pathfinder/casesensitivefsfileseeker.cpp
 	pathfinder/caseinsensitivefsfileseeker.cpp
+	pathfinder/filealias.cpp
 	pathfinder/filesearchpath.cpp
 	pathfinder/pathfinder.cpp
+	pathfinder/wadpathfinder.cpp
 	plugins/engineplugin.cpp
 	plugins/pluginloader.cpp
 	refresher/refresher.cpp
@@ -413,8 +418,10 @@ set(HEADER_FILES
 	pathfinder/basefileseeker.h
 	pathfinder/casesensitivefsfileseeker.h
 	pathfinder/caseinsensitivefsfileseeker.h
+	pathfinder/filealias.h
 	pathfinder/filesearchpath.h
 	pathfinder/pathfinder.h
+	pathfinder/wadpathfinder.h
 	plugins/engineplugin.h
 	plugins/pluginloader.h
 	serverapi/tooltips/tooltipgenerator.h

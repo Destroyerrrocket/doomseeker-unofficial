@@ -164,6 +164,8 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		/**
 		 * @brief @b [Virtual] Plugins can replace IWAD discovery mechanism
 		 *        and generation of relevant executable parameters here.
+		 *
+		 * This method supports WAD aliasing configured in Doomseeker.
 		 */
 		void addIwad();
 		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, addIwad, ());
@@ -180,6 +182,8 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 * prepended with argForPwadLoading() argument.
 		 *
 		 * Not found WADs are marked as such with markPwadAsMissing() method.
+		 *
+		 * This method supports WAD aliasing configured in Doomseeker.
 		 */
 		void addPwads();
 		/**
@@ -279,6 +283,11 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		const QString& demoName() const;
 
 		/**
+		 * @brief Finds WAD in a way that supports user configured aliases.
+		 */
+		QString findWad(const QString &wad) const;
+
+		/**
 		 * @brief "Join" password required in game.
 		 */
 		const QString& inGamePassword() const;
@@ -298,24 +307,19 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 * @brief Reference to a PathFinder belonging to this GameClientRunner.
 		 *
 		 * Useful if plugins want to access the PathFinder.
-		 *
-		 * This PathFinder is set up by a call to setupPathFinder(), which can
-		 * be overwritten by plugis.
 		 */
 		PathFinder& pathFinder();
+
+		/**
+		 * @brief Retrieves path to offline exe from plugin's ExeFile.
+		 */
+		QString pathToOfflineExe(Message &msg);
 
 		/**
 		 * @brief Direct access to ServerConnectParams associated with
 		 *        current command line generation.
 		 */
 		ServerConnectParams& serverConnectParams();
-		/**
-		 * @brief @b [Virtual] Sets up PathFinder that is used to search for
-		 *        WADs, or other files if necessary.
-		 */
-		void setupPathFinder();
-		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, setupPathFinder, ());
-
 
 		void setArgForConnect(const QString& arg);
 		void setArgForConnectPassword(const QString& arg);
@@ -361,11 +365,18 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		bool canDownloadWadsInGame() const;
 		void createCommandLineArguments_default();
 		bool isFatalError() const;
-		void setupPathFinder_default();
 		QString findIwad() const;
 		GamePaths gamePaths();
 		const QString& pluginName() const;
 		void saveDemoMetaData();
+
+		/**
+		 * @brief Sets up PathFinder that is used to search for
+		 *        WADs, or other files if necessary.
+		 *
+		 * This is done by calling Server::wadPathFinder().
+		 */
+		void setupPathFinder();
 };
 
 #endif

@@ -26,6 +26,7 @@
 #include "ini/inisection.h"
 #include "ini/inivariable.h"
 #include "pathfinder/pathfinder.h"
+#include "pathfinder/wadpathfinder.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/exefile.h"
 #include "serverapi/gameexeretriever.h"
@@ -132,13 +133,11 @@ class GameClientRunner::PrivData
 		void (GameClientRunner::*addExtra)();
 		void (GameClientRunner::*addIwad)();
 		void (GameClientRunner::*createCommandLineArguments)();
-		void (GameClientRunner::*setupPathFinder)();
 };
 
 POLYMORPHIC_DEFINE(void, GameClientRunner, addExtra, (), ());
 POLYMORPHIC_DEFINE(void, GameClientRunner, addIwad, (), ());
 POLYMORPHIC_DEFINE(void, GameClientRunner, createCommandLineArguments, (), ());
-POLYMORPHIC_DEFINE(void, GameClientRunner, setupPathFinder, (), ());
 
 GameClientRunner::GameClientRunner(ServerPtr server)
 {
@@ -146,7 +145,6 @@ GameClientRunner::GameClientRunner(ServerPtr server)
 	set_addExtra(&GameClientRunner::addExtra_default);
 	set_addIwad(&GameClientRunner::addIwad_default);
 	set_createCommandLineArguments(&GameClientRunner::createCommandLineArguments_default);
-	set_setupPathFinder(&GameClientRunner::setupPathFinder_default);
 	d->argConnect = "-connect";
 	d->argIwadLoading = "-iwad";
 	d->argPort = "-port";
@@ -262,7 +260,7 @@ void GameClientRunner::addPwads()
 {
 	for (int i = 0; i < d->server->numWads(); ++i)
 	{
-		QString pwad = d->pathFinder.findFile(d->server->wad(i).name());
+		QString pwad = findWad(d->server->wad(i).name());
 		if (pwad.isEmpty() && !d->server->wad(i).isOptional())
 		{
 			markPwadAsMissing(d->server->wad(i).name());
@@ -370,30 +368,52 @@ const QString& GameClientRunner::demoName() const
 
 QString GameClientRunner::findIwad() const
 {
-	return d->pathFinder.findFile(d->server->iwad().toLower());
+	return findWad(d->server->iwad().toLower());
+}
+
+QString GameClientRunner::findWad(const QString &wad) const
+{
+	return WadPathFinder(d->pathFinder).find(wad).path();
 }
 
 GameClientRunner::GamePaths GameClientRunner::gamePaths()
 {
 	Message msg;
 	GamePaths result;
-	GameExeRetriever exeRetriever = GameExeRetriever(*d->server->plugin()->gameExe());
+
 	QScopedPointer<ExeFile> exeFile(d->server->clientExe());
 	result.clientExe = exeFile->pathToExe(msg);
-	result.offlineExe = exeRetriever.pathToOfflineExe(msg);
+	if (result.clientExe.isEmpty())
+	{
+		if (msg.type() == Message::Type::GAME_NOT_FOUND_BUT_CAN_BE_INSTALLED)
+		{
+			d->joinError.setType(JoinError::CanAutomaticallyInstallGame);
+			if (msg.contents().isEmpty())
+			{
+				d->joinError.setError(msg.contents());
+			}
+			else
+			{
+				d->joinError.setError(tr("Game can be installed by Doomseeker"));
+			}
+		}
+		else
+		{
+			d->joinError.setType(JoinError::ConfigurationError);
+			QString error = tr("Client binary cannot be obtained for %1, please "
+				"check the location given in the configuration.").arg(pluginName());
+			if (!msg.isIgnore())
+			{
+				error += "\n\n" + msg.contents();
+			}
+			d->joinError.setError(error);
+		}
+		return GamePaths();
+	}
 	result.workingDir = exeFile->workingDirectory(msg);
 
-	if (!result.isValid())
-	{
-		QString error = tr("Client binary cannot be obtained for %1, please "
-			"check the location given in the configuration.").arg(pluginName());
-		d->joinError.setType(JoinError::ConfigurationError);
-		if (!msg.isIgnore())
-		{
-			error += "\n\n" + msg.contents();
-		}
-		d->joinError.setError(error);
-	}
+	GameExeRetriever exeRetriever = GameExeRetriever(*d->server->plugin()->gameExe());
+	result.offlineExe = pathToOfflineExe(msg);
 
 	return result;
 }
@@ -438,6 +458,12 @@ void GameClientRunner::markPwadAsMissing(const QString& pwadName)
 PathFinder& GameClientRunner::pathFinder()
 {
 	return d->pathFinder;
+}
+
+QString GameClientRunner::pathToOfflineExe(Message &msg)
+{
+	GameExeRetriever exeRetriever = GameExeRetriever(*d->server->plugin()->gameExe());
+	return exeRetriever.pathToOfflineExe(msg);
 }
 
 const QString& GameClientRunner::pluginName() const
@@ -490,14 +516,9 @@ void GameClientRunner::setJoinError(const JoinError& e)
 	d->joinError = e;
 }
 
-void GameClientRunner::setupPathFinder_default()
+void GameClientRunner::setupPathFinder()
 {
-	GamePaths paths = gamePaths();
-	// Add the offline game directory so results are more consistent
-	// addPrioritySearchDir prepends to the list so we'll want to add the real
-	// priority directory second.
-	d->pathFinder.addPrioritySearchDir(paths.offlineExe);
-	d->pathFinder.addPrioritySearchDir(paths.clientExe);
+	d->pathFinder = d->server->wadPathFinder();
 }
 
 QString GameClientRunner::wadTargetDirectory() const

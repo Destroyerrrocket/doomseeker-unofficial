@@ -37,7 +37,7 @@ ChocolateDoomGameClientRunner::ChocolateDoomGameClientRunner(
 
 void ChocolateDoomGameClientRunner::createCommandLineArguments()
 {
-	if(server->players()->size() > 0)
+	if(server->players().size() > 0)
 	{
 		GameClientRunner::createCommandLineArguments();
 	}

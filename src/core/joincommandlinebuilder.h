@@ -51,8 +51,8 @@ class JoinCommandLineBuilder : public QObject
 		~JoinCommandLineBuilder();
 
 		static bool checkWadseekerValidity(QWidget *parent=NULL);
-		const QString &error() const;
 		bool isConfigurationError() const;
+		const QString &error() const;
 		CommandLineInfo obtainJoinCommandLine();
 
 	private:
@@ -74,6 +74,7 @@ class JoinCommandLineBuilder : public QObject
 		MissingWadsProceed handleMissingWads(const JoinError &error);
 		QString mkDemoName();
 		void saveDemoMetaData(const QString& demoName);
+		bool tryToInstallGame();
 };
 
 #endif

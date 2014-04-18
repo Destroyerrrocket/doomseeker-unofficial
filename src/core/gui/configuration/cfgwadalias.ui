@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CFGWadAlias</class>
+ <widget class="QWidget" name="CFGWadAlias">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>319</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Aliases listed here will be used if WADs are not found.</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="table">
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
+     <attribute name="horizontalHeaderHighlightSections">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="verticalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string>WAD</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Aliases</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="btnAdd">
+       <property name="text">
+        <string>Add</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnAddDefaults">
+       <property name="text">
+        <string>Add Defaults</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnRemove">
+       <property name="text">
+        <string>Remove</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Multiple aliases can be separated with semicolon ';'</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>btnAdd</sender>
+   <signal>clicked()</signal>
+   <receiver>CFGWadAlias</receiver>
+   <slot>addNewEntry()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>38</x>
+     <y>287</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>159</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnRemove</sender>
+   <signal>clicked()</signal>
+   <receiver>CFGWadAlias</receiver>
+   <slot>removeSelected()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>119</x>
+     <y>287</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>159</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnAddDefaults</sender>
+   <signal>clicked()</signal>
+   <receiver>CFGWadAlias</receiver>
+   <slot>addDefaults()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>119</x>
+     <y>287</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>159</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>addNewEntry()</slot>
+  <slot>removeSelected()</slot>
+  <slot>addDefaults()</slot>
+ </slots>
+</ui>

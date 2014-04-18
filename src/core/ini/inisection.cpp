@@ -84,6 +84,12 @@ void IniSection::deleteSetting(const QString& name)
 	remove(name);
 }
 
+bool IniSection::hasSetting(const QString &name) const
+{
+	assert(!isNull());
+	return d->pIni->hasSetting(this->name(), name);
+}
+
 bool IniSection::isNull() const
 {
 	return d->pIni == NULL;
