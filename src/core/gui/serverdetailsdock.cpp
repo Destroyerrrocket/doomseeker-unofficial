@@ -33,6 +33,7 @@
 ServerDetailsDock::ServerDetailsDock(QWidget *parent) : QDockWidget(parent)
 {
 	setupUi(this);
+	this->toggleViewAction()->setIcon(QIcon(":/icons/server_details.png"));
 
 	connect(this, SIGNAL( dockLocationChanged(Qt::DockWidgetArea) ), SLOT( handleLocation(Qt::DockWidgetArea) ));
 }
