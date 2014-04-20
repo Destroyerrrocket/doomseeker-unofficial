@@ -30,6 +30,7 @@
 #include <QUdpSocket>
 
 /**
+ * @ingroup group_pluginapi
  * @brief An abstract interface for a remote console protocol.
  */
 class MAIN_EXPORT RConProtocol : public QObject

@@ -1,0 +1,42 @@
+/**
+* @mainpage Doomseeker
+*
+* Doomseeker is a server browser application for multiple platforms
+* with support for multiple different Doom game engines in mind. While the
+* program provides the core functionality, it also serves as an engine for
+* plugins that implement actual support for specific engines like
+* Chocolate Doom, Odamex or Zandronum. This document is a reference manual
+* for Doomseeker's Plugin API. If you're interested in developing a plugin
+* for a new engine, we recommend to inspect plugins already available in
+* Doomseeker's repository and use them as a base.
+*
+* Following list orders plugins by subjective complexity:
+*
+* -# Chocolate Doom
+* -# Odamex
+* -# Zandronum
+*
+* Each of these plugins provides examples for different implementations of
+* game server clients, master server clients, execution of "join game"
+* operation, game hosting, IRC channel definition, custom executable support
+* per server basis, and so on.
+*
+* Furthermore, we also have a so called "Fake Plugin" that is used for
+* Doomseeker testing and development purposes and fakes both proper plugin
+* implementation as well as the game master server and game servers.
+*
+* @section mainpage_sowheredoistart So, where do I start?
+*
+* Start by referring to @ref group_pluginapi module.
+*/
+
+/**
+* @defgroup group_pluginapi Plugin API
+* @brief All classes exported by Doomseeker and usable in Plugin API.
+*
+* Please note that while this lists only these classes that are supposed to be
+* used inside plugin code, these classes also declare public methods that are
+* meant to be used from inside Doomseeker core code only.
+* These methods are marked as such in documentation text, and using them
+* inappropriately may lead to undefined behavior.
+*/

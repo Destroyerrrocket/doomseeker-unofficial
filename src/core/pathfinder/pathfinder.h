@@ -32,6 +32,7 @@ class IniSection;
 class IniVariable;
 
 /**
+ * @ingroup group_pluginapi
  * @brief Result of multiple file search operation done by PathFinder.
  *
  * This object is copyable.
@@ -61,6 +62,7 @@ class MAIN_EXPORT PathFinderResult
 };
 
 /**
+ * @ingroup group_pluginapi
  * @brief Performs a case-insensitive (OS independent) file searches.
  *
  * This object is copyable.

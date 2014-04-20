@@ -47,6 +47,9 @@ class CommandLineInfo
 		bool isValid() const;
 };
 
+/**
+ * @ingroup group_pluginapi
+ */
 class MAIN_EXPORT AppRunner : public QObject
 {
 	Q_OBJECT
@@ -69,7 +72,7 @@ class MAIN_EXPORT AppRunner : public QObject
 #endif
 
 		static Message runExecutable(const CommandLineInfo& cmdInfo);
-		
+
 		/**
 		 * @brief Executes predefined command line.
 		 *

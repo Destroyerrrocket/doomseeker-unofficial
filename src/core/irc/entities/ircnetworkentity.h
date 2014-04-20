@@ -28,6 +28,7 @@
 #include <QStringList>
 
 /**
+ * @ingroup group_pluginapi
  * @brief Data structure that describes and defines a connection to an IRC
  * network or server.
  */

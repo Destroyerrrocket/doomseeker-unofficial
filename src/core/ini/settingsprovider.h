@@ -41,6 +41,9 @@
 #include <QStringList>
 #include <QVariant>
 
+/**
+ * @ingroup group_pluginapi
+ */
 class MAIN_EXPORT SettingsProvider
 {
 	public:

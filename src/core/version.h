@@ -27,8 +27,9 @@
 #include "global.h"
 
 /**
- *	@brief Provides interface for plugins and for Doomseeker itself
- *	to obtain version information on the program.
+ * @ingroup group_pluginapi
+ * @brief Provides interface for plugins and for Doomseeker itself
+ * to obtain version information on the program.
  */
 class MAIN_EXPORT Version
 {

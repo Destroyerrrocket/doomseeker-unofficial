@@ -11,6 +11,7 @@
 #include <QString>
 
 /**
+ * @ingroup group_pluginapi
  * @brief Static class responsible for retrieving paths to data files used
  *        by Doomseeker.
  *

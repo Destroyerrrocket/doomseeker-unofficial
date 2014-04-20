@@ -36,6 +36,9 @@ class PlayersList;
  */
 typedef QMap<int, PlayersList> PlayersByTeams;
 
+/**
+ * @ingroup group_pluginapi
+ */
 class MAIN_EXPORT PlayersList
 {
 	public:
@@ -47,7 +50,7 @@ class MAIN_EXPORT PlayersList
 		 *	@brief Lists all bots regardless if they are on a team or not.
 		 */
 		void bots(PlayersList& botsList) const;
-		
+
 		/**
 		 *	@brief Lists only those bots that are not on a team.
 		 */

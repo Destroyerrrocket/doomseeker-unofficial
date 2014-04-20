@@ -30,6 +30,7 @@ class CreateServerDialog;
 class Ini;
 
 /**
+ * @ingroup group_pluginapi
  * @brief Base class to be used by plugins to define custom pages in Create
  *        Server dialog.
  */

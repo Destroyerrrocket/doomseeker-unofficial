@@ -26,14 +26,15 @@
 #include "global.h"
 
 /**
- *	@brief Random values generator.
+ * @ingroup group_pluginapi
+ * @brief Random values generator.
  *
- *	Each call to a method that generates a value performs
- *	a bIsInit == true check first. If this check fails a builtInInit() is
- *	called. This ensures that Random number generator is always initialized
- *	before the rand() call is made.
+ * Each call to a method that generates a value performs
+ * a bIsInit == true check first. If this check fails a builtInInit() is
+ * called. This ensures that Random number generator is always initialized
+ * before the rand() call is made.
  *
- *	Internally this uses srand() and rand() functions from C Standard Library.
+ * Internally this uses srand() and rand() functions from C Standard Library.
  */
 class MAIN_EXPORT Random
 {

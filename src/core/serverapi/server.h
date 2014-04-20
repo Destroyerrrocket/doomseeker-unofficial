@@ -54,6 +54,7 @@ class RConProtocol;
 class TooltipGenerator;
 
 /**
+ * @ingroup group_pluginapi
  * @brief A representation of a server for a given game.
  *
  * This is a multipurpose class that represents a game server in general.

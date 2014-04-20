@@ -32,6 +32,7 @@
 class IniSection;
 
 /**
+ * @ingroup group_pluginapi
  * @brief INI variable representation.
  *
  * Structure containing variable's value and comments.

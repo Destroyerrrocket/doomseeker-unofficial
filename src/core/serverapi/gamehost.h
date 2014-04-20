@@ -33,6 +33,9 @@ class EnginePlugin;
 class GameCreateParams;
 class Message;
 
+/**
+ * @ingroup group_pluginapi
+ */
 class MAIN_EXPORT GameHost : public QObject
 {
 	Q_OBJECT

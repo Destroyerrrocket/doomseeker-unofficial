@@ -31,12 +31,13 @@
 #define gDefaultDataPaths (DataPaths::defaultInstance())
 
 /**
- *	@brief Represents directories used by Doomseeker to store data.
+ * @ingroup group_pluginapi
+ * @brief Represents directories used by Doomseeker to store data.
  *
- *	Since Doomseeker doesn't need to store much all data is stored in a single
- *	directory. For portable model this is the same directory as in which
- *	Doomseeker.exe resides. Otherwise .doomseeker/ directory can be created
- *	in a path depending on the operating system.
+ * Since Doomseeker doesn't need to store much all data is stored in a single
+ * directory. For portable model this is the same directory as in which
+ * Doomseeker.exe resides. Otherwise .doomseeker/ directory can be created
+ * in a path depending on the operating system.
  */
 class MAIN_EXPORT DataPaths
 {

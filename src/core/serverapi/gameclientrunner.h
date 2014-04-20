@@ -35,6 +35,7 @@
 class Server;
 
 /**
+ * @ingroup group_pluginapi
  * @brief A DTO for GameClientRunner; exchanges information between main program
  *        and plugins, and allows future extensions.
  *
@@ -73,6 +74,7 @@ class MAIN_EXPORT ServerConnectParams
 };
 
 /**
+ * @ingroup group_pluginapi
  * @brief Creates command line that launches the client executable of the game
  *        and connects it to a server.
  *

@@ -28,6 +28,9 @@
 #include <QString>
 #include <QObject>
 
+/**
+ * @ingroup group_pluginapi
+ */
 class MAIN_EXPORT TooltipGenerator : public QObject
 {
 	public:

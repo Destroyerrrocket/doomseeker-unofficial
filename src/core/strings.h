@@ -31,6 +31,9 @@ class QStringList;
 // \c = '\034'
 #define ESCAPE_COLOR_CHAR	'\034'
 
+/**
+ * @ingroup group_pluginapi
+ */
 class MAIN_EXPORT Strings
 {
 	public:
@@ -122,7 +125,7 @@ class MAIN_EXPORT Strings
 		 *	'..' markers and no double separators.
 		 */
 		static QString normalizePath(QString path);
-		
+
 		/**
 		 * @brief Reads raw data from the current position of
 		 *        passed QDataStream until a specified byte is encountered.

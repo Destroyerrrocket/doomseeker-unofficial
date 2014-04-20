@@ -43,6 +43,7 @@ class StaticMessages : public QObject
 };
 
 /**
+ * @ingroup group_pluginapi
  * @brief Message object used to pass messages throughout the Doomseeker's
  *        system.
  *

@@ -26,6 +26,7 @@
 #include <QSharedPointer>
 
 /**
+ * @ingroup group_pluginapi
  * @file
  * ServerPtr typedefs declarations.
  *
