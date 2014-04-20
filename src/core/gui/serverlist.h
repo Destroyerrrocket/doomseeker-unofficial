@@ -95,7 +95,7 @@ class ServerListHandler : public QObject
 		/// Handles column sorting.
 		void columnHeaderClicked(int);
 		void doubleClicked(const QModelIndex&);
-		void itemSelected(const QModelIndex&);
+		void itemSelected(const QItemSelection&);
 		void modelCleared();
 		void mouseEntered(const QModelIndex&);
 

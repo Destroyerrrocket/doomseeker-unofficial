@@ -93,6 +93,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/passwordDlg.ui
 	gui/rconpassworddialog.ui
 	gui/remoteconsole.ui
+	gui/serverdetailsdock.ui
 	gui/serverfilterdock.ui
 	gui/wadseekerinterface.ui
 )
@@ -153,6 +154,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/passwordDlg.h
 	gui/rconpassworddialog.h
 	gui/remoteconsole.h
+	gui/serverdetailsdock.h
 	gui/serverfilterdock.h
 	gui/serverlist.h
 	gui/standardserverconsole.h
@@ -272,6 +274,7 @@ set(SOURCE_FILES
 	gui/passwordDlg.cpp
 	gui/rconpassworddialog.cpp
 	gui/remoteconsole.cpp
+	gui/serverdetailsdock.cpp
 	gui/serverfilterdock.cpp
 	gui/serverlist.cpp
 	gui/standardserverconsole.cpp

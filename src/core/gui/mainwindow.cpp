@@ -34,6 +34,7 @@
 #include "gui/ip2cupdatebox.h"
 #include "gui/mainwindow.h"
 #include "gui/passwordDlg.h"
+#include "gui/serverdetailsdock.h"
 #include "gui/serverfilterdock.h"
 #include "gui/wadseekerinterface.h"
 #include "gui/wadseekershow.h"
@@ -132,6 +133,9 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	// Spawn Server Table Handler.
 	serverTableHandler = new ServerListHandler(tableServers, this);
 	connectEntities();
+
+	initServerDetailsDock();
+	tabifyDockWidget(ircDock, detailsDock);
 
 	// Calculate screen center.
 	int screenWidth = QApplication::desktop()->width();
@@ -739,6 +743,18 @@ void MainWindow::initMainDock()
 	addDockWidget(Qt::RightDockWidgetArea, mainDock);
 }
 
+void MainWindow::initServerDetailsDock()
+{
+	detailsDock = new ServerDetailsDock(this);
+	menuView->addAction(detailsDock->toggleViewAction());
+	detailsDock->toggleViewAction()->setText(tr("Server &Details"));
+	detailsDock->toggleViewAction()->setShortcut(tr("CTRL+D"));
+	detailsDock->hide();
+	addDockWidget(Qt::BottomDockWidgetArea, detailsDock);
+
+	detailsDock->connect(serverTableHandler, SIGNAL( serversSelected(QList<ServerPtr>&) ), SLOT( displaySelection(QList<ServerPtr> &) ));
+}
+
 void MainWindow::initServerFilterDock()
 {
 	serverFilterDock = new ServerFilterDock(this);
@@ -1242,6 +1258,7 @@ void MainWindow::setupToolBar()
 	pToolBar->addAction(logDock->toggleViewAction());
 	pToolBar->addAction(ircDock->toggleViewAction());
 	pToolBar->addAction(serverFilterDock->toggleViewAction());
+	pToolBar->addAction(detailsDock->toggleViewAction());
 
 	// Quick Search
 	QLineEdit *qs = serverFilterDock->createQuickSearch();
