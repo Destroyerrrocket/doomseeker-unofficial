@@ -1159,6 +1159,7 @@ void MainWindow::refreshThreadEndsWork()
 	}
 
 	bTotalRefreshInProcess = false;
+	detailsDock->displaySelection(serverTableHandler->selectedServers());
 }
 
 void MainWindow::restartAndInstallUpdatesNow()
