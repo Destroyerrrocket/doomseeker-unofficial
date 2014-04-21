@@ -134,12 +134,28 @@ DMFlagsSection ZandronumDmflags::dmflags2()
 DMFlagsSection ZandronumDmflags1point0::compatflags2()
 {
 	DMFlagsSection section("Compat. flags 2");
+	section << DMFlag(tr("NETSCRIPTS are clientside"), 0);
+	section << DMFlag(tr("Clients send full button info"), 1);
+	section << DMFlag(tr("Disallow 'land' console command"), 2);
+	section << DMFlag(tr("Old random generator"), 3);
+	section << DMFlag(tr("Powerup spheres have NOGRAVITY flag"), 4);
+	section << DMFlag(tr("Don't stop scripts running on a player when player leaves the server"), 5);
+	section << DMFlag(tr("Explosion causes strong horizontal thrust (like old ZDoom)"), 6);
+	section << DMFlag(tr("Non-SOLID things fall through thing bridges"), 7);
+	section << DMFlag(tr("ZDoom 123B33 jump physics"), 8);
+	section << DMFlag(tr("Can't change weapons during raise/lower"), 9);
 	return section;
 }
 
 DMFlagsSection ZandronumDmflags1point0::dmflags3()
 {
 	DMFlagsSection section("DMFlags3");
+	section << DMFlag(tr("Don't display names of targeted players"), 0);
+	section << DMFlag(tr("Apply lmsspectatorsettings in all game modes"), 1);
+	section << DMFlag(tr("Force no coop info"), 2);
+	section << DMFlag(tr("No unlagged"), 3);
+	section << DMFlag(tr("Noclip through other players"), 4);
+	section << DMFlag(tr("No medals"), 5);
 	return section;
 }
 
