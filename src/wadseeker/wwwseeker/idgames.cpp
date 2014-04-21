@@ -23,38 +23,70 @@
 #include "idgames.h"
 
 #include "entities/waddownloadinfo.h"
+#include "protocols/idgames/idgamesclient.h"
+#include "protocols/idgames/idgamesfile.h"
+#include "protocols/idgames/idgamesfilematcher.h"
+#include "protocols/idgames/idgamesreply.h"
+#include "protocols/idgames/idgamesresult.h"
 #include "wwwseeker/htmlparser.h"
 #include "wwwseeker/urlparser.h"
 
 #include <QDebug>
 
 
+class Idgames::PrivData
+{
+	public:
+		bool bIsAborting;
+		QNetworkReply* currentRequest;
+		QString idgamesBaseUrl;
+		IdgamesClient *idgamesClient;
+		IdgamesReply *idgamesReply;
+		QNetworkAccessManager* nam;
+		WadDownloadInfo seekedFile;
+		QString userAgent;
+};
+
 
 Idgames::Idgames(const QString& idgamesPage)
 {
-	bIsAborting = false;
-	currentPage = 1;
-	idgamesBaseUrl = idgamesPage;
-	pCurrentRequest = NULL;
-	pNetworkAccessManager = new QNetworkAccessManager();
-	seekedFile = new WadDownloadInfo("");
+	d = new PrivData();
+	d->nam = new QNetworkAccessManager();
+	d->idgamesBaseUrl = idgamesPage;
+	d->idgamesClient = new IdgamesClient(d->nam, idgamesPage);
+	d->idgamesReply = NULL;
+	d->bIsAborting = false;
+	d->currentRequest = NULL;
 }
 
 Idgames::~Idgames()
 {
-	delete seekedFile;
-	pNetworkAccessManager->deleteLater();
+	if (d->idgamesReply != NULL)
+	{
+		delete d->idgamesReply;
+	}
+	delete d->idgamesClient;
+	if (d->currentRequest != NULL)
+	{
+		d->currentRequest->deleteLater();
+	}
+	d->nam->deleteLater();
+	delete d;
 }
 
 void Idgames::abort()
 {
-	if (!bIsAborting)
+	if (!d->bIsAborting)
 	{
-		if (pCurrentRequest != NULL)
+		d->bIsAborting = true;
+		// If one is occuring, others cannot.
+		if (d->idgamesReply != NULL)
 		{
-			bIsAborting = true;
-
-			pCurrentRequest->abort();
+			d->idgamesReply->abort();
+		}
+		else if (d->currentRequest != NULL)
+		{
+			d->currentRequest->abort();
 		}
 		else
 		{
@@ -63,48 +95,10 @@ void Idgames::abort()
 	}
 }
 
-void Idgames::afterProcess(PageProcessResults result, const QUrl& url)
-{
-	QByteArray nul;
-	switch (result)
-	{
-		case NotIdgames:
-			emit message(tr("%1 is not Idgames archive! Aborting.").arg(idgamesBaseUrl), WadseekerLib::Error);
-			abort();
-			break;
-
-		case StringTooShort:
-			emit message(tr("Idgames: String \"%1\" is too short. Aborting.").arg(zipName()), WadseekerLib::Error);
-			abort();
-			break;
-
-		case NoPositions:
-			emit message(tr("Idgames: File \"%1\" not found.").arg(zipName()), WadseekerLib::Notice);
-			emit finished(this);
-			break;
-
-		case Ok:
-			// If url is empty we move to next page
-			// if it's not, we get it and return the retrieved site
-			// to WWWSeeker.
-			if (url.isEmpty())
-			{
-				getNextPage();
-			}
-			else
-			{
-				filePageFound = true;
-				startNetworkQuery(url);
-			}
-			break;
-	}
-}
-
 QString Idgames::defaultIdgamesUrl()
 {
-	return "http://www.doomworld.com/idgames/index.php?search=1&page=%PAGENUM%&field=filename&word=%ZIPNAME%&sort=time&order=asc";
+	return IdgamesClient::DEFAULT_URL.toString();
 }
-
 
 void Idgames::extractAndEmitLinks(QByteArray& pageData, const QUrl& pageUrl)
 {
@@ -118,8 +112,7 @@ void Idgames::extractAndEmitLinks(QByteArray& pageData, const QUrl& pageUrl)
 	QStringList possibleFilenames;
 	possibleFilenames << zipName();
 	QList<Link> directLinks = urlParser.directLinks(possibleFilenames, pageUrl);
-	
-	
+
 	if (!directLinks.isEmpty())
 	{
 		QList<QUrl> directUrls;
@@ -128,226 +121,139 @@ void Idgames::extractAndEmitLinks(QByteArray& pageData, const QUrl& pageUrl)
 			directUrls << link.url;
 		}
 		
-		emit fileLinksFound(this->seekedFile->name(), directUrls);
+		emit fileLinksFound(d->seekedFile.name(), directUrls);
 	}
 
 	emit finished(this);
 }
 
+const WadDownloadInfo& Idgames::file() const
+{
+	return d->seekedFile;
+}
+
+void Idgames::onIdgamesApiQueryFinished()
+{
+	emit siteFinished(d->idgamesClient->baseUrl());
+	IdgamesResult result = d->idgamesReply->result();
+	delete d->idgamesReply;
+	d->idgamesReply = NULL;
+	if (d->bIsAborting)
+	{
+		emit finished(this);
+		return;
+	}
+	if (result.isOk())
+	{
+		QList<IdgamesFile> files = IdgamesFile::parseSearchResult(result.content());
+		IdgamesFile bestMatch = IdgamesFileMatcher::match(d->seekedFile, files);
+		if (!bestMatch.isNull())
+		{
+			startNetworkQuery(bestMatch.url());
+		}
+		else
+		{
+			QString msg = tr("Idgames - no file found");
+			emit message(msg, WadseekerLib::Error);
+			emit finished(this);
+		}
+	}
+	else
+	{
+		QString msg = tr("Idgames - %1: %2").arg(result.errorType(), result.errorMessage());
+		emit message(msg, WadseekerLib::Error);
+		emit finished(this);
+	}
+}
+
+void Idgames::queryIdgamesApi()
+{
+	d->idgamesClient->setBaseUrl(d->idgamesBaseUrl);
+	emit siteStarted(d->idgamesClient->baseUrl());
+	d->idgamesReply = d->idgamesClient->search(zipName());
+	this->connect(d->idgamesReply, SIGNAL(finished()), SLOT(onIdgamesApiQueryFinished()));
+}
+
 void Idgames::setFile(const WadDownloadInfo& wad)
 {
-	*seekedFile = wad;
+	d->seekedFile = wad;
 }
 
 void Idgames::startSearch()
 {
-	currentPage = 1;
-	filePageFound = false;
-
-	if (!idgamesBaseUrl.contains("%ZIPNAME%"))
+	if (!QUrl(d->idgamesBaseUrl).isValid())
 	{
-		emit message(tr("Idgames error: no %ZIPNAME% present in idgames url:\n%1").arg(idgamesBaseUrl), WadseekerLib::Error);
+		emit message(tr("Idgames error: invalid base URL:\n%1").arg(d->idgamesBaseUrl),
+			WadseekerLib::Error);
 		emit finished(this);
 		return;
 	}
 
-	if (seekedFile->name().isEmpty())
+	if (d->seekedFile.name().isEmpty())
 	{
-		emit message(tr("Idgames error: Specified search filename is empty or invalid."), WadseekerLib::Error);
+		emit message(tr("Idgames error: Specified search filename is empty or invalid."),
+			WadseekerLib::Error);
 		emit finished(this);
 		return;
 	}
 
-	emit message(tr("Searching Idgames archive for file: %1").arg(zipName()), WadseekerLib::NoticeImportant);
-
-	getNextPage();
-}
-
-void Idgames::getNextPage()
-{
-	emit message(tr("Page %1...").arg(currentPage), WadseekerLib::Notice);
-	QString tmpUrl = idgamesBaseUrl;
-	QUrl url = tmpUrl.replace("%PAGENUM%", QString::number(currentPage)).replace("%ZIPNAME%", zipName());
-	++currentPage;
-	startNetworkQuery(url);
+	emit message(tr("Searching Idgames archive for file: %1").arg(zipName()),
+		WadseekerLib::NoticeImportant);
+	queryIdgamesApi();
 }
 
 void Idgames::networkRequestFinished()
 {
-	if (pCurrentRequest == NULL)
+	if (d->currentRequest == NULL)
 	{
 		return;
 	}
 
-	QByteArray pageData = pCurrentRequest->readAll();
-	QUrl pageUrl = pCurrentRequest->url();
+	QByteArray pageData = d->currentRequest->readAll();
+	QUrl pageUrl = d->currentRequest->url();
 
 	emit siteFinished(pageUrl);
 
 	// Clean up to accept new requests.
-	pCurrentRequest->deleteLater();
-	pCurrentRequest = NULL;
+	d->currentRequest->deleteLater();
+	d->currentRequest = NULL;
 
-	if (bIsAborting)
+	if (d->bIsAborting)
 	{
 		emit finished(this);
 	}
 	else
 	{
-		if (filePageFound)
-		{
-			// WAD page was found. Let's extract links.
-			extractAndEmitLinks(pageData, pageUrl);
-		}
-		else
-		{
-			// We're still looking for the WAD page.
-			QUrl filePageUrl;
-
-			PageProcessResults result = processPage(pageData, filePageUrl);
-			afterProcess(result, filePageUrl);
-		}
+		extractAndEmitLinks(pageData, pageUrl);
 	}
 }
 
 void Idgames::networkRequestProgress(qint64 done, qint64 total)
 {
-	if (pCurrentRequest != NULL)
+	if (d->currentRequest != NULL)
 	{
-		emit siteProgress(pCurrentRequest->url(), done, total);
+		emit siteProgress(d->currentRequest->url(), done, total);
 	}
 }
 
-Idgames::PageProcessResults Idgames::processPage(QByteArray& pageData, QUrl& url)
+void Idgames::setPage(const QString& url)
 {
-	/*
-		The code we are looking for here looks like this:
-		<table class=wadlisting>
-			<tr>
-				<td class=wadlisting_name><a href=?id=1054>Castle to Hell</a>&nbsp;&nbsp;</td>
-				<td class=wadlisting_label>Filename:</td>
-				<td class=wadlisting_field>hellcast.zip</td>
-			</tr>
+	d->idgamesBaseUrl = url;
+}
 
-		This repeats for each position displayed on site.
-		However we also need to take into account other cases:
-		a) there are no positions on the site
-		b) string is too short
-		c) this is not idgames site (multiple checks)
-	*/
-
-	url.clear();
-
-	// Check if this is idgames (check <head> data)
-	int indexOfHead = pageData.indexOf("<head>");
-	int indexOfHeadEnd = pageData.indexOf("</head>");
-
-	if (indexOfHead < 0 || indexOfHeadEnd < indexOfHead)
-	{
-		return NotIdgames;
-	}
-
-	QByteArray head = pageData.mid(indexOfHead, indexOfHeadEnd - indexOfHead);
-
-	if (!head.contains("<title>Doomworld /idgames database</title>")
-	||	!head.contains("<META http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">")
-	||	!head.contains("<link rel=\"stylesheet\" type=\"text/css\" href=\"idgames.css\">"))
-	{
-		return NotIdgames;
-	}
-
-	// Now see if page contains any positions and whether or not it has "Too short string error":
-	// Get data inbetween <input type="submit" value="mong"> and <div class="timer">
-	int indexOfMong = pageData.indexOf("<input type=\"submit\" value=\"mong\">");
-	int indexOfTimer = pageData.indexOf("<div class=\"timer\">");
-	if (indexOfMong < 0 || indexOfTimer < indexOfMong)
-	{
-		// This is not idgames if either of above are not found
-		return NotIdgames;
-	}
-
-	QByteArray filesData = pageData.mid(indexOfMong, indexOfTimer - indexOfMong);
-	if (!filesData.contains("<table class=wadlisting>"))
-	{
-		if (filesData.contains("Need longer search string."))
-		{
-			return StringTooShort;
-		}
-		else
-		{
-			return NoPositions;
-		}
-	}
-
-	// Now we can proceed to parsing filenames and retrieving URL's.
-	const QString wadListing = "<table class=wadlisting>";
-	const QString filenameField = "<td class=wadlisting_field>";
-	const QString aHref = "<a href=";
-
-	int indexOfWadlisting = filesData.indexOf(wadListing);
-	while(indexOfWadlisting >= 0)
-	{
-		// The first wadlisting_field after this is the filename.
-
-		int indexOfFilename = filesData.indexOf(filenameField, indexOfWadlisting) + filenameField.length();
-		if (indexOfFilename < 0)
-		{
-			// Yet again, this is not Idgames archive
-			return NotIdgames;
-		}
-
-		int indexOfFilenameEnd = filesData.indexOf("</td>", indexOfFilename);
-		QString filename = filesData.mid(indexOfFilename, indexOfFilenameEnd - indexOfFilename);
-
-		if (filename.compare(zipName(), Qt::CaseInsensitive) == 0)
-		{
-			// The file is found, save it's URL and return 'Ok'.
-			int indexOfWadname = filesData.indexOf("<td class=wadlisting_name>", indexOfWadlisting);
-			if (indexOfWadname < 0)
-			{
-				// Yet again, this is not Idgames archive
-				return NotIdgames;
-			}
-
-			QByteArray positionData = filesData.mid(indexOfWadname, indexOfFilename - indexOfWadname);
-			int indexOfHref = positionData.indexOf(aHref);
-			if (indexOfHref < 0)
-			{
-				emit message(tr("Idgames error: File \"%1\" was found, but cannot locate link to it's page").arg(zipName()), WadseekerLib::Error);
-				return NoPositions;
-			}
-
-			indexOfHref += aHref.length();
-
-			int indexOfHrefEnd = positionData.indexOf(">", indexOfHref);
-			QUrl href = QString(positionData.mid(indexOfHref, indexOfHrefEnd - indexOfHref));
-			QUrl base = idgamesBaseUrl;
-
-			if (href.scheme().isEmpty())
-				href.setScheme(base.scheme());
-			if (href.authority().isEmpty())
-				href.setAuthority(base.authority());
-			if (href.path().isEmpty())
-				href.setPath(base.path());
-
-			url = href.toEncoded();
-			return Ok;
-		}
-
-		indexOfWadlisting = filesData.indexOf(wadListing, indexOfFilenameEnd);
-	}
-
-	return NoPositions;
+void Idgames::setUserAgent(const QString& userAgent)
+{
+	d->userAgent = userAgent;
 }
 
 void Idgames::startNetworkQuery(const QUrl& url)
 {
 	QNetworkRequest request;
 	request.setUrl(url);
-	request.setRawHeader("User-Agent", userAgent.toAscii());
+	request.setRawHeader("User-Agent", d->userAgent.toAscii());
 
-	QNetworkReply* pReply = pNetworkAccessManager->get(request);
-	pCurrentRequest = pReply;
+	QNetworkReply* pReply = d->nam->get(request);
+	d->currentRequest = pReply;
 	this->connect(pReply, SIGNAL( downloadProgress(qint64, qint64)),
 		SLOT( networkRequestProgress(qint64, qint64) ) );
 	this->connect(pReply, SIGNAL( finished() ),
@@ -358,5 +264,5 @@ void Idgames::startNetworkQuery(const QUrl& url)
 
 QString Idgames::zipName() const
 {
-	return seekedFile->archiveName("zip");
+	return d->seekedFile.archiveName("zip");
 }

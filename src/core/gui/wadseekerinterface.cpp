@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "gui/wadseekerinterface.h"
 #include "configuration/doomseekerconfig.h"
+#include "serverapi/server.h"
 #include "application.h"
 #include "mainwindow.h"
 #include "strings.h"
@@ -29,28 +30,96 @@
 #include <QMessageBox>
 
 const int WadseekerInterface::UPDATE_INTERVAL_MS = 500;
+WadseekerInterface *WadseekerInterface::currentInstance = NULL;
+
+class WadseekerInterface::PrivData
+{
+public:
+	bool bCompletedSuccessfully;
+};
 
 WadseekerInterface::WadseekerInterface(QWidget* parent)
 : QDialog(parent)
 {
-	if (gApp->mainWindow())
+	d = new PrivData();
+	construct();
+	bAutomatic = false;
+}
+
+WadseekerInterface::WadseekerInterface(ServerPtr server, QWidget* parent)
+: QDialog(parent)
+{
+	d = new PrivData();
+	construct();
+	bAutomatic = true;
+	lblTop->setText(tr("Downloading WADs for server \"%1\"").arg(server->name()));
+	btnDownload->hide();
+	leWadName->hide();
+	setCustomSite(server->webSite());
+}
+
+WadseekerInterface::~WadseekerInterface()
+{
+	delete d;
+	currentInstance = NULL;
+}
+
+void WadseekerInterface::accept()
+{
+	if (isAutomatic())
 	{
-		gApp->mainWindow()->stopAutoRefreshTimer();
+		if (d->bCompletedSuccessfully)
+		{
+			done(QDialog::Accepted);
+		}
 	}
-	setupUi(this);
+	else
+	{
+		if (leWadName->text().isEmpty())
+		{
+			return;
+		}
+
+		startSeeking(leWadName->text().split(',', QString::SkipEmptyParts));
+	}
+}
+
+void WadseekerInterface::allDone(bool bSuccess)
+{
 	setStateWaiting();
+	d->bCompletedSuccessfully = bSuccess;
+	QApplication::alert(this);
+	if (bSuccess)
+	{
+		displayMessage(tr("All done. Success."), WadseekerLib::NoticeImportant, false);
 
-	initMessageColors();
+		if (isAutomatic())
+		{
+			if (isActiveWindow())
+			{
+				done(QDialog::Accepted);
+			}
+			else
+			{
+				btnStartGame->show();
+			}
+		}
+	}
+	else
+	{
+		QStringList failures = unsuccessfulWads();
 
-	this->setWindowIcon(QIcon(":/icon.png"));
+		foreach (const QString& failure, failures)
+		{
+			twWads->setFileFailed(failure);
+		}
 
-	this->connect(btnClose, SIGNAL( clicked() ),
-		SLOT( reject() ) );
-	this->connect(btnDownload, SIGNAL( clicked() ),
-		SLOT( accept() ) );
-	this->connect(&updateTimer, SIGNAL( timeout() ),
-		SLOT( registerUpdateRequest() ) );
+		displayMessage(tr("All done. Fail."), WadseekerLib::CriticalError, false);
+	}
+}
 
+void WadseekerInterface::connectWadseekerObject()
+{
 	// Connect Wadseeker to the dialog box.
 	this->connect(&wadseeker, SIGNAL( allDone(bool) ),
 		SLOT( allDone(bool) ) );
@@ -76,7 +145,22 @@ WadseekerInterface::WadseekerInterface(QWidget* parent)
 		SLOT( setFileProgress(const QString&, qint64, qint64) ) );
 	twWads->connect(&wadseeker, SIGNAL( fileDownloadStarted(const QString&, const QUrl&) ),
 		SLOT( setFileUrl(const QString&, const QUrl&) ) );
-		
+}
+
+void WadseekerInterface::construct()
+{
+	setupUi(this);
+	d->bCompletedSuccessfully = false;
+	setStateWaiting();
+
+	initMessageColors();
+
+	this->setWindowIcon(QIcon(":/icon.png"));
+	btnStartGame->hide();
+	this->connect(&updateTimer, SIGNAL(timeout()), SLOT(registerUpdateRequest()));
+
+	connectWadseekerObject();
+
 	// Connect tables.
 	this->connect(twWads, SIGNAL( rightMouseClick(const QModelIndex&, const QPoint&) ),
 		SLOT( wadsTableRightClicked(const QModelIndex&, const QPoint&) ) );
@@ -99,47 +183,24 @@ WadseekerInterface::WadseekerInterface(QWidget* parent)
 	updateTimer.start(UPDATE_INTERVAL_MS);
 }
 
-WadseekerInterface::~WadseekerInterface()
+WadseekerInterface *WadseekerInterface::create(QWidget* parent)
 {
-	if (gApp->mainWindow())
+	if (!isInstantiated())
 	{
-		gApp->mainWindow()->initAutoRefreshTimer();
+		currentInstance = new WadseekerInterface(parent);
+		return currentInstance;
 	}
+	return NULL;
 }
 
-void WadseekerInterface::accept()
+WadseekerInterface *WadseekerInterface::create(ServerPtr server, QWidget* parent)
 {
-	if (leWadName->text().isEmpty())
-		return;
-
-	startSeeking(leWadName->text().split(',', QString::SkipEmptyParts));
-}
-
-void WadseekerInterface::allDone(bool bSuccess)
-{
-	setStateWaiting();
-
-	if (bSuccess)
+	if (!isInstantiated())
 	{
-		displayMessage(tr("All done. Success."), WadseekerLib::NoticeImportant, false);
-
-		if (bAutomatic)
-		{
-			// Close the dialog box.
-			done(QDialog::Accepted);
-		}
+		currentInstance = new WadseekerInterface(server, parent);
+		return currentInstance;
 	}
-	else
-	{
-		QStringList failures = unsuccessfulWads();
-
-		foreach (const QString& failure, failures)
-		{
-			twWads->setFileFailed(failure);
-		}
-
-		displayMessage(tr("All done. Fail."), WadseekerLib::CriticalError, false);
-	}
+	return NULL;
 }
 
 void WadseekerInterface::displayMessage(const QString& message, WadseekerLib::MessageType type, bool bPrependErrorsWithMessageType)
@@ -221,6 +282,11 @@ void WadseekerInterface::initMessageColors()
 	colorHtmlMessageFatalError = gConfig.wadseeker.colorMessageCriticalError;
 }
 
+bool WadseekerInterface::isInstantiated()
+{
+	return currentInstance != NULL;
+}
+
 void WadseekerInterface::message(const QString& message, WadseekerLib::MessageType type)
 {
 	displayMessage(message, type, true);
@@ -283,6 +349,18 @@ void WadseekerInterface::setStateWaiting()
 	state = Waiting;
 }
 
+void WadseekerInterface::setWads(const QStringList& wads)
+{
+	if (isAutomatic())
+	{
+		seekedWads = wads;
+	}
+	else
+	{
+		leWadName->setText(wads.join(", "));
+	}
+}
+
 void WadseekerInterface::setupIdgames()
 {
 	QString idgamesUrl = Wadseeker::defaultIdgamesUrl();
@@ -302,7 +380,7 @@ void WadseekerInterface::showEvent(QShowEvent* event)
 	{
 		bFirstShown = true;
 
-		if (bAutomatic)
+		if (isAutomatic())
 		{
 			startSeeking(seekedWads);
 		}
@@ -339,6 +417,7 @@ void WadseekerInterface::startSeeking(const QStringList& seekedFilesList)
 	{
 		return;
 	}
+	d->bCompletedSuccessfully = false;
 
 	// Get rid of the whitespace characters from each filename; we don't want
 	// to be searching " awad.wad".
@@ -390,7 +469,7 @@ void WadseekerInterface::updateTitle()
 	}
 }
 
-QStringList	WadseekerInterface::unsuccessfulWads() const
+QStringList WadseekerInterface::unsuccessfulWads() const
 {
 	QStringList allWads = seekedWads;
 

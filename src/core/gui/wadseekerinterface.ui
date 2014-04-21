@@ -17,9 +17,9 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="lblTop">
        <property name="text">
-        <string>Seek WAD (or multiple WADs, comma separated):</string>
+        <string>Seek WAD or multiple WADs, comma (',') separated:</string>
        </property>
       </widget>
      </item>
@@ -146,6 +146,16 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="btnStartGame">
+       <property name="text">
+        <string>Start Game</string>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="btnDownload">
        <property name="text">
         <string>Download</string>
@@ -179,5 +189,54 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>btnClose</sender>
+   <signal>clicked()</signal>
+   <receiver>WadseekerInterface</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>758</x>
+     <y>573</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>796</x>
+     <y>597</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnDownload</sender>
+   <signal>clicked()</signal>
+   <receiver>WadseekerInterface</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>657</x>
+     <y>585</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>688</x>
+     <y>594</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnStartGame</sender>
+   <signal>clicked()</signal>
+   <receiver>WadseekerInterface</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>587</x>
+     <y>579</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>591</x>
+     <y>595</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

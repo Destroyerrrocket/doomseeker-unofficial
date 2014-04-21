@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "ircdocktabcontents.h"
 #include "gui/irc/ircsounds.h"
+#include "gui/irc/ircuserlistmodel.h"
 #include "gui/commongui.h"
 #include "irc/configuration/ircconfig.h"
 #include "irc/ircchanneladapter.h"
@@ -29,12 +30,14 @@
 #include "irc/ircglobal.h"
 #include "irc/ircmessageclass.h"
 #include "irc/ircnetworkadapter.h"
+#include "irc/ircnicknamecompleter.h"
 #include "irc/ircuserinfo.h"
 #include "irc/ircuserlist.h"
 #include "log.h"
 #include <QDateTime>
 #include <QScrollBar>
 #include <QStandardItemModel>
+
 
 class IRCDockTabContents::PrivChatMenu : public QMenu
 {
@@ -63,7 +66,9 @@ IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 	this->userListContextMenu = NULL;
 
 	this->pParentIRCDock = pParentIRCDock;
-	this->lvUserList->setModel(new QStandardItemModel(this->lvUserList));
+	nicknameCompleter = new IRCNicknameCompleter();
+
+	setupNewUserListModel();
 
 	// There is only one case in which we want this to be visible:
 	// if we are in a channel.
@@ -159,6 +164,7 @@ void IRCDockTabContents::applyAppearanceSettings()
 	this->lvUserList->setStyleSheet(qtStyleSheet);
 	this->lvUserList->setFont(appearance.userListFont);
 
+	this->leCommandLine->installEventFilter(this);
 	this->leCommandLine->setStyleSheet(qtStyleSheet);
 	this->leCommandLine->setFont(appearance.mainFont);
 
@@ -174,6 +180,41 @@ void IRCDockTabContents::applyAppearanceSettings()
 void IRCDockTabContents::blinkTimerSlot()
 {
 	setBlinkTitle(!bBlinkTitle);
+}
+
+void IRCDockTabContents::completeNickname()
+{
+	IRCCompletionResult result;
+	if (nicknameCompleter->isReset())
+	{
+		result = nicknameCompleter->complete(leCommandLine->text(), leCommandLine->cursorPosition());
+	}
+	else
+	{
+		result = nicknameCompleter->cycleNext();
+	}
+	if (result.isValid())
+	{
+		// Prevent reset due to cursor position change.
+		leCommandLine->blockSignals(true);
+		leCommandLine->setText(result.textLine);
+		leCommandLine->setCursorPosition(result.cursorPos);
+		leCommandLine->blockSignals(false);
+	}
+}
+
+bool IRCDockTabContents::eventFilter(QObject *watched, QEvent *event)
+{
+	if (watched == leCommandLine && event->type() == QEvent::KeyPress)
+	{
+		QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+		if (keyEvent->key() == Qt::Key_Tab)
+		{
+			completeNickname();
+			return true;
+		}
+	}
+	return false;
 }
 
 QStandardItem* IRCDockTabContents::findUserListItem(const QString& nickname)
@@ -280,10 +321,9 @@ void IRCDockTabContents::myNicknameUsedSlot()
 
 void IRCDockTabContents::nameAdded(const IRCUserInfo& userInfo)
 {
-	QString nickname = userInfo.prefixedName();
-
 	QStandardItemModel* pModel = (QStandardItemModel*)this->lvUserList->model();
-	QStandardItem* pItem = new QStandardItem(nickname);
+	QStandardItem* pItem = new QStandardItem(userInfo.prefixedName());
+	pItem->setData(userInfo.cleanNickname(), IRCUserListModel::RoleCleanNickname);
 
 	// Try to append the nickname at the proper place in the list.
 	for (int i = 0; i < pModel->rowCount(); ++i)
@@ -305,7 +345,7 @@ void IRCDockTabContents::nameAdded(const IRCUserInfo& userInfo)
 
 void IRCDockTabContents::nameListUpdated(const IRCUserList& userList)
 {
-	this->lvUserList->setModel(new QStandardItemModel(this->lvUserList));
+	setupNewUserListModel();
 
 	for (unsigned i = 0; i < userList.size(); ++i)
 	{
@@ -402,6 +442,11 @@ void IRCDockTabContents::receiveMessageWithClass(const QString& message, const I
 	}
 
 	this->insertMessage(messageClass, messageHtmlEscaped);
+}
+
+void IRCDockTabContents::resetNicknameCompletion()
+{
+	nicknameCompleter->reset();
 }
 
 QString IRCDockTabContents::selectedNickname()
@@ -515,6 +560,12 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 			break;
 		}
 	}
+}
+
+void IRCDockTabContents::setupNewUserListModel()
+{
+	lvUserList->setModel(new QStandardItemModel(lvUserList));
+	nicknameCompleter->setModel(lvUserList->model());
 }
 
 void IRCDockTabContents::showChatContextMenu()

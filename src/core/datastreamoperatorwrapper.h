@@ -28,6 +28,7 @@
 #include "global.h"
 
 /**
+ * @ingroup group_pluginapi
  * @brief Wraps around QDataStream stream operators to provide cleaner
  *        reading interface.
  */
@@ -36,17 +37,17 @@ class MAIN_EXPORT DataStreamOperatorWrapper
 	public:
 		DataStreamOperatorWrapper(QDataStream* stream);
 		virtual ~DataStreamOperatorWrapper();
-		
+
 		/**
 		 * @brief Gets underlying QDataStream.
 		 */
 		QDataStream* dataStream();
-		
+
 		/**
 		 * @brief Gets underlying QDataStream.
 		 */
 		const QDataStream* dataStream() const;
-		
+
 		/**
 		 * @brief Returns true if there is any data remaining in the stream.
 		 *
@@ -56,7 +57,7 @@ class MAIN_EXPORT DataStreamOperatorWrapper
 		{
 			return remaining() > 0;
 		}
-	
+
 		qint8 readQInt8();
 		bool readBool();
 		quint8 readQUInt8();
@@ -68,7 +69,7 @@ class MAIN_EXPORT DataStreamOperatorWrapper
 		qint64 readQInt64();
 		float readFloat();
 		double readDouble();
-		
+
 		/**
 		 * @brief Reads specified amount of raw bytes.
 		 *
@@ -77,7 +78,7 @@ class MAIN_EXPORT DataStreamOperatorWrapper
 		 * @return QByteArray of read bytes.
 		 */
 		QByteArray readRaw(qint64 length);
-		
+
 		/**
 		 * @brief Reads all remaining raw bytes.
 		 *
@@ -86,14 +87,14 @@ class MAIN_EXPORT DataStreamOperatorWrapper
 		 * @return QByteArray of read bytes.
 		 */
 		QByteArray readRawAll();
-		
+
 		/**
 		 * @brief This method calls Strings::readUntilByte() .
 		 */
 		QByteArray readRawUntilByte(char stopByte);
-		
+
 		/**
-		 * @brief Returns a remaining amount of bytes from the underlying 
+		 * @brief Returns a remaining amount of bytes from the underlying
 		 * QIODevice.
 		 *
 		 * This is done by performing `QIODevice::size() - QIODevice::pos()`.
@@ -101,7 +102,7 @@ class MAIN_EXPORT DataStreamOperatorWrapper
 		 * sequential.
 		 */
 		qint64 remaining() const;
-		
+
 		/**
 		 * @brief Reads and discards specified amount of data.
 		 *

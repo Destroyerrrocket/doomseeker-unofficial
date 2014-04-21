@@ -41,35 +41,22 @@ class Idgames : public QObject
 		static QString defaultIdgamesUrl();
 
 		/**
-		 *	Creates object to handle Idgames archive.
-		 *	@param idgamesPage - address of idgames archive.
-		 *		this should contain %ZIPNAME% and %PAGENUM%
-		 *		to find the file and iterate through pages properly.
+		 * Creates object to handle Idgames archive.
+		 * @param idgamesPage - base address of idgames archive.
 		 */
 		Idgames(const QString& idgamesPage);
 		~Idgames();
 
 		void abort();
 
-		const WadDownloadInfo& file() const { return *seekedFile; }
+		const WadDownloadInfo& file() const;
 
 		void setFile(const WadDownloadInfo& wad);
-		void setPage(const QString& url) { idgamesBaseUrl = url; }
-		void setUserAgent(const QString& userAgent) { this->userAgent = userAgent; }
+		void setPage(const QString& url);
+		void setUserAgent(const QString& userAgent);
 
 		/**
-		 *	Entry method. From this point the whole process can go
-		 *	in 4 ways:
-		 *	a)	program iterates through sites until it finds the requested
-		 *		file, then a site for this file is returned through done()
-		 *		signal
-		 *	b)	program iterates through sites and stumbles upon a page with
-		 *		no file entries. done() signal with "fail" flag is sent.
-		 *	c)	no %PAGENUM% is present in URL, search is done only once and
-		 *		then it fails immediately after trying to go to next page
-		 *		(in case if the file is not found after this first search)
-		 *	d)	no %ZIPNAME% is present in URL, done() with "fail" flag is
-		 *		sent immediately
+		 * Entry method.
 		 */
 		void startSearch();
 
@@ -119,35 +106,8 @@ class Idgames : public QObject
 			Ok = 1,
 		};
 
-		bool bIsAborting;
-		int currentPage;
-
-		/**
-		 * Once this flag is set to true, the Idgames object has already
-		 * found the page for the WAD and will now proceed to retrieve it and
-		 * extract links.
-		 */
-		bool filePageFound;
-
-		QNetworkReply* pCurrentRequest;
-		QNetworkAccessManager* pNetworkAccessManager;
-		QString idgamesBaseUrl;
-		WadDownloadInfo* seekedFile;
-		QString userAgent;
-
-		/**
-		 *	This should be called immediately after processPage.
-		 *	@param response - return of processPage()
-		 *	@param url - url param of processPage()
-		 */
-		void afterProcess(PageProcessResults result, const QUrl& url);
-
-		/**
-		 *	Downloads Idgames page and increases currentPage counter.
-		 */
-		void getNextPage();
-
-		void doneEx(bool error);
+		class PrivData;
+		PrivData *d;
 
 		/**
 		 * @brief Extracts WAD download links from specified page.
@@ -163,11 +123,7 @@ class Idgames : public QObject
 		 */
 		void extractAndEmitLinks(QByteArray& pageData, const QUrl& pageUrl);
 
-		/**
-		 * @param [out] url - Link to the page describing the file, or invalid
-		 *                    QUrl object if link not found.
-		 */
-		PageProcessResults processPage(QByteArray& pageData, QUrl& url);
+		void queryIdgamesApi();
 
 		/**
 		 * @brief Starts network query using specified URL.
@@ -177,6 +133,7 @@ class Idgames : public QObject
 		QString zipName() const;
 
 	private slots:
+		void onIdgamesApiQueryFinished();
 		void networkRequestFinished();
 		void networkRequestProgress(qint64 done, qint64 total);
 };

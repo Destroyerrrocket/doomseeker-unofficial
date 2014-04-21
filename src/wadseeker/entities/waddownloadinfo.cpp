@@ -9,6 +9,11 @@
 #include <QFileInfo>
 #include <QStringList>
 
+WadDownloadInfo::WadDownloadInfo()
+{
+	d.size = -1;
+}
+
 WadDownloadInfo::WadDownloadInfo(const QString& name)
 {
 	d.name = name;

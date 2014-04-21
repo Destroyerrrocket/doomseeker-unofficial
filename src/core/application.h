@@ -32,6 +32,7 @@
 class MainWindow;
 
 /**
+ * @ingroup group_pluginapi
  * @brief Program central hub of information.
  */
 class MAIN_EXPORT Application : public QApplication

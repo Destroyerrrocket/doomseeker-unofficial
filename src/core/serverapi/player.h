@@ -30,6 +30,7 @@
 #include <QString>
 
 /**
+ * @ingroup group_pluginapi
  * @brief Data structure that holds information about players in a server.
  */
 class MAIN_EXPORT Player

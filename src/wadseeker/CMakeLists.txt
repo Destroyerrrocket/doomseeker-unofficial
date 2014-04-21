@@ -35,6 +35,7 @@ include_directories(
 )
 
 set(WADSEEKER_QT_FILES
+	protocols/idgames/idgamesreply.h
 	protocols/fixednetworkaccessmanager.h
 	protocols/fixedftpreply.h
 	protocols/networkreplysignalwrapper.h
@@ -53,8 +54,14 @@ set(WADSEEKER_FILES
 	entities/link.cpp
 	entities/waddownloadinfo.cpp
 	protocols/entities/networkreplywrapperinfo.cpp
+	protocols/idgames/idgamesclient.cpp
+	protocols/idgames/idgamesfile.cpp
+	protocols/idgames/idgamesfilematcher.cpp
+	protocols/idgames/idgamesreply.cpp
+	protocols/idgames/idgamesresult.cpp
 	protocols/fixednetworkaccessmanager.cpp
 	protocols/fixedftpreply.cpp
+	protocols/json.cpp
 	protocols/http.cpp
 	protocols/networkreplysignalwrapper.cpp
 	protocols/networkreplytimeouter.cpp
@@ -81,6 +88,11 @@ set(HEADER_FILES
 	entities/link.h
 	entities/waddownloadinfo.h
 	protocols/entities/networkreplywrapperinfo.h
+	protocols/idgames/idgamesclient.h
+	protocols/idgames/idgamesfile.h
+	protocols/idgames/idgamesfilematcher.h
+	protocols/idgames/idgamesresult.h
+	protocols/json.h
 	protocols/http.h
 	protocols/urlprovider.h
 	wadretriever/wadinstaller.h

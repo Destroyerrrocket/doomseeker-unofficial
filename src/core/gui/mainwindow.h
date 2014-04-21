@@ -45,6 +45,7 @@ class AutoUpdater;
 class ConnectionHandler;
 class DoomseekerConfigurationDialog;
 class IP2CLoader;
+class ServerDetailsDock;
 class ServerFilterDock;
 class ServersStatusWidget;
 class UpdateChannel;
@@ -130,6 +131,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 
 		void updateMasterAddresses();
 
+	public slots:
+		void runGame(const ServerPtr&);
+
 	protected:
 		friend class DoomseekerConfigurationDialog;
 
@@ -169,6 +173,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		QProgressBar* ip2cUpdateProgressBar;
 		IRCDock* ircDock;
 		LogDock* logDock;
+		ServerDetailsDock* detailsDock;
 		ServerFilterDock* serverFilterDock;
 		ServerListHandler* serverTableHandler;
 
@@ -222,6 +227,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void initIRCDock();
 		void initLogDock();
 		void initMainDock();
+		void initServerDetailsDock();
 		void initServerFilterDock();
 
 		/**
@@ -295,7 +301,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void refreshThreadBeginsWork();
 		void refreshThreadEndsWork();
 		void restartAndInstallUpdatesNow();
-		void runGame(const ServerPtr&);
 		void serverAddedToList(const ServerPtr&);
 		void showServerJoinCommandLine(const ServerPtr&);
 		void showUpdaterProcessErrorDialog();

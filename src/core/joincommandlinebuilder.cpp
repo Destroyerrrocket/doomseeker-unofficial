@@ -28,6 +28,7 @@
 #include "configuration/doomseekerconfig.h"
 #include "gui/passwordDlg.h"
 #include "gui/wadseekerinterface.h"
+#include "gui/wadseekershow.h"
 #include "ini/settingsproviderqt.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/exefile.h"
@@ -47,7 +48,6 @@ class JoinCommandLineBuilder::PrivData
 		bool configurationError;
 		QString error;
 		Demo demo;
-		bool hadMissing;
 		ServerPtr server;
 		QWidget *parentWidget;
 };
@@ -58,7 +58,6 @@ JoinCommandLineBuilder::JoinCommandLineBuilder(ServerPtr server,
 	d = new PrivData();
 	d->configurationError = false;
 	d->demo = demo;
-	d->hadMissing = false;
 	d->parentWidget = parentWidget;
 	d->server = server;
 }
@@ -188,9 +187,19 @@ void JoinCommandLineBuilder::handleError(const JoinError &error)
 
 JoinCommandLineBuilder::MissingWadsProceed JoinCommandLineBuilder::handleMissingWads(const JoinError &error)
 {
+	if (WadseekerInterface::isInstantiated())
+	{
+		QMessageBox::StandardButtons ret = 
+			QMessageBox::warning(d->parentWidget, tr("Doomseeker - files are missing"),
+				tr("You don't have all the files required by this server and an instance "
+					"of Wadseeker is already running.\n\n"
+					"Press 'Ignore' to join anyway."),
+				QMessageBox::Abort | QMessageBox::Ignore);
+		return ret == QMessageBox::Ignore ? Ignore : Cancel;;
+	}
+
 	QString filesMissingMessage = tr("Following files are missing:\n");
 
-	// Execute Wadseeker
 	if (!error.missingIwad().isEmpty())
 	{
 		filesMissingMessage += tr("IWAD: ") + error.missingIwad().toLower() + "\n";
@@ -217,23 +226,21 @@ JoinCommandLineBuilder::MissingWadsProceed JoinCommandLineBuilder::handleMissing
 		displayMissingWadsMessage(downloadableWads, filesMissingMessage);
 	if (ret == QMessageBox::Yes)
 	{
-		if (!checkWadseekerValidity(d->parentWidget))
+		if (!gWadseekerShow->checkWadseekerValidity(d->parentWidget))
 		{
-			d->error = tr("Wadseeker will not work correctly: \n"
-				"Target directory is either not set, is invalid or cannot be written to.\n"
-				"Please review your Configuration and/or refer to online help available from "
-				"the Help menu.");
 			return Cancel;
 		}
 
-		WadseekerInterface wsi(d->parentWidget);
-		wsi.setAutomatic(true, downloadableWads);
-		wsi.setCustomSite(d->server->webSite());
-		if (wsi.exec() == QDialog::Accepted)
-		{
-			d->hadMissing = true;
-			return Retry;
-		}
+		WadseekerInterface *wadseeker = WadseekerInterface::create(d->server);
+		wadseeker->setWads(downloadableWads);
+		wadseeker->setAttribute(Qt::WA_DeleteOnClose);
+		// As Wadseeker window is asynchronous the control of game joining
+		// is delegated to the WadseekerShow singleton. The join process
+		// will be restarted once all WADs download and user still wishes
+		// to connect.
+		gWadseekerShow->registerWadseekerWithServer(d->server, wadseeker);
+		wadseeker->show();
+		return Cancel;
 	}
 	return ret == QMessageBox::Ignore ? Ignore : Cancel;
 }

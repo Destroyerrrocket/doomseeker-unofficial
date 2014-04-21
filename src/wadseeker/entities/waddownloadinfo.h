@@ -32,6 +32,7 @@
 class WadDownloadInfo
 {
 	public:
+		WadDownloadInfo();
 		WadDownloadInfo(const QString& name);
 
 		/**

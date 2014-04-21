@@ -27,6 +27,7 @@
 
 #include <QHash>
 #include <QList>
+#include <QMultiMap>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QStringList>
@@ -60,6 +61,23 @@ class WWWSeeker : public QObject
 		virtual ~WWWSeeker();
 
 		/**
+		 * @brief Adds a URL to a site where a specified filename may reside
+		 *        with default priority.
+		 *
+		 * Such site will be searched in a different order than global site
+		 * URLs. Since it is suspected that these sites may contain specified
+		 * files, they will have the priority.
+		 *
+		 * Naturally, such sites are also searched for all other seeked
+		 * filenames, not the only specified one.
+		 *
+		 * If specified URL is on visited URLs list this becomes a no-op.
+		 *
+		 * Default priority is 0.
+		 */
+		void addFileSiteUrl(const QString& filename, const QUrl& url);
+
+		/**
 		 * @brief Adds a URL to a site where a specified filename may reside.
 		 *
 		 * Such site will be searched in a different order than global site
@@ -70,8 +88,11 @@ class WWWSeeker : public QObject
 		 * filenames, not the only specified one.
 		 *
 		 * If specified URL is on visited URLs list this becomes a no-op.
+		 *
+		 * @param priority
+		 *     The higher the number, the bigger the URL priority.
 		 */
-		void addFileSiteUrl(const QString& filename, const QUrl& url);
+		void addFileSiteUrlWithPriority(const QString& filename, const QUrl& url, int priority);
 
 		/**
 		 * @brief Adds a URL to a site that will be used in the search.
@@ -228,7 +249,7 @@ class WWWSeeker : public QObject
 				 * Key - name of the file.
 				 * Value - URLs to the site.
 				 */
-				QHash<QString, QList<QUrl> > fileSiteUrls;
+				QHash<QString, QMultiMap<int, QUrl> > fileSiteUrls;
 
 				/**
 				 * @brief Used to rotate over files on the fileSiteUrls

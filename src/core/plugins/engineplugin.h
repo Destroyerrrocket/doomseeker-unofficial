@@ -63,6 +63,9 @@ class QHostAddress;
 class QPixmap;
 class QWidget;
 
+/**
+ * @ingroup group_pluginapi
+ */
 class MAIN_EXPORT EnginePlugin
 {
 	protected:

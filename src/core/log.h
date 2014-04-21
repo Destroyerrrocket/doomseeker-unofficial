@@ -30,7 +30,8 @@
 #include <QObject>
 
 /**
- *	@brief Log manager.
+ * @ingroup group_pluginapi
+ * @brief Log manager.
  */
 class MAIN_EXPORT Log : public QObject
 {

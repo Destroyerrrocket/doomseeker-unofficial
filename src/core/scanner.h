@@ -67,7 +67,8 @@ enum ETokenType
 };
 
 /**
- * Scanner reads scripts by checking individual tokens.
+ * @ingroup group_pluginapi
+ * @brief Scanner reads scripts by checking individual tokens.
  * @author Blzut3
  */
 class MAIN_EXPORT Scanner

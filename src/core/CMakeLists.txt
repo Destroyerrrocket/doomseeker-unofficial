@@ -93,6 +93,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/passwordDlg.ui
 	gui/rconpassworddialog.ui
 	gui/remoteconsole.ui
+	gui/serverdetailsdock.ui
 	gui/serverfilterdock.ui
 	gui/wadseekerinterface.ui
 )
@@ -153,10 +154,12 @@ set(DOOMSEEKER_QT_FILES
 	gui/passwordDlg.h
 	gui/rconpassworddialog.h
 	gui/remoteconsole.h
+	gui/serverdetailsdock.h
 	gui/serverfilterdock.h
 	gui/serverlist.h
 	gui/standardserverconsole.h
 	gui/wadseekerinterface.h
+	gui/wadseekershow.h
 	ini/ini.h
 	ip2c/ip2c.h
 	ip2c/ip2cloader.h
@@ -176,6 +179,7 @@ set(DOOMSEEKER_QT_FILES
 	serverapi/tooltips/playertable.h
 	refresher/refresher.h
 	serverapi/exefile.h
+	serverapi/gameclientrunner.h
 	serverapi/gameexefactory.h
 	serverapi/gamehost.h
 	serverapi/masterclient.h
@@ -270,10 +274,12 @@ set(SOURCE_FILES
 	gui/passwordDlg.cpp
 	gui/rconpassworddialog.cpp
 	gui/remoteconsole.cpp
+	gui/serverdetailsdock.cpp
 	gui/serverfilterdock.cpp
 	gui/serverlist.cpp
 	gui/standardserverconsole.cpp
 	gui/wadseekerinterface.cpp
+	gui/wadseekershow.cpp
 	ini/inisection.cpp
 	ini/inivariable.cpp
 	ini/ini.cpp
@@ -300,6 +306,7 @@ set(SOURCE_FILES
 	irc/ircisupportparser.cpp
 	irc/ircmessageclass.cpp
 	irc/ircnetworkadapter.cpp
+	irc/ircnicknamecompleter.cpp
 	irc/ircprivadapter.cpp
 	irc/ircrequestparser.cpp
 	irc/ircresponseparser.cpp
@@ -354,6 +361,7 @@ set(SOURCE_FILES
 	application.cpp
 	apprunner.cpp
 	commandline.cpp
+	commandlinetokenizer.cpp
 	customservers.cpp
 	datapaths.cpp
 	datastreamoperatorwrapper.cpp
@@ -387,6 +395,7 @@ set(HEADER_FILES
 	gui/helpers/datetablewidgetitem.h
 	gui/helpers/playersdiagram.h
 	gui/irc/ircsounds.h
+	gui/irc/ircuserlistmodel.h
 	gui/widgets/qtabwidgetext.h
 	gui/commongui.h
 	ini/inisection.h
@@ -406,6 +415,7 @@ set(HEADER_FILES
 	irc/ircisupportparser.h
 	irc/ircmessageclass.h
 	irc/ircnetworkconnectioninfo.h
+	irc/ircnicknamecompleter.h
 	irc/ircuserinfo.h
 	irc/ircuserlist.h
 	pathfinder/basefileseeker.h
@@ -421,7 +431,6 @@ set(HEADER_FILES
 	serverapi/buddyinfo.h
 	serverapi/gamecreateparams.h
 	serverapi/gameexeretriever.h
-	serverapi/gameclientrunner.h
 	serverapi/joinerror.h
 	serverapi/player.h
 	serverapi/playerslist.h
@@ -440,6 +449,7 @@ set(HEADER_FILES
 	updater/updatepackagefilter.h
 	updater/updaterscriptparser.h
 	commandline.h
+	commandlinetokenizer.h
 	datapaths.h
 	datastreamoperatorwrapper.h
 	doomseekerfilepaths.h
@@ -590,14 +600,23 @@ if(WIN32)
 			DESTINATION engines
 		)
 	endif()
-	# Install other files that need to get distributed with binary.
+
+	# License files.
+	# Text files in Windows distribution really should have a .txt extension
+	# so rename them all accordingly.
 	set(LICENSE_FILES
-		${CMAKE_SOURCE_DIR}/LICENSE
-		${CMAKE_SOURCE_DIR}/LICENSE.json
-		${CMAKE_SOURCE_DIR}/LICENSE.wadseeker
+		LICENSE
+		LICENSE.json
+		LICENSE.wadseeker
 	)
+	foreach (LICFILE ${LICENSE_FILES})
+		install(FILES "${CMAKE_SOURCE_DIR}/${LICFILE}" DESTINATION .
+			RENAME "${LICFILE}.txt")
+	endforeach(LICFILE)
+
+	# Translatons
 	install(FILES ${TRANSLATION_FILES_TO_COPY} DESTINATION translations)
-	install(FILES ${LICENSE_FILES} DESTINATION .)
+	# Other
 	install(FILES ${CMAKE_SOURCE_DIR}/tools/doomseeker-portable.bat DESTINATION .)
 endif(WIN32)
 

@@ -33,6 +33,7 @@
 class SettingsProvider;
 
 /**
+ * @ingroup group_pluginapi
  * @brief Configuration handler.
  *
  * This class is an extension to simple interface provided by SettingsProvider.

@@ -81,6 +81,12 @@ void WWWSeeker::abort()
 
 void WWWSeeker::addFileSiteUrl(const QString& filename, const QUrl& url)
 {
+	const int DEFAULT_PRIORITY = 0;
+	addFileSiteUrlWithPriority(filename, url, DEFAULT_PRIORITY);
+}
+
+void WWWSeeker::addFileSiteUrlWithPriority(const QString& filename, const QUrl& url, int priority)
+{
 	if (!wasUrlUsed(url))
 	{
 		QString lowerCaseFilename = filename.toLower();
@@ -88,14 +94,14 @@ void WWWSeeker::addFileSiteUrl(const QString& filename, const QUrl& url)
 		if (d.fileSiteUrls.contains(lowerCaseFilename))
 		{
 			// Add to existing URL list.
-			QList<QUrl>& urls = d.fileSiteUrls[lowerCaseFilename];
-			urls << url;
+			QMultiMap<int, QUrl>& urls = d.fileSiteUrls[lowerCaseFilename];
+			urls.insert(priority, url);
 		}
 		else
 		{
 			// Create a new URL list.
-			QList<QUrl> urls;
-			urls << url;
+			QMultiMap<int, QUrl> urls;
+			urls.insert(priority, url);
 			d.fileSiteUrls.insert(lowerCaseFilename, urls);
 
 			// Don't forget to update the key list with a new key.
@@ -569,10 +575,12 @@ QUrl WWWSeeker::takeNextUrl()
 
 		if (d.fileSiteUrls.contains(lowerCaseFilename))
 		{
-			QList<QUrl>& urls = d.fileSiteUrls[lowerCaseFilename];
+			QMultiMap<int, QUrl>& urls = d.fileSiteUrls[lowerCaseFilename];
 			if (!urls.isEmpty())
 			{
-				QUrl url = urls.takeFirst();
+				int priority = urls.keys().back();
+				QUrl url = urls.values(priority).takeLast();
+				urls.remove(priority, url);
 				if (urls.isEmpty())
 				{
 					// Remove now empty list from the hash map.

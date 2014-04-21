@@ -27,6 +27,7 @@
 	<file>icons/pause.png</file>
 	<file>icons/person.png</file>
 	<file>icons/preferences-system-4.png</file>
+	<file>icons/server_details.png</file>
 	<file alias="shield.png">icons/shield.png</file>
 	<file>icons/view-refresh-2.png</file>
 	<file>icons/x.png</file>

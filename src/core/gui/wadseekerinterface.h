@@ -26,41 +26,44 @@
 #include "ui_wadseekerinterface.h"
 
 #include "ini/ini.h"
+#include "serverapi/serverptr.h"
 #include "wadseeker/wadseeker.h"
 #include <QStringList>
 #include <QTimer>
 
 /**
- * This dialog box returns 'Accepted' result ONLY when
- * automaticCloseOnSuccess is set to true and when
- * it succeedes finding all wads.
+ * @brief Wadseeker dialog box, only one instance is allowed.
+ *
+ * This is not a singleton, but create() methods will return NULL if instance
+ * is already running. There's also isInstantiated() static method available.
  */
 class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 {
 	Q_OBJECT
 
 	public:
-		WadseekerInterface(QWidget* parent = NULL);
+		static bool isInstantiated();
+
+		static WadseekerInterface *create(QWidget* parent = NULL);
+		static WadseekerInterface *create(ServerPtr server, QWidget* parent = NULL);
 		~WadseekerInterface();
 
 		bool isAutomatic() { return bAutomatic; }
-
-		/**
-		 * Sets the window to start seeking immediatelly after being shown and
-		 * automatically close on success.
-		 * @param b - is automatic or is it not
-		 * @param seekedWads - wads to seek if 'b' parameter is set to true.
-		 */
-		void setAutomatic(bool b, const QStringList& seekedWads)
-		{
-			bAutomatic = b;
-			this->seekedWads = seekedWads;
-		}
 
 		void setCustomSite(const QString& site)
 		{
 			this->customSite = site;
 		}
+
+		/**
+		 * @brief Sets WADs to seek.
+		 *
+		 * If window is automatic seek will start immediatelly. Otherwise
+		 * WADs are inserted into the line edit.
+		 *
+		 * @param wads - wads to seek.
+		 */
+		void setWads(const QStringList& wads);
 
 		Wadseeker& wadseekerRef() { return wadseeker; }
 
@@ -71,7 +74,11 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 			Waiting = 1
 		};
 
+		class PrivData;
+		PrivData *d;
+
 		static const int UPDATE_INTERVAL_MS;
+		static WadseekerInterface *currentInstance;
 
 		bool bAutomatic;
 		bool bFirstShown;
@@ -99,6 +106,11 @@ class WadseekerInterface : public QDialog, Ui::WadseekerInterface
 		QTimer updateTimer;
 		Wadseeker wadseeker;
 
+		WadseekerInterface(QWidget* parent = NULL);
+		WadseekerInterface(ServerPtr server, QWidget* parent = NULL);
+
+		void connectWadseekerObject();
+		void construct();
 		void displayMessage(const QString& message, WadseekerLib::MessageType type, bool bPrependErrorsWithMessageType);
 		void initMessageColors();
 

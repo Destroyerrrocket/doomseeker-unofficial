@@ -28,6 +28,7 @@
 #include <QStringList>
 
 /**
+ * @ingroup group_pluginapi
  * @brief Indicator of error for the server join process.
  *
  * This structure contains information about whether an error occured and

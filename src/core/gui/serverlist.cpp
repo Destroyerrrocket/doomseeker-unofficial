@@ -149,9 +149,8 @@ void ServerListHandler::connectTableModelProxySlots()
 	QHeaderView* header = table->horizontalHeader();
 	connect(header, SIGNAL( sectionClicked(int) ), this, SLOT ( columnHeaderClicked(int) ) );
 	connect(model, SIGNAL( modelCleared() ), this, SLOT( modelCleared() ) );
-	connect(table, SIGNAL( clicked(const QModelIndex&) ), this, SLOT( itemSelected(const QModelIndex&) ));
+	connect(table->selectionModel(), SIGNAL( selectionChanged(const QItemSelection&, const QItemSelection&) ), this, SLOT( itemSelected(const QItemSelection&) ));
 	connect(table, SIGNAL( middleMouseClick(const QModelIndex&, const QPoint&) ), this, SLOT( tableMiddleClicked(const QModelIndex&, const QPoint&) ) );
-	connect(table, SIGNAL( rightMouseClick(const QModelIndex&, const QPoint&) ), this, SLOT ( itemSelected(const QModelIndex&)) );
 	connect(table, SIGNAL( rightMouseClick(const QModelIndex&, const QPoint&) ), this, SLOT ( tableRightClicked(const QModelIndex&, const QPoint&)) );
 	connect(table, SIGNAL( entered(const QModelIndex&) ), this, SLOT ( mouseEntered(const QModelIndex&)) );
 	connect(table, SIGNAL( leftMouseDoubleClicked(const QModelIndex&, const QPoint&)), this, SLOT( doubleClicked(const QModelIndex&)) );
@@ -479,9 +478,18 @@ bool ServerListHandler::isSortingByColumn(int columnIndex)
 	return sortIndex == columnIndex;
 }
 
-void ServerListHandler::itemSelected(const QModelIndex& index)
+void ServerListHandler::itemSelected(const QItemSelection& selection)
 {
-	QList<ServerPtr> servers = selectedServers();
+	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
+	QModelIndexList indexList = selection.indexes();
+
+	QList<ServerPtr> servers;
+	for(int i = 0; i < indexList.count(); ++i)
+	{
+		QModelIndex realIndex = pModel->mapToSource(indexList[i]);
+		ServerPtr server = model->serverFromList(realIndex);
+		servers.append(server);
+	}
 	emit serversSelected(servers);
 }
 

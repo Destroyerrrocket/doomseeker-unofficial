@@ -29,6 +29,9 @@
 
 class EnginePlugin;
 
+/**
+ * @ingroup group_pluginapi
+ */
 class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox, private Ui::EngineConfigurationBaseBox
 {
 		Q_OBJECT

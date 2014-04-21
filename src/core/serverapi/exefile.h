@@ -30,6 +30,9 @@
 
 class Message;
 
+/**
+ * @ingroup group_pluginapi
+ */
 class MAIN_EXPORT ExeFile : public QObject
 {
 	Q_OBJECT

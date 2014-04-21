@@ -33,6 +33,7 @@ class Server;
 
 
 /**
+ * @ingroup group_pluginapi
  * @brief Returns executable file retrievers from plugins to Doomseeker.
  *
  * This class has been designed so that it can be extended freely without

@@ -38,6 +38,7 @@ class QFile;
 class QUdpSocket;
 
 /**
+ * @ingroup group_pluginapi
  * @brief Abstract base for all MasterClients.
  *
  * This is expected to fetch a list of IP addresses which will be turned

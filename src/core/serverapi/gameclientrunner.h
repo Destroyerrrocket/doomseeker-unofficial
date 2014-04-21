@@ -35,6 +35,7 @@
 class Server;
 
 /**
+ * @ingroup group_pluginapi
  * @brief A DTO for GameClientRunner; exchanges information between main program
  *        and plugins, and allows future extensions.
  *
@@ -73,6 +74,7 @@ class MAIN_EXPORT ServerConnectParams
 };
 
 /**
+ * @ingroup group_pluginapi
  * @brief Creates command line that launches the client executable of the game
  *        and connects it to a server.
  *
@@ -89,6 +91,8 @@ class MAIN_EXPORT ServerConnectParams
  */
 class MAIN_EXPORT GameClientRunner : public QObject
 {
+	Q_OBJECT
+
 	public:
 		GameClientRunner(ServerPtr server);
 		virtual ~GameClientRunner();
@@ -117,6 +121,10 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		/**
 		 * @brief Adds custom parameters defined by user in configuration box
 		 *        to the args list.
+		 *
+		 * Custom parameters are specified as a single string by the user,
+		 * but they're split to separate arguments in a manner appropriate
+		 * to given OS.
 		 */
 		void addCustomParameters();
 		/**

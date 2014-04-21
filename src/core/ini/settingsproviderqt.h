@@ -38,6 +38,9 @@
 #include "ini/settingsprovider.h"
 #include <QSettings>
 
+/**
+ * @ingroup group_pluginapi
+ */
 class MAIN_EXPORT SettingsProviderQt : public SettingsProvider
 {
 	public:

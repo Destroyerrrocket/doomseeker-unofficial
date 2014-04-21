@@ -31,6 +31,7 @@ class Ini;
 class IniVariable;
 
 /**
+ * @ingroup group_pluginapi
  * @brief INI section representation.
  *
  * Provides access to variables in specified INI file section.

@@ -33,6 +33,7 @@ class GameCVar;
 class GameMode;
 
 /**
+ * @ingroup group_pluginapi
  * @brief Game parametrization data used when creating new games.
  */
 class MAIN_EXPORT GameCreateParams

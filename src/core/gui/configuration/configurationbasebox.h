@@ -31,12 +31,13 @@
 #include <QWidget>
 
 /**
- *	@brief Base class for configuration group boxes.
+ * @ingroup group_pluginapi
+ * @brief Base class for configuration group boxes.
  *
- *	Such group boxes contain actual widgets allowing user input
- *	in order to configure program's modules. Settings are being
- *	read() and save()'d through virtual methods, however the
- *	implementation of such methods can do basicaly anything.
+ * Such group boxes contain actual widgets allowing user input
+ * in order to configure program's modules. Settings are being
+ * read() and save()'d through virtual methods, however the
+ * implementation of such methods can do basicaly anything.
  */
 class MAIN_EXPORT ConfigurationBaseBox : public QWidget
 {

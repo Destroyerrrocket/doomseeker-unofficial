@@ -93,6 +93,16 @@ bool UrlParser::isDirectLinkToFile(const QStringList& wantedFilenames, const Lin
 	return isDirectLinkToFile(wantedFilenames, link.url);
 }
 
+bool UrlParser::isWadnameTemplateUrl(const QUrl &url)
+{
+	return url.toString().contains("%WADNAME%") || url.toString().contains("%s");
+}
+
+QUrl UrlParser::resolveWadnameTemplateUrl(const QUrl &url, const QString &wadname)
+{
+	return url.toString().replace("%WADNAME%", wadname).replace("%s", wadname);
+}
+
 QList<Link> UrlParser::siteLinks(const QStringList& wantedFilenames, const QUrl& baseUrl)
 {
 	QList<Link> linksList;

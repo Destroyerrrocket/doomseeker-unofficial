@@ -30,8 +30,14 @@
 
 #include "global.h"
 
-/*! \file serverstructs.h */
+/**
+ * \ingroup group_pluginapi
+ * \file serverstructs.h
+ */
 
+/**
+ * @ingroup group_pluginapi
+ */
 class MAIN_EXPORT DMFlag
 {
 	public:
@@ -51,6 +57,7 @@ class MAIN_EXPORT DMFlag
 };
 
 /**
+ * @ingroup group_pluginapi
  * @brief Generic representation of DMFlags section.
  */
 class MAIN_EXPORT DMFlagsSection
@@ -80,6 +87,7 @@ class MAIN_EXPORT DMFlagsSection
 };
 
 /**
+ * @ingroup group_pluginapi
  * @brief Struct containing info about a game variable (like fraglimit).
  */
 class MAIN_EXPORT GameCVar
@@ -116,6 +124,7 @@ class MAIN_EXPORT GameCVar
 };
 
 /**
+ * @ingroup group_pluginapi
  * @brief Data structure that holds information about game mode.
  */
 class MAIN_EXPORT GameMode
@@ -173,7 +182,11 @@ class MAIN_EXPORT GameMode
 		void setTeamGame(bool b);
 };
 
-// Some ports support optional wads.
+/**
+ * @ingroup group_pluginapi
+ *
+ * Some ports support optional wads.
+ */
 class MAIN_EXPORT PWad
 {
 	public:
