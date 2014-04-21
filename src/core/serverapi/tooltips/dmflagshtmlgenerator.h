@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// tooltipgenerator.cpp
+// dmflagshtmlgenerator.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,56 +20,26 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "tooltipgenerator.h"
+#ifndef id0CB78D4D_98A3_4FF4_B664C60EAD35E524
+#define id0CB78D4D_98A3_4FF4_B664C60EAD35E524
 
-#include "serverapi/tooltips/dmflagshtmlgenerator.h"
-#include "serverapi/tooltips/gameinfotip.h"
-#include "serverapi/tooltips/generalinfotip.h"
-#include "serverapi/tooltips/playertable.h"
-#include "serverapi/server.h"
+#include "serverapi/serverptr.h"
+#include <QObject>
+#include <QString>
 
-class TooltipGenerator::PrivData
+class DmflagsHtmlGenerator : public QObject
 {
+	Q_OBJECT;
+
 	public:
-		ServerCPtr server;
+		DmflagsHtmlGenerator(const ServerCPtr &server);
+		~DmflagsHtmlGenerator();
+
+		QString generate();
+
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
-TooltipGenerator::TooltipGenerator(const ServerCPtr &server)
-{
-	d = new PrivData();
-	d->server = server;
-}
-
-TooltipGenerator::~TooltipGenerator()
-{
-	delete d;
-}
-
-QString TooltipGenerator::dmflagsHTML()
-{
-	DmflagsHtmlGenerator generator(server());
-	return generator.generate();
-}
-
-QString TooltipGenerator::gameInfoTableHTML()
-{
-	GameInfoTip tip(server());
-	return tip.generateHTML();
-}
-
-QString TooltipGenerator::generalInfoHTML()
-{
-	GeneralInfoTip tip(server());
-	return tip.generateHTML();
-}
-
-QString TooltipGenerator::playerTableHTML()
-{
-	PlayerTable table(server());
-	return table.generateHTML();
-}
-
-ServerCPtr TooltipGenerator::server() const
-{
-	return d->server;
-}
+#endif // header

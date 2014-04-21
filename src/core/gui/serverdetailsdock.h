@@ -43,6 +43,10 @@ public slots:
 
 protected slots:
 	void handleLocation(Qt::DockWidgetArea);
+
+private:
+	void clear();
+	ServerPtr selectServer(QList<ServerPtr>&);
 };
 
 #endif

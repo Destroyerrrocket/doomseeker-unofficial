@@ -174,6 +174,7 @@ set(DOOMSEEKER_QT_FILES
 	irc/ircprivadapter.h
 	irc/ircrequestparser.h
 	irc/ircresponseparser.h
+	serverapi/tooltips/dmflagshtmlgenerator.h
 	serverapi/tooltips/gameinfotip.h
 	serverapi/tooltips/generalinfotip.h
 	serverapi/tooltips/playertable.h
@@ -322,6 +323,7 @@ set(SOURCE_FILES
 	plugins/engineplugin.cpp
 	plugins/pluginloader.cpp
 	refresher/refresher.cpp
+	serverapi/tooltips/dmflagshtmlgenerator.cpp
 	serverapi/tooltips/gameinfotip.cpp
 	serverapi/tooltips/generalinfotip.cpp
 	serverapi/tooltips/playertable.cpp
