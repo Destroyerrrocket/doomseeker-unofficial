@@ -71,6 +71,7 @@ class MAIN_EXPORT DMFlagsSection
 		void add(const DMFlag& flag);
 		unsigned combineValues() const;
 		int count() const;
+		bool isEmpty() const;
 		const QString &name() const;
 		const DMFlag &operator[](int index) const;
 		DMFlag &operator[](int index);

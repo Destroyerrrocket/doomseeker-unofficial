@@ -29,6 +29,16 @@ class DmflagsHtmlGenerator::PrivData
 {
 	public:
 		ServerCPtr server;
+
+		QString mkSectionContents(const DMFlagsSection &section)
+		{
+			QString result;
+			for (int i = 0; i < section.count(); ++i)
+			{
+				result += "<li>" + section[i].name() + "</li>";
+			}
+			return result;
+		}
 };
 
 DmflagsHtmlGenerator::DmflagsHtmlGenerator(const ServerCPtr &server)
@@ -48,12 +58,17 @@ QString DmflagsHtmlGenerator::generate()
 	const QList<DMFlagsSection> sections = d->server->dmFlags();
 	foreach(const DMFlagsSection &section, sections)
 	{
-		result += section.name() + ":\n";
-		for(int i = 0; i < section.count(); ++i)
+		if (!section.isEmpty())
 		{
-			result += section[i].name() + '\n';
+			result += QString("<li><b>%1 (%2):</b></li>").arg(section.name()).arg(section.combineValues());
+			result += "<ul>";
+			result += d->mkSectionContents(section);
+			result += "</ul>";
 		}
-		result += '\n';
+	}
+	if (!result.isEmpty())
+	{
+		result = "<ul>" + result + "</ul>";
 	}
 	return result;
 }
