@@ -128,8 +128,8 @@ DMFlagsSection ZandronumDmflags::dmflags2()
 	section << DMFlag( tr("Allies can't be seen on the automap"), DF2_NO_AUTOMAP_ALLIES);
 	section << DMFlag( tr("You can't spy allies"), DF2_DISALLOW_SPYING);
 	section << DMFlag( tr("Players can use chase cam"), DF2_CHASECAM);
-	section << DMFlag( tr("Players can suicide"), DF2_NOSUICIDE);
-	section << DMFlag( tr("Players can not use autoaim"), DF2_NOAUTOAIM);
+	section << DMFlag( tr("Players can't suicide"), DF2_NOSUICIDE);
+	section << DMFlag( tr("Players can't use autoaim"), DF2_NOAUTOAIM);
 	section << DMFlag( tr("Spawn map actors in coop as if the game was single player"), DF2_COOP_SP_ACTOR_SPAWN);
 	return section;
 }
