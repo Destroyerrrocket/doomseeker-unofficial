@@ -42,39 +42,26 @@ ServerDetailsDock::~ServerDetailsDock()
 {
 }
 
+void ServerDetailsDock::clear()
+{
+	sbLabel->setText("");
+	detailsLabel->setText("");
+}
+
 void ServerDetailsDock::displaySelection(QList<ServerPtr> &selectedServers)
 {
-	if(selectedServers.count() == 0)
+	ServerPtr server = selectServer(selectedServers);
+	if (server == NULL)
 	{
-		sbLabel->setText("");
-		detailsLabel->setText("");
+		clear();
 		return;
 	}
 
-	ServerPtr selectedServer = selectedServers[0];
-
-	TooltipGenerator* tooltipGenerator = selectedServer->tooltipGenerator();
-
-	QString ret;
-	if(selectedServer->players().numClients() != 0)
-		ret = tooltipGenerator->playerTableHTML();
-	sbLabel->setText(ret);
-
+	TooltipGenerator* tooltipGenerator = server->tooltipGenerator();
+	if(server->players().numClients() != 0)
+		sbLabel->setText(tooltipGenerator->playerTableHTML());
+	detailsLabel->setText(tooltipGenerator->dmflagsHTML());
 	delete tooltipGenerator;
-
-	QString details;
-	const QList<DMFlagsSection> sections = selectedServer->dmFlags();
-	foreach(const DMFlagsSection &section, sections)
-	{
-		details += section.name() + ":\n";
-		for(unsigned int i = 0;i < section.count();++i)
-		{
-			details += section[i].name() + '\n';
-		}
-		details += '\n';
-	}
-
-	detailsLabel->setText(details);
 }
 
 void ServerDetailsDock::handleLocation(Qt::DockWidgetArea area)
@@ -96,3 +83,17 @@ void ServerDetailsDock::handleLocation(Qt::DockWidgetArea area)
 			break;
 	}
 }
+
+ServerPtr ServerDetailsDock::selectServer(QList<ServerPtr> &selectedServers)
+{
+	if (selectedServers.count() == 0)
+	{
+		return ServerPtr();
+	}
+	if (!selectedServers[0]->isKnown())
+	{
+		return ServerPtr();
+	}
+	return selectedServers[0];
+}
+

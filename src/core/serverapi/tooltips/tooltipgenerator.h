@@ -38,6 +38,11 @@ class MAIN_EXPORT TooltipGenerator : public QObject
 		virtual ~TooltipGenerator();
 
 		/**
+		 * @brief DMFLAGS listing for the current server.
+		 */
+		virtual QString dmflagsHTML();
+
+		/**
 		 * @brief General info about current game (fraglimit, team scores, etc.)
 		 */
 		virtual QString gameInfoTableHTML();
