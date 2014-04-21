@@ -60,7 +60,7 @@ QList<DMFlagsSection> ZandronumServerDmflagsParser::sequential32Parse(
 		// inserted into the structure of this server.
 		for (int j = 0; j < knownSection.count(); ++j)
 		{
-			if ( (dmflags & (1 << knownSection[j].value())) != 0)
+			if ( (dmflags & knownSection[j].value()) != 0)
 			{
 				detectedSection << knownSection[j];
 			}

@@ -43,20 +43,20 @@ GameMode OdamexGameInfo::gameModeDuel()
 void OdamexGameInfo::initDMFlags()
 {
 	DMFlagsSection section("DMFlags");
-	section << DMFlag( tr("Items respawn"),								0 );
-	section << DMFlag( tr("Weapons stay"),								1 );
-	section << DMFlag( tr("Friendly fire"),								2 );
-	section << DMFlag( tr("Allow exit"),								3 );
-	section << DMFlag( tr("Infinite ammo"),								4 );
-	section << DMFlag( tr("No monsters"),								5 );
-	section << DMFlag( tr("Monsters respawn"),							6 );
-	section << DMFlag( tr("Fast monsters"),								7 );
-	section << DMFlag( tr("Jumping allowed"),							8 );
-	section << DMFlag( tr("Freelook allowed"),							9 );
-	section << DMFlag( tr("Wad can be downloaded"),						10 );
-	section << DMFlag( tr("Server resets on empty"),					11 );
-	section << DMFlag( tr("Clean Maps"),								12 );
-	section << DMFlag( tr("Kill anyone who tries to leave the level"),	13 );
+	section << DMFlag( tr("Items respawn"), 1 << 0 );
+	section << DMFlag( tr("Weapons stay"), 1 << 1 );
+	section << DMFlag( tr("Friendly fire"), 1 << 2 );
+	section << DMFlag( tr("Allow exit"), 1 << 3 );
+	section << DMFlag( tr("Infinite ammo"), 1 << 4 );
+	section << DMFlag( tr("No monsters"), 1 << 5 );
+	section << DMFlag( tr("Monsters respawn"), 1 << 6 );
+	section << DMFlag( tr("Fast monsters"), 1 << 7 );
+	section << DMFlag( tr("Jumping allowed"), 1 << 8 );
+	section << DMFlag( tr("Freelook allowed"), 1 << 9 );
+	section << DMFlag( tr("Wad can be downloaded"), 1 << 10 );
+	section << DMFlag( tr("Server resets on empty"), 1 << 11 );
+	section << DMFlag( tr("Clean Maps"), 1 << 12 );
+	section << DMFlag( tr("Kill anyone who tries to leave the level"), 1 << 13 );
 
 	dmFlagsList << section;
 }
