@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "zandronumserverdmflagsparser.h"
 
+#include "zandronumdmflags.h"
 #include "zandronumgameinfo.h"
 #include "zandronumserver.h"
 #include <serverapi/serverstructs.h>
@@ -90,5 +91,5 @@ QList<DMFlagsSection> ZandronumServerNullParser::parse()
 
 QList<DMFlagsSection> ZandronumServer1point0DmflagsParser::parse()
 {
-	return sequential32Parse(ZandronumGameInfo::dmFlags1Point0());
+	return sequential32Parse(ZandronumDmflags1point0().flags());
 }

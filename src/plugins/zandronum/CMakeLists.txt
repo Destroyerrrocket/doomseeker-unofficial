@@ -11,6 +11,7 @@ set(ZANDRONUM_QT_FILES
 	createserverdialogpages/flagspage.h
 	enginezandronumconfigbox.h
 	zandronumbinaries.h
+	zandronumdmflags.h
 	zandronumgamehost.h
 	zandronummasterclient.h
 	zandronumserver.h
@@ -25,6 +26,7 @@ set(ZANDRONUM_FILES
 	huffman/huffman.cpp
 	enginezandronumconfigbox.cpp
 	zandronumbinaries.cpp
+	zandronumdmflags.cpp
 	zandronumengineplugin.cpp
 	zandronumgamehost.cpp
 	zandronumgameinfo.cpp

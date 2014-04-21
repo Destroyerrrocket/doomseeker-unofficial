@@ -66,7 +66,6 @@ ZandronumEnginePlugin::ZandronumEnginePlugin()
 		EP_SupportsRandomMapRotation,
 		EP_GameModes, ZandronumGameInfo::gameModes(),
 		EP_GameModifiers, ZandronumGameInfo::gameModifiers(),
-		EP_AllDMFlags, ZandronumGameInfo::dmFlags(),
 		EP_IRCChannel, "Zandronum", "irc.zandronum.com", "#zandronum",
 		EP_RefreshThreshold, 10,
 		EP_DemoExtension, false, "cld",
