@@ -660,6 +660,10 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		QList<int>& scoresMutable();
 		/**
+		 * @brief Set dmFlags().
+		 */
+		void setDmFlags(const QList<DMFlagsSection>& dmFlags);
+		/**
 		 * @brief Set gameVersion().
 		 */
 		void setGameVersion(const QString& version);
@@ -727,7 +731,6 @@ class MAIN_EXPORT Server : public QObject
 		QByteArray createSendRequest_default();
 		Response readRequest_default(const QByteArray &data);
 
-		void setDmFlags(const QList<DMFlagsSection>& dmFlags);
 		void setResponse(Response response);
 		void setScores(const QList<int>& scores);
 		void setWads(const QList<PWad>& wads);
