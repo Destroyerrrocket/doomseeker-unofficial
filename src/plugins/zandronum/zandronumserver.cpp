@@ -29,6 +29,7 @@
 #include "zandronumgameinfo.h"
 #include "zandronumgamerunner.h"
 #include "zandronumengineplugin.h"
+#include "zandronumserverdmflagsparser.h"
 #include "global.h"
 #include "log.h"
 #include "datastreamoperatorwrapper.h"
@@ -364,44 +365,6 @@ Server::Response ZandronumServer::readRequest(const QByteArray &data)
 		flags ^= SQF_BOTSKILL;
 	}
 
-	if((flags & SQF_DMFLAGS) == SQF_DMFLAGS)
-	{
-		// Not supported because the amount of returned DMFlags
-		// may vary depending on the server version. For example: old
-		// servers may return only dmflags, dmflags2 and compatflags.
-		// New servers may add dmflags3 and compatflags2.
-		gLog << tr("Zandronum plugin: asking for DMFLAGS is not "
-			"supported. This message should never appear.");
-		//flags ^= SQF_DMFLAGS;
-
-		//clearDMFlags();
-
-		//const DMFlags& zandronumFlags = *ZandronumGameInfo::dmFlags();
-
-		//// Read each dmflags section separately.
-		//for (int i = 0; i < NUM_DMFLAG_SECTIONS; ++i)
-		//{
-		//	unsigned int dmflags = READINT32(&packetOut[pos]);
-		//	pos += 4;
-
-		//	const DMFlagsSection& zandronumFlagsSection = *zandronumFlags[i];
-		//	DMFlagsSection* dmFlagsSection = new DMFlagsSection();
-		//	dmFlagsSection->name = zandronumFlagsSection.name;
-
-		//	// Iterate through every known flag to check whether it should be
-		//	// inserted into the structure of this server.
-		//	for (int j = 0; j < zandronumFlagsSection.flags.count(); ++j)
-		//	{
-		//		if ( (dmflags & (1 << zandronumFlagsSection.flags[j].value)) != 0)
-		//		{
-		//			dmFlagsSection->flags << zandronumFlagsSection.flags[j];
-		//		}
-		//	}
-
-		//	dmFlags << dmFlagsSection;
-		//}
-	}
-
 	if((flags & SQF_LIMITS) == SQF_LIMITS)
 	{
 		flags ^= SQF_LIMITS;
@@ -581,6 +544,18 @@ Server::Response ZandronumServer::readRequest(const QByteArray &data)
 	{
 		testingServer = false;
 		testingArchive = QString();
+	}
+
+	setDmFlags(QList<DMFlagsSection>()); // Basically, clear.
+	if((flags & SQF_ALL_DMFLAGS) == SQF_ALL_DMFLAGS)
+	{
+		flags ^= SQF_ALL_DMFLAGS;
+		ZandronumServerDmflagsParser *parser = ZandronumServerDmflagsParser::mkParser(this, &inStream);
+		if (parser != NULL)
+		{
+			setDmFlags(parser->parse());
+			delete parser;
+		}
 	}
 
 	if((flags & SQF_SECURITY_SETTINGS) == SQF_SECURITY_SETTINGS)

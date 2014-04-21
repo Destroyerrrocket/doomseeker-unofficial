@@ -31,6 +31,7 @@ set(ZANDRONUM_FILES
 	zandronumgamerunner.cpp
 	zandronummasterclient.cpp
 	zandronumserver.cpp
+	zandronumserverdmflagsparser.cpp
 )
 
 set(HEADER_FILES
@@ -44,6 +45,7 @@ set(HEADER_FILES
 	zandronumengineplugin.h
 	zandronumgameinfo.h
 	zandronumgamerunner.h
+	zandronumserverdmflagsparser.h
 )
 
 qt_wrap_cpp(zandronum ZANDRONUM_FILES ${ZANDRONUM_QT_FILES})

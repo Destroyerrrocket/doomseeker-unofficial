@@ -37,6 +37,17 @@ ZandronumGameInfo::ZandronumGameInfo()
 	delete static_constructor;
 }
 
+QList<DMFlagsSection> ZandronumGameInfo::dmFlags1Point0()
+{
+	QList<DMFlagsSection> result;
+	result << initDMFlags1();
+	result << initDMFlags2();
+	result << initDMFlags3();
+	result << initCompatFlags();
+	result << initCompatFlags2();
+	return result;
+}
+
 void ZandronumGameInfo::initDMFlags()
 {
 	dmFlagsList << initDMFlags1();
@@ -113,6 +124,12 @@ DMFlagsSection ZandronumGameInfo::initDMFlags2()
 	return section;
 }
 
+DMFlagsSection ZandronumGameInfo::initDMFlags3()
+{
+	DMFlagsSection section("DMFlags3");
+	return section;
+}
+
 DMFlagsSection ZandronumGameInfo::initCompatFlags()
 {
 	DMFlagsSection section("Compat. flags");
@@ -146,6 +163,12 @@ DMFlagsSection ZandronumGameInfo::initCompatFlags()
 	section << DMFlag( tr("Sector sounds use original method for sound orgin"),			29 );
 	section << DMFlag( tr("Use original Doom heights for clipping against projetiles"),	30 );
 	section << DMFlag( tr("Monsters can't be pushed over drop offs"),						31 );
+	return section;
+}
+
+DMFlagsSection ZandronumGameInfo::initCompatFlags2()
+{
+	DMFlagsSection section("Compat. flags 2");
 	return section;
 }
 

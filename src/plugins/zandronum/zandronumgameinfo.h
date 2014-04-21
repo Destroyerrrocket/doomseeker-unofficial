@@ -285,6 +285,7 @@ class ZandronumGameInfo : public QObject
 		};
 
 		static const QList<DMFlagsSection>* dmFlags() { return &dmFlagsList; }
+		static QList<DMFlagsSection> dmFlags1Point0();
 		static const QList<GameMode>* gameModes() { return &gameModesList; }
 		static const QList<GameCVar>* gameModifiers() { return &gameModifiersList; }
 
@@ -297,9 +298,11 @@ class ZandronumGameInfo : public QObject
 		ZandronumGameInfo();
 
 		void initDMFlags();
-		DMFlagsSection initDMFlags1();
-		DMFlagsSection initDMFlags2();
-		DMFlagsSection initCompatFlags();
+		static DMFlagsSection initDMFlags1();
+		static DMFlagsSection initDMFlags2();
+		static DMFlagsSection initDMFlags3();
+		static DMFlagsSection initCompatFlags();
+		static DMFlagsSection initCompatFlags2();
 		void initGameModes();
 		void initGameModifiers();
 
