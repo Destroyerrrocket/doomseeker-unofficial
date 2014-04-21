@@ -36,6 +36,7 @@ ServerDetailsDock::ServerDetailsDock(QWidget *parent) : QDockWidget(parent)
 	this->toggleViewAction()->setIcon(QIcon(":/icons/server_details.png"));
 
 	connect(this, SIGNAL( dockLocationChanged(Qt::DockWidgetArea) ), SLOT( handleLocation(Qt::DockWidgetArea) ));
+	clear();
 }
 
 ServerDetailsDock::~ServerDetailsDock()
@@ -44,6 +45,7 @@ ServerDetailsDock::~ServerDetailsDock()
 
 void ServerDetailsDock::clear()
 {
+	lblServer->setText("");
 	sbLabel->setText("");
 	detailsLabel->setText("");
 }
@@ -57,6 +59,7 @@ void ServerDetailsDock::displaySelection(QList<ServerPtr> &selectedServers)
 		return;
 	}
 
+	lblServer->setText(server->name());
 	TooltipGenerator* tooltipGenerator = server->tooltipGenerator();
 	if(server->players().numClients() != 0)
 		sbLabel->setText(tooltipGenerator->playerTableHTML());
@@ -75,11 +78,11 @@ void ServerDetailsDock::handleLocation(Qt::DockWidgetArea area)
 			// widget be a dock means that the RightDockWidgetArea is favored.
 			if(width() < height())
 			{
-				static_cast<QBoxLayout*>(widget()->layout())->setDirection(QBoxLayout::TopToBottom);
+				static_cast<QBoxLayout*>(dataLayout)->setDirection(QBoxLayout::TopToBottom);
 				break;
 			}
 		default:
-			static_cast<QBoxLayout*>(widget()->layout())->setDirection(QBoxLayout::LeftToRight);
+			static_cast<QBoxLayout*>(dataLayout)->setDirection(QBoxLayout::LeftToRight);
 			break;
 	}
 }
