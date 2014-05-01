@@ -1159,7 +1159,8 @@ void MainWindow::refreshThreadEndsWork()
 	}
 
 	bTotalRefreshInProcess = false;
-	detailsDock->displaySelection(serverTableHandler->selectedServers());
+	QList<ServerPtr> selectedServers = serverTableHandler->selectedServers();
+	detailsDock->displaySelection(selectedServers);
 }
 
 void MainWindow::restartAndInstallUpdatesNow()
