@@ -47,10 +47,7 @@ class CommandLineInfo
 		bool isValid() const;
 };
 
-/**
- * @ingroup group_pluginapi
- */
-class MAIN_EXPORT AppRunner : public QObject
+class AppRunner : public QObject
 {
 	Q_OBJECT
 
