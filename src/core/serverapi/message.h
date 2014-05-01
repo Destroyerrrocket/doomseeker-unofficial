@@ -48,24 +48,70 @@ class StaticMessages : public QObject
  *        system.
  *
  * Message type and content is carried over through this object. If type
- * member is set to Messages::Types::IGNORE_TYPE then content member should
+ * member is set to Message::Type::IGNORE_TYPE then content member should
  * be ignored and the entire Message object should be treated as carrying
  * no message at all.
+ *
+ * Messages can be displayed by the application through a pop-up box or in
+ * the program log. This may differ depending on message severity and current
+ * procedure.
+ *
+ * Message objects are safe to copy.
  */
 class MAIN_EXPORT Message
 {
 	public:
+		/**
+		 * @brief One of possible, Doomseeker recognizable error types.
+		 *
+		 * Doomseeker may take certain actions depending on the type of the
+		 * Message. This is largely dependent on the situation. However,
+		 * in general, IGNORE_TYPE messages are... ignored silently, while
+		 * all error type messages are displayed in one manner or another.
+		 * Methods that use Message objects describe any behavior that
+		 * differs from standard or might be unexpected.
+		 */
 		class Type
 		{
 			public:
+				/**
+				 * @brief 'Null' Message object; ignore it.
+				 */
 				static const unsigned IGNORE_TYPE = 0;
 
+				/**
+				 * @brief Programmer-defined information message, not an error.
+				 *
+				 * This is used for display only and no parsing other than
+				 * severity determination is performed.
+				 */
 				static const unsigned CUSTOM_INFORMATION = 1;
+				/**
+				 * @brief Message indicates that the operation was cancelled.
+				 */
 				static const unsigned CANCELLED = 2;
+				/**
+				 * @brief Message indicates that the operation was successful.
+				 */
 				static const unsigned SUCCESSFUL = 3;
 
+				/**
+				 * @brief Programmer-defined error message.
+				 *
+				 * This is used for display and may interrupt any affected
+				 * operation.
+				 */
 				static const unsigned CUSTOM_ERROR = 0x7fffffff;
+				/**
+				 * @brief Information indicating that current player is banned
+				 *        from given server.
+				 */
 				static const unsigned BANNED_FROM_MASTERSERVER = CUSTOM_ERROR + 1;
+				/**
+				 * @brief Indicates that program executable was not found, but
+				 *        Doomseeker or plugin are capable of performing
+				 *        the installation.
+				 */
 				static const unsigned GAME_NOT_FOUND_BUT_CAN_BE_INSTALLED = CUSTOM_ERROR + 2;
 		};
 
@@ -85,21 +131,58 @@ class MAIN_EXPORT Message
 			return Message(Type::CUSTOM_INFORMATION, content);
 		}
 
+		/**
+		 * @brief 'Null' message object, returns true on isIgnore().
+		 */
 		Message();
+		/**
+		 * @brief Message with defined type but carrying nothing to display.
+		 *
+		 * Sometimes Doomseeker may override and display a hard-coded message
+		 * anyway, depending on current procedure and message type.
+		 */
 		Message(unsigned type);
+		/**
+		 * @brief Message with defined type and custom display content.
+		 *
+		 * Sometimes Doomseeker may override and display a hard-coded message
+		 * anyway, depending on current procedure and message type.
+		 */
 		Message(unsigned type, const QString &content);
 		Message(const Message &other);
 		Message &operator=(const Message &other);
 		virtual ~Message();
 
+		/**
+		 * @brief Customized displayable contents of this Message.
+		 */
 		QString contents() const;
 
+		/**
+		 * @brief True if type() equals to CUSTOM_INFORMATION or CUSTOM_ERROR.
+		 */
 		bool isCustom() const;
+		/**
+		 * @brief True if type() is equal to or greater than CUSTOM_ERROR.
+		 */
 		bool isError() const;
+		/**
+		 * @brief True for 'Null' messages.
+		 */
 		bool isIgnore() const;
+		/**
+		 * @brief True if type() is equal to or greater than CUSTOM_INFORMATION,
+		 *        and lesser than CUSTOM_ERROR.
+		 */
 		bool isInformation() const;
 
+		/**
+		 * @brief Generation time in seconds since UTC epoch.
+		 */
 		unsigned timestamp() const;
+		/**
+		 * @brief Message::Type.
+		 */
 		unsigned type() const;
 
 	private:

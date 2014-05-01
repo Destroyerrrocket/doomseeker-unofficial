@@ -32,6 +32,17 @@ class Message;
 
 /**
  * @ingroup group_pluginapi
+ * @brief Access to external program executables
+ *        (game clients, servers, and so on).
+ *
+ * ExeFile is an interface to external programs executables. It obtains
+ * directory and file paths to the executable with pathToExe()
+ * and workingDirectory(), defines name of
+ * configKey() under which the executable path can be stored,
+ * names the program in general through programName() and also
+ * names the purpose of the exec within that program through
+ * exeTypeName() and lastly, it optionally handles install() procedure
+ * if user and plugin desire so.
  */
 class MAIN_EXPORT ExeFile : public QObject
 {
@@ -42,11 +53,12 @@ class MAIN_EXPORT ExeFile : public QObject
 		virtual ~ExeFile();
 
 		/**
-		 * @brief INI config key for stored executable path.
+		 * @brief Config key where executable path on current system
+		 *        can be remembered.
 		 */
 		const QString& configKey() const;
 		/**
-		 * @brief Name of the type of the executable (server, client, etc.)
+		 * @brief Name of the type of the executable (server, client, etc.).
 		 */
 		const QString& exeTypeName() const;
 		/**
@@ -60,39 +72,64 @@ class MAIN_EXPORT ExeFile : public QObject
 		 *
 		 * Default implementation does nothing and returns ignorable message.
 		 *
+		 * Example implementation is provided in Zandronum plugin.
+		 *
 		 * @param parent
 		 *     Should be treated as parent widget for all widgets that need
 		 *     to be created during the process.
+		 *
+		 * @return
+		 * Message with appropriately set type. Type of the message affects
+		 * Doomseeker behavior so it needs to be set correctly.
+		 * - Message::Type::SUCCESSFUL if installation completes properly,
+		 *   in this case Doomseeker continues any operation that was
+		 *   interrupted by the installation procedure (like game launch).
+		 * - Message::Type::CANCELLED if installation was cancelled by the user,
+		 *   in this case Doomseeker aborts silently.
+		 * - Return error type to prompt Doomseeker to display an error message.
 		 */
 		virtual Message install(QWidget *parent);
 		/**
-		 * @brief Name of the program this executable belongs to.
+		 * @brief Name of the program this executable belongs to (ex. "Odamex").
 		 */
 		const QString& programName() const;
 
 		/**
 		 * @brief Returns the path to the executable file.
 		 *
-		 * @param [out] message 
-		 *     Information message, if any. The type of the message might be
-		 *     relevant in some cases, please review documentation for
-		 *     install() method.
+		 * @param [out] message
+		 *     Information or error message, if any.
+		 *     The type of the message might be relevant in some cases,
+		 *     please review documentation for install() method.
 		 *
-		 * @return Empty if error, path to the file if all fine.
+		 * @return Path to the file if all fine or empty if error.
 		 * @see install()
 		 */
 		virtual QString pathToExe(Message& message);
 
+		/**
+		 * @brief Plugin setter for configKey().
+		 */
 		void setConfigKey(const QString& keyName);
+		/**
+		 * @brief Plugin setter for exeTypeName().
+		 */
 		void setExeTypeName(const QString& name);
+		/**
+		 * @brief Plugin setter for programName().
+		 */
 		void setProgramName(const QString& name);
 
 		/**
-		 * Default behavior returns directory of pathToExe(), but
-		 * you can override this to provide different working directory for
-		 * testing binaries.
+		 * @brief Path to this executable working directory.
 		 *
-		 * @param [out] error - type of error
+		 * Default behavior returns directory of pathToExe(), but
+		 * you can override this to provide different working directory
+		 * if needed.
+		 *
+		 * @param [out] message
+		 *     Information or error message, if any.
+		 * @return Path to the working directory if all fine or empty if error.
 		 */
 		virtual QString workingDirectory(Message& message);
 
