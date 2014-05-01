@@ -32,8 +32,10 @@
 #include "serverapi/gameexeretriever.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
+#include "apprunner.h"
 #include "commandlinetokenizer.h"
 #include "log.h"
+#include <QDir>
 #include <QScopedPointer>
 #include <QStringList>
 
