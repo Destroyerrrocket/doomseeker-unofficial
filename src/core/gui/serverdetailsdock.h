@@ -41,11 +41,12 @@ public:
 public slots:
 	void displaySelection(QList<ServerPtr>&);
 
-protected slots:
-	void handleLocation(Qt::DockWidgetArea);
+protected:
+	void resizeEvent(QResizeEvent *event);
 
 private:
 	void clear();
+	void reorientContentsBasingOnDimensions();
 	ServerPtr selectServer(QList<ServerPtr>&);
 };
 

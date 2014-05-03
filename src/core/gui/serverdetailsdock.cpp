@@ -35,7 +35,6 @@ ServerDetailsDock::ServerDetailsDock(QWidget *parent) : QDockWidget(parent)
 	setupUi(this);
 	this->toggleViewAction()->setIcon(QIcon(":/icons/server_details.png"));
 
-	connect(this, SIGNAL( dockLocationChanged(Qt::DockWidgetArea) ), SLOT( handleLocation(Qt::DockWidgetArea) ));
 	clear();
 }
 
@@ -67,24 +66,22 @@ void ServerDetailsDock::displaySelection(QList<ServerPtr> &selectedServers)
 	delete tooltipGenerator;
 }
 
-void ServerDetailsDock::handleLocation(Qt::DockWidgetArea area)
+void ServerDetailsDock::reorientContentsBasingOnDimensions()
 {
-	switch(area)
+	const int TOPTOBOTTOM_PREFERENCE_THRESHOLD = 100;
+	if (height() + TOPTOBOTTOM_PREFERENCE_THRESHOLD > width())
 	{
-		case Qt::LeftDockWidgetArea:
-		case Qt::RightDockWidgetArea:
-			// Try to reorient the widgets if we're docking in a vertical position.
-			// We can't assume the area value is good enough since having the central
-			// widget be a dock means that the RightDockWidgetArea is favored.
-			if(width() < height())
-			{
-				static_cast<QBoxLayout*>(dataLayout)->setDirection(QBoxLayout::TopToBottom);
-				break;
-			}
-		default:
-			static_cast<QBoxLayout*>(dataLayout)->setDirection(QBoxLayout::LeftToRight);
-			break;
+		static_cast<QBoxLayout*>(dataLayout)->setDirection(QBoxLayout::TopToBottom);
 	}
+	else
+	{
+		static_cast<QBoxLayout*>(dataLayout)->setDirection(QBoxLayout::LeftToRight);
+	}
+}
+
+void ServerDetailsDock::resizeEvent(QResizeEvent *event)
+{
+	reorientContentsBasingOnDimensions();
 }
 
 ServerPtr ServerDetailsDock::selectServer(QList<ServerPtr> &selectedServers)
