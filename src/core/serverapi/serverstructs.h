@@ -37,6 +37,16 @@
 
 /**
  * @ingroup group_pluginapi
+ * @brief A game setting that is a part of a group of settings
+ *        that can be OR'ed logically as a single integer.
+ *
+ * DMFlag is basically a setting that is toggleable between enabled/disabled
+ * state, and a bunch of DMFlags can be represented as bitflags that can be
+ * OR'ed, XOR'ed, and AND'ed together.
+ *
+ * DMFlag objects can be put into DMFlagsSection collection.
+ *
+ * This structure is safe to copy.
  */
 class MAIN_EXPORT DMFlag
 {
@@ -46,9 +56,20 @@ class MAIN_EXPORT DMFlag
 		COPYABLE_D_POINTERED_DECLARE(DMFlag);
 		virtual ~DMFlag();
 
+		/**
+		 * @brief Valid objects have value() greater than zero.
+		 *
+		 * Invalid objects can be treated as 'Null'.
+		 */
 		bool isValid() const;
 
+		/**
+		 * @brief User-displayable name of the DMFlag, ex. "Jump is allowed".
+		 */
 		const QString& name() const;
+		/**
+		 * @brief Bits that represent this flag (usually just a single '1' bit).
+		 */
 		unsigned value() const;
 
 	private:
@@ -58,7 +79,10 @@ class MAIN_EXPORT DMFlag
 
 /**
  * @ingroup group_pluginapi
- * @brief Generic representation of DMFlags section.
+ * @brief A group of DMFlag objects that can be safely OR'ed
+ *        together to form a meaningful value.
+ *
+ * This object is safe to copy.
  */
 class MAIN_EXPORT DMFlagsSection
 {
@@ -68,14 +92,41 @@ class MAIN_EXPORT DMFlagsSection
 		COPYABLE_D_POINTERED_DECLARE(DMFlagsSection);
 		virtual ~DMFlagsSection();
 
+		/**
+		 * @brief Append a new DMFlag to this section.
+		 *
+		 * Note that conflicting DMFlags will still be accepted here, as no
+		 * check are performed. Objects added here affect results of
+		 * combineValues().
+		 */
 		void add(const DMFlag& flag);
+		/**
+		 * @brief Logical OR of all DMFlag::value() results in this collection.
+		 *
+		 * Invalid DMFlag objects, if present in the collection, do not affect
+		 * the output of this operation.
+		 */
 		unsigned combineValues() const;
+		/**
+		 * @brief Number of DMFlag objects inside the collection.
+		 */
 		int count() const;
 		bool isEmpty() const;
+		/**
+		 * @brief User-displayable name of this section,
+		 *        ex. "Compatibility flags".
+		 */
 		const QString &name() const;
+		/**
+		 * @brief Access DMFlag at specific index with '[]' operator.
+		 */
 		const DMFlag &operator[](int index) const;
 		DMFlag &operator[](int index);
 
+		/**
+		 * @brief Stream input operator that appends DMFlag to the collection,
+		 *        same as add().
+		 */
 		DMFlagsSection& operator<<(const DMFlag& flag)
 		{
 			add(flag);
@@ -89,7 +140,9 @@ class MAIN_EXPORT DMFlagsSection
 
 /**
  * @ingroup group_pluginapi
- * @brief Struct containing info about a game variable (like fraglimit).
+ * @brief A general game setting or variable (like fraglimit).
+ *
+ * This object is safe to copy.
  */
 class MAIN_EXPORT GameCVar
 {
@@ -100,20 +153,37 @@ class MAIN_EXPORT GameCVar
 		virtual ~GameCVar();
 
 		/**
-		 * Command used to set the given CVar.
+		 * @brief Command-line argument that sets this GameCVar.
+		 *
+		 * When launching a game, this command() is passed as one of the
+		 * command line arguments and the value() is what follows directly
+		 * after.
 		 */
 		const QString &command() const;
 
+		/**
+		 * @brief Is any value assigned to this GameCVar.
+		 */
 		bool hasValue() const;
+		/**
+		 * @brief 'Null' objects are invalid.
+		 */
 		bool isValid() const;
 
 		/**
-		 * Nice name to display in Create Server dialog.
+		 * @brief Nice name to display to user in Create Server dialog and
+		 *        in other widgets.
 		 */
 		const QString &name() const;
 
+		/**
+		 * @brief Assign value() to this GameCVar.
+		 */
 		void setValue(const QVariant& value);
 
+		/**
+		 * @brief Passed as the second argument, following command().
+		 */
 		const QVariant &value() const;
 		QString valueString() const { return value().toString(); }
 		bool valueBool() const { return value().toBool(); }
@@ -126,17 +196,42 @@ class MAIN_EXPORT GameCVar
 
 /**
  * @ingroup group_pluginapi
- * @brief Data structure that holds information about game mode.
+ * @brief Game mode representation.
+ *
+ * The only available constructor will create an invalid object (returns false
+ * on isValid()). The proper method of construction is to use provided static
+ * builder methods. Either use one of 'mk' methods, that are mentioned
+ * in StandardGameMode description, or build your own mode using ffaGame() or
+ * teamGame() methods. index() in all cases must either be one of
+ * StandardGameMode values or unique within your plugin for given game mode.
+ *
+ * This object is safe to copy.
  */
 class MAIN_EXPORT GameMode
 {
 	public:
+		/**
+		 * @brief These game modes are so common that Doomseeker represents
+		 *        them through internal values and static methods.
+		 *
+		 * If your plugin recognizes that the server uses one of these game
+		 * modes it's much better to use these values instead of implementing
+		 * your own representation.
+		 *
+		 * <b>More importantly</b>, static builder methods have been provided
+		 * that already create appropriate GameMode objects. These methods are:
+		 * mkCooperative(), mkDeathmatch(), mkTeamDeathmatch(),
+		 * mkCaptureTheFlag(), and mkUnknown().
+		 */
 		enum StandardGameMode
 		{
 			SGM_Cooperative = 900,
 			SGM_Deathmatch = 901,
 			SGM_TeamDeathmatch = 902,
 			SGM_CTF = 903,
+			/**
+			 * @brief Impossible to determine the game mode.
+			 */
 			SGM_Unknown = 904
 		};
 
@@ -150,28 +245,58 @@ class MAIN_EXPORT GameMode
 		static GameMode mkUnknown();
 
 		/**
-		 * @brief Opposite of team game.
+		 * @brief Construct a custom FFA game where players don't belong
+		 *        to any teams.
+		 *
+		 * Cooperative game modes like "coop", "survival" or "invasion" are
+		 * also considered as FFA.
+		 *
+		 * @param index
+		 *     Value unique to given plugin but not within 900 - 1000 range.
+		 * @param name
+		 *     User-displayable name of the game mode.
+		 *
+		 * @see teamGame()
 		 */
 		static GameMode ffaGame(int index, const QString &name);
 		/**
 		 * @brief Game mode based on rivaling teams.
+		 *
+		 * @param index
+		 *     Value unique to given plugin but not within 900 - 1000 range.
+		 * @param name
+		 *     User-displayable name of the game mode.
+		 *
+		 * @see ffaGame()
 		 */
 		static GameMode teamGame(int index, const QString &name);
 
+		/**
+		 * @brief Constructs an invalid GameMode object.
+		 */
 		GameMode();
 		COPYABLE_D_POINTERED_DECLARE(GameMode);
 		virtual ~GameMode();
 
+		/**
+		 * @brief Index, either a StandardGameMode or custom defined by plugin.
+		 */
 		int index() const;
 
 		/**
-		 * @brief Name to display for game mode.
+		 * @brief User-friendly name to display for game mode.
 		 *
 		 * This should be fairly short about no longer than "cooperative".
 		 */
 		const QString &name() const;
 
+		/**
+		 * @brief Is this GameMode based on rivaling teams?
+		 */
 		bool isTeamGame() const;
+		/**
+		 * @brief 'Null' objects are invalid.
+		 */
 		bool isValid() const;
 
 	private:
@@ -185,8 +310,11 @@ class MAIN_EXPORT GameMode
 
 /**
  * @ingroup group_pluginapi
+ * @brief PWAD hosted on a server.
  *
  * Some ports support optional wads.
+ *
+ * This object is safe to copy.
  */
 class MAIN_EXPORT PWad
 {
@@ -195,7 +323,13 @@ class MAIN_EXPORT PWad
 		COPYABLE_D_POINTERED_DECLARE(PWad);
 		virtual ~PWad();
 
+		/**
+		 * @brief Is this WAD required to join the server?
+		 */
 		bool isOptional() const;
+		/**
+		 * @brief File name of the WAD.
+		 */
 		const QString& name() const;
 
 	private:
