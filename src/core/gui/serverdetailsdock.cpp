@@ -45,8 +45,8 @@ ServerDetailsDock::~ServerDetailsDock()
 void ServerDetailsDock::clear()
 {
 	lblServer->setText("");
-	sbLabel->setText("");
-	detailsLabel->setText("");
+	sbArea->setText("");
+	detailsArea->setText("");
 }
 
 void ServerDetailsDock::displaySelection(QList<ServerPtr> &selectedServers)
@@ -61,8 +61,8 @@ void ServerDetailsDock::displaySelection(QList<ServerPtr> &selectedServers)
 	lblServer->setText(server->name());
 	TooltipGenerator* tooltipGenerator = server->tooltipGenerator();
 	if(server->players().numClients() != 0)
-		sbLabel->setText(tooltipGenerator->playerTableHTML());
-	detailsLabel->setText(tooltipGenerator->dmflagsHTML());
+		sbArea->setText(tooltipGenerator->playerTableHTML());
+	detailsArea->setText(tooltipGenerator->dmflagsHTML());
 	delete tooltipGenerator;
 }
 
