@@ -328,7 +328,6 @@ void GameClientRunner::createCommandLineArguments_default()
 {
 	BAIL_ON_ERROR(addGamePaths());
 	BAIL_ON_ERROR(addConnectCommand());
-	BAIL_ON_ERROR(addCustomParameters());
 	if (d->server->isLocked())
 	{
 		BAIL_ON_ERROR(addPassword());
@@ -343,6 +342,7 @@ void GameClientRunner::createCommandLineArguments_default()
 	}
 	BAIL_ON_ERROR(addWads());
 	BAIL_ON_ERROR(addExtra());
+	BAIL_ON_ERROR(addCustomParameters());
 }
 
 JoinError GameClientRunner::createJoinCommandLine(CommandLineInfo& cli,
