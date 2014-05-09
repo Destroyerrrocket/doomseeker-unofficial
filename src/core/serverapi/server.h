@@ -278,6 +278,12 @@ class MAIN_EXPORT Server : public QObject
 		 * @see addPlayer()
 		 */
 		void clearPlayersList();
+
+		/**
+		 * @brief <b>[Virtual]</b> Allows a plugin to provide custom server details.
+		 */
+		QString customDetails();
+
 		/**
 		 * @brief dmflags used by this server.
 		 */
@@ -628,6 +634,8 @@ class MAIN_EXPORT Server : public QObject
 		void updated(ServerPtr server, int response);
 
 	protected:
+		POLYMORPHIC_SETTER_DECLARE(QString, Server, customDetails, ());
+
 		/**
 		 * @brief <b>[Pure Virtual]</b> Reads response packet.
 		 *
@@ -728,6 +736,7 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		void emitUpdated(int response);
 
+		QString customDetails_default();
 		QByteArray createSendRequest_default();
 		Response readRequest_default(const QByteArray &data);
 

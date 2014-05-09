@@ -24,6 +24,8 @@
 #ifndef __ODAMEXSERVER_H__
 #define __ODAMEXSERVER_H__
 
+#include <QMap>
+
 #include "serverapi/server.h"
 
 #define NUM_ODAMEX_GAME_MODES 5
@@ -39,6 +41,8 @@ class OdamexServer : public Server
 	public:
 		OdamexServer(const QHostAddress &address, unsigned short port);
 
+		QString customDetails();
+
 		const QStringList& dehs() const { return dehPatches; }
 		GameClientRunner* gameRunner();
 
@@ -48,6 +52,7 @@ class OdamexServer : public Server
 		Response readRequest(const QByteArray &data);
 		QByteArray createSendRequest();
 
+		QMap<QString, QString> cvars;
 		short protocol;
 		QStringList dehPatches;
 };

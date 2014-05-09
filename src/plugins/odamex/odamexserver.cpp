@@ -52,8 +52,24 @@
 OdamexServer::OdamexServer(const QHostAddress &address, unsigned short port)
 : Server(address, port), protocol(0)
 {
+	set_customDetails(&OdamexServer::customDetails);
 	set_readRequest(&OdamexServer::readRequest);
 	set_createSendRequest(&OdamexServer::createSendRequest);
+}
+
+QString OdamexServer::customDetails()
+{
+	if(cvars.empty())
+		return "";
+
+	QString cvarList("<ul>");
+	QMap<QString,QString>::ConstIterator iter = cvars.constBegin();
+	do
+	{
+		cvarList += QString("<li>%1 %2</li>").arg(iter.key()).arg(iter.value());
+	}
+	while(++iter != cvars.constEnd());
+	return cvarList + "</ul>";
 }
 
 GameClientRunner* OdamexServer::gameRunner()
@@ -100,6 +116,7 @@ Server::Response OdamexServer::readRequest(const QByteArray &data)
 
 	CHECK_POS;
 
+	cvars.clear();
 	short cvarCount = in.readQUInt8();
 	while(cvarCount-- > 0)
 	{
@@ -160,6 +177,8 @@ Server::Response OdamexServer::readRequest(const QByteArray &data)
 		}
 		else if(cvarName == "sv_website")
 			setWebSite(cvarValue);
+		else
+			cvars.insert(cvarName, cvarValue);
 	}
 
 	if(protocolVersion >= 4)

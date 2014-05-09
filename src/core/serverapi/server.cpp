@@ -108,6 +108,7 @@ class Server::PrivData
 		int triesLeft;
 		QWeakPointer<Server> self;
 
+		QString (Server::*customDetails)();
 		QByteArray (Server::*createSendRequest)();
 		Response (Server::*readRequest)(const QByteArray&);
 };
@@ -149,6 +150,7 @@ Server::Server(const QHostAddress &address, unsigned short port)
 	d->bKnown = false;
 	d->custom = false;
 
+	set_customDetails(&Server::customDetails_default);
 	set_createSendRequest(&Server::createSendRequest_default);
 	set_readRequest(&Server::readRequest_default);
 
@@ -164,6 +166,7 @@ Server::~Server()
 	delete d;
 }
 
+POLYMORPHIC_DEFINE(QString, Server, customDetails, (), ());
 POLYMORPHIC_DEFINE(QByteArray, Server, createSendRequest, (), ());
 POLYMORPHIC_DEFINE(Server::Response, Server, readRequest, (const QByteArray& data), (data));
 
@@ -249,6 +252,11 @@ ExeFile* Server::clientExe()
 	f->setExeTypeName(tr("client"));
 	f->setConfigKey("BinaryPath");
 	return f;
+}
+
+QString Server::customDetails_default()
+{
+	return "";
 }
 
 const QList<DMFlagsSection>& Server::dmFlags() const
