@@ -62,6 +62,8 @@ void ServerDetailsDock::displaySelection(QList<ServerPtr> &selectedServers)
 	TooltipGenerator* tooltipGenerator = server->tooltipGenerator();
 	if(server->players().numClients() != 0)
 		sbArea->setText(tooltipGenerator->playerTableHTML());
+	else
+		sbArea->setText(QString());
 	detailsArea->setText(QString("<div>%1</div>%2").arg(server->customDetails()).arg(tooltipGenerator->dmflagsHTML()));
 	delete tooltipGenerator;
 }
