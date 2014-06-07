@@ -37,6 +37,7 @@
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
 #include "serverapi/serverstructs.h"
+#include "urlopener.h"
 #include <QApplication>
 #include <QClipboard>
 #include <QDesktopServices>
@@ -187,7 +188,10 @@ void ServerListHandler::contextMenuTriggered(QAction* action)
 			break;
 
 		case ServerListContextMenu::OpenURL:
-			QDesktopServices::openUrl(server->webSite());
+			// Calling QDesktopServices::openUrl() here directly resulted
+			// in a crash somewhere in Qt libraries. UrlOpener defers the
+			// call with a timer and this fixes the crash.
+			UrlOpener::instance()->open(server->webSite());
 			break;
 
 		case ServerListContextMenu::NothingHappened:

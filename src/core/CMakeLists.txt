@@ -199,6 +199,7 @@ set(DOOMSEEKER_QT_FILES
 	main.h
 	socketsignalsadapter.h
 	connectionhandler.h
+	urlopener.h
 )
 
 qt_wrap_cpp(doomseekerWraps QT_FILES ${DOOMSEEKER_QT_FILES})
@@ -378,6 +379,7 @@ set(SOURCE_FILES
 	strings.cpp
 	utf8splitter.cpp
 	connectionhandler.cpp
+	urlopener.cpp
 	version.cpp
 	versiondump.cpp
 )
