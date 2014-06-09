@@ -34,13 +34,21 @@ class MainWindow;
 /**
  * @ingroup group_pluginapi
  * @brief Program central hub of information.
+ *
+ * Accessors provide plugins with certain objects and data that is not
+ * encapsulated in any singleton. Calling any non-const method from
+ * plugin perspective may result in undefined behavior of the program
+ * or even other plugins.
  */
 class MAIN_EXPORT Application : public QApplication
 {
 	public:
 		/**
-		 * @brief Doesn't delete the actual instance() but calls destroy()
-		 *        method.
+		 * @brief Deinitializes the program; executed when program is shutting
+		 *        down.
+		 *
+		 * Doesn't delete the actual instance() but calls destroy()
+		 * method.
 		 *
 		 * That way certain data fields can still be accessed after the
 		 * program is deinitialized. Actual instance is never deleted
@@ -55,7 +63,7 @@ class MAIN_EXPORT Application : public QApplication
 
 		/**
 		 * @brief Plugins and other threads can use this to figure out
-		 *        that program is closing.
+		 *        if program is closing.
 		 *
 		 * Threads should exit their loops and let the program close gracefully.
 		 */
@@ -64,20 +72,24 @@ class MAIN_EXPORT Application : public QApplication
 		/**
 		 * @brief MainWindow of the program.
 		 *
-		 * Might be NULL if current run doesn't create MainWindow.
+		 * Might be NULL if current run doesn't create a MainWindow.
 		 */
 		MainWindow *mainWindow() const;
 		/**
 		 * @brief Returns MainWindow as a QWidget.
 		 *
 		 * Useful for plugins that need to specify parent widget for dialog
-		 * boxes or such.
+		 * boxes or such, as MainWindow class itself is not exported.
+		 *
+		 * Might be NULL if current run doesn't create a MainWindow.
 		 */
 		QWidget *mainWindowAsQWidget() const;
 
 		void setMainWindow(MainWindow* mainWindow);
 		/**
-		 * @brief Called when program is shutting down.
+		 * @brief Makes isRunning() return false.
+		 *
+		 * Called when program is shutting down.
 		 */
 		void stopRunning();
 

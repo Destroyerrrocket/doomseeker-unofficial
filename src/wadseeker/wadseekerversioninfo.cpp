@@ -74,7 +74,7 @@ QString	WadseekerVersionInfo::userAgent()
 
 QString WadseekerVersionInfo::version()
 {
-	return "0.7.4";
+	return "0.8";
 }
 
 QString WadseekerVersionInfo::yearSpan()

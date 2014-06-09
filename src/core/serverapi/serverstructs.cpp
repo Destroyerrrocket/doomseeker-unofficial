@@ -113,6 +113,11 @@ int DMFlagsSection::count() const
 	return d->flags.count();
 }
 
+bool DMFlagsSection::isEmpty() const
+{
+	return count() == 0;
+}
+
 const QString& DMFlagsSection::name() const
 {
 	return d->name;

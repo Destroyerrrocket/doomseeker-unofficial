@@ -128,7 +128,6 @@ set(DOOMSEEKER_QT_FILES
 	gui/models/serverlistproxymodel.h
 	gui/models/serverlistrowhandler.h
 	gui/widgets/colorbutton.h
-	gui/widgets/createserverdialogpage.h
 	gui/widgets/dndfilesystemlistview.h
 	gui/widgets/dockedwidgets.h
 	gui/widgets/fontbutton.h
@@ -189,12 +188,10 @@ set(DOOMSEEKER_QT_FILES
 	serverapi/message.h
 	serverapi/rconprotocol.h
 	serverapi/server.h
-	serverapi/serverptr.h
 	updater/autoupdater.h
 	updater/updatechannel.h
 	updater/updaterinfoparser.h
 	updater/updateinstaller.h
-	application.h
 	apprunner.h
 	customservers.h
 	joincommandlinebuilder.h
@@ -202,6 +199,7 @@ set(DOOMSEEKER_QT_FILES
 	main.h
 	socketsignalsadapter.h
 	connectionhandler.h
+	urlopener.h
 )
 
 qt_wrap_cpp(doomseekerWraps QT_FILES ${DOOMSEEKER_QT_FILES})
@@ -381,6 +379,7 @@ set(SOURCE_FILES
 	strings.cpp
 	utf8splitter.cpp
 	connectionhandler.cpp
+	urlopener.cpp
 	version.cpp
 	versiondump.cpp
 )
@@ -398,6 +397,7 @@ set(HEADER_FILES
 	gui/helpers/playersdiagram.h
 	gui/irc/ircsounds.h
 	gui/irc/ircuserlistmodel.h
+	gui/widgets/createserverdialogpage.h
 	gui/widgets/qtabwidgetext.h
 	gui/commongui.h
 	ini/inisection.h
@@ -437,6 +437,7 @@ set(HEADER_FILES
 	serverapi/player.h
 	serverapi/playerslist.h
 	serverapi/polymorphism.h
+	serverapi/serverptr.h
 	serverapi/serverstructs.h
 	serverapi/serversummary.h
 	tests/testbase.h
@@ -450,6 +451,7 @@ set(HEADER_FILES
 	updater/updatepackage.h
 	updater/updatepackagefilter.h
 	updater/updaterscriptparser.h
+	application.h
 	commandline.h
 	commandlinetokenizer.h
 	datapaths.h

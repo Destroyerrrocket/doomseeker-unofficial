@@ -34,7 +34,7 @@
 #include "serverapi/gameclientrunner.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
-
+#include "apprunner.h"
 #include <QDesktopServices>
 #include <QMessageBox>
 #include <QUrl>

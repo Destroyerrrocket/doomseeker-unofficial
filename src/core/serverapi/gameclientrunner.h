@@ -27,11 +27,12 @@
 #include "serverapi/joinerror.h"
 #include "serverapi/polymorphism.h"
 #include "serverapi/serverptr.h"
-#include "apprunner.h"
 #include "global.h"
 #include <QObject>
 #include <QString>
 
+class CommandLineInfo;
+class Message;
 class Server;
 
 /**

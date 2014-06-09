@@ -46,7 +46,7 @@ void ZandronumGameHost::addDMFlags()
 
 		for (int j = 0; j < section.count(); ++j)
 		{
-			flagsValue |= 1 << section[i].value();
+			flagsValue |= section[i].value();
 		}
 
 		args() << argNames[i] << QString::number(flagsValue);

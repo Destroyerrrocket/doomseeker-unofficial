@@ -27,105 +27,110 @@
 DMFlagsSection ZandronumDmflags::compatflags()
 {
 	DMFlagsSection section("Compat. flags");
-	section << DMFlag( tr("Use Doom's shortest texture behavior"),						0 );
-	section << DMFlag( tr("Don't fix loop index for stair building"),						1 );
-	section << DMFlag( tr("Pain elemental is limited to 20 lost souls"),					2 );
-	section << DMFlag( tr("Pickups are only heard locally"),								3 );
-	section << DMFlag( tr("Infinitly tall actors"),										4 );
-	section << DMFlag( tr("Limit actors to only one sound"),								5 );
-	section << DMFlag( tr("Enable wallrunning"),											6 );
-	section << DMFlag( tr("Dropped items spawn on floor"),								7 );
-	section << DMFlag( tr("Special lines block use line"),								8 );
-	section << DMFlag( tr("Disable BOOM local door light effect"),						9 );
-	section << DMFlag( tr("Raven's scrollers use their original speed"),					10 );
-	section << DMFlag( tr("Use sector based sound target code"),							11 );
-	section << DMFlag( tr("Limit dehacked MaxHealth to health bonus"),					12 );
-	section << DMFlag( tr("Trace ignores lines with the same sector on both sides"),		13 );
-	section << DMFlag( tr("Monsters can not move when hanging over a drop off"),			14 );
-	section << DMFlag( tr("Scrolling sectors are additive like Boom"),					15 );
-	section << DMFlag( tr("Monsters can see semi-invisible players"),						16 );
-	section << DMFlag( tr("Limited movement in the air"),									17 );
-	section << DMFlag( tr("Allow map01 \"plasma bump\" bug"),								18 );
-	section << DMFlag( tr("Allow instant respawn after death"),							19 );
-	section << DMFlag( tr("Disable taunting"),											20 );
-	section << DMFlag( tr("Use doom2.exe's original sound curve"),						21 );
-	section << DMFlag( tr("Use original doom2 intermission music"),						22 );
-	section << DMFlag( tr("Disable stealth monsters"),									23 );
-	section << DMFlag( tr("Disable crosshair"),											25 );
-	section << DMFlag( tr("Force weapon switch"),											26 );
-	section << DMFlag( tr("Instantly moving floors are not silent"),						28 );
-	section << DMFlag( tr("Sector sounds use original method for sound orgin"),			29 );
-	section << DMFlag( tr("Use original Doom heights for clipping against projetiles"),	30 );
-	section << DMFlag( tr("Monsters can't be pushed over drop offs"),						31 );
+	section << DMFlag( tr("Use Doom's shortest texture behavior"), COMPATF_SHORTTEX);
+	section << DMFlag( tr("Don't fix loop index for stair building"), COMPATF_STAIRINDEX);
+	section << DMFlag( tr("Pain elemental is limited to 20 lost souls"), COMPATF_LIMITPAIN);
+	section << DMFlag( tr("Pickups are only heard locally"), COMPATF_SILENTPICKUP);
+	section << DMFlag( tr("Infinitly tall actors"), COMPATF_NO_PASSMOBJ);
+	section << DMFlag( tr("Limit actors to only one sound"), COMPATF_MAGICSILENCE);
+	section << DMFlag( tr("Enable wallrunning"), COMPATF_WALLRUN);
+	section << DMFlag( tr("Dropped items spawn on floor"), COMPATF_NOTOSSDROPS);
+	section << DMFlag( tr("Special lines block use line"), COMPATF_USEBLOCKING);
+	section << DMFlag( tr("Disable BOOM local door light effect"), COMPATF_NODOORLIGHT);
+	section << DMFlag( tr("Raven's scrollers use their original speed"), COMPATF_RAVENSCROLL);
+	section << DMFlag( tr("Use sector based sound target code"), COMPATF_SOUNDTARGET);
+	section << DMFlag( tr("Limit dehacked MaxHealth to health bonus"), COMPATF_DEHHEALTH);
+	section << DMFlag( tr("Trace ignores lines with the same sector on both sides"), COMPATF_TRACE);
+	section << DMFlag( tr("Monsters can not move when hanging over a drop off"), COMPATF_DROPOFF);
+	section << DMFlag( tr("Scrolling sectors are additive like Boom"), COMPATF_BOOMSCROLL);
+	section << DMFlag( tr("Monsters can see semi-invisible players"), COMPATF_INVISIBILITY);
+	section << DMFlag( tr("Limited movement in the air"), COMPATF_LIMITED_AIRMOVEMENT);
+	section << DMFlag( tr("Allow map01 \"plasma bump\" bug"), COMPATF_PLASMA_BUMP_BUG);
+	section << DMFlag( tr("Allow instant respawn after death"), COMPATF_INSTANTRESPAWN);
+	section << DMFlag( tr("Disable taunting"), COMPATF_DISABLETAUNTS);
+	section << DMFlag( tr("Use doom2.exe's original sound curve"), COMPATF_ORIGINALSOUNDCURVE);
+	section << DMFlag( tr("Use original doom2 intermission music"), COMPATF_OLDINTERMISSION);
+	section << DMFlag( tr("Disable stealth monsters"), COMPATF_DISABLESTEALTHMONSTERS);
+	section << DMFlag( tr("Radius damage has infinite height"), COMPATF_OLDRADIUSDMG);
+	section << DMFlag( tr("Disable crosshair"), COMPATF_NO_CROSSHAIR);
+	section << DMFlag( tr("Force weapon switch"), COMPATF_OLD_WEAPON_SWITCH);
+	section << DMFlag( tr("Instantly moving floors are not silent"), COMPATF_SILENT_INSTANT_FLOORS);
+	section << DMFlag( tr("Sector sounds use original method for sound orgin"), COMPATF_SECTORSOUNDS);
+	section << DMFlag( tr("Use original Doom heights for clipping against projetiles"), COMPATF_MISSILECLIP);
+	section << DMFlag( tr("Monsters can't be pushed over drop offs"), COMPATF_CROSSDROPOFF);
 	return section;
 }
 
 DMFlagsSection ZandronumDmflags::dmflags()
 {
 	DMFlagsSection section("DMFlags");
-	section << DMFlag( tr("Do not spawn health items (DM)"),				0 );
-	section << DMFlag( tr("Do not spawn powerups (DM)"), 					1 );
-	section << DMFlag( tr("Weapons remain after pickup (DM)"),				2 );
-	section << DMFlag( tr("Falling damage (ZDoom/Strife)"),					3 );
-	section << DMFlag( tr("Falling damage (Hexen/Strife)"), 				4 );
-	section << DMFlag( tr("Stay on same map when someone exits (DM)"),		6 );
-	section << DMFlag( tr("Spawn players as far as possible (DM)"),			7 );
-	section << DMFlag( tr("Automatically respawn dead players (DM)"),		8 );
-	section << DMFlag( tr("Don't spawn armor (DM)"),						9 );
-	section << DMFlag( tr("Kill anyone who tries to exit the level (DM)"),	10 );
-	section << DMFlag( tr("Infinite ammo"),									11 );
-	section << DMFlag( tr("No monsters"),									12 );
-	section << DMFlag( tr("Monsters respawn"),								13 );
-	section << DMFlag( tr("Items other than invuln. and invis. respawn"),	14 );
-	section << DMFlag( tr("Fast monsters"),									15 );
-	section << DMFlag( tr("No jumping"),									16 );
-	section << DMFlag( tr("No freelook"),									17 );
-	section << DMFlag( tr("Respawn invulnerability and invisibility"),		18 );
-	section << DMFlag( tr("Arbitrator FOV"),								19 );
-	section << DMFlag( tr("No multiplayer weapons in cooperative"),			20 );
-	section << DMFlag( tr("No crouching"),									21 );
-	section << DMFlag( tr("Lose all old inventory on respawn (COOP)"),		22 );
-	section << DMFlag( tr("Lose keys on respawn (COOP)"),					23 );
-	section << DMFlag( tr("Lose weapons on respawn (COOP)"),				24 );
-	section << DMFlag( tr("Lose armor on respawn (COOP)"),					25 );
-	section << DMFlag( tr("Lose powerups on respawn (COOP)"),				26 );
-	section << DMFlag( tr("Lose ammo on respawn (COOP)"),					27 );
-	section << DMFlag( tr("Lose half your ammo on respawn (COOP)"),			28 );
-	section << DMFlag( tr("Jumping allowed"),								29 );
-	section << DMFlag( tr("Crouching allowed"),								30 );
+	section << DMFlag( tr("Do not spawn health items (DM)"), DF_NO_HEALTH);
+	section << DMFlag( tr("Do not spawn powerups (DM)"), DF_NO_ITEMS);
+	section << DMFlag( tr("Weapons remain after pickup (DM)"), DF_WEAPONS_STAY);
+	section << DMFlag( tr("Falling damage (old ZDoom)"), DF_FORCE_FALLINGZD);
+	section << DMFlag( tr("Falling damage (Hexen)"), DF_FORCE_FALLINGHX);
+	section << DMFlag( tr("Falling damage (Strife)"), DF_FORCE_FALLINGST);
+	section << DMFlag( tr("Stay on same map when someone exits (DM)"), DF_SAME_LEVEL);
+	section << DMFlag( tr("Spawn players as far as possible (DM)"), DF_SPAWN_FARTHEST);
+	section << DMFlag( tr("Automatically respawn dead players (DM)"), DF_FORCE_RESPAWN);
+	section << DMFlag( tr("Don't spawn armor (DM)"), DF_NO_ARMOR);
+	section << DMFlag( tr("Kill anyone who tries to exit the level (DM)"), DF_NO_EXIT);
+	section << DMFlag( tr("Infinite ammo"), DF_INFINITE_AMMO);
+	section << DMFlag( tr("No monsters"), DF_NO_MONSTERS);
+	section << DMFlag( tr("Monsters respawn"), DF_MONSTERS_RESPAWN);
+	section << DMFlag( tr("Items other than invuln. and invis. respawn"), DF_ITEMS_RESPAWN);
+	section << DMFlag( tr("Fast monsters"), DF_FAST_MONSTERS);
+	section << DMFlag( tr("No jumping"), DF_NO_JUMP);
+	section << DMFlag( tr("No freelook"), DF_NO_FREELOOK);
+	section << DMFlag( tr("Respawn invulnerability and invisibility"), DF_RESPAWN_SUPER);
+	section << DMFlag( tr("Arbitrator FOV"), DF_NO_FOV);
+	section << DMFlag( tr("No multiplayer weapons in cooperative"), DF_NO_COOP_WEAPON_SPAWN);
+	section << DMFlag( tr("No crouching"), DF_NO_CROUCH);
+	section << DMFlag( tr("Lose all old inventory on respawn (COOP)"), DF_COOP_LOSE_INVENTORY);
+	section << DMFlag( tr("Lose keys on respawn (COOP)"), DF_COOP_LOSE_KEYS);
+	section << DMFlag( tr("Lose weapons on respawn (COOP)"), DF_COOP_LOSE_WEAPONS);
+	section << DMFlag( tr("Lose armor on respawn (COOP)"), DF_COOP_LOSE_ARMOR);
+	section << DMFlag( tr("Lose powerups on respawn (COOP)"), DF_COOP_LOSE_POWERUPS);
+	section << DMFlag( tr("Lose ammo on respawn (COOP)"), DF_COOP_LOSE_AMMO);
+	section << DMFlag( tr("Lose half your ammo on respawn (COOP)"), DF_COOP_HALVE_AMMO);
+	// Why do these two exist anyway?
+	section << DMFlag( tr("Jumping allowed"), DF_YES_JUMP);
+	section << DMFlag( tr("Crouching allowed"), DF_YES_CROUCH);
 	return section;
 }
 
 DMFlagsSection ZandronumDmflags::dmflags2()
 {
 	DMFlagsSection section("DMFlags2");
-	section << DMFlag( tr("Drop weapons upon death"), 						1 );
-	section << DMFlag( tr("Don't spawn runes"),								2 );
-	section << DMFlag( tr("Instantly return flags (ST/CTF)"),					3 );
-	section << DMFlag( tr("Don't allow players to switch teams"),				4 );
-	section << DMFlag( tr("Players are automatically assigned teams"),		5 );
-	section << DMFlag( tr("Double the amount of ammo given"),					6 );
-	section << DMFlag( tr("Players slowly lose health over 100% like Quake"),	7 );
-	section << DMFlag( tr("Allow BFG freeaiming"),							8 );
-	section << DMFlag( tr("Barrels respawn"),									9 );
-	section << DMFlag( tr("No respawn protection"),							10 );
-	section << DMFlag( tr("All players start with a shotgun"),				11 );
-	section << DMFlag( tr("Players respawn where they died (COOP)"),			12 );
-	section << DMFlag( tr("Players keep teams after map change"),				13 );
-	section << DMFlag( tr("Don't clear frags after each level"),				14 );
-	section << DMFlag( tr("Player can't respawn"),							15 );
-	section << DMFlag( tr("Lose a frag when killed"),							16 );
-	section << DMFlag( tr("Infinite inventory"),								17 );
-	section << DMFlag( tr("No rocket jumping"),								19 );
-	section << DMFlag( tr("Award damage not kills"),							20 );
-	section << DMFlag( tr("Force drawing alpha"),								21 );
-	section << DMFlag( tr("All monsters must be killed before exiting"),		22 );
-	section << DMFlag( tr("Players can't see the automap"),					23 );
-	section << DMFlag( tr("Allies can't be seen on the automap"),				24 );
-	section << DMFlag( tr("You can't spy allies"),							25 );
-	section << DMFlag( tr("Players can use chase cam"),						26 );
-	section << DMFlag( tr("Players can suicide"),								27 );
-	section << DMFlag( tr("Players can not use autoaim"),						28 );
+	section << DMFlag( tr("Drop weapons upon death"), DF2_YES_WEAPONDROP);
+	section << DMFlag( tr("Don't spawn runes"), DF2_NO_RUNES);
+	section << DMFlag( tr("Instantly return flags (ST/CTF)"), DF2_INSTANT_RETURN);
+	section << DMFlag( tr("Don't allow players to switch teams"), DF2_NO_TEAM_SWITCH);
+	section << DMFlag( tr("Players are automatically assigned teams"), DF2_NO_TEAM_SELECT);
+	section << DMFlag( tr("Double the amount of ammo given"), DF2_YES_DOUBLEAMMO);
+	section << DMFlag( tr("Players slowly lose health over 100% like Quake"), DF2_YES_DEGENERATION);
+	section << DMFlag( tr("Allow BFG freeaiming"), DF2_YES_FREEAIMBFG);
+	section << DMFlag( tr("Barrels respawn"), DF2_BARRELS_RESPAWN);
+	section << DMFlag( tr("No respawn protection"), DF2_NO_RESPAWN_INVUL);
+	section << DMFlag( tr("All players start with a shotgun"), DF2_COOP_SHOTGUNSTART);
+	section << DMFlag( tr("Players respawn where they died (COOP)"), DF2_SAME_SPAWN_SPOT);
+	section << DMFlag( tr("Players keep teams after map change"), DF2_YES_KEEP_TEAMS);
+	section << DMFlag( tr("Don't clear frags after each level"), DF2_YES_KEEPFRAGS);
+	section << DMFlag( tr("Player can't respawn"), DF2_NO_RESPAWN);
+	section << DMFlag( tr("Lose a frag when killed"), DF2_YES_LOSEFRAG);
+	section << DMFlag( tr("Infinite inventory"), DF2_INFINITE_INVENTORY);
+	section << DMFlag( tr("Force OpenGL defaults"), DF2_FORCE_GL_DEFAULTS);
+	section << DMFlag( tr("No rocket jumping"), DF2_NO_ROCKET_JUMPING);
+	section << DMFlag( tr("Award damage not kills"), DF2_AWARD_DAMAGE_INSTEAD_KILLS);
+	section << DMFlag( tr("Force drawing alpha"), DF2_FORCE_ALPHA);
+	section << DMFlag( tr("All monsters must be killed before exiting"), DF2_KILL_MONSTERS);
+	section << DMFlag( tr("Players can't see the automap"), DF2_NO_AUTOMAP);
+	section << DMFlag( tr("Allies can't be seen on the automap"), DF2_NO_AUTOMAP_ALLIES);
+	section << DMFlag( tr("You can't spy allies"), DF2_DISALLOW_SPYING);
+	section << DMFlag( tr("Players can use chase cam"), DF2_CHASECAM);
+	section << DMFlag( tr("Players can't suicide"), DF2_NOSUICIDE);
+	section << DMFlag( tr("Players can't use autoaim"), DF2_NOAUTOAIM);
+	section << DMFlag( tr("Spawn map actors in coop as if the game was single player"), DF2_COOP_SP_ACTOR_SPAWN);
 	return section;
 }
 
@@ -134,28 +139,30 @@ DMFlagsSection ZandronumDmflags::dmflags2()
 DMFlagsSection ZandronumDmflags1point0::compatflags2()
 {
 	DMFlagsSection section("Compat. flags 2");
-	section << DMFlag(tr("NETSCRIPTS are clientside"), 0);
-	section << DMFlag(tr("Clients send full button info"), 1);
-	section << DMFlag(tr("Disallow 'land' console command"), 2);
-	section << DMFlag(tr("Old random generator"), 3);
-	section << DMFlag(tr("Powerup spheres have NOGRAVITY flag"), 4);
-	section << DMFlag(tr("Don't stop scripts running on a player when player leaves the server"), 5);
-	section << DMFlag(tr("Explosion causes strong horizontal thrust (like old ZDoom)"), 6);
-	section << DMFlag(tr("Non-SOLID things fall through thing bridges"), 7);
-	section << DMFlag(tr("ZDoom 123B33 jump physics"), 8);
-	section << DMFlag(tr("Can't change weapons during raise/lower"), 9);
+	section << DMFlag(tr("NETSCRIPTS are clientside"), COMPATF2_NETSCRIPTS_ARE_CLIENTSIDE);
+	section << DMFlag(tr("Clients send full button info"), COMPATF2_CLIENTS_SEND_FULL_BUTTON_INFO);
+	section << DMFlag(tr("Disallow 'land' console command"), COMPATF2_NO_LAND);
+	section << DMFlag(tr("Old random generator"), COMPATF2_OLD_RANDOM_GENERATOR);
+	section << DMFlag(tr("Powerup spheres have NOGRAVITY flag"), COMPATF2_NOGRAVITY_SPHERES);
+	section << DMFlag(tr("Don't stop scripts running on a player when player leaves the server"),
+		COMPATF2_DONT_STOP_PLAYER_SCRIPTS_ON_DISCONNECT);
+	section << DMFlag(tr("Explosion causes strong horizontal thrust (like old ZDoom)"),
+		COMPATF2_EXPLOSION_THRUST);
+	section << DMFlag(tr("Non-SOLID things fall through thing bridges"), COMPATF2_BRIDGE_DROPS);
+	section << DMFlag(tr("ZDoom 123B33 jump physics"), COMPATF2_ZDOOM_123B33_JUMP_PHYSICS);
+	section << DMFlag(tr("Can't change weapons during raise/lower"), COMPATF2_FULL_WEAPON_LOWER);
 	return section;
 }
 
 DMFlagsSection ZandronumDmflags1point0::dmflags3()
 {
 	DMFlagsSection section("DMFlags3");
-	section << DMFlag(tr("Don't display names of targeted players"), 0);
-	section << DMFlag(tr("Apply lmsspectatorsettings in all game modes"), 1);
-	section << DMFlag(tr("Force no coop info"), 2);
-	section << DMFlag(tr("No unlagged"), 3);
-	section << DMFlag(tr("Noclip through other players"), 4);
-	section << DMFlag(tr("No medals"), 5);
+	section << DMFlag(tr("Don't display names of targeted players"), DF3_NO_IDENTIFY_TARGET);
+	section << DMFlag(tr("Apply lmsspectatorsettings in all game modes"), DF3_ALWAYS_APPLY_LMS_SPECTATORSETTINGS);
+	section << DMFlag(tr("Force no coop info"), DF3_NO_COOP_INFO);
+	section << DMFlag(tr("No unlagged"), DF3_NOUNLAGGED);
+	section << DMFlag(tr("Noclip through other players"), DF3_UNBLOCK_PLAYERS);
+	section << DMFlag(tr("No medals"), DF3_NO_MEDALS);
 	return section;
 }
 

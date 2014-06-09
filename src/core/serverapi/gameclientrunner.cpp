@@ -32,8 +32,10 @@
 #include "serverapi/gameexeretriever.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
+#include "apprunner.h"
 #include "commandlinetokenizer.h"
 #include "log.h"
+#include <QDir>
 #include <QScopedPointer>
 #include <QStringList>
 
@@ -326,7 +328,6 @@ void GameClientRunner::createCommandLineArguments_default()
 {
 	BAIL_ON_ERROR(addGamePaths());
 	BAIL_ON_ERROR(addConnectCommand());
-	BAIL_ON_ERROR(addCustomParameters());
 	if (d->server->isLocked())
 	{
 		BAIL_ON_ERROR(addPassword());
@@ -341,6 +342,7 @@ void GameClientRunner::createCommandLineArguments_default()
 	}
 	BAIL_ON_ERROR(addWads());
 	BAIL_ON_ERROR(addExtra());
+	BAIL_ON_ERROR(addCustomParameters());
 }
 
 JoinError GameClientRunner::createJoinCommandLine(CommandLineInfo& cli,

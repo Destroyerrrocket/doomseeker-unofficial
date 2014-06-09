@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// odamexserver.h
+// urlopener.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,43 +18,33 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#ifndef idAF497E8F_22A5_4630_ACB761050B5AF2BF
+#define idAF497E8F_22A5_4630_ACB761050B5AF2BF
 
-#ifndef __ODAMEXSERVER_H__
-#define __ODAMEXSERVER_H__
+#include <QUrl>
+#include <QObject>
 
-#include <QMap>
-
-#include "serverapi/server.h"
-
-#define NUM_ODAMEX_GAME_MODES 5
-
-class GameHost;
-class GameClientRunner;
-class EnginePlugin;
-
-class OdamexServer : public Server
+class UrlOpener : public QObject
 {
-	Q_OBJECT
+Q_OBJECT
 
-	public:
-		OdamexServer(const QHostAddress &address, unsigned short port);
+public:
+	static UrlOpener *instance();
 
-		QString customDetails();
+	void open(const QUrl &url);
 
-		const QStringList& dehs() const { return dehPatches; }
-		GameClientRunner* gameRunner();
+private:
+	class PrivData;
+	PrivData *d;
 
-		EnginePlugin* plugin() const;
+	UrlOpener();
 
-	protected:
-		Response readRequest(const QByteArray &data);
-		QByteArray createSendRequest();
+	static UrlOpener *inst;
 
-		QMap<QString, QString> cvars;
-		short protocol;
-		QStringList dehPatches;
+private slots:
+	void doOpen();
 };
 
-#endif /* __ODAMEXSERVER_H__ */
+#endif

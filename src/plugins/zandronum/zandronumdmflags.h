@@ -109,7 +109,7 @@ class ZandronumDmflags : public QObject
 			DF2_NO_AUTOMAP_ALLIES = 1 << 24,	// Allies can been seen on the automap.
 			DF2_DISALLOW_SPYING = 1 << 25, // You can spy on your allies.
 			DF2_CHASECAM = 1 << 26, // Players can use the chasecam cheat.
-			DF2_NOSUICIDE = 1 << 27, // Players are allowed to suicide.
+			DF2_NOSUICIDE = 1 << 27, // Players aren't allowed to suicide.
 			DF2_NOAUTOAIM = 1 << 28, // Players cannot use autoaim.
 
 			// [BB] Enforces some Gl rendering options to their default values.

@@ -35,7 +35,7 @@ ServerDetailsDock::ServerDetailsDock(QWidget *parent) : QDockWidget(parent)
 	setupUi(this);
 	this->toggleViewAction()->setIcon(QIcon(":/icons/server_details.png"));
 
-	connect(this, SIGNAL( dockLocationChanged(Qt::DockWidgetArea) ), SLOT( handleLocation(Qt::DockWidgetArea) ));
+	clear();
 }
 
 ServerDetailsDock::~ServerDetailsDock()
@@ -44,8 +44,9 @@ ServerDetailsDock::~ServerDetailsDock()
 
 void ServerDetailsDock::clear()
 {
-	sbLabel->setText("");
-	detailsLabel->setText("");
+	lblServer->setText("");
+	sbArea->setText("");
+	detailsArea->setText("");
 }
 
 void ServerDetailsDock::displaySelection(QList<ServerPtr> &selectedServers)
@@ -57,31 +58,32 @@ void ServerDetailsDock::displaySelection(QList<ServerPtr> &selectedServers)
 		return;
 	}
 
+	lblServer->setText(server->name());
 	TooltipGenerator* tooltipGenerator = server->tooltipGenerator();
 	if(server->players().numClients() != 0)
-		sbLabel->setText(tooltipGenerator->playerTableHTML());
-	detailsLabel->setText(tooltipGenerator->dmflagsHTML());
+		sbArea->setText(tooltipGenerator->playerTableHTML());
+	else
+		sbArea->setText(QString());
+	detailsArea->setText(QString("<div>%1</div>%2").arg(server->customDetails()).arg(tooltipGenerator->dmflagsHTML()));
 	delete tooltipGenerator;
 }
 
-void ServerDetailsDock::handleLocation(Qt::DockWidgetArea area)
+void ServerDetailsDock::reorientContentsBasingOnDimensions()
 {
-	switch(area)
+	const int TOPTOBOTTOM_PREFERENCE_THRESHOLD = 100;
+	if (height() + TOPTOBOTTOM_PREFERENCE_THRESHOLD > width())
 	{
-		case Qt::LeftDockWidgetArea:
-		case Qt::RightDockWidgetArea:
-			// Try to reorient the widgets if we're docking in a vertical position.
-			// We can't assume the area value is good enough since having the central
-			// widget be a dock means that the RightDockWidgetArea is favored.
-			if(width() < height())
-			{
-				static_cast<QBoxLayout*>(widget()->layout())->setDirection(QBoxLayout::TopToBottom);
-				break;
-			}
-		default:
-			static_cast<QBoxLayout*>(widget()->layout())->setDirection(QBoxLayout::LeftToRight);
-			break;
+		static_cast<QBoxLayout*>(dataLayout)->setDirection(QBoxLayout::TopToBottom);
 	}
+	else
+	{
+		static_cast<QBoxLayout*>(dataLayout)->setDirection(QBoxLayout::LeftToRight);
+	}
+}
+
+void ServerDetailsDock::resizeEvent(QResizeEvent *event)
+{
+	reorientContentsBasingOnDimensions();
 }
 
 ServerPtr ServerDetailsDock::selectServer(QList<ServerPtr> &selectedServers)

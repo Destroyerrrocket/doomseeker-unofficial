@@ -153,12 +153,8 @@ void FixedFtpReply::abort()
 {
 	bIsAborting = true;
 	ftp->abort();
-	if (ftp->currentCommand() == QFtp::ConnectToHost)
-	{
-		// We haven't even yet connected to the host so the
-		// abort is successful.
-		emit finished();
-	}
+	ftp->disconnect(this);
+	emit finished();
 }
 
 void FixedFtpReply::close()

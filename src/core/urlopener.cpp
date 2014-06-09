@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// dmflagshtmlgenerator.cpp
+// urlopener.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,57 +18,46 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "dmflagshtmlgenerator.h"
+#include "urlopener.h"
 
-#include "serverapi/server.h"
-#include "serverapi/serverstructs.h"
+#include <QDesktopServices>
+#include <QQueue>
+#include <QTimer>
 
-class DmflagsHtmlGenerator::PrivData
+class UrlOpener::PrivData
 {
-	public:
-		ServerCPtr server;
-
-		QString mkSectionContents(const DMFlagsSection &section)
-		{
-			QString result;
-			for (int i = 0; i < section.count(); ++i)
-			{
-				result += "<li>" + section[i].name() + "</li>";
-			}
-			return result;
-		}
+public:
+	QQueue<QUrl> queue;
 };
 
-DmflagsHtmlGenerator::DmflagsHtmlGenerator(const ServerCPtr &server)
+UrlOpener *UrlOpener::inst = NULL;
+
+UrlOpener::UrlOpener()
 {
 	d = new PrivData();
-	d->server = server;
 }
 
-DmflagsHtmlGenerator::~DmflagsHtmlGenerator()
+void UrlOpener::doOpen()
 {
-	delete d;
+	if (!d->queue.isEmpty())
+	{
+		QDesktopServices::openUrl(d->queue.dequeue());
+	}
 }
 
-QString DmflagsHtmlGenerator::generate()
+UrlOpener *UrlOpener::instance()
 {
-	QString result;
-	const QList<DMFlagsSection> sections = d->server->dmFlags();
-	foreach(const DMFlagsSection &section, sections)
+	if (inst == NULL)
 	{
-		if (!section.isEmpty())
-		{
-			result += QString("<li><b>%1 (%2):</b></li>").arg(section.name()).arg(section.combineValues());
-			result += "<ul>";
-			result += d->mkSectionContents(section);
-			result += "</ul>";
-		}
+		inst = new UrlOpener();
 	}
-	if (!result.isEmpty())
-	{
-		result = "<ul>" + result + "</ul>";
-	}
-	return result;
+	return inst;
+}
+
+void UrlOpener::open(const QUrl &url)
+{
+	d->queue.enqueue(url);
+	QTimer::singleShot(0, this, SLOT(doOpen()));
 }
