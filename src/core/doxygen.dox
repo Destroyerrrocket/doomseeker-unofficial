@@ -27,7 +27,11 @@
 *
 * @section mainpage_sowheredoistart So, where do I start?
 *
-* Start by referring to @ref group_pluginapi module.
+* A short startup guide can be found on this page:\n
+* http://doomseeker.drdteam.org/docs/plugins.php
+*
+* Detailed help can be obtained by referring to @ref group_pluginapi reference
+* documentation.
 */
 
 /**

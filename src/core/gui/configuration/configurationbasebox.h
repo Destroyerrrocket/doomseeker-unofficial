@@ -32,12 +32,15 @@
 
 /**
  * @ingroup group_pluginapi
- * @brief Base class for configuration group boxes.
+ * @brief Base class for configuration pages.
  *
- * Such group boxes contain actual widgets allowing user input
- * in order to configure program's modules. Settings are being
- * read() and save()'d through virtual methods, however the
- * implementation of such methods can do basicaly anything.
+ * Subclassed pages contain actual widgets allowing user input
+ * in order to configure program's modules. Specific settings are
+ * read and saved through virtual methods: saveSettings() and readSettings().
+ *
+ * Plugins should rather inherit from EngineConfigurationBaseBox
+ * as this provides some default, common behavior, like executable path or
+ * custom program parameters configuration.
  */
 class MAIN_EXPORT ConfigurationBaseBox : public QWidget
 {
@@ -47,51 +50,71 @@ class MAIN_EXPORT ConfigurationBaseBox : public QWidget
 		ConfigurationBaseBox(QWidget* parent = NULL);
 		virtual ~ConfigurationBaseBox();
 
+		/**
+		 * @brief Does this page allow to save the new settings?
+		 *
+		 * @see setAllowSave()
+		 */
 		bool allowSave();
+		/**
+		 * @brief true if settings for this page have already been loaded
+		 *        at least once.
+		 */
 		bool areSettingsAlreadyRead();
 
 		/**
-		 *	@brief Reimplement this to return displayable icon for the
-		 *	ConfigurationBaseBox.
+		 * @brief Reimplement this to return a displayable icon for the
+		 *        ConfigurationBaseBox.
 		 *
-		 *	If there is no QIcon associated with this box just return
-		 *	QIcon object with argument-less constructor.
+		 * If there is no QIcon associated with this box just return
+		 * a QIcon object with argument-less constructor.
 		 */
 		virtual QIcon icon() const = 0;
 
 		/**
-		 * @brief Reimplement this to return list-displayable name for the
+		 * @brief Reimplement this to return a list-displayable name for this
 		 *        ConfigurationBaseBox.
 		 */
 		virtual QString name() const = 0;
 
+		/**
+		 * @brief Change whether settings on this page can be stored in
+		 *        persisting configuration.
+		 */
 		void setAllowSave(bool b);
+		/**
+		 * @brief Read configuration from persistence to page contents.
+		 */
 		void read();
+		/**
+		 * @brief Save configuration from page contents to persistence.
+		 *
+		 * @return true if save completes successfully, false on error.
+		 */
 		bool save();
 		/**
-		 * @brief Groupbox page title, by default returns name().
+		 * @brief Page title, by default returns the same string as name().
 		 */
 		virtual QString title() const;
 
 	signals:
 		/**
-		 *	This will send a request to the Doomseeker through
-		 *	ConfigurationDialog to redraw some graphics.
+		 * @brief Emit to tell Doomseeker to redraw certain widgets.
+		 *
+		 * This will send a request to Doomseeker to redraw some graphics.
+		 * This should be emitted if settings on current page change
+		 * program's appearance so that program can redraw affected widgets.
 		 */
 		void appearanceChanged();
 
 	protected:
 		/**
-		 *	These shouldn't execute Config::readConfig() and
-		 *	Config::saveConfig() methods. They're here to read settings
-		 *	from and write them to controls.
+		 * @brief Reimplement this to read settings from config into widgets.
 		 */
 		virtual void readSettings()=0;
 
 		/**
-		 *	These shouldn't execute Config::readConfig() and
-		 *	Config::saveConfig() methods. They're here to read settings
-		 *	from and write them to controls.
+		 * @brief Reimplement this to write settings to config from widgets.
 		 */
 		virtual void saveSettings()=0;
 
