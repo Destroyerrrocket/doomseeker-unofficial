@@ -20,14 +20,18 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>r389</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
 	<key>CFBundleShortVersionString</key>
 	<string>r389</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Doomseeker and its likeness © 2010 The Skulltag Team.</string>
+	<string>Doomseeker and its likeness © 2014 The Doomseeker Team.</string>
 	<key>CFBundleLongVersionString</key>
 	<string>r389</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Doomseeker and its likeness © 2010 The Skulltag Team.</string>
+	<string>Doomseeker and its likeness © 2014 The Doomseeker Team.</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
 	<key>LSRequiresCarbon</key>
 	<true/>
 </dict>

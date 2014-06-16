@@ -382,7 +382,7 @@
     <string>&amp;Wadseeker</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+W</string>
+    <string>Ctrl+Alt+W</string>
    </property>
   </action>
   <action name="menuActionBuddies">
