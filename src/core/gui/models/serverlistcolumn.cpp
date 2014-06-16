@@ -50,7 +50,7 @@ QString ServerListColumns::columnLabel(int columnId)
 	switch (columnId)
 	{
 		case IDPort:
-			return tr("Port");
+			return "";
 		case IDPlayers:
 			return tr("Players");
 		case IDPing:
