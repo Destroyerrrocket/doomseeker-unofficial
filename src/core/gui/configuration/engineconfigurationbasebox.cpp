@@ -141,6 +141,8 @@ void EngineConfigurationBaseBox::readSettings()
 	if(d->plugin->data()->hasMasterServer)
 		leMasterserverAddress->setText(d->config->value("Masterserver").toString());
 	leServerBinaryPath->setText(d->config->value("ServerBinaryPath").toString());
+
+	updateCustomParametersSaveState();
 }
 
 void EngineConfigurationBaseBox::removeCurrentCustomParametersFromStorage()
@@ -206,6 +208,7 @@ QString EngineConfigurationBaseBox::title() const
 void EngineConfigurationBaseBox::updateCustomParametersSaveState()
 {
 	bool paramExists = d->existsInStoredCustomParameters(currentCustomParameters());
-	btnSaveCustomParameters->setVisible(!paramExists);
-	btnDeleteCustomParameters->setVisible(paramExists);
+	bool isEmpty = currentCustomParameters().isEmpty();
+	btnSaveCustomParameters->setVisible(!isEmpty && !paramExists);
+	btnDeleteCustomParameters->setVisible(!isEmpty && paramExists);
 }
