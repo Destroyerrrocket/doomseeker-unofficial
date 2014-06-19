@@ -106,6 +106,7 @@
 	<file alias="flags/PER">flags/PER.png</file> <!-- Peru -->
 	<file alias="flags/PHL">flags/PHL.png</file> <!-- Philippines -->
 	<file alias="flags/POL">flags/POL.png</file> <!-- Poland -->
+	<file alias="flags/PRI">flags/PRI.png</file> <!-- Puerto Rico -->
 	<file alias="flags/PRT">flags/PRT.png</file> <!-- Portugal -->
 	<file alias="flags/PRY">flags/PRY.png</file> <!-- Paraguay -->
 	<file alias="flags/QAT">flags/QAT.png</file> <!-- Qatar -->
