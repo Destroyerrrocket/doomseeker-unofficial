@@ -63,8 +63,8 @@ EngineConfigurationBaseBox::EngineConfigurationBaseBox(const EnginePlugin *plugi
 	if(!plugin->data()->hasMasterServer)
 		masterAddressBox->hide();
 
-	connect(btnBrowseClientBinary, SIGNAL( clicked() ), this, SLOT ( btnBrowseClientBinaryClicked() ));
-	connect(btnBrowseServerBinary, SIGNAL( clicked() ), this, SLOT ( btnBrowseServerBinaryClicked() ));
+	this->connect(btnBrowseClientBinary, SIGNAL( clicked() ), SLOT( browseForClientBinary() ));
+	this->connect(btnBrowseServerBinary, SIGNAL( clicked() ), SLOT( browseForServerBinary() ));
 }
 
 EngineConfigurationBaseBox::~EngineConfigurationBaseBox()
@@ -88,18 +88,20 @@ void EngineConfigurationBaseBox::browseForBinary(QLineEdit *input, const QString
 	// Other platforms do not have an extension for their binary files.
 	filter = tr("Any files(*)");
 #endif
-	QString strFilepath = QFileDialog::getOpenFileName(this, tr("Doomseeker - choose ") + d->plugin->data()->name + " " + type, QString(), filter);
-	if(!strFilepath.isEmpty()) // don't update if nothing was selected.
-		input->setText(strFilepath);
+	QString filepath = QFileDialog::getOpenFileName(this,
+		tr("Doomseeker - choose %1 %2").arg(d->plugin->data()->name).arg(type),
+		QString(), filter);
+	if (!filepath.isEmpty())
+		input->setText(filepath);
 }
 
-void EngineConfigurationBaseBox::btnBrowseClientBinaryClicked()
+void EngineConfigurationBaseBox::browseForClientBinary()
 {
 	browseForBinary(leClientBinaryPath, tr("client binary"));
 
 }
 
-void EngineConfigurationBaseBox::btnBrowseServerBinaryClicked()
+void EngineConfigurationBaseBox::browseForServerBinary()
 {
 	browseForBinary(leServerBinaryPath, tr("server binary"));
 }

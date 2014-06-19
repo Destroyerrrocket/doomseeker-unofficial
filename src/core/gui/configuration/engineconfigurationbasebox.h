@@ -85,22 +85,20 @@ class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox, priv
 		       Name of executable type, displayed in browser's title.
 		 */
 		void browseForBinary(QLineEdit *input, const QString &type);
-		void makeClientOnly();
 		void saveSettings();
-
-	protected slots:
-		void btnBrowseClientBinaryClicked();
-		void btnBrowseServerBinaryClicked();
 
 	private:
 		class PrivData;
 		PrivData *d;
 
 		QString currentCustomParameters() const;
+		void makeClientOnly();
 		void removeStoredCustomParametersFromConfig(const QString &parameters);
 		void removeStoredCustomParametersFromWidget(const QString &parameters);
 
 	private slots:
+		void browseForClientBinary();
+		void browseForServerBinary();
 		void removeCurrentCustomParametersFromStorage();
 		void saveCustomParameters();
 		void updateCustomParametersSaveState();
