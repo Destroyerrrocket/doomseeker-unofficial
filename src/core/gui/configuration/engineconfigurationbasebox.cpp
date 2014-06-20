@@ -57,6 +57,10 @@ EngineConfigurationBaseBox::EngineConfigurationBaseBox(const EnginePlugin *plugi
 	d->config = &cfg;
 	setupUi(this);
 
+	// Prevent combo box stretching.
+	cboCustomParameters->setMinimumContentsLength(25);
+	cboCustomParameters->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+
 	if(plugin->data()->clientOnly)
 		makeClientOnly();
 
