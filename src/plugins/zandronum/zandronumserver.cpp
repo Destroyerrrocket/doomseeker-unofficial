@@ -67,7 +67,7 @@ ZandronumVersion::ZandronumVersion(QString version) : version(version)
 	QStringList parts = versionExpression.capturedTexts();
 	major = parts[1].toUShort();
 	minor = parts[2].toUShort();
-	revision = parts[3][0].toAscii();
+	revision = parts[3].toUShort();
 	build = parts[4].toUShort();
 	tag = parts[5];
 	hgRevisionDate = parts[6].toUInt();
@@ -76,7 +76,10 @@ ZandronumVersion::ZandronumVersion(QString version) : version(version)
 
 bool ZandronumVersion::operator> (const ZandronumVersion &other) const
 {
-	if(major > other.major && minor > other.minor && revision > other.revision && build > other.build)
+	if(major > other.major ||
+		(major == other.major && (minor > other.minor ||
+		(minor == other.minor && (revision > other.revision ||
+		(revision == other.revision && build > other.build))))))
 		return true;
 	if((tag.isEmpty() && !other.tag.isEmpty()) || (tag > other.tag))
 		return true;
@@ -87,7 +90,7 @@ bool ZandronumVersion::operator> (const ZandronumVersion &other) const
 	return false;
 }
 
-const QRegExp ZandronumVersion::versionExpression("(\\d+).(\\d+)([a-zA-Z]?)(\\d*)(?:-([a-zA-Z]*)?)?(?:-r(\\d+)(?:-(\\d+))?)?");
+const QRegExp ZandronumVersion::versionExpression("(\\d+).(\\d+).(\\d+)(?:.(\\d+))?(?:-([a-zA-Z]*)?)?(?:-r(\\d+)(?:-(\\d+))?)?");
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -526,10 +529,7 @@ Server::Response ZandronumServer::readRequest(const QByteArray &data)
 		}
 	}
 
-	// Due to a bug in 0.97d3 we need to add additional checks here.
-	// 0.97d3 servers also respond with SQF_TESTING_SERVER flag set
-	// if it was previously sent to them
-	if (in.remaining() != 0 && ZandronumVersion(gameVersion()) > ZandronumVersion("0.97d3") && (flags & SQF_TESTING_SERVER) == SQF_TESTING_SERVER)
+	if (in.remaining() != 0 && (flags & SQF_TESTING_SERVER) == SQF_TESTING_SERVER)
 	{
 		flags ^= SQF_TESTING_SERVER;
 
