@@ -5,10 +5,12 @@ include(../PluginHeader.txt)
 
 qt4_wrap_ui(ZANDRONUM_UI_FILES
 	createserverdialogpages/flagspage.ui
+	createserverdialogpages/votingsetupwidget.ui
 )
 
 set(ZANDRONUM_QT_FILES
 	createserverdialogpages/flagspage.h
+	createserverdialogpages/votingsetupwidget.h
 	enginezandronumconfigbox.h
 	zandronumbinaries.h
 	zandronumdmflags.h
@@ -20,6 +22,7 @@ set(ZANDRONUM_QT_FILES
 set(ZANDRONUM_FILES
 	createserverdialogpages/flagspagevaluecontroller.cpp
 	createserverdialogpages/flagspage.cpp
+	createserverdialogpages/votingsetupwidget.cpp
 	huffman/bitreader.cpp
 	huffman/bitwriter.cpp
 	huffman/huffcodec.cpp
