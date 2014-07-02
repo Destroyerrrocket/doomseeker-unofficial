@@ -76,7 +76,7 @@ bool CanRefreshServer::hasEnoughTimeSinceLastRefreshPassed() const
 
 	if (d->server->lastResponse() == Server::RESPONSE_TIMEOUT)
 	{
-		return d->secsSinceLastRefresh() > 1;
+		return d->secsSinceLastRefresh() >= 1;
 	}
 	else
 	{
