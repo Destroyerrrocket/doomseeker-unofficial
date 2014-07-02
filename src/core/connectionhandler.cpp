@@ -30,6 +30,7 @@
 #include "gui/configuration/doomseekerconfigurationdialog.h"
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
+#include "refresher/canrefreshserver.h"
 #include "refresher/refresher.h"
 #include "serverapi/gameclientrunner.h"
 #include "serverapi/message.h"
@@ -158,7 +159,8 @@ void ConnectionHandler::refreshToJoin()
 {
 	// If the data we have is old we should refresh first to check if we can
 	// still properly join the server.
-	if(d->server->isRefreshable() && gConfig.doomseeker.bQueryBeforeLaunch)
+	CanRefreshServer refreshCheck(d->server.data());
+	if(refreshCheck.shouldRefresh() && gConfig.doomseeker.bQueryBeforeLaunch)
 	{
 		gRefresher->registerServer(d->server.data());
 	}

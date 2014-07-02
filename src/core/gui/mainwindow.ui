@@ -382,7 +382,7 @@
     <string>&amp;Wadseeker</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+W</string>
+    <string>Ctrl+Alt+W</string>
    </property>
   </action>
   <action name="menuActionBuddies">
@@ -402,7 +402,7 @@
      <normaloff>:/flags/localhost-small</normaloff>:/flags/localhost-small</iconset>
    </property>
    <property name="text">
-    <string>&amp;Create Server</string>
+    <string>&amp;Create Game</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>

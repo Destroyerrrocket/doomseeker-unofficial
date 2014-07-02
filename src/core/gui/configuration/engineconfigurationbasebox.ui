@@ -88,7 +88,40 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="leCustomParameters"/>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QComboBox" name="cboCustomParameters">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="editable">
+        <bool>true</bool>
+       </property>
+       <property name="insertPolicy">
+        <enum>QComboBox::InsertAlphabetically</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnSaveCustomParameters">
+       <property name="icon">
+        <iconset resource="../../../../media/resources.qrc">
+         <normaloff>:/icons/diskette.png</normaloff>:/icons/diskette.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnDeleteCustomParameters">
+       <property name="icon">
+        <iconset resource="../../../../media/resources.qrc">
+         <normaloff>:/icons/x.png</normaloff>:/icons/x.png</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QWidget" name="masterAddressBox" native="true">
@@ -124,6 +157,62 @@
    </item>
   </layout>
  </widget>
- <resources/>
- <connections/>
+ <resources>
+  <include location="../../../../media/resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>btnSaveCustomParameters</sender>
+   <signal>clicked()</signal>
+   <receiver>EngineConfigurationBaseBox</receiver>
+   <slot>saveCustomParameters()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>326</x>
+     <y>133</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>326</x>
+     <y>148</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnDeleteCustomParameters</sender>
+   <signal>clicked()</signal>
+   <receiver>EngineConfigurationBaseBox</receiver>
+   <slot>removeCurrentCustomParametersFromStorage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>353</x>
+     <y>133</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>357</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cboCustomParameters</sender>
+   <signal>editTextChanged(QString)</signal>
+   <receiver>EngineConfigurationBaseBox</receiver>
+   <slot>updateCustomParametersSaveState()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>291</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>291</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>saveCustomParameters()</slot>
+  <slot>removeCurrentCustomParametersFromStorage()</slot>
+  <slot>updateCustomParametersSaveState()</slot>
+ </slots>
 </ui>

@@ -320,6 +320,7 @@ set(SOURCE_FILES
 	pathfinder/wadpathfinder.cpp
 	plugins/engineplugin.cpp
 	plugins/pluginloader.cpp
+	refresher/canrefreshserver.cpp
 	refresher/refresher.cpp
 	serverapi/tooltips/dmflagshtmlgenerator.cpp
 	serverapi/tooltips/gameinfotip.cpp
@@ -429,6 +430,7 @@ set(HEADER_FILES
 	pathfinder/wadpathfinder.h
 	plugins/engineplugin.h
 	plugins/pluginloader.h
+	refresher/canrefreshserver.h
 	serverapi/tooltips/tooltipgenerator.h
 	serverapi/buddyinfo.h
 	serverapi/gamecreateparams.h

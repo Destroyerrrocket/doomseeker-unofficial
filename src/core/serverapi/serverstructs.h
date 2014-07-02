@@ -171,7 +171,7 @@ class MAIN_EXPORT GameCVar
 		bool isValid() const;
 
 		/**
-		 * @brief Nice name to display to user in Create Server dialog and
+		 * @brief Nice name to display to user in Create Game dialog and
 		 *        in other widgets.
 		 */
 		const QString &name() const;

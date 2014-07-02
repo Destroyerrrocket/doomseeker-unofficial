@@ -91,11 +91,17 @@ class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox, priv
 		class PrivData;
 		PrivData *d;
 
+		QString currentCustomParameters() const;
 		void makeClientOnly();
+		void removeStoredCustomParametersFromConfig(const QString &parameters);
+		void removeStoredCustomParametersFromWidget(const QString &parameters);
 
 	private slots:
 		void browseForClientBinary();
 		void browseForServerBinary();
+		void removeCurrentCustomParametersFromStorage();
+		void saveCustomParameters();
+		void updateCustomParametersSaveState();
 };
 
 #endif /* __ENGINECONFIGBASE_H__ */

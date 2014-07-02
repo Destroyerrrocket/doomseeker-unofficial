@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// vavoomengineplugin.cpp
+// canrefreshserver.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,47 +18,25 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#ifndef id659CC023_3107_4F93_87BF5FE76A9468E9
+#define id659CC023_3107_4F93_87BF5FE76A9468E9
 
-#include "plugins/engineplugin.h"
+class Server;
 
-#include "vavoomgameinfo.h"
-#include "vavoomengineplugin.h"
-#include "vavoommasterclient.h"
-#include "vavoomserver.h"
-
-INSTALL_PLUGIN(VavoomEnginePlugin)
-
-VavoomEnginePlugin::VavoomEnginePlugin()
+class CanRefreshServer
 {
-	const // clear warnings
-	#include "vavoom.xpm"
+public:
+	CanRefreshServer(const Server *server);
+	~CanRefreshServer();
 
-	init("Vavoom", vavoom_xpm,
-		EP_Author, "The Doomseeker Team",
-		EP_Version, 9,
+	bool hasEnoughTimeSinceLastRefreshPassed() const;
+	bool shouldRefresh() const;
 
-		EP_AllowsURL,
-		EP_AllowsEmail,
-		EP_AllowsConnectPassword,
-		EP_AllowsJoinPassword,
-		EP_AllowsRConPassword,
-		EP_AllowsMOTD,
-		EP_DefaultServerPort, 26000,
-		EP_HasMasterServer,
-		EP_DefaultMaster, "altdeath.com:26001",
-		EP_GameModes, VavoomGameInfo::gameModes(),
-		EP_Done
-	);
-}
+private:
+	class PrivData;
+	PrivData *d;
+};
 
-MasterClient *VavoomEnginePlugin::masterClient() const
-{
-	return new VavoomMasterClient();
-}
-
-ServerPtr VavoomEnginePlugin::mkServer(const QHostAddress &address, unsigned short port) const
-{
-	return ServerPtr(new VavoomServer(address, port));
-}
+#endif

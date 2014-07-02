@@ -197,7 +197,7 @@ void DoomseekerConfigurationDialog::openConfiguration(const EnginePlugin *openPl
 void DoomseekerConfigurationDialog::showPluginConfiguration(const EnginePlugin *plugin)
 {
 	// Find plugin page and make it the active page
-	for(unsigned int i = 0;i < enginesRoot->rowCount();++i)
+	for(int i = 0;i < enginesRoot->rowCount();++i)
 	{
 		QStandardItem *page = enginesRoot->child(i);
 		QtMetaPointer metaPointer = qVariantValue<QtMetaPointer>(page->data());

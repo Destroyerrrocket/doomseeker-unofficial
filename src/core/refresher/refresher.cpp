@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "refresher.h"
 
+#include "refresher/canrefreshserver.h"
 #include "serverapi/masterclient.h"
 #include "serverapi/masterclientsignalproxy.h"
 #include "serverapi/mastermanager.h"
@@ -287,7 +288,8 @@ bool Refresher::registerServer(Server* server)
 	purgeNullServers();
 	if (!d->registeredServers.contains(server))
 	{
-		if (!server->isRefreshable())
+		CanRefreshServer refreshChecker(server);
+		if (!refreshChecker.shouldRefresh())
 		{
 			return false;
 		}

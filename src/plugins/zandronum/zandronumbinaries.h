@@ -82,10 +82,12 @@ class TestingProgressDialog : public QProgressDialog
 		TestingProgressDialog(const QUrl& url, QWidget *parent);
 
 		const QByteArray &data() const { return downloadedFileData; }
+		QString error() const { return networkError; }
 		const QString &filename() const { return downloadedFilename; }
 
 	private slots:
 		void abort();
+		void errorReceived(QNetworkReply::NetworkError);
 		void downloadFinished();
 		void downloadProgress(qint64 value, qint64 max);
 
@@ -95,6 +97,7 @@ class TestingProgressDialog : public QProgressDialog
 		QString downloadedFilename;
 		QNetworkAccessManager networkAccessManager;
 		QNetworkReply* pNetworkReply;
+		QString networkError;
 
 		void getUrl(const QUrl& url);
 };

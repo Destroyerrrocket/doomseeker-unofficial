@@ -370,7 +370,7 @@ void CreateServerDialog::cboGamemodeSelected(int index)
 
 bool CreateServerDialog::commandLineArguments(QString &executable, QStringList &args)
 {
-	const QString errorCapt = tr("Doomseeker - create server");
+	const QString errorCapt = tr("Doomseeker - create game");
 	if (d->currentEngine == NULL)
 	{
 		QMessageBox::critical(NULL, errorCapt, tr("No engine selected"));
@@ -995,7 +995,7 @@ void CreateServerDialog::removeLimitWidgets()
 
 void CreateServerDialog::runGame(bool offline)
 {
-	const QString errorCapt = tr("Doomseeker - create server");
+	const QString errorCapt = tr("Doomseeker - create game");
 	if (d->currentEngine == NULL)
 	{
 		QMessageBox::critical(NULL, errorCapt, tr("No engine selected"));

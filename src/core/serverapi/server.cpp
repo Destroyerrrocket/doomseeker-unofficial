@@ -33,6 +33,7 @@
 #include "serverapi/gameexeretriever.h"
 #include "serverapi/message.h"
 #include "serverapi/playerslist.h"
+#include <QElapsedTimer>
 #include <QTime>
 #include <QUdpSocket>
 #include <cassert>
@@ -71,6 +72,7 @@ class Server::PrivData
 		bool custom;
 		QList<DMFlagsSection> dmFlags;
 		QString email;
+		QElapsedTimer lastRefreshClock;
 		QString iwad;
 		bool locked;
 		bool lockedInGame;
@@ -358,7 +360,8 @@ bool Server::isRandomMapRotation() const
 
 bool Server::isRefreshable() const
 {
-	return d->pingClock.secsTo(QTime::currentTime()) >= plugin()->data()->refreshThreshold;
+	// deprecated, see doc
+	return true;
 }
 
 bool Server::isRefreshing() const
@@ -484,6 +487,7 @@ void Server::refreshStarts()
 
 void Server::refreshStops(Response response)
 {
+	d->lastRefreshClock.start();
 	setResponse(response);
 	if (!d->bPingIsSet)
 	{
@@ -730,6 +734,18 @@ unsigned short Server::timeLeft() const
 unsigned short Server::timeLimit() const
 {
 	return d->timeLimit;
+}
+
+qint64 Server::timeMsSinceLastRefresh() const
+{
+	if (d->lastRefreshClock.isValid())
+	{
+		return d->lastRefreshClock.elapsed();
+	}
+	else
+	{
+		return -1;
+	}
 }
 
 TooltipGenerator* Server::tooltipGenerator() const

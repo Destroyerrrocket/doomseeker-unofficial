@@ -6,6 +6,7 @@
 #include <ini/inisection.h>
 
 #include "createserverdialogpages/flagspagevaluecontroller.h"
+#include "createserverdialogpages/votingsetupwidget.h"
 #include "zandronumdmflags.h"
 #include "zandronumgameinfo.h"
 
@@ -112,6 +113,8 @@ QStringList FlagsPage::generateGameRunParameters()
 
 	params << "+sv_defaultdmflags" << (cbDefaultDmflags->isChecked() ? "1" : "0");
 
+	params << votingPage->generateGameRunParameters();
+
 	return params;
 }
 
@@ -167,7 +170,7 @@ bool FlagsPage::loadConfig(Ini& ini)
 
 	propagateFlagsInputsChanges();
 
-	return true;
+	return votingPage->loadConfig(ini);;
 }
 
 void FlagsPage::propagateFlagsInputsChanges()
@@ -199,6 +202,6 @@ bool FlagsPage::saveConfig(Ini& ini)
 	section["monsters_damage_factor"] =
 		(float)spinMonstersDamageFactor->value();
 
-	return true;
+	return votingPage->saveConfig(ini);
 }
 

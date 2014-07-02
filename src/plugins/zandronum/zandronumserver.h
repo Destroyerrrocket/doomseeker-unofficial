@@ -49,7 +49,7 @@ class ZandronumVersion
 
 		unsigned short int majorVersion() const { return major; }
 		unsigned short int minorVersion() const { return minor; }
-		unsigned char revisionLetter() const { return revision; }
+		unsigned short int revisionVersion() const { return revision; }
 		unsigned int hgVersionDate() const { return hgRevisionDate; }
 		unsigned short int hgVersionTime() const { return hgRevisionTime; }
 
@@ -61,7 +61,7 @@ class ZandronumVersion
 
 		unsigned short int major;
 		unsigned short int minor;
-		unsigned char revision;
+		unsigned short int revision;
 		unsigned short int build;
 		QString tag;
 		unsigned int hgRevisionDate;

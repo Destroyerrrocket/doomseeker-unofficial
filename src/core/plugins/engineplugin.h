@@ -102,7 +102,7 @@ class MAIN_EXPORT EnginePlugin
 
 			/**
 			 * (bool)
-			 * If specified then "Create Server" dialog won't build
+			 * If specified then "Create Game" dialog won't build
 			 * flags pages out of the EnginePlugin::Data::allDMFlags list.
 			 * Plugin either doesn't want to have the flags pages created
 			 * or will provide the pages on its own through
@@ -139,11 +139,11 @@ class MAIN_EXPORT EnginePlugin
 				/// All available game modes for the engine or NULL if none.
 				const QList<GameMode>* gameModes;
 				/**
-				*	@brief Returns a list of modifiers.
+				* @brief Returns a list of modifiers.
 				*
-				*	Modifiers are used and displayed in Create Server dialog.
-				*	If an empty list (or NULL) is returned, Modifier combo will be
-				*	disabled.
+				* Modifiers are used and displayed in Create Game dialog.
+				* If an empty list (or NULL) is returned, Modifier combo will be
+				* disabled.
 				*/
 				const QList<GameCVar>* gameModifiers;
 				bool hasMasterServer;
@@ -161,9 +161,9 @@ class MAIN_EXPORT EnginePlugin
 				bool demoExtensionAutomatic;
 				QString demoExtension;
 				/**
-				 * @brief Controls behavior of "Create Server" dialog.
+				 * @brief Controls behavior of "Create Game" dialog.
 				 *
-				 * If true then "Create Server" dialog will build
+				 * If true then "Create Game" dialog will build
 				 * flags pages out of the allDMFlags list. If false then plugin
 				 * either doesn't want to have the flags pages created or will
 				 * provide the pages on its own.
@@ -206,7 +206,7 @@ class MAIN_EXPORT EnginePlugin
 		virtual ConfigurationBaseBox* configuration(QWidget *parent) const;
 
 		/**
-		 * @brief Creates a list of custom Create Server dialog pages.
+		 * @brief Creates a list of custom Create Game dialog pages.
 		 *
 		 * These pages need to be instantiated with the passed pointer as
 		 * a parent. Once instantiated, Doomseeker will take care of the
@@ -214,7 +214,7 @@ class MAIN_EXPORT EnginePlugin
 		 * dialog box itself is valid.
 		 *
 		 * Pages are always inserted before the "Custom parameters" page
-		 * in the Create Server dialog.
+		 * in the Create Game dialog.
 		 *
 		 * Default behavior assumes that the plugin doesn't define any custom
 		 * pages and returns an empty list.

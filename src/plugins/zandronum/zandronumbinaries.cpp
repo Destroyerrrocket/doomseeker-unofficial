@@ -236,10 +236,10 @@ bool ZandronumClientExeFile::downloadTestingBinaries(const QDir &destination, QW
 
 	// Get URL
 	QString versionPrefix;
-	if (version.revisionLetter() != 0)
+	if (version.revisionVersion() != 0)
 	{
-		versionPrefix = QString("%1.%2%3").arg(version.majorVersion())
-			.arg(version.minorVersion()).arg(QChar(version.revisionLetter()));
+		versionPrefix = QString("%1.%2.%3").arg(version.majorVersion())
+			.arg(version.minorVersion()).arg(version.revisionVersion());
 	}
 	else
 	{
@@ -250,7 +250,14 @@ bool ZandronumClientExeFile::downloadTestingBinaries(const QDir &destination, QW
 	QUrl url(QString(TESTING_BINARY_URL).arg(versionPrefix).arg(hgVersion));
 	gLog << tr("Downloading Zandronum testing binary from URL: %1").arg(url.toString());
 	TestingProgressDialog dialog(url, parent);
-	if(dialog.exec() == QDialog::Accepted)
+	int ret = dialog.exec();
+	if(!dialog.error().isEmpty())
+	{
+		QMessageBox::critical(parent, tr("Doomseeker - download failed"),
+			tr("Failed to download testing binary.\n\n%1").arg(dialog.error()));
+		return false;
+	}
+	else if(ret == QDialog::Accepted)
 	{
 		// Extract the needed files.
 		QString filename;
@@ -434,6 +441,11 @@ void TestingProgressDialog::downloadFinished()
 	}
 }
 
+void TestingProgressDialog::errorReceived(QNetworkReply::NetworkError code)
+{
+	networkError = pNetworkReply->errorString();
+}
+
 void TestingProgressDialog::getUrl(const QUrl& url)
 {
 	QNetworkRequest request;
@@ -443,6 +455,7 @@ void TestingProgressDialog::getUrl(const QUrl& url)
 	this->pNetworkReply = networkAccessManager.get(request);
 
 	connect(pNetworkReply, SIGNAL(downloadProgress(qint64, qint64)), this, SLOT(downloadProgress(qint64, qint64)));
+	connect(pNetworkReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(errorReceived(QNetworkReply::NetworkError)));
 	connect(pNetworkReply, SIGNAL(finished()), this, SLOT(downloadFinished()));
 }
 
