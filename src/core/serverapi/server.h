@@ -370,6 +370,9 @@ class MAIN_EXPORT Server : public QObject
 		bool isRandomMapRotation() const;
 		/**
 		 * @brief Can the server be refreshed at the current moment?
+		 *
+		 * @deprecated Left for compatibility reasons, always returns true.
+		 *     Behavior handled by CanRefreshServer class.
 		 */
 		bool isRefreshable() const;
 		/**
@@ -591,6 +594,21 @@ class MAIN_EXPORT Server : public QObject
 		 * @brief Round time limit, expressed in minutes.
 		 */
 		unsigned short timeLimit() const;
+
+		/**
+		 * @brief Milliseconds elapsed since last refresh.
+		 *
+		 * Underlying code uses QElapsedTimer to provide
+		 * unified results that ignore events like daylight savings time change
+		 * or user manipulating with system clock.
+		 *
+		 * @return A number of milliseconds since the completion of the last
+		 *     refresh operation. If server wasn't refreshed yet
+		 *     or is currently refreshing for the first time, then
+		 *     this will return a negative value.
+		 */
+		qint64 timeMsSinceLastRefresh() const;
+
 		/**
 		 * @brief Game skill level, starting from zero.
 		 *
