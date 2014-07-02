@@ -32,6 +32,7 @@ public:
 	~CanRefreshServer();
 
 	bool hasEnoughTimeSinceLastRefreshPassed() const;
+	bool shouldRefresh() const;
 
 private:
 	class PrivData;

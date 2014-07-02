@@ -83,3 +83,8 @@ bool CanRefreshServer::hasEnoughTimeSinceLastRefreshPassed() const
 		return d->secsSinceLastRefresh() >= d->pluginData()->refreshThreshold;
 	}
 }
+
+bool CanRefreshServer::shouldRefresh() const
+{
+	return hasEnoughTimeSinceLastRefreshPassed();
+}

@@ -289,7 +289,7 @@ bool Refresher::registerServer(Server* server)
 	if (!d->registeredServers.contains(server))
 	{
 		CanRefreshServer refreshChecker(server);
-		if (!refreshChecker.hasEnoughTimeSinceLastRefreshPassed())
+		if (!refreshChecker.shouldRefresh())
 		{
 			return false;
 		}
