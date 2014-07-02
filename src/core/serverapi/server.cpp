@@ -358,12 +358,6 @@ bool Server::isRandomMapRotation() const
 	return d->randomMapRotation;
 }
 
-bool Server::isRefreshable() const
-{
-	// deprecated, see doc
-	return true;
-}
-
 bool Server::isRefreshing() const
 {
 	return d->bIsRefreshing;

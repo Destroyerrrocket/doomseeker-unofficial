@@ -369,13 +369,6 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		bool isRandomMapRotation() const;
 		/**
-		 * @brief Can the server be refreshed at the current moment?
-		 *
-		 * @deprecated Left for compatibility reasons, always returns true.
-		 *     Behavior handled by CanRefreshServer class.
-		 */
-		bool isRefreshable() const;
-		/**
 		 * @brief Is the server being refreshed at the current moment?
 		 */
 		bool isRefreshing() const;
