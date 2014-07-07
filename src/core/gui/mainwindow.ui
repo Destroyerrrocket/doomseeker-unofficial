@@ -272,7 +272,7 @@
      <x>0</x>
      <y>0</y>
      <width>796</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="locale">
@@ -376,7 +376,7 @@
   <action name="menuActionWadseeker">
    <property name="icon">
     <iconset resource="../../../media/resources.qrc">
-     <normaloff>:/icons/download.png</normaloff>:/icons/download.png</iconset>
+     <normaloff>:/icons/get-wad.png</normaloff>:/icons/get-wad.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Wadseeker</string>
@@ -399,7 +399,7 @@
   <action name="menuActionCreateServer">
    <property name="icon">
     <iconset resource="../../../media/resources.qrc">
-     <normaloff>:/flags/localhost-small</normaloff>:/flags/localhost-small</iconset>
+     <normaloff>:/icons/create-server.png</normaloff>:/icons/create-server.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Create Game</string>

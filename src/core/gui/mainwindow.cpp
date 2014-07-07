@@ -1235,7 +1235,7 @@ void MainWindow::setupToolBar()
 	pToolBar->setObjectName("Toolbar");
 
 	// Refresh buttons
-	toolBarGetServers = new QAction(QIcon(":/icons/arrow-down-double.png"), tr("Get Servers"), pToolBar);
+	toolBarGetServers = new QAction(QIcon(":/icons/refresh.png"), tr("Get Servers"), pToolBar);
 	toolBarRefreshAll = new QAction(QIcon(":/icons/view-refresh-2.png"), tr("Refresh All"), pToolBar);
 
 	// Setup menu
