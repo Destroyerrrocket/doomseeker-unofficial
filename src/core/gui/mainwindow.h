@@ -181,7 +181,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		QHash<MasterClient*, QQueryMenuAction*> queryMenuPorts;
 		QHash<MasterClient*, ServersStatusWidget*> serversStatusesWidgets;
 		QAction* toolBarGetServers;
-		QAction* toolBarRefreshAll;
 		QSystemTrayIcon* trayIcon;
 		QMenu* trayIconMenu;
 		/// Update should be discarded if this changes.

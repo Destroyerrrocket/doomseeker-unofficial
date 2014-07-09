@@ -295,7 +295,6 @@ void MainWindow::autoRefreshTimer_timeout()
 void MainWindow::blockRefreshButtons()
 {
 	toolBarGetServers->setEnabled(false);
-	toolBarRefreshAll->setEnabled(false);
 }
 
 void MainWindow::changeEvent(QEvent* event)
@@ -1146,7 +1145,6 @@ void MainWindow::refreshThreadBeginsWork()
 void MainWindow::refreshThreadEndsWork()
 {
 	toolBarGetServers->setEnabled(true);
-	toolBarRefreshAll->setEnabled(true);
 
 	serverTableHandler->serverTable()->setAllowAllRowsRefresh(true);
 	serverTableHandler->cleanUpForce();
@@ -1236,12 +1234,10 @@ void MainWindow::setupToolBar()
 
 	// Refresh buttons
 	toolBarGetServers = new QAction(QIcon(":/icons/refresh.png"), tr("Get Servers"), pToolBar);
-	toolBarRefreshAll = new QAction(QIcon(":/icons/view-refresh-2.png"), tr("Refresh All"), pToolBar);
 
 	// Setup menu
 	// Refresh buttons
 	pToolBar->addAction(toolBarGetServers);
-	pToolBar->addAction(toolBarRefreshAll);
 
 	// File menu buttons.
 	pToolBar->addSeparator();
@@ -1334,18 +1330,6 @@ void MainWindow::toolBarAction(QAction* pAction)
 	if (pAction == toolBarGetServers)
 	{
 		getServers();
-	}
-	else if (pAction == toolBarRefreshAll)
-	{
-		if (serverTableHandler->hasAtLeastOneServer())
-		{
-			serverTableHandler->refreshAll();
-		}
-		else
-		{
-			gLog << "Attempted a refresh on an empty table. Getting servers instead.";
-			getServers();
-		}
 	}
 }
 
