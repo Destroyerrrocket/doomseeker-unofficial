@@ -25,13 +25,17 @@
 #
 #
 # Name:           fix_excessive_whitespace.py
-# Description:    Converts this:
-#                 void            something();
-#                 info this:
-#                 void something();
-#                 Basically, removes excessive whitespace between two
-#                 printable characters. Omits comment blocks.
-#                 Affects only .h files.
+#
+# Description:
+#
+# Converts this:
+# void            something();
+# into this:
+# void something();
+#
+# Basically, removes excessive whitespace between two
+# printable characters. Omits comment blocks.
+# Affects only .h files.
 #
 import re
 import os
