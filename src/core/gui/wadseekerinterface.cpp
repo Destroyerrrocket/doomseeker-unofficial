@@ -442,7 +442,7 @@ void WadseekerInterface::updateProgressBar()
 {
 	double totalPercentage = twWads->totalDonePercentage();
 	unsigned progressBarValue = (unsigned)(totalPercentage * 100.0);
-	
+
 	pbOverallProgress->setValue(progressBarValue);
 }
 
@@ -484,27 +484,27 @@ QStringList WadseekerInterface::unsuccessfulWads() const
 void WadseekerInterface::wadsTableRightClicked(const QModelIndex& index, const QPoint& cursorPosition)
 {
 	WadseekerWadsTable::ContextMenu* menu = twWads->contextMenu(index, cursorPosition);
-	
+
 	// Disable actions depending on Wadseeker's state.
 	QString fileName = twWads->fileNameAtRow(index.row());
 	if (!wadseeker.isDownloadingFile(fileName))
 	{
 		menu->actionSkipCurrentSite->setEnabled(false);
 	}
-	
+
 	QAction* pResult = menu->exec();
-	
+
 	if (pResult == menu->actionSkipCurrentSite)
 	{
 		QString wadName = twWads->fileNameAtRow(index.row());
 		twWads->setFileUrl(fileName, QUrl());
-		
+
 		wadseeker.skipFileCurrentUrl(wadName);
 	}
 	else if (pResult != NULL)
 	{
 		QMessageBox::warning(this, tr("Context menu error"), tr("Unknown action selected."));
 	}
-	
+
 	delete menu;
 }

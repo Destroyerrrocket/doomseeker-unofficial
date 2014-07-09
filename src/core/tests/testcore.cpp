@@ -39,23 +39,23 @@ void TestCore::executeTest(TestUnitBase* pTest)
 	testLog << "--------------------------------------------------------";
 	testLog << QString("Test: %1").arg(pTest->testName());
 	testLog << "--------------------------------------------------------";
-	
+
 	QTime time;
 	time.start();
-	
+
 	bool bResult = pTest->executeTest();
 	delete pTest;
-	
+
 	int executionTime = time.elapsed();
-	
+
 	QString resultString = "Result: %1. Time: %2 ms";
 	resultString = resultString.arg(bResult ? "SUCCESS" : "FAIL").arg(executionTime);
-	
+
 	testLog << "--------------------------------------------------------";
 	testLog << resultString;
 	testLog << "--------------------------------------------------------";
 	testLog << "";
-	
+
 	if (bResult)
 	{
 		++testsSucceeded;

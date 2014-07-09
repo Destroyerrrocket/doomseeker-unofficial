@@ -29,9 +29,9 @@ class TestDataPathsAppDataDirectoryAccess : public TestUnitBase
 {
 	public:
 		TestDataPathsAppDataDirectoryAccess(bool bPortable);
-	
+
 		bool executeTest();
-		
+
 	protected:
 		bool bPortable;
 };
@@ -40,9 +40,9 @@ class TestDataPathsAppDataDirectoryWrite : public TestUnitBase
 {
 	public:
 		TestDataPathsAppDataDirectoryWrite(bool bPortable);
-	
+
 		bool executeTest();
-		
+
 	protected:
 		bool bPortable;
 };

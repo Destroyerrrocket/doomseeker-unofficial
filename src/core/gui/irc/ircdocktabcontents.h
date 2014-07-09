@@ -49,13 +49,13 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 	public:
 		IRCDockTabContents(IRCDock* pParentIRCDock);
 		~IRCDockTabContents();
-		
+
 		/**
 		 *	@brief Applies current appearance settings from the IRC config.
 		 */
 		void applyAppearanceSettings();
-		
-		/** 
+
+		/**
 		 *	@brief Called when tab becomes active.
 		 *
 		 *	Informs the tab that it should grab keyboard focus.
@@ -63,20 +63,20 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 */
 		void grabFocus();
 		bool hasTabFocus() const;
-		
+
 		QIcon icon() const;
 
 		IRCAdapterBase* ircAdapter() const { return pIrcAdapter; }
-		
+
 		/**
 		 *	@brief Calling this multiple times on the same object will cause
 		 *	memory leaks.
 		 */
 		void setIRCAdapter(IRCAdapterBase* pAdapter);
-		
+
 		QString title() const;
 		QString titleColor() const;
-		
+
 	public slots:
 		void receiveMessage(const QString& message);
 		void receiveMessageWithClass(const QString& message, const IRCMessageClass& messageClass);
@@ -89,14 +89,14 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 *	Capture this to close this widget.
 		 */
 		void chatWindowCloseRequest(IRCDockTabContents*);
-		
+
 		/**
-		 *	@brief Emitted when the variable returned by 
-		 *	IRCAdapterBase::title() might have changed and the 
+		 *	@brief Emitted when the variable returned by
+		 *	IRCAdapterBase::title() might have changed and the
 		 *	application should be notified of this fact.
 		 */
 		void titleChange(IRCDockTabContents* pCaller);
-		
+
 		/**
 		 *	@brief Emitted when network adapter for this dock emits
 		 *	its focusRequest() signal.
@@ -106,7 +106,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 	protected slots:
 		void adapterFocusRequest();
 		void adapterTerminating();
-	
+
 		void adapterTitleChange()
 		{
 			emit titleChange(this);
@@ -116,15 +116,15 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		void nameListUpdated(const IRCUserList& userList);
 		void nameRemoved(const IRCUserInfo& userInfo);
 		void nameUpdated(const IRCUserInfo& userInfo);
-		
+
 		/**
 		 *	@brief Captures signals from IRC Networks which indicate that a new
 		 *	chat window is being opened.
 		 */
 		void newChatWindowIsOpened(IRCChatAdapter* pAdapter);
-		
+
 		void myNicknameUsedSlot();
-		
+
 		void receiveError(const QString& error);
 		void sendMessage();
 		void userListCustomContextMenuRequested(const QPoint& pos);
@@ -157,13 +157,13 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 
 			private:
 				bool bIsOperator;
-			
+
 		};
 
 		class PrivChatMenu;
 
 		static const int BLINK_TIMER_DELAY_MS;
-	
+
 		/**
 		 *	@brief Holds blinkTimer state.
 		 *
@@ -173,16 +173,16 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 */
 		bool bBlinkTitle;
 		bool bIsDestroying;
-		
+
 		QTimer blinkTimer;
-		
+
 		IRCMessageClass* lastMessageClass;
 		IRCNicknameCompleter *nicknameCompleter;
 		/**
 		 *	@brief This is required to properly refresh colors when
 		 *	appearance is changed.
 		 */
-		QStringList textOutputContents;		
+		QStringList textOutputContents;
 		UserListMenu* userListContextMenu;
 
 		void completeNickname();

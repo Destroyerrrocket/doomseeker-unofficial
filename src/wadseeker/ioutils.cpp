@@ -35,9 +35,9 @@ bool IOUtils::copy(QIODevice& src, QIODevice& dst, unsigned long long maxCount, 
 	{
 		if (dst.write(buffer) != buffer.size())
 		{
-			return false;	
+			return false;
 		}
-		
+
 		copiedCount += buffer.size();
 		if (copiedCount < maxCount)
 		{
@@ -50,6 +50,6 @@ bool IOUtils::copy(QIODevice& src, QIODevice& dst, unsigned long long maxCount, 
 			buffer = src.read(nextRead);
 		}
 	}
-	
+
 	return true;
 }

@@ -30,7 +30,7 @@ if ((a) != (b)) \
 { \
 	qDebug() << "a:" << (a) << ", b:" << (b); \
 	return false; \
-} 
+}
 
 bool TestUtf8Splitter::executeTest()
 {

@@ -44,7 +44,7 @@ class CFGWadseekerIdgames : public ConfigurationBaseBox, private Ui::CFGWadseeke
 		void cbUseIdgamesToggled(bool checked);
 
 	protected:
-		
+
 
 		void saveSettings();
 };

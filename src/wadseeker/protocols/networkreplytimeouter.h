@@ -41,13 +41,13 @@ class WADSEEKER_API NetworkReplyTimeouter : public QObject
 
 	public:
 		NetworkReplyTimeouter(QNetworkReply* pReply);
-		virtual ~NetworkReplyTimeouter();		
-		
+		virtual ~NetworkReplyTimeouter();
+
 		QNetworkReply& reply()
 		{
 			return *pReply;
 		}
-	
+
 		/**
 		 * @brief Sets timeout that occurs when progress stops.
 		 *
@@ -61,11 +61,11 @@ class WADSEEKER_API NetworkReplyTimeouter : public QObject
 		 *      Set to 0 to disable timeout.
 		 */
 		void setProgressTimeout(unsigned timeoutMsecs);
-		
+
 		/**
 		 * @brief Starts the timeout for connection establishment.
 		 *
-		 * This is the timeout between the call to 
+		 * This is the timeout between the call to
 		 * startConnectionTimeoutTimer() and first reception of
 		 * downloadProgress() or uploadProgress() signals.
 		 *
@@ -75,10 +75,10 @@ class WADSEEKER_API NetworkReplyTimeouter : public QObject
 		 *      aborted. Also generates a QNetworkReply::TimeoutError error.
 		 */
 		void startConnectionTimeoutTimer(unsigned timeoutMsecs);
-		
+
 	signals:
 		/**
-		 * @brief This signal is connected directly to QNetworkReply and 
+		 * @brief This signal is connected directly to QNetworkReply and
 		 *        shouldn't really be used.
 		 */
 		void error(QNetworkReply::NetworkError code);
@@ -89,24 +89,24 @@ class WADSEEKER_API NetworkReplyTimeouter : public QObject
 		 *        uploadProgress() signal is captured.
 		 */
 		bool bIsProgressing;
-	
+
 		/**
 		 * @brief Timeout before the connection is made.
 		 */
 		QTimer* pConnectionTimeoutTimer;
-		
+
 		/**
 		 * @brief Timeout when download progress stops.
 		 */
 		QTimer* pProgressTimeoutTimer;
-		
+
 		QNetworkReply* pReply;
-		
+
 		unsigned progressTimeout;
-		
+
 		void restartProgressTimeoutIfAllowed();
 		void stopTimerIfNotNull(QTimer* pTimer);
-		
+
 	private slots:
 		void progressRegistered(qint64 bytesReceived, qint64 bytesTotal);
 		void finishedSlot();

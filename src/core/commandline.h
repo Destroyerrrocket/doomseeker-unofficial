@@ -40,14 +40,14 @@ class CommandLine
 		/**
 		 * @brief Escapes all characters in all strings on the list.
 		 *
-		 * The passed list is modified directly. No elements are added or 
+		 * The passed list is modified directly. No elements are added or
 		 * removed but the existing elements may change.
 		 *
 		 * The function behaves differently depending on the OS the program
 		 * was compiled for.
 		 */
 		static void escapeArgs(QStringList& args);
-		
+
 		/**
 		 * @brief Escapes all characters in the passed string.
 		 *

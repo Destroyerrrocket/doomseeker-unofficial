@@ -417,7 +417,7 @@ bool Scanner::nextToken(bool autoExpandState)
 				{
 					d->scanPos++;
 					d->nextState.setToken(cur == '<' ? TK_ShiftLeftEq : TK_ShiftRightEq);
-					
+
 				}
 				else
 					d->nextState.setToken(cur == '<' ? TK_ShiftLeft : TK_ShiftRight);

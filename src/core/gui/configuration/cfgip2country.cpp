@@ -23,7 +23,7 @@
 #include "cfgip2country.h"
 #include "configuration/doomseekerconfig.h"
 
-CFGIP2Country::CFGIP2Country(QWidget *parent) 
+CFGIP2Country::CFGIP2Country(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
 	setupUi(this);

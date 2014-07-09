@@ -30,7 +30,7 @@
 #include <QMutexLocker>
 #include <QTime>
 
-IP2CParser::IP2CParser(IP2C* pTargetDatabase) 
+IP2CParser::IP2CParser(IP2C* pTargetDatabase)
 {
 	currentParsingThread = NULL;
 	this->pTargetDatabase = pTargetDatabase;
@@ -102,12 +102,12 @@ bool IP2CParser::doReadDatabase(const QString& filePath)
 
 	// This will set proper state whenever and wherever this method finishes.
 	ConstructorDestructorParserStateSetter stateSetter(this);
-	
+
 	QFile dataBase(filePath);
 	gLog << tr("Parsing IP2C database: %1").arg(dataBase.fileName());
-	
-	if (!dataBase.exists() 
-	||  !dataBase.open(QIODevice::ReadOnly) 
+
+	if (!dataBase.exists()
+	||  !dataBase.open(QIODevice::ReadOnly)
 	||  !dataBase.isReadable())
 	{
 		gLog << tr("Unable to open IP2C file.");
@@ -190,10 +190,10 @@ void IP2CParser::parsingThreadFinished()
 {
 	bool bSuccessState = currentParsingThread->bSuccessState;
 	gLog << tr("IP2C parsing thread has finished.");
-	
+
 	delete currentParsingThread;
 	currentParsingThread = NULL;
-	
+
 	emit parsingFinished(bSuccessState);
 }
 
@@ -201,7 +201,7 @@ bool IP2CParser::readDatabase(const QString& filePath)
 {
 	bool bSuccess = doReadDatabase(filePath);
 	emit parsingFinished(bSuccess);
-	
+
 	return bSuccess;
 }
 
@@ -211,12 +211,12 @@ void IP2CParser::readDatabaseThreaded(const QString& filePath)
 	{
 		return;
 	}
-	
+
 	ParsingThread* pParsingThread = new ParsingThread(this, filePath);
 	connect(pParsingThread, SIGNAL( finished() ), this, SLOT( parsingThreadFinished() ) );
-	
+
 	currentParsingThread = pParsingThread;
-	
+
 	pParsingThread->start();
 }
 

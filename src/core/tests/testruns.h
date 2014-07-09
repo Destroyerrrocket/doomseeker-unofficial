@@ -15,7 +15,7 @@ class TestRuns
 {
 	public:
 		static TestCore* pTestCore;
-		
+
 		static void callTests();
 };
 

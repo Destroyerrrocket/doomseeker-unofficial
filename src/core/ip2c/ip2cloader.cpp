@@ -20,7 +20,7 @@ IP2CLoader::IP2CLoader()
 	d = new PrivData();
 
 	d->ip2cParser = new IP2CParser(IP2C::instance());
-	this->connect(d->ip2cParser, SIGNAL( parsingFinished(bool) ), 
+	this->connect(d->ip2cParser, SIGNAL( parsingFinished(bool) ),
 		SLOT( ip2cFinishedParsing(bool) ) );
 
 	d->ip2cUpdater = new IP2CUpdater();

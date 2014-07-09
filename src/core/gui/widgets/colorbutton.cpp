@@ -27,7 +27,7 @@ ColorButton::ColorButton(QWidget* parent)
 : QPushButton(parent)
 {
 	connect( this, SIGNAL( clicked() ), this, SLOT( thisClicked() ) );
-	
+
 	color.setNamedColor("#ffffff");
 	updateAppearance();
 }
@@ -69,7 +69,7 @@ void ColorButton::thisClicked()
 void ColorButton::updateAppearance()
 {
 	static const QString COLOR_STYLE = "QPushButton { background-color : %1; }";
-	
+
 	QString styleSheet = COLOR_STYLE.arg(color.name());
 	setStyleSheet(styleSheet);
 }
@@ -79,6 +79,6 @@ void ColorButton::updateColor(const QColor& newColor)
 	QColor oldColor = color;
 	color = newColor;
 	updateAppearance();
-	
+
 	emit colorUpdated(oldColor, color);
 }

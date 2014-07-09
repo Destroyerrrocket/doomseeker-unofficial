@@ -52,11 +52,11 @@ void IRCConfigurationDialog::initOptionsList()
 
 	pConfigBox = new CFGIRCAppearance(this);
 	this->addConfigurationBox(NULL, pConfigBox);
-	
-	cfgNetworks = new CFGIRCNetworks(this); 
+
+	cfgNetworks = new CFGIRCNetworks(this);
 	pConfigBox = cfgNetworks;
 	this->addConfigurationBox(NULL, pConfigBox);
-	
+
 	pConfigBox = new CFGIRCSounds(this);
 	this->addConfigurationBox(NULL, pConfigBox);
 }
@@ -71,7 +71,7 @@ bool IRCConfigurationDialog::isNetworkAutojoinEnabled()
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -86,11 +86,11 @@ bool IRCConfigurationDialog::validate()
 			{
 				return false;
 			}
-			
+
 			gIRCConfig.personal.nickname = nick;
 		}
 	}
-	
+
 	return true;
 }
 

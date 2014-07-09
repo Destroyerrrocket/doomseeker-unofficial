@@ -34,12 +34,12 @@ class Localization
 {
 	public:
 		static bool loadTranslation(const QString& localeName);
-		
+
 		static QList<LocalizationInfo> loadLocalizationsList(const QStringList& definitionsFileSearchDirs);
-		
+
 	private:
 		class LocalizationLoader;
-		
+
 		static QList<QTranslator*> currentlyLoadedTranslations;
 		static QTranslator* loadTranslationFile(const QString& localeName, const QStringList& searchPaths);
 };

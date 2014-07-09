@@ -29,7 +29,7 @@
 #include <QString>
 
 /**
- *	@brief Stores the input into a history that can be accessed by pressing up 
+ *	@brief Stores the input into a history that can be accessed by pressing up
  *	and down.
  */
 class MemoryLineEdit : public QLineEdit

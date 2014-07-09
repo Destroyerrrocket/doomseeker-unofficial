@@ -58,13 +58,13 @@ void TableWidgetMouseAware::mouseDoubleClickEvent(QMouseEvent* event)
 QList<int> TableWidgetMouseAware::selectedRows() const
 {
 	QItemSelectionModel* pSelectionModel = this->selectionModel();
-	
+
 	QList<int> rowIndices;
 	QModelIndexList rows = pSelectionModel->selectedRows();
 	foreach(const QModelIndex& index, rows)
 	{
 		rowIndices << index.row();
 	}
-	
+
 	return rowIndices;
 }

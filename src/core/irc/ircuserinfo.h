@@ -66,11 +66,11 @@ class IRCUserInfo
 		QString cleanNickname() const;
 
 		/**
-		 *	@brief Returns cleanNickname() with a call to 
+		 *	@brief Returns cleanNickname() with a call to
 		 *	IRCGlobal::toIrcLower() .
 		 */
 		QString cleanNicknameLowerCase() const;
-		
+
 		QString extractHostnameFromFullSignature() const;
 
 		/**
@@ -79,8 +79,8 @@ class IRCUserInfo
 		 *
 		 *	Calls the operator==.
 		 */
-		bool isSameNickname(const IRCUserInfo& otherUser) const; 
-		bool isSameNickname(const QString& otherNickname) const; 
+		bool isSameNickname(const IRCUserInfo& otherUser) const;
+		bool isSameNickname(const QString& otherNickname) const;
 
 		bool isOp() const;
 		bool isValid() const;
@@ -89,7 +89,7 @@ class IRCUserInfo
 		const IRCNetworkAdapter *network() const;
 
 		bool operator==(const IRCUserInfo& otherUser) const;
-		
+
 		/**
 		 *	@brief This operator can be used for sorting.
 		 *
@@ -105,7 +105,7 @@ class IRCUserInfo
 		QString prefixedName() const;
 
 		/**
-		 *	@brief Returns prefixedName() with a call to 
+		 *	@brief Returns prefixedName() with a call to
 		 *	IRCGlobal::toIrcLower() .
 		 */
 		QString prefixedNameLowerCase() const;

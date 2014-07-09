@@ -33,23 +33,23 @@ class IRCDelayedOperation
 		{
 			Ban
 		};
-		
+
 		IRCDelayedOperation(OperationType operationType, const QString& nickname = "", const QString& channel = "");
-		
+
 		QString attribute(const QString& name) const
 		{
 			if (attributes.contains(name))
 			{
 				return attributes[name];
 			}
-			
+
 			return QString();
 		}
-		
+
 		const QString& channel() const { return channelName; }
 		const QString& nickname() const { return nick; }
 		OperationType operationType() const { return operType; }
-		
+
 		bool operator==(const IRCDelayedOperation& other) const;
 		void setAttribute(const QString& name, const QString& value)
 		{
@@ -62,8 +62,8 @@ class IRCDelayedOperation
 				attributes.insert(name, value);
 			}
 		}
-		
-	
+
+
 	private:
 		QHash<QString, QString> attributes;
 		QString channelName;

@@ -27,7 +27,7 @@
 #include "log.h"
 #include <cassert>
 
-CFGAutoUpdates::CFGAutoUpdates(QWidget *parent) 
+CFGAutoUpdates::CFGAutoUpdates(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
 	setupUi(this);

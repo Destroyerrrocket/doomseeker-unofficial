@@ -23,7 +23,7 @@
 #include "cfgwadseekerappearance.h"
 #include "configuration/doomseekerconfig.h"
 
-CFGWadseekerAppearance::CFGWadseekerAppearance(QWidget* parent) 
+CFGWadseekerAppearance::CFGWadseekerAppearance(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
 	setupUi(this);

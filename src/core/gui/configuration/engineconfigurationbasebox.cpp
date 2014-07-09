@@ -49,7 +49,7 @@ class EngineConfigurationBaseBox::PrivData
 		}
 };
 
-EngineConfigurationBaseBox::EngineConfigurationBaseBox(const EnginePlugin *plugin, IniSection &cfg, QWidget *parent) 
+EngineConfigurationBaseBox::EngineConfigurationBaseBox(const EnginePlugin *plugin, IniSection &cfg, QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
 	d = new PrivData();

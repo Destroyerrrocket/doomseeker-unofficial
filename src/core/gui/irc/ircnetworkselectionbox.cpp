@@ -30,10 +30,10 @@ IRCNetworkSelectionBox::IRCNetworkSelectionBox(QWidget* parent)
 : QDialog(parent)
 {
 	setupUi(this);
-	
+
 	connect(btnNewNetwork, SIGNAL( clicked() ), SLOT( btnNewNetworkClicked() ) );
 	connect(cboNetwork, SIGNAL( currentIndexChanged(int) ), SLOT( networkChanged(int) ) );
-	
+
 	initWidgets();
 }
 
@@ -48,15 +48,15 @@ void IRCNetworkSelectionBox::accept()
 void IRCNetworkSelectionBox::addNetworkToComboBox(const IRCNetworkEntity& network, bool bLastUsed)
 {
 	QString title = QString("%1 [%2:%3]").arg(network.description()).arg(network.address()).arg(network.port());
-	
+
 	if (bLastUsed)
 	{
 		title += tr("<Last Used Configuration>");
 	}
-	
+
 	QtMetaPointer metaPointer = (void*)&network;
 	QVariant variantPointer = qVariantFromValue(metaPointer);
-		
+
 	cboNetwork->addItem(title, variantPointer);
 }
 
@@ -79,13 +79,13 @@ void IRCNetworkSelectionBox::fetchNetworks()
 	{
 		this->addNetworkToComboBox(gIRCConfig.networks.lastUsedNetwork, true);
 	}
-	
+
 	foreach (const IRCNetworkEntity& network, networksArray)
 	{
 		addNetworkToComboBox(network);
 	}
-	
-	updateNetworkInfo();	
+
+	updateNetworkInfo();
 }
 
 void IRCNetworkSelectionBox::initWidgets()
@@ -93,14 +93,14 @@ void IRCNetworkSelectionBox::initWidgets()
 	leAlternateNick->setText(gIRCConfig.personal.alternativeNickname);
 	leNick->setText(gIRCConfig.personal.nickname);
 	leRealName->setText(gIRCConfig.personal.fullName);
-	
+
 	fetchNetworks();
 }
 
 IRCNetworkEntity IRCNetworkSelectionBox::network() const
 {
 	IRCNetworkEntity networkEntity = this->networkComboBox();
-	
+
 	networkEntity.setAddress(leServerAddress->text());
 	networkEntity.setPassword(lePassword->text());
 	networkEntity.setPort(spinPort->value());
@@ -123,11 +123,11 @@ IRCNetworkEntity IRCNetworkSelectionBox::networkComboBox() const
 	{
 		return IRCNetworkEntity();
 	}
-	
+
 	QtMetaPointer metaPointer = qVariantValue<QtMetaPointer>(cboNetwork->itemData(index));
 	void* pointer = metaPointer;
 	IRCNetworkEntity* pNetwork = (IRCNetworkEntity*)pointer;
-	
+
 	return *pNetwork;
 }
 
@@ -138,16 +138,16 @@ IRCNetworkConnectionInfo IRCNetworkSelectionBox::networkConnectionInfo() const
 	outInfo.alternateNick = leAlternateNick->text();
 	outInfo.nick = leNick->text();
 	outInfo.realName = leRealName->text();
-	
+
 	outInfo.networkEntity = this->network();
-	
+
 	return outInfo;
 }
 
 void IRCNetworkSelectionBox::updateNetworkInfo()
 {
 	IRCNetworkEntity network = this->networkComboBox();
-		
+
 	leServerAddress->setText(network.address());
 	spinPort->setValue(network.port());
 	lePassword->setText(network.password());
@@ -157,18 +157,18 @@ bool IRCNetworkSelectionBox::validate()
 {
 	const static QString ERROR_TITLE = tr("IRC connection error");
 	IRCNetworkConnectionInfo connectionInfo = this->networkConnectionInfo();
-	
+
 	if (connectionInfo.nick.isEmpty())
 	{
 		QMessageBox::warning(NULL, ERROR_TITLE, tr("You must specify a nick."));
 		return false;
-	}	
-	
+	}
+
 	if (connectionInfo.networkEntity.address().isEmpty())
 	{
 		QMessageBox::warning(NULL, ERROR_TITLE, tr("You must specify a network address."));
 		return false;
 	}
-	
+
 	return true;
 }

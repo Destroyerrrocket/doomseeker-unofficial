@@ -34,13 +34,13 @@ class NetworkReplyWrapperInfo
 		/**
 		 * @brief Default timeout for connection establishment.
 		 *
-		 * This is the timeout between the call to 
+		 * This is the timeout between the call to
 		 * startConnectionTimeoutTimer() and first reception of
 		 * downloadProgress() or uploadProgress() signals.
 		 */
 		static const unsigned DEFAULT_CONNECTION_TIMEOUT_MSECS = 15 * 1000;
 		static const unsigned SUGGESTED_PROGRESS_TIMEOUT_MSECS = 60 * 1000;
-		
+
 		NetworkReplySignalWrapper* pSignalWrapper;
 		NetworkReplyTimeouter* pTimeouter;
 		QNetworkReply* pReply;
@@ -49,7 +49,7 @@ class NetworkReplyWrapperInfo
 		~NetworkReplyWrapperInfo();
 
 		void deleteMembersLater();
-		
+
 		/**
 		 * @brief Sets timeout that occurs when progress stops.
 		 *
@@ -63,11 +63,11 @@ class NetworkReplyWrapperInfo
 		 *      Set to 0 to disable timeout.
 		 */
 		void setProgressTimeout(unsigned timeoutMsecs);
-		
+
 		/**
 		 * @brief Starts the timeout for connection establishment.
 		 *
-		 * This is the timeout between the call to 
+		 * This is the timeout between the call to
 		 * startConnectionTimeoutTimer() and first reception of
 		 * downloadProgress() or uploadProgress() signals.
 		 *

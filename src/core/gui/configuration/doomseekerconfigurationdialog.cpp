@@ -55,10 +55,10 @@ QStandardItem* DoomseekerConfigurationDialog::addConfigurationBox(QStandardItem*
 
 	if (pItem != NULL)
 	{
-		connect(pConfigurationBox, SIGNAL( appearanceChanged() ), 
+		connect(pConfigurationBox, SIGNAL( appearanceChanged() ),
 			SLOT( appearanceChangedSlot() ) );
 	}
-	
+
 	return pItem;
 }
 
@@ -86,7 +86,7 @@ void DoomseekerConfigurationDialog::appendWadseekerConfigurationBoxes()
 {
 	QStandardItem* wadseekerRoot = addLabel(NULL, tr("Wadseeker"));
 	wadseekerRoot->setIcon(QIcon(":/icons/download.png"));
-	
+
 	ConfigurationBaseBox* pConfigBox = NULL;
 
 	pConfigBox = new CFGWadseekerAppearance(this);
@@ -146,7 +146,7 @@ void DoomseekerConfigurationDialog::initOptionsList()
 
 	appendFilePathsConfigurationBoxes();
 	appendWadseekerConfigurationBoxes();
-	
+
 	optionsTree()->expandAll();
 }
 

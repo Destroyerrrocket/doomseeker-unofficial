@@ -30,7 +30,7 @@
 #include <QTreeView>
 #include <QAbstractButton>
 
-ConfigurationDialog::ConfigurationDialog(QWidget* parent) 
+ConfigurationDialog::ConfigurationDialog(QWidget* parent)
 : QDialog(parent)
 {
 	setupUi(this);
@@ -58,13 +58,13 @@ QStandardItem* ConfigurationDialog::addConfigurationBox(QStandardItem* rootItem,
 	{
 		return NULL;
 	}
-	
+
 	QStandardItemModel* pModel = (QStandardItemModel*)tvOptionsList->model();
 	if (rootItem == NULL)
 	{
 		rootItem = pModel->invisibleRootItem();
 	}
-	
+
 	if (!this->hasItemOnList(rootItem))
 	{
 		return NULL;
@@ -72,12 +72,12 @@ QStandardItem* ConfigurationDialog::addConfigurationBox(QStandardItem* rootItem,
 
 	QStandardItem* pNewItem = new QStandardItem(pConfigurationBox->name());
 	pNewItem->setIcon(pConfigurationBox->icon());
-	
+
 	void* pointerConfigurationBox = pConfigurationBox;
 	QtMetaPointer metaPointer = pointerConfigurationBox;
 	QVariant variantConfigurationBox = qVariantFromValue(metaPointer);
 	pNewItem->setData(variantConfigurationBox);
-	
+
 	if (position < 0)
 	{
 		rootItem->appendRow(pNewItem);
@@ -99,18 +99,18 @@ QStandardItem* ConfigurationDialog::addLabel(QStandardItem* rootItem, const QStr
 	{
 		rootItem = pModel->invisibleRootItem();
 	}
-	
+
 	if (!this->hasItemOnList(rootItem))
 	{
 		return NULL;
 	}
-	
+
 	QtMetaPointer metaPointer = (void*)NULL;
 	QVariant variantMetaPointer = qVariantFromValue(metaPointer);
-	
+
 	QStandardItem* pNewItem = new QStandardItem(label);
-	pNewItem->setData(variantMetaPointer);	
-	
+	pNewItem->setData(variantMetaPointer);
+
 	if (position < 0)
 	{
 		rootItem->appendRow(pNewItem);
@@ -119,7 +119,7 @@ QStandardItem* ConfigurationDialog::addLabel(QStandardItem* rootItem, const QStr
 	{
 		rootItem->insertRow(position, pNewItem);
 	}
-	
+
 	return pNewItem;
 }
 
@@ -171,7 +171,7 @@ bool ConfigurationDialog::isConfigurationBoxOnTheList(ConfigurationBaseBox* pCon
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -197,13 +197,13 @@ bool ConfigurationDialog::hasItemOnList(QStandardItem* pItem) const
 	{
 		return false;
 	}
-	
+
 	QStandardItemModel* pModel = (QStandardItemModel*)tvOptionsList->model();
-	
+
 	// Calling index methods on the invisible root items will always return
 	// invalid values.
-	
-	return pModel->invisibleRootItem() == pItem 
+
+	return pModel->invisibleRootItem() == pItem
 		|| pModel->indexFromItem(pItem).isValid();
 }
 
@@ -249,7 +249,7 @@ void ConfigurationDialog::saveSettings()
 	{
 		configBoxesList[i]->save();
 	}
-	
+
 	doSaveSettings();
 
 	if(isVisible())

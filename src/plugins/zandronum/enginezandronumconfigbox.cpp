@@ -27,7 +27,7 @@
 
 #include <QFileDialog>
 
-EngineZandronumConfigBox::EngineZandronumConfigBox(const EnginePlugin* plugin, IniSection& cfg, QWidget* parent) 
+EngineZandronumConfigBox::EngineZandronumConfigBox(const EnginePlugin* plugin, IniSection& cfg, QWidget* parent)
 : EngineConfigurationBaseBox(plugin, cfg, parent)
 {
 	// Create the testing box, we might as well do this in code.
@@ -68,7 +68,7 @@ void EngineZandronumConfigBox::btnBrowseTestingPathClicked()
 void EngineZandronumConfigBox::readSettings()
 {
 	EngineConfigurationBaseBox::readSettings();
-	
+
 	IniSection& config = *ZandronumEnginePlugin::staticInstance()->data()->pConfig;
 
 	groupTesting->setChecked(config["EnableTesting"]);
@@ -81,7 +81,7 @@ void EngineZandronumConfigBox::saveSettings()
 	EngineConfigurationBaseBox::saveSettings();
 
 	QString strVal;
-	
+
 	IniSection& config = *ZandronumEnginePlugin::staticInstance()->data()->pConfig;
 
 	config["EnableTesting"] = groupTesting->isChecked();

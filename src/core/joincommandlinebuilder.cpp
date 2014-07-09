@@ -19,7 +19,7 @@
 //
 //------------------------------------------------------------------------------
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
-//------------------------------------------------------------------------------ 
+//------------------------------------------------------------------------------
 #include "joincommandlinebuilder.h"
 
 #include "apprunner.h"
@@ -189,7 +189,7 @@ JoinCommandLineBuilder::MissingWadsProceed JoinCommandLineBuilder::handleMissing
 {
 	if (WadseekerInterface::isInstantiated())
 	{
-		QMessageBox::StandardButtons ret = 
+		QMessageBox::StandardButtons ret =
 			QMessageBox::warning(d->parentWidget, tr("Doomseeker - files are missing"),
 				tr("You don't have all the files required by this server and an instance "
 					"of Wadseeker is already running.\n\n"

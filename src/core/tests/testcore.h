@@ -34,7 +34,7 @@
  *	performed in enclosed environment and may cause damage to the application's
  *	setup if used inappropriately.
  *
- *	Tests package imitates the Java's JUnit behavior. 
+ *	Tests package imitates the Java's JUnit behavior.
  *	The design is much simplier and the only supported outputs are the Log class
  *	(which prints to stdout) and stdout itself. The test results are simple
  *	boolean values: false if test failed at some point or true if succeeded.
@@ -49,30 +49,30 @@ class TestCore : public TestBase
 {
 	public:
 		TestCore();
-		
+
 		/**
 		 *	@brief Clears success/fail counters.
 		 */
 		void clearCounters();
-		
+
 		/**
 		 *	Provides a standard encapsulation for test execution.
 		 *
-		 *	@param test - An instance of TestUnitBase derivative class. 
-		 *				  @b Important: this object will be deleted by this 
+		 *	@param test - An instance of TestUnitBase derivative class.
+		 *				  @b Important: this object will be deleted by this
 		 *				  method
 		 */
-		void executeTest(TestUnitBase* pTest);		
-		
+		void executeTest(TestUnitBase* pTest);
+
 		int numTests() const { return testsFailed + testsSucceeded; }
 		int numTestsFailed() const { return testsFailed; }
 		int numTestsSucceeded() const { return testsSucceeded; }
-		
-		
+
+
 	protected:
 		int testsFailed;
 		int testsSucceeded;
-		
+
 };
 
 #endif

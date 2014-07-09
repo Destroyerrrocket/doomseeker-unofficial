@@ -23,7 +23,7 @@ class Localization::LocalizationLoader
 {
 	public:
 		LocalizationLoader() {};
-		
+
 		QList<LocalizationInfo> loadLocalizationsList(const QStringList& definitionsFileSearchDirs);
 
 	private:

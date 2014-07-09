@@ -70,7 +70,7 @@ class UpdaterScriptParser
 		 * - /install/file[*]/package/#text - "file[*]" means every "file"
 		 *   element.
 		 *
-		 * @return A null QString if successful. If failed then QString 
+		 * @return A null QString if successful. If failed then QString
 		 *         contains error message.
 		 */
 		QString setPackageName(const QString& name);

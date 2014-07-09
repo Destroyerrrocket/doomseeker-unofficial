@@ -69,7 +69,7 @@ class UpdatePackage
 		 * is performed.
 		 */
 		unsigned long long revision;
-		
+
 		UpdatePackage()
 		{
 			revision = 0;

@@ -46,7 +46,7 @@ IP2CUpdater::~IP2CUpdater()
 		pCurrentNetworkReply->abort();
 		pCurrentNetworkReply->deleteLater();
 	}
-	
+
 	if (pNetworkAccessManager != NULL)
 	{
 		pNetworkAccessManager->deleteLater();

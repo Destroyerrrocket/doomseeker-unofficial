@@ -32,7 +32,7 @@ class QTabWidgetExt : public QTabWidget
 		: QTabWidget(parent)
 		{
 		}
-	
+
 		QTabBar* tabBarPublic()
 		{
 			return tabBar();

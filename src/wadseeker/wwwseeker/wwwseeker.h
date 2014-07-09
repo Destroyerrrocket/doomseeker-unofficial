@@ -163,7 +163,7 @@ class WWWSeeker : public QObject
 		}
 
 		void setUserAgent(const QString& userAgent);
-		
+
 		/**
 		 * @brief Skips site seeks for specified URL.
 		 *

@@ -129,7 +129,7 @@ void RemoteConsole::showPasswordDialog()
 		protocol->sendPassword(dlg->connectPassword());
 	}
 	delete dlg;
-	
+
 	// Set/Restore focus to the cmd line input.
 	serverConsole->setFocus();
 }

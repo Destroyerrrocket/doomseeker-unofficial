@@ -12,7 +12,7 @@ CFGIRCSounds::CFGIRCSounds(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
 	setupUi(this);
-	
+
 	this->connect(btnBrowseNicknameUsed, SIGNAL( clicked() ), SLOT( btnBrowseNicknameUsedClicked() ) );
 	this->connect(btnBrowsePrivateMessage, SIGNAL( clicked() ), SLOT( btnBrowsePrivateMessageClicked() ) );
 }
@@ -42,7 +42,7 @@ void CFGIRCSounds::readSettings()
 {
 	cbNicknameUsed->setChecked(gIRCConfig.sounds.bUseNicknameUsedSound);
 	cbPrivateMessage->setChecked(gIRCConfig.sounds.bUsePrivateMessageReceivedSound);
-	
+
 	leNicknameUsed->setText(gIRCConfig.sounds.nicknameUsedSound);
 	lePrivateMessage->setText(gIRCConfig.sounds.privateMessageReceivedSound);
 }
@@ -51,7 +51,7 @@ void CFGIRCSounds::saveSettings()
 {
 	gIRCConfig.sounds.bUseNicknameUsedSound = cbNicknameUsed->isChecked();
 	gIRCConfig.sounds.bUsePrivateMessageReceivedSound = cbPrivateMessage->isChecked();
-	
+
 	gIRCConfig.sounds.nicknameUsedSound = leNicknameUsed->text();
 	gIRCConfig.sounds.privateMessageReceivedSound = lePrivateMessage->text();
 }

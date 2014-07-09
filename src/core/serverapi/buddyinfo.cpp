@@ -32,7 +32,7 @@ void BuddyInfo::readConfigEntry(const QString& configEntry, QVector<BuddyInfo>& 
 		{
 			break; // Invalid so lets just use what we have.
 		}
-		
+
 		BuddyInfo::PatternType type = BuddyInfo::PT_BASIC;
 		if(listReader->str().compare("basic") == 0)
 		{
@@ -47,15 +47,15 @@ void BuddyInfo::readConfigEntry(const QString& configEntry, QVector<BuddyInfo>& 
 		{
 			break;
 		}
-		
+
 		QRegExp pattern(listReader->str(), Qt::CaseInsensitive, type == PT_BASIC ? QRegExp::Wildcard : QRegExp::RegExp);
 		if(pattern.isValid())
 		{
 			BuddyInfo buddyInfo;
-			
+
 			buddyInfo.pattern = pattern;
 			buddyInfo.patternType = type;
-			
+
 			outVector.append(buddyInfo);
 		}
 

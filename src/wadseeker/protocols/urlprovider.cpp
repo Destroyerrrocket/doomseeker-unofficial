@@ -30,7 +30,7 @@ class MirrorStorage
 {
 	public:
 		QList<QUrl> urls;
-		
+
 		bool hasUrl(const QUrl& url) const
 		{
 			foreach (const QUrl& urlOnList, urls)
@@ -40,10 +40,10 @@ class MirrorStorage
 					return true;
 				}
 			}
-			
+
 			return false;
 		}
-		
+
 		bool isEmpty() const
 		{
 			return urls.isEmpty();
@@ -80,12 +80,12 @@ void URLProvider::addMirror(const QUrl& originalUrl, const QUrl& mirrorUrl)
 	{
 		QList<QUrl> newUrls;
 		newUrls << originalUrl;
-		
+
 		if (!hasOrHadUrl(mirrorUrl))
 		{
 			newUrls << mirrorUrl;
 		}
-		
+
 		addMirrorUrls(newUrls);
 	}
 }
@@ -102,7 +102,7 @@ void URLProvider::addMirrorUrls(const QList<QUrl>& urls)
 			insertUrlPrioritized(url);
 		}
 	}
-	
+
 	if (!pMirrorStorage->isEmpty())
 	{
 		mirrors << pMirrorStorage;
@@ -173,7 +173,7 @@ bool URLProvider::hasOrHadUrl(const QUrl& url) const
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -199,7 +199,7 @@ QList<MirrorStorage*> URLProvider::mirrorsWithUrl(const QUrl& url)
 			mirrorsWithUrls << pMirror;
 		}
 	}
-	
+
 	return mirrorsWithUrls;
 }
 

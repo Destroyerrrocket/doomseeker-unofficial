@@ -35,7 +35,7 @@ class IOUtils
 		 * @b Note:
 		 * IODevices must be open before the method is called.
 		 * IODevices are not closed when copy operation finishes.
-		 * There are no seek operations performed. Data is read from src 
+		 * There are no seek operations performed. Data is read from src
 		 * current position and written to dst current position.
 		 *
 		 * @param src

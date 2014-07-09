@@ -32,7 +32,7 @@ class CFGWadseekerAppearance : public ConfigurationBaseBox, private Ui::CFGWadse
 
 	public:
 		CFGWadseekerAppearance(QWidget* parent = NULL);
-	
+
 		QIcon icon() const { return QIcon(":/icons/color-fill.png"); }
 		QString name() const { return tr("Appearance"); }
 		void readSettings();

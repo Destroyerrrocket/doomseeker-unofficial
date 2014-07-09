@@ -34,29 +34,29 @@ class IRCDelayedOperationList
 {
 	public:
 		~IRCDelayedOperationList();
-	
+
 		void add(const IRCDelayedOperation& operation);
 		void clear();
-		bool hasOperation(const IRCDelayedOperation& operationPattern) const 
-		{ 
-			return operation(operationPattern) != NULL; 
+		bool hasOperation(const IRCDelayedOperation& operationPattern) const
+		{
+			return operation(operationPattern) != NULL;
 		}
-		
+
 		const IRCDelayedOperation* operationForChannel(IRCDelayedOperation::OperationType operationType, const QString& channel) const;
-		
+
 		/**
 		 *	@brief Extracts operation that equals the passed object.
 		 */
 		const IRCDelayedOperation* operation(const IRCDelayedOperation& operation) const;
-		
+
 		const IRCDelayedOperation* operationForNickname(IRCDelayedOperation::OperationType operationType, const QString& nickname) const;
-		
+
 		IRCDelayedOperationList& operator<<(const IRCDelayedOperation& operation)
 		{
 			this->add(operation);
 			return *this;
 		}
-		
+
 		/**
 		 *	@brief Removes operation from the list.
 		 *
@@ -66,7 +66,7 @@ class IRCDelayedOperationList
 		 *		methods.
 		 */
 		void remove(const IRCDelayedOperation* pointer);
-		
+
 	private:
 		QVector<IRCDelayedOperation*> operationsArray;
 };
