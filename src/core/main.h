@@ -117,7 +117,6 @@ class Main : public QObject
 
 	private:
 		bool bPortableMode;
-		QString workingDirectory;
 };
 
 #endif /* __MAIN_H__ */

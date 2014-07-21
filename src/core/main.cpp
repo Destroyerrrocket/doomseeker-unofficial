@@ -321,7 +321,7 @@ bool Main::initDataDirectories()
 {
 	DataPaths::initDefault(bPortableMode);
 	DoomseekerFilePaths::pDataPaths = gDefaultDataPaths;
-	gDefaultDataPaths->setWorkingDirectory(Strings::trim(this->workingDirectory, "\""));
+	gDefaultDataPaths->setWorkingDirectory(QCoreApplication::applicationDirPath());
 	if (!gDefaultDataPaths->createDirectories())
 	{
 		return false;
@@ -460,13 +460,6 @@ int Main::installPendingUpdates()
 
 bool Main::interpretCommandLineParameters()
 {
-	QString firstArg = arguments[0];
-	int lastSlash = qMax<int>(firstArg.lastIndexOf('\\'), firstArg.lastIndexOf('/'));
-	if(lastSlash != -1)
-	{
-		this->workingDirectory = firstArg.mid(0, lastSlash+1);
-	}
-
 	for(int i = 0; i < argumentsCount; ++i)
 	{
 		const char* arg = arguments[i];
@@ -529,9 +522,9 @@ bool Main::interpretCommandLineParameters()
 					gLog << tr("Failed to open file.");
 					return false;
 				}
+				Application::init(argumentsCount, arguments);
 				initDataDirectories();
 				// Plugins generate QPixmaps which need a QApplication active
-				Application::init(argumentsCount, arguments);
 				PluginLoader::init(Strings::combineManyPaths(dataDirectories, "engines/"));
 				gLog << tr("Dumping version info to file in JSON format.");
 				VersionDump::dumpJsonToIO(f);
