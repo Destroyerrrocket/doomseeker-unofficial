@@ -522,9 +522,9 @@ bool Main::interpretCommandLineParameters()
 					gLog << tr("Failed to open file.");
 					return false;
 				}
+				// Plugins generate QPixmaps which need a QApplication active
 				Application::init(argumentsCount, arguments);
 				initDataDirectories();
-				// Plugins generate QPixmaps which need a QApplication active
 				PluginLoader::init(Strings::combineManyPaths(dataDirectories, "engines/"));
 				gLog << tr("Dumping version info to file in JSON format.");
 				VersionDump::dumpJsonToIO(f);
