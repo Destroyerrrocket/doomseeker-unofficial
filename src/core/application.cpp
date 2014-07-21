@@ -30,7 +30,6 @@ class Application::PrivData
 	public:
 		MainWindow *mainWindow;
 		bool running;
-		QString workingDirectory;
 };
 
 Application *Application::staticInstance = NULL;
@@ -41,7 +40,6 @@ Application::Application(int &argc, char **argv)
 	d = new PrivData();
 	d->mainWindow = NULL;
 	d->running = true;
-	d->workingDirectory = "./";
 }
 
 
