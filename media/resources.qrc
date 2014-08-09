@@ -8,6 +8,7 @@
 	<file>icons/ascending.png</file>
 	<file>icons/audio-speaker.png</file>
 	<file>icons/buddies.png</file>
+	<file>icons/chat.png</file>
 	<file>icons/color-fill.png</file>
 	<file>icons/create-server.png</file>
 	<file>icons/descending.png</file>
@@ -18,7 +19,6 @@
 	<file>icons/exclamation.png</file>
 	<file>icons/filter.png</file>
 	<file>icons/get-wad.png</file>
-	<file>icons/irc.png</file>
 	<file>icons/irc_channel.png</file>
 	<file>icons/joystick.png</file>
 	<file>icons/log.png</file>

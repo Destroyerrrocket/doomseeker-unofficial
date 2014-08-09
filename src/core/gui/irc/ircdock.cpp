@@ -36,7 +36,7 @@ IRCDock::IRCDock(QWidget* parent)
 : QDockWidget(parent)
 {
 	setupUi(this);
-	this->toggleViewAction()->setIcon(QIcon(":/icons/irc.png"));
+	this->toggleViewAction()->setIcon(QIcon(":/icons/chat.png"));
 
 	pSounds = new IRCSounds();
 	pSounds->loadFromConfig();
