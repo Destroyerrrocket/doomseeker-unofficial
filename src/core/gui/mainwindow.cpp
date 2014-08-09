@@ -1117,7 +1117,7 @@ QQueryMenuAction* MainWindow::queryMenuActionForMasterClient(MasterClient* pClie
 void MainWindow::quitProgram()
 {
 	bWantToQuit = true;
-	close();
+	QApplication::closeAllWindows();
 }
 
 void dupa(ServerPtr a) {
