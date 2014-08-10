@@ -138,6 +138,7 @@ Server::Server(const QHostAddress &address, unsigned short port)
 	d->maxClients = 0;
 	d->maxPlayers = 0;
 	d->name = tr("<< ERROR >>");
+	d->response = RESPONSE_NO_RESPONSE_YET;
 	d->scoreLimit = 0;
 	d->timeLeft = 0;
 	d->timeLimit = 0;
@@ -151,6 +152,7 @@ Server::Server(const QHostAddress &address, unsigned short port)
 	d->skill = 3;
 	d->bKnown = false;
 	d->custom = false;
+	d->lastRefreshClock.invalidate();
 
 	set_customDetails(&Server::customDetails_default);
 	set_createSendRequest(&Server::createSendRequest_default);
