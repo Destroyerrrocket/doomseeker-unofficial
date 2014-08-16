@@ -43,12 +43,20 @@ p, li { white-space: pre-wrap; }
          <property name="text">
           <string>Add</string>
          </property>
+         <property name="icon">
+          <iconset resource="../../../../media/resources.qrc">
+           <normaloff>:/icons/plus.png</normaloff>:/icons/plus.png</iconset>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="btnRemove">
          <property name="text">
           <string>Remove</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../../media/resources.qrc">
+           <normaloff>:/icons/x.png</normaloff>:/icons/x.png</iconset>
          </property>
         </widget>
        </item>
@@ -81,6 +89,8 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../../../media/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

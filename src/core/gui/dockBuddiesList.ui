@@ -71,8 +71,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>182</width>
-         <height>122</height>
+         <width>382</width>
+         <height>206</height>
         </rect>
        </property>
        <attribute name="label">
@@ -112,12 +112,20 @@
             <property name="text">
              <string>Add</string>
             </property>
+            <property name="icon">
+             <iconset resource="../../../media/resources.qrc">
+              <normaloff>:/icons/plus.png</normaloff>:/icons/plus.png</iconset>
+            </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="deleteButton">
             <property name="text">
              <string>Delete</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../../../media/resources.qrc">
+              <normaloff>:/icons/x.png</normaloff>:/icons/x.png</iconset>
             </property>
            </widget>
           </item>
@@ -130,6 +138,8 @@
    </layout>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../../media/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

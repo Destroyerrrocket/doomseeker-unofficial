@@ -96,6 +96,10 @@
          <property name="text">
           <string>Download &amp;&amp; Install</string>
          </property>
+         <property name="icon">
+          <iconset resource="../../../media/resources.qrc">
+           <normaloff>:/icons/ok.png</normaloff>:/icons/ok.png</iconset>
+         </property>
         </widget>
        </item>
        <item>
@@ -114,6 +118,10 @@
          </property>
          <property name="text">
           <string>Discard</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../media/resources.qrc">
+           <normaloff>:/icons/x.png</normaloff>:/icons/x.png</iconset>
          </property>
         </widget>
        </item>

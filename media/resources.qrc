@@ -24,11 +24,13 @@
 	<file>icons/log.png</file>
 	<file>icons/media-record.png</file>
 	<file>icons/media-playback-start.png</file>
+	<file>icons/minus.png</file>
 	<file>icons/network-connect-3.png</file>
 	<file>icons/ok.png</file>
 	<file>icons/padlock.png</file>
 	<file>icons/pause.png</file>
 	<file>icons/person.png</file>
+	<file>icons/plus.png</file>
 	<file>icons/preferences-system-4.png</file>
 	<file>icons/refresh.png</file>
 	<file>icons/server_details.png</file>

@@ -59,6 +59,10 @@
           <property name="text">
            <string>Default</string>
           </property>
+          <property name="icon">
+           <iconset resource="../../../../media/resources.qrc">
+            <normaloff>:/icon.png</normaloff>:/icon.png</iconset>
+          </property>
          </widget>
         </item>
        </layout>
@@ -81,6 +85,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../../../media/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

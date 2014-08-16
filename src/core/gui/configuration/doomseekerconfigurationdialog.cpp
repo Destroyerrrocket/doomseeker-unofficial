@@ -85,7 +85,7 @@ void DoomseekerConfigurationDialog::appendFilePathsConfigurationBoxes()
 void DoomseekerConfigurationDialog::appendWadseekerConfigurationBoxes()
 {
 	QStandardItem* wadseekerRoot = addLabel(NULL, tr("Wadseeker"));
-	wadseekerRoot->setIcon(QIcon(":/icons/download.png"));
+	wadseekerRoot->setIcon(QIcon(":/icons/get-wad.png"));
 
 	ConfigurationBaseBox* pConfigBox = NULL;
 

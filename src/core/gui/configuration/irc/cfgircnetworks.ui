@@ -54,6 +54,10 @@
        <property name="text">
         <string>Add</string>
        </property>
+       <property name="icon">
+        <iconset resource="../../../../../media/resources.qrc">
+         <normaloff>:/icons/plus.png</normaloff>:/icons/plus.png</iconset>
+       </property>
       </widget>
      </item>
      <item>
@@ -68,12 +72,18 @@
        <property name="text">
         <string>Remove</string>
        </property>
+       <property name="icon">
+        <iconset resource="../../../../../media/resources.qrc">
+         <normaloff>:/icons/x.png</normaloff>:/icons/x.png</iconset>
+       </property>
       </widget>
      </item>
     </layout>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../../../../media/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
