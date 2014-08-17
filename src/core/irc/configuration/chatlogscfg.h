@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chatlogs.cpp
+// chatlogscfg.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,49 +20,34 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "chatlogs.h"
+#ifndef id46ac54ff_adba_49cd_b972_b804898b4fb6
+#define id46ac54ff_adba_49cd_b972_b804898b4fb6
 
-#include "irc/configuration/chatlogscfg.h"
-#include "irc/entities/ircnetworkentity.h"
-#include <QDir>
+#include <QString>
+#include <QVariant>
 
-class ChatLogs::PrivData
+class ChatLogsCfg
 {
 public:
-	QString rootPath() const
-	{
-		return ChatLogsCfg().chatLogsRootDir();
-	}
+	ChatLogsCfg();
+	~ChatLogsCfg();
+
+	QString chatLogsRootDir() const;
+	void setChatLogsRootDir(const QString &val);
+
+	bool isStoreLogs() const;
+	void setStoreLogs(bool b);
+
+	bool isRestoreChatFromLogs() const;
+	void setRestoreChatFromLogs(bool b);
+
+
+private:
+	class PrivData;
+	PrivData *d;
+
+	void setValue(const QString &key, const QVariant &value);
+	QVariant value(const QString &key, const QVariant &defValue = QVariant()) const;
 };
 
-
-ChatLogs::ChatLogs()
-{
-	d = new PrivData();
-}
-
-ChatLogs::~ChatLogs()
-{
-	delete d;
-}
-
-QString ChatLogs::logFilePath(const IRCNetworkEntity &entity, const QString &recipient) const
-{
-	QString fileName = recipient;
-	if (recipient.trimmed().isEmpty())
-	{
-		fileName = "@main";
-	}
-	return QString("%1/%2.txt").arg(networkDirPath(entity), fileName);
-}
-
-bool ChatLogs::mkLogDir(const IRCNetworkEntity &entity)
-{
-	QDir dir(networkDirPath(entity));
-	return dir.mkpath(".");
-}
-
-QString ChatLogs::networkDirPath(const IRCNetworkEntity &entity) const
-{
-	return QString("%1/%2").arg(d->rootPath(), entity.description());
-}
+#endif

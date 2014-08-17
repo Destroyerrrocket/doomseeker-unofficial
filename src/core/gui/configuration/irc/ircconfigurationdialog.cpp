@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircconfigurationdialog.h"
+#include "gui/configuration/irc/cfgchatlogspage.h"
 #include "gui/configuration/irc/cfgircappearance.h"
 #include "gui/configuration/irc/cfgircnetworks.h"
 #include "gui/configuration/irc/cfgircsounds.h"
@@ -59,6 +60,8 @@ void IRCConfigurationDialog::initOptionsList()
 
 	pConfigBox = new CFGIRCSounds(this);
 	this->addConfigurationBox(NULL, pConfigBox);
+
+	addConfigurationBox(NULL, new CfgChatLogsPage(this));
 }
 
 bool IRCConfigurationDialog::isNetworkAutojoinEnabled()

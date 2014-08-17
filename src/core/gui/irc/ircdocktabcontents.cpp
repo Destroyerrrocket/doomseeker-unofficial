@@ -24,6 +24,7 @@
 #include "gui/irc/ircsounds.h"
 #include "gui/irc/ircuserlistmodel.h"
 #include "gui/commongui.h"
+#include "irc/configuration/chatlogscfg.h"
 #include "irc/configuration/ircconfig.h"
 #include "irc/chatlogs.h"
 #include "irc/ircchanneladapter.h"
@@ -558,8 +559,15 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 	assert(pIrcAdapter == NULL);
 	pIrcAdapter = pAdapter;
 
-	restoreLog();
-	openLog();
+	ChatLogsCfg cfg;
+	if (cfg.isRestoreChatFromLogs())
+	{
+		restoreLog();
+	}
+	if (cfg.isStoreLogs())
+	{
+		openLog();
+	}
 
 	connect(pIrcAdapter, SIGNAL( error(const QString&) ), SLOT( receiveError(const QString& ) ));
 	connect(pIrcAdapter, SIGNAL( focusRequest() ), SLOT( adapterFocusRequest() ));
@@ -827,7 +835,8 @@ QString IRCDockTabContents::wrapTextWithMetaTags(const QString &text,
 
 bool IRCDockTabContents::writeLog(const QString &text)
 {
-	if (d->log.isOpen())
+	ChatLogsCfg cfg;
+	if (d->log.isOpen() && cfg.isStoreLogs())
 	{
 		d->log.write(text.toUtf8());
 		d->log.flush();

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chatlogs.cpp
+// chatlogscfg.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,49 +20,64 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "chatlogs.h"
+#include "chatlogscfg.h"
 
-#include "irc/configuration/chatlogscfg.h"
-#include "irc/entities/ircnetworkentity.h"
-#include <QDir>
+#include "irc/configuration/ircconfig.h"
+#include "datapaths.h"
 
-class ChatLogs::PrivData
+class ChatLogsCfg::PrivData
 {
 public:
-	QString rootPath() const
-	{
-		return ChatLogsCfg().chatLogsRootDir();
-	}
 };
 
 
-ChatLogs::ChatLogs()
+ChatLogsCfg::ChatLogsCfg()
 {
 	d = new PrivData();
 }
 
-ChatLogs::~ChatLogs()
+ChatLogsCfg::~ChatLogsCfg()
 {
 	delete d;
 }
 
-QString ChatLogs::logFilePath(const IRCNetworkEntity &entity, const QString &recipient) const
+QString ChatLogsCfg::chatLogsRootDir() const
 {
-	QString fileName = recipient;
-	if (recipient.trimmed().isEmpty())
-	{
-		fileName = "@main";
-	}
-	return QString("%1/%2.txt").arg(networkDirPath(entity), fileName);
+	return value("ChatLogsRootDir", gDefaultDataPaths->localDataLocationPath(
+		DataPaths::CHATLOGS_DIR_NAME)).toString();
 }
 
-bool ChatLogs::mkLogDir(const IRCNetworkEntity &entity)
+void ChatLogsCfg::setChatLogsRootDir(const QString &val)
 {
-	QDir dir(networkDirPath(entity));
-	return dir.mkpath(".");
+	setValue("ChatLogsRootDir", val);
 }
 
-QString ChatLogs::networkDirPath(const IRCNetworkEntity &entity) const
+bool ChatLogsCfg::isStoreLogs() const
 {
-	return QString("%1/%2").arg(d->rootPath(), entity.description());
+	return value("StoreLogs", true).toBool();
+}
+
+void ChatLogsCfg::setStoreLogs(bool b)
+{
+	setValue("StoreLogs", b);
+}
+
+bool ChatLogsCfg::isRestoreChatFromLogs() const
+{
+	return value("RestoreChatFromLogs", true).toBool();
+}
+
+void ChatLogsCfg::setRestoreChatFromLogs(bool b)
+{
+	setValue("RestoreChatFromLogs", b);
+}
+
+void ChatLogsCfg::setValue(const QString &key, const QVariant &value)
+{
+	gIRCConfig.ini()->section("Logs").setValue(key, value);
+}
+
+QVariant ChatLogsCfg::value(const QString &key, const QVariant &defValue) const
+{
+	return gIRCConfig.ini()->section("Logs").value(key, defValue);
 }

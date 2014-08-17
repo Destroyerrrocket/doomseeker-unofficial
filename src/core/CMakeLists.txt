@@ -61,6 +61,7 @@ add_definitions("-DINSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
 qt4_wrap_ui(doomseekerUI
 	gui/configuration/irc/cfgircappearance.ui
 	gui/configuration/irc/cfgircdefinenetworkdialog.ui
+	gui/configuration/irc/cfgchatlogspage.ui
 	gui/configuration/irc/cfgircnetworks.ui
 	gui/configuration/irc/cfgircsounds.ui
 	gui/configuration/cfgappearance.ui
@@ -101,6 +102,7 @@ qt4_wrap_ui(doomseekerUI
 set(DOOMSEEKER_QT_FILES
 	gui/configuration/irc/cfgircappearance.h
 	gui/configuration/irc/cfgircdefinenetworkdialog.h
+	gui/configuration/irc/cfgchatlogspage.h
 	gui/configuration/irc/cfgircnetworks.h
 	gui/configuration/irc/cfgircsounds.h
 	gui/configuration/irc/ircconfigurationdialog.h
@@ -215,6 +217,7 @@ set(SOURCE_FILES
 	configuration/serverpasswordsummary.cpp
 	gui/configuration/irc/cfgircappearance.cpp
 	gui/configuration/irc/cfgircdefinenetworkdialog.cpp
+	gui/configuration/irc/cfgchatlogspage.cpp
 	gui/configuration/irc/cfgircnetworks.cpp
 	gui/configuration/irc/cfgircsounds.cpp
 	gui/configuration/irc/ircconfigurationdialog.cpp
@@ -290,6 +293,7 @@ set(SOURCE_FILES
 	ip2c/ip2cparser.cpp
 	ip2c/ip2cupdater.cpp
 	irc/configuration/ircconfig.cpp
+	irc/configuration/chatlogscfg.cpp
 	irc/constants/ircresponsetype.cpp
 	irc/entities/ircnetworkentity.cpp
 	irc/entities/ircresponseparseresult.cpp
@@ -409,6 +413,7 @@ set(HEADER_FILES
 	ini/settingsproviderqt.h
 	ip2c/entities/ip2ccountryinfo.h
 	irc/configuration/ircconfig.h
+	irc/configuration/chatlogscfg.h
 	irc/constants/ircresponsetype.h
 	irc/entities/ircnetworkentity.h
 	irc/entities/ircresponseparseresult.h

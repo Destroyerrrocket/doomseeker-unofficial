@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chatlogs.cpp
+// cfgchatlogspage.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,49 +20,37 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "chatlogs.h"
+#ifndef id65026263_73af_4292_be84_ddb5bf7f606b
+#define id65026263_73af_4292_be84_ddb5bf7f606b
 
-#include "irc/configuration/chatlogscfg.h"
-#include "irc/entities/ircnetworkentity.h"
-#include <QDir>
+#include "ui_cfgchatlogspage.h"
+#include "gui/configuration/configurationbasebox.h"
 
-class ChatLogs::PrivData
+class CfgChatLogsPage : public ConfigurationBaseBox, private Ui::CfgChatLogsPage
 {
+Q_OBJECT
+
 public:
-	QString rootPath() const
-	{
-		return ChatLogsCfg().chatLogsRootDir();
-	}
+	CfgChatLogsPage(QWidget *parent);
+	~CfgChatLogsPage();
+
+	QIcon icon() const { return QIcon(":/icons/log.png"); }
+	QString name() const { return tr("Logging"); }
+	void readSettings();
+	QString title() const { return tr("IRC - Logging"); }
+
+protected:
+	void saveSettings();
+
+private:
+	class PrivData;
+	PrivData *d;
+
+	bool checkDir(const QString &directory);
+
+private slots:
+	void browseStorageDirectory();
+	void exploreStorageDirectory();
 };
 
-
-ChatLogs::ChatLogs()
-{
-	d = new PrivData();
-}
-
-ChatLogs::~ChatLogs()
-{
-	delete d;
-}
-
-QString ChatLogs::logFilePath(const IRCNetworkEntity &entity, const QString &recipient) const
-{
-	QString fileName = recipient;
-	if (recipient.trimmed().isEmpty())
-	{
-		fileName = "@main";
-	}
-	return QString("%1/%2.txt").arg(networkDirPath(entity), fileName);
-}
-
-bool ChatLogs::mkLogDir(const IRCNetworkEntity &entity)
-{
-	QDir dir(networkDirPath(entity));
-	return dir.mkpath(".");
-}
-
-QString ChatLogs::networkDirPath(const IRCNetworkEntity &entity) const
-{
-	return QString("%1/%2").arg(d->rootPath(), entity.description());
-}
+#endif
