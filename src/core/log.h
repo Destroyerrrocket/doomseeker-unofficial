@@ -57,20 +57,6 @@ class MAIN_EXPORT Log : public QObject
 		const QString& content() const;
 
 		/**
-		 *	Works like printf() from stdio. After the output string is
-		 *	constructed it is passed to addEntry() where additional formatting
-		 *	is applied.
-		 */
-		void logPrintf(const char* str, ...);
-
-		/**
-		 *	Works like printf() from stdio. After the output string is
-		 *	constructed it is displayed AS IS, without any additional
-		 *	formatting.
-		 */
-		void logUnformattedPrintf(const char* str, ...);
-
-		/**
 		 * @brief If true all new entries will also be printed to stdout.
 		 *
 		 * Otherwise entries are stored only in the logContent member.
@@ -118,8 +104,6 @@ class MAIN_EXPORT Log : public QObject
 	private:
 		class PrivData;
 		PrivData *d;
-
-		int doLogPrintf(char* output, unsigned outputSize, const char* str, va_list argList);
-};
+};
 
 #endif

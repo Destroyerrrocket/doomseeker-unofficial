@@ -89,53 +89,9 @@ const QString& Log::content() const
 	return d->logContent;
 }
 
-int Log::doLogPrintf(char* output, unsigned outputSize, const char* str, va_list argList)
-{
-	QMutexLocker locker(&d->mutex);
-
-	if (str == NULL)
-	{
-		return - 1;
-	}
-
-	return vsnprintf(output, outputSize, str, argList);
-}
-
 bool Log::isPrintingToStdout() const
 {
 	return d->printToStdout;
-}
-
-void Log::logPrintf(const char* str, ...)
-{
-	va_list argList;
-	char tempText[1024];
-
-	va_start(argList, str);
-
-	int size = doLogPrintf(tempText, sizeof(tempText), str, argList);
-	if(size == -1)
-	{
-		return;
-	}
-
-	addEntry(tempText);
-}
-
-void Log::logUnformattedPrintf(const char* str, ...)
-{
-	va_list argList;
-	char tempText[1024];
-
-	va_start(argList, str);
-
-	int size = doLogPrintf(tempText, sizeof(tempText), str, argList);
-	if(size == -1)
-	{
-		return;
-	}
-
-	addUnformattedEntry(tempText);
 }
 
 Log& Log::operator<<(const QString& string)
