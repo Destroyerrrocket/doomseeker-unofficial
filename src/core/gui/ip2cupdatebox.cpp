@@ -30,27 +30,27 @@ IP2CUpdateBox::IP2CUpdateBox(QWidget* parent)
 : QDialog(parent)
 {
 	setupUi(this);
-	
+
 	connect(btnUpdate, SIGNAL( clicked() ), this, SLOT( accept() ) );
 	connect(btnCancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
-	
+
 	updateInfo();
 }
 
 void IP2CUpdateBox::updateInfo()
 {
 	QString filePath = DoomseekerFilePaths::ip2cDatabase();
-	
+
 	lblIP2CFileLocation->setText(filePath);
-	
+
 	QFileInfo fileInfo(filePath);
 	if (fileInfo.exists())
 	{
 		QDateTime lastModified = fileInfo.lastModified();
 		QDateTime current = QDateTime::currentDateTime();
-		
+
 		int days = lastModified.daysTo(current);
-		
+
 		QString ageString = tr("This database is %n days old.", "", days);
 		lblDatabaseAge->setText(ageString);
 	}
@@ -58,8 +58,8 @@ void IP2CUpdateBox::updateInfo()
 	{
 		lblDatabaseAge->setText(tr("This file cannot be found. Precompiled database will be used. Use update button if you want to fix this problem."));
 	}
-	
-	
-	
-	
+
+
+
+
 }

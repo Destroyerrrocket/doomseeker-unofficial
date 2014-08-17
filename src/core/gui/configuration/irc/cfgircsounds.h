@@ -33,19 +33,19 @@ class CFGIRCSounds : public ConfigurationBaseBox, private Ui::CFGIRCSounds
 	public:
 		CFGIRCSounds(QWidget* parent = NULL);
 		~CFGIRCSounds();
-		
+
 		QIcon icon() const { return QIcon(":/icons/audio-speaker.png"); }
 		QString name() const { return tr("Sounds"); }
 		void readSettings();
 		QString title() const { return tr("IRC - Sounds"); }
-		
+
 	protected:
 		void saveSettings();
-		
+
 	private:
 		QString getPathToWav();
 		void setPath(QLineEdit* pLineEdit, const QString& path);
-		
+
 	private slots:
 		void btnBrowseNicknameUsedClicked();
 		void btnBrowsePrivateMessageClicked();

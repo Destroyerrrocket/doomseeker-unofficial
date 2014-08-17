@@ -10,7 +10,7 @@ FontButton::FontButton(QWidget* parent)
 : QPushButton(parent)
 {
 	connect(this, SIGNAL( clicked() ), SLOT( thisClicked() ) );
-	
+
 	this->updateAppearance();
 }
 
@@ -35,7 +35,7 @@ void FontButton::updateAppearance()
 {
 	QString text = QString("%1, %2").arg(this->currentFont.family()).arg(this->currentFont.pointSize());
 	QFont textFont = this->currentFont;
-	
+
 	this->setFont(textFont);
 	this->setText(text);
 }
@@ -45,7 +45,7 @@ void FontButton::updateFont(const QFont& newFont)
 	QFont oldFont = this->currentFont;
 	this->currentFont = newFont;
 	updateAppearance();
-	
+
 	emit fontUpdated(oldFont, this->currentFont);
 }
 

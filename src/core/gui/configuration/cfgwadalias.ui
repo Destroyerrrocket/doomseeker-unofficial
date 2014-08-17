@@ -60,6 +60,10 @@
        <property name="text">
         <string>Add</string>
        </property>
+       <property name="icon">
+        <iconset resource="../../../../media/resources.qrc">
+         <normaloff>:/icons/plus.png</normaloff>:/icons/plus.png</iconset>
+       </property>
       </widget>
      </item>
      <item>
@@ -67,12 +71,20 @@
        <property name="text">
         <string>Add Defaults</string>
        </property>
+       <property name="icon">
+        <iconset resource="../../../../media/resources.qrc">
+         <normaloff>:/icons/doomseeker_plus.png</normaloff>:/icons/doomseeker_plus.png</iconset>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btnRemove">
        <property name="text">
         <string>Remove</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../../media/resources.qrc">
+         <normaloff>:/icons/x.png</normaloff>:/icons/x.png</iconset>
        </property>
       </widget>
      </item>
@@ -100,7 +112,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../../../media/resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>btnAdd</sender>

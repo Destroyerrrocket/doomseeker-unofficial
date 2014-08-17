@@ -27,7 +27,7 @@
 // to update this file before making a new tag or a new release.
 //
 // NOTE:
-// This file defines the version data but it SHOULD NOT be used to access this 
+// This file defines the version data but it SHOULD NOT be used to access this
 // data. To prevent unnecessary recompilations of huge amount of files
 // everytime the version changes, all information should be accessed
 // using the class defined in 'version.h' file.

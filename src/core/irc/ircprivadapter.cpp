@@ -50,22 +50,22 @@ void IRCPrivAdapter::userLeaves(const QString& nickname, const QString& farewell
 	if (recipientUserInfo.isSameNickname(nickname))
 	{
 		QString message = "";
-	
+
 		switch (quitType)
 		{
 			case IRCChatAdapter::NetworkKill:
 				message = tr("This user connection has been killed. (KILL: %1)").arg(farewellMessage);
 				break;
-		
+
 			case IRCChatAdapter::NetworkQuit:
 				message = tr("This user has left the network. (QUIT: %1)").arg(farewellMessage);
 				break;
-				
+
 			default:
 				emit error(tr("Unhandled IRCQuitType in IRCPrivAdapter::userLeaves()"));
 				break;
 		}
-		
+
 		if (!message.isEmpty())
 		{
 			emit messageWithClass(message, IRCMessageClass::NetworkAction);

@@ -40,10 +40,10 @@ class DndFileSystemListView : public QListView
 
 	public:
 		DndFileSystemListView(QWidget* pParent = NULL);
-		
+
 	signals:
 		void fileSystemPathDropped(const QString& path);
-		
+
 	protected:
 		void dragEnterEvent(QDragEnterEvent* pEvent);
 		void dropEvent(QDropEvent* pEvent);

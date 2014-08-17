@@ -29,7 +29,7 @@
 const int COL_PATH = 0;
 const int COL_RECURSE = 1;
 
-CFGFilePaths::CFGFilePaths(QWidget* parent) 
+CFGFilePaths::CFGFilePaths(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
 	setupUi(this);

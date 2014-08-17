@@ -37,7 +37,7 @@ class ExampleINIs
 		 *	errors.
 		 */
 		static QByteArray getExampleINI();
-		
+
 		/**
 		 *	@brief Ini class should detect errors in this example.
 		 */
@@ -48,65 +48,65 @@ class TestReadINI : public TestUnitBase
 {
 	public:
 		TestReadINI();
-	
+
 		bool executeTest();
 };
 
 class TestReadINIVariable : public TestUnitBase
 {
-	public:	
+	public:
 		TestReadINIVariable()
 		: TestUnitBase("Read INI Variable")
 		{
 		}
-		
+
 		bool executeTest();
 };
 
 class TestReadINIList : public TestUnitBase
 {
-	public:	
+	public:
 		TestReadINIList()
 		: TestUnitBase("Read INI List")
 		{
 		}
-		
+
 		bool executeTest();
-		
+
 	protected:
 		bool compareEntry(const QString& actual, const QString& expected);
 };
 
 class TestDeleteINIVariable : public TestUnitBase
 {
-	public:	
+	public:
 		TestDeleteINIVariable()
 		: TestUnitBase("Delete INI Variable")
 		{
 		}
-		
+
 		bool executeTest();
 };
 
 class TestDeleteINISection : public TestUnitBase
 {
-	public:	
+	public:
 		TestDeleteINISection()
 		: TestUnitBase("Delete INI Section")
 		{
 		}
-		
+
 		bool executeTest();
 };
 
 class TestReadINIWithErrors : public TestUnitBase
 {
-	public:	
+	public:
 		TestReadINIWithErrors()
 		: TestUnitBase("Read INI file with errors")
 		{
 		}
-		
+
 		bool executeTest();
 };
 

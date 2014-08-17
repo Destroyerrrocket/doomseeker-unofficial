@@ -76,7 +76,7 @@ void WadRetriever::addMirrorUrls(const WadDownloadInfo& wad, const QList<QUrl>& 
 				filteredUrlList << urlCandidate;
 			}
 		}
-		
+
 		if (!filteredUrlList.isEmpty())
 		{
 			pRetrieverInfo->downloadUrls->addMirrorUrls(filteredUrlList);
@@ -322,7 +322,7 @@ bool WadRetriever::isUrlAllowedToDownloadATM(const QUrl& url) const
 			return false;
 		}
 	}
-	
+
 	return true;
 }
 
@@ -340,11 +340,11 @@ void WadRetriever::networkQueryError(QNetworkReply* pReply, QNetworkReply::Netwo
 	// We shall ignore OperationCanceledError because this error is caused
 	// by a call to QNetworkReply::abort() and it may confuse users.
 	// "Why am I getting this error? Is it a bug? Yeah, it is a bug!"
-	if (code != QNetworkReply::NoError && code != QNetworkReply::OperationCanceledError) 
+	if (code != QNetworkReply::NoError && code != QNetworkReply::OperationCanceledError)
 	{
 		WadRetrieverInfo* pInfo = findRetrieverInfo(pReply);
 		QString errorString = FixedNetworkAccessManager::networkErrorToString(code);
-		
+
 		emit message(tr("File \"%1\": network error occurred: %2")
 			.arg(pInfo->wad->name(), errorString), WadseekerLib::Error);
 	}
@@ -361,7 +361,7 @@ void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 		{
 			url = pReply->url();
 		}
-		
+
 #ifndef NDEBUG
 		{
 			QUrl replyUrl = pReply->url();
@@ -377,13 +377,13 @@ void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 				printf("%s: %s\n", headerName.constData(), headerData.constData());
 			}
 			printf("END OF HEADERS\n");
-		
+
 		    qDebug() << "WadRetriever: Finished network query for URL: " << url.toString();
 		}
 #endif
 		emit message(tr("Finished URL: %1").arg(url.toString()),
 					WadseekerLib::Notice);
-	
+
 		NetworkReplyWrapperInfo* pReplyWrapperInfo = pInfo->pNetworkReply;
 		emit wadDownloadFinished(*pInfo->wad);
 
@@ -517,13 +517,13 @@ void WadRetriever::resolveDownloadFinish(QNetworkReply* pReply, WadRetrieverInfo
 		// the mirrors will also contain the invalid file and should not be
 		// queried.
 		pWadRetrieverInfo->downloadUrls->removeUrlAndMirrors(url);
-	
+
 		// Save the contents to temporary file so it can be seeked freely.
 		QTemporaryFile tempFile;
 		tempFile.open();
 		IOUtils::copy(*pReply, tempFile);
 		tempFile.seek(0);
-	
+
 		// We need to determine the correct filename.
 		QString filename = pWadRetrieverInfo->wad->name();
 		Http http(pReply);
@@ -606,14 +606,14 @@ void WadRetriever::startNextDownloads()
 	{
 		return;
 	}
-	
+
 	foreach (WadRetrieverInfo* pRetrieverInfo, d.wads)
 	{
 		if (numCurrentRunningDownloads() >= d.maxConcurrentWadDownloads)
 		{
 			break;
 		}
-	
+
 		if (pRetrieverInfo->isAvailableForDownload())
 		{
 			// Take first valid URL to use.
@@ -648,7 +648,7 @@ void WadRetriever::tryInstall(const QString& filename, QIODevice* dataStream)
 {
 	const bool IS_ARCHIVE = true;
 	WadInstaller installer(d.targetSavePath);
-	
+
 	QTemporaryFile tempFile;
 	QIODevice* stream = dataStream;
 	if (dataStream->isSequential())
@@ -660,7 +660,7 @@ void WadRetriever::tryInstall(const QString& filename, QIODevice* dataStream)
 		IOUtils::copy(*dataStream, tempFile);
 		tempFile.seek(0);
 		stream = &tempFile;
-	}	
+	}
 
 	emit message(tr("Attempting to install file %1 of size %2").arg(filename).arg(stream->size()),
 				WadseekerLib::Notice);

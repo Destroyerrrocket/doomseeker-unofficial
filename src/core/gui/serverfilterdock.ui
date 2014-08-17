@@ -199,6 +199,10 @@
           <property name="text">
            <string>Clear</string>
           </property>
+          <property name="icon">
+           <iconset resource="../../../media/resources.qrc">
+            <normaloff>:/icons/x.png</normaloff>:/icons/x.png</iconset>
+          </property>
          </widget>
         </item>
         <item>
@@ -244,7 +248,9 @@
   <tabstop>btnClear</tabstop>
   <tabstop>scrollArea</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../../../media/resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>btnClear</sender>

@@ -141,7 +141,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 * Deallocates an instance of Wadseeker.
 		 */
 		~Wadseeker();
-		
+
 		/**
 		 * @brief Check if Wadseeker is currently downloading given file.
 		 *
@@ -250,7 +250,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *      performed.
 		 */
 		void skipFileCurrentUrl(const QString& fileName);
-		
+
 		/**
 		 * @brief Skips site seeks for specified URL.
 		 *
@@ -263,7 +263,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *      is passed no operation will be performed.
 		 */
 		void skipSiteSeek(const QUrl& url);
-		
+
 		/**
 		 *	Library's "entry" method. This is where Wadseeker begins
 		 *	to iterate through WWW sites to find all files specified

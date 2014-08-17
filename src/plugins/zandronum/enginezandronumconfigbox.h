@@ -41,7 +41,7 @@ class EngineZandronumConfigBox : public EngineConfigurationBaseBox
 		void btnBrowseTestingPathClicked();
 
 	protected:
-		
+
 		void saveSettings();
 
 		QGroupBox *groupTesting;

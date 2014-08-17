@@ -64,10 +64,10 @@ QString IRCUserInfo::extractHostnameFromFullSignature() const
 		int indexOfDelimiterChar = this->fullSignature.indexOf('@');
 		QString hostName = this->fullSignature;
 		hostName.remove(0, indexOfDelimiterChar + 1);
-		
+
 		return hostName;
 	}
-	
+
 	return "";
 }
 

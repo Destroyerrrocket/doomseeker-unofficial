@@ -38,11 +38,11 @@ TestDataPathsAppDataDirectoryAccess::TestDataPathsAppDataDirectoryAccess(bool bP
 bool TestDataPathsAppDataDirectoryAccess::executeTest()
 {
 	DataPaths dataPaths(bPortable);
-	
+
 	QString appDataDir = dataPaths.systemAppDataDirectory();
-	
+
 	testLog << QString("App Data directory: %1").arg(appDataDir);
-	
+
 	return dataPaths.validateAppDataDirectory();
 }
 
@@ -62,10 +62,10 @@ TestDataPathsAppDataDirectoryWrite::TestDataPathsAppDataDirectoryWrite(bool bPor
 bool TestDataPathsAppDataDirectoryWrite::executeTest()
 {
 	DataPaths dataPaths(bPortable);
-	
+
 	QString appDataDirPath = dataPaths.systemAppDataDirectory();
 	QDir appDataDir(appDataDirPath);
-	
+
 	QString randomDirName;
 	bool bEntryDoesExist = false;
 	do
@@ -77,26 +77,26 @@ bool TestDataPathsAppDataDirectoryWrite::executeTest()
 		bEntryDoesExist = appDataDir.exists(randomDirName);
 	}
 	while (bEntryDoesExist == true);
-	
+
 	QString randomDirPath = appDataDirPath + "/" + randomDirName;
-	
+
 	testLog << "Attempting to create directory:";
 	testLog << randomDirPath;
 
 	if (!appDataDir.mkdir(randomDirName))
 	{
 		testLog << "Failed.";
-		return false;	
+		return false;
 	}
-	
+
 	QString testFilePath = randomDirPath + "/" + "tmpfile.tmp";
 	QFile testFile(testFilePath);
-	
+
 	testLog << "Attempting to open following file for writing:";
 	testLog << testFilePath;
 
 	bool bReturnValue = true;
-	
+
 	if (!testFile.open(QIODevice::WriteOnly))
 	{
 		testLog << "Failed.";
@@ -107,9 +107,9 @@ bool TestDataPathsAppDataDirectoryWrite::executeTest()
 		testFile.close();
 		testFile.remove();
 	}
-	
+
 	// Clean up!
 	appDataDir.rmdir(randomDirName);
-	
+
 	return bReturnValue;
 }

@@ -121,7 +121,7 @@ void PathFinder::addPrioritySearchDir(const QString& dir)
 		d->searchPaths.prepend(fileInfo.absoluteDir().absolutePath());
 	else
 		d->searchPaths.prepend(fileInfo.absoluteFilePath());
-	
+
 }
 
 QString PathFinder::findFile(const QString& fileName) const

@@ -15,7 +15,7 @@ class QtMetaPointer
 		{
 			ptr = copyin.ptr;
 		}
-		
+
 		void* ptr;
 
 	public:
@@ -39,13 +39,13 @@ class QtMetaPointer
 
 			return *this;
 		}
-		
+
 		QtMetaPointer& operator=(void* rhs)
 		{
 			this->ptr = rhs;
 			return *this;
 		}
-		
+
 		~QtMetaPointer() {}
 
 		bool operator==(const QtMetaPointer* fPtr) const
@@ -62,11 +62,11 @@ class QtMetaPointer
 		{
 			return ptr;
 		}
-		
+
 		operator void* () { return ptr; }
 		operator const void* () const { return ptr; }
 };
 
-Q_DECLARE_METATYPE(QtMetaPointer) 
+Q_DECLARE_METATYPE(QtMetaPointer)
 
 #endif

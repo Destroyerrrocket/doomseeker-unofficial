@@ -632,8 +632,8 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		void begunRefreshing(ServerPtr server);
 		/**
-		 * @brief Emitted when a refresh has been completed. 
-		 * 
+		 * @brief Emitted when a refresh has been completed.
+		 *
 		 * Be sure to check the response to see if anything has actually
 		 * changed.
 		 *

@@ -37,7 +37,7 @@ class UpdatePackage;
  *
  * AutoUpdater is a non-reusable state machine. This means that if start()
  * was called once then subsequent calls to start() are an error even if
- * the machine has completed its previous job. If updater needs to be 
+ * the machine has completed its previous job. If updater needs to be
  * launched multiple times then the old object needs to be disposed of
  * and a new object needs to be created.
  *
@@ -81,7 +81,7 @@ class AutoUpdater : public QObject
 			 */
 			EC_UpdaterInfoCannotParse,
 			/**
-			 * @brief File was parseable but there was no main program 
+			 * @brief File was parseable but there was no main program
 			 *        information inside.
 			 */
 			EC_UpdaterInfoMissingMainProgramNode,
@@ -142,7 +142,7 @@ class AutoUpdater : public QObject
 		 */
 		static QString updaterScriptPath();
 		static QString updateStorageDirPath();
-		
+
 
 		AutoUpdater(QObject* pParent = NULL);
 		~AutoUpdater();
@@ -218,7 +218,7 @@ class AutoUpdater : public QObject
 		 */
 		void setRequireDownloadAndInstallConfirmation(bool b);
 		void start();
-		
+
 	public slots:
 		void confirmDownloadAndInstall();
 

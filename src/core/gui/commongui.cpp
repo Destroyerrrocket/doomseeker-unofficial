@@ -89,17 +89,17 @@ void CommonGUI::removeSelectedRowsFromStandardItemView(QAbstractItemView* view,
 		QModelIndex index = model->indexFromItem(itemList[i]);
 		model->removeRow(index.row());
 	}
-	
+
 	if (bSelectNextItem && !indexList.isEmpty())
 	{
 		int selectRowIdx = lowestRemovedRow;
 		selectRowIdx -= indexList.size();
-		
+
 		if (selectRowIdx + 1 < model->rowCount())
 		{
 			++selectRowIdx;
 		}
-		
+
 		if (selectRowIdx >= 0)
 		{
 			QModelIndex newIdx = model->index(selectRowIdx, 0);

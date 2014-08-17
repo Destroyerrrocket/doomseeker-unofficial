@@ -61,6 +61,10 @@
         <property name="text">
          <string>Clear</string>
         </property>
+        <property name="icon">
+         <iconset resource="../../../media/resources.qrc">
+          <normaloff>:/icons/x.png</normaloff>:/icons/x.png</iconset>
+        </property>
        </widget>
       </item>
      </layout>
@@ -76,6 +80,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../../../media/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

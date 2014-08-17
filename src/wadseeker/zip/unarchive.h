@@ -72,7 +72,7 @@ class WADSEEKER_API UnArchive : public QObject
 		 * The device needs to be deleted manually.
 		 */
 		static UnArchive *openArchive(const QFileInfo &fi, QIODevice* dataStream);
-		
+
 		/**
 		 * @brief Opens an archive stored in the known path in the
 		 *        file system.
@@ -87,7 +87,7 @@ class WADSEEKER_API UnArchive : public QObject
 
 	private:
 		static UnArchive *detectArchive(const QFileInfo &fi, QIODevice *&device);
-		
+
 		/**
 		 * @brief If true will cause delete of stream QIODevice.
 		 */

@@ -120,7 +120,7 @@ void Idgames::extractAndEmitLinks(QByteArray& pageData, const QUrl& pageUrl)
 		{
 			directUrls << link.url;
 		}
-		
+
 		emit fileLinksFound(d->seekedFile.name(), directUrls);
 	}
 

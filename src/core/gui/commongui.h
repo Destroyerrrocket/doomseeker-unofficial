@@ -34,7 +34,7 @@ class CommonGUI
 		/**
 		 * @brief Calls QInputDialog::getText().
 		 */
-		static QString askString(const QString& title, const QString& label, 
+		static QString askString(const QString& title, const QString& label,
 			bool* ok = NULL, const QString& defaultString = "");
 
 		/**

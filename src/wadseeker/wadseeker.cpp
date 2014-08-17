@@ -390,7 +390,7 @@ void Wadseeker::setupIdgamesClients(const QList<WadDownloadInfo>& wadDownloadInf
 			SIGNAL( message(const QString&, WadseekerLib::MessageType) ) );
 
 		this->connect(pIdgames, SIGNAL( fileLinksFound(const QString&, const QList<QUrl>&)),
-			SLOT( fileMirrorLinksFound(const QString&, const QList<QUrl>&) ) );		
+			SLOT( fileMirrorLinksFound(const QString&, const QList<QUrl>&) ) );
 
 		// Forward signals as with WWWSeeker
 		this->connect(pIdgames, SIGNAL( siteFinished(const QUrl&) ),

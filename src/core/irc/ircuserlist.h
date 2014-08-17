@@ -65,9 +65,9 @@ class IRCUserList
 		void clear();
 
 		bool hasUser(const QString& nickname) const;
-		
+
 		const IRCUserInfo* operator[](int index) const { return usersArray[index]; }
-		
+
 		/**
 		 *	@brief Removes a name from the sortecd cachedNames list.
 		 *
@@ -85,9 +85,9 @@ class IRCUserList
 		 *	Please note that this list is not ordered in any way.
 		 */
 		QStringList toStringList() const;
-		
+
 		const IRCUserInfo* user(const QString& nickname) const;
-		
+
 		/**
 		 *	@brief Gets a copy of the IRCUserInfo for user with given
 		 *	name.
@@ -96,7 +96,7 @@ class IRCUserList
 		 *	no nickname.
 		 */
 		IRCUserInfo userCopy(const QString& nickname) const;
-	
+
 	private:
 		QVector<IRCUserInfo*> usersArray;
 

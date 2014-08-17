@@ -214,7 +214,7 @@ void WadseekerWadsTable::setFileUrl(const QString& filename, const QUrl& url)
 		QTableWidgetItem* pItem = this->item(row, IDX_URL_COLUMN);
 		pItem->setText(url.toString());
 		pItem->setToolTip(url.toString());
-		
+
 		QProgressBar* pBar = (QProgressBar*) this->cellWidget(row, IDX_PROGRESS_COLUMN);
 		pBar->setMaximum(0);
 		pBar->setValue(0);
@@ -299,7 +299,7 @@ void WadseekerWadsTable::updateDataInfoValues(bool bForce)
 			// Update ETA and speed.
 			if (pCalculator->expectedDataSize() != pCalculator->lastRegisterAttemptedDataAmount())
 			{
-				// If both above values are equal it means we have either 
+				// If both above values are equal it means we have either
 				// finished the download or didn't start it yet. In either case
 				// we shouldn't change the speed and ETA displays.
 				long double ldEta = pCalculator->estimatedTimeUntilArrival();

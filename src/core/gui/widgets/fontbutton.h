@@ -38,22 +38,22 @@ class FontButton : public QPushButton
 		FontButton(QWidget* parent = NULL);
 
 		const QFont& selectedFont() const { return currentFont; }
-		
+
 		void setSelectedFont(const QFont& font);
-	
+
 	signals:
 		void fontUpdated(QFont oldFont, const QFont& newFont);
 
 	protected:
 		QFont currentFont;
-	
+
 		void updateAppearance();
-		
+
 		/**
 		 *	@brief Will always emit fontUpdated() signal.
 		 */
 		void updateFont(const QFont& newFont);
-		
+
 	protected slots:
 		void thisClicked();
 };

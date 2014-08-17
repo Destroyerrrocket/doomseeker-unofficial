@@ -50,7 +50,7 @@ FixedFtpReply::FixedFtpReply(const QNetworkRequest& request)
 	bIsAborting = false;
 	offset = 0;
 	fileSize = 0;
-	
+
 	QUrl url = request.url();
 
 	ftp = new QFtp(this);

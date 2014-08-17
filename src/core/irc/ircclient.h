@@ -45,10 +45,10 @@ class IRCClient : public QObject
 		bool isConnected() const;
 
 		bool sendMessage(const QString& message);
-		
+
 	signals:
 		void hostLookupError(QHostInfo::HostInfoError errorValue);
-		
+
 		/**
 		 *	@brief These are the messages that IRCClient class sends to
 		 *	inform the upper layers of progress.
@@ -57,14 +57,14 @@ class IRCClient : public QObject
 		 */
 		void infoMessage(const QString& message);
 		void ircServerResponse(const QString& message);
-		
+
 	private:
 		bool bIsInHostLookupMode;
 		QString hostName;
 		int lookUpId;
 		unsigned short port;
 		QTcpSocket socket;
-		
+
 		/**
 		 *	@brief Will prefer IPv4 addresses.
 		 *
@@ -75,7 +75,7 @@ class IRCClient : public QObject
 	private slots:
 		void hostLookupFinished(const QHostInfo& hostInfo);
 		void receiveSocketData();
-		
+
 };
 
 #endif

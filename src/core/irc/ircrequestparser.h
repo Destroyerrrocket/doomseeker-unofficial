@@ -45,7 +45,7 @@ class IRCNetworkAdapter;
  * - ':' characters will be inserted into some commands.
  *   @b Example: "/part #channel I am leaving!" to
  *   "part #channel :I am leaving!"
- * 
+ *
  * For more information refer to parse() method.
  */
 class IRCRequestParser : public QObject
@@ -76,7 +76,7 @@ class IRCRequestParser : public QObject
 		 * @param pAdapter
 		 *     Adapter that sends the message.
 		 * @param input
-		 *     Input message in common format. See IRCRequestParser 
+		 *     Input message in common format. See IRCRequestParser
 		 *     description.
 		 *
 		 * @return
@@ -100,7 +100,7 @@ class IRCRequestParser : public QObject
 	signals:
 		/**
 		 * @brief Echoes back all PRIVMSG commands.
-		 * 
+		 *
 		 * @param recipient
 		 *     Recipient of the message. This is extracted
 		 *     directly from the privmsg request.
@@ -108,7 +108,7 @@ class IRCRequestParser : public QObject
 		 *     Content of the message.
 		 */
 		void echoPrivmsg(const QString& recipient, const QString& content);
-		
+
 		/**
 		 * @brief Emitted when "/query" alias is used.
 		 *

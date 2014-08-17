@@ -40,31 +40,31 @@ class IRCSounds
 			NicknameUsed,
 			PrivateMessageReceived
 		};
-	
+
 		IRCSounds() {}
 		~IRCSounds()
 		{
 			unload();
 		}
-		
+
 		/**
 		 *	@brief Reloads all sounds using paths stored in config.
 		 *
 		 *	All previously loaded sounds are unloaded.
 		 */
 		void loadFromConfig();
-		
+
 		/**
 		 *	@brief Plays given sound.
 		 */
 		void playIfAvailable(SoundType sound);
-		
-	private:	
+
+	private:
 		QMap<SoundType, QSound*> sounds;
-	
+
 		QSound* loadIfExists(const QString& path);
 		void unload();
-		
+
 };
 
 #endif

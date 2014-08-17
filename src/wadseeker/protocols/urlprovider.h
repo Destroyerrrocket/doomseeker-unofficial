@@ -54,7 +54,7 @@ class URLProvider
 		 *
 		 * @b Note: If both URLs are not yet known, then a new
 		 * mirror set is created.
-		 */		
+		 */
 		void addMirror(const QUrl& originalUrl, const QUrl& mirrorUrl);
 
 		/**
@@ -62,12 +62,12 @@ class URLProvider
 		 *        to the same resource.
 		 */
 		void addMirrorUrls(const QList<QUrl>& urls);
-		
+
 		/**
 		 * @brief Adds a single URL to the list. No mirrors.
 		 */
 		void addUrl(const QUrl& url);
-		
+
 		/**
 		 * @brief All URLs for which hasUrl() will return true.
 		 *
@@ -75,7 +75,7 @@ class URLProvider
 		 * or removeUrlAndMirrors() methods.
 		 */
 		QList<QUrl> allAvailableUrls() const;
-		
+
 		/**
 		 * @brief First URL on the prioritized list.
 		 *
@@ -83,36 +83,36 @@ class URLProvider
 		 * which they were added.
 		 */
 		QUrl first() const;
-		
+
 		/**
-		 * @brief Checks if URL was known to the object during its entire 
+		 * @brief Checks if URL was known to the object during its entire
 		 *        lifetime.
 		 *
 		 * This URL might not appear anymore on the available URLs
 		 * list. Such URLs will return false on hasUrl().
 		 */
 		bool hasOrHadUrl(const QUrl& url) const;
-		
+
 		/**
 		 * @brief Checks if URL is on the available URLs list.
 		 */
 		bool hasUrl(const QUrl& url) const;
-		
+
 		/**
 		 * @brief True if there are no available URLs.
 		 */
 		bool isEmpty() const;
-		
+
 		/**
 		 * @brief Number of currently available URLs.
 		 */
 		unsigned numUrls() const;
-		
+
 		/**
 		 * @brief Same as addUrl()
 		 */
 		URLProvider& operator<<(const QUrl& url);
-		
+
 		/**
 		 * @brief Removes single URL from the available URLs list.
 		 *
@@ -121,7 +121,7 @@ class URLProvider
 		 * possible.
 		 */
 		void removeUrl(const QUrl& url);
-		
+
 		/**
 		 * @brief Removes URL and all its mirrors from the available URLs list.
 		 *
@@ -130,13 +130,13 @@ class URLProvider
 		 * possible.
 		 */
 		void removeUrlAndMirrors(const QUrl& url);
-		
+
 		/**
 		 * @brief Returns the first URL from available URLs list and removes
 		 *        that URL from that list.
 		 */
 		QUrl takeFirst();
-	
+
 	private:
 		enum
 		{
@@ -150,7 +150,7 @@ class URLProvider
 		// for example.
 		QMap<int, QList<QUrl> > allUrlsPrioritized;
 		QList<MirrorStorage*> mirrors;
-		
+
 		QList<MirrorStorage*> mirrorsWithUrl(const QUrl& url);
 
 		void insertUrlPrioritized(const QUrl& url);

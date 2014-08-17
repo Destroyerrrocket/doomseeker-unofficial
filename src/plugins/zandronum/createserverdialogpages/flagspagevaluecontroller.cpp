@@ -426,7 +426,7 @@ void FlagsPageValueController::convertToNumericalGeneral()
 	FlagsPage* f = flagsPage;
 
 	// Environment
-	
+
 	// Reset the value.
 	dmflags &= ~(ZandronumDmflags::DF_FORCE_FALLINGZD
 				| ZandronumDmflags::DF_FORCE_FALLINGHX

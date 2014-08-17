@@ -44,11 +44,11 @@ class TestUnitBase : public TestBase
 	public:
 		TestUnitBase(const QString& testName);
 		virtual ~TestUnitBase() {}
-	
+
 		virtual bool executeTest() = 0;
-		
+
 		const QString& testName() const { return _testName; }
-		
+
 	protected:
 		QString _testName;
 };

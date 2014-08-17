@@ -39,10 +39,10 @@ class WadseekerWadsTable : public TableWidgetMouseAware
 		class ContextMenu : public QMenu
 		{
 			friend class WadseekerWadsTable;
-		
+
 			public:
 				QAction* actionSkipCurrentSite;
-				
+
 			private:
 				ContextMenu(QWidget* pParent = NULL);
 		};
@@ -58,9 +58,9 @@ class WadseekerWadsTable : public TableWidgetMouseAware
 		~WadseekerWadsTable();
 
 		void addFile(const QString& filename);
-		
+
 		ContextMenu* contextMenu(const QModelIndex& index, const QPoint& cursorPosition);
-		
+
 		/**
 		 * @brief Total size of data in bytes for specified row.
 		 *
@@ -68,8 +68,8 @@ class WadseekerWadsTable : public TableWidgetMouseAware
 		 *         row is invalid.
 		 */
 		qint64 expectedDataSize(int row) const;
-		
-		QString fileNameAtRow(int row) const; 
+
+		QString fileNameAtRow(int row) const;
 
 		/**
 		 * @brief Total done percentage calculated basing on the data set by
@@ -79,13 +79,13 @@ class WadseekerWadsTable : public TableWidgetMouseAware
 		 *         calculated a negative value is returned.
 		 */
 		double totalDonePercentage() const;
-		
+
 	public slots:
 		void setFileDownloadFinished(const QString& filename);
 		void setFileFailed(const QString& filename);
 		void setFileProgress(const QString& filename, qint64 current, qint64 total);
 		void setFileSuccessful(const QString& filename);
-		
+
 		/**
 		 * @brief Fired when new URL starts for specified file.
 		 */

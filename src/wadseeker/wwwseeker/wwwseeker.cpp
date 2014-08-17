@@ -252,10 +252,10 @@ void WWWSeeker::networkQueryError(QNetworkReply* pReply, QNetworkReply::NetworkE
 	// We shall ignore OperationCanceledError because this error is caused
 	// by a call to QNetworkReply::abort() and it may confuse users.
 	// "Why am I getting this error? Is it a bug? Yeah, it is a bug!"
-	if (code != QNetworkReply::NoError && code != QNetworkReply::OperationCanceledError) 
+	if (code != QNetworkReply::NoError && code != QNetworkReply::OperationCanceledError)
 	{
 		QString errorString = FixedNetworkAccessManager::networkErrorToString(code);
-		
+
 		emit message(tr("Site \"%1\": network error occurred: %2")
 			.arg(pReply->request().url().toString(), errorString), WadseekerLib::Error);
 	}

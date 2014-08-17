@@ -35,12 +35,12 @@ void IRCSounds::loadFromConfig()
 		QString path = gIRCConfig.sounds.nicknameUsedSound;
 		sounds.insert(NicknameUsed, loadIfExists(path));
 	}
-	
+
 	if (gIRCConfig.sounds.bUsePrivateMessageReceivedSound)
 	{
 		QString path = gIRCConfig.sounds.privateMessageReceivedSound;
 		sounds.insert(PrivateMessageReceived, loadIfExists(path));
-	}	
+	}
 }
 
 QSound* IRCSounds::loadIfExists(const QString& path)
@@ -50,7 +50,7 @@ QSound* IRCSounds::loadIfExists(const QString& path)
 	{
 		return new QSound(path);
 	}
-	
+
 	return NULL;
 }
 
@@ -73,6 +73,6 @@ void IRCSounds::unload()
 			delete it.value();
 		}
 	}
-	
+
 	sounds.clear();
 }

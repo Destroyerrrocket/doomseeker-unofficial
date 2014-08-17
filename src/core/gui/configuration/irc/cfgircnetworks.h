@@ -38,27 +38,27 @@ class CFGIRCNetworks : public ConfigurationBaseBox, private Ui::CFGIRCNetworks
 	public:
 		CFGIRCNetworks(QWidget* parent = NULL);
 		~CFGIRCNetworks();
-		
+
 		QIcon icon() const { return QIcon(":/flags/lan-small"); }
 		QString name() const { return tr("Networks"); }
 		QVector<IRCNetworkEntity*> networks();
 		void readSettings();
 		QString title() const { return tr("IRC - Networks"); }
-		
+
 	protected:
 		void saveSettings();
-		
+
 	private:
 		void addRecord(IRCNetworkEntity* pNetworkEntity);
 		void cleanUpTable();
 		QList<QStandardItem*> generateTableRecord(IRCNetworkEntity* pNetworkEntity);
 		IRCNetworkEntity* network(int row);
-		
+
 		/**
 		 *	@brief Never call this function directly. Use network() instead.
 		 */
 		IRCNetworkEntity* obtainNetworkEntity(QStandardItem* pItem);
-		
+
 		void prepareTable();
 		IRCNetworkEntity* selectedNetwork();
 		int selectedRow();

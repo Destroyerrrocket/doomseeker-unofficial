@@ -26,18 +26,18 @@
 #include "ui_cfgircappearance.h"
 #include "gui/configuration/configurationbasebox.h"
 
-class CFGIRCAppearance : public ConfigurationBaseBox, private Ui::CFGIRCAppearance 
+class CFGIRCAppearance : public ConfigurationBaseBox, private Ui::CFGIRCAppearance
 {
 	Q_OBJECT
 
 	public:
 		CFGIRCAppearance(QWidget* parent = NULL);
-		
+
 		QIcon icon() const { return QIcon(":/icons/color-fill.png"); }
 		QString name() const { return tr("Appearance"); }
 		void readSettings();
 		QString title() const { return tr("IRC - Appearance"); }
-		
+
 	protected:
 		void saveSettings();
 };

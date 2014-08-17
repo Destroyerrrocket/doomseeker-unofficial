@@ -35,7 +35,7 @@ class LocalizationInfo
 		 */
 		QString countryCodeName;
 		/**
-		 * @brief Compliant with language_country standard. See 
+		 * @brief Compliant with language_country standard. See
 		 *        QLocale::name()
 		 */
 		QString localeName;
@@ -43,10 +43,10 @@ class LocalizationInfo
 		 * @brief Name that will be displayed to user.
 		 */
 		QString niceName;
-		
+
 		void fromString(const QString& str);
 		QString toString() const;
-		
+
 		bool operator==(const LocalizationInfo& o2) const;
 };
 

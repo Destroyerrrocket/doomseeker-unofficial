@@ -38,17 +38,17 @@ class IODeviceCloser
 		{
 			this->d = d;
 		}
-		
+
 		~IODeviceCloser()
 		{
 			this->d->close();
 		}
-		
+
 	private:
 		QIODevice* d;
 };
 
-UnZip::UnZip(QIODevice *device) 
+UnZip::UnZip(QIODevice *device)
 : UnArchive(device)
 {
 }
@@ -73,7 +73,7 @@ QList<ZipLocalFileHeader> UnZip::allDataHeaders()
 		emit message(tr("Failed to open archive for reading."), WadseekerLib::Error);
 		return list;
 	}
-	
+
 	IODeviceCloser ioDevCloser(stream);
 	while(true)
 	{
@@ -115,23 +115,23 @@ bool UnZip::extract(int file, const QString& where)
 		return false;
 	}
 	IODeviceCloser ioDevCloser(stream);
-	
+
 	int headerResult = readHeaderFromFileIndex(file, header);
 	if (headerResult != ZipLocalFileHeader::NoError)
 	{
-		qDebug() << "UnZip::extract(): Failed to extract file" << file 
+		qDebug() << "UnZip::extract(): Failed to extract file" << file
 			<< ", result:" << headerResult;
 		return false;
 	}
 	qint64 pos = header.headerPosition + header.howManyBytesTillData();
-	
+
 	if (!stream->seek(pos))
 	{
 		qDebug() << "UnZip::extract(): Failed to seek archive to pos" << pos
 			<< "for file:" << file << ", result:" << headerResult;
 		return false;
 	}
-	
+
 	QFile outputFile(where);
 	outputFile.open(QFile::WriteOnly);
 	bool bOk = true;
@@ -146,7 +146,7 @@ bool UnZip::extract(int file, const QString& where)
 		bOk = IOUtils::copy(*stream, outputFile, header.uncompressedSize);
 	}
 	outputFile.close();
-	return bOk;		
+	return bOk;
 }
 
 int UnZip::findFileEntry(const QString& entryName)
@@ -163,7 +163,7 @@ int UnZip::findFileEntry(const QString& entryName)
 	{
 		return -1;
 	}
-	
+
 	IODeviceCloser ioDevCloser(stream);
 	while(true)
 	{
@@ -188,7 +188,7 @@ int UnZip::findFileEntry(const QString& entryName)
 		pos += zip.fileEntrySize();
 		++fileIndex;
 	}
-	
+
 	return fileIndex;
 }
 
@@ -200,12 +200,12 @@ QString UnZip::fileNameFromIndex(int file)
 	{
 		return QString();
 	}
-	
+
 	int result = readHeaderFromFileIndex(file, header);
 	stream->close();
 
-	return result == ZipLocalFileHeader::NoError 
-		? header.fileName 
+	return result == ZipLocalFileHeader::NoError
+		? header.fileName
 		: QString();
 }
 
@@ -217,7 +217,7 @@ bool UnZip::isZip()
 	{
 		return false;
 	}
-	
+
 	err = readHeader(0, zip);
 	stream->close();
 
@@ -232,7 +232,7 @@ int UnZip::readHeader(qint64 pos, ZipLocalFileHeader& zip)
 	{
 		return ZipLocalFileHeader::EndOfFileReached;
 	}
-	
+
 	if (!stream->seek(pos))
 	{
 		return ZipLocalFileHeader::Corrupted;
@@ -278,11 +278,11 @@ int UnZip::readHeaderFromFileIndex(int file, ZipLocalFileHeader& zip)
 		{
 			return result;
 		}
-		
+
 		pos += tempHeader.fileEntrySize();
 	}
-	
-	zip = tempHeader; 
+
+	zip = tempHeader;
 	return ZipLocalFileHeader::NoError;
 }
 
@@ -290,20 +290,20 @@ int UnZip::uncompress(QIODevice& streamIn, QIODevice& streamOut, unsigned long c
 {
 	const unsigned long BUFFER_SIZE = 2 * 1024 * 1024;
 	char* out = new char[BUFFER_SIZE];
-	
+
 	z_stream zstream;
 	zstream.next_out = (unsigned char*)out;
 	zstream.avail_out = BUFFER_SIZE;
 	zstream.zalloc = Z_NULL;
 	zstream.zfree = Z_NULL;
 	unsigned int err = inflateInit2(&zstream, -15);
-	
+
 	int ret = Z_OK;
 	bool bOk = true;
-	do 
+	do
 	{
 		QByteArray inData = streamIn.read(BUFFER_SIZE);
-		if (inData.isEmpty()) 
+		if (inData.isEmpty())
 		{
 			err = Z_STREAM_END;
 			break;
@@ -312,13 +312,13 @@ int UnZip::uncompress(QIODevice& streamIn, QIODevice& streamOut, unsigned long c
 		zstream.next_in = (Bytef*)inData.data();
 
 		// run inflate() on input until output buffer not full
-		do 
+		do
 		{
 			zstream.avail_out = BUFFER_SIZE;
 			zstream.next_out = (Bytef*)out;
 			ret = inflate(&zstream, Z_NO_FLUSH);
-			
-			switch (ret) 
+
+			switch (ret)
 			{
 				case Z_NEED_DICT:
 					ret = Z_DATA_ERROR;
@@ -327,14 +327,14 @@ int UnZip::uncompress(QIODevice& streamIn, QIODevice& streamOut, unsigned long c
 					bOk = false;
 					break;
 			}
-			
+
 			if (!bOk)
 			{
 				break;
 			}
-			
+
 			int have = BUFFER_SIZE - zstream.avail_out;
-			if (streamOut.write(out, have) != have) 
+			if (streamOut.write(out, have) != have)
 			{
 				bOk = false;
 				ret = Z_ERRNO;
@@ -344,12 +344,12 @@ int UnZip::uncompress(QIODevice& streamIn, QIODevice& streamOut, unsigned long c
 
         // done when inflate() says it's done
     } while (ret != Z_STREAM_END && bOk);
-	
+
 	int inflateEndErr = inflateEnd(&zstream);
 	if(err != Z_STREAM_END)
 	{
 		return err;
 	}
-	
+
 	return inflateEndErr;
 }

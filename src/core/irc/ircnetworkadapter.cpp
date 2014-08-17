@@ -738,7 +738,7 @@ void IRCNetworkAdapter::whoIsUser(const QString& nickname, const QString& user, 
 	// Deliver pending bans.
 	while(true)
 	{
-		const IRCDelayedOperation* pBanOperation = 
+		const IRCDelayedOperation* pBanOperation =
 			delayedOperations.operationForNickname(IRCDelayedOperation::Ban,
 			userPrefixes().cleanNickname(nickname));
 		if (pBanOperation == NULL)

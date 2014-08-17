@@ -122,7 +122,7 @@ const IRCUserInfo* IRCUserList::user(const QString& nickname) const
 	{
 		return NULL;
 	}
-	
+
 	return usersArray[index];
 }
 

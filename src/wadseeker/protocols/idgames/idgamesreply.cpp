@@ -61,7 +61,7 @@ void IdgamesReply::onNetworkFinished()
 			qDebug() << "idgames onNetworkFinished()" << json;
 			qDebug() << "idgames onNetworkFinished() parsed" << QtJson::Json::parse(json);
 		#endif
-		
+
 	}
 	else
 	{

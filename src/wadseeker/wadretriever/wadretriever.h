@@ -65,7 +65,7 @@ class WadRetriever : public QObject
 		~WadRetriever();
 
 		void abort();
-		
+
 		/**
 		 * @brief Provides a list of mirror URLs for a WAD download.
 		 *
@@ -77,12 +77,12 @@ class WadRetriever : public QObject
 		 *      WAD for which the URL will be added. If WAD is not on the list
 		 *      set by setWads() the URL will not be added.
 		 * @param urls
-		 *      A list of mirror download URLs that will be queued for 
+		 *      A list of mirror download URLs that will be queued for
 		 *      specified WAD. If file is downloaded but then discarded because
 		 *      Wadseeker decides that this is not a file it wants then all
 		 *      mirror URLs will also be discarded.
 		 */
-		void addMirrorUrls(const WadDownloadInfo& wad, const QList<QUrl>& urls);		
+		void addMirrorUrls(const WadDownloadInfo& wad, const QList<QUrl>& urls);
 
 		/**
 		 * @brief Provides new URL for a WAD download.
@@ -204,7 +204,7 @@ class WadRetriever : public QObject
 		 *
 		 * This omits the download procedure treating data param as already
 		 * downloaded file contents. If data is recognized as an archive
-		 * it will be inspected for seeked filenames and if desired files 
+		 * it will be inspected for seeked filenames and if desired files
 		 * are found then they will be extracted.
 		 *
 		 * @param
@@ -274,7 +274,7 @@ class WadRetriever : public QObject
 
 				WadRetrieverInfo(const WadDownloadInfo& wad);
 				~WadRetrieverInfo();
-				
+
 				bool isAvailableForDownload() const;
 
 				bool operator==(const WadDownloadInfo& wad) const;
@@ -340,12 +340,12 @@ class WadRetriever : public QObject
 		 * @brief True if URL is either on the queue or already used.
 		 */
 		bool hasUrl(const WadRetrieverInfo& wadRetrieverInfo, const QUrl& url) const;
-		
+
 		/**
 		 * @brief Checks if URL can be download at the curren time.
 		 *
 		 * @return True if it is Ok to download the resource denoted by URL.
-		 *         False if a resource from the same hostname is already 
+		 *         False if a resource from the same hostname is already
 		 *         being downloaded.
 		 */
 		bool isUrlAllowedToDownloadATM(const QUrl& url) const;

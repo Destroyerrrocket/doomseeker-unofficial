@@ -30,7 +30,7 @@
 #include <QMessageBox>
 #include <QUrl>
 
-CFGWadseekerSites::CFGWadseekerSites(QWidget* parent) 
+CFGWadseekerSites::CFGWadseekerSites(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
 	setupUi(this);

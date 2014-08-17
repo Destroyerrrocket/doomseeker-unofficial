@@ -255,7 +255,7 @@ class ZandronumDmflags1point0 : public QObject
 			COMPATF2_DONT_STOP_PLAYER_SCRIPTS_ON_DISCONNECT = 1 << 5,
 			// If this is enabled, explosions cause a strong horizontal thrust like in old ZDoom versions.
 			COMPATF2_EXPLOSION_THRUST = 1 << 6,
-			// If this is enabled, non-SOLID things like flags fall through bridges 
+			// If this is enabled, non-SOLID things like flags fall through bridges
 			// (as they used to do in old ZDoom versions).
 			COMPATF2_BRIDGE_DROPS = 1 << 7,
 			// [CK] Uses old ZDoom jump physics, it's a minor bug in the gravity code that causes gravity application in the wrong place

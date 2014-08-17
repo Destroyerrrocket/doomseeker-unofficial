@@ -30,18 +30,18 @@ NetworkReplyTimeouter::NetworkReplyTimeouter(QNetworkReply* pReply)
 	this->pConnectionTimeoutTimer = NULL;
 	this->pProgressTimeoutTimer = NULL;
 	this->progressTimeout = 0;
-	
-	this->connect(pReply, 
+
+	this->connect(pReply,
 		SIGNAL( downloadProgress(qint64, qint64) ),
 		SLOT( progressRegistered(qint64, qint64) ));
-	this->connect(pReply, 
+	this->connect(pReply,
 		SIGNAL( uploadProgress(qint64, qint64) ),
-		SLOT( progressRegistered(qint64, qint64) ));	
-		
-		
-	// This little monster here allows us to emit custom generated 
+		SLOT( progressRegistered(qint64, qint64) ));
+
+
+	// This little monster here allows us to emit custom generated
 	// signals from QNetworkReply!
-	pReply->connect(this, 
+	pReply->connect(this,
 		SIGNAL( error(QNetworkReply::NetworkError) ),
 		SIGNAL( error(QNetworkReply::NetworkError) ));
 }
@@ -52,7 +52,7 @@ NetworkReplyTimeouter::~NetworkReplyTimeouter()
 	{
 		delete pConnectionTimeoutTimer;
 	}
-	
+
 	if (pProgressTimeoutTimer != NULL)
 	{
 		delete pProgressTimeoutTimer;
@@ -69,7 +69,7 @@ void NetworkReplyTimeouter::progressRegistered(qint64 bytesSent, qint64 bytesTot
 {
 	bIsProgressing = true;
 	stopTimerIfNotNull(pConnectionTimeoutTimer);
-	restartProgressTimeoutIfAllowed();	
+	restartProgressTimeoutIfAllowed();
 }
 
 void NetworkReplyTimeouter::restartProgressTimeoutIfAllowed()
@@ -84,7 +84,7 @@ void NetworkReplyTimeouter::restartProgressTimeoutIfAllowed()
 				SIGNAL( timeout() ),
 				SLOT( timeout() ) );
 		}
-		
+
 		pProgressTimeoutTimer->start(progressTimeout);
 	}
 }
@@ -107,7 +107,7 @@ void NetworkReplyTimeouter::startConnectionTimeoutTimer(unsigned timeoutMsecs)
 			SIGNAL( timeout() ),
 			SLOT( timeout() ) );
 	}
-		
+
 	pConnectionTimeoutTimer->start(timeoutMsecs);
 }
 

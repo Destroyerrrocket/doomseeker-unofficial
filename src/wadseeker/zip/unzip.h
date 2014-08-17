@@ -94,21 +94,21 @@ class UnZip : public UnArchive
 
 	private:
 		/**
-		 * @brief This method expects the iodevice to be already open 
+		 * @brief This method expects the iodevice to be already open
 		 *        and it won't close it.
 		 *
 		 * @return ZipLocalFileHeader::HeaderError value
 		 */
 		int readHeader(qint64 pos, ZipLocalFileHeader& zip);
-		
+
 		/**
-		 * @brief This method expects the iodevice to be already open 
+		 * @brief This method expects the iodevice to be already open
 		 *        and it won't close it.
 		 *
 		 * @return ZipLocalFileHeader::HeaderError value
 		 */
 		int readHeaderFromFileIndex(int file, ZipLocalFileHeader& zip);
-		
+
 		int uncompress(QIODevice& streamIn, QIODevice& streamOut, unsigned long compressedSize);
 };
 

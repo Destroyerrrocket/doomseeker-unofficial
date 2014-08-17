@@ -99,6 +99,10 @@
        <property name="text">
         <string>New</string>
        </property>
+       <property name="icon">
+        <iconset resource="../../../../media/resources.qrc">
+         <normaloff>:/icons/plus.png</normaloff>:/icons/plus.png</iconset>
+       </property>
       </widget>
      </item>
     </layout>
@@ -180,7 +184,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../../../media/resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

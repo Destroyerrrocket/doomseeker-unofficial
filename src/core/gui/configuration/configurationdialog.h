@@ -80,7 +80,7 @@ class ConfigurationDialog : public QDialog, private Ui::ConfigurationDialog
 		virtual void keyPressEvent(QKeyEvent* e);
 
 		bool isConfigurationBoxInfoValid(ConfigurationBaseBox* pConfigurationBox);
-		
+
 		/**
 		 * @brief Returns pointer to the tree widget that contains
 		 *        configuration sections list.

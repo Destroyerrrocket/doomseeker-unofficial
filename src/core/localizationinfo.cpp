@@ -2,8 +2,8 @@
 
 bool LocalizationInfo::operator==(const LocalizationInfo& o2) const
 {
-	return countryCodeName == o2.countryCodeName 
-		&& localeName == o2.localeName 
+	return countryCodeName == o2.countryCodeName
+		&& localeName == o2.localeName
 		&& niceName == o2.niceName;
 }
 

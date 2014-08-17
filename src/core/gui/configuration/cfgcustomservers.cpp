@@ -31,7 +31,7 @@
 const // clear warnings
 #include "unknownengine.xpm"
 
-CFGCustomServers::CFGCustomServers(QWidget *parent) 
+CFGCustomServers::CFGCustomServers(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
 	setupUi(this);
@@ -260,10 +260,10 @@ QVector<CustomServerInfo> CFGCustomServers::tableGetServers()
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
 		CustomServerInfo customServer;
-	
+
 		QStandardItem* item = model->item(i, EngineColumnIndex);
 		customServer.engine = item->data().toString();
-		
+
 		customServer.engineIndex = gPlugins->pluginIndexFromName(customServer.engine);
 
 		item = model->item(i, AddressColumnIndex);

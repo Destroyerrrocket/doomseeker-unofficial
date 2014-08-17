@@ -28,7 +28,7 @@
 class SocketSignalsAdapter : public QObject
 {
 	Q_OBJECT
-	
+
 	public:
 		const QAbstractSocket* pSocket;
 

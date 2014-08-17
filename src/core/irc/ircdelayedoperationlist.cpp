@@ -39,7 +39,7 @@ void IRCDelayedOperationList::clear()
 	{
 		delete operationsArray[i];
 	}
-	
+
 	operationsArray.clear();
 }
 
@@ -54,10 +54,10 @@ const IRCDelayedOperation* IRCDelayedOperationList::operationForChannel(IRCDelay
 			return &operation;
 		}
 	}
-	
+
 	return NULL;
 }
-		
+
 const IRCDelayedOperation* IRCDelayedOperationList::operation(const IRCDelayedOperation& operation) const
 {
 	for (int i = 0; i < operationsArray.size(); ++i)
@@ -67,10 +67,10 @@ const IRCDelayedOperation* IRCDelayedOperationList::operation(const IRCDelayedOp
 			return operationsArray[i];
 		}
 	}
-	
+
 	return NULL;
 }
-		
+
 const IRCDelayedOperation* IRCDelayedOperationList::operationForNickname(
 	IRCDelayedOperation::OperationType operationType, const QString& nickname) const
 {
@@ -83,7 +83,7 @@ const IRCDelayedOperation* IRCDelayedOperationList::operationForNickname(
 			return &operation;
 		}
 	}
-	
+
 	return NULL;
 }
 

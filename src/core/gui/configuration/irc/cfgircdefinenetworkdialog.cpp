@@ -89,13 +89,13 @@ void CFGIRCDefineNetworkDialog::buttonClicked(QAbstractButton* button)
 	else
 	{
 		this->reject();
-	}	
+	}
 }
 
 void CFGIRCDefineNetworkDialog::construct()
 {
 	setupUi(this);
-	
+
 	connect(buttonBox, SIGNAL( clicked(QAbstractButton*) ), SLOT( buttonClicked(QAbstractButton*) ) );
 }
 
@@ -112,10 +112,10 @@ QStringList CFGIRCDefineNetworkDialog::formatOffenders(const QStringList& offend
 IRCNetworkEntity CFGIRCDefineNetworkDialog::getNetworkEntity() const
 {
 	IRCNetworkEntity entity;
-	
+
 	QString autojoinChannels = this->teAutojoinChannels->toPlainText();
 	autojoinChannels.remove('\r').replace('\n', ' ');
-	
+
 	entity.setAddress(this->leAddress->text().trimmed());
 	entity.setAutojoinChannels(autojoinChannels.split(" ", QString::SkipEmptyParts));
 	entity.setAutojoinCommands(autojoinCommands());
@@ -124,7 +124,7 @@ IRCNetworkEntity CFGIRCDefineNetworkDialog::getNetworkEntity() const
 	entity.setNickservPassword(this->leNickservPassword->text());
 	entity.setPassword(this->leServerPassword->text());
 	entity.setPort(this->spinPort->value());
-	
+
 	return entity;
 }
 

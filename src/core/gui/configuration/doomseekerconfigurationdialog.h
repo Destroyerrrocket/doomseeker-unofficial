@@ -33,8 +33,8 @@ class DoomseekerConfigurationDialog : public ConfigurationDialog
 
 	public:
 		DoomseekerConfigurationDialog(QWidget* parent = NULL);
-		
-		QStandardItem* addConfigurationBox(QStandardItem* rootItem, ConfigurationBaseBox* pConfigurationBox, int position = -1);	
+
+		QStandardItem* addConfigurationBox(QStandardItem* rootItem, ConfigurationBaseBox* pConfigurationBox, int position = -1);
 		bool addEngineConfiguration(ConfigurationBaseBox* pConfigurationBox);
 		bool appearanceChanged() const { return bAppearanceChanged; }
 		bool customServersChanged() const { return bCustomServersChanged; }
@@ -46,18 +46,18 @@ class DoomseekerConfigurationDialog : public ConfigurationDialog
 	private:
 		bool bAppearanceChanged;
 		bool bCustomServersChanged;
-		ConfigurationBaseBox* customServersCfgBox;		
-		QStandardItem* enginesRoot;			
-	
+		ConfigurationBaseBox* customServersCfgBox;
+		QStandardItem* enginesRoot;
+
 		void appendFilePathsConfigurationBoxes();
 		void appendWadseekerConfigurationBoxes();
 		void doSaveSettings();
-		
+
 	private slots:
 		/**
 		 *	When called, sets bAppearanceChanged to true.
 		 */
-		void appearanceChangedSlot();		
+		void appearanceChangedSlot();
 };
 
 #endif

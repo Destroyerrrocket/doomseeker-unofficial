@@ -36,7 +36,7 @@ class IRCNetworkAdapter;
 class IRCAdapterBase : public QObject
 {
 	Q_OBJECT
-		
+
 	public:
 		/**
 		 *	@brief Defines all possible types of IRC adapters.
@@ -47,7 +47,7 @@ class IRCAdapterBase : public QObject
 			ChannelAdapter,
 			PrivAdapter
 		};
-		
+
 		/**
 		 *	@brief Destructor emits terminating() signal.
 		 */
@@ -74,19 +74,19 @@ class IRCAdapterBase : public QObject
 		 *	@param pOrigin
 		 *		Origin of this message. Can be used to determine where the error
 		 *		and message signals should be passed.
-		 */	
+		 */
 		virtual void doSendMessage(const QString& message, IRCAdapterBase* pOrigin) = 0;
-		
+
 		void emitError(const QString& strError)
 		{
 			emit error(strError);
 		}
-		
+
 		void emitFocusRequest()
 		{
 			emit focusRequest();
 		}
-		
+
 		void emitMessage(const QString& strMessage)
 		{
 			emit message(strMessage);
@@ -96,7 +96,7 @@ class IRCAdapterBase : public QObject
 		{
 			emit messageWithClass(strMessage, messageClass);
 		}
-		
+
 		/**
 		 *	@brief The idea of the adapter system is that each adapter
 		 *	is either a network or is a child of a network.
@@ -121,18 +121,18 @@ class IRCAdapterBase : public QObject
 		{
 			doSendMessage(message, NULL);
 		}
-	
+
 	signals:
 		void error(const QString& error);
-		
+
 		/**
 		 *	@brief Called when this adapter requests UI focus.
 		 */
 		void focusRequest();
-		
+
 		void message(const QString& message);
 		void messageWithClass(const QString& message, const IRCMessageClass& messageClass);
-		
+
 		void terminating();
 
 		/**

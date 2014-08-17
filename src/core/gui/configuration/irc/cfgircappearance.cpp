@@ -45,11 +45,11 @@ void CFGIRCAppearance::readSettings()
 	// Fonts
 	this->btnMainFont->setSelectedFont(gIRCConfig.appearance.mainFont);
 	this->btnUserListFont->setSelectedFont(gIRCConfig.appearance.userListFont);
-	
+
 	// Others
 	this->cbTimestamps->setChecked(gIRCConfig.appearance.timestamps);
 }
-		
+
 void CFGIRCAppearance::saveSettings()
 {
 	// Colors
@@ -66,7 +66,7 @@ void CFGIRCAppearance::saveSettings()
 	// Fonts
 	gIRCConfig.appearance.mainFont = this->btnMainFont->selectedFont();
 	gIRCConfig.appearance.userListFont = this->btnUserListFont->selectedFont();
-	
+
 	// Others
 	gIRCConfig.appearance.timestamps = this->cbTimestamps->isChecked();
 }

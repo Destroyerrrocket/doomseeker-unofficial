@@ -29,7 +29,7 @@
 	if ((a) != (b)) \
 	{ \
 		return false; \
-	} 
+	}
 
 bool TestIRCISupportPrefix::executeTest()
 {

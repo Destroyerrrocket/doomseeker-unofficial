@@ -23,7 +23,7 @@
 #include "cfgquery.h"
 #include "configuration/doomseekerconfig.h"
 
-CFGQuery::CFGQuery(QWidget *parent) 
+CFGQuery::CFGQuery(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
 	setupUi(this);
