@@ -25,6 +25,7 @@
 #include "ini/settingsproviderqt.h"
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
+#include "datapaths.h"
 #include "log.h"
 #include "version.h"
 
@@ -231,12 +232,23 @@ IRCConfig::GeneralCfg::GeneralCfg()
 
 void IRCConfig::GeneralCfg::load(IniSection& section)
 {
-
+	this->section = section;
 }
 
 void IRCConfig::GeneralCfg::save(IniSection& section)
 {
 
+}
+
+QString IRCConfig::GeneralCfg::chatLogsRootDir() const
+{
+	return section.value("ChatLogsRootDir", gDefaultDataPaths->localDataLocationPath(
+		DataPaths::CHATLOGS_DIR_NAME)).toString();
+}
+
+void IRCConfig::GeneralCfg::setChatLogsRootDir(const QString &val)
+{
+	section.setValue("ChatLogsRootDir", val);
 }
 
 //////////////////////////////////////////////////////////////////////////////

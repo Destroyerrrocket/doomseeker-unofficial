@@ -32,7 +32,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 	friend class IRCSocketSignalsAdapter;
 
 	public:
-		IRCNetworkAdapter();
+		IRCNetworkAdapter(const IRCNetworkConnectionInfo &connectionInfo);
 		~IRCNetworkAdapter();
 
 		AdapterType adapterType() const { return NetworkAdapter; }
@@ -67,7 +67,11 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 */
 		void banUser(const QString& nickname, const QString& reason, const QString& channel);
 
-		void connect(const IRCNetworkConnectionInfo& connectionInfo);
+		void connect();
+		const IRCNetworkConnectionInfo &connection() const
+		{
+			return this->connectionInfo;
+		}
 
 		/**
 		 * @brief Detaches the specified IRCChatAdapter instance from this

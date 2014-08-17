@@ -35,8 +35,9 @@
 #include "log.h"
 #include <QDateTime>
 
-IRCNetworkAdapter::IRCNetworkAdapter()
+IRCNetworkAdapter::IRCNetworkAdapter(const IRCNetworkConnectionInfo &connectionInfo)
 {
+	this->connectionInfo = connectionInfo;
 	this->bIsJoining = false;
 	this->bEmitAllIRCMessages = false;
 
@@ -152,9 +153,8 @@ void IRCNetworkAdapter::banUser(const QString& nickname, const QString& reason, 
 		userPrefixes().cleanNickname(nickname)));
 }
 
-void IRCNetworkAdapter::connect(const IRCNetworkConnectionInfo& connectionInfo)
+void IRCNetworkAdapter::connect()
 {
-	this->connectionInfo = connectionInfo;
 	emit titleChange();
 	ircClient.connect(connectionInfo.networkEntity.address(), connectionInfo.networkEntity.port());
 }

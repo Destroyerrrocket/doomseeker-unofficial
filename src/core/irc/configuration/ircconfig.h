@@ -79,6 +79,11 @@ class IRCConfig
 			void load(IniSection& section);
 			void save(IniSection& section);
 
+			QString chatLogsRootDir() const;
+			void setChatLogsRootDir(const QString &val);
+
+			private:
+			IniSection section;
 		};
 
 		class PersonalCfg
