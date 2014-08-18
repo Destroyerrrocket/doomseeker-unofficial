@@ -179,6 +179,10 @@ void DockBuddiesList::scan(const MasterManager *master)
 	buddies.clear(); //empty list
 	foreach(ServerPtr server, masterClient->allServers())
 	{
+		if (!server->isKnown())
+		{
+			continue;
+		}
 		for(int i = 0; i < server->players().numClients(); ++i)
 		{
 			const Player player = server->player(i);
