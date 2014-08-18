@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------
 #include "dockBuddiesList.h"
 #include "configuration/doomseekerconfig.h"
-#include "serverapi/masterclient.h"
+#include "serverapi/mastermanager.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
 #include "strings.h"
@@ -167,7 +167,7 @@ void DockBuddiesList::patternsListContextMenu(const QPoint &pos) const
 	context.exec(patternsList->mapToGlobal(pos));
 }
 
-void DockBuddiesList::scan(const MasterClient *master)
+void DockBuddiesList::scan(const MasterManager *master)
 {
 	if(master == NULL && masterClient == NULL)
 		return;
@@ -177,7 +177,7 @@ void DockBuddiesList::scan(const MasterClient *master)
 	}
 
 	buddies.clear(); //empty list
-	foreach(ServerPtr server, masterClient->servers())
+	foreach(ServerPtr server, masterClient->allServers())
 	{
 		for(int i = 0; i < server->players().numClients(); ++i)
 		{

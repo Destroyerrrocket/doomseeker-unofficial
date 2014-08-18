@@ -34,7 +34,7 @@
 #include <QRegExp>
 #include <QStandardItemModel>
 
-class MasterClient;
+class MasterManager;
 class Player;
 class Server;
 
@@ -57,7 +57,7 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 
 	public slots:
 		void addBuddy();
-		void scan(const MasterClient *master=NULL);
+		void scan(const MasterManager *master=NULL);
 
 	signals:
 		void joinServer(const ServerPtr &server);
@@ -88,7 +88,7 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 		void patternsListContextMenu(const QPoint &pos) const;
 
 	private:
-		const MasterClient *masterClient;
+		const MasterManager *masterClient;
 		bool save;
 };
 

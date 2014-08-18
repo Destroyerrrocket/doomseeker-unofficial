@@ -71,6 +71,17 @@ void MasterManager::addMaster(MasterClient *master)
 	mastersReceivers.append(pMasterReceiver);
 }
 
+QList<ServerPtr> MasterManager::allServers() const
+{
+	QList<ServerPtr> result;
+	foreach (MasterClient *master, masters)
+	{
+		result << master->servers();
+	}
+	result << customServers->servers();
+	return result;
+}
+
 void MasterManager::masterListUpdated(MasterClient* pSender)
 {
 	foreach(ServerPtr pServer, pSender->servers())
