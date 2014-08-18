@@ -73,6 +73,8 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 				const Player &buddy() const;
 				ServerPtr location() const;
 
+				bool operator==(const BuddyLocationInfo &other) const;
+
 			private:
 				class PrivData;
 				PrivData *d;

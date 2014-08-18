@@ -190,7 +190,11 @@ void DockBuddiesList::scan(const MasterManager *master)
 			{
 				if(pattern.exactMatch(player.nameColorTagsStripped()))
 				{
-					buddies << BuddyLocationInfo(player, server);
+					BuddyLocationInfo candidate(player, server);
+					if (!buddies.contains(candidate))
+					{
+						buddies << BuddyLocationInfo(player, server);
+					}
 				}
 			}
 		}
@@ -292,4 +296,12 @@ const Player &DockBuddiesList::BuddyLocationInfo::buddy() const
 ServerPtr DockBuddiesList::BuddyLocationInfo::location() const
 {
 	return d->server;
+}
+
+bool DockBuddiesList::BuddyLocationInfo::operator==(const BuddyLocationInfo &other) const
+{
+	return d->buddy == other.d->buddy
+		&& d->server->address() == other.d->server->address()
+		&& d->server->port() == other.d->server->port()
+		&& d->server->plugin() == other.d->server->plugin();
 }
