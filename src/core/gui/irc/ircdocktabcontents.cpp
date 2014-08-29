@@ -492,7 +492,9 @@ bool IRCDockTabContents::restoreLog()
 
 		receiveMessageWithClass(tr("---- All lines above were loaded from log ----"),
 			IRCMessageClass::NetworkAction);
+		return true;
 	}
+	return false;
 }
 
 QString IRCDockTabContents::selectedNickname()
@@ -840,7 +842,9 @@ bool IRCDockTabContents::writeLog(const QString &text)
 	{
 		d->log.write(text.toUtf8());
 		d->log.flush();
+		return true;
 	}
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
