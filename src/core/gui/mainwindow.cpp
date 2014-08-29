@@ -39,6 +39,7 @@
 #include "gui/wadseekerinterface.h"
 #include "gui/wadseekershow.h"
 #include "ip2c/ip2cloader.h"
+#include "irc/configuration/chatnetworkscfg.h"
 #include "irc/configuration/ircconfig.h"
 #include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
@@ -705,7 +706,7 @@ void MainWindow::initIRCDock()
 	ircDock->hide();
 	this->addDockWidget(Qt::BottomDockWidgetArea, ircDock);
 
-	if (gIRCConfig.isAutojoinNetworksEnabled())
+	if (ChatNetworksCfg().isAnyNetworkOnAutoJoin())
 	{
 		this->ircDock->setVisible(true);
 		this->ircDock->performNetworkAutojoins();

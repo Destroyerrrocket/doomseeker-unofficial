@@ -28,6 +28,7 @@
 
 class IRCMessageClass;
 class IRCNetworkAdapter;
+class IRCNetworkEntity;
 
 /**
  *	@brief Provides an unified communication interface between a client and
@@ -105,6 +106,7 @@ class IRCAdapterBase : public QObject
 		 *	to which this adapter belongs.
 		 */
 		virtual IRCNetworkAdapter* network() = 0;
+		const IRCNetworkEntity &networkEntity() const;
 
 		virtual QString recipient() const
 		{

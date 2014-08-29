@@ -35,6 +35,8 @@
 class MAIN_EXPORT IRCNetworkEntity
 {
 	public:
+		static IRCNetworkEntity deserializeQVariant(const QVariant &var);
+
 		IRCNetworkEntity();
 		COPYABLE_D_POINTERED_DECLARE(IRCNetworkEntity);
 		virtual ~IRCNetworkEntity();
@@ -59,6 +61,12 @@ class MAIN_EXPORT IRCNetworkEntity
 		/**
 		 * @brief A short, human-readable description for the network.
 		 * (Preferably a single word).
+		 *
+		 * Only limited set of characters is allowed in network description,
+		 * as this description is used to name the directory where
+		 * chat logs are being kept. These characters are letters, digits,
+		 * spaces, and also '_' and '-'. All other characters will be
+		 * automatically converted to '_' by setDescription().
 		 */
 		const QString &description() const;
 
@@ -102,6 +110,8 @@ class MAIN_EXPORT IRCNetworkEntity
 		 * Default value: 6667
 		 */
 		unsigned short port() const;
+
+		QVariant serializeQVariant() const;
 
 		void setAddress(const QString &v);
 		void setAutojoinChannels(const QStringList &v);

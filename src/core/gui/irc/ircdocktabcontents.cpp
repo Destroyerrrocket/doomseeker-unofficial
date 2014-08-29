@@ -24,7 +24,9 @@
 #include "gui/irc/ircsounds.h"
 #include "gui/irc/ircuserlistmodel.h"
 #include "gui/commongui.h"
+#include "irc/configuration/chatlogscfg.h"
 #include "irc/configuration/ircconfig.h"
+#include "irc/chatlogs.h"
 #include "irc/ircchanneladapter.h"
 #include "irc/ircdock.h"
 #include "irc/ircglobal.h"
@@ -37,6 +39,7 @@
 #include <QDateTime>
 #include <QScrollBar>
 #include <QStandardItemModel>
+#include <cassert>
 
 
 class IRCDockTabContents::PrivChatMenu : public QMenu
@@ -56,14 +59,22 @@ class IRCDockTabContents::PrivChatMenu : public QMenu
 
 const int IRCDockTabContents::BLINK_TIMER_DELAY_MS = 650;
 
+class IRCDockTabContents::PrivData
+{
+public:
+	QFile log;
+};
+
 IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 {
 	setupUi(this);
+	d = new PrivData();
 
 	this->bBlinkTitle = false;
 	this->bIsDestroying = false;
 	this->lastMessageClass = NULL;
 	this->userListContextMenu = NULL;
+	this->pIrcAdapter = NULL;
 
 	this->pParentIRCDock = pParentIRCDock;
 	nicknameCompleter = new IRCNicknameCompleter();
@@ -110,6 +121,8 @@ IRCDockTabContents::~IRCDockTabContents()
 		pIrcAdapter = NULL;
 		delete pTmpAdapter;
 	}
+
+	delete d;
 }
 
 void IRCDockTabContents::adapterFocusRequest()
@@ -378,11 +391,31 @@ IRCNetworkAdapter* IRCDockTabContents::network()
 	return ircAdapter()->network();
 }
 
+const IRCNetworkEntity &IRCDockTabContents::networkEntity() const
+{
+	return ircAdapter()->networkEntity();
+}
+
 void IRCDockTabContents::newChatWindowIsOpened(IRCChatAdapter* pAdapter)
 {
 	// Once a new chat adapter is opened we need to add it to the master
 	// dock widget.
 	pParentIRCDock->addIRCAdapter(pAdapter);
+}
+
+bool IRCDockTabContents::openLog()
+{
+	ChatLogs logs;
+	if (!logs.mkLogDir(networkEntity()))
+	{
+		receiveMessageWithClass(tr("Failed to create chat log directory:\n'%1'").arg(
+			logs.networkDirPath(networkEntity())), IRCMessageClass::Error);
+		return false;
+	}
+	d->log.setFileName(ChatLogs().logFilePath(networkEntity(), recipient()));
+	d->log.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text);
+	d->log.write(tr("<DATE> Chat log started on %1\n\n").arg(QDateTime::currentDateTime().toString()).toUtf8());
+	return true;
 }
 
 void IRCDockTabContents::receiveError(const QString& error)
@@ -397,8 +430,6 @@ void IRCDockTabContents::receiveMessage(const QString& message)
 
 void IRCDockTabContents::receiveMessageWithClass(const QString& message, const IRCMessageClass& messageClass)
 {
-	QString className = messageClass.toStyleSheetClassName();
-
 	QString messageHtmlEscaped = message;
 
 	if (gIRCConfig.appearance.timestamps)
@@ -417,17 +448,9 @@ void IRCDockTabContents::receiveMessageWithClass(const QString& message, const I
 	// by RFC 1459.
 	messageHtmlEscaped += "\n";
 
-	messageHtmlEscaped.replace("<", "&lt;").replace(">", "&gt;");
-	messageHtmlEscaped = Strings::wrapUrlsWithHtmlATags(messageHtmlEscaped);
+	writeLog(messageHtmlEscaped);
 
-	if (className.isEmpty())
-	{
-		messageHtmlEscaped = "<span>" + messageHtmlEscaped + "</span>";
-	}
-	else
-	{
-		messageHtmlEscaped = ("<span class='" + className + "'>" + messageHtmlEscaped + "</span>");
-	}
+	messageHtmlEscaped = wrapTextWithMetaTags(messageHtmlEscaped, messageClass);
 
 	// Play sound if this is Priv adapter.
 	if (pIrcAdapter->adapterType() == IRCAdapterBase::PrivAdapter)
@@ -444,9 +467,34 @@ void IRCDockTabContents::receiveMessageWithClass(const QString& message, const I
 	this->insertMessage(messageClass, messageHtmlEscaped);
 }
 
+QString IRCDockTabContents::recipient() const
+{
+	return pIrcAdapter->recipient();
+}
+
 void IRCDockTabContents::resetNicknameCompletion()
 {
 	nicknameCompleter->reset();
+}
+
+bool IRCDockTabContents::restoreLog()
+{
+	ChatLogs logs;
+	QFile file(logs.logFilePath(networkEntity(), recipient()));
+	if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		QStringList lines = QString(file.readAll()).split("\n");
+		int line = lines.size() - 1000;
+		lines = lines.mid((line > 0) ? line : 0);
+
+		insertMessage(IRCMessageClass::Normal,
+			wrapTextWithMetaTags(lines.join("\n"), IRCMessageClass::Normal));
+
+		receiveMessageWithClass(tr("---- All lines above were loaded from log ----"),
+			IRCMessageClass::NetworkAction);
+		return true;
+	}
+	return false;
 }
 
 QString IRCDockTabContents::selectedNickname()
@@ -510,7 +558,19 @@ void IRCDockTabContents::setBlinkTitle(bool b)
 
 void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 {
+	assert(pIrcAdapter == NULL);
 	pIrcAdapter = pAdapter;
+
+	ChatLogsCfg cfg;
+	if (cfg.isRestoreChatFromLogs())
+	{
+		restoreLog();
+	}
+	if (cfg.isStoreLogs())
+	{
+		openLog();
+	}
+
 	connect(pIrcAdapter, SIGNAL( error(const QString&) ), SLOT( receiveError(const QString& ) ));
 	connect(pIrcAdapter, SIGNAL( focusRequest() ), SLOT( adapterFocusRequest() ));
 	connect(pIrcAdapter, SIGNAL( message(const QString&) ), SLOT( receiveMessage(const QString& ) ));
@@ -756,6 +816,37 @@ void IRCDockTabContents::userListDoubleClicked(const QModelIndex& index)
 	this->pIrcAdapter->network()->openNewAdapter(cleanNickname);
 }
 
+QString IRCDockTabContents::wrapTextWithMetaTags(const QString &text,
+	const IRCMessageClass &messageClass) const
+{
+	QString result = text;
+	result.replace("<", "&lt;").replace(">", "&gt;");
+	result = Strings::wrapUrlsWithHtmlATags(result);
+
+	QString className = messageClass.toStyleSheetClassName();
+	if (className.isEmpty())
+	{
+		result = "<span>" + result + "</span>";
+	}
+	else
+	{
+		result = ("<span class='" + className + "'>" + result + "</span>");
+	}
+	return result;
+}
+
+bool IRCDockTabContents::writeLog(const QString &text)
+{
+	ChatLogsCfg cfg;
+	if (d->log.isOpen() && cfg.isStoreLogs())
+	{
+		d->log.write(text.toUtf8());
+		d->log.flush();
+		return true;
+	}
+	return false;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 IRCDockTabContents::UserListMenu::UserListMenu()
 {
@@ -777,4 +868,3 @@ IRCDockTabContents::UserListMenu::UserListMenu()
 
 	this->bIsOperator = false;
 }
-

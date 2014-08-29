@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------
 #include "cfgircnetworks.h"
 #include "gui/configuration/irc/cfgircdefinenetworkdialog.h"
-#include "irc/configuration/ircconfig.h"
+#include "irc/configuration/chatnetworkscfg.h"
 #include "qtmetapointer.h"
 #include <QItemDelegate>
 #include <QStandardItemModel>
@@ -185,7 +185,7 @@ void CFGIRCNetworks::readSettings()
 {
 	prepareTable();
 
-	const QVector<IRCNetworkEntity>& cfgNetworks = gIRCConfig.networks.networks;
+	QList<IRCNetworkEntity> cfgNetworks = ChatNetworksCfg().networks();
 	for (int i = 0; i < cfgNetworks.size(); ++i)
 	{
 		// Remember that pointers are stored within the table.
@@ -210,12 +210,14 @@ void CFGIRCNetworks::removeButtonClicked()
 void CFGIRCNetworks::saveSettings()
 {
 	QVector<IRCNetworkEntity*> networksArray = networks();
-	gIRCConfig.networks.networks.clear();
+	QList<IRCNetworkEntity> networks;
 
 	foreach (IRCNetworkEntity* pEntity, networksArray)
 	{
-		gIRCConfig.networks.networks << *pEntity;
+		networks << *pEntity;
 	}
+
+	ChatNetworksCfg().setNetworks(networks);
 }
 
 IRCNetworkEntity* CFGIRCNetworks::selectedNetwork()

@@ -44,6 +44,7 @@ class MasterManager : public MasterClient
 		~MasterManager();
 
 		void addMaster(MasterClient *master);
+		QList<ServerPtr> allServers() const;
 		CustomServers *customServs() { return customServers; }
 
 		int numMasters() const { return masters.size(); }

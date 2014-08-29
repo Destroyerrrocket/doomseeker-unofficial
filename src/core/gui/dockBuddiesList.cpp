@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------
 #include "dockBuddiesList.h"
 #include "configuration/doomseekerconfig.h"
-#include "serverapi/masterclient.h"
+#include "serverapi/mastermanager.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
 #include "strings.h"
@@ -167,7 +167,7 @@ void DockBuddiesList::patternsListContextMenu(const QPoint &pos) const
 	context.exec(patternsList->mapToGlobal(pos));
 }
 
-void DockBuddiesList::scan(const MasterClient *master)
+void DockBuddiesList::scan(const MasterManager *master)
 {
 	if(master == NULL && masterClient == NULL)
 		return;
@@ -177,8 +177,12 @@ void DockBuddiesList::scan(const MasterClient *master)
 	}
 
 	buddies.clear(); //empty list
-	foreach(ServerPtr server, masterClient->servers())
+	foreach(ServerPtr server, masterClient->allServers())
 	{
+		if (!server->isKnown())
+		{
+			continue;
+		}
 		for(int i = 0; i < server->players().numClients(); ++i)
 		{
 			const Player player = server->player(i);
@@ -186,7 +190,11 @@ void DockBuddiesList::scan(const MasterClient *master)
 			{
 				if(pattern.exactMatch(player.nameColorTagsStripped()))
 				{
-					buddies << BuddyLocationInfo(player, server);
+					BuddyLocationInfo candidate(player, server);
+					if (!buddies.contains(candidate))
+					{
+						buddies << BuddyLocationInfo(player, server);
+					}
 				}
 			}
 		}
@@ -288,4 +296,12 @@ const Player &DockBuddiesList::BuddyLocationInfo::buddy() const
 ServerPtr DockBuddiesList::BuddyLocationInfo::location() const
 {
 	return d->server;
+}
+
+bool DockBuddiesList::BuddyLocationInfo::operator==(const BuddyLocationInfo &other) const
+{
+	return d->buddy == other.d->buddy
+		&& d->server->address() == other.d->server->address()
+		&& d->server->port() == other.d->server->port()
+		&& d->server->plugin() == other.d->server->plugin();
 }

@@ -52,6 +52,7 @@ class MAIN_EXPORT DataPaths
 		static const QString PROGRAMS_APPDATA_DIR_NAME;
 		static const QString PROGRAMS_APPDATASUPPORT_DIR_NAME;
 		static const QString DEMOS_DIR_NAME;
+		static const QString CHATLOGS_DIR_NAME;
 		static const QString TRANSLATIONS_DIR_NAME;
 		static const QString UPDATE_PACKAGES_DIR_NAME;
 		static const QString UPDATE_PACKAGE_FILENAME_PREFIX;

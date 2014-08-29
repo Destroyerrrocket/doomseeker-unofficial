@@ -22,6 +22,9 @@
 //------------------------------------------------------------------------------
 #include "ircnetworkentity.h"
 
+#include "irc/chatnetworknamer.h"
+#include <QVariantMap>
+
 class IRCNetworkEntity::PrivData
 {
 	public:
@@ -129,7 +132,7 @@ void IRCNetworkEntity::setAutojoinNetwork(bool v)
 
 void IRCNetworkEntity::setDescription(const QString &v)
 {
-	d->description = v;
+	d->description = ChatNetworkNamer::convertToValidName(v);
 }
 
 void IRCNetworkEntity::setNickservCommand(const QString &v)
@@ -152,3 +155,33 @@ void IRCNetworkEntity::setPort(unsigned short v)
 	d->port = v;
 }
 
+IRCNetworkEntity IRCNetworkEntity::deserializeQVariant(const QVariant &var)
+{
+	QVariantMap map = var.toMap();
+	IRCNetworkEntity result;
+	result.setAddress(map["address"].toString());
+	result.setAutojoinChannels(map["autoJoinChannels"].toStringList());
+	result.setAutojoinCommands(map["autoJoinCommands"].toStringList());
+	result.setAutojoinNetwork(map["autoJoinNetwork"].toBool());
+	result.setDescription(map["description"].toString());
+	result.setNickservCommand(map["nickservCommand"].toString());
+	result.setNickservPassword(map["nickservPassword"].toString());
+	result.setPassword(map["password"].toString());
+	result.setPort(map["port"].toInt());
+	return result;
+}
+
+QVariant IRCNetworkEntity::serializeQVariant() const
+{
+	QVariantMap map;
+	map["address"] = address();
+	map["autoJoinChannels"] = autojoinChannels();
+	map["autoJoinCommands"] = autojoinCommands();
+	map["autoJoinNetwork"] = isAutojoinNetwork();
+	map["description"] = description();
+	map["nickservCommand"] = nickservCommand();
+	map["nickservPassword"] = nickservPassword();
+	map["password"] = password();
+	map["port"] = port();
+	return map;
+}

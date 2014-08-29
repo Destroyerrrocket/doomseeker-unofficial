@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// cfgircdefinenetworkdialog.h
+// chatlogs.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,43 +18,51 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __CFGIRCDEFINENETWORKDIALOG_H__
-#define __CFGIRCDEFINENETWORKDIALOG_H__
+#include "chatlogs.h"
 
-#include "ui_cfgircdefinenetworkdialog.h"
+#include "irc/configuration/chatlogscfg.h"
 #include "irc/entities/ircnetworkentity.h"
+#include <QDir>
 
-class CFGIRCDefineNetworkDialog : public QDialog, private Ui::CFGIRCDefineNetworkDialog
+class ChatLogs::PrivData
 {
-	Q_OBJECT
-
-	public:
-		CFGIRCDefineNetworkDialog(const IRCNetworkEntity& initValuesEntity, QWidget* parent = NULL);
-		CFGIRCDefineNetworkDialog(QWidget* parent = NULL);
-
-		IRCNetworkEntity getNetworkEntity() const;
-
-	public slots:
-		void accept();
-
-	private:
-		bool askToAcceptAnywayWhenCommandsBad(const QStringList& offenders);
-		QStringList autojoinCommands() const;
-		void construct();
-		QStringList formatOffenders(const QStringList& offenders) const;
-		void initFrom(const IRCNetworkEntity& networkEntity);
-		bool isValidDescription() const;
-		/**
-		 * @brief If validation fails, the offending lines are returned.
-		 */
-		QStringList validateAutojoinCommands() const;
-		bool validateDescription();
-
-	private slots:
-		void buttonClicked(QAbstractButton* button);
-
+public:
+	QString rootPath() const
+	{
+		return ChatLogsCfg().chatLogsRootDir();
+	}
 };
 
-#endif
+
+ChatLogs::ChatLogs()
+{
+	d = new PrivData();
+}
+
+ChatLogs::~ChatLogs()
+{
+	delete d;
+}
+
+QString ChatLogs::logFilePath(const IRCNetworkEntity &entity, const QString &recipient) const
+{
+	QString fileName = recipient;
+	if (recipient.trimmed().isEmpty())
+	{
+		fileName = "@main";
+	}
+	return QString("%1/%2.txt").arg(networkDirPath(entity), fileName);
+}
+
+bool ChatLogs::mkLogDir(const IRCNetworkEntity &entity)
+{
+	QDir dir(networkDirPath(entity));
+	return dir.mkpath(".");
+}
+
+QString ChatLogs::networkDirPath(const IRCNetworkEntity &entity) const
+{
+	return QString("%1/%2").arg(d->rootPath(), entity.description());
+}

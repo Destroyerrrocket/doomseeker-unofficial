@@ -162,6 +162,9 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 
 		class PrivChatMenu;
 
+		class PrivData;
+		PrivData *d;
+
 		static const int BLINK_TIMER_DELAY_MS;
 
 		/**
@@ -188,8 +191,12 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		void completeNickname();
 		QStandardItem* findUserListItem(const QString& nickname);
 		UserListMenu& getUserListContextMenu();
-		IRCNetworkAdapter* network();
 		void insertMessage(const IRCMessageClass& messageClass, const QString& htmlString);
+		IRCNetworkAdapter* network();
+		const IRCNetworkEntity &networkEntity() const;
+		bool openLog();
+		QString recipient() const;
+		bool restoreLog();
 		QString selectedNickname();
 
 		void sendCtcpPing(const QString &nickname);
@@ -207,6 +214,11 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 */
 		void setupNewUserListModel();
 		void showPrivChatContextMenu();
+
+		QString wrapTextWithMetaTags(const QString &text,
+			const IRCMessageClass &messageClass) const;
+
+		bool writeLog(const QString &text);
 
 	private slots:
 		void blinkTimerSlot();

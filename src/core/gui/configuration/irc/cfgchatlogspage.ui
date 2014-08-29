@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CfgChatLogsPage</class>
+ <widget class="QWidget" name="CfgChatLogsPage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>432</width>
+    <height>227</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QCheckBox" name="cbStoreLogs">
+     <property name="text">
+      <string>Store chat logs?</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="cbRestoreLogs">
+     <property name="text">
+      <string>Restore logs when re-entering chat?</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Logs storage directory:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLineEdit" name="leDir"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnBrowseDir">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>40</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QPushButton" name="btnExploreDir">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Explore</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>btnBrowseDir</sender>
+   <signal>clicked()</signal>
+   <receiver>CfgChatLogsPage</receiver>
+   <slot>browseStorageDirectory()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>283</x>
+     <y>220</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>431</x>
+     <y>173</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnExploreDir</sender>
+   <signal>clicked()</signal>
+   <receiver>CfgChatLogsPage</receiver>
+   <slot>exploreStorageDirectory()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>386</x>
+     <y>224</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>433</x>
+     <y>215</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>browseStorageDirectory()</slot>
+  <slot>exploreStorageDirectory()</slot>
+ </slots>
+</ui>
