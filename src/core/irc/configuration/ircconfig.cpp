@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "ircconfig.h"
 
+#include "irc/configuration/chatnetworkscfg.h"
 #include "ini/settingsproviderqt.h"
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
@@ -60,17 +61,53 @@ void IRCConfig::dispose()
 	}
 }
 
-bool IRCConfig::isAutojoinNetworksEnabled() const
+void IRCConfig::loadNetworksFromPlugins()
 {
-	foreach (const IRCNetworkEntity& network, networks.networks)
+	QList<IRCNetworkEntity> networks = ChatNetworksCfg().networks();
+	bool shouldSave = false;
+	// Go through the plugins and register their IRC servers.
+	for(unsigned int i = 0;i < gPlugins->numPlugins();i++)
 	{
-		if (network.isAutojoinNetwork())
+		if(gPlugins->plugin(i)->info()->data()->ircChannels.size() == 0)
+			continue;
+
+		// OK so maybe registering only on first run is a good idea after all...
+		IniVariable registered = gPlugins->plugin(i)->info()->data()->pConfig->createSetting("IRCRegistered", false);
+		if(!registered)
 		{
-			return true;
+			shouldSave = true;
+			registered = true;
+
+			foreach(const IRCNetworkEntity &entity, gPlugins->plugin(i)->info()->data()->ircChannels)
+			{
+				// If we have a unique server add it to the list...
+				if(!networks.contains(entity))
+					networks << entity;
+				else
+				{
+					// otherwise add the channel to the auto join.
+					IRCNetworkEntity &existingEntity = networks[networks.indexOf(entity)];
+					if(existingEntity.autojoinChannels().contains(entity.autojoinChannels()[0]))
+						continue;
+					if(existingEntity.isAutojoinNetwork())
+					{
+						// If we have this set to auto join ask first.
+						if(QMessageBox::question(NULL, QObject::tr("Add plugin's IRC channel?"),
+							QObject::tr("Would you like the %1 plugin to add its channel to %2's auto join?")
+								.arg(entity.description()).arg(existingEntity.description()),
+							QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes) == QMessageBox::No)
+							continue;
+					}
+
+					existingEntity.autojoinChannels() << entity.autojoinChannels()[0];
+				}
+			}
 		}
 	}
-
-	return false;
+	if (shouldSave)
+	{
+		ChatNetworksCfg().setNetworks(networks);
+	}
 }
 
 bool IRCConfig::readFromFile()
@@ -94,7 +131,7 @@ bool IRCConfig::readFromFile()
 	section = pIni->section(SoundsCfg::SECTION_NAME);
 	sounds.load(section);
 
-	networks.load(*pIni);
+	loadNetworksFromPlugins();
 
 	return true;
 }
@@ -105,12 +142,6 @@ bool IRCConfig::saveToFile()
 	{
 		return false;
 	}
-
-// TODO: Find a workaround for this.
-//	const QString TOP_COMMENT = QObject::tr("This is %1 IRC module configuration file.\n\
-//Any modification done manually to this file is on your own risk.").arg(Version::fullVersionInfo());
-//
-//	pIni->setIniTopComment(TOP_COMMENT);
 
 	IniSection section;
 
@@ -125,8 +156,6 @@ bool IRCConfig::saveToFile()
 
 	section = pIni->section(SoundsCfg::SECTION_NAME);
 	sounds.save(section);
-
-	networks.save(*pIni);
 
 	if (settings->isWritable())
 	{
@@ -237,140 +266,6 @@ void IRCConfig::GeneralCfg::load(IniSection& section)
 void IRCConfig::GeneralCfg::save(IniSection& section)
 {
 
-}
-
-//////////////////////////////////////////////////////////////////////////////
-const QString IRCConfig::NetworksDataCfg::SECTIONS_NAMES_PREFIX = "Network.";
-
-QVector<IRCNetworkEntity> IRCConfig::NetworksDataCfg::autojoinNetworks() const
-{
-	QVector<IRCNetworkEntity> autoNetworks;
-	foreach (const IRCNetworkEntity& network, this->networks)
-	{
-		if (network.isAutojoinNetwork())
-		{
-			autoNetworks << network;
-		}
-	}
-
-	return autoNetworks;
-}
-
-void IRCConfig::NetworksDataCfg::clearNetworkSections(Ini& ini)
-{
-	QVector<IniSection> sections = ini.sectionsArray("^" + SECTIONS_NAMES_PREFIX);
-	foreach (const IniSection& section, sections)
-	{
-		ini.deleteSection(section.name());
-	}
-}
-
-void IRCConfig::NetworksDataCfg::networksSortedByDescription(QVector<IRCNetworkEntity>& outVector)
-{
-	outVector = this->networks;
-	qSort(outVector);
-}
-
-void IRCConfig::NetworksDataCfg::load(Ini& ini)
-{
-	QVector<IniSection> sections = ini.sectionsArray("^" + SECTIONS_NAMES_PREFIX);
-	for (int i = 0; i < sections.size(); ++i)
-	{
-		IniSection& iniSection = sections[i];
-		IRCNetworkEntity network;
-
-		this->loadNetwork(iniSection, network);
-
-		this->networks << network;
-	}
-
-	IniSection lastUsedNetworkSection = ini.section("LastUsedNetwork");
-	this->loadNetwork(lastUsedNetworkSection, this->lastUsedNetwork);
-
-	// Go through the plugins and register their IRC servers.
-	for(unsigned int i = 0;i < gPlugins->numPlugins();i++)
-	{
-		if(gPlugins->plugin(i)->info()->data()->ircChannels.size() == 0)
-			continue;
-
-		// OK so maybe registering only on first run is a good idea after all...
-		IniVariable registered = gPlugins->plugin(i)->info()->data()->pConfig->createSetting("IRCRegistered", false);
-		if(!registered)
-		{
-			registered = true;
-
-			foreach(const IRCNetworkEntity &entity, gPlugins->plugin(i)->info()->data()->ircChannels)
-			{
-				// If we have a unique server add it to the list...
-				if(!networks.contains(entity))
-					networks << entity;
-				else
-				{
-					// otherwise add the channel to the auto join.
-					IRCNetworkEntity &existingEntity = networks[networks.indexOf(entity)];
-					if(existingEntity.autojoinChannels().contains(entity.autojoinChannels()[0]))
-						continue;
-					if(existingEntity.isAutojoinNetwork())
-					{
-						// If we have this set to auto join ask first.
-						if(QMessageBox::question(NULL, QObject::tr("Add plugin's IRC channel?"),
-							QObject::tr("Would you like the %1 plugin to add its channel to %2's auto join?")
-								.arg(entity.description()).arg(existingEntity.description()),
-							QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes) == QMessageBox::No)
-							continue;
-					}
-
-					existingEntity.autojoinChannels() << entity.autojoinChannels()[0];
-				}
-			}
-		}
-	}
-}
-
-void IRCConfig::NetworksDataCfg::loadNetwork(const IniSection& iniSection, IRCNetworkEntity& network)
-{
-	network.setAddress(iniSection["Address"]);
-	network.setAutojoinNetwork(iniSection["bAutojoinNetwork"]);
-	network.setAutojoinChannels(((const QString &)iniSection["AutojoinChannels"]).split(" ", QString::SkipEmptyParts));
-	network.setAutojoinCommands(iniSection.value("AutojoinCommands").toStringList());
-	network.setDescription(iniSection["Description"]);
-	network.setNickservCommand(iniSection["NickservCommand"]);
-	network.setNickservPassword(iniSection["NickservPassword"]);
-	network.setPassword(iniSection["Password"]);
-	network.setPort(iniSection["Port"]);
-}
-
-void IRCConfig::NetworksDataCfg::save(Ini& ini)
-{
-	// Erase all previously stored networks.
-	// We need to rebuild these sections from scratch.
-	clearNetworkSections(ini);
-
-	for (int i = 0; i < this->networks.size(); ++i)
-	{
-		QString sectionName = SECTIONS_NAMES_PREFIX + QString::number(i);
-
-		const IRCNetworkEntity& network = this->networks[i];
-		IniSection iniSection = ini.section(sectionName);
-
-		this->saveNetwork(iniSection, network);
-	}
-
-	IniSection lastUsedNetworkSection = ini.section("LastUsedNetwork");
-	this->saveNetwork(lastUsedNetworkSection, this->lastUsedNetwork);
-}
-
-void IRCConfig::NetworksDataCfg::saveNetwork(IniSection& iniSection, const IRCNetworkEntity& network)
-{
-	iniSection["Address"] = network.address();
-	iniSection["bAutojoinNetwork"] = network.isAutojoinNetwork();
-	iniSection["AutojoinChannels"] = network.autojoinChannels().join(" ");
-	iniSection["AutojoinCommands"].setValue(network.autojoinCommands());
-	iniSection["Description"] = network.description();
-	iniSection["NickservCommand"] = network.nickservCommand();
-	iniSection["NickservPassword"] = network.nickservPassword();
-	iniSection["Password"] = network.password();
-	iniSection["Port"] = network.port();
 }
 //////////////////////////////////////////////////////////////////////////////
 const QString IRCConfig::PersonalCfg::SECTION_NAME = "Personal";

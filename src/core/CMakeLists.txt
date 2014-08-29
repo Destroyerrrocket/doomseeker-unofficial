@@ -294,6 +294,7 @@ set(SOURCE_FILES
 	ip2c/ip2cupdater.cpp
 	irc/configuration/ircconfig.cpp
 	irc/configuration/chatlogscfg.cpp
+	irc/configuration/chatnetworkscfg.cpp
 	irc/constants/ircresponsetype.cpp
 	irc/entities/ircnetworkentity.cpp
 	irc/entities/ircresponseparseresult.cpp
@@ -415,6 +416,7 @@ set(HEADER_FILES
 	ip2c/entities/ip2ccountryinfo.h
 	irc/configuration/ircconfig.h
 	irc/configuration/chatlogscfg.h
+	irc/configuration/chatnetworkscfg.h
 	irc/constants/ircresponsetype.h
 	irc/entities/ircnetworkentity.h
 	irc/entities/ircresponseparseresult.h

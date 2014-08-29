@@ -34,7 +34,7 @@
 class SettingsProviderQt;
 
 /**
- *	@brief This Singleton holds entire Doomseeker configuration in memory.
+ *	@brief This Singleton holds most of Doomseeker IRC configuration in memory.
  *
  *	The first time it is instantiated the cfg variables are set to default
  *	values. Then they can be either read from or saved to a .ini file.
@@ -98,33 +98,6 @@ class IRCConfig
 			void save(IniSection& section);
 		};
 
-		/**
-		 *	@brief Complexity of data here requires to create a section
-		 *	for each network.
-		 *
-		 *	Please note that IRCNetworkEntity::description values
-		 *	must be unique.
-		 */
-		class NetworksDataCfg
-		{
-			public:
-			static const QString SECTIONS_NAMES_PREFIX;
-
-			IRCNetworkEntity lastUsedNetwork;
-			QVector<IRCNetworkEntity> networks;
-
-			QVector<IRCNetworkEntity> autojoinNetworks() const;
-			void networksSortedByDescription(QVector<IRCNetworkEntity>& outVector);
-			void load(Ini& ini);
-			void save(Ini& ini);
-
-			private:
-				void clearNetworkSections(Ini& ini);
-
-				void loadNetwork(const IniSection& iniSection, IRCNetworkEntity& network);
-				void saveNetwork(IniSection& iniSection, const IRCNetworkEntity& network);
-		};
-
 		class SoundsCfg
 		{
 			public:
@@ -157,19 +130,10 @@ class IRCConfig
 
 		AppearanceCfg appearance;
 		GeneralCfg general;
-		NetworksDataCfg networks;
 		PersonalCfg personal;
 		SoundsCfg sounds;
 
 		Ini* ini() { return this->pIni.data(); }
-
-		/**
-		 *	@brief Returns true if at least one network has autojoin
-		 *	enabled.
-		 *
-		 *	NetworksDataCfg::lastUsedNetwork is not considered here.
-		 */
-		bool isAutojoinNetworksEnabled() const;
 
 		/**
 		 *	@brief Reads settings from ini file. This file must be
@@ -203,6 +167,8 @@ class IRCConfig
 
 		IRCConfig();
 		~IRCConfig();
+
+		void loadNetworksFromPlugins();
 };
 
 #endif

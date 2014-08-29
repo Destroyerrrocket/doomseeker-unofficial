@@ -50,8 +50,6 @@ class IRCNetworkSelectionBox : public QDialog, private Ui::IRCNetworkSelectionBo
 		IRCNetworkConnectionInfo networkConnectionInfo() const;
 
 	private:
-		QVector<IRCNetworkEntity> networksArray;
-
 		void fetchNetworks();
 		void initWidgets();
 

@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "ircnetworkselectionbox.h"
 #include "gui/configuration/irc/cfgircdefinenetworkdialog.h"
+#include "irc/configuration/chatnetworkscfg.h"
 #include "irc/configuration/ircconfig.h"
 #include "qtmetapointer.h"
 #include <QMessageBox>
@@ -54,10 +55,7 @@ void IRCNetworkSelectionBox::addNetworkToComboBox(const IRCNetworkEntity& networ
 		title += tr("<Last Used Configuration>");
 	}
 
-	QtMetaPointer metaPointer = (void*)&network;
-	QVariant variantPointer = qVariantFromValue(metaPointer);
-
-	cboNetwork->addItem(title, variantPointer);
+	cboNetwork->addItem(title, network.serializeQVariant());
 }
 
 void IRCNetworkSelectionBox::btnNewNetworkClicked()
@@ -65,22 +63,29 @@ void IRCNetworkSelectionBox::btnNewNetworkClicked()
 	CFGIRCDefineNetworkDialog dialog(this);
 	if (dialog.exec() == QDialog::Accepted)
 	{
-		gIRCConfig.networks.networks << dialog.getNetworkEntity();
+		ChatNetworksCfg cfg;
+		QList<IRCNetworkEntity> networks = cfg.networks();
+		networks << dialog.getNetworkEntity();
+		cfg.setNetworks(networks);
+
 		fetchNetworks();
 	}
 }
 
 void IRCNetworkSelectionBox::fetchNetworks()
 {
-	gIRCConfig.networks.networksSortedByDescription(networksArray);
+	ChatNetworksCfg cfg;
+	QList<IRCNetworkEntity> networks = cfg.networks();
+	qSort(networks);
 	cboNetwork->clear();
 
-	if (gIRCConfig.networks.lastUsedNetwork.isValid())
+	IRCNetworkEntity lastUsedNetwork = cfg.lastUsedNetwork();
+	if (lastUsedNetwork.isValid())
 	{
-		this->addNetworkToComboBox(gIRCConfig.networks.lastUsedNetwork, true);
+		this->addNetworkToComboBox(lastUsedNetwork, true);
 	}
 
-	foreach (const IRCNetworkEntity& network, networksArray)
+	foreach (const IRCNetworkEntity& network, networks)
 	{
 		addNetworkToComboBox(network);
 	}
@@ -124,11 +129,7 @@ IRCNetworkEntity IRCNetworkSelectionBox::networkComboBox() const
 		return IRCNetworkEntity();
 	}
 
-	QtMetaPointer metaPointer = qVariantValue<QtMetaPointer>(cboNetwork->itemData(index));
-	void* pointer = metaPointer;
-	IRCNetworkEntity* pNetwork = (IRCNetworkEntity*)pointer;
-
-	return *pNetwork;
+	return IRCNetworkEntity::deserializeQVariant(cboNetwork->itemData(index));
 }
 
 IRCNetworkConnectionInfo IRCNetworkSelectionBox::networkConnectionInfo() const

@@ -24,6 +24,7 @@
 #include "gui/irc/ircdocktabcontents.h"
 #include "gui/irc/ircnetworkselectionbox.h"
 #include "gui/irc/ircsounds.h"
+#include "irc/configuration/chatnetworkscfg.h"
 #include "irc/configuration/ircconfig.h"
 #include "irc/ircglobalmessages.h"
 #include "irc/ircnetworkadapter.h"
@@ -168,7 +169,7 @@ void IRCDock::performNetworkAutojoins()
 
 	connectionInfo.fillInMissingFields();
 
-	QVector<IRCNetworkEntity> autojoinNetworks = gIRCConfig.networks.autojoinNetworks();
+	QList<IRCNetworkEntity> autojoinNetworks = ChatNetworksCfg().autoJoinNetworks();
 	foreach (const IRCNetworkEntity& network, autojoinNetworks)
 	{
 		connectionInfo.networkEntity = network;
@@ -254,7 +255,7 @@ void IRCDock::toolBarAction(QAction* pAction)
 		if (networkSelection.exec() == QDialog::Accepted)
 		{
 			IRCNetworkConnectionInfo connectionInfo = networkSelection.networkConnectionInfo();
-			gIRCConfig.networks.lastUsedNetwork = connectionInfo.networkEntity;
+			ChatNetworksCfg().setLastUsedNetwork(connectionInfo.networkEntity);
 
 			// We will attempt to remember user credentials for further use.
 			gIRCConfig.personal.alternativeNickname = connectionInfo.alternateNick;

@@ -35,6 +35,8 @@
 class MAIN_EXPORT IRCNetworkEntity
 {
 	public:
+		static IRCNetworkEntity deserializeQVariant(const QVariant &var);
+
 		IRCNetworkEntity();
 		COPYABLE_D_POINTERED_DECLARE(IRCNetworkEntity);
 		virtual ~IRCNetworkEntity();
@@ -108,6 +110,8 @@ class MAIN_EXPORT IRCNetworkEntity
 		 * Default value: 6667
 		 */
 		unsigned short port() const;
+
+		QVariant serializeQVariant() const;
 
 		void setAddress(const QString &v);
 		void setAutojoinChannels(const QStringList &v);
