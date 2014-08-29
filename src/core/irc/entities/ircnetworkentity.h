@@ -75,10 +75,7 @@ class MAIN_EXPORT IRCNetworkEntity
 		 */
 		bool isAutojoinNetwork() const;
 
-		bool isValid() const
-		{
-			return !address().isEmpty() && port() != 0;
-		}
+		bool isValid() const;
 
 		const QString &nickservCommand() const;
 		const QString &nickservPassword() const;
@@ -86,18 +83,12 @@ class MAIN_EXPORT IRCNetworkEntity
 		/**
 		 * @brief Sorts by description.
 		 */
-		bool operator< (const IRCNetworkEntity& other) const
-		{
-			return description().toLower().trimmed() < other.description().toLower().trimmed();
-		}
+		bool operator<(const IRCNetworkEntity& other) const;
 
 		/**
 		 * @brief Checks to see if this is the same server.
 		 */
-		bool operator== (const IRCNetworkEntity& other) const
-		{
-			return address() == other.address() && port() == other.port();
-		}
+		bool operator==(const IRCNetworkEntity& other) const;
 
 		/**
 		 * @brief Password for the server or network. Ignored if empty.
