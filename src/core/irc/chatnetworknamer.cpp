@@ -24,7 +24,7 @@
 
 QString ChatNetworkNamer::additionalAllowedChars()
 {
-	return "-_";
+	return ".-_";
 }
 
 QString ChatNetworkNamer::convertToValidName(const QString &name)
