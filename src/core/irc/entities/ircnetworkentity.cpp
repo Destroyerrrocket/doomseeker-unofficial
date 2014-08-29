@@ -22,6 +22,8 @@
 //------------------------------------------------------------------------------
 #include "ircnetworkentity.h"
 
+#include "irc/chatnetworknamer.h"
+
 class IRCNetworkEntity::PrivData
 {
 	public:
@@ -129,7 +131,7 @@ void IRCNetworkEntity::setAutojoinNetwork(bool v)
 
 void IRCNetworkEntity::setDescription(const QString &v)
 {
-	d->description = v;
+	d->description = ChatNetworkNamer::convertToValidName(v);
 }
 
 void IRCNetworkEntity::setNickservCommand(const QString &v)

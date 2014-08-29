@@ -1,0 +1,62 @@
+//------------------------------------------------------------------------------
+// chatnetworknamer.cpp
+//------------------------------------------------------------------------------
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+// 02110-1301, USA.
+//
+//------------------------------------------------------------------------------
+// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
+//------------------------------------------------------------------------------
+#include "chatnetworknamer.h"
+
+QString ChatNetworkNamer::additionalAllowedChars()
+{
+	return "-_";
+}
+
+QString ChatNetworkNamer::convertToValidName(const QString &name)
+{
+	QString result = name;
+	for (int i = 0; i < result.length(); ++i)
+	{
+		if (!isValidCharacter(result[i]))
+		{
+			result[i] = '_';
+		}
+	}
+	return result;
+}
+
+bool ChatNetworkNamer::isValidCharacter(const QChar &c)
+{
+	return c.isLetterOrNumber() || c == ' ' || additionalAllowedChars().contains(c);
+}
+
+bool ChatNetworkNamer::isValidName(const QString &name)
+{
+	if (name.trimmed().isEmpty())
+	{
+		return false;
+	}
+	for (int i = 0; i < name.length(); ++i)
+	{
+		if (!isValidCharacter(name[i]))
+		{
+			return false;
+		}
+	}
+	return true;
+}

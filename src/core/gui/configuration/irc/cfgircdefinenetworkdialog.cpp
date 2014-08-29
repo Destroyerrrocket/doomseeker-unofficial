@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "cfgircdefinenetworkdialog.h"
 
+#include "irc/chatnetworknamer.h"
 #include <QMessageBox>
 #include <cassert>
 
@@ -43,6 +44,10 @@ CFGIRCDefineNetworkDialog::CFGIRCDefineNetworkDialog(QWidget* parent)
 
 void CFGIRCDefineNetworkDialog::accept()
 {
+	if (!validateDescription())
+	{
+		return;
+	}
 	QStringList offenders = validateAutojoinCommands();
 	if (!offenders.isEmpty())
 	{
@@ -140,6 +145,11 @@ void CFGIRCDefineNetworkDialog::initFrom(const IRCNetworkEntity& networkEntity)
 	this->spinPort->setValue(networkEntity.port());
 }
 
+bool CFGIRCDefineNetworkDialog::isValidDescription() const
+{
+	return ChatNetworkNamer::isValidName(leDescription->text());
+}
+
 QStringList CFGIRCDefineNetworkDialog::validateAutojoinCommands() const
 {
 	QStringList offenders;
@@ -151,4 +161,17 @@ QStringList CFGIRCDefineNetworkDialog::validateAutojoinCommands() const
 		}
 	}
 	return offenders;
+}
+
+bool CFGIRCDefineNetworkDialog::validateDescription()
+{
+	if (!isValidDescription())
+	{
+		QString msg = tr("Network description is invalid.\n\n"
+			"Only letters, digits, spaces and \"%1\" are allowed.")
+				.arg(ChatNetworkNamer::additionalAllowedChars());
+		QMessageBox::critical(this, tr("Invalid network description"), msg);
+		return false;
+	}
+	return true;
 }

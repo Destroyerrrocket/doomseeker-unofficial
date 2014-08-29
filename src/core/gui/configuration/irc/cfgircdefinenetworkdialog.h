@@ -45,10 +45,12 @@ class CFGIRCDefineNetworkDialog : public QDialog, private Ui::CFGIRCDefineNetwor
 		void construct();
 		QStringList formatOffenders(const QStringList& offenders) const;
 		void initFrom(const IRCNetworkEntity& networkEntity);
+		bool isValidDescription() const;
 		/**
 		 * @brief If validation fails, the offending lines are returned.
 		 */
 		QStringList validateAutojoinCommands() const;
+		bool validateDescription();
 
 	private slots:
 		void buttonClicked(QAbstractButton* button);
