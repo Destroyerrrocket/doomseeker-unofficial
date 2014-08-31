@@ -27,12 +27,12 @@
 #include <QMessageBox>
 #include <cassert>
 
-const int MAX_IRC_COMMAND_LENGTH = 512;
-
 
 class CFGIRCDefineNetworkDialog::PrivData
 {
 public:
+	static const int MAX_IRC_COMMAND_LENGTH = 512;
+
 	QList<IRCNetworkEntity> existingNetworks;
 	QString originalDescription;
 };
@@ -78,7 +78,7 @@ bool CFGIRCDefineNetworkDialog::askToAcceptAnywayWhenCommandsBad(const QStringLi
 {
 	assert(!offenders.isEmpty() && "no offenders");
 	QString header = tr("Following commands have violated the IRC maximum byte "
-		"number limit (%1):\n\n").arg(MAX_IRC_COMMAND_LENGTH);
+		"number limit (%1):\n\n").arg(PrivData::MAX_IRC_COMMAND_LENGTH);
 	QString footer = tr("\n\nIf saved, the script may not run properly.\n\n"
 		"Do you wish to save the script anyway?");
 	QStringList formattedOffenders = formatOffenders(offenders.mid(0, 10));
@@ -202,7 +202,7 @@ QStringList CFGIRCDefineNetworkDialog::validateAutojoinCommands() const
 	QStringList offenders;
 	foreach (const QString& command, autojoinCommands())
 	{
-		if (command.toAscii().length() > MAX_IRC_COMMAND_LENGTH)
+		if (command.toAscii().length() > PrivData::MAX_IRC_COMMAND_LENGTH)
 		{
 			offenders << command;
 		}
