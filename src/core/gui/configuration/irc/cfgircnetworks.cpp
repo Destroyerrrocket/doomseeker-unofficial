@@ -43,16 +43,13 @@ CFGIRCNetworks::CFGIRCNetworks(QWidget* parent)
 
 CFGIRCNetworks::~CFGIRCNetworks()
 {
-	QVector<IRCNetworkEntity*> networksArray = networks();
-	foreach (IRCNetworkEntity* pEntity, networksArray)
-	{
-		delete pEntity;
-	}
+	cleanUpTable();
 }
 
 void CFGIRCNetworks::addButtonClicked()
 {
 	CFGIRCDefineNetworkDialog dialog(this);
+	dialog.setExistingNetworks(networksAsQList());
 	if (dialog.exec() == QDialog::Accepted)
 	{
 		IRCNetworkEntity* pNetworkEntity = new IRCNetworkEntity();
@@ -91,6 +88,7 @@ void CFGIRCNetworks::editButtonClicked()
 	if (pNetwork != NULL)
 	{
 		CFGIRCDefineNetworkDialog dialog(*pNetwork, this);
+		dialog.setExistingNetworks(networksAsQList());
 		if (dialog.exec() == QDialog::Accepted)
 		{
 			*pNetwork = dialog.getNetworkEntity();
@@ -127,7 +125,7 @@ QList<QStandardItem*> CFGIRCNetworks::generateTableRecord(IRCNetworkEntity* pNet
 	return itemArray;
 }
 
-IRCNetworkEntity* CFGIRCNetworks::network(int row)
+IRCNetworkEntity* CFGIRCNetworks::network(int row) const
 {
 	QStandardItemModel* pModel = (QStandardItemModel*)gridNetworks->model();
 	IRCNetworkEntity* pNetwork = obtainNetworkEntity(pModel->item(row));
@@ -151,7 +149,17 @@ QVector<IRCNetworkEntity*> CFGIRCNetworks::networks()
 	return entityArray;
 }
 
-IRCNetworkEntity* CFGIRCNetworks::obtainNetworkEntity(QStandardItem* pItem)
+QList<IRCNetworkEntity> CFGIRCNetworks::networksAsQList() const
+{
+	QList<IRCNetworkEntity> result;
+	for (int row = 0; row < gridNetworks->model()->rowCount(); ++row)
+	{
+		result << *network(row);
+	}
+	return result;
+}
+
+IRCNetworkEntity* CFGIRCNetworks::obtainNetworkEntity(QStandardItem* pItem) const
 {
 	QtMetaPointer metaPointer = qVariantValue<QtMetaPointer>(pItem->data());
 	void* pointer = metaPointer;
@@ -209,15 +217,7 @@ void CFGIRCNetworks::removeButtonClicked()
 
 void CFGIRCNetworks::saveSettings()
 {
-	QVector<IRCNetworkEntity*> networksArray = networks();
-	QList<IRCNetworkEntity> networks;
-
-	foreach (IRCNetworkEntity* pEntity, networksArray)
-	{
-		networks << *pEntity;
-	}
-
-	ChatNetworksCfg().setNetworks(networks);
+	ChatNetworksCfg().setNetworks(networksAsQList());
 }
 
 IRCNetworkEntity* CFGIRCNetworks::selectedNetwork()

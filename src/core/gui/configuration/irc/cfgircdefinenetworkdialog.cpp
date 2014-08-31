@@ -22,11 +22,21 @@
 //------------------------------------------------------------------------------
 #include "cfgircdefinenetworkdialog.h"
 
+#include "irc/configuration/chatnetworkscfg.h"
 #include "irc/chatnetworknamer.h"
 #include <QMessageBox>
 #include <cassert>
 
 const int MAX_IRC_COMMAND_LENGTH = 512;
+
+
+class CFGIRCDefineNetworkDialog::PrivData
+{
+public:
+	QList<IRCNetworkEntity> existingNetworks;
+	QString originalDescription;
+};
+
 
 CFGIRCDefineNetworkDialog::CFGIRCDefineNetworkDialog(const IRCNetworkEntity& initValuesEntity, QWidget* parent)
 : QDialog(parent)
@@ -40,6 +50,11 @@ CFGIRCDefineNetworkDialog::CFGIRCDefineNetworkDialog(QWidget* parent)
 : QDialog(parent)
 {
 	construct();
+}
+
+CFGIRCDefineNetworkDialog::~CFGIRCDefineNetworkDialog()
+{
+	delete d;
 }
 
 void CFGIRCDefineNetworkDialog::accept()
@@ -100,6 +115,7 @@ void CFGIRCDefineNetworkDialog::buttonClicked(QAbstractButton* button)
 void CFGIRCDefineNetworkDialog::construct()
 {
 	setupUi(this);
+	d = new PrivData();
 
 	connect(buttonBox, SIGNAL( clicked(QAbstractButton*) ), SLOT( buttonClicked(QAbstractButton*) ) );
 }
@@ -135,6 +151,7 @@ IRCNetworkEntity CFGIRCDefineNetworkDialog::getNetworkEntity() const
 
 void CFGIRCDefineNetworkDialog::initFrom(const IRCNetworkEntity& networkEntity)
 {
+	d->originalDescription = networkEntity.description();
 	this->leAddress->setText(networkEntity.address());
 	this->teAutojoinChannels->setPlainText(networkEntity.autojoinChannels().join(" "));
 	this->teAutojoinCommands->setPlainText(networkEntity.autojoinCommands().join("\n"));
@@ -145,9 +162,39 @@ void CFGIRCDefineNetworkDialog::initFrom(const IRCNetworkEntity& networkEntity)
 	this->spinPort->setValue(networkEntity.port());
 }
 
+bool CFGIRCDefineNetworkDialog::isDescriptionUnique() const
+{
+	QString current = leDescription->text().trimmed().toLower();
+	if (d->originalDescription.trimmed().toLower() == current)
+	{
+		// Network is being edited and its name hasn't been changed.
+		return true;
+	}
+	foreach (const IRCNetworkEntity &network, listExistingNetworks())
+	{
+		if (network.description().trimmed().toLower() == current)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 bool CFGIRCDefineNetworkDialog::isValidDescription() const
 {
 	return ChatNetworkNamer::isValidName(leDescription->text());
+}
+
+QList<IRCNetworkEntity> CFGIRCDefineNetworkDialog::listExistingNetworks() const
+{
+	if (!d->existingNetworks.isEmpty())
+	{
+		return d->existingNetworks;
+	}
+	else
+	{
+		return ChatNetworksCfg().networks();
+	}
 }
 
 QStringList CFGIRCDefineNetworkDialog::validateAutojoinCommands() const
@@ -163,12 +210,23 @@ QStringList CFGIRCDefineNetworkDialog::validateAutojoinCommands() const
 	return offenders;
 }
 
+void CFGIRCDefineNetworkDialog::setExistingNetworks(const QList<IRCNetworkEntity> &networks)
+{
+	d->existingNetworks = networks;
+}
+
 bool CFGIRCDefineNetworkDialog::validateDescription()
 {
 	if (leDescription->text().trimmed().isEmpty())
 	{
 		QMessageBox::critical(this, tr("Invalid network description"),
 			tr("Network description cannot be empty."));
+		return false;
+	}
+	if (!isDescriptionUnique())
+	{
+		QMessageBox::critical(this, tr("Invalid network description"),
+			tr("There already is a network with such description."));
 		return false;
 	}
 	if (!isValidDescription())
