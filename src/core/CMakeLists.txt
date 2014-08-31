@@ -166,6 +166,7 @@ set(DOOMSEEKER_QT_FILES
 	ip2c/ip2cloader.h
 	ip2c/ip2cparser.h
 	ip2c/ip2cupdater.h
+	irc/chatlogs.h
 	irc/ircadapterbase.h
 	irc/ircchanneladapter.h
 	irc/ircclient.h
@@ -421,7 +422,6 @@ set(HEADER_FILES
 	irc/entities/ircnetworkentity.h
 	irc/entities/ircresponseparseresult.h
 	irc/entities/ircuserprefix.h
-	irc/chatlogs.h
 	irc/chatnetworknamer.h
 	irc/ircchatadapter.h
 	irc/ircdelayedoperation.h

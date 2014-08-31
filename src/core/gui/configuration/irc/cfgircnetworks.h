@@ -61,6 +61,7 @@ class CFGIRCNetworks : public ConfigurationBaseBox, private Ui::CFGIRCNetworks
 		IRCNetworkEntity* obtainNetworkEntity(QStandardItem* pItem) const;
 
 		void prepareTable();
+		void saveNetworks();
 		IRCNetworkEntity* selectedNetwork();
 		int selectedRow();
 		void updateRecord(int row);

@@ -23,12 +23,15 @@
 #ifndef id8a9b47a8_4986_4c15_a37a_e718e8af36fa
 #define id8a9b47a8_4986_4c15_a37a_e718e8af36fa
 
+#include <QObject>
 #include <QString>
 
 class IRCNetworkEntity;
 
-class ChatLogs
+class ChatLogs : public QObject
 {
+Q_OBJECT
+
 public:
 	ChatLogs();
 	~ChatLogs();
@@ -36,6 +39,7 @@ public:
 	QString logFilePath(const IRCNetworkEntity &entity, const QString &recipient) const;
 	bool mkLogDir(const IRCNetworkEntity &entity);
 	QString networkDirPath(const IRCNetworkEntity &entity) const;
+	bool renameNetwork(QWidget *parentUi, QString oldName, QString newName);
 
 private:
 	class PrivData;

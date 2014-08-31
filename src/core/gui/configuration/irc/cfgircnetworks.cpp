@@ -23,6 +23,7 @@
 #include "cfgircnetworks.h"
 #include "gui/configuration/irc/cfgircdefinenetworkdialog.h"
 #include "irc/configuration/chatnetworkscfg.h"
+#include "irc/chatlogs.h"
 #include "qtmetapointer.h"
 #include <QItemDelegate>
 #include <QStandardItemModel>
@@ -56,8 +57,8 @@ void CFGIRCNetworks::addButtonClicked()
 		*pNetworkEntity = dialog.getNetworkEntity();
 
 		addRecord(pNetworkEntity);
+		saveNetworks();
 	}
-
 }
 
 void CFGIRCNetworks::addRecord(IRCNetworkEntity* pNetworkEntity)
@@ -91,8 +92,13 @@ void CFGIRCNetworks::editButtonClicked()
 		dialog.setExistingNetworks(networksAsQList());
 		if (dialog.exec() == QDialog::Accepted)
 		{
-			*pNetwork = dialog.getNetworkEntity();
-			this->updateRecord(this->selectedRow());
+			IRCNetworkEntity editedNetwork = dialog.getNetworkEntity();
+			if (ChatLogs().renameNetwork(this, pNetwork->description(), editedNetwork.description()))
+			{
+				*pNetwork = dialog.getNetworkEntity();
+				this->updateRecord(this->selectedRow());
+				saveNetworks();
+			}
 		}
 	}
 }
@@ -215,9 +221,14 @@ void CFGIRCNetworks::removeButtonClicked()
 	}
 }
 
-void CFGIRCNetworks::saveSettings()
+void CFGIRCNetworks::saveNetworks()
 {
 	ChatNetworksCfg().setNetworks(networksAsQList());
+}
+
+void CFGIRCNetworks::saveSettings()
+{
+	saveNetworks();
 }
 
 IRCNetworkEntity* CFGIRCNetworks::selectedNetwork()
