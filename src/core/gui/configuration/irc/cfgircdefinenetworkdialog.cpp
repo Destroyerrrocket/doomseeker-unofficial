@@ -165,6 +165,12 @@ QStringList CFGIRCDefineNetworkDialog::validateAutojoinCommands() const
 
 bool CFGIRCDefineNetworkDialog::validateDescription()
 {
+	if (leDescription->text().trimmed().isEmpty())
+	{
+		QMessageBox::critical(this, tr("Invalid network description"),
+			tr("Network description cannot be empty."));
+		return false;
+	}
 	if (!isValidDescription())
 	{
 		QString msg = tr("Network description is invalid.\n\n"
