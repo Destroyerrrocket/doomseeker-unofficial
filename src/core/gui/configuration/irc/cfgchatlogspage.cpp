@@ -83,7 +83,8 @@ void CfgChatLogsPage::exploreStorageDirectory()
 {
 	if (checkDir(leDir->text()))
 	{
-		QDesktopServices::openUrl(QString("file://%1").arg(leDir->text()));
+		QString path = QDir::toNativeSeparators(leDir->text());
+		QDesktopServices::openUrl(QString("file:///%1").arg(path));
 	}
 }
 
