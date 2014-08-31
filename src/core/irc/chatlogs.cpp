@@ -48,7 +48,7 @@ ChatLogs::~ChatLogs()
 
 QString ChatLogs::logFilePath(const IRCNetworkEntity &entity, const QString &recipient) const
 {
-	QString fileName = recipient;
+	QString fileName = recipient.trimmed().toLower();
 	if (recipient.trimmed().isEmpty())
 	{
 		fileName = "@main";
@@ -64,5 +64,5 @@ bool ChatLogs::mkLogDir(const IRCNetworkEntity &entity)
 
 QString ChatLogs::networkDirPath(const IRCNetworkEntity &entity) const
 {
-	return QString("%1/%2").arg(d->rootPath(), entity.description());
+	return QString("%1/%2").arg(d->rootPath(), entity.description().trimmed().toLower());
 }
