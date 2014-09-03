@@ -63,12 +63,14 @@ class IRCDockTabContents::PrivData
 {
 public:
 	QFile log;
+	QDateTime lastMessageDate;
 };
 
 IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 {
 	setupUi(this);
 	d = new PrivData();
+	d->lastMessageDate = QDateTime::currentDateTime();
 
 	this->bBlinkTitle = false;
 	this->bIsDestroying = false;
@@ -323,6 +325,18 @@ void IRCDockTabContents::insertMessage(const IRCMessageClass& messageClass, cons
 	}
 }
 
+void IRCDockTabContents::markDate()
+{
+	QDateTime previousMessageDate = d->lastMessageDate;
+	QDateTime nowDate = QDateTime::currentDateTime();
+	d->lastMessageDate = nowDate;
+	if (previousMessageDate.daysTo(nowDate) != 0)
+	{
+		receiveMessageWithClass(tr("<<<DATE>>> Date on this computer changes to %1").arg(
+			nowDate.toString()), IRCMessageClass::NetworkAction);
+	}
+}
+
 void IRCDockTabContents::myNicknameUsedSlot()
 {
 	pParentIRCDock->sounds().playIfAvailable(IRCSounds::NicknameUsed);
@@ -414,7 +428,7 @@ bool IRCDockTabContents::openLog()
 	}
 	d->log.setFileName(ChatLogs().logFilePath(networkEntity(), recipient()));
 	d->log.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text);
-	d->log.write(tr("<DATE> Chat log started on %1\n\n").arg(QDateTime::currentDateTime().toString()).toUtf8());
+	d->log.write(tr("<<<DATE>>> Chat log started on %1\n\n").arg(QDateTime::currentDateTime().toString()).toUtf8());
 	return true;
 }
 
@@ -430,6 +444,8 @@ void IRCDockTabContents::receiveMessage(const QString& message)
 
 void IRCDockTabContents::receiveMessageWithClass(const QString& message, const IRCMessageClass& messageClass)
 {
+	markDate();
+
 	QString messageHtmlEscaped = message;
 
 	if (gIRCConfig.appearance.timestamps)

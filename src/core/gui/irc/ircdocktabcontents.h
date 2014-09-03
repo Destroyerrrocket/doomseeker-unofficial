@@ -192,6 +192,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		QStandardItem* findUserListItem(const QString& nickname);
 		UserListMenu& getUserListContextMenu();
 		void insertMessage(const IRCMessageClass& messageClass, const QString& htmlString);
+		void markDate();
 		IRCNetworkAdapter* network();
 		const IRCNetworkEntity &networkEntity() const;
 		bool openLog();
