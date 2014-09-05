@@ -37,6 +37,7 @@
 #include "irc/ircuserlist.h"
 #include "log.h"
 #include <QDateTime>
+#include <QFile>
 #include <QScrollBar>
 #include <QStandardItemModel>
 #include <cassert>
