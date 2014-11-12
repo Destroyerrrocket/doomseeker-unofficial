@@ -712,8 +712,6 @@ const IRCUserPrefix &IRCNetworkAdapter::userPrefixes() const
 
 void IRCNetworkAdapter::userQuitsNetwork(const QString& nickname, const QString& farewellMessage)
 {
-	emit messageWithClass(QString("User %1 quits network.").arg(nickname), IRCMessageClass::ChannelAction);
-
 	// We need to iterate through EVERY adapter and notify them
 	// about this quit.
 	// Implementation of each adapter should recognize if this quit actually
