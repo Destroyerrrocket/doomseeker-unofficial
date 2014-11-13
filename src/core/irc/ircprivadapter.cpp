@@ -34,6 +34,8 @@ void IRCPrivAdapter::userChangesNickname(const QString& oldNickname, const QStri
 {
 	if (recipientName.compare(oldNickname, Qt::CaseInsensitive) == 0)
 	{
+		emit messageWithClass(tr("This user changed nickname from %1 to %2")
+			.arg(oldNickname, newNickname), IRCMessageClass::ChannelAction);
 		setRecipient(newNickname);
 	}
 }

@@ -631,11 +631,10 @@ QString IRCNetworkAdapter::title() const
 
 void IRCNetworkAdapter::userChangesNickname(const QString& oldNickname, const QString& newNickname)
 {
-	emit messageWithClass(QString("User changed nickname: %1 to %2.").arg(oldNickname, newNickname), IRCMessageClass::NetworkAction);
-
 	if (isMyNickname(oldNickname))
 	{
-		emit messageWithClass(tr("Updated own nickname."), IRCMessageClass::NetworkAction);
+		emit messageWithClass(tr("Updated own nickname to %1.").arg(newNickname),
+			IRCMessageClass::NetworkAction);
 		connectionInfo.nick = newNickname;
 
 		emit titleChange();
