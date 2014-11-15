@@ -201,9 +201,13 @@ p, li { white-space: pre-wrap; }
         <translation>Dodaj znajomego</translation>
     </message>
     <message>
-        <location filename="../../../../visual2008/src/core/ui_addBuddyDlg.h" line="102"/>
         <source>Type the name of your buddy here.  If the pattern type is set to basic you may use an asterisk (*) as a wild card,</source>
-        <translation>W tym miejscu podaj nicka swojego znajomego. Jeżeli typ wzoru ustawiony jest na podstawowy, możesz użyć gwiazdki (*) jako dowolnego ciągu znaków,</translation>
+        <translation type="obsolete">W tym miejscu podaj nicka swojego znajomego. Jeżeli typ wzoru ustawiony jest na podstawowy, możesz użyć gwiazdki (*) jako dowolnego ciągu znaków,</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2008/src/core/ui_addBuddyDlg.h" line="102"/>
+        <source>Type the name of your buddy here.  If the pattern type is set to basic you may use an asterisk (*) as a wild card.</source>
+        <translation>W tym miejscu podaj nicka swojego znajomego. Jeżeli typ wzoru ustawiony jest na podstawowy, możesz użyć gwiazdki (*) jako dowolnego ciągu znaków.</translation>
     </message>
     <message>
         <location filename="../../../../visual2008/src/core/ui_addBuddyDlg.h" line="103"/>
@@ -3014,111 +3018,124 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>IRCDockTabContents</name>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="54"/>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="856"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="55"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="873"/>
         <source>CTCP Ping</source>
         <translation>CTCP Ping</translation>
     </message>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="55"/>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="855"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="56"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="872"/>
         <source>CTCP Time</source>
         <translation>CTCP Czas</translation>
     </message>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="56"/>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="857"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="57"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="874"/>
         <source>CTCP Version</source>
         <translation>CTCP Wersja</translation>
     </message>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="411"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="336"/>
+        <source>&lt;&lt;&lt;DATE&gt;&gt;&gt; Date on this computer changes to %1</source>
+        <translation>&lt;&lt;DATA&gt;&gt;&gt; Data na tym komputerze zmienia się na %1</translation>
+    </message>
+    <message>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="426"/>
         <source>Failed to create chat log directory:
 &apos;%1&apos;</source>
         <translation>Nie udało się stworzyć katalogu do przechowywania logów z chata:
 %1</translation>
     </message>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="417"/>
         <source>&lt;DATE&gt; Chat log started on %1
 
 </source>
-        <translation>&lt;DATE&gt; Wystartowano log o czasie %1
+        <translation type="obsolete">&lt;DATE&gt; Wystartowano log o czasie %1
 
 </translation>
     </message>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="423"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="432"/>
+        <source>&lt;&lt;&lt;DATE&gt;&gt;&gt; Chat log started on %1
+
+</source>
+        <translation>&lt;&lt;DATA&gt;&gt;&gt; Log chata wystartowany o dacie %1
+
+</translation>
+    </message>
+    <message>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="438"/>
         <source>Error: %1</source>
         <translation>Błąd: %1</translation>
     </message>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="493"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="510"/>
         <source>---- All lines above were loaded from log ----</source>
         <translation>---- Wszystkie linie powyżej zostały załadowane z loga ----</translation>
     </message>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="742"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="759"/>
         <source>Ban user</source>
         <translation>Zbanuj użytkownika</translation>
     </message>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="742"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="759"/>
         <source>Input reason for banning user %1 from channel %2</source>
         <translation>Podaj powód zbanowania użytkownika %1 z kanału %2</translation>
     </message>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="780"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="797"/>
         <source>Kick user</source>
         <translation>Kopnij użytkownika</translation>
     </message>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="780"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="797"/>
         <source>Input reason for kicking user %1 from channel %2</source>
         <translation>Podaj powód kopnięcia użytkownika %1 z kanału %2</translation>
     </message>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="853"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="870"/>
         <source>Open chat window</source>
         <translation>Otwórz okno czata</translation>
     </message>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="859"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="876"/>
         <source>Op</source>
         <translation>Daj opa</translation>
     </message>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="860"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="877"/>
         <source>Deop</source>
         <translation>Zabierz opa</translation>
     </message>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="861"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="878"/>
         <source>Half op</source>
         <translation>Daj pół-opa</translation>
     </message>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="862"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="879"/>
         <source>De half op</source>
         <translation>Zabierz pół-opa</translation>
     </message>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="863"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="880"/>
         <source>Voice</source>
         <translation>Daj voice</translation>
     </message>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="864"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="881"/>
         <source>Devoice</source>
         <translation>Zabierz voice</translation>
     </message>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="866"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="883"/>
         <source>Kick</source>
         <translation>Kopnij</translation>
     </message>
     <message>
-        <location filename="../gui/irc/ircdocktabcontents.cpp" line="867"/>
+        <location filename="../gui/irc/ircdocktabcontents.cpp" line="884"/>
         <source>Ban</source>
         <translation>Zbanuj</translation>
     </message>
@@ -3236,17 +3253,21 @@ p, li { white-space: pre-wrap; }
         <translation>Błąd parsowania: %1</translation>
     </message>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="638"/>
-        <source>Updated own nickname.</source>
-        <translation>Uaktualniono własny nick.</translation>
+        <location filename="../irc/ircnetworkadapter.cpp" line="636"/>
+        <source>Updated own nickname to %1.</source>
+        <translation>Uaktualniono własny nick na %1.</translation>
     </message>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="698"/>
+        <source>Updated own nickname.</source>
+        <translation type="obsolete">Uaktualniono własny nick.</translation>
+    </message>
+    <message>
+        <location filename="../irc/ircnetworkadapter.cpp" line="697"/>
         <source>You left channel %1.</source>
         <translation>Opuściłeś kanał %1.</translation>
     </message>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="732"/>
+        <location filename="../irc/ircnetworkadapter.cpp" line="729"/>
         <source>Ping to user %1: %2ms</source>
         <translation>Ping do użytkownika %1: %2ms</translation>
     </message>
@@ -3351,17 +3372,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>IRCPrivAdapter</name>
     <message>
-        <location filename="../irc/ircprivadapter.cpp" line="57"/>
+        <location filename="../irc/ircprivadapter.cpp" line="37"/>
+        <source>This user changed nickname from %1 to %2</source>
+        <translation>Ten użytkownik zmienił nicka z %1 na %2</translation>
+    </message>
+    <message>
+        <location filename="../irc/ircprivadapter.cpp" line="59"/>
         <source>This user connection has been killed. (KILL: %1)</source>
         <translation>Ten użytkownik został skillowany. (KILL %1)</translation>
     </message>
     <message>
-        <location filename="../irc/ircprivadapter.cpp" line="61"/>
+        <location filename="../irc/ircprivadapter.cpp" line="63"/>
         <source>This user has left the network. (QUIT: %1)</source>
         <translation>Ten użytkownik opuścił sieć. (QUIT: %1)</translation>
     </message>
     <message>
-        <location filename="../irc/ircprivadapter.cpp" line="65"/>
+        <location filename="../irc/ircprivadapter.cpp" line="67"/>
         <source>Unhandled IRCQuitType in IRCPrivAdapter::userLeaves()</source>
         <translation></translation>
     </message>
@@ -3414,12 +3440,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>IRCSocketSignalsAdapter</name>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="763"/>
+        <location filename="../irc/ircnetworkadapter.cpp" line="760"/>
         <source>Connected. Sending registration messages.</source>
         <translation>Połączono. Wysyłam komunikaty rejestrujące.</translation>
     </message>
     <message>
-        <location filename="../irc/ircnetworkadapter.cpp" line="785"/>
+        <location filename="../irc/ircnetworkadapter.cpp" line="782"/>
         <source>IRC: Disconnected from network %1</source>
         <translation>IRC: rozłączono z sieci %1</translation>
     </message>
