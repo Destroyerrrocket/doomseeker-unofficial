@@ -64,19 +64,6 @@ class ConnectionHandler : public QObject
 		void run();
 
 		static ConnectionHandler *connectByUrl(const QUrl &url);
-		/**
-		 *	Generates command line info for specified server.
-		 *
-		 *	@param [out] cli - generated command line
-		 *	@param errorCaption - caption used for QMessageBox in case of an
-		 *		error
-		 *	@param hadMissing - If set to a non-NULL value the pointer will be
-		 *		set to true if Wadseeker downloaded files.
-		 *	@return true on success, false otherwise.
-		 */
-		bool obtainJoinCommandLine(CommandLineInfo& cli,
-			const QString& errorCaption, bool managedDemo,
-			bool *hadMissing=NULL);
 
 	protected:
 		void finish(int response);
@@ -91,6 +78,12 @@ class ConnectionHandler : public QObject
 	private:
 		class PrivData;
 		PrivData *d;
+
+		void buildJoinCommandLine();
+		void runCommandLine(const CommandLineInfo &cli);
+
+	private slots:
+		void onCommandLineBuildFinished();
 };
 
 #endif

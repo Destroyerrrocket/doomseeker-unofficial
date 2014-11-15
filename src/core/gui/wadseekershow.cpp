@@ -35,7 +35,6 @@
 class WadseekerShow::PrivData
 {
 public:
-	QMap<WadseekerInterface*, ServerPtr> wadseekers;
 };
 
 WadseekerShow *WadseekerShow::staticInstance = NULL;
@@ -79,21 +78,4 @@ WadseekerShow *WadseekerShow::instance()
 		staticInstance = new WadseekerShow();
 	}
 	return staticInstance;
-}
-
-void WadseekerShow::onWadseekerWithServerDone(int result)
-{
-	WadseekerInterface *wadseeker = static_cast<WadseekerInterface*>(sender());
-	ServerPtr server = d->wadseekers[wadseeker];
-	d->wadseekers.remove(wadseeker);
-	if (result == QDialog::Accepted)
-	{
-		gApp->mainWindow()->runGame(server);
-	}
-}
-
-void WadseekerShow::registerWadseekerWithServer(ServerPtr server, WadseekerInterface *wadseeker)
-{
-	d->wadseekers[wadseeker] = server;
-	this->connect(wadseeker, SIGNAL(finished(int)), SLOT(onWadseekerWithServerDone(int)));
 }

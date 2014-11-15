@@ -50,17 +50,26 @@ class JoinCommandLineBuilder : public QObject
 		JoinCommandLineBuilder(ServerPtr server, Demo demo, QWidget *parentWidget);
 		~JoinCommandLineBuilder();
 
+		const CommandLineInfo &builtCommandLine() const;
 		static bool checkWadseekerValidity(QWidget *parent=NULL);
 		bool isConfigurationError() const;
 		const QString &error() const;
-		CommandLineInfo obtainJoinCommandLine();
+		/**
+		 * @brief Runs asynchronously and emits
+		 * commandLineBuildFinished() when done.
+		 */
+		void obtainJoinCommandLine();
+		ServerPtr server() const;
+
+	signals:
+		void commandLineBuildFinished();
 
 	private:
 		enum MissingWadsProceed
 		{
 			Ignore,
 			Cancel,
-			Retry
+			Seeking
 		};
 
 		class PrivData;
@@ -70,11 +79,15 @@ class JoinCommandLineBuilder : public QObject
 		bool buildServerConnectParams(ServerConnectParams &params);
 		bool checkServerStatus();
 		int displayMissingWadsMessage(const QStringList &downloadableWads, const QString &message);
+		void failBuild();
 		void handleError(const JoinError &error);
 		MissingWadsProceed handleMissingWads(const JoinError &error);
 		QString mkDemoName();
 		void saveDemoMetaData(const QString& demoName);
 		bool tryToInstallGame();
+
+	private slots:
+		void onWadseekerDone(int result);
 };
 
 #endif
