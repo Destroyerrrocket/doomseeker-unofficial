@@ -67,7 +67,7 @@ class IRCNetworkSelectionBox : public QDialog, private Ui::IRCNetworkSelectionBo
 		bool validate();
 
 	private slots:
-		void btnNewNetworkClicked();
+		void createNewNetwork();
 		void editCurrentNetwork();
 		void networkChanged(int index);
 };

@@ -251,8 +251,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnNewNetwork</sender>
+   <signal>clicked()</signal>
+   <receiver>IRCNetworkSelectionBox</receiver>
+   <slot>createNewNetwork()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>239</x>
+     <y>115</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>354</x>
+     <y>110</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>editCurrentNetwork()</slot>
+  <slot>createNewNetwork()</slot>
  </slots>
 </ui>

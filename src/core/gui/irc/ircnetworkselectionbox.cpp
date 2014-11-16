@@ -32,7 +32,6 @@ IRCNetworkSelectionBox::IRCNetworkSelectionBox(QWidget* parent)
 {
 	setupUi(this);
 
-	connect(btnNewNetwork, SIGNAL( clicked() ), SLOT( btnNewNetworkClicked() ) );
 	connect(cboNetwork, SIGNAL( currentIndexChanged(int) ), SLOT( networkChanged(int) ) );
 
 	initWidgets();
@@ -56,7 +55,7 @@ QString IRCNetworkSelectionBox::buildTitle(const IRCNetworkEntity &network) cons
 	return QString("%1 [%2:%3]").arg(network.description()).arg(network.address()).arg(network.port());
 }
 
-void IRCNetworkSelectionBox::btnNewNetworkClicked()
+void IRCNetworkSelectionBox::createNewNetwork()
 {
 	CFGIRCDefineNetworkDialog dialog(this);
 	if (dialog.exec() == QDialog::Accepted)
