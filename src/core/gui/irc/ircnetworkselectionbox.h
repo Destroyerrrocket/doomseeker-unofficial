@@ -57,7 +57,9 @@ class IRCNetworkSelectionBox : public QDialog, private Ui::IRCNetworkSelectionBo
 		/**
 		 *	@brief Extracts selected network from combo box.
 		 */
-		IRCNetworkEntity networkComboBox() const;
+		IRCNetworkEntity networkCurrent() const;
+		IRCNetworkEntity networkAtRow(int row) const;
+		void setNetworkMatchingDescriptionAsCurrent(const QString &description);
 		void updateNetworkInfo();
 		bool validate();
 

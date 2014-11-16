@@ -58,12 +58,24 @@ bool ChatNetworksCfg::isAnyNetworkOnAutoJoin() const
 
 IRCNetworkEntity ChatNetworksCfg::lastUsedNetwork() const
 {
-	return loadNetwork(ini().section("LastUsedNetwork"));
+	QString networkName = ini().section("LastUsedNetwork").value("Description").toString();
+	foreach (const IRCNetworkEntity &network, networks())
+	{
+		if (network.description() == networkName)
+		{
+			return network;
+		}
+	}
+	return IRCNetworkEntity();
 }
 
 void ChatNetworksCfg::setLastUsedNetwork(const IRCNetworkEntity &network)
 {
-	saveNetwork(ini().section("LastUsedNetwork"), network);
+	// LastUsedNetwork section had more data in the past. To prevent
+	// obscuring of the .ini file with this old data, we'll delete the
+	// section and promptly recreate it.
+	ini().deleteSection("LastUsedNetwork");
+	ini().section("LastUsedNetwork").setValue("Description", network.description());
 }
 
 QList<IRCNetworkEntity> ChatNetworksCfg::networks() const

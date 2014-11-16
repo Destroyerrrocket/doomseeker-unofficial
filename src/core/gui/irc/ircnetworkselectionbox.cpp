@@ -79,15 +79,15 @@ void IRCNetworkSelectionBox::fetchNetworks()
 	qSort(networks);
 	cboNetwork->clear();
 
-	IRCNetworkEntity lastUsedNetwork = cfg.lastUsedNetwork();
-	if (lastUsedNetwork.isValid())
-	{
-		this->addNetworkToComboBox(lastUsedNetwork, true);
-	}
-
 	foreach (const IRCNetworkEntity& network, networks)
 	{
 		addNetworkToComboBox(network);
+	}
+
+	IRCNetworkEntity lastUsedNetwork = cfg.lastUsedNetwork();
+	if (lastUsedNetwork.isValid())
+	{
+		setNetworkMatchingDescriptionAsCurrent(lastUsedNetwork.description());
 	}
 
 	updateNetworkInfo();
@@ -104,32 +104,31 @@ void IRCNetworkSelectionBox::initWidgets()
 
 IRCNetworkEntity IRCNetworkSelectionBox::network() const
 {
-	IRCNetworkEntity networkEntity = this->networkComboBox();
-
-	networkEntity.setAddress(leServerAddress->text());
+	IRCNetworkEntity networkEntity = networkCurrent();
 	networkEntity.setPassword(lePassword->text());
-	networkEntity.setPort(spinPort->value());
-
 	return networkEntity;
 }
 
 void IRCNetworkSelectionBox::networkChanged(int index)
 {
-	if (index > 0)
+	if (index >= 0)
 	{
 		updateNetworkInfo();
 	}
 }
 
-IRCNetworkEntity IRCNetworkSelectionBox::networkComboBox() const
+IRCNetworkEntity IRCNetworkSelectionBox::networkCurrent() const
 {
-	int index = cboNetwork->currentIndex();
-	if (index < 0)
+	return networkAtRow(cboNetwork->currentIndex());
+}
+
+IRCNetworkEntity IRCNetworkSelectionBox::networkAtRow(int row) const
+{
+	if (row < 0 || row >= cboNetwork->count())
 	{
 		return IRCNetworkEntity();
 	}
-
-	return IRCNetworkEntity::deserializeQVariant(cboNetwork->itemData(index));
+	return IRCNetworkEntity::deserializeQVariant(cboNetwork->itemData(row));
 }
 
 IRCNetworkConnectionInfo IRCNetworkSelectionBox::networkConnectionInfo() const
@@ -145,9 +144,22 @@ IRCNetworkConnectionInfo IRCNetworkSelectionBox::networkConnectionInfo() const
 	return outInfo;
 }
 
+void IRCNetworkSelectionBox::setNetworkMatchingDescriptionAsCurrent(const QString &description)
+{
+	for (int row = 0; row < cboNetwork->count(); ++row)
+	{
+		IRCNetworkEntity candidate = networkAtRow(row);
+		if (candidate.description() == description)
+		{
+			cboNetwork->setCurrentIndex(row);
+			break;
+		}
+	}
+}
+
 void IRCNetworkSelectionBox::updateNetworkInfo()
 {
-	IRCNetworkEntity network = this->networkComboBox();
+	IRCNetworkEntity network = networkCurrent();
 
 	leServerAddress->setText(network.address());
 	spinPort->setValue(network.port());

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>278</width>
-    <height>263</height>
+    <height>273</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -124,6 +124,9 @@
        <property name="text">
         <string>74.207.247.18</string>
        </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item row="1" column="0">
@@ -135,6 +138,12 @@
      </item>
      <item row="1" column="1">
       <widget class="QSpinBox" name="spinPort">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="buttonSymbols">
+        <enum>QAbstractSpinBox::NoButtons</enum>
+       </property>
        <property name="minimum">
         <number>6667</number>
        </property>
