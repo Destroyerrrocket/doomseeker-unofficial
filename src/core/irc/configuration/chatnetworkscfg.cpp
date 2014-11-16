@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "chatnetworkscfg.h"
 
+#include "irc/chatlogs.h"
 #include "irc/configuration/ircconfig.h"
 #include "ini/inisection.h"
 #include <QString>
@@ -99,6 +100,27 @@ void ChatNetworksCfg::setNetworks(const QList<IRCNetworkEntity> &networks)
 		saveNetwork(networkSection(id), network);
 		++id;
 	}
+}
+
+bool ChatNetworksCfg::replaceNetwork(const QString &oldDescription, const IRCNetworkEntity &newNetwork, QWidget *errorDisplayParentWidget)
+{
+	if (!ChatLogs().renameNetwork(errorDisplayParentWidget, oldDescription, newNetwork.description()))
+	{
+		return false;
+	}
+	QList<IRCNetworkEntity> networks = this->networks();
+	QMutableListIterator<IRCNetworkEntity> it(networks);
+	while (it.hasNext())
+	{
+		IRCNetworkEntity &network = it.next();
+		if (network.description() == oldDescription)
+		{
+			network = newNetwork;
+			break;
+		}
+	}
+	setNetworks(networks);
+	return true;
 }
 
 void ChatNetworksCfg::clearNetworkSections()

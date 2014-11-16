@@ -46,16 +46,14 @@ void IRCNetworkSelectionBox::accept()
 	}
 }
 
-void IRCNetworkSelectionBox::addNetworkToComboBox(const IRCNetworkEntity& network, bool bLastUsed)
+void IRCNetworkSelectionBox::addNetworkToComboBox(const IRCNetworkEntity& network)
 {
-	QString title = QString("%1 [%2:%3]").arg(network.description()).arg(network.address()).arg(network.port());
+	cboNetwork->addItem(buildTitle(network), network.serializeQVariant());
+}
 
-	if (bLastUsed)
-	{
-		title += tr("<Last Used Configuration>");
-	}
-
-	cboNetwork->addItem(title, network.serializeQVariant());
+QString IRCNetworkSelectionBox::buildTitle(const IRCNetworkEntity &network) const
+{
+	return QString("%1 [%2:%3]").arg(network.description()).arg(network.address()).arg(network.port());
 }
 
 void IRCNetworkSelectionBox::btnNewNetworkClicked()
@@ -69,6 +67,26 @@ void IRCNetworkSelectionBox::btnNewNetworkClicked()
 		cfg.setNetworks(networks);
 
 		fetchNetworks();
+	}
+}
+
+void IRCNetworkSelectionBox::editCurrentNetwork()
+{
+	IRCNetworkEntity network = networkCurrent();
+	if (!network.isValid())
+	{
+		QMessageBox::critical(this, tr("Doomseeker - edit network"),
+			tr("Cannot edit as no valid network is selected."));
+		return;
+	}
+	CFGIRCDefineNetworkDialog dialog(network, this);
+	if (dialog.exec() == QDialog::Accepted)
+	{
+		IRCNetworkEntity editedNetwork = dialog.getNetworkEntity();
+		if (replaceNetworkInConfig(network, editedNetwork))
+		{
+			updateCurrentNetwork(editedNetwork);
+		}
 	}
 }
 
@@ -155,6 +173,19 @@ void IRCNetworkSelectionBox::setNetworkMatchingDescriptionAsCurrent(const QStrin
 			break;
 		}
 	}
+}
+
+void IRCNetworkSelectionBox::updateCurrentNetwork(const IRCNetworkEntity &network)
+{
+	cboNetwork->setItemText(cboNetwork->currentIndex(), buildTitle(network));
+	cboNetwork->setItemData(cboNetwork->currentIndex(), network.serializeQVariant());
+	updateNetworkInfo();
+}
+
+bool IRCNetworkSelectionBox::replaceNetworkInConfig(const IRCNetworkEntity &oldNetwork, const IRCNetworkEntity &newNetwork)
+{
+	ChatNetworksCfg cfg;
+	return cfg.replaceNetwork(oldNetwork.description(), newNetwork, this);
 }
 
 void IRCNetworkSelectionBox::updateNetworkInfo()
