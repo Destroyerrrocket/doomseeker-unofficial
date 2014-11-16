@@ -330,7 +330,10 @@ void IRCNetworkAdapter::helloClient(const QString& nickname)
 	}
 	foreach (const QString& command, network.autojoinCommands())
 	{
-		this->sendMessage(command);
+		if (!command.trimmed().isEmpty())
+		{
+			this->sendMessage(command);
+		}
 	}
 
 	foreach (const QString& channel, network.autojoinChannels())
