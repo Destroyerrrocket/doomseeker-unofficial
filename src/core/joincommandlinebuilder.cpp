@@ -46,10 +46,13 @@ class JoinCommandLineBuilder::PrivData
 	public:
 		CommandLineInfo cli;
 		bool configurationError;
+		QString connectPassword;
 		QString error;
 		Demo demo;
+		QString inGamePassword;
 		ServerPtr server;
 		QWidget *parentWidget;
+		bool passwordsAlreadySet;
 };
 
 JoinCommandLineBuilder::JoinCommandLineBuilder(ServerPtr server,
@@ -59,6 +62,7 @@ JoinCommandLineBuilder::JoinCommandLineBuilder(ServerPtr server,
 	d->configurationError = false;
 	d->demo = demo;
 	d->parentWidget = parentWidget;
+	d->passwordsAlreadySet = false;
 	d->server = server;
 }
 
@@ -80,16 +84,22 @@ QStringList JoinCommandLineBuilder::allDownloadableWads(const JoinError &joinErr
 
 bool JoinCommandLineBuilder::buildServerConnectParams(ServerConnectParams &params)
 {
-	if(d->server->isLockedAnywhere())
+	if (d->server->isLockedAnywhere())
 	{
-		PasswordDlg password(d->server);
-		int ret = password.exec();
-		if (ret != QDialog::Accepted)
+		if (!d->passwordsAlreadySet)
 		{
-			return false;
+			PasswordDlg password(d->server);
+			int ret = password.exec();
+			if (ret != QDialog::Accepted)
+			{
+				return false;
+			}
+			d->connectPassword = password.connectPassword();
+			d->inGamePassword = password.inGamePassword();
+			d->passwordsAlreadySet = true;
 		}
-		params.setConnectPassword(password.connectPassword());
-		params.setInGamePassword(password.inGamePassword());
+		params.setConnectPassword(d->connectPassword);
+		params.setInGamePassword(d->inGamePassword);
 	}
 
 	if (gConfig.doomseeker.bRecordDemo)
