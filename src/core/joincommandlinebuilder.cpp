@@ -315,7 +315,11 @@ void JoinCommandLineBuilder::obtainJoinCommandLine()
 			{
 				obtainJoinCommandLine();
 			}
-			break;
+			else
+			{
+				failBuild();
+			}
+			return;
 		}
 
 		case JoinError::MissingWads:
