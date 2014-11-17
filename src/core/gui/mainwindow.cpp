@@ -516,6 +516,7 @@ void MainWindow::finishConfiguration(DoomseekerConfigurationDialog &configDialog
 {
 	// In case the master server addresses changed, notify the master clients.
 	updateMasterAddresses();
+	gRefresher->setDelayBetweenResends(gConfig.doomseeker.queryTimeout);
 
 	// If appearance changed - update the widgets.
 	if (configDialog.appearanceChanged())
