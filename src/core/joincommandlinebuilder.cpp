@@ -46,10 +46,13 @@ class JoinCommandLineBuilder::PrivData
 	public:
 		CommandLineInfo cli;
 		bool configurationError;
+		QString connectPassword;
 		QString error;
 		Demo demo;
+		QString inGamePassword;
 		ServerPtr server;
 		QWidget *parentWidget;
+		bool passwordsAlreadySet;
 };
 
 JoinCommandLineBuilder::JoinCommandLineBuilder(ServerPtr server,
@@ -59,6 +62,7 @@ JoinCommandLineBuilder::JoinCommandLineBuilder(ServerPtr server,
 	d->configurationError = false;
 	d->demo = demo;
 	d->parentWidget = parentWidget;
+	d->passwordsAlreadySet = false;
 	d->server = server;
 }
 
@@ -80,16 +84,22 @@ QStringList JoinCommandLineBuilder::allDownloadableWads(const JoinError &joinErr
 
 bool JoinCommandLineBuilder::buildServerConnectParams(ServerConnectParams &params)
 {
-	if(d->server->isLockedAnywhere())
+	if (d->server->isLockedAnywhere())
 	{
-		PasswordDlg password(d->server);
-		int ret = password.exec();
-		if (ret != QDialog::Accepted)
+		if (!d->passwordsAlreadySet)
 		{
-			return false;
+			PasswordDlg password(d->server);
+			int ret = password.exec();
+			if (ret != QDialog::Accepted)
+			{
+				return false;
+			}
+			d->connectPassword = password.connectPassword();
+			d->inGamePassword = password.inGamePassword();
+			d->passwordsAlreadySet = true;
 		}
-		params.setConnectPassword(password.connectPassword());
-		params.setInGamePassword(password.inGamePassword());
+		params.setConnectPassword(d->connectPassword);
+		params.setInGamePassword(d->inGamePassword);
 	}
 
 	if (gConfig.doomseeker.bRecordDemo)
@@ -97,6 +107,11 @@ bool JoinCommandLineBuilder::buildServerConnectParams(ServerConnectParams &param
 		params.setDemoName(mkDemoName());
 	}
 	return true;
+}
+
+const CommandLineInfo &JoinCommandLineBuilder::builtCommandLine() const
+{
+	return d->cli;
 }
 
 bool JoinCommandLineBuilder::checkServerStatus()
@@ -168,6 +183,12 @@ const QString &JoinCommandLineBuilder::error() const
 	return d->error;
 }
 
+void JoinCommandLineBuilder::failBuild()
+{
+	d->cli = CommandLineInfo();
+	emit commandLineBuildFinished();
+}
+
 void JoinCommandLineBuilder::handleError(const JoinError &error)
 {
 	if (!error.error().isEmpty())
@@ -232,15 +253,11 @@ JoinCommandLineBuilder::MissingWadsProceed JoinCommandLineBuilder::handleMissing
 		}
 
 		WadseekerInterface *wadseeker = WadseekerInterface::create(d->server);
+		this->connect(wadseeker, SIGNAL(finished(int)), SLOT(onWadseekerDone(int)));
 		wadseeker->setWads(downloadableWads);
 		wadseeker->setAttribute(Qt::WA_DeleteOnClose);
-		// As Wadseeker window is asynchronous the control of game joining
-		// is delegated to the WadseekerShow singleton. The join process
-		// will be restarted once all WADs download and user still wishes
-		// to connect.
-		gWadseekerShow->registerWadseekerWithServer(d->server, wadseeker);
 		wadseeker->show();
-		return Cancel;
+		return Seeking;
 	}
 	return ret == QMessageBox::Ignore ? Ignore : Cancel;
 }
@@ -268,20 +285,22 @@ QString JoinCommandLineBuilder::mkDemoName()
 	return demoName;
 }
 
-CommandLineInfo JoinCommandLineBuilder::obtainJoinCommandLine()
+void JoinCommandLineBuilder::obtainJoinCommandLine()
 {
 	assert(d->server != NULL);
 	d->cli = CommandLineInfo();
 
 	if (!checkServerStatus())
 	{
-		return CommandLineInfo();
+		failBuild();
+		return;
 	}
 
 	ServerConnectParams params;
 	if (!buildServerConnectParams(params))
 	{
-		return CommandLineInfo();
+		failBuild();
+		return;
 	}
 	GameClientRunner* gameRunner = d->server->gameRunner();
 	JoinError joinError = gameRunner->createJoinCommandLine(d->cli, params);
@@ -290,12 +309,14 @@ CommandLineInfo JoinCommandLineBuilder::obtainJoinCommandLine()
 	switch (joinError.type())
 	{
 		case JoinError::Terminate:
-			return CommandLineInfo();
+			failBuild();
+			return;
 		case JoinError::ConfigurationError:
 		case JoinError::Critical:
 		{
 			handleError(joinError);
-			return CommandLineInfo();
+			failBuild();
+			return;
 		}
 
 		case JoinError::CanAutomaticallyInstallGame:
@@ -304,7 +325,11 @@ CommandLineInfo JoinCommandLineBuilder::obtainJoinCommandLine()
 			{
 				obtainJoinCommandLine();
 			}
-			break;
+			else
+			{
+				failBuild();
+			}
+			return;
 		}
 
 		case JoinError::MissingWads:
@@ -313,14 +338,17 @@ CommandLineInfo JoinCommandLineBuilder::obtainJoinCommandLine()
 			switch (proceed)
 			{
 				case Cancel:
-					return CommandLineInfo();
+					failBuild();
+					return;
 				case Ignore:
 					break;
-				case Retry:
-					return obtainJoinCommandLine();
+				case Seeking:
+					// async process; will call slot
+					return;
 				default:
 					gLog << "Bug: not sure how to proceed after \"MissingWads\".";
-					return CommandLineInfo();
+					failBuild();
+					return;
 			}
 			// Intentional fall through
 		}
@@ -337,7 +365,16 @@ CommandLineInfo JoinCommandLineBuilder::obtainJoinCommandLine()
 			break;
 	}
 
-	return d->cli;
+	emit commandLineBuildFinished();
+}
+
+void JoinCommandLineBuilder::onWadseekerDone(int result)
+{
+	qDebug() << "onWadseekerDone:" << result;
+	if (result == QDialog::Accepted)
+	{
+		obtainJoinCommandLine();
+	}
 }
 
 void JoinCommandLineBuilder::saveDemoMetaData(const QString& demoName)
@@ -369,6 +406,11 @@ void JoinCommandLineBuilder::saveDemoMetaData(const QString& demoName)
 
 	metaSection.createSetting("iwad", d->server->iwad().toLower());
 	metaSection.createSetting("pwads", wadList.join(";"));
+}
+
+ServerPtr JoinCommandLineBuilder::server() const
+{
+	return d->server;
 }
 
 bool JoinCommandLineBuilder::tryToInstallGame()

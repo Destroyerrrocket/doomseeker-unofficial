@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>278</width>
-    <height>263</height>
+    <width>354</width>
+    <height>273</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -73,14 +73,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QComboBox" name="cboNetwork">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
+      <widget class="QComboBox" name="cboNetwork"/>
      </item>
      <item>
       <widget class="QPushButton" name="btnNewNetwork">
@@ -105,6 +98,19 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="btnEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Edit</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -124,6 +130,9 @@
        <property name="text">
         <string>74.207.247.18</string>
        </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item row="1" column="0">
@@ -135,6 +144,12 @@
      </item>
      <item row="1" column="1">
       <widget class="QSpinBox" name="spinPort">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="buttonSymbols">
+        <enum>QAbstractSpinBox::NoButtons</enum>
+       </property>
        <property name="minimum">
         <number>6667</number>
        </property>
@@ -200,7 +215,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
-     <y>274</y>
+     <y>272</y>
     </hint>
    </hints>
   </connection>
@@ -216,9 +231,45 @@
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
-     <y>274</y>
+     <y>272</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnEdit</sender>
+   <signal>clicked()</signal>
+   <receiver>IRCNetworkSelectionBox</receiver>
+   <slot>editCurrentNetwork()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>321</x>
+     <y>123</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>352</x>
+     <y>122</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnNewNetwork</sender>
+   <signal>clicked()</signal>
+   <receiver>IRCNetworkSelectionBox</receiver>
+   <slot>createNewNetwork()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>239</x>
+     <y>115</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>354</x>
+     <y>110</y>
     </hint>
    </hints>
   </connection>
  </connections>
+ <slots>
+  <slot>editCurrentNetwork()</slot>
+  <slot>createNewNetwork()</slot>
+ </slots>
 </ui>

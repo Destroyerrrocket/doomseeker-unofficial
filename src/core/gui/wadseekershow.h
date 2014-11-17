@@ -38,7 +38,6 @@ class WadseekerShow : public QObject
 		static WadseekerShow *instance();
 
 		bool checkWadseekerValidity(QWidget *parent);
-		void registerWadseekerWithServer(ServerPtr server, WadseekerInterface *wadseeker);
 
 	private:
 		class PrivData;
@@ -46,9 +45,6 @@ class WadseekerShow : public QObject
 		PrivData *d;
 
 		WadseekerShow();
-
-	private slots:
-		void onWadseekerWithServerDone(int result);
 };
 
 #endif

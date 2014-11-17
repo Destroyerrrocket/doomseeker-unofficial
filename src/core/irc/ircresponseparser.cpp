@@ -288,6 +288,7 @@ IRCResponseParseResult IRCResponseParser::parseMessage()
 			break;
 		}
 
+		case IRCResponseType::ERRCannotSendToChan:
 		case IRCResponseType::ERRChanOpPrivIsNeeded:
 		{
 			d->params.takeFirst(); // User
