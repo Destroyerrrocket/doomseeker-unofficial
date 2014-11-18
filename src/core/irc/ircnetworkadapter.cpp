@@ -492,7 +492,7 @@ void IRCNetworkAdapter::namesListEndReceived(const QString& channel)
 
 void IRCNetworkAdapter::nicknameInUse(const QString& nickname)
 {
-	IRCGlobalMessages::instance().emitMessageWithClass(tr("Nickname %1 is already taken.").arg(nickname), IRCMessageClass::NetworkAction, this);
+	emit messageToNetworksCurrentChatBox(tr("Nickname %1 is already taken.").arg(nickname), IRCMessageClass::Error);
 	if (this->bIsJoining)
 	{
 		const QString& altNick = this->connectionInfo.alternateNick;
@@ -518,7 +518,7 @@ void IRCNetworkAdapter::nicknameInUse(const QString& nickname)
 
 void IRCNetworkAdapter::noSuchNickname(const QString& nickname)
 {
-	IRCGlobalMessages::instance().emitError(tr("User %1 is not logged in.").arg(nickname), this);
+	emit messageToNetworksCurrentChatBox(tr("User %1 is not logged in.").arg(nickname), IRCMessageClass::Error);
 }
 
 void IRCNetworkAdapter::openNewAdapter(const QString& recipientName)

@@ -287,7 +287,7 @@ IRCResponseParseResult IRCResponseParser::parseMessage()
 			{
 				msg += tr(" (%1)").arg(joinAndTrimColonIfNecessary(d->params));
 			}
-			emit printToNetworksCurrentChatBox(msg, IRCMessageClass::NetworkAction);
+			emit printToNetworksCurrentChatBox(msg, IRCMessageClass::Error);
 			break;
 		}
 
