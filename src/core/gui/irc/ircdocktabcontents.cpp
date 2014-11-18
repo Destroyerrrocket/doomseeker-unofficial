@@ -500,7 +500,8 @@ bool IRCDockTabContents::restoreLog()
 	QFile file(logs.logFilePath(networkEntity(), recipient()));
 	if (file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-		QStringList lines = QString(file.readAll()).split("\n");
+		QByteArray contents = file.readAll();
+		QStringList lines = QString::fromUtf8(contents, contents.size()).split("\n");
 		int line = lines.size() - 1000;
 		lines = lines.mid((line > 0) ? line : 0);
 
