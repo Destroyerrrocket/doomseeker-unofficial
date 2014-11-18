@@ -433,11 +433,11 @@ bool IRCDockTabContents::openLog()
 	return true;
 }
 
-void IRCDockTabContents::printToSendersCurrentChatBox(const QString &text, const IRCMessageClass &msgClass)
+void IRCDockTabContents::printToSendersNetworksCurrentChatBox(const QString &text, const IRCMessageClass &msgClass)
 {
 	IRCAdapterBase *adapter = static_cast<IRCAdapterBase*>(sender());
 	IRCDockTabContents *tab = pParentIRCDock->tabWithFocus();
-	if (tab != NULL && tab->ircAdapter()->network() == adapter->network())
+	if (tab != NULL && tab->ircAdapter()->network()->isAdapterRelated(adapter))
 	{
 		tab->ircAdapter()->emitMessageWithClass(text, msgClass);
 	}
@@ -609,6 +609,8 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 	connect(pIrcAdapter, SIGNAL( messageWithClass(const QString&, const IRCMessageClass&) ), SLOT( receiveMessageWithClass(const QString&, const IRCMessageClass&) ));
 	connect(pIrcAdapter, SIGNAL( terminating() ), SLOT( adapterTerminating() ) );
 	connect(pIrcAdapter, SIGNAL( titleChange() ), SLOT( adapterTitleChange() ) );
+	connect(pIrcAdapter, SIGNAL( messageToNetworksCurrentChatBox(QString, IRCMessageClass) ),
+		SLOT( printToSendersNetworksCurrentChatBox(QString, IRCMessageClass) ) );
 
 	switch (pIrcAdapter->adapterType())
 	{
@@ -616,8 +618,6 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 		{
 			IRCNetworkAdapter* pNetworkAdapter = (IRCNetworkAdapter*)pAdapter;
 			connect(pNetworkAdapter, SIGNAL( newChatWindowIsOpened(IRCChatAdapter*) ), SLOT( newChatWindowIsOpened(IRCChatAdapter*) ) );
-			connect(pNetworkAdapter, SIGNAL( printToMyCurrentChatBox(QString, IRCMessageClass) ),
-				SLOT( printToSendersCurrentChatBox(QString, IRCMessageClass) ) );
 			break;
 		}
 

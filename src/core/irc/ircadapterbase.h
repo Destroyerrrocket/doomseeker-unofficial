@@ -134,6 +134,7 @@ class IRCAdapterBase : public QObject
 
 		void message(const QString& message);
 		void messageWithClass(const QString& message, const IRCMessageClass& messageClass);
+		void messageToNetworksCurrentChatBox(const QString &message, const IRCMessageClass &msgClass);
 
 		void terminating();
 
