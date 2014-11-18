@@ -638,7 +638,7 @@ void IRCNetworkAdapter::userChangesNickname(const QString& oldNickname, const QS
 {
 	if (isMyNickname(oldNickname))
 	{
-		emit messageWithClass(tr("Updated own nickname to %1.").arg(newNickname),
+		emit messageToNetworksCurrentChatBox(tr("Updated own nickname to %1.").arg(newNickname),
 			IRCMessageClass::NetworkAction);
 		connectionInfo.nick = newNickname;
 
