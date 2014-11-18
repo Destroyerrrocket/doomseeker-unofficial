@@ -433,6 +433,20 @@ bool IRCDockTabContents::openLog()
 	return true;
 }
 
+void IRCDockTabContents::printToSendersCurrentChatBox(const QString &text, const IRCMessageClass &msgClass)
+{
+	IRCAdapterBase *adapter = static_cast<IRCAdapterBase*>(sender());
+	IRCDockTabContents *tab = pParentIRCDock->tabWithFocus();
+	if (tab != NULL && tab->ircAdapter()->network() == adapter->network())
+	{
+		tab->ircAdapter()->emitMessageWithClass(text, msgClass);
+	}
+	else
+	{
+		adapter->emitMessageWithClass(text, msgClass);
+	}
+}
+
 void IRCDockTabContents::receiveError(const QString& error)
 {
 	receiveMessageWithClass(tr("Error: %1").arg(error), IRCMessageClass::Error);
@@ -602,6 +616,8 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 		{
 			IRCNetworkAdapter* pNetworkAdapter = (IRCNetworkAdapter*)pAdapter;
 			connect(pNetworkAdapter, SIGNAL( newChatWindowIsOpened(IRCChatAdapter*) ), SLOT( newChatWindowIsOpened(IRCChatAdapter*) ) );
+			connect(pNetworkAdapter, SIGNAL( printToMyCurrentChatBox(QString, IRCMessageClass) ),
+				SLOT( printToSendersCurrentChatBox(QString, IRCMessageClass) ) );
 			break;
 		}
 

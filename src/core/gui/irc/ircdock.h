@@ -55,6 +55,7 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 		void performNetworkAutojoins();
 
 		IRCSounds& sounds();
+		IRCDockTabContents *tabWithFocus();
 
 	private:
 		IRCSounds* pSounds;

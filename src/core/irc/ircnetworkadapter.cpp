@@ -95,6 +95,8 @@ IRCNetworkAdapter::IRCNetworkAdapter(const IRCNetworkConnectionInfo &connectionI
 		SIGNAL(printWithClass(const QString&, const QString&, const IRCMessageClass&)),
 		this, SLOT(printWithClass(const QString&, const QString&, const IRCMessageClass&)),
 		Qt::DirectConnection);
+	QObject::connect(ircResponseParser, SIGNAL(printToNetworksCurrentChatBox(QString, IRCMessageClass)),
+		SIGNAL(printToMyCurrentChatBox(QString, IRCMessageClass)));
 
 	QObject::connect(ircResponseParser, SIGNAL ( privMsgReceived(const QString&, const QString&, const QString&) ),
 		this, SLOT( privMsgReceived(const QString&, const QString&, const QString&) ) );

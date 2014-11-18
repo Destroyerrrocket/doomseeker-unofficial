@@ -236,6 +236,15 @@ void IRCDock::tabFocusRequest(IRCDockTabContents* pCaller)
 	tabWidget->setCurrentWidget(pCaller);
 }
 
+IRCDockTabContents *IRCDock::tabWithFocus()
+{
+	if (tabWidget->currentWidget() != NULL)
+	{
+		return static_cast<IRCDockTabContents*>(tabWidget->currentWidget());
+	}
+	return NULL;
+}
+
 void IRCDock::titleChange(IRCDockTabContents* pCaller)
 {
 	int tabIndex = tabWidget->indexOf(pCaller);

@@ -187,6 +187,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 *        from this network.
 		 */
 		void newChatWindowIsOpened(IRCChatAdapter* pWindow);
+		void printToMyCurrentChatBox(const QString &printWhat, const IRCMessageClass &msgClass);
 
 	private:
 		/**

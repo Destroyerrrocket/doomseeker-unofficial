@@ -90,6 +90,7 @@ class IRCResponseParser : public QObject
 		 * @brief Same as print(), but allows to specify message class.
 		 */
 		void printWithClass(const QString& printWhat, const QString& printWhere, const IRCMessageClass& msgClass);
+		void printToNetworksCurrentChatBox(const QString &printWhat, const IRCMessageClass &msgClass);
 
 		void privMsgReceived(const QString& recipient, const QString& sender, const QString& content);
 		/**

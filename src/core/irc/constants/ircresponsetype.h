@@ -109,6 +109,8 @@ class IRCResponseType
 			/// 404
 			ERRCannotSendToChan,
 
+			/// 432
+			ERRErroneousNickname,
 			/// 433
 			ERRNicknameInUse,
 

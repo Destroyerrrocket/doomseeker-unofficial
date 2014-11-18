@@ -277,6 +277,20 @@ IRCResponseParseResult IRCResponseParser::parseMessage()
 			break;
 		}
 
+		case IRCResponseType::ERRErroneousNickname:
+		{
+			// Own nickname.
+			d->params.takeFirst();
+			QString badNick = d->params.takeFirst();
+			QString msg = tr("Erroneous nickname: %1").arg(badNick);
+			if (d->params.join(" ").compare(":Erroneous nickname", Qt::CaseInsensitive) != 0)
+			{
+				msg += tr(" (%1)").arg(joinAndTrimColonIfNecessary(d->params));
+			}
+			emit printToNetworksCurrentChatBox(msg, IRCMessageClass::NetworkAction);
+			break;
+		}
+
 		case IRCResponseType::ERRNicknameInUse:
 		{
 			// Drop the first param.
