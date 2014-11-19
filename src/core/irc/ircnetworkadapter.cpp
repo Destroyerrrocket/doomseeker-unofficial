@@ -24,7 +24,6 @@
 #include "irc/entities/ircuserprefix.h"
 #include "irc/ircchanneladapter.h"
 #include "irc/ircglobal.h"
-#include "irc/ircglobalmessages.h"
 #include "irc/ircisupportparser.h"
 #include "irc/ircmessageclass.h"
 #include "irc/ircprivadapter.h"
@@ -499,17 +498,17 @@ void IRCNetworkAdapter::nicknameInUse(const QString& nickname)
 
 		if (this->connectionInfo.nick.compare(altNick, Qt::CaseInsensitive) == 0)
 		{
-			IRCGlobalMessages::instance().emitError(tr("Both nickname and alternate nickname are taken on this network."), this);
+			emit messageWithClass(tr("Both nickname and alternate nickname are taken on this network."), IRCMessageClass::Error);
 		}
 		else if (altNick.isEmpty())
 		{
-			IRCGlobalMessages::instance().emitError(tr("No alternate nickname specified."), this);
+			emit messageWithClass(tr("No alternate nickname specified."), IRCMessageClass::Error);
 		}
 		else
 		{
 			this->connectionInfo.nick = altNick;
 
-			IRCGlobalMessages::instance().emitMessageWithClass(tr("Using alternate nickname %1 to join.").arg(altNick), IRCMessageClass::NetworkAction, this);
+			emit messageWithClass(tr("Using alternate nickname %1 to join.").arg(altNick), IRCMessageClass::NetworkAction);
 			QString message = QString("/nick %1").arg(altNick);
 			sendMessage(message);
 		}
@@ -584,6 +583,11 @@ void IRCNetworkAdapter::printWithClass(const QString& printWhat,
 
 		pAdapter->emitMessageWithClass(printWhat, msgClass);
 	}
+}
+
+void IRCNetworkAdapter::printToCurrentChatBox(const QString& printWhat, const IRCMessageClass& msgClass)
+{
+	emit messageToNetworksCurrentChatBox(printWhat, msgClass);
 }
 
 void IRCNetworkAdapter::privMsgReceived(const QString& recipient, const QString& sender, const QString& content)
@@ -730,9 +734,9 @@ void IRCNetworkAdapter::userQuitsNetwork(const QString& nickname, const QString&
 void IRCNetworkAdapter::userPing(const QString &nickname, qint64 ping)
 {
 	qint64 delta = QDateTime::currentMSecsSinceEpoch() - ping;
-	ircGlobalMsg.emitMessageWithClass(
+	emit messageToNetworksCurrentChatBox(
 		tr("Ping to user %1: %2ms").arg(nickname).arg(delta),
-		IRCMessageClass::Ctcp, this);
+		IRCMessageClass::Ctcp);
 }
 
 void IRCNetworkAdapter::whoIsUser(const QString& nickname, const QString& user, const QString& hostName, const QString& realName)

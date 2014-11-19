@@ -179,6 +179,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 */
 		void print(const QString& printWhat, const QString& printWhere);
 		void printWithClass(const QString& printWhat, const QString& printWhere, const IRCMessageClass& msgClass);
+		void printToCurrentChatBox(const QString& printWhat, const IRCMessageClass& msgClass);
 		void userPing(const QString &nickname, qint64 ping);
 
 	signals:
