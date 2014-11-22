@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chatlogscfg.h
+// chatlogarchive.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,40 +20,26 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef id46ac54ff_adba_49cd_b972_b804898b4fb6
-#define id46ac54ff_adba_49cd_b972_b804898b4fb6
+#ifndef idccf54adf_3557_4e8c_bde9_b6fc5469a592
+#define idccf54adf_3557_4e8c_bde9_b6fc5469a592
 
 #include <QString>
-#include <QVariant>
 
-class ChatLogsCfg
+class IRCNetworkEntity;
+
+class ChatLogArchive
 {
 public:
-	ChatLogsCfg();
-	~ChatLogsCfg();
+	ChatLogArchive();
+	~ChatLogArchive();
 
-	QString chatLogsRootDir() const;
-	void setChatLogsRootDir(const QString &val);
-
-	bool isStoreLogs() const;
-	void setStoreLogs(bool b);
-
-	bool isRestoreChatFromLogs() const;
-	void setRestoreChatFromLogs(bool b);
-
-	bool isRemoveOldLogs() const;
-	void setRemoveOldLogs(bool b);
-
-	int oldLogsRemovalDaysThreshold() const;
-	void setOldLogsRemovalDaysThreshold(int val);
-
+	static QString archiveDirPath(const IRCNetworkEntity &network, const QString &recipient);
+	static QStringList listArchivedLogsSortedByTime(const IRCNetworkEntity &network, const QString &recipient);
+	static QString mkArchiveFilePath(const IRCNetworkEntity &network, const QString &recipient);
 
 private:
 	class PrivData;
 	PrivData *d;
-
-	void setValue(const QString &key, const QVariant &value);
-	QVariant value(const QString &key, const QVariant &defValue = QVariant()) const;
 };
 
 #endif

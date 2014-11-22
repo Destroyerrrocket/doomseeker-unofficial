@@ -94,6 +94,8 @@ void CfgChatLogsPage::readSettings()
 	leDir->setText(cfg.chatLogsRootDir());
 	cbStoreLogs->setChecked(cfg.isStoreLogs());
 	cbRestoreLogs->setChecked(cfg.isRestoreChatFromLogs());
+	groupRemoveOldArchives->setChecked(cfg.isRemoveOldLogs());
+	spinLogRemovalAge->setValue(cfg.oldLogsRemovalDaysThreshold());
 }
 
 void CfgChatLogsPage::saveSettings()
@@ -102,4 +104,6 @@ void CfgChatLogsPage::saveSettings()
 	cfg.setChatLogsRootDir(leDir->text());
 	cfg.setStoreLogs(cbStoreLogs->isChecked());
 	cfg.setRestoreChatFromLogs(cbRestoreLogs->isChecked());
+	cfg.setRemoveOldLogs(groupRemoveOldArchives->isChecked());
+	cfg.setOldLogsRemovalDaysThreshold(spinLogRemovalAge->value());
 }

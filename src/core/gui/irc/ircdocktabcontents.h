@@ -198,6 +198,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		bool openLog();
 		QString recipient() const;
 		bool restoreLog();
+		void rotateOldLog();
 		QString selectedNickname();
 
 		void sendCtcpPing(const QString &nickname);

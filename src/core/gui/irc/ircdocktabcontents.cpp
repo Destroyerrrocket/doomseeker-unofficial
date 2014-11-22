@@ -26,6 +26,7 @@
 #include "gui/commongui.h"
 #include "irc/configuration/chatlogscfg.h"
 #include "irc/configuration/ircconfig.h"
+#include "irc/chatlogrotate.h"
 #include "irc/chatlogs.h"
 #include "irc/ircchanneladapter.h"
 #include "irc/ircdock.h"
@@ -420,6 +421,7 @@ void IRCDockTabContents::newChatWindowIsOpened(IRCChatAdapter* pAdapter)
 
 bool IRCDockTabContents::openLog()
 {
+	rotateOldLog();
 	ChatLogs logs;
 	if (!logs.mkLogDir(networkEntity()))
 	{
@@ -431,6 +433,17 @@ bool IRCDockTabContents::openLog()
 	d->log.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text);
 	d->log.write(tr("<<<DATE>>> Chat log started on %1\n\n").arg(QDateTime::currentDateTime().toString()).toUtf8());
 	return true;
+}
+
+void IRCDockTabContents::rotateOldLog()
+{
+	assert(!d->log.isOpen());
+	ChatLogsCfg cfg;
+
+	ChatLogRotate logRotate;
+	logRotate.setRemovalAgeDaysThreshold(
+		cfg.isRestoreChatFromLogs() ? cfg.oldLogsRemovalDaysThreshold() : -1);
+	logRotate.rotate(networkEntity(), recipient());
 }
 
 void IRCDockTabContents::printToSendersNetworksCurrentChatBox(const QString &text, const IRCMessageClass &msgClass)

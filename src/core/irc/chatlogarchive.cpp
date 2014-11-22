@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chatlogscfg.h
+// chatlogarchive.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,40 +20,44 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef id46ac54ff_adba_49cd_b972_b804898b4fb6
-#define id46ac54ff_adba_49cd_b972_b804898b4fb6
+#include "chatlogarchive.h"
 
-#include <QString>
-#include <QVariant>
+#include <QDateTime>
+#include <QDir>
+#include <QFileInfo>
+#include "irc/entities/ircnetworkentity.h"
+#include "irc/chatlogs.h"
 
-class ChatLogsCfg
+class ChatLogArchive::PrivData
 {
 public:
-	ChatLogsCfg();
-	~ChatLogsCfg();
-
-	QString chatLogsRootDir() const;
-	void setChatLogsRootDir(const QString &val);
-
-	bool isStoreLogs() const;
-	void setStoreLogs(bool b);
-
-	bool isRestoreChatFromLogs() const;
-	void setRestoreChatFromLogs(bool b);
-
-	bool isRemoveOldLogs() const;
-	void setRemoveOldLogs(bool b);
-
-	int oldLogsRemovalDaysThreshold() const;
-	void setOldLogsRemovalDaysThreshold(int val);
-
-
-private:
-	class PrivData;
-	PrivData *d;
-
-	void setValue(const QString &key, const QVariant &value);
-	QVariant value(const QString &key, const QVariant &defValue = QVariant()) const;
 };
 
-#endif
+
+ChatLogArchive::ChatLogArchive()
+{
+	d = new PrivData();
+}
+
+ChatLogArchive::~ChatLogArchive()
+{
+	delete d;
+}
+
+QString ChatLogArchive::archiveDirPath(const IRCNetworkEntity &network, const QString &recipient)
+{
+	ChatLogs logs;
+	return QString("%1/backup/%2").arg(logs.networkDirPath(network), logs.logFileName(recipient));
+}
+
+QStringList ChatLogArchive::listArchivedLogsSortedByTime(const IRCNetworkEntity &network, const QString &recipient)
+{
+	return QDir(archiveDirPath(network, recipient)).entryList(QDir::Files, QDir::Time);
+}
+
+QString ChatLogArchive::mkArchiveFilePath(const IRCNetworkEntity &network, const QString &recipient)
+{
+	QDateTime time = QDateTime::currentDateTime();
+	return QString("%1/%2.txt").arg(
+		archiveDirPath(network, recipient), time.toString("yyyy-MM-dd_hh-mm-ss"));
+}

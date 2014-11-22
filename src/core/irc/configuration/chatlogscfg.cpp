@@ -72,6 +72,26 @@ void ChatLogsCfg::setRestoreChatFromLogs(bool b)
 	setValue("RestoreChatFromLogs", b);
 }
 
+bool ChatLogsCfg::isRemoveOldLogs() const
+{
+	return value("RemoveOldLogs", false).toBool();
+}
+void ChatLogsCfg::setRemoveOldLogs(bool b)
+{
+	setValue("RemoveOldLogs", b);
+}
+
+int ChatLogsCfg::oldLogsRemovalDaysThreshold() const
+{
+	int val = value("OldLogsRemovalDaysThreshold", 365).toInt();
+	return qMax(1, val);
+}
+
+void ChatLogsCfg::setOldLogsRemovalDaysThreshold(int val)
+{
+	setValue("OldlogsRemovalDaysThreshold", val);
+}
+
 void ChatLogsCfg::setValue(const QString &key, const QVariant &value)
 {
 	gIRCConfig.ini()->section("Logs").setValue(key, value);

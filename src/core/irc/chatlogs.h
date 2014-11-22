@@ -37,6 +37,7 @@ public:
 	~ChatLogs();
 
 	QString logFilePath(const IRCNetworkEntity &entity, const QString &recipient) const;
+	QString logFileName(const QString &recipient) const;
 	bool mkLogDir(const IRCNetworkEntity &entity);
 	QString networkDirPath(const IRCNetworkEntity &entity) const;
 	bool renameNetwork(QWidget *parentUi, QString oldName, QString newName);

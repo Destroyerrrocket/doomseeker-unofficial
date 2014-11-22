@@ -49,12 +49,19 @@ ChatLogs::~ChatLogs()
 
 QString ChatLogs::logFilePath(const IRCNetworkEntity &entity, const QString &recipient) const
 {
-	QString fileName = recipient.trimmed().toLower();
-	if (recipient.trimmed().isEmpty())
+	return QString("%1/%2.txt").arg(networkDirPath(entity), logFileName(recipient));
+}
+
+QString ChatLogs::logFileName(const QString &recipient) const
+{
+	if (!recipient.trimmed().isEmpty())
 	{
-		fileName = "@main";
+		return recipient.trimmed().toLower();
 	}
-	return QString("%1/%2.txt").arg(networkDirPath(entity), fileName);
+	else
+	{
+		return "@main";
+	}
 }
 
 bool ChatLogs::mkLogDir(const IRCNetworkEntity &entity)

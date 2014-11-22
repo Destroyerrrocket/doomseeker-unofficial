@@ -299,6 +299,8 @@ set(SOURCE_FILES
 	irc/entities/ircnetworkentity.cpp
 	irc/entities/ircresponseparseresult.cpp
 	irc/entities/ircuserprefix.cpp
+	irc/chatlogarchive.cpp
+	irc/chatlogrotate.cpp
 	irc/chatlogs.cpp
 	irc/chatnetworknamer.cpp
 	irc/ircadapterbase.cpp
@@ -420,6 +422,8 @@ set(HEADER_FILES
 	irc/entities/ircnetworkentity.h
 	irc/entities/ircresponseparseresult.h
 	irc/entities/ircuserprefix.h
+	irc/chatlogarchive.h
+	irc/chatlogrotate.h
 	irc/chatnetworknamer.h
 	irc/ircchatadapter.h
 	irc/ircdelayedoperation.h
