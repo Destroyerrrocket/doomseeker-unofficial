@@ -143,6 +143,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 				UserListMenu();
 
 				QAction* ban;
+				QAction *whois;
 				QAction *ctcpTime;
 				QAction *ctcpPing;
 				QAction *ctcpVersion;
@@ -204,6 +205,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		void sendCtcpPing(const QString &nickname);
 		void sendCtcpTime(const QString &nickname);
 		void sendCtcpVersion(const QString &nickname);
+		void sendWhois(const QString &nickname);
 
 		/**
 		 *	Sets bBlinkTitle to specified value and emits

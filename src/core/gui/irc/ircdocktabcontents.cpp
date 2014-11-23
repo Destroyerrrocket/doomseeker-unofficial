@@ -50,9 +50,11 @@ class IRCDockTabContents::PrivChatMenu : public QMenu
 		QAction *ctcpPing;
 		QAction *ctcpTime;
 		QAction *ctcpVersion;
+		QAction *whois;
 
 		PrivChatMenu()
 		{
+			whois = addAction(tr("Whois"));
 			ctcpPing = addAction(tr("CTCP Ping"));
 			ctcpTime = addAction(tr("CTCP Time"));
 			ctcpVersion = addAction(tr("CTCP Version"));
@@ -584,6 +586,11 @@ void IRCDockTabContents::sendMessage()
 	}
 }
 
+void IRCDockTabContents::sendWhois(const QString &nickname)
+{
+	network()->sendMessage(QString("/WHOIS %1").arg(nickname));
+}
+
 void IRCDockTabContents::setBlinkTitle(bool b)
 {
 	bool bEmit = false;
@@ -694,7 +701,11 @@ void IRCDockTabContents::showPrivChatContextMenu()
 		return;
 	}
 
-	if (action == menu.ctcpPing)
+	if (action == menu.whois)
+	{
+		sendWhois(cleanNickname);
+	}
+	else if (action == menu.ctcpPing)
 	{
 		sendCtcpPing(cleanNickname);
 	}
@@ -791,6 +802,10 @@ void IRCDockTabContents::userListCustomContextMenuRequested(const QPoint& pos)
 		{
 			pAdapter->banUser(cleanNickname, reason);
 		}
+	}
+	else if (pAction == menu.whois)
+	{
+		sendWhois(cleanNickname);
 	}
 	else if (pAction == menu.ctcpTime)
 	{
@@ -899,6 +914,7 @@ IRCDockTabContents::UserListMenu::UserListMenu()
 {
 	this->openChatWindow = this->addAction(tr("Open chat window"));
 	this->addSeparator();
+	this->whois = this->addAction(tr("Whois"));
 	this->ctcpTime = this->addAction(tr("CTCP Time"));
 	this->ctcpPing = this->addAction(tr("CTCP Ping"));
 	this->ctcpVersion = this->addAction(tr("CTCP Version"));
