@@ -108,6 +108,9 @@ IRCNetworkAdapter::IRCNetworkAdapter(const IRCNetworkConnectionInfo &connectionI
 	QObject::connect(ircResponseParser, SIGNAL ( userChangesNickname(const QString&, const QString&) ),
 		this, SLOT( userChangesNickname(const QString&, const QString&) ) );
 
+	QObject::connect(ircResponseParser, SIGNAL(userIdleTime(QString, int)),
+		this, SLOT(userIdleTime(QString, int)));
+
 	QObject::connect(ircResponseParser, SIGNAL ( userJoinsChannel(const QString&, const QString&, const QString&) ),
 		this, SLOT( userJoinsChannel(const QString&, const QString&, const QString&) ) );
 
@@ -115,6 +118,9 @@ IRCNetworkAdapter::IRCNetworkAdapter(const IRCNetworkConnectionInfo &connectionI
 		SIGNAL(userModeChanged(const QString&, const QString&, const QList<char>&, const QList<char>&)),
 		this,
 		SLOT(userModeChanged(const QString&, const QString&, const QList<char>&, const QList<char>&)));
+
+	QObject::connect(ircResponseParser, SIGNAL(userNetworkJoinDateTime(QString, QDateTime)),
+		this, SLOT(userNetworkJoinDateTime(QString, QDateTime)));
 
 	QObject::connect(ircResponseParser, SIGNAL ( userPartsChannel(const QString&, const QString&, const QString&) ),
 		this, SLOT( userPartsChannel(const QString&, const QString&, const QString&) ) );
@@ -685,6 +691,13 @@ void IRCNetworkAdapter::userJoinsChannel(const QString& channel, const QString& 
 	}
 }
 
+void IRCNetworkAdapter::userIdleTime(const QString &nick, int secondsIdle)
+{
+	QString msg = tr("Last activity of user %1 was %2 ago.").arg(
+		nick, Strings::formatTime(secondsIdle));
+	emit messageToNetworksCurrentChatBox(msg, IRCMessageClass::NetworkAction);
+}
+
 void IRCNetworkAdapter::userModeChanged(const QString& channel, const QString& nickname,
 	const QList<char> &addedFlags, const QList<char> &removedFlags)
 {
@@ -693,6 +706,13 @@ void IRCNetworkAdapter::userModeChanged(const QString& channel, const QString& n
 		IRCChatAdapter* pAdapter = this->getOrCreateNewChatAdapter(channel);
 		pAdapter->userModeChanges(nickname, addedFlags, removedFlags);
 	}
+}
+
+void IRCNetworkAdapter::userNetworkJoinDateTime(const QString &nick, const QDateTime &timeOfJoin)
+{
+	QString msg = tr("%1 joined the network on %2").arg(nick,
+		timeOfJoin.toString("yyyy-MM-dd HH:mm:ss"));
+	emit messageToNetworksCurrentChatBox(msg, IRCMessageClass::NetworkAction);
 }
 
 void IRCNetworkAdapter::userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage)
@@ -742,6 +762,7 @@ void IRCNetworkAdapter::userPing(const QString &nickname, qint64 ping)
 void IRCNetworkAdapter::whoIsUser(const QString& nickname, const QString& user, const QString& hostName, const QString& realName)
 {
 	// Deliver pending bans.
+	bool anyBanDelivered = false;
 	while(true)
 	{
 		const IRCDelayedOperation* pBanOperation =
@@ -751,6 +772,7 @@ void IRCNetworkAdapter::whoIsUser(const QString& nickname, const QString& user, 
 		{
 			break;
 		}
+		anyBanDelivered = true;
 
 		QString banString = "*!*@" + hostName;
 		QString reason = pBanOperation->attribute("reason");
@@ -758,6 +780,12 @@ void IRCNetworkAdapter::whoIsUser(const QString& nickname, const QString& user, 
 		this->sendMessage(QString("/kick %1 %2 %3").arg(pBanOperation->channel(), nickname, reason));
 
 		delayedOperations.remove(pBanOperation);
+	}
+	if (!anyBanDelivered)
+	{
+		emit messageToNetworksCurrentChatBox(
+			QString("%1 %2 %3 %4").arg(nickname, user, hostName, realName),
+			IRCMessageClass::NetworkAction);
 	}
 }
 

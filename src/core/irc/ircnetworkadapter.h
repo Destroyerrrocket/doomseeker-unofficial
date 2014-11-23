@@ -262,9 +262,11 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		void privMsgReceived(const QString& recipient, const QString& sender, const QString& content);
 		void sendPong(const QString& toWhom);
 		void userChangesNickname(const QString& oldNickname, const QString& newNickname);
+		void userIdleTime(const QString &nick, int secondsIdle);
 		void userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature);
 		void userModeChanged(const QString& channel, const QString& nickname,
 			const QList<char> &addedFlags, const QList<char> &removedFlags);
+		void userNetworkJoinDateTime(const QString &nick, const QDateTime &timeOfJoin);
 		void userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage);
 		void userQuitsNetwork(const QString& nickname, const QString& farewellMessage);
 		void whoIsUser(const QString& nickname, const QString& user, const QString& hostName, const QString& realName);

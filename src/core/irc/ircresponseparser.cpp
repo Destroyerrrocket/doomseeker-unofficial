@@ -143,6 +143,54 @@ IRCResponseParseResult IRCResponseParser::parseMessage()
 			break;
 		}
 
+		case IRCResponseType::RPLWhoIsRegnick:
+		case IRCResponseType::RPLWhoIsServer:
+		case IRCResponseType::RPLWhoIsOperator:
+		case IRCResponseType::RPLWhoIsHost:
+		case IRCResponseType::RPLWhoIsModes:
+		case IRCResponseType::RPLWhoIsSpecial:
+		case IRCResponseType::RPLEndOfWhoIs:
+		{
+			d->params.takeFirst(); // Own nick.
+			emit printToNetworksCurrentChatBox(d->params.join(" "), IRCMessageClass::NetworkAction);
+			break;
+		}
+
+		case IRCResponseType::RPLWhoIsIdle:
+		{
+			d->params.takeFirst(); // Own nick.
+			QString nick = d->params.takeFirst();
+			int secondsIdle = d->params.takeFirst().toInt();
+			emit userIdleTime(nick, secondsIdle);
+			if (d->params.first().toInt() != 0)
+			{
+				int joinedOn = d->params.takeFirst().toInt();
+				emit userNetworkJoinDateTime(nick, QDateTime::fromTime_t(joinedOn));
+			}
+			break;
+		}
+
+		case IRCResponseType::RPLWhoIsChannels:
+		{
+			d->params.takeFirst(); // Own nick.
+			QString nick = d->params.takeFirst();
+			QString channels = joinAndTrimColonIfNecessary(d->params);
+			emit printToNetworksCurrentChatBox(tr("%1 is on channels: %2").arg(nick, channels),
+				IRCMessageClass::NetworkAction);
+			break;
+		}
+
+		case IRCResponseType::RPLWhoIsAccount:
+		{
+			d->params.takeFirst(); // Own nick.
+			QString nick = d->params.takeFirst();
+			QString account = d->params.takeFirst();
+			QString message = joinAndTrimColonIfNecessary(d->params);
+			emit printToNetworksCurrentChatBox(QString("%1 %2 %3").arg(nick, message, account),
+				IRCMessageClass::NetworkAction);
+			break;
+		}
+
 		case IRCResponseType::RPLISupport:
 		{
 			d->params.takeFirst(); // Own nickname.
