@@ -664,7 +664,6 @@ ZandronumRConProtocol::ZandronumRConProtocol(ServerPtr server)
 	set_disconnectFromServer(&ZandronumRConProtocol::disconnectFromServer);
 	set_sendCommand(&ZandronumRConProtocol::sendCommand);
 	set_sendPassword(&ZandronumRConProtocol::sendPassword);
-	set_packetReady(&ZandronumRConProtocol::packetReady);
 
 	// Note: the original rcon utility did TIMEOUT/4.
 	// Try to get at least 4 packets in before timing out,

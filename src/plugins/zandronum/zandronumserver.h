@@ -230,7 +230,7 @@ class ZandronumRConProtocol : public RConProtocol
 		QString salt;
 		int serverProtocolVersion;
 
-	protected slots:
+	private slots:
 		void packetReady();
 };
 

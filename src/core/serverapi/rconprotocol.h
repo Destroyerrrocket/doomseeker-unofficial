@@ -127,7 +127,6 @@ class MAIN_EXPORT RConProtocol : public QObject
 		POLYMORPHIC_SETTER_DECLARE(void, RConProtocol, disconnectFromServer, ());
 		POLYMORPHIC_SETTER_DECLARE(void, RConProtocol, sendCommand, (const QString &cmd));
 		POLYMORPHIC_SETTER_DECLARE(void, RConProtocol, sendPassword, (const QString &password));
-		POLYMORPHIC_SETTER_DECLARE(void, RConProtocol, packetReady, ());
 
 		/**
 		 * @brief Address of the server to which this remote console
@@ -168,13 +167,6 @@ class MAIN_EXPORT RConProtocol : public QObject
 
 		friend class Server;
 
-	protected slots:
-		/**
-		 * @brief <b>[Pure Virtual] [deprecated]</b>
-		 * @deprecated Ignore. Will be removed.
-		 */
-		void packetReady();
-
 	private:
 		class PrivData;
 		PrivData* d;
@@ -182,7 +174,6 @@ class MAIN_EXPORT RConProtocol : public QObject
 		void disconnectFromServer_default();
 		void sendCommand_default(const QString &cmd);
 		void sendPassword_default(const QString &password);
-		void packetReady_default();
 };
 
 #endif

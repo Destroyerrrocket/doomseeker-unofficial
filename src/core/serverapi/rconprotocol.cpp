@@ -37,7 +37,6 @@ class RConProtocol::PrivData
 		void (RConProtocol::*disconnectFromServer)();
 		void (RConProtocol::*sendCommand)(const QString&);
 		void (RConProtocol::*sendPassword)(const QString&);
-		void (RConProtocol::*packetReady)();
 };
 
 RConProtocol::RConProtocol(ServerPtr server)
@@ -52,7 +51,6 @@ RConProtocol::RConProtocol(ServerPtr server)
 	set_disconnectFromServer(&RConProtocol::disconnectFromServer_default);
 	set_sendCommand(&RConProtocol::sendCommand_default);
 	set_sendPassword(&RConProtocol::sendPassword_default);
-	set_packetReady(&RConProtocol::packetReady_default);
 }
 
 RConProtocol::~RConProtocol()
@@ -64,7 +62,6 @@ RConProtocol::~RConProtocol()
 POLYMORPHIC_DEFINE(void, RConProtocol, disconnectFromServer, (), ());
 POLYMORPHIC_DEFINE(void, RConProtocol, sendCommand, (const QString& cmd), (cmd));
 POLYMORPHIC_DEFINE(void, RConProtocol, sendPassword, (const QString& password), (password));
-POLYMORPHIC_DEFINE(void, RConProtocol, packetReady, (), ());
 
 const QHostAddress &RConProtocol::address() const
 {
@@ -79,11 +76,6 @@ void RConProtocol::disconnectFromServer_default()
 bool RConProtocol::isConnected() const
 {
 	return d->connected;
-}
-
-void RConProtocol::packetReady_default()
-{
-	assert(0 && "RConProtocol::packetReady() is not implemented");
 }
 
 quint16 RConProtocol::port() const
