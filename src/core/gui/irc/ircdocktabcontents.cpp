@@ -26,6 +26,7 @@
 #include "gui/commongui.h"
 #include "irc/configuration/chatlogscfg.h"
 #include "irc/configuration/ircconfig.h"
+#include "irc/chatlogrotate.h"
 #include "irc/chatlogs.h"
 #include "irc/ircchanneladapter.h"
 #include "irc/ircdock.h"
@@ -37,6 +38,7 @@
 #include "irc/ircuserlist.h"
 #include "log.h"
 #include <QDateTime>
+#include <QFile>
 #include <QScrollBar>
 #include <QStandardItemModel>
 #include <cassert>
@@ -63,12 +65,14 @@ class IRCDockTabContents::PrivData
 {
 public:
 	QFile log;
+	QDateTime lastMessageDate;
 };
 
 IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 {
 	setupUi(this);
 	d = new PrivData();
+	d->lastMessageDate = QDateTime::currentDateTime();
 
 	this->bBlinkTitle = false;
 	this->bIsDestroying = false;
@@ -323,6 +327,18 @@ void IRCDockTabContents::insertMessage(const IRCMessageClass& messageClass, cons
 	}
 }
 
+void IRCDockTabContents::markDate()
+{
+	QDateTime previousMessageDate = d->lastMessageDate;
+	QDateTime nowDate = QDateTime::currentDateTime();
+	d->lastMessageDate = nowDate;
+	if (previousMessageDate.daysTo(nowDate) != 0)
+	{
+		receiveMessageWithClass(tr("<<<DATE>>> Date on this computer changes to %1").arg(
+			nowDate.toString()), IRCMessageClass::NetworkAction);
+	}
+}
+
 void IRCDockTabContents::myNicknameUsedSlot()
 {
 	pParentIRCDock->sounds().playIfAvailable(IRCSounds::NicknameUsed);
@@ -405,6 +421,7 @@ void IRCDockTabContents::newChatWindowIsOpened(IRCChatAdapter* pAdapter)
 
 bool IRCDockTabContents::openLog()
 {
+	rotateOldLog();
 	ChatLogs logs;
 	if (!logs.mkLogDir(networkEntity()))
 	{
@@ -414,8 +431,33 @@ bool IRCDockTabContents::openLog()
 	}
 	d->log.setFileName(ChatLogs().logFilePath(networkEntity(), recipient()));
 	d->log.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text);
-	d->log.write(tr("<DATE> Chat log started on %1\n\n").arg(QDateTime::currentDateTime().toString()).toUtf8());
+	d->log.write(tr("<<<DATE>>> Chat log started on %1\n\n").arg(QDateTime::currentDateTime().toString()).toUtf8());
 	return true;
+}
+
+void IRCDockTabContents::rotateOldLog()
+{
+	assert(!d->log.isOpen());
+	ChatLogsCfg cfg;
+
+	ChatLogRotate logRotate;
+	logRotate.setRemovalAgeDaysThreshold(
+		cfg.isRestoreChatFromLogs() ? cfg.oldLogsRemovalDaysThreshold() : -1);
+	logRotate.rotate(networkEntity(), recipient());
+}
+
+void IRCDockTabContents::printToSendersNetworksCurrentChatBox(const QString &text, const IRCMessageClass &msgClass)
+{
+	IRCAdapterBase *adapter = static_cast<IRCAdapterBase*>(sender());
+	IRCDockTabContents *tab = pParentIRCDock->tabWithFocus();
+	if (tab != NULL && tab->ircAdapter()->network()->isAdapterRelated(adapter))
+	{
+		tab->ircAdapter()->emitMessageWithClass(text, msgClass);
+	}
+	else
+	{
+		adapter->emitMessageWithClass(text, msgClass);
+	}
 }
 
 void IRCDockTabContents::receiveError(const QString& error)
@@ -430,6 +472,8 @@ void IRCDockTabContents::receiveMessage(const QString& message)
 
 void IRCDockTabContents::receiveMessageWithClass(const QString& message, const IRCMessageClass& messageClass)
 {
+	markDate();
+
 	QString messageHtmlEscaped = message;
 
 	if (gIRCConfig.appearance.timestamps)
@@ -483,7 +527,8 @@ bool IRCDockTabContents::restoreLog()
 	QFile file(logs.logFilePath(networkEntity(), recipient()));
 	if (file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-		QStringList lines = QString(file.readAll()).split("\n");
+		QByteArray contents = file.readAll();
+		QStringList lines = QString::fromUtf8(contents, contents.size()).split("\n");
 		int line = lines.size() - 1000;
 		lines = lines.mid((line > 0) ? line : 0);
 
@@ -577,6 +622,8 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 	connect(pIrcAdapter, SIGNAL( messageWithClass(const QString&, const IRCMessageClass&) ), SLOT( receiveMessageWithClass(const QString&, const IRCMessageClass&) ));
 	connect(pIrcAdapter, SIGNAL( terminating() ), SLOT( adapterTerminating() ) );
 	connect(pIrcAdapter, SIGNAL( titleChange() ), SLOT( adapterTitleChange() ) );
+	connect(pIrcAdapter, SIGNAL( messageToNetworksCurrentChatBox(QString, IRCMessageClass) ),
+		SLOT( printToSendersNetworksCurrentChatBox(QString, IRCMessageClass) ) );
 
 	switch (pIrcAdapter->adapterType())
 	{

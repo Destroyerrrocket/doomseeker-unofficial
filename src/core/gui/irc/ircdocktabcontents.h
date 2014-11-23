@@ -192,11 +192,13 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		QStandardItem* findUserListItem(const QString& nickname);
 		UserListMenu& getUserListContextMenu();
 		void insertMessage(const IRCMessageClass& messageClass, const QString& htmlString);
+		void markDate();
 		IRCNetworkAdapter* network();
 		const IRCNetworkEntity &networkEntity() const;
 		bool openLog();
 		QString recipient() const;
 		bool restoreLog();
+		void rotateOldLog();
 		QString selectedNickname();
 
 		void sendCtcpPing(const QString &nickname);
@@ -222,6 +224,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 
 	private slots:
 		void blinkTimerSlot();
+		void printToSendersNetworksCurrentChatBox(const QString &text, const IRCMessageClass &msgClass);
 		void resetNicknameCompletion();
 		void showChatContextMenu();
 };

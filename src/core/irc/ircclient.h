@@ -26,6 +26,7 @@
 #include "socketsignalsadapter.h"
 #include <QHostInfo>
 #include <QTcpSocket>
+#include <QTimer>
 
 class IRCClient : public QObject
 {
@@ -45,6 +46,7 @@ class IRCClient : public QObject
 		bool isConnected() const;
 
 		bool sendMessage(const QString& message);
+		void setFakeRecvLag(int lagMs);
 
 	signals:
 		void hostLookupError(QHostInfo::HostInfoError errorValue);
@@ -63,6 +65,7 @@ class IRCClient : public QObject
 		QString hostName;
 		int lookUpId;
 		unsigned short port;
+		QTimer recvTimer;
 		QTcpSocket socket;
 
 		/**
@@ -75,6 +78,7 @@ class IRCClient : public QObject
 	private slots:
 		void hostLookupFinished(const QHostInfo& hostInfo);
 		void receiveSocketData();
+		void receiveSocketDataDelayed();
 
 };
 

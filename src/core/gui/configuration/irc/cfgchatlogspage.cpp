@@ -83,7 +83,8 @@ void CfgChatLogsPage::exploreStorageDirectory()
 {
 	if (checkDir(leDir->text()))
 	{
-		QDesktopServices::openUrl(QString("file://%1").arg(leDir->text()));
+		QString path = QDir::toNativeSeparators(leDir->text());
+		QDesktopServices::openUrl(QString("file:///%1").arg(path));
 	}
 }
 
@@ -93,6 +94,8 @@ void CfgChatLogsPage::readSettings()
 	leDir->setText(cfg.chatLogsRootDir());
 	cbStoreLogs->setChecked(cfg.isStoreLogs());
 	cbRestoreLogs->setChecked(cfg.isRestoreChatFromLogs());
+	groupRemoveOldArchives->setChecked(cfg.isRemoveOldLogs());
+	spinLogRemovalAge->setValue(cfg.oldLogsRemovalDaysThreshold());
 }
 
 void CfgChatLogsPage::saveSettings()
@@ -101,4 +104,6 @@ void CfgChatLogsPage::saveSettings()
 	cfg.setChatLogsRootDir(leDir->text());
 	cfg.setStoreLogs(cbStoreLogs->isChecked());
 	cfg.setRestoreChatFromLogs(cbRestoreLogs->isChecked());
+	cfg.setRemoveOldLogs(groupRemoveOldArchives->isChecked());
+	cfg.setOldLogsRemovalDaysThreshold(spinLogRemovalAge->value());
 }

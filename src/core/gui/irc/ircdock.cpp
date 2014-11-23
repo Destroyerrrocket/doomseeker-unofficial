@@ -26,7 +26,6 @@
 #include "gui/irc/ircsounds.h"
 #include "irc/configuration/chatnetworkscfg.h"
 #include "irc/configuration/ircconfig.h"
-#include "irc/ircglobalmessages.h"
 #include "irc/ircnetworkadapter.h"
 
 #include <QInputDialog>
@@ -44,19 +43,11 @@ IRCDock::IRCDock(QWidget* parent)
 
 	setupToolbar();
 
-	IRCGlobalMessages& ircGlobalMessages = IRCGlobalMessages::instance();
-
 	connect(tabWidget, SIGNAL( currentChanged(int) ),
 		SLOT( tabCurrentChanged(int) ));
 
 	connect(tabWidget, SIGNAL( tabCloseRequested(int) ),
 		SLOT( tabCloseRequestedSlot(int) ));
-
-	connect(&ircGlobalMessages, SIGNAL( message(const QString&, IRCAdapterBase*) ),
-		SLOT( globalMessage(const QString&, IRCAdapterBase*) ) );
-
-	connect(&ircGlobalMessages, SIGNAL( messageWithClass(const QString&, const IRCMessageClass&, IRCAdapterBase*) ),
-		SLOT( globalMessageWithClass(const QString&, const IRCMessageClass&, IRCAdapterBase*) ) );
 }
 
 IRCDock::~IRCDock()
@@ -113,34 +104,6 @@ void IRCDock::connectToNewNetwork(IRCNetworkConnectionInfo& connectionInfo, bool
 	if (bFocusOnNewTab)
 	{
 		tabFocusRequest(pTab);
-	}
-}
-
-void IRCDock::globalMessage(const QString& message, IRCAdapterBase* pMessageSender)
-{
-	IRCDockTabContents* pWidget = (IRCDockTabContents*)tabWidget->currentWidget();
-	if (pWidget != NULL)
-	{
-		QString prefixedMessage = prefixMessage(pWidget->ircAdapter(), pMessageSender, message);
-		pWidget->receiveMessage(prefixedMessage);
-	}
-}
-
-void IRCDock::globalMessageWithClass(const QString& message, const IRCMessageClass& messageClass, IRCAdapterBase* pMessageSender)
-{
-	IRCDockTabContents* pWidget =  (IRCDockTabContents*)tabWidget->currentWidget();
-
-	bool bIsAdapterRelated = pWidget != NULL
-		&& pWidget->ircAdapter()->network()->isAdapterRelated(pMessageSender);
-
-	if (bIsAdapterRelated || pMessageSender == NULL)
-	{
-		QString prefixedMessage = prefixMessage(pWidget->ircAdapter(), pMessageSender, message);
-		pWidget->receiveMessageWithClass(prefixedMessage, messageClass);
-	}
-	else
-	{
-		pMessageSender->emitMessageWithClass(message, messageClass);
 	}
 }
 
@@ -234,6 +197,15 @@ void IRCDock::tabCurrentChanged(int index)
 void IRCDock::tabFocusRequest(IRCDockTabContents* pCaller)
 {
 	tabWidget->setCurrentWidget(pCaller);
+}
+
+IRCDockTabContents *IRCDock::tabWithFocus()
+{
+	if (tabWidget->currentWidget() != NULL)
+	{
+		return static_cast<IRCDockTabContents*>(tabWidget->currentWidget());
+	}
+	return NULL;
 }
 
 void IRCDock::titleChange(IRCDockTabContents* pCaller)

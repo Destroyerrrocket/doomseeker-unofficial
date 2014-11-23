@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chatnetworknamer.cpp
+// chatlogarchive.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,43 +20,26 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "chatnetworknamer.h"
+#ifndef idccf54adf_3557_4e8c_bde9_b6fc5469a592
+#define idccf54adf_3557_4e8c_bde9_b6fc5469a592
 
-QString ChatNetworkNamer::additionalAllowedChars()
-{
-	return ".-_";
-}
+#include <QString>
 
-QString ChatNetworkNamer::convertToValidName(const QString &name)
-{
-	QString result = name;
-	for (int i = 0; i < result.length(); ++i)
-	{
-		if (!isValidCharacter(result[i]))
-		{
-			result[i] = '_';
-		}
-	}
-	return result;
-}
+class IRCNetworkEntity;
 
-bool ChatNetworkNamer::isValidCharacter(const QChar &c)
+class ChatLogArchive
 {
-	return c.isLetterOrNumber() || c == ' ' || additionalAllowedChars().contains(c);
-}
+public:
+	ChatLogArchive();
+	~ChatLogArchive();
 
-bool ChatNetworkNamer::isValidName(const QString &name)
-{
-	if (name.trimmed().isEmpty())
-	{
-		return false;
-	}
-	for (int i = 0; i < name.length(); ++i)
-	{
-		if (!isValidCharacter(name[i]))
-		{
-			return false;
-		}
-	}
-	return true;
-}
+	static QString archiveDirPath(const IRCNetworkEntity &network, const QString &recipient);
+	static QStringList listArchivedLogsSortedByTime(const IRCNetworkEntity &network, const QString &recipient);
+	static QString mkArchiveFilePath(const IRCNetworkEntity &network, const QString &recipient);
+
+private:
+	class PrivData;
+	PrivData *d;
+};
+
+#endif

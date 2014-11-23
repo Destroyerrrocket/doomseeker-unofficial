@@ -41,6 +41,12 @@ public:
 	bool isRestoreChatFromLogs() const;
 	void setRestoreChatFromLogs(bool b);
 
+	bool isRemoveOldLogs() const;
+	void setRemoveOldLogs(bool b);
+
+	int oldLogsRemovalDaysThreshold() const;
+	void setOldLogsRemovalDaysThreshold(int val);
+
 
 private:
 	class PrivData;

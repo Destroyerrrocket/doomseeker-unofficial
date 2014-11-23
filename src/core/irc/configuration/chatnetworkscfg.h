@@ -25,6 +25,7 @@
 
 #include <QList>
 #include <QString>
+#include <QWidget>
 
 class Ini;
 class IniSection;
@@ -41,6 +42,14 @@ public:
 
 	QList<IRCNetworkEntity> networks() const;
 	void setNetworks(const QList<IRCNetworkEntity> &networks);
+
+	/**
+	 * @brief Replace network definition in config and move around log files.
+	 *
+	 * Method may fail if chat logs fail to be moved.
+	 */
+	bool replaceNetwork(const QString &oldDescription, const IRCNetworkEntity &newNetwork,
+		QWidget *errorDisplayParentWidget);
 
 private:
 	static const QString SECTIONS_NAMES_PREFIX;

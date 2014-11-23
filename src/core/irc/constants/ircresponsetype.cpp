@@ -125,6 +125,12 @@ QString IRCResponseType::toRfcString(MsgType type)
 		case ERRNoSuchNick:
 			return "401";
 
+		case ERRCannotSendToChan:
+			return "404";
+
+		case ERRErroneousNickname:
+			return "432";
+
 		case ERRNicknameInUse:
 			return "433";
 

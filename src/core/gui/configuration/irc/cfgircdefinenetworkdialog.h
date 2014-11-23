@@ -33,19 +33,29 @@ class CFGIRCDefineNetworkDialog : public QDialog, private Ui::CFGIRCDefineNetwor
 	public:
 		CFGIRCDefineNetworkDialog(const IRCNetworkEntity& initValuesEntity, QWidget* parent = NULL);
 		CFGIRCDefineNetworkDialog(QWidget* parent = NULL);
+		~CFGIRCDefineNetworkDialog();
 
 		IRCNetworkEntity getNetworkEntity() const;
+		/**
+		 * @brief Overrides extraction from config if not-empty list is set.
+		 */
+		void setExistingNetworks(const QList<IRCNetworkEntity> &networks);
 
 	public slots:
 		void accept();
 
 	private:
+		class PrivData;
+		PrivData *d;
+
 		bool askToAcceptAnywayWhenCommandsBad(const QStringList& offenders);
 		QStringList autojoinCommands() const;
 		void construct();
 		QStringList formatOffenders(const QStringList& offenders) const;
 		void initFrom(const IRCNetworkEntity& networkEntity);
+		bool isDescriptionUnique() const;
 		bool isValidDescription() const;
+		QList<IRCNetworkEntity> listExistingNetworks() const;
 		/**
 		 * @brief If validation fails, the offending lines are returned.
 		 */

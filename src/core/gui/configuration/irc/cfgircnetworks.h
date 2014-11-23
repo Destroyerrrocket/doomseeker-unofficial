@@ -52,14 +52,16 @@ class CFGIRCNetworks : public ConfigurationBaseBox, private Ui::CFGIRCNetworks
 		void addRecord(IRCNetworkEntity* pNetworkEntity);
 		void cleanUpTable();
 		QList<QStandardItem*> generateTableRecord(IRCNetworkEntity* pNetworkEntity);
-		IRCNetworkEntity* network(int row);
+		IRCNetworkEntity* network(int row) const;
+		QList<IRCNetworkEntity> networksAsQList() const;
 
 		/**
 		 *	@brief Never call this function directly. Use network() instead.
 		 */
-		IRCNetworkEntity* obtainNetworkEntity(QStandardItem* pItem);
+		IRCNetworkEntity* obtainNetworkEntity(QStandardItem* pItem) const;
 
 		void prepareTable();
+		void saveNetworks();
 		IRCNetworkEntity* selectedNetwork();
 		int selectedRow();
 		void updateRecord(int row);

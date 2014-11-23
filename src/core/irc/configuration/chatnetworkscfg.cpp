@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "chatnetworkscfg.h"
 
+#include "irc/chatlogs.h"
 #include "irc/configuration/ircconfig.h"
 #include "ini/inisection.h"
 #include <QString>
@@ -58,12 +59,24 @@ bool ChatNetworksCfg::isAnyNetworkOnAutoJoin() const
 
 IRCNetworkEntity ChatNetworksCfg::lastUsedNetwork() const
 {
-	return loadNetwork(ini().section("LastUsedNetwork"));
+	QString networkName = ini().section("LastUsedNetwork").value("Description").toString();
+	foreach (const IRCNetworkEntity &network, networks())
+	{
+		if (network.description() == networkName)
+		{
+			return network;
+		}
+	}
+	return IRCNetworkEntity();
 }
 
 void ChatNetworksCfg::setLastUsedNetwork(const IRCNetworkEntity &network)
 {
-	saveNetwork(ini().section("LastUsedNetwork"), network);
+	// LastUsedNetwork section had more data in the past. To prevent
+	// obscuring of the .ini file with this old data, we'll delete the
+	// section and promptly recreate it.
+	ini().deleteSection("LastUsedNetwork");
+	ini().section("LastUsedNetwork").setValue("Description", network.description());
 }
 
 QList<IRCNetworkEntity> ChatNetworksCfg::networks() const
@@ -87,6 +100,27 @@ void ChatNetworksCfg::setNetworks(const QList<IRCNetworkEntity> &networks)
 		saveNetwork(networkSection(id), network);
 		++id;
 	}
+}
+
+bool ChatNetworksCfg::replaceNetwork(const QString &oldDescription, const IRCNetworkEntity &newNetwork, QWidget *errorDisplayParentWidget)
+{
+	if (!ChatLogs().renameNetwork(errorDisplayParentWidget, oldDescription, newNetwork.description()))
+	{
+		return false;
+	}
+	QList<IRCNetworkEntity> networks = this->networks();
+	QMutableListIterator<IRCNetworkEntity> it(networks);
+	while (it.hasNext())
+	{
+		IRCNetworkEntity &network = it.next();
+		if (network.description() == oldDescription)
+		{
+			network = newNetwork;
+			break;
+		}
+	}
+	setNetworks(networks);
+	return true;
 }
 
 void ChatNetworksCfg::clearNetworkSections()

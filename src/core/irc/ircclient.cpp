@@ -28,7 +28,11 @@ IRCClient::IRCClient()
 	this->lookUpId = -1;
 	this->bIsInHostLookupMode = false;
 
-	QObject::connect(&socket, SIGNAL( readyRead() ), this, SLOT( receiveSocketData() ) );
+	recvTimer.setSingleShot(true);
+	setFakeRecvLag(0);
+
+	QObject::connect(&socket, SIGNAL(readyRead()), this, SLOT(receiveSocketDataDelayed()));
+	QObject::connect(&recvTimer, SIGNAL(timeout()), this, SLOT(receiveSocketData()));
 }
 
 IRCClient::~IRCClient()
@@ -135,6 +139,14 @@ void IRCClient::receiveSocketData()
 	}
 }
 
+void IRCClient::receiveSocketDataDelayed()
+{
+	if (!recvTimer.isActive())
+	{
+		recvTimer.start();
+	}
+}
+
 bool IRCClient::sendMessage(const QString& message)
 {
 	if (!isConnected())
@@ -149,4 +161,9 @@ bool IRCClient::sendMessage(const QString& message)
 	socket.flush();
 
 	return numBytesWritten == messageContent.size();
+}
+
+void IRCClient::setFakeRecvLag(int lagMs)
+{
+	recvTimer.setInterval(lagMs);
 }

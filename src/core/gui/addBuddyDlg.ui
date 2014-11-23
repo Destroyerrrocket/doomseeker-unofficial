@@ -23,7 +23,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Type the name of your buddy here.  If the pattern type is set to basic you may use an asterisk (*) as a wild card,</string>
+      <string>Type the name of your buddy here.  If the pattern type is set to basic you may use an asterisk (*) as a wild card.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

@@ -133,26 +133,46 @@ void ConnectionHandler::finish(int response)
 	emit finished(response);
 }
 
-bool ConnectionHandler::obtainJoinCommandLine(CommandLineInfo& cli,
-	const QString& errorCaption, bool managedDemo, bool *hadMissing)
+void ConnectionHandler::buildJoinCommandLine()
 {
-	JoinCommandLineBuilder::Demo demo = managedDemo ? JoinCommandLineBuilder::Managed : JoinCommandLineBuilder::Unmanaged;
-	JoinCommandLineBuilder builder(d->server, demo, d->parentWidget);
-	CommandLineInfo builtCli = builder.obtainJoinCommandLine();
-	if (!builtCli.isValid())
+	JoinCommandLineBuilder::Demo demo = JoinCommandLineBuilder::Managed;
+	JoinCommandLineBuilder *builder = new JoinCommandLineBuilder(d->server, demo, d->parentWidget);
+	this->connect(builder, SIGNAL(commandLineBuildFinished()), SLOT(onCommandLineBuildFinished()));
+	builder->obtainJoinCommandLine();
+}
+
+void ConnectionHandler::onCommandLineBuildFinished()
+{
+	JoinCommandLineBuilder *builder = static_cast<JoinCommandLineBuilder*>(sender());
+	CommandLineInfo builtCli = builder->builtCommandLine();
+	if (builtCli.isValid())
 	{
-		if (!builder.error().isEmpty())
-		{
-			QMessageBox::critical(d->parentWidget, errorCaption, builder.error());
-			if (builder.isConfigurationError())
-			{
-				DoomseekerConfigurationDialog::openConfiguration(d->server->plugin());
-			}
-		}
-		return false;
+		runCommandLine(builtCli);
 	}
-	cli = builtCli;
-	return true;
+	else
+	{
+		if (!builder->error().isEmpty())
+		{
+			QMessageBox::critical(d->parentWidget, tr("Doomseeker - join game"), builder->error());
+		}
+		if (builder->isConfigurationError())
+		{
+			DoomseekerConfigurationDialog::openConfiguration(d->server->plugin());
+		}
+	}
+	builder->deleteLater();
+	finish(Server::RESPONSE_GOOD);
+}
+
+void ConnectionHandler::runCommandLine(const CommandLineInfo &cli)
+{
+	Message message = AppRunner::runExecutable(cli);
+	if (message.isError())
+	{
+		gLog << tr("Error while launching executable for server \"%1\", game \"%2\": %3")
+			.arg(d->server->name()).arg(d->server->engineName()).arg(message.contents());
+		QMessageBox::critical(d->parentWidget, tr("Doomseeker - launch executable"), message.contents());
+	}
 }
 
 void ConnectionHandler::refreshToJoin()
@@ -172,28 +192,7 @@ void ConnectionHandler::refreshToJoin()
 
 void ConnectionHandler::run()
 {
-	bool hadMissing = false;
-	CommandLineInfo cli;
-	if (obtainJoinCommandLine(cli, tr("Doomseeker - join server"), true, &hadMissing))
-	{
-		if(hadMissing)
-		{
-			// Downloading wads takes an unknown amount of time, a server may
-			// have rotated wads, players could have joined, etc so lets refresh.
-			refreshToJoin();
-			return;
-		}
-
-		Message message = AppRunner::runExecutable(cli);
-		if (message.isError())
-		{
-			gLog << tr("Error while launching executable for server \"%1\", game \"%2\": %3")
-				.arg(d->server->name()).arg(d->server->engineName()).arg(message.contents());
-			QMessageBox::critical(d->parentWidget, tr("Doomseeker - launch executable"), message.contents());
-		}
-	}
-
-	finish(Server::RESPONSE_GOOD);
+	buildJoinCommandLine();
 }
 
 // -------------------------- URL Handler -------------------------------------

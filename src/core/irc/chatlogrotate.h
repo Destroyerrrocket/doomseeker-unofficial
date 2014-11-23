@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chatnetworknamer.cpp
+// chatlogrotate.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,43 +20,37 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "chatnetworknamer.h"
+#ifndef ida3366499_a83b_4d70_908c_8d0d2a7e3e36
+#define ida3366499_a83b_4d70_908c_8d0d2a7e3e36
 
-QString ChatNetworkNamer::additionalAllowedChars()
-{
-	return ".-_";
-}
+#include <QFileInfo>
+#include <QString>
 
-QString ChatNetworkNamer::convertToValidName(const QString &name)
-{
-	QString result = name;
-	for (int i = 0; i < result.length(); ++i)
-	{
-		if (!isValidCharacter(result[i]))
-		{
-			result[i] = '_';
-		}
-	}
-	return result;
-}
+class IRCNetworkEntity;
 
-bool ChatNetworkNamer::isValidCharacter(const QChar &c)
+class ChatLogRotate
 {
-	return c.isLetterOrNumber() || c == ' ' || additionalAllowedChars().contains(c);
-}
+public:
+	ChatLogRotate();
+	~ChatLogRotate();
 
-bool ChatNetworkNamer::isValidName(const QString &name)
-{
-	if (name.trimmed().isEmpty())
-	{
-		return false;
-	}
-	for (int i = 0; i < name.length(); ++i)
-	{
-		if (!isValidCharacter(name[i]))
-		{
-			return false;
-		}
-	}
-	return true;
-}
+	void setMaxSize(int size);
+	/**
+	 * Setting this to a negative number disables the removal.
+	 */
+	void setRemovalAgeDaysThreshold(int age);
+
+	void rotate(const IRCNetworkEntity &network, const QString &recipient);
+
+private:
+	class PrivData;
+	PrivData *d;
+
+	void archivizeCurrent(const IRCNetworkEntity &network, const QString &recipient);
+	void mkBackupDir(const IRCNetworkEntity &network, const QString &recipient);
+	void purgeOld(const IRCNetworkEntity &network, const QString &recipient);
+
+	bool isEligibleForRemoval(const QFileInfo &entry) const;
+};
+
+#endif

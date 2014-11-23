@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chatnetworknamer.cpp
+// chatlogarchive.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,43 +20,44 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "chatnetworknamer.h"
+#include "chatlogarchive.h"
 
-QString ChatNetworkNamer::additionalAllowedChars()
+#include <QDateTime>
+#include <QDir>
+#include <QFileInfo>
+#include "irc/entities/ircnetworkentity.h"
+#include "irc/chatlogs.h"
+
+class ChatLogArchive::PrivData
 {
-	return ".-_";
+public:
+};
+
+
+ChatLogArchive::ChatLogArchive()
+{
+	d = new PrivData();
 }
 
-QString ChatNetworkNamer::convertToValidName(const QString &name)
+ChatLogArchive::~ChatLogArchive()
 {
-	QString result = name;
-	for (int i = 0; i < result.length(); ++i)
-	{
-		if (!isValidCharacter(result[i]))
-		{
-			result[i] = '_';
-		}
-	}
-	return result;
+	delete d;
 }
 
-bool ChatNetworkNamer::isValidCharacter(const QChar &c)
+QString ChatLogArchive::archiveDirPath(const IRCNetworkEntity &network, const QString &recipient)
 {
-	return c.isLetterOrNumber() || c == ' ' || additionalAllowedChars().contains(c);
+	ChatLogs logs;
+	return QString("%1/backup/%2").arg(logs.networkDirPath(network), logs.logFileName(recipient));
 }
 
-bool ChatNetworkNamer::isValidName(const QString &name)
+QStringList ChatLogArchive::listArchivedLogsSortedByTime(const IRCNetworkEntity &network, const QString &recipient)
 {
-	if (name.trimmed().isEmpty())
-	{
-		return false;
-	}
-	for (int i = 0; i < name.length(); ++i)
-	{
-		if (!isValidCharacter(name[i]))
-		{
-			return false;
-		}
-	}
-	return true;
+	return QDir(archiveDirPath(network, recipient)).entryList(QDir::Files, QDir::Time);
+}
+
+QString ChatLogArchive::mkArchiveFilePath(const IRCNetworkEntity &network, const QString &recipient)
+{
+	QDateTime time = QDateTime::currentDateTime();
+	return QString("%1/%2.txt").arg(
+		archiveDirPath(network, recipient), time.toString("yyyy-MM-dd_hh-mm-ss"));
 }

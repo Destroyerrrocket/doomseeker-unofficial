@@ -34,6 +34,13 @@ public:
 	#ifdef Q_OS_WIN32
 		static QStringList tokenize(const QString &cmdLine)
 		{
+			if (cmdLine.isEmpty())
+			{
+				// CommandLineToArgvW() returns path to current executable
+				// if lpCmdLine argument is an empty string. We don't want that
+				// here.
+				return QStringList();
+			}
 			int numArgs = 0;
 			LPCWSTR winapiCmdLine = (LPCWSTR)cmdLine.utf16();
 			LPWSTR* winapiTokens = CommandLineToArgvW(winapiCmdLine, &numArgs);

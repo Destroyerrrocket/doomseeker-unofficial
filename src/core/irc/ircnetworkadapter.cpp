@@ -24,7 +24,6 @@
 #include "irc/entities/ircuserprefix.h"
 #include "irc/ircchanneladapter.h"
 #include "irc/ircglobal.h"
-#include "irc/ircglobalmessages.h"
 #include "irc/ircisupportparser.h"
 #include "irc/ircmessageclass.h"
 #include "irc/ircprivadapter.h"
@@ -95,6 +94,8 @@ IRCNetworkAdapter::IRCNetworkAdapter(const IRCNetworkConnectionInfo &connectionI
 		SIGNAL(printWithClass(const QString&, const QString&, const IRCMessageClass&)),
 		this, SLOT(printWithClass(const QString&, const QString&, const IRCMessageClass&)),
 		Qt::DirectConnection);
+	QObject::connect(ircResponseParser, SIGNAL(printToNetworksCurrentChatBox(QString, IRCMessageClass)),
+		SIGNAL(messageToNetworksCurrentChatBox(QString, IRCMessageClass)));
 
 	QObject::connect(ircResponseParser, SIGNAL ( privMsgReceived(const QString&, const QString&, const QString&) ),
 		this, SLOT( privMsgReceived(const QString&, const QString&, const QString&) ) );
@@ -330,7 +331,10 @@ void IRCNetworkAdapter::helloClient(const QString& nickname)
 	}
 	foreach (const QString& command, network.autojoinCommands())
 	{
-		this->sendMessage(command);
+		if (!command.trimmed().isEmpty())
+		{
+			this->sendMessage(command);
+		}
 	}
 
 	foreach (const QString& channel, network.autojoinChannels())
@@ -487,24 +491,24 @@ void IRCNetworkAdapter::namesListEndReceived(const QString& channel)
 
 void IRCNetworkAdapter::nicknameInUse(const QString& nickname)
 {
-	IRCGlobalMessages::instance().emitMessageWithClass(tr("Nickname %1 is already taken.").arg(nickname), IRCMessageClass::NetworkAction, this);
+	emit messageToNetworksCurrentChatBox(tr("Nickname %1 is already taken.").arg(nickname), IRCMessageClass::Error);
 	if (this->bIsJoining)
 	{
 		const QString& altNick = this->connectionInfo.alternateNick;
 
 		if (this->connectionInfo.nick.compare(altNick, Qt::CaseInsensitive) == 0)
 		{
-			IRCGlobalMessages::instance().emitError(tr("Both nickname and alternate nickname are taken on this network."), this);
+			emit messageWithClass(tr("Both nickname and alternate nickname are taken on this network."), IRCMessageClass::Error);
 		}
 		else if (altNick.isEmpty())
 		{
-			IRCGlobalMessages::instance().emitError(tr("No alternate nickname specified."), this);
+			emit messageWithClass(tr("No alternate nickname specified."), IRCMessageClass::Error);
 		}
 		else
 		{
 			this->connectionInfo.nick = altNick;
 
-			IRCGlobalMessages::instance().emitMessageWithClass(tr("Using alternate nickname %1 to join.").arg(altNick), IRCMessageClass::NetworkAction, this);
+			emit messageWithClass(tr("Using alternate nickname %1 to join.").arg(altNick), IRCMessageClass::NetworkAction);
 			QString message = QString("/nick %1").arg(altNick);
 			sendMessage(message);
 		}
@@ -513,7 +517,7 @@ void IRCNetworkAdapter::nicknameInUse(const QString& nickname)
 
 void IRCNetworkAdapter::noSuchNickname(const QString& nickname)
 {
-	IRCGlobalMessages::instance().emitError(tr("User %1 is not logged in.").arg(nickname), this);
+	emit messageToNetworksCurrentChatBox(tr("User %1 is not logged in.").arg(nickname), IRCMessageClass::Error);
 }
 
 void IRCNetworkAdapter::openNewAdapter(const QString& recipientName)
@@ -581,6 +585,11 @@ void IRCNetworkAdapter::printWithClass(const QString& printWhat,
 	}
 }
 
+void IRCNetworkAdapter::printToCurrentChatBox(const QString& printWhat, const IRCMessageClass& msgClass)
+{
+	emit messageToNetworksCurrentChatBox(printWhat, msgClass);
+}
+
 void IRCNetworkAdapter::privMsgReceived(const QString& recipient, const QString& sender, const QString& content)
 {
 	IRCChatAdapter* pAdapter = this->getOrCreateNewChatAdapter(recipient);
@@ -631,11 +640,10 @@ QString IRCNetworkAdapter::title() const
 
 void IRCNetworkAdapter::userChangesNickname(const QString& oldNickname, const QString& newNickname)
 {
-	emit messageWithClass(QString("User changed nickname: %1 to %2.").arg(oldNickname, newNickname), IRCMessageClass::NetworkAction);
-
 	if (isMyNickname(oldNickname))
 	{
-		emit messageWithClass(tr("Updated own nickname."), IRCMessageClass::NetworkAction);
+		emit messageToNetworksCurrentChatBox(tr("Updated own nickname to %1.").arg(newNickname),
+			IRCMessageClass::NetworkAction);
 		connectionInfo.nick = newNickname;
 
 		emit titleChange();
@@ -712,8 +720,6 @@ const IRCUserPrefix &IRCNetworkAdapter::userPrefixes() const
 
 void IRCNetworkAdapter::userQuitsNetwork(const QString& nickname, const QString& farewellMessage)
 {
-	emit messageWithClass(QString("User %1 quits network.").arg(nickname), IRCMessageClass::ChannelAction);
-
 	// We need to iterate through EVERY adapter and notify them
 	// about this quit.
 	// Implementation of each adapter should recognize if this quit actually
@@ -728,9 +734,9 @@ void IRCNetworkAdapter::userQuitsNetwork(const QString& nickname, const QString&
 void IRCNetworkAdapter::userPing(const QString &nickname, qint64 ping)
 {
 	qint64 delta = QDateTime::currentMSecsSinceEpoch() - ping;
-	ircGlobalMsg.emitMessageWithClass(
+	emit messageToNetworksCurrentChatBox(
 		tr("Ping to user %1: %2ms").arg(nickname).arg(delta),
-		IRCMessageClass::Ctcp, this);
+		IRCMessageClass::Ctcp);
 }
 
 void IRCNetworkAdapter::whoIsUser(const QString& nickname, const QString& user, const QString& hostName, const QString& realName)

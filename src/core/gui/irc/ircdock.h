@@ -55,6 +55,7 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 		void performNetworkAutojoins();
 
 		IRCSounds& sounds();
+		IRCDockTabContents *tabWithFocus();
 
 	private:
 		IRCSounds* pSounds;
@@ -85,8 +86,6 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 
 	private slots:
 		void chatWindowCloseRequestSlot(IRCDockTabContents* pCaller);
-		void globalMessage(const QString& message, IRCAdapterBase* pMessageSender);
-		void globalMessageWithClass(const QString& message, const IRCMessageClass& messageClass, IRCAdapterBase* pMessageSender);
 		void tabCloseRequestedSlot(int index);
 		void tabCurrentChanged(int index);
 		void tabFocusRequest(IRCDockTabContents* pCaller);

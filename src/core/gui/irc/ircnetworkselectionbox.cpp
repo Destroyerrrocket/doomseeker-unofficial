@@ -32,7 +32,6 @@ IRCNetworkSelectionBox::IRCNetworkSelectionBox(QWidget* parent)
 {
 	setupUi(this);
 
-	connect(btnNewNetwork, SIGNAL( clicked() ), SLOT( btnNewNetworkClicked() ) );
 	connect(cboNetwork, SIGNAL( currentIndexChanged(int) ), SLOT( networkChanged(int) ) );
 
 	initWidgets();
@@ -46,19 +45,17 @@ void IRCNetworkSelectionBox::accept()
 	}
 }
 
-void IRCNetworkSelectionBox::addNetworkToComboBox(const IRCNetworkEntity& network, bool bLastUsed)
+void IRCNetworkSelectionBox::addNetworkToComboBox(const IRCNetworkEntity& network)
 {
-	QString title = QString("%1 [%2:%3]").arg(network.description()).arg(network.address()).arg(network.port());
-
-	if (bLastUsed)
-	{
-		title += tr("<Last Used Configuration>");
-	}
-
-	cboNetwork->addItem(title, network.serializeQVariant());
+	cboNetwork->addItem(buildTitle(network), network.serializeQVariant());
 }
 
-void IRCNetworkSelectionBox::btnNewNetworkClicked()
+QString IRCNetworkSelectionBox::buildTitle(const IRCNetworkEntity &network) const
+{
+	return QString("%1 [%2:%3]").arg(network.description()).arg(network.address()).arg(network.port());
+}
+
+void IRCNetworkSelectionBox::createNewNetwork()
 {
 	CFGIRCDefineNetworkDialog dialog(this);
 	if (dialog.exec() == QDialog::Accepted)
@@ -72,6 +69,26 @@ void IRCNetworkSelectionBox::btnNewNetworkClicked()
 	}
 }
 
+void IRCNetworkSelectionBox::editCurrentNetwork()
+{
+	IRCNetworkEntity network = networkCurrent();
+	if (!network.isValid())
+	{
+		QMessageBox::critical(this, tr("Doomseeker - edit network"),
+			tr("Cannot edit as no valid network is selected."));
+		return;
+	}
+	CFGIRCDefineNetworkDialog dialog(network, this);
+	if (dialog.exec() == QDialog::Accepted)
+	{
+		IRCNetworkEntity editedNetwork = dialog.getNetworkEntity();
+		if (replaceNetworkInConfig(network, editedNetwork))
+		{
+			updateCurrentNetwork(editedNetwork);
+		}
+	}
+}
+
 void IRCNetworkSelectionBox::fetchNetworks()
 {
 	ChatNetworksCfg cfg;
@@ -79,15 +96,15 @@ void IRCNetworkSelectionBox::fetchNetworks()
 	qSort(networks);
 	cboNetwork->clear();
 
-	IRCNetworkEntity lastUsedNetwork = cfg.lastUsedNetwork();
-	if (lastUsedNetwork.isValid())
-	{
-		this->addNetworkToComboBox(lastUsedNetwork, true);
-	}
-
 	foreach (const IRCNetworkEntity& network, networks)
 	{
 		addNetworkToComboBox(network);
+	}
+
+	IRCNetworkEntity lastUsedNetwork = cfg.lastUsedNetwork();
+	if (lastUsedNetwork.isValid())
+	{
+		setNetworkMatchingDescriptionAsCurrent(lastUsedNetwork.description());
 	}
 
 	updateNetworkInfo();
@@ -104,32 +121,31 @@ void IRCNetworkSelectionBox::initWidgets()
 
 IRCNetworkEntity IRCNetworkSelectionBox::network() const
 {
-	IRCNetworkEntity networkEntity = this->networkComboBox();
-
-	networkEntity.setAddress(leServerAddress->text());
+	IRCNetworkEntity networkEntity = networkCurrent();
 	networkEntity.setPassword(lePassword->text());
-	networkEntity.setPort(spinPort->value());
-
 	return networkEntity;
 }
 
 void IRCNetworkSelectionBox::networkChanged(int index)
 {
-	if (index > 0)
+	if (index >= 0)
 	{
 		updateNetworkInfo();
 	}
 }
 
-IRCNetworkEntity IRCNetworkSelectionBox::networkComboBox() const
+IRCNetworkEntity IRCNetworkSelectionBox::networkCurrent() const
 {
-	int index = cboNetwork->currentIndex();
-	if (index < 0)
+	return networkAtRow(cboNetwork->currentIndex());
+}
+
+IRCNetworkEntity IRCNetworkSelectionBox::networkAtRow(int row) const
+{
+	if (row < 0 || row >= cboNetwork->count())
 	{
 		return IRCNetworkEntity();
 	}
-
-	return IRCNetworkEntity::deserializeQVariant(cboNetwork->itemData(index));
+	return IRCNetworkEntity::deserializeQVariant(cboNetwork->itemData(row));
 }
 
 IRCNetworkConnectionInfo IRCNetworkSelectionBox::networkConnectionInfo() const
@@ -145,9 +161,35 @@ IRCNetworkConnectionInfo IRCNetworkSelectionBox::networkConnectionInfo() const
 	return outInfo;
 }
 
+void IRCNetworkSelectionBox::setNetworkMatchingDescriptionAsCurrent(const QString &description)
+{
+	for (int row = 0; row < cboNetwork->count(); ++row)
+	{
+		IRCNetworkEntity candidate = networkAtRow(row);
+		if (candidate.description() == description)
+		{
+			cboNetwork->setCurrentIndex(row);
+			break;
+		}
+	}
+}
+
+void IRCNetworkSelectionBox::updateCurrentNetwork(const IRCNetworkEntity &network)
+{
+	cboNetwork->setItemText(cboNetwork->currentIndex(), buildTitle(network));
+	cboNetwork->setItemData(cboNetwork->currentIndex(), network.serializeQVariant());
+	updateNetworkInfo();
+}
+
+bool IRCNetworkSelectionBox::replaceNetworkInConfig(const IRCNetworkEntity &oldNetwork, const IRCNetworkEntity &newNetwork)
+{
+	ChatNetworksCfg cfg;
+	return cfg.replaceNetwork(oldNetwork.description(), newNetwork, this);
+}
+
 void IRCNetworkSelectionBox::updateNetworkInfo()
 {
-	IRCNetworkEntity network = this->networkComboBox();
+	IRCNetworkEntity network = networkCurrent();
 
 	leServerAddress->setText(network.address());
 	spinPort->setValue(network.port());

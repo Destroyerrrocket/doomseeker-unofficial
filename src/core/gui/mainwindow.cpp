@@ -516,6 +516,7 @@ void MainWindow::finishConfiguration(DoomseekerConfigurationDialog &configDialog
 {
 	// In case the master server addresses changed, notify the master clients.
 	updateMasterAddresses();
+	gRefresher->setDelayBetweenResends(gConfig.doomseeker.queryTimeout);
 
 	// If appearance changed - update the widgets.
 	if (configDialog.appearanceChanged())
@@ -1280,7 +1281,16 @@ void MainWindow::showServerJoinCommandLine(const ServerPtr &server)
 {
 	CommandLineInfo cli;
 	ConnectionHandler connectionHandler(server, this);
-	if (connectionHandler.obtainJoinCommandLine(cli, tr("Doomseeker - join command line"), false))
+	JoinCommandLineBuilder *builder = new JoinCommandLineBuilder(server, JoinCommandLineBuilder::Unmanaged, this);
+	this->connect(builder, SIGNAL(commandLineBuildFinished()), SLOT(showServerJoinCommandLineOnBuilderFinished()));
+	builder->obtainJoinCommandLine();
+}
+
+void MainWindow::showServerJoinCommandLineOnBuilderFinished()
+{
+	JoinCommandLineBuilder *builder = static_cast<JoinCommandLineBuilder*>(sender());
+	CommandLineInfo cli = builder->builtCommandLine();
+	if (cli.isValid())
 	{
 		QString execPath = cli.executable.absoluteFilePath();
 		QStringList args = cli.args;
@@ -1288,9 +1298,18 @@ void MainWindow::showServerJoinCommandLine(const ServerPtr &server)
 		CommandLine::escapeExecutable(execPath);
 		CommandLine::escapeArgs(args);
 
-		CopyTextDlg ctd(execPath + " " + args.join(" "), server->name(), this);
+		CopyTextDlg ctd(execPath + " " + args.join(" "), builder->server()->name(), this);
 		ctd.exec();
 	}
+	else
+	{
+		if (!builder->error().isEmpty())
+		{
+			QMessageBox::critical(this, tr("Doomseeker - show join command line"),
+				tr("Command line cannot be built:\n%1").arg(builder->error()));
+		}
+	}
+	builder->deleteLater();
 }
 
 void MainWindow::showUpdaterProcessErrorDialog()
