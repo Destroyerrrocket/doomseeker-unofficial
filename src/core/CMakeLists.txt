@@ -383,6 +383,7 @@ set(SOURCE_FILES
 	localizationinfo.cpp
 	log.cpp
 	main.cpp
+	patternlist.cpp
 	random.cpp
 	scanner.cpp
 	speedcalculator.cpp
@@ -479,6 +480,7 @@ set(HEADER_FILES
 	json.h
 	localization.h
 	localizationinfo.h
+	patternlist.h
 	random.h
 	qtmetapointer.h
 	scanner.h

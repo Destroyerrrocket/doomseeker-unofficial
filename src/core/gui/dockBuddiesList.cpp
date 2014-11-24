@@ -186,15 +186,12 @@ void DockBuddiesList::scan(const MasterManager *master)
 		for(int i = 0; i < server->players().numClients(); ++i)
 		{
 			const Player player = server->player(i);
-			foreach(QRegExp pattern, pBuddies)
+			if (pBuddies.isExactMatchAny(player.nameColorTagsStripped()))
 			{
-				if(pattern.exactMatch(player.nameColorTagsStripped()))
+				BuddyLocationInfo candidate(player, server);
+				if (!buddies.contains(candidate))
 				{
-					BuddyLocationInfo candidate(player, server);
-					if (!buddies.contains(candidate))
-					{
-						buddies << BuddyLocationInfo(player, server);
-					}
+					buddies << BuddyLocationInfo(player, server);
 				}
 			}
 		}
