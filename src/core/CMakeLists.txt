@@ -166,6 +166,8 @@ set(DOOMSEEKER_QT_FILES
 	ip2c/ip2cloader.h
 	ip2c/ip2cparser.h
 	ip2c/ip2cupdater.h
+	irc/ops/ircdelayedoperation.h
+	irc/ops/ircdelayedoperationban.h
 	irc/chatlogs.h
 	irc/ircadapterbase.h
 	irc/ircchanneladapter.h
@@ -299,6 +301,8 @@ set(SOURCE_FILES
 	irc/entities/ircnetworkentity.cpp
 	irc/entities/ircresponseparseresult.cpp
 	irc/entities/ircuserprefix.cpp
+	irc/ops/ircdelayedoperation.cpp
+	irc/ops/ircdelayedoperationban.cpp
 	irc/chatlogarchive.cpp
 	irc/chatlogrotate.cpp
 	irc/chatlogs.cpp
@@ -308,8 +312,6 @@ set(SOURCE_FILES
 	irc/ircchatadapter.cpp
 	irc/ircclient.cpp
 	irc/ircctcpparser.cpp
-	irc/ircdelayedoperation.cpp
-	irc/ircdelayedoperationlist.cpp
 	irc/ircglobal.cpp
 	irc/ircisupportparser.cpp
 	irc/ircmessageclass.cpp
@@ -427,8 +429,6 @@ set(HEADER_FILES
 	irc/chatlogrotate.h
 	irc/chatnetworknamer.h
 	irc/ircchatadapter.h
-	irc/ircdelayedoperation.h
-	irc/ircdelayedoperationlist.h
 	irc/ircglobal.h
 	irc/ircisupportparser.h
 	irc/ircmessageclass.h

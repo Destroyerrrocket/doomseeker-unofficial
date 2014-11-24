@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// ircdelayedoperation.h
+// ircdelayedoperation.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,55 +20,9 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __IRCDELAYEDOPERATION_H__
-#define __IRCDELAYEDOPERATION_H__
+#include "ircdelayedoperation.h"
 
-#include <QHash>
-#include <QString>
-
-class IRCDelayedOperation
+IRCDelayedOperation::IRCDelayedOperation(QObject *parent)
+: QObject(parent)
 {
-	public:
-		enum OperationType
-		{
-			Ban
-		};
-
-		IRCDelayedOperation(OperationType operationType, const QString& nickname = "", const QString& channel = "");
-
-		QString attribute(const QString& name) const
-		{
-			if (attributes.contains(name))
-			{
-				return attributes[name];
-			}
-
-			return QString();
-		}
-
-		const QString& channel() const { return channelName; }
-		const QString& nickname() const { return nick; }
-		OperationType operationType() const { return operType; }
-
-		bool operator==(const IRCDelayedOperation& other) const;
-		void setAttribute(const QString& name, const QString& value)
-		{
-			if (attributes.contains(name))
-			{
-				attributes[name] = value;
-			}
-			else
-			{
-				attributes.insert(name, value);
-			}
-		}
-
-
-	private:
-		QHash<QString, QString> attributes;
-		QString channelName;
-		QString nick;
-		OperationType operType;
-};
-
-#endif
+}

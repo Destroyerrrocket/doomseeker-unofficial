@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "ircnetworkadapter.h"
 #include "irc/entities/ircuserprefix.h"
+#include "irc/ops/ircdelayedoperationban.h"
 #include "irc/ircchanneladapter.h"
 #include "irc/ircglobal.h"
 #include "irc/ircisupportparser.h"
@@ -151,13 +152,9 @@ void IRCNetworkAdapter::appendISupportLine(const QString &line)
 
 void IRCNetworkAdapter::banUser(const QString& nickname, const QString& reason, const QString& channel)
 {
-	IRCDelayedOperation operation(IRCDelayedOperation::Ban,
-		userPrefixes().cleanNickname(nickname), channel);
-	operation.setAttribute("reason", reason);
-	delayedOperations << operation;
-
-	this->sendMessage(QString("/whois %1").arg(
-		userPrefixes().cleanNickname(nickname)));
+	IRCDelayedOperationBan *op = new IRCDelayedOperationBan(this, channel, nickname, this);
+	op->setReason(reason);
+	op->start();
 }
 
 void IRCNetworkAdapter::connect()
@@ -761,32 +758,9 @@ void IRCNetworkAdapter::userPing(const QString &nickname, qint64 ping)
 
 void IRCNetworkAdapter::whoIsUser(const QString& nickname, const QString& user, const QString& hostName, const QString& realName)
 {
-	// Deliver pending bans.
-	bool anyBanDelivered = false;
-	while(true)
-	{
-		const IRCDelayedOperation* pBanOperation =
-			delayedOperations.operationForNickname(IRCDelayedOperation::Ban,
-			userPrefixes().cleanNickname(nickname));
-		if (pBanOperation == NULL)
-		{
-			break;
-		}
-		anyBanDelivered = true;
-
-		QString banString = "*!*@" + hostName;
-		QString reason = pBanOperation->attribute("reason");
-		this->sendMessage(QString("/mode %1 +b %2").arg(pBanOperation->channel(), banString));
-		this->sendMessage(QString("/kick %1 %2 %3").arg(pBanOperation->channel(), nickname, reason));
-
-		delayedOperations.remove(pBanOperation);
-	}
-	if (!anyBanDelivered)
-	{
-		emit messageToNetworksCurrentChatBox(
-			QString("%1 %2 %3 %4").arg(nickname, user, hostName, realName),
-			IRCMessageClass::NetworkAction);
-	}
+	emit messageToNetworksCurrentChatBox(
+		QString("%1 %2 %3 %4").arg(nickname, user, hostName, realName),
+		IRCMessageClass::NetworkAction);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -8,7 +8,6 @@
 
 #include "irc/ircadapterbase.h"
 #include "irc/ircclient.h"
-#include "irc/ircdelayedoperationlist.h"
 #include "irc/ircnetworkconnectioninfo.h"
 #include "irc/ircrequestparser.h"
 #include "socketsignalsadapter.h"
@@ -130,6 +129,11 @@ class IRCNetworkAdapter : public IRCAdapterBase
 			return this;
 		}
 
+		IRCResponseParser *responseParser()
+		{
+			return ircResponseParser;
+		}
+
 		/**
 		 * @brief Sets channel flags.
 		 *
@@ -143,8 +147,8 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		void sendCtcp(const QString &nickname, const QString &command);
 
 		/**
- 		* @see bEmitAllIRCMessages
- 		*/
+		* @see bEmitAllIRCMessages
+		*/
 		void setEmitAllIRCMessagesEnabled(bool b)
 		{
 			this->bEmitAllIRCMessages = b;
@@ -219,7 +223,6 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 */
 		QHash<QString, IRCChatAdapter*> chatWindows;
 		IRCNetworkConnectionInfo connectionInfo;
-		IRCDelayedOperationList delayedOperations;
 		IRCClient ircClient;
 		IRCRequestParser ircRequestParser;
 		IRCResponseParser* ircResponseParser;
