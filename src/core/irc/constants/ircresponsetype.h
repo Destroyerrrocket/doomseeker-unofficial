@@ -69,6 +69,9 @@ class IRCResponseType
 			/// 254 - how many channels,
 			RPLLUserChannels,
 
+			/// 301
+			RPLAway,
+
 			/**
 			 * @brief 307 - no idea what this is, but we'll treat it
 			 *        the same way we treat RPLWhoIsSpecial.

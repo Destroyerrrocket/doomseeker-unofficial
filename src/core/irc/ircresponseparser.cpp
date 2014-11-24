@@ -128,6 +128,16 @@ IRCResponseParseResult IRCResponseParser::parseMessage()
 			break;
 		}
 
+		case IRCResponseType::RPLAway:
+		{
+			d->params.takeFirst(); // Own nick.
+			QString nickname = d->params.takeFirst();
+			QString reason = joinAndTrimColonIfNecessary(d->params);
+			emit printToNetworksCurrentChatBox(tr("User %1 is away: %2").arg(nickname, reason),
+				IRCMessageClass::NetworkAction);
+			break;
+		}
+
 		case IRCResponseType::RPLWhoIsUser:
 		{
 			// First param is unnecessary

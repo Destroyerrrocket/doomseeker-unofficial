@@ -98,6 +98,9 @@ QString IRCResponseType::toRfcString(MsgType type)
 		case RPLLUserMe:
 			return "255";
 
+		case RPLAway:
+			return "301";
+
 		case RPLWhoIsRegnick:
 			return "307";
 
