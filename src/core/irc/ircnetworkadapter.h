@@ -102,6 +102,8 @@ class IRCNetworkAdapter : public IRCAdapterBase
 
 		bool hasRecipient(const QString& recipient) const;
 
+		const PatternList &ignoredUsersPatterns() const;
+
 		/**
 		 * @brief Checks if pAdapter equals this or is one of
 		 *        chat windows of this network.
@@ -153,6 +155,8 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		{
 			this->bEmitAllIRCMessages = b;
 		}
+
+		void setNetworkEntity(const IRCNetworkEntity &network);
 
 		QString title() const;
 

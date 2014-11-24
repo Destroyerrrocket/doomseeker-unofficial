@@ -25,6 +25,7 @@
 #include "irc/chatlogs.h"
 #include "irc/configuration/ircconfig.h"
 #include "ini/inisection.h"
+#include "patternlist.h"
 #include <QString>
 
 const QString ChatNetworksCfg::SECTIONS_NAMES_PREFIX = "Network.";
@@ -102,6 +103,18 @@ void ChatNetworksCfg::setNetworks(const QList<IRCNetworkEntity> &networks)
 	}
 }
 
+IRCNetworkEntity ChatNetworksCfg::network(const QString &description)
+{
+	foreach (const IRCNetworkEntity &network, networks())
+	{
+		if (network.description() == description)
+		{
+			return network;
+		}
+	}
+	return IRCNetworkEntity();
+}
+
 bool ChatNetworksCfg::replaceNetwork(const QString &oldDescription, const IRCNetworkEntity &newNetwork, QWidget *errorDisplayParentWidget)
 {
 	if (!ChatLogs().renameNetwork(errorDisplayParentWidget, oldDescription, newNetwork.description()))
@@ -140,6 +153,7 @@ IRCNetworkEntity ChatNetworksCfg::loadNetwork(const IniSection& section) const
 		.split(" ", QString::SkipEmptyParts));
 	network.setAutojoinCommands(section.value("AutojoinCommands").toStringList());
 	network.setDescription(section["Description"]);
+	network.setIgnoredUsers(PatternList::deserializeQVariant(section.value("IgnoredUsers")));
 	network.setNickservCommand(section["NickservCommand"]);
 	network.setNickservPassword(section["NickservPassword"]);
 	network.setPassword(section["Password"]);
@@ -154,6 +168,7 @@ void ChatNetworksCfg::saveNetwork(IniSection section, const IRCNetworkEntity& ne
 	section["AutojoinChannels"] = network.autojoinChannels().join(" ");
 	section["AutojoinCommands"].setValue(network.autojoinCommands());
 	section["Description"] = network.description();
+	section.setValue("IgnoredUsers", network.ignoredUsers().serializeQVariant());
 	section["NickservCommand"] = network.nickservCommand();
 	section["NickservPassword"] = network.nickservPassword();
 	section["Password"] = network.password();

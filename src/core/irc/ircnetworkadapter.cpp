@@ -352,6 +352,11 @@ void IRCNetworkAdapter::helloClient(const QString& nickname)
 	emit titleChange();
 }
 
+const PatternList &IRCNetworkAdapter::ignoredUsersPatterns() const
+{
+	return connection().networkEntity.ignoredUsers();
+}
+
 void IRCNetworkAdapter::ircServerResponse(const QString& message)
 {
 	IRCResponseParseResult result = ircResponseParser->parse(message);
@@ -604,6 +609,16 @@ void IRCNetworkAdapter::printMsgLiteral(const QString& recipient, const QString&
 {
 	this->getOrCreateNewChatAdapter(recipient);
 	printWithClass(content, recipient, msgClass);
+}
+
+void IRCNetworkAdapter::setNetworkEntity(const IRCNetworkEntity &entity)
+{
+	IRCNetworkEntity oldEntity = connectionInfo.networkEntity;
+	connectionInfo.networkEntity = entity;
+	if (oldEntity.description() != entity.description())
+	{
+		emit titleChange();
+	}
 }
 
 void IRCNetworkAdapter::sendCtcp(const QString &nickname, const QString &command)

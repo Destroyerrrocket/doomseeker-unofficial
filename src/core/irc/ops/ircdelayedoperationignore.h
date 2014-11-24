@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// patternlist.h
+// ircdelayedoperationignore.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,21 +20,34 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef ida6f4579f_f353_49df_a314_5b3ebcdbcad7
-#define ida6f4579f_f353_49df_a314_5b3ebcdbcad7
+#ifndef id6d18a0bf_8b5a_44d2_be14_a0de3c5175fe
+#define id6d18a0bf_8b5a_44d2_be14_a0de3c5175fe
 
-#include <QList>
-#include <QRegExp>
-#include <QString>
-#include <QVariant>
+#include "irc/ops/ircdelayedoperation.h"
 
-class PatternList : public QList<QRegExp>
+class IRCNetworkAdapter;
+
+class IRCDelayedOperationIgnore : public IRCDelayedOperation
 {
-public:
-	bool isExactMatchAny(const QString &candidate) const;
+Q_OBJECT
 
-	static PatternList deserializeQVariant(const QVariant &var);
-	QVariant serializeQVariant() const;
+public:
+	IRCDelayedOperationIgnore(QWidget *parent, IRCNetworkAdapter *network, const QString &nickname);
+	~IRCDelayedOperationIgnore();
+
+	/**
+	 * If disabled, a '*!*@host' pattern is assumed. Disabled by default.
+	 */
+	bool setShowPatternPopup(bool b);
+	void start();
+
+private:
+	class PrivData;
+	PrivData *d;
+
+private slots:
+	void onWhoIsUser(const QString& nickname, const QString& user,
+		const QString& hostName, const QString& realName);
 };
 
 #endif

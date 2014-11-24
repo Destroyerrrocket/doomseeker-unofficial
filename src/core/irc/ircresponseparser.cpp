@@ -33,6 +33,7 @@
 #include "irc/ircnetworkadapter.h"
 #include "irc/ircuserinfo.h"
 #include "log.h"
+#include "patternlist.h"
 #include "strings.h"
 
 class IRCResponseParser::PrivData
@@ -71,6 +72,11 @@ IRCResponseParser::FlagModes IRCResponseParser::getFlagMode(char c)
 	}
 }
 
+bool IRCResponseParser::isPrefixIgnored() const
+{
+	return d->network->ignoredUsersPatterns().isExactMatchAny(d->prefix);
+}
+
 QString IRCResponseParser::joinAndTrimColonIfNecessary(const QStringList& strList) const
 {
 	QString joined = strList.join(" ");
@@ -87,7 +93,7 @@ IRCResponseParseResult IRCResponseParser::parse(const QString& message)
 	QString prefix = prefixRegExp.cap(1);
 	QString remainder = formattedMessage.mid(prefix.length());
 
-	d->prefix = Strings::triml(prefix, ":");
+	d->prefix = Strings::triml(prefix, ":").trimmed();
 
 	// Obtain message sender from the prefix.
 	int indexExclamation = prefix.indexOf('!');
@@ -498,6 +504,10 @@ IRCResponseParseResult IRCResponseParser::parseMessage()
 
 void IRCResponseParser::parsePrivMsgOrNotice()
 {
+	if (isPrefixIgnored())
+	{
+		return;
+	}
 	QString recipient = d->params.takeFirst();
 	if (!IRCGlobal::isChannelName(recipient))
 	{

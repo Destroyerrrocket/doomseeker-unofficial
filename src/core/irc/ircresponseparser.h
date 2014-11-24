@@ -125,6 +125,7 @@ class IRCResponseParser : public QObject
 		class PrivData;
 		PrivData *d;
 
+		bool isPrefixIgnored() const;
 		QString joinAndTrimColonIfNecessary(const QStringList& strList) const;
 
 		/**

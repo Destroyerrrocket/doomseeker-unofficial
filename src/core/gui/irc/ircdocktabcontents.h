@@ -152,6 +152,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 				QAction* devoice;
 				QAction* halfOp;
 				QAction* kick;
+				QAction *ignore;
 				QAction* op;
 				QAction* openChatWindow;
 				QAction* voice;
@@ -218,6 +219,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 */
 		void setupNewUserListModel();
 		void showPrivChatContextMenu();
+		void startIgnoreOperation(const QString &nickname);
 
 		QString wrapTextWithMetaTags(const QString &text,
 			const IRCMessageClass &messageClass) const;

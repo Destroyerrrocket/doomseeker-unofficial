@@ -43,6 +43,8 @@ public:
 	QList<IRCNetworkEntity> networks() const;
 	void setNetworks(const QList<IRCNetworkEntity> &networks);
 
+	IRCNetworkEntity network(const QString &description);
+
 	/**
 	 * @brief Replace network definition in config and move around log files.
 	 *

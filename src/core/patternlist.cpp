@@ -22,6 +22,8 @@
 //------------------------------------------------------------------------------
 #include "patternlist.h"
 
+#include <QDebug>
+
 bool PatternList::isExactMatchAny(const QString &candidate) const
 {
 	foreach (const QRegExp &matcher, *this)
@@ -32,4 +34,24 @@ bool PatternList::isExactMatchAny(const QString &candidate) const
 		}
 	}
 	return false;
+}
+
+PatternList PatternList::deserializeQVariant(const QVariant &var)
+{
+	PatternList result;
+	foreach (const QVariant &element, var.toList())
+	{
+		result << element.toRegExp();
+	}
+	return result;
+}
+
+QVariant PatternList::serializeQVariant() const
+{
+	QVariantList var;
+	foreach (const QRegExp &pattern, *this)
+	{
+		var << pattern;
+	}
+	return var;
 }

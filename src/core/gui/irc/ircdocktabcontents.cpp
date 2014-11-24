@@ -26,6 +26,7 @@
 #include "gui/commongui.h"
 #include "irc/configuration/chatlogscfg.h"
 #include "irc/configuration/ircconfig.h"
+#include "irc/ops/ircdelayedoperationignore.h"
 #include "irc/chatlogrotate.h"
 #include "irc/chatlogs.h"
 #include "irc/ircchanneladapter.h"
@@ -51,6 +52,7 @@ class IRCDockTabContents::PrivChatMenu : public QMenu
 		QAction *ctcpPing;
 		QAction *ctcpTime;
 		QAction *ctcpVersion;
+		QAction *ignore;
 		QAction *whois;
 
 		PrivChatMenu()
@@ -59,6 +61,8 @@ class IRCDockTabContents::PrivChatMenu : public QMenu
 			ctcpPing = addAction(tr("CTCP Ping"));
 			ctcpTime = addAction(tr("CTCP Time"));
 			ctcpVersion = addAction(tr("CTCP Version"));
+			addSeparator();
+			ignore = addAction(tr("Ignore"));
 		}
 };
 
@@ -712,11 +716,7 @@ void IRCDockTabContents::showPrivChatContextMenu()
 		return;
 	}
 
-	if (action == menu.whois)
-	{
-		sendWhois(cleanNickname);
-	}
-	else if (action == menu.ctcpPing)
+	if (action == menu.ctcpPing)
 	{
 		sendCtcpPing(cleanNickname);
 	}
@@ -728,10 +728,25 @@ void IRCDockTabContents::showPrivChatContextMenu()
 	{
 		sendCtcpVersion(cleanNickname);
 	}
+	else if (action == menu.ignore)
+	{
+		startIgnoreOperation(cleanNickname);
+	}
+	else if (action == menu.whois)
+	{
+		sendWhois(cleanNickname);
+	}
 	else
 	{
 		qDebug() << "unsupported action" << action->text();
 	}
+}
+
+void IRCDockTabContents::startIgnoreOperation(const QString &nickname)
+{
+	IRCDelayedOperationIgnore *op = new IRCDelayedOperationIgnore(this, network(), nickname);
+	op->setShowPatternPopup(true);
+	op->start();
 }
 
 QString IRCDockTabContents::title() const
@@ -814,10 +829,6 @@ void IRCDockTabContents::userListCustomContextMenuRequested(const QPoint& pos)
 			pAdapter->banUser(cleanNickname, reason);
 		}
 	}
-	else if (pAction == menu.whois)
-	{
-		sendWhois(cleanNickname);
-	}
 	else if (pAction == menu.ctcpTime)
 	{
 		sendCtcpTime(cleanNickname);
@@ -846,6 +857,10 @@ void IRCDockTabContents::userListCustomContextMenuRequested(const QPoint& pos)
 	{
 		pAdapter->setHalfOp(cleanNickname, true);
 	}
+	else if (pAction == menu.ignore)
+	{
+		startIgnoreOperation(cleanNickname);
+	}
 	else if (pAction == menu.kick)
 	{
 		bool bOk = false;
@@ -867,6 +882,10 @@ void IRCDockTabContents::userListCustomContextMenuRequested(const QPoint& pos)
 	else if (pAction == menu.voice)
 	{
 		pAdapter->setVoiced(cleanNickname, true);
+	}
+	else if (pAction == menu.whois)
+	{
+		sendWhois(cleanNickname);
 	}
 }
 
@@ -937,6 +956,7 @@ IRCDockTabContents::UserListMenu::UserListMenu()
 	this->voice = this->addAction(tr("Voice"));
 	this->devoice = this->addAction(tr("Devoice"));
 	this->addSeparator();
+	this->ignore = this->addAction(tr("Ignore"));
 	this->kick = this->addAction(tr("Kick"));
 	this->ban = this->addAction(tr("Ban"));
 

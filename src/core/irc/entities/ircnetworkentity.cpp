@@ -23,6 +23,7 @@
 #include "ircnetworkentity.h"
 
 #include "irc/chatnetworknamer.h"
+#include "patternlist.h"
 #include <QVariantMap>
 
 class IRCNetworkEntity::PrivData
@@ -33,6 +34,7 @@ class IRCNetworkEntity::PrivData
 		QStringList autojoinCommands;
 		bool bAutojoinNetwork;
 		QString description;
+		PatternList ignoredUsers;
 		QString nickservCommand;
 		QString nickservPassword;
 		QString password;
@@ -155,6 +157,16 @@ void IRCNetworkEntity::setPort(unsigned short v)
 	d->port = v;
 }
 
+const PatternList &IRCNetworkEntity::ignoredUsers() const
+{
+	return d->ignoredUsers;
+}
+
+void IRCNetworkEntity::setIgnoredUsers(const PatternList &val)
+{
+	d->ignoredUsers = val;
+}
+
 IRCNetworkEntity IRCNetworkEntity::deserializeQVariant(const QVariant &var)
 {
 	QVariantMap map = var.toMap();
@@ -164,6 +176,7 @@ IRCNetworkEntity IRCNetworkEntity::deserializeQVariant(const QVariant &var)
 	result.setAutojoinCommands(map["autoJoinCommands"].toStringList());
 	result.setAutojoinNetwork(map["autoJoinNetwork"].toBool());
 	result.setDescription(map["description"].toString());
+	result.setIgnoredUsers(PatternList::deserializeQVariant(map["ignoredUsers"]));
 	result.setNickservCommand(map["nickservCommand"].toString());
 	result.setNickservPassword(map["nickservPassword"].toString());
 	result.setPassword(map["password"].toString());
@@ -179,6 +192,7 @@ QVariant IRCNetworkEntity::serializeQVariant() const
 	map["autoJoinCommands"] = autojoinCommands();
 	map["autoJoinNetwork"] = isAutojoinNetwork();
 	map["description"] = description();
+	map["ignoredUsers"] = ignoredUsers().serializeQVariant();
 	map["nickservCommand"] = nickservCommand();
 	map["nickservPassword"] = nickservPassword();
 	map["password"] = password();
