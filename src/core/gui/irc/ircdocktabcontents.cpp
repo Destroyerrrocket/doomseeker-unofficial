@@ -36,6 +36,7 @@
 #include "irc/ircnicknamecompleter.h"
 #include "irc/ircuserinfo.h"
 #include "irc/ircuserlist.h"
+#include "application.h"
 #include "log.h"
 #include <QDateTime>
 #include <QFile>
@@ -93,8 +94,10 @@ IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 
 	btnCommand->setVisible(false);
 
-	connect(btnSend, SIGNAL( clicked() ), this, SLOT( sendMessage() ));
-	connect(leCommandLine, SIGNAL( returnPressed() ), this, SLOT( sendMessage() ));
+	this->connect(btnSend, SIGNAL(clicked()), SLOT(sendMessage()));
+	this->connect(leCommandLine, SIGNAL(returnPressed()), SLOT(sendMessage()));
+	this->connect(gApp, SIGNAL(focusChanged(QWidget*, QWidget*)),
+		SLOT(onFocusChanged(QWidget*, QWidget*)));
 
 	applyAppearanceSettings();
 
@@ -419,6 +422,14 @@ void IRCDockTabContents::newChatWindowIsOpened(IRCChatAdapter* pAdapter)
 	// Once a new chat adapter is opened we need to add it to the master
 	// dock widget.
 	pParentIRCDock->addIRCAdapter(pAdapter);
+}
+
+void IRCDockTabContents::onFocusChanged(QWidget *old, QWidget *now)
+{
+	if (old == lvUserList && now != userListContextMenu)
+	{
+		lvUserList->clearSelection();
+	}
 }
 
 bool IRCDockTabContents::openLog()

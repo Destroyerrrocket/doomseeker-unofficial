@@ -226,6 +226,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 
 	private slots:
 		void blinkTimerSlot();
+		void onFocusChanged(QWidget *old, QWidget *now);
 		void printToSendersNetworksCurrentChatBox(const QString &text, const IRCMessageClass &msgClass);
 		void resetNicknameCompletion();
 		void showChatContextMenu();
