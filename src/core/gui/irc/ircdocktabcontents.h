@@ -243,6 +243,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		void printToSendersNetworksCurrentChatBox(const QString &text, const IRCMessageClass &msgClass);
 		void resetNicknameCompletion();
 		void showChatContextMenu(const QPoint &pos);
+		void showIgnoresManager();
 };
 
 #endif

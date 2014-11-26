@@ -80,6 +80,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/configuration/engineconfigurationbasebox.ui
 	gui/irc/ircdock.ui
 	gui/irc/ircdocktabcontents.ui
+	gui/irc/ircignoresmanager.ui
 	gui/irc/ircnetworkselectionbox.ui
 	gui/widgets/serverconsole.ui
 	gui/aboutdialog.ui
@@ -124,6 +125,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/configuration/engineconfigurationbasebox.h
 	gui/irc/ircdock.h
 	gui/irc/ircdocktabcontents.h
+	gui/irc/ircignoresmanager.h
 	gui/irc/ircnetworkselectionbox.h
 	gui/models/serverlistcolumn.h
 	gui/models/serverlistmodel.h
@@ -246,6 +248,7 @@ set(SOURCE_FILES
 	gui/helpers/playersdiagram.cpp
 	gui/irc/ircdock.cpp
 	gui/irc/ircdocktabcontents.cpp
+	gui/irc/ircignoresmanager.cpp
 	gui/irc/ircnetworkselectionbox.cpp
 	gui/irc/ircsounds.cpp
 	gui/models/serverlistcolumn.cpp

@@ -21,11 +21,13 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircdocktabcontents.h"
+#include "gui/irc/ircignoresmanager.h"
 #include "gui/irc/ircsounds.h"
 #include "gui/irc/ircuserlistmodel.h"
 #include "gui/commongui.h"
 #include "irc/configuration/chatlogscfg.h"
 #include "irc/configuration/ircconfig.h"
+#include "irc/entities/ircnetworkentity.h"
 #include "irc/ops/ircdelayedoperationignore.h"
 #include "irc/chatlogrotate.h"
 #include "irc/chatlogs.h"
@@ -683,14 +685,16 @@ void IRCDockTabContents::showChatContextMenu(const QPoint &pos)
 		menu->addSeparator();
 		appendPrivChatContextMenuOptions(menu);
 	}
-//	menu->addSeparator();
-//	appendGeneralChatContextMenuOptions(menu);
+	menu->addSeparator();
+	appendGeneralChatContextMenuOptions(menu);
 	menu->exec(txtOutputWidget->mapToGlobal(pos));
 	delete menu;
 }
 
 void IRCDockTabContents::appendGeneralChatContextMenuOptions(QMenu *menu)
 {
+	QAction *manageIgnores = menu->addAction(tr("Manage ignores"));
+	this->connect(manageIgnores, SIGNAL(triggered()), SLOT(showIgnoresManager()));
 }
 
 void IRCDockTabContents::appendPrivChatContextMenuOptions(QMenu *menu)
@@ -737,6 +741,14 @@ void IRCDockTabContents::onPrivChatActionTriggered()
 		qDebug() << "Unsupported priv chat action: " << action->data();
 		break;
 	}
+}
+
+void IRCDockTabContents::showIgnoresManager()
+{
+	IRCIgnoresManager *dialog = new IRCIgnoresManager(this, networkEntity().description());
+	connect(dialog, SIGNAL(accepted()), network(), SLOT(reloadNetworkEntityFromConfig()));
+	dialog->setAttribute(Qt::WA_DeleteOnClose);
+	dialog->show();
 }
 
 void IRCDockTabContents::startIgnoreOperation(const QString &nickname)

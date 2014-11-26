@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircnetworkadapter.h"
+#include "irc/configuration/chatnetworkscfg.h"
 #include "irc/entities/ircuserprefix.h"
 #include "irc/ops/ircdelayedoperationban.h"
 #include "irc/ircchanneladapter.h"
@@ -609,6 +610,16 @@ void IRCNetworkAdapter::printMsgLiteral(const QString& recipient, const QString&
 {
 	this->getOrCreateNewChatAdapter(recipient);
 	printWithClass(content, recipient, msgClass);
+}
+
+void IRCNetworkAdapter::reloadNetworkEntityFromConfig()
+{
+	ChatNetworksCfg cfg;
+	IRCNetworkEntity entity = cfg.network(connectionInfo.networkEntity.description());
+	if (entity.isValid())
+	{
+		setNetworkEntity(entity);
+	}
 }
 
 void IRCNetworkAdapter::setNetworkEntity(const IRCNetworkEntity &entity)
