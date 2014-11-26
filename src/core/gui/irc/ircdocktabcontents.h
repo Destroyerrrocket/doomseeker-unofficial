@@ -162,7 +162,14 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 
 		};
 
-		class PrivChatMenu;
+		enum PrivChatMenu
+		{
+			PrivWhois,
+			PrivCtcpPing,
+			PrivCtcpTime,
+			PrivCtcpVersion,
+			PrivIgnore
+		};
 
 		class PrivData;
 		PrivData *d;
@@ -189,6 +196,10 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 */
 		QStringList textOutputContents;
 		UserListMenu* userListContextMenu;
+
+		void appendGeneralChatContextMenuOptions(QMenu *menu);
+		void appendPrivChatContextMenuOptions(QMenu *menu);
+		void appendPrivChatContextMenuAction(QMenu *menu, const QString &text, PrivChatMenu type);
 
 		void completeNickname();
 		QStandardItem* findUserListItem(const QString& nickname);
@@ -218,7 +229,6 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 * @brief Deletes current model, applies a new, empty one.
 		 */
 		void setupNewUserListModel();
-		void showPrivChatContextMenu();
 		void startIgnoreOperation(const QString &nickname);
 
 		QString wrapTextWithMetaTags(const QString &text,
@@ -229,9 +239,10 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 	private slots:
 		void blinkTimerSlot();
 		void onFocusChanged(QWidget *old, QWidget *now);
+		void onPrivChatActionTriggered();
 		void printToSendersNetworksCurrentChatBox(const QString &text, const IRCMessageClass &msgClass);
 		void resetNicknameCompletion();
-		void showChatContextMenu();
+		void showChatContextMenu(const QPoint &pos);
 };
 
 #endif

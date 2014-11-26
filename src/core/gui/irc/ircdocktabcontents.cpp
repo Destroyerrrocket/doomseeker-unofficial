@@ -46,26 +46,6 @@
 #include <cassert>
 
 
-class IRCDockTabContents::PrivChatMenu : public QMenu
-{
-	public:
-		QAction *ctcpPing;
-		QAction *ctcpTime;
-		QAction *ctcpVersion;
-		QAction *ignore;
-		QAction *whois;
-
-		PrivChatMenu()
-		{
-			whois = addAction(tr("Whois"));
-			ctcpPing = addAction(tr("CTCP Ping"));
-			ctcpTime = addAction(tr("CTCP Time"));
-			ctcpVersion = addAction(tr("CTCP Version"));
-			addSeparator();
-			ignore = addAction(tr("Ignore"));
-		}
-};
-
 const int IRCDockTabContents::BLINK_TIMER_DELAY_MS = 650;
 
 class IRCDockTabContents::PrivData
@@ -90,13 +70,12 @@ IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 	this->pParentIRCDock = pParentIRCDock;
 	nicknameCompleter = new IRCNicknameCompleter();
 
+	txtOutputWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 	setupNewUserListModel();
 
 	// There is only one case in which we want this to be visible:
 	// if we are in a channel.
 	this->lvUserList->setVisible(false);
-
-	btnCommand->setVisible(false);
 
 	this->connect(btnSend, SIGNAL(clicked()), SLOT(sendMessage()));
 	this->connect(leCommandLine, SIGNAL(returnPressed()), SLOT(sendMessage()));
@@ -679,7 +658,6 @@ void IRCDockTabContents::setIRCAdapter(IRCAdapterBase* pAdapter)
 
 		case IRCAdapterBase::PrivAdapter:
 		{
-			btnCommand->setVisible(true);
 			break;
 		}
 
@@ -697,48 +675,67 @@ void IRCDockTabContents::setupNewUserListModel()
 	nicknameCompleter->setModel(lvUserList->model());
 }
 
-void IRCDockTabContents::showChatContextMenu()
+void IRCDockTabContents::showChatContextMenu(const QPoint &pos)
 {
-	showPrivChatContextMenu();
+	QMenu *menu = txtOutputWidget->createStandardContextMenu(pos);
+	if (ircAdapter()->adapterType() == IRCAdapterBase::PrivAdapter)
+	{
+		menu->addSeparator();
+		appendPrivChatContextMenuOptions(menu);
+	}
+//	menu->addSeparator();
+//	appendGeneralChatContextMenuOptions(menu);
+	menu->exec(txtOutputWidget->mapToGlobal(pos));
+	delete menu;
 }
 
-void IRCDockTabContents::showPrivChatContextMenu()
+void IRCDockTabContents::appendGeneralChatContextMenuOptions(QMenu *menu)
+{
+}
+
+void IRCDockTabContents::appendPrivChatContextMenuOptions(QMenu *menu)
+{
+	appendPrivChatContextMenuAction(menu, tr("Whois"), PrivWhois);
+	appendPrivChatContextMenuAction(menu, tr("CTCP Ping"), PrivCtcpPing);
+	appendPrivChatContextMenuAction(menu, tr("CTCP Time"), PrivCtcpTime);
+	appendPrivChatContextMenuAction(menu, tr("CTCP Version"), PrivCtcpVersion);
+	appendPrivChatContextMenuAction(menu, tr("Ignore"), PrivIgnore);
+}
+
+void IRCDockTabContents::appendPrivChatContextMenuAction(QMenu *menu,
+	const QString &text, PrivChatMenu type)
+{
+	QAction *action = menu->addAction(text);
+	action->setData(type);
+	this->connect(action, SIGNAL(triggered()), SLOT(onPrivChatActionTriggered()));
+}
+
+void IRCDockTabContents::onPrivChatActionTriggered()
 {
 	QString nickname = ircAdapter()->recipient();
 	QString cleanNickname = IRCUserInfo(nickname, network()).cleanNickname();
-
-	PrivChatMenu menu;
-
-	QPoint pos(0, btnCommand->height());
-	QAction *action = menu.exec(btnCommand->mapToGlobal(pos));
-	if (action == NULL)
+	QAction *action = static_cast<QAction*>(sender());
+	switch (action->data().toInt())
 	{
-		return;
-	}
-
-	if (action == menu.ctcpPing)
-	{
-		sendCtcpPing(cleanNickname);
-	}
-	else if (action == menu.ctcpTime)
-	{
-		sendCtcpTime(cleanNickname);
-	}
-	else if (action == menu.ctcpVersion)
-	{
-		sendCtcpVersion(cleanNickname);
-	}
-	else if (action == menu.ignore)
-	{
-		startIgnoreOperation(cleanNickname);
-	}
-	else if (action == menu.whois)
-	{
+	case PrivWhois:
 		sendWhois(cleanNickname);
-	}
-	else
-	{
-		qDebug() << "unsupported action" << action->text();
+		break;
+	case PrivCtcpPing:
+		sendCtcpPing(cleanNickname);
+		break;
+	case PrivCtcpTime:
+		sendCtcpTime(cleanNickname);
+		break;
+	case PrivCtcpVersion:
+		sendCtcpVersion(cleanNickname);
+		break;
+	case PrivIgnore:
+		startIgnoreOperation(cleanNickname);
+		break;
+	default:
+		assert(0 && "Unsupported priv chat action");
+		qDebug() << "Unsupported priv chat action: " << action->data();
+		break;
 	}
 }
 
