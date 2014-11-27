@@ -66,6 +66,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 */
 		void banUser(const QString& nickname, const QString& reason, const QString& channel);
 
+		QList<IRCAdapterBase*> childrenAdapters();
 		void connect();
 		const IRCNetworkConnectionInfo &connection() const
 		{

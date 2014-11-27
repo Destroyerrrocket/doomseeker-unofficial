@@ -24,6 +24,15 @@
 
 #include "irc/ircnetworkadapter.h"
 
+void IRCAdapterBase::emitMessageToAllChatBoxes(const QString &message, const IRCMessageClass &msgClass)
+{
+	network()->emitMessageWithClass(message, msgClass);
+	foreach (IRCAdapterBase *adapter, network()->childrenAdapters())
+	{
+		adapter->emitMessageWithClass(message, msgClass);
+	}
+}
+
 const IRCNetworkEntity &IRCAdapterBase::networkEntity() const
 {
 	return const_cast<IRCAdapterBase*>(this)->network()->connection().networkEntity;

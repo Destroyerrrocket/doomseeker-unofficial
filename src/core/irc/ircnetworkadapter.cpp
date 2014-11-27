@@ -158,6 +158,16 @@ void IRCNetworkAdapter::banUser(const QString& nickname, const QString& reason, 
 	op->start();
 }
 
+QList<IRCAdapterBase*> IRCNetworkAdapter::childrenAdapters()
+{
+	QList<IRCAdapterBase*> result;
+	foreach (IRCChatAdapter *adapter, chatWindows.values())
+	{
+		result << adapter;
+	}
+	return result;
+}
+
 void IRCNetworkAdapter::connect()
 {
 	emit titleChange();
