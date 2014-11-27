@@ -197,6 +197,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		QStringList textOutputContents;
 		UserListMenu* userListContextMenu;
 
+		void alertIfConfigured();
 		void appendGeneralChatContextMenuOptions(QMenu *menu);
 		void appendPrivChatContextMenuOptions(QMenu *menu);
 		void appendPrivChatContextMenuAction(QMenu *menu, const QString &text, PrivChatMenu type);

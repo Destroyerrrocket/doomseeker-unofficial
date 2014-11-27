@@ -136,6 +136,14 @@ void IRCDockTabContents::adapterTerminating()
 	}
 }
 
+void IRCDockTabContents::alertIfConfigured()
+{
+	if (gIRCConfig.appearance.windowAlertOnImportantChatEvent)
+	{
+		QApplication::alert(gApp->mainWindowAsQWidget());
+	}
+}
+
 void IRCDockTabContents::applyAppearanceSettings()
 {
 	const static QString STYLE_SHEET_BASE_TEMPLATE =
@@ -331,6 +339,7 @@ void IRCDockTabContents::markDate()
 
 void IRCDockTabContents::myNicknameUsedSlot()
 {
+	alertIfConfigured();
 	pParentIRCDock->sounds().playIfAvailable(IRCSounds::NicknameUsed);
 	if (!hasTabFocus())
 	{
@@ -497,6 +506,7 @@ void IRCDockTabContents::receiveMessageWithClass(const QString& message, const I
 	// Play sound if this is Priv adapter.
 	if (pIrcAdapter->adapterType() == IRCAdapterBase::PrivAdapter)
 	{
+		alertIfConfigured();
 		pParentIRCDock->sounds().playIfAvailable(IRCSounds::PrivateMessageReceived);
 
 		// If this tab doesn't have focus, also start blinking the title.

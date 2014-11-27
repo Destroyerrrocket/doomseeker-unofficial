@@ -48,6 +48,7 @@ void CFGIRCAppearance::readSettings()
 
 	// Others
 	this->cbTimestamps->setChecked(gIRCConfig.appearance.timestamps);
+	cbWindowAlertOnImportantEvent->setChecked(gIRCConfig.appearance.windowAlertOnImportantChatEvent);
 }
 
 void CFGIRCAppearance::saveSettings()
@@ -69,6 +70,7 @@ void CFGIRCAppearance::saveSettings()
 
 	// Others
 	gIRCConfig.appearance.timestamps = this->cbTimestamps->isChecked();
+	gIRCConfig.appearance.windowAlertOnImportantChatEvent = cbWindowAlertOnImportantEvent->isChecked();
 }
 
 

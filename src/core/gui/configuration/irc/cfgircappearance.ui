@@ -197,6 +197,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="cbWindowAlertOnImportantEvent">
+     <property name="text">
+      <string>Window/task bar alert on important event (private msg, callsign)</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
