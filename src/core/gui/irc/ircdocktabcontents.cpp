@@ -319,10 +319,7 @@ void IRCDockTabContents::insertMessage(const IRCMessageClass& messageClass, cons
 		this->txtOutputWidget->moveCursor(QTextCursor::End);
 	}
 
-	if (!this->hasTabFocus())
-	{
-		emit titleChange(this);
-	}
+	emit newMessagePrinted();
 }
 
 void IRCDockTabContents::markDate()
@@ -610,7 +607,7 @@ void IRCDockTabContents::setBlinkTitle(bool b)
 
 	if (bEmit)
 	{
-		emit titleChange(this);
+		emit titleBlinkRequested();
 	}
 }
 

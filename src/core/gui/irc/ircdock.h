@@ -89,7 +89,8 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 		void tabCloseRequestedSlot(int index);
 		void tabCurrentChanged(int index);
 		void tabFocusRequest(IRCDockTabContents* pCaller);
-		void titleChange(IRCDockTabContents* pCaller);
+		void titleChange(IRCDockTabContents* caller);
+		void titleChangeWithColorOfSenderIfNotFocused();
 		void toolBarAction(QAction* pAction);
 
 

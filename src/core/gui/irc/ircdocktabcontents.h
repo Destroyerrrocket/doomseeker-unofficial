@@ -90,6 +90,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 */
 		void chatWindowCloseRequest(IRCDockTabContents*);
 
+		void titleBlinkRequested();
 		/**
 		 *	@brief Emitted when the variable returned by
 		 *	IRCAdapterBase::title() might have changed and the
@@ -102,6 +103,8 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 *	its focusRequest() signal.
 		 */
 		void focusRequest(IRCDockTabContents* pCaller);
+
+		void newMessagePrinted();
 
 	protected slots:
 		void adapterFocusRequest();
