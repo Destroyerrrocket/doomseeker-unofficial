@@ -38,7 +38,7 @@ public:
 	/**
 	 * If disabled, a '*!*@host' pattern is assumed. Disabled by default.
 	 */
-	bool setShowPatternPopup(bool b);
+	void setShowPatternPopup(bool b);
 	void start();
 
 private:

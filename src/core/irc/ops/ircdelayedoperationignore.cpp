@@ -99,7 +99,7 @@ void IRCDelayedOperationIgnore::onWhoIsUser(const QString& nickname, const QStri
 	this->deleteLater();
 }
 
-bool IRCDelayedOperationIgnore::setShowPatternPopup(bool b)
+void IRCDelayedOperationIgnore::setShowPatternPopup(bool b)
 {
 	d->showPatternPopup = b;
 }
