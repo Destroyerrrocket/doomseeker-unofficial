@@ -82,12 +82,13 @@ class MAIN_EXPORT GameExeFactory : public QObject
 		ExeFile* server();
 		POLYMORPHIC_SETTER_DECLARE(ExeFile*, GameExeFactory, server, ());
 
+	protected:
+		ExeFile* offline_default();
+		ExeFile* server_default();
+
 	private:
 		class PrivData;
 		PrivData* d;
-
-		ExeFile* offline_default();
-		ExeFile* server_default();
 };
 
 #endif

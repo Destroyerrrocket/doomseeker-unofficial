@@ -90,6 +90,10 @@ void GameHost::addCustomParameters()
 	args().append(params().customParameters());
 }
 
+void GameHost::addDMFlags_default()
+{
+}
+
 void GameHost::addExtra()
 {
 }

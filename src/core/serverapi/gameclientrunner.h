@@ -148,6 +148,7 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 */
 		void addExtra();
 		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, addExtra, ());
+		void addExtra_default();
 
 		/**
 		 * @brief Sets working directory and path to executable in out put
@@ -172,6 +173,7 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 */
 		void addIwad();
 		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, addIwad, ());
+		void addIwad_default();
 
 		/**
 		 * @brief Calls addIwad() then addPwads(), sets JoinError::MissingWads
@@ -275,9 +277,7 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 */
 		void createCommandLineArguments();
 		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, createCommandLineArguments, ());
-		// TODO: Delete this method in pluginapi branch, make all _default() methods protected
-		// if they're not pure virtual.
-		void createCommandLineArguments_default_();
+		void createCommandLineArguments_default();
 
 		/**
 		 * @brief Password for server connection.
@@ -366,10 +366,7 @@ class MAIN_EXPORT GameClientRunner : public QObject
 
 		PrivData* d;
 
-		void addExtra_default() {};
-		void addIwad_default();
 		bool canDownloadWadsInGame() const;
-		void createCommandLineArguments_default();
 		bool isFatalError() const;
 		QString findIwad() const;
 		GamePaths gamePaths();
