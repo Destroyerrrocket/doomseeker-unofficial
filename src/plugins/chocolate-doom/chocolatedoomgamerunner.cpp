@@ -39,7 +39,7 @@ void ChocolateDoomGameClientRunner::createCommandLineArguments()
 {
 	if(server->players().size() > 0)
 	{
-		GameClientRunner::createCommandLineArguments();
+		createCommandLineArguments_default_();
 	}
 	else
 	{
@@ -51,7 +51,7 @@ void ChocolateDoomGameClientRunner::createCommandLineArguments()
 		{
 			csd->commandLineArguments(tmp, args());
 			delete csd;
-			GameClientRunner::createCommandLineArguments();
+			createCommandLineArguments_default_();
 		}
 		else
 		{
