@@ -275,6 +275,9 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 */
 		void createCommandLineArguments();
 		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, createCommandLineArguments, ());
+		// TODO: Delete this method in pluginapi branch, make all _default() methods protected
+		// if they're not pure virtual.
+		void createCommandLineArguments_default_();
 
 		/**
 		 * @brief Password for server connection.

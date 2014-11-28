@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chatnetworkscfg.h
+// patternlist.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,48 +20,21 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef id6b479233_6426_4c75_892a_674e329b97f8
-#define id6b479233_6426_4c75_892a_674e329b97f8
+#ifndef ida6f4579f_f353_49df_a314_5b3ebcdbcad7
+#define ida6f4579f_f353_49df_a314_5b3ebcdbcad7
 
 #include <QList>
+#include <QRegExp>
 #include <QString>
-#include <QWidget>
+#include <QVariant>
 
-class Ini;
-class IniSection;
-class IRCNetworkEntity;
-
-class ChatNetworksCfg
+class PatternList : public QList<QRegExp>
 {
 public:
-	QList<IRCNetworkEntity> autoJoinNetworks() const;
-	bool isAnyNetworkOnAutoJoin() const;
+	bool isExactMatchAny(const QString &candidate) const;
 
-	IRCNetworkEntity lastUsedNetwork() const;
-	void setLastUsedNetwork(const IRCNetworkEntity &network);
-
-	QList<IRCNetworkEntity> networks() const;
-	void setNetworks(const QList<IRCNetworkEntity> &networks);
-
-	IRCNetworkEntity network(const QString &description);
-
-	/**
-	 * @brief Replace network definition in config and move around log files.
-	 *
-	 * Method may fail if chat logs fail to be moved.
-	 */
-	bool replaceNetwork(const QString &oldDescription, const IRCNetworkEntity &newNetwork,
-		QWidget *errorDisplayParentWidget);
-
-private:
-	static const QString SECTIONS_NAMES_PREFIX;
-
-	QVector<IniSection> allNetworksSections() const;
-	void clearNetworkSections();
-	Ini& ini() const;
-	IRCNetworkEntity loadNetwork(const IniSection &section) const;
-	IniSection networkSection(int id);
-	void saveNetwork(IniSection section, const IRCNetworkEntity& network);
+	static PatternList deserializeQVariant(const QVariant &var);
+	QVariant serializeQVariant() const;
 };
 
 #endif

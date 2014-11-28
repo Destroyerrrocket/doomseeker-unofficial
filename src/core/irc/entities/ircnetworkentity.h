@@ -27,6 +27,8 @@
 #include <QString>
 #include <QStringList>
 
+class PatternList;
+
 /**
  * @ingroup group_pluginapi
  * @brief Data structure that describes and defines a connection to an IRC
@@ -69,6 +71,9 @@ class MAIN_EXPORT IRCNetworkEntity
 		 * automatically converted to '_' by setDescription().
 		 */
 		const QString &description() const;
+
+		const PatternList &ignoredUsers() const;
+		void setIgnoredUsers(const PatternList &val);
 
 		/**
 		 * @brief Join this network when Doomseeker starts up.

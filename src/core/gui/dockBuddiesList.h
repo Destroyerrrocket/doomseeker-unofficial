@@ -27,6 +27,7 @@
 #include "global.h"
 #include "serverapi/buddyinfo.h"
 #include "serverapi/serverptr.h"
+#include "patternlist.h"
 #include "ui_dockBuddiesList.h"
 #include "ui_addBuddyDlg.h"
 
@@ -82,7 +83,7 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 
 		QList<DockBuddiesList::BuddyLocationInfo> buddies;
 		QStandardItemModel *buddiesTableModel;
-		QList<QRegExp> pBuddies;
+		PatternList pBuddies;
 
 	protected slots:
 		void deleteBuddy();

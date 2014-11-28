@@ -201,6 +201,7 @@ IRCConfig::AppearanceCfg::AppearanceCfg()
 	this->userListSelectedTextColor = "#cbcb0f";
 	this->userListSelectedBackgroundColor = "#B74600";
 	this->urlColor = "#00F6FF";
+	windowAlertOnImportantChatEvent = true;
 }
 
 void IRCConfig::AppearanceCfg::init(IniSection& section)
@@ -233,6 +234,7 @@ void IRCConfig::AppearanceCfg::load(IniSection& section)
 	this->urlColor = (const QString &)section["UrlColor"];
 	this->userListSelectedTextColor = (const QString &)section["UserListSelectedTextColor"];
 	this->userListSelectedBackgroundColor = (const QString &)section["UserListSelectedBackgroundColor"];
+	windowAlertOnImportantChatEvent = section.value("WindowAlertOnImportantChatEvent", true).toBool();
 }
 
 void IRCConfig::AppearanceCfg::save(IniSection& section)
@@ -249,6 +251,7 @@ void IRCConfig::AppearanceCfg::save(IniSection& section)
 	section["UserListSelectedTextColor"] = this->userListSelectedTextColor;
 	section["UserListSelectedBackgroundColor"] = this->userListSelectedBackgroundColor;
 	section["UrlColor"] = this->urlColor;
+	section.setValue("WindowAlertOnImportantChatEvent", windowAlertOnImportantChatEvent);
 }
 
 //////////////////////////////////////////////////////////////////////////////

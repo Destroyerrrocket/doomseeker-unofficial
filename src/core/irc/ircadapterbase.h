@@ -119,6 +119,8 @@ class IRCAdapterBase : public QObject
 		virtual QString title() const = 0;
 
 	public slots:
+		void emitMessageToAllChatBoxes(const QString &message, const IRCMessageClass &msgClass);
+
 		void sendMessage(const QString& message)
 		{
 			doSendMessage(message, NULL);

@@ -324,6 +324,11 @@ const QString& GameClientRunner::connectPassword() const
 	return d->connectParams.connectPassword();
 }
 
+void GameClientRunner::createCommandLineArguments_default_()
+{
+    createCommandLineArguments_default();
+}
+
 void GameClientRunner::createCommandLineArguments_default()
 {
 	BAIL_ON_ERROR(addGamePaths());

@@ -21,7 +21,9 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircnetworkadapter.h"
+#include "irc/configuration/chatnetworkscfg.h"
 #include "irc/entities/ircuserprefix.h"
+#include "irc/ops/ircdelayedoperationban.h"
 #include "irc/ircchanneladapter.h"
 #include "irc/ircglobal.h"
 #include "irc/ircisupportparser.h"
@@ -108,6 +110,9 @@ IRCNetworkAdapter::IRCNetworkAdapter(const IRCNetworkConnectionInfo &connectionI
 	QObject::connect(ircResponseParser, SIGNAL ( userChangesNickname(const QString&, const QString&) ),
 		this, SLOT( userChangesNickname(const QString&, const QString&) ) );
 
+	QObject::connect(ircResponseParser, SIGNAL(userIdleTime(QString, int)),
+		this, SLOT(userIdleTime(QString, int)));
+
 	QObject::connect(ircResponseParser, SIGNAL ( userJoinsChannel(const QString&, const QString&, const QString&) ),
 		this, SLOT( userJoinsChannel(const QString&, const QString&, const QString&) ) );
 
@@ -115,6 +120,9 @@ IRCNetworkAdapter::IRCNetworkAdapter(const IRCNetworkConnectionInfo &connectionI
 		SIGNAL(userModeChanged(const QString&, const QString&, const QList<char>&, const QList<char>&)),
 		this,
 		SLOT(userModeChanged(const QString&, const QString&, const QList<char>&, const QList<char>&)));
+
+	QObject::connect(ircResponseParser, SIGNAL(userNetworkJoinDateTime(QString, QDateTime)),
+		this, SLOT(userNetworkJoinDateTime(QString, QDateTime)));
 
 	QObject::connect(ircResponseParser, SIGNAL ( userPartsChannel(const QString&, const QString&, const QString&) ),
 		this, SLOT( userPartsChannel(const QString&, const QString&, const QString&) ) );
@@ -145,13 +153,19 @@ void IRCNetworkAdapter::appendISupportLine(const QString &line)
 
 void IRCNetworkAdapter::banUser(const QString& nickname, const QString& reason, const QString& channel)
 {
-	IRCDelayedOperation operation(IRCDelayedOperation::Ban,
-		userPrefixes().cleanNickname(nickname), channel);
-	operation.setAttribute("reason", reason);
-	delayedOperations << operation;
+	IRCDelayedOperationBan *op = new IRCDelayedOperationBan(this, channel, nickname, this);
+	op->setReason(reason);
+	op->start();
+}
 
-	this->sendMessage(QString("/whois %1").arg(
-		userPrefixes().cleanNickname(nickname)));
+QList<IRCAdapterBase*> IRCNetworkAdapter::childrenAdapters()
+{
+	QList<IRCAdapterBase*> result;
+	foreach (IRCChatAdapter *adapter, chatWindows.values())
+	{
+		result << adapter;
+	}
+	return result;
 }
 
 void IRCNetworkAdapter::connect()
@@ -347,6 +361,11 @@ void IRCNetworkAdapter::helloClient(const QString& nickname)
 
 	// Emit this just to be safe.
 	emit titleChange();
+}
+
+const PatternList &IRCNetworkAdapter::ignoredUsersPatterns() const
+{
+	return connection().networkEntity.ignoredUsers();
 }
 
 void IRCNetworkAdapter::ircServerResponse(const QString& message)
@@ -603,6 +622,26 @@ void IRCNetworkAdapter::printMsgLiteral(const QString& recipient, const QString&
 	printWithClass(content, recipient, msgClass);
 }
 
+void IRCNetworkAdapter::reloadNetworkEntityFromConfig()
+{
+	ChatNetworksCfg cfg;
+	IRCNetworkEntity entity = cfg.network(connectionInfo.networkEntity.description());
+	if (entity.isValid())
+	{
+		setNetworkEntity(entity);
+	}
+}
+
+void IRCNetworkAdapter::setNetworkEntity(const IRCNetworkEntity &entity)
+{
+	IRCNetworkEntity oldEntity = connectionInfo.networkEntity;
+	connectionInfo.networkEntity = entity;
+	if (oldEntity.description() != entity.description())
+	{
+		emit titleChange();
+	}
+}
+
 void IRCNetworkAdapter::sendCtcp(const QString &nickname, const QString &command)
 {
 	QString msg = QString("/PRIVMSG %1 %2%3%2").arg(nickname).arg(QChar(0x1)).arg(command);
@@ -685,6 +724,13 @@ void IRCNetworkAdapter::userJoinsChannel(const QString& channel, const QString& 
 	}
 }
 
+void IRCNetworkAdapter::userIdleTime(const QString &nick, int secondsIdle)
+{
+	QString msg = tr("Last activity of user %1 was %2 ago.").arg(
+		nick, Strings::formatTime(secondsIdle));
+	emit messageToNetworksCurrentChatBox(msg, IRCMessageClass::NetworkAction);
+}
+
 void IRCNetworkAdapter::userModeChanged(const QString& channel, const QString& nickname,
 	const QList<char> &addedFlags, const QList<char> &removedFlags)
 {
@@ -693,6 +739,13 @@ void IRCNetworkAdapter::userModeChanged(const QString& channel, const QString& n
 		IRCChatAdapter* pAdapter = this->getOrCreateNewChatAdapter(channel);
 		pAdapter->userModeChanges(nickname, addedFlags, removedFlags);
 	}
+}
+
+void IRCNetworkAdapter::userNetworkJoinDateTime(const QString &nick, const QDateTime &timeOfJoin)
+{
+	QString msg = tr("%1 joined the network on %2").arg(nick,
+		timeOfJoin.toString("yyyy-MM-dd HH:mm:ss"));
+	emit messageToNetworksCurrentChatBox(msg, IRCMessageClass::NetworkAction);
 }
 
 void IRCNetworkAdapter::userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage)
@@ -741,24 +794,9 @@ void IRCNetworkAdapter::userPing(const QString &nickname, qint64 ping)
 
 void IRCNetworkAdapter::whoIsUser(const QString& nickname, const QString& user, const QString& hostName, const QString& realName)
 {
-	// Deliver pending bans.
-	while(true)
-	{
-		const IRCDelayedOperation* pBanOperation =
-			delayedOperations.operationForNickname(IRCDelayedOperation::Ban,
-			userPrefixes().cleanNickname(nickname));
-		if (pBanOperation == NULL)
-		{
-			break;
-		}
-
-		QString banString = "*!*@" + hostName;
-		QString reason = pBanOperation->attribute("reason");
-		this->sendMessage(QString("/mode %1 +b %2").arg(pBanOperation->channel(), banString));
-		this->sendMessage(QString("/kick %1 %2 %3").arg(pBanOperation->channel(), nickname, reason));
-
-		delayedOperations.remove(pBanOperation);
-	}
+	emit messageToNetworksCurrentChatBox(
+		QString("%1 %2 %3 %4").arg(nickname, user, hostName, realName),
+		IRCMessageClass::NetworkAction);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

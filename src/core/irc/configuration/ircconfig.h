@@ -61,6 +61,7 @@ class IRCConfig
 			QFont userListFont;
 			QString userListSelectedTextColor;
 			QString userListSelectedBackgroundColor;
+			bool windowAlertOnImportantChatEvent;
 
 			AppearanceCfg();
 

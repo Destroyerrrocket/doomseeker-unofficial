@@ -109,6 +109,10 @@ IRCRequestParser::IRCRequestParseResult IRCRequestParser::buildOutput()
 		d->output = QString("%1 :%2").arg(d->message, d->tokens.join(" "));
 		return QuitCommand;
 	}
+	else if (d->message == "AWAY")
+	{
+		d->output = QString("%1 :%2").arg(d->message, d->tokens.join(" "));
+	}
 	else if (d->message == "PART")
 	{
 		if (d->tokens.isEmpty())

@@ -8,7 +8,6 @@
 
 #include "irc/ircadapterbase.h"
 #include "irc/ircclient.h"
-#include "irc/ircdelayedoperationlist.h"
 #include "irc/ircnetworkconnectioninfo.h"
 #include "irc/ircrequestparser.h"
 #include "socketsignalsadapter.h"
@@ -67,6 +66,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 */
 		void banUser(const QString& nickname, const QString& reason, const QString& channel);
 
+		QList<IRCAdapterBase*> childrenAdapters();
 		void connect();
 		const IRCNetworkConnectionInfo &connection() const
 		{
@@ -103,6 +103,8 @@ class IRCNetworkAdapter : public IRCAdapterBase
 
 		bool hasRecipient(const QString& recipient) const;
 
+		const PatternList &ignoredUsersPatterns() const;
+
 		/**
 		 * @brief Checks if pAdapter equals this or is one of
 		 *        chat windows of this network.
@@ -130,6 +132,11 @@ class IRCNetworkAdapter : public IRCAdapterBase
 			return this;
 		}
 
+		IRCResponseParser *responseParser()
+		{
+			return ircResponseParser;
+		}
+
 		/**
 		 * @brief Sets channel flags.
 		 *
@@ -143,12 +150,14 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		void sendCtcp(const QString &nickname, const QString &command);
 
 		/**
- 		* @see bEmitAllIRCMessages
- 		*/
+		* @see bEmitAllIRCMessages
+		*/
 		void setEmitAllIRCMessagesEnabled(bool b)
 		{
 			this->bEmitAllIRCMessages = b;
 		}
+
+		void setNetworkEntity(const IRCNetworkEntity &network);
 
 		QString title() const;
 
@@ -180,6 +189,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		void print(const QString& printWhat, const QString& printWhere);
 		void printWithClass(const QString& printWhat, const QString& printWhere, const IRCMessageClass& msgClass);
 		void printToCurrentChatBox(const QString& printWhat, const IRCMessageClass& msgClass);
+		void reloadNetworkEntityFromConfig();
 		void userPing(const QString &nickname, qint64 ping);
 
 	signals:
@@ -219,7 +229,6 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 */
 		QHash<QString, IRCChatAdapter*> chatWindows;
 		IRCNetworkConnectionInfo connectionInfo;
-		IRCDelayedOperationList delayedOperations;
 		IRCClient ircClient;
 		IRCRequestParser ircRequestParser;
 		IRCResponseParser* ircResponseParser;
@@ -262,9 +271,11 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		void privMsgReceived(const QString& recipient, const QString& sender, const QString& content);
 		void sendPong(const QString& toWhom);
 		void userChangesNickname(const QString& oldNickname, const QString& newNickname);
+		void userIdleTime(const QString &nick, int secondsIdle);
 		void userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature);
 		void userModeChanged(const QString& channel, const QString& nickname,
 			const QList<char> &addedFlags, const QList<char> &removedFlags);
+		void userNetworkJoinDateTime(const QString &nick, const QDateTime &timeOfJoin);
 		void userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage);
 		void userQuitsNetwork(const QString& nickname, const QString& farewellMessage);
 		void whoIsUser(const QString& nickname, const QString& user, const QString& hostName, const QString& realName);

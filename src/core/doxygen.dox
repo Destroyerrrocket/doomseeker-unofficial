@@ -32,6 +32,62 @@
 *
 * Detailed help can be obtained by referring to @ref group_pluginapi reference
 * documentation.
+*
+* @section mainpage_whatispurevirtual What is [pure virtual] and how is it different from C++ virtual?
+*
+* To understand why certain 'virtual' methods in Plugin API are
+* exposed through a homebrew interface instead of C++'s standard
+* 'virtual' keyword, we first need to understand what is %Application
+* Binary Interface (or ABI, for short), why it's important to keep it
+* compatible between releases of Doomseeker, and how and when it
+* breaks.
+*
+* To keep things simple, ABI is how compiled Doomseeker executable and
+* plugin's DLLs talk to each other (nomenclature differs a bit between
+* OSes, but let's not digress). Some changes to Doomseeker source code
+* will maintain ABI compatibility, which means that old plugins can
+* talk to new versions of Doomseeker. Some other changes, however,
+* will break the ABI and when old plugin tries to talk to such build
+* of Doomseeker, the whole program may crash. One of the ways to break
+* ABI compatibility is to add a new 'virtual' method to a class that
+* is already implemented by an old version of a plugin. The reason why
+* this happens is excellently described on this page:
+*
+* - https://techbase.kde.org/Policies/Binary_Compatibility_Examples#Add_new_virtuals_to_a_non-leaf_class
+*
+* To allow us to extend existing classes in Doomseeker API with new
+* virtual methods, we produced our own virtualization system. What
+* plugin implementor needs to know is that this involves method
+* pointers and setters for those pointers that need to be called from
+* constructor. This is much simpler than it sounds. To override a
+* <b>[Pure Virtual]</b> or <b>[Virtual]</b> method, just do the
+* following:
+*
+* -# Declare and define method in your implementation as
+*    'private'. It's signature needs to be the same as signature of
+*    the virtual method, so return value and all arguments must be the
+*    same.
+* -# In constructor, call: <code>set_method(&MyImplementation::method);</code>
+*
+* To see how to do this, inspect implementation of
+* ZandronumRConProtocol. If you'd like to learn more, inspect
+* implementation of its base class: RConProtocol.
+*
+* In Doomseeker, you can encounter following types of virtual methods:
+*
+* - Standard C++ virtual and abstract methods. Override them as
+*   you'd override any other method.
+* - Doomseeker's <b>[Virtual]</b> method that provides default
+*   implementation but can be overwritten.
+* - Doomseeker's <b>[Pure Virtual]</b> method that provides no
+*   default implementation. Unfortunately, the code will
+*   compile even if you don't prove any implementation, however
+*   Doomseeker's debug builds will exit with assert()
+*   error if such method is called.
+*
+* More reading on ABI compatibility:
+*
+* * https://techbase.kde.org/Policies/Binary_Compatibility_Issues_With_C++
 */
 
 /**

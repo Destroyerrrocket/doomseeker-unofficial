@@ -90,6 +90,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 */
 		void chatWindowCloseRequest(IRCDockTabContents*);
 
+		void titleBlinkRequested();
 		/**
 		 *	@brief Emitted when the variable returned by
 		 *	IRCAdapterBase::title() might have changed and the
@@ -102,6 +103,8 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 *	its focusRequest() signal.
 		 */
 		void focusRequest(IRCDockTabContents* pCaller);
+
+		void newMessagePrinted();
 
 	protected slots:
 		void adapterFocusRequest();
@@ -143,6 +146,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 				UserListMenu();
 
 				QAction* ban;
+				QAction *whois;
 				QAction *ctcpTime;
 				QAction *ctcpPing;
 				QAction *ctcpVersion;
@@ -151,6 +155,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 				QAction* devoice;
 				QAction* halfOp;
 				QAction* kick;
+				QAction *ignore;
 				QAction* op;
 				QAction* openChatWindow;
 				QAction* voice;
@@ -160,7 +165,14 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 
 		};
 
-		class PrivChatMenu;
+		enum PrivChatMenu
+		{
+			PrivWhois,
+			PrivCtcpPing,
+			PrivCtcpTime,
+			PrivCtcpVersion,
+			PrivIgnore
+		};
 
 		class PrivData;
 		PrivData *d;
@@ -188,6 +200,11 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		QStringList textOutputContents;
 		UserListMenu* userListContextMenu;
 
+		void alertIfConfigured();
+		void appendGeneralChatContextMenuOptions(QMenu *menu);
+		void appendPrivChatContextMenuOptions(QMenu *menu);
+		void appendPrivChatContextMenuAction(QMenu *menu, const QString &text, PrivChatMenu type);
+
 		void completeNickname();
 		QStandardItem* findUserListItem(const QString& nickname);
 		UserListMenu& getUserListContextMenu();
@@ -204,6 +221,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		void sendCtcpPing(const QString &nickname);
 		void sendCtcpTime(const QString &nickname);
 		void sendCtcpVersion(const QString &nickname);
+		void sendWhois(const QString &nickname);
 
 		/**
 		 *	Sets bBlinkTitle to specified value and emits
@@ -215,7 +233,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		 * @brief Deletes current model, applies a new, empty one.
 		 */
 		void setupNewUserListModel();
-		void showPrivChatContextMenu();
+		void startIgnoreOperation(const QString &nickname);
 
 		QString wrapTextWithMetaTags(const QString &text,
 			const IRCMessageClass &messageClass) const;
@@ -224,9 +242,12 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 
 	private slots:
 		void blinkTimerSlot();
+		void onFocusChanged(QWidget *old, QWidget *now);
+		void onPrivChatActionTriggered();
 		void printToSendersNetworksCurrentChatBox(const QString &text, const IRCMessageClass &msgClass);
 		void resetNicknameCompletion();
-		void showChatContextMenu();
+		void showChatContextMenu(const QPoint &pos);
+		void showIgnoresManager();
 };
 
 #endif

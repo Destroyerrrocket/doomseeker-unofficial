@@ -69,6 +69,15 @@ class IRCResponseType
 			/// 254 - how many channels,
 			RPLLUserChannels,
 
+			/// 301
+			RPLAway,
+
+			/**
+			 * @brief 307 - no idea what this is, but we'll treat it
+			 *        the same way we treat RPLWhoIsSpecial.
+			 */
+			RPLWhoIsRegnick,
+
 			/**
  			* @brief 255 - how many clients on how many servers,
  			*
@@ -79,6 +88,34 @@ class IRCResponseType
 
 			/// 311
 			RPLWhoIsUser,
+
+			/// 312
+			RPLWhoIsServer,
+
+			/// 313
+			RPLWhoIsOperator,
+
+			/// 317
+			RPLWhoIsIdle,
+
+			/// 318
+			RPLEndOfWhoIs,
+
+			/// 319
+			RPLWhoIsChannels,
+
+			/**
+			 * @brief 320 - it's inconclusive what this code means.
+			 *
+			 * This source https://www.alien.net.au/irc/irc2numerics.html
+			 * specified that this can have more than one meaning.
+			 * I'm not sure what to expect here, but this message will
+			 * be treated the same as a generic WHOIS reply.
+			 */
+			RPLWhoIsSpecial,
+
+			/// 330
+			RPLWhoIsAccount,
 
 			/// 332
 			RPLTopic,
@@ -100,6 +137,12 @@ class IRCResponseType
 
 			/// 376 - end of the message of the day
 			RPLEndOfMOTD,
+
+			/// 378
+			RPLWhoIsHost,
+
+			/// 379
+			RPLWhoIsModes,
 
 			// === Here are errors with no text representation ===
 

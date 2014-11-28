@@ -62,6 +62,10 @@ IRCDockTabContents* IRCDock::addIRCAdapter(IRCAdapterBase* pIRCAdapter)
 	connect(pNewAdapterWidget, SIGNAL( chatWindowCloseRequest(IRCDockTabContents*) ), SLOT( chatWindowCloseRequestSlot(IRCDockTabContents*) ) );
 	connect(pNewAdapterWidget, SIGNAL( focusRequest(IRCDockTabContents*) ), SLOT( tabFocusRequest(IRCDockTabContents*) ) );
 	connect(pNewAdapterWidget, SIGNAL( titleChange(IRCDockTabContents*) ), SLOT( titleChange(IRCDockTabContents*) ) );
+	connect(pNewAdapterWidget, SIGNAL(newMessagePrinted()),
+		SLOT(titleChangeWithColorOfSenderIfNotFocused()));
+	connect(pNewAdapterWidget, SIGNAL(titleBlinkRequested()),
+		SLOT(titleChangeWithColorOfSenderIfNotFocused()));
 
 	pNewAdapterWidget->setIRCAdapter(pIRCAdapter);
 	tabWidget->addTab(pNewAdapterWidget, pNewAdapterWidget->icon(), pNewAdapterWidget->title());
@@ -208,14 +212,23 @@ IRCDockTabContents *IRCDock::tabWithFocus()
 	return NULL;
 }
 
-void IRCDock::titleChange(IRCDockTabContents* pCaller)
+void IRCDock::titleChange(IRCDockTabContents* caller)
 {
-	int tabIndex = tabWidget->indexOf(pCaller);
+	int tabIndex = tabWidget->indexOf(caller);
 	if (tabIndex >= 0)
 	{
-		QString newTitle = pCaller->title();
-		tabWidget->setTabText(tabIndex, newTitle);
-		tabWidget->tabBarPublic()->setTabTextColor(tabIndex, pCaller->titleColor());
+		tabWidget->setTabText(tabIndex, caller->title());
+	}
+}
+
+void IRCDock::titleChangeWithColorOfSenderIfNotFocused()
+{
+	IRCDockTabContents* caller = static_cast<IRCDockTabContents*>(sender());
+	int tabIndex = tabWidget->indexOf(caller);
+	if (tabIndex >= 0)
+	{
+		tabWidget->setTabText(tabIndex, caller->title());
+		tabWidget->tabBarPublic()->setTabTextColor(tabIndex, caller->titleColor());
 	}
 }
 

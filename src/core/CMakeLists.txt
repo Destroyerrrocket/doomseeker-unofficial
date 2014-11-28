@@ -80,6 +80,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/configuration/engineconfigurationbasebox.ui
 	gui/irc/ircdock.ui
 	gui/irc/ircdocktabcontents.ui
+	gui/irc/ircignoresmanager.ui
 	gui/irc/ircnetworkselectionbox.ui
 	gui/widgets/serverconsole.ui
 	gui/aboutdialog.ui
@@ -124,6 +125,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/configuration/engineconfigurationbasebox.h
 	gui/irc/ircdock.h
 	gui/irc/ircdocktabcontents.h
+	gui/irc/ircignoresmanager.h
 	gui/irc/ircnetworkselectionbox.h
 	gui/models/serverlistcolumn.h
 	gui/models/serverlistmodel.h
@@ -166,6 +168,9 @@ set(DOOMSEEKER_QT_FILES
 	ip2c/ip2cloader.h
 	ip2c/ip2cparser.h
 	ip2c/ip2cupdater.h
+	irc/ops/ircdelayedoperation.h
+	irc/ops/ircdelayedoperationban.h
+	irc/ops/ircdelayedoperationignore.h
 	irc/chatlogs.h
 	irc/ircadapterbase.h
 	irc/ircchanneladapter.h
@@ -243,6 +248,7 @@ set(SOURCE_FILES
 	gui/helpers/playersdiagram.cpp
 	gui/irc/ircdock.cpp
 	gui/irc/ircdocktabcontents.cpp
+	gui/irc/ircignoresmanager.cpp
 	gui/irc/ircnetworkselectionbox.cpp
 	gui/irc/ircsounds.cpp
 	gui/models/serverlistcolumn.cpp
@@ -299,6 +305,9 @@ set(SOURCE_FILES
 	irc/entities/ircnetworkentity.cpp
 	irc/entities/ircresponseparseresult.cpp
 	irc/entities/ircuserprefix.cpp
+	irc/ops/ircdelayedoperation.cpp
+	irc/ops/ircdelayedoperationban.cpp
+	irc/ops/ircdelayedoperationignore.cpp
 	irc/chatlogarchive.cpp
 	irc/chatlogrotate.cpp
 	irc/chatlogs.cpp
@@ -308,8 +317,6 @@ set(SOURCE_FILES
 	irc/ircchatadapter.cpp
 	irc/ircclient.cpp
 	irc/ircctcpparser.cpp
-	irc/ircdelayedoperation.cpp
-	irc/ircdelayedoperationlist.cpp
 	irc/ircglobal.cpp
 	irc/ircisupportparser.cpp
 	irc/ircmessageclass.cpp
@@ -383,6 +390,7 @@ set(SOURCE_FILES
 	localizationinfo.cpp
 	log.cpp
 	main.cpp
+	patternlist.cpp
 	random.cpp
 	scanner.cpp
 	speedcalculator.cpp
@@ -426,8 +434,6 @@ set(HEADER_FILES
 	irc/chatlogrotate.h
 	irc/chatnetworknamer.h
 	irc/ircchatadapter.h
-	irc/ircdelayedoperation.h
-	irc/ircdelayedoperationlist.h
 	irc/ircglobal.h
 	irc/ircisupportparser.h
 	irc/ircmessageclass.h
@@ -479,6 +485,7 @@ set(HEADER_FILES
 	json.h
 	localization.h
 	localizationinfo.h
+	patternlist.h
 	random.h
 	qtmetapointer.h
 	scanner.h

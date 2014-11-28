@@ -71,13 +71,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="btnCommand">
-         <property name="text">
-          <string>Command</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QPushButton" name="btnPauseTextArea">
          <property name="toolTip">
           <string>Do not scroll text area</string>
@@ -142,22 +135,6 @@
  </resources>
  <connections>
   <connection>
-   <sender>btnCommand</sender>
-   <signal>clicked()</signal>
-   <receiver>IRCDockTabContents</receiver>
-   <slot>showChatContextMenu()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>417</x>
-     <y>274</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>469</x>
-     <y>296</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>leCommandLine</sender>
    <signal>cursorPositionChanged(int,int)</signal>
    <receiver>IRCDockTabContents</receiver>
@@ -189,9 +166,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>txtOutputWidget</sender>
+   <signal>customContextMenuRequested(QPoint)</signal>
+   <receiver>IRCDockTabContents</receiver>
+   <slot>showChatContextMenu(QPoint)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>474</x>
+     <y>81</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>510</x>
+     <y>82</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
-  <slot>showChatContextMenu()</slot>
+  <slot>showChatContextMenu(QPoint)</slot>
   <slot>resetNicknameCompletion()</slot>
  </slots>
 </ui>

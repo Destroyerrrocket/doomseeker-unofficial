@@ -33,6 +33,7 @@
 #include "irc/ircnetworkadapter.h"
 #include "irc/ircuserinfo.h"
 #include "log.h"
+#include "patternlist.h"
 #include "strings.h"
 
 class IRCResponseParser::PrivData
@@ -71,6 +72,11 @@ IRCResponseParser::FlagModes IRCResponseParser::getFlagMode(char c)
 	}
 }
 
+bool IRCResponseParser::isPrefixIgnored() const
+{
+	return d->network->ignoredUsersPatterns().isExactMatchAny(d->prefix);
+}
+
 QString IRCResponseParser::joinAndTrimColonIfNecessary(const QStringList& strList) const
 {
 	QString joined = strList.join(" ");
@@ -87,7 +93,7 @@ IRCResponseParseResult IRCResponseParser::parse(const QString& message)
 	QString prefix = prefixRegExp.cap(1);
 	QString remainder = formattedMessage.mid(prefix.length());
 
-	d->prefix = Strings::triml(prefix, ":");
+	d->prefix = Strings::triml(prefix, ":").trimmed();
 
 	// Obtain message sender from the prefix.
 	int indexExclamation = prefix.indexOf('!');
@@ -128,6 +134,16 @@ IRCResponseParseResult IRCResponseParser::parseMessage()
 			break;
 		}
 
+		case IRCResponseType::RPLAway:
+		{
+			d->params.takeFirst(); // Own nick.
+			QString nickname = d->params.takeFirst();
+			QString reason = joinAndTrimColonIfNecessary(d->params);
+			emit printToNetworksCurrentChatBox(tr("User %1 is away: %2").arg(nickname, reason),
+				IRCMessageClass::NetworkAction);
+			break;
+		}
+
 		case IRCResponseType::RPLWhoIsUser:
 		{
 			// First param is unnecessary
@@ -140,6 +156,54 @@ IRCResponseParseResult IRCResponseParser::parseMessage()
 			QString realName = joinAndTrimColonIfNecessary(d->params);
 
 			emit whoIsUser(nickname, user, hostName, realName);
+			break;
+		}
+
+		case IRCResponseType::RPLWhoIsRegnick:
+		case IRCResponseType::RPLWhoIsServer:
+		case IRCResponseType::RPLWhoIsOperator:
+		case IRCResponseType::RPLWhoIsHost:
+		case IRCResponseType::RPLWhoIsModes:
+		case IRCResponseType::RPLWhoIsSpecial:
+		case IRCResponseType::RPLEndOfWhoIs:
+		{
+			d->params.takeFirst(); // Own nick.
+			emit printToNetworksCurrentChatBox(d->params.join(" "), IRCMessageClass::NetworkAction);
+			break;
+		}
+
+		case IRCResponseType::RPLWhoIsIdle:
+		{
+			d->params.takeFirst(); // Own nick.
+			QString nick = d->params.takeFirst();
+			int secondsIdle = d->params.takeFirst().toInt();
+			emit userIdleTime(nick, secondsIdle);
+			if (d->params.first().toInt() != 0)
+			{
+				int joinedOn = d->params.takeFirst().toInt();
+				emit userNetworkJoinDateTime(nick, QDateTime::fromTime_t(joinedOn));
+			}
+			break;
+		}
+
+		case IRCResponseType::RPLWhoIsChannels:
+		{
+			d->params.takeFirst(); // Own nick.
+			QString nick = d->params.takeFirst();
+			QString channels = joinAndTrimColonIfNecessary(d->params);
+			emit printToNetworksCurrentChatBox(tr("%1 is on channels: %2").arg(nick, channels),
+				IRCMessageClass::NetworkAction);
+			break;
+		}
+
+		case IRCResponseType::RPLWhoIsAccount:
+		{
+			d->params.takeFirst(); // Own nick.
+			QString nick = d->params.takeFirst();
+			QString account = d->params.takeFirst();
+			QString message = joinAndTrimColonIfNecessary(d->params);
+			emit printToNetworksCurrentChatBox(QString("%1 %2 %3").arg(nick, message, account),
+				IRCMessageClass::NetworkAction);
 			break;
 		}
 
@@ -440,6 +504,10 @@ IRCResponseParseResult IRCResponseParser::parseMessage()
 
 void IRCResponseParser::parsePrivMsgOrNotice()
 {
+	if (isPrefixIgnored())
+	{
+		return;
+	}
 	QString recipient = d->params.takeFirst();
 	if (!IRCGlobal::isChannelName(recipient))
 	{

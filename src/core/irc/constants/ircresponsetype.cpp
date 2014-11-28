@@ -98,8 +98,35 @@ QString IRCResponseType::toRfcString(MsgType type)
 		case RPLLUserMe:
 			return "255";
 
+		case RPLAway:
+			return "301";
+
+		case RPLWhoIsRegnick:
+			return "307";
+
 		case RPLWhoIsUser:
 			return "311";
+
+		case RPLWhoIsServer:
+			return "312";
+
+		case RPLWhoIsOperator:
+			return "313";
+
+		case RPLWhoIsIdle:
+			return "317";
+
+		case RPLEndOfWhoIs:
+			return "318";
+
+		case RPLWhoIsChannels:
+			return "319";
+
+		case RPLWhoIsSpecial:
+			return "320";
+
+		case RPLWhoIsAccount:
+			return "330";
 
 		case RPLTopic:
 			return "332";
@@ -121,6 +148,12 @@ QString IRCResponseType::toRfcString(MsgType type)
 
 		case RPLEndOfMOTD:
 			return "376";
+
+		case RPLWhoIsHost:
+			return "378";
+
+		case RPLWhoIsModes:
+			return "379";
 
 		case ERRNoSuchNick:
 			return "401";

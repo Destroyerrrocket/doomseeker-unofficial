@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// ircadapterbase.cpp
+// patternlist.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,20 +20,38 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "ircadapterbase.h"
+#include "patternlist.h"
 
-#include "irc/ircnetworkadapter.h"
+#include <QDebug>
 
-void IRCAdapterBase::emitMessageToAllChatBoxes(const QString &message, const IRCMessageClass &msgClass)
+bool PatternList::isExactMatchAny(const QString &candidate) const
 {
-	network()->emitMessageWithClass(message, msgClass);
-	foreach (IRCAdapterBase *adapter, network()->childrenAdapters())
+	foreach (const QRegExp &matcher, *this)
 	{
-		adapter->emitMessageWithClass(message, msgClass);
+		if (matcher.exactMatch(candidate))
+		{
+			return true;
+		}
 	}
+	return false;
 }
 
-const IRCNetworkEntity &IRCAdapterBase::networkEntity() const
+PatternList PatternList::deserializeQVariant(const QVariant &var)
 {
-	return const_cast<IRCAdapterBase*>(this)->network()->connection().networkEntity;
+	PatternList result;
+	foreach (const QVariant &element, var.toList())
+	{
+		result << element.toRegExp();
+	}
+	return result;
+}
+
+QVariant PatternList::serializeQVariant() const
+{
+	QVariantList var;
+	foreach (const QRegExp &pattern, *this)
+	{
+		var << pattern;
+	}
+	return var;
 }

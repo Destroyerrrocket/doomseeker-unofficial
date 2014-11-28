@@ -25,6 +25,7 @@
 
 #include "irc/entities/ircresponseparseresult.h"
 
+#include <QDateTime>
 #include <QObject>
 #include <QString>
 
@@ -100,7 +101,9 @@ class IRCResponseParser : public QObject
 		void privMsgLiteralReceived(const QString& recipient, const QString& content, const IRCMessageClass& msgClass);
 		void sendPongMessage(const QString& sendWhere);
 		void userChangesNickname(const QString& oldNickname, const QString& newNickname);
+		void userIdleTime(const QString &nick, int secondsIdle);
 		void userJoinsChannel(const QString& channel, const QString& nickname, const QString& fullSignature);
+		void userNetworkJoinDateTime(const QString &nick, const QDateTime &timeOfJoin);
 		void userModeChanged(const QString& channel, const QString& nickname,
 			const QList<char> &flagsAdded, const QList<char> &flagsRemoved);
 		void userPartsChannel(const QString& channel, const QString& nickname, const QString& farewellMessage);
@@ -122,6 +125,7 @@ class IRCResponseParser : public QObject
 		class PrivData;
 		PrivData *d;
 
+		bool isPrefixIgnored() const;
 		QString joinAndTrimColonIfNecessary(const QStringList& strList) const;
 
 		/**

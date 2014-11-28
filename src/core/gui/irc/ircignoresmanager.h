@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// ircadapterbase.cpp
+// ircignoresmanager.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,20 +20,36 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "ircadapterbase.h"
+#ifndef id16362687_1562_4529_ac24_a94f29a52c9f
+#define id16362687_1562_4529_ac24_a94f29a52c9f
 
-#include "irc/ircnetworkadapter.h"
+#include <QDialog>
+#include "ui_ircignoresmanager.h"
 
-void IRCAdapterBase::emitMessageToAllChatBoxes(const QString &message, const IRCMessageClass &msgClass)
+class PatternList;
+
+class IRCIgnoresManager : public QDialog, private Ui::IRCIgnoresManager
 {
-	network()->emitMessageWithClass(message, msgClass);
-	foreach (IRCAdapterBase *adapter, network()->childrenAdapters())
-	{
-		adapter->emitMessageWithClass(message, msgClass);
-	}
-}
+Q_OBJECT
 
-const IRCNetworkEntity &IRCAdapterBase::networkEntity() const
-{
-	return const_cast<IRCAdapterBase*>(this)->network()->connection().networkEntity;
-}
+public:
+	IRCIgnoresManager(QWidget *parent, const QString &networkDescription);
+	~IRCIgnoresManager();
+
+protected:
+	void done(int result);
+	void keyPressEvent(QKeyEvent *event);
+
+private:
+	class PrivData;
+	PrivData *d;
+
+	void loadItems();
+	PatternList patterns() const;
+	void saveItems();
+
+private slots:
+	void deleteSelected();
+};
+
+#endif

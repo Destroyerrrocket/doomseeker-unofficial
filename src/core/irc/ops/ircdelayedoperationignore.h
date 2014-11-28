@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// ircadapterbase.cpp
+// ircdelayedoperationignore.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,20 +20,34 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "ircadapterbase.h"
+#ifndef id6d18a0bf_8b5a_44d2_be14_a0de3c5175fe
+#define id6d18a0bf_8b5a_44d2_be14_a0de3c5175fe
 
-#include "irc/ircnetworkadapter.h"
+#include "irc/ops/ircdelayedoperation.h"
 
-void IRCAdapterBase::emitMessageToAllChatBoxes(const QString &message, const IRCMessageClass &msgClass)
+class IRCNetworkAdapter;
+
+class IRCDelayedOperationIgnore : public IRCDelayedOperation
 {
-	network()->emitMessageWithClass(message, msgClass);
-	foreach (IRCAdapterBase *adapter, network()->childrenAdapters())
-	{
-		adapter->emitMessageWithClass(message, msgClass);
-	}
-}
+Q_OBJECT
 
-const IRCNetworkEntity &IRCAdapterBase::networkEntity() const
-{
-	return const_cast<IRCAdapterBase*>(this)->network()->connection().networkEntity;
-}
+public:
+	IRCDelayedOperationIgnore(QWidget *parent, IRCNetworkAdapter *network, const QString &nickname);
+	~IRCDelayedOperationIgnore();
+
+	/**
+	 * If disabled, a '*!*@host' pattern is assumed. Disabled by default.
+	 */
+	void setShowPatternPopup(bool b);
+	void start();
+
+private:
+	class PrivData;
+	PrivData *d;
+
+private slots:
+	void onWhoIsUser(const QString& nickname, const QString& user,
+		const QString& hostName, const QString& realName);
+};
+
+#endif
