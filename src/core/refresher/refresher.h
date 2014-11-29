@@ -141,7 +141,7 @@ class Refresher : public QObject
 
 	private slots:
 		void attemptTimeoutMasters();
-		void masterFinishedRefreshing(MasterClient* pMaster);
+		void masterFinishedRefreshing();
 		void readAllPendingDatagrams();
 		void sendMasterQueries();
 		void sendServerQueries();

@@ -65,24 +65,29 @@ class MasterManager : public MasterClient
 		void masterMessage(MasterClient* pSender, const QString& title, const QString& content, bool isError);
 		void masterMessageImportant(MasterClient* pSender, const Message& objMessage);
 
-	protected:
+	private:
 		CustomServers *customServers;
 		QList<MasterClient *> masters;
 		QSet<MasterClient *> mastersBeingRefreshed;
-		QList<MasterClientSignalProxy*> mastersReceivers;
 
 		QByteArray createServerListRequest() { return QByteArray(); }
 		Response readMasterResponse(const QByteArray &data);
 		void timeoutRefreshEx();
 
-	protected slots:
-		void masterListUpdated(MasterClient* pSender);
+	private slots:
+		void masterListUpdated();
 
-		void readMasterMessage(MasterClient* pSender, const QString& title, const QString& content, bool isError)
+		void forwardMasterMessage(const QString& title, const QString& content, bool isError)
 		{
-			emit masterMessage(pSender, title, content, isError);
+			MasterClient* master = static_cast<MasterClient*>(sender());
+			emit masterMessage(master, title, content, isError);
+		}
+
+		void forwardMasterMessageImportant(const Message &message)
+		{
+			MasterClient* master = static_cast<MasterClient*>(sender());
+			emit masterMessageImportant(master, message);
 		}
 };
 
 #endif
-

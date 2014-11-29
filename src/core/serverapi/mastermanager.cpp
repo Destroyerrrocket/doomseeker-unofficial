@@ -24,7 +24,6 @@
 
 #include "mastermanager.h"
 
-#include "serverapi/masterclientsignalproxy.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
 #include "customservers.h"
@@ -41,11 +40,6 @@ MasterManager::~MasterManager()
 {
 	clearServers();
 
-	for (int i = 0; i < mastersReceivers.size(); ++i)
-	{
-		delete mastersReceivers[i];
-	}
-
 	for(int i = 0;i < masters.size();i++)
 		delete masters[i];
 
@@ -60,15 +54,11 @@ void MasterManager::addMaster(MasterClient *master)
 	masters.append(master);
 	master->setEnabled(true);
 
-	MasterClientSignalProxy* pMasterReceiver = new MasterClientSignalProxy(master);
-	connect(pMasterReceiver, SIGNAL( listUpdated(MasterClient*) ),
-		this, SLOT( masterListUpdated(MasterClient*) ) );
-	connect(pMasterReceiver, SIGNAL( message(MasterClient*, const QString&, const QString&, bool) ),
-		this, SIGNAL( masterMessage(MasterClient*, const QString&, const QString&, bool) ) );
-	connect(pMasterReceiver, SIGNAL( messageImportant(MasterClient*, const Message&) ),
-		this, SIGNAL( masterMessageImportant(MasterClient*, const Message&) ));
-
-	mastersReceivers.append(pMasterReceiver);
+	this->connect(master, SIGNAL(listUpdated()), SLOT(masterListUpdated()));
+	this->connect(master, SIGNAL(message(QString, QString, bool)),
+		SLOT(forwardMasterMessage(QString, QString, bool)));
+	this->connect(master, SIGNAL(messageImportant(Message)),
+		SLOT(forwardMasterMessageImportant(Message)));
 }
 
 QList<ServerPtr> MasterManager::allServers() const
@@ -82,15 +72,16 @@ QList<ServerPtr> MasterManager::allServers() const
 	return result;
 }
 
-void MasterManager::masterListUpdated(MasterClient* pSender)
+void MasterManager::masterListUpdated()
 {
-	foreach(ServerPtr pServer, pSender->servers())
+	MasterClient *master = static_cast<MasterClient*>(sender());
+	foreach(ServerPtr pServer, master->servers())
 	{
 		registerNewServer(pServer);
 	}
 
-	emit listUpdatedForMaster(pSender);
-	mastersBeingRefreshed.remove(pSender);
+	emit listUpdatedForMaster(master);
+	mastersBeingRefreshed.remove(master);
 	if (mastersBeingRefreshed.isEmpty())
 	{
 		emit listUpdated();
