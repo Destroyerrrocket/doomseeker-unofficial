@@ -500,7 +500,7 @@ bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 	params.setConnectPassword(leConnectPassword->text());
 	params.setIngamePassword(leJoinPassword->text());
 	params.setRconPassword(leRConPassword->text());
-	params.setPort(spinPort->value());
+	params.setPort(spinPort->isEnabled() ? spinPort->value() : 0);
 	params.setSkill(cboDifficulty->currentIndex());
 	params.setUrl(leURL->text());
 
@@ -937,6 +937,8 @@ void CreateServerDialog::makeSetupServerDialog(const EnginePlugin *plugin)
 	d->bSuppressMissingExeErrors = true;
 	d->bIsServerSetup = true;
 	setEngine(plugin->data()->name);
+
+	cbAllowTheGameToChoosePort->hide();
 
 	// Disable some stuff
 	QWidget *disableControls[] =
