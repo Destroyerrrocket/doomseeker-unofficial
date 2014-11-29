@@ -51,7 +51,9 @@ void ChocolateDoomGameClientRunner::createCommandLineArguments()
 		{
 			csd->commandLineArguments(tmp, args());
 			delete csd;
-			createCommandLineArguments_default_();
+			addGamePaths();
+			addConnectCommand();
+			addCustomParameters();
 		}
 		else
 		{

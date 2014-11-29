@@ -48,7 +48,7 @@ void ChocolateDoomGameHost::addExtra()
 	}
 
 	// Convert map name to proper number for -warp
-	QString mapname = params().map().toUpper();
+	QString mapname = params().map().trimmed().toUpper();
 	if(mapname.length() == 5 && mapname.startsWith("MAP"))
 		args() << "-warp" << mapname.right(2);
 	else if(mapname.length() == 4 && mapname[0] == 'E' && mapname[2] == 'M')
