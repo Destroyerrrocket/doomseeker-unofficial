@@ -933,7 +933,7 @@ void CreateServerDialog::lstAdditionalFilesPathDnd(const QString& path)
 	}
 }
 
-void CreateServerDialog::makeSetupServerDialog(const EnginePlugin *plugin)
+void CreateServerDialog::makeSetupRemoteGameDialog(const EnginePlugin *plugin)
 {
 	d->bSuppressMissingExeErrors = true;
 	d->remoteGameSetup = true;

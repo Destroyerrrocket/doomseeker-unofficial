@@ -47,7 +47,7 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		virtual ~CreateServerDialog();
 
 		bool commandLineArguments(QString &executable, QStringList &args);
-		void makeSetupServerDialog(const EnginePlugin *plugin);
+		void makeSetupRemoteGameDialog(const EnginePlugin *plugin);
 
 	private slots:
 		void btnAddMapToMaplistClicked();
