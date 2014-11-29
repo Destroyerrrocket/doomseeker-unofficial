@@ -58,7 +58,7 @@ class CreateServerDialog::PrivData
 {
 	public:
 		bool bSuppressMissingExeErrors;
-		bool bIsServerSetup;
+		bool remoteGameSetup;
 		QList<CreateServerDialogPage*> currentCustomPages;
 		EnginePlugin *currentEngine;
 		QList<DMFlagsTabWidget*> dmFlagsTabs;
@@ -76,7 +76,7 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 	setAttribute(Qt::WA_DeleteOnClose);
 
 	d->bSuppressMissingExeErrors = true;
-	d->bIsServerSetup = false;
+	d->remoteGameSetup = false;
 	d->currentEngine = NULL;
 
 	setupUi(this);
@@ -338,7 +338,7 @@ void CreateServerDialog::btnSaveClicked()
 
 void CreateServerDialog::btnStartServerClicked()
 {
-	if(!d->bIsServerSetup)
+	if(!d->remoteGameSetup)
 		runGame(false);
 	else
 		accept();
@@ -413,7 +413,7 @@ bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 	QString offlineExePath = pathToOfflineExe(message);
 	QString serverExePath = pathToServerExe(message);
 	bool bIsLineEditPotiningToServerBinary = (leExecutable->text() == serverExePath);
-	bool bShouldUseClientBinary = (offline || d->bIsServerSetup) && message.isIgnore() && bIsLineEditPotiningToServerBinary;
+	bool bShouldUseClientBinary = (offline || d->remoteGameSetup) && message.isIgnore() && bIsLineEditPotiningToServerBinary;
 
 	params.setHostMode(offline ? GameCreateParams::Offline : GameCreateParams::Host);
 	if (bShouldUseClientBinary)
@@ -500,7 +500,7 @@ bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 	params.setConnectPassword(leConnectPassword->text());
 	params.setIngamePassword(leJoinPassword->text());
 	params.setRconPassword(leRConPassword->text());
-	params.setPort(spinPort->value());
+	params.setPort(spinPort->isEnabled() ? spinPort->value() : 0);
 	params.setSkill(cboDifficulty->currentIndex());
 	params.setUrl(leURL->text());
 
@@ -612,9 +612,10 @@ void CreateServerDialog::initEngineSpecific(EnginePlugin* engineInfo)
 	// Executable path
 	Message message;
 
-	if (d->bIsServerSetup)
+	if (d->remoteGameSetup)
 	{
-		// TODO: something weird, perhaps just refer to offline executable here?
+		// When we setup a remote game, we want to use a client
+		// executable to connect to it.
 		ServerPtr server = d->currentEngine->server(QHostAddress("127.0.0.1"), 1);
 		leExecutable->setText(pathToClientExe(server.data(), message));
 	}
@@ -820,7 +821,7 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 	IniSection dmflags = ini.section("DMFlags");
 
 	// General
-	if (!d->bIsServerSetup)
+	if (!d->remoteGameSetup)
 	{
 		QString engineName = general["engine"];
 		const EnginePlugin* prevEngine = d->currentEngine;
@@ -935,8 +936,10 @@ void CreateServerDialog::lstAdditionalFilesPathDnd(const QString& path)
 void CreateServerDialog::makeSetupServerDialog(const EnginePlugin *plugin)
 {
 	d->bSuppressMissingExeErrors = true;
-	d->bIsServerSetup = true;
+	d->remoteGameSetup = true;
 	setEngine(plugin->data()->name);
+
+	cbAllowTheGameToChoosePort->hide();
 
 	// Disable some stuff
 	QWidget *disableControls[] =

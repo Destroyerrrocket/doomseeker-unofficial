@@ -177,7 +177,7 @@ void GameHost::createCommandLineArguments()
 	BAIL_ON_ERROR(addPwads());
 
 	// Port
-	if (params().hostMode() == GameCreateParams::Host)
+	if (params().hostMode() == GameCreateParams::Host && params().port() > 0)
 	{
 		args() << argForPort() << QString::number(params().port());
 	}
