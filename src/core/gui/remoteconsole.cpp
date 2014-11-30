@@ -114,8 +114,7 @@ void RemoteConsole::invalidPassword()
 
 void RemoteConsole::disconnectFromServer()
 {
-	if(protocol->isConnected())
-		protocol->disconnectFromServer();
+	protocol->disconnectFromServer();
 }
 
 void RemoteConsole::showPasswordDialog()
