@@ -54,7 +54,8 @@ class ZandronumRConProtocol : public RConProtocol
 		};
 
 	public:
-		static RConProtocol *connectToServer(ServerPtr server);
+		ZandronumRConProtocol(ServerPtr server);
+		void connectToServer();
 
 	public slots:
 		void disconnectFromServer();
@@ -63,8 +64,6 @@ class ZandronumRConProtocol : public RConProtocol
 		void sendPong();
 
 	protected:
-		ZandronumRConProtocol(ServerPtr server);
-
 		void processPacket(QIODevice* ioDevice, bool initial=false, int maxUpdates=1);
 
 		QTimer pingTimer;

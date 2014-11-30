@@ -655,5 +655,5 @@ void ZandronumServer::updatedSlot(ServerPtr server, int response)
 
 RConProtocol *ZandronumServer::rcon()
 {
-	return ZandronumRConProtocol::connectToServer(self());
+	return new ZandronumRConProtocol(self());
 }

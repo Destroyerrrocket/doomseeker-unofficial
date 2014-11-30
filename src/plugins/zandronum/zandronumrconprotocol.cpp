@@ -48,21 +48,19 @@ ZandronumRConProtocol::ZandronumRConProtocol(ServerPtr server)
 	connect(&pingTimer, SIGNAL( timeout() ), this, SLOT( sendPong() ));
 }
 
-RConProtocol *ZandronumRConProtocol::connectToServer(ServerPtr server)
+void ZandronumRConProtocol::connectToServer()
 {
-	ZandronumRConProtocol *protocol = new ZandronumRConProtocol(server);
-
 	const char beginConnection[2] = { CLRC_BEGINCONNECTION, RCON_PROTOCOL_VERSION };
 	QByteArray encodedConnection = HuffmanQt::encode(beginConnection, 2);
 
 	// Try to connect, up to 3 times
-	protocol->setConnected(false);
-	for(unsigned int attempts = 0;attempts < 3;attempts++)
+	setConnected(false);
+	for (int attempts = 0; attempts < 3 && !isConnected(); attempts++)
 	{
-		protocol->socket().writeDatagram(encodedConnection, protocol->address(), protocol->port());
-		if(protocol->socket().waitForReadyRead(3000))
+		socket().writeDatagram(encodedConnection, address(), port());
+		if(socket().waitForReadyRead(3000))
 		{
-			int size = protocol->socket().pendingDatagramSize();
+			int size = socket().pendingDatagramSize();
 			if (size <= 0)
 			{
 				// [Zalewa]
@@ -72,36 +70,36 @@ RConProtocol *ZandronumRConProtocol::connectToServer(ServerPtr server)
 				continue;
 			}
 			QByteArray encodedPacket;
-			encodedPacket.resize(protocol->socket().pendingDatagramSize());
-			protocol->socket().readDatagram(encodedPacket.data(), encodedPacket.size());
+			encodedPacket.resize(socket().pendingDatagramSize());
+			socket().readDatagram(encodedPacket.data(), encodedPacket.size());
 			QByteArray packet = HuffmanQt::decode(encodedPacket);
 			switch(packet[0])
 			{
 				case SVRC_BANNED:
-					QMessageBox::critical(NULL, tr("Banned"), tr("You have been banned from this server."));
-					break;
+					emit messageReceived(tr("You have been banned from this server."));
+					return;
 				default:
 				case SVRC_OLDPROTOCOL:
-					QMessageBox::critical(NULL, tr("Incompatible Protocol"), tr("The protocol appears to be outdated."));
-					break;
+					emit messageReceived(tr("The protocol appears to be outdated."));
+					return;
 				case SVRC_SALT:
-					protocol->setConnected(true);
-					protocol->salt = QString(packet.mid(1));
-					protocol->pingTimer.start();
-					return protocol;
+					setConnected(true);
+					salt = QString(packet.mid(1));
+					pingTimer.start();
+					break;
 			}
-			break;
 		}
 	}
-	delete protocol;
-	return NULL;
 }
 
 void ZandronumRConProtocol::disconnectFromServer()
 {
-	const char disconnectPacket[1] = { CLRC_DISCONNECT };
-	QByteArray encodedDisconnect = HuffmanQt::encode(disconnectPacket, 1);
-	socket().writeDatagram(encodedDisconnect, address(), port());
+	if (isConnected())
+	{
+		const char disconnectPacket[1] = { CLRC_DISCONNECT };
+		QByteArray encodedDisconnect = HuffmanQt::encode(disconnectPacket, 1);
+		socket().writeDatagram(encodedDisconnect, address(), port());
+	}
 	setConnected(false);
 	pingTimer.stop();
 	emit disconnected();
@@ -119,6 +117,15 @@ void ZandronumRConProtocol::sendCommand(const QString &cmd)
 
 void ZandronumRConProtocol::sendPassword(const QString &password)
 {
+	if (!isConnected())
+	{
+		connectToServer();
+		if (!isConnected())
+		{
+			return;
+		}
+	}
+
 	// Calculate the MD5 of the salt + password
 	QString hashPassword = salt + password;
 	QCryptographicHash hash(QCryptographicHash::Md5);
