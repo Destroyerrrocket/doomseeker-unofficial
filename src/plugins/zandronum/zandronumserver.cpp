@@ -589,7 +589,7 @@ QRgb ZandronumServer::teamColor(unsigned team) const
 	return teamInfo[team].color().rgb();
 }
 
-QString	ZandronumServer::teamName(unsigned team) const
+QString ZandronumServer::teamName(unsigned team) const
 {
 	if (team == 255)
 		return "NO TEAM";
