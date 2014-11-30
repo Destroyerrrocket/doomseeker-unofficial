@@ -41,51 +41,36 @@ ZandronumRConProtocol::ZandronumRConProtocol(ServerPtr server)
 	set_sendPassword(&ZandronumRConProtocol::sendPassword);
 	set_packetReady(&ZandronumRConProtocol::packetReady);
 
+	connectStage = Disconnected;
+	failedConnectionAttempts = 0;
+	failedPasswordAttempts = 0;
+
 	huffmanSocket.setSocket(&socket());
+	connect(&socket(), SIGNAL( readyRead() ), this, SLOT( packetReady() ));
 
 	// Note: the original rcon utility did TIMEOUT/4.
 	// Try to get at least 4 packets in before timing out,
 	pingTimer.setInterval(2500);
 	connect(&pingTimer, SIGNAL( timeout() ), this, SLOT( sendPong() ));
+
+	timeoutTimer.setSingleShot(true);
+	this->connect(&timeoutTimer, SIGNAL(timeout()), SLOT(packetTimeout()));
 }
 
 void ZandronumRConProtocol::connectToServer()
 {
 	const char beginConnection[2] = { CLRC_BEGINCONNECTION, RCON_PROTOCOL_VERSION };
 
-	// Try to connect, up to 3 times
-	setConnected(false);
-	for (int attempts = 0; attempts < 3 && !isConnected(); attempts++)
+	if (failedConnectionAttempts < MAX_CONNECTIONT_ATTEMPTS)
 	{
+		emit messageReceived(tr("Connection attempt ..."));
+		setConnected(false);
 		huffmanSocket.writeDatagram(beginConnection, 2, address(), port());
-		if(socket().waitForReadyRead(3000))
-		{
-			int size = socket().pendingDatagramSize();
-			if (size <= 0)
-			{
-				// [Zalewa]
-				// This situation always occurs when trying to connect to
-				// a non-existent localhost server on Windows. I don't know
-				// if it happens in any other situation.
-				continue;
-			}
-			QByteArray packet = huffmanSocket.readDatagram();
-			switch(packet[0])
-			{
-				case SVRC_BANNED:
-					emit messageReceived(tr("You have been banned from this server."));
-					return;
-				default:
-				case SVRC_OLDPROTOCOL:
-					emit messageReceived(tr("The protocol appears to be outdated."));
-					return;
-				case SVRC_SALT:
-					setConnected(true);
-					salt = QString(packet.mid(1));
-					pingTimer.start();
-					break;
-			}
-		}
+	}
+	else
+	{
+		setDisconnectedState();
+		emit messageReceived(tr("Too many failed connection attempts. Aborting."));
 	}
 }
 
@@ -96,8 +81,7 @@ void ZandronumRConProtocol::disconnectFromServer()
 		const char disconnectPacket[1] = { CLRC_DISCONNECT };
 		huffmanSocket.writeDatagram(disconnectPacket, 1, address(), port());
 	}
-	setConnected(false);
-	pingTimer.stop();
+	setDisconnectedState();
 	emit disconnected();
 }
 
@@ -112,37 +96,63 @@ void ZandronumRConProtocol::sendCommand(const QString &cmd)
 
 void ZandronumRConProtocol::sendPassword(const QString &password)
 {
-	if (!isConnected())
+	this->password = password;
+	stepConnect();
+}
+
+void ZandronumRConProtocol::sendMemorizedPassword()
+{
+	if (failedPasswordAttempts < MAX_PASSWORD_ATTEMPTS)
 	{
-		connectToServer();
-		if (!isConnected())
-		{
-			return;
-		}
-	}
+		emit messageReceived(tr("Authenticating ..."));
+		// Calculate the MD5 of the salt + password
+		QString hashPassword = salt + password;
+		QCryptographicHash hash(QCryptographicHash::Md5);
+		hash.addData(hashPassword.toAscii());
+		QByteArray md5 = hash.result().toHex();
 
-	// Calculate the MD5 of the salt + password
-	QString hashPassword = salt + password;
-	QCryptographicHash hash(QCryptographicHash::Md5);
-	hash.addData(hashPassword.toAscii());
-	QByteArray md5 = hash.result().toHex();
+		// Create the packet
+		char passwordPacket[34];
+		passwordPacket[0] = CLRC_PASSWORD;
+		memcpy(passwordPacket+1, md5.data(), md5.size());
+		passwordPacket[33] = 0;
 
-	// Create the packet
-	char passwordPacket[34];
-	passwordPacket[0] = CLRC_PASSWORD;
-	memcpy(passwordPacket+1, md5.data(), md5.size());
-	passwordPacket[33] = 0;
-
-	for(unsigned int i = 0;i < 3;i++)
-	{
 		huffmanSocket.writeDatagram(passwordPacket, 34, address(), port());
+	}
+	else
+	{
+		setDisconnectedState();
+		emit messageReceived(tr("Too many failed authentication attempts. Aborting."));
+	}
+}
 
-		if(socket().waitForReadyRead(3000))
-		{
-			packetReady();
-			connect(&socket(), SIGNAL( readyRead() ), this, SLOT( packetReady() ));
-			break;
-		}
+void ZandronumRConProtocol::setDisconnectedState()
+{
+	pingTimer.stop();
+	setConnected(false);
+	connectStage = Disconnected;
+}
+
+void ZandronumRConProtocol::stepConnect()
+{
+	switch (connectStage)
+	{
+	case Disconnected:
+		failedConnectionAttempts = 0;
+		failedPasswordAttempts = 0;
+		connectStage = ConnectEstablishing;
+		stepConnect();
+		break;
+	case ConnectEstablishing:
+		connectToServer();
+		timeoutTimer.start(3000);
+		break;
+	case ConnectPassword:
+		sendMemorizedPassword();
+		timeoutTimer.start(3000);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -155,15 +165,68 @@ void ZandronumRConProtocol::sendPong()
 
 void ZandronumRConProtocol::packetReady()
 {
-	if(!isConnected())
-		return;
-
+	timeoutTimer.stop();
 	while(socket().hasPendingDatagrams())
 	{
 		QByteArray packet = huffmanSocket.readDatagram();
 		QBuffer stream(&packet);
 		stream.open(QIODevice::ReadOnly);
-		processPacket(&stream);
+		switch (connectStage)
+		{
+		case ConnectEstablishing:
+			processEstablishingPacket(stream);
+			break;
+		case ConnectPassword:
+		case ConnectEstablished:
+			processPacket(&stream);
+			break;
+		}
+	}
+}
+
+void ZandronumRConProtocol::packetTimeout()
+{
+	switch (connectStage)
+	{
+	case ConnectEstablishing:
+		++failedConnectionAttempts;
+		emit messageReceived(tr("Failed to establish connection."));
+		break;
+	case ConnectPassword:
+		++failedPasswordAttempts;
+		emit messageReceived(tr("Timeout on authentication."));
+		break;
+	default:
+		return;
+	}
+	stepConnect();
+}
+
+void ZandronumRConProtocol::processEstablishingPacket(QIODevice &ioDevice)
+{
+	QDataStream dataStream(&ioDevice);
+	dataStream.setByteOrder(QDataStream::LittleEndian);
+	DataStreamOperatorWrapper in(&dataStream);
+
+	qint8 code = in.readQInt8();
+	switch(code)
+	{
+		case SVRC_BANNED:
+			emit messageReceived(tr("You have been banned from this server."));
+			setDisconnectedState();
+			break;
+		default:
+		case SVRC_OLDPROTOCOL:
+			emit messageReceived(tr("The protocol appears to be outdated."));
+			setDisconnectedState();
+			break;
+		case SVRC_SALT:
+			setConnected(true);
+			salt = QString(in.readRawUntilByte('\0'));
+			pingTimer.start();
+			connectStage = ConnectPassword;
+			stepConnect();
+			break;
 	}
 }
 
@@ -195,7 +258,9 @@ void ZandronumRConProtocol::processPacket(QIODevice* ioDevice, bool initial, int
 				break;
 			case SVRC_LOGGEDIN:
 			{
-				connect(&socket(), SIGNAL( readyRead() ), this, SLOT( packetReady() ));
+				emit messageReceived(tr("Remote console connection established."));
+				emit messageReceived(tr("-----")); // Just a delimiter.
+				connectStage = ConnectEstablished;
 				serverProtocolVersion = in.readQUInt8();
 				hostName = in.readRawUntilByte('\0');
 				emit serverNameChanged(hostName);

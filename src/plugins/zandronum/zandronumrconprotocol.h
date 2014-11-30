@@ -65,16 +65,37 @@ class ZandronumRConProtocol : public RConProtocol
 		void sendPong();
 
 	private:
-		void processPacket(QIODevice* ioDevice, bool initial=false, int maxUpdates=1);
+		static const int MAX_CONNECTIONT_ATTEMPTS = 3;
+		static const int MAX_PASSWORD_ATTEMPTS = 3;
 
+		enum ConnectStage
+		{
+			ConnectEstablishing,
+			ConnectPassword,
+			ConnectEstablished,
+			Disconnected,
+		};
+
+		void processEstablishingPacket(QIODevice &ioDevice);
+		void processPacket(QIODevice* ioDevice, bool initial=false, int maxUpdates=1);
+		void sendMemorizedPassword();
+		void setDisconnectedState();
+		void stepConnect();
+
+		ConnectStage connectStage;
+		int failedConnectionAttempts;
+		int failedPasswordAttempts;
 		HuffmanUdpSocket huffmanSocket;
 		QTimer pingTimer;
 		QString hostName;
+		QString password;
 		QString salt;
 		int serverProtocolVersion;
+		QTimer timeoutTimer;
 
 	private slots:
 		void packetReady();
+		void packetTimeout();
 };
 
 #endif
