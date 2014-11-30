@@ -26,10 +26,7 @@
 
 #include <QString>
 #include <QColor>
-#include <QTime>
-#include <QTimer>
 
-#include "serverapi/rconprotocol.h"
 #include "serverapi/server.h"
 
 #define NUM_ZANDRONUM_GAME_MODES 16
@@ -37,6 +34,7 @@
 #define ST_MAX_TEAMS 4U
 
 class GameClientRunner;
+class RConProtocol;
 class ZandronumServer;
 
 /**
@@ -183,55 +181,6 @@ class ZandronumServer : public Server
 		QByteArray createSendRequest();
 		static unsigned int millisecondTime();
 		Response readRequest(const QByteArray &data);
-};
-
-class ZandronumRConProtocol : public RConProtocol
-{
-	Q_OBJECT
-
-	private:
-		enum
-		{
-			SVRCU_PLAYERDATA = 0,
-			SVRCU_ADMINCOUNT,
-			SVRCU_MAP,
-
-			SVRC_OLDPROTOCOL = 32,
-			SVRC_BANNED,
-			SVRC_SALT,
-			SVRC_LOGGEDIN,
-			SVRC_INVALIDPASSWORD,
-			SVRC_MESSAGE,
-			SVRC_UPDATE,
-
-			CLRC_BEGINCONNECTION = 52,
-			CLRC_PASSWORD,
-			CLRC_COMMAND,
-			CLRC_PONG,
-			CLRC_DISCONNECT
-		};
-
-	public:
-		static RConProtocol *connectToServer(ServerPtr server);
-
-	public slots:
-		void disconnectFromServer();
-		void sendCommand(const QString &cmd);
-		void sendPassword(const QString &password);
-		void sendPong();
-
-	protected:
-		ZandronumRConProtocol(ServerPtr server);
-
-		void processPacket(QIODevice* ioDevice, bool initial=false, int maxUpdates=1);
-
-		QTimer pingTimer;
-		QString hostName;
-		QString salt;
-		int serverProtocolVersion;
-
-	protected slots:
-		void packetReady();
 };
 
 #endif

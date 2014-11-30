@@ -16,6 +16,7 @@ set(ZANDRONUM_QT_FILES
 	zandronumdmflags.h
 	zandronumgamehost.h
 	zandronummasterclient.h
+	zandronumrconprotocol.h
 	zandronumserver.h
 )
 
@@ -35,6 +36,7 @@ set(ZANDRONUM_FILES
 	zandronumgameinfo.cpp
 	zandronumgamerunner.cpp
 	zandronummasterclient.cpp
+	zandronumrconprotocol.cpp
 	zandronumserver.cpp
 	zandronumserverdmflagsparser.cpp
 )
