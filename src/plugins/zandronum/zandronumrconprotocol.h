@@ -24,7 +24,8 @@
 #ifndef idd10651d2_c61d_498e_8ff6_88a782a8fa1c
 #define idd10651d2_c61d_498e_8ff6_88a782a8fa1c
 
-#include "serverapi/rconprotocol.h"
+#include "huffmanudpsocket.h"
+#include <serverapi/rconprotocol.h>
 #include <QTimer>
 
 class ZandronumRConProtocol : public RConProtocol
@@ -63,15 +64,16 @@ class ZandronumRConProtocol : public RConProtocol
 		void sendPassword(const QString &password);
 		void sendPong();
 
-	protected:
+	private:
 		void processPacket(QIODevice* ioDevice, bool initial=false, int maxUpdates=1);
 
+		HuffmanUdpSocket huffmanSocket;
 		QTimer pingTimer;
 		QString hostName;
 		QString salt;
 		int serverProtocolVersion;
 
-	protected slots:
+	private slots:
 		void packetReady();
 };
 

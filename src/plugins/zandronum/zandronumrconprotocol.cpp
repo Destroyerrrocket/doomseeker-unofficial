@@ -29,7 +29,6 @@
 #include <QMessageBox>
 #include <datastreamoperatorwrapper.h>
 #include "huffman/huffman.h"
-#include "huffmanqt.h"
 #include "zandronumserver.h"
 
 #define RCON_PROTOCOL_VERSION	3
@@ -42,6 +41,8 @@ ZandronumRConProtocol::ZandronumRConProtocol(ServerPtr server)
 	set_sendPassword(&ZandronumRConProtocol::sendPassword);
 	set_packetReady(&ZandronumRConProtocol::packetReady);
 
+	huffmanSocket.setSocket(&socket());
+
 	// Note: the original rcon utility did TIMEOUT/4.
 	// Try to get at least 4 packets in before timing out,
 	pingTimer.setInterval(2500);
@@ -51,13 +52,12 @@ ZandronumRConProtocol::ZandronumRConProtocol(ServerPtr server)
 void ZandronumRConProtocol::connectToServer()
 {
 	const char beginConnection[2] = { CLRC_BEGINCONNECTION, RCON_PROTOCOL_VERSION };
-	QByteArray encodedConnection = HuffmanQt::encode(beginConnection, 2);
 
 	// Try to connect, up to 3 times
 	setConnected(false);
 	for (int attempts = 0; attempts < 3 && !isConnected(); attempts++)
 	{
-		socket().writeDatagram(encodedConnection, address(), port());
+		huffmanSocket.writeDatagram(beginConnection, 2, address(), port());
 		if(socket().waitForReadyRead(3000))
 		{
 			int size = socket().pendingDatagramSize();
@@ -69,10 +69,7 @@ void ZandronumRConProtocol::connectToServer()
 				// if it happens in any other situation.
 				continue;
 			}
-			QByteArray encodedPacket;
-			encodedPacket.resize(socket().pendingDatagramSize());
-			socket().readDatagram(encodedPacket.data(), encodedPacket.size());
-			QByteArray packet = HuffmanQt::decode(encodedPacket);
+			QByteArray packet = huffmanSocket.readDatagram();
 			switch(packet[0])
 			{
 				case SVRC_BANNED:
@@ -97,8 +94,7 @@ void ZandronumRConProtocol::disconnectFromServer()
 	if (isConnected())
 	{
 		const char disconnectPacket[1] = { CLRC_DISCONNECT };
-		QByteArray encodedDisconnect = HuffmanQt::encode(disconnectPacket, 1);
-		socket().writeDatagram(encodedDisconnect, address(), port());
+		huffmanSocket.writeDatagram(disconnectPacket, 1, address(), port());
 	}
 	setConnected(false);
 	pingTimer.stop();
@@ -111,8 +107,7 @@ void ZandronumRConProtocol::sendCommand(const QString &cmd)
 	packet[0] = CLRC_COMMAND;
 	packet[cmd.length()+1] = 0;
 	memcpy(packet+1, cmd.toAscii().constData(), cmd.length());
-	QByteArray encodedPacket = HuffmanQt::encode(packet, 4096);
-	socket().writeDatagram(encodedPacket, address(), port());
+	huffmanSocket.writeDatagram(packet, 4096, address(), port());
 }
 
 void ZandronumRConProtocol::sendPassword(const QString &password)
@@ -137,11 +132,10 @@ void ZandronumRConProtocol::sendPassword(const QString &password)
 	passwordPacket[0] = CLRC_PASSWORD;
 	memcpy(passwordPacket+1, md5.data(), md5.size());
 	passwordPacket[33] = 0;
-	QByteArray encodedPassword = HuffmanQt::encode(passwordPacket, 34);
 
 	for(unsigned int i = 0;i < 3;i++)
 	{
-		socket().writeDatagram(encodedPassword, address(), port());
+		huffmanSocket.writeDatagram(passwordPacket, 34, address(), port());
 
 		if(socket().waitForReadyRead(3000))
 		{
@@ -156,8 +150,7 @@ void ZandronumRConProtocol::sendPong()
 {
 	// create a "PONG" packet
 	const char pong[1] = { CLRC_PONG };
-	QByteArray encodedPong = HuffmanQt::encode(pong, 1);
-	socket().writeDatagram(encodedPong, address(), port());
+	huffmanSocket.writeDatagram(pong, 1, address(), port());
 }
 
 void ZandronumRConProtocol::packetReady()
@@ -167,12 +160,7 @@ void ZandronumRConProtocol::packetReady()
 
 	while(socket().hasPendingDatagrams())
 	{
-		int size = socket().pendingDatagramSize();
-		char* data = new char[size];
-		socket().readDatagram(data, size);
-		QByteArray packet = HuffmanQt::decode(data, size);
-		delete[] data;
-
+		QByteArray packet = huffmanSocket.readDatagram();
 		QBuffer stream(&packet);
 		stream.open(QIODevice::ReadOnly);
 		processPacket(&stream);

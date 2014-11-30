@@ -13,6 +13,7 @@ set(ZANDRONUM_QT_FILES
 	createserverdialogpages/votingsetupwidget.h
 	enginezandronumconfigbox.h
 	huffmanqt.h
+	huffmanudpsocket.h
 	zandronumbinaries.h
 	zandronumdmflags.h
 	zandronumgamehost.h
@@ -31,6 +32,7 @@ set(ZANDRONUM_FILES
 	huffman/huffman.cpp
 	enginezandronumconfigbox.cpp
 	huffmanqt.cpp
+	huffmanudpsocket.cpp
 	zandronumbinaries.cpp
 	zandronumdmflags.cpp
 	zandronumengineplugin.cpp
