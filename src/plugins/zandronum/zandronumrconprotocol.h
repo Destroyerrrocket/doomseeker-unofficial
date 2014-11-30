@@ -26,6 +26,7 @@
 
 #include "huffmanudpsocket.h"
 #include <serverapi/rconprotocol.h>
+#include <QElapsedTimer>
 #include <QTimer>
 
 class ZandronumRConProtocol : public RConProtocol
@@ -67,6 +68,7 @@ class ZandronumRConProtocol : public RConProtocol
 	private:
 		static const int MAX_CONNECTIONT_ATTEMPTS = 3;
 		static const int MAX_PASSWORD_ATTEMPTS = 3;
+		static const int AUTH_FLOOD_PREVENTION_PERIOD = 11 * 1000;
 
 		enum ConnectStage
 		{
@@ -80,11 +82,16 @@ class ZandronumRConProtocol : public RConProtocol
 		void processPacket(QIODevice* ioDevice, bool initial=false, int maxUpdates=1);
 		void sendMemorizedPassword();
 		void setDisconnectedState();
-		void stepConnect();
+		/**
+		 * @brief Reconnect state is similar to disconnect state, but
+		 * doesn't clear failed attempts counters.
+		 */
+		void setReconnectState();
 
+		QElapsedTimer authTime;
 		ConnectStage connectStage;
-		int failedConnectionAttempts;
-		int failedPasswordAttempts;
+		int connectionAttempts;
+		int passwordAttempts;
 		HuffmanUdpSocket huffmanSocket;
 		QTimer pingTimer;
 		QString hostName;
@@ -96,6 +103,7 @@ class ZandronumRConProtocol : public RConProtocol
 	private slots:
 		void packetReady();
 		void packetTimeout();
+		void stepConnect();
 };
 
 #endif

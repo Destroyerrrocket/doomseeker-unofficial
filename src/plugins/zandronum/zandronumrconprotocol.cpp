@@ -42,8 +42,9 @@ ZandronumRConProtocol::ZandronumRConProtocol(ServerPtr server)
 	set_packetReady(&ZandronumRConProtocol::packetReady);
 
 	connectStage = Disconnected;
-	failedConnectionAttempts = 0;
-	failedPasswordAttempts = 0;
+	connectionAttempts = 0;
+	passwordAttempts = 0;
+	authTime.invalidate();
 
 	huffmanSocket.setSocket(&socket());
 	connect(&socket(), SIGNAL( readyRead() ), this, SLOT( packetReady() ));
@@ -61,11 +62,13 @@ void ZandronumRConProtocol::connectToServer()
 {
 	const char beginConnection[2] = { CLRC_BEGINCONNECTION, RCON_PROTOCOL_VERSION };
 
-	if (failedConnectionAttempts < MAX_CONNECTIONT_ATTEMPTS)
+	if (connectionAttempts < MAX_CONNECTIONT_ATTEMPTS)
 	{
+		++connectionAttempts;
 		emit messageReceived(tr("Connection attempt ..."));
 		setConnected(false);
 		huffmanSocket.writeDatagram(beginConnection, 2, address(), port());
+		timeoutTimer.start(3000);
 	}
 	else
 	{
@@ -102,8 +105,9 @@ void ZandronumRConProtocol::sendPassword(const QString &password)
 
 void ZandronumRConProtocol::sendMemorizedPassword()
 {
-	if (failedPasswordAttempts < MAX_PASSWORD_ATTEMPTS)
+	if (passwordAttempts < MAX_PASSWORD_ATTEMPTS)
 	{
+		++passwordAttempts;
 		emit messageReceived(tr("Authenticating ..."));
 		// Calculate the MD5 of the salt + password
 		QString hashPassword = salt + password;
@@ -118,6 +122,7 @@ void ZandronumRConProtocol::sendMemorizedPassword()
 		passwordPacket[33] = 0;
 
 		huffmanSocket.writeDatagram(passwordPacket, 34, address(), port());
+		timeoutTimer.start(3000);
 	}
 	else
 	{
@@ -130,7 +135,14 @@ void ZandronumRConProtocol::setDisconnectedState()
 {
 	pingTimer.stop();
 	setConnected(false);
+	authTime.invalidate();
 	connectStage = Disconnected;
+}
+
+void ZandronumRConProtocol::setReconnectState()
+{
+	setDisconnectedState();
+	connectStage = ConnectEstablishing;
 }
 
 void ZandronumRConProtocol::stepConnect()
@@ -138,18 +150,31 @@ void ZandronumRConProtocol::stepConnect()
 	switch (connectStage)
 	{
 	case Disconnected:
-		failedConnectionAttempts = 0;
-		failedPasswordAttempts = 0;
+		connectionAttempts = 0;
+		passwordAttempts = 0;
 		connectStage = ConnectEstablishing;
 		stepConnect();
 		break;
 	case ConnectEstablishing:
 		connectToServer();
-		timeoutTimer.start(3000);
 		break;
 	case ConnectPassword:
-		sendMemorizedPassword();
-		timeoutTimer.start(3000);
+		if (!authTime.isValid())
+		{
+			sendMemorizedPassword();
+		}
+		else
+		{
+			int delta = qMax(0, AUTH_FLOOD_PREVENTION_PERIOD - static_cast<int>(authTime.elapsed()));
+			if (delta > 0)
+			{
+				emit messageReceived(
+					tr("Delaying for about %n seconds before next authentication attempt.",
+					0, qMax(1, delta / 1000)));
+			}
+			setReconnectState();
+			QTimer::singleShot(delta, this, SLOT(stepConnect()));
+		}
 		break;
 	default:
 		break;
@@ -189,11 +214,9 @@ void ZandronumRConProtocol::packetTimeout()
 	switch (connectStage)
 	{
 	case ConnectEstablishing:
-		++failedConnectionAttempts;
 		emit messageReceived(tr("Failed to establish connection."));
 		break;
 	case ConnectPassword:
-		++failedPasswordAttempts;
 		emit messageReceived(tr("Timeout on authentication."));
 		break;
 	default:
@@ -254,6 +277,8 @@ void ZandronumRConProtocol::processPacket(QIODevice* ioDevice, bool initial, int
 				qDebug() << "Unknown update (" << update << ")";
 				return;
 			case SVRC_INVALIDPASSWORD:
+				authTime.start();
+				emit messageReceived(tr("Authentication failure."));
 				emit invalidPassword();
 				break;
 			case SVRC_LOGGEDIN:
