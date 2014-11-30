@@ -940,6 +940,7 @@ void CreateServerDialog::makeSetupServerDialog(const EnginePlugin *plugin)
 	setEngine(plugin->data()->name);
 
 	cbAllowTheGameToChoosePort->hide();
+	btnCommandLine->hide();
 
 	// Disable some stuff
 	QWidget *disableControls[] =
