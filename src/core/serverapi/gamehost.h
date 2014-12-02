@@ -165,6 +165,9 @@ class MAIN_EXPORT GameHost : public QObject
 		void addIwad_default();
 		void addPwads_default();
 		void addDMFlags_default() {};
+		void addDemoPlaybackIfApplicable();
+		void addDemoRecordIfApplicable();
+		void saveDemoMetaData();
 		void setupGamePaths();
 };
 

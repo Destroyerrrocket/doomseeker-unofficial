@@ -29,6 +29,16 @@
 #include <QDateTime>
 #include <QDir>
 
+GameDemo::GameDemo()
+{
+	d.control = NoDemo;
+}
+
+GameDemo::GameDemo(Control control)
+{
+	d.control = control;
+}
+
 QString GameDemo::mkDemoFullPath(Control control, const EnginePlugin &plugin)
 {
 	if (control == Managed)
@@ -76,4 +86,9 @@ void GameDemo::saveDemoMetaData(const QString &demoName, const EnginePlugin &plu
 
 	metaSection.createSetting("iwad", iwad.toLower());
 	metaSection.createSetting("pwads", pwads.join(";"));
+}
+
+GameDemo::operator GameDemo::Control() const
+{
+	return d.control;
 }

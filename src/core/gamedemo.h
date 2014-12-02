@@ -32,15 +32,28 @@ class GameDemo
 public:
 	enum Control
 	{
+		NoDemo,
 		Managed,
 		Unmanaged
 	};
+
+	GameDemo();
+	GameDemo(Control control);
 
 	static QString mkDemoFullPath(Control control, const EnginePlugin &plugin);
 	static void saveDemoMetaData(const QString &demoName, const EnginePlugin &plugin,
 		const QString &iwad, const QStringList &pwads);
 
+	operator Control() const;
+
 private:
+	class PrivData
+	{
+	public:
+		GameDemo::Control control;
+	};
+	PrivData d;
+
 	static QString mkDemoName(const EnginePlugin &plugin);
 };
 
