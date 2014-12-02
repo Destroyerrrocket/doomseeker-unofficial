@@ -36,6 +36,7 @@
 #include "serverapi/message.h"
 #include "serverapi/server.h"
 #include "application.h"
+#include "gamedemo.h"
 
 #include <wadseeker/wadseeker.h>
 #include <QMessageBox>
@@ -48,7 +49,7 @@ class JoinCommandLineBuilder::PrivData
 		bool configurationError;
 		QString connectPassword;
 		QString error;
-		GameDemo::Control demoControl;
+		GameDemo demo;
 		QString demoName;
 		QString inGamePassword;
 		ServerPtr server;
@@ -57,12 +58,12 @@ class JoinCommandLineBuilder::PrivData
 };
 
 JoinCommandLineBuilder::JoinCommandLineBuilder(ServerPtr server,
-	GameDemo::Control demoControl, QWidget *parentWidget)
+	GameDemo demo, QWidget *parentWidget)
 {
 	d = new PrivData();
 	d->configurationError = false;
-	d->demoControl = demoControl;
-	d->demoName = GameDemo::mkDemoFullPath(demoControl, *server->plugin());
+	d->demo = demo;
+	d->demoName = GameDemo::mkDemoFullPath(demo, *server->plugin());
 	d->parentWidget = parentWidget;
 	d->passwordsAlreadySet = false;
 	d->server = server;
@@ -104,7 +105,7 @@ bool JoinCommandLineBuilder::buildServerConnectParams(ServerConnectParams &param
 		params.setInGamePassword(d->inGamePassword);
 	}
 
-	if (gConfig.doomseeker.bRecordDemo)
+	if (!d->demoName.isEmpty())
 	{
 		params.setDemoName(d->demoName);
 	}
@@ -338,7 +339,7 @@ void JoinCommandLineBuilder::obtainJoinCommandLine()
 		}
 
 		case JoinError::NoError:
-			if (d->demoControl == GameDemo::Managed && gConfig.doomseeker.bRecordDemo)
+			if (d->demo == GameDemo::Managed)
 			{
 				QStringList pwads;
 				foreach (const PWad &wad, d->server->wads())

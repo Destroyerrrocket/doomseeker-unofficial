@@ -24,10 +24,10 @@
 #define id3D55B51B_0F01_4FAB_8D44E1593B00E437
 
 #include "serverapi/serverptr.h"
-#include "gamedemo.h"
 #include <QObject>
 
 class CommandLineInfo;
+class GameDemo;
 class JoinError;
 class Server;
 class ServerConnectParams;
@@ -42,8 +42,7 @@ class JoinCommandLineBuilder : public QObject
 	Q_OBJECT
 
 	public:
-		JoinCommandLineBuilder(ServerPtr server, GameDemo::Control demoControl,
-			QWidget *parentWidget);
+		JoinCommandLineBuilder(ServerPtr server, GameDemo demo, QWidget *parentWidget);
 		~JoinCommandLineBuilder();
 
 		const CommandLineInfo &builtCommandLine() const;

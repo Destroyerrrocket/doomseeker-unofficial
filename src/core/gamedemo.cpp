@@ -26,6 +26,7 @@
 #include "ini/settingsproviderqt.h"
 #include "plugins/engineplugin.h"
 #include "datapaths.h"
+#include <cassert>
 #include <QDateTime>
 #include <QDir>
 
@@ -41,13 +42,17 @@ GameDemo::GameDemo(Control control)
 
 QString GameDemo::mkDemoFullPath(Control control, const EnginePlugin &plugin)
 {
-	if (control == Managed)
+	switch (control)
 	{
+	case Managed:
 		return gDefaultDataPaths->demosDirectoryPath() + QDir::separator() + mkDemoName(plugin);
-	}
-	else
-	{
+	case Unmanaged:
 		return mkDemoName(plugin);
+	case NoDemo:
+		return QString();
+	default:
+		assert(0 && "Unknown demo control type");
+		return QString();
 	}
 }
 

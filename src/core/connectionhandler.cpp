@@ -36,6 +36,7 @@
 #include "serverapi/message.h"
 #include "serverapi/server.h"
 #include "apprunner.h"
+#include "gamedemo.h"
 #include <QDesktopServices>
 #include <QMessageBox>
 #include <QUrl>
@@ -136,7 +137,8 @@ void ConnectionHandler::finish(int response)
 void ConnectionHandler::buildJoinCommandLine()
 {
 	JoinCommandLineBuilder *builder = new JoinCommandLineBuilder(d->server,
-		GameDemo::Managed, d->parentWidget);
+		gConfig.doomseeker.bRecordDemo ? GameDemo::Managed : GameDemo::NoDemo,
+		d->parentWidget);
 	this->connect(builder, SIGNAL(commandLineBuildFinished()), SLOT(onCommandLineBuildFinished()));
 	builder->obtainJoinCommandLine();
 }
