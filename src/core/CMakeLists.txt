@@ -382,6 +382,7 @@ set(SOURCE_FILES
 	datastreamoperatorwrapper.cpp
 	doomseekerfilepaths.cpp
 	fileutils.cpp
+	gamedemo.cpp
 	joincommandlinebuilder.cpp
 	json.cpp
 	localization.cpp
@@ -479,6 +480,7 @@ set(HEADER_FILES
 	doomseekerfilepaths.h
 	dpointer.h
 	fileutils.h
+	gamedemo.h
 	global.h
 	json.h
 	localization.h

@@ -1281,7 +1281,7 @@ void MainWindow::showServerJoinCommandLine(const ServerPtr &server)
 {
 	CommandLineInfo cli;
 	ConnectionHandler connectionHandler(server, this);
-	JoinCommandLineBuilder *builder = new JoinCommandLineBuilder(server, JoinCommandLineBuilder::Unmanaged, this);
+	JoinCommandLineBuilder *builder = new JoinCommandLineBuilder(server, GameDemo::Unmanaged, this);
 	this->connect(builder, SIGNAL(commandLineBuildFinished()), SLOT(showServerJoinCommandLineOnBuilderFinished()));
 	builder->obtainJoinCommandLine();
 }

@@ -48,7 +48,8 @@ class JoinCommandLineBuilder::PrivData
 		bool configurationError;
 		QString connectPassword;
 		QString error;
-		Demo demo;
+		GameDemo::Control demoControl;
+		QString demoName;
 		QString inGamePassword;
 		ServerPtr server;
 		QWidget *parentWidget;
@@ -56,11 +57,12 @@ class JoinCommandLineBuilder::PrivData
 };
 
 JoinCommandLineBuilder::JoinCommandLineBuilder(ServerPtr server,
-	Demo demo, QWidget *parentWidget)
+	GameDemo::Control demoControl, QWidget *parentWidget)
 {
 	d = new PrivData();
 	d->configurationError = false;
-	d->demo = demo;
+	d->demoControl = demoControl;
+	d->demoName = GameDemo::mkDemoFullPath(demoControl, *server->plugin());
 	d->parentWidget = parentWidget;
 	d->passwordsAlreadySet = false;
 	d->server = server;
@@ -104,7 +106,7 @@ bool JoinCommandLineBuilder::buildServerConnectParams(ServerConnectParams &param
 
 	if (gConfig.doomseeker.bRecordDemo)
 	{
-		params.setDemoName(mkDemoName());
+		params.setDemoName(d->demoName);
 	}
 	return true;
 }
@@ -267,24 +269,6 @@ bool JoinCommandLineBuilder::isConfigurationError() const
 	return d->configurationError;
 }
 
-QString JoinCommandLineBuilder::mkDemoName()
-{
-	// port-iwad-date-wad
-	QString demoName;
-	if (d->demo == Managed)
-	{
-		demoName = gDefaultDataPaths->demosDirectoryPath() + QDir::separator();
-	}
-	demoName += QString("%1_%2").
-		arg(d->server->engineName()).
-		arg(QDateTime::currentDateTime().toString("dd.MM.yyyy_hh.mm.ss"));
-	if (!d->server->plugin()->data()->demoExtensionAutomatic)
-	{
-		demoName += QString(".%1").arg(d->server->plugin()->data()->demoExtension);
-	}
-	return demoName;
-}
-
 void JoinCommandLineBuilder::obtainJoinCommandLine()
 {
 	assert(d->server != NULL);
@@ -354,9 +338,15 @@ void JoinCommandLineBuilder::obtainJoinCommandLine()
 		}
 
 		case JoinError::NoError:
-			if (d->demo == Managed && gConfig.doomseeker.bRecordDemo)
+			if (d->demoControl == GameDemo::Managed && gConfig.doomseeker.bRecordDemo)
 			{
-				saveDemoMetaData(mkDemoName());
+				QStringList pwads;
+				foreach (const PWad &wad, d->server->wads())
+				{
+					pwads << wad.name();
+				}
+				GameDemo::saveDemoMetaData(d->demoName, *d->server->plugin(),
+					d->server->iwad(), pwads);
 			}
 			break;
 
@@ -375,37 +365,6 @@ void JoinCommandLineBuilder::onWadseekerDone(int result)
 	{
 		obtainJoinCommandLine();
 	}
-}
-
-void JoinCommandLineBuilder::saveDemoMetaData(const QString& demoName)
-{
-	QString metaFileName;
-	// If the extension is automatic we need to add it here
-	if(d->server->plugin()->data()->demoExtensionAutomatic)
-	{
-		metaFileName = QString("%1.%2.ini").arg(demoName)
-			.arg(d->server->plugin()->data()->demoExtension);
-	}
-	else
-	{
-		metaFileName = demoName + ".ini";
-	}
-
-	QSettings settings(metaFileName, QSettings::IniFormat);
-	SettingsProviderQt settingsProvider(&settings);
-	Ini metaFile(&settingsProvider);
-	IniSection metaSection = metaFile.createSection("meta");
-
-	// Get a list of wads for demo name:
-	QStringList wadList;
-	for (int i = 0; i < d->server->numWads(); ++i)
-	{
-		// Also be sure to escape any underscores.
-		wadList << d->server->wad(i).name().toLower();
-	}
-
-	metaSection.createSetting("iwad", d->server->iwad().toLower());
-	metaSection.createSetting("pwads", wadList.join(";"));
 }
 
 ServerPtr JoinCommandLineBuilder::server() const

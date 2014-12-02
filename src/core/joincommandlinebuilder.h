@@ -24,6 +24,7 @@
 #define id3D55B51B_0F01_4FAB_8D44E1593B00E437
 
 #include "serverapi/serverptr.h"
+#include "gamedemo.h"
 #include <QObject>
 
 class CommandLineInfo;
@@ -41,13 +42,8 @@ class JoinCommandLineBuilder : public QObject
 	Q_OBJECT
 
 	public:
-		enum Demo
-		{
-			Managed,
-			Unmanaged
-		};
-
-		JoinCommandLineBuilder(ServerPtr server, Demo demo, QWidget *parentWidget);
+		JoinCommandLineBuilder(ServerPtr server, GameDemo::Control demoControl,
+			QWidget *parentWidget);
 		~JoinCommandLineBuilder();
 
 		const CommandLineInfo &builtCommandLine() const;
@@ -83,7 +79,6 @@ class JoinCommandLineBuilder : public QObject
 		void handleError(const JoinError &error);
 		MissingWadsProceed handleMissingWads(const JoinError &error);
 		QString mkDemoName();
-		void saveDemoMetaData(const QString& demoName);
 		bool tryToInstallGame();
 
 	private slots:

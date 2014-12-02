@@ -135,8 +135,8 @@ void ConnectionHandler::finish(int response)
 
 void ConnectionHandler::buildJoinCommandLine()
 {
-	JoinCommandLineBuilder::Demo demo = JoinCommandLineBuilder::Managed;
-	JoinCommandLineBuilder *builder = new JoinCommandLineBuilder(d->server, demo, d->parentWidget);
+	JoinCommandLineBuilder *builder = new JoinCommandLineBuilder(d->server,
+		GameDemo::Managed, d->parentWidget);
 	this->connect(builder, SIGNAL(commandLineBuildFinished()), SLOT(onCommandLineBuildFinished()));
 	builder->obtainJoinCommandLine();
 }
