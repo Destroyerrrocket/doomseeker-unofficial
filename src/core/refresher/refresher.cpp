@@ -24,7 +24,6 @@
 
 #include "refresher/canrefreshserver.h"
 #include "serverapi/masterclient.h"
-#include "serverapi/masterclientsignalproxy.h"
 #include "serverapi/mastermanager.h"
 #include "plugins/pluginloader.h"
 #include "serverapi/server.h"
@@ -91,14 +90,10 @@ class Refresher::MasterClientInfo
 		{
 			pParentThread = pParent;
 			pLastChallengeTimer = NULL;
-			pReceiver = new MasterClientSignalProxy(pMaster);
-			connect(pReceiver, SIGNAL( listUpdated(MasterClient*) ), pParent, SLOT( masterFinishedRefreshing(MasterClient*) ) );
-
 			numOfChallengesSent = 0;
 		}
 		~MasterClientInfo()
 		{
-			delete pReceiver;
 			if (pLastChallengeTimer != NULL)
 			{
 				delete pLastChallengeTimer;
@@ -136,8 +131,7 @@ class Refresher::MasterClientInfo
 
 		int numOfChallengesSent;
 
-	protected:
-		MasterClientSignalProxy* pReceiver;
+	private:
 		Refresher* pParentThread;
 		QTimer* pLastChallengeTimer;
 };
@@ -231,8 +225,9 @@ bool Refresher::hasFreeServerRefreshSlots() const
 	return d->refreshingServers.size() < gConfig.doomseeker.queryBatchSize;
 }
 
-void Refresher::masterFinishedRefreshing(MasterClient* pMaster)
+void Refresher::masterFinishedRefreshing()
 {
+	MasterClient* pMaster = static_cast<MasterClient*>(sender());
 	const QList<ServerPtr>& servers = pMaster->servers();
 	foreach (ServerPtr pServer, servers)
 	{
@@ -266,6 +261,7 @@ void Refresher::registerMaster(MasterClient* pMaster)
 	if (!d->registeredMasters.contains(pMaster))
 	{
 		MasterClientInfo* pMasterInfo = new MasterClientInfo(pMaster, this);
+		this->connect(pMaster, SIGNAL(listUpdated()), SLOT(masterFinishedRefreshing()));
 
 		d->registeredMasters.insert(pMaster, pMasterInfo);
 		d->unchallengedMasters.insert(pMaster);

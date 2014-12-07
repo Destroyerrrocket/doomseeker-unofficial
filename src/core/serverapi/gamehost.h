@@ -165,6 +165,9 @@ class MAIN_EXPORT GameHost : public QObject
 
 		Q_DISABLE_COPY(GameHost);
 
+		void addDemoPlaybackIfApplicable();
+		void addDemoRecordIfApplicable();
+		void saveDemoMetaData();
 		void setupGamePaths();
 };
 

@@ -41,6 +41,7 @@
 #include "serverapi/server.h"
 #include "apprunner.h"
 #include "commandline.h"
+#include "gamedemo.h"
 #include "strings.h"
 
 #include <QCheckBox>
@@ -517,7 +518,17 @@ bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 		}
 	}
 
+	createHostInfoDemoRecord(params, offline);
 	return true;
+}
+
+void CreateServerDialog::createHostInfoDemoRecord(GameCreateParams& params, bool offline)
+{
+	if (gConfig.doomseeker.bRecordDemo && offline)
+	{
+		params.setDemoPath(GameDemo::mkDemoFullPath(GameDemo::Managed, *d->currentEngine));
+		params.setDemoRecord(GameDemo::Managed);
+	}
 }
 
 void CreateServerDialog::firstLoadConfigTimer()
@@ -940,6 +951,7 @@ void CreateServerDialog::makeSetupRemoteGameDialog(const EnginePlugin *plugin)
 	setEngine(plugin->data()->name);
 
 	cbAllowTheGameToChoosePort->hide();
+	btnCommandLine->hide();
 
 	// Disable some stuff
 	QWidget *disableControls[] =

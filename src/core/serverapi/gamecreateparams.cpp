@@ -23,6 +23,8 @@
 #include "gamecreateparams.h"
 
 #include "serverapi/serverstructs.h"
+#include "gamedemo.h"
+#include <QFileInfo>
 
 class GameCreateParams::PrivData
 {
@@ -34,6 +36,7 @@ class GameCreateParams::PrivData
 		QList<GameCVar> cvars;
 		QString executablePath;
 		QString demoPath;
+		GameDemo demoRecord;
 		QList<DMFlagsSection> dmFlags;
 		QString email;
 		GameMode gameMode;
@@ -105,6 +108,16 @@ const QString& GameCreateParams::demoPath() const
 	return d->demoPath;
 }
 
+const GameDemo &GameCreateParams::demoRecord() const
+{
+	return d->demoRecord;
+}
+
+void GameCreateParams::setDemoRecord(const GameDemo &demo)
+{
+	d->demoRecord = demo;
+}
+
 QList<DMFlagsSection>& GameCreateParams::dmFlags()
 {
 	return d->dmFlags;
@@ -160,6 +173,12 @@ const QString& GameCreateParams::iwadPath() const
 	return d->iwadPath;
 }
 
+QString GameCreateParams::iwadName() const
+{
+	QFileInfo fi(iwadPath());
+	return fi.fileName();
+}
+
 const QString& GameCreateParams::map() const
 {
 	return d->map;
@@ -208,6 +227,17 @@ QStringList& GameCreateParams::pwadsPaths()
 const QStringList& GameCreateParams::pwadsPaths() const
 {
 	return d->pwadsPaths;
+}
+
+QStringList GameCreateParams::pwadsNames() const
+{
+	QStringList result;
+	foreach (const QString &path, pwadsPaths())
+	{
+		QFileInfo fi(path);
+		result << fi.fileName();
+	}
+	return result;
 }
 
 const QString& GameCreateParams::rconPassword() const

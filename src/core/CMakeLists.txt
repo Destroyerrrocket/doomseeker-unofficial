@@ -190,7 +190,6 @@ set(DOOMSEEKER_QT_FILES
 	serverapi/gameexefactory.h
 	serverapi/gamehost.h
 	serverapi/masterclient.h
-	serverapi/masterclientsignalproxy.h
 	serverapi/mastermanager.h
 	serverapi/message.h
 	serverapi/rconprotocol.h
@@ -352,7 +351,6 @@ set(SOURCE_FILES
 	serverapi/gameclientrunner.cpp
 	serverapi/joinerror.cpp
 	serverapi/masterclient.cpp
-	serverapi/masterclientsignalproxy.cpp
 	serverapi/mastermanager.cpp
 	serverapi/message.cpp
 	serverapi/player.cpp
@@ -384,6 +382,7 @@ set(SOURCE_FILES
 	datastreamoperatorwrapper.cpp
 	doomseekerfilepaths.cpp
 	fileutils.cpp
+	gamedemo.cpp
 	joincommandlinebuilder.cpp
 	json.cpp
 	localization.cpp
@@ -481,6 +480,7 @@ set(HEADER_FILES
 	doomseekerfilepaths.h
 	dpointer.h
 	fileutils.h
+	gamedemo.h
 	global.h
 	json.h
 	localization.h

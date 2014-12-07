@@ -56,6 +56,7 @@
 #include "customservers.h"
 #include "doomseekerfilepaths.h"
 #include "fileutils.h"
+#include "gamedemo.h"
 #include "joincommandlinebuilder.h"
 #include "log.h"
 #include "main.h"
@@ -1281,7 +1282,8 @@ void MainWindow::showServerJoinCommandLine(const ServerPtr &server)
 {
 	CommandLineInfo cli;
 	ConnectionHandler connectionHandler(server, this);
-	JoinCommandLineBuilder *builder = new JoinCommandLineBuilder(server, JoinCommandLineBuilder::Unmanaged, this);
+	GameDemo demo = gConfig.doomseeker.bRecordDemo ? GameDemo::Unmanaged : GameDemo::NoDemo;
+	JoinCommandLineBuilder *builder = new JoinCommandLineBuilder(server, demo, this);
 	this->connect(builder, SIGNAL(commandLineBuildFinished()), SLOT(showServerJoinCommandLineOnBuilderFinished()));
 	builder->obtainJoinCommandLine();
 }

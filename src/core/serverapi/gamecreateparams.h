@@ -30,6 +30,7 @@
 
 class DMFlagsSection;
 class GameCVar;
+class GameDemo;
 class GameMode;
 
 /**
@@ -65,9 +66,33 @@ class MAIN_EXPORT GameCreateParams
 		const QList<GameCVar>& cvars() const;
 
 		/**
-		 * @brief Use if running in DEMO mode.
+		 * @brief Use if running in HostMode::Demo mode or recording a demo.
+		 *
+		 * Used either as a path to already existing demo that should
+		 * be played back, or as a path to a new demo that should be
+		 * recorded.
+		 *
+		 * When hostMode() is HostMode::Demo then this points to a
+		 * demo for playback.
+		 *
+		 * When hostMode() is HostMode::Offline and demoRecord() is
+		 * not GameDemo::NoDemo then this points to a new demo to
+		 * record.
+		 *
+		 * @see hostMode()
+		 * @see demoRecord()
 		 */
 		const QString& demoPath() const;
+		/**
+		 * @brief Type of demo to record; applicable only in Offline game.
+		 *
+		 * If set to record a demo, then demoPath() must also be set.
+		 * Default is GameDemo::NoDemo.
+		 */
+		const GameDemo &demoRecord() const;
+		void setDemoRecord(const GameDemo &demo);
+
+
 		QList<DMFlagsSection>& dmFlags();
 		const QList<DMFlagsSection>& dmFlags() const;
 		const QString& email() const;
@@ -87,6 +112,11 @@ class MAIN_EXPORT GameCreateParams
 		 */
 		const QString& ingamePassword() const;
 		const QString& iwadPath() const;
+
+		/**
+		 * @brief Name of IWAD, derived from iwadPath().
+		 */
+		QString iwadName() const;
 
 		/**
 		 * @brief Level name as in E1M1 or MAP01.
@@ -111,6 +141,10 @@ class MAIN_EXPORT GameCreateParams
 		unsigned short port() const;
 		QStringList& pwadsPaths();
 		const QStringList& pwadsPaths() const;
+		/**
+		 * @brief Names of PWADs, derived from pwadsPaths().
+		 */
+		QStringList pwadsNames() const;
 
 		/**
 		 * @brief Password required to connect to remote admin console.

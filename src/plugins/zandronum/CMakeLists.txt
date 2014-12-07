@@ -12,10 +12,13 @@ set(ZANDRONUM_QT_FILES
 	createserverdialogpages/flagspage.h
 	createserverdialogpages/votingsetupwidget.h
 	enginezandronumconfigbox.h
+	huffmanqt.h
+	huffmanudpsocket.h
 	zandronumbinaries.h
 	zandronumdmflags.h
 	zandronumgamehost.h
 	zandronummasterclient.h
+	zandronumrconprotocol.h
 	zandronumserver.h
 )
 
@@ -28,6 +31,8 @@ set(ZANDRONUM_FILES
 	huffman/huffcodec.cpp
 	huffman/huffman.cpp
 	enginezandronumconfigbox.cpp
+	huffmanqt.cpp
+	huffmanudpsocket.cpp
 	zandronumbinaries.cpp
 	zandronumdmflags.cpp
 	zandronumengineplugin.cpp
@@ -35,6 +40,7 @@ set(ZANDRONUM_FILES
 	zandronumgameinfo.cpp
 	zandronumgamerunner.cpp
 	zandronummasterclient.cpp
+	zandronumrconprotocol.cpp
 	zandronumserver.cpp
 	zandronumserverdmflagsparser.cpp
 )

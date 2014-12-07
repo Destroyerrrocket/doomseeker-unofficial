@@ -27,6 +27,7 @@
 #include "serverapi/message.h"
 #include "serverapi/serverstructs.h"
 #include "apprunner.h"
+#include "gamedemo.h"
 #include <cassert>
 #include <QFileInfo>
 #include <QStringList>
@@ -88,6 +89,25 @@ POLYMORPHIC_DEFINE(void, GameHost, addDMFlags, (), ());
 void GameHost::addCustomParameters()
 {
 	args().append(params().customParameters());
+}
+
+void GameHost::addDemoPlaybackIfApplicable()
+{
+	if (params().hostMode() == GameCreateParams::Demo)
+	{
+		args() << argForDemoPlayback();
+		args() << params().demoPath();
+	}
+}
+
+void GameHost::addDemoRecordIfApplicable()
+{
+	if (params().hostMode() == GameCreateParams::Offline
+		&& params().demoRecord() != GameDemo::NoDemo)
+	{
+		args() << argForDemoRecord();
+		args() << params().demoPath();
+	}
 }
 
 void GameHost::addDMFlags_default()
@@ -197,15 +217,14 @@ void GameHost::createCommandLineArguments()
 			args() << argForServerLaunch();
 		}
 	}
-	else if (params().hostMode() == GameCreateParams::Demo)
-	{
-		args() << argForDemoPlayback();
-		args() << params().demoPath();
-	}
 
 	BAIL_ON_ERROR(addDMFlags());
 	BAIL_ON_ERROR(addExtra());
 	BAIL_ON_ERROR(addCustomParameters());
+
+	addDemoPlaybackIfApplicable();
+	addDemoRecordIfApplicable();
+	saveDemoMetaData();
 }
 
 Message GameHost::createHostCommandLine(const GameCreateParams& params, CommandLineInfo& cmdLine)
@@ -266,6 +285,15 @@ const GameCreateParams& GameHost::params() const
 EnginePlugin* GameHost::plugin() const
 {
 	return d->plugin;
+}
+
+void GameHost::saveDemoMetaData()
+{
+	if (params().demoRecord() == GameDemo::Managed)
+	{
+		GameDemo::saveDemoMetaData(params().demoPath(), *plugin(),
+			params().iwadName(), params().pwadsNames());
+	}
 }
 
 void GameHost::setArgForIwadLoading(const QString& arg)
