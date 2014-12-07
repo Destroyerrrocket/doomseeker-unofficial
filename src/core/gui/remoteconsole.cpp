@@ -102,7 +102,7 @@ void RemoteConsole::changeServerName(const QString &name)
 void RemoteConsole::closeEvent(QCloseEvent *event)
 {
 	if(protocol && protocol->isConnected())
-		disconnectFromServer();
+		protocol->disconnectFromServer();
 	event->accept();
 }
 
@@ -114,7 +114,14 @@ void RemoteConsole::invalidPassword()
 
 void RemoteConsole::disconnectFromServer()
 {
-	protocol->disconnectFromServer();
+	if (protocol)
+	{
+		protocol->disconnectFromServer();
+	}
+	else
+	{
+		close();
+	}
 }
 
 void RemoteConsole::showPasswordDialog()
