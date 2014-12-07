@@ -79,6 +79,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/configuration/cfgwadseekersites.ui
 	gui/configuration/engineconfigurationbasebox.ui
 	gui/createserver/customparamspanel.ui
+	gui/createserver/maplistpanel.ui
 	gui/createserver/miscserversetuppanel.ui
 	gui/irc/ircdock.ui
 	gui/irc/ircdocktabcontents.ui
@@ -126,6 +127,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/configuration/doomseekerconfigurationdialog.h
 	gui/configuration/engineconfigurationbasebox.h
 	gui/createserver/customparamspanel.h
+	gui/createserver/maplistpanel.h
 	gui/createserver/miscserversetuppanel.h
 	gui/irc/ircdock.h
 	gui/irc/ircdocktabcontents.h
@@ -246,6 +248,7 @@ set(SOURCE_FILES
 	gui/configuration/doomseekerconfigurationdialog.cpp
 	gui/configuration/engineconfigurationbasebox.cpp
 	gui/createserver/customparamspanel.cpp
+	gui/createserver/maplistpanel.cpp
 	gui/createserver/miscserversetuppanel.cpp
 	gui/entity/serverlistfilterinfo.cpp
 	gui/helpers/comboboxex.cpp

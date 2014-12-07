@@ -81,7 +81,6 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 	d->currentEngine = NULL;
 
 	setupUi(this);
-	connect(btnAddMapToMaplist, SIGNAL( clicked() ), this, SLOT ( btnAddMapToMaplistClicked() ) );
 	connect(btnAddPwad, SIGNAL( clicked() ), this, SLOT ( btnAddPwadClicked() ) );
 	connect(btnBrowseExecutable, SIGNAL( clicked() ), this, SLOT ( btnBrowseExecutableClicked() ) );
 	connect(btnCancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
@@ -91,7 +90,7 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 	connect(btnIwadBrowse, SIGNAL( clicked() ), this, SLOT ( btnIwadBrowseClicked() ) );
 	connect(btnLoad, SIGNAL( clicked() ), this, SLOT ( btnLoadClicked() ) );
 	connect(btnPlayOffline, SIGNAL( clicked() ), this, SLOT ( btnPlayOfflineClicked() ) );
-	connect(btnRemoveMapFromMaplist, SIGNAL( clicked() ), this, SLOT ( btnRemoveMapFromMaplistClicked() ) );
+
 	connect(btnRemovePwad, SIGNAL( clicked() ), this, SLOT ( btnRemovePwadClicked() ) );
 	connect(btnSave, SIGNAL( clicked() ), this, SLOT ( btnSaveClicked() ) );
 	connect(btnStartServer, SIGNAL( clicked() ), this, SLOT( btnStartServerClicked() ) );
@@ -102,11 +101,8 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 	connect(lstAdditionalFiles, SIGNAL( fileSystemPathDropped(const QString& ) ),
 		this, SLOT( lstAdditionalFilesPathDnd(const QString&) ) );
 
-	connect(QApplication::instance(), SIGNAL( focusChanged(QWidget*, QWidget*) ), this, SLOT( focusChanged(QWidget*, QWidget*) ));
-
 	cboIwad->setEditable(true);
 	lstAdditionalFiles->setModel(new QStandardItemModel(this));
-	lstMaplist->setModel(new QStandardItemModel(this));
 
 	initPrimary();
 	d->bSuppressMissingExeErrors = false;
@@ -145,23 +141,6 @@ void CreateServerDialog::addIwad(const QString& path)
 	cboIwad->setCurrentIndex(cboIwad->count() - 1);
 }
 
-void CreateServerDialog::addMapToMaplist(const QString& map)
-{
-	if (map.isEmpty())
-	{
-		return;
-	}
-
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstMaplist->model());
-
-	QStandardItem* it = new QStandardItem(map);
-
-	it->setDragEnabled(true);
-	it->setDropEnabled(false);
-
-	model->appendRow(it);
-}
-
 void CreateServerDialog::addWadPath(const QString& strPath)
 {
 	if (strPath.isEmpty())
@@ -197,11 +176,6 @@ void CreateServerDialog::addWadPath(const QString& strPath)
 	it->setToolTip(strPath);
 
 	model->appendRow(it);
-}
-
-void CreateServerDialog::btnAddMapToMaplistClicked()
-{
-	addMapToMaplist(leMapname->text());
 }
 
 void CreateServerDialog::btnAddPwadClicked()
@@ -301,12 +275,6 @@ void CreateServerDialog::btnLoadClicked()
 void CreateServerDialog::btnPlayOfflineClicked()
 {
 	runGame(true);
-}
-
-void CreateServerDialog::btnRemoveMapFromMaplistClicked()
-{
-	const bool bSelectNextLowest = true;
-	CommonGUI::removeSelectedRowsFromStandardItemView(lstMaplist, bSelectNextLowest);
 }
 
 void CreateServerDialog::btnRemovePwadClicked()
@@ -486,8 +454,6 @@ bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 	params.setBroadcastToLan(cbBroadcastToLAN->isChecked());
 	params.setBroadcastToMaster(cbBroadcastToMaster->isChecked());
 	params.setMap(leMap->text());
-	params.setMapList(CommonGUI::listViewStandardItemsToStringList(lstMaplist));
-	params.setRandomMapRotation(cbRandomMapRotation->isChecked());
 	params.setMaxClients(spinMaxClients->value());
 	params.setMaxPlayers(spinMaxPlayers->value());
 	params.setName(leServername->text());
@@ -528,19 +494,6 @@ void CreateServerDialog::firstLoadConfigTimer()
 	if (fi.exists())
 	{
 		loadConfig(tmpServerCfgPath);
-	}
-}
-
-
-void CreateServerDialog::focusChanged(QWidget* oldW, QWidget* newW)
-{
-	if (newW == leMapname)
-	{
-		btnAddMapToMaplist->setDefault(true);
-	}
-	else if (oldW == leMapname)
-	{
-		btnAddMapToMaplist->setDefault(false);
 	}
 }
 
@@ -745,7 +698,7 @@ void CreateServerDialog::initPrimary()
 
 void CreateServerDialog::initRules()
 {
-	cbRandomMapRotation->setVisible(d->currentEngine->data()->supportsRandomMapRotation);
+	mapListPanel->setupForEngine(d->currentEngine);
 
 	cboModifier->clear();
 	d->gameModifiers.clear();
@@ -848,14 +801,7 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 		widget->spinBox->setValue(rules[widget->limit.command()]);
 	}
 
-	stringList = rules["maplist"].valueString().split(";");
-	model = lstMaplist->model();
-	model->removeRows(0, model->rowCount());
-	foreach(QString s, stringList)
-	{
-		addMapToMaplist(s);
-	}
-	cbRandomMapRotation->setChecked(rules["randomMapRotation"]);
+	mapListPanel->loadConfig(ini);
 
 	// Misc.
 	miscPanel->loadConfig(ini);
@@ -1025,9 +971,7 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 		rules[widget->limit.command()] = widget->spinBox->value();
 	}
 
-	stringList = CommonGUI::listViewStandardItemsToStringList(lstMaplist);
-	rules["maplist"] = stringList.join(";");
-	rules["randomMapRotation"] = cbRandomMapRotation->isChecked();
+	mapListPanel->saveConfig(ini);
 
 	// Misc.
 	miscPanel->saveConfig(ini);

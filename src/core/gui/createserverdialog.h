@@ -50,7 +50,6 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		void makeSetupRemoteGameDialog(const EnginePlugin *plugin);
 
 	private slots:
-		void btnAddMapToMaplistClicked();
 		void btnAddPwadClicked();
 		void btnBrowseExecutableClicked();
 		void btnCommandLineClicked();
@@ -59,14 +58,12 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		void btnIwadBrowseClicked();
 		void btnLoadClicked();
 		void btnPlayOfflineClicked();
-		void btnRemoveMapFromMaplistClicked();
 		void btnRemovePwadClicked();
 		void btnSaveClicked();
 		void btnStartServerClicked();
 		void cboEngineSelected(int index);
 		void cboGamemodeSelected(int index);
 		void firstLoadConfigTimer();
-		void focusChanged(QWidget* oldW, QWidget* newW);
 
 		/**
 		 * @brief Files drag'n'drop on WADs list view.
@@ -105,7 +102,6 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		 * will be selected.
 		 */
 		void addIwad(const QString& path);
-		void addMapToMaplist(const QString& map);
 		void addWadPath(const QString& path);
 
 		/**

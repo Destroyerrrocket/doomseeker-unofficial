@@ -352,62 +352,9 @@
            <property name="title">
             <string>Map list</string>
            </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <layout class="QVBoxLayout" name="verticalLayout_6">
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_6">
-              <item>
-               <widget class="QListView" name="lstMaplist">
-                <property name="dragEnabled">
-                 <bool>true</bool>
-                </property>
-                <property name="dragDropMode">
-                 <enum>QAbstractItemView::InternalMove</enum>
-                </property>
-                <property name="selectionMode">
-                 <enum>QAbstractItemView::ExtendedSelection</enum>
-                </property>
-                <property name="movement">
-                 <enum>QListView::Free</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_8">
-                <item>
-                 <widget class="QPushButton" name="btnAddMapToMaplist">
-                  <property name="text">
-                   <string>Add</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../../../media/resources.qrc">
-                    <normaloff>:/icons/plus.png</normaloff>:/icons/plus.png</iconset>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="btnRemoveMapFromMaplist">
-                  <property name="text">
-                   <string>Remove</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../../../media/resources.qrc">
-                    <normaloff>:/icons/x.png</normaloff>:/icons/x.png</iconset>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="leMapname"/>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="cbRandomMapRotation">
-                <property name="text">
-                 <string>Random map rotation</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
+             <widget class="MapListPanel" name="mapListPanel" native="true"/>
             </item>
            </layout>
           </widget>
@@ -620,6 +567,12 @@
    <class>MiscServerSetupPanel</class>
    <extends>QWidget</extends>
    <header>gui/createserver/miscserversetuppanel.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MapListPanel</class>
+   <extends>QWidget</extends>
+   <header>gui/createserver/maplistpanel.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

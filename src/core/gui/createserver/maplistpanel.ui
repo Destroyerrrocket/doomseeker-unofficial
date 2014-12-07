@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MapListPanel</class>
+ <widget class="QWidget" name="MapListPanel">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QListView" name="lstMaplist">
+     <property name="dragEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="dragDropMode">
+      <enum>QAbstractItemView::InternalMove</enum>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::ExtendedSelection</enum>
+     </property>
+     <property name="movement">
+      <enum>QListView::Free</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_8">
+     <item>
+      <widget class="QPushButton" name="btnAddMapToMaplist">
+       <property name="text">
+        <string>Add</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../../media/resources.qrc">
+         <normaloff>:/icons/plus.png</normaloff>:/icons/plus.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnRemoveMapFromMaplist">
+       <property name="text">
+        <string>Remove</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../../media/resources.qrc">
+         <normaloff>:/icons/x.png</normaloff>:/icons/x.png</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="leMapname"/>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="cbRandomMapRotation">
+     <property name="text">
+      <string>Random map rotation</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>lstMaplist</tabstop>
+  <tabstop>btnAddMapToMaplist</tabstop>
+  <tabstop>btnRemoveMapFromMaplist</tabstop>
+  <tabstop>leMapname</tabstop>
+  <tabstop>cbRandomMapRotation</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../../../../media/resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>btnAddMapToMaplist</sender>
+   <signal>clicked()</signal>
+   <receiver>MapListPanel</receiver>
+   <slot>addMapFromEditBoxToList()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>118</x>
+     <y>230</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>131</x>
+     <y>248</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnRemoveMapFromMaplist</sender>
+   <signal>clicked()</signal>
+   <receiver>MapListPanel</receiver>
+   <slot>removeSelectedFromList()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>342</x>
+     <y>231</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>351</x>
+     <y>247</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>addMapFromEditBoxToList()</slot>
+  <slot>removeSelectedFromList()</slot>
+ </slots>
+</ui>
