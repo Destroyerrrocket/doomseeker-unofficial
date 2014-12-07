@@ -514,71 +514,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
-        <layout class="QFormLayout" name="formLayout_2">
-         <property name="fieldGrowthPolicy">
-          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-         </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="labelURL">
-           <property name="text">
-            <string>URL:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="leURL"/>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="labelEmail">
-           <property name="text">
-            <string>E-mail:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="leEmail"/>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="labelConnectPassword">
-           <property name="text">
-            <string>Connect password:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="labelJoinPassword">
-           <property name="text">
-            <string>Join password:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="labelRConPassword">
-           <property name="text">
-            <string>RCon password:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="leConnectPassword"/>
-         </item>
-         <item row="3" column="1">
-          <widget class="QLineEdit" name="leJoinPassword"/>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLineEdit" name="leRConPassword"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QLabel" name="labelMOTD">
-         <property name="text">
-          <string>MOTD:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPlainTextEdit" name="pteMOTD"/>
+        <widget class="MiscServerSetupPanel" name="miscPanel" native="true"/>
        </item>
       </layout>
      </widget>
@@ -678,6 +614,12 @@
    <class>CustomParamsPanel</class>
    <extends>QWidget</extends>
    <header>gui/createserver/customparamspanel.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MiscServerSetupPanel</class>
+   <extends>QWidget</extends>
+   <header>gui/createserver/miscserversetuppanel.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

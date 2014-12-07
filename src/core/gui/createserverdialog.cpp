@@ -479,23 +479,20 @@ bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 	// Custom parameters
 	customParamsPanel->fillInParams(params);
 
+	// Misc. page
+	miscPanel->fillInParams(params);
+
 	// Other
 	params.setBroadcastToLan(cbBroadcastToLAN->isChecked());
 	params.setBroadcastToMaster(cbBroadcastToMaster->isChecked());
-	params.setEmail(leEmail->text());
 	params.setMap(leMap->text());
 	params.setMapList(CommonGUI::listViewStandardItemsToStringList(lstMaplist));
 	params.setRandomMapRotation(cbRandomMapRotation->isChecked());
 	params.setMaxClients(spinMaxClients->value());
 	params.setMaxPlayers(spinMaxPlayers->value());
-	params.setMotd(pteMOTD->toPlainText());
 	params.setName(leServername->text());
-	params.setConnectPassword(leConnectPassword->text());
-	params.setIngamePassword(leJoinPassword->text());
-	params.setRconPassword(leRConPassword->text());
 	params.setPort(spinPort->isEnabled() ? spinPort->value() : 0);
 	params.setSkill(cboDifficulty->currentIndex());
-	params.setUrl(leURL->text());
 
 	const QList<GameMode>* gameModes = d->currentEngine->data()->gameModes;
 	if (gameModes != NULL)
@@ -704,42 +701,8 @@ void CreateServerDialog::initGamemodeSpecific(const GameMode& gameMode)
 
 void CreateServerDialog::initInfoAndPassword()
 {
-	const static int MISC_TAB_INDEX = 2;
-
-	bool bAtLeastOneVisible = false;
-	bool bIsVisible = false;
-
-	bIsVisible = d->currentEngine->data()->allowsConnectPassword;
-	labelConnectPassword->setVisible(bIsVisible);
-	leConnectPassword->setVisible(bIsVisible);
-	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
-
-	bIsVisible = d->currentEngine->data()->allowsEmail;
-	labelEmail->setVisible(bIsVisible);
-	leEmail->setVisible(bIsVisible);
-	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
-
-	bIsVisible = d->currentEngine->data()->allowsJoinPassword;
-	labelJoinPassword->setVisible(bIsVisible);
-	leJoinPassword->setVisible(bIsVisible);
-	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
-
-	bIsVisible = d->currentEngine->data()->allowsMOTD;
-	labelMOTD->setVisible(bIsVisible);
-	pteMOTD->setVisible(bIsVisible);
-	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
-
-	bIsVisible = d->currentEngine->data()->allowsRConPassword;
-	labelRConPassword->setVisible(bIsVisible);
-	leRConPassword->setVisible(bIsVisible);
-	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
-
-	bIsVisible = d->currentEngine->data()->allowsURL;
-	labelURL->setVisible(bIsVisible);
-	leURL->setVisible(bIsVisible);
-	bAtLeastOneVisible = bAtLeastOneVisible || bIsVisible;
-
-	tabWidget->setTabEnabled(MISC_TAB_INDEX, bAtLeastOneVisible);
+	miscPanel->setupForEngine(d->currentEngine);
+	tabWidget->setTabEnabled(tabWidget->indexOf(tabMisc), miscPanel->isAnythingAvailable());
 }
 
 void CreateServerDialog::initPrimary()
@@ -895,12 +858,7 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 	cbRandomMapRotation->setChecked(rules["randomMapRotation"]);
 
 	// Misc.
-	leURL->setText(misc["URL"]);
-	leEmail->setText(misc["eMail"]);
-	leConnectPassword->setText(misc["connectPassword"]);
-	leJoinPassword->setText(misc["joinPassword"]);
-	leRConPassword->setText(misc["RConPassword"]);
-	pteMOTD->document()->setPlainText(misc["MOTD"]);
+	miscPanel->loadConfig(ini);
 
 	// DMFlags
 	foreach(DMFlagsTabWidget* p, d->dmFlagsTabs)
@@ -1039,7 +997,6 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 	Ini ini(&settingsProvider);
 	IniSection general = ini.createSection("General");
 	IniSection rules = ini.createSection("Rules");
-	IniSection misc = ini.createSection("Misc");
 	IniSection dmflags = ini.createSection("DMFlags");
 
 	// General
@@ -1073,12 +1030,7 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 	rules["randomMapRotation"] = cbRandomMapRotation->isChecked();
 
 	// Misc.
-	misc["URL"] = leURL->text();
-	misc["eMail"] = leEmail->text();
-	misc["connectPassword"] = leConnectPassword->text();
-	misc["joinPassword"] = leJoinPassword->text();
-	misc["RConPassword"] = leRConPassword->text();
-	misc["MOTD"] = pteMOTD->toPlainText();
+	miscPanel->saveConfig(ini);
 
 	// DMFlags
 	foreach(DMFlagsTabWidget* p, d->dmFlagsTabs)
