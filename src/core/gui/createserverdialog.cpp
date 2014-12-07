@@ -477,15 +477,7 @@ bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 	}
 
 	// Custom parameters
-	{
-		QString cp = pteCustomParameters->toPlainText();
-		Scanner sc(cp.toAscii().constData(), cp.length());
-		while (sc.nextString())
-		{
-			QString param = sc->str();
-			params.customParameters() << param;
-		}
-	}
+	customParamsPanel->fillInParams(params);
 
 	// Other
 	params.setBroadcastToLan(cbBroadcastToLAN->isChecked());
@@ -931,7 +923,7 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 	}
 
 	// Custom parameters
-	pteCustomParameters->document()->setPlainText(misc["CustomParams"]);
+	customParamsPanel->loadConfig(ini);
 	return true;
 }
 
@@ -1109,7 +1101,7 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 	}
 
 	// Custom parameters
-	misc["CustomParams"] = pteCustomParameters->toPlainText();
+	customParamsPanel->saveConfig(ini);
 
 	if (settingsFile.isWritable())
 	{
