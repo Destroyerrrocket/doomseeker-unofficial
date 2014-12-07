@@ -68,6 +68,9 @@
 *    the virtual method, so return value and all arguments must be the
 *    same.
 * -# In constructor, call: <code>set_method(&MyImplementation::method);</code>
+* -# If method is just <b>[Virtual]</b> (and not <b>[Pure Virtual]</b>)
+*    you can call the default behavior by calling <code>method_default()</code>.
+*    There's no need to specify the <code>SuperClass::</code> prefix.
 *
 * To see how to do this, inspect implementation of
 * ZandronumRConProtocol. If you'd like to learn more, inspect
