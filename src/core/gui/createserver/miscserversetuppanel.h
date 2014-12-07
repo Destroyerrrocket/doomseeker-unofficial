@@ -32,6 +32,8 @@ class Ini;
 
 class MiscServerSetupPanel : public QWidget, private Ui::MiscServerSetupPanel
 {
+Q_OBJECT
+
 public:
 	MiscServerSetupPanel(QWidget *parent);
 

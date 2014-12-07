@@ -31,6 +31,8 @@ class Ini;
 
 class CustomParamsPanel : public QWidget, private Ui::CustomParamsPanel
 {
+Q_OBJECT
+
 public:
 	CustomParamsPanel(QWidget *parent);
 
