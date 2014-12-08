@@ -676,8 +676,6 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 	SettingsProviderQt settingsProvider(&settingsFile);
 	Ini ini(&settingsProvider);
 	IniSection general = ini.section("General");
-	IniSection rules = ini.section("Rules");
-	IniSection misc = ini.section("Misc");
 	IniSection dmflags = ini.section("DMFlags");
 
 	// General
@@ -862,7 +860,6 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 	SettingsProviderQt settingsProvider(&settingsFile);
 	Ini ini(&settingsProvider);
 	IniSection general = ini.createSection("General");
-	IniSection rules = ini.createSection("Rules");
 	IniSection dmflags = ini.createSection("DMFlags");
 
 	// General
