@@ -63,8 +63,6 @@ class CreateServerDialog::PrivData
 		QList<CreateServerDialogPage*> currentCustomPages;
 		EnginePlugin *currentEngine;
 		QList<DMFlagsTabWidget*> dmFlagsTabs;
-		QList<GameLimitWidget*> limitWidgets;
-		QList<GameCVar> gameModifiers;
 };
 
 const QString CreateServerDialog::TEMP_SERVER_CONFIG_FILENAME = "/tmpserver.ini";
@@ -428,22 +426,6 @@ bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 	}
 	params.setCustomParameters(customPagesParams);
 
-	// limits
-	foreach(GameLimitWidget* p, d->limitWidgets)
-	{
-		p->limit.setValue(p->spinBox->value());
-		params.cvars() << p->limit;
-	}
-
-	// modifier
-	int modIndex = cboModifier->currentIndex();
-	if (modIndex > 0) // Index zero is always "< NONE >"
-	{
-		--modIndex;
-		d->gameModifiers[modIndex].setValue(1);
-		params.cvars() << d->gameModifiers[modIndex];
-	}
-
 	// Custom parameters
 	customParamsPanel->fillInParams(params);
 
@@ -451,14 +433,12 @@ bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 	miscPanel->fillInParams(params);
 
 	// Other
+	rulesPanel->fillInParams(params);
 	params.setBroadcastToLan(cbBroadcastToLAN->isChecked());
 	params.setBroadcastToMaster(cbBroadcastToMaster->isChecked());
 	params.setMap(leMap->text());
-	params.setMaxClients(spinMaxClients->value());
-	params.setMaxPlayers(spinMaxPlayers->value());
 	params.setName(leServername->text());
 	params.setPort(spinPort->isEnabled() ? spinPort->value() : 0);
-	params.setSkill(cboDifficulty->currentIndex());
 
 	const QList<GameMode>* gameModes = d->currentEngine->data()->gameModes;
 	if (gameModes != NULL)
@@ -484,6 +464,22 @@ void CreateServerDialog::createHostInfoDemoRecord(GameCreateParams& params, bool
 		params.setDemoPath(GameDemo::mkDemoFullPath(GameDemo::Managed, *d->currentEngine));
 		params.setDemoRecord(GameDemo::Managed);
 	}
+}
+
+GameMode CreateServerDialog::currentGameMode() const
+{
+	const QList<GameMode>* gameModes = d->currentEngine->data()->gameModes;
+	if (gameModes != NULL)
+	{
+		foreach (const GameMode& mode, (*gameModes))
+		{
+			if (mode.name().compare(cboGamemode->currentText()) == 0)
+			{
+				return mode;
+			}
+		}
+	}
+	return GameMode();
 }
 
 void CreateServerDialog::firstLoadConfigTimer()
@@ -599,8 +595,7 @@ void CreateServerDialog::initEngineSpecific(EnginePlugin* engineInfo)
 	}
 	else
 	{
-		// No game modes defined for plugin so lets clear the rules page.
-		removeLimitWidgets();
+		rulesPanel->setupForEngine(d->currentEngine, GameMode());
 	}
 
 	initDMFlagsTabs();
@@ -629,27 +624,7 @@ void CreateServerDialog::initEngineSpecificPages(EnginePlugin* engineInfo)
 
 void CreateServerDialog::initGamemodeSpecific(const GameMode& gameMode)
 {
-	// Rules tab
-	removeLimitWidgets();
-	QList<GameCVar> limits = d->currentEngine->limits(gameMode);
-	QList<GameCVar>::iterator it;
-
-	int number = 0;
-	for (it = limits.begin(); it != limits.end(); ++it, ++number)
-	{
-		QLabel* label = new QLabel(this);
-		label->setText(it->name());
-		QSpinBox* spinBox = new QSpinBox(this);
-		spinBox->setMaximum(999999);
-
-		limitsLayout->addRow(label, spinBox);
-
-		GameLimitWidget* glw = new GameLimitWidget();
-		glw->label = label;
-		glw->spinBox = spinBox;
-		glw->limit = (*it);
-		d->limitWidgets << glw;
-	}
+	rulesPanel->setupForEngine(d->currentEngine, gameMode);
 }
 
 void CreateServerDialog::initInfoAndPassword()
@@ -673,14 +648,6 @@ void CreateServerDialog::initPrimary()
 		cboEngine->setCurrentIndex(0);
 	}
 
-	cboDifficulty->clear();
-
-	cboDifficulty->addItem("1 - I'm too young to die", 0);
-	cboDifficulty->addItem("2 - Hey, not too rough", 1);
-	cboDifficulty->addItem("3 - Hurt me plenty", 2);
-	cboDifficulty->addItem("4 - Ultra-violence", 3);
-	cboDifficulty->addItem("5 - NIGHTMARE!", 4);
-
 	const QString iwads[] = { "doom.wad", "doom1.wad", "doom2.wad", "tnt.wad", "plutonia.wad", "heretic.wad", "hexen.wad", "hexdd.wad", "freedoom.wad", "strife1.wad", "" };
 
 	cboIwad->clear();
@@ -698,33 +665,7 @@ void CreateServerDialog::initPrimary()
 
 void CreateServerDialog::initRules()
 {
-	mapListPanel->setupForEngine(d->currentEngine);
-
-	cboModifier->clear();
-	d->gameModifiers.clear();
-
-	const QList<GameCVar>* pEngineGameModifiers = d->currentEngine->data()->gameModifiers;
-
-	if (pEngineGameModifiers != NULL && !pEngineGameModifiers->isEmpty())
-	{
-		const QList<GameCVar>& engineGameModifiers = *pEngineGameModifiers;
-
-		cboModifier->show();
-		labelModifiers->show();
-
-		cboModifier->addItem(tr("< NONE >"));
-
-		for (int i = 0; i < engineGameModifiers.count(); ++i)
-		{
-			cboModifier->addItem(engineGameModifiers[i].name());
-			d->gameModifiers << engineGameModifiers[i];
-		}
-	}
-	else
-	{
-		cboModifier->hide();
-		labelModifiers->hide();
-	}
+	rulesPanel->setupForEngine(d->currentEngine, currentGameMode());
 }
 
 bool CreateServerDialog::loadConfig(const QString& filename)
@@ -791,17 +732,7 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 	cbBroadcastToMaster->setChecked(general["broadcastToMaster"]);
 
 	// Rules
-	cboDifficulty->setCurrentIndex(rules["difficulty"]);
-	cboModifier->setCurrentIndex(rules["modifier"]);
-	spinMaxClients->setValue(rules["maxClients"]);
-	spinMaxPlayers->setValue(rules["maxPlayers"]);
-
-	foreach (GameLimitWidget* widget, d->limitWidgets)
-	{
-		widget->spinBox->setValue(rules[widget->limit.command()]);
-	}
-
-	mapListPanel->loadConfig(ini);
+	rulesPanel->loadConfig(ini);
 
 	// Misc.
 	miscPanel->loadConfig(ini);
@@ -854,12 +785,14 @@ void CreateServerDialog::makeSetupRemoteGameDialog(const EnginePlugin *plugin)
 	{
 		cboEngine, leExecutable, btnBrowseExecutable, btnDefaultExecutable,
 		cbLockExecutable, leServername, spinPort, cbBroadcastToLAN,
-		cbBroadcastToMaster, btnPlayOffline, spinMaxClients, spinMaxPlayers,
+		cbBroadcastToMaster, btnPlayOffline,
 
 		NULL
 	};
 	for(int i = 0;disableControls[i] != NULL;++i)
 		disableControls[i]->setDisabled(true);
+
+	rulesPanel->setupForRemoteGame();
 }
 
 QString CreateServerDialog::pathToClientExe(Server* server, Message& message)
@@ -889,19 +822,6 @@ void CreateServerDialog::removeDMFlagsTabs()
 	}
 
 	d->dmFlagsTabs.clear();
-}
-
-void CreateServerDialog::removeLimitWidgets()
-{
-	QList<GameLimitWidget*>::iterator it;
-	foreach (GameLimitWidget *widget, d->limitWidgets)
-	{
-		delete widget->label;
-		delete widget->spinBox;
-		delete widget;
-	}
-
-	d->limitWidgets.clear();
 }
 
 void CreateServerDialog::runGame(bool offline)
@@ -960,18 +880,7 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 	general["broadcastToLAN"] = cbBroadcastToLAN->isChecked();
 	general["broadcastToMaster"] = cbBroadcastToMaster->isChecked();
 
-	// Rules
-	rules["difficulty"] = cboDifficulty->currentIndex();
-	rules["modifier"] = cboModifier->currentIndex();
-	rules["maxClients"] = spinMaxClients->value();
-	rules["maxPlayers"] = spinMaxPlayers->value();
-
-	foreach (GameLimitWidget *widget, d->limitWidgets)
-	{
-		rules[widget->limit.command()] = widget->spinBox->value();
-	}
-
-	mapListPanel->saveConfig(ini);
+	rulesPanel->saveConfig(ini);
 
 	// Misc.
 	miscPanel->saveConfig(ini);

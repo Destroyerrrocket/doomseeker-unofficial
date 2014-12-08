@@ -83,14 +83,6 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 				QList<QCheckBox*> checkBoxes;
 		};
 
-		class GameLimitWidget
-		{
-			public:
-				QWidget* label;
-				QSpinBox* spinBox;
-				GameCVar limit;
-		};
-
 		static const QString TEMP_SERVER_CONFIG_FILENAME;
 
 		class PrivData;
@@ -111,6 +103,8 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		 */
 		bool createHostInfo(GameCreateParams& params, bool offline);
 		void createHostInfoDemoRecord(GameCreateParams& params, bool offline);
+
+		GameMode currentGameMode() const;
 
 		void initDMFlagsTabs();
 
@@ -145,7 +139,6 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		QString pathToOfflineExe(Message& message);
 		QString pathToServerExe(Message& message);
 		void removeDMFlagsTabs();
-		void removeLimitWidgets();
 		void runGame(bool offline);
 		bool saveConfig(const QString& filename);
 		bool setEngine(const QString &engineName);
