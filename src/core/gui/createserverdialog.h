@@ -78,8 +78,8 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 				DMFlagsSection section;
 
 				/**
- 				 * Check boxes in the same order the flags are stored in the plugin.
- 				 */
+				 * Check boxes in the same order the flags are stored in the plugin.
+				 */
 				QList<QCheckBox*> checkBoxes;
 		};
 
