@@ -79,28 +79,21 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 	d->currentEngine = NULL;
 
 	setupUi(this);
-	connect(btnAddPwad, SIGNAL( clicked() ), this, SLOT ( btnAddPwadClicked() ) );
 	connect(btnBrowseExecutable, SIGNAL( clicked() ), this, SLOT ( btnBrowseExecutableClicked() ) );
 	connect(btnCancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
 	connect(btnCommandLine, SIGNAL( clicked() ), this, SLOT( btnCommandLineClicked() ) );
-	connect(btnClearPwadList, SIGNAL( clicked() ), this, SLOT( btnClearPwadListClicked() ) );
 	connect(btnDefaultExecutable, SIGNAL( clicked() ), this, SLOT( btnDefaultExecutableClicked() ) );
 	connect(btnIwadBrowse, SIGNAL( clicked() ), this, SLOT ( btnIwadBrowseClicked() ) );
 	connect(btnLoad, SIGNAL( clicked() ), this, SLOT ( btnLoadClicked() ) );
 	connect(btnPlayOffline, SIGNAL( clicked() ), this, SLOT ( btnPlayOfflineClicked() ) );
 
-	connect(btnRemovePwad, SIGNAL( clicked() ), this, SLOT ( btnRemovePwadClicked() ) );
 	connect(btnSave, SIGNAL( clicked() ), this, SLOT ( btnSaveClicked() ) );
 	connect(btnStartServer, SIGNAL( clicked() ), this, SLOT( btnStartServerClicked() ) );
 
 	connect(cboEngine, SIGNAL( currentIndexChanged(int) ), this, SLOT( cboEngineSelected(int) ) );
 	connect(cboGamemode, SIGNAL( currentIndexChanged(int) ), this, SLOT( cboGamemodeSelected(int) ) );
 
-	connect(lstAdditionalFiles, SIGNAL( fileSystemPathDropped(const QString& ) ),
-		this, SLOT( lstAdditionalFilesPathDnd(const QString&) ) );
-
 	cboIwad->setEditable(true);
-	lstAdditionalFiles->setModel(new QStandardItemModel(this));
 
 	initPrimary();
 	d->bSuppressMissingExeErrors = false;
@@ -139,62 +132,6 @@ void CreateServerDialog::addIwad(const QString& path)
 	cboIwad->setCurrentIndex(cboIwad->count() - 1);
 }
 
-void CreateServerDialog::addWadPath(const QString& strPath)
-{
-	if (strPath.isEmpty())
-	{
-		return;
-	}
-
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstAdditionalFiles->model());
-
-	// Check if this path exists already, if so - do nothing.
-	for(int i = 0; i < model->rowCount(); ++i)
-	{
-		QStandardItem* item = model->item(i);
-		QString dir = item->text();
-		Qt::CaseSensitivity cs;
-
-		#ifdef Q_OS_WIN32
-		cs = Qt::CaseInsensitive;
-		#else
-		cs = Qt::CaseSensitive;
-		#endif
-
-		if (dir.compare(strPath, cs) == 0)
-		{
-			return;
-		}
-	}
-
-	QStandardItem* it = new QStandardItem(strPath);
-
-	it->setDragEnabled(true);
-	it->setDropEnabled(false);
-	it->setToolTip(strPath);
-
-	model->appendRow(it);
-}
-
-void CreateServerDialog::btnAddPwadClicked()
-{
-	QString dialogDir = gConfig.doomseeker.previousCreateServerWadDir;
-	QStringList filesNames = QFileDialog::getOpenFileNames(this, tr("Doomseeker - Add file(s)"), dialogDir);
-
-	if (!filesNames.isEmpty())
-	{
-		// Remember the directory of the first file. This directory will be
-		// restored the next time this dialog is opened.
-		QFileInfo fi(filesNames[0]);
-		gConfig.doomseeker.previousCreateServerWadDir = fi.absolutePath();
-
-		foreach (const QString& strFile, filesNames)
-		{
-			addWadPath(strFile);
-		}
-	}
-}
-
 void CreateServerDialog::btnBrowseExecutableClicked()
 {
 	QString dialogDir = gConfig.doomseeker.previousCreateServerExecDir;
@@ -207,12 +144,6 @@ void CreateServerDialog::btnBrowseExecutableClicked()
 
 		leExecutable->setText(fi.absoluteFilePath());
 	}
-}
-
-void CreateServerDialog::btnClearPwadListClicked()
-{
-	QStandardItemModel* pModel = (QStandardItemModel*)lstAdditionalFiles->model();
-	pModel->clear();
 }
 
 void CreateServerDialog::btnCommandLineClicked()
@@ -273,12 +204,6 @@ void CreateServerDialog::btnLoadClicked()
 void CreateServerDialog::btnPlayOfflineClicked()
 {
 	runGame(true);
-}
-
-void CreateServerDialog::btnRemovePwadClicked()
-{
-	const bool bSelectNextLowest = true;
-	CommonGUI::removeSelectedRowsFromStandardItemView(lstAdditionalFiles, bSelectNextLowest);
 }
 
 void CreateServerDialog::btnSaveClicked()
@@ -393,7 +318,7 @@ bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 	}
 
 	params.setIwadPath(cboIwad->currentText());
-	params.setPwadsPaths(CommonGUI::listViewStandardItemsToStringList(lstAdditionalFiles));
+	params.setPwadsPaths(wadsPicker->filePaths());
 
 	// DMFlags
 	foreach(const DMFlagsTabWidget* p, d->dmFlagsTabs)
@@ -718,13 +643,7 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 	leMap->setText(general["map"]);
 	addIwad(general["iwad"]);
 
-	stringList = general["pwads"].valueString().split(";");
-	model = lstAdditionalFiles->model();
-	model->removeRows(0, model->rowCount());
-	foreach (QString s, stringList)
-	{
-		addWadPath(s);
-	}
+	wadsPicker->setFilePaths(general["pwads"].valueString().split(";"));
 
 	cbBroadcastToLAN->setChecked(general["broadcastToLAN"]);
 	cbBroadcastToMaster->setChecked(general["broadcastToMaster"]);
@@ -758,15 +677,6 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 	// Custom parameters
 	customParamsPanel->loadConfig(ini);
 	return true;
-}
-
-void CreateServerDialog::lstAdditionalFilesPathDnd(const QString& path)
-{
-	QFileInfo fileInfo(path);
-	if (fileInfo.isFile())
-	{
-		addWadPath(path);
-	}
 }
 
 void CreateServerDialog::makeSetupRemoteGameDialog(const EnginePlugin *plugin)
@@ -871,8 +781,7 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 	general["map"] = leMap->text();
 	general["iwad"] = cboIwad->currentText();
 
-	stringList = CommonGUI::listViewStandardItemsToStringList(lstAdditionalFiles);
-	general["pwads"] = stringList.join(";");
+	general["pwads"] = wadsPicker->filePaths().join(";");
 
 	general["broadcastToLAN"] = cbBroadcastToLAN->isChecked();
 	general["broadcastToMaster"] = cbBroadcastToMaster->isChecked();

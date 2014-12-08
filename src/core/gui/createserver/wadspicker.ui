@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WadsPicker</class>
+ <widget class="QWidget" name="WadsPicker">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="DndFileSystemListView" name="lstAdditionalFiles">
+     <property name="acceptDrops">
+      <bool>true</bool>
+     </property>
+     <property name="dragEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="dragDropMode">
+      <enum>QAbstractItemView::InternalMove</enum>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::ExtendedSelection</enum>
+     </property>
+     <property name="movement">
+      <enum>QListView::Free</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QPushButton" name="btnClearPwadList">
+       <property name="text">
+        <string>Clear</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnAddPwad">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Add</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../../media/resources.qrc">
+         <normaloff>:/icons/plus.png</normaloff>:/icons/plus.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnRemovePwad">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Remove</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../../media/resources.qrc">
+         <normaloff>:/icons/x.png</normaloff>:/icons/x.png</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DndFileSystemListView</class>
+   <extends>QListView</extends>
+   <header>gui/widgets/dndfilesystemlistview.h</header>
+   <slots>
+    <signal>fileSystemPathDropped(QString)</signal>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>lstAdditionalFiles</tabstop>
+  <tabstop>btnClearPwadList</tabstop>
+  <tabstop>btnAddPwad</tabstop>
+  <tabstop>btnRemovePwad</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../../../../media/resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>btnClearPwadList</sender>
+   <signal>clicked()</signal>
+   <receiver>WadsPicker</receiver>
+   <slot>removeAll()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>47</x>
+     <y>281</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>98</x>
+     <y>268</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnAddPwad</sender>
+   <signal>clicked()</signal>
+   <receiver>WadsPicker</receiver>
+   <slot>browseAndAdd()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>262</x>
+     <y>277</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>246</x>
+     <y>267</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnRemovePwad</sender>
+   <signal>clicked()</signal>
+   <receiver>WadsPicker</receiver>
+   <slot>removeSelected()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>358</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>338</x>
+     <y>268</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lstAdditionalFiles</sender>
+   <signal>fileSystemPathDropped(QString)</signal>
+   <receiver>WadsPicker</receiver>
+   <slot>addWadPath(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>71</x>
+     <y>208</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>28</x>
+     <y>270</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>removeAll()</slot>
+  <slot>removeSelected()</slot>
+  <slot>browseAndAdd()</slot>
+  <slot>addWadPath(QString)</slot>
+ </slots>
+</ui>

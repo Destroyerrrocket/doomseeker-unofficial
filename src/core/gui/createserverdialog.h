@@ -50,25 +50,17 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		void makeSetupRemoteGameDialog(const EnginePlugin *plugin);
 
 	private slots:
-		void btnAddPwadClicked();
 		void btnBrowseExecutableClicked();
 		void btnCommandLineClicked();
-		void btnClearPwadListClicked();
 		void btnDefaultExecutableClicked();
 		void btnIwadBrowseClicked();
 		void btnLoadClicked();
 		void btnPlayOfflineClicked();
-		void btnRemovePwadClicked();
 		void btnSaveClicked();
 		void btnStartServerClicked();
 		void cboEngineSelected(int index);
 		void cboGamemodeSelected(int index);
 		void firstLoadConfigTimer();
-
-		/**
-		 * @brief Files drag'n'drop on WADs list view.
-		 */
-		void lstAdditionalFilesPathDnd(const QString& path);
 
 	private:
 		class DMFlagsTabWidget
@@ -94,7 +86,6 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		 * will be selected.
 		 */
 		void addIwad(const QString& path);
-		void addWadPath(const QString& path);
 
 		/**
 		 * Sets host information for both server and hi objects. Both

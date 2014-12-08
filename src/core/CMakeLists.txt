@@ -82,6 +82,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/createserver/gamerulespanel.ui
 	gui/createserver/maplistpanel.ui
 	gui/createserver/miscserversetuppanel.ui
+	gui/createserver/wadspicker.ui
 	gui/irc/ircdock.ui
 	gui/irc/ircdocktabcontents.ui
 	gui/irc/ircignoresmanager.ui
@@ -131,6 +132,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/createserver/gamerulespanel.h
 	gui/createserver/maplistpanel.h
 	gui/createserver/miscserversetuppanel.h
+	gui/createserver/wadspicker.h
 	gui/irc/ircdock.h
 	gui/irc/ircdocktabcontents.h
 	gui/irc/ircignoresmanager.h
@@ -253,6 +255,7 @@ set(SOURCE_FILES
 	gui/createserver/gamerulespanel.cpp
 	gui/createserver/maplistpanel.cpp
 	gui/createserver/miscserversetuppanel.cpp
+	gui/createserver/wadspicker.cpp
 	gui/entity/serverlistfilterinfo.cpp
 	gui/helpers/comboboxex.cpp
 	gui/helpers/datetablewidgetitem.cpp
