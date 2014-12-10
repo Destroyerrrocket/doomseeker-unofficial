@@ -301,37 +301,12 @@ bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 	params.setHostMode(offline ? GameCreateParams::Offline : GameCreateParams::Host);
 	params.setIwadPath(cboIwad->currentText());
 	params.setPwadsPaths(wadsPicker->filePaths());
+	params.dmFlags() = dmFlags();
 
-	// DMFlags
-	foreach(const DMFlagsTabWidget* p, d->dmFlagsTabs)
+	if (!fillInParamsFromPluginPages(params))
 	{
-		DMFlagsSection sec(p->section.name());
-		for (int i = 0; i < p->section.count(); ++i)
-		{
-			if (p->checkBoxes[i]->isChecked())
-			{
-				sec.add(p->section[i]);
-			}
-		}
-		params.dmFlags() << sec;
+		return false;
 	}
-
-	// Custom pages.
-	QStringList customPagesParams;
-	foreach (CreateServerDialogPage* page, d->currentCustomPages)
-	{
-		if (page->validate())
-		{
-			customPagesParams << page->generateGameRunParameters();
-		}
-		else
-		{
-			// Pages must take care of displaying their own error messages.
-			tabWidget->setCurrentIndex(tabWidget->indexOf(page));
-			return false;
-		}
-	}
-	params.setCustomParameters(customPagesParams);
 
 	// Custom parameters
 	customParamsPanel->fillInParams(params);
@@ -375,6 +350,24 @@ GameMode CreateServerDialog::currentGameMode() const
 		}
 	}
 	return GameMode();
+}
+
+QList<DMFlagsSection> CreateServerDialog::dmFlags() const
+{
+	QList<DMFlagsSection> result;
+	foreach(const DMFlagsTabWidget* p, d->dmFlagsTabs)
+	{
+		DMFlagsSection sec(p->section.name());
+		for (int i = 0; i < p->section.count(); ++i)
+		{
+			if (p->checkBoxes[i]->isChecked())
+			{
+				sec.add(p->section[i]);
+			}
+		}
+		result << sec;
+	}
+	return result;
 }
 
 void CreateServerDialog::firstLoadConfigTimer()
@@ -709,6 +702,24 @@ QString CreateServerDialog::pathToOfflineExe(Message& message)
 QString CreateServerDialog::pathToServerExe(Message& message)
 {
 	return GameExeRetriever(*d->currentEngine->gameExe()).pathToServerExe(message);
+}
+
+bool CreateServerDialog::fillInParamsFromPluginPages(GameCreateParams &params)
+{
+	foreach (CreateServerDialogPage* page, d->currentCustomPages)
+	{
+		if (page->validate())
+		{
+			params.customParameters() << page->generateGameRunParameters();
+		}
+		else
+		{
+			// Pages must take care of displaying their own error messages.
+			tabWidget->setCurrentIndex(tabWidget->indexOf(page));
+			return false;
+		}
+	}
+	return true;
 }
 
 void CreateServerDialog::removeDMFlagsTabs()

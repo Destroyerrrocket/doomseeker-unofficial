@@ -97,6 +97,9 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 
 		GameMode currentGameMode() const;
 
+		QList<DMFlagsSection> dmFlags() const;
+
+		bool fillInParamsFromPluginPages(GameCreateParams &params);
 		void initDMFlagsTabs();
 
 		/**
