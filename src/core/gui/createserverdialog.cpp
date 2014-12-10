@@ -297,26 +297,8 @@ bool CreateServerDialog::commandLineArguments(QString &executable, QStringList &
 
 bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 {
-	// Since some operating systems have different offline and server binaries
-	// We will see if they are playing offline and switch to the client
-	// binary if the specified executable is the same as what is provided
-	// as the server.
-	Message message;
-	QString offlineExePath = pathToOfflineExe(message);
-	QString serverExePath = pathToServerExe(message);
-	bool bIsLineEditPotiningToServerBinary = (leExecutable->text() == serverExePath);
-	bool bShouldUseClientBinary = (offline || d->remoteGameSetup) && message.isIgnore() && bIsLineEditPotiningToServerBinary;
-
+	params.setExecutablePath(pathToExe(offline));
 	params.setHostMode(offline ? GameCreateParams::Offline : GameCreateParams::Host);
-	if (bShouldUseClientBinary)
-	{
-		params.setExecutablePath(offlineExePath);
-	}
-	else
-	{
-		params.setExecutablePath(leExecutable->text());
-	}
-
 	params.setIwadPath(cboIwad->currentText());
 	params.setPwadsPaths(wadsPicker->filePaths());
 
@@ -689,6 +671,28 @@ void CreateServerDialog::makeSetupRemoteGameDialog(const EnginePlugin *plugin)
 		disableControls[i]->setDisabled(true);
 
 	rulesPanel->setupForRemoteGame();
+}
+
+QString CreateServerDialog::pathToExe(bool offline)
+{
+	// Since some operating systems have different offline and server binaries
+	// We will see if they are playing offline and switch to the client
+	// binary if the specified executable is the same as what is provided
+	// as the server.
+	Message message;
+	QString offlineExePath = pathToOfflineExe(message);
+	QString serverExePath = pathToServerExe(message);
+	bool bIsLineEditPotiningToServerBinary = (leExecutable->text() == serverExePath);
+	bool bShouldUseClientBinary = (offline || d->remoteGameSetup) && message.isIgnore() && bIsLineEditPotiningToServerBinary;
+
+	if (bShouldUseClientBinary)
+	{
+		return offlineExePath;
+	}
+	else
+	{
+		return leExecutable->text();
+	}
 }
 
 QString CreateServerDialog::pathToClientExe(Server* server, Message& message)
