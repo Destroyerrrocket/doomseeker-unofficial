@@ -39,21 +39,9 @@ class OdamexGameInfo : public QObject
 			MODE_DUEL
 		};
 
-		static const QList<DMFlagsSection>* dmFlags() { return &dmFlagsList; }
-		static const QList<GameMode>* gameModes() { return &gameModesList; }
+		static QList<DMFlagsSection> dmFlags();
+		static QList<GameMode> gameModes();
 		static GameMode gameModeDuel();
-
-	protected:
-		static QList<DMFlagsSection> dmFlagsList;
-		static QList<GameMode> gameModesList;
-
-	private:
-		OdamexGameInfo();
-
-		void initDMFlags();
-		void initGameModes();
-
-		static OdamexGameInfo* static_constructor;
 };
 
 #endif

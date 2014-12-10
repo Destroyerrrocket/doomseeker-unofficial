@@ -64,6 +64,10 @@ PluginEnginePlugin::~PluginEnginePlugin()
 	delete d;
 }
 
+void PluginEnginePlugin::initDMFlags()
+{
+}
+
 MasterClient *PluginEnginePlugin::masterClient() const
 {
 	return new PluginMasterClient();

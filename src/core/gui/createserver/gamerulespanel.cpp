@@ -154,16 +154,16 @@ void GameRulesPanel::setupModifiers(const EnginePlugin *engine)
 	cboModifier->clear();
 	d->gameModifiers.clear();
 
-	const QList<GameCVar>* engineGameModifiers = engine->data()->gameModifiers;
+	const QList<GameCVar> &modifiers = engine->data()->gameModifiers;
 
-	if (engineGameModifiers != NULL && !engineGameModifiers->isEmpty())
+	if (!modifiers.isEmpty())
 	{
 		cboModifier->show();
 		labelModifiers->show();
 
 		cboModifier->addItem(tr("< NONE >"));
 
-		foreach (const GameCVar &cvar, *engineGameModifiers)
+		foreach (const GameCVar &cvar, modifiers)
 		{
 			cboModifier->addItem(cvar.name());
 			d->gameModifiers << cvar;

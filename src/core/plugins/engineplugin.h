@@ -81,7 +81,6 @@ class MAIN_EXPORT EnginePlugin
 			EP_Author, ///< (const char*) Author of the plugin.
 			EP_Version, ///< (unsigned int) Single version number for plugin.
 
-			EP_AllDMFlags, ///< (const DMFlags*) Array of DMFlags objects.
 			EP_AllowsConnectPassword, ///< Signifies that servers can be created with a connection password.
 			EP_AllowsEmail, ///< Signifies that servers can have an administrative contact email attached.
 			EP_AllowsURL, ///< Signifies that servers can provide a URL for potential wad downloads.
@@ -90,8 +89,6 @@ class MAIN_EXPORT EnginePlugin
 			EP_AllowsMOTD, ///< Signifies that servers can have a message of the day.
 			EP_DefaultMaster, ///< (const char*) Default ip address and port ("address:port") for master server.  Requires EP_HasMasterServer.
 			EP_DefaultServerPort, ///< (quint16) Default port for custom server creation.
-			EP_GameModes, ///< (const QList&lt;GameMode&gt;*) List of all possible game modes supported.
-			EP_GameModifiers, ///< (const QList&lt;GameCVar&gt;*) List of potential game modifiers.
 			EP_HasMasterServer, ///< Signifies that the plugin implements a master server protocol.
 			EP_InGameFileDownloads, ///< Allows the player to join a server without downloading files through Wadseeker.
 			EP_IRCChannel, ///< (const char*)server, (const char*)channel - Can be repeated. Default IRC channels.
@@ -125,7 +122,7 @@ class MAIN_EXPORT EnginePlugin
 			public:
 				unsigned int abiVersion;
 				/// List of all engine's DM flags or NULL if none.
-				const QList<DMFlagsSection>* allDMFlags;
+				QList<DMFlagsSection> allDMFlags;
 				bool allowsConnectPassword;
 				bool allowsEmail;
 				bool allowsJoinPassword;
@@ -137,7 +134,7 @@ class MAIN_EXPORT EnginePlugin
 				QString defaultMaster;
 				quint16 defaultServerPort;
 				/// All available game modes for the engine or NULL if none.
-				const QList<GameMode>* gameModes;
+				QList<GameMode> gameModes;
 				/**
 				* @brief Returns a list of modifiers.
 				*
@@ -145,7 +142,7 @@ class MAIN_EXPORT EnginePlugin
 				* If an empty list (or NULL) is returned, Modifier combo will be
 				* disabled.
 				*/
-				const QList<GameCVar>* gameModifiers;
+				QList<GameCVar> gameModifiers;
 				bool hasMasterServer;
 				/// icon of the engine
 				QPixmap *icon;
@@ -276,6 +273,10 @@ class MAIN_EXPORT EnginePlugin
 		 *        a ServerPtr.
 		 */
 		virtual ServerPtr mkServer(const QHostAddress &address, unsigned short port) const = 0;
+
+		void setDMFlags(const QList<DMFlagsSection> &dmFlags);
+		void setGameModes(const QList<GameMode> &gameModes);
+		void setGameModifiers(const QList<GameCVar> &gameModifiers);
 
 	private:
 		Data *d;

@@ -50,7 +50,6 @@ OdamexEnginePlugin::OdamexEnginePlugin()
 		EP_AllowsMOTD,
 		EP_DefaultMaster, "master1.odamex.net:15000",
 		EP_DefaultServerPort, 10666,
-		EP_GameModes, OdamexGameInfo::gameModes(),
 		EP_HasMasterServer,
 		EP_IRCChannel, "Odamex", "irc.quakenet.org", "#odamex",
 		EP_SupportsRandomMapRotation,
@@ -58,6 +57,8 @@ OdamexEnginePlugin::OdamexEnginePlugin()
 		EP_DemoExtension, true, "odd",
 		EP_Done
 	);
+	setDMFlags(OdamexGameInfo::dmFlags());
+	setGameModes(OdamexGameInfo::gameModes());
 }
 
 GameHost* OdamexEnginePlugin::gameHost()

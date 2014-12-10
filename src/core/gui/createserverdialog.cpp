@@ -252,11 +252,8 @@ void CreateServerDialog::cboGamemodeSelected(int index)
 {
 	if (index >= 0)
 	{
-		const QList<GameMode>* gameModes = d->currentEngine->data()->gameModes;
-		if (gameModes != NULL)
-		{
-			initGamemodeSpecific((*gameModes)[index]);
-		}
+		const QList<GameMode> &gameModes = d->currentEngine->data()->gameModes;
+		initGamemodeSpecific(gameModes[index]);
 	}
 }
 
@@ -338,15 +335,12 @@ void CreateServerDialog::createHostInfoDemoRecord(GameCreateParams& params, bool
 
 GameMode CreateServerDialog::currentGameMode() const
 {
-	const QList<GameMode>* gameModes = d->currentEngine->data()->gameModes;
-	if (gameModes != NULL)
+	const QList<GameMode> &gameModes = d->currentEngine->data()->gameModes;
+	foreach (const GameMode& mode, gameModes)
 	{
-		foreach (const GameMode& mode, (*gameModes))
+		if (mode.name().compare(cboGamemode->currentText()) == 0)
 		{
-			if (mode.name().compare(cboGamemode->currentText()) == 0)
-			{
-				return mode;
-			}
+			return mode;
 		}
 	}
 	return GameMode();
@@ -388,13 +382,11 @@ void CreateServerDialog::initDMFlagsTabs()
 	if (d->currentEngine->data()->createDMFlagsPagesAutomatic)
 	{
 		int paramsIndex = tabWidget->indexOf(tabCustomParameters);
-		const QList<DMFlagsSection>* dmFlagsSec = d->currentEngine->data()->allDMFlags;
-		if(dmFlagsSec == NULL || dmFlagsSec->empty())
+		const QList<DMFlagsSection> &dmFlagsSections = d->currentEngine->data()->allDMFlags;
+		if(dmFlagsSections.empty())
 		{
 			return; // Nothing to do
 		}
-
-		const QList<DMFlagsSection>& dmFlagsSections = *dmFlagsSec;
 
 		for (int i = 0; i < dmFlagsSections.count(); ++i)
 		{
@@ -473,12 +465,12 @@ void CreateServerDialog::initEngineSpecific(EnginePlugin* engineInfo)
 
 	cboGamemode->clear();
 
-	const QList<GameMode>* gameModes = d->currentEngine->data()->gameModes;
-	if (gameModes != NULL)
+	const QList<GameMode> &gameModes = d->currentEngine->data()->gameModes;
+	if (!gameModes.isEmpty())
 	{
-		for (int i = 0; i < gameModes->count(); ++i)
+		for (int i = 0; i < gameModes.count(); ++i)
 		{
-			cboGamemode->addItem((*gameModes)[i].name(), i);
+			cboGamemode->addItem(gameModes[i].name(), i);
 		}
 	}
 	else

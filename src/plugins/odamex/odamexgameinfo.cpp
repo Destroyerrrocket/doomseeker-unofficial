@@ -22,25 +22,12 @@
 //------------------------------------------------------------------------------
 #include "odamexgameinfo.h"
 
-QList<DMFlagsSection> OdamexGameInfo::dmFlagsList;
-QList<GameMode> OdamexGameInfo::gameModesList;
-
-OdamexGameInfo* OdamexGameInfo::static_constructor = new OdamexGameInfo();
-
-OdamexGameInfo::OdamexGameInfo()
-{
-	initDMFlags();
-	initGameModes();
-
-	delete static_constructor;
-}
-
 GameMode OdamexGameInfo::gameModeDuel()
 {
 	return GameMode::ffaGame(MODE_DUEL, tr("Duel"));
 }
 
-void OdamexGameInfo::initDMFlags()
+QList<DMFlagsSection> OdamexGameInfo::dmFlags()
 {
 	DMFlagsSection section("DMFlags");
 	section << DMFlag( tr("Items respawn"), 1 << 0 );
@@ -58,14 +45,17 @@ void OdamexGameInfo::initDMFlags()
 	section << DMFlag( tr("Clean Maps"), 1 << 12 );
 	section << DMFlag( tr("Kill anyone who tries to leave the level"), 1 << 13 );
 
-	dmFlagsList << section;
+	QList<DMFlagsSection> result;
+	result << section;
+	return result;
 }
 
-void OdamexGameInfo::initGameModes()
+QList<GameMode> OdamexGameInfo::gameModes()
 {
+	QList<GameMode> gameModesList;
 	gameModesList << GameMode::mkCooperative();
 	gameModesList << GameMode::mkDeathmatch();
 	gameModesList << GameMode::mkTeamDeathmatch();
 	gameModesList << GameMode::mkCaptureTheFlag();
-//	gameModesList << GameMode(MODE_DEATHMATCH2, tr("Deathmatch 2.0"), false);
+	return gameModesList;
 }

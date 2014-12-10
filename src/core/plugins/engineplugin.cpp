@@ -36,7 +36,6 @@
 EnginePlugin::Data::Data()
 {
 	// Init the defaults.
-	allDMFlags = NULL;
 	allowsConnectPassword = false;
 	allowsEmail = false;
 	allowsJoinPassword = false;
@@ -48,8 +47,6 @@ EnginePlugin::Data::Data()
 	defaultServerPort = 10666;
 	demoExtensionAutomatic = true;
 	demoExtension = "lmp";
-	gameModes = NULL;
-	gameModifiers = NULL;
 	hasMasterServer = false;
 	icon = NULL;
 	inGameFileDownloads = false;
@@ -118,9 +115,6 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 				d->version = va_arg(va, unsigned int);
 				break;
 
-			case EP_AllDMFlags:
-				d->allDMFlags = va_arg(va, const QList<DMFlagsSection>*);
-				break;
 			case EP_AllowsConnectPassword:
 				d->allowsConnectPassword = true;
 				break;
@@ -154,12 +148,6 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 				break;
 			case EP_DontCreateDMFlagsPagesAutomatic:
 				d->createDMFlagsPagesAutomatic = false;
-				break;
-			case EP_GameModes:
-				d->gameModes = va_arg(va, QList<GameMode>*);
-				break;
-			case EP_GameModifiers:
-				d->gameModifiers = va_arg(va, QList<GameCVar>*);
 				break;
 			case EP_HasMasterServer:
 				d->hasMasterServer = true;
@@ -219,4 +207,19 @@ void EnginePlugin::setConfig(IniSection &ini) const
 	ini.createSetting("Masterserver", data()->defaultMaster);
 
 	setupConfig(ini);
+}
+
+void EnginePlugin::setDMFlags(const QList<DMFlagsSection> &dmFlags)
+{
+	d->allDMFlags = dmFlags;
+}
+
+void EnginePlugin::setGameModes(const QList<GameMode> &gameModes)
+{
+	d->gameModes = gameModes;
+}
+
+void EnginePlugin::setGameModifiers(const QList<GameCVar> &gameModifiers)
+{
+	d->gameModifiers = gameModifiers;
 }

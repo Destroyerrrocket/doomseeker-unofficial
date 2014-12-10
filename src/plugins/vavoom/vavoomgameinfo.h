@@ -34,17 +34,7 @@ class VavoomGameInfo : public QObject
 			MODE_UNKNOWN
 		};
 
-		static const QList<GameMode>* gameModes() { return &gameModesList; }
-
-	protected:
-		static QList<GameMode> gameModesList;
-
-	private:
-		VavoomGameInfo();
-
-		void initGameModes();
-
-		static VavoomGameInfo* static_constructor;
+		static QList<GameMode> gameModes();
 };
 
 #endif

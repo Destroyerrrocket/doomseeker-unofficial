@@ -40,8 +40,9 @@ class PluginEnginePlugin : public EnginePlugin
 
 	private:
 		class PrivData;
-
 		PrivData* d;
+
+		void initDMFlags();
 };
 
 #endif
