@@ -364,19 +364,7 @@ bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 	params.setMap(leMap->text());
 	params.setName(leServername->text());
 	params.setPort(spinPort->isEnabled() ? spinPort->value() : 0);
-
-	const QList<GameMode>* gameModes = d->currentEngine->data()->gameModes;
-	if (gameModes != NULL)
-	{
-		foreach (const GameMode& mode, (*gameModes))
-		{
-			if (mode.name().compare(cboGamemode->currentText()) == 0)
-			{
-				params.setGameMode(mode);
-				break;
-			}
-		}
-	}
+	params.setGameMode(currentGameMode());
 
 	createHostInfoDemoRecord(params, offline);
 	return true;
