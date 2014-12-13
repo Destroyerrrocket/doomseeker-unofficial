@@ -362,7 +362,7 @@ void CreateServerDialog::initDMFlagsTabs()
 				}
 
 				QCheckBox* checkBox = new QCheckBox();
-				checkBox->setText(dmFlagsSections[i].name());
+				checkBox->setText(dmFlagsSections[i][j].name());
 				dmftw->checkBoxes << checkBox;
 				layout->addWidget(checkBox);
 			}
