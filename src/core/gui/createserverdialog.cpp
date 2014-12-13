@@ -26,32 +26,18 @@
 #include "copytextdlg.h"
 #include "gui/widgets/createserverdialogpage.h"
 #include "datapaths.h"
-#include "commongui.h"
 #include "ini/ini.h"
 #include "ini/settingsproviderqt.h"
-#include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
-#include "scanner.h"
-#include "serverapi/exefile.h"
-#include "serverapi/gameexeretriever.h"
 #include "serverapi/gamecreateparams.h"
 #include "serverapi/gamehost.h"
 #include "serverapi/message.h"
-#include "serverapi/server.h"
 #include "apprunner.h"
 #include "commandline.h"
 #include "gamedemo.h"
-#include "strings.h"
 
-#include <QCheckBox>
-#include <QDebug>
 #include <QFileDialog>
-#include <QMenu>
-#include <QMenuBar>
 #include <QMessageBox>
-#include <QObject>
-#include <QScopedPointer>
-#include <QStandardItemModel>
 #include <QTimer>
 
 class CreateServerDialog::PrivData
