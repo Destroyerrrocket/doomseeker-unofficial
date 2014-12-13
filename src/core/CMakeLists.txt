@@ -81,6 +81,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/createserver/customparamspanel.ui
 	gui/createserver/dmflagspanel.ui
 	gui/createserver/gamerulespanel.ui
+	gui/createserver/generalgamesetuppanel.ui
 	gui/createserver/iwadpicker.ui
 	gui/createserver/maplistpanel.ui
 	gui/createserver/miscserversetuppanel.ui
@@ -133,6 +134,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/createserver/customparamspanel.h
 	gui/createserver/dmflagspanel.h
 	gui/createserver/gamerulespanel.h
+	gui/createserver/generalgamesetuppanel.h
 	gui/createserver/iwadpicker.h
 	gui/createserver/maplistpanel.h
 	gui/createserver/miscserversetuppanel.h
@@ -259,6 +261,7 @@ set(SOURCE_FILES
 	gui/createserver/customparamspanel.cpp
 	gui/createserver/dmflagspanel.cpp
 	gui/createserver/gamerulespanel.cpp
+	gui/createserver/generalgamesetuppanel.cpp
 	gui/createserver/iwadpicker.cpp
 	gui/createserver/maplistpanel.cpp
 	gui/createserver/miscserversetuppanel.cpp

@@ -50,14 +50,11 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		void makeSetupRemoteGameDialog(const EnginePlugin *plugin);
 
 	private slots:
-		void btnBrowseExecutableClicked();
 		void btnCommandLineClicked();
-		void btnDefaultExecutableClicked();
 		void btnLoadClicked();
 		void btnPlayOfflineClicked();
 		void btnSaveClicked();
 		void btnStartServerClicked();
-		void cboGamemodeSelected(int index);
 		void firstLoadConfigTimer();
 
 		/**
@@ -65,7 +62,8 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		 *	Resets most of the controls and puts engine specific information
 		 *	and controls where applicable.
 		 */
-		void initEngineSpecific(EnginePlugin* engineInfo);
+		void initEngineSpecific(EnginePlugin *engineInfo);
+		void initGamemodeSpecific(const GameMode &gameMode);
 
 	private:
 		static const QString TEMP_SERVER_CONFIG_FILENAME;
@@ -100,20 +98,13 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		 */
 		void initEngineSpecificPages(EnginePlugin* engineInfo);
 
-		void initGamemodeSpecific(const GameMode& gameMode);
-
 		void initInfoAndPassword();
 
 		void initRules();
 
 		bool loadConfig(const QString& filename);
-		QString pathToExe(bool offline);
-		QString pathToClientExe(Server* server, Message& message);
-		QString pathToOfflineExe(Message& message);
-		QString pathToServerExe(Message& message);
 		void runGame(bool offline);
 		bool saveConfig(const QString& filename);
-		bool setEngine(const QString &engineName);
 };
 
 #endif

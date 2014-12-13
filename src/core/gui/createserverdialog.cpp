@@ -57,7 +57,6 @@
 class CreateServerDialog::PrivData
 {
 	public:
-		bool bSuppressMissingExeErrors;
 		bool remoteGameSetup;
 		QList<CreateServerDialogPage*> currentCustomPages;
 		EnginePlugin *currentEngine;
@@ -72,26 +71,17 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 	// Have the console delete itself
 	setAttribute(Qt::WA_DeleteOnClose);
 
-	d->bSuppressMissingExeErrors = true;
 	d->remoteGameSetup = false;
 	d->currentEngine = NULL;
 
 	setupUi(this);
-	connect(btnBrowseExecutable, SIGNAL( clicked() ), this, SLOT ( btnBrowseExecutableClicked() ) );
 	connect(btnCancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
 	connect(btnCommandLine, SIGNAL( clicked() ), this, SLOT( btnCommandLineClicked() ) );
-	connect(btnDefaultExecutable, SIGNAL( clicked() ), this, SLOT( btnDefaultExecutableClicked() ) );
 	connect(btnLoad, SIGNAL( clicked() ), this, SLOT ( btnLoadClicked() ) );
 	connect(btnPlayOffline, SIGNAL( clicked() ), this, SLOT ( btnPlayOfflineClicked() ) );
 
 	connect(btnSave, SIGNAL( clicked() ), this, SLOT ( btnSaveClicked() ) );
 	connect(btnStartServer, SIGNAL( clicked() ), this, SLOT( btnStartServerClicked() ) );
-
-	connect(cboEngine, SIGNAL(currentPluginChanged(EnginePlugin*)),
-		this, SLOT(initEngineSpecific(EnginePlugin*)));
-	connect(cboGamemode, SIGNAL( currentIndexChanged(int) ), this, SLOT( cboGamemodeSelected(int) ) );
-
-	d->bSuppressMissingExeErrors = false;
 
 	// This is a crude solution to the problem where message boxes appear
 	// before the actual Create Server dialog. We need to give some time
@@ -103,20 +93,6 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 CreateServerDialog::~CreateServerDialog()
 {
 	delete d;
-}
-
-void CreateServerDialog::btnBrowseExecutableClicked()
-{
-	QString dialogDir = gConfig.doomseeker.previousCreateServerExecDir;
-	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - Add file"), dialogDir);
-
-	if (!strFile.isEmpty())
-	{
-		QFileInfo fi(strFile);
-		gConfig.doomseeker.previousCreateServerExecDir = fi.absolutePath();
-
-		leExecutable->setText(fi.absoluteFilePath());
-	}
 }
 
 void CreateServerDialog::btnCommandLineClicked()
@@ -131,18 +107,6 @@ void CreateServerDialog::btnCommandLineClicked()
 
 		CopyTextDlg ctd(executable + " " + args.join(" "), "Host server command line:", this);
 		ctd.exec();
-	}
-}
-
-void CreateServerDialog::btnDefaultExecutableClicked()
-{
-	Message message;
-	leExecutable->setText(pathToServerExe(message));
-
-	if (!message.isIgnore())
-	{
-		QMessageBox::critical(NULL, tr("Obtaining default server binary path."),
-			message.contents(),QMessageBox::Ok, QMessageBox::Ok);
 	}
 }
 
@@ -195,15 +159,6 @@ void CreateServerDialog::btnStartServerClicked()
 		accept();
 }
 
-void CreateServerDialog::cboGamemodeSelected(int index)
-{
-	if (index >= 0)
-	{
-		const QList<GameMode> &gameModes = d->currentEngine->data()->gameModes;
-		initGamemodeSpecific(gameModes[index]);
-	}
-}
-
 bool CreateServerDialog::commandLineArguments(QString &executable, QStringList &args)
 {
 	const QString errorCapt = tr("Doomseeker - create game");
@@ -241,10 +196,7 @@ bool CreateServerDialog::commandLineArguments(QString &executable, QStringList &
 
 bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 {
-	params.setExecutablePath(pathToExe(offline));
-	params.setHostMode(offline ? GameCreateParams::Offline : GameCreateParams::Host);
-	params.setIwadPath(iwadPicker->currentIwad());
-	params.setPwadsPaths(wadsPicker->filePaths());
+	generalSetupPanel->fillInParams(params, offline);
 	dmflagsPanel->fillInParams(params);
 
 	if (!fillInParamsFromPluginPages(params))
@@ -252,20 +204,9 @@ bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 		return false;
 	}
 
-	// Custom parameters
 	customParamsPanel->fillInParams(params);
-
-	// Misc. page
 	miscPanel->fillInParams(params);
-
-	// Other
 	rulesPanel->fillInParams(params);
-	params.setBroadcastToLan(cbBroadcastToLAN->isChecked());
-	params.setBroadcastToMaster(cbBroadcastToMaster->isChecked());
-	params.setMap(leMap->text());
-	params.setName(leServername->text());
-	params.setPort(spinPort->isEnabled() ? spinPort->value() : 0);
-	params.setGameMode(currentGameMode());
 
 	createHostInfoDemoRecord(params, offline);
 	return true;
@@ -282,15 +223,7 @@ void CreateServerDialog::createHostInfoDemoRecord(GameCreateParams& params, bool
 
 GameMode CreateServerDialog::currentGameMode() const
 {
-	const QList<GameMode> &gameModes = d->currentEngine->data()->gameModes;
-	foreach (const GameMode& mode, gameModes)
-	{
-		if (mode.name().compare(cboGamemode->currentText()) == 0)
-		{
-			return mode;
-		}
-	}
-	return GameMode();
+	return generalSetupPanel->currentGameMode();
 }
 
 void CreateServerDialog::firstLoadConfigTimer()
@@ -302,7 +235,7 @@ void CreateServerDialog::firstLoadConfigTimer()
 	{
 		loadConfig(tmpServerCfgPath);
 	}
-	initEngineSpecific(cboEngine->currentPlugin());
+	initEngineSpecific(generalSetupPanel->currentPlugin());
 }
 
 void CreateServerDialog::initDMFlagsTabs()
@@ -319,62 +252,23 @@ void CreateServerDialog::initDMFlagsTabs()
 	}
 }
 
-void CreateServerDialog::initEngineSpecific(EnginePlugin* engineInfo)
+void CreateServerDialog::initEngineSpecific(EnginePlugin* engine)
 {
-	if (engineInfo == d->currentEngine || engineInfo == NULL)
+	if (engine == d->currentEngine || engine == NULL)
 	{
 		return;
 	}
 
-	d->currentEngine = engineInfo;
+	d->currentEngine = engine;
 
-	// Executable path
-	Message message;
-
-	if (d->remoteGameSetup)
-	{
-		// When we setup a remote game, we want to use a client
-		// executable to connect to it.
-		ServerPtr server = d->currentEngine->server(QHostAddress("127.0.0.1"), 1);
-		leExecutable->setText(pathToClientExe(server.data(), message));
-	}
-	else
-	{
-		leExecutable->setText(pathToServerExe(message));
-	}
-
-	if (message.isError() && !d->bSuppressMissingExeErrors)
-	{
-		QString caption = tr("Doomseeker - error obtaining server binary");
-		QString error = tr("Server binary for engine \"%1\" cannot be obtained.\nFollowing error has occured:\n%2").arg(engineInfo->data()->name, message.contents());
-
-		QMessageBox::warning(NULL, caption, error);
-	}
-
-	spinPort->setValue(d->currentEngine->data()->defaultServerPort);
-
-	cboGamemode->clear();
-
-	const QList<GameMode> &gameModes = d->currentEngine->data()->gameModes;
-	if (!gameModes.isEmpty())
-	{
-		for (int i = 0; i < gameModes.count(); ++i)
-		{
-			cboGamemode->addItem(gameModes[i].name(), i);
-		}
-	}
-	else
-	{
-		rulesPanel->setupForEngine(d->currentEngine, GameMode());
-	}
-
+	generalSetupPanel->setupForEngine(engine);
 	initDMFlagsTabs();
-	initEngineSpecificPages(engineInfo);
+	initEngineSpecificPages(engine);
 	initInfoAndPassword();
 	initRules();
 }
 
-void CreateServerDialog::initEngineSpecificPages(EnginePlugin* engineInfo)
+void CreateServerDialog::initEngineSpecificPages(EnginePlugin* engine)
 {
 	// First, get rid of the original pages.
 	foreach (CreateServerDialogPage* page, d->currentCustomPages)
@@ -384,7 +278,7 @@ void CreateServerDialog::initEngineSpecificPages(EnginePlugin* engineInfo)
 	d->currentCustomPages.clear();
 
 	// Add new custom pages to the dialog.
-	d->currentCustomPages = engineInfo->createServerDialogPages(this);
+	d->currentCustomPages = engine->createServerDialogPages(this);
 	foreach (CreateServerDialogPage* page, d->currentCustomPages)
 	{
 		int idxInsertAt = tabWidget->indexOf(tabCustomParameters);
@@ -392,7 +286,7 @@ void CreateServerDialog::initEngineSpecificPages(EnginePlugin* engineInfo)
 	}
 }
 
-void CreateServerDialog::initGamemodeSpecific(const GameMode& gameMode)
+void CreateServerDialog::initGamemodeSpecific(const GameMode &gameMode)
 {
 	rulesPanel->setupForEngine(d->currentEngine, gameMode);
 }
@@ -413,60 +307,10 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 	QSettings settingsFile(filename, QSettings::IniFormat);
 	SettingsProviderQt settingsProvider(&settingsFile);
 	Ini ini(&settingsProvider);
-	IniSection general = ini.section("General");
 
-	// General
-	if (!d->remoteGameSetup)
-	{
-		QString engineName = general["engine"];
-		const EnginePlugin* prevEngine = d->currentEngine;
-		if(!setEngine(engineName))
-			return false;
-
-		bool bChangeExecutable = (prevEngine != d->currentEngine || !cbLockExecutable->isChecked());
-
-		// First let's check if we can use executable stored in the server's config.
-		// We will save the path to this executable in a local variable.
-		QString executablePath = "";
-		if (bChangeExecutable)
-		{
-			executablePath = *general["executable"];
-			QFileInfo fileInfo(executablePath);
-			if (!fileInfo.exists())
-			{
-				// Executable cannot be found, display error message and reset
-				// the local variable.
-				QMessageBox::warning(NULL, tr("Doomseeker - load server config"), tr("Game executable saved in config cannot be found.\nDefault executable will be used."));
-				executablePath = "";
-			}
-		}
-
-		// If we successfuly retrieved path from the config we shall
-		// set this path in the line edit control.
-		if (!executablePath.isEmpty())
-		{
-			leExecutable->setText(executablePath);
-		}
-	}
-
-	leServername->setText(general["name"]);
-	spinPort->setValue(general["port"]);
-	cboGamemode->setCurrentIndex(general["gamemode"]);
-	leMap->setText(general["map"]);
-	iwadPicker->addIwad(general["iwad"]);
-
-	wadsPicker->setFilePaths(general["pwads"].valueString().split(";"));
-
-	cbBroadcastToLAN->setChecked(general["broadcastToLAN"]);
-	cbBroadcastToMaster->setChecked(general["broadcastToMaster"]);
-
-	// Rules
+	generalSetupPanel->loadConfig(ini);
 	rulesPanel->loadConfig(ini);
-
-	// Misc.
 	miscPanel->loadConfig(ini);
-
-	// DMFlags
 	dmflagsPanel->loadConfig(ini);
 
 	// Custom pages.
@@ -475,71 +319,19 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 		page->loadConfig(ini);
 	}
 
-	// Custom parameters
 	customParamsPanel->loadConfig(ini);
 	return true;
 }
 
 void CreateServerDialog::makeSetupRemoteGameDialog(const EnginePlugin *plugin)
 {
-	d->bSuppressMissingExeErrors = true;
 	d->remoteGameSetup = true;
-	setEngine(plugin->data()->name);
 
-	cbAllowTheGameToChoosePort->hide();
 	btnCommandLine->hide();
+	btnPlayOffline->setDisabled(true);
 
-	// Disable some stuff
-	QWidget *disableControls[] =
-	{
-		cboEngine, leExecutable, btnBrowseExecutable, btnDefaultExecutable,
-		cbLockExecutable, leServername, spinPort, cbBroadcastToLAN,
-		cbBroadcastToMaster, btnPlayOffline,
-
-		NULL
-	};
-	for(int i = 0;disableControls[i] != NULL;++i)
-		disableControls[i]->setDisabled(true);
-
+	generalSetupPanel->setupForRemoteGame();
 	rulesPanel->setupForRemoteGame();
-}
-
-QString CreateServerDialog::pathToExe(bool offline)
-{
-	// Since some operating systems have different offline and server binaries
-	// We will see if they are playing offline and switch to the client
-	// binary if the specified executable is the same as what is provided
-	// as the server.
-	Message message;
-	QString offlineExePath = pathToOfflineExe(message);
-	QString serverExePath = pathToServerExe(message);
-	bool bIsLineEditPotiningToServerBinary = (leExecutable->text() == serverExePath);
-	bool bShouldUseClientBinary = (offline || d->remoteGameSetup) && message.isIgnore() && bIsLineEditPotiningToServerBinary;
-
-	if (bShouldUseClientBinary)
-	{
-		return offlineExePath;
-	}
-	else
-	{
-		return leExecutable->text();
-	}
-}
-
-QString CreateServerDialog::pathToClientExe(Server* server, Message& message)
-{
-	QScopedPointer<ExeFile> f(server->clientExe());
-	return f->pathToExe(message);
-}
-
-QString CreateServerDialog::pathToOfflineExe(Message& message)
-{
-	return GameExeRetriever(*d->currentEngine->gameExe()).pathToOfflineExe(message);
-}
-
-QString CreateServerDialog::pathToServerExe(Message& message)
-{
-	return GameExeRetriever(*d->currentEngine->gameExe()).pathToServerExe(message);
 }
 
 bool CreateServerDialog::fillInParamsFromPluginPages(GameCreateParams &params)
@@ -598,26 +390,9 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 	Ini ini(&settingsProvider);
 	IniSection general = ini.section("General");
 
-	// General
-	general["engine"] = cboEngine->currentText();
-	general["executable"] = leExecutable->text();
-	general["name"] = leServername->text();
-	general["port"] = spinPort->value();
-	general["gamemode"] = cboGamemode->currentIndex();
-	general["map"] = leMap->text();
-	general["iwad"] = iwadPicker->currentIwad();
-
-	general["pwads"] = wadsPicker->filePaths().join(";");
-
-	general["broadcastToLAN"] = cbBroadcastToLAN->isChecked();
-	general["broadcastToMaster"] = cbBroadcastToMaster->isChecked();
-
+	generalSetupPanel->saveConfig(ini);
 	rulesPanel->saveConfig(ini);
-
-	// Misc.
 	miscPanel->saveConfig(ini);
-
-	// DMFlags
 	dmflagsPanel->saveConfig(ini);
 
 	// Custom pages.
@@ -626,7 +401,6 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 		page->saveConfig(ini);
 	}
 
-	// Custom parameters
 	customParamsPanel->saveConfig(ini);
 
 	if (settingsFile.isWritable())
@@ -635,15 +409,4 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 		return true;
 	}
 	return false;
-}
-
-bool CreateServerDialog::setEngine(const QString &engineName)
-{
-	if (!cboEngine->setPluginByName(engineName))
-	{
-		QMessageBox::critical(this, tr("Doomseeker - load server config"),
-			tr("Plugin for engine \"%1\" is not present!").arg(engineName));
-		return false;
-	}
-	return true;
 }
