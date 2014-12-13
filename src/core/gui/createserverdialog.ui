@@ -100,26 +100,6 @@
            </property>
           </widget>
          </item>
-         <item row="8" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QComboBox" name="cboIwad"/>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btnIwadBrowse">
-             <property name="maximumSize">
-              <size>
-               <width>32</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>...</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
          <item row="7" column="1">
           <widget class="QLineEdit" name="leMap"/>
          </item>
@@ -215,6 +195,9 @@
             </widget>
            </item>
           </layout>
+         </item>
+         <item row="8" column="1">
+          <widget class="IwadPicker" name="iwadPicker" native="true"/>
          </item>
         </layout>
        </item>
@@ -383,6 +366,12 @@
    <class>WadsPicker</class>
    <extends>QWidget</extends>
    <header>gui/createserver/wadspicker.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>IwadPicker</class>
+   <extends>QWidget</extends>
+   <header>gui/createserver/iwadpicker.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

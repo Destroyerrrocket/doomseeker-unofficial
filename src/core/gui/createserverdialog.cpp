@@ -83,7 +83,6 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 	connect(btnCancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
 	connect(btnCommandLine, SIGNAL( clicked() ), this, SLOT( btnCommandLineClicked() ) );
 	connect(btnDefaultExecutable, SIGNAL( clicked() ), this, SLOT( btnDefaultExecutableClicked() ) );
-	connect(btnIwadBrowse, SIGNAL( clicked() ), this, SLOT ( btnIwadBrowseClicked() ) );
 	connect(btnLoad, SIGNAL( clicked() ), this, SLOT ( btnLoadClicked() ) );
 	connect(btnPlayOffline, SIGNAL( clicked() ), this, SLOT ( btnPlayOfflineClicked() ) );
 
@@ -92,8 +91,6 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 
 	connect(cboEngine, SIGNAL( currentIndexChanged(int) ), this, SLOT( cboEngineSelected(int) ) );
 	connect(cboGamemode, SIGNAL( currentIndexChanged(int) ), this, SLOT( cboGamemodeSelected(int) ) );
-
-	cboIwad->setEditable(true);
 
 	initPrimary();
 	d->bSuppressMissingExeErrors = false;
@@ -108,28 +105,6 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 CreateServerDialog::~CreateServerDialog()
 {
 	delete d;
-}
-
-void CreateServerDialog::addIwad(const QString& path)
-{
-	if (path.isEmpty())
-	{
-		return;
-	}
-
-	for (int i = 0; i < cboIwad->count(); ++i)
-	{
-		if (cboIwad->itemText(i).compare(path) == 0)
-		{
-			cboIwad->setCurrentIndex(i);
-			return;
-		}
-	}
-
-	QString cleanPath = Strings::normalizePath(path);
-
-	cboIwad->addItem(cleanPath);
-	cboIwad->setCurrentIndex(cboIwad->count() - 1);
 }
 
 void CreateServerDialog::btnBrowseExecutableClicked()
@@ -170,20 +145,6 @@ void CreateServerDialog::btnDefaultExecutableClicked()
 	{
 		QMessageBox::critical(NULL, tr("Obtaining default server binary path."),
 			message.contents(),QMessageBox::Ok, QMessageBox::Ok);
-	}
-}
-
-void CreateServerDialog::btnIwadBrowseClicked()
-{
-	QString dialogDir = gConfig.doomseeker.previousCreateServerWadDir;
-	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - select IWAD"), dialogDir);
-
-	if (!strFile.isEmpty())
-	{
-		QFileInfo fi(strFile);
-		gConfig.doomseeker.previousCreateServerWadDir = fi.absolutePath();
-
-		addIwad(strFile);
 	}
 }
 
@@ -296,7 +257,7 @@ bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 {
 	params.setExecutablePath(pathToExe(offline));
 	params.setHostMode(offline ? GameCreateParams::Offline : GameCreateParams::Host);
-	params.setIwadPath(cboIwad->currentText());
+	params.setIwadPath(iwadPicker->currentIwad());
 	params.setPwadsPaths(wadsPicker->filePaths());
 	params.dmFlags() = dmFlags();
 
@@ -527,20 +488,6 @@ void CreateServerDialog::initPrimary()
 	{
 		cboEngine->setCurrentIndex(0);
 	}
-
-	const QString iwads[] = { "doom.wad", "doom1.wad", "doom2.wad", "tnt.wad", "plutonia.wad", "heretic.wad", "hexen.wad", "hexdd.wad", "freedoom.wad", "strife1.wad", "" };
-
-	cboIwad->clear();
-
-	for (int i = 0; !iwads[i].isEmpty(); ++i)
-	{
-		PathFinder pathFinder;
-		QString path = pathFinder.findFile(iwads[i]);
-		if (!path.isEmpty())
-		{
-			cboIwad->addItem(path);
-		}
-	}
 }
 
 void CreateServerDialog::initRules()
@@ -596,7 +543,7 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 	spinPort->setValue(general["port"]);
 	cboGamemode->setCurrentIndex(general["gamemode"]);
 	leMap->setText(general["map"]);
-	addIwad(general["iwad"]);
+	iwadPicker->addIwad(general["iwad"]);
 
 	wadsPicker->setFilePaths(general["pwads"].valueString().split(";"));
 
@@ -774,7 +721,7 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 	general["port"] = spinPort->value();
 	general["gamemode"] = cboGamemode->currentIndex();
 	general["map"] = leMap->text();
-	general["iwad"] = cboIwad->currentText();
+	general["iwad"] = iwadPicker->currentIwad();
 
 	general["pwads"] = wadsPicker->filePaths().join(";");
 

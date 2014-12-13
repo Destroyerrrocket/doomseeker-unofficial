@@ -53,7 +53,6 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		void btnBrowseExecutableClicked();
 		void btnCommandLineClicked();
 		void btnDefaultExecutableClicked();
-		void btnIwadBrowseClicked();
 		void btnLoadClicked();
 		void btnPlayOfflineClicked();
 		void btnSaveClicked();
