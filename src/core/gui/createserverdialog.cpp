@@ -61,7 +61,6 @@ class CreateServerDialog::PrivData
 		bool remoteGameSetup;
 		QList<CreateServerDialogPage*> currentCustomPages;
 		EnginePlugin *currentEngine;
-		QList<DMFlagsTabWidget*> dmFlagsTabs;
 };
 
 const QString CreateServerDialog::TEMP_SERVER_CONFIG_FILENAME = "/tmpserver.ini";
@@ -246,7 +245,7 @@ bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 	params.setHostMode(offline ? GameCreateParams::Offline : GameCreateParams::Host);
 	params.setIwadPath(iwadPicker->currentIwad());
 	params.setPwadsPaths(wadsPicker->filePaths());
-	params.dmFlags() = dmFlags();
+	dmflagsPanel->fillInParams(params);
 
 	if (!fillInParamsFromPluginPages(params))
 	{
@@ -294,24 +293,6 @@ GameMode CreateServerDialog::currentGameMode() const
 	return GameMode();
 }
 
-QList<DMFlagsSection> CreateServerDialog::dmFlags() const
-{
-	QList<DMFlagsSection> result;
-	foreach(const DMFlagsTabWidget* p, d->dmFlagsTabs)
-	{
-		DMFlagsSection sec(p->section.name());
-		for (int i = 0; i < p->section.count(); ++i)
-		{
-			if (p->checkBoxes[i]->isChecked())
-			{
-				sec.add(p->section[i]);
-			}
-		}
-		result << sec;
-	}
-	return result;
-}
-
 void CreateServerDialog::firstLoadConfigTimer()
 {
 	QString tmpServerCfgPath = gDefaultDataPaths->programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
@@ -326,55 +307,15 @@ void CreateServerDialog::firstLoadConfigTimer()
 
 void CreateServerDialog::initDMFlagsTabs()
 {
-	removeDMFlagsTabs();
-
-	if (d->currentEngine->data()->createDMFlagsPagesAutomatic)
+	bool flagsAdded = dmflagsPanel->initDMFlagsTabs(d->currentEngine);
+	int tabIndex = tabWidget->indexOf(tabFlags);
+	if (flagsAdded && tabIndex < 0)
 	{
-		int paramsIndex = tabWidget->indexOf(tabCustomParameters);
-		const QList<DMFlagsSection> &dmFlagsSections = d->currentEngine->data()->allDMFlags;
-		if(dmFlagsSections.empty())
-		{
-			return; // Nothing to do
-		}
-
-		for (int i = 0; i < dmFlagsSections.count(); ++i)
-		{
-			DMFlagsTabWidget* dmftw = new DMFlagsTabWidget();
-
-			QWidget* flagsTab = new QWidget(this);
-			dmftw->widget = flagsTab;
-			dmftw->section = dmFlagsSections[i];
-
-			QHBoxLayout* hLayout = new QHBoxLayout(flagsTab);
-
-			QVBoxLayout* layout = NULL;
-			for (int j = 0; j < dmFlagsSections[i].count(); ++j)
-			{
-				if ((j % 16) == 0)
-				{
-					if (layout != NULL)
-					{
-						layout->addStretch();
-					}
-
-					layout = new QVBoxLayout();
-					hLayout->addLayout(layout);
-				}
-
-				QCheckBox* checkBox = new QCheckBox();
-				checkBox->setText(dmFlagsSections[i][j].name());
-				dmftw->checkBoxes << checkBox;
-				layout->addWidget(checkBox);
-			}
-
-			if (layout != NULL)
-			{
-				layout->addStretch();
-			}
-
-			d->dmFlagsTabs << dmftw;
-			tabWidget->insertTab(paramsIndex++, flagsTab, dmFlagsSections[i].name());
-		}
+		tabWidget->insertTab(tabWidget->indexOf(tabCustomParameters), tabFlags, tr("Flags"));
+	}
+	else if (!flagsAdded && tabIndex >= 0)
+	{
+		tabWidget->removeTab(tabIndex);
 	}
 }
 
@@ -469,13 +410,10 @@ void CreateServerDialog::initRules()
 
 bool CreateServerDialog::loadConfig(const QString& filename)
 {
-	QAbstractItemModel* model;
-	QStringList stringList;
 	QSettings settingsFile(filename, QSettings::IniFormat);
 	SettingsProviderQt settingsProvider(&settingsFile);
 	Ini ini(&settingsProvider);
 	IniSection general = ini.section("General");
-	IniSection dmflags = ini.section("DMFlags");
 
 	// General
 	if (!d->remoteGameSetup)
@@ -529,18 +467,7 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 	miscPanel->loadConfig(ini);
 
 	// DMFlags
-	foreach(DMFlagsTabWidget* p, d->dmFlagsTabs)
-	{
-		for (int i = 0; i < p->section.count(); ++i)
-		{
-			QRegExp re("[^a-zA-Z]");
-			QString name1 = p->section.name();
-			QString name2 = p->section[i].name();
-			name1 = name1.remove(re);
-			name2 = name2.remove(re);
-			p->checkBoxes[i]->setChecked(dmflags[name1 + name2]);
-		}
-	}
+	dmflagsPanel->loadConfig(ini);
 
 	// Custom pages.
 	foreach (CreateServerDialogPage* page, d->currentCustomPages)
@@ -633,19 +560,6 @@ bool CreateServerDialog::fillInParamsFromPluginPages(GameCreateParams &params)
 	return true;
 }
 
-void CreateServerDialog::removeDMFlagsTabs()
-{
-	foreach (DMFlagsTabWidget* flags, d->dmFlagsTabs)
-	{
-		int index = tabWidget->indexOf(flags->widget);
-		tabWidget->removeTab(index);
-		delete flags->widget;
-		delete flags;
-	}
-
-	d->dmFlagsTabs.clear();
-}
-
 void CreateServerDialog::runGame(bool offline)
 {
 	const QString errorCapt = tr("Doomseeker - create game");
@@ -679,12 +593,10 @@ void CreateServerDialog::runGame(bool offline)
 
 bool CreateServerDialog::saveConfig(const QString& filename)
 {
-	QStringList stringList;
 	QSettings settingsFile(filename, QSettings::IniFormat);
 	SettingsProviderQt settingsProvider(&settingsFile);
 	Ini ini(&settingsProvider);
 	IniSection general = ini.createSection("General");
-	IniSection dmflags = ini.createSection("DMFlags");
 
 	// General
 	general["engine"] = cboEngine->currentText();
@@ -706,18 +618,7 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 	miscPanel->saveConfig(ini);
 
 	// DMFlags
-	foreach(DMFlagsTabWidget* p, d->dmFlagsTabs)
-	{
-		for (int i = 0; i < p->section.count(); ++i)
-		{
-			QRegExp re("[^a-zA-Z]");
-			QString name1 = p->section.name();
-			QString name2 = p->section[i].name();
-			name1 = name1.remove(re);
-			name2 = name2.remove(re);
-			dmflags[name1 + name2] = p->checkBoxes[i]->isChecked();
-		}
-	}
+	dmflagsPanel->saveConfig(ini);
 
 	// Custom pages.
 	foreach (CreateServerDialogPage* page, d->currentCustomPages)

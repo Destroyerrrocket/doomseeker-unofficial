@@ -79,6 +79,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/configuration/cfgwadseekersites.ui
 	gui/configuration/engineconfigurationbasebox.ui
 	gui/createserver/customparamspanel.ui
+	gui/createserver/dmflagspanel.ui
 	gui/createserver/gamerulespanel.ui
 	gui/createserver/iwadpicker.ui
 	gui/createserver/maplistpanel.ui
@@ -130,6 +131,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/configuration/doomseekerconfigurationdialog.h
 	gui/configuration/engineconfigurationbasebox.h
 	gui/createserver/customparamspanel.h
+	gui/createserver/dmflagspanel.h
 	gui/createserver/gamerulespanel.h
 	gui/createserver/iwadpicker.h
 	gui/createserver/maplistpanel.h
@@ -255,6 +257,7 @@ set(SOURCE_FILES
 	gui/configuration/doomseekerconfigurationdialog.cpp
 	gui/configuration/engineconfigurationbasebox.cpp
 	gui/createserver/customparamspanel.cpp
+	gui/createserver/dmflagspanel.cpp
 	gui/createserver/gamerulespanel.cpp
 	gui/createserver/iwadpicker.cpp
 	gui/createserver/maplistpanel.cpp

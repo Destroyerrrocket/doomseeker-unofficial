@@ -68,18 +68,6 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		void initEngineSpecific(EnginePlugin* engineInfo);
 
 	private:
-		class DMFlagsTabWidget
-		{
-			public:
-				QWidget* widget;
-				DMFlagsSection section;
-
-				/**
-				 * Check boxes in the same order the flags are stored in the plugin.
-				 */
-				QList<QCheckBox*> checkBoxes;
-		};
-
 		static const QString TEMP_SERVER_CONFIG_FILENAME;
 
 		class PrivData;
@@ -102,8 +90,6 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 
 		GameMode currentGameMode() const;
 
-		QList<DMFlagsSection> dmFlags() const;
-
 		bool fillInParamsFromPluginPages(GameCreateParams &params);
 		void initDMFlagsTabs();
 
@@ -125,7 +111,6 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		QString pathToClientExe(Server* server, Message& message);
 		QString pathToOfflineExe(Message& message);
 		QString pathToServerExe(Message& message);
-		void removeDMFlagsTabs();
 		void runGame(bool offline);
 		bool saveConfig(const QString& filename);
 		bool setEngine(const QString &engineName);

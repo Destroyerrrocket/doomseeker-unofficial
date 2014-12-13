@@ -257,6 +257,16 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tabFlags">
+      <attribute name="title">
+       <string>Flags</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="DMFlagsPanel" name="dmflagsPanel" native="true"/>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tabCustomParameters">
       <attribute name="title">
        <string>Custom parameters</string>
@@ -378,6 +388,12 @@
    <class>EnginePluginComboBox</class>
    <extends>QComboBox</extends>
    <header>gui/widgets/engineplugincombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DMFlagsPanel</class>
+   <extends>QWidget</extends>
+   <header>gui/createserver/dmflagspanel.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
