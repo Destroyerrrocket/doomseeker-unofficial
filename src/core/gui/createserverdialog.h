@@ -57,9 +57,15 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		void btnPlayOfflineClicked();
 		void btnSaveClicked();
 		void btnStartServerClicked();
-		void cboEngineSelected(int index);
 		void cboGamemodeSelected(int index);
 		void firstLoadConfigTimer();
+
+		/**
+		 *	Called each time when a new engine in engine combo box is selected.
+		 *	Resets most of the controls and puts engine specific information
+		 *	and controls where applicable.
+		 */
+		void initEngineSpecific(EnginePlugin* engineInfo);
 
 	private:
 		class DMFlagsTabWidget
@@ -102,13 +108,6 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		void initDMFlagsTabs();
 
 		/**
-		 *	Called each time when a new engine in engine combo box is selected.
-		 *	Resets most of the controls and puts engine specific information
-		 *	and controls where applicable.
-		 */
-		void initEngineSpecific(EnginePlugin* engineInfo);
-
-		/**
 		 * @brief Loads pages specific for the given engine.
 		 *
 		 * @see CreateServerDialogPage
@@ -119,12 +118,6 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 
 		void initInfoAndPassword();
 
-		/**
-		 * Called once, when the dialog is opened. Handles initialization
-		 * of very basic stuff that's common no matter what the selected
-		 * engine is.
-		 */
-		void initPrimary();
 		void initRules();
 
 		bool loadConfig(const QString& filename);

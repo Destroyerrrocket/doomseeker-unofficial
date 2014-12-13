@@ -146,6 +146,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/widgets/colorbutton.h
 	gui/widgets/dndfilesystemlistview.h
 	gui/widgets/dockedwidgets.h
+	gui/widgets/engineplugincombobox.h
 	gui/widgets/fontbutton.h
 	gui/widgets/importantmessageswidget.h
 	gui/widgets/memorylineedit.h
@@ -275,6 +276,7 @@ set(SOURCE_FILES
 	gui/widgets/colorbutton.cpp
 	gui/widgets/createserverdialogpage.cpp
 	gui/widgets/dndfilesystemlistview.cpp
+	gui/widgets/engineplugincombobox.cpp
 	gui/widgets/fontbutton.cpp
 	gui/widgets/importantmessageswidget.cpp
 	gui/widgets/memorylineedit.cpp

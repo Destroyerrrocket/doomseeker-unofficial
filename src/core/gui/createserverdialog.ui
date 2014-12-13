@@ -40,7 +40,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QComboBox" name="cboEngine"/>
+          <widget class="EnginePluginComboBox" name="cboEngine"/>
          </item>
          <item row="3" column="0">
           <widget class="QLabel" name="label_4">
@@ -374,6 +374,11 @@
    <header>gui/createserver/iwadpicker.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>EnginePluginComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/widgets/engineplugincombobox.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="../../../media/resources.qrc"/>
@@ -386,12 +391,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>381</x>
-     <y>157</y>
+     <x>589</x>
+     <y>215</y>
     </hint>
     <hint type="destinationlabel">
-     <x>230</x>
-     <y>164</y>
+     <x>337</x>
+     <y>216</y>
     </hint>
    </hints>
   </connection>

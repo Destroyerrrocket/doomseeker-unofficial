@@ -31,7 +31,6 @@
 #include "ini/settingsproviderqt.h"
 #include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
-#include "plugins/pluginloader.h"
 #include "scanner.h"
 #include "serverapi/exefile.h"
 #include "serverapi/gameexeretriever.h"
@@ -89,10 +88,10 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 	connect(btnSave, SIGNAL( clicked() ), this, SLOT ( btnSaveClicked() ) );
 	connect(btnStartServer, SIGNAL( clicked() ), this, SLOT( btnStartServerClicked() ) );
 
-	connect(cboEngine, SIGNAL( currentIndexChanged(int) ), this, SLOT( cboEngineSelected(int) ) );
+	connect(cboEngine, SIGNAL(currentPluginChanged(EnginePlugin*)),
+		this, SLOT(initEngineSpecific(EnginePlugin*)));
 	connect(cboGamemode, SIGNAL( currentIndexChanged(int) ), this, SLOT( cboGamemodeSelected(int) ) );
 
-	initPrimary();
 	d->bSuppressMissingExeErrors = false;
 
 	// This is a crude solution to the problem where message boxes appear
@@ -195,18 +194,6 @@ void CreateServerDialog::btnStartServerClicked()
 		runGame(false);
 	else
 		accept();
-}
-
-void CreateServerDialog::cboEngineSelected(int index)
-{
-	if (index >= 0)
-	{
-		unsigned enginePluginIndex = cboEngine->itemData(index).toUInt();
-		if (enginePluginIndex < gPlugins->numPlugins())
-		{
-			initEngineSpecific(gPlugins->info(enginePluginIndex));
-		}
-	}
 }
 
 void CreateServerDialog::cboGamemodeSelected(int index)
@@ -334,6 +321,7 @@ void CreateServerDialog::firstLoadConfigTimer()
 	{
 		loadConfig(tmpServerCfgPath);
 	}
+	initEngineSpecific(cboEngine->currentPlugin());
 }
 
 void CreateServerDialog::initDMFlagsTabs()
@@ -472,22 +460,6 @@ void CreateServerDialog::initInfoAndPassword()
 {
 	miscPanel->setupForEngine(d->currentEngine);
 	tabWidget->setTabEnabled(tabWidget->indexOf(tabMisc), miscPanel->isAnythingAvailable());
-}
-
-void CreateServerDialog::initPrimary()
-{
-	cboEngine->clear();
-
-	for (unsigned i = 0; i < gPlugins->numPlugins(); ++i)
-	{
-		const EnginePlugin* plugin = gPlugins->info(i);
-		cboEngine->addItem(plugin->icon(), plugin->data()->name, i);
-	}
-
-	if (cboEngine->count() > 0)
-	{
-		cboEngine->setCurrentIndex(0);
-	}
 }
 
 void CreateServerDialog::initRules()
@@ -766,14 +738,11 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 
 bool CreateServerDialog::setEngine(const QString &engineName)
 {
-	int engIndex = gPlugins->pluginIndexFromName(engineName);
-	if (engIndex < 0)
+	if (!cboEngine->setPluginByName(engineName))
 	{
-		QMessageBox::critical(NULL, tr("Doomseeker - load server config"), tr("Plugin for engine \"%1\" is not present!").arg(engineName));
+		QMessageBox::critical(this, tr("Doomseeker - load server config"),
+			tr("Plugin for engine \"%1\" is not present!").arg(engineName));
 		return false;
 	}
-
-	// Select engine. This will also select the default executable path.
-	cboEngine->setCurrentIndex(engIndex);
 	return true;
 }
