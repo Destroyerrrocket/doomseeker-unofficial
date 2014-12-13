@@ -165,7 +165,7 @@ void DMFlagsPanel::loadConfig(Ini &config)
 
 void DMFlagsPanel::saveConfig(Ini &config)
 {
-	IniSection dmflags = config.createSection("DMFlags");
+	IniSection dmflags = config.section("DMFlags");
 	foreach(DMFlagsTabWidget* p, d->dmFlagsTabs)
 	{
 		for (int i = 0; i < p->section.count(); ++i)

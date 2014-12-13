@@ -46,25 +46,15 @@ Ini::~Ini()
 	delete d;
 }
 
-IniSection Ini::createSection(const QString& name)
-{
-	if (name.isEmpty())
-	{
-		return IniSection();
-	}
-
-	return IniSection(this, name);
-}
-
 IniVariable Ini::createSetting(const QString& sectionName, const QString& name, const QVariant& data)
 {
-	IniSection section = createSection(sectionName);
-	if (section.isNull())
+	IniSection s = section(sectionName);
+	if (s.isNull())
 	{
 		return IniVariable();
 	}
 
-	return section.createSetting(name, data);
+	return s.createSetting(name, data);
 }
 
 void Ini::deleteSection(const QString& sectionName)
@@ -87,16 +77,6 @@ void Ini::removeKey(const QString& key)
 	d->provider->remove(key);
 }
 
-IniSection Ini::retrieveSection(const QString& name)
-{
-	if (name.isEmpty())
-	{
-		return IniSection();
-	}
-
-	return IniSection(this, name);
-}
-
 IniVariable Ini::retrieveSetting(const QString& sectionName, const QString& variableName)
 {
 	IniSection section = this->section(sectionName);
@@ -110,7 +90,12 @@ IniVariable Ini::retrieveSetting(const QString& sectionName, const QString& vari
 
 IniSection Ini::section(const QString& name)
 {
-	return createSection(name);
+	if (name.isEmpty())
+	{
+		return IniSection();
+	}
+
+	return IniSection(this, name);
 }
 
 QVector<IniSection> Ini::sectionsArray(const QString& regexPattern)

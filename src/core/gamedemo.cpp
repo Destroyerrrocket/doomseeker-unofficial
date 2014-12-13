@@ -87,7 +87,7 @@ void GameDemo::saveDemoMetaData(const QString &demoName, const EnginePlugin &plu
 	QSettings settings(metaFileName, QSettings::IniFormat);
 	SettingsProviderQt settingsProvider(&settings);
 	Ini metaFile(&settingsProvider);
-	IniSection metaSection = metaFile.createSection("meta");
+	IniSection metaSection = metaFile.section("meta");
 
 	metaSection.createSetting("iwad", iwad.toLower());
 	metaSection.createSetting("pwads", pwads.join(";"));

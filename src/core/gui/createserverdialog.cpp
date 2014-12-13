@@ -596,7 +596,7 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 	QSettings settingsFile(filename, QSettings::IniFormat);
 	SettingsProviderQt settingsProvider(&settingsFile);
 	Ini ini(&settingsProvider);
-	IniSection general = ini.createSection("General");
+	IniSection general = ini.section("General");
 
 	// General
 	general["engine"] = cboEngine->currentText();

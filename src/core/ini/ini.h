@@ -74,12 +74,6 @@ class MAIN_EXPORT Ini : public QObject
 		virtual ~Ini();
 
 		/**
-		 *	No change to the data will be made if section already exists.
-		 *	@return Newly created or existing section.
-		 */
-		IniSection createSection(const QString& name);
-
-		/**
 		 *	Value of data parameter will be ignored and no changes will be
 		 *	performed if setting already exists.
 		 *	@return Newly created or existing setting.
@@ -108,13 +102,6 @@ class MAIN_EXPORT Ini : public QObject
 		void removeKey(const QString& key);
 
 		/**
-		 *	This method will not create a new section if it doesn't exist yet.
-		 *	@return NULL if section doesn't exist or a pointer to
-		 *	internally stored IniSection object. Do not delete this object.
-		 */
-		IniSection retrieveSection(const QString& name);
-
-		/**
 		 *	This won't create a variable if it doesn't exist and return NULL
 		 *	in such case.
 		 *	@return A reference to the internally stored IniVariable if it
@@ -123,16 +110,15 @@ class MAIN_EXPORT Ini : public QObject
 		IniVariable retrieveSetting(const QString& sectionname, const QString& variablename);
 
 		/**
-		 *	This method will attempt to retrieve an existing section.
-		 *	If this section does not exist a new section will be created.
+		 * @brief Access configuration file section.
 		 *
-		 *	This is in fact an alias to createSection() and it has been
-		 *	introduced to fit the IniVariable create/retrieve/setting set
-		 *	of methods and to avoid further confusion
-		 *	(ie. "why does this crash").
+		 * Creates and returns an accessor object to a section of
+		 * specified name.  No actual modification to underlying data
+		 * is done. The IniSection object is merely a convenience
+		 * proxy for the Ini class.
 		 *
-		 *	@return NULL if section doesn't exist or a pointer to
-		 *	internally stored IniSection object. Do not delete this object.
+		 * If section name is empty then a 'null object' of IniSection
+		 * type is returned.
 		 */
 		IniSection section(const QString& name);
 
