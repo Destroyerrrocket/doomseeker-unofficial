@@ -15,6 +15,7 @@ set(FAKEPLUGIN_FILES
 	responder/respondercfg.cpp
 	responder/serverresponder.cpp
 	pluginengineplugin.cpp
+	plugingamehost.cpp
 	pluginmasterclient.cpp
 	pluginserver.cpp
 )
@@ -24,6 +25,7 @@ set(HEADER_FILES
 	responder/awaitingclient.h
 	responder/respondercfg.h
 	pluginengineplugin.h
+	plugingamehost.h
 )
 
 qt_wrap_cpp(fakePlugin FAKEPLUGIN_FILES ${FAKEPLUGIN_QT_FILES})

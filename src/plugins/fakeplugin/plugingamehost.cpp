@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// engineplugin.h
+// plugingamehost.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,32 +18,26 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2013 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef PLUGIN_ENGINEPLUGIN_H
-#define PLUGIN_ENGINEPLUGIN_H
+#include "plugingamehost.h"
 
-#include "plugins/engineplugin.h"
+#include "pluginengineplugin.h"
+#include <serverapi/gamecreateparams.h>
 
-class PluginEnginePlugin : public EnginePlugin
+PluginGameHost::PluginGameHost()
+: GameHost(PluginEnginePlugin::staticInstance())
 {
-	DECLARE_PLUGIN(PluginEnginePlugin)
-	public:
-		PluginEnginePlugin();
-		~PluginEnginePlugin();
+	set_addDMFlags(&PluginGameHost::addDMFlags);
+}
 
-		GameHost *gameHost();
-		MasterClient* masterClient() const;
-		ServerPtr mkServer(const QHostAddress &address, unsigned short port) const;
-
-		bool isMasterResponderInstantiated() const;
-		void startMasterResponder();
-
-	private:
-		class PrivData;
-		PrivData* d;
-
-		void initDMFlags();
-};
-
-#endif
+void PluginGameHost::addDMFlags()
+{
+	foreach (const DMFlagsSection &section, params().dmFlags())
+	{
+		for (int i = 0; i < section.count(); ++i)
+		{
+			args() << "-flag" << section.name() << section[i].name();
+		}
+	}
+}

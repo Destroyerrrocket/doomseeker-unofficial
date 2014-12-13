@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// engineplugin.h
+// plugingamehost.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,32 +18,22 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2013 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef PLUGIN_ENGINEPLUGIN_H
-#define PLUGIN_ENGINEPLUGIN_H
+#ifndef id28cf84d9_c79e_486a_9ec5_7b20c097fa0d
+#define id28cf84d9_c79e_486a_9ec5_7b20c097fa0d
 
-#include "plugins/engineplugin.h"
+#include <serverapi/gamehost.h>
 
-class PluginEnginePlugin : public EnginePlugin
+class PluginGameHost : public GameHost
 {
-	DECLARE_PLUGIN(PluginEnginePlugin)
-	public:
-		PluginEnginePlugin();
-		~PluginEnginePlugin();
+public:
+	PluginGameHost();
 
-		GameHost *gameHost();
-		MasterClient* masterClient() const;
-		ServerPtr mkServer(const QHostAddress &address, unsigned short port) const;
+private:
+	Q_DISABLE_COPY(PluginGameHost);
 
-		bool isMasterResponderInstantiated() const;
-		void startMasterResponder();
-
-	private:
-		class PrivData;
-		PrivData* d;
-
-		void initDMFlags();
+	void addDMFlags();
 };
 
 #endif
