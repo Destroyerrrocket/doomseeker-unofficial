@@ -54,6 +54,7 @@ QDialog *CreateServerDialogApi::dialog() const
 
 bool CreateServerDialogApi::fillInCommandLineArguments(QString &executable, QStringList &args)
 {
+	assert(d->dialog);
 	return d->dialog->commandLineArguments(executable, args);
 }
 
