@@ -85,13 +85,10 @@ class MAIN_EXPORT CreateServerDialogPage : public QWidget
 		 *
 		 * @return Return true on validation success or false on failure.
 		 */
-		virtual bool validate()
-		{
-			return true;
-		}
+		virtual bool validate();
 
 	protected:
-		CreateServerDialog* parentDialog();
+		QDialog* parentDialog();
 
 	private:
 		class PrivData;
