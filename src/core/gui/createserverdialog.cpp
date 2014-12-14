@@ -214,6 +214,7 @@ GameMode CreateServerDialog::currentGameMode() const
 
 void CreateServerDialog::firstLoadConfigTimer()
 {
+	initEngineSpecific(generalSetupPanel->currentPlugin());
 	QString tmpServerCfgPath = gDefaultDataPaths->programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
 
 	QFileInfo fi(tmpServerCfgPath);
@@ -221,7 +222,6 @@ void CreateServerDialog::firstLoadConfigTimer()
 	{
 		loadConfig(tmpServerCfgPath);
 	}
-	initEngineSpecific(generalSetupPanel->currentPlugin());
 }
 
 void CreateServerDialog::initDMFlagsTabs()
