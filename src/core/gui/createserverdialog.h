@@ -38,7 +38,7 @@ class Server;
  * @ingroup group_pluginapi
  * @brief Dialog window allowing user to host a game.
  */
-class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerDialog
+class CreateServerDialog : public QDialog, private Ui::CreateServerDialog
 {
 	Q_OBJECT
 
@@ -47,7 +47,7 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		virtual ~CreateServerDialog();
 
 		bool commandLineArguments(QString &executable, QStringList &args);
-		void makeSetupRemoteGameDialog(const EnginePlugin *plugin);
+		void makeRemoteGameSetupDialog(const EnginePlugin *plugin);
 
 	private slots:
 		void btnCommandLineClicked();

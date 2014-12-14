@@ -309,7 +309,7 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 	return true;
 }
 
-void CreateServerDialog::makeSetupRemoteGameDialog(const EnginePlugin *plugin)
+void CreateServerDialog::makeRemoteGameSetupDialog(const EnginePlugin *plugin)
 {
 	d->remoteGameSetup = true;
 

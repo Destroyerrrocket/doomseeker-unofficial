@@ -369,6 +369,7 @@ set(SOURCE_FILES
 	serverapi/tooltips/playertable.cpp
 	serverapi/tooltips/tooltipgenerator.cpp
 	serverapi/buddyinfo.cpp
+	serverapi/createserverdialogapi.cpp
 	serverapi/exefile.cpp
 	serverapi/gamecreateparams.cpp
 	serverapi/gameexefactory.cpp
@@ -478,6 +479,7 @@ set(HEADER_FILES
 	refresher/canrefreshserver.h
 	serverapi/tooltips/tooltipgenerator.h
 	serverapi/buddyinfo.h
+	serverapi/createserverdialogapi.h
 	serverapi/gamecreateparams.h
 	serverapi/gameexeretriever.h
 	serverapi/joinerror.h
