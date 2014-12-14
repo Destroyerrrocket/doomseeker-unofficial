@@ -47,6 +47,12 @@ CreateServerDialogApi::~CreateServerDialogApi()
 	delete d;
 }
 
+CreateServerDialogApi *CreateServerDialogApi::createNew(QWidget *parent)
+{
+	CreateServerDialogApi *api = new CreateServerDialogApi(parent);
+	return api;
+}
+
 QDialog *CreateServerDialogApi::dialog() const
 {
 	return d->dialog;

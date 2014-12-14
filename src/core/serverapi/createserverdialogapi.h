@@ -50,7 +50,12 @@ class EnginePlugin;
 class MAIN_EXPORT CreateServerDialogApi
 {
 public:
-	CreateServerDialogApi(QWidget *parent);
+	/**
+	 * @brief Constructs a new CreateServerDialog that is deleted when the API
+	 * object is deleted.
+	 */
+	static CreateServerDialogApi *createNew(QWidget *parent);
+
 	virtual ~CreateServerDialogApi();
 
 	/**
@@ -85,6 +90,8 @@ private:
 
 	class PrivData;
 	PrivData *d;
+
+	CreateServerDialogApi(QWidget *parent);
 };
 
 #endif
