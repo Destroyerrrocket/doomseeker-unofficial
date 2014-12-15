@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// passwordDlg.cpp
+// passworddlg.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,9 +20,9 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
-#include "passwordDlg.h"
+#include "passworddlg.h"
 
-#include "ui_passwordDlg.h"
+#include "ui_passworddlg.h"
 
 #include "configuration/passwordscfg.h"
 #include "configuration/serverpassword.h"
@@ -31,7 +31,7 @@
 
 #include <QLineEdit>
 
-class PasswordDlg::PrivData : public Ui::passwordDlg
+class PasswordDlg::PrivData : public Ui::PasswordDlg
 {
 	public:
 		ServerCPtr server;

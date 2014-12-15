@@ -33,7 +33,6 @@
 #include "gui/dockBuddiesList.h"
 #include "gui/ip2cupdatebox.h"
 #include "gui/mainwindow.h"
-#include "gui/passwordDlg.h"
 #include "gui/serverdetailsdock.h"
 #include "gui/serverfilterdock.h"
 #include "gui/wadseekerinterface.h"

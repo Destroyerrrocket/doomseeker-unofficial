@@ -100,7 +100,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/ip2cupdatebox.ui
 	gui/logdock.ui
 	gui/mainwindow.ui
-	gui/passwordDlg.ui
+	gui/passworddlg.ui
 	gui/rconpassworddialog.ui
 	gui/remoteconsole.ui
 	gui/serverdetailsdock.ui
@@ -171,7 +171,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/ip2cupdatebox.h
 	gui/logdock.h
 	gui/mainwindow.h
-	gui/passwordDlg.h
+	gui/passworddlg.h
 	gui/rconpassworddialog.h
 	gui/remoteconsole.h
 	gui/serverdetailsdock.h
@@ -304,7 +304,7 @@ set(SOURCE_FILES
 	gui/ip2cupdatebox.cpp
 	gui/logdock.cpp
 	gui/mainwindow.cpp
-	gui/passwordDlg.cpp
+	gui/passworddlg.cpp
 	gui/rconpassworddialog.cpp
 	gui/remoteconsole.cpp
 	gui/serverdetailsdock.cpp
