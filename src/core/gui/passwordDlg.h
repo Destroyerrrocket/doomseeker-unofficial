@@ -23,14 +23,14 @@
 #ifndef __PASSWORDDIALOG_H__
 #define __PASSWORDDIALOG_H__
 
-#include "ui_passwordDlg.h"
 #include "serverapi/serverptr.h"
+#include <QDialog>
 #include <QStringList>
 
 class EnginePlugin;
 class Server;
 
-class PasswordDlg : public QDialog, private Ui::passwordDlg
+class PasswordDlg : public QDialog
 {
 	Q_OBJECT
 

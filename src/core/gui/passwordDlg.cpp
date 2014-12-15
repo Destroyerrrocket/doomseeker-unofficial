@@ -22,6 +22,8 @@
 //------------------------------------------------------------------------------
 #include "passwordDlg.h"
 
+#include "ui_passwordDlg.h"
+
 #include "configuration/passwordscfg.h"
 #include "configuration/serverpassword.h"
 #include "gui/helpers/comboboxex.h"
@@ -29,7 +31,7 @@
 
 #include <QLineEdit>
 
-class PasswordDlg::PrivData
+class PasswordDlg::PrivData : public Ui::passwordDlg
 {
 	public:
 		ServerCPtr server;
@@ -40,10 +42,10 @@ class PasswordDlg::PrivData
 PasswordDlg::PasswordDlg(ServerCPtr server, QWidget *parent)
 : QDialog(parent)
 {
-	setupUi(this);
 	d = new PrivData();
-	d->cboConnectPassEx = new ComboBoxEx(*cboConnectPassword);
-	d->cboIngamePassEx = new ComboBoxEx(*cboIngamePassword);
+	d->setupUi(this);
+	d->cboConnectPassEx = new ComboBoxEx(*d->cboConnectPassword);
+	d->cboIngamePassEx = new ComboBoxEx(*d->cboIngamePassword);
 	d->server = server;
 
 	applyInputsVisibility();
@@ -70,18 +72,18 @@ void PasswordDlg::accept()
 
 void PasswordDlg::applyInputsVisibility()
 {
-	connectPasswordWidget->setVisible(d->server->isLocked());
-	ingamePasswordWidget->setVisible(d->server->isLockedInGame());
+	d->connectPasswordWidget->setVisible(d->server->isLocked());
+	d->ingamePasswordWidget->setVisible(d->server->isLockedInGame());
 }
 
 QString PasswordDlg::connectPassword() const
 {
-	return cboConnectPassword->currentText();
+	return d->cboConnectPassword->currentText();
 }
 
 QString PasswordDlg::inGamePassword() const
 {
-	return cboIngamePassword->currentText();
+	return d->cboIngamePassword->currentText();
 }
 
 void PasswordDlg::loadConfiguration()
@@ -89,10 +91,10 @@ void PasswordDlg::loadConfiguration()
 	PasswordsCfg cfg;
 	if(cfg.isHidingPasswords())
 	{
-		cboConnectPassword->lineEdit()->setEchoMode(QLineEdit::Password);
-		cboIngamePassword->lineEdit()->setEchoMode(QLineEdit::Password);
+		d->cboConnectPassword->lineEdit()->setEchoMode(QLineEdit::Password);
+		d->cboIngamePassword->lineEdit()->setEchoMode(QLineEdit::Password);
 	}
-	remember->setChecked(cfg.isRememberingConnectPhrase());
+	d->remember->setChecked(cfg.isRememberingConnectPhrase());
 	setPasswords(cfg.serverPhrases());
 	setCurrentConnectPassword(cfg.suggestPassword(
 		d->server.data(), ServerPasswordType::CONNECT).phrase());
@@ -103,36 +105,36 @@ void PasswordDlg::loadConfiguration()
 void PasswordDlg::removeCurrentConnectPassword()
 {
 	PasswordsCfg cfg;
-	QString phrase = cboConnectPassword->currentText();
-	cfg.removeServerPhrase(cboConnectPassword->currentText());
+	QString phrase = d->cboConnectPassword->currentText();
+	cfg.removeServerPhrase(d->cboConnectPassword->currentText());
 
 	d->cboIngamePassEx->removeItem(phrase);
 	if (!d->cboConnectPassEx->removeCurrentItem())
 	{
-		cboConnectPassword->clearEditText();
-		cboConnectPassword->setFocus();
+		d->cboConnectPassword->clearEditText();
+		d->cboConnectPassword->setFocus();
 	}
 }
 
 void PasswordDlg::removeCurrentIngamePassword()
 {
 	PasswordsCfg cfg;
-	QString phrase = cboIngamePassword->currentText();
-	cfg.removeServerPhrase(cboIngamePassword->currentText());
+	QString phrase = d->cboIngamePassword->currentText();
+	cfg.removeServerPhrase(d->cboIngamePassword->currentText());
 
 	d->cboConnectPassEx->removeItem(phrase);
 	if (!d->cboIngamePassEx->removeCurrentItem())
 	{
-		cboIngamePassword->clearEditText();
-		cboIngamePassword->setFocus();
+		d->cboIngamePassword->clearEditText();
+		d->cboIngamePassword->setFocus();
 	}
 }
 
 void PasswordDlg::saveConfiguration()
 {
 	PasswordsCfg cfg;
-	cfg.setRememberConnectPhrase(remember->isChecked());
-	if (remember->isChecked())
+	cfg.setRememberConnectPhrase(d->remember->isChecked());
+	if (d->remember->isChecked())
 	{
 		cfg.saveServerPhrase(connectPassword(), d->server.data(), ServerPasswordType::CONNECT);
 		cfg.saveServerPhrase(inGamePassword(), d->server.data(), ServerPasswordType::INGAME);
