@@ -37,28 +37,21 @@ ChocolateDoomGameClientRunner::ChocolateDoomGameClientRunner(
 
 void ChocolateDoomGameClientRunner::createCommandLineArguments()
 {
-	if(server->players().size() > 0)
+	QString tmp;
+	CreateServerDialogApi *csd = CreateServerDialogApi::createNew(NULL);
+	csd->dialog()->setAttribute(Qt::WA_DeleteOnClose, false);
+	csd->makeRemoteGameSetup(plugin());
+	if(csd->dialog()->exec() == QDialog::Accepted)
 	{
-		createCommandLineArguments_default();
+		csd->fillInCommandLineArguments(tmp, args());
+		delete csd;
+		addGamePaths();
+		addConnectCommand();
+		addCustomParameters();
 	}
 	else
 	{
-		QString tmp;
-		CreateServerDialogApi *csd = CreateServerDialogApi::createNew(NULL);
-		csd->dialog()->setAttribute(Qt::WA_DeleteOnClose, false);
-		csd->makeRemoteGameSetup(plugin());
-		if(csd->dialog()->exec() == QDialog::Accepted)
-		{
-			csd->fillInCommandLineArguments(tmp, args());
-			delete csd;
-			addGamePaths();
-			addConnectCommand();
-			addCustomParameters();
-		}
-		else
-		{
-			delete csd;
-			setJoinError(JoinError(JoinError::Terminate));
-		}
+		delete csd;
+		setJoinError(JoinError(JoinError::Terminate));
 	}
 }
