@@ -1120,3 +1120,24 @@ bool CreateServerDialog::setEngine(const QString &engineName)
 	cboEngine->setCurrentIndex(engIndex);
 	return true;
 }
+
+void CreateServerDialog::setIwadByName(const QString &iwad)
+{
+	for (int i = 0; i < cboIwad->count(); ++i)
+	{
+		QFileInfo fi(cboIwad->itemText(i));
+		if (fi.fileName().compare(iwad, Qt::CaseInsensitive) == 0)
+		{
+			cboIwad->setCurrentIndex(i);
+			return;
+		}
+	}
+	// If IWAD with given name isn't present on the list try to find it anyway.
+	PathFinder pathFinder;
+	QString path = pathFinder.findFile(iwad);
+	if (!path.isEmpty())
+	{
+		cboIwad->addItem(path);
+		cboIwad->setCurrentIndex(cboIwad->count() - 1);
+	}
+}

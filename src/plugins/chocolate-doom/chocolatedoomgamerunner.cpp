@@ -41,6 +41,7 @@ void ChocolateDoomGameClientRunner::createCommandLineArguments()
 	CreateServerDialog *csd = new CreateServerDialog();
 	csd->setAttribute(Qt::WA_DeleteOnClose, false);
 	csd->makeSetupServerDialog(plugin());
+	csd->setIwadByName(server->iwad());
 	if(csd->exec() == QDialog::Accepted)
 	{
 		csd->commandLineArguments(tmp, args());
