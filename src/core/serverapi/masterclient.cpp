@@ -100,8 +100,8 @@ void MasterClient::emitBannedMessage()
 	QString helpMsg = masterBanHelp();
 	if (!helpMsg.trimmed().isEmpty())
 	{
-		msg = Message(Message::Type::CUSTOM_ERROR, msg.contents()
-			+ tr("\n%1").arg(helpMsg.trimmed()));
+		msg = Message(Message::Type::CUSTOM_ERROR, tr("%1 %2").arg(
+			msg.contents(), helpMsg.trimmed()));
 	}
 	emit message(engineName(), msg.contents(), true);
 	emit messageImportant(msg);

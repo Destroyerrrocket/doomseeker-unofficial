@@ -872,15 +872,9 @@ void MainWindow::masterManagerMessages(MasterClient* pSender, const QString& tit
 
 void MainWindow::masterManagerMessagesImportant(MasterClient* pSender, const Message& objMessage)
 {
-	QString strFullMessage = tr("Master server for %1: %2")
+	QString strFullMessage = tr("%1: %2")
 		.arg(pSender->plugin()->data()->name)
 		.arg(objMessage.contents());
-
-	if (objMessage.isError())
-	{
-		strFullMessage = "<font color=\"#ff0000\">" + strFullMessage + "</font>";
-	}
-
 	importantMessagesWidget->addMessage(strFullMessage, objMessage.timestamp());
 }
 

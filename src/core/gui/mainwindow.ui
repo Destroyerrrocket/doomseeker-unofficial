@@ -26,12 +26,6 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <property name="font">
-       <font>
-        <family>Monospace</family>
-        <pointsize>8</pointsize>
-       </font>
-      </property>
      </widget>
     </item>
     <item>
@@ -280,7 +274,7 @@
      <x>0</x>
      <y>0</y>
      <width>796</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <property name="locale">
