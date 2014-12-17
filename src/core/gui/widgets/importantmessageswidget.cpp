@@ -6,32 +6,44 @@
 #include "importantmessageswidget.h"
 
 #include <QDateTime>
+#include "ui_importantmessageswidget.h"
+
+class ImportantMessagesWidget::PrivData : public Ui::ImportantMessagesWidget
+{
+public:
+	class MessageLabel
+	{
+	public:
+		MessageLabel(QLabel* pLabel)
+		{
+			this->pLabel = pLabel;
+			this->timeCreated = QDateTime::currentDateTime();
+		}
+
+		QLabel* pLabel;
+		QDateTime timeCreated;
+	};
+
+	static const unsigned DEFAULT_MAX_MESSAGES = 0;
+	static const unsigned MAX_MSG_KEEP_TIME_SEC = 10;
+
+	QList<MessageLabel> labelWidgets;
+	int maxMessages;
+};
 
 ImportantMessagesWidget::ImportantMessagesWidget(QWidget* pParent)
 : QWidget(pParent)
 {
-	_maxMessages = DEFAULT_MAX_MESSAGES;
+	d = new PrivData();
+	d->maxMessages = PrivData::DEFAULT_MAX_MESSAGES;
+	d->setupUi(this);
 
-	pLayout = new QVBoxLayout();
-	pLayout->setSpacing(1);
-	pLayout->setMargin(0);
-	pLayout->setContentsMargins(0, 0, 0, 0);
-	this->setLayout(pLayout);
-
-	this->setContentsMargins(0, 0, 0, 0);
-
-	// Setup the clean up timer.
-	this->connect(&oldLabelCleaner, SIGNAL( timeout() ),
-		SLOT( dropOldWidgetsIfBeyondLimit()) );
-
-	// Remember to convert seconds to msecs.
-	oldLabelCleaner.start(MAX_MSG_KEEP_TIME_SEC * 1000);
 	this->hide();
 }
 
 ImportantMessagesWidget::~ImportantMessagesWidget()
 {
-	delete pLayout;
+	delete d;
 }
 
 void ImportantMessagesWidget::addMessage(const QString& message)
@@ -49,9 +61,12 @@ void ImportantMessagesWidget::addMessage(const QString& message, const QDateTime
 
 	QLabel* pNewLabel = new QLabel(this);
 	pNewLabel->setText(strTimestamp + message);
+	pNewLabel->setTextInteractionFlags(pNewLabel->textInteractionFlags()
+		| Qt::TextSelectableByMouse);
+	pNewLabel->setWordWrap(true);
 
-	labelWidgets << MessageLabel(pNewLabel);
-	pLayout->addWidget(pNewLabel);
+	d->labelWidgets << PrivData::MessageLabel(pNewLabel);
+	d->messageLayout->addWidget(pNewLabel);
 
 	// Remember that widget may be auto-hidden.
 	this->show();
@@ -67,22 +82,20 @@ void ImportantMessagesWidget::addMessage(const QString& message, unsigned timest
 
 void ImportantMessagesWidget::clear()
 {
-	while (!labelWidgets.isEmpty())
+	while (!d->labelWidgets.isEmpty())
 	{
 		removeOneOldest();
 	}
 }
 
-#include <cstdio>
-
 void ImportantMessagesWidget::dropOldWidgetsIfBeyondLimit()
 {
-	while (labelWidgets.size() > _maxMessages)
+	while (d->labelWidgets.size() > d->maxMessages)
 	{
-		MessageLabel& oldestLabel = labelWidgets.first();
+		PrivData::MessageLabel& oldestLabel = d->labelWidgets.first();
 		int timeDifference = oldestLabel.timeCreated.secsTo(QDateTime::currentDateTime());
 
-		if (timeDifference > MAX_MSG_KEEP_TIME_SEC)
+		if (timeDifference > PrivData::MAX_MSG_KEEP_TIME_SEC)
 		{
 			removeOneOldest();
 		}
@@ -97,7 +110,7 @@ void ImportantMessagesWidget::dropOldWidgetsIfBeyondLimit()
 
 void ImportantMessagesWidget::removeOldest(int num)
 {
-	if (num >= labelWidgets.size())
+	if (num >= d->labelWidgets.size())
 	{
 		clear();
 	}
@@ -112,14 +125,24 @@ void ImportantMessagesWidget::removeOldest(int num)
 
 void ImportantMessagesWidget::removeOneOldest()
 {
-	if (!labelWidgets.isEmpty())
+	if (!d->labelWidgets.isEmpty())
 	{
-		delete labelWidgets.takeFirst().pLabel;
+		delete d->labelWidgets.takeFirst().pLabel;
 
-		if (labelWidgets.isEmpty())
+		if (d->labelWidgets.isEmpty())
 		{
 			// Auto-hide when there is nothing to show.
-			//this->hide();
+			hide();
 		}
 	}
+}
+
+unsigned ImportantMessagesWidget::maxMessages() const
+{
+	return d->maxMessages;
+}
+
+void ImportantMessagesWidget::setMaxMessages(unsigned num)
+{
+	d->maxMessages = num;
 }

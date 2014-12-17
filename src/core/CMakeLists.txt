@@ -82,6 +82,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/irc/ircdocktabcontents.ui
 	gui/irc/ircignoresmanager.ui
 	gui/irc/ircnetworkselectionbox.ui
+	gui/widgets/importantmessageswidget.ui
 	gui/widgets/serverconsole.ui
 	gui/aboutdialog.ui
 	gui/addBuddyDlg.ui
