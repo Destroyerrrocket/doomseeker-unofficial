@@ -57,7 +57,11 @@ class MasterClient::PrivData
 		{
 			return cache != NULL && cache->isWritable();
 		}
+
+		QString (MasterClient::*masterBanHelp)() const;
 };
+
+POLYMORPHIC_DEFINE_CONST(QString, MasterClient, masterBanHelp, (), ());
 
 MasterClient::MasterClient()
 {
@@ -66,6 +70,7 @@ MasterClient::MasterClient()
 	d->timeouted = false;
 	d->enabled = true;
 	d->port = 0;
+	set_masterBanHelp(&MasterClient::masterBanHelp_default);
 }
 
 MasterClient::~MasterClient()
@@ -87,6 +92,19 @@ void MasterClient::clearServers()
 bool MasterClient::isAddressSame(const QHostAddress &address, unsigned short port) const
 {
 	return (d->address == address && d->port == port);
+}
+
+void MasterClient::emitBannedMessage()
+{
+	Message msg = Message(Message::Type::BANNED_FROM_MASTERSERVER);
+	QString helpMsg = masterBanHelp();
+	if (!helpMsg.trimmed().isEmpty())
+	{
+		msg = Message(Message::Type::CUSTOM_ERROR, msg.contents()
+			+ tr("\n%1").arg(helpMsg.trimmed()));
+	}
+	emit message(engineName(), msg.contents(), true);
+	emit messageImportant(msg);
 }
 
 void MasterClient::emptyServerList()
@@ -117,6 +135,11 @@ bool MasterClient::isTimeouted() const
 	return d->timeouted;
 }
 
+QString MasterClient::masterBanHelp_default() const
+{
+	return QString();
+}
+
 void MasterClient::notifyResponse(Response response)
 {
 	switch(response)
@@ -125,9 +148,7 @@ void MasterClient::notifyResponse(Response response)
 			break;
 		case RESPONSE_BANNED:
 		{
-			Message msg = Message(Message::Type::BANNED_FROM_MASTERSERVER);
-			emit message(engineName(), msg.contents(), true);
-			emit messageImportant(msg);
+			emitBannedMessage();
 			break;
 		}
 		case RESPONSE_WAIT:

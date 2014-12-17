@@ -29,6 +29,7 @@
 #include <QList>
 
 #include "global.h"
+#include "polymorphism.h"
 #include "serverapi/serverptr.h"
 
 class Message;
@@ -94,6 +95,22 @@ class MAIN_EXPORT MasterClient : public QObject
 		 * to set this to false.
 		 */
 		bool isTimeouted() const;
+
+		/**
+		 * @brief [Virtual] Help message displayed to the user when
+		 * ban is detected.
+		 *
+		 * Doomseeker displays a "you're banned from this master
+		 * server" message when RESPONSE_BANNED is returned by
+		 * readResponse(). By redefining this method, your plugin may
+		 * show additional help message next to the usual
+		 * one. Normally, you'd have this return some kind of staff
+		 * contact info. Basic HTML is supported in the display.
+		 *
+		 * Default implementation returns an empty string.
+		 */
+		QString masterBanHelp() const;
+
 		void notifyResponse(Response response);
 		int numPlayers() const;
 		int numServers() const;
@@ -181,6 +198,9 @@ class MAIN_EXPORT MasterClient : public QObject
 		 */
 		void emptyServerList();
 
+		POLYMORPHIC_SETTER_DECLARE_CONST(QString, MasterClient, masterBanHelp, ());
+		QString masterBanHelp_default() const;
+
 		bool preparePacketCache(bool write);
 
 		/**
@@ -205,6 +225,8 @@ class MAIN_EXPORT MasterClient : public QObject
 	private:
 		class PrivData;
 		PrivData* d;
+
+		void emitBannedMessage();
 };
 
 #endif /* __MASTERSERVER_H__ */

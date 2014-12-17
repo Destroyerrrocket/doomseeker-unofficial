@@ -48,6 +48,9 @@ class ZandronumMasterClient : public MasterClient
 		bool readLastPacket;
 		int numPackets;
 		unsigned int packetsRead;
+
+	private:
+		QString masterBanHelp() const;
 };
 
 #endif

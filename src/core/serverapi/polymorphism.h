@@ -40,6 +40,21 @@
 		return (this->*d->name)callargs; \
 	}
 
+#define POLYMORPHIC_SETTER_DECLARE_CONST(ret, self, name, args) \
+	template<typename X> void set_##name(ret (X::*x)args const) \
+	{ \
+		set_##name(static_cast<ret (self::*)args const>(x)); \
+	} \
+	void set_##name(ret (self::*f)args const); \
 
+#define POLYMORPHIC_DEFINE_CONST(ret, self, name, args, callargs) \
+	void self::set_##name(ret (self::*f)args const) \
+	{ \
+		d->name = f; \
+	} \
+	ret self::name args const \
+	{ \
+		return (this->*d->name)callargs; \
+	}
 
 #endif
