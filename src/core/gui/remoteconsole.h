@@ -24,14 +24,11 @@
 #ifndef __REMOTECONSOLE_H__
 #define __REMOTECONSOLE_H__
 
-#include "ui_remoteconsole.h"
 #include "serverapi/serverptr.h"
-#include "widgets/serverconsole.h"
 
-class RConProtocol;
-class Server;
+#include <QMainWindow>
 
-class RemoteConsole : public QMainWindow, private Ui::RemoteConsole
+class RemoteConsole : public QMainWindow
 {
 	Q_OBJECT
 
@@ -44,7 +41,7 @@ class RemoteConsole : public QMainWindow, private Ui::RemoteConsole
 		 * Returns true if the remote console has been successfully created.
 		 * Should not be false unless the first constructor is used.
 		 */
-		bool isValid() const { return protocol != NULL; }
+		bool isValid() const;
 
 	public slots:
 		void disconnectFromServer();
@@ -60,9 +57,8 @@ class RemoteConsole : public QMainWindow, private Ui::RemoteConsole
 		void updatePlayerList();
 
 	private:
-		RConProtocol *protocol;
-		ServerConsole *serverConsole;
-		ServerPtr server;
+		class PrivData;
+		PrivData *d;
 };
 
 #endif /* __REMOTECONSOLE_HPP__ */

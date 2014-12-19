@@ -21,27 +21,38 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ip2cupdatebox.h"
+#include "ui_ip2cupdatebox.h"
 
 #include "doomseekerfilepaths.h"
 
 #include <QDateTime>
 
+class IP2CUpdateBox::PrivData : public Ui::IP2CUpdateBox
+{
+};
+
 IP2CUpdateBox::IP2CUpdateBox(QWidget* parent)
 : QDialog(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
 
-	connect(btnUpdate, SIGNAL( clicked() ), this, SLOT( accept() ) );
-	connect(btnCancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
+	connect(d->btnUpdate, SIGNAL( clicked() ), this, SLOT( accept() ) );
+	connect(d->btnCancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
 
 	updateInfo();
+}
+
+IP2CUpdateBox::~IP2CUpdateBox()
+{
+	delete d;
 }
 
 void IP2CUpdateBox::updateInfo()
 {
 	QString filePath = DoomseekerFilePaths::ip2cDatabase();
 
-	lblIP2CFileLocation->setText(filePath);
+	d->lblIP2CFileLocation->setText(filePath);
 
 	QFileInfo fileInfo(filePath);
 	if (fileInfo.exists())
@@ -52,11 +63,11 @@ void IP2CUpdateBox::updateInfo()
 		int days = lastModified.daysTo(current);
 
 		QString ageString = tr("This database is %n days old.", "", days);
-		lblDatabaseAge->setText(ageString);
+		d->lblDatabaseAge->setText(ageString);
 	}
 	else
 	{
-		lblDatabaseAge->setText(tr("This file cannot be found. Precompiled database will be used. Use update button if you want to fix this problem."));
+		d->lblDatabaseAge->setText(tr("This file cannot be found. Precompiled database will be used. Use update button if you want to fix this problem."));
 	}
 
 

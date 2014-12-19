@@ -23,22 +23,32 @@
 #include "copytextdlg.h"
 #include <QClipboard>
 
+class CopyTextDlg::PrivData : public Ui::CopyTextDlg
+{
+};
+
 CopyTextDlg::CopyTextDlg(const QString& content, const QString& description, QWidget* parent) : QDialog(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
 
-	connect(btnCopy, SIGNAL( clicked() ), this, SLOT( copyContent() ) );
+	connect(d->btnCopy, SIGNAL( clicked() ), SLOT( copyContent() ) );
 
 	if (!description.isNull())
 	{
-		lblDescription->setText(description);
+		d->lblDescription->setText(description);
 	}
 
-	teContent->document()->setPlainText(content);
+	d->teContent->document()->setPlainText(content);
+}
+
+CopyTextDlg::~CopyTextDlg()
+{
+	delete d;
 }
 
 void CopyTextDlg::copyContent()
 {
 	QClipboard *clipboard = QApplication::clipboard();
-	clipboard->setText(teContent->document()->toPlainText());
+	clipboard->setText(d->teContent->document()->toPlainText());
 }

@@ -25,16 +25,17 @@
 
 #include <QDockWidget>
 
-#include "ui_serverfilterdock.h"
-
 class ServerListFilterInfo;
+class QLineEdit;
+class QComboBox;
 
-class ServerFilterDock : public QDockWidget, private Ui::ServerFilterDock
+class ServerFilterDock : public QDockWidget
 {
 	Q_OBJECT
 
 	public:
 		ServerFilterDock(QWidget* pParent = NULL);
+		~ServerFilterDock();
 
 		void addGameModeToComboBox(const QString& gameMode);
 
@@ -59,19 +60,8 @@ class ServerFilterDock : public QDockWidget, private Ui::ServerFilterDock
 		void nonEmptyServerGroupingAtTopToggled(bool b);
 
 	private:
-		/**
- 		* @brief Quick Search widget that is actually located outside the
- 		* ServerFilterDock.
- 		*
- 		* ServerFilterDock needs to keep track of this widget in order to
- 		* update the changing value appropriately.
- 		*/
-		QLineEdit* leQuickSearch;
-		/**
-		 * Guard used to prevent multiple signals being generated while loading
-		 * a filter with setFilterInfo.
-		 */
-		bool bDisableUpdate;
+		class PrivData;
+		PrivData *d;
 
 		void addSortedNonDuplicate(QComboBox* comboBox, const QString& text);
 

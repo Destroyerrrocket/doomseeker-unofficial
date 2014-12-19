@@ -24,34 +24,40 @@
 #include "aboutdialog.h"
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
+#include "ui_aboutdialog.h"
 #include "wadseeker/wadseekerversioninfo.h"
 #include "version.h"
 #include <QPixmap>
 
+class AboutDialog::PrivData : public Ui::AboutDialog
+{
+};
+
 AboutDialog::AboutDialog(QWidget* parent) : QDialog(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
 
-	connect(buttonBox, SIGNAL( clicked(QAbstractButton *) ), this, SLOT( close() ));
+	connect(d->buttonBox, SIGNAL( clicked(QAbstractButton *) ), SLOT( close() ));
 
 	// Doomseeker
-	versionChangeset->setText(Version::changeset());
-	versionNumber->setText(Version::versionRevision());
-	lblRevision->setText(QString::number(Version::revisionNumber()));
-	logo->setPixmap(QPixmap(":/logo.png"));
+	d->versionChangeset->setText(Version::changeset());
+	d->versionNumber->setText(Version::versionRevision());
+	d->lblRevision->setText(QString::number(Version::revisionNumber()));
+	d->logo->setPixmap(QPixmap(":/logo.png"));
 
 	// Wadseeker
-	wadseekerAuthor->setText(WadseekerVersionInfo::author());
-	wadseekerDescription->setText(WadseekerVersionInfo::description());
-	wadseekerVersion->setText(WadseekerVersionInfo::version());
-	wadseekerYearSpan->setText(WadseekerVersionInfo::yearSpan());
+	d->wadseekerAuthor->setText(WadseekerVersionInfo::author());
+	d->wadseekerDescription->setText(WadseekerVersionInfo::description());
+	d->wadseekerVersion->setText(WadseekerVersionInfo::version());
+	d->wadseekerYearSpan->setText(WadseekerVersionInfo::yearSpan());
 
 	// Populate plugins dialog
 	for(unsigned i = 0; i < gPlugins->numPlugins(); ++i)
 	{
-		pluginBox->addItem( gPlugins->plugin(i)->info()->data()->name);
+		d->pluginBox->addItem( gPlugins->plugin(i)->info()->data()->name);
 	}
-	connect(pluginBox, SIGNAL( currentIndexChanged(int) ), this, SLOT( changePlugin(int) ));
+	connect(d->pluginBox, SIGNAL( currentIndexChanged(int) ), SLOT( changePlugin(int) ));
 	changePlugin(0);
 
 	adjustSize();
@@ -59,6 +65,7 @@ AboutDialog::AboutDialog(QWidget* parent) : QDialog(parent)
 
 AboutDialog::~AboutDialog()
 {
+	delete d;
 }
 
 void AboutDialog::changePlugin(int pluginIndex)
@@ -68,6 +75,6 @@ void AboutDialog::changePlugin(int pluginIndex)
 
 	const EnginePlugin* plug = gPlugins->plugin(pluginIndex)->info();
 
-	pluginAuthor->setText(plug->data()->author);
-	pluginVersion->setText(QString("Version: %1.%2").arg(plug->data()->abiVersion).arg(plug->data()->version));
+	d->pluginAuthor->setText(plug->data()->author);
+	d->pluginVersion->setText(QString("Version: %1.%2").arg(plug->data()->abiVersion).arg(plug->data()->version));
 }

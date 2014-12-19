@@ -22,31 +22,37 @@
 //------------------------------------------------------------------------------
 #include "configuration/doomseekerconfig.h"
 #include "rconpassworddialog.h"
+#include "ui_rconpassworddialog.h"
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
+
+class RconPasswordDialog::PrivData : public Ui::RconPasswordDialog
+{
+};
 
 RconPasswordDialog::RconPasswordDialog(QWidget *parent, bool connection)
 : QDialog(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
 
 	if (connection)
 	{
 		// Populate engines box.
-		engines->clear();
+		d->engines->clear();
 		for(unsigned int i = 0;i < gPlugins->numPlugins();i++)
 		{
 			const EnginePlugin* info = gPlugins->plugin(i)->info();
-			engines->addItem(info->icon(), info->data()->name, i);
+			d->engines->addItem(info->icon(), info->data()->name, i);
 		}
 	}
 	else
 	{
-		connectionBox->hide();
+		d->connectionBox->hide();
 	}
 
 	if(gConfig.doomseeker.bHidePasswords)
-		lePassword->setEchoMode(QLineEdit::Password);
+		d->lePassword->setEchoMode(QLineEdit::Password);
 
 	// Adjust the size and prevent resizing.
 	adjustSize();
@@ -54,16 +60,26 @@ RconPasswordDialog::RconPasswordDialog(QWidget *parent, bool connection)
 	setMaximumHeight(height());
 }
 
+RconPasswordDialog::~RconPasswordDialog()
+{
+	delete d;
+}
+
 QString RconPasswordDialog::connectPassword() const
 {
-	return lePassword->text();
+	return d->lePassword->text();
 }
 
 const EnginePlugin *RconPasswordDialog::selectedEngine() const
 {
-	const PluginLoader::Plugin *plugin = gPlugins->plugin(engines->currentIndex());
+	const PluginLoader::Plugin *plugin = gPlugins->plugin(d->engines->currentIndex());
 	if(plugin == NULL)
 		return NULL;
 
 	return plugin->info();
+}
+
+QString RconPasswordDialog::serverAddress() const
+{
+	return d->leServerAddress->text();
 }

@@ -23,9 +23,7 @@
 #ifndef DOOMSEEKER_GUI_CREATESERVERDIALOG_H
 #define DOOMSEEKER_GUI_CREATESERVERDIALOG_H
 
-#include "ui_createserverdialog.h"
 #include "serverapi/serverstructs.h"
-#include <QCheckBox>
 #include <QDialog>
 
 class CreateServerDialogPage;
@@ -38,7 +36,7 @@ class Server;
  * @ingroup group_pluginapi
  * @brief Dialog window allowing user to host a game.
  */
-class CreateServerDialog : public QDialog, private Ui::CreateServerDialog
+class CreateServerDialog : public QDialog
 {
 	Q_OBJECT
 

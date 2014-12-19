@@ -37,6 +37,7 @@
 #include "gui/configuration/engineconfigurationbasebox.h"
 #include "gui/mainwindow.h"
 #include "plugins/engineplugin.h"
+#include "plugins/pluginloader.h"
 #include "updater/updatechannel.h"
 #include "application.h"
 #include "log.h"
@@ -170,7 +171,7 @@ void DoomseekerConfigurationDialog::openConfiguration(const EnginePlugin *openPl
 	DoomseekerConfig::AutoUpdates::UpdateMode updateModeBefore = gConfig.autoUpdates.updateMode;
 	UpdateChannel updateChannelBefore = UpdateChannel::fromName(gConfig.autoUpdates.updateChannelName);
 	// Stop the auto refresh timer during configuration.
-	mw->autoRefreshTimer.stop();
+	mw->stopAutoRefreshTimer();
 
 	if(openPlugin)
 		configDialog.showPluginConfiguration(openPlugin);

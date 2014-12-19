@@ -23,21 +23,25 @@
 #ifndef id254128BC_CE43_41C3_A9C0DD520BECAB15
 #define id254128BC_CE43_41C3_A9C0DD520BECAB15
 
-#include "ui_rconpassworddialog.h"
-#include <QStringList>
+#include <QDialog>
 
 class EnginePlugin;
 
-class RconPasswordDialog : public QDialog, private Ui::RconPasswordDialog
+class RconPasswordDialog : public QDialog
 {
 	Q_OBJECT
 
 	public:
 		RconPasswordDialog(QWidget *parent=NULL, bool connection=false);
+		~RconPasswordDialog();
 
 		QString connectPassword() const;
 		const EnginePlugin *selectedEngine() const;
-		QString serverAddress() const { return leServerAddress->text(); }
+		QString serverAddress() const;
+
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 #endif

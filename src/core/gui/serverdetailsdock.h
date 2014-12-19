@@ -28,9 +28,7 @@
 
 #include "serverapi/serverptr.h"
 
-#include "ui_serverdetailsdock.h"
-
-class ServerDetailsDock : public QDockWidget, private Ui::ServerDetailsDock
+class ServerDetailsDock : public QDockWidget
 {
 	Q_OBJECT
 
@@ -48,6 +46,9 @@ private:
 	void clear();
 	void reorientContentsBasingOnDimensions();
 	ServerPtr selectServer(QList<ServerPtr>&);
+
+	class PrivData;
+	PrivData *d;
 };
 
 #endif

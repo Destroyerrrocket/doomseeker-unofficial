@@ -23,18 +23,18 @@
 #ifndef __LOGDOCK_H_
 #define __LOGDOCK_H_
 
-#include "ui_logdock.h"
 #include <QDockWidget>
 
 /**
  *	@brief Dockable widget designed for application's log presentation.
  */
-class LogDock : public QDockWidget, private Ui::LogDock
+class LogDock : public QDockWidget
 {
 	Q_OBJECT;
 
 	public:
 		LogDock(QWidget* parent = NULL);
+		~LogDock();
 
 	public slots:
 		/**
@@ -47,7 +47,9 @@ class LogDock : public QDockWidget, private Ui::LogDock
 	protected slots:
 		void btnCopyClicked();
 
-
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 #endif

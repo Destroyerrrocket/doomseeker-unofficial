@@ -21,6 +21,7 @@
 // Copyright (C) 2009-2012 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "createserverdialog.h"
+#include "ui_createserverdialog.h"
 
 #include "configuration/doomseekerconfig.h"
 #include "copytextdlg.h"
@@ -40,7 +41,7 @@
 #include <QMessageBox>
 #include <QTimer>
 
-class CreateServerDialog::PrivData
+class CreateServerDialog::PrivData : public Ui::CreateServerDialog
 {
 	public:
 		bool remoteGameSetup;
@@ -60,14 +61,7 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 	d->remoteGameSetup = false;
 	d->currentEngine = NULL;
 
-	setupUi(this);
-	connect(btnCancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
-	connect(btnCommandLine, SIGNAL( clicked() ), this, SLOT( btnCommandLineClicked() ) );
-	connect(btnLoad, SIGNAL( clicked() ), this, SLOT ( btnLoadClicked() ) );
-	connect(btnPlayOffline, SIGNAL( clicked() ), this, SLOT ( btnPlayOfflineClicked() ) );
-
-	connect(btnSave, SIGNAL( clicked() ), this, SLOT ( btnSaveClicked() ) );
-	connect(btnStartServer, SIGNAL( clicked() ), this, SLOT( btnStartServerClicked() ) );
+	d->setupUi(this);
 
 	// This is a crude solution to the problem where message boxes appear
 	// before the actual Create Server dialog. We need to give some time
@@ -182,17 +176,17 @@ bool CreateServerDialog::commandLineArguments(QString &executable, QStringList &
 
 bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 {
-	generalSetupPanel->fillInParams(params, offline);
-	dmflagsPanel->fillInParams(params);
+	d->generalSetupPanel->fillInParams(params, offline);
+	d->dmflagsPanel->fillInParams(params);
 
 	if (!fillInParamsFromPluginPages(params))
 	{
 		return false;
 	}
 
-	customParamsPanel->fillInParams(params);
-	miscPanel->fillInParams(params);
-	rulesPanel->fillInParams(params);
+	d->customParamsPanel->fillInParams(params);
+	d->miscPanel->fillInParams(params);
+	d->rulesPanel->fillInParams(params);
 
 	createHostInfoDemoRecord(params, offline);
 	return true;
@@ -209,12 +203,12 @@ void CreateServerDialog::createHostInfoDemoRecord(GameCreateParams& params, bool
 
 GameMode CreateServerDialog::currentGameMode() const
 {
-	return generalSetupPanel->currentGameMode();
+	return d->generalSetupPanel->currentGameMode();
 }
 
 void CreateServerDialog::firstLoadConfigTimer()
 {
-	initEngineSpecific(generalSetupPanel->currentPlugin());
+	initEngineSpecific(d->generalSetupPanel->currentPlugin());
 	QString tmpServerCfgPath = gDefaultDataPaths->programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
 
 	QFileInfo fi(tmpServerCfgPath);
@@ -226,15 +220,15 @@ void CreateServerDialog::firstLoadConfigTimer()
 
 void CreateServerDialog::initDMFlagsTabs()
 {
-	bool flagsAdded = dmflagsPanel->initDMFlagsTabs(d->currentEngine);
-	int tabIndex = tabWidget->indexOf(tabFlags);
+	bool flagsAdded = d->dmflagsPanel->initDMFlagsTabs(d->currentEngine);
+	int tabIndex = d->tabWidget->indexOf(d->tabFlags);
 	if (flagsAdded && tabIndex < 0)
 	{
-		tabWidget->insertTab(tabWidget->indexOf(tabCustomParameters), tabFlags, tr("Flags"));
+		d->tabWidget->insertTab(d->tabWidget->indexOf(d->tabCustomParameters), d->tabFlags, tr("Flags"));
 	}
 	else if (!flagsAdded && tabIndex >= 0)
 	{
-		tabWidget->removeTab(tabIndex);
+		d->tabWidget->removeTab(tabIndex);
 	}
 }
 
@@ -247,7 +241,7 @@ void CreateServerDialog::initEngineSpecific(EnginePlugin* engine)
 
 	d->currentEngine = engine;
 
-	generalSetupPanel->setupForEngine(engine);
+	d->generalSetupPanel->setupForEngine(engine);
 	initDMFlagsTabs();
 	initEngineSpecificPages(engine);
 	initInfoAndPassword();
@@ -267,25 +261,25 @@ void CreateServerDialog::initEngineSpecificPages(EnginePlugin* engine)
 	d->currentCustomPages = engine->createServerDialogPages(this);
 	foreach (CreateServerDialogPage* page, d->currentCustomPages)
 	{
-		int idxInsertAt = tabWidget->indexOf(tabCustomParameters);
-		tabWidget->insertTab(idxInsertAt, page, page->name());
+		int idxInsertAt = d->tabWidget->indexOf(d->tabCustomParameters);
+		d->tabWidget->insertTab(idxInsertAt, page, page->name());
 	}
 }
 
 void CreateServerDialog::initGamemodeSpecific(const GameMode &gameMode)
 {
-	rulesPanel->setupForEngine(d->currentEngine, gameMode);
+	d->rulesPanel->setupForEngine(d->currentEngine, gameMode);
 }
 
 void CreateServerDialog::initInfoAndPassword()
 {
-	miscPanel->setupForEngine(d->currentEngine);
-	tabWidget->setTabEnabled(tabWidget->indexOf(tabMisc), miscPanel->isAnythingAvailable());
+	d->miscPanel->setupForEngine(d->currentEngine);
+	d->tabWidget->setTabEnabled(d->tabWidget->indexOf(d->tabMisc), d->miscPanel->isAnythingAvailable());
 }
 
 void CreateServerDialog::initRules()
 {
-	rulesPanel->setupForEngine(d->currentEngine, currentGameMode());
+	d->rulesPanel->setupForEngine(d->currentEngine, currentGameMode());
 }
 
 bool CreateServerDialog::loadConfig(const QString& filename)
@@ -294,10 +288,10 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 	SettingsProviderQt settingsProvider(&settingsFile);
 	Ini ini(&settingsProvider);
 
-	generalSetupPanel->loadConfig(ini);
-	rulesPanel->loadConfig(ini);
-	miscPanel->loadConfig(ini);
-	dmflagsPanel->loadConfig(ini);
+	d->generalSetupPanel->loadConfig(ini);
+	d->rulesPanel->loadConfig(ini);
+	d->miscPanel->loadConfig(ini);
+	d->dmflagsPanel->loadConfig(ini);
 
 	// Custom pages.
 	foreach (CreateServerDialogPage* page, d->currentCustomPages)
@@ -305,7 +299,7 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 		page->loadConfig(ini);
 	}
 
-	customParamsPanel->loadConfig(ini);
+	d->customParamsPanel->loadConfig(ini);
 	return true;
 }
 
@@ -313,11 +307,11 @@ void CreateServerDialog::makeRemoteGameSetupDialog(const EnginePlugin *plugin)
 {
 	d->remoteGameSetup = true;
 
-	btnCommandLine->hide();
-	btnPlayOffline->setDisabled(true);
+	d->btnCommandLine->hide();
+	d->btnPlayOffline->setDisabled(true);
 
-	generalSetupPanel->setupForRemoteGame();
-	rulesPanel->setupForRemoteGame();
+	d->generalSetupPanel->setupForRemoteGame();
+	d->rulesPanel->setupForRemoteGame();
 }
 
 bool CreateServerDialog::fillInParamsFromPluginPages(GameCreateParams &params)
@@ -331,7 +325,7 @@ bool CreateServerDialog::fillInParamsFromPluginPages(GameCreateParams &params)
 		else
 		{
 			// Pages must take care of displaying their own error messages.
-			tabWidget->setCurrentIndex(tabWidget->indexOf(page));
+			d->tabWidget->setCurrentIndex(d->tabWidget->indexOf(page));
 			return false;
 		}
 	}
@@ -376,10 +370,10 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 	Ini ini(&settingsProvider);
 	IniSection general = ini.section("General");
 
-	generalSetupPanel->saveConfig(ini);
-	rulesPanel->saveConfig(ini);
-	miscPanel->saveConfig(ini);
-	dmflagsPanel->saveConfig(ini);
+	d->generalSetupPanel->saveConfig(ini);
+	d->rulesPanel->saveConfig(ini);
+	d->miscPanel->saveConfig(ini);
+	d->dmflagsPanel->saveConfig(ini);
 
 	// Custom pages.
 	foreach (CreateServerDialogPage* page, d->currentCustomPages)
@@ -387,7 +381,7 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 		page->saveConfig(ini);
 	}
 
-	customParamsPanel->saveConfig(ini);
+	d->customParamsPanel->saveConfig(ini);
 
 	if (settingsFile.isWritable())
 	{

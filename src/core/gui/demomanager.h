@@ -23,46 +23,34 @@
 #ifndef __DEMOMANAGER_H__
 #define __DEMOMANAGER_H__
 
-#include "ui_demomanager.h"
 #include "global.h"
 
-#include <QDateTime>
-#include <QList>
+#include <QDialog>
 
-class QLabel;
+class QAbstractButton;
 class QModelIndex;
-class QStandardItemModel;
 
 /**
  *	@brief Dialog for managing demos recorded through Doomseeker.
  */
-class DemoManagerDlg : public QDialog, private Ui::DemoManagerDlg
+class DemoManagerDlg : public QDialog
 {
 	Q_OBJECT
 
 	public:
 		DemoManagerDlg();
-
-	protected:
-		class Demo
-		{
-			public:
-				QString filename;
-				QString port;
-				QDateTime time;
-				QStringList wads;
-		};
-
-		void adjustDemoList();
-		bool doRemoveDemo(const QString &file);
-
-		Demo *selectedDemo;
-		QStandardItemModel *demoModel;
-		QList<QList<Demo> > demoTree;
+		~DemoManagerDlg();
 
 	protected slots:
 		void performAction(QAbstractButton *button);
 		void updatePreview(const QModelIndex &index);
+
+	private:
+		void adjustDemoList();
+		bool doRemoveDemo(const QString &file);
+
+		class PrivData;
+		PrivData *d;
 };
 
 #endif

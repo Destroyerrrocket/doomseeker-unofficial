@@ -22,33 +22,44 @@
 //------------------------------------------------------------------------------
 #include "logdock.h"
 #include "log.h"
+#include "ui_logdock.h"
 #include <QClipboard>
+
+class LogDock::PrivData : public Ui::LogDock
+{
+};
 
 LogDock::LogDock(QWidget* parent) : QDockWidget(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
 	this->toggleViewAction()->setIcon(QIcon(":/icons/log.png"));
 
-	dockWidgetContents->setHintSize(175, 200);
+	d->dockWidgetContents->setHintSize(175, 200);
 
-	connect(btnClear, SIGNAL( clicked() ), this, SLOT( clearContent() ) );
-	connect(btnCopy, SIGNAL( clicked() ), this, SLOT( btnCopyClicked() ) );
+	connect(d->btnClear, SIGNAL( clicked() ), this, SLOT( clearContent() ) );
+	connect(d->btnCopy, SIGNAL( clicked() ), this, SLOT( btnCopyClicked() ) );
+}
+
+LogDock::~LogDock()
+{
+	delete d;
 }
 
 void LogDock::appendLogEntry(const QString& entry)
 {
-	teContent->moveCursor(QTextCursor::End);
-	teContent->insertPlainText(entry);
+	d->teContent->moveCursor(QTextCursor::End);
+	d->teContent->insertPlainText(entry);
 }
 
 void LogDock::clearContent()
 {
 	gLog.clearContent();
-	teContent->document()->clear();
+	d->teContent->document()->clear();
 }
 
 void LogDock::btnCopyClicked()
 {
 	QClipboard *clipboard = QApplication::clipboard();
-	clipboard->setText(teContent->document()->toPlainText());
+	clipboard->setText(d->teContent->document()->toPlainText());
 }

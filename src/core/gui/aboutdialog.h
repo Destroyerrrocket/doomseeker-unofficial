@@ -24,9 +24,9 @@
 #ifndef DOOMSEEKER_GUI_ABOUTDIALOG_H
 #define DOOMSEEKER_GUI_ABOUTDIALOG_H
 
-#include "ui_aboutdialog.h"
+#include <QDialog>
 
-class AboutDialog : public QDialog, private Ui::AboutDialog
+class AboutDialog : public QDialog
 {
 	Q_OBJECT
 
@@ -36,6 +36,10 @@ class AboutDialog : public QDialog, private Ui::AboutDialog
 
 	public slots:
 		void changePlugin(int pluginIndex);
+
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 #endif /* DOOMSEEKER_GUI_ABOUTDIALOG_H */

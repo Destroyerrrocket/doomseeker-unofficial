@@ -220,9 +220,110 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnCancel</sender>
+   <signal>clicked()</signal>
+   <receiver>CreateServerDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>578</x>
+     <y>500</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>305</x>
+     <y>259</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnCommandLine</sender>
+   <signal>clicked()</signal>
+   <receiver>CreateServerDialog</receiver>
+   <slot>btnCommandLineClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>399</x>
+     <y>500</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>305</x>
+     <y>259</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnLoad</sender>
+   <signal>clicked()</signal>
+   <receiver>CreateServerDialog</receiver>
+   <slot>btnLoadClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>31</x>
+     <y>500</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>305</x>
+     <y>259</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnPlayOffline</sender>
+   <signal>clicked()</signal>
+   <receiver>CreateServerDialog</receiver>
+   <slot>btnPlayOfflineClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>297</x>
+     <y>500</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>305</x>
+     <y>259</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnSave</sender>
+   <signal>clicked()</signal>
+   <receiver>CreateServerDialog</receiver>
+   <slot>btnSaveClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>98</x>
+     <y>501</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>305</x>
+     <y>259</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnStartServer</sender>
+   <signal>clicked()</signal>
+   <receiver>CreateServerDialog</receiver>
+   <slot>btnStartServerClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>501</x>
+     <y>500</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>305</x>
+     <y>259</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>initGamemodeSpecific(GameMode)</slot>
   <slot>initEngineSpecific(EnginePlugin*)</slot>
+  <slot>btnCommandLineClicked()</slot>
+  <slot>btnLoadClicked()</slot>
+  <slot>btnPlayOfflineClicked()</slot>
+  <slot>btnSaveClicked()</slot>
+  <slot>btnStartServerClicked()</slot>
  </slots>
 </ui>

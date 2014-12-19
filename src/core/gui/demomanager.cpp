@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "demomanager.h"
+#include "ui_demomanager.h"
 #include "ini/ini.h"
 #include "ini/settingsproviderqt.h"
 #include "datapaths.h"
@@ -41,19 +42,43 @@
 #include <QPushButton>
 #include <QStandardItemModel>
 
-DemoManagerDlg::DemoManagerDlg() : selectedDemo(NULL)
+class Demo
 {
-	setupUi(this);
+	public:
+		QString filename;
+		QString port;
+		QDateTime time;
+		QStringList wads;
+};
+
+class DemoManagerDlg::PrivData : public Ui::DemoManagerDlg
+{
+	public:
+		Demo *selectedDemo;
+		QStandardItemModel *demoModel;
+		QList<QList<Demo> > demoTree;
+};
+
+DemoManagerDlg::DemoManagerDlg()
+{
+	d = new PrivData;
+	d->setupUi(this);
+	d->selectedDemo = NULL;
 
 	// Add a play button
-	QPushButton *playButton = buttonBox->addButton(tr("Play"), QDialogButtonBox::ActionRole);
+	QPushButton *playButton = d->buttonBox->addButton(tr("Play"), QDialogButtonBox::ActionRole);
 	playButton->setIcon(QIcon(":/icons/media-playback-start.png"));
 
-	demoModel = new QStandardItemModel();
+	d->demoModel = new QStandardItemModel();
 	adjustDemoList();
 
-	connect(buttonBox, SIGNAL( clicked(QAbstractButton *) ), this, SLOT( performAction(QAbstractButton *) ));
-	connect(demoList->selectionModel(), SIGNAL( currentChanged(const QModelIndex &, const QModelIndex &) ), this, SLOT( updatePreview(const QModelIndex &) ));
+	connect(d->buttonBox, SIGNAL( clicked(QAbstractButton *) ), this, SLOT( performAction(QAbstractButton *) ));
+	connect(d->demoList->selectionModel(), SIGNAL( currentChanged(const QModelIndex &, const QModelIndex &) ), this, SLOT( updatePreview(const QModelIndex &) ));
+}
+
+DemoManagerDlg::~DemoManagerDlg()
+{
+	delete d;
 }
 
 void DemoManagerDlg::adjustDemoList()
@@ -131,8 +156,8 @@ void DemoManagerDlg::adjustDemoList()
 	}
 
 	// Convert to a model
-	demoModel->clear();
-	demoTree.clear();
+	d->demoModel->clear();
+	d->demoTree.clear();
 	foreach(const DemoMap &demoDate, demoMap)
 	{
 		QStandardItem *item = new QStandardItem(demoDate.begin().value().time.toString("ddd. MMM d, yyyy"));
@@ -142,10 +167,10 @@ void DemoManagerDlg::adjustDemoList()
 			demoDateList << demo;
 			item->appendRow(new QStandardItem(demo.time.toString("hh:mm:ss")));
 		}
-		demoTree << demoDateList;
-		demoModel->appendRow(item);
+		d->demoTree << demoDateList;
+		d->demoModel->appendRow(item);
 	}
-	demoList->setModel(demoModel);
+	d->demoList->setModel(d->demoModel);
 }
 
 bool DemoManagerDlg::doRemoveDemo(const QString &file)
@@ -156,7 +181,7 @@ bool DemoManagerDlg::doRemoveDemo(const QString &file)
 	{
 		// Remove ini file as well, but don't bother warning if it can't be deleted for whatever reason
 		QFile::remove(file + ".ini");
-		selectedDemo = NULL;
+		d->selectedDemo = NULL;
 		return true;
 	}
 	return false;
@@ -164,41 +189,41 @@ bool DemoManagerDlg::doRemoveDemo(const QString &file)
 
 void DemoManagerDlg::performAction(QAbstractButton *button)
 {
-	if(button == buttonBox->button(QDialogButtonBox::Close))
+	if(button == d->buttonBox->button(QDialogButtonBox::Close))
 		reject();
-	else if(button == buttonBox->button(QDialogButtonBox::Save))
+	else if(button == d->buttonBox->button(QDialogButtonBox::Save))
 	{
-		if(selectedDemo == NULL)
+		if(d->selectedDemo == NULL)
 			return;
 
 		QFileDialog saveDialog(this);
 		saveDialog.setAcceptMode(QFileDialog::AcceptSave);
-		saveDialog.selectFile(selectedDemo->filename);
+		saveDialog.selectFile(d->selectedDemo->filename);
 		if(saveDialog.exec() == QDialog::Accepted)
 		{
 			// Copy the demo to the new location.
-			if(!QFile::copy(gDefaultDataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename, saveDialog.selectedFiles().first()))
+			if(!QFile::copy(gDefaultDataPaths->demosDirectoryPath() + QDir::separator() + d->selectedDemo->filename, saveDialog.selectedFiles().first()))
 				QMessageBox::critical(this, tr("Unable to save"), tr("Could not write to the specified location."));
 		}
 	}
-	else if(button == buttonBox->button(QDialogButtonBox::Discard))
+	else if(button == d->buttonBox->button(QDialogButtonBox::Discard))
 	{
 		if(QMessageBox::question(this, tr("Delete demo?"), tr("Are you sure you want to delete the selected demo?"), QMessageBox::Yes|QMessageBox::Cancel) == QMessageBox::Yes)
 		{
-			QModelIndex index = demoList->selectionModel()->currentIndex();
-			if(selectedDemo == NULL)
+			QModelIndex index = d->demoList->selectionModel()->currentIndex();
+			if(d->selectedDemo == NULL)
 			{
 				int dateRow = index.row();
 				for(int timeRow = 0;index.child(timeRow, 0).isValid();++timeRow)
 				{
-					if(doRemoveDemo(gDefaultDataPaths->demosDirectoryPath() + QDir::separator() + demoTree[dateRow][timeRow].filename))
+					if(doRemoveDemo(gDefaultDataPaths->demosDirectoryPath() + QDir::separator() + d->demoTree[dateRow][timeRow].filename))
 					{
-						demoModel->removeRow(timeRow, index);
-						demoTree[dateRow].removeAt(timeRow);
-						if(demoTree[dateRow].size() == 0)
+						d->demoModel->removeRow(timeRow, index);
+						d->demoTree[dateRow].removeAt(timeRow);
+						if(d->demoTree[dateRow].size() == 0)
 						{
-							demoModel->removeRow(dateRow);
-							demoTree.removeAt(dateRow);
+							d->demoModel->removeRow(dateRow);
+							d->demoTree.removeAt(dateRow);
 							break;
 						}
 
@@ -209,18 +234,18 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 			}
 			else
 			{
-				if(doRemoveDemo(gDefaultDataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename))
+				if(doRemoveDemo(gDefaultDataPaths->demosDirectoryPath() + QDir::separator() + d->selectedDemo->filename))
 				{
 					// Adjust the tree
 					int dateRow = index.parent().row();
 					int timeRow = index.row();
 
-					demoModel->removeRow(timeRow, index.parent());
-					demoTree[dateRow].removeAt(timeRow);
-					if(demoTree[dateRow].size() == 0)
+					d->demoModel->removeRow(timeRow, index.parent());
+					d->demoTree[dateRow].removeAt(timeRow);
+					if(d->demoTree[dateRow].size() == 0)
 					{
-						demoModel->removeRow(dateRow);
-						demoTree.removeAt(dateRow);
+						d->demoModel->removeRow(dateRow);
+						d->demoTree.removeAt(dateRow);
 					}
 				}
 			}
@@ -228,21 +253,21 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 	}
 	else // Play
 	{
-		if(selectedDemo == NULL)
+		if(d->selectedDemo == NULL)
 			return;
 
 		// Look for the plugin used to record.
 		EnginePlugin *plugin = NULL;
 		for(int i = 0;i < gPlugins->numPlugins();i++)
 		{
-			if (selectedDemo->port == gPlugins->info(i)->data()->name)
+			if (d->selectedDemo->port == gPlugins->info(i)->data()->name)
 			{
 				plugin = gPlugins->info(i);
 			}
 		}
 		if(plugin == NULL)
 		{
-			QMessageBox::critical(this, tr("No plugin"), tr("The \"%1\" plugin does not appear to be loaded.").arg(selectedDemo->port));
+			QMessageBox::critical(this, tr("No plugin"), tr("The \"%1\" plugin does not appear to be loaded.").arg(d->selectedDemo->port));
 			return;
 		}
 
@@ -253,7 +278,7 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 		// Locate all the files needed to play the demo
 		PathFinder pf;
 		pf.addPrioritySearchDir(binPath);
-		PathFinderResult result = pf.findFiles(selectedDemo->wads);
+		PathFinderResult result = pf.findFiles(d->selectedDemo->wads);
 		if(!result.missingFiles().isEmpty())
 		{
 			QMessageBox::critical(this, tr("Files not found"),
@@ -263,7 +288,7 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 
 		// Play the demo
 		GameCreateParams params;
-		params.setDemoPath(gDefaultDataPaths->demosDirectoryPath() + QDir::separator() + selectedDemo->filename);
+		params.setDemoPath(gDefaultDataPaths->demosDirectoryPath() + QDir::separator() + d->selectedDemo->filename);
 		params.setIwadPath(result.foundFiles()[0]);
 		params.setPwadsPaths(result.foundFiles().mid(1));
 		params.setHostMode(GameCreateParams::Demo);
@@ -285,21 +310,21 @@ void DemoManagerDlg::updatePreview(const QModelIndex &index)
 {
 	if(!index.isValid() || !index.parent().isValid())
 	{
-		preview->setText("");
-		selectedDemo = NULL;
+		d->preview->setText("");
+		d->selectedDemo = NULL;
 		return;
 	}
 
 	int dateRow = index.parent().row();
 	int timeRow = index.row();
-	selectedDemo = &demoTree[dateRow][timeRow];
+	d->selectedDemo = &d->demoTree[dateRow][timeRow];
 
-	QString text = "<b>" + tr("Port") + ":</b><p style=\"margin: 0px 0px 0px 10px\">" + selectedDemo->port + "</p>" +
+	QString text = "<b>" + tr("Port") + ":</b><p style=\"margin: 0px 0px 0px 10px\">" + d->selectedDemo->port + "</p>" +
 		"<b>" + tr("WADs") + ":</b><p style=\"margin: 0px 0px 0px 10px\">";
-	foreach(const QString &wad, selectedDemo->wads)
+	foreach(const QString &wad, d->selectedDemo->wads)
 	{
 		text += wad + "<br />";
 	}
 	text += "</p>";
-	preview->setText(text);
+	d->preview->setText(text);
 }
