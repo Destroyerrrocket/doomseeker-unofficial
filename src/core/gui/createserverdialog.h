@@ -144,7 +144,7 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		void initPrimary();
 		void initRules();
 
-		bool loadConfig(const QString& filename);
+		bool loadConfig(const QString& filename, bool loadingPrevious);
 		QString pathToClientExe(Server* server, Message& message);
 		QString pathToOfflineExe(Message& message);
 		QString pathToServerExe(Message& message);

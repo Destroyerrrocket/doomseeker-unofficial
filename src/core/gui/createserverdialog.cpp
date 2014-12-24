@@ -59,6 +59,7 @@ class CreateServerDialog::PrivData
 	public:
 		bool bSuppressMissingExeErrors;
 		bool bIsServerSetup;
+		bool iwadSetExplicitly;
 		QList<CreateServerDialogPage*> currentCustomPages;
 		EnginePlugin *currentEngine;
 		QList<DMFlagsTabWidget*> dmFlagsTabs;
@@ -78,6 +79,7 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 	d->bSuppressMissingExeErrors = true;
 	d->bIsServerSetup = false;
 	d->currentEngine = NULL;
+	d->iwadSetExplicitly = false;
 
 	setupUi(this);
 	connect(btnAddMapToMaplist, SIGNAL( clicked() ), this, SLOT ( btnAddMapToMaplistClicked() ) );
@@ -293,7 +295,7 @@ void CreateServerDialog::btnLoadClicked()
 		QFileInfo fi(strFile);
 		gConfig.doomseeker.previousCreateServerConfigDir = fi.absolutePath();
 
-		loadConfig(strFile);
+		loadConfig(strFile, false);
 	}
 }
 
@@ -527,7 +529,7 @@ void CreateServerDialog::firstLoadConfigTimer()
 	QFileInfo fi(tmpServerCfgPath);
 	if (fi.exists())
 	{
-		loadConfig(tmpServerCfgPath);
+		loadConfig(tmpServerCfgPath, true);
 	}
 }
 
@@ -807,7 +809,7 @@ void CreateServerDialog::initRules()
 	}
 }
 
-bool CreateServerDialog::loadConfig(const QString& filename)
+bool CreateServerDialog::loadConfig(const QString& filename, bool loadingPrevious)
 {
 	QAbstractItemModel* model;
 	QStringList stringList;
@@ -857,7 +859,10 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 	spinPort->setValue(general["port"]);
 	cboGamemode->setCurrentIndex(general["gamemode"]);
 	leMap->setText(general["map"]);
-	addIwad(general["iwad"]);
+	if (!(loadingPrevious && d->iwadSetExplicitly))
+	{
+		addIwad(general["iwad"]);
+	}
 
 	stringList = general["pwads"].valueString().split(";");
 	model = lstAdditionalFiles->model();
@@ -1123,6 +1128,7 @@ bool CreateServerDialog::setEngine(const QString &engineName)
 
 void CreateServerDialog::setIwadByName(const QString &iwad)
 {
+	d->iwadSetExplicitly = true;
 	for (int i = 0; i < cboIwad->count(); ++i)
 	{
 		QFileInfo fi(cboIwad->itemText(i));
