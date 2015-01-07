@@ -39,13 +39,13 @@
 #include "svnrevision.h"
 
 // Info used by version.cpp
-#define VERSION_STRING "0.12.1 Beta"
+#define VERSION_STRING "0.12.2 Beta"
 
 // Info used by windows.rc
-#define FILEVERSION_DEF 0,12,1,SVN_REVISION_NUMBER
-#define PRODUCTVERSION_DEF 0,12,1,SVN_REVISION_NUMBER
-#define FILEVERSION_STR_DEF "0.12.1.0"
-#define PRODUCTVERSION_STR_DEF "0.12.1.0"
+#define FILEVERSION_DEF 0,12,2,SVN_REVISION_NUMBER
+#define PRODUCTVERSION_DEF 0,12,2,SVN_REVISION_NUMBER
+#define FILEVERSION_STR_DEF "0.12.2.0"
+#define PRODUCTVERSION_STR_DEF "0.12.2.0"
 #define LEGALCOPYRIGHT_DEF "The Doomseeker Team 2009 - 2015"
 
 #endif

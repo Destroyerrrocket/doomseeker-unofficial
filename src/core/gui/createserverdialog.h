@@ -48,6 +48,7 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 
 		bool commandLineArguments(QString &executable, QStringList &args);
 		void makeSetupServerDialog(const EnginePlugin *plugin);
+		void setIwadByName(const QString &iwad);
 
 	private slots:
 		void btnAddMapToMaplistClicked();
@@ -144,7 +145,7 @@ class MAIN_EXPORT CreateServerDialog : public QDialog, private Ui::CreateServerD
 		void initPrimary();
 		void initRules();
 
-		bool loadConfig(const QString& filename);
+		bool loadConfig(const QString& filename, bool loadingPrevious);
 		QString pathToClientExe(Server* server, Message& message);
 		QString pathToOfflineExe(Message& message);
 		QString pathToServerExe(Message& message);

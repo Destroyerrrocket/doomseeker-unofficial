@@ -60,6 +60,7 @@ class CreateServerDialog::PrivData
 	public:
 		bool bSuppressMissingExeErrors;
 		bool remoteGameSetup;
+		bool iwadSetExplicitly;
 		QList<CreateServerDialogPage*> currentCustomPages;
 		EnginePlugin *currentEngine;
 		QList<DMFlagsTabWidget*> dmFlagsTabs;
@@ -79,6 +80,7 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 	d->bSuppressMissingExeErrors = true;
 	d->remoteGameSetup = false;
 	d->currentEngine = NULL;
+	d->iwadSetExplicitly = false;
 
 	setupUi(this);
 	connect(btnAddMapToMaplist, SIGNAL( clicked() ), this, SLOT ( btnAddMapToMaplistClicked() ) );
@@ -294,7 +296,7 @@ void CreateServerDialog::btnLoadClicked()
 		QFileInfo fi(strFile);
 		gConfig.doomseeker.previousCreateServerConfigDir = fi.absolutePath();
 
-		loadConfig(strFile);
+		loadConfig(strFile, false);
 	}
 }
 
@@ -538,7 +540,7 @@ void CreateServerDialog::firstLoadConfigTimer()
 	QFileInfo fi(tmpServerCfgPath);
 	if (fi.exists())
 	{
-		loadConfig(tmpServerCfgPath);
+		loadConfig(tmpServerCfgPath, true);
 	}
 }
 
@@ -819,7 +821,7 @@ void CreateServerDialog::initRules()
 	}
 }
 
-bool CreateServerDialog::loadConfig(const QString& filename)
+bool CreateServerDialog::loadConfig(const QString& filename, bool loadingPrevious)
 {
 	QAbstractItemModel* model;
 	QStringList stringList;
@@ -869,7 +871,10 @@ bool CreateServerDialog::loadConfig(const QString& filename)
 	spinPort->setValue(general["port"]);
 	cboGamemode->setCurrentIndex(general["gamemode"]);
 	leMap->setText(general["map"]);
-	addIwad(general["iwad"]);
+	if (!(loadingPrevious && d->iwadSetExplicitly))
+	{
+		addIwad(general["iwad"]);
+	}
 
 	stringList = general["pwads"].valueString().split(";");
 	model = lstAdditionalFiles->model();
@@ -1131,4 +1136,26 @@ bool CreateServerDialog::setEngine(const QString &engineName)
 	// Select engine. This will also select the default executable path.
 	cboEngine->setCurrentIndex(engIndex);
 	return true;
+}
+
+void CreateServerDialog::setIwadByName(const QString &iwad)
+{
+	d->iwadSetExplicitly = true;
+	for (int i = 0; i < cboIwad->count(); ++i)
+	{
+		QFileInfo fi(cboIwad->itemText(i));
+		if (fi.fileName().compare(iwad, Qt::CaseInsensitive) == 0)
+		{
+			cboIwad->setCurrentIndex(i);
+			return;
+		}
+	}
+	// If IWAD with given name isn't present on the list try to find it anyway.
+	PathFinder pathFinder;
+	QString path = pathFinder.findFile(iwad);
+	if (!path.isEmpty())
+	{
+		cboIwad->addItem(path);
+		cboIwad->setCurrentIndex(cboIwad->count() - 1);
+	}
 }
