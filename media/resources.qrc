@@ -47,6 +47,7 @@
 	<file alias="slots/marines/bot">slotstyles/marines/bot.png</file>
 	<file alias="slots/marines/player">slotstyles/marines/player.png</file>
 	<file alias="slots/marines/spectator">slotstyles/marines/spectator.png</file>
+	<file alias="flags/ALB">flags/ALB.png</file> <!-- Albania -->
 	<file alias="flags/ARE">flags/ARE.png</file> <!-- United Arab Emirates -->
 	<file alias="flags/ARG">flags/ARG.png</file> <!-- Argentina -->
 	<file alias="flags/ARM">flags/ARM.png</file> <!-- Armenia -->
