@@ -63,6 +63,8 @@ class IP2C : public QObject
 					ipStart = ipEnd = 0;
 				}
 
+				bool isCountryKnown() const;
+
 				/**
 				 *	IP2CData class is valid when ipStart is different from
 				 *	ipEnd.

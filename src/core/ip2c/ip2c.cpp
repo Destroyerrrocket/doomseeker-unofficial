@@ -163,13 +163,8 @@ IP2CCountryInfo IP2C::obtainCountryInfo(unsigned int ipaddress)
 
 	const IP2CData& data = lookupIP(ipaddress);
 
-	if (data.country.isEmpty())
+	if (!data.isCountryKnown())
 	{
-		char buffer[1024];
-
-		sprintf(buffer, "Unrecognized IP address: %s (DEC: %u / HEX: %X)", QHostAddress(ipaddress).toString().toAscii().constData(), ipaddress, ipaddress);
-		gLog << buffer;
-
 		return IP2CCountryInfo(&flagUnknown, tr("Unknown"));
 	}
 
@@ -180,4 +175,9 @@ IP2CCountryInfo IP2C::obtainCountryInfo(unsigned int ipaddress)
 
 	const QPixmap* pFlag = &flag(data.country);
 	return IP2CCountryInfo(pFlag, data.countryFullName);
+}
+
+bool IP2C::IP2CData::isCountryKnown() const
+{
+	return !country.isEmpty() && country != "ZZZ";
 }
