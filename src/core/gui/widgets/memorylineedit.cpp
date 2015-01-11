@@ -22,6 +22,8 @@
 //------------------------------------------------------------------------------
 #include "memorylineedit.h"
 
+#include <QKeyEvent>
+
 MemoryLineEdit::MemoryLineEdit(QWidget *parent) : QLineEdit(parent)
 {
 	connect(this, SIGNAL(returnPressed()), this, SLOT(storeCommand()));

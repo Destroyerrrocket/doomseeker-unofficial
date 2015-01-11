@@ -7,11 +7,12 @@
 #define __IMPORTANTMESSAGESWIDGET_H__
 
 #include <QDateTime>
-#include <QLabel>
 #include <QList>
 #include <QTimer>
-#include <QVBoxLayout>
 #include <QWidget>
+
+class QLabel;
+class QVBoxLayout;
 
 /**
  * @brief A self-scaling widget that displays messages as separate instances of

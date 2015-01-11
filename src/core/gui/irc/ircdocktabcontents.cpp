@@ -43,6 +43,7 @@
 #include "log.h"
 #include <QDateTime>
 #include <QFile>
+#include <QKeyEvent>
 #include <QScrollBar>
 #include <QStandardItemModel>
 #include <cassert>

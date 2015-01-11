@@ -25,9 +25,10 @@
 #define __ENGINECONFIGBASE_H__
 
 #include "gui/configuration/configurationbasebox.h"
-#include "ui_engineconfigurationbasebox.h"
 
 class EnginePlugin;
+class IniSection;
+class QLineEdit;
 
 /**
  * @ingroup group_pluginapi
@@ -43,7 +44,7 @@ class EnginePlugin;
  * New subclassed instances of this configuration page can be created and
  * returned in a reimplementation of the EnginePlugin::configuration() method.
  */
-class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox, private Ui::EngineConfigurationBaseBox
+class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox
 {
 	Q_OBJECT
 

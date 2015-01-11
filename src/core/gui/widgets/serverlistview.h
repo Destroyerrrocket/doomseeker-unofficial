@@ -25,7 +25,8 @@
 #define __SERVERLISTVIEW_H_
 
 #include <QTableView>
-#include <QMouseEvent>
+
+class QMouseEvent;
 
 #define USERROLE_RIGHTALIGNDECORATION 1
 

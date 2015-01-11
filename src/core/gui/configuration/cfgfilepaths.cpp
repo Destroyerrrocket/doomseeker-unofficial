@@ -21,6 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "cfgfilepaths.h"
+#include "ui_cfgfilepaths.h"
 #include "configuration/doomseekerconfig.h"
 #include "pathfinder/filesearchpath.h"
 #include <QFileDialog>
@@ -29,24 +30,34 @@
 const int COL_PATH = 0;
 const int COL_RECURSE = 1;
 
+class CFGFilePaths::PrivData : public Ui::CFGFilePaths
+{
+};
+
 CFGFilePaths::CFGFilePaths(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
 
 	QStandardItemModel* model = new QStandardItemModel(this);
-	lstIwadAndPwadPaths->setModel(model);
+	d->lstIwadAndPwadPaths->setModel(model);
 
 	QStringList labels;
 	labels << tr("Path") << tr("Recurse");
 	model->setHorizontalHeaderLabels(labels);
 
-	QHeaderView* header = lstIwadAndPwadPaths->horizontalHeader();
+	QHeaderView* header = d->lstIwadAndPwadPaths->horizontalHeader();
 	header->setResizeMode(COL_PATH, QHeaderView::Stretch);
 	header->setResizeMode(COL_RECURSE, QHeaderView::ResizeToContents);
 
-	connect(btnAddWadPath, SIGNAL( clicked() ), this, SLOT( btnAddWadPath_Click()) );
-	connect(btnRemoveWadPath, SIGNAL( clicked() ), this, SLOT( btnRemoveWadPath_Click()) );
+	connect(d->btnAddWadPath, SIGNAL( clicked() ), this, SLOT( btnAddWadPath_Click()) );
+	connect(d->btnRemoveWadPath, SIGNAL( clicked() ), this, SLOT( btnRemoveWadPath_Click()) );
+}
+
+CFGFilePaths::~CFGFilePaths()
+{
+	delete d;
 }
 
 void CFGFilePaths::addPath(const FileSearchPath& fileSearchPath)
@@ -56,7 +67,7 @@ void CFGFilePaths::addPath(const FileSearchPath& fileSearchPath)
 		return;
 	}
 
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstIwadAndPwadPaths->model());
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(d->lstIwadAndPwadPaths->model());
 
 	if (!isPathAlreadyDefined(fileSearchPath.path()))
 	{
@@ -70,7 +81,7 @@ void CFGFilePaths::addPath(const FileSearchPath& fileSearchPath)
 		items << path;
 		items << recurse;
 		model->appendRow(items);
-		lstIwadAndPwadPaths->resizeRowsToContents();
+		d->lstIwadAndPwadPaths->resizeRowsToContents();
 	}
 }
 
@@ -82,11 +93,11 @@ void CFGFilePaths::btnAddWadPath_Click()
 
 void CFGFilePaths::btnRemoveWadPath_Click()
 {
-	QItemSelectionModel* selModel = lstIwadAndPwadPaths->selectionModel();
+	QItemSelectionModel* selModel = d->lstIwadAndPwadPaths->selectionModel();
 	QModelIndexList indexList = selModel->selectedRows();
 	selModel->clear();
 
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstIwadAndPwadPaths->model());
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(d->lstIwadAndPwadPaths->model());
 	QList<QStandardItem*> itemList;
 	for (int i = 0; i < indexList.count(); ++i)
 	{
@@ -100,9 +111,14 @@ void CFGFilePaths::btnRemoveWadPath_Click()
 	}
 }
 
+QIcon CFGFilePaths::icon() const
+{
+	return QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon);
+}
+
 bool CFGFilePaths::isPathAlreadyDefined(const QString& path)
 {
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstIwadAndPwadPaths->model());
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(d->lstIwadAndPwadPaths->model());
 
 	Qt::CaseSensitivity caseSensitivity;
 
@@ -134,14 +150,14 @@ void CFGFilePaths::readSettings()
 		addPath(wadPaths[i]);
 	}
 
-	cbTellMeWhereAreMyWads->setChecked(gConfig.doomseeker.bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn);
+	d->cbTellMeWhereAreMyWads->setChecked(gConfig.doomseeker.bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn);
 }
 
 void CFGFilePaths::saveSettings()
 {
 	QList<FileSearchPath> wadPaths;
 
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstIwadAndPwadPaths->model());
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(d->lstIwadAndPwadPaths->model());
 	{
 		for(int i = 0; i < model->rowCount(); ++i)
 		{
@@ -154,5 +170,5 @@ void CFGFilePaths::saveSettings()
 	}
 
 	gConfig.doomseeker.wadPaths = wadPaths;
-	gConfig.doomseeker.bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn = cbTellMeWhereAreMyWads->isChecked();
+	gConfig.doomseeker.bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn = d->cbTellMeWhereAreMyWads->isChecked();
 }

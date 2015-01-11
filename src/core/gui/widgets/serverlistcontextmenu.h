@@ -23,8 +23,6 @@
 #ifndef __SERVER_LIST_CONTEXT_MENU_H_
 #define __SERVER_LIST_CONTEXT_MENU_H_
 
-#include <QMenu>
-#include <QModelIndex>
 #include <QObject>
 #include "serverapi/serverptr.h"
 
@@ -32,6 +30,10 @@ class Server;
 class ServerFilterBuilderMenu;
 class ServerListFilterInfo;
 class ServerListHandler;
+class QAction;
+class QMenu;
+class QModelIndex;
+class QPoint;
 
 class ServerListContextMenu : public QObject
 {

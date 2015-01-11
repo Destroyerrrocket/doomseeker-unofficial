@@ -25,14 +25,15 @@
 #define __CFG_QUERY_H__
 
 #include "gui/configuration/configurationbasebox.h"
-#include "ui_cfgquery.h"
+#include <QIcon>
 
-class CFGQuery : public ConfigurationBaseBox, private Ui::CFGQuery
+class CFGQuery : public ConfigurationBaseBox
 {
 	Q_OBJECT
 
 	public:
 		CFGQuery(QWidget *parent=NULL);
+		~CFGQuery();
 
 		QIcon icon() const { return QIcon(":/icons/view-refresh-2.png"); }
 		QString name() const { return tr("Query"); }
@@ -40,6 +41,10 @@ class CFGQuery : public ConfigurationBaseBox, private Ui::CFGQuery
 
 	protected:
 		void saveSettings();
+
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 #endif /* __CFG_QUERY_H__ */

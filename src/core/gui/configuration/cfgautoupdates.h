@@ -24,14 +24,15 @@
 #define DOOMSEEKER_GUI_CONFIGURATION_CFGAUTOPUDATES_H
 
 #include "gui/configuration/configurationbasebox.h"
-#include "ui_cfgautoupdates.h"
+#include <QIcon>
 
-class CFGAutoUpdates : public ConfigurationBaseBox, private Ui::CFGAutoUpdates
+class CFGAutoUpdates : public ConfigurationBaseBox
 {
 	Q_OBJECT
 
 	public:
 		CFGAutoUpdates(QWidget* parent=NULL);
+		~CFGAutoUpdates();
 
 		QIcon icon() const { return QIcon(":/icons/doomseeker_plus.png"); }
 		QString name() const { return tr("Auto Updates"); }
@@ -44,6 +45,8 @@ class CFGAutoUpdates : public ConfigurationBaseBox, private Ui::CFGAutoUpdates
 	private:
 		void initUpdateChannels();
 
+		class PrivData;
+		PrivData *d;
 	private slots:
 		void onUpdateChannelChange(int index);
 };

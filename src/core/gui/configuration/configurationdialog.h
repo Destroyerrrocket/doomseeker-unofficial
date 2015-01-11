@@ -23,11 +23,15 @@
 #ifndef __CONFIGUREDIALOG_H_
 #define __CONFIGUREDIALOG_H_
 
-#include "gui/configuration/configurationbasebox.h"
-#include "ini/ini.h"
-#include "ui_configurationdialog.h"
+#include <QDialog>
 
-class ConfigurationDialog : public QDialog, private Ui::ConfigurationDialog
+class ConfigurationBaseBox;
+class QAbstractButton;
+class QModelIndex;
+class QStandardItem;
+class QTreeView;
+
+class ConfigurationDialog : public QDialog
 {
 	Q_OBJECT
 
@@ -101,8 +105,8 @@ class ConfigurationDialog : public QDialog, private Ui::ConfigurationDialog
 		void onOptionListCurrentChanged(const QModelIndex &current, const QModelIndex &previous);
 
 	private:
-		QList<ConfigurationBaseBox*> configBoxesList;
-		QWidget* currentlyDisplayedCfgBox;
+		class PrivData;
+		PrivData *d;
 
 		bool hasItemOnList(QStandardItem* pItem) const;
 };

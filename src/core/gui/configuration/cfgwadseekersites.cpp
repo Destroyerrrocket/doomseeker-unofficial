@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "cfgwadseekersites.h"
+#include "ui_cfgwadseekersites.h"
 #include "configuration/doomseekerconfig.h"
 #include "wadseeker/wadseeker.h"
 #include <QCompleter>
@@ -28,41 +29,52 @@
 #include <QDirModel>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QStandardItemModel>
 #include <QUrl>
+
+class CFGWadseekerSites::PrivData : public Ui::CFGWadseekerSites
+{
+};
 
 CFGWadseekerSites::CFGWadseekerSites(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
 
-	lstUrls->setModel(new QStandardItemModel());
+	d->lstUrls->setModel(new QStandardItemModel());
 
-	connect(btnUrlAdd, SIGNAL( clicked() ), this, SLOT( btnUrlAddClicked() ) );
-	connect(btnUrlDefault, SIGNAL( clicked() ), this, SLOT( btnUrlDefaultClicked() ) );
-	connect(btnUrlRemove, SIGNAL( clicked() ), this, SLOT( btnUrlRemoveClicked() ) );
-	connect(leUrl, SIGNAL(returnPressed()), this, SLOT(btnUrlAddClicked()));
+	connect(d->btnUrlAdd, SIGNAL( clicked() ), this, SLOT( btnUrlAddClicked() ) );
+	connect(d->btnUrlDefault, SIGNAL( clicked() ), this, SLOT( btnUrlDefaultClicked() ) );
+	connect(d->btnUrlRemove, SIGNAL( clicked() ), this, SLOT( btnUrlRemoveClicked() ) );
+	connect(d->leUrl, SIGNAL(returnPressed()), this, SLOT(btnUrlAddClicked()));
+}
+
+CFGWadseekerSites::~CFGWadseekerSites()
+{
+	delete d;
 }
 
 void CFGWadseekerSites::btnUrlAddClicked()
 {
-	insertUrl(leUrl->text());
+	insertUrl(d->leUrl->text());
 }
 
 void CFGWadseekerSites::btnUrlDefaultClicked()
 {
 	for (int i = 0; !Wadseeker::defaultSites[i].isEmpty(); ++i)
 	{
-		this->insertUrl(Wadseeker::defaultSites[i]);
+		insertUrl(Wadseeker::defaultSites[i]);
 	}
 }
 
 void CFGWadseekerSites::btnUrlRemoveClicked()
 {
-	QItemSelectionModel* selModel = lstUrls->selectionModel();
+	QItemSelectionModel* selModel = d->lstUrls->selectionModel();
 	QModelIndexList indexList = selModel->selectedIndexes();
 	selModel->clear();
 
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstUrls->model());
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(d->lstUrls->model());
 	QList<QStandardItem*> itemList;
 	for (int i = 0; i < indexList.count(); ++i)
 	{
@@ -84,7 +96,7 @@ void CFGWadseekerSites::insertUrl(const QUrl& url)
 	}
 
 	// first we check whether the URL is already in the box.
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstUrls->model());
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(d->lstUrls->model());
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
 		QUrl existingUrl( model->item(i)->text() );
@@ -115,7 +127,7 @@ void CFGWadseekerSites::readSettings()
 void CFGWadseekerSites::saveSettings()
 {
 	QStringList urlList;
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstUrls->model());
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(d->lstUrls->model());
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
 		QUrl existingUrl( model->item(i)->text() );

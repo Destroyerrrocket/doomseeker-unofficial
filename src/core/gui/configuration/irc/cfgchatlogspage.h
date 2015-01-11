@@ -23,10 +23,10 @@
 #ifndef id65026263_73af_4292_be84_ddb5bf7f606b
 #define id65026263_73af_4292_be84_ddb5bf7f606b
 
-#include "ui_cfgchatlogspage.h"
 #include "gui/configuration/configurationbasebox.h"
+#include <QIcon>
 
-class CfgChatLogsPage : public ConfigurationBaseBox, private Ui::CfgChatLogsPage
+class CfgChatLogsPage : public ConfigurationBaseBox
 {
 Q_OBJECT
 

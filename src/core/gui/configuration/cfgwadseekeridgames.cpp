@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "cfgwadseekeridgames.h"
+#include "ui_cfgwadseekeridgames.h"
 #include "configuration/doomseekerconfig.h"
 #include "wadseeker/wadseeker.h"
 #include <QCompleter>
@@ -30,35 +31,45 @@
 #include <QMessageBox>
 #include <QUrl>
 
+class CFGWadseekerIdgames::PrivData : public Ui::CFGWadseekerIdgames
+{
+};
+
 CFGWadseekerIdgames::CFGWadseekerIdgames(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
 
-	connect(btnIdgamesURLDefault, SIGNAL( clicked() ), this, SLOT( btnIdgamesURLDefaultClicked() ) );
-	connect(cbUseIdgames, SIGNAL( toggled(bool) ), this, SLOT( cbUseIdgamesToggled(bool) ) );
+	connect(d->btnIdgamesURLDefault, SIGNAL( clicked() ), this, SLOT( btnIdgamesURLDefaultClicked() ) );
+	connect(d->cbUseIdgames, SIGNAL( toggled(bool) ), this, SLOT( cbUseIdgamesToggled(bool) ) );
 
-	cbUseIdgamesToggled(cbUseIdgames->isChecked());
+	cbUseIdgamesToggled(d->cbUseIdgames->isChecked());
+}
+
+CFGWadseekerIdgames::~CFGWadseekerIdgames()
+{
+	delete d;
 }
 
 void CFGWadseekerIdgames::btnIdgamesURLDefaultClicked()
 {
-	leIdgamesURL->setText(Wadseeker::defaultIdgamesUrl());
+	d->leIdgamesURL->setText(Wadseeker::defaultIdgamesUrl());
 }
 
 void CFGWadseekerIdgames::cbUseIdgamesToggled(bool checked)
 {
-	frameWithContent->setEnabled(checked);
+	d->frameWithContent->setEnabled(checked);
 }
 
 void CFGWadseekerIdgames::readSettings()
 {
-	cbUseIdgames->setChecked(gConfig.wadseeker.bSearchInIdgames);
-	leIdgamesURL->setText(gConfig.wadseeker.idgamesURL);
+	d->cbUseIdgames->setChecked(gConfig.wadseeker.bSearchInIdgames);
+	d->leIdgamesURL->setText(gConfig.wadseeker.idgamesURL);
 }
 
 void CFGWadseekerIdgames::saveSettings()
 {
-	gConfig.wadseeker.bSearchInIdgames = cbUseIdgames->isChecked();
-	gConfig.wadseeker.idgamesURL = leIdgamesURL->text();
+	gConfig.wadseeker.bSearchInIdgames = d->cbUseIdgames->isChecked();
+	gConfig.wadseeker.idgamesURL = d->leIdgamesURL->text();
 }

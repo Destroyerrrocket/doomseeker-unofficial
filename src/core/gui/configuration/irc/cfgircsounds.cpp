@@ -4,31 +4,38 @@
 // Copyright (C) 2011 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "cfgircsounds.h"
+#include "ui_cfgircsounds.h"
 #include "irc/configuration/ircconfig.h"
 
 #include <QFileDialog>
 
+class CFGIRCSounds::PrivData : public Ui::CFGIRCSounds
+{
+};
+
 CFGIRCSounds::CFGIRCSounds(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
 
-	this->connect(btnBrowseNicknameUsed, SIGNAL( clicked() ), SLOT( btnBrowseNicknameUsedClicked() ) );
-	this->connect(btnBrowsePrivateMessage, SIGNAL( clicked() ), SLOT( btnBrowsePrivateMessageClicked() ) );
+	this->connect(d->btnBrowseNicknameUsed, SIGNAL( clicked() ), SLOT( btnBrowseNicknameUsedClicked() ) );
+	this->connect(d->btnBrowsePrivateMessage, SIGNAL( clicked() ), SLOT( btnBrowsePrivateMessageClicked() ) );
 }
 
 CFGIRCSounds::~CFGIRCSounds()
 {
+	delete d;
 }
 
 void CFGIRCSounds::btnBrowseNicknameUsedClicked()
 {
-	setPath(leNicknameUsed, getPathToWav());
+	setPath(d->leNicknameUsed, getPathToWav());
 }
 
 void CFGIRCSounds::btnBrowsePrivateMessageClicked()
 {
-	setPath(lePrivateMessage, getPathToWav());
+	setPath(d->lePrivateMessage, getPathToWav());
 }
 
 QString CFGIRCSounds::getPathToWav()
@@ -40,20 +47,20 @@ QString CFGIRCSounds::getPathToWav()
 
 void CFGIRCSounds::readSettings()
 {
-	cbNicknameUsed->setChecked(gIRCConfig.sounds.bUseNicknameUsedSound);
-	cbPrivateMessage->setChecked(gIRCConfig.sounds.bUsePrivateMessageReceivedSound);
+	d->cbNicknameUsed->setChecked(gIRCConfig.sounds.bUseNicknameUsedSound);
+	d->cbPrivateMessage->setChecked(gIRCConfig.sounds.bUsePrivateMessageReceivedSound);
 
-	leNicknameUsed->setText(gIRCConfig.sounds.nicknameUsedSound);
-	lePrivateMessage->setText(gIRCConfig.sounds.privateMessageReceivedSound);
+	d->leNicknameUsed->setText(gIRCConfig.sounds.nicknameUsedSound);
+	d->lePrivateMessage->setText(gIRCConfig.sounds.privateMessageReceivedSound);
 }
 
 void CFGIRCSounds::saveSettings()
 {
-	gIRCConfig.sounds.bUseNicknameUsedSound = cbNicknameUsed->isChecked();
-	gIRCConfig.sounds.bUsePrivateMessageReceivedSound = cbPrivateMessage->isChecked();
+	gIRCConfig.sounds.bUseNicknameUsedSound = d->cbNicknameUsed->isChecked();
+	gIRCConfig.sounds.bUsePrivateMessageReceivedSound = d->cbPrivateMessage->isChecked();
 
-	gIRCConfig.sounds.nicknameUsedSound = leNicknameUsed->text();
-	gIRCConfig.sounds.privateMessageReceivedSound = lePrivateMessage->text();
+	gIRCConfig.sounds.nicknameUsedSound = d->leNicknameUsed->text();
+	gIRCConfig.sounds.privateMessageReceivedSound = d->lePrivateMessage->text();
 }
 
 void CFGIRCSounds::setPath(QLineEdit* pLineEdit, const QString& path)

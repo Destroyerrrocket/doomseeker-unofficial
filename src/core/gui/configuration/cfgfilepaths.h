@@ -25,33 +25,27 @@
 #define __CFG_FILE_PATHS_H_
 
 #include "gui/configuration/configurationbasebox.h"
-#include "ui_cfgfilepaths.h"
 
 class FileSearchPath;
 
-class CFGFilePaths : public ConfigurationBaseBox, private Ui::CFGFilePaths
+class CFGFilePaths : public ConfigurationBaseBox
 {
 	Q_OBJECT
 
 	public:
 		CFGFilePaths(QWidget* parent = 0);
+		~CFGFilePaths();
 
 		void readSettings();
 
 	protected:
 		void addPath(const FileSearchPath& fileSearchPath);
 
-		QIcon icon() const
-		{
-			return QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon);
-		}
+		QIcon icon() const;
 
 		bool isPathAlreadyDefined(const QString& path);
 
-		QString name() const
-		{
-			return tr("File Paths");
-		}
+		QString name() const { return tr("File Paths"); }
 
 		void saveSettings();
 
@@ -59,6 +53,9 @@ class CFGFilePaths : public ConfigurationBaseBox, private Ui::CFGFilePaths
 		void btnAddWadPath_Click();
 		void btnRemoveWadPath_Click();
 
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 #endif

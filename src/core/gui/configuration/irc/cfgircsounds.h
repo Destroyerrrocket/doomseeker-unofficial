@@ -23,10 +23,12 @@
 #ifndef __CFGIRCSOUNDS_H__
 #define __CFGIRCSOUNDS_H__
 
-#include "ui_cfgircsounds.h"
 #include "gui/configuration/configurationbasebox.h"
+#include <QIcon>
 
-class CFGIRCSounds : public ConfigurationBaseBox, private Ui::CFGIRCSounds
+class QLineEdit;
+
+class CFGIRCSounds : public ConfigurationBaseBox
 {
 	Q_OBJECT
 
@@ -46,6 +48,8 @@ class CFGIRCSounds : public ConfigurationBaseBox, private Ui::CFGIRCSounds
 		QString getPathToWav();
 		void setPath(QLineEdit* pLineEdit, const QString& path);
 
+		class PrivData;
+		PrivData *d;
 	private slots:
 		void btnBrowseNicknameUsedClicked();
 		void btnBrowsePrivateMessageClicked();

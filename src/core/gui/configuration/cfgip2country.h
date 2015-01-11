@@ -25,14 +25,15 @@
 #define __CFG_IP2COUNTRY_H__
 
 #include "gui/configuration/configurationbasebox.h"
-#include "ui_cfgip2country.h"
+#include <QIcon>
 
-class CFGIP2Country : public ConfigurationBaseBox, private Ui::CFGIP2Country
+class CFGIP2Country : public ConfigurationBaseBox
 {
 	Q_OBJECT
 
 	public:
 		CFGIP2Country(QWidget *parent=NULL);
+		~CFGIP2Country();
 
 		QIcon icon() const { return QIcon(":/icons/emblem-web.png"); }
 		QString name() const { return tr("IP2C"); }
@@ -40,6 +41,10 @@ class CFGIP2Country : public ConfigurationBaseBox, private Ui::CFGIP2Country
 
 	protected:
 		void saveSettings();
+
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 #endif

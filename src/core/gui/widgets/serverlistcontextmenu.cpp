@@ -29,6 +29,7 @@
 #include "strings.h"
 #include <QApplication>
 #include <QClipboard>
+#include <QModelIndex>
 #include <cassert>
 
 class ServerListContextMenu::PrivData

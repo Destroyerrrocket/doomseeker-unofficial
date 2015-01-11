@@ -26,6 +26,7 @@
 #include "gui/helpers/playersdiagram.h"
 #include "gui/irc/ircdock.h"
 #include "gui/irc/ircsounds.h"
+#include "gui/models/serverlistmodel.h"
 #include "gui/widgets/serversstatuswidget.h"
 #include "gui/aboutdialog.h"
 #include "gui/copytextdlg.h"

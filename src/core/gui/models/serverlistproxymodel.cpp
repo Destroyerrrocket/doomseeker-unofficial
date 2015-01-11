@@ -24,10 +24,13 @@
 
 #include "gui/entity/serverlistfilterinfo.h"
 #include "gui/models/serverlistcolumn.h"
+#include "gui/models/serverlistmodel.h"
 #include "gui/serverlist.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
 #include "serverapi/serverstructs.h"
+
+#include <QWidget>
 
 class ServerListProxyModel::PrivData
 {

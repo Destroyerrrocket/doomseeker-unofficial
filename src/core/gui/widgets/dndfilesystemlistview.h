@@ -23,8 +23,6 @@
 #ifndef __DNDFILESYSTEMLISTVIEW_H__
 #define __DNDFILESYSTEMLISTVIEW_H__
 
-#include <QDragEnterEvent>
-#include <QDropEvent>
 #include <QListView>
 
 /**

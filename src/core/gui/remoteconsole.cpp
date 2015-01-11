@@ -21,10 +21,6 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include <QMessageBox>
-#include <QScopedPointer>
-#include <QString>
-
 #include "plugins/engineplugin.h"
 #include "serverapi/rconprotocol.h"
 #include "serverapi/server.h"
@@ -33,6 +29,11 @@
 #include "rconpassworddialog.h"
 #include "strings.h"
 #include "ui_remoteconsole.h"
+
+#include <QKeyEvent>
+#include <QMessageBox>
+#include <QScopedPointer>
+#include <QString>
 
 class RemoteConsole::PrivData : public Ui::RemoteConsole
 {

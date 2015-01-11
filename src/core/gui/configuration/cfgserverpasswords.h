@@ -24,11 +24,13 @@
 #define idEB6A779F_CFBD_4900_AFC803D7BF80EC31
 
 #include "gui/configuration/configurationbasebox.h"
-#include "ui_cfgserverpasswords.h"
+#include <QIcon>
 
 class ServerPassword;
+class QTableWidget;
+class QTableWidgetItem;
 
-class CFGServerPasswords : public ConfigurationBaseBox, private Ui::CFGServerPasswords
+class CFGServerPasswords : public ConfigurationBaseBox
 {
 	Q_OBJECT
 

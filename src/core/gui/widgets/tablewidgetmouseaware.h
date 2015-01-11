@@ -6,7 +6,7 @@
 #ifndef __TABLEWIDGETMOUSEAWARE_H__
 #define __TABLEWIDGETMOUSEAWARE_H__
 
-#include <QList>
+#include <QtContainerFwd>
 #include <QTableWidget>
 
 class TableWidgetMouseAware : public QTableWidget

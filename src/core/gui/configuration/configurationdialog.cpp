@@ -21,6 +21,9 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "configurationdialog.h"
+#include "ui_configurationdialog.h"
+
+#include "configurationbasebox.h"
 #include "qtmetapointer.h"
 #include <Qt>
 #include <QDebug>
@@ -30,26 +33,36 @@
 #include <QTreeView>
 #include <QAbstractButton>
 
+class ConfigurationDialog::PrivData : public Ui::ConfigurationDialog
+{
+public:
+	QList<ConfigurationBaseBox*> configBoxesList;
+	QWidget* currentlyDisplayedCfgBox;
+};
+
 ConfigurationDialog::ConfigurationDialog(QWidget* parent)
 : QDialog(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
 
-	tvOptionsList->setHeaderHidden(true);
-	tvOptionsList->setModel(new QStandardItemModel(this));
+	d->tvOptionsList->setHeaderHidden(true);
+	d->tvOptionsList->setModel(new QStandardItemModel(this));
 
-	currentlyDisplayedCfgBox = NULL;
-	connect(buttonBox, SIGNAL( clicked(QAbstractButton *) ), this, SLOT ( btnClicked(QAbstractButton *) ));
-	this->connect(tvOptionsList->selectionModel(), SIGNAL(currentChanged(QModelIndex, QModelIndex)),
+	d->currentlyDisplayedCfgBox = NULL;
+	connect(d->buttonBox, SIGNAL( clicked(QAbstractButton *) ), this, SLOT ( btnClicked(QAbstractButton *) ));
+	this->connect(d->tvOptionsList->selectionModel(), SIGNAL(currentChanged(QModelIndex, QModelIndex)),
 		SLOT(onOptionListCurrentChanged(QModelIndex, QModelIndex)));
 }
 
 ConfigurationDialog::~ConfigurationDialog()
 {
-	for(int i = 0; i < configBoxesList.count(); ++i)
+	for(int i = 0; i < d->configBoxesList.count(); ++i)
 	{
-		delete configBoxesList[i];
+		delete d->configBoxesList[i];
 	}
+
+	delete d;
 }
 
 QStandardItem* ConfigurationDialog::addConfigurationBox(QStandardItem* rootItem, ConfigurationBaseBox* pConfigurationBox, int position)
@@ -59,7 +72,7 @@ QStandardItem* ConfigurationDialog::addConfigurationBox(QStandardItem* rootItem,
 		return NULL;
 	}
 
-	QStandardItemModel* pModel = (QStandardItemModel*)tvOptionsList->model();
+	QStandardItemModel* pModel = (QStandardItemModel*)d->tvOptionsList->model();
 	if (rootItem == NULL)
 	{
 		rootItem = pModel->invisibleRootItem();
@@ -87,14 +100,14 @@ QStandardItem* ConfigurationDialog::addConfigurationBox(QStandardItem* rootItem,
 		rootItem->insertRow(position, pNewItem);
 	}
 
-	configBoxesList.push_back(pConfigurationBox);
+	d->configBoxesList.push_back(pConfigurationBox);
 
 	return pNewItem;
 }
 
 QStandardItem* ConfigurationDialog::addLabel(QStandardItem* rootItem, const QString& label, int position)
 {
-	QStandardItemModel* pModel = (QStandardItemModel*)tvOptionsList->model();
+	QStandardItemModel* pModel = (QStandardItemModel*)d->tvOptionsList->model();
 	if (rootItem == NULL)
 	{
 		rootItem = pModel->invisibleRootItem();
@@ -126,7 +139,7 @@ QStandardItem* ConfigurationDialog::addLabel(QStandardItem* rootItem, const QStr
 void ConfigurationDialog::btnClicked(QAbstractButton *button)
 {
 	// Figure out what button we pressed and perform its action.
-	switch(buttonBox->standardButton(button))
+	switch(d->buttonBox->standardButton(button))
 	{
 		default:
 			break;
@@ -164,7 +177,7 @@ bool ConfigurationDialog::isConfigurationBoxInfoValid(ConfigurationBaseBox* pCon
 
 bool ConfigurationDialog::isConfigurationBoxOnTheList(ConfigurationBaseBox* pConfigurationBox)
 {
-	foreach (ConfigurationBaseBox* pBoxOnTheList, configBoxesList)
+	foreach (ConfigurationBaseBox* pBoxOnTheList, d->configBoxesList)
 	{
 		if (pConfigurationBox == pBoxOnTheList)
 		{
@@ -198,7 +211,7 @@ bool ConfigurationDialog::hasItemOnList(QStandardItem* pItem) const
 		return false;
 	}
 
-	QStandardItemModel* pModel = (QStandardItemModel*)tvOptionsList->model();
+	QStandardItemModel* pModel = (QStandardItemModel*)d->tvOptionsList->model();
 
 	// Calling index methods on the invisible root items will always return
 	// invalid values.
@@ -217,7 +230,7 @@ void ConfigurationDialog::onOptionListCurrentChanged(const QModelIndex &current,
 
 void ConfigurationDialog::switchToItem(const QModelIndex& index)
 {
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(tvOptionsList->model());
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(d->tvOptionsList->model());
 	QStandardItem* item = model->itemFromIndex(index);
 
 	QtMetaPointer metaPointer = qVariantValue<QtMetaPointer>(item->data());
@@ -239,15 +252,15 @@ void ConfigurationDialog::switchToItem(const QModelIndex& index)
 
 QTreeView* ConfigurationDialog::optionsTree()
 {
-	return tvOptionsList;
+	return d->tvOptionsList;
 }
 
 void ConfigurationDialog::saveSettings()
 {
 	// Iterate through every engine and execute it's saving method
-	for (int i = 0; i < configBoxesList.count(); ++i)
+	for (int i = 0; i < d->configBoxesList.count(); ++i)
 	{
-		configBoxesList[i]->save();
+		d->configBoxesList[i]->save();
 	}
 
 	doSaveSettings();
@@ -255,9 +268,9 @@ void ConfigurationDialog::saveSettings()
 	if(isVisible())
 	{
 		// Allow panels such as the one for Wadseeker update their contents.
-		for (int i = 0; i < configBoxesList.count(); ++i)
+		for (int i = 0; i < d->configBoxesList.count(); ++i)
 		{
-			configBoxesList[i]->read();
+			d->configBoxesList[i]->read();
 		}
 	}
 }
@@ -265,17 +278,17 @@ void ConfigurationDialog::saveSettings()
 
 void ConfigurationDialog::showConfigurationBox(ConfigurationBaseBox* widget)
 {
-	if (currentlyDisplayedCfgBox != NULL)
+	if (d->currentlyDisplayedCfgBox != NULL)
 	{
-		currentlyDisplayedCfgBox->hide();
-		mainPanel->setTitle(QString());
+		d->currentlyDisplayedCfgBox->hide();
+		d->mainPanel->setTitle(QString());
 	}
-	currentlyDisplayedCfgBox = widget;
+	d->currentlyDisplayedCfgBox = widget;
 
 	if (widget != NULL)
 	{
-		mainPanel->layout()->addWidget(widget);
-		mainPanel->setTitle(widget->title());
+		d->mainPanel->layout()->addWidget(widget);
+		d->mainPanel->setTitle(widget->title());
 		widget->show();
 	}
 }

@@ -24,18 +24,22 @@
 #define __CFGCUSTOMSERVERS_H_
 
 #include "gui/configuration/configurationbasebox.h"
-#include "customservers.h"
-#include "ui_cfgcustomservers.h"
+#include <QIcon>
 
 class ConfigurationBoxInfo;
+class CustomServerInfo;
 class EnginePlugin;
+class QModelIndex;
+class QStandardItem;
+class QStandardItemModel;
 
-class CFGCustomServers : public ConfigurationBaseBox, private Ui::CFGCustomServers
+class CFGCustomServers : public ConfigurationBaseBox
 {
 	Q_OBJECT
 
 	public:
 		CFGCustomServers(QWidget *parent=NULL);
+		~CFGCustomServers();
 
 		QIcon icon() const { return QIcon(":/flags/localhost-small"); }
 		QString name() const { return tr("Custom Servers"); }
@@ -84,6 +88,10 @@ class CFGCustomServers : public ConfigurationBaseBox, private Ui::CFGCustomServe
 		void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
 		void remove();
 		void setEngine();
+
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 #endif

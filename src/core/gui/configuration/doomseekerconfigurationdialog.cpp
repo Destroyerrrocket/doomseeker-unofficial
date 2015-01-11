@@ -42,6 +42,8 @@
 #include "application.h"
 #include "log.h"
 #include "qtmetapointer.h"
+#include <QStandardItem>
+#include <QTreeView>
 
 DoomseekerConfigurationDialog::DoomseekerConfigurationDialog(QWidget* parent)
 : ConfigurationDialog(parent)

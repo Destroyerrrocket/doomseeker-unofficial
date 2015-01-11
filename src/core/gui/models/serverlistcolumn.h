@@ -23,10 +23,10 @@
 #ifndef __SERVER_LIST_COLUMN_H_
 #define __SERVER_LIST_COLUMN_H_
 
-#include <QList>
+#include <QtContainerFwd>
 #include <QObject>
-#include <QStandardItem>
-#include <QString>
+
+class QStandardItem;
 
 class ServerListColumn
 {

@@ -6,6 +6,8 @@
 #include "importantmessageswidget.h"
 
 #include <QDateTime>
+#include <QLabel>
+#include <QVBoxLayout>
 
 ImportantMessagesWidget::ImportantMessagesWidget(QWidget* pParent)
 : QWidget(pParent)

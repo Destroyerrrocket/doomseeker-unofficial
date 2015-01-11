@@ -21,19 +21,33 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 #include "configuration/doomseekerconfig.h"
+#include "gui/widgets/memorylineedit.h"
 #include "serverconsole.h"
+#include "ui_serverconsole.h"
 #include "strings.h"
 
 #include <QRegExp>
 
+class ServerConsole::PrivData : public Ui::ServerConsole
+{
+public:
+	MemoryLineEdit *consoleInput;
+};
+
 ServerConsole::ServerConsole(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
 
-	consoleInput = new MemoryLineEdit();
-	layout()->addWidget(consoleInput);
+	d->consoleInput = new MemoryLineEdit();
+	layout()->addWidget(d->consoleInput);
 
-	connect(consoleInput, SIGNAL(returnPressed()), this, SLOT(forwardMessage()));
+	connect(d->consoleInput, SIGNAL(returnPressed()), this, SLOT(forwardMessage()));
+}
+
+ServerConsole::~ServerConsole()
+{
+	delete d;
 }
 
 void ServerConsole::appendMessage(const QString &message)
@@ -53,22 +67,22 @@ void ServerConsole::appendMessage(const QString &message)
 	}
 
 	// Emulate append since we need to force HTML on (append auto detects which fails if &lt; or < is not found).
-	consoleOutput->moveCursor(QTextCursor::End);
-	consoleOutput->insertHtml("<br>" + appendMessage);
-	consoleOutput->moveCursor(QTextCursor::End);
+	d->consoleOutput->moveCursor(QTextCursor::End);
+	d->consoleOutput->insertHtml("<br>" + appendMessage);
+	d->consoleOutput->moveCursor(QTextCursor::End);
 }
 
 void ServerConsole::forwardMessage()
 {
-	QString msg = consoleInput->text();
+	QString msg = d->consoleInput->text();
 	if(msg[0] == ':')
 		msg.replace(0, 1, "say ");
 
 	emit messageSent(msg);
-	consoleInput->setText("");
+	d->consoleInput->setText("");
 }
 
 void ServerConsole::setFocus()
 {
-	consoleInput->setFocus();
+	d->consoleInput->setFocus();
 }

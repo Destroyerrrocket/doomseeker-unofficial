@@ -24,10 +24,7 @@
 #ifndef __CONFIGURATION_BASE_BOX_H_
 #define __CONFIGURATION_BASE_BOX_H_
 
-#include "ini/ini.h"
 #include "global.h"
-#include <QPushButton>
-#include <QStandardItem>
 #include <QWidget>
 
 /**

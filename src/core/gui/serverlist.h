@@ -25,21 +25,23 @@
 #define __SERVERLIST_H_
 
 #include <QObject>
-#include <QStandardItem>
-#include <QString>
-#include <QTableView>
 #include <QTimer>
 
-#include "gui/widgets/serverlistview.h"
-#include "gui/models/serverlistmodel.h"
 #include "serverapi/serverptr.h"
 
 class PWad;
 class IniSection;
 class Server;
 class ServerListFilterInfo;
+class ServerListModel;
 class ServerListProxyModel;
+class ServerListView;
 class WadFindResult;
+class QAction;
+class QItemSelection;
+class QModelIndex;
+class QPoint;
+class QSortFilterProxyModel;
 
 class ServerListHandler : public QObject
 {

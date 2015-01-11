@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 
 #include "gui/configuration/engineconfigurationbasebox.h"
+#include "ini/ini.h"
 #include "irc/entities/ircnetworkentity.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/gameexefactory.h"

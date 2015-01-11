@@ -21,6 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "cfgappearance.h"
+#include "ui_cfgappearance.h"
 
 #include "configuration/doomseekerconfig.h"
 #include <QColorDialog>
@@ -30,10 +31,20 @@
 #include "log.h"
 #include "main.h"
 
+class CFGAppearance::PrivData : public Ui::CFGAppearance
+{
+};
+
 CFGAppearance::CFGAppearance(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
+}
+
+CFGAppearance::~CFGAppearance()
+{
+	delete d;
 }
 
 void CFGAppearance::initLanguagesList()
@@ -46,19 +57,19 @@ void CFGAppearance::initLanguagesList()
 		const QString& displayName = obj.niceName;
 
 		QPixmap flag = IP2C::instance()->flag(flagName);
-		cboLanguage->addItem(flag, displayName, translationName);
+		d->cboLanguage->addItem(flag, displayName, translationName);
 	}
 }
 
 void CFGAppearance::readSettings()
 {
-	if (cboLanguage->count() == 0)
+	if (d->cboLanguage->count() == 0)
 	{
 		initLanguagesList();
 	}
-	slotStyle->setCurrentIndex(gConfig.doomseeker.slotStyle);
+	d->slotStyle->setCurrentIndex(gConfig.doomseeker.slotStyle);
 
-	btnCustomServersColor->setColorHtml(gConfig.doomseeker.customServersColor);
+	d->btnCustomServersColor->setColorHtml(gConfig.doomseeker.customServersColor);
 
 	// Make sure that the tray is available. If it's not, disable tray icon
 	// completely and make sure no change can be done to the configuration in
@@ -67,31 +78,31 @@ void CFGAppearance::readSettings()
 	{
 		gConfig.doomseeker.bUseTrayIcon = false;
 		gConfig.doomseeker.bCloseToTrayIcon = false;
-		gboUseTrayIcon->setEnabled(false);
+		d->gboUseTrayIcon->setEnabled(false);
 	}
 
-	gboUseTrayIcon->setChecked(gConfig.doomseeker.bUseTrayIcon);
+	d->gboUseTrayIcon->setChecked(gConfig.doomseeker.bUseTrayIcon);
 
-	cbCloseToTrayIcon->setChecked(gConfig.doomseeker.bCloseToTrayIcon);
+	d->cbCloseToTrayIcon->setChecked(gConfig.doomseeker.bCloseToTrayIcon);
 
-	cbColorizeConsole->setChecked(gConfig.doomseeker.bColorizeServerConsole);
-	cbDrawGridInServerTable->setChecked(gConfig.doomseeker.bDrawGridInServerTable);
+	d->cbColorizeConsole->setChecked(gConfig.doomseeker.bColorizeServerConsole);
+	d->cbDrawGridInServerTable->setChecked(gConfig.doomseeker.bDrawGridInServerTable);
 
-	cbHidePasswords->setChecked(gConfig.doomseeker.bHidePasswords);
+	d->cbHidePasswords->setChecked(gConfig.doomseeker.bHidePasswords);
 
-	cbLookupHosts->setChecked(gConfig.doomseeker.bLookupHosts);
+	d->cbLookupHosts->setChecked(gConfig.doomseeker.bLookupHosts);
 
 	// This is not really an appearance option, but it does change how the list
 	// appears and thus utilized the fact that the appearance options cause the
 	// list to refresh.  It also doesn't fit into any of the other existing
 	// categories at this time.
-	cbBotsNotPlayers->setChecked(gConfig.doomseeker.bBotsAreNotPlayers);
+	d->cbBotsNotPlayers->setChecked(gConfig.doomseeker.bBotsAreNotPlayers);
 
 	// Set language.
-	int idxLanguage = cboLanguage->findData(gConfig.doomseeker.localization);
+	int idxLanguage = d->cboLanguage->findData(gConfig.doomseeker.localization);
 	if (idxLanguage >= 0)
 	{
-		cboLanguage->setCurrentIndex(idxLanguage);
+		d->cboLanguage->setCurrentIndex(idxLanguage);
 	}
 	else
 	{
@@ -99,23 +110,23 @@ void CFGAppearance::readSettings()
 		QString name = gConfig.doomseeker.localization;
 		const QPixmap& icon = IP2C::instance()->flagUnknown;
 		QString str = tr("Unknown language definition \"%1\"").arg(name);
-		cboLanguage->addItem(icon, str, name);
-		cboLanguage->setCurrentIndex(cboLanguage->count() - 1);
+		d->cboLanguage->addItem(icon, str, name);
+		d->cboLanguage->setCurrentIndex(d->cboLanguage->count() - 1);
 	}
 }
 
 void CFGAppearance::saveSettings()
 {
-	gConfig.doomseeker.slotStyle = slotStyle->currentIndex();
-	gConfig.doomseeker.customServersColor = btnCustomServersColor->colorHtml();
-	gConfig.doomseeker.bUseTrayIcon = gboUseTrayIcon->isChecked();
-	gConfig.doomseeker.bCloseToTrayIcon = cbCloseToTrayIcon->isChecked();
-	gConfig.doomseeker.bColorizeServerConsole = cbColorizeConsole->isChecked();
-	gConfig.doomseeker.bDrawGridInServerTable = cbDrawGridInServerTable->isChecked();
-	gConfig.doomseeker.bBotsAreNotPlayers = cbBotsNotPlayers->isChecked();
-	gConfig.doomseeker.bHidePasswords = cbHidePasswords->isChecked();
-	gConfig.doomseeker.bLookupHosts = cbLookupHosts->isChecked();
-	QString localization = cboLanguage->itemData(cboLanguage->currentIndex()).toString();
+	gConfig.doomseeker.slotStyle = d->slotStyle->currentIndex();
+	gConfig.doomseeker.customServersColor = d->btnCustomServersColor->colorHtml();
+	gConfig.doomseeker.bUseTrayIcon = d->gboUseTrayIcon->isChecked();
+	gConfig.doomseeker.bCloseToTrayIcon = d->cbCloseToTrayIcon->isChecked();
+	gConfig.doomseeker.bColorizeServerConsole = d->cbColorizeConsole->isChecked();
+	gConfig.doomseeker.bDrawGridInServerTable = d->cbDrawGridInServerTable->isChecked();
+	gConfig.doomseeker.bBotsAreNotPlayers = d->cbBotsNotPlayers->isChecked();
+	gConfig.doomseeker.bHidePasswords = d->cbHidePasswords->isChecked();
+	gConfig.doomseeker.bLookupHosts = d->cbLookupHosts->isChecked();
+	QString localization = d->cboLanguage->itemData(d->cboLanguage->currentIndex()).toString();
 	if (localization != gConfig.doomseeker.localization)
 	{
 		// Translation may be strenuous so do it only if the selected

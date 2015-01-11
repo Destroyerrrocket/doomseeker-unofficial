@@ -25,15 +25,15 @@
 #define __CFG_APPEARANCE_H__
 
 #include "gui/configuration/configurationbasebox.h"
-#include "gui/widgets/colorbutton.h"
-#include "ui_cfgappearance.h"
+#include <QIcon>
 
-class CFGAppearance : public ConfigurationBaseBox, private Ui::CFGAppearance
+class CFGAppearance : public ConfigurationBaseBox
 {
 	Q_OBJECT
 
 	public:
 		CFGAppearance(QWidget *parent=NULL);
+		~CFGAppearance();
 
 		QIcon icon() const { return QIcon(":/icons/color-fill.png"); }
 		QString name() const { return tr("Appearance"); }
@@ -45,6 +45,9 @@ class CFGAppearance : public ConfigurationBaseBox, private Ui::CFGAppearance
 
 	private:
 		void initLanguagesList();
+
+		class PrivData;
+		PrivData *d;
 };
 
 #endif /* __CFG_APPEARANCE_H__ */

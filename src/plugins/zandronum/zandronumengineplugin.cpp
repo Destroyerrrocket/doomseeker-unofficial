@@ -23,6 +23,7 @@
 //------------------------------------------------------------------------------
 
 #include <datapaths.h>
+#include <ini/ini.h>
 #include <pathfinder/pathfinder.h>
 #include <plugins/engineplugin.h>
 #include <strings.h>

@@ -24,7 +24,7 @@
 #define id436d9d45_1fa2_4bc9_9b7e_1dacbffcd6ed
 
 #include <QComboBox>
-#include <QString>
+
 class EnginePlugin;
 
 class EnginePluginComboBox : public QComboBox

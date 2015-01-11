@@ -24,12 +24,11 @@
 #define idBE57B8CD_234F_4EEE_AC1B1FAAFB11B1CD
 
 #include "gui/configuration/configurationbasebox.h"
-#include "ui_cfgwadalias.h"
-#include <QTableWidgetItem>
 
 class FileAlias;
+class QTableWidgetItem;
 
-class CFGWadAlias : public ConfigurationBaseBox, private Ui::CFGWadAlias
+class CFGWadAlias : public ConfigurationBaseBox
 {
 	Q_OBJECT
 
@@ -37,14 +36,8 @@ class CFGWadAlias : public ConfigurationBaseBox, private Ui::CFGWadAlias
 		CFGWadAlias(QWidget *parent=NULL);
 		~CFGWadAlias();
 
-		QIcon icon() const
-		{
-			return QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon);
-		}
-		QString name() const
-		{
-			return tr("WAD Aliases");
-		}
+		QIcon icon() const;
+		QString name() const { return tr("WAD Aliases"); }
 
 		void readSettings();
 

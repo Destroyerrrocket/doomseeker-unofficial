@@ -21,12 +21,13 @@
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "cfgwadalias.h"
+#include "ui_cfgwadalias.h"
 
 #include "configuration/doomseekerconfig.h"
 #include "gui/commongui.h"
 #include "pathfinder/filealias.h"
 
-class CFGWadAlias::PrivData
+class CFGWadAlias::PrivData : public Ui::CFGWadAlias
 {
 public:
 	enum Columns
@@ -39,12 +40,12 @@ public:
 CFGWadAlias::CFGWadAlias(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
-	setupUi(this);
 	d = new PrivData();
-	QHeaderView *header = table->horizontalHeader();
+	d->setupUi(this);
+	QHeaderView *header = d->table->horizontalHeader();
 	header->resizeSection(PrivData::ColWad, 150);
 	header->setResizeMode(PrivData::ColAliases, QHeaderView::Stretch);
-	table->sortByColumn(PrivData::ColWad, Qt::AscendingOrder);
+	d->table->sortByColumn(PrivData::ColWad, Qt::AscendingOrder);
 }
 
 CFGWadAlias::~CFGWadAlias()
@@ -54,14 +55,14 @@ CFGWadAlias::~CFGWadAlias()
 
 void CFGWadAlias::addAliasToTable(const FileAlias &alias)
 {
-	bool wasSortingEnabled = table->isSortingEnabled();
-	table->setSortingEnabled(false);
+	bool wasSortingEnabled = d->table->isSortingEnabled();
+	d->table->setSortingEnabled(false);
 
 	int row = findRowWithWad(alias.name());
 	if (row < 0)
 	{
-		row = table->rowCount();
-		table->insertRow(row);
+		row = d->table->rowCount();
+		d->table->insertRow(row);
 		applyAliasToRow(row, alias);
 	}
 	else
@@ -72,8 +73,8 @@ void CFGWadAlias::addAliasToTable(const FileAlias &alias)
 		applyAliasToRow(row, existingAlias);
 	}
 
-	table->setSortingEnabled(wasSortingEnabled);
-	table->resizeRowsToContents();
+	d->table->setSortingEnabled(wasSortingEnabled);
+	d->table->resizeRowsToContents();
 }
 
 void CFGWadAlias::addDefaults()
@@ -87,21 +88,21 @@ void CFGWadAlias::addDefaults()
 
 void CFGWadAlias::addNewEntry()
 {
-	bool wasSortingEnabled = table->isSortingEnabled();
-	table->setSortingEnabled(false);
+	bool wasSortingEnabled = d->table->isSortingEnabled();
+	d->table->setSortingEnabled(false);
 
-	int row = table->rowCount();
-	table->insertRow(row);
-	table->setItem(row, PrivData::ColWad, new QTableWidgetItem());
-	table->setItem(row, PrivData::ColAliases, new QTableWidgetItem());
+	int row = d->table->rowCount();
+	d->table->insertRow(row);
+	d->table->setItem(row, PrivData::ColWad, new QTableWidgetItem());
+	d->table->setItem(row, PrivData::ColAliases, new QTableWidgetItem());
 
-	table->setSortingEnabled(wasSortingEnabled);
+	d->table->setSortingEnabled(wasSortingEnabled);
 }
 
 QList<FileAlias> CFGWadAlias::aliases() const
 {
 	QList<FileAlias> aliases;
-	for (int row = 0; row < table->rowCount(); ++row)
+	for (int row = 0; row < d->table->rowCount(); ++row)
 	{
 		FileAlias alias = aliasFromRow(row);
 		if (alias.isValid())
@@ -115,8 +116,8 @@ QList<FileAlias> CFGWadAlias::aliases() const
 FileAlias CFGWadAlias::aliasFromRow(int row) const
 {
 	FileAlias alias;
-	alias.setName(table->item(row, PrivData::ColWad)->text().trimmed());
-	QStringList candidateAliases = table->item(row, PrivData::ColAliases)->text().split(";");
+	alias.setName(d->table->item(row, PrivData::ColWad)->text().trimmed());
+	QStringList candidateAliases = d->table->item(row, PrivData::ColAliases)->text().split(";");
 	foreach (const QString &candidateAlias, candidateAliases)
 	{
 		if (!candidateAlias.trimmed().isEmpty())
@@ -129,15 +130,15 @@ FileAlias CFGWadAlias::aliasFromRow(int row) const
 
 void CFGWadAlias::applyAliasToRow(int row, const FileAlias &alias)
 {
-	table->setItem(row, PrivData::ColWad, toolTipItem(alias.name()));
-	table->setItem(row, PrivData::ColAliases, toolTipItem(alias.aliases().join("; ")));
+	d->table->setItem(row, PrivData::ColWad, toolTipItem(alias.name()));
+	d->table->setItem(row, PrivData::ColAliases, toolTipItem(alias.aliases().join("; ")));
 }
 
 int CFGWadAlias::findRowWithWad(const QString &wadName)
 {
-	for (int row = 0; row < table->rowCount(); ++row)
+	for (int row = 0; row < d->table->rowCount(); ++row)
 	{
-		if (table->item(row, PrivData::ColWad)->text().trimmed().compare(
+		if (d->table->item(row, PrivData::ColWad)->text().trimmed().compare(
 			wadName.trimmed(), Qt::CaseInsensitive) == 0)
 		{
 			return row;
@@ -146,11 +147,16 @@ int CFGWadAlias::findRowWithWad(const QString &wadName)
 	return -1;
 }
 
+QIcon CFGWadAlias::icon() const
+{
+	return QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon);
+}
+
 void CFGWadAlias::readSettings()
 {
-	while (table->rowCount() > 0)
+	while (d->table->rowCount() > 0)
 	{
-		table->removeRow(0);
+		d->table->removeRow(0);
 	}
 	// Aliases from configuration are guaranteed to be unique.
 	QList<FileAlias> aliases = gConfig.doomseeker.wadAliases();
@@ -165,7 +171,7 @@ void CFGWadAlias::readSettings()
 
 void CFGWadAlias::removeSelected()
 {
-	CommonGUI::removeSelectedRowsFromQTableWidget(table);
+	CommonGUI::removeSelectedRowsFromQTableWidget(d->table);
 }
 
 void CFGWadAlias::saveSettings()

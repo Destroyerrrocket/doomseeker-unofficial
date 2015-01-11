@@ -21,14 +21,16 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "cfgircdefinenetworkdialog.h"
+#include "ui_cfgircdefinenetworkdialog.h"
 
 #include "irc/configuration/chatnetworkscfg.h"
+#include "irc/entities/ircnetworkentity.h"
 #include "irc/chatnetworknamer.h"
 #include <QMessageBox>
 #include <cassert>
 
 
-class CFGIRCDefineNetworkDialog::PrivData
+class CFGIRCDefineNetworkDialog::PrivData : public Ui::CFGIRCDefineNetworkDialog
 {
 public:
 	static const int MAX_IRC_COMMAND_LENGTH = 512;
@@ -96,13 +98,13 @@ bool CFGIRCDefineNetworkDialog::askToAcceptAnywayWhenCommandsBad(const QStringLi
 
 QStringList CFGIRCDefineNetworkDialog::autojoinCommands() const
 {
-	return this->teAutojoinCommands->toPlainText().split("\n");
+	return d->teAutojoinCommands->toPlainText().split("\n");
 }
 
 void CFGIRCDefineNetworkDialog::buttonClicked(QAbstractButton* button)
 {
 	QPushButton* pButton = (QPushButton*)button;
-	if (pButton == buttonBox->button(QDialogButtonBox::Ok))
+	if (pButton == d->buttonBox->button(QDialogButtonBox::Ok))
 	{
 		this->accept();
 	}
@@ -114,10 +116,10 @@ void CFGIRCDefineNetworkDialog::buttonClicked(QAbstractButton* button)
 
 void CFGIRCDefineNetworkDialog::construct()
 {
-	setupUi(this);
 	d = new PrivData();
+	d->setupUi(this);
 
-	connect(buttonBox, SIGNAL( clicked(QAbstractButton*) ), SLOT( buttonClicked(QAbstractButton*) ) );
+	connect(d->buttonBox, SIGNAL( clicked(QAbstractButton*) ), SLOT( buttonClicked(QAbstractButton*) ) );
 }
 
 QStringList CFGIRCDefineNetworkDialog::formatOffenders(const QStringList& offenders) const
@@ -134,17 +136,17 @@ IRCNetworkEntity CFGIRCDefineNetworkDialog::getNetworkEntity() const
 {
 	IRCNetworkEntity entity;
 
-	QString autojoinChannels = this->teAutojoinChannels->toPlainText();
+	QString autojoinChannels = d->teAutojoinChannels->toPlainText();
 	autojoinChannels.remove('\r').replace('\n', ' ');
 
-	entity.setAddress(this->leAddress->text().trimmed());
+	entity.setAddress(d->leAddress->text().trimmed());
 	entity.setAutojoinChannels(autojoinChannels.split(" ", QString::SkipEmptyParts));
 	entity.setAutojoinCommands(autojoinCommands());
-	entity.setDescription(this->leDescription->text().trimmed());
-	entity.setNickservCommand(this->leNickservCommand->text().trimmed());
-	entity.setNickservPassword(this->leNickservPassword->text());
-	entity.setPassword(this->leServerPassword->text());
-	entity.setPort(this->spinPort->value());
+	entity.setDescription(d->leDescription->text().trimmed());
+	entity.setNickservCommand(d->leNickservCommand->text().trimmed());
+	entity.setNickservPassword(d->leNickservPassword->text());
+	entity.setPassword(d->leServerPassword->text());
+	entity.setPort(d->spinPort->value());
 
 	return entity;
 }
@@ -152,19 +154,19 @@ IRCNetworkEntity CFGIRCDefineNetworkDialog::getNetworkEntity() const
 void CFGIRCDefineNetworkDialog::initFrom(const IRCNetworkEntity& networkEntity)
 {
 	d->originalDescription = networkEntity.description();
-	this->leAddress->setText(networkEntity.address());
-	this->teAutojoinChannels->setPlainText(networkEntity.autojoinChannels().join(" "));
-	this->teAutojoinCommands->setPlainText(networkEntity.autojoinCommands().join("\n"));
-	this->leDescription->setText(networkEntity.description());
-	this->leNickservCommand->setText(networkEntity.nickservCommand());
-	this->leNickservPassword->setText(networkEntity.nickservPassword());
-	this->leServerPassword->setText(networkEntity.password());
-	this->spinPort->setValue(networkEntity.port());
+	d->leAddress->setText(networkEntity.address());
+	d->teAutojoinChannels->setPlainText(networkEntity.autojoinChannels().join(" "));
+	d->teAutojoinCommands->setPlainText(networkEntity.autojoinCommands().join("\n"));
+	d->leDescription->setText(networkEntity.description());
+	d->leNickservCommand->setText(networkEntity.nickservCommand());
+	d->leNickservPassword->setText(networkEntity.nickservPassword());
+	d->leServerPassword->setText(networkEntity.password());
+	d->spinPort->setValue(networkEntity.port());
 }
 
 bool CFGIRCDefineNetworkDialog::isDescriptionUnique() const
 {
-	QString current = leDescription->text().trimmed().toLower();
+	QString current = d->leDescription->text().trimmed().toLower();
 	if (d->originalDescription.trimmed().toLower() == current)
 	{
 		// Network is being edited and its name hasn't been changed.
@@ -182,7 +184,7 @@ bool CFGIRCDefineNetworkDialog::isDescriptionUnique() const
 
 bool CFGIRCDefineNetworkDialog::isValidDescription() const
 {
-	return ChatNetworkNamer::isValidName(leDescription->text());
+	return ChatNetworkNamer::isValidName(d->leDescription->text());
 }
 
 QList<IRCNetworkEntity> CFGIRCDefineNetworkDialog::listExistingNetworks() const
@@ -217,7 +219,7 @@ void CFGIRCDefineNetworkDialog::setExistingNetworks(const QList<IRCNetworkEntity
 
 bool CFGIRCDefineNetworkDialog::validateDescription()
 {
-	if (leDescription->text().trimmed().isEmpty())
+	if (d->leDescription->text().trimmed().isEmpty())
 	{
 		QMessageBox::critical(this, tr("Invalid network description"),
 			tr("Network description cannot be empty."));

@@ -23,6 +23,7 @@
 #include "dndfilesystemlistview.h"
 
 #include <QDebug>
+#include <QDragEnterEvent>
 #include <QFileInfo>
 #include <QList>
 #include <QUrl>

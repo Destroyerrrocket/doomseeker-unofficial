@@ -24,8 +24,8 @@
 #define id61914372_2F5E_42A3_9CCC3ADF106B6FF2
 
 #include <QComboBox>
-#include <QEvent>
-#include <QString>
+
+class QEvent;
 
 /**
  * Based on:

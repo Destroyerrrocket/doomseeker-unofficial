@@ -21,24 +21,35 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "cfgip2country.h"
+#include "ui_cfgip2country.h"
 #include "configuration/doomseekerconfig.h"
+
+class CFGIP2Country::PrivData : public Ui::CFGIP2Country
+{
+};
 
 CFGIP2Country::CFGIP2Country(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
+}
+
+CFGIP2Country::~CFGIP2Country()
+{
+	delete d;
 }
 
 void CFGIP2Country::readSettings()
 {
-	leIP2CUrl->setText(gConfig.doomseeker.ip2CountryUrl);
-	grbAutoUpdate->setChecked(gConfig.doomseeker.bIP2CountryAutoUpdate);
-	spinMaximumAge->setValue(gConfig.doomseeker.ip2CountryDatabaseMaximumAge);
+	d->leIP2CUrl->setText(gConfig.doomseeker.ip2CountryUrl);
+	d->grbAutoUpdate->setChecked(gConfig.doomseeker.bIP2CountryAutoUpdate);
+	d->spinMaximumAge->setValue(gConfig.doomseeker.ip2CountryDatabaseMaximumAge);
 }
 
 void CFGIP2Country::saveSettings()
 {
-	gConfig.doomseeker.ip2CountryUrl = leIP2CUrl->text();
-	gConfig.doomseeker.bIP2CountryAutoUpdate = grbAutoUpdate->isChecked();
-	gConfig.doomseeker.ip2CountryDatabaseMaximumAge = spinMaximumAge->value();
+	gConfig.doomseeker.ip2CountryUrl = d->leIP2CUrl->text();
+	gConfig.doomseeker.bIP2CountryAutoUpdate = d->grbAutoUpdate->isChecked();
+	gConfig.doomseeker.ip2CountryDatabaseMaximumAge = d->spinMaximumAge->value();
 }

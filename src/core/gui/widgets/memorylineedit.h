@@ -23,10 +23,11 @@
 #ifndef __MEMORYLINEEDIT_H__
 #define __MEMORYLINEEDIT_H__
 
-#include <QKeyEvent>
 #include <QLineEdit>
 #include <QList>
 #include <QString>
+
+class QKeyEvent;
 
 /**
  *	@brief Stores the input into a history that can be accessed by pressing up
