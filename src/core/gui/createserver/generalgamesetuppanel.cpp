@@ -21,6 +21,7 @@
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "generalgamesetuppanel.h"
+#include "ui_generalgamesetuppanel.h"
 
 #include "configuration/doomseekerconfig.h"
 #include "ini/ini.h"
@@ -36,7 +37,7 @@
 #include <QHostAddress>
 #include <QMessageBox>
 
-class GeneralGameSetupPanel::PrivData
+class GeneralGameSetupPanel::PrivData : public Ui::GeneralGameSetupPanel
 {
 public:
 	EnginePlugin *currentEngine;
@@ -48,12 +49,12 @@ public:
 GeneralGameSetupPanel::GeneralGameSetupPanel(QWidget *parent)
 : QWidget(parent)
 {
-	setupUi(this);
 	d = new PrivData();
+	d->setupUi(this);
 	d->remoteGameSetup = false;
 	d->suppressMissingExeErrors = false;
 
-	this->connect(cboEngine, SIGNAL(currentPluginChanged(EnginePlugin*)),
+	this->connect(d->cboEngine, SIGNAL(currentPluginChanged(EnginePlugin*)),
 		SIGNAL(pluginChanged(EnginePlugin*)));
 }
 
@@ -66,13 +67,13 @@ void GeneralGameSetupPanel::fillInParams(GameCreateParams &params, bool offline)
 {
 	params.setExecutablePath(pathToExe(offline));
 	params.setHostMode(offline ? GameCreateParams::Offline : GameCreateParams::Host);
-	params.setIwadPath(iwadPicker->currentIwad());
-	params.setPwadsPaths(wadsPicker->filePaths());
-	params.setBroadcastToLan(cbBroadcastToLAN->isChecked());
-	params.setBroadcastToMaster(cbBroadcastToMaster->isChecked());
-	params.setMap(leMap->text());
-	params.setName(leServername->text());
-	params.setPort(spinPort->isEnabled() ? spinPort->value() : 0);
+	params.setIwadPath(d->iwadPicker->currentIwad());
+	params.setPwadsPaths(d->wadsPicker->filePaths());
+	params.setBroadcastToLan(d->cbBroadcastToLAN->isChecked());
+	params.setBroadcastToMaster(d->cbBroadcastToMaster->isChecked());
+	params.setMap(d->leMap->text());
+	params.setName(d->leServername->text());
+	params.setPort(d->spinPort->isEnabled() ? d->spinPort->value() : 0);
 	params.setGameMode(currentGameMode());
 }
 
@@ -88,7 +89,7 @@ void GeneralGameSetupPanel::loadConfig(Ini &config)
 		if(!setEngine(engineName))
 			return;
 
-		bool bChangeExecutable = (prevEngine != d->currentEngine || !cbLockExecutable->isChecked());
+		bool bChangeExecutable = (prevEngine != d->currentEngine || !d->cbLockExecutable->isChecked());
 
 		// First let's check if we can use executable stored in the server's config.
 		// We will save the path to this executable in a local variable.
@@ -113,37 +114,37 @@ void GeneralGameSetupPanel::loadConfig(Ini &config)
 		// set this path in the line edit control.
 		if (!executablePath.isEmpty())
 		{
-			leExecutable->setText(executablePath);
+			d->leExecutable->setText(executablePath);
 		}
 	}
 
-	leServername->setText(general["name"]);
-	spinPort->setValue(general["port"]);
-	cboGamemode->setCurrentIndex(general["gamemode"]);
-	leMap->setText(general["map"]);
-	iwadPicker->addIwad(general["iwad"]);
+	d->leServername->setText(general["name"]);
+	d->spinPort->setValue(general["port"]);
+	d->cboGamemode->setCurrentIndex(general["gamemode"]);
+	d->leMap->setText(general["map"]);
+	d->iwadPicker->addIwad(general["iwad"]);
 
-	wadsPicker->setFilePaths(general["pwads"].valueString().split(";"));
+	d->wadsPicker->setFilePaths(general["pwads"].valueString().split(";"));
 
-	cbBroadcastToLAN->setChecked(general["broadcastToLAN"]);
-	cbBroadcastToMaster->setChecked(general["broadcastToMaster"]);
+	d->cbBroadcastToLAN->setChecked(general["broadcastToLAN"]);
+	d->cbBroadcastToMaster->setChecked(general["broadcastToMaster"]);
 }
 
 void GeneralGameSetupPanel::saveConfig(Ini &config)
 {
 	IniSection general = config.section("General");
-	general["engine"] = cboEngine->currentText();
-	general["executable"] = leExecutable->text();
-	general["name"] = leServername->text();
-	general["port"] = spinPort->value();
-	general["gamemode"] = cboGamemode->currentIndex();
-	general["map"] = leMap->text();
-	general["iwad"] = iwadPicker->currentIwad();
+	general["engine"] = d->cboEngine->currentText();
+	general["executable"] = d->leExecutable->text();
+	general["name"] = d->leServername->text();
+	general["port"] = d->spinPort->value();
+	general["gamemode"] = d->cboGamemode->currentIndex();
+	general["map"] = d->leMap->text();
+	general["iwad"] = d->iwadPicker->currentIwad();
 
-	general["pwads"] = wadsPicker->filePaths().join(";");
+	general["pwads"] = d->wadsPicker->filePaths().join(";");
 
-	general["broadcastToLAN"] = cbBroadcastToLAN->isChecked();
-	general["broadcastToMaster"] = cbBroadcastToMaster->isChecked();
+	general["broadcastToLAN"] = d->cbBroadcastToLAN->isChecked();
+	general["broadcastToMaster"] = d->cbBroadcastToMaster->isChecked();
 }
 
 void GeneralGameSetupPanel::setupForEngine(EnginePlugin *engine)
@@ -157,11 +158,11 @@ void GeneralGameSetupPanel::setupForEngine(EnginePlugin *engine)
 		// When we setup a remote game, we want to use a client
 		// executable to connect to it.
 		ServerPtr server = engine->server(QHostAddress("127.0.0.1"), 1);
-		leExecutable->setText(pathToClientExe(server.data(), message));
+		d->leExecutable->setText(pathToClientExe(server.data(), message));
 	}
 	else
 	{
-		leExecutable->setText(pathToServerExe(message));
+		d->leExecutable->setText(pathToServerExe(message));
 	}
 
 	if (message.isError() && !d->suppressMissingExeErrors)
@@ -174,15 +175,15 @@ void GeneralGameSetupPanel::setupForEngine(EnginePlugin *engine)
 		QMessageBox::warning(this, caption, error);
 	}
 
-	spinPort->setValue(d->currentEngine->data()->defaultServerPort);
+	d->spinPort->setValue(d->currentEngine->data()->defaultServerPort);
 
-	cboGamemode->clear();
+	d->cboGamemode->clear();
 	const QList<GameMode> &gameModes = d->currentEngine->data()->gameModes;
 	if (!gameModes.isEmpty())
 	{
 		for (int i = 0; i < gameModes.count(); ++i)
 		{
-			cboGamemode->addItem(gameModes[i].name(), i);
+			d->cboGamemode->addItem(gameModes[i].name(), i);
 		}
 	}
 }
@@ -191,12 +192,12 @@ void GeneralGameSetupPanel::setupForRemoteGame()
 {
 	d->suppressMissingExeErrors = true;
 	d->remoteGameSetup = true;
-	cbAllowTheGameToChoosePort->hide();
+	d->cbAllowTheGameToChoosePort->hide();
 	QWidget *disableControls[] =
 	{
-		cboEngine, leExecutable, btnBrowseExecutable, btnDefaultExecutable,
-		cbLockExecutable, leServername, spinPort, cbBroadcastToLAN,
-		cbBroadcastToMaster,
+		d->cboEngine, d->leExecutable, d->btnBrowseExecutable, d->btnDefaultExecutable,
+		d->cbLockExecutable, d->leServername, d->spinPort, d->cbBroadcastToLAN,
+		d->cbBroadcastToMaster,
 
 		NULL
 	};
@@ -213,7 +214,7 @@ QString GeneralGameSetupPanel::pathToExe(bool offline)
 	Message message;
 	QString offlineExePath = pathToOfflineExe(message);
 	QString serverExePath = pathToServerExe(message);
-	bool bIsLineEditPotiningToServerBinary = (leExecutable->text() == serverExePath);
+	bool bIsLineEditPotiningToServerBinary = (d->leExecutable->text() == serverExePath);
 	bool bShouldUseClientBinary = (offline || d->remoteGameSetup) && message.isIgnore() && bIsLineEditPotiningToServerBinary;
 
 	if (bShouldUseClientBinary)
@@ -222,7 +223,7 @@ QString GeneralGameSetupPanel::pathToExe(bool offline)
 	}
 	else
 	{
-		return leExecutable->text();
+		return d->leExecutable->text();
 	}
 }
 
@@ -252,14 +253,14 @@ void GeneralGameSetupPanel::browseExecutable()
 		QFileInfo fi(strFile);
 		gConfig.doomseeker.previousCreateServerExecDir = fi.absolutePath();
 
-		leExecutable->setText(fi.absoluteFilePath());
+		d->leExecutable->setText(fi.absoluteFilePath());
 	}
 }
 
 void GeneralGameSetupPanel::setExecutableToDefault()
 {
 	Message message;
-	leExecutable->setText(pathToServerExe(message));
+	d->leExecutable->setText(pathToServerExe(message));
 
 	if (!message.isIgnore())
 	{
@@ -282,7 +283,7 @@ GameMode GeneralGameSetupPanel::currentGameMode() const
 	const QList<GameMode> &gameModes = d->currentEngine->data()->gameModes;
 	foreach (const GameMode& mode, gameModes)
 	{
-		if (mode.name().compare(cboGamemode->currentText()) == 0)
+		if (mode.name().compare(d->cboGamemode->currentText()) == 0)
 		{
 			return mode;
 		}
@@ -292,12 +293,12 @@ GameMode GeneralGameSetupPanel::currentGameMode() const
 
 EnginePlugin *GeneralGameSetupPanel::currentPlugin() const
 {
-	return cboEngine->currentPlugin();
+	return d->cboEngine->currentPlugin();
 }
 
 bool GeneralGameSetupPanel::setEngine(const QString &engineName)
 {
-	if (!cboEngine->setPluginByName(engineName))
+	if (!d->cboEngine->setPluginByName(engineName))
 	{
 		QMessageBox::critical(this, tr("Doomseeker - load server config"),
 			tr("Plugin for engine \"%1\" is not present!").arg(engineName));

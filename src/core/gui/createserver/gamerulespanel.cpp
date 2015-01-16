@@ -21,13 +21,14 @@
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "gamerulespanel.h"
+#include "ui_gamerulespanel.h"
 
 #include "ini/ini.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/gamecreateparams.h"
 #include "serverapi/serverstructs.h"
 
-class GameRulesPanel::PrivData
+class GameRulesPanel::PrivData : public Ui::GameRulesPanel
 {
 public:
 	class GameLimitWidget
@@ -46,7 +47,7 @@ GameRulesPanel::GameRulesPanel(QWidget *parent)
 : QWidget(parent)
 {
 	d = new PrivData();
-	setupUi(this);
+	d->setupUi(this);
 }
 
 GameRulesPanel::~GameRulesPanel()
@@ -57,14 +58,14 @@ GameRulesPanel::~GameRulesPanel()
 
 void GameRulesPanel::fillInParams(GameCreateParams &params)
 {
-	params.setSkill(cboDifficulty->currentIndex());
-	params.setMaxClients(spinMaxClients->value());
-	params.setMaxPlayers(spinMaxPlayers->value());
+	params.setSkill(d->cboDifficulty->currentIndex());
+	params.setMaxClients(d->spinMaxClients->value());
+	params.setMaxPlayers(d->spinMaxPlayers->value());
 
 	fillInLimits(params);
 	fillInModifiers(params);
 
-	mapListPanel->fillInParams(params);
+	d->mapListPanel->fillInParams(params);
 }
 
 void GameRulesPanel::fillInLimits(GameCreateParams &params)
@@ -78,7 +79,7 @@ void GameRulesPanel::fillInLimits(GameCreateParams &params)
 
 void GameRulesPanel::fillInModifiers(GameCreateParams &params)
 {
-	int modIndex = cboModifier->currentIndex();
+	int modIndex = d->cboModifier->currentIndex();
 	if (modIndex > 0) // Index zero is always "< NONE >"
 	{
 		--modIndex;
@@ -91,39 +92,39 @@ void GameRulesPanel::loadConfig(Ini &config)
 {
 	IniSection section = config.section("Rules");
 
-	cboDifficulty->setCurrentIndex(section["difficulty"]);
-	cboModifier->setCurrentIndex(section["modifier"]);
-	spinMaxClients->setValue(section["maxClients"]);
-	spinMaxPlayers->setValue(section["maxPlayers"]);
+	d->cboDifficulty->setCurrentIndex(section["difficulty"]);
+	d->cboModifier->setCurrentIndex(section["modifier"]);
+	d->spinMaxClients->setValue(section["maxClients"]);
+	d->spinMaxPlayers->setValue(section["maxPlayers"]);
 	foreach (PrivData::GameLimitWidget* widget, d->limitWidgets)
 	{
 		widget->spinBox->setValue(section[widget->limit.command()]);
 	}
 
-	mapListPanel->loadConfig(config);
+	d->mapListPanel->loadConfig(config);
 }
 
 void GameRulesPanel::saveConfig(Ini &config)
 {
 	IniSection section = config.section("Rules");
 
-	section["difficulty"] = cboDifficulty->currentIndex();
-	section["modifier"] = cboModifier->currentIndex();
-	section["maxClients"] = spinMaxClients->value();
-	section["maxPlayers"] = spinMaxPlayers->value();
+	section["difficulty"] = d->cboDifficulty->currentIndex();
+	section["modifier"] = d->cboModifier->currentIndex();
+	section["maxClients"] = d->spinMaxClients->value();
+	section["maxPlayers"] = d->spinMaxPlayers->value();
 	foreach (PrivData::GameLimitWidget *widget, d->limitWidgets)
 	{
 		section[widget->limit.command()] = widget->spinBox->value();
 	}
 
-	mapListPanel->saveConfig(config);
+	d->mapListPanel->saveConfig(config);
 }
 
 void GameRulesPanel::setupForEngine(const EnginePlugin *engine, const GameMode &gameMode)
 {
 	setupDifficulty();
 	setupModifiers(engine);
-	mapListPanel->setupForEngine(engine);
+	d->mapListPanel->setupForEngine(engine);
 
 	setupLimitWidgets(engine, gameMode);
 }
@@ -132,7 +133,7 @@ void GameRulesPanel::setupForRemoteGame()
 {
 	QWidget *disableControls[] =
 	{
-		spinMaxClients, spinMaxPlayers, NULL
+		d->spinMaxClients, d->spinMaxPlayers, NULL
 	};
 	for (int i = 0; disableControls[i]; ++i)
 		disableControls[i]->setDisabled(true);
@@ -140,39 +141,39 @@ void GameRulesPanel::setupForRemoteGame()
 
 void GameRulesPanel::setupDifficulty()
 {
-	cboDifficulty->clear();
+	d->cboDifficulty->clear();
 
-	cboDifficulty->addItem("1 - I'm too young to die", 0);
-	cboDifficulty->addItem("2 - Hey, not too rough", 1);
-	cboDifficulty->addItem("3 - Hurt me plenty", 2);
-	cboDifficulty->addItem("4 - Ultra-violence", 3);
-	cboDifficulty->addItem("5 - NIGHTMARE!", 4);
+	d->cboDifficulty->addItem("1 - I'm too young to die", 0);
+	d->cboDifficulty->addItem("2 - Hey, not too rough", 1);
+	d->cboDifficulty->addItem("3 - Hurt me plenty", 2);
+	d->cboDifficulty->addItem("4 - Ultra-violence", 3);
+	d->cboDifficulty->addItem("5 - NIGHTMARE!", 4);
 }
 
 void GameRulesPanel::setupModifiers(const EnginePlugin *engine)
 {
-	cboModifier->clear();
+	d->cboModifier->clear();
 	d->gameModifiers.clear();
 
 	const QList<GameCVar> &modifiers = engine->data()->gameModifiers;
 
 	if (!modifiers.isEmpty())
 	{
-		cboModifier->show();
-		labelModifiers->show();
+		d->cboModifier->show();
+		d->labelModifiers->show();
 
-		cboModifier->addItem(tr("< NONE >"));
+		d->cboModifier->addItem(tr("< NONE >"));
 
 		foreach (const GameCVar &cvar, modifiers)
 		{
-			cboModifier->addItem(cvar.name());
+			d->cboModifier->addItem(cvar.name());
 			d->gameModifiers << cvar;
 		}
 	}
 	else
 	{
-		cboModifier->hide();
-		labelModifiers->hide();
+		d->cboModifier->hide();
+		d->labelModifiers->hide();
 	}
 }
 
@@ -202,7 +203,7 @@ void GameRulesPanel::setupLimitWidgets(const EnginePlugin *engine, const GameMod
 		QSpinBox* spinBox = new QSpinBox(this);
 		spinBox->setMaximum(999999);
 
-		limitsLayout->addRow(label, spinBox);
+		d->limitsLayout->addRow(label, spinBox);
 
 		PrivData::GameLimitWidget* glw = new PrivData::GameLimitWidget();
 		glw->label = label;

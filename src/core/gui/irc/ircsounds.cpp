@@ -25,6 +25,7 @@
 #include "irc/configuration/ircconfig.h"
 
 #include <QFileInfo>
+#include <QSound>
 
 void IRCSounds::loadFromConfig()
 {

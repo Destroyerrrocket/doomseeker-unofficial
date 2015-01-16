@@ -23,18 +23,18 @@
 #ifndef id6733139c_96d4_4ad7_bc7a_04bf8a85f5bf
 #define id6733139c_96d4_4ad7_bc7a_04bf8a85f5bf
 
-#include "ui_iwadpicker.h"
 #include <QWidget>
 
 class GameCreateParams;
 class Ini;
 
-class IwadPicker : public QWidget, private Ui::IwadPicker
+class IwadPicker : public QWidget
 {
 Q_OBJECT
 
 public:
 	IwadPicker(QWidget *parent);
+	~IwadPicker();
 
 	void addIwad(const QString &path);
 	QString currentIwad() const;
@@ -42,6 +42,8 @@ public:
 private:
 	void loadIwads();
 
+	class PrivData;
+	PrivData *d;
 private slots:
 	void browse();
 };

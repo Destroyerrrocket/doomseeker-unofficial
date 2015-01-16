@@ -21,20 +21,32 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircnetworkselectionbox.h"
+#include "ui_ircnetworkselectionbox.h"
 #include "gui/configuration/irc/cfgircdefinenetworkdialog.h"
 #include "irc/configuration/chatnetworkscfg.h"
 #include "irc/configuration/ircconfig.h"
+#include "irc/ircnetworkconnectioninfo.h"
 #include "qtmetapointer.h"
 #include <QMessageBox>
+
+class IRCNetworkSelectionBox::PrivData : public Ui::IRCNetworkSelectionBox
+{
+};
 
 IRCNetworkSelectionBox::IRCNetworkSelectionBox(QWidget* parent)
 : QDialog(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
 
-	connect(cboNetwork, SIGNAL( currentIndexChanged(int) ), SLOT( networkChanged(int) ) );
+	connect(d->cboNetwork, SIGNAL( currentIndexChanged(int) ), SLOT( networkChanged(int) ) );
 
 	initWidgets();
+}
+
+IRCNetworkSelectionBox::~IRCNetworkSelectionBox()
+{
+	delete d;
 }
 
 void IRCNetworkSelectionBox::accept()
@@ -47,7 +59,7 @@ void IRCNetworkSelectionBox::accept()
 
 void IRCNetworkSelectionBox::addNetworkToComboBox(const IRCNetworkEntity& network)
 {
-	cboNetwork->addItem(buildTitle(network), network.serializeQVariant());
+	d->cboNetwork->addItem(buildTitle(network), network.serializeQVariant());
 }
 
 QString IRCNetworkSelectionBox::buildTitle(const IRCNetworkEntity &network) const
@@ -94,7 +106,7 @@ void IRCNetworkSelectionBox::fetchNetworks()
 	ChatNetworksCfg cfg;
 	QList<IRCNetworkEntity> networks = cfg.networks();
 	qSort(networks);
-	cboNetwork->clear();
+	d->cboNetwork->clear();
 
 	foreach (const IRCNetworkEntity& network, networks)
 	{
@@ -112,9 +124,9 @@ void IRCNetworkSelectionBox::fetchNetworks()
 
 void IRCNetworkSelectionBox::initWidgets()
 {
-	leAlternateNick->setText(gIRCConfig.personal.alternativeNickname);
-	leNick->setText(gIRCConfig.personal.nickname);
-	leRealName->setText(gIRCConfig.personal.fullName);
+	d->leAlternateNick->setText(gIRCConfig.personal.alternativeNickname);
+	d->leNick->setText(gIRCConfig.personal.nickname);
+	d->leRealName->setText(gIRCConfig.personal.fullName);
 
 	fetchNetworks();
 }
@@ -122,7 +134,7 @@ void IRCNetworkSelectionBox::initWidgets()
 IRCNetworkEntity IRCNetworkSelectionBox::network() const
 {
 	IRCNetworkEntity networkEntity = networkCurrent();
-	networkEntity.setPassword(lePassword->text());
+	networkEntity.setPassword(d->lePassword->text());
 	return networkEntity;
 }
 
@@ -136,25 +148,25 @@ void IRCNetworkSelectionBox::networkChanged(int index)
 
 IRCNetworkEntity IRCNetworkSelectionBox::networkCurrent() const
 {
-	return networkAtRow(cboNetwork->currentIndex());
+	return networkAtRow(d->cboNetwork->currentIndex());
 }
 
 IRCNetworkEntity IRCNetworkSelectionBox::networkAtRow(int row) const
 {
-	if (row < 0 || row >= cboNetwork->count())
+	if (row < 0 || row >= d->cboNetwork->count())
 	{
 		return IRCNetworkEntity();
 	}
-	return IRCNetworkEntity::deserializeQVariant(cboNetwork->itemData(row));
+	return IRCNetworkEntity::deserializeQVariant(d->cboNetwork->itemData(row));
 }
 
 IRCNetworkConnectionInfo IRCNetworkSelectionBox::networkConnectionInfo() const
 {
 	IRCNetworkConnectionInfo outInfo;
 
-	outInfo.alternateNick = leAlternateNick->text();
-	outInfo.nick = leNick->text();
-	outInfo.realName = leRealName->text();
+	outInfo.alternateNick = d->leAlternateNick->text();
+	outInfo.nick = d->leNick->text();
+	outInfo.realName = d->leRealName->text();
 
 	outInfo.networkEntity = this->network();
 
@@ -163,12 +175,12 @@ IRCNetworkConnectionInfo IRCNetworkSelectionBox::networkConnectionInfo() const
 
 void IRCNetworkSelectionBox::setNetworkMatchingDescriptionAsCurrent(const QString &description)
 {
-	for (int row = 0; row < cboNetwork->count(); ++row)
+	for (int row = 0; row < d->cboNetwork->count(); ++row)
 	{
 		IRCNetworkEntity candidate = networkAtRow(row);
 		if (candidate.description() == description)
 		{
-			cboNetwork->setCurrentIndex(row);
+			d->cboNetwork->setCurrentIndex(row);
 			break;
 		}
 	}
@@ -176,8 +188,8 @@ void IRCNetworkSelectionBox::setNetworkMatchingDescriptionAsCurrent(const QStrin
 
 void IRCNetworkSelectionBox::updateCurrentNetwork(const IRCNetworkEntity &network)
 {
-	cboNetwork->setItemText(cboNetwork->currentIndex(), buildTitle(network));
-	cboNetwork->setItemData(cboNetwork->currentIndex(), network.serializeQVariant());
+	d->cboNetwork->setItemText(d->cboNetwork->currentIndex(), buildTitle(network));
+	d->cboNetwork->setItemData(d->cboNetwork->currentIndex(), network.serializeQVariant());
 	updateNetworkInfo();
 }
 
@@ -191,9 +203,9 @@ void IRCNetworkSelectionBox::updateNetworkInfo()
 {
 	IRCNetworkEntity network = networkCurrent();
 
-	leServerAddress->setText(network.address());
-	spinPort->setValue(network.port());
-	lePassword->setText(network.password());
+	d->leServerAddress->setText(network.address());
+	d->spinPort->setValue(network.port());
+	d->lePassword->setText(network.password());
 }
 
 bool IRCNetworkSelectionBox::validate()

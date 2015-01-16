@@ -23,16 +23,15 @@
 #ifndef id76bed8d4_95b3_443b_9d90_4f95b6310cf8
 #define id76bed8d4_95b3_443b_9d90_4f95b6310cf8
 
-#include "ui_dmflagspanel.h"
-#include <QCheckBox>
 #include <QWidget>
+#include <QtContainerFwd>
 
 class DMFlagsSection;
 class EnginePlugin;
 class GameCreateParams;
 class Ini;
 
-class DMFlagsPanel : public QWidget, private Ui::DMFlagsPanel
+class DMFlagsPanel : public QWidget
 {
 public:
 	DMFlagsPanel(QWidget *parent);

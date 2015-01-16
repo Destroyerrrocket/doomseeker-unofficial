@@ -23,19 +23,19 @@
 #ifndef id163550df_b0ab_4873_9092_4bd572bb3ab8
 #define id163550df_b0ab_4873_9092_4bd572bb3ab8
 
-#include "ui_miscserversetuppanel.h"
 #include <QWidget>
 
 class GameCreateParams;
 class EnginePlugin;
 class Ini;
 
-class MiscServerSetupPanel : public QWidget, private Ui::MiscServerSetupPanel
+class MiscServerSetupPanel : public QWidget
 {
 Q_OBJECT
 
 public:
 	MiscServerSetupPanel(QWidget *parent);
+	~MiscServerSetupPanel();
 
 	void fillInParams(GameCreateParams &params);
 	bool isAnythingAvailable() const;
@@ -44,7 +44,8 @@ public:
 	void setupForEngine(const EnginePlugin *engine);
 
 private:
-	bool anythingAvailable;
+	class PrivData;
+	PrivData *d;
 };
 
 #endif

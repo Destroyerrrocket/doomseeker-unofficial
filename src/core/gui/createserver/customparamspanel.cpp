@@ -21,20 +21,31 @@
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "customparamspanel.h"
+#include "ui_customparamspanel.h"
 
 #include "ini/ini.h"
 #include "serverapi/gamecreateparams.h"
 #include "scanner.h"
 
+class CustomParamsPanel::PrivData : public Ui::CustomParamsPanel
+{
+};
+
 CustomParamsPanel::CustomParamsPanel(QWidget *parent)
 : QWidget(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
+}
+
+CustomParamsPanel::~CustomParamsPanel()
+{
+	delete d;
 }
 
 void CustomParamsPanel::fillInParams(GameCreateParams &params)
 {
-	QString customParams = paramsArea->toPlainText();
+	QString customParams = d->paramsArea->toPlainText();
 	QByteArray utf8 = customParams.toUtf8();
 	Scanner sc(utf8.constData(), utf8.length());
 	while (sc.nextString())
@@ -46,11 +57,11 @@ void CustomParamsPanel::fillInParams(GameCreateParams &params)
 void CustomParamsPanel::loadConfig(Ini &config)
 {
 	IniSection misc = config.section("Misc");
-	paramsArea->document()->setPlainText(misc["CustomParams"]);
+	d->paramsArea->document()->setPlainText(misc["CustomParams"]);
 }
 
 void CustomParamsPanel::saveConfig(Ini &config)
 {
 	IniSection misc = config.section("Misc");
-	misc["CustomParams"] = paramsArea->toPlainText();
+	misc["CustomParams"] = d->paramsArea->toPlainText();
 }

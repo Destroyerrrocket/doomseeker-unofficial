@@ -21,11 +21,14 @@
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "dmflagspanel.h"
+#include "ui_dmflagspanel.h"
 
 #include "ini/ini.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/gamecreateparams.h"
 #include "serverapi/serverstructs.h"
+
+#include <QCheckBox>
 
 class DMFlagsPanel::DMFlagsTabWidget
 {
@@ -40,7 +43,7 @@ public:
 };
 
 
-class DMFlagsPanel::PrivData
+class DMFlagsPanel::PrivData : public Ui::DMFlagsPanel
 {
 public:
 	QList<DMFlagsTabWidget*> dmFlagsTabs;
@@ -50,8 +53,8 @@ public:
 DMFlagsPanel::DMFlagsPanel(QWidget *parent)
 : QWidget(parent)
 {
-	setupUi(this);
 	d = new PrivData();
+	d->setupUi(this);
 }
 
 DMFlagsPanel::~DMFlagsPanel()
@@ -126,7 +129,7 @@ bool DMFlagsPanel::initDMFlagsTabs(const EnginePlugin *engine)
 			}
 
 			d->dmFlagsTabs << dmftw;
-			tabWidget->addTab(flagsTab, dmFlagsSections[i].name());
+			d->tabWidget->addTab(flagsTab, dmFlagsSections[i].name());
 		}
 		return true;
 	}
@@ -137,8 +140,8 @@ void DMFlagsPanel::removeDMFlagsTabs()
 {
 	foreach (DMFlagsTabWidget* flags, d->dmFlagsTabs)
 	{
-		int index = tabWidget->indexOf(flags->widget);
-		tabWidget->removeTab(index);
+		int index = d->tabWidget->indexOf(flags->widget);
+		d->tabWidget->removeTab(index);
 		delete flags->widget;
 		delete flags;
 	}

@@ -21,6 +21,7 @@
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "iwadpicker.h"
+#include "ui_iwadpicker.h"
 
 #include "configuration/doomseekerconfig.h"
 #include "pathfinder/pathfinder.h"
@@ -28,11 +29,21 @@
 #include <QFileDialog>
 #include <QFileInfo>
 
+class IwadPicker::PrivData : public Ui::IwadPicker
+{
+};
+
 IwadPicker::IwadPicker(QWidget *parent)
 : QWidget(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
 	loadIwads();
+}
+
+IwadPicker::~IwadPicker()
+{
+	delete d;
 }
 
 void IwadPicker::addIwad(const QString& path)
@@ -42,17 +53,17 @@ void IwadPicker::addIwad(const QString& path)
 		return;
 	}
 
-	for (int i = 0; i < cboIwad->count(); ++i)
+	for (int i = 0; i < d->cboIwad->count(); ++i)
 	{
-		if (cboIwad->itemText(i).compare(path) == 0)
+		if (d->cboIwad->itemText(i).compare(path) == 0)
 		{
-			cboIwad->setCurrentIndex(i);
+			d->cboIwad->setCurrentIndex(i);
 			return;
 		}
 	}
 
-	cboIwad->addItem(Strings::normalizePath(path));
-	cboIwad->setCurrentIndex(cboIwad->count() - 1);
+	d->cboIwad->addItem(Strings::normalizePath(path));
+	d->cboIwad->setCurrentIndex(d->cboIwad->count() - 1);
 }
 
 void IwadPicker::browse()
@@ -71,7 +82,7 @@ void IwadPicker::browse()
 
 QString IwadPicker::currentIwad() const
 {
-	return cboIwad->currentText();
+	return d->cboIwad->currentText();
 }
 
 void IwadPicker::loadIwads()
@@ -83,14 +94,14 @@ void IwadPicker::loadIwads()
 		"strife1.wad", ""
 	};
 
-	cboIwad->clear();
+	d->cboIwad->clear();
 	for (int i = 0; !iwads[i].isEmpty(); ++i)
 	{
 		PathFinder pathFinder;
 		QString path = pathFinder.findFile(iwads[i]);
 		if (!path.isEmpty())
 		{
-			cboIwad->addItem(path);
+			d->cboIwad->addItem(path);
 		}
 	}
 }

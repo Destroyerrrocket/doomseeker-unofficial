@@ -23,18 +23,18 @@
 #ifndef __IRCNETWORKSELECTIONBOX_H__
 #define __IRCNETWORKSELECTIONBOX_H__
 
-#include "ui_ircnetworkselectionbox.h"
-
-#include "irc/entities/ircnetworkentity.h"
-#include "irc/ircnetworkconnectioninfo.h"
 #include <QDialog>
 
-class IRCNetworkSelectionBox : public QDialog, private Ui::IRCNetworkSelectionBox
+class IRCNetworkConnectionInfo;
+class IRCNetworkEntity;
+
+class IRCNetworkSelectionBox : public QDialog
 {
 	Q_OBJECT
 
 	public:
 		IRCNetworkSelectionBox(QWidget* parent = NULL);
+		~IRCNetworkSelectionBox();
 
 		void accept();
 
@@ -66,6 +66,8 @@ class IRCNetworkSelectionBox : public QDialog, private Ui::IRCNetworkSelectionBo
 		void updateNetworkInfo();
 		bool validate();
 
+		class PrivData;
+		PrivData *d;
 	private slots:
 		void createNewNetwork();
 		void editCurrentNetwork();

@@ -23,22 +23,26 @@
 #ifndef idb5bd7932_a986_44a8_8c28_935cc89c64f2
 #define idb5bd7932_a986_44a8_8c28_935cc89c64f2
 
-#include "ui_customparamspanel.h"
 #include <QWidget>
 
 class GameCreateParams;
 class Ini;
 
-class CustomParamsPanel : public QWidget, private Ui::CustomParamsPanel
+class CustomParamsPanel : public QWidget
 {
 Q_OBJECT
 
 public:
 	CustomParamsPanel(QWidget *parent);
+	~CustomParamsPanel();
 
 	void fillInParams(GameCreateParams &params);
 	void loadConfig(Ini &config);
 	void saveConfig(Ini &config);
+
+private:
+	class PrivData;
+	PrivData *d;
 };
 
 #endif

@@ -23,16 +23,17 @@
 #ifndef idcb0c6116_a0f7_4c45_bbe4_42e4b1944363
 #define idcb0c6116_a0f7_4c45_bbe4_42e4b1944363
 
-#include "ui_wadspicker.h"
-#include <QStringList>
 #include <QWidget>
 
-class WadsPicker : public QWidget, private Ui::WadsPicker
+class QStringList;
+
+class WadsPicker : public QWidget
 {
 Q_OBJECT
 
 public:
 	WadsPicker(QWidget *parent);
+	~WadsPicker();
 
 	QStringList filePaths() const;
 	void setFilePaths(const QStringList &paths);
@@ -42,6 +43,10 @@ private slots:
 	void browseAndAdd();
 	void removeAll();
 	void removeSelected();
+
+private:
+	class PrivData;
+	PrivData *d;
 };
 
 #endif

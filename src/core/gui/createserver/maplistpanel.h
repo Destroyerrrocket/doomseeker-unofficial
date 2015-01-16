@@ -23,19 +23,19 @@
 #ifndef id73b8c7bf_fc0d_416b_bda8_e1252e0763c0
 #define id73b8c7bf_fc0d_416b_bda8_e1252e0763c0
 
-#include "ui_maplistpanel.h"
 #include <QWidget>
 
 class EnginePlugin;
 class GameCreateParams;
 class Ini;
 
-class MapListPanel : public QWidget, private Ui::MapListPanel
+class MapListPanel : public QWidget
 {
 Q_OBJECT
 
 public:
 	MapListPanel(QWidget *parent);
+	~MapListPanel();
 
 	void fillInParams(GameCreateParams &params);
 	void loadConfig(Ini &config);
@@ -45,6 +45,8 @@ public:
 private:
 	void addMapToMaplist(const QString &map);
 
+	class PrivData;
+	PrivData *d;
 private slots:
 	void addMapFromEditBoxToList();
 	void onFocusChanged(QWidget* old, QWidget* now);

@@ -23,7 +23,6 @@
 #ifndef id880d5e15_1a53_40da_bdb9_11d9b4dc3222
 #define id880d5e15_1a53_40da_bdb9_11d9b4dc3222
 
-#include "ui_gamerulespanel.h"
 #include <QWidget>
 
 class EnginePlugin;
@@ -31,7 +30,7 @@ class GameCreateParams;
 class GameMode;
 class Ini;
 
-class GameRulesPanel : public QWidget, private Ui::GameRulesPanel
+class GameRulesPanel : public QWidget
 {
 Q_OBJECT
 

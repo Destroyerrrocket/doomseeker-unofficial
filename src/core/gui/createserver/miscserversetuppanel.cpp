@@ -21,87 +21,100 @@
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "miscserversetuppanel.h"
+#include "ui_miscserversetuppanel.h"
 
 #include "ini/ini.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/gamecreateparams.h"
 
+class MiscServerSetupPanel::PrivData : public Ui::MiscServerSetupPanel
+{
+public:
+	bool anythingAvailable;
+};
+
 MiscServerSetupPanel::MiscServerSetupPanel(QWidget *parent)
 : QWidget(parent)
 {
-	setupUi(this);
-	anythingAvailable = false;
+	d = new PrivData;
+	d->setupUi(this);
+	d->anythingAvailable = false;
+}
+
+MiscServerSetupPanel::~MiscServerSetupPanel()
+{
+	delete d;
 }
 
 void MiscServerSetupPanel::fillInParams(GameCreateParams &params)
 {
-	params.setEmail(leEmail->text());
-	params.setMotd(pteMOTD->toPlainText());
-	params.setConnectPassword(leConnectPassword->text());
-	params.setIngamePassword(leJoinPassword->text());
-	params.setRconPassword(leRConPassword->text());
-	params.setUrl(leURL->text());
+	params.setEmail(d->leEmail->text());
+	params.setMotd(d->pteMOTD->toPlainText());
+	params.setConnectPassword(d->leConnectPassword->text());
+	params.setIngamePassword(d->leJoinPassword->text());
+	params.setRconPassword(d->leRConPassword->text());
+	params.setUrl(d->leURL->text());
 }
 
 bool MiscServerSetupPanel::isAnythingAvailable() const
 {
-	return anythingAvailable;
+	return d->anythingAvailable;
 }
 
 void MiscServerSetupPanel::loadConfig(Ini &config)
 {
 	IniSection misc = config.section("Misc");
-	leURL->setText(misc["URL"]);
-	leEmail->setText(misc["eMail"]);
-	leConnectPassword->setText(misc["connectPassword"]);
-	leJoinPassword->setText(misc["joinPassword"]);
-	leRConPassword->setText(misc["RConPassword"]);
-	pteMOTD->document()->setPlainText(misc["MOTD"]);
+	d->leURL->setText(misc["URL"]);
+	d->leEmail->setText(misc["eMail"]);
+	d->leConnectPassword->setText(misc["connectPassword"]);
+	d->leJoinPassword->setText(misc["joinPassword"]);
+	d->leRConPassword->setText(misc["RConPassword"]);
+	d->pteMOTD->document()->setPlainText(misc["MOTD"]);
 }
 
 void MiscServerSetupPanel::saveConfig(Ini &config)
 {
 	IniSection misc = config.section("Misc");
-	misc["URL"] = leURL->text();
-	misc["eMail"] = leEmail->text();
-	misc["connectPassword"] = leConnectPassword->text();
-	misc["joinPassword"] = leJoinPassword->text();
-	misc["RConPassword"] = leRConPassword->text();
-	misc["MOTD"] = pteMOTD->toPlainText();
+	misc["URL"] = d->leURL->text();
+	misc["eMail"] = d->leEmail->text();
+	misc["connectPassword"] = d->leConnectPassword->text();
+	misc["joinPassword"] = d->leJoinPassword->text();
+	misc["RConPassword"] = d->leRConPassword->text();
+	misc["MOTD"] = d->pteMOTD->toPlainText();
 }
 
 void MiscServerSetupPanel::setupForEngine(const EnginePlugin *engine)
 {
-	anythingAvailable = false;
+	d->anythingAvailable = false;
 	bool visible = false;
 
 	visible = engine->data()->allowsConnectPassword;
-	labelConnectPassword->setVisible(visible);
-	leConnectPassword->setVisible(visible);
-	anythingAvailable = visible || anythingAvailable;
+	d->labelConnectPassword->setVisible(visible);
+	d->leConnectPassword->setVisible(visible);
+	d->anythingAvailable = visible || d->anythingAvailable;
 
 	visible = engine->data()->allowsEmail;
-	labelEmail->setVisible(visible);
-	leEmail->setVisible(visible);
-	anythingAvailable = visible || anythingAvailable;
+	d->labelEmail->setVisible(visible);
+	d->leEmail->setVisible(visible);
+	d->anythingAvailable = visible || d->anythingAvailable;
 
 	visible = engine->data()->allowsJoinPassword;
-	labelJoinPassword->setVisible(visible);
-	leJoinPassword->setVisible(visible);
-	anythingAvailable = visible || anythingAvailable;
+	d->labelJoinPassword->setVisible(visible);
+	d->leJoinPassword->setVisible(visible);
+	d->anythingAvailable = visible || d->anythingAvailable;
 
 	visible = engine->data()->allowsMOTD;
-	labelMOTD->setVisible(visible);
-	pteMOTD->setVisible(visible);
-	anythingAvailable = visible || anythingAvailable;
+	d->labelMOTD->setVisible(visible);
+	d->pteMOTD->setVisible(visible);
+	d->anythingAvailable = visible || d->anythingAvailable;
 
 	visible = engine->data()->allowsRConPassword;
-	labelRConPassword->setVisible(visible);
-	leRConPassword->setVisible(visible);
-	anythingAvailable = visible || anythingAvailable;
+	d->labelRConPassword->setVisible(visible);
+	d->leRConPassword->setVisible(visible);
+	d->anythingAvailable = visible || d->anythingAvailable;
 
 	visible = engine->data()->allowsURL;
-	labelURL->setVisible(visible);
-	leURL->setVisible(visible);
-	anythingAvailable = visible || anythingAvailable;
+	d->labelURL->setVisible(visible);
+	d->leURL->setVisible(visible);
+	d->anythingAvailable = visible || d->anythingAvailable;
 }

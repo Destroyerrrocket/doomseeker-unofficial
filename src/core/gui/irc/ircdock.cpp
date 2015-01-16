@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircdock.h"
+#include "ui_ircdock.h"
 #include "gui/irc/ircdocktabcontents.h"
 #include "gui/irc/ircnetworkselectionbox.h"
 #include "gui/irc/ircsounds.h"
@@ -32,27 +33,34 @@
 #include <QMessageBox>
 #include <QToolBar>
 
+class IRCDock::PrivData : public Ui::IRCDock
+{
+public:
+	IRCSounds pSounds;
+	QAction* toolBarConnect;
+	QAction* toolBarOpenChatWindow;
+};
+
 IRCDock::IRCDock(QWidget* parent)
 : QDockWidget(parent)
 {
-	setupUi(this);
-	this->toggleViewAction()->setIcon(QIcon(":/icons/chat.png"));
+	d->setupUi(this);
+	toggleViewAction()->setIcon(QIcon(":/icons/chat.png"));
 
-	pSounds = new IRCSounds();
-	pSounds->loadFromConfig();
+	d->pSounds.loadFromConfig();
 
 	setupToolbar();
 
-	connect(tabWidget, SIGNAL( currentChanged(int) ),
+	connect(d->tabWidget, SIGNAL( currentChanged(int) ),
 		SLOT( tabCurrentChanged(int) ));
 
-	connect(tabWidget, SIGNAL( tabCloseRequested(int) ),
+	connect(d->tabWidget, SIGNAL( tabCloseRequested(int) ),
 		SLOT( tabCloseRequestedSlot(int) ));
 }
 
 IRCDock::~IRCDock()
 {
-	delete pSounds;
+	delete d;
 }
 
 IRCDockTabContents* IRCDock::addIRCAdapter(IRCAdapterBase* pIRCAdapter)
@@ -68,7 +76,7 @@ IRCDockTabContents* IRCDock::addIRCAdapter(IRCAdapterBase* pIRCAdapter)
 		SLOT(titleChangeWithColorOfSenderIfNotFocused()));
 
 	pNewAdapterWidget->setIRCAdapter(pIRCAdapter);
-	tabWidget->addTab(pNewAdapterWidget, pNewAdapterWidget->icon(), pNewAdapterWidget->title());
+	d->tabWidget->addTab(pNewAdapterWidget, pNewAdapterWidget->icon(), pNewAdapterWidget->title());
 	this->titleChange(pNewAdapterWidget);
 
 	return pNewAdapterWidget;
@@ -76,16 +84,16 @@ IRCDockTabContents* IRCDock::addIRCAdapter(IRCAdapterBase* pIRCAdapter)
 
 void IRCDock::applyAppearanceSettings()
 {
-	for (int i = 0; i < tabWidget->count(); ++i)
+	for (int i = 0; i < d->tabWidget->count(); ++i)
 	{
-		IRCDockTabContents* pWidget = (IRCDockTabContents*)tabWidget->widget(i);
+		IRCDockTabContents* pWidget = (IRCDockTabContents*)d->tabWidget->widget(i);
 		pWidget->applyAppearanceSettings();
 	}
 }
 
 void IRCDock::chatWindowCloseRequestSlot(IRCDockTabContents* pCaller)
 {
-	int tabIndex = tabWidget->indexOf(pCaller);
+	int tabIndex = d->tabWidget->indexOf(pCaller);
 	if (tabIndex >= 0)
 	{
 		tabCloseRequestedSlot(tabIndex);
@@ -113,12 +121,12 @@ void IRCDock::connectToNewNetwork(IRCNetworkConnectionInfo& connectionInfo, bool
 
 bool IRCDock::hasTabFocus(const IRCDockTabContents* pTab) const
 {
-	return (this->tabWidget->currentWidget() == pTab);
+	return (this->d->tabWidget->currentWidget() == pTab);
 }
 
 IRCNetworkAdapter* IRCDock::networkWithUiFocus()
 {
-	IRCDockTabContents* pWidget = (IRCDockTabContents*)tabWidget->currentWidget();
+	IRCDockTabContents* pWidget = (IRCDockTabContents*)d->tabWidget->currentWidget();
 	if (pWidget == NULL)
 	{
 		return NULL;
@@ -165,25 +173,25 @@ void IRCDock::setupToolbar()
 	pToolBar->setMovable(false);
 	pToolBar->setOrientation(Qt::Vertical);
 
-	toolBarConnect = new QAction(QIcon(":/icons/network-connect-3.png"), tr("Connect"), pToolBar);
-	toolBarOpenChatWindow = new QAction(QIcon(":/icons/irc_channel.png"), tr("Open chat window"), pToolBar);
+	d->toolBarConnect = new QAction(QIcon(":/icons/network-connect-3.png"), tr("Connect"), pToolBar);
+	d->toolBarOpenChatWindow = new QAction(QIcon(":/icons/irc_channel.png"), tr("Open chat window"), pToolBar);
 
-	pToolBar->addAction(toolBarConnect);
-	pToolBar->addAction(toolBarOpenChatWindow);
+	pToolBar->addAction(d->toolBarConnect);
+	pToolBar->addAction(d->toolBarOpenChatWindow);
 
-	horizontalLayout->insertWidget(0, pToolBar);
-	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( toolBarAction(QAction*) ) );
+	d->horizontalLayout->insertWidget(0, pToolBar);
+	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( d->toolBarAction(QAction*) ) );
 }
 
 IRCSounds& IRCDock::sounds()
 {
-	return *pSounds;
+	return d->pSounds;
 }
 
 void IRCDock::tabCloseRequestedSlot(int index)
 {
-	QWidget* pPageWidget = tabWidget->widget(index);
-	tabWidget->removeTab(index);
+	QWidget* pPageWidget = d->tabWidget->widget(index);
+	d->tabWidget->removeTab(index);
 
 	delete pPageWidget;
 }
@@ -192,49 +200,49 @@ void IRCDock::tabCurrentChanged(int index)
 {
 	if (index >= 0)
 	{
-		tabWidget->tabBarPublic()->setTabTextColor(index, "");
-		IRCDockTabContents* pTab = (IRCDockTabContents*) tabWidget->widget(index);
+		d->tabWidget->tabBarPublic()->setTabTextColor(index, "");
+		IRCDockTabContents* pTab = (IRCDockTabContents*) d->tabWidget->widget(index);
 		pTab->grabFocus();
 	}
 }
 
 void IRCDock::tabFocusRequest(IRCDockTabContents* pCaller)
 {
-	tabWidget->setCurrentWidget(pCaller);
+	d->tabWidget->setCurrentWidget(pCaller);
 }
 
 IRCDockTabContents *IRCDock::tabWithFocus()
 {
-	if (tabWidget->currentWidget() != NULL)
+	if (d->tabWidget->currentWidget() != NULL)
 	{
-		return static_cast<IRCDockTabContents*>(tabWidget->currentWidget());
+		return static_cast<IRCDockTabContents*>(d->tabWidget->currentWidget());
 	}
 	return NULL;
 }
 
 void IRCDock::titleChange(IRCDockTabContents* caller)
 {
-	int tabIndex = tabWidget->indexOf(caller);
+	int tabIndex = d->tabWidget->indexOf(caller);
 	if (tabIndex >= 0)
 	{
-		tabWidget->setTabText(tabIndex, caller->title());
+		d->tabWidget->setTabText(tabIndex, caller->title());
 	}
 }
 
 void IRCDock::titleChangeWithColorOfSenderIfNotFocused()
 {
 	IRCDockTabContents* caller = static_cast<IRCDockTabContents*>(sender());
-	int tabIndex = tabWidget->indexOf(caller);
+	int tabIndex = d->tabWidget->indexOf(caller);
 	if (tabIndex >= 0)
 	{
-		tabWidget->setTabText(tabIndex, caller->title());
-		tabWidget->tabBarPublic()->setTabTextColor(tabIndex, caller->titleColor());
+		d->tabWidget->setTabText(tabIndex, caller->title());
+		d->tabWidget->tabBarPublic()->setTabTextColor(tabIndex, caller->titleColor());
 	}
 }
 
 void IRCDock::toolBarAction(QAction* pAction)
 {
-	if (pAction == toolBarConnect)
+	if (pAction == d->toolBarConnect)
 	{
 		IRCNetworkSelectionBox networkSelection(this);
 		if (networkSelection.exec() == QDialog::Accepted)
@@ -252,7 +260,7 @@ void IRCDock::toolBarAction(QAction* pAction)
 			connectToNewNetwork(connectionInfo, true);
 		}
 	}
-	else if (pAction == toolBarOpenChatWindow)
+	else if (pAction == d->toolBarOpenChatWindow)
 	{
 		IRCNetworkAdapter* pNetwork = networkWithUiFocus();
 		if (pNetwork == NULL)

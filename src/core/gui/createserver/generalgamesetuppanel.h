@@ -23,7 +23,6 @@
 #ifndef idb76a672e_9f54_4dbc_a933_33ea083e8f11
 #define idb76a672e_9f54_4dbc_a933_33ea083e8f11
 
-#include "ui_generalgamesetuppanel.h"
 #include <QWidget>
 
 class EnginePlugin;
@@ -33,7 +32,7 @@ class Ini;
 class Message;
 class Server;
 
-class GeneralGameSetupPanel : public QWidget, private Ui::GeneralGameSetupPanel
+class GeneralGameSetupPanel : public QWidget
 {
 Q_OBJECT
 

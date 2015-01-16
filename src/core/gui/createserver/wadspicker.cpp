@@ -21,16 +21,27 @@
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "wadspicker.h"
+#include "ui_wadspicker.h"
 
 #include "configuration/doomseekerconfig.h"
 #include "gui/commongui.h"
 #include <QFileDialog>
 #include <QStandardItemModel>
 
+class WadsPicker::PrivData : public Ui::WadsPicker
+{
+};
+
 WadsPicker::WadsPicker(QWidget *parent)
 {
-	setupUi(this);
-	lstAdditionalFiles->setModel(new QStandardItemModel(this));
+	d = new PrivData;
+	d->setupUi(this);
+	d->lstAdditionalFiles->setModel(new QStandardItemModel(this));
+}
+
+WadsPicker::~WadsPicker()
+{
+	delete d;
 }
 
 void WadsPicker::addWadPath(const QString &wadPath)
@@ -45,7 +56,7 @@ void WadsPicker::addWadPath(const QString &wadPath)
 		return;
 	}
 
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(lstAdditionalFiles->model());
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(d->lstAdditionalFiles->model());
 
 	// Check if this path exists already, if so - do nothing.
 	for(int i = 0; i < model->rowCount(); ++i)
@@ -97,7 +108,7 @@ void WadsPicker::browseAndAdd()
 
 QStringList WadsPicker::filePaths() const
 {
-	return CommonGUI::listViewStandardItemsToStringList(lstAdditionalFiles);
+	return CommonGUI::listViewStandardItemsToStringList(d->lstAdditionalFiles);
 }
 
 void WadsPicker::setFilePaths(const QStringList &paths)
@@ -111,12 +122,12 @@ void WadsPicker::setFilePaths(const QStringList &paths)
 
 void WadsPicker::removeAll()
 {
-	QStandardItemModel* pModel = (QStandardItemModel*)lstAdditionalFiles->model();
+	QStandardItemModel* pModel = (QStandardItemModel*)d->lstAdditionalFiles->model();
 	pModel->clear();
 }
 
 void WadsPicker::removeSelected()
 {
 	const bool bSelectNextLowest = true;
-	CommonGUI::removeSelectedRowsFromStandardItemView(lstAdditionalFiles, bSelectNextLowest);
+	CommonGUI::removeSelectedRowsFromStandardItemView(d->lstAdditionalFiles, bSelectNextLowest);
 }
