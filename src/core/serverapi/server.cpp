@@ -184,6 +184,11 @@ void Server::addWad(const QString& wad)
 	d->wads << wad;
 }
 
+void Server::addWad(const PWad& wad)
+{
+	d->wads << wad;
+}
+
 const QHostAddress& Server::address() const
 {
 	return d->address;

@@ -267,7 +267,7 @@ void GameClientRunner::addPwads()
 		{
 			markPwadAsMissing(d->server->wad(i).name());
 		}
-		else
+		else if (!pwad.isEmpty()) // Don't -file missing optional wads
 		{
 			args() << argForPwadLoading() << pwad;
 		}

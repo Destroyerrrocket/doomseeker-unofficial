@@ -562,6 +562,28 @@ Server::Response ZandronumServer::readRequest(const QByteArray &data)
 		setSecure(in.readQUInt8() != 0);
 	}
 
+	if((flags & SQF_OPTIONAL_WADS) == SQF_OPTIONAL_WADS)
+	{
+		flags ^= SQF_OPTIONAL_WADS;
+
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		unsigned int numOpts = in.readQUInt8();
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(numOpts);
+
+		QList<PWad> pwads = wads();
+		while(numOpts--)
+		{
+			unsigned int index = in.readQInt8();
+			if(index < pwads.size())
+				pwads.replace(index, PWad(pwads[index].name(), true));
+		}
+
+		// Send revised list of wads to actual server object.
+		clearWads();
+		foreach(const PWad &wad, pwads)
+			addWad(wad);
+	}
+
 	return RESPONSE_GOOD;
 }
 
