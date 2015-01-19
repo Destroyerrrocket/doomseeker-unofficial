@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "refresher.h"
 
+#include "configuration/queryspeed.h"
 #include "refresher/canrefreshserver.h"
 #include "serverapi/masterclient.h"
 #include "serverapi/mastermanager.h"
@@ -347,7 +348,7 @@ void Refresher::sendServerQueries()
 		// Call self. This will continue until there's nothing more
 		// to refresh. Also make sure that there is at least some
 		// delay between calls or Doomseeker will hog CPU.
-		QTimer::singleShot(qMax(1U, gConfig.doomseeker.queryInterval),
+		QTimer::singleShot(qMax(1, gConfig.doomseeker.querySpeed().intervalBetweenServers),
 			this, SLOT(sendServerQueries()));
 	}
 	else

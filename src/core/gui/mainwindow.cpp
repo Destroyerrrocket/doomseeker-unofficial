@@ -21,6 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "configuration/doomseekerconfig.h"
+#include "configuration/queryspeed.h"
 #include "gui/configuration/irc/ircconfigurationdialog.h"
 #include "gui/configuration/doomseekerconfigurationdialog.h"
 #include "gui/helpers/playersdiagram.h"
@@ -617,7 +618,7 @@ void MainWindow::finishConfiguration(DoomseekerConfigurationDialog &configDialog
 {
 	// In case the master server addresses changed, notify the master clients.
 	updateMasterAddresses();
-	gRefresher->setDelayBetweenResends(gConfig.doomseeker.queryTimeout);
+	gRefresher->setDelayBetweenResends(gConfig.doomseeker.querySpeed().delayBetweenSingleServerAttempts);
 
 	// If appearance changed - update the widgets.
 	if (configDialog.appearanceChanged())

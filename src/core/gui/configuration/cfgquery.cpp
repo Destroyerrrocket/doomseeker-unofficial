@@ -23,9 +23,26 @@
 #include "cfgquery.h"
 #include "ui_cfgquery.h"
 #include "configuration/doomseekerconfig.h"
+#include "configuration/queryspeed.h"
 
 class CFGQuery::PrivData : public Ui::CFGQuery
 {
+public:
+	void setQuerySpeed(const QuerySpeed &speed)
+	{
+		triesBox->setValue(speed.attemptsPerServer);
+		timeoutBox->setValue(speed.delayBetweenSingleServerAttempts);
+		queryIntervalBox->setValue(speed.intervalBetweenServers);
+	}
+	
+	QuerySpeed querySpeed() const
+	{
+		QuerySpeed speed;
+		speed.attemptsPerServer = triesBox->value();
+		speed.delayBetweenSingleServerAttempts = timeoutBox->value();
+		speed.intervalBetweenServers = queryIntervalBox->value();
+		return speed;
+	}
 };
 
 CFGQuery::CFGQuery(QWidget *parent)
@@ -44,22 +61,33 @@ void CFGQuery::readSettings()
 {
 	d->queryBeforeLaunch->setChecked(gConfig.doomseeker.bQueryBeforeLaunch);
 	d->queryOnStartup->setChecked(gConfig.doomseeker.bQueryOnStartup);
-	d->triesBox->setValue(gConfig.doomseeker.queryTries);
-	d->timeoutBox->setValue(gConfig.doomseeker.queryTimeout);
 	d->grbServerAutoRefresh->setChecked(gConfig.doomseeker.bQueryAutoRefreshEnabled);
 	d->numAutoRefreshEverySeconds->setValue(gConfig.doomseeker.queryAutoRefreshEverySeconds);
 	d->cbDontRefreshIfActive->setChecked(gConfig.doomseeker.bQueryAutoRefreshDontIfActive);
-	d->queryIntervalBox->setValue(gConfig.doomseeker.queryInterval);
+	d->setQuerySpeed(gConfig.doomseeker.querySpeed());
 }
 
 void CFGQuery::saveSettings()
 {
 	gConfig.doomseeker.bQueryBeforeLaunch = d->queryBeforeLaunch->isChecked();
 	gConfig.doomseeker.bQueryOnStartup = d->queryOnStartup->isChecked();
-	gConfig.doomseeker.queryTries = d->triesBox->value();
-	gConfig.doomseeker.queryTimeout = d->timeoutBox->value();
 	gConfig.doomseeker.bQueryAutoRefreshEnabled = d->grbServerAutoRefresh->isChecked();
 	gConfig.doomseeker.queryAutoRefreshEverySeconds = d->numAutoRefreshEverySeconds->value();
 	gConfig.doomseeker.bQueryAutoRefreshDontIfActive = d->cbDontRefreshIfActive->isChecked();
-	gConfig.doomseeker.queryInterval = d->queryIntervalBox->value();
+	gConfig.doomseeker.setQuerySpeed(d->querySpeed());
+}
+
+void CFGQuery::setCautiousQueryPreset()
+{
+	d->setQuerySpeed(QuerySpeed::cautious());
+}
+
+void CFGQuery::setModerateQueryPreset()
+{
+	d->setQuerySpeed(QuerySpeed::moderate());
+}
+
+void CFGQuery::setAggressiveQueryPreset()
+{
+	d->setQuerySpeed(QuerySpeed::aggressive());
 }

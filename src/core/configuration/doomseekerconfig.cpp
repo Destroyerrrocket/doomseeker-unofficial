@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "doomseekerconfig.h"
 
+#include "configuration/queryspeed.h"
 #include "gui/models/serverlistproxymodel.h"
 #include "ini/ini.h"
 #include "ini/inisection.h"
@@ -209,6 +210,7 @@ class DoomseekerConfig::DoomseekerCfg::PrivData
 {
 	public:
 		IniSection section;
+		QuerySpeed querySpeed;
 };
 
 const QString DoomseekerConfig::DoomseekerCfg::SECTION_NAME = "Doomseeker";
@@ -242,9 +244,7 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->mainWindowX = 0xffff;
 	this->mainWindowY = 0xffff;
 	this->queryAutoRefreshEverySeconds = 180;
-	this->queryInterval = 50;
-	this->queryTimeout = 1000;
-	this->queryTries = 3;
+	setQuerySpeed(QuerySpeed::moderate());
 	this->previousCreateServerConfigDir = "";
 	this->previousCreateServerExecDir = "";
 	this->previousCreateServerWadDir = "";
@@ -342,9 +342,9 @@ void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 	section.createSetting("IP2CMaximumAge", this->ip2CountryDatabaseMaximumAge);
 	section.createSetting("IP2CUrl", this->ip2CountryUrl);
 	section.createSetting("QueryAutoRefreshEverySeconds", this->queryAutoRefreshEverySeconds);
-	section.createSetting("QueryBatchDelay", this->queryInterval);
-	section.createSetting("QueryTimeout", this->queryTimeout);
-	section.createSetting("QueryTries", this->queryTries);
+	section.createSetting("QueryBatchDelay", this->querySpeed().intervalBetweenServers);
+	section.createSetting("QueryTimeout", this->querySpeed().delayBetweenSingleServerAttempts);
+	section.createSetting("QueryTries", this->querySpeed().attemptsPerServer);
 	section.createSetting("SlotStyle", this->slotStyle);
 	section.createSetting("ServerListSortIndex", this->serverListSortIndex);
 	section.createSetting("ServerListSortDirection", this->serverListSortDirection);
@@ -389,9 +389,9 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->mainWindowX = section["MainWindowX"];
 	this->mainWindowY = section["MainWindowY"];
 	this->queryAutoRefreshEverySeconds = section["QueryAutoRefreshEverySeconds"];
-	this->queryInterval = section["QueryBatchDelay"];
-	this->queryTimeout = section["QueryTimeout"];
-	this->queryTries = section["QueryTries"];
+	d->querySpeed.intervalBetweenServers = section["QueryBatchDelay"];
+	d->querySpeed.delayBetweenSingleServerAttempts = section["QueryTimeout"];
+	d->querySpeed.attemptsPerServer = section["QueryTries"];
 	this->previousCreateServerConfigDir = (const QString &)section["PreviousCreateServerConfigDir"];
 	this->previousCreateServerExecDir = (const QString &)section["PreviousCreateServerExecDir"];
 	this->previousCreateServerWadDir = (const QString &)section["PreviousCreateServerWadDir"];
@@ -460,9 +460,9 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["MainWindowX"] = this->mainWindowX;
 	section["MainWindowY"] = this->mainWindowY;
 	section["QueryAutoRefreshEverySeconds"] = this->queryAutoRefreshEverySeconds;
-	section["QueryBatchDelay"] = this->queryInterval;
-	section["QueryTimeout"] = this->queryTimeout;
-	section["QueryTries"] = this->queryTries;
+	section["QueryBatchDelay"] = this->querySpeed().intervalBetweenServers;
+	section["QueryTimeout"] = this->querySpeed().delayBetweenSingleServerAttempts;
+	section["QueryTries"] = this->querySpeed().attemptsPerServer;
 	section["PreviousCreateServerConfigDir"] = this->previousCreateServerConfigDir;
 	section["PreviousCreateServerExecDir"] = this->previousCreateServerExecDir;
 	section["PreviousCreateServerWadDir"] = this->previousCreateServerWadDir;
@@ -494,6 +494,16 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	// Buddies lists
 	QString buddiesList = BuddyInfo::createConfigEntry(this->buddiesList);
 	section["BuddiesList"] = buddiesList;
+}
+
+const QuerySpeed &DoomseekerConfig::DoomseekerCfg::querySpeed() const
+{
+	return d->querySpeed;
+}
+
+void DoomseekerConfig::DoomseekerCfg::setQuerySpeed(const QuerySpeed &val)
+{
+	d->querySpeed = val;
 }
 
 QList<FileAlias> DoomseekerConfig::DoomseekerCfg::wadAliases()

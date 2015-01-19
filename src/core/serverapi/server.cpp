@@ -24,6 +24,7 @@
 
 #include "log.h"
 #include "configuration/doomseekerconfig.h"
+#include "configuration/queryspeed.h"
 #include "pathfinder/pathfinder.h"
 #include "plugins/engineplugin.h"
 #include "strings.h"
@@ -479,7 +480,7 @@ void Server::refreshStarts()
 	d->bIsRefreshing = true;
 
 	emit begunRefreshing(ServerPtr(self()));
-	d->triesLeft = gConfig.doomseeker.queryTries;
+	d->triesLeft = gConfig.doomseeker.querySpeed().attemptsPerServer;
 	if (d->triesLeft > 10) // Limit the maximum number of tries
 	{
 		d->triesLeft = 10;

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// cfgquery.h
+// queryspeed.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,38 +18,21 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#ifndef idC8DC23B5_9EE8_4248_A438B00780F217CA
+#define idC8DC23B5_9EE8_4248_A438B00780F217CA
 
-#ifndef __CFG_QUERY_H__
-#define __CFG_QUERY_H__
-
-#include "gui/configuration/configurationbasebox.h"
-#include <QIcon>
-
-class CFGQuery : public ConfigurationBaseBox
+class QuerySpeed
 {
-	Q_OBJECT
+public:
+	static QuerySpeed cautious();
+	static QuerySpeed moderate();
+	static QuerySpeed aggressive();
 
-	public:
-		CFGQuery(QWidget *parent=NULL);
-		~CFGQuery();
-
-		QIcon icon() const { return QIcon(":/icons/view-refresh-2.png"); }
-		QString name() const { return tr("Query"); }
-		void readSettings();
-
-	protected:
-		void saveSettings();
-
-	private:
-		class PrivData;
-		PrivData *d;
-
-	private slots:
-		void setCautiousQueryPreset();
-		void setModerateQueryPreset();
-		void setAggressiveQueryPreset();
+	int attemptsPerServer;
+	int delayBetweenSingleServerAttempts;
+	int intervalBetweenServers;
 };
 
-#endif /* __CFG_QUERY_H__ */
+#endif

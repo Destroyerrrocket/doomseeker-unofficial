@@ -235,6 +235,7 @@ qt4_add_resources(doomseekerResources
 set(SOURCE_FILES
 	configuration/doomseekerconfig.cpp
 	configuration/passwordscfg.cpp
+	configuration/queryspeed.cpp
 	configuration/serverpassword.cpp
 	configuration/serverpasswordsummary.cpp
 	gui/configuration/irc/cfgircappearance.cpp
@@ -434,6 +435,7 @@ set(HEADER_FILES
 	${DOOMSEEKER_QT_FILES}
 	configuration/doomseekerconfig.h
 	configuration/passwordscfg.h
+	configuration/queryspeed.h
 	configuration/serverpassword.h
 	configuration/serverpasswordsummary.h
 	gui/entity/serverlistfilterinfo.h

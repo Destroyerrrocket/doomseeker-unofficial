@@ -39,6 +39,7 @@ class Ini;
 class EnginePlugin;
 class FileAlias;
 class FileSearchPath;
+class QuerySpeed;
 class SettingsProviderQt;
 
 /**
@@ -86,9 +87,6 @@ class DoomseekerConfig
 			int mainWindowX;
 			int mainWindowY;
 			unsigned queryAutoRefreshEverySeconds;
-			unsigned queryInterval;
-			unsigned queryTimeout;
-			unsigned queryTries;
 			QString previousCreateServerConfigDir;
 			QString previousCreateServerExecDir;
 			QString previousCreateServerWadDir;
@@ -111,6 +109,9 @@ class DoomseekerConfig
 
 			QList<ColumnSort> additionalSortColumns() const;
 			void setAdditionalSortColumns(const QList<ColumnSort> &val);
+
+			const QuerySpeed &querySpeed() const;
+			void setQuerySpeed(const QuerySpeed &val);
 
 			QList<FileAlias> wadAliases();
 			void setWadAliases(const QList<FileAlias> &val);

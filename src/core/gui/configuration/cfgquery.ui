@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>436</width>
-    <height>300</height>
+    <height>397</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -108,88 +108,128 @@
      <property name="title">
       <string>Refresh speed</string>
      </property>
-     <layout class="QFormLayout" name="formLayout_3">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="toolTip">
-         <string>How many times Doomseeker will attempt to query each server before deeming it to be not responding.</string>
-        </property>
-        <property name="text">
-         <string>Number of attempts per server:</string>
-        </property>
-       </widget>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QFormLayout" name="formLayout_2">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="toolTip">
+           <string>How many times Doomseeker will attempt to query each server before deeming it to be not responding.</string>
+          </property>
+          <property name="text">
+           <string>Number of attempts per server:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QSpinBox" name="triesBox">
+          <property name="toolTip">
+           <string>How many times Doomseeker will attempt to query each server before deeming it to be not responding.</string>
+          </property>
+          <property name="minimum">
+           <number>3</number>
+          </property>
+          <property name="maximum">
+           <number>10</number>
+          </property>
+          <property name="singleStep">
+           <number>1</number>
+          </property>
+          <property name="value">
+           <number>7</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label">
+          <property name="toolTip">
+           <string>Delay in miliseconds between each query attempt.</string>
+          </property>
+          <property name="text">
+           <string>Delay between attemps (ms):</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QSpinBox" name="timeoutBox">
+          <property name="toolTip">
+           <string>Delay in miliseconds between each query attempt.</string>
+          </property>
+          <property name="minimum">
+           <number>500</number>
+          </property>
+          <property name="maximum">
+           <number>10000</number>
+          </property>
+          <property name="singleStep">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>1000</number>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>Interval between different servers (ms):</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QSpinBox" name="queryIntervalBox">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Delay to wait before Doomseeker will check if any free slots open up for server queries (1ms recommended). Number of slots is determined by the &amp;quot;Batch size&amp;quot; setting. Increasing this value may negatively affect the speed of server list refresh, but will free up CPU and decrease bandwidth usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>1000</number>
+          </property>
+          <property name="singleStep">
+           <number>10</number>
+          </property>
+          <property name="value">
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
-      <item row="0" column="1">
-       <widget class="QSpinBox" name="triesBox">
-        <property name="toolTip">
-         <string>How many times Doomseeker will attempt to query each server before deeming it to be not responding.</string>
-        </property>
-        <property name="minimum">
-         <number>3</number>
-        </property>
-        <property name="maximum">
-         <number>10</number>
-        </property>
-        <property name="singleStep">
-         <number>1</number>
-        </property>
-        <property name="value">
-         <number>7</number>
-        </property>
-       </widget>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QPushButton" name="pushButton">
+          <property name="text">
+           <string>Cautious</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_2">
+          <property name="text">
+           <string>Moderate</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_3">
+          <property name="text">
+           <string>Aggressive</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label">
-        <property name="toolTip">
-         <string>Delay in miliseconds between each query attempt.</string>
-        </property>
-        <property name="text">
-         <string>Delay between attemps (ms):</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QSpinBox" name="timeoutBox">
-        <property name="toolTip">
-         <string>Delay in miliseconds between each query attempt.</string>
-        </property>
-        <property name="minimum">
-         <number>500</number>
-        </property>
-        <property name="maximum">
-         <number>10000</number>
-        </property>
-        <property name="singleStep">
-         <number>100</number>
-        </property>
-        <property name="value">
-         <number>1000</number>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_7">
-        <property name="text">
-         <string>Interval between different servers (ms):</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QSpinBox" name="queryIntervalBox">
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Delay to wait before Doomseeker will check if any free slots open up for server queries (1ms recommended). Number of slots is determined by the &amp;quot;Batch size&amp;quot; setting. Increasing this value may negatively affect the speed of server list refresh, but will free up CPU and decrease bandwidth usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>1000</number>
-        </property>
-        <property name="singleStep">
-         <number>10</number>
-        </property>
-        <property name="value">
-         <number>1</number>
+      <item>
+       <widget class="QPlainTextEdit" name="plainTextEdit">
+        <property name="plainText">
+         <string>The three buttons change refresh speed settings to different values. Speed settings determine how long will it take to populate the server list and how accurate the refresh will be. Higher speed can mean lesser accuracy.
+
+If you're experiencing problems with refreshing servers, you might prefer &quot;Cautious&quot; preset, while &quot;Aggressive&quot; preset should be preferred with good connection quality.
+
+These values can be also modified by hand.</string>
         </property>
        </widget>
       </item>
@@ -212,5 +252,59 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CFGQuery</receiver>
+   <slot>setCautiousQueryPreset()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>68</x>
+     <y>249</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>6</x>
+     <y>394</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>CFGQuery</receiver>
+   <slot>setModerateQueryPreset()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>226</x>
+     <y>248</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>92</x>
+     <y>394</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>CFGQuery</receiver>
+   <slot>setAggressiveQueryPreset()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>372</x>
+     <y>243</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>337</x>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>setCautiousQueryPreset()</slot>
+  <slot>setModerateQueryPreset()</slot>
+  <slot>setAggressiveQueryPreset()</slot>
+ </slots>
 </ui>

@@ -33,6 +33,7 @@
 
 #include "configuration/doomseekerconfig.h"
 #include "configuration/passwordscfg.h"
+#include "configuration/queryspeed.h"
 #include "connectionhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/remoteconsole.h"
@@ -544,7 +545,7 @@ bool Main::interpretCommandLineParameters()
 void Main::setupRefreshingThread()
 {
 	gLog << tr("Starting refreshing thread.");
-	gRefresher->setDelayBetweenResends(gConfig.doomseeker.queryTimeout);
+	gRefresher->setDelayBetweenResends(gConfig.doomseeker.querySpeed().delayBetweenSingleServerAttempts);
 	gRefresher->start();
 }
 
