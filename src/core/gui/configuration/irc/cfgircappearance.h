@@ -23,15 +23,16 @@
 #ifndef __CFGIRCAPPEARANCE_H__
 #define __CFGIRCAPPEARANCE_H__
 
-#include "ui_cfgircappearance.h"
 #include "gui/configuration/configurationbasebox.h"
+#include <QIcon>
 
-class CFGIRCAppearance : public ConfigurationBaseBox, private Ui::CFGIRCAppearance
+class CFGIRCAppearance : public ConfigurationBaseBox
 {
 	Q_OBJECT
 
 	public:
 		CFGIRCAppearance(QWidget* parent = NULL);
+		~CFGIRCAppearance();
 
 		QIcon icon() const { return QIcon(":/icons/color-fill.png"); }
 		QString name() const { return tr("Appearance"); }
@@ -40,6 +41,10 @@ class CFGIRCAppearance : public ConfigurationBaseBox, private Ui::CFGIRCAppearan
 
 	protected:
 		void saveSettings();
+
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 #endif

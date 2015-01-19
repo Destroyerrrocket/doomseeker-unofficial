@@ -110,6 +110,10 @@ void GameHost::addDemoRecordIfApplicable()
 	}
 }
 
+void GameHost::addDMFlags_default()
+{
+}
+
 void GameHost::addExtra()
 {
 }

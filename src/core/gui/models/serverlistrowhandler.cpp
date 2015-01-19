@@ -25,6 +25,7 @@
 #include "serverlistmodel.h"
 #include "configuration/doomseekerconfig.h"
 #include "gui/helpers/playersdiagram.h"
+#include "gui/widgets/serverlistview.h"
 #include "gui/serverlist.h"
 #include "ip2c/ip2c.h"
 #include "serverapi/playerslist.h"

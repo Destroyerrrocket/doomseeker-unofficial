@@ -24,13 +24,11 @@
 #define __SERVERLISTPROXYMODEL_H__
 
 #include "serverapi/serverptr.h"
-#include <QModelIndex>
 #include <QSortFilterProxyModel>
 
 class ServerListFilterInfo;
 class ServerListHandler;
 class Server;
-
 
 class ColumnSort
 {

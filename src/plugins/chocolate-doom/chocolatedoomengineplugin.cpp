@@ -42,10 +42,10 @@ ChocolateDoomEnginePlugin::ChocolateDoomEnginePlugin()
 
 		EP_DefaultMaster, "master.chocolate-doom.org:2342",
 		EP_DefaultServerPort, 2342,
-		EP_GameModes, ChocolateDoomGameInfo::gameModes(),
 		EP_HasMasterServer,
 		EP_Done
 	);
+	setGameModes(ChocolateDoomGameInfo::gameModes());
 }
 
 GameHost* ChocolateDoomEnginePlugin::gameHost()

@@ -24,12 +24,7 @@
 #define __SERVER_LIST_MODEL_H_
 
 #include "serverapi/serverptr.h"
-#include <QHostAddress>
-#include <QSortFilterProxyModel>
-#include <QStandardItem>
 #include <QStandardItemModel>
-#include <QString>
-#include <QPixmap>
 
 class Server;
 class ServerListSortFilterProxyModel;

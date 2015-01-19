@@ -24,7 +24,7 @@
 
 #include "chocolatedoomgameinfo.h"
 #include "chocolatedoomserver.h"
-#include "gui/createserverdialog.h"
+#include <serverapi/createserverdialogapi.h>
 #include "serverapi/playerslist.h"
 
 ChocolateDoomGameClientRunner::ChocolateDoomGameClientRunner(
@@ -38,16 +38,16 @@ ChocolateDoomGameClientRunner::ChocolateDoomGameClientRunner(
 void ChocolateDoomGameClientRunner::createCommandLineArguments()
 {
 	QString tmp;
-	CreateServerDialog *csd = new CreateServerDialog();
-	csd->setAttribute(Qt::WA_DeleteOnClose, false);
-	csd->makeSetupServerDialog(plugin());
+	CreateServerDialogApi *csd = CreateServerDialogApi::createNew(NULL);
+	csd->dialog()->setAttribute(Qt::WA_DeleteOnClose, false);
+	csd->makeRemoteGameSetup(plugin());
 	if (server->players().size() > 0)
 	{
 		csd->setIwadByName(server->iwad());
 	}
-	if(csd->exec() == QDialog::Accepted)
+	if(csd->dialog()->exec() == QDialog::Accepted)
 	{
-		csd->commandLineArguments(tmp, args());
+		csd->fillInCommandLineArguments(tmp, args());
 		delete csd;
 		addGamePaths();
 		addConnectCommand();

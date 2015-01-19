@@ -23,16 +23,18 @@
 #ifndef __WADSEEKERCONFIG_SITES_H_
 #define __WADSEEKERCONFIG_SITES_H_
 
-#include "ui_cfgwadseekersites.h"
 #include "gui/configuration/configurationbasebox.h"
-#include <QKeyEvent>
+#include <QIcon>
 
-class CFGWadseekerSites : public ConfigurationBaseBox, private Ui::CFGWadseekerSites
+class QUrl;
+
+class CFGWadseekerSites : public ConfigurationBaseBox
 {
 	Q_OBJECT
 
 	public:
 		CFGWadseekerSites(QWidget* parent = NULL);
+		~CFGWadseekerSites();
 
 		QIcon icon() const { return QIcon(":/icons/emblem-web.png"); }
 		QString name() const { return tr("Sites"); }
@@ -47,6 +49,10 @@ class CFGWadseekerSites : public ConfigurationBaseBox, private Ui::CFGWadseekerS
 	protected:
 		void saveSettings();
 		void insertUrl(const QUrl& url);
+
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 #endif

@@ -118,6 +118,7 @@ class MAIN_EXPORT GameHost : public QObject
 		 */
 		void addDMFlags();
 		POLYMORPHIC_SETTER_DECLARE(void, GameHost, addDMFlags, ());
+		void addDMFlags_default();
 
 		/**
 		 * @brief Creates engine specific command line parameters out of
@@ -132,9 +133,11 @@ class MAIN_EXPORT GameHost : public QObject
 
 		void addIwad();
 		POLYMORPHIC_SETTER_DECLARE(void, GameHost, addIwad, ());
+		void addIwad_default();
 
 		void addPwads();
 		POLYMORPHIC_SETTER_DECLARE(void, GameHost, addPwads, ());
+		void addPwads_default();
 
 		virtual void createCommandLineArguments();
 
@@ -162,9 +165,6 @@ class MAIN_EXPORT GameHost : public QObject
 
 		Q_DISABLE_COPY(GameHost);
 
-		void addIwad_default();
-		void addPwads_default();
-		void addDMFlags_default() {};
 		void addDemoPlaybackIfApplicable();
 		void addDemoRecordIfApplicable();
 		void saveDemoMetaData();

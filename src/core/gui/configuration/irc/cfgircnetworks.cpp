@@ -21,30 +21,39 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "cfgircnetworks.h"
+#include "ui_cfgircnetworks.h"
 #include "gui/configuration/irc/cfgircdefinenetworkdialog.h"
 #include "irc/configuration/chatnetworkscfg.h"
+#include "irc/entities/ircnetworkentity.h"
 #include "irc/chatlogs.h"
 #include "qtmetapointer.h"
 #include <QItemDelegate>
 #include <QStandardItemModel>
 
+class CFGIRCNetworks::PrivData : public Ui::CFGIRCNetworks
+{
+};
+
 CFGIRCNetworks::CFGIRCNetworks(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
 
-	connect(btnAdd, SIGNAL( clicked() ), this, SLOT( addButtonClicked() ) );
-	connect(btnEdit, SIGNAL( clicked() ), this, SLOT( editButtonClicked() ) );
-	connect(btnRemove, SIGNAL( clicked() ), this, SLOT( removeButtonClicked() ) );
-	connect(gridNetworks, SIGNAL( doubleClicked(const QModelIndex&) ), SLOT( tableDoubleClicked(const QModelIndex&) ) );
+	connect(d->btnAdd, SIGNAL( clicked() ), this, SLOT( addButtonClicked() ) );
+	connect(d->btnEdit, SIGNAL( clicked() ), this, SLOT( editButtonClicked() ) );
+	connect(d->btnRemove, SIGNAL( clicked() ), this, SLOT( removeButtonClicked() ) );
+	connect(d->gridNetworks, SIGNAL( doubleClicked(const QModelIndex&) ), SLOT( tableDoubleClicked(const QModelIndex&) ) );
 
 	// Crash prevention measure.
-	gridNetworks->setModel(new QStandardItemModel(this));
+	d->gridNetworks->setModel(new QStandardItemModel(this));
 }
 
 CFGIRCNetworks::~CFGIRCNetworks()
 {
 	cleanUpTable();
+
+	delete d;
 }
 
 void CFGIRCNetworks::addButtonClicked()
@@ -63,14 +72,14 @@ void CFGIRCNetworks::addButtonClicked()
 
 void CFGIRCNetworks::addRecord(IRCNetworkEntity* pNetworkEntity)
 {
-	QStandardItemModel* pModel = (QStandardItemModel*)gridNetworks->model();
+	QStandardItemModel* pModel = (QStandardItemModel*)d->gridNetworks->model();
 	pModel->appendRow(generateTableRecord(pNetworkEntity));
 
-	this->gridNetworks->resizeRowsToContents();
+	this->d->gridNetworks->resizeRowsToContents();
 
-	if (this->gridNetworks->model()->rowCount() == 1)
+	if (this->d->gridNetworks->model()->rowCount() == 1)
 	{
-		this->gridNetworks->resizeColumnToContents(0);
+		this->d->gridNetworks->resizeColumnToContents(0);
 	}
 }
 
@@ -133,7 +142,7 @@ QList<QStandardItem*> CFGIRCNetworks::generateTableRecord(IRCNetworkEntity* pNet
 
 IRCNetworkEntity* CFGIRCNetworks::network(int row) const
 {
-	QStandardItemModel* pModel = (QStandardItemModel*)gridNetworks->model();
+	QStandardItemModel* pModel = (QStandardItemModel*)d->gridNetworks->model();
 	IRCNetworkEntity* pNetwork = obtainNetworkEntity(pModel->item(row));
 	pNetwork->setAutojoinNetwork((pModel->item(row, 0)->checkState() == Qt::Checked));
 
@@ -144,7 +153,7 @@ QVector<IRCNetworkEntity*> CFGIRCNetworks::networks()
 {
 	QVector<IRCNetworkEntity*> entityArray;
 
-	QStandardItemModel* pModel = (QStandardItemModel*)gridNetworks->model();
+	QStandardItemModel* pModel = (QStandardItemModel*)d->gridNetworks->model();
 	for (int i = 0; i < pModel->rowCount(); ++i)
 	{
 		IRCNetworkEntity* pEntity = this->network(i);
@@ -158,7 +167,7 @@ QVector<IRCNetworkEntity*> CFGIRCNetworks::networks()
 QList<IRCNetworkEntity> CFGIRCNetworks::networksAsQList() const
 {
 	QList<IRCNetworkEntity> result;
-	for (int row = 0; row < gridNetworks->model()->rowCount(); ++row)
+	for (int row = 0; row < d->gridNetworks->model()->rowCount(); ++row)
 	{
 		result << *network(row);
 	}
@@ -184,15 +193,15 @@ void CFGIRCNetworks::prepareTable()
 	labels << "" << tr("Description") << tr("Address");
 	pModel->setHorizontalHeaderLabels(labels);
 
-	gridNetworks->setModel(pModel);
+	d->gridNetworks->setModel(pModel);
 
-	gridNetworks->setColumnWidth(1, 180);
-	gridNetworks->setColumnWidth(2, 180);
+	d->gridNetworks->setColumnWidth(1, 180);
+	d->gridNetworks->setColumnWidth(2, 180);
 
-	gridNetworks->horizontalHeader()->setHighlightSections(false);
-	gridNetworks->horizontalHeader()->setResizeMode(0, QHeaderView::Fixed);
+	d->gridNetworks->horizontalHeader()->setHighlightSections(false);
+	d->gridNetworks->horizontalHeader()->setResizeMode(0, QHeaderView::Fixed);
 
-	gridNetworks->verticalHeader()->hide();
+	d->gridNetworks->verticalHeader()->hide();
 }
 
 void CFGIRCNetworks::readSettings()
@@ -216,7 +225,7 @@ void CFGIRCNetworks::removeButtonClicked()
 
 	if (row >= 0)
 	{
-		QStandardItemModel* pModel = (QStandardItemModel*)gridNetworks->model();
+		QStandardItemModel* pModel = (QStandardItemModel*)d->gridNetworks->model();
 		pModel->removeRow(row);
 	}
 }
@@ -233,8 +242,8 @@ void CFGIRCNetworks::saveSettings()
 
 IRCNetworkEntity* CFGIRCNetworks::selectedNetwork()
 {
-	QStandardItemModel* pModel = (QStandardItemModel*)gridNetworks->model();
-	QItemSelectionModel* pSelectionModel = gridNetworks->selectionModel();
+	QStandardItemModel* pModel = (QStandardItemModel*)d->gridNetworks->model();
+	QItemSelectionModel* pSelectionModel = d->gridNetworks->selectionModel();
 	QModelIndexList indexList = pSelectionModel->selectedRows();
 
 	if (!indexList.empty())
@@ -248,8 +257,8 @@ IRCNetworkEntity* CFGIRCNetworks::selectedNetwork()
 
 int CFGIRCNetworks::selectedRow()
 {
-	QStandardItemModel* pModel = (QStandardItemModel*)gridNetworks->model();
-	QItemSelectionModel* pSelectionModel = gridNetworks->selectionModel();
+	QStandardItemModel* pModel = (QStandardItemModel*)d->gridNetworks->model();
+	QItemSelectionModel* pSelectionModel = d->gridNetworks->selectionModel();
 	QModelIndexList indexList = pSelectionModel->selectedRows();
 
 	if (!indexList.empty())
@@ -267,7 +276,7 @@ void CFGIRCNetworks::tableDoubleClicked(const QModelIndex& index)
 
 void CFGIRCNetworks::updateRecord(int row)
 {
-	QStandardItemModel* pModel = (QStandardItemModel*)gridNetworks->model();
+	QStandardItemModel* pModel = (QStandardItemModel*)d->gridNetworks->model();
 	QStandardItem* pItemDescription = pModel->item(row, 1);
 
 	IRCNetworkEntity* pNetwork = this->network(row);
@@ -277,5 +286,5 @@ void CFGIRCNetworks::updateRecord(int row)
 	QStandardItem* pItemAddress = pModel->item(row, 2);
 	pItemAddress->setText(QString("%1:%2").arg(pNetwork->address()).arg(pNetwork->port()));
 
-	this->gridNetworks->resizeRowsToContents();
+	this->d->gridNetworks->resizeRowsToContents();
 }

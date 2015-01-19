@@ -24,11 +24,10 @@
 #define id16362687_1562_4529_ac24_a94f29a52c9f
 
 #include <QDialog>
-#include "ui_ircignoresmanager.h"
 
 class PatternList;
 
-class IRCIgnoresManager : public QDialog, private Ui::IRCIgnoresManager
+class IRCIgnoresManager : public QDialog
 {
 Q_OBJECT
 

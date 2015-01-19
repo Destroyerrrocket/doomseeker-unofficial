@@ -48,9 +48,9 @@ VavoomEnginePlugin::VavoomEnginePlugin()
 		EP_DefaultServerPort, 26000,
 		EP_HasMasterServer,
 		EP_DefaultMaster, "altdeath.com:26001",
-		EP_GameModes, VavoomGameInfo::gameModes(),
 		EP_Done
 	);
+	setGameModes(VavoomGameInfo::gameModes());
 }
 
 MasterClient *VavoomEnginePlugin::masterClient() const

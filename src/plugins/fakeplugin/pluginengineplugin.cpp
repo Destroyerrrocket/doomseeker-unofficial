@@ -26,6 +26,7 @@
 #include "responder/masterresponder.h"
 #include "responder/respondercfg.h"
 #include "pluginengineplugin.h"
+#include "plugingamehost.h"
 #include "pluginmasterclient.h"
 #include "pluginserver.h"
 #include <cassert>
@@ -56,12 +57,36 @@ PluginEnginePlugin::PluginEnginePlugin()
 
 	d = new PrivData();
 	d->masterResponder = NULL;
+
+	initDMFlags();
 }
 
 PluginEnginePlugin::~PluginEnginePlugin()
 {
 	delete d->masterResponder;
 	delete d;
+}
+
+void PluginEnginePlugin::initDMFlags()
+{
+	DMFlagsSection flags1("Flags 1");
+	flags1 << DMFlag("Flag1 0x1", 0x1);
+	flags1 << DMFlag("Flag1 0x8", 0x8);
+	flags1 << DMFlag("Flag1 0x10", 0x10);
+
+	DMFlagsSection flags2("Flags 2");
+	flags2 << DMFlag("Flag2 0x40", 0x40);
+	flags2 << DMFlag("Flag2 0x80", 0x80);
+	flags2 << DMFlag("Flag2 0x100", 0x100);
+
+	QList<DMFlagsSection> sections;
+	sections << flags1 << flags2;
+	setDMFlags(sections);
+}
+
+GameHost *PluginEnginePlugin::gameHost()
+{
+	return new PluginGameHost();
 }
 
 MasterClient *PluginEnginePlugin::masterClient() const

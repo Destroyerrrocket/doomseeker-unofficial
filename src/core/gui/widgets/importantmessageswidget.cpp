@@ -7,6 +7,8 @@
 
 #include <QDateTime>
 #include "ui_importantmessageswidget.h"
+#include <QLabel>
+#include <QVBoxLayout>
 
 class ImportantMessagesWidget::PrivData : public Ui::ImportantMessagesWidget
 {

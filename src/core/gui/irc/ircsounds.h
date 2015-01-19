@@ -24,7 +24,8 @@
 #define __IRCSOUNDS_H__
 
 #include <QMap>
-#include <QSound>
+
+class QSound;
 
 /**
  *	@brief Part of IRC UI package. Plays IRC related sounds.

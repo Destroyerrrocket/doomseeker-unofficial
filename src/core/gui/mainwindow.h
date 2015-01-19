@@ -24,64 +24,21 @@
 #ifndef __MAINWINDOW_H_
 #define __MAINWINDOW_H_
 
-#include "ui_mainwindow.h"
+#include "serverapi/serverptr.h"
 
-#include "gui/irc/ircdock.h"
-#include "gui/dockBuddiesList.h"
-#include "gui/logdock.h"
-#include "gui/serverlist.h"
-#include "gui/widgets/serversstatuswidget.h"
-#include "serverapi/mastermanager.h"
-#include "plugins/pluginloader.h"
-#include "apprunner.h"
-
-#include <QAction>
-#include <QProgressBar>
-#include <QString>
-#include <QStandardItem>
+#include <QMainWindow>
 #include <QSystemTrayIcon>
 
-class AutoUpdater;
-class ConnectionHandler;
 class DoomseekerConfigurationDialog;
 class IP2CLoader;
-class ServerDetailsDock;
-class ServerFilterDock;
-class ServersStatusWidget;
-class UpdateChannel;
+class MasterClient;
+class MasterManager;
+class Message;
+class QProgressBar;
+class QQueryMenuAction;
+class ServerListFilterInfo;
 
-/**
- *	@brief Menu action for Query Menu
- *
- *	Replaces the original QAction to make toggling of master clients easier.
- *	The constructor automatically connects the passed MasterClient's
- *	setEnabled() slot to this QQueryMenuAction toggled() signal.
- */
-class QQueryMenuAction : public QAction
-{
-	public:
-		QQueryMenuAction(MasterClient* mClient, ServersStatusWidget *statusWidget, QObject* parent = NULL)
-		:QAction(parent)
-		{
-			this->pClient = mClient;
-
-			if (mClient != NULL)
-			{
-				connect(this, SIGNAL( toggled(bool) ), mClient, SLOT( setEnabled(bool) ) );
-				connect(this, SIGNAL( toggled(bool) ), statusWidget, SLOT( setMasterEnabledStatus(bool) ) );
-			}
-		}
-
-		MasterClient* masterClient()
-		{
-			return pClient;
-		}
-
-	private:
-		MasterClient* pClient;
-};
-
-class MainWindow : public QMainWindow, private Ui::MainWindowWnd
+class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 
@@ -127,7 +84,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		 */
 		void setQueryMasterServerEnabled(MasterClient* pClient, bool bEnabled);
 
-		void stopAutoRefreshTimer() { autoRefreshTimer.stop(); }
+		void stopAutoRefreshTimer();
 
 		void updateMasterAddresses();
 
@@ -138,56 +95,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		friend class DoomseekerConfigurationDialog;
 
 		static const QString HELP_SITE_URL;
-
-		QApplication* application;
-		QTimer autoRefreshTimer;
-
-		AutoUpdater* autoUpdater;
-		QWidget* autoUpdaterStatusBarWidget;
-		QPushButton* autoUpdaterAbortButton;
-		QLabel* autoUpdaterLabel;
-		QProgressBar* autoUpdaterFileProgressBar;
-		QProgressBar* autoUpdaterOverallProgressBar;
-
-		/**
-		 *	Set to true by btnGetServers_click() process and to false
-		 *	when refreshing thread enters sleep mode.
-		 */
-		bool bTotalRefreshInProcess;
-
-		DockBuddiesList* buddiesList;
-
-		/**
-		 *	This is required so tray icon knows how to bring the window back.
-		 */
-		bool bWasMaximized;
-
-		/**
-		 *	If set to true the closeEvent() method will ignore tray icon
-		 *	settings and proceed to close the MainWindow. This is set by
-		 *	quitProgram() slot.
-		 */
-		bool bWantToQuit;
-
-		IP2CLoader* ip2cLoader;
-		QProgressBar* ip2cUpdateProgressBar;
-		IRCDock* ircDock;
-		LogDock* logDock;
-		ServerDetailsDock* detailsDock;
-		ServerFilterDock* serverFilterDock;
-		ServerListHandler* serverTableHandler;
-
-		MasterManager* masterManager;
-		QHash<MasterClient*, QQueryMenuAction*> queryMenuPorts;
-		QHash<MasterClient*, ServersStatusWidget*> serversStatusesWidgets;
-		QAction* toolBarGetServers;
-		QSystemTrayIcon* trayIcon;
-		QMenu* trayIconMenu;
-		/// Update should be discarded if this changes.
-		UpdateChannel* updateChannelOnUpdateStart;
-		int updaterInstallerErrorCode;
-
-		ConnectionHandler *connectionHandler;
 
 		void changeEvent(QEvent* event);
 		void checkForUpdates(bool bUserTriggered);
@@ -317,7 +224,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindowWnd
 		void updateServerFilter(const ServerListFilterInfo& filterInfo);
 
 	private:
-		QDockWidget *mainDock;
+		class PrivData;
+		PrivData *d;
 
 		void connectIP2CLoader(IP2CLoader* loader);
 

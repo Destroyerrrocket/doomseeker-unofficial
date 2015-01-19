@@ -22,21 +22,9 @@
 //------------------------------------------------------------------------------
 #include "zandronumgameinfo.h"
 
-QList<GameMode> ZandronumGameInfo::gameModesList;
-QList<GameCVar> ZandronumGameInfo::gameModifiersList;
-
-ZandronumGameInfo* ZandronumGameInfo::static_constructor = new ZandronumGameInfo();
-
-ZandronumGameInfo::ZandronumGameInfo()
+QList<GameMode> ZandronumGameInfo::gameModes()
 {
-	initGameModes();
-	initGameModifiers();
-
-	delete static_constructor;
-}
-
-void ZandronumGameInfo::initGameModes()
-{
+	QList<GameMode> gameModesList;
 	gameModesList << GameMode::mkCooperative();;
 	gameModesList << GameMode::ffaGame(GAMEMODE_SURVIVAL, tr("Survival"));
 	gameModesList << GameMode::ffaGame(GAMEMODE_INVASION, tr("Invasion"));
@@ -54,10 +42,13 @@ void ZandronumGameInfo::initGameModes()
 	gameModesList << GameMode::teamGame(GAMEMODE_SKULLTAG, tr("Skulltag"));
 	gameModesList << GameMode::teamGame(GAMEMODE_DOMINATION, tr("Domination"));
 	gameModesList << GameMode::mkUnknown();
+	return gameModesList;
 }
 
-void ZandronumGameInfo::initGameModifiers()
+QList<GameCVar> ZandronumGameInfo::gameModifiers()
 {
+	QList<GameCVar> gameModifiersList;
 	gameModifiersList << GameCVar("Buckshot", "+buckshot");
 	gameModifiersList << GameCVar("Instagib", "+instagib");
+	return gameModifiersList;
 }

@@ -21,6 +21,7 @@
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "cfgchatlogspage.h"
+#include "ui_cfgchatlogspage.h"
 
 #include "irc/configuration/chatlogscfg.h"
 #include <QDesktopServices>
@@ -29,17 +30,16 @@
 #include <QMessageBox>
 #include <QUrl>
 
-class CfgChatLogsPage::PrivData
+class CfgChatLogsPage::PrivData : public Ui::CfgChatLogsPage
 {
-public:
 };
 
 
 CfgChatLogsPage::CfgChatLogsPage(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
-	setupUi(this);
 	d = new PrivData();
+	d->setupUi(this);
 }
 
 CfgChatLogsPage::~CfgChatLogsPage()
@@ -50,10 +50,10 @@ CfgChatLogsPage::~CfgChatLogsPage()
 void CfgChatLogsPage::browseStorageDirectory()
 {
 	QString path = QFileDialog::getExistingDirectory(this,
-		tr("Browse chat logs storage directory"), leDir->text());
+		tr("Browse chat logs storage directory"), d->leDir->text());
 	if (!path.isEmpty())
 	{
-		leDir->setText(path);
+		d->leDir->setText(path);
 	}
 }
 
@@ -81,9 +81,9 @@ bool CfgChatLogsPage::checkDir(const QString &directory)
 
 void CfgChatLogsPage::exploreStorageDirectory()
 {
-	if (checkDir(leDir->text()))
+	if (checkDir(d->leDir->text()))
 	{
-		QString path = QDir::toNativeSeparators(leDir->text());
+		QString path = QDir::toNativeSeparators(d->leDir->text());
 		QDesktopServices::openUrl(QString("file:///%1").arg(path));
 	}
 }
@@ -91,19 +91,19 @@ void CfgChatLogsPage::exploreStorageDirectory()
 void CfgChatLogsPage::readSettings()
 {
 	ChatLogsCfg cfg;
-	leDir->setText(cfg.chatLogsRootDir());
-	cbStoreLogs->setChecked(cfg.isStoreLogs());
-	cbRestoreLogs->setChecked(cfg.isRestoreChatFromLogs());
-	groupRemoveOldArchives->setChecked(cfg.isRemoveOldLogs());
-	spinLogRemovalAge->setValue(cfg.oldLogsRemovalDaysThreshold());
+	d->leDir->setText(cfg.chatLogsRootDir());
+	d->cbStoreLogs->setChecked(cfg.isStoreLogs());
+	d->cbRestoreLogs->setChecked(cfg.isRestoreChatFromLogs());
+	d->groupRemoveOldArchives->setChecked(cfg.isRemoveOldLogs());
+	d->spinLogRemovalAge->setValue(cfg.oldLogsRemovalDaysThreshold());
 }
 
 void CfgChatLogsPage::saveSettings()
 {
 	ChatLogsCfg cfg;
-	cfg.setChatLogsRootDir(leDir->text());
-	cfg.setStoreLogs(cbStoreLogs->isChecked());
-	cfg.setRestoreChatFromLogs(cbRestoreLogs->isChecked());
-	cfg.setRemoveOldLogs(groupRemoveOldArchives->isChecked());
-	cfg.setOldLogsRemovalDaysThreshold(spinLogRemovalAge->value());
+	cfg.setChatLogsRootDir(d->leDir->text());
+	cfg.setStoreLogs(d->cbStoreLogs->isChecked());
+	cfg.setRestoreChatFromLogs(d->cbRestoreLogs->isChecked());
+	cfg.setRemoveOldLogs(d->groupRemoveOldArchives->isChecked());
+	cfg.setOldLogsRemovalDaysThreshold(d->spinLogRemovalAge->value());
 }

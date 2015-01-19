@@ -23,15 +23,15 @@
 #ifndef __CFGIRCNETWORKS_H__
 #define __CFGIRCNETWORKS_H__
 
-#include "ui_cfgircnetworks.h"
 #include "gui/configuration/configurationbasebox.h"
-#include <QList>
-#include <QStandardItem>
-#include <QVector>
+#include <QtContainerFwd>
+#include <QIcon>
 
 class IRCNetworkEntity;
+class QModelIndex;
+class QStandardItem;
 
-class CFGIRCNetworks : public ConfigurationBaseBox, private Ui::CFGIRCNetworks
+class CFGIRCNetworks : public ConfigurationBaseBox
 {
 	Q_OBJECT
 
@@ -66,6 +66,8 @@ class CFGIRCNetworks : public ConfigurationBaseBox, private Ui::CFGIRCNetworks
 		int selectedRow();
 		void updateRecord(int row);
 
+		class PrivData;
+		PrivData *d;
 	private slots:
 		void addButtonClicked();
 		void editButtonClicked();

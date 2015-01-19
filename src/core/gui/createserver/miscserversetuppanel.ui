@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MiscServerSetupPanel</class>
+ <widget class="QWidget" name="MiscServerSetupPanel">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <layout class="QFormLayout" name="formLayout_2">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="labelURL">
+       <property name="text">
+        <string>URL:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="leURL"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="labelEmail">
+       <property name="text">
+        <string>E-mail:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="leEmail"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="labelConnectPassword">
+       <property name="text">
+        <string>Connect password:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="labelJoinPassword">
+       <property name="text">
+        <string>Join password:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="labelRConPassword">
+       <property name="text">
+        <string>RCon password:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="leConnectPassword"/>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="leJoinPassword"/>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="leRConPassword"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelMOTD">
+     <property name="text">
+      <string>MOTD:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPlainTextEdit" name="pteMOTD"/>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>leURL</tabstop>
+  <tabstop>leEmail</tabstop>
+  <tabstop>leConnectPassword</tabstop>
+  <tabstop>leJoinPassword</tabstop>
+  <tabstop>leRConPassword</tabstop>
+  <tabstop>pteMOTD</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

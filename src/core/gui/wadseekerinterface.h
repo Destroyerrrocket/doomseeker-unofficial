@@ -23,13 +23,13 @@
 #ifndef __WADSEEKERINTERFACE_H_
 #define __WADSEEKERINTERFACE_H_
 
-#include "ui_wadseekerinterface.h"
-
-#include "ini/ini.h"
 #include "serverapi/serverptr.h"
 #include "wadseeker/wadseeker.h"
+#include <QDialog>
 #include <QStringList>
 #include <QTimer>
+
+class QModelIndex;
 
 /**
  * @brief Wadseeker dialog box, only one instance is allowed.
@@ -37,7 +37,7 @@
  * This is not a singleton, but create() methods will return NULL if instance
  * is already running. There's also isInstantiated() static method available.
  */
-class WadseekerInterface : public QDialog, Ui::WadseekerInterface
+class WadseekerInterface : public QDialog
 {
 	Q_OBJECT
 

@@ -22,18 +22,9 @@
 //------------------------------------------------------------------------------
 #include "vavoomgameinfo.h"
 
-QList<GameMode> VavoomGameInfo::gameModesList;
-
-VavoomGameInfo* VavoomGameInfo::static_constructor = new VavoomGameInfo();
-
-VavoomGameInfo::VavoomGameInfo()
+QList<GameMode> VavoomGameInfo::gameModes()
 {
-	initGameModes();
-
-	delete static_constructor;
-}
-
-void VavoomGameInfo::initGameModes()
-{
+	QList<GameMode> gameModesList;
 	gameModesList << GameMode::mkUnknown();
+	return gameModesList;
 }

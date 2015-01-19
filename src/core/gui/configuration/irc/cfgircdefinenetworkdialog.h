@@ -23,10 +23,13 @@
 #ifndef __CFGIRCDEFINENETWORKDIALOG_H__
 #define __CFGIRCDEFINENETWORKDIALOG_H__
 
-#include "ui_cfgircdefinenetworkdialog.h"
-#include "irc/entities/ircnetworkentity.h"
+#include <QDialog>
+#include <QtContainerFwd>
 
-class CFGIRCDefineNetworkDialog : public QDialog, private Ui::CFGIRCDefineNetworkDialog
+class IRCNetworkEntity;
+class QAbstractButton;
+
+class CFGIRCDefineNetworkDialog : public QDialog
 {
 	Q_OBJECT
 

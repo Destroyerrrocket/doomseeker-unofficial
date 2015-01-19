@@ -23,10 +23,12 @@
 #ifndef DOOMSEEKER_GUI_COMMONGUI_H
 #define DOOMSEEKER_GUI_COMMONGUI_H
 
-#include <QAbstractItemView>
-#include <QListView>
-#include <QStringList>
-#include <QTableWidgetItem>
+#include <QString>
+
+class QAbstractItemView;
+class QListView;
+class QStringList;
+class QTableWidget;
 
 class CommonGUI
 {

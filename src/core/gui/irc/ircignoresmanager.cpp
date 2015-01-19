@@ -21,13 +21,14 @@
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircignoresmanager.h"
+#include "ui_ircignoresmanager.h"
 
 #include <QKeyEvent>
 #include "irc/configuration/chatnetworkscfg.h"
 #include "irc/entities/ircnetworkentity.h"
 #include "patternlist.h"
 
-class IRCIgnoresManager::PrivData
+class IRCIgnoresManager::PrivData : public Ui::IRCIgnoresManager
 {
 public:
 	QString networkDescription;
@@ -39,7 +40,7 @@ IRCIgnoresManager::IRCIgnoresManager(QWidget *parent, const QString &networkDesc
 {
 	d = new PrivData();
 	d->networkDescription = networkDescription;
-	setupUi(this);
+	d->setupUi(this);
 
 	loadItems();
 }
@@ -73,9 +74,9 @@ void IRCIgnoresManager::loadItems()
 	IRCNetworkEntity network = cfg.network(d->networkDescription);
 	foreach (const QRegExp &pattern, network.ignoredUsers())
 	{
-		QListWidgetItem *item = new QListWidgetItem(pattern.pattern(), list);
+		QListWidgetItem *item = new QListWidgetItem(pattern.pattern(), d->list);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
-		list->addItem(item);
+		d->list->addItem(item);
 	}
 }
 
@@ -90,9 +91,9 @@ void IRCIgnoresManager::saveItems()
 PatternList IRCIgnoresManager::patterns() const
 {
 	PatternList result;
-	for (int row = 0; row < list->count(); ++row)
+	for (int row = 0; row < d->list->count(); ++row)
 	{
-		QString text = list->item(row)->text();
+		QString text = d->list->item(row)->text();
 		if (!text.trimmed().isEmpty())
 		{
 			result << QRegExp(text, Qt::CaseInsensitive, QRegExp::Wildcard);
@@ -103,10 +104,10 @@ PatternList IRCIgnoresManager::patterns() const
 
 void IRCIgnoresManager::deleteSelected()
 {
-	QList<QListWidgetItem*> selection = list->selectedItems();
+	QList<QListWidgetItem*> selection = d->list->selectedItems();
 	foreach (QListWidgetItem *item, selection)
 	{
-		list->removeItemWidget(item);
+		d->list->removeItemWidget(item);
 	}
 	qDeleteAll(selection);
 }

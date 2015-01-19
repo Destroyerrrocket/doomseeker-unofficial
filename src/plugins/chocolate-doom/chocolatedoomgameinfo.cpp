@@ -24,19 +24,11 @@
 #include "chocolatedoomgameinfo.h"
 #include <QObject>
 
-QList<GameMode> ChocolateDoomGameInfo::gameModesList;
-ChocolateDoomGameInfo* ChocolateDoomGameInfo::static_constructor = new ChocolateDoomGameInfo();
-
-ChocolateDoomGameInfo::ChocolateDoomGameInfo()
+QList<GameMode> ChocolateDoomGameInfo::gameModes()
 {
-	initGameModes();
-
-	delete static_constructor;
-}
-
-void ChocolateDoomGameInfo::initGameModes()
-{
+	QList<GameMode> gameModesList;
 	gameModesList << GameMode::mkCooperative();
 	gameModesList << GameMode::mkDeathmatch();
 	gameModesList << GameMode::ffaGame(MODE_ALTDEATH, QObject::tr("Altdeath (Deathmatch 2.0)"));
+	return gameModesList;
 }

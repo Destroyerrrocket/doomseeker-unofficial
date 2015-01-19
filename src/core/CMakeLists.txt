@@ -78,6 +78,14 @@ qt4_wrap_ui(doomseekerUI
 	gui/configuration/cfgwadseekeridgames.ui
 	gui/configuration/cfgwadseekersites.ui
 	gui/configuration/engineconfigurationbasebox.ui
+	gui/createserver/customparamspanel.ui
+	gui/createserver/dmflagspanel.ui
+	gui/createserver/gamerulespanel.ui
+	gui/createserver/generalgamesetuppanel.ui
+	gui/createserver/iwadpicker.ui
+	gui/createserver/maplistpanel.ui
+	gui/createserver/miscserversetuppanel.ui
+	gui/createserver/wadspicker.ui
 	gui/irc/ircdock.ui
 	gui/irc/ircdocktabcontents.ui
 	gui/irc/ircignoresmanager.ui
@@ -93,7 +101,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/ip2cupdatebox.ui
 	gui/logdock.ui
 	gui/mainwindow.ui
-	gui/passwordDlg.ui
+	gui/passworddlg.ui
 	gui/rconpassworddialog.ui
 	gui/remoteconsole.ui
 	gui/serverdetailsdock.ui
@@ -124,6 +132,14 @@ set(DOOMSEEKER_QT_FILES
 	gui/configuration/configurationdialog.h
 	gui/configuration/doomseekerconfigurationdialog.h
 	gui/configuration/engineconfigurationbasebox.h
+	gui/createserver/customparamspanel.h
+	gui/createserver/dmflagspanel.h
+	gui/createserver/gamerulespanel.h
+	gui/createserver/generalgamesetuppanel.h
+	gui/createserver/iwadpicker.h
+	gui/createserver/maplistpanel.h
+	gui/createserver/miscserversetuppanel.h
+	gui/createserver/wadspicker.h
 	gui/irc/ircdock.h
 	gui/irc/ircdocktabcontents.h
 	gui/irc/ircignoresmanager.h
@@ -135,6 +151,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/widgets/colorbutton.h
 	gui/widgets/dndfilesystemlistview.h
 	gui/widgets/dockedwidgets.h
+	gui/widgets/engineplugincombobox.h
 	gui/widgets/fontbutton.h
 	gui/widgets/importantmessageswidget.h
 	gui/widgets/memorylineedit.h
@@ -155,7 +172,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/ip2cupdatebox.h
 	gui/logdock.h
 	gui/mainwindow.h
-	gui/passwordDlg.h
+	gui/passworddlg.h
 	gui/rconpassworddialog.h
 	gui/remoteconsole.h
 	gui/serverdetailsdock.h
@@ -242,6 +259,14 @@ set(SOURCE_FILES
 	gui/configuration/configurationdialog.cpp
 	gui/configuration/doomseekerconfigurationdialog.cpp
 	gui/configuration/engineconfigurationbasebox.cpp
+	gui/createserver/customparamspanel.cpp
+	gui/createserver/dmflagspanel.cpp
+	gui/createserver/gamerulespanel.cpp
+	gui/createserver/generalgamesetuppanel.cpp
+	gui/createserver/iwadpicker.cpp
+	gui/createserver/maplistpanel.cpp
+	gui/createserver/miscserversetuppanel.cpp
+	gui/createserver/wadspicker.cpp
 	gui/entity/serverlistfilterinfo.cpp
 	gui/helpers/comboboxex.cpp
 	gui/helpers/datetablewidgetitem.cpp
@@ -258,6 +283,7 @@ set(SOURCE_FILES
 	gui/widgets/colorbutton.cpp
 	gui/widgets/createserverdialogpage.cpp
 	gui/widgets/dndfilesystemlistview.cpp
+	gui/widgets/engineplugincombobox.cpp
 	gui/widgets/fontbutton.cpp
 	gui/widgets/importantmessageswidget.cpp
 	gui/widgets/memorylineedit.cpp
@@ -279,7 +305,7 @@ set(SOURCE_FILES
 	gui/ip2cupdatebox.cpp
 	gui/logdock.cpp
 	gui/mainwindow.cpp
-	gui/passwordDlg.cpp
+	gui/passworddlg.cpp
 	gui/rconpassworddialog.cpp
 	gui/remoteconsole.cpp
 	gui/serverdetailsdock.cpp
@@ -344,6 +370,7 @@ set(SOURCE_FILES
 	serverapi/tooltips/playertable.cpp
 	serverapi/tooltips/tooltipgenerator.cpp
 	serverapi/buddyinfo.cpp
+	serverapi/createserverdialogapi.cpp
 	serverapi/exefile.cpp
 	serverapi/gamecreateparams.cpp
 	serverapi/gameexefactory.cpp
@@ -453,6 +480,7 @@ set(HEADER_FILES
 	refresher/canrefreshserver.h
 	serverapi/tooltips/tooltipgenerator.h
 	serverapi/buddyinfo.h
+	serverapi/createserverdialogapi.h
 	serverapi/gamecreateparams.h
 	serverapi/gameexeretriever.h
 	serverapi/joinerror.h

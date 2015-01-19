@@ -51,7 +51,12 @@ const QString& CreateServerDialogPage::name() const
 	return d->name;
 }
 
-CreateServerDialog* CreateServerDialogPage::parentDialog()
+QDialog* CreateServerDialogPage::parentDialog()
 {
 	return d->pParentDialog;
+}
+
+bool CreateServerDialogPage::validate()
+{
+	return true;
 }

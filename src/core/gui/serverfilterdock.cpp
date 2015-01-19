@@ -21,28 +21,53 @@
 // Copyright (C) 2011 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "serverfilterdock.h"
+#include "ui_serverfilterdock.h"
 
 #include "configuration/doomseekerconfig.h"
 #include "gui/entity/serverlistfilterinfo.h"
 
+class ServerFilterDock::PrivData : public Ui::ServerFilterDock
+{
+public:
+	/**
+	* @brief Quick Search widget that is actually located outside the
+	* ServerFilterDock.
+	*
+	* ServerFilterDock needs to keep track of this widget in order to
+	* update the changing value appropriately.
+	*/
+	QLineEdit* leQuickSearch;
+	/**
+		* Guard used to prevent multiple signals being generated while loading
+		* a filter with setFilterInfo.
+		*/
+	bool bDisableUpdate;
+};
+
 ServerFilterDock::ServerFilterDock(QWidget* pParent)
 : QDockWidget(pParent)
 {
-	setupUi(this);
-	leQuickSearch = NULL;
-	bDisableUpdate = false;
-	cbGroupServersWithPlayersAtTop->setChecked(gConfig.doomseeker.bGroupServersWithPlayersAtTheTopOfTheList);
+	d = new PrivData;
+	d->setupUi(this);
+	d->leQuickSearch = NULL;
+	d->bDisableUpdate = false;
+	d->cbGroupServersWithPlayersAtTop->setChecked(gConfig.doomseeker.bGroupServersWithPlayersAtTheTopOfTheList);
 
-	this->toggleViewAction()->setIcon(QIcon(":/icons/filter.png"));
+	toggleViewAction()->setIcon(QIcon(":/icons/filter.png"));
 
 	toggleViewAction()->setText(tr("Server &Filter"));
 	toggleViewAction()->setShortcut(tr("CTRL+F"));
 }
 
+ServerFilterDock::~ServerFilterDock()
+{
+	delete d;
+}
+
 void ServerFilterDock::addGameModeToComboBox(const QString& gameMode)
 {
-	addSortedNonDuplicate(cboGameMode, gameMode.trimmed());
-	addSortedNonDuplicate(cboExcludeGameMode, gameMode.trimmed());
+	addSortedNonDuplicate(d->cboGameMode, gameMode.trimmed());
+	addSortedNonDuplicate(d->cboExcludeGameMode, gameMode.trimmed());
 }
 
 void ServerFilterDock::addSortedNonDuplicate(QComboBox* comboBox, const QString& text)
@@ -72,23 +97,23 @@ void ServerFilterDock::clear()
 
 QLineEdit *ServerFilterDock::createQuickSearch()
 {
-	if (leQuickSearch == NULL)
+	if (d->leQuickSearch == NULL)
 	{
 		QLineEdit *qs = new QLineEdit();
-		qs->setText(leServerName->text());
+		qs->setText(d->leServerName->text());
 
-		connect(leServerName, SIGNAL( textEdited(const QString &) ), qs, SLOT( setText(const QString &) ));
-		connect(qs, SIGNAL( textEdited(const QString &) ), leServerName, SLOT( setText(const QString &) ));
+		connect(d->leServerName, SIGNAL( textEdited(const QString &) ), qs, SLOT( setText(const QString &) ));
+		connect(qs, SIGNAL( textEdited(const QString &) ), d->leServerName, SLOT( setText(const QString &) ));
 
-		leQuickSearch = qs;
+		d->leQuickSearch = qs;
 	}
 
-	return leQuickSearch;
+	return d->leQuickSearch;
 }
 
 void ServerFilterDock::emitUpdated()
 {
-	if(bDisableUpdate)
+	if(d->bDisableUpdate)
 		return;
 
 	emit filterUpdated(filterInfo());
@@ -98,57 +123,57 @@ ServerListFilterInfo ServerFilterDock::filterInfo() const
 {
 	ServerListFilterInfo filterInfo;
 
-	filterInfo.bEnabled = cbFilteringEnabled->isChecked();
-	filterInfo.bShowEmpty = cbShowEmpty->isChecked();
-	filterInfo.bShowFull = cbShowFull->isChecked();
-	filterInfo.bShowOnlyValid = cbShowOnlyValid->isChecked();
-	filterInfo.gameModes = cboGameMode->selectedItemTexts();
-	filterInfo.gameModesExcluded = cboExcludeGameMode->selectedItemTexts();
-	filterInfo.maxPing = spinMaxPing->value();
-	filterInfo.serverName = leServerName->text();
-	filterInfo.wads = leWads->text().trimmed().split(",", QString::SkipEmptyParts);
-	filterInfo.wadsExcluded = leExcludeWads->text().trimmed().split(",", QString::SkipEmptyParts);
+	filterInfo.bEnabled = d->cbFilteringEnabled->isChecked();
+	filterInfo.bShowEmpty = d->cbShowEmpty->isChecked();
+	filterInfo.bShowFull = d->cbShowFull->isChecked();
+	filterInfo.bShowOnlyValid = d->cbShowOnlyValid->isChecked();
+	filterInfo.gameModes = d->cboGameMode->selectedItemTexts();
+	filterInfo.gameModesExcluded = d->cboExcludeGameMode->selectedItemTexts();
+	filterInfo.maxPing = d->spinMaxPing->value();
+	filterInfo.serverName = d->leServerName->text();
+	filterInfo.wads = d->leWads->text().trimmed().split(",", QString::SkipEmptyParts);
+	filterInfo.wadsExcluded = d->leExcludeWads->text().trimmed().split(",", QString::SkipEmptyParts);
 
 	return filterInfo;
 }
 
 void ServerFilterDock::onServerGroupingChange()
 {
-	gConfig.doomseeker.bGroupServersWithPlayersAtTheTopOfTheList = cbGroupServersWithPlayersAtTop->isChecked();
-	emit nonEmptyServerGroupingAtTopToggled(cbGroupServersWithPlayersAtTop->isChecked());
+	gConfig.doomseeker.bGroupServersWithPlayersAtTheTopOfTheList = d->cbGroupServersWithPlayersAtTop->isChecked();
+	emit nonEmptyServerGroupingAtTopToggled(d->cbGroupServersWithPlayersAtTop->isChecked());
 }
 
 void ServerFilterDock::setFilterInfo(const ServerListFilterInfo& filterInfo)
 {
-	bDisableUpdate = true;
+	d->bDisableUpdate = true;
 
-	cbFilteringEnabled->setChecked(filterInfo.bEnabled);
-	cbShowEmpty->setChecked(filterInfo.bShowEmpty);
-	cbShowFull->setChecked(filterInfo.bShowFull);
-	cbShowOnlyValid->setChecked(filterInfo.bShowOnlyValid);
+	d->cbFilteringEnabled->setChecked(filterInfo.bEnabled);
+	d->cbShowEmpty->setChecked(filterInfo.bShowEmpty);
+	d->cbShowFull->setChecked(filterInfo.bShowFull);
+	d->cbShowOnlyValid->setChecked(filterInfo.bShowOnlyValid);
 
 	foreach (const QString& gameMode, filterInfo.gameModes)
 	{
 		addGameModeToComboBox(gameMode);
 	}
-	cboGameMode->setSelectedTexts(filterInfo.gameModes);
+	d->cboGameMode->setSelectedTexts(filterInfo.gameModes);
 
 	foreach (const QString& gameMode, filterInfo.gameModesExcluded)
 	{
 		addGameModeToComboBox(gameMode);
 	}
-	cboExcludeGameMode->setSelectedTexts(filterInfo.gameModesExcluded);
+	d->cboExcludeGameMode->setSelectedTexts(filterInfo.gameModesExcluded);
 
-	spinMaxPing->setValue(filterInfo.maxPing);
-	if (leQuickSearch != NULL)
+	d->spinMaxPing->setValue(filterInfo.maxPing);
+	if (d->leQuickSearch != NULL)
 	{
-		leQuickSearch->setText(filterInfo.serverName.trimmed());
+		d->leQuickSearch->setText(filterInfo.serverName.trimmed());
 	}
 
-	leServerName->setText(filterInfo.serverName.trimmed());
-	leWads->setText(filterInfo.wads.join(",").trimmed());
-	leExcludeWads->setText(filterInfo.wadsExcluded.join(",").trimmed());
+	d->leServerName->setText(filterInfo.serverName.trimmed());
+	d->leWads->setText(filterInfo.wads.join(",").trimmed());
+	d->leExcludeWads->setText(filterInfo.wadsExcluded.join(",").trimmed());
 
-	bDisableUpdate = false;
+	d->bDisableUpdate = false;
 	emitUpdated();
 }

@@ -91,7 +91,7 @@ IniSection DoomseekerConfig::iniSectionForPlugin(const QString& pluginName)
 
 	QString sectionName = pluginName;
 	sectionName = sectionName.replace(' ', "");
-	return this->pIni->createSection(sectionName);
+	return this->pIni->section(sectionName);
 }
 
 IniSection DoomseekerConfig::iniSectionForPlugin(const EnginePlugin* plugin)

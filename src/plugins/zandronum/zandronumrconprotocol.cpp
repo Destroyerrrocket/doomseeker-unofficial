@@ -39,7 +39,6 @@ ZandronumRConProtocol::ZandronumRConProtocol(ServerPtr server)
 	set_disconnectFromServer(&ZandronumRConProtocol::disconnectFromServer);
 	set_sendCommand(&ZandronumRConProtocol::sendCommand);
 	set_sendPassword(&ZandronumRConProtocol::sendPassword);
-	set_packetReady(&ZandronumRConProtocol::packetReady);
 
 	connectStage = Disconnected;
 	connectionAttempts = 0;

@@ -22,11 +22,13 @@
 //------------------------------------------------------------------------------
 
 #include "engineconfigurationbasebox.h"
+#include "ui_engineconfigurationbasebox.h"
+#include "ini/ini.h"
 #include "plugins/engineplugin.h"
 
 #include <QFileDialog>
 
-class EngineConfigurationBaseBox::PrivData
+class EngineConfigurationBaseBox::PrivData : public Ui::EngineConfigurationBaseBox
 {
 	public:
 		IniSection *config;
@@ -55,20 +57,20 @@ EngineConfigurationBaseBox::EngineConfigurationBaseBox(const EnginePlugin *plugi
 	d = new PrivData();
 	d->plugin = plugin;
 	d->config = &cfg;
-	setupUi(this);
+	d->setupUi(this);
 
 	// Prevent combo box stretching.
-	cboCustomParameters->setMinimumContentsLength(25);
-	cboCustomParameters->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+	d->cboCustomParameters->setMinimumContentsLength(25);
+	d->cboCustomParameters->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
 
 	if(plugin->data()->clientOnly)
 		makeClientOnly();
 
 	if(!plugin->data()->hasMasterServer)
-		masterAddressBox->hide();
+		d->masterAddressBox->hide();
 
-	this->connect(btnBrowseClientBinary, SIGNAL( clicked() ), SLOT( browseForClientBinary() ));
-	this->connect(btnBrowseServerBinary, SIGNAL( clicked() ), SLOT( browseForServerBinary() ));
+	this->connect(d->btnBrowseClientBinary, SIGNAL( clicked() ), SLOT( browseForClientBinary() ));
+	this->connect(d->btnBrowseServerBinary, SIGNAL( clicked() ), SLOT( browseForServerBinary() ));
 }
 
 EngineConfigurationBaseBox::~EngineConfigurationBaseBox()
@@ -78,9 +80,9 @@ EngineConfigurationBaseBox::~EngineConfigurationBaseBox()
 
 void EngineConfigurationBaseBox::addWidget(QWidget *widget)
 {
-	layout()->removeItem(verticalSpacer);
+	layout()->removeItem(d->verticalSpacer);
 	layout()->addWidget(widget);
-	layout()->addItem(verticalSpacer);
+	layout()->addItem(d->verticalSpacer);
 }
 
 void EngineConfigurationBaseBox::browseForBinary(QLineEdit *input, const QString &type)
@@ -101,18 +103,18 @@ void EngineConfigurationBaseBox::browseForBinary(QLineEdit *input, const QString
 
 void EngineConfigurationBaseBox::browseForClientBinary()
 {
-	browseForBinary(leClientBinaryPath, tr("client binary"));
+	browseForBinary(d->leClientBinaryPath, tr("client binary"));
 
 }
 
 void EngineConfigurationBaseBox::browseForServerBinary()
 {
-	browseForBinary(leServerBinaryPath, tr("server binary"));
+	browseForBinary(d->leServerBinaryPath, tr("server binary"));
 }
 
 QString EngineConfigurationBaseBox::currentCustomParameters() const
 {
-	return cboCustomParameters->currentText().trimmed();
+	return d->cboCustomParameters->currentText().trimmed();
 }
 
 QIcon EngineConfigurationBaseBox::icon() const
@@ -124,8 +126,8 @@ void EngineConfigurationBaseBox::makeClientOnly()
 {
 	d->clientOnly = true;
 
-	lblClientBinary->setText(tr("Path to executable:"));
-	serverBinaryBox->hide();
+	d->lblClientBinary->setText(tr("Path to executable:"));
+	d->serverBinaryBox->hide();
 }
 
 QString EngineConfigurationBaseBox::name() const
@@ -140,13 +142,13 @@ const EnginePlugin *EngineConfigurationBaseBox::plugin() const
 
 void EngineConfigurationBaseBox::readSettings()
 {
-	leClientBinaryPath->setText(d->config->value("BinaryPath").toString());
-	cboCustomParameters->clear();
-	cboCustomParameters->addItems(d->readStoredCustomParameters());
-	cboCustomParameters->setEditText(d->config->value("CustomParameters").toString());
+	d->leClientBinaryPath->setText(d->config->value("BinaryPath").toString());
+	d->cboCustomParameters->clear();
+	d->cboCustomParameters->addItems(d->readStoredCustomParameters());
+	d->cboCustomParameters->setEditText(d->config->value("CustomParameters").toString());
 	if(d->plugin->data()->hasMasterServer)
-		leMasterserverAddress->setText(d->config->value("Masterserver").toString());
-	leServerBinaryPath->setText(d->config->value("ServerBinaryPath").toString());
+		d->leMasterserverAddress->setText(d->config->value("Masterserver").toString());
+	d->leServerBinaryPath->setText(d->config->value("ServerBinaryPath").toString());
 
 	updateCustomParametersSaveState();
 }
@@ -168,11 +170,11 @@ void EngineConfigurationBaseBox::removeStoredCustomParametersFromConfig(const QS
 
 void EngineConfigurationBaseBox::removeStoredCustomParametersFromWidget(const QString &parameters)
 {
-	int indexInWidget = cboCustomParameters->findText(parameters);
+	int indexInWidget = d->cboCustomParameters->findText(parameters);
 	if (indexInWidget >= 0)
 	{
-		cboCustomParameters->removeItem(indexInWidget);
-		cboCustomParameters->setEditText(parameters);
+		d->cboCustomParameters->removeItem(indexInWidget);
+		d->cboCustomParameters->setEditText(parameters);
 	}
 }
 
@@ -183,7 +185,7 @@ void EngineConfigurationBaseBox::saveCustomParameters()
 		QStringList parameters = d->readStoredCustomParameters();
 		parameters << currentCustomParameters();
 		d->saveStoredCustomParameters(parameters);
-		cboCustomParameters->addItem(currentCustomParameters());
+		d->cboCustomParameters->addItem(currentCustomParameters());
 	}
 	updateCustomParametersSaveState();
 }
@@ -192,17 +194,17 @@ void EngineConfigurationBaseBox::saveSettings()
 {
 	QString executable;
 
-	executable = leClientBinaryPath->text();
+	executable = d->leClientBinaryPath->text();
 	d->config->setValue("BinaryPath", executable);
 	if (!d->clientOnly)
 	{
-		executable = leServerBinaryPath->text();
+		executable = d->leServerBinaryPath->text();
 	}
 	d->config->setValue("ServerBinaryPath", executable);
 	d->config->setValue("CustomParameters", currentCustomParameters());
 	if (d->plugin->data()->hasMasterServer)
 	{
-		d->config->setValue("Masterserver", leMasterserverAddress->text());
+		d->config->setValue("Masterserver", d->leMasterserverAddress->text());
 	}
 }
 
@@ -215,6 +217,6 @@ void EngineConfigurationBaseBox::updateCustomParametersSaveState()
 {
 	bool paramExists = d->existsInStoredCustomParameters(currentCustomParameters());
 	bool isEmpty = currentCustomParameters().isEmpty();
-	btnSaveCustomParameters->setVisible(!isEmpty && !paramExists);
-	btnDeleteCustomParameters->setVisible(!isEmpty && paramExists);
+	d->btnSaveCustomParameters->setVisible(!isEmpty && !paramExists);
+	d->btnDeleteCustomParameters->setVisible(!isEmpty && paramExists);
 }

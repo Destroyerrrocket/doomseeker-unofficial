@@ -23,26 +23,25 @@
 #ifndef __IRCDOCK_TAB_CONTENTS_H_
 #define __IRCDOCK_TAB_CONTENTS_H_
 
-#include "irc/ircadapterbase.h"
-#include "irc/ircmessageclass.h"
-
-#include "ui_ircdocktabcontents.h"
-#include <QAction>
-#include <QStandardItem>
-#include <QMenu>
-#include <QTimer>
 #include <QWidget>
 
+class IRCAdapterBase;
 class IRCChatAdapter;
 class IRCDock;
+class IRCMessageClass;
+class IRCNetworkAdapter;
+class IRCNetworkEntity;
 class IRCNicknameCompleter;
 class IRCUserInfo;
 class IRCUserList;
+class QMenu;
+class QModelIndex;
+class QStandardItem;
 
 /**
  *	@brief Dockable widget designed for IRC communication.
  */
-class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
+class IRCDockTabContents : public QWidget
 {
 	Q_OBJECT;
 
@@ -140,30 +139,7 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		bool eventFilter(QObject *watched, QEvent *event);
 
 	private:
-		class UserListMenu : public QMenu
-		{
-			public:
-				UserListMenu();
-
-				QAction* ban;
-				QAction *whois;
-				QAction *ctcpTime;
-				QAction *ctcpPing;
-				QAction *ctcpVersion;
-				QAction* dehalfOp;
-				QAction* deop;
-				QAction* devoice;
-				QAction* halfOp;
-				QAction* kick;
-				QAction *ignore;
-				QAction* op;
-				QAction* openChatWindow;
-				QAction* voice;
-
-			private:
-				bool bIsOperator;
-
-		};
+		class UserListMenu;
 
 		enum PrivChatMenu
 		{
@@ -178,27 +154,6 @@ class IRCDockTabContents : public QWidget, private Ui::IRCDockTabContents
 		PrivData *d;
 
 		static const int BLINK_TIMER_DELAY_MS;
-
-		/**
-		 *	@brief Holds blinkTimer state.
-		 *
-		 *	Either text shows in usual color (false) or inverted one (true).
-		 *	Change to this variable should be accompanied by emitting
-		 *	titleChange() signal.
-		 */
-		bool bBlinkTitle;
-		bool bIsDestroying;
-
-		QTimer blinkTimer;
-
-		IRCMessageClass* lastMessageClass;
-		IRCNicknameCompleter *nicknameCompleter;
-		/**
-		 *	@brief This is required to properly refresh colors when
-		 *	appearance is changed.
-		 */
-		QStringList textOutputContents;
-		UserListMenu* userListContextMenu;
 
 		void alertIfConfigured();
 		void appendGeneralChatContextMenuOptions(QMenu *menu);

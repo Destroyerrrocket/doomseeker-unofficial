@@ -38,7 +38,7 @@ VavoomServer::VavoomServer(const QHostAddress &address, unsigned short port)
 	set_readRequest(&VavoomServer::readRequest);
 	set_createSendRequest(&VavoomServer::createSendRequest);
 
-	GameMode unknownMode = (*VavoomGameInfo::gameModes())[VavoomGameInfo::MODE_UNKNOWN];
+	GameMode unknownMode = VavoomGameInfo::gameModes()[VavoomGameInfo::MODE_UNKNOWN];
 	setGameMode(unknownMode);
 }
 

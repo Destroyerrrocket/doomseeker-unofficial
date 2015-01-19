@@ -27,6 +27,7 @@
 #include <QDebug>
 #include <QHeaderView>
 #include <QItemDelegate>
+#include <QMouseEvent>
 #include <QPainter>
 #include <QSortFilterProxyModel>
 #include <QTextDocument>

@@ -69,20 +69,8 @@ class ZandronumGameInfo : public QObject
 			GAMEMODE_DOMINATION
 		};
 
-		static const QList<GameMode>* gameModes() { return &gameModesList; }
-		static const QList<GameCVar>* gameModifiers() { return &gameModifiersList; }
-
-	protected:
-		static QList<GameMode> gameModesList;
-		static QList<GameCVar> gameModifiersList;
-
-	private:
-		ZandronumGameInfo();
-
-		void initGameModes();
-		void initGameModifiers();
-
-		static ZandronumGameInfo* static_constructor;
+		static QList<GameMode> gameModes();
+		static QList<GameCVar> gameModifiers();
 };
 
 #endif

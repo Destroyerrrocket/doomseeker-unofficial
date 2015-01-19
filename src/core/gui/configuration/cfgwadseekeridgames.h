@@ -23,16 +23,16 @@
 #ifndef __WADSEEKERCONFIG_IDGAMES_H_
 #define __WADSEEKERCONFIG_IDGAMES_H_
 
-#include "ui_cfgwadseekeridgames.h"
 #include "gui/configuration/configurationbasebox.h"
-#include <QKeyEvent>
+#include <QIcon>
 
-class CFGWadseekerIdgames : public ConfigurationBaseBox, private Ui::CFGWadseekerIdgames
+class CFGWadseekerIdgames : public ConfigurationBaseBox
 {
 	Q_OBJECT
 
 	public:
 		CFGWadseekerIdgames(QWidget* parent = NULL);
+		~CFGWadseekerIdgames();
 
 		QIcon icon() const { return QIcon(":/icons/arrow-down-double.png"); }
 		QString name() const { return tr("Idgames"); }
@@ -44,9 +44,11 @@ class CFGWadseekerIdgames : public ConfigurationBaseBox, private Ui::CFGWadseeke
 		void cbUseIdgamesToggled(bool checked);
 
 	protected:
-
-
 		void saveSettings();
+
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 #endif

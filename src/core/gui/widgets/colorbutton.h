@@ -23,7 +23,6 @@
 #ifndef __COLORBUTTON_H__
 #define __COLORBUTTON_H__
 
-#include <QColor>
 #include <QPushButton>
 
 /**

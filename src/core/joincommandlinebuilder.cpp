@@ -26,7 +26,7 @@
 #include "datapaths.h"
 #include "log.h"
 #include "configuration/doomseekerconfig.h"
-#include "gui/passwordDlg.h"
+#include "gui/passworddlg.h"
 #include "gui/wadseekerinterface.h"
 #include "gui/wadseekershow.h"
 #include "ini/settingsproviderqt.h"

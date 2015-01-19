@@ -22,33 +22,45 @@
 //------------------------------------------------------------------------------
 #include "configuration/doomseekerconfig.h"
 #include "cfgcustomservers.h"
+#include "ui_cfgcustomservers.h"
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
 #include <QHeaderView>
 #include <QMessageBox>
+#include <QStandardItemModel>
 #include <QUrl>
 
 const // clear warnings
 #include "unknownengine.xpm"
 
+class CFGCustomServers::PrivData : public Ui::CFGCustomServers
+{
+};
+
 CFGCustomServers::CFGCustomServers(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
 
-	connect(btnAdd, SIGNAL( clicked() ), this, SLOT( add() ));
-	connect(btnRemove, SIGNAL( clicked() ), this, SLOT( remove() ));
-	connect(btnSetEngine, SIGNAL( clicked() ), this, SLOT( setEngine() ));
+	connect(d->btnAdd, SIGNAL( clicked() ), this, SLOT( add() ));
+	connect(d->btnRemove, SIGNAL( clicked() ), this, SLOT( remove() ));
+	connect(d->btnSetEngine, SIGNAL( clicked() ), this, SLOT( setEngine() ));
 
 	prepareEnginesComboBox();
 }
 
+CFGCustomServers::~CFGCustomServers()
+{
+	delete d;
+}
+
 void CFGCustomServers::add()
 {
-	int pluginIndex = cboEngines->itemData(cboEngines->currentIndex()).toInt();
+	int pluginIndex = d->cboEngines->itemData(d->cboEngines->currentIndex()).toInt();
 	const EnginePlugin* plugin = gPlugins->info(pluginIndex);
 
-	QString engineName = cboEngines->itemText(cboEngines->currentIndex());
+	QString engineName = d->cboEngines->itemText(d->cboEngines->currentIndex());
 
 	add(engineName, "", plugin->data()->defaultServerPort);
 }
@@ -67,7 +79,7 @@ void CFGCustomServers::add(const QString& engineName, const QString& host, unsig
 	record.append(new QStandardItem(portString));
 
 	model->appendRow(record);
-	tvServers->resizeRowsToContents();
+	d->tvServers->resizeRowsToContents();
 }
 
 CFGCustomServers::CheckAndFixPorts CFGCustomServers::checkAndFixPorts(int firstRow, int lastRow)
@@ -139,17 +151,17 @@ bool CFGCustomServers::isPortCorrect(int rowIndex)
 
 void CFGCustomServers::prepareEnginesComboBox()
 {
-	cboEngines->clear();
+	d->cboEngines->clear();
 
 	for (unsigned i = 0; i < gPlugins->numPlugins(); ++i)
 	{
 		const EnginePlugin* plugin = gPlugins->info(i);
-		cboEngines->addItem(plugin->icon(), plugin->data()->name, i);
+		d->cboEngines->addItem(plugin->icon(), plugin->data()->name, i);
 	}
 
-	if (cboEngines->count() > 0)
+	if (d->cboEngines->count() > 0)
 	{
-		cboEngines->setCurrentIndex(0);
+		d->cboEngines->setCurrentIndex(0);
 	}
 }
 
@@ -163,16 +175,16 @@ void CFGCustomServers::prepareTable()
 	labels << "" << tr("Host") << tr("Port");
 	model->setHorizontalHeaderLabels(labels);
 
-	tvServers->setModel(model);
+	d->tvServers->setModel(model);
 
-	tvServers->setColumnWidth(0, 23);
-	tvServers->setColumnWidth(1, 180);
-	tvServers->setColumnWidth(2, 60);
+	d->tvServers->setColumnWidth(0, 23);
+	d->tvServers->setColumnWidth(1, 180);
+	d->tvServers->setColumnWidth(2, 60);
 
-	tvServers->horizontalHeader()->setHighlightSections(false);
-	tvServers->horizontalHeader()->setResizeMode(0, QHeaderView::Fixed);
+	d->tvServers->horizontalHeader()->setHighlightSections(false);
+	d->tvServers->horizontalHeader()->setResizeMode(0, QHeaderView::Fixed);
 
-	tvServers->verticalHeader()->hide();
+	d->tvServers->verticalHeader()->hide();
 }
 
 void CFGCustomServers::readSettings()
@@ -189,7 +201,7 @@ void CFGCustomServers::readSettings()
 
 void CFGCustomServers::remove()
 {
-	QItemSelectionModel* selModel = tvServers->selectionModel();
+	QItemSelectionModel* selModel = d->tvServers->selectionModel();
 	QModelIndexList indexList = selModel->selectedRows();
 	selModel->clear();
 
@@ -213,14 +225,14 @@ void CFGCustomServers::saveSettings()
 
 void CFGCustomServers::setEngine()
 {
-	QItemSelectionModel* sel = tvServers->selectionModel();
+	QItemSelectionModel* sel = d->tvServers->selectionModel();
 	QModelIndexList indexList = sel->selectedRows();
 
 	QModelIndexList::iterator it;
 	for (it = indexList.begin(); it != indexList.end(); ++it)
 	{
 		QStandardItem* item = model->itemFromIndex(*it);
-		QString engineName = cboEngines->itemText(cboEngines->currentIndex());
+		QString engineName = d->cboEngines->itemText(d->cboEngines->currentIndex());
 		setEngineOnItem(item, engineName);
 	}
 }

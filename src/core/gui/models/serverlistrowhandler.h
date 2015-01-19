@@ -24,14 +24,14 @@
 #define __SERVER_LIST_ROW_HANDLER_H_
 
 #include "serverapi/serverptr.h"
-#include <QHostAddress>
 #include <QObject>
-#include <QStandardItem>
-#include <QString>
 
 class GameCVar;
 class Server;
 class ServerListModel;
+class QHostAddress;
+class QPixmap;
+class QStandardItem;
 
 class ServerListRowHandler : public QObject
 {

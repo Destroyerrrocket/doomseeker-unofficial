@@ -24,15 +24,21 @@
 #include <QBoxLayout>
 
 #include "serverdetailsdock.h"
+#include "ui_serverdetailsdock.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
 #include "serverapi/serverptr.h"
 #include "serverapi/serverstructs.h"
 #include "serverapi/tooltips/tooltipgenerator.h"
 
+class ServerDetailsDock::PrivData : public Ui::ServerDetailsDock
+{
+};
+
 ServerDetailsDock::ServerDetailsDock(QWidget *parent) : QDockWidget(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
 	this->toggleViewAction()->setIcon(QIcon(":/icons/server_details.png"));
 
 	clear();
@@ -40,13 +46,14 @@ ServerDetailsDock::ServerDetailsDock(QWidget *parent) : QDockWidget(parent)
 
 ServerDetailsDock::~ServerDetailsDock()
 {
+	delete d;
 }
 
 void ServerDetailsDock::clear()
 {
-	lblServer->setText("");
-	sbArea->setText("");
-	detailsArea->setText("");
+	d->lblServer->setText("");
+	d->sbArea->setText("");
+	d->detailsArea->setText("");
 }
 
 void ServerDetailsDock::displaySelection(QList<ServerPtr> &selectedServers)
@@ -58,13 +65,13 @@ void ServerDetailsDock::displaySelection(QList<ServerPtr> &selectedServers)
 		return;
 	}
 
-	lblServer->setText(server->name());
+	d->lblServer->setText(server->name());
 	TooltipGenerator* tooltipGenerator = server->tooltipGenerator();
 	if(server->players().numClients() != 0)
-		sbArea->setText(tooltipGenerator->playerTableHTML());
+		d->sbArea->setText(tooltipGenerator->playerTableHTML());
 	else
-		sbArea->setText(QString());
-	detailsArea->setText(QString("<div>%1</div>%2").arg(server->customDetails()).arg(tooltipGenerator->dmflagsHTML()));
+		d->sbArea->setText(QString());
+	d->detailsArea->setText(QString("<div>%1</div>%2").arg(server->customDetails()).arg(tooltipGenerator->dmflagsHTML()));
 	delete tooltipGenerator;
 }
 
@@ -73,11 +80,11 @@ void ServerDetailsDock::reorientContentsBasingOnDimensions()
 	const int TOPTOBOTTOM_PREFERENCE_THRESHOLD = 100;
 	if (height() + TOPTOBOTTOM_PREFERENCE_THRESHOLD > width())
 	{
-		static_cast<QBoxLayout*>(dataLayout)->setDirection(QBoxLayout::TopToBottom);
+		static_cast<QBoxLayout*>(d->dataLayout)->setDirection(QBoxLayout::TopToBottom);
 	}
 	else
 	{
-		static_cast<QBoxLayout*>(dataLayout)->setDirection(QBoxLayout::LeftToRight);
+		static_cast<QBoxLayout*>(d->dataLayout)->setDirection(QBoxLayout::LeftToRight);
 	}
 }
 

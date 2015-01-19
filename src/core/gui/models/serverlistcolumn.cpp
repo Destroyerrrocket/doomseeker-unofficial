@@ -22,6 +22,9 @@
 //------------------------------------------------------------------------------
 #include "serverlistcolumn.h"
 
+#include <QStandardItem>
+#include <QStringList>
+
 using namespace ServerListColumnId;
 
 #define HIDDEN true

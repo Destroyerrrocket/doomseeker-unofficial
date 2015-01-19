@@ -23,15 +23,16 @@
 #ifndef __WADSEEKERCONFIGAPPEARANCE_H__
 #define __WADSEEKERCONFIGAPPEARANCE_H__
 
-#include "ui_cfgwadseekerappearance.h"
 #include "gui/configuration/configurationbasebox.h"
+#include <QIcon>
 
-class CFGWadseekerAppearance : public ConfigurationBaseBox, private Ui::CFGWadseekerAppearance
+class CFGWadseekerAppearance : public ConfigurationBaseBox
 {
 	Q_OBJECT
 
 	public:
 		CFGWadseekerAppearance(QWidget* parent = NULL);
+		~CFGWadseekerAppearance();
 
 		QIcon icon() const { return QIcon(":/icons/color-fill.png"); }
 		QString name() const { return tr("Appearance"); }
@@ -40,6 +41,10 @@ class CFGWadseekerAppearance : public ConfigurationBaseBox, private Ui::CFGWadse
 
 	protected:
 		void saveSettings();
+
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 #endif

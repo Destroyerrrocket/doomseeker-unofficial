@@ -22,7 +22,10 @@
 //------------------------------------------------------------------------------
 #include "commongui.h"
 #include <QInputDialog>
+#include <QListView>
 #include <QStandardItemModel>
+#include <QTableWidget>
+#include <QStringList>
 
 QString CommonGUI::askString(const QString& title, const QString& label,
 	bool* ok, const QString& defaultString)

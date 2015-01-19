@@ -23,6 +23,7 @@
 //------------------------------------------------------------------------------
 
 #include <datapaths.h>
+#include <ini/ini.h>
 #include <pathfinder/pathfinder.h>
 #include <plugins/engineplugin.h>
 #include <strings.h>
@@ -64,14 +65,14 @@ ZandronumEnginePlugin::ZandronumEnginePlugin()
 		EP_HasMasterServer,
 		EP_DefaultMaster, "master.zandronum.com:15300",
 		EP_SupportsRandomMapRotation,
-		EP_GameModes, ZandronumGameInfo::gameModes(),
-		EP_GameModifiers, ZandronumGameInfo::gameModifiers(),
 		EP_IRCChannel, "Zandronum", "irc.zandronum.com", "#zandronum",
 		EP_RefreshThreshold, 10,
 		EP_DemoExtension, false, "cld",
 		EP_URLScheme, "zan",
 		EP_Done
 	);
+	setGameModes(ZandronumGameInfo::gameModes());
+	setGameModifiers(ZandronumGameInfo::gameModifiers());
 }
 
 void ZandronumEnginePlugin::setupConfig(IniSection &config) const

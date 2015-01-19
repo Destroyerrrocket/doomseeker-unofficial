@@ -24,17 +24,21 @@
 #define __IP2CUPDATEBOX_H__
 
 #include <QDialog>
-#include "ui_ip2cupdatebox.h"
 
-class IP2CUpdateBox : public QDialog, private Ui::IP2CUpdateBox
+class IP2CUpdateBox : public QDialog
 {
 	Q_OBJECT
 
 	public:
 		IP2CUpdateBox(QWidget* parent = NULL);
+		~IP2CUpdateBox();
 
 	protected:
 		void updateInfo();
+
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 #endif

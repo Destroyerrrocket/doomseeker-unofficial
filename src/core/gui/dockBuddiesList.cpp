@@ -21,47 +21,77 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 #include "dockBuddiesList.h"
+#include "ui_addBuddyDlg.h"
+#include "ui_dockBuddiesList.h"
 #include "configuration/doomseekerconfig.h"
 #include "serverapi/mastermanager.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
+#include "patternlist.h"
 #include "strings.h"
 #include <QMenu>
 #include <QMessageBox>
 #include <QRegExp>
+#include <QStandardItemModel>
+
+class DockBuddiesList::BuddyLocationInfo
+{
+public:
+	BuddyLocationInfo(const Player &buddy, ServerPtr location);
+	COPYABLE_D_POINTERED_DECLARE(BuddyLocationInfo);
+	~BuddyLocationInfo();
+
+	const Player &buddy() const;
+	ServerPtr location() const;
+
+	bool operator==(const BuddyLocationInfo &other) const;
+
+private:
+	class PrivData;
+	PrivData *d;
+};
+
+class DockBuddiesList::PrivData : public Ui::DockBuddiesList
+{
+public:
+	QList< ::DockBuddiesList::BuddyLocationInfo> buddies;
+	QStandardItemModel *buddiesTableModel;
+	PatternList pBuddies;
+};
 
 DockBuddiesList::DockBuddiesList(QWidget *parent)
 : QDockWidget(parent), masterClient(NULL), save(false)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
 	this->toggleViewAction()->setIcon(QIcon(":/icons/buddies.png"));
 
 	// Set up the model
-	buddiesTableModel = new QStandardItemModel();
+	d->buddiesTableModel = new QStandardItemModel();
 
 	// Not working yet.
 	QStringList columns;
 	columns << tr("ID");
 	columns << tr("Buddy");
 	columns << tr("Location");
-	buddiesTableModel->setHorizontalHeaderLabels(columns);
+	d->buddiesTableModel->setHorizontalHeaderLabels(columns);
 
-	buddiesTable->setModel(buddiesTableModel);
-	buddiesTable->setColumnHidden(0, true); // Hide the ID
+	d->buddiesTable->setModel(d->buddiesTableModel);
+	d->buddiesTable->setColumnHidden(0, true); // Hide the ID
 
 	// Read config
 	const QVector<BuddyInfo>& buddies = gConfig.doomseeker.buddiesList;
 
 	foreach (const BuddyInfo& buddy, buddies)
 	{
-		pBuddies << buddy.pattern;
-		patternsList->addItem(buddy.pattern.pattern());
+		d->pBuddies << buddy.pattern;
+		d->patternsList->addItem(buddy.pattern.pattern());
 	}
 
-	connect(addButton, SIGNAL( clicked() ), this, SLOT( addBuddy() ));
-	connect(buddiesTable, SIGNAL( doubleClicked(const QModelIndex &) ), this, SLOT( followBuddy(const QModelIndex &) ));
-	connect(deleteButton, SIGNAL( clicked() ), this, SLOT( deleteBuddy() ));
-	connect(patternsList, SIGNAL( customContextMenuRequested(const QPoint &) ), this, SLOT( patternsListContextMenu(const QPoint &) ));
+	connect(d->addButton, SIGNAL( clicked() ), this, SLOT( addBuddy() ));
+	connect(d->buddiesTable, SIGNAL( doubleClicked(const QModelIndex &) ), this, SLOT( followBuddy(const QModelIndex &) ));
+	connect(d->deleteButton, SIGNAL( clicked() ), this, SLOT( deleteBuddy() ));
+	connect(d->patternsList, SIGNAL( customContextMenuRequested(const QPoint &) ), this, SLOT( patternsListContextMenu(const QPoint &) ));
 }
 
 DockBuddiesList::~DockBuddiesList()
@@ -70,11 +100,12 @@ DockBuddiesList::~DockBuddiesList()
 	// write cycle.
 	if(!save)
 	{
+		delete d;
 		return;
 	}
 
 	gConfig.doomseeker.buddiesList.clear();
-	foreach (QRegExp pattern, pBuddies)
+	foreach (QRegExp pattern, d->pBuddies)
 	{
 		BuddyInfo buddyInfo;
 
@@ -83,6 +114,8 @@ DockBuddiesList::~DockBuddiesList()
 
 		gConfig.doomseeker.buddiesList << buddyInfo;
 	}
+
+	delete d;
 }
 
 void DockBuddiesList::addBuddy()
@@ -96,11 +129,11 @@ void DockBuddiesList::addBuddy()
 
 	if(pattern.isValid())
 	{
-		pBuddies << pattern;
+		d->pBuddies << pattern;
 		scan(masterClient);
 	}
 
-	patternsList->addItem(dlg.pattern());
+	d->patternsList->addItem(dlg.pattern());
 
 	save = true;
 }
@@ -108,14 +141,14 @@ void DockBuddiesList::addBuddy()
 void DockBuddiesList::deleteBuddy()
 {
 	// Do nothing if nothing is selected.
-	if(patternsList->selectionModel()->selectedIndexes().size() <= 0)
+	if(d->patternsList->selectionModel()->selectedIndexes().size() <= 0)
 		return;
 
 	if(QMessageBox::warning(this, tr("Delete Buddy"), tr("Are you sure you want to delete this pattern?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)
 		!= QMessageBox::Yes)
 		return;
 
-	QModelIndexList selection = patternsList->selectionModel()->selectedIndexes();
+	QModelIndexList selection = d->patternsList->selectionModel()->selectedIndexes();
 	// We have to remove the bottom most row until they are all gone.
 	while(selection.size() > 0)
 	{
@@ -126,8 +159,8 @@ void DockBuddiesList::deleteBuddy()
 				largestIndex = i;
 		}
 
-		pBuddies.removeAt(selection[largestIndex].row());
-		delete patternsList->item(selection[largestIndex].row());
+		d->pBuddies.removeAt(selection[largestIndex].row());
+		delete d->patternsList->item(selection[largestIndex].row());
 		selection.removeAt(largestIndex); // remove index
 	}
 
@@ -141,14 +174,14 @@ void DockBuddiesList::followBuddy(const QModelIndex &index)
 	// Folow the buddy into the server.
 	QString error;
 
-	ServerPtr server = buddies[buddiesTableModel->item(index.row(), BLCID_ID)->data().toInt()].location();
+	ServerPtr server = d->buddies[d->buddiesTableModel->item(index.row(), BLCID_ID)->data().toInt()].location();
 	emit joinServer(server);
 }
 
 void DockBuddiesList::patternsListContextMenu(const QPoint &pos) const
 {
 	// First lets get the selection since that will determine the menu.
-	QModelIndexList selection = patternsList->selectionModel()->selectedIndexes();
+	QModelIndexList selection = d->patternsList->selectionModel()->selectedIndexes();
 
 	QMenu context;
 
@@ -164,7 +197,7 @@ void DockBuddiesList::patternsListContextMenu(const QPoint &pos) const
 	}
 
 	// Finally show our menu.
-	context.exec(patternsList->mapToGlobal(pos));
+	context.exec(d->patternsList->mapToGlobal(pos));
 }
 
 void DockBuddiesList::scan(const MasterManager *master)
@@ -176,7 +209,7 @@ void DockBuddiesList::scan(const MasterManager *master)
 		masterClient = master;
 	}
 
-	buddies.clear(); //empty list
+	d->buddies.clear(); //empty list
 	foreach(ServerPtr server, masterClient->allServers())
 	{
 		if (!server->isKnown())
@@ -186,22 +219,22 @@ void DockBuddiesList::scan(const MasterManager *master)
 		for(int i = 0; i < server->players().numClients(); ++i)
 		{
 			const Player player = server->player(i);
-			if (pBuddies.isExactMatchAny(player.nameColorTagsStripped()))
+			if (d->pBuddies.isExactMatchAny(player.nameColorTagsStripped()))
 			{
 				BuddyLocationInfo candidate(player, server);
-				if (!buddies.contains(candidate))
+				if (!d->buddies.contains(candidate))
 				{
-					buddies << BuddyLocationInfo(player, server);
+					d->buddies << BuddyLocationInfo(player, server);
 				}
 			}
 		}
 	}
 
 	// Populate list
-	buddiesTableModel->removeRows(0, buddiesTableModel->rowCount());
-	for(int i = 0;i < buddies.size();i++)
+	d->buddiesTableModel->removeRows(0, d->buddiesTableModel->rowCount());
+	for(int i = 0;i < d->buddies.size();i++)
 	{
-		const BuddyLocationInfo &info = buddies[i];
+		const BuddyLocationInfo &info = d->buddies[i];
 		QList<QStandardItem *> columns;
 
 		for(int j = 0;j < HOW_MANY_BUDDIESLIST_COLUMNS;j++)
@@ -227,25 +260,35 @@ void DockBuddiesList::scan(const MasterManager *master)
 			}
 		}
 
-		buddiesTableModel->appendRow(columns);
+		d->buddiesTableModel->appendRow(columns);
 	}
 
 	// Fits rows to contents
-	buddiesTable->resizeRowsToContents();
+	d->buddiesTable->resizeRowsToContents();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
+class AddBuddyDlg::PrivData : public Ui::AddBuddyDlg
+{
+};
+
 AddBuddyDlg::AddBuddyDlg(QWidget *parent) : QDialog(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
 
-	connect(buttonBox, SIGNAL( clicked(QAbstractButton *) ), this, SLOT( buttonBoxClicked(QAbstractButton *) ));
+	connect(d->buttonBox, SIGNAL( clicked(QAbstractButton *) ), this, SLOT( buttonBoxClicked(QAbstractButton *) ));
+}
+
+AddBuddyDlg::~AddBuddyDlg()
+{
+	delete d;
 }
 
 void AddBuddyDlg::buttonBoxClicked(QAbstractButton *button)
 {
-	if(buttonBox->standardButton(button) == QDialogButtonBox::Ok)
+	if(d->buttonBox->standardButton(button) == QDialogButtonBox::Ok)
 	{
 		if(patternType() == BuddyInfo::PT_ADVANCED)
 		{
@@ -260,6 +303,16 @@ void AddBuddyDlg::buttonBoxClicked(QAbstractButton *button)
 	}
 	else
 		reject();
+}
+
+QString AddBuddyDlg::pattern() const
+{
+	return d->patternBox->text();
+}
+
+BuddyInfo::PatternType AddBuddyDlg::patternType() const
+{
+	return d->basicPattern->isChecked() ? BuddyInfo::PT_BASIC : BuddyInfo::PT_ADVANCED;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

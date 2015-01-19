@@ -21,36 +21,47 @@
 // Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 #include "cfgquery.h"
+#include "ui_cfgquery.h"
 #include "configuration/doomseekerconfig.h"
+
+class CFGQuery::PrivData : public Ui::CFGQuery
+{
+};
 
 CFGQuery::CFGQuery(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
+}
+
+CFGQuery::~CFGQuery()
+{
+	delete d;
 }
 
 void CFGQuery::readSettings()
 {
-	queryBeforeLaunch->setChecked(gConfig.doomseeker.bQueryBeforeLaunch);
-	queryOnStartup->setChecked(gConfig.doomseeker.bQueryOnStartup);
-	triesBox->setValue(gConfig.doomseeker.queryTries);
-	timeoutBox->setValue(gConfig.doomseeker.queryTimeout);
-	grbServerAutoRefresh->setChecked(gConfig.doomseeker.bQueryAutoRefreshEnabled);
-	numAutoRefreshEverySeconds->setValue(gConfig.doomseeker.queryAutoRefreshEverySeconds);
-	cbDontRefreshIfActive->setChecked(gConfig.doomseeker.bQueryAutoRefreshDontIfActive);
-	batchSizeBox->setValue(gConfig.doomseeker.queryBatchSize);
-	batchDelayBox->setValue(gConfig.doomseeker.queryBatchDelay);
+	d->queryBeforeLaunch->setChecked(gConfig.doomseeker.bQueryBeforeLaunch);
+	d->queryOnStartup->setChecked(gConfig.doomseeker.bQueryOnStartup);
+	d->triesBox->setValue(gConfig.doomseeker.queryTries);
+	d->timeoutBox->setValue(gConfig.doomseeker.queryTimeout);
+	d->grbServerAutoRefresh->setChecked(gConfig.doomseeker.bQueryAutoRefreshEnabled);
+	d->numAutoRefreshEverySeconds->setValue(gConfig.doomseeker.queryAutoRefreshEverySeconds);
+	d->cbDontRefreshIfActive->setChecked(gConfig.doomseeker.bQueryAutoRefreshDontIfActive);
+	d->batchSizeBox->setValue(gConfig.doomseeker.queryBatchSize);
+	d->batchDelayBox->setValue(gConfig.doomseeker.queryBatchDelay);
 }
 
 void CFGQuery::saveSettings()
 {
-	gConfig.doomseeker.bQueryBeforeLaunch = queryBeforeLaunch->isChecked();
-	gConfig.doomseeker.bQueryOnStartup = queryOnStartup->isChecked();
-	gConfig.doomseeker.queryTries = triesBox->value();
-	gConfig.doomseeker.queryTimeout = timeoutBox->value();
-	gConfig.doomseeker.bQueryAutoRefreshEnabled = grbServerAutoRefresh->isChecked();
-	gConfig.doomseeker.queryAutoRefreshEverySeconds = numAutoRefreshEverySeconds->value();
-	gConfig.doomseeker.bQueryAutoRefreshDontIfActive = cbDontRefreshIfActive->isChecked();
-	gConfig.doomseeker.queryBatchSize = batchSizeBox->value();
-	gConfig.doomseeker.queryBatchDelay = batchDelayBox->value();
+	gConfig.doomseeker.bQueryBeforeLaunch = d->queryBeforeLaunch->isChecked();
+	gConfig.doomseeker.bQueryOnStartup = d->queryOnStartup->isChecked();
+	gConfig.doomseeker.queryTries = d->triesBox->value();
+	gConfig.doomseeker.queryTimeout = d->timeoutBox->value();
+	gConfig.doomseeker.bQueryAutoRefreshEnabled = d->grbServerAutoRefresh->isChecked();
+	gConfig.doomseeker.queryAutoRefreshEverySeconds = d->numAutoRefreshEverySeconds->value();
+	gConfig.doomseeker.bQueryAutoRefreshDontIfActive = d->cbDontRefreshIfActive->isChecked();
+	gConfig.doomseeker.queryBatchSize = d->batchSizeBox->value();
+	gConfig.doomseeker.queryBatchDelay = d->batchDelayBox->value();
 }

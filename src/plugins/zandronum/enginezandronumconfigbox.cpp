@@ -23,9 +23,16 @@
 
 #include "enginezandronumconfigbox.h"
 #include "zandronumengineplugin.h"
+#include "ini/ini.h"
 #include "plugins/engineplugin.h"
 
+#include <QCheckBox>
 #include <QFileDialog>
+#include <QGroupBox>
+#include <QLabel>
+#include <QLayout>
+#include <QLineEdit>
+#include <QPushButton>
 
 EngineZandronumConfigBox::EngineZandronumConfigBox(const EnginePlugin* plugin, IniSection& cfg, QWidget* parent)
 : EngineConfigurationBaseBox(plugin, cfg, parent)

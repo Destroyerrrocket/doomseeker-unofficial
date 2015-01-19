@@ -26,9 +26,9 @@
 #include "serverapi/serverptr.h"
 #include "serverapi/player.h"
 #include <QPixmap>
-#include <QImage>
 
 class Server;
+class QImage;
 
 #define NUM_SLOTSTYLES 2
 

@@ -86,6 +86,11 @@ bool IRCNetworkEntity::isAutojoinNetwork() const
 	return d->bAutojoinNetwork;;
 }
 
+bool IRCNetworkEntity::isValid() const
+{
+	return !address().isEmpty() && port() != 0;
+}
+
 const QString &IRCNetworkEntity::description() const
 {
 	return d->description;
@@ -99,6 +104,16 @@ const QString &IRCNetworkEntity::nickservCommand() const
 const QString &IRCNetworkEntity::nickservPassword() const
 {
 	return d->nickservPassword;
+}
+
+bool IRCNetworkEntity::operator<(const IRCNetworkEntity& other) const
+{
+	return description().toLower().trimmed() < other.description().toLower().trimmed();
+}
+
+bool IRCNetworkEntity::operator==(const IRCNetworkEntity& other) const
+{
+	return address() == other.address() && port() == other.port();
 }
 
 const QString &IRCNetworkEntity::password() const

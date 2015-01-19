@@ -24,22 +24,17 @@
 #ifndef __DOCKBUDDIESLIST_H__
 #define __DOCKBUDDIESLIST_H__
 
-#include "global.h"
 #include "serverapi/buddyinfo.h"
 #include "serverapi/serverptr.h"
-#include "patternlist.h"
-#include "ui_dockBuddiesList.h"
-#include "ui_addBuddyDlg.h"
 
-#include <QList>
-#include <QRegExp>
-#include <QStandardItemModel>
+#include <QDialog>
+#include <QDockWidget>
 
 class MasterManager;
-class Player;
-class Server;
+class QAbstractButton;
+class QModelIndex;
 
-class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
+class DockBuddiesList : public QDockWidget
 {
 	Q_OBJECT
 
@@ -64,26 +59,7 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 		void joinServer(const ServerPtr &server);
 
 	protected:
-		class BuddyLocationInfo
-		{
-			public:
-				BuddyLocationInfo(const Player &buddy, ServerPtr location);
-				COPYABLE_D_POINTERED_DECLARE(BuddyLocationInfo);
-				~BuddyLocationInfo();
-
-				const Player &buddy() const;
-				ServerPtr location() const;
-
-				bool operator==(const BuddyLocationInfo &other) const;
-
-			private:
-				class PrivData;
-				PrivData *d;
-		};
-
-		QList<DockBuddiesList::BuddyLocationInfo> buddies;
-		QStandardItemModel *buddiesTableModel;
-		PatternList pBuddies;
+		class BuddyLocationInfo;
 
 	protected slots:
 		void deleteBuddy();
@@ -91,22 +67,30 @@ class DockBuddiesList : public QDockWidget, private Ui::DockBuddiesList
 		void patternsListContextMenu(const QPoint &pos) const;
 
 	private:
+		class PrivData;
+		PrivData *d;
+
 		const MasterManager *masterClient;
 		bool save;
 };
 
-class AddBuddyDlg : public QDialog, private Ui::AddBuddyDlg
+class AddBuddyDlg : public QDialog
 {
 	Q_OBJECT
 
 	public:
 		AddBuddyDlg(QWidget *parent=NULL);
+		~AddBuddyDlg();
 
-		BuddyInfo::PatternType patternType() const { return basicPattern->isChecked() ? BuddyInfo::PT_BASIC : BuddyInfo::PT_ADVANCED; }
-		QString pattern() const { return patternBox->text(); }
+		BuddyInfo::PatternType patternType() const;
+		QString pattern() const;
 
 	protected slots:
 		void buttonBoxClicked(QAbstractButton *button);
+
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 #endif /* __DOCKBUDDIESLIST_H__ */

@@ -35,17 +35,7 @@ class ChocolateDoomGameInfo
 			MODE_DEATHMATCH,
 			MODE_ALTDEATH
 		};
-		static const QList<GameMode>* gameModes() { return &gameModesList; }
-
-	protected:
-		static QList<GameMode> gameModesList;
-
-	private:
-		ChocolateDoomGameInfo();
-
-		void initGameModes();
-
-		static ChocolateDoomGameInfo* static_constructor;
+		static QList<GameMode> gameModes();
 };
 
 #endif

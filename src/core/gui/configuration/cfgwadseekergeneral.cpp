@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "cfgwadseekergeneral.h"
+#include "ui_cfgwadseekergeneral.h"
 
 #include "configuration/doomseekerconfig.h"
 #include "pathfinder/filesearchpath.h"
@@ -29,39 +30,49 @@
 #include <QDirModel>
 #include <QMessageBox>
 
+class CFGWadseekerGeneral::PrivData : public Ui::CFGWadseekerGeneral
+{
+};
+
 CFGWadseekerGeneral::CFGWadseekerGeneral(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
 
 	// Settings defined in this widget are ATM unused.
-	widgetTimeouts->setVisible(false);
+	d->widgetTimeouts->setVisible(false);
 
-	cbTargetDirectory->setCompleter(new QCompleter(new QDirModel()));
+	d->cbTargetDirectory->setCompleter(new QCompleter(new QDirModel()));
+}
+
+CFGWadseekerGeneral::~CFGWadseekerGeneral()
+{
+	delete d;
 }
 
 void CFGWadseekerGeneral::fillTargetDirectoryComboBox()
 {
-	cbTargetDirectory->clear();
-	cbTargetDirectory->addItems(gConfig.doomseeker.wadPathsOnly());
+	d->cbTargetDirectory->clear();
+	d->cbTargetDirectory->addItems(gConfig.doomseeker.wadPathsOnly());
 }
 
 void CFGWadseekerGeneral::readSettings()
 {
 	fillTargetDirectoryComboBox();
 
-	cbTargetDirectory->setEditText(gConfig.wadseeker.targetDirectory);
-	spinConnectTimeout->setValue(gConfig.wadseeker.connectTimeoutSeconds);
-	spinDownloadTimeout->setValue(gConfig.wadseeker.downloadTimeoutSeconds);
-	spinMaxConcurrentSiteSeeks->setValue(gConfig.wadseeker.maxConcurrentSiteDownloads);
-	spinMaxConcurrentWadDownloads->setValue(gConfig.wadseeker.maxConcurrentWadDownloads);
+	d->cbTargetDirectory->setEditText(gConfig.wadseeker.targetDirectory);
+	d->spinConnectTimeout->setValue(gConfig.wadseeker.connectTimeoutSeconds);
+	d->spinDownloadTimeout->setValue(gConfig.wadseeker.downloadTimeoutSeconds);
+	d->spinMaxConcurrentSiteSeeks->setValue(gConfig.wadseeker.maxConcurrentSiteDownloads);
+	d->spinMaxConcurrentWadDownloads->setValue(gConfig.wadseeker.maxConcurrentWadDownloads);
 }
 
 void CFGWadseekerGeneral::saveSettings()
 {
-	gConfig.wadseeker.targetDirectory = cbTargetDirectory->currentText();
+	gConfig.wadseeker.targetDirectory = d->cbTargetDirectory->currentText();
 
-	QFileInfo targetDirectoryInfo(cbTargetDirectory->currentText());
+	QFileInfo targetDirectoryInfo(d->cbTargetDirectory->currentText());
 	if(!targetDirectoryInfo.isWritable())
 	{
 		QMessageBox::warning(this, tr("Wadseeker - error"),
@@ -73,7 +84,7 @@ void CFGWadseekerGeneral::saveSettings()
 		// Also take a look at the file paths configuration.  Warn if it is not on the list.
 		bool pathPossible = false;
 
-		QFileInfo wadseekerTargetDirectoryFileInfo(cbTargetDirectory->currentText());
+		QFileInfo wadseekerTargetDirectoryFileInfo(d->cbTargetDirectory->currentText());
 		foreach (FileSearchPath possiblePath, gConfig.doomseeker.wadPaths)
 		{
 			// Bring paths to QFileInfo before string comparison. Two same paths
@@ -96,8 +107,8 @@ void CFGWadseekerGeneral::saveSettings()
 		}
 	}
 
-	gConfig.wadseeker.connectTimeoutSeconds = spinConnectTimeout->value();
-	gConfig.wadseeker.downloadTimeoutSeconds = spinDownloadTimeout->value();
-	gConfig.wadseeker.maxConcurrentSiteDownloads = spinMaxConcurrentSiteSeeks->value();
-	gConfig.wadseeker.maxConcurrentWadDownloads = spinMaxConcurrentWadDownloads->value();
+	gConfig.wadseeker.connectTimeoutSeconds = d->spinConnectTimeout->value();
+	gConfig.wadseeker.downloadTimeoutSeconds = d->spinDownloadTimeout->value();
+	gConfig.wadseeker.maxConcurrentSiteDownloads = d->spinMaxConcurrentSiteSeeks->value();
+	gConfig.wadseeker.maxConcurrentWadDownloads = d->spinMaxConcurrentWadDownloads->value();
 }

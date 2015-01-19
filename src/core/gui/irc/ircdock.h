@@ -23,12 +23,10 @@
 #ifndef __IRCDOCK_H_
 #define __IRCDOCK_H_
 
-#include "ui_ircdock.h"
 #include <QDockWidget>
 
 class IRCAdapterBase;
 class IRCDockTabContents;
-class IRCMessageClass;
 class IRCNetworkAdapter;
 class IRCNetworkConnectionInfo;
 class IRCSounds;
@@ -36,7 +34,7 @@ class IRCSounds;
 /**
  *	@brief Dockable widget designed for IRC communication.
  */
-class IRCDock : public QDockWidget, private Ui::IRCDock
+class IRCDock : public QDockWidget
 {
 	Q_OBJECT;
 
@@ -58,9 +56,8 @@ class IRCDock : public QDockWidget, private Ui::IRCDock
 		IRCDockTabContents *tabWithFocus();
 
 	private:
-		IRCSounds* pSounds;
-		QAction* toolBarConnect;
-		QAction* toolBarOpenChatWindow;
+		class PrivData;
+		PrivData *d;
 
 		IRCNetworkAdapter* networkWithUiFocus();
 

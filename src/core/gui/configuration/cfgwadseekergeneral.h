@@ -23,15 +23,16 @@
 #ifndef __WADSEEKERCONFIG_GENERAL_H_
 #define __WADSEEKERCONFIG_GENERAL_H_
 
-#include "ui_cfgwadseekergeneral.h"
 #include "gui/configuration/configurationbasebox.h"
+#include <QIcon>
 
-class CFGWadseekerGeneral : public ConfigurationBaseBox, private Ui::CFGWadseekerGeneral
+class CFGWadseekerGeneral : public ConfigurationBaseBox
 {
 	Q_OBJECT
 
 	public:
 		CFGWadseekerGeneral(QWidget* parent = NULL);
+		~CFGWadseekerGeneral();
 
 		QIcon icon() const { return QIcon(":/icons/preferences-system-4.png"); }
 		QString name() const { return tr("General"); }
@@ -41,6 +42,10 @@ class CFGWadseekerGeneral : public ConfigurationBaseBox, private Ui::CFGWadseeke
 	protected:
 		void fillTargetDirectoryComboBox();
 		void saveSettings();
+
+	private:
+		class PrivData;
+		PrivData *d;
 };
 
 #endif

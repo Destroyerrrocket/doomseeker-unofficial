@@ -21,16 +21,27 @@
 // Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "cfgautoupdates.h"
+#include "ui_cfgautoupdates.h"
 
 #include "configuration/doomseekerconfig.h"
 #include "updater/updatechannel.h"
 #include "log.h"
 #include <cassert>
 
+class CFGAutoUpdates::PrivData : public Ui::CFGAutoUpdates
+{
+};
+
 CFGAutoUpdates::CFGAutoUpdates(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
-	setupUi(this);
+	d = new PrivData;
+	d->setupUi(this);
+}
+
+CFGAutoUpdates::~CFGAutoUpdates()
+{
+	delete d;
 }
 
 void CFGAutoUpdates::initUpdateChannels()
@@ -38,7 +49,7 @@ void CFGAutoUpdates::initUpdateChannels()
 	QList<UpdateChannel> channels = UpdateChannel::allChannels();
 	foreach (const UpdateChannel& channel, channels)
 	{
-		cboUpdateChannel->addItem(channel.translatedName(),
+		d->cboUpdateChannel->addItem(channel.translatedName(),
 			channel.name());
 	}
 }
@@ -46,9 +57,9 @@ void CFGAutoUpdates::initUpdateChannels()
 void CFGAutoUpdates::onUpdateChannelChange(int index)
 {
 	// Update description field.
-	QString name = cboUpdateChannel->itemData(index).toString();
+	QString name = d->cboUpdateChannel->itemData(index).toString();
 	UpdateChannel channel = UpdateChannel::fromName(name);
-	pteChannelDescription->setPlainText(channel.translatedDescription());
+	d->pteChannelDescription->setPlainText(channel.translatedDescription());
 }
 
 void CFGAutoUpdates::readSettings()
@@ -58,37 +69,37 @@ void CFGAutoUpdates::readSettings()
 	switch (gConfig.autoUpdates.updateMode)
 	{
 		case DoomseekerConfig::AutoUpdates::UM_Disabled:
-			rbDisabled->setChecked(true);
+			d->rbDisabled->setChecked(true);
 			break;
 		default:
 		case DoomseekerConfig::AutoUpdates::UM_NotifyOnly:
-			rbNotifyButDontInstall->setChecked(true);
+			d->rbNotifyButDontInstall->setChecked(true);
 			break;
 		case DoomseekerConfig::AutoUpdates::UM_FullAuto:
-			rbInstallAutomatically->setChecked(true);
+			d->rbInstallAutomatically->setChecked(true);
 			break;
 	}
 	QString channelName = gConfig.autoUpdates.updateChannelName;
-	int channelIdx = cboUpdateChannel->findData(channelName);
+	int channelIdx = d->cboUpdateChannel->findData(channelName);
 	if (channelIdx < 0)
 	{
 		// Default to "stable" if user tampered with the INI file.
-		channelIdx = cboUpdateChannel->findData(UpdateChannel::mkStable().name());
+		channelIdx = d->cboUpdateChannel->findData(UpdateChannel::mkStable().name());
 	}
-	cboUpdateChannel->setCurrentIndex(channelIdx);
+	d->cboUpdateChannel->setCurrentIndex(channelIdx);
 }
 
 void CFGAutoUpdates::saveSettings()
 {
-	if (rbDisabled->isChecked())
+	if (d->rbDisabled->isChecked())
 	{
 		gConfig.autoUpdates.updateMode = DoomseekerConfig::AutoUpdates::UM_Disabled;
 	}
-	else if (rbNotifyButDontInstall->isChecked())
+	else if (d->rbNotifyButDontInstall->isChecked())
 	{
 		gConfig.autoUpdates.updateMode = DoomseekerConfig::AutoUpdates::UM_NotifyOnly;
 	}
-	else if (rbInstallAutomatically->isChecked())
+	else if (d->rbInstallAutomatically->isChecked())
 	{
 		gConfig.autoUpdates.updateMode = DoomseekerConfig::AutoUpdates::UM_FullAuto;
 	}
@@ -96,6 +107,6 @@ void CFGAutoUpdates::saveSettings()
 	{
 		assert(false && "CFGAutoUpdates::saveSettings() - No radio button is checked.");
 	}
-	gConfig.autoUpdates.updateChannelName = cboUpdateChannel->itemData(
-		cboUpdateChannel->currentIndex()).toString();
+	gConfig.autoUpdates.updateChannelName = d->cboUpdateChannel->itemData(
+		d->cboUpdateChannel->currentIndex()).toString();
 }

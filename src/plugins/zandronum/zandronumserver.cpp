@@ -135,9 +135,9 @@ QList<GameCVar> ZandronumServer::modifiers() const
 {
 	QList<GameCVar> result;
 	if(instagib)
-		result << (*ZandronumGameInfo::gameModifiers())[1];
+		result << ZandronumGameInfo::gameModifiers()[1];
 	else if(buckshot)
-		result << (*ZandronumGameInfo::gameModifiers())[0];
+		result << ZandronumGameInfo::gameModifiers()[0];
 	return result;
 }
 
@@ -306,7 +306,7 @@ Server::Response ZandronumServer::readRequest(const QByteArray &data)
 		}
 
 		mode = static_cast<ZandronumGameInfo::ZandronumGameMode> (modeCode);
-		setGameMode((*ZandronumGameInfo::gameModes())[mode]);
+		setGameMode(ZandronumGameInfo::gameModes()[mode]);
 
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(2);
 		instagib = in.readQInt8() != 0;

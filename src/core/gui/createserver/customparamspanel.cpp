@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// passwordDlg.h
+// customparamspanel.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,46 +18,50 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __PASSWORDDIALOG_H__
-#define __PASSWORDDIALOG_H__
+#include "customparamspanel.h"
+#include "ui_customparamspanel.h"
 
-#include "ui_passwordDlg.h"
-#include "serverapi/serverptr.h"
-#include <QStringList>
+#include "ini/ini.h"
+#include "serverapi/gamecreateparams.h"
+#include "scanner.h"
 
-class EnginePlugin;
-class Server;
-
-class PasswordDlg : public QDialog, private Ui::passwordDlg
+class CustomParamsPanel::PrivData : public Ui::CustomParamsPanel
 {
-	Q_OBJECT
-
-	public:
-		PasswordDlg(ServerCPtr server, QWidget *parent=NULL);
-		~PasswordDlg();
-
-		QString connectPassword() const;
-		QString inGamePassword() const;
-
-	public slots:
-		void accept();
-
-	private:
-		class PrivData;
-		PrivData* d;
-
-		void applyInputsVisibility();
-		void loadConfiguration();
-		void saveConfiguration();
-		void setCurrentConnectPassword(const QString& password);
-		void setCurrentIngamePassword(const QString& password);
-		void setPasswords(const QStringList& passwords);
-
-	private slots:
-		void removeCurrentConnectPassword();
-		void removeCurrentIngamePassword();
 };
 
-#endif /* __PASSWORDDIALOG_H__ */
+CustomParamsPanel::CustomParamsPanel(QWidget *parent)
+: QWidget(parent)
+{
+	d = new PrivData;
+	d->setupUi(this);
+}
+
+CustomParamsPanel::~CustomParamsPanel()
+{
+	delete d;
+}
+
+void CustomParamsPanel::fillInParams(GameCreateParams &params)
+{
+	QString customParams = d->paramsArea->toPlainText();
+	QByteArray utf8 = customParams.toUtf8();
+	Scanner sc(utf8.constData(), utf8.length());
+	while (sc.nextString())
+	{
+		params.customParameters() << sc->str();
+	}
+}
+
+void CustomParamsPanel::loadConfig(Ini &config)
+{
+	IniSection misc = config.section("Misc");
+	d->paramsArea->document()->setPlainText(misc["CustomParams"]);
+}
+
+void CustomParamsPanel::saveConfig(Ini &config)
+{
+	IniSection misc = config.section("Misc");
+	misc["CustomParams"] = d->paramsArea->toPlainText();
+}
