@@ -86,54 +86,26 @@ class Refresher::Data
 class Refresher::MasterClientInfo
 {
 	public:
-		MasterClientInfo(MasterClient* pMaster, Refresher* pParent)
+		MasterClientInfo(Refresher* parent)
 		{
-			pParentThread = pParent;
-			pLastChallengeTimer = NULL;
-			numOfChallengesSent = 0;
-		}
-		~MasterClientInfo()
-		{
-			if (pLastChallengeTimer != NULL)
-			{
-				delete pLastChallengeTimer;
-			}
+			connect(&lastChallengeTimer, SIGNAL(timeout()),
+				parent, SLOT(attemptTimeoutMasters()));
+			lastChallengeTimer.setSingleShot(true);
+			lastChallengeTimer.setInterval(MASTER_SERVER_TIMEOUT_DELAY);
 		}
 
 		void fireLastChallengeSentTimer()
 		{
-			// This was previously done with an object of QTimer
-			// instead of a pointer.
-			// Unfortunately on Windows it produced a cross-threading
-			// warning messages saying that timer cannot be started
-			// from a different thread.
-			if (pLastChallengeTimer == NULL)
-			{
-				pLastChallengeTimer = new QTimer();
-				connect(pLastChallengeTimer, SIGNAL(timeout()),
-					pParentThread, SLOT(attemptTimeoutMasters()));
-				pLastChallengeTimer->setSingleShot(true);
-				pLastChallengeTimer->setInterval(MASTER_SERVER_TIMEOUT_DELAY);
-			}
-
-			pLastChallengeTimer->start();
+			lastChallengeTimer.start();
 		}
 
 		bool isLastChallengeTimerActive() const
 		{
-			if (pLastChallengeTimer == NULL)
-			{
-				return false;
-			}
-
-			return pLastChallengeTimer->isActive();
+			return lastChallengeTimer.isActive();
 		}
 
-		int numOfChallengesSent;
-
 	private:
-		Refresher* pParentThread;
-		QTimer* pLastChallengeTimer;
+		QTimer lastChallengeTimer;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -260,7 +232,7 @@ void Refresher::registerMaster(MasterClient* pMaster)
 {
 	if (!d->registeredMasters.contains(pMaster))
 	{
-		MasterClientInfo* pMasterInfo = new MasterClientInfo(pMaster, this);
+		MasterClientInfo* pMasterInfo = new MasterClientInfo(this);
 		this->connect(pMaster, SIGNAL(listUpdated()), SLOT(masterFinishedRefreshing()));
 
 		d->registeredMasters.insert(pMaster, pMasterInfo);
@@ -342,7 +314,6 @@ void Refresher::sendMasterQueries()
 		MasterClient* pMaster = *d->unchallengedMasters.begin();
 
 		MasterClientInfo* pMasterInfo = d->registeredMasters[pMaster];
-		++pMasterInfo->numOfChallengesSent;
 		pMasterInfo->fireLastChallengeSentTimer();
 
 		pMaster->refreshStarts();
@@ -382,24 +353,6 @@ void Refresher::sendServerQueries()
 void Refresher::setDelayBetweenResends(int delay)
 {
 	d->delayBetweenResends = qMax(delay, 100);
-}
-
-bool Refresher::shouldBlockRefreshingProcess() const
-{
-	if (!d->registeredMasters.isEmpty())
-	{
-		return true;
-	}
-
-	foreach(const Server* pServer, d->registeredServers)
-	{
-		if (!pServer->isCustom())
-		{
-			return true;
-		}
-	}
-
-	return false;
 }
 
 bool Refresher::start()

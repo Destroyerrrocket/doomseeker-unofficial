@@ -114,12 +114,6 @@ class Refresher : public QObject
 
 		void readPendingDatagram();
 
-		/**
-		 * @brief Returns true if there are any master clients or non-custom
-		 * servers registered.
-		 */
-		bool shouldBlockRefreshingProcess() const;
-
 		void startNewServerRefreshesIfFreeSlots();
 		void resendCurrentServerRefreshesIfTimeout();
 
