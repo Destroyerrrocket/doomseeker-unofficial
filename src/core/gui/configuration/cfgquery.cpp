@@ -49,8 +49,7 @@ void CFGQuery::readSettings()
 	d->grbServerAutoRefresh->setChecked(gConfig.doomseeker.bQueryAutoRefreshEnabled);
 	d->numAutoRefreshEverySeconds->setValue(gConfig.doomseeker.queryAutoRefreshEverySeconds);
 	d->cbDontRefreshIfActive->setChecked(gConfig.doomseeker.bQueryAutoRefreshDontIfActive);
-	d->batchSizeBox->setValue(gConfig.doomseeker.queryBatchSize);
-	d->batchDelayBox->setValue(gConfig.doomseeker.queryBatchDelay);
+	d->queryIntervalBox->setValue(gConfig.doomseeker.queryInterval);
 }
 
 void CFGQuery::saveSettings()
@@ -62,6 +61,5 @@ void CFGQuery::saveSettings()
 	gConfig.doomseeker.bQueryAutoRefreshEnabled = d->grbServerAutoRefresh->isChecked();
 	gConfig.doomseeker.queryAutoRefreshEverySeconds = d->numAutoRefreshEverySeconds->value();
 	gConfig.doomseeker.bQueryAutoRefreshDontIfActive = d->cbDontRefreshIfActive->isChecked();
-	gConfig.doomseeker.queryBatchSize = d->batchSizeBox->value();
-	gConfig.doomseeker.queryBatchDelay = d->batchDelayBox->value();
+	gConfig.doomseeker.queryInterval = d->queryIntervalBox->value();
 }

@@ -86,8 +86,7 @@ class DoomseekerConfig
 			int mainWindowX;
 			int mainWindowY;
 			unsigned queryAutoRefreshEverySeconds;
-			unsigned queryBatchSize;
-			unsigned queryBatchDelay;
+			unsigned queryInterval;
 			unsigned queryTimeout;
 			unsigned queryTries;
 			QString previousCreateServerConfigDir;

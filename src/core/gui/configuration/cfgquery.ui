@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>436</width>
-    <height>382</height>
+    <height>300</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -15,100 +15,21 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QFormLayout" name="formLayout">
-     <property name="fieldGrowthPolicy">
-      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+    <widget class="QCheckBox" name="queryOnStartup">
+     <property name="text">
+      <string>Refresh servers on startup</string>
      </property>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Query servers on startup</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QCheckBox" name="queryOnStartup">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_4">
-       <property name="toolTip">
-        <string>How many times Doomseeker will attempt to query each server before deeming it to be not responding.</string>
-       </property>
-       <property name="text">
-        <string>Number of tries:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QSpinBox" name="triesBox">
-       <property name="toolTip">
-        <string>How many times Doomseeker will attempt to query each server before deeming it to be not responding.</string>
-       </property>
-       <property name="minimum">
-        <number>3</number>
-       </property>
-       <property name="maximum">
-        <number>10</number>
-       </property>
-       <property name="singleStep">
-        <number>1</number>
-       </property>
-       <property name="value">
-        <number>7</number>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label">
-       <property name="toolTip">
-        <string>Delay in miliseconds between each query attempt.</string>
-       </property>
-       <property name="text">
-        <string>Delay between tries (ms):</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QSpinBox" name="timeoutBox">
-       <property name="toolTip">
-        <string>Delay in miliseconds between each query attempt.</string>
-       </property>
-       <property name="minimum">
-        <number>500</number>
-       </property>
-       <property name="maximum">
-        <number>10000</number>
-       </property>
-       <property name="singleStep">
-        <number>100</number>
-       </property>
-       <property name="value">
-        <number>1000</number>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_8">
-       <property name="text">
-        <string>Query before launch</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QCheckBox" name="queryBeforeLaunch">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="queryBeforeLaunch">
+     <property name="text">
+      <string>Refresh before launch</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QGroupBox" name="grbServerAutoRefresh">
@@ -185,44 +106,76 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Query Speed</string>
+      <string>Refresh speed</string>
      </property>
      <layout class="QFormLayout" name="formLayout_3">
-      <property name="fieldGrowthPolicy">
-       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-      </property>
       <item row="0" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Batch size:</string>
+       <widget class="QLabel" name="label_4">
+        <property name="toolTip">
+         <string>How many times Doomseeker will attempt to query each server before deeming it to be not responding.</string>
         </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_7">
         <property name="text">
-         <string>Batch delay (ms):</string>
+         <string>Number of attempts per server:</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QSpinBox" name="batchSizeBox">
+       <widget class="QSpinBox" name="triesBox">
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of servers to query in a single batch (30 recommended). Increasing this value will improve the speed of server list refresh, but may also increase CPU and bandwidth usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>How many times Doomseeker will attempt to query each server before deeming it to be not responding.</string>
         </property>
         <property name="minimum">
-         <number>1</number>
+         <number>3</number>
         </property>
         <property name="maximum">
-         <number>250</number>
+         <number>10</number>
+        </property>
+        <property name="singleStep">
+         <number>1</number>
         </property>
         <property name="value">
-         <number>30</number>
+         <number>7</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label">
+        <property name="toolTip">
+         <string>Delay in miliseconds between each query attempt.</string>
+        </property>
+        <property name="text">
+         <string>Delay between attemps (ms):</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QSpinBox" name="batchDelayBox">
+       <widget class="QSpinBox" name="timeoutBox">
+        <property name="toolTip">
+         <string>Delay in miliseconds between each query attempt.</string>
+        </property>
+        <property name="minimum">
+         <number>500</number>
+        </property>
+        <property name="maximum">
+         <number>10000</number>
+        </property>
+        <property name="singleStep">
+         <number>100</number>
+        </property>
+        <property name="value">
+         <number>1000</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Interval between different servers (ms):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QSpinBox" name="queryIntervalBox">
         <property name="toolTip">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Delay to wait before Doomseeker will check if any free slots open up for server queries (1ms recommended). Number of slots is determined by the &amp;quot;Batch size&amp;quot; setting. Increasing this value may negatively affect the speed of server list refresh, but will free up CPU and decrease bandwidth usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>

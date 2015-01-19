@@ -242,8 +242,7 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->mainWindowX = 0xffff;
 	this->mainWindowY = 0xffff;
 	this->queryAutoRefreshEverySeconds = 180;
-	this->queryBatchSize = 30;
-	this->queryBatchDelay = 50;
+	this->queryInterval = 50;
 	this->queryTimeout = 1000;
 	this->queryTries = 3;
 	this->previousCreateServerConfigDir = "";
@@ -343,8 +342,7 @@ void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 	section.createSetting("IP2CMaximumAge", this->ip2CountryDatabaseMaximumAge);
 	section.createSetting("IP2CUrl", this->ip2CountryUrl);
 	section.createSetting("QueryAutoRefreshEverySeconds", this->queryAutoRefreshEverySeconds);
-	section.createSetting("QueryBatchSize", this->queryBatchSize);
-	section.createSetting("QueryBatchDelay", this->queryBatchDelay);
+	section.createSetting("QueryBatchDelay", this->queryInterval);
 	section.createSetting("QueryTimeout", this->queryTimeout);
 	section.createSetting("QueryTries", this->queryTries);
 	section.createSetting("SlotStyle", this->slotStyle);
@@ -391,8 +389,7 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->mainWindowX = section["MainWindowX"];
 	this->mainWindowY = section["MainWindowY"];
 	this->queryAutoRefreshEverySeconds = section["QueryAutoRefreshEverySeconds"];
-	this->queryBatchSize = section["QueryBatchSize"];
-	this->queryBatchDelay = section["QueryBatchDelay"];
+	this->queryInterval = section["QueryBatchDelay"];
 	this->queryTimeout = section["QueryTimeout"];
 	this->queryTries = section["QueryTries"];
 	this->previousCreateServerConfigDir = (const QString &)section["PreviousCreateServerConfigDir"];
@@ -463,8 +460,7 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["MainWindowX"] = this->mainWindowX;
 	section["MainWindowY"] = this->mainWindowY;
 	section["QueryAutoRefreshEverySeconds"] = this->queryAutoRefreshEverySeconds;
-	section["QueryBatchSize"] = this->queryBatchSize;
-	section["QueryBatchDelay"] = this->queryBatchDelay;
+	section["QueryBatchDelay"] = this->queryInterval;
 	section["QueryTimeout"] = this->queryTimeout;
 	section["QueryTries"] = this->queryTries;
 	section["PreviousCreateServerConfigDir"] = this->previousCreateServerConfigDir;

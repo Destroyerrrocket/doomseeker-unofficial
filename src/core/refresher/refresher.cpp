@@ -76,9 +76,23 @@ class Refresher::Data
 		 * if the objects they point to have been deleted.
 		 */
 		QList<QPointer<Server> > registeredServers;
+		QList<QPointer<Server> > unchallengedServers;
 		QList<ServerRefreshTime> refreshingServers;
 		QUdpSocket* socket;
 		QSet<MasterClient*> unchallengedMasters;
+
+		QPointer<Server> popNextUnchallengedServer()
+		{
+			while (!unchallengedServers.isEmpty())
+			{
+				QPointer<Server> server = unchallengedServers.takeFirst();
+				if (!server.isNull())
+				{
+					return server;
+				}
+			}
+			return NULL;
+		}
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -192,11 +206,6 @@ bool Refresher::isAnythingToRefresh() const
 		|| !d->registeredMasters.isEmpty() || !d->unchallengedMasters.isEmpty();
 }
 
-bool Refresher::hasFreeServerRefreshSlots() const
-{
-	return d->refreshingServers.size() < gConfig.doomseeker.queryBatchSize;
-}
-
 void Refresher::masterFinishedRefreshing()
 {
 	MasterClient* pMaster = static_cast<MasterClient*>(sender());
@@ -221,6 +230,7 @@ void Refresher::purgeNullServers()
 {
 	d->registeredServers.removeAll(NULL);
 	d->refreshingServers.removeAll(ServerRefreshTime(NULL));
+	d->unchallengedServers.removeAll(NULL);
 }
 
 void Refresher::quit()
@@ -262,6 +272,7 @@ bool Refresher::registerServer(Server* server)
 			return false;
 		}
 		d->registeredServers.append(server);
+		d->unchallengedServers.append(server);
 		if (!server->isCustom())
 		{
 			emit block();
@@ -332,12 +343,12 @@ void Refresher::sendServerQueries()
 	purgeNullServers();
 	if (!d->registeredServers.isEmpty())
 	{
-		startNewServerRefreshesIfFreeSlots();
+		startNewServerRefresh();
 		resendCurrentServerRefreshesIfTimeout();
 		// Call self. This will continue until there's nothing more
 		// to refresh. Also make sure that there is at least some
 		// delay between calls or Doomseeker will hog CPU.
-		QTimer::singleShot(qMax(1U, gConfig.doomseeker.queryBatchDelay),
+		QTimer::singleShot(qMax(1U, gConfig.doomseeker.queryInterval),
 			this, SLOT(sendServerQueries()));
 	}
 	else
@@ -372,31 +383,20 @@ bool Refresher::start()
 	return false;
 }
 
-void Refresher::startNewServerRefreshesIfFreeSlots()
+void Refresher::startNewServerRefresh()
 {
 	// Copy the list as the original will be modified.
 	// We don't want to confuse the foreach.
-	QList<QPointer<Server> > servers = d->registeredServers;
-	foreach (QPointer<Server> server, servers)
+	QPointer<Server> server = d->popNextUnchallengedServer();
+	if (!server.isNull())
 	{
-		if (server.isNull())
+		if(server->sendRefreshQuery(d->socket))
 		{
-			continue;
+			d->refreshingServers.append(server);
 		}
-		if (!hasFreeServerRefreshSlots())
+		else
 		{
-			break;
-		}
-		if (!d->refreshingServers.contains(server))
-		{
-			if(server->sendRefreshQuery(d->socket))
-			{
-				d->refreshingServers.append(server);
-			}
-			else
-			{
-				d->registeredServers.removeAll(server);
-			}
+			d->registeredServers.removeAll(server);
 		}
 	}
 }
@@ -414,8 +414,8 @@ void Refresher::resendCurrentServerRefreshesIfTimeout()
 			}
 			else
 			{
-				d->refreshingServers.removeOne(refreshOp);
 				d->registeredServers.removeAll(refreshOp.server);
+				d->refreshingServers.removeOne(refreshOp);
 				// The collection on which we iterate just got shortened
 				// so let's back up by one step.
 				--i;

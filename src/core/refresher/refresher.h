@@ -108,13 +108,12 @@ class Refresher : public QObject
 
 		bool isAnythingToRefresh() const;
 		Server* findRefreshingServer(const QHostAddress& address, unsigned short port);
-		bool hasFreeServerRefreshSlots() const;
 
 		void purgeNullServers();
 
 		void readPendingDatagram();
 
-		void startNewServerRefreshesIfFreeSlots();
+		void startNewServerRefresh();
 		void resendCurrentServerRefreshesIfTimeout();
 
 		// TODO: Constify 'address' and 'packet' args.
