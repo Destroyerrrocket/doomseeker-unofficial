@@ -21,6 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "entities/waddownloadinfo.h"
+#include "protocols/wadarchive/wadarchiveclient.h"
 #include "wadretriever/wadretriever.h"
 #include "wwwseeker/entities/fileseekinfo.h"
 #include "wwwseeker/idgames.h"
@@ -57,12 +58,18 @@ Wadseeker::Wadseeker()
 {
 	d.bIsAborting = false;
 	d.seekParametersForCurrentSeek = NULL;
+	d.wadArchiveClient = NULL;
 	d.wadRetriever = NULL;
 	d.wwwSeeker = NULL;
 }
 
 Wadseeker::~Wadseeker()
 {
+	if (d.wadArchiveClient != NULL)
+	{
+		delete d.wadArchiveClient;
+	}
+
 	while (!d.idgamesClients.isEmpty())
 	{
 		delete d.idgamesClients.takeFirst();
@@ -90,6 +97,11 @@ void Wadseeker::abort()
 	{
 		d.bIsAborting = true;
 
+		if (d.wadArchiveClient != NULL)
+		{
+			d.wadArchiveClient->abort();
+		}
+
 		foreach (Idgames* pIdgamesClient, d.idgamesClients)
 		{
 			pIdgamesClient->abort();
@@ -107,6 +119,14 @@ void Wadseeker::abort()
 	}
 }
 
+void Wadseeker::cleanUpIfAllFinished()
+{
+	if (isAllFinished())
+	{
+		cleanUpAfterFinish();
+	}
+}
+
 void Wadseeker::cleanUpAfterFinish()
 {
 	if (d.seekParametersForCurrentSeek == NULL)
@@ -121,6 +141,9 @@ void Wadseeker::cleanUpAfterFinish()
 
 	delete d.seekParametersForCurrentSeek;
 	d.seekParametersForCurrentSeek = NULL;
+
+	delete d.wadArchiveClient;
+	d.wadArchiveClient = NULL;
 
 	d.wadRetriever->deleteLater();
 	d.wadRetriever = NULL;
@@ -254,6 +277,7 @@ bool Wadseeker::isWorking() const
 
 	return d.wwwSeeker->isWorking()
 		|| d.wadRetriever->isAnyDownloadWorking()
+		|| d.wadArchiveClient->isWorking()
 		|| !d.idgamesClients.isEmpty();
 }
 
@@ -453,6 +477,21 @@ void Wadseeker::setupSitesUrls()
 	}
 }
 
+void Wadseeker::setupWadArchiveClient(const QList<WadDownloadInfo> &wadDownloadInfos)
+{
+	d.wadArchiveClient = new WadArchiveClient();
+	d.wadArchiveClient->setUserAgent(WadseekerVersionInfo::userAgent());
+	foreach (const WadDownloadInfo &wad, wadDownloadInfos)
+	{
+		d.wadArchiveClient->enqueue(wad);
+	}
+
+	this->connect(d.wadArchiveClient, SIGNAL(message(QString, WadseekerLib::MessageType)),
+		SIGNAL(message(QString, WadseekerLib::MessageType)));
+	this->connect(d.wadArchiveClient, SIGNAL(finished()),
+		SLOT(cleanUpIfAllFinished()));
+}
+
 void Wadseeker::skipFileCurrentUrl(const QString& fileName)
 {
 	if (d.wadRetriever != NULL)
@@ -478,6 +517,15 @@ void Wadseeker::startNextIdgamesClient()
 		pIdgames->startSearch();
 	}
 
+	if (isAllFinished())
+	{
+		cleanUpAfterFinish();
+	}
+}
+
+void Wadseeker::startWadArchiveClient()
+{
+	d.wadArchiveClient->start();
 	if (isAllFinished())
 	{
 		cleanUpAfterFinish();
@@ -566,6 +614,10 @@ bool Wadseeker::startSeek(const QStringList& wads)
 	{
 		setupIdgamesClients(wadDownloadInfoList);
 	}
+	if (d.seekParametersForCurrentSeek->bWadArchiveEnabled)
+	{
+		setupWadArchiveClient(wadDownloadInfoList);
+	}
 
 	d.wadRetriever->setMaxConcurrentWadDownloads(d.seekParametersForCurrentSeek->maxConcurrentDownloads);
 	d.wadRetriever->setTargetSavePath(d.seekParametersForCurrentSeek->saveDirectoryPath);
@@ -578,6 +630,10 @@ bool Wadseeker::startSeek(const QStringList& wads)
 	if (d.seekParametersForCurrentSeek->bIdgamesEnabled)
 	{
 		startNextIdgamesClient();
+	}
+	if (d.seekParametersForCurrentSeek->bWadArchiveEnabled)
+	{
+		startWadArchiveClient();
 	}
 
 	return true;
@@ -661,6 +717,7 @@ void Wadseeker::wwwSeekerFinished()
 Wadseeker::SeekParameters::SeekParameters()
 {
 	this->bIdgamesEnabled = true;
+	this->bWadArchiveEnabled = true;
 	this->idgamesUrl = Wadseeker::defaultIdgamesUrl();
 	this->maxConcurrentDownloads = 3;
 	this->maxConcurrentSeeks = 3;

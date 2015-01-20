@@ -29,13 +29,14 @@ find_package(BZip2 REQUIRED)
 include(${QT_USE_FILE})
 include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}
-	${CMAKE_CURRENT_SOURCE_DIR}	
-	${ZLIB_INCLUDE_DIR} 
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${ZLIB_INCLUDE_DIR}
 	${BZIP2_INCLUDE_DIR}
 )
 
 set(WADSEEKER_QT_FILES
 	protocols/idgames/idgamesreply.h
+	protocols/wadarchive/wadarchiveclient.h
 	protocols/fixednetworkaccessmanager.h
 	protocols/fixedftpreply.h
 	protocols/networkreplysignalwrapper.h
@@ -59,6 +60,7 @@ set(WADSEEKER_FILES
 	protocols/idgames/idgamesfilematcher.cpp
 	protocols/idgames/idgamesreply.cpp
 	protocols/idgames/idgamesresult.cpp
+	protocols/wadarchive/wadarchiveclient.cpp
 	protocols/fixednetworkaccessmanager.cpp
 	protocols/fixedftpreply.cpp
 	protocols/json.cpp
@@ -100,9 +102,9 @@ set(HEADER_FILES
 	wwwseeker/htmlparser.h
 	wwwseeker/urlparser.h
 	ioutils.h
-	wadseekerexportinfo.h	
+	wadseekerexportinfo.h
 	wadseekermessagetype.h
-	wadseekerversioninfo.h	
+	wadseekerversioninfo.h
 )
 
 include_directories(${QT_INCLUDES})

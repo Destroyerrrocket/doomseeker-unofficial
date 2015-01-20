@@ -36,6 +36,7 @@
 #define WADSEEKER_DOWNLOAD_TIMEOUT_SECONDS_DEFAULT 120
 
 class Idgames;
+class WadArchiveClient;
 class WadRetriever;
 class WWWSeeker;
 
@@ -396,6 +397,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		{
 			public:
 				bool bIdgamesEnabled;
+				bool bWadArchiveEnabled;
 				QUrl customSiteUrl;
 				QString idgamesUrl;
 				unsigned maxConcurrentDownloads;
@@ -435,6 +437,7 @@ class WADSEEKER_API Wadseeker : public QObject
 				 */
 				SeekParameters* seekParametersForCurrentSeek;
 
+				WadArchiveClient* wadArchiveClient;
 				WadRetriever* wadRetriever;
 				WWWSeeker* wwwSeeker;
 		};
@@ -451,11 +454,13 @@ class WADSEEKER_API Wadseeker : public QObject
 
 		void setupIdgamesClients(const QList<WadDownloadInfo>& wadDownloadInfoList);
 		void setupSitesUrls();
-
+		void setupWadArchiveClient(const QList<WadDownloadInfo> &wadDownloadInfos);
 
 		void startNextIdgamesClient();
+		void startWadArchiveClient();
 
 	private slots:
+		void cleanUpIfAllFinished();
 		void fileLinkFound(const QString& filename, const QUrl& url);
 		void fileMirrorLinksFound(const QString& filename, const QList<QUrl>& urls);
 		void idgamesClientFinished(Idgames* pEmitter);
