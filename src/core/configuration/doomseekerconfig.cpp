@@ -623,6 +623,7 @@ const QString DoomseekerConfig::WadseekerCfg::SECTION_NAME = "Wadseeker";
 DoomseekerConfig::WadseekerCfg::WadseekerCfg()
 {
 	this->bSearchInIdgames = true;
+	this->bSearchInWadArchive = true;
 	this->colorMessageCriticalError = "#ff0000";
 	this->colorMessageError = "#ff0000";
 	this->colorMessageNotice = "#000000";
@@ -641,6 +642,7 @@ DoomseekerConfig::WadseekerCfg::WadseekerCfg()
 void DoomseekerConfig::WadseekerCfg::init(IniSection& section)
 {
 	section.createSetting("SearchInIdgames", this->bSearchInIdgames);
+	section.createSetting("SearchInWadArchive", this->bSearchInWadArchive);
 	section.createSetting("ColorMessageCriticalError", this->colorMessageCriticalError);
 	section.createSetting("ColorMessageError", this->colorMessageError);
 	section.createSetting("ColorMessageNotice", this->colorMessageNotice);
@@ -656,6 +658,7 @@ void DoomseekerConfig::WadseekerCfg::init(IniSection& section)
 void DoomseekerConfig::WadseekerCfg::load(IniSection& section)
 {
 	this->bSearchInIdgames = section["SearchInIdgames"];
+	this->bSearchInWadArchive = section["SearchInWadArchive"];
 	this->colorMessageCriticalError = (const QString &)section["ColorMessageCriticalError"];
 	this->colorMessageError = (const QString &)section["ColorMessageError"];
 	this->colorMessageNotice = (const QString &)section["ColorMessageNotice"];
@@ -678,6 +681,7 @@ void DoomseekerConfig::WadseekerCfg::load(IniSection& section)
 void DoomseekerConfig::WadseekerCfg::save(IniSection& section)
 {
 	section["SearchInIdgames"] = this->bSearchInIdgames;
+	section["SearchInWadArchive"] = this->bSearchInWadArchive;
 	section["ColorMessageCriticalError"] = this->colorMessageCriticalError;
 	section["ColorMessageError"] = this->colorMessageError;
 	section["ColorMessageNotice"] = this->colorMessageNotice;

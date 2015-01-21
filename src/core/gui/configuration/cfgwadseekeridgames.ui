@@ -15,57 +15,95 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QCheckBox" name="cbUseIdgames">
-     <property name="text">
-      <string>Use Idgames archive</string>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Idgames</string>
      </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QFrame" name="frameWithContent">
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <property name="spacing">
-       <number>9</number>
-      </property>
-      <property name="leftMargin">
-       <number>0</number>
-      </property>
-      <property name="topMargin">
-       <number>20</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="QLabel" name="label_7">
+       <widget class="QCheckBox" name="cbUseIdgames">
         <property name="text">
-         <string>Idgames archive URL (changing this is NOT recommended):</string>
+         <string>Use Idgames archive</string>
         </property>
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_6">
-        <item>
-         <widget class="QLineEdit" name="leIdgamesURL"/>
-        </item>
-        <item>
-         <widget class="QPushButton" name="btnIdgamesURLDefault">
-          <property name="text">
-           <string>Default</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../../../../media/resources.qrc">
-            <normaloff>:/icon.png</normaloff>:/icon.png</iconset>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <widget class="QFrame" name="frameWithContent">
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="spacing">
+          <number>9</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>20</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Idgames archive URL (changing this is NOT recommended):</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <item>
+            <widget class="QLineEdit" name="leIdgamesURL"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnIdgamesURLDefault">
+             <property name="text">
+              <string>Default</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../../../../media/resources.qrc">
+               <normaloff>:/icon.png</normaloff>:/icon.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Wad Archive</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <widget class="QCheckBox" name="cbUseWadArchive">
+        <property name="text">
+         <string>Use Wad Archive</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://www.wad-archive.com/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.wad-archive.com/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="openExternalLinks">
+         <bool>true</bool>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
