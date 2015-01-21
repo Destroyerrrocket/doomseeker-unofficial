@@ -126,5 +126,22 @@
  <resources>
   <include location="../../../../media/resources.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>cbUseIdgames</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>frameWithContent</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>57</x>
+     <y>40</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>53</x>
+     <y>62</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
