@@ -426,6 +426,10 @@ int ServerListRowHandler::updateServer(int response)
 
 		case Server::RESPONSE_NO_RESPONSE_YET:
 			setFirstQuery();
+			if (d->server->isRefreshing())
+			{
+				setRefreshing();
+			}
 			break;
 
 		default:
