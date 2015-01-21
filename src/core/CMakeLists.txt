@@ -217,6 +217,7 @@ set(DOOMSEEKER_QT_FILES
 	updater/updaterinfoparser.h
 	updater/updateinstaller.h
 	apprunner.h
+	cmdargshelp.h
 	customservers.h
 	joincommandlinebuilder.h
 	log.h
@@ -404,6 +405,7 @@ set(SOURCE_FILES
 	updater/updaterscriptparser.cpp
 	application.cpp
 	apprunner.cpp
+	cmdargshelp.cpp
 	commandline.cpp
 	commandlinetokenizer.cpp
 	customservers.cpp
