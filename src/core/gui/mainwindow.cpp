@@ -1218,9 +1218,6 @@ void MainWindow::quitProgram()
 	QApplication::closeAllWindows();
 }
 
-void dupa(ServerPtr a) {
-}
-
 void MainWindow::refreshCustomServers()
 {
 	CustomServers* customServers = d->masterManager->customServs();
