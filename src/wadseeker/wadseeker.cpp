@@ -490,6 +490,8 @@ void Wadseeker::setupWadArchiveClient(const QList<WadDownloadInfo> &wadDownloadI
 		SIGNAL(message(QString, WadseekerLib::MessageType)));
 	this->connect(d.wadArchiveClient, SIGNAL(finished()),
 		SLOT(cleanUpIfAllFinished()));
+	this->connect(d.wadArchiveClient, SIGNAL(urlFound(QString, QUrl)),
+		SLOT(fileLinkFound(QString, QUrl)));
 }
 
 void Wadseeker::skipFileCurrentUrl(const QString& fileName)

@@ -57,6 +57,11 @@ bool WadDownloadInfo::isArchive() const
 	return false;
 }
 
+bool WadDownloadInfo::isValid() const
+{
+	return !d.name.trimmed().isEmpty();
+}
+
 bool WadDownloadInfo::isFilenameIndicatingSameWad(const QString& filename) const
 {
 	QFileInfo fi(filename);

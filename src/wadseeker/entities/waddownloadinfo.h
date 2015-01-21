@@ -58,6 +58,8 @@ class WadDownloadInfo
 		 */
 		bool isArchive() const;
 
+		bool isValid() const;
+
 		/**
 		 * @brief Checks if filename is the same WAD as this object.
 		 *

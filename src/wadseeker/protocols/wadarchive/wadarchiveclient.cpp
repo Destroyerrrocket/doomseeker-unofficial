@@ -23,6 +23,7 @@
 #include "wadarchiveclient.h"
 
 #include "entities/waddownloadinfo.h"
+#include "protocols/json.h"
 #include <QDebug>
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -31,6 +32,7 @@
 class WadArchiveClient::PrivData
 {
 public:
+	WadDownloadInfo currentWad;
 	QNetworkAccessManager *nam;
 	QNetworkReply *reply;
 	QString userAgent;
@@ -38,7 +40,7 @@ public:
 
 	QUrl buildUrl(const WadDownloadInfo &wad)
 	{
-		if (wad.name().contains("/"))
+		if (!wad.isValid() || wad.name().contains("/"))
 		{
 			return QUrl();
 		}
@@ -118,12 +120,12 @@ void WadArchiveClient::startNextInQueue()
 		emitFinished();
 		return;
 	}
-	WadDownloadInfo wad = d->queue.takeFirst();
-	QUrl url = d->buildUrl(wad);
+	d->currentWad = d->queue.takeFirst();
+	QUrl url = d->buildUrl(d->currentWad);
 	#ifndef NDEBUG
 		qDebug() << "wad archive search:" << url;
 	#endif
-	emit message(tr("Querying Wad Archive for %1").arg(wad.name()), WadseekerLib::Notice);
+	emit message(tr("Querying Wad Archive for %1").arg(d->currentWad.name()), WadseekerLib::Notice);
 
 	QNetworkRequest request;
 	request.setUrl(url);
@@ -135,7 +137,22 @@ void WadArchiveClient::startNextInQueue()
 void WadArchiveClient::onQueryFinished()
 {
 	emit message(tr("Wad Archive query finished."), WadseekerLib::Notice);
+	QVariantList elements = QtJson::Json::parse(d->reply->readAll()).toList();
+	if (elements.size() > 0)
+	{
+		parseWadArchiveStructure(elements[0].toMap());
+	}
+
 	d->reply->deleteLater();
 	d->reply = NULL;
 	startNextInQueue();
+}
+
+void WadArchiveClient::parseWadArchiveStructure(const QVariantMap &map)
+{
+	QVariantList links = map["links"].toList();
+	foreach (QVariant link, links)
+	{
+		emit urlFound(d->currentWad.name(), QUrl(link.toString()));
+	}
 }

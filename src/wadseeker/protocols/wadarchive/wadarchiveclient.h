@@ -26,6 +26,8 @@
 #include <QNetworkAccessManager>
 #include <QObject>
 #include <QString>
+#include <QUrl>
+#include <QVariant>
 #include "wadseekermessagetype.h"
 
 class WadDownloadInfo;
@@ -47,12 +49,14 @@ public:
 signals:
 	void finished();
 	void message(const QString &msg, WadseekerLib::MessageType type);
+	void urlFound(const QString &wadName, const QUrl &url);
 
 private:
 	class PrivData;
 	PrivData *d;
 
 	void emitFinished();
+	void parseWadArchiveStructure(const QVariantMap &map);
 	void startNextInQueue();
 
 private slots:
