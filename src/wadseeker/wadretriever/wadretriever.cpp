@@ -510,6 +510,11 @@ void WadRetriever::resolveDownloadFinish(QNetworkReply* pReply, WadRetrieverInfo
 		url = pReply->url();
 	}
 
+	if (pReply->error() != QNetworkReply::NoError)
+	{
+		emit badUrlDetected(url);
+	}
+
 	if (pReply->bytesAvailable() > 0 && pReply->error() == QNetworkReply::NoError)
 	{
 		// File was downloaded successfully from this URL so we do not

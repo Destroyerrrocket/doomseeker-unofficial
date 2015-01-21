@@ -212,6 +212,8 @@ class WadRetriever : public QObject
 		void tryInstall(const QString& filename, QIODevice* dataStream);
 
 	signals:
+		void badUrlDetected(const QUrl &url);
+
 		/**
 		 * @brief Emitted when all WADs are successfully installed.
 		 *

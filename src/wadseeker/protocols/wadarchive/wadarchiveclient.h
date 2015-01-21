@@ -43,6 +43,7 @@ public:
 	void abort();
 	void enqueue(const WadDownloadInfo &wad);
 	bool isWorking() const;
+	void reportBadUrlIfOriginatingFromHere(const QUrl &url);
 	void setUserAgent(const QString &userAgent);
 	void start();
 

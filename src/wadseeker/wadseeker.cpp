@@ -308,6 +308,7 @@ void Wadseeker::prepareSeekObjects()
 	// WadRetriever
 	d.wadRetriever = new WadRetriever();
 	d.wadRetriever->setUserAgent(WadseekerVersionInfo::userAgent());
+	connect(d.wadRetriever, SIGNAL(badUrlDetected(QUrl)), SLOT(reportBadUrl(QUrl)));
 
 	// Connect signals to slots.
 
@@ -332,6 +333,14 @@ void Wadseeker::prepareSeekObjects()
 
 	this->connect(d.wadRetriever, SIGNAL( wadInstalled(WadDownloadInfo) ),
 		SLOT( wadRetrieverWadInstalled(WadDownloadInfo) ) );
+}
+
+void Wadseeker::reportBadUrl(const QUrl &url)
+{
+	if (d.wadArchiveClient != NULL)
+	{
+		d.wadArchiveClient->reportBadUrlIfOriginatingFromHere(url);
+	}
 }
 
 void Wadseeker::setCustomSite(const QUrl& url)

@@ -37,6 +37,7 @@ public:
 	QNetworkReply *reply;
 	QString userAgent;
 	QList<WadDownloadInfo> queue;
+	QList<QUrl> urls;
 
 	QUrl buildUrl(const WadDownloadInfo &wad)
 	{
@@ -45,6 +46,12 @@ public:
 			return QUrl();
 		}
 		return QUrl(QString("http://www.wad-archive.com/wadseeker/%1").arg(wad.name()));
+	}
+
+	QUrl buildBadUrlReporterUrl(const QUrl &url)
+	{
+		return QUrl(QString("http://www.wad-archive.com/wadseeker/missing/%1")
+			.arg(QString(url.toString().toAscii().toBase64())));
 	}
 };
 
@@ -96,7 +103,7 @@ void WadArchiveClient::enqueue(const WadDownloadInfo &wad)
 
 bool WadArchiveClient::isWorking() const
 {
-	return false;
+	return !d->queue.isEmpty() || d->reply != NULL;
 }
 
 void WadArchiveClient::setUserAgent(const QString &userAgent)
@@ -153,6 +160,25 @@ void WadArchiveClient::parseWadArchiveStructure(const QVariantMap &map)
 	QVariantList links = map["links"].toList();
 	foreach (QVariant link, links)
 	{
+		d->urls << QUrl(link.toString());
 		emit urlFound(d->currentWad.name(), QUrl(link.toString()));
+	}
+}
+
+void WadArchiveClient::reportBadUrlIfOriginatingFromHere(const QUrl &url)
+{
+	if (d->urls.contains(url))
+	{
+		emit message(tr("Reporting bad URL to Wad Archive: %1").arg(url.toString()),
+			WadseekerLib::Notice);
+		QUrl reportUrl = d->buildBadUrlReporterUrl(url);
+		#ifndef NDEBUG
+			qDebug() << "Wad Archive report url:" << reportUrl;
+		#endif
+		QNetworkRequest request;
+		request.setUrl(reportUrl);
+		request.setRawHeader("User-Agent", d->userAgent.toAscii());
+		QNetworkReply *reply = d->nam->get(request);
+		connect(reply, SIGNAL(finished()), reply, SLOT(deleteLater()));
 	}
 }
