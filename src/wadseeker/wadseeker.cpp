@@ -277,7 +277,7 @@ bool Wadseeker::isWorking() const
 
 	return d.wwwSeeker->isWorking()
 		|| d.wadRetriever->isAnyDownloadWorking()
-		|| d.wadArchiveClient->isWorking()
+		|| (d.wadArchiveClient != NULL && d.wadArchiveClient->isWorking())
 		|| !d.idgamesClients.isEmpty();
 }
 
@@ -405,6 +405,11 @@ void Wadseeker::setTargetDirectory(const QString& dir)
 	}
 
 	d.seekParameters.saveDirectoryPath = targetDir;
+}
+
+void Wadseeker::setWadArchiveEnabled(bool enabled)
+{
+	d.seekParameters.bWadArchiveEnabled = enabled;
 }
 
 void Wadseeker::setupIdgamesClients(const QList<WadDownloadInfo>& wadDownloadInfoList)

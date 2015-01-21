@@ -239,6 +239,12 @@ class WADSEEKER_API Wadseeker : public QObject
 		void setTargetDirectory(const QString& dir);
 
 		/**
+		 * @brief If set to true, Wadseeker will contact
+		 * http://www.wad-archive.com to look for download URLs.
+		 */
+		void setWadArchiveEnabled(bool enabled);
+
+		/**
 		 * @brief Skips current URL for the specified file.
 		 *
 		 * If available a new file URL will be immediately taken from the queue
