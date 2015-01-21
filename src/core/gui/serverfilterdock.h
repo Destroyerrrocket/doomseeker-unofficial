@@ -68,6 +68,7 @@ class ServerFilterDock : public QDockWidget
 	private slots:
 		void clear();
 		void emitUpdated();
+		void enableFilter();
 		void onServerGroupingChange();
 };
 
