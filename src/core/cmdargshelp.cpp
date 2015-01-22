@@ -29,9 +29,10 @@ QString CmdArgsHelp::argsHelp()
 		"--connect protocol://ip[:port]\n"
 		"    Attempts to connect to the specified server.\n");
 	help += tr(
-		"--datadir\n"
+		"--datadir [directory]\n"
 		"    Sets an explicit search location for\n"
-		"    IP2C data along with plugins.\n");
+		"    IP2C data along with plugins.\n"
+		"    Can be specified multiple times.\n");
 	help += tr(
 		"--rcon [plugin] [ip]\n"
 		"    Launch the rcon client for the specified ip.\n");
