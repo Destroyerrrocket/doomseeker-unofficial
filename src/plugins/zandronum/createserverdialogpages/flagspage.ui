@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>632</width>
-    <height>407</height>
+    <width>820</width>
+    <height>485</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1614,17 +1614,14 @@ p, li { white-space: pre-wrap; }
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="1" column="3">
-      <widget class="QLineEdit" name="leDmflags3">
+     <item row="0" column="4">
+      <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>0</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <string>zandronum dmflags</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="0" column="1">
       <widget class="QLineEdit" name="leDmflags">
        <property name="text">
         <string>0</string>
@@ -1634,31 +1631,21 @@ p, li { white-space: pre-wrap; }
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
         <string>dmflags</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
+     <item row="1" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>dmflags2</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="5">
-      <widget class="QLineEdit" name="leCompatflags">
-       <property name="text">
-        <string>0</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
+     <item row="1" column="1">
       <widget class="QLineEdit" name="leDmflags2">
        <property name="text">
         <string>0</string>
@@ -1668,29 +1655,42 @@ p, li { white-space: pre-wrap; }
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
-      <widget class="QLabel" name="label_5">
+     <item row="1" column="4">
+      <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>dmflags3</string>
+        <string>zandronum compatflags</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="4">
+     <item row="1" column="5">
+      <widget class="QLineEdit" name="leZandronumCompatflags">
+       <property name="text">
+        <string>0</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
       <widget class="QLabel" name="label_3">
        <property name="text">
         <string>compatflags</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="4">
-      <widget class="QLabel" name="label_4">
+     <item row="0" column="5">
+      <widget class="QLineEdit" name="leZandronumDmflags">
        <property name="text">
-        <string>compatflags2</string>
+        <string>0</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
-     <item row="2" column="5">
-      <widget class="QLineEdit" name="leCompatflags2">
+     <item row="0" column="3">
+      <widget class="QLineEdit" name="leCompatflags">
        <property name="text">
         <string>0</string>
        </property>
@@ -1715,9 +1715,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>tabWidget</tabstop>
   <tabstop>leDmflags</tabstop>
   <tabstop>leDmflags2</tabstop>
-  <tabstop>leDmflags3</tabstop>
-  <tabstop>leCompatflags</tabstop>
-  <tabstop>leCompatflags2</tabstop>
+  <tabstop>leZandronumCompatflags</tabstop>
   <tabstop>cboFallingDamage</tabstop>
   <tabstop>cbNoMonsters</tabstop>
   <tabstop>cbItemsRespawn</tabstop>
@@ -1854,7 +1852,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>leDmflags3</sender>
+   <sender>leZandronumDmflags</sender>
    <signal>textEdited(QString)</signal>
    <receiver>FlagsPage</receiver>
    <slot>propagateFlagsInputsChanges()</slot>
@@ -1902,7 +1900,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>leCompatflags2</sender>
+   <sender>leZandronumCompatflags</sender>
    <signal>textEdited(QString)</signal>
    <receiver>FlagsPage</receiver>
    <slot>propagateFlagsInputsChanges()</slot>

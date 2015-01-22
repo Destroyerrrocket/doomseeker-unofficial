@@ -57,9 +57,9 @@ FlagsPage::FlagsPage(CreateServerDialog* pParentDialog)
 	// 32-bit unsigned values.
 	leDmflags->setValidator(&d->validator);
 	leDmflags2->setValidator(&d->validator);
-	leDmflags3->setValidator(&d->validator);
+	leZandronumDmflags->setValidator(&d->validator);
 	leCompatflags->setValidator(&d->validator);
-	leCompatflags2->setValidator(&d->validator);
+	leZandronumCompatflags->setValidator(&d->validator);
 	leLMSAllowedWeapons->setValidator(&d->validator);
 	leLMSSpectatorSettings->setValidator(&d->validator);
 
@@ -94,9 +94,9 @@ QStringList FlagsPage::generateGameRunParameters()
 
 	params << "+dmflags" << leDmflags->text();
 	params << "+dmflags2" << leDmflags2->text();
-	params << "+dmflags3" << leDmflags3->text();
+	params << "+zadmflags" << leZandronumDmflags->text();
 	params << "+compatflags" << leCompatflags->text();
-	params << "+compatflags2" << leCompatflags2->text();
+	params << "+zacompatflags" << leZandronumCompatflags->text();
 	params << "+lmsallowedweapons" << leLMSAllowedWeapons->text();
 	params << "+lmsspectatorsettings" << leLMSSpectatorSettings->text();
 
@@ -144,9 +144,9 @@ bool FlagsPage::loadConfig(Ini& ini)
 
 	insertFlagsIfValid(leDmflags, section["dmflags"]);
 	insertFlagsIfValid(leDmflags2, section["dmflags2"]);
-	insertFlagsIfValid(leDmflags3, section["dmflags3"]);
+	insertFlagsIfValid(leZandronumDmflags, section["zandronumDmflags"]);
 	insertFlagsIfValid(leCompatflags, section["compatflags"]);
-	insertFlagsIfValid(leCompatflags2, section["compatflags2"]);
+	insertFlagsIfValid(leZandronumCompatflags, section["zandronumCompatflags"]);
 	insertFlagsIfValid(leLMSAllowedWeapons, section["lmsallowedweapons"], DEFAULT_LMSALLOWEDWEAPONS);
 	insertFlagsIfValid(leLMSSpectatorSettings, section["lmsspectatorsettings"], DEFAULT_LMSSPECTATORSETTINGS);
 
@@ -185,9 +185,9 @@ bool FlagsPage::saveConfig(Ini& ini)
 
 	section["dmflags"] = leDmflags->text();
 	section["dmflags2"] = leDmflags2->text();
-	section["dmflags3"] = leDmflags3->text();
+	section["zandronumDmflags"] = leZandronumDmflags->text();
 	section["compatflags"] = leCompatflags->text();
-	section["compatflags2"] = leCompatflags2->text();
+	section["zandronumCompatflags"] = leZandronumCompatflags->text();
 	section["lmsallowedweapons"] = leLMSAllowedWeapons->text();
 	section["lmsspectatorsettings"] = leLMSSpectatorSettings->text();
 	section["defaultdmflags"] = cbDefaultDmflags->isChecked();

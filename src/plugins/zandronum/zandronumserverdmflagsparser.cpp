@@ -31,7 +31,7 @@
 ZandronumServerDmflagsParser *ZandronumServerDmflagsParser::mkParser(
 	ZandronumServer *server, QDataStream *in)
 {
-	return new ZandronumServer1point0DmflagsParser(server, in);
+	return new ZandronumServer2point0DmflagsParser(server, in);
 }
 
 ZandronumServerDmflagsParser::ZandronumServerDmflagsParser(
@@ -89,7 +89,7 @@ QList<DMFlagsSection> ZandronumServerNullParser::parse()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-QList<DMFlagsSection> ZandronumServer1point0DmflagsParser::parse()
+QList<DMFlagsSection> ZandronumServer2point0DmflagsParser::parse()
 {
-	return sequential32Parse(ZandronumDmflags1point0().flags());
+	return sequential32Parse(ZandronumDmflags().flags());
 }

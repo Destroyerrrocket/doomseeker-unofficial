@@ -42,22 +42,22 @@ class FlagsPageValueController
 
 	private:
 		unsigned compatflags;
-		unsigned compatflags2;
+		unsigned zandronumCompatflags;
 
 		unsigned dmflags;
 		unsigned dmflags2;
-		unsigned dmflags3;
+		unsigned zandronumDmflags;
 
 		unsigned lmsAllowedWeapons;
 		unsigned lmsSpectatorSettings;
 
 		QMap<unsigned, QCheckBox*> compatflagsCheckboxes;
-		QMap<unsigned, QCheckBox*> compatflags2Checkboxes;
 		QMap<unsigned, QCheckBox*> dmflagsCheckboxes;
 		QMap<unsigned, QCheckBox*> dmflags2Checkboxes;
-		QMap<unsigned, QCheckBox*> dmflags3Checkboxes;
 		QMap<unsigned, QCheckBox*> lmsAllowedWeaponsCheckboxes;
 		QMap<unsigned, QCheckBox*> lmsSpectatorSettingsCheckboxes;
+		QMap<unsigned, QCheckBox*> zandronumCompatflagsCheckboxes;
+		QMap<unsigned, QCheckBox*> zandronumDmflagsCheckboxes;
 
 		FlagsPage* flagsPage;
 

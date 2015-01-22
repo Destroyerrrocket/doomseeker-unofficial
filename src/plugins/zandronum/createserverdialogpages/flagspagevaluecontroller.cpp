@@ -36,32 +36,14 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 	{
 		QMap<unsigned, QCheckBox*>& m = compatflagsCheckboxes;
 
-		// Players
-		m.insert(ZandronumDmflags::COMPATF_DISABLETAUNTS,
-			f->cbTaunt);
-		m.insert(ZandronumDmflags::COMPATF_NO_CROSSHAIR,
-			f->cbUseCrosshairs);
-
 		// Compatibility
 		// - Oldschool
-		m.insert(ZandronumDmflags::COMPATF_PLASMA_BUMP_BUG,
-			f->cbCompatPlasmaBumpBug);
 		m.insert(ZandronumDmflags::COMPATF_MAGICSILENCE,
 			f->cbCompatAllowSilentBFGTrick);
 		m.insert(ZandronumDmflags::COMPATF_WALLRUN,
 			f->cbCompatEnableWallRunning);
-		m.insert(ZandronumDmflags::COMPATF_OLD_WEAPON_SWITCH,
-			f->cbCompatOriginalWeaponSwitch);
 		m.insert(ZandronumDmflags::COMPATF_SILENTPICKUP,
 			f->cbCompatDontLetOthersHearPickups);
-		m.insert(ZandronumDmflags::COMPATF_LIMITED_AIRMOVEMENT,
-			f->cbCompatLimitedMovementInTheAir);
-		m.insert(ZandronumDmflags::COMPATF_INSTANTRESPAWN,
-			f->cbCompatAllowInstantRespawn);
-		m.insert(ZandronumDmflags::COMPATF_OLDINTERMISSION,
-			f->cbCompatUseOldIntermissionScreensMusic);
-		m.insert(ZandronumDmflags::COMPATF_DISABLESTEALTHMONSTERS,
-			f->cbCompatDisableStealthMonsters);
 		m.insert(ZandronumDmflags::COMPATF_INVISIBILITY,
 			f->cbCompatMonstersSeeSemiInvisiblePlayers);
 		// - General, left panel
@@ -89,8 +71,6 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbCompatAllSpecialLinesCanDropUseLines);
 		m.insert(ZandronumDmflags::COMPATF_NODOORLIGHT,
 			f->cbCompatDisableBoomDoorLightEffect);
-		m.insert(ZandronumDmflags::COMPATF_ORIGINALSOUNDCURVE,
-			f->cbCompatOriginalSoundCurve);
 		m.insert(ZandronumDmflags::COMPATF_RAVENSCROLL,
 			f->cbCompatRavensScrollersUseOriginalSpeed);
 		m.insert(ZandronumDmflags::COMPATF_SOUNDTARGET,
@@ -101,41 +81,57 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbCompatTraceIgnoreLinesWithoutSameSectorOnBothSides);
 		m.insert(ZandronumDmflags::COMPATF_CROSSDROPOFF,
 			f->cbCompatMonstersCantBePushedOffCliffs);
-		m.insert(ZandronumDmflags::COMPATF_OLDRADIUSDMG,
-			f->cbCompatOldDamageRadiusInfiniteHeight);
 		m.insert(ZandronumDmflags::COMPATF_MISSILECLIP,
 			f->cbCompatUseOriginalMissileClippingHeight);
 	}
 
 	// Compat flags 2
 	{
-		QMap<unsigned, QCheckBox*>& m = compatflags2Checkboxes;
+		QMap<unsigned, QCheckBox*>& m = zandronumCompatflagsCheckboxes;
 
 		// Players
+		m.insert(ZandronumDmflags::ZACOMPATF_DISABLETAUNTS,
+			f->cbTaunt);
+		m.insert(ZandronumDmflags::ZACOMPATF_NO_CROSSHAIR,
+			f->cbUseCrosshairs);
 		// - Disallow
-		m.insert(ZandronumDmflags1point0::COMPATF2_NO_LAND,
+		m.insert(ZandronumDmflags::ZACOMPATF_NO_LAND,
 			f->cbUseLandConsoleCommand);
 		// Compatibility
-		// - General, left panel
-		m.insert(ZandronumDmflags1point0::COMPATF2_CLIENTS_SEND_FULL_BUTTON_INFO,
+		m.insert(ZandronumDmflags::ZACOMPATF_PLASMA_BUMP_BUG,
+			f->cbCompatPlasmaBumpBug);
+		m.insert(ZandronumDmflags::ZACOMPATF_OLD_WEAPON_SWITCH,
+			f->cbCompatOriginalWeaponSwitch);
+		m.insert(ZandronumDmflags::ZACOMPATF_LIMITED_AIRMOVEMENT,
+			f->cbCompatLimitedMovementInTheAir);
+		m.insert(ZandronumDmflags::ZACOMPATF_INSTANTRESPAWN,
+			f->cbCompatAllowInstantRespawn);
+		m.insert(ZandronumDmflags::ZACOMPATF_OLDINTERMISSION,
+			f->cbCompatUseOldIntermissionScreensMusic);
+		m.insert(ZandronumDmflags::ZACOMPATF_DISABLESTEALTHMONSTERS,
+			f->cbCompatDisableStealthMonsters);
+		m.insert(ZandronumDmflags::ZACOMPATF_OLDRADIUSDMG,
+			f->cbCompatOldDamageRadiusInfiniteHeight);
+		m.insert(ZandronumDmflags::ZACOMPATF_CLIENTS_SEND_FULL_BUTTON_INFO,
 			f->cbCompatClientsSendFullButtonInfo);
-		m.insert(ZandronumDmflags1point0::COMPATF2_OLD_RANDOM_GENERATOR,
+		m.insert(ZandronumDmflags::ZACOMPATF_OLD_RANDOM_GENERATOR,
 			f->cbCompatOldRandomNumberGenerator);
-		// - General, right panel
-		m.insert(ZandronumDmflags1point0::COMPATF2_NETSCRIPTS_ARE_CLIENTSIDE,
+		m.insert(ZandronumDmflags::ZACOMPATF_NETSCRIPTS_ARE_CLIENTSIDE,
 			f->cbCompatNETScriptsAreClientside);
-		m.insert(ZandronumDmflags1point0::COMPATF2_NOGRAVITY_SPHERES,
+		m.insert(ZandronumDmflags::ZACOMPATF_NOGRAVITY_SPHERES,
 			f->cbCompatAddNOGRAVITYFlagToSpheres);
-		m.insert(ZandronumDmflags1point0::COMPATF2_DONT_STOP_PLAYER_SCRIPTS_ON_DISCONNECT,
+		m.insert(ZandronumDmflags::ZACOMPATF_DONT_STOP_PLAYER_SCRIPTS_ON_DISCONNECT,
 			f->cbDontStopPlayerScriptsOnDisconnect);
-		m.insert(ZandronumDmflags1point0::COMPATF2_EXPLOSION_THRUST,
+		m.insert(ZandronumDmflags::ZACOMPATF_OLD_EXPLOSION_THRUST,
 			f->cbOldZDoomHorizontalThrust);
-		m.insert(ZandronumDmflags1point0::COMPATF2_BRIDGE_DROPS,
+		m.insert(ZandronumDmflags::ZACOMPATF_OLD_BRIDGE_DROPS,
 			f->cbOldZDoomBridgeDrops);
-		m.insert(ZandronumDmflags1point0::COMPATF2_ZDOOM_123B33_JUMP_PHYSICS,
+		m.insert(ZandronumDmflags::ZACOMPATF_OLD_ZDOOM_ZMOVEMENT,
 			f->cbOldZDoomJumpPhysics);
-		m.insert(ZandronumDmflags1point0::COMPATF2_FULL_WEAPON_LOWER,
+		m.insert(ZandronumDmflags::ZACOMPATF_FULL_WEAPON_LOWER,
 			f->cbCompatFullWeaponLower);
+		m.insert(ZandronumDmflags::ZACOMPATF_ORIGINALSOUNDCURVE,
+			f->cbCompatOriginalSoundCurve);
 	}
 
 	// DMFlags
@@ -210,7 +206,7 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbServerPicksTeams);
 		m.insert(ZandronumDmflags::DF2_NO_TEAM_SWITCH,
 			f->cbPlayersCantSwitchTeams);
-		m.insert(ZandronumDmflags::DF2_YES_KEEP_TEAMS,
+		m.insert(ZandronumDmflags::ZADF_YES_KEEP_TEAMS,
 			f->cbKeepTeamsAfterAMapChange);
 		m.insert(ZandronumDmflags::DF2_NO_AUTOMAP_ALLIES,
 			f->cbHideAlliesOnTheAutomap);
@@ -225,14 +221,8 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbSuicide);
 		m.insert(ZandronumDmflags::DF2_NO_RESPAWN,
 			f->cbRespawn);
-		m.insert(ZandronumDmflags::DF2_NO_ROCKET_JUMPING,
-			f->cbRocketJump);
 		m.insert(ZandronumDmflags::DF2_NO_AUTOMAP,
 			f->cbUseAutomap);
-		m.insert(ZandronumDmflags::DF2_FORCE_GL_DEFAULTS,
-			f->cbUseCustomGLLightingSettings);
-		m.insert(ZandronumDmflags::DF2_FORCE_ALPHA,
-			f->cbTurnOffTranslucency);
 		m.insert(ZandronumDmflags::DF2_NOAUTOAIM,
 			f->cbUseAutoaim);
 		// - Abilities
@@ -246,12 +236,6 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbAllowBFGFreeaiming);
 
 		// Cooperative
-		// - General
-		m.insert(ZandronumDmflags::DF2_AWARD_DAMAGE_INSTEAD_KILLS,
-			f->cbScoreDamageNotKills);
-		// - Environment
-		m.insert(ZandronumDmflags::DF2_COOP_SP_ACTOR_SPAWN,
-			f->cbDontSpawnAnyMultiplayerItem);
 		// - Monsters
 		m.insert(ZandronumDmflags::DF2_KILL_MONSTERS,
 			f->cbMonstersMustBeKilledToExit);
@@ -282,25 +266,37 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 
 	// DMFlags 3
 	{
-		QMap<unsigned, QCheckBox*>& m = dmflags3Checkboxes;
+		QMap<unsigned, QCheckBox*>& m = zandronumDmflagsCheckboxes;
 
 		// General
-		m.insert(ZandronumDmflags1point0::DF3_NOUNLAGGED,
+		m.insert(ZandronumDmflags::ZADF_NOUNLAGGED,
 			f->cbNoUnlagged);
-		m.insert(ZandronumDmflags1point0::DF3_ALWAYS_APPLY_LMS_SPECTATORSETTINGS,
+		m.insert(ZandronumDmflags::ZADF_ALWAYS_APPLY_LMS_SPECTATORSETTINGS,
 			f->cbAlwaysApplyLMSSpectatorSettings);
-		m.insert(ZandronumDmflags1point0::DF3_NO_MEDALS,
+		m.insert(ZandronumDmflags::ZADF_NO_MEDALS,
 			f->cbNoMedals);
+		m.insert(ZandronumDmflags::ZADF_AWARD_DAMAGE_INSTEAD_KILLS,
+			f->cbScoreDamageNotKills);
+		// - Environment
+		m.insert(ZandronumDmflags::ZADF_COOP_SP_ACTOR_SPAWN,
+			f->cbDontSpawnAnyMultiplayerItem);
 
 		// Players
 		// - Disallow 2
-		m.insert(ZandronumDmflags1point0::DF3_NO_IDENTIFY_TARGET,
+		m.insert(ZandronumDmflags::ZADF_NO_IDENTIFY_TARGET,
 			f->cbTargetIdentify);
-		m.insert(ZandronumDmflags1point0::DF3_NO_COOP_INFO,
+		m.insert(ZandronumDmflags::ZADF_NO_COOP_INFO,
 			f->cbDisplayCoopInfo);
 		// - Behavior
-		m.insert(ZandronumDmflags1point0::DF3_UNBLOCK_PLAYERS,
+		m.insert(ZandronumDmflags::ZADF_UNBLOCK_PLAYERS,
 			f->cbPlayersCanWalkThroughEachOther);
+
+		m.insert(ZandronumDmflags::ZADF_NO_ROCKET_JUMPING,
+			f->cbRocketJump);
+		m.insert(ZandronumDmflags::ZADF_FORCE_GL_DEFAULTS,
+			f->cbUseCustomGLLightingSettings);
+		m.insert(ZandronumDmflags::ZADF_FORCE_ALPHA,
+			f->cbTurnOffTranslucency);
 	}
 
 	// LMSAllowedWeapons
@@ -346,10 +342,10 @@ void FlagsPageValueController::convertNumericalToWidgets()
 	readFlagsFromTextInputs();
 
 	convertNumericalToCheckboxes(compatflagsCheckboxes, compatflags);
-	convertNumericalToCheckboxes(compatflags2Checkboxes, compatflags2);
+	convertNumericalToCheckboxes(zandronumCompatflagsCheckboxes, zandronumCompatflags);
 	convertNumericalToCheckboxes(dmflagsCheckboxes, dmflags);
 	convertNumericalToCheckboxes(dmflags2Checkboxes, dmflags2);
-	convertNumericalToCheckboxes(dmflags3Checkboxes, dmflags3);
+	convertNumericalToCheckboxes(zandronumDmflagsCheckboxes, zandronumDmflags);
 	convertNumericalToCheckboxes(lmsAllowedWeaponsCheckboxes, lmsAllowedWeapons);
 	convertNumericalToCheckboxes(lmsSpectatorSettingsCheckboxes, lmsSpectatorSettings);
 
@@ -365,10 +361,10 @@ void FlagsPageValueController::convertWidgetsToNumerical()
 	readFlagsFromTextInputs();
 
 	convertCheckboxesToNumerical(compatflagsCheckboxes, compatflags);
-	convertCheckboxesToNumerical(compatflags2Checkboxes, compatflags2);
+	convertCheckboxesToNumerical(zandronumCompatflagsCheckboxes, zandronumCompatflags);
 	convertCheckboxesToNumerical(dmflagsCheckboxes, dmflags);
 	convertCheckboxesToNumerical(dmflags2Checkboxes, dmflags2);
-	convertCheckboxesToNumerical(dmflags3Checkboxes, dmflags3);
+	convertCheckboxesToNumerical(zandronumDmflagsCheckboxes, zandronumDmflags);
 	convertCheckboxesToNumerical(lmsAllowedWeaponsCheckboxes, lmsAllowedWeapons);
 	convertCheckboxesToNumerical(lmsSpectatorSettingsCheckboxes, lmsSpectatorSettings);
 
@@ -380,9 +376,9 @@ void FlagsPageValueController::convertWidgetsToNumerical()
 	// Apply values to widgets.
 	flagsPage->leDmflags->setText(QString::number(dmflags));
 	flagsPage->leDmflags2->setText(QString::number(dmflags2));
-	flagsPage->leDmflags3->setText(QString::number(dmflags3));
+	flagsPage->leZandronumDmflags->setText(QString::number(zandronumDmflags));
 	flagsPage->leCompatflags->setText(QString::number(compatflags));
-	flagsPage->leCompatflags2->setText(QString::number(compatflags2));
+	flagsPage->leZandronumCompatflags->setText(QString::number(zandronumCompatflags));
 	flagsPage->leLMSAllowedWeapons->setText(QString::number(lmsAllowedWeapons));
 	flagsPage->leLMSSpectatorSettings->setText(QString::number(lmsSpectatorSettings));
 }
@@ -609,9 +605,9 @@ void FlagsPageValueController::readFlagsFromTextInputs()
 {
 	dmflags = flagsPage->leDmflags->text().toUInt();
 	dmflags2 = flagsPage->leDmflags2->text().toUInt();
-	dmflags3 = flagsPage->leDmflags3->text().toUInt();
+	zandronumDmflags = flagsPage->leZandronumDmflags->text().toUInt();
 	compatflags = flagsPage->leCompatflags->text().toUInt();
-	compatflags2 = flagsPage->leCompatflags2->text().toUInt();
+	zandronumCompatflags = flagsPage->leZandronumCompatflags->text().toUInt();
 	lmsAllowedWeapons = flagsPage->leLMSAllowedWeapons->text().toUInt();
 	lmsSpectatorSettings = flagsPage->leLMSSpectatorSettings->text().toUInt();
 }
