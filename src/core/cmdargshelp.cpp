@@ -37,7 +37,10 @@ QString CmdArgsHelp::argsHelp()
 		"    Launch the rcon client for the specified ip.\n");
 	help += tr(
 		"--portable\n"
-		"    Starts application in portable mode.\n");
+		"    Starts application in portable mode.\n"
+		"    In portable mode Doomseeker saves all configuration files\n"
+		"    to the directory where its executable resides.\n"
+		"    Normally, configuration is saved to user's home directory.\n");
 	help += tr(
 		"--version-json [file]\n"
 		"    Prints version info on Doomseeker and all\n"
