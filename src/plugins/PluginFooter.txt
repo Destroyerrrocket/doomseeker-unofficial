@@ -22,3 +22,17 @@ add_custom_command(TARGET ${PLUGIN_NAME} PRE_BUILD
 add_custom_command(TARGET ${PLUGIN_NAME} POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PLUGIN_LOCATION} ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/engines
 )
+
+# Copy translations
+if (QM_FILES)
+	add_custom_command(TARGET ${PLUGIN_NAME} PRE_BUILD
+		COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/translations
+	)
+
+	foreach(FILE_TO_COPY ${QM_FILES})
+		add_custom_command(TARGET ${PLUGIN_NAME} POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			${FILE_TO_COPY} ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/translations
+		)
+	endforeach(FILE_TO_COPY)
+endif(QM_FILES)

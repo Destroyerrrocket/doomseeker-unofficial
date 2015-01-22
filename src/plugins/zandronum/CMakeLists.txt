@@ -61,11 +61,23 @@ set(HEADER_FILES
 
 qt_wrap_cpp(zandronum ZANDRONUM_FILES ${ZANDRONUM_QT_FILES})
 
+set(TRANSLATIONS_FILES
+	translations/zandronum_pl_PL.ts
+)
+set(FILES_TO_TRANSLATE
+	${ZANDRONUM_QT_FILES}
+	${ZANDRONUM_UI_FILES}
+	${ZANDRONUM_FILES}
+)
+
+include(../Translation.txt)
+
 add_library(${PLUGIN_NAME} 
 	MODULE 
 	${ZANDRONUM_FILES} 
 	${HEADER_FILES}
 	${ZANDRONUM_UI_FILES}
+	${QM_FILES}
 )
 
 target_link_libraries(${PLUGIN_NAME} ${PLUGIN_LIBS} wadseeker)
