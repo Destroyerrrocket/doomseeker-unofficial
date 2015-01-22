@@ -7,12 +7,18 @@ get_property(PLUGIN_LOCATION TARGET ${PLUGIN_NAME} PROPERTY LOCATION)
 if (NOT DONT_INSTALL) # if install
 	if(UNIX AND NOT APPLE)
 		install(FILES ${PLUGIN_LOCATION} DESTINATION share/doomseeker/engines)
+		if (QM_FILES)
+			install(FILES ${QM_FILES} DESTINATION share/doomseeker/translations)
+		endif (QM_FILES)
 	elseif(WIN32)
 		install(TARGETS ${PLUGIN_NAME} 
 			RUNTIME DESTINATION engines
 			LIBRARY DESTINATION engines
 			OPTIONAL
 		)
+		if (QM_FILES)
+			install(FILES ${QM_FILES} DESTINATION translations)
+		endif (QM_FILES)
 	endif(UNIX AND NOT APPLE)
 endif(NOT DONT_INSTALL)
 
