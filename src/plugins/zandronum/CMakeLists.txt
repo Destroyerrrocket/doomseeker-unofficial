@@ -17,6 +17,7 @@ set(ZANDRONUM_QT_FILES
 	zandronumbinaries.h
 	zandronumdmflags.h
 	zandronumgamehost.h
+	zandronumgameinfo.h
 	zandronummasterclient.h
 	zandronumrconprotocol.h
 	zandronumserver.h
@@ -54,7 +55,6 @@ set(HEADER_FILES
 	huffman/huffcodec.h
 	huffman/huffman.h
 	zandronumengineplugin.h
-	zandronumgameinfo.h
 	zandronumgamerunner.h
 	zandronumserverdmflagsparser.h
 )
