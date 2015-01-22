@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// cmdargshelp.cpp
+// programargshelpdialog.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,28 +20,29 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "programargshelpdialog.h"
+
+#include "ui_programargshelpdialog.h"
 #include "cmdargshelp.h"
 
-QString CmdArgsHelp::argsHelp()
+class ProgramArgsHelpDialog::PrivData : public Ui::ProgramArgsHelpDialog
 {
-	QString help = "";
-	help += tr(
-		"--connect protocol://ip[:port]\n"
-		"    Attempts to connect to the specified server.\n");
-	help += tr(
-		"--datadir\n"
-		"    Sets an explicit search location for\n"
-		"    IP2C data along with plugins.\n");
-	help += tr(
-		"--rcon [plugin] [ip]\n"
-		"    Launch the rcon client for the specified ip.\n");
-	help += tr(
-		"--portable\n"
-		"    Starts application in portable mode.\n");
-	help += tr(
-		"--version-json [file]\n"
-		"    Prints version info on Doomseeker and all\n"
-		"    plugins in JSON format to specified file,\n"
-		"    then closes the program.\n");
-	return help;
+public:
+};
+
+
+ProgramArgsHelpDialog::ProgramArgsHelpDialog(QWidget *parent)
+: QDialog(parent)
+{
+	d = new PrivData();
+	d->setupUi(this);
+
+	QFont font("Courier");
+	d->textArea->setFont(font);
+	d->textArea->setPlainText(CmdArgsHelp::argsHelp());
+}
+
+ProgramArgsHelpDialog::~ProgramArgsHelpDialog()
+{
+	delete d;
 }

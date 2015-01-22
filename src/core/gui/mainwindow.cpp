@@ -37,6 +37,7 @@
 #include "gui/ip2cupdatebox.h"
 #include "gui/logdock.h"
 #include "gui/mainwindow.h"
+#include "gui/programargshelpdialog.h"
 #include "gui/serverdetailsdock.h"
 #include "gui/serverfilterdock.h"
 #include "gui/serverlist.h"
@@ -1368,6 +1369,13 @@ void MainWindow::setupToolBar()
 	this->addToolBar(Qt::TopToolBarArea, pToolBar);
 	setUnifiedTitleAndToolBarOnMac(true);
 	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( toolBarAction(QAction*) ) );
+}
+
+void MainWindow::showProgramArgsHelp()
+{
+	ProgramArgsHelpDialog *dialog = new ProgramArgsHelpDialog(this);
+	dialog->setAttribute(Qt::WA_DeleteOnClose);
+	dialog->show();
 }
 
 void MainWindow::showServerJoinCommandLine(const ServerPtr &server)

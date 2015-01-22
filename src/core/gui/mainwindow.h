@@ -234,6 +234,7 @@ class MainWindow : public QMainWindow
 		void ip2cJobsFinished();
 		void ip2cStartUpdate();
 		void showServerJoinCommandLineOnBuilderFinished();
+		void showProgramArgsHelp();
 };
 
 #endif
