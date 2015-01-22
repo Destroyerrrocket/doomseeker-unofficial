@@ -28,6 +28,8 @@
 
 class OdamexGameInfo : public QObject
 {
+	Q_OBJECT
+
 	public:
 		enum OdamexGameModes
 		{
