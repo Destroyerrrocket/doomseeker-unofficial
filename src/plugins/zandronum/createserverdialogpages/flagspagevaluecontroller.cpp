@@ -152,6 +152,10 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbCompatFullWeaponLower);
 		m.insert(ZandronumDmflags::ZACOMPATF_ORIGINALSOUNDCURVE,
 			f->cbCompatOriginalSoundCurve);
+		m.insert(ZandronumDmflags::ZACOMPATF_AUTOAIM,
+			f->cbCompatUseVanillaAutoaimTracerBehavior);
+		m.insert(ZandronumDmflags::ZACOMPATF_SILENT_WEST_SPAWNS,
+			f->cbCompatWestSpawnsAreSilent);
 	}
 
 	// DMFlags

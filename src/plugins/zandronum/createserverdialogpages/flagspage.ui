@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>5</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
@@ -1353,9 +1353,6 @@ p, li { white-space: pre-wrap; }
            </item>
            <item>
             <widget class="QCheckBox" name="cbCompatBlockMonsterLinesIgnoreFriendlyMonsters">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Crushed monsters are turned into gibs, rather than replaced by gibs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
              <property name="text">
               <string>Block monster lines ignore friendly monsters</string>
              </property>
@@ -1363,9 +1360,6 @@ p, li { white-space: pre-wrap; }
            </item>
            <item>
             <widget class="QCheckBox" name="cbCompatFindNeighboringLightLevelLikeDoom">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Crushed monsters are turned into gibs, rather than replaced by gibs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
              <property name="text">
               <string>Find neighboring light level like Doom</string>
              </property>
@@ -1475,9 +1469,6 @@ p, li { white-space: pre-wrap; }
            </item>
            <item>
             <widget class="QCheckBox" name="cbCompatSpriteSortOrderInverted">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Crushed monsters are turned into gibs, rather than replaced by gibs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
              <property name="text">
               <string>Sprite sort order inverted for sprites of equal distance</string>
              </property>
@@ -1485,9 +1476,6 @@ p, li { white-space: pre-wrap; }
            </item>
            <item>
             <widget class="QCheckBox" name="cbCompatHitscansOriginalBlockmap">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Crushed monsters are turned into gibs, rather than replaced by gibs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
              <property name="text">
               <string>Hitscans use original blockmap and hit check code</string>
              </property>
@@ -1495,9 +1483,6 @@ p, li { white-space: pre-wrap; }
            </item>
            <item>
             <widget class="QCheckBox" name="cbCompatDrawPolyobjectsOld">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Crushed monsters are turned into gibs, rather than replaced by gibs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
              <property name="text">
               <string>Draw polyobjects the old fashioned way</string>
              </property>
@@ -1627,6 +1612,16 @@ p, li { white-space: pre-wrap; }
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatUseVanillaAutoaimTracerBehavior">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;p&gt;Zandronum uses more tracers to fill in the gaps, this reverts it to vanilla's 3 tracer behavior&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Use vanilla autoaim tracer behavior</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
@@ -1714,6 +1709,13 @@ p, li { white-space: pre-wrap; }
              </property>
              <property name="text">
               <string>Disallow weapon change until fully drawn or hidden</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatWestSpawnsAreSilent">
+             <property name="text">
+              <string>West spawns are silent</string>
              </property>
             </widget>
            </item>
@@ -4215,6 +4217,38 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>3</x>
      <y>345</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCompatUseVanillaAutoaimTracerBehavior</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>51</x>
+     <y>278</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>3</x>
+     <y>279</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCompatWestSpawnsAreSilent</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>407</x>
+     <y>281</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>630</x>
+     <y>278</y>
     </hint>
    </hints>
   </connection>
