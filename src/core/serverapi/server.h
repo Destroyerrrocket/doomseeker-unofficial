@@ -669,10 +669,6 @@ class MAIN_EXPORT Server : public QObject
 		/**
 		 * @brief Add PWAD to the list of this server's PWADs.
 		 */
-		void addWad(const QString& wad);
-		/**
-		 * @brief Add PWad object to the list of this server's PWADs.
-		 */
 		void addWad(const PWad& wad);
 		/**
 		 * @brief Clear PWADs list.
