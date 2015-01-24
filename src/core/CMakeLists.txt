@@ -102,6 +102,7 @@ qt4_wrap_ui(doomseekerUI
 	gui/logdock.ui
 	gui/mainwindow.ui
 	gui/passworddlg.ui
+	gui/programargshelpdialog.ui
 	gui/rconpassworddialog.ui
 	gui/remoteconsole.ui
 	gui/serverdetailsdock.ui
@@ -173,6 +174,7 @@ set(DOOMSEEKER_QT_FILES
 	gui/logdock.h
 	gui/mainwindow.h
 	gui/passworddlg.h
+	gui/programargshelpdialog.h
 	gui/rconpassworddialog.h
 	gui/remoteconsole.h
 	gui/serverdetailsdock.h
@@ -217,6 +219,7 @@ set(DOOMSEEKER_QT_FILES
 	updater/updaterinfoparser.h
 	updater/updateinstaller.h
 	apprunner.h
+	cmdargshelp.h
 	customservers.h
 	joincommandlinebuilder.h
 	log.h
@@ -307,6 +310,7 @@ set(SOURCE_FILES
 	gui/logdock.cpp
 	gui/mainwindow.cpp
 	gui/passworddlg.cpp
+	gui/programargshelpdialog.cpp
 	gui/rconpassworddialog.cpp
 	gui/remoteconsole.cpp
 	gui/serverdetailsdock.cpp
@@ -404,6 +408,7 @@ set(SOURCE_FILES
 	updater/updaterscriptparser.cpp
 	application.cpp
 	apprunner.cpp
+	cmdargshelp.cpp
 	commandline.cpp
 	commandlinetokenizer.cpp
 	customservers.cpp

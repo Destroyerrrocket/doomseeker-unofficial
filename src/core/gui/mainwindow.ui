@@ -296,6 +296,7 @@
     </property>
     <addaction name="menuActionHelp"/>
     <addaction name="menuActionCheckForUpdates"/>
+    <addaction name="menuActionProgramArgsHelp"/>
     <addaction name="separator"/>
     <addaction name="menuActionAbout"/>
     <addaction name="menuActionAboutQt"/>
@@ -495,6 +496,11 @@
     <string>&amp;Check for Updates</string>
    </property>
   </action>
+  <action name="menuActionProgramArgsHelp">
+   <property name="text">
+    <string>&amp;Program Args</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -594,11 +600,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>menuActionProgramArgsHelp</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowWnd</receiver>
+   <slot>showProgramArgsHelp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>397</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>checkForUpdatesUserTriggered()</slot>
   <slot>confirmUpdateInstallation()</slot>
   <slot>discardUpdates()</slot>
   <slot>restartAndInstallUpdatesNow()</slot>
+  <slot>showProgramArgsHelp()</slot>
  </slots>
 </ui>

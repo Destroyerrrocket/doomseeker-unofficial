@@ -117,6 +117,7 @@
 	<file alias="flags/PRY">flags/PRY.png</file> <!-- Paraguay -->
 	<file alias="flags/QAT">flags/QAT.png</file> <!-- Qatar -->
 	<file alias="flags/ROM">flags/ROM.png</file> <!-- Romania -->
+	<file alias="flags/ROU">flags/ROM.png</file> <!-- Romania -->
 	<file alias="flags/RUS">flags/RUS.png</file> <!-- Russian Federation -->
 	<file alias="flags/SAU">flags/SAU.png</file> <!-- Saudi Arabia -->
 	<file alias="flags/SGP">flags/SGP.png</file> <!-- Singapore -->

@@ -9,6 +9,8 @@
 #include <QTranslator>
 #include <QSet>
 #include <QStringList>
+#include "plugins/engineplugin.h"
+#include "plugins/pluginloader.h"
 #include "datapaths.h"
 #include "log.h"
 
@@ -82,6 +84,20 @@ bool Localization::loadTranslation(const QString& localeName)
 	if (myappTranslator != NULL)
 	{
 		currentlyLoadedTranslations.append(myappTranslator);
+	}
+
+	// Plugins translators.
+	foreach (const PluginLoader::Plugin *plugin, gPlugins->plugins())
+	{
+		QString name = plugin->info()->nameCanonical();
+		QTranslator *pluginTranslator = loadTranslationFile(
+			QString("%1_%2").arg(name, localeName),
+			searchPaths);
+		if (pluginTranslator)
+		{
+			gLog << QString("Loaded translation for plugin %1").arg(name);
+			currentlyLoadedTranslations.append(pluginTranslator);
+		}
 	}
 	return myappTranslator != NULL;
 }

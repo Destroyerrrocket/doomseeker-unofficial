@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// odamexgameinfo.h
+// programargshelpdialog.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,32 +18,22 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __ODAMEX_GAME_INFO_H_
-#define __ODAMEX_GAME_INFO_H_
+#ifndef ide3012154_3afe_40a7_890a_8954265af33b
+#define ide3012154_3afe_40a7_890a_8954265af33b
 
-#include "serverapi/serverstructs.h"
-#include <QObject>
+#include <QDialog>
 
-class OdamexGameInfo : public QObject
+class ProgramArgsHelpDialog : public QDialog
 {
-	Q_OBJECT
+public:
+	ProgramArgsHelpDialog(QWidget *parent);
+	~ProgramArgsHelpDialog();
 
-	public:
-		enum OdamexGameModes
-		{
-			MODE_COOPERATIVE,
-			MODE_DEATHMATCH,
-			MODE_DEATHMATCH2,
-			MODE_TEAM_DEATHMATCH,
-			MODE_CAPTURE_THE_FLAG,
-			MODE_DUEL
-		};
-
-		static QList<DMFlagsSection> dmFlags();
-		static QList<GameMode> gameModes();
-		static GameMode gameModeDuel();
+private:
+	class PrivData;
+	PrivData *d;
 };
 
 #endif

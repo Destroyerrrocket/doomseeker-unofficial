@@ -42,6 +42,7 @@
 #include "irc/configuration/ircconfig.h"
 #include "serverapi/server.h"
 #include "application.h"
+#include "cmdargshelp.h"
 #include "commandlinetokenizer.h"
 #include "doomseekerfilepaths.h"
 #include "localization.h"
@@ -489,14 +490,8 @@ bool Main::interpretCommandLineParameters()
 		{
 			gLog.setTimestampsEnabled(false);
 			// Print information to the log and terminate.
-			gLog << tr("Available command line parameters:");
-			gLog << tr("	--connect protocol://ip[:port] : Attempts to connect to the specified server.");
-			gLog << tr("	--datadir : Sets an explicit search location for IP2C data along with plugins.");
-			gLog << tr("	--rcon [plugin] [ip] : Launch the rcon client for the specified ip.");
-			gLog << tr("	--portable : Starts application in portable mode.");
-			gLog << tr("	--version-json [file] : Prints version info on\n"
-			           "	    Doomseeker and all plugins in JSON format\n"
-			           "	    to specified file, then closes the program.\n");
+			gLog << tr("Available command line parameters:\n");
+			gLog << CmdArgsHelp::argsHelp();
 			return false;
 		}
 		else if (strcmp(arg, "--update-failed") == 0)

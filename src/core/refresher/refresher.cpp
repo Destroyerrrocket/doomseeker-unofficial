@@ -267,6 +267,7 @@ void Refresher::registerMaster(MasterClient* pMaster)
 
 bool Refresher::registerServer(Server* server)
 {
+	bool hadAnyServers = d->hasAnyServers();
 	purgeNullServers();
 	if (!d->isServerRegistered(server))
 	{
@@ -282,10 +283,13 @@ bool Refresher::registerServer(Server* server)
 		}
 
 		server->refreshStarts();
-		if (d->bSleeping)
+		if (!hadAnyServers && d->hasAnyServers())
 		{
-			d->bSleeping = false;
-			emit sleepingModeExit();
+			if (d->bSleeping)
+			{
+				d->bSleeping = false;
+				emit sleepingModeExit();
+			}
 			QTimer::singleShot(20, this, SLOT(sendServerQueries()));
 		}
 	}

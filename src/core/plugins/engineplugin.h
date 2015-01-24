@@ -259,6 +259,18 @@ class MAIN_EXPORT EnginePlugin
 		void masterHost(QString &host, unsigned short &port) const;
 
 		/**
+		 * @brief Derived from actual plugin name.
+		 *
+		 * This name is derived from plugin's actual name with following rules:
+		 * - All characters are lower-cased.
+		 * - All whitespace is replaced with underscores.
+		 *
+		 * Doomseeker uses this name when loading translation files
+		 * for plugins.
+		 */
+		QString nameCanonical() const;
+
+		/**
 		 * @brief Creates an instance of server object from this plugin.
 		 *
 		 * This might be useful for custom servers.

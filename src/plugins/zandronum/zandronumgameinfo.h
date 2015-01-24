@@ -28,6 +28,8 @@
 
 class ZandronumGameInfo : public QObject
 {
+	Q_OBJECT
+
 	public:
 		enum LMSAllowedWeapons
 		{

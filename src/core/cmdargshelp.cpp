@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// odamexgameinfo.h
+// cmdargshelp.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,32 +18,34 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __ODAMEX_GAME_INFO_H_
-#define __ODAMEX_GAME_INFO_H_
+#include "cmdargshelp.h"
 
-#include "serverapi/serverstructs.h"
-#include <QObject>
-
-class OdamexGameInfo : public QObject
+QString CmdArgsHelp::argsHelp()
 {
-	Q_OBJECT
-
-	public:
-		enum OdamexGameModes
-		{
-			MODE_COOPERATIVE,
-			MODE_DEATHMATCH,
-			MODE_DEATHMATCH2,
-			MODE_TEAM_DEATHMATCH,
-			MODE_CAPTURE_THE_FLAG,
-			MODE_DUEL
-		};
-
-		static QList<DMFlagsSection> dmFlags();
-		static QList<GameMode> gameModes();
-		static GameMode gameModeDuel();
-};
-
-#endif
+	QString help = "";
+	help += tr(
+		"--connect protocol://ip[:port]\n"
+		"    Attempts to connect to the specified server.\n");
+	help += tr(
+		"--datadir [directory]\n"
+		"    Sets an explicit search location for\n"
+		"    IP2C data along with plugins.\n"
+		"    Can be specified multiple times.\n");
+	help += tr(
+		"--rcon [plugin] [ip]\n"
+		"    Launch the rcon client for the specified ip.\n");
+	help += tr(
+		"--portable\n"
+		"    Starts application in portable mode.\n"
+		"    In portable mode Doomseeker saves all configuration files\n"
+		"    to the directory where its executable resides.\n"
+		"    Normally, configuration is saved to user's home directory.\n");
+	help += tr(
+		"--version-json [file]\n"
+		"    Prints version info on Doomseeker and all\n"
+		"    plugins in JSON format to specified file,\n"
+		"    then closes the program.\n");
+	return help;
+}
