@@ -39,7 +39,7 @@
     <message>
         <location filename="../createserverdialogpages/flagspage.cpp" line="68"/>
         <source>Old (ZDoom)</source>
-        <translation>Stare (ZDoom)</translation>
+        <translation>Stary (ZDoom)</translation>
     </message>
     <message>
         <location filename="../createserverdialogpages/flagspage.cpp" line="69"/>
@@ -67,12 +67,12 @@
         <translation>Tak</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1605"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1604"/>
         <source>Form</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1607"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1606"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -87,954 +87,956 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;(+sv_defaultdmflags)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1614"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1613"/>
         <source>Default DMFlags</source>
         <translation>Domyślne DMFlagi</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1615"/>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1694"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1614"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1690"/>
         <source>Environment</source>
         <translation>Środowisko</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1616"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1615"/>
         <source>Falling damage:</source>
         <translation>Ból od upadku:</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1617"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1616"/>
         <source>No monsters</source>
         <translation>Brak potworów</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1618"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1617"/>
         <source>Items respawn</source>
         <translation>Odradzanie przedmiotów</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1619"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1618"/>
         <source>Barrels respawn</source>
         <translation>Odradzanie beczek</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1621"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1620"/>
         <source>Respawn invulnerability and invisibility spheres.</source>
         <translation>Odradzanie kul nieśmiertelności i niewidzialności.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1623"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1622"/>
         <source>Mega powerups respawn</source>
         <translation>Odradzanie mega-dopalaczy</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1624"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1623"/>
         <source>Teams</source>
         <translation>Drużyny</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1625"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1624"/>
         <source>Server picks teams</source>
         <translation>Serwer wybiera drużyny</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1626"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1625"/>
         <source>Players can&apos;t switch teams</source>
         <translation>Gracze nie mogą zmieniać drużyn</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1627"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1626"/>
         <source>Keep teams after a map change</source>
         <translation>Zachowuj drużyny po zmianie mapy</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1628"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1627"/>
         <source>Hide allies on the automap</source>
         <translation>Ukrywaj sojuszników na automapie</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1629"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1628"/>
         <source>Don&apos;t let players spy on allies</source>
         <translation>Nie pozwalaj graczom podglądać sojuszników</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1630"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1629"/>
         <source>Instant flag/skull return</source>
         <translation>Natychmiastowy zwrot flagi/czaszki</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1632"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1631"/>
         <source>Don&apos;t use ping-based backwards reconciliation for player-fired hitscans and rails.</source>
         <translation>Nie używaj opartego na pingu wstecznego poprawiania dla wystrzelonych przez graczy hitscanów i promieni.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1634"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1633"/>
         <source>No unlagged</source>
         <translation>Wyłącz unlagged</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1636"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1635"/>
         <source>Apply lmsspectatorsettings in all game modes.</source>
         <translation>Zastosuj lmsspectatorsettings we wszystkich trybach gry.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1638"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1637"/>
         <source>Always apply LMS spectator settings</source>
         <translation>Zawsze stostuj ustawienia widzów LMS</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1640"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1639"/>
         <source>Enforces clients not to show medals, i.e. behave as if cl_medals == 0.</source>
         <translation>Wymusza na klientach nie pokazywanie medali, tak jakby cl_medals == 0.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1642"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1641"/>
         <source>No medals</source>
         <translation>Brak medali</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1643"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1642"/>
         <source>General</source>
         <translation>Ogólne</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1644"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1643"/>
         <source>Disallow</source>
         <translation>Nie pozwalaj</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1645"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1644"/>
         <source>Sucide</source>
         <translation>Samobójstwo</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1646"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1645"/>
         <source>Respawn</source>
         <translation>Respawn</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1648"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1647"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;P_RadiusAttack doesn&apos;t give players any z-momentum if the attack was made by a player. This essentially disables rocket jumping.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;P_RadiusAttack nie nadaje graczom z-pędu jeżeli źródłem ataku jest sam gracz. To wyłącza skakanie na rakietach.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1650"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1649"/>
         <source>Rocket jump</source>
         <translation>Skakanie na rakietach</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1651"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1650"/>
         <source>Taunt</source>
         <translation>Okrzyki</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1652"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1651"/>
         <source>Use automap</source>
         <translation>Używanie automapy</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1653"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1652"/>
         <source>Turn off translucency</source>
         <translation>Wyłączanie przezroczystości</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1654"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1653"/>
         <source>Use crosshairs</source>
         <translation>Używanie celownika</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1655"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1654"/>
         <source>Use custom GL lighting settings</source>
         <translation>Używanie własnych ustawień światła w OpenGL</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1657"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1656"/>
         <source>Enforces clients not to identify players, i.e. behave as if cl_identifytarget == 0.</source>
         <translation>Wymusza na klientach brak identyfikacji graczy, tak jakby cl_identifytarget == 0.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1659"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1658"/>
         <source>Target identify</source>
         <translation>Identyfikacja celów</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1661"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1660"/>
         <source>Enforces clients not to draw coop info, i.e. behave as if cl_drawcoopinfo == 0.</source>
         <translation>Wymusza na klientach brak rysowania informacji w coopie, tak jakby cl_drawcoopinfo == 0.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1663"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1662"/>
         <source>Display coop info</source>
         <translation>Wyświetlanie informacji coop</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1664"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1663"/>
         <source>Use autoaim</source>
         <translation>Używanie autocelowania</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1666"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1665"/>
         <source>Only let the arbitrator set FOV (for all players)</source>
         <translation>Tylko serwer może ustalić FOV (wszystkim graczom)</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1668"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1667"/>
         <source>Use FOV</source>
         <translation>Używanie FOV</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1669"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1668"/>
         <source>Use freelook</source>
-        <translation>Używanie patrzenia góra-dół</translation>
+        <translation>Patrzenia góra-dół</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1671"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1670"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Players are not allowed to use the land CCMD. Because of Zandronum&apos;s default amount of air control, flying players can get a huge speed boast with the land CCMD. Disallowing players to land, allows to keep the default air control most people are used to while not giving flying players too much of an advantage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gracze nie mogą używać komendy konsolowej land. Ze względu na domyślną swobodę kontroli w powietrzu, latający gracze mogą ogromnie przyspieszać za pomocą komendy land. Zabranianie graczom lądować pozwala zachować domyślną kontrolę w powietrzu, do której gracze są przyzwyczajeni, nie dając im jednocześnie znacznej przewagi.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1673"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1672"/>
         <source>Use &apos;land&apos; console command</source>
         <translation>Używania komendy &apos;land&apos;</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1674"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1673"/>
         <source>Abilities</source>
         <translation>Zdolności</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1675"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1674"/>
         <source>Jumping:</source>
         <translation>Skakanie:</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1676"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1675"/>
         <source>Crouching:</source>
         <translation>Kucanie:</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1677"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1676"/>
         <source>Infinite inventory</source>
         <translation>Nieskończony ekwipunek</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1678"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1677"/>
         <source>Infinite ammo</source>
         <translation>Nieskończona amunicja</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1680"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1679"/>
         <source>Like Quake 3</source>
         <translation>Jak w Quake 3</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1682"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1681"/>
         <source>Slowly lose health when over 100%</source>
         <translation>Powoli trać zdrowie powyżej 100%</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1683"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1682"/>
         <source>Can use chasecam</source>
         <translation>Można używać kamery z 3 osoby</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1685"/>
         <source>Disallow BFG freeaiming in multiplayer games.</source>
-        <translation>Zabroń celowania góra-dól z BFG w grach wieloosobowych.</translation>
+        <translation type="obsolete">Zabroń celowania góra-dól z BFG w grach wieloosobowych.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1687"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1683"/>
         <source>Allow BFG freeaiming</source>
         <translation>Pozwól na celowanie góra-dół z BFG</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1688"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1684"/>
         <source>Behavior</source>
         <translation>Zachowanie</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1689"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1685"/>
         <source>Players can walk through each other</source>
         <translation>Gracze mogą przenikać przez siebie</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1690"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1686"/>
         <source>Force inactive players to spectate after:</source>
         <translation>Wymuś tryb widza dla nieaktywnych graczy po:</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1691"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1687"/>
         <source>min.</source>
         <translation>min.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1692"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1688"/>
         <source>Players</source>
         <translation>Gracze</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1693"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1689"/>
         <source>Score damage, not kills</source>
         <translation>Nagradzaj obrażenia, nie zabójstwa</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1695"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1691"/>
         <source>Don&apos;t spawn Deathmatch weapons</source>
         <translation>Nie spawnuj broni z Deathmatcha</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1697"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1693"/>
         <source>Spawn map actors in coop as if the game was single player.</source>
         <translation>Spawnuj aktorów na mapie w trybie coop, tak jakby była to gra single player.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1699"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1695"/>
         <source>Don&apos;t spawn any multiplayer actor in coop</source>
         <translation>Nie spawnuj żadnego aktora wieloosobowego w coopie</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1700"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1696"/>
         <source>Monsters...</source>
         <translation>Potwory...</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1701"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1697"/>
         <source>are fast (like Nightmare)</source>
         <translation>są szybkie (jak na Nightmare)</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1702"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1698"/>
         <source>respawn (like Nightmare)</source>
         <translation>odradzają się (jak na Nightmare)</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1703"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1699"/>
         <source>must be killed to enable exit</source>
         <translation>muszą zostać zabite aby można było wyjść</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1704"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1700"/>
         <source>Kill percentage:</source>
         <translation>Procent zabójstw:</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1706"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1702"/>
         <source>Multiplier of damage dealt by monsters.</source>
         <translation>Mnożnik obrażeń zadawanych przez potwory.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1708"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1704"/>
         <source>Damage factor:</source>
         <translation>Mnożnik obrażeń:</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1710"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1706"/>
         <source>&lt;html&gt;&lt;body&gt;&lt;p&gt;Multiplier of damage dealt by monsters.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;body&gt;&lt;p&gt;Mnożnik obrażeń zadawanych przez potwory.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1712"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1708"/>
         <source>On player death...</source>
         <translation>Gdy gracz zginie...</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1713"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1709"/>
         <source>Respawn where died</source>
         <translation>Odradza się tam, gdzie zginął</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1714"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1710"/>
         <source>Lose all inventory</source>
         <translation>Traci cały ekwipunek</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1715"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1711"/>
         <source>Lose armor</source>
         <translation>Traci zbroję</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1716"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1712"/>
         <source>Lose keys</source>
         <translation>Traci klucze</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1717"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1713"/>
         <source>Lose powerups</source>
         <translation>Traci dopalacze</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1718"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1714"/>
         <source>Lose weapons</source>
         <translation>Traci bronie</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1719"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1715"/>
         <source>Lose all ammo</source>
         <translation>Traci całą amunicję</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1720"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1716"/>
         <source>Lose half ammo</source>
         <translation>Traci połowę amunicji</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1721"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1717"/>
         <source>Cooperative</source>
         <translation>Kooperacja</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1722"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1718"/>
         <source>When players die, they...</source>
         <translation>Gdy gracze giną, to...</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1723"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1719"/>
         <source>Respawn automatically</source>
         <translation>Od razu się odradzają</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1724"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1720"/>
         <source>Drop their weapon</source>
         <translation>Upuszczają swoją broń</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1725"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1721"/>
         <source>Respawn farthest away from others</source>
         <translation>Odradzają się najdalej od innych</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1726"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1722"/>
         <source>Lose a frag</source>
         <translation>Tracą fraga</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1727"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1723"/>
         <source>Respawn with a shotgun</source>
         <translation>Odradzają się z szotganem</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1728"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1724"/>
         <source>Don&apos;t get respawn protection</source>
         <translation>Nie mają ochrony po respawnie</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1729"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1725"/>
         <source>When someone exits the level...</source>
         <translation>Gdy ktoś opuści poziom...</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1730"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1726"/>
         <source>Continue to the next map</source>
         <translation>Kontynuuj do następnej mapy</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1731"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1727"/>
         <source>Restart the current level</source>
         <translation>Restartuj obecny poziom</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1732"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1728"/>
         <source>Kill the player</source>
         <translation>Zabij tego gracza</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1733"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1729"/>
         <source>Keep frags after map change</source>
         <translation>Zachowuj fragi po zmianie mapy</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1734"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1730"/>
         <source>Weapons &amp;&amp; Ammo</source>
         <translation>Bronie i amunicja</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1735"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1731"/>
         <source>Weapons stay after pickup</source>
         <translation>Bronie nie znikają po podniesieniu</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1736"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1732"/>
         <source>Double ammo</source>
         <translation>Podwójna amunicja</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1737"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1733"/>
         <source>Don&apos;t spawn...</source>
         <translation>Nie spawnuj...</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1738"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1734"/>
         <source>Health</source>
         <translation>Zdrowia</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1739"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1735"/>
         <source>Armor</source>
         <translation>Zbroi</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1740"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1736"/>
         <source>Runes</source>
         <translation>Run</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1741"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1737"/>
         <source>Deathmatch</source>
         <translation>Deathmatch</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1742"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1738"/>
         <source>Weapons</source>
         <translation>Bronie</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1743"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1739"/>
         <source>Chainsaw</source>
         <translation>Piła</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1744"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1740"/>
         <source>Pistol</source>
         <translation>Pistolet</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1745"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1741"/>
         <source>Shotgun</source>
         <translation>Szotgan</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1746"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1742"/>
         <source>Super shotgun</source>
         <translation>Dwururka</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1747"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1743"/>
         <source>Chaingun</source>
         <translation>Chaingun</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1748"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1744"/>
         <source>Minigun</source>
         <translation>Minigun</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1749"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1745"/>
         <source>Rocket launcher</source>
         <translation>Rakietnica</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1750"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1746"/>
         <source>Grenade launcher</source>
         <translation>Granatnik</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1751"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1747"/>
         <source>Plasma rifle</source>
         <translation>Plazmówka</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1752"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1748"/>
         <source>Railgun</source>
         <translation>Railgun</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1753"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1749"/>
         <source>lmsallowedweapons:</source>
         <translation>lsmallowedweapons:</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1754"/>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1756"/>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1886"/>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1887"/>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1890"/>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1891"/>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1895"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1750"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1752"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1871"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1872"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1875"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1876"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1880"/>
         <source>0</source>
         <translation>0</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1755"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1751"/>
         <source>lmsspectatorsettings:</source>
         <translation>lmsspectatorsettings:</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1757"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1753"/>
         <source>Spectators can...</source>
         <translation>Widzowie mogą...</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1758"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1754"/>
         <source>Talk to active players</source>
         <translation>Rozmawiać z żyjącymi graczami</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1759"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1755"/>
         <source>View the game</source>
         <translation>Oglądać grę</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1760"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1756"/>
         <source>LMS</source>
         <translation>LMS</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1762"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1758"/>
         <source>Enable buggier wall clipping so players can wallrun.</source>
         <translation>Włącz zbugowaną kolizję ze ścianami, aby gracze mogli robić wallrun.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1764"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1760"/>
         <source>Enable wall running</source>
         <translation>Włącz wall running</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1766"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1762"/>
         <source>Pickups are only heard locally.</source>
         <translation>Podniesione przedmioty słychać tylko lokalnie.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1768"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1764"/>
         <source>Don&apos;t let others hear pickups</source>
         <translation>Inni nie słyszą podniesień</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1769"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1765"/>
         <source>Allow instant respawn</source>
         <translation>Zezwól na natychmiastowy respawn</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1771"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1767"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disable stealth monsters, since doom2.exe didn&apos;t have them.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Note: this handles ZDoom&apos;s invisible monsters.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;THIS DOESN&apos;T AFFECT THE PARTIAL INVISIBILITY SPHERE IN ANY WAY. See &amp;quot;Monsters see semi-invisible players&amp;quot; for that.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wyłącz potwory &quot;stealth&quot;, ponieważ doom2.exe ich nie miało.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Uwaga: to odnosi się do niewidzialnych potworów z ZDooma.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;TO NIE WPŁYWA NA KULĘ POŁOWICZNEJ NIEWIDZIALNOŚCI W ŻADEN SPOSÓB. Użyj do tego ustawienia &amp;quot;Potwory widzą na wpół-niewidzialnych graczy&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1773"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1769"/>
         <source>Disable stealth monsters</source>
         <translation>Wyłącz potwory &quot;stealth&quot;</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1775"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1771"/>
         <source>Limit actors to one sound at a time.</source>
         <translation>Ogranicz aktorów do jednego dźwięku na raz.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1777"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1773"/>
         <source>Allow silent BFG trick</source>
         <translation>Pozwól na trick z cichym BFG</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1779"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1775"/>
         <source>Clients use the vanilla Doom weapon on pickup behavior.</source>
         <translation>Klienci używają zachowania z vanilla Dooma po podniesieniu broni.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1781"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1777"/>
         <source>Original weapon switch</source>
         <translation>Oryginalna zmiana broni</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1782"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1778"/>
         <source>Limited movement in the air</source>
         <translation>Ograniczone poruszanie w powietrzu</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1784"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1780"/>
         <source>This affects the partial invisibility sphere.</source>
         <translation>To wpływa na kulę połowicznej niewidzialności.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1786"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1782"/>
         <source>Monsters see semi-invisible players</source>
         <translation>Potwory widzą na wpół-niewidzialnych graczy</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1788"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1784"/>
         <source>Allow the map01 &quot;plasma bump&quot; bug.</source>
         <translation>Zezwól na błąd &quot;plasma bump&quot; z map01.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1790"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1786"/>
         <source>Plasma bump bug</source>
         <translation>Błąd plasma bump</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1792"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1788"/>
         <source>Use doom2.exe&apos;s original intermission screens/music.</source>
         <translation>Używaj muzyki i ekranów z doom2.exe podczas intermisji.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1794"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1790"/>
         <source>Use old intermission screens/music</source>
         <translation>Używaj starych intermisji</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1796"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1792"/>
         <source>Scrolling sectors are additive like in Boom.</source>
         <translation>Przesuwające się sektory dodają się jak w Boomie.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1798"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1794"/>
         <source>Scrolling sectors are additive</source>
         <translation>Przesuwające sektory dodają się</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1800"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1796"/>
         <source>Sector sounds use original method for sound origin.</source>
         <translation>Dźwięki sektorów używają oryginalnej metody pozycjonowania dźwięku.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1802"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1798"/>
         <source>Sector sounds use original method</source>
         <translation>Dźwięki sektorów używają oryginalnej metody</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1804"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1800"/>
         <source>Monsters cannot move when hanging over a dropoff.</source>
         <translation>Potwory utykają nad krawędziami.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1806"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1802"/>
         <source>No monsters dropoff move</source>
         <translation>Potwory utykają nad krawędziami</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1808"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1804"/>
         <source>Instantly moving floors are not silent.</source>
         <translation>Natychmiastowo poruszane podłogi nie są ciche.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1810"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1806"/>
         <source>Instantly moving floors aren&apos;t silent</source>
         <translation>Natychmiastowo poruszane podłogi nie są ciche</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1812"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1808"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clients send ucmd.buttons as &amp;quot;long&amp;quot; instead of as &amp;quot;byte&amp;quot; in CLIENTCOMMANDS_ClientMove. So far this is only necessary if the ACS function GetPlayerInput is used in a server side script to check for buttons bigger than BT_ZOOM. Otherwise this information is completely useless for the server and the additional net traffic to send it should be avoided.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Klienci wysyłają ucmd.buttons jako &amp;quot;long&amp;quot; zamiast jako &amp;quot;byte&amp;quot; w CLIENTCOMMANDS_ClientMove. Jak do tej pory, było to jedynie potrzebne w funkcji ACS GetPlayerInput, gdy jest ona użyta po stronie serwera do sprawdzenia przycisku większego niż BT_ZOOM. W każdym innym przypadku ta informacja jest całkowicie bezużyteczna dla serwera i powinno się unikać dodatkowego zużycia łącza.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1814"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1810"/>
         <source>Clients send full button info</source>
         <translation>Klienci wysyłają pełne info o przyciskach</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1816"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1812"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use Doom&apos;s random table instead of ZDoom&apos;s random number generator. Affects weapon damage among other things.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Używaj losowej tablicy z Dooma zamiast generatora liczb losowych z ZDooma. Wpływa to, między innymi, na obrażenia od broni.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1818"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1814"/>
         <source>Old random number generator</source>
         <translation>Stary generator liczb losowych</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1819"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1815"/>
         <source>Monsters can&apos;t be pushed off cliffs</source>
         <translation>Potwory nie mogą być wypchnięte przez przepaść</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1820"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1816"/>
         <source>Old damage radius (infinite height)</source>
         <translation>Obrażenia obszarowe mają nieskończoną wysokość</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1821"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1817"/>
         <source>Compatibility</source>
         <translation>Kompatybilność</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1822"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1818"/>
         <source>Use original missile clipping height</source>
         <translation>Używaj oryginalnej wysokości kolizji pocisków</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1823"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1819"/>
         <source>Use sector based sound target code</source>
         <translation>Używaj kodu celowania dźwiękiem opartego na sektorach</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1825"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1821"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Doom&apos;s hitscan tracing code ignores all lines with both sides in the same sector. ZDoom&apos;s does not. This option reverts to the original but less precise behavior. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Kod w Doomie odpowiedzialny za śledzenie hitscanów ignoruje wszystkie linie, które mają ten sam sektor po obu stronach. ZDoom tego nie robi. Ta opcja przywraca oryginalne, lecz mniej dokładne zachowanie. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1827"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1823"/>
         <source>Trace ignore lines w/ same sector on both sides</source>
         <translation>Trasowanie ignoruje linie o tym samym sektorze po obu stronach</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1828"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1824"/>
         <source>Limit deh.MaxHealth to health bonus</source>
         <translation>Ogranicz deh.MaxHealth do bonusu energii</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1830"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1826"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The scrolling floor specials in Heretic and Hexen move the player much faster than the actual texture scrolling speed. Enable this option to restore this effect. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Akcje przesuwające podłogę w Hereticu i Hexenie przesuwają graczy znacznie szybciej, niż teksturę. Włączenie tej opcji przywraca ten efekt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1832"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1828"/>
         <source>Raven&apos;s scrollers use original speed</source>
         <translation>Przesuwniki Ravena używają oryginalnych prędkości</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1834"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1830"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add NOGRAVITY to actors named InvulnerabilitySphere, Soulsphere, Megasphere and BlurSphere when spawned by the map.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dodaj NOGRAVITY aktorom o nazwach InvulnerabilitySphere, Soulsphere, Megasphere i BlurSphere gdy są spawnowane przez mapę.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1836"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1832"/>
         <source>Add NOGRAVITY flag to spheres</source>
         <translation>Dodaj flagę NOGRAVITY kulom</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1838"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1834"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When a player leaves the game, don&apos;t stop any scripts of that player that are still running.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gdy gracz opuści grę, nie zatrzymuj skryptów, które są dla niego uruchomione.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1840"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1836"/>
         <source>Don&apos;t stop player scripts on disconnect</source>
         <translation>Nie zatrzymuj skryptów gracza po rozłączeniu</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1842"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1838"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If this is enabled, explosions cause a strong horizontal thrust like in old ZDoom versions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gdy jest to włączone, eksplozje silnie popychają w poziomie jak w starych wersjach ZDooma.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1844"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1840"/>
         <source>Old ZDoom horizontal thrust</source>
         <translation>Popychanie poziome ze starego ZDooma</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1846"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1842"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If this is enabled, non-SOLID things like flags fall through bridges (as they used to do in old ZDoom versions).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
 </source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gdy to jest włączone, nie-SOLIDne obiekty jak flagi wpadają pod mosty (tak jak to było w starych wersjach ZDooma).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1849"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1845"/>
         <source>Old ZDoom bridge drops</source>
         <translation>Upuszczanie pod most ze starego ZDooma</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1851"/>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1877"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1847"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Uses old ZDoom jump physics, it&apos;s a minor bug in the gravity code that causes gravity application in the wrong place.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Używaj fizyki skoku ze starego ZDooma. To mały błąd w kodzie, który aplikuje grawitację nie w tym miejscu, co trzeba.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Uses old ZDoom jump physics, it&apos;s a minor bug in the gravity code that causes gravity application in the wrong place.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Używaj fizyki skoku ze starego ZDooma. To mały błąd w kodzie, który aplikuje grawitację nie w tym miejscu, co trzeba.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1857"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1849"/>
         <source>ZDoom 1.23B33 jump physics</source>
         <translation>Fizyka skoku z ZDooma 1.23B33</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1859"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1851"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use Doom&apos;s shortest texture find behavior. This is requied by some WADs in MAP07.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Używaj najkrótszego wyszukiwania tekstury z Dooma. Jest to wymagane przez niektóre WADy w MAP07.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1861"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1853"/>
         <source>Find shortest textures like Doom</source>
         <translation>Wyszukuj najkrótszej tekstury jak w Doomie</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1862"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1854"/>
         <source>Limit pain elementals to 20 lost souls</source>
         <translation>Ogranicz pain elemental do 20 lost souls</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1863"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1855"/>
         <source>Spawned item drops on the floor</source>
         <translation>Spawnięte przedmioty spadają na podłogę</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1865"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1857"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Treat ACS scripts with the SCRIPTF_Net flag to be client side, i.e. executed on the clients, but not on the server.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Traktuj skrypty ACS z flagą SCRIPTF_Net jako skrypty po stronie klienta, tzn. wykonuj je u klientów, a nie na serwerze.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1867"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1859"/>
         <source>NET scripts are clientside</source>
         <translation>Skrypty NET są po stronie klienta</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1868"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1860"/>
         <source>Actors are infinitely tall</source>
         <translation>Nieskończenie wysocy aktorzy</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1870"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1862"/>
         <source>Don&apos;t fix loop index for stair building.</source>
         <translation>Nie naprawiaj indeksu pętli do budowania schodów.</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1872"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1864"/>
         <source>Use buggier stair building</source>
         <translation>Używaj zbugowanego budowania schodów</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1873"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1865"/>
         <source>Disable Boom door light effect</source>
         <translation>Wyłącz Boomowy efekt świateł z drzwi</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1874"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1866"/>
         <source>All special lines can drop use lines</source>
         <translation>Wszystkie specjalne linie mogą anulować używanie linii</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1875"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1867"/>
         <source>Original sound curve</source>
         <translation>Oryginalna krzywa dźwięku</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1883"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1868"/>
         <source>Disallow weapon change until fully drawn or hidden</source>
         <translation>Nie można zmieniać broni w trakcie wyciągania/chowania</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1884"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1869"/>
         <source>Compatibility 2</source>
         <translation>Kompatybilność 2</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1885"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1870"/>
         <source>Voting</source>
         <translation>Głosowanie</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1888"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1873"/>
         <source>dmflags</source>
         <translation>dmflags</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1889"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1874"/>
         <source>dmflags2</source>
         <translation>dmflags2</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1892"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1877"/>
         <source>dmflags3</source>
         <translation>dmflags3</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1893"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1878"/>
         <source>compatflags</source>
         <translation>compatflags</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1894"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_flagspage.h" line="1879"/>
         <source>compatflags2</source>
         <translation>compatflags2</translation>
     </message>
@@ -1093,87 +1095,87 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>VotingSetupWidget</name>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="215"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="214"/>
         <source>Form</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="216"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="215"/>
         <source>Use this page</source>
         <translation>Używaj tej strony</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="217"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="216"/>
         <source>Who can vote</source>
         <translation>Kto może głosować</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="218"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="217"/>
         <source>All can vote</source>
         <translation>Wszyscy mogą głosować</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="219"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="218"/>
         <source>No one can vote</source>
         <translation>Nikt nie może głosować</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="220"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="219"/>
         <source>Spectators can&apos;t vote</source>
         <translation>Widzowie nie mogą głosować</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="221"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="220"/>
         <source>Minimum number of players required to call a vote:</source>
         <translation>Minimalna ilość graczy wymagana do głosu:</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="222"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="221"/>
         <source>Allow specific votes</source>
         <translation>Zezwól na głosowanie</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="223"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="222"/>
         <source>pointlimit</source>
         <translation>limit punktów</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="224"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="223"/>
         <source>duellimit</source>
         <translation>limit pojedynków</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="225"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="224"/>
         <source>timelimit</source>
         <translation>limit czasu</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="226"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="225"/>
         <source>winlimit</source>
         <translation>limit zwycięstw</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="227"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="226"/>
         <source>changemap</source>
         <translation>changemap</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="228"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="227"/>
         <source>kick</source>
         <translation>kopnięcie</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="229"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="228"/>
         <source>map</source>
         <translation>map</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="230"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="229"/>
         <source>fraglimit</source>
         <translation>limit fragów</translation>
     </message>
     <message>
-        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="231"/>
+        <location filename="../../../../../debug/src/plugins/zandronum/ui_votingsetupwidget.h" line="230"/>
         <source>Vote flooding protection enabled</source>
         <translation>Chroń przed floodowaniem głosowaniami</translation>
     </message>
