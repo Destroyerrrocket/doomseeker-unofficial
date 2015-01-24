@@ -234,11 +234,15 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbCanUseChasecam);
 		m.insert(ZandronumDmflags::DF2_YES_FREEAIMBFG,
 			f->cbAllowBFGFreeaiming);
+		m.insert(ZandronumDmflags::DF2_DONTCHECKAMMO,
+			f->cbDontCheckAmmoWhenSwitchingWeapons);
 
 		// Cooperative
 		// - Monsters
 		m.insert(ZandronumDmflags::DF2_KILL_MONSTERS,
 			f->cbMonstersMustBeKilledToExit);
+		m.insert(ZandronumDmflags::DF2_KILLBOSSMONST,
+			f->cbKillBossMonsters);
 		// - Player death
 		m.insert(ZandronumDmflags::DF2_SAME_SPAWN_SPOT,
 			f->cbRespawnWhereDied);
@@ -264,7 +268,7 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbDontSpawnRunes);
 	}
 
-	// DMFlags 3
+	// Zandronum DMFlags
 	{
 		QMap<unsigned, QCheckBox*>& m = zandronumDmflagsCheckboxes;
 
@@ -287,6 +291,8 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbTargetIdentify);
 		m.insert(ZandronumDmflags::ZADF_NO_COOP_INFO,
 			f->cbDisplayCoopInfo);
+		m.insert(ZandronumDmflags::ZADF_MAX_BLOOD_SCALAR,
+			f->cbMaxBloodScalar);
 		// - Behavior
 		m.insert(ZandronumDmflags::ZADF_UNBLOCK_PLAYERS,
 			f->cbPlayersCanWalkThroughEachOther);
@@ -297,6 +303,10 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbUseCustomGLLightingSettings);
 		m.insert(ZandronumDmflags::ZADF_FORCE_ALPHA,
 			f->cbTurnOffTranslucency);
+
+		// Cooperative
+		m.insert(ZandronumDmflags::ZADF_SHARE_KEYS,
+			f->cbShareKeys);
 	}
 
 	// LMSAllowedWeapons
