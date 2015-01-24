@@ -34,7 +34,7 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 
 	// Compat flags
 	{
-		QMap<unsigned, QCheckBox*>& m = compatflagsCheckboxes;
+		QMap<unsigned, QAbstractButton*>& m = compatflagsCheckboxes;
 
 		// Compatibility
 		// - Oldschool
@@ -87,7 +87,7 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 
 	// Compat flags 2
 	{
-		QMap<unsigned, QCheckBox*>& m = zandronumCompatflagsCheckboxes;
+		QMap<unsigned, QAbstractButton*>& m = zandronumCompatflagsCheckboxes;
 
 		// Players
 		m.insert(ZandronumDmflags::ZACOMPATF_DISABLETAUNTS,
@@ -136,7 +136,7 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 
 	// DMFlags
 	{
-		QMap<unsigned, QCheckBox*>& m = dmflagsCheckboxes;
+		QMap<unsigned, QAbstractButton*>& m = dmflagsCheckboxes;
 
 		// General
 		m.insert(ZandronumDmflags::DF_NO_MONSTERS,
@@ -197,7 +197,7 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 
 	// DMFlags 2
 	{
-		QMap<unsigned, QCheckBox*>& m = dmflags2Checkboxes;
+		QMap<unsigned, QAbstractButton*>& m = dmflags2Checkboxes;
 
 		// General
 		m.insert(ZandronumDmflags::DF2_BARRELS_RESPAWN,
@@ -270,7 +270,7 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 
 	// Zandronum DMFlags
 	{
-		QMap<unsigned, QCheckBox*>& m = zandronumDmflagsCheckboxes;
+		QMap<unsigned, QAbstractButton*>& m = zandronumDmflagsCheckboxes;
 
 		// General
 		m.insert(ZandronumDmflags::ZADF_NOUNLAGGED,
@@ -295,7 +295,9 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbMaxBloodScalar);
 		// - Behavior
 		m.insert(ZandronumDmflags::ZADF_UNBLOCK_PLAYERS,
-			f->cbPlayersCanWalkThroughEachOther);
+			f->rbPlayersCanWalkThroughEachOther);
+		m.insert(ZandronumDmflags::ZADF_UNBLOCK_ALLIES,
+			f->rbAlliesCanWalkThroughEachOther);
 
 		m.insert(ZandronumDmflags::ZADF_NO_ROCKET_JUMPING,
 			f->cbRocketJump);
@@ -311,7 +313,7 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 
 	// LMSAllowedWeapons
 	{
-		QMap<unsigned, QCheckBox*>& m = lmsAllowedWeaponsCheckboxes;
+		QMap<unsigned, QAbstractButton*>& m = lmsAllowedWeaponsCheckboxes;
 
 		m.insert(ZandronumGameInfo::LMSAW_Chainsaw,
 			f->cbLMSChainsaw);
@@ -337,7 +339,7 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 
 	// LMSSpectatorSettings
 	{
-		QMap<unsigned, QCheckBox*>& m = lmsSpectatorSettingsCheckboxes;
+		QMap<unsigned, QAbstractButton*>& m = lmsSpectatorSettingsCheckboxes;
 
 		m.insert(ZandronumGameInfo::LMSSS_TalkToActivePlayers,
 			f->cbLMSSpectatorsCanTalkToActivePlayers);
@@ -394,7 +396,7 @@ void FlagsPageValueController::convertWidgetsToNumerical()
 }
 
 void FlagsPageValueController::convertCheckboxesToNumerical(
-	const QMap<unsigned, QCheckBox*>& checkboxMap,
+	const QMap<unsigned, QAbstractButton*>& checkboxMap,
 	unsigned& flagsValue)
 {
 	foreach (unsigned flag, checkboxMap.keys())
@@ -416,7 +418,7 @@ void FlagsPageValueController::convertCheckboxesToNumerical(
 }
 
 void FlagsPageValueController::convertNumericalToCheckboxes(
-	QMap<unsigned, QCheckBox*>& checkboxMap,
+	QMap<unsigned, QAbstractButton*>& checkboxMap,
 	unsigned flagsValue)
 {
 	foreach (unsigned flag, checkboxMap.keys())
@@ -581,6 +583,12 @@ void FlagsPageValueController::convertToWidgetPlayers()
 	else
 	{
 		f->cboCrouching->setCurrentIndex(FlagsPage::JCA_Default);
+	}
+
+	if ((zandronumDmflags & ZandronumDmflags::ZADF_UNBLOCK_PLAYERS) == 0 &&
+		(zandronumDmflags & ZandronumDmflags::ZADF_UNBLOCK_ALLIES) == 0)
+	{
+		f->rbPlayersBlockEachOtherNormally->setChecked(true);
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////

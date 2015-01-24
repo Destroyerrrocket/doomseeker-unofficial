@@ -23,7 +23,7 @@
 #ifndef DOOMSEEKER_PLUGIN_ZANDRONUM_CREATESERVERDIALOGPAGES_FLAGSPAGEVALUECONTROLLER_H
 #define DOOMSEEKER_PLUGIN_ZANDRONUM_CREATESERVERDIALOGPAGES_FLAGSPAGEVALUECONTROLLER_H
 
-#include <QCheckBox>
+#include <QAbstractButton>
 #include <QMap>
 
 class FlagsPage;
@@ -51,13 +51,13 @@ class FlagsPageValueController
 		unsigned lmsAllowedWeapons;
 		unsigned lmsSpectatorSettings;
 
-		QMap<unsigned, QCheckBox*> compatflagsCheckboxes;
-		QMap<unsigned, QCheckBox*> dmflagsCheckboxes;
-		QMap<unsigned, QCheckBox*> dmflags2Checkboxes;
-		QMap<unsigned, QCheckBox*> lmsAllowedWeaponsCheckboxes;
-		QMap<unsigned, QCheckBox*> lmsSpectatorSettingsCheckboxes;
-		QMap<unsigned, QCheckBox*> zandronumCompatflagsCheckboxes;
-		QMap<unsigned, QCheckBox*> zandronumDmflagsCheckboxes;
+		QMap<unsigned, QAbstractButton*> compatflagsCheckboxes;
+		QMap<unsigned, QAbstractButton*> dmflagsCheckboxes;
+		QMap<unsigned, QAbstractButton*> dmflags2Checkboxes;
+		QMap<unsigned, QAbstractButton*> lmsAllowedWeaponsCheckboxes;
+		QMap<unsigned, QAbstractButton*> lmsSpectatorSettingsCheckboxes;
+		QMap<unsigned, QAbstractButton*> zandronumCompatflagsCheckboxes;
+		QMap<unsigned, QAbstractButton*> zandronumDmflagsCheckboxes;
 
 		FlagsPage* flagsPage;
 
@@ -66,9 +66,9 @@ class FlagsPageValueController
 		void convertToNumericalCooperative();
 		void convertToNumericalDeathmatch();
 
-		void convertCheckboxesToNumerical(const QMap<unsigned, QCheckBox*>& checkboxMap,
+		void convertCheckboxesToNumerical(const QMap<unsigned, QAbstractButton*>& checkboxMap,
 			unsigned& flagsValue);
-		void convertNumericalToCheckboxes(QMap<unsigned, QCheckBox*>& checkboxMap,
+		void convertNumericalToCheckboxes(QMap<unsigned, QAbstractButton*>& checkboxMap,
 			unsigned flagsValue);
 
 		void convertToWidgetGeneral();
