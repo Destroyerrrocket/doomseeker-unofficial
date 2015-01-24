@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
@@ -1327,6 +1327,50 @@ p, li { white-space: pre-wrap; }
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatAnyBossDeathActivatesMapSpecials">
+             <property name="text">
+              <string>Any boss death activates map specials</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatFrictionPushersPullersAffectMonsters">
+             <property name="text">
+              <string>Friction/pushers/pullers affect Monsters</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatCrusherGibsByMorphingNotReplacement">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Crushed monsters are turned into gibs, rather than replaced by gibs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Crusher gibs by morphing, not replacement</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatBlockMonsterLinesIgnoreFriendlyMonsters">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Crushed monsters are turned into gibs, rather than replaced by gibs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Block monster lines ignore friendly monsters</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatFindNeighboringLightLevelLikeDoom">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Crushed monsters are turned into gibs, rather than replaced by gibs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Find neighboring light level like Doom</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
@@ -1412,6 +1456,50 @@ p, li { white-space: pre-wrap; }
             <widget class="QCheckBox" name="cbCompatOldDamageRadiusInfiniteHeight">
              <property name="text">
               <string>Old damage radius (infinite height)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatMinotaur">
+             <property name="text">
+              <string>Minotaur's floor flame explodes immediately when feet are clipped</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatOriginalVelocityCalcForMushroomInDehacked">
+             <property name="text">
+              <string>Original velocity calc. for A_Mushroom in Dehacked</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatSpriteSortOrderInverted">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Crushed monsters are turned into gibs, rather than replaced by gibs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Sprite sort order inverted for sprites of equal distance</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatHitscansOriginalBlockmap">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Crushed monsters are turned into gibs, rather than replaced by gibs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Hitscans use original blockmap and hit check code</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatDrawPolyobjectsOld">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Crushed monsters are turned into gibs, rather than replaced by gibs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Draw polyobjects the old fashioned way</string>
              </property>
             </widget>
            </item>
@@ -1853,6 +1941,11 @@ p, li { white-space: pre-wrap; }
   <tabstop>cbCompatLimitedMovementInTheAir</tabstop>
   <tabstop>cbCompatMonstersSeeSemiInvisiblePlayers</tabstop>
   <tabstop>cbCompatPlasmaBumpBug</tabstop>
+  <tabstop>cbCompatAnyBossDeathActivatesMapSpecials</tabstop>
+  <tabstop>cbCompatFrictionPushersPullersAffectMonsters</tabstop>
+  <tabstop>cbCompatCrusherGibsByMorphingNotReplacement</tabstop>
+  <tabstop>cbCompatBlockMonsterLinesIgnoreFriendlyMonsters</tabstop>
+  <tabstop>cbCompatFindNeighboringLightLevelLikeDoom</tabstop>
   <tabstop>cbCompatUseOldIntermissionScreensMusic</tabstop>
   <tabstop>cbCompatScrollingSectorsAreAdditive</tabstop>
   <tabstop>cbCompatSectorSoundsUseOriginalMethod</tabstop>
@@ -1862,16 +1955,11 @@ p, li { white-space: pre-wrap; }
   <tabstop>cbCompatOldRandomNumberGenerator</tabstop>
   <tabstop>cbCompatMonstersCantBePushedOffCliffs</tabstop>
   <tabstop>cbCompatOldDamageRadiusInfiniteHeight</tabstop>
-  <tabstop>cbCompatUseOriginalMissileClippingHeight</tabstop>
-  <tabstop>cbCompatUseSectorBasedSoundTargetCode</tabstop>
-  <tabstop>cbCompatTraceIgnoreLinesWithoutSameSectorOnBothSides</tabstop>
-  <tabstop>cbCompatLimitDehMaxHealthToHealthBonus</tabstop>
-  <tabstop>cbCompatRavensScrollersUseOriginalSpeed</tabstop>
-  <tabstop>cbCompatAddNOGRAVITYFlagToSpheres</tabstop>
-  <tabstop>cbDontStopPlayerScriptsOnDisconnect</tabstop>
-  <tabstop>cbOldZDoomHorizontalThrust</tabstop>
-  <tabstop>cbOldZDoomBridgeDrops</tabstop>
-  <tabstop>cbCompatFindShortestTexturesLikeDoom</tabstop>
+  <tabstop>cbCompatMinotaur</tabstop>
+  <tabstop>cbCompatOriginalVelocityCalcForMushroomInDehacked</tabstop>
+  <tabstop>cbCompatSpriteSortOrderInverted</tabstop>
+  <tabstop>cbCompatHitscansOriginalBlockmap</tabstop>
+  <tabstop>cbCompatDrawPolyobjectsOld</tabstop>
   <tabstop>cbCompatLimitPainElementals</tabstop>
   <tabstop>cbCompatSpawnItemDropsOnTheFloor</tabstop>
   <tabstop>cbCompatNETScriptsAreClientside</tabstop>
@@ -1880,6 +1968,29 @@ p, li { white-space: pre-wrap; }
   <tabstop>cbCompatDisableBoomDoorLightEffect</tabstop>
   <tabstop>cbCompatAllSpecialLinesCanDropUseLines</tabstop>
   <tabstop>cbCompatOriginalSoundCurve</tabstop>
+  <tabstop>cbNoUnlagged</tabstop>
+  <tabstop>cbAlwaysApplyLMSSpectatorSettings</tabstop>
+  <tabstop>cbNoMedals</tabstop>
+  <tabstop>cbMaxBloodScalar</tabstop>
+  <tabstop>cbDontCheckAmmoWhenSwitchingWeapons</tabstop>
+  <tabstop>cbKillBossMonsters</tabstop>
+  <tabstop>cbShareKeys</tabstop>
+  <tabstop>cbOldZDoomJumpPhysics</tabstop>
+  <tabstop>cbCompatFullWeaponLower</tabstop>
+  <tabstop>leZandronumDmflags</tabstop>
+  <tabstop>leCompatflags</tabstop>
+  <tabstop>rbAlliesCanWalkThroughEachOther</tabstop>
+  <tabstop>rbPlayersBlockEachOtherNormally</tabstop>
+  <tabstop>cbCompatUseSectorBasedSoundTargetCode</tabstop>
+  <tabstop>cbCompatAddNOGRAVITYFlagToSpheres</tabstop>
+  <tabstop>cbDontStopPlayerScriptsOnDisconnect</tabstop>
+  <tabstop>cbCompatTraceIgnoreLinesWithoutSameSectorOnBothSides</tabstop>
+  <tabstop>cbCompatLimitDehMaxHealthToHealthBonus</tabstop>
+  <tabstop>cbCompatRavensScrollersUseOriginalSpeed</tabstop>
+  <tabstop>cbOldZDoomHorizontalThrust</tabstop>
+  <tabstop>cbOldZDoomBridgeDrops</tabstop>
+  <tabstop>cbCompatUseOriginalMissileClippingHeight</tabstop>
+  <tabstop>cbCompatFindShortestTexturesLikeDoom</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -3490,7 +3601,7 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>607</x>
+     <x>558</x>
      <y>242</y>
     </hint>
     <hint type="destinationlabel">
@@ -3944,6 +4055,166 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>631</x>
      <y>319</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCompatAnyBossDeathActivatesMapSpecials</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>45</x>
+     <y>249</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>3</x>
+     <y>268</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCompatMinotaur</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>588</x>
+     <y>256</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>623</x>
+     <y>2</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCompatFrictionPushersPullersAffectMonsters</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>39</x>
+     <y>281</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>280</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCompatCrusherGibsByMorphingNotReplacement</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>41</x>
+     <y>297</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>307</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCompatOriginalVelocityCalcForMushroomInDehacked</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>404</x>
+     <y>287</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>595</x>
+     <y>-2</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCompatSpriteSortOrderInverted</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>448</x>
+     <y>302</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>556</x>
+     <y>7</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCompatBlockMonsterLinesIgnoreFriendlyMonsters</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>79</x>
+     <y>324</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>324</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCompatHitscansOriginalBlockmap</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>352</x>
+     <y>328</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>629</x>
+     <y>324</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCompatDrawPolyobjectsOld</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>303</x>
+     <y>347</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>631</x>
+     <y>352</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCompatFindNeighboringLightLevelLikeDoom</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>80</x>
+     <y>350</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>3</x>
+     <y>345</y>
     </hint>
    </hints>
   </connection>

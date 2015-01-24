@@ -55,6 +55,16 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbCompatInstantlyMovingFloorsArentSilent);
 		m.insert(ZandronumDmflags::COMPATF_SECTORSOUNDS,
 			f->cbCompatSectorSoundsUseOriginalMethod);
+		m.insert(ZandronumDmflags::COMPATF_ANYBOSSDEATH,
+			f->cbCompatAnyBossDeathActivatesMapSpecials);
+		m.insert(ZandronumDmflags::COMPATF_MBFMONSTERMOVE,
+			f->cbCompatFrictionPushersPullersAffectMonsters);
+		m.insert(ZandronumDmflags::COMPATF_CORPSEGIBS,
+			f->cbCompatCrusherGibsByMorphingNotReplacement);
+		m.insert(ZandronumDmflags::COMPATF_NOBLOCKFRIENDS,
+			f->cbCompatBlockMonsterLinesIgnoreFriendlyMonsters);
+		m.insert(ZandronumDmflags::COMPATF_LIGHT,
+			f->cbCompatFindNeighboringLightLevelLikeDoom);
 
 		// - General, right panel
 		m.insert(ZandronumDmflags::COMPATF_SHORTTEX,
@@ -83,9 +93,19 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbCompatMonstersCantBePushedOffCliffs);
 		m.insert(ZandronumDmflags::COMPATF_MISSILECLIP,
 			f->cbCompatUseOriginalMissileClippingHeight);
+		m.insert(ZandronumDmflags::COMPATF_MINOTAUR,
+			f->cbCompatMinotaur);
+		m.insert(ZandronumDmflags::COMPATF_MUSHROOM,
+			f->cbCompatOriginalVelocityCalcForMushroomInDehacked);
+		m.insert(ZandronumDmflags::COMPATF_SPRITESORT,
+			f->cbCompatSpriteSortOrderInverted);
+		m.insert(ZandronumDmflags::COMPATF_HITSCAN,
+			f->cbCompatHitscansOriginalBlockmap);
+		m.insert(ZandronumDmflags::COMPATF_POLYOBJ,
+			f->cbCompatDrawPolyobjectsOld);
 	}
 
-	// Compat flags 2
+	// Zandronum compatflags
 	{
 		QMap<unsigned, QAbstractButton*>& m = zandronumCompatflagsCheckboxes;
 
