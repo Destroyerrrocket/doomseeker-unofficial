@@ -80,7 +80,7 @@ void ChocolateDoomGameClientRunner::joinPopulatedServer()
 		args() << "-iwad" << dialog->iwadPath();
 		foreach (const QString &file, dialog->filePaths())
 		{
-			if (file.endsWith(".deh"))
+			if (file.toLower().endsWith(".deh"))
 			{
 				args() << "-deh" << file;
 			}

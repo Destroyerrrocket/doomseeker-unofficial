@@ -59,6 +59,13 @@ class MAIN_EXPORT GameHost : public QObject
 
 	protected:
 		/**
+		 * @brief Command line parameter that is used to load a DEHACKED file.
+		 *
+		 * Default: "-deh".
+		 */
+		const QString& argForDehLoading() const;
+
+		/**
 		 * @brief Command line parameter that is used to set IWAD.
 		 *
 		 * Default: "-iwad".
@@ -143,6 +150,7 @@ class MAIN_EXPORT GameHost : public QObject
 
 		const GameCreateParams& params() const;
 
+		void setArgForDehLoading(const QString& arg);
 		void setArgForIwadLoading(const QString& arg);
 		void setArgForPort(const QString& arg);
 		void setArgForPwadLoading(const QString& arg);

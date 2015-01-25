@@ -44,6 +44,7 @@
 class GameHost::PrivData
 {
 	public:
+		QString argDehLoading;
 		QString argIwadLoading;
 		QString argPort;
 		QString argPwadLoading;
@@ -64,6 +65,7 @@ class GameHost::PrivData
 GameHost::GameHost(EnginePlugin* plugin)
 {
 	d = new PrivData();
+	d->argDehLoading = "-deh";
 	d->argIwadLoading = "-iwad";
 	d->argPort = "-port";
 	d->argPwadLoading = "-file";
@@ -143,8 +145,6 @@ void GameHost::addPwads_default()
 {
 	foreach(const QString& pwad, params().pwadsPaths())
 	{
-		args() << argForPwadLoading();
-
 		QFileInfo fi(pwad);
 		if (!fi.isFile())
 		{
@@ -152,8 +152,20 @@ void GameHost::addPwads_default()
 			setMessage(Message::customError(error));
 			return;
 		}
-		args() << pwad;
+		if (pwad.toLower().endsWith(".deh"))
+		{
+			args() << argForDehLoading() << pwad;
+		}
+		else
+		{
+			args() << argForPwadLoading() << pwad;
+		}
 	}
+}
+
+const QString& GameHost::argForDehLoading() const
+{
+	return d->argDehLoading;
 }
 
 const QString& GameHost::argForIwadLoading() const
@@ -294,6 +306,11 @@ void GameHost::saveDemoMetaData()
 		GameDemo::saveDemoMetaData(params().demoPath(), *plugin(),
 			params().iwadName(), params().pwadsNames());
 	}
+}
+
+void GameHost::setArgForDehLoading(const QString& arg)
+{
+	d->argDehLoading = arg;
 }
 
 void GameHost::setArgForIwadLoading(const QString& arg)

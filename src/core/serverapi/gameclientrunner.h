@@ -233,6 +233,13 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		const QString& argForConnectPassword() const;
 
 		/**
+		 * @brief Command line parameter that is used to load a DEHACKED file.
+		 *
+		 * Default: "-deh".
+		 */
+		const QString& argForDehLoading() const;
+
+		/**
 		 * @brief Command line parameter that is used to specify in-game
 		 *        ("join") password.
 		 *
@@ -334,6 +341,7 @@ class MAIN_EXPORT GameClientRunner : public QObject
 
 		void setArgForConnect(const QString& arg);
 		void setArgForConnectPassword(const QString& arg);
+		void setArgForDehLoading(const QString& arg);
 		void setArgForInGamePassword(const QString& arg);
 		void setArgForIwadLoading(const QString& arg);
 		void setArgForPort(const QString& arg);

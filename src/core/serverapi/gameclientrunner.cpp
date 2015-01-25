@@ -117,6 +117,7 @@ class GameClientRunner::PrivData
 	public:
 		QString argConnect;
 		QString argConnectPassword;
+		QString argDehLoading;
 		QString argInGamePassword;
 		QString argIwadLoading;
 		QString argPort;
@@ -273,7 +274,14 @@ void GameClientRunner::addPwads()
 		}
 		else if (!pwad.isEmpty()) // Don't -file missing optional wads
 		{
-			args() << argForPwadLoading() << pwad;
+			if (pwad.toLower().endsWith(".deh"))
+			{
+				args() << argForDehLoading() << pwad;
+			}
+			else
+			{
+				args() << argForPwadLoading() << pwad;
+			}
 		}
 	}
 }
@@ -291,6 +299,11 @@ const QString& GameClientRunner::argForConnect() const
 const QString& GameClientRunner::argForConnectPassword() const
 {
 	return d->argConnectPassword;
+}
+
+const QString& GameClientRunner::argForDehLoading() const
+{
+	return d->argDehLoading;
 }
 
 const QString& GameClientRunner::argForInGamePassword() const
@@ -490,6 +503,11 @@ void GameClientRunner::setArgForConnect(const QString& arg)
 void GameClientRunner::setArgForConnectPassword(const QString& arg)
 {
 	d->argConnectPassword = arg;
+}
+
+void GameClientRunner::setArgForDehLoading(const QString& arg)
+{
+	d->argDehLoading = arg;
 }
 
 void GameClientRunner::setArgForInGamePassword(const QString& arg)
