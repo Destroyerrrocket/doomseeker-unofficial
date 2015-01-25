@@ -215,6 +215,8 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 */
 		QStringList& args();
 
+		const QString& argForBexLoading() const;
+
 		/**
 		 * @brief Command line parameter that specifies the target server's IP
 		 *        and port.
@@ -339,6 +341,7 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 */
 		ServerConnectParams& serverConnectParams();
 
+		void setArgForBexLoading(const QString& arg);
 		void setArgForConnect(const QString& arg);
 		void setArgForConnectPassword(const QString& arg);
 		void setArgForDehLoading(const QString& arg);

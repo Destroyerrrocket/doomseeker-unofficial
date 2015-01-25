@@ -115,6 +115,7 @@ void ServerConnectParams::setInGamePassword(const QString& val)
 class GameClientRunner::PrivData
 {
 	public:
+		QString argBexLoading;
 		QString argConnect;
 		QString argConnectPassword;
 		QString argDehLoading;
@@ -148,7 +149,9 @@ GameClientRunner::GameClientRunner(ServerPtr server)
 	set_addExtra(&GameClientRunner::addExtra_default);
 	set_addIwad(&GameClientRunner::addIwad_default);
 	set_createCommandLineArguments(&GameClientRunner::createCommandLineArguments_default);
+	d->argBexLoading = "-deh";
 	d->argConnect = "-connect";
+	d->argDehLoading = "-deh";
 	d->argIwadLoading = "-iwad";
 	d->argPort = "-port";
 	d->argPwadLoading = "-file";
@@ -278,6 +281,10 @@ void GameClientRunner::addPwads()
 			{
 				args() << argForDehLoading() << pwad;
 			}
+			else if (pwad.toLower().endsWith(".bex"))
+			{
+				args() << argForBexLoading() << pwad;
+			}
 			else
 			{
 				args() << argForPwadLoading() << pwad;
@@ -289,6 +296,11 @@ void GameClientRunner::addPwads()
 QStringList& GameClientRunner::args()
 {
 	return d->cli->args;
+}
+
+const QString& GameClientRunner::argForBexLoading() const
+{
+	return d->argBexLoading;
 }
 
 const QString& GameClientRunner::argForConnect() const
@@ -493,6 +505,11 @@ const QString& GameClientRunner::pluginName() const
 ServerConnectParams& GameClientRunner::serverConnectParams()
 {
 	return d->connectParams;
+}
+
+void GameClientRunner::setArgForBexLoading(const QString& arg)
+{
+	d->argBexLoading = arg;
 }
 
 void GameClientRunner::setArgForConnect(const QString& arg)

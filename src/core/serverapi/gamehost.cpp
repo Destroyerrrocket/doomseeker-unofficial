@@ -44,6 +44,7 @@
 class GameHost::PrivData
 {
 	public:
+		QString argBexLoading;
 		QString argDehLoading;
 		QString argIwadLoading;
 		QString argPort;
@@ -65,6 +66,7 @@ class GameHost::PrivData
 GameHost::GameHost(EnginePlugin* plugin)
 {
 	d = new PrivData();
+	d->argBexLoading = "-deh";
 	d->argDehLoading = "-deh";
 	d->argIwadLoading = "-iwad";
 	d->argPort = "-port";
@@ -156,11 +158,20 @@ void GameHost::addPwads_default()
 		{
 			args() << argForDehLoading() << pwad;
 		}
+		else if (pwad.toLower().endsWith(".bex"))
+		{
+			args() << argForBexLoading() << pwad;
+		}
 		else
 		{
 			args() << argForPwadLoading() << pwad;
 		}
 	}
+}
+
+const QString& GameHost::argForBexLoading() const
+{
+	return d->argBexLoading;
 }
 
 const QString& GameHost::argForDehLoading() const
@@ -306,6 +317,11 @@ void GameHost::saveDemoMetaData()
 		GameDemo::saveDemoMetaData(params().demoPath(), *plugin(),
 			params().iwadName(), params().pwadsNames());
 	}
+}
+
+void GameHost::setArgForBexLoading(const QString& arg)
+{
+	d->argBexLoading = arg;
 }
 
 void GameHost::setArgForDehLoading(const QString& arg)

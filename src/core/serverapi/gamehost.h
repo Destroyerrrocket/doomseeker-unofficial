@@ -59,6 +59,13 @@ class MAIN_EXPORT GameHost : public QObject
 
 	protected:
 		/**
+		 * @brief Command line parameter that is used to load a BEX file.
+		 *
+		 * Default: "-deh".
+		 */
+		const QString& argForBexLoading() const;
+
+		/**
 		 * @brief Command line parameter that is used to load a DEHACKED file.
 		 *
 		 * Default: "-deh".
@@ -150,6 +157,7 @@ class MAIN_EXPORT GameHost : public QObject
 
 		const GameCreateParams& params() const;
 
+		void setArgForBexLoading(const QString& arg);
 		void setArgForDehLoading(const QString& arg);
 		void setArgForIwadLoading(const QString& arg);
 		void setArgForPort(const QString& arg);
