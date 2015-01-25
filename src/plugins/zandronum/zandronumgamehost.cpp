@@ -30,8 +30,6 @@
 ZandronumGameHost::ZandronumGameHost()
 : GameHost(ZandronumEnginePlugin::staticInstance())
 {
-	setArgForBexLoading("-file");
-	setArgForDehLoading("-file");
 	setArgForServerLaunch("-host");
 
 	set_addDMFlags(&ZandronumGameHost::addDMFlags);

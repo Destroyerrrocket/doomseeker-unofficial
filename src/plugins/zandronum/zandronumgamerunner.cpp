@@ -31,8 +31,6 @@
 ZandronumGameClientRunner::ZandronumGameClientRunner(ServerPtr server)
 : GameClientRunner(server)
 {
-	setArgForBexLoading("-file");
-	setArgForDehLoading("-file");
 	setArgForConnectPassword("+cl_password");
 	setArgForInGamePassword("+cl_joinpassword");
 	set_addExtra(&ZandronumGameClientRunner::addExtra);
