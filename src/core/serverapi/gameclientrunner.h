@@ -112,6 +112,11 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		JoinError createJoinCommandLine(CommandLineInfo &cli,
 			const ServerConnectParams &params);
 
+		/**
+		 * @brief JoinError set by last call to createJoinCommandLine().
+		 */
+		JoinError joinError() const;
+
 	protected:
 		/**
 		 * @brief Adds connection arguments to the list.

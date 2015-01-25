@@ -39,6 +39,8 @@ class ChocolateDoomGameClientRunner : public GameClientRunner
 		QSharedPointer<ChocolateDoomServer> server;
 
 		void createCommandLineArguments();
+		void configureEmptyServer();
+		void joinPopulatedServer();
 };
 
 #endif

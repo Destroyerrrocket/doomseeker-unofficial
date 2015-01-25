@@ -24,6 +24,7 @@
 
 #include "chocolatedoomgameinfo.h"
 #include "chocolatedoomserver.h"
+#include <gui/createserver/iwadandwadspickerdialog.h>
 #include <serverapi/createserverdialogapi.h>
 #include "serverapi/playerslist.h"
 
@@ -37,25 +38,61 @@ ChocolateDoomGameClientRunner::ChocolateDoomGameClientRunner(
 
 void ChocolateDoomGameClientRunner::createCommandLineArguments()
 {
-	QString tmp;
-	CreateServerDialogApi *csd = CreateServerDialogApi::createNew(NULL);
-	csd->dialog()->setAttribute(Qt::WA_DeleteOnClose, false);
-	csd->makeRemoteGameSetup(plugin());
-	if (server->players().size() > 0)
+	if (server->players().size() == 0)
 	{
-		csd->setIwadByName(server->iwad());
+		configureEmptyServer();
 	}
-	if(csd->dialog()->exec() == QDialog::Accepted)
+	else
 	{
-		csd->fillInCommandLineArguments(tmp, args());
-		delete csd;
+		joinPopulatedServer();
+	}
+	if (joinError().type() == JoinError::NoError)
+	{
 		addGamePaths();
 		addConnectCommand();
 		addCustomParameters();
 	}
+}
+
+void ChocolateDoomGameClientRunner::configureEmptyServer()
+{
+	CreateServerDialogApi *csd = CreateServerDialogApi::createNew(NULL);
+	csd->dialog()->setAttribute(Qt::WA_DeleteOnClose, false);
+	csd->makeRemoteGameSetup(plugin());
+	if(csd->dialog()->exec() == QDialog::Accepted)
+	{
+		QString tmp;
+		csd->fillInCommandLineArguments(tmp, args());
+	}
 	else
 	{
-		delete csd;
 		setJoinError(JoinError(JoinError::Terminate));
 	}
+	delete csd;
+}
+
+void ChocolateDoomGameClientRunner::joinPopulatedServer()
+{
+	IwadAndWadsPickerDialog *dialog = new IwadAndWadsPickerDialog(NULL);
+	dialog->setIwadByName(server->iwad());
+	if (dialog->exec() == QDialog::Accepted)
+	{
+		args() << "-iwad" << dialog->iwadPath();
+		foreach (const QString &file, dialog->filePaths())
+		{
+			if (file.endsWith(".deh"))
+			{
+				args() << "-deh" << file;
+			}
+			else
+			{
+				args() << "-file" << file;
+			}
+		}
+	}
+	else
+	{
+		setJoinError(JoinError(JoinError::Terminate));
+	}
+	delete dialog;
 }

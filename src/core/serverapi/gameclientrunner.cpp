@@ -517,6 +517,11 @@ void GameClientRunner::setArgForDemoRecord(const QString& arg)
 	d->argDemoRecord = arg;
 }
 
+JoinError GameClientRunner::joinError() const
+{
+	return d->joinError;
+}
+
 void GameClientRunner::setJoinError(const JoinError& e)
 {
 	d->joinError = e;
