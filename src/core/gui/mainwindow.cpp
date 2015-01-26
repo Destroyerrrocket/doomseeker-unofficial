@@ -240,30 +240,6 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	initServerDetailsDock();
 	tabifyDockWidget(d->ircDock, d->detailsDock);
 
-	// Calculate screen center.
-	int screenWidth = QApplication::desktop()->width();
-	int screenHeight = QApplication::desktop()->height();
-
-	// Window geometry settings
-	if (!gConfig.doomseeker.areMainWindowSizeSettingsValid(screenWidth, screenHeight))
-	{
-		gConfig.doomseeker.mainWindowX = (screenWidth - width()) / 2;
-		gConfig.doomseeker.mainWindowY = (screenHeight - height()) / 2;
-		gConfig.doomseeker.mainWindowWidth = width();
-		gConfig.doomseeker.mainWindowHeight = height();
-	}
-	else if (gConfig.doomseeker.mainWindowY < 0)
-	{
-		// Do not allow y values less than zero anyway.
-		// We do not want to loose the titlebar.
-		gConfig.doomseeker.mainWindowY = 0;
-	}
-
-	move(gConfig.doomseeker.mainWindowX, gConfig.doomseeker.mainWindowY);
-	resize(gConfig.doomseeker.mainWindowWidth, gConfig.doomseeker.mainWindowHeight);
-
-	restoreState(QByteArray::fromBase64(gConfig.doomseeker.mainWindowState.toAscii()));
-
 	// Restore checked states.
 	d->menuActionRecordDemo->setChecked(gConfig.doomseeker.bRecordDemo);
 
@@ -303,6 +279,9 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	connectIP2CLoader(d->ip2cLoader);
 	d->ip2cLoader->load();
 
+	restoreState(QByteArray::fromBase64(gConfig.doomseeker.mainWindowState.toAscii()));
+	restoreGeometry(gConfig.doomseeker.mainWindowGeometry);
+
 	// Start first refresh from a timer. We want the main window fully
 	// set up before refresh.
 	QTimer::singleShot(1, this, SLOT(postInitAppStartup()));
@@ -310,6 +289,10 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 
 MainWindow::~MainWindow()
 {
+	// Window geometry settings
+	gConfig.doomseeker.mainWindowGeometry = saveGeometry();
+	gConfig.doomseeker.mainWindowState = saveState().toBase64();
+
 	if (d->updateChannelOnUpdateStart != NULL)
 	{
 		delete d->updateChannelOnUpdateStart;
@@ -321,18 +304,6 @@ MainWindow::~MainWindow()
 	}
 	if(d->connectionHandler)
 		delete d->connectionHandler;
-
-	// Window geometry settings
-	gConfig.doomseeker.bMainWindowMaximized = isMaximized();
-	if (!isMaximized() && !isMinimized())
-	{
-		gConfig.doomseeker.mainWindowX = x();
-		gConfig.doomseeker.mainWindowY = y();
-		gConfig.doomseeker.mainWindowWidth = width();
-		gConfig.doomseeker.mainWindowHeight = height();
-	}
-
-	gConfig.doomseeker.mainWindowState = saveState().toBase64();
 
 	QList<QAction*> menuQueryActions = d->menuQuery->actions();
 	QList<QAction*>::iterator it;

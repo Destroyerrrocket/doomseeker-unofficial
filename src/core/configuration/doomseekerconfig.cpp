@@ -230,7 +230,6 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->bQueryAutoRefreshEnabled = false;
 	this->bQueryBeforeLaunch = true;
 	this->bQueryOnStartup = true;
-	this->bMainWindowMaximized = false;
 	this->bRecordDemo = false;
 	this->bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn = true;
 	this->bUseTrayIcon = false;
@@ -241,10 +240,7 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->ip2CountryUrl = "http://doomseeker.drdteam.org/ip2c/get";
 	this->localization = QLocale::system().name();
 	this->mainWindowState = "";
-	this->mainWindowHeight = 0xffff;
-	this->mainWindowWidth = 0xffff;
-	this->mainWindowX = 0xffff;
-	this->mainWindowY = 0xffff;
+	this->mainWindowGeometry = "";
 	this->queryAutoRefreshEverySeconds = 180;
 	setQuerySpeed(QuerySpeed::moderate());
 	this->previousCreateServerConfigDir = "";
@@ -283,43 +279,6 @@ void DoomseekerConfig::DoomseekerCfg::setAdditionalSortColumns(const QList<Colum
 	d->section.setValue("AdditionalSortColumns", varList);
 }
 
-bool DoomseekerConfig::DoomseekerCfg::areMainWindowSizeSettingsValid(int maxValidX, int maxValidY) const
-{
-	int endX = this->mainWindowX + this->mainWindowWidth;
-	int endY = this->mainWindowY + this->mainWindowHeight;
-
-	if (endX <= 0 || endY <= 0)
-	{
-		return false;
-	}
-
-	if (this->mainWindowX > maxValidX
-	||  this->mainWindowY > maxValidY)
-	{
-		return false;
-	}
-
-	if (this->mainWindowX < -2 * maxValidX
-	||  this->mainWindowY < -2 * maxValidY)
-	{
-		return false;
-	}
-
-	if (this->mainWindowWidth > 2 * (unsigned)maxValidX
-	||  this->mainWindowWidth == 0)
-	{
-		return false;
-	}
-
-	if (this->mainWindowHeight > 2 * (unsigned)maxValidY
-	|| this->mainWindowHeight == 0)
-	{
-		return false;
-	}
-
-	return true;
-}
-
 void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 {
 	// TODO: Make all methods use d->section
@@ -336,7 +295,6 @@ void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 	section.createSetting("QueryAutoRefreshDontIfActive", this->bQueryAutoRefreshDontIfActive);
 	section.createSetting("QueryAutoRefreshEnabled", this->bQueryAutoRefreshEnabled);
 	section.createSetting("QueryOnStartup", this->bQueryOnStartup);
-	section.createSetting("MainWindowMaximized", this->bMainWindowMaximized);
 	section.createSetting("RecordDemo", this->bRecordDemo);
 	section.createSetting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn", this->bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn);
 	section.createSetting("UseTrayIcon", this->bUseTrayIcon);
@@ -380,7 +338,6 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->bQueryAutoRefreshEnabled = section["QueryAutoRefreshEnabled"];
 	this->bQueryBeforeLaunch = section["QueryBeforeLaunch"];
 	this->bQueryOnStartup = section["QueryOnStartup"];
-	this->bMainWindowMaximized = section["MainWindowMaximized"];
 	this->bRecordDemo = section["RecordDemo"];
 	this->bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn = section["TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn"];
 	this->bUseTrayIcon = section["UseTrayIcon"];
@@ -390,10 +347,7 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->ip2CountryDatabaseMaximumAge = section["IP2CMaximumAge"];
 	this->ip2CountryUrl = (const QString &)section["IP2CUrl"];
 	this->mainWindowState = (const QString &)section["MainWindowState"];
-	this->mainWindowHeight = section["MainWindowHeight"];
-	this->mainWindowWidth = section["MainWindowWidth"];
-	this->mainWindowX = section["MainWindowX"];
-	this->mainWindowY = section["MainWindowY"];
+	this->mainWindowGeometry = section.value("MainWindowGeometry", "").toByteArray();
 	this->queryAutoRefreshEverySeconds = section["QueryAutoRefreshEverySeconds"];
 	d->querySpeed.intervalBetweenServers = section["QueryBatchDelay"];
 	d->querySpeed.delayBetweenSingleServerAttempts = section["QueryTimeout"];
@@ -453,7 +407,6 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["QueryAutoRefreshEnabled"] = this->bQueryAutoRefreshEnabled;
 	section["QueryBeforeLaunch"] = this->bQueryBeforeLaunch;
 	section["QueryOnStartup"] = this->bQueryOnStartup;
-	section["MainWindowMaximized"] = this->bMainWindowMaximized;
 	section["RecordDemo"] = this->bRecordDemo;
 	section["TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn"] = this->bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn;
 	section["UseTrayIcon"] = this->bUseTrayIcon;
@@ -463,10 +416,7 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["IP2CMaximumAge"] = this->ip2CountryDatabaseMaximumAge;
 	section["IP2CUrl"] = this->ip2CountryUrl;
 	section["MainWindowState"] = this->mainWindowState;
-	section["MainWindowHeight"] = this->mainWindowHeight;
-	section["MainWindowWidth"] = this->mainWindowWidth;
-	section["MainWindowX"] = this->mainWindowX;
-	section["MainWindowY"] = this->mainWindowY;
+	section.setValue("MainWindowGeometry", this->mainWindowGeometry);
 	section["QueryAutoRefreshEverySeconds"] = this->queryAutoRefreshEverySeconds;
 	section["QueryBatchDelay"] = this->querySpeed().intervalBetweenServers;
 	section["QueryTimeout"] = this->querySpeed().delayBetweenSingleServerAttempts;

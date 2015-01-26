@@ -269,14 +269,7 @@ void Main::createMainWindow()
 	gLog << tr("Preparing GUI.");
 
 	gApp->setMainWindow(new MainWindow(gApp, argumentsCount, arguments));
-	if (gConfig.doomseeker.bMainWindowMaximized)
-	{
-		gApp->mainWindow()->showMaximized();
-	}
-	else
-	{
-		gApp->mainWindow()->show();
-	}
+	gApp->mainWindow()->show();
 
 	if (bIsFirstRun)
 	{

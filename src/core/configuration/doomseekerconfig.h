@@ -67,7 +67,6 @@ class DoomseekerConfig
 			bool bGroupServersWithPlayersAtTheTopOfTheList;
 			bool bIP2CountryAutoUpdate;
 			bool bLookupHosts;
-			bool bMainWindowMaximized;
 			bool bMarkServersWithBuddies;
 			bool bQueryAutoRefreshDontIfActive;
 			bool bQueryAutoRefreshEnabled;
@@ -84,10 +83,7 @@ class DoomseekerConfig
 			unsigned ip2CountryDatabaseMaximumAge;
 			QString ip2CountryUrl;
 			QString mainWindowState;
-			unsigned mainWindowWidth;
-			unsigned mainWindowHeight;
-			int mainWindowX;
-			int mainWindowY;
+			QByteArray mainWindowGeometry;
 			unsigned queryAutoRefreshEverySeconds;
 			QString previousCreateServerConfigDir;
 			QString previousCreateServerExecDir;
@@ -100,14 +96,6 @@ class DoomseekerConfig
 
 			DoomseekerCfg();
 			~DoomseekerCfg();
-
-			/**
-			 *	@brief Will return false if at least one of them is out of
-			 *	bounds.
-			 *
-			 *	This will ensure that window remains accessible.
-			 */
-			bool areMainWindowSizeSettingsValid(int maxValidX, int maxValidY) const;
 
 			QList<ColumnSort> additionalSortColumns() const;
 			void setAdditionalSortColumns(const QList<ColumnSort> &val);
