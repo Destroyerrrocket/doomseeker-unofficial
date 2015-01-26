@@ -51,12 +51,15 @@ class DockBuddiesList : public QDockWidget
 		DockBuddiesList(QWidget *parent=NULL);
 		~DockBuddiesList();
 
+		bool hasBuddy(const ServerPtr &server);
+
 	public slots:
 		void addBuddy();
 		void scan(const MasterManager *master=NULL);
 
 	signals:
 		void joinServer(const ServerPtr &server);
+		void scanCompleted();
 
 	protected:
 		class BuddyLocationInfo;

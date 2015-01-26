@@ -26,11 +26,14 @@
 #include "configuration/doomseekerconfig.h"
 #include "gui/helpers/playersdiagram.h"
 #include "gui/widgets/serverlistview.h"
+#include "gui/dockBuddiesList.h"
+#include "gui/mainwindow.h"
 #include "gui/serverlist.h"
 #include "ip2c/ip2c.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
 #include "serverapi/serverstructs.h"
+#include "application.h"
 #include "log.h"
 #include <QPainter>
 
@@ -233,15 +236,26 @@ ServerPtr ServerListRowHandler::server()
 
 void ServerListRowHandler::setBackgroundColor()
 {
+	QString color;
 	if (d->server->isCustom())
 	{
-		QString color = gConfig.doomseeker.customServersColor;
-
-		for (int column = 0; column < NUM_SERVERLIST_COLUMNS; ++column)
+		color = gConfig.doomseeker.customServersColor;
+	}
+	else if (gApp->mainWindow()->buddiesList()->hasBuddy(d->server))
+	{
+		if (gConfig.doomseeker.bMarkServersWithBuddies)
 		{
-			QStandardItem* pItem = item(column);
-			pItem->setBackground( QBrush(QColor(color )) );
+			color = gConfig.doomseeker.buddyServersColor;
 		}
+	}
+
+	for (int column = 0; column < NUM_SERVERLIST_COLUMNS; ++column)
+	{
+		QBrush brush = !color.isEmpty()
+			? QBrush(QColor(color))
+			: Qt::NoBrush;
+		QStandardItem* pItem = item(column);
+		pItem->setBackground(brush);
 	}
 }
 

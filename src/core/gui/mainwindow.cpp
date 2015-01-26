@@ -224,7 +224,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	d->buddiesList->toggleViewAction()->setText(tr("&Buddies"));
 	d->buddiesList->toggleViewAction()->setShortcut(tr("CTRL+B"));
 
-	connect(d->buddiesList, SIGNAL( joinServer(ServerPtr) ), this, SLOT( runGame(ServerPtr) ));
+	connect(d->buddiesList, SIGNAL(joinServer(ServerPtr)), this, SLOT(runGame(ServerPtr)));
 	d->buddiesList->hide();
 	this->addDockWidget(Qt::LeftDockWidgetArea, d->buddiesList);
 	initLogDock();
@@ -401,6 +401,11 @@ void MainWindow::blockRefreshButtons()
 	d->toolBarGetServers->setEnabled(false);
 }
 
+DockBuddiesList *MainWindow::buddiesList()
+{
+	return d->buddiesList;
+}
+
 void MainWindow::changeEvent(QEvent* event)
 {
 	if (event->type() == QEvent::ActivationChange && isActiveWindow() && !isMinimized() && !isHidden())
@@ -562,6 +567,7 @@ void MainWindow::connectEntities()
 	connect(d->serverTableHandler, SIGNAL( serverDoubleClicked(ServerPtr) ), this, SLOT( runGame(ServerPtr) ) );
 	connect(d->serverTableHandler, SIGNAL( displayServerJoinCommandLine(ServerPtr) ), this, SLOT( showServerJoinCommandLine(ServerPtr) ) );
 	connect(d->serverTableHandler, SIGNAL( serverInfoUpdated(ServerPtr) ), this, SLOT( serverAddedToList(ServerPtr) ) );
+	connect(d->buddiesList, SIGNAL(scanCompleted()), d->serverTableHandler, SLOT(redraw()));
 }
 
 void MainWindow::fillQueryMenu(MasterManager* masterManager)

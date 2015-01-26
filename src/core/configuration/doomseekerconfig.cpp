@@ -234,6 +234,8 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->bRecordDemo = false;
 	this->bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn = true;
 	this->bUseTrayIcon = false;
+	this->bMarkServersWithBuddies = true;
+	this->buddyServersColor = "#5ecf75";
 	this->customServersColor = "#ffaa00";
 	this->ip2CountryDatabaseMaximumAge = 60;
 	this->ip2CountryUrl = "http://doomseeker.drdteam.org/ip2c/get";
@@ -338,6 +340,8 @@ void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 	section.createSetting("RecordDemo", this->bRecordDemo);
 	section.createSetting("TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn", this->bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn);
 	section.createSetting("UseTrayIcon", this->bUseTrayIcon);
+	section.createSetting("MarkServersWithBuddies", this->bMarkServersWithBuddies);
+	section.createSetting("BuddyServersColor", this->buddyServersColor);
 	section.createSetting("CustomServersColor", this->customServersColor);
 	section.createSetting("IP2CMaximumAge", this->ip2CountryDatabaseMaximumAge);
 	section.createSetting("IP2CUrl", this->ip2CountryUrl);
@@ -380,6 +384,8 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->bRecordDemo = section["RecordDemo"];
 	this->bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn = section["TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn"];
 	this->bUseTrayIcon = section["UseTrayIcon"];
+	this->bMarkServersWithBuddies = section["MarkServersWithBuddies"];
+	this->buddyServersColor = (const QString &)section["BuddyServersColor"];
 	this->customServersColor = (const QString &)section["CustomServersColor"];
 	this->ip2CountryDatabaseMaximumAge = section["IP2CMaximumAge"];
 	this->ip2CountryUrl = (const QString &)section["IP2CUrl"];
@@ -451,6 +457,8 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["RecordDemo"] = this->bRecordDemo;
 	section["TellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn"] = this->bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn;
 	section["UseTrayIcon"] = this->bUseTrayIcon;
+	section["MarkServersWithBuddies"] = this->bMarkServersWithBuddies;
+	section["BuddyServersColor"] = this->buddyServersColor;
 	section["CustomServersColor"] = this->customServersColor;
 	section["IP2CMaximumAge"] = this->ip2CountryDatabaseMaximumAge;
 	section["IP2CUrl"] = this->ip2CountryUrl;

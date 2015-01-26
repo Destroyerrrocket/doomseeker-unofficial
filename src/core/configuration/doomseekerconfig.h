@@ -68,6 +68,7 @@ class DoomseekerConfig
 			bool bIP2CountryAutoUpdate;
 			bool bLookupHosts;
 			bool bMainWindowMaximized;
+			bool bMarkServersWithBuddies;
 			bool bQueryAutoRefreshDontIfActive;
 			bool bQueryAutoRefreshEnabled;
 			bool bQueryBeforeLaunch;
@@ -76,6 +77,7 @@ class DoomseekerConfig
 			bool bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn;
 			QVector<BuddyInfo> buddiesList;
 			bool bUseTrayIcon;
+			QString buddyServersColor;
 			QVector<CustomServerInfo> customServers;
 			QString customServersColor;
 			QString localization;

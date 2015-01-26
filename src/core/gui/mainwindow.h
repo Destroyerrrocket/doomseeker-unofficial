@@ -29,6 +29,7 @@
 #include <QMainWindow>
 #include <QSystemTrayIcon>
 
+class DockBuddiesList;
 class DoomseekerConfigurationDialog;
 class IP2CLoader;
 class MasterClient;
@@ -45,6 +46,8 @@ class MainWindow : public QMainWindow
 	public:
 		MainWindow(QApplication* application, int argc, char** argv);
 		~MainWindow();
+
+		DockBuddiesList *buddiesList();
 
 		/**
 		 *	This will either enable or disable the auto refresh timer

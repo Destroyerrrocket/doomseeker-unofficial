@@ -178,6 +178,18 @@ void DockBuddiesList::followBuddy(const QModelIndex &index)
 	emit joinServer(server);
 }
 
+bool DockBuddiesList::hasBuddy(const ServerPtr &server)
+{
+	foreach (const BuddyLocationInfo &location, d->buddies)
+	{
+		if (location.location() == server)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 void DockBuddiesList::patternsListContextMenu(const QPoint &pos) const
 {
 	// First lets get the selection since that will determine the menu.
@@ -265,6 +277,7 @@ void DockBuddiesList::scan(const MasterManager *master)
 
 	// Fits rows to contents
 	d->buddiesTable->resizeRowsToContents();
+	emit scanCompleted();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
