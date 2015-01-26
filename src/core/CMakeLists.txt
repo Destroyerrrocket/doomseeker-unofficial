@@ -153,7 +153,6 @@ set(DOOMSEEKER_QT_FILES
 	gui/models/serverlistrowhandler.h
 	gui/widgets/colorbutton.h
 	gui/widgets/dndfilesystemlistview.h
-	gui/widgets/dockedwidgets.h
 	gui/widgets/engineplugincombobox.h
 	gui/widgets/fontbutton.h
 	gui/widgets/importantmessageswidget.h

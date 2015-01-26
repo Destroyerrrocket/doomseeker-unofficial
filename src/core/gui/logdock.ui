@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Log</string>
   </property>
-  <widget class="DockWidgetChild" name="dockWidgetContents">
+  <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QTextEdit" name="teContent">
@@ -72,14 +72,6 @@
    </layout>
   </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>DockWidgetChild</class>
-   <extends>QWidget</extends>
-   <header>gui/widgets/dockedwidgets.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="../../../media/resources.qrc"/>
  </resources>

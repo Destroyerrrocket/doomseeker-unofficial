@@ -35,8 +35,6 @@ LogDock::LogDock(QWidget* parent) : QDockWidget(parent)
 	d->setupUi(this);
 	this->toggleViewAction()->setIcon(QIcon(":/icons/log.png"));
 
-	d->dockWidgetContents->setHintSize(175, 200);
-
 	connect(d->btnClear, SIGNAL( clicked() ), this, SLOT( clearContent() ) );
 	connect(d->btnCopy, SIGNAL( clicked() ), this, SLOT( btnCopyClicked() ) );
 }
