@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "ircnetworkadapter.h"
 #include "irc/configuration/chatnetworkscfg.h"
+#include "irc/configuration/ircconfig.h"
 #include "irc/entities/ircuserprefix.h"
 #include "irc/ops/ircdelayedoperationban.h"
 #include "irc/ircchanneladapter.h"
@@ -136,7 +137,7 @@ IRCNetworkAdapter::IRCNetworkAdapter(const IRCNetworkConnectionInfo &connectionI
 
 IRCNetworkAdapter::~IRCNetworkAdapter()
 {
-	disconnect();
+	disconnect(gIRCConfig.personal.quitMessage);
 
 	killAllChatWindows();
 	delete this->ircResponseParser;

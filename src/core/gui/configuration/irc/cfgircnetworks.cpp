@@ -24,6 +24,7 @@
 #include "ui_cfgircnetworks.h"
 #include "gui/configuration/irc/cfgircdefinenetworkdialog.h"
 #include "irc/configuration/chatnetworkscfg.h"
+#include "irc/configuration/ircconfig.h"
 #include "irc/entities/ircnetworkentity.h"
 #include "irc/chatlogs.h"
 #include "qtmetapointer.h"
@@ -217,6 +218,8 @@ void CFGIRCNetworks::readSettings()
 
 		addRecord(pCopy);
 	}
+
+	d->leQuitMessage->setText(gIRCConfig.personal.quitMessage);
 }
 
 void CFGIRCNetworks::removeButtonClicked()
@@ -238,6 +241,8 @@ void CFGIRCNetworks::saveNetworks()
 void CFGIRCNetworks::saveSettings()
 {
 	saveNetworks();
+
+	gIRCConfig.personal.quitMessage = d->leQuitMessage->text().trimmed();
 }
 
 IRCNetworkEntity* CFGIRCNetworks::selectedNetwork()

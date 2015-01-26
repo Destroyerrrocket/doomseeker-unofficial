@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "ircchanneladapter.h"
+#include "irc/configuration/ircconfig.h"
 #include "irc/ircglobal.h"
 #include "irc/ircmessageclass.h"
 #include "irc/ircnetworkadapter.h"
@@ -37,7 +38,7 @@ IRCChannelAdapter::~IRCChannelAdapter()
 {
 	if (this->pNetwork != NULL)
 	{
-		sendMessage("/part " + this->recipientName + " " + tr("Doomseeker End Of Line"));
+		sendMessage("/part " + this->recipientName + " " + gIRCConfig.personal.quitMessage);
 	}
 
 	delete users;

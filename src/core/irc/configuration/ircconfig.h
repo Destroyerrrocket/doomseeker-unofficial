@@ -89,6 +89,7 @@ class IRCConfig
 			QString alternativeNickname;
 			QString fullName;
 			QString nickname;
+			QString quitMessage;
 
 			PersonalCfg();
 

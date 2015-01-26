@@ -79,7 +79,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 		 */
 		void detachChatWindow(const IRCChatAdapter* pAdapter);
 
-		void disconnect(const QString& farewellMessage = tr("Doomseeker End Of Line"));
+		void disconnect(const QString& farewellMessage);
 
 		/**
 		 * @brief Implemented to support direct communication between client

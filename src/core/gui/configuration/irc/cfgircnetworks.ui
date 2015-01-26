@@ -80,6 +80,16 @@
      </item>
     </layout>
    </item>
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Channel/network quit message:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="leQuitMessage"/>
+   </item>
   </layout>
  </widget>
  <resources>
