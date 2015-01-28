@@ -26,14 +26,50 @@
 #include "global.h"
 #include <QDialog>
 
+/**
+ * @ingroup group_pluginapi
+ * @brief Simple dialog box where user can pick path to IWAD and
+ * additional game files.
+ *
+ * This dialog box contains two input widgets and standard
+ * accept/cancel buttons. User can pick a single IWAD from a combo
+ * box, and multiple other files (PWADs, Dehacked patches, etc.) using
+ * a list that also accepts drag'n'drops. Files can also be browsed
+ * using OS standard file browser dialog.
+ *
+ * Doomseeker will attempt to find all known IWADs in "File paths"
+ * that are configured by the user. It will populate the combo box
+ * with all found paths. If it's desired, the dialog can be instructed
+ * to select a default IWAD by name using setIwadByName() method.
+ *
+ * If dialog is "Accepted", results can be obtained through
+ * filePaths() and iwadPath() accessors.
+ */
 class MAIN_EXPORT IwadAndWadsPickerDialog : public QDialog
 {
 public:
 	IwadAndWadsPickerDialog(QWidget *parent);
 	virtual ~IwadAndWadsPickerDialog();
 
+	/**
+	 * @brief List of file paths (excluding IWAD) that were picked by
+	 * the user.
+	 */
 	QStringList filePaths() const;
+
+	/**
+	 * @brief Path to IWAD file that was picked by the user.
+	 */
 	QString iwadPath() const;
+
+	/**
+	 * @brief Attempt to chose default IWAD by name.
+	 *
+	 * Attempts to set the path to the IWAD. It might be unsuccessful
+	 * if IWAD cannot be found in any directory that was preconfigured
+	 * by the user. In this case the method fails silently and does
+	 * nothing.
+	 */
 	void setIwadByName(const QString &iwad);
 
 private:

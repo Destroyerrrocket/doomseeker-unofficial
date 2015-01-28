@@ -33,7 +33,6 @@ class Message;
 class Server;
 
 /**
- * @ingroup group_pluginapi
  * @brief Dialog window allowing user to host a game.
  */
 class CreateServerDialog : public QDialog

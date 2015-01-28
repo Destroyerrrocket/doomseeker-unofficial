@@ -37,9 +37,12 @@ class Message;
 class CommandLineInfo
 {
 	public:
-		QDir applicationDir; /// working directory
-		QStringList args; /// launch parameters
-		QFileInfo executable; /// path to the executable
+		/// working directory
+		QDir applicationDir;
+		/// launch parameters
+		QStringList args;
+		/// path to the executable
+		QFileInfo executable;
 
 		/**
 		 * @brief It's valid when at least executable is set.

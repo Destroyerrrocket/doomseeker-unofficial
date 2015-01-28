@@ -40,12 +40,6 @@ class EnginePlugin;
  *
  * Deleting this proxy object will also delete underlying CreateServerDialog.
  * This object cannot be copied.
- *
- * Why not provide direct access to CreateServerDialog? Well, because
- * CreateServerDialog inherits data fields from a class that is generated
- * from .ui file. Therefore, modifying the .ui file breaks the ABI. Providing
- * access to public methods of CreateServerDialog through a proxy such as this
- * one solves this problem once and for all.
  */
 class MAIN_EXPORT CreateServerDialogApi
 {
@@ -84,9 +78,14 @@ public:
 	 * is by default set to "client" instead of "server".
 	 */
 	void makeRemoteGameSetup(const EnginePlugin *plugin);
-	
+
 	/**
-	 * @brief Sets path to IWAD box to the one matching given name.
+	 * @brief Attempt to chose default IWAD by name.
+	 *
+	 * Attempts to set the path to the IWAD. It might be unsuccessful
+	 * if IWAD cannot be found in any directory that was preconfigured
+	 * by the user. In this case the method fails silently and does
+	 * nothing.
 	 */
 	void setIwadByName(const QString &iwad);
 
