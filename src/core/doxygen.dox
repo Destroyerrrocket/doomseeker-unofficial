@@ -43,15 +43,17 @@
 * breaks.
 *
 * To keep things simple, ABI is how compiled Doomseeker executable and
-* plugin's DLLs talk to each other (nomenclature differs a bit between
-* OSes, but let's not digress). Some changes to Doomseeker source code
-* will maintain ABI compatibility, which means that old plugins can
-* talk to new versions of Doomseeker. Some other changes, however,
-* will break the ABI and when old plugin tries to talk to such build
-* of Doomseeker, the whole program may crash. One of the ways to break
-* ABI compatibility is to add a new 'virtual' method to a class that
-* is already implemented by an old version of a plugin. The reason why
-* this happens is excellently described on this page:
+* plugin's DLLs talk to each other. Nomenclature, such as 'DLL',
+* differs a bit between OSes, but let's not digress. This section
+* applies to all Operating Systems, be it Windows, Linux or
+* other. Some changes to Doomseeker source code will maintain ABI
+* compatibility, which means that old plugins can talk to new versions
+* of Doomseeker. Some other changes, however, will break the ABI and
+* when old plugin tries to talk to such build of Doomseeker, the whole
+* program may crash. One of the ways to break ABI compatibility is to
+* add a new 'virtual' method to a class that is already implemented by
+* an old version of a plugin. The reason why this happens is
+* excellently described on this page:
 *
 * - https://techbase.kde.org/Policies/Binary_Compatibility_Examples#Add_new_virtuals_to_a_non-leaf_class
 *
@@ -84,7 +86,7 @@
 *   implementation but can be overwritten.
 * - Doomseeker's <b>[Pure Virtual]</b> method that provides no
 *   default implementation. Unfortunately, the code will
-*   compile even if you don't prove any implementation, however
+*   compile even if you don't provide any implementation. Still,
 *   Doomseeker's debug builds will exit with assert()
 *   error if such method is called.
 *
