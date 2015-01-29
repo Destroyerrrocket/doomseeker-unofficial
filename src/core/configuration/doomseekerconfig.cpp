@@ -304,9 +304,9 @@ void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 	section.createSetting("IP2CMaximumAge", this->ip2CountryDatabaseMaximumAge);
 	section.createSetting("IP2CUrl", this->ip2CountryUrl);
 	section.createSetting("QueryAutoRefreshEverySeconds", this->queryAutoRefreshEverySeconds);
-	section.createSetting("QueryBatchDelay", this->querySpeed().intervalBetweenServers);
-	section.createSetting("QueryTimeout", this->querySpeed().delayBetweenSingleServerAttempts);
-	section.createSetting("QueryTries", this->querySpeed().attemptsPerServer);
+	section.createSetting("QueryServerInterval", this->querySpeed().intervalBetweenServers);
+	section.createSetting("QueryServerTimeout", this->querySpeed().delayBetweenSingleServerAttempts);
+	section.createSetting("QueryAttemptsPerServer", this->querySpeed().attemptsPerServer);
 	section.createSetting("SlotStyle", this->slotStyle);
 	section.createSetting("ServerListSortIndex", this->serverListSortIndex);
 	section.createSetting("ServerListSortDirection", this->serverListSortDirection);
@@ -349,9 +349,9 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->mainWindowState = (const QString &)section["MainWindowState"];
 	this->mainWindowGeometry = section.value("MainWindowGeometry", "").toByteArray();
 	this->queryAutoRefreshEverySeconds = section["QueryAutoRefreshEverySeconds"];
-	d->querySpeed.intervalBetweenServers = section["QueryBatchDelay"];
-	d->querySpeed.delayBetweenSingleServerAttempts = section["QueryTimeout"];
-	d->querySpeed.attemptsPerServer = section["QueryTries"];
+	d->querySpeed.intervalBetweenServers = section["QueryServerInterval"];
+	d->querySpeed.delayBetweenSingleServerAttempts = section["QueryServerTimeout"];
+	d->querySpeed.attemptsPerServer = section["QueryAttemptsPerServer"];
 	this->previousCreateServerConfigDir = (const QString &)section["PreviousCreateServerConfigDir"];
 	this->previousCreateServerExecDir = (const QString &)section["PreviousCreateServerExecDir"];
 	this->previousCreateServerWadDir = (const QString &)section["PreviousCreateServerWadDir"];
@@ -418,9 +418,9 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["MainWindowState"] = this->mainWindowState;
 	section.setValue("MainWindowGeometry", this->mainWindowGeometry);
 	section["QueryAutoRefreshEverySeconds"] = this->queryAutoRefreshEverySeconds;
-	section["QueryBatchDelay"] = this->querySpeed().intervalBetweenServers;
-	section["QueryTimeout"] = this->querySpeed().delayBetweenSingleServerAttempts;
-	section["QueryTries"] = this->querySpeed().attemptsPerServer;
+	section["QueryServerInterval"] = this->querySpeed().intervalBetweenServers;
+	section["QueryServerTimeout"] = this->querySpeed().delayBetweenSingleServerAttempts;
+	section["QueryAttemptsPerServer"] = this->querySpeed().attemptsPerServer;
 	section["PreviousCreateServerConfigDir"] = this->previousCreateServerConfigDir;
 	section["PreviousCreateServerExecDir"] = this->previousCreateServerExecDir;
 	section["PreviousCreateServerWadDir"] = this->previousCreateServerWadDir;
