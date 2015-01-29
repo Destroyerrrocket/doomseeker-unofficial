@@ -104,6 +104,7 @@ class Server::PrivData
 		bool bIsRefreshing;
 		QHostAddress address;
 		QHostInfo host;
+		int hostLookupId;
 		unsigned short port;
 		/**
  		 * @brief Track how many resends we should try.
@@ -154,6 +155,7 @@ Server::Server(const QHostAddress &address, unsigned short port)
 	d->bKnown = false;
 	d->custom = false;
 	d->lastRefreshClock.invalidate();
+	d->hostLookupId = -1;
 
 	set_customDetails(&Server::customDetails_default);
 	set_createSendRequest(&Server::createSendRequest_default);
@@ -167,6 +169,10 @@ Server::Server(const QHostAddress &address, unsigned short port)
 
 Server::~Server()
 {
+	if (d->hostLookupId >= 0)
+	{
+		QHostInfo::abortHostLookup(d->hostLookupId);
+	}
 	clearDMFlags();
 	delete d;
 }
@@ -383,7 +389,8 @@ Server::Response Server::lastResponse() const
 
 void Server::lookupHost()
 {
-	QHostInfo::lookupHost(address().toString(), this, SLOT( setHostName(QHostInfo) ));
+	d->hostLookupId = QHostInfo::lookupHost(address().toString(), this,
+		SLOT(setHostName(QHostInfo)));
 }
 
 const QStringList& Server::mapList() const
@@ -573,6 +580,7 @@ void Server::setGameVersion(const QString& version)
 
 void Server::setHostName(QHostInfo host)
 {
+	d->hostLookupId = -1;
 	d->host = host;
 	if(!d->bIsRefreshing)
 		emit updated(self(), lastResponse());
