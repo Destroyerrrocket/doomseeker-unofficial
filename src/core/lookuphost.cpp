@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "lookuphost.h"
 
+#include <QHostInfo>
 #include <QMutex>
 #include <QMutexLocker>
 #include <QTimer>

@@ -23,10 +23,11 @@
 #ifndef id98fdc6b8_d51c_4a3b_a61e_91ddc4105daf
 #define id98fdc6b8_d51c_4a3b_a61e_91ddc4105daf
 
-#include <QHostInfo>
 #include <QObject>
 #include <QString>
 #include <QThread>
+
+class QHostInfo;
 
 /**
  * QHostInfo (Qt 4.8.6) has a bug on Windows that prevents the
@@ -82,14 +83,6 @@ private:
 private slots:
 	void derefWorkCounter();
 };
-
-class LookupRequest
-{
-public:
-	int id;
-	QString hostName;
-};
-
 
 class LookupHostWorker : public QObject
 {
