@@ -22,10 +22,10 @@
 //------------------------------------------------------------------------------
 #include "ircclient.h"
 #include "log.h"
+#include "lookuphost.h"
 
 IRCClient::IRCClient()
 {
-	this->lookUpId = -1;
 	this->bIsInHostLookupMode = false;
 
 	recvTimer.setSingleShot(true);
@@ -37,12 +37,6 @@ IRCClient::IRCClient()
 
 IRCClient::~IRCClient()
 {
-	if (this->bIsInHostLookupMode)
-	{
-		QHostInfo::abortHostLookup(this->lookUpId);
-		this->bIsInHostLookupMode = false;
-	}
-
 	disconnect();
 }
 
@@ -54,7 +48,7 @@ void IRCClient::connect(const QString& address, unsigned short port)
 	this->port = port;
 	this->hostName = address;
 
-	this->lookUpId = QHostInfo::lookupHost(address, this, SLOT( hostLookupFinished(const QHostInfo&) ) );
+	LookupHost::lookupHost(address, this, SLOT( hostLookupFinished(const QHostInfo&) ) );
 }
 
 void IRCClient::connectSocketSignals(SocketSignalsAdapter* pAdapter)

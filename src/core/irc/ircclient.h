@@ -63,7 +63,6 @@ class IRCClient : public QObject
 	private:
 		bool bIsInHostLookupMode;
 		QString hostName;
-		int lookUpId;
 		unsigned short port;
 		QTimer recvTimer;
 		QTcpSocket socket;
