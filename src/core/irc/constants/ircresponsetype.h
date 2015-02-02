@@ -123,6 +123,9 @@ class IRCResponseType
 			/// 333
 			RPLTopicWhoTime,
 
+			/// 335 - non-standard
+			RPLWhoIsBot,
+
 			/// 353 - names list for a channel
 			RPLNamReply,
 

@@ -134,6 +134,9 @@ QString IRCResponseType::toRfcString(MsgType type)
 		case RPLTopicWhoTime:
 			return "333";
 
+		case RPLWhoIsBot:
+			return "335";
+
 		case RPLNamReply:
 			return "353";
 

@@ -165,6 +165,7 @@ IRCResponseParseResult IRCResponseParser::parseMessage()
 		case IRCResponseType::RPLWhoIsHost:
 		case IRCResponseType::RPLWhoIsModes:
 		case IRCResponseType::RPLWhoIsSpecial:
+		case IRCResponseType::RPLWhoIsBot:
 		case IRCResponseType::RPLEndOfWhoIs:
 		{
 			d->params.takeFirst(); // Own nick.
