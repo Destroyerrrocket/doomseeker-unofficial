@@ -173,6 +173,9 @@ QString IRCResponseType::toRfcString(MsgType type)
 		case ERRChanOpPrivIsNeeded:
 			return "482";
 
+		case RPLWhoIsSecure:
+			return "671";
+
 		case Join:
 			return "JOIN";
 

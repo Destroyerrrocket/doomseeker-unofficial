@@ -163,6 +163,9 @@ class IRCResponseType
 			/// 482
 			ERRChanOpPrivIsNeeded,
 
+			/// 671
+			RPLWhoIsSecure,
+
 			// === Here are types which convert to their string counterparts
 			// === letter-by-letter
 
