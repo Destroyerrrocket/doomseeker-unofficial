@@ -1,7 +1,7 @@
 ================================================================================
 Compiling Doomseeker in Microsoft Visual Studio 2008 Express with Qt 4.x
 Written by Zalewa, June 2012
-Last update: 4th November 2012
+Last update: 5th February 2015
 ================================================================================
 1. Quick introduction.
 
@@ -33,16 +33,16 @@ will work in MSVC 2010 and vice-versa. Get MSVC 2008.
 ================================================================================
 3. Qt.
 
-http://qt-project.org/downloads
+Direct link to version 4.8.6, 32-bit
+(newest Qt 4 at the time when this is written, 2015-02-05):
+http://download.qt.io/archive/qt/4.8/4.8.6/qt-opensource-windows-x86-vs2008-4.8.6.exe
 
-Qt download page has several links that allow to download the Qt SDK.
-You don't want to use the first link that says "Qt SDK". The link that should
-be used will say "Qt libraries 4.x.x for Windows (VS2008, >200MB)". 
+Directory link
+(if you really want a different version):
+http://download.qt.io/archive/qt/4.8/
 
-This package contains all libraries that you need and the Qt Designer that 
-helps with creating GUI components.
-
-The "Qt SDK" URL installs trash that you don't need anyway.
+This package contains all libraries that you need and the Qt Designer
+that helps with creating GUI components.
 
 Refuse any prompts that will ask you if you wish to install the MinGW compiler.
 
@@ -54,6 +54,8 @@ environment variables in Windows. If you decide to modify the PATH variable
 ================================================================================
 4. CMake.
 
+http://www.cmake.org/
+
 CMake is a quite useful tool that helps with creation of project files and
 makefiles for various different compilers and Operating Systems. It allows
 programmers to avoid uploading all that mess that IDEs create when they
@@ -64,7 +66,7 @@ Get CMake now.
 
 Launch CMake GUI.
 
-The first thing you would like to set is "Where to build the binaries". This 
+The first thing you need to set is "Where to build the binaries". This
 should be located somewhere outside the repository. For example:
 D:/dev/Doomseeker/visual2008
 
@@ -92,11 +94,11 @@ list should now change and you should see following items:
 - QT
 - ZLIB
 
-First of all open "Ungrouped Entries" and uncheck "BUILD_SHARED_LIBS". This
+First of all, open "Ungrouped Entries" and uncheck "BUILD_SHARED_LIBS". This
 comes from ZLib source code and we don't need this because we already have a
 compiled version of ZLib.
 
-Next open "FORCE" group and uncheck everything.
+Next, open "FORCE" group and uncheck everything.
 
 Now we need to show Visual Studio where BZip2 and ZLib libraries are located.
 When you open BZIP2 and ZLIB groups it should say that all entries were not 
