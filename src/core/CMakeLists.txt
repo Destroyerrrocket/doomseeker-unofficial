@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.6)
+cmake_minimum_required(VERSION 2.8.7)
 
 # Regarding Microsoft Visual Studio:
 # Creating proper builds with MSVC required setting subsystem to windows,
@@ -65,7 +65,7 @@ include("CMakeSpawnFileListing.txt")
 configure_file(
 	"${CMAKE_CURRENT_SOURCE_DIR}/CMakeFileListing.txt"
 	"${CMAKE_CURRENT_SOURCE_DIR}/CMakeFileListing.txt"
-	COPYONLY
+	NEWLINE_STYLE LF
 )
 include("CMakeFileListing.txt")
 
