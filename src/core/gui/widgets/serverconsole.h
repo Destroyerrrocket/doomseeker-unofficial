@@ -23,6 +23,8 @@
 #ifndef SERVERCONSOLE_H
 #define SERVERCONSOLE_H
 
+#include "dptr.h"
+
 #include <QWidget>
 
 class ServerConsole : public QWidget
@@ -48,8 +50,7 @@ class ServerConsole : public QWidget
 		void forwardMessage();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<ServerConsole> d;
 };
 
 #endif // SERVERCONSOLE_H

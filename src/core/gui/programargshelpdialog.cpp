@@ -25,16 +25,16 @@
 #include "ui_programargshelpdialog.h"
 #include "cmdargshelp.h"
 
-class ProgramArgsHelpDialog::PrivData : public Ui::ProgramArgsHelpDialog
+DClass<ProgramArgsHelpDialog> : public Ui::ProgramArgsHelpDialog
 {
-public:
 };
+
+DPointered(ProgramArgsHelpDialog)
 
 
 ProgramArgsHelpDialog::ProgramArgsHelpDialog(QWidget *parent)
 : QDialog(parent)
 {
-	d = new PrivData();
 	d->setupUi(this);
 
 	QFont font("Courier");
@@ -44,5 +44,4 @@ ProgramArgsHelpDialog::ProgramArgsHelpDialog(QWidget *parent)
 
 ProgramArgsHelpDialog::~ProgramArgsHelpDialog()
 {
-	delete d;
 }

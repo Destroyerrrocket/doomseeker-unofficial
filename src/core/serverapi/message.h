@@ -23,6 +23,7 @@
 #ifndef __DS_MESSAGE_H_
 #define __DS_MESSAGE_H_
 
+#include "dptr.h"
 #include "global.h"
 #include <QDateTime>
 #include <QMetaType>
@@ -186,8 +187,7 @@ class MAIN_EXPORT Message
 		unsigned type() const;
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<Message> d;
 
 		void construct();
 };

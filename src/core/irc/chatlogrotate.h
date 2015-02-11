@@ -23,6 +23,8 @@
 #ifndef ida3366499_a83b_4d70_908c_8d0d2a7e3e36
 #define ida3366499_a83b_4d70_908c_8d0d2a7e3e36
 
+#include "dptr.h"
+
 #include <QFileInfo>
 #include <QString>
 
@@ -43,8 +45,7 @@ public:
 	void rotate(const IRCNetworkEntity &network, const QString &recipient);
 
 private:
-	class PrivData;
-	PrivData *d;
+	DPtr<ChatLogRotate> d;
 
 	void archivizeCurrent(const IRCNetworkEntity &network, const QString &recipient);
 	void mkBackupDir(const IRCNetworkEntity &network, const QString &recipient);

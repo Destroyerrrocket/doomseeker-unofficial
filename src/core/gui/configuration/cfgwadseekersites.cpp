@@ -32,14 +32,15 @@
 #include <QStandardItemModel>
 #include <QUrl>
 
-class CFGWadseekerSites::PrivData : public Ui::CFGWadseekerSites
+DClass<CFGWadseekerSites> : public Ui::CFGWadseekerSites
 {
 };
+
+DPointered(CFGWadseekerSites)
 
 CFGWadseekerSites::CFGWadseekerSites(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 
 	d->lstUrls->setModel(new QStandardItemModel());
@@ -52,7 +53,6 @@ CFGWadseekerSites::CFGWadseekerSites(QWidget* parent)
 
 CFGWadseekerSites::~CFGWadseekerSites()
 {
-	delete d;
 }
 
 void CFGWadseekerSites::btnUrlAddClicked()

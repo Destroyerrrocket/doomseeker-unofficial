@@ -23,6 +23,7 @@
 #ifndef __PLAYERS_LIST_H_
 #define __PLAYERS_LIST_H_
 
+#include "dptr.h"
 #include "global.h"
 #include "player.h"
 #include <QList>
@@ -96,8 +97,7 @@ class MAIN_EXPORT PlayersList
 		int size() const;
 		void spectators(PlayersList& spectatorsList) const;
 	private:
-		class PrivData;
-		PrivData* d;
+		DPtr<PlayersList> d;
 };
 
 #endif

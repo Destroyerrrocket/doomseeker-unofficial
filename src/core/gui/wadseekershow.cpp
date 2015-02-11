@@ -32,16 +32,16 @@
 #include <QMap>
 #include <QMessageBox>
 
-class WadseekerShow::PrivData
+DClass<WadseekerShow>
 {
-public:
 };
+
+DPointered(WadseekerShow)
 
 WadseekerShow *WadseekerShow::staticInstance = NULL;
 
 WadseekerShow::WadseekerShow()
 {
-	d = new PrivData();
 }
 
 bool WadseekerShow::checkWadseekerValidity(QWidget *parent)

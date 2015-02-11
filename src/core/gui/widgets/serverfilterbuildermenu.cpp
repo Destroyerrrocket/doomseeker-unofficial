@@ -26,7 +26,7 @@
 #include "serverapi/server.h"
 #include "serverapi/serverstructs.h"
 
-class ServerFilterBuilderMenu::PrivData
+DClass<ServerFilterBuilderMenu>
 {
 	public:
 		ServerListFilterInfo filter;
@@ -42,11 +42,12 @@ class ServerFilterBuilderMenu::PrivData
 		}
 };
 
+DPointered(ServerFilterBuilderMenu)
+
 ServerFilterBuilderMenu::ServerFilterBuilderMenu(const Server& server,
 	const ServerListFilterInfo& filter, QWidget* parent)
 : QMenu(tr("Build server filter ..."), parent)
 {
-	d = new PrivData();
 	d->filter = filter;
 	d->gameMode = server.gameMode().name();
 	d->maxPing = server.ping();
@@ -92,7 +93,6 @@ ServerFilterBuilderMenu::ServerFilterBuilderMenu(const Server& server,
 
 ServerFilterBuilderMenu::~ServerFilterBuilderMenu()
 {
-	delete d;
 }
 
 QAction* ServerFilterBuilderMenu::addAction(QMenu* menu, const QString& text, const char* slot)
@@ -128,7 +128,7 @@ void ServerFilterBuilderMenu::applyPingFilter()
 void ServerFilterBuilderMenu::excludeWadFromAction()
 {
 	QAction* action = static_cast<QAction*>(sender());
-	PrivData::addIfNotContains(d->filter.wadsExcluded, action->text());
+	PrivData<ServerFilterBuilderMenu>::addIfNotContains(d->filter.wadsExcluded, action->text());
 }
 
 const ServerListFilterInfo& ServerFilterBuilderMenu::filter() const
@@ -139,7 +139,7 @@ const ServerListFilterInfo& ServerFilterBuilderMenu::filter() const
 void ServerFilterBuilderMenu::includeWadFromAction()
 {
 	QAction* action = static_cast<QAction*>(sender());
-	PrivData::addIfNotContains(d->filter.wads, action->text());
+	PrivData<ServerFilterBuilderMenu>::addIfNotContains(d->filter.wads, action->text());
 }
 
 QAction* ServerFilterBuilderMenu::mkExcludeWadAction(QMenu* menu, const QString& wadName)

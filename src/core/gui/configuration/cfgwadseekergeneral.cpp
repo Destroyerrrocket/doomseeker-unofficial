@@ -30,14 +30,15 @@
 #include <QDirModel>
 #include <QMessageBox>
 
-class CFGWadseekerGeneral::PrivData : public Ui::CFGWadseekerGeneral
+DClass<CFGWadseekerGeneral> : public Ui::CFGWadseekerGeneral
 {
 };
+
+DPointered(CFGWadseekerGeneral)
 
 CFGWadseekerGeneral::CFGWadseekerGeneral(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 
 	// Settings defined in this widget are ATM unused.
@@ -48,7 +49,6 @@ CFGWadseekerGeneral::CFGWadseekerGeneral(QWidget* parent)
 
 CFGWadseekerGeneral::~CFGWadseekerGeneral()
 {
-	delete d;
 }
 
 void CFGWadseekerGeneral::fillTargetDirectoryComboBox()

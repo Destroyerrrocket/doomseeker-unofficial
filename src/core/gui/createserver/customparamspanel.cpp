@@ -27,20 +27,20 @@
 #include "serverapi/gamecreateparams.h"
 #include "scanner.h"
 
-class CustomParamsPanel::PrivData : public Ui::CustomParamsPanel
+DClass<CustomParamsPanel> : public Ui::CustomParamsPanel
 {
 };
+
+DPointered(CustomParamsPanel)
 
 CustomParamsPanel::CustomParamsPanel(QWidget *parent)
 : QWidget(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 }
 
 CustomParamsPanel::~CustomParamsPanel()
 {
-	delete d;
 }
 
 void CustomParamsPanel::fillInParams(GameCreateParams &params)

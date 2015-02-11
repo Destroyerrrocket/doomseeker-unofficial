@@ -42,7 +42,7 @@
 #include <QMessageBox>
 #include <cassert>
 
-class JoinCommandLineBuilder::PrivData
+DClass<JoinCommandLineBuilder>
 {
 	public:
 		CommandLineInfo cli;
@@ -57,10 +57,11 @@ class JoinCommandLineBuilder::PrivData
 		bool passwordsAlreadySet;
 };
 
+DPointered(JoinCommandLineBuilder)
+
 JoinCommandLineBuilder::JoinCommandLineBuilder(ServerPtr server,
 	GameDemo demo, QWidget *parentWidget)
 {
-	d = new PrivData();
 	d->configurationError = false;
 	d->demo = demo;
 	d->demoName = GameDemo::mkDemoFullPath(demo, *server->plugin());
@@ -71,7 +72,6 @@ JoinCommandLineBuilder::JoinCommandLineBuilder(ServerPtr server,
 
 JoinCommandLineBuilder::~JoinCommandLineBuilder()
 {
-	delete d;
 }
 
 QStringList JoinCommandLineBuilder::allDownloadableWads(const JoinError &joinError)

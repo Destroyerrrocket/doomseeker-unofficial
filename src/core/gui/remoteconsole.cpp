@@ -35,7 +35,7 @@
 #include <QScopedPointer>
 #include <QString>
 
-class RemoteConsole::PrivData : public Ui::RemoteConsole
+DClass<RemoteConsole> : public Ui::RemoteConsole
 {
 public:
 	RConProtocol *protocol;
@@ -43,9 +43,10 @@ public:
 	ServerPtr server;
 };
 
+DPointered(RemoteConsole)
+
 RemoteConsole::RemoteConsole(QWidget *parent) : QMainWindow(parent)
 {
-	d = new PrivData;
 	d->protocol = NULL;
 
 	// Prompt for connection info & password.
@@ -86,7 +87,6 @@ RemoteConsole::RemoteConsole(QWidget *parent) : QMainWindow(parent)
 RemoteConsole::RemoteConsole(ServerPtr server, QWidget *parent)
 : QMainWindow(parent)
 {
-	d = new PrivData;
 	d->protocol = server->rcon();
 	d->server = server;
 	standardInit();
@@ -108,7 +108,6 @@ RemoteConsole::RemoteConsole(ServerPtr server, QWidget *parent)
 
 RemoteConsole::~RemoteConsole()
 {
-	delete d;
 }
 
 void RemoteConsole::changeServerName(const QString &name)

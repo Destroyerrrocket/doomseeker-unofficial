@@ -24,16 +24,17 @@
 #include "serverapi/server.h"
 #include "serverapi/serverstructs.h"
 
-class PlayerTable::PrivData
+DClass<PlayerTable>
 {
 	public:
 		int numOfColumns;
 		ServerCPtr server;
 };
 
+DPointered(PlayerTable)
+
 PlayerTable::PlayerTable(const ServerCPtr &server)
 {
-	d = new PrivData();
 	d->numOfColumns = 0;
 	d->server = server;
 	setNumberOfColumns();
@@ -41,7 +42,6 @@ PlayerTable::PlayerTable(const ServerCPtr &server)
 
 PlayerTable::~PlayerTable()
 {
-	delete d;
 }
 
 QString PlayerTable::generateHTML()

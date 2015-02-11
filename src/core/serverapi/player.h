@@ -25,6 +25,7 @@
 
 #define MAX_TEAMS 4
 
+#include "dptr.h"
 #include "global.h"
 #include <QHash>
 #include <QString>
@@ -76,8 +77,7 @@ class MAIN_EXPORT Player
 		QString nameColorTagsStripped() const;
 
 	private:
-		class PrivData;
-		PrivData* d;
+		DPtr<Player> d;
 };
 
 uint qHash(const Player& player);

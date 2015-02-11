@@ -31,7 +31,7 @@
 #include "patternlist.h"
 #include <QInputDialog>
 
-class IRCDelayedOperationIgnore::PrivData
+DClass<IRCDelayedOperationIgnore>
 {
 public:
 	bool showPatternPopup;
@@ -50,12 +50,13 @@ public:
 	}
 };
 
+DPointered(IRCDelayedOperationIgnore)
+
 
 IRCDelayedOperationIgnore::IRCDelayedOperationIgnore(QWidget *parent,
 	IRCNetworkAdapter *network, const QString &nickname)
 : IRCDelayedOperation(parent)
 {
-	d = new PrivData();
 	d->showPatternPopup = false;
 	d->network = network;
 	d->nickname = nickname;
@@ -67,7 +68,6 @@ IRCDelayedOperationIgnore::IRCDelayedOperationIgnore(QWidget *parent,
 
 IRCDelayedOperationIgnore::~IRCDelayedOperationIgnore()
 {
-	delete d;
 }
 
 void IRCDelayedOperationIgnore::start()

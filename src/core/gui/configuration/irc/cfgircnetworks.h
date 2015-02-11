@@ -24,6 +24,7 @@
 #define __CFGIRCNETWORKS_H__
 
 #include "gui/configuration/configurationbasebox.h"
+#include "dptr.h"
 #include <QtContainerFwd>
 #include <QIcon>
 
@@ -66,8 +67,7 @@ class CFGIRCNetworks : public ConfigurationBaseBox
 		int selectedRow();
 		void updateRecord(int row);
 
-		class PrivData;
-		PrivData *d;
+		DPtr<CFGIRCNetworks> d;
 	private slots:
 		void addButtonClicked();
 		void editButtonClicked();

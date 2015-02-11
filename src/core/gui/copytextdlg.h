@@ -25,6 +25,7 @@
 #define __COPYTEXTDLG_H_
 
 #include "ui_copytextdlg.h"
+#include "dptr.h"
 #include <QDialog>
 
 class CopyTextDlg : public QDialog
@@ -39,8 +40,7 @@ class CopyTextDlg : public QDialog
 		void copyContent();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<CopyTextDlg> d;
 };
 
 #endif

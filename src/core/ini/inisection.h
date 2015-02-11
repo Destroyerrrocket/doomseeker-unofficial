@@ -25,6 +25,7 @@
 
 #include <QVariant>
 #include <QVector>
+#include "dptr.h"
 #include "global.h"
 
 class Ini;
@@ -59,7 +60,6 @@ class MAIN_EXPORT IniSection
  		*/
 		IniSection(Ini* pIni, const QString& sectionName);
 
-		COPYABLE_D_POINTERED_DECLARE(IniSection)
 		virtual ~IniSection();
 
 		/**
@@ -179,8 +179,7 @@ class MAIN_EXPORT IniSection
 		QVariant value(const QString& key, QVariant defaultValue) const;
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<IniSection> d;
 
 		/**
 		 * @brief Removes specified key in this section.

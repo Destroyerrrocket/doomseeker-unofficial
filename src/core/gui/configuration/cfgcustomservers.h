@@ -24,6 +24,7 @@
 #define __CFGCUSTOMSERVERS_H_
 
 #include "gui/configuration/configurationbasebox.h"
+#include "dptr.h"
 #include <QIcon>
 
 class ConfigurationBoxInfo;
@@ -90,8 +91,7 @@ class CFGCustomServers : public ConfigurationBaseBox
 		void setEngine();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<CFGCustomServers> d;
 };
 
 #endif

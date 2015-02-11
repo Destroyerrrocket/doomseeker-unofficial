@@ -27,23 +27,23 @@
 #include "plugins/engineplugin.h"
 #include "serverapi/gamecreateparams.h"
 
-class MiscServerSetupPanel::PrivData : public Ui::MiscServerSetupPanel
+DClass<MiscServerSetupPanel> : public Ui::MiscServerSetupPanel
 {
 public:
 	bool anythingAvailable;
 };
 
+DPointered(MiscServerSetupPanel)
+
 MiscServerSetupPanel::MiscServerSetupPanel(QWidget *parent)
 : QWidget(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 	d->anythingAvailable = false;
 }
 
 MiscServerSetupPanel::~MiscServerSetupPanel()
 {
-	delete d;
 }
 
 void MiscServerSetupPanel::fillInParams(GameCreateParams &params)

@@ -33,17 +33,18 @@
 #include <QTreeView>
 #include <QAbstractButton>
 
-class ConfigurationDialog::PrivData : public Ui::ConfigurationDialog
+DClass<ConfigurationDialog> : public Ui::ConfigurationDialog
 {
 public:
 	QList<ConfigurationBaseBox*> configBoxesList;
 	QWidget* currentlyDisplayedCfgBox;
 };
 
+DPointered(ConfigurationDialog)
+
 ConfigurationDialog::ConfigurationDialog(QWidget* parent)
 : QDialog(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 
 	d->tvOptionsList->setHeaderHidden(true);
@@ -61,8 +62,6 @@ ConfigurationDialog::~ConfigurationDialog()
 	{
 		delete d->configBoxesList[i];
 	}
-
-	delete d;
 }
 
 QStandardItem* ConfigurationDialog::addConfigurationBox(QStandardItem* rootItem, ConfigurationBaseBox* pConfigurationBox, int position)

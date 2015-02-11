@@ -34,11 +34,10 @@
 #include <QRegExp>
 #include <QStandardItemModel>
 
-class DockBuddiesList::BuddyLocationInfo
+class BuddyLocationInfo
 {
 public:
 	BuddyLocationInfo(const Player &buddy, ServerPtr location);
-	COPYABLE_D_POINTERED_DECLARE(BuddyLocationInfo);
 	~BuddyLocationInfo();
 
 	const Player &buddy() const;
@@ -47,22 +46,22 @@ public:
 	bool operator==(const BuddyLocationInfo &other) const;
 
 private:
-	class PrivData;
-	PrivData *d;
+	DPtr<BuddyLocationInfo> d;
 };
 
-class DockBuddiesList::PrivData : public Ui::DockBuddiesList
+DClass<DockBuddiesList> : public Ui::DockBuddiesList
 {
 public:
-	QList< ::DockBuddiesList::BuddyLocationInfo> buddies;
+	QList<BuddyLocationInfo> buddies;
 	QStandardItemModel *buddiesTableModel;
 	PatternList pBuddies;
 };
 
+DPointered(DockBuddiesList)
+
 DockBuddiesList::DockBuddiesList(QWidget *parent)
 : QDockWidget(parent), masterClient(NULL), save(false)
 {
-	d = new PrivData;
 	d->setupUi(this);
 	this->toggleViewAction()->setIcon(QIcon(":/icons/buddies.png"));
 
@@ -99,10 +98,7 @@ DockBuddiesList::~DockBuddiesList()
 	// See if we made any modification since modifying the setting will cause a
 	// write cycle.
 	if(!save)
-	{
-		delete d;
 		return;
-	}
 
 	gConfig.doomseeker.buddiesList.clear();
 	foreach (QRegExp pattern, d->pBuddies)
@@ -114,8 +110,6 @@ DockBuddiesList::~DockBuddiesList()
 
 		gConfig.doomseeker.buddiesList << buddyInfo;
 	}
-
-	delete d;
 }
 
 void DockBuddiesList::addBuddy()
@@ -282,13 +276,14 @@ void DockBuddiesList::scan(const MasterManager *master)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class AddBuddyDlg::PrivData : public Ui::AddBuddyDlg
+DClass<AddBuddyDlg> : public Ui::AddBuddyDlg
 {
 };
 
+DPointered(AddBuddyDlg)
+
 AddBuddyDlg::AddBuddyDlg(QWidget *parent) : QDialog(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 
 	connect(d->buttonBox, SIGNAL( clicked(QAbstractButton *) ), this, SLOT( buttonBoxClicked(QAbstractButton *) ));
@@ -296,7 +291,6 @@ AddBuddyDlg::AddBuddyDlg(QWidget *parent) : QDialog(parent)
 
 AddBuddyDlg::~AddBuddyDlg()
 {
-	delete d;
 }
 
 void AddBuddyDlg::buttonBoxClicked(QAbstractButton *button)
@@ -330,38 +324,36 @@ BuddyInfo::PatternType AddBuddyDlg::patternType() const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class DockBuddiesList::BuddyLocationInfo::PrivData
+DClass<BuddyLocationInfo>
 {
 	public:
 		Player buddy;
 		ServerPtr server;
 };
 
-COPYABLE_D_POINTERED_INNER_DEFINE(DockBuddiesList::BuddyLocationInfo, BuddyLocationInfo);
+DPointered(BuddyLocationInfo)
 
-DockBuddiesList::BuddyLocationInfo::BuddyLocationInfo(const Player &buddy, ServerPtr location)
+BuddyLocationInfo::BuddyLocationInfo(const Player &buddy, ServerPtr location)
 {
-	d = new PrivData();
 	d->buddy = buddy;
 	d->server = location;
 }
 
-DockBuddiesList::BuddyLocationInfo::~BuddyLocationInfo()
+BuddyLocationInfo::~BuddyLocationInfo()
 {
-	delete d;
 }
 
-const Player &DockBuddiesList::BuddyLocationInfo::buddy() const
+const Player &BuddyLocationInfo::buddy() const
 {
 	return d->buddy;
 }
 
-ServerPtr DockBuddiesList::BuddyLocationInfo::location() const
+ServerPtr BuddyLocationInfo::location() const
 {
 	return d->server;
 }
 
-bool DockBuddiesList::BuddyLocationInfo::operator==(const BuddyLocationInfo &other) const
+bool BuddyLocationInfo::operator==(const BuddyLocationInfo &other) const
 {
 	return d->buddy == other.d->buddy
 		&& d->server->address() == other.d->server->address()

@@ -1,6 +1,8 @@
 #ifndef id14670887_AF0E_4EAD_9A495B9E413C6723
 #define id14670887_AF0E_4EAD_9A495B9E413C6723
 
+#include "dptr.h"
+
 #include <QObject>
 #include <QString>
 
@@ -41,8 +43,7 @@ class IRCCtcpParser : public QObject
 		const QString &reply() const;
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<IRCCtcpParser> d;
 
 		bool isCommand(const QString &candidate);
 		bool isCtcp() const;

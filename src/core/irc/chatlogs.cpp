@@ -27,7 +27,7 @@
 #include <QDir>
 #include <QMessageBox>
 
-class ChatLogs::PrivData
+DClass<ChatLogs>
 {
 public:
 	QString rootPath() const
@@ -36,15 +36,15 @@ public:
 	}
 };
 
+DPointered(ChatLogs)
+
 
 ChatLogs::ChatLogs()
 {
-	d = new PrivData();
 }
 
 ChatLogs::~ChatLogs()
 {
-	delete d;
 }
 
 QString ChatLogs::logFilePath(const IRCNetworkEntity &entity, const QString &recipient) const

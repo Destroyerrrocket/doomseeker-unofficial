@@ -25,7 +25,7 @@
 #include "configuration/doomseekerconfig.h"
 #include "configuration/queryspeed.h"
 
-class CFGQuery::PrivData : public Ui::CFGQuery
+DClass<CFGQuery> : public Ui::CFGQuery
 {
 public:
 	void setQuerySpeed(const QuerySpeed &speed)
@@ -45,16 +45,16 @@ public:
 	}
 };
 
+DPointered(CFGQuery)
+
 CFGQuery::CFGQuery(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 }
 
 CFGQuery::~CFGQuery()
 {
-	delete d;
 }
 
 void CFGQuery::readSettings()

@@ -8,17 +8,18 @@
 #include "log.h"
 #include <QFile>
 
-class IP2CLoader::PrivData
+DClass<IP2CLoader>
 {
 	public:
 		IP2CParser* ip2cParser;
 		IP2CUpdater* ip2cUpdater;
 };
+
+DPointered(IP2CLoader)
+
 ///////////////////////////////////////////////////////////////////////////////
 IP2CLoader::IP2CLoader()
 {
-	d = new PrivData();
-
 	d->ip2cParser = new IP2CParser(IP2C::instance());
 	this->connect(d->ip2cParser, SIGNAL( parsingFinished(bool) ),
 		SLOT( ip2cFinishedParsing(bool) ) );
@@ -41,7 +42,6 @@ IP2CLoader::~IP2CLoader()
 
 	delete d->ip2cParser;
 	delete d->ip2cUpdater;
-	delete d;
 }
 
 void IP2CLoader::load()

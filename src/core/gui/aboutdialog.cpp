@@ -29,13 +29,14 @@
 #include "version.h"
 #include <QPixmap>
 
-class AboutDialog::PrivData : public Ui::AboutDialog
+DClass<AboutDialog> : public Ui::AboutDialog
 {
 };
 
+DPointered(AboutDialog)
+
 AboutDialog::AboutDialog(QWidget* parent) : QDialog(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 
 	connect(d->buttonBox, SIGNAL( clicked(QAbstractButton *) ), SLOT( close() ));
@@ -65,7 +66,6 @@ AboutDialog::AboutDialog(QWidget* parent) : QDialog(parent)
 
 AboutDialog::~AboutDialog()
 {
-	delete d;
 }
 
 void AboutDialog::changePlugin(int pluginIndex)

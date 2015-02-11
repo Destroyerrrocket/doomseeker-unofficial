@@ -32,7 +32,7 @@
 #include <QModelIndex>
 #include <cassert>
 
-class ServerListContextMenu::PrivData
+DClass<ServerListContextMenu>
 {
 	public:
 		QAction *clearAdditionalSorting;
@@ -44,11 +44,12 @@ class ServerListContextMenu::PrivData
 		ServerListHandler *parent;
 };
 
+DPointered(ServerListContextMenu)
+
 ServerListContextMenu::ServerListContextMenu(ServerPtr server, const ServerListFilterInfo& filter,
 	const QModelIndex &modelIndex, ServerListHandler *parent)
 : QObject(parent), pServer(server)
 {
-	d = new PrivData();
 	d->parent = parent;
 	d->serverFilter = filter;
 	d->modelIndex = modelIndex;
@@ -59,7 +60,6 @@ ServerListContextMenu::ServerListContextMenu(ServerPtr server, const ServerListF
 ServerListContextMenu::~ServerListContextMenu()
 {
 	delete menu;
-	delete d;
 }
 
 QMenu* ServerListContextMenu::createCopyMenu(QWidget* parent)

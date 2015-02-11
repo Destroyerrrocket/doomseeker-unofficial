@@ -24,6 +24,7 @@
 #define id97064B0C_7D3A_489E_B2241AD6943450FB
 
 #include "global.h"
+#include "dptr.h"
 #include <QHash>
 #include <QObject>
 #include <QString>
@@ -134,8 +135,7 @@ class MAIN_EXPORT ExeFile : public QObject
 		virtual QString workingDirectory(Message& message);
 
 	private:
-		class PrivData;
-		PrivData* d;
+		DPtr<ExeFile> d;
 
 		QString obtainBinary(Message& message) const;
 };

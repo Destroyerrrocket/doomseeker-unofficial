@@ -24,6 +24,7 @@
 #define id65026263_73af_4292_be84_ddb5bf7f606b
 
 #include "gui/configuration/configurationbasebox.h"
+#include "dptr.h"
 #include <QIcon>
 
 class CfgChatLogsPage : public ConfigurationBaseBox
@@ -43,8 +44,7 @@ protected:
 	void saveSettings();
 
 private:
-	class PrivData;
-	PrivData *d;
+	DPtr<CfgChatLogsPage> d;
 
 	bool checkDir(const QString &directory);
 

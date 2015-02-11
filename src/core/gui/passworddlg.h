@@ -24,6 +24,7 @@
 #define __PASSWORDDIALOG_H__
 
 #include "serverapi/serverptr.h"
+#include "dptr.h"
 #include <QDialog>
 
 class EnginePlugin;
@@ -45,8 +46,7 @@ class PasswordDlg : public QDialog
 		void accept();
 
 	private:
-		class PrivData;
-		PrivData* d;
+		DPtr<PasswordDlg> d;
 
 		void applyInputsVisibility();
 		void loadConfiguration();

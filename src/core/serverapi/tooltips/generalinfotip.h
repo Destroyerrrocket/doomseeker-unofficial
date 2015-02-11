@@ -24,6 +24,7 @@
 #define __GENERAL_INFO_TIP_H_
 
 #include "serverapi/serverptr.h"
+#include "dptr.h"
 #include "global.h"
 #include <QString>
 #include <QObject>
@@ -39,8 +40,7 @@ class GeneralInfoTip : public QObject
 		QString generateHTML();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<GeneralInfoTip> d;
 
 		/**
 		 *	Generates output in format

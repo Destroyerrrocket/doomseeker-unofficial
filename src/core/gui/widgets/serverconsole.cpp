@@ -28,15 +28,16 @@
 
 #include <QRegExp>
 
-class ServerConsole::PrivData : public Ui::ServerConsole
+DClass<ServerConsole> : public Ui::ServerConsole
 {
 public:
 	MemoryLineEdit *consoleInput;
 };
 
+DPointered(ServerConsole)
+
 ServerConsole::ServerConsole(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f)
 {
-	d = new PrivData;
 	d->setupUi(this);
 
 	d->consoleInput = new MemoryLineEdit();
@@ -47,7 +48,6 @@ ServerConsole::ServerConsole(QWidget *parent, Qt::WindowFlags f) : QWidget(paren
 
 ServerConsole::~ServerConsole()
 {
-	delete d;
 }
 
 void ServerConsole::appendMessage(const QString &message)

@@ -32,7 +32,7 @@
 #include <QFileInfo>
 #include <cstdlib>
 
-class PathFinderResult::PrivData
+DClass<PathFinderResult>
 {
 	public:
 		QStringList foundFiles;
@@ -40,17 +40,15 @@ class PathFinderResult::PrivData
 };
 
 
-COPYABLE_D_POINTERED_DEFINE(PathFinderResult);
+DPointered(PathFinderResult)
 
 
 PathFinderResult::PathFinderResult()
 {
-	d = new PrivData();
 }
 
 PathFinderResult::~PathFinderResult()
 {
-	delete d;
 }
 
 QStringList& PathFinderResult::foundFiles()
@@ -75,26 +73,24 @@ const QStringList& PathFinderResult::missingFiles() const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class PathFinder::PrivData
+DClass<PathFinder>
 {
 	public:
 		QList<FileSearchPath> searchPaths;
 };
 
 
-COPYABLE_D_POINTERED_DEFINE(PathFinder);
+DPointered(PathFinder)
 
 
 PathFinder::PathFinder()
 {
-	d = new PrivData();
 	d->searchPaths = gConfig.doomseeker.wadPaths;
 	d->searchPaths << gConfig.wadseeker.targetDirectory;
 }
 
 PathFinder::PathFinder(const QStringList& paths)
 {
-	d = new PrivData();
 	foreach (const QString& path, paths)
 	{
 		d->searchPaths << path;
@@ -103,7 +99,6 @@ PathFinder::PathFinder(const QStringList& paths)
 
 PathFinder::~PathFinder()
 {
-	delete d;
 }
 
 void PathFinder::addPrioritySearchDir(const QString& dir)

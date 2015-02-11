@@ -22,10 +22,10 @@
 //------------------------------------------------------------------------------
 #include "joinerror.h"
 
-class JoinError::PrivData
+DClass<JoinError>
 {
 	public:
-		JoinErrorType type;
+		JoinError::JoinErrorType type;
 		QString error;
 
 		/**
@@ -39,37 +39,31 @@ class JoinError::PrivData
 		QStringList missingWads;
 };
 
+DPointered(JoinError)
+
 JoinError::JoinError()
 {
-	d = new PrivData();
 	d->type = NoError;
 }
 
 JoinError::JoinError(JoinError::JoinErrorType type)
 {
-	d = new PrivData();
 	d->type = type;
 }
 
 JoinError::JoinError(const JoinError& other)
 {
-	d = new PrivData();
-	*d = *other.d;
+	d = other.d;
 }
 
 JoinError& JoinError::operator=(const JoinError& other)
 {
-	if (this != &other)
-	{
-		d = new PrivData();
-		*d = *other.d;
-	}
+	d = other.d;
 	return *this;
 }
 
 JoinError::~JoinError()
 {
-	delete d;
 }
 
 void JoinError::addMissingWad(const QString& wad)

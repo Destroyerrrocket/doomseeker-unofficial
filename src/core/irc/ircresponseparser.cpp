@@ -36,7 +36,7 @@
 #include "patternlist.h"
 #include "strings.h"
 
-class IRCResponseParser::PrivData
+DClass<IRCResponseParser>
 {
 	public:
 		IRCNetworkAdapter *network;
@@ -46,15 +46,15 @@ class IRCResponseParser::PrivData
 		QStringList params;
 };
 
+DPointered(IRCResponseParser)
+
 IRCResponseParser::IRCResponseParser(IRCNetworkAdapter *network)
 {
-	d = new PrivData();
 	d->network = network;
 }
 
 IRCResponseParser::~IRCResponseParser()
 {
-	delete d;
 }
 
 IRCResponseParser::FlagModes IRCResponseParser::getFlagMode(char c)

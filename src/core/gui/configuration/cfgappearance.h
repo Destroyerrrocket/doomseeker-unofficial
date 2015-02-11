@@ -25,6 +25,7 @@
 #define __CFG_APPEARANCE_H__
 
 #include "gui/configuration/configurationbasebox.h"
+#include "dptr.h"
 #include <QIcon>
 
 class CFGAppearance : public ConfigurationBaseBox
@@ -46,8 +47,7 @@ class CFGAppearance : public ConfigurationBaseBox
 	private:
 		void initLanguagesList();
 
-		class PrivData;
-		PrivData *d;
+		DPtr<CFGAppearance> d;
 };
 
 #endif /* __CFG_APPEARANCE_H__ */

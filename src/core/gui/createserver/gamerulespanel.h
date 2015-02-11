@@ -23,6 +23,8 @@
 #ifndef id880d5e15_1a53_40da_bdb9_11d9b4dc3222
 #define id880d5e15_1a53_40da_bdb9_11d9b4dc3222
 
+#include "dptr.h"
+
 #include <QWidget>
 
 class EnginePlugin;
@@ -45,8 +47,7 @@ public:
 	void setupForRemoteGame();
 
 private:
-	class PrivData;
-	PrivData *d;
+	DPtr<GameRulesPanel> d;
 
 	void fillInLimits(GameCreateParams &params);
 	void fillInModifiers(GameCreateParams &params);

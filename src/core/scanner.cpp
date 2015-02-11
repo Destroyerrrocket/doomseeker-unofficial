@@ -27,10 +27,10 @@
 
 #include "scanner.h"
 
-class Scanner::PrivData
+DClass<Scanner>
 {
 	public:
-		ParserState		nextState, prevState, state;
+		Scanner::ParserState nextState, prevState, state;
 
 		char*			data;
 		unsigned int	length;
@@ -44,6 +44,22 @@ class Scanner::PrivData
 
 		QString			scriptIdentifier;
 };
+
+DClass<Scanner::ParserState>
+{
+	public:
+		QString str;
+		unsigned int number;
+		double decimal;
+		bool boolean;
+		char token;
+		unsigned int tokenLine;
+		unsigned int tokenLinePosition;
+		unsigned int scanPos;
+};
+
+DPointered(Scanner::ParserState);
+DPointered(Scanner)
 
 void (*Scanner::messageHandler)(MessageLevel, const char*, va_list) = NULL;
 
@@ -84,7 +100,6 @@ static const char* const TokenNames[TK_NumSpecialTokens] =
 
 Scanner::Scanner(const char* data, int length)
 {
-	d = new PrivData();
 	d->line = 1;
 	d->lineStart = 0;
 	d->logicalPosition = 0;
@@ -104,7 +119,6 @@ Scanner::Scanner(const char* data, int length)
 Scanner::~Scanner()
 {
 	delete[] d->data;
-	delete d;
 }
 
 // Here's my answer to the preprocessor screwing up line numbers. What we do is
@@ -771,29 +785,13 @@ const QString& Scanner::unescape(QString &str)
 	return str;
 }
 ////////////////////////////////////////////////////////////////////////////////
-class Scanner::ParserState::PrivData
-{
-	public:
-		QString str;
-		unsigned int number;
-		double decimal;
-		bool boolean;
-		char token;
-		unsigned int tokenLine;
-		unsigned int tokenLinePosition;
-		unsigned int scanPos;
-};
-
-COPYABLE_D_POINTERED_INNER_DEFINE(Scanner::ParserState, ParserState);
 
 Scanner::ParserState::ParserState()
 {
-	d = new PrivData();
 }
 
 Scanner::ParserState::~ParserState()
 {
-	delete d;
 }
 
 const QString &Scanner::ParserState::str() const

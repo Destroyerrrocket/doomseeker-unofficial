@@ -23,6 +23,8 @@
 #ifndef idb76a672e_9f54_4dbc_a933_33ea083e8f11
 #define idb76a672e_9f54_4dbc_a933_33ea083e8f11
 
+#include "dptr.h"
+
 #include <QWidget>
 
 class EnginePlugin;
@@ -54,8 +56,7 @@ signals:
 	void pluginChanged(EnginePlugin *plugin);
 
 private:
-	class PrivData;
-	PrivData *d;
+	DPtr<GeneralGameSetupPanel> d;
 
 	QString pathToExe(bool offline);
 	QString pathToClientExe(Server* server, Message& message);

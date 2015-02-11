@@ -41,7 +41,7 @@
 	} \
 }
 
-class GameHost::PrivData
+DClass<GameHost>
 {
 	public:
 		QString argBexLoading;
@@ -63,9 +63,10 @@ class GameHost::PrivData
 		void (GameHost::*addDMFlags)();
 };
 
+DPointered(GameHost)
+
 GameHost::GameHost(EnginePlugin* plugin)
 {
-	d = new PrivData();
 	d->argBexLoading = "-deh";
 	d->argDehLoading = "-deh";
 	d->argIwadLoading = "-iwad";
@@ -83,7 +84,6 @@ GameHost::GameHost(EnginePlugin* plugin)
 
 GameHost::~GameHost()
 {
-	delete d;
 }
 
 POLYMORPHIC_DEFINE(void, GameHost, addIwad, (), ());

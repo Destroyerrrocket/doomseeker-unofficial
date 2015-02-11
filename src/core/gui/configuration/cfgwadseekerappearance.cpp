@@ -24,20 +24,20 @@
 #include "ui_cfgwadseekerappearance.h"
 #include "configuration/doomseekerconfig.h"
 
-class CFGWadseekerAppearance::PrivData : public Ui::CFGWadseekerAppearance
+DClass<CFGWadseekerAppearance> : public Ui::CFGWadseekerAppearance
 {
 };
+
+DPointered(CFGWadseekerAppearance)
 
 CFGWadseekerAppearance::CFGWadseekerAppearance(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 }
 
 CFGWadseekerAppearance::~CFGWadseekerAppearance()
 {
-	delete d;
 }
 
 void CFGWadseekerAppearance::readSettings()

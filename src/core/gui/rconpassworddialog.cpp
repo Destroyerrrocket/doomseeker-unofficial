@@ -26,14 +26,15 @@
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
 
-class RconPasswordDialog::PrivData : public Ui::RconPasswordDialog
+DClass<RconPasswordDialog> : public Ui::RconPasswordDialog
 {
 };
+
+DPointered(RconPasswordDialog)
 
 RconPasswordDialog::RconPasswordDialog(QWidget *parent, bool connection)
 : QDialog(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 
 	if (connection)
@@ -62,7 +63,6 @@ RconPasswordDialog::RconPasswordDialog(QWidget *parent, bool connection)
 
 RconPasswordDialog::~RconPasswordDialog()
 {
-	delete d;
 }
 
 QString RconPasswordDialog::connectPassword() const

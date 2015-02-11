@@ -26,17 +26,22 @@
 #include <QQueue>
 #include <QTimer>
 
-class UrlOpener::PrivData
+DClass<UrlOpener>
 {
 public:
 	QQueue<QUrl> queue;
 };
 
+DPointered(UrlOpener)
+
 UrlOpener *UrlOpener::inst = NULL;
 
 UrlOpener::UrlOpener()
 {
-	d = new PrivData();
+}
+
+UrlOpener::~UrlOpener()
+{
 }
 
 void UrlOpener::doOpen()

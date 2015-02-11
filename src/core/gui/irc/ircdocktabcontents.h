@@ -23,6 +23,8 @@
 #ifndef __IRCDOCK_TAB_CONTENTS_H_
 #define __IRCDOCK_TAB_CONTENTS_H_
 
+#include "dptr.h"
+
 #include <QWidget>
 
 class IRCAdapterBase;
@@ -150,8 +152,8 @@ class IRCDockTabContents : public QWidget
 			PrivIgnore
 		};
 
-		class PrivData;
-		PrivData *d;
+		DPtr<IRCDockTabContents> d;
+		friend class PrivData<IRCDockTabContents>;
 
 		static const int BLINK_TIMER_DELAY_MS;
 

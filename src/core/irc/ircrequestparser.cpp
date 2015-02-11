@@ -31,7 +31,7 @@
 #include "irc/ircuserinfo.h"
 #include <QStringList>
 
-class IRCRequestParser::PrivData
+DClass<IRCRequestParser>
 {
 	public:
 		IRCAdapterBase *adapter;
@@ -40,15 +40,15 @@ class IRCRequestParser::PrivData
 		QStringList tokens;
 };
 
+DPointered(IRCRequestParser)
+
 IRCRequestParser::IRCRequestParser()
 {
-	d = new PrivData();
 	d->adapter = NULL;
 }
 
 IRCRequestParser::~IRCRequestParser()
 {
-	delete d;
 }
 
 IRCNetworkAdapter *IRCRequestParser::network()

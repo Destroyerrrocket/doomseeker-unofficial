@@ -24,6 +24,8 @@
 #ifndef DOOMSEEKER_GUI_ABOUTDIALOG_H
 #define DOOMSEEKER_GUI_ABOUTDIALOG_H
 
+#include "dptr.h"
+
 #include <QDialog>
 
 class AboutDialog : public QDialog
@@ -38,8 +40,7 @@ class AboutDialog : public QDialog
 		void changePlugin(int pluginIndex);
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<AboutDialog> d;
 };
 
 #endif /* DOOMSEEKER_GUI_ABOUTDIALOG_H */

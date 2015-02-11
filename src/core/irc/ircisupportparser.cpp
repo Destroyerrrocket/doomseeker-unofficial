@@ -26,7 +26,7 @@
 #include <QByteArray>
 #include <QStringList>
 
-class IRCISupportParser::PrivData
+DClass<IRCISupportParser>
 {
 public:
 	class State
@@ -44,14 +44,14 @@ public:
 	State state;
 };
 
+DPointered(IRCISupportParser)
+
 IRCISupportParser::IRCISupportParser()
 {
-	d = new PrivData();
 }
 
 IRCISupportParser::~IRCISupportParser()
 {
-	delete d;
 }
 
 void IRCISupportParser::appendLine(const QString &line)
@@ -82,7 +82,7 @@ QString IRCISupportParser::findValue(const QString &key)
 
 void IRCISupportParser::parse()
 {
-	d->state = PrivData::State();
+	d->state = PrivData<IRCISupportParser>::State();
 	parsePrefix();
 }
 

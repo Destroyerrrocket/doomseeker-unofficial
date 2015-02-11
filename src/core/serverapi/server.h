@@ -26,6 +26,7 @@
 
 #include "serverapi/polymorphism.h"
 #include "serverapi/serverptr.h"
+#include "dptr.h"
 #include "global.h"
 
 #include <QColor>
@@ -735,11 +736,9 @@ class MAIN_EXPORT Server : public QObject
 	private:
 		Q_DISABLE_COPY(Server)
 
-		class PrivData;
-
 		static QString teamNames[];
 
-		PrivData* d;
+		DPtr<Server> d;
 
 		void clearDMFlags();
 

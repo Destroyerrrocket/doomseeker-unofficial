@@ -28,7 +28,7 @@
 
 #include <QFileDialog>
 
-class EngineConfigurationBaseBox::PrivData : public Ui::EngineConfigurationBaseBox
+DClass<EngineConfigurationBaseBox> : public Ui::EngineConfigurationBaseBox
 {
 	public:
 		IniSection *config;
@@ -51,10 +51,11 @@ class EngineConfigurationBaseBox::PrivData : public Ui::EngineConfigurationBaseB
 		}
 };
 
+DPointered(EngineConfigurationBaseBox)
+
 EngineConfigurationBaseBox::EngineConfigurationBaseBox(const EnginePlugin *plugin, IniSection &cfg, QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
-	d = new PrivData();
 	d->plugin = plugin;
 	d->config = &cfg;
 	d->setupUi(this);
@@ -75,7 +76,6 @@ EngineConfigurationBaseBox::EngineConfigurationBaseBox(const EnginePlugin *plugi
 
 EngineConfigurationBaseBox::~EngineConfigurationBaseBox()
 {
-	delete d;
 }
 
 void EngineConfigurationBaseBox::addWidget(QWidget *widget)

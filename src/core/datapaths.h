@@ -24,6 +24,7 @@
 #define __DATAPATHS_H__
 
 #include "global.h"
+#include "dptr.h"
 #include <QDir>
 #include <QString>
 #include <QStringList>
@@ -209,8 +210,7 @@ class MAIN_EXPORT DataPaths
 		bool tryCreateDirectory(const QDir& rootDir, const QString& dirToCreate) const;
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<DataPaths> d;
 
 		static DataPaths *staticDefaultInstance;
 };

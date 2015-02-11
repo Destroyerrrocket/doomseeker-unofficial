@@ -28,7 +28,7 @@
 #include <cassert>
 #include <cstdlib>
 
-class DataPaths::PrivData
+DClass<DataPaths>
 {
 	public:
 		bool bIsPortableModeOn;
@@ -38,6 +38,7 @@ class DataPaths::PrivData
 		QString workingDirectory;
 };
 
+DPointered(DataPaths)
 
 DataPaths *DataPaths::staticDefaultInstance = NULL;
 
@@ -57,7 +58,6 @@ const QString DataPaths::UPDATE_PACKAGE_FILENAME_PREFIX = "doomseeker-update-pkg
 
 DataPaths::DataPaths(bool bPortableModeOn)
 {
-	d = new PrivData();
 	d->bIsPortableModeOn = bPortableModeOn;
 
 	d->programsDirectoryName = PROGRAMS_APPDATA_DIR_NAME;
@@ -68,7 +68,6 @@ DataPaths::DataPaths(bool bPortableModeOn)
 
 DataPaths::~DataPaths()
 {
-	delete d;
 }
 
 QStringList DataPaths::canWrite() const

@@ -24,20 +24,20 @@
 #include "ui_cfgip2country.h"
 #include "configuration/doomseekerconfig.h"
 
-class CFGIP2Country::PrivData : public Ui::CFGIP2Country
+DClass<CFGIP2Country> : public Ui::CFGIP2Country
 {
 };
+
+DPointered(CFGIP2Country)
 
 CFGIP2Country::CFGIP2Country(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 }
 
 CFGIP2Country::~CFGIP2Country()
 {
-	delete d;
 }
 
 void CFGIP2Country::readSettings()

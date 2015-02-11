@@ -39,7 +39,7 @@
 #include <QScopedPointer>
 #include <QStringList>
 
-class ServerConnectParams::PrivData
+DClass<ServerConnectParams>
 {
 	public:
 		QString connectPassword;
@@ -47,29 +47,25 @@ class ServerConnectParams::PrivData
 		QString inGamePassword;
 };
 
+DPointered(ServerConnectParams)
+
 ServerConnectParams::ServerConnectParams()
 {
-	d = new PrivData();
 }
 
 ServerConnectParams::ServerConnectParams(const ServerConnectParams& other)
 {
-	d = new PrivData();
-	*d = *other.d;
+	d = other.d;
 }
 
 ServerConnectParams& ServerConnectParams::operator=(const ServerConnectParams& other)
 {
-	if (this != &other)
-	{
-		*d = *other.d;
-	}
+	d = other.d;
 	return *this;
 }
 
 ServerConnectParams::~ServerConnectParams()
 {
-	delete d;
 }
 
 const QString& ServerConnectParams::connectPassword() const
@@ -112,7 +108,7 @@ void ServerConnectParams::setInGamePassword(const QString& val)
 }
 
 
-class GameClientRunner::PrivData
+DClass<GameClientRunner>
 {
 	public:
 		QString argBexLoading;
@@ -139,13 +135,14 @@ class GameClientRunner::PrivData
 		void (GameClientRunner::*createCommandLineArguments)();
 };
 
+DPointered(GameClientRunner)
+
 POLYMORPHIC_DEFINE(void, GameClientRunner, addExtra, (), ());
 POLYMORPHIC_DEFINE(void, GameClientRunner, addIwad, (), ());
 POLYMORPHIC_DEFINE(void, GameClientRunner, createCommandLineArguments, (), ());
 
 GameClientRunner::GameClientRunner(ServerPtr server)
 {
-	d = new PrivData();
 	set_addExtra(&GameClientRunner::addExtra_default);
 	set_addIwad(&GameClientRunner::addIwad_default);
 	set_createCommandLineArguments(&GameClientRunner::createCommandLineArguments_default);
@@ -162,7 +159,6 @@ GameClientRunner::GameClientRunner(ServerPtr server)
 
 GameClientRunner::~GameClientRunner()
 {
-	delete d;
 }
 
 void GameClientRunner::addConnectCommand()

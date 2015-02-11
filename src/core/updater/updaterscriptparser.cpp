@@ -26,21 +26,21 @@
 #include <QDebug>
 #include <cassert>
 
-class UpdaterScriptParser::PrivData
+DClass<UpdaterScriptParser>
 {
 	public:
 		QDomDocument* pDoc;
 };
+
+DPointered(UpdaterScriptParser)
 //////////////////////////////////////////////////////////////////////////////
 UpdaterScriptParser::UpdaterScriptParser(QDomDocument& document)
 {
-	d = new PrivData();
 	d->pDoc = &document;
 }
 
 UpdaterScriptParser::~UpdaterScriptParser()
 {
-	delete d;
 }
 
 QDomNode UpdaterScriptParser::installNode(const QDomDocument& doc)

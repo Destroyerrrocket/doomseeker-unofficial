@@ -25,6 +25,7 @@
 
 #include "serverapi/polymorphism.h"
 #include "serverapi/serverptr.h"
+#include "dptr.h"
 #include "player.h"
 #include <QThread>
 #include <QUdpSocket>
@@ -205,8 +206,7 @@ class MAIN_EXPORT RConProtocol : public QObject
 		friend class Server;
 
 	private:
-		class PrivData;
-		PrivData* d;
+		DPtr<RConProtocol> d;
 
 		void disconnectFromServer_default();
 		void sendCommand_default(const QString &cmd);

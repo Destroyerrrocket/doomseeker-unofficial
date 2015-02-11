@@ -24,6 +24,7 @@
 #define __SERVER_LIST_ROW_HANDLER_H_
 
 #include "serverapi/serverptr.h"
+#include "dptr.h"
 #include <QObject>
 
 class GameCVar;
@@ -91,8 +92,7 @@ class ServerListRowHandler : public QObject
 
 		static ServerPtr serverFromList(ServerListModel* parentModel, int rowIndex);
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<ServerListRowHandler> d;
 
 		void emptyItem(QStandardItem*);
 

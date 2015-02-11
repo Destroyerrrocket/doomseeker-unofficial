@@ -26,23 +26,21 @@
 #include "pathfinder/filealias.h"
 #include "pathfinder/pathfinder.h"
 
-class WadFindResult::PrivData
+DClass<WadFindResult>
 {
 	public:
 		QString alias;
 		QString path;
 };
 
-COPYABLE_D_POINTERED_DEFINE(WadFindResult);
+DPointered(WadFindResult)
 
 WadFindResult::WadFindResult()
 {
-	d = new PrivData();
 }
 
 WadFindResult::~WadFindResult()
 {
-	delete d;
 }
 
 const QString &WadFindResult::alias() const
@@ -75,23 +73,23 @@ void WadFindResult::setPath(const QString &val)
 	d->path = val;
 }
 ///////////////////////////////////////////////////////////////////////////////
-class WadPathFinder::PrivData
+DClass<WadPathFinder>
 {
 	public:
 		QList<FileAlias> aliases;
 		PathFinder pathFinder;
 };
 
+DPointered(WadPathFinder)
+
 WadPathFinder::WadPathFinder(const PathFinder &pathFinder)
 {
-	d = new PrivData();
 	d->aliases = gConfig.doomseeker.wadAliases();
 	d->pathFinder = pathFinder;
 }
 
 WadPathFinder::~WadPathFinder()
 {
-	delete d;
 }
 
 QStringList WadPathFinder::aliases(const QString &name) const

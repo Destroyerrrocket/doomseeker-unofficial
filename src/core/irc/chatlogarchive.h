@@ -23,6 +23,8 @@
 #ifndef idccf54adf_3557_4e8c_bde9_b6fc5469a592
 #define idccf54adf_3557_4e8c_bde9_b6fc5469a592
 
+#include "dptr.h"
+
 #include <QString>
 
 class IRCNetworkEntity;
@@ -38,8 +40,7 @@ public:
 	static QString mkArchiveFilePath(const IRCNetworkEntity &network, const QString &recipient);
 
 private:
-	class PrivData;
-	PrivData *d;
+	DPtr<ChatLogArchive> d;
 };
 
 #endif

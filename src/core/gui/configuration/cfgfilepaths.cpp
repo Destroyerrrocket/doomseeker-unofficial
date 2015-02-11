@@ -30,14 +30,15 @@
 const int COL_PATH = 0;
 const int COL_RECURSE = 1;
 
-class CFGFilePaths::PrivData : public Ui::CFGFilePaths
+DClass<CFGFilePaths> : public Ui::CFGFilePaths
 {
 };
+
+DPointered(CFGFilePaths)
 
 CFGFilePaths::CFGFilePaths(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 
 	QStandardItemModel* model = new QStandardItemModel(this);
@@ -57,7 +58,6 @@ CFGFilePaths::CFGFilePaths(QWidget* parent)
 
 CFGFilePaths::~CFGFilePaths()
 {
-	delete d;
 }
 
 void CFGFilePaths::addPath(const FileSearchPath& fileSearchPath)

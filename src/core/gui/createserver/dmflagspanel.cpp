@@ -30,7 +30,7 @@
 
 #include <QCheckBox>
 
-class DMFlagsPanel::DMFlagsTabWidget
+class DMFlagsTabWidget
 {
 public:
 	QWidget* widget;
@@ -43,24 +43,24 @@ public:
 };
 
 
-class DMFlagsPanel::PrivData : public Ui::DMFlagsPanel
+DClass<DMFlagsPanel> : public Ui::DMFlagsPanel
 {
 public:
 	QList<DMFlagsTabWidget*> dmFlagsTabs;
 };
 
+DPointered(DMFlagsPanel)
+
 
 DMFlagsPanel::DMFlagsPanel(QWidget *parent)
 : QWidget(parent)
 {
-	d = new PrivData();
 	d->setupUi(this);
 }
 
 DMFlagsPanel::~DMFlagsPanel()
 {
 	removeDMFlagsTabs();
-	delete d;
 }
 
 QList<DMFlagsSection> DMFlagsPanel::dmFlags() const

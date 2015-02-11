@@ -51,7 +51,7 @@ class Demo
 		QStringList wads;
 };
 
-class DemoManagerDlg::PrivData : public Ui::DemoManagerDlg
+DClass<DemoManagerDlg> : public Ui::DemoManagerDlg
 {
 	public:
 		Demo *selectedDemo;
@@ -59,9 +59,10 @@ class DemoManagerDlg::PrivData : public Ui::DemoManagerDlg
 		QList<QList<Demo> > demoTree;
 };
 
+DPointered(DemoManagerDlg)
+
 DemoManagerDlg::DemoManagerDlg()
 {
-	d = new PrivData;
 	d->setupUi(this);
 	d->selectedDemo = NULL;
 
@@ -78,7 +79,6 @@ DemoManagerDlg::DemoManagerDlg()
 
 DemoManagerDlg::~DemoManagerDlg()
 {
-	delete d;
 }
 
 void DemoManagerDlg::adjustDemoList()

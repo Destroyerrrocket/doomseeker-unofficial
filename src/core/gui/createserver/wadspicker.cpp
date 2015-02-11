@@ -28,20 +28,20 @@
 #include <QFileDialog>
 #include <QStandardItemModel>
 
-class WadsPicker::PrivData : public Ui::WadsPicker
+DClass<WadsPicker> : public Ui::WadsPicker
 {
 };
 
+DPointered(WadsPicker)
+
 WadsPicker::WadsPicker(QWidget *parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 	d->lstAdditionalFiles->setModel(new QStandardItemModel(this));
 }
 
 WadsPicker::~WadsPicker()
 {
-	delete d;
 }
 
 void WadsPicker::addWadPath(const QString &wadPath)

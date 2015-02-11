@@ -24,6 +24,7 @@
 #define id09997e3e_b12d_406c_9c9a_3919ed3ff04d
 
 #include "irc/ops/ircdelayedoperation.h"
+#include "dptr.h"
 
 class IRCNetworkAdapter;
 
@@ -40,8 +41,7 @@ public:
 	void start();
 
 private:
-	class PrivData;
-	PrivData *d;
+	DPtr<IRCDelayedOperationBan> d;
 
 private slots:
 	void onWhoIsUser(const QString& nickname, const QString& user,

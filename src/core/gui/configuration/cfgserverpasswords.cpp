@@ -41,17 +41,17 @@ const int COL_SERV_LAST_TIME = 3;
 
 const QString HIDDEN_PASS = "***";
 
-class CFGServerPasswords::PrivData : public Ui::CFGServerPasswords
+DClass<CFGServerPasswords> : public Ui::CFGServerPasswords
 {
 	public:
 		bool bHidingPasswordsMode;
 };
 
+DPointered(CFGServerPasswords)
 
 CFGServerPasswords::CFGServerPasswords(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
-	d = new PrivData();
 	d->setupUi(this);
 	d->bHidingPasswordsMode = true;
 	hidePasswords();
@@ -64,7 +64,6 @@ CFGServerPasswords::CFGServerPasswords(QWidget* parent)
 
 CFGServerPasswords::~CFGServerPasswords()
 {
-	delete d;
 }
 
 void CFGServerPasswords::addPasswordFromLineEdit()

@@ -27,14 +27,15 @@
 
 #include <QDateTime>
 
-class IP2CUpdateBox::PrivData : public Ui::IP2CUpdateBox
+DClass<IP2CUpdateBox> : public Ui::IP2CUpdateBox
 {
 };
+
+DPointered(IP2CUpdateBox)
 
 IP2CUpdateBox::IP2CUpdateBox(QWidget* parent)
 : QDialog(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 
 	connect(d->btnUpdate, SIGNAL( clicked() ), this, SLOT( accept() ) );
@@ -45,7 +46,6 @@ IP2CUpdateBox::IP2CUpdateBox(QWidget* parent)
 
 IP2CUpdateBox::~IP2CUpdateBox()
 {
-	delete d;
 }
 
 void IP2CUpdateBox::updateInfo()

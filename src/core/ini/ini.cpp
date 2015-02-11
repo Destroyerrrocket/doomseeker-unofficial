@@ -29,21 +29,21 @@
 
 #include <cassert>
 
-class Ini::PrivData
+DClass<Ini>
 {
 	public:
 		SettingsProvider* provider;
 };
 
+DPointered(Ini)
+
 Ini::Ini(SettingsProvider* provider)
 {
-	d = new PrivData();
 	d->provider = provider;
 }
 
 Ini::~Ini()
 {
-	delete d;
 }
 
 IniVariable Ini::createSetting(const QString& sectionName, const QString& name, const QVariant& data)

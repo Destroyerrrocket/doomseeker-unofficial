@@ -33,7 +33,7 @@ QString StaticMessages::getMessage(unsigned messageType)
 	}
 }
 
-class Message::PrivData
+DClass<Message>
 {
 	public:
 		QString content;
@@ -41,23 +41,22 @@ class Message::PrivData
 		unsigned type;
 };
 
+DPointered(Message)
+
 Message::Message()
 {
-	d = new PrivData();
 	construct();
 	d->type = Type::IGNORE_TYPE;
 }
 
 Message::Message(unsigned type)
 {
-	d = new PrivData();
 	construct();
 	d->type = type;
 }
 
 Message::Message(unsigned type, const QString &content)
 {
-	d = new PrivData();
 	construct();
 	d->content = content;
 	d->type = type;
@@ -65,22 +64,17 @@ Message::Message(unsigned type, const QString &content)
 
 Message::Message(const Message &other)
 {
-	d = new PrivData();
-	*d = *other.d;
+	d = other.d;
 }
 
 Message &Message::operator=(const Message &other)
 {
-	if (this != &other)
-	{
-		*d = *other.d;
-	}
+	d = other.d;
 	return *this;
 }
 
 Message::~Message()
 {
-	delete d;
 }
 
 void Message::construct()

@@ -31,20 +31,20 @@
 #include "log.h"
 #include "main.h"
 
-class CFGAppearance::PrivData : public Ui::CFGAppearance
+DClass<CFGAppearance> : public Ui::CFGAppearance
 {
 };
+
+DPointered(CFGAppearance)
 
 CFGAppearance::CFGAppearance(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 }
 
 CFGAppearance::~CFGAppearance()
 {
-	delete d;
 }
 
 void CFGAppearance::initLanguagesList()

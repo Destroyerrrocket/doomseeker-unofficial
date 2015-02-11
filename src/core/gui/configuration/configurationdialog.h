@@ -23,6 +23,8 @@
 #ifndef __CONFIGUREDIALOG_H_
 #define __CONFIGUREDIALOG_H_
 
+#include "dptr.h"
+
 #include <QDialog>
 
 class ConfigurationBaseBox;
@@ -105,8 +107,7 @@ class ConfigurationDialog : public QDialog
 		void onOptionListCurrentChanged(const QModelIndex &current, const QModelIndex &previous);
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<ConfigurationDialog> d;
 
 		bool hasItemOnList(QStandardItem* pItem) const;
 };

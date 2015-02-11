@@ -30,7 +30,7 @@
 #include <cassert>
 
 
-class CFGIRCDefineNetworkDialog::PrivData : public Ui::CFGIRCDefineNetworkDialog
+DClass<CFGIRCDefineNetworkDialog> : public Ui::CFGIRCDefineNetworkDialog
 {
 public:
 	static const int MAX_IRC_COMMAND_LENGTH = 512;
@@ -38,6 +38,8 @@ public:
 	QList<IRCNetworkEntity> existingNetworks;
 	QString originalDescription;
 };
+
+DPointered(CFGIRCDefineNetworkDialog)
 
 
 CFGIRCDefineNetworkDialog::CFGIRCDefineNetworkDialog(const IRCNetworkEntity& initValuesEntity, QWidget* parent)
@@ -56,7 +58,6 @@ CFGIRCDefineNetworkDialog::CFGIRCDefineNetworkDialog(QWidget* parent)
 
 CFGIRCDefineNetworkDialog::~CFGIRCDefineNetworkDialog()
 {
-	delete d;
 }
 
 void CFGIRCDefineNetworkDialog::accept()
@@ -80,7 +81,7 @@ bool CFGIRCDefineNetworkDialog::askToAcceptAnywayWhenCommandsBad(const QStringLi
 {
 	assert(!offenders.isEmpty() && "no offenders");
 	QString header = tr("Following commands have violated the IRC maximum byte "
-		"number limit (%1):\n\n").arg(PrivData::MAX_IRC_COMMAND_LENGTH);
+		"number limit (%1):\n\n").arg(PrivData<CFGIRCDefineNetworkDialog>::MAX_IRC_COMMAND_LENGTH);
 	QString footer = tr("\n\nIf saved, the script may not run properly.\n\n"
 		"Do you wish to save the script anyway?");
 	QStringList formattedOffenders = formatOffenders(offenders.mid(0, 10));
@@ -116,7 +117,6 @@ void CFGIRCDefineNetworkDialog::buttonClicked(QAbstractButton* button)
 
 void CFGIRCDefineNetworkDialog::construct()
 {
-	d = new PrivData();
 	d->setupUi(this);
 
 	connect(d->buttonBox, SIGNAL( clicked(QAbstractButton*) ), SLOT( buttonClicked(QAbstractButton*) ) );
@@ -204,7 +204,7 @@ QStringList CFGIRCDefineNetworkDialog::validateAutojoinCommands() const
 	QStringList offenders;
 	foreach (const QString& command, autojoinCommands())
 	{
-		if (command.toAscii().length() > PrivData::MAX_IRC_COMMAND_LENGTH)
+		if (command.toAscii().length() > PrivData<CFGIRCDefineNetworkDialog>::MAX_IRC_COMMAND_LENGTH)
 		{
 			offenders << command;
 		}

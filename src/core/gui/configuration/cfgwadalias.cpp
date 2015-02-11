@@ -27,7 +27,7 @@
 #include "gui/commongui.h"
 #include "pathfinder/filealias.h"
 
-class CFGWadAlias::PrivData : public Ui::CFGWadAlias
+DClass<CFGWadAlias> : public Ui::CFGWadAlias
 {
 public:
 	enum Columns
@@ -37,20 +37,20 @@ public:
 	};
 };
 
+DPointered(CFGWadAlias)
+
 CFGWadAlias::CFGWadAlias(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
-	d = new PrivData();
 	d->setupUi(this);
 	QHeaderView *header = d->table->horizontalHeader();
-	header->resizeSection(PrivData::ColWad, 150);
-	header->setResizeMode(PrivData::ColAliases, QHeaderView::Stretch);
-	d->table->sortByColumn(PrivData::ColWad, Qt::AscendingOrder);
+	header->resizeSection(PrivData<CFGWadAlias>::ColWad, 150);
+	header->setResizeMode(PrivData<CFGWadAlias>::ColAliases, QHeaderView::Stretch);
+	d->table->sortByColumn(PrivData<CFGWadAlias>::ColWad, Qt::AscendingOrder);
 }
 
 CFGWadAlias::~CFGWadAlias()
 {
-	delete d;
 }
 
 void CFGWadAlias::addAliasToTable(const FileAlias &alias)
@@ -93,8 +93,8 @@ void CFGWadAlias::addNewEntry()
 
 	int row = d->table->rowCount();
 	d->table->insertRow(row);
-	d->table->setItem(row, PrivData::ColWad, new QTableWidgetItem());
-	d->table->setItem(row, PrivData::ColAliases, new QTableWidgetItem());
+	d->table->setItem(row, PrivData<CFGWadAlias>::ColWad, new QTableWidgetItem());
+	d->table->setItem(row, PrivData<CFGWadAlias>::ColAliases, new QTableWidgetItem());
 
 	d->table->setSortingEnabled(wasSortingEnabled);
 }
@@ -116,8 +116,8 @@ QList<FileAlias> CFGWadAlias::aliases() const
 FileAlias CFGWadAlias::aliasFromRow(int row) const
 {
 	FileAlias alias;
-	alias.setName(d->table->item(row, PrivData::ColWad)->text().trimmed());
-	QStringList candidateAliases = d->table->item(row, PrivData::ColAliases)->text().split(";");
+	alias.setName(d->table->item(row, PrivData<CFGWadAlias>::ColWad)->text().trimmed());
+	QStringList candidateAliases = d->table->item(row, PrivData<CFGWadAlias>::ColAliases)->text().split(";");
 	foreach (const QString &candidateAlias, candidateAliases)
 	{
 		if (!candidateAlias.trimmed().isEmpty())
@@ -130,15 +130,15 @@ FileAlias CFGWadAlias::aliasFromRow(int row) const
 
 void CFGWadAlias::applyAliasToRow(int row, const FileAlias &alias)
 {
-	d->table->setItem(row, PrivData::ColWad, toolTipItem(alias.name()));
-	d->table->setItem(row, PrivData::ColAliases, toolTipItem(alias.aliases().join("; ")));
+	d->table->setItem(row, PrivData<CFGWadAlias>::ColWad, toolTipItem(alias.name()));
+	d->table->setItem(row, PrivData<CFGWadAlias>::ColAliases, toolTipItem(alias.aliases().join("; ")));
 }
 
 int CFGWadAlias::findRowWithWad(const QString &wadName)
 {
 	for (int row = 0; row < d->table->rowCount(); ++row)
 	{
-		if (d->table->item(row, PrivData::ColWad)->text().trimmed().compare(
+		if (d->table->item(row, PrivData<CFGWadAlias>::ColWad)->text().trimmed().compare(
 			wadName.trimmed(), Qt::CaseInsensitive) == 0)
 		{
 			return row;

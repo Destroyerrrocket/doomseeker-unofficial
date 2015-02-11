@@ -23,6 +23,8 @@
 #ifndef id1E18D75F_28FA_48A1_9CACE55638B41394
 #define id1E18D75F_28FA_48A1_9CACE55638B41394
 
+#include "dptr.h"
+
 #include <QList>
 #include <QSettings>
 #include <QString>
@@ -79,8 +81,7 @@ class PasswordsCfg
 		static Ini* ini;
 		static QSettings* settings;
 
-		class PrivData;
-		PrivData* d;
+		DPtr<PasswordsCfg> d;
 
 		void cutServers(QList<ServerPassword>& passwords) const;
 		void cutStoredServers();

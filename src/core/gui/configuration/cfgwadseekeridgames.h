@@ -24,6 +24,7 @@
 #define __WADSEEKERCONFIG_IDGAMES_H_
 
 #include "gui/configuration/configurationbasebox.h"
+#include "dptr.h"
 #include <QIcon>
 
 class CFGWadseekerIdgames : public ConfigurationBaseBox
@@ -46,8 +47,7 @@ class CFGWadseekerIdgames : public ConfigurationBaseBox
 		void saveSettings();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<CFGWadseekerIdgames> d;
 };
 
 #endif

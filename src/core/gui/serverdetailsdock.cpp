@@ -31,13 +31,14 @@
 #include "serverapi/serverstructs.h"
 #include "serverapi/tooltips/tooltipgenerator.h"
 
-class ServerDetailsDock::PrivData : public Ui::ServerDetailsDock
+DClass<ServerDetailsDock> : public Ui::ServerDetailsDock
 {
 };
 
+DPointered(ServerDetailsDock)
+
 ServerDetailsDock::ServerDetailsDock(QWidget *parent) : QDockWidget(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 	this->toggleViewAction()->setIcon(QIcon(":/icons/server_details.png"));
 
@@ -46,7 +47,6 @@ ServerDetailsDock::ServerDetailsDock(QWidget *parent) : QDockWidget(parent)
 
 ServerDetailsDock::~ServerDetailsDock()
 {
-	delete d;
 }
 
 void ServerDetailsDock::clear()

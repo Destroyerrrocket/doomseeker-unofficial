@@ -30,22 +30,22 @@ type tmp; \
 (*d->s) >> tmp; \
 return tmp;
 
-class DataStreamOperatorWrapper::PrivData
+DClass<DataStreamOperatorWrapper>
 {
 	public:
 		QDataStream *s;
 };
 
+DPointered(DataStreamOperatorWrapper)
+
 DataStreamOperatorWrapper::DataStreamOperatorWrapper(QDataStream* stream)
 {
 	assert(stream != NULL);
-	d = new PrivData();
 	d->s = stream;
 }
 
 DataStreamOperatorWrapper::~DataStreamOperatorWrapper()
 {
-	delete d;
 }
 
 QDataStream* DataStreamOperatorWrapper::dataStream()

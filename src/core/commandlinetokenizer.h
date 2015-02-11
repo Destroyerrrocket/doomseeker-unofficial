@@ -23,6 +23,8 @@
 #ifndef idFC7A2485_BC0B_42CB_A9A3892937F60D8D
 #define idFC7A2485_BC0B_42CB_A9A3892937F60D8D
 
+#include "dptr.h"
+
 #include <QString>
 #include <QStringList>
 

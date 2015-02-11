@@ -26,15 +26,16 @@
 #include <QPointer>
 #include <cassert>
 
-class CreateServerDialogApi::PrivData
+DClass<CreateServerDialogApi>
 {
 public:
 	QPointer<CreateServerDialog> dialog;
 };
 
+DPointered(CreateServerDialogApi)
+
 CreateServerDialogApi::CreateServerDialogApi(QWidget *parent)
 {
-	d = new PrivData();
 	d->dialog = new CreateServerDialog(parent);
 }
 
@@ -44,7 +45,6 @@ CreateServerDialogApi::~CreateServerDialogApi()
 	{
 		delete d->dialog;
 	}
-	delete d;
 }
 
 CreateServerDialogApi *CreateServerDialogApi::createNew(QWidget *parent)

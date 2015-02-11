@@ -23,6 +23,8 @@
 #ifndef idC00B9C6A_977E_4970_B5CD88B85BB926A9
 #define idC00B9C6A_977E_4970_B5CD88B85BB926A9
 
+#include "dptr.h"
+
 #include <QAbstractItemModel>
 
 class IRCCompletionResult
@@ -58,10 +60,7 @@ class IRCNicknameCompleter
 		void setModel(QAbstractItemModel *model);
 
 	private:
-		class PrivData;
-		PrivData *d;
-
-		class State;
+		DPtr<IRCNicknameCompleter> d;
 };
 
 #endif

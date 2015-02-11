@@ -31,14 +31,15 @@
 #include <QMessageBox>
 #include <QUrl>
 
-class CFGWadseekerIdgames::PrivData : public Ui::CFGWadseekerIdgames
+DClass<CFGWadseekerIdgames> : public Ui::CFGWadseekerIdgames
 {
 };
+
+DPointered(CFGWadseekerIdgames)
 
 CFGWadseekerIdgames::CFGWadseekerIdgames(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 
 	connect(d->btnIdgamesURLDefault, SIGNAL( clicked() ), this, SLOT( btnIdgamesURLDefaultClicked() ) );
@@ -47,7 +48,6 @@ CFGWadseekerIdgames::CFGWadseekerIdgames(QWidget* parent)
 
 CFGWadseekerIdgames::~CFGWadseekerIdgames()
 {
-	delete d;
 }
 
 void CFGWadseekerIdgames::btnIdgamesURLDefaultClicked()

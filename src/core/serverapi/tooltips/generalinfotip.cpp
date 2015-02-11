@@ -25,21 +25,21 @@
 #include "ip2c/ip2c.h"
 #include "serverapi/server.h"
 
-class GeneralInfoTip::PrivData
+DClass<GeneralInfoTip>
 {
 	public:
 		ServerCPtr server;
 };
 
+DPointered(GeneralInfoTip)
+
 GeneralInfoTip::GeneralInfoTip(const ServerCPtr &server)
 {
-	d = new PrivData();
 	d->server = server;
 }
 
 GeneralInfoTip::~GeneralInfoTip()
 {
-	delete d;
 }
 
 QString GeneralInfoTip::generateHTML()

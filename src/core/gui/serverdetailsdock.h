@@ -27,6 +27,7 @@
 #include <QDockWidget>
 
 #include "serverapi/serverptr.h"
+#include "dptr.h"
 
 class ServerDetailsDock : public QDockWidget
 {
@@ -47,8 +48,7 @@ private:
 	void reorientContentsBasingOnDimensions();
 	ServerPtr selectServer(QList<ServerPtr>&);
 
-	class PrivData;
-	PrivData *d;
+	DPtr<ServerDetailsDock> d;
 };
 
 #endif

@@ -24,6 +24,7 @@
 #define __WADSEEKERCONFIG_GENERAL_H_
 
 #include "gui/configuration/configurationbasebox.h"
+#include "dptr.h"
 #include <QIcon>
 
 class CFGWadseekerGeneral : public ConfigurationBaseBox
@@ -44,8 +45,7 @@ class CFGWadseekerGeneral : public ConfigurationBaseBox
 		void saveSettings();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<CFGWadseekerGeneral> d;
 };
 
 #endif

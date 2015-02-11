@@ -28,21 +28,21 @@
 #include "serverapi/tooltips/playertable.h"
 #include "serverapi/server.h"
 
-class TooltipGenerator::PrivData
+DClass<TooltipGenerator>
 {
 	public:
 		ServerCPtr server;
 };
 
+DPointered(TooltipGenerator)
+
 TooltipGenerator::TooltipGenerator(const ServerCPtr &server)
 {
-	d = new PrivData();
 	d->server = server;
 }
 
 TooltipGenerator::~TooltipGenerator()
 {
-	delete d;
 }
 
 QString TooltipGenerator::dmflagsHTML()

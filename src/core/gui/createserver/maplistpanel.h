@@ -23,6 +23,8 @@
 #ifndef id73b8c7bf_fc0d_416b_bda8_e1252e0763c0
 #define id73b8c7bf_fc0d_416b_bda8_e1252e0763c0
 
+#include "dptr.h"
+
 #include <QWidget>
 
 class EnginePlugin;
@@ -45,8 +47,7 @@ public:
 private:
 	void addMapToMaplist(const QString &map);
 
-	class PrivData;
-	PrivData *d;
+	DPtr<MapListPanel> d;
 private slots:
 	void addMapFromEditBoxToList();
 	void onFocusChanged(QWidget* old, QWidget* now);

@@ -28,20 +28,20 @@
 #include "log.h"
 #include <cassert>
 
-class CFGAutoUpdates::PrivData : public Ui::CFGAutoUpdates
+DClass<CFGAutoUpdates> : public Ui::CFGAutoUpdates
 {
 };
+
+DPointered(CFGAutoUpdates)
 
 CFGAutoUpdates::CFGAutoUpdates(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 }
 
 CFGAutoUpdates::~CFGAutoUpdates()
 {
-	delete d;
 }
 
 void CFGAutoUpdates::initUpdateChannels()

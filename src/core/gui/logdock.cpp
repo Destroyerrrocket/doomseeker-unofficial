@@ -25,13 +25,14 @@
 #include "ui_logdock.h"
 #include <QClipboard>
 
-class LogDock::PrivData : public Ui::LogDock
+DClass<LogDock> : public Ui::LogDock
 {
 };
 
+DPointered(LogDock)
+
 LogDock::LogDock(QWidget* parent) : QDockWidget(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 	this->toggleViewAction()->setIcon(QIcon(":/icons/log.png"));
 
@@ -41,7 +42,6 @@ LogDock::LogDock(QWidget* parent) : QDockWidget(parent)
 
 LogDock::~LogDock()
 {
-	delete d;
 }
 
 void LogDock::appendLogEntry(const QString& entry)

@@ -27,7 +27,7 @@
 const QString ServerPasswordType::CONNECT = "Connect";
 const QString ServerPasswordType::INGAME = "InGame";
 
-class ServerPasswordSummary::PrivData
+DClass<ServerPasswordSummary>
 {
 	public:
 		ServerSummary serverSummary;
@@ -38,23 +38,20 @@ class ServerPasswordSummary::PrivData
 		QString type;
 };
 
-COPYABLE_D_POINTERED_DEFINE(ServerPasswordSummary)
+DPointered(ServerPasswordSummary)
 
 ServerPasswordSummary::ServerPasswordSummary()
 {
-	d = new PrivData();
 }
 
 ServerPasswordSummary::ServerPasswordSummary(const Server *server, const QString &type)
 {
-	d = new PrivData();
 	d->serverSummary = ServerSummary(server);
 	d->type = type;
 }
 
 ServerPasswordSummary::~ServerPasswordSummary()
 {
-	delete d;
 }
 
 ServerPasswordSummary ServerPasswordSummary::deserializeQVariant(const QVariant& v)

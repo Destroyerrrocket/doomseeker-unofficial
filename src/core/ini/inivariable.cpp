@@ -26,7 +26,7 @@
 
 #include <cassert>
 
-class IniVariable::PrivData
+DClass<IniVariable>
 {
 	public:
 		/**
@@ -41,23 +41,20 @@ class IniVariable::PrivData
 		QString key;
 };
 
-COPYABLE_D_POINTERED_DEFINE(IniVariable);
+DPointered(IniVariable)
 
 IniVariable::IniVariable()
 {
-	d = new PrivData();
 }
 
 IniVariable::IniVariable(const IniSection &section, const QString& key)
 {
-	d = new PrivData();
 	d->section = section;
 	d->key = key;
 }
 
 IniVariable::~IniVariable()
 {
-	delete d;
 }
 
 IniVariable::operator bool() const

@@ -36,6 +36,7 @@
 #define idB4E0ED4E_CB13_4106_84A03E8713EF4A09
 
 #include "ini/settingsprovider.h"
+#include "dptr.h"
 #include <QSettings>
 
 /**
@@ -55,8 +56,7 @@ class MAIN_EXPORT SettingsProviderQt : public SettingsProvider
 		QVariant value(const QString& key, QVariant defValue = QVariant()) const;
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<SettingsProviderQt> d;
 };
 
 #endif // header

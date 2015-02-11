@@ -1,6 +1,8 @@
 #ifndef idBE97C916_2BFB_4C8C_B530CA666606FA7D
 #define idBE97C916_2BFB_4C8C_B530CA666606FA7D
 
+#include "dptr.h"
+
 #include <QObject>
 
 class IP2CLoader : public QObject
@@ -19,9 +21,7 @@ class IP2CLoader : public QObject
 		void finished();
 
 	private:
-		class PrivData;
-
-		PrivData* d;
+		DPtr<IP2CLoader> d;
 
 		void ip2cJobsFinished();
 		void ip2cParseDatabase();

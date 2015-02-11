@@ -31,7 +31,7 @@
 
 #include <QLineEdit>
 
-class PasswordDlg::PrivData : public Ui::PasswordDlg
+DClass<PasswordDlg> : public Ui::PasswordDlg
 {
 	public:
 		ServerCPtr server;
@@ -39,10 +39,11 @@ class PasswordDlg::PrivData : public Ui::PasswordDlg
 		ComboBoxEx *cboIngamePassEx;
 };
 
+DPointered(PasswordDlg)
+
 PasswordDlg::PasswordDlg(ServerCPtr server, QWidget *parent)
 : QDialog(parent)
 {
-	d = new PrivData();
 	d->setupUi(this);
 	d->cboConnectPassEx = new ComboBoxEx(*d->cboConnectPassword);
 	d->cboIngamePassEx = new ComboBoxEx(*d->cboIngamePassword);
@@ -61,7 +62,6 @@ PasswordDlg::PasswordDlg(ServerCPtr server, QWidget *parent)
 PasswordDlg::~PasswordDlg()
 {
 	delete d->cboConnectPassEx;
-	delete d;
 }
 
 void PasswordDlg::accept()

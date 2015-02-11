@@ -24,6 +24,7 @@
 #define idEB6A779F_CFBD_4900_AFC803D7BF80EC31
 
 #include "gui/configuration/configurationbasebox.h"
+#include "dptr.h"
 #include <QIcon>
 
 class ServerPassword;
@@ -47,8 +48,7 @@ class CFGServerPasswords : public ConfigurationBaseBox
 		void saveSettings();
 
 	private:
-		class PrivData;
-		PrivData* d;
+		DPtr<CFGServerPasswords> d;
 
 		void addServerPasswordToTable(const ServerPassword& password);
 		void clearTable(QTableWidget* table);

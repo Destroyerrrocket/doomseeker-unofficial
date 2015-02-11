@@ -23,7 +23,7 @@
 #ifndef idA2EA6505_8AD6_40F7_AD19A3DFD8DBC961
 #define idA2EA6505_8AD6_40F7_AD19A3DFD8DBC961
 
-#include "dpointer.h"
+#include "dptr.h"
 #include <QString>
 #include <QVariant>
 
@@ -41,8 +41,6 @@ class ServerPasswordSummary
 {
 	public:
 		static ServerPasswordSummary deserializeQVariant(const QVariant& v);
-
-		COPYABLE_D_POINTERED_DECLARE(ServerPasswordSummary)
 
 		ServerPasswordSummary();
 		/**
@@ -98,9 +96,7 @@ class ServerPasswordSummary
 		const QString &typeWithCompatibility() const;
 
 	private:
-		class PrivData;
-		PrivData *d;
-
+		DPtr<ServerPasswordSummary> d;
 };
 
 #endif

@@ -32,7 +32,7 @@
 
 #include <QWidget>
 
-class ServerListProxyModel::PrivData
+DClass<ServerListProxyModel>
 {
 	public:
 		QList<ColumnSort> additionalSortColumns;
@@ -66,10 +66,11 @@ class ServerListProxyModel::PrivData
 		}
 };
 
+DPointered(ServerListProxyModel)
+
 ServerListProxyModel::ServerListProxyModel(ServerListHandler* serverListHandler)
 : QSortFilterProxyModel(serverListHandler)
 {
-	d = new PrivData();
 	d->groupServersWithPlayersAtTop = true;
 	d->mainSortColumn = -1;
 	d->parentHandler = serverListHandler;
@@ -77,7 +78,6 @@ ServerListProxyModel::ServerListProxyModel(ServerListHandler* serverListHandler)
 
 ServerListProxyModel::~ServerListProxyModel()
 {
-	delete d;
 }
 
 void ServerListProxyModel::addAdditionalColumnSorting(int column, Qt::SortOrder order)

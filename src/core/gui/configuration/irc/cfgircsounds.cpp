@@ -9,14 +9,15 @@
 
 #include <QFileDialog>
 
-class CFGIRCSounds::PrivData : public Ui::CFGIRCSounds
+DClass<CFGIRCSounds> : public Ui::CFGIRCSounds
 {
 };
+
+DPointered(CFGIRCSounds)
 
 CFGIRCSounds::CFGIRCSounds(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 
 	this->connect(d->btnBrowseNicknameUsed, SIGNAL( clicked() ), SLOT( btnBrowseNicknameUsedClicked() ) );
@@ -25,7 +26,6 @@ CFGIRCSounds::CFGIRCSounds(QWidget* parent)
 
 CFGIRCSounds::~CFGIRCSounds()
 {
-	delete d;
 }
 
 void CFGIRCSounds::btnBrowseNicknameUsedClicked()

@@ -27,13 +27,13 @@
 #include <QCompleter>
 #include <QRegExp>
 
-class IRCNicknameCompleter::State
+class IRCNicknameCompleterState
 {
 	public:
 		int cursorPos;
 		QString textLine;
 
-		State()
+		IRCNicknameCompleterState()
 		{
 			cursorPos = -1;
 		}
@@ -69,11 +69,11 @@ class IRCNicknameCompleter::State
 		}
 };
 
-class IRCNicknameCompleter::PrivData
+DClass<IRCNicknameCompleter>
 {
 	public:
 		QCompleter completer;
-		IRCNicknameCompleter::State state;
+		IRCNicknameCompleterState state;
 
 		IRCCompletionResult complete()
 		{
@@ -92,22 +92,22 @@ class IRCNicknameCompleter::PrivData
 		}
 };
 
+DPointeredNoCopy(IRCNicknameCompleter)
+
 IRCNicknameCompleter::IRCNicknameCompleter()
 {
-	d = new PrivData();
 	d->completer.setCaseSensitivity(Qt::CaseInsensitive);
 	d->completer.setCompletionRole(IRCUserListModel::RoleCleanNickname);
 }
 
 IRCNicknameCompleter::~IRCNicknameCompleter()
 {
-	delete d;
 }
 
 IRCCompletionResult IRCNicknameCompleter::complete(const QString &textLine,
 	int cursorPosition)
 {
-	d->state = State();
+	d->state = IRCNicknameCompleterState();
 	d->state.cursorPos = cursorPosition;
 	d->state.textLine = textLine;
 
@@ -140,7 +140,7 @@ bool IRCNicknameCompleter::isReset() const
 
 void IRCNicknameCompleter::reset()
 {
-	d->state = State();
+	d->state = IRCNicknameCompleterState();
 }
 
 void IRCNicknameCompleter::setModel(QAbstractItemModel *model)

@@ -25,19 +25,20 @@
 #include "gui/mainwindow.h"
 #include <cassert>
 
-class Application::PrivData
+DClass<Application>
 {
 	public:
 		MainWindow *mainWindow;
 		bool running;
 };
 
+DPointered(Application)
+
 Application *Application::staticInstance = NULL;
 
 Application::Application(int &argc, char **argv)
 : QApplication(argc, argv)
 {
-	d = new PrivData();
 	d->mainWindow = NULL;
 	d->running = true;
 }
@@ -45,7 +46,6 @@ Application::Application(int &argc, char **argv)
 
 Application::~Application()
 {
-	delete d;
 }
 
 void Application::deinit()

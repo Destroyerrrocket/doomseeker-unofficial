@@ -24,6 +24,7 @@
 #define __DOOMSEEKERCONFIG_H__
 
 #include "customservers.h"
+#include "dptr.h"
 #include "gui/entity/serverlistfilterinfo.h"
 #include "serverapi/buddyinfo.h"
 #include <QScopedPointer>
@@ -120,8 +121,7 @@ class DoomseekerConfig
 			void save(IniSection& section);
 
 			private:
-				class PrivData;
-				PrivData *d;
+				DPtr<DoomseekerCfg> d;
 		};
 
 		class AutoUpdates

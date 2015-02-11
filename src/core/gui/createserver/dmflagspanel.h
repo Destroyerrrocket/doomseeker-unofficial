@@ -23,6 +23,8 @@
 #ifndef id76bed8d4_95b3_443b_9d90_4f95b6310cf8
 #define id76bed8d4_95b3_443b_9d90_4f95b6310cf8
 
+#include "dptr.h"
+
 #include <QWidget>
 #include <QtContainerFwd>
 
@@ -43,10 +45,7 @@ public:
 	void saveConfig(Ini &config);
 
 private:
-	class DMFlagsTabWidget;
-
-	class PrivData;
-	PrivData *d;
+	DPtr<DMFlagsPanel> d;
 
 	QList<DMFlagsSection> dmFlags() const;
 	void removeDMFlagsTabs();

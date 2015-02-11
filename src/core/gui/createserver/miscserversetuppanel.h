@@ -23,6 +23,8 @@
 #ifndef id163550df_b0ab_4873_9092_4bd572bb3ab8
 #define id163550df_b0ab_4873_9092_4bd572bb3ab8
 
+#include "dptr.h"
+
 #include <QWidget>
 
 class GameCreateParams;
@@ -44,8 +46,7 @@ public:
 	void setupForEngine(const EnginePlugin *engine);
 
 private:
-	class PrivData;
-	PrivData *d;
+	DPtr<MiscServerSetupPanel> d;
 };
 
 #endif

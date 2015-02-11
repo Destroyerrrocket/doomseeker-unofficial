@@ -24,6 +24,7 @@
 #define DOOMSEEKER_GUI_CREATESERVERDIALOG_H
 
 #include "serverapi/serverstructs.h"
+#include "dptr.h"
 #include <QDialog>
 
 class CreateServerDialogPage;
@@ -66,8 +67,7 @@ class CreateServerDialog : public QDialog
 	private:
 		static const QString TEMP_SERVER_CONFIG_FILENAME;
 
-		class PrivData;
-		PrivData *d;
+		DPtr<CreateServerDialog> d;
 
 		/**
 		 * Adds IWAD path to the IWAD ComboBox.

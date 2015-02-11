@@ -23,6 +23,8 @@
 #ifndef ide3012154_3afe_40a7_890a_8954265af33b
 #define ide3012154_3afe_40a7_890a_8954265af33b
 
+#include "dptr.h"
+
 #include <QDialog>
 
 class ProgramArgsHelpDialog : public QDialog
@@ -32,8 +34,7 @@ public:
 	~ProgramArgsHelpDialog();
 
 private:
-	class PrivData;
-	PrivData *d;
+	DPtr<ProgramArgsHelpDialog> d;
 };
 
 #endif

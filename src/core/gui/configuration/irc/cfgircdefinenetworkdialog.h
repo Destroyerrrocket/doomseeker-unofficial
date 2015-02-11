@@ -23,6 +23,8 @@
 #ifndef __CFGIRCDEFINENETWORKDIALOG_H__
 #define __CFGIRCDEFINENETWORKDIALOG_H__
 
+#include "dptr.h"
+
 #include <QDialog>
 #include <QtContainerFwd>
 
@@ -48,8 +50,7 @@ class CFGIRCDefineNetworkDialog : public QDialog
 		void accept();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<CFGIRCDefineNetworkDialog> d;
 
 		bool askToAcceptAnywayWhenCommandsBad(const QStringList& offenders);
 		QStringList autojoinCommands() const;

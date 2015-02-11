@@ -6,7 +6,7 @@
 #include "irc/ircnetworkadapter.h"
 #include "version.h"
 
-class IRCCtcpParser::PrivData
+DClass<IRCCtcpParser>
 {
 	public:
 		QString command;
@@ -21,10 +21,11 @@ class IRCCtcpParser::PrivData
 		QString sender;
 };
 
+DPointered(IRCCtcpParser)
+
 IRCCtcpParser::IRCCtcpParser(IRCNetworkAdapter *network, const QString &sender,
 	const QString &recipient, const QString &msg, MessageType msgType)
 {
-	d = new PrivData();
 	d->echo = DontShow;
 	d->msg = msg;
 	d->msgType = msgType;
@@ -35,7 +36,6 @@ IRCCtcpParser::IRCCtcpParser(IRCNetworkAdapter *network, const QString &sender,
 
 IRCCtcpParser::~IRCCtcpParser()
 {
-	delete d;
 }
 
 IRCCtcpParser::CtcpEcho IRCCtcpParser::echo() const

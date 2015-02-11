@@ -28,17 +28,18 @@
 #include "irc/entities/ircnetworkentity.h"
 #include "patternlist.h"
 
-class IRCIgnoresManager::PrivData : public Ui::IRCIgnoresManager
+DClass<IRCIgnoresManager> : public Ui::IRCIgnoresManager
 {
 public:
 	QString networkDescription;
 };
 
+DPointered(IRCIgnoresManager)
+
 
 IRCIgnoresManager::IRCIgnoresManager(QWidget *parent, const QString &networkDescription)
 : QDialog(parent)
 {
-	d = new PrivData();
 	d->networkDescription = networkDescription;
 	d->setupUi(this);
 
@@ -47,7 +48,6 @@ IRCIgnoresManager::IRCIgnoresManager(QWidget *parent, const QString &networkDesc
 
 IRCIgnoresManager::~IRCIgnoresManager()
 {
-	delete d;
 }
 
 void IRCIgnoresManager::done(int result)

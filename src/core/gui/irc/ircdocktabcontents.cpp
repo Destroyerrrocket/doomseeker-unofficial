@@ -54,7 +54,7 @@
 
 const int IRCDockTabContents::BLINK_TIMER_DELAY_MS = 650;
 
-class IRCDockTabContents::PrivData : public Ui::IRCDockTabContents
+DClass<IRCDockTabContents> : public Ui::IRCDockTabContents
 {
 public:
 	QFile log;
@@ -81,6 +81,8 @@ public:
 	QStringList textOutputContents;
 	::IRCDockTabContents::UserListMenu* userListContextMenu;
 };
+
+DPointeredNoCopy(IRCDockTabContents)
 
 class IRCDockTabContents::UserListMenu : public QMenu
 {
@@ -109,7 +111,6 @@ class IRCDockTabContents::UserListMenu : public QMenu
 
 IRCDockTabContents::IRCDockTabContents(IRCDock* pParentIRCDock)
 {
-	d = new PrivData();
 	d->setupUi(this);
 	d->lastMessageDate = QDateTime::currentDateTime();
 
@@ -165,8 +166,6 @@ IRCDockTabContents::~IRCDockTabContents()
 		pIrcAdapter = NULL;
 		delete pTmpAdapter;
 	}
-
-	delete d;
 }
 
 void IRCDockTabContents::adapterFocusRequest()

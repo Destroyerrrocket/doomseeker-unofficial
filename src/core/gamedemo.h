@@ -23,6 +23,8 @@
 #ifndef ida153f497_2308_468a_8825_d9e06386db7a
 #define ida153f497_2308_468a_8825_d9e06386db7a
 
+#include "dptr.h"
+
 #include <QString>
 
 class EnginePlugin;

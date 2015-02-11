@@ -23,6 +23,8 @@
 #ifndef DOOMSEEKER_UPDATER_UPDATERSCRIPTPARSER_H
 #define DOOMSEEKER_UPDATER_UPDATERSCRIPTPARSER_H
 
+#include "dptr.h"
+
 #include <QDomDocument>
 #include <QString>
 
@@ -76,13 +78,11 @@ class UpdaterScriptParser
 		QString setPackageName(const QString& name);
 
 	private:
-		class PrivData;
-
 		static QDomNode installNode(const QDomDocument& doc);
 		static QString msgMainElementMissingError();
 		static QDomNode packagesNode(const QDomDocument& doc);
 
-		PrivData* d;
+		DPtr<UpdaterScriptParser> d;
 
 		QDomElement mainElement();
 		QString setPackageNameInFiles(const QString& name);

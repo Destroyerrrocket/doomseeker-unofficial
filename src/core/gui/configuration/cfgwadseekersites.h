@@ -24,6 +24,7 @@
 #define __WADSEEKERCONFIG_SITES_H_
 
 #include "gui/configuration/configurationbasebox.h"
+#include "dptr.h"
 #include <QIcon>
 
 class QUrl;
@@ -51,8 +52,7 @@ class CFGWadseekerSites : public ConfigurationBaseBox
 		void insertUrl(const QUrl& url);
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<CFGWadseekerSites> d;
 };
 
 #endif

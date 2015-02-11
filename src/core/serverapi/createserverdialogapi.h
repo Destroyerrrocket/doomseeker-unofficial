@@ -24,6 +24,7 @@
 #define idebec7725_01df_4b56_a803_07fb69a062ad
 
 #include "global.h"
+#include "dptr.h"
 #include <QDialog>
 
 class EnginePlugin;
@@ -92,8 +93,7 @@ public:
 private:
 	Q_DISABLE_COPY(CreateServerDialogApi);
 
-	class PrivData;
-	PrivData *d;
+	DPtr<CreateServerDialogApi> d;
 
 	CreateServerDialogApi(QWidget *parent);
 };

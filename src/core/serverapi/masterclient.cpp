@@ -36,7 +36,7 @@
 #include <QMessageBox>
 #include <QUdpSocket>
 
-class MasterClient::PrivData
+DClass<MasterClient>
 {
 	public:
 		QHostAddress address;
@@ -61,11 +61,12 @@ class MasterClient::PrivData
 		QString (MasterClient::*masterBanHelp)() const;
 };
 
+DPointered(MasterClient)
+
 POLYMORPHIC_DEFINE_CONST(QString, MasterClient, masterBanHelp, (), ());
 
 MasterClient::MasterClient()
 {
-	d = new PrivData();
 	d->cache = NULL;
 	d->timeouted = false;
 	d->enabled = true;
@@ -81,7 +82,6 @@ MasterClient::~MasterClient()
 	{
 		delete d->cache;
 	}
-	delete d;
 }
 
 void MasterClient::clearServers()

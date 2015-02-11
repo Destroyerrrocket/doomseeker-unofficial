@@ -25,23 +25,23 @@
 #include "serverapi/server.h"
 #include "serverapi/serverstructs.h"
 
-class GameInfoTip::PrivData
+DClass<GameInfoTip>
 {
 	public:
 		ServerCPtr server;
 };
 
+DPointered(GameInfoTip)
+
 const QString GameInfoTip::UNLIMITED = QObject::tr("Unlimited");
 
 GameInfoTip::GameInfoTip(const ServerCPtr &server)
 {
-	d = new PrivData();
 	d->server = server;
 }
 
 GameInfoTip::~GameInfoTip()
 {
-	delete d;
 }
 
 QString GameInfoTip::generateHTML()

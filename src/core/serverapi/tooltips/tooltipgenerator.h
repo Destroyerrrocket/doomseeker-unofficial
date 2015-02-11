@@ -24,6 +24,7 @@
 #define __TOOLTIP_GENERATOR_H_
 
 #include "serverapi/serverptr.h"
+#include "dptr.h"
 #include "global.h"
 #include <QString>
 #include <QObject>
@@ -63,8 +64,7 @@ class MAIN_EXPORT TooltipGenerator : public QObject
 		ServerCPtr server() const;
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<TooltipGenerator> d;
 };
 
 #endif

@@ -309,7 +309,7 @@ void IP2CParser::readTextDatabase(QByteArray& textDatabase, Countries& countries
 	// Trim the header
 	textDatabase = textDatabase.right(textDatabase.size() - indexOfNewLine);
 
-	Scanner sc = Scanner(textDatabase.constData(), textDatabase.count());
+	Scanner sc(textDatabase.constData(), textDatabase.count());
 	countries.clear();
 	while(sc.tokensLeft())
 	{

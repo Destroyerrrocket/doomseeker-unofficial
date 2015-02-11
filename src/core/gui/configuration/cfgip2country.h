@@ -25,6 +25,7 @@
 #define __CFG_IP2COUNTRY_H__
 
 #include "gui/configuration/configurationbasebox.h"
+#include "dptr.h"
 #include <QIcon>
 
 class CFGIP2Country : public ConfigurationBaseBox
@@ -43,8 +44,7 @@ class CFGIP2Country : public ConfigurationBaseBox
 		void saveSettings();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<CFGIP2Country> d;
 };
 
 #endif

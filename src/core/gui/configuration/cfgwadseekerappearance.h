@@ -24,6 +24,7 @@
 #define __WADSEEKERCONFIGAPPEARANCE_H__
 
 #include "gui/configuration/configurationbasebox.h"
+#include "dptr.h"
 #include <QIcon>
 
 class CFGWadseekerAppearance : public ConfigurationBaseBox
@@ -43,8 +44,7 @@ class CFGWadseekerAppearance : public ConfigurationBaseBox
 		void saveSettings();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<CFGWadseekerAppearance> d;
 };
 
 #endif

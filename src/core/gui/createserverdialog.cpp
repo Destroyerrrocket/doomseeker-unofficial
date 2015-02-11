@@ -41,7 +41,7 @@
 #include <QMessageBox>
 #include <QTimer>
 
-class CreateServerDialog::PrivData : public Ui::CreateServerDialog
+DClass<CreateServerDialog> : public Ui::CreateServerDialog
 {
 	public:
 		bool remoteGameSetup;
@@ -49,12 +49,13 @@ class CreateServerDialog::PrivData : public Ui::CreateServerDialog
 		EnginePlugin *currentEngine;
 };
 
+DPointered(CreateServerDialog)
+
 const QString CreateServerDialog::TEMP_SERVER_CONFIG_FILENAME = "/tmpserver.ini";
 
 CreateServerDialog::CreateServerDialog(QWidget* parent)
 : QDialog(parent)
 {
-	d = new PrivData();
 	// Have the console delete itself
 	setAttribute(Qt::WA_DeleteOnClose);
 
@@ -72,7 +73,6 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 
 CreateServerDialog::~CreateServerDialog()
 {
-	delete d;
 }
 
 void CreateServerDialog::btnCommandLineClicked()

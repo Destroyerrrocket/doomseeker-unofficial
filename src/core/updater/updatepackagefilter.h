@@ -25,6 +25,7 @@
 
 #include "updater/updatechannel.h"
 #include "updater/updatepackage.h"
+#include "dptr.h"
 #include <QList>
 #include <QMap>
 #include <QString>
@@ -76,9 +77,9 @@ class UpdatePackageFilter
 
 	private:
 		class PluginInfo;
-		class PrivData;
 
-		PrivData* d;
+		DPtr<UpdatePackageFilter> d;
+		friend class PrivData<UpdatePackageFilter>;
 
 		QMap<QString, PluginInfo> collectPluginInfo();
 		bool isDifferentThanInstalled(UpdatePackage& pkg) const;

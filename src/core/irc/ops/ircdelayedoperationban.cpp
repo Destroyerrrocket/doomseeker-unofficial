@@ -26,7 +26,7 @@
 #include "irc/ircresponseparser.h"
 #include "irc/ircnetworkadapter.h"
 
-class IRCDelayedOperationBan::PrivData
+DClass<IRCDelayedOperationBan>
 {
 public:
 	QString channel;
@@ -40,12 +40,12 @@ public:
 	}
 };
 
+DPointered(IRCDelayedOperationBan)
 
 IRCDelayedOperationBan::IRCDelayedOperationBan(IRCNetworkAdapter *network,
 	const QString &channel, const QString &nickname, QObject *parent)
 : IRCDelayedOperation(parent)
 {
-	d = new PrivData();
 	d->channel = channel;
 	d->nickname = nickname;
 	d->network = network;
@@ -56,7 +56,6 @@ IRCDelayedOperationBan::IRCDelayedOperationBan(IRCNetworkAdapter *network,
 
 IRCDelayedOperationBan::~IRCDelayedOperationBan()
 {
-	delete d;
 }
 
 void IRCDelayedOperationBan::start()

@@ -23,6 +23,8 @@
 #ifndef DOOMSEEKER_UPDATER_UPDATERINFOPARSER_H
 #define DOOMSEEKER_UPDATER_UPDATERINFOPARSER_H
 
+#include "dptr.h"
+
 #include <QByteArray>
 #include <QList>
 #include <QVariantMap>
@@ -53,9 +55,7 @@ class UpdaterInfoParser : public QObject
 		int parse(const QByteArray& json);
 
 	private:
-		class PrivData;
-
-		PrivData* d;
+		DPtr<UpdaterInfoParser> d;
 
 		int parsePackageNode(const QString& packageName, const QVariantMap& map);
 };

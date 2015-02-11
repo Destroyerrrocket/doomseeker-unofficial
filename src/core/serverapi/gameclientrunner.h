@@ -27,6 +27,7 @@
 #include "serverapi/joinerror.h"
 #include "serverapi/polymorphism.h"
 #include "serverapi/serverptr.h"
+#include "dptr.h"
 #include "global.h"
 #include <QObject>
 #include <QString>
@@ -70,8 +71,7 @@ class MAIN_EXPORT ServerConnectParams
 		void setInGamePassword(const QString& val);
 
 	private:
-		class PrivData;
-		PrivData* d;
+		DPtr<ServerConnectParams> d;
 };
 
 /**
@@ -378,9 +378,7 @@ class MAIN_EXPORT GameClientRunner : public QObject
 				}
 		};
 
-		class PrivData;
-
-		PrivData* d;
+		DPtr<GameClientRunner> d;
 
 		bool canDownloadWadsInGame() const;
 		bool isFatalError() const;

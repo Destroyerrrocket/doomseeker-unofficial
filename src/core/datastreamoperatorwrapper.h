@@ -26,6 +26,7 @@
 #include <QDataStream>
 
 #include "global.h"
+#include "dptr.h"
 
 /**
  * @ingroup group_pluginapi
@@ -113,8 +114,7 @@ class MAIN_EXPORT DataStreamOperatorWrapper
 		int skipRawData(int len);
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<DataStreamOperatorWrapper> d;
 };
 
 #endif

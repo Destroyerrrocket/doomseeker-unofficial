@@ -42,7 +42,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class Server::PrivData
+DClass<Server>
 {
 	public:
 		PrivData()
@@ -87,7 +87,7 @@ class Server::PrivData
 		QTime pingClock;
 		PlayersList players;
 		bool randomMapRotation;
-		Response response;
+		Server::Response response;
 		QList<int> scores;
 		unsigned int scoreLimit;
 		unsigned short timeLeft;
@@ -114,8 +114,10 @@ class Server::PrivData
 
 		QString (Server::*customDetails)();
 		QByteArray (Server::*createSendRequest)();
-		Response (Server::*readRequest)(const QByteArray&);
+		Server::Response (Server::*readRequest)(const QByteArray&);
 };
+
+DPointeredNoCopy(Server)
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -130,7 +132,6 @@ QString Server::teamNames[] =
 Server::Server(const QHostAddress &address, unsigned short port)
 : QObject()
 {
-	d = new PrivData();
 	d->address = address;
 	d->port = port;
 	d->bIsRefreshing = false;
@@ -169,7 +170,6 @@ Server::Server(const QHostAddress &address, unsigned short port)
 Server::~Server()
 {
 	clearDMFlags();
-	delete d;
 }
 
 POLYMORPHIC_DEFINE(QString, Server, customDetails, (), ());

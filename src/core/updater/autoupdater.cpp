@@ -38,7 +38,7 @@
 #include <QTemporaryFile>
 #include <cassert>
 
-class AutoUpdater::PrivData
+DClass<AutoUpdater>
 {
 	public:
 		/// All scripts are merged to create one big script for all packages.
@@ -51,7 +51,7 @@ class AutoUpdater::PrivData
 		UpdateChannel channel;
 		UpdatePackage currentlyDownloadedPackage;
 		QStringList downloadedPackagesFilenames;
-		ErrorCode errorCode;
+		AutoUpdater::ErrorCode errorCode;
 		QMap<QString, QList<unsigned long long> > ignoredPackagesRevisions;
 		QList<UpdatePackage> newUpdatePackages;
 		QList<UpdatePackage> packagesInDownloadQueue;
@@ -59,6 +59,9 @@ class AutoUpdater::PrivData
 		FixedNetworkAccessManager* pNam;
 		QNetworkReply* pNetworkReply;
 };
+
+DPointered(AutoUpdater)
+
 //////////////////////////////////////////////////////////////////////////////
 
 const QString AutoUpdater::PLUGIN_PREFIX = "p-";
@@ -69,7 +72,6 @@ const QString AutoUpdater::UPDATER_INFO_URL_BASE = "http://doomseeker.drdteam.or
 AutoUpdater::AutoUpdater(QObject* pParent)
 : QObject(pParent)
 {
-	d = new PrivData();
 	d->bDownloadAndInstallRequireConfirmation = false;
 	d->bPackageDownloadStarted = false;
 	d->bIsRunning = false;
@@ -94,7 +96,6 @@ AutoUpdater::~AutoUpdater()
 	}
 	d->pNam->disconnect();
 	d->pNam->deleteLater();
-	delete d;
 }
 
 void AutoUpdater::abort()

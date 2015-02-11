@@ -23,6 +23,8 @@
 #ifndef id6733139c_96d4_4ad7_bc7a_04bf8a85f5bf
 #define id6733139c_96d4_4ad7_bc7a_04bf8a85f5bf
 
+#include "dptr.h"
+
 #include <QWidget>
 
 class GameCreateParams;
@@ -43,8 +45,7 @@ public:
 private:
 	void loadIwads();
 
-	class PrivData;
-	PrivData *d;
+	DPtr<IwadPicker> d;
 private slots:
 	void browse();
 };

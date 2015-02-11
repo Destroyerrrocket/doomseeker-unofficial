@@ -24,6 +24,7 @@
 #define DOOMSEEKER_GUI_WIDGETS_CREATESERVERDIALOGPAGE_H
 
 #include "global.h"
+#include "dptr.h"
 #include <QWidget>
 
 class CreateServerDialog;
@@ -91,8 +92,7 @@ class MAIN_EXPORT CreateServerDialogPage : public QWidget
 		QDialog* parentDialog();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<CreateServerDialogPage> d;
 };
 
 #endif

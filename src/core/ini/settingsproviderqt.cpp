@@ -36,21 +36,21 @@
 
 #include <cassert>
 
-class SettingsProviderQt::PrivData
+DClass<SettingsProviderQt>
 {
 	public:
 		QSettings* target;
 };
 
+DPointered(SettingsProviderQt)
+
 SettingsProviderQt::SettingsProviderQt(QSettings* target)
 {
-	d = new PrivData();
 	d->target = target;
 }
 
 SettingsProviderQt::~SettingsProviderQt()
 {
-	delete d;
 }
 
 QStringList SettingsProviderQt::allKeys() const

@@ -23,6 +23,8 @@
 #ifndef id98fdc6b8_d51c_4a3b_a61e_91ddc4105daf
 #define id98fdc6b8_d51c_4a3b_a61e_91ddc4105daf
 
+#include "dptr.h"
+
 #include <QObject>
 #include <QString>
 #include <QThread>
@@ -68,8 +70,7 @@ public:
 	static void lookupHost(const QString &name, QObject *receiver, const char *receiverSlot);
 
 private:
-	class PrivData;
-	PrivData *d;
+	DPtr<LookupHost> d;
 
 	static LookupHost *instance();
 	static LookupHost *inst;

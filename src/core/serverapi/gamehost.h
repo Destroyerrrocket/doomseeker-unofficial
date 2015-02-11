@@ -23,6 +23,7 @@
 #ifndef idABA35264_C99B_49FA_BEDEDB4F5978C7EC
 #define idABA35264_C99B_49FA_BEDEDB4F5978C7EC
 
+#include "dptr.h"
 #include "global.h"
 #include "serverapi/polymorphism.h"
 #include <QObject>
@@ -239,8 +240,7 @@ class MAIN_EXPORT GameHost : public QObject
 		void setMessage(const Message& message);
 
 	private:
-		class PrivData;
-		PrivData* d;
+		DPtr<GameHost> d;
 
 		Q_DISABLE_COPY(GameHost);
 

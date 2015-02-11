@@ -41,7 +41,7 @@
 #include <QMessageBox>
 #include <QUrl>
 
-class ConnectionHandler::PrivData
+DClass<ConnectionHandler>
 {
 	public:
 		bool handleResponse;
@@ -49,11 +49,12 @@ class ConnectionHandler::PrivData
 		QWidget *parentWidget;
 };
 
+DPointered(ConnectionHandler)
+
 ConnectionHandler::ConnectionHandler(ServerPtr server, QWidget *parentWidget,
 	bool handleResponse)
 : QObject(parentWidget)
 {
-	d = new PrivData();
 	d->handleResponse = handleResponse;
 	d->server = server;
 	d->parentWidget = parentWidget;
@@ -63,7 +64,6 @@ ConnectionHandler::ConnectionHandler(ServerPtr server, QWidget *parentWidget,
 
 ConnectionHandler::~ConnectionHandler()
 {
-	delete d;
 }
 
 void ConnectionHandler::checkResponse(const ServerPtr &server, int response)

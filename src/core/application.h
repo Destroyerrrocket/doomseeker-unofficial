@@ -24,6 +24,7 @@
 #define id5E252D92_36B9_40C2_964DBFD7D0E99622
 
 #include "global.h"
+#include "dptr.h"
 
 #include <QApplication>
 
@@ -94,8 +95,7 @@ class MAIN_EXPORT Application : public QApplication
 		void stopRunning();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<Application> d;
 
 		static Application *staticInstance;
 

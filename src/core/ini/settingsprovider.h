@@ -36,6 +36,7 @@
 #define idEB87F251C_EC08_4EFE_9DC1754821652427
 
 #include "global.h"
+#include "dptr.h"
 
 #include <QString>
 #include <QStringList>
@@ -65,8 +66,7 @@ class MAIN_EXPORT SettingsProvider
 		void copyFrom(const SettingsProvider& other);
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<SettingsProvider> d;
 };
 
 #endif // header

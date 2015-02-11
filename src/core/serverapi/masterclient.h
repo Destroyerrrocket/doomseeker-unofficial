@@ -28,6 +28,7 @@
 #include <QHostAddress>
 #include <QList>
 
+#include "dptr.h"
 #include "global.h"
 #include "polymorphism.h"
 #include "serverapi/serverptr.h"
@@ -223,8 +224,7 @@ class MAIN_EXPORT MasterClient : public QObject
 		virtual void timeoutRefreshEx();
 
 	private:
-		class PrivData;
-		PrivData* d;
+		DPtr<MasterClient> d;
 
 		void emitBannedMessage();
 };

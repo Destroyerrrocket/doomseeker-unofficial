@@ -23,7 +23,7 @@
 #ifndef idCA954A5A_EF00_4F51_9C9782634F191143
 #define idCA954A5A_EF00_4F51_9C9782634F191143
 
-#include "dpointer.h"
+#include "dptr.h"
 #include <QString>
 #include <QStringList>
 
@@ -33,7 +33,6 @@ class WadFindResult
 {
 	public:
 		WadFindResult();
-		COPYABLE_D_POINTERED_DECLARE(WadFindResult);
 		virtual ~WadFindResult();
 
 		const QString &alias() const;
@@ -46,8 +45,7 @@ class WadFindResult
 		void setPath(const QString &val);
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<WadFindResult> d;
 };
 
 /**
@@ -62,8 +60,7 @@ class WadPathFinder
 		WadFindResult find(const QString &name);
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<WadPathFinder> d;
 
 		QStringList aliases(const QString &name) const;
 };

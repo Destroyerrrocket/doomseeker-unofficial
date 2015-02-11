@@ -33,16 +33,17 @@
 const int WadseekerInterface::UPDATE_INTERVAL_MS = 500;
 WadseekerInterface *WadseekerInterface::currentInstance = NULL;
 
-class WadseekerInterface::PrivData : public Ui::WadseekerInterface
+DClass<WadseekerInterface> : public Ui::WadseekerInterface
 {
 public:
 	bool bCompletedSuccessfully;
 };
 
+DPointered(WadseekerInterface)
+
 WadseekerInterface::WadseekerInterface(QWidget* parent)
 : QDialog(parent)
 {
-	d = new PrivData();
 	construct();
 	bAutomatic = false;
 }
@@ -50,7 +51,6 @@ WadseekerInterface::WadseekerInterface(QWidget* parent)
 WadseekerInterface::WadseekerInterface(ServerPtr server, QWidget* parent)
 : QDialog(parent)
 {
-	d = new PrivData();
 	construct();
 	bAutomatic = true;
 	d->lblTop->setText(tr("Downloading WADs for server \"%1\"").arg(server->name()));
@@ -61,7 +61,6 @@ WadseekerInterface::WadseekerInterface(ServerPtr server, QWidget* parent)
 
 WadseekerInterface::~WadseekerInterface()
 {
-	delete d;
 	currentInstance = NULL;
 }
 

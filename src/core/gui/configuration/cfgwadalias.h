@@ -24,6 +24,7 @@
 #define idBE57B8CD_234F_4EEE_AC1B1FAAFB11B1CD
 
 #include "gui/configuration/configurationbasebox.h"
+#include "dptr.h"
 
 class FileAlias;
 class QTableWidgetItem;
@@ -45,8 +46,7 @@ class CFGWadAlias : public ConfigurationBaseBox
 		void saveSettings();
 
 	private:
-		class PrivData;
-		PrivData* d;
+		DPtr<CFGWadAlias> d;
 
 		void addAliasToTable(const FileAlias &alias);
 		FileAlias aliasFromRow(int row) const;

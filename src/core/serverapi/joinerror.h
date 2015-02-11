@@ -23,6 +23,7 @@
 #ifndef id0375B082_FEE9_4270_B314893A57DB3840
 #define id0375B082_FEE9_4270_B314893A57DB3840
 
+#include "dptr.h"
 #include "global.h"
 #include <QString>
 #include <QStringList>
@@ -89,8 +90,7 @@ class MAIN_EXPORT JoinError
 		JoinErrorType type() const;
 
 	private:
-		class PrivData;
-		PrivData* d;
+		DPtr<JoinError> d;
 };
 
 #endif

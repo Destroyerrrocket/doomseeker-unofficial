@@ -25,8 +25,7 @@
 
 #include "serverapi/playerslist.h"
 #include "serverapi/serverptr.h"
-#include <QHash>
-#include <QList>
+#include "dptr.h"
 #include <QObject>
 #include <QString>
 
@@ -41,8 +40,7 @@ class PlayerTable : public QObject
 		QString generateHTML();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<PlayerTable> d;
 
 		/**
 		 *	@brief Sets numOfColumns based on pServer states.

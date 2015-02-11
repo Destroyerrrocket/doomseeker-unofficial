@@ -25,6 +25,7 @@
 #define __CFG_QUERY_H__
 
 #include "gui/configuration/configurationbasebox.h"
+#include "dptr.h"
 #include <QIcon>
 
 class CFGQuery : public ConfigurationBaseBox
@@ -43,8 +44,7 @@ class CFGQuery : public ConfigurationBaseBox
 		void saveSettings();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<CFGQuery> d;
 
 	private slots:
 		void setCautiousQueryPreset();

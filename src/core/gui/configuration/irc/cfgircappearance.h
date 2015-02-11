@@ -24,6 +24,7 @@
 #define __CFGIRCAPPEARANCE_H__
 
 #include "gui/configuration/configurationbasebox.h"
+#include "dptr.h"
 #include <QIcon>
 
 class CFGIRCAppearance : public ConfigurationBaseBox
@@ -43,8 +44,7 @@ class CFGIRCAppearance : public ConfigurationBaseBox
 		void saveSettings();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<CFGIRCAppearance> d;
 };
 
 #endif

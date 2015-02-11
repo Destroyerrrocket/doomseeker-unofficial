@@ -48,8 +48,7 @@ class CFGIRCSounds : public ConfigurationBaseBox
 		QString getPathToWav();
 		void setPath(QLineEdit* pLineEdit, const QString& path);
 
-		class PrivData;
-		PrivData *d;
+		DPtr<CFGIRCSounds> d;
 	private slots:
 		void btnBrowseNicknameUsedClicked();
 		void btnBrowsePrivateMessageClicked();

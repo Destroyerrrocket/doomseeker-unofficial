@@ -25,6 +25,7 @@
 
 #include "serverapi/serverptr.h"
 #include "wadseeker/wadseeker.h"
+#include "dptr.h"
 #include <QDialog>
 #include <QStringList>
 #include <QTimer>
@@ -74,8 +75,7 @@ class WadseekerInterface : public QDialog
 			Waiting = 1
 		};
 
-		class PrivData;
-		PrivData *d;
+		DPtr<WadseekerInterface> d;
 
 		static const int UPDATE_INTERVAL_MS;
 		static WadseekerInterface *currentInstance;

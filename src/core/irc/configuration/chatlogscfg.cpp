@@ -25,20 +25,19 @@
 #include "irc/configuration/ircconfig.h"
 #include "datapaths.h"
 
-class ChatLogsCfg::PrivData
+DClass<ChatLogsCfg>
 {
-public:
 };
+
+DPointered(ChatLogsCfg)
 
 
 ChatLogsCfg::ChatLogsCfg()
 {
-	d = new PrivData();
 }
 
 ChatLogsCfg::~ChatLogsCfg()
 {
-	delete d;
 }
 
 QString ChatLogsCfg::chatLogsRootDir() const

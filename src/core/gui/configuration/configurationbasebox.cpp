@@ -22,17 +22,18 @@
 //------------------------------------------------------------------------------
 #include "configurationbasebox.h"
 
-class ConfigurationBaseBox::PrivData
+DClass<ConfigurationBaseBox>
 {
 	public:
 		bool bAllowSave;
 		bool bSettingsAlreadyRead;
 };
 
+DPointered(ConfigurationBaseBox)
+
 ConfigurationBaseBox::ConfigurationBaseBox(QWidget* parent)
 : QWidget(parent)
 {
-	d = new PrivData();
 	d->bAllowSave = false;
 	d->bSettingsAlreadyRead = false;
 	hide();
@@ -40,7 +41,6 @@ ConfigurationBaseBox::ConfigurationBaseBox(QWidget* parent)
 
 ConfigurationBaseBox::~ConfigurationBaseBox()
 {
-	delete d;
 }
 
 bool ConfigurationBaseBox::allowSave()

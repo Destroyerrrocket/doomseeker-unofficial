@@ -47,7 +47,7 @@
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
-class PluginLoader::Plugin::PrivData
+DClass<PluginLoader::Plugin>
 {
 	public:
 		EnginePlugin *info;
@@ -59,9 +59,10 @@ class PluginLoader::Plugin::PrivData
 		#endif
 };
 
+DPointered(PluginLoader::Plugin)
+
 PluginLoader::Plugin::Plugin(unsigned int type, QString file)
 {
-	d = new PrivData();
 	d->file = file;
 	// Load the library
 	d->library = dlopen(d->file.toAscii().constData(), RTLD_NOW);
@@ -102,7 +103,6 @@ PluginLoader::Plugin::Plugin(unsigned int type, QString file)
 PluginLoader::Plugin::~Plugin()
 {
 	unload();
-	delete d;
 }
 
 void *PluginLoader::Plugin::function(const char* func) const
@@ -139,19 +139,20 @@ void PluginLoader::Plugin::unload()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-class PluginLoader::PrivData
+DClass<PluginLoader>
 {
 	public:
 		unsigned int type;
 		QString pluginsDirectory;
-		QList<Plugin*> plugins;
+		QList<PluginLoader::Plugin*> plugins;
 };
+
+DPointered(PluginLoader)
 
 PluginLoader *PluginLoader::staticInstance = NULL;
 
 PluginLoader::PluginLoader(unsigned int type, const QStringList &directories)
 {
-	d = new PrivData();
 	d->type = type;
 	foreach (const QString &dir, directories)
 	{
@@ -170,7 +171,6 @@ PluginLoader::PluginLoader(unsigned int type, const QStringList &directories)
 PluginLoader::~PluginLoader()
 {
 	qDeleteAll(d->plugins);
-	delete d;
 }
 
 void PluginLoader::clearPlugins()

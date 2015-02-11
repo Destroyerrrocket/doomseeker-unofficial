@@ -23,6 +23,8 @@
 #ifndef id254128BC_CE43_41C3_A9C0DD520BECAB15
 #define id254128BC_CE43_41C3_A9C0DD520BECAB15
 
+#include "dptr.h"
+
 #include <QDialog>
 
 class EnginePlugin;
@@ -40,8 +42,7 @@ class RconPasswordDialog : public QDialog
 		QString serverAddress() const;
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<RconPasswordDialog> d;
 };
 
 #endif

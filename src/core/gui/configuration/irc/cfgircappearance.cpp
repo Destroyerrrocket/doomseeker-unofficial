@@ -24,20 +24,20 @@
 #include "ui_cfgircappearance.h"
 #include "irc/configuration/ircconfig.h"
 
-class CFGIRCAppearance::PrivData : public Ui::CFGIRCAppearance
+DClass<CFGIRCAppearance> : public Ui::CFGIRCAppearance
 {
 };
+
+DPointered(CFGIRCAppearance)
 
 CFGIRCAppearance::CFGIRCAppearance(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 }
 
 CFGIRCAppearance::~CFGIRCAppearance()
 {
-	delete d;
 }
 
 void CFGIRCAppearance::readSettings()

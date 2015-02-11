@@ -27,20 +27,20 @@
 #include "json.h"
 #include "log.h"
 
-class UpdaterInfoParser::PrivData
+DClass<UpdaterInfoParser>
 {
 	public:
 		QList<UpdatePackage> packages;
 };
+
+DPointered(UpdaterInfoParser)
 //////////////////////////////////////////////////////////////////////////////
 UpdaterInfoParser::UpdaterInfoParser()
 {
-	d = new PrivData();
 }
 
 UpdaterInfoParser::~UpdaterInfoParser()
 {
-	delete d;
 }
 
 const QList<UpdatePackage>& UpdaterInfoParser::packages() const

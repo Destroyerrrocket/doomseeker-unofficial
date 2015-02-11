@@ -118,7 +118,7 @@ class QQueryMenuAction : public QAction
 		MasterClient* pClient;
 };
 
-class MainWindow::PrivData : public Ui::MainWindowWnd
+DClass<MainWindow> : public Ui::MainWindowWnd
 {
 public:
 	PrivData() : bTotalRefreshInProcess(false), buddiesList(NULL),
@@ -179,9 +179,10 @@ public:
 	QDockWidget *mainDock;
 };
 
+DPointeredNoCopy(MainWindow)
+
 MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 {
-	d = new PrivData;
 	d->autoUpdater = NULL;
 	d->mainDock = NULL;
 	d->connectionHandler = NULL;
@@ -342,8 +343,6 @@ MainWindow::~MainWindow()
 	{
 		delete d->ip2cLoader;
 	}
-
-	delete d;
 }
 
 void MainWindow::abortAutoUpdater()

@@ -31,7 +31,7 @@
 #include <QString>
 #include <QFileInfo>
 
-class ExeFile::PrivData
+DClass<ExeFile>
 {
 	public:
 		QString configKey;
@@ -39,14 +39,14 @@ class ExeFile::PrivData
 		QString programName;
 };
 
+DPointered(ExeFile)
+
 ExeFile::ExeFile()
 {
-	d = new PrivData();
 }
 
 ExeFile::~ExeFile()
 {
-	delete d;
 }
 
 const QString& ExeFile::configKey() const

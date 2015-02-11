@@ -25,7 +25,7 @@
 #include "plugins/engineplugin.h"
 #include "serverapi/exefile.h"
 
-class GameExeFactory::PrivData
+DClass<GameExeFactory>
 {
 public:
 	EnginePlugin* plugin;
@@ -34,9 +34,10 @@ public:
 	ExeFile* (GameExeFactory::*server)();
 };
 
+DPointered(GameExeFactory)
+
 GameExeFactory::GameExeFactory(EnginePlugin* plugin)
 {
-	d = new PrivData();
 	d->plugin = plugin;
 
 	set_offline(&GameExeFactory::offline_default);
@@ -45,7 +46,6 @@ GameExeFactory::GameExeFactory(EnginePlugin* plugin)
 
 GameExeFactory::~GameExeFactory()
 {
-	delete d;
 }
 
 POLYMORPHIC_DEFINE(ExeFile*, GameExeFactory, offline, (), ());

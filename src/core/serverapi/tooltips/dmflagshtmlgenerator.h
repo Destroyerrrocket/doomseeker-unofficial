@@ -24,6 +24,7 @@
 #define id0CB78D4D_98A3_4FF4_B664C60EAD35E524
 
 #include "serverapi/serverptr.h"
+#include "dptr.h"
 #include <QObject>
 #include <QString>
 
@@ -38,8 +39,7 @@ class DmflagsHtmlGenerator : public QObject
 		QString generate();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<DmflagsHtmlGenerator> d;
 };
 
 #endif // header

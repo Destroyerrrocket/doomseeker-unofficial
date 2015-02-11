@@ -24,22 +24,20 @@
 
 #include "ui_iwadandwadspickerdialog.h"
 
-class IwadAndWadsPickerDialog::PrivData : public Ui::IwadAndWadsPickerDialog
+DClass<IwadAndWadsPickerDialog> : public Ui::IwadAndWadsPickerDialog
 {
-public:
 };
 
+DPointered(IwadAndWadsPickerDialog)
 
 IwadAndWadsPickerDialog::IwadAndWadsPickerDialog(QWidget *parent)
 : QDialog(parent)
 {
-	d = new PrivData();
 	d->setupUi(this);
 }
 
 IwadAndWadsPickerDialog::~IwadAndWadsPickerDialog()
 {
-	delete d;
 }
 
 QStringList IwadAndWadsPickerDialog::filePaths() const

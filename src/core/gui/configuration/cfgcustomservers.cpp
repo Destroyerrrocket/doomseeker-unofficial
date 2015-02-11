@@ -33,14 +33,15 @@
 const // clear warnings
 #include "unknownengine.xpm"
 
-class CFGCustomServers::PrivData : public Ui::CFGCustomServers
+DClass<CFGCustomServers> : public Ui::CFGCustomServers
 {
 };
+
+DPointered(CFGCustomServers)
 
 CFGCustomServers::CFGCustomServers(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 
 	connect(d->btnAdd, SIGNAL( clicked() ), this, SLOT( add() ));
@@ -52,7 +53,6 @@ CFGCustomServers::CFGCustomServers(QWidget *parent)
 
 CFGCustomServers::~CFGCustomServers()
 {
-	delete d;
 }
 
 void CFGCustomServers::add()

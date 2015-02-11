@@ -28,20 +28,18 @@
 #include "irc/entities/ircnetworkentity.h"
 #include "irc/chatlogs.h"
 
-class ChatLogArchive::PrivData
+DClass<ChatLogArchive>
 {
-public:
 };
 
+DPointered(ChatLogArchive)
 
 ChatLogArchive::ChatLogArchive()
 {
-	d = new PrivData();
 }
 
 ChatLogArchive::~ChatLogArchive()
 {
-	delete d;
 }
 
 QString ChatLogArchive::archiveDirPath(const IRCNetworkEntity &network, const QString &recipient)

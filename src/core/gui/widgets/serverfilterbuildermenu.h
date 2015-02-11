@@ -23,6 +23,8 @@
 #ifndef id33120EA3_7525_471D_B8AAE607B642CC00
 #define id33120EA3_7525_471D_B8AAE607B642CC00
 
+#include "dptr.h"
+
 #include <QMenu>
 
 class Server;
@@ -40,9 +42,7 @@ class ServerFilterBuilderMenu : public QMenu
 		const ServerListFilterInfo& filter() const;
 
 	private:
-		class PrivData;
-
-		PrivData* d;
+		DPtr<ServerFilterBuilderMenu> d;
 
 		QAction* addAction(QMenu* menu, const QString& text, const char* slot);
 		QAction* mkExcludeWadAction(QMenu* menu, const QString& wadName);

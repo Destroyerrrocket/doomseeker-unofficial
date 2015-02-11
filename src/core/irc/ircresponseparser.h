@@ -24,6 +24,7 @@
 #define __IRCRESPONSEPARSER_H__
 
 #include "irc/entities/ircresponseparseresult.h"
+#include "dptr.h"
 
 #include <QDateTime>
 #include <QObject>
@@ -122,8 +123,7 @@ class IRCResponseParser : public QObject
 			FlagModeError
 		};
 
-		class PrivData;
-		PrivData *d;
+		DPtr<IRCResponseParser> d;
 
 		bool isPrefixIgnored() const;
 		QString joinAndTrimColonIfNecessary(const QStringList& strList) const;

@@ -31,14 +31,15 @@
 #include <QItemDelegate>
 #include <QStandardItemModel>
 
-class CFGIRCNetworks::PrivData : public Ui::CFGIRCNetworks
+DClass<CFGIRCNetworks> : public Ui::CFGIRCNetworks
 {
 };
+
+DPointered(CFGIRCNetworks)
 
 CFGIRCNetworks::CFGIRCNetworks(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 
 	connect(d->btnAdd, SIGNAL( clicked() ), this, SLOT( addButtonClicked() ) );
@@ -53,8 +54,6 @@ CFGIRCNetworks::CFGIRCNetworks(QWidget* parent)
 CFGIRCNetworks::~CFGIRCNetworks()
 {
 	cleanUpTable();
-
-	delete d;
 }
 
 void CFGIRCNetworks::addButtonClicked()

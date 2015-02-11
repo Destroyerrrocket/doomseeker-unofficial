@@ -24,6 +24,7 @@
 #define __DEMOMANAGER_H__
 
 #include "global.h"
+#include "dptr.h"
 
 #include <QDialog>
 
@@ -49,8 +50,7 @@ class DemoManagerDlg : public QDialog
 		void adjustDemoList();
 		bool doRemoveDemo(const QString &file);
 
-		class PrivData;
-		PrivData *d;
+		DPtr<DemoManagerDlg> d;
 };
 
 #endif

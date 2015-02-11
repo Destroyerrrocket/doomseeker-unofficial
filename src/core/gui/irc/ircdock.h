@@ -23,6 +23,8 @@
 #ifndef __IRCDOCK_H_
 #define __IRCDOCK_H_
 
+#include "dptr.h"
+
 #include <QDockWidget>
 
 class IRCAdapterBase;
@@ -56,8 +58,7 @@ class IRCDock : public QDockWidget
 		IRCDockTabContents *tabWithFocus();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<IRCDock> d;
 
 		IRCNetworkAdapter* networkWithUiFocus();
 

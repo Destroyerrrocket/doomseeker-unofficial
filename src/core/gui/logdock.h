@@ -23,6 +23,8 @@
 #ifndef __LOGDOCK_H_
 #define __LOGDOCK_H_
 
+#include "dptr.h"
+
 #include <QDockWidget>
 
 /**
@@ -48,8 +50,7 @@ class LogDock : public QDockWidget
 		void btnCopyClicked();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<LogDock> d;
 };
 
 #endif

@@ -23,6 +23,8 @@
 #ifndef __SERVERFILTERDOCK_H__
 #define __SERVERFILTERDOCK_H__
 
+#include "dptr.h"
+
 #include <QDockWidget>
 
 class ServerListFilterInfo;
@@ -60,8 +62,7 @@ class ServerFilterDock : public QDockWidget
 		void nonEmptyServerGroupingAtTopToggled(bool b);
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<ServerFilterDock> d;
 
 		void addSortedNonDuplicate(QComboBox* comboBox, const QString& text);
 

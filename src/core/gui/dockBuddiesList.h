@@ -26,6 +26,7 @@
 
 #include "serverapi/buddyinfo.h"
 #include "serverapi/serverptr.h"
+#include "dptr.h"
 
 #include <QDialog>
 #include <QDockWidget>
@@ -61,17 +62,13 @@ class DockBuddiesList : public QDockWidget
 		void joinServer(const ServerPtr &server);
 		void scanCompleted();
 
-	protected:
-		class BuddyLocationInfo;
-
 	protected slots:
 		void deleteBuddy();
 		void followBuddy(const QModelIndex &index);
 		void patternsListContextMenu(const QPoint &pos) const;
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<DockBuddiesList> d;
 
 		const MasterManager *masterClient;
 		bool save;
@@ -92,8 +89,7 @@ class AddBuddyDlg : public QDialog
 		void buttonBoxClicked(QAbstractButton *button);
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<AddBuddyDlg> d;
 };
 
 #endif /* __DOCKBUDDIESLIST_H__ */

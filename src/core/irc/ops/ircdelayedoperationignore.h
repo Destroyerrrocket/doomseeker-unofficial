@@ -24,6 +24,7 @@
 #define id6d18a0bf_8b5a_44d2_be14_a0de3c5175fe
 
 #include "irc/ops/ircdelayedoperation.h"
+#include "dptr.h"
 
 class IRCNetworkAdapter;
 
@@ -42,8 +43,7 @@ public:
 	void start();
 
 private:
-	class PrivData;
-	PrivData *d;
+	DPtr<IRCDelayedOperationIgnore> d;
 
 private slots:
 	void onWhoIsUser(const QString& nickname, const QString& user,

@@ -23,6 +23,8 @@
 #ifndef DOOMSEEKER_UPDATER_AUTOUPDATER_H
 #define DOOMSEEKER_UPDATER_AUTOUPDATER_H
 
+#include "dptr.h"
+
 #include <QDomDocument>
 #include <QNetworkReply>
 #include <QObject>
@@ -240,9 +242,7 @@ class AutoUpdater : public QObject
 		void packageDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
 
 	private:
-		class PrivData;
-
-		PrivData* d;
+		DPtr<AutoUpdater> d;
 
 		/**
 		 * @brief Updates package name to fit the current package filename.

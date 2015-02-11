@@ -23,6 +23,8 @@
 #ifndef idAF497E8F_22A5_4630_ACB761050B5AF2BF
 #define idAF497E8F_22A5_4630_ACB761050B5AF2BF
 
+#include "dptr.h"
+
 #include <QUrl>
 #include <QObject>
 
@@ -36,10 +38,10 @@ public:
 	void open(const QUrl &url);
 
 private:
-	class PrivData;
-	PrivData *d;
+	DPtr<UrlOpener> d;
 
 	UrlOpener();
+	~UrlOpener();
 
 	static UrlOpener *inst;
 

@@ -26,6 +26,7 @@
 #include "ini/inisection.h"
 #include "ini/inivariable.h"
 #include "global.h"
+#include "dptr.h"
 #include <QString>
 #include <QStringList>
 #include <QVector>
@@ -142,8 +143,7 @@ class MAIN_EXPORT Ini : public QObject
 		QVariant value(const QString& key) const;
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<Ini> d;
 };
 
 #endif

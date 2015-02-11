@@ -25,6 +25,7 @@
 #define __CONFIGURATION_BASE_BOX_H_
 
 #include "global.h"
+#include "dptr.h"
 #include <QWidget>
 
 /**
@@ -116,8 +117,7 @@ class MAIN_EXPORT ConfigurationBaseBox : public QWidget
 		virtual void saveSettings()=0;
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<ConfigurationBaseBox> d;
 };
 
 #endif

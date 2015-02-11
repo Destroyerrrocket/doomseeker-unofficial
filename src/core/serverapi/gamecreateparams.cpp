@@ -26,7 +26,7 @@
 #include "gamedemo.h"
 #include <QFileInfo>
 
-class GameCreateParams::PrivData
+DClass<GameCreateParams>
 {
 	public:
 		bool broadcastToLan;
@@ -57,13 +57,10 @@ class GameCreateParams::PrivData
 		QString url;
 };
 
-
-COPYABLE_D_POINTERED_DEFINE(GameCreateParams);
-
+DPointered(GameCreateParams)
 
 GameCreateParams::GameCreateParams()
 {
-	d = new PrivData();
 	d->broadcastToLan = true;
 	d->broadcastToMaster = true;
 	d->randomMapRotation = false;
@@ -75,7 +72,6 @@ GameCreateParams::GameCreateParams()
 
 GameCreateParams::~GameCreateParams()
 {
-	delete d;
 }
 
 const QString& GameCreateParams::connectPassword() const

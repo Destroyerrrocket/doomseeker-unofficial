@@ -25,6 +25,7 @@
 #define __ENGINECONFIGBASE_H__
 
 #include "gui/configuration/configurationbasebox.h"
+#include "dptr.h"
 
 class EnginePlugin;
 class IniSection;
@@ -89,8 +90,7 @@ class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox
 		void saveSettings();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<EngineConfigurationBaseBox> d;
 
 		QString currentCustomParameters() const;
 		void makeClientOnly();

@@ -23,6 +23,8 @@
 #ifndef id659CC023_3107_4F93_87BF5FE76A9468E9
 #define id659CC023_3107_4F93_87BF5FE76A9468E9
 
+#include "dptr.h"
+
 class Server;
 
 class CanRefreshServer
@@ -35,8 +37,7 @@ public:
 	bool shouldRefresh() const;
 
 private:
-	class PrivData;
-	PrivData *d;
+	DPtr<CanRefreshServer> d;
 };
 
 #endif

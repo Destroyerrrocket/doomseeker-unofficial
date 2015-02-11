@@ -33,7 +33,7 @@
 #include <QMessageBox>
 #include <QToolBar>
 
-class IRCDock::PrivData : public Ui::IRCDock
+DClass<IRCDock> : public Ui::IRCDock
 {
 public:
 	IRCSounds pSounds;
@@ -41,10 +41,11 @@ public:
 	QAction* toolBarOpenChatWindow;
 };
 
+DPointered(IRCDock)
+
 IRCDock::IRCDock(QWidget* parent)
 : QDockWidget(parent)
 {
-	d = new PrivData();
 	d->setupUi(this);
 	toggleViewAction()->setIcon(QIcon(":/icons/chat.png"));
 
@@ -61,7 +62,6 @@ IRCDock::IRCDock(QWidget* parent)
 
 IRCDock::~IRCDock()
 {
-	delete d;
 }
 
 IRCDockTabContents* IRCDock::addIRCAdapter(IRCAdapterBase* pIRCAdapter)

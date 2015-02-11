@@ -37,7 +37,7 @@
 #include <QHostAddress>
 #include <QMessageBox>
 
-class GeneralGameSetupPanel::PrivData : public Ui::GeneralGameSetupPanel
+DClass<GeneralGameSetupPanel> : public Ui::GeneralGameSetupPanel
 {
 public:
 	EnginePlugin *currentEngine;
@@ -46,11 +46,12 @@ public:
 	bool remoteGameSetup;
 };
 
+DPointered(GeneralGameSetupPanel)
+
 
 GeneralGameSetupPanel::GeneralGameSetupPanel(QWidget *parent)
 : QWidget(parent)
 {
-	d = new PrivData();
 	d->setupUi(this);
 	d->iwadSetExplicitly = false;
 	d->remoteGameSetup = false;
@@ -62,7 +63,6 @@ GeneralGameSetupPanel::GeneralGameSetupPanel(QWidget *parent)
 
 GeneralGameSetupPanel::~GeneralGameSetupPanel()
 {
-	delete d;
 }
 
 void GeneralGameSetupPanel::fillInParams(GameCreateParams &params, bool offline)

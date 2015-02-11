@@ -23,6 +23,8 @@
 #ifndef __IRCREQUESTPARSER_H__
 #define __IRCREQUESTPARSER_H__
 
+#include "dptr.h"
+
 #include <QObject>
 #include <QString>
 
@@ -121,8 +123,7 @@ class IRCRequestParser : public QObject
 		void query(const QString& who);
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<IRCRequestParser> d;
 
 		IRCRequestParseResult buildOutput();
 		IRCNetworkAdapter *network();

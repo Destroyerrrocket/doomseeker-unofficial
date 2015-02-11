@@ -6,11 +6,11 @@
 #ifndef __IMPORTANTMESSAGESWIDGET_H__
 #define __IMPORTANTMESSAGESWIDGET_H__
 
-#include <QDateTime>
-#include <QList>
-#include <QTimer>
+#include "dptr.h"
+
 #include <QWidget>
 
+class QDateTime;
 class QLabel;
 class QVBoxLayout;
 
@@ -89,8 +89,7 @@ class ImportantMessagesWidget : public QWidget
 		void removeOneOldest();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<ImportantMessagesWidget> d;
 
 	private slots:
 		/**

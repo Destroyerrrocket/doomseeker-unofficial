@@ -23,6 +23,7 @@
 #ifndef __INIVARIABLE_H__
 #define __INIVARIABLE_H__
 
+#include "dptr.h"
 #include "global.h"
 
 #include <QHash>
@@ -53,7 +54,6 @@ class MAIN_EXPORT IniVariable
 		 */
 		IniVariable(const IniSection &section, const QString& key);
 
-		COPYABLE_D_POINTERED_DECLARE(IniVariable);
 		virtual ~IniVariable();
 
 		/**
@@ -133,8 +133,7 @@ class MAIN_EXPORT IniVariable
 		friend class TestReadINIVariable;
 		friend class TestReadINIList;
 
-		class PrivData;
-		PrivData *d;
+		DPtr<IniVariable> d;
 };
 
 #endif

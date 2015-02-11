@@ -28,6 +28,7 @@
 #include <QString>
 
 #include "global.h"
+#include "dptr.h"
 
 #define gPlugins (PluginLoader::instance())
 
@@ -67,8 +68,7 @@ class PluginLoader
 				EnginePlugin *info() const;
 
 			private:
-				class PrivData;
-				PrivData *d;
+				DPtr<Plugin> d;
 
 				void unload();
 		};
@@ -152,8 +152,7 @@ class PluginLoader
 		const Plugin* operator[] (unsigned int index) const;
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<PluginLoader> d;
 
 		static PluginLoader *staticInstance;
 

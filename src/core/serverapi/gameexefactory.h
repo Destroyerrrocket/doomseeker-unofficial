@@ -23,6 +23,7 @@
 #ifndef id53E6D544_EC39_49F8_93CF518BBB413164
 #define id53E6D544_EC39_49F8_93CF518BBB413164
 
+#include "dptr.h"
 #include "global.h"
 #include "serverapi/polymorphism.h"
 #include <QObject>
@@ -87,8 +88,7 @@ class MAIN_EXPORT GameExeFactory : public QObject
 		ExeFile* server_default();
 
 	private:
-		class PrivData;
-		PrivData* d;
+		DPtr<GameExeFactory> d;
 };
 
 #endif

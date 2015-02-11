@@ -28,6 +28,7 @@
 #include <QObject>
 #include <QVariant>
 
+#include "dptr.h"
 #include "global.h"
 
 /**
@@ -53,7 +54,6 @@ class MAIN_EXPORT DMFlag
 	public:
 		DMFlag();
 		DMFlag(QString name, unsigned value);
-		COPYABLE_D_POINTERED_DECLARE(DMFlag);
 		virtual ~DMFlag();
 
 		/**
@@ -73,8 +73,7 @@ class MAIN_EXPORT DMFlag
 		unsigned value() const;
 
 	private:
-		class PrivData;
-		PrivData* d;
+		DPtr<DMFlag> d;
 };
 
 /**
@@ -89,7 +88,6 @@ class MAIN_EXPORT DMFlagsSection
 	public:
 		DMFlagsSection();
 		DMFlagsSection(const QString& name);
-		COPYABLE_D_POINTERED_DECLARE(DMFlagsSection);
 		virtual ~DMFlagsSection();
 
 		/**
@@ -134,8 +132,7 @@ class MAIN_EXPORT DMFlagsSection
 		}
 
 	private:
-		class PrivData;
-		PrivData* d;
+		DPtr<DMFlagsSection> d;
 };
 
 /**
@@ -149,7 +146,6 @@ class MAIN_EXPORT GameCVar
 	public:
 		GameCVar();
 		GameCVar(const QString &name, const QString &command);
-		COPYABLE_D_POINTERED_DECLARE(GameCVar);
 		virtual ~GameCVar();
 
 		/**
@@ -190,8 +186,7 @@ class MAIN_EXPORT GameCVar
 		int valueInt() const { return value().toInt(); }
 
 	private:
-		class PrivData;
-		PrivData* d;
+		DPtr<GameCVar> d;
 };
 
 /**
@@ -275,7 +270,6 @@ class MAIN_EXPORT GameMode
 		 * @brief Constructs an invalid GameMode object.
 		 */
 		GameMode();
-		COPYABLE_D_POINTERED_DECLARE(GameMode);
 		virtual ~GameMode();
 
 		/**
@@ -300,8 +294,7 @@ class MAIN_EXPORT GameMode
 		bool isValid() const;
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<GameMode> d;
 
 		GameMode(int index, const QString &name);
 
@@ -320,7 +313,6 @@ class MAIN_EXPORT PWad
 {
 	public:
 		PWad(const QString &name, bool optional=false);
-		COPYABLE_D_POINTERED_DECLARE(PWad);
 		virtual ~PWad();
 
 		/**
@@ -333,8 +325,7 @@ class MAIN_EXPORT PWad
 		const QString& name() const;
 
 	private:
-		class PrivData;
-		PrivData* d;
+		DPtr<PWad> d;
 };
 
 #endif

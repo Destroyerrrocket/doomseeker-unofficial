@@ -30,7 +30,7 @@
 
 LookupHost *LookupHost::inst = NULL;
 
-class LookupHost::PrivData
+DClass<LookupHost>
 {
 public:
 	/**
@@ -46,16 +46,16 @@ public:
 	bool accepting;
 };
 
+DPointeredNoCopy(LookupHost)
+
 LookupHost::LookupHost()
 {
-	d = new PrivData();
 	d->accepting = true;
 	d->runningLookups = 0;
 }
 
 LookupHost::~LookupHost()
 {
-	delete d;
 }
 
 void LookupHost::lookupHost(const QString &name, QObject *receiver, const char *receiverSlot)
@@ -133,7 +133,7 @@ void LookupHostWorker::work()
 	QMutexLocker locker(&LookupHost::instance()->d->lock);
 	if (LookupHost::instance()->d->accepting)
 	{
-		if (LookupHost::instance()->d->runningLookups < LookupHost::PrivData::MAX_LOOKUPS)
+		if (LookupHost::instance()->d->runningLookups < PrivData<LookupHost>::MAX_LOOKUPS)
 		{
 			++LookupHost::instance()->d->runningLookups;
 			QHostInfo::lookupHost(hostName, this, SLOT(hostFoundReceived(QHostInfo)));

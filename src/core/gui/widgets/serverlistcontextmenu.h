@@ -25,6 +25,7 @@
 
 #include <QObject>
 #include "serverapi/serverptr.h"
+#include "dptr.h"
 
 class Server;
 class ServerFilterBuilderMenu;
@@ -73,9 +74,7 @@ class ServerListContextMenu : public QObject
 		void triggered(QAction* action);
 
 	private:
-		class PrivData;
-
-		PrivData* d;
+		DPtr<ServerListContextMenu> d;
 
 		QMenu* createCopyMenu(QWidget* parent);
 		void createMembers();

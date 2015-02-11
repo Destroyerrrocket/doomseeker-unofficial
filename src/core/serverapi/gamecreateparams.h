@@ -23,6 +23,7 @@
 #ifndef idF7CFB784_3591_4B2C_B5529AE7FBCC2568
 #define idF7CFB784_3591_4B2C_B5529AE7FBCC2568
 
+#include "dptr.h"
 #include "global.h"
 #include <QList>
 #include <QString>
@@ -48,7 +49,6 @@ class MAIN_EXPORT GameCreateParams
 		};
 
 		GameCreateParams();
-		COPYABLE_D_POINTERED_DECLARE(GameCreateParams);
 		~GameCreateParams();
 
 		/**
@@ -141,7 +141,8 @@ class MAIN_EXPORT GameCreateParams
 		unsigned short port() const;
 		QStringList& pwadsPaths();
 		const QStringList& pwadsPaths() const;
-		/**
+
+		/**
 		 * @brief Names of PWADs, derived from pwadsPaths().
 		 */
 		QStringList pwadsNames() const;
@@ -186,8 +187,7 @@ class MAIN_EXPORT GameCreateParams
 		const QString& url() const;
 
 	private:
-		class PrivData;
-		PrivData* d;
+		DPtr<GameCreateParams> d;
 };
 
 #endif // header

@@ -23,13 +23,14 @@
 #include "copytextdlg.h"
 #include <QClipboard>
 
-class CopyTextDlg::PrivData : public Ui::CopyTextDlg
+DClass<CopyTextDlg> : public Ui::CopyTextDlg
 {
 };
 
+DPointered(CopyTextDlg)
+
 CopyTextDlg::CopyTextDlg(const QString& content, const QString& description, QWidget* parent) : QDialog(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 
 	connect(d->btnCopy, SIGNAL( clicked() ), SLOT( copyContent() ) );
@@ -44,7 +45,6 @@ CopyTextDlg::CopyTextDlg(const QString& content, const QString& description, QWi
 
 CopyTextDlg::~CopyTextDlg()
 {
-	delete d;
 }
 
 void CopyTextDlg::copyContent()

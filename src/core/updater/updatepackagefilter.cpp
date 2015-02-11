@@ -35,23 +35,23 @@ class UpdatePackageFilter::PluginInfo
 		unsigned long long revision;
 };
 //////////////////////////////////////////////////////////////////////////////
-class UpdatePackageFilter::PrivData
+DClass<UpdatePackageFilter>
 {
 	public:
 		bool bWasAnyUpdatePackageIgnored;
 		QMap<QString, QList<unsigned long long> > ignoredPackagesRevisions;
-		QMap<QString, PluginInfo> plugins;
+		QMap<QString, UpdatePackageFilter::PluginInfo> plugins;
 };
+
+DPointered(UpdatePackageFilter)
 //////////////////////////////////////////////////////////////////////////////
 UpdatePackageFilter::UpdatePackageFilter()
 {
-	d = new PrivData();
 	d->bWasAnyUpdatePackageIgnored = false;
 }
 
 UpdatePackageFilter::~UpdatePackageFilter()
 {
-	delete d;
 }
 
 QMap<QString, UpdatePackageFilter::PluginInfo> UpdatePackageFilter::collectPluginInfo()

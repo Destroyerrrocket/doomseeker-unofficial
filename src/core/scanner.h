@@ -27,6 +27,7 @@
 #include <QObject>
 #include <QString>
 
+#include "dptr.h"
 #include "global.h"
 
 enum ETokenType
@@ -73,12 +74,14 @@ enum ETokenType
  */
 class MAIN_EXPORT Scanner
 {
+	private:
+		Scanner(const Scanner &other);
+
 	public:
 		class ParserState
 		{
 			public:
 				ParserState();
-				COPYABLE_D_POINTERED_DECLARE(ParserState);
 				virtual ~ParserState();
 
 				const QString& str() const;
@@ -106,8 +109,7 @@ class MAIN_EXPORT Scanner
 				void setScanPos(unsigned int v);
 
 			private:
-				class PrivData;
-				PrivData *d;
+				DPtr<ParserState> d;
 		};
 
 		enum MessageLevel
@@ -176,8 +178,7 @@ class MAIN_EXPORT Scanner
 		void incrementLine();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<Scanner> d;
 
 		static void (*messageHandler)(MessageLevel, const char*, va_list);
 };

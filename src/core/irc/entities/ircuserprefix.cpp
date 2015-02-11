@@ -38,34 +38,30 @@ class IRCModePrefix
 };
 
 
-class IRCUserPrefix::PrivData
+DClass<IRCUserPrefix>
 {
 	public:
 		QList<IRCModePrefix> map;
 };
 
+DPointered(IRCUserPrefix)
+
 IRCUserPrefix::IRCUserPrefix()
 {
-	d = new PrivData();
 }
 
 IRCUserPrefix::IRCUserPrefix(const IRCUserPrefix &other)
 {
-	d = new PrivData();
-	*d = *other.d;
+	d = other.d;
 }
 
 IRCUserPrefix::~IRCUserPrefix()
 {
-	delete d;
 }
 
 IRCUserPrefix &IRCUserPrefix::operator=(const IRCUserPrefix &other)
 {
-	if (this != &other)
-	{
-		*d = *other.d;
-	}
+	d = other.d;
 	return *this;
 }
 

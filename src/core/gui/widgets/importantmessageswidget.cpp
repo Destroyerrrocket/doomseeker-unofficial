@@ -10,7 +10,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-class ImportantMessagesWidget::PrivData : public Ui::ImportantMessagesWidget
+DClass<ImportantMessagesWidget> : public Ui::ImportantMessagesWidget
 {
 public:
 	class MessageLabel
@@ -33,11 +33,12 @@ public:
 	int maxMessages;
 };
 
+DPointered(ImportantMessagesWidget)
+
 ImportantMessagesWidget::ImportantMessagesWidget(QWidget* pParent)
 : QWidget(pParent)
 {
-	d = new PrivData();
-	d->maxMessages = PrivData::DEFAULT_MAX_MESSAGES;
+	d->maxMessages = PrivData<ImportantMessagesWidget>::DEFAULT_MAX_MESSAGES;
 	d->setupUi(this);
 
 	this->hide();
@@ -45,7 +46,6 @@ ImportantMessagesWidget::ImportantMessagesWidget(QWidget* pParent)
 
 ImportantMessagesWidget::~ImportantMessagesWidget()
 {
-	delete d;
 }
 
 void ImportantMessagesWidget::addMessage(const QString& message)
@@ -73,7 +73,7 @@ void ImportantMessagesWidget::addMessage(const QString& message, const QDateTime
 		| Qt::TextSelectableByMouse);
 	pNewLabel->setWordWrap(true);
 
-	d->labelWidgets << PrivData::MessageLabel(pNewLabel);
+	d->labelWidgets << PrivData<ImportantMessagesWidget>::MessageLabel(pNewLabel);
 	d->messageLayout->addWidget(pNewLabel);
 
 	// Remember that widget may be auto-hidden.
@@ -100,10 +100,10 @@ void ImportantMessagesWidget::dropOldWidgetsIfBeyondLimit()
 {
 	while (d->labelWidgets.size() > d->maxMessages)
 	{
-		PrivData::MessageLabel& oldestLabel = d->labelWidgets.first();
+		PrivData<ImportantMessagesWidget>::MessageLabel& oldestLabel = d->labelWidgets.first();
 		int timeDifference = oldestLabel.timeCreated.secsTo(QDateTime::currentDateTime());
 
-		if (timeDifference > PrivData::MAX_MSG_KEEP_TIME_SEC)
+		if (timeDifference > PrivData<ImportantMessagesWidget>::MAX_MSG_KEEP_TIME_SEC)
 		{
 			removeOneOldest();
 		}

@@ -34,18 +34,18 @@
 //------------------------------------------------------------------------------
 #include "settingsprovider.h"
 
-class SettingsProvider::PrivData
+DClass<SettingsProvider>
 {
 };
 
+DPointered(SettingsProvider)
+
 SettingsProvider::SettingsProvider()
 {
-	d = new PrivData();
 }
 
 SettingsProvider::~SettingsProvider()
 {
-	delete d;
 }
 
 void SettingsProvider::copyFrom(const SettingsProvider& other)

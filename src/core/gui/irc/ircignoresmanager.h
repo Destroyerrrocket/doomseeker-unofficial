@@ -23,6 +23,8 @@
 #ifndef id16362687_1562_4529_ac24_a94f29a52c9f
 #define id16362687_1562_4529_ac24_a94f29a52c9f
 
+#include "dptr.h"
+
 #include <QDialog>
 
 class PatternList;
@@ -40,8 +42,7 @@ protected:
 	void keyPressEvent(QKeyEvent *event);
 
 private:
-	class PrivData;
-	PrivData *d;
+	DPtr<IRCIgnoresManager> d;
 
 	void loadItems();
 	PatternList patterns() const;

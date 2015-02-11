@@ -26,7 +26,7 @@
 #include "configuration/doomseekerconfig.h"
 #include "gui/entity/serverlistfilterinfo.h"
 
-class ServerFilterDock::PrivData : public Ui::ServerFilterDock
+DClass<ServerFilterDock> : public Ui::ServerFilterDock
 {
 public:
 	/**
@@ -44,10 +44,11 @@ public:
 	bool bDisableUpdate;
 };
 
+DPointered(ServerFilterDock)
+
 ServerFilterDock::ServerFilterDock(QWidget* pParent)
 : QDockWidget(pParent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 	d->leQuickSearch = NULL;
 	d->bDisableUpdate = false;
@@ -61,7 +62,6 @@ ServerFilterDock::ServerFilterDock(QWidget* pParent)
 
 ServerFilterDock::~ServerFilterDock()
 {
-	delete d;
 }
 
 void ServerFilterDock::addGameModeToComboBox(const QString& gameMode)

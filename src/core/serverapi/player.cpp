@@ -23,7 +23,7 @@
 #include "player.h"
 #include "strings.h"
 
-class Player::PrivData
+DClass<Player>
 {
 	public:
 		QString name;
@@ -31,12 +31,13 @@ class Player::PrivData
 		unsigned short ping;
 		bool spectator;
 		bool bot;
-		PlayerTeam team;
+		Player::PlayerTeam team;
 };
+
+DPointered(Player)
 
 Player::Player()
 {
-	d = new PrivData();
 	d->score = 0;
 	d->ping = 0;
 	d->spectator = false;
@@ -46,7 +47,6 @@ Player::Player()
 
 Player::Player(const QString &name, unsigned short score, unsigned short ping, PlayerTeam team, bool spectator, bool bot)
 {
-	d = new PrivData();
 	d->name = name;
 	d->score = score;
 	d->ping = ping;
@@ -57,22 +57,17 @@ Player::Player(const QString &name, unsigned short score, unsigned short ping, P
 
 Player::Player(const Player& other)
 {
-	d = new PrivData();
-	*d = *other.d;
+	d = other.d;
 }
 
 Player& Player::operator=(const Player& other)
 {
-	if (this != &other)
-	{
-		*d = *other.d;
-	}
+	d = other.d;
 	return *this;
 }
 
 Player::~Player()
 {
-	delete d;
 }
 
 bool Player::isBot() const

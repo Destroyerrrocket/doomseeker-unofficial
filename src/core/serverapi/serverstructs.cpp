@@ -24,31 +24,28 @@
 
 #include <QVector>
 
-class DMFlag::PrivData
+DClass<DMFlag>
 {
 	public:
 		QString name;
 		unsigned value;
 };
 
+DPointered(DMFlag)
+
 DMFlag::DMFlag()
 {
-	d = new PrivData();
 	d->value = 0;
 }
 
 DMFlag::DMFlag(QString name, unsigned value)
 {
-	d = new PrivData();
 	d->name = name;
 	d->value = value;
 }
 
-COPYABLE_D_POINTERED_DEFINE(DMFlag);
-
 DMFlag::~DMFlag()
 {
-	delete d;
 }
 
 bool DMFlag::isValid() const
@@ -68,29 +65,26 @@ unsigned DMFlag::value() const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class DMFlagsSection::PrivData
+DClass<DMFlagsSection>
 {
 	public:
 		QString name;
 		QVector<DMFlag> flags;
 };
 
-COPYABLE_D_POINTERED_DEFINE(DMFlagsSection);
+DPointered(DMFlagsSection)
 
 DMFlagsSection::DMFlagsSection()
 {
-	d = new PrivData();
 }
 
 DMFlagsSection::DMFlagsSection(const QString& name)
 {
-	d = new PrivData();
 	d->name = name;
 }
 
 DMFlagsSection::~DMFlagsSection()
 {
-	delete d;
 }
 
 void DMFlagsSection::add(const DMFlag& flag)
@@ -135,7 +129,7 @@ DMFlag& DMFlagsSection::operator[](int index)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class GameCVar::PrivData
+DClass<GameCVar>
 {
 	public:
 		QString command;
@@ -143,23 +137,20 @@ class GameCVar::PrivData
 		QVariant value;
 };
 
-COPYABLE_D_POINTERED_DEFINE(GameCVar);
+DPointered(GameCVar)
 
 GameCVar::GameCVar()
 {
-	d = new PrivData();
 }
 
 GameCVar::GameCVar(const QString &name, const QString &command)
 {
-	d = new PrivData();
 	d->name = name;
 	d->command = command;
 }
 
 GameCVar::~GameCVar()
 {
-	delete d;
 }
 
 const QString &GameCVar::command() const
@@ -194,7 +185,7 @@ const QVariant &GameCVar::value() const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class GameMode::PrivData
+DClass<GameMode>
 {
 	public:
 		int index;
@@ -202,18 +193,16 @@ class GameMode::PrivData
 		bool teamgame;
 };
 
-COPYABLE_D_POINTERED_DEFINE(GameMode);
+DPointered(GameMode)
 
 GameMode::GameMode()
 {
-	d = new PrivData();
 	d->index = -1;
 	d->teamgame = false;
 }
 
 GameMode::GameMode(int index, const QString &name)
 {
-	d = new PrivData();
 	d->index = index;
 	d->name = name;
 	d->teamgame = false;
@@ -221,7 +210,6 @@ GameMode::GameMode(int index, const QString &name)
 
 GameMode::~GameMode()
 {
-	delete d;
 }
 
 GameMode GameMode::ffaGame(int index, const QString &name)
@@ -290,25 +278,23 @@ GameMode GameMode::teamGame(int index, const QString &name)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class PWad::PrivData
+DClass<PWad>
 {
 	public:
 		QString name;
 		bool optional;
 };
 
-COPYABLE_D_POINTERED_DEFINE(PWad);
+DPointered(PWad)
 
 PWad::PWad(const QString &name, bool optional)
 {
-	d = new PrivData();
 	d->name = name;
 	d->optional = optional;
 }
 
 PWad::~PWad()
 {
-	delete d;
 }
 
 bool PWad::isOptional() const

@@ -25,6 +25,7 @@
 
 #define gLog Log::instance
 
+#include "dptr.h"
 #include "global.h"
 #include <QMutex>
 #include <QObject>
@@ -102,8 +103,8 @@ class MAIN_EXPORT Log : public QObject
 		void newEntry(const QString& entry);
 
 	private:
-		class PrivData;
-		PrivData *d;
-};
+		DPtr<Log> d;
+
+};
 
 #endif

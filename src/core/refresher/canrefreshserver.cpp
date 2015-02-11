@@ -25,7 +25,7 @@
 #include "plugins/engineplugin.h"
 #include "serverapi/server.h"
 
-class CanRefreshServer::PrivData
+DClass<CanRefreshServer>
 {
 public:
 	const Server *server;
@@ -56,15 +56,15 @@ public:
 	}
 };
 
+DPointered(CanRefreshServer)
+
 CanRefreshServer::CanRefreshServer(const Server *server)
 {
-	d = new PrivData();
 	d->server = server;
 }
 
 CanRefreshServer::~CanRefreshServer()
 {
-	delete d;
 }
 
 bool CanRefreshServer::hasEnoughTimeSinceLastRefreshPassed() const

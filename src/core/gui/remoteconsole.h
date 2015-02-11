@@ -25,6 +25,7 @@
 #define __REMOTECONSOLE_H__
 
 #include "serverapi/serverptr.h"
+#include "dptr.h"
 
 #include <QMainWindow>
 
@@ -57,8 +58,7 @@ class RemoteConsole : public QMainWindow
 		void updatePlayerList();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<RemoteConsole> d;
 };
 
 #endif /* __REMOTECONSOLE_HPP__ */

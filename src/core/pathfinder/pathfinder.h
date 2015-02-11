@@ -25,6 +25,7 @@
 #define __PATHFINDER_H_
 
 #include "pathfinder/filesearchpath.h"
+#include "dptr.h"
 #include "global.h"
 #include <QStringList>
 
@@ -41,7 +42,6 @@ class MAIN_EXPORT PathFinderResult
 {
 	public:
 		PathFinderResult();
-		COPYABLE_D_POINTERED_DECLARE(PathFinderResult);
 		virtual ~PathFinderResult();
 
 		/**
@@ -57,8 +57,7 @@ class MAIN_EXPORT PathFinderResult
 		const QStringList& missingFiles() const;
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<PathFinderResult> d;
 };
 
 /**
@@ -95,7 +94,6 @@ class MAIN_EXPORT PathFinder
 		PathFinder(const QStringList& paths);
 		// [Zalewa] This may seem strange, but I don't see any reason why
 		// PathFinder can't be copyable. All in all, it's just a set of paths.
-		COPYABLE_D_POINTERED_DECLARE(PathFinder);
 		virtual ~PathFinder();
 
 		/**
@@ -116,8 +114,7 @@ class MAIN_EXPORT PathFinder
 		PathFinderResult findFiles(const QStringList& files) const;
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<PathFinder> d;
 };
 
 #endif

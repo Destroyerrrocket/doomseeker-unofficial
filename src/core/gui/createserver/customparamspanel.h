@@ -23,6 +23,8 @@
 #ifndef idb5bd7932_a986_44a8_8c28_935cc89c64f2
 #define idb5bd7932_a986_44a8_8c28_935cc89c64f2
 
+#include "dptr.h"
+
 #include <QWidget>
 
 class GameCreateParams;
@@ -41,8 +43,7 @@ public:
 	void saveConfig(Ini &config);
 
 private:
-	class PrivData;
-	PrivData *d;
+	DPtr<CustomParamsPanel> d;
 };
 
 #endif

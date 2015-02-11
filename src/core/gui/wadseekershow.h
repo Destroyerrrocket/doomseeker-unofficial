@@ -25,6 +25,7 @@
 
 #include <QObject>
 #include "serverapi/serverptr.h"
+#include "dptr.h"
 
 #define gWadseekerShow (WadseekerShow::instance())
 
@@ -40,9 +41,8 @@ class WadseekerShow : public QObject
 		bool checkWadseekerValidity(QWidget *parent);
 
 	private:
-		class PrivData;
 		static WadseekerShow *staticInstance;
-		PrivData *d;
+		DPtr<WadseekerShow> d;
 
 		WadseekerShow();
 };

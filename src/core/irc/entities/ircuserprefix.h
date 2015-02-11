@@ -23,6 +23,8 @@
 #ifndef id068647E2_4561_423C_AC0AE4C8499B2EF8
 #define id068647E2_4561_423C_AC0AE4C8499B2EF8
 
+#include "dptr.h"
+
 #include <QList>
 #include <QString>
 
@@ -63,8 +65,7 @@ class IRCUserPrefix
 		char topMostMode(const QList<char> &candidates) const;
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<IRCUserPrefix> d;
 };
 
 #endif

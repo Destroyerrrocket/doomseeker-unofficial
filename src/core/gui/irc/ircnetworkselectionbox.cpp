@@ -29,14 +29,15 @@
 #include "qtmetapointer.h"
 #include <QMessageBox>
 
-class IRCNetworkSelectionBox::PrivData : public Ui::IRCNetworkSelectionBox
+DClass<IRCNetworkSelectionBox> : public Ui::IRCNetworkSelectionBox
 {
 };
+
+DPointered(IRCNetworkSelectionBox)
 
 IRCNetworkSelectionBox::IRCNetworkSelectionBox(QWidget* parent)
 : QDialog(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 
 	connect(d->cboNetwork, SIGNAL( currentIndexChanged(int) ), SLOT( networkChanged(int) ) );
@@ -46,7 +47,6 @@ IRCNetworkSelectionBox::IRCNetworkSelectionBox(QWidget* parent)
 
 IRCNetworkSelectionBox::~IRCNetworkSelectionBox()
 {
-	delete d;
 }
 
 void IRCNetworkSelectionBox::accept()

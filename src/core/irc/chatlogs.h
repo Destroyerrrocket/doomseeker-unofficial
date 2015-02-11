@@ -23,6 +23,8 @@
 #ifndef id8a9b47a8_4986_4c15_a37a_e718e8af36fa
 #define id8a9b47a8_4986_4c15_a37a_e718e8af36fa
 
+#include "dptr.h"
+
 #include <QObject>
 #include <QString>
 
@@ -43,8 +45,7 @@ public:
 	bool renameNetwork(QWidget *parentUi, QString oldName, QString newName);
 
 private:
-	class PrivData;
-	PrivData *d;
+	DPtr<ChatLogs> d;
 };
 
 #endif

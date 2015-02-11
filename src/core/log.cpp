@@ -26,7 +26,7 @@
 #include <QMutexLocker>
 #include <cstdio>
 
-class Log::PrivData
+DClass<Log>
 {
 	public:
 		QString logContent;
@@ -35,18 +35,18 @@ class Log::PrivData
 		bool timestamps;
 };
 
+DPointeredNoCopy(Log)
+
 Log gLog;
 
 Log::Log()
 {
-	d = new PrivData();
 	d->timestamps = true;
 	d->printToStdout = true;
 }
 
 Log::~Log()
 {
-	delete d;
 }
 
 void Log::addEntry(const QString& string)

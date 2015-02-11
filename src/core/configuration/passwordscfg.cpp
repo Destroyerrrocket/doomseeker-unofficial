@@ -48,22 +48,22 @@ Ini* PasswordsCfg::ini = NULL;
 QSettings *PasswordsCfg::settings = NULL;
 
 
-class PasswordsCfg::PrivData
+DClass<PasswordsCfg>
 {
 	public:
 		IniSection section;
 };
 
+DPointered(PasswordsCfg)
+
 PasswordsCfg::PasswordsCfg()
 {
 	assert(ini != NULL && "instantiated PasswordsCfg() without initing ini");
-	d = new PrivData();
 	d->section = ini->section(SECTION_NAME);
 }
 
 PasswordsCfg::~PasswordsCfg()
 {
-	delete d;
 }
 
 void PasswordsCfg::cutServers(QList<ServerPassword>& passwords) const

@@ -25,6 +25,7 @@
 #define __MAINWINDOW_H_
 
 #include "serverapi/serverptr.h"
+#include "dptr.h"
 
 #include <QMainWindow>
 #include <QSystemTrayIcon>
@@ -227,8 +228,7 @@ class MainWindow : public QMainWindow
 		void updateServerFilter(const ServerListFilterInfo& filterInfo);
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<MainWindow> d;
 
 		void connectIP2CLoader(IP2CLoader* loader);
 

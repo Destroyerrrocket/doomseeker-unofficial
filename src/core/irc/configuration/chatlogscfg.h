@@ -23,6 +23,8 @@
 #ifndef id46ac54ff_adba_49cd_b972_b804898b4fb6
 #define id46ac54ff_adba_49cd_b972_b804898b4fb6
 
+#include "dptr.h"
+
 #include <QString>
 #include <QVariant>
 
@@ -49,8 +51,7 @@ public:
 
 
 private:
-	class PrivData;
-	PrivData *d;
+	DPtr<ChatLogsCfg> d;
 
 	void setValue(const QString &key, const QVariant &value);
 	QVariant value(const QString &key, const QVariant &defValue = QVariant()) const;

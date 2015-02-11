@@ -28,7 +28,7 @@
 #include "serverapi/gamecreateparams.h"
 #include "serverapi/serverstructs.h"
 
-class GameRulesPanel::PrivData : public Ui::GameRulesPanel
+DClass<GameRulesPanel> : public Ui::GameRulesPanel
 {
 public:
 	class GameLimitWidget
@@ -43,17 +43,17 @@ public:
 	QList<GameLimitWidget*> limitWidgets;
 };
 
+DPointered(GameRulesPanel)
+
 GameRulesPanel::GameRulesPanel(QWidget *parent)
 : QWidget(parent)
 {
-	d = new PrivData();
 	d->setupUi(this);
 }
 
 GameRulesPanel::~GameRulesPanel()
 {
 	qDeleteAll(d->limitWidgets);
-	delete d;
 }
 
 void GameRulesPanel::fillInParams(GameCreateParams &params)
@@ -70,7 +70,7 @@ void GameRulesPanel::fillInParams(GameCreateParams &params)
 
 void GameRulesPanel::fillInLimits(GameCreateParams &params)
 {
-	foreach(PrivData::GameLimitWidget* p, d->limitWidgets)
+	foreach(PrivData<GameRulesPanel>::GameLimitWidget* p, d->limitWidgets)
 	{
 		p->limit.setValue(p->spinBox->value());
 		params.cvars() << p->limit;
@@ -96,7 +96,7 @@ void GameRulesPanel::loadConfig(Ini &config)
 	d->cboModifier->setCurrentIndex(section["modifier"]);
 	d->spinMaxClients->setValue(section["maxClients"]);
 	d->spinMaxPlayers->setValue(section["maxPlayers"]);
-	foreach (PrivData::GameLimitWidget* widget, d->limitWidgets)
+	foreach (PrivData<GameRulesPanel>::GameLimitWidget* widget, d->limitWidgets)
 	{
 		widget->spinBox->setValue(section[widget->limit.command()]);
 	}
@@ -112,7 +112,7 @@ void GameRulesPanel::saveConfig(Ini &config)
 	section["modifier"] = d->cboModifier->currentIndex();
 	section["maxClients"] = d->spinMaxClients->value();
 	section["maxPlayers"] = d->spinMaxPlayers->value();
-	foreach (PrivData::GameLimitWidget *widget, d->limitWidgets)
+	foreach (PrivData<GameRulesPanel>::GameLimitWidget *widget, d->limitWidgets)
 	{
 		section[widget->limit.command()] = widget->spinBox->value();
 	}
@@ -179,7 +179,7 @@ void GameRulesPanel::setupModifiers(const EnginePlugin *engine)
 
 void GameRulesPanel::removeLimitWidgets()
 {
-	foreach (PrivData::GameLimitWidget *widget, d->limitWidgets)
+	foreach (PrivData<GameRulesPanel>::GameLimitWidget *widget, d->limitWidgets)
 	{
 		delete widget->label;
 		delete widget->spinBox;
@@ -205,7 +205,7 @@ void GameRulesPanel::setupLimitWidgets(const EnginePlugin *engine, const GameMod
 
 		d->limitsLayout->addRow(label, spinBox);
 
-		PrivData::GameLimitWidget* glw = new PrivData::GameLimitWidget();
+		PrivData<GameRulesPanel>::GameLimitWidget* glw = new PrivData<GameRulesPanel>::GameLimitWidget();
 		glw->label = label;
 		glw->spinBox = spinBox;
 		glw->limit = (*it);

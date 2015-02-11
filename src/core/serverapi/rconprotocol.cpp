@@ -25,7 +25,7 @@
 
 #include <cassert>
 
-class RConProtocol::PrivData
+DClass<RConProtocol>
 {
 	public:
 		bool connected;
@@ -39,9 +39,10 @@ class RConProtocol::PrivData
 		void (RConProtocol::*sendPassword)(const QString&);
 };
 
+DPointeredNoCopy(RConProtocol)
+
 RConProtocol::RConProtocol(ServerPtr server)
 {
-	d = new PrivData();
 	d->connected = false;
 	d->serverAddress = server->address();
 	d->serverPort = server->port();
@@ -56,7 +57,6 @@ RConProtocol::RConProtocol(ServerPtr server)
 RConProtocol::~RConProtocol()
 {
 	d->socket.close();
-	delete d;
 }
 
 POLYMORPHIC_DEFINE(void, RConProtocol, disconnectFromServer, (), ());

@@ -24,26 +24,26 @@
 
 #include "gui/createserverdialog.h"
 
-class CreateServerDialogPage::PrivData
+DClass<CreateServerDialogPage>
 {
 	public:
 		QString name;
 		CreateServerDialog* pParentDialog;
 };
 
+DPointered(CreateServerDialogPage)
+
 CreateServerDialogPage::CreateServerDialogPage(
 	CreateServerDialog* pParentDialog,
 	const QString& name)
 : QWidget(pParentDialog)
 {
-	d = new PrivData();
 	d->pParentDialog = pParentDialog;
 	d->name = name;
 }
 
 CreateServerDialogPage::~CreateServerDialogPage()
 {
-	delete d;
 }
 
 const QString& CreateServerDialogPage::name() const

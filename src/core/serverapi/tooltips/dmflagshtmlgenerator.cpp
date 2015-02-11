@@ -25,7 +25,7 @@
 #include "serverapi/server.h"
 #include "serverapi/serverstructs.h"
 
-class DmflagsHtmlGenerator::PrivData
+DClass<DmflagsHtmlGenerator>
 {
 	public:
 		ServerCPtr server;
@@ -41,15 +41,15 @@ class DmflagsHtmlGenerator::PrivData
 		}
 };
 
+DPointered(DmflagsHtmlGenerator)
+
 DmflagsHtmlGenerator::DmflagsHtmlGenerator(const ServerCPtr &server)
 {
-	d = new PrivData();
 	d->server = server;
 }
 
 DmflagsHtmlGenerator::~DmflagsHtmlGenerator()
 {
-	delete d;
 }
 
 QString DmflagsHtmlGenerator::generate()

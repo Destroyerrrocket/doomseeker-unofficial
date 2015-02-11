@@ -25,6 +25,7 @@
 #define __CFG_FILE_PATHS_H_
 
 #include "gui/configuration/configurationbasebox.h"
+#include "dptr.h"
 
 class FileSearchPath;
 
@@ -54,8 +55,7 @@ class CFGFilePaths : public ConfigurationBaseBox
 		void btnRemoveWadPath_Click();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<CFGFilePaths> d;
 };
 
 #endif

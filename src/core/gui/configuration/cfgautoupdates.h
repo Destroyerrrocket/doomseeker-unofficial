@@ -24,6 +24,7 @@
 #define DOOMSEEKER_GUI_CONFIGURATION_CFGAUTOPUDATES_H
 
 #include "gui/configuration/configurationbasebox.h"
+#include "dptr.h"
 #include <QIcon>
 
 class CFGAutoUpdates : public ConfigurationBaseBox
@@ -45,8 +46,7 @@ class CFGAutoUpdates : public ConfigurationBaseBox
 	private:
 		void initUpdateChannels();
 
-		class PrivData;
-		PrivData *d;
+		DPtr<CFGAutoUpdates> d;
 	private slots:
 		void onUpdateChannelChange(int index);
 };

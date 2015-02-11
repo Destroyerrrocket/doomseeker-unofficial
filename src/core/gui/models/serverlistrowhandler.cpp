@@ -39,30 +39,29 @@
 
 using namespace ServerListColumnId;
 
-class ServerListRowHandler::PrivData
+DClass<ServerListRowHandler>
 {
 	public:
 		ServerPtr server;
 };
 
+DPointered(ServerListRowHandler)
+
 ServerListRowHandler::ServerListRowHandler(ServerListModel* parentModel,
     int rowIndex, const ServerPtr &server)
 : model(parentModel), row(rowIndex)
 {
-	d = new PrivData();
 	d->server = server;
 }
 
 ServerListRowHandler::ServerListRowHandler(ServerListModel* parentModel, int rowIndex)
 : model(parentModel), row(rowIndex)
 {
-	d = new PrivData();
 	d->server = serverFromList(parentModel, rowIndex);
 }
 
 ServerListRowHandler::~ServerListRowHandler()
 {
-	delete d;
 }
 
 void ServerListRowHandler::clearNonVitalFields()

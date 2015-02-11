@@ -23,6 +23,8 @@
 #ifndef __IP2CUPDATEBOX_H__
 #define __IP2CUPDATEBOX_H__
 
+#include "dptr.h"
+
 #include <QDialog>
 
 class IP2CUpdateBox : public QDialog
@@ -37,8 +39,7 @@ class IP2CUpdateBox : public QDialog
 		void updateInfo();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<IP2CUpdateBox> d;
 };
 
 #endif

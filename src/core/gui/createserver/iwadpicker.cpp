@@ -29,21 +29,21 @@
 #include <QFileDialog>
 #include <QFileInfo>
 
-class IwadPicker::PrivData : public Ui::IwadPicker
+DClass<IwadPicker> : public Ui::IwadPicker
 {
 };
+
+DPointered(IwadPicker)
 
 IwadPicker::IwadPicker(QWidget *parent)
 : QWidget(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 	loadIwads();
 }
 
 IwadPicker::~IwadPicker()
 {
-	delete d;
 }
 
 void IwadPicker::addIwad(const QString& path)

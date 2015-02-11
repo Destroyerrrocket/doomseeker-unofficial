@@ -30,21 +30,21 @@
 #include <QMessageBox>
 #include <QUrl>
 
-class CfgChatLogsPage::PrivData : public Ui::CfgChatLogsPage
+DClass<CfgChatLogsPage> : public Ui::CfgChatLogsPage
 {
 };
+
+DPointered(CfgChatLogsPage)
 
 
 CfgChatLogsPage::CfgChatLogsPage(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
-	d = new PrivData();
 	d->setupUi(this);
 }
 
 CfgChatLogsPage::~CfgChatLogsPage()
 {
-	delete d;
 }
 
 void CfgChatLogsPage::browseStorageDirectory()

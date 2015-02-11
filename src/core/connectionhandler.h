@@ -26,6 +26,7 @@
 #define __CONNECTIONHANDLER_H__
 
 #include "serverapi/serverptr.h"
+#include "dptr.h"
 #include <QObject>
 
 class CommandLineInfo;
@@ -76,8 +77,7 @@ class ConnectionHandler : public QObject
 		void finished(int response);
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<ConnectionHandler> d;
 
 		void buildJoinCommandLine();
 		void runCommandLine(const CommandLineInfo &cli);

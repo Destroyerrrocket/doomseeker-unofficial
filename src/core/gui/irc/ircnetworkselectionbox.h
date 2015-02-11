@@ -23,6 +23,8 @@
 #ifndef __IRCNETWORKSELECTIONBOX_H__
 #define __IRCNETWORKSELECTIONBOX_H__
 
+#include "dptr.h"
+
 #include <QDialog>
 
 class IRCNetworkConnectionInfo;
@@ -66,8 +68,7 @@ class IRCNetworkSelectionBox : public QDialog
 		void updateNetworkInfo();
 		bool validate();
 
-		class PrivData;
-		PrivData *d;
+		DPtr<IRCNetworkSelectionBox> d;
 	private slots:
 		void createNewNetwork();
 		void editCurrentNetwork();

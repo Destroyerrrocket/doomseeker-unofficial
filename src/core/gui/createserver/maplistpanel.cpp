@@ -29,14 +29,15 @@
 #include "commongui.h"
 #include <QStandardItemModel>
 
-class MapListPanel::PrivData : public Ui::MapListPanel
+DClass<MapListPanel> : public Ui::MapListPanel
 {
 };
+
+DPointered(MapListPanel)
 
 MapListPanel::MapListPanel(QWidget *parent)
 :QWidget(parent)
 {
-	d = new PrivData;
 	d->setupUi(this);
 	d->lstMaplist->setModel(new QStandardItemModel(this));
 	this->connect(QApplication::instance(), SIGNAL(focusChanged(QWidget*, QWidget*)),
@@ -45,7 +46,6 @@ MapListPanel::MapListPanel(QWidget *parent)
 
 MapListPanel::~MapListPanel()
 {
-	delete d;
 }
 
 void MapListPanel::addMapFromEditBoxToList()

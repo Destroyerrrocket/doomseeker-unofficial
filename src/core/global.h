@@ -2,7 +2,6 @@
 #define __GLOBAL_H__
 
 #include <QtGlobal>
-#include "dpointer.h"
 
 static inline quint32 READINT32(const char *pointer)
 {

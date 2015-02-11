@@ -22,36 +22,32 @@
 //------------------------------------------------------------------------------
 #include "playerslist.h"
 
-class PlayersList::PrivData
+DClass<PlayersList>
 {
 	public:
 		QList<Player> players;
 };
 
+DPointered(PlayersList)
+
 PlayersList::PlayersList()
 {
 	// Nothing to store yet. Future backward compatibility with plugins.
-	d = new PrivData();
 }
 
 PlayersList::PlayersList(const PlayersList& other)
 {
-	d = new PrivData();
-	*d = *other.d;
+	d = other.d;
 }
 
 PlayersList& PlayersList::operator=(const PlayersList& other)
 {
-	if (this != &other)
-	{
-		*d = *other.d;
-	}
+	d = other.d;
 	return *this;
 }
 
 PlayersList::~PlayersList()
 {
-	delete d;
 }
 
 void PlayersList::bots(PlayersList& botsList) const

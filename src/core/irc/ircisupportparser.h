@@ -23,6 +23,8 @@
 #ifndef idDBEE9861_C853_4D04_81D86245014678B9
 #define idDBEE9861_C853_4D04_81D86245014678B9
 
+#include "dptr.h"
+
 #include <QString>
 
 class IRCUserPrefix;
@@ -38,8 +40,7 @@ class IRCISupportParser
 		const IRCUserPrefix &userPrefixes() const;
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<IRCISupportParser> d;
 
 		QString findValue(const QString &key);
 		void parsePrefix();

@@ -23,6 +23,8 @@
 #ifndef idcb0c6116_a0f7_4c45_bbe4_42e4b1944363
 #define idcb0c6116_a0f7_4c45_bbe4_42e4b1944363
 
+#include "dptr.h"
+
 #include <QWidget>
 
 class QStringList;
@@ -45,8 +47,7 @@ private slots:
 	void removeSelected();
 
 private:
-	class PrivData;
-	PrivData *d;
+	DPtr<WadsPicker> d;
 };
 
 #endif

@@ -24,6 +24,7 @@
 #define __GAME_INFO_TIP_H_
 
 #include "serverapi/serverptr.h"
+#include "dptr.h"
 #include <QString>
 #include <QObject>
 
@@ -38,8 +39,7 @@ class GameInfoTip : public QObject
 		QString generateHTML();
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<GameInfoTip> d;
 
 		static const QString UNLIMITED;
 

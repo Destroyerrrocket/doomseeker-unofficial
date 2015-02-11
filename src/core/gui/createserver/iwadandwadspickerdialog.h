@@ -24,6 +24,7 @@
 #define idc56cfbd4_25dc_4818_96d3_71452acc62e8
 
 #include "global.h"
+#include "dptr.h"
 #include <QDialog>
 
 /**
@@ -73,8 +74,7 @@ public:
 	void setIwadByName(const QString &iwad);
 
 private:
-	class PrivData;
-	PrivData *d;
+	DPtr<IwadAndWadsPickerDialog> d;
 };
 
 #endif

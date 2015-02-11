@@ -206,18 +206,19 @@ bool DoomseekerConfig::setIniFile(const QString& filePath)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-class DoomseekerConfig::DoomseekerCfg::PrivData
+DClass<DoomseekerConfig::DoomseekerCfg>
 {
 	public:
 		IniSection section;
 		QuerySpeed querySpeed;
 };
 
+DPointered(DoomseekerConfig::DoomseekerCfg)
+
 const QString DoomseekerConfig::DoomseekerCfg::SECTION_NAME = "Doomseeker";
 
 DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 {
-	d = new PrivData();
 	this->bBotsAreNotPlayers = true;
 	this->bCloseToTrayIcon = false;
 	this->bColorizeServerConsole = true;
@@ -255,7 +256,6 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 
 DoomseekerConfig::DoomseekerCfg::~DoomseekerCfg()
 {
-	delete d;
 }
 
 QList<ColumnSort> DoomseekerConfig::DoomseekerCfg::additionalSortColumns() const

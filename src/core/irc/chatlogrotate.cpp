@@ -31,24 +31,24 @@
 #include "log.h"
 
 
-class ChatLogRotate::PrivData
+DClass<ChatLogRotate>
 {
 public:
 	int maxSize;
 	int removalAgeDaysThreshold;
 };
 
+DPointered(ChatLogRotate)
+
 
 ChatLogRotate::ChatLogRotate()
 {
-	d = new PrivData();
 	d->removalAgeDaysThreshold = -1;
 	d->maxSize = 5 * 1024 * 1024;
 }
 
 ChatLogRotate::~ChatLogRotate()
 {
-	delete d;
 }
 
 void ChatLogRotate::setMaxSize(int size)

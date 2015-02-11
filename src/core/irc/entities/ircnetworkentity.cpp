@@ -26,7 +26,7 @@
 #include "patternlist.h"
 #include <QVariantMap>
 
-class IRCNetworkEntity::PrivData
+DClass<IRCNetworkEntity>
 {
 	public:
 		QString address;
@@ -41,11 +41,10 @@ class IRCNetworkEntity::PrivData
 		unsigned short port;
 };
 
-COPYABLE_D_POINTERED_DEFINE(IRCNetworkEntity);
+DPointered(IRCNetworkEntity)
 
 IRCNetworkEntity::IRCNetworkEntity()
 {
-	d = new PrivData();
 	d->bAutojoinNetwork = false;
 	d->port = 6667;
 	d->nickservCommand = "/msg nickserv identify %1";
@@ -53,7 +52,6 @@ IRCNetworkEntity::IRCNetworkEntity()
 
 IRCNetworkEntity::~IRCNetworkEntity()
 {
-	delete d;
 }
 
 const QString &IRCNetworkEntity::address() const

@@ -23,6 +23,7 @@
 #ifndef __IRCNETWORKENTITY_H__
 #define __IRCNETWORKENTITY_H__
 
+#include "dptr.h"
 #include "global.h"
 #include <QString>
 #include <QStringList>
@@ -40,7 +41,6 @@ class MAIN_EXPORT IRCNetworkEntity
 		static IRCNetworkEntity deserializeQVariant(const QVariant &var);
 
 		IRCNetworkEntity();
-		COPYABLE_D_POINTERED_DECLARE(IRCNetworkEntity);
 		virtual ~IRCNetworkEntity();
 
 		/**
@@ -120,8 +120,7 @@ class MAIN_EXPORT IRCNetworkEntity
 		void setPort(unsigned short v);
 
 	private:
-		class PrivData;
-		PrivData *d;
+		DPtr<IRCNetworkEntity> d;
 };
 
 #endif
