@@ -66,7 +66,6 @@ DPointered(AutoUpdater)
 
 const QString AutoUpdater::PLUGIN_PREFIX = "p-";
 const QString AutoUpdater::MAIN_PROGRAM_PACKAGE_NAME = "doomseeker";
-// This can be set to different values depending on target platform.
 const QString AutoUpdater::UPDATER_INFO_URL_BASE = "http://doomseeker.drdteam.org/updates/";
 
 AutoUpdater::AutoUpdater(QObject* pParent)
@@ -176,6 +175,11 @@ void AutoUpdater::emitOverallProgress(const QString& message)
 	emit overallProgress(current, total, message);
 }
 
+void AutoUpdater::emitStatusMessage(const QString &message)
+{
+	emit statusMessage(message);
+}
+
 AutoUpdater::ErrorCode AutoUpdater::errorCode() const
 {
 	return d->errorCode;
@@ -259,16 +263,16 @@ void AutoUpdater::onPackageDownloadFinish()
 {
 	if (d->pNetworkReply->error() == QNetworkReply::NoError)
 	{
-		gLog << tr("Finished downloading package \"%1\".")
-			.arg(d->currentlyDownloadedPackage.displayName);
+		emitStatusMessage(tr("Finished downloading package \"%1\".")
+			.arg(d->currentlyDownloadedPackage.displayName));
 		startPackageScriptDownload(d->currentlyDownloadedPackage);
 	}
 	else
 	{
-		gLog << tr("Network error when downloading package \"%1\": [%2] %3")
+		emitStatusMessage(tr("Network error when downloading package \"%1\": [%2] %3")
 			.arg(d->currentlyDownloadedPackage.displayName)
 			.arg(d->pNetworkReply->error())
-			.arg(d->pNetworkReply->errorString());
+			.arg(d->pNetworkReply->errorString()));
 		finishWithError(EC_PackageDownloadProblem);
 	}
 }
@@ -288,8 +292,8 @@ void AutoUpdater::onPackageScriptDownloadFinish()
 {
 	if (d->pNetworkReply->error() == QNetworkReply::NoError)
 	{
-		gLog << tr("Finished downloading package script \"%1\".")
-			.arg(d->currentlyDownloadedPackage.displayName);
+		emitStatusMessage(tr("Finished downloading package script \"%1\".")
+			.arg(d->currentlyDownloadedPackage.displayName));
 		QByteArray xmlData = d->pNetworkReply->readAll();
 		QDomDocument xmlDoc = adjustUpdaterScriptXml(xmlData);
 		if (xmlDoc.isNull())
@@ -305,17 +309,17 @@ void AutoUpdater::onPackageScriptDownloadFinish()
 		}
 		else
 		{
-			gLog << tr("All packages downloaded. Building updater script.");
+			emitStatusMessage(tr("All packages downloaded. Building updater script."));
 			ErrorCode result = saveUpdaterScript();
 			finishWithError(result);
 		}
 	}
 	else
 	{
-		gLog << tr("Network error when downloading package script \"%1\": [%2] %3")
+		emitStatusMessage(tr("Network error when downloading package script \"%1\": [%2] %3")
 			.arg(d->currentlyDownloadedPackage.displayName)
 			.arg(d->pNetworkReply->error())
-			.arg(d->pNetworkReply->errorString());
+			.arg(d->pNetworkReply->errorString()));
 		finishWithError(EC_PackageDownloadProblem);
 	}
 }
@@ -341,7 +345,7 @@ void AutoUpdater::onUpdaterInfoDownloadFinish()
 			d->newUpdatePackages = packagesList;
 			if (d->bDownloadAndInstallRequireConfirmation)
 			{
-				gLog << tr("Requesting update confirmation.");
+				emitStatusMessage(tr("Requesting update confirmation."));
 				emitOverallProgress(tr("Confirm"));
 				emit downloadAndInstallConfirmationRequested();
 			}
@@ -353,11 +357,11 @@ void AutoUpdater::onUpdaterInfoDownloadFinish()
 		else
 		{
 			// Nothing to update.
-			gLog << tr("No new program updates detected.");
+			emitStatusMessage(tr("No new program updates detected."));
 			if (filter.wasAnyUpdatePackageIgnored())
 			{
-				gLog << tr("Some update packages were ignored. To install them "
-					"select \"Check for updates\" option from \"Help\" menu.");
+				emitStatusMessage(tr("Some update packages were ignored. To install them "
+					"select \"Check for updates\" option from \"Help\" menu."));
 			}
 			finishWithError(EC_Ok);
 		}
