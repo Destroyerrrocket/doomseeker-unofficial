@@ -236,6 +236,7 @@ class MainWindow : public QMainWindow
 		void ip2cDownloadProgress(qint64 current, qint64 max);
 		void ip2cJobsFinished();
 		void ip2cStartUpdate();
+		void showAndLogStatusMessage(const QString &message);
 		void showServerJoinCommandLineOnBuilderFinished();
 		void showProgramArgsHelp();
 };

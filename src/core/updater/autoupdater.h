@@ -238,6 +238,7 @@ class AutoUpdater : public QObject
 
 		void overallProgress(int current, int total, const QString& msg);
 		void packageDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
+		void statusMessage(const QString &message);
 
 	private:
 		class PrivData;
@@ -257,6 +258,7 @@ class AutoUpdater : public QObject
 		 */
 		void dumpUpdatePackagesToLog(const QList<UpdatePackage>& packages);
 		void emitOverallProgress(const QString& message);
+		void emitStatusMessage(const QString &message);
 		void finishWithError(ErrorCode code);
 		QUrl mkVersionDataFileUrl();
 

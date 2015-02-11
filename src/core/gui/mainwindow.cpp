@@ -408,8 +408,10 @@ void MainWindow::checkForUpdates(bool bUserTriggered)
 	FileUtils::rmAllFiles(DoomseekerFilePaths::updatePackagesStorageDir(),
 		removeFilter);
 
-	gLog << tr("Checking for updates...");
+	showAndLogStatusMessage(tr("Checking for updates..."));
 	d->autoUpdater = new AutoUpdater();
+	this->connect(d->autoUpdater, SIGNAL(statusMessage(QString)),
+		SLOT(showAndLogStatusMessage(QString)));
 	this->connect(d->autoUpdater, SIGNAL(finished()),
 		SLOT(onAutoUpdaterFinish()));
 	this->connect(d->autoUpdater, SIGNAL(downloadAndInstallConfirmationRequested()),
@@ -1087,8 +1089,8 @@ void MainWindow::onAutoUpdaterFileProgress(qint64 bytesReceived, qint64 bytesTot
 
 void MainWindow::onAutoUpdaterFinish()
 {
-	gLog << tr("Program update detection & download finished with status: [%1] %2")
-		.arg((int)d->autoUpdater->errorCode()).arg(d->autoUpdater->errorString());
+	showAndLogStatusMessage(tr("Program update detection & download finished with status: [%1] %2")
+		.arg((int)d->autoUpdater->errorCode()).arg(d->autoUpdater->errorString()));
 	gConfig.autoUpdates.bPerformUpdateOnNextRun = false;
 	if (d->autoUpdater->errorCode() == AutoUpdater::EC_Ok)
 	{
@@ -1346,6 +1348,12 @@ void MainWindow::setupToolBar()
 	this->addToolBar(Qt::TopToolBarArea, pToolBar);
 	setUnifiedTitleAndToolBarOnMac(true);
 	connect(pToolBar, SIGNAL( actionTriggered(QAction*) ), this, SLOT( toolBarAction(QAction*) ) );
+}
+
+void MainWindow::showAndLogStatusMessage(const QString &message)
+{
+	gLog << message;
+	statusBar()->showMessage(message);
 }
 
 void MainWindow::showProgramArgsHelp()
