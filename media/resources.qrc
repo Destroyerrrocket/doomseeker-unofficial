@@ -68,6 +68,7 @@
 	<file alias="flags/CZE">flags/CZE.png</file> <!-- Czech Republic -->
 	<file alias="flags/DEU">flags/DEU.png</file> <!-- Germany -->
 	<file alias="flags/DNK">flags/DNK.png</file> <!-- Denmark -->
+	<file alias="flags/DOM">flags/DOM.png</file> <!-- Dominican Republic -->
 	<file alias="flags/DZA">flags/DZA.png</file> <!-- Algeria -->
 	<file alias="flags/EGY">flags/EGY.png</file> <!-- Egypt -->
 	<file alias="flags/EST">flags/EST.png</file> <!-- Estonia -->
