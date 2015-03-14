@@ -59,6 +59,7 @@ DClass<JoinCommandLineBuilder>
 		ServerPtr server;
 		QWidget *parentWidget;
 		bool passwordsAlreadySet;
+		bool requireOptionals;
 
 		// For missing wads dialog
 		QDialogButtonBox *buttonBox;
@@ -75,6 +76,7 @@ JoinCommandLineBuilder::JoinCommandLineBuilder(ServerPtr server,
 	d->demoName = GameDemo::mkDemoFullPath(demo, *server->plugin());
 	d->parentWidget = parentWidget;
 	d->passwordsAlreadySet = false;
+	d->requireOptionals = false;
 	d->server = server;
 }
 
@@ -321,7 +323,12 @@ JoinCommandLineBuilder::MissingWadsProceed JoinCommandLineBuilder::handleMissing
 			else
 				wadlist << wad.name();
 		}
-		filesMissingMessage += tr("PWADS: %1\nOptional PWADs: %2").arg(wadlist.join(", ")).arg(optionals.join(", "));
+		filesMissingMessage += tr("PWADS: %1").arg(wadlist.join(", "));
+		if(!optionals.isEmpty())
+		{
+			filesMissingMessage += "\n";
+			filesMissingMessage += QString("Optional PWADS: %1").arg(optionals.join(", "));
+		}
 	}
 
 	QStringList requiredDownloads, optionalDownloads;
@@ -376,6 +383,9 @@ void JoinCommandLineBuilder::obtainJoinCommandLine()
 	GameClientRunner* gameRunner = d->server->gameRunner();
 	JoinError joinError = gameRunner->createJoinCommandLine(d->cli, params);
 	delete gameRunner;
+
+	if(d->requireOptionals && joinError.type() == JoinError::NoError && !joinError.missingWads().isEmpty())
+		joinError.setType(JoinError::MissingWads);
 
 	switch (joinError.type())
 	{
@@ -457,6 +467,11 @@ void JoinCommandLineBuilder::onWadseekerDone(int result)
 ServerPtr JoinCommandLineBuilder::server() const
 {
 	return d->server;
+}
+
+void JoinCommandLineBuilder::setRequireOptionals(bool required)
+{
+	d->requireOptionals = required;
 }
 
 bool JoinCommandLineBuilder::tryToInstallGame()

@@ -57,6 +57,10 @@ class JoinCommandLineBuilder : public QObject
 		 */
 		void obtainJoinCommandLine();
 		ServerPtr server() const;
+		/**
+		 * @brief Treats optional wads are required so Wadseeker prompts.
+		 */
+		void setRequireOptionals(bool);
 
 	signals:
 		void commandLineBuildFinished();

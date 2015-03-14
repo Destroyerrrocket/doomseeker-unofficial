@@ -54,6 +54,7 @@ class ServerListContextMenu : public QObject
 			SortAdditionallyDescending,
 			ClearAdditionalSorting,
 			RemoveAdditionalSortingForColumn,
+			FindMissingWADs,
 
 			/// This is returned upon cancel.
 			NothingHappened
@@ -79,23 +80,6 @@ class ServerListContextMenu : public QObject
 		QMenu* createCopyMenu(QWidget* parent);
 		void createMembers();
 		void initializeMembers();
-
-		QAction* copyAddress;
-		QAction* copyEmail;
-		QAction* copyName;
-		QAction* copyUrl;
-		ServerFilterBuilderMenu* filterBuilder;
-		QAction* join;
-
-		QMenu* menu;
-
-		QAction* openUrlInDefaultBrowser;
-
-		ServerPtr pServer;
-
-		QAction* rcon;
-		QAction* refresh;
-		QAction* showJoinCommandLine;
 };
 
 #endif

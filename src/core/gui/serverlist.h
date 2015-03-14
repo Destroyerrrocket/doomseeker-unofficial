@@ -107,6 +107,12 @@ class ServerListHandler : public QObject
 		 */
 		void displayServerJoinCommandLine(const ServerPtr&);
 
+		/**
+		 * Request to force missing wads to be searched for (including
+		 * optionals).
+		 */
+		void findMissingWADs(const ServerPtr&);
+
 		void serverFilterModified(const ServerListFilterInfo& filter);
 		/**
 		 *	@brief Emitted every time when a server info is updated through

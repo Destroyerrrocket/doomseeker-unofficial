@@ -184,6 +184,7 @@ class MainWindow : public QMainWindow
 		void checkForUpdatesUserTriggered();
 		void confirmUpdateInstallation();
 		void discardUpdates();
+		void findMissingWADs(const ServerPtr&);
 		void finishedQueryingMaster(MasterClient* master);
 		void getServers();
 		void masterManagerMessages(MasterClient* pSender, const QString& title, const QString& content, bool isError);

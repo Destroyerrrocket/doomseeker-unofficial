@@ -181,6 +181,10 @@ void ServerListHandler::contextMenuTriggered(QAction* action)
 			// Do nothing.
 			break;
 
+		case ServerListContextMenu::FindMissingWADs:
+			emit findMissingWADs(server);
+			break;
+
 		case ServerListContextMenu::Join:
 			emit serverDoubleClicked(server);
 			break;

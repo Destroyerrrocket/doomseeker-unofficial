@@ -66,6 +66,7 @@
 #include "fileutils.h"
 #include "gamedemo.h"
 #include "joincommandlinebuilder.h"
+#include "pathfinder/wadpathfinder.h"
 #include "log.h"
 #include "main.h"
 #include "strings.h"
@@ -537,7 +538,8 @@ void MainWindow::connectEntities()
 	connect(d->serverTableHandler, SIGNAL(serverFilterModified(ServerListFilterInfo)),
 		d->serverFilterDock, SLOT(setFilterInfo(ServerListFilterInfo)));
 	connect(d->serverTableHandler, SIGNAL( serverDoubleClicked(ServerPtr) ), this, SLOT( runGame(ServerPtr) ) );
-	connect(d->serverTableHandler, SIGNAL( displayServerJoinCommandLine(ServerPtr) ), this, SLOT( showServerJoinCommandLine(ServerPtr) ) );
+	connect(d->serverTableHandler, SIGNAL( displayServerJoinCommandLine(const ServerPtr&) ), this, SLOT( showServerJoinCommandLine(const ServerPtr&) ) );
+	connect(d->serverTableHandler, SIGNAL( findMissingWADs(const ServerPtr&) ), this, SLOT( findMissingWADs(const ServerPtr&) ) );
 	connect(d->serverTableHandler, SIGNAL( serverInfoUpdated(ServerPtr) ), this, SLOT( serverAddedToList(ServerPtr) ) );
 	connect(d->buddiesList, SIGNAL(scanCompleted()), d->serverTableHandler, SLOT(redraw()));
 }
@@ -591,6 +593,35 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 			setQueryMasterServerEnabled(pMasterClient, true);
 		}
 	}
+}
+
+void MainWindow::findMissingWADs(const ServerPtr &server)
+{
+	// Display a message if all WADs are present.
+	bool allfound = true;
+	QList<PWad> wads = server->wads();
+	PathFinder pathFinder = server->wadPathFinder();
+	WadPathFinder wadFinder(pathFinder);
+	foreach(const PWad &wad, wads)
+	{
+		if(!wadFinder.find(wad.name()).isValid())
+		{
+			allfound = false;
+			break;
+		}
+	}
+	if(allfound)
+	{
+		QMessageBox::information(this, tr("All WADs found"), tr("All of the WADs used by this server are present."));
+		return;
+	}
+
+	CommandLineInfo cli;
+	ConnectionHandler connectionHandler(server, this);
+	// Use a command line builder to trigger missing wads dialog.
+	JoinCommandLineBuilder *builder = new JoinCommandLineBuilder(server, GameDemo::NoDemo, this);
+	builder->setRequireOptionals(true);
+	builder->obtainJoinCommandLine();
 }
 
 void MainWindow::finishConfiguration(DoomseekerConfigurationDialog &configDialog, bool lookupHostsChanged)
