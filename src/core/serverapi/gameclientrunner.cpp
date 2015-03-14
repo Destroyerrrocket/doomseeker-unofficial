@@ -126,7 +126,7 @@ DClass<GameClientRunner>
 		ServerConnectParams connectParams;
 		CommandLineInfo* cli;
 		JoinError joinError;
-		QStringList missingPwads;
+		QList<PWad> missingPwads;
 		PathFinder pathFinder;
 		ServerPtr server;
 
@@ -245,7 +245,15 @@ void GameClientRunner::addWads()
 			d->joinError.setMissingIwad(d->server->iwad());
 		}
 		d->joinError.setMissingWads(d->missingPwads);
-		d->joinError.setType(JoinError::MissingWads);
+		foreach(const PWad &wad, d->missingPwads)
+		{
+			// Only error if there are required missing wads
+			if(!wad.isOptional())
+			{
+				d->joinError.setType(JoinError::MissingWads);
+				break;
+			}
+		}
 	}
 }
 
@@ -267,11 +275,11 @@ void GameClientRunner::addPwads()
 	for (int i = 0; i < d->server->numWads(); ++i)
 	{
 		QString pwad = findWad(d->server->wad(i).name());
-		if (pwad.isEmpty() && !d->server->wad(i).isOptional())
+		if (pwad.isEmpty())
 		{
-			markPwadAsMissing(d->server->wad(i).name());
+			markPwadAsMissing(d->server->wad(i));
 		}
-		else if (!pwad.isEmpty()) // Don't -file missing optional wads
+		else
 		{
 			if (pwad.toLower().endsWith(".deh"))
 			{
@@ -477,7 +485,7 @@ const QString& GameClientRunner::iwadPath() const
 	return d->cachedIwadPath;
 }
 
-void GameClientRunner::markPwadAsMissing(const QString& pwadName)
+void GameClientRunner::markPwadAsMissing(const PWad& pwadName)
 {
 	d->missingPwads << pwadName;
 }

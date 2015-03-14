@@ -321,7 +321,7 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 * This information is retrieved by Doomseeker to prompt user whether
 		 * they want to try to download the WADs.
 		 */
-		void markPwadAsMissing(const QString& pwadName);
+		void markPwadAsMissing(const PWad& pwadName);
 
 		/**
 		 * @brief Reference to a PathFinder belonging to this GameClientRunner.

@@ -26,7 +26,9 @@
 #include "dptr.h"
 #include "global.h"
 #include <QString>
-#include <QStringList>
+#include <QtContainerFwd>
+
+class PWad;
 
 /**
  * @ingroup group_pluginapi
@@ -64,7 +66,7 @@ class MAIN_EXPORT JoinError
 		JoinError& operator=(const JoinError& other);
 		virtual ~JoinError();
 
-		void addMissingWad(const QString& wad);
+		void addMissingWad(const PWad& wad);
 		void clearMissingWads();
 
 		const QString& error() const;
@@ -80,11 +82,11 @@ class MAIN_EXPORT JoinError
 		/**
 		 * This is valid only if type == MissingWads.
 		 */
-		const QStringList& missingWads() const;
+		const QList<PWad>& missingWads() const;
 
 		void setError(const QString& error);
 		void setMissingIwad(const QString& iwad);
-		void setMissingWads(const QStringList& wads);
+		void setMissingWads(const QList<PWad>& wads);
 		void setType(JoinErrorType type);
 
 		JoinErrorType type() const;

@@ -32,6 +32,7 @@ class GameDemo;
 class JoinError;
 class Server;
 class ServerConnectParams;
+class QAbstractButton;
 class QUrl;
 class QWidget;
 
@@ -70,10 +71,10 @@ class JoinCommandLineBuilder : public QObject
 
 		DPtr<JoinCommandLineBuilder> d;
 
-		QStringList allDownloadableWads(const JoinError &joinError);
+		void allDownloadableWads(const JoinError &joinError, QStringList &required, QStringList &optional);
 		bool buildServerConnectParams(ServerConnectParams &params);
 		bool checkServerStatus();
-		int displayMissingWadsMessage(const QStringList &downloadableWads, const QString &message);
+		int displayMissingWadsMessage(const QStringList &downloadableWads, QStringList &optionalWads, const QString &message);
 		void failBuild();
 		void handleError(const JoinError &error);
 		MissingWadsProceed handleMissingWads(const JoinError &error);
@@ -81,6 +82,7 @@ class JoinCommandLineBuilder : public QObject
 		bool tryToInstallGame();
 
 	private slots:
+		void missingWadsClicked(QAbstractButton *);
 		void onWadseekerDone(int result);
 };
 

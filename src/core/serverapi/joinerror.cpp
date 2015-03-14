@@ -21,6 +21,9 @@
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "joinerror.h"
+#include "serverapi/serverstructs.h"
+
+#include <QList>
 
 DClass<JoinError>
 {
@@ -36,7 +39,7 @@ DClass<JoinError>
 		/**
 		 * This is valid only if type == MissingWads.
 		 */
-		QStringList missingWads;
+		QList<PWad> missingWads;
 };
 
 DPointered(JoinError)
@@ -66,7 +69,7 @@ JoinError::~JoinError()
 {
 }
 
-void JoinError::addMissingWad(const QString& wad)
+void JoinError::addMissingWad(const PWad& wad)
 {
 	d->missingWads << wad;
 }
@@ -103,7 +106,7 @@ const QString& JoinError::missingIwad() const
 	return d->missingIwad;
 }
 
-const QStringList& JoinError::missingWads() const
+const QList<PWad>& JoinError::missingWads() const
 {
 	return d->missingWads;
 }
@@ -118,7 +121,7 @@ void JoinError::setMissingIwad(const QString& iwad)
 	d->missingIwad = iwad;
 }
 
-void JoinError::setMissingWads(const QStringList& wads)
+void JoinError::setMissingWads(const QList<PWad>& wads)
 {
 	d->missingWads = wads;
 }

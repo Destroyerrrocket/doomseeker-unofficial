@@ -39,6 +39,10 @@
 #include "gamedemo.h"
 
 #include <wadseeker/wadseeker.h>
+#include <QDialogButtonBox>
+#include <QGridLayout>
+#include <QLabel>
+#include <QListWidget>
 #include <QMessageBox>
 #include <cassert>
 
@@ -55,6 +59,10 @@ DClass<JoinCommandLineBuilder>
 		ServerPtr server;
 		QWidget *parentWidget;
 		bool passwordsAlreadySet;
+
+		// For missing wads dialog
+		QDialogButtonBox *buttonBox;
+		QDialogButtonBox::StandardButton lastButtonClicked;
 };
 
 DPointered(JoinCommandLineBuilder)
@@ -74,15 +82,23 @@ JoinCommandLineBuilder::~JoinCommandLineBuilder()
 {
 }
 
-QStringList JoinCommandLineBuilder::allDownloadableWads(const JoinError &joinError)
+void JoinCommandLineBuilder::allDownloadableWads(const JoinError &joinError, QStringList &required, QStringList &optional)
 {
-	QStringList wads;
 	if (!joinError.missingIwad().isEmpty())
 	{
-		wads << joinError.missingIwad();
+		required << joinError.missingIwad();
 	}
-	wads.append(joinError.missingWads());
-	return Wadseeker::filterAllowedOnlyWads(wads);
+
+	const QList<PWad> missingWads = joinError.missingWads();
+	foreach(const PWad &wad, missingWads)
+	{
+		if(wad.isOptional())
+			optional.append(wad.name());
+		else
+			required.append(wad.name());
+	}
+	required = Wadseeker::filterAllowedOnlyWads(required);
+	optional = Wadseeker::filterAllowedOnlyWads(optional);
 }
 
 bool JoinCommandLineBuilder::buildServerConnectParams(ServerConnectParams &params)
@@ -153,32 +169,85 @@ bool JoinCommandLineBuilder::checkWadseekerValidity(QWidget *parent)
 }
 
 int JoinCommandLineBuilder::displayMissingWadsMessage(const QStringList &downloadableWads,
-	const QString &message)
+	QStringList &optionalWads, const QString &message)
 {
-	QString fullMessage = message;
-	QString ignoreMessage;
-	QMessageBox::StandardButtons buttons = 0;
-	if (d->server->plugin()->data()->inGameFileDownloads)
+	const QString CAPTION = tr("Doomseeker - files are missing");
+
+	// Can't use QMessageBox here because we need to be able to add our
+	// optional wad selection box.
+	QDialog msgBox;
+	msgBox.setWindowTitle(CAPTION);
+	QGridLayout *grid = new QGridLayout;
+	QLabel *mainMessage = new QLabel;
+	grid->addWidget(mainMessage, 0, 1);
+
+	QListWidget *optionalList = NULL;
+	if(!optionalWads.isEmpty())
 	{
-		ignoreMessage = tr("\nAlternatively use ignore to connect anyways.");
-		buttons |= QMessageBox::Ignore;
+		optionalList = new QListWidget;
+		optionalList->setMaximumHeight(64);
+		grid->addWidget(optionalList, 1, 1);
+		foreach(const QString &wad, optionalWads)
+		{
+			QListWidgetItem *item = new QListWidgetItem(wad, optionalList);
+			item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+			item->setCheckState(Qt::Checked);
+		}
 	}
 
-	const QString CAPTION = tr("Doomseeker - files are missing");
-	if (!downloadableWads.isEmpty())
+	QLabel *questionLabel = new QLabel;
+	grid->addWidget(questionLabel, 2, 1);
+
+	// We'll need to store this in our d-pointer and connect a signal to this
+	// object since a button box doesn't give us an easy way to get the button
+	// clicked to close the dialog.
+	d->buttonBox = new QDialogButtonBox;
+	d->lastButtonClicked = QDialogButtonBox::NoButton;
+	grid->addWidget(d->buttonBox, 3, 0, 1, 2, Qt::AlignRight);
+	msgBox.connect(d->buttonBox, SIGNAL(accepted()), SLOT(accept()));
+	msgBox.connect(d->buttonBox, SIGNAL(rejected()), SLOT(reject()));
+	connect(d->buttonBox, SIGNAL(clicked(QAbstractButton*)), SLOT(missingWadsClicked(QAbstractButton*)));
+
+	QLabel *icon = new QLabel;
+	QIcon questionIcon = msgBox.style()->standardIcon(QStyle::SP_MessageBoxQuestion);
+	icon->setPixmap(questionIcon.pixmap(questionIcon.actualSize(QSize(64,64))));
+	grid->addWidget(icon, 0, 0, 3, 1, Qt::AlignTop);
+	
+	msgBox.setLayout(grid);
+
+	QString ignoreMessage;
+	if (d->server->plugin()->data()->inGameFileDownloads)
 	{
-		fullMessage += tr("\n\nFollowing files can be downloaded: %1\n\n"
-			"Do you want Wadseeker to find the missing WADs?").arg(downloadableWads.join(", "));
-		fullMessage += ignoreMessage;
-		buttons |= QMessageBox::Yes | QMessageBox::No;
-		return QMessageBox::question(d->parentWidget, CAPTION, fullMessage, buttons);
+		ignoreMessage = tr("Alternatively use ignore to connect anyways.");
+		d->buttonBox->addButton(QDialogButtonBox::Ignore);
+	}
+
+	QString questionMessage;
+	if (!downloadableWads.isEmpty() || !optionalWads.isEmpty())
+	{
+		questionLabel->setText(QString("%1\n%2").arg(tr("Do you want Wadseeker to find the missing WADs?")).arg(ignoreMessage));
+		d->buttonBox->addButton(QDialogButtonBox::Yes);
+		d->buttonBox->addButton(QDialogButtonBox::No);
+		mainMessage->setText(QString("%1\n\n%2").arg(message).arg(tr("Following files can be downloaded: %1").arg(downloadableWads.join(", "))));
+		
 	}
 	else
 	{
-		fullMessage += ignoreMessage;
-		buttons |= QMessageBox::Ok;
-		return QMessageBox::critical(d->parentWidget, CAPTION, fullMessage, buttons);
+		questionLabel->setText(ignoreMessage);
+		d->buttonBox->addButton(QDialogButtonBox::Ok);
+		mainMessage->setText(message);
 	}
+
+	msgBox.exec();
+
+	// Clear out unselected optional wads.
+	for(int i = optionalWads.size();i-- > 0;)
+	{
+		if(optionalList->item(i)->checkState() != Qt::Checked)
+			optionalWads.removeAt(i);
+	}
+
+	return d->lastButtonClicked;
 }
 
 const QString &JoinCommandLineBuilder::error() const
@@ -242,12 +311,23 @@ JoinCommandLineBuilder::MissingWadsProceed JoinCommandLineBuilder::handleMissing
 
 	if (!error.missingWads().isEmpty())
 	{
-		filesMissingMessage += tr("PWADS: %1").arg(error.missingWads().join(", "));
+		const QList<PWad> missingWads = error.missingWads();
+		QStringList wadlist;
+		QStringList optionals;
+		foreach(const PWad &wad, missingWads)
+		{
+			if(wad.isOptional())
+				optionals << wad.name();
+			else
+				wadlist << wad.name();
+		}
+		filesMissingMessage += tr("PWADS: %1\nOptional PWADs: %2").arg(wadlist.join(", ")).arg(optionals.join(", "));
 	}
 
-	QStringList downloadableWads = allDownloadableWads(error);
+	QStringList requiredDownloads, optionalDownloads;
+	allDownloadableWads(error, requiredDownloads, optionalDownloads);
 	QMessageBox::StandardButtons ret = (QMessageBox::StandardButtons)
-		displayMissingWadsMessage(downloadableWads, filesMissingMessage);
+		displayMissingWadsMessage(requiredDownloads, optionalDownloads, filesMissingMessage);
 	if (ret == QMessageBox::Yes)
 	{
 		if (!gWadseekerShow->checkWadseekerValidity(d->parentWidget))
@@ -257,7 +337,8 @@ JoinCommandLineBuilder::MissingWadsProceed JoinCommandLineBuilder::handleMissing
 
 		WadseekerInterface *wadseeker = WadseekerInterface::create(d->server);
 		this->connect(wadseeker, SIGNAL(finished(int)), SLOT(onWadseekerDone(int)));
-		wadseeker->setWads(downloadableWads);
+		requiredDownloads.append(optionalDownloads); // Pass in all requested downloads to Wadseeker
+		wadseeker->setWads(requiredDownloads);
 		wadseeker->setAttribute(Qt::WA_DeleteOnClose);
 		wadseeker->show();
 		return Seeking;
@@ -268,6 +349,11 @@ JoinCommandLineBuilder::MissingWadsProceed JoinCommandLineBuilder::handleMissing
 bool JoinCommandLineBuilder::isConfigurationError() const
 {
 	return d->configurationError;
+}
+
+void JoinCommandLineBuilder::missingWadsClicked(QAbstractButton *button)
+{
+	d->lastButtonClicked = d->buttonBox->standardButton(button);
 }
 
 void JoinCommandLineBuilder::obtainJoinCommandLine()
