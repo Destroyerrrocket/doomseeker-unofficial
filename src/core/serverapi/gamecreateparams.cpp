@@ -50,6 +50,7 @@ DClass<GameCreateParams>
 		QString motd;
 		QString name;
 		unsigned short port;
+		QList<bool> pwadsOptional;
 		QStringList pwadsPaths;
 		bool randomMapRotation;
 		QString rconPassword;
@@ -215,6 +216,16 @@ unsigned short GameCreateParams::port() const
 	return d->port;
 }
 
+QList<bool>& GameCreateParams::pwadsOptional()
+{
+	return d->pwadsOptional;
+}
+
+const QList<bool>& GameCreateParams::pwadsOptional() const
+{
+	return d->pwadsOptional;
+}
+
 QStringList& GameCreateParams::pwadsPaths()
 {
 	return d->pwadsPaths;
@@ -334,6 +345,11 @@ void GameCreateParams::setName(const QString& name)
 void GameCreateParams::setPort(unsigned short port)
 {
 	d->port = port;
+}
+
+void GameCreateParams::setPwadsOptional(const QList<bool>& pwadsOptional)
+{
+	d->pwadsOptional = pwadsOptional;
 }
 
 void GameCreateParams::setPwadsPaths(const QStringList& pwadsPaths)

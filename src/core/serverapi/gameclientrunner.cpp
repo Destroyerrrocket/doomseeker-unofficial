@@ -117,6 +117,7 @@ DClass<GameClientRunner>
 		QString argDehLoading;
 		QString argInGamePassword;
 		QString argIwadLoading;
+		QString argOptionalWadLoading;
 		QString argPort;
 		QString argPwadLoading;
 		QString argDemoRecord;
@@ -150,6 +151,7 @@ GameClientRunner::GameClientRunner(ServerPtr server)
 	d->argConnect = "-connect";
 	d->argDehLoading = "-deh";
 	d->argIwadLoading = "-iwad";
+	d->argOptionalWadLoading = "-file"; // Assume one does not have this feature.
 	d->argPort = "-port";
 	d->argPwadLoading = "-file";
 	d->argDemoRecord = "-record";
@@ -330,6 +332,11 @@ const QString& GameClientRunner::argForInGamePassword() const
 const QString& GameClientRunner::argForIwadLoading() const
 {
 	return d->argIwadLoading;
+}
+
+const QString& GameClientRunner::argForOptionalWadLoading() const
+{
+	return d->argOptionalWadLoading;
 }
 
 const QString& GameClientRunner::argForPort() const
@@ -539,6 +546,11 @@ void GameClientRunner::setArgForInGamePassword(const QString& arg)
 void GameClientRunner::setArgForIwadLoading(const QString& arg)
 {
 	d->argIwadLoading = arg;
+}
+
+void GameClientRunner::setArgForOptionalWadLoading(const QString& arg)
+{
+	d->argOptionalWadLoading = arg;
 }
 
 void GameClientRunner::setArgForPort(const QString& arg)

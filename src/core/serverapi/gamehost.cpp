@@ -47,6 +47,7 @@ DClass<GameHost>
 		QString argBexLoading;
 		QString argDehLoading;
 		QString argIwadLoading;
+		QString argOptionalWadLoading;
 		QString argPort;
 		QString argPwadLoading;
 		QString argDemoPlayback;
@@ -70,6 +71,7 @@ GameHost::GameHost(EnginePlugin* plugin)
 	d->argBexLoading = "-deh";
 	d->argDehLoading = "-deh";
 	d->argIwadLoading = "-iwad";
+	d->argOptionalWadLoading = "-file";
 	d->argPort = "-port";
 	d->argPwadLoading = "-file";
 	d->argDemoPlayback = "-playdemo";
@@ -145,8 +147,11 @@ void GameHost::addIwad_default()
 
 void GameHost::addPwads_default()
 {
-	foreach(const QString& pwad, params().pwadsPaths())
+	const QList<bool> &pwadsOptional = params().pwadsOptional();
+	for(int i = 0;i < params().pwadsPaths().size();++i)
 	{
+		const QString &pwad = params().pwadsPaths()[i];
+
 		QFileInfo fi(pwad);
 		if (!fi.isFile())
 		{
@@ -164,7 +169,10 @@ void GameHost::addPwads_default()
 		}
 		else
 		{
-			args() << argForPwadLoading() << pwad;
+			if(pwadsOptional.size() > i && pwadsOptional[i])
+				args() << argForOptionalWadLoading() << pwad;
+			else
+				args() << argForPwadLoading() << pwad;
 		}
 	}
 }
@@ -182,6 +190,11 @@ const QString& GameHost::argForDehLoading() const
 const QString& GameHost::argForIwadLoading() const
 {
 	return d->argIwadLoading;
+}
+
+const QString& GameHost::argForOptionalWadLoading() const
+{
+	return d->argOptionalWadLoading;
 }
 
 const QString& GameHost::argForPort() const
@@ -332,6 +345,11 @@ void GameHost::setArgForDehLoading(const QString& arg)
 void GameHost::setArgForIwadLoading(const QString& arg)
 {
 	d->argIwadLoading = arg;
+}
+
+void GameHost::setArgForOptionalWadLoading(const QString& arg)
+{
+	d->argOptionalWadLoading = arg;
 }
 
 void GameHost::setArgForPort(const QString& arg)

@@ -44,7 +44,7 @@ WadsPicker::~WadsPicker()
 {
 }
 
-void WadsPicker::addWadPath(const QString &wadPath)
+void WadsPicker::addWadPath(const QString &wadPath, bool required)
 {
 	if (wadPath.isEmpty())
 	{
@@ -82,6 +82,8 @@ void WadsPicker::addWadPath(const QString &wadPath)
 	it->setDragEnabled(true);
 	it->setDropEnabled(false);
 	it->setToolTip(wadPath);
+	it->setCheckable(true);
+	it->setCheckState(required ? Qt::Checked : Qt::Unchecked);
 
 	model->appendRow(it);
 }
@@ -106,17 +108,27 @@ void WadsPicker::browseAndAdd()
 	}
 }
 
+QList<bool> WadsPicker::fileOptional() const
+{
+	QList<bool> checked = CommonGUI::listViewStandardItemsToBoolList(d->lstAdditionalFiles);
+	// We check required WADs and want to return optional wads.
+	for(int i = 0;i < checked.size();++i)
+		checked[i] = !checked[i];
+	return checked;
+}
+
 QStringList WadsPicker::filePaths() const
 {
 	return CommonGUI::listViewStandardItemsToStringList(d->lstAdditionalFiles);
 }
 
-void WadsPicker::setFilePaths(const QStringList &paths)
+void WadsPicker::setFilePaths(const QStringList &paths, const QList<bool> &optionals)
 {
 	removeAll();
-	foreach (const QString &path, paths)
+	for(int i = 0;i < paths.size();++i)
 	{
-		addWadPath(path);
+		const QString &path = paths[i];
+		addWadPath(paths[i], i >= optionals.size() || !optionals[i]);
 	}
 }
 

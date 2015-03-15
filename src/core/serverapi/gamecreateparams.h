@@ -139,6 +139,8 @@ class MAIN_EXPORT GameCreateParams
 		const QString& motd() const;
 		const QString& name() const;
 		unsigned short port() const;
+		QList<bool>& pwadsOptional();
+		const QList<bool>& pwadsOptional() const;
 		QStringList& pwadsPaths();
 		const QStringList& pwadsPaths() const;
 
@@ -171,6 +173,7 @@ class MAIN_EXPORT GameCreateParams
 		void setMotd(const QString& motd);
 		void setName(const QString& name);
 		void setPort(unsigned short port);
+		void setPwadsOptional(const QList<bool>& pwadsOptional);
 		void setPwadsPaths(const QStringList& pwadsPaths);
 		void setRandomMapRotation(bool b);
 		void setRconPassword(const QString& pass);

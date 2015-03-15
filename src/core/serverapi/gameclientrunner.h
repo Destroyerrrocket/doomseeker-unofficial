@@ -266,6 +266,13 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		const QString& argForPort() const;
 
 		/**
+		 * @brief Command line parameter that is used to load optional WADs.
+		 *
+		 * Default: "-file".
+		 */
+		const QString& argForOptionalWadLoading() const;
+
+		/**
 		 * @brief Command line parameter that is used to load a PWAD.
 		 *
 		 * Default: "-file".
@@ -345,11 +352,12 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		void setArgForConnect(const QString& arg);
 		void setArgForConnectPassword(const QString& arg);
 		void setArgForDehLoading(const QString& arg);
+		void setArgForDemoRecord(const QString& arg);
 		void setArgForInGamePassword(const QString& arg);
 		void setArgForIwadLoading(const QString& arg);
+		void setArgForOptionalWadLoading(const QString& arg);
 		void setArgForPort(const QString& arg);
 		void setArgForPwadLoading(const QString& arg);
-		void setArgForDemoRecord(const QString& arg);
 
 		/**
 		 * @brief Apply error that is passed to the launching routine and

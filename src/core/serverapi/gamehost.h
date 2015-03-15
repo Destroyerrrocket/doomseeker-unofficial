@@ -113,6 +113,13 @@ class MAIN_EXPORT GameHost : public QObject
 		const QString& argForIwadLoading() const;
 
 		/**
+		 * @brief Command line parameter that is used to load optional WADs.
+		 *
+		 * Default: "-file".
+		 */
+		const QString& argForOptionalWadLoading() const;
+
+		/**
 		 * @brief Command line parameter that is used to set network port for
 		 * the game.
 		 *
@@ -224,6 +231,7 @@ class MAIN_EXPORT GameHost : public QObject
 		void setArgForBexLoading(const QString& arg);
 		void setArgForDehLoading(const QString& arg);
 		void setArgForIwadLoading(const QString& arg);
+		void setArgForOptionalWadLoading(const QString& arg);
 		void setArgForPort(const QString& arg);
 		void setArgForPwadLoading(const QString& arg);
 		void setArgForDemoPlayback(const QString& arg);

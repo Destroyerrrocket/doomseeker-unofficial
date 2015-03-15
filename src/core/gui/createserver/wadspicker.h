@@ -37,11 +37,12 @@ public:
 	WadsPicker(QWidget *parent);
 	~WadsPicker();
 
+	QList<bool> fileOptional() const;
 	QStringList filePaths() const;
-	void setFilePaths(const QStringList &paths);
+	void setFilePaths(const QStringList &paths, const QList<bool> &optionals);
 
 private slots:
-	void addWadPath(const QString &wadPath);
+	void addWadPath(const QString &wadPath, bool required=true);
 	void browseAndAdd();
 	void removeAll();
 	void removeSelected();

@@ -34,6 +34,19 @@ QString CommonGUI::askString(const QString& title, const QString& label,
 		defaultString, ok);
 }
 
+QList<bool> CommonGUI::listViewStandardItemsToBoolList(QListView* listview)
+{
+	QList<bool> list;
+	QStandardItemModel* model = static_cast<QStandardItemModel*>(
+		listview->model());
+	for (int i = 0; i < model->rowCount(); ++i)
+	{
+		list << (model->item(i)->checkState() == Qt::Checked);
+	}
+
+	return list;
+}
+
 QStringList CommonGUI::listViewStandardItemsToStringList(QListView* listview)
 {
 	QStringList list;

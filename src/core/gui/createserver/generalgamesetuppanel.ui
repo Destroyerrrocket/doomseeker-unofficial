@@ -191,7 +191,7 @@
    <item>
     <widget class="QLabel" name="label_6">
      <property name="text">
-      <string>Additional WADs and files:</string>
+      <string>Additional WADs and files (check required):</string>
      </property>
     </widget>
    </item>

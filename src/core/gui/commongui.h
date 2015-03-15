@@ -40,6 +40,12 @@ class CommonGUI
 			bool* ok = NULL, const QString& defaultString = "");
 
 		/**
+		 * Reads items from a QListView with QStandardItemModel and pulls the
+		 * checked state and converts to a QList<bool>.
+		 */
+		static QList<bool> listViewStandardItemsToBoolList(QListView* listview);
+
+		/**
 		 * @brief Reads items from a QListView that uses QStandardItemModel
 		 * and puts texts of these items into a list of strings.
 		 * @param listview - QListView that uses QStandardItemModel.

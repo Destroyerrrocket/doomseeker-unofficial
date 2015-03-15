@@ -71,6 +71,7 @@ void GeneralGameSetupPanel::fillInParams(GameCreateParams &params, bool offline)
 	params.setHostMode(offline ? GameCreateParams::Offline : GameCreateParams::Host);
 	params.setIwadPath(d->iwadPicker->currentIwad());
 	params.setPwadsPaths(d->wadsPicker->filePaths());
+	params.setPwadsOptional(d->wadsPicker->fileOptional());
 	params.setBroadcastToLan(d->cbBroadcastToLAN->isChecked());
 	params.setBroadcastToMaster(d->cbBroadcastToMaster->isChecked());
 	params.setMap(d->leMap->text());
@@ -130,7 +131,12 @@ void GeneralGameSetupPanel::loadConfig(Ini &config, bool loadingPrevious)
 		d->iwadPicker->addIwad(general["iwad"]);
 	}
 
-	d->wadsPicker->setFilePaths(general["pwads"].valueString().split(";"));
+	QList<bool> optionalWads;
+	foreach(QString value, general["pwadsOptional"].valueString().split(";"))
+	{
+		optionalWads << (value != "0");
+	}	
+	d->wadsPicker->setFilePaths(general["pwads"].valueString().split(";"), optionalWads);
 
 	d->cbBroadcastToLAN->setChecked(general["broadcastToLAN"]);
 	d->cbBroadcastToMaster->setChecked(general["broadcastToMaster"]);
@@ -148,6 +154,11 @@ void GeneralGameSetupPanel::saveConfig(Ini &config)
 	general["iwad"] = d->iwadPicker->currentIwad();
 
 	general["pwads"] = d->wadsPicker->filePaths().join(";");
+	QList<bool> optionalWads = d->wadsPicker->fileOptional();
+	QStringList optionalList;
+	foreach(bool optional, optionalWads)
+		optionalList << (optional ? "1" : "0");
+	general["pwadsOptional"] = optionalList.join(";");
 
 	general["broadcastToLAN"] = d->cbBroadcastToLAN->isChecked();
 	general["broadcastToMaster"] = d->cbBroadcastToMaster->isChecked();

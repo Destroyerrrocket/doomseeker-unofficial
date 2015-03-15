@@ -31,6 +31,7 @@ ZandronumGameHost::ZandronumGameHost()
 : GameHost(ZandronumEnginePlugin::staticInstance())
 {
 	setArgForServerLaunch("-host");
+	setArgForOptionalWadLoading("-optfile");
 
 	set_addDMFlags(&ZandronumGameHost::addDMFlags);
 }
