@@ -119,11 +119,14 @@ class MAIN_EXPORT GameClientRunner : public QObject
 
 	protected:
 		/**
-		 * @brief Adds connection arguments to the list.
+		 * @brief @b [Virtual] Adds connection arguments to the list.
 		 *
 		 * This is argForConnect() followed by server "ip:port".
 		 */
 		void addConnectCommand();
+		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, addConnectCommand, ());
+		void addConnectCommand_default();
+
 		/**
 		 * @brief Adds custom parameters defined by user in configuration box
 		 *        to the args list.
@@ -161,7 +164,7 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 */
 		void addGamePaths();
 		/**
-		 * @brief Adds in-game password to the args list.
+		 * @brief @b [Virtual] Adds in-game password to the args list.
 		 *
 		 * Adds argForInGamePassword() followed by inGamePassword().
 		 *
@@ -170,6 +173,8 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 *     and attempts to add the arguments anyway.
 		 */
 		void addInGamePassword();
+		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, addInGamePassword, ());
+		void addInGamePassword_default();
 		/**
 		 * @brief @b [Virtual] Plugins can replace IWAD discovery mechanism
 		 *        and generation of relevant executable parameters here.
@@ -197,7 +202,7 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 */
 		void addPwads();
 		/**
-		 * @brief Adds connect password to the args list.
+		 * @brief @b [Virtual] Adds connect password to the args list.
 		 *
 		 * This is argForConnectPassword() followed by connectPassword().
 		 *
@@ -206,6 +211,8 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 *     and attempts to add the arguments anyway.
 		 */
 		void addPassword();
+		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, addPassword, ());
+		void addPassword_default();
 
 		/**
 		 * @brief Output command line arguments.

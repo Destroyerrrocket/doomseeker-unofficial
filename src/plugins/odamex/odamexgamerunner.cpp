@@ -31,7 +31,15 @@ OdamexGameClientRunner::OdamexGameClientRunner(QSharedPointer<OdamexServer> serv
 {
 	this->server = server;
 	setArgForDemoRecord("-netrecord");
+	set_addConnectCommand(&OdamexGameClientRunner::addConnectCommand);
 	set_addExtra(&OdamexGameClientRunner::addExtra);
+	set_addPassword(&OdamexGameClientRunner::addPassword);
+}
+
+void OdamexGameClientRunner::addConnectCommand()
+{
+	GameClientRunner::addConnectCommand_default();
+	args() << connectPassword();
 }
 
 void OdamexGameClientRunner::addExtra()
@@ -77,4 +85,10 @@ void OdamexGameClientRunner::addExtra()
 		}
 		args() << waddir;
 	}
+}
+
+void OdamexGameClientRunner::addPassword()
+{
+	// Odamex specifies the connect password as part of the connect command
+	// so we should no-op this function.
 }

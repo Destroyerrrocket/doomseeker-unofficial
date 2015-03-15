@@ -35,7 +35,9 @@ class OdamexGameClientRunner : public GameClientRunner
 	private:
 		QSharedPointer<OdamexServer> server;
 
+		void addConnectCommand();
 		void addExtra();
+		void addPassword();
 };
 
 #endif

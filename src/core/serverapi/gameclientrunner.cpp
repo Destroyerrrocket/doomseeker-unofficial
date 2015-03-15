@@ -131,21 +131,30 @@ DClass<GameClientRunner>
 		PathFinder pathFinder;
 		ServerPtr server;
 
+		void (GameClientRunner::*addConnectCommand)();
 		void (GameClientRunner::*addExtra)();
+		void (GameClientRunner::*addInGamePassword)();
 		void (GameClientRunner::*addIwad)();
+		void (GameClientRunner::*addPassword)();
 		void (GameClientRunner::*createCommandLineArguments)();
 };
 
 DPointered(GameClientRunner)
 
+POLYMORPHIC_DEFINE(void, GameClientRunner, addConnectCommand, (), ());
 POLYMORPHIC_DEFINE(void, GameClientRunner, addExtra, (), ());
+POLYMORPHIC_DEFINE(void, GameClientRunner, addInGamePassword, (), ());
 POLYMORPHIC_DEFINE(void, GameClientRunner, addIwad, (), ());
+POLYMORPHIC_DEFINE(void, GameClientRunner, addPassword, (), ());
 POLYMORPHIC_DEFINE(void, GameClientRunner, createCommandLineArguments, (), ());
 
 GameClientRunner::GameClientRunner(ServerPtr server)
 {
+	set_addConnectCommand(&GameClientRunner::addConnectCommand_default);
 	set_addExtra(&GameClientRunner::addExtra_default);
+	set_addInGamePassword(&GameClientRunner::addInGamePassword_default);
 	set_addIwad(&GameClientRunner::addIwad_default);
+	set_addPassword(&GameClientRunner::addPassword_default);
 	set_createCommandLineArguments(&GameClientRunner::createCommandLineArguments_default);
 	d->argBexLoading = "-deh";
 	d->argConnect = "-connect";
@@ -163,7 +172,7 @@ GameClientRunner::~GameClientRunner()
 {
 }
 
-void GameClientRunner::addConnectCommand()
+void GameClientRunner::addConnectCommand_default()
 {
 	QString address = QString("%1:%2").arg(d->server->address().toString()).arg(d->server->port());
 	args() << argForConnect() << address;
@@ -213,7 +222,7 @@ void GameClientRunner::addGamePaths()
 	d->cli->applicationDir = applicationDir;
 }
 
-void GameClientRunner::addInGamePassword()
+void GameClientRunner::addInGamePassword_default()
 {
 	if (!argForInGamePassword().isNull())
 	{
@@ -259,7 +268,7 @@ void GameClientRunner::addWads()
 	}
 }
 
-void GameClientRunner::addPassword()
+void GameClientRunner::addPassword_default()
 {
 	if (!argForConnectPassword().isNull())
 	{
