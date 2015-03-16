@@ -39,7 +39,8 @@ OdamexGameClientRunner::OdamexGameClientRunner(QSharedPointer<OdamexServer> serv
 void OdamexGameClientRunner::addConnectCommand()
 {
 	GameClientRunner::addConnectCommand_default();
-	args() << connectPassword();
+	if(server->isLocked())
+		args() << connectPassword();
 }
 
 void OdamexGameClientRunner::addExtra()

@@ -337,7 +337,10 @@ JoinCommandLineBuilder::MissingWadsProceed JoinCommandLineBuilder::handleMissing
 		displayMissingWadsMessage(requiredDownloads, optionalDownloads, filesMissingMessage);
 	if (ret == QMessageBox::Yes)
 	{
-		if (!gWadseekerShow->checkWadseekerValidity(d->parentWidget))
+		// If all there were no required wads and all optionals are unchecked,
+		// don't display Wadseeker.  Also check if Wadseeker setup is valid.
+		if ((requiredDownloads.isEmpty() && optionalDownloads.isEmpty())
+			|| !gWadseekerShow->checkWadseekerValidity(d->parentWidget))
 		{
 			return Cancel;
 		}
@@ -467,6 +470,15 @@ void JoinCommandLineBuilder::onWadseekerDone(int result)
 ServerPtr JoinCommandLineBuilder::server() const
 {
 	return d->server;
+}
+
+void JoinCommandLineBuilder::setPasswords(const QString &connectPassword, const QString &inGamePassword)
+{
+	d->passwordsAlreadySet = !(connectPassword.isNull() && inGamePassword.isNull());
+	if(!connectPassword.isNull())
+		d->connectPassword = connectPassword;
+	if(!inGamePassword.isNull())
+		d->inGamePassword = inGamePassword;
 }
 
 void JoinCommandLineBuilder::setRequireOptionals(bool required)
