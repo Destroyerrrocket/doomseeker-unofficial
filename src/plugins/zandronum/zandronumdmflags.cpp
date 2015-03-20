@@ -24,7 +24,7 @@
 
 #include "serverapi/serverstructs.h"
 
-DMFlagsSection ZandronumDmflags::compatflags()
+DMFlagsSection ZandronumDmflags::compatFlags()
 {
 	DMFlagsSection section("Compat. flags");
 	section << DMFlag( tr("Use Doom's shortest texture behavior"), COMPATF_SHORTTEX);
@@ -44,20 +44,48 @@ DMFlagsSection ZandronumDmflags::compatflags()
 	section << DMFlag( tr("Monsters can not move when hanging over a drop off"), COMPATF_DROPOFF);
 	section << DMFlag( tr("Scrolling sectors are additive like Boom"), COMPATF_BOOMSCROLL);
 	section << DMFlag( tr("Monsters can see semi-invisible players"), COMPATF_INVISIBILITY);
-	section << DMFlag( tr("Limited movement in the air"), COMPATF_LIMITED_AIRMOVEMENT);
-	section << DMFlag( tr("Allow map01 \"plasma bump\" bug"), COMPATF_PLASMA_BUMP_BUG);
-	section << DMFlag( tr("Allow instant respawn after death"), COMPATF_INSTANTRESPAWN);
-	section << DMFlag( tr("Disable taunting"), COMPATF_DISABLETAUNTS);
-	section << DMFlag( tr("Use doom2.exe's original sound curve"), COMPATF_ORIGINALSOUNDCURVE);
-	section << DMFlag( tr("Use original doom2 intermission music"), COMPATF_OLDINTERMISSION);
-	section << DMFlag( tr("Disable stealth monsters"), COMPATF_DISABLESTEALTHMONSTERS);
-	section << DMFlag( tr("Radius damage has infinite height"), COMPATF_OLDRADIUSDMG);
-	section << DMFlag( tr("Disable crosshair"), COMPATF_NO_CROSSHAIR);
-	section << DMFlag( tr("Force weapon switch"), COMPATF_OLD_WEAPON_SWITCH);
-	section << DMFlag( tr("Instantly moving floors are not silent"), COMPATF_SILENT_INSTANT_FLOORS);
-	section << DMFlag( tr("Sector sounds use original method for sound orgin"), COMPATF_SECTORSOUNDS);
-	section << DMFlag( tr("Use original Doom heights for clipping against projetiles"), COMPATF_MISSILECLIP);
-	section << DMFlag( tr("Monsters can't be pushed over drop offs"), COMPATF_CROSSDROPOFF);
+	section << DMFlag(tr("Instantly moving floors are not silent"), COMPATF_SILENT_INSTANT_FLOORS);
+	section << DMFlag(tr("Sector sounds use original method for sound origin"), COMPATF_SECTORSOUNDS);
+	section << DMFlag(tr("Use original Doom heights for clipping against projectiles"), COMPATF_MISSILECLIP);
+	section << DMFlag(tr("Monsters can't be pushed over dropoffs"), COMPATF_CROSSDROPOFF);
+	section << DMFlag(tr("Any monster which calls BOSSDEATH counts for level specials"), COMPATF_ANYBOSSDEATH);
+	section << DMFlag(tr("Minotaur's floor flame is exploded immediately when feet are clipped"), COMPATF_MINOTAUR);
+	section << DMFlag(tr("Force original velocity calculations for A_Mushroom in Dehacked mods"), COMPATF_MUSHROOM);
+	section << DMFlag(tr("Monsters are affected by friction and pushers/pullers"), COMPATF_MBFMONSTERMOVE);
+	section << DMFlag(tr("Crushed monsters are turned into gibs, rather than replaced by gibs"), COMPATF_CORPSEGIBS);
+	section << DMFlag(tr("Friendly monsters aren't blocked by monster-blocking lines"), COMPATF_NOBLOCKFRIENDS);
+	section << DMFlag(tr("Invert sprite sorting order for sprites of equal distance"), COMPATF_SPRITESORT);
+	section << DMFlag(tr("Hitscans use original blockmap and hit check code"), COMPATF_HITSCAN);
+	section << DMFlag(tr("Find neighboring light level like like Doom"), COMPATF_LIGHT);
+	section << DMFlag(tr("Draw polyobjects the old fashioned way"), COMPATF_POLYOBJ);
+	return section;
+}
+
+DMFlagsSection ZandronumDmflags::zandronumCompatFlags()
+{
+	DMFlagsSection section("ZA Compat. flags");
+	section << DMFlag(tr("Net scripts are client side"), ZACOMPATF_NETSCRIPTS_ARE_CLIENTSIDE);
+	section << DMFlag(tr("Clients send full button info"), ZACOMPATF_CLIENTS_SEND_FULL_BUTTON_INFO);
+	section << DMFlag(tr("Players can't use 'land' CCMD"), ZACOMPATF_NO_LAND);
+	section << DMFlag(tr("Use Doom's original random number generator"), ZACOMPATF_OLD_RANDOM_GENERATOR);
+	section << DMFlag(tr("Spheres have NOGRAVITY flag"), ZACOMPATF_NOGRAVITY_SPHERES);
+	section << DMFlag(tr("Don't stop player scripts on disconnect"), ZACOMPATF_DONT_STOP_PLAYER_SCRIPTS_ON_DISCONNECT);
+	section << DMFlag(tr("Use horizontal explosion thrust of old ZDoom versions"), ZACOMPATF_OLD_EXPLOSION_THRUST);
+	section << DMFlag(tr("Non-SOLID things fall through invisible bridges"), ZACOMPATF_OLD_BRIDGE_DROPS);
+	section << DMFlag(tr("Use old ZDoom jump physics"), ZACOMPATF_OLD_ZDOOM_ZMOVEMENT);
+	section << DMFlag(tr("Disallow weapon change when in mid raise/lower"), ZACOMPATF_FULL_WEAPON_LOWER);
+	section << DMFlag(tr("Use vanilla's autoaim tracer behavior"), ZACOMPATF_AUTOAIM);
+	section << DMFlag(tr("West spawns are silent"), ZACOMPATF_SILENT_WEST_SPAWNS);
+	section << DMFlag(tr("Limited movement in the air"), ZACOMPATF_LIMITED_AIRMOVEMENT);
+	section << DMFlag(tr("Allow map01 \"plasma bump\" bug"), ZACOMPATF_PLASMA_BUMP_BUG);
+	section << DMFlag(tr("Allow instant respawn after death"), ZACOMPATF_INSTANTRESPAWN);
+	section << DMFlag(tr("Disable taunting"), ZACOMPATF_DISABLETAUNTS);
+	section << DMFlag(tr("Use doom2.exe's original sound curve"), ZACOMPATF_ORIGINALSOUNDCURVE);
+	section << DMFlag(tr("Use original doom2 intermission music"), ZACOMPATF_OLDINTERMISSION);
+	section << DMFlag(tr("Disable stealth monsters"), ZACOMPATF_DISABLESTEALTHMONSTERS);
+	section << DMFlag(tr("Radius damage has infinite height"), ZACOMPATF_OLDRADIUSDMG);
+	section << DMFlag(tr("Disable crosshair"), ZACOMPATF_NO_CROSSHAIR);
+	section << DMFlag(tr("Force weapon switch"), ZACOMPATF_OLD_WEAPON_SWITCH);
 	return section;
 }
 
@@ -114,15 +142,10 @@ DMFlagsSection ZandronumDmflags::dmflags2()
 	section << DMFlag( tr("No respawn protection"), DF2_NO_RESPAWN_INVUL);
 	section << DMFlag( tr("All players start with a shotgun"), DF2_COOP_SHOTGUNSTART);
 	section << DMFlag( tr("Players respawn where they died (COOP)"), DF2_SAME_SPAWN_SPOT);
-	section << DMFlag( tr("Players keep teams after map change"), DF2_YES_KEEP_TEAMS);
 	section << DMFlag( tr("Don't clear frags after each level"), DF2_YES_KEEPFRAGS);
 	section << DMFlag( tr("Player can't respawn"), DF2_NO_RESPAWN);
 	section << DMFlag( tr("Lose a frag when killed"), DF2_YES_LOSEFRAG);
 	section << DMFlag( tr("Infinite inventory"), DF2_INFINITE_INVENTORY);
-	section << DMFlag( tr("Force OpenGL defaults"), DF2_FORCE_GL_DEFAULTS);
-	section << DMFlag( tr("No rocket jumping"), DF2_NO_ROCKET_JUMPING);
-	section << DMFlag( tr("Award damage not kills"), DF2_AWARD_DAMAGE_INSTEAD_KILLS);
-	section << DMFlag( tr("Force drawing alpha"), DF2_FORCE_ALPHA);
 	section << DMFlag( tr("All monsters must be killed before exiting"), DF2_KILL_MONSTERS);
 	section << DMFlag( tr("Players can't see the automap"), DF2_NO_AUTOMAP);
 	section << DMFlag( tr("Allies can't be seen on the automap"), DF2_NO_AUTOMAP_ALLIES);
@@ -130,50 +153,39 @@ DMFlagsSection ZandronumDmflags::dmflags2()
 	section << DMFlag( tr("Players can use chase cam"), DF2_CHASECAM);
 	section << DMFlag( tr("Players can't suicide"), DF2_NOSUICIDE);
 	section << DMFlag( tr("Players can't use autoaim"), DF2_NOAUTOAIM);
-	section << DMFlag( tr("Spawn map actors in coop as if the game was single player"), DF2_COOP_SP_ACTOR_SPAWN);
+	section << DMFlag(tr("Don't check ammo when switching weapons"), DF2_DONTCHECKAMMO);
+	section << DMFlag(tr("Kill all monsters spawned by a boss cube when the boss dies"), DF2_KILLBOSSMONST);
 	return section;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
-DMFlagsSection ZandronumDmflags1point0::compatflags2()
+DMFlagsSection ZandronumDmflags::zandronumDmflags()
 {
-	DMFlagsSection section("Compat. flags 2");
-	section << DMFlag(tr("NETSCRIPTS are clientside"), COMPATF2_NETSCRIPTS_ARE_CLIENTSIDE);
-	section << DMFlag(tr("Clients send full button info"), COMPATF2_CLIENTS_SEND_FULL_BUTTON_INFO);
-	section << DMFlag(tr("Disallow 'land' console command"), COMPATF2_NO_LAND);
-	section << DMFlag(tr("Old random generator"), COMPATF2_OLD_RANDOM_GENERATOR);
-	section << DMFlag(tr("Powerup spheres have NOGRAVITY flag"), COMPATF2_NOGRAVITY_SPHERES);
-	section << DMFlag(tr("Don't stop scripts running on a player when player leaves the server"),
-		COMPATF2_DONT_STOP_PLAYER_SCRIPTS_ON_DISCONNECT);
-	section << DMFlag(tr("Explosion causes strong horizontal thrust (like old ZDoom)"),
-		COMPATF2_EXPLOSION_THRUST);
-	section << DMFlag(tr("Non-SOLID things fall through thing bridges"), COMPATF2_BRIDGE_DROPS);
-	section << DMFlag(tr("ZDoom 123B33 jump physics"), COMPATF2_ZDOOM_123B33_JUMP_PHYSICS);
-	section << DMFlag(tr("Can't change weapons during raise/lower"), COMPATF2_FULL_WEAPON_LOWER);
+	DMFlagsSection section("Zandronum Flags");
+	section << DMFlag(tr("Clients can't identify targets"), ZADF_NO_IDENTIFY_TARGET);
+	section << DMFlag(tr("lmsspectatorsettings applied in all game modes"), ZADF_ALWAYS_APPLY_LMS_SPECTATORSETTINGS);
+	section << DMFlag(tr("Clients can't draw coop info"), ZADF_NO_COOP_INFO);
+	section << DMFlag(tr("Unlagged is disabled"), ZADF_NOUNLAGGED);
+	section << DMFlag(tr("Players don't block each other"), ZADF_UNBLOCK_PLAYERS);
+	section << DMFlag(tr("Clients don't show medals"), ZADF_NO_MEDALS);
+	section << DMFlag(tr("Keys are shared between players"), ZADF_SHARE_KEYS);
+	section << DMFlag(tr("Player teams are preserved between maps"), ZADF_YES_KEEP_TEAMS);
+	section << DMFlag(tr("Force OpenGL defaults"), ZADF_FORCE_GL_DEFAULTS);
+	section << DMFlag(tr("No rocket jumping"), ZADF_NO_ROCKET_JUMPING);
+	section << DMFlag(tr("Award damage instead of kills"), ZADF_AWARD_DAMAGE_INSTEAD_KILLS);
+	section << DMFlag(tr("Force drawing alpha"), ZADF_FORCE_ALPHA);
+	section << DMFlag(tr("Don't spawn multiplayer things"), ZADF_COOP_SP_ACTOR_SPAWN);
+	section << DMFlag(tr("Force blood screen brightness on clients to emulate vanilla"), ZADF_MAX_BLOOD_SCALAR);
+	section << DMFlag(tr("Teammates don't block each other"), ZADF_UNBLOCK_ALLIES);
 	return section;
 }
 
-DMFlagsSection ZandronumDmflags1point0::dmflags3()
+QList<DMFlagsSection> ZandronumDmflags::flags()
 {
-	DMFlagsSection section("DMFlags3");
-	section << DMFlag(tr("Don't display names of targeted players"), DF3_NO_IDENTIFY_TARGET);
-	section << DMFlag(tr("Apply lmsspectatorsettings in all game modes"), DF3_ALWAYS_APPLY_LMS_SPECTATORSETTINGS);
-	section << DMFlag(tr("Force no coop info"), DF3_NO_COOP_INFO);
-	section << DMFlag(tr("No unlagged"), DF3_NOUNLAGGED);
-	section << DMFlag(tr("Noclip through other players"), DF3_UNBLOCK_PLAYERS);
-	section << DMFlag(tr("No medals"), DF3_NO_MEDALS);
-	return section;
-}
-
-QList<DMFlagsSection> ZandronumDmflags1point0::flags()
-{
-	ZandronumDmflags common;
 	QList<DMFlagsSection> result;
-	result << common.dmflags();
-	result << common.dmflags2();
-	result << dmflags3();
-	result << common.compatflags();
-	result << compatflags2();
+	result << dmflags();
+	result << dmflags2();
+	result << zandronumDmflags();
+	result << compatFlags();
+	result << zandronumCompatFlags();
 	return result;
 }
