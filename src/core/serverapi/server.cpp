@@ -623,6 +623,8 @@ void Server::setMotd(const QString& motd)
 void Server::setName(const QString& serverName)
 {
 	d->name = serverName;
+	// Don't let servers occupy more than one row with newline chars.
+	d->name.replace('\n', ' ').replace('\r', ' ');
 }
 
 void Server::setPing(unsigned int ping)
