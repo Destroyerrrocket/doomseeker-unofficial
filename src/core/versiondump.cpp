@@ -65,9 +65,12 @@ void VersionDump::dumpJsonToIO(QIODevice& io)
 	QVariantMap root;
 	Module doomseeker(Version::name(), QString::number(Version::revisionNumber()),
 		Version::versionRevision());
+	// TODO Remove "doomseeker" on next stable release.
 	root["doomseeker"] = doomseeker.toVariantMap();
-	root["wadseeker"] = Module("Wadseeker", QString::number(Version::revisionNumber()),
+	root["doomseeker-core"] = doomseeker.toVariantMap();
+	root["wadseeker"] = Module("Wadseeker", WadseekerVersionInfo::version(),
 		WadseekerVersionInfo::version()).toVariantMap();
+	root["qt"] = Module("Qt", qVersion()).toVariantMap();
 	for (unsigned int i = 0; i < gPlugins->numPlugins(); ++i)
 	{
 		const PluginLoader::Plugin* plugin = gPlugins->plugin(i);

@@ -27,6 +27,7 @@
 #include "updater/autoupdater.h"
 #include "version.h"
 #include <cassert>
+#include <wadseeker/wadseekerversioninfo.h>
 
 class UpdatePackageFilter::PluginInfo
 {
@@ -103,11 +104,27 @@ bool UpdatePackageFilter::isDifferentThanInstalled(UpdatePackage& pkg) const
 {
 	if (pkg.name == AutoUpdater::MAIN_PROGRAM_PACKAGE_NAME)
 	{
-		// Main program node.
 		QString localRevision = QString::number(Version::revisionNumber());
 		if (localRevision != pkg.revision)
 		{
 			pkg.currentlyInstalledDisplayVersion = Version::versionRevision();
+			return true;
+		}
+	}
+	else if (pkg.name == AutoUpdater::WADSEEKER_PACKAGE_NAME)
+	{
+		QString localRevision = WadseekerVersionInfo::version();
+		if (localRevision != pkg.revision)
+		{
+			pkg.currentlyInstalledDisplayVersion = localRevision;
+			return true;
+		}
+	}
+	else if (pkg.name == AutoUpdater::QT_PACKAGE_NAME)
+	{
+		if (QString(qVersion()) != pkg.revision)
+		{
+			pkg.currentlyInstalledDisplayVersion = qVersion();
 			return true;
 		}
 	}

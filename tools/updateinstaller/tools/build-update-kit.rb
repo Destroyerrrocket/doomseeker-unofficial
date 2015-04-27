@@ -168,7 +168,12 @@ def dump_update_info(output_path, channel, version_data)
 end
 
 def filter_blacklisted_packages(versions)
-    return versions.select {|pkg, data| pkg != "wadseeker"}
+    # TODO: blacklist doomseeker for 'beta' update channel,
+    # then hardcode a final doomseeker.zip package in the update-info file.
+    # This final doomseeker.zip should already be aware of split
+    # packages (qt.zip, wadseeker.zip, doomseeker-core.zip).
+    # And don't forget that Mac and Windows can be different here.
+    return versions
 end
 ###############################################################################
 # Script Contents

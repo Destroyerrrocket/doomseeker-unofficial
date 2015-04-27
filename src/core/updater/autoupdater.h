@@ -129,6 +129,8 @@ class AutoUpdater : public QObject
 		 * Other packages are plugins.
 		 */
 		static const QString MAIN_PROGRAM_PACKAGE_NAME;
+		static const QString QT_PACKAGE_NAME;
+		static const QString WADSEEKER_PACKAGE_NAME;
 		/**
 		 * @brief Base URL to the directory where "update-info*"
 		 *        JSON files are contained.
