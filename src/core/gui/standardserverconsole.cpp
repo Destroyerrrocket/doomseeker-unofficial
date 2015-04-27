@@ -109,5 +109,5 @@ void StandardServerConsole::outputDataReady()
 
 void StandardServerConsole::writeToStandardInput(const QString &message)
 {
-	process->write((message+"\n").toAscii());
+	process->write((message+"\n").toUtf8());
 }

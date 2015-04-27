@@ -367,11 +367,11 @@ void WWWSeeker::networkQueryMetaDataChanged(QNetworkReply* pReply)
 			FileSeekInfo* attachmentSeekInfo = findFileSeekInfo(attachmentName);
 
 #ifndef NDEBUG
-			printf("Attachment detected on URL %s\n", url.toString().toAscii().constData());
+			printf("Attachment detected on URL %s\n", url.toString().toUtf8().constData());
 			if (attachmentSeekInfo != NULL)
 			{
 				printf("Forwarding the detected attachment to \"%s\" download queue\n",
-						attachmentSeekInfo->file().toAscii().constData());
+						attachmentSeekInfo->file().toUtf8().constData());
 			}
 #endif
 			// Abort further download here.
@@ -432,7 +432,7 @@ void WWWSeeker::parseAsHtml(QNetworkReply* pReply)
 		QList<Link> directLinks = urlParser.directLinks(possibleFilenames, url);
 
 #ifndef NDEBUG
-		printf("File %s\n", file.toAscii().constData());
+		printf("File %s\n", file.toUtf8().constData());
 		printf("Site links: %d\n", siteLinks.size());
 		printf("Direct links: %d\n", directLinks.size());
 #endif
@@ -494,7 +494,7 @@ void WWWSeeker::startNetworkQuery(const QUrl& url)
 {
 	QNetworkRequest request;
 	request.setUrl(url);
-	request.setRawHeader("User-Agent", d.userAgent.toAscii());
+	request.setRawHeader("User-Agent", d.userAgent.toUtf8());
 
 	QNetworkReply* pReply = d.pNetworkAccessManager->get(request);
 	addNetworkReply(pReply);
@@ -506,7 +506,7 @@ void WWWSeeker::startNextSites()
 			&& isMoreToSearch())
 	{
 		QUrl url = takeNextUrl();
-		printf("Took URL: %s\n", url.toString().toAscii().constData());
+		printf("Took URL: %s\n", url.toString().toUtf8().constData());
 
 		if (url.isValid())
 		{

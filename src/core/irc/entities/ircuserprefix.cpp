@@ -74,7 +74,7 @@ QString IRCUserPrefix::cleanNickname(const QString &nickname) const
 {
 	if (!nickname.isEmpty())
 	{
-		if (hasPrefix(nickname[0].toAscii()))
+		if (hasPrefix(nickname[0].toLatin1()))
 		{
 			return nickname.mid(1);
 		}
@@ -126,9 +126,9 @@ char IRCUserPrefix::modeFromNickname(const QString &nickname) const
 {
 	if (!nickname.isEmpty())
 	{
-		if (hasPrefix(nickname[0].toAscii()))
+		if (hasPrefix(nickname[0].toLatin1()))
 		{
-			return modeForPrefix(nickname[0].toAscii());
+			return modeForPrefix(nickname[0].toLatin1());
 		}
 	}
 	return 0;

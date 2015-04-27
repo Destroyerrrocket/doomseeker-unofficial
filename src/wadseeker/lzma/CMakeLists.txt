@@ -2,7 +2,7 @@ cmake_minimum_required( VERSION 2.4 )
 
 if( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
 	set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -fomit-frame-pointer -fPIC" )
-endif( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
+endif()
 
 set( LZMA_FILES
 	C/Archive/7z/7zDecode.c
@@ -24,7 +24,7 @@ set( LZMA_FILES
 
 if( WIN32 )
 	set( LZMA_FILES ${LZMA_FILES} C/Threads.c )
-endif( WIN32 )
+endif()
 
 add_library( lzma ${LZMA_FILES} )
 target_link_libraries( lzma )

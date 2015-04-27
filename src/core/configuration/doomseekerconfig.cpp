@@ -632,7 +632,7 @@ void DoomseekerConfig::WadseekerCfg::load(IniSection& section)
 	QStringList urlList = section["SearchURLs"].valueString().split(";", QString::SkipEmptyParts);
 	foreach (const QString& url, urlList)
 	{
-		this->searchURLs << QUrl::fromPercentEncoding(url.toAscii());
+		this->searchURLs << QUrl::fromPercentEncoding(url.toUtf8());
 	}
 }
 
@@ -654,7 +654,7 @@ void DoomseekerConfig::WadseekerCfg::save(IniSection& section)
 	QStringList urlEncodedList;
 	foreach (const QString& url, this->searchURLs)
 	{
-		urlEncodedList << QUrl::toPercentEncoding(url.toAscii());
+		urlEncodedList << QUrl::toPercentEncoding(url.toUtf8());
 	}
 	section["SearchURLs"] = urlEncodedList.join(";");
 }

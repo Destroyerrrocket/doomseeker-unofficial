@@ -28,6 +28,10 @@
 #include <cassert>
 #include <cstdlib>
 
+#if QT_VERSION >= 0x050000
+#include <QStandardPaths>
+#endif
+
 DClass<DataPaths>
 {
 	public:
@@ -181,7 +185,11 @@ QString DataPaths::localDataLocationPath(const QString& subpath) const
 	QString rootPath;
 	if (!isPortableModeOn())
 	{
+#if QT_VERSION >= 0x050000
+		rootPath = QStandardPaths::standardLocations(QStandardPaths::DataLocation).first();
+#else
 		rootPath = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+#endif
 		rootPath = Strings::combinePaths(rootPath, ".doomseeker");
 	}
 	else
@@ -214,7 +222,7 @@ QString DataPaths::programFilesDirectory(MachineType machineType)
 				return QString();
 		}
 
-		QString path = getenv(envVarName.toAscii().constData());
+		QString path = getenv(envVarName.toUtf8().constData());
 		if (path.isEmpty() && machineType != Preferred)
 		{
 			// Empty outcome may happen on 32-bit systems where variables

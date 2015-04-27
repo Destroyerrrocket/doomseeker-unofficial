@@ -42,7 +42,9 @@
 #include "fixednetworkaccessmanager.h"
 
 #include <QtNetwork>
+#if QT_VERSION < 0x050000
 #include "protocols/fixedftpreply.h"
+#endif
 
 FixedNetworkAccessManager::FixedNetworkAccessManager(QObject *parent)
 	: QNetworkAccessManager(parent)
@@ -56,11 +58,13 @@ QNetworkReply *FixedNetworkAccessManager::createRequest(
 	if (request.url().scheme() != "ftp")
 		return QNetworkAccessManager::createRequest(operation, request, device);
 
+#if QT_VERSION < 0x050000
 	if (operation == GetOperation)
 		// Handle ftp:// URLs separately by creating custom QNetworkReply
 		// objects.
 		return new FixedFtpReply(request);
 	else
+#endif
 		return QNetworkAccessManager::createRequest(operation, request, device);
 }
 

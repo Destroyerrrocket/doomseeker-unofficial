@@ -433,7 +433,7 @@ void AutoUpdater::start()
 	}
 	d->bIsRunning = true;
 	QNetworkRequest request;
-	request.setRawHeader("User-Agent", Version::userAgent().toAscii());
+	request.setRawHeader("User-Agent", Version::userAgent().toUtf8());
 	request.setUrl(mkVersionDataFileUrl());
 	QNetworkReply* pReply = d->pNam->get(request);
 	// The updater info file should always be very small and
@@ -493,7 +493,7 @@ void AutoUpdater::startPackageDownload(const UpdatePackage& pkg)
 	d->downloadedPackagesFilenames << fileInfo.fileName();
 
 	QNetworkRequest request;
-	request.setRawHeader("User-Agent", Version::userAgent().toAscii());
+	request.setRawHeader("User-Agent", Version::userAgent().toUtf8());
 	request.setUrl(url);
 	QNetworkReply* pReply = d->pNam->get(request);
 	d->currentlyDownloadedPackage = pkg;
@@ -522,7 +522,7 @@ void AutoUpdater::startPackageScriptDownload(const UpdatePackage& pkg)
 		pkg.downloadScriptUrl.toString());
 
 	QNetworkRequest request;
-	request.setRawHeader("User-Agent", Version::userAgent().toAscii());
+	request.setRawHeader("User-Agent", Version::userAgent().toUtf8());
 	request.setUrl(url);
 	QNetworkReply* pReply = d->pNam->get(request);
 	d->currentlyDownloadedPackage = pkg;

@@ -576,7 +576,7 @@ void IRCResponseParser::parseUserModeMessage(const QString& channel, QString fla
 	// Of course add/subtract characters are not counted here.
 
 	// The first character should always define the flagMode.
-	FlagModes flagMode = getFlagMode(flagsString[0].toAscii());
+	FlagModes flagMode = getFlagMode(flagsString[0].toLatin1());
 
 	if (flagMode == FlagModeError)
 	{
@@ -588,7 +588,7 @@ void IRCResponseParser::parseUserModeMessage(const QString& channel, QString fla
 
 	for (int i = 1; i < flagsString.size(); ++i)
 	{
-		char flagChar = flagsString[i].toAscii();
+		char flagChar = flagsString[i].toLatin1();
 
 		FlagModes tmpFlagMode = getFlagMode(flagChar);
 		if (tmpFlagMode == FlagModeError)

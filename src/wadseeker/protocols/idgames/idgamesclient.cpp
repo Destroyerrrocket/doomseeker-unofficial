@@ -61,7 +61,7 @@ IdgamesReply *IdgamesClient::search(const QString &filename)
 	#endif
 	QNetworkRequest request;
 	request.setUrl(url);
-	request.setRawHeader("User-Agent", d->userAgent.toAscii());
+	request.setRawHeader("User-Agent", d->userAgent.toUtf8());
 	QNetworkReply *reply = d->nam->get(request);
 	return new IdgamesReply(reply);
 }

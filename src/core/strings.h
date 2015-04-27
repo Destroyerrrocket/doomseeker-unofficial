@@ -61,7 +61,7 @@ class MAIN_EXPORT Strings
 		 * QString pathBase = "C:\\games\\";
 		 * QString pathSuffix = "\\doom\\doom.exe";
 		 * QString fullPath = Strings::combinePaths(pathBase, pathSuffix);
-		 * printf("%s\n", fullPath.toAscii().constData());
+		 * printf("%s\n", fullPath.toUtf8().constData());
 		 * // Output: "C:/games/doom/doom.exe"
 		 *	@endcode
 		 *	@param pathFront - base path

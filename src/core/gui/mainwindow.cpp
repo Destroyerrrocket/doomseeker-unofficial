@@ -281,7 +281,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	connectIP2CLoader(d->ip2cLoader);
 	d->ip2cLoader->load();
 
-	restoreState(QByteArray::fromBase64(gConfig.doomseeker.mainWindowState.toAscii()));
+	restoreState(QByteArray::fromBase64(gConfig.doomseeker.mainWindowState.toUtf8()));
 	restoreGeometry(gConfig.doomseeker.mainWindowGeometry);
 
 	// Start first refresh from a timer. We want the main window fully

@@ -60,7 +60,7 @@ void IP2CUpdater::downloadDatabase(const QUrl& netLocation)
 	QNetworkRequest request;
 	request.setUrl(netLocation);
 	qDebug() << netLocation;
-	request.setRawHeader("User-Agent", Version::userAgent().toAscii());
+	request.setRawHeader("User-Agent", Version::userAgent().toUtf8());
 
 	pCurrentNetworkReply = pNetworkAccessManager->get(request);
 	this->connect(pCurrentNetworkReply, SIGNAL(	downloadProgress(qint64, qint64) ),
@@ -101,7 +101,7 @@ void IP2CUpdater::downloadFinished()
 			QString tmpFilePath = tmpFile.fileName();
 
 			QByteArray uncompressedData;
-			gzFile gz = gzopen(tmpFilePath.toAscii().constData(), "rb");
+			gzFile gz = gzopen(tmpFilePath.toUtf8().constData(), "rb");
 			if(gz != NULL)
 			{
 				char chunk[131072]; // 128k

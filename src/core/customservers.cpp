@@ -54,12 +54,12 @@ void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerIn
 			if (entryList.size() == 3)
 			{
 				CustomServerInfo customServerInfo;
-				customServerInfo.engine = QUrl::fromPercentEncoding(entryList[0].toAscii());
+				customServerInfo.engine = QUrl::fromPercentEncoding(entryList[0].toUtf8());
 
 				int engineIndex = gPlugins->pluginIndexFromName(customServerInfo.engine);
 				customServerInfo.engineIndex = engineIndex;
 
-				customServerInfo.host = QUrl::fromPercentEncoding(entryList[1].toAscii());
+				customServerInfo.host = QUrl::fromPercentEncoding(entryList[1].toUtf8());
 
 				bool ok = false;
 				int port = QString(entryList[2]).toInt(&ok);

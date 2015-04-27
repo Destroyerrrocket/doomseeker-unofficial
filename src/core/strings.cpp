@@ -83,7 +83,7 @@ QString Strings::colorizeString(const QString &str, int current)
 			if(i >= str.length())
 				break;
 			QChar colorChar = str[i].toLower();
-			int color = colorChar.toAscii() - 97;
+			int color = colorChar.toLatin1() - 97;
 
 			// special cases
 			if(colorChar == '+')
@@ -435,7 +435,7 @@ QString& Strings::trimr(QString& str, const QString& charList)
 	int i;
 	for (i = str.length() - 1; i >= 0; --i)
 	{
-		if (!isCharOnCharList(str[i].toAscii(), charList))
+		if (!isCharOnCharList(str[i].toLatin1(), charList))
 			break;
 	}
 	++i;
@@ -448,7 +448,7 @@ QString& Strings::triml(QString& str, const QString& charList)
 	int i;
 	for (i = 0; i < str.length(); ++i)
 	{
-		if (!isCharOnCharList(str[i].toAscii(), charList))
+		if (!isCharOnCharList(str[i].toLatin1(), charList))
 			break;
 	}
 

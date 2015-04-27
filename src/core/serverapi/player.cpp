@@ -118,7 +118,7 @@ QString Player::nameFormatted() const
 		if ((d->name[i] < 32 || d->name[i] > 126) && d->name[i] != ESCAPE_COLOR_CHAR)
 			continue;
 
-		switch (d->name[i].toAscii())
+		switch (d->name[i].toLatin1())
 		{
 			case '<':
 				ret += "&lt;";

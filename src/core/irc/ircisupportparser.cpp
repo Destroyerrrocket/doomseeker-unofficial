@@ -99,8 +99,8 @@ void IRCISupportParser::parsePrefix()
 	{
 		return;
 	}
-	QByteArray modes = regex.cap(1).toAscii();
-	QByteArray prefixes = regex.cap(2).toAscii();
+	QByteArray modes = regex.cap(1).toUtf8();
+	QByteArray prefixes = regex.cap(2).toUtf8();
 	if (modes.size() != prefixes.size())
 	{
 		return;

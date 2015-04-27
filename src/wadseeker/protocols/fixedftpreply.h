@@ -44,6 +44,8 @@
 #define FTPREPLY_H
 
 #include <QNetworkReply>
+
+#if QT_VERSION < 0x050000
 #include <QStringList>
 #include <QUrlInfo>
 
@@ -98,4 +100,5 @@ private:
 	void setContent();
 };
 
+#endif
 #endif

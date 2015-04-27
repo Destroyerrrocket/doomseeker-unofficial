@@ -38,7 +38,7 @@ bool IRCGlobal::isChannelName(const QString& name)
 	}
 
 	QChar c = name[0];
-	return isChannelDenotingCharacter(c.toAscii());
+	return isChannelDenotingCharacter(c.toLatin1());
 }
 
 QString IRCGlobal::toIrcLower(const QString& str)

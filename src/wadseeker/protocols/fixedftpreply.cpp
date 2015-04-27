@@ -44,6 +44,8 @@
 #include <QDebug>
 #include <QtNetwork>
 
+#if QT_VERSION < 0x050000
+
 FixedFtpReply::FixedFtpReply(const QNetworkRequest& request)
 	: QNetworkReply()
 {
@@ -182,3 +184,4 @@ qint64 FixedFtpReply::readData(char *data, qint64 maxSize)
 	} else
 		return -1;
 }
+#endif

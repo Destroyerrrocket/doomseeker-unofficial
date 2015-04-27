@@ -65,7 +65,7 @@ PluginLoader::Plugin::Plugin(unsigned int type, QString file)
 {
 	d->file = file;
 	// Load the library
-	d->library = dlopen(d->file.toAscii().constData(), RTLD_NOW);
+	d->library = dlopen(d->file.toUtf8().constData(), RTLD_NOW);
 
 	if(d->library != NULL)
 	{

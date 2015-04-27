@@ -51,7 +51,7 @@ PluginEnginePlugin::PluginEnginePlugin()
 		EP_Version, 1,
 
 		EP_HasMasterServer,
-		EP_DefaultMaster, masterAddress().toAscii().constData(),
+		EP_DefaultMaster, masterAddress().toUtf8().constData(),
 		EP_Done
 	);
 

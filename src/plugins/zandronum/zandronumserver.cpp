@@ -190,7 +190,7 @@ Server::Response ZandronumServer::readRequest(const QByteArray &data)
 	{
 		fprintf(stderr, "Data size error when reading server %s:%u."
 			" Data size encoded: %u, decoded %u\n",
-			address().toString().toAscii().constData(), port(),
+			address().toString().toUtf8().constData(), port(),
 			data.size(), decodedSize);
 		return RESPONSE_BAD;
 	}
@@ -493,7 +493,7 @@ Server::Response ZandronumServer::readRequest(const QByteArray &data)
 		{
 			RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
 			QString name = in.readRawUntilByte('\0');
-			teamInfo[i].setName(tr(name.toAscii().constData()));
+			teamInfo[i].setName(tr(name.toUtf8().constData()));
 		}
 	}
 	if((flags & SQF_TEAMINFO_COLOR) == SQF_TEAMINFO_COLOR)
@@ -628,7 +628,7 @@ void ZandronumServer::updatedSlot(ServerPtr server, int response)
 		QSharedPointer<ZandronumServer> s = server.staticCast<ZandronumServer>();
 		QByteArray& req = s->lastReadRequest;
 
-		fprintf(stderr, "Bad response from server: %s:%u\n", address().toString().toAscii().constData(), port());
+		fprintf(stderr, "Bad response from server: %s:%u\n", address().toString().toUtf8().constData(), port());
 		fprintf(stderr, "Response size: %u\n", req.size());
 		fprintf(stderr, "Data (all non-printable characters are replaced with '?'):\n");
 

@@ -65,7 +65,7 @@ SkulltagVersion::SkulltagVersion(QString version) : version(version)
 	QStringList parts = versionExpression.capturedTexts();
 	major = parts[1].toUShort();
 	minor = parts[2].toUShort();
-	revision = parts[3][0].toAscii();
+	revision = parts[3][0].toUtf8();
 	build = parts[4].toUShort();
 	tag = parts[5];
 	hgRevisionDate = parts[6].toUInt();
@@ -184,7 +184,7 @@ Server::Response SkulltagServer::readRequest(QByteArray &data)
 	{
 		fprintf(stderr, "Data size error when reading server %s:%u."
 			" Data size encoded: %u, decoded %u\n", 
-			address().toString().toAscii().constData(), port(), 
+			address().toString().toUtf8().constData(), port(), 
 			data.size(), decodedSize);
 		return RESPONSE_BAD;
 	}
@@ -521,7 +521,7 @@ Server::Response SkulltagServer::readRequest(QByteArray &data)
 		{
 			RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
 			QString name = in.readRawUntilByte('\0');
-			teamInfo[i].setName(tr(name.toAscii().constData()));
+			teamInfo[i].setName(tr(name.toUtf8().constData()));
 		}
 	}
 	if((flags & SQF_TEAMINFO_COLOR) == SQF_TEAMINFO_COLOR)
@@ -614,7 +614,7 @@ void SkulltagServer::updatedSlot(Server* server, int response)
 		SkulltagServer* s = (SkulltagServer*)server;
 		QByteArray& req = s->lastReadRequest;
 
-		fprintf(stderr, "Bad response from server: %s:%u\n", address().toString().toAscii().constData(), port());
+		fprintf(stderr, "Bad response from server: %s:%u\n", address().toString().toUtf8().constData(), port());
 		fprintf(stderr, "Response size: %u\n", req.size());
 		fprintf(stderr, "Data (all non-printable characters are replaced with '?'):\n");
 
@@ -733,7 +733,7 @@ void SkulltagRConProtocol::sendCommand(const QString &cmd)
 	unsigned char packet[4096];
 	packet[0] = CLRC_COMMAND;
 	packet[cmd.length()+1] = 0;
-	memcpy(packet+1, cmd.toAscii().constData(), cmd.length());
+	memcpy(packet+1, cmd.toUtf8().constData(), cmd.length());
 	char encodedPacket[4097];
 	int encodedSize = 4097;
 	HUFFMAN_Encode(packet, reinterpret_cast<unsigned char*> (encodedPacket), cmd.length()+2, &encodedSize);
@@ -745,7 +745,7 @@ void SkulltagRConProtocol::sendPassword(const QString &password)
 	// Calculate the MD5 of the salt + password
 	QString hashPassword = salt + password;
 	QCryptographicHash hash(QCryptographicHash::Md5);
-	hash.addData(hashPassword.toAscii());
+	hash.addData(hashPassword.toUtf8());
 	QByteArray md5 = hash.result().toHex();
 
 	// Create the packet

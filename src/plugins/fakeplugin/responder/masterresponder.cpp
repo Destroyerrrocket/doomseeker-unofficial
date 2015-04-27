@@ -96,9 +96,9 @@ QList<QByteArray> MasterResponder::buildResponsePackets()
 		}
 		QString currentPort = QString::number(server->port());
 		QString tmp = packet + ";" + currentPort;
-		if (tmp.toAscii().length() > maxPortsListsLength)
+		if (tmp.toUtf8().length() > maxPortsListsLength)
 		{
-			portsLists.append(packet.toAscii());
+			portsLists.append(packet.toUtf8());
 			packet = currentPort;
 		}
 		else
@@ -106,14 +106,14 @@ QList<QByteArray> MasterResponder::buildResponsePackets()
 			packet = tmp;
 		}
 	}
-	portsLists.append(packet.toAscii());
+	portsLists.append(packet.toUtf8());
 	// Now that we have the number of packets, we can prepend
 	// that number to each packet.
 	QList<QByteArray> result;
 	foreach (const QByteArray& portsList, portsLists)
 	{
 		QString number = QString::number(portsLists.size()) + ";";
-		result.append(number.toAscii() + portsList);
+		result.append(number.toUtf8() + portsList);
 	}
 	return result;
 }

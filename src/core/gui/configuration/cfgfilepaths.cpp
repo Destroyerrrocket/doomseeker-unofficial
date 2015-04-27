@@ -49,8 +49,13 @@ CFGFilePaths::CFGFilePaths(QWidget* parent)
 	model->setHorizontalHeaderLabels(labels);
 
 	QHeaderView* header = d->lstIwadAndPwadPaths->horizontalHeader();
+#if QT_VERSION >= 0x050000
+	header->setSectionResizeMode(COL_PATH, QHeaderView::Stretch);
+	header->setSectionResizeMode(COL_RECURSE, QHeaderView::ResizeToContents);
+#else
 	header->setResizeMode(COL_PATH, QHeaderView::Stretch);
 	header->setResizeMode(COL_RECURSE, QHeaderView::ResizeToContents);
+#endif
 
 	connect(d->btnAddWadPath, SIGNAL( clicked() ), this, SLOT( btnAddWadPath_Click()) );
 	connect(d->btnRemoveWadPath, SIGNAL( clicked() ), this, SLOT( btnRemoveWadPath_Click()) );

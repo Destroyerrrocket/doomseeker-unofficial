@@ -92,7 +92,7 @@ void ZandronumRConProtocol::sendCommand(const QString &cmd)
 	char packet[4096];
 	packet[0] = CLRC_COMMAND;
 	packet[cmd.length()+1] = 0;
-	memcpy(packet+1, cmd.toAscii().constData(), cmd.length());
+	memcpy(packet+1, cmd.toUtf8().constData(), cmd.length());
 	huffmanSocket.writeDatagram(packet, 4096, address(), port());
 }
 
@@ -111,7 +111,7 @@ void ZandronumRConProtocol::sendMemorizedPassword()
 		// Calculate the MD5 of the salt + password
 		QString hashPassword = salt + password;
 		QCryptographicHash hash(QCryptographicHash::Md5);
-		hash.addData(hashPassword.toAscii());
+		hash.addData(hashPassword.toUtf8());
 		QByteArray md5 = hash.result().toHex();
 
 		// Create the packet

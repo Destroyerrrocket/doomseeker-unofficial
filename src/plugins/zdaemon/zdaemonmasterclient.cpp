@@ -66,7 +66,7 @@ void ZDaemonMasterClient::createQueryRequest()
 	/*QString userAgent = Version::name() + "/" + Version::version() + " (ZDaemon Plugin)";
 
 	QNetworkRequest netRequest(QUrl("http://" + server + ":" + QString("%1").arg(port) + "/servers/zdaemon.txt")); // Used to be masterlist.php
-	netRequest.setRawHeader("User-Agent", userAgent.toAscii());
+	netRequest.setRawHeader("User-Agent", userAgent.toUtf8());
 
 	QNetworkReply *reply = netAccessManager->get(netRequest);*/
 }
@@ -130,7 +130,7 @@ bool ZDaemonMasterClient::readMasterResponse(QByteArray &data)
 		static char requestHeader[12] = { 0x36, 0xdb, 0x0b, 0x00, 0x6c, 0x00, 0x00, 0x00, 0x33,0x66,0xaa,0x6c };
 		key = in.readRawUntilByte('\0');
 		QByteArray request(requestHeader, 8);
-		request.push_back(QByteArray(key.toAscii().constData(), key.toAscii().length()));
+		request.push_back(QByteArray(key.toUtf8().constData(), key.toUtf8().length()));
 		request.push_back('\0');
 		request.push_back(QByteArray(requestHeader+8, 4));
 		pGlobalUdpSocket->writeDatagram(request, address, port);

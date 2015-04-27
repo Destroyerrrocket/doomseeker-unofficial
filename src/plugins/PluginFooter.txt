@@ -2,14 +2,13 @@
 
 add_dependencies(${PLUGIN_NAME} doomseeker)
 
-get_property(PLUGIN_LOCATION TARGET ${PLUGIN_NAME} PROPERTY LOCATION)
 # Installation is on by default unless explicitly disabled.
 if (NOT DONT_INSTALL) # if install
 	if(UNIX AND NOT APPLE)
-		install(FILES ${PLUGIN_LOCATION} DESTINATION share/doomseeker/engines)
+		install(FILES $<TARGET_FILE:${PLUGIN_NAME}> DESTINATION share/doomseeker/engines)
 		if (QM_FILES)
 			install(FILES ${QM_FILES} DESTINATION share/doomseeker/translations)
-		endif (QM_FILES)
+		endif ()
 	elseif(WIN32)
 		install(TARGETS ${PLUGIN_NAME} 
 			RUNTIME DESTINATION engines
@@ -18,15 +17,15 @@ if (NOT DONT_INSTALL) # if install
 		)
 		if (QM_FILES)
 			install(FILES ${QM_FILES} DESTINATION translations)
-		endif (QM_FILES)
-	endif(UNIX AND NOT APPLE)
-endif(NOT DONT_INSTALL)
+		endif ()
+	endif()
+endif()
 
 add_custom_command(TARGET ${PLUGIN_NAME} PRE_BUILD
 	COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/engines
 )
 add_custom_command(TARGET ${PLUGIN_NAME} POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PLUGIN_LOCATION} ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/engines
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:${PLUGIN_NAME}> ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/engines
 )
 
 # Copy translations
@@ -41,4 +40,4 @@ if (QM_FILES)
 			${FILE_TO_COPY} ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/translations
 		)
 	endforeach(FILE_TO_COPY)
-endif(QM_FILES)
+endif()

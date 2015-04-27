@@ -571,7 +571,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLine
 	{
 		const QString& parameter = commandLine[i];
 		argv[i] = new char[parameter.size() + 1];
-		strcpy(argv[i], parameter.toAscii().constData());
+		strcpy(argv[i], parameter.toUtf8().constData());
 	}
 
 	Main* pMain = new Main(argc, argv);

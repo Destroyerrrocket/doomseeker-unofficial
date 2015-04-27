@@ -52,7 +52,7 @@ ServerConsole::~ServerConsole()
 
 void ServerConsole::appendMessage(const QString &message)
 {
-	QString appendMessage = Qt::escape(message);
+	QString appendMessage = QString(message).toHtmlEscaped();
 	if(appendMessage.endsWith('\n')) // Remove the trailing new line since appendPlainText seems to add one automatically.
 		appendMessage.chop(1);
 	appendMessage.replace('\n', "<br>");

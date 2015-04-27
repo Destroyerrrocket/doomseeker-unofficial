@@ -311,7 +311,7 @@ bool SkulltagBinaries::spawnTestingBatchFile(const QString& versionDir, QString&
 		return false;
 	}
 
-	if (file.write(content.toAscii()) < 0)
+	if (file.write(content.toUtf8()) < 0)
 	{
 		QString error = tr("Error while writing batch file \"%1\"").arg(fullPathToFile);
 		message = Message::customError(error);
@@ -389,7 +389,7 @@ void TestingProgressDialog::getUrl(const QUrl& url)
 {
 	QNetworkRequest request;
 	request.setUrl(url);
-	request.setRawHeader("User-Agent", Version::userAgent().toAscii());
+	request.setRawHeader("User-Agent", Version::userAgent().toUtf8());
 
 	this->pNetworkReply = networkAccessManager.get(request);
 

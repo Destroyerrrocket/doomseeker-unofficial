@@ -232,7 +232,7 @@ void ConfigurationDialog::switchToItem(const QModelIndex& index)
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(d->tvOptionsList->model());
 	QStandardItem* item = model->itemFromIndex(index);
 
-	QtMetaPointer metaPointer = qVariantValue<QtMetaPointer>(item->data());
+	QtMetaPointer metaPointer = item->data().value<QtMetaPointer>();
 	void* pointer = metaPointer;
 	ConfigurationBaseBox* pConfigBox = (ConfigurationBaseBox*)pointer;
 

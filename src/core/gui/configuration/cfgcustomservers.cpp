@@ -182,7 +182,11 @@ void CFGCustomServers::prepareTable()
 	d->tvServers->setColumnWidth(2, 60);
 
 	d->tvServers->horizontalHeader()->setHighlightSections(false);
+#if QT_VERSION >= 0x050000
+	d->tvServers->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
+#else
 	d->tvServers->horizontalHeader()->setResizeMode(0, QHeaderView::Fixed);
+#endif
 
 	d->tvServers->verticalHeader()->hide();
 }

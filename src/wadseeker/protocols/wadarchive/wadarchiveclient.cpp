@@ -51,7 +51,7 @@ public:
 	QUrl buildBadUrlReporterUrl(const QUrl &url)
 	{
 		return QUrl(QString("http://www.wad-archive.com/wadseeker/missing/%1")
-			.arg(QString(url.toString().toAscii().toBase64())));
+			.arg(QString(url.toString().toUtf8().toBase64())));
 	}
 };
 
@@ -136,7 +136,7 @@ void WadArchiveClient::startNextInQueue()
 
 	QNetworkRequest request;
 	request.setUrl(url);
-	request.setRawHeader("User-Agent", d->userAgent.toAscii());
+	request.setRawHeader("User-Agent", d->userAgent.toUtf8());
 	d->reply = d->nam->get(request);
 	this->connect(d->reply, SIGNAL(finished()), SLOT(onQueryFinished()));
 }
@@ -177,7 +177,7 @@ void WadArchiveClient::reportBadUrlIfOriginatingFromHere(const QUrl &url)
 		#endif
 		QNetworkRequest request;
 		request.setUrl(reportUrl);
-		request.setRawHeader("User-Agent", d->userAgent.toAscii());
+		request.setRawHeader("User-Agent", d->userAgent.toUtf8());
 		QNetworkReply *reply = d->nam->get(request);
 		connect(reply, SIGNAL(finished()), reply, SLOT(deleteLater()));
 	}

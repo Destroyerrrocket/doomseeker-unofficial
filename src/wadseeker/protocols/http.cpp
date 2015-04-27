@@ -46,7 +46,7 @@ QString Http::attachmentName() const
 
 	// Now we need to extract the filename from the INI-like list.
 	// HtmlParser already has appropriate method.
-	HtmlParser parser(attachmentInfo.toAscii());
+	HtmlParser parser(attachmentInfo.toUtf8());
 	return parser.htmlValue("filename").trimmed();
 }
 

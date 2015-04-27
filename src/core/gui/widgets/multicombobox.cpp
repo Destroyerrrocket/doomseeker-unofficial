@@ -1,5 +1,9 @@
 #include "multicombobox.h"
-#include <QtGui>
+#include <QAbstractItemView>
+#include <QApplication>
+#include <QCheckBox>
+#include <QItemDelegate>
+#include <QStylePainter>
 
 // internal private editor
 class MultiComboBoxEditor : public QCheckBox

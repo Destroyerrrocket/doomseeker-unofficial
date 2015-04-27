@@ -24,7 +24,7 @@ void BuddyInfo::readConfigEntry(const QString& configEntry, QVector<BuddyInfo>& 
 {
 	outVector.clear();
 
-	Scanner listReader(configEntry.toAscii().constData(), configEntry.length());
+	Scanner listReader(configEntry.toUtf8().constData(), configEntry.length());
 	// Syntax: {basic|advanced} "pattern";...
 	while(listReader.tokensLeft())
 	{

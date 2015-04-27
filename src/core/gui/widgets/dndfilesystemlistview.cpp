@@ -26,6 +26,7 @@
 #include <QDragEnterEvent>
 #include <QFileInfo>
 #include <QList>
+#include <QMimeData>
 #include <QUrl>
 
 DndFileSystemListView::DndFileSystemListView(QWidget* pParent)

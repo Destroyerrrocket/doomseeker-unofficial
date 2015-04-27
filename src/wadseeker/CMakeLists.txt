@@ -1,32 +1,50 @@
-cmake_minimum_required(VERSION 2.4)
-
-if(COMMAND cmake_policy)
-	cmake_policy(SET CMP0003 NEW)
-endif(COMMAND cmake_policy)
+cmake_minimum_required(VERSION 2.8.7)
 
 if (MSVC)
 	set(CMAKE_SHARED_LIBRARY_PREFIX "lib")
-endif (MSVC)
+endif ()
 
 # If we are compiling wadseeker outside of doomseeker prepare its own project.
 if(DEFINED DOOMSEEKER_SOURCE_DIR)
 	include_directories(${DOOMSEEKER_SOURCE_DIR}/src ${DOOMSEEKER_SOURCE_DIR}/src/wadseeker/lzma/C)
-else(DEFINED DOOMSEEKER_SOURCE_DIR)
+else()
 	project(WADSEEKER)
 	include_directories(${WADSEEKER_SOURCE_DIR}/lzma/C)
-endif(DEFINED DOOMSEEKER_SOURCE_DIR)
+endif()
 
 add_subdirectory(lzma)
 
 if(WIN32)
 	add_definitions(-DWADSEEKER_API_EXPORT)
-endif(WIN32)
+endif()
 
-find_package(Qt4 COMPONENTS QtCore QtNetwork REQUIRED)
+find_package(Qt5Core)
+if(NOT Qt5Core_FOUND)
+	find_package(Qt4 COMPONENTS QtCore QtNetwork REQUIRED)
+	include(${QT_USE_FILE})
+else()
+	find_package(Qt5LinguistTools REQUIRED)
+	find_package(Qt5Network REQUIRED)
+	macro(qt4_add_resources)
+		qt5_add_resources(${ARGV})
+	endmacro()
+	macro(qt4_wrap_ui)
+		qt5_wrap_ui(${ARGV})
+	endmacro()
+	macro(qt4_add_translation)
+		qt5_add_translation(${ARGV})
+	endmacro()
+	macro(qt4_create_translation)
+		qt5_create_translation(${ARGV})
+	endmacro()
+	set(QT_LIBRARIES Qt5::Core Qt5::Network)
+	set(QT_INCLUDES ${Qt5Core_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS})
+	add_definitions(${Qt5Core_DEFINITIONS} ${Qt5Network_DEFINITIONS})
+endif()
+
 find_package(ZLIB REQUIRED)
 find_package(BZip2 REQUIRED)
 
-include(${QT_USE_FILE})
 include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}
@@ -38,7 +56,6 @@ set(WADSEEKER_QT_FILES
 	protocols/idgames/idgamesreply.h
 	protocols/wadarchive/wadarchiveclient.h
 	protocols/fixednetworkaccessmanager.h
-	protocols/fixedftpreply.h
 	protocols/networkreplysignalwrapper.h
 	protocols/networkreplytimeouter.h
 	wadretriever/wadretriever.h
@@ -62,7 +79,6 @@ set(WADSEEKER_FILES
 	protocols/idgames/idgamesresult.cpp
 	protocols/wadarchive/wadarchiveclient.cpp
 	protocols/fixednetworkaccessmanager.cpp
-	protocols/fixedftpreply.cpp
 	protocols/json.cpp
 	protocols/http.cpp
 	protocols/networkreplysignalwrapper.cpp
@@ -107,6 +123,11 @@ set(HEADER_FILES
 	wadseekerversioninfo.h
 )
 
+if(NOT Qt5Core_FOUND)
+	set(WADSEEKER_FILES ${WADSEEKER_FILES} protocols/fixedftpreply.cpp)
+	set(WADSEEKER_QT_FILES ${WADSEEKER_QT_FILES} protocols/fixedftpreply.h)
+endif()
+
 include_directories(${QT_INCLUDES})
 
 qt_wrap_cpp(wadseekerQt WADSEEKER_FILES ${WADSEEKER_QT_FILES})
@@ -117,10 +138,10 @@ target_link_libraries(wadseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} ${ZLIB
 
 if(DEFINED DOOMSEEKER_BINARY_DIR)
 	set_target_properties(wadseeker PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${DOOMSEEKER_BINARY_DIR} RUNTIME_OUTPUT_DIRECTORY ${DOOMSEEKER_BINARY_DIR})
-endif(DEFINED DOOMSEEKER_BINARY_DIR)
+endif()
 
 if(NOT WIN32 AND NOT XCODE_VERSION)
 	install(TARGETS wadseeker LIBRARY DESTINATION lib)
 elseif(WIN32)
 	install(TARGETS wadseeker RUNTIME DESTINATION .)
-endif(NOT WIN32 AND NOT XCODE_VERSION)
+endif()

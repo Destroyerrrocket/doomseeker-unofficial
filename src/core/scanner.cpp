@@ -153,9 +153,9 @@ void Scanner::checkForMeta()
 			}
 			if(fileLength > 0 && lineLength > 0)
 			{
-				setScriptIdentifier(QString::fromAscii(d->data+metaStart, fileLength));
-				QString lineNumber = QString::fromAscii(d->data+metaStart+fileLength+1, lineLength);
-				d->line = atoi(lineNumber.toAscii().constData());
+				setScriptIdentifier(QString::fromUtf8(d->data+metaStart, fileLength));
+				QString lineNumber = QString::fromUtf8(d->data+metaStart+fileLength+1, lineLength);
+				d->line = atoi(lineNumber.toUtf8().constData());
 				d->lineStart = d->scanPos;
 			}
 		}
@@ -348,7 +348,7 @@ bool Scanner::nextString()
 	if(end-start > 0)
 	{
 		d->nextState.setScanPos(d->scanPos);
-		QString thisString = QString::fromAscii(d->data+start, end-start);
+		QString thisString = QString::fromUtf8(d->data+start, end-start);
 		if(quoted)
 			unescape(thisString);
 		d->nextState.setStr(thisString);
@@ -696,7 +696,7 @@ void Scanner::scriptMessage(MessageLevel level, const char* error, ...) const
 	}
 
 	char* newMessage = new char[strlen(error) + d->scriptIdentifier.length() + 25];
-	sprintf(newMessage, "%s:%d:%d:%s: %s\n", d->scriptIdentifier.toAscii().constData(), currentLine(), currentLinePos(), messageLevel, error);
+	sprintf(newMessage, "%s:%d:%d:%s: %s\n", d->scriptIdentifier.toUtf8().constData(), currentLine(), currentLinePos(), messageLevel, error);
 	va_list list;
 	va_start(list, error);
 	if(messageHandler)

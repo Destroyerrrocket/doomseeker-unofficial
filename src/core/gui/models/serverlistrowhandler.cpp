@@ -393,7 +393,7 @@ ServerPtr ServerListRowHandler::serverFromList(ServerListModel* parentModel, int
 	{
 		return ServerPtr();
 	}
-	return qVariantValue<ServerPtr>(pointer);
+	return pointer.value<ServerPtr>();
 }
 
 //ServerListRowHandler::ServerGroup ServerListRowHandler::serverGroup()

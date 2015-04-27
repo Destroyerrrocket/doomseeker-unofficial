@@ -63,7 +63,7 @@ public:
 		static QStringList tokenize(const QString &cmdLine)
 		{
 			QStringList result;
-			Scanner sc(cmdLine.toAscii().constData(), cmdLine.length());
+			Scanner sc(cmdLine.toUtf8().constData(), cmdLine.length());
 			while (sc.nextString())
 			{
 				result << sc->str();

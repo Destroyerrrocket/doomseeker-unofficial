@@ -250,7 +250,7 @@ void Idgames::startNetworkQuery(const QUrl& url)
 {
 	QNetworkRequest request;
 	request.setUrl(url);
-	request.setRawHeader("User-Agent", d->userAgent.toAscii());
+	request.setRawHeader("User-Agent", d->userAgent.toUtf8());
 
 	QNetworkReply* pReply = d->nam->get(request);
 	d->currentRequest = pReply;

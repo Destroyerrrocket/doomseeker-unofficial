@@ -683,14 +683,22 @@ void ServerListHandler::setupTableColumnWidths()
 			table->setColumnHidden(i, columns[i].bHidden);
 			if(!columns[i].bResizable)
 			{
+#if QT_VERSION >= 0x050000
+				table->horizontalHeader()->setSectionResizeMode(i, QHeaderView::Fixed);
+#else
 				table->horizontalHeader()->setResizeMode(i, QHeaderView::Fixed);
+#endif
 			}
 		}
 	}
 	else
-		table->horizontalHeader()->restoreState(QByteArray::fromBase64(headerState.toAscii()));
+		table->horizontalHeader()->restoreState(QByteArray::fromBase64(headerState.toUtf8()));
 
+#if QT_VERSION >= 0x050000
+	table->horizontalHeader()->setSectionsMovable(true);
+#else
 	table->horizontalHeader()->setMovable(true);
+#endif
 
 	if(gConfig.doomseeker.serverListSortIndex >= 0)
 	{

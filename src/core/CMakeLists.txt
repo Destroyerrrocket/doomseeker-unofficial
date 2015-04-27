@@ -20,20 +20,41 @@ cmake_minimum_required(VERSION 2.8.7)
 if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
 	cmake_policy(SET CMP0005 NEW)
-endif(COMMAND cmake_policy)
+endif()
 
 # Get the SVN revision
-get_target_property( UPDATEREVISION_EXE updaterevision LOCATION )
-
 add_custom_target(revision_check ALL
-	COMMAND ${UPDATEREVISION_EXE} . ${CMAKE_CURRENT_SOURCE_DIR}/svnrevision.h
+	COMMAND updaterevision . ${CMAKE_CURRENT_SOURCE_DIR}/svnrevision.h
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	DEPENDS updaterevision
 )
 
-find_package(Qt4 REQUIRED)
+find_package(Qt5Widgets)
+if(NOT Qt5Widgets_FOUND)
+	find_package(Qt4 REQUIRED)
+	include(${QT_USE_FILE})
+else()
+	find_package(Qt5LinguistTools REQUIRED)
+	find_package(Qt5Multimedia REQUIRED)
+	find_package(Qt5Network REQUIRED)
+	find_package(Qt5Xml REQUIRED)
+	macro(qt4_add_resources)
+		qt5_add_resources(${ARGV})
+	endmacro()
+	macro(qt4_wrap_ui)
+		qt5_wrap_ui(${ARGV})
+	endmacro()
+	macro(qt4_add_translation)
+		qt5_add_translation(${ARGV})
+	endmacro()
+	macro(qt4_create_translation)
+		qt5_create_translation(${ARGV})
+	endmacro()
+	set(QT_LIBRARIES Qt5::Widgets Qt5::Multimedia Qt5::Network Qt5::Xml)
+	set(QT_INCLUDES ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Multimedia_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS})
+	add_definitions(${Qt5Widgets_DEFINITIONS} ${Qt5Multimedia_DEFINITIONS} ${Qt5Network_DEFINITIONS} ${Qt5Xml_DEFINTIONS})
+endif()
 find_package(ZLIB REQUIRED)
-include(${QT_USE_FILE})
 
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/../
@@ -46,15 +67,15 @@ include_directories(
 
 if(WIN32)
 	add_definitions(-DMODE_MAIN)
-endif(WIN32)
+endif()
 
 if(WITH_AUTOUPDATES)
 	add_definitions(-DWITH_AUTOUPDATES)
-endif(WITH_AUTOUPDATES)
+endif()
 
 if (MSVC)
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-endif (MSVC)
+endif ()
 
 add_definitions("-DINSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
 
@@ -96,9 +117,9 @@ if (UPDATE_TRANSLATIONS)
 		"Update source translation translations/*.ts files (WARNING: make clean will delete the source .ts files! Danger!)"
 	)
 	message(STATUS "make translations_target\n\n")
-else (UPDATE_TRANSLATIONS)
+else ()
 	add_custom_target(translations_target)
-endif (UPDATE_TRANSLATIONS) 
+endif () 
 
 if (WIN32)
 	# Compile&copy Qt translations that need to be redistributed with the .exe.
@@ -109,7 +130,7 @@ if (WIN32)
 		${TRANSLATIONS_FILES}
 		${QT_TRANSLATIONS_DIR}/qt_pl.ts
 	)
-endif (WIN32)
+endif ()
 
 qt4_add_translation(QM_FILES ${TRANSLATIONS_FILES})
 
@@ -125,10 +146,10 @@ if(WIN32)
 		)
 
 		set(SOURCE_FILES ${SOURCE_FILES} windows.o)
-	else("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+	else()
 		set(SOURCE_FILES ${SOURCE_FILES} ${DOOMSEEKER_SOURCE_DIR}/media/windows.rc)
-	endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-endif(WIN32)
+	endif()
+endif()
 
 add_executable(doomseeker
 	${doomseekerUI}
@@ -172,7 +193,7 @@ if(WIN32)
 	else(MSVC)
 		set_target_properties(doomseeker PROPERTIES LINK_FLAGS_RELEASE "-Wl,-subsystem,windows")
 		set_target_properties(doomseeker PROPERTIES LINK_FLAGS_MINSIZEREL "-Wl,-subsystem,windows")
-	endif(MSVC)
+	endif()
 	
 	# Install program DIRECTLY to directory specified by
 	# ${CMAKE_INSTALL_PREFIX}. If ${CMAKE_INSTALL_PREFIX} is set to something
@@ -224,11 +245,11 @@ if(WIN32)
 	install(FILES ${TRANSLATION_FILES_TO_COPY} DESTINATION translations)
 	# Other
 	install(FILES ${CMAKE_SOURCE_DIR}/tools/doomseeker-portable.bat DESTINATION .)
-endif(WIN32)
+endif()
 
 if(UNIX AND NOT APPLE)
 	install(TARGETS doomseeker RUNTIME DESTINATION bin)
 	install(FILES ${CMAKE_SOURCE_DIR}/media/icon.png DESTINATION share/doomseeker)
 	install(FILES ${TRANSLATION_FILES_TO_COPY} DESTINATION share/doomseeker/translations)
 	install(FILES ${CMAKE_SOURCE_DIR}/media/Doomseeker.desktop DESTINATION /usr/share/applications)
-endif(UNIX AND NOT APPLE)
+endif()

@@ -204,7 +204,7 @@ QStringList CFGIRCDefineNetworkDialog::validateAutojoinCommands() const
 	QStringList offenders;
 	foreach (const QString& command, autojoinCommands())
 	{
-		if (command.toAscii().length() > PrivData<CFGIRCDefineNetworkDialog>::MAX_IRC_COMMAND_LENGTH)
+		if (command.toUtf8().length() > PrivData<CFGIRCDefineNetworkDialog>::MAX_IRC_COMMAND_LENGTH)
 		{
 			offenders << command;
 		}

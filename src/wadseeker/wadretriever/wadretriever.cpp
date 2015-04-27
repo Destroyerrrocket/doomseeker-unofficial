@@ -635,7 +635,7 @@ void WadRetriever::startNetworkQuery(WadRetrieverInfo& wadRetrieverInfo, const Q
 {
 	QNetworkRequest request;
 	request.setUrl(url);
-	request.setRawHeader("User-Agent", d.userAgent.toAscii());
+	request.setRawHeader("User-Agent", d.userAgent.toUtf8());
 
 	d.usedDownloadUrls << url;
 

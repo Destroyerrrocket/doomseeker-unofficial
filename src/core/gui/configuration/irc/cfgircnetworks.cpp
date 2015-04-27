@@ -176,7 +176,7 @@ QList<IRCNetworkEntity> CFGIRCNetworks::networksAsQList() const
 
 IRCNetworkEntity* CFGIRCNetworks::obtainNetworkEntity(QStandardItem* pItem) const
 {
-	QtMetaPointer metaPointer = qVariantValue<QtMetaPointer>(pItem->data());
+	QtMetaPointer metaPointer = pItem->data().value<QtMetaPointer>();
 	void* pointer = metaPointer;
 	IRCNetworkEntity* pEntity = (IRCNetworkEntity*)pointer;
 
@@ -199,7 +199,11 @@ void CFGIRCNetworks::prepareTable()
 	d->gridNetworks->setColumnWidth(2, 180);
 
 	d->gridNetworks->horizontalHeader()->setHighlightSections(false);
+#if QT_VERSION >= 0x050000
+	d->gridNetworks->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
+#else
 	d->gridNetworks->horizontalHeader()->setResizeMode(0, QHeaderView::Fixed);
+#endif
 
 	d->gridNetworks->verticalHeader()->hide();
 }

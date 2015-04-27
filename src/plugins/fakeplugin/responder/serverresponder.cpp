@@ -90,7 +90,7 @@ void ServerResponder::respond()
 {
 	AwaitingClient client = d->awaitingClients.takeFirst();
 	QByteArray response = QByteArray("FAKF");
-	response += QString::number(port()).toAscii();
+	response += QString::number(port()).toUtf8();
 	d->socket->writeDatagram(response, client.address, client.port);
 }
 

@@ -54,7 +54,11 @@ QList<Link> UrlParser::directLinks(const QStringList& wantedFilenames, const QUr
 
 bool UrlParser::hasFileReferenceSomewhere(const QStringList& wantedFilenames, const Link& link)
 {
+#if QT_VERSION >= 0x050000
+	QString strQuery = link.url.query(QUrl::FullyEncoded);
+#else
 	QString strQuery = link.url.encodedQuery();
+#endif
 
 	foreach (const QString& filename, wantedFilenames)
 	{
@@ -75,7 +79,11 @@ bool UrlParser::hasSameHost(const QUrl& url1, const QUrl& url2)
 
 bool UrlParser::isDirectLinkToFile(const QStringList& wantedFilenames, const QUrl& url)
 {
+#if QT_VERSION >= 0x050000
+	QFileInfo fi(url.path(QUrl::FullyEncoded));
+#else
 	QFileInfo fi(url.encodedPath());
+#endif
 
 	foreach (const QString& filename, wantedFilenames)
 	{

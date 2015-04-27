@@ -27,6 +27,7 @@
 #include "global.h"
 #include <QDateTime>
 #include <QMetaType>
+#include <QObject>
 #include <QString>
 
 class StaticMessages : public QObject

@@ -86,7 +86,7 @@ void UnTar::scanTarFile()
 			break;
 		}
 
-		file.filename = QString::fromAscii(buffer, qMin(static_cast<int>(strlen(buffer)), 100));
+		file.filename = QString::fromUtf8(buffer, qMin(static_cast<int>(strlen(buffer)), 100));
 		if(file.filename.isEmpty())
 			break;
 		file.size = QString(&buffer[124]).left(12).toUInt(&valid, 8);

@@ -203,7 +203,7 @@ void DoomseekerConfigurationDialog::showPluginConfiguration(const EnginePlugin *
 	for(int i = 0;i < enginesRoot->rowCount();++i)
 	{
 		QStandardItem *page = enginesRoot->child(i);
-		QtMetaPointer metaPointer = qVariantValue<QtMetaPointer>(page->data());
+		QtMetaPointer metaPointer = page->data().value<QtMetaPointer>();
 		void* pointer = metaPointer;
 		EngineConfigurationBaseBox *engineConfig = (EngineConfigurationBaseBox*)pointer;
 
