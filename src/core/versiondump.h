@@ -27,8 +27,11 @@ class QIODevice;
 
 class VersionDump
 {
-	public:
-		static void dumpJsonToIO(QIODevice& io);
+public:
+	static void dumpJsonToIO(QIODevice& io);
+
+private:
+	class Module;
 };
 
 #endif // header

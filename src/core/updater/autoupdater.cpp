@@ -52,7 +52,7 @@ DClass<AutoUpdater>
 		UpdatePackage currentlyDownloadedPackage;
 		QStringList downloadedPackagesFilenames;
 		AutoUpdater::ErrorCode errorCode;
-		QMap<QString, QList<unsigned long long> > ignoredPackagesRevisions;
+		QMap<QString, QList<QString> > ignoredPackagesRevisions;
 		QList<UpdatePackage> newUpdatePackages;
 		QList<UpdatePackage> packagesInDownloadQueue;
 		QTemporaryFile* pCurrentPackageFile;
@@ -395,7 +395,7 @@ void AutoUpdater::setChannel(const UpdateChannel& updateChannel)
 	d->channel = updateChannel;
 }
 
-void AutoUpdater::setIgnoreRevisions(const QMap<QString, QList<unsigned long long> >& packagesRevisions)
+void AutoUpdater::setIgnoreRevisions(const QMap<QString, QList<QString> >& packagesRevisions)
 {
 	d->ignoredPackagesRevisions = packagesRevisions;
 }

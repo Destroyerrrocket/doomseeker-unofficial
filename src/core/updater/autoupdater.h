@@ -204,9 +204,9 @@ class AutoUpdater : public QObject
 		 * then the entire list is treated as if it wasn't set.
 		 *
 		 * @param packagesRevisions
-		 *     Key - package name. Value - list of revision numbers.
+		 *     Key - package name. Value - list of revisions.
 		 */
-		void setIgnoreRevisions(const QMap<QString, QList<unsigned long long> >& packagesRevisions);
+		void setIgnoreRevisions(const QMap<QString, QList<QString> >& packagesRevisions);
 		/**
 		 * @brief Controls if the download&installation process is automated.
 		 *

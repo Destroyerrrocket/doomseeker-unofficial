@@ -30,10 +30,10 @@
 #include <QString>
 #include <wadseeker/wadseekerversioninfo.h>
 
-class Module
+class VersionDump::Module
 {
 	public:
-		Module(const QString& displayName, unsigned long long revision,
+		Module(const QString& displayName, const QString &revision,
 			const QString& displayVersion = QString())
 		{
 			_displayName = displayName;
@@ -46,6 +46,7 @@ class Module
 			QVariantMap result;
 			result["display-name"] = _displayName;
 			result["revision"] = _revision;
+
 			if (!_displayVersion.isNull())
 			{
 				result["display-version"] = _displayVersion;
@@ -55,23 +56,24 @@ class Module
 
 	private:
 		QString _displayName;
-		unsigned long long _revision;
+		QString _revision;
 		QString _displayVersion;
 };
 
 void VersionDump::dumpJsonToIO(QIODevice& io)
 {
 	QVariantMap root;
-	root["doomseeker"] = Module(Version::name(), Version::revisionNumber(),
-		Version::versionRevision()).toVariantMap();
-	root["wadseeker"] = Module("Wadseeker", Version::revisionNumber(),
+	Module doomseeker(Version::name(), QString::number(Version::revisionNumber()),
+		Version::versionRevision());
+	root["doomseeker"] = doomseeker.toVariantMap();
+	root["wadseeker"] = Module("Wadseeker", QString::number(Version::revisionNumber()),
 		WadseekerVersionInfo::version()).toVariantMap();
 	for (unsigned int i = 0; i < gPlugins->numPlugins(); ++i)
 	{
 		const PluginLoader::Plugin* plugin = gPlugins->plugin(i);
 		QString name = plugin->info()->data()->name;
 		QString keyword = "p-" + name.toLower().replace(" ", "");
-		root[keyword] = Module(name, plugin->info()->data()->version).toVariantMap();
+		root[keyword] = Module(name, QString::number(plugin->info()->data()->version)).toVariantMap();
 	}
 
 	io.write(QtJson::Json::serialize(root));

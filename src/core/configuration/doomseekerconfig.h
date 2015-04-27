@@ -153,7 +153,7 @@ class DoomseekerConfig
 			 * - Key - package name.
 			 * - Value - package revision.
 			 */
-			QMap<QString, unsigned long long> lastKnownUpdateRevisions;
+			QMap<QString, QString> lastKnownUpdateRevisions;
 			UpdateMode updateMode;
 			/**
 			 * @brief Pass this to UpdateChannel::fromName() .

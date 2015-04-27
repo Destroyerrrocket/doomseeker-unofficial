@@ -57,7 +57,7 @@ class UpdatePackageFilter
 		~UpdatePackageFilter();
 
 		QList<UpdatePackage> filter(const QList<UpdatePackage>& packages);
-		void setIgnoreRevisions(const QMap<QString, QList<unsigned long long> >& packagesRevisions);
+		void setIgnoreRevisions(const QMap<QString, QList<QString> >& packagesRevisions);
 		/**
 		 * @brief After filter() flag which says if any package was ignored.
 		 *
@@ -83,7 +83,7 @@ class UpdatePackageFilter
 
 		QMap<QString, PluginInfo> collectPluginInfo();
 		bool isDifferentThanInstalled(UpdatePackage& pkg) const;
-		bool isOnIgnoredList(const QString& package, unsigned long long revision) const;
+		bool isOnIgnoredList(const QString& package, const QString &revision) const;
 };
 
 #endif

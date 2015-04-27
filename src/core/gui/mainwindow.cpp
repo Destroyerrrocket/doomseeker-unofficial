@@ -421,13 +421,13 @@ void MainWindow::checkForUpdates(bool bUserTriggered)
 	this->connect(d->autoUpdater, SIGNAL(packageDownloadProgress(qint64, qint64)),
 		SLOT(onAutoUpdaterFileProgress(qint64, qint64)));
 
-	QMap<QString, QList<unsigned long long> > ignoredPackagesRevisions;
+	QMap<QString, QList<QString> > ignoredPackagesRevisions;
 	if (!bUserTriggered)
 	{
 		foreach (const QString& package, gConfig.autoUpdates.lastKnownUpdateRevisions.keys())
 		{
-			unsigned long long revision = gConfig.autoUpdates.lastKnownUpdateRevisions[package];
-			QList<unsigned long long> list;
+			QString revision = gConfig.autoUpdates.lastKnownUpdateRevisions[package];
+			QList<QString> list;
 			list << revision;
 			ignoredPackagesRevisions.insert(package, list);
 		}

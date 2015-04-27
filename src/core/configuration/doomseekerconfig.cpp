@@ -514,7 +514,7 @@ void DoomseekerConfig::AutoUpdates::load(IniSection& section)
 	foreach (const QString& package, lastKnownUpdateRevisionsVariant.keys())
 	{
 		QVariant revisionVariant = lastKnownUpdateRevisionsVariant[package];
-		lastKnownUpdateRevisions.insert(package, revisionVariant.toLongLong());
+		lastKnownUpdateRevisions.insert(package, revisionVariant.toString());
 	}
 	bPerformUpdateOnNextRun = section["bPerformUpdateOnNextRun"].value().toBool();
 }

@@ -32,14 +32,14 @@ class UpdatePackageFilter::PluginInfo
 {
 	public:
 		QString name;
-		unsigned long long revision;
+		QString revision;
 };
 //////////////////////////////////////////////////////////////////////////////
 DClass<UpdatePackageFilter>
 {
 	public:
 		bool bWasAnyUpdatePackageIgnored;
-		QMap<QString, QList<unsigned long long> > ignoredPackagesRevisions;
+		QMap<QString, QList<QString> > ignoredPackagesRevisions;
 		QMap<QString, UpdatePackageFilter::PluginInfo> plugins;
 };
 
@@ -62,7 +62,7 @@ QMap<QString, UpdatePackageFilter::PluginInfo> UpdatePackageFilter::collectPlugi
 	{
 		PluginInfo pluginInfo;
 		pluginInfo.name = plugin->info()->data()->name;
-		pluginInfo.revision = plugin->info()->data()->version;
+		pluginInfo.revision = QString::number(plugin->info()->data()->version);
 		QString prefixedName = AutoUpdater::PLUGIN_PREFIX + pluginInfo.name.toLower().replace(" ", "");
 		infos.insert(prefixedName, pluginInfo);
 	}
@@ -104,7 +104,7 @@ bool UpdatePackageFilter::isDifferentThanInstalled(UpdatePackage& pkg) const
 	if (pkg.name == AutoUpdater::MAIN_PROGRAM_PACKAGE_NAME)
 	{
 		// Main program node.
-		unsigned long long localRevision = Version::revisionNumber();
+		QString localRevision = QString::number(Version::revisionNumber());
 		if (localRevision != pkg.revision)
 		{
 			pkg.currentlyInstalledDisplayVersion = Version::versionRevision();
@@ -119,7 +119,7 @@ bool UpdatePackageFilter::isDifferentThanInstalled(UpdatePackage& pkg) const
 			PluginInfo pluginInfo = d->plugins[pkg.name];
 			if (pluginInfo.revision != pkg.revision)
 			{
-				pkg.currentlyInstalledDisplayVersion = QString::number(pluginInfo.revision);
+				pkg.currentlyInstalledDisplayVersion = pluginInfo.revision;
 				return true;
 			}
 		}
@@ -127,15 +127,14 @@ bool UpdatePackageFilter::isDifferentThanInstalled(UpdatePackage& pkg) const
 	return false;
 }
 
-bool UpdatePackageFilter::isOnIgnoredList(const QString& package,
-	unsigned long long revision) const
+bool UpdatePackageFilter::isOnIgnoredList(const QString& package, const QString &revision) const
 {
-	const QList<unsigned long long>& list = d->ignoredPackagesRevisions[package];
+	const QList<QString>& list = d->ignoredPackagesRevisions[package];
 	return list.contains(revision);
 }
 
 void UpdatePackageFilter::setIgnoreRevisions(
-	const QMap<QString, QList<unsigned long long> >& packagesRevisions)
+	const QMap<QString, QList<QString> >& packagesRevisions)
 {
 	d->ignoredPackagesRevisions = packagesRevisions;
 }

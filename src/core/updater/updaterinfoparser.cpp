@@ -85,7 +85,7 @@ int UpdaterInfoParser::parsePackageNode(const QString& packageName, const QVaria
 
 	if (map.contains("revision"))
 	{
-		package.revision = map["revision"].toLongLong();
+		package.revision = map["revision"].toString();
 	}
 	else
 	{
@@ -99,7 +99,7 @@ int UpdaterInfoParser::parsePackageNode(const QString& packageName, const QVaria
 	}
 	else
 	{
-		package.displayVersion = QString::number(package.revision);
+		package.displayVersion = package.revision;
 	}
 
 	if (map.contains("display-name"))

@@ -62,18 +62,13 @@ class UpdatePackage
 		 */
 		QString name;
 		/**
-		 * @brief Revision number used for version comparison.
+		 * @brief Revision used for version comparison.
 		 *
 		 * This is used to compare versions between the currently installed
-		 * program and the available update. If numbers match then no upgrade
+		 * program and the available update. If values match then no upgrade
 		 * is performed.
 		 */
-		unsigned long long revision;
-
-		UpdatePackage()
-		{
-			revision = 0;
-		}
+		QString revision;
 };
 
 #endif
