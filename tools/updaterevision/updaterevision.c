@@ -19,7 +19,7 @@
 int main(int argc, char **argv)
 {
 	char *name;
-	char currev[64], lastrev[64], run[256], *rev;
+	char currev[64], lastrev[64], run[16384], hgLogRun[16384], *rev;
 	unsigned long urev;
 	FILE *stream = NULL;
 	int gotrev = 0, needupdate = 1;
@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 	if ( svnCheckout )
 		sprintf (run, "svnversion -cn %s", argv[1]);
 	else
-		sprintf (run, "hg identify -n"); 
+		sprintf (run, "hg identify -n \"%s\"", argv[1]);
 	if ((name = tempnam(NULL, "svnout")) != NULL)
 	{
 #ifdef __APPLE__
@@ -71,9 +71,10 @@ int main(int argc, char **argv)
 		   (isdigit(currev[0]) || (currev[0] == '-' && currev[1] == '1')))
 		{
 			gotrev = 1;
+			sprintf(hgLogRun, "hg log -r. --template \"{date|hgdate} {node|short}\" \"%s\"", argv[1]);
 			// [BB] Find the date the revision of the working copy was created.
 			if ( ( svnCheckout == 0 ) &&
-				( system("hg log -r. --template \"{date|hgdate} {node|short}\"") == 0 ) &&
+				( system(hgLogRun) == 0 ) &&
 				( fseek(stream, strlen(currev), SEEK_SET) == 0 ) &&
 				( fgets(hgdateString, sizeof ( hgdateString ), stream) == hgdateString ) )
 			{
