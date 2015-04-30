@@ -60,6 +60,7 @@ QStringList VotingSetupWidget::gameParametersList() const
 	params << "+sv_nopointlimitvote" << (!cbPointLimitVote->isChecked() ? "1" : "0");
 	params << "+sv_notimelimitvote" << (!cbTimeLimitVote->isChecked() ? "1" : "0");
 	params << "+sv_nowinlimitvote" << (!cbWinLimitVote->isChecked() ? "1" : "0");
+	params << "+sv_noforcespecvote" << (!cbForceSpectatorVote->isChecked() ? "1" : "0");
 
 	return params;
 }
@@ -82,6 +83,7 @@ bool VotingSetupWidget::loadConfig(Ini& ini)
 	cbDuelLimitVote->setChecked(section.value("DuelLimitVote", true).toBool());
 	cbPointLimitVote->setChecked(section.value("PointLimitVote", true).toBool());
 	cbWinLimitVote->setChecked(section.value("WinLimitVote", true).toBool());
+	cbForceSpectatorVote->setChecked(section.value("ForceSpectatorVote", true).toBool());
 
 	return true;
 }
@@ -104,6 +106,7 @@ bool VotingSetupWidget::saveConfig(Ini& ini)
 	section["DuelLimitVote"] = cbDuelLimitVote->isChecked();
 	section["PointLimitVote"] = cbPointLimitVote->isChecked();
 	section["WinLimitVote"] = cbWinLimitVote->isChecked();
+	section["ForceSpectatorVote"] = cbForceSpectatorVote->isChecked();
 
 	return true;
 }
