@@ -64,9 +64,9 @@ else( BZIP2_FOUND AND NOT FORCE_INTERNAL_BZIP2 )
 	set( BZIP2_LIBRARY bz2 )
 endif( BZIP2_FOUND AND NOT FORCE_INTERNAL_BZIP2 )
 
-if(MSVC AND NOT MSVC90)
-	message(WARNING 
-		"Full automatic packaging is only supported for Microsoft Visual C++ 2008. "
+if(MSVC AND NOT MSVC90 AND NOT MSVC12)
+	message(WARNING
+		"Full automatic packaging is only supported for Microsoft Visual C++ 2008 and 2013. "
 		"Remember that redist needs to be accessible both by the main program "
 		"and by the engines/ directory. Copy over Manifest and redist DLLs to "
 		"engines/ directory if you do not plan on installing redist on target "

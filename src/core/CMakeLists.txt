@@ -34,6 +34,8 @@ if(NOT Qt5Widgets_FOUND)
 	find_package(Qt4 REQUIRED)
 	include(${QT_USE_FILE})
 else()
+	find_package(Qt5Core REQUIRED)
+	find_package(Qt5Gui REQUIRED)
 	find_package(Qt5LinguistTools REQUIRED)
 	find_package(Qt5Multimedia REQUIRED)
 	find_package(Qt5Network REQUIRED)
@@ -50,9 +52,10 @@ else()
 	macro(qt4_create_translation)
 		qt5_create_translation(${ARGV})
 	endmacro()
-	set(QT_LIBRARIES Qt5::Widgets Qt5::Multimedia Qt5::Network Qt5::Xml)
+	set(QT_LIBRARIES Qt5::Widgets Qt5::Multimedia Qt5::Network Qt5::Xml Qt5::Gui Qt5::Core)
 	set(QT_INCLUDES ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Multimedia_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS})
 	add_definitions(${Qt5Widgets_DEFINITIONS} ${Qt5Multimedia_DEFINITIONS} ${Qt5Network_DEFINITIONS} ${Qt5Xml_DEFINTIONS})
+	get_target_property(QMAKE_EXEC Qt5::qmake LOCATION)
 endif()
 find_package(ZLIB REQUIRED)
 
@@ -108,31 +111,40 @@ if (UPDATE_TRANSLATIONS)
 		${SOURCE_FILES}
 		${HEADER_FILES}
 	)
-	qt4_create_translation(TS_FILES 
+	qt4_create_translation(TS_FILES
 		${FILES_TO_TRANSLATE}
 		${TRANSLATIONS_FILES}
 	)
 	add_custom_target(translations_target DEPENDS ${TS_FILES})
-	message(WARNING 
+	message(WARNING
 		"Update source translation translations/*.ts files (WARNING: make clean will delete the source .ts files! Danger!)"
 	)
 	message(STATUS "make translations_target\n\n")
 else ()
 	add_custom_target(translations_target)
-endif () 
+endif ()
 
-if (WIN32)
-	# Compile&copy Qt translations that need to be redistributed with the .exe.
+if (WIN32 AND NOT Qt5Widgets_FOUND)
+	# Compile&copy Qt4 translations that need to be redistributed with the .exe.
 	# .qm files from these need to be redistributed with the application.
-	# This is Windows only.
 	# WARNING: This should always be defined after UPDATE_TRANSLATIONS "if".
 	set(TRANSLATIONS_FILES
 		${TRANSLATIONS_FILES}
-		${QT_TRANSLATIONS_DIR}/qt_pl.ts
-	)
-endif ()
+		${QT_TRANSLATIONS_DIR}/qt_pl.ts)
+endif()
 
 qt4_add_translation(QM_FILES ${TRANSLATIONS_FILES})
+
+if (WIN32 AND Qt5Widgets_FOUND)
+	# Copy Qt5 translations that need to be redistributed with the .exe.
+	# WARNING: This should always be defined after qt4_add_translation.
+	execute_process(COMMAND ${QMAKE_EXEC} -query QT_INSTALL_TRANSLATIONS
+		OUTPUT_VARIABLE QT_TRANSLATIONS_DIR
+		OUTPUT_STRIP_TRAILING_WHITESPACE)
+	set(QM_FILES
+		${QM_FILES}
+		${QT_TRANSLATIONS_DIR}/qt_pl.qm)
+endif ()
 
 # windows.rc
 if(WIN32)
@@ -141,9 +153,9 @@ if(WIN32)
 		add_custom_command(
 			OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/windows.o
 			COMMAND windres -o ${CMAKE_CURRENT_BINARY_DIR}/windows.o -i ${DOOMSEEKER_SOURCE_DIR}/media/windows.rc
-      WORKING_DIRECTORY ${DOOMSEEKER_SOURCE_DIR}/media
+			WORKING_DIRECTORY ${DOOMSEEKER_SOURCE_DIR}/media
 			COMMENT "Generating windows resources (windows.rc)"
-		)
+v		)
 
 		set(SOURCE_FILES ${SOURCE_FILES} windows.o)
 	else()
@@ -194,38 +206,58 @@ if(WIN32)
 		set_target_properties(doomseeker PROPERTIES LINK_FLAGS_RELEASE "-Wl,-subsystem,windows")
 		set_target_properties(doomseeker PROPERTIES LINK_FLAGS_MINSIZEREL "-Wl,-subsystem,windows")
 	endif()
-	
+
 	# Install program DIRECTLY to directory specified by
 	# ${CMAKE_INSTALL_PREFIX}. If ${CMAKE_INSTALL_PREFIX} is set to something
 	# stupid like "C:\Program Files\" (this is the CMake's default, BTW)
 	# then program.exe will be dumped to "C:\Program Files\program.exe"
 	install(TARGETS doomseeker RUNTIME DESTINATION .)
 	# Install Qt libraries.
-	# TODO: This could be rewritten to install the debug libraries
-	# when Debug build type is used. On the other hand installing debug builds
-	# is rather senseless.
-	get_filename_component(QT_DLL_DIR ${QT_QMAKE_EXECUTABLE} PATH)
-	set(QT_LIBS_RELEASE
-		${QT_DLL_DIR}/QtCore4.dll
-		${QT_DLL_DIR}/QtGui4.dll
-		${QT_DLL_DIR}/QtNetwork4.dll
-		${QT_DLL_DIR}/QtXml4.dll
-	)
-	install(FILES ${QT_LIBS_RELEASE} DESTINATION .)
+	if (Qt5Widgets_FOUND)
+		# Qt5*.dll
+		foreach(qtlib ${QT_LIBRARIES})
+			get_target_property(qtlib_location ${qtlib} LOCATION)
+			install(FILES ${qtlib_location} DESTINATION .)
+		endforeach()
+		# plugins
+		execute_process(COMMAND ${QMAKE_EXEC} -query QT_INSTALL_PLUGINS
+			OUTPUT_VARIABLE QT_PLUGINS_DIR
+			OUTPUT_STRIP_TRAILING_WHITESPACE)
+		install(FILES ${QT_PLUGINS_DIR}/platforms/qwindows.dll DESTINATION platforms)
+		# ICU (the 21 Megabyte bastard)
+		execute_process(COMMAND ${QMAKE_EXEC} -query QT_INSTALL_LIBEXECS
+			OUTPUT_VARIABLE QT_LIBEXECS_DIR
+			OUTPUT_STRIP_TRAILING_WHITESPACE)
+		install(FILES
+			${QT_LIBEXECS_DIR}/icuin53.dll
+			${QT_LIBEXECS_DIR}/icuuc53.dll
+			${QT_LIBEXECS_DIR}/icudt53.dll
+			DESTINATION .)
+	else()
+		get_filename_component(QT_DLL_DIR ${QT_QMAKE_EXECUTABLE} PATH)
+		set(QT_LIBS_RELEASE
+			${QT_DLL_DIR}/QtCore4.dll
+			${QT_DLL_DIR}/QtGui4.dll
+			${QT_DLL_DIR}/QtNetwork4.dll
+			${QT_DLL_DIR}/QtXml4.dll
+			)
+		install(FILES ${QT_LIBS_RELEASE} DESTINATION .)
+	endif()
 	# Install .ico file. No idea what purpose would this server but some
 	# programs come with their icons in the .ico file so why not.
 	install(FILES ${CMAKE_SOURCE_DIR}/media/icon_windows.ico DESTINATION .
 		RENAME doomseeker.ico
 	)
-	# Install MSVC runtime. Only Visual 2008 is supported at the moment.
-	if (MSVC90)
+	# Install MSVC runtime. Only Visual 2008 and 2013 are supported at the moment.
+	if (MSVC90 OR MSVC12)
 		# Install redist and manifest for the program.
 		include("${CMAKE_SOURCE_DIR}/cmake/Modules/FindRequiredSystemLibraries.cmake")
 		install_programs(. ${REQUIRED_SYSTEM_LIBRARIES})
+	endif()
+	if (MSVC90)
 		# Install manifest for plugins.
 		install(FILES ${CMAKE_SOURCE_DIR}/media/manifest_for_engines_directory/Microsoft.VC90.CRT.manifest
-			DESTINATION engines
-		)
+			DESTINATION engines)
 	endif()
 
 	# License files.
