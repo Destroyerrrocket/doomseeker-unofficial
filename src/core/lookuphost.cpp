@@ -44,6 +44,18 @@ public:
 	LookupHostConsumerThread thread;
 	QMutex lock;
 	bool accepting;
+
+	int workCount() const
+	{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)) && (QT_VERSION < QT_VERSION_CHECK(5, 3, 0))
+		// I have no idea why primitive cast operator was removed from
+		// QAtomicInt between versions Qt 5.0 and Qt 5.3. Qt 4.x had
+		// it. Qt >=5.3 has it.
+		return workCounter.load();
+#else
+		return workCounter;
+#endif
+	}
 };
 
 DPointeredNoCopy(LookupHost)
@@ -101,7 +113,7 @@ void LookupHost::finalizeAndJoin_()
 		QMutexLocker locker(&d->lock);
 		d->accepting = false;
 	}
-	while (d->workCounter > 0)
+	while (d->workCount() > 0)
 	{
 		d->thread.wait(1000);
 	}
