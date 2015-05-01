@@ -46,7 +46,9 @@ else()
 	add_definitions(${Qt5Core_DEFINITIONS} ${Qt5Network_DEFINITIONS})
 endif()
 
-find_package(ZLIB REQUIRED)
+if (NOT ZLIB_INCLUDE_DIR OR NOT ZLIB_LIBRARIES)
+	find_package(ZLIB REQUIRED)
+endif()
 find_package(BZip2 REQUIRED)
 
 include_directories(

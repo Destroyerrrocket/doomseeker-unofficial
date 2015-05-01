@@ -4,7 +4,7 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 project(zlib C)
 
 if(NOT DEFINED BUILD_SHARED_LIBS)
-    option(BUILD_SHARED_LIBS "Build a shared library form of zlib" ON)
+    option(BUILD_SHARED_LIBS "Build a shared library form of zlib" OFF)
 endif()
 
 include(CheckTypeSize)
