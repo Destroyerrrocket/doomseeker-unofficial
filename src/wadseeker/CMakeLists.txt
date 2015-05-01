@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 2.8.7)
 
+if(COMMAND cmake_policy)
+	cmake_policy(SET CMP0020 OLD) # This is a DLL, no need for main() of any kind.
+endif()
+
 if (MSVC)
 	set(CMAKE_SHARED_LIBRARY_PREFIX "lib")
 endif ()
