@@ -155,7 +155,7 @@ if(WIN32)
 			COMMAND windres -o ${CMAKE_CURRENT_BINARY_DIR}/windows.o -i ${DOOMSEEKER_SOURCE_DIR}/media/windows.rc
 			WORKING_DIRECTORY ${DOOMSEEKER_SOURCE_DIR}/media
 			COMMENT "Generating windows resources (windows.rc)"
-v		)
+		)
 
 		set(SOURCE_FILES ${SOURCE_FILES} windows.o)
 	else()
