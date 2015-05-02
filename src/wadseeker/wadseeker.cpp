@@ -96,26 +96,26 @@ void Wadseeker::abort()
 	if (isWorking() && !d.bIsAborting)
 	{
 		d.bIsAborting = true;
-
-		if (d.wadArchiveClient != NULL)
-		{
-			d.wadArchiveClient->abort();
-		}
-
-		foreach (Idgames* pIdgamesClient, d.idgamesClients)
-		{
-			pIdgamesClient->abort();
-		}
-
-		if (d.wwwSeeker != NULL)
-		{
-			d.wwwSeeker->abort();
-		}
-
+		abortSeekers();
 		if (d.wadRetriever != NULL)
 		{
 			d.wadRetriever->abort();
 		}
+	}
+}
+
+void Wadseeker::abortSeekers()
+{
+	stopWadArchiveClient();
+	stopIdgames();
+	abortWwwSeeker();
+}
+
+void Wadseeker::abortWwwSeeker()
+{
+	if (d.wwwSeeker != NULL)
+	{
+		d.wwwSeeker->abort();
 	}
 }
 
@@ -595,7 +595,7 @@ void Wadseeker::startWadArchiveClient()
 
 void Wadseeker::stopWadArchiveClient()
 {
-	if (d.wadArchiveClient != NULL && d.wadArchiveClient->isWorking())
+	if (d.wadArchiveClient != NULL)
 	{
 		d.wadArchiveClient->abort();
 	}
@@ -746,6 +746,7 @@ void Wadseeker::wadRetrieverFinished()
 		}
 		else
 		{
+			abortSeekers();
 			emit message(tr("WadRetriever is finished."), WadseekerLib::NoticeImportant);
 		}
 	}

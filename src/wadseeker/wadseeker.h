@@ -484,6 +484,8 @@ class WADSEEKER_API Wadseeker : public QObject
 
 		PrivData d;
 
+		void abortSeekers();
+		void abortWwwSeeker();
 		void cleanUpAfterFinish();
 		bool isAllFinished() const;
 
