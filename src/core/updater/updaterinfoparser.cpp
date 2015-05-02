@@ -31,6 +31,12 @@ DClass<UpdaterInfoParser>
 {
 	public:
 		QList<UpdatePackage> packages;
+
+		bool hasMainProgramName(const QVariantMap &metaData) const
+		{
+			return metaData.contains(AutoUpdater::MAIN_PROGRAM_PACKAGE_NAME)
+				|| metaData.contains(AutoUpdater::FALLBACK_MAIN_PROGRAM_PACKAGE_NAME);
+		}
 };
 
 DPointered(UpdaterInfoParser)
@@ -55,7 +61,7 @@ int UpdaterInfoParser::parse(const QByteArray& json)
 	if (var.isValid())
 	{
 		QVariantMap metaData = var.toMap();
-		if (metaData.contains(AutoUpdater::MAIN_PROGRAM_PACKAGE_NAME))
+		if (d->hasMainProgramName(metaData))
 		{
 			foreach (const QString& package, metaData.keys())
 			{

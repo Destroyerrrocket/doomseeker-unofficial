@@ -40,13 +40,34 @@ DClass<UpdatePackageFilter>
 {
 	public:
 		bool bWasAnyUpdatePackageIgnored;
+		bool useFallbackMainProgramName;
 		QMap<QString, QList<QString> > ignoredPackagesRevisions;
 		QMap<QString, UpdatePackageFilter::PluginInfo> plugins;
+
+		bool hasMainProgramPackage(const QList<UpdatePackage> &packages) const
+		{
+			foreach (const UpdatePackage &pkg, packages)
+			{
+				if (pkg.name == AutoUpdater::MAIN_PROGRAM_PACKAGE_NAME)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		const QString &mainProgramPackageNameOrFallback() const
+		{
+			return !useFallbackMainProgramName ?
+				AutoUpdater::MAIN_PROGRAM_PACKAGE_NAME :
+				AutoUpdater::FALLBACK_MAIN_PROGRAM_PACKAGE_NAME;
+		}
 };
 
 DPointered(UpdatePackageFilter)
 //////////////////////////////////////////////////////////////////////////////
 UpdatePackageFilter::UpdatePackageFilter()
+
 {
 	d->bWasAnyUpdatePackageIgnored = false;
 }
@@ -75,6 +96,7 @@ QList<UpdatePackage> UpdatePackageFilter::filter(const QList<UpdatePackage>& pac
 	QList<UpdatePackage> filtered;
 	d->plugins = collectPluginInfo();
 	QList<UpdatePackage> packagesOnIgnoredList;
+	d->useFallbackMainProgramName = !d->hasMainProgramPackage(packages);
 	foreach (UpdatePackage pkg, packages)
 	{
 		if (isDifferentThanInstalled(pkg))
@@ -102,7 +124,7 @@ QList<UpdatePackage> UpdatePackageFilter::filter(const QList<UpdatePackage>& pac
 
 bool UpdatePackageFilter::isDifferentThanInstalled(UpdatePackage& pkg) const
 {
-	if (pkg.name == AutoUpdater::MAIN_PROGRAM_PACKAGE_NAME)
+	if (pkg.name == d->mainProgramPackageNameOrFallback())
 	{
 		QString localRevision = QString::number(Version::revisionNumber());
 		if (localRevision != pkg.revision)

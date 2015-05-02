@@ -129,6 +129,10 @@ class AutoUpdater : public QObject
 		 * Other packages are plugins.
 		 */
 		static const QString MAIN_PROGRAM_PACKAGE_NAME;
+		/**
+		 * @brief Support for downgrading to monolithic Doomseeker package.
+		 */
+		static const QString FALLBACK_MAIN_PROGRAM_PACKAGE_NAME;
 		static const QString QT_PACKAGE_NAME;
 		static const QString WADSEEKER_PACKAGE_NAME;
 		/**
