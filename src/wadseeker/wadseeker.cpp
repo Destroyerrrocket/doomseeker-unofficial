@@ -31,6 +31,7 @@
 #include "zip/un7zip.h"
 #include "wadseeker.h"
 #include "wadseekerversioninfo.h"
+#include <QDebug>
 #include <QDir>
 #include <QFileInfo>
 #include <QStack>
