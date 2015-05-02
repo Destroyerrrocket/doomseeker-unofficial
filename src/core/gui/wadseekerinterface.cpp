@@ -64,6 +64,18 @@ WadseekerInterface::~WadseekerInterface()
 	currentInstance = NULL;
 }
 
+void WadseekerInterface::abortService(const QString &service)
+{
+	message(tr("Aborting service: %1").arg(service), WadseekerLib::Notice);
+	wadseeker.skipService(service);
+}
+
+void WadseekerInterface::abortSite(const QUrl &url)
+{
+	message(tr("Aborting site: %1").arg(url.toString()), WadseekerLib::Notice);
+	wadseeker.skipSiteSeek(url);
+}
+
 void WadseekerInterface::accept()
 {
 	if (isAutomatic())
@@ -137,6 +149,10 @@ void WadseekerInterface::connectWadseekerObject()
 		SLOT( siteRedirect(const QUrl&, const QUrl&) ) );
 	this->connect(&wadseeker, SIGNAL( siteStarted(const QUrl&) ),
 		SLOT( siteStarted(const QUrl&) ) );
+	this->connect(&wadseeker, SIGNAL( serviceStarted(QString) ),
+		SLOT( serviceStarted(QString) ) );
+	this->connect(&wadseeker, SIGNAL( serviceFinished(QString) ),
+		SLOT( serviceFinished(QString) ) );
 
 	// Connect Wadseeker to the WADs table widget.
 	d->twWads->connect(&wadseeker, SIGNAL( fileDownloadFinished(const QString&) ),
@@ -386,6 +402,16 @@ void WadseekerInterface::showEvent(QShowEvent* event)
 			startSeeking(seekedWads);
 		}
 	}
+}
+
+void WadseekerInterface::serviceStarted(const QString &service)
+{
+	d->twSites->addService(service);
+}
+
+void WadseekerInterface::serviceFinished(const QString &service)
+{
+	d->twSites->removeService(service);
 }
 
 void WadseekerInterface::siteFinished(const QUrl& site)

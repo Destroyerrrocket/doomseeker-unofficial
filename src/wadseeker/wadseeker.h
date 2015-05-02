@@ -259,6 +259,14 @@ class WADSEEKER_API Wadseeker : public QObject
 		void skipFileCurrentUrl(const QString& fileName);
 
 		/**
+		 * @brief Aborts querying a service if such query is in progress.
+		 *
+		 * @param service
+		 *     Name of the service as emitted by serviceStarted() signal.
+		 */
+		void skipService(const QString &service);
+
+		/**
 		 * @brief Skips site seeks for specified URL.
 		 *
 		 * If available a new site URL will be immediately taken from the queue
@@ -312,7 +320,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 * @brief Emitted when a particular file finishes downloading.
 		 *
 		 * @b NOTE: This doesn't mean that the WAD was successfully installed.
-		 * It only servers as a notification that a download has been
+		 * It only serves as a notification that a download has been
 		 * completed.
 		 *
 		 * @param filename
@@ -377,6 +385,32 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *     signals.
 		 */
 		void seekStarted(const QStringList& filenames);
+
+		/**
+		 * @brief Notifies that Wadseeker started querying a
+		 * customized service.
+		 *
+		 * Customized services are: WadArchive, idgames.
+		 *
+		 * @param name
+		 *     Unique name of the service. Can be used to abort
+		 *     querying of this service by passing it to
+		 *     skipService().
+		 *
+		 * @see serviceFinished()
+		 */
+		void serviceStarted(const QString &name);
+
+		/**
+		 * @brief Notifies that Wadseeker is done querying a
+		 * customized service.
+		 *
+		 * @param name
+		 *     Unique name of the service.
+		 *
+		 * @see serviceStarted()
+		 */
+		void serviceFinished(const QString &name);
 
 		/**
 		 * @brief Emitted when a WWW site finishes download.
@@ -463,7 +497,10 @@ class WADSEEKER_API Wadseeker : public QObject
 		void setupWadArchiveClient(const QList<WadDownloadInfo> &wadDownloadInfos);
 
 		void startNextIdgamesClient();
+		void startIdgames();
+		void stopIdgames();
 		void startWadArchiveClient();
+		void stopWadArchiveClient();
 
 	private slots:
 		void cleanUpIfAllFinished();
@@ -471,6 +508,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		void fileMirrorLinksFound(const QString& filename, const QList<QUrl>& urls);
 		void idgamesClientFinished(Idgames* pEmitter);
 		void reportBadUrl(const QUrl &url);
+		void wadArchiveFinished();
 		void wadRetrieverDownloadFinished(WadDownloadInfo wadDownloadInfo);
 		void wadRetrieverDownloadProgress(WadDownloadInfo wadDownloadInfo, qint64 current, qint64 total);
 		void wadRetrieverDownloadStarted(WadDownloadInfo wadDownloadInfo, const QUrl& url);

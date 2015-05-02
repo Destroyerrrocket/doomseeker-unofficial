@@ -134,6 +134,8 @@ class WadseekerInterface : public QDialog
 		QStringList unsuccessfulWads() const;
 
 	private slots:
+		void abortService(const QString &service);
+		void abortSite(const QUrl &url);
 		void accept();
 		void allDone(bool bSuccess);
 		void fileDownloadSuccessful(const QString& filename);
@@ -141,6 +143,8 @@ class WadseekerInterface : public QDialog
 		void message(const QString& message, WadseekerLib::MessageType type);
 		void registerUpdateRequest();
 		void seekStarted(const QStringList& filenames);
+		void serviceStarted(const QString &service);
+		void serviceFinished(const QString &service);
 		void siteFinished(const QUrl& site);
 		void siteProgress(const QUrl& site, qint64 bytes, qint64 total);
 		void siteRedirect(const QUrl& oldUrl, const QUrl& newUrl);

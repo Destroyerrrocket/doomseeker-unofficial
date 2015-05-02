@@ -228,6 +228,10 @@ void Wadseeker::idgamesClientFinished(Idgames* pEmitter)
 		startNextIdgamesClient();
 	}
 
+	if (d.idgamesClients.isEmpty())
+	{
+		emit serviceFinished("idgames");
+	}
 	if (isAllFinished())
 	{
 		cleanUpAfterFinish();
@@ -503,7 +507,7 @@ void Wadseeker::setupWadArchiveClient(const QList<WadDownloadInfo> &wadDownloadI
 	this->connect(d.wadArchiveClient, SIGNAL(message(QString, WadseekerLib::MessageType)),
 		SIGNAL(message(QString, WadseekerLib::MessageType)));
 	this->connect(d.wadArchiveClient, SIGNAL(finished()),
-		SLOT(cleanUpIfAllFinished()));
+		SLOT(wadArchiveFinished()));
 	this->connect(d.wadArchiveClient, SIGNAL(urlFound(QString, QUrl)),
 		SLOT(fileLinkFound(QString, QUrl)));
 }
@@ -516,12 +520,36 @@ void Wadseeker::skipFileCurrentUrl(const QString& fileName)
 	}
 }
 
+void Wadseeker::skipService(const QString &service)
+{
+	if (service == "WadArchive")
+	{
+		stopWadArchiveClient();
+	}
+	else if (service == "idgames")
+	{
+		stopIdgames();
+	}
+	else
+	{
+		qDebug() << "Wadseeker: attempted to abort unknown service " << service;
+		emit message(tr("Attempted to abort unknown service '%1'").arg(service),
+			WadseekerLib::Error);
+	}
+}
+
 void Wadseeker::skipSiteSeek(const QUrl& url)
 {
 	if (d.wwwSeeker != NULL)
 	{
 		d.wwwSeeker->skipSite(url);
 	}
+}
+
+void Wadseeker::startIdgames()
+{
+	emit serviceStarted("idgames");
+	startNextIdgamesClient();
 }
 
 void Wadseeker::startNextIdgamesClient()
@@ -539,12 +567,37 @@ void Wadseeker::startNextIdgamesClient()
 	}
 }
 
+void Wadseeker::stopIdgames()
+{
+	if (d.idgamesClients.isEmpty())
+	{
+		return;
+	}
+	Idgames *current = d.idgamesClients.takeFirst();
+	qDeleteAll(d.idgamesClients);
+	d.idgamesClients.clear();
+
+	current->abort();
+}
+
 void Wadseeker::startWadArchiveClient()
 {
 	d.wadArchiveClient->start();
+	if (d.wadArchiveClient->isWorking())
+	{
+		emit serviceStarted("WadArchive");
+	}
 	if (isAllFinished())
 	{
 		cleanUpAfterFinish();
+	}
+}
+
+void Wadseeker::stopWadArchiveClient()
+{
+	if (d.wadArchiveClient != NULL && d.wadArchiveClient->isWorking())
+	{
+		d.wadArchiveClient->abort();
 	}
 }
 
@@ -645,7 +698,7 @@ bool Wadseeker::startSeek(const QStringList& wads)
 	d.wwwSeeker->startSearch(fileSeekInfosList);
 	if (d.seekParametersForCurrentSeek->bIdgamesEnabled)
 	{
-		startNextIdgamesClient();
+		startIdgames();
 	}
 	if (d.seekParametersForCurrentSeek->bWadArchiveEnabled)
 	{
@@ -658,6 +711,12 @@ bool Wadseeker::startSeek(const QStringList& wads)
 QString Wadseeker::targetDirectory() const
 {
 	return d.seekParameters.saveDirectoryPath;
+}
+
+void Wadseeker::wadArchiveFinished()
+{
+	emit serviceFinished("WadArchive");
+	cleanUpIfAllFinished();
 }
 
 void Wadseeker::wadRetrieverDownloadFinished(WadDownloadInfo wadDownloadInfo)

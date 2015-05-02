@@ -54,6 +54,11 @@
          <string>Progress</string>
         </property>
        </column>
+       <column>
+        <property name="text">
+         <string>Abort</string>
+        </property>
+       </column>
       </widget>
      </item>
      <item>
@@ -189,6 +194,10 @@
    <class>WadseekerSitesTable</class>
    <extends>QTableWidget</extends>
    <header>gui/widgets/wadseekersitestable.h</header>
+   <slots>
+    <signal>serviceAbortRequested(QString)</signal>
+    <signal>urlAbortRequested(QUrl)</signal>
+   </slots>
   </customwidget>
   <customwidget>
    <class>WadseekerWadsTable</class>
@@ -248,5 +257,41 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>twSites</sender>
+   <signal>serviceAbortRequested(QString)</signal>
+   <receiver>WadseekerInterface</receiver>
+   <slot>abortService(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>682</x>
+     <y>112</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>twSites</sender>
+   <signal>urlAbortRequested(QUrl)</signal>
+   <receiver>WadseekerInterface</receiver>
+   <slot>abortSite(QUrl)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>754</x>
+     <y>170</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>800</x>
+     <y>176</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>abortService(QString)</slot>
+  <slot>abortSite(QUrl)</slot>
+ </slots>
 </ui>

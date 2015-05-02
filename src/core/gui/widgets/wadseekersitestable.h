@@ -23,6 +23,7 @@
 #ifndef __WADSEEKERSITESTABLE_H__
 #define __WADSEEKERSITESTABLE_H__
 
+#include <QSignalMapper>
 #include "gui/widgets/tablewidgetmouseaware.h"
 
 class WadseekerSitesTable : public TableWidgetMouseAware
@@ -32,6 +33,7 @@ class WadseekerSitesTable : public TableWidgetMouseAware
 	public:
 		static const int IDX_URL_COLUMN = 0;
 		static const int IDX_PROGRESS_COLUMN = 1;
+		static const int IDX_ABORT_COLUMN = 2;
 
 		WadseekerSitesTable(QWidget* pParent = NULL);
 
@@ -39,7 +41,13 @@ class WadseekerSitesTable : public TableWidgetMouseAware
 		void removeUrl(const QUrl& url);
 
 	public slots:
+		void addService(const QString &service);
+		void removeService(const QString &service);
 		void setUrlProgress(const QUrl& url, qint64 current, qint64 total);
+
+	signals:
+		void serviceAbortRequested(const QString &service);
+		void urlAbortRequested(const QUrl &url);
 
 	protected:
 		void showEvent(QShowEvent* pEvent);
@@ -49,11 +57,17 @@ class WadseekerSitesTable : public TableWidgetMouseAware
 		{
 			public:
 				bool bAlreadyShownOnce;
+				QSignalMapper serviceAborter;
+				QSignalMapper urlAborter;
 		};
 
 		PrivData d;
 
-		int findUrlRow(const QUrl& url);
+		int findRow(const QString &text);
+		int findRow(const QUrl &url);
+
+	private slots:
+		void requestUrlAbort(const QString &urlAsString);
 };
 
 #endif
