@@ -225,7 +225,12 @@ if(WIN32)
 			OUTPUT_VARIABLE QT_PLUGINS_DIR
 			OUTPUT_STRIP_TRAILING_WHITESPACE)
 		install(FILES ${QT_PLUGINS_DIR}/platforms/qwindows.dll DESTINATION platforms)
-		# ICU (the 21 Megabyte bastard)
+		# ICU (the 26.6 Megabyte bastard)
+		#
+		# Installation of ICU is optional. If you don't have ICU
+		# files, it's possible that your Qt installation doesn't
+		# need them. That's very good as ICU files weight about 30
+		# Megabytes and Doomseeker makes no use of them.
 		execute_process(COMMAND ${QMAKE_EXEC} -query QT_INSTALL_LIBEXECS
 			OUTPUT_VARIABLE QT_LIBEXECS_DIR
 			OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -233,7 +238,7 @@ if(WIN32)
 			${QT_LIBEXECS_DIR}/icuin53.dll
 			${QT_LIBEXECS_DIR}/icuuc53.dll
 			${QT_LIBEXECS_DIR}/icudt53.dll
-			DESTINATION .)
+			DESTINATION . OPTIONAL)
 	else()
 		get_filename_component(QT_DLL_DIR ${QT_QMAKE_EXECUTABLE} PATH)
 		set(QT_LIBS_RELEASE
