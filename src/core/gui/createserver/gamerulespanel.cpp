@@ -49,6 +49,7 @@ GameRulesPanel::GameRulesPanel(QWidget *parent)
 : QWidget(parent)
 {
 	d->setupUi(this);
+	setupDifficulty();
 }
 
 GameRulesPanel::~GameRulesPanel()
@@ -122,7 +123,6 @@ void GameRulesPanel::saveConfig(Ini &config)
 
 void GameRulesPanel::setupForEngine(const EnginePlugin *engine, const GameMode &gameMode)
 {
-	setupDifficulty();
 	setupModifiers(engine);
 	d->mapListPanel->setupForEngine(engine);
 
