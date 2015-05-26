@@ -115,12 +115,16 @@ def obtain_version_information(binary_dir)
     end
 end
 
-def package_suffix(revision, channel, platform)
-    return "_#{revision}-#{channel}_#{platform}"
+def package_suffix(display_version, revision, channel, platform)
+    suffix = "#{revision}-#{channel}_#{platform}"
+    if display_version != revision
+        suffix = "#{display_version}_#{suffix}"
+    end
+    return "_#{suffix}"
 end
 
-def package_filename(pkg_name, revision, channel, platform)
-    return "#{pkg_name}#{package_suffix(revision, channel, platform)}.zip"
+def package_filename(pkg_name, display_version, revision, channel, platform)
+    return "#{pkg_name}#{package_suffix(display_version, revision, channel, platform)}.zip"
 end
 
 def extract_display_version(pkg_data)
@@ -131,11 +135,11 @@ end
 def process_package(pkg_name, channel, version_data, binary_dir, output_dir)
     # Create the package archive and .xml script by calling
     # the "create-packages" script.
-    
+
     # Extract necessary information on the package.
     revision = version_data["revision"]
     display_version = extract_display_version(version_data)
-    suffix = package_suffix(revision, channel, PACKAGE_PLATFORM)
+    suffix = package_suffix(display_version, revision, channel, PACKAGE_PLATFORM)
     # Get path to the .js config file required by the script.
     cfg_file_path = File.join(PACKAGE_CONFIGS_DIR, "#{pkg_name}.js")
     # Run script.
@@ -151,8 +155,9 @@ def dump_update_info(output_path, channel, version_data)
     update_info = {}
     version_data.each do |pkg, pkg_info|
         revision = pkg_info["revision"]
-        filename = package_filename(pkg, revision, channel, PACKAGE_PLATFORM)
-        url = File.join(URL_BASE, filename)
+        display_version = extract_display_version(pkg_info)
+        filename = package_filename(pkg, display_version, revision, channel, PACKAGE_PLATFORM)
+        url = File.join(URL_BASE, PACKAGE_PLATFORM, channel, filename)
         update_info[pkg] = {
             "revision" => revision,
             "display-version" => extract_display_version(pkg_info),
@@ -213,6 +218,7 @@ end
 
 versions = obtain_version_information(binary_dir)
 output_dir = spawn_unique_dir("upkgs-#{target_channel}")
+packages_output_dir = File.join(output_dir, PACKAGE_PLATFORM, target_channel)
 
 # Process packages.
 successes = []
@@ -220,7 +226,7 @@ failures = []
 versions.each do |pkg_name, version_data|
     begin
         $stderr.puts "==== Now processing: #{pkg_name}"
-        process_package(pkg_name, target_channel, version_data, binary_dir, output_dir)
+        process_package(pkg_name, target_channel, version_data, binary_dir, packages_output_dir)
         successes << pkg_name
     rescue
         puts $@, $!
