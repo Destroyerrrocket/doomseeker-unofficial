@@ -208,6 +208,11 @@ if(WIN32)
 		set_target_properties(doomseeker PROPERTIES LINK_FLAGS_MINSIZEREL "-Wl,-subsystem,windows")
 	endif()
 
+	# OpenSSL
+	set(OPENSSL_LIBEAY32_DLL "" CACHE FILEPATH "Path to libeay32.dll v.1.0.2.1")
+	set(OPENSSL_SSLEAY32_DLL "" CACHE FILEPATH "Path to ssleay32.dll v.1.0.2.1")
+	install(FILES ${OPENSSL_LIBEAY32_DLL} ${OPENSSL_SSLEAY32_DLL} DESTINATION .)
+
 	# Install program DIRECTLY to directory specified by
 	# ${CMAKE_INSTALL_PREFIX}. If ${CMAKE_INSTALL_PREFIX} is set to something
 	# stupid like "C:\Program Files\" (this is the CMake's default, BTW)

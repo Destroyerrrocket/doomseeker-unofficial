@@ -20,7 +20,9 @@
         "updater.exe",
         "doomseeker.ico",
         "LICENSE.json.txt",
-        "LICENSE.wadseeker.txt"
+        "LICENSE.wadseeker.txt",
+        "libeay32.dll",
+        "ssleay32.dll"
     ],
 
     "updater-binary" : "updater.exe",

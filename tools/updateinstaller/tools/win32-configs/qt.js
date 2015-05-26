@@ -7,7 +7,9 @@
         "Qt5Multimedia.dll",
         "Qt5Network.dll",
         "Qt5Widgets.dll",
-        "Qt5Xml.dll"
+        "Qt5Xml.dll",
+        "libeay32.dll",
+        "ssleay32.dll"
     ],
 
     "updater-binary" : "updater.exe",
