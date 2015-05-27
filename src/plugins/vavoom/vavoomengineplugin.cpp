@@ -50,7 +50,11 @@ VavoomEnginePlugin::VavoomEnginePlugin()
 		EP_DefaultMaster, "altdeath.com:26001",
 		EP_Done
 	);
-	setGameModes(VavoomGameInfo::gameModes());
+}
+
+QList<GameMode> VavoomEnginePlugin::gameModes() const
+{
+	return VavoomGameInfo::gameModes();
 }
 
 MasterClient *VavoomEnginePlugin::masterClient() const

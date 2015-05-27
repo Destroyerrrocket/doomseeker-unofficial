@@ -100,7 +100,7 @@ class MAIN_EXPORT EnginePlugin
 			/**
 			 * (bool)
 			 * If specified then "Create Game" dialog won't build
-			 * flags pages out of the EnginePlugin::Data::allDMFlags list.
+			 * flags pages out of the EnginePlugin::dmFlags() list.
 			 * Plugin either doesn't want to have the flags pages created
 			 * or will provide the pages on its own through
 			 * EnginePlugin::createServerDialogPages().
@@ -121,8 +121,6 @@ class MAIN_EXPORT EnginePlugin
 		{
 			public:
 				unsigned int abiVersion;
-				/// List of all engine's DM flags or NULL if none.
-				QList<DMFlagsSection> allDMFlags;
 				bool allowsConnectPassword;
 				bool allowsEmail;
 				bool allowsJoinPassword;
@@ -133,16 +131,6 @@ class MAIN_EXPORT EnginePlugin
 				/// Default port on which servers for given engine are hosted.
 				QString defaultMaster;
 				quint16 defaultServerPort;
-				/// All available game modes for the engine or NULL if none.
-				QList<GameMode> gameModes;
-				/**
-				* @brief Returns a list of modifiers.
-				*
-				* Modifiers are used and displayed in Create Game dialog.
-				* If an empty list (or NULL) is returned, Modifier combo will be
-				* disabled.
-				*/
-				QList<GameCVar> gameModifiers;
 				bool hasMasterServer;
 				/// icon of the engine
 				QPixmap *icon;
@@ -161,7 +149,7 @@ class MAIN_EXPORT EnginePlugin
 				 * @brief Controls behavior of "Create Game" dialog.
 				 *
 				 * If true then "Create Game" dialog will build
-				 * flags pages out of the allDMFlags list. If false then plugin
+				 * flags pages out of the dmFlags list. If false then plugin
 				 * either doesn't want to have the flags pages created or will
 				 * provide the pages on its own.
 				 *
@@ -229,6 +217,11 @@ class MAIN_EXPORT EnginePlugin
 		const QPixmap &icon() const { return *d->icon; }
 		void setConfig(IniSection &cfg) const;
 
+		/**
+		 * @brief Game settings flags.
+		 */
+		virtual QList<DMFlagsSection> dmFlags() const;
+
 		GameExeFactory *gameExe()
 		{
 			return data()->gameExeFactory;
@@ -242,6 +235,19 @@ class MAIN_EXPORT EnginePlugin
 		 * manually by the programmer.
 		 */
 		virtual GameHost* gameHost();
+
+		/**
+		 * @brief Game modes (cooperative, deathmatch, ctf).
+		 *
+		 * Modifiers are used and displayed in Create Game dialog.
+		 * If an empty list (or NULL) is returned, Modifier combo box
+		 * will be disabled.
+		 */
+		virtual QList<GameMode> gameModes() const;
+		/**
+		 * @brief Modifier that apply to all game modes (ex. instagib).
+		 */
+		virtual QList<GameCVar> gameModifiers() const;
 
 		/**
 		 *	@brief Returns a list of limits (like fraglimit) supported by passed
@@ -285,10 +291,6 @@ class MAIN_EXPORT EnginePlugin
 		 *        a ServerPtr.
 		 */
 		virtual ServerPtr mkServer(const QHostAddress &address, unsigned short port) const = 0;
-
-		void setDMFlags(const QList<DMFlagsSection> &dmFlags);
-		void setGameModes(const QList<GameMode> &gameModes);
-		void setGameModifiers(const QList<GameCVar> &gameModifiers);
 
 	private:
 		Data *d;

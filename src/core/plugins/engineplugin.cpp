@@ -84,9 +84,24 @@ ConfigurationBaseBox* EnginePlugin::configuration(QWidget *parent) const
 	return new EngineConfigurationBaseBox(this, *d->pConfig, parent);
 }
 
+QList<DMFlagsSection> EnginePlugin::dmFlags() const
+{
+	return QList<DMFlagsSection>();
+}
+
 GameHost* EnginePlugin::gameHost()
 {
 	return new GameHost(this);
+}
+
+QList<GameMode> EnginePlugin::gameModes() const
+{
+	return QList<GameMode>();
+}
+
+QList<GameCVar> EnginePlugin::gameModifiers() const
+{
+	return QList<GameCVar>();
 }
 
 void EnginePlugin::init(const char* name, const char* const icon[], ...)
@@ -216,19 +231,4 @@ void EnginePlugin::setConfig(IniSection &ini) const
 	ini.createSetting("Masterserver", data()->defaultMaster);
 
 	setupConfig(ini);
-}
-
-void EnginePlugin::setDMFlags(const QList<DMFlagsSection> &dmFlags)
-{
-	d->allDMFlags = dmFlags;
-}
-
-void EnginePlugin::setGameModes(const QList<GameMode> &gameModes)
-{
-	d->gameModes = gameModes;
-}
-
-void EnginePlugin::setGameModifiers(const QList<GameCVar> &gameModifiers)
-{
-	d->gameModifiers = gameModifiers;
 }

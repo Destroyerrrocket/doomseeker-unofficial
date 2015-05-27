@@ -45,12 +45,16 @@ ChocolateDoomEnginePlugin::ChocolateDoomEnginePlugin()
 		EP_HasMasterServer,
 		EP_Done
 	);
-	setGameModes(ChocolateDoomGameInfo::gameModes());
 }
 
 GameHost* ChocolateDoomEnginePlugin::gameHost()
 {
 	return new ChocolateDoomGameHost();
+}
+
+QList<GameMode> ChocolateDoomEnginePlugin::gameModes() const
+{
+	return ChocolateDoomGameInfo::gameModes();
 }
 
 MasterClient *ChocolateDoomEnginePlugin::masterClient() const

@@ -170,9 +170,9 @@ Server::Response OdamexServer::readRequest(const QByteArray &data)
 		else if(cvarName == "sv_gametype")
 		{
 			unsigned int mode = cvarValue.toUInt();
-			if(mode < (unsigned)plugin()->data()->gameModes.size())
+			if(mode < (unsigned)plugin()->gameModes().size())
 			{
-				setGameMode(plugin()->data()->gameModes[cvarValue.toUInt()]);
+				setGameMode(plugin()->gameModes()[cvarValue.toUInt()]);
 			}
 		}
 		else if(cvarName == "sv_website")

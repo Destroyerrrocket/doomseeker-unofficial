@@ -71,8 +71,6 @@ ZandronumEnginePlugin::ZandronumEnginePlugin()
 		EP_URLScheme, "zan",
 		EP_Done
 	);
-	setGameModes(ZandronumGameInfo::gameModes());
-	setGameModifiers(ZandronumGameInfo::gameModifiers());
 }
 
 void ZandronumEnginePlugin::setupConfig(IniSection &config) const
@@ -117,6 +115,16 @@ QList<CreateServerDialogPage*> ZandronumEnginePlugin::createServerDialogPages(
 GameHost* ZandronumEnginePlugin::gameHost()
 {
 	return new ZandronumGameHost();
+}
+
+QList<GameMode> ZandronumEnginePlugin::gameModes() const
+{
+	return ZandronumGameInfo::gameModes();
+}
+
+QList<GameCVar> ZandronumEnginePlugin::gameModifiers() const
+{
+	return ZandronumGameInfo::gameModifiers();
 }
 
 QList<GameCVar> ZandronumEnginePlugin::limits(const GameMode& gm) const

@@ -155,7 +155,7 @@ void GameRulesPanel::setupModifiers(const EnginePlugin *engine)
 	d->cboModifier->clear();
 	d->gameModifiers.clear();
 
-	const QList<GameCVar> &modifiers = engine->data()->gameModifiers;
+	QList<GameCVar> modifiers = engine->gameModifiers();
 
 	if (!modifiers.isEmpty())
 	{

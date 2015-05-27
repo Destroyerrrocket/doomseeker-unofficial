@@ -57,8 +57,16 @@ OdamexEnginePlugin::OdamexEnginePlugin()
 		EP_DemoExtension, true, "odd",
 		EP_Done
 	);
-	setDMFlags(OdamexGameInfo::dmFlags());
-	setGameModes(OdamexGameInfo::gameModes());
+}
+
+QList<DMFlagsSection> OdamexEnginePlugin::dmFlags() const
+{
+	return OdamexGameInfo::dmFlags();
+}
+
+QList<GameMode> OdamexEnginePlugin::gameModes() const
+{
+	return OdamexGameInfo::gameModes();
 }
 
 GameHost* OdamexEnginePlugin::gameHost()

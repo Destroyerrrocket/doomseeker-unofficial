@@ -31,7 +31,9 @@ class OdamexEnginePlugin : public EnginePlugin
 	public:
 		OdamexEnginePlugin();
 
+		QList<DMFlagsSection> dmFlags() const;
 		GameHost *gameHost();
+		QList<GameMode> gameModes() const;
 		MasterClient *masterClient() const;
 		ServerPtr mkServer(const QHostAddress &address, unsigned short port) const;
 };

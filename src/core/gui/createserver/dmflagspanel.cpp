@@ -87,7 +87,7 @@ bool DMFlagsPanel::initDMFlagsTabs(const EnginePlugin *engine)
 
 	if (engine->data()->createDMFlagsPagesAutomatic)
 	{
-		const QList<DMFlagsSection> &dmFlagsSections = engine->data()->allDMFlags;
+		QList<DMFlagsSection> dmFlagsSections = engine->dmFlags();
 		if (dmFlagsSections.empty())
 		{
 			return false; // Nothing to do

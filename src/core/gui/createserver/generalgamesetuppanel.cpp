@@ -195,7 +195,7 @@ void GeneralGameSetupPanel::setupForEngine(EnginePlugin *engine)
 	d->spinPort->setValue(d->currentEngine->data()->defaultServerPort);
 
 	d->cboGamemode->clear();
-	const QList<GameMode> &gameModes = d->currentEngine->data()->gameModes;
+	QList<GameMode> gameModes = d->currentEngine->gameModes();
 	if (!gameModes.isEmpty())
 	{
 		for (int i = 0; i < gameModes.count(); ++i)
@@ -296,14 +296,14 @@ void GeneralGameSetupPanel::onGameModeChanged(int index)
 {
 	if (index >= 0)
 	{
-		const QList<GameMode> &gameModes = d->currentEngine->data()->gameModes;
+		QList<GameMode> gameModes = d->currentEngine->gameModes();
 		emit gameModeChanged(gameModes[index]);
 	}
 }
 
 GameMode GeneralGameSetupPanel::currentGameMode() const
 {
-	const QList<GameMode> &gameModes = d->currentEngine->data()->gameModes;
+	QList<GameMode> gameModes = d->currentEngine->gameModes();
 	foreach (const GameMode& mode, gameModes)
 	{
 		if (mode.name().compare(d->cboGamemode->currentText()) == 0)
