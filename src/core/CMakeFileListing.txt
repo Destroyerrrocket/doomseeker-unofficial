@@ -67,6 +67,7 @@ set(HEADER_FILES
 	datastreamoperatorwrapper.h
 	doomseekerfilepaths.h
 	dptr.h
+	filefilter.h
 	fileutils.h
 	gamedemo.h
 	global.h
@@ -279,6 +280,7 @@ set(SOURCE_FILES
 	datapaths.cpp
 	datastreamoperatorwrapper.cpp
 	doomseekerfilepaths.cpp
+	filefilter.cpp
 	fileutils.cpp
 	gamedemo.cpp
 	gui/aboutdialog.cpp

@@ -32,6 +32,7 @@
 #include "serverapi/message.h"
 #include "serverapi/serverstructs.h"
 #include "serverapi/server.h"
+#include "filefilter.h"
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QHostAddress>
@@ -269,7 +270,8 @@ QString GeneralGameSetupPanel::pathToServerExe(Message& message)
 void GeneralGameSetupPanel::browseExecutable()
 {
 	QString dialogDir = gConfig.doomseeker.previousCreateServerExecDir;
-	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - Add file"), dialogDir);
+	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - Add file"),
+		dialogDir, FileFilter::executableFilesFilter());
 
 	if (!strFile.isEmpty())
 	{

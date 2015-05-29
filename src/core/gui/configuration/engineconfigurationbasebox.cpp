@@ -25,6 +25,7 @@
 #include "ui_engineconfigurationbasebox.h"
 #include "ini/ini.h"
 #include "plugins/engineplugin.h"
+#include "filefilter.h"
 
 #include <QFileDialog>
 
@@ -87,16 +88,9 @@ void EngineConfigurationBaseBox::addWidget(QWidget *widget)
 
 void EngineConfigurationBaseBox::browseForBinary(QLineEdit *input, const QString &type)
 {
-	QString filter;
-#if defined(Q_OS_WIN32)
-	filter = tr("Binary files (*.exe);;Any files (*)");
-#else
-	// Other platforms do not have an extension for their binary files.
-	filter = tr("Any files(*)");
-#endif
 	QString filepath = QFileDialog::getOpenFileName(this,
 		tr("Doomseeker - choose %1 %2").arg(d->plugin->data()->name).arg(type),
-		QString(), filter);
+		QString(), FileFilter::executableFilesFilter());
 	if (!filepath.isEmpty())
 		input->setText(filepath);
 }
