@@ -45,7 +45,7 @@ void AppRunner::cleanArguments(QStringList& args)
 	}
 }
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
 QString AppRunner::findBundleBinary(const QFileInfo &file)
 {
 	// Scan the plist file for where the real binary is in a bundle.  We have

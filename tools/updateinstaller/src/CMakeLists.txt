@@ -5,7 +5,7 @@ find_package(Threads REQUIRED)
 include(GenerateCppResourceFile)
 
 if (UNIX)
-	add_definitions(-Wall -Werror -Wconversion)
+	add_definitions(-Wall -Wconversion)
 endif()
 
 include(UsePkgConfig)

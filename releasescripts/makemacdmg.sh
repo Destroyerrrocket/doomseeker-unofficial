@@ -1,5 +1,17 @@
 #!/bin/bash
 
+SDK_10_4=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.4u.sdk
+SDK_10_6=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.6.sdk
+
+if [ -z $QT5PATH ]
+then
+	echo "Building Qt4 version."
+	QT_VERSION=4
+else
+	echo "Building Qt5 version."
+	QT_VERSION=5
+fi
+
 # Get the version number
 version_info=`grep --only-matching -E '([0-9]+\.[0-9]+)|Beta|Alpha' ../src/core/versiondefs.h`
 version=""
@@ -24,7 +36,7 @@ then
 	version="0.0"
 fi
 
-NUM_CPU_CORES=`system_profiler SPHardwareDataType | awk '/Total Number Of Cores/ {print $5};'`
+NUM_CPU_CORES=`system_profiler SPHardwareDataType | awk '/Total Number of Cores/ {print $5};'`
 
 echo "Version: $version"
 echo "Tag: $tag"
@@ -38,9 +50,14 @@ mkdir Doomseeker/Doomseeker.app/Contents/Resources
 # Build
 mkdir Doomseeker/build
 cd Doomseeker/build
-cmake ../../.. -DMAC_ARCH_UNIVERSAL=ON -DMAC_SDK_10.4=ON -DCMAKE_BUILD_TYPE=Release $@
-# Run CMake twice since it will try to reconfigure itself... grr...
-cmake ../../.. -DCMAKE_BUILD_TYPE=Release $@
+if [ -z $QT5PATH ]
+then
+	cmake ../../.. -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.0 -DCMAKE_C_COMPILER=/usr/bin/gcc-4.0 $@
+	cmake ../../.. -DCMAKE_OSX_ARCHITECTURES="ppc;i386" -DCMAKE_OSX_DEPLOYMENT_TARGET=10.4 -DCMAKE_OSX_SYSROOT=${SDK_10_4} -DCMAKE_BUILD_TYPE=Release $@
+else
+	CMAKE_PREFIX_PATH=$QT5PATH cmake ../../.. $@
+	CMAKE_PREFIX_PATH=$QT5PATH cmake ../../.. -DCMAKE_OSX_ARCHITECTURES="x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=10.6 -DCMAKE_OSX_SYSROOT=$SDK_10_6 -DCMAKE_BUILD_TYPE=Release $@
+fi
 make -j $NUM_CPU_CORES
 cd ..
 
@@ -54,26 +71,30 @@ then
 	QTPATH=/Library/Frameworks/
 	QTPLPATH=/Developer/Applications/Qt/
 fi
+
 echo "Qt Located: $QTPATH"
 echo "Qt Plugins: $QTPLPATH"
 echo
 
+MODULES=`otool -L build/doomseeker | grep -o 'Qt[A-Za-z]\{1,\}.framework' | sed 's/.framework//'`
+MODULES_COMMA=`echo $MODULES | sed 's/ /,/g'`
+
 cp {build/,Doomseeker.app/Contents/MacOS/}doomseeker
 cp {build/,Doomseeker.app/Contents/MacOS/}updater
 cp {build/,Doomseeker.app/Contents/Frameworks/}libwadseeker.dylib
-cp -R {${QTPATH},Doomseeker.app/Contents/Frameworks/}QtCore.framework
-cp -R {${QTPATH},Doomseeker.app/Contents/Frameworks/}QtGui.framework
-cp -R {${QTPATH},Doomseeker.app/Contents/Frameworks/}QtNetwork.framework
-cp -R {${QTPATH},Doomseeker.app/Contents/Frameworks/}QtXml.framework
-cp -R {${QTPLPATH},Doomseeker.app/Contents/}plugins
+for i in $MODULES
+do
+	cp -a {${QTPATH},Doomseeker.app/Contents/Frameworks/}$i.framework
+	rm -f `find Doomseeker.app/Contents/Frameworks/$i.framework -name *_debug*`
+	rm -rf `find Doomseeker.app/Contents/Frameworks/$i.framework -name Headers`
+done
+cp -a {${QTPLPATH},Doomseeker.app/Contents/}plugins
 cp -R {build/,Doomseeker.app/Contents/MacOS/}engines
 cp -R {build/,Doomseeker.app/Contents/MacOS/}translations
 cp {${QTPLPATH},Doomseeker.app/Contents/MacOS/}translations/qt_pl.qm
 cp {../../media/,Doomseeker.app/Contents/}Info.plist
 cp {../../media/,Doomseeker.app/Contents/Resources/}icon-osx.icns
 cp {../../media/,Doomseeker.app/Contents/Resources/}qt.conf
-rm -rf Doomseeker.app/Contents/Frameworks/{QtCore,QtGui,QtNetwork,QtXml}.framework/{*_debug.dSYM,Versions/4/Headers}
-rm -f Doomseeker.app/Contents/Frameworks/{QtCore,QtGui,QtNetwork,QtXml}.framework/{Versions/4/,}*_debug*
 
 QTPLUGINS_LIST=''
 for i in `ls Doomseeker.app/Contents/plugins`
@@ -92,13 +113,13 @@ do
 		install_name_tool -change `otool -L $i | grep -m 1 --only-matching '[/@].*libwadseeker.dylib'` @executable_path/../Frameworks/libwadseeker.dylib $i
 	fi
 done
-for i in QtCore QtGui QtNetwork QtXml
+for i in $MODULES
 do
-	install_name_tool -id {@executable_path/../,Doomseeker.app/Contents/}Frameworks/${i}.framework/Versions/4/$i
-	install_name_tool -change {${QTNTPATH},@executable_path/../Frameworks/}QtCore.framework/Versions/4/QtCore Doomseeker.app/Contents/Frameworks/${i}.framework/Versions/4/$i
+	install_name_tool -id {@executable_path/../,Doomseeker.app/Contents/}Frameworks/${i}.framework/Versions/$QT_VERSION/$i
+	install_name_tool -change {${QTNTPATH},@executable_path/../Frameworks/}QtCore.framework/Versions/$QT_VERSION/QtCore Doomseeker.app/Contents/Frameworks/${i}.framework/Versions/$QT_VERSION/$i
 	for j in $RELINK_LIST
 	do
-		install_name_tool -change {${QTNTPATH},@executable_path/../Frameworks/}${i}.framework/Versions/4/$i $j
+		install_name_tool -change {${QTNTPATH},@executable_path/../Frameworks/}${i}.framework/Versions/$QT_VERSION/$i $j
 	done
 done
 

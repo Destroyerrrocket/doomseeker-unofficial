@@ -67,7 +67,7 @@ class AppRunner : public QObject
 		 */
 		static void cleanArguments(QStringList& args);
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
 		static QString findBundleBinary(const QFileInfo &file);
 #endif
 

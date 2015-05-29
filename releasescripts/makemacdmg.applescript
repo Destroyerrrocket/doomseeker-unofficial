@@ -3,7 +3,7 @@
 
 on run
 	tell application "Finder"
-		tell disk "Doomseeker"
+		tell disk "image"
 			open
 			set options to icon view options of container window
 			tell options
@@ -18,7 +18,7 @@ on run
 				set statusbar visible to false
 			end tell
 
-			make new alias to "Macintosh HD:Applications" at "Doomseeker" with properties {name:"Applications"}
+			make new alias file to POSIX file "/Applications" at "image" with properties {name:"Applications"}
 
 			set position of item "Doomseeker.app" to {75, 150}
 			set label index of item "Doomseeker.app" to 7
