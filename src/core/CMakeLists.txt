@@ -30,7 +30,10 @@ add_custom_target(revision_check ALL
 	DEPENDS updaterevision
 )
 
-find_package(Qt5Widgets)
+if(NOT FORCE_QT4)
+	find_package(Qt5Widgets)
+endif()
+
 if(NOT Qt5Widgets_FOUND)
 	find_package(Qt4 REQUIRED)
 	include(${QT_USE_FILE})

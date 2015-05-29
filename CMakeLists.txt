@@ -10,6 +10,7 @@ if(NOT WIN32)
 	find_package( BZip2 )
 endif()
 
+option(FORCE_QT4 "Force Qt4" NO)
 option(FORCE_INTERNAL_ZLIB "Use internal zlib")
 option(FORCE_INTERNAL_BZIP2 "Use internal bzip2")
 

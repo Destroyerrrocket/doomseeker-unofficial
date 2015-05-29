@@ -18,7 +18,10 @@ if(WIN32)
 	endif()
 endif()
 
-find_package(Qt5Widgets)
+if(NOT FORCE_QT4)
+	find_package(Qt5Widgets)
+endif()
+
 if(NOT Qt5Widgets_FOUND)
 	find_package(Qt4 REQUIRED)
 	include(${QT_USE_FILE})
