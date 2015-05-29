@@ -559,7 +559,7 @@ void ServerListHandler::mouseEntered(const QModelIndex& index)
 			break;
 	}
 
-	QToolTip::showText(QCursor::pos(), tooltip, table);
+	QToolTip::showText(QCursor::pos(), tooltip, NULL);
 }
 
 void ServerListHandler::prepareServerTable()
