@@ -32,6 +32,7 @@ class PluginEnginePlugin : public EnginePlugin
 		PluginEnginePlugin();
 		~PluginEnginePlugin();
 
+		QList<DMFlagsSection> dmFlags() const;
 		GameHost *gameHost();
 		MasterClient* masterClient() const;
 		ServerPtr mkServer(const QHostAddress &address, unsigned short port) const;
@@ -42,8 +43,6 @@ class PluginEnginePlugin : public EnginePlugin
 	private:
 		class PrivData;
 		PrivData* d;
-
-		void initDMFlags();
 };
 
 #endif

@@ -57,8 +57,6 @@ PluginEnginePlugin::PluginEnginePlugin()
 
 	d = new PrivData();
 	d->masterResponder = NULL;
-
-	initDMFlags();
 }
 
 PluginEnginePlugin::~PluginEnginePlugin()
@@ -67,7 +65,7 @@ PluginEnginePlugin::~PluginEnginePlugin()
 	delete d;
 }
 
-void PluginEnginePlugin::initDMFlags()
+QList<DMFlagsSection> PluginEnginePlugin::dmFlags() const
 {
 	DMFlagsSection flags1("Flags 1");
 	flags1 << DMFlag("Flag1 0x1", 0x1);
@@ -81,7 +79,7 @@ void PluginEnginePlugin::initDMFlags()
 
 	QList<DMFlagsSection> sections;
 	sections << flags1 << flags2;
-	setDMFlags(sections);
+	return sections;
 }
 
 GameHost *PluginEnginePlugin::gameHost()
