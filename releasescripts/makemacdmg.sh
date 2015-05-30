@@ -72,6 +72,14 @@ then
 	QTPLPATH=/Developer/Applications/Qt/
 fi
 
+if [ -d "${QTPATH}../hybridlib" ]
+then
+	# Blzut3 merged PowerPC Qt 4.7 and i386 Qt 4.8 into a single library which
+	# works when compiled against 4.7. This pulls in the proper library.
+	QTPATH=`echo $QTPATH | sed 's,/lib,/hybridlib,'`
+	#QTPLPATH=`echo $QTPLPATH | sed 's,/plugins,/hybridplugins,'`
+fi
+
 echo "Qt Located: $QTPATH"
 echo "Qt Plugins: $QTPLPATH"
 echo
@@ -84,7 +92,7 @@ cp {build/,Doomseeker.app/Contents/MacOS/}updater
 cp {build/,Doomseeker.app/Contents/Frameworks/}libwadseeker.dylib
 for i in $MODULES
 do
-	cp -a {${QTPATH},Doomseeker.app/Contents/Frameworks/}$i.framework
+	cp -a ${QTPATH}$i.framework Doomseeker.app/Contents/Frameworks/
 	rm -f `find Doomseeker.app/Contents/Frameworks/$i.framework -name *_debug*`
 	rm -rf `find Doomseeker.app/Contents/Frameworks/$i.framework -name Headers`
 done
@@ -96,6 +104,7 @@ cp {../../media/,Doomseeker.app/Contents/}Info.plist
 cp {../../media/,Doomseeker.app/Contents/Resources/}icon-osx.icns
 cp {../../media/,Doomseeker.app/Contents/Resources/}qt.conf
 
+# Get a list of Qt plugins so that we can relink them.
 QTPLUGINS_LIST=''
 for i in `ls Doomseeker.app/Contents/plugins`
 do
@@ -116,7 +125,11 @@ done
 for i in $MODULES
 do
 	install_name_tool -id {@executable_path/../,Doomseeker.app/Contents/}Frameworks/${i}.framework/Versions/$QT_VERSION/$i
-	install_name_tool -change {${QTNTPATH},@executable_path/../Frameworks/}QtCore.framework/Versions/$QT_VERSION/QtCore Doomseeker.app/Contents/Frameworks/${i}.framework/Versions/$QT_VERSION/$i
+	for j in `otool -L Doomseeker.app/Contents/Frameworks/${i}.framework/Versions/$QT_VERSION/$i | grep 'Qt[A-Za-z]*.framework' | tail -n +3 | awk '{print $1}'`
+	do
+		current=`echo $j | sed "s,$QTNTPATH,,"`
+		install_name_tool -change {${QTNTPATH},@executable_path/../Frameworks/}$current Doomseeker.app/Contents/Frameworks/${i}.framework/Versions/$QT_VERSION/$i
+	done
 	for j in $RELINK_LIST
 	do
 		install_name_tool -change {${QTNTPATH},@executable_path/../Frameworks/}${i}.framework/Versions/$QT_VERSION/$i $j
