@@ -3,7 +3,7 @@
 #------------------------------------------------------------------------------
 # build-update-kit-win32.rb
 #
-# Copyright (C) 2013 "Zalewa" <zalewapl@gmail.com>
+# Copyright (C) 2013 - 2015 "Zalewa" <zalewapl@gmail.com>
 #------------------------------------------------------------------------------
 
 # Instructions of use:
@@ -13,7 +13,6 @@
 # What this does:
 # 1. For every package that is returned by program when --version-json arg
 #    is used, there is a call to CREATE_PACKAGE_SCRIPT_NAME script.
-#    Wadseeker package is ignored as it is distributed as a part of Doomseeker.
 #    Platform, display version and suffix information is passed to this script
 #    as arguments.
 # 2. An output directory is determined basing on current timestamp and randomly
@@ -22,7 +21,7 @@
 # 3. CREATE_PACKAGE_SCRIPT_NAME script creates two files in the output
 #    directory. One file is a package .zip archive, the other is a Mendeley
 #    updater's XML script. Files are named basing on internal package name,
-#    revision, channel and platform.
+#    human-readable version, revision, channel and platform.
 # 4. If at least one package was created successfully, this script will
 #    create an "update-info.js" file. This file contains information on
 #    all packages for current channel. Doomseeker downloads this file each time
@@ -40,13 +39,19 @@
 #   requirements must be met.
 # - PACKAGE_CONFIGS_DIR must exist and contain .js files, one for each package.
 #   .js files must be compliant with config-template.js. Files must be named
-#   after internal package names (doomseeker.js, p-chocolatedoom.js, etc.).
+#   after internal package names (doomseeker-core.js, p-chocolatedoom.js, etc.).
 # - Doomseeker binary packages need to be compiled beforehand and placed in
 #   a directory in a structure that is the same as after deployment on end-user
 #   system. All Doomseeker requirements and peripheral files must also be
 #   located in this directory (translations, plugins, runtime DLLs, etc.).
 #   `make install`, or INSTALL target in Visual Studio, should take care of
 #   creating appropriate structure.
+#
+# Usage from build script:
+#   Just run 'package_beta' or 'package_stable' targets. It'll take care of
+#   prior building and installation and spawn update packages in
+#   ${CMAKE_BUILD_DIR}. The exact, full, absolute path is always printed
+#   to stderr (console output) so check there if you can't find your package.
 #
 # Usage:
 #    Call pattern & arguments:
@@ -143,9 +148,10 @@ def process_package(pkg_name, channel, version_data, binary_dir, output_dir)
     # Get path to the .js config file required by the script.
     cfg_file_path = File.join(PACKAGE_CONFIGS_DIR, "#{pkg_name}.js")
     # Run script.
-    result = system("ruby", CREATE_PACKAGE_SCRIPT_NAME, "-p", PACKAGE_PLATFORM,
-        "-v", display_version, "--suffix", suffix,
-        binary_dir, cfg_file_path, output_dir)
+    scriptdir = File.dirname(__FILE__)
+    result = system("ruby", "#{scriptdir}/#{CREATE_PACKAGE_SCRIPT_NAME}",
+        "-p", PACKAGE_PLATFORM, "-v", display_version, "--suffix", suffix,
+        binary_dir, "#{scriptdir}/#{cfg_file_path}", output_dir)
     raise "Package generation failed." if !result
 end
 
@@ -248,6 +254,8 @@ end
 
 if !successes.empty?
     $stderr.puts "Created packages are in directory: #{output_dir}"
+    fullpath = File.expand_path(output_dir)
+    $stderr.puts "#{fullpath}"
     # If at least one package was successful create the update-info.js file.
     update_info_path = File.join(output_dir, "update-info_#{PACKAGE_PLATFORM}_#{target_channel}.js")
     $stderr.puts "Creating update info file: #{update_info_path}"

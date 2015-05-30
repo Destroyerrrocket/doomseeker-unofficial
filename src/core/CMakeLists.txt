@@ -299,3 +299,31 @@ if(UNIX AND NOT APPLE)
 	install(FILES ${TRANSLATION_FILES_TO_COPY} DESTINATION share/doomseeker/translations)
 	install(FILES ${CMAKE_SOURCE_DIR}/media/Doomseeker.desktop DESTINATION /usr/share/applications)
 endif()
+
+if(WIN32 OR APPLE)
+	find_program(RUBY_EXEC ruby)
+	if(NOT AUTOUPDATE_PACKAGE_DIRECTORY)
+		set(AUTOUPDATE_PACKAGE_DIRECTORY ${CMAKE_BUILD_DIR})
+	endif()
+	if(RUBY_EXEC)
+		# Apparently, it's not possible to make one target be dependent
+		# on 'install' target, hence this workaround:
+		add_custom_target(install_dependable
+			COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR}
+			--target install --config ${CMAKE_CFG_INTDIR}
+			)
+		add_custom_target(package_beta
+			COMMAND ${RUBY_EXEC}
+			"${CMAKE_SOURCE_DIR}/tools/updateinstaller/tools/build-update-kit.rb"
+			-c beta -i "${CMAKE_INSTALL_PREFIX}"
+			WORKING_DIRECTORY ${AUTOUPDATE_PACKAGE_DIRECTORY})
+		add_custom_target(package_stable
+			COMMAND ${RUBY_EXEC}
+			"${CMAKE_SOURCE_DIR}/tools/updateinstaller/tools/build-update-kit.rb"
+			-c stable -i "${CMAKE_INSTALL_PREFIX}"
+			WORKING_DIRECTORY ${AUTOUPDATE_PACKAGE_DIRECTORY})
+		# Build Doomseeker and satellites, then install, then package.
+		add_dependencies(package_beta install_dependable all)
+		add_dependencies(package_stable install_dependable all)
+	endif()
+endif()
