@@ -29,7 +29,7 @@
 
 class EnginePlugin;
 
-class Broadcast : public QObject
+class MAIN_EXPORT Broadcast : public QObject
 {
 	Q_OBJECT;
 
