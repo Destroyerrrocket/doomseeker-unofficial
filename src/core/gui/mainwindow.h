@@ -32,12 +32,13 @@
 
 class DockBuddiesList;
 class DoomseekerConfigurationDialog;
+class EnginePlugin;
 class IP2CLoader;
 class MasterClient;
 class MasterManager;
 class Message;
 class QProgressBar;
-class QQueryMenuAction;
+class QueryMenuAction;
 class ServerListFilterInfo;
 
 class MainWindow : public QMainWindow
@@ -86,7 +87,7 @@ class MainWindow : public QMainWindow
 		 * @brief Sets query for selected MasterClient object to enabled
 		 * or disabled.
 		 */
-		void setQueryMasterServerEnabled(MasterClient* pClient, bool bEnabled);
+		void setQueryPluginEnabled(const EnginePlugin* pClient, bool bEnabled);
 
 		void stopAutoRefreshTimer();
 
@@ -156,9 +157,10 @@ class MainWindow : public QMainWindow
 		bool isAnythingToRefresh() const;
 		bool isAnyMasterEnabled() const;
 
-		QQueryMenuAction* queryMenuActionForMasterClient(MasterClient* pClient);
+		QueryMenuAction* queryMenuActionForPlugin(const EnginePlugin *plugin);
 
 		void refreshCustomServers();
+		void refreshLanServers();
 		void setupIcons();
 		void setupToolBar();
 
@@ -218,12 +220,10 @@ class MainWindow : public QMainWindow
 		void showUpdateInstallErrorDialog();
 
 		/**
-		 * @brief Toggles specified MasterClient object enabled or disabled.
-		 *
-		 * This affects the query menu, servers status widgets and the master
-		 * client itself.
+		 * This affects the query menu, servers status widgets, master
+		 * client and broadcasts.
 		 */
-		void toggleMasterClientEnabled(MasterClient* pClient);
+		void togglePluginQueryEnabled(const EnginePlugin* plugin);
 		void toolBarAction(QAction* pAction);
 		void trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
 		void updateServerFilter(const ServerListFilterInfo& filterInfo);

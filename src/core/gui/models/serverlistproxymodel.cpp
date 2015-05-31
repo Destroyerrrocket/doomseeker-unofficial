@@ -302,6 +302,15 @@ bool ServerListProxyModel::lessThan(const QModelIndex& left, const QModelIndex& 
 		{
 			return d->sortOrder == Qt::DescendingOrder;
 		}
+
+		if (s1->isLan() && !s2->isLan())
+		{
+			return d->sortOrder == Qt::AscendingOrder;
+		}
+		else if (!s1->isLan() && s2->isLan())
+		{
+			return d->sortOrder == Qt::DescendingOrder;
+		}
 	}
 
 	ServerListModel::ServerGroup sg1 = model->serverGroup(left.row());

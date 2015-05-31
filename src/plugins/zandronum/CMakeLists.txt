@@ -15,6 +15,7 @@ set(ZANDRONUM_QT_FILES
 	huffmanqt.h
 	huffmanudpsocket.h
 	zandronumbinaries.h
+	zandronumbroadcast.h
 	zandronumdmflags.h
 	zandronumgamehost.h
 	zandronumgameinfo.h
@@ -35,6 +36,7 @@ set(ZANDRONUM_FILES
 	huffmanqt.cpp
 	huffmanudpsocket.cpp
 	zandronumbinaries.cpp
+	zandronumbroadcast.cpp
 	zandronumdmflags.cpp
 	zandronumengineplugin.cpp
 	zandronumgamehost.cpp

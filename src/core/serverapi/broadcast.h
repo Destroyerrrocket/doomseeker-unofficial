@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// serversstatuswidget.h
+// broadcast.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,56 +18,52 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#ifndef idc606b220_53de_4e6a_b364_1aed39334d8f
+#define idc606b220_53de_4e6a_b364_1aed39334d8f
 
-#ifndef __SERVERSSTATUSWIDGET_H__
-#define __SERVERSSTATUSWIDGET_H__
-
+#include "dptr.h"
+#include "global.h"
 #include "serverapi/serverptr.h"
-#include <QLabel>
 
 class EnginePlugin;
-class MasterClient;
-class Server;
 
-class ServersStatusWidget : public QLabel
+class Broadcast : public QObject
 {
-	Q_OBJECT
+	Q_OBJECT;
 
-	public:
-		ServersStatusWidget(const EnginePlugin *plugin);
+public:
+	Broadcast(QObject *parent = 0);
+	virtual ~Broadcast();
 
-	public slots:
-		/**
-		* @brief Changes the appearance of the widget basing on the boolean
-		* value.
-		*
-		* If set to true, apperance will be clear. If set to false, appearance
-		* will be "grayed out".
-		*/
-		void setMasterEnabledStatus(bool bEnabled);
-		void updateDisplay();
+	/**
+	 * @brief Is LAN broadcast capture enabled?
+	 *
+	 * Plugins need to decide themselves how to react to being
+	 * disabled. Broadcast is always enabled by default.
+	 *
+	 * Setter emits enabledChanged() signal.
+	 */
+	bool isEnabled() const;
+	void setEnabled(bool enabled);
 
-	signals:
-		void clicked(const EnginePlugin* plugin);
+	/**
+	 * @brief Plugin this Broadcast belongs to.
+	 *
+	 * New instances of EnginePlugin shouldn't be created here. Instead
+	 * each plugin should keep a global instance of EnginePlugin (singleton?)
+	 * and a pointer to this instance should be returned.
+	 */
+	virtual EnginePlugin* plugin() const = 0;
 
-	protected:
-		void mousePressEvent(QMouseEvent* event);
-		void paintEvent(QPaintEvent *event);
+signals:
+	void enabledChanged(bool enabled);
+	void serverDetected(ServerPtr server, bool needsRefresh);
+	void serverLost(ServerPtr server);
 
-		bool bMasterIsEnabled;
-		QPixmap icon;
-		QPixmap iconDisabled;
-		unsigned int numBots;
-		unsigned int numPlayers;
-		const EnginePlugin *plugin;
-		MasterClient *serverList;
-
-	protected slots:
-		void addServer(const ServerPtr &server);
-		void registerServers();
-		void removeServer(const ServerPtr &server);
+private:
+	DPtr<Broadcast> d;
 };
 
-#endif /* __SERVERSSTATUSWIDGET_H__ */
+#endif

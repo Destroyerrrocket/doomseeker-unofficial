@@ -604,6 +604,11 @@ void ServerListHandler::removeAdditionalSortingForColumn(const QModelIndex &mode
 	sortingProxy->removeAdditionalColumnSorting(modelIndex.column());
 }
 
+void ServerListHandler::removeServer(const ServerPtr &server)
+{
+	model->removeServer(server);
+}
+
 void ServerListHandler::saveAdditionalSortingConfig()
 {
 	gConfig.doomseeker.setAdditionalSortColumns(sortingProxy->additionalSortColumns());

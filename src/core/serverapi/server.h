@@ -624,6 +624,12 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		const QString& webSite() const;
 
+		/**
+		 * @brief Does this server come from LAN.
+		 */
+		bool isLan() const;
+		void setLan(bool b);
+
 	signals:
 		/**
 		 * @brief Emitted when refresh process begins for the current server.

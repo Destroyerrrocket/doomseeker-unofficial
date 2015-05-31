@@ -46,7 +46,7 @@ VavoomEnginePlugin::VavoomEnginePlugin()
 		EP_AllowsRConPassword,
 		EP_AllowsMOTD,
 		EP_DefaultServerPort, 26000,
-		EP_HasMasterServer,
+		EP_MasterClient, new VavoomMasterClient(),
 		EP_DefaultMaster, "altdeath.com:26001",
 		EP_Done
 	);
@@ -55,11 +55,6 @@ VavoomEnginePlugin::VavoomEnginePlugin()
 QList<GameMode> VavoomEnginePlugin::gameModes() const
 {
 	return VavoomGameInfo::gameModes();
-}
-
-MasterClient *VavoomEnginePlugin::masterClient() const
-{
-	return new VavoomMasterClient();
 }
 
 ServerPtr VavoomEnginePlugin::mkServer(const QHostAddress &address, unsigned short port) const

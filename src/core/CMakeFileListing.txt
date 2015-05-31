@@ -214,6 +214,8 @@ set(HEADER_FILES
 	refresher/canrefreshserver.h
 	refresher/refresher.h
 	scanner.h
+	serverapi/broadcast.h
+	serverapi/broadcastmanager.h
 	serverapi/buddyinfo.h
 	serverapi/createserverdialogapi.h
 	serverapi/exefile.h
@@ -422,6 +424,8 @@ set(SOURCE_FILES
 	refresher/canrefreshserver.cpp
 	refresher/refresher.cpp
 	scanner.cpp
+	serverapi/broadcast.cpp
+	serverapi/broadcastmanager.cpp
 	serverapi/buddyinfo.cpp
 	serverapi/createserverdialogapi.cpp
 	serverapi/exefile.cpp

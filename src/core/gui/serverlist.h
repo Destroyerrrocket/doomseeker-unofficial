@@ -78,6 +78,7 @@ class ServerListHandler : public QObject
 		void redraw();
 		void refreshAll();
 		void refreshSelected();
+		void removeServer(const ServerPtr &server);
 		void serverBegunRefreshing(const ServerPtr &server);
 		void serverUpdated(const ServerPtr &server, int response);
 

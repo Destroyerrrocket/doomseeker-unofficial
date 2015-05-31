@@ -50,6 +50,8 @@
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
 #include "refresher/refresher.h"
+#include "serverapi/broadcast.h"
+#include "serverapi/broadcastmanager.h"
 #include "serverapi/gameclientrunner.h"
 #include "serverapi/mastermanager.h"
 #include "serverapi/message.h"
@@ -93,30 +95,31 @@ const QString MainWindow::HELP_SITE_URL = "http://doomseeker.drdteam.org/help";
  *
  *	Replaces the original QAction to make toggling of master clients easier.
  *	The constructor automatically connects the passed MasterClient's
- *	setEnabled() slot to this QQueryMenuAction toggled() signal.
+ *	setEnabled() slot to this QueryMenuAction toggled() signal.
  */
-class QQueryMenuAction : public QAction
+class QueryMenuAction : public QAction
 {
 	public:
-		QQueryMenuAction(MasterClient* mClient, ServersStatusWidget *statusWidget, QObject* parent = NULL)
+		QueryMenuAction(const EnginePlugin *plugin, ServersStatusWidget *statusWidget, QObject* parent = NULL)
 		:QAction(parent)
 		{
-			this->pClient = mClient;
+			this->pPlugin = plugin;
 
-			if (mClient != NULL)
+			if (plugin != NULL)
 			{
-				connect(this, SIGNAL( toggled(bool) ), mClient, SLOT( setEnabled(bool) ) );
+				connect(this, SIGNAL( toggled(bool) ), plugin->data()->masterClient,
+					SLOT( setEnabled(bool) ) );
 				connect(this, SIGNAL( toggled(bool) ), statusWidget, SLOT( setMasterEnabledStatus(bool) ) );
 			}
 		}
 
-		MasterClient* masterClient()
+		const EnginePlugin* plugin() const
 		{
-			return pClient;
+			return pPlugin;
 		}
 
 	private:
-		MasterClient* pClient;
+		const EnginePlugin* pPlugin;
 };
 
 DClass<MainWindow> : public Ui::MainWindowWnd
@@ -145,6 +148,7 @@ public:
 	bool bTotalRefreshInProcess;
 
 	DockBuddiesList* buddiesList;
+	BroadcastManager *broadcastManager;
 
 	/**
 		*	This is required so tray icon knows how to bring the window back.
@@ -167,8 +171,8 @@ public:
 	ServerListHandler* serverTableHandler;
 
 	MasterManager* masterManager;
-	QHash<MasterClient*, QQueryMenuAction*> queryMenuPorts;
-	QHash<MasterClient*, ServersStatusWidget*> serversStatusesWidgets;
+	QHash<const EnginePlugin*, QueryMenuAction*> queryMenuPorts;
+	QHash<const EnginePlugin*, ServersStatusWidget*> serversStatusesWidgets;
 	QAction* toolBarGetServers;
 	QSystemTrayIcon* trayIcon;
 	QMenu* trayIconMenu;
@@ -238,6 +242,10 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	// Spawn Server Table Handler.
 	d->serverTableHandler = new ServerListHandler(d->tableServers, this);
 	connectEntities();
+
+	d->broadcastManager = new BroadcastManager(this);
+	d->serverTableHandler->connect(d->broadcastManager,
+		SIGNAL(newServerDetected(ServerPtr, int)), SLOT(serverUpdated(ServerPtr, int)));
 
 	initServerDetailsDock();
 	tabifyDockWidget(d->ircDock, d->detailsDock);
@@ -551,27 +559,37 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 	for(unsigned i = 0; i < gPlugins->numPlugins(); ++i)
 	{
 		const EnginePlugin* plugin = gPlugins->info(i);
-		if(!plugin->data()->hasMasterServer)
+		if(!plugin->data()->hasMasterClient() && !plugin->data()->hasBroadcast())
 		{
 			continue;
 		}
 
-		MasterClient* pMasterClient = plugin->masterClient();
-		pMasterClient->updateAddress();
-		masterManager->addMaster(pMasterClient);
+		if (plugin->data()->hasMasterClient())
+		{
+			MasterClient* pMasterClient = plugin->data()->masterClient;
+			pMasterClient->updateAddress();
+			masterManager->addMaster(pMasterClient);
+		}
+
+		if (plugin->data()->hasBroadcast())
+		{
+			d->broadcastManager->registerPlugin(plugin);
+			d->serverTableHandler->connect(plugin->data()->broadcast,
+				SIGNAL(serverLost(ServerPtr)), SLOT(removeServer(ServerPtr)));
+		}
 
 		// Now is a good time to also populate the status bar widgets
-		ServersStatusWidget *statusWidget = new ServersStatusWidget(plugin->icon(), pMasterClient);
-		d->serversStatusesWidgets.insert(pMasterClient, statusWidget);
+		ServersStatusWidget *statusWidget = new ServersStatusWidget(plugin);
+		d->serversStatusesWidgets.insert(plugin, statusWidget);
 
-		this->connect(statusWidget, SIGNAL( clicked(MasterClient*) ) ,
-			SLOT( toggleMasterClientEnabled(MasterClient*) ) );
+		this->connect(statusWidget, SIGNAL( clicked(const EnginePlugin*) ) ,
+			SLOT( togglePluginQueryEnabled(const EnginePlugin*) ) );
 
 		statusBar()->addPermanentWidget(statusWidget);
 
 		QString name = gPlugins->info(i)->data()->name;
-		QQueryMenuAction* query = new QQueryMenuAction(pMasterClient, statusWidget, d->menuQuery);
-		d->queryMenuPorts.insert(pMasterClient, query);
+		QueryMenuAction* query = new QueryMenuAction(plugin, statusWidget, d->menuQuery);
+		d->queryMenuPorts.insert(plugin, query);
 
 		d->menuQuery->addAction(query);
 
@@ -584,13 +602,13 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		if (!pluginConfig.retrieveSetting("Query").value().isNull())
 		{
 			bool enabled = pluginConfig["Query"];
-			setQueryMasterServerEnabled(pMasterClient, enabled);
+			setQueryPluginEnabled(plugin, enabled);
 		}
 		else
 		{
 			// if no setting is found for this engine
 			// set default to true:
-			setQueryMasterServerEnabled(pMasterClient, true);
+			setQueryPluginEnabled(plugin, true);
 		}
 	}
 }
@@ -704,6 +722,7 @@ void MainWindow::getServers()
 	gLog << tr("Total refresh process initialized!");
 	d->serverTableHandler->clearTable();
 	refreshCustomServers();
+	refreshLanServers();
 
 	bool bAtLeastOneEnabled = false;
 
@@ -1208,16 +1227,16 @@ void MainWindow::postInitAppStartup()
 	}
 }
 
-QQueryMenuAction* MainWindow::queryMenuActionForMasterClient(MasterClient* pClient)
+QueryMenuAction* MainWindow::queryMenuActionForPlugin(const EnginePlugin* plugin)
 {
-	if (pClient == NULL)
+	if (plugin == NULL)
 	{
 		return NULL;
 	}
 
-	if (d->queryMenuPorts.contains(pClient))
+	if (d->queryMenuPorts.contains(plugin))
 	{
-		return d->queryMenuPorts[pClient];
+		return d->queryMenuPorts[plugin];
 	}
 
 	return NULL;
@@ -1236,6 +1255,15 @@ void MainWindow::refreshCustomServers()
 	for(int i = 0;i < customServers->numServers();i++)
 	{
 		ServerPtr server = (*customServers)[i];
+		d->serverTableHandler->serverUpdated(server, Server::RESPONSE_NO_RESPONSE_YET);
+		gRefresher->registerServer(server.data());
+	}
+}
+
+void MainWindow::refreshLanServers()
+{
+	foreach (ServerPtr server, d->broadcastManager->servers())
+	{
 		d->serverTableHandler->serverUpdated(server, Server::RESPONSE_NO_RESPONSE_YET);
 		gRefresher->registerServer(server.data());
 	}
@@ -1282,16 +1310,23 @@ void MainWindow::runGame(const ServerPtr &server)
 	d->connectionHandler->run();
 }
 
-void MainWindow::setQueryMasterServerEnabled(MasterClient* pClient, bool bEnabled)
+void MainWindow::setQueryPluginEnabled(const EnginePlugin* plugin, bool bEnabled)
 {
-	assert(pClient != NULL);
+	assert(plugin != NULL);
 
-	QQueryMenuAction* pAction = queryMenuActionForMasterClient(pClient);
+	QueryMenuAction* pAction = queryMenuActionForPlugin(plugin);
 	if (pAction != NULL)
 	{
 		pAction->setChecked(bEnabled);
-		pClient->setEnabled(bEnabled);
-		d->serversStatusesWidgets[pClient]->setMasterEnabledStatus(bEnabled);
+		if (plugin->data()->hasMasterClient())
+		{
+			plugin->data()->masterClient->setEnabled(bEnabled);
+		}
+		if (plugin->data()->hasBroadcast())
+		{
+			plugin->data()->broadcast->setEnabled(bEnabled);
+		}
+		d->serversStatusesWidgets[plugin]->setMasterEnabledStatus(bEnabled);
 	}
 }
 
@@ -1460,12 +1495,12 @@ void MainWindow::stopAutoRefreshTimer()
 	d->autoRefreshTimer.stop();
 }
 
-void MainWindow::toggleMasterClientEnabled(MasterClient* pClient)
+void MainWindow::togglePluginQueryEnabled(const EnginePlugin *plugin)
 {
-	QQueryMenuAction* pAction = queryMenuActionForMasterClient(pClient);
+	QueryMenuAction* pAction = queryMenuActionForPlugin(plugin);
 	assert(pAction != NULL);
 
-	setQueryMasterServerEnabled(pClient, !pAction->isChecked());
+	setQueryPluginEnabled(plugin, !pAction->isChecked());
 }
 
 void MainWindow::toolBarAction(QAction* pAction)

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// engineplugin.h
+// broadcastmanager.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,30 +18,37 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2013 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef PLUGIN_ENGINEPLUGIN_H
-#define PLUGIN_ENGINEPLUGIN_H
+#ifndef id66a9e2b7_6bbe_4592_802a_2f9c8c84afe4
+#define id66a9e2b7_6bbe_4592_802a_2f9c8c84afe4
 
-#include "plugins/engineplugin.h"
+#include "dptr.h"
+#include "serverapi/serverptr.h"
+#include <QObject>
 
-class PluginEnginePlugin : public EnginePlugin
+class EnginePlugin;
+
+class BroadcastManager : public QObject
 {
-	DECLARE_PLUGIN(PluginEnginePlugin)
-	public:
-		PluginEnginePlugin();
-		~PluginEnginePlugin();
+	Q_OBJECT;
 
-		QList<DMFlagsSection> dmFlags() const;
-		GameHost *gameHost();
-		ServerPtr mkServer(const QHostAddress &address, unsigned short port) const;
+public:
+	BroadcastManager(QObject *parent = 0);
+	~BroadcastManager();
 
-		bool isMasterResponderInstantiated() const;
-		void startMasterResponder();
+	void registerPlugin(const EnginePlugin *plugin);
+	QList<ServerPtr> servers() const;
 
-	private:
-		class PrivData;
-		PrivData* d;
+signals:
+	void newServerDetected(ServerPtr server, int response);
+
+private:
+	DPtr<BroadcastManager> d;
+
+private slots:
+	void forgetServer(ServerPtr server);
+	void registerServer(ServerPtr server, bool needsRefresh);
 };
 
 #endif

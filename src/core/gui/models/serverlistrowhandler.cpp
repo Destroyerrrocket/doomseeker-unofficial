@@ -240,6 +240,10 @@ void ServerListRowHandler::setBackgroundColor()
 	{
 		color = gConfig.doomseeker.customServersColor;
 	}
+	else if (d->server->isLan())
+	{
+		color = gConfig.doomseeker.lanServersColor;
+	}
 	else if (gApp->mainWindow()->buddiesList()->hasBuddy(d->server))
 	{
 		if (gConfig.doomseeker.bMarkServersWithBuddies)

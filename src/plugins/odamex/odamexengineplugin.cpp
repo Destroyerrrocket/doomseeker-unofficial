@@ -50,7 +50,7 @@ OdamexEnginePlugin::OdamexEnginePlugin()
 		EP_AllowsMOTD,
 		EP_DefaultMaster, "master1.odamex.net:15000",
 		EP_DefaultServerPort, 10666,
-		EP_HasMasterServer,
+		EP_MasterClient, new OdamexMasterClient(),
 		EP_IRCChannel, "Odamex", "irc.quakenet.org", "#odamex",
 		EP_SupportsRandomMapRotation,
 		EP_InGameFileDownloads,
@@ -72,11 +72,6 @@ QList<GameMode> OdamexEnginePlugin::gameModes() const
 GameHost* OdamexEnginePlugin::gameHost()
 {
 	return new OdamexGameHost();
-}
-
-MasterClient *OdamexEnginePlugin::masterClient() const
-{
-	return new OdamexMasterClient();
 }
 
 ServerPtr OdamexEnginePlugin::mkServer(const QHostAddress &address, unsigned short port) const

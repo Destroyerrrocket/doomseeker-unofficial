@@ -23,7 +23,8 @@
 #ifndef DOOMSEEKER_PLUGIN_ZANDRONUM_ENGINEPLUGIN_H
 #define DOOMSEEKER_PLUGIN_ZANDRONUM_ENGINEPLUGIN_H
 
-#include "plugins/engineplugin.h"
+#include <plugins/engineplugin.h>
+#include <dptr.h>
 
 class ZandronumEnginePlugin : public EnginePlugin
 {
@@ -45,6 +46,11 @@ class ZandronumEnginePlugin : public EnginePlugin
 		MasterClient *masterClient() const;
 
 		ServerPtr mkServer(const QHostAddress &address, unsigned short port) const;
+
+		void start();
+
+	private:
+		DPtr<ZandronumEnginePlugin> d;
 };
 
 #endif

@@ -116,13 +116,18 @@ void ServerListModel::removeCustomServers()
 		}
 	}
 
-	foreach (ServerPtr server, serversToRemove)
+	foreach (const ServerPtr &server, serversToRemove)
 	{
-		int index = findServerOnTheList(server.data());
-		if (index >= 0)
-		{
-			removeRow(index);
-		}
+		removeServer(server);
+	}
+}
+
+void ServerListModel::removeServer(const ServerPtr &server)
+{
+	int index = findServerOnTheList(server.data());
+	if (index >= 0)
+	{
+		removeRow(index);
 	}
 }
 

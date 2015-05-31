@@ -76,6 +76,7 @@ DClass<Server>
 		QString email;
 		QElapsedTimer lastRefreshClock;
 		QString iwad;
+		bool lan;
 		bool locked;
 		bool lockedInGame;
 		QStringList mapList;
@@ -135,6 +136,7 @@ Server::Server(const QHostAddress &address, unsigned short port)
 	d->address = address;
 	d->port = port;
 	d->bIsRefreshing = false;
+	d->lan = false;
 	d->locked = false;
 	d->lockedInGame = false;
 	d->triesLeft = 0;
@@ -788,4 +790,14 @@ const QList<PWad>& Server::wads() const
 const QString& Server::webSite() const
 {
 	return d->webSite;
+}
+
+bool Server::isLan() const
+{
+	return d->lan;
+}
+
+void Server::setLan(bool b)
+{
+	d->lan = b;
 }

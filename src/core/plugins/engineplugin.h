@@ -48,6 +48,7 @@
 		return XEnginePlugin::staticInstance(); \
 	}
 
+class Broadcast;
 class ConfigurationBaseBox;
 class CreateServerDialog;
 class CreateServerDialogPage;
@@ -89,7 +90,6 @@ class MAIN_EXPORT EnginePlugin
 			EP_AllowsMOTD, ///< Signifies that servers can have a message of the day.
 			EP_DefaultMaster, ///< (const char*) Default ip address and port ("address:port") for master server.  Requires EP_HasMasterServer.
 			EP_DefaultServerPort, ///< (quint16) Default port for custom server creation.
-			EP_HasMasterServer, ///< Signifies that the plugin implements a master server protocol.
 			EP_InGameFileDownloads, ///< Allows the player to join a server without downloading files through Wadseeker.
 			EP_IRCChannel, ///< (const char*)server, (const char*)channel - Can be repeated. Default IRC channels.
 			EP_SupportsRandomMapRotation, ///< Signifies that a server can be created with a random map rotation.
@@ -106,7 +106,15 @@ class MAIN_EXPORT EnginePlugin
 			 * EnginePlugin::createServerDialogPages().
 			 */
 			EP_DontCreateDMFlagsPagesAutomatic,
-			EP_ClientOnly ///< Indicates that client binary serves the purpose of the client and server.
+			EP_ClientOnly, ///< Indicates that client binary serves the purpose of the client and server.
+			/**
+			 * @brief LAN Broadcast object.
+			 */
+			EP_Broadcast,
+			/**
+			 * @brief MasterClient object.
+			 */
+			EP_MasterClient
 		};
 
 		/// Reimplement if you want to perform some ini initialization manually.
@@ -131,11 +139,11 @@ class MAIN_EXPORT EnginePlugin
 				/// Default port on which servers for given engine are hosted.
 				QString defaultMaster;
 				quint16 defaultServerPort;
-				bool hasMasterServer;
 				/// icon of the engine
 				QPixmap *icon;
 				bool inGameFileDownloads;
 				QVector<IRCNetworkEntity> ircChannels;
+				MasterClient *masterClient;
 				QString name;
 				IniSection *pConfig;
 				quint8 refreshThreshold;
@@ -167,8 +175,19 @@ class MAIN_EXPORT EnginePlugin
 				 * strategies. Refer to GameExeFactory doc for more details.
 				 */
 				GameExeFactory *gameExeFactory;
+				Broadcast *broadcast;
 
 				Data();
+
+				bool hasBroadcast() const
+				{
+					return broadcast != NULL;
+				}
+
+				bool hasMasterClient() const
+				{
+					return masterClient != NULL;
+				}
 		};
 
 		EnginePlugin();
@@ -256,10 +275,6 @@ class MAIN_EXPORT EnginePlugin
 		virtual QList<GameCVar> limits(const GameMode& mode) const { return QList<GameCVar>(); }
 
 		/**
-		 * Creates an MasterClient instace for this plugin.
-		 */
-		virtual MasterClient* masterClient() const { return NULL; }
-		/**
 		 * Fills the variables with information about the master's address.
 		 */
 		void masterHost(QString &host, unsigned short &port) const;
@@ -284,6 +299,22 @@ class MAIN_EXPORT EnginePlugin
 		 * @return instance of plugin's server object
 		 */
 		virtual ServerPtr server(const QHostAddress &address, unsigned short port) const;
+
+		/**
+		 * @brief Start services, init data structures.
+		 *
+		 * This is a good place to initialize whatever cannot be
+		 * initialized in the constructor. As constructor is called
+		 * during DLL init, it might be a bad place to call certain
+		 * functions. For example, calling QObject::tr() may lead to
+		 * Access Violation exception and failure to load the plugin
+		 * in some compiler/OS environment setups (Visual Studio 2013
+		 * in Debug mode). start() is a safer place to do this. It's
+		 * also a good place to start LAN broadcast capture.
+		 *
+		 * Default implementation does nothing.
+		 */
+		virtual void start();
 
 	protected:
 		/**

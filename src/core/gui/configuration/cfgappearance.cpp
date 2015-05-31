@@ -71,6 +71,7 @@ void CFGAppearance::readSettings()
 
 	d->btnCustomServersColor->setColorHtml(gConfig.doomseeker.customServersColor);
 	d->btnBuddyServersColor->setColorHtml(gConfig.doomseeker.buddyServersColor);
+	d->btnLanServersColor->setColorHtml(gConfig.doomseeker.lanServersColor);
 	d->cbMarkServersWithBuddies->setChecked(gConfig.doomseeker.bMarkServersWithBuddies);
 
 	// Make sure that the tray is available. If it's not, disable tray icon
@@ -123,6 +124,7 @@ void CFGAppearance::saveSettings()
 	gConfig.doomseeker.bMarkServersWithBuddies = d->cbMarkServersWithBuddies->isChecked();
 	gConfig.doomseeker.buddyServersColor = d->btnBuddyServersColor->colorHtml();
 	gConfig.doomseeker.customServersColor = d->btnCustomServersColor->colorHtml();
+	gConfig.doomseeker.lanServersColor = d->btnLanServersColor->colorHtml();
 	gConfig.doomseeker.bUseTrayIcon = d->gboUseTrayIcon->isChecked();
 	gConfig.doomseeker.bCloseToTrayIcon = d->cbCloseToTrayIcon->isChecked();
 	gConfig.doomseeker.bColorizeServerConsole = d->cbColorizeConsole->isChecked();

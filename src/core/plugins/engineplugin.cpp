@@ -43,14 +43,15 @@ EnginePlugin::Data::Data()
 	allowsMOTD = false;
 	allowsRConPassword = false;
 	allowsURL = false;
+	broadcast = NULL;
 	clientOnly = false;
 	createDMFlagsPagesAutomatic = true;
 	defaultServerPort = 10666;
 	demoExtensionAutomatic = true;
 	demoExtension = "lmp";
-	hasMasterServer = false;
 	icon = NULL;
 	inGameFileDownloads = false;
+	masterClient = NULL;
 	pConfig = NULL;
 	refreshThreshold = 2;
 	supportsRandomMapRotation = false;
@@ -149,6 +150,9 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 			case EP_AllowsMOTD:
 				d->allowsMOTD = true;
 				break;
+			case EP_Broadcast:
+				d->broadcast = va_arg(va, Broadcast*);
+				break;
 			case EP_ClientOnly:
 				d->clientOnly = true;
 				break;
@@ -164,9 +168,6 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 				break;
 			case EP_DontCreateDMFlagsPagesAutomatic:
 				d->createDMFlagsPagesAutomatic = false;
-				break;
-			case EP_HasMasterServer:
-				d->hasMasterServer = true;
 				break;
 			case EP_InGameFileDownloads:
 				d->inGameFileDownloads = true;
@@ -188,6 +189,9 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 					d->ircChannels << entity;
 				break;
 			}
+			case EP_MasterClient:
+				d->masterClient = va_arg(va, MasterClient*);
+				break;
 			case EP_SupportsRandomMapRotation:
 				d->supportsRandomMapRotation = true;
 				break;
@@ -231,4 +235,8 @@ void EnginePlugin::setConfig(IniSection &ini) const
 	ini.createSetting("Masterserver", data()->defaultMaster);
 
 	setupConfig(ini);
+}
+
+void EnginePlugin::start()
+{
 }

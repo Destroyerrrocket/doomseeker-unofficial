@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// engineplugin.h
+// zandronumbroadcast.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,30 +18,33 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2013 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef PLUGIN_ENGINEPLUGIN_H
-#define PLUGIN_ENGINEPLUGIN_H
+#ifndef ide4ecbce5_6700_4d65_8e47_160a349b2211
+#define ide4ecbce5_6700_4d65_8e47_160a349b2211
 
-#include "plugins/engineplugin.h"
+#include <dptr.h>
+#include <QObject>
+#include <serverapi/broadcast.h>
+#include <serverapi/serverptr.h>
 
-class PluginEnginePlugin : public EnginePlugin
+class ZandronumBroadcast : public Broadcast
 {
-	DECLARE_PLUGIN(PluginEnginePlugin)
-	public:
-		PluginEnginePlugin();
-		~PluginEnginePlugin();
+	Q_OBJECT;
 
-		QList<DMFlagsSection> dmFlags() const;
-		GameHost *gameHost();
-		ServerPtr mkServer(const QHostAddress &address, unsigned short port) const;
+public:
+	ZandronumBroadcast();
+	~ZandronumBroadcast();
 
-		bool isMasterResponderInstantiated() const;
-		void startMasterResponder();
+	EnginePlugin* plugin() const;
+	void start();
 
-	private:
-		class PrivData;
-		PrivData* d;
+private:
+	DPtr<ZandronumBroadcast> d;
+
+private slots:
+	void readPackets();
+	void terminateOldServers();
 };
 
 #endif

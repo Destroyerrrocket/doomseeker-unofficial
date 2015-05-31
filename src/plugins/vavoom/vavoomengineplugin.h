@@ -32,7 +32,6 @@ class VavoomEnginePlugin : public EnginePlugin
 		VavoomEnginePlugin();
 
 		QList<GameMode> gameModes() const;
-		MasterClient *masterClient() const;
 
 		ServerPtr mkServer(const QHostAddress &address, unsigned short port) const;
 };

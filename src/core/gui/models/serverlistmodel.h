@@ -92,6 +92,7 @@ class ServerListModel : public QStandardItemModel
 		void redrawAll();
 
 		void removeCustomServers();
+		void removeServer(const ServerPtr &server);
 
 		/**
 		 *  Updates flag on given row.

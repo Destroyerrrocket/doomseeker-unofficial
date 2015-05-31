@@ -277,7 +277,7 @@ bool Refresher::registerServer(Server* server)
 			return false;
 		}
 		d->unchallengedServers.append(server);
-		if (!server->isCustom())
+		if (!server->isCustom() && !server->isLan())
 		{
 			emit block();
 		}

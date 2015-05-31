@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// engineplugin.h
+// broadcast.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,30 +18,34 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2013 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef PLUGIN_ENGINEPLUGIN_H
-#define PLUGIN_ENGINEPLUGIN_H
+#include "broadcast.h"
 
-#include "plugins/engineplugin.h"
-
-class PluginEnginePlugin : public EnginePlugin
+DClass<Broadcast>
 {
-	DECLARE_PLUGIN(PluginEnginePlugin)
-	public:
-		PluginEnginePlugin();
-		~PluginEnginePlugin();
-
-		QList<DMFlagsSection> dmFlags() const;
-		GameHost *gameHost();
-		ServerPtr mkServer(const QHostAddress &address, unsigned short port) const;
-
-		bool isMasterResponderInstantiated() const;
-		void startMasterResponder();
-
-	private:
-		class PrivData;
-		PrivData* d;
+public:
+	bool enabled;
 };
+DPointered(Broadcast)
 
-#endif
+Broadcast::Broadcast(QObject *parent)
+: QObject(parent)
+{
+	d->enabled = true;
+}
+
+Broadcast::~Broadcast()
+{
+}
+
+bool Broadcast::isEnabled() const
+{
+	return d->enabled;
+}
+
+void Broadcast::setEnabled(bool enabled)
+{
+	d->enabled = enabled;
+	emit enabledChanged(enabled);
+}

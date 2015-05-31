@@ -80,6 +80,7 @@ class DoomseekerConfig
 			QString buddyServersColor;
 			QVector<CustomServerInfo> customServers;
 			QString customServersColor;
+			QString lanServersColor;
 			QString localization;
 			unsigned ip2CountryDatabaseMaximumAge;
 			QString ip2CountryUrl;

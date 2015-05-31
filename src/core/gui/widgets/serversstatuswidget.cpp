@@ -27,13 +27,17 @@
 #include <QPainter>
 
 #include "serversstatuswidget.h"
+#include "plugins/engineplugin.h"
 #include "serverapi/masterclient.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
 
-ServersStatusWidget::ServersStatusWidget(const QPixmap &icon, MasterClient *serverList) : QLabel(),
-	bMasterIsEnabled(false), icon(icon), numBots(0), numPlayers(0), serverList(serverList)
+ServersStatusWidget::ServersStatusWidget(const EnginePlugin *plugin) : QLabel(),
+	bMasterIsEnabled(false), icon(plugin->icon()), numBots(0), numPlayers(0)
 {
+	this->plugin = plugin;
+	serverList = plugin->data()->masterClient;
+
 	// Transform icon to grayscale format for disabled appearance
 	QImage iconImage = icon.toImage();
 	int width = iconImage.width();
@@ -85,7 +89,7 @@ void ServersStatusWidget::mousePressEvent(QMouseEvent* event)
 {
 	if (event->button() == Qt::LeftButton)
 	{
-		emit clicked(serverList);
+		emit clicked(plugin);
 	}
 }
 

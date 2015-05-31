@@ -92,6 +92,7 @@ PluginLoader::Plugin::Plugin(unsigned int type, QString file)
 		}
 
 		gLog << QObject::tr("Loaded plugin: \"%1\"!").arg(info()->data()->name);
+		d->info->start();
 	}
 	else
 	{

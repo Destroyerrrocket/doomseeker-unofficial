@@ -68,7 +68,7 @@ EngineConfigurationBaseBox::EngineConfigurationBaseBox(const EnginePlugin *plugi
 	if(plugin->data()->clientOnly)
 		makeClientOnly();
 
-	if(!plugin->data()->hasMasterServer)
+	if(!plugin->data()->hasMasterClient())
 		d->masterAddressBox->hide();
 
 	this->connect(d->btnBrowseClientBinary, SIGNAL( clicked() ), SLOT( browseForClientBinary() ));
@@ -140,7 +140,7 @@ void EngineConfigurationBaseBox::readSettings()
 	d->cboCustomParameters->clear();
 	d->cboCustomParameters->addItems(d->readStoredCustomParameters());
 	d->cboCustomParameters->setEditText(d->config->value("CustomParameters").toString());
-	if(d->plugin->data()->hasMasterServer)
+	if(d->plugin->data()->hasMasterClient())
 		d->leMasterserverAddress->setText(d->config->value("Masterserver").toString());
 	d->leServerBinaryPath->setText(d->config->value("ServerBinaryPath").toString());
 
@@ -196,7 +196,7 @@ void EngineConfigurationBaseBox::saveSettings()
 	}
 	d->config->setValue("ServerBinaryPath", executable);
 	d->config->setValue("CustomParameters", currentCustomParameters());
-	if (d->plugin->data()->hasMasterServer)
+	if (d->plugin->data()->hasMasterClient())
 	{
 		d->config->setValue("Masterserver", d->leMasterserverAddress->text());
 	}

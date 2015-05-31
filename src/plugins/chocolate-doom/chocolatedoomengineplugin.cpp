@@ -42,7 +42,7 @@ ChocolateDoomEnginePlugin::ChocolateDoomEnginePlugin()
 
 		EP_DefaultMaster, "master.chocolate-doom.org:2342",
 		EP_DefaultServerPort, 2342,
-		EP_HasMasterServer,
+		EP_MasterClient, new ChocolateDoomMasterClient(),
 		EP_Done
 	);
 }
@@ -55,11 +55,6 @@ GameHost* ChocolateDoomEnginePlugin::gameHost()
 QList<GameMode> ChocolateDoomEnginePlugin::gameModes() const
 {
 	return ChocolateDoomGameInfo::gameModes();
-}
-
-MasterClient *ChocolateDoomEnginePlugin::masterClient() const
-{
-	return new ChocolateDoomMasterClient();
 }
 
 ServerPtr ChocolateDoomEnginePlugin::mkServer(const QHostAddress &address, unsigned short port) const

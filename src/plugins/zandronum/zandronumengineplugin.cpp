@@ -30,6 +30,7 @@
 
 #include "huffman/huffman.h"
 #include "createserverdialogpages/flagspage.h"
+#include "zandronumbroadcast.h"
 #include "zandronumbinaries.h"
 #include "zandronumgamehost.h"
 #include "zandronumgameinfo.h"
@@ -40,9 +41,17 @@
 
 INSTALL_PLUGIN(ZandronumEnginePlugin)
 
+DClass<ZandronumEnginePlugin>
+{
+public:
+	ZandronumBroadcast *broadcast;
+};
+DPointered(ZandronumEnginePlugin);
+
 ZandronumEnginePlugin::ZandronumEnginePlugin()
 {
 	HUFFMAN_Construct();
+	d->broadcast = new ZandronumBroadcast();
 
 	const // clear warnings
 	#include "zandronum.xpm"
@@ -62,13 +71,14 @@ ZandronumEnginePlugin::ZandronumEnginePlugin()
 #endif
 		EP_DontCreateDMFlagsPagesAutomatic,
 		EP_DefaultServerPort, 10666,
-		EP_HasMasterServer,
 		EP_DefaultMaster, "master.zandronum.com:15300",
 		EP_SupportsRandomMapRotation,
 		EP_IRCChannel, "Zandronum", "irc.zandronum.com", "#zandronum",
 		EP_RefreshThreshold, 10,
 		EP_DemoExtension, false, "cld",
 		EP_URLScheme, "zan",
+		EP_Broadcast, d->broadcast,
+		EP_MasterClient, new ZandronumMasterClient(),
 		EP_Done
 	);
 }
@@ -176,12 +186,13 @@ QList<GameCVar> ZandronumEnginePlugin::limits(const GameMode& gm) const
 	return gl;
 }
 
-MasterClient *ZandronumEnginePlugin::masterClient() const
-{
-	return new ZandronumMasterClient();
-}
-
 ServerPtr ZandronumEnginePlugin::mkServer(const QHostAddress &address, unsigned short port) const
 {
 	return ServerPtr(new ZandronumServer(address, port));
+}
+
+void ZandronumEnginePlugin::start()
+{
+	EnginePlugin::start();
+	d->broadcast->start();
 }

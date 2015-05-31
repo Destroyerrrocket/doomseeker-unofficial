@@ -237,6 +237,7 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->bMarkServersWithBuddies = true;
 	this->buddyServersColor = "#5ecf75";
 	this->customServersColor = "#ffaa00";
+	this->lanServersColor = "#92ebe5";
 	this->ip2CountryDatabaseMaximumAge = 60;
 	this->ip2CountryUrl = "http://doomseeker.drdteam.org/ip2c/get";
 	this->localization = QLocale::system().name();
@@ -301,6 +302,7 @@ void DoomseekerConfig::DoomseekerCfg::init(IniSection& section)
 	section.createSetting("MarkServersWithBuddies", this->bMarkServersWithBuddies);
 	section.createSetting("BuddyServersColor", this->buddyServersColor);
 	section.createSetting("CustomServersColor", this->customServersColor);
+	section.createSetting("LanServersColor", this->lanServersColor);
 	section.createSetting("IP2CMaximumAge", this->ip2CountryDatabaseMaximumAge);
 	section.createSetting("IP2CUrl", this->ip2CountryUrl);
 	section.createSetting("QueryAutoRefreshEverySeconds", this->queryAutoRefreshEverySeconds);
@@ -344,6 +346,7 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->bMarkServersWithBuddies = section["MarkServersWithBuddies"];
 	this->buddyServersColor = (const QString &)section["BuddyServersColor"];
 	this->customServersColor = (const QString &)section["CustomServersColor"];
+	this->lanServersColor = (const QString &)section["LanServersColor"];
 	this->ip2CountryDatabaseMaximumAge = section["IP2CMaximumAge"];
 	this->ip2CountryUrl = (const QString &)section["IP2CUrl"];
 	this->mainWindowState = (const QString &)section["MainWindowState"];
@@ -413,6 +416,7 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	section["MarkServersWithBuddies"] = this->bMarkServersWithBuddies;
 	section["BuddyServersColor"] = this->buddyServersColor;
 	section["CustomServersColor"] = this->customServersColor;
+	section["LanServersColor"] = this->lanServersColor;
 	section["IP2CMaximumAge"] = this->ip2CountryDatabaseMaximumAge;
 	section["IP2CUrl"] = this->ip2CountryUrl;
 	section["MainWindowState"] = this->mainWindowState;

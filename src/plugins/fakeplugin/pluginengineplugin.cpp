@@ -50,7 +50,7 @@ PluginEnginePlugin::PluginEnginePlugin()
 		EP_Author, "The Doomseeker Team",
 		EP_Version, 1,
 
-		EP_HasMasterServer,
+		EP_MasterClient, new PluginMasterClient(),
 		EP_DefaultMaster, masterAddress().toUtf8().constData(),
 		EP_Done
 	);
@@ -85,11 +85,6 @@ QList<DMFlagsSection> PluginEnginePlugin::dmFlags() const
 GameHost *PluginEnginePlugin::gameHost()
 {
 	return new PluginGameHost();
-}
-
-MasterClient *PluginEnginePlugin::masterClient() const
-{
-	return new PluginMasterClient();
 }
 
 ServerPtr PluginEnginePlugin::mkServer(const QHostAddress &address, unsigned short port) const
