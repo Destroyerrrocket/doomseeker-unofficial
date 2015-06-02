@@ -85,7 +85,7 @@ void DemoManagerDlg::adjustDemoList()
 {
 	// Get valid extensions
 	QStringList demoExtensions;
-	for(int i = 0;i < gPlugins->numPlugins();++i)
+	for(unsigned i = 0;i < gPlugins->numPlugins();++i)
 	{
 		QString ext = QString("*.%1").arg(gPlugins->info(i)->data()->demoExtension);
 
@@ -108,7 +108,7 @@ void DemoManagerDlg::adjustDemoList()
 		QStringList demoData;
 		QString metaData = demoName.left(demoName.lastIndexOf("."));
 		// We need to split manually to handle escaping.
-		for(unsigned int i = 0;i < metaData.length();++i)
+		for(int i = 0;i < metaData.length();++i)
 		{
 			if(metaData[i] == '_')
 			{
@@ -258,7 +258,7 @@ void DemoManagerDlg::performAction(QAbstractButton *button)
 
 		// Look for the plugin used to record.
 		EnginePlugin *plugin = NULL;
-		for(int i = 0;i < gPlugins->numPlugins();i++)
+		for(unsigned i = 0;i < gPlugins->numPlugins();i++)
 		{
 			if (d->selectedDemo->port == gPlugins->info(i)->data()->name)
 			{
