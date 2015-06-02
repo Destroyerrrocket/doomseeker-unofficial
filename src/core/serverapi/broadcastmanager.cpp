@@ -51,6 +51,7 @@ void BroadcastManager::forgetServer(ServerPtr server)
 		.arg(server->name()).arg(server->address().toString())
 		.arg(server->port());
 	d->servers.remove(server);
+	emit serverLost(server);
 }
 
 void BroadcastManager::registerServer(ServerPtr server, bool needsRefresh)

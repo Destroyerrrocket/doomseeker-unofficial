@@ -41,6 +41,7 @@ public:
 	QList<ServerPtr> servers() const;
 
 signals:
+	void serverLost(ServerPtr server);
 	void newServerDetected(ServerPtr server, int response);
 
 private:

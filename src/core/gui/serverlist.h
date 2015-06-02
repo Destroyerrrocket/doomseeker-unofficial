@@ -71,6 +71,7 @@ class ServerListHandler : public QObject
 	public slots:
 		void applyFilter(const ServerListFilterInfo& filterInfo);
 		void cleanUp();
+		void deregisterServer(const ServerPtr &server);
 		/**
 		 * @brief Looks up hosts for all available servers.
 		 */
@@ -78,6 +79,8 @@ class ServerListHandler : public QObject
 		void redraw();
 		void refreshAll();
 		void refreshSelected();
+		void registerServer(ServerPtr server);
+		/// TODO this needs to be rectified with registerServer();
 		void removeServer(const ServerPtr &server);
 		void serverBegunRefreshing(const ServerPtr &server);
 		void serverUpdated(const ServerPtr &server, int response);

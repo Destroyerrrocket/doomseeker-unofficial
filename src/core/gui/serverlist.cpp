@@ -805,3 +805,16 @@ void ServerListHandler::updateSearch(const QString& search)
 	QRegExp pattern(QString("*") + search + "*", Qt::CaseInsensitive, QRegExp::Wildcard);
 	sortingProxy->setFilterRegExp(pattern);
 }
+
+void ServerListHandler::registerServer(ServerPtr server)
+{
+	this->connect(server.data(), SIGNAL(updated(ServerPtr, int)),
+		SLOT(serverUpdated(ServerPtr, int)));
+	this->connect(server.data(), SIGNAL(begunRefreshing(ServerPtr)),
+		SLOT(serverBegunRefreshing(ServerPtr)));
+}
+
+void ServerListHandler::deregisterServer(const ServerPtr &server)
+{
+	server->disconnect(this);
+}

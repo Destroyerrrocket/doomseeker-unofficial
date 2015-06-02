@@ -113,10 +113,31 @@ void ServersStatusWidget::registerServers()
 	{
 		foreach(ServerPtr server, serverList->servers())
 		{
-			connect(server.data(), SIGNAL(begunRefreshing(ServerPtr)), this, SLOT(removeServer(ServerPtr)), Qt::DirectConnection);
-			connect(server.data(), SIGNAL(updated(ServerPtr, int)), this, SLOT(addServer(ServerPtr)), Qt::DirectConnection);
+			deregisterServer(server);
+			registerServer(server);
 		}
 	}
+}
+
+void ServersStatusWidget::registerServerIfSamePlugin(ServerPtr server)
+{
+	if (server->plugin() == plugin)
+	{
+		registerServer(server);
+	}
+}
+
+void ServersStatusWidget::registerServer(ServerPtr server)
+{
+	this->connect(server.data(), SIGNAL(begunRefreshing(ServerPtr)),
+		SLOT(removeServer(ServerPtr)), Qt::DirectConnection);
+	this->connect(server.data(), SIGNAL(updated(ServerPtr, int)),
+		SLOT(addServer(ServerPtr)), Qt::DirectConnection);
+}
+
+void ServersStatusWidget::deregisterServer(const ServerPtr &server)
+{
+	server->disconnect(this);
 }
 
 void ServersStatusWidget::removeServer(const ServerPtr &server)

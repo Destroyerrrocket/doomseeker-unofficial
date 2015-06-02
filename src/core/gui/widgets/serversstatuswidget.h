@@ -39,6 +39,7 @@ class ServersStatusWidget : public QLabel
 		ServersStatusWidget(const EnginePlugin *plugin);
 
 	public slots:
+		void deregisterServer(const ServerPtr &server);
 		/**
 		* @brief Changes the appearance of the widget basing on the boolean
 		* value.
@@ -47,14 +48,16 @@ class ServersStatusWidget : public QLabel
 		* will be "grayed out".
 		*/
 		void setMasterEnabledStatus(bool bEnabled);
+		void registerServerIfSamePlugin(ServerPtr server);
 		void updateDisplay();
 
 	signals:
 		void clicked(const EnginePlugin* plugin);
 
-	protected:
+	private:
 		void mousePressEvent(QMouseEvent* event);
 		void paintEvent(QPaintEvent *event);
+		void registerServer(ServerPtr server);
 
 		bool bMasterIsEnabled;
 		QPixmap icon;
@@ -64,7 +67,7 @@ class ServersStatusWidget : public QLabel
 		const EnginePlugin *plugin;
 		MasterClient *serverList;
 
-	protected slots:
+	private slots:
 		void addServer(const ServerPtr &server);
 		void registerServers();
 		void removeServer(const ServerPtr &server);

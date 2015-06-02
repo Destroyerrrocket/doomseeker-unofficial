@@ -246,6 +246,10 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	d->broadcastManager = new BroadcastManager(this);
 	d->serverTableHandler->connect(d->broadcastManager,
 		SIGNAL(newServerDetected(ServerPtr, int)), SLOT(serverUpdated(ServerPtr, int)));
+	d->serverTableHandler->connect(d->broadcastManager,
+		SIGNAL(newServerDetected(ServerPtr, int)), SLOT(registerServer(ServerPtr)));
+	d->serverTableHandler->connect(d->broadcastManager,
+		SIGNAL(serverLost(ServerPtr)), SLOT(deregisterServer(ServerPtr)));
 
 	initServerDetailsDock();
 	tabifyDockWidget(d->ircDock, d->detailsDock);
@@ -584,6 +588,12 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 
 		this->connect(statusWidget, SIGNAL( clicked(const EnginePlugin*) ) ,
 			SLOT( togglePluginQueryEnabled(const EnginePlugin*) ) );
+		statusWidget->connect(d->broadcastManager,
+			SIGNAL(newServerDetected(ServerPtr, int)),
+			SLOT(registerServerIfSamePlugin(ServerPtr)));
+		statusWidget->connect(d->broadcastManager,
+			SIGNAL(serverLost(ServerPtr)), SLOT(deregisterServer(ServerPtr)));
+
 
 		statusBar()->addPermanentWidget(statusWidget);
 
@@ -1264,7 +1274,7 @@ void MainWindow::refreshLanServers()
 {
 	foreach (ServerPtr server, d->broadcastManager->servers())
 	{
-		d->serverTableHandler->serverUpdated(server, Server::RESPONSE_NO_RESPONSE_YET);
+		d->serverTableHandler->serverUpdated(server, server->lastResponse());
 		gRefresher->registerServer(server.data());
 	}
 }
