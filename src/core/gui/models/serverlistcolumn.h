@@ -28,14 +28,13 @@
 
 class QStandardItem;
 
-class ServerListColumn
+struct ServerListColumn
 {
-	public:
-		int columnId;
-		int width;
-		bool bHidden;
-		bool bResizable;
-		Qt::SortOrder defaultSortOrder;
+	int columnId;
+	int width;
+	bool bHidden;
+	bool bResizable;
+	Qt::SortOrder defaultSortOrder;
 };
 
 namespace ServerListColumnId
@@ -66,8 +65,8 @@ class ServerListColumns : public QObject
 		static ServerListColumn columns[];
 
 		static QString columnLabel(int columnId);
-		static void generateColumnHeaderLabels(QStringList& outputLabels);
-		static void generateListOfCells(QList<QStandardItem*>& outputList);
+		static QStringList generateColumnHeaderLabels();
+		static QList<QStandardItem*> generateListOfCells();
 
 		static bool isColumnVital(int columnId);
 

@@ -781,13 +781,12 @@ void ServerListHandler::updateCountryFlags(bool force)
 void ServerListHandler::updateHeaderTitles()
 {
 	const QList<ColumnSort> &sortings = sortingProxy->additionalSortColumns();
-	QStringList labels;
-	ServerListColumns::generateColumnHeaderLabels(labels);
 	for (int i = 0; i < ServerListColumnId::NUM_SERVERLIST_COLUMNS; ++i)
 	{
 		// Clear header icons.
 		model->setHeaderData(i, Qt::Horizontal, QIcon(), Qt::DecorationRole);
 	}
+	QStringList labels = ServerListColumns::generateColumnHeaderLabels();
 	for (int i = 0; i < sortings.size(); ++i)
 	{
 		const ColumnSort &sort = sortings[i];

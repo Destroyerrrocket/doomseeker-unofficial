@@ -45,9 +45,7 @@ ServerListModel::ServerListModel(ServerListHandler* parent)
 
 int ServerListModel::addServer(ServerPtr server, int response)
 {
-	QList<QStandardItem*> columns;
-	ServerListColumns::generateListOfCells(columns);
-
+	QList<QStandardItem*> columns = ServerListColumns::generateListOfCells();
 	appendRow(columns);
 
 	// Country flag is set only once. Set it here and avoid setting it in
@@ -159,9 +157,7 @@ void ServerListModel::setRefreshing(ServerPtr server)
 
 void ServerListModel::prepareHeaders()
 {
-	QStringList labels;
-	ServerListColumns::generateColumnHeaderLabels(labels);
-	setHorizontalHeaderLabels(labels);
+	setHorizontalHeaderLabels(ServerListColumns::generateColumnHeaderLabels());
 }
 
 int ServerListModel::updateServer(int row, ServerPtr server, int response)
