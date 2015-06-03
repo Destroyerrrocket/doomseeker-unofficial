@@ -400,12 +400,6 @@ ServerPtr ServerListRowHandler::serverFromList(ServerListModel* parentModel, int
 	return pointer.value<ServerPtr>();
 }
 
-//ServerListRowHandler::ServerGroup ServerListRowHandler::serverGroup()
-//{
-//	QStandardItem* qstdItem = item(row, SLCID_HIDDEN_GROUP);
-//	return static_cast<ServerListRowHandler::ServerGroup>(qstdItem->data(DTSort).toInt());
-//}
-
 int ServerListRowHandler::updateServer(int response)
 {
 	fillServerPointerColumn();

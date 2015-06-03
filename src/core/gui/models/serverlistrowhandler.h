@@ -45,7 +45,6 @@ class ServerListRowHandler : public QObject
 		 *  SG_NORMAL servers will be always on the top of the list, after them
 		 *  will be SG_WAIT servers, etc.
 		 *
-		 *  @b WARNING:
 		 *	Exception: custom servers will always be on top of the list
 		 *	and will be sorted inside their own group independentedly.
 		 */
@@ -110,8 +109,6 @@ class ServerListRowHandler : public QObject
 		void fillServerPointerColumn();
 
 		void prepareHeaders();
-		//ServerGroup 			serverGroup(int row);
-
 
 		void setBackgroundColor();
 
