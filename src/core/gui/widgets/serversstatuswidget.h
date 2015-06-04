@@ -65,6 +65,7 @@ class ServersStatusWidget : public QLabel
 		QPixmap iconDisabled;
 		unsigned int numBots;
 		unsigned int numPlayers;
+		unsigned int numServers;
 		const EnginePlugin *plugin;
 		const ServerList *serverList;
 

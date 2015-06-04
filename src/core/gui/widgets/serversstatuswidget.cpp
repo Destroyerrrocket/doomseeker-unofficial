@@ -35,7 +35,7 @@
 
 ServersStatusWidget::ServersStatusWidget(const EnginePlugin *plugin, const ServerList *serverList)
 	: QLabel(), enabled(false), icon(plugin->icon()),
-	  numBots(0), numPlayers(0)
+	  numBots(0), numPlayers(0), numServers(0)
 {
 	this->plugin = plugin;
 
@@ -144,6 +144,7 @@ void ServersStatusWidget::registerServer(ServerPtr server)
 	this->connect(server.data(), SIGNAL(updated(ServerPtr, int)),
 		SLOT(increaseCountersAndUpdateDisplay(ServerPtr)));
 	increaseCountersAndUpdateDisplay(server);
+	++numServers;
 }
 
 void ServersStatusWidget::deregisterServerIfSamePlugin(const ServerPtr &server)
@@ -157,6 +158,8 @@ void ServersStatusWidget::deregisterServerIfSamePlugin(const ServerPtr &server)
 			// so let's not decrease it twice or errors will happen.
 			decreaseCountersAndUpdateDisplay(server);
 		}
+		--numServers;
+		updateDisplay();
 	}
 }
 
@@ -178,8 +181,7 @@ void ServersStatusWidget::updateDisplay()
 {
 	if (enabled)
 	{
-		setText(QString("%1-%2 %3").arg(numPlayers).arg(numBots)
-			.arg(serverList->serversForPlugin(plugin).size()));
+		setText(QString("%1-%2 %3").arg(numPlayers).arg(numBots).arg(numServers));
 	}
 	else
 	{
