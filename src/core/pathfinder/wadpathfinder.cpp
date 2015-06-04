@@ -25,6 +25,7 @@
 #include "configuration/doomseekerconfig.h"
 #include "pathfinder/filealias.h"
 #include "pathfinder/pathfinder.h"
+#include "serverapi/server.h"
 
 DClass<WadFindResult>
 {
@@ -127,4 +128,11 @@ WadFindResult WadPathFinder::find(const QString &name)
 		}
 	}
 	return WadFindResult();
+}
+///////////////////////////////////////////////////////////////////////////
+WadFindResult findWad(ServerPtr server, const QString &wadName)
+{
+	PathFinder pathFinder = server->wadPathFinder();
+	WadPathFinder wadFinder(pathFinder);
+	return wadFinder.find(wadName);
 }

@@ -24,6 +24,7 @@
 #define idCA954A5A_EF00_4F51_9C9782634F191143
 
 #include "dptr.h"
+#include "serverapi/serverptr.h"
 #include <QString>
 #include <QStringList>
 
@@ -64,5 +65,7 @@ class WadPathFinder
 
 		QStringList aliases(const QString &name) const;
 };
+
+WadFindResult findWad(ServerPtr server, const QString &wadName);
 
 #endif

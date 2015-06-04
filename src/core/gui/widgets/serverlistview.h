@@ -43,7 +43,6 @@ class ServerListView : public QTableView
 		void setAllowAllRowsRefresh(bool b) { bAllowAllRowsRefresh = b; }
 
 	public slots:
-		void updateRowVisuals(int row);
 		void updateAllRows();
 
 	protected:
@@ -54,8 +53,8 @@ class ServerListView : public QTableView
 
 	signals:
 		void leftMouseDoubleClicked(const QModelIndex& index, const QPoint& cursorPosition);
-		void middleMouseClick(const QModelIndex& index, const QPoint& cursorPosition);
-		void rightMouseClick(const QModelIndex& index, const QPoint& cursorPosition);
+		void middleMouseClicked(const QModelIndex& index, const QPoint& cursorPosition);
+		void rightMouseClicked(const QModelIndex& index, const QPoint& cursorPosition);
 };
 
 #endif

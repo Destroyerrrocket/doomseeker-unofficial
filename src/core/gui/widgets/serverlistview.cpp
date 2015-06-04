@@ -115,14 +115,14 @@ void ServerListView::mouseReleaseEvent(QMouseEvent* event)
 		case Qt::MidButton:
 			if (index.isValid())
 			{
-				emit middleMouseClick(index, event->pos());
+				emit middleMouseClicked(index, event->pos());
 			}
 			break;
 
 		case Qt::RightButton:
 			if (index.isValid())
 			{
-				emit rightMouseClick(index, event->pos());
+				emit rightMouseClicked(index, event->pos());
 			}
 			break;
 
@@ -148,21 +148,10 @@ void ServerListView::mouseDoubleClickEvent(QMouseEvent* event)
 	}
 }
 
-void ServerListView::updateRowVisuals(int row)
-{
-	resizeRowToContents(row);
-}
-
 void ServerListView::updateAllRows()
 {
 	if (bAllowAllRowsRefresh)
 	{
-		QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(model());
-		int rowCount = pModel->sourceModel()->rowCount();
-
-		for (int i = 0; i < rowCount; ++i)
-		{
-			updateRowVisuals(i);
-		}
+		resizeRowsToContents();
 	}
 }

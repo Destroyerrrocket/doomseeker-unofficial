@@ -240,6 +240,7 @@ set(HEADER_FILES
 	serverapi/tooltips/gameinfotip.h
 	serverapi/tooltips/generalinfotip.h
 	serverapi/tooltips/playertable.h
+	serverapi/tooltips/servertooltip.h
 	serverapi/tooltips/tooltipgenerator.h
 	socketsignalsadapter.h
 	speedcalculator.h
@@ -448,6 +449,7 @@ set(SOURCE_FILES
 	serverapi/tooltips/gameinfotip.cpp
 	serverapi/tooltips/generalinfotip.cpp
 	serverapi/tooltips/playertable.cpp
+	serverapi/tooltips/servertooltip.cpp
 	serverapi/tooltips/tooltipgenerator.cpp
 	speedcalculator.cpp
 	strings.cpp

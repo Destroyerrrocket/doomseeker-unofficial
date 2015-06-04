@@ -33,7 +33,7 @@
 #include "pathfinder/wadpathfinder.h"
 #include "plugins/engineplugin.h"
 #include "refresher/refresher.h"
-#include "serverapi/tooltips/tooltipgenerator.h"
+#include "serverapi/tooltips/servertooltip.h"
 #include "serverapi/gameexeretriever.h"
 #include "serverapi/message.h"
 #include "serverapi/playerslist.h"
@@ -49,10 +49,6 @@
 #include <QStandardItem>
 #include <QToolTip>
 #include <QUrl>
-
-const QString ServerListHandler::FONT_COLOR_MISSING = "#ff0000";
-const QString ServerListHandler::FONT_COLOR_OPTIONAL = "#ff9f00";
-const QString ServerListHandler::FONT_COLOR_FOUND = "#009f00";
 
 using namespace ServerListColumnId;
 
@@ -153,8 +149,8 @@ void ServerListHandler::connectTableModelProxySlots()
 	connect(header, SIGNAL( sectionClicked(int) ), this, SLOT ( columnHeaderClicked(int) ) );
 	connect(model, SIGNAL( modelCleared() ), this, SLOT( modelCleared() ) );
 	connect(table->selectionModel(), SIGNAL( selectionChanged(const QItemSelection&, const QItemSelection&) ), this, SLOT( itemSelected(const QItemSelection&) ));
-	connect(table, SIGNAL( middleMouseClick(const QModelIndex&, const QPoint&) ), this, SLOT( tableMiddleClicked(const QModelIndex&, const QPoint&) ) );
-	connect(table, SIGNAL( rightMouseClick(const QModelIndex&, const QPoint&) ), this, SLOT ( tableRightClicked(const QModelIndex&, const QPoint&)) );
+	connect(table, SIGNAL( middleMouseClicked(const QModelIndex&, const QPoint&) ), this, SLOT( tableMiddleClicked(const QModelIndex&, const QPoint&) ) );
+	connect(table, SIGNAL( rightMouseClicked(const QModelIndex&, const QPoint&) ), this, SLOT ( tableRightClicked(const QModelIndex&, const QPoint&)) );
 	connect(table, SIGNAL( entered(const QModelIndex&) ), this, SLOT ( mouseEntered(const QModelIndex&)) );
 	connect(table, SIGNAL( leftMouseDoubleClicked(const QModelIndex&, const QPoint&)), this, SLOT( doubleClicked(const QModelIndex&)) );
 }
@@ -235,197 +231,11 @@ void ServerListHandler::contextMenuTriggered(QAction* action)
 	}
 }
 
-QString ServerListHandler::createIwadToolTip(ServerPtr server)
-{
-	if (!server->isKnown())
-	{
-		return QString();
-	}
-
-	// This will only return anything if we have the "TellMe..." option enabled.
-	bool bFindIwad = gConfig.doomseeker.bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn;
-
-	if (bFindIwad)
-	{
-		static const QString FORMAT_TEMPLATE = "<font color=\"%1\">%2</font>";
-
-		Message binMessage;
-		// Use offline binary so that testing builds are not triggered.
-		QString binPath = GameExeRetriever(*server->plugin()->gameExe()).pathToOfflineExe(binMessage);
-
-		WadFindResult path = findWad(server, server->iwad());
-
-		if (path.isValid())
-		{
-			QString msg = path.path();
-			if (path.isAlias())
-			{
-				msg += " " + tr("(alias of: %1)").arg(server->iwad());
-			}
-			return FORMAT_TEMPLATE.arg(FONT_COLOR_FOUND, msg);
-		}
-		else
-		{
-			return FORMAT_TEMPLATE.arg(FONT_COLOR_MISSING, tr("MISSING"));
-		}
-	}
-
-	return QString();
-}
-
 ServerListModel* ServerListHandler::createModel()
 {
 	ServerListModel* serverListModel = new ServerListModel(this);
 	serverListModel->prepareHeaders();
-
 	return serverListModel;
-}
-
-QString ServerListHandler::createPlayersToolTip(ServerCPtr server)
-{
-	if (server == NULL || !server->isKnown())
-	{
-		return QString();
-	}
-
-	TooltipGenerator* tooltipGenerator = server->tooltipGenerator();
-
-	QString ret;
-	ret = "<div style='white-space: pre'>";
-	ret += tooltipGenerator->gameInfoTableHTML();
-	if(server->players().numClients() != 0)
-	{
-		ret += tooltipGenerator->playerTableHTML();
-	}
-	ret += "</div>";
-
-	delete tooltipGenerator;
-	return ret;
-}
-
-QString ServerListHandler::createPortToolTip(ServerCPtr server)
-{
-	if (server == NULL || !server->isKnown())
-		return QString();
-
-	QString ret;
-	if (server->isLocked())
-		ret += "Password protected\n";
-	if (server->isLockedInGame())
-		ret += "Password protected in-game\n";
-	if (server->isSecure())
-		ret += "Enforces master bans\n";
-	return ret.trimmed();
-}
-
-QString ServerListHandler::createPwadsToolTip(ServerPtr server)
-{
-	if (server == NULL || !server->isKnown() || server->numWads() == 0)
-	{
-		return QString();
-	}
-
-	// Prepare initial formatting.
-	static const QString toolTip = "<div style='white-space: pre'>%1</div>";
-	QString content;
-
-	const QList<PWad>& pwads = server->wads();
-
-	// Check if we should seek and colorize.
-	bool bFindWads = gConfig.doomseeker.bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn;
-
-	// Engage!
-	if (bFindWads)
-	{
-		QStringList pwadsFormatted;
-		foreach (const PWad &wad, pwads)
-		{
-			pwadsFormatted << createPwadToolTipInfo(wad, server);
-		}
-
-		content = "<table cellspacing=1>";
-		content += pwadsFormatted.join("\n");
-		content += "</table>";
-	}
-	else
-	{
-		foreach (const PWad &wad, pwads)
-		{
-			content += wad.name() + "\n";
-		}
-		content.chop(1); // Get rid of extra \n.
-	}
-
-	return toolTip.arg(content);
-}
-
-QString ServerListHandler::createPwadToolTipInfo(const PWad& pwad, const ServerPtr &server)
-{
-	WadFindResult path = findWad(server, pwad.name());
-
-	QString fontColor = "#777777";
-	QStringList cells;
-
-	cells << pwad.name();
-	if (path.isValid())
-	{
-		fontColor = FONT_COLOR_FOUND;
-		cells << path.path();
-	}
-	else
-	{
-		if (pwad.isOptional())
-		{
-			fontColor = FONT_COLOR_OPTIONAL;
-			cells << tr("OPTIONAL");
-		}
-		else
-		{
-			fontColor = FONT_COLOR_MISSING;
-			cells << tr("MISSING");
-		}
-	}
-	if (path.isAlias())
-	{
-		cells << tr("ALIAS");
-	}
-	else
-	{
-		cells << "";
-	}
-
-	QString formattedStringBegin = QString("<tr style=\"color: %1;\">").arg(fontColor);
-	QString formattedStringMiddle;
-	QString space = "";
-	foreach (const QString &cell, cells)
-	{
-		formattedStringMiddle += QString("<td style=\"padding-right: 5;\">%1</td>").arg(cell);
-		space = " ";
-	}
-	return formattedStringBegin + formattedStringMiddle + "</tr>";
-}
-
-QString ServerListHandler::createServerNameToolTip(ServerCPtr server)
-{
-	if (server == NULL)
-	{
-		return QString();
-	}
-
-	TooltipGenerator* tooltipGenerator = server->tooltipGenerator();
-
-	QString ret;
-	QString generalInfo = tooltipGenerator->generalInfoHTML();
-
-	if (!generalInfo.isEmpty())
-	{
-		ret = "<div style='white-space: pre'>";
-		ret += generalInfo;
-		ret += "</div>";
-	}
-
-	delete tooltipGenerator;
-	return ret;
 }
 
 ServerListProxyModel *ServerListHandler::createSortingProxy(ServerListModel* serverListModel)
@@ -446,13 +256,6 @@ ServerListProxyModel *ServerListHandler::createSortingProxy(ServerListModel* ser
 void ServerListHandler::doubleClicked(const QModelIndex& index)
 {
 	emit serverDoubleClicked(serverFromIndex(index));
-}
-
-WadFindResult ServerListHandler::findWad(ServerPtr server, const QString &name) const
-{
-	PathFinder pathFinder = server->wadPathFinder();
-	WadPathFinder wadFinder(pathFinder);
-	return wadFinder.find(name);
 }
 
 Qt::SortOrder ServerListHandler::getColumnDefaultSortOrder(int columnId)
@@ -531,7 +334,7 @@ void ServerListHandler::mouseEntered(const QModelIndex& index)
 	switch(index.column())
 	{
 		case IDPort:
-			tooltip = createPortToolTip(server);
+			tooltip = ServerTooltip::createPortToolTip(server);
 			break;
 
 		case IDAddress:
@@ -539,19 +342,19 @@ void ServerListHandler::mouseEntered(const QModelIndex& index)
 			break;
 
 		case IDPlayers:
-			tooltip = createPlayersToolTip(server);
+			tooltip = ServerTooltip::createPlayersToolTip(server);
 			break;
 
 		case IDServerName:
-			tooltip = createServerNameToolTip(server);
+			tooltip = ServerTooltip::createServerNameToolTip(server);
 			break;
 
 		case IDIwad:
-			tooltip = createIwadToolTip(server);
+			tooltip = ServerTooltip::createIwadToolTip(server);
 			break;
 
 		case IDWads:
-			tooltip = createPwadsToolTip(server);
+			tooltip = ServerTooltip::createPwadsToolTip(server);
 			break;
 
 		default:

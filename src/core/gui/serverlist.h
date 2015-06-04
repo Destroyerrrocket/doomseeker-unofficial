@@ -127,11 +127,6 @@ class ServerListHandler : public QObject
 		void serversSelected(QList<ServerPtr>&);
 
 	protected:
-		// TODO: These need to be set by appearance configuration.
-		static const QString FONT_COLOR_MISSING;
-		static const QString FONT_COLOR_OPTIONAL;
-		static const QString FONT_COLOR_FOUND;
-
 		QTimer cleanerTimer;
 
 		QWidget* mainWindow;
@@ -142,13 +137,6 @@ class ServerListHandler : public QObject
 		Qt::SortOrder sortOrder;
 		int sortIndex;
 		ServerListView* table;
-
-		QString createIwadToolTip(ServerPtr server);
-		QString createPlayersToolTip(ServerCPtr server);
-		QString createPortToolTip(ServerCPtr server);
-		QString createPwadsToolTip(ServerPtr server);
-		QString createPwadToolTipInfo(const PWad& pwad, const ServerPtr &server);
-		QString createServerNameToolTip(ServerCPtr server);
 
 		bool areColumnsWidthsSettingsChanged();
 
@@ -174,7 +162,6 @@ class ServerListHandler : public QObject
 
 	private:
 		void clearAdditionalSorting();
-		WadFindResult findWad(ServerPtr server, const QString &name) const;
 		void removeAdditionalSortingForColumn(const QModelIndex &modelIndex);
 		void sortAdditionally(const QModelIndex &modelIndex, Qt::SortOrder order);
 
