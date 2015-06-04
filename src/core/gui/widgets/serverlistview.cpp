@@ -209,10 +209,10 @@ void ServerListView::updateAllRows()
 
 void ServerListView::allowVisualAdjustment()
 {
-	allowedVisualAdjustment = false;
+	allowedVisualAdjustment = true;
 }
 
 void ServerListView::disallowVisualAdjustment()
 {
-	allowedVisualAdjustment = true;
+	allowedVisualAdjustment = false;
 }

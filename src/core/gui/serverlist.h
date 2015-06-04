@@ -76,7 +76,6 @@ class ServerList : public QObject
 		 */
 		void lookupHosts();
 		void redraw();
-		void refreshAll();
 		void refreshSelected();
 		void registerServer(ServerPtr server);
 		void removeServer(const ServerPtr &server);

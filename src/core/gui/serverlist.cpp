@@ -367,14 +367,6 @@ void ServerList::redraw()
 	model->redrawAll();
 }
 
-void ServerList::refreshAll()
-{
-	for (int i = 0; i < model->rowCount(); ++i)
-	{
-		gRefresher->registerServer(model->serverFromList(i).data());
-	}
-}
-
 void ServerList::refreshSelected()
 {
 	QItemSelectionModel* selectionModel = table->selectionModel();
