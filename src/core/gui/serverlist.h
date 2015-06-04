@@ -29,6 +29,7 @@
 
 #include "serverapi/serverptr.h"
 
+class EnginePlugin;
 class PWad;
 class IniSection;
 class Server;
@@ -51,7 +52,6 @@ class ServerList : public QObject
 		ServerList(ServerListView* serverTable, QWidget* pMainWindow);
 		~ServerList();
 
-		void clearTable();
 		void cleanUpForce();
 
 		QWidget* getMainWindow() { return mainWindow; }
@@ -61,17 +61,16 @@ class ServerList : public QObject
 		bool isSortingAdditionallyByColumn(int column) const;
 		bool isSortingByColumn(int columnIndex);
 
-		QList<ServerPtr> selectedServers();
+		void removeCustomServers();
+		void removeNonSpecialServers();
+		QList<ServerPtr> selectedServers() const;
+		QList<ServerPtr> serversForPlugin(const EnginePlugin *plugin) const;
 
 		ServerPtr serverFromIndex(const QModelIndex&);
-
-		ServerListModel* serverModel() { return model; }
-		ServerListView* serverTable() { return table; }
 
 	public slots:
 		void applyFilter(const ServerListFilterInfo& filterInfo);
 		void cleanUp();
-		void deregisterServer(const ServerPtr &server);
 		/**
 		 * @brief Looks up hosts for all available servers.
 		 */
@@ -80,11 +79,7 @@ class ServerList : public QObject
 		void refreshAll();
 		void refreshSelected();
 		void registerServer(ServerPtr server);
-		/// TODO this needs to be rectified with registerServer();
 		void removeServer(const ServerPtr &server);
-		void serverBegunRefreshing(const ServerPtr &server);
-		void serverUpdated(const ServerPtr &server, int response);
-
 		/**
 		 *	@brief Sets country flags for servers that don't have flags
 		 *		present yet.
@@ -109,12 +104,14 @@ class ServerList : public QObject
 		 */
 		void findMissingWADs(const ServerPtr&);
 
+		void serverDeregistered(ServerPtr);
 		void serverFilterModified(const ServerListFilterInfo& filter);
 		/**
 		 *	@brief Emitted every time when a server info is updated through
-		 *	serverUpdated()
+		 *	onServerUpdated().
 		 */
 		void serverInfoUpdated(const ServerPtr&);
+		void serverRegistered(ServerPtr);
 		void serverDoubleClicked(const ServerPtr&);
 		void serversSelected(QList<ServerPtr>&);
 
@@ -160,9 +157,10 @@ class ServerList : public QObject
 		void contextMenuTriggered(QAction* action);
 		void doubleClicked(const QModelIndex&);
 		void itemSelected(const QItemSelection&);
-		void modelCleared();
 		void mouseEntered(const QModelIndex&);
 		void saveAdditionalSortingConfig();
+		void onServerBegunRefreshing(const ServerPtr &server);
+		void onServerUpdated(const ServerPtr &server);
 		void updateHeaderTitles();
 };
 

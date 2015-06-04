@@ -245,11 +245,9 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 
 	d->broadcastManager = new BroadcastManager(this);
 	d->serverList->connect(d->broadcastManager,
-		SIGNAL(newServerDetected(ServerPtr, int)), SLOT(serverUpdated(ServerPtr, int)));
-	d->serverList->connect(d->broadcastManager,
 		SIGNAL(newServerDetected(ServerPtr, int)), SLOT(registerServer(ServerPtr)));
 	d->serverList->connect(d->broadcastManager,
-		SIGNAL(serverLost(ServerPtr)), SLOT(deregisterServer(ServerPtr)));
+		SIGNAL(serverLost(ServerPtr)), SLOT(removeServer(ServerPtr)));
 
 	initServerDetailsDock();
 	tabifyDockWidget(d->ircDock, d->detailsDock);
@@ -269,9 +267,11 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	fillQueryMenu(d->masterManager);
 
 	// Init custom servers
-	d->masterManager->customServs()->readConfig(d->serverList,
-		SLOT(serverUpdated(ServerPtr, int)),
-		SLOT(serverBegunRefreshing(ServerPtr)) );
+	QList<ServerPtr> customServers = d->masterManager->customServs()->readConfig();
+	foreach (ServerPtr server, customServers)
+	{
+		d->serverList->registerServer(server);
+	}
 
 	setWindowIcon(QIcon(":/icon.png"));
 
@@ -578,22 +578,14 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		if (plugin->data()->hasBroadcast())
 		{
 			d->broadcastManager->registerPlugin(plugin);
-			d->serverList->connect(plugin->data()->broadcast,
-				SIGNAL(serverLost(ServerPtr)), SLOT(removeServer(ServerPtr)));
 		}
 
 		// Now is a good time to also populate the status bar widgets
-		ServersStatusWidget *statusWidget = new ServersStatusWidget(plugin);
+		ServersStatusWidget *statusWidget = new ServersStatusWidget(plugin, d->serverList);
 		d->serversStatusesWidgets.insert(plugin, statusWidget);
 
 		this->connect(statusWidget, SIGNAL( clicked(const EnginePlugin*) ) ,
 			SLOT( togglePluginQueryEnabled(const EnginePlugin*) ) );
-		statusWidget->connect(d->broadcastManager,
-			SIGNAL(newServerDetected(ServerPtr, int)),
-			SLOT(registerServerIfSamePlugin(ServerPtr)));
-		statusWidget->connect(d->broadcastManager,
-			SIGNAL(serverLost(ServerPtr)), SLOT(deregisterServer(ServerPtr)));
-
 
 		statusBar()->addPermanentWidget(statusWidget);
 
@@ -676,8 +668,12 @@ void MainWindow::finishConfiguration(DoomseekerConfigurationDialog &configDialog
 	// Refresh custom servers list:
 	if (configDialog.customServersChanged())
 	{
-		d->serverList->serverModel()->removeCustomServers();
-		d->masterManager->customServs()->readConfig(d->serverList, SLOT(serverUpdated(ServerPtr, int)), SLOT(serverBegunRefreshing(ServerPtr)) );
+		d->serverList->removeCustomServers();
+		QList<ServerPtr> servers = d->masterManager->customServs()->readConfig();
+		foreach (ServerPtr server, servers)
+		{
+			d->serverList->registerServer(server);
+		}
 		refreshCustomServers();
 	}
 }
@@ -691,11 +687,7 @@ void MainWindow::finishedQueryingMaster(MasterClient* master)
 
 	for(int i = 0;i < master->numServers();i++)
 	{
-		connect((*master)[i].data(), SIGNAL(updated(ServerPtr, int)),
-			d->serverList, SLOT(serverUpdated(ServerPtr, int)) );
-
-		connect((*master)[i].data(), SIGNAL(begunRefreshing(ServerPtr)),
-			d->serverList, SLOT(serverBegunRefreshing(ServerPtr)) );
+		d->serverList->registerServer((*master)[i]);
 	}
 }
 
@@ -730,7 +722,7 @@ void MainWindow::getServers()
 	d->bTotalRefreshInProcess = true;
 	d->autoRefreshTimer.stop();
 	gLog << tr("Total refresh process initialized!");
-	d->serverList->clearTable();
+	d->serverList->removeNonSpecialServers();
 	refreshCustomServers();
 	refreshLanServers();
 
@@ -1265,7 +1257,6 @@ void MainWindow::refreshCustomServers()
 	for(int i = 0;i < customServers->numServers();i++)
 	{
 		ServerPtr server = (*customServers)[i];
-		d->serverList->serverUpdated(server, Server::RESPONSE_NO_RESPONSE_YET);
 		gRefresher->registerServer(server.data());
 	}
 }
@@ -1274,15 +1265,12 @@ void MainWindow::refreshLanServers()
 {
 	foreach (ServerPtr server, d->broadcastManager->servers())
 	{
-		d->serverList->serverUpdated(server, server->lastResponse());
 		gRefresher->registerServer(server.data());
 	}
 }
 
 void MainWindow::refreshThreadBeginsWork()
 {
-	// disable refresh.
-	d->serverList->serverTable()->setAllowAllRowsRefresh(false);
 	statusBar()->showMessage(tr("Querying..."));
 }
 
@@ -1290,7 +1278,6 @@ void MainWindow::refreshThreadEndsWork()
 {
 	d->toolBarGetServers->setEnabled(true);
 
-	d->serverList->serverTable()->setAllowAllRowsRefresh(true);
 	d->serverList->cleanUpForce();
 	statusBar()->showMessage(tr("Done"));
 	updateTrayIconTooltipAndLogTotalRefresh();

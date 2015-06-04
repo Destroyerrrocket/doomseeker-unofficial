@@ -27,16 +27,23 @@
 #include <QPainter>
 
 #include "serversstatuswidget.h"
+#include "gui/serverlist.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/masterclient.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
 
-ServersStatusWidget::ServersStatusWidget(const EnginePlugin *plugin) : QLabel(),
-	bMasterIsEnabled(false), icon(plugin->icon()), numBots(0), numPlayers(0)
+ServersStatusWidget::ServersStatusWidget(const EnginePlugin *plugin, const ServerList *serverList)
+	: QLabel(), enabled(false), icon(plugin->icon()),
+	  numBots(0), numPlayers(0)
 {
 	this->plugin = plugin;
-	serverList = plugin->data()->masterClient;
+
+	this->serverList = serverList;
+	this->connect(serverList, SIGNAL(serverRegistered(ServerPtr)),
+		SLOT(registerServerIfSamePlugin(ServerPtr)));
+	this->connect(serverList, SIGNAL(serverDeregistered(ServerPtr)),
+		SLOT(deregisterServerIfSamePlugin(ServerPtr)));
 
 	// Transform icon to grayscale format for disabled appearance
 	QImage iconImage = icon.toImage();
@@ -72,17 +79,20 @@ ServersStatusWidget::ServersStatusWidget(const EnginePlugin *plugin) : QLabel(),
 	setIndent(22);
 	updateDisplay();
 
-	registerServers();
-
-	connect(serverList, SIGNAL(listUpdated()), this, SLOT(registerServers()));
+	resetStatus();
 }
 
-void ServersStatusWidget::addServer(const ServerPtr &server)
+void ServersStatusWidget::increaseCountersAndUpdateDisplay(const ServerPtr &server)
+{
+	increaseCounters(server);
+	updateDisplay();
+}
+
+void ServersStatusWidget::increaseCounters(ServerPtr server)
 {
 	const PlayersList &players = server->players();
 	numPlayers += players.numClients();
 	numBots += players.numBots();
-	updateDisplay();
 }
 
 void ServersStatusWidget::mousePressEvent(QMouseEvent* event)
@@ -97,13 +107,13 @@ void ServersStatusWidget::paintEvent(QPaintEvent *event)
 {
 	QPainter p(this);
 	p.setRenderHint(QPainter::SmoothPixmapTransform);
-	p.drawPixmap(2, 2, 18, 18, bMasterIsEnabled ? icon : iconDisabled);
+	p.drawPixmap(2, 2, 18, 18, enabled ? icon : iconDisabled);
 	p.end();
 
 	QLabel::paintEvent(event);
 }
 
-void ServersStatusWidget::registerServers()
+void ServersStatusWidget::resetStatus()
 {
 	// Since this is done when the list changes we should reset some values
 	numPlayers = 0;
@@ -111,12 +121,12 @@ void ServersStatusWidget::registerServers()
 
 	if (serverList != NULL)
 	{
-		foreach(ServerPtr server, serverList->servers())
+		foreach(ServerPtr server, serverList->serversForPlugin(plugin))
 		{
-			deregisterServer(server);
-			registerServer(server);
+			increaseCounters(server);
 		}
 	}
+	updateDisplay();
 }
 
 void ServersStatusWidget::registerServerIfSamePlugin(ServerPtr server)
@@ -130,17 +140,27 @@ void ServersStatusWidget::registerServerIfSamePlugin(ServerPtr server)
 void ServersStatusWidget::registerServer(ServerPtr server)
 {
 	this->connect(server.data(), SIGNAL(begunRefreshing(ServerPtr)),
-		SLOT(removeServer(ServerPtr)), Qt::DirectConnection);
+		SLOT(decreaseCountersAndUpdateDisplay(ServerPtr)));
 	this->connect(server.data(), SIGNAL(updated(ServerPtr, int)),
-		SLOT(addServer(ServerPtr)), Qt::DirectConnection);
+		SLOT(increaseCountersAndUpdateDisplay(ServerPtr)));
+	increaseCountersAndUpdateDisplay(server);
 }
 
-void ServersStatusWidget::deregisterServer(const ServerPtr &server)
+void ServersStatusWidget::deregisterServerIfSamePlugin(const ServerPtr &server)
 {
-	server->disconnect(this);
+	if (server->plugin() == plugin)
+	{
+		server->disconnect(this);
+		if (!server->isRefreshing())
+		{
+			// A refreshing server has already decreased its counters
+			// so let's not decrease it twice or errors will happen.
+			decreaseCountersAndUpdateDisplay(server);
+		}
+	}
 }
 
-void ServersStatusWidget::removeServer(const ServerPtr &server)
+void ServersStatusWidget::decreaseCountersAndUpdateDisplay(const ServerPtr &server)
 {
 	const PlayersList &players = server->players();
 	numPlayers -= players.numClients();
@@ -150,15 +170,16 @@ void ServersStatusWidget::removeServer(const ServerPtr &server)
 
 void ServersStatusWidget::setMasterEnabledStatus(bool bEnabled)
 {
-	this->bMasterIsEnabled = bEnabled;
+	this->enabled = bEnabled;
 	updateDisplay();
 }
 
 void ServersStatusWidget::updateDisplay()
 {
-	if (bMasterIsEnabled)
+	if (enabled)
 	{
-		setText(QString("%1-%2 %3").arg(numPlayers).arg(numBots).arg(serverList != NULL ? serverList->numServers() : 0));
+		setText(QString("%1-%2 %3").arg(numPlayers).arg(numBots)
+			.arg(serverList->serversForPlugin(plugin).size()));
 	}
 	else
 	{

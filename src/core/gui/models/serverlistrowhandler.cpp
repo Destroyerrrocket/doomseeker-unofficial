@@ -221,7 +221,7 @@ QStandardItem* ServerListRowHandler::item(int columnIndex)
 
 void ServerListRowHandler::redraw()
 {
-	updateServer(d->server->lastResponse());
+	updateServer();
 
 	// Since updateServer doesn't do anything with the flags we need to
 	// explicitly redraw it here.
@@ -389,7 +389,7 @@ void ServerListRowHandler::setWait()
 	fillItem(qstdItem, SGWait);
 }
 
-ServerPtr ServerListRowHandler::serverFromList(ServerListModel* parentModel, int rowIndex)
+ServerPtr ServerListRowHandler::serverFromList(const ServerListModel* parentModel, int rowIndex)
 {
 	QStandardItem* pItem = parentModel->item(rowIndex, IDHiddenServerPointer);
 	QVariant pointer = qVariantFromValue(pItem->data(DTPointerToServerStructure));
@@ -400,13 +400,13 @@ ServerPtr ServerListRowHandler::serverFromList(ServerListModel* parentModel, int
 	return pointer.value<ServerPtr>();
 }
 
-int ServerListRowHandler::updateServer(int response)
+int ServerListRowHandler::updateServer()
 {
 	fillServerPointerColumn();
 	fillPortIconColumn();
 	fillAddressColumn();
 
-	switch(response)
+	switch(d->server->lastResponse())
 	{
 		case Server::RESPONSE_BAD:
 			setBad();
@@ -444,7 +444,7 @@ int ServerListRowHandler::updateServer(int response)
 			break;
 
 		default:
-			gLog << tr("Unkown server response (%1): %2:%3").arg(response)
+			gLog << tr("Unkown server response (%1): %2:%3").arg(d->server->lastResponse())
 				.arg(d->server->address().toString()).arg(d->server->port());
 			break;
 	}

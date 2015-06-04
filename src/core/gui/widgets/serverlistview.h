@@ -38,23 +38,23 @@ class ServerListView : public QTableView
 	public:
 		ServerListView(QWidget* parent = 0);
 
-		/**
-		 *	Enables or disables update of row visuals.
-		 */
-		void setAllowAllRowsRefresh(bool b) { bAllowAllRowsRefresh = b; }
 		void setupTableProperties();
 
 	public slots:
 		void updateAllRows();
 
 	protected:
-		bool bAllowAllRowsRefresh;
+		bool allowedVisualAdjustment;
 
 		virtual void mouseReleaseEvent(QMouseEvent* event);
 		virtual void mouseDoubleClickEvent(QMouseEvent* event);
 
 	private:
 		void setupTableColumnWidths();
+
+	private slots:
+		void allowVisualAdjustment();
+		void disallowVisualAdjustment();
 
 	signals:
 		void leftMouseDoubleClicked(const QModelIndex& index, const QPoint& cursorPosition);

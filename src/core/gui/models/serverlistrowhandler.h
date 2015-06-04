@@ -87,9 +87,9 @@ class ServerListRowHandler : public QObject
 		void setCountryFlag();
 		void setRefreshing();
 
-		int updateServer(int response);
+		int updateServer();
 
-		static ServerPtr serverFromList(ServerListModel* parentModel, int rowIndex);
+		static ServerPtr serverFromList(const ServerListModel* parentModel, int rowIndex);
 	private:
 		DPtr<ServerListRowHandler> d;
 

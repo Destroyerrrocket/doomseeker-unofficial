@@ -43,7 +43,7 @@ ServerListModel::ServerListModel(ServerList* parent)
 	setSortRole(SLDT_SORT);
 }
 
-int ServerListModel::addServer(ServerPtr server, int response)
+int ServerListModel::addServer(ServerPtr server)
 {
 	QList<QStandardItem*> columns = ServerListColumns::generateListOfCells();
 	appendRow(columns);
@@ -58,14 +58,7 @@ int ServerListModel::addServer(ServerPtr server, int response)
 		rowHandler.setCountryFlag();
 	}
 
-	return rowHandler.updateServer(response);
-}
-
-void ServerListModel::destroyRows()
-{
-	int rows = rowCount();
-	removeRows(0, rows);
-	emit modelCleared();
+	return rowHandler.updateServer();
 }
 
 int ServerListModel::findServerOnTheList(const Server* server)
@@ -102,22 +95,46 @@ void ServerListModel::redrawAll()
 	}
 }
 
-void ServerListModel::removeCustomServers()
+QList<ServerPtr> ServerListModel::customServers() const
 {
-	QList<ServerPtr> serversToRemove;
+	QList<ServerPtr> servers;
 	for (int i = 0; i < rowCount(); ++i)
 	{
 		ServerPtr server = serverFromList(i);
 		if (server->isCustom())
 		{
-			serversToRemove.append(server);
+			servers << server;
 		}
 	}
+	return servers;
+}
 
-	foreach (const ServerPtr &server, serversToRemove)
+QList<ServerPtr> ServerListModel::nonSpecialServers() const
+{
+	QList<ServerPtr> servers;
+	for (int i = 0; i < rowCount(); ++i)
 	{
-		removeServer(server);
+		ServerPtr server = serverFromList(i);
+		if (!server->isCustom() && !server->isLan())
+		{
+			servers << server;
+		}
 	}
+	return servers;
+}
+
+QList<ServerPtr> ServerListModel::serversForPlugin(const EnginePlugin *plugin) const
+{
+	QList<ServerPtr> servers;
+	for (int i = 0; i < rowCount(); ++i)
+	{
+		ServerPtr server = serverFromList(i);
+		if (server->plugin() == plugin)
+		{
+			servers << server;
+		}
+	}
+	return servers;
 }
 
 void ServerListModel::removeServer(const ServerPtr &server)
@@ -129,12 +146,12 @@ void ServerListModel::removeServer(const ServerPtr &server)
 	}
 }
 
-ServerPtr ServerListModel::serverFromList(int rowIndex)
+ServerPtr ServerListModel::serverFromList(int rowIndex) const
 {
 	return ServerListRowHandler::serverFromList(this, rowIndex);
 }
 
-ServerPtr ServerListModel::serverFromList(const QModelIndex& index)
+ServerPtr ServerListModel::serverFromList(const QModelIndex& index) const
 {
 	return ServerListRowHandler::serverFromList(this, index.row());
 }
@@ -160,10 +177,10 @@ void ServerListModel::prepareHeaders()
 	setHorizontalHeaderLabels(ServerListColumns::generateColumnHeaderLabels());
 }
 
-int ServerListModel::updateServer(int row, ServerPtr server, int response)
+int ServerListModel::updateServer(int row, ServerPtr server)
 {
 	ServerListRowHandler rowHandler(this, row, server);
-	rowHandler.updateServer(response);
+	rowHandler.updateServer();
 
 	return row;
 }

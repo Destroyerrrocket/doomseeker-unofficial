@@ -26,6 +26,7 @@
 #include "serverapi/serverptr.h"
 #include <QStandardItemModel>
 
+class EnginePlugin;
 class Server;
 class ServerListSortFilterProxyModel;
 class ServerList;
@@ -70,9 +71,8 @@ class ServerListModel : public QStandardItemModel
 		/**
 		 * @return New row index.
 		 */
-		int addServer(ServerPtr server, int response);
-
-		void destroyRows();
+		int addServer(ServerPtr server);
+		QList<ServerPtr> customServers() const;
 
 		/**
 		 *	@brief Finds index of the row where server is contained.
@@ -83,6 +83,9 @@ class ServerListModel : public QStandardItemModel
 
 		ServerList* handler() { return parentHandler; }
 
+		QList<ServerPtr> nonSpecialServers() const;
+		QList<ServerPtr> serversForPlugin(const EnginePlugin *plugin) const;
+
 		/**
 		 *	Enforces update of a given row. No modificiation is done
 		 *	to the server info itself. Can be used to redraw things like
@@ -91,7 +94,6 @@ class ServerListModel : public QStandardItemModel
 		void redraw(int row);
 		void redrawAll();
 
-		void removeCustomServers();
 		void removeServer(const ServerPtr &server);
 
 		/**
@@ -103,19 +105,18 @@ class ServerListModel : public QStandardItemModel
 		/**
 		 *	Returns row index.
 		 */
-		int updateServer(int row, ServerPtr server, int response);
+		int updateServer(int row, ServerPtr server);
 
-		ServerPtr serverFromList(int rowIndex);
-		ServerPtr serverFromList(const QModelIndex&);
+		ServerPtr serverFromList(int rowIndex) const;
+		ServerPtr serverFromList(const QModelIndex&) const;
 
 		void setRefreshing(ServerPtr server);
 
 	signals:
 		void allRowsContentChanged();
-		void modelCleared();
 		void rowContentChanged(int row);
 
-	protected:
+	private:
 		void prepareHeaders();
 		ServerGroup serverGroup(int row);
 

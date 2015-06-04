@@ -251,7 +251,6 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 
 		if (!d->filterInfo.wadsExcluded.isEmpty())
 		{
-			bool bWadFound = false;
 			foreach (const QString& filteredWad, d->filterInfo.wadsExcluded)
 			{
 				if (s->anyWadnameContains(filteredWad))

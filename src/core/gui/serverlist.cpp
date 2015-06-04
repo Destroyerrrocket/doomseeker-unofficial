@@ -76,11 +76,6 @@ bool ServerList::areColumnsWidthsSettingsChanged()
 	return false;
 }
 
-void ServerList::clearTable()
-{
-	model->destroyRows();
-}
-
 void ServerList::cleanUp()
 {
 	if (needsCleaning && mainWindow->isActiveWindow())
@@ -131,8 +126,6 @@ void ServerList::connectTableModelProxySlots()
 {
 	QHeaderView* header = table->horizontalHeader();
 	this->connect(header, SIGNAL(sectionClicked(int)), SLOT(columnHeaderClicked(int)));
-
-	this->connect(model, SIGNAL(modelCleared()), SLOT(modelCleared()));
 
 	this->connect(table->selectionModel(),
 		SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
@@ -306,12 +299,6 @@ void ServerList::lookupHosts()
 	}
 }
 
-void ServerList::modelCleared()
-{
-	QList<ServerPtr> servers;
-	emit serversSelected(servers);
-}
-
 void ServerList::mouseEntered(const QModelIndex& index)
 {
 	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
@@ -400,14 +387,42 @@ void ServerList::refreshSelected()
 	}
 }
 
-void ServerList::removeAdditionalSortingForColumn(const QModelIndex &modelIndex)
+void ServerList::registerServer(ServerPtr server)
 {
-	proxyModel->removeAdditionalColumnSorting(modelIndex.column());
+	this->connect(server.data(), SIGNAL(updated(ServerPtr, int)),
+		SLOT(onServerUpdated(ServerPtr)));
+	this->connect(server.data(), SIGNAL(begunRefreshing(ServerPtr)),
+		SLOT(onServerBegunRefreshing(ServerPtr)));
+	model->addServer(server);
+	emit serverRegistered(server);
 }
 
 void ServerList::removeServer(const ServerPtr &server)
 {
+	server->disconnect(this);
 	model->removeServer(server);
+	emit serverDeregistered(server);
+}
+
+void ServerList::removeCustomServers()
+{
+	foreach (ServerPtr server, model->customServers())
+	{
+		removeServer(server);
+	}
+}
+
+void ServerList::removeNonSpecialServers()
+{
+	foreach (ServerPtr server, model->nonSpecialServers())
+	{
+		removeServer(server);
+	}
+}
+
+void ServerList::removeAdditionalSortingForColumn(const QModelIndex &modelIndex)
+{
+	proxyModel->removeAdditionalColumnSorting(modelIndex.column());
 }
 
 void ServerList::saveAdditionalSortingConfig()
@@ -422,7 +437,7 @@ void ServerList::saveColumnsWidthsSettings()
 	gConfig.doomseeker.serverListSortDirection = sortOrder;
 }
 
-QList<ServerPtr> ServerList::selectedServers()
+QList<ServerPtr> ServerList::selectedServers() const
 {
 	QModelIndexList indexList = table->selectionModel()->selectedRows();
 
@@ -436,7 +451,7 @@ QList<ServerPtr> ServerList::selectedServers()
 	return servers;
 }
 
-void ServerList::serverBegunRefreshing(const ServerPtr &server)
+void ServerList::onServerBegunRefreshing(const ServerPtr &server)
 {
 	model->setRefreshing(server);
 }
@@ -448,16 +463,21 @@ ServerPtr ServerList::serverFromIndex(const QModelIndex &index)
 	return model->serverFromList(indexReal);
 }
 
-void ServerList::serverUpdated(const ServerPtr &server, int response)
+QList<ServerPtr> ServerList::serversForPlugin(const EnginePlugin *plugin) const
+{
+	return model->serversForPlugin(plugin);
+}
+
+void ServerList::onServerUpdated(const ServerPtr &server)
 {
 	int rowIndex = model->findServerOnTheList(server.data());
 	if (rowIndex >= 0)
 	{
-		rowIndex = model->updateServer(rowIndex, server, response);
+		rowIndex = model->updateServer(rowIndex, server);
 	}
 	else
 	{
-		rowIndex = model->addServer(server, response);
+		rowIndex = model->addServer(server);
 	}
 
 	needsCleaning = true;
@@ -543,17 +563,4 @@ void ServerList::updateSearch(const QString& search)
 {
 	QRegExp pattern(QString("*") + search + "*", Qt::CaseInsensitive, QRegExp::Wildcard);
 	proxyModel->setFilterRegExp(pattern);
-}
-
-void ServerList::registerServer(ServerPtr server)
-{
-	this->connect(server.data(), SIGNAL(updated(ServerPtr, int)),
-		SLOT(serverUpdated(ServerPtr, int)));
-	this->connect(server.data(), SIGNAL(begunRefreshing(ServerPtr)),
-		SLOT(serverBegunRefreshing(ServerPtr)));
-}
-
-void ServerList::deregisterServer(const ServerPtr &server)
-{
-	server->disconnect(this);
 }

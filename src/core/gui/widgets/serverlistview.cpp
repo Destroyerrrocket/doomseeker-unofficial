@@ -25,6 +25,7 @@
 
 #include "configuration/doomseekerconfig.h"
 #include "gui/models/serverlistcolumn.h"
+#include "refresher/refresher.h"
 #include <QDebug>
 #include <QHeaderView>
 #include <QItemDelegate>
@@ -104,8 +105,13 @@ ServerListView::ServerListView(QWidget* parent) : QTableView(parent)
 	verticalHeader()->setDefaultSectionSize(fontMetrics().height() + 6);
 	setShowGrid(gConfig.doomseeker.bDrawGridInServerTable);
 
-	bAllowAllRowsRefresh = true;
+	allowedVisualAdjustment = true;
 	setItemDelegate(new CustomItemDelegate());
+
+	this->connect(gRefresher, SIGNAL(sleepingModeEnter()),
+		SLOT(allowVisualAdjustment()));
+	this->connect(gRefresher, SIGNAL(sleepingModeExit()),
+		SLOT(disallowVisualAdjustment()));
 }
 
 void ServerListView::mouseReleaseEvent(QMouseEvent* event)
@@ -195,8 +201,18 @@ void ServerListView::setupTableColumnWidths()
 
 void ServerListView::updateAllRows()
 {
-	if (bAllowAllRowsRefresh)
+	if (allowedVisualAdjustment)
 	{
 		resizeRowsToContents();
 	}
+}
+
+void ServerListView::allowVisualAdjustment()
+{
+	allowedVisualAdjustment = false;
+}
+
+void ServerListView::disallowVisualAdjustment()
+{
+	allowedVisualAdjustment = true;
 }
