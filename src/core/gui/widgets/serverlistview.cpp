@@ -24,6 +24,7 @@
 #include "gui/widgets/serverlistview.h"
 
 #include "configuration/doomseekerconfig.h"
+#include "gui/models/serverlistcolumn.h"
 #include <QDebug>
 #include <QHeaderView>
 #include <QItemDelegate>
@@ -146,6 +147,50 @@ void ServerListView::mouseDoubleClickEvent(QMouseEvent* event)
 			emit leftMouseDoubleClicked(index, event->pos());
 		}
 	}
+}
+
+void ServerListView::setupTableProperties()
+{
+	setIconSize(QSize(26, 15));
+	// We don't really need a vertical header so lets remove it.
+	verticalHeader()->hide();
+	// Some flags that can't be set from the Designer.
+	horizontalHeader()->setSortIndicatorShown(true);
+	horizontalHeader()->setHighlightSections(false);
+
+	setMouseTracking(true);
+
+	setupTableColumnWidths();
+}
+
+void ServerListView::setupTableColumnWidths()
+{
+	QString &headerState = gConfig.doomseeker.serverListColumnState;
+	if(headerState.isEmpty())
+	{
+		for (int i = 0; i < ServerListColumnId::NUM_SERVERLIST_COLUMNS; ++i)
+		{
+			ServerListColumn* columns = ServerListColumns::columns;
+			setColumnWidth(i, columns[i].width);
+			setColumnHidden(i, columns[i].bHidden);
+			if(!columns[i].bResizable)
+			{
+#if QT_VERSION >= 0x050000
+				horizontalHeader()->setSectionResizeMode(i, QHeaderView::Fixed);
+#else
+				horizontalHeader()->setResizeMode(i, QHeaderView::Fixed);
+#endif
+			}
+		}
+	}
+	else
+		horizontalHeader()->restoreState(QByteArray::fromBase64(headerState.toUtf8()));
+
+#if QT_VERSION >= 0x050000
+	horizontalHeader()->setSectionsMovable(true);
+#else
+	horizontalHeader()->setMovable(true);
+#endif
 }
 
 void ServerListView::updateAllRows()

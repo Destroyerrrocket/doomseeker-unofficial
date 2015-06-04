@@ -20,35 +20,22 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+#include "serverlist.h"
+
 #include "configuration/doomseekerconfig.h"
 #include "gui/remoteconsole.h"
-#include "gui/serverlist.h"
 #include "gui/models/serverlistcolumn.h"
 #include "gui/models/serverlistmodel.h"
 #include "gui/models/serverlistproxymodel.h"
-#include "gui/models/serverlistrowhandler.h"
 #include "gui/widgets/serverlistcontextmenu.h"
 #include "gui/widgets/serverlistview.h"
-#include "pathfinder/pathfinder.h"
-#include "pathfinder/wadpathfinder.h"
-#include "plugins/engineplugin.h"
 #include "refresher/refresher.h"
 #include "serverapi/tooltips/servertooltip.h"
-#include "serverapi/gameexeretriever.h"
-#include "serverapi/message.h"
-#include "serverapi/playerslist.h"
 #include "serverapi/server.h"
-#include "serverapi/serverstructs.h"
 #include "urlopener.h"
-#include <QApplication>
-#include <QClipboard>
-#include <QDesktopServices>
 #include <QHeaderView>
-#include <QMenu>
 #include <QMessageBox>
-#include <QStandardItem>
 #include <QToolTip>
-#include <QUrl>
 
 using namespace ServerListColumnId;
 
@@ -72,10 +59,7 @@ ServerListHandler::~ServerListHandler()
 void ServerListHandler::applyFilter(const ServerListFilterInfo& filterInfo)
 {
 	gConfig.serverFilter.info = filterInfo;
-
-	ServerListProxyModel* pModel = static_cast<ServerListProxyModel*>(table->model());
-	pModel->setFilterInfo(filterInfo);
-
+	sortingProxy->setFilterInfo(filterInfo);
 	needsCleaning = true;
 }
 
@@ -129,7 +113,7 @@ void ServerListHandler::columnHeaderClicked(int index)
 {
 	if (isSortingByColumn(index))
 	{
-		sortOrder = swapCurrentSortOrder();
+		sortOrder = swappedCurrentSortOrder();
 	}
 	else
 	{
@@ -146,13 +130,20 @@ void ServerListHandler::columnHeaderClicked(int index)
 void ServerListHandler::connectTableModelProxySlots()
 {
 	QHeaderView* header = table->horizontalHeader();
-	connect(header, SIGNAL( sectionClicked(int) ), this, SLOT ( columnHeaderClicked(int) ) );
-	connect(model, SIGNAL( modelCleared() ), this, SLOT( modelCleared() ) );
-	connect(table->selectionModel(), SIGNAL( selectionChanged(const QItemSelection&, const QItemSelection&) ), this, SLOT( itemSelected(const QItemSelection&) ));
-	connect(table, SIGNAL( middleMouseClicked(const QModelIndex&, const QPoint&) ), this, SLOT( tableMiddleClicked(const QModelIndex&, const QPoint&) ) );
-	connect(table, SIGNAL( rightMouseClicked(const QModelIndex&, const QPoint&) ), this, SLOT ( tableRightClicked(const QModelIndex&, const QPoint&)) );
-	connect(table, SIGNAL( entered(const QModelIndex&) ), this, SLOT ( mouseEntered(const QModelIndex&)) );
-	connect(table, SIGNAL( leftMouseDoubleClicked(const QModelIndex&, const QPoint&)), this, SLOT( doubleClicked(const QModelIndex&)) );
+	this->connect(header, SIGNAL(sectionClicked(int)), SLOT(columnHeaderClicked(int)));
+
+	this->connect(model, SIGNAL(modelCleared()), SLOT(modelCleared()));
+
+	this->connect(table->selectionModel(),
+		SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
+		SLOT(itemSelected(QItemSelection)));
+	this->connect(table, SIGNAL(middleMouseClicked(QModelIndex, QPoint)),
+		SLOT(tableMiddleClicked(QModelIndex, QPoint)));
+	this->connect(table, SIGNAL(rightMouseClicked(QModelIndex, QPoint)),
+		SLOT(tableRightClicked(QModelIndex, QPoint)));
+	this->connect(table, SIGNAL(entered(QModelIndex)), SLOT(mouseEntered(QModelIndex)));
+	this->connect(table, SIGNAL(leftMouseDoubleClicked(QModelIndex, QPoint)),
+		SLOT(doubleClicked(QModelIndex)));
 }
 
 void ServerListHandler::contextMenuAboutToHide()
@@ -247,7 +238,7 @@ ServerListProxyModel *ServerListHandler::createSortingProxy(ServerListModel* ser
 		SLOT(saveAdditionalSortingConfig()));
 	proxy->setSourceModel(serverListModel);
 	proxy->setSortRole(ServerListModel::SLDT_SORT);
-	proxy->setSortCaseSensitivity( Qt::CaseInsensitive );
+	proxy->setSortCaseSensitivity(Qt::CaseInsensitive);
 	proxy->setFilterKeyColumn(IDServerName);
 
 	return proxy;
@@ -371,7 +362,14 @@ void ServerListHandler::prepareServerTable()
 	sortingProxy = createSortingProxy(model);
 
 	columnHeaderClicked(IDPlayers);
-	setupTableProperties(sortingProxy);
+	table->setModel(sortingProxy);
+	table->setupTableProperties();
+
+	if(gConfig.doomseeker.serverListSortIndex >= 0)
+	{
+		sortIndex = gConfig.doomseeker.serverListSortIndex;
+		sortOrder = static_cast<Qt::SortOrder> (gConfig.doomseeker.serverListSortDirection);
+	}
 
 	connectTableModelProxySlots();
 	sortingProxy->setAdditionalSortColumns(gConfig.doomseeker.additionalSortColumns());
@@ -426,14 +424,12 @@ void ServerListHandler::saveColumnsWidthsSettings()
 
 QList<ServerPtr> ServerListHandler::selectedServers()
 {
-	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
-	QItemSelectionModel* selModel = table->selectionModel();
-	QModelIndexList indexList = selModel->selectedRows();
+	QModelIndexList indexList = table->selectionModel()->selectedRows();
 
 	QList<ServerPtr> servers;
 	for(int i = 0; i < indexList.count(); ++i)
 	{
-		QModelIndex realIndex = pModel->mapToSource(indexList[i]);
+		QModelIndex realIndex = sortingProxy->mapToSource(indexList[i]);
 		ServerPtr server = model->serverFromList(realIndex);
 		servers.append(server);
 	}
@@ -479,73 +475,15 @@ void ServerListHandler::setGroupServersWithPlayersAtTop(bool b)
 	sortingProxy->setGroupServersWithPlayersAtTop(b);
 }
 
-void ServerListHandler::setupTableColumnWidths()
-{
-	QString &headerState = gConfig.doomseeker.serverListColumnState;
-	if(headerState.isEmpty())
-	{
-		for (int i = 0; i < NUM_SERVERLIST_COLUMNS; ++i)
-		{
-			ServerListColumn* columns = ServerListColumns::columns;
-			table->setColumnWidth(i, columns[i].width);
-			table->setColumnHidden(i, columns[i].bHidden);
-			if(!columns[i].bResizable)
-			{
-#if QT_VERSION >= 0x050000
-				table->horizontalHeader()->setSectionResizeMode(i, QHeaderView::Fixed);
-#else
-				table->horizontalHeader()->setResizeMode(i, QHeaderView::Fixed);
-#endif
-			}
-		}
-	}
-	else
-		table->horizontalHeader()->restoreState(QByteArray::fromBase64(headerState.toUtf8()));
-
-#if QT_VERSION >= 0x050000
-	table->horizontalHeader()->setSectionsMovable(true);
-#else
-	table->horizontalHeader()->setMovable(true);
-#endif
-
-	if(gConfig.doomseeker.serverListSortIndex >= 0)
-	{
-		sortIndex = gConfig.doomseeker.serverListSortIndex;
-		sortOrder = static_cast<Qt::SortOrder> (gConfig.doomseeker.serverListSortDirection);
-	}
-}
-
-void ServerListHandler::setupTableProperties(QSortFilterProxyModel* tableModel)
-{
-	table->setModel(tableModel);
-	table->setIconSize(QSize(26, 15));
-	// We don't really need a vertical header so lets remove it.
-	table->verticalHeader()->hide();
-	// Some flags that can't be set from the Designer.
-	table->horizontalHeader()->setSortIndicatorShown(true);
-	table->horizontalHeader()->setHighlightSections(false);
-
-	table->setMouseTracking(true);
-
-	setupTableColumnWidths();
-}
-
 void ServerListHandler::sortAdditionally(const QModelIndex &modelIndex, Qt::SortOrder order)
 {
 	ServerListProxyModel* model = static_cast<ServerListProxyModel*>(table->model());
 	model->addAdditionalColumnSorting(modelIndex.column(), order);
 }
 
-Qt::SortOrder ServerListHandler::swapCurrentSortOrder()
+Qt::SortOrder ServerListHandler::swappedCurrentSortOrder()
 {
-	if (sortOrder == Qt::AscendingOrder)
-	{
-		return Qt::DescendingOrder;
-	}
-	else
-	{
-		return Qt::AscendingOrder;
-	}
+	return sortOrder == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
 }
 
 void ServerListHandler::tableMiddleClicked(const QModelIndex& index, const QPoint& cursorPosition)
@@ -557,9 +495,8 @@ void ServerListHandler::tableRightClicked(const QModelIndex& index, const QPoint
 {
 	ServerPtr server = serverFromIndex(index);
 
-	ServerListProxyModel* pModel = static_cast<ServerListProxyModel*>(table->model());
 	ServerListContextMenu *contextMenu = new ServerListContextMenu(server,
-		pModel->filterInfo(), index, this);
+		sortingProxy->filterInfo(), index, this);
 	this->connect(contextMenu, SIGNAL(aboutToHide()), SLOT(contextMenuAboutToHide()));
 	this->connect(contextMenu, SIGNAL(triggered(QAction*)), SLOT(contextMenuTriggered(QAction*)));
 

@@ -27,6 +27,7 @@
 #include <QTableView>
 
 class QMouseEvent;
+class ServerListProxyModel;
 
 #define USERROLE_RIGHTALIGNDECORATION 1
 
@@ -41,6 +42,7 @@ class ServerListView : public QTableView
 		 *	Enables or disables update of row visuals.
 		 */
 		void setAllowAllRowsRefresh(bool b) { bAllowAllRowsRefresh = b; }
+		void setupTableProperties();
 
 	public slots:
 		void updateAllRows();
@@ -50,6 +52,9 @@ class ServerListView : public QTableView
 
 		virtual void mouseReleaseEvent(QMouseEvent* event);
 		virtual void mouseDoubleClickEvent(QMouseEvent* event);
+
+	private:
+		void setupTableColumnWidths();
 
 	signals:
 		void leftMouseDoubleClicked(const QModelIndex& index, const QPoint& cursorPosition);

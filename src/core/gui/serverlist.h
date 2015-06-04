@@ -97,14 +97,6 @@ class ServerListHandler : public QObject
 		void updateCountryFlags();
 		void updateSearch(const QString& search);
 
-	protected slots:
-		/// Handles column sorting.
-		void columnHeaderClicked(int);
-		void doubleClicked(const QModelIndex&);
-		void itemSelected(const QItemSelection&);
-		void modelCleared();
-		void mouseEntered(const QModelIndex&);
-
 	signals:
 		/**
 		 * Emitted when a request for join command line show is called.
@@ -126,7 +118,7 @@ class ServerListHandler : public QObject
 		void serverDoubleClicked(const ServerPtr&);
 		void serversSelected(QList<ServerPtr>&);
 
-	protected:
+	private:
 		QTimer cleanerTimer;
 
 		QWidget* mainWindow;
@@ -141,6 +133,7 @@ class ServerListHandler : public QObject
 		bool areColumnsWidthsSettingsChanged();
 
 		void connectTableModelProxySlots();
+		void clearAdditionalSorting();
 
 		ServerListModel* createModel();
 		ServerListProxyModel *createSortingProxy(ServerListModel* serverListModel);
@@ -151,23 +144,26 @@ class ServerListHandler : public QObject
 
 		void prepareServerTable();
 
+		void removeAdditionalSortingForColumn(const QModelIndex &modelIndex);
 		void saveColumnsWidthsSettings();
 
 		void setupTableColumnWidths();
 		void setupTableProperties(QSortFilterProxyModel* tableModel);
 
-		Qt::SortOrder swapCurrentSortOrder();
+		void sortAdditionally(const QModelIndex &modelIndex, Qt::SortOrder order);
+
+		Qt::SortOrder swappedCurrentSortOrder();
 
 		void updateCountryFlags(bool force);
 
-	private:
-		void clearAdditionalSorting();
-		void removeAdditionalSortingForColumn(const QModelIndex &modelIndex);
-		void sortAdditionally(const QModelIndex &modelIndex, Qt::SortOrder order);
-
 	private slots:
+		void columnHeaderClicked(int);
 		void contextMenuAboutToHide();
 		void contextMenuTriggered(QAction* action);
+		void doubleClicked(const QModelIndex&);
+		void itemSelected(const QItemSelection&);
+		void modelCleared();
+		void mouseEntered(const QModelIndex&);
 		void saveAdditionalSortingConfig();
 		void updateHeaderTitles();
 };
