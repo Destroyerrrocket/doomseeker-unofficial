@@ -168,7 +168,7 @@ public:
 	LogDock* logDock;
 	ServerDetailsDock* detailsDock;
 	ServerFilterDock* serverFilterDock;
-	ServerListHandler* serverTableHandler;
+	ServerList* serverList;
 
 	MasterManager* masterManager;
 	QHash<const EnginePlugin*, QueryMenuAction*> queryMenuPorts;
@@ -240,15 +240,15 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	splitDockWidget(d->mainDock, d->serverFilterDock, Qt::Horizontal);
 
 	// Spawn Server Table Handler.
-	d->serverTableHandler = new ServerListHandler(d->tableServers, this);
+	d->serverList = new ServerList(d->tableServers, this);
 	connectEntities();
 
 	d->broadcastManager = new BroadcastManager(this);
-	d->serverTableHandler->connect(d->broadcastManager,
+	d->serverList->connect(d->broadcastManager,
 		SIGNAL(newServerDetected(ServerPtr, int)), SLOT(serverUpdated(ServerPtr, int)));
-	d->serverTableHandler->connect(d->broadcastManager,
+	d->serverList->connect(d->broadcastManager,
 		SIGNAL(newServerDetected(ServerPtr, int)), SLOT(registerServer(ServerPtr)));
-	d->serverTableHandler->connect(d->broadcastManager,
+	d->serverList->connect(d->broadcastManager,
 		SIGNAL(serverLost(ServerPtr)), SLOT(deregisterServer(ServerPtr)));
 
 	initServerDetailsDock();
@@ -269,7 +269,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	fillQueryMenu(d->masterManager);
 
 	// Init custom servers
-	d->masterManager->customServs()->readConfig(d->serverTableHandler,
+	d->masterManager->customServs()->readConfig(d->serverList,
 		SLOT(serverUpdated(ServerPtr, int)),
 		SLOT(serverBegunRefreshing(ServerPtr)) );
 
@@ -345,7 +345,7 @@ MainWindow::~MainWindow()
 		d->trayIconMenu = NULL;
 	}
 
-	delete d->serverTableHandler;
+	delete d->serverList;
 
 	if(d->masterManager != NULL)
 	{
@@ -393,7 +393,7 @@ void MainWindow::changeEvent(QEvent* event)
 {
 	if (event->type() == QEvent::ActivationChange && isActiveWindow() && !isMinimized() && !isHidden())
 	{
-		d->serverTableHandler->cleanUp();
+		d->serverList->cleanUp();
 		event->accept();
 	}
 	QMainWindow::changeEvent(event);
@@ -546,14 +546,14 @@ void MainWindow::connectEntities()
 	connect(d->serverFilterDock, SIGNAL(filterUpdated(const ServerListFilterInfo&)),
 		this, SLOT(updateServerFilter(const ServerListFilterInfo&)) );
 	connect(d->serverFilterDock, SIGNAL(nonEmptyServerGroupingAtTopToggled(bool)),
-		d->serverTableHandler, SLOT(setGroupServersWithPlayersAtTop(bool)) );
-	connect(d->serverTableHandler, SIGNAL(serverFilterModified(ServerListFilterInfo)),
+		d->serverList, SLOT(setGroupServersWithPlayersAtTop(bool)) );
+	connect(d->serverList, SIGNAL(serverFilterModified(ServerListFilterInfo)),
 		d->serverFilterDock, SLOT(setFilterInfo(ServerListFilterInfo)));
-	connect(d->serverTableHandler, SIGNAL( serverDoubleClicked(ServerPtr) ), this, SLOT( runGame(ServerPtr) ) );
-	connect(d->serverTableHandler, SIGNAL( displayServerJoinCommandLine(const ServerPtr&) ), this, SLOT( showServerJoinCommandLine(const ServerPtr&) ) );
-	connect(d->serverTableHandler, SIGNAL( findMissingWADs(const ServerPtr&) ), this, SLOT( findMissingWADs(const ServerPtr&) ) );
-	connect(d->serverTableHandler, SIGNAL( serverInfoUpdated(ServerPtr) ), this, SLOT( serverAddedToList(ServerPtr) ) );
-	connect(d->buddiesList, SIGNAL(scanCompleted()), d->serverTableHandler, SLOT(redraw()));
+	connect(d->serverList, SIGNAL( serverDoubleClicked(ServerPtr) ), this, SLOT( runGame(ServerPtr) ) );
+	connect(d->serverList, SIGNAL( displayServerJoinCommandLine(const ServerPtr&) ), this, SLOT( showServerJoinCommandLine(const ServerPtr&) ) );
+	connect(d->serverList, SIGNAL( findMissingWADs(const ServerPtr&) ), this, SLOT( findMissingWADs(const ServerPtr&) ) );
+	connect(d->serverList, SIGNAL( serverInfoUpdated(ServerPtr) ), this, SLOT( serverAddedToList(ServerPtr) ) );
+	connect(d->buddiesList, SIGNAL(scanCompleted()), d->serverList, SLOT(redraw()));
 }
 
 void MainWindow::fillQueryMenu(MasterManager* masterManager)
@@ -578,7 +578,7 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		if (plugin->data()->hasBroadcast())
 		{
 			d->broadcastManager->registerPlugin(plugin);
-			d->serverTableHandler->connect(plugin->data()->broadcast,
+			d->serverList->connect(plugin->data()->broadcast,
 				SIGNAL(serverLost(ServerPtr)), SLOT(removeServer(ServerPtr)));
 		}
 
@@ -663,21 +663,21 @@ void MainWindow::finishConfiguration(DoomseekerConfigurationDialog &configDialog
 	if (configDialog.appearanceChanged())
 	{
 		d->tableServers->setShowGrid(gConfig.doomseeker.bDrawGridInServerTable);
-		d->serverTableHandler->redraw();
+		d->serverList->redraw();
 		initTrayIcon();
 	}
 
 	// Do the following only if setting changed from false to true.
 	if (lookupHostsChanged)
 	{
-		d->serverTableHandler->lookupHosts();
+		d->serverList->lookupHosts();
 	}
 
 	// Refresh custom servers list:
 	if (configDialog.customServersChanged())
 	{
-		d->serverTableHandler->serverModel()->removeCustomServers();
-		d->masterManager->customServs()->readConfig(d->serverTableHandler, SLOT(serverUpdated(ServerPtr, int)), SLOT(serverBegunRefreshing(ServerPtr)) );
+		d->serverList->serverModel()->removeCustomServers();
+		d->masterManager->customServs()->readConfig(d->serverList, SLOT(serverUpdated(ServerPtr, int)), SLOT(serverBegunRefreshing(ServerPtr)) );
 		refreshCustomServers();
 	}
 }
@@ -692,10 +692,10 @@ void MainWindow::finishedQueryingMaster(MasterClient* master)
 	for(int i = 0;i < master->numServers();i++)
 	{
 		connect((*master)[i].data(), SIGNAL(updated(ServerPtr, int)),
-			d->serverTableHandler, SLOT(serverUpdated(ServerPtr, int)) );
+			d->serverList, SLOT(serverUpdated(ServerPtr, int)) );
 
 		connect((*master)[i].data(), SIGNAL(begunRefreshing(ServerPtr)),
-			d->serverTableHandler, SLOT(serverBegunRefreshing(ServerPtr)) );
+			d->serverList, SLOT(serverBegunRefreshing(ServerPtr)) );
 	}
 }
 
@@ -730,7 +730,7 @@ void MainWindow::getServers()
 	d->bTotalRefreshInProcess = true;
 	d->autoRefreshTimer.stop();
 	gLog << tr("Total refresh process initialized!");
-	d->serverTableHandler->clearTable();
+	d->serverList->clearTable();
 	refreshCustomServers();
 	refreshLanServers();
 
@@ -895,7 +895,7 @@ void MainWindow::initServerDetailsDock()
 	d->detailsDock->hide();
 	addDockWidget(Qt::BottomDockWidgetArea, d->detailsDock);
 
-	d->detailsDock->connect(d->serverTableHandler, SIGNAL( serversSelected(QList<ServerPtr>&) ), SLOT( displaySelection(QList<ServerPtr> &) ));
+	d->detailsDock->connect(d->serverList, SIGNAL( serversSelected(QList<ServerPtr>&) ), SLOT( displaySelection(QList<ServerPtr> &) ));
 }
 
 void MainWindow::initServerFilterDock()
@@ -952,7 +952,7 @@ void MainWindow::ip2cDownloadProgress(qint64 current, qint64 max)
 void MainWindow::ip2cJobsFinished()
 {
 	d->menuActionUpdateIP2C->setEnabled(true);
-	d->serverTableHandler->updateCountryFlags();
+	d->serverList->updateCountryFlags();
 	d->ip2cUpdateProgressBar->hide();
 
 	if (d->ip2cLoader != NULL)
@@ -1265,7 +1265,7 @@ void MainWindow::refreshCustomServers()
 	for(int i = 0;i < customServers->numServers();i++)
 	{
 		ServerPtr server = (*customServers)[i];
-		d->serverTableHandler->serverUpdated(server, Server::RESPONSE_NO_RESPONSE_YET);
+		d->serverList->serverUpdated(server, Server::RESPONSE_NO_RESPONSE_YET);
 		gRefresher->registerServer(server.data());
 	}
 }
@@ -1274,7 +1274,7 @@ void MainWindow::refreshLanServers()
 {
 	foreach (ServerPtr server, d->broadcastManager->servers())
 	{
-		d->serverTableHandler->serverUpdated(server, server->lastResponse());
+		d->serverList->serverUpdated(server, server->lastResponse());
 		gRefresher->registerServer(server.data());
 	}
 }
@@ -1282,7 +1282,7 @@ void MainWindow::refreshLanServers()
 void MainWindow::refreshThreadBeginsWork()
 {
 	// disable refresh.
-	d->serverTableHandler->serverTable()->setAllowAllRowsRefresh(false);
+	d->serverList->serverTable()->setAllowAllRowsRefresh(false);
 	statusBar()->showMessage(tr("Querying..."));
 }
 
@@ -1290,8 +1290,8 @@ void MainWindow::refreshThreadEndsWork()
 {
 	d->toolBarGetServers->setEnabled(true);
 
-	d->serverTableHandler->serverTable()->setAllowAllRowsRefresh(true);
-	d->serverTableHandler->cleanUpForce();
+	d->serverList->serverTable()->setAllowAllRowsRefresh(true);
+	d->serverList->cleanUpForce();
 	statusBar()->showMessage(tr("Done"));
 	updateTrayIconTooltipAndLogTotalRefresh();
 
@@ -1301,7 +1301,7 @@ void MainWindow::refreshThreadEndsWork()
 	}
 
 	d->bTotalRefreshInProcess = false;
-	QList<ServerPtr> selectedServers = d->serverTableHandler->selectedServers();
+	QList<ServerPtr> selectedServers = d->serverList->selectedServers();
 	d->detailsDock->displaySelection(selectedServers);
 }
 
@@ -1554,7 +1554,7 @@ void MainWindow::updateMasterAddresses()
 
 void MainWindow::updateServerFilter(const ServerListFilterInfo& filterInfo)
 {
-	d->serverTableHandler->applyFilter(filterInfo);
+	d->serverList->applyFilter(filterInfo);
 	d->lblServerFilterApplied->setVisible(filterInfo.isFilteringAnything());
 }
 

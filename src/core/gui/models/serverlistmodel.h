@@ -28,13 +28,13 @@
 
 class Server;
 class ServerListSortFilterProxyModel;
-class ServerListHandler;
+class ServerList;
 
 class ServerListModel : public QStandardItemModel
 {
 	Q_OBJECT
 
-	friend class ServerListHandler;
+	friend class ServerList;
 	friend class ServerListProxyModel;
 
 	public:
@@ -65,7 +65,7 @@ class ServerListModel : public QStandardItemModel
 			SLDT_SORT = Qt::UserRole+2
 		};
 
-		ServerListModel(ServerListHandler* parent);
+		ServerListModel(ServerList* parent);
 
 		/**
 		 * @return New row index.
@@ -81,7 +81,7 @@ class ServerListModel : public QStandardItemModel
 		 */
 		int findServerOnTheList(const Server* server);
 
-		ServerListHandler* handler() { return parentHandler; }
+		ServerList* handler() { return parentHandler; }
 
 		/**
 		 *	Enforces update of a given row. No modificiation is done
@@ -121,7 +121,7 @@ class ServerListModel : public QStandardItemModel
 
 		QVariant columnSortData(int row, int column);
 
-		ServerListHandler* parentHandler;
+		ServerList* parentHandler;
 };
 
 #endif

@@ -39,9 +39,9 @@
 
 using namespace ServerListColumnId;
 
-ServerListHandler::ServerListHandler(ServerListView* serverTable, QWidget* pMainWindow)
+ServerList::ServerList(ServerListView* serverTable, QWidget* pMainWindow)
 : mainWindow(pMainWindow), model(NULL),
-  sortingProxy(NULL), sortOrder(Qt::AscendingOrder),
+  proxyModel(NULL), sortOrder(Qt::AscendingOrder),
   sortIndex(-1), table(serverTable)
 {
 	prepareServerTable();
@@ -51,19 +51,19 @@ ServerListHandler::ServerListHandler(ServerListView* serverTable, QWidget* pMain
 	initCleanerTimer();
 }
 
-ServerListHandler::~ServerListHandler()
+ServerList::~ServerList()
 {
 	saveColumnsWidthsSettings();
 }
 
-void ServerListHandler::applyFilter(const ServerListFilterInfo& filterInfo)
+void ServerList::applyFilter(const ServerListFilterInfo& filterInfo)
 {
 	gConfig.serverFilter.info = filterInfo;
-	sortingProxy->setFilterInfo(filterInfo);
+	proxyModel->setFilterInfo(filterInfo);
 	needsCleaning = true;
 }
 
-bool ServerListHandler::areColumnsWidthsSettingsChanged()
+bool ServerList::areColumnsWidthsSettingsChanged()
 {
 	for(int i = 0; i < NUM_SERVERLIST_COLUMNS; ++i)
 	{
@@ -76,12 +76,12 @@ bool ServerListHandler::areColumnsWidthsSettingsChanged()
 	return false;
 }
 
-void ServerListHandler::clearTable()
+void ServerList::clearTable()
 {
 	model->destroyRows();
 }
 
-void ServerListHandler::cleanUp()
+void ServerList::cleanUp()
 {
 	if (needsCleaning && mainWindow->isActiveWindow())
 	{
@@ -98,18 +98,18 @@ void ServerListHandler::cleanUp()
 	}
 }
 
-void ServerListHandler::cleanUpForce()
+void ServerList::cleanUpForce()
 {
 	needsCleaning = true;
 	cleanUp();
 }
 
-void ServerListHandler::clearAdditionalSorting()
+void ServerList::clearAdditionalSorting()
 {
-	sortingProxy->clearAdditionalSorting();
+	proxyModel->clearAdditionalSorting();
 }
 
-void ServerListHandler::columnHeaderClicked(int index)
+void ServerList::columnHeaderClicked(int index)
 {
 	if (isSortingByColumn(index))
 	{
@@ -127,7 +127,7 @@ void ServerListHandler::columnHeaderClicked(int index)
 	header->setSortIndicator(sortIndex, sortOrder);
 }
 
-void ServerListHandler::connectTableModelProxySlots()
+void ServerList::connectTableModelProxySlots()
 {
 	QHeaderView* header = table->horizontalHeader();
 	this->connect(header, SIGNAL(sectionClicked(int)), SLOT(columnHeaderClicked(int)));
@@ -146,12 +146,12 @@ void ServerListHandler::connectTableModelProxySlots()
 		SLOT(doubleClicked(QModelIndex)));
 }
 
-void ServerListHandler::contextMenuAboutToHide()
+void ServerList::contextMenuAboutToHide()
 {
 	sender()->deleteLater();
 }
 
-void ServerListHandler::contextMenuTriggered(QAction* action)
+void ServerList::contextMenuTriggered(QAction* action)
 {
 	ServerListContextMenu *contextMenu = static_cast<ServerListContextMenu*>(sender());
 	ServerPtr server = contextMenu->server();
@@ -217,19 +217,19 @@ void ServerListHandler::contextMenuTriggered(QAction* action)
 
 		default:
 			QMessageBox::warning(mainWindow, tr("Doomseeker - context menu warning"),
-				tr("Unhandled behavior in ServerListHandler::contextMenuTriggered()"));
+				tr("Unhandled behavior in ServerList::contextMenuTriggered()"));
 			break;
 	}
 }
 
-ServerListModel* ServerListHandler::createModel()
+ServerListModel* ServerList::createModel()
 {
 	ServerListModel* serverListModel = new ServerListModel(this);
 	serverListModel->prepareHeaders();
 	return serverListModel;
 }
 
-ServerListProxyModel *ServerListHandler::createSortingProxy(ServerListModel* serverListModel)
+ServerListProxyModel *ServerList::createSortingProxy(ServerListModel* serverListModel)
 {
 	ServerListProxyModel* proxy = new ServerListProxyModel(this);
 	this->connect(proxy, SIGNAL(additionalSortColumnsChanged()),
@@ -244,45 +244,45 @@ ServerListProxyModel *ServerListHandler::createSortingProxy(ServerListModel* ser
 	return proxy;
 }
 
-void ServerListHandler::doubleClicked(const QModelIndex& index)
+void ServerList::doubleClicked(const QModelIndex& index)
 {
 	emit serverDoubleClicked(serverFromIndex(index));
 }
 
-Qt::SortOrder ServerListHandler::getColumnDefaultSortOrder(int columnId)
+Qt::SortOrder ServerList::getColumnDefaultSortOrder(int columnId)
 {
 	// Right now we can assume that columnIndex == columnId.
 	return ServerListColumns::columns[columnId].defaultSortOrder;
 }
 
-bool ServerListHandler::hasAtLeastOneServer() const
+bool ServerList::hasAtLeastOneServer() const
 {
 	return model->rowCount() > 0;
 }
 
-void ServerListHandler::initCleanerTimer()
+void ServerList::initCleanerTimer()
 {
 	cleanerTimer.setInterval(200);
 	cleanerTimer.start();
 	connect(&cleanerTimer, SIGNAL( timeout() ), this, SLOT ( cleanUp() ) );
 }
 
-bool ServerListHandler::isAnyColumnSortedAdditionally() const
+bool ServerList::isAnyColumnSortedAdditionally() const
 {
-	return sortingProxy->isAnyColumnSortedAdditionally();
+	return proxyModel->isAnyColumnSortedAdditionally();
 }
 
-bool ServerListHandler::isSortingAdditionallyByColumn(int column) const
+bool ServerList::isSortingAdditionallyByColumn(int column) const
 {
-	return sortingProxy->isSortingAdditionallyByColumn(column);
+	return proxyModel->isSortingAdditionallyByColumn(column);
 }
 
-bool ServerListHandler::isSortingByColumn(int columnIndex)
+bool ServerList::isSortingByColumn(int columnIndex)
 {
 	return sortIndex == columnIndex;
 }
 
-void ServerListHandler::itemSelected(const QItemSelection& selection)
+void ServerList::itemSelected(const QItemSelection& selection)
 {
 	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
 	QModelIndexList indexList = selection.indexes();
@@ -297,7 +297,7 @@ void ServerListHandler::itemSelected(const QItemSelection& selection)
 	emit serversSelected(servers);
 }
 
-void ServerListHandler::lookupHosts()
+void ServerList::lookupHosts()
 {
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
@@ -306,13 +306,13 @@ void ServerListHandler::lookupHosts()
 	}
 }
 
-void ServerListHandler::modelCleared()
+void ServerList::modelCleared()
 {
 	QList<ServerPtr> servers;
 	emit serversSelected(servers);
 }
 
-void ServerListHandler::mouseEntered(const QModelIndex& index)
+void ServerList::mouseEntered(const QModelIndex& index)
 {
 	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
 	QModelIndex realIndex = pModel->mapToSource(index);
@@ -356,13 +356,13 @@ void ServerListHandler::mouseEntered(const QModelIndex& index)
 	QToolTip::showText(QCursor::pos(), tooltip, NULL);
 }
 
-void ServerListHandler::prepareServerTable()
+void ServerList::prepareServerTable()
 {
 	model = createModel();
-	sortingProxy = createSortingProxy(model);
+	proxyModel = createSortingProxy(model);
 
 	columnHeaderClicked(IDPlayers);
-	table->setModel(sortingProxy);
+	table->setModel(proxyModel);
 	table->setupTableProperties();
 
 	if(gConfig.doomseeker.serverListSortIndex >= 0)
@@ -372,15 +372,15 @@ void ServerListHandler::prepareServerTable()
 	}
 
 	connectTableModelProxySlots();
-	sortingProxy->setAdditionalSortColumns(gConfig.doomseeker.additionalSortColumns());
+	proxyModel->setAdditionalSortColumns(gConfig.doomseeker.additionalSortColumns());
 }
 
-void ServerListHandler::redraw()
+void ServerList::redraw()
 {
 	model->redrawAll();
 }
 
-void ServerListHandler::refreshAll()
+void ServerList::refreshAll()
 {
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
@@ -388,67 +388,67 @@ void ServerListHandler::refreshAll()
 	}
 }
 
-void ServerListHandler::refreshSelected()
+void ServerList::refreshSelected()
 {
 	QItemSelectionModel* selectionModel = table->selectionModel();
 	QModelIndexList indexList = selectionModel->selectedRows();
 
 	for(int i = 0; i < indexList.count(); ++i)
 	{
-		QModelIndex realIndex = sortingProxy->mapToSource(indexList[i]);
+		QModelIndex realIndex = proxyModel->mapToSource(indexList[i]);
 		gRefresher->registerServer(model->serverFromList(realIndex).data());
 	}
 }
 
-void ServerListHandler::removeAdditionalSortingForColumn(const QModelIndex &modelIndex)
+void ServerList::removeAdditionalSortingForColumn(const QModelIndex &modelIndex)
 {
-	sortingProxy->removeAdditionalColumnSorting(modelIndex.column());
+	proxyModel->removeAdditionalColumnSorting(modelIndex.column());
 }
 
-void ServerListHandler::removeServer(const ServerPtr &server)
+void ServerList::removeServer(const ServerPtr &server)
 {
 	model->removeServer(server);
 }
 
-void ServerListHandler::saveAdditionalSortingConfig()
+void ServerList::saveAdditionalSortingConfig()
 {
-	gConfig.doomseeker.setAdditionalSortColumns(sortingProxy->additionalSortColumns());
+	gConfig.doomseeker.setAdditionalSortColumns(proxyModel->additionalSortColumns());
 }
 
-void ServerListHandler::saveColumnsWidthsSettings()
+void ServerList::saveColumnsWidthsSettings()
 {
 	gConfig.doomseeker.serverListColumnState = table->horizontalHeader()->saveState().toBase64();
 	gConfig.doomseeker.serverListSortIndex = sortIndex;
 	gConfig.doomseeker.serverListSortDirection = sortOrder;
 }
 
-QList<ServerPtr> ServerListHandler::selectedServers()
+QList<ServerPtr> ServerList::selectedServers()
 {
 	QModelIndexList indexList = table->selectionModel()->selectedRows();
 
 	QList<ServerPtr> servers;
 	for(int i = 0; i < indexList.count(); ++i)
 	{
-		QModelIndex realIndex = sortingProxy->mapToSource(indexList[i]);
+		QModelIndex realIndex = proxyModel->mapToSource(indexList[i]);
 		ServerPtr server = model->serverFromList(realIndex);
 		servers.append(server);
 	}
 	return servers;
 }
 
-void ServerListHandler::serverBegunRefreshing(const ServerPtr &server)
+void ServerList::serverBegunRefreshing(const ServerPtr &server)
 {
 	model->setRefreshing(server);
 }
 
-ServerPtr ServerListHandler::serverFromIndex(const QModelIndex &index)
+ServerPtr ServerList::serverFromIndex(const QModelIndex &index)
 {
 	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());
 	QModelIndex indexReal = pModel->mapToSource(index);
 	return model->serverFromList(indexReal);
 }
 
-void ServerListHandler::serverUpdated(const ServerPtr &server, int response)
+void ServerList::serverUpdated(const ServerPtr &server, int response)
 {
 	int rowIndex = model->findServerOnTheList(server.data());
 	if (rowIndex >= 0)
@@ -464,39 +464,39 @@ void ServerListHandler::serverUpdated(const ServerPtr &server, int response)
 	emit serverInfoUpdated(server);
 }
 
-void ServerListHandler::setCountryFlagsIfNotPresent()
+void ServerList::setCountryFlagsIfNotPresent()
 {
 	const bool FORCE = true;
 	updateCountryFlags(!FORCE);
 }
 
-void ServerListHandler::setGroupServersWithPlayersAtTop(bool b)
+void ServerList::setGroupServersWithPlayersAtTop(bool b)
 {
-	sortingProxy->setGroupServersWithPlayersAtTop(b);
+	proxyModel->setGroupServersWithPlayersAtTop(b);
 }
 
-void ServerListHandler::sortAdditionally(const QModelIndex &modelIndex, Qt::SortOrder order)
+void ServerList::sortAdditionally(const QModelIndex &modelIndex, Qt::SortOrder order)
 {
 	ServerListProxyModel* model = static_cast<ServerListProxyModel*>(table->model());
 	model->addAdditionalColumnSorting(modelIndex.column(), order);
 }
 
-Qt::SortOrder ServerListHandler::swappedCurrentSortOrder()
+Qt::SortOrder ServerList::swappedCurrentSortOrder()
 {
 	return sortOrder == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
 }
 
-void ServerListHandler::tableMiddleClicked(const QModelIndex& index, const QPoint& cursorPosition)
+void ServerList::tableMiddleClicked(const QModelIndex& index, const QPoint& cursorPosition)
 {
 	refreshSelected();
 }
 
-void ServerListHandler::tableRightClicked(const QModelIndex& index, const QPoint& cursorPosition)
+void ServerList::tableRightClicked(const QModelIndex& index, const QPoint& cursorPosition)
 {
 	ServerPtr server = serverFromIndex(index);
 
 	ServerListContextMenu *contextMenu = new ServerListContextMenu(server,
-		sortingProxy->filterInfo(), index, this);
+		proxyModel->filterInfo(), index, this);
 	this->connect(contextMenu, SIGNAL(aboutToHide()), SLOT(contextMenuAboutToHide()));
 	this->connect(contextMenu, SIGNAL(triggered(QAction*)), SLOT(contextMenuTriggered(QAction*)));
 
@@ -504,13 +504,13 @@ void ServerListHandler::tableRightClicked(const QModelIndex& index, const QPoint
 	contextMenu->popup(displayPoint);
 }
 
-void ServerListHandler::updateCountryFlags()
+void ServerList::updateCountryFlags()
 {
 	const bool FORCE = true;
 	updateCountryFlags(FORCE);
 }
 
-void ServerListHandler::updateCountryFlags(bool force)
+void ServerList::updateCountryFlags(bool force)
 {
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
@@ -518,9 +518,9 @@ void ServerListHandler::updateCountryFlags(bool force)
 	}
 }
 
-void ServerListHandler::updateHeaderTitles()
+void ServerList::updateHeaderTitles()
 {
-	const QList<ColumnSort> &sortings = sortingProxy->additionalSortColumns();
+	const QList<ColumnSort> &sortings = proxyModel->additionalSortColumns();
 	for (int i = 0; i < ServerListColumnId::NUM_SERVERLIST_COLUMNS; ++i)
 	{
 		// Clear header icons.
@@ -539,13 +539,13 @@ void ServerListHandler::updateHeaderTitles()
 	model->setHorizontalHeaderLabels(labels);
 }
 
-void ServerListHandler::updateSearch(const QString& search)
+void ServerList::updateSearch(const QString& search)
 {
 	QRegExp pattern(QString("*") + search + "*", Qt::CaseInsensitive, QRegExp::Wildcard);
-	sortingProxy->setFilterRegExp(pattern);
+	proxyModel->setFilterRegExp(pattern);
 }
 
-void ServerListHandler::registerServer(ServerPtr server)
+void ServerList::registerServer(ServerPtr server)
 {
 	this->connect(server.data(), SIGNAL(updated(ServerPtr, int)),
 		SLOT(serverUpdated(ServerPtr, int)));
@@ -553,7 +553,7 @@ void ServerListHandler::registerServer(ServerPtr server)
 		SLOT(serverBegunRefreshing(ServerPtr)));
 }
 
-void ServerListHandler::deregisterServer(const ServerPtr &server)
+void ServerList::deregisterServer(const ServerPtr &server)
 {
 	server->disconnect(this);
 }

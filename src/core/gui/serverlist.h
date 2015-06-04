@@ -43,13 +43,13 @@ class QModelIndex;
 class QPoint;
 class QSortFilterProxyModel;
 
-class ServerListHandler : public QObject
+class ServerList : public QObject
 {
 	Q_OBJECT
 
 	public:
-		ServerListHandler(ServerListView* serverTable, QWidget* pMainWindow);
-		~ServerListHandler();
+		ServerList(ServerListView* serverTable, QWidget* pMainWindow);
+		~ServerList();
 
 		void clearTable();
 		void cleanUpForce();
@@ -120,12 +120,10 @@ class ServerListHandler : public QObject
 
 	private:
 		QTimer cleanerTimer;
-
 		QWidget* mainWindow;
 		ServerListModel* model;
 		bool needsCleaning;
-		ServerListProxyModel *sortingProxy;
-
+		ServerListProxyModel *proxyModel;
 		Qt::SortOrder sortOrder;
 		int sortIndex;
 		ServerListView* table;

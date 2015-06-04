@@ -5488,11 +5488,11 @@ z graczami na górze listy</translation>
     </message>
 </context>
 <context>
-    <name>ServerListHandler</name>
+    <name>ServerList</name>
     <message>
         <location filename="../gui/serverlist.cpp" line="233"/>
-        <source>Unhandled behavior in ServerListHandler::contextMenuTriggered()</source>
-        <translation>Nieobsłużone zachowanie w ServerListHandler::contextMenuTriggered()</translation>
+        <source>Unhandled behavior in ServerList::contextMenuTriggered()</source>
+        <translation>Nieobsłużone zachowanie w ServerList::contextMenuTriggered()</translation>
     </message>
     <message>
         <location filename="../gui/serverlist.cpp" line="263"/>

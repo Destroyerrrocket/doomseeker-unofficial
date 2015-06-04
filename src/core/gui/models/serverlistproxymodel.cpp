@@ -38,7 +38,7 @@ DClass<ServerListProxyModel>
 		QList<ColumnSort> additionalSortColumns;
 		bool groupServersWithPlayersAtTop;
 		int mainSortColumn;
-		ServerListHandler* parentHandler;
+		ServerList* parentHandler;
 		ServerListFilterInfo filterInfo;
 		Qt::SortOrder sortOrder;
 
@@ -68,7 +68,7 @@ DClass<ServerListProxyModel>
 
 DPointered(ServerListProxyModel)
 
-ServerListProxyModel::ServerListProxyModel(ServerListHandler* serverListHandler)
+ServerListProxyModel::ServerListProxyModel(ServerList* serverListHandler)
 : QSortFilterProxyModel(serverListHandler)
 {
 	d->groupServersWithPlayersAtTop = true;

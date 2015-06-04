@@ -36,7 +36,7 @@ using namespace ServerListColumnId;
 
 //////////////////////////////////////////////////////////////
 
-ServerListModel::ServerListModel(ServerListHandler* parent)
+ServerListModel::ServerListModel(ServerList* parent)
 : QStandardItemModel(parent),
   parentHandler(parent)
 {
