@@ -58,6 +58,8 @@ class ServersStatusWidget : public QLabel
 		void mousePressEvent(QMouseEvent* event);
 		void paintEvent(QPaintEvent *event);
 		void registerServer(ServerPtr server);
+		unsigned refreshedPercent() const;
+		QString refreshedPercentAsText() const;
 		void resetStatus();
 
 		bool enabled;
@@ -66,12 +68,15 @@ class ServersStatusWidget : public QLabel
 		unsigned int numBots;
 		unsigned int numPlayers;
 		unsigned int numServers;
+		unsigned int numRefreshing;
 		const EnginePlugin *plugin;
 		const ServerList *serverList;
 
 	private slots:
 		void decreaseCountersAndUpdateDisplay(const ServerPtr &server);
+		void decreaseRefreshingCountAndUpdateDisplay();
 		void increaseCountersAndUpdateDisplay(const ServerPtr &server);
+		void increaseRefreshingCountAndUpdateDisplay();
 		void deregisterServerIfSamePlugin(const ServerPtr &server);
 		void registerServerIfSamePlugin(ServerPtr server);
 };

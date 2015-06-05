@@ -25,6 +25,7 @@
 #include <QLabel>
 #include <QMouseEvent>
 #include <QPainter>
+#include <cmath>
 
 #include "serversstatuswidget.h"
 #include "gui/serverlist.h"
@@ -35,7 +36,7 @@
 
 ServersStatusWidget::ServersStatusWidget(const EnginePlugin *plugin, const ServerList *serverList)
 	: QLabel(), enabled(false), icon(plugin->icon()),
-	  numBots(0), numPlayers(0), numServers(0)
+	  numBots(0), numPlayers(0), numServers(0), numRefreshing(0)
 {
 	this->plugin = plugin;
 
@@ -74,7 +75,7 @@ ServersStatusWidget::ServersStatusWidget(const EnginePlugin *plugin, const Serve
 #endif
 
 	setFixedHeight(22);
-	setToolTip(tr("Players-Bots Servers"));
+	setToolTip(tr("Players-Bots Servers Refreshed%"));
 
 	setIndent(22);
 	updateDisplay();
@@ -141,10 +142,18 @@ void ServersStatusWidget::registerServer(ServerPtr server)
 {
 	this->connect(server.data(), SIGNAL(begunRefreshing(ServerPtr)),
 		SLOT(decreaseCountersAndUpdateDisplay(ServerPtr)));
+	this->connect(server.data(), SIGNAL(begunRefreshing(ServerPtr)),
+		SLOT(increaseRefreshingCountAndUpdateDisplay()));
 	this->connect(server.data(), SIGNAL(updated(ServerPtr, int)),
 		SLOT(increaseCountersAndUpdateDisplay(ServerPtr)));
+	this->connect(server.data(), SIGNAL(updated(ServerPtr, int)),
+		SLOT(decreaseRefreshingCountAndUpdateDisplay()));
 	increaseCountersAndUpdateDisplay(server);
 	++numServers;
+	if (server->isRefreshing())
+	{
+		++numRefreshing;
+	}
 }
 
 void ServersStatusWidget::deregisterServerIfSamePlugin(const ServerPtr &server)
@@ -157,6 +166,10 @@ void ServersStatusWidget::deregisterServerIfSamePlugin(const ServerPtr &server)
 			// A refreshing server has already decreased its counters
 			// so let's not decrease it twice or errors will happen.
 			decreaseCountersAndUpdateDisplay(server);
+		}
+		else
+		{
+			--numRefreshing;
 		}
 		--numServers;
 		updateDisplay();
@@ -171,6 +184,44 @@ void ServersStatusWidget::decreaseCountersAndUpdateDisplay(const ServerPtr &serv
 	updateDisplay();
 }
 
+void ServersStatusWidget::decreaseRefreshingCountAndUpdateDisplay()
+{
+	--numRefreshing;
+	updateDisplay();
+}
+
+void ServersStatusWidget::increaseRefreshingCountAndUpdateDisplay()
+{
+	++numRefreshing;
+	updateDisplay();
+}
+
+QString ServersStatusWidget::refreshedPercentAsText() const
+{
+	if (numServers == 0)
+	{
+		return tr("N/A");
+	}
+	else
+	{
+		return tr("%1%").arg(refreshedPercent());
+	}
+}
+
+unsigned ServersStatusWidget::refreshedPercent() const
+{
+	if (numRefreshing == 0 || numServers == 0)
+	{
+		return 100;
+	}
+	else
+	{
+		float refreshingFactor = static_cast<float>(numRefreshing) /
+			static_cast<float>(numServers);
+		return static_cast<unsigned>(floor(100.0 - 100.0 * refreshingFactor));
+	}
+}
+
 void ServersStatusWidget::setMasterEnabledStatus(bool bEnabled)
 {
 	this->enabled = bEnabled;
@@ -181,7 +232,8 @@ void ServersStatusWidget::updateDisplay()
 {
 	if (enabled)
 	{
-		setText(QString("%1-%2 %3").arg(numPlayers).arg(numBots).arg(numServers));
+		setText(QString("%1-%2 %3 %4").arg(numPlayers).arg(numBots)
+			.arg(numServers).arg(refreshedPercentAsText()));
 	}
 	else
 	{
