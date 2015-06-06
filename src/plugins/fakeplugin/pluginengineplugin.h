@@ -38,6 +38,7 @@ class PluginEnginePlugin : public EnginePlugin
 
 		bool isMasterResponderInstantiated() const;
 		void startMasterResponder();
+		void start();
 
 	private:
 		class PrivData;
