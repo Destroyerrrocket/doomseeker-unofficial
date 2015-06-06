@@ -40,6 +40,8 @@ struct ServerListCount
 	int numServers;
 	int numRefreshing;
 
+	ServerListCount();
+
 	void countPlayers(const ServerPtr &server);
 	void discountPlayers(const ServerPtr &server);
 

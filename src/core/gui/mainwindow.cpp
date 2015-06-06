@@ -1549,7 +1549,7 @@ void MainWindow::updateServerFilter(const ServerListFilterInfo& filterInfo)
 
 ServerListCount MainWindow::sumServerListCount() const
 {
-	ServerListCount count = {};
+	ServerListCount count;
 	foreach (const ServersStatusWidget *status, d->serversStatusesWidgets.values())
 	{
 		count += status->count();

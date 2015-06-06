@@ -25,6 +25,7 @@
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
 #include <cassert>
+#include <cmath>
 
 DClass<ServerListCountTracker>
 {
@@ -44,9 +45,6 @@ DPointered(ServerListCountTracker)
 ServerListCountTracker::ServerListCountTracker(QObject *parent)
 : QObject(parent)
 {
-	// {} intializes the struct with zeroes
-	// http://stackoverflow.com/questions/17080975/c-correct-way-of-initializing-a-struct-in-a-class-constructor
-	d->count = {};
 	d->plugin = NULL;
 	d->hasRegisterBeenCalled = false;
 }
@@ -118,6 +116,19 @@ void ServerListCountTracker::onServerUpdated(ServerPtr server)
 }
 
 ///////////////////////////////////////////////////////////////////////////
+
+ServerListCount::ServerListCount()
+{
+	numBots = 0;
+	numHumanPlayers = 0;
+	numPlayers = 0;
+
+	numCustomServers = 0;
+	numGenericServers = 0;
+	numLanServers = 0;
+	numServers = 0;
+	numRefreshing = 0;
+}
 
 void ServerListCount::countPlayers(const ServerPtr &server)
 {
