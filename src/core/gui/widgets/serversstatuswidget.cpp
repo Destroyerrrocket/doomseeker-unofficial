@@ -33,18 +33,22 @@
 #include "serverapi/masterclient.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
+#include "serverapi/serverlistcounttracker.h"
 
 ServersStatusWidget::ServersStatusWidget(const EnginePlugin *plugin, const ServerList *serverList)
-	: QLabel(), enabled(false), icon(plugin->icon()),
-	  numBots(0), numPlayers(0), numServers(0), numRefreshing(0)
+	: QLabel(), enabled(false), icon(plugin->icon())
 {
 	this->plugin = plugin;
 
+	this->countTracker = new ServerListCountTracker(this);
+	this->countTracker->setPluginFilter(plugin);
 	this->serverList = serverList;
-	this->connect(serverList, SIGNAL(serverRegistered(ServerPtr)),
-		SLOT(registerServerIfSamePlugin(ServerPtr)));
-	this->connect(serverList, SIGNAL(serverDeregistered(ServerPtr)),
-		SLOT(deregisterServerIfSamePlugin(ServerPtr)));
+
+	countTracker->connect(serverList, SIGNAL(serverRegistered(ServerPtr)),
+		SLOT(registerServer(ServerPtr)));
+	countTracker->connect(serverList, SIGNAL(serverDeregistered(ServerPtr)),
+		SLOT(deregisterServer(ServerPtr)));
+	this->connect(countTracker, SIGNAL(updated()), SLOT(updateDisplay()));
 
 	// Transform icon to grayscale format for disabled appearance
 	QImage iconImage = icon.toImage();
@@ -75,25 +79,10 @@ ServersStatusWidget::ServersStatusWidget(const EnginePlugin *plugin, const Serve
 #endif
 
 	setFixedHeight(22);
-	setToolTip(tr("Players-Bots Servers Refreshed%"));
+	setToolTip(tr("Players (Humans + Bots) / Servers Refreshed%"));
 
 	setIndent(22);
 	updateDisplay();
-
-	resetStatus();
-}
-
-void ServersStatusWidget::increaseCountersAndUpdateDisplay(const ServerPtr &server)
-{
-	increaseCounters(server);
-	updateDisplay();
-}
-
-void ServersStatusWidget::increaseCounters(ServerPtr server)
-{
-	const PlayersList &players = server->players();
-	numPlayers += players.numClients();
-	numBots += players.numBots();
 }
 
 void ServersStatusWidget::mousePressEvent(QMouseEvent* event)
@@ -114,111 +103,26 @@ void ServersStatusWidget::paintEvent(QPaintEvent *event)
 	QLabel::paintEvent(event);
 }
 
-void ServersStatusWidget::resetStatus()
-{
-	// Since this is done when the list changes we should reset some values
-	numPlayers = 0;
-	numBots = 0;
-
-	if (serverList != NULL)
-	{
-		foreach(ServerPtr server, serverList->serversForPlugin(plugin))
-		{
-			increaseCounters(server);
-		}
-	}
-	updateDisplay();
-}
-
 void ServersStatusWidget::registerServerIfSamePlugin(ServerPtr server)
 {
-	if (server->plugin() == plugin)
-	{
-		registerServer(server);
-	}
-}
-
-void ServersStatusWidget::registerServer(ServerPtr server)
-{
-	this->connect(server.data(), SIGNAL(begunRefreshing(ServerPtr)),
-		SLOT(decreaseCountersAndUpdateDisplay(ServerPtr)));
-	this->connect(server.data(), SIGNAL(begunRefreshing(ServerPtr)),
-		SLOT(increaseRefreshingCountAndUpdateDisplay()));
-	this->connect(server.data(), SIGNAL(updated(ServerPtr, int)),
-		SLOT(increaseCountersAndUpdateDisplay(ServerPtr)));
-	this->connect(server.data(), SIGNAL(updated(ServerPtr, int)),
-		SLOT(decreaseRefreshingCountAndUpdateDisplay()));
-	increaseCountersAndUpdateDisplay(server);
-	++numServers;
-	if (server->isRefreshing())
-	{
-		++numRefreshing;
-	}
+	countTracker->registerServer(server);
 }
 
 void ServersStatusWidget::deregisterServerIfSamePlugin(const ServerPtr &server)
 {
-	if (server->plugin() == plugin)
-	{
-		server->disconnect(this);
-		if (!server->isRefreshing())
-		{
-			// A refreshing server has already decreased its counters
-			// so let's not decrease it twice or errors will happen.
-			decreaseCountersAndUpdateDisplay(server);
-		}
-		else
-		{
-			--numRefreshing;
-		}
-		--numServers;
-		updateDisplay();
-	}
-}
-
-void ServersStatusWidget::decreaseCountersAndUpdateDisplay(const ServerPtr &server)
-{
-	const PlayersList &players = server->players();
-	numPlayers -= players.numClients();
-	numBots -= players.numBots();
-	updateDisplay();
-}
-
-void ServersStatusWidget::decreaseRefreshingCountAndUpdateDisplay()
-{
-	--numRefreshing;
-	updateDisplay();
-}
-
-void ServersStatusWidget::increaseRefreshingCountAndUpdateDisplay()
-{
-	++numRefreshing;
-	updateDisplay();
+	countTracker->deregisterServer(server);
 }
 
 QString ServersStatusWidget::refreshedPercentAsText() const
 {
-	if (numServers == 0)
+	const ServerListCount &count = countTracker->count();
+	if (count.numServers == 0)
 	{
 		return tr("N/A");
 	}
 	else
 	{
-		return tr("%1%").arg(refreshedPercent());
-	}
-}
-
-unsigned ServersStatusWidget::refreshedPercent() const
-{
-	if (numRefreshing == 0 || numServers == 0)
-	{
-		return 100;
-	}
-	else
-	{
-		float refreshingFactor = static_cast<float>(numRefreshing) /
-			static_cast<float>(numServers);
-		return static_cast<unsigned>(floor(100.0 - 100.0 * refreshingFactor));
+		return tr("%1%").arg(count.refreshedPercent());
 	}
 }
 
@@ -232,8 +136,9 @@ void ServersStatusWidget::updateDisplay()
 {
 	if (enabled)
 	{
-		setText(QString("%1-%2 %3 %4").arg(numPlayers).arg(numBots)
-			.arg(numServers).arg(refreshedPercentAsText()));
+		const ServerListCount &count = countTracker->count();
+		setText(QString("%1 (%2+%3) / %4 %5").arg(count.numPlayers).arg(count.numHumanPlayers)
+			.arg(count.numBots) .arg(count.numServers).arg(refreshedPercentAsText()));
 	}
 	else
 	{

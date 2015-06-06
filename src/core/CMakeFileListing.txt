@@ -233,6 +233,7 @@ set(HEADER_FILES
 	serverapi/polymorphism.h
 	serverapi/rconprotocol.h
 	serverapi/server.h
+	serverapi/serverlistcounttracker.h
 	serverapi/serverptr.h
 	serverapi/serverstructs.h
 	serverapi/serversummary.h
@@ -443,6 +444,7 @@ set(SOURCE_FILES
 	serverapi/playerslist.cpp
 	serverapi/rconprotocol.cpp
 	serverapi/server.cpp
+	serverapi/serverlistcounttracker.cpp
 	serverapi/serverstructs.cpp
 	serverapi/serversummary.cpp
 	serverapi/tooltips/dmflagshtmlgenerator.cpp

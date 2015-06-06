@@ -31,6 +31,7 @@ class EnginePlugin;
 class MasterClient;
 class Server;
 class ServerList;
+class ServerListCountTracker;
 
 class ServersStatusWidget : public QLabel
 {
@@ -54,29 +55,19 @@ class ServersStatusWidget : public QLabel
 		void clicked(const EnginePlugin* plugin);
 
 	private:
-		void increaseCounters(ServerPtr server);
 		void mousePressEvent(QMouseEvent* event);
 		void paintEvent(QPaintEvent *event);
 		void registerServer(ServerPtr server);
-		unsigned refreshedPercent() const;
 		QString refreshedPercentAsText() const;
-		void resetStatus();
 
 		bool enabled;
 		QPixmap icon;
 		QPixmap iconDisabled;
-		unsigned int numBots;
-		unsigned int numPlayers;
-		unsigned int numServers;
-		unsigned int numRefreshing;
+		ServerListCountTracker *countTracker;
 		const EnginePlugin *plugin;
 		const ServerList *serverList;
 
 	private slots:
-		void decreaseCountersAndUpdateDisplay(const ServerPtr &server);
-		void decreaseRefreshingCountAndUpdateDisplay();
-		void increaseCountersAndUpdateDisplay(const ServerPtr &server);
-		void increaseRefreshingCountAndUpdateDisplay();
 		void deregisterServerIfSamePlugin(const ServerPtr &server);
 		void registerServerIfSamePlugin(ServerPtr server);
 };
