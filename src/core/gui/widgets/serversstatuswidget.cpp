@@ -143,11 +143,16 @@ void ServersStatusWidget::updateDisplay()
 	if (enabled)
 	{
 		const ServerListCount &count = countTracker->count();
-		setText(QString("%1 (%2+%3) / %4 %5").arg(count.numPlayers).arg(count.numHumanPlayers)
-			.arg(count.numBots) .arg(count.numServers).arg(refreshedPercentAsText()));
+		QString text = tr("%1 (%2+%3) / %4").arg(count.numPlayers).arg(count.numHumanPlayers)
+			.arg(count.numBots) .arg(count.numServers);
+		if (count.numRefreshing > 0)
+		{
+			text += tr(" %1").arg(refreshedPercentAsText());
+		}
+		setText(text);
 	}
 	else
 	{
-		setText("N/A");
+		setText(tr("N/A"));
 	}
 }
