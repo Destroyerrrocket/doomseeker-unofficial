@@ -123,6 +123,16 @@ QList<ServerPtr> ServerListModel::nonSpecialServers() const
 	return servers;
 }
 
+QList<ServerPtr> ServerListModel::servers() const
+{
+	QList<ServerPtr> servers;
+	for (int i = 0; i < rowCount(); ++i)
+	{
+		servers << serverFromList(i);
+	}
+	return servers;
+}
+
 QList<ServerPtr> ServerListModel::serversForPlugin(const EnginePlugin *plugin) const
 {
 	QList<ServerPtr> servers;

@@ -32,6 +32,7 @@ class MasterClient;
 class Server;
 class ServerList;
 class ServerListCountTracker;
+struct ServerListCount;
 
 class ServersStatusWidget : public QLabel
 {
@@ -39,6 +40,8 @@ class ServersStatusWidget : public QLabel
 
 	public:
 		ServersStatusWidget(const EnginePlugin *plugin, const ServerList *serverList);
+
+		const ServerListCount &count() const;
 
 	public slots:
 		/**
@@ -53,6 +56,7 @@ class ServersStatusWidget : public QLabel
 
 	signals:
 		void clicked(const EnginePlugin* plugin);
+		void counterUpdated();
 
 	private:
 		void mousePressEvent(QMouseEvent* event);

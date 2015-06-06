@@ -56,6 +56,7 @@
 #include "serverapi/mastermanager.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
+#include "serverapi/serverlistcounttracker.h"
 #include "updater/autoupdater.h"
 #include "updater/updatechannel.h"
 #include "updater/updateinstaller.h"
@@ -586,6 +587,8 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 
 		this->connect(statusWidget, SIGNAL( clicked(const EnginePlugin*) ) ,
 			SLOT( togglePluginQueryEnabled(const EnginePlugin*) ) );
+		this->connect(statusWidget, SIGNAL(counterUpdated()),
+			SLOT(updateTrayIconTooltip()));
 
 		statusBar()->addPermanentWidget(statusWidget);
 
@@ -1536,7 +1539,6 @@ void MainWindow::updateMasterAddresses()
 	{
 		(*d->masterManager)[i]->updateAddress();
 	}
-
 }
 
 void MainWindow::updateServerFilter(const ServerListFilterInfo& filterInfo)
@@ -1545,23 +1547,44 @@ void MainWindow::updateServerFilter(const ServerListFilterInfo& filterInfo)
 	d->lblServerFilterApplied->setVisible(filterInfo.isFilteringAnything());
 }
 
-void MainWindow::updateTrayIconTooltipAndLogTotalRefresh()
+ServerListCount MainWindow::sumServerListCount() const
 {
-	int numServers = d->masterManager->numServers();
-	int numCustoms = d->masterManager->customServs()->numServers();
-	int numPlayers = d->masterManager->numPlayers() + d->masterManager->customServs()->numPlayers();
+	ServerListCount count = {};
+	foreach (const ServersStatusWidget *status, d->serversStatusesWidgets.values())
+	{
+		count += status->count();
+	}
+	return count;
+}
 
+void MainWindow::updateTrayIconTooltip()
+{
+	updateTrayIconTooltip(sumServerListCount());
+}
+
+void MainWindow::updateTrayIconTooltip(const ServerListCount &count)
+{
 	if (d->trayIcon != NULL)
 	{
 		QString tip;
-		tip += "Servers: " + QString::number(numServers) + " + " + QString::number(numCustoms) + " custom\n";
-		tip += "Players: " + QString::number(numPlayers);
+		tip += tr("Generic servers: %1\n").arg(count.numGenericServers);
+		tip += tr("Custom servers: %1\n").arg(count.numCustomServers);
+		tip += tr("LAN servers: %1\n").arg(count.numLanServers);
+		tip += tr("Human players: %1").arg(count.numHumanPlayers);
 		d->trayIcon->setToolTip(tip);
 	}
+}
+
+void MainWindow::updateTrayIconTooltipAndLogTotalRefresh()
+{
+	ServerListCount count = sumServerListCount();
+	updateTrayIconTooltip(count);
 
 	if (d->bTotalRefreshInProcess)
 	{
-		gLog << tr("Finished refreshing. Servers on the list: %1 (+ %2 custom). Players: %3.")
-			.arg(numServers).arg(numCustoms).arg(numPlayers);
+		gLog << tr("Finished refreshing. Servers on the list: %1 "
+			"(+ %2 custom + %3 LAN). Players: %4.")
+			.arg(count.numGenericServers).arg(count.numCustomServers)
+			.arg(count.numLanServers).arg(count.numHumanPlayers);
 	}
 }

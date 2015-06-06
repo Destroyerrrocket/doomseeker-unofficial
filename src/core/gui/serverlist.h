@@ -64,6 +64,7 @@ class ServerList : public QObject
 		void removeCustomServers();
 		void removeNonSpecialServers();
 		QList<ServerPtr> selectedServers() const;
+		QList<ServerPtr> servers() const;
 		QList<ServerPtr> serversForPlugin(const EnginePlugin *plugin) const;
 
 		ServerPtr serverFromIndex(const QModelIndex&);

@@ -448,6 +448,11 @@ void ServerList::onServerBegunRefreshing(const ServerPtr &server)
 	model->setRefreshing(server);
 }
 
+QList<ServerPtr> ServerList::servers() const
+{
+	return model->servers();
+}
+
 ServerPtr ServerList::serverFromIndex(const QModelIndex &index)
 {
 	QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(table->model());

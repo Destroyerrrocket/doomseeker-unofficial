@@ -84,6 +84,7 @@ class ServerListModel : public QStandardItemModel
 		ServerList* handler() { return parentHandler; }
 
 		QList<ServerPtr> nonSpecialServers() const;
+		QList<ServerPtr> servers() const;
 		QList<ServerPtr> serversForPlugin(const EnginePlugin *plugin) const;
 
 		/**

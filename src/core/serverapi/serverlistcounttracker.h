@@ -47,6 +47,8 @@ struct ServerListCount
 	void discountServer(const ServerPtr &server);
 
 	int refreshedPercent() const;
+
+	ServerListCount& operator+=(const ServerListCount &other);
 };
 
 class ServerListCountTracker : public QObject

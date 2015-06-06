@@ -166,3 +166,17 @@ int ServerListCount::refreshedPercent() const
 		return static_cast<int>(floor(100.0 - 100.0 * refreshingFactor));
 	}
 }
+
+ServerListCount& ServerListCount::operator+=(const ServerListCount &other)
+{
+	numBots += other.numBots;
+	numHumanPlayers += other.numHumanPlayers;
+	numPlayers += other.numPlayers;
+
+	numCustomServers += other.numCustomServers;
+	numGenericServers += other.numGenericServers;
+	numLanServers += other.numLanServers;
+	numServers += other.numServers;
+	numRefreshing += other.numRefreshing;
+	return *this;
+}

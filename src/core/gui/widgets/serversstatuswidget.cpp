@@ -49,6 +49,7 @@ ServersStatusWidget::ServersStatusWidget(const EnginePlugin *plugin, const Serve
 	countTracker->connect(serverList, SIGNAL(serverDeregistered(ServerPtr)),
 		SLOT(deregisterServer(ServerPtr)));
 	this->connect(countTracker, SIGNAL(updated()), SLOT(updateDisplay()));
+	this->connect(countTracker, SIGNAL(updated()), SIGNAL(counterUpdated()));
 
 	// Transform icon to grayscale format for disabled appearance
 	QImage iconImage = icon.toImage();
@@ -83,6 +84,11 @@ ServersStatusWidget::ServersStatusWidget(const EnginePlugin *plugin, const Serve
 
 	setIndent(22);
 	updateDisplay();
+}
+
+const ServerListCount &ServersStatusWidget::count() const
+{
+	return countTracker->count();
 }
 
 void ServersStatusWidget::mousePressEvent(QMouseEvent* event)
