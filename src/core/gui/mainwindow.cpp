@@ -1583,7 +1583,7 @@ void MainWindow::updateTrayIconTooltipAndLogTotalRefresh()
 	if (d->bTotalRefreshInProcess)
 	{
 		gLog << tr("Finished refreshing. Servers on the list: %1 "
-			"(+ %2 custom + %3 LAN). Players: %4.")
+			"(+%2 custom, +%3 LAN). Players: %4.")
 			.arg(count.numGenericServers).arg(count.numCustomServers)
 			.arg(count.numLanServers).arg(count.numHumanPlayers);
 	}
