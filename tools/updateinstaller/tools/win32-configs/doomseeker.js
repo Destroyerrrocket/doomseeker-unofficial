@@ -15,6 +15,7 @@
         "Qt5Multimedia.dll",
         "Qt5Network.dll",
         "Qt5Widgets.dll",
+        "Qt5WinExtras.dll",
         "Qt5Xml.dll",
         "doomseeker.exe",
         "updater.exe",
