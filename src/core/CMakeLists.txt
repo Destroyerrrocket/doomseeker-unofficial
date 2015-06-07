@@ -297,6 +297,7 @@ if(WIN32)
 	install(FILES ${TRANSLATION_FILES_TO_COPY} DESTINATION translations)
 	# Other
 	install(FILES ${CMAKE_SOURCE_DIR}/tools/doomseeker-portable.bat DESTINATION .)
+	install(FILES ${CMAKE_SOURCE_DIR}/CHANGELOG.md DESTINATION . RENAME CHANGELOG.txt)
 endif()
 
 if(UNIX AND NOT APPLE)

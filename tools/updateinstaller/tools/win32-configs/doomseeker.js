@@ -20,6 +20,7 @@
         "doomseeker.exe",
         "updater.exe",
         "doomseeker.ico",
+        "CHANGELOG.txt",
         "LICENSE.json.txt",
         "LICENSE.wadseeker.txt",
         "libeay32.dll",

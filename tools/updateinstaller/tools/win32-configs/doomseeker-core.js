@@ -11,6 +11,7 @@
         "doomseeker.exe",
         "updater.exe",
         "doomseeker.ico",
+        "CHANGELOG.txt",
         "LICENSE.json.txt"
     ],
 
