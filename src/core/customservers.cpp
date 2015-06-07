@@ -83,17 +83,17 @@ void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerIn
 	} // end of for
 }
 
-void CustomServers::readConfig(QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing)
+QList<ServerPtr> CustomServers::readConfig()
 {
-	QList<CustomServerInfo> customServerInfoList = gConfig.doomseeker.customServers.toList();
-	setServers(customServerInfoList, receiver, slotUpdated, slotBegunRefreshing);
+	return setServers(gConfig.doomseeker.customServers.toList());
 }
 
-void CustomServers::setServers(const QList<CustomServerInfo>& csiList, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing)
+QList<ServerPtr> CustomServers::setServers(const QList<CustomServerInfo>& serverDefs)
 {
 	emptyServerList();
 
-	foreach (const CustomServerInfo& customServerInfo, csiList)
+	QList<ServerPtr> servers;
+	foreach (const CustomServerInfo& customServerInfo, serverDefs)
 	{
 		if (customServerInfo.engineIndex < 0)
 		{
@@ -128,8 +128,8 @@ void CustomServers::setServers(const QList<CustomServerInfo>& csiList, QObject* 
 		}
 		p->setCustom(true);
 
-		connect(p.data(), SIGNAL( updated(ServerPtr, int) ), receiver, slotUpdated);
-		connect(p.data(), SIGNAL( begunRefreshing(ServerPtr) ), receiver, slotBegunRefreshing);
 		registerNewServer(p);
+		servers << p;
 	}
+	return servers;
 }

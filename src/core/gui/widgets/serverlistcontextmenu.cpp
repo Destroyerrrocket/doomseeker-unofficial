@@ -54,13 +54,13 @@ public:
 	ServerPtr pServer;
 	QModelIndex modelIndex;
 	ServerListFilterInfo serverFilter;
-	ServerListHandler *parent;
+	ServerList *parent;
 };
 
 DPointered(ServerListContextMenu)
 
 ServerListContextMenu::ServerListContextMenu(ServerPtr server, const ServerListFilterInfo& filter,
-	const QModelIndex &modelIndex, ServerListHandler *parent)
+	const QModelIndex &modelIndex, ServerList *parent)
 : QObject(parent)
 {
 	d->pServer = server;

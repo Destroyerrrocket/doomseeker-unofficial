@@ -40,6 +40,7 @@ class Message;
 class QProgressBar;
 class QueryMenuAction;
 class ServerListFilterInfo;
+struct ServerListCount;
 
 class MainWindow : public QMainWindow
 {
@@ -161,13 +162,12 @@ class MainWindow : public QMainWindow
 
 		void refreshCustomServers();
 		void refreshLanServers();
+		void showEvent(QShowEvent *event);
 		void setupIcons();
 		void setupToolBar();
+		ServerListCount sumServerListCount() const;
 
-		/**
-		 *	Functionality and name of this function might not be perfect but
-		 *	it saves some copy&pasting in the end. The end justifies the means.
-		 */
+		void updateTrayIconTooltip(const ServerListCount &count);
 		void updateTrayIconTooltipAndLogTotalRefresh();
 
 	protected slots:
@@ -227,6 +227,7 @@ class MainWindow : public QMainWindow
 		void toolBarAction(QAction* pAction);
 		void trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
 		void updateServerFilter(const ServerListFilterInfo& filterInfo);
+		void updateRefreshProgress();
 
 	private:
 		DPtr<MainWindow> d;

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// serverlistcolumn.h
+// servertooltip.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,59 +18,29 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __SERVER_LIST_COLUMN_H_
-#define __SERVER_LIST_COLUMN_H_
+#ifndef id86d749c6_00f5_4612_ade3_caf9613c33dd
+#define id86d749c6_00f5_4612_ade3_caf9613c33dd
 
-#include <QtContainerFwd>
-#include <QObject>
+#include <QString>
+#include "serverapi/serverptr.h"
 
-class QStandardItem;
+class PWad;
 
-struct ServerListColumn
+namespace ServerTooltip
 {
-	int columnId;
-	int width;
-	bool bHidden;
-	bool bResizable;
-	Qt::SortOrder defaultSortOrder;
-};
-
-namespace ServerListColumnId
-{
-	enum ColumnId
+	class L10n : public QObject
 	{
-		IDPort,
-		IDPlayers,
-		IDPing,
-		IDServerName,
-		IDAddress,
-		IDIwad,
-		IDMap,
-		IDWads,
-		IDGametype,
-		IDHiddenGroup,
-		IDHiddenServerPointer,
-
-		NUM_SERVERLIST_COLUMNS
+		Q_OBJECT;
 	};
-}
 
-class ServerListColumns : public QObject
-{
-	Q_OBJECT
-
-	public:
-		static ServerListColumn columns[];
-
-		static QString columnLabel(int columnId);
-		static QStringList generateColumnHeaderLabels();
-		static QList<QStandardItem*> generateListOfCells();
-
-		static bool isColumnVital(int columnId);
-
-		ServerListColumns() {}
+	QString createIwadToolTip(ServerPtr server);
+	QString createPlayersToolTip(ServerCPtr server);
+	QString createPortToolTip(ServerCPtr server);
+	QString createPwadsToolTip(ServerPtr server);
+	QString createPwadToolTipInfo(const PWad& pwad, const ServerPtr &server);
+	QString createServerNameToolTip(ServerCPtr server);
 };
 
 #endif

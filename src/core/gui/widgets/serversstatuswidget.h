@@ -30,16 +30,20 @@
 class EnginePlugin;
 class MasterClient;
 class Server;
+class ServerList;
+class ServerListCountTracker;
+struct ServerListCount;
 
 class ServersStatusWidget : public QLabel
 {
 	Q_OBJECT
 
 	public:
-		ServersStatusWidget(const EnginePlugin *plugin);
+		ServersStatusWidget(const EnginePlugin *plugin, const ServerList *serverList);
+
+		const ServerListCount &count() const;
 
 	public slots:
-		void deregisterServer(const ServerPtr &server);
 		/**
 		* @brief Changes the appearance of the widget basing on the boolean
 		* value.
@@ -48,29 +52,28 @@ class ServersStatusWidget : public QLabel
 		* will be "grayed out".
 		*/
 		void setMasterEnabledStatus(bool bEnabled);
-		void registerServerIfSamePlugin(ServerPtr server);
 		void updateDisplay();
 
 	signals:
 		void clicked(const EnginePlugin* plugin);
+		void counterUpdated();
 
 	private:
 		void mousePressEvent(QMouseEvent* event);
 		void paintEvent(QPaintEvent *event);
 		void registerServer(ServerPtr server);
+		QString refreshedPercentAsText() const;
 
-		bool bMasterIsEnabled;
+		bool enabled;
 		QPixmap icon;
 		QPixmap iconDisabled;
-		unsigned int numBots;
-		unsigned int numPlayers;
+		ServerListCountTracker *countTracker;
 		const EnginePlugin *plugin;
-		MasterClient *serverList;
+		const ServerList *serverList;
 
 	private slots:
-		void addServer(const ServerPtr &server);
-		void registerServers();
-		void removeServer(const ServerPtr &server);
+		void deregisterServerIfSamePlugin(const ServerPtr &server);
+		void registerServerIfSamePlugin(ServerPtr server);
 };
 
 #endif /* __SERVERSSTATUSWIDGET_H__ */

@@ -385,6 +385,11 @@ class MAIN_EXPORT Server : public QObject
 		bool isSecure() const;
 
 		/**
+		 * @brief Special servers are custom servers or LAN servers.
+		 */
+		bool isSpecial() const;
+
+		/**
 		 * @brief IWAD used by this server.
 		 */
 		const QString& iwad() const;

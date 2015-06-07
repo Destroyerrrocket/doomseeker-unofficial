@@ -25,18 +25,31 @@
 #include <QLabel>
 #include <QMouseEvent>
 #include <QPainter>
+#include <cmath>
 
 #include "serversstatuswidget.h"
+#include "gui/serverlist.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/masterclient.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
+#include "serverapi/serverlistcounttracker.h"
 
-ServersStatusWidget::ServersStatusWidget(const EnginePlugin *plugin) : QLabel(),
-	bMasterIsEnabled(false), icon(plugin->icon()), numBots(0), numPlayers(0)
+ServersStatusWidget::ServersStatusWidget(const EnginePlugin *plugin, const ServerList *serverList)
+	: QLabel(), enabled(false), icon(plugin->icon())
 {
 	this->plugin = plugin;
-	serverList = plugin->data()->masterClient;
+
+	this->countTracker = new ServerListCountTracker(this);
+	this->countTracker->setPluginFilter(plugin);
+	this->serverList = serverList;
+
+	countTracker->connect(serverList, SIGNAL(serverRegistered(ServerPtr)),
+		SLOT(registerServer(ServerPtr)));
+	countTracker->connect(serverList, SIGNAL(serverDeregistered(ServerPtr)),
+		SLOT(deregisterServer(ServerPtr)));
+	this->connect(countTracker, SIGNAL(updated()), SLOT(updateDisplay()));
+	this->connect(countTracker, SIGNAL(updated()), SIGNAL(counterUpdated()));
 
 	// Transform icon to grayscale format for disabled appearance
 	QImage iconImage = icon.toImage();
@@ -67,22 +80,15 @@ ServersStatusWidget::ServersStatusWidget(const EnginePlugin *plugin) : QLabel(),
 #endif
 
 	setFixedHeight(22);
-	setToolTip(tr("Players-Bots Servers"));
+	setToolTip(tr("Players (Humans + Bots) / Servers Refreshed%"));
 
 	setIndent(22);
 	updateDisplay();
-
-	registerServers();
-
-	connect(serverList, SIGNAL(listUpdated()), this, SLOT(registerServers()));
 }
 
-void ServersStatusWidget::addServer(const ServerPtr &server)
+const ServerListCount &ServersStatusWidget::count() const
 {
-	const PlayersList &players = server->players();
-	numPlayers += players.numClients();
-	numBots += players.numBots();
-	updateDisplay();
+	return countTracker->count();
 }
 
 void ServersStatusWidget::mousePressEvent(QMouseEvent* event)
@@ -97,71 +103,56 @@ void ServersStatusWidget::paintEvent(QPaintEvent *event)
 {
 	QPainter p(this);
 	p.setRenderHint(QPainter::SmoothPixmapTransform);
-	p.drawPixmap(2, 2, 18, 18, bMasterIsEnabled ? icon : iconDisabled);
+	p.drawPixmap(2, 2, 18, 18, enabled ? icon : iconDisabled);
 	p.end();
 
 	QLabel::paintEvent(event);
 }
 
-void ServersStatusWidget::registerServers()
-{
-	// Since this is done when the list changes we should reset some values
-	numPlayers = 0;
-	numBots = 0;
-
-	if (serverList != NULL)
-	{
-		foreach(ServerPtr server, serverList->servers())
-		{
-			deregisterServer(server);
-			registerServer(server);
-		}
-	}
-}
-
 void ServersStatusWidget::registerServerIfSamePlugin(ServerPtr server)
 {
-	if (server->plugin() == plugin)
+	countTracker->registerServer(server);
+}
+
+void ServersStatusWidget::deregisterServerIfSamePlugin(const ServerPtr &server)
+{
+	countTracker->deregisterServer(server);
+}
+
+QString ServersStatusWidget::refreshedPercentAsText() const
+{
+	const ServerListCount &count = countTracker->count();
+	if (count.numServers == 0)
 	{
-		registerServer(server);
+		return tr("N/A");
 	}
-}
-
-void ServersStatusWidget::registerServer(ServerPtr server)
-{
-	this->connect(server.data(), SIGNAL(begunRefreshing(ServerPtr)),
-		SLOT(removeServer(ServerPtr)), Qt::DirectConnection);
-	this->connect(server.data(), SIGNAL(updated(ServerPtr, int)),
-		SLOT(addServer(ServerPtr)), Qt::DirectConnection);
-}
-
-void ServersStatusWidget::deregisterServer(const ServerPtr &server)
-{
-	server->disconnect(this);
-}
-
-void ServersStatusWidget::removeServer(const ServerPtr &server)
-{
-	const PlayersList &players = server->players();
-	numPlayers -= players.numClients();
-	numBots -= players.numBots();
-	updateDisplay();
+	else
+	{
+		return tr("%1%").arg(count.refreshedPercent());
+	}
 }
 
 void ServersStatusWidget::setMasterEnabledStatus(bool bEnabled)
 {
-	this->bMasterIsEnabled = bEnabled;
+	this->enabled = bEnabled;
 	updateDisplay();
 }
 
 void ServersStatusWidget::updateDisplay()
 {
-	if (bMasterIsEnabled)
+	if (enabled)
 	{
-		setText(QString("%1-%2 %3").arg(numPlayers).arg(numBots).arg(serverList != NULL ? serverList->numServers() : 0));
+		const ServerListCount &count = countTracker->count();
+		QString text = tr("%1 (%2+%3) / %4").arg(count.numPlayers).arg(count.numHumanPlayers)
+			.arg(count.numBots) .arg(count.numServers);
+		if (count.numRefreshing > 0)
+		{
+			text += tr(" %1").arg(refreshedPercentAsText());
+		}
+		setText(text);
 	}
 	else
 	{
-		setText("N/A");
+		setText(tr("N/A"));
 	}
 }

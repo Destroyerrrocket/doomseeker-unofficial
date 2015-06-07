@@ -38,7 +38,7 @@ DClass<ServerListProxyModel>
 		QList<ColumnSort> additionalSortColumns;
 		bool groupServersWithPlayersAtTop;
 		int mainSortColumn;
-		ServerListHandler* parentHandler;
+		ServerList* parentHandler;
 		ServerListFilterInfo filterInfo;
 		Qt::SortOrder sortOrder;
 
@@ -68,7 +68,7 @@ DClass<ServerListProxyModel>
 
 DPointered(ServerListProxyModel)
 
-ServerListProxyModel::ServerListProxyModel(ServerListHandler* serverListHandler)
+ServerListProxyModel::ServerListProxyModel(ServerList* serverListHandler)
 : QSortFilterProxyModel(serverListHandler)
 {
 	d->groupServersWithPlayersAtTop = true;
@@ -251,7 +251,6 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 
 		if (!d->filterInfo.wadsExcluded.isEmpty())
 		{
-			bool bWadFound = false;
 			foreach (const QString& filteredWad, d->filterInfo.wadsExcluded)
 			{
 				if (s->anyWadnameContains(filteredWad))

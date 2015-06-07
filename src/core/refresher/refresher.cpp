@@ -500,6 +500,7 @@ bool Refresher::tryReadDatagramByServer(const QHostAddress& address,
 
 void Refresher::unregisterMaster(MasterClient* pMaster)
 {
+	pMaster->disconnect(this);
 	Data::MasterHashtableIt it = d->registeredMasters.find(pMaster);
 	if (it != d->registeredMasters.end())
 	{

@@ -66,13 +66,10 @@ class CustomServers : public MasterClient
 		const EnginePlugin *plugin() const { return NULL; }
 
 		/**
-		 *	Convenience method - tries to read config seeking for
-		 *	"CustomServers" entry, decode it and launch setServers() method.
-		 *	@param receiver - object to receive server signals
-		 *	@param slotUpdated - slot to receive Server::updated signals
-		 *	@param slotBegunRefreshing - slot to receive Server::begunRefreshing signals
+		 * Convenience method - tries to read config seeking for
+		 * "CustomServers" entry, decode it and launch setServers() method.
 		 */
-		void readConfig(QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing);
+		QList<ServerPtr> readConfig();
 
 		/**
 		 *	Since this is not required here (there's no real
@@ -81,16 +78,13 @@ class CustomServers : public MasterClient
 		void refreshStarts() {}
 
 		/**
-		 *	Sets a list of custom servers.
-		 *	@param csiList - list of custom servers. If element's
-		 *		engineIndex is < 0 the element is discarded. Also
-		 *		the element will be discarded if it's hostname cannot
-		 *		be resolved.
-		 *	@param receiver - object to receive server signals
-		 *	@param slotUpdated - slot to receive Server::updated signals
-		 *	@param slotBegunRefreshing - slot to receive Server::begunRefreshing signals
+		 * Sets a list of custom servers.
+		 * @param csiList - list of custom servers. If element's
+		 *     engineIndex is < 0 the element is discarded. Also
+		 *     the element will be discarded if its hostname cannot
+		 *     be resolved.
 		 */
-		void setServers(const QList<CustomServerInfo>& csiList, QObject* receiver, const char* slotUpdated, const char* slotBegunRefreshing);
+		QList<ServerPtr> setServers(const QList<CustomServerInfo>& serverDefs);
 
 	protected:
 		QByteArray createServerListRequest() { return QByteArray(); }

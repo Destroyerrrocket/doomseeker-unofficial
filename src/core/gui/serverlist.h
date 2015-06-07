@@ -29,6 +29,7 @@
 
 #include "serverapi/serverptr.h"
 
+class EnginePlugin;
 class PWad;
 class IniSection;
 class Server;
@@ -43,15 +44,14 @@ class QModelIndex;
 class QPoint;
 class QSortFilterProxyModel;
 
-class ServerListHandler : public QObject
+class ServerList : public QObject
 {
 	Q_OBJECT
 
 	public:
-		ServerListHandler(ServerListView* serverTable, QWidget* pMainWindow);
-		~ServerListHandler();
+		ServerList(ServerListView* serverTable, QWidget* pMainWindow);
+		~ServerList();
 
-		void clearTable();
 		void cleanUpForce();
 
 		QWidget* getMainWindow() { return mainWindow; }
@@ -61,30 +61,25 @@ class ServerListHandler : public QObject
 		bool isSortingAdditionallyByColumn(int column) const;
 		bool isSortingByColumn(int columnIndex);
 
-		QList<ServerPtr> selectedServers();
+		void removeCustomServers();
+		void removeNonSpecialServers();
+		QList<ServerPtr> selectedServers() const;
+		QList<ServerPtr> servers() const;
+		QList<ServerPtr> serversForPlugin(const EnginePlugin *plugin) const;
 
 		ServerPtr serverFromIndex(const QModelIndex&);
-
-		ServerListModel* serverModel() { return model; }
-		ServerListView* serverTable() { return table; }
 
 	public slots:
 		void applyFilter(const ServerListFilterInfo& filterInfo);
 		void cleanUp();
-		void deregisterServer(const ServerPtr &server);
 		/**
 		 * @brief Looks up hosts for all available servers.
 		 */
 		void lookupHosts();
 		void redraw();
-		void refreshAll();
 		void refreshSelected();
 		void registerServer(ServerPtr server);
-		/// TODO this needs to be rectified with registerServer();
 		void removeServer(const ServerPtr &server);
-		void serverBegunRefreshing(const ServerPtr &server);
-		void serverUpdated(const ServerPtr &server, int response);
-
 		/**
 		 *	@brief Sets country flags for servers that don't have flags
 		 *		present yet.
@@ -96,14 +91,6 @@ class ServerListHandler : public QObject
 		void tableRightClicked(const QModelIndex& index, const QPoint& cursorPosition);
 		void updateCountryFlags();
 		void updateSearch(const QString& search);
-
-	protected slots:
-		/// Handles column sorting.
-		void columnHeaderClicked(int);
-		void doubleClicked(const QModelIndex&);
-		void itemSelected(const QItemSelection&);
-		void modelCleared();
-		void mouseEntered(const QModelIndex&);
 
 	signals:
 		/**
@@ -117,42 +104,31 @@ class ServerListHandler : public QObject
 		 */
 		void findMissingWADs(const ServerPtr&);
 
+		void serverDeregistered(ServerPtr);
 		void serverFilterModified(const ServerListFilterInfo& filter);
 		/**
 		 *	@brief Emitted every time when a server info is updated through
-		 *	serverUpdated()
+		 *	onServerUpdated().
 		 */
 		void serverInfoUpdated(const ServerPtr&);
+		void serverRegistered(ServerPtr);
 		void serverDoubleClicked(const ServerPtr&);
 		void serversSelected(QList<ServerPtr>&);
 
-	protected:
-		// TODO: These need to be set by appearance configuration.
-		static const QString FONT_COLOR_MISSING;
-		static const QString FONT_COLOR_OPTIONAL;
-		static const QString FONT_COLOR_FOUND;
-
+	private:
 		QTimer cleanerTimer;
-
 		QWidget* mainWindow;
 		ServerListModel* model;
 		bool needsCleaning;
-		ServerListProxyModel *sortingProxy;
-
+		ServerListProxyModel *proxyModel;
 		Qt::SortOrder sortOrder;
 		int sortIndex;
 		ServerListView* table;
 
-		QString createIwadToolTip(ServerPtr server);
-		QString createPlayersToolTip(ServerCPtr server);
-		QString createPortToolTip(ServerCPtr server);
-		QString createPwadsToolTip(ServerPtr server);
-		QString createPwadToolTipInfo(const PWad& pwad, const ServerPtr &server);
-		QString createServerNameToolTip(ServerCPtr server);
-
 		bool areColumnsWidthsSettingsChanged();
 
 		void connectTableModelProxySlots();
+		void clearAdditionalSorting();
 
 		ServerListModel* createModel();
 		ServerListProxyModel *createSortingProxy(ServerListModel* serverListModel);
@@ -163,25 +139,28 @@ class ServerListHandler : public QObject
 
 		void prepareServerTable();
 
+		void removeAdditionalSortingForColumn(const QModelIndex &modelIndex);
 		void saveColumnsWidthsSettings();
 
 		void setupTableColumnWidths();
 		void setupTableProperties(QSortFilterProxyModel* tableModel);
 
-		Qt::SortOrder swapCurrentSortOrder();
+		void sortAdditionally(const QModelIndex &modelIndex, Qt::SortOrder order);
+
+		Qt::SortOrder swappedCurrentSortOrder();
 
 		void updateCountryFlags(bool force);
 
-	private:
-		void clearAdditionalSorting();
-		WadFindResult findWad(ServerPtr server, const QString &name) const;
-		void removeAdditionalSortingForColumn(const QModelIndex &modelIndex);
-		void sortAdditionally(const QModelIndex &modelIndex, Qt::SortOrder order);
-
 	private slots:
+		void columnHeaderClicked(int);
 		void contextMenuAboutToHide();
 		void contextMenuTriggered(QAction* action);
+		void doubleClicked(const QModelIndex&);
+		void itemSelected(const QItemSelection&);
+		void mouseEntered(const QModelIndex&);
 		void saveAdditionalSortingConfig();
+		void onServerBegunRefreshing(const ServerPtr &server);
+		void onServerUpdated(const ServerPtr &server);
 		void updateHeaderTitles();
 };
 

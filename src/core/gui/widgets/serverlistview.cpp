@@ -24,6 +24,8 @@
 #include "gui/widgets/serverlistview.h"
 
 #include "configuration/doomseekerconfig.h"
+#include "gui/models/serverlistcolumn.h"
+#include "refresher/refresher.h"
 #include <QDebug>
 #include <QHeaderView>
 #include <QItemDelegate>
@@ -103,8 +105,13 @@ ServerListView::ServerListView(QWidget* parent) : QTableView(parent)
 	verticalHeader()->setDefaultSectionSize(fontMetrics().height() + 6);
 	setShowGrid(gConfig.doomseeker.bDrawGridInServerTable);
 
-	bAllowAllRowsRefresh = true;
+	allowedVisualAdjustment = true;
 	setItemDelegate(new CustomItemDelegate());
+
+	this->connect(gRefresher, SIGNAL(sleepingModeEnter()),
+		SLOT(allowVisualAdjustment()));
+	this->connect(gRefresher, SIGNAL(sleepingModeExit()),
+		SLOT(disallowVisualAdjustment()));
 }
 
 void ServerListView::mouseReleaseEvent(QMouseEvent* event)
@@ -115,14 +122,14 @@ void ServerListView::mouseReleaseEvent(QMouseEvent* event)
 		case Qt::MidButton:
 			if (index.isValid())
 			{
-				emit middleMouseClick(index, event->pos());
+				emit middleMouseClicked(index, event->pos());
 			}
 			break;
 
 		case Qt::RightButton:
 			if (index.isValid())
 			{
-				emit rightMouseClick(index, event->pos());
+				emit rightMouseClicked(index, event->pos());
 			}
 			break;
 
@@ -148,21 +155,64 @@ void ServerListView::mouseDoubleClickEvent(QMouseEvent* event)
 	}
 }
 
-void ServerListView::updateRowVisuals(int row)
+void ServerListView::setupTableProperties()
 {
-	resizeRowToContents(row);
+	setIconSize(QSize(26, 15));
+	// We don't really need a vertical header so lets remove it.
+	verticalHeader()->hide();
+	// Some flags that can't be set from the Designer.
+	horizontalHeader()->setSortIndicatorShown(true);
+	horizontalHeader()->setHighlightSections(false);
+
+	setMouseTracking(true);
+
+	setupTableColumnWidths();
+}
+
+void ServerListView::setupTableColumnWidths()
+{
+	QString &headerState = gConfig.doomseeker.serverListColumnState;
+	if(headerState.isEmpty())
+	{
+		for (int i = 0; i < ServerListColumnId::NUM_SERVERLIST_COLUMNS; ++i)
+		{
+			ServerListColumn* columns = ServerListColumns::columns;
+			setColumnWidth(i, columns[i].width);
+			setColumnHidden(i, columns[i].bHidden);
+			if(!columns[i].bResizable)
+			{
+#if QT_VERSION >= 0x050000
+				horizontalHeader()->setSectionResizeMode(i, QHeaderView::Fixed);
+#else
+				horizontalHeader()->setResizeMode(i, QHeaderView::Fixed);
+#endif
+			}
+		}
+	}
+	else
+		horizontalHeader()->restoreState(QByteArray::fromBase64(headerState.toUtf8()));
+
+#if QT_VERSION >= 0x050000
+	horizontalHeader()->setSectionsMovable(true);
+#else
+	horizontalHeader()->setMovable(true);
+#endif
 }
 
 void ServerListView::updateAllRows()
 {
-	if (bAllowAllRowsRefresh)
+	if (allowedVisualAdjustment)
 	{
-		QSortFilterProxyModel* pModel = static_cast<QSortFilterProxyModel*>(model());
-		int rowCount = pModel->sourceModel()->rowCount();
-
-		for (int i = 0; i < rowCount; ++i)
-		{
-			updateRowVisuals(i);
-		}
+		resizeRowsToContents();
 	}
+}
+
+void ServerListView::allowVisualAdjustment()
+{
+	allowedVisualAdjustment = true;
+}
+
+void ServerListView::disallowVisualAdjustment()
+{
+	allowedVisualAdjustment = false;
 }

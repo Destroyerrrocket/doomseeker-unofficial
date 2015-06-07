@@ -235,6 +235,7 @@ set(HEADER_FILES
 	serverapi/polymorphism.h
 	serverapi/rconprotocol.h
 	serverapi/server.h
+	serverapi/serverlistcounttracker.h
 	serverapi/serverptr.h
 	serverapi/serverstructs.h
 	serverapi/serversummary.h
@@ -242,6 +243,7 @@ set(HEADER_FILES
 	serverapi/tooltips/gameinfotip.h
 	serverapi/tooltips/generalinfotip.h
 	serverapi/tooltips/playertable.h
+	serverapi/tooltips/servertooltip.h
 	serverapi/tooltips/tooltipgenerator.h
 	socketsignalsadapter.h
 	speedcalculator.h
@@ -446,12 +448,14 @@ set(SOURCE_FILES
 	serverapi/playerslist.cpp
 	serverapi/rconprotocol.cpp
 	serverapi/server.cpp
+	serverapi/serverlistcounttracker.cpp
 	serverapi/serverstructs.cpp
 	serverapi/serversummary.cpp
 	serverapi/tooltips/dmflagshtmlgenerator.cpp
 	serverapi/tooltips/gameinfotip.cpp
 	serverapi/tooltips/generalinfotip.cpp
 	serverapi/tooltips/playertable.cpp
+	serverapi/tooltips/servertooltip.cpp
 	serverapi/tooltips/tooltipgenerator.cpp
 	speedcalculator.cpp
 	strings.cpp

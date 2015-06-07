@@ -42,9 +42,9 @@ class ServerFilterDock : public QDockWidget
 		void addGameModeToComboBox(const QString& gameMode);
 
 		/**
- 		* @brief Creates and/or returns an instance of widget that is located
- 		* in the MainWindow toolbar.
- 		*/
+		* @brief Creates and/or returns an instance of widget that is located
+		* in the MainWindow toolbar.
+		*/
 		QLineEdit *createQuickSearch();
 
 		ServerListFilterInfo filterInfo() const;

@@ -26,15 +26,16 @@
 #include "serverapi/serverptr.h"
 #include <QStandardItemModel>
 
+class EnginePlugin;
 class Server;
 class ServerListSortFilterProxyModel;
-class ServerListHandler;
+class ServerList;
 
 class ServerListModel : public QStandardItemModel
 {
 	Q_OBJECT
 
-	friend class ServerListHandler;
+	friend class ServerList;
 	friend class ServerListProxyModel;
 
 	public:
@@ -65,14 +66,13 @@ class ServerListModel : public QStandardItemModel
 			SLDT_SORT = Qt::UserRole+2
 		};
 
-		ServerListModel(ServerListHandler* parent);
+		ServerListModel(ServerList* parent);
 
 		/**
 		 * @return New row index.
 		 */
-		int addServer(ServerPtr server, int response);
-
-		void destroyRows();
+		int addServer(ServerPtr server);
+		QList<ServerPtr> customServers() const;
 
 		/**
 		 *	@brief Finds index of the row where server is contained.
@@ -81,7 +81,11 @@ class ServerListModel : public QStandardItemModel
 		 */
 		int findServerOnTheList(const Server* server);
 
-		ServerListHandler* handler() { return parentHandler; }
+		ServerList* handler() { return parentHandler; }
+
+		QList<ServerPtr> nonSpecialServers() const;
+		QList<ServerPtr> servers() const;
+		QList<ServerPtr> serversForPlugin(const EnginePlugin *plugin) const;
 
 		/**
 		 *	Enforces update of a given row. No modificiation is done
@@ -91,7 +95,6 @@ class ServerListModel : public QStandardItemModel
 		void redraw(int row);
 		void redrawAll();
 
-		void removeCustomServers();
 		void removeServer(const ServerPtr &server);
 
 		/**
@@ -103,25 +106,24 @@ class ServerListModel : public QStandardItemModel
 		/**
 		 *	Returns row index.
 		 */
-		int updateServer(int row, ServerPtr server, int response);
+		int updateServer(int row, ServerPtr server);
 
-		ServerPtr serverFromList(int rowIndex);
-		ServerPtr serverFromList(const QModelIndex&);
+		ServerPtr serverFromList(int rowIndex) const;
+		ServerPtr serverFromList(const QModelIndex&) const;
 
 		void setRefreshing(ServerPtr server);
 
 	signals:
 		void allRowsContentChanged();
-		void modelCleared();
 		void rowContentChanged(int row);
 
-	protected:
+	private:
 		void prepareHeaders();
 		ServerGroup serverGroup(int row);
 
 		QVariant columnSortData(int row, int column);
 
-		ServerListHandler* parentHandler;
+		ServerList* parentHandler;
 };
 
 #endif

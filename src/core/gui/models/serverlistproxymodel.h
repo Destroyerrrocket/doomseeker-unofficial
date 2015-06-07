@@ -28,7 +28,7 @@
 #include <QSortFilterProxyModel>
 
 class ServerListFilterInfo;
-class ServerListHandler;
+class ServerList;
 class Server;
 
 class ColumnSort
@@ -58,7 +58,7 @@ class ServerListProxyModel : public QSortFilterProxyModel
 	Q_OBJECT
 
 	public:
-		ServerListProxyModel(ServerListHandler* serverListHandler);
+		ServerListProxyModel(ServerList* serverListHandler);
 		~ServerListProxyModel();
 
 		void addAdditionalColumnSorting(int column, Qt::SortOrder order);

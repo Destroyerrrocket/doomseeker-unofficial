@@ -374,6 +374,11 @@ bool Server::isSecure() const
 	return d->bSecure;
 }
 
+bool Server::isSpecial() const
+{
+	return isLan() || isCustom();
+}
+
 const QString& Server::iwad() const
 {
 	return d->iwad;
