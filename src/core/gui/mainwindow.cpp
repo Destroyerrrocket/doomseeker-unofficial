@@ -142,24 +142,24 @@ public:
 	QProgressBar* autoUpdaterOverallProgressBar;
 
 	/**
-		*	Set to true by btnGetServers_click() process and to false
-		*	when refreshing thread enters sleep mode.
-		*/
+	 * Set to true by btnGetServers_click() process and to false
+	 * when refreshing thread enters sleep mode.
+	 */
 	bool bTotalRefreshInProcess;
 
 	DockBuddiesList* buddiesList;
 	BroadcastManager *broadcastManager;
 
 	/**
-		*	This is required so tray icon knows how to bring the window back.
-		*/
+	 * This is required so tray icon knows how to bring the window back.
+	 */
 	bool bWasMaximized;
 
 	/**
-		*	If set to true the closeEvent() method will ignore tray icon
-		*	settings and proceed to close the MainWindow. This is set by
-		*	quitProgram() slot.
-		*/
+	 * If set to true the closeEvent() method will ignore tray icon
+	 * settings and proceed to close the MainWindow. This is set by
+	 * quitProgram() slot.
+	 */
 	bool bWantToQuit;
 
 	IP2CLoader* ip2cLoader;
