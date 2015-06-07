@@ -1,8 +1,13 @@
 # Change Log
 
+Visit this file cleanly formatted in repository:
+https://bitbucket.org/Blzut3/doomseeker/src/default/CHANGELOG.md
+
+This file follows recommendations in accordance to:
+http://keepachangelog.com/
+
 ## [Development][development]
 ### Added
-
 - Provide more information in game status widgets (bottom-right corner).
 Humans and bots are now counted separately and together, refresh progress
 is included and the numbers also encompass custom and LAN servers.
