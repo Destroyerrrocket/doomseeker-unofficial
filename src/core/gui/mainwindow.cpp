@@ -34,6 +34,8 @@
 #include "gui/createserverdialog.h"
 #include "gui/demomanager.h"
 #include "gui/dockBuddiesList.h"
+#include "gui/helpers/taskbarbutton.h"
+#include "gui/helpers/taskbarprogress.h"
 #include "gui/ip2cupdatebox.h"
 #include "gui/logdock.h"
 #include "gui/mainwindow.h"
@@ -183,6 +185,9 @@ public:
 
 	ConnectionHandler *connectionHandler;
 	QDockWidget *mainDock;
+
+	TaskbarProgress *taskbarProgress;
+	TaskbarButton *taskbarButton;
 };
 
 DPointeredNoCopy(MainWindow)
@@ -199,6 +204,10 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	d->setupUi(this);
+
+	d->taskbarButton = new TaskbarButton(this);
+	d->taskbarProgress = d->taskbarButton->progress();
+
 	setupIcons();
 
 	initAutoUpdaterWidgets();
@@ -588,7 +597,7 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 		this->connect(statusWidget, SIGNAL( clicked(const EnginePlugin*) ) ,
 			SLOT( togglePluginQueryEnabled(const EnginePlugin*) ) );
 		this->connect(statusWidget, SIGNAL(counterUpdated()),
-			SLOT(updateTrayIconTooltip()));
+			SLOT(updateRefreshProgress()));
 
 		statusBar()->addPermanentWidget(statusWidget);
 
@@ -1275,6 +1284,7 @@ void MainWindow::refreshLanServers()
 void MainWindow::refreshThreadBeginsWork()
 {
 	statusBar()->showMessage(tr("Querying..."));
+	d->taskbarProgress->show();
 }
 
 void MainWindow::refreshThreadEndsWork()
@@ -1284,6 +1294,7 @@ void MainWindow::refreshThreadEndsWork()
 	d->serverList->cleanUpForce();
 	statusBar()->showMessage(tr("Done"));
 	updateTrayIconTooltipAndLogTotalRefresh();
+	d->taskbarProgress->hide();
 
 	if (d->bTotalRefreshInProcess)
 	{
@@ -1422,6 +1433,12 @@ void MainWindow::showAndLogStatusMessage(const QString &message)
 	statusBar()->showMessage(message);
 }
 
+void MainWindow::showEvent(QShowEvent *event)
+{
+	// http://stackoverflow.com/a/26910648/1089357
+	d->taskbarButton->setWindow(windowHandle());
+}
+
 void MainWindow::showProgramArgsHelp()
 {
 	ProgramArgsHelpDialog *dialog = new ProgramArgsHelpDialog(this);
@@ -1557,9 +1574,12 @@ ServerListCount MainWindow::sumServerListCount() const
 	return count;
 }
 
-void MainWindow::updateTrayIconTooltip()
+void MainWindow::updateRefreshProgress()
 {
-	updateTrayIconTooltip(sumServerListCount());
+	ServerListCount count = sumServerListCount();
+	d->taskbarProgress->setMaximum(count.numServers);
+	d->taskbarProgress->setValue(count.numServers - count.numRefreshing);
+	updateTrayIconTooltip(count);
 }
 
 void MainWindow::updateTrayIconTooltip(const ServerListCount &count)

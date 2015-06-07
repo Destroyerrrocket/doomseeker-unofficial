@@ -162,6 +162,7 @@ class MainWindow : public QMainWindow
 
 		void refreshCustomServers();
 		void refreshLanServers();
+		void showEvent(QShowEvent *event);
 		void setupIcons();
 		void setupToolBar();
 		ServerListCount sumServerListCount() const;
@@ -226,7 +227,7 @@ class MainWindow : public QMainWindow
 		void toolBarAction(QAction* pAction);
 		void trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
 		void updateServerFilter(const ServerListFilterInfo& filterInfo);
-		void updateTrayIconTooltip();
+		void updateRefreshProgress();
 
 	private:
 		DPtr<MainWindow> d;
