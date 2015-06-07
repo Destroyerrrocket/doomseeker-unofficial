@@ -112,6 +112,8 @@ set(HEADER_FILES
 	gui/helpers/comboboxex.h
 	gui/helpers/datetablewidgetitem.h
 	gui/helpers/playersdiagram.h
+	gui/helpers/taskbarbutton.h
+	gui/helpers/taskbarprogress.h
 	gui/ip2cupdatebox.h
 	gui/irc/ircdock.h
 	gui/irc/ircdocktabcontents.h
@@ -328,6 +330,8 @@ set(SOURCE_FILES
 	gui/helpers/comboboxex.cpp
 	gui/helpers/datetablewidgetitem.cpp
 	gui/helpers/playersdiagram.cpp
+	gui/helpers/taskbarbutton.cpp
+	gui/helpers/taskbarprogress.cpp
 	gui/ip2cupdatebox.cpp
 	gui/irc/ircdock.cpp
 	gui/irc/ircdocktabcontents.cpp

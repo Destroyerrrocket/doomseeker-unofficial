@@ -46,15 +46,6 @@ QString masterAddress()
 
 PluginEnginePlugin::PluginEnginePlugin()
 {
-	init("Fake Plugin", NULL,
-		EP_Author, "The Doomseeker Team",
-		EP_Version, 1,
-
-		EP_MasterClient, new PluginMasterClient(),
-		EP_DefaultMaster, masterAddress().toUtf8().constData(),
-		EP_Done
-	);
-
 	d = new PrivData();
 	d->masterResponder = NULL;
 }
@@ -102,4 +93,16 @@ void PluginEnginePlugin::startMasterResponder()
 	assert(!isMasterResponderInstantiated());
 	d->masterResponder = new MasterResponder();
 	d->masterResponder->bind(ResponderCfg::masterServerPort());
+}
+
+void PluginEnginePlugin::start()
+{
+	init("Fake Plugin", NULL,
+		EP_Author, "The Doomseeker Team",
+		EP_Version, 1,
+
+		EP_MasterClient, new PluginMasterClient(),
+		EP_DefaultMaster, masterAddress().toUtf8().constData(),
+		EP_Done
+	);
 }

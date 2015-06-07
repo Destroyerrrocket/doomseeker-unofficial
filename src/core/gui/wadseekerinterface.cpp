@@ -22,7 +22,10 @@
 //------------------------------------------------------------------------------
 #include "gui/wadseekerinterface.h"
 #include "ui_wadseekerinterface.h"
+
 #include "configuration/doomseekerconfig.h"
+#include "gui/helpers/taskbarbutton.h"
+#include "gui/helpers/taskbarprogress.h"
 #include "serverapi/server.h"
 #include "application.h"
 #include "mainwindow.h"
@@ -37,6 +40,8 @@ DClass<WadseekerInterface> : public Ui::WadseekerInterface
 {
 public:
 	bool bCompletedSuccessfully;
+	TaskbarButton *taskbarButton;
+	TaskbarProgress *taskbarProgress;
 };
 
 DPointered(WadseekerInterface)
@@ -167,6 +172,12 @@ void WadseekerInterface::construct()
 {
 	d->setupUi(this);
 	d->bCompletedSuccessfully = false;
+
+	d->taskbarButton = new TaskbarButton(this);
+
+	d->taskbarProgress = d->taskbarButton->progress();
+	d->taskbarProgress->setMaximum(d->pbOverallProgress->maximum());
+
 	setStateWaiting();
 
 	initMessageColors();
@@ -337,6 +348,7 @@ void WadseekerInterface::seekStarted(const QStringList& filenames)
 {
 	d->teWadseekerOutput->clear();
 	d->pbOverallProgress->setValue(0);
+	d->taskbarProgress->setValue(0);
 	displayMessage("Seek started on filenames: " + filenames.join(", "), WadseekerLib::Notice, false);
 
 	seekedWads = filenames;
@@ -355,6 +367,7 @@ void WadseekerInterface::setStateDownloading()
 {
 	d->btnClose->setText(tr("Abort"));
 	d->btnDownload->setEnabled(false);
+	d->taskbarProgress->show();
 	state = Downloading;
 }
 
@@ -362,6 +375,7 @@ void WadseekerInterface::setStateWaiting()
 {
 	d->btnClose->setText(tr("Close"));
 	d->btnDownload->setEnabled(true);
+	d->taskbarProgress->hide();
 	state = Waiting;
 }
 
@@ -395,6 +409,7 @@ void WadseekerInterface::showEvent(QShowEvent* event)
 {
 	if (!bFirstShown)
 	{
+		d->taskbarButton->setWindow(windowHandle());
 		bFirstShown = true;
 
 		if (isAutomatic())
@@ -471,6 +486,7 @@ void WadseekerInterface::updateProgressBar()
 	unsigned progressBarValue = (unsigned)(totalPercentage * 100.0);
 
 	d->pbOverallProgress->setValue(progressBarValue);
+	d->taskbarProgress->setValue(progressBarValue);
 }
 
 void WadseekerInterface::updateTitle()
