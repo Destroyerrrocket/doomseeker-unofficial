@@ -1,10 +1,10 @@
 # Change Log
 
 Visit this file cleanly formatted in repository:
-https://bitbucket.org/Blzut3/doomseeker/src/default/CHANGELOG.md
+<https://bitbucket.org/Blzut3/doomseeker/src/default/CHANGELOG.md>
 
 This file follows recommendations in accordance to:
-http://keepachangelog.com/
+<http://keepachangelog.com/>
 
 ## [Development][development]
 ### Added
