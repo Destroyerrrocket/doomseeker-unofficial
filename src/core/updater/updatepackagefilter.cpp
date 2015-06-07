@@ -144,9 +144,9 @@ bool UpdatePackageFilter::isDifferentThanInstalled(UpdatePackage& pkg) const
 	}
 	else if (pkg.name == AutoUpdater::QT_PACKAGE_NAME)
 	{
-		if (QString(qVersion()) != pkg.revision)
+		if (QString(Version::qtPackageVersion()) != pkg.revision)
 		{
-			pkg.currentlyInstalledDisplayVersion = qVersion();
+			pkg.currentlyInstalledDisplayVersion = Version::qtPackageVersion();
 			return true;
 		}
 	}

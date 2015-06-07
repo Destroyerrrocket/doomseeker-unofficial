@@ -46,6 +46,11 @@ QString Version::operatingSystem()
 	#endif
 }
 
+QString Version::qtPackageVersion()
+{
+	return QString("%1-1").arg(qVersion());
+}
+
 QString Version::revision()
 {
 	return SVN_REVISION_STRING;

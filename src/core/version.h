@@ -56,6 +56,7 @@ class MAIN_EXPORT Version
 		 * @brief Name of operating system, content length and detail may vary.
 		 */
 		static QString operatingSystem();
+		static QString qtPackageVersion();
 		static QString revision();
 		static unsigned long long revisionNumber();
 
