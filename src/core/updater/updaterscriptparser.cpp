@@ -69,7 +69,7 @@ void UpdaterScriptParser::merge(const QDomDocument& otherDoc)
 		listNodes = nodePackagesSrc.toElement().elementsByTagName("package");
 		for (int i = 0; i < listNodes.count(); ++i)
 		{
-			nodePackagesDst.appendChild(listNodes.at(i));
+			nodePackagesDst.appendChild(listNodes.at(i).cloneNode(true));
 		}
 
 		QDomNode nodeInstallDst = installNode(*d->pDoc);
@@ -77,7 +77,7 @@ void UpdaterScriptParser::merge(const QDomDocument& otherDoc)
 		listNodes = nodeInstallSrc.toElement().elementsByTagName("file");
 		for (int i = 0; i < listNodes.count(); ++i)
 		{
-			nodeInstallDst.appendChild(listNodes.at(i));
+			nodeInstallDst.appendChild(listNodes.at(i).cloneNode(true));
 		}
 	}
 	else
