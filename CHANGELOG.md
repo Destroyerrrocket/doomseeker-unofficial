@@ -36,6 +36,10 @@ require to download Qt libraries everytime anymore.
 
 ### Fixed
 - Don't reset difficulty in "Create Game" dialog when changing game mode.
+- Auto-updater wouldn't install all files from auxiliary update packages.
+This wasn't very critical for a long time as most files in auxiliary
+packages (plugin's packages) weren't vital and the plugins themselves
+were always installed correctly.
 - Wadseeker: Automatically abort queries to sites & services when all
 files are installed.
 
