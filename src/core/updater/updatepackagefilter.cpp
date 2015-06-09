@@ -25,7 +25,10 @@
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
 #include "updater/autoupdater.h"
+#include "strings.h"
 #include "version.h"
+#include <QCoreApplication>
+#include <QFile>
 #include <cassert>
 #include <wadseeker/wadseekerversioninfo.h>
 
@@ -148,6 +151,26 @@ bool UpdatePackageFilter::isDifferentThanInstalled(UpdatePackage& pkg) const
 		{
 			pkg.currentlyInstalledDisplayVersion = Version::qtPackageVersion();
 			return true;
+		}
+		// Workaround for auto-updater bug that made itself apparent
+		// in Doomseeker 1.1~beta builds. Bug caused every even
+		// numbered file in auxiliary packages not to be installed. As
+		// Qt is such auxiliary package in 1.1~beta, some files,
+		// including Qt5WinExtras.dll, failed to install.
+		bool checkWinExtras = false;
+#ifdef Q_OS_WIN32
+		checkWinExtras = true;
+#endif
+		if (checkWinExtras)
+		{
+			QString winExtrasLocation = Strings::combinePaths(
+				QCoreApplication::applicationDirPath(), "Qt5WinExtras.dll");
+			QFile file(winExtrasLocation);
+			if (!file.exists())
+			{
+				pkg.currentlyInstalledDisplayVersion = Version::qtPackageVersion() + tr("-BROKEN");
+				return true;
+			}
 		}
 	}
 	else

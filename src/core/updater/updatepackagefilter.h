@@ -50,8 +50,10 @@
  * - Packages which have the same revision number as the ones already
  *   installed are discarded. This is hardcoded into the class.
  */
-class UpdatePackageFilter
+class UpdatePackageFilter : public QObject
 {
+	Q_OBJECT;
+
 	public:
 		UpdatePackageFilter();
 		~UpdatePackageFilter();
@@ -76,6 +78,8 @@ class UpdatePackageFilter
 		bool wasAnyUpdatePackageIgnored() const;
 
 	private:
+		Q_DISABLE_COPY(UpdatePackageFilter);
+
 		class PluginInfo;
 
 		DPtr<UpdatePackageFilter> d;
