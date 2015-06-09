@@ -89,6 +89,11 @@ void GameRulesPanel::fillInModifiers(GameCreateParams &params)
 	}
 }
 
+MapListPanel *GameRulesPanel::mapListPanel()
+{
+	return d->mapListPanel;
+}
+
 void GameRulesPanel::loadConfig(Ini &config)
 {
 	IniSection section = config.section("Rules");
@@ -119,6 +124,11 @@ void GameRulesPanel::saveConfig(Ini &config)
 	}
 
 	d->mapListPanel->saveConfig(config);
+}
+
+void GameRulesPanel::setCreateServerDialog(CreateServerDialog *dialog)
+{
+	d->mapListPanel->setCreateServerDialog(dialog);
 }
 
 void GameRulesPanel::setupForEngine(const EnginePlugin *engine, const GameMode &gameMode)

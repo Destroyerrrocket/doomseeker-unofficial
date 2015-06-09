@@ -64,6 +64,9 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 
 	d->setupUi(this);
 
+	d->generalSetupPanel->setCreateServerDialog(this);
+	d->rulesPanel->setCreateServerDialog(this);
+
 	// This is a crude solution to the problem where message boxes appear
 	// before the actual Create Server dialog. We need to give some time
 	// for the Dialog to appear. Unfortunately reimplementing
@@ -312,6 +315,16 @@ void CreateServerDialog::makeRemoteGameSetupDialog(const EnginePlugin *plugin)
 
 	d->generalSetupPanel->setupForRemoteGame();
 	d->rulesPanel->setupForRemoteGame();
+}
+
+MapListPanel* CreateServerDialog::mapListPanel()
+{
+	return d->rulesPanel->mapListPanel();
+}
+
+QString CreateServerDialog::mapName() const
+{
+	return d->generalSetupPanel->mapName();
 }
 
 bool CreateServerDialog::fillInParamsFromPluginPages(GameCreateParams &params)

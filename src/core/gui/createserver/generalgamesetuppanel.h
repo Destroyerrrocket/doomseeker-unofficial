@@ -27,6 +27,7 @@
 
 #include <QWidget>
 
+class CreateServerDialog;
 class EnginePlugin;
 class GameCreateParams;
 class GameMode;
@@ -46,14 +47,19 @@ public:
 	EnginePlugin *currentPlugin() const;
 	void fillInParams(GameCreateParams &params, bool offline);
 	void loadConfig(Ini &config, bool loadingPrevious);
+	QString mapName() const;
 	void saveConfig(Ini &config);
 	void setupForEngine(EnginePlugin *engine);
 	void setupForRemoteGame();
+	void setCreateServerDialog(CreateServerDialog *dialog);
 	void setIwadByName(const QString &iwad);
 
 signals:
 	void gameModeChanged(const GameMode &gameMode);
 	void pluginChanged(EnginePlugin *plugin);
+
+protected:
+	void showEvent(QShowEvent *event);
 
 private:
 	DPtr<GeneralGameSetupPanel> d;
@@ -69,6 +75,7 @@ private slots:
 	void browseExecutable();
 	void onGameModeChanged(int);
 	void setExecutableToDefault();
+	void updateMapWarningVisibility();
 };
 
 #endif

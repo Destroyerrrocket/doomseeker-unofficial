@@ -15,6 +15,9 @@
     <number>0</number>
    </property>
    <item>
+    <widget class="IconLabel" name="lblWarning" native="true"/>
+   </item>
+   <item>
     <widget class="QListView" name="lstMaplist">
      <property name="dragEnabled">
       <bool>true</bool>
@@ -68,6 +71,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>IconLabel</class>
+   <extends>QWidget</extends>
+   <header>gui/widgets/iconlabel.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>lstMaplist</tabstop>
   <tabstop>btnAddMapToMaplist</tabstop>

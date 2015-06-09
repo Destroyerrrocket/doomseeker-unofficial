@@ -24,6 +24,8 @@
 #include "ui_generalgamesetuppanel.h"
 
 #include "configuration/doomseekerconfig.h"
+#include "gui/createserver/maplistpanel.h"
+#include "gui/createserverdialog.h"
 #include "ini/ini.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/exefile.h"
@@ -37,12 +39,15 @@
 #include <QFileInfo>
 #include <QHostAddress>
 #include <QMessageBox>
+#include <QTimer>
+#include <cassert>
 
 DClass<GeneralGameSetupPanel> : public Ui::GeneralGameSetupPanel
 {
 public:
 	EnginePlugin *currentEngine;
 	bool iwadSetExplicitly;
+	CreateServerDialog *parentDialog;
 	bool suppressMissingExeErrors;
 	bool remoteGameSetup;
 };
@@ -57,6 +62,7 @@ GeneralGameSetupPanel::GeneralGameSetupPanel(QWidget *parent)
 	d->iwadSetExplicitly = false;
 	d->remoteGameSetup = false;
 	d->suppressMissingExeErrors = false;
+	d->parentDialog = NULL;
 
 	this->connect(d->cboEngine, SIGNAL(currentPluginChanged(EnginePlugin*)),
 		SIGNAL(pluginChanged(EnginePlugin*)));
@@ -141,6 +147,9 @@ void GeneralGameSetupPanel::loadConfig(Ini &config, bool loadingPrevious)
 
 	d->cbBroadcastToLAN->setChecked(general["broadcastToLAN"]);
 	d->cbBroadcastToMaster->setChecked(general["broadcastToMaster"]);
+
+	// Timer triggers slot after config is fully loaded.
+	QTimer::singleShot(0, this, SLOT(updateMapWarningVisibility()));
 }
 
 void GeneralGameSetupPanel::saveConfig(Ini &config)
@@ -223,10 +232,25 @@ void GeneralGameSetupPanel::setupForRemoteGame()
 		disableControls[i]->setDisabled(true);
 }
 
+void GeneralGameSetupPanel::setCreateServerDialog(CreateServerDialog *dialog)
+{
+	d->parentDialog = dialog;
+}
+
 void GeneralGameSetupPanel::setIwadByName(const QString &iwad)
 {
 	d->iwadSetExplicitly = true;
 	d->iwadPicker->setIwadByName(iwad);
+}
+
+void GeneralGameSetupPanel::showEvent(QShowEvent *event)
+{
+	updateMapWarningVisibility();
+}
+
+QString GeneralGameSetupPanel::mapName() const
+{
+	return d->leMap->text();
 }
 
 QString GeneralGameSetupPanel::pathToExe(bool offline)
@@ -330,4 +354,11 @@ bool GeneralGameSetupPanel::setEngine(const QString &engineName)
 		return false;
 	}
 	return true;
+}
+
+void GeneralGameSetupPanel::updateMapWarningVisibility()
+{
+	assert(d->parentDialog != NULL);
+	MapListPanel *mapList = d->parentDialog->mapListPanel();
+	d->lblMapWarning->setVisible(mapList->hasMaps() && !mapList->isMapOnList(mapName()));
 }

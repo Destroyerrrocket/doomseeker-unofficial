@@ -27,6 +27,7 @@
 
 #include <QWidget>
 
+class CreateServerDialog;
 class EnginePlugin;
 class GameCreateParams;
 class Ini;
@@ -40,9 +41,15 @@ public:
 	~MapListPanel();
 
 	void fillInParams(GameCreateParams &params);
+	bool hasMaps() const;
+	bool isMapOnList(const QString &mapName) const;
 	void loadConfig(Ini &config);
 	void saveConfig(Ini &config);
+	void setCreateServerDialog(CreateServerDialog *dialog);
 	void setupForEngine(const EnginePlugin *engine);
+
+protected:
+	void showEvent(QShowEvent *event);
 
 private:
 	void addMapToMaplist(const QString &map);
@@ -52,6 +59,7 @@ private slots:
 	void addMapFromEditBoxToList();
 	void onFocusChanged(QWidget* old, QWidget* now);
 	void removeSelectedFromList();
+	void updateMapWarningVisibility();
 };
 
 #endif

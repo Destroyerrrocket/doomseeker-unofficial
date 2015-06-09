@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gamerulespanel.h
+// iconlabel.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,47 +18,50 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef id880d5e15_1a53_40da_bdb9_11d9b4dc3222
-#define id880d5e15_1a53_40da_bdb9_11d9b4dc3222
+#include "iconlabel.h"
 
-#include "dptr.h"
-
-#include <QWidget>
-
-class CreateServerDialog;
-class EnginePlugin;
-class GameCreateParams;
-class GameMode;
-class Ini;
-class MapListPanel;
-
-class GameRulesPanel : public QWidget
+IconLabel::IconLabel(QWidget* pParent)
+: QWidget(pParent)
 {
-Q_OBJECT
+	lblIcon = new QLabel(this);
+	lblIcon->setPixmap(QPixmap(":/icons/help"));
+	lblIcon->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
 
-public:
-	GameRulesPanel(QWidget *parent);
-	~GameRulesPanel();
+	lblText = new QLabel(this);
+	lblText->setText("TextLabel");
 
-	void fillInParams(GameCreateParams &params);
-	MapListPanel *mapListPanel();
-	void loadConfig(Ini &config);
-	void saveConfig(Ini &config);
-	void setupForEngine(const EnginePlugin *engine, const GameMode &gameMode);
-	void setupForRemoteGame();
-	void setCreateServerDialog(CreateServerDialog *dialog);
+	pLayout = new QHBoxLayout(this);
+	pLayout->addWidget(lblIcon);
+	pLayout->addWidget(lblText);
+	pLayout->setContentsMargins(0, 0, 0, 0);
 
-private:
-	DPtr<GameRulesPanel> d;
+	this->setLayout(pLayout);
+	this->setContentsMargins(0, 0, 0, 0);
+}
 
-	void fillInLimits(GameCreateParams &params);
-	void fillInModifiers(GameCreateParams &params);
-	void removeLimitWidgets();
-	void setupDifficulty();
-	void setupLimitWidgets(const EnginePlugin *engine, const GameMode &gameMode);
-	void setupModifiers(const EnginePlugin *engine);
-};
+const QPixmap* IconLabel::pixmap() const
+{
+	return lblIcon->pixmap();
+}
 
-#endif
+QString IconLabel::text() const
+{
+	return lblText->text();
+}
+
+void IconLabel::setPixmap(const QPixmap& pixmap)
+{
+	lblIcon->setPixmap(pixmap);
+}
+
+void IconLabel::setText(const QString& str)
+{
+	lblText->setText(str);
+}
+
+void IconLabel::setWordWrap(bool wrap)
+{
+	lblText->setWordWrap(wrap);
+}

@@ -30,6 +30,7 @@
 class CreateServerDialogPage;
 class EnginePlugin;
 class GameCreateParams;
+class MapListPanel;
 class Message;
 class Server;
 
@@ -46,6 +47,8 @@ class CreateServerDialog : public QDialog
 
 		bool commandLineArguments(QString &executable, QStringList &args);
 		void makeRemoteGameSetupDialog(const EnginePlugin *plugin);
+		MapListPanel *mapListPanel();
+		QString mapName() const;
 		void setIwadByName(const QString &iwad);
 
 	private slots:

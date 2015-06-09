@@ -24,13 +24,17 @@
 #include "ui_maplistpanel.h"
 
 #include "ini/ini.h"
+#include "gui/createserverdialog.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/gamecreateparams.h"
 #include "commongui.h"
 #include <QStandardItemModel>
+#include <QTimer>
 
 DClass<MapListPanel> : public Ui::MapListPanel
 {
+public:
+	CreateServerDialog *parentDialog;
 };
 
 DPointered(MapListPanel)
@@ -42,6 +46,12 @@ MapListPanel::MapListPanel(QWidget *parent)
 	d->lstMaplist->setModel(new QStandardItemModel(this));
 	this->connect(QApplication::instance(), SIGNAL(focusChanged(QWidget*, QWidget*)),
 		SLOT(onFocusChanged(QWidget*, QWidget*)));
+
+	d->parentDialog = NULL;
+
+	d->lblWarning->setText(tr("Current map isn't present on map list. Game may misbehave."));
+	d->lblWarning->setPixmap(QPixmap(":/icons/exclamation.png"));
+	d->lblWarning->setWordWrap(true);
 }
 
 MapListPanel::~MapListPanel()
@@ -64,6 +74,7 @@ void MapListPanel::addMapToMaplist(const QString &map)
 	it->setDragEnabled(true);
 	it->setDropEnabled(false);
 	model->appendRow(it);
+	updateMapWarningVisibility();
 }
 
 void MapListPanel::onFocusChanged(QWidget* old, QWidget* now)
@@ -82,12 +93,40 @@ void MapListPanel::removeSelectedFromList()
 {
 	const bool bSelectNextLowest = true;
 	CommonGUI::removeSelectedRowsFromStandardItemView(d->lstMaplist, bSelectNextLowest);
+	updateMapWarningVisibility();
 }
 
 void MapListPanel::fillInParams(GameCreateParams &params)
 {
 	params.setMapList(CommonGUI::listViewStandardItemsToStringList(d->lstMaplist));
 	params.setRandomMapRotation(d->cbRandomMapRotation->isChecked());
+}
+
+bool MapListPanel::hasMaps() const
+{
+	return d->lstMaplist->model()->rowCount() > 0;
+}
+
+bool MapListPanel::isMapOnList(const QString &mapName) const
+{
+	foreach (const QString &candidate, CommonGUI::listViewStandardItemsToStringList(d->lstMaplist))
+	{
+		if (candidate.compare(mapName, Qt::CaseInsensitive) == 0)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+void MapListPanel::showEvent(QShowEvent *event)
+{
+	updateMapWarningVisibility();
+}
+
+void MapListPanel::updateMapWarningVisibility()
+{
+	d->lblWarning->setVisible(hasMaps() && !isMapOnList(d->parentDialog->mapName()));
 }
 
 void MapListPanel::loadConfig(Ini &config)
@@ -101,6 +140,9 @@ void MapListPanel::loadConfig(Ini &config)
 		addMapToMaplist(s);
 	}
 	d->cbRandomMapRotation->setChecked(section["randomMapRotation"]);
+
+	// Timer triggers slot after config is fully loaded.
+	QTimer::singleShot(0, this, SLOT(updateMapWarningVisibility()));
 }
 
 void MapListPanel::saveConfig(Ini &config)
@@ -109,6 +151,11 @@ void MapListPanel::saveConfig(Ini &config)
 	QStringList stringList = CommonGUI::listViewStandardItemsToStringList(d->lstMaplist);
 	section["maplist"] = stringList.join(";");
 	section["randomMapRotation"] = d->cbRandomMapRotation->isChecked();
+}
+
+void MapListPanel::setCreateServerDialog(CreateServerDialog *dialog)
+{
+	d->parentDialog = dialog;
 }
 
 void MapListPanel::setupForEngine(const EnginePlugin *engine)

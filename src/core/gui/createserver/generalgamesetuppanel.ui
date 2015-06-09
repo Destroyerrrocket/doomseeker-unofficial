@@ -143,6 +143,19 @@
        </item>
       </layout>
      </item>
+     <item row="5" column="0">
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
      <item row="6" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
@@ -161,7 +174,36 @@
       </widget>
      </item>
      <item row="7" column="1">
-      <widget class="QLineEdit" name="leMap"/>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLineEdit" name="leMap"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="lblMapWarning">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>This map isn't present on map list. Game may misbehave.</string>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="../../../../media/resources.qrc">:/icons/exclamation.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item row="8" column="0">
       <widget class="QLabel" name="label_5">
@@ -172,19 +214,6 @@
      </item>
      <item row="8" column="1">
       <widget class="IwadPicker" name="iwadPicker" native="true"/>
-     </item>
-     <item row="5" column="0">
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
      </item>
     </layout>
    </item>
@@ -250,7 +279,9 @@
    <header>gui/widgets/engineplugincombobox.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../../../../media/resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>btnDefaultExecutable</sender>
@@ -275,8 +306,8 @@
    <slot>browseExecutable()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>424</x>
-     <y>44</y>
+     <x>462</x>
+     <y>50</y>
     </hint>
     <hint type="destinationlabel">
      <x>597</x>
@@ -291,8 +322,8 @@
    <slot>onGameModeChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>568</x>
-     <y>189</y>
+     <x>594</x>
+     <y>183</y>
     </hint>
     <hint type="destinationlabel">
      <x>597</x>
@@ -307,12 +338,28 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>385</x>
-     <y>133</y>
+     <x>593</x>
+     <y>128</y>
     </hint>
     <hint type="destinationlabel">
-     <x>228</x>
-     <y>134</y>
+     <x>301</x>
+     <y>130</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>leMap</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>GeneralGameSetupPanel</receiver>
+   <slot>updateMapWarningVisibility()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>320</x>
+     <y>200</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>297</x>
+     <y>191</y>
     </hint>
    </hints>
   </connection>
@@ -321,5 +368,6 @@
   <slot>setExecutableToDefault()</slot>
   <slot>browseExecutable()</slot>
   <slot>onGameModeChanged(int)</slot>
+  <slot>updateMapWarningVisibility()</slot>
  </slots>
 </ui>

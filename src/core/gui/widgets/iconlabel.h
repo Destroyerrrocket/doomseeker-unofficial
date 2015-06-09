@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gamerulespanel.h
+// iconlabel.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,47 +18,30 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef id880d5e15_1a53_40da_bdb9_11d9b4dc3222
-#define id880d5e15_1a53_40da_bdb9_11d9b4dc3222
+#ifndef __ICONLABEL_H__
+#define __ICONLABEL_H__
 
-#include "dptr.h"
-
+#include <QHBoxLayout>
+#include <QLabel>
 #include <QWidget>
 
-class CreateServerDialog;
-class EnginePlugin;
-class GameCreateParams;
-class GameMode;
-class Ini;
-class MapListPanel;
-
-class GameRulesPanel : public QWidget
+class IconLabel : public QWidget
 {
-Q_OBJECT
+	public:
+		IconLabel(QWidget* pParent = NULL);
 
-public:
-	GameRulesPanel(QWidget *parent);
-	~GameRulesPanel();
+		const QPixmap* pixmap() const;
+		QString text() const;
+		void setPixmap(const QPixmap& pixmap);
+		void setText(const QString& str);
+		void setWordWrap(bool wrap);
 
-	void fillInParams(GameCreateParams &params);
-	MapListPanel *mapListPanel();
-	void loadConfig(Ini &config);
-	void saveConfig(Ini &config);
-	void setupForEngine(const EnginePlugin *engine, const GameMode &gameMode);
-	void setupForRemoteGame();
-	void setCreateServerDialog(CreateServerDialog *dialog);
-
-private:
-	DPtr<GameRulesPanel> d;
-
-	void fillInLimits(GameCreateParams &params);
-	void fillInModifiers(GameCreateParams &params);
-	void removeLimitWidgets();
-	void setupDifficulty();
-	void setupLimitWidgets(const EnginePlugin *engine, const GameMode &gameMode);
-	void setupModifiers(const EnginePlugin *engine);
+	private:
+		QHBoxLayout* pLayout;
+		QLabel* lblIcon;
+		QLabel* lblText;
 };
 
 #endif
