@@ -113,7 +113,6 @@ class MAIN_EXPORT MasterClient : public QObject
 		QString masterBanHelp() const;
 
 		void notifyResponse(Response response);
-		int numPlayers() const;
 		int numServers() const;
 		ServerPtr operator[] (int index) const;
 

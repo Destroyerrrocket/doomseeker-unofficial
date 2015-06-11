@@ -168,19 +168,6 @@ void MasterClient::notifyResponse(Response response)
 	}
 }
 
-int MasterClient::numPlayers() const
-{
-	int players = 0;
-	foreach(ServerPtr server, d->servers)
-	{
-		if (server != NULL)
-		{
-			players += server->players().numClients();
-		}
-	}
-	return players;
-}
-
 int MasterClient::numServers() const
 {
 	return d->servers.size();
