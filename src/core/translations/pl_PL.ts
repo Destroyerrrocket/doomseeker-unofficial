@@ -5680,7 +5680,7 @@ z graczami na górze listy</translation>
     <message>
         <location filename="../gui/widgets/serversstatuswidget.cpp" line="150"/>
         <source> %1</source>
-        <translation>%1</translation>
+        <translation> %1</translation>
     </message>
 </context>
 <context>
