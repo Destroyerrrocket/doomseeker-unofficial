@@ -88,6 +88,7 @@ class UpdatePackageFilter : public QObject
 		QMap<QString, PluginInfo> collectPluginInfo();
 		bool isDifferentThanInstalled(UpdatePackage& pkg) const;
 		bool isOnIgnoredList(const QString& package, const QString &revision) const;
+		bool isQtInstallOk() const;
 };
 
 #endif

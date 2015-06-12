@@ -155,22 +155,16 @@ bool UpdatePackageFilter::isDifferentThanInstalled(UpdatePackage& pkg) const
 		// Workaround for auto-updater bug that made itself apparent
 		// in Doomseeker 1.1~beta builds. Bug caused every even
 		// numbered file in auxiliary packages not to be installed. As
-		// Qt is such auxiliary package in 1.1~beta, some files,
-		// including Qt5WinExtras.dll, failed to install.
-		bool checkWinExtras = false;
+		// Qt is such auxiliary package in 1.1~beta, some files
+		// failed to install.
+		bool checkBrokenQt = false;
 #ifdef Q_OS_WIN32
-		checkWinExtras = true;
+		checkBrokenQt = true;
 #endif
-		if (checkWinExtras)
+		if (checkBrokenQt && !isQtInstallOk())
 		{
-			QString winExtrasLocation = Strings::combinePaths(
-				QCoreApplication::applicationDirPath(), "Qt5WinExtras.dll");
-			QFile file(winExtrasLocation);
-			if (!file.exists())
-			{
-				pkg.currentlyInstalledDisplayVersion = Version::qtPackageVersion() + tr("-BROKEN");
-				return true;
-			}
+			pkg.currentlyInstalledDisplayVersion = Version::qtPackageVersion() + tr("-BROKEN");
+			return true;
 		}
 	}
 	else
@@ -187,6 +181,23 @@ bool UpdatePackageFilter::isDifferentThanInstalled(UpdatePackage& pkg) const
 		}
 	}
 	return false;
+}
+
+bool UpdatePackageFilter::isQtInstallOk() const
+{
+	QStringList files;
+	files << "libeay32.dll" << "ssleay32.dll";
+	foreach (const QString &filename, files)
+	{
+		QString fileLocation = Strings::combinePaths(
+			QCoreApplication::applicationDirPath(), filename);
+		QFile file(fileLocation);
+		if (!file.exists())
+		{
+			return false;
+		}
+	}
+	return true;
 }
 
 bool UpdatePackageFilter::isOnIgnoredList(const QString& package, const QString &revision) const
