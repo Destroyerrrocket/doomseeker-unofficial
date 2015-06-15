@@ -96,6 +96,7 @@
 	<file alias="flags/KGZ">flags/KGZ.png</file> <!-- Kyrgyzstan -->
 	<file alias="flags/KOR">flags/KOR.png</file> <!-- Republic of Korea -->
 	<file alias="flags/KWT">flags/KWT.png</file> <!-- Kuwait -->
+	<file alias="flags/LBN">flags/LBN.png</file> <!-- Lebanon -->
 	<file alias="flags/LTU">flags/LTU.png</file> <!-- Lithuania -->
 	<file alias="flags/LUX">flags/LUX.png</file> <!-- Luxembourg -->
 	<file alias="flags/LVA">flags/LVA.png</file> <!-- Latvia -->
