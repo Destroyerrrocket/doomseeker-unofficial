@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="pl_PL">
+<TS version="2.1" language="pl_PL">
 <context>
     <name>EngineZandronumConfigBox</name>
     <message>
@@ -1301,9 +1301,18 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ZandronumBroadcast</name>
     <message>
-        <location filename="../zandronumbroadcast.cpp" line="96"/>
         <source>Listening to Zandronum LAN server broadcasts.</source>
-        <translation>Nasłuchuję rozgłoszeń serwerów LAN Zandronum.</translation>
+        <translation type="vanished">Nasłuchuję rozgłoszeń serwerów LAN Zandronum.</translation>
+    </message>
+    <message>
+        <location filename="../zandronumbroadcast.cpp" line="114"/>
+        <source>Listening to Zandronum&apos;s LAN servers broadcasts on port %1.</source>
+        <translation>Nasłuchuję rozgłoszeń serwerów LAN Zandronum na porcie %1.</translation>
+    </message>
+    <message>
+        <location filename="../zandronumbroadcast.cpp" line="120"/>
+        <source>Failed to bind Zandronum&apos;s LAN broadcasts listening socket on port %1. Will keep retrying silently.</source>
+        <translation>Nie udało się rozpoczęcie nasłuchu rozgłoszeń LAN dla Zandronum na porcie %1. Będą podejmowane ciche próby naprawy.</translation>
     </message>
 </context>
 <context>

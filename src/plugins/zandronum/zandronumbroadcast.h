@@ -43,6 +43,7 @@ private:
 	DPtr<ZandronumBroadcast> d;
 
 private slots:
+	void bindSocket();
 	void readPackets();
 	void terminateOldServers();
 };

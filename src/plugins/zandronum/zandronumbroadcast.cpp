@@ -72,6 +72,7 @@ public:
 	static const int BROADCAST_LISTEN_PORT = 15101;
 	static const int TERMINATE_OLD_AGE_MS = 10000;
 
+	bool bindFailureLogged;
 	QUdpSocket *socket;
 	QMap<HostPort, LanServer> servers;
 	QTimer activityTimer;
@@ -80,6 +81,8 @@ DPointeredNoCopy(ZandronumBroadcast)
 
 ZandronumBroadcast::ZandronumBroadcast()
 {
+	d->bindFailureLogged = false;
+	d->socket = NULL;
 }
 
 ZandronumBroadcast::~ZandronumBroadcast()
@@ -93,14 +96,33 @@ EnginePlugin* ZandronumBroadcast::plugin() const
 
 void ZandronumBroadcast::start()
 {
-	gLog << tr("Listening to Zandronum LAN server broadcasts.");
 	d->socket = new QUdpSocket(this);
 	this->connect(d->socket, SIGNAL(readyRead()), SLOT(readPackets()));
-	d->socket->bind(QHostAddress::Any, PrivData<ZandronumBroadcast>::BROADCAST_LISTEN_PORT,
-		QUdpSocket::ShareAddress);
+	bindSocket();
 
 	this->connect(&d->activityTimer, SIGNAL(timeout()), SLOT(terminateOldServers()));
 	d->activityTimer.start(PrivData<ZandronumBroadcast>::TERMINATE_OLD_AGE_MS);
+}
+
+void ZandronumBroadcast::bindSocket()
+{
+	const int port = PrivData<ZandronumBroadcast>::BROADCAST_LISTEN_PORT;
+	bool bound = d->socket->bind(QHostAddress::Any, port,
+		QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+	if (bound)
+	{
+		gLog << tr("Listening to Zandronum's LAN servers broadcasts on port %1.").arg(port);
+	}
+	else
+	{
+		if (!d->bindFailureLogged)
+		{
+			gLog << tr("Failed to bind Zandronum's LAN broadcasts listening socket on port %1. "
+				"Will keep retrying silently.").arg(port);
+			d->bindFailureLogged = true;
+		}
+		QTimer::singleShot(10000, this, SLOT(bindSocket()));
+	}
 }
 
 void ZandronumBroadcast::readPackets()
