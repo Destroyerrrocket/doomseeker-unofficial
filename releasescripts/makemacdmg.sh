@@ -52,8 +52,8 @@ mkdir Doomseeker/build
 cd Doomseeker/build
 if [ -z $QT5PATH ]
 then
-	cmake ../../.. -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.0 -DCMAKE_C_COMPILER=/usr/bin/gcc-4.0 $@
-	cmake ../../.. -DCMAKE_OSX_ARCHITECTURES="ppc;i386" -DCMAKE_OSX_DEPLOYMENT_TARGET=10.4 -DCMAKE_OSX_SYSROOT=${SDK_10_4} -DCMAKE_BUILD_TYPE=Release $@
+	cmake ../../.. -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.0 -DCMAKE_C_COMPILER=/usr/bin/gcc-4.0 -DFORCE_QT4=YES $@
+	cmake ../../.. -DCMAKE_OSX_ARCHITECTURES="ppc;i386" -DCMAKE_OSX_DEPLOYMENT_TARGET=10.4 -DCMAKE_OSX_SYSROOT=${SDK_10_4} -DCMAKE_BUILD_TYPE=Release -DFORCE_QT4=YES $@
 else
 	CMAKE_PREFIX_PATH=$QT5PATH cmake ../../.. $@
 	CMAKE_PREFIX_PATH=$QT5PATH cmake ../../.. -DCMAKE_OSX_ARCHITECTURES="x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=10.6 -DCMAKE_OSX_SYSROOT=$SDK_10_6 -DCMAKE_BUILD_TYPE=Release $@
@@ -97,6 +97,7 @@ do
 	rm -rf `find Doomseeker.app/Contents/Frameworks/$i.framework -name Headers`
 done
 cp -a {${QTPLPATH},Doomseeker.app/Contents/}plugins
+rm -f `find Doomseeker.app/Contents/plugins -name *_debug*`
 cp -R {build/,Doomseeker.app/Contents/MacOS/}engines
 cp -R {build/,Doomseeker.app/Contents/MacOS/}translations
 cp {${QTPLPATH},Doomseeker.app/Contents/MacOS/}translations/qt_pl.qm
@@ -139,22 +140,7 @@ done
 rm -r build
 
 cd ..
-
-# Create/Mount the image
-IMAGENAME=Doomseeker-${version}${tag}.dmg
-mkdir image
-hdiutil create -size 100m -srcfolder Doomseeker -volname Doomseeker -fs HFS+ -format UDRW $IMAGENAME
-hdiutil attach -readwrite -noverify -noautoopen $IMAGENAME -mountpoint image
-
-mkdir image/.background
-cp ../media/Doomseeker-DMG-Background.png image/.background/background.png
-osascript makemacdmg.applescript
-
-# Finalize
-hdiutil detach ./image
-hdiutil convert $IMAGENAME -format UDBZ -o tmp$IMAGENAME
-mv {tmp,}$IMAGENAME
-hdiutil internet-enable -yes $IMAGENAME
-
 mv Doomseeker/Doomseeker.app Doomseeker.app
-rm -r Doomseeker image
+rm -r Doomseeker
+
+./createmacdmg.sh Doomseeker-${version}${tag}.dmg

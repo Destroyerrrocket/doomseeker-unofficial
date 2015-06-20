@@ -39,14 +39,14 @@
 #include "zandronumserver.h"
 #include "enginezandronumconfigbox.h"
 
-INSTALL_PLUGIN(ZandronumEnginePlugin)
-
 DClass<ZandronumEnginePlugin>
 {
 public:
 	ZandronumBroadcast *broadcast;
 };
 DPointered(ZandronumEnginePlugin);
+
+INSTALL_PLUGIN(ZandronumEnginePlugin)
 
 ZandronumEnginePlugin::ZandronumEnginePlugin()
 {
