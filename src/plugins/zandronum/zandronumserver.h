@@ -126,6 +126,7 @@ class ZandronumServer : public Server
 			SQF_ALL_DMFLAGS = 0x08000000,
 			SQF_SECURITY_SETTINGS= 0x10000000,
 			SQF_OPTIONAL_WADS = 0x20000000,
+			SQF_DEH = 0x40000000,
 
 			SQF_STANDARDQUERY =
 				SQF_NAME|SQF_URL|SQF_EMAIL|SQF_MAPNAME|SQF_MAXCLIENTS|
@@ -134,7 +135,7 @@ class ZandronumServer : public Server
 				SQF_NUMPLAYERS|SQF_PLAYERDATA|SQF_TEAMINFO_NUMBER|
 				SQF_TEAMINFO_NAME|SQF_TEAMINFO_SCORE|SQF_GAMESKILL|
 				SQF_TESTING_SERVER|SQF_ALL_DMFLAGS|SQF_SECURITY_SETTINGS|
-				SQF_OPTIONAL_WADS
+				SQF_OPTIONAL_WADS|SQF_DEH
 		};
 
 		ZandronumServer(const QHostAddress &address, unsigned short port);
@@ -183,6 +184,9 @@ class ZandronumServer : public Server
 		QByteArray createSendRequest();
 		static unsigned int millisecondTime();
 		Response readRequest(const QByteArray &data);
+
+	private:
+		void resetPwadsList(const QList<PWad> &wads);
 };
 
 #endif

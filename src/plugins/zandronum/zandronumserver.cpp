@@ -578,13 +578,34 @@ Server::Response ZandronumServer::readRequest(const QByteArray &data)
 				pwads.replace(index, PWad(pwads[index].name(), true));
 		}
 
-		// Send revised list of wads to actual server object.
-		clearWads();
-		foreach(const PWad &wad, pwads)
-			addWad(wad);
+		resetPwadsList(pwads);
+	}
+
+	if((flags & SQF_DEH) == SQF_DEH)
+	{
+		flags ^= SQF_DEH;
+
+		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+		unsigned int numDehs = in.readQUInt8();
+
+		QList<PWad> pwads = wads();
+		while(numDehs--)
+		{
+			RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
+			QString deh = in.readRawUntilByte('\0');
+			pwads << deh;
+		}
+		resetPwadsList(pwads);
 	}
 
 	return RESPONSE_GOOD;
+}
+
+void ZandronumServer::resetPwadsList(const QList<PWad> &wads)
+{
+	clearWads();
+	foreach(const PWad &wad, wads)
+		addWad(wad);
 }
 
 QByteArray ZandronumServer::createSendRequest()
