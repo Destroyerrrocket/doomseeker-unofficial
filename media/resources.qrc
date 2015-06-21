@@ -137,6 +137,7 @@
 	<file alias="flags/UKR">flags/UKR.png</file> <!-- Ukraine -->
 	<file alias="flags/URY">flags/URY.png</file> <!-- Uruguay -->
 	<file alias="flags/USA">flags/USA.png</file> <!-- USA -->
+	<file alias="flags/UZB">flags/UZB.png</file> <!-- Uzbekistan -->
 	<file alias="flags/VEN">flags/VEN.png</file> <!-- Venezuela -->
 	<file alias="flags/ZAF">flags/ZAF.png</file> <!-- South Africa -->
 	<file alias="flags/lan-small">flags/lan-small.png</file>
