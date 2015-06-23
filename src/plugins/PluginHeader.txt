@@ -8,7 +8,9 @@
 
 if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0011 OLD) # We want the policy to bleed to the includer.
-	cmake_policy(SET CMP0020 OLD) # These are DLLs, no need for main() of any kind.
+	if (POLICY CMP0020)
+		cmake_policy(SET CMP0020 OLD) # These are DLLs, no need for main() of any kind.
+	endif()
 endif()
 
 if(WIN32)
