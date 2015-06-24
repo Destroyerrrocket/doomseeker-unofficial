@@ -428,7 +428,7 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		unsigned short maxPlayers() const;
 		/**
-		 * @brief Messafe of the Day.
+		 * @brief Message of the Day.
 		 */
 		const QString& motd() const;
 		/**
