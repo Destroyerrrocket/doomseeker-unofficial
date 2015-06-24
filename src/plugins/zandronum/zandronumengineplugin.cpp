@@ -91,9 +91,10 @@ void ZandronumEnginePlugin::setupConfig(IniSection &config) const
 	QString trimPattern = QString("\\/");
 	QStringList paths;
 
-	paths << Strings::trimr(programFilesDirectory, trimPattern) + "\\Zandronum";
 	paths << "." << "..";
 	paths << gDefaultDataPaths->workingDirectory() + "\\..";
+	paths << gDefaultDataPaths->workingDirectory();
+	paths << Strings::trimr(programFilesDirectory, trimPattern) + "\\Zandronum";
 
 	PathFinder pf(paths);
 	config.createSetting("BinaryPath", pf.findFile("zandronum.exe"));
