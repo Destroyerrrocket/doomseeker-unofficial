@@ -89,11 +89,13 @@ void ZandronumEnginePlugin::setupConfig(IniSection &config) const
 #ifdef Q_OS_WIN32
 	QString programFilesDirectory = DataPaths::programFilesDirectory(DataPaths::x86);
 	QString trimPattern = QString("\\/");
-	QString paths = Strings::trimr(programFilesDirectory, trimPattern);
+	QStringList paths;
 
-	paths += "\\Zandronum;" + gDefaultDataPaths->workingDirectory() + ";.";
+	paths << Strings::trimr(programFilesDirectory, trimPattern) + "\\Zandronum";
+	paths << "." << "..";
+	paths << gDefaultDataPaths->workingDirectory() + "\\..";
 
-	PathFinder pf(paths.split(";"));
+	PathFinder pf(paths);
 	config.createSetting("BinaryPath", pf.findFile("zandronum.exe"));
 #else
 	QString paths = QString("/usr/bin;/usr/local/bin;/usr/share/bin;/usr/games/zandronum;/usr/local/games/zandronum;/usr/share/games/zandronum;") + gDefaultDataPaths->workingDirectory() + ";.";
