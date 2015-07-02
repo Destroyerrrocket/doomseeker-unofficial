@@ -49,6 +49,17 @@ private:
 	DPtr<BuddyLocationInfo> d;
 };
 
+// [BL] This was moved earlier in the file in order to prevent double specialization
+// with some compilers
+DClass<BuddyLocationInfo>
+{
+public:
+	Player buddy;
+	ServerPtr server;
+};
+
+DPointered(BuddyLocationInfo)
+
 DClass<DockBuddiesList> : public Ui::DockBuddiesList
 {
 public:
@@ -323,15 +334,6 @@ BuddyInfo::PatternType AddBuddyDlg::patternType() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-DClass<BuddyLocationInfo>
-{
-	public:
-		Player buddy;
-		ServerPtr server;
-};
-
-DPointered(BuddyLocationInfo)
 
 BuddyLocationInfo::BuddyLocationInfo(const Player &buddy, ServerPtr location)
 {

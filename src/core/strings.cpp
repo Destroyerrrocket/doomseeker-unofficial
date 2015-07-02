@@ -30,6 +30,7 @@
 #include <cassert>
 #include <cmath>
 
+#include <QDataStream>
 #include <QDateTime>
 #include <QDir>
 #include <QStringList>

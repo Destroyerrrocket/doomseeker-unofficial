@@ -29,6 +29,7 @@
 #include <QStringList>
 
 class PatternList;
+class QVariant;
 
 /**
  * @ingroup group_pluginapi

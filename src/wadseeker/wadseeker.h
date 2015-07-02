@@ -24,6 +24,7 @@
 #define __WADSEEKER_H_
 
 #include <QList>
+#include <QObject>
 #include <QString>
 #include <QStringList>
 #include <QUrl>
