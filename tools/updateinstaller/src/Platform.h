@@ -16,6 +16,7 @@
 
 #ifdef __APPLE__
  #define PLATFORM_MAC
+ #include <unistd.h>
 #endif
 
 #if defined(PLATFORM_LINUX) || defined(PLATFORM_MAC)

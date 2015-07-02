@@ -3,7 +3,7 @@
 # Create/Mount the image
 IMAGENAME=$1
 mkdir image
-hdiutil create -size 100m -srcfolder image -volname Doomseeker -fs HFS+ -format UDRW $IMAGENAME
+hdiutil create -size 300m -srcfolder image -volname Doomseeker -fs HFS+ -format UDRW $IMAGENAME
 hdiutil attach -readwrite -noverify -noautoopen $IMAGENAME -mountpoint image
 
 mkdir image/.background

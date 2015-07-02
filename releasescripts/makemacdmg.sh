@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SDK_10_4=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.4u.sdk
-SDK_10_6=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.6.sdk
+SDK_10_7=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk
 
 if [ -z $QT5PATH ]
 then
@@ -56,15 +56,24 @@ then
 	cmake ../../.. -DCMAKE_OSX_ARCHITECTURES="ppc;i386" -DCMAKE_OSX_DEPLOYMENT_TARGET=10.4 -DCMAKE_OSX_SYSROOT=${SDK_10_4} -DCMAKE_BUILD_TYPE=Release -DFORCE_QT4=YES $@
 else
 	CMAKE_PREFIX_PATH=$QT5PATH cmake ../../.. $@
-	CMAKE_PREFIX_PATH=$QT5PATH cmake ../../.. -DCMAKE_OSX_ARCHITECTURES="x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=10.6 -DCMAKE_OSX_SYSROOT=$SDK_10_6 -DCMAKE_BUILD_TYPE=Release $@
+	CMAKE_PREFIX_PATH=$QT5PATH cmake ../../.. -DCMAKE_OSX_ARCHITECTURES="x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=10.7 -DCMAKE_OSX_SYSROOT=$SDK_10_7 -DCMAKE_BUILD_TYPE=Release $@
 fi
 make -j $NUM_CPU_CORES
+./doomseeker --version-json version.js
+plutil -convert xml1 version.js
+DISPLAYVERSION=`/usr/libexec/PlistBuddy -c Print:doomseeker:display-version version.js`
 cd ..
 
 # Detect Qt installation
 QTCORE_STRING=`otool -L build/doomseeker | grep QtCore.framework`
 QTPATH=`echo $QTCORE_STRING | sed 's,QtCore.framework.*,,'`
+
 QTNTPATH=$QTPATH
+if [ ! -z "$QT5PATH" ]
+then
+	QTPATH="$QT5PATH/lib/"
+fi
+
 QTPLPATH=${QTPATH}../
 if [ -z "$QTPATH" ]
 then
@@ -104,6 +113,20 @@ cp {${QTPLPATH},Doomseeker.app/Contents/MacOS/}translations/qt_pl.qm
 cp {../../media/,Doomseeker.app/Contents/}Info.plist
 cp {../../media/,Doomseeker.app/Contents/Resources/}icon-osx.icns
 cp {../../media/,Doomseeker.app/Contents/Resources/}qt.conf
+
+/usr/libexec/PlistBuddy -c "Set :CFBundleVersion $version" Doomseeker.app/Contents/Info.plist
+/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $version" Doomseeker.app/Contents/Info.plist
+/usr/libexec/PlistBuddy -c "Set :CFBundleLongVersionString $DISPLAYVERSION" Doomseeker.app/Contents/Info.plist
+
+# For non-Qt5 remove any ppc64 or x86_64 libraries there may be.
+if [ -z "$QT5PATH" ]
+then
+	BINFILES=`find Doomseeker.app -type f -exec sh -c "file -I '{}' | grep -q 'octet-stream'" \; -print`
+	for i in $BINFILES
+	do
+		lipo -remove ppc64 -remove x86_64 $i -output $i
+	done
+fi
 
 # Get a list of Qt plugins so that we can relink them.
 QTPLUGINS_LIST=''
