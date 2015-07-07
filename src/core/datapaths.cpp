@@ -25,6 +25,7 @@
 #include <QCoreApplication>
 #include "strings.h"
 #include <QDesktopServices>
+#include <QProcessEnvironment>
 #include <cassert>
 #include <cstdlib>
 
@@ -144,6 +145,11 @@ QStringList DataPaths::directoriesExist() const
 	return failedList;
 }
 
+QString DataPaths::env(const QString &key)
+{
+	return QProcessEnvironment::systemEnvironment().value(key);
+}
+
 const QString& DataPaths::programDirName() const
 {
 	return d->programsDirectoryName;
@@ -222,7 +228,7 @@ QString DataPaths::programFilesDirectory(MachineType machineType)
 				return QString();
 		}
 
-		QString path = getenv(envVarName.toUtf8().constData());
+		QString path = env(envVarName);
 		if (path.isEmpty() && machineType != Preferred)
 		{
 			// Empty outcome may happen on 32-bit systems where variables
@@ -294,7 +300,7 @@ QString DataPaths::systemAppDataDirectory(QString append) const
 	#ifdef Q_OS_WIN32
 	// Let's open new block to prevent variable "bleeding".
 	{
-		QString envVar = getenv("APPDATA");
+		QString envVar = env("APPDATA");
 		if (validateDir(envVar))
 		{
 			dir = envVar;

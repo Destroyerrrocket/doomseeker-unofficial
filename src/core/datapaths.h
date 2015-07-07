@@ -212,6 +212,7 @@ class MAIN_EXPORT DataPaths
 	private:
 		DPtr<DataPaths> d;
 
+		static QString env(const QString &key);
 		static DataPaths *staticDefaultInstance;
 };
 
