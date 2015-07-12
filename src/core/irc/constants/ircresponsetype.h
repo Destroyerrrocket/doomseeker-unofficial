@@ -160,6 +160,13 @@ class IRCResponseType
 			/// 433
 			ERRNicknameInUse,
 
+			ERRChannelIsFull, // 471
+			ERRInviteOnlyChan, // 473
+			ERRBannedFromChan, // 474
+			ERRBadChannelKey, // 475
+			ERRBadChannelMask, // 476
+			ERRNoChanModes, // 477
+
 			/// 482
 			ERRChanOpPrivIsNeeded,
 

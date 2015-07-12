@@ -367,13 +367,32 @@ IRCResponseParseResult IRCResponseParser::parseMessage()
 			break;
 		}
 
+		case IRCResponseType::ERRChannelIsFull:
+		case IRCResponseType::ERRInviteOnlyChan:
+		case IRCResponseType::ERRBannedFromChan:
+		case IRCResponseType::ERRBadChannelKey:
+		case IRCResponseType::ERRBadChannelMask:
+		case IRCResponseType::ERRNoChanModes:
 		case IRCResponseType::ERRCannotSendToChan:
 		case IRCResponseType::ERRChanOpPrivIsNeeded:
 		{
 			d->params.takeFirst(); // User
 			QString channel = d->params.takeFirst();
 			QString reason = joinAndTrimColonIfNecessary(d->params);
-			emit printWithClass(reason, channel, IRCMessageClass(IRCMessageClass::ChannelAction));
+			switch (enumType)
+			{
+			case IRCResponseType::ERRChannelIsFull:
+			case IRCResponseType::ERRInviteOnlyChan:
+			case IRCResponseType::ERRBannedFromChan:
+			case IRCResponseType::ERRBadChannelKey:
+				emit printToNetworksCurrentChatBox(tr("%1: %2").arg(channel, reason),
+					IRCMessageClass::Error);
+				break;
+			default:
+				emit printWithClass(reason, channel, IRCMessageClass::ChannelAction);
+				break;
+			}
+
 			break;
 		}
 

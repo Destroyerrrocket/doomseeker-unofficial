@@ -170,6 +170,24 @@ QString IRCResponseType::toRfcString(MsgType type)
 		case ERRNicknameInUse:
 			return "433";
 
+		case ERRChannelIsFull:
+			return "471";
+
+		case ERRInviteOnlyChan:
+			return "473";
+
+		case ERRBannedFromChan:
+			return "474";
+
+		case ERRBadChannelKey:
+			return "475";
+
+		case ERRBadChannelMask:
+			return "476";
+
+		case ERRNoChanModes:
+			return "477";
+
 		case ERRChanOpPrivIsNeeded:
 			return "482";
 
