@@ -579,7 +579,7 @@ void IRCResponseParser::parsePrivMsgOrNotice()
 		}
 		else if (responseType == IRCResponseType::Notice)
 		{
-			emit print(QString("[%1]: %2").arg(d->sender, content), QString());
+			emit print(tr("[%1]: %2").arg(d->sender, content), recipient);
 		}
 		else
 		{
