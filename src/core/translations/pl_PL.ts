@@ -3644,7 +3644,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="730"/>
         <source>Last activity of user %1 was %2 ago.</source>
-        <translation>Ostatnia aktywności użytkownika %1 była %2 temu.</translation>
+        <translation>Ostatnia aktywność użytkownika %1 była %2 temu.</translation>
     </message>
     <message>
         <location filename="../irc/ircnetworkadapter.cpp" line="747"/>

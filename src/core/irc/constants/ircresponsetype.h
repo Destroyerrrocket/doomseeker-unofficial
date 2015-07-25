@@ -126,6 +126,9 @@ class IRCResponseType
 			/// 335 - non-standard
 			RPLWhoIsBot,
 
+			/// 338
+			RPLWhoIsActually,
+
 			/// 353 - names list for a channel
 			RPLNamReply,
 
