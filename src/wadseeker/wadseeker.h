@@ -29,6 +29,7 @@
 #include <QStringList>
 #include <QUrl>
 
+#include "dptr.h"
 #include "entities/waddownloadinfo.h"
 #include "wadseekerexportinfo.h"
 #include "wadseekermessagetype.h"
@@ -434,56 +435,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		void siteStarted(const QUrl& site);
 
 	private:
-		class SeekParameters
-		{
-			public:
-				bool bIdgamesEnabled;
-				bool bWadArchiveEnabled;
-				QUrl customSiteUrl;
-				QString idgamesUrl;
-				unsigned maxConcurrentDownloads;
-				unsigned maxConcurrentSeeks;
-				QString saveDirectoryPath;
-				QStringList seekedWads;
-				QStringList sitesUrls;
-
-				SeekParameters();
-		};
-
-		class PrivData
-		{
-			public:
-				bool bIsAborting;
-
-				/**
-				 * @brief Idgames objects that will handle each file
-				 *        separately.
-				 *
-				 * Each file is probed one-at-a-time on the IDGames page. This
-				 * was designed to prevent creating too many request to the
-				 * IDGames page.
-				 *
-				 * As long as there are Idgames clients on the
-				 * list the Wadseeker will return true on isWorking() as there
-				 * is a potential chance that new links to files will be found.
-				 */
-				QList<Idgames* > idgamesClients;
-
-				SeekParameters seekParameters;
-
-				/**
-				 * This object is created when startSeek() method is called. This will
-				 * ensure that the parameters won't change during the seek operation.
-				 * When seek is not in progress this is NULL.
-				 */
-				SeekParameters* seekParametersForCurrentSeek;
-
-				WadArchiveClient* wadArchiveClient;
-				WadRetriever* wadRetriever;
-				WWWSeeker* wwwSeeker;
-		};
-
-		PrivData d;
+		DPtr<Wadseeker> d;
 
 		void abortSeekers();
 		void abortWwwSeeker();
