@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// fileutils.h
+// freedoomquery.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,39 +18,36 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef DOOMSEEKER_FILEUTILS_H
-#define DOOMSEEKER_FILEUTILS_H
+#ifndef ida836a012_9be3_4ce5_b9d3_f94c2f8e061d
+#define ida836a012_9be3_4ce5_b9d3_f94c2f8e061d
 
-#include <QByteArray>
-#include <QDir>
-#include <QString>
-#include <QStringList>
+#include "dptr.h"
+#include <QObject>
 
-class FileUtils
+class ModSet;
+
+class FreedoomQuery : public QObject
 {
-	public:
-		static QByteArray md5(const QString &path);
+	Q_OBJECT;
 
-		/**
-		 * @brief Deletes all files in specified directory.
-		 *
-		 * Attempts to delete all files it can. If one file cannot be deleted
-		 * then this method will proceed to the next one until all
-		 * files are iterated over. Failure to delete even one file will
-		 * result in 'false' being returned.
-		 *
-		 * @param dirPath
-		 *     Path to the directory.
-		 * @param nameFilters
-		 *     Filters as in QDir::setNameFilters().
-		 * @param filters
-		 *     QDir::Filter
-		 * @return true if all files were successfully deleted.
-		 */
-		static bool rmAllFiles(const QString& dirPath,
-			const QStringList & nameFilters = QStringList());
+public:
+	FreedoomQuery(QObject *parent = 0);
+	~FreedoomQuery();
+
+	const QString &error() const;
+	const ModSet &modSet() const;
+	void start();
+
+signals:
+	void finished();
+
+private:
+	DPtr<FreedoomQuery> d;
+
+private slots:
+	void onNetworkQueryFinished();
 };
 
 #endif

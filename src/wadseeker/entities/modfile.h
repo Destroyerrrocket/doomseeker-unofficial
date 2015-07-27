@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// fileutils.h
+// modfile.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,39 +18,43 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef DOOMSEEKER_FILEUTILS_H
-#define DOOMSEEKER_FILEUTILS_H
+#ifndef ided18842d_ed12_42b5_9c38_c21abea3480f
+#define ided18842d_ed12_42b5_9c38_c21abea3480f
 
-#include <QByteArray>
-#include <QDir>
+#include "dptr.h"
+#include "../wadseekerexportinfo.h"
+
 #include <QString>
-#include <QStringList>
+#include <QUrl>
 
-class FileUtils
+class WADSEEKER_API ModFile
 {
-	public:
-		static QByteArray md5(const QString &path);
+public:
+	ModFile();
+	virtual ~ModFile();
 
-		/**
-		 * @brief Deletes all files in specified directory.
-		 *
-		 * Attempts to delete all files it can. If one file cannot be deleted
-		 * then this method will proceed to the next one until all
-		 * files are iterated over. Failure to delete even one file will
-		 * result in 'false' being returned.
-		 *
-		 * @param dirPath
-		 *     Path to the directory.
-		 * @param nameFilters
-		 *     Filters as in QDir::setNameFilters().
-		 * @param filters
-		 *     QDir::Filter
-		 * @return true if all files were successfully deleted.
-		 */
-		static bool rmAllFiles(const QString& dirPath,
-			const QStringList & nameFilters = QStringList());
+	const QString &fileName() const;
+	void setFileName(const QString &) const;
+
+	const QString &name() const;
+	void setName(const QString &) const;
+
+	const QString &description() const;
+	void setDescription(const QString &) const;
+
+	const QString &md5() const;
+	void setMd5(const QString &) const;
+
+	const QUrl &url() const;
+	void setUrl(const QUrl &) const;
+
+	const QString &version() const;
+	void setVersion(const QString &) const;
+
+private:
+	DPtr<ModFile> d;
 };
 
 #endif

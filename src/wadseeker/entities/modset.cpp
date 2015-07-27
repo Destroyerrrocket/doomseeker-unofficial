@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// fileutils.h
+// modset.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,39 +18,65 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef DOOMSEEKER_FILEUTILS_H
-#define DOOMSEEKER_FILEUTILS_H
+#include "modset.h"
 
-#include <QByteArray>
-#include <QDir>
-#include <QString>
-#include <QStringList>
+#include <QMap>
 
-class FileUtils
+DClass<ModSet>
 {
-	public:
-		static QByteArray md5(const QString &path);
-
-		/**
-		 * @brief Deletes all files in specified directory.
-		 *
-		 * Attempts to delete all files it can. If one file cannot be deleted
-		 * then this method will proceed to the next one until all
-		 * files are iterated over. Failure to delete even one file will
-		 * result in 'false' being returned.
-		 *
-		 * @param dirPath
-		 *     Path to the directory.
-		 * @param nameFilters
-		 *     Filters as in QDir::setNameFilters().
-		 * @param filters
-		 *     QDir::Filter
-		 * @return true if all files were successfully deleted.
-		 */
-		static bool rmAllFiles(const QString& dirPath,
-			const QStringList & nameFilters = QStringList());
+public:
+	QMap<QString, ModFile> files;
 };
+DPointered(ModSet)
 
-#endif
+ModSet::ModSet()
+{
+}
+
+ModSet::~ModSet()
+{
+}
+
+void ModSet::addModFile(const ModFile &file)
+{
+	if (!file.fileName().isEmpty())
+	{
+		d->files.insert(file.fileName(), file);
+	}
+}
+
+void ModSet::clear()
+{
+	d->files.clear();
+}
+
+ModFile ModSet::findFileName(const QString &fileName) const
+{
+	return d->files[fileName];
+}
+
+ModFile ModSet::first() const
+{
+	if (isEmpty())
+	{
+		return ModFile();
+	}
+	return modFiles().first();
+}
+
+bool ModSet::isEmpty() const
+{
+	return d->files.isEmpty();
+}
+
+QList<ModFile> ModSet::modFiles() const
+{
+	return d->files.values();
+}
+
+void ModSet::removeModFile(const ModFile &file)
+{
+	d->files.remove(file.fileName());
+}

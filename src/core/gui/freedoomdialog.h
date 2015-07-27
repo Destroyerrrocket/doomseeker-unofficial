@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// fileutils.h
+// freedoomdialog.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,39 +18,53 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef DOOMSEEKER_FILEUTILS_H
-#define DOOMSEEKER_FILEUTILS_H
+#ifndef idf158b01c_04e9_4734_8b12_f66ddbea5cbc
+#define idf158b01c_04e9_4734_8b12_f66ddbea5cbc
 
-#include <QByteArray>
-#include <QDir>
+#include "dptr.h"
+#include <QDialog>
 #include <QString>
-#include <QStringList>
 
-class FileUtils
+class ModFile;
+class ModSet;
+
+class FreedoomDialog : public QDialog
 {
-	public:
-		static QByteArray md5(const QString &path);
+	Q_OBJECT;
 
-		/**
-		 * @brief Deletes all files in specified directory.
-		 *
-		 * Attempts to delete all files it can. If one file cannot be deleted
-		 * then this method will proceed to the next one until all
-		 * files are iterated over. Failure to delete even one file will
-		 * result in 'false' being returned.
-		 *
-		 * @param dirPath
-		 *     Path to the directory.
-		 * @param nameFilters
-		 *     Filters as in QDir::setNameFilters().
-		 * @param filters
-		 *     QDir::Filter
-		 * @return true if all files were successfully deleted.
-		 */
-		static bool rmAllFiles(const QString& dirPath,
-			const QStringList & nameFilters = QStringList());
+public:
+	FreedoomDialog(QWidget *parent);
+	~FreedoomDialog();
+
+public slots:
+	void accept();
+
+private:
+	enum Column
+	{
+		ColName,
+		ColStatus,
+		ColInstall
+	};
+
+	DPtr<FreedoomDialog> d;
+
+	void insertModFile(const ModFile &file);
+	void resetProgressBar();
+	ModSet selectedModFiles() const;
+	void setupInstallPaths();
+	void setupWadsTable();
+	void showError(const QString &text);
+	void showModInfo(const ModSet &modSet);
+	void showStatus(const QString &text);
+
+private slots:
+	void applyFreedoomVersionInfo();
+	void fetchInfo();
+	void onModInstallFinished();
+	void showFileDownloadProgress(const QString &file, qint64 current, qint64 total);
 };
 
 #endif

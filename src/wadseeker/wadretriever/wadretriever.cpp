@@ -38,7 +38,8 @@
 #include <QTemporaryFile>
 #include <QTimer>
 
-WadRetriever::WadRetriever()
+WadRetriever::WadRetriever(QObject *parent)
+: QObject(parent)
 {
 	d.bIsAborting = false;
 	d.maxConcurrentWadDownloads = 3;

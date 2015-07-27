@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// fileutils.h
+// modset.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,39 +18,31 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef DOOMSEEKER_FILEUTILS_H
-#define DOOMSEEKER_FILEUTILS_H
+#ifndef id78d5de3c_ac88_4972_86bf_667567e4e647
+#define id78d5de3c_ac88_4972_86bf_667567e4e647
 
-#include <QByteArray>
-#include <QDir>
-#include <QString>
-#include <QStringList>
+#include "dptr.h"
+#include "modfile.h"
+#include "../wadseekerexportinfo.h"
 
-class FileUtils
+class WADSEEKER_API ModSet
 {
-	public:
-		static QByteArray md5(const QString &path);
+public:
+	ModSet();
+	~ModSet();
 
-		/**
-		 * @brief Deletes all files in specified directory.
-		 *
-		 * Attempts to delete all files it can. If one file cannot be deleted
-		 * then this method will proceed to the next one until all
-		 * files are iterated over. Failure to delete even one file will
-		 * result in 'false' being returned.
-		 *
-		 * @param dirPath
-		 *     Path to the directory.
-		 * @param nameFilters
-		 *     Filters as in QDir::setNameFilters().
-		 * @param filters
-		 *     QDir::Filter
-		 * @return true if all files were successfully deleted.
-		 */
-		static bool rmAllFiles(const QString& dirPath,
-			const QStringList & nameFilters = QStringList());
+	void addModFile(const ModFile &file);
+	void clear();
+	ModFile findFileName(const QString &fileName) const;
+	ModFile first() const;
+	bool isEmpty() const;
+	QList<ModFile> modFiles() const;
+	void removeModFile(const ModFile &file);
+
+private:
+	DPtr<ModSet> d;
 };
 
 #endif

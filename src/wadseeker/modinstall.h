@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// fileutils.h
+// modinstall.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,39 +18,44 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef DOOMSEEKER_FILEUTILS_H
-#define DOOMSEEKER_FILEUTILS_H
+#ifndef id33bf644f_e0e7_4b53_8c65_742992226eed
+#define id33bf644f_e0e7_4b53_8c65_742992226eed
 
-#include <QByteArray>
-#include <QDir>
+#include "dptr.h"
+#include "wadseekerexportinfo.h"
+#include <QObject>
 #include <QString>
-#include <QStringList>
 
-class FileUtils
+class ModSet;
+class WadDownloadInfo;
+
+class WADSEEKER_API ModInstall : public QObject
 {
-	public:
-		static QByteArray md5(const QString &path);
+	Q_OBJECT;
 
-		/**
-		 * @brief Deletes all files in specified directory.
-		 *
-		 * Attempts to delete all files it can. If one file cannot be deleted
-		 * then this method will proceed to the next one until all
-		 * files are iterated over. Failure to delete even one file will
-		 * result in 'false' being returned.
-		 *
-		 * @param dirPath
-		 *     Path to the directory.
-		 * @param nameFilters
-		 *     Filters as in QDir::setNameFilters().
-		 * @param filters
-		 *     QDir::Filter
-		 * @return true if all files were successfully deleted.
-		 */
-		static bool rmAllFiles(const QString& dirPath,
-			const QStringList & nameFilters = QStringList());
+public:
+	ModInstall(QObject *parent = 0);
+	~ModInstall();
+
+	const QString &error() const;
+	bool isError() const;
+	void install(const QString &targetDir, const ModSet &modSet);
+
+signals:
+	void fileDownloadProgress(const QString &filename, qint64 current, qint64 total);
+	void finished();
+
+private:
+	DPtr<ModInstall> d;
+
+	void errorOut(const QString &msg);
+
+private slots:
+	void failInstallation();
+	void onWadDownloadProgress(const WadDownloadInfo &wadDownloadInfo,
+		qint64 current, qint64 total);
 };
 
 #endif

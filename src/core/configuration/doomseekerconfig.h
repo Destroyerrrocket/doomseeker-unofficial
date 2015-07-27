@@ -271,6 +271,8 @@ class DoomseekerConfig
 		 */
 		bool setIniFile(const QString& filePath);
 
+		QList<FileSearchPath> combinedWadseekPaths() const;
+
 
 	private:
 		static DoomseekerConfig* instance;

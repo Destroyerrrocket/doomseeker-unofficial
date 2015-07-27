@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// fileutils.h
+// freedoom.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,39 +18,48 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef DOOMSEEKER_FILEUTILS_H
-#define DOOMSEEKER_FILEUTILS_H
+#include "freedoom.h"
 
-#include <QByteArray>
-#include <QDir>
-#include <QString>
-#include <QStringList>
+#include "entities/modset.h"
+#include "protocols/freedoom/freedoomquery.h"
 
-class FileUtils
+DClass<Freedoom>
 {
-	public:
-		static QByteArray md5(const QString &path);
-
-		/**
-		 * @brief Deletes all files in specified directory.
-		 *
-		 * Attempts to delete all files it can. If one file cannot be deleted
-		 * then this method will proceed to the next one until all
-		 * files are iterated over. Failure to delete even one file will
-		 * result in 'false' being returned.
-		 *
-		 * @param dirPath
-		 *     Path to the directory.
-		 * @param nameFilters
-		 *     Filters as in QDir::setNameFilters().
-		 * @param filters
-		 *     QDir::Filter
-		 * @return true if all files were successfully deleted.
-		 */
-		static bool rmAllFiles(const QString& dirPath,
-			const QStringList & nameFilters = QStringList());
+public:
+	QScopedPointer<FreedoomQuery> query;
 };
+DPointeredNoCopy(Freedoom)
 
-#endif
+Freedoom::Freedoom(QObject *parent)
+: QObject(parent)
+{
+	d->query.reset(new FreedoomQuery());
+}
+
+Freedoom::~Freedoom()
+{
+}
+
+const QString &Freedoom::error() const
+{
+	return d->query->error();
+}
+
+bool Freedoom::isError() const
+{
+	return !error().isEmpty();
+}
+
+const ModSet &Freedoom::modSet() const
+{
+	return d->query->modSet();
+}
+
+void Freedoom::requestModSet()
+{
+	d->query.reset(new FreedoomQuery());
+	this->connect(d->query.data(), SIGNAL(finished()), SIGNAL(finished()));
+	d->query->start();
+}

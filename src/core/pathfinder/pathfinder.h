@@ -92,8 +92,6 @@ class MAIN_EXPORT PathFinder
 		 * Program configuration is skipped here.
 		 */
 		PathFinder(const QStringList& paths);
-		// [Zalewa] This may seem strange, but I don't see any reason why
-		// PathFinder can't be copyable. All in all, it's just a set of paths.
 		virtual ~PathFinder();
 
 		/**

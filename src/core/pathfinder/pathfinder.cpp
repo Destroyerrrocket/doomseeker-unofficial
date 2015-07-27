@@ -85,8 +85,7 @@ DPointered(PathFinder)
 
 PathFinder::PathFinder()
 {
-	d->searchPaths = gConfig.doomseeker.wadPaths;
-	d->searchPaths << gConfig.wadseeker.targetDirectory;
+	d->searchPaths = gConfig.combinedWadseekPaths();
 }
 
 PathFinder::PathFinder(const QStringList& paths)

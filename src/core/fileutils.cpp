@@ -22,8 +22,26 @@
 //------------------------------------------------------------------------------
 #include "fileutils.h"
 
+#include <QCryptographicHash>
 #include <QDirIterator>
 #include "log.h"
+
+QByteArray FileUtils::md5(const QString &path)
+{
+	QFile f(path);
+	if (f.open(QIODevice::ReadOnly))
+	{
+		QCryptographicHash hash(QCryptographicHash::Md5);
+		QByteArray chunk = f.read(1024 * 1024);
+		for (; !chunk.isEmpty(); chunk = f.read(1024 * 1024))
+		{
+			hash.addData(chunk);
+		}
+		f.close();
+		return hash.result();
+	}
+	return QByteArray();
+}
 
 bool FileUtils::rmAllFiles(const QString& dirPath,
 	const QStringList & nameFilters)

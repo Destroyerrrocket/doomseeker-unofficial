@@ -33,6 +33,7 @@ set(UI_FILES
 	gui/createserverdialog.ui
 	gui/demomanager.ui
 	gui/dockBuddiesList.ui
+	gui/freedoomdialog.ui
 	gui/ip2cupdatebox.ui
 	gui/irc/ircdock.ui
 	gui/irc/ircdocktabcontents.ui
@@ -109,6 +110,7 @@ set(HEADER_FILES
 	gui/demomanager.h
 	gui/dockBuddiesList.h
 	gui/entity/serverlistfilterinfo.h
+	gui/freedoomdialog.h
 	gui/helpers/comboboxex.h
 	gui/helpers/datetablewidgetitem.h
 	gui/helpers/playersdiagram.h
@@ -328,6 +330,7 @@ set(SOURCE_FILES
 	gui/demomanager.cpp
 	gui/dockBuddiesList.cpp
 	gui/entity/serverlistfilterinfo.cpp
+	gui/freedoomdialog.cpp
 	gui/helpers/comboboxex.cpp
 	gui/helpers/datetablewidgetitem.cpp
 	gui/helpers/playersdiagram.cpp

@@ -31,7 +31,16 @@
     <item>
      <widget class="QWidget" name="updatesConfirmationWidget" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
         <number>0</number>
        </property>
        <item>
@@ -138,7 +147,16 @@
     <item>
      <widget class="QWidget" name="updatesDownloadedWidget" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
         <number>0</number>
        </property>
        <item>
@@ -274,7 +292,7 @@
      <x>0</x>
      <y>0</y>
      <width>796</width>
-     <height>25</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="locale">
@@ -308,6 +326,7 @@
     <addaction name="menuActionCreateServer"/>
     <addaction name="menuActionWadseeker"/>
     <addaction name="menuActionUpdateIP2C"/>
+    <addaction name="menuActionInstallFreedoom"/>
     <addaction name="separator"/>
     <addaction name="menuActionManageDemos"/>
     <addaction name="menuActionRecordDemo"/>
@@ -501,6 +520,11 @@
     <string>&amp;Program Args</string>
    </property>
   </action>
+  <action name="menuActionInstallFreedoom">
+   <property name="text">
+    <string>Install &amp;Freedoom</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -616,6 +640,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>menuActionInstallFreedoom</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowWnd</receiver>
+   <slot>showInstallFreedoomDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>397</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>checkForUpdatesUserTriggered()</slot>
@@ -623,5 +663,6 @@
   <slot>discardUpdates()</slot>
   <slot>restartAndInstallUpdatesNow()</slot>
   <slot>showProgramArgsHelp()</slot>
+  <slot>showInstallFreedoomDialog()</slot>
  </slots>
 </ui>

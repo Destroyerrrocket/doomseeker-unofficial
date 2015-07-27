@@ -205,6 +205,13 @@ bool DoomseekerConfig::setIniFile(const QString& filePath)
 	return true;
 }
 
+QList<FileSearchPath> DoomseekerConfig::combinedWadseekPaths() const
+{
+	QList<FileSearchPath> paths = doomseeker.wadPaths;
+	paths << wadseeker.targetDirectory;
+	return paths;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 DClass<DoomseekerConfig::DoomseekerCfg>
 {

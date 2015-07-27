@@ -62,6 +62,8 @@ include_directories(
 )
 
 set(WADSEEKER_QT_FILES
+	protocols/freedoom/freedoominfoparser.h
+	protocols/freedoom/freedoomquery.h
 	protocols/idgames/idgamesreply.h
 	protocols/wadarchive/wadarchiveclient.h
 	protocols/fixednetworkaccessmanager.h
@@ -74,13 +76,19 @@ set(WADSEEKER_QT_FILES
 	zip/un7zip.h
 	zip/untar.h
 	zip/unzip.h
+	freedoom.h
+	modinstall.h
 	wadseeker.h
 )
 
 set(WADSEEKER_FILES
 	entities/link.cpp
+	entities/modfile.cpp
+	entities/modset.cpp
 	entities/waddownloadinfo.cpp
 	protocols/entities/networkreplywrapperinfo.cpp
+	protocols/freedoom/freedoominfoparser.cpp
+	protocols/freedoom/freedoomquery.cpp
 	protocols/idgames/idgamesclient.cpp
 	protocols/idgames/idgamesfile.cpp
 	protocols/idgames/idgamesfilematcher.cpp
@@ -104,7 +112,9 @@ set(WADSEEKER_FILES
 	zip/un7zip.cpp
 	zip/untar.cpp
 	zip/unzip.cpp
+	freedoom.cpp
 	ioutils.cpp
+	modinstall.cpp
 	wadseeker.cpp
 	wadseekerversioninfo.cpp
 )
@@ -113,6 +123,8 @@ set(WADSEEKER_FILES
 set(HEADER_FILES
 	${WADSEEKER_QT_FILES}
 	entities/link.h
+	entities/modfile.h
+	entities/modset.h
 	entities/waddownloadinfo.h
 	protocols/entities/networkreplywrapperinfo.h
 	protocols/idgames/idgamesclient.h

@@ -395,7 +395,6 @@ void WadseekerInterface::setupIdgames()
 {
 	QString idgamesUrl = Wadseeker::defaultIdgamesUrl();
 	bool useIdgames = true;
-	bool idgamesHasHighPriority = false;
 
 	useIdgames = gConfig.wadseeker.bSearchInIdgames;
 	idgamesUrl = gConfig.wadseeker.idgamesURL;

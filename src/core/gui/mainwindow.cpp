@@ -36,6 +36,7 @@
 #include "gui/dockBuddiesList.h"
 #include "gui/helpers/taskbarbutton.h"
 #include "gui/helpers/taskbarprogress.h"
+#include "gui/freedoomdialog.h"
 #include "gui/ip2cupdatebox.h"
 #include "gui/logdock.h"
 #include "gui/mainwindow.h"
@@ -1439,6 +1440,13 @@ void MainWindow::showEvent(QShowEvent *event)
 	// http://stackoverflow.com/a/26910648/1089357
 	d->taskbarButton->setWindow(windowHandle());
 #endif
+}
+
+void MainWindow::showInstallFreedoomDialog()
+{
+	FreedoomDialog *dialog = new FreedoomDialog(NULL);
+	dialog->setAttribute(Qt::WA_DeleteOnClose);
+	dialog->show();
 }
 
 void MainWindow::showProgramArgsHelp()

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// fileutils.h
+// freedoominfoparser.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,39 +18,26 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef DOOMSEEKER_FILEUTILS_H
-#define DOOMSEEKER_FILEUTILS_H
+#ifndef id86e35712_abf9_449b_be61_20011facc647
+#define id86e35712_abf9_449b_be61_20011facc647
 
+#include "dptr.h"
 #include <QByteArray>
-#include <QDir>
-#include <QString>
-#include <QStringList>
 
-class FileUtils
+class ModSet;
+
+class FreedoomInfoParser
 {
-	public:
-		static QByteArray md5(const QString &path);
+public:
+	FreedoomInfoParser(const QByteArray &contents);
+	~FreedoomInfoParser();
 
-		/**
-		 * @brief Deletes all files in specified directory.
-		 *
-		 * Attempts to delete all files it can. If one file cannot be deleted
-		 * then this method will proceed to the next one until all
-		 * files are iterated over. Failure to delete even one file will
-		 * result in 'false' being returned.
-		 *
-		 * @param dirPath
-		 *     Path to the directory.
-		 * @param nameFilters
-		 *     Filters as in QDir::setNameFilters().
-		 * @param filters
-		 *     QDir::Filter
-		 * @return true if all files were successfully deleted.
-		 */
-		static bool rmAllFiles(const QString& dirPath,
-			const QStringList & nameFilters = QStringList());
+	ModSet parse();
+
+private:
+	DPtr<FreedoomInfoParser> d;
 };
 
 #endif

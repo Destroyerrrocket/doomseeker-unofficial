@@ -61,7 +61,7 @@ class WadRetriever : public QObject
 	Q_OBJECT
 
 	public:
-		WadRetriever();
+		WadRetriever(QObject *parent = 0);
 		~WadRetriever();
 
 		void abort();
