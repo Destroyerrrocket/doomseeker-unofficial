@@ -24,6 +24,7 @@
 
 #include <QCryptographicHash>
 #include <QDirIterator>
+#include <QFileInfo>
 #include "log.h"
 
 QByteArray FileUtils::md5(const QString &path)
@@ -41,6 +42,18 @@ QByteArray FileUtils::md5(const QString &path)
 		return hash.result();
 	}
 	return QByteArray();
+}
+
+bool FileUtils::containsPath(const QStringList &candidates, const QString &path)
+{
+	foreach (const QString &candidate, candidates)
+	{
+		if (QFileInfo(candidate) == QFileInfo(path))
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 bool FileUtils::rmAllFiles(const QString& dirPath,

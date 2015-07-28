@@ -34,6 +34,7 @@
 #include "updater/updatechannel.h"
 #include "wadseeker/wadseeker.h"
 #include "datapaths.h"
+#include "fileutils.h"
 #include "log.h"
 #include "strings.h"
 #include "version.h"
@@ -475,7 +476,7 @@ void DoomseekerConfig::DoomseekerCfg::setQuerySpeed(const QuerySpeed &val)
 	d->querySpeed = val;
 }
 
-QList<FileAlias> DoomseekerConfig::DoomseekerCfg::wadAliases()
+QList<FileAlias> DoomseekerConfig::DoomseekerCfg::wadAliases() const
 {
 	QList<FileAlias> list;
 	QVariantList varList = d->section.value("WadAliases").toList();
@@ -494,6 +495,19 @@ void DoomseekerConfig::DoomseekerCfg::setWadAliases(const QList<FileAlias> &val)
 		varList << elem.serializeQVariant();
 	}
 	d->section.setValue("WadAliases", varList);
+}
+
+void DoomseekerConfig::DoomseekerCfg::enableFreedoomInstallation(const QString &dir)
+{
+	if (!FileUtils::containsPath(wadPathsOnly(), dir))
+	{
+		wadPaths.prepend(dir);
+	}
+	QList<FileAlias> aliases = wadAliases();
+	aliases << FileAlias::freeDoom1Aliases();
+	aliases << FileAlias::freeDoom2Aliases();
+	aliases = FileAliasList::mergeDuplicates(aliases);
+	setWadAliases(aliases);
 }
 
 QStringList DoomseekerConfig::DoomseekerCfg::wadPathsOnly() const

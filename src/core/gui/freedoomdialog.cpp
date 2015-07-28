@@ -40,6 +40,7 @@ DClass<FreedoomDialog> : public Ui::FreedoomDialog
 public:
 	Freedoom *freedoom;
 	ModInstall *modInstall;
+	QString targetDir;
 };
 DPointered(FreedoomDialog)
 
@@ -77,19 +78,27 @@ void FreedoomDialog::accept()
 	}
 	resetProgressBar();
 	showStatus(tr("Downloading & installing ..."));
-	d->modInstall->install(d->cboInstallPath->currentText(), modSet);
+	d->targetDir = d->cboInstallPath->currentText();
+	d->modInstall->install(d->targetDir, modSet);
 }
 
 void FreedoomDialog::onModInstallFinished()
 {
 	if (!d->modInstall->isError())
 	{
+		updateConfig();
 		fetchInfo();
 	}
 	else
 	{
 		showError(d->modInstall->error());
 	}
+}
+
+void FreedoomDialog::updateConfig()
+{
+	gConfig.doomseeker.enableFreedoomInstallation(d->targetDir);
+	gConfig.saveToFile();
 }
 
 void FreedoomDialog::fetchInfo()

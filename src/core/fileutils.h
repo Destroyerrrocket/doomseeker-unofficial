@@ -32,6 +32,12 @@ class FileUtils
 {
 	public:
 		static QByteArray md5(const QString &path);
+		/**
+		 * @brief Uses QFileInfo::operator== to see if 'path' is on
+		 * 'candidates' list.
+		 */
+		static bool containsPath(const QStringList &candidates,
+			const QString &path);
 
 		/**
 		 * @brief Deletes all files in specified directory.

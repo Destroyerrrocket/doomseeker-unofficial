@@ -102,10 +102,12 @@ class DoomseekerConfig
 			QList<ColumnSort> additionalSortColumns() const;
 			void setAdditionalSortColumns(const QList<ColumnSort> &val);
 
+			void enableFreedoomInstallation(const QString &dir);
+
 			const QuerySpeed &querySpeed() const;
 			void setQuerySpeed(const QuerySpeed &val);
 
-			QList<FileAlias> wadAliases();
+			QList<FileAlias> wadAliases() const;
 			void setWadAliases(const QList<FileAlias> &val);
 
 			QStringList wadPathsOnly() const;

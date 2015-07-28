@@ -59,6 +59,7 @@ private:
 	void showError(const QString &text);
 	void showModInfo(const ModSet &modSet);
 	void showStatus(const QString &text);
+	void updateConfig();
 
 private slots:
 	void applyFreedoomVersionInfo();
