@@ -88,7 +88,6 @@ void ServerList::cleanUp()
 		}
 
 		setCountryFlagsIfNotPresent();
-		table->updateAllRows();
 		needsCleaning = false;
 	}
 }

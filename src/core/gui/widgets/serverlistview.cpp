@@ -103,15 +103,14 @@ ServerListView::ServerListView(QWidget* parent) : QTableView(parent)
 {
 	// Prevent the fat rows problem.
 	verticalHeader()->setDefaultSectionSize(fontMetrics().height() + 6);
+#if QT_VERSION >= 0x050000
+	verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+#else
+	verticalHeader()->setResizeMode(QHeaderView::Fixed);
+#endif
 	setShowGrid(gConfig.doomseeker.bDrawGridInServerTable);
 
-	allowedVisualAdjustment = true;
 	setItemDelegate(new CustomItemDelegate());
-
-	this->connect(gRefresher, SIGNAL(sleepingModeEnter()),
-		SLOT(allowVisualAdjustment()));
-	this->connect(gRefresher, SIGNAL(sleepingModeExit()),
-		SLOT(disallowVisualAdjustment()));
 }
 
 void ServerListView::mouseReleaseEvent(QMouseEvent* event)
@@ -158,8 +157,6 @@ void ServerListView::mouseDoubleClickEvent(QMouseEvent* event)
 void ServerListView::setupTableProperties()
 {
 	setIconSize(QSize(26, 15));
-	// We don't really need a vertical header so lets remove it.
-	verticalHeader()->hide();
 	// Some flags that can't be set from the Designer.
 	horizontalHeader()->setSortIndicatorShown(true);
 	horizontalHeader()->setHighlightSections(false);
@@ -197,22 +194,4 @@ void ServerListView::setupTableColumnWidths()
 #else
 	horizontalHeader()->setMovable(true);
 #endif
-}
-
-void ServerListView::updateAllRows()
-{
-	if (allowedVisualAdjustment)
-	{
-		resizeRowsToContents();
-	}
-}
-
-void ServerListView::allowVisualAdjustment()
-{
-	allowedVisualAdjustment = true;
-}
-
-void ServerListView::disallowVisualAdjustment()
-{
-	allowedVisualAdjustment = false;
 }

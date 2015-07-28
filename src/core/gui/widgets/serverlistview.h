@@ -40,21 +40,12 @@ class ServerListView : public QTableView
 
 		void setupTableProperties();
 
-	public slots:
-		void updateAllRows();
-
 	protected:
-		bool allowedVisualAdjustment;
-
 		virtual void mouseReleaseEvent(QMouseEvent* event);
 		virtual void mouseDoubleClickEvent(QMouseEvent* event);
 
 	private:
 		void setupTableColumnWidths();
-
-	private slots:
-		void allowVisualAdjustment();
-		void disallowVisualAdjustment();
 
 	signals:
 		void leftMouseDoubleClicked(const QModelIndex& index, const QPoint& cursorPosition);
