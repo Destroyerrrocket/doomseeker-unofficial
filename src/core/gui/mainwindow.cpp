@@ -88,6 +88,7 @@
 #include <QIcon>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QPointer>
 #include <QProgressBar>
 #include <QToolBar>
 #include <QSizePolicy>
@@ -171,6 +172,7 @@ public:
 	IRCDock* ircDock;
 	LogDock* logDock;
 	ServerDetailsDock* detailsDock;
+	QPointer<FreedoomDialog> freedoomDialog;
 	ServerFilterDock* serverFilterDock;
 	ServerList* serverList;
 
@@ -1444,9 +1446,15 @@ void MainWindow::showEvent(QShowEvent *event)
 
 void MainWindow::showInstallFreedoomDialog()
 {
+	if (!d->freedoomDialog.isNull())
+	{
+		d->freedoomDialog->activateWindow();
+		return;
+	}
 	FreedoomDialog *dialog = new FreedoomDialog(NULL);
 	dialog->setAttribute(Qt::WA_DeleteOnClose);
 	dialog->show();
+	d->freedoomDialog = dialog;
 }
 
 void MainWindow::showProgramArgsHelp()
