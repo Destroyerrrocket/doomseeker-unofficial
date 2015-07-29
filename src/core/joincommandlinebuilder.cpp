@@ -49,15 +49,18 @@
 DClass<JoinCommandLineBuilder>
 {
 	public:
+		bool allFilesAreOptional;
 		CommandLineInfo cli;
 		bool configurationError;
 		QString connectPassword;
 		QString error;
+		bool finishUponRetrievingFiles;
 		GameDemo demo;
 		QString demoName;
 		QString inGamePassword;
 		ServerPtr server;
 		QWidget *parentWidget;
+		bool allowMissingFilesIgnore;
 		bool passwordsAlreadySet;
 		bool requireOptionals;
 
@@ -71,9 +74,12 @@ DPointered(JoinCommandLineBuilder)
 JoinCommandLineBuilder::JoinCommandLineBuilder(ServerPtr server,
 	GameDemo demo, QWidget *parentWidget)
 {
+	d->allFilesAreOptional = false;
+	d->allowMissingFilesIgnore = true;
 	d->configurationError = false;
 	d->demo = demo;
 	d->demoName = GameDemo::mkDemoFullPath(demo, *server->plugin());
+	d->finishUponRetrievingFiles = false;
 	d->parentWidget = parentWidget;
 	d->passwordsAlreadySet = false;
 	d->requireOptionals = false;
@@ -170,88 +176,6 @@ bool JoinCommandLineBuilder::checkWadseekerValidity(QWidget *parent)
 	return true;
 }
 
-int JoinCommandLineBuilder::displayMissingWadsMessage(const QStringList &downloadableWads,
-	QStringList &optionalWads, const QString &message)
-{
-	const QString CAPTION = tr("Doomseeker - files are missing");
-
-	// Can't use QMessageBox here because we need to be able to add our
-	// optional wad selection box.
-	QDialog msgBox;
-	msgBox.setWindowTitle(CAPTION);
-	QGridLayout *grid = new QGridLayout;
-	QLabel *mainMessage = new QLabel;
-	grid->addWidget(mainMessage, 0, 1);
-
-	QListWidget *optionalList = NULL;
-	if(!optionalWads.isEmpty())
-	{
-		optionalList = new QListWidget;
-		optionalList->setMaximumHeight(64);
-		grid->addWidget(optionalList, 1, 1);
-		foreach(const QString &wad, optionalWads)
-		{
-			QListWidgetItem *item = new QListWidgetItem(wad, optionalList);
-			item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-			item->setCheckState(Qt::Checked);
-		}
-	}
-
-	QLabel *questionLabel = new QLabel;
-	grid->addWidget(questionLabel, 2, 1);
-
-	// We'll need to store this in our d-pointer and connect a signal to this
-	// object since a button box doesn't give us an easy way to get the button
-	// clicked to close the dialog.
-	d->buttonBox = new QDialogButtonBox;
-	d->lastButtonClicked = QDialogButtonBox::NoButton;
-	grid->addWidget(d->buttonBox, 3, 0, 1, 2, Qt::AlignRight);
-	msgBox.connect(d->buttonBox, SIGNAL(accepted()), SLOT(accept()));
-	msgBox.connect(d->buttonBox, SIGNAL(rejected()), SLOT(reject()));
-	connect(d->buttonBox, SIGNAL(clicked(QAbstractButton*)), SLOT(missingWadsClicked(QAbstractButton*)));
-
-	QLabel *icon = new QLabel;
-	QIcon questionIcon = msgBox.style()->standardIcon(QStyle::SP_MessageBoxQuestion);
-	icon->setPixmap(questionIcon.pixmap(questionIcon.actualSize(QSize(64,64))));
-	grid->addWidget(icon, 0, 0, 3, 1, Qt::AlignTop);
-	
-	msgBox.setLayout(grid);
-
-	QString ignoreMessage;
-	if (d->server->plugin()->data()->inGameFileDownloads)
-	{
-		ignoreMessage = tr("Alternatively use ignore to connect anyways.");
-		d->buttonBox->addButton(QDialogButtonBox::Ignore);
-	}
-
-	QString questionMessage;
-	if (!downloadableWads.isEmpty() || !optionalWads.isEmpty())
-	{
-		questionLabel->setText(QString("%1\n%2").arg(tr("Do you want Wadseeker to find the missing WADs?")).arg(ignoreMessage));
-		d->buttonBox->addButton(QDialogButtonBox::Yes);
-		d->buttonBox->addButton(QDialogButtonBox::No);
-		mainMessage->setText(QString("%1\n\n%2").arg(message).arg(tr("Following files can be downloaded: %1").arg(downloadableWads.join(", "))));
-		
-	}
-	else
-	{
-		questionLabel->setText(ignoreMessage);
-		d->buttonBox->addButton(QDialogButtonBox::Ok);
-		mainMessage->setText(message);
-	}
-
-	msgBox.exec();
-
-	// Clear out unselected optional wads.
-	for(int i = optionalWads.size();i-- > 0;)
-	{
-		if(optionalList->item(i)->checkState() != Qt::Checked)
-			optionalWads.removeAt(i);
-	}
-
-	return d->lastButtonClicked;
-}
-
 const QString &JoinCommandLineBuilder::error() const
 {
 	return d->error;
@@ -280,80 +204,51 @@ void JoinCommandLineBuilder::handleError(const JoinError &error)
 			d->server->engineName()).arg(d->error);
 }
 
-JoinCommandLineBuilder::MissingWadsProceed JoinCommandLineBuilder::handleMissingWads(const JoinError &error)
+MissingWadsDialog::MissingWadsProceed JoinCommandLineBuilder::handleMissingWads(const JoinError &error)
 {
-	if (WadseekerInterface::isInstantiated())
-	{
-		QMessageBox::StandardButtons ret =
-			QMessageBox::warning(d->parentWidget, tr("Doomseeker - files are missing"),
-				tr("You don't have all the files required by this server and an instance "
-					"of Wadseeker is already running.\n\n"
-					"Press 'Ignore' to join anyway."),
-				QMessageBox::Abort | QMessageBox::Ignore);
-		return ret == QMessageBox::Ignore ? Ignore : Cancel;;
-	}
-
-	QString filesMissingMessage = tr("Following files are missing:\n");
-
+	QList<PWad> missingWads;
 	if (!error.missingIwad().isEmpty())
 	{
-		filesMissingMessage += tr("IWAD: ") + error.missingIwad().toLower() + "\n";
-		if (Wadseeker::isForbiddenWad(error.missingIwad()))
-		{
-			filesMissingMessage += tr("\n"
-				"Make sure that this file is in one of the paths "
-				"specified in Options -> File Paths.\n"
-				"This file belongs to a commercial game or is otherwise "
-				"blocked from download. If you don't have this file, "
-				"and it belongs to a commercial game, "
-				"you need to purchase the game associated with this IWAD.\n"
-				"Wadseeker will not download commercial IWADs.\n\n");
-		}
+		missingWads << error.missingIwad();
 	}
-
 	if (!error.missingWads().isEmpty())
 	{
-		const QList<PWad> missingWads = error.missingWads();
-		QStringList wadlist;
-		QStringList optionals;
-		foreach(const PWad &wad, missingWads)
-		{
-			if(wad.isOptional())
-				optionals << wad.name();
-			else
-				wadlist << wad.name();
-		}
-		filesMissingMessage += tr("PWADS: %1").arg(wadlist.join(", "));
-		if(!optionals.isEmpty())
-		{
-			filesMissingMessage += "\n";
-			filesMissingMessage += QString("Optional PWADS: %1").arg(optionals.join(", "));
-		}
+		missingWads << error.missingWads();
 	}
-
-	QStringList requiredDownloads, optionalDownloads;
-	allDownloadableWads(error, requiredDownloads, optionalDownloads);
-	QMessageBox::StandardButtons ret = (QMessageBox::StandardButtons)
-		displayMissingWadsMessage(requiredDownloads, optionalDownloads, filesMissingMessage);
-	if (ret == QMessageBox::Yes)
+	if (d->allFilesAreOptional)
 	{
-		// If all there were no required wads and all optionals are unchecked,
-		// don't display Wadseeker.  Also check if Wadseeker setup is valid.
-		if ((requiredDownloads.isEmpty() && optionalDownloads.isEmpty())
-			|| !gWadseekerShow->checkWadseekerValidity(d->parentWidget))
+		QList<PWad> tmp = missingWads;
+		missingWads.clear();
+		foreach (const PWad &file, tmp)
 		{
-			return Cancel;
+			missingWads << PWad(file.name(), true);
 		}
-
-		WadseekerInterface *wadseeker = WadseekerInterface::create(d->server);
-		this->connect(wadseeker, SIGNAL(finished(int)), SLOT(onWadseekerDone(int)));
-		requiredDownloads.append(optionalDownloads); // Pass in all requested downloads to Wadseeker
-		wadseeker->setWads(requiredDownloads);
-		wadseeker->setAttribute(Qt::WA_DeleteOnClose);
-		wadseeker->show();
-		return Seeking;
 	}
-	return ret == QMessageBox::Ignore ? Ignore : Cancel;
+	MissingWadsDialog dialog(missingWads, d->parentWidget);
+	dialog.setAllowIgnore(d->allowMissingFilesIgnore);
+	if (dialog.exec() == QDialog::Accepted)
+	{
+		if (dialog.decision() == MissingWadsDialog::Install)
+		{
+			if (!gWadseekerShow->checkWadseekerValidity(d->parentWidget))
+			{
+				return MissingWadsDialog::Cancel;
+			}
+			WadseekerInterface *wadseeker = WadseekerInterface::create(d->server);
+			if (d->finishUponRetrievingFiles)
+			{
+				this->connect(wadseeker, SIGNAL(finished(int)), SIGNAL(commandLineBuildFinished()));
+			}
+			else
+			{
+				this->connect(wadseeker, SIGNAL(finished(int)), SLOT(onWadseekerDone(int)));
+			}
+			wadseeker->setWads(dialog.filesToDownload());
+			wadseeker->setAttribute(Qt::WA_DeleteOnClose);
+			wadseeker->show();
+		}
+	}
+	return dialog.decision();
 }
 
 bool JoinCommandLineBuilder::isConfigurationError() const
@@ -418,15 +313,16 @@ void JoinCommandLineBuilder::obtainJoinCommandLine()
 
 		case JoinError::MissingWads:
 		{
-			MissingWadsProceed proceed = handleMissingWads(joinError);
+			MissingWadsDialog::MissingWadsProceed proceed =
+				handleMissingWads(joinError);
 			switch (proceed)
 			{
-				case Cancel:
+				case MissingWadsDialog::Cancel:
 					failBuild();
 					return;
-				case Ignore:
+				case MissingWadsDialog::Ignore:
 					break;
-				case Seeking:
+				case MissingWadsDialog::Install:
 					// async process; will call slot
 					return;
 				default:
@@ -470,6 +366,21 @@ void JoinCommandLineBuilder::onWadseekerDone(int result)
 ServerPtr JoinCommandLineBuilder::server() const
 {
 	return d->server;
+}
+
+void JoinCommandLineBuilder::setAllowMissingFilesIgnore(bool allow)
+{
+	d->allowMissingFilesIgnore = allow;
+}
+
+void JoinCommandLineBuilder::setAllFilesAreOptional(bool b)
+{
+	d->allFilesAreOptional = b;
+}
+
+void JoinCommandLineBuilder::setFinishUponRetrievingFiles(bool b)
+{
+	d->finishUponRetrievingFiles = b;
 }
 
 void JoinCommandLineBuilder::setPasswords(const QString &connectPassword, const QString &inGamePassword)

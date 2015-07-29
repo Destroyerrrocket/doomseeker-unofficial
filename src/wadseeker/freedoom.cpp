@@ -24,6 +24,7 @@
 
 #include "entities/modset.h"
 #include "protocols/freedoom/freedoomquery.h"
+#include <QStringList>
 
 DClass<Freedoom>
 {
@@ -50,6 +51,13 @@ const QString &Freedoom::error() const
 bool Freedoom::isError() const
 {
 	return !error().isEmpty();
+}
+
+bool Freedoom::hasFreedoomReplacement(const QString &fileName)
+{
+	QStringList candidates;
+	candidates << "doom.wad" << "doom2.wad" << "tnt.wad" << "plutonia.wad";
+	return candidates.contains(fileName, Qt::CaseInsensitive);
 }
 
 const ModSet &Freedoom::modSet() const

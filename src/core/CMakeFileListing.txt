@@ -41,6 +41,7 @@ set(UI_FILES
 	gui/irc/ircnetworkselectionbox.ui
 	gui/logdock.ui
 	gui/mainwindow.ui
+	gui/missingwadsdialog.ui
 	gui/passworddlg.ui
 	gui/programargshelpdialog.ui
 	gui/rconpassworddialog.ui
@@ -125,6 +126,7 @@ set(HEADER_FILES
 	gui/irc/ircuserlistmodel.h
 	gui/logdock.h
 	gui/mainwindow.h
+	gui/missingwadsdialog.h
 	gui/models/serverlistcolumn.h
 	gui/models/serverlistmodel.h
 	gui/models/serverlistproxymodel.h
@@ -344,6 +346,7 @@ set(SOURCE_FILES
 	gui/irc/ircsounds.cpp
 	gui/logdock.cpp
 	gui/mainwindow.cpp
+	gui/missingwadsdialog.cpp
 	gui/models/serverlistcolumn.cpp
 	gui/models/serverlistmodel.cpp
 	gui/models/serverlistproxymodel.cpp

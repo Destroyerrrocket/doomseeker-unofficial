@@ -23,6 +23,7 @@
 #ifndef id3D55B51B_0F01_4FAB_8D44E1593B00E437
 #define id3D55B51B_0F01_4FAB_8D44E1593B00E437
 
+#include "gui/missingwadsdialog.h"
 #include "serverapi/serverptr.h"
 #include "dptr.h"
 #include <QObject>
@@ -57,6 +58,9 @@ class JoinCommandLineBuilder : public QObject
 		 */
 		void obtainJoinCommandLine();
 		ServerPtr server() const;
+		void setAllowMissingFilesIgnore(bool);
+		void setAllFilesAreOptional(bool);
+		void setFinishUponRetrievingFiles(bool);
 		/**
 		 * @brief Sets the connect/ingame password and bypasses the prompt.
 		 * Set passwords to a null string to unset.
@@ -71,22 +75,15 @@ class JoinCommandLineBuilder : public QObject
 		void commandLineBuildFinished();
 
 	private:
-		enum MissingWadsProceed
-		{
-			Ignore,
-			Cancel,
-			Seeking
-		};
-
 		DPtr<JoinCommandLineBuilder> d;
 
 		void allDownloadableWads(const JoinError &joinError, QStringList &required, QStringList &optional);
 		bool buildServerConnectParams(ServerConnectParams &params);
 		bool checkServerStatus();
-		int displayMissingWadsMessage(const QStringList &downloadableWads, QStringList &optionalWads, const QString &message);
 		void failBuild();
 		void handleError(const JoinError &error);
-		MissingWadsProceed handleMissingWads(const JoinError &error);
+		MissingWadsDialog::MissingWadsProceed handleMissingWads(
+			const JoinError &error);
 		QString mkDemoName();
 		bool tryToInstallGame();
 
@@ -96,4 +93,3 @@ class JoinCommandLineBuilder : public QObject
 };
 
 #endif
-

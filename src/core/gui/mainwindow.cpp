@@ -655,7 +655,11 @@ void MainWindow::findMissingWADs(const ServerPtr &server)
 	ConnectionHandler connectionHandler(server, this);
 	// Use a command line builder to trigger missing wads dialog.
 	JoinCommandLineBuilder *builder = new JoinCommandLineBuilder(server, GameDemo::NoDemo, this);
+	builder->connect(builder, SIGNAL(commandLineBuildFinished()), SLOT(deleteLater()));
 	builder->setRequireOptionals(true);
+	builder->setAllFilesAreOptional(true);
+	builder->setFinishUponRetrievingFiles(true);
+	builder->setAllowMissingFilesIgnore(false);
 	builder->setPasswords("", "");
 	builder->obtainJoinCommandLine();
 }

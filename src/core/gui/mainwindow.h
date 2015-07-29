@@ -96,6 +96,7 @@ class MainWindow : public QMainWindow
 
 	public slots:
 		void runGame(const ServerPtr&);
+		void showInstallFreedoomDialog();
 
 	protected:
 		friend class DoomseekerConfigurationDialog;
@@ -239,7 +240,6 @@ class MainWindow : public QMainWindow
 		void ip2cJobsFinished();
 		void ip2cStartUpdate();
 		void showAndLogStatusMessage(const QString &message);
-		void showInstallFreedoomDialog();
 		void showServerJoinCommandLineOnBuilderFinished();
 		void showProgramArgsHelp();
 };

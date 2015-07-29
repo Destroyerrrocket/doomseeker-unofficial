@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// freedoom.h
+// missingwadsdialog.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,35 +20,57 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef idb06bc70b_1d65_4502_98e1_3492d2b760e0
-#define idb06bc70b_1d65_4502_98e1_3492d2b760e0
+#ifndef id6b2989fd_5c98_4e31_ad64_cf57b7231a67
+#define id6b2989fd_5c98_4e31_ad64_cf57b7231a67
 
 #include "dptr.h"
-#include "wadseekerexportinfo.h"
-#include <QObject>
+#include <QDialog>
+#include <QList>
+#include <QStringList>
 
-class ModSet;
+class PWad;
 
-class WADSEEKER_API Freedoom : public QObject
+class MissingWadsDialog : public QDialog
 {
 	Q_OBJECT;
 
 public:
-	static bool hasFreedoomReplacement(const QString &fileName);
+	enum MissingWadsProceed
+	{
+		Ignore,
+		Cancel,
+		Install
+	};
 
-	Freedoom(QObject *parent = 0);
-	virtual ~Freedoom();
+	MissingWadsDialog(const QList<PWad> &wads, QWidget *parent);
+	~MissingWadsDialog();
 
-	const QString &error() const;
-	bool isError() const;
-	const ModSet &modSet() const;
-	void requestModSet();
-
-signals:
-	void finished();
+	MissingWadsProceed decision() const;
+	QStringList filesToDownload() const;
+	void setAllowIgnore(bool);
+	void setAllFilesAreOptional(bool);
 
 private:
-	DPtr<Freedoom> d;
+	DPtr<MissingWadsDialog> d;
+
+	QStringList downloadableFiles() const;
+	QStringList forbiddenFiles() const;
+	QStringList optionalFiles() const;
+
+	bool isFreedoomReplaceableOnList(const QStringList &files) const;
+	QStringList selectedOptionalFiles() const;
+	void setup();
+	void setupForbiddenFilesArea();
+	void setupDownloadableFilesArea();
+	void setupOptionalFilesArea();
+	void setupWadseekerIsRunning();
+	void setupWadseekerNotRunning();
+
+private slots:
+	void ignoreMissingFiles();
+	void installFreedoom();
+	void installMissingFiles();
+	void updateStateAccordingToFileSelection();
 };
 
 #endif
