@@ -58,10 +58,10 @@ were always installed correctly.
 - Use QProcessEnvironment to obtain environment variables instead of
 getenv(). The new solution should be unicode-aware.
 - Downloading missing files from server list context menu:
-  - Don't display "missing files" error message anymore if user chooses
-    not to install optional WADs.
-  - Treat all files as optional and allow user to select them.
-  - JoinCommandLineBuilder was never freed and created a memory leak.
+    - Don't display "missing files" error message anymore if user chooses
+      not to install optional WADs.
+    - Treat all files as optional and allow user to select them.
+    - JoinCommandLineBuilder was never freed and created a memory leak.
 - Wadseeker: Automatically abort queries to sites & services when all
 files are installed.
 
