@@ -32,9 +32,7 @@ class DmflagsValidator : public QValidator
 			}
 
 			bool bOk;
-			unsigned val = input.toUInt(&bOk);
-
-
+			input.toUInt(&bOk);
 			return bOk ? QValidator::Acceptable : QValidator::Invalid;
 		}
 };

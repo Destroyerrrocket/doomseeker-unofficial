@@ -27,7 +27,7 @@ public:
 	};
 
 	static const unsigned DEFAULT_MAX_MESSAGES = 0;
-	static const unsigned MAX_MSG_KEEP_TIME_SEC = 10;
+	static const int MAX_MSG_KEEP_TIME_SEC = 10;
 
 	QList<MessageLabel> labelWidgets;
 	int maxMessages;

@@ -127,7 +127,6 @@ void WadsPicker::setFilePaths(const QStringList &paths, const QList<bool> &optio
 	removeAll();
 	for(int i = 0;i < paths.size();++i)
 	{
-		const QString &path = paths[i];
 		addWadPath(paths[i], i >= optionals.size() || !optionals[i]);
 	}
 }

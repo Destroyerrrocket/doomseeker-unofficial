@@ -91,10 +91,6 @@ IniVariable::operator float() const
 
 const IniVariable &IniVariable::operator=(const QString &str)
 {
-	if (isNull())
-	{
-		bool breakpoint = true;
-	}
 	assert(!isNull());
 
 	setValue(str);

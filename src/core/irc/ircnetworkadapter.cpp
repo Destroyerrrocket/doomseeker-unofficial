@@ -248,8 +248,6 @@ void IRCNetworkAdapter::echoPrivmsg(const QString& recipient, const QString& con
 
 IRCChatAdapter* IRCNetworkAdapter::getChatAdapter(const QString& recipient)
 {
-	IRCChatAdapter* pAdapter = NULL;
-
 	if (recipient.isEmpty())
 	{
 		emit error("Doomseeker error: getChatAdapter() received empty recipient.");
@@ -267,8 +265,6 @@ IRCChatAdapter* IRCNetworkAdapter::getChatAdapter(const QString& recipient)
 
 const IRCChatAdapter* IRCNetworkAdapter::getChatAdapter(const QString& recipient) const
 {
-	const IRCChatAdapter* pAdapter = NULL;
-
 	if (recipient.isEmpty())
 	{
 		return NULL;

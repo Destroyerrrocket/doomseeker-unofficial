@@ -745,8 +745,6 @@ void MainWindow::getServers()
 	refreshCustomServers();
 	refreshLanServers();
 
-	bool bAtLeastOneEnabled = false;
-
 	if (!isAnyMasterEnabled())
 	{
 		gLog << tr("Warning: No master servers were enabled for this refresh. "

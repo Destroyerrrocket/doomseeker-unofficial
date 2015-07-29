@@ -250,7 +250,6 @@ void CFGIRCNetworks::saveSettings()
 
 IRCNetworkEntity* CFGIRCNetworks::selectedNetwork()
 {
-	QStandardItemModel* pModel = (QStandardItemModel*)d->gridNetworks->model();
 	QItemSelectionModel* pSelectionModel = d->gridNetworks->selectionModel();
 	QModelIndexList indexList = pSelectionModel->selectedRows();
 
@@ -265,7 +264,6 @@ IRCNetworkEntity* CFGIRCNetworks::selectedNetwork()
 
 int CFGIRCNetworks::selectedRow()
 {
-	QStandardItemModel* pModel = (QStandardItemModel*)d->gridNetworks->model();
 	QItemSelectionModel* pSelectionModel = d->gridNetworks->selectionModel();
 	QModelIndexList indexList = pSelectionModel->selectedRows();
 

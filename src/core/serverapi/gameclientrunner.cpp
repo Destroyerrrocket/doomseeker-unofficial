@@ -462,10 +462,7 @@ GameClientRunner::GamePaths GameClientRunner::gamePaths()
 		return GamePaths();
 	}
 	result.workingDir = exeFile->workingDirectory(msg);
-
-	GameExeRetriever exeRetriever = GameExeRetriever(*d->server->plugin()->gameExe());
 	result.offlineExe = pathToOfflineExe(msg);
-
 	return result;
 }
 

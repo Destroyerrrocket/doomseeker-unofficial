@@ -38,6 +38,7 @@ class ZandronumServerDmflagsParser
 		static ZandronumServerDmflagsParser *mkParser(ZandronumServer *server, QDataStream *in);
 
 		ZandronumServerDmflagsParser(ZandronumServer *server, QDataStream *in);
+		virtual ~ZandronumServerDmflagsParser() {};
 
 		virtual QList<DMFlagsSection> parse() = 0;
 
