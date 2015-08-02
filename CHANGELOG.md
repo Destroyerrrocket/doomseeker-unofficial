@@ -66,7 +66,8 @@ getenv(). The new solution should be unicode-aware.
 files are installed.
 
 
-## 1.0 - 2015-03-22
+## [1.0] - 2015-03-22
 - Version 1.0 released. No changelog was keeped before.
 
 [development]: https://bitbucket.org/Blzut3/doomseeker/commits/all
+[1.0]: https://bitbucket.org/Blzut3/doomseeker/commits/tag/1.0
