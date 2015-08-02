@@ -1,14 +1,6 @@
 {
-    "name" : "doomseeker",
+    "name" : "qt",
     "files" : [
-        "Contents/MacOS/translations/translations.def",
-        "Contents/MacOS/translations/pl_PL.qm",
-        "Contents/MacOS/translations/qt_pl.qm",
-        "Contents/MacOS/doomseeker",
-        "Contents/MacOS/updater",
-        "Contents/Frameworks/libwadseeker.dylib",
-        "Contents/Info.plist",
-        "Contents/Resources/icon-osx.icns",
         "Contents/Frameworks/QtCore.framework/Contents/Info.plist",
         "Contents/Frameworks/QtCore.framework/QtCore.prl",
         "Contents/Frameworks/QtCore.framework/Versions/4/QtCore",
