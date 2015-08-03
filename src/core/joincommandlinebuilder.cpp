@@ -234,13 +234,15 @@ MissingWadsDialog::MissingWadsProceed JoinCommandLineBuilder::handleMissingWads(
 			{
 				return MissingWadsDialog::Cancel;
 			}
-			WadseekerInterface *wadseeker = WadseekerInterface::create(d->server);
+			WadseekerInterface *wadseeker = NULL;
 			if (d->finishUponRetrievingFiles)
 			{
+				wadseeker = WadseekerInterface::createNoGame(d->server);
 				this->connect(wadseeker, SIGNAL(finished(int)), SIGNAL(commandLineBuildFinished()));
 			}
 			else
 			{
+				wadseeker = WadseekerInterface::create(d->server);
 				this->connect(wadseeker, SIGNAL(finished(int)), SLOT(onWadseekerDone(int)));
 			}
 			wadseeker->setWads(dialog.filesToDownload());

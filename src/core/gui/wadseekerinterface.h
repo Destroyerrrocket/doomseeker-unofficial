@@ -47,6 +47,7 @@ class WadseekerInterface : public QDialog
 
 		static WadseekerInterface *create(QWidget* parent = NULL);
 		static WadseekerInterface *create(ServerPtr server, QWidget* parent = NULL);
+		static WadseekerInterface *createNoGame(ServerPtr server, QWidget* parent = NULL);
 		~WadseekerInterface();
 
 		bool isAutomatic() { return bAutomatic; }

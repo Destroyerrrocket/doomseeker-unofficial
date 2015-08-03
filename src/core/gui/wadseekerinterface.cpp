@@ -40,6 +40,7 @@ DClass<WadseekerInterface> : public Ui::WadseekerInterface
 {
 public:
 	bool bCompletedSuccessfully;
+	bool preventGame;
 	TaskbarButton *taskbarButton;
 	TaskbarProgress *taskbarProgress;
 };
@@ -110,7 +111,7 @@ void WadseekerInterface::allDone(bool bSuccess)
 	{
 		displayMessage(tr("All done. Success."), WadseekerLib::NoticeImportant, false);
 
-		if (isAutomatic())
+		if (isAutomatic() && !d->preventGame)
 		{
 			if (isActiveWindow())
 			{
@@ -171,6 +172,7 @@ void WadseekerInterface::connectWadseekerObject()
 void WadseekerInterface::construct()
 {
 	d->setupUi(this);
+	d->preventGame = false;
 	d->bCompletedSuccessfully = false;
 
 	d->taskbarButton = new TaskbarButton(this);
@@ -228,6 +230,16 @@ WadseekerInterface *WadseekerInterface::create(ServerPtr server, QWidget* parent
 		return currentInstance;
 	}
 	return NULL;
+}
+
+WadseekerInterface *WadseekerInterface::createNoGame(ServerPtr server, QWidget* parent)
+{
+	WadseekerInterface *interface = create(server, parent);
+	if (interface != NULL)
+	{
+		interface->d->preventGame = true;
+	}
+	return interface;
 }
 
 void WadseekerInterface::displayMessage(const QString& message, WadseekerLib::MessageType type, bool bPrependErrorsWithMessageType)
