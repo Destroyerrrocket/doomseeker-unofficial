@@ -74,7 +74,7 @@ QString WadseekerVersionInfo::userAgent()
 
 QString WadseekerVersionInfo::version()
 {
-	return "1.1~beta-3";
+	return "1.1~beta-4";
 }
 
 QString WadseekerVersionInfo::yearSpan()
