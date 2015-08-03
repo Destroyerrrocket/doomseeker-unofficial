@@ -106,7 +106,7 @@ void CFGWadseekerSites::insertUrl(const QUrl& url)
 		}
 	}
 
-	QStandardItem* it = new QStandardItem(url.toString());
+	QStandardItem* it = new QStandardItem(QUrl::fromPercentEncoding(url.toString().toUtf8()));
 
 	it->setDragEnabled(true);
 	it->setDropEnabled(false);
@@ -131,7 +131,7 @@ void CFGWadseekerSites::saveSettings()
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
 		QUrl existingUrl( model->item(i)->text() );
-		urlList << existingUrl.toString();
+		urlList << QUrl::fromPercentEncoding(existingUrl.toString().toUtf8());
 	}
 
 	gConfig.wadseeker.searchURLs = urlList;

@@ -679,8 +679,7 @@ void DoomseekerConfig::WadseekerCfg::save(IniSection& section)
 	QStringList urlEncodedList;
 	foreach (const QString& url, this->searchURLs)
 	{
-		urlEncodedList << QUrl::toPercentEncoding(url.toUtf8());
+		urlEncodedList << QUrl::toPercentEncoding(url);
 	}
 	section["SearchURLs"] = urlEncodedList.join(";");
 }
-
