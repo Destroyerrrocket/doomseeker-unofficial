@@ -147,6 +147,13 @@ bool UpdatePackageFilter::isDifferentThanInstalled(UpdatePackage& pkg) const
 	}
 	else if (pkg.name == AutoUpdater::QT_PACKAGE_NAME)
 	{
+		// For OS X PowerPC is no longer getting Qt updates so it will
+		// always be on 4.8.  Similarly i386 will be used as a legacy
+		// platform (the number of 32-bit only Intel Macs is tiny and
+		// the version of Qt5 we're launching with requires Lion or
+		// higher.  Thus only 64-bit Intel Macs need to even bother
+		// checking this package.
+#if !defined(Q_OS_MAC) || defined(__x86_64__)
 		if (QString(Version::qtPackageVersion()) != pkg.revision)
 		{
 			pkg.currentlyInstalledDisplayVersion = Version::qtPackageVersion();
@@ -166,6 +173,7 @@ bool UpdatePackageFilter::isDifferentThanInstalled(UpdatePackage& pkg) const
 			pkg.currentlyInstalledDisplayVersion = Version::qtPackageVersion() + tr("-BROKEN");
 			return true;
 		}
+#endif
 	}
 	else
 	{
