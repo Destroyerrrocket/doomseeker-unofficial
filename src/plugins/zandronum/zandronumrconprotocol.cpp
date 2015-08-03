@@ -204,6 +204,8 @@ void ZandronumRConProtocol::packetReady()
 		case ConnectEstablished:
 			processPacket(&stream);
 			break;
+		case Disconnected:
+			break;	
 		}
 	}
 }

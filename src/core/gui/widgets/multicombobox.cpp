@@ -129,6 +129,9 @@ bool MultiComboBox::handleViewViewportEvent(QEvent* event)
 {
 	switch (event->type())
 	{
+		default:
+			break;
+
 		case QEvent::Hide:
 			// TODO: Have this react only if value actually changed.
 			emit valueChanged();

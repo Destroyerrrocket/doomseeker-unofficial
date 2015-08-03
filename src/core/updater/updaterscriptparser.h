@@ -50,8 +50,8 @@ class UpdaterScriptParser
 		 * that the source document is either completely empty or already
 		 * a valid updater script. These nodes get merged:
 		 *
-		 * - /packages/*
-		 * - /install/*
+		 * - /packages/ *
+		 * - /install/ *
 		 *
 		 * The merge is done by making deep copies.
 		 *
