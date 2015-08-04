@@ -4045,26 +4045,26 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>JoinCommandLineBuilder</name>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="149"/>
+        <location filename="../joincommandlinebuilder.cpp" line="141"/>
         <source>This server is still refreshing.
 Please wait until it is finished.</source>
         <translation>Ten serwer jest wciąż odświeżany.
 Proszę poczekać, aż zostanie to zakończone.</translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="150"/>
+        <location filename="../joincommandlinebuilder.cpp" line="142"/>
         <source>Attempted to obtain a join command line for a &quot;%1&quot; server that is under refresh.</source>
         <translation>Próba otrzymania komendy dołączenia dla serwera &quot;%1&quot;, który wciąż jest odświeżany.</translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="157"/>
+        <location filename="../joincommandlinebuilder.cpp" line="149"/>
         <source>Data for this server is not available.
 Operation failed.</source>
         <translation>Dane tego serwera są niedostępne.
 Operacja nieudana.</translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="158"/>
+        <location filename="../joincommandlinebuilder.cpp" line="150"/>
         <source>Attempted to obtain a join command line for an unknown server &quot;%1&quot;</source>
         <translation>Próba otrzymania komendy dołączenia dla nieznanego serwera &quot;%1&quot;</translation>
     </message>
@@ -4103,12 +4103,12 @@ Czy chcesz, aby Wadseeker poszukał brakujących WADów?</translation>
         <translation>Następujące pliki mogą zostać pobrane: %1</translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="198"/>
+        <location filename="../joincommandlinebuilder.cpp" line="190"/>
         <source>Unknown error.</source>
         <translation>Nieznany błąd.</translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="202"/>
+        <location filename="../joincommandlinebuilder.cpp" line="194"/>
         <source>Error when obtaining join parameters for server &quot;%1&quot;, game &quot;%2&quot;: %3</source>
         <translation>Błąd otrzymywania parametrów dołączenia do serwera &quot;%1&quot;, gra &quot;%2&quot;: %3</translation>
     </message>
@@ -4149,7 +4149,7 @@ Wadseeker nie będzie pobierał komercyjnych IWADów.
         <translation>PWADy: %1</translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="405"/>
+        <location filename="../joincommandlinebuilder.cpp" line="357"/>
         <source>Game installation failure</source>
         <translation>Błąd instalacji gry</translation>
     </message>
@@ -4402,22 +4402,22 @@ Jedno z prawidłowych miejsc dla wtyczek to katalog &quot;engines/&quot;.
         <translation>Szukam aktualizacji...</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="650"/>
+        <location filename="../gui/mainwindow.cpp" line="652"/>
         <source>All WADs found</source>
         <translation>Wszystkie WADy odnalezione</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="650"/>
+        <location filename="../gui/mainwindow.cpp" line="652"/>
         <source>All of the WADs used by this server are present.</source>
         <translation>Wszystkie WADy używane przez ten serwer są obecne.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="718"/>
+        <location filename="../gui/mainwindow.cpp" line="723"/>
         <source>Senseless refresh operation attempted.</source>
         <translation>Próba bezsensownego odświeżenia.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="720"/>
+        <location filename="../gui/mainwindow.cpp" line="725"/>
         <source>Doomseeker is unable to proceed with the refresh operation because the following problem has occured:
 
 </source>
@@ -4426,103 +4426,103 @@ Jedno z prawidłowych miejsc dla wtyczek to katalog &quot;engines/&quot;.
 </translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="725"/>
+        <location filename="../gui/mainwindow.cpp" line="730"/>
         <source>Plugins are missing from the &quot;engines/&quot; directory.</source>
         <translation>W katalogu &quot;engines/&quot; nie ma wtyczek.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="729"/>
+        <location filename="../gui/mainwindow.cpp" line="734"/>
         <source>No master servers are enabled in the &quot;Query&quot; menu.</source>
         <translation>Żaden master serwer nie został włączony w menu &quot;Odpytywanie&quot;.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="733"/>
+        <location filename="../gui/mainwindow.cpp" line="738"/>
         <source>Unknown error occured.</source>
         <translation>Nastąpił nieznany błąd.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="737"/>
+        <location filename="../gui/mainwindow.cpp" line="742"/>
         <source>Doomseeker - senseless operation</source>
         <translation>Doomseeker - bezsensowna operacja</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="743"/>
+        <location filename="../gui/mainwindow.cpp" line="748"/>
         <source>Total refresh process initialized!</source>
         <translation>Rozpoczęto proces totalnego odświeżenia!</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="750"/>
+        <location filename="../gui/mainwindow.cpp" line="755"/>
         <source>Warning: No master servers were enabled for this refresh. Check your Query menu or &quot;engines/&quot; directory. Custom servers will still refresh.</source>
         <translation>Ostrzeżenie: żaden master serwer nie został włączony dla tego odświeżenia. Sprawdź menu &quot;Odpytywanie&quot; lub katalog &quot;engines/&quot;. Serwery własne zostaną odświeżone mimo to.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="818"/>
+        <location filename="../gui/mainwindow.cpp" line="823"/>
         <source>Auto Updater:</source>
         <translation>Auto-aktualizacja:</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="833"/>
+        <location filename="../gui/mainwindow.cpp" line="838"/>
         <source>Abort update.</source>
         <translation>Przerwij aktualizację.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="845"/>
+        <location filename="../gui/mainwindow.cpp" line="850"/>
         <source>IP2C Update</source>
         <translation>Aktualizacja IP2C</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="856"/>
+        <location filename="../gui/mainwindow.cpp" line="861"/>
         <source>&amp;IRC</source>
         <translation>&amp;IRC</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="857"/>
+        <location filename="../gui/mainwindow.cpp" line="862"/>
         <source>CTRL+I</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="872"/>
+        <location filename="../gui/mainwindow.cpp" line="877"/>
         <source>&amp;Log</source>
         <translation>&amp;Log</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="873"/>
+        <location filename="../gui/mainwindow.cpp" line="878"/>
         <source>CTRL+L</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="889"/>
+        <location filename="../gui/mainwindow.cpp" line="894"/>
         <source>Servers</source>
         <translation>Serwery</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1610"/>
+        <location filename="../gui/mainwindow.cpp" line="1615"/>
         <source>Generic servers: %1
 </source>
         <translation>Serwery ogólne: %1
 </translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1611"/>
+        <location filename="../gui/mainwindow.cpp" line="1616"/>
         <source>Custom servers: %1
 </source>
         <translation>Serwery własne: %1
 </translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1612"/>
+        <location filename="../gui/mainwindow.cpp" line="1617"/>
         <source>LAN servers: %1
 </source>
         <translation>Serwery LAN: %1
 </translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1613"/>
+        <location filename="../gui/mainwindow.cpp" line="1618"/>
         <source>Human players: %1</source>
         <translation>Ludzcy gracze: %1</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1625"/>
+        <location filename="../gui/mainwindow.cpp" line="1630"/>
         <source>Finished refreshing. Servers on the list: %1 (+%2 custom, +%3 LAN). Players: %4.</source>
         <translation>Ukończono odświeżanie. Serwerów na liście: %1 (+%2 własnych, +%3 LAN). Graczy: %4.</translation>
     </message>
@@ -4563,50 +4563,50 @@ Jedno z prawidłowych miejsc dla wtyczek to katalog &quot;engines/&quot;.
         <translation type="obsolete">Rozpoczynanie aktualizacji IP2C.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1012"/>
+        <location filename="../gui/mainwindow.cpp" line="1017"/>
         <source>Master server for %1: %2</source>
         <translation>Master serwer dla %1: %2</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1016"/>
+        <location filename="../gui/mainwindow.cpp" line="1021"/>
         <source>Error: %1</source>
         <translation>Błąd: %1</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1025"/>
+        <location filename="../gui/mainwindow.cpp" line="1030"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1056"/>
-        <location filename="../gui/mainwindow.cpp" line="1064"/>
+        <location filename="../gui/mainwindow.cpp" line="1061"/>
+        <location filename="../gui/mainwindow.cpp" line="1069"/>
         <source>Help error</source>
         <translation>Błąd pomocy</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1056"/>
+        <location filename="../gui/mainwindow.cpp" line="1061"/>
         <source>No help found.</source>
         <translation>Nie znaleziono pomocy.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1064"/>
+        <location filename="../gui/mainwindow.cpp" line="1069"/>
         <source>Failed to open URL:
 %1</source>
         <translation>Nie można otworzyć adresu:
 %1</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1143"/>
+        <location filename="../gui/mainwindow.cpp" line="1148"/>
         <source>Welcome to Doomseeker</source>
         <translation>Witamy w programie Doomseeker</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1144"/>
+        <location filename="../gui/mainwindow.cpp" line="1149"/>
         <source>Before you start browsing for servers, please ensure that Doomseeker is properly configured.</source>
         <translation>Zanim zaczniesz przeglądać serwery, proszę poświęc chwilę aby skonfigurować Doomseekera poprawnie.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1161"/>
+        <location filename="../gui/mainwindow.cpp" line="1166"/>
         <source>Program update detection &amp; download finished with status: [%1] %2</source>
         <translation>Wykrywanie i pobieranie aktualizacji programu ukończone ze statusem: [%1] %2</translation>
     </message>
@@ -4615,27 +4615,27 @@ Jedno z prawidłowych miejsc dla wtyczek to katalog &quot;engines/&quot;.
         <translation type="obsolete">Aktualizacja programu ukończona ze statusem [%1]: %2</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1171"/>
+        <location filename="../gui/mainwindow.cpp" line="1176"/>
         <source>Updates will be installed on next program start.</source>
         <translation>Aktualizacje zostaną zainstalowane przy następnym starcie programu.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1178"/>
+        <location filename="../gui/mainwindow.cpp" line="1183"/>
         <source>Update channel was changed during update process. Discarding update.</source>
         <translation>Kanał aktualizacji został zmieniony w trakcie jej trwania. Porzucam aktualizację.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1220"/>
+        <location filename="../gui/mainwindow.cpp" line="1225"/>
         <source>Query on startup warning: No master servers are enabled in the Query menu.</source>
         <translation>Ostrzeżenie odpytywania na starcie: żaden master serwer nie jest włączony w menu &quot;Odpytywanie&quot;.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1238"/>
+        <location filename="../gui/mainwindow.cpp" line="1243"/>
         <source>Doomseeker critical error</source>
         <translation>Doomseeker - krytyczny błąd</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1239"/>
+        <location filename="../gui/mainwindow.cpp" line="1244"/>
         <source>Doomseeker was unable to find any plugin libraries.
 Although the application will still work it will not be possible to fetch any server info or launch any game.
 
@@ -4660,22 +4660,22 @@ Proszę sprawdź, czy w katalogu &quot;engines/&quot; znajdują się jakiekolwie
 Aby naprawić ten błąd można spróbować pobrać Doomseekera jeszcze raz ze strony podanej w menu Pomoc|O programie i przeinstalować Doomseekera.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1291"/>
+        <location filename="../gui/mainwindow.cpp" line="1296"/>
         <source>Querying...</source>
         <translation>Odpytywanie...</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1300"/>
+        <location filename="../gui/mainwindow.cpp" line="1305"/>
         <source>Done</source>
         <translation>Ukończono</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1388"/>
+        <location filename="../gui/mainwindow.cpp" line="1393"/>
         <source>Main Toolbar</source>
         <translation>Główny Pasek Narzędziowy</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1393"/>
+        <location filename="../gui/mainwindow.cpp" line="1398"/>
         <source>Get Servers</source>
         <translation>Pobierz serwery</translation>
     </message>
@@ -4684,7 +4684,7 @@ Aby naprawić ten błąd można spróbować pobrać Doomseekera jeszcze raz ze s
         <translation type="obsolete">Odśwież wszystko</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1427"/>
+        <location filename="../gui/mainwindow.cpp" line="1432"/>
         <source>Search:</source>
         <translation>Szukaj:</translation>
     </message>
@@ -4693,19 +4693,19 @@ Aby naprawić ten błąd można spróbować pobrać Doomseekera jeszcze raz ze s
         <translation type="obsolete">Doomseeker - komenda dołączenia</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1512"/>
+        <location filename="../gui/mainwindow.cpp" line="1517"/>
         <source>Update installation problem:
 %1</source>
         <translation>Problem podczas instalowania aktualizacji:
 %1</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1516"/>
+        <location filename="../gui/mainwindow.cpp" line="1521"/>
         <source>Update installation failed.</source>
         <translation>Instalacja aktualizacji zakończona niepowodzeniem.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1519"/>
+        <location filename="../gui/mainwindow.cpp" line="1524"/>
         <source>%1
 
 Remaining updates have been discarded.</source>
@@ -4714,7 +4714,7 @@ Remaining updates have been discarded.</source>
 Pozostałe aktualizacje zostały porzucone.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1524"/>
+        <location filename="../gui/mainwindow.cpp" line="1529"/>
         <source>Update install problem:
 %1
 
@@ -4725,28 +4725,28 @@ Remaining updates have been discarded.</source>
 Pozostałe aktualizacje zostały porzucone.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1518"/>
-        <location filename="../gui/mainwindow.cpp" line="1527"/>
+        <location filename="../gui/mainwindow.cpp" line="1523"/>
+        <location filename="../gui/mainwindow.cpp" line="1532"/>
         <source>Doomseeker - Auto Update problem</source>
         <translation>Doomseeker - Problem automatycznej aktualizacji</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="902"/>
+        <location filename="../gui/mainwindow.cpp" line="907"/>
         <source>Server &amp;Details</source>
         <translation>Szcze&amp;góły serwera</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="903"/>
+        <location filename="../gui/mainwindow.cpp" line="908"/>
         <source>CTRL+D</source>
         <translation>CTRL+D</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1498"/>
+        <location filename="../gui/mainwindow.cpp" line="1503"/>
         <source>Doomseeker - show join command line</source>
         <translation>Doomseeker - pokaż komendę dołączenia</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1499"/>
+        <location filename="../gui/mainwindow.cpp" line="1504"/>
         <source>Command line cannot be built:
 %1</source>
         <translation>Linia komend nie może zostać zbudowana:
@@ -5082,12 +5082,11 @@ Pozostałe aktualizacje zostały porzucone.</translation>
 <context>
     <name>MissingWadsDialog</name>
     <message>
-        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="266"/>
+        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="272"/>
         <source>Doomseeker - files are missing</source>
         <translation>Doomseeker - brakuje plików</translation>
     </message>
     <message>
-        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="267"/>
         <source>You don&apos;t have all the files required by this server and an instance of Wadseeker is already running.
 
 Press &apos;Ignore&apos; to join anyway.</source>
@@ -5096,18 +5095,28 @@ Press &apos;Ignore&apos; to join anyway.</source>
 Możesz wcisnąć &quot;Ignoruj&quot;, aby dołączyć się mimo wszystko.</translation>
     </message>
     <message>
-        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="270"/>
+        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="273"/>
+        <source>You don&apos;t have all the files required by this server and an instance of Wadseeker is already running.</source>
+        <translation>Nie masz wszystkich plików, które są potrzebne do gry na tym serwerze, a Wadseeker już jest uruchomiony.</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="274"/>
+        <source>Press &apos;Ignore&apos; to join anyway.</source>
+        <translation>Możesz wcisnąć &quot;Ignoruj&quot;, aby dołączyć się mimo wszystko.</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="275"/>
         <source>These files belong to a commercial game or are otherwise blocked from download:</source>
         <translation>Te pliki należą do gry w sprzedaży, bądź są po prostu zablokowane przed pobraniem:</translation>
     </message>
     <message>
-        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="271"/>
-        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="277"/>
+        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="276"/>
+        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="282"/>
         <source>&lt;files&gt;</source>
         <translation>&lt;pliki&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="272"/>
+        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="277"/>
         <source>Make sure that this file is in one of the paths specified in Options -&gt; File Paths.
 
 If you don&apos;t have this file, and it belongs to a commercial game, you need to purchase the game associated with this file. Wadseeker will not download commercial IWADs or modifications.</source>
@@ -5116,47 +5125,47 @@ If you don&apos;t have this file, and it belongs to a commercial game, you need 
 Jeżeli nie masz tego pliku, a należy on do gry w sprzedaży, to musisz kupić grę związaną z tym plikiem. Wadseeker nie będzie pobierał komercyjnych IWADów bądź modyfikacji.</translation>
     </message>
     <message>
-        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="275"/>
+        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="280"/>
         <source>You can also install a free replacement IWAD with &quot;Install Freedoom&quot; button.</source>
         <translation>Możesz także zainstalować darmowy IWAD zastępczy używając przycisku &quot;Zainstaluj Freedoom&quot;.</translation>
     </message>
     <message>
-        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="276"/>
+        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="281"/>
         <source>Following files can be downloaded:</source>
         <translation>Następujące pliki mogą zostać pobrane:</translation>
     </message>
     <message>
-        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="278"/>
+        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="283"/>
         <source>Optional files:</source>
         <translation>Pliki opcjonalne:</translation>
     </message>
     <message>
-        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="279"/>
+        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="284"/>
         <source>Do you want Wadseeker to find the missing WADs?</source>
         <translation>Czy chcesz aby Wadseeker odszukał brakujące WADy?</translation>
     </message>
     <message>
-        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="280"/>
+        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="285"/>
         <source>Alternatively use ignore to connect anyways.</source>
         <translation>Alternatywnie, wciśnij &quot;ignoruj&quot; aby połączyć się mimo wszystko.</translation>
     </message>
     <message>
-        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="281"/>
+        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="286"/>
         <source>Install Freedoom</source>
         <translation>Zainstaluj Freedoom</translation>
     </message>
     <message>
-        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="282"/>
+        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="287"/>
         <source>Install</source>
         <translation>Instaluj</translation>
     </message>
     <message>
-        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="283"/>
+        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="288"/>
         <source>Ignore</source>
         <translation>Ignoruj</translation>
     </message>
     <message>
-        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="284"/>
+        <location filename="../../../../visual2013/src/core/ui_missingwadsdialog.h" line="289"/>
         <source>Cancel</source>
         <translation>Anuluj</translation>
     </message>
@@ -5996,7 +6005,7 @@ z graczami na górze listy</translation>
 <context>
     <name>UpdatePackageFilter</name>
     <message>
-        <location filename="../updater/updatepackagefilter.cpp" line="166"/>
+        <location filename="../updater/updatepackagefilter.cpp" line="173"/>
         <source>-BROKEN</source>
         <translation>-ZEPSUTE</translation>
     </message>
@@ -6066,7 +6075,7 @@ z graczami na górze listy</translation>
 <context>
     <name>WadseekerInterface</name>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="61"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="63"/>
         <source>Downloading WADs for server &quot;%1&quot;</source>
         <translation>Pobieranie WADów dla serwera &quot;%1&quot;</translation>
     </message>
@@ -6091,45 +6100,45 @@ z graczami na górze listy</translation>
         <translation>Wszystkie zakończone. Porażka.</translation>
     </message>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="250"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="262"/>
         <source>CRITICAL ERROR: %1</source>
         <translation>BŁĄD KRYTYCZNY: %1</translation>
     </message>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="265"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="277"/>
         <source>Error: %1</source>
         <translation>Błąd: %1</translation>
     </message>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="344"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="356"/>
         <location filename="../../../../visual2013/src/core/ui_wadseekerinterface.h" line="173"/>
         <source>Wadseeker</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="368"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="380"/>
         <location filename="../../../../visual2013/src/core/ui_wadseekerinterface.h" line="180"/>
         <source>Abort</source>
         <translation>Przerwij</translation>
     </message>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="376"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="388"/>
         <location filename="../../../../visual2013/src/core/ui_wadseekerinterface.h" line="195"/>
         <source>Close</source>
         <translation>Zamknij</translation>
     </message>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="505"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="525"/>
         <source>[%1%] Wadseeker</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="550"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="570"/>
         <source>Context menu error</source>
         <translation>Błąd menu kontekstowego</translation>
     </message>
     <message>
-        <location filename="../gui/wadseekerinterface.cpp" line="550"/>
+        <location filename="../gui/wadseekerinterface.cpp" line="570"/>
         <source>Unknown action selected.</source>
         <translation>Wybrano nieznaną akcję.</translation>
     </message>
