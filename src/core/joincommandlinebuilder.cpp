@@ -49,20 +49,16 @@
 DClass<JoinCommandLineBuilder>
 {
 	public:
-		bool allFilesAreOptional;
 		CommandLineInfo cli;
 		bool configurationError;
 		QString connectPassword;
 		QString error;
-		bool finishUponRetrievingFiles;
 		GameDemo demo;
 		QString demoName;
 		QString inGamePassword;
 		ServerPtr server;
 		QWidget *parentWidget;
-		bool allowMissingFilesIgnore;
 		bool passwordsAlreadySet;
-		bool requireOptionals;
 
 		// For missing wads dialog
 		QDialogButtonBox *buttonBox;
@@ -74,15 +70,11 @@ DPointered(JoinCommandLineBuilder)
 JoinCommandLineBuilder::JoinCommandLineBuilder(ServerPtr server,
 	GameDemo demo, QWidget *parentWidget)
 {
-	d->allFilesAreOptional = false;
-	d->allowMissingFilesIgnore = true;
 	d->configurationError = false;
 	d->demo = demo;
 	d->demoName = GameDemo::mkDemoFullPath(demo, *server->plugin());
-	d->finishUponRetrievingFiles = false;
 	d->parentWidget = parentWidget;
 	d->passwordsAlreadySet = false;
-	d->requireOptionals = false;
 	d->server = server;
 }
 
@@ -215,17 +207,7 @@ MissingWadsDialog::MissingWadsProceed JoinCommandLineBuilder::handleMissingWads(
 	{
 		missingWads << error.missingWads();
 	}
-	if (d->allFilesAreOptional)
-	{
-		QList<PWad> tmp = missingWads;
-		missingWads.clear();
-		foreach (const PWad &file, tmp)
-		{
-			missingWads << PWad(file.name(), true);
-		}
-	}
 	MissingWadsDialog dialog(missingWads, d->parentWidget);
-	dialog.setAllowIgnore(d->allowMissingFilesIgnore);
 	if (dialog.exec() == QDialog::Accepted)
 	{
 		if (dialog.decision() == MissingWadsDialog::Install)
@@ -234,17 +216,8 @@ MissingWadsDialog::MissingWadsProceed JoinCommandLineBuilder::handleMissingWads(
 			{
 				return MissingWadsDialog::Cancel;
 			}
-			WadseekerInterface *wadseeker = NULL;
-			if (d->finishUponRetrievingFiles)
-			{
-				wadseeker = WadseekerInterface::createNoGame(d->server);
-				this->connect(wadseeker, SIGNAL(finished(int)), SIGNAL(commandLineBuildFinished()));
-			}
-			else
-			{
-				wadseeker = WadseekerInterface::create(d->server);
-				this->connect(wadseeker, SIGNAL(finished(int)), SLOT(onWadseekerDone(int)));
-			}
+			WadseekerInterface *wadseeker = WadseekerInterface::create(d->server);
+			this->connect(wadseeker, SIGNAL(finished(int)), SLOT(onWadseekerDone(int)));
 			wadseeker->setWads(dialog.filesToDownload());
 			wadseeker->setAttribute(Qt::WA_DeleteOnClose);
 			wadseeker->show();
@@ -283,9 +256,6 @@ void JoinCommandLineBuilder::obtainJoinCommandLine()
 	GameClientRunner* gameRunner = d->server->gameRunner();
 	JoinError joinError = gameRunner->createJoinCommandLine(d->cli, params);
 	delete gameRunner;
-
-	if(d->requireOptionals && joinError.type() == JoinError::NoError && !joinError.missingWads().isEmpty())
-		joinError.setType(JoinError::MissingWads);
 
 	switch (joinError.type())
 	{
@@ -370,21 +340,6 @@ ServerPtr JoinCommandLineBuilder::server() const
 	return d->server;
 }
 
-void JoinCommandLineBuilder::setAllowMissingFilesIgnore(bool allow)
-{
-	d->allowMissingFilesIgnore = allow;
-}
-
-void JoinCommandLineBuilder::setAllFilesAreOptional(bool b)
-{
-	d->allFilesAreOptional = b;
-}
-
-void JoinCommandLineBuilder::setFinishUponRetrievingFiles(bool b)
-{
-	d->finishUponRetrievingFiles = b;
-}
-
 void JoinCommandLineBuilder::setPasswords(const QString &connectPassword, const QString &inGamePassword)
 {
 	d->passwordsAlreadySet = !(connectPassword.isNull() && inGamePassword.isNull());
@@ -392,11 +347,6 @@ void JoinCommandLineBuilder::setPasswords(const QString &connectPassword, const 
 		d->connectPassword = connectPassword;
 	if(!inGamePassword.isNull())
 		d->inGamePassword = inGamePassword;
-}
-
-void JoinCommandLineBuilder::setRequireOptionals(bool required)
-{
-	d->requireOptionals = required;
 }
 
 bool JoinCommandLineBuilder::tryToInstallGame()

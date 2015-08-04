@@ -58,6 +58,7 @@ void MissingWadsDialog::setAllowIgnore(bool allow)
 {
 	d->btnIgnore->setVisible(allow);
 	d->lblUseIgnore->setVisible(allow);
+	d->lblUseIgnoreCantRun->setVisible(allow);
 }
 
 void MissingWadsDialog::setup()
@@ -88,6 +89,8 @@ void MissingWadsDialog::setupWadseekerNotRunning()
 	setupForbiddenFilesArea();
 	setupDownloadableFilesArea();
 	setupOptionalFilesArea();
+
+	d->btnInstall->setVisible(hasAnyAllowedFile());
 }
 
 void MissingWadsDialog::setupForbiddenFilesArea()
@@ -166,7 +169,7 @@ void MissingWadsDialog::ignoreMissingFiles()
 
 void MissingWadsDialog::installFreedoom()
 {
-	gApp->mainWindow()->showInstallFreedoomDialog();
+	QTimer::singleShot(0, gApp->mainWindow(), SLOT(showInstallFreedoomDialog()));
 	accept();
 }
 
@@ -234,6 +237,11 @@ QStringList MissingWadsDialog::selectedOptionalFiles() const
 		}
 	}
 	return result;
+}
+
+bool MissingWadsDialog::hasAnyAllowedFile() const
+{
+	return !downloadableFiles().isEmpty() || !optionalFiles().isEmpty();
 }
 
 MissingWadsDialog::MissingWadsProceed MissingWadsDialog::decision() const

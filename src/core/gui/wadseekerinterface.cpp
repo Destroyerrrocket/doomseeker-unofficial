@@ -58,10 +58,9 @@ WadseekerInterface::WadseekerInterface(ServerPtr server, QWidget* parent)
 : QDialog(parent)
 {
 	construct();
-	bAutomatic = true;
+	setupAutomatic();
+	d->lblTop->show();
 	d->lblTop->setText(tr("Downloading WADs for server \"%1\"").arg(server->name()));
-	d->btnDownload->hide();
-	d->leWadName->hide();
 	setCustomSite(server->webSite());
 }
 
@@ -232,11 +231,12 @@ WadseekerInterface *WadseekerInterface::create(ServerPtr server, QWidget* parent
 	return NULL;
 }
 
-WadseekerInterface *WadseekerInterface::createNoGame(ServerPtr server, QWidget* parent)
+WadseekerInterface *WadseekerInterface::createAutoNoGame(QWidget* parent)
 {
-	WadseekerInterface *interface = create(server, parent);
+	WadseekerInterface *interface = create(parent);
 	if (interface != NULL)
 	{
+		interface->setupAutomatic();
 		interface->d->preventGame = true;
 	}
 	return interface;
@@ -389,6 +389,14 @@ void WadseekerInterface::setStateWaiting()
 	d->btnDownload->setEnabled(true);
 	d->taskbarProgress->hide();
 	state = Waiting;
+}
+
+void WadseekerInterface::setupAutomatic()
+{
+	bAutomatic = true;
+	d->lblTop->hide();
+	d->btnDownload->hide();
+	d->leWadName->hide();
 }
 
 void WadseekerInterface::setWads(const QStringList& wads)

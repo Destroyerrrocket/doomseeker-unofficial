@@ -58,18 +58,11 @@ class JoinCommandLineBuilder : public QObject
 		 */
 		void obtainJoinCommandLine();
 		ServerPtr server() const;
-		void setAllowMissingFilesIgnore(bool);
-		void setAllFilesAreOptional(bool);
-		void setFinishUponRetrievingFiles(bool);
 		/**
 		 * @brief Sets the connect/ingame password and bypasses the prompt.
 		 * Set passwords to a null string to unset.
 		 */
 		void setPasswords(const QString &connectPassword=QString(), const QString &inGamePassword=QString());
-		/**
-		 * @brief Treats optional wads are required so Wadseeker prompts.
-		 */
-		void setRequireOptionals(bool);
 
 	signals:
 		void commandLineBuildFinished();

@@ -48,7 +48,6 @@ public:
 	MissingWadsProceed decision() const;
 	QStringList filesToDownload() const;
 	void setAllowIgnore(bool);
-	void setAllFilesAreOptional(bool);
 
 private:
 	DPtr<MissingWadsDialog> d;
@@ -57,6 +56,7 @@ private:
 	QStringList forbiddenFiles() const;
 	QStringList optionalFiles() const;
 
+	bool hasAnyAllowedFile() const;
 	bool isFreedoomReplaceableOnList(const QStringList &files) const;
 	QStringList selectedOptionalFiles() const;
 	void setup();

@@ -635,33 +635,38 @@ void MainWindow::findMissingWADs(const ServerPtr &server)
 	// Display a message if all WADs are present.
 	bool allfound = true;
 	QList<PWad> wads = server->wads();
+	wads << server->iwad();
 	PathFinder pathFinder = server->wadPathFinder();
 	WadPathFinder wadFinder(pathFinder);
+	QList<PWad> missingWads;
 	foreach(const PWad &wad, wads)
 	{
 		if(!wadFinder.find(wad.name()).isValid())
 		{
-			allfound = false;
-			break;
+			PWad optionalWad = PWad(wad.name(), true);
+			missingWads << optionalWad;
 		}
 	}
-	if(allfound)
+	if (missingWads.isEmpty())
 	{
 		QMessageBox::information(this, tr("All WADs found"), tr("All of the WADs used by this server are present."));
 		return;
 	}
 
-	CommandLineInfo cli;
-	ConnectionHandler connectionHandler(server, this);
-	// Use a command line builder to trigger missing wads dialog.
-	JoinCommandLineBuilder *builder = new JoinCommandLineBuilder(server, GameDemo::NoDemo, this);
-	builder->connect(builder, SIGNAL(commandLineBuildFinished()), SLOT(deleteLater()));
-	builder->setRequireOptionals(true);
-	builder->setAllFilesAreOptional(true);
-	builder->setFinishUponRetrievingFiles(true);
-	builder->setAllowMissingFilesIgnore(false);
-	builder->setPasswords("", "");
-	builder->obtainJoinCommandLine();
+	MissingWadsDialog dialog(missingWads, this);
+	dialog.setAllowIgnore(false);
+	if (dialog.exec() == QDialog::Accepted && dialog.decision() == MissingWadsDialog::Install)
+	{
+		if (!gWadseekerShow->checkWadseekerValidity(this))
+		{
+			return;
+		}
+		WadseekerInterface *wadseeker = WadseekerInterface::createAutoNoGame();
+		wadseeker->setCustomSite(server->webSite());
+		wadseeker->setWads(dialog.filesToDownload());
+		wadseeker->setAttribute(Qt::WA_DeleteOnClose);
+		wadseeker->show();
+	}
 }
 
 void MainWindow::finishConfiguration(DoomseekerConfigurationDialog &configDialog, bool lookupHostsChanged)
