@@ -94,6 +94,11 @@ echo "Qt Plugins: $QTPLPATH"
 echo
 
 MODULES=`otool -L build/doomseeker | grep -o 'Qt[A-Za-z]\{1,\}.framework' | sed 's/.framework//'`
+if [ ! -z "$QT5PATH" ]
+then
+	# Few more modules used by cocoa plugin
+	MODULES="$MODULES QtDBus QtPrintSupport"
+fi
 MODULES_COMMA=`echo $MODULES | sed 's/ /,/g'`
 
 cp {build/,Doomseeker.app/Contents/MacOS/}doomseeker
