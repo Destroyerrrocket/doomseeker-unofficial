@@ -50,8 +50,8 @@ class UrlParser
 		 */
 		static bool isDirectLinkToFile(const QStringList& wantedFilenames, const QUrl& url);
 
-		static bool isWadnameTemplateUrl(const QUrl &url);
-		static QUrl resolveWadnameTemplateUrl(const QUrl &url, const QString &wadname);
+		static bool isWadnameTemplateUrl(const QString &url);
+		static QUrl resolveWadnameTemplateUrl(QString url, const QString &wadname);
 		/**
 		 * @brief Checks if URLs are the same. Ignores character case.
 		 */

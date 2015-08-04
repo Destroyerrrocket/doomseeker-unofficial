@@ -88,7 +88,7 @@ void CFGWadseekerSites::btnUrlRemoveClicked()
 	}
 }
 
-void CFGWadseekerSites::insertUrl(const QUrl& url)
+void CFGWadseekerSites::insertUrl(const QString& url)
 {
 	if (url.isEmpty())
 	{
@@ -106,11 +106,11 @@ void CFGWadseekerSites::insertUrl(const QUrl& url)
 		}
 	}
 
-	QStandardItem* it = new QStandardItem(QUrl::fromPercentEncoding(url.toString().toUtf8()));
+	QStandardItem* it = new QStandardItem(url);
 
 	it->setDragEnabled(true);
 	it->setDropEnabled(false);
-	it->setToolTip(url.toString());
+	it->setToolTip(url);
 
 	model->appendRow(it);
 }
@@ -130,8 +130,7 @@ void CFGWadseekerSites::saveSettings()
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(d->lstUrls->model());
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
-		QUrl existingUrl( model->item(i)->text() );
-		urlList << QUrl::fromPercentEncoding(existingUrl.toString().toUtf8());
+		urlList << model->item(i)->text();
 	}
 
 	gConfig.wadseeker.searchURLs = urlList;

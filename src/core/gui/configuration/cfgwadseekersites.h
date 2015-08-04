@@ -49,10 +49,11 @@ class CFGWadseekerSites : public ConfigurationBaseBox
 
 	protected:
 		void saveSettings();
-		void insertUrl(const QUrl& url);
 
 	private:
 		DPtr<CFGWadseekerSites> d;
+
+		void insertUrl(const QString& url);
 };
 
 #endif

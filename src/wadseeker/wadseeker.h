@@ -174,7 +174,7 @@ class WADSEEKER_API Wadseeker : public QObject
 		 *	@param url
 		 *		A valid, absolute URL.
 		 */
-		void setCustomSite(const QUrl& url);
+		void setCustomSite(const QString& url);
 
 		/**
 		 *	@brief Toggles Idgames enabled state.

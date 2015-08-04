@@ -101,24 +101,22 @@ bool UrlParser::isDirectLinkToFile(const QStringList& wantedFilenames, const Lin
 	return isDirectLinkToFile(wantedFilenames, link.url);
 }
 
-bool UrlParser::isWadnameTemplateUrl(const QUrl &url)
+bool UrlParser::isWadnameTemplateUrl(const QString &url)
 {
-	QString str = QUrl::fromPercentEncoding(url.toString().toUtf8());
-	return str.contains("%WADNAME%") || str.contains("%s");
+	return url.contains("%WADNAME%") || url.contains("%s");
 }
 
-QUrl UrlParser::resolveWadnameTemplateUrl(const QUrl &url, const QString &wadname)
+QUrl UrlParser::resolveWadnameTemplateUrl(QString url, const QString &wadname)
 {
-	QString str = QUrl::fromPercentEncoding(url.toString().toUtf8());
-	if (str.contains("%WADNAME%"))
+	if (url.contains("%WADNAME%"))
 	{
-		str = str.replace("%WADNAME%", wadname);
+		url = url.replace("%WADNAME%", wadname);
 	}
 	else
 	{
-		str = str.replace("%s", wadname);
+		url = url.replace("%s", wadname);
 	}
-	return str;
+	return url;
 }
 
 QList<Link> UrlParser::siteLinks(const QStringList& wantedFilenames, const QUrl& baseUrl)

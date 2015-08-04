@@ -63,7 +63,7 @@ public:
 	public:
 		bool bIdgamesEnabled;
 		bool bWadArchiveEnabled;
-		QUrl customSiteUrl;
+		QString customSiteUrl;
 		QString idgamesUrl;
 		unsigned maxConcurrentDownloads;
 		unsigned maxConcurrentSeeks;
@@ -406,7 +406,7 @@ void Wadseeker::reportBadUrl(const QUrl &url)
 	}
 }
 
-void Wadseeker::setCustomSite(const QUrl& url)
+void Wadseeker::setCustomSite(const QString& url)
 {
 	d->seekParameters.customSiteUrl = url;
 }
