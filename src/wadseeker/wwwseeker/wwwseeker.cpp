@@ -262,21 +262,27 @@ void WWWSeeker::networkQueryError(QNetworkReply* pReply, QNetworkReply::NetworkE
 	qDebug() << "WWWSeeker::networkQueryError() " << code;
 }
 
+void WWWSeeker::logHeaders(QNetworkReply *reply)
+{
+	qDebug() << "HEADERS";
+	qDebug() << "URL " << reply->url();
+	QList<QByteArray> headers = reply->rawHeaderList();
+	foreach (const QByteArray& headerName, headers)
+	{
+		QByteArray headerData = reply->rawHeader(headerName);
+		qDebug() << QString("%1: %2").arg(QString::fromUtf8(headerName)).arg(
+			QString::fromUtf8(headerData));
+	}
+	printf("END OF HEADERS\n");
+}
+
 void WWWSeeker::networkQueryFinished(QNetworkReply* pReply)
 {
 	QUrl url = pReply->request().url();
 
 #ifndef NDEBUG
 	printf("WWWSeeker::networkQueryFinished()\n");
-	QList<QByteArray> headers = pReply->rawHeaderList();
-	printf("HEADERS\n");
-	printf("URL %s\n", url.toEncoded().constData());
-	foreach (const QByteArray& headerName, headers)
-	{
-		QByteArray headerData = pReply->rawHeader(headerName);
-		printf("%s: %s\n", headerName.constData(), headerData.constData());
-	}
-	printf("END OF HEADERS\n");
+	logHeaders(pReply);
 #endif
 
 	QUrl possibleRedirectUrl = pReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
@@ -334,15 +340,7 @@ void WWWSeeker::networkQueryMetaDataChanged(QNetworkReply* pReply)
 
 #ifndef NDEBUG
 	printf("WWWSeeker::networkQueryMetaDataChanged()\n");
-	QList<QByteArray> headers = pReply->rawHeaderList();
-	printf("HEADERS\n");
-	printf("URL %s\n", url.toEncoded().constData());
-	foreach (const QByteArray& headerName, headers)
-	{
-		QByteArray headerData = pReply->rawHeader(headerName);
-		printf("%s: %s\n", headerName.constData(), headerData.constData());
-	}
-	printf("END OF HEADERS\n");
+	logHeaders(pReply);
 #endif
 
 	Http http(pReply);
@@ -414,10 +412,10 @@ void WWWSeeker::parseAsHtml(QNetworkReply* pReply)
 	QList<Link> links = html.linksFromHtml();
 
 #ifndef NDEBUG
-	printf("Finished URL %s - content type %s. Data size: %d\n", url.toEncoded().constData(),
-		pReply->header(QNetworkRequest::ContentTypeHeader).toByteArray().constData(), downloadedData.size());
-
-	printf("Links: %d\n", links.size());
+	qDebug() << "Finished URL" << url << "; content type"
+		<< pReply->header(QNetworkRequest::ContentTypeHeader).toString()
+		<< ". Data size:" << downloadedData.size();
+	qDebug() << "Links:" << links.size();
 #endif
 
 	// Extract URLs of interest from <A HREFs>
@@ -506,7 +504,7 @@ void WWWSeeker::startNextSites()
 			&& isMoreToSearch())
 	{
 		QUrl url = takeNextUrl();
-		printf("Took URL: %s\n", url.toString().toUtf8().constData());
+		qDebug() << "Took URL:" << url.toString();
 
 		if (url.isValid())
 		{
@@ -521,7 +519,7 @@ void WWWSeeker::startNextSites()
 			}
 			else
 			{
-				printf("Starting site: %s\n", url.toEncoded().constData());
+				qDebug() << "Starting site:" << url.toString();
 
 				startNetworkQuery(url);
 				emit siteStarted(url);

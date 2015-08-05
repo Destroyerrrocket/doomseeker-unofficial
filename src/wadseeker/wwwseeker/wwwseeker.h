@@ -317,6 +317,8 @@ class WWWSeeker : public QObject
 
 		bool isMoreToSearch() const;
 
+		void logHeaders(QNetworkReply *reply);
+
 		void parseAsHtml(QNetworkReply* pReply);
 
 		/**

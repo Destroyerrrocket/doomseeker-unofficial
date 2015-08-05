@@ -247,7 +247,7 @@ QString HtmlParser::htmlValue(const QString& key)
 	return ret;
 }
 
-QList<Link>	HtmlParser::linksFromHtml()
+QList<Link> HtmlParser::linksFromHtml()
 {
 	QList<Link> list;
 

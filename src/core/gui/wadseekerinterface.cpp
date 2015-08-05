@@ -453,7 +453,7 @@ void WadseekerInterface::serviceFinished(const QString &service)
 void WadseekerInterface::siteFinished(const QUrl& site)
 {
 	d->twSites->removeUrl(site);
-	displayMessage("Site finished: " + site.toEncoded(), WadseekerLib::Notice, false);
+	displayMessage("Site finished: " + site.toString(), WadseekerLib::Notice, false);
 }
 
 void WadseekerInterface::siteProgress(const QUrl& site, qint64 bytes, qint64 total)
@@ -465,13 +465,13 @@ void WadseekerInterface::siteRedirect(const QUrl& oldUrl, const QUrl& newUrl)
 {
 	d->twSites->removeUrl(oldUrl);
 	d->twSites->addUrl(newUrl);
-	displayMessage("Site redirect: " + oldUrl.toEncoded() + " -> " + newUrl.toEncoded(), WadseekerLib::Notice, false);
+	displayMessage("Site redirect: " + oldUrl.toString() + " -> " + newUrl.toString(), WadseekerLib::Notice, false);
 }
 
 void WadseekerInterface::siteStarted(const QUrl& site)
 {
 	d->twSites->addUrl(site);
-	displayMessage("Site started: " + site.toEncoded(), WadseekerLib::Notice, false);
+	displayMessage("Site started: " + site.toString(), WadseekerLib::Notice, false);
 }
 
 void WadseekerInterface::startSeeking(const QStringList& seekedFilesList)
