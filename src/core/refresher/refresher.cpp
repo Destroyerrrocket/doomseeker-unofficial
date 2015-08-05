@@ -198,7 +198,7 @@ Server* Refresher::findRefreshingServer(const QHostAddress& address,
 		{
 			continue;
 		}
-		if (refreshOp.server->address() == address && refreshOp.server->port() == port)
+		if (refreshOp.server->address().toIPv4Address() == address.toIPv4Address() && refreshOp.server->port() == port)
 		{
 			return refreshOp.server;
 		}

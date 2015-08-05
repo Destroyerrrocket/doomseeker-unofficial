@@ -91,7 +91,7 @@ void MasterClient::clearServers()
 
 bool MasterClient::isAddressSame(const QHostAddress &address, unsigned short port) const
 {
-	return (d->address == address && d->port == port);
+	return (d->address.toIPv4Address() == address.toIPv4Address() && d->port == port);
 }
 
 void MasterClient::emitBannedMessage()
