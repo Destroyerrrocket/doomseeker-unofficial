@@ -89,7 +89,7 @@ Message AppRunner::runExecutable(const CommandLineInfo& cmdInfo)
 
 	int result;
 
-	#ifdef Q_WS_MAC
+	#ifdef Q_OS_MAC
 	if( cmdInfo.executable.isBundle() )
 	{
 		result = QProcess::startDetached(cmdInfo.executable.absoluteFilePath() + AppRunner::findBundleBinary(cmdInfo.executable), args, cmdInfo.applicationDir.absolutePath());
