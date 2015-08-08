@@ -265,7 +265,7 @@ if(WIN32)
 			)
 		install(FILES ${QT_LIBS_RELEASE} DESTINATION .)
 	endif()
-	# Install .ico file. No idea what purpose would this server but some
+	# Install .ico file. No idea what purpose would this serve but some
 	# programs come with their icons in the .ico file so why not.
 	install(FILES ${CMAKE_SOURCE_DIR}/media/icon_windows.ico DESTINATION .
 		RENAME doomseeker.ico

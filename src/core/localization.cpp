@@ -73,8 +73,18 @@ bool Localization::loadTranslation(const QString& localeName)
 		// If Qt translation is not bundled with program then try to load
 		// it from system location. This behavior is valid for Linux.
 		qtTranslator = new QTranslator();
+		gLog << QString("Loading Qt translation '%1' from system dir '%2' ...").arg(
+			localeName, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
 		qtTranslator->load("qt_" + localeName,
 			QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+		if (!qtTranslator->isEmpty())
+		{
+			gLog << QString("Loaded Qt translation from system dir.");
+		}
+		else
+		{
+			gLog << QString("Failed to load Qt translation from system dir.");
+		}
 		QCoreApplication::installTranslator(qtTranslator);
 	}
 	currentlyLoadedTranslations.append(qtTranslator);
@@ -110,6 +120,7 @@ QTranslator* Localization::loadTranslationFile(const QString& localeName, const 
 	{
 		if (pTranslator->load(localeName, dir))
 		{
+			gLog << QString("Installed translation '%1' at dir '%2'.").arg(localeName, dir);
 			QCoreApplication::installTranslator(pTranslator);
 			bLoaded = true;
 			break;
