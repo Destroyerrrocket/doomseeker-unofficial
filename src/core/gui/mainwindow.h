@@ -234,6 +234,7 @@ class MainWindow : public QMainWindow
 		DPtr<MainWindow> d;
 
 		void connectIP2CLoader(IP2CLoader* loader);
+		void fixIconsDpi();
 
 	private slots:
 		void ip2cDownloadProgress(qint64 current, qint64 max);

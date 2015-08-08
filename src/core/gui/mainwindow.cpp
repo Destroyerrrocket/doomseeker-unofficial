@@ -715,6 +715,14 @@ void MainWindow::finishedQueryingMaster(MasterClient* master)
 	}
 }
 
+void MainWindow::fixIconsDpi()
+{
+	// http://blog.qt.io/blog/2013/04/25/retina-display-support-for-mac-os-ios-and-x11/
+	QIcon icon(":/icons/exclamation_16.png");
+	d->lblExclamation1->setPixmap(icon.pixmap(16));
+	d->lblExclamation2->setPixmap(icon.pixmap(16));
+}
+
 void MainWindow::getServers()
 {
 	// Check if this operation has any sense.
@@ -1202,6 +1210,8 @@ void MainWindow::postInitAppStartup()
 {
 	// Load server filter from config.
 	d->serverFilterDock->setFilterInfo(gConfig.serverFilter.info);
+
+	fixIconsDpi();
 
 	// Check query on statup
 	// Let's see if we have any plugins first. If not, display error.

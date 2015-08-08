@@ -48,21 +48,9 @@
         </spacer>
        </item>
        <item>
-        <widget class="QLabel" name="label_2">
-         <property name="maximumSize">
-          <size>
-           <width>16</width>
-           <height>16</height>
-          </size>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
+        <widget class="QLabel" name="lblExclamation1">
          <property name="pixmap">
-          <pixmap resource="../../../media/resources.qrc">:/icons/exclamation.png</pixmap>
-         </property>
-         <property name="scaledContents">
-          <bool>true</bool>
+          <pixmap resource="../../../media/resources.qrc">:/icons/exclamation_16.png</pixmap>
          </property>
         </widget>
        </item>
@@ -155,21 +143,12 @@
         </spacer>
        </item>
        <item>
-        <widget class="QLabel" name="label_3">
-         <property name="maximumSize">
-          <size>
-           <width>16</width>
-           <height>16</height>
-          </size>
-         </property>
+        <widget class="QLabel" name="lblExclamation2">
          <property name="text">
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="../../../media/resources.qrc">:/icons/exclamation.png</pixmap>
-         </property>
-         <property name="scaledContents">
-          <bool>true</bool>
+          <pixmap resource="../../../media/resources.qrc">:/icons/exclamation_16.png</pixmap>
          </property>
         </widget>
        </item>
@@ -277,7 +256,7 @@
      <x>0</x>
      <y>0</y>
      <width>796</width>
-     <height>31</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="locale">
@@ -525,6 +504,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../../../media/resources.qrc"/>
   <include location="../../../media/resources.qrc"/>
   <include location="../../../media/resources.qrc"/>
  </resources>

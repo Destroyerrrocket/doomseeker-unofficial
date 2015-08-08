@@ -17,6 +17,8 @@
 	<file>icons/download.png</file>
 	<file>icons/emblem-web.png</file>
 	<file>icons/exclamation.png</file>
+	<file>icons/exclamation_16.png</file>
+	<file alias="icons/exclamation_16@2x.png">icons/exclamation.png</file>
 	<file>icons/filter.png</file>
 	<file>icons/get-wad.png</file>
 	<file>icons/irc_channel.png</file>
