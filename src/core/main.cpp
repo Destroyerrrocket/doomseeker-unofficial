@@ -570,7 +570,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLine
 	for (int i = 0; i < commandLine.size(); ++i)
 	{
 		const QString& parameter = commandLine[i];
-		argv[i] = new char[parameter.size() + 1];
+		argv[i] = new char[parameter.toUtf8().size() + 1];
 		strcpy(argv[i], parameter.toUtf8().constData());
 	}
 
