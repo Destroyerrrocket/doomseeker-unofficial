@@ -42,7 +42,10 @@ class DemoManagerDlg : public QDialog
 		DemoManagerDlg();
 		~DemoManagerDlg();
 
-	protected slots:
+	private slots:
+		void deleteSelected();
+		void exportSelected();
+		void playSelected();
 		void performAction(QAbstractButton *button);
 		void updatePreview(const QModelIndex &index);
 
