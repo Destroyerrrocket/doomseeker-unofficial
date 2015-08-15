@@ -6,7 +6,7 @@ project(zlib C)
 set(VERSION "1.2.7")
 
 if(NOT DEFINED BUILD_SHARED_LIBS)
-    option(BUILD_SHARED_LIBS "Build a shared library form of zlib" ON)
+    option(BUILD_SHARED_LIBS "Build a shared library form of zlib" OFF)
 endif()
 
 set(ZLIBNAME z)
