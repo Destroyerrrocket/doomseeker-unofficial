@@ -34,11 +34,14 @@
 #include "global.h"
 #include "log.h"
 #include "datastreamoperatorwrapper.h"
-#include "serverapi/playerslist.h"
+#include <serverapi/playerslist.h>
+#include <serverapi/message.h>
+#include <strings.h>
 
 #include <QBuffer>
 #include <QDataStream>
 #include <QDateTime>
+#include <QFileInfo>
 #include <QRegExp>
 
 #define SERVER_CHALLENGE	0xC7,0x00,0x00,0x00
@@ -673,6 +676,32 @@ void ZandronumServer::updatedSlot(ServerPtr server, int response)
 
 		fprintf(stderr, "\n-- End of response --\n\n");
 	}
+}
+
+PathFinder ZandronumServer::wadPathFinder()
+{
+	PathFinder pathFinder = Server::wadPathFinder();
+	if (isTestingServer())
+	{
+		QScopedPointer<ExeFile> exe(clientExe());
+		Message message;
+		QString exePath = exe->pathToExe(message);
+		if (!exePath.isNull())
+		{
+			// exePath is path to a .bat/.sh file that resides in
+			// directory above the directory of actual deployment of
+			// the testing client. Fortunately, name of the .bat/.sh
+			// file is the same as the name of the directory that
+			// interests us. So, we cut out the file extension and
+			// thus we receive a proper path that we can add to
+			// PathFinder.
+			QFileInfo fileInfo(exePath);
+			QString dirPath = Strings::combinePaths(fileInfo.absolutePath(),
+				fileInfo.completeBaseName());
+			pathFinder.addPrioritySearchDir(dirPath);
+		}
+	}
+	return pathFinder;
 }
 
 RConProtocol *ZandronumServer::rcon()

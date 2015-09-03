@@ -156,6 +156,8 @@ class ZandronumServer : public Server
 		QRgb teamColor(unsigned team) const;
 		QString teamName(unsigned team) const;
 
+		PathFinder wadPathFinder();
+
 	protected slots:
 		void updatedSlot(ServerPtr server, int response);
 
