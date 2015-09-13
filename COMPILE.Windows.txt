@@ -23,7 +23,7 @@ and non-commercial use.
 3. Qt.
 
 Get Qt from this URL:
-http://doomseeker.drdteam.org/files/dependencies/Qt5.4.1-no-icu-Zalewa-VS2013-x86.7z
+http://doomseeker.drdteam.org/files/dependencies/Qt5.5.0-no-icu-Zalewa-VS2013-x86.7z
 
 This is a Qt version compiled by me. The official build, at the time
 when this is written, has a dependency on a huge (about 30MB) ICU
