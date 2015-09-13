@@ -48,7 +48,7 @@ QString Version::operatingSystem()
 
 QString Version::qtPackageVersion()
 {
-	return QString("%1-1").arg(qVersion());
+	return qVersion();
 }
 
 QString Version::revision()
@@ -82,4 +82,3 @@ QString Version::versionRevision()
 		return version() + "-" + revision();
 	}
 }
-
