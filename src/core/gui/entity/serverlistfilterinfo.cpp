@@ -29,6 +29,7 @@ ServerListFilterInfo::ServerListFilterInfo()
 	bShowFull = true;
 	bShowOnlyValid = false;
 	maxPing = 0;
+	testingServers = Doomseeker::Indifferent;
 }
 
 void ServerListFilterInfo::copy(const ServerListFilterInfo& other)
@@ -41,6 +42,7 @@ void ServerListFilterInfo::copy(const ServerListFilterInfo& other)
 	gameModesExcluded = other.gameModesExcluded;
 	maxPing = other.maxPing;
 	serverName = other.serverName.trimmed();
+	testingServers = other.testingServers;
 
 	copyTrimmed(this->wads, other.wads);
 	copyTrimmed(this->wadsExcluded, other.wadsExcluded);
@@ -85,6 +87,11 @@ bool ServerListFilterInfo::isFilteringAnything() const
 		return true;
 	}
 
+	if (testingServers != Doomseeker::Indifferent)
+	{
+		return true;
+	}
+
 	return false;
 }
 
@@ -100,9 +107,9 @@ QString ServerListFilterInfo::toString() const
 	ret += QString("GameModes Excluded: ") + gameModesExcluded.join(",") + "\n";
 	ret += QString("MaxPing: ") + QString::number(maxPing) + "\n";
 	ret += QString("ServerName: ") + serverName + "\n";
+	ret += QString("Testing servers: %1\n").arg(testingServers);
 	ret += QString("WADs: ") + wads.join(",") + "\n";
 	ret += QString("WADs Excluded: ") + wadsExcluded.join(",") + "\n";
 
 	return ret;
 }
-

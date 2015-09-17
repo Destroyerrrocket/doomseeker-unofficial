@@ -38,9 +38,9 @@ public:
 	*/
 	QLineEdit* leQuickSearch;
 	/**
-		* Guard used to prevent multiple signals being generated while loading
-		* a filter with setFilterInfo.
-		*/
+	* Guard used to prevent multiple signals being generated while loading
+	* a filter with setFilterInfo.
+	*/
 	bool bDisableUpdate;
 };
 
@@ -137,6 +137,7 @@ ServerListFilterInfo ServerFilterDock::filterInfo() const
 	filterInfo.gameModes = d->cboGameMode->selectedItemTexts();
 	filterInfo.gameModesExcluded = d->cboExcludeGameMode->selectedItemTexts();
 	filterInfo.maxPing = d->spinMaxPing->value();
+	filterInfo.testingServers = Doomseeker::checkboxTristateToShowMode(d->cbShowTestingServers->checkState());
 	filterInfo.serverName = d->leServerName->text();
 	filterInfo.wads = d->leWads->text().trimmed().split(",", QString::SkipEmptyParts);
 	filterInfo.wadsExcluded = d->leExcludeWads->text().trimmed().split(",", QString::SkipEmptyParts);
@@ -180,6 +181,9 @@ void ServerFilterDock::setFilterInfo(const ServerListFilterInfo& filterInfo)
 	d->leServerName->setText(filterInfo.serverName.trimmed());
 	d->leWads->setText(filterInfo.wads.join(",").trimmed());
 	d->leExcludeWads->setText(filterInfo.wadsExcluded.join(",").trimmed());
+
+	d->cbShowTestingServers->setCheckState(Doomseeker::showModeToCheckboxState(
+			filterInfo.testingServers));
 
 	d->bDisableUpdate = false;
 	emitUpdated();

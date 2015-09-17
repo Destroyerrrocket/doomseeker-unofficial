@@ -111,6 +111,7 @@ set(HEADER_FILES
 	gui/demomanager.h
 	gui/dockBuddiesList.h
 	gui/entity/serverlistfilterinfo.h
+	gui/entity/showmode.h
 	gui/freedoomdialog.h
 	gui/helpers/comboboxex.h
 	gui/helpers/datetablewidgetitem.h
@@ -332,6 +333,7 @@ set(SOURCE_FILES
 	gui/demomanager.cpp
 	gui/dockBuddiesList.cpp
 	gui/entity/serverlistfilterinfo.cpp
+	gui/entity/showmode.cpp
 	gui/freedoomdialog.cpp
 	gui/helpers/comboboxex.cpp
 	gui/helpers/datetablewidgetitem.cpp

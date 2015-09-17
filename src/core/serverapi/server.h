@@ -390,6 +390,11 @@ class MAIN_EXPORT Server : public QObject
 		bool isSpecial() const;
 
 		/**
+		 * @brief Does this server run a testing version of the game?
+		 */
+		bool isTestingServer() const;
+
+		/**
 		 * @brief IWAD used by this server.
 		 */
 		const QString& iwad() const;
@@ -727,6 +732,7 @@ class MAIN_EXPORT Server : public QObject
 		 */
 		void setPingIsSet(bool b);
 
+		void setTestingServer(bool b);
 		/**
 		 * @brief Set timeLeft().
 		 */

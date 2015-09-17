@@ -94,6 +94,7 @@ DClass<Server>
 		unsigned short timeLeft;
 		unsigned short timeLimit;
 		unsigned char skill;
+		bool testingServer;
 		QString version;
 		QList<PWad> wads;
 		QString webSite;
@@ -139,6 +140,7 @@ Server::Server(const QHostAddress &address, unsigned short port)
 	d->lan = false;
 	d->locked = false;
 	d->lockedInGame = false;
+	d->testingServer = false;
 	d->triesLeft = 0;
 	d->maxClients = 0;
 	d->maxPlayers = 0;
@@ -377,6 +379,11 @@ bool Server::isSecure() const
 bool Server::isSpecial() const
 {
 	return isLan() || isCustom();
+}
+
+bool Server::isTestingServer() const
+{
+	return d->testingServer;
 }
 
 const QString& Server::iwad() const
@@ -685,6 +692,11 @@ void Server::setSecure(bool bSecure)
 void Server::setSelf(const QWeakPointer<Server> &self)
 {
 	d->self = self;
+}
+
+void Server::setTestingServer(bool b)
+{
+	d->testingServer = b;
 }
 
 void Server::setTimeLeft(unsigned short serverTimeLeft)

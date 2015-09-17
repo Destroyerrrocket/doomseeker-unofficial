@@ -142,8 +142,6 @@ class ZandronumServer : public Server
 
 		ExeFile *clientExe();
 
-		bool isTestingServer() const { return testingServer; }
-
 		GameHost* gameHost();
 		GameClientRunner* gameRunner();
 
@@ -165,7 +163,6 @@ class ZandronumServer : public Server
 	protected:
 		bool buckshot;
 		bool instagib;
-		bool testingServer;
 
 		float teamDamage;
 

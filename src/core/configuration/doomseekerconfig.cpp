@@ -569,6 +569,7 @@ void DoomseekerConfig::ServerFilter::init(IniSection& section)
 	section.createSetting("GameModesExcluded", QStringList());
 	section.createSetting("MaxPing", 0);
 	section.createSetting("ServerName", "");
+	section.createSetting("TestingServers", Doomseeker::Indifferent);
 	section.createSetting("WADs", QStringList());
 	section.createSetting("WADsExcluded", QStringList());
 }
@@ -583,6 +584,7 @@ void DoomseekerConfig::ServerFilter::load(IniSection& section)
 	info.gameModesExcluded = section["GameModesExcluded"].value().toStringList();
 	info.maxPing = section["MaxPing"];
 	info.serverName = (const QString &)section["ServerName"];
+	info.testingServers = static_cast<Doomseeker::ShowMode>(section.value("TestingServers").toInt());
 	info.wads = section["WADs"].value().toStringList();
 	info.wadsExcluded = section["WADsExcluded"].value().toStringList();
 }
@@ -597,6 +599,7 @@ void DoomseekerConfig::ServerFilter::save(IniSection& section)
 	section["GameModesExcluded"].setValue(info.gameModesExcluded);
 	section["MaxPing"] = info.maxPing;
 	section["ServerName"] = info.serverName;
+	section["TestingServers"] = info.testingServers;
 	section["WADs"].setValue(info.wads);
 	section["WADsExcluded"].setValue(info.wadsExcluded);
 }

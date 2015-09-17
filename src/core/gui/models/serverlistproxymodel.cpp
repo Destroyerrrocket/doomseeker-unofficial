@@ -206,6 +206,15 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 			return false;
 		}
 
+		if (d->filterInfo.testingServers == Doomseeker::ShowOnly && !s->isTestingServer())
+		{
+			return false;
+		}
+		else if (d->filterInfo.testingServers == Doomseeker::ShowNone && s->isTestingServer())
+		{
+			return false;
+		}
+
 		const QString& nameFilter = d->filterInfo.serverName;
 		if (!nameFilter.isEmpty())
 		{

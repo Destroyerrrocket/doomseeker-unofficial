@@ -26,6 +26,8 @@
 #include <QString>
 #include <QStringList>
 
+#include "gui/entity/showmode.h"
+
 /**
  *	@brief Structure describing server filter.
  */
@@ -49,6 +51,7 @@ public:
 	QString serverName;
 	QStringList wads;
 	QStringList wadsExcluded;
+	Doomseeker::ShowMode testingServers;
 
 	ServerListFilterInfo();
 	ServerListFilterInfo(const ServerListFilterInfo& other)

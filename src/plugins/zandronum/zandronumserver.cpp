@@ -103,7 +103,7 @@ TeamInfo::TeamInfo(const QString &name, const QColor &color, unsigned int score)
 
 ZandronumServer::ZandronumServer(const QHostAddress &address, unsigned short port)
 : Server(address, port),
-  buckshot(false), instagib(false), testingServer(false), teamDamage(0.0f),
+  buckshot(false), instagib(false), teamDamage(0.0f),
   botSkill(0), duelLimit(0), fragLimit(0), pointLimit(0), winLimit(0),
   numTeams(2)
 {
@@ -534,7 +534,7 @@ Server::Response ZandronumServer::readRequest(const QByteArray &data)
 		flags ^= SQF_TESTING_SERVER;
 
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
-		testingServer = in.readQInt8() != 0;
+		setTestingServer(in.readQInt8() != 0);
 
 		// '\0' is read if testingServer == false
 		RETURN_BAD_IF_NOT_ENOUGH_DATA(1);
@@ -542,7 +542,7 @@ Server::Response ZandronumServer::readRequest(const QByteArray &data)
 	}
 	else
 	{
-		testingServer = false;
+		setTestingServer(false);
 		testingArchive = QString();
 	}
 
