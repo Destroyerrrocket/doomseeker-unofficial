@@ -2375,6 +2375,16 @@ p, li { white-space: pre-wrap; }
         <translation>Odtwarzaj</translation>
     </message>
     <message>
+        <location filename="../../../../visual2013/src/core/ui_demomanager.h" line="136"/>
+        <source>Delete</source>
+        <translation>Usuń</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2013/src/core/ui_demomanager.h" line="137"/>
+        <source>Export</source>
+        <translation>Eksportuj</translation>
+    </message>
+    <message>
         <location filename="../gui/demomanager.cpp" line="206"/>
         <source>Unable to save</source>
         <translation>Błąd zapisu</translation>
@@ -5617,6 +5627,11 @@ z graczami na górze listy</translation>
         <location filename="../../../../visual2013/src/core/ui_serverfilterdock.h" line="253"/>
         <source>Show only valid servers</source>
         <translation>Pokaż tylko prawidłowe serwery</translation>
+    </message>
+    <message>
+        <location filename="../../../../visual2013/src/core/ui_serverfilterdock.h" line="262"/>
+        <source>Show testing servers</source>
+        <translation>Pokaż serwery testujące</translation>
     </message>
     <message>
         <location filename="../../../../visual2013/src/core/ui_serverfilterdock.h" line="254"/>
