@@ -101,7 +101,7 @@ class ZandronumRConProtocol : public RConProtocol
 		QTimer timeoutTimer;
 
 	private slots:
-		void packetReady();
+		void readAllPendingDatagrams();
 		void packetTimeout();
 		void stepConnect();
 };

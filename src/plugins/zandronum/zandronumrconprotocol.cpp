@@ -46,12 +46,13 @@ ZandronumRConProtocol::ZandronumRConProtocol(ServerPtr server)
 	authTime.invalidate();
 
 	huffmanSocket.setSocket(&socket());
-	connect(&socket(), SIGNAL( readyRead() ), this, SLOT( packetReady() ));
+	connect(&socket(), SIGNAL( readyRead() ), this, SLOT( readAllPendingDatagrams() ));
 
 	// Note: the original rcon utility did TIMEOUT/4.
 	// Try to get at least 4 packets in before timing out,
 	pingTimer.setInterval(2500);
 	connect(&pingTimer, SIGNAL( timeout() ), this, SLOT( sendPong() ));
+	connect(&pingTimer, SIGNAL( timeout() ), this, SLOT( readAllPendingDatagrams() ));
 
 	timeoutTimer.setSingleShot(true);
 	this->connect(&timeoutTimer, SIGNAL(timeout()), SLOT(packetTimeout()));
@@ -187,11 +188,11 @@ void ZandronumRConProtocol::sendPong()
 	huffmanSocket.writeDatagram(pong, 1, address(), port());
 }
 
-void ZandronumRConProtocol::packetReady()
+void ZandronumRConProtocol::readAllPendingDatagrams()
 {
-	timeoutTimer.stop();
 	while(socket().hasPendingDatagrams())
 	{
+		timeoutTimer.stop();
 		QByteArray packet = huffmanSocket.readDatagram();
 		QBuffer stream(&packet);
 		stream.open(QIODevice::ReadOnly);
@@ -205,7 +206,7 @@ void ZandronumRConProtocol::packetReady()
 			processPacket(&stream);
 			break;
 		case Disconnected:
-			break;	
+			break;
 		}
 	}
 }

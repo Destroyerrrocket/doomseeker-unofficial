@@ -69,6 +69,7 @@ class Refresher::Data
 		bool bSleeping;
 		bool bKeepRunning;
 		int delayBetweenResends;
+		QTimer flushPendingDatagramsTimer;
 		MasterHashtable registeredMasters;
 
 		QList<QPointer<Server> > unchallengedServers;
@@ -140,6 +141,9 @@ Refresher::Refresher()
 	d->bKeepRunning = true;
 	d->delayBetweenResends = 1000;
 	d->socket = NULL;
+
+	this->connect(&d->flushPendingDatagramsTimer, SIGNAL(timeout()), SLOT(readAllPendingDatagrams()));
+	d->flushPendingDatagramsTimer.start(1000);
 }
 
 Refresher::~Refresher()

@@ -97,10 +97,11 @@ EnginePlugin* ZandronumBroadcast::plugin() const
 void ZandronumBroadcast::start()
 {
 	d->socket = new QUdpSocket(this);
-	this->connect(d->socket, SIGNAL(readyRead()), SLOT(readPackets()));
+	this->connect(d->socket, SIGNAL(readyRead()), SLOT(readAllPendingDatagrams()));
 	bindSocket();
 
 	this->connect(&d->activityTimer, SIGNAL(timeout()), SLOT(terminateOldServers()));
+	this->connect(&d->activityTimer, SIGNAL(timeout()), SLOT(readAllPendingDatagrams()));
 	d->activityTimer.start(PrivData<ZandronumBroadcast>::TERMINATE_OLD_AGE_MS);
 }
 
@@ -125,7 +126,7 @@ void ZandronumBroadcast::bindSocket()
 	}
 }
 
-void ZandronumBroadcast::readPackets()
+void ZandronumBroadcast::readAllPendingDatagrams()
 {
 	while (d->socket->hasPendingDatagrams())
 	{

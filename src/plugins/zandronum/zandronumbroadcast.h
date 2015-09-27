@@ -44,7 +44,7 @@ private:
 
 private slots:
 	void bindSocket();
-	void readPackets();
+	void readAllPendingDatagrams();
 	void terminateOldServers();
 };
 
