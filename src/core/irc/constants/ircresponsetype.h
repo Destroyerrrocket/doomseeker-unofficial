@@ -114,6 +114,12 @@ class IRCResponseType
 			 */
 			RPLWhoIsSpecial,
 
+			/// 328
+			RPLChannelUrl,
+
+			/// 329
+			RPLCreationTime,
+
 			/// 330
 			RPLWhoIsAccount,
 

@@ -239,6 +239,25 @@ IRCResponseParseResult IRCResponseParser::parseMessage()
 			break;
 		}
 
+		case IRCResponseType::RPLChannelUrl:
+		{
+			d->params.takeFirst(); // Own nickname.
+			QString channel = d->params.takeFirst();
+			QString url = joinAndTrimColonIfNecessary(d->params);
+			emit printWithClass(tr("URL: %1").arg(url), channel, IRCMessageClass::ChannelAction);
+			break;
+		}
+
+		case IRCResponseType::RPLCreationTime:
+		{
+			d->params.takeFirst(); // Own nickname.
+			QString channel = d->params.takeFirst();
+			QString time = joinAndTrimColonIfNecessary(d->params);
+			emit printWithClass(tr("Created time: %1").arg(time), channel,
+				IRCMessageClass::ChannelAction);
+			break;
+		}
+
 		case IRCResponseType::RPLNamReply:
 		{
 			// Namelists.

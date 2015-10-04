@@ -125,6 +125,12 @@ QString IRCResponseType::toRfcString(MsgType type)
 		case RPLWhoIsSpecial:
 			return "320";
 
+		case RPLChannelUrl:
+			return "328";
+
+		case RPLCreationTime:
+			return "329";
+
 		case RPLWhoIsAccount:
 			return "330";
 
