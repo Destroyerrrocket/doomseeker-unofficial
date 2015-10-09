@@ -633,7 +633,6 @@ void MainWindow::fillQueryMenu(MasterManager* masterManager)
 void MainWindow::findMissingWADs(const ServerPtr &server)
 {
 	// Display a message if all WADs are present.
-	bool allfound = true;
 	QList<PWad> wads = server->wads();
 	wads << server->iwad();
 	PathFinder pathFinder = server->wadPathFinder();
