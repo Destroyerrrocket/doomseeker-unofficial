@@ -24,6 +24,7 @@
 
 #include "apprunner.h"
 #include "strings.h"
+#include <QRegExp>
 
 void CommandLine::escapeArgs(QStringList& args)
 {
@@ -35,21 +36,34 @@ void CommandLine::escapeArgs(QStringList& args)
 	}
 }
 
+static bool needsQuoteWrap(const QString &arg)
+{
+	QRegExp reallySafestCharsIHope = QRegExp("[^a-z0-9/\\_-+]", Qt::CaseInsensitive);
+	return arg.contains(reallySafestCharsIHope);
+}
+
 #if defined Q_OS_WIN
 void CommandLine::escapeArg(QString& arg)
 {
 	// Note: this may be game specific (oh, dear...)
 	arg.replace('"', "\\\"");
-	arg.prepend('"');
-	arg += '"';
+	if (needsQuoteWrap(arg))
+	{
+		arg.prepend('"');
+		arg += '"';
+	}
 }
+
 #else
 // Since most other operating systems are Unix like we might as well make this a default.
 void CommandLine::escapeArg(QString& arg)
 {
 	arg.replace('\'', "'\\''"); // This does: ' -> '\''
-	arg.prepend('\'');
-	arg += '\'';
+	if (needsQuoteWrap(arg))
+	{
+		arg.prepend('\'');
+		arg += '\'';
+	}
 }
 #endif
 
