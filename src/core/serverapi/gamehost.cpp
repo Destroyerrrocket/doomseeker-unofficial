@@ -22,11 +22,15 @@
 //------------------------------------------------------------------------------
 #include "gamehost.h"
 
+#include "configuration/doomseekerconfig.h"
+#include "ini/inisection.h"
+#include "ini/inivariable.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/gamecreateparams.h"
 #include "serverapi/message.h"
 #include "serverapi/serverstructs.h"
 #include "apprunner.h"
+#include "commandlinetokenizer.h"
 #include "gamedemo.h"
 #include <cassert>
 #include <QFileInfo>
@@ -62,6 +66,7 @@ DClass<GameHost>
 		void (GameHost::*addIwad)();
 		void (GameHost::*addPwads)();
 		void (GameHost::*addDMFlags)();
+		void (GameHost::*addGlobalGameCustomParameters)();
 };
 
 DPointered(GameHost)
@@ -82,6 +87,7 @@ GameHost::GameHost(EnginePlugin* plugin)
 	set_addIwad(&GameHost::addIwad_default);
 	set_addPwads(&GameHost::addPwads_default);
 	set_addDMFlags(&GameHost::addDMFlags_default);
+	set_addGlobalGameCustomParameters(&GameHost::addGlobalGameCustomParameters_default);
 }
 
 GameHost::~GameHost()
@@ -91,6 +97,7 @@ GameHost::~GameHost()
 POLYMORPHIC_DEFINE(void, GameHost, addIwad, (), ());
 POLYMORPHIC_DEFINE(void, GameHost, addPwads, (), ());
 POLYMORPHIC_DEFINE(void, GameHost, addDMFlags, (), ());
+POLYMORPHIC_DEFINE(void, GameHost, addGlobalGameCustomParameters, (), ());
 
 void GameHost::addCustomParameters()
 {
@@ -122,6 +129,14 @@ void GameHost::addDMFlags_default()
 
 void GameHost::addExtra()
 {
+}
+
+void GameHost::addGlobalGameCustomParameters_default()
+{
+	IniSection config = gConfig.iniSectionForPlugin(plugin());
+	QString customParameters = config["CustomParameters"];
+	CommandLineTokenizer tokenizer;
+	args() << tokenizer.tokenize(customParameters);
 }
 
 void GameHost::addIwad_default()
@@ -229,6 +244,7 @@ QStringList &GameHost::args()
 
 void GameHost::createCommandLineArguments()
 {
+	BAIL_ON_ERROR(addGlobalGameCustomParameters());
 	BAIL_ON_ERROR(addIwad());
 	BAIL_ON_ERROR(addPwads());
 

@@ -196,6 +196,17 @@ class MAIN_EXPORT GameHost : public QObject
 		virtual void addExtra();
 
 		/**
+		 * @brief @b [Virtual] Adds custom parameters as defined in
+		 * Doomseeker's configuration box.
+		 *
+		 * These parameters are added at the very beginning of the
+		 * command line.
+		 */
+		void addGlobalGameCustomParameters();
+		POLYMORPHIC_SETTER_DECLARE(void, GameHost, addGlobalGameCustomParameters, ());
+		void addGlobalGameCustomParameters_default();
+
+		/**
 		 * @brief @b [Virtual] Loads IWAD.
 		 */
 		void addIwad();
