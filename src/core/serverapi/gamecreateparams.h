@@ -33,6 +33,7 @@ class DMFlagsSection;
 class GameCVar;
 class GameDemo;
 class GameMode;
+class PWad;
 
 /**
  * @ingroup group_pluginapi
@@ -145,6 +146,11 @@ class MAIN_EXPORT GameCreateParams
 		const QStringList& pwadsPaths() const;
 
 		/**
+		 * @brief PWad objects with just the file names and optional statuses.
+		 */
+		QList<PWad> pwads() const;
+
+		/**
 		 * @brief Names of PWADs, derived from pwadsPaths().
 		 */
 		QStringList pwadsNames() const;
@@ -192,5 +198,7 @@ class MAIN_EXPORT GameCreateParams
 	private:
 		DPtr<GameCreateParams> d;
 };
+
+
 
 #endif // header

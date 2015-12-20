@@ -25,9 +25,11 @@
 
 #include "dptr.h"
 
+#include <QList>
 #include <QString>
 
 class EnginePlugin;
+class PWad;
 
 class GameDemo
 {
@@ -44,7 +46,7 @@ public:
 
 	static QString mkDemoFullPath(Control control, const EnginePlugin &plugin);
 	static void saveDemoMetaData(const QString &demoName, const EnginePlugin &plugin,
-		const QString &iwad, const QStringList &pwads);
+		const QString &iwad, const QList<PWad> &pwads);
 
 	operator Control() const;
 

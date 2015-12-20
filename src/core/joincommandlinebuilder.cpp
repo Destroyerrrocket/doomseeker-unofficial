@@ -308,13 +308,8 @@ void JoinCommandLineBuilder::obtainJoinCommandLine()
 		case JoinError::NoError:
 			if (d->demo == GameDemo::Managed)
 			{
-				QStringList pwads;
-				foreach (const PWad &wad, d->server->wads())
-				{
-					pwads << wad.name();
-				}
 				GameDemo::saveDemoMetaData(d->demoName, *d->server->plugin(),
-					d->server->iwad(), pwads);
+					d->server->iwad(), d->server->wads());
 			}
 			break;
 

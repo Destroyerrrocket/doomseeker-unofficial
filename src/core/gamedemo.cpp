@@ -25,6 +25,7 @@
 #include "ini/ini.h"
 #include "ini/settingsproviderqt.h"
 #include "plugins/engineplugin.h"
+#include "serverapi/serverstructs.h"
 #include "datapaths.h"
 #include <cassert>
 #include <QDateTime>
@@ -70,7 +71,7 @@ QString GameDemo::mkDemoName(const EnginePlugin &plugin)
 }
 
 void GameDemo::saveDemoMetaData(const QString &demoName, const EnginePlugin &plugin,
-	const QString &iwad, const QStringList &pwads)
+	const QString &iwad, const QList<PWad> &pwads)
 {
 	QString metaFileName;
 	// If the extension is automatic we need to add it here
@@ -89,8 +90,24 @@ void GameDemo::saveDemoMetaData(const QString &demoName, const EnginePlugin &plu
 	Ini metaFile(&settingsProvider);
 	IniSection metaSection = metaFile.section("meta");
 
+	QStringList requiredPwads;
+	QStringList optionalPwads;
+
+	foreach (const PWad &wad, pwads)
+	{
+		if (wad.isOptional())
+		{
+			optionalPwads << wad.name();
+		}
+		else
+		{
+			requiredPwads << wad.name();
+		}
+	}
+
 	metaSection.createSetting("iwad", iwad.toLower());
-	metaSection.createSetting("pwads", pwads.join(";"));
+	metaSection.createSetting("pwads", requiredPwads.join(";"));
+	metaSection.createSetting("optionalPwads", optionalPwads);
 }
 
 GameDemo::operator GameDemo::Control() const

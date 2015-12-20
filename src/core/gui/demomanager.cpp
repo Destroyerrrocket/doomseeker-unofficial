@@ -49,6 +49,7 @@ class Demo
 		QString port;
 		QDateTime time;
 		QStringList wads;
+		QStringList optionalWads;
 };
 
 DClass<DemoManagerDlg> : public Ui::DemoManagerDlg
@@ -145,6 +146,7 @@ void DemoManagerDlg::adjustDemoList()
 			QString pwads = metaData.retrieveSetting("meta", "pwads");
 			if(pwads.length() > 0)
 				demo.wads << pwads.split(";");
+			demo.optionalWads = metaData.retrieveSetting("meta", "optionalPwads").value().toStringList();
 		}
 
 		demoMap[date.daysTo(today)][time.secsTo(referenceTime)] = demo;
@@ -274,20 +276,21 @@ void DemoManagerDlg::playSelected()
 	// Locate all the files needed to play the demo
 	PathFinder pf;
 	pf.addPrioritySearchDir(binPath);
-	PathFinderResult result = pf.findFiles(d->selectedDemo->wads);
-	if(!result.missingFiles().isEmpty())
+	PathFinderResult wadsPaths = pf.findFiles(d->selectedDemo->wads);
+	if(!wadsPaths.missingFiles().isEmpty())
 	{
 		QMessageBox::critical(this, tr("Files not found"),
-			tr("The following files could not be located: ") + result.missingFiles().join(", "));
+			tr("The following files could not be located: ") + wadsPaths.missingFiles().join(", "));
 		return;
 	}
+	PathFinderResult optionalWadPaths = pf.findFiles(d->selectedDemo->optionalWads);
 
 	// Play the demo
 	GameCreateParams params;
 	params.setDemoPath(gDefaultDataPaths->demosDirectoryPath()
 		+ QDir::separator() + d->selectedDemo->filename);
-	params.setIwadPath(result.foundFiles()[0]);
-	params.setPwadsPaths(result.foundFiles().mid(1));
+	params.setIwadPath(wadsPaths.foundFiles()[0]);
+	params.setPwadsPaths(wadsPaths.foundFiles().mid(1) + optionalWadPaths.foundFiles());
 	params.setHostMode(GameCreateParams::Demo);
 	params.setExecutablePath(binPath);
 
@@ -328,6 +331,10 @@ void DemoManagerDlg::updatePreview(const QModelIndex &index)
 	foreach(const QString &wad, d->selectedDemo->wads)
 	{
 		text += wad + "<br />";
+	}
+	foreach(const QString &wad, d->selectedDemo->optionalWads)
+	{
+		text += "[" + wad + "]<br />";
 	}
 	text += "</p>";
 	d->preview->setText(text);

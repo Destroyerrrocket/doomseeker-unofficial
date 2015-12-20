@@ -247,6 +247,17 @@ QStringList GameCreateParams::pwadsNames() const
 	return result;
 }
 
+QList<PWad> GameCreateParams::pwads() const
+{
+	QList<PWad> result;
+	QStringList names = pwadsNames();
+	for (int i = 0; i < names.size(); ++i)
+	{
+		result << PWad(names[i], pwadsOptional()[i]);
+	}
+	return result;
+}
+
 const QString& GameCreateParams::rconPassword() const
 {
 	return d->rconPassword;

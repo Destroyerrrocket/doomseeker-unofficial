@@ -344,7 +344,7 @@ void GameHost::saveDemoMetaData()
 	if (params().demoRecord() == GameDemo::Managed)
 	{
 		GameDemo::saveDemoMetaData(params().demoPath(), *plugin(),
-			params().iwadName(), params().pwadsNames());
+			params().iwadName(), params().pwads());
 	}
 }
 
