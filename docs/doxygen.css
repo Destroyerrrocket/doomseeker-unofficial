@@ -1,9 +1,19 @@
-div.tabs
+#doxygen img
 {
 	display: inline;
 }
 
-div.tabs ul
+[onclick]
+{
+	cursor: pointer;
+}
+
+div.tabs, div.tabs2
+{
+	display: inline;
+}
+
+div.tabs ul, div.tabs2 ul
 {
 	display: inline;
 	margin: 0px 0px 0px 0px;
@@ -11,10 +21,42 @@ div.tabs ul
 	list-style-type: none;
 }
 
-div.tabs ul li
+div.tabs ul li, div.tabs2 ul li
 {
 	display: inline;
 	margin: 0px 10px 0px 0px;
+}
+
+div.header div.headertitle div.title
+{
+	color: #800000;
+	font-size: 24pt;
+	font-weight: bold;
+	margin: 0px 0px 2px 0px;
+	font-family: sans;
+}
+
+div.levels
+{
+	font-size: 9pt;
+	color: #222222;
+}
+
+div.levels span
+{
+	cursor: pointer;
+	color: #a00000;
+}
+
+div.levels span+span
+{
+	padding-left: 5px;
+}
+
+div.levels span:hover
+{
+	color: #b00000;
+	text-decoration: underline;
 }
 
 table td
@@ -22,12 +64,12 @@ table td
 	margin: 2px 0px 2px 0px;
 	padding: 2px;
 }
-table td.indexkey
+table td.indexkey, table td.entry
 {
 	border: #7F7F7F 1px solid;
 	background-color: #DDDDDD;
 }
-table td.indexvalue
+table td.indexvalue, table td.desc
 {
 	border: #7F7F7F 1px solid;
 	min-width: 20px;
@@ -47,6 +89,10 @@ a.el
 	background-color: #FFFFFF;
 	margin-bottom: 15px;
 	padding: 4px;
+}
+.memSeparator
+{
+	display: none;
 }
 
 #searchli, #MSearchSelectWindow, #SearchResultsWindow

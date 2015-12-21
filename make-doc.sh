@@ -43,6 +43,12 @@ if [ $debug -ne 0 ]; then
 	sed -i -r 's/HTML_FOOTER\s*=.*//' $tmpdoxyfile
 fi
 
+if [ $debug -eq 0 ]; then
+	if [ -d "$outputdir/html" ]; then
+		rm -rf "$outputdir/html"
+	fi
+fi
+
 mkdir -p $outputdir
 doxygen "$tmpdoxyfile"
 exitcode=$?
