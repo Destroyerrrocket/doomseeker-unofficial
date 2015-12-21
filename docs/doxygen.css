@@ -1,0 +1,84 @@
+div.tabs
+{
+	display: inline;
+}
+
+div.tabs ul
+{
+	display: inline;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	list-style-type: none;
+}
+
+div.tabs ul li
+{
+	display: inline;
+	margin: 0px 10px 0px 0px;
+}
+
+table td
+{
+	margin: 2px 0px 2px 0px;
+	padding: 2px;
+}
+table td.indexkey
+{
+	border: #7F7F7F 1px solid;
+	background-color: #DDDDDD;
+}
+table td.indexvalue
+{
+	border: #7F7F7F 1px solid;
+	min-width: 20px;
+}
+
+a.el
+{
+	font-weight: bold;
+}
+
+.memproto
+{
+	font-weight: bold;
+}
+.memdoc
+{
+	background-color: #FFFFFF;
+	margin-bottom: 15px;
+	padding: 4px;
+}
+
+#searchli, #MSearchSelectWindow, #SearchResultsWindow
+{
+	display: none;
+}
+
+/* code view */
+
+.fragment
+{
+	font-family: monospace, fixed;
+	background-color: #F5F5F5;
+	font-size: 10pt;
+}
+
+.comment
+{
+	color: #7F7F7F;
+	font-style: italic;
+}
+.preprocessor
+{
+	color: #007F00;
+}
+.keyword, .keywordtype
+{
+	color: #0000FF;
+	font-weight: bold;
+}
+.keywordflow
+{
+	color: #00007F;
+	font-weight: bold;
+}
