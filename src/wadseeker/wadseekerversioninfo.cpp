@@ -23,6 +23,8 @@
 #include "wadseekerversioninfo.h"
 #include <QObject>
 
+#define VERSION_STRING "1.1~beta-6"
+
 QString WadseekerVersionInfo::author()
 {
 	return QObject::tr("The Doomseeker Team");
@@ -74,7 +76,7 @@ QString WadseekerVersionInfo::userAgent()
 
 QString WadseekerVersionInfo::version()
 {
-	return "1.1~beta-6";
+	return VERSION_STRING;
 }
 
 QString WadseekerVersionInfo::yearSpan()

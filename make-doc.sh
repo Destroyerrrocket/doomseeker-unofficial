@@ -12,6 +12,11 @@ doxyfile=$1
 tmpdoxyfile="/tmp/doomseekerdoc.doxycfg"
 outputdir="/tmp/doomseekerdoc"
 versiondefs="src/core/versiondefs.h"
+project="doomseeker"
+if [[ $doxyfile == *"wadseeker"* ]]; then
+	project="wadseeker"
+	versiondefs="src/wadseeker/wadseekerversioninfo.cpp"
+fi
 debug=0
 
 if [ $# -ge 2 ]; then
@@ -55,7 +60,7 @@ exitcode=$?
 
 if [ $debug -eq 0 ]; then
 	pushd $outputdir
-	pkg_name="doomseeker_$version"
+	pkg_name="${project}_${version}"
 	if [ -d "./$pkg_name" ]; then
 		rm -rf "./$pkg_name"
 	fi
